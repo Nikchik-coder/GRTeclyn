@@ -17,36 +17,56 @@
 template <class matter_t>
 ConstraintsWithMatter<matter_t>::ConstraintsWithMatter(
     double dx, double G_Newton, int a_c_Ham, const Interval &a_c_Moms,
+    std::array<double, AMREX_SPACEDIM> a_center, amrex::Real a_time,
     int a_c_Ham_abs_terms /* defaulted*/,
     const Interval &a_c_Moms_abs_terms /*defaulted*/)
     : Constraints(dx, a_c_Ham, a_c_Moms, a_c_Ham_abs_terms, a_c_Moms_abs_terms,
                   0.0 /*No cosmological constant*/),
-      m_G_Newton(G_Newton)
+      my_matter(matter_t()), m_G_Newton(G_Newton), m_dx(dx), m_center(a_center),
+      m_time(a_time)
+{
+}
+
+template <class matter_t>
+ConstraintsWithMatter<matter_t>::ConstraintsWithMatter(
+    matter_t a_matter, double dx, double G_Newton, int a_c_Ham,
+    const Interval &a_c_Moms, std::array<double, AMREX_SPACEDIM> a_center,
+    amrex::Real a_time, int a_c_Ham_abs_terms /* defaulted*/,
+    const Interval &a_c_Moms_abs_terms /*defaulted*/)
+    : Constraints(dx, a_c_Ham, a_c_Moms, a_c_Ham_abs_terms, a_c_Moms_abs_terms,
+                  0.0 /*No cosmological constant*/),
+      my_matter(a_matter), m_G_Newton(G_Newton), m_dx(dx), m_center(a_center),
+      m_time(a_time)
 {
 }
 
 template <class matter_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-ConstraintsWithMatter<matter_t>::compute(
-    int i, int j, int k, const amrex::Array4<amrex::Real> &out_arrays,
-    const amrex::Array4<amrex::Real const> &state_arrays) const
+ConstraintsWithMatter<matter_t>::operator()(
+    int ix, int iy, int iz, const amrex::Array4<amrex::Real> &constraints,
+    const amrex::Array4<amrex::Real const> &state) const
 {
-    // Load local vars and calculate derivs
-    const auto vars = load_vars<BSSNMatterVars>(state_arrays.cellData(i, j, k));
-    const auto d1 =
-        m_deriv.template diff1<BSSNMatterVars>(i, j, k, state_arrays);
-    const auto d2 =
-        m_deriv.template diff2<BSSNMatterVars>(i, j, k, state_arrays);
+    const amrex::CellData<const amrex::Real> &state_cell_data =
+        state.cellData(ix, iy, iz);
+    typename matter_t::Vars vars(state_cell_data);
+    const typename matter_t::D1Vars d1(ix, iy, iz, state, m_deriv);
+    const Tensor<2, amrex::Real> d2_chi =
+        m_deriv.diff2(ix, iy, iz, state, c_chi);
+    const Tensor<4, amrex::Real> d2_h =
+        m_deriv.diff2_tensor(ix, iy, iz, state, c_h11);
 
     // Inverse metric and Christoffel symbol
-    const auto h_UU  = TensorAlgebra::compute_inverse_sym(vars.h);
-    const auto chris = TensorAlgebra::compute_christoffel(d1.h, h_UU);
+    const auto h_UU  = CCZ4Geometry::compute_inverse_metric(vars);
+    const auto chris = CCZ4Geometry::compute_christoffel(d1, h_UU);
+    const Coordinates coords(amrex::IntVect{AMREX_D_DECL(ix, iy, iz)}, m_dx, m_center);
 
     // Get the non matter terms for the constraints
-    Vars out = constraint_equations(vars, d1, d2, h_UU, chris);
+    constraints_t out =
+        constraint_equations(vars, d1, d2_chi, d2_h, h_UU, chris);
 
     // Energy Momentum Tensor
-    const auto emtensor = my_matter.compute_emtensor(vars, d1, h_UU, chris.ULL);
+    const auto emtensor =
+        my_matter.compute_emtensor(vars, d1, h_UU, chris.ULL, coords, m_time);
 
     // Hamiltonian constraint
     if (m_c_Ham >= 0 || m_c_Ham_abs_terms >= 0)
@@ -66,7 +86,7 @@ ConstraintsWithMatter<matter_t>::compute(
         }
     }
     // Write the constraints into the output FArrayBox
-    store_vars(out, out_arrays.cellData(i, j, k));
+    store_vars(out, constraints.cellData(ix, iy, iz));
 }
 
 template <class matter_t>
@@ -95,7 +115,7 @@ template <class matter_t>
 void ConstraintsWithMatter<matter_t>::compute_mf(
     amrex::MultiFab &out_mf, int dcomp, int ncomp,
     const amrex::MultiFab &src_mf, const amrex::Geometry &geomdata,
-    amrex::Real /*time*/, const int * /*bcrec*/, int /*level*/)
+    amrex::Real time, const int * /*bcrec*/, int /*level*/)
 {
     const auto &out_arrays = out_mf.arrays();
     const auto &src_arrays = src_mf.const_arrays();
@@ -106,21 +126,24 @@ void ConstraintsWithMatter<matter_t>::compute_mf(
     pp.get("G_Newton", G_Newton, 0);
 
     amrex::Real dx = geomdata.CellSize(0);
+    std::array<double, AMREX_SPACEDIM> center = {0.0, 0.0, 0.0};
     int iham       = dcomp; // Ham
     Interval imom =
         Interval(dcomp + 1, dcomp + AMREX_SPACEDIM); // Mom1, Mom2, Mom3
 
     AMREX_ALWAYS_ASSERT(ncomp == (1 + AMREX_SPACEDIM));
 
-    ConstraintsWithMatter<matter_t> my_matter_constraints(dx, G_Newton, iham,
-                                                          imom);
+    pp.load("center", center, center);
+
+    ConstraintsWithMatter<matter_t> my_matter_constraints(dx, G_Newton, iham, imom,
+                                                          center, time);
 
     amrex::ParallelFor(
         out_mf,
-        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k) noexcept
+        [=] AMREX_GPU_DEVICE(int box_no, int ix, int iy, int iz) noexcept
         {
-            my_matter_constraints.compute(i, j, k, out_arrays[box_no],
-                                          src_arrays[box_no]);
+            my_matter_constraints(ix, iy, iz, out_arrays[box_no],
+                                  src_arrays[box_no]);
         });
 }
 

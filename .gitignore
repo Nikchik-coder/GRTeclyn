@@ -40,3 +40,33 @@ Doxygen/html
 log*
 *.patch
 *.log
+
+# Visualization output (frames, movies) - scripts in src/visualisation/ are kept
+src/visualisation/K/
+src/visualisation/lapse/
+src/visualisation/Theta/
+src/visualisation/chi/
+src/visualisation/binary_bh/
+src/visualisation/waves/
+src/visualisation/chi_y
+src/visualisation/chi_z
+src/visualisation/chi_x
+src/visualisation/K_z
+
+
+#Running scripts
+script/
+
+src/SimResults/
+
+scr/visualisation/visualize
+src/visualisation/ArticleResults/
+src/visualisation/visualize/
+src/visualisation/visualize_zoom/
+src/visualisation/process_wave/__pycache__/
+#cach
+cache/
+__pycache__/
+.pytest_cache/
+
+src/visualisation/visualize_supported
