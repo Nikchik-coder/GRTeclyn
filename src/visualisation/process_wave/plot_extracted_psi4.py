@@ -491,14 +491,18 @@ def _draw_waveform(
 
 
 def _draw_psd(ax, radii, stored_psd, linestyles, smooth_w, smooth_p,
-              pert_sigma=None):
+              pert_sigma=None, f_max: float | None = None):
     for i, R in enumerate(radii):
         if R not in stored_psd:
             continue
         freqs, psd = stored_psd[R]
         psd_s = _smooth_psd(psd, window=smooth_w, polyorder=smooth_p)
         ls = linestyles[i % len(linestyles)]
-        ax.semilogy(freqs, psd_s, color="black", linestyle=ls, linewidth=1.0, label=rf"$R={R:g}$")
+        if f_max is not None:
+            m = freqs <= float(f_max)
+            ax.semilogy(freqs[m], psd_s[m], color="black", linestyle=ls, linewidth=1.0, label=rf"$R={R:g}$")
+        else:
+            ax.semilogy(freqs, psd_s, color="black", linestyle=ls, linewidth=1.0, label=rf"$R={R:g}$")
 
     if pert_sigma is not None and pert_sigma > 0:
         any_R = next(iter(stored_psd))
@@ -514,6 +518,9 @@ def _draw_psd(ax, radii, stored_psd, linestyles, smooth_w, smooth_p,
                         label=rf"Gaussian pert. ($\sigma_K={pert_sigma:g}$)")
         f_char = 1.0 / (np.pi * pert_sigma * np.sqrt(2))
         ax.axvline(f_char, color="red", linewidth=0.8, linestyle="--", alpha=0.6)
+
+    if f_max is not None:
+        ax.set_xlim(0.0, float(f_max))
 
     ax.set_xlabel(r"$f\,(M^{-1})$")
     ax.set_ylabel(r"$\mathrm{ESD}\left[r\,\Psi_4^{2,0}\right]$")
@@ -531,30 +538,47 @@ def _draw_strain_code(ax, freqs, strain_psd_code, R_strain):
     ax.tick_params(axis="both", which="major", direction="in", top=True, right=True)
 
 
-def _draw_strain_ligo(ax, freqs, strain_psd_code, mass_msun, distance_mpc, R_ext=None):
+def _draw_strain_ligo(ax, freqs, strain_psd_code, mass_msun, distance_mpc, R_ext=None, ligo_quantity: str = "asd"):
     f_phys, S_h_phys = _scale_to_physical(freqs, strain_psd_code, mass_msun, distance_mpc)
     valid_phys = (f_phys > 0) & np.isfinite(S_h_phys) & (S_h_phys > 0)
-    h_char = np.zeros_like(f_phys)
-    h_char[valid_phys] = np.sqrt(f_phys[valid_phys] * S_h_phys[valid_phys])
+    ligo_quantity = (ligo_quantity or "asd").lower().strip()
+    if ligo_quantity not in {"asd", "hchar"}:
+        ligo_quantity = "asd"
+
+    # Paper-like quantity: ASD = sqrt(S_h). Alternative: characteristic strain sqrt(f*S_h).
+    y_sig = np.zeros_like(f_phys)
+    if ligo_quantity == "asd":
+        y_sig[valid_phys] = np.sqrt(S_h_phys[valid_phys])
+        y_label = r"Strain noise, $1/\sqrt{\mathrm{Hz}}$"
+    else:
+        y_sig[valid_phys] = np.sqrt(f_phys[valid_phys] * S_h_phys[valid_phys])
+        y_label = r"$h_{\mathrm{char}}(f)$"
 
     ax.loglog(
-        f_phys[valid_phys], h_char[valid_phys],
+        f_phys[valid_phys], y_sig[valid_phys],
         color="black", linewidth=1.2,
         label=rf"Signal ($M\!=\!{mass_msun:g}\,M_\odot$, $D\!=\!{distance_mpc:g}$ Mpc)",
     )
     f_ligo = np.geomspace(10.0, 5000.0, 500)
     S_n = _aLIGO_noise_psd(f_ligo)
-    h_n = np.sqrt(f_ligo * S_n)
-    ax.loglog(f_ligo, h_n, color="gray", linewidth=1.0, linestyle="--", label="Advanced LIGO design")
+    if ligo_quantity == "asd":
+        y_noise = np.sqrt(S_n)
+    else:
+        y_noise = np.sqrt(f_ligo * S_n)
+    ax.loglog(f_ligo, y_noise, color="gray", linewidth=1.0, linestyle="--", label="Advanced LIGO design")
     ax.set_xlabel(r"$f$ (Hz)")
-    ax.set_ylabel(r"$h_{\mathrm{char}}(f)$")
+    ax.set_ylabel(y_label)
     ax.legend(loc="upper right", frameon=True, framealpha=0.9, fontsize=8)
     ax.grid(True, which="major", ls="--", alpha=0.6)
     ax.tick_params(axis="both", which="major", direction="in", top=True, right=True)
+    ax.set_xlim(10.0, 5000.0)
 
     S_n_signal = _aLIGO_noise_psd(f_phys)
     snr = _compute_snr(f_phys, S_h_phys, S_n_signal)
-    peak_idx = np.argmax(h_char[valid_phys]) if np.any(valid_phys) else 0
+    # Diagnostics: report peak frequency based on characteristic strain (common convention)
+    h_char_diag = np.zeros_like(f_phys)
+    h_char_diag[valid_phys] = np.sqrt(f_phys[valid_phys] * S_h_phys[valid_phys])
+    peak_idx = np.argmax(h_char_diag[valid_phys]) if np.any(valid_phys) else 0
     f_peak_code = freqs[valid_phys][peak_idx] if np.any(valid_phys) else 0.0
     f_peak_hz = f_phys[valid_phys][peak_idx] if np.any(valid_phys) else 0.0
     band = _frequency_band_label(f_peak_hz)
@@ -628,6 +652,109 @@ def _draw_propagation(ax, t, radii, series, linestyles):
     for R1, R2, v in speeds:
         classification = _classify_signal(v)
         print(f"  R={R1:g} -> R={R2:g}: v = {v:.4f} c  [{classification}]")
+
+
+def _draw_spectrogram(ax, t, psi4, R, args, fs):
+    if fs is None or len(t) < 64:
+        ax.text(0.5, 0.5, "Insufficient data for spectrogram", transform=ax.transAxes, ha="center")
+        return
+
+    import scipy.signal as signal
+    from matplotlib.ticker import ScalarFormatter
+    
+    y_re = np.real(psi4)
+    dt = 1.0 / fs
+    
+    # Zoom in the Y-Axis (Frequency) to focus on the interesting physics
+    f_max = 3.0
+    if args.esd_fmax and float(args.esd_fmax) < f_max:
+        f_max = float(args.esd_fmax)
+        
+    # Avoid f=0 (DC drift) and focus on the physically interesting band.
+    # For "LIGO style" we use log-spaced frequencies and a log y-axis.
+    f_min = 0.1
+    n_freq = 260
+    freqs = np.logspace(np.log10(f_min), np.log10(f_max), n_freq)
+    w = 8.0
+    
+    # Compute Continuous Wavelet Transform (Morlet) manually to avoid removed scipy.signal.cwt
+    N_orig = len(y_re)
+    # Pad to avoid edge effects
+    pad_len = N_orig // 2
+    y_padded = np.pad(y_re, (pad_len, pad_len), 'constant')
+    N_padded = len(y_padded)
+    
+    cwtmatr = np.zeros((len(freqs), N_padded), dtype=complex)
+    t_wave = np.arange(-N_padded//2, N_padded//2) * dt
+    
+    for i, f in enumerate(freqs):
+        s = w / (2.0 * np.pi * f)
+        wavelet = np.exp(2j * np.pi * f * t_wave) * np.exp(-t_wave**2 / (2.0 * s**2))
+        wavelet *= (np.pi * s**2)**(-0.25)
+        cwtmatr[i, :] = signal.fftconvolve(y_padded, wavelet, mode='same')
+        
+    amplitude = np.abs(cwtmatr)
+    # Crop the padded portion out of the power array to match the original t array
+    amplitude = amplitude[:, pad_len:pad_len+N_orig]
+    
+    t_ret = t - R
+    
+    if amplitude.size > 0 and np.nanmax(amplitude) > 0:
+        amp_max = float(np.nanmax(amplitude))
+        amp = amplitude / amp_max
+        amp = np.nan_to_num(amp, nan=0.0, posinf=0.0, neginf=0.0)
+
+        # LIGO-style: viridis, linear amplitude (not power/log-power).
+        cmap = plt.get_cmap("viridis").copy()
+        cmap.set_bad(cmap(0.0))
+
+        amp_m = np.ma.masked_invalid(amp)
+
+        # IMPORTANT: rasterize the mesh so PDFs render reliably when downloaded.
+        pcm = ax.pcolormesh(
+            t_ret,
+            freqs,
+            amp_m,
+            shading="auto",
+            cmap=cmap,
+            vmin=0.0,
+            vmax=1.0,
+            rasterized=True,
+            antialiased=False,
+        )
+
+        cbar = plt.colorbar(pcm, ax=ax, pad=0.02)
+        cbar.set_label("Normalized amplitude", fontsize=10)
+        cbar.ax.tick_params(labelsize=9)
+    else:
+        ax.text(0.5, 0.5, "Spectrogram power is zero", transform=ax.transAxes, ha="center")
+        
+    ax.set_yscale("log")
+    ax.set_ylim(f_min, f_max)
+    ax.set_yticks([0.1, 0.2, 0.5, 1.0, 2.0, 3.0])
+    ax.yaxis.set_major_formatter(ScalarFormatter())
+
+    # Default view: match the retarded-time waveform panel.
+    # If the user provides --t-min/--t-max, respect those; otherwise show a standard window.
+    if args.t_min is not None or args.t_max is not None:
+        if args.t_min is not None:
+            ax.set_xlim(left=args.t_min)
+        if args.t_max is not None:
+            ax.set_xlim(right=args.t_max)
+    else:
+        # Don't show times earlier than the simulation provides (t starts at ~0),
+        # so for retarded time this typically starts near -R.
+        x_left = float(np.nanmin(t_ret))
+        x_right = min(15.0, float(np.nanmax(t_ret)))
+        ax.set_xlim(x_left, x_right)
+        
+    ax.set_ylabel(r"$f\,(M^{-1})$")
+    ax.set_xlabel(r"Retarded time $t - R_{\mathrm{ext}}$")
+
+    # LIGO-style visible white grid overlay.
+    ax.set_axisbelow(False)
+    ax.grid(True, which="major", color="white", alpha=0.4, linestyle="-", linewidth=0.8)
+    ax.tick_params(axis="both", which="major", direction="in", top=True, right=True)
 
 
 # ---------------------------------------------------------------------------
@@ -711,7 +838,7 @@ def _plot_combined(t, radii, series, stored_psd, args, linestyles, fs):
     # (c) ESD of Ψ4 + perturbation spectral content
     _draw_psd(axes[1, 0], radii, stored_psd, linestyles,
               args.psd_smooth_window, args.psd_smooth_polyorder,
-              pert_sigma=args.pert_sigma)
+              pert_sigma=args.pert_sigma, f_max=args.esd_fmax)
 
     # (d) Propagation speed analysis
     if len(radii) >= 2:
@@ -720,26 +847,37 @@ def _plot_combined(t, radii, series, stored_psd, args, linestyles, fs):
         axes[1, 1].text(0.5, 0.5, "Need $\\geq 2$ radii", transform=axes[1, 1].transAxes,
                         ha="center", va="center", fontsize=12)
 
-    # (e) Strain PSD (code units) and (f) Strain vs LIGO
+    # (e) Time-frequency Spectrogram and (f) Strain vs LIGO
+    # Use an earlier extraction radius for the spectrogram by default so the
+    # retarded-time tail extends far enough to show ringdown.
     R_strain = radii[-1]
+    R_spec = args.spectrogram_radius if (getattr(args, "spectrogram_radius", None) is not None) else radii[0]
+    _draw_spectrogram(axes[2, 0], t, series[R_spec], R_spec, args, fs)
+
     if R_strain in stored_psd:
         freqs, psd_psi4 = stored_psd[R_strain]
         psd_psi4_s = _smooth_psd(psd_psi4, window=args.psd_smooth_window, polyorder=args.psd_smooth_polyorder)
         strain_psd_code = _psd_psi4_to_strain(freqs, psd_psi4_s)
 
-        _draw_strain_code(axes[2, 0], freqs, strain_psd_code, R_strain)
-        _draw_strain_ligo(axes[2, 1], freqs, strain_psd_code, args.mass_msun, args.distance_mpc, R_ext=R_strain)
+        _draw_strain_ligo(
+            axes[2, 1],
+            freqs,
+            strain_psd_code,
+            args.mass_msun,
+            args.distance_mpc,
+            R_ext=R_strain,
+            ligo_quantity=args.ligo_quantity,
+        )
     else:
-        for ax in [axes[2, 0], axes[2, 1]]:
-            ax.text(0.5, 0.5, "No PSD data", transform=ax.transAxes,
-                    ha="center", va="center", fontsize=12)
+        axes[2, 1].text(0.5, 0.5, "No PSD data", transform=axes[2, 1].transAxes,
+                        ha="center", va="center", fontsize=12)
 
     titles = [
         r"Waveform $r\,\mathrm{Re}(\Psi_4^{2,0})$",
         r"Waveform $r\,\mathrm{Re}(\Psi_4^{2,0})$ (retarded) + QNM fit",
         r"Energy Spectral Density of $\Psi_4$",
         "Propagation speed analysis",
-        rf"Strain PSD (code units, $R={R_strain:g}$)",
+        rf"Spectrogram (time-frequency, $R={R_spec:g}$)",
         r"Strain vs.\ Advanced LIGO sensitivity",
     ]
     for ax, letter, title in zip(axes.flatten(), string.ascii_lowercase, titles):
@@ -784,28 +922,38 @@ def _plot_stacked(t, radii, series, stored_psd, args, linestyles, fs):
         ax_psd = axes_arr[ax_idx]; ax_idx += 1
         _draw_psd(ax_psd, radii, stored_psd, linestyles,
                   args.psd_smooth_window, args.psd_smooth_polyorder,
-                  pert_sigma=args.pert_sigma)
+                  pert_sigma=args.pert_sigma, f_max=args.esd_fmax)
         ax_psd.set_title(r"Power Spectral Density of $\Psi_4$")
 
-    # Strain
+    # Strain and Spectrogram
     if args.strain:
         R_strain = radii[-1]
+        
+        ax_spec = axes_arr[ax_idx]; ax_idx += 1
+        R_spec = args.spectrogram_radius if (getattr(args, "spectrogram_radius", None) is not None) else radii[0]
+        _draw_spectrogram(ax_spec, t, series[R_spec], R_spec, args, fs)
+        ax_spec.set_title(rf"Spectrogram (time-frequency, $R={R_spec:g}$)")
+
         if R_strain in stored_psd:
             freqs, psd_psi4 = stored_psd[R_strain]
             psd_psi4_s = _smooth_psd(psd_psi4, window=args.psd_smooth_window,
                                      polyorder=args.psd_smooth_polyorder)
             strain_psd_code = _psd_psi4_to_strain(freqs, psd_psi4_s)
 
-            ax_sc = axes_arr[ax_idx]; ax_idx += 1
-            _draw_strain_code(ax_sc, freqs, strain_psd_code, R_strain)
-            ax_sc.set_title(rf"Strain PSD (code units, $R={R_strain:g}$)")
-
             ax_ph = axes_arr[ax_idx]; ax_idx += 1
-            _draw_strain_ligo(ax_ph, freqs, strain_psd_code, args.mass_msun, args.distance_mpc, R_ext=R_strain)
+            _draw_strain_ligo(
+                ax_ph,
+                freqs,
+                strain_psd_code,
+                args.mass_msun,
+                args.distance_mpc,
+                R_ext=R_strain,
+                ligo_quantity=args.ligo_quantity,
+            )
             ax_ph.set_title(r"Strain vs.\ Advanced LIGO sensitivity")
         else:
             print("WARNING: No PSD data for strain conversion.")
-            ax_idx += 2
+            ax_idx += 1
 
     # Propagation speed
     if args.propagation_speed and len(radii) >= 2:
@@ -859,10 +1007,25 @@ def main() -> None:
     parser.add_argument("--psd-smooth-window", type=int, default=21)
     parser.add_argument("--psd-smooth-polyorder", type=int, default=5)
     parser.add_argument("--psd-hide-raw", action="store_true")
+    parser.add_argument(
+        "--esd-fmax",
+        type=float,
+        default=None,
+        help="Maximum frequency (in code units M^-1) to show on the ESD panel. "
+             "Example: --esd-fmax 20 cuts off the flat high-frequency tail.",
+    )
 
     parser.add_argument("--strain", action="store_true", help="Enable strain PSD conversion and LIGO overlay")
     parser.add_argument("--mass-msun", type=float, default=30.0, help="Total mass in solar masses (default: 30)")
     parser.add_argument("--distance-mpc", type=float, default=10.0, help="Luminosity distance in Mpc (default: 10)")
+    parser.add_argument(
+        "--ligo-quantity",
+        choices=["asd", "hchar"],
+        default="asd",
+        help="Quantity to plot in the LIGO comparison panel: "
+             "'asd' plots amplitude spectral density sqrt(S_h) and sqrt(S_n) (paper-style); "
+             "'hchar' plots characteristic strain sqrt(f S_h) and sqrt(f S_n).",
+    )
     parser.add_argument("--propagation-speed", action="store_true", help="Measure propagation speed across extraction radii")
     parser.add_argument(
         "--pert-sigma", type=float, default=None,
@@ -877,6 +1040,13 @@ def main() -> None:
     parser.add_argument(
         "--combined", action="store_true",
         help="Produce a single 3x2 publication figure with all analysis panels."
+    )
+    parser.add_argument(
+        "--spectrogram-radius",
+        type=float,
+        default=None,
+        help="Extraction radius R to use for the time-frequency spectrogram panel. "
+             "Default: use the smallest available radius (to preserve the retarded-time ringdown tail).",
     )
 
     args = parser.parse_args()

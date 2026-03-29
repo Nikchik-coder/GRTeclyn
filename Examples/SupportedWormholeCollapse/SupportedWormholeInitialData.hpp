@@ -15,17 +15,18 @@
 
 #include <cmath>
 
-//! Initial data for a self-consistent "supported wormhole" experiment.
+//! Initial data for a self-consistent single-throat Ellis-Bronnikov wormhole.
 //!
-//! This class provides a conformally-flat isotropic *two-mouth* ansatz via
-//! superposition of Ellis–Bronnikov potentials:
+//! Uses the conformally-flat isotropic form in Cartesian coordinates:
 //!
-//!   psi(x) = 1 + bA^2/(4|x-cA|^2) + bB^2/(4|x-cB|^2),
-//!   chi = psi^{-4},  h_ij = delta_ij.
+//!   psi = sqrt(1 + b0^2 / (4 r^2)),   chi = psi^{-4},   h_ij = delta_ij.
+//!
+//! Equivalently: chi = (1 + b0^2/(4r^2))^{-2} = (4r^2/(4r^2 + b0^2))^2.
 //!
 //! The evolution system is the fully coupled Einstein-Klein-Gordon system
-//! with a phantom (ghost) scalar field. This initial slice represents an
-//! exact solution to the constraints at t=0.
+//! with a phantom (ghost) scalar field. This initial slice (with Pi=0,
+//! K_ij=0) satisfies the momentum constraint exactly. The Hamiltonian
+//! constraint has only a small spin-0 residual from the scalar perturbation.
 class SupportedWormholeInitialData
 {
   public:
@@ -35,6 +36,8 @@ class SupportedWormholeInitialData
         // 0 = alpha = 1
         // 1 = alpha = sqrt(chi) (pre-collapsed)
         // 2 = alpha = 1 - 3*log(chi) (N=2, 1+log-inspired using gamma = chi^{-3})
+        // 3 = alpha = chi (strong origin damping)
+        // 4 = smooth inner-core damping with alpha ~ r^8 near the origin
         int initial_lapse_type;
 
         // Grid center used for index->physical coordinate mapping
@@ -73,7 +76,7 @@ class SupportedWormholeInitialData
         const data_t y = coords.y;
         const data_t z = coords.z;
 
-        const double b0 = m_params.throat_radius_A;
+        const double b0 = m_params.b0;
         const double b0_sq = b0 * b0;
 
         // Distances to throat
@@ -82,28 +85,29 @@ class SupportedWormholeInitialData
         const data_t dzA = z - (data_t)m_params.centerA[2];
         const data_t rA2 = dxA * dxA + dyA * dyA + dzA * dzA;
 
-        // Regularisation to avoid division by zero at origin
-        const data_t eps2 = (data_t)1.0e-24;
-        const data_t rA2_reg = simd_max(rA2, eps2);
-
         data_t chi = 1.0;
         data_t h11 = 1.0, h12 = 0.0, h13 = 0.0, h22 = 1.0, h23 = 0.0, h33 = 1.0;
 
-        // Isotropic conformally-flat Ellis–Bronnikov form:
-        const data_t termA = (data_t)b0_sq / (4.0 * rA2_reg);
-        const data_t psi   = 1.0 + termA;
-        const data_t psi2  = psi * psi;
-        const data_t psi4  = psi2 * psi2;
-        chi = 1.0 / psi4;
+        // Algebraically non-singular Ellis–Bronnikov conformal factor (Eq. 7):
+        //   chi = (4r^2 / (4r^2 + b0^2))^2
+        // Evaluates smoothly to 0 at r=0 without any floor or clamp.
+        const data_t r_sq_4 = 4.0 * rA2;
+        const data_t den    = r_sq_4 + (data_t)b0_sq;
+        const data_t frac   = r_sq_4 / den;
+        chi = frac * frac;
 
-        // Floors (avoid NaNs in evolution)
+        // Floor for evolution safety (CCZ4 terms involving 1/chi)
         if (chi < (data_t)1.0e-10) chi = (data_t)1.0e-10;
 
         // Initialize scalar field phi and Pi
         data_t phi = 0.0;
         data_t Pi = 0.0;
-        
+
         // phi(r) = (1/sqrt(4*pi)) * arctan( (r - b0^2/(4r)) / b0 )
+        // At r->0 the argument -> -inf, giving phi -> -1/(2*sqrt(pi)).
+        // Use a floor on r^2 only for the atan argument to avoid 0/0.
+        const data_t eps2 = (data_t)1.0e-24;
+        const data_t rA2_reg = simd_max(rA2, eps2);
         const data_t rA = sqrt(rA2_reg);
         const data_t argA = (rA - (data_t)b0_sq / (4.0 * rA)) / (data_t)b0;
         phi = (data_t)(1.0 / sqrt(4.0 * M_PI)) * atan(argA);
@@ -123,7 +127,8 @@ class SupportedWormholeInitialData
 
             const data_t rA2_safe = simd_max(rA2, eps2_ang);
             const data_t cos_theta_A_sq = dzA * dzA / rA2_safe;
-            const data_t Y20_A = 3.0 * cos_theta_A_sq - 1.0;
+            const data_t Y20_A = (data_t)sqrt(5.0 / (16.0 * M_PI))
+                               * (3.0 * cos_theta_A_sq - 1.0);
             const data_t dphi_A = ((data_t)phi_mono + (data_t)phi_amp * Y20_A)
                                   * exp(-rA2 / sig2);
 
@@ -137,10 +142,28 @@ class SupportedWormholeInitialData
         }
         else if (m_params.initial_lapse_type == 2)
         {
-            // For conformal variables with det(h)=1, det(gamma)=chi^{-3}.
-            // Using alpha = 1 + ln(gamma^{N/2}) with N=2 gives:
-            // alpha = 1 + ln(gamma) = 1 - 3 ln(chi).
             lapse = 1.0 - (data_t)3.0 * log(chi);
+        }
+        else if (m_params.initial_lapse_type == 3)
+        {
+            // Origin-damped profile: alpha = chi ~ r^4 near r=0.
+            // Laplacian(r^4) = 20*r^2 -> 0, so no gauge shock at the
+            // compactified infinity.  At the throat alpha = chi(throat)
+            // still drives the physical instability cleanly.
+            lapse = chi;
+        }
+        else if (m_params.initial_lapse_type == 4)
+        {
+            // Smoothly freeze only the innermost core. Near r = 0 this behaves
+            // like alpha ~ r^8, so the first several derivatives also vanish.
+            // Far from the origin, and in particular at the throat r = b0/2,
+            // alpha is exponentially close to 1 on the initial slice.
+            const data_t core_radius = (data_t)(0.3 * b0);
+            const data_t scaled_r = rA / core_radius;
+            const data_t scaled_r2 = scaled_r * scaled_r;
+            const data_t scaled_r4 = scaled_r2 * scaled_r2;
+            const data_t scaled_r8 = scaled_r4 * scaled_r4;
+            lapse = 1.0 - exp(-scaled_r8);
         }
         if (lapse < (data_t)1.0e-10) lapse = (data_t)1.0e-10;
 
