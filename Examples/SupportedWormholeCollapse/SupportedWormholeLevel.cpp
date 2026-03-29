@@ -10,6 +10,7 @@
 #include "WeylExtraction.hpp"
 #include "SupportedWormholeInitialData.hpp"
 #include "ExoticScalarField.hpp"
+#include "PhantomDecayPotential.hpp"
 
 #include <AMReX_Reduce.H>
 #include <AMReX_Utility.H>
@@ -20,9 +21,10 @@ void SupportedWormholeLevel::variableSetUp()
     BL_PROFILE("SupportedWormholeLevel::variableSetUp()");
     stateVariableSetUp();
     
-    ExoticScalarField<> exotic_scalar;
-    ConstraintsWithMatter<ExoticScalarField<>>::set_up(state_index);
-    Weyl4WithMatter<ExoticScalarField<>>::set_up(state_index);
+    PhantomDecayPotential potential; // Default construct for setup
+    ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
+    ConstraintsWithMatter<ExoticScalarField<PhantomDecayPotential>>::set_up(state_index);
+    Weyl4WithMatter<ExoticScalarField<PhantomDecayPotential>>::set_up(state_index);
 }
 
 void SupportedWormholeLevel::specificAdvance()
@@ -30,7 +32,8 @@ void SupportedWormholeLevel::specificAdvance()
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse;
+    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
+                                           simParams().min_lapse);
 
     // Enforce algebraic constraints
     amrex::ParallelFor(S_new,
@@ -74,11 +77,20 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                                     const double a_time)
 {
     BL_PROFILE("SupportedWormholeLevel::specificEvalRHS()");
+    const int soln_ghosts = a_soln.nGrowVect()[0];
+    if (soln_ghosts > 0)
+    {
+        // Ensure ghost cells are valid before enforcing algebraic constraints
+        // and evaluating high-order derivatives in the RHS.
+        FillPatch(*this, a_soln, soln_ghosts, a_time, state_index, 0,
+                  a_soln.nComp());
+    }
     const auto &soln_arrs   = a_soln.arrays();
     const auto &soln_c_arrs = a_soln.const_arrays();
     const auto &rhs_arrs    = a_rhs.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse;
+    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
+                                           simParams().min_lapse);
 
     // Enforce algebraic constraints pre-RHS
     amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
@@ -89,9 +101,10 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                        });
 
     // Calculate CCZ4 Right Hand Side (Einstein Equations + Matter)
-    ExoticScalarField<> exotic_scalar(
-        DefaultPotential(), simParams().wormhole_params.support_strength);
-    CCZ4RHSWithMatter<ExoticScalarField<>, MovingPunctureGaugeWithMatter, FourthOrderDerivatives> ccz4rhs(
+    PhantomDecayPotential potential(simParams().wormhole_params.phantom_mass);
+    ExoticScalarField<PhantomDecayPotential> exotic_scalar(
+        potential, simParams().wormhole_params.support_strength);
+    CCZ4RHSWithMatter<ExoticScalarField<PhantomDecayPotential>, MovingPunctureGaugeWithMatter, FourthOrderDerivatives> ccz4rhs(
         exotic_scalar, simParams().ccz4_params, Geom().CellSize(0),
         simParams().sigma, simParams().formulation, 1.0,
         simParams().wormhole_params.grid_center, a_time);
@@ -100,75 +113,6 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
         a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
         { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
 
-    const auto delayed_start =
-        simParams().wormhole_params.delayed_kick_start;
-    const auto delayed_duration =
-        simParams().wormhole_params.delayed_kick_duration;
-    const auto delayed_monopole =
-        simParams().wormhole_params.delayed_kick_monopole_amplitude;
-    const auto delayed_quadrupole =
-        simParams().wormhole_params.delayed_kick_quadrupole_amplitude;
-    const auto delayed_width =
-        simParams().wormhole_params.delayed_kick_width;
-
-    if (delayed_start >= 0.0 && delayed_duration > 0.0 &&
-        ((delayed_monopole != 0.0) || (delayed_quadrupole != 0.0)) &&
-        delayed_width > 0.0 && a_time >= delayed_start &&
-        a_time <= delayed_start + delayed_duration)
-    {
-        const double x = (a_time - delayed_start) / delayed_duration;
-        // Smooth pulse with zero endpoints. The time integral over the window is
-        // unity, so the delayed amplitudes correspond approximately to the
-        // injected change in K.
-        const double temporal_weight =
-            (1.0 - std::cos(2.0 * M_PI * x)) / delayed_duration;
-        const double sig2 = delayed_width * delayed_width;
-        const auto center = simParams().wormhole_params.grid_center;
-        const auto centerA = simParams().wormhole_params.centerA;
-        const auto centerB = simParams().wormhole_params.centerB;
-        const int metric_type = simParams().wormhole_params.metric_type;
-        const double dx = Geom().CellSize(0);
-
-        amrex::ParallelFor(
-            a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            {
-                Coordinates coords(amrex::IntVect(AMREX_D_DECL(i, j, k)), dx,
-                                   center);
-                const amrex::Real xloc = coords.x;
-                const amrex::Real yloc = coords.y;
-                const amrex::Real zloc = coords.z;
-
-                const amrex::Real dxA = xloc - centerA[0];
-                const amrex::Real dyA = yloc - centerA[1];
-                const amrex::Real dzA = zloc - centerA[2];
-                const amrex::Real rA2 = dxA * dxA + dyA * dyA + dzA * dzA;
-                const amrex::Real rA2_safe = amrex::max(rA2, amrex::Real(1.0e-24));
-                const amrex::Real y20A = 3.0 * dzA * dzA / rA2_safe - 1.0;
-                const amrex::Real kickA =
-                    (delayed_monopole + delayed_quadrupole * y20A) *
-                    std::exp(-rA2 / sig2);
-
-                amrex::Real delayed_kick = kickA;
-                if (metric_type != 1)
-                {
-                    const amrex::Real dxB = xloc - centerB[0];
-                    const amrex::Real dyB = yloc - centerB[1];
-                    const amrex::Real dzB = zloc - centerB[2];
-                    const amrex::Real rB2 = dxB * dxB + dyB * dyB + dzB * dzB;
-                    const amrex::Real rB2_safe =
-                        amrex::max(rB2, amrex::Real(1.0e-24));
-                    const amrex::Real y20B =
-                        3.0 * dzB * dzB / rB2_safe - 1.0;
-                    delayed_kick +=
-                        (delayed_monopole + delayed_quadrupole * y20B) *
-                        std::exp(-rB2 / sig2);
-                }
-
-                rhs_arrs[box_no](i, j, k, c_K) +=
-                    temporal_weight * delayed_kick;
-            });
-    }
-
     amrex::Gpu::streamSynchronize();
 }
 
@@ -176,10 +120,13 @@ void SupportedWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
+    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
+                                           simParams().min_lapse);
     amrex::ParallelFor(a_soln, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        {
                            trace_A_removal(i, j, k, soln_arrs[box_no]);
+                           positive_chi_lapse(i, j, k, soln_arrs[box_no]);
                        });
 
     amrex::Gpu::streamSynchronize();
@@ -235,10 +182,11 @@ void SupportedWormholeLevel::specificPostTimeStep()
         amrex::MultiFab cst(state_new.boxArray(), state_new.DistributionMap(), 4,
                             0);
         cst.setVal(0.0);
-        ExoticScalarField<> exotic_scalar(
-            DefaultPotential(), simParams().wormhole_params.support_strength);
+        PhantomDecayPotential potential(simParams().wormhole_params.phantom_mass);
+        ExoticScalarField<PhantomDecayPotential> exotic_scalar(
+            potential, simParams().wormhole_params.support_strength);
         const auto dx = Geom().CellSizeArray();
-        ConstraintsWithMatter<ExoticScalarField<>> my_constraints(
+        ConstraintsWithMatter<ExoticScalarField<PhantomDecayPotential>> my_constraints(
             exotic_scalar, dx[0], 1.0, 0, Interval(1, 3),
             simParams().wormhole_params.grid_center, time);
 
@@ -325,8 +273,8 @@ void SupportedWormholeLevel::specificPostTimeStep()
     }
 
     // --- Collapse / strong-field diagnostics (small-data output) ---
-    // These are cheap global reductions that can be recorded even when plotfiles
-    // are deleted on-the-fly.
+    // Sample from the finest AMR level so the throat region is fully resolved.
+    // Triggered once per coarse step (Level 0) but reads finest-level data.
     if (Level() == 0)
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
@@ -334,24 +282,50 @@ void SupportedWormholeLevel::specificPostTimeStep()
         const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
         const bool first_step          = (time == 0.0);
 
-        amrex::MultiFab &state_new = get_new_data(state_index);
-        FillPatch(*this, state_new, 2, time, state_index, 0, state_new.nComp());
+        const int finest_lev = parent->finestLevel();
+        auto &fine_level     = parent->getLevel(finest_lev);
+        amrex::MultiFab &state_fine = fine_level.get_new_data(state_index);
+        const auto &fine_geom       = parent->Geom(finest_lev);
+
+        FillPatch(fine_level, state_fine, 2, time, state_index, 0,
+                  state_fine.nComp());
+
+        {
+            const auto &arrs = state_fine.arrays();
+            TraceARemoval trace_A_removal;
+            PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
+                                                   simParams().min_lapse);
+            amrex::ParallelFor(state_fine, amrex::IntVect(0),
+                               [=] AMREX_GPU_DEVICE(int box_no, int i, int j,
+                                                    int k)
+                               {
+                                   trace_A_removal(i, j, k, arrs[box_no]);
+                                   positive_chi_lapse(i, j, k, arrs[box_no]);
+                               });
+            amrex::Gpu::streamSynchronize();
+        }
 
         amrex::ReduceOps<amrex::ReduceOpMin, amrex::ReduceOpMin,
-                         amrex::ReduceOpMax, amrex::ReduceOpMax>
+                         amrex::ReduceOpMax, amrex::ReduceOpMax,
+                         amrex::ReduceOpMin,
+                         amrex::ReduceOpMin, amrex::ReduceOpMax,
+                         amrex::ReduceOpMin, amrex::ReduceOpMax>
             reduce_ops;
-        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real> reduce_data(
-            reduce_ops);
+        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real,
+                          amrex::Real,
+                          amrex::Real, amrex::Real,
+                          amrex::Real, amrex::Real>
+            reduce_data(reduce_ops);
         using ReduceTuple = typename decltype(reduce_data)::Type;
         
-        const auto prob_lo = Geom().ProbLoArray();
-        const auto dx_arr = Geom().CellSizeArray();
+        const auto prob_lo = fine_geom.ProbLoArray();
+        const auto dx_arr = fine_geom.CellSizeArray();
 
-        for (amrex::MFIter mfi(state_new, amrex::TilingIfNotGPU());
+        for (amrex::MFIter mfi(state_fine, amrex::TilingIfNotGPU());
              mfi.isValid(); ++mfi)
         {
             const amrex::Box &bx = mfi.validbox();
-            const auto arr       = state_new.const_array(mfi);
+            const auto arr       = state_fine.const_array(mfi);
             reduce_ops.eval(
                 bx, reduce_data,
                 [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTuple
@@ -367,6 +341,7 @@ void SupportedWormholeLevel::specificPostTimeStep()
                     const amrex::Real r = std::sqrt(r2);
                     
                     amrex::Real ah_radius = 0.0;
+                    amrex::Real theta_plus_min_proxy = 1.0e30;
                     if (r > 1e-6) // avoid division by zero
                     {
                         const amrex::Real A11 = arr(i, j, k, c_A11);
@@ -378,9 +353,24 @@ void SupportedWormholeLevel::specificPostTimeStep()
                         
                         const amrex::Real Arr = (A11*x*x + A22*y*y + A33*z*z + 2.0*A12*x*y + 2.0*A13*x*z + 2.0*A23*y*z) / r2;
                         
-                        // Expansion of outgoing null rays in spherical symmetry:
-                        // theta_+ = 2 sqrt(chi) / r + 2/3 K - chi * A_rr
-                        const amrex::Real theta_plus = 2.0 * std::sqrt(chi) / r + (2.0/3.0) * K - chi * Arr;
+                        const amrex::Real dx_chi =
+                            (arr(i + 1, j, k, c_chi) - arr(i - 1, j, k, c_chi)) /
+                            (2.0 * dx_arr[0]);
+                        const amrex::Real dy_chi =
+                            (arr(i, j + 1, k, c_chi) - arr(i, j - 1, k, c_chi)) /
+                            (2.0 * dx_arr[1]);
+                        const amrex::Real dz_chi =
+                            (arr(i, j, k + 1, c_chi) - arr(i, j, k - 1, c_chi)) /
+                            (2.0 * dx_arr[2]);
+                        const amrex::Real dchi_dr =
+                            (x * dx_chi + y * dy_chi + z * dz_chi) / r;
+                        const amrex::Real sqrt_chi =
+                            std::sqrt(amrex::max(chi, amrex::Real(1.0e-20)));
+
+                        const amrex::Real theta_plus =
+                            2.0 * sqrt_chi / r - dchi_dr / sqrt_chi + Arr -
+                            (2.0 / 3.0) * K;
+                        theta_plus_min_proxy = theta_plus;
                         
                         if (theta_plus <= 0.0)
                         {
@@ -388,7 +378,11 @@ void SupportedWormholeLevel::specificPostTimeStep()
                         }
                     }
 
-                    return {lapse, chi, amrex::Math::abs(K), ah_radius};
+                    const amrex::Real sf_phi = arr(i, j, k, c_phi);
+                    const amrex::Real sf_Pi  = arr(i, j, k, c_Pi);
+
+                    return {lapse, chi, amrex::Math::abs(K), ah_radius, theta_plus_min_proxy,
+                            sf_phi, sf_phi, sf_Pi, sf_Pi};
                 });
         }
 
@@ -397,10 +391,20 @@ void SupportedWormholeLevel::specificPostTimeStep()
         amrex::Real min_chi    = amrex::get<1>(reduce_vals);
         amrex::Real max_abs_K  = amrex::get<2>(reduce_vals);
         amrex::Real max_ah_r   = amrex::get<3>(reduce_vals);
+        amrex::Real min_theta_plus = amrex::get<4>(reduce_vals);
+        amrex::Real min_phi    = amrex::get<5>(reduce_vals);
+        amrex::Real max_phi    = amrex::get<6>(reduce_vals);
+        amrex::Real min_Pi     = amrex::get<7>(reduce_vals);
+        amrex::Real max_Pi     = amrex::get<8>(reduce_vals);
         amrex::ParallelDescriptor::ReduceRealMin(min_lapse);
         amrex::ParallelDescriptor::ReduceRealMin(min_chi);
         amrex::ParallelDescriptor::ReduceRealMax(max_abs_K);
         amrex::ParallelDescriptor::ReduceRealMax(max_ah_r);
+        amrex::ParallelDescriptor::ReduceRealMin(min_theta_plus);
+        amrex::ParallelDescriptor::ReduceRealMin(min_phi);
+        amrex::ParallelDescriptor::ReduceRealMax(max_phi);
+        amrex::ParallelDescriptor::ReduceRealMin(min_Pi);
+        amrex::ParallelDescriptor::ReduceRealMax(max_Pi);
 
         // Location of the global minimum lapse (average over ties).
         // This helps confirm the collapse localizes at the throat/center rather
@@ -415,11 +419,11 @@ void SupportedWormholeLevel::specificPostTimeStep()
             reduce_data_loc(reduce_ops_loc);
         using ReduceTupleLoc = typename decltype(reduce_data_loc)::Type;
 
-        for (amrex::MFIter mfi(state_new, amrex::TilingIfNotGPU());
+        for (amrex::MFIter mfi(state_fine, amrex::TilingIfNotGPU());
              mfi.isValid(); ++mfi)
         {
             const amrex::Box &bx = mfi.validbox();
-            const auto arr       = state_new.const_array(mfi);
+            const auto arr       = state_fine.const_array(mfi);
             reduce_ops_loc.eval(
                 bx, reduce_data_loc,
                 [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTupleLoc
@@ -450,6 +454,90 @@ void SupportedWormholeLevel::specificPostTimeStep()
         const amrex::Real min_lapse_y = (count > 0.0) ? (sum_y / count) : 0.0;
         const amrex::Real min_lapse_z = (count > 0.0) ? (sum_z / count) : 0.0;
 
+        const amrex::Real tol_theta = amrex::max(
+            amrex::Real(1.0e-12),
+            amrex::Real(1.0e-8) * amrex::Math::abs(min_theta_plus));
+
+        amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum>
+            reduce_ops_theta_loc;
+        amrex::ReduceData<amrex::Real, amrex::Real> reduce_data_theta_loc(
+            reduce_ops_theta_loc);
+        using ReduceTupleThetaLoc = typename decltype(reduce_data_theta_loc)::Type;
+
+        for (amrex::MFIter mfi(state_fine, amrex::TilingIfNotGPU());
+             mfi.isValid(); ++mfi)
+        {
+            const amrex::Box &bx = mfi.validbox();
+            const auto arr       = state_fine.const_array(mfi);
+            reduce_ops_theta_loc.eval(
+                bx, reduce_data_theta_loc,
+                [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTupleThetaLoc
+                {
+                    const amrex::Real chi = arr(i, j, k, c_chi);
+                    const amrex::Real K   = arr(i, j, k, c_K);
+
+                    const amrex::Real x =
+                        prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0];
+                    const amrex::Real y =
+                        prob_lo[1] + (amrex::Real(j) + 0.5) * dx_arr[1];
+                    const amrex::Real z =
+                        prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2];
+                    const amrex::Real r2 = x * x + y * y + z * z;
+                    const amrex::Real r  = std::sqrt(r2);
+
+                    if (r <= 1e-6)
+                    {
+                        return {0.0, 0.0};
+                    }
+
+                    const amrex::Real A11 = arr(i, j, k, c_A11);
+                    const amrex::Real A22 = arr(i, j, k, c_A22);
+                    const amrex::Real A33 = arr(i, j, k, c_A33);
+                    const amrex::Real A12 = arr(i, j, k, c_A12);
+                    const amrex::Real A13 = arr(i, j, k, c_A13);
+                    const amrex::Real A23 = arr(i, j, k, c_A23);
+
+                    const amrex::Real Arr =
+                        (A11 * x * x + A22 * y * y + A33 * z * z +
+                         2.0 * A12 * x * y + 2.0 * A13 * x * z +
+                         2.0 * A23 * y * z) /
+                        r2;
+
+                    const amrex::Real dx_chi =
+                        (arr(i + 1, j, k, c_chi) - arr(i - 1, j, k, c_chi)) /
+                        (2.0 * dx_arr[0]);
+                    const amrex::Real dy_chi =
+                        (arr(i, j + 1, k, c_chi) - arr(i, j - 1, k, c_chi)) /
+                        (2.0 * dx_arr[1]);
+                    const amrex::Real dz_chi =
+                        (arr(i, j, k + 1, c_chi) - arr(i, j, k - 1, c_chi)) /
+                        (2.0 * dx_arr[2]);
+                    const amrex::Real dchi_dr =
+                        (x * dx_chi + y * dy_chi + z * dz_chi) / r;
+                    const amrex::Real sqrt_chi =
+                        std::sqrt(amrex::max(chi, amrex::Real(1.0e-20)));
+
+                    const amrex::Real theta_plus =
+                        2.0 * sqrt_chi / r - dchi_dr / sqrt_chi + Arr -
+                        (2.0 / 3.0) * K;
+
+                    const bool is_min =
+                        (amrex::Math::abs(theta_plus - min_theta_plus) <=
+                         tol_theta);
+                    if (!is_min)
+                    {
+                        return {0.0, 0.0};
+                    }
+                    return {r, 1.0};
+                });
+        }
+
+        auto [sum_r_theta, count_r_theta] = reduce_data_theta_loc.value();
+        amrex::ParallelDescriptor::ReduceRealSum(sum_r_theta);
+        amrex::ParallelDescriptor::ReduceRealSum(count_r_theta);
+        const amrex::Real r_at_min_theta_plus =
+            (count_r_theta > 0.0) ? (sum_r_theta / count_r_theta) : 0.0;
+
         GRParmParse pp;
         std::string output_path = "./";
         pp.load("output_path", output_path, std::string("./"));
@@ -475,7 +563,9 @@ void SupportedWormholeLevel::specificPostTimeStep()
         {
             diag_file.write_header_line(
                 {"min_lapse", "min_chi", "max_abs_K", "min_lapse_x",
-                 "min_lapse_y", "min_lapse_z", "max_ah_r"});
+                 "min_lapse_y", "min_lapse_z", "max_ah_r", "min_theta_plus",
+                 "r_at_min_theta_plus",
+                 "min_phi", "max_phi", "min_Pi", "max_Pi"});
         }
         diag_file.write_time_data_line({static_cast<double>(min_lapse),
                                         static_cast<double>(min_chi),
@@ -483,6 +573,12 @@ void SupportedWormholeLevel::specificPostTimeStep()
                                         static_cast<double>(min_lapse_x),
                                         static_cast<double>(min_lapse_y),
                                         static_cast<double>(min_lapse_z),
-                                        static_cast<double>(max_ah_r)});
+                                        static_cast<double>(max_ah_r),
+                                        static_cast<double>(min_theta_plus),
+                                        static_cast<double>(r_at_min_theta_plus),
+                                        static_cast<double>(min_phi),
+                                        static_cast<double>(max_phi),
+                                        static_cast<double>(min_Pi),
+                                        static_cast<double>(max_Pi)});
     }
 }

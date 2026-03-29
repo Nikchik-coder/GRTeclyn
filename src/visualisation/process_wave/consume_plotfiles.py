@@ -28,6 +28,8 @@ import numpy as np
 import yt
 import matplotlib.pyplot as plt
 from matplotlib.ticker import FuncFormatter
+from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 -- registers 3D projection
+from scipy.integrate import cumulative_trapezoid
 
 
 def _default_data_dir() -> str:
@@ -474,6 +476,225 @@ def _extract_mode_amps_l2m0(
     return amps
 
 
+def _extract_areal_radius_min(
+    ds,
+    center: Sequence[float] = (0.0, 0.0, 0.0),
+    chi_floor: float = 1.0e-8,
+) -> Tuple[float, float]:
+    """Extract the minimum areal radius R_areal = r / sqrt(chi) along the x-axis.
+
+    Returns (R_areal_min, r_at_min).
+    """
+    right = float(ds.domain_right_edge[0])
+    c = np.asarray(center, dtype=float)
+    ray = ds.ray(c, [right, c[1], c[2]])
+
+    r_arr = np.asarray(ray[("index", "x")], dtype=float) - c[0]
+    chi_arr = np.asarray(ray[("boxlib", "chi")], dtype=float)
+
+    order = np.argsort(r_arr)
+    r_arr = r_arr[order]
+    chi_arr = chi_arr[order]
+
+    chi_arr = np.maximum(chi_arr, chi_floor)
+    R_areal = r_arr / np.sqrt(chi_arr)
+
+    skip = r_arr > 1.0e-12
+    if not np.any(skip):
+        return (0.0, 0.0)
+    R_areal_valid = R_areal[skip]
+    r_valid = r_arr[skip]
+    i_min = np.argmin(R_areal_valid)
+    return (float(R_areal_valid[i_min]), float(r_valid[i_min]))
+
+
+def _extract_embedding_profile(
+    ds,
+    center: Sequence[float] = (0.0, 0.0, 0.0),
+    chi_floor: float = 1.0e-8,
+    r_max: float | None = None,
+) -> Tuple[np.ndarray, np.ndarray]:
+    """Compute the isometric embedding profile (R_areal, z_embed) from chi along x-axis.
+
+    The spatial metric is dl^2 = (1/chi) dr^2.  The embedding surface satisfies
+    dR^2 + dz^2 = dl^2,  where R_areal = r / sqrt(chi).
+
+    In isotropic coordinates, the throat (minimum R_areal) is at r = b0/2, NOT
+    at the grid origin r=0 (which represents the compactified second universe's
+    asymptotic infinity).  We locate the throat, then integrate z_embed outward
+    in both directions to produce a symmetric two-funnel embedding with the
+    throat at z_embed=0.
+
+    The raw AMR ray data is interpolated onto a uniform fine grid to eliminate
+    step artifacts at refinement-level boundaries.
+
+    Returns arrays (R_areal, z_embed) suitable for surface-of-revolution plotting.
+    """
+    right = float(ds.domain_right_edge[0])
+    c = np.asarray(center, dtype=float)
+    ray = ds.ray(c, [right, c[1], c[2]])
+
+    r_raw = np.asarray(ray[("index", "x")], dtype=float) - c[0]
+    chi_raw = np.asarray(ray[("boxlib", "chi")], dtype=float)
+
+    order = np.argsort(r_raw)
+    r_raw = r_raw[order]
+    chi_raw = chi_raw[order]
+
+    chi_raw = np.maximum(chi_raw, chi_floor)
+
+    valid = r_raw > 1.0e-12
+    r_raw = r_raw[valid]
+    chi_raw = chi_raw[valid]
+
+    if len(r_raw) < 3:
+        return np.array([]), np.array([])
+
+    r_end = float(r_max) if r_max is not None else float(r_raw[-1])
+    n_pts = max(1024, len(r_raw) * 4)
+    r_arr = np.linspace(float(r_raw[0]), r_end, n_pts)
+    chi_arr = np.interp(r_arr, r_raw, chi_raw)
+    chi_arr = np.maximum(chi_arr, chi_floor)
+
+    from scipy.ndimage import gaussian_filter1d
+    dr = r_arr[1] - r_arr[0]
+    dx_fine = float(np.min(np.diff(r_raw))) if len(r_raw) > 1 else dr
+    sigma_pts = max(2.0, 3.0 * dx_fine / dr)
+    chi_arr = gaussian_filter1d(chi_arr, sigma=sigma_pts, mode="nearest")
+    chi_arr = np.maximum(chi_arr, chi_floor)
+
+    R_areal = r_arr / np.sqrt(chi_arr)
+    R_areal = gaussian_filter1d(R_areal, sigma=sigma_pts, mode="nearest")
+
+    dR_dr = np.gradient(R_areal, r_arr)
+    dl_dr_sq = 1.0 / chi_arr
+    dz_dr_sq = dl_dr_sq - dR_dr**2
+    dz_dr = np.sqrt(np.maximum(dz_dr_sq, 0.0))
+
+    # Find the throat (minimum R_areal) and build the outer funnel.
+    # The Ellis-Bronnikov geometry is symmetric under r <-> b0^2/(4r),
+    # so both funnels have identical embedding profiles when parameterized
+    # by R_areal.  The inner funnel (r -> 0, second universe) is poorly
+    # resolved numerically (chi hits the floor), so we use the well-resolved
+    # outer funnel and mirror it to produce the classic symmetric embedding.
+    i_throat = int(np.argmin(R_areal))
+
+    R_outer = R_areal[i_throat:]
+    dz_outer = dz_dr[i_throat:]
+    z_outer = np.zeros(len(R_outer))
+    if len(R_outer) > 1:
+        z_outer[1:] = cumulative_trapezoid(dz_outer, r_arr[i_throat:])
+
+    R_full = np.concatenate([R_outer[::-1], R_outer[1:]])
+    z_full = np.concatenate([-z_outer[::-1], z_outer[1:]])
+
+    return R_full, z_full
+
+
+def _render_embedding_frame(
+    ds,
+    frames_out_dir: str,
+    frame_idx: int,
+    center: Sequence[float] = (0.0, 0.0, 0.0),
+    r_max: float | None = None,
+    verbose: bool = False,
+) -> str:
+    """Render a 3D embedding-diagram frame (surface of revolution) and save as PNG."""
+    R_areal, z_embed = _extract_embedding_profile(ds, center=center, r_max=r_max)
+    if len(R_areal) < 3:
+        raise RuntimeError("Too few points for embedding diagram.")
+
+    if r_max is None:
+        r_max = float(ds.domain_right_edge[0]) - center[0]
+
+    lim_xy = float(r_max) * 1.15
+    lim_z = float(r_max) * 0.8
+
+    # Clip embedding data to the z-axis display range. Near the grid origin
+    # (compactified second universe) chi -> 0 produces enormous dl/dr,
+    # making z_embed blow up while R_areal remains large. Matplotlib 3D does
+    # not clip surfaces to axis limits, so unclipped data obscures the throat.
+    mask = np.abs(z_embed) <= lim_z * 1.05
+    if mask.sum() >= 3:
+        R_areal = R_areal[mask]
+        z_embed = z_embed[mask]
+        lim_xy = min(lim_xy, float(np.max(R_areal)) * 1.15)
+
+    phi = np.linspace(0, 2 * np.pi, 80)
+    PHI, _ = np.meshgrid(phi, np.arange(len(R_areal)))
+    X_3d = R_areal[:, None] * np.cos(PHI)
+    Y_3d = R_areal[:, None] * np.sin(PHI)
+    Z_3d = np.broadcast_to(z_embed[:, None], X_3d.shape)
+
+    plt.rcParams.update({
+        "font.family": "serif",
+        "font.serif": ["Computer Modern Roman", "DejaVu Serif", "Times New Roman", "serif"],
+        "mathtext.fontset": "cm",
+        "axes.labelsize": 14,
+        "axes.titlesize": 16,
+        "xtick.labelsize": 12,
+        "ytick.labelsize": 12,
+        "axes.linewidth": 1.2,
+    })
+
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot(111, projection="3d")
+
+    norm = plt.Normalize(vmin=-lim_z, vmax=lim_z)
+    colors = plt.cm.viridis(norm(Z_3d))
+    ax.plot_surface(X_3d, Y_3d, Z_3d, facecolors=colors, shade=True, alpha=0.85,
+                    rstride=2, cstride=2, linewidth=0)
+
+    ax.set_xlim(-lim_xy, lim_xy)
+    ax.set_ylim(-lim_xy, lim_xy)
+    ax.set_zlim(-lim_z, lim_z)
+
+    ax.view_init(elev=25, azim=-60)
+    t_sim = float(ds.current_time)
+    ax.set_title(r"$\mathrm{Embedding\;Diagram}\quad t=%.3f$" % t_sim, fontsize=16)
+    ax.set_xlabel(r"$x$", fontsize=14)
+    ax.set_ylabel(r"$y$", fontsize=14)
+    ax.set_zlabel(r"$z_{\mathrm{embed}}$", fontsize=14)
+
+    from matplotlib.ticker import FuncFormatter
+    math_fmt = FuncFormatter(lambda v, _: r"$%g$" % v)
+    ax.xaxis.set_major_formatter(math_fmt)
+    ax.yaxis.set_major_formatter(math_fmt)
+    ax.zaxis.set_major_formatter(math_fmt)
+
+    output_dir = os.path.join(frames_out_dir, "embedding")
+    frames_dir = os.path.join(output_dir, "frames")
+    os.makedirs(frames_dir, exist_ok=True)
+    frame_name = f"frame_{frame_idx:04d}.png"
+    out_path = os.path.join(frames_dir, frame_name)
+    fig.savefig(out_path, dpi=150, bbox_inches="tight", pad_inches=0.3)
+    plt.close(fig)
+
+    if verbose:
+        print(f"[embedding] t={t_sim:.4f} -> {out_path}")
+
+    return out_path
+
+
+def _cleanup_embedding_frames(frames_out_dir: str, verbose: bool) -> None:
+    """Remove existing embedding PNG frames and movie."""
+    base = Path(frames_out_dir) / "embedding" / "frames"
+    if base.is_dir():
+        for p in base.glob("*.png"):
+            try:
+                p.unlink()
+            except FileNotFoundError:
+                pass
+        if verbose:
+            print(f"[clean] cleared embedding frames in {base}")
+    movie = Path(frames_out_dir) / "embedding" / "movie_embedding.mp4"
+    if movie.exists():
+        try:
+            movie.unlink()
+        except FileNotFoundError:
+            pass
+
+
 def _load_state(state_path: Path) -> Dict[str, bool]:
     if not state_path.exists():
         return {}
@@ -496,6 +717,108 @@ def _append_line(path: Path, header: str, line: str) -> None:
         if is_new:
             f.write(header.rstrip() + "\n")
         f.write(line.rstrip() + "\n")
+
+
+def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_frame_idx: int) -> dict:
+    import yt
+    
+    try:
+        yt.funcs.mylog.setLevel(30 if args_dict.get("verbose") else 40)
+    except Exception:
+        pass
+
+    t0 = time.time()
+    result = {
+        "p": p,
+        "key": os.path.basename(p),
+        "t": 0.0,
+        "psi4_line": None,
+        "areal_line": None,
+        "success": False,
+        "deleted": False,
+        "status_str": "",
+        "dt_s": 0.0,
+        "error": None
+    }
+    
+    try:
+        ds = yt.load(p)
+        t = float(ds.current_time)
+        result["t"] = t
+        key = result["key"]
+
+        # --- Psi4 extraction (optional) ---
+        if args_dict.get("psi4"):
+            if ("boxlib", "Weyl4_Re") not in ds.field_list or ("boxlib", "Weyl4_Im") not in ds.field_list:
+                raise RuntimeError("Plotfile missing Weyl4_Re/Im. Set: amr.derive_plot_vars = Weyl4 and re-run.")
+            amps = _extract_mode_amps_l2m0(
+                ds,
+                radii=[float(r) for r in args_dict["radii"]],
+                n_points=int(args_dict["n_points"]),
+                center=args_dict["center"],
+            )
+            result["psi4_line"] = f"{t:.16e}  " + "  ".join([f"{a.real:.16e}  {a.imag:.16e}" for a in amps])
+
+        # --- Frame rendering (optional) ---
+        frame_fields = [_canonical_field_name(f) for f in args_dict.get("frames_fields", [])]
+        if frame_fields:
+            idx = _parse_plot_index(key)
+            frame_idx = idx if idx is not None else fallback_frame_idx
+            for fld in frame_fields:
+                _render_slice_frame(
+                    ds,
+                    field=fld,
+                    axis=args_dict["frames_axis"],
+                    coord=args_dict.get("frames_coord"),
+                    zoom=args_dict.get("frames_zoom"),
+                    center_xyz=args_dict.get("frames_center"),
+                    corner=args_dict.get("frames_corner"),
+                    frames_out_dir=args_dict["frames_out"],
+                    frame_idx=int(frame_idx),
+                    verbose=args_dict.get("verbose", False),
+                )
+
+        # --- Areal radius extraction (optional) ---
+        if args_dict.get("areal_radius"):
+            if ("boxlib", "chi") in ds.field_list:
+                R_min, r_min = _extract_areal_radius_min(ds, center=args_dict["center"])
+                result["areal_line"] = f"{t:.16e}  {R_min:.16e}  {r_min:.16e}"
+            else:
+                if args_dict.get("verbose", False):
+                    print(f"WARNING: plotfile {key} missing chi field; skipping areal radius.")
+
+        # --- Embedding diagram frame (optional) ---
+        if args_dict.get("embedding"):
+            if ("boxlib", "chi") in ds.field_list:
+                e_idx = _parse_plot_index(key)
+                embed_frame_idx = e_idx if e_idx is not None else fallback_frame_idx
+                _render_embedding_frame(
+                    ds,
+                    frames_out_dir=args_dict["frames_out"],
+                    frame_idx=int(embed_frame_idx),
+                    center=args_dict["center"],
+                    r_max=args_dict.get("embedding_rmax"),
+                    verbose=args_dict.get("verbose", False),
+                )
+            else:
+                if args_dict.get("verbose", False):
+                    print(f"WARNING: plotfile {key} missing chi field; skipping embedding.")
+
+        result["success"] = True
+        
+        # --- Delete ---
+        if args_dict.get("delete") and (p not in protected):
+            shutil.rmtree(p)
+            result["deleted"] = True
+
+    except Exception as e:
+        result["error"] = str(e)
+
+    result["dt_s"] = time.time() - t0
+    status = "deleted" if result["deleted"] else ("kept" if args_dict.get("delete") else "kept(no-delete)")
+    result["status_str"] = status
+    
+    return result
 
 
 def main() -> None:
@@ -540,6 +863,22 @@ def main() -> None:
     parser.add_argument("--frames-corner", action="store_true", help="Corner mode for symmetry-reduced domains (frames).")
     parser.add_argument("--frames-out", default=_default_frames_out_dir(), help="Frames output base dir (default: src/visualisation/visualize).")
     parser.add_argument(
+        "--areal-radius",
+        action="store_true",
+        help="Extract minimum areal radius R_areal = r/sqrt(chi) along x-axis to areal_radius.dat.",
+    )
+    parser.add_argument(
+        "--embedding",
+        action="store_true",
+        help="Render 3D embedding-diagram frames (surface of revolution from chi profile).",
+    )
+    parser.add_argument(
+        "--embedding-rmax",
+        type=float,
+        default=None,
+        help="Maximum coordinate radius for embedding diagram (default: full domain).",
+    )
+    parser.add_argument(
         "--delete",
         action="store_true",
         help="Delete plotfile directory after successful extraction",
@@ -549,6 +888,17 @@ def main() -> None:
         type=int,
         default=2,
         help="Never delete the newest N plotfiles (safety, default: 2)",
+    )
+    parser.add_argument(
+        "-j", "--jobs",
+        type=int,
+        default=1,
+        help="Number of parallel worker processes to use",
+    )
+    parser.add_argument(
+        "--keep-existing-frames",
+        action="store_true",
+        help="Do not delete existing frames at startup.",
     )
     args = parser.parse_args()
 
@@ -563,24 +913,25 @@ def main() -> None:
     out_dir = Path(args.out) if args.out else Path(data_dir) / "small_data"
     state_path = out_dir / "consume_state.json"
     out_path = out_dir / "psi4_mode_l2m0.dat"
+    areal_out_path = out_dir / "areal_radius.dat"
     header = "# time  " + "  ".join([f"Re(R={R:g})  Im(R={R:g})" for R in args.radii])
+    areal_header = "# time  R_areal_min  r_at_R_areal_min"
 
     state = _load_state(state_path)
 
     # Auto-reset on simulation restart (same output dir reused):
-    # If we detect plotfiles starting again from 0 but our saved state refers to
-    # plotfiles that don't exist, truncate outputs and start fresh.
     plot_dirs_now = _iter_plotfile_dirs(data_dir)
     if _should_auto_reset(plot_dirs_now, state):
         print("Detected a likely simulation restart in the same output directory.")
         print(f"Resetting: {out_path} and {state_path}")
         _truncate_if_exists(out_path)
+        _truncate_if_exists(areal_out_path)
         _save_state(state_path, {})
         state = {}
 
     # If rendering frames, clear existing frames for the requested fields/axis at startup.
     frame_fields_startup = [_canonical_field_name(f) for f in args.frames_fields]
-    if frame_fields_startup:
+    if frame_fields_startup and not args.keep_existing_frames:
         _cleanup_existing_frames(
             frames_out_dir=os.path.abspath(args.frames_out),
             fields=frame_fields_startup,
@@ -588,79 +939,79 @@ def main() -> None:
             verbose=args.verbose,
         )
 
+    if args.embedding and not args.keep_existing_frames:
+        _cleanup_embedding_frames(
+            frames_out_dir=os.path.abspath(args.frames_out),
+            verbose=args.verbose,
+        )
+
     def process_once() -> int:
         plot_dirs = _iter_plotfile_dirs(data_dir)
         if not plot_dirs:
             return 0
-        processed = 0
+        processed_count = 0
 
         # Never delete newest keep_last plotfiles
         protected = set(plot_dirs[-max(0, int(args.keep_last)) :])
 
+        to_process = []
         for p in plot_dirs:
             key = os.path.basename(p)
             if state.get(key):
                 continue
             if not _is_plotfile_ready(p, stable_seconds=float(args.stable_seconds)):
                 continue
+            to_process.append(p)
 
-            try:
-                t0 = time.time()
-                ds = yt.load(p)
-                t = float(ds.current_time)
+        if not to_process:
+            return 0
 
-                # --- Psi4 extraction (optional) ---
-                if args.psi4:
-                    # Validate fields once per plotfile
-                    if ("boxlib", "Weyl4_Re") not in ds.field_list or ("boxlib", "Weyl4_Im") not in ds.field_list:
-                        raise RuntimeError(
-                            "Plotfile missing Weyl4_Re/Im. Set: amr.derive_plot_vars = Weyl4 and re-run."
-                        )
-                    amps = _extract_mode_amps_l2m0(
-                        ds,
-                        radii=[float(r) for r in args.radii],
-                        n_points=int(args.n_points),
-                        center=args.center,
-                    )
-                    line = f"{t:.16e}  " + "  ".join([f"{a.real:.16e}  {a.imag:.16e}" for a in amps])
-                    _append_line(out_path, header=header, line=line)
-
-                # --- Frame rendering (optional) ---
-                frame_fields = [_canonical_field_name(f) for f in args.frames_fields]
-                if frame_fields:
-                    idx = _parse_plot_index(key)
-                    frame_idx = idx if idx is not None else processed
-                    for fld in frame_fields:
-                        _render_slice_frame(
-                            ds,
-                            field=fld,
-                            axis=args.frames_axis,
-                            coord=args.frames_coord,
-                            zoom=args.frames_zoom,
-                            center_xyz=args.frames_center,
-                            corner=args.frames_corner,
-                            frames_out_dir=os.path.abspath(args.frames_out),
-                            frame_idx=int(frame_idx),
-                            verbose=args.verbose,
-                        )
-
-                state[key] = True
-                _save_state(state_path, state)
-                processed += 1
-
-                deleted = False
-                if args.delete and (p not in protected):
-                    shutil.rmtree(p)
-                    deleted = True
-
-                if args.verbose:
-                    dt_s = time.time() - t0
-                    status = "deleted" if deleted else ("kept" if args.delete else "kept(no-delete)")
-                    print(f"[ok] {key}  t={t:.6g}  {status}  ({dt_s:.2f}s)")
-            except Exception as e:
-                # Do not mark as processed; do not delete.
-                print(f"WARNING: failed to process {p}: {e}")
-                continue
+        args_dict = vars(args)
+        args_dict["frames_out"] = os.path.abspath(args.frames_out)
+        
+        if args.jobs > 1:
+            from concurrent.futures import ProcessPoolExecutor
+            with ProcessPoolExecutor(max_workers=args.jobs) as executor:
+                futures = []
+                for i, p in enumerate(to_process):
+                    futures.append(executor.submit(_process_single_plotfile, p, args_dict, protected, processed_count + i))
+                
+                for p, f in zip(to_process, futures):
+                    try:
+                        res = f.result()
+                        if res["success"]:
+                            if res["psi4_line"]:
+                                _append_line(out_path, header=header, line=res["psi4_line"])
+                            if res["areal_line"]:
+                                _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
+                            
+                            state[res["key"]] = True
+                            _save_state(state_path, state)
+                            processed_count += 1
+                            
+                            if args.verbose:
+                                print(f"[ok] {res['key']}  t={res['t']:.6g}  {res['status_str']}  ({res['dt_s']:.2f}s)")
+                        else:
+                            print(f"WARNING: failed to process {p}: {res.get('error', 'Unknown error')}")
+                    except Exception as e:
+                        print(f"WARNING: worker failed for {p}: {e}")
+        else:
+            for i, p in enumerate(to_process):
+                res = _process_single_plotfile(p, args_dict, protected, processed_count + i)
+                if res["success"]:
+                    if res["psi4_line"]:
+                        _append_line(out_path, header=header, line=res["psi4_line"])
+                    if res["areal_line"]:
+                        _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
+                    
+                    state[res["key"]] = True
+                    _save_state(state_path, state)
+                    processed_count += 1
+                    
+                    if args.verbose:
+                        print(f"[ok] {res['key']}  t={res['t']:.6g}  {res['status_str']}  ({res['dt_s']:.2f}s)")
+                else:
+                    print(f"WARNING: failed to process {p}: {res.get('error', 'Unknown error')}")
 
         # Cleanup pass: delete plotfiles that were processed earlier but were
         # inside keep-last at the time. Once they are no longer protected, we
@@ -681,7 +1032,7 @@ def main() -> None:
                 except Exception as e:
                     print(f"WARNING: failed to delete {p}: {e}")
 
-        return processed
+        return processed_count
 
     if args.watch:
         print(f"Watching {data_dir} for plotfiles. Writing {out_path}")
