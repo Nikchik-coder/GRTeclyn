@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# Shared HQ promotion defaults (stage 2) for campaigns/hq/run_batch.sh and replay_eval.py.
+# Source after env.sh; expects GRTECLYN_ROOT and WRAPPER_ROOT.
+set -euo pipefail
+
+RUNS_DIR="${RUNS_DIR:-${GRTECLYN_ROOT}/runs/grtresna_promote}"
+N_FULL="${N_FULL:-256}"
+L_FULL="${L_FULL:-128}"
+GRTRESNA_DOMAIN_L="${GRTRESNA_DOMAIN_L:-${L_FULL}}"
+MAX_LEVEL="${MAX_LEVEL:-3}"
+REGRID_THRESHOLD="${REGRID_THRESHOLD:-0.02}"
+STOP_TIME="${STOP_TIME:-30}"
+PLOT_INTERVAL="${PLOT_INTERVAL:-24}"
+GRTRESNA_MAX_HAM_PCT="${GRTRESNA_MAX_HAM_PCT:-10}"
+GRTRESNA_MAX_MOM_PCT="${GRTRESNA_MAX_MOM_PCT:-10}"
+GRTRESNA_TIMEOUT="${GRTRESNA_TIMEOUT:-7200}"
+GRTRESNA_ITERATIONS="${GRTRESNA_ITERATIONS:-30}"
+GRTRESNA_RANKS="${GRTRESNA_RANKS:-8}"
+# Keep >=3 plotfiles for evolved/geodesic FTL + effective EC scoring.
+CONSUMER_KEEP_LAST="${CONSUMER_KEEP_LAST:-3}"
+# Spherical Psi4 (Weyl4) extraction radii from physics center (L/2 for HQ).
+CONSUMER_RADII="${CONSUMER_RADII:-8 12 24}"
+export GRTECLYN_PSI4="${GRTECLYN_PSI4:-1}"
+export GRTECLYN_PSI4_N_POINTS="${GRTECLYN_PSI4_N_POINTS:-128}"
+FORCE="${FORCE:-0}"
+# HQ run folder names default to campaign-style slugs (like QD/CMA-ES), not l128n256t30_*.
+# Set INCLUDE_RESOLUTION_IN_NAME=1 to restore legacy l{L}n{N}t{t}_{prefix}_hq_eval* names.
+INCLUDE_RESOLUTION_IN_NAME="${INCLUDE_RESOLUTION_IN_NAME:-0}"
+INCLUDE_STOP_TIME_IN_NAME="${INCLUDE_STOP_TIME_IN_NAME:-1}"
+
+export GRTRESNA_ROOT="${GRTRESNA_ROOT:-$(cd -- "${GRTECLYN_ROOT}/.." && pwd)/GRTresna}"
+# Live PNG frames during GPU (slow on HQ AMR). Override with GRTECLYN_FRAMES=0 for
+# metrics-only live runs. Plotfiles are still deleted on the fly (keep-last);
+# set GRTECLYN_KEEP_PLOTFILES=1 only if a later frame drain must re-read dumps.
+export GRTECLYN_FRAMES="${GRTECLYN_FRAMES:-1}"
+export GRTECLYN_CONSUMER_DRAIN="${GRTECLYN_CONSUMER_DRAIN:-0}"
+if [[ "${GRTRESNA_MATTER_SECTOR:-}" == "boson_star" ]]; then
+  # phi_lump1 (bicomplex phantom Phi- real part) is skipped gracefully for the
+  # single-complex model that does not emit it (see worker.py frame loop).
+  export GRTECLYN_FRAMES_FIELDS="${FRAMES_FIELDS:-scalar_activity phi Pi phi_lump0 Pi_lump0 chi chi_minus_1 local_speed shift1 rho_req Weyl4_Re Weyl4_Im Weyl4_Mag}"
+  export GRTECLYN_PROJECTION_FIELDS="${PROJECTION_FIELDS:-scalar_activity phi}"
+else
+  export GRTECLYN_FRAMES_FIELDS="${FRAMES_FIELDS:-lump_activity scalar_activity phi_lump_sum Pi_lump_sum chi chi_minus_1 local_speed shift1 rho_req Weyl4_Re Weyl4_Im Weyl4_Mag}"
+  export GRTECLYN_PROJECTION_FIELDS="${PROJECTION_FIELDS:-lump_activity scalar_activity}"
+fi
+export GRTECLYN_FRAMES_ZOOM="${FRAMES_ZOOM:-none}"
+export GRTECLYN_PROJECTION_AXES="${PROJECTION_AXES:-x y z}"
+export GRTECLYN_PROJECTION_METHOD="${PROJECTION_METHOD:-mip}"
+# Default consumer parallelism: 2 (sweet spot on NFS for 2.7 GB AMR plotfiles;
+# 8 saturates NFS and workers hang in rpc_wait_bit_killable). Override via env.
+export CONSUMER_JOBS="${CONSUMER_JOBS:-2}"
+export GRTECLYN_CONSUMER_JOBS_MAX="${GRTECLYN_CONSUMER_JOBS_MAX:-2}"
+export GRTECLYN_EVOLVING_GEODESIC="${GRTECLYN_EVOLVING_GEODESIC:-1}"
+export GRTECLYN_EVOLVING_GEODESIC_MODE="${GRTECLYN_EVOLVING_GEODESIC_MODE:-hq}"
+# Always probe all 3 principal axes for directional blind search.
+export GRTECLYN_GEO_DIRECTIONS="${GRTECLYN_GEO_DIRECTIONS:-x y z}"
+# Fast frame defaults (~9x speedup on 256^3 AMR HQ runs; override to restore quality):
+#   DPI 90, buff_cap 512, samples/cell 1 — full-domain movies don't need 1024^2.
+# consume_plotfiles/config.py honours these via os.environ (see _FRAME_DPI etc.).
+export GRTECLYN_FRAMES_DPI="${GRTECLYN_FRAMES_DPI:-90}"
+export GRTECLYN_FRAMES_BUFF_CAP="${GRTECLYN_FRAMES_BUFF_CAP:-512}"
+export GRTECLYN_FRAMES_SAMPLES_PER_CELL="${GRTECLYN_FRAMES_SAMPLES_PER_CELL:-1}"
+
+PYTHON_BIN="${PYTHON_BIN:-}"
+if [[ -z "${PYTHON_BIN}" ]]; then
+  if [[ -x "${WRAPPER_ROOT}/.venv/bin/python" ]]; then
+    PYTHON_BIN="${WRAPPER_ROOT}/.venv/bin/python"
+  elif command -v uv >/dev/null 2>&1; then
+    PYTHON_BIN="uv run --project ${WRAPPER_ROOT} python"
+  else
+    PYTHON_BIN="python"
+  fi
+fi
+
+promote_build_name() {
+  local eval_padded="$1"
+  local slug="${NAME_PREFIX:-hq}"
+  if [[ "${INCLUDE_RESOLUTION_IN_NAME}" == "1" ]]; then
+    local base="l${L_FULL}n${N_FULL}"
+    if [[ "${INCLUDE_STOP_TIME_IN_NAME}" == "1" ]]; then
+      base="${base}t${STOP_TIME}"
+    fi
+    echo "${base}_${slug}_hq_eval${eval_padded}"
+  else
+    echo "${slug}_hq_eval${eval_padded}"
+  fi
+}

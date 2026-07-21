@@ -15,4 +15,21 @@ GRTECLYN_CEXE_headers += ConstraintsWithMatter.hpp \
                          ScalarFieldD1Vars.hpp \
                          ScalarFieldD2Vars.hpp \
                          ExoticScalarField.hpp \
-                         ExoticScalarField.impl.hpp
+                         ExoticScalarField.impl.hpp \
+                         ComplexScalarFieldVars.hpp \
+                         ComplexScalarFieldAdvecVars.hpp \
+                         ComplexScalarFieldD1Vars.hpp \
+                         ComplexScalarFieldD2Vars.hpp \
+                         ComplexExoticScalarField.hpp \
+                         ComplexExoticScalarField.impl.hpp \
+                         ComplexScalarPotential.hpp \
+                         ComplexScalarField.hpp \
+                         ComplexScalarField.impl.hpp \
+                         GRTresnaScalarLayout.hpp \
+                         GRTresnaScalarPotential.hpp \
+                         GRTresnaIndependentScalars.hpp \
+                         GRTresnaIndependentScalars.impl.hpp \
+                         GRTresnaIndependentScalarsVars.hpp \
+                         GRTresnaIndependentScalarsD1Vars.hpp \
+                         GRTresnaIndependentScalarsD2Vars.hpp \
+                         GRTresnaIndependentScalarsAdvecVars.hpp

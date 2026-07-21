@@ -10,6 +10,39 @@
 #ifndef CCZ4RHSWITHMATTER_IMPL_HPP_
 #define CCZ4RHSWITHMATTER_IMPL_HPP_
 #include "DimensionDefinitions.hpp"
+#include "ComplexScalarField.hpp"
+#include "GRTresnaIndependentScalars.hpp"
+
+//! Detection trait: true if matter_t has the 7-arg add_matter_rhs overload
+//! (rhs, vars, d1, d2, advec, coords, time) used by the pump/trajectory system.
+//! Matter classes without it (e.g. ExoticScalarField, NoMatter, DustMatter)
+//! fall through to the 5-arg overload.  Uses the void_t detection idiom so it
+//! works for any matter class, not just the two hard-coded ones.
+namespace detail_matter
+{
+template <class T, class = void>
+struct has_time_rhs : std::false_type
+{
+};
+
+template <class T>
+struct has_time_rhs<
+    T, std::void_t<decltype(std::declval<const T &>().add_matter_rhs(
+           std::declval<const amrex::CellData<amrex::Real> &>(),
+           std::declval<const typename T::Vars &>(),
+           std::declval<const typename T::D1Vars &>(),
+           std::declval<const typename T::D2Vars &>(),
+           std::declval<const typename T::AdvecVars &>(),
+           std::declval<const Coordinates &>(), std::declval<amrex::Real>()))>>
+    : std::true_type
+{
+};
+
+template <class T>
+inline constexpr bool has_time_rhs_v = has_time_rhs<T>::value;
+} // namespace detail_matter
+
+#include <type_traits>
 
 template <class matter_t, class gauge_t, class deriv_t>
 CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::CCZ4RHSWithMatter(
@@ -54,6 +87,10 @@ CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::operator()(
 
     const amrex::CellData<amrex::Real> &rhs_cell_data =
         rhs_state.cellData(ix, iy, iz);
+    for (int n = 0; n < rhs_cell_data.nComp(); ++n)
+    {
+        rhs_cell_data[n] = 0.0;
+    }
 
     this->rhs_equation(rhs_cell_data, vars, d1, d2, advec);
 
@@ -61,7 +98,17 @@ CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::operator()(
     add_emtensor_rhs(rhs_cell_data, vars, d1, coords);
 
     // add evolution of matter fields themselves
-    m_matter.add_matter_rhs(rhs_cell_data, vars, d1, d2, advec);
+    if constexpr (std::is_same_v<matter_t, GRTresnaIndependentScalars> ||
+                  std::is_same_v<matter_t, ComplexScalarField> ||
+                  detail_matter::has_time_rhs_v<matter_t>)
+    {
+        m_matter.add_matter_rhs(rhs_cell_data, vars, d1, d2, advec, coords,
+                                m_time);
+    }
+    else
+    {
+        m_matter.add_matter_rhs(rhs_cell_data, vars, d1, d2, advec);
+    }
 
     // Add dissipation to all terms
     this->m_deriv.add_dissipation(ix, iy, iz, rhs_cell_data, state,
