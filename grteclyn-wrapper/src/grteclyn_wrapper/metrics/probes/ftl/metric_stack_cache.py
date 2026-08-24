@@ -51,6 +51,82 @@ def append_slice_from_plotfile(
     return out
 
 
+def required_n_space(
+    *, n_cell: int, box_length: float, max_level: int, half_width: float
+) -> int:
+    """Slice resolution needed to match the run's FINEST AMR level.
+
+    The cache is a UNIFORM resample.  If its ``dx`` is coarser than the finest
+    refined level, every feature that lives on the refined levels is smoothed
+    away -- silently, because the resulting metric is still smooth and still
+    integrable.  See :func:`cache_fidelity`.
+    """
+    finest_dx = (float(box_length) / int(n_cell)) / (2 ** int(max_level))
+    return int(round(2.0 * float(half_width) / finest_dx)) + 1
+
+
+def slice_time(slice_path: Path) -> float:
+    """Simulation time stored in a cached slice (reads only the ``t`` member)."""
+    with np.load(slice_path) as slab:
+        return float(slab["t"])
+
+
+def slice_min_chi(slice_path: Path) -> float:
+    """Smallest conformal factor the cached slice can represent.
+
+    ``gamma_ij = gammatilde_ij / chi`` with ``det gammatilde = 1``, so
+    ``det gamma = chi^-3`` and ``chi = (det gamma)^(-1/3)`` exactly.
+    """
+    with np.load(slice_path) as slab:
+        gamma = np.asarray(slab["g"])[..., 1:, 1:]
+    det = np.linalg.det(gamma.astype(np.float64))
+    det = np.maximum(det, 1.0e-300)
+    return float(np.cbrt(1.0 / det).min())
+
+
+def cache_fidelity(
+    cache_dir: Path,
+    true_min_chi_at: dict[float, float],
+    *,
+    tol: float = 1.5,
+    max_time: float | None = None,
+) -> list[tuple[float, float, float, float]]:
+    """Slices where the cache CANNOT represent the geometry the sim produced.
+
+    ``true_min_chi_at`` maps simulation time -> ``min_chi`` as reported by the
+    run itself (col 3 of ``collapse_diagnostics.dat``).  Returns one
+    ``(t, true, cached, ratio)`` tuple per offending slice, worst first.
+
+    WHY THIS EXISTS.  A uniform resample coarser than the finest AMR level
+    erases sharp features without any error, warning, or visible artifact --
+    the cached metric stays smooth and null geodesics integrate through it
+    happily.  On the 2026-07-28 pump ladder the pump-free run's central well
+    reached ``chi = 5.7e-4`` while its 33^3 cache bottomed out at ``5.6e-2``, a
+    factor of 99.  Rays never paid the Shapiro delay they should have, so that
+    run reported the LARGEST apparent shortcut precisely because it was the
+    most badly resolved.  The error hit only the collapsing run, so it biased a
+    cross-run comparison rather than shifting it uniformly.  Always run this
+    before quoting a cache-derived number.
+    """
+    out: list[tuple[float, float, float, float]] = []
+    for path in list_slice_files(cache_dir):
+        with np.load(path) as slab:
+            t = float(slab["t"])
+        if max_time is not None and t > max_time + 1.0e-9:
+            continue
+        if not true_min_chi_at:
+            continue
+        t_ref = min(true_min_chi_at, key=lambda x: abs(x - t))
+        true = float(true_min_chi_at[t_ref])
+        if true <= 0.0:
+            continue
+        cached = slice_min_chi(path)
+        ratio = cached / true
+        if ratio > tol:
+            out.append((t, true, cached, ratio))
+    return sorted(out, key=lambda row: -row[3])
+
+
 def list_slice_files(cache_dir: Path) -> list[Path]:
     if not cache_dir.is_dir():
         return []
@@ -83,10 +159,20 @@ def evolving_field_from_metric_stack_cache(
     *,
     slice_stride: int = 1,
     max_slices: int | None = None,
+    max_time: float | None = None,
 ) -> EvolvingMetricField | None:
-    """Rebuild ``EvolvingMetricField`` from cached per-plotfile slices."""
+    """Rebuild ``EvolvingMetricField`` from cached per-plotfile slices.
+
+    ``max_time`` drops slices after that simulation time.  Truncation is
+    conservative under the strict no-frozen-tail guard: a ray still in flight
+    past the last kept slice reports ``reached=False`` rather than completing
+    through clamped geometry.
+    """
+    all_files = list_slice_files(cache_dir)
+    if max_time is not None:
+        all_files = [p for p in all_files if slice_time(p) <= max_time + 1.0e-9]
     files = subsample_slice_files(
-        list_slice_files(cache_dir),
+        all_files,
         stride=slice_stride,
         max_slices=max_slices,
     )
@@ -101,7 +187,10 @@ def evolving_field_from_metric_stack_cache(
     for path in files:
         data = np.load(path)
         times.append(float(data["t"]))
-        slices.append(np.asarray(data["g"], dtype=np.float64))
+        # Keep the stored float32: promotion inside ``trilinear`` is exact, so
+        # results are bit-identical to a float64 upcast at half the resident
+        # memory (24 GB vs 48 GB per process at 257^3).
+        slices.append(np.asarray(data["g"]))
         if origin is None:
             origin = np.asarray(data["origin"], dtype=np.float64)
             sp = np.asarray(data["spacing"], dtype=np.float64)

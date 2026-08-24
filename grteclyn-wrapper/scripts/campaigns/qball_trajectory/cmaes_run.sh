@@ -11,7 +11,7 @@
 #
 # Overrides:
 #   RUN_NAME=qball_traj_bicomplex_cmaes_v1
-#   WARM_START_TRAJECTORY=../runs/grtresna_qd/qball_traj_bicomplex_v1/trajectory.jsonl
+#   WARM_START_TRAJECTORY=../runs/neuralspacetime/search/map_elites/qball_traj_bicomplex_v1/trajectory.jsonl
 #   WARM_START_TOP_K=1 TARGET_EVALS=150 GPU_IDS="0 1 2 3 4 5 6 7"
 #   DRY_RUN=1   # smoke without GPU
 set -euo pipefail
@@ -24,8 +24,8 @@ REPO_ROOT="$(cd -- "${SCRIPT_DIR}/../../../.." && pwd)"
 
 # --- CMA-ES run identity ---
 export RUN_NAME="${RUN_NAME:-qball_traj_bicomplex_cmaes_v1}"
-export RUNS_DIR="${RUNS_DIR:-${REPO_ROOT}/runs/grtresna_cmaes}"
-export WARM_START_TRAJECTORY="${WARM_START_TRAJECTORY:-${REPO_ROOT}/runs/grtresna_qd/qball_traj_bicomplex_v1/trajectory.jsonl}"
+export RUNS_DIR="${RUNS_DIR:-${REPO_ROOT}/runs/neuralspacetime/search/cma_es}"
+export WARM_START_TRAJECTORY="${WARM_START_TRAJECTORY:-${REPO_ROOT}/runs/neuralspacetime/search/map_elites/qball_traj_bicomplex_v1/trajectory.jsonl}"
 export WARM_START_TOP_K="${WARM_START_TOP_K:-1}"
 export WARM_START_JITTER="${WARM_START_JITTER:-0.05}"
 export SIGMA0="${SIGMA0:-0.05}"
@@ -34,7 +34,9 @@ export MAX_GENERATIONS="${MAX_GENERATIONS:-50}"
 # Keep enough elites that HQ/matrix can still find the champion if freeze is late.
 export KEEP_TOP_EVAL_DIRS="${KEEP_TOP_EVAL_DIRS:-10}"
 export GPU_IDS="${GPU_IDS:-0 1 2 3 4 5 6 7}"
-export POPULATION="${POPULATION:-$(wc -w <<< "${GPU_IDS}")}"
+# 4x GPU slots, never #GPUs: the generation barrier starves the pipeline
+# otherwise (README "Stage 1 - CMA-ES" warning; cap cost with TARGET_EVALS).
+export POPULATION="${POPULATION:-$((4 * $(wc -w <<< "${GPU_IDS}")))}"
 
 # --- Matter model: must match QD (bicomplex) ---
 export GRTRESNA_MATTER_SECTOR=boson_star
@@ -43,7 +45,27 @@ export GRTRESNA_MATTER_COUPLING="${GRTRESNA_MATTER_COUPLING:-canonical}"
 export GRTRESNA_FULL_Z=1
 export GRTRESNA_ALLOW_SIGN_MISMATCH="${GRTRESNA_ALLOW_SIGN_MISMATCH:-0}"
 export SCORE_PUMP_ENERGY_WEIGHT="${SCORE_PUMP_ENERGY_WEIGHT:-40}"
-export RL_PUMP_STOP_TIME="${RL_PUMP_STOP_TIME:-4}"
+
+# Pump convention (GPU_RUN_PLAN.md §12.1): the pump runs for the ENTIRE
+# simulation (-1 = never stop). The old silent default here (stop at t=4)
+# flipped the physics of any campaign that forgot to set it — the value must
+# now be stated explicitly; >= 0 is only for a deliberate pump-off control.
+if [[ -z "${RL_PUMP_STOP_TIME:-}" ]]; then
+  echo "[cmaes] RL_PUMP_STOP_TIME is required (no silent default):" >&2
+  echo "        -1 = pump on for the whole run (the convention);" >&2
+  echo "        >=0 only for a deliberate pump-off control." >&2
+  exit 2
+fi
+export RL_PUMP_STOP_TIME
+# A negative pump value erases the scorer's fallback emission floor
+# (metrics/score/ftl.py skips values < 0) — the floor must then be pinned
+# explicitly or f_geo silently changes meaning.
+if [[ "${RL_PUMP_STOP_TIME}" == -* && -z "${GEODESIC_EMIT_MIN_TIME:-}" ]]; then
+  echo "[cmaes] RL_PUMP_STOP_TIME=${RL_PUMP_STOP_TIME} needs an explicit emission" >&2
+  echo "        floor: set GEODESIC_EMIT_MIN_TIME (=4 for the fgeo lineage)." >&2
+  exit 2
+fi
+export GEODESIC_EMIT_MIN_TIME="${GEODESIC_EMIT_MIN_TIME:-}"
 export FRAMES_FIELDS="${FRAMES_FIELDS:-scalar_activity phi Pi phi_lump0 Pi_lump0 phi_lump1 Pi_lump1 phi_lump2 Pi_lump2 chi chi_minus_1 local_speed shift1 rho_req}"
 export PROJECTION_FIELDS="${PROJECTION_FIELDS:-scalar_activity phi}"
 

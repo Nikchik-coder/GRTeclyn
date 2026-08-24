@@ -9,6 +9,7 @@ from typing import Literal, Mapping, Sequence
 
 from .config import REPO_ROOT, WRAPPER_ROOT
 from .episode import Episode
+from .scratch import plotfile_dir
 
 ConsumerProfile = Literal["wormhole", "radial"]
 
@@ -134,6 +135,19 @@ def _strip_param_value(value: str) -> str:
     return value
 
 
+def _read_str_param(params_path: Path, key: str, default: str) -> str:
+    try:
+        for line in params_path.read_text(encoding="utf-8").splitlines():
+            if "=" not in line:
+                continue
+            lhs, rhs = line.split("=", 1)
+            if lhs.strip() == key:
+                return _strip_param_value(rhs).split()[0]
+    except (FileNotFoundError, IndexError):
+        pass
+    return default
+
+
 def _read_float_param(params_path: Path, key: str, default: float) -> float:
     try:
         for line in params_path.read_text(encoding="utf-8").splitlines():
@@ -251,10 +265,17 @@ def build_consume_command(
         *resolve_consume_python(),
         "-m",
         "grteclyn_wrapper.visualisation.process_wave.consume_plotfiles",
+        # Read the plotfiles where the simulation actually wrote them (node-local
+        # scratch), but write the distilled numbers to the episode.  The two are
+        # the same directory only when scratch is off.
         "--data",
-        str(episode.path),
+        str(plotfile_dir(episode.path)),
         "--out",
         str(episode.small_data_dir),
+        # The early-termination flag is a message to the *runner*, which watches
+        # the episode directory -- it must not follow the plotfiles to scratch.
+        "--stop-sim-path",
+        str(episode.path / ".stop_sim"),
         "--radii",
         *[str(r) for r in radii],
         "--n-points",
@@ -296,6 +317,32 @@ def build_consume_command(
         command.extend(
             ["--confinement-timeseries", "--confinement-well-width", f"{well_width:g}"]
         )
+    if _env_flag("GRTECLYN_SECTOR_BARYCENTERS"):
+        command.append("--sector-barycenters")
+        matter_model = _read_str_param(episode.params_path, "recipe_matter_model", "")
+        if matter_model:
+            command.extend(["--matter-model", matter_model])
+    # Scrutiny stream (core positions, momentum balance, gauge check).  Off by
+    # default: it is the only stream that builds a covering grid.
+    if _env_flag("GRTECLYN_SECTOR_DYNAMICS"):
+        command.append("--sector-dynamics")
+        level = os.environ.get("GRTECLYN_SECTOR_DYNAMICS_LEVEL", "").strip()
+        if level:
+            command.extend(["--sector-dynamics-level", level])
+    # Higher-multipole Psi4 (l>=3) into its own stream.  Off by default: it adds
+    # one sphere sampling per plotfile and is only meaningful on wave-zone
+    # extraction shells (Debug.md item C).
+    # Slice cache (paper movies): keep the 2-D array behind every native frame
+    # so the whole series can be re-rendered on one fixed colour scale after
+    # the run (scripts/plot/rerender_frames.py).  Off by default; paper
+    # campaigns opt in with GRTECLYN_FRAMES_CACHE_SLICES=1.
+    if _env_flag("GRTECLYN_FRAMES_CACHE_SLICES"):
+        command.append("--frames-cache-slices")
+    if _env_flag("GRTECLYN_PSI4_HIGHER_L"):
+        command.append("--psi4-higher-l")
+        ells = os.environ.get("GRTECLYN_PSI4_ELLS", "").strip()
+        if ells:
+            command.extend(["--psi4-ells", *ells.replace(",", " ").split()])
     central_enabled = _central_timeseries_enabled(central_timeseries)
     splash_incremental = (
         _incremental_score_enabled(incremental_score)
@@ -325,13 +372,7 @@ def build_consume_command(
         if _central_radial_enabled():
             command.extend(["--central-radial-profile", "--central-radial-r-max", "6.0"])
         if _splash_early_term_enabled():
-            command.extend(
-                [
-                    "--splash-early-term",
-                    "--stop-sim-path",
-                    str(episode.path / ".stop_sim"),
-                ]
-            )
+            command.append("--splash-early-term")
         if not ftl_timeseries and objective_mode != "weighted":
             if "--objective-mode" not in command:
                 command.extend(["--objective-mode", str(objective_mode)])

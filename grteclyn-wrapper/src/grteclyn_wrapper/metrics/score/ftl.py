@@ -3,19 +3,29 @@ from __future__ import annotations
 import math
 import os
 
+from ..probes.ftl.geodesic import rays_complete
 from .types import ScoringContext
 
 
 def _post_pump_emit_ok(t_emit: float) -> bool:
-    """False when t_emit is before RL_PUMP_STOP_TIME (igniter still on)."""
-    raw = os.environ.get("RL_PUMP_STOP_TIME", "").strip()
-    if not raw:
-        return True
-    try:
-        stop = float(raw)
-    except (TypeError, ValueError):
-        return True
-    if stop < 0.0:
+    """False when t_emit is below the configured emit floor.
+
+    Floor preference: ``GEODESIC_EMIT_MIN_TIME``, else ``RL_PUMP_STOP_TIME``.
+    When neither is set, every launch is accepted (always-on pump / no filter).
+    """
+    stop: float | None = None
+    for key in ("GEODESIC_EMIT_MIN_TIME", "RL_PUMP_STOP_TIME"):
+        raw = os.environ.get(key, "").strip()
+        if not raw:
+            continue
+        try:
+            val = float(raw)
+        except (TypeError, ValueError):
+            continue
+        if val >= 0.0:
+            stop = val
+            break
+    if stop is None:
         return True
     return t_emit + 1.0e-12 >= stop
 
@@ -30,12 +40,14 @@ SOLVED_LOCALITY_CEILING = 0.5
 OP_FTL_FLOOR = 3.0e-2
 OP_FTL_TARGET = 1.0e-1
 GEO_FTL_FLOOR = 1.0e-3
-# Full marks require a genuinely dramatic gauge-invariant shortcut (~20% null
-# arrival-time advantage over flat space).  A marginal few-percent shortcut --
-# real and reliability-gated, but physically modest in a near-flat geometry --
-# therefore earns only a small fraction here, so the scalar score tracks the
-# *magnitude* of the shortcut instead of saturating the moment the floor is
-# crossed.
+# Normalization scale for the gauge-invariant shortcut magnitude: a ~20% null
+# arrival-time advantage over flat space reads as 1.0.  The scale is LINEAR
+# AND UNCAPPED above the target -- the old min(..., 1.0) saturation meant
+# every mode paid nothing for depth beyond 20%, which silently turned the
+# qball_traj_fgeo_v1 campaign into a matter-retention contest (its deepest
+# corridor, f_geo=0.383, scored 4x below a shallower survivor).  A marginal
+# few-percent shortcut still earns only a small fraction here, so the score
+# tracks the magnitude of the shortcut at both ends of the scale.
 GEO_FTL_TARGET = 2.0e-1
 PRECURSOR_SPEED_SCALE = 0.15  # (c - 1) reward saturation scale
 PRECURSOR_FRAC_SCALE = 0.15   # superluminal area-fraction reference
@@ -45,9 +57,9 @@ CHANNEL_PATH_EXCESS_SCALE = 0.12
 
 
 def _geo_magnitude(value: float) -> float:
-    return min(
+    return max(
+        0.0,
         (value - GEO_FTL_FLOOR) / (GEO_FTL_TARGET - GEO_FTL_FLOOR),
-        1.0,
     )
 
 
@@ -174,12 +186,13 @@ def compute_ftl_components(
         )
     # A tiny coordinate-time win is useful as a shaping signal, but it should not
     # dominate the search.  The previous log scale saturated at F_op~0.01 and let
-    # quasi-stationary "warp lens" artifacts score as solved FTL.  Reserve the
-    # hard operational reward for a materially stronger evolved shortcut.
+    # quasi-stationary "warp lens" artifacts score as solved FTL.  The floor and
+    # linear scale handle that; the scale is uncapped above OP_FTL_TARGET (f_op
+    # is intrinsically <= 1, so the component is bounded by ~13.9 anyway) so a
+    # materially deeper evolved shortcut always out-ranks a shallower one.
     if math.isfinite(f_op_ev) and f_op_ev > OP_FTL_FLOOR:
-        components["operational_ftl"] = min(
-            (f_op_ev - OP_FTL_FLOOR) / (OP_FTL_TARGET - OP_FTL_FLOOR),
-            1.0,
+        components["operational_ftl"] = (
+            (f_op_ev - OP_FTL_FLOOR) / (OP_FTL_TARGET - OP_FTL_FLOOR)
         )
     else:
         components["operational_ftl"] = 0.0
@@ -195,8 +208,9 @@ def compute_ftl_components(
     geo_trustworthy = bool(
         geo_report is not None
         and geo_report.h_quality_ok
-        and geo_report.n_rays > 0
-        and geo_report.n_reached == geo_report.n_rays
+        and rays_complete(
+            geo_report.n_rays, geo_report.n_reached, geo_report.n_captured
+        )
     )
     ctx.geo_trustworthy = geo_trustworthy
     ctx.f_geo = f_geo
@@ -244,12 +258,18 @@ def compute_ftl_components(
             f"frozen final-frame gauge-invariant shortcut (f_geo={f_geo:.3e})"
         )
 
+    # Raw evolving-shortcut depth: the un-squashed, un-gated-by-survival f_geo
+    # of the trustworthy 4D trace (best over the emission sweep).  Unlike
+    # ftl_geo_evolving it does NOT saturate at GEO_FTL_TARGET and is NOT
+    # multiplied by structural_persistence, so a deep transient corridor keeps
+    # its full magnitude even when the lumps disperse afterwards.  Consumed
+    # only by the f_geo_depth objective; every other mode ignores it.
+    components["ftl_geo_depth"] = 0.0
     evo_geo = metrics.evolving_geodesic
     evo_trustworthy = bool(
         evo_geo is not None
         and evo_geo.h_quality_ok
-        and evo_geo.n_rays > 0
-        and evo_geo.n_reached == evo_geo.n_rays
+        and rays_complete(evo_geo.n_rays, evo_geo.n_reached, evo_geo.n_captured)
     )
     if evo_geo is not None:
         # 4D evolving trace ran -- it is authoritative for geodesic FTL ranking.
@@ -264,6 +284,7 @@ def compute_ftl_components(
         ):
             evo_mag = _geo_magnitude(evo_geo.f_geo)
             components["ftl_geo_evolving"] = evo_mag * structural_persistence
+            components["ftl_geo_depth"] = float(evo_geo.f_geo)
             components["operational_ftl_geodesic"] = 0.0
             notes.append(
                 f"4D evolving null-geodesic shortcut (f_geo_evol={evo_geo.f_geo:.3e})"
@@ -366,15 +387,18 @@ def compute_ftl_components(
     if metrics.ftl_persistence is not None and metrics.ftl_persistence.f_op_min is not None:
         f_op_sustained = float(metrics.ftl_persistence.f_op_min)
         if math.isfinite(f_op_sustained) and f_op_sustained > OP_FTL_FLOOR:
-            components["ftl_persistence"] = min(
-                (f_op_sustained - OP_FTL_FLOOR) / (OP_FTL_TARGET - OP_FTL_FLOOR),
-                1.0,
+            # Uncapped like operational_ftl: a sustained deep shortcut keeps
+            # out-ranking a sustained shallow one past OP_FTL_TARGET.
+            components["ftl_persistence"] = (
+                (f_op_sustained - OP_FTL_FLOOR) / (OP_FTL_TARGET - OP_FTL_FLOOR)
             )
         else:
             components["ftl_persistence"] = 0.0
     else:
+        # Retention ratio vs t=0; uncapped above 1 so a shortcut that DEEPENS
+        # over the run is credited for the growth, not clipped to "retained".
         components["ftl_persistence"] = (
-            float(min(max(f_op_ev / f_op_t0, 0.0), 1.0)) if f_op_t0 > 1.0e-9 else 0.0
+            float(max(f_op_ev / f_op_t0, 0.0)) if f_op_t0 > 1.0e-9 else 0.0
         )
     if metrics.evolving_geodesic_mode and metrics.evolving_geodesic is None:
         if components["operational_ftl"] > 0.0:

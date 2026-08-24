@@ -25,6 +25,74 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 _LUMP_KEY_RE = re.compile(r"^grtresna_lump(\d+)_(\w+)$")
+# Trajectory campaigns name their lumps differently, and every consumer that
+# matched only the line above treated them as having no lumps at all.
+_TRAJECTORY_LUMP_KEY_RE = re.compile(r"^trajectory_lump(\d+)_(\w+)$")
+
+# The four knobs that give the shell's matter a velocity, with the defaults the
+# decoder falls back to when a campaign does not supply them.  The toroidal
+# default is 0.35c -- a real, large frame-dragging current that no search
+# dimension and no trajectory record ever mentioned.  See DebugPreGPU.md PG-2.
+SHELL_CURRENT_DEFAULTS: dict[str, float] = {
+    "grtresna_shell_toroidal_velocity": 0.35,
+    "grtresna_shell_poloidal_velocity": 0.0,
+    "grtresna_shell_radial_velocity": 0.0,
+    "grtresna_shell_omega": 0.0,
+}
+
+
+def resolved_shell_currents(overrides: Mapping[str, Any]) -> dict[str, float]:
+    """The matter currents the decoder will actually use, defaults included.
+
+    Two rules, and they have to agree or the campaign is describing something it
+    is not running:
+
+    * ``grtresna_shell_static >= 1`` means static matter -- every current zero.
+    * A campaign that supplies **no** current key is not searching motion, so
+      it gets static matter too.  Previously such a campaign still picked up the
+      0.35c toroidal default for any candidate whose ``shell_static`` bit
+      happened to decode to 0, which is half of them, since that dimension stays
+      in the space with its centre at 0 = moving.
+    """
+    supplied = [key for key in SHELL_CURRENT_DEFAULTS if key in overrides]
+
+    static = False
+    if not supplied:
+        static = True
+    else:
+        try:
+            static = int(round(float(overrides.get("grtresna_shell_static", 0.0)))) >= 1
+        except (TypeError, ValueError):
+            static = False
+
+    resolved: dict[str, float] = {}
+    for key, default in SHELL_CURRENT_DEFAULTS.items():
+        if static:
+            resolved[key] = 0.0
+            continue
+        try:
+            resolved[key] = float(overrides.get(key, default))
+        except (TypeError, ValueError):
+            resolved[key] = default
+    return resolved
+
+
+def unrecorded_shell_currents(
+    overrides: Mapping[str, Any],
+    searched_keys: frozenset[str] | set[str],
+) -> dict[str, float]:
+    """Non-zero currents that no search dimension and no override declares.
+
+    A trajectory record lists the searched dimensions only, so a current that
+    arrives as a decode default leaves no trace anywhere -- which is how a fixed
+    0.35c toroidal flow rode along through a whole campaign unnoticed.
+    """
+    resolved = resolved_shell_currents(overrides)
+    return {
+        key: value
+        for key, value in resolved.items()
+        if value != 0.0 and key not in searched_keys and key not in overrides
+    }
 
 
 def _expand_shell_lumps_from_overrides(
@@ -41,12 +109,14 @@ def _expand_shell_lumps_from_overrides(
     thickness = get_float("grtresna_shell_thickness", 0.5)
     axis_theta = get_float("grtresna_shell_axis_theta", 0.5 * math.pi)
     axis_phi = get_float("grtresna_shell_axis_phi", 0.0)
-    v_tor = get_float("grtresna_shell_toroidal_velocity", 0.35)
-    v_pol = get_float("grtresna_shell_poloidal_velocity", 0.0)
-    v_rad = get_float("grtresna_shell_radial_velocity", 0.0)
-    omega = get_float("grtresna_shell_omega", 0.0)
-    if int(round(get_float("grtresna_shell_static", 0.0))) >= 1:
-        v_tor = v_pol = v_rad = omega = 0.0
+    # Single source of truth for the static/moving decision -- the space builder
+    # strips the velocity dimensions in the static families, and this is what
+    # makes "stripped" mean "no motion" instead of "0.35c you cannot see".
+    currents = resolved_shell_currents(overrides)
+    v_tor = currents["grtresna_shell_toroidal_velocity"]
+    v_pol = currents["grtresna_shell_poloidal_velocity"]
+    v_rad = currents["grtresna_shell_radial_velocity"]
+    omega = currents["grtresna_shell_omega"]
     dipole = get_float("grtresna_shell_dipole_amp", 0.0)
     quadrupole = get_float("grtresna_shell_quadrupole_amp", 0.0)
     if canonical_boson:
@@ -311,6 +381,12 @@ def _expand_trajectory_boson_lumps_from_overrides(
     couplings = QBallCouplings(mass=mass, lam=lam, mu=mu, omega=omega)
     use_equilibrium = bool(int(round(get_float("grtresna_qball_equilibrium_amplitude", 0.0))))
     use_ode = bool(int(round(get_float("grtresna_qball_ode_profile", 0.0))))
+    # Both painters rescale the ODE table by amp/phi_c, so a stationary seed
+    # requires amp == the table's own phi_c.  cap_well_depth instead clamps to
+    # the thin-wall estimate sqrt(3*lam/4*mu), ~4.5% under phi_c at the Bondi
+    # couplings -- an off-shell seed that breathes and sheds.  Opt-in so existing
+    # campaigns keep bit-identical initial data.
+    use_exact_amp = bool(int(round(get_float("grtresna_qball_exact_amplitude", 0.0))))
     # Self-gravitating boson star: gravity binds the lump, so its SEED is a true
     # equilibrium (profile 4).  This replaces only the dispersing sech seed -- the
     # closed-loop PD trap pump still transports the lump along its trajectory.  The
@@ -400,13 +476,16 @@ def _expand_trajectory_boson_lumps_from_overrides(
             velocity = (0.0, 0.0, 0.0)
 
         exotic = int(round(get_float(f"{pfx}exotic", 0.0)))
-        if use_selfgrav and exotic:
-            # A phantom (negative-energy) scalar is anti-confining: the coupled
-            # Einstein-Klein-Gordon system has no self-gravitating equilibrium, so
-            # there is no exotic self-grav star to seed.  Force canonical.
+        if use_selfgrav and exotic and not (lam > 0.0 and mu > 0.0 and omega > 0.0):
+            # A gravity-BOUND phantom star cannot exist (its self-gravity is
+            # repulsive), so the mini-star path (lam=mu=0, phi_c-parameterized)
+            # has nothing to seed.  With sextic couplings + a target frequency
+            # the binding is the scalar interaction and the dressed phantom
+            # star DOES exist (solved with gravity_sign=-1); let it through.
             logger.warning(
-                "trajectory lump %d: exotic flag ignored in self-gravitating mode "
-                "(no phantom boson-star equilibrium exists); using canonical matter.",
+                "trajectory lump %d: exotic flag ignored in self-gravitating "
+                "mini-star mode (no gravity-bound phantom equilibrium); using "
+                "canonical matter.  Sextic couplings + bs_omega enable it.",
                 k,
             )
             exotic = 0
@@ -415,6 +494,10 @@ def _expand_trajectory_boson_lumps_from_overrides(
             # Initial-data central amplitude sets the star on its mass-radius
             # branch via the gravitational eigenvalue; it is NOT the pump depth.
             amp = bs_phi_c
+        elif use_ode and use_exact_amp and lam > 0.0 and mu > 0.0:
+            from ...grtresna.profiles.qball_ode import cached_qball_radial_profile
+
+            amp = float(cached_qball_radial_profile(mass, lam, mu, omega).phi_c)
         elif use_equilibrium and lam > 0.0 and mu > 0.0:
             amp = couplings.cap_well_depth(well_depth)
         else:
@@ -431,12 +514,17 @@ def _expand_trajectory_boson_lumps_from_overrides(
             "exotic": exotic,
         }
         if (use_ode or use_selfgrav) and lam > 0.0 and mu > 0.0:
+            # Per-lump star frequency (trajectory_lump{k}_bs_omega): lets a
+            # mixed pair match |ADM| across sectors -- the equal-mass Bondi
+            # cell runs the phantom star at a slightly higher omega than the
+            # canonical one.  0 => the global grtresna_bs_omega.
+            omega_k = get_float(f"{pfx}bs_omega", 0.0)
             lump.update(
                 {
                     "qball_mass": mass,
                     "qball_lam": lam,
                     "qball_mu": mu,
-                    "qball_omega": omega,
+                    "qball_omega": omega_k if omega_k > 0.0 else omega,
                 }
             )
         lumps.append(lump)

@@ -59,6 +59,18 @@ class ConstraintMetrics:
     max_step_ham_ratio: float | None = None
     mom_spike_ratio: float | None = None
     has_constraint_spike: bool = False
+    # Whole-hierarchy ("composite") norms, cols 12/16/17 of constraint_norms.dat.
+    # The fields above come from cols 2-3, which are level-0 only, count cells
+    # sitting under the refinement, and average over a domain that is mostly
+    # vacuum -- fine as the governor's input, not an accuracy figure.  These are
+    # None for any file written before the columns existed.
+    max_hamiltonian_l2_amr: float | None = None
+    max_hamiltonian_linf_amr: float | None = None
+    max_hamiltonian_l2_amr_ref: float | None = None
+    # False when the run never built a level >= 1, in which case the composite
+    # numbers describe a single-level grid and the refined-region norm is
+    # *unmeasured*, not zero.  See DebugPreGPU.md PG-3.
+    has_refined_region: bool = False
 
 
 @dataclass(frozen=True)
@@ -170,6 +182,10 @@ class EvolvingGeodesicMetrics:
     n_reached: int
     h_quality_ok: bool
     max_h_rel_drift: float
+    # Rays that fell into a puncture throat / horizon.  Excluded from the trust
+    # bar (see ``probes.ftl.geodesic.rays_complete``) — capture is physics, not
+    # an integration failure.
+    n_captured: int = 0
 
 
 @dataclass(frozen=True)
@@ -234,3 +250,9 @@ class ConfinementMetrics:
     spread_ratio: float | None
     initial_total: float | None
     final_total: float | None
+    #: Proper-volume (sqrt(gamma) = chi^-3/2) counterparts of the final moments.
+    #: None for confinement.dat files written before 2026-07-28.  The scoring
+    #: gate still uses the coordinate ``final_confined_frac`` for continuity;
+    #: quote the proper values for any cross-run comparison involving collapse.
+    final_rms_radius_proper: float | None = None
+    final_confined_frac_proper: float | None = None

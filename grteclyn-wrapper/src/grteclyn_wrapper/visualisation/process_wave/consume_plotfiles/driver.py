@@ -9,9 +9,14 @@ from pathlib import Path
 
 import yt
 
+from grteclyn_wrapper.objective_modes import QD_OBJECTIVE_MODES
+
 from .config import _default_data_dir, _default_frames_out_dir, _frames_auto_zlim_enabled
 from .extraction.central import CENTRAL_TIMESERIES_HEADER
 from .extraction.confinement import CONFINEMENT_TIMESERIES_HEADER
+from .extraction.sector_barycenters import SECTOR_BARYCENTERS_HEADER
+from .extraction.sector_dynamics import SECTOR_DYNAMICS_HEADER
+from .extraction.psi4_higher_l import higher_l_header as _higher_l_header
 from .extraction.ftl import FTL_TIMESERIES_HEADER
 from .extraction.shell import _shell_stats_header
 from .fields import _canonical_field_name
@@ -21,6 +26,7 @@ from .frames.cleanup import (
     _cleanup_projection_frames,
 )
 from .frames.zlim import _lock_frame_zlims_from_plotfile
+from .frames.zlim_scan import scan_series_zlims
 from .plotfiles import (
     _is_plotfile_ready,
     _iter_plotfile_dirs,
@@ -64,7 +70,7 @@ def main() -> None:
         default=[0.0, 0.0, 0.0],
         help="Extraction center (x y z) in code units",
     )
-    parser.add_argument("--stable-seconds", type=float, default=5.0, help="Require Header mtime older than this")
+    parser.add_argument("--stable-seconds", type=float, default=30.0, help="Require Header mtime older than this (30s default for NFS)")
     parser.add_argument("--poll-seconds", type=float, default=2.0, help="Polling interval when --watch")
     parser.add_argument("--watch", action="store_true", help="Keep running and process new plotfiles")
     parser.add_argument(
@@ -77,6 +83,22 @@ def main() -> None:
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Enable/disable Psi4 mode extraction to .dat (default: enabled).",
+    )
+    parser.add_argument(
+        "--psi4-higher-l",
+        action="store_true",
+        help=(
+            "Also project Psi4 onto l>=3 s=-2 harmonics, into its own stream "
+            "psi4_mode_higher_l.dat.  Off by default; costs one extra sphere "
+            "sampling per plotfile.  Leaves the l=2 streams untouched."
+        ),
+    )
+    parser.add_argument(
+        "--psi4-ells",
+        nargs="+",
+        type=int,
+        default=[3, 4],
+        help="Multipoles for --psi4-higher-l (supported: 2 3 4; default: 3 4).",
     )
     parser.add_argument(
         "--shell-fields",
@@ -105,6 +127,26 @@ def main() -> None:
         action=argparse.BooleanOptionalAction,
         default=True,
         help="Lock per-field colorbar limits from the first plotfile (stable movies, visible faint fields).",
+    )
+    parser.add_argument(
+        "--frames-cache-slices",
+        action="store_true",
+        help="Keep each rendered 2-D slice (~1e4x smaller than its plotfile) so the "
+             "frames can be redrawn afterwards against one fixed colorbar. The way "
+             "to get a still colorbar when plotfiles are deleted on the fly.",
+    )
+    parser.add_argument(
+        "--frames-zlim-scan",
+        action="store_true",
+        help="Measure one fixed colorbar per field over ALL plotfiles before rendering "
+             "(paper-quality movies: the bar never moves). Needs the plotfiles kept.",
+    )
+    parser.add_argument(
+        "--frames-zlim-scan-stride",
+        type=int,
+        default=1,
+        help="Scan every Nth plotfile instead of all of them (default 1). The last "
+             "plotfile is always scanned.",
     )
     parser.add_argument("--frames-out", default=_default_frames_out_dir(), help="Frames output base dir (default: grteclyn_wrapper/visualisation/visualize).")
     parser.add_argument(
@@ -148,6 +190,34 @@ def main() -> None:
         type=float,
         default=1.5,
         help="Lump scale for confinement R_conf = 4*well_width (default 1.5).",
+    )
+    parser.add_argument(
+        "--sector-barycenters",
+        action="store_true",
+        help="Per-plotfile canonical/phantom sector centroids to "
+        "sector_barycenters.dat -- the Bondi-dipole runaway diagnostic "
+        "(the aggregate barycentre cancels for a mixed-sign pair).",
+    )
+    parser.add_argument(
+        "--sector-dynamics",
+        action="store_true",
+        help="Per-plotfile CORE dynamics to sector_dynamics.dat: halo-free core "
+        "positions, per-sector matter momentum (Bondi momentum balance) and a "
+        "gauge check (shift at the cores, proper separation).  Builds a "
+        "covering grid, so it is the most expensive stream -- opt in.",
+    )
+    parser.add_argument(
+        "--sector-dynamics-level",
+        type=int,
+        default=0,
+        help="AMR level for the sector-dynamics covering grid (default 0). "
+        "Each level up costs 8x memory and time.",
+    )
+    parser.add_argument(
+        "--matter-model",
+        default="",
+        help="Authoritative recipe_matter_model tag for the sector split "
+        "(field-sniffing cannot classify runs whose canonical sector is zero).",
     )
     parser.add_argument(
         "--central-timeseries",
@@ -205,7 +275,7 @@ def main() -> None:
     parser.add_argument(
         "--objective-mode",
         default="weighted",
-        choices=["weighted", "ftl_first", "robust_ftl", "general_ftl", "critical_collapse", "gw_beam"],
+        choices=list(QD_OBJECTIVE_MODES),
         help="Objective mode for incremental scoring (matches final score_episode).",
     )
     parser.add_argument(
@@ -280,11 +350,14 @@ def main() -> None:
     out_path = out_dir / "psi4_mode_l2m0.dat"
     psi4_all_out_path = out_dir / "psi4_mode_l2_all.dat"
     psi4_directional_out_path = out_dir / "psi4_directional.dat"
+    psi4_higher_l_out_path = out_dir / "psi4_mode_higher_l.dat"
     areal_out_path = out_dir / "areal_radius.dat"
     shell_out_path = out_dir / "shell_profiles.dat"
     boundary_flux_out_path = out_dir / "boundary_flux.dat"
     ftl_out_path = out_dir / "ftl_timeseries.dat"
     confinement_out_path = out_dir / "confinement.dat"
+    sector_barycenters_out_path = out_dir / "sector_barycenters.dat"
+    sector_dynamics_out_path = out_dir / "sector_dynamics.dat"
     central_out_path = out_dir / "central_timeseries.dat"
     central_radial_out_path = out_dir / "central_radial_profile.dat"
     score_ts_path = out_dir / "score_timeseries.jsonl"
@@ -301,6 +374,8 @@ def main() -> None:
         )
     )
     psi4_directional_header = "# time  P_total  P_z_beam  beam_ratio  beaming_gain  wavezone_std"
+    psi4_higher_l_ells = tuple(sorted(set(int(x) for x in args.psi4_ells)))
+    psi4_higher_l_header = _higher_l_header(psi4_higher_l_ells, args.radii)
     areal_header = "# time  R_areal_min  r_at_R_areal_min"
     shell_header = _shell_stats_header(args.radii, args.shell_fields)
 
@@ -314,6 +389,8 @@ def main() -> None:
         _truncate_if_exists(out_path)
         _truncate_if_exists(psi4_all_out_path)
         _truncate_if_exists(psi4_directional_out_path)
+        if args.psi4_higher_l:
+            _truncate_if_exists(psi4_higher_l_out_path)
         _truncate_if_exists(areal_out_path)
         if args.shell_fields:
             _truncate_if_exists(shell_out_path)
@@ -321,6 +398,10 @@ def main() -> None:
             _truncate_if_exists(ftl_out_path)
         if args.confinement_timeseries:
             _truncate_if_exists(confinement_out_path)
+        if args.sector_barycenters:
+            _truncate_if_exists(sector_barycenters_out_path)
+        if args.sector_dynamics:
+            _truncate_if_exists(sector_dynamics_out_path)
         if args.central_timeseries:
             _truncate_if_exists(central_out_path)
         if args.central_radial_profile:
@@ -483,14 +564,26 @@ def main() -> None:
         use_global_zlim = bool(
             args.frames_global_zlim and not _frames_auto_zlim_enabled(args.frames_auto_zlim)
         )
-        if frame_fields_startup and use_global_zlim and not frame_zlims and to_process:
-            first = min(
-                to_process,
-                key=lambda p: _parse_plot_index(os.path.basename(p)) if _parse_plot_index(os.path.basename(p)) is not None else 10**12,
-            )
-            frame_zlims = _lock_frame_zlims_from_plotfile(first, args_dict)
-            state["frame_zlims"] = frame_zlims
-            _save_state(state_path, state)
+        if frame_fields_startup and not frame_zlims and to_process:
+            if args.frames_zlim_scan:
+                # One scale for the whole run, measured from the whole run: the
+                # only way the colourbar can be guaranteed not to move.
+                frame_zlims = scan_series_zlims(
+                    to_process,
+                    args_dict,
+                    stride=max(1, int(args.frames_zlim_scan_stride)),
+                    record_dir=args_dict["frames_out"],
+                    verbose=bool(args.verbose),
+                )
+            if not frame_zlims and use_global_zlim:
+                first = min(
+                    to_process,
+                    key=lambda p: _parse_plot_index(os.path.basename(p)) if _parse_plot_index(os.path.basename(p)) is not None else 10**12,
+                )
+                frame_zlims = _lock_frame_zlims_from_plotfile(first, args_dict)
+            if frame_zlims:
+                state["frame_zlims"] = frame_zlims
+                _save_state(state_path, state)
         args_dict["frame_zlims"] = frame_zlims
         args_dict["frames_global_zlim"] = use_global_zlim
 
@@ -503,17 +596,32 @@ def main() -> None:
                 futures = {
                     executor.submit(
                         _process_single_plotfile, p, args_dict, protected, processed_count + i
-                    ): p
+                    ): (i, p)
                     for i, p in enumerate(to_process)
                 }
+                # Collect every worker result first, then emit in SUBMISSION
+                # order.  as_completed() yields in COMPLETION order, so
+                # appending straight out of it interleaves rows from workers
+                # that finished out of turn, leaving each .dat stream
+                # non-monotone in time.  Nothing downstream validates that:
+                # the drift velocities, the psi4/|Xdot| correlation and every
+                # np.gradient/interp consumer would silently return garbage.
+                # A batch is at most args.jobs plotfiles (see the slice above),
+                # so this holds only `jobs` small_data rows in memory.
+                collected = {}
                 done = 0
                 for f in as_completed(futures):
-                    p = futures[f]
+                    idx, p = futures[f]
                     done += 1
                     key = os.path.basename(p)
                     print(f"[{done}/{len(to_process)}] finished {key}", flush=True)
                     try:
-                        res = f.result()
+                        collected[idx] = (p, f.result())
+                    except Exception as e:
+                        print(f"WARNING: worker failed for {p}: {e}")
+                for idx in sorted(collected):
+                    p, res = collected[idx]
+                    try:
                         if res["success"]:
                             if res["psi4_line"]:
                                 _append_line(out_path, header=header, line=res["psi4_line"])
@@ -528,6 +636,12 @@ def main() -> None:
                                     psi4_directional_out_path,
                                     header=psi4_directional_header,
                                     line=res["psi4_directional_line"],
+                                )
+                            if res.get("psi4_higher_l_line"):
+                                _append_line(
+                                    psi4_higher_l_out_path,
+                                    header=psi4_higher_l_header,
+                                    line=res["psi4_higher_l_line"],
                                 )
                             if res["areal_line"]:
                                 _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
@@ -553,6 +667,18 @@ def main() -> None:
                                     header=CONFINEMENT_TIMESERIES_HEADER,
                                     line=res["confinement_line"],
                                 )
+                            if res.get("sector_barycenters_line"):
+                                _append_line(
+                                    sector_barycenters_out_path,
+                                    header=SECTOR_BARYCENTERS_HEADER,
+                                    line=res["sector_barycenters_line"],
+                                )
+                            if res.get("sector_dynamics_line"):
+                                _append_line(
+                                    sector_dynamics_out_path,
+                                    header=SECTOR_DYNAMICS_HEADER,
+                                    line=res["sector_dynamics_line"],
+                                )
                             _handle_central_outputs(res)
 
                             state[res["key"]] = True
@@ -564,7 +690,7 @@ def main() -> None:
                         else:
                             print(f"WARNING: failed to process {p}: {res.get('error', 'Unknown error')}")
                     except Exception as e:
-                        print(f"WARNING: worker failed for {p}: {e}")
+                        print(f"WARNING: emitting result for {p} failed: {e}")
         else:
             for i, p in enumerate(to_process):
                 key = os.path.basename(p)
@@ -584,6 +710,12 @@ def main() -> None:
                             psi4_directional_out_path,
                             header=psi4_directional_header,
                             line=res["psi4_directional_line"],
+                        )
+                    if res.get("psi4_higher_l_line"):
+                        _append_line(
+                            psi4_higher_l_out_path,
+                            header=psi4_higher_l_header,
+                            line=res["psi4_higher_l_line"],
                         )
                     if res["areal_line"]:
                         _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
@@ -608,6 +740,24 @@ def main() -> None:
                             confinement_out_path,
                             header=CONFINEMENT_TIMESERIES_HEADER,
                             line=res["confinement_line"],
+                        )
+                    if res.get("sector_barycenters_line"):
+                        _append_line(
+                            sector_barycenters_out_path,
+                            header=SECTOR_BARYCENTERS_HEADER,
+                            line=res["sector_barycenters_line"],
+                        )
+                    # NB: this append was previously present only in the
+                    # --jobs>1 branch.  With the default --jobs 1 the worker
+                    # computed the scrutiny stream (~1.6 s per plotfile) and the
+                    # driver then silently discarded it, so sector_dynamics.dat
+                    # was never created -- which is why the Bondi momentum
+                    # balance (Debug.md item B) had no data to read.
+                    if res.get("sector_dynamics_line"):
+                        _append_line(
+                            sector_dynamics_out_path,
+                            header=SECTOR_DYNAMICS_HEADER,
+                            line=res["sector_dynamics_line"],
                         )
                     _handle_central_outputs(res)
 

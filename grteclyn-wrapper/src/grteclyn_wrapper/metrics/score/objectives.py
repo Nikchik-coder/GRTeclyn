@@ -35,6 +35,10 @@ def compute_total(
         return _robust_ftl_total(components, notes, exotic_penalty_weight=exotic_penalty_weight)
     if objective_mode == "general_ftl":
         return _general_ftl_total(components, notes, exotic_penalty_weight=exotic_penalty_weight)
+    if objective_mode == "f_geo_max":
+        return _f_geo_max_total(components, notes)
+    if objective_mode == "f_geo_depth":
+        return _f_geo_depth_total(components, notes)
     if objective_mode == "critical_collapse":
         return _critical_collapse_total(components, notes, splash_mode=splash_mode)
     if objective_mode == "gw_beam":
@@ -248,6 +252,75 @@ def _general_ftl_total(
     notes.append(
         "objective_mode=general_ftl: gauge-invariant shortcut + curvature reward; "
         "graded horizon penalty; warp-motor shaping disabled; "
+        f"pump_energy_weight={_pump_energy_weight():.1f}"
+    )
+    return total
+
+
+def _f_geo_max_total(
+    components: dict[str, float],
+    notes: list[str],
+) -> float:
+    # Pure evolving-shortcut hunt.  The evolving-geodesic f_geo is the only
+    # first-order reward (1% shortcut = 100 points) and exotic matter is free
+    # fuel: there is deliberately NO exotic_penalty term, so this mode ignores
+    # SCORE_EXOTIC_PENALTY_WEIGHT entirely.  Everything else is second-order
+    # shaping so MAP-Elites keeps a gradient in the f_geo = 0 region — the
+    # frozen-probe shortcut says the geometry is bending the right way before
+    # a live ray has landed, persistence/health say the lumps have not
+    # dissolved.  The graded horizon penalty and the pump-energy tax stay on
+    # so a collapsing or pump-inflated configuration cannot fake a shortcut.
+    health_gate = components.get("nontriviality_gate", 0.0)
+    total = (
+        10000.0 * components.get("ftl_geo_evolving", 0.0)
+        + 100.0 * components.get("operational_ftl_geodesic", 0.0)
+        + 60.0 * components.get("ftl_persistence", 0.0)
+        + 40.0 * components.get("curvature_activity", 0.0)
+        + health_gate * (
+            30.0 * components.get("survival", 0.0)
+            + 10.0 * components.get("stability", 0.0)
+            + 5.0 * components.get("constraint_health", 0.0)
+        )
+        + _pump_energy_weight() * components.get("pump_energy_penalty", 0.0)
+        + 200.0 * components.get("horizon_penalty", 0.0)
+    )
+    notes.append(
+        "objective_mode=f_geo_max: evolving-geodesic shortcut is the only "
+        "first-order reward (1% = 100 pts); exotic penalty disabled by "
+        f"construction; pump_energy_weight={_pump_energy_weight():.1f}"
+    )
+    return total
+
+
+def _f_geo_depth_total(
+    components: dict[str, float],
+    notes: list[str],
+) -> float:
+    # Wild depth hunt.  The RAW evolving-geodesic depth (ftl_geo_depth) is the
+    # only first-order reward: 1% path saving = 100 points, uncapped (no
+    # GEO_FTL_TARGET saturation) and NOT multiplied by structural persistence,
+    # so a maximally deep transient corridor wins even when the lumps disperse
+    # the moment after the ray lands.  There are deliberately NO survival /
+    # stability / confinement / constraint-health terms and no exotic penalty:
+    # under f_geo_max every candidate deeper than 20% scored identically to its
+    # matter retention, which is exactly the pressure this mode removes.
+    # Honesty is enforced upstream, not by shaping: the depth component is
+    # zero unless the ray bundle is complete, the constraint drift stayed
+    # small, and the emission is after the pump floor.  The pump-energy tax
+    # stays on (an open-system energy injection could otherwise fake depth)
+    # and the graded horizon penalty stays on (a collapsed run truncates the
+    # metric stack before rays can land, so collapse is pure waste).
+    total = (
+        10000.0 * components.get("ftl_geo_depth", 0.0)
+        + 100.0 * components.get("operational_ftl_geodesic", 0.0)
+        + 40.0 * components.get("curvature_activity", 0.0)
+        + _pump_energy_weight() * components.get("pump_energy_penalty", 0.0)
+        + 200.0 * components.get("horizon_penalty", 0.0)
+    )
+    notes.append(
+        "objective_mode=f_geo_depth: raw uncapped evolving-geodesic depth is "
+        "the only first-order reward (1% = 100 pts); no survival/stability/"
+        "confinement shaping; exotic penalty disabled by construction; "
         f"pump_energy_weight={_pump_energy_weight():.1f}"
     )
     return total

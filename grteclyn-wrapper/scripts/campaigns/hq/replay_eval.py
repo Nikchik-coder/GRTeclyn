@@ -29,9 +29,10 @@ from grteclyn_wrapper.grtresna.matter.wiring import (
 from grteclyn_wrapper.grtresna.matter.models import GRTRESNA_BICOMPLEX_SCALAR_MODEL
 from grteclyn_wrapper.grtresna.profiles.qball_couplings import QBallCouplings
 from grteclyn_wrapper.grtresna.io import read_gridinit
-from grteclyn_wrapper.grtresna.solver import GRTresnaConfig
+from grteclyn_wrapper.grtresna.solver import GRTresnaConfig, apply_exotic_safe_solver
+from grteclyn_wrapper.objective_modes import OBJECTIVE_MODES
 from grteclyn_wrapper.search.grtresna_convergence_gate import GRTresnaConvergenceConfig
-from grteclyn_wrapper.search.optimize.candidates import _clamp_trajectory_speed
+
 
 # Match scripts/campaigns/lib/search_common.sh (QD stage-0 defaults).
 _QD_PLOT_INTERVAL = 320
@@ -102,13 +103,13 @@ def _parse_params_value(raw: str) -> int | float | str:
         return value
 
 
-def _load_matter_replay_overrides(source_eval: Path) -> dict[str, int | float | str]:
-    """Restore evolution matter params for gridinit-only replay.
+def _matter_overrides_from_dir(run_dir: Path) -> dict[str, int | float | str]:
+    """Evolution matter params recorded alongside one solved slice.
 
     Prefer ``initial_data.matter.json`` (full metadata including scalar_mu);
     fall back to scanning ``params.txt`` for ``EVOLUTION_MATTER_KEYS``.
     """
-    matter_json = source_eval / "initial_data.matter.json"
+    matter_json = run_dir / "initial_data.matter.json"
     if matter_json.is_file():
         meta = read_matter_metadata(matter_json)
         overrides = evolution_overrides_from_metadata(meta)
@@ -118,7 +119,7 @@ def _load_matter_replay_overrides(source_eval: Path) -> dict[str, int | float | 
             if key in EVOLUTION_MATTER_KEYS
         }
 
-    params_path = source_eval / "params.txt"
+    params_path = run_dir / "params.txt"
     if not params_path.is_file():
         return {}
 
@@ -134,6 +135,33 @@ def _load_matter_replay_overrides(source_eval: Path) -> dict[str, int | float | 
     return overrides
 
 
+def _load_matter_replay_overrides(
+    source_eval: Path, gridinit: Path | None = None
+) -> dict[str, int | float | str]:
+    """Restore evolution matter params for gridinit-only replay.
+
+    THE SLICE'S OWN DIRECTORY WINS.  ``recipe_scalar_*`` are what the evolution
+    actually reads, and on the normal path they are copied over from the
+    GRTresna solve; skipping the solve skips that copy, so they have to come
+    from somewhere.  Taking them from ``source_eval`` is wrong whenever the
+    slice was solved for a different matter model than the eval it descends
+    from -- which is the usual case for a campaign that overrides the rung.  It
+    fails silently and catastrophically: the star is dropped into a potential it
+    is not a solution of, blows apart within ~10 time units, and every geometry
+    diagnostic then looks superb because a near-empty box satisfies the
+    constraints.  Measured 2026-08-21: a bondi cell (1 canonical lump,
+    lambda 10240, mu 21845333) replayed from eval_000322 came back as 5 phantom
+    lumps on lambda 640, mu 85333.
+    """
+    candidates = [] if gridinit is None else [gridinit.parent]
+    candidates.append(source_eval)
+    for run_dir in candidates:
+        overrides = _matter_overrides_from_dir(run_dir)
+        if overrides:
+            return overrides
+    return {}
+
+
 def _promotion_overrides(
     base: dict,
     *,
@@ -143,6 +171,7 @@ def _promotion_overrides(
     plot_interval: int,
     max_level: int,
     regrid_threshold: float,
+    checkpoint_interval: int = -1,
 ) -> dict:
     promoted_max_level = int(max_level)
     overrides = dict(base)
@@ -155,7 +184,7 @@ def _promotion_overrides(
             "extraction_center": f"{half:g} {half:g} {half:g}",
             "stop_time": float(stop_time),
             "plot_interval": int(plot_interval),
-            "checkpoint_interval": -1,
+            "checkpoint_interval": int(checkpoint_interval),
             "max_level": promoted_max_level,
             # CMA-ES/QD metadata may carry a shorter list from a lower max_level;
             # AMReX aborts if regrid_interval has fewer entries than max_level+1.
@@ -208,14 +237,14 @@ def main() -> int:
     parser.add_argument(
         "source_eval",
         type=Path,
-        help="Source eval dir, e.g. runs/grtresna_qd/qd_.../eval_000057",
+        help="Source eval dir, e.g. runs/neuralspacetime/search/map_elites/qd_.../eval_000057",
     )
     parser.add_argument("--name", required=True, help="Output episode name")
     parser.add_argument(
         "--runs-dir",
         type=Path,
         default=None,
-        help="Parent output dir (default: runs/grtresna_promote)",
+        help="Parent output dir (default: runs/neuralspacetime/hq)",
     )
     parser.add_argument("--gpu", default="0", help="CUDA device id(s)")
     parser.add_argument(
@@ -249,18 +278,64 @@ def main() -> int:
         default=_QD_PLOT_INTERVAL,
         help="Plotfile cadence in steps (QD default: 320 → ~6 dumps at t=16, dt≈0.01).",
     )
+    parser.add_argument(
+        "--checkpoint-interval",
+        type=int,
+        default=-1,
+        help="Checkpoint cadence in steps (default -1 = never). Set this for any "
+        "multi-hour run: without a checkpoint an Arena OOM or a node blip loses "
+        "the whole evolution with no restart point.",
+    )
     parser.add_argument("--ftl-L", type=float, default=8.0)
     parser.add_argument("--grtresna-ranks", type=int, default=8)
     parser.add_argument("--grtresna-iterations", type=int, default=30)
+    parser.add_argument(
+        "--grtresna-nl-exit-tolerance", type=float, default=1.0,
+        help="NL solve exit tolerance in %% (Ham AND Mom). The default 1.0 "
+        "leaves a ~0.6%% momentum residual that radiates as a metric ring at "
+        "launch -- tighten (e.g. 0.05) for equilibrium-star seeds.",
+    )
+    parser.add_argument(
+        "--grtresna-nl-stall-tolerance", type=float, default=0.02,
+    )
     parser.add_argument("--grtresna-max-level", type=int, default=3)
     parser.add_argument("--grtresna-refine-threshold", type=float, default=0.5)
     parser.add_argument("--grtresna-regrid-radius", type=float, default=0.0)
     parser.add_argument("--grtresna-jacobian-cap", type=float, default=25.0)
     parser.add_argument(
+        "--grtresna-maximal-slicing",
+        action="store_true",
+        help=(
+            "Force the K=0 York/Lichnerowicz solve for NON-exotic matter too. "
+            "By default maximal slicing is switched on only when exotic "
+            "(negative-energy) lumps are present, because the CTTK ansatz "
+            "K=sign*sqrt(24 pi G rho) is imaginary for rho<0.  Canonical "
+            "matter therefore silently gets K != 0 -- a slice that is already "
+            "collapsing at birth -- while its phantom counterpart starts at "
+            "rest.  This flag removes that asymmetry so the two sectors differ "
+            "only in the sign of the energy."
+        ),
+    )
+    parser.add_argument(
         "--grtresna-domain-l",
         type=float,
         default=None,
         help="GRTresna solve box width (default: same as --l-full)",
+    )
+    parser.add_argument(
+        "--grtresna-n",
+        type=int,
+        default=None,
+        help="GRTresna solve cells per axis (default: same as --n-full). The "
+        "solve box is normally WIDER than the evolution box so the outer "
+        "boundary condition sits far from the matter; leaving this at the "
+        "default therefore makes the solve cell coarser than the evolution "
+        "cell by exactly that width ratio. The Hamiltonian constraint takes "
+        "second derivatives, so the interpolation noise that leaves is "
+        "amplified as 1/dx^2 and REFINING the evolution grid makes the t=0 "
+        "violation worse, not better. Set this to "
+        "n_full * (grtresna_domain_l / l_full) to match cell sizes -- on "
+        "aligned centres that makes the transfer a straight copy.",
     )
     parser.add_argument("--grtresna-timeout", type=int, default=3600)
     parser.add_argument("--grtresna-max-ham-pct", type=float, default=5.0)
@@ -285,17 +360,17 @@ def main() -> int:
         help="Reuse an existing initial_data.gridinit and skip the GRTresna solve",
     )
     parser.add_argument(
+        "--solve-only",
+        action="store_true",
+        help="Run only the GRTresna solve + CPU gates, write "
+        "initial_data.gridinit into the episode dir, and exit without "
+        "requesting a GPU. Pair with a later --gridinit run to evolve — "
+        "lets initial data be prestaged on CPU while the GPUs are busy.",
+    )
+    parser.add_argument(
         "--objective-mode",
         default="general_ftl",
-        choices=[
-            "weighted",
-            "ftl_first",
-            "robust_ftl",
-            "general_ftl",
-            "critical_collapse",
-            "spacetime_shear",
-            "gw_beam",
-        ],
+        choices=OBJECTIVE_MODES,
         help="Scoring objective (default: general_ftl for HQ v20 replays).",
     )
     parser.add_argument(
@@ -351,7 +426,7 @@ def main() -> int:
     runs_dir = (
         args.runs_dir.expanduser().resolve()
         if args.runs_dir is not None
-        else repo_root / "runs" / "grtresna_promote"
+        else repo_root / "runs" / "neuralspacetime" / "hq"
     )
     runs_dir.mkdir(parents=True, exist_ok=True)
 
@@ -361,6 +436,7 @@ def main() -> int:
     grtresna_domain_l = (
         float(args.grtresna_domain_l) if args.grtresna_domain_l is not None else l_full
     )
+    grtresna_n = int(args.grtresna_n) if args.grtresna_n is not None else n
     overrides = _promotion_overrides(
         base_overrides,
         n_full=n,
@@ -369,6 +445,7 @@ def main() -> int:
         plot_interval=args.plot_interval,
         max_level=args.max_level,
         regrid_threshold=args.regrid_threshold,
+        checkpoint_interval=args.checkpoint_interval,
     )
 
     # Apply --extra-override KEY=VALUE pairs last (highest priority).
@@ -400,26 +477,29 @@ def main() -> int:
         key, raw = token.split("=", 1)
         overrides[key.strip()] = _parse_params_value(raw)
 
-    # Enforce the sub-luminal / adiabatic trajectory-speed cap on replay too:
-    # historical elites (e.g. eval 122) carry v_t = R0*|omega_rot| up to ~6c,
-    # which no soliton can follow.  Clamp omega_rot per lump (default 0.3c,
-    # override via --extra-override trajectory_v_max=...) before the genome
-    # reaches the GRTresna seed and the GRTeclyn co-moving trap.
-    _clamp_trajectory_speed(overrides)
+    # The frozen champion's metadata already stores physical omega_rot / v_rad
+    # (converted from normalized fractions by _clamp_trajectory_speed during the
+    # search).  Re-applying the conversion here would shrink the speeds by an
+    # additional factor of ~v_max/R0, producing a different configuration than
+    # the one the search evaluated.  Skip the conversion on replay; the values
+    # are already sub-luminal by construction.
 
     domain = GRTresnaDomainConfig(
         full_z=True,
         l_full=l_full,
         n_full=n,
         grtresna_l=grtresna_domain_l,
-        grtresna_nx=n,
-        grtresna_ny=n,
-        grtresna_nz=n,
+        grtresna_nx=grtresna_n,
+        grtresna_ny=grtresna_n,
+        grtresna_nz=grtresna_n,
         gridinit_nx=n,
         gridinit_ny=n,
         gridinit_nz=n,
     )
     overrides = {**overrides, **domain.evolution_overrides()}
+
+    if args.solve_only and args.gridinit is not None:
+        parser.error("--solve-only and --gridinit are mutually exclusive")
 
     use_grtresna = args.gridinit is None
     grtresna_config = None
@@ -431,6 +511,8 @@ def main() -> int:
         grtresna_config = GRTresnaConfig(
             mpi_ranks=args.grtresna_ranks,
             max_NL_iterations=args.grtresna_iterations,
+            nl_exit_tolerance=args.grtresna_nl_exit_tolerance,
+            nl_stall_tolerance=args.grtresna_nl_stall_tolerance,
             timeout=args.grtresna_timeout,
             max_level=args.grtresna_max_level,
             refine_threshold=args.grtresna_refine_threshold,
@@ -447,6 +529,11 @@ def main() -> int:
             cleanup=True,
         )
         grtresna_config = domain.apply_to_solver(grtresna_config)
+        if args.grtresna_maximal_slicing:
+            # fit_matter only ever turns maximal_slicing ON, so forcing it here
+            # survives the matter fit that runs later.
+            grtresna_config.maximal_slicing = True
+            apply_exotic_safe_solver(grtresna_config)
     else:
         gridinit = args.gridinit.expanduser().resolve()
         if not gridinit.is_file():
@@ -456,7 +543,7 @@ def main() -> int:
             gridinit,
             evolution_center=evolution_center,
         )
-        overrides.update(_load_matter_replay_overrides(source_eval))
+        overrides.update(_load_matter_replay_overrides(source_eval, gridinit))
         matter_model = overrides.get("recipe_matter_model")
         if matter_model == GRTRESNA_BICOMPLEX_SCALAR_MODEL:
             # Force the full canonical+phantom channel set so HQ frames can show
@@ -484,7 +571,7 @@ def main() -> int:
     example = resolve_example("RadialRecipe")
     template = example.template
     executable = None
-    if not args.dry_run:
+    if not args.dry_run and not args.solve_only:
         executable = resolve_executable(
             None,
             example=example,
@@ -494,7 +581,12 @@ def main() -> int:
             debug=False,
         )
 
-    mode = "grtresna+gpu" if use_grtresna else "gpu-only"
+    if args.solve_only:
+        mode = "solve-only"
+    elif use_grtresna:
+        mode = "grtresna+gpu"
+    else:
+        mode = "gpu-only"
     print(
         f"[replay] {source_eval.name} -> {runs_dir / args.name} "
         f"(L={l_full:g}, N={n}, t={args.stop_time}, GPU={args.gpu}, mode={mode})",
@@ -528,6 +620,7 @@ def main() -> int:
         grtresna_base=grtresna_config,
         grtresna_solved_ftl_gate=False,
         grtresna_convergence_config=grtresna_convergence_config,
+        solve_only=args.solve_only,
     )
     print(
         json.dumps(

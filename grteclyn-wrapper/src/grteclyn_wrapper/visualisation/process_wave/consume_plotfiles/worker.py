@@ -10,14 +10,45 @@ import numpy as np
 from .extraction.areal import _extract_areal_radius_min
 from .extraction.central import _extract_central_timeseries_line
 from .extraction.confinement import _extract_confinement_line
+from .extraction.sector_barycenters import _extract_sector_barycenters_line
+from .extraction.sector_dynamics import _extract_sector_dynamics_line
 from .extraction.ftl import _extract_ftl_timeseries_line
 from .extraction.psi4 import _extract_mode_amps_l2m0, _extract_mode_amps_l2_all
+from .extraction.psi4_higher_l import (
+    extract_higher_l_modes,
+    higher_l_line as _higher_l_line,
+    parse_ells as _parse_ells,
+)
 from .extraction.shell import _extract_shell_field_stats, _format_shell_stats_line
 from .fields import _canonical_field_name
 from .frames.embedding import _render_embedding_frame
 from .frames.projection import _render_projection_frame
 from .frames.slice import _render_slice_frame
 from .plotfiles import _parse_plot_index
+
+
+def _load_plotfile_with_retry(yt, p: str, retries: int = 3, delay_s: float = 10.0, verbose: bool = False):
+    """Load a plotfile, retrying on NFS visibility errors.
+
+    Under NFS close-to-open semantics the plotfile metadata can report the
+    file as present while the data blocks are not yet readable on this client,
+    yielding transient FileNotFoundError/OSError.  Retry a few times with a
+    fixed backoff before giving up.
+    """
+    last_exc: Exception | None = None
+    for attempt in range(retries + 1):
+        try:
+            return yt.load(p)
+        except (FileNotFoundError, OSError) as exc:
+            last_exc = exc
+            if attempt < retries:
+                if verbose:
+                    print(
+                        f"WARNING: yt.load failed for {os.path.basename(p)} "
+                        f"(attempt {attempt + 1}/{retries + 1}): {exc}; retrying in {delay_s}s"
+                    )
+                time.sleep(delay_s)
+    raise last_exc
 
 
 def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_frame_idx: int) -> dict:
@@ -50,7 +81,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
     }
 
     try:
-        ds = yt.load(p)
+        ds = _load_plotfile_with_retry(yt, p, verbose=args_dict.get("verbose", False))
         t = float(ds.current_time)
         result["t"] = t
         key = result["key"]
@@ -120,6 +151,26 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                     f"  {beaming_gain:.16e}  {wavezone_std:.16e}"
                 )
 
+            # Higher multipoles (l>=3) -- own stream, own flag, l=2 untouched.
+            # Failure here must not take down the l=2 streams, which are the
+            # published ones; log and carry on.
+            if args_dict.get("psi4_higher_l"):
+                try:
+                    ells = _parse_ells(args_dict.get("psi4_ells"))
+                    modes_by_l = extract_higher_l_modes(
+                        ds,
+                        radii=radii,
+                        n_points=int(args_dict["n_points"]),
+                        center=args_dict["center"],
+                        ells=ells,
+                    )
+                    result["psi4_higher_l_line"] = _higher_l_line(
+                        t, modes_by_l, ells, len(radii)
+                    )
+                except Exception as exc:
+                    if args_dict.get("verbose", False):
+                        print(f"WARNING: higher-l Psi4 extraction failed for {key}: {exc}")
+
         shell_fields = list(args_dict.get("shell_fields") or [])
         if shell_fields:
             try:
@@ -164,6 +215,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                         auto_zlim=args_dict.get("frames_auto_zlim"),
                         frame_zlims=args_dict.get("frame_zlims"),
                         use_global_zlim=args_dict.get("frames_global_zlim", True),
+                        cache_slices=bool(args_dict.get("frames_cache_slices", False)),
                     )
                 except Exception as exc:
                     if args_dict.get("verbose", False):
@@ -236,6 +288,23 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                 p,
                 t=t,
                 well_width=float(args_dict.get("confinement_well_width", 1.5)),
+                verbose=args_dict.get("verbose", False),
+            )
+
+        if args_dict.get("sector_barycenters"):
+            result["sector_barycenters_line"] = _extract_sector_barycenters_line(
+                p,
+                t=t,
+                matter_model=str(args_dict.get("matter_model") or ""),
+                well_width=float(args_dict.get("confinement_well_width", 1.5)),
+                verbose=args_dict.get("verbose", False),
+            )
+
+        if args_dict.get("sector_dynamics"):
+            result["sector_dynamics_line"] = _extract_sector_dynamics_line(
+                p,
+                t=t,
+                level=int(args_dict.get("sector_dynamics_level", 0)),
                 verbose=args_dict.get("verbose", False),
             )
 

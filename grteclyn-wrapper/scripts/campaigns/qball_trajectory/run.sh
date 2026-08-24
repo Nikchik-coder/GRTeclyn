@@ -75,9 +75,19 @@ export GRTRESNA_FULL_Z=1
 export GRTRESNA_ALLOW_SIGN_MISMATCH="${GRTRESNA_ALLOW_SIGN_MISMATCH:-0}"
 # Honest open-system pump accounting in the score (does not restore Bianchi).
 export SCORE_PUMP_ENERGY_WEIGHT="${SCORE_PUMP_ENERGY_WEIGHT:-40}"
-# Transient igniter: k_p=0 after t*; score f_geo only for t_emit>=t* (unset to
-# leave the pump on for the full stop_time).
-export RL_PUMP_STOP_TIME="${RL_PUMP_STOP_TIME:-4}"
+# Pump runs for the FULL stop_time (-1 => never stops).  Debug.md 9 measured a
+# direct ablation on the HQ ladder: driving for 4-24 units gives a peak L2_Ham
+# no worse than not driving at all (tp4 3.90e-3 vs unpumped 4.27e-3), with the
+# hard boundary at t_pump=24 (16 in this fast tier).  At stop_time=16 the whole
+# run sits inside the validated band, so the 4-unit igniter was leaving 12 of
+# 16 units unpumped for no constraint-budget reason.
+export RL_PUMP_STOP_TIME="${RL_PUMP_STOP_TIME:--1}"
+# RL_PUMP_STOP_TIME doubles as the f_geo emission floor (metrics/score/ftl.py
+# prefers GEODESIC_EMIT_MIN_TIME, else falls back to it).  With the pump always
+# on that fallback yields no floor at all, so every ray from t=0 would count and
+# f_geo would silently change meaning.  Pin the floor explicitly at the old
+# igniter time to keep scores comparable across campaigns.
+export GEODESIC_EMIT_MIN_TIME="${GEODESIC_EMIT_MIN_TIME:-4}"
 # Bicomplex plot channels for frames / confinement.
 export FRAMES_FIELDS="${FRAMES_FIELDS:-scalar_activity phi Pi phi_lump0 Pi_lump0 phi_lump1 Pi_lump1 phi_lump2 Pi_lump2 chi chi_minus_1 local_speed shift1 rho_req}"
 export PROJECTION_FIELDS="${PROJECTION_FIELDS:-scalar_activity phi}"
@@ -118,7 +128,17 @@ trajectory_lump4_well_depth=0.15 \
 trajectory_well_width=1.667}"
 
 # --- Evolution (stop_time must be set before EXTRA_SETS for spiral radius clamp) ---
-export STOP_TIME="${STOP_TIME:-16.0}"
+# 20, not 16: the evolving-geodesic probe counts a ray only if it arrives before
+# the last stored slice (no frozen-tail credit).  Flat crossing takes 14.4 and
+# the emit floor is t=4, so at stop_time=16 a t=4 launch needed a >=17% shortcut
+# just to arrive in time -- pump_v1 measured exactly that: 96 of 100 completed
+# evals scored f_geo=0 and the only nonzero values were 0.169-0.212.  MAP-Elites
+# had no gradient below the 17% cliff.  At 20 the t=4 launch arrives by 18.4
+# even flat, so f_geo is continuous from 0 and sub-17% shortcuts (e.g. the
+# 13.8% champion) score.  Pump stays on the full run; t_pump=20 sits inside the
+# HQ-validated band (tp<=24, Debug.md 9) but past the fast-tier measurement
+# (tp16) -- the tanh governor is the backstop, watch the gpu_failed rate.
+export STOP_TIME="${STOP_TIME:-20.0}"
 export PLOT_INTERVAL="${PLOT_INTERVAL:-320}"
 
 # Non-search-space overrides passed as --set via EXTRA_SETS (base overrides).
@@ -160,6 +180,7 @@ echo "   GPUs: ${GPU_IDS} (batch=${BATCH_SIZE})  target_evals=${QD_TARGET_EVALS}
 echo "   Matter: grtresna_bicomplex_scalar (per-lump exotic signs retained in evolution)"
 echo "   Search: 39-D pinned (includes v_rad spiral drift per lump)"
 echo "   Score:  general_ftl + SCORE_EXOTIC_PENALTY_WEIGHT=${SCORE_EXOTIC_PENALTY_WEIGHT} + SCORE_FTL_DISPERSION_GATE=${SCORE_FTL_DISPERSION_GATE} + SCORE_PUMP_ENERGY_WEIGHT=${SCORE_PUMP_ENERGY_WEIGHT:-40}"
+echo "   Pump:   rl_pump_stop_time=${RL_PUMP_STOP_TIME} (-1 = on for the full stop_time=${STOP_TIME}); f_geo emit floor=${GEODESIC_EMIT_MIN_TIME}"
 echo "   Pipeline: max_grtresna=${MAX_CONCURRENT_GRTRESNA} scoring_workers=${SCORING_WORKERS:-<#GPUs>} (scoring runs off the GPU-lease path)"
 
 if [[ "${PIPELINE_MONITOR:-1}" == "1" ]]; then

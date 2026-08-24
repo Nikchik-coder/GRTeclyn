@@ -43,6 +43,26 @@ struct RLMatterPumpParams
     //! falls back to the legacy additive-source pump.
     double k_p{0.0};
     double k_d{0.0};
+    //! Per-sector gain override for the PHANTOM (Phi-) field.  Negative => the
+    //! phantom sector inherits ``k_p`` / ``k_d`` (the historical behaviour, so
+    //! existing configs are bit-identical).
+    //!
+    //! WHY THIS EXISTS.  The two sectors need different authority, not the same
+    //! authority.  Measured on the mode-0 pump ladder (runs/pump/pump_ladder_m0,
+    //! t in [13, 30], confined_frac decay rate per unit time):
+    //!
+    //!     sector      pump off   pump on    outcome
+    //!     canonical     0.100      ~0.000   decay ARRESTED (plateau ~0.50)
+    //!     phantom       0.217       0.076   decay only SLOWED (2.9x)
+    //!
+    //! With one shared gain the controller removes a similar absolute amount of
+    //! decay from each sector (~0.10 canonical, ~0.14 phantom), but the phantom
+    //! sector's intrinsic dispersal rate is 2.2x larger, so the same authority
+    //! arrests one and merely slows the other.  The shortfall is ~0.076 per unit
+    //! time of unsuppressed phantom decay.  Raising only the phantom gain is the
+    //! minimal lever that targets it without perturbing the canonical plateau.
+    double k_p_phantom{-1.0};
+    double k_d_phantom{-1.0};
     //! Trap-target matter profile shape and scale.  ``target_profile`` 0 =>
     //! Gaussian (legacy), 2 => sech bound lump (correct exponential tail).
     //! ``target_width`` is the physical bound-state size 1/sqrt(m^2-omega^2);
@@ -60,6 +80,19 @@ struct RLMatterPumpParams
     //! excites a breathing mode that collapses the star.  <= 0 => use
     //! ``site.amplitude`` (legacy).
     double target_amp{0.0};
+    //! Superposed-target PD law (0 => legacy per-site errors).  With per-site
+    //! errors, overlapping same-sector sites each compare the field against
+    //! THEIR OWN lump alone, so in the overlap the (superposed) field looks
+    //! like an excess to every site and their down-drives sum -- the
+    //! controller strips matter exactly where lumps touch.  Measured on
+    //! pump_confine_b/pcb_match: the two canonical sites are 8.9 apart
+    //! (overlap 9e-3, sector +11% by t=1.44) while the three phantom sites
+    //! sit 4.6-5.0 apart (overlap ~0.1, sector -19%).  When enabled, sites of
+    //! the selected sector accumulate ONE summed target and one summed
+    //! envelope, the PD error is taken against that superposition, and the
+    //! weight is capped at min(sum env, 1) so overlaps do not multiply the
+    //! gain.  Reduces exactly to the legacy law for an isolated site.
+    int superpose_targets{0};
 };
 
 namespace RLRuntime

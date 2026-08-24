@@ -21,6 +21,344 @@ env) is configured with a gitignored [`.env`](#site-paths-env) — see below.
 
 ---
 
+## Running a campaign without numerical artifacts
+
+Read this before launching anything whose numbers will be believed. Rules 9 and 10 are the preflight — run them first; 9 checks the cell, 10 checks the machine; 11 is how to tell a launch actually happened. Every rule
+below is here because breaking it silently produced a result that looked clean
+and was wrong. The full diagnosis of each is in
+[`research/bondi_dipole/docs/MatterDebugg.md`](../research/bondi_dipole/docs/MatterDebugg.md).
+
+### 1. The solve grid must land exactly on the evolution grid
+
+The elliptic solve runs in its own box and the answer is copied onto the
+evolution grid cell by cell. That copy is piecewise constant with last-source-
+wins, so **whenever a solve cell is smaller than an evolution cell the metric
+arrives displaced by a fraction of a cell.** The matter does not move with it —
+it is repainted analytically, exact to machine precision — so every star is born
+sitting off the centre of its own gravitational well. Canonical matter falls
+back down that well, phantom matter is pushed up it, and the resulting drift
+looks exactly like a physical interaction.
+
+Set the solve cells so the two spacings are equal, and refine the solve not at
+all:
+
+```
+BONDI_GRTRESNA_N        = NFULL * (GRTRESNA_DOMAIN_L / LFULL)
+BONDI_GRTRESNA_MAXLEVEL = 0
+```
+
+For the standard `L = 64`, `N = 128` grid solved in an `L = 128` box that is
+`N = 256`, no refinement. Resolving the initial data *finer* than the grid it
+will be evolved on buys nothing and costs exactly this.
+
+**Verify it, before spending GPU time** — the check runs in seconds on the file
+the solve drops:
+
+```bash
+grteclyn-wrapper/.venv/bin/python research/bondi_dipole/check_gridinit_alignment.py \
+    runs/<campaign>/<cell>/<eval>/initial_data.gridinit
+```
+
+The metric-minus-matter offset must be `0.0000`. Anything at the `1e-2` level
+means the transfer is interpolating and the run will drift.
+
+### 2. Refining the evolution grid alone makes the initial data worse
+
+The initial data's own constraint violation grows as `1/dx²`, so a finer
+evolution cell starts from a *worse* slice unless the solve grid is refined with
+it. A resolution study that only changes `N` is measuring the error floor, not
+convergence. Rule 1 is what keeps the pair matched.
+
+### 3. Check the matter before believing any geometry diagnostic
+
+A star that has quietly dissolved makes every geometry diagnostic look perfect —
+lapse flat, constraints small, no collapse. Confirm the peak amplitude and the
+confined fraction are steady over the run *first*; only then read the geometry.
+Beware the reverse error too: the campaign scorer flags "matter DISPERSED"
+against an absolute threshold, so a star family that sits at 27% confinement by
+construction trips it while being perfectly stable. Compare against the run's
+own `t = 0`, not against a constant.
+
+### 4. Never trust a diagnostic quantised coarser than its signal
+
+`proper_sep` integrated between integer *peak cell* indices, so it could not
+resolve anything finer than one cell — while the signal it was asked to measure
+was a fifth of that. It read as perfectly constant, then jumped a whole cell.
+Fixed 2026-08-21; **values written before that date must not be compared with
+values written after it.** When a column looks suspiciously flat or steppy,
+check what it is actually computed from.
+
+### 5. Do not edit a campaign script while a run is executing it
+
+bash reads a script lazily, by byte offset. Inserting lines near the top shifts
+every later byte, and the already-running instance resumes at a stale offset —
+it will execute a line that uses a variable whose assignment it never read, and
+die at the very end with a misleading `unbound variable`. Copy to a new name and
+edit the copy. The failure lands *after* all the real work, so check the
+evaluator's `exit_code` and the frame counts before believing the run is lost.
+
+### 6. Cache the slices if the movies are going in a paper
+
+Frames are rendered as plotfiles arrive and the plotfiles are deleted
+immediately — they are far too large to keep, and
+[rule: extract frames on the fly](#always-extract-frames-on-the-fly-required)
+is not negotiable. So the renderer can never know how large a field will grow
+later in the run, and both of its options are wrong for a paper movie:
+rescaling every frame makes the colourbar and its tick labels move in every
+frame, so a colour means a different number each time; locking the scale from
+the first plotfile is still but puts late-time features off the end of it,
+because `chi` starts nearly flat and develops its well later.
+
+What the renderer draws is a single 2-D slice, and that slice is already in
+memory. It is around ten thousand times smaller than the plotfile it came from —
+at `N = 512`, roughly 1 MB out of a ~30 GB plotfile — so it can be kept for the
+whole run at negligible cost. Add to the consumer:
+
+```
+--frames-cache-slices
+```
+
+Then, once the run has finished, redraw every frame against one scale measured
+over the whole series:
+
+```bash
+grteclyn-wrapper/scripts/plot/rerender_frames.py <episode>/frames --movies
+```
+
+The scale is the envelope of what each frame would have chosen on its own, so
+nothing is clipped, the colourbar is pixel-identical in every frame, and colours
+are comparable across time. Delete `frames/_slice_cache/` when the movies are
+final.
+
+**This has to be decided before launching.** Frames already rendered without the
+cache cannot be rescaled — the plotfiles they came from are gone. Caching covers
+the uniform-grid path (`max_level = 0`), which is what rule 1 requires anyway;
+AMR levels still draw through yt's buffer and are not cached.
+
+(`--frames-zlim-scan` does the same job by reading the plotfiles directly, for
+the rare case where they were kept.)
+
+### 7. A green test suite does not cover potential-dependent matter
+
+Every test in `Tests/` uses a zero potential, so any term multiplied by `V`
+is multiplied by nought and the suite passes regardless. A star made of
+potential is exactly the case that was never tested — which is how the trS bug
+below survived. Add a non-zero-potential case when touching matter terms.
+
+### 8. The solve tolerance is a request, not a guarantee — check which door it left by
+
+`BONDI_NL_TOL` sets a target. The solver leaves its nonlinear loop by three
+different doors and **only one of them means the initial data is as good as it
+was asked to be**:
+
+| door | what happened | is the tolerance met? |
+|---|---|---|
+| `converged` | both relative errors fell below `NL_exit_tolerance` | yes |
+| `stalled` | improvement per iteration fell below `NL_stall_tolerance`, so the loop gave up | **no — it can stop anywhere above it** |
+| cap | `max_NL_iterations` ran out (default 50) | **no, and no line is printed saying so** |
+
+Nothing downstream checks which door was used. The Python layer reads the final
+residuals and logs `GRTresna converged: ...` unconditionally — that message is a
+label, not a verdict — and the evolution then runs on initial data that never
+met its target. Such a run looks completely normal: star still, lapse flat,
+constraints "small". They are simply not as small as the launch script claims,
+which silently turns a convergence ladder into a measurement of the error floor
+(and see rule 2 — the ladder depends on the tolerance falling with the grid).
+
+**The defaults make this easy to hit.** `GRTresnaConfig` ships
+`nl_exit_tolerance = 1.0` — one percent — because it was tuned for MAP-Elites
+throughput, where thousands of cheap solves matter more than any one of them
+being tight. Anything that does not override it inherits a search campaign's
+tolerance into a paper run.
+
+Unlike the rules above, this one was caught by inspection rather than by a
+ruined campaign: every cell in `runs/bondi/staging/archive/` was audited on
+2026-08-22 and all of them genuinely converged, at iteration 12 of 50, about 2x
+inside the 0.002% they asked for. Two-fold headroom is not much, so the check is
+worth running on every new cell rather than assumed from these.
+
+Check it on the two files that survive archiving (`Ham_and_Mom_errors.txt` and
+the solve's own `params.txt`; the per-rank `pout` logs are deleted):
+
+```bash
+grteclyn-wrapper/.venv/bin/python research/bondi_dipole/check_solve_exit.py \
+    runs/<campaign>/<cell>
+```
+
+Exit status is the gate. It also fails a solve that met the tolerance only on
+the last permitted iteration — that is met-by-luck, and the next rung of a
+ladder will not be so lucky.
+
+Remember which side binds: the phantom sector's residual is the one that
+approaches the gate, the canonical sector's sits far inside it. Reading only
+the canonical number will tell you everything is fine when it is not.
+
+### 9. Preflight every cell against the cell it will be compared with
+
+Rules 1-8 each judge a cell on its own. A cell can pass all of them — aligned
+grid, converged solve, intact matter — and still be worthless, because what
+makes it worthless is a difference from the run it is *read against*. Nothing
+above looks at two cells at once, and on 2026-08-22 that gap cost a relaunch.
+
+**What happened.** GRTresna switches to the maximal-slicing `K = 0` path *by
+itself* whenever any lump carries negative energy: the CTTK ansatz
+`K = sign·sqrt(24πGρ)` is imaginary for `ρ < 0`, so it has no choice. Switching
+it also relaxes psi to 0.6, sets a psi floor of 0.1, and moves coefficient
+averaging from harmonic to arithmetic. A command copied from any
+phantom-bearing cell inherits all four **invisibly** — they appear nowhere in
+the launch script, because nobody asked for them. Delete the phantom star and
+all four vanish just as silently. The all-canonical null control was built by
+copying the mixed pair's command and changing the sector flags, so it was born
+on an already-collapsing slice while the cell it was the null *for* started
+flat. Every per-cell gate passed.
+
+**Why the dry run does not save you.** `BONDI_DRYRUN=1` cannot show this: the
+solve's parameter file does not exist until the solve runs, and the dry run's
+own metadata does not record the choice. The first moment the truth is written
+down is *after* the CPU time is spent.
+
+So the check has to read the launch script — the only artefact that exists
+before anything is spent:
+
+```bash
+grteclyn-wrapper/.venv/bin/python research/bondi_dipole/preflight_cell.py \
+    runs/<campaign>/<cell>/launch.sh \
+    --reference runs/bondi/staging/archive/runaway_pair_d10_L64_N128_lev0/launch.sh
+```
+
+Exit status is the gate. It enforces rule 1's grid-alignment arithmetic and
+rule 8's tolerance, refuses an all-canonical cell that has not asked for
+`BONDI_GRTRESNA_MAXIMAL_SLICING=1`, and — given a reference — reports **every**
+knob that differs and was not meant to. That last part is the general lesson:
+the knobs a cell is supposed to vary are a short list, and anything else that
+differs is a surprise, and a surprise is the bug.
+
+The general shape of this failure is worth keeping in mind beyond this one
+flag: **a setting applied automatically on a condition is a setting that
+disappears automatically when the condition does.** Whenever behaviour is
+switched on by a property of the physics rather than by a line someone wrote,
+changing the physics silently changes the numerics too.
+
+### 10. Preflight the machine, not just the cell — solves starve evolutions
+
+Elliptic solves and GPU evolutions do not share this node peacefully, and the
+cost is far larger than a core count suggests.
+
+**What was measured, 2026-08-22.** Four evolutions running alone held ~150-183
+units of evolution time per hour each — matching the archive, whose ten cells
+also ran four-at-a-time at 183. Starting three 32-rank solves alongside them
+dropped the same four to **24-56 t/hour**, a five-fold loss, cards reading
+41-55% instead of 82-95%. Killing the solves restored them within minutes.
+
+**It is not core exhaustion, so do not reason from core counts.** Measured with
+`sweep_ranks.py`, four evolutions plus their four consumers draw only ~720% —
+about seven of 128 cores — and even 133 solver ranks added just ~5000% more.
+Less than half the machine was busy on paper while the evolutions ran at a
+fifth speed. The contention is for memory bandwidth and scheduler latency, not
+for cores: multigrid sweeps over a 384³-512³ grid saturate memory traffic, and
+the evolution's host thread has to be scheduled promptly every step to keep its
+card fed. A GPU run can be starved by a machine that looks half idle.
+
+**The practical rule.** GPU-hours are the scarce resource in a campaign like
+this (~59 of them against ~14 hours of solving), so protect them: run at most
+**one 32-rank solve while four evolutions are in flight**, and let a solve
+queue wait on the number of live evolutions rather than on free cores or an
+idle-looking card. Check the *evolution rate* after starting anything new —
+`t/hour` from `sector_dynamics.dat` — because the card's utilisation percentage
+is bursty and will not tell you plainly.
+
+**Killing a solve is not the same as stopping it.** `kill -TERM` on the
+launcher's process group leaves the MPI ranks running: after three solves were
+"stopped" that way, 133 GRTresna ranks were still in state `R` and the
+evolutions stayed starved until someone noticed. The tell-tale is `.nfs*` files
+left under the run directory — handles held by processes that are very much
+alive. Never wave a kill at this and assume it landed; use the sweeper, which
+re-checks and exits non-zero if anything survived:
+
+```bash
+# what is running, with real per-process CPU (changes nothing)
+grteclyn-wrapper/scripts/ops/sweep_ranks.py
+
+# stop every elliptic solve, leave the GPU evolutions untouched
+grteclyn-wrapper/scripts/ops/sweep_ranks.py --kill solves
+
+# stop everything belonging to one cell
+grteclyn-wrapper/scripts/ops/sweep_ranks.py --kill all --match <cell-name>
+```
+
+**Why the ordinary tools cannot help here.** `/proc/stat` and `/proc/loadavg`
+are broken on this node (`Transport endpoint is not connected`), so `ps`,
+`top`, `uptime`, `pgrep`, `pkill`, `killall` and `free` all fail or return
+nothing, and `nvidia-smi --query-compute-apps` reports no PIDs. Counting
+`pout.N` files is not a substitute either — they persist after the writer dies,
+so a finished solve looks identical to a running one. The per-PID files under
+`/proc` do work, which is what the sweeper walks.
+
+**Starvation slows a run; it never corrupts one.** The evolution is
+deterministic in its own time coordinate, so being descheduled costs wall-clock
+and nothing else. Confirmed rather than assumed: the mirror cell ran through the
+entire starved window and reproduced the archived cell it mirrors to every
+printed digit — same sector totals, same rms, same core positions. The one thing
+genuinely spoiled is `simulation_elapsed_seconds`: a starved cell's wall time is
+meaningless and must stay out of the campaign plan's ledger.
+
+See also [Rules (do not skip)](#rules-do-not-skip) for the campaign-mechanics
+rules (population sizing, scratch locality, pump convention).
+
+### 11. A launch that prints nothing did not happen — never prefix a launcher with `env`
+
+**What was measured, 2026-08-24.** Six consecutive attempts to start the 0.3c
+chase cell through `env BONDI_...=... bash run_pair_selfgrav.sh` all returned
+exit 0 within a second — no output, no launcher process, no `launcher.pid`, no
+cell directory, and an empty `bash -x` trace. The identical command with bare
+`BONDI_...=... bash run_pair_selfgrav.sh` prefixes worked on the first try.
+
+**The mechanism.** Sandboxed and agent-driven shells may stub `env` out: the
+stub returns success without executing its argument. An interactive terminal
+has the real `/usr/bin/env`, which is why the same line works when a person
+pastes it and dies silently when a harness runs it. `set -euo pipefail` cannot
+save you — the script never starts, so there is nothing to fail — and the
+exit code is 0, so every "did it work" check based on status passes.
+
+**The practical rule.** Launch with plain `VAR=value cmd` prefixes; they are
+POSIX, they survive `setsid`/`nohup` chains (put them before the whole chain),
+and they need no external binary. And judge a launch by evidence, never by
+exit code: within seconds a real launch has a live launcher PID, a growing
+launch log, and a `launcher.pid` in the runs directory. Absence of any one of
+those means the launch did not happen, whatever the shell said.
+
+**The debris trap that compounds it.** A `--dry-run` (or an aborted launch)
+leaves a cell directory containing `params.txt`, `metadata.json` and a
+`score.json` full of nulls — and the launcher's already-exists guard then
+kills every later *real* launch of that cell instantly. When a "running"
+cell is suspect, check for an evolution log and a non-empty `data/` before
+believing it; the dry-run signature is everything written within one second
+and `data/` empty. Delete the debris and launch again.
+
+## What was fixed — 2026-08-21
+
+Five defects, found while chasing a spurious drift in the Bondi dipole campaign.
+The first three each invalidated results that had already been written up.
+
+| # | Defect | Why it went unseen | Effect once fixed |
+|---|---|---|---|
+| 1 | The matter stress-energy **trace `trS` subtracted the potential twice**, in every matter class in the tree. Proven exactly against the covariant `T_ab`: `rho`, `j_i`, `S_ij` correct, `trS` short by `-3V`. | `trS` feeds only `rhs[c_K]` — invisible to the constraint monitor — and the whole test suite uses `V = 0`. | Stars that marched to a horizon by `t = 24` became static: lapse `0.99202` against a birth `0.99209`. |
+| 2 | **Canonical stars were born mid-collapse** while phantom ones were born at rest — one line choosing the constraint-solving method gave the two sectors different slices. | An asymmetry with no physical content looks like a physical asymmetry between the sectors. | Removed a birth kick present in every canonical cell ever run. |
+| 3 | **The solved metric arrived on the evolution grid displaced** by ~0.1 cell (rule 1 above), identically on all three axes. | It produces a clean, smooth, sign-flipping drift — indistinguishable from a real interaction, and it does not converge away with resolution. | A lone star's drift over `t = 200` fell from `-0.328` on all three axes to `1.8e-03`, a `269x` reduction. The measured pair acceleration then matched `GM/d²` directly, with nothing subtracted. |
+| 4 | **`proper_sep` was quantised** to whole cells (rule 4 above). | It returned plausible round numbers. | The column now resolves sub-cell separations exactly; it is unused by any published number. |
+| 5 | **Movie colourbars rescaled per frame** (rule 6 above). | Cosmetic, but a colour then means a different value in every frame, and it cannot be repaired afterwards once the plotfiles are gone. | `--frames-cache-slices` + `rerender_frames.py` give one fixed scale per run, verified pixel-identical across frames. |
+
+An important negative result, worth knowing before re-deriving anything: defect 3
+corrupted only the *relative* motion of a pair. The common-mode motion — the
+runaway itself — was unaffected, matching between old and corrected runs to
+about 3%. Differential measurements that difference two cells at the same
+separation were likewise immune, because the artefact cancels.
+
+The corrected campaign and its data are in
+[`results/bondi-dipole-runaway/campaign/`](../results/bondi-dipole-runaway/campaign/).
+
+---
+
 ## What is implemented
 
 | Capability | Where | Notes |
@@ -31,11 +369,12 @@ env) is configured with a gitignored [`.env`](#site-paths-env) — see below.
 | **Plotfile consumer** — streaming `small_data/` + PNG `frames/` + HDF5 deletion | `scripts/lib/`, `src/.../visualisation/` | `consume_plotfiles` sidecar; **required** for every production run |
 | **Ψ₄ / GW extraction** — in-code C++ `WeylExtraction` (spherical-harmonic modes) | `Examples/RotatingWormholeCollapse/`, `src/.../visualisation/process_wave/` | **Primary: in-code GRTeclyn `SphericalExtraction`** → `data/Weyl4_mode_2{0,1,2}.dat`, dense (every coarse step), multi-radius, decoupled from plotfiles. Python `process_wave` sidecar still extracts a coarse cross-check + drives frames |
 | **Search algorithms** — MAP-Elites (QD) archive, CMA-ES hill-climb | `src/.../search/qd_search/`, `src/.../search/optimize/` | Shared pre-evolution gates; warm-start from any trajectory |
-| **Objectives** — `ftl_first`, `robust_ftl`, `general_ftl`, `critical_collapse`, `gw_beam`, `spacetime_shear` | `src/.../metrics/score/objectives.py` | See [Campaigns](#campaigns) for which objective each campaign uses |
+| **Objectives** — `ftl_first`, `robust_ftl`, `general_ftl`, `f_geo_max`, `f_geo_depth`, `critical_collapse`, `gw_beam`, `spacetime_shear` | `src/.../metrics/score/objectives.py` | See [Campaigns](#campaigns) for which objective each campaign uses |
 | **Descriptors** — `ftl_lifetime`, `speed_horizon`, `wave_focusing`, `spacetime_shear`, `gw_beam` | `src/.../search/qd_search/descriptors.py` | Behavior axes for the MAP-Elites archive |
 | **4D null-geodesic probe** — gauge-invariant FTL shortcut measurement | `src/.../metrics/probes/ftl/` | `search` (cheap) and `hq` (full verify) profiles; continuous emission sweep |
 | **Falsification tiers** — T0 constructed → T6 analytic | `scripts/search/validate_tiers.py` | Offline ladder; no rerun needed |
 | **Geometry-first projection** — motif scout → GRTresna solve | `src/.../initial_data/motif.py`, `grtresna/fit/motif.py`, `projection/` | Additive second stage; never push fitted matter directly into GRTeclyn |
+| **Pure-geometry MAP-Elites atlas** — Stage-1 stationary metric scout | `src/.../search/geometry_atlas/`, `scripts/campaigns/geometry_atlas/run.sh` | Searches broad asymptotically flat 4-metrics (no matter); scores frozen `f_geo` + stationary `f_ff` vs exotic-energy cost; see [`docs/GeometryFirst.md`](docs/GeometryFirst.md) |
 | **Iterative matter adjustment** — CMA-ES loop over lump params (GRTresna-only) | `projection/iterate.py`, `projection/mismatch.py` | `--iterate N` on `project_geometry_motif.py`; L2 geometry-mismatch fitness; closes the fit→solve→compare loop |
 | **Post-load constraint gate** — short GPU load check of `.gridinit` | `projection/postload_gate.py` | Rejects bad loads before the expensive main evolution |
 | **Solved-FTL gate** — cheap t=0 filter on `.gridinit` | `search/solved_ftl_gate.py` | ~1 s/candidate; rejects flat/degenerate slices |
@@ -58,6 +397,14 @@ specialized single-stage campaigns. Each campaign has its own launcher under
 | **1 — CMA-ES** | Local hill-climb from QD elites | `scripts/campaigns/cmaes/run.sh` | `runs/grtresna_cmaes/<name>/` |
 | **2 — HQ** | Full-res replay + frames | `scripts/campaigns/hq/run_batch.sh` | `runs/grtresna_promote/<prefix>_hq_eval*/` |
 
+**Geometry-first Stage-1 scout** (independent of the matter-first ladder above):
+
+| Stage | What it does | Launcher | Output directory |
+|-------|--------------|----------|------------------|
+| **G0 — geometry atlas** | MAP-Elites over stationary metrics; frozen `f_geo` / `f_ff` | `scripts/campaigns/geometry_atlas/run.sh` | `runs/geometry_atlas/<name>/` |
+
+This is a pure-geometry scout. It does **not** replace matter-first QD/CMA-ES; elites later hand off to `project_geometry_motif.py` for matter synthesis. Stationary atlas scores are screening metrics only — dynamical shortcuts still require GRTeclyn evolution.
+
 Shared search defaults (grid, gates, 4D probe, objective) live in
 `scripts/campaigns/lib/search_common.sh`. HQ defaults in
 `scripts/campaigns/lib/promote_common.sh`. QD and CMA-ES **must** stay aligned
@@ -69,11 +416,14 @@ shortcuts survive refinement.
 
 | Campaign | Launcher | Objective | Descriptor | Matter | What it searches for |
 |----------|----------|-----------|------------|--------|----------------------|
+| **`geometry_atlas`** | `scripts/campaigns/geometry_atlas/run.sh` | stationary `f_geo`/`f_ff` | `f_geo` × log exotic energy | none (pure geometry) | Broad stationary metric atlas; Stage-1 inverse-design scout |
 | **`general_ftl` (wormhole/ring/spin)** | `scripts/campaigns/general_ftl/run_all.sh` | `general_ftl` | `ftl_lifetime` | real scalar (pinned 15-D subspace) | FTL shortcut on a wormhole/ring/spin geometry; current production path |
 | **`ftl_4d` (generic QD)** | `scripts/campaigns/qd/run.sh` | `ftl_first` | `ftl_lifetime` | real scalar shell/ring/free | Generic FTL discovery |
 | **`qball_trajectory` (spiral)** | `scripts/campaigns/qball_trajectory/run.sh` | `general_ftl` | `ftl_lifetime` | complex scalar Q-ball, 5 per-lump orbits (39-D) | FTL from compact solitons on retrograde spiral orbits |
 | **`qball_trajectory` (Lentz)** | `scripts/campaigns/qball_trajectory/run_lentz.sh` | `general_ftl` | `ftl_lifetime` | canonical Q-ball only, v_max=0.5c | Pure positive-energy FTL (no phantom matter) |
 | **`qball_trajectory` (shear)** | `scripts/campaigns/qball_trajectory/run_shear.sh` | `spacetime_shear` | `spacetime_shear` | canonical Q-ball | Extreme non-collapsing frame-dragging shear |
+| **`qball_trajectory` (f_geo)** | `scripts/campaigns/qball_trajectory/run_fgeo.sh` | `f_geo_max` | `ftl_lifetime` | complex scalar Q-ball, 39-D, phantom free | Evolving-geodesic shortcut × matter retention (`qball_traj_fgeo_v1`: 400 evals, best depth 38.3%) |
+| **`qball_trajectory` (depth)** | `scripts/campaigns/qball_trajectory/run_fgeo_depth.sh` | `f_geo_depth` | `ftl_lifetime` | complex scalar Q-ball, 39-D, phantom free | Pure DEPTH hunt: raw uncapped evolving f_geo, no survival/stability shaping; stop_time 32, emission sweep to t=18 |
 | **`gw_beam`** | `scripts/campaigns/gw_beam/run.sh` | `gw_beam` | `gw_beam` | canonical Q-ball trajectory | Directional gravitational-wave emission (Z-axis beaming) |
 | **`splash` (critical collapse)** | `scripts/campaigns/splash/run.sh` | `critical_collapse` | `wave_focusing` | canonical bosonic shell | Gravitational-wave focusing / critical collapse |
 | **`boson_star`** | `scripts/campaigns/boson_star/run.sh` | `ftl_first` | `ftl_lifetime` | complex scalar / U(1), 7-D | Single centered Gaussian boson star |
@@ -86,9 +436,19 @@ shortcuts survive refinement.
 | `ftl_first` | FTL shortcut, health secondary | geodesic + operational FTL dominate; shaping gradients cut to ~40%; trapped-surface veto |
 | `robust_ftl` | Persistent, low-exotic FTL | persistence boosted (300→500), exotic hardened (40→70), coordinate signals trimmed |
 | `general_ftl` | Gauge-invariant shortcut + curvature | geodesic + curvature_activity; graded horizon penalty; warp-motor shaping disabled |
+| `f_geo_max` | Evolving shortcut × matter retention | 10000×`ftl_geo_evolving` (= geodesic depth × structural persistence); no exotic penalty; pump tax + graded horizon stay on |
+| `f_geo_depth` | **Raw shortcut depth, go-deep** | 10000×`ftl_geo_depth` (uncapped raw evolving f_geo, 1% = 100 pts, NOT survival-multiplied); no survival/stability/confinement/exotic terms; pump tax + graded horizon (−200 max) only |
 | `critical_collapse` | GW focusing / collapse | geometric splash (χ-well + Ψ₄ wave + K-crunch) primary; ρ/focus/lapse secondary; FTL ignored |
 | `gw_beam` | Directional GW power + Z-beaming | `(1000×quality + 100×peak + health) × gw_health_multiplier + penalties`; collapse → multiplier 0 |
 | `spacetime_shear` | Max curvature, avoid horizon | 1000×curvature_activity + confinement; horizon veto (−500); FTL-agnostic |
+
+**Depth scaling is uncapped (2026-08-05).** `_geo_magnitude` (1.0 at 20%
+path saving) and the operational arrival-time components (`operational_ftl`,
+`ftl_persistence`) used to saturate via `min(..., 1.0)`; the caps are
+removed, so every mode now pays linearly for depth beyond target. (The old
+cap silently turned `qball_traj_fgeo_v1` into a matter-retention contest
+above 20% depth.) Artifact-guard compressions -- precursor / shift-drive log
+scales, solved-FTL locality gates -- are deliberately still bounded.
 
 ---
 
@@ -146,21 +506,8 @@ Rules:
 - If `.env` is missing, `GRTECLYN_ROOT` is auto-detected from the wrapper layout;
   `GRTRESNA_ENV` is **not** guessed — set it in `.env` for GRTresna MPI work.
 
-Quick check:
-
-```bash
-cd grteclyn-wrapper
-source scripts/lib/env.sh
-echo "GRTECLYN_ROOT=$GRTECLYN_ROOT"
-echo "GRTRESNA_ROOT=$GRTRESNA_ROOT"
-echo "GRTRESNA_ENV=${GRTRESNA_ENV:-unset}"
-
-uv run python -c "
-from grteclyn_wrapper.core.site_paths import grteclyn_root, grtresna_env
-print(grteclyn_root())
-print(grtresna_env())
-"
-```
+Quick check: `source scripts/lib/env.sh && echo $GRTECLYN_ROOT`, or from
+Python `from grteclyn_wrapper.core.site_paths import grteclyn_root`.
 
 ### Stage 0 — MAP-Elites (QD)
 
@@ -195,57 +542,22 @@ QD_NAME=general_ftl_wormhole_v21 QD_RESUME=1 \
   bash scripts/campaigns/qd/run.sh
 ```
 
-**Q-ball trajectory spiral** (compact solitons on retrograde orbits, 39-D):
+**Campaign-family one-liners** (defaults live inside each launcher; same
+override env vars as `run.sh` -- `QD_NAME`, `QD_TARGET_EVALS`, `GPU_IDS`,
+`QD_RESUME=1`, ...):
 
 ```bash
-QD_NAME=qball_traj_spiral_v3 QD_TARGET_EVALS=400 \
-GPU_IDS="0 1 2 3 4 5 6 7" \
-  bash scripts/campaigns/qball_trajectory/run.sh
-```
-
-**Lentz** (pure canonical matter, v_max=0.5c):
-
-```bash
-QD_NAME=qball_traj_lentz_v1 QD_TARGET_EVALS=200 \
-  bash scripts/campaigns/qball_trajectory/run_lentz.sh
-```
-
-**Spacetime shear** (extreme non-collapsing curvature):
-
-```bash
-QD_NAME=qball_traj_shear_v1 QD_TARGET_EVALS=200 \
-  bash scripts/campaigns/qball_trajectory/run_shear.sh
-```
-
-**GW beam** (directional gravitational-wave emission, canonical Q-balls):
-
-```bash
-QD_NAME=gw_beam_v1 QD_TARGET_EVALS=200 \
-GPU_IDS="0 1 2 3" \
-  bash scripts/campaigns/gw_beam/run.sh
-```
-
-**Splash** (critical collapse / GW focusing, canonical bosonic shell):
-
-```bash
-QD_NAME=spacetime_splash_v13 QD_TARGET_EVALS=100 \
-GPU_IDS="0 1 2 3 4 5 6 7" \
-  bash scripts/campaigns/splash/run.sh
-```
-
-**Boson star** (complex scalar / U(1), 7-D):
-
-```bash
-QD_NAME=boson_star_v1 QD_TARGET_EVALS=80 \
+bash scripts/campaigns/qball_trajectory/run.sh            # spiral: 39-D per-lump orbits, general_ftl
+bash scripts/campaigns/qball_trajectory/run_lentz.sh      # Lentz: canonical matter only, v_max=0.5c
+bash scripts/campaigns/qball_trajectory/run_shear.sh      # spacetime shear
+bash scripts/campaigns/qball_trajectory/run_fgeo.sh       # f_geo_max: shortcut x retention (qball_traj_fgeo_v1)
+bash scripts/campaigns/qball_trajectory/run_fgeo_depth.sh # f_geo_depth: raw uncapped depth, seeds from fgeo_v1 elites
+bash scripts/campaigns/gw_beam/run.sh                     # directional GW emission (GPU_IDS="0 1 2 3")
+bash scripts/campaigns/splash/run.sh                      # critical collapse / GW focusing
 GRTRESNA_MATTER_SECTOR=boson_star GRTRESNA_MATTER_COUPLING=canonical \
-GPU_IDS="0 1 2 3" \
-  bash scripts/campaigns/boson_star/run.sh
-```
+  bash scripts/campaigns/boson_star/run.sh                # boson star, 7-D
 
-**Bosonic shell + FTL (RL chassis)** (~18-D, exotic wedge ON):
-
-```bash
-uv sync   # h5py>=3.10 required for GRTresna Chombo→gridinit bridge
+# Bosonic shell + FTL (RL chassis), ~18-D, exotic wedge ON:
 QD_NAME=boson_shell_ftl_rl_v1 QD_TARGET_EVALS=200 QD_ITERATIONS=30 \
 STOP_TIME=16.0 PLOT_INTERVAL=320 GRTECLYN_FRAMES=1 \
 GPU_IDS="0 1 2 3 4 5 6 7" MAX_CONCURRENT_GRTRESNA=5 BATCH_SIZE=8 \
@@ -290,10 +602,22 @@ PIN_DIMS="$(bash -c 'source scripts/campaigns/lib/general_ftl_pins.sh && ftl_gen
 
 | Knob | Typical | Notes |
 |------|---------|-------|
-| Population | = GPU count | `POPULATION` defaults to `#GPU_IDS` |
+| Population | **≥ 4 × GPU slots** (e.g. 16 on 4 GPUs) | NEVER `= #GPU_IDS` — see warning below |
 | σ₀ | 0.05–0.08 | local basin width |
 | Warm-start | top-K elites | `WARM_START_TOP_K`, `WARM_START_JITTER` |
 | Target | eval budget | `TARGET_EVALS` or `MAX_GENERATIONS × pop` |
+
+> **⚠ Population must be several × the GPU slot count — never run CMA-ES
+> "generationally starved".** CMA-ES has a hard barrier at every `tell()`:
+> no next-generation candidate exists until ALL of the current generation
+> finish. With `POPULATION = #GPUs` (the old default) any fast-failing
+> candidate (post-load gate reject) or straggler leaves GPUs idle for most
+> of each generation — measured ~50 % idle on the 2026-08-06
+> `qball_traj_fgeo_depth_cmaes_v1` first launch. With `POPULATION ≥ 4 ×`
+> slots the within-generation pipeline streams candidates back-to-back
+> (like MAP-Elites) and the barrier tail is amortized away. Bonus: the
+> CMA-ES textbook population for an n-dim search is `4+⌊3·ln n⌋` (≈ 15 at
+> n = 39) — `pop = 4` was statistically undersized as well as slow.
 
 **Outputs:** `runs/grtresna_cmaes/<RUN_NAME>/` — same layout as QD. **Monitor:**
 `tail -f runs/grtresna_cmaes/<RUN_NAME>/trajectory.jsonl`
@@ -359,10 +683,110 @@ comparison and full env-var reference.
 ### Rules (do not skip)
 
 1. **CMA-ES must mirror QD** — same `OBJECTIVE_MODE`, pins, grid, `STOP_TIME`, geodesic config.
+   And `POPULATION ≥ 4 × GPU slots` — never `= #GPUs` (generation barrier starves the pipeline; see the Stage 1 warning).
 2. **`general_ftl` needs `GRTECLYN_GEO_DIRECTIONS=x y z`** — wormhole shortcuts live on z; x-only scoring replays elites at the wrong fitness.
 3. **HQ `CANDIDATES` is eval/gpu pairs** — e.g. `"46 0 39 1"` not a bare eval list.
 4. **Search turns frames off, HQ turns them on** — by design (`search_common.sh` vs `promote_common.sh`).
 5. **Promotion must use `N > L`** (or same `L` with larger `N`) to refine the grid. `L=N` only enlarges the domain at `dx=1` — no fidelity gain.
+6. **Plotfiles go to node-local scratch, never NFS** — automatic since `core/scratch.py`; `output_path` stays on NFS. Only override it (`GRTECLYN_SCRATCH`) if `/tmp` is not node-local on your machine. See [Plotfile scratch MUST be node-local](#plotfile-scratch-must-be-node-local-required).
+7. **The pump runs for the ENTIRE simulation** — never stopped mid-run. Enforced at launch, not by checklist; see [Pump convention](#pump-convention-enforced-at-launch) below.
+
+### Pump convention (enforced at launch)
+
+The PD pump stays on for the whole simulation. In the evolution config this
+means the `rl_pump_stop_time` key is **absent** — the binary's default (`-1`)
+is "never stop" — so a config with no pump key is already correct, and any
+non-negative value someone bakes in silently changes the physics of every run
+that inherits it. That failure mode is now closed by the launchers themselves:
+
+**Search launchers** (`qball_trajectory/cmaes_run.sh`): `RL_PUMP_STOP_TIME`
+must be set explicitly — there is no silent default any more; an unset value
+refuses to launch (exit 2).
+
+```bash
+RL_PUMP_STOP_TIME=-1     # the convention: pump on for the whole run
+GEODESIC_EMIT_MIN_TIME=4 # required whenever the pump value is negative
+```
+
+The floor pairing is also enforced: a negative pump value erases the scorer's
+fallback emission floor (`metrics/score/ftl.py` skips negatives), so `-1`
+without an explicit `GEODESIC_EMIT_MIN_TIME` refuses to launch — otherwise
+`f_geo` silently changes meaning between runs.
+
+**Promotion launchers** (`promote/lib/run_matrix.sh`): every launch and every
+`--list` runs `promote/lib/validate_pump_convention.py` over the manifest and
+the environment. It refuses (exit 3) when:
+
+- the manifest bakes a non-negative `rl_pump_stop_time` anywhere
+  (`physics_frozen`, `extra_overrides`, any nesting, `key=value` string form —
+  unparseable values are refused, not waved through), or
+- the environment carries `RL_PUMP_STOP_TIME ≥ 0`, or
+- a pump-on manifest is launched without `GEODESIC_EMIT_MIN_TIME` in the env.
+
+**Deliberate pump-off controls** (e.g. the pump-free twin that proves `f_geo`
+persists without ignition) are the only exception, and they must say so in
+the manifest, top-level:
+
+```json
+"pump_off_control": true
+```
+
+Only with that key may a manifest carry a non-negative `rl_pump_stop_time`.
+The key is not inherited from templates — each control manifest declares it
+itself, so a copy-paste of an old manifest with a baked stop time is refused
+loudly instead of quietly stopping the pump.
+
+Covered by `tests/scripts/test_pump_convention.py` (11 tests, including
+end-to-end refusal of the retired template manifest and acceptance of the
+pump-free twin).
+
+### Stopping detached campaigns — kill the orchestrator first
+
+Campaign launchers run detached (`setsid nohup bash launcher.sh ... &`) so they
+survive shell teardown. Stopping one naively **does not work**, for three
+reasons found the hard way (2026-08-05, `bondi_dipole_v1` post-mortem):
+
+1. **The `$!` you captured at launch is the wrong PID.** It is the short-lived
+   `setsid` parent; the real launcher is its forked child in a *new session*.
+   Killing the recorded pid (or its process group) hits nothing.
+2. **Killing workers by path pattern silently *advances* the campaign.** The
+   orchestrator's argv is just `bash launcher.sh` and per-run drivers use
+   `--runs-dir X --name Y` (never the `X/Y` path you grep for). So a pattern
+   kill takes out the simulation + consumer, the orchestrator sees a
+   "finished" step, and launches the next run — which looks exactly like the
+   campaign refusing to die.
+3. **GRTresna solvers detach into their own session/pgid** — even a correct
+   group-kill of the launcher leaves a solver running to its timeout.
+
+The fix is a **global tool** — one implementation for every campaign type
+(QD/MAP-Elites, CMA-ES, HQ replays, Bondi matrices, one-off ladders):
+
+```bash
+# Preview what would be killed (touches nothing):
+bash scripts/campaigns/stop_campaign.sh --dry-run <runs_dir | campaign_name>
+# Stop for real, with verification and escalation:
+bash scripts/campaigns/stop_campaign.sh <runs_dir | campaign_name> [...]
+```
+
+It works in the only order that does: (1) freeze the queue — kill the
+orchestrators and their shell ancestors first, found via
+`<runs_dir>/launcher.pid`, driver argv (`--name <campaign>`,
+`--runs-dir <dir>`), and a parent-walk; (2) sweep every worker class by runs
+dir and scratch path; (3) **verify with pgrep and escalate to SIGKILL** until
+nothing survives. A stop without the verification step is a guess.
+
+Launcher-side contract: every campaign launcher registers its true PID by
+calling the shared helper (one line, after the runs dir is known):
+
+```bash
+source "${SCRIPT_DIR}/../lib/launcher_common.sh"
+campaign_register_launcher "${RUNS_DIR}"
+```
+
+The stop tool's process discovery covers unregistered launchers too, but the
+pid file is the fast, unambiguous path — add the call to any new launcher.
+There are deliberately no per-campaign stop scripts: one tool, one way to
+stop, for every campaign.
 
 ### ALWAYS extract frames on the fly (required)
 
@@ -378,42 +802,86 @@ metrics in flight and delete processed plotfiles immediately.
 | PNG frames written | Set `GRTECLYN_FRAMES_FIELDS` → outputs in `eval_*/frames/` |
 | Verify consumer alive | `ps aux \| grep consume_plotfiles` while GPU is busy |
 
-#### Plotfile pruning: failure mode and fix
+#### Plotfile scratch MUST be node-local (required)
 
-`--keep-last N` protects the newest `N` plotfiles; it does not delete a
-plotfile until extraction succeeds. A log entry such as
-`[ok] RadialRecipePlt00000 ... kept` means that the file was protected at that
-moment, not that it will be retained permanently. Once it falls outside the
-newest `N`, the consumer logs
-`[gc] deleted previously-processed RadialRecipePlt00000`.
+Plotfiles are write-once, read-once, delete-immediately transients -- never
+write them to NFS. `amr.plot_file` / `amr.check_file` are independent of
+`output_path`: route the heavy data to node-local NVMe and keep only `.dat`
+diagnostics and `small_data/` on the shared filesystem. A 256-cubed ml=3
+plotfile is ~3.2 GB every ~288 s per run; on NFS that capped concurrency at
+2 runs (consumers stalled in `D` state). Node-local scratch drops NFS traffic
+from ~130 MB/s to KB/s and lets every GPU on the node run concurrently
+(extraction 15.7 s vs 288 s cadence -- 18x headroom; measured 2026-07-28).
 
-Two bugs previously allowed HQ plotfiles to accumulate:
+```
+output_path    = "<NFS>/runs/<campaign>/<run>"       # .dat + small_data
+amr.plot_file  = "/tmp/<scratch>/<run>/RadialRecipePlt"
+amr.check_file = "/tmp/<scratch>/<run>/RadialRecipeChk"
+```
 
-1. Metrics-only runs (`GRTECLYN_FRAMES=0`) silently disabled deletion.
-   Deletion is now independent of frame rendering. Set
-   `GRTECLYN_KEEP_PLOTFILES=1` only when retaining the HDF5 dumps is intentional.
-2. Watch mode queued the entire backlog before running GC. Extraction can take
-   minutes per multi-GB AMR dump, so old processed files remained while new
-   files accumulated. Watch mode now processes at most one worker-sized batch
-   per pass and runs GC before starting the next extraction batch.
+Consumer: `--data /tmp/<scratch>/<run>` (local) `--out <NFS>/.../small_data`.
 
-Production cadence must also let extraction keep up with evolution. The eval
-118 validation campaign uses `plot_interval=144` instead of `24`; this retains
-roughly 1.4--1.9 simulation-time-unit sampling while avoiding a plotfile every
-few wall-clock seconds. A live run normally has `keep_last + jobs` files at
-most (three protected files plus files currently being processed).
+Enforced in code for every stage: `core/scratch.py` maps episode dir to
+`/tmp/grteclyn_scratch/<campaign>_<eval>_<hash>/`, applied in
+`core/params.py::episode_path_overrides`; the consumer's `--data`, the
+scoring plotfile lookup and every cleanup path use the same mapping. An
+unwritable root falls back to the episode dir with a warning; launchers that
+set `amr.plot_file` themselves keep their explicit value.
 
-Verify pruning with:
+| Variable | Effect |
+|----------|--------|
+| *(unset)* | scratch at `/tmp/grteclyn_scratch` -- the default |
+| `GRTECLYN_SCRATCH=/path` | move the scratch root |
+| `GRTECLYN_SCRATCH=0` | keep plotfiles in the episode directory (old behaviour) |
+| `GRTECLYN_SCRATCH_FORCE_PURGE=1` | purge scratch even when the ledger is incomplete |
+
+Rules that keep this safe:
+
+* **Deletion is ledger-gated.** Only plotfiles recorded in
+  `small_data/consume_state.json` are GC'd; a file that fails extraction is
+  retried, never collected. `[ok] ... kept` means *protected right now*, not
+  retained permanently. Consequence: **any extraction not enabled during the
+  run is unrecoverable** -- decide `--areal-radius`, `--shell-fields`, frames
+  and scoring passes before launch.
+* **NEVER run external plotfile-deletion loops** alongside the consumer. An
+  ad-hoc `while true; do ... rm -rf ...; done` loop once raced the consumer
+  and destroyed complete, unprocessed plotfiles (2026-07). The consumer's own
+  `--delete --keep-last N` is the only safe deletion path; if disk pressure
+  is a concern, raise `plot_interval` or reduce extraction cost (`-j 1`,
+  disable frames).
+* **Purge scratch only when every resident plotfile appears in
+  `consume_state.json`**, and allow a **600 s drain window** after the sim
+  exits -- shorter windows truncated confinement data.
+* **Cloning a baseline `params.txt`:** `amr.plot_file` / `amr.check_file` are
+  absolute paths into the source run -- strip and re-emit them, or the clone
+  writes into (and a `--delete` consumer prunes) the baseline. Verify each of
+  the three path keys occurs exactly once.
+* **Sizing.** Local steady state = `n_runs x (keep_last + jobs) x
+  plotfile_size` (six 256-cubed runs = ~70 GB); check `df -h /tmp` first;
+  checkpoints are **not** pruned by the consumer. NFS cost is set by
+  `GRTECLYN_METRIC_STACK_N_SPACE` (scales as `n_space` cubed): default 33 is
+  ~30 MB per t=30 run, HQ's 257 is **~4.2-6.2 GB per run**. The metric stack
+  is what post-hoc rescoring reads after plotfiles are purged -- delete it
+  only when no further scoring pass (e.g. a later-`t_emit` emission sweep) is
+  wanted.
+* **Keep every write inside your own space.** Call
+  `grteclyn-wrapper/.venv/bin/python -m ...` directly (not `uv run`, which
+  writes `~/.cache/uv`) and pin `XDG_CACHE_HOME`, `UV_CACHE_DIR`,
+  `MPLCONFIGDIR`, `TMPDIR`, `PYTHONPYCACHEPREFIX` into `$SCRATCH/_cache/`.
+  On the shared cluster the complete write set is `/tmp/<scratch>/`
+  (transient) and the NFS run directory -- nothing else.
+
+Verify pruning:
 
 ```bash
 ps aux | grep consume_plotfiles | grep -- '--delete --keep-last 3'
 grep -h '\[gc\] deleted' ../runs/grtresna_promote/e118_*/run.log | tail
 ```
 
-If the count keeps growing beyond `keep_last + jobs`, check whether consumer
-workers are blocked in NFS I/O (`D` state), then increase `plot_interval` or
-reduce extraction cost. Never delete an unprocessed plotfile merely to force
-the count down; that loses the corresponding Psi4/FTL sample.
+A live run holds at most `keep_last + jobs` plotfiles. If the count keeps
+growing, consumers are blocked in NFS I/O (`D` state) -- raise
+`plot_interval` or cut extraction cost. Never delete an unprocessed plotfile
+to force the count down; that loses the corresponding Psi4/FTL sample.
 
 ### Smoke test (all stages)
 
@@ -445,24 +913,6 @@ GRTresna (sibling repo, ../GRTresna)        GRTeclyn (this repo, .)
                                                   consume_plotfiles
                                                         ▼
                                              small_data/ + frames/ + score
-```
-
-### GRTresna → wrapper → GRTeclyn data flow
-
-```text
-Search / CLI overrides
-        │
-        ▼
-  GRTresnaConfig  ──►  params.txt  ──►  GRTresna (MPI)  ──►  InitialDataFinal.3d.hdf5
-        │                                                        │
-        ▼                                                        ▼
-  io/conversion  ──►  initial_data.gridinit  (+ optional .matter.json)
-        │                                                        │
-        ▼                                                        ▼
-  post-load gate (short GPU load, L2_Ham/Mom check)  ──►  GRTeclyn ExternalGridInitialData evolution
-                                                                 │
-                                                                 ▼
-                                                       consume_plotfiles → score
 ```
 
 ### Per-eval loop (every CMA-ES member and QD candidate)
@@ -557,15 +1007,12 @@ The gate also runs automatically inside `solve_torus.py` (prints
 
 ### Rotating Q-torus wormhole — genuine stationary eigenstate support + collapse
 
-The rotating-wormhole support was originally a spherical Q-ball twisted by
-`(sinθ)^m`, which is **not** a stationary state and drains its Noether charge
-(half-life t≈13–16). The fix is a **genuine 2D spinning Q-ball eigenstate**
+The wormhole support is a genuine 2D spinning Q-ball eigenstate
 `Φ = f(ρ,z)e^{i(mφ−ωt)}`, solved by `grtresna/profiles/qball_torus.py`
-(bordered Newton + amplitude continuation; pins the peak, lets ω float, so it
-cannot collapse to the vacuum), painted into GRTresna as `profile == 4`. Result:
-charge half-life ≈ doubled and no t≈13.5 dynamical blow-up (journal:
-[`../research/rotatingwormhole/OrbitalPumpPlan.md`](../research/rotatingwormhole/OrbitalPumpPlan.md)
-Phase 8).
+(bordered Newton + amplitude continuation) and painted into GRTresna as
+`profile == 4`. (The old `(sinθ)^m`-twisted sphere was not stationary and
+drained its Noether charge, half-life t~13-16.) Journal:
+[`OrbitalPumpPlan.md`](../research/rotatingwormhole/OrbitalPumpPlan.md) Phase 8.
 
 **Solve an isolated torus ID** (throat-free flat background; validates the
 eigenstate on its own). `EXOTIC=1` matches the phantom evolution matter;
@@ -624,37 +1071,16 @@ Couplings/ω/exotic/mass **must** match between the `solve_torus` ID and the
 
 #### GW / Ψ₄ extraction is now C++-side (upgrade)
 
-**Upgrade (2026-07):** Ψ₄ is now extracted **in-code on the C++ side** using
-GRTeclyn's own `WeylExtraction` (`SphericalExtraction`), instead of being
-reconstructed in Python by post-processing the `Weyl4_Re/Im` grid fields dumped
-into plotfiles. `SupportedWormholeLevel::specificPostTimeStep` interpolates the
-`Weyl4` derived variable onto the extraction spheres and writes the
-spherical-harmonic mode time series directly to `output/data/`:
-
-- `Weyl4_mode_20.dat`, `Weyl4_mode_21.dat`, `Weyl4_mode_22.dat` — the l=2,
-  m=0/1/2 modes, one appended row per **coarse step** (dt≈0.01), one Re/Im
-  column pair **per extraction radius**.
-
-Why this is better than the old Python route:
-
-| | Old (Python `process_wave` sidecar) | New (in-code C++ `WeylExtraction`) |
-|---|---|---|
-| Sampling cadence | tied to `plot_interval` (≈ every 2 code units → ~13 points) | every coarse step (dt≈0.01 → thousands of points) |
-| Decoupled from frames/plotfiles | no (finer Ψ₄ ⇒ plotfile/frame flood) | **yes** (Ψ₄ cadence independent of `--plot-interval`) |
-| Angular decomposition | grid-sampled shells, approximate | proper `num_points_phi/theta` Gauss quadrature (collaboration code) |
-| Multi-radius | supported | supported (`--extraction-radii`) |
-
-The Python `process_wave` sidecar still runs (coarse Ψ₄ cross-check +
-confinement + frame rendering), but the **`Weyl4_mode_*.dat` files are the
-trusted GW signal** for wave analysis (1/r fall-off, propagation speed between
-shells, QNM fits).
-
-Relevant flags (see `wormhole_case.py --help`):
+Since 2026-07, Ψ₄ is extracted in-code by GRTeclyn's `WeylExtraction`
+(`SphericalExtraction`): `Weyl4_mode_2{0,1,2}.dat` in `output/data/`, one row
+per coarse step (dt~0.01), one Re/Im column pair per extraction radius --
+dense, multi-radius, independent of `--plot-interval` (which now controls
+only frame/movie cadence). The Python `process_wave` sidecar still runs
+(coarse cross-check + confinement + frames). For physics plots use
+`small_data/psi4_mode_l2m0.dat` -- see the trust note under
+[Visualization](#visualization).
 
 ```bash
-# t=40 so the burst propagates out; three detector shells for a radial ladder;
-# dense in-code Psi4 is automatic (every step) and independent of --plot-interval
-# (which now controls only the frame/movie cadence).
 bash grteclyn-wrapper/scripts/wormhole/run/wormhole_case.sh --gridinit "$G" --full-box \
   --omega 0.25067 --m 1 --dx 0.5 --box-size 64 --max-level 3 --stop-time 40 \
   --mass 0.5 --lambda 170 --mu6 14450 --sponge \
@@ -665,14 +1091,13 @@ bash grteclyn-wrapper/scripts/wormhole/run/wormhole_case.sh --gridinit "$G" --fu
 
 | Flag | Effect |
 |------|--------|
-| `--extraction-radii R [R ...]` | Weyl4 shell radii (default `12 24`). Shells at/behind the sponge (`≥ L/2−2`) are auto-dropped. Feeds both the in-code extraction and the sidecar. |
-| `--write-extraction-surfaces` | also dump the raw per-step Weyl4 surfaces (off by default — thousands of files; the compact `Weyl4_mode_*.dat` is always written). |
-| `--plot-interval N` | frame/movie cadence only (Ψ₄ is now independent). Use a moderate value (e.g. 100) for smooth movies without a plotfile flood. |
+| `--extraction-radii R [R ...]` | Weyl4 shell radii (default `12 24`); shells at/behind the sponge (>= L/2-2) auto-dropped |
+| `--write-extraction-surfaces` | also dump raw per-step surfaces (off by default -- thousands of files) |
+| `--plot-interval N` | frame/movie cadence only (Ψ₄ independent) |
 
-Implementation note: the wormhole `Main` now builds a `BHAMR<1>` container
-(instead of a bare `GRAMR`) purely to reuse its set-up `m_weyl_interpolator`;
-puncture tracking stays disabled. This required a rebuild — see
-[Build the RotatingWormholeCollapse binary](#build-the-rotatingwormholecollapse-binary-mpi--cuda).
+Implementation note: the wormhole `Main` builds a `BHAMR<1>` purely to reuse
+its `m_weyl_interpolator` (puncture tracking stays disabled) -- requires the
+MPI+CUDA rebuild below.
 
 ### One-off GRTresna solve
 
@@ -693,23 +1118,12 @@ Deep bridge docs: [`src/grteclyn_wrapper/grtresna/README.md`](src/grteclyn_wrapp
 
 ### Self-gravitating boson star
 
-The wrapper ships an ODE solver for genuine self-gravitating boson stars
-(gravity provides the binding, not an artificial pump well). After a four-bug
-fix, a single stable-branch star stays mostly confined through a full coarse
-evolution. Full handoff: [`SELFGRAV_HANDOFF.md`](SELFGRAV_HANDOFF.md).
-
-| t | old broken seed | fixed (stable star + pump) |
-|---|-----------------|----------------------------|
-| 0 | 0.96 | 0.74 (broad seed settling) |
-| 6.4 | 0.74 | **0.97** |
-| 9.6 | 0.64 | **0.97** |
-| 12.8 | 0.61 | **0.97** |
-| 16.0 | **0.58** (dispersed) | **0.90** |
-
-**Caveats (read before trusting):** the "confined fraction" is generous; RMS
-radius tightens to ~2.1 by t≈9.6 then spreads back to ~4.2 by t=16 (slow leak /
-breathing). High resolution (`max_level=3`) still develops NaNs around t≈6–9 —
-a separate numerical-relativity stability issue, not the seed/pump physics.
+ODE solver for genuine self-gravitating boson stars (gravity provides the
+binding, not an artificial pump well): `grtresna/profiles/boson_star_ode.py`.
+After a four-bug fix a single stable-branch star holds confinement ~0.90 at
+t=16 (was 0.58, dispersed); `max_level=3` still develops NaNs at t~6-9 -- an
+open numerical-stability issue, not seed/pump physics. Full handoff:
+[`SELFGRAV_HANDOFF.md`](SELFGRAV_HANDOFF.md).
 
 ---
 
@@ -779,6 +1193,60 @@ reports the peak `f_geo(t_emit)`.
 `GRTECLYN_EVOLVING_GEODESIC_MODE=search`; HQ `--evolving-geodesic` or
 `GRTECLYN_EVOLVING_GEODESIC_MODE=hq`.
 
+### Scoring `f_geo_evol` for hand-rolled campaigns — the corrected recipe
+
+A campaign queue never reaches the metrics aggregation layer, so
+`ftl_timeseries.dat` cols 13/14 stay at their `0.0  0` placeholders and no
+`evolving_geodesic.json` exists until the post-hoc pass runs (Debug.md §13).
+This is the correct way to run it after the fixes of 2026-07-28 (`4f31f33a`):
+
+```bash
+# ONE process per run, all in parallel — the pass is single-core.
+# Export the env FIRST, on its own line. Do NOT chain `export … && nohup … &`:
+# the trailing `&` backgrounds the whole && list, the exports land in that
+# subshell only, and every later launch silently runs in SEARCH mode
+# (3 rays, stride-2 slices, 15k steps) while still writing result files.
+S=/tmp/grteclyn_scratch/_cache
+export GRTECLYN_EVOLVING_GEODESIC_MODE=hq GEODESIC_EMIT_MIN_TIME=0 \
+       XDG_CACHE_HOME=$S UV_CACHE_DIR=$S/uv MPLCONFIGDIR=$S/mpl \
+       TMPDIR=$S/tmp PYTHONPYCACHEPREFIX=$S/pyc
+for k in 0 4 8 16 24 30; do
+  nohup grteclyn-wrapper/.venv/bin/python -u \
+    grteclyn-wrapper/scripts/campaigns/rl/score_evolving_geodesic.py \
+    runs/pump/pump_ladder_m0/lad_m0_tp$k --ftl-l 8 \
+    > $S/score_tp$k.log 2>&1 &
+done
+```
+
+**Verify before trusting output:** the first log line must say `mode=hq` and
+the result line must say `rays=5/5` (search mode reports `rays=3/3`). The two
+profiles produce different numbers from the same cache with no other visible
+difference.
+
+Rules baked into the script (do not work around them):
+
+* **It refuses unfaithful caches.** `cache_fidelity` compares each slice's
+  representable `min_chi` against the run's own `collapse_diagnostics.dat`;
+  any slice >1.5× too shallow aborts the run's score (Debug.md §15). For a run
+  whose *late* slices fail (deep-collapse endgame after the rays have already
+  arrived), pass `--max-time <t>` to truncate the stack before the offending
+  slices instead of `--force`. Truncation is conservative by construction:
+  the strict no-frozen-tail guard fails any ray still in flight past the last
+  kept slice rather than letting it coast through frozen geometry.
+* **It does not recompute frozen per-slice `f_geo`.** The consumer already
+  measured it per plotfile at full AMR fidelity into `ftl_timeseries.dat`
+  col 3; the scorer reuses the peak over `geo_trustworthy` rows and records
+  provenance in the notes (the old per-slice rebuild cost >60 min/run at
+  90-110 GB RSS; the corrected pass is ~3 min/run at ~25 GB).
+* **Results are written before they are printed**, so a dead parent shell
+  (broken stdout pipe) can no longer discard a finished trace.
+* A single launch at `t_emit=0` arrives at t≈12–13 and therefore **cannot
+  distinguish rungs that only differ after t=16** — `tp16/tp24/tp30` report
+  identical `f_geo_evol` to the last digit because the ray never samples any
+  spacetime where they differ. That is the emission protocol, not a bug; use
+  the emission sweep (`GRTECLYN_GEO_EMIT_INTERVAL`, `GEODESIC_EMIT_MIN_TIME`)
+  to probe late launches.
+
 ### Scoring pipeline
 
 `score_episode()` runs phases in fixed order (each mutates
@@ -794,48 +1262,18 @@ reports the peak `f_geo(t_emit)`.
 
 The total is then assembled by the chosen [objective mode](#objective-modes).
 
-### Score components by tier (`ftl_first`)
+### Score components and survival
 
-| Tier | Component | Weight | Meaning |
-|------|-----------|-------:|---------|
-| **Validated FTL** | `operational_ftl_geodesic` | 1000 | gauge-invariant geodesic shortcut (reliability-gated) |
-| | `ftl_geo_evolving` | 1000 | 4D evolving-metric geodesic shortcut |
-| | `operational_ftl` | 400 | evolved coordinate-time shortcut vs flat baseline (Dijkstra) |
-| | `ftl_persistence` | 300 | shortcut sustained across last retained plotfiles |
-| | `operational_ftl_solved` | 50 | constraint-solved t=0 shortcut |
-| **Shaping gradients** | `channel_progress` | 100 | `path_closeness × √(ftl_precursor × shift_drive)` |
-| | `ftl_precursor` | 30 | local cone-tilt past `c=1` + superluminal area (graded) |
-| | `shift_drive` | 20 | frame-drag motor (`max_shift`) |
-| **Health/survival** (gated by `nontriviality_gate`) | `survival` | 70 | `numerical_survival × structural_persistence` |
-| | `energy_condition` | 40 | evolved NEC/WEC/SEC/DEC |
-| | `instability_penalty` | 15 | geometric drift penalty |
-| | `stability` | 10 | bounded stability reward |
-| | `comoving_stability` | 8 | co-moving-frame drift |
-| | `constraint_health` | 6 | evolved Ham/Mom constraint quality |
-| **Penalties** | `exotic_penalty` | 40×weight | NEC-violating matter (graded 0..−1.6) |
-| | `stationary_artifact_penalty` | 8 | shift-free geometry demotion |
-| | `horizon_penalty` | 500 | trapped-surface veto (non-traversable) |
-
-`structural_persistence = density_retention × morphological_coherence` (3D
-connected-component count of matter activity). It also gates the Tier-2 shaping
-rewards — a structure that dissipates or fragments cannot bank "promising
-precursor" credit.
-
-`SUPERLUMINAL_MARGIN = 0.05` de-saturates the superluminal-fraction descriptor:
-only cells genuinely past `c=1.05` count, separating cone-tilted lobes from the
-broad shift background.
-
-### Survival = numerical_survival × structural_persistence
-
-`numerical_survival` alone (did the integrator reach `stop_time`?) perversely
-rewards junk — empty space is the easiest thing to march to the end. It is
-gated by **structural persistence**, itself the product of two failure modes:
-
-- **Density retention** — fraction of peak matter energy density still present
-  at `stop_time`. A dissipating config sees its peak ρ collapse toward 0.
-- **Morphological coherence** — whether surviving matter is still one connected
-  structure or has fragmented. Measured in 3D on a level-0 covering grid;
-  returns `~1/k` for `k` comparable pieces.
+Exact per-component weights live in `metrics/score/objectives.py` (validated
+FTL terms 1000x/400x/300x dominate; shaping gradients ~20-100x; health terms
+gated by `nontriviality_gate`; penalties: exotic 40x graded 0..-1.6,
+stationary 8x, horizon 500x). `survival = numerical_survival x
+structural_persistence`, where structural persistence = density retention x
+morphological coherence x confined mass fraction -- reaching `stop_time`
+alone earns nothing (empty space marches to the end trivially), and a
+dissipating or fragmenting structure cannot bank shaping credit.
+`SUPERLUMINAL_MARGIN = 0.05` de-saturates the superluminal-fraction
+descriptor (only cells genuinely past c=1.05 count).
 
 ### Public API
 
@@ -848,268 +1286,23 @@ from grteclyn_wrapper.metrics.score import Score, DEFAULT_WEIGHTS
 
 ## Main results
 
-Full per-eval tables, frames, and movies live in three lab journals:
-[`research/neuralspacetime/MapElites.md`](../research/neuralspacetime/MapElites.md)
-(FTL search — SH, shell, wormhole),
-[`research/neuralspacetime/MapElitesDynamics.md`](../research/neuralspacetime/MapElitesDynamics.md)
-(trajectory FTL campaigns), and
-[`research/grlab/LabJournal.md`](../research/grlab/LabJournal.md) (GW beam +
-splash). Headline numbers below, in roughly chronological order.
+Run-by-run results live outside this README:
 
-### Top 3 findings (critical summary)
+| Where | What |
+|-------|------|
+| [`MapElites.md`](../research/neuralspacetime/MapElites.md) | FTL search lab journal (SH, shell, wormhole) |
+| [`MapElitesDynamics.md`](../research/neuralspacetime/MapElitesDynamics.md) | Trajectory FTL campaign lab journal |
+| [`grlab/LabJournal.md`](../research/grlab/LabJournal.md) | GW beam + splash lab journal |
+| [`results/`](../results/) | Git-friendly campaign extracts, e.g. [`qball-trajectory-evolving-geodesic-shortcut-search/CAMPAIGN_RESULTS.md`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/search/qball-trajectory-evolving-geodesic-shortcut-search/CAMPAIGN_RESULTS.md) |
+| [`NextSteps.md`](NextSteps.md) | Critical review of the claims' validity + hardening plan |
 
-Across all campaigns — FTL search, wormhole, trajectory, GW beam, splash,
-self-grav — the three findings that matter most. A critical review of these
-claims' validity (baseline gauge-dependence, missing probe controls, pump
-consistency) and the plan to harden them is in [`NextSteps.md`](NextSteps.md):
-
-**1. Genuine gauge-invariant FTL shortcuts exist in GR with exotic matter — but they are transient, not stable warp bubbles.**
-
-The trajectory campaigns produced the strongest evidence: **eval 122**
-(`trajectory_5lump_v1`) survived to t=30 at 256³ HQ with a confirmed **9.4%
-end-to-end 4D geodesic shortcut** (frozen peak **21%**). **Eval 118**
-(`qball_traj_spiral_v2`) peaked at **~23%** mid-run. These are gauge-invariant
-(null rays traced through the full evolving metric, not frozen slices), with
-5/5 rays reaching their targets, geodesic drift < 0.002, and shift vectors that
-*decay* (the opposite of gauge runaway). This is not a coordinate artifact.
-
-The critical caveat: **in every case the matter disperses and the channel
-fades.** Eval 118 confinement falls 53%→23% (rms radius 7.6→18.6); the channel
-peaks at t≈19 then decays. Eval 122's FTL window lasts ~16.6 code units (55% of
-evolution) before closing. The wormhole HQ (eval 046) opens a real throat mid-run
-(peak 7.57%) but a **horizon forms at t≈21** and kills it. No campaign found a
-configuration that holds a shortcut open while keeping matter confined. The
-honest summary: GR permits transient superluminal shortcuts with exotic matter,
-but sustaining them requires a confinement mechanism (self-grav boson star, RL
-pump) that this work has not yet solved.
-
-**2. The validation pipeline successfully separates physical shortcuts from gauge artifacts — without it, multiple false positives would have been published as FTL.**
-
-The single most important methodological result. Several high-scoring
-candidates turned out to be artifacts:
-
-| Candidate | Apparent signal | What it actually was | Caught by |
-|-----------|----------------|----------------------|-----------|
-| `trajectory_5lump_v1` eval 008 | 24.62% f_geo (Stage 0 leader) | Low-res artifact → 0% at HQ | HQ resolution ladder |
-| SH eval 151 | 2.26c max speed | Gauge collapse (geodesics untrusted from t=3.2) | Geodesic trust flag |
-| SH eval 101 | f_geo = 0.753 | Single untrusted timestep (shift runaway to 1.01) | Timestep trust + shift monitoring |
-| GW beam v3 eval 51 | Score 336 | Numerical bomb: Ham crash → Ψ₄ noise scored as GW | Health multiplier + Ψ₄ truncation |
-| Wormhole v22 | operational_ftl = 0 | Real 19% shortcut invisible to coordinate Dijkstra | 4D evolving geodesic vs frozen slice |
-
-The last row is the key insight: a stationary wormhole (β≈0) reads subluminal on
-coordinate Dijkstra (`operational_ftl = 0`) because lapse drops below 1, but the
-4D null-geodesic tracer measures a real ~19% proper-distance shortcut through
-the throat. The pipeline decoupled gauge-dependent coordinate speed from
-gauge-invariant traversability. Without the 4D evolving probe + dispersion gate +
-geodesic trust flag + HQ ladder, the project would have reported both false
-positives (eval 008, 151, 101) and false negatives (the wormhole throat).
-
-**3. Search design — ansatz and matter sector — is the dominant lever; optimizer tuning is secondary.**
-
-The search infrastructure (MAP-Elites, CMA-ES, GRTresna-in-the-loop) is mature,
-but what determined success was *what* was searched:
-
-| Comparison | Result | Implication |
-|-----------|--------|-------------|
-| Trajectory ansatz vs SH | 54% FTL hit rate vs 1.3% (**40×**) | Per-lump independent orbits give the optimizer geometric freedom SH lacks |
-| Real scalar vs boson shell | 32/92 FTL vs 0/94 (**zero**) | Complex U(1) boson shells do not open geodesic shortcuts under matched conditions |
-| Self-grav boson star | Still disperses at high res (NaN @ t≈6–9) | Confinement is the unsolved bottleneck, not the search |
-
-The GW beam campaign confirmed this from the opposite direction: even with a
-working search and hard gates, the best directional GW emission was a **weak
-steady hum** (~30% beam ratio at P ~ 10⁻⁵–10⁻⁴), not a laser. The search found
-what the physics permits — coherent multi-lump clusters with breathing
-quadrupoles — and no amount of optimizer tuning changes that. Future work should
-invest in the matter model (self-grav confinement, RL pump actuation) rather
-than further search-space refinement.
-
----
-
-### FTL search — spherical-harmonic `scalar_sh_ftl_v22` (200 evals, general_ftl)
-
-First genuine geodesic FTL: **eval 189** (score 470.6). Source:
-[MapElites.md §SH campaign](../research/neuralspacetime/MapElites.md#sh-campaign-results-scalar_sh_ftl_v22-200-evals-2025-06-24).
-
-| Property | Value |
-|----------|-------|
-| `f_geo_peak` | 3.1% @ t=9.6 (rises dynamically from 0) |
-| `ftl_geo_evolving` | 0.101 |
-| `ftl_lifetime` | 1.0 (present at every timestep) |
-| `max_speed` | 1.33c → 1.21c (shift *decays* 0.36→0.04 — healthy gauge) |
-| geodesic trust | 5/5 rays, drift <0.002, all timesteps trusted |
-| exotic_fraction | 0.51 (3/5 lumps exotic) |
-
-Two false positives discarded: eval 151 (2.26c = gauge collapse artifact,
-geodesics untrusted from t=3.2) and eval 101 (f_geo=0.75 from one untrusted
-timestep, shift runaway to 1.01). Pipeline funnel: 200 sampled → 74 GRTresna
-rejected → 23 postload rejected → **73 gpu_ok (36%)**.
-
-### `general_ftl` wormhole — `general_ftl_wormhole_v21` (200 evals, 15-D pinned)
-
-Stationary, non-translating wormholes in a 15-D pinned subspace. Source:
-[MapElites.md §v22 final results](../research/neuralspacetime/MapElites.md#v22-final-results-top-3--ftl-champions).
-
-| Eval | Score | `ftl_geo_evolving` | `f_geo_peak` | `op_ftl` | Survival | Role |
-|------|------:|-------------------:|-------------:|---------:|---------:|------|
-| **063** | **165.6** | **19.3%** | 4.2% | 0 | 0.94 | score + 4D record holder |
-| **191** | 161.9 | 18.5% | 3.8% | 0 | **1.00** | champion (survival, f_op_peak) |
-| **174** | 157.4 | 18.5% | 3.8% | 0 | 1.00 | stable variant |
-
-**Scoring paradox resolved:** `operational_ftl = 0` while `ftl_geo_evolving ≈ 19%`.
-In a stationary wormhole (β≈0), lapse-dominated coordinate speed reads subluminal
-(Dijkstra → 0), but proper-distance contraction through the throat gives a real
-~19% 4D null-geodesic shortcut. The pipeline decouples coordinate gauge artifacts
-from physical traversable shortcuts.
-
-**CMA-ES refinement** (eval 063 → eval 046): score 165.6 → **179.8** (+14.2),
-`ftl_geo_evolving` 19.3% → **20.3%**, survival → 1.00. Basin-tightening, not a new
-mechanism. Source:
-[MapElites.md §v22 CMA-ES](../research/neuralspacetime/MapElites.md#v22-cma-es-wormhole-refinement-general_ftl_wormhole_cmaes_v1-2026-06-18).
-
-**HQ promotion** (eval 046, 256³, t=30): throat opens mid-run, peak **7.57%** 4D
-@ t≈15.6, then **horizon kills** at t≈21 (score cliff to −546). A mid-run FTL
-demonstrator, not a t=30 survivor. Source:
-[MapElites.md §HQ eval 046](../research/neuralspacetime/MapElites.md#hq-eval-046-final-results-t30).
-
-### Trajectory FTL — `qball_traj_spiral_v2` (200/200 evals, general_ftl)
-
-Best search candidate **eval 118** — a breathing, retrograde, mostly-exotic
-Q-ball shell. Source:
-[MapElitesDynamics.md §spiral v2](../research/neuralspacetime/MapElitesDynamics.md#qball_traj_spiral_v2--dispersion-gated-spiral-qd-complete-2026-07-01-200200-evals).
-
-| | QD (128³, t=16) | HQ (256³, t=16) | HQ (256³, t=30) |
-|--|----------------:|----------------:|----------------:|
-| **Score** | **603.39** | 511.89 | **224.20** |
-| `operational_ftl` | 0.347 | 0.346 | 0.099 (dispersal-gated) |
-| `ftl_geo_evolving` | 0.306 | 0.225 | 0.150 |
-| 4D `f_geo_evol` | peak 17.7% (t_emit≈12) | 13.0% | **13.0%** |
-| frozen `f_geo` peak | — | 22.1% @ t≈15.1 | **22.8% @ t≈19.2** |
-| `max_local_speed` | 1.47 c | 1.46 c | — |
-| confinement | ~53% @ t=0 | ~35% | **23%** (rms 7.6→18.6) |
-
-**Verdict:** A real, gauge-invariant geodesic shortcut (~13% end-to-end, peaking
-~23% mid-run). Numerics survive to t=30. But **matter disperses** — confinement
-falls 53%→23% and the channel peaks near t≈19 then fades. A transient shortcut
-from a dissolving "motor," not a stable warp bubble.
-
-### HQ validation — `trajectory_5lump_v1` (5 elites at 256³, t=30)
-
-Source:
-[MapElitesDynamics.md §HQ validation](../research/neuralspacetime/MapElitesDynamics.md#hq-validation-results-trajectory_5lump_v1-only).
-
-| Eval | Stage 0 score | Stage 0 f_geo | HQ f_geo_evol | HQ f_geo_peak | HQ status | Verdict |
-|------|--------------:|--------------:|--------------:|--------------:|-----------|---------|
-| 122 | 1237.6 | 8.51% | **9.40%** | **20.97%** | survived t=30 | **CONFIRMED** |
-| 115 | 1367.9 | 10.63% | 12.5% | 20.3% | crashed t=21 | confirmed (transient) |
-| 050 | 1039.5 | 10.82% | 7.4% | 20.3% | crashed t=19 | confirmed (transient) |
-| 111 | 1389.6 | 17.37% | 8.6% | 19.8% | crashed t=8.6 | confirmed (short) |
-| 008 | 1166.8 | 24.62% | 0.0% | — | survived t=30 | **FALSE POSITIVE** |
-
-All genuinely FTL configs converge to **~20% peak f_geo** at HQ (resolution
-ceiling). Eval 008's 24.62% Stage 0 signal was entirely a low-res artifact. Eval
-122 is the only eval that both survived to t=30 AND confirmed FTL.
-
-### SH vs trajectory ansatz (Stage 0 head-to-head)
-
-Source:
-[MapElitesDynamics.md §SH vs trajectory](../research/neuralspacetime/MapElitesDynamics.md#campaign-comparison-scalar_sh_ftl_v22-vs-trajectory_5lump_v1-2026-06-25).
-
-| Metric | **SH v22** (202 evals) | **Trajectory v1** (130 evals) | Factor |
-|--------|----------------------:|---------------------------:|--------|
-| Best stable score | 470.6 | **1367.9** | 2.9× |
-| Best stable f_geo_peak | 2.12% | **10.63%** | 5.0× |
-| Best HQ-confirmed f_geo_evol | — | **9.40%** | — |
-| FTL hit rate (per GPU eval) | 1.3% | **54%** | ~40× |
-
-The trajectory ansatz (per-lump independent orbits) decisively outperforms the
-spherical-harmonic ansatz for FTL discovery.
-
-### Paired shell — boson vs scalar (200+200 evals, general_ftl)
-
-Source:
-[MapElites.md §paired shell](../research/neuralspacetime/MapElites.md#paired-shell-ftl-comparison-boson-vs-scalar-2026-06-23).
-
-| Metric | **Boson** | **Scalar** |
-|--------|----------:|-----------:|
-| `gpu_ok` | 94 (47%) | 92 (46%) |
-| `f_geo_peak > 0` | **0 / 94** | **33 / 92** |
-| `ftl_geo_evolving > 0` | **0 / 94** | **32 / 92** |
-| Best score | 21.6 (eval 100, no FTL) | **869.3** (eval 166, persist 0.76) |
-
-**Verdict:** Boson static exotic shell **never opens a geodesic shortcut** (0/94);
-real scalar exotic shell does (32/92). Boson arm **rejected** for FTL RL;
-scalar eval 166/126 promoted for RL chassis Gate 2.
-
-### Wormhole / shell HQ leaderboard (`qd_20260605T155951Z`, t=50)
-
-Source: [MapElites.md §campaign log](../research/neuralspacetime/MapElites.md#campaign-log--runs-analysis).
-
-| Rank | eval | HQ score | `op_ftl` | `channel` | `shift` | Role |
-|------|------|--------:|---------:|----------:|--------:|------|
-| 1 | **106** | **1423** | **1.000** | 0.423 | 0.179 | HQ winner |
-| 2 | **117** | **1346** | 0.920 | 0.436 | 0.190 | Channel backup |
-| 3 | **011** | **1274** | 0.885 | 0.302 | 0.091 | Search leader |
-| 4 | **094** | **1089** | 0.658 | 0.454 | 0.206 | Best channel/shift |
-
-Resolution ladder (eval 057, `op_ftl`=1.0 holds across all):
-
-| Run | L | N | t | max c | Notes |
-|-----|--:|--:|--:|------:|-------|
-| `val16hq2` | 128 | 128 | 16 | 1.192 | best t=16 HQ |
-| `val30hq` | 128 | 128 | 30 | 1.276 | peak c |
-| `val100hq` | 128 | 128 | 100 | 1.205 | long GPU-only |
-| `val256hq` | 256 | 256 | 100 | 1.196 | 2× domain; ~3× tighter Ham/Mom |
-
-### GW laser search — `gw_beam_qd100_v4` (100/100 evals, gw_beam objective)
-
-Canonical Q-balls on trajectory orbits, scored for directional Ψ₄ emission
-(Z-axis beaming). Source:
-[LabJournal.md §gw_beam v4](../research/grlab/LabJournal.md#2026-07-03-gw_beam_qd100_v4-complete-eval-61--88-analysis).
-
-Hard gates held: 77/100 collapse modes crushed to ~−116; 22 healthy survivors;
-5 archive elites.
-
-| | eval 88 (best score) | eval 61 (best beam) |
-|--|----------------------|---------------------|
-| Score | **3.09** | 2.82 |
-| mean Ψ₄ power | 4.5×10⁻⁴ | **6.4×10⁻⁴** |
-| beam_ratio | 14% | **~30%** (to 40% late) |
-| max ‖Ham‖₂ | 0.08 | 0.14 |
-
-**Verdict:** Neither run is a strong GW emitter — both produce a weak steady hum
-(P ~ 10⁻⁵–10⁻⁴), not a merger chirp or beamed burst. The t=0 Ψ₄ spike is an
-initial/near-zone transient. The ~30% Z-beaming (eval 61) comes from a coherent,
-fast, compact multi-lump cluster + breathing quadrupole, not a clean radiative-
-zone binary.
-
-**Reward-hacking closure (v3 → v4):** v3's optimizer built a **numerical bomb**
-instead of a GW laser — crash the Hamiltonian → grid fills with high-frequency
-noise → second-derivative Ψ₄ reports "infinite wave power" (eval 51 @ **336**
-vs trustworthy eval 7 @ 3.4). Permanently closed in v4 by three hard gates:
-Ψ₄ time-series truncation at the spike, archive admission requiring
-`tier ≥ CONSTRUCTED`, and a multiplicative `gw_health_multiplier` (→0 on
-collapse). Source:
-[LabJournal.md §v3→v4](../research/grlab/LabJournal.md#2026-07-03-gw_beam_qd100_v3--v4-collapse-mode-reward-hacking).
-
-### Splash campaign — `spacetime_splash` (critical_collapse objective)
-
-Canonical bosonic shell, scored for gravitational-wave focusing / critical
-collapse. Uses `critical_collapse` objective (geometric splash: χ-well + Ψ₄ wave
-+ K-crunch primary; ρ/focus/lapse secondary). Source:
-[MapElites.md §handoff to RL](../research/neuralspacetime/MapElites.md#handoff-to-rl).
-
-Interim pump proof: splash boson **`spacetime_splash_v14_moving/eval_000010`**
-held as the pump-actuation reference until RL Gate 2 passes on the scalar FTL
-chassis. The splash campaign validated the `critical_collapse` scorer and the
-`SPLASH_MODE` early-termination (stop once matter disperses after peak, typically
-t≈10–12), and feeds the RL handoff path.
-
-### Self-gravitating boson star (single-star smoke)
-
-See [Self-gravitating boson star](#self-gravitating-boson-star) above. After the
-four-bug fix, confinement holds ~0.90 at t=16 (was 0.58). Not yet committed;
-high-res instability remains open. Source:
-[`SELFGRAV_HANDOFF.md`](SELFGRAV_HANDOFF.md).
+Three takeaways that shape current work: (1) genuine gauge-invariant FTL
+shortcuts exist with exotic matter but are transient -- no configuration yet
+holds a shortcut open while keeping matter confined; (2) the validation
+pipeline (4D evolving probe, trust flags, HQ resolution ladder) is what
+separates physical shortcuts from gauge artifacts -- several would-be headline
+results were artifacts; (3) ansatz and matter sector dominate outcomes,
+optimizer tuning is secondary.
 
 ---
 
@@ -1181,9 +1374,6 @@ uv run python grteclyn-wrapper/scripts/campaigns/hq/replay_eval.py \
   --evolving-geodesic --objective-mode general_ftl \
   --gridinit runs/grtresna_promote/e118_dl_L160_N320_t30_hq_eval000118/initial_data.gridinit
 
-# Or via the eval-118 validation launcher:
-EVOLUTION_MPI_RANKS=2 GPU_ID=4,5 FORCE=1 \
-  # eval-118 validation is NO-GO; archived under scripts/campaigns/promote/_archive/eval118/
 ```
 
 | Flag / env | Effect |
@@ -1196,10 +1386,165 @@ EVOLUTION_MPI_RANKS=2 GPU_ID=4,5 FORCE=1 \
 env. The runner wraps each rank with
 `CUDA_VISIBLE_DEVICES=${GRTECLYN_GPU_IDS[LOCAL_RANK]}`.
 
-**Known limitation (2026-07):** RadialRecipe MPI+CUDA currently segfaults at the
-first RK4 advance under AMR (`storeRKCoarseData` / `m_fillpatcher`) even when
-VRAM is fine. Single-GPU remains the production path until that AMReX/GRAMR
-path is fixed. Use multi-GPU only after a smoke advance past `t>0` succeeds.
+#### MPI status and triage runbook
+
+**Do not trust any "MPI is broken" claim without re-running the checks below.**
+That status has flipped twice. It is recorded per date because it is a property
+of whichever node the pod currently sits on, not of this repo.
+
+| Layer | Status | Last verified |
+|---|---|---|
+| `mpirun` itself (local OpenMPI) | **works** — 1 and 4 ranks, correct rank ids | 2026-08-19 |
+| GRTeclyn RadialRecipe MPI+CUDA | **works** — 2 ranks, AMR max_level 3, clean past the old crash point | 2026-08-19 |
+| GRTeclyn RadialRecipe MPI+CUDA, 3 ranks | **works** — 3 ranks on `N=256, L=128, max_level 3`, first AMR advance clean, 22–23 GB per card | 2026-08-19 |
+| GRTresna solver multi-rank | **works** — 8 ranks reproduce the serial residuals digit-for-digit | 2026-08-19 |
+| GRTeclyn RotatingWormholeCollapse MPI+CUDA | worked multi-GPU, but only on an **older node** | 2026-06 |
+
+**The July RadialRecipe AMR crash does not reproduce (retested 2026-08-19).**
+A 2-rank run on `N=240, L=128, max_level 3` advanced cleanly through all four
+levels with zero errors. Memory genuinely splits — **26 GB per card against
+49.8 GB on one** — which is the point: multi-GPU buys *headroom*, not speed.
+Throughput was 30.7 code units/h on two cards versus 29.4 on one, i.e.
+unchanged. So use it to fit a grid that will not fit on one card, and do not
+expect a run to finish sooner. Launch with
+`--gpu 0,1 --evolution-mpi-ranks 2` (or `GPU_ID="0,1" EVOLUTION_MPI_RANKS=2`
+through a promote campaign, which expands a bare `GPU_ID` into consecutive
+ids automatically).
+
+**GRTresna multi-rank solves are ~6× faster at no cost in accuracy.** At
+`N=256`, 8 ranks ran ~74 s per nonlinear iteration against ~7.7 min
+single-rank — a 6-iteration production solve drops from ~46 min to ~8 min —
+and iterations 1–4 reproduced the single-rank Ham/Mom residuals to all seven
+printed digits. This supersedes the older observation that 8 ranks converged
+*worse* than 1 (0.93 % vs 0.63 % Ham); that predates the Chombo rebuild.
+Pass `--grtresna-ranks 8`. Load stayed near 11 of 128 cores, so wider is
+available if it ever pays.
+
+**Two distinct failures have been mistaken for each other. Keep them apart:**
+
+1. *Node-level.* On one node every MPI job died in PRRTE daemon start-up —
+   even `mpirun -np 1 hostname`. Nothing in this repo could fix it; it went
+   away when the pod moved. If this is happening, stop and check the node, do
+   not rebuild anything.
+2. *Toolchain-level.* GRTresna died with SIGILL from mismatched
+   `-march=native` objects. Fixed by rebuilding Chombo's MPI libs
+   consistently: `scripts/build/rebuild_grtresna_mpi.sh` (it ends with its own
+   2-rank smoke test).
+3. *Application-level.* RadialRecipe MPI+CUDA segfaults at the **first RK4
+   advance under AMR**, inside `amrex::FillPatchIterator::Initialize`
+   (`amrex/Src/Amr/AMReX_AmrLevel.cpp:1004`, reached via
+   `AmrLevel::FillPatch`). VRAM is fine when it happens. This is specific to
+   this example's code path — the wormhole example does not hit it.
+
+**Triage order — run these before concluding anything:**
+
+```bash
+export PATH="$OPENMPI_ROOT/bin:$PATH"
+export LD_LIBRARY_PATH="$OPENMPI_ROOT/lib:${LD_LIBRARY_PATH:-}"
+
+# 1. Is MPI alive at all on this node?  (If this fails, it is the node.)
+mpirun -np 1 hostname
+mpirun -np 4 bash -c 'echo "rank $OMPI_COMM_WORLD_RANK of $OMPI_COMM_WORLD_SIZE"'
+
+# 2. Does the CPU solver run multi-rank?  (Wins ~40 min per HQ constraint solve.)
+bash grteclyn-wrapper/scripts/build/rebuild_grtresna_mpi.sh   # only if step 1 passed
+
+# 3. Does RadialRecipe survive one AMR advance on 2 GPUs?
+#    Short stop-time, max_level>0 — the crash is at the FIRST advance, so a
+#    run that reaches t>0 has cleared it.  Never launch a long multi-GPU run
+#    before this passes.
+```
+
+The RadialRecipe MPI+CUDA binary is normally already built and current — check
+its timestamp against `RadialRecipeLevel.cpp` before spending a rebuild. A
+rebuild does **not** address failure mode 3, which is a code path, not a link.
+
+#### Multi-GPU pipeline start — what goes wrong before step 1
+
+Everything here was seen on 2026-08-19 bringing a 3-rank `RadialRecipe` run up.
+None of it is a code bug; all of it looks like a code bug from the log.
+
+**1. Relaunching straight after killing a multi-GPU job deadlocks the start.**
+The new ranks reach `AMReX … initialized` and stop. The log ends there, every
+rank sits at 100 % CPU, GPU utilisation is 0 %, and each card holds only its
+~590 MB CUDA context. It never recovers. The same command, run again once the
+cards report `0 MiB`, starts normally — so this is the driver still tearing
+down the previous job, not a rank-count limit. **Wait for `nvidia-smi` to show
+the cards actually free before relaunching.** Confirmed by running the same
+`check_params=1` pass standalone at 2 and 3 ranks: both exit 0 in seconds.
+
+**2. A spinning rank looks identical to a working one unless you measure it.**
+On this node `ps -o etimes,pcpu` reports `0` for live processes, so the obvious
+check says nothing. Read the CPU counters instead — ticks climbing with no log
+growth and no GPU work is a spin-wait, i.e. a hung collective:
+
+```bash
+for p in $(pgrep -f main3d); do awk '{print $1, "utime="$14}' /proc/$p/stat; done
+# sample twice; rising utime + static log size + 0 % GPU = hung, not busy
+```
+
+**3. `mpirun` is not on `PATH` in a plain shell.** Manual triage fails with
+`timeout: failed to run command 'mpirun': No such file or directory`, which
+reads like a broken install. The launchers set this up themselves; a hand-run
+check has to do it first:
+
+```bash
+export PATH="$OPENMPI_ROOT/bin:$PATH"
+export LD_LIBRARY_PATH="$OPENMPI_ROOT/lib:${LD_LIBRARY_PATH:-}"
+```
+
+**4. Reusing initial data is opt-in.** Nothing infers a saved solve. Without an
+explicit `GRIDINIT=…` (or `--gridinit`), a promote relaunch re-runs the whole
+elliptic solve — ~30 min wasted, and the restart is no longer bit-identical to
+the run it replaces. Pass it whenever you are re-running the same genome:
+
+```bash
+GRIDINIT=<abs path to saved initial_data.gridinit> \
+GPU_ID=0,1,2 EVOLUTION_MPI_RANKS=3 \
+bash scripts/campaigns/promote/<campaign>/run.sh <CELL>
+```
+
+The run log confirms the reuse with `mode=gpu-only`; a fresh solve says
+otherwise. Verify on the live process, not on intent:
+
+```bash
+tr '\0' ' ' < /proc/$(pgrep -f replay_eval | head -1)/cmdline | grep -o '\-\-gridinit [^ ]*'
+```
+
+**5. Extra cards do not make the run finish sooner.** Worth repeating here
+because it is the usual reason someone reaches for more GPUs: throughput is
+flat (30.7 units/h on two cards vs 29.4 on one), the win is per-card memory.
+Adding cards converts an arena OOM into a run that survives — at the same wall
+clock. If the deadline is the problem, cut `stop_time` or change the grid; do
+not add cards.
+
+#### Arena OOM part-way through a long AMR run
+
+A run can start comfortably and still die of GPU memory hours later: as matter
+disperses, more cells get tagged and the Arena grows. Observed on a single
+H100 at `N=256, L=128, max_level=3`: **62 GB at t=0 climbing to 77 GB, aborting
+at t≈37 of 64** while asking for a further 17 MiB. The abort looks like this,
+and is *not* the segfault above:
+
+```
+amrex::Abort::0::Arena out of memory!!!
+Error: cudaMalloc returned 2: out of memory
+[The Arena] space allocated (MB): 77208
+Free  GPU global memory (MB): 2
+```
+
+What to do:
+
+- **Set `checkpoint_interval` > 0 for any multi-hour run.** With the default
+  `-1` there is no restart point and the whole run is lost. This is the single
+  most valuable change.
+- Budget headroom, not just the starting footprint. Measured on one H100:
+  N=240 → 49.8 GB, N=256 → 62 GB *initially*, N=288 → OOMs immediately
+  (77.8 GB allocated, 2 MB free). A run that starts at 62 GB has far less
+  margin than it appears.
+- If it recurs at a resolution you need: raise `regrid_threshold` so fewer
+  cells are tagged, lower `max_level`, or step down one grid size — in that
+  order, since the first two change the least about the physics.
 
 #### Build the RotatingWormholeCollapse binary (MPI + CUDA)
 
@@ -1314,17 +1659,12 @@ Mass/distance configs for the GW panels are baked into `plot_diagnostic.sh`
 (`30:10`, `1000:0.002`, `1000:1`); override the first with env `MASS_MSUN` /
 `DISTANCE_MPC`. LIGO panel quantity via `LIGO_QUANTITY=asd|hchar`.
 
-> **Which Ψ₄ is trusted?** `plot_diagnostic.sh` uses the **Python post-hoc
-> spherical-harmonic extraction** in `small_data/psi4_mode_l2m0.dat` (produced by
-> `consume_plotfiles` during the run). That signal is validated: the `m=0`
-> imaginary part is ~1e-5 (≈0, as required) and it is free of high-frequency
-> gauge contamination. **Do NOT** feed `data/Weyl4_mode_2{0,1,2}.dat` (the dense
-> in-code C++ extraction) into `plot_extracted_psi4.py` for physics plots —
-> that extraction currently carries an `O(1)` spurious `m=0` imaginary part and a
-> ~1.8 M⁻¹ junk oscillation. This is **expected**: the GRTL collaboration lists
-> *Weyl scalar / CCE extraction* as 🔧 **In progress** in GRTeclyn's port status, so
-> the in-code C++ Ψ₄ path is incomplete upstream. Use the Python extraction until
-> it is marked ✅ Ported. It is retained only for debugging.
+> **Which Ψ₄ is trusted?** Use the Python post-hoc extraction
+> `small_data/psi4_mode_l2m0.dat` (validated: `m=0` imaginary part ~1e-5, no
+> gauge contamination). Do **NOT** feed the dense in-code C++
+> `data/Weyl4_mode_2*.dat` into physics plots -- upstream Weyl/CCE extraction
+> is still In-progress and carries an O(1) spurious `m=0` imaginary part; it
+> is retained for debugging only.
 
 Full module reference: [`src/grteclyn_wrapper/visualisation/README.md`](src/grteclyn_wrapper/visualisation/README.md).
 
@@ -1415,33 +1755,12 @@ nvidia-smi   # expect 0 MiB, no running processes
 
 ### Research manuscript (TikZ / tectonic)
 
-The neuralspacetime article (`research.tex`, TikZ + pgfplots figures) is compiled
-on this machine with **tectonic**:
-
 ```bash
-cd ../research/neuralspacetime/article
-tectonic --keep-logs research.tex
-# → research.pdf
+cd ../research/neuralspacetime/article && tectonic --keep-logs research.tex   # -> research.pdf
 ```
 
-If `tectonic` is missing, install the **prebuilt static
-binary** (no system libraries, no root needed). Do *not* use `cargo install
-tectonic` here — it needs `pkg-config` + libpng/freetype/harfbuzz/icu, which are
-not installed on this box:
-
-```bash
-wget -qO /tmp/tectonic.tar.gz \
-  "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.15.0/tectonic-0.15.0-x86_64-unknown-linux-musl.tar.gz"
-mkdir -p ~/.local/bin && tar xzf /tmp/tectonic.tar.gz -C ~/.local/bin
-chmod +x ~/.local/bin/tectonic && ~/.local/bin/tectonic --version
-```
-
-On first run tectonic downloads the TeX support files (fonts, `.tfm`/`.pfb`) it
-needs and caches them, so the initial compile requires network access.
-
-Source: [`../research/neuralspacetime/article/research.tex`](../research/neuralspacetime/article/research.tex) ·
-PDF: [`../research/neuralspacetime/article/research.pdf`](../research/neuralspacetime/article/research.pdf) ·
-campaign journal: [`../research/neuralspacetime/MapElitesDynamics.md`](../research/neuralspacetime/MapElitesDynamics.md).
+First run downloads TeX support files (needs network access once). Source:
+[`article/research.tex`](../research/neuralspacetime/article/research.tex).
 
 ### Related docs
 

@@ -20,7 +20,7 @@ import json
 import os
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Sequence
+from typing import Iterable, Sequence
 
 import numpy as np
 from numpy.typing import NDArray
@@ -38,6 +38,7 @@ from .geodesic import (
     null_hamiltonian,
     project_null,
     ray_is_captured,
+    rays_complete,
 )
 from .metric_field import (
     EvolvingMetricField,
@@ -49,6 +50,7 @@ from .metric_field import (
 from .metric_stack_cache import (
     evolving_field_from_metric_stack_cache,
     list_slice_files,
+    slice_time,
     subsample_slice_files,
 )
 from .evolving_geodesic_options import (
@@ -111,8 +113,14 @@ def integrate_null_ray_on_field(
     h_tol: float = 1.0e-6,
     h_rel_abort: float | None = None,
     detect_capture: bool = True,
+    allow_frozen_tail: bool = False,
 ) -> NullRayResult:
-    """Trace one null ray through a possibly time-dependent metric field."""
+    """Trace one null ray through a possibly time-dependent metric field.
+
+    ``allow_frozen_tail=True`` restores the pre-2026-07-28 behaviour of letting
+    a ray complete through the (time-clamped) final slice after the stack ends.
+    Only legitimate for genuinely stationary stacks (tests, analytic controls).
+    """
     prop_idx = axis + 1
     pos = [0.0, 0.0, 0.0]
     pos[axis] = x_start
@@ -132,15 +140,60 @@ def integrate_null_ray_on_field(
     ds = ds_init
     s_min, s_max = _spatial_extent(field, axis)
 
+    # A ray still in flight past the last stored slice would silently complete
+    # through a FROZEN final metric (EvolvingMetricField clamps its time
+    # bracket).  On the candidate-146 RM stack a t_emit=12 launch "arrived" at
+    # t=32.75 against a stack ending at t=30 -- 2.75 units of pretend geometry.
+    # Such rays are integration failures, not measurements.
+    t_stack_end = (
+        float(field.times[-1])
+        if isinstance(field, EvolvingMetricField) and not allow_frozen_tail
+        else None
+    )
+
+    x_prev = x.copy()
     for _ in range(max_steps):
         if x[prop_idx] >= x_end:
-            t_coord = abs(float(x[0] - t0))
+            # Interpolate the crossing back onto the detector plane: the RK
+            # step overshoots by up to one step, and reading the clock at the
+            # overshot position biased t_coord late (f_geo low) by up to
+            # ~ds ~ 0.05.
+            frac = 1.0
+            denom = float(x[prop_idx] - x_prev[prop_idx])
+            if denom > 0.0 and x_prev[prop_idx] < x_end:
+                frac = (x_end - float(x_prev[prop_idx])) / denom
+            t_cross = float(x_prev[0]) + frac * float(x[0] - x_prev[0])
+            if t_stack_end is not None and t_cross > t_stack_end + 1.0e-9:
+                return NullRayResult(
+                    reached=False,
+                    t_coord=None,
+                    t_flat=t_flat,
+                    max_h_drift=max_h,
+                    max_h_rel=max_h_rel,
+                    notes=(
+                        f"ray outlived metric stack (arrival t={t_cross:.2f} > "
+                        f"last slice t={t_stack_end:.2f}; frozen-tail geometry)",
+                    ),
+                )
+            t_coord = abs(t_cross - t0)
             return NullRayResult(
                 reached=True,
                 t_coord=t_coord,
                 t_flat=t_flat,
                 max_h_drift=max_h,
                 max_h_rel=max_h_rel,
+            )
+        if t_stack_end is not None and float(x[0]) > t_stack_end + 1.0e-9:
+            return NullRayResult(
+                reached=False,
+                t_coord=None,
+                t_flat=t_flat,
+                max_h_drift=max_h,
+                max_h_rel=max_h_rel,
+                notes=(
+                    f"ray outlived metric stack (t={float(x[0]):.2f} > last "
+                    f"slice t={t_stack_end:.2f}; frozen-tail geometry)",
+                ),
             )
 
         g_pt, ginv_pt, dg_pt = field.sample(x)
@@ -177,6 +230,7 @@ def integrate_null_ray_on_field(
         k2x, k2k = rhs(x + 0.5 * ds * k1x, k + 0.5 * ds * k1k)
         k3x, k3k = rhs(x + 0.5 * ds * k2x, k + 0.5 * ds * k2k)
         k4x, k4k = rhs(x + ds * k3x, k + ds * k3k)
+        x_prev = x
         x = x + (ds / 6.0) * (k1x + 2 * k2x + 2 * k3x + k4x)
         k = k + (ds / 6.0) * (k1k + 2 * k2k + 2 * k3k + k4k)
 
@@ -241,6 +295,7 @@ def compute_evolving_geodesic_ftl(
     h_rel_abort: float | None = None,
     frozen_peak: float | None = None,
     axis: int = 0,
+    allow_frozen_tail: bool = False,
 ) -> EvolvingGeodesicFtlReport:
     """Run a fan of evolving null rays and return end-to-end ``f_geo``."""
     if isinstance(field, EvolvingMetricField):
@@ -268,6 +323,7 @@ def compute_evolving_geodesic_ftl(
                 ds_init=ds_init,
                 h_tol=h_tol,
                 h_rel_abort=h_rel_abort,
+                allow_frozen_tail=allow_frozen_tail,
             )
         )
 
@@ -328,15 +384,20 @@ def compute_evolving_geodesic_ftl(
     )
 
 
+def evolving_report_trustworthy(report: EvolvingGeodesicFtlReport) -> bool:
+    """True when the 4D trace is certified: h-quality held and the bundle closed.
+
+    The single trust bar for an evolving report.  Consumers that only have the
+    scalar fields (``EvolvingGeodesicMetrics``, a JSON payload) should call
+    :func:`rays_complete` with the same three counts rather than re-deriving.
+    """
+    return report.h_quality_ok and rays_complete(
+        report.n_rays, report.n_reached, report.n_captured
+    )
+
+
 def _report_probe_score(report: EvolvingGeodesicFtlReport) -> float:
-    # Captured rays (fell into a puncture/horizon) are physics, not failures;
-    # trust requires every non-captured ray to reach.  Identical to the old bar
-    # when n_captured == 0.
-    if (
-        report.h_quality_ok
-        and report.n_reached > 0
-        and report.n_reached == report.n_rays - report.n_captured
-    ):
+    if evolving_report_trustworthy(report):
         return report.f_geo
     return -1.0
 
@@ -352,6 +413,7 @@ def compute_evolving_geodesic_ftl_best_direction(
     h_tol: float = 1.0e-6,
     h_rel_abort: float | None = None,
     frozen_peak: float | None = None,
+    allow_frozen_tail: bool = False,
 ) -> EvolvingGeodesicFtlReport:
     """Scan principal axes and return the report with the largest trustworthy ``f_geo``."""
     axis_map = {label: idx for idx, label in enumerate(_AXIS_LABELS)}
@@ -370,6 +432,7 @@ def compute_evolving_geodesic_ftl_best_direction(
             h_rel_abort=h_rel_abort,
             frozen_peak=frozen_peak if len(axes) == 1 else None,
             axis=axis,
+            allow_frozen_tail=allow_frozen_tail,
         )
         for axis in axes
     ]
@@ -419,27 +482,42 @@ def _emission_times(
     return times if len(times) > 1 else None
 
 
+def _geodesic_emit_min_time() -> float | None:
+    """Minimum eligible t_emit for the peak-f_geo selection.
+
+    Preference order:
+      1. ``GEODESIC_EMIT_MIN_TIME`` (explicit; use with an always-on pump)
+      2. ``RL_PUMP_STOP_TIME`` (legacy igniter filter; preserves published numbers)
+
+    Returns None when neither is set, so every launch remains eligible.
+    """
+    for key in ("GEODESIC_EMIT_MIN_TIME", "RL_PUMP_STOP_TIME"):
+        raw = os.environ.get(key, "").strip()
+        if not raw:
+            continue
+        try:
+            stop = float(raw)
+        except (TypeError, ValueError):
+            continue
+        if stop >= 0.0:
+            return stop
+    return None
+
+
 def _pump_stop_time_for_geo() -> float | None:
-    """Return rl_pump_stop_time from env when configured (>=0), else None."""
-    raw = os.environ.get("RL_PUMP_STOP_TIME", "").strip()
-    if not raw:
-        return None
-    try:
-        stop = float(raw)
-    except (TypeError, ValueError):
-        return None
-    return stop if stop >= 0.0 else None
+    """Backward-compatible alias for :func:`_geodesic_emit_min_time`."""
+    return _geodesic_emit_min_time()
 
 
 def _eligible_emit_reports(
     reports: list[tuple[float, EvolvingGeodesicFtlReport]],
 ) -> list[tuple[float, EvolvingGeodesicFtlReport]]:
-    """Keep launches with t_emit >= pump-stop when the igniter is configured.
+    """Keep launches with t_emit >= emit-min when a floor is configured.
 
-    If every launch is pre-stop (too short a run), fall back to all reports so
-    the probe still returns a number, but the peak_note will flag the filter.
+    If every launch is below the floor (too short a run), fall back to all
+    reports so the probe still returns a number; the peak_note flags the filter.
     """
-    stop = _pump_stop_time_for_geo()
+    stop = _geodesic_emit_min_time()
     if stop is None:
         return reports
     kept = [(te, rep) for te, rep in reports if te + 1.0e-12 >= stop]
@@ -482,19 +560,18 @@ def compute_evolving_geodesic_ftl_emission_sweep(
         reports.append((float(te), rep))
 
     sweep = tuple((te, float(rep.f_geo), int(rep.n_reached)) for te, rep in reports)
-    # When the transient igniter pump is configured (RL_PUMP_STOP_TIME>=0),
-    # only accept peak f_geo from launches at/after the pump-free window so
-    # the headline shortcut is measured on a conservative EKG segment.
+    # Optional emit floor (GEODESIC_EMIT_MIN_TIME, else RL_PUMP_STOP_TIME).
     eligible = _eligible_emit_reports(reports)
     best_te, best = max(eligible, key=lambda tr: _report_probe_score(tr[1]))
     sweep_note = "emit_sweep: " + ", ".join(
         f"t={te:.2f}->f={rep.f_geo:.3f}(n{rep.n_reached})" for te, rep in reports
     )
     peak_note = f"peak f_geo={best.f_geo:.3f} at t_emit={best_te:.2f} over {len(reports)} launches"
-    if len(eligible) < len(reports):
+    emit_floor = _geodesic_emit_min_time()
+    if emit_floor is not None and len(eligible) < len(reports):
         peak_note += (
-            f" (post-pump window: kept {len(eligible)}/{len(reports)} launches "
-            f"with t_emit>=rl_pump_stop_time)"
+            f" (emit floor: kept {len(eligible)}/{len(reports)} launches "
+            f"with t_emit>={emit_floor:g})"
         )
 
     return EvolvingGeodesicFtlReport(
@@ -515,7 +592,7 @@ def compute_evolving_geodesic_ftl_emission_sweep(
 
 
 def _frozen_peak_from_g_slices(
-    slices: Sequence[NDArray[np.float64]],
+    slices: Iterable[NDArray[np.float64]],
     origin: NDArray[np.float64],
     spacing: tuple[float, float, float],
     *,
@@ -556,30 +633,45 @@ def compute_evolving_geodesic_ftl_from_metric_stack_cache(
     options: EvolvingGeodesicOptions | None = None,
     n_rays: int | None = None,
     h_tol: float = 1.0e-6,
+    max_time: float | None = None,
+    frozen_peak_override: float | None = None,
 ) -> EvolvingGeodesicFtlReport | None:
-    """End-to-end evolving trace from cached per-plotfile metric slices."""
+    """End-to-end evolving trace from cached per-plotfile metric slices.
+
+    ``frozen_peak_override`` supplies a frozen-slice peak measured elsewhere
+    (e.g. the consumer's per-plotfile ``f_geo`` column) when
+    ``compute_frozen_peak`` is off; recomputing it from the cache costs two
+    full-grid inversions plus gradients per slice, which at 257^3 dominates the
+    entire pass while only reproducing a number of lower provenance.
+    """
     opts = options or evolving_geodesic_options_from_env()
     ray_count = opts.n_rays if n_rays is None else n_rays
     field = evolving_field_from_metric_stack_cache(
         cache_dir,
         slice_stride=opts.slice_stride,
         max_slices=opts.max_slices,
+        max_time=max_time,
     )
     if field is None:
         return None
-    frozen_peak = None
+    frozen_peak = frozen_peak_override
     if opts.compute_frozen_peak:
+        all_files = list_slice_files(cache_dir)
+        if max_time is not None:
+            all_files = [p for p in all_files if slice_time(p) <= max_time + 1.0e-9]
         files = subsample_slice_files(
-            list_slice_files(cache_dir),
+            all_files,
             stride=opts.slice_stride,
             max_slices=opts.max_slices,
         )
-        slices: list[NDArray[np.float64]] = []
-        for path in files:
-            slices.append(np.asarray(np.load(path)["g"], dtype=np.float64))
         spacing = field.spatial_spacing
+        # Stream one slice at a time: preloading the whole list held a second
+        # full-precision copy of the stack (~47 GB at 257^3) for the entire pass.
+        slice_iter = (
+            np.asarray(np.load(path)["g"], dtype=np.float64) for path in files
+        )
         frozen_peak = _frozen_peak_from_g_slices(
-            slices,
+            slice_iter,
             field.origin,
             spacing,
             n_rays=ray_count,
@@ -666,14 +758,22 @@ def compute_evolving_geodesic_ftl_from_analytic(
     h_tol: float = 1.0e-6,
     directions: Sequence[str] | None = None,
 ) -> EvolvingGeodesicFtlReport:
-    """Analytic-stack entry point (Alcubierre validation)."""
+    """Analytic-stack entry point (Alcubierre validation).
+
+    allow_frozen_tail: analytic metrics are defined for all t; the stored stack
+    is a sampling convenience, so completing a flight through the clamped final
+    slice is acceptable here (and only here -- production cache paths stay
+    strict).
+    """
     field = evolving_field_from_analytic_stack(g, spacing)
     dirs = tuple(directions) if directions is not None else geo_directions_from_env()
     if len(dirs) == 1:
         axis = _AXIS_LABELS.index(dirs[0]) if dirs[0] in _AXIS_LABELS else 0
-        return compute_evolving_geodesic_ftl(field, n_rays=n_rays, h_tol=h_tol, axis=axis)
+        return compute_evolving_geodesic_ftl(
+            field, n_rays=n_rays, h_tol=h_tol, axis=axis, allow_frozen_tail=True
+        )
     return compute_evolving_geodesic_ftl_best_direction(
-        field, directions=dirs, n_rays=n_rays, h_tol=h_tol
+        field, directions=dirs, n_rays=n_rays, h_tol=h_tol, allow_frozen_tail=True
     )
 
 

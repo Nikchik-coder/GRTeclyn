@@ -3,6 +3,7 @@
 #include "RadialRecipeLevel.hpp"
 #include "RadialRecipeMatterConstraints.hpp"
 #include "RadialRecipeMatterDispatch.hpp"
+#include "RecentringBox.hpp"
 #include "GRTresnaIndependentScalars.hpp"
 #include "ComplexScalarField.hpp"
 #include "CCZ4RHSWithMatter.hpp"
@@ -15,10 +16,14 @@
 #include "SmallDataIO.hpp"
 #include "TraceARemoval.hpp"
 #include "RLMatterPumpParams.hpp"
+#include "RLPumpForce.hpp"
 #include "Weyl4WithMatter.hpp"
 
+#include <AMReX_MultiFabUtil.H>
 #include <AMReX_Reduce.H>
 #include <AMReX_Utility.H>
+#include <AMReX_iMultiFab.H>
+#include <algorithm>
 #include <array>
 #include <cmath>
 
@@ -429,6 +434,198 @@ void RadialRecipeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
     amrex::Gpu::streamSynchronize();
 }
 
+namespace
+{
+// ---------------------------------------------------------------------------
+// Composite (whole-hierarchy) constraint norms.
+//
+// The long-standing L2_Ham / L2_Mom in constraint_norms.dat are computed on
+// LEVEL 0 ONLY, over every level-0 cell -- including the cells sitting
+// underneath the refinement -- and averaged over the whole domain.  That is the
+// right number for its actual consumer: it feeds RLRuntime::publish_cached_L2_Ham
+// and hence the pump governor, where cheapness and run-to-run consistency are
+// what matter.  It is NOT an accuracy measure, for three compounding reasons:
+//
+//   1. the refined levels never contribute, so violation living where the
+//      matter actually is is invisible (finest dx is 2^max_level smaller);
+//   2. covered coarse cells are still summed, so the active region is counted
+//      at a resolution it is not evolved on, and its real residual never
+//      appears at all;
+//   3. the domain is overwhelmingly near-vacuum, so the volume-weighted mean is
+//      diluted toward zero by empty space.
+//
+// The quantities below are the standard AMR composite: evaluate the constraints
+// on every level, drop each coarse cell that has finer cells beneath it, weight
+// by that level's own cell volume, accumulate.  Reported in NEW columns --
+// cols 2/3 and the governor's input are deliberately left byte-for-byte alone,
+// so this stays a diagnostics-only change and every pre-existing run remains
+// comparable.  See research/neuralspacetime/Debug.md PART B fix item 0.
+// ---------------------------------------------------------------------------
+struct AmrConstraintNorms
+{
+    amrex::Real L2_Ham     = 0.0; // composite, covered cells + boundary dropped
+    amrex::Real L2_Mom     = 0.0;
+    amrex::Real L2_Ham_rel = 0.0; // / composite norm of the individual terms
+    amrex::Real L2_Mom_rel = 0.0;
+    amrex::Real Linf_Ham   = 0.0; // max |Ham| over the same set -- undiluted
+    amrex::Real L2_Ham_ref = 0.0; // refined region (levels >= 1) only
+};
+
+// boundary_skip counts LEVEL-0 cells to drop at the outer domain boundary
+// (their violation is boundary-condition, not physics); scaled per level.
+// cst_level0, if given, is the caller's already-filled level-0 constraint
+// MultiFab (same 8 components, same with_abs_terms).  Reusing it matters: level
+// 0 holds ~99.9% of the cells, so recomputing it here would roughly double the
+// per-step diagnostic cost for nothing.
+AmrConstraintNorms
+compute_amr_constraint_norms(amrex::Amr *parent,
+                             const SimulationParameters &params,
+                             amrex::Real time, int state_idx, int boundary_skip,
+                             const amrex::MultiFab *cst_level0 = nullptr)
+{
+    AmrConstraintNorms out;
+
+    amrex::Real sum_ham2 = 0.0, sum_mom2 = 0.0, sum_vol = 0.0;
+    amrex::Real sum_ham_abs2 = 0.0, sum_mom_abs2 = 0.0;
+    amrex::Real sum_ham2_ref = 0.0, sum_vol_ref = 0.0;
+    amrex::Real max_ham = 0.0;
+
+    const int finest = parent->finestLevel();
+    const int n0     = parent->Geom(0).Domain().length(0);
+
+    for (int lev = 0; lev <= finest; ++lev)
+    {
+        amrex::AmrLevel &level = parent->getLevel(lev);
+        const auto dx          = level.Geom().CellSizeArray();
+
+        amrex::MultiFab cst_local;
+        const amrex::MultiFab *cstp = nullptr;
+        if (lev == 0 && cst_level0 != nullptr)
+        {
+            cstp = cst_level0;
+        }
+        else
+        {
+            amrex::MultiFab &state = level.get_new_data(state_idx);
+            // Safe here: Amr calls post_timestep on level 0 only after every
+            // finer level has been advanced to the same time and averaged down.
+            amrex::AmrLevel::FillPatch(level, state, 2, time, state_idx, 0,
+                                       state.nComp());
+            cst_local.define(state.boxArray(), state.DistributionMap(), 8, 0);
+            cst_local.setVal(0.0);
+            RadialRecipeMatter::fill_active_constraints(
+                cst_local, state, params, dx[0],
+                params.recipe_params.grid_center, time,
+                /*with_abs_terms=*/true);
+            cstp = &cst_local;
+        }
+        const amrex::MultiFab &cst = *cstp;
+
+        const amrex::Real cell_vol = dx[0] * dx[1] * dx[2];
+
+        // 1 exactly where this level's cell is covered by the next finer level.
+        amrex::iMultiFab covered(cst.boxArray(), cst.DistributionMap(), 1, 0);
+        if (lev < finest)
+        {
+            covered = amrex::makeFineMask(cst,
+                                          parent->getLevel(lev + 1).boxArray(),
+                                          parent->refRatio(lev), 0, 1);
+        }
+        else
+        {
+            covered.setVal(0);
+        }
+
+        // Outer boundary layer in this level's index space. Fine levels never
+        // touch the domain edge, so in practice this only bites on level 0.
+        const int scale     = level.Geom().Domain().length(0) / n0;
+        amrex::Box interior = level.Geom().Domain();
+        interior.grow(-boundary_skip * scale);
+        const amrex::IntVect ilo = interior.smallEnd();
+        const amrex::IntVect ihi = interior.bigEnd();
+
+        amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum, amrex::ReduceOpMax>
+            ops;
+        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real,
+                          amrex::Real, amrex::Real>
+            data(ops);
+        using Tuple = typename decltype(data)::Type;
+
+        for (amrex::MFIter mfi(cst, amrex::TilingIfNotGPU()); mfi.isValid();
+             ++mfi)
+        {
+            const amrex::Box &bx = mfi.validbox();
+            const auto arr       = cst.const_array(mfi);
+            const auto cov       = covered.const_array(mfi);
+            ops.eval(
+                bx, data,
+                [=] AMREX_GPU_DEVICE(int i, int j, int k) -> Tuple
+                {
+                    if (cov(i, j, k) != 0 || i < ilo[0] || i > ihi[0] ||
+                        j < ilo[1] || j > ihi[1] || k < ilo[2] || k > ihi[2])
+                    {
+                        return {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+                    }
+                    const amrex::Real ham     = arr(i, j, k, 0);
+                    const amrex::Real m1      = arr(i, j, k, 1);
+                    const amrex::Real m2      = arr(i, j, k, 2);
+                    const amrex::Real m3      = arr(i, j, k, 3);
+                    const amrex::Real ham_abs = arr(i, j, k, 4);
+                    const amrex::Real ma1     = arr(i, j, k, 5);
+                    const amrex::Real ma2     = arr(i, j, k, 6);
+                    const amrex::Real ma3     = arr(i, j, k, 7);
+                    const amrex::Real mom2    = m1 * m1 + m2 * m2 + m3 * m3;
+                    const amrex::Real mom_abs2 =
+                        ma1 * ma1 + ma2 * ma2 + ma3 * ma3;
+                    return {ham * ham * cell_vol, mom2 * cell_vol, cell_vol,
+                            ham_abs * ham_abs * cell_vol, mom_abs2 * cell_vol,
+                            std::abs(ham)};
+                });
+        }
+
+        const auto v             = data.value();
+        const amrex::Real lv_ham2 = amrex::get<0>(v);
+        const amrex::Real lv_vol  = amrex::get<2>(v);
+        sum_ham2     += lv_ham2;
+        sum_mom2     += amrex::get<1>(v);
+        sum_vol      += lv_vol;
+        sum_ham_abs2 += amrex::get<3>(v);
+        sum_mom_abs2 += amrex::get<4>(v);
+        max_ham = std::max(max_ham, amrex::get<5>(v));
+        if (lev >= 1)
+        {
+            sum_ham2_ref += lv_ham2;
+            sum_vol_ref  += lv_vol;
+        }
+    }
+
+    amrex::ParallelDescriptor::ReduceRealSum(sum_ham2);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_mom2);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_vol);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_ham_abs2);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_mom_abs2);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_ham2_ref);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_vol_ref);
+    amrex::ParallelDescriptor::ReduceRealMax(max_ham);
+
+    if (sum_vol > 0.0)
+    {
+        out.L2_Ham = std::sqrt(sum_ham2 / sum_vol);
+        out.L2_Mom = std::sqrt(sum_mom2 / sum_vol);
+        const amrex::Real ham_abs = std::sqrt(sum_ham_abs2 / sum_vol);
+        const amrex::Real mom_abs = std::sqrt(sum_mom_abs2 / sum_vol);
+        out.L2_Ham_rel = (ham_abs > 0.0) ? out.L2_Ham / ham_abs : 0.0;
+        out.L2_Mom_rel = (mom_abs > 0.0) ? out.L2_Mom / mom_abs : 0.0;
+    }
+    out.Linf_Ham = max_ham;
+    out.L2_Ham_ref =
+        (sum_vol_ref > 0.0) ? std::sqrt(sum_ham2_ref / sum_vol_ref) : 0.0;
+    return out;
+}
+} // namespace
+
 void RadialRecipeLevel::specificPostTimeStep()
 {
     BL_PROFILE("RadialRecipeLevel::specificPostTimeStep");
@@ -443,61 +640,25 @@ void RadialRecipeLevel::specificPostTimeStep()
         amrex::MultiFab &state_new = get_new_data(state_index);
         FillPatch(*this, state_new, 2, time, state_index, 0, state_new.nComp());
 
-        amrex::MultiFab cst(state_new.boxArray(), state_new.DistributionMap(), 4,
-                            0);
+        // 8 components: Ham, Mom1-3, Ham_abs, Mom_abs1-3 for relative norms.
+        amrex::MultiFab cst(state_new.boxArray(), state_new.DistributionMap(),
+                            8, 0);
         cst.setVal(0.0);
         const auto dx = Geom().CellSizeArray();
-        if (RadialRecipeMatter::uses_independent_scalars(simParams()))
-        {
-            GRTresnaIndependentScalars matter(
-                simParams().recipe_num_scalar_fields,
-                simParams().recipe_scalar_field_signs,
-                simParams().recipe_scalar_mass,
-                simParams().recipe_scalar_lambda);
-            fill_matter_constraints(cst, state_new, matter, dx[0],
-                                    simParams().recipe_params.grid_center,
-                                    time);
-        }
-        else if (RadialRecipeMatter::uses_complex_scalar(simParams()))
-        {
-            ComplexScalarField matter(simParams().recipe_scalar_mass,
-                                      simParams().recipe_scalar_lambda,
-                                      simParams().recipe_scalar_sign);
-            fill_matter_constraints(cst, state_new, matter, dx[0],
-                                    simParams().recipe_params.grid_center,
-                                    time);
-        }
-        else if (RadialRecipeMatter::uses_bicomplex_scalar(simParams()))
-        {
-            BiComplexScalarField matter(simParams().recipe_scalar_mass,
-                                        simParams().recipe_scalar_lambda);
-            fill_matter_constraints(cst, state_new, matter, dx[0],
-                                    simParams().recipe_params.grid_center,
-                                    time);
-        }
-        else if (simParams().recipe_exotic_matter)
-        {
-            ExoticScalarField<DefaultPotential> exotic_scalar(
-                DefaultPotential(), simParams().recipe_support_strength);
-            fill_matter_constraints(cst, state_new, exotic_scalar, dx[0],
-                                    simParams().recipe_params.grid_center,
-                                    time);
-        }
-        else
-        {
-            ScalarField<DefaultPotential> scalar_field;
-            fill_matter_constraints(cst, state_new, scalar_field, dx[0],
-                                    simParams().recipe_params.grid_center,
-                                    time);
-        }
+        RadialRecipeMatter::fill_active_constraints(
+            cst, state_new, simParams(), dx[0],
+            simParams().recipe_params.grid_center, time,
+            /*with_abs_terms=*/true);
 
         const amrex::Real cell_vol = dx[0] * dx[1] * dx[2];
 
         amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum, amrex::ReduceOpSum,
                          amrex::ReduceOpSum>
             reduce_ops;
-        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real> reduce_data(
-            reduce_ops);
+        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real,
+                          amrex::Real>
+            reduce_data(reduce_ops);
         using ReduceTuple = typename decltype(reduce_data)::Type;
 
         for (amrex::MFIter mfi(cst, amrex::TilingIfNotGPU()); mfi.isValid();
@@ -513,22 +674,170 @@ void RadialRecipeLevel::specificPostTimeStep()
                     const amrex::Real m1  = arr(i, j, k, 1);
                     const amrex::Real m2  = arr(i, j, k, 2);
                     const amrex::Real m3  = arr(i, j, k, 3);
+                    const amrex::Real ham_abs = arr(i, j, k, 4);
+                    const amrex::Real ma1 = arr(i, j, k, 5);
+                    const amrex::Real ma2 = arr(i, j, k, 6);
+                    const amrex::Real ma3 = arr(i, j, k, 7);
                     const amrex::Real mom2 = (m1 * m1 + m2 * m2 + m3 * m3);
-                    return {ham * ham * cell_vol, mom2 * cell_vol, cell_vol};
+                    const amrex::Real mom_abs2 =
+                        (ma1 * ma1 + ma2 * ma2 + ma3 * ma3);
+                    return {ham * ham * cell_vol, mom2 * cell_vol, cell_vol,
+                            ham_abs * ham_abs * cell_vol,
+                            mom_abs2 * cell_vol};
                 });
         }
 
-        auto [sum_ham2, sum_mom2, sum_vol] = reduce_data.value();
+        auto [sum_ham2, sum_mom2, sum_vol, sum_ham_abs2, sum_mom_abs2] =
+            reduce_data.value();
         amrex::ParallelDescriptor::ReduceRealSum(sum_ham2);
         amrex::ParallelDescriptor::ReduceRealSum(sum_mom2);
         amrex::ParallelDescriptor::ReduceRealSum(sum_vol);
+        amrex::ParallelDescriptor::ReduceRealSum(sum_ham_abs2);
+        amrex::ParallelDescriptor::ReduceRealSum(sum_mom_abs2);
 
         const double L2_Ham =
             (sum_vol > 0.0) ? std::sqrt(sum_ham2 / sum_vol) : 0.0;
         const double L2_Mom =
             (sum_vol > 0.0) ? std::sqrt(sum_mom2 / sum_vol) : 0.0;
+        const double L2_Ham_abs =
+            (sum_vol > 0.0) ? std::sqrt(sum_ham_abs2 / sum_vol) : 0.0;
+        const double L2_Mom_abs =
+            (sum_vol > 0.0) ? std::sqrt(sum_mom_abs2 / sum_vol) : 0.0;
+        const double L2_Ham_rel =
+            (L2_Ham_abs > 0.0) ? (L2_Ham / L2_Ham_abs) : 0.0;
+        const double L2_Mom_rel =
+            (L2_Mom_abs > 0.0) ? (L2_Mom / L2_Mom_abs) : 0.0;
 
         RLRuntime::publish_cached_L2_Ham(L2_Ham);
+
+        // Pump force L2 and governor (appended columns; see header below).
+        // NOTE on the lapse: the pump adds S_A to ∂_t Π_A, a coordinate-time
+        // rate, so the force density that actually enters ∂_t ρ and ∂_t j_i is
+        // f = Σ_A s_A S_A (...) with NO lapse factor (the α in the "α f_⊥" of
+        // the Duhamel bound is already absorbed converting the KG source J_A
+        // to S_A = α J_A).  Matches ControllerReservoirMatter exactly.
+        amrex::Real pump_force_L2 = 0.0;
+        amrex::Real pump_fi_L2    = 0.0;
+        const int n_fields =
+            RadialRecipeMatter::uses_bicomplex_scalar(simParams()) ? 2 : 1;
+        const bool bicomplex =
+            RadialRecipeMatter::uses_bicomplex_scalar(simParams());
+        const RLMatterPumpParams pump_diag =
+            RadialRecipeMatter::build_rl_pump(simParams(), n_fields, time);
+        const double governor_val = pump_diag.governor;
+        if (pump_diag.num_sites >= 1)
+        {
+            amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
+                             amrex::ReduceOpSum>
+                pf_ops;
+            amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real> pf_data(
+                pf_ops);
+            const auto prob_lo = Geom().ProbLoArray();
+            const auto dx_arr  = Geom().CellSizeArray();
+            // Same centre-relative frame as Coordinates / RLLumpTracker / RHS.
+            const amrex::Real cgx =
+                static_cast<amrex::Real>(simParams().recipe_params.grid_center[0]);
+            const amrex::Real cgy =
+                static_cast<amrex::Real>(simParams().recipe_params.grid_center[1]);
+            const amrex::Real cgz =
+                static_cast<amrex::Real>(simParams().recipe_params.grid_center[2]);
+            for (amrex::MFIter mfi(state_new, amrex::TilingIfNotGPU());
+                 mfi.isValid(); ++mfi)
+            {
+                const amrex::Box &bx = mfi.validbox();
+                const auto arr       = state_new.const_array(mfi);
+                pf_ops.eval(
+                    bx, pf_data,
+                    [=] AMREX_GPU_DEVICE(int i, int j, int k)
+                        -> amrex::GpuTuple<amrex::Real, amrex::Real,
+                                           amrex::Real>
+                    {
+                        const amrex::Real x = prob_lo[0] +
+                                             (amrex::Real(i) + 0.5) * dx_arr[0] -
+                                             cgx;
+                        const amrex::Real y = prob_lo[1] +
+                                             (amrex::Real(j) + 0.5) * dx_arr[1] -
+                                             cgy;
+                        const amrex::Real z = prob_lo[2] +
+                                             (amrex::Real(k) + 0.5) * dx_arr[2] -
+                                             cgz;
+                        const amrex::Real lapse = arr(i, j, k, c_lapse);
+                        const amrex::Real phi1p = arr(i, j, k, c_phi);
+                        const amrex::Real phi2p = arr(i, j, k, c_phi2);
+                        const amrex::Real Pi1p  = arr(i, j, k, c_Pi);
+                        const amrex::Real Pi2p  = arr(i, j, k, c_Pi2);
+                        const amrex::Real phi1m =
+                            bicomplex ? arr(i, j, k, c_phi_m) : 0.0;
+                        const amrex::Real phi2m =
+                            bicomplex ? arr(i, j, k, c_phi2_m) : 0.0;
+                        const amrex::Real Pi1m =
+                            bicomplex ? arr(i, j, k, c_Pi_m) : 0.0;
+                        const amrex::Real Pi2m =
+                            bicomplex ? arr(i, j, k, c_Pi2_m) : 0.0;
+                        RLPumpSources src;
+                        if (bicomplex)
+                        {
+                            src = RLPumpForce::compute_bicomplex_sources(
+                                pump_diag, x, y, z, time, lapse, phi1p, phi2p,
+                                Pi1p, Pi2p, phi1m, phi2m, Pi1m, Pi2m);
+                        }
+                        else
+                        {
+                            src = RLPumpForce::compute_single_field_sources(
+                                pump_diag, x, y, z, time, lapse, phi1p, phi2p,
+                                Pi1p, Pi2p);
+                        }
+                        // Gravitational signs: +1 canonical, -1 phantom.
+                        const amrex::Real f_perp =
+                            (Pi1p * src.s1p + Pi2p * src.s2p) -
+                            (Pi1m * src.s1m + Pi2m * src.s2m);
+
+                        // f_i = Sum_A s_A S_A d_i phi_A.  state_new is
+                        // FillPatch'd with 2 ghost cells above, so the same
+                        // 4th-order centred stencil the RHS uses is available
+                        // on the valid box.
+                        auto d1c = [&](int comp, int dir) -> amrex::Real
+                        {
+                            const int di = (dir == 0) ? 1 : 0;
+                            const int dj = (dir == 1) ? 1 : 0;
+                            const int dk = (dir == 2) ? 1 : 0;
+                            const amrex::Real fm2 =
+                                arr(i - 2 * di, j - 2 * dj, k - 2 * dk, comp);
+                            const amrex::Real fm1 =
+                                arr(i - di, j - dj, k - dk, comp);
+                            const amrex::Real fp1 =
+                                arr(i + di, j + dj, k + dk, comp);
+                            const amrex::Real fp2 =
+                                arr(i + 2 * di, j + 2 * dj, k + 2 * dk, comp);
+                            return (fm2 - 8.0 * fm1 + 8.0 * fp1 - fp2) /
+                                   (12.0 * dx_arr[dir]);
+                        };
+                        amrex::Real fi2 = 0.0;
+                        for (int dir = 0; dir < 3; ++dir)
+                        {
+                            amrex::Real f_dir =
+                                src.s1p * d1c(c_phi, dir) +
+                                src.s2p * d1c(c_phi2, dir);
+                            if (bicomplex)
+                            {
+                                f_dir -= src.s1m * d1c(c_phi_m, dir) +
+                                         src.s2m * d1c(c_phi2_m, dir);
+                            }
+                            fi2 += f_dir * f_dir;
+                        }
+                        return {f_perp * f_perp * cell_vol, fi2 * cell_vol,
+                                cell_vol};
+                    });
+            }
+            auto [sum_af2, sum_afi2, sum_pf_vol] = pf_data.value();
+            amrex::ParallelDescriptor::ReduceRealSum(sum_af2);
+            amrex::ParallelDescriptor::ReduceRealSum(sum_afi2);
+            amrex::ParallelDescriptor::ReduceRealSum(sum_pf_vol);
+            pump_force_L2 =
+                (sum_pf_vol > 0.0) ? std::sqrt(sum_af2 / sum_pf_vol) : 0.0;
+            pump_fi_L2 =
+                (sum_pf_vol > 0.0) ? std::sqrt(sum_afi2 / sum_pf_vol) : 0.0;
+        }
 
         amrex::MultiFab cst_vac(state_new.boxArray(),
                                 state_new.DistributionMap(), 4, 0);
@@ -598,6 +907,12 @@ void RadialRecipeLevel::specificPostTimeStep()
             amrex::UtilCreateDirectory(out_dir, 0755, false);
         }
 
+        // Whole-hierarchy norms (cols 12-17). These are the ones to quote as
+        // an accuracy figure; cols 2-3 above are the governor's input and stay
+        // exactly as they were. 4 level-0 cells of outer boundary are dropped.
+        const AmrConstraintNorms amr_norms = compute_amr_constraint_norms(
+            parent, simParams(), time, state_index, /*boundary_skip=*/4, &cst);
+
         const std::string prefix = out_dir + "constraint_norms";
 
         SmallDataIO constraints_file(prefix, dt, time, restart_time,
@@ -605,14 +920,27 @@ void RadialRecipeLevel::specificPostTimeStep()
         constraints_file.remove_duplicate_time_data();
         if (first_step)
         {
+            // Append-only: existing readers use cols 1-3 (time, L2_Ham, L2_Mom)
+            // and optionally 4-6. New columns follow.
             constraints_file.write_header_line(
                 {"L2_Ham", "L2_Mom", "min_rho_req", "max_rho_req",
-                 "integral_neg_rho"});
+                 "integral_neg_rho", "L2_Ham_rel", "L2_Mom_rel",
+                 "pump_force_L2", "governor", "pump_fi_L2", "L2_Ham_amr",
+                 "L2_Mom_amr", "L2_Ham_amr_rel", "L2_Mom_amr_rel",
+                 "Linf_Ham_amr", "L2_Ham_amr_ref"});
         }
         constraints_file.write_time_data_line(
             {L2_Ham, L2_Mom, static_cast<double>(min_rho_req),
              static_cast<double>(max_rho_req),
-             static_cast<double>(sum_neg_rho)});
+             static_cast<double>(sum_neg_rho), L2_Ham_rel, L2_Mom_rel,
+             static_cast<double>(pump_force_L2), governor_val,
+             static_cast<double>(pump_fi_L2),
+             static_cast<double>(amr_norms.L2_Ham),
+             static_cast<double>(amr_norms.L2_Mom),
+             static_cast<double>(amr_norms.L2_Ham_rel),
+             static_cast<double>(amr_norms.L2_Mom_rel),
+             static_cast<double>(amr_norms.Linf_Ham),
+             static_cast<double>(amr_norms.L2_Ham_ref)});
     }
 
     if (Level() == 0)
@@ -646,13 +974,11 @@ void RadialRecipeLevel::specificPostTimeStep()
         }
 
         amrex::ReduceOps<amrex::ReduceOpMin, amrex::ReduceOpMin,
-                         amrex::ReduceOpMax, amrex::ReduceOpMax,
-                         amrex::ReduceOpMin,
+                         amrex::ReduceOpMax,
                          amrex::ReduceOpMin, amrex::ReduceOpMax,
                          amrex::ReduceOpMin, amrex::ReduceOpMax>
             reduce_ops;
-        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real,
-                          amrex::Real,
+        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real,
                           amrex::Real, amrex::Real,
                           amrex::Real, amrex::Real>
             reduce_data(reduce_ops);
@@ -660,16 +986,6 @@ void RadialRecipeLevel::specificPostTimeStep()
 
         const auto prob_lo = fine_geom.ProbLoArray();
         const auto dx_arr = fine_geom.CellSizeArray();
-
-        // The apparent-horizon / expansion proxy must be measured about the
-        // physics center (where the initial data is centered), not the
-        // coordinate origin at the domain corner.  Using the corner makes
-        // r ~ |grid_center| at the actual center, which collapses the
-        // 2*sqrt(chi)/r regularizing term and produces spurious theta_plus<0
-        // (false trapped surfaces) offset to r ~ |grid_center|.
-        const amrex::Real cx = simParams().recipe_params.grid_center[0];
-        const amrex::Real cy = simParams().recipe_params.grid_center[1];
-        const amrex::Real cz = simParams().recipe_params.grid_center[2];
 
         for (amrex::MFIter mfi(state_fine, amrex::TilingIfNotGPU());
              mfi.isValid(); ++mfi)
@@ -680,58 +996,13 @@ void RadialRecipeLevel::specificPostTimeStep()
                 bx, reduce_data,
                 [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTuple
                 {
-                    const amrex::Real lapse = arr(i, j, k, c_lapse);
-                    const amrex::Real chi   = arr(i, j, k, c_chi);
-                    const amrex::Real K     = arr(i, j, k, c_K);
-
-                    const amrex::Real x = prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0] - cx;
-                    const amrex::Real y = prob_lo[1] + (amrex::Real(j) + 0.5) * dx_arr[1] - cy;
-                    const amrex::Real z = prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2] - cz;
-                    const amrex::Real r2 = x*x + y*y + z*z;
-                    const amrex::Real r = std::sqrt(r2);
-
-                    amrex::Real ah_radius = 0.0;
-                    amrex::Real theta_plus_min_proxy = 1.0e30;
-                    if (r > 1e-6)
-                    {
-                        const amrex::Real A11 = arr(i, j, k, c_A11);
-                        const amrex::Real A22 = arr(i, j, k, c_A22);
-                        const amrex::Real A33 = arr(i, j, k, c_A33);
-                        const amrex::Real A12 = arr(i, j, k, c_A12);
-                        const amrex::Real A13 = arr(i, j, k, c_A13);
-                        const amrex::Real A23 = arr(i, j, k, c_A23);
-
-                        const amrex::Real Arr = (A11*x*x + A22*y*y + A33*z*z + 2.0*A12*x*y + 2.0*A13*x*z + 2.0*A23*y*z) / r2;
-
-                        const amrex::Real dx_chi =
-                            (arr(i + 1, j, k, c_chi) - arr(i - 1, j, k, c_chi)) /
-                            (2.0 * dx_arr[0]);
-                        const amrex::Real dy_chi =
-                            (arr(i, j + 1, k, c_chi) - arr(i, j - 1, k, c_chi)) /
-                            (2.0 * dx_arr[1]);
-                        const amrex::Real dz_chi =
-                            (arr(i, j, k + 1, c_chi) - arr(i, j, k - 1, c_chi)) /
-                            (2.0 * dx_arr[2]);
-                        const amrex::Real dchi_dr =
-                            (x * dx_chi + y * dy_chi + z * dz_chi) / r;
-                        const amrex::Real sqrt_chi =
-                            std::sqrt(amrex::max(chi, amrex::Real(1.0e-20)));
-
-                        const amrex::Real theta_plus =
-                            2.0 * sqrt_chi / r - dchi_dr / sqrt_chi + Arr -
-                            (2.0 / 3.0) * K;
-                        theta_plus_min_proxy = theta_plus;
-
-                        if (theta_plus <= 0.0)
-                        {
-                            ah_radius = r;
-                        }
-                    }
-
+                    const amrex::Real lapse  = arr(i, j, k, c_lapse);
+                    const amrex::Real chi    = arr(i, j, k, c_chi);
+                    const amrex::Real K      = arr(i, j, k, c_K);
                     const amrex::Real sf_phi = arr(i, j, k, c_phi);
                     const amrex::Real sf_Pi  = arr(i, j, k, c_Pi);
 
-                    return {lapse, chi, amrex::Math::abs(K), ah_radius, theta_plus_min_proxy,
+                    return {lapse, chi, amrex::Math::abs(K),
                             sf_phi, sf_phi, sf_Pi, sf_Pi};
                 });
         }
@@ -740,17 +1011,13 @@ void RadialRecipeLevel::specificPostTimeStep()
         amrex::Real min_lapse  = amrex::get<0>(reduce_vals);
         amrex::Real min_chi    = amrex::get<1>(reduce_vals);
         amrex::Real max_abs_K  = amrex::get<2>(reduce_vals);
-        amrex::Real max_ah_r   = amrex::get<3>(reduce_vals);
-        amrex::Real min_theta_plus = amrex::get<4>(reduce_vals);
-        amrex::Real min_phi    = amrex::get<5>(reduce_vals);
-        amrex::Real max_phi    = amrex::get<6>(reduce_vals);
-        amrex::Real min_Pi     = amrex::get<7>(reduce_vals);
-        amrex::Real max_Pi     = amrex::get<8>(reduce_vals);
+        amrex::Real min_phi    = amrex::get<3>(reduce_vals);
+        amrex::Real max_phi    = amrex::get<4>(reduce_vals);
+        amrex::Real min_Pi     = amrex::get<5>(reduce_vals);
+        amrex::Real max_Pi     = amrex::get<6>(reduce_vals);
         amrex::ParallelDescriptor::ReduceRealMin(min_lapse);
         amrex::ParallelDescriptor::ReduceRealMin(min_chi);
         amrex::ParallelDescriptor::ReduceRealMax(max_abs_K);
-        amrex::ParallelDescriptor::ReduceRealMax(max_ah_r);
-        amrex::ParallelDescriptor::ReduceRealMin(min_theta_plus);
         amrex::ParallelDescriptor::ReduceRealMin(min_phi);
         amrex::ParallelDescriptor::ReduceRealMax(max_phi);
         amrex::ParallelDescriptor::ReduceRealMin(min_Pi);
@@ -801,42 +1068,119 @@ void RadialRecipeLevel::specificPostTimeStep()
         const amrex::Real min_lapse_y = (count > 0.0) ? (sum_y / count) : 0.0;
         const amrex::Real min_lapse_z = (count > 0.0) ? (sum_z / count) : 0.0;
 
-        const amrex::Real tol_theta = amrex::max(
-            amrex::Real(1.0e-12),
-            amrex::Real(1.0e-8) * amrex::Math::abs(min_theta_plus));
+        // ---- Apparent-horizon test: shell-averaged outgoing expansion ------
+        //
+        // A marginally trapped surface is a property of a whole closed
+        // surface: the outgoing expansion must average to zero over it.  The
+        // previous diagnostic instead took the pointwise minimum of theta
+        // over the grid, with r measured from the grid center.  Because the
+        // lumps collapse off-center, that minimum simply tracked whichever
+        // lump was deepest and reported its distance from the grid center
+        // (r ~ 11) as a "horizon radius" -- firing while every interior was
+        // still healthy (lapse 0.70, chi 0.64).  Masking the coarse-fine
+        // stencil edge removed a real contamination but not that artifact,
+        // because the artifact was never at the refinement edge: it was at
+        // the lump.  See Debug.md 16a.
+        //
+        // The corrected test averages theta over concentric coordinate
+        // spheres centered on the lapse minimum -- the one place a horizon
+        // can form first -- and only trusts shells the finest level actually
+        // covers, so partially sampled spheres at the edge of the refined
+        // region can no longer masquerade as a surface.
+        //
+        // The dchi_dr stencil reads i+-1 neighbours; at the finest level's
+        // outer boundary those are ghosts interpolated from the coarse
+        // level.  Mask = 1 on this level's valid cells (faces shared with a
+        // sibling box become 1 via FillBoundary), 0 on coarse-fine and
+        // domain ghosts; theta is evaluated only where all six neighbours
+        // are valid.
+        amrex::iMultiFab fine_mask(state_fine.boxArray(),
+                                   state_fine.DistributionMap(), 1, 1);
+        fine_mask.setVal(0);
+        fine_mask.setVal(1, 0, 1, 0);
+        fine_mask.FillBoundary(fine_geom.periodicity());
 
-        amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum>
-            reduce_ops_theta_loc;
-        amrex::ReduceData<amrex::Real, amrex::Real> reduce_data_theta_loc(
-            reduce_ops_theta_loc);
-        using ReduceTupleThetaLoc = typename decltype(reduce_data_theta_loc)::Type;
+        const amrex::Real hx = min_lapse_x;
+        const amrex::Real hy = min_lapse_y;
+        const amrex::Real hz = min_lapse_z;
+
+        // Shell grid: span the finest level's bounding box as seen from the
+        // search center, at roughly two fine cells per shell.
+        amrex::Real shell_r_max = 0.0;
+        {
+            const amrex::Box fbox = state_fine.boxArray().minimalBox();
+            for (int c = 0; c < 8; ++c)
+            {
+                const amrex::Real px =
+                    prob_lo[0] +
+                    amrex::Real((c & 1) ? (fbox.bigEnd(0) + 1) : fbox.smallEnd(0)) *
+                        dx_arr[0];
+                const amrex::Real py =
+                    prob_lo[1] +
+                    amrex::Real((c & 2) ? (fbox.bigEnd(1) + 1) : fbox.smallEnd(1)) *
+                        dx_arr[1];
+                const amrex::Real pz =
+                    prob_lo[2] +
+                    amrex::Real((c & 4) ? (fbox.bigEnd(2) + 1) : fbox.smallEnd(2)) *
+                        dx_arr[2];
+                const amrex::Real d2 = (px - hx) * (px - hx) +
+                                       (py - hy) * (py - hy) +
+                                       (pz - hz) * (pz - hz);
+                shell_r_max = amrex::max(shell_r_max, std::sqrt(d2));
+            }
+        }
+        const int n_shells = std::min(
+            1024, std::max(8, static_cast<int>(shell_r_max /
+                                               (2.0 * dx_arr[0])) + 1));
+        const amrex::Real shell_dr = shell_r_max / amrex::Real(n_shells);
+
+        // [0, n_shells) accumulates sum(theta); [n_shells, 2*n_shells)
+        // accumulates the cell count, so one device buffer serves both.
+        amrex::Gpu::DeviceVector<amrex::Real> d_shell(2 * n_shells);
+        amrex::Real *shell_acc = d_shell.data();
+        amrex::ParallelFor(2 * n_shells,
+                           [=] AMREX_GPU_DEVICE(int b) { shell_acc[b] = 0.0; });
 
         for (amrex::MFIter mfi(state_fine, amrex::TilingIfNotGPU());
              mfi.isValid(); ++mfi)
         {
             const amrex::Box &bx = mfi.validbox();
             const auto arr       = state_fine.const_array(mfi);
-            reduce_ops_theta_loc.eval(
-                bx, reduce_data_theta_loc,
-                [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTupleThetaLoc
+            const auto mask_arr  = fine_mask.const_array(mfi);
+            amrex::ParallelFor(
+                bx,
+                [=] AMREX_GPU_DEVICE(int i, int j, int k)
                 {
-                    const amrex::Real chi = arr(i, j, k, c_chi);
-                    const amrex::Real K   = arr(i, j, k, c_K);
-
-                    const amrex::Real x =
-                        prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0] - cx;
-                    const amrex::Real y =
-                        prob_lo[1] + (amrex::Real(j) + 0.5) * dx_arr[1] - cy;
-                    const amrex::Real z =
-                        prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2] - cz;
-                    const amrex::Real r2 = x * x + y * y + z * z;
-                    const amrex::Real r  = std::sqrt(r2);
-
-                    if (r <= 1e-6)
+                    if (mask_arr(i - 1, j, k) == 0 ||
+                        mask_arr(i + 1, j, k) == 0 ||
+                        mask_arr(i, j - 1, k) == 0 ||
+                        mask_arr(i, j + 1, k) == 0 ||
+                        mask_arr(i, j, k - 1) == 0 ||
+                        mask_arr(i, j, k + 1) == 0)
                     {
-                        return {0.0, 0.0};
+                        return;
                     }
 
+                    const amrex::Real x =
+                        prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0] - hx;
+                    const amrex::Real y =
+                        prob_lo[1] + (amrex::Real(j) + 0.5) * dx_arr[1] - hy;
+                    const amrex::Real z =
+                        prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2] - hz;
+                    const amrex::Real r2 = x * x + y * y + z * z;
+                    const amrex::Real r  = std::sqrt(r2);
+                    if (r <= 1.0e-6)
+                    {
+                        return;
+                    }
+                    const int b = static_cast<int>(r / shell_dr);
+                    if (b < 0 || b >= n_shells)
+                    {
+                        return;
+                    }
+
+                    const amrex::Real chi = arr(i, j, k, c_chi);
+                    const amrex::Real K   = arr(i, j, k, c_K);
                     const amrex::Real A11 = arr(i, j, k, c_A11);
                     const amrex::Real A22 = arr(i, j, k, c_A22);
                     const amrex::Real A33 = arr(i, j, k, c_A33);
@@ -868,29 +1212,71 @@ void RadialRecipeLevel::specificPostTimeStep()
                         2.0 * sqrt_chi / r - dchi_dr / sqrt_chi + Arr -
                         (2.0 / 3.0) * K;
 
-                    const bool is_min =
-                        (amrex::Math::abs(theta_plus - min_theta_plus) <=
-                         tol_theta);
-                    if (!is_min)
-                    {
-                        return {0.0, 0.0};
-                    }
-                    return {r, 1.0};
+                    amrex::HostDevice::Atomic::Add(&shell_acc[b], theta_plus);
+                    amrex::HostDevice::Atomic::Add(&shell_acc[n_shells + b],
+                                                   amrex::Real(1.0));
                 });
         }
+        amrex::Gpu::streamSynchronize();
 
-        auto [sum_r_theta, count_r_theta] = reduce_data_theta_loc.value();
-        amrex::ParallelDescriptor::ReduceRealSum(sum_r_theta);
-        amrex::ParallelDescriptor::ReduceRealSum(count_r_theta);
-        const amrex::Real r_at_min_theta_plus =
-            (count_r_theta > 0.0) ? (sum_r_theta / count_r_theta) : 0.0;
+        std::vector<amrex::Real> h_shell(2 * n_shells);
+        amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_shell.begin(),
+                         d_shell.end(), h_shell.begin());
+        amrex::ParallelDescriptor::ReduceRealSum(h_shell.data(), 2 * n_shells);
+
+        // A shell counts only if the finest level covers essentially all of
+        // it -- a partially sampled sphere has no meaningful average, and it
+        // was exactly those partial spheres that used to produce phantom
+        // horizons.
+        constexpr amrex::Real shell_coverage_min = 0.90;
+        constexpr amrex::Real shell_count_min    = 32.0;
+        const amrex::Real cell_vol = dx_arr[0] * dx_arr[1] * dx_arr[2];
+        const amrex::Real four_thirds_pi =
+            amrex::Real(4.0 / 3.0) * amrex::Math::pi<amrex::Real>();
+
+        amrex::Real ah_r_out = 0.0;
+        amrex::Real min_theta_bar =
+            std::numeric_limits<amrex::Real>::quiet_NaN();
+        amrex::Real r_at_min_theta_bar = 0.0;
+        amrex::Real n_shells_ok        = 0.0;
+        amrex::Real best_theta_bar     = 1.0e30;
+        for (int b = 0; b < n_shells; ++b)
+        {
+            const amrex::Real cnt = h_shell[n_shells + b];
+            if (cnt < shell_count_min)
+            {
+                continue;
+            }
+            const amrex::Real r_in  = amrex::Real(b) * shell_dr;
+            const amrex::Real r_out = amrex::Real(b + 1) * shell_dr;
+            const amrex::Real expected =
+                four_thirds_pi *
+                (r_out * r_out * r_out - r_in * r_in * r_in) / cell_vol;
+            if (cnt < shell_coverage_min * expected)
+            {
+                continue;
+            }
+            n_shells_ok += 1.0;
+            const amrex::Real theta_bar = h_shell[b] / cnt;
+            const amrex::Real r_mid     = 0.5 * (r_in + r_out);
+            if (theta_bar < best_theta_bar)
+            {
+                best_theta_bar     = theta_bar;
+                min_theta_bar      = theta_bar;
+                r_at_min_theta_bar = r_mid;
+            }
+            // Outermost fully covered sphere that is marginally trapped.
+            if (theta_bar <= 0.0)
+            {
+                ah_r_out = r_mid;
+            }
+        }
 
         // Pump control-effort diagnostic: instantaneous power injected by the
         // PD/open-loop matter pump into the scalar momentum equations,
-        //   P = integral alpha * (Pi · S_Pi) sqrt(gamma) dV.
+        //   P = integral alpha * f_perp * sqrt(gamma) dV,
+        // with f_perp from RLPumpForce (same source law as the evolution RHS).
         // Zero when the pump is off (num_sites < 1) or past rl_pump_stop_time.
-        // Ported from SupportedWormholeLevel; MAP-Elites penalises the
-        // time-integral so the search favours minimal artificial forcing.
         amrex::Real pump_work = 0.0;
         {
             const bool bicomplex =
@@ -902,6 +1288,13 @@ void RadialRecipeLevel::specificPostTimeStep()
             {
                 const amrex::Real cell_vol =
                     dx_arr[0] * dx_arr[1] * dx_arr[2];
+                // Same centre-relative frame as Coordinates / RLLumpTracker / RHS.
+                const amrex::Real cgx = static_cast<amrex::Real>(
+                    simParams().recipe_params.grid_center[0]);
+                const amrex::Real cgy = static_cast<amrex::Real>(
+                    simParams().recipe_params.grid_center[1]);
+                const amrex::Real cgz = static_cast<amrex::Real>(
+                    simParams().recipe_params.grid_center[2]);
                 amrex::ReduceOps<amrex::ReduceOpSum> reduce_ops_pw;
                 amrex::ReduceData<amrex::Real> reduce_data_pw(reduce_ops_pw);
                 using ReduceTuplePW = typename decltype(reduce_data_pw)::Type;
@@ -916,11 +1309,14 @@ void RadialRecipeLevel::specificPostTimeStep()
                         [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTuplePW
                         {
                             const amrex::Real x =
-                                prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0];
+                                prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0] -
+                                cgx;
                             const amrex::Real y =
-                                prob_lo[1] + (amrex::Real(j) + 0.5) * dx_arr[1];
+                                prob_lo[1] + (amrex::Real(j) + 0.5) * dx_arr[1] -
+                                cgy;
                             const amrex::Real z =
-                                prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2];
+                                prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2] -
+                                cgz;
                             const amrex::Real lapse = arr(i, j, k, c_lapse);
                             const amrex::Real chi = amrex::max(
                                 arr(i, j, k, c_chi), amrex::Real(1.0e-10));
@@ -939,91 +1335,29 @@ void RadialRecipeLevel::specificPostTimeStep()
                             const amrex::Real Pi2m =
                                 bicomplex ? arr(i, j, k, c_Pi2_m) : 0.0;
 
-                            amrex::Real s1p = 0.0, s2p = 0.0;
-                            amrex::Real s1m = 0.0, s2m = 0.0;
-                            const amrex::Real gov = pump.governor;
-                            if (pump.k_p > 0.0)
+                            RLPumpSources src;
+                            if (bicomplex)
                             {
-                                const amrex::Real kp = pump.k_p;
-                                const amrex::Real kd = pump.k_d;
-                                const amrex::Real inv_a = 1.0 / lapse;
-                                const amrex::Real tw =
-                                    (pump.target_width > 0.0) ? pump.target_width
-                                                              : pump.width;
-                                for (int s = 0; s < pump.num_sites; ++s)
-                                {
-                                    const auto &site = pump.sites[s];
-                                    if (site.amplitude <= 0.0)
-                                        continue;
-                                    const amrex::Real env =
-                                        RLRuntime::compute_site_envelope(
-                                            x, y, z, site, tw,
-                                            pump.target_profile);
-                                    if (env < 1.0e-8)
-                                        continue;
-                                    const amrex::Real amp_t =
-                                        (pump.target_amp > 0.0) ? pump.target_amp
-                                                                : site.amplitude;
-                                    const amrex::Real g   = amp_t * env;
-                                    const amrex::Real arg =
-                                        -site.frequency * pw_time + site.phase;
-                                    const amrex::Real tphi1 = g * std::cos(arg);
-                                    const amrex::Real tphi2 = g * std::sin(arg);
-                                    const amrex::Real tPi1 =
-                                        site.frequency * tphi2 * inv_a;
-                                    const amrex::Real tPi2 =
-                                        -site.frequency * tphi1 * inv_a;
-                                    const amrex::Real w = gov * env;
-                                    if (!bicomplex || site.field_sign >= 0)
-                                    {
-                                        s1p += w * (-kp * (phi1p - tphi1) -
-                                                    kd * (Pi1p - tPi1));
-                                        s2p += w * (-kp * (phi2p - tphi2) -
-                                                    kd * (Pi2p - tPi2));
-                                    }
-                                    else
-                                    {
-                                        s1m += w * (-kp * (phi1m - tphi1) -
-                                                    kd * (Pi1m - tPi1));
-                                        s2m += w * (-kp * (phi2m - tphi2) -
-                                                    kd * (Pi2m - tPi2));
-                                    }
-                                }
+                                src = RLPumpForce::compute_bicomplex_sources(
+                                    pump, x, y, z, pw_time, lapse, phi1p, phi2p,
+                                    Pi1p, Pi2p, phi1m, phi2m, Pi1m, Pi2m);
                             }
                             else
                             {
-                                for (int s = 0; s < pump.num_sites; ++s)
-                                {
-                                    const amrex::Real base =
-                                        RLRuntime::compute_site_base(
-                                            x, y, z, pump.sites[s], pump.width,
-                                            gov);
-                                    if (base <= 0.0)
-                                        continue;
-                                    const amrex::Real arg =
-                                        pump.sites[s].frequency * pw_time +
-                                        pump.sites[s].phase;
-                                    const amrex::Real dc = base * std::cos(arg);
-                                    const amrex::Real ds = base * std::sin(arg);
-                                    if (!bicomplex ||
-                                        pump.sites[s].field_sign >= 0)
-                                    {
-                                        s1p += dc;
-                                        s2p += ds;
-                                    }
-                                    else
-                                    {
-                                        s1m += dc;
-                                        s2m += ds;
-                                    }
-                                }
+                                src = RLPumpForce::compute_single_field_sources(
+                                    pump, x, y, z, pw_time, lapse, phi1p, phi2p,
+                                    Pi1p, Pi2p);
                             }
-                            const amrex::Real power =
-                                lapse *
-                                (Pi1p * s1p + Pi2p * s2p + Pi1m * s1m +
-                                 Pi2m * s2m) *
-                                sqrt_gamma * cell_vol;
-                            return {power};
+                            // f_perp with gravitational signs: +1 canonical,
+                            // -1 phantom.  Power = f_perp * sqrt(gamma): the
+                            // pump adds S_A to d_t Pi_A (a coordinate-time
+                            // rate), so d_t rho|_pump = f_perp exactly, with
+                            // NO lapse factor.  Same convention as
+                            // ControllerReservoirMatter.
+                            const amrex::Real f_perp =
+                                (Pi1p * src.s1p + Pi2p * src.s2p) -
+                                (Pi1m * src.s1m + Pi2m * src.s2m);
+                            return {f_perp * sqrt_gamma * cell_vol};
                         });
                 }
                 pump_work = amrex::get<0>(reduce_data_pw.value());
@@ -1066,9 +1400,16 @@ void RadialRecipeLevel::specificPostTimeStep()
                                         static_cast<double>(min_lapse_x),
                                         static_cast<double>(min_lapse_y),
                                         static_cast<double>(min_lapse_z),
-                                        static_cast<double>(max_ah_r),
-                                        static_cast<double>(min_theta_plus),
-                                        static_cast<double>(r_at_min_theta_plus),
+                                        // Shell-averaged replacements for the
+                                        // withdrawn pointwise proxy; same three
+                                        // columns, so nothing reading this file
+                                        // by position moves.  min_theta_plus is
+                                        // NaN when no sphere was fully covered
+                                        // by the finest level -- unmeasured, and
+                                        // it must not read as zero.
+                                        static_cast<double>(ah_r_out),
+                                        static_cast<double>(min_theta_bar),
+                                        static_cast<double>(r_at_min_theta_bar),
                                         static_cast<double>(min_phi),
                                         static_cast<double>(max_phi),
                                         static_cast<double>(min_Pi),
@@ -1105,16 +1446,24 @@ void RadialRecipeLevel::specificPostTimeStep()
             }
             else if (RadialRecipeMatter::uses_complex_scalar(simParams()))
             {
+                // NOTE: recipe_scalar_mu MUST be passed.  Until 2026-07-28 this
+                // constructor omitted it, so every EC margin was evaluated with
+                // the sextic term of the Q-ball potential silently zeroed --
+                // a different V than the one the evolution integrates.
                 ComplexScalarField matter(simParams().recipe_scalar_mass,
                                             simParams().recipe_scalar_lambda,
-                                            simParams().recipe_scalar_sign);
+                                            simParams().recipe_scalar_sign,
+                                            simParams().recipe_scalar_mu);
                 ec_res = reduce_ec_margins(state_fine, matter, ec_dx,
                                            ec_cell_vol);
             }
             else if (RadialRecipeMatter::uses_bicomplex_scalar(simParams()))
             {
+                // Same μ omission as above; at candidate-146 amplitudes the
+                // sextic term is comparable to the mass/quartic terms.
                 BiComplexScalarField matter(simParams().recipe_scalar_mass,
-                                            simParams().recipe_scalar_lambda);
+                                            simParams().recipe_scalar_lambda,
+                                            simParams().recipe_scalar_mu);
                 ec_res = reduce_ec_margins(state_fine, matter, ec_dx,
                                            ec_cell_vol);
             }
@@ -1261,5 +1610,150 @@ void RadialRecipeLevel::specificPostTimeStep()
                  static_cast<double>(max_KijKij),
                  static_cast<double>(std::sqrt(sum_R3sq_vol))});
         }
+    }
+
+    // --- recentring box ----------------------------------------------------
+    //
+    // Last in the step on purpose.  Every diagnostic above has already been
+    // computed and written from the pre-shift state, so a row of
+    // constraint_norms.dat and a row of treadmill.dat describe the same
+    // instant.  Any plotfile the driver writes after this point is post-shift,
+    // and joining it to the odometer at the same time reproduces the true
+    // trajectory exactly.
+    if (Level() == 0 && simParams().treadmill_params.enabled)
+    {
+        configure_recentring_box();
+
+        amrex::StateData &state_data = get_state_data(state_index);
+        std::vector<amrex::MultiFab *> states{&get_new_data(state_index)};
+        if (state_data.hasOldData())
+        {
+            // AmrLevel::RK starts every step from the old data, so leaving it
+            // behind would evolve two frames against each other.
+            states.push_back(&get_old_data(state_index));
+        }
+
+        const RecentringBox::Step tread = recentring_box().advance(
+            states, Geom(), parent->levelSteps(0), state_data.curTime(),
+            parent->dtLevel(0), get_gramr_ptr()->get_restart_time());
+
+        if (tread.shifted)
+        {
+            // A FillPatcher caches coarse data against the old labelling.  It
+            // is unused at max_level = 0, which this module requires anyway,
+            // but one line removes the question.
+            resetFillPatcher();
+        }
+    }
+}
+
+void RadialRecipeLevel::configure_recentring_box()
+{
+    // Idempotent: several entry points (post-timestep, checkpoint, restart)
+    // need the box configured and none of them knows which runs first.
+    static bool s_configured = false;
+    if (s_configured)
+    {
+        return;
+    }
+    s_configured = true;
+
+    const SimulationParameters &params = simParams();
+
+    // Which components define each matter sector's core.  The bicomplex model
+    // carries a canonical and a phantom field in disjoint slots; anything else
+    // is a single sector.  Supplying the indices HERE rather than hard-coding
+    // them inside the tracker is what keeps the tracker reusable and this
+    // level the only place that knows the matter layout.
+    std::vector<SectorFieldSet> sectors;
+    sectors.push_back(SectorFieldSet{{c_phi, c_Pi, c_phi2, c_Pi2}});
+    if (RadialRecipeMatter::uses_bicomplex_scalar(params))
+    {
+        sectors.push_back(SectorFieldSet{{c_phi_m, c_Pi_m, c_phi2_m, c_Pi2_m}});
+    }
+
+    const std::vector<double> asymptotic(
+        params.boundary_params.vars_asymptotic_values.begin(),
+        params.boundary_params.vars_asymptotic_values.end());
+
+    GRParmParse pp;
+    std::string output_path = "./";
+    pp.load("output_path", output_path, std::string("./"));
+    std::string data_subpath;
+    pp.load("data_subpath", data_subpath, std::string(""));
+    if (!output_path.empty() && output_path.back() != '/')
+    {
+        output_path += "/";
+    }
+    if (!data_subpath.empty() && data_subpath.back() != '/')
+    {
+        data_subpath += "/";
+    }
+    const std::string out_dir = output_path + data_subpath;
+    if (!out_dir.empty())
+    {
+        amrex::UtilCreateDirectory(out_dir, 0755, false);
+    }
+
+    // How far the source's outer envelope reaches from the pair's midpoint:
+    // half the widest lump separation plus the tracker's own search radius,
+    // which is sized to the star.  An estimate, and deliberately generous --
+    // it can only ever refuse a configuration, never wave a marginal one
+    // through.
+    double half_separation = 0.0;
+    for (int k = 0; k < params.trajectory_params.num_lumps; ++k)
+    {
+        half_separation =
+            std::max(half_separation,
+                     std::abs(params.trajectory_params.lumps[k].R0));
+    }
+    const double source_reach =
+        half_separation + params.treadmill_params.ball_radius;
+
+    std::array<int, AMREX_SPACEDIM> is_periodic{};
+    for (int d = 0; d < AMREX_SPACEDIM; ++d)
+    {
+        is_periodic[d] = Geom().isPeriodic(d) ? 1 : 0;
+    }
+
+    const bool ok = recentring_box().configure(
+        params.treadmill_params,
+        Geom().CellSize(std::clamp(params.treadmill_params.axis, 0,
+                                   AMREX_SPACEDIM - 1)),
+        params.recipe_params.grid_center, sectors, asymptotic,
+        out_dir + "treadmill", parent->maxLevel(), is_periodic,
+        GridTreadmill::min_box_extent(get_new_data(state_index).boxArray(),
+                                      params.treadmill_params.axis),
+        params.sponge_params.enabled ? params.sponge_params.inner_radius : -1.0,
+        source_reach);
+    RecentringBox::require_valid(ok);
+}
+
+void RadialRecipeLevel::specific_pre_checkpoint(const std::string &a_dir,
+                                                std::ostream & /*a_os*/)
+{
+    if (Level() != 0 || !simParams().treadmill_params.enabled)
+    {
+        return;
+    }
+    configure_recentring_box();
+    recentring_box().save(a_dir);
+}
+
+void RadialRecipeLevel::specific_post_restart()
+{
+    if (Level() != 0 || !simParams().treadmill_params.enabled)
+    {
+        return;
+    }
+    configure_recentring_box();
+    const std::string &restart_dir = parent->theRestartFile();
+    if (!recentring_box().load(restart_dir))
+    {
+        // Resuming with the odometer at zero would produce a trajectory that
+        // is wrong and looks entirely plausible.  Refuse instead.
+        amrex::Abort("[treadmill] no odometer found in the checkpoint at " +
+                     restart_dir +
+                     "; restarting would silently reset the trajectory");
     }
 }

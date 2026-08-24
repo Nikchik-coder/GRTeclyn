@@ -1,0 +1,151 @@
+{
+  "campaign": "fgeo_max_cmaes_validation",
+  "source_run": "runs/neuralspacetime/search/cma_es/qball_traj_fgeo_max_cmaes_v1",
+  "source_eval": "auto",
+  "objective_mode": "f_geo_max",
+  "physics_frozen": {
+    "matter_model": "grtresna_bicomplex_scalar",
+    "matter_sector": "boson_star",
+    "pump": "on for the ENTIRE run \u2014 rl_pump_stop_time deliberately ABSENT (absent key = never stop, GPU_RUN_PLAN.md 12.1; the pump-convention validator refuses this manifest if one is added)",
+    "max_level": 3,
+    "regrid_threshold": 0.02,
+    "qball": "compact ODE + equilibrium amplitude",
+    "do_not_mutate": true
+  },
+  "extra_overrides": [
+    "grtresna_matter_model=grtresna_bicomplex_scalar",
+    "grtresna_matter_coupling=canonical"
+  ],
+  "defaults": {
+    "stop_time": 64.0,
+    "plot_interval": 72,
+    "grteclyn_frames": 1,
+    "grteclyn_psi4": 1,
+    "grteclyn_psi4_n_points": 128,
+    "consumer_radii": [
+      12.0,
+      18.0,
+      24.0
+    ],
+    "geo_directions": "x y z",
+    "geo_emit_interval": 2.0,
+    "geo_max_emissions": 29,
+    "evolving_geodesic_mode": "hq",
+    "gauge_speed_factor": 1.41421356237
+  },
+  "runs": [
+    {
+      "id": "FMAX-RM",
+      "phase": 2,
+      "role": "hq_baseline_richardson_medium",
+      "n_full": 256,
+      "l_full": 128.0,
+      "stop_time": 64.0,
+      "plot_interval": 72,
+      "grteclyn_frames": 1,
+      "evolution_mpi_ranks": 3,
+      "consumer_radii": [
+        12.0,
+        18.0,
+        24.0
+      ],
+      "name_prefix": "fmax_rm_L128_N256_t64",
+      "notes": "HQ headline + Richardson medium (h=0.5). 1 GPU. Metrics-only. Raised 1 -> 3 GPUs on 2026-08-19 after the single- and dual-card attempts failed the same way: the mesh keeps refining, so speed decays (22 -> 2.3 units/h by t=44) while per-card memory grows ~6 GB/h, and attempt 1 OOMed. Splitting the domain across 3 ranks cuts the per-card footprint by about a third and moves the ceiling out past t=64. Compute layout only - physics_frozen untouched."
+    },
+    {
+      "id": "FMAX-RC",
+      "phase": 3,
+      "role": "richardson_coarse",
+      "n_full": 192,
+      "l_full": 128.0,
+      "stop_time": 32.0,
+      "plot_interval": 72,
+      "grteclyn_frames": 1,
+      "evolution_mpi_ranks": 1,
+      "consumer_radii": [
+        12.0,
+        18.0,
+        24.0
+      ],
+      "name_prefix": "fmax_rc_L128_N192_t32",
+      "notes": "Richardson coarse (h=0.667). 1 GPU. Window cut 64 -> 32 on 2026-08-20. The headline transport curve plateaus at t~43-45 (0.508 at 43, 0.510 at 48), so everything past ~45 was cost with no signal, and it is exactly where memory triples (51 GB of data at t=24, 92 GB at t=42, 152 GB at t=48). At t=32 a cell needs ~58 GB and fits one card, which is what makes this matrix runnable. The convergence claim compares rungs against each other, so the absolute value of the truncated window does not matter; the headline number is quoted from the separate t=51 RM run instead.",
+      "geo_max_emissions": 13
+    },
+    {
+      "id": "FMAX-RI",
+      "phase": 3,
+      "role": "richardson_intermediate",
+      "n_full": 240,
+      "l_full": 128.0,
+      "stop_time": 32.0,
+      "plot_interval": 72,
+      "grteclyn_frames": 1,
+      "evolution_mpi_ranks": 1,
+      "consumer_radii": [
+        12.0,
+        18.0,
+        24.0
+      ],
+      "name_prefix": "fmax_ri_L128_N240_t32",
+      "notes": "Richardson intermediate rung (h=0.533). Replaces the retired N=384 fine rung (OOMs on one GPU; ladder capped per GPU_RUN_PLAN.md 2). Raised 224 -> 240 on 2026-08-19: the memory probe passed (N=240 -> 49.8 GB and 29.4 units/h on one card; N=288 OOMs), so 240 is the finest rung that fits a single GPU. Ladder is now h = 0.500 / 0.533 / 0.667 (N = 256 / 240 / 192 at L=128). Window cut 64 -> 32 on 2026-08-20. The headline transport curve plateaus at t~43-45 (0.508 at 43, 0.510 at 48), so everything past ~45 was cost with no signal, and it is exactly where memory triples (51 GB of data at t=24, 92 GB at t=42, 152 GB at t=48). At t=32 a cell needs ~58 GB and fits one card, which is what makes this matrix runnable. The convergence claim compares rungs against each other, so the absolute value of the truncated window does not matter; the headline number is quoted from the separate t=51 RM run instead.",
+      "geo_max_emissions": 13
+    },
+    {
+      "id": "FMAX-DS",
+      "phase": 3,
+      "role": "domain_small",
+      "n_full": 192,
+      "l_full": 96.0,
+      "stop_time": 32.0,
+      "plot_interval": 72,
+      "grteclyn_frames": 1,
+      "evolution_mpi_ranks": 1,
+      "consumer_radii": [
+        12.0,
+        18.0,
+        24.0
+      ],
+      "name_prefix": "fmax_ds_L96_N192_t32",
+      "notes": "Domain study small (L=96, same h). 1 GPU. Window cut 64 -> 32 on 2026-08-20. The headline transport curve plateaus at t~43-45 (0.508 at 43, 0.510 at 48), so everything past ~45 was cost with no signal, and it is exactly where memory triples (51 GB of data at t=24, 92 GB at t=42, 152 GB at t=48). At t=32 a cell needs ~58 GB and fits one card, which is what makes this matrix runnable. The convergence claim compares rungs against each other, so the absolute value of the truncated window does not matter; the headline number is quoted from the separate t=51 RM run instead.",
+      "geo_max_emissions": 13
+    },
+    {
+      "id": "FMAX-DS2",
+      "phase": 3,
+      "role": "domain_mid",
+      "n_full": 224,
+      "l_full": 112.0,
+      "stop_time": 32.0,
+      "plot_interval": 72,
+      "grteclyn_frames": 1,
+      "evolution_mpi_ranks": 1,
+      "consumer_radii": [
+        12.0,
+        18.0,
+        24.0
+      ],
+      "name_prefix": "fmax_ds2_L112_N224_t32",
+      "notes": "Domain study mid (L=112, same h). Replaces the retired L160/N320 cell (~137 GB, unproducible on one GPU). Window cut 64 -> 32 on 2026-08-20. The headline transport curve plateaus at t~43-45 (0.508 at 43, 0.510 at 48), so everything past ~45 was cost with no signal, and it is exactly where memory triples (51 GB of data at t=24, 92 GB at t=42, 152 GB at t=48). At t=32 a cell needs ~58 GB and fits one card, which is what makes this matrix runnable. The convergence claim compares rungs against each other, so the absolute value of the truncated window does not matter; the headline number is quoted from the separate t=51 RM run instead.",
+      "geo_max_emissions": 13
+    }
+  ],
+  "acceptance": {
+    "f_geo_positive": true,
+    "n_rays": 5,
+    "h_quality_ok": true,
+    "richardson_series": [
+      "FMAX-RC",
+      "FMAX-RI",
+      "FMAX-RM"
+    ],
+    "fine_vs_medium_rel_tol": 0.1,
+    "domain_l112_vs_l128_rel_tol": 0.1,
+    "freefall_ladder_spread_rel_tol": 0.1
+  },
+  "stop_condition": {
+    "run_id": "FMAX-RM",
+    "require_positive_f_geo": true,
+    "require_h_quality_ok": true,
+    "on_fail": "halt_matrix_diagnose_drift"
+  }
+}

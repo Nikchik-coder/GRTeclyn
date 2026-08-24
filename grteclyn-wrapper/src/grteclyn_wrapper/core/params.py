@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Mapping
 
 from .config import ExampleConfig, resolve_example
+from .scratch import plotfile_dir
 
 
 _ASSIGNMENT_RE = re.compile(r"^(?P<prefix>\s*(?P<key>[A-Za-z0-9_.]+)\s*=\s*)(?P<value>.*?)(?P<comment>\s+#.*)?$")
@@ -17,10 +18,13 @@ _PARM_PARSE_TOKEN_LIST_KEYS = frozenset(
 
 
 def regrid_intervals_for_max_level(max_level: int) -> list[int]:
-    """AMR regrid cadence per level; length must match ``max_level + 1`` entries."""
+    """AMR regrid cadence: GRTeclyn getarr-reads exactly ``max_level`` entries
+    and appends its own terminal 0 (AMReXParameters.hpp), but ParmParse aborts
+    at file-parse time on a key with no tokens -- so unigrid (``max_level 0``)
+    must still emit one benign ``0``, never an empty list."""
     max_lvl = int(max_level)
     if max_lvl <= 0:
-        return []
+        return [0]
     return [16] * min(max_lvl, 2) + [8] * max(0, max_lvl - 2)
 
 
@@ -102,12 +106,21 @@ class ParamsTemplate:
 
 
 def episode_path_overrides(episode_dir: Path, example: ExampleConfig | str = "SupportedWormholeCollapse") -> dict[str, object]:
+    """Route results to the episode directory and transients to node-local disk.
+
+    ``amr.plot_file`` / ``amr.check_file`` are independent of ``output_path``,
+    which is what lets the 3.2 GB write-once/read-once/delete plotfiles stay
+    inside the node while the ~12 MB anyone actually reads goes to the shared
+    filesystem.  ``plotfile_dir`` returns the episode directory itself when
+    scratch is disabled or unusable, so this stays the old layout in that case.
+    """
     example_cfg = example if isinstance(example, ExampleConfig) else resolve_example(example)
     episode_dir = episode_dir.expanduser().resolve()
+    transient_dir = plotfile_dir(episode_dir, create=True)
     return {
         "output_path": episode_dir,
-        "amr.check_file": episode_dir / example_cfg.check_prefix,
-        "amr.plot_file": episode_dir / example_cfg.plot_prefix,
+        "amr.check_file": transient_dir / example_cfg.check_prefix,
+        "amr.plot_file": transient_dir / example_cfg.plot_prefix,
     }
 
 

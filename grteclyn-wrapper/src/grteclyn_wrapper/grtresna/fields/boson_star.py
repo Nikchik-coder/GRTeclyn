@@ -10,6 +10,7 @@ from numpy.typing import NDArray
 from ..profiles.boson_star import (
     PROFILE_ODE_BOUND,
     PROFILE_SECH_BOUND,
+    PROFILE_SELFGRAV_BOUND,
     BosonStarProfile,
 )
 from ..profiles.envelope import angular_factor, envelope_grid, phi0_at_radius
@@ -134,7 +135,7 @@ def _raw_lump_phi_grid(
     dz = pz - center[2]
     r2 = dx * dx + dy * dy + dz * dz
     profile = int(lump.get("profile", 0))
-    if profile == PROFILE_ODE_BOUND:
+    if profile in (PROFILE_ODE_BOUND, PROFILE_SELFGRAV_BOUND):
         r = np.sqrt(r2)
         return _lump_phi0_at_radius(r, lump) * angular_factor(
             int(lump.get("mode", 0)), dx, dy, width
@@ -169,6 +170,11 @@ def _boosted_lump_fields(
     zero = np.zeros_like(px, dtype=np.float64)
     if amp == 0.0:
         return zero, zero.copy(), zero.copy(), zero.copy()
+
+    # Per-lump U(1) phase velocity (mixed-frequency selfgrav pairs); falls
+    # back to the global omega.  Must match GRTresna's lump{k}_bs_omega so the
+    # repaint and the constraint solve agree on the momentum.
+    omega = float(lump.get("bs_omega", 0.0)) or omega
 
     width = float(lump.get("width", 5.0))
     center = np.asarray(lump.get("center", (0.0, 0.0, 0.0)), dtype=np.float64)

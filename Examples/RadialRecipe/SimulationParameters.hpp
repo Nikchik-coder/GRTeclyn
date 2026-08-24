@@ -4,10 +4,13 @@
 #include "ExternalGridInitialData.hpp"
 #include "GRParmParse.hpp"
 #include "GRTresnaScalarLayout.hpp"
+#include "GridTreadmill.hpp"
 #include "RadialRecipeInitialData.hpp"
 #include "SimulationParametersBase.hpp"
 #include "SpongeZone.hpp"
 #include "TrajectoryParams.hpp"
+
+#include <AMReX.H>
 
 #include <array>
 #include <sstream>
@@ -63,8 +66,18 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("rl_num_lumps", rl_num_lumps, 1);
         if (rl_num_lumps < 1)
             rl_num_lumps = 1;
+        // Refuse rather than truncate -- same reasoning as trajectory_num_lumps
+        // below (DebugPreGPU.md PG-9): a silently reduced lump count makes every
+        // rl_lump<k>_* key past the cap a dead knob that still looks configured.
         if (rl_num_lumps > GRTRESNA_MAX_INDEPENDENT_SCALARS)
-            rl_num_lumps = GRTRESNA_MAX_INDEPENDENT_SCALARS;
+        {
+            amrex::Abort(
+                "rl_num_lumps = " + std::to_string(rl_num_lumps) +
+                " exceeds GRTRESNA_MAX_INDEPENDENT_SCALARS = " +
+                std::to_string(GRTRESNA_MAX_INDEPENDENT_SCALARS) +
+                ". Lower rl_num_lumps or raise the cap in "
+                "Source/Matter/GRTresnaScalarLayout.hpp.");
+        }
         pp.load("rl_pump_width", rl_pump_width, 1.5);
         pp.load("rl_pump_max_amplitude", rl_pump_max_amplitude, 0.05);
         pp.load("rl_l2_ham_governor_center", rl_l2_ham_governor_center, 0.035);
@@ -75,6 +88,12 @@ class SimulationParameters : public SimulationParametersBase
         // source.  Default 0 => legacy source pump (backward compatible).
         pp.load("rl_pump_kp", rl_pump_kp, 0.0);
         pp.load("rl_pump_kd", rl_pump_kd, 0.0);
+        // Per-sector gain override for the phantom (Phi-) field.  < 0 => the
+        // phantom sector inherits the shared gains above (bit-identical to the
+        // historical single-gain behaviour).  See RLMatterPumpParams for the
+        // measured decay rates that motivate a separate phantom gain.
+        pp.load("rl_pump_kp_phantom", rl_pump_kp_phantom, -1.0);
+        pp.load("rl_pump_kd_phantom", rl_pump_kd_phantom, -1.0);
         // Trap-target matter shape: 0 Gaussian (legacy), 2 sech bound lump.
         // target width = physical bound size 1/sqrt(m^2-omega^2); <=0 => pump width.
         pp.load("rl_pump_target_profile", rl_pump_target_profile, 0);
@@ -82,10 +101,23 @@ class SimulationParameters : public SimulationParametersBase
         // Trap-target central amplitude (self-grav boson star: bs_phi_c).  0 =>
         // use the per-site amplitude (legacy).
         pp.load("rl_pump_target_amp", rl_pump_target_amp, 0.0);
+        // Superposed-target PD law: overlapping same-sector sites share one
+        // summed target and a capped weight instead of summing per-site
+        // errors (which strips matter where lumps overlap).  0 = legacy.
+        pp.load("rl_pump_superpose_targets", rl_pump_superpose_targets, 0);
         // Transient "igniter" pump: when >= 0 and time >= stop, force the pump
         // fully off (k_p=k_d=0, num_sites=0) so post-stop evolution is
         // conservative Einstein-Klein-Gordon.  Default -1 => never auto-stop.
         pp.load("rl_pump_stop_time", rl_pump_stop_time, -1.0);
+        // Controller energy-momentum reservoir:
+        //   0 = off (default; bit-identical to pre-reservoir runs)
+        //   1 = ledger (evolve reservoir; include in constraint diagnostic)
+        //   2 = backreaction (also include reservoir in the CCZ4 RHS)
+        pp.load("controller_reservoir_mode", controller_reservoir_mode, 0);
+        if (controller_reservoir_mode < 0)
+            controller_reservoir_mode = 0;
+        if (controller_reservoir_mode > 2)
+            controller_reservoir_mode = 2;
         // Per-lump action state starts at zero; the RL agent populates it.
         rl_pump_amplitude.fill(0.0);
         rl_pump_frequency.fill(0.0);
@@ -104,8 +136,24 @@ class SimulationParameters : public SimulationParametersBase
             pp.load("trajectory_num_lumps", n_traj, 5);
             if (n_traj < 1)
                 n_traj = 1;
+            // Refuse rather than truncate.  This used to silently clamp to the
+            // compile-time cap, so a campaign configured for 8 lumps drove 5 and
+            // said nothing: trajectory_lump5..7_* were written into every
+            // params.txt and read by no one, leaving 21 declared search
+            // dimensions with zero effect on the evolution while the archive
+            // reported coverage over all of them.  A run that cannot do what its
+            // config asks must not start.  See DebugPreGPU.md PG-9.
             if (n_traj > GRTRESNA_MAX_INDEPENDENT_SCALARS)
-                n_traj = GRTRESNA_MAX_INDEPENDENT_SCALARS;
+            {
+                amrex::Abort(
+                    "trajectory_num_lumps = " + std::to_string(n_traj) +
+                    " exceeds GRTRESNA_MAX_INDEPENDENT_SCALARS = " +
+                    std::to_string(GRTRESNA_MAX_INDEPENDENT_SCALARS) +
+                    ". The extra lumps' trajectory parameters would be ignored "
+                    "silently. Either lower trajectory_num_lumps or raise the "
+                    "cap in Source/Matter/GRTresnaScalarLayout.hpp (which also "
+                    "widens the state vector by 2 components per lump).");
+            }
             trajectory_params.num_lumps = n_traj;
         }
 
@@ -136,6 +184,20 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("sponge_strength", sponge_params.strength, 4.0);
         pp.load("sponge_ramp_power", sponge_params.ramp_power, 4);
         pp.load("sponge_center", sponge_params.center, center);
+
+        // Recentring box ("treadmill"): once the source has drifted, carry the
+        // DATA back toward the box centre by a whole number of cells and keep
+        // an odometer of how far, so a runaway can be followed for as long as
+        // wanted without enlarging the box.  Off by default, so every archived
+        // cell is bit-for-bit unaffected.  Design and validation ladder:
+        // research/bondi_dipole/docs/CHASE_TO_03C.md.
+        pp.load("treadmill_enabled", treadmill_params.enabled, false);
+        pp.load("treadmill_axis", treadmill_params.axis, 0);
+        pp.load("treadmill_threshold", treadmill_params.threshold, 2.0);
+        pp.load("treadmill_check_interval", treadmill_params.check_interval,
+                20);
+        pp.load("treadmill_ball_radius", treadmill_params.ball_radius, 8.0);
+        pp.load("treadmill_fill_mode", treadmill_params.fill_mode, 0);
     }
 
     void read_recipe_params(GRParmParse &pp)
@@ -273,10 +335,14 @@ class SimulationParameters : public SimulationParametersBase
     double rl_l2_ham_governor_width{0.003};
     double rl_pump_kp{0.0}; //!< PD trap proportional gain (0 => legacy source)
     double rl_pump_kd{0.0}; //!< PD trap derivative gain
+    double rl_pump_kp_phantom{-1.0}; //!< phantom-sector k_p (<0 => inherit k_p)
+    double rl_pump_kd_phantom{-1.0}; //!< phantom-sector k_d (<0 => inherit k_d)
     int rl_pump_target_profile{0}; //!< 0 Gaussian, 2 sech bound-lump target
     double rl_pump_target_width{0.0}; //!< physical 1/sqrt(m^2-omega^2); <=0 => width
     double rl_pump_target_amp{0.0}; //!< trap-target central amplitude (bs_phi_c); <=0 => site amp
+    int rl_pump_superpose_targets{0}; //!< 1 => summed sector target + capped weight; 0 legacy
     double rl_pump_stop_time{-1.0}; //!< >=0 => pump off for time>=stop; -1 => never
+    int controller_reservoir_mode{0}; //!< 0 off, 1 ledger, 2 backreaction
 
     // Trajectory-guided geometry survey (Independent of RL; no ZMQ needed).
     int trajectory_mode{0};        //!< 0 = off, 1 = parametric trajectory
@@ -286,46 +352,66 @@ class SimulationParameters : public SimulationParametersBase
     // Numerical sponge zone (radially-ramped extra KO dissipation).
     SpongeZoneParams sponge_params{};
 
+    // Recentring box (exact whole-cell translation + odometer).
+    GridTreadmillParams treadmill_params{};
+
   private:
+    // NOTE on multi-value keys: `key = 1 -1 -1 1 -1` is tokenized by
+    // ParmParse into five values, and a scalar query returns ONLY token 0.
+    // Both helpers below used to read the key into ONE std::string and split
+    // it -- which silently kept just the first value. For
+    // recipe_scalar_field_signs that parsed `1 -1 -1 1 -1` as [1, 0, 0, 0, 0],
+    // and since 0 routes to canonical, EVERY pump spotlight drove the
+    // canonical field: the phantom sector never received any pump force on
+    // any bicomplex campaign up to 2026-07-28 (Debug.md 19.8). Multi-value
+    // keys must go through countval + getarr.
     void load_rl_lump_seed_axis(
         GRParmParse &pp, const char *key,
         std::array<double, GRTRESNA_MAX_INDEPENDENT_SCALARS> &out)
     {
         out.fill(0.0);
-        std::string line;
-        pp.load(key, line, std::string(""));
-        if (line.empty())
+        const int nvals = pp.countval(key);
+        if (nvals < 1)
             return;
-        std::istringstream iss(line);
-        double value = 0.0;
-        int idx      = 0;
-        while (iss >> value && idx < GRTRESNA_MAX_INDEPENDENT_SCALARS)
+        std::vector<double> vals;
+        pp.getarr(key, vals, 0,
+                  std::min(nvals, GRTRESNA_MAX_INDEPENDENT_SCALARS));
+        for (std::size_t i = 0; i < vals.size(); ++i)
         {
-            out[idx++] = value;
+            out[i] = vals[i];
         }
     }
 
     void load_scalar_field_signs(GRParmParse &pp)
     {
-        std::string signs_line;
-        pp.load("recipe_scalar_field_signs", signs_line, std::string(""));
-        if (!signs_line.empty())
+        const int nvals = pp.countval("recipe_scalar_field_signs");
+        if (nvals > 0)
         {
-            std::istringstream iss(signs_line);
-            int sign = 0;
-            int idx  = 0;
-            while (iss >> sign && idx < GRTRESNA_MAX_INDEPENDENT_SCALARS)
+            std::vector<int> signs;
+            pp.getarr("recipe_scalar_field_signs", signs, 0,
+                      std::min(nvals, GRTRESNA_MAX_INDEPENDENT_SCALARS));
+            for (std::size_t i = 0; i < signs.size(); ++i)
             {
-                recipe_scalar_field_signs[idx++] = sign;
+                recipe_scalar_field_signs[i] = signs[i];
             }
-            return;
         }
+        else
+        {
+            for (int k = 0; k < GRTRESNA_MAX_INDEPENDENT_SCALARS; ++k)
+            {
+                std::ostringstream key;
+                key << "recipe_scalar_field_sign_" << k;
+                pp.load(key.str().c_str(), recipe_scalar_field_signs[k], 1);
+            }
+        }
+        // Echo what was actually parsed: the silent first-token bug above
+        // survived four campaigns because nothing ever printed this.
+        amrex::Print() << "recipe_scalar_field_signs parsed:";
         for (int k = 0; k < GRTRESNA_MAX_INDEPENDENT_SCALARS; ++k)
         {
-            std::ostringstream key;
-            key << "recipe_scalar_field_sign_" << k;
-            pp.load(key.str().c_str(), recipe_scalar_field_signs[k], 1);
+            amrex::Print() << " " << recipe_scalar_field_signs[k];
         }
+        amrex::Print() << "\n";
     }
 
     void load_coeff_array(GRParmParse &pp, const char *prefix,
