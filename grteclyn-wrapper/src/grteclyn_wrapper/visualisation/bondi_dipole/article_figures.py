@@ -41,11 +41,12 @@ matplotlib.use("pgf")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
-HERE = os.path.dirname(os.path.abspath(__file__))
-REPO = os.path.abspath(os.path.join(HERE, "..", ".."))
+# .../GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/bondi_dipole
+REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                    *[os.pardir] * 5))
 PACK = os.path.join(REPO, "results", "bondi-dipole-runaway")
 CAMP = os.path.join(PACK, "campaign")
-OUT = os.path.join(HERE, "figures")
+OUT = os.path.join(REPO, "research", "bondi_dipole", "figures")
 os.makedirs(OUT, exist_ok=True)
 
 plt.rcParams.update(
@@ -432,9 +433,12 @@ def fig_chase_frames():
             for x, mk in ((xc, "o"), (xp, "s")):
                 ax.plot(x, 32, mk, ms=3.6, markerfacecolor="white",
                         markeredgecolor="k", markeredgewidth=0.7)
-            # release positions and displacement arrows, kept clear of the
-            # sector labels and of the gap arrow
-            for x0, x1, yy in ((37.0, xc, 41.6), (27.0, xp, 22.4)):
+            # release positions and displacement arrows.  The canonical tick
+            # rides at x = 37, where both rows carry a label -- the sector
+            # names on top, the hill/well names below -- so it sits at a
+            # different height in each row to stay clear of them.
+            y_can = 41.6 if row == 0 else 38.6
+            for x0, x1, yy in ((37.0, xc, y_can), (27.0, xp, 22.4)):
                 ax.plot([x0, x0], [yy - 1.6, yy + 1.6], color=ink, lw=0.5,
                         ls=(0, (2, 2)))
                 if x1 - x0 > 0.5:
@@ -472,9 +476,9 @@ def fig_chase_frames():
                     color="white")
     # name the two curvature signs on the panel that first shows them, so the
     # hill and the well are read off the figure and not out of the caption
-    axes[1, 0].text(27, 43.4, "hill", ha="center", va="top", fontsize=6.4,
+    axes[1, 0].text(27, 43.9, "hill", ha="center", va="top", fontsize=6.4,
                     color="0.15")
-    axes[1, 0].text(37, 43.4, "well", ha="center", va="top", fontsize=6.4,
+    axes[1, 0].text(37, 43.9, "well", ha="center", va="top", fontsize=6.4,
                     color="0.15")
 
     # the two locked colour scales of the stills, so the sign divide of the
