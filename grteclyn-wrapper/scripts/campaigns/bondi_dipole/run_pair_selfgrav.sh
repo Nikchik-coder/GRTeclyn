@@ -26,7 +26,8 @@
 # Usage:
 #   BONDI_S0=0 BONDI_S1=1 BONDI_GPU=3 bash scripts/campaigns/bondi_dipole/run_pair_selfgrav.sh
 # Overrides: BONDI_GPU (default 3), BONDI_STOP_TIME (default 60),
-#            BONDI_RUNS_DIR, BONDI_SEP (default 8), BONDI_S0/BONDI_S1.
+#            BONDI_RUNS_DIR, BONDI_SEP (default 8), BONDI_S0/BONDI_S1,
+#            BONDI_EXTRA (raw params.txt KEY=VALUE overrides; see below).
 #   BONDI_NL_TOL / BONDI_NL_STALL_TOL: elliptic-solve stopping rule.  Scale
 #     BONDI_NL_TOL as dx^4 across a ladder to get a convergence order out of it.
 #   BONDI_SPONGE=1: switch on the boundary sponge (inner/outer/strength/ramp
@@ -332,6 +333,24 @@ if [[ -n "${BONDI_EXTRACTION_RADII:-}" ]]; then
   )
 fi
 
+# BONDI_EXTRA -- whitespace-separated KEY=VALUE params.txt overrides, applied
+# last and so winning over everything above.  Empty by default, so every
+# archived cell reproduces bit-for-bit without it.  This exists for the gauge
+# twin the referee response needs: the evolution gauge lives in params.txt
+# (`eta`, `shift_Gamma_coeff`, `lapse_power`) and is not otherwise reachable
+# from the environment.  Example:
+#   BONDI_EXTRA="eta=2.0"                       # Gamma-driver damping doubled
+#   BONDI_EXTRA="lapse_power=0.0 eta=2.0"       # harmonic-type slicing too
+# The initial data does not depend on any of these, so a gauge twin may and
+# should reuse the paired cell's initial_data.gridinit via BONDI_GRIDINIT.
+EXTRA_FLAGS=()
+if [[ -n "${BONDI_EXTRA:-}" ]]; then
+  for _kv in ${BONDI_EXTRA}; do
+    [[ "${_kv}" == *=* ]] || { echo "[bondi] BONDI_EXTRA needs KEY=VALUE, got '${_kv}'"; exit 1; }
+    EXTRA_FLAGS+=(--extra-override "${_kv}")
+  done
+fi
+
 MAXIMAL_SLICING_FLAG=()
 if [[ "${GRTRESNA_MAXIMAL_SLICING}" != "0" ]]; then
   MAXIMAL_SLICING_FLAG=(--grtresna-maximal-slicing)
@@ -364,6 +383,7 @@ PYTHONPATH="${WRAPPER_DIR}/src" "${WRAPPER_DIR}/.venv/bin/python" \
   --grtresna-timeout "${GRTRESNA_TIMEOUT}" \
   "${MAXIMAL_SLICING_FLAG[@]}" \
   "${EXTRACTION_FLAGS[@]}" \
+  ${EXTRA_FLAGS[@]+"${EXTRA_FLAGS[@]}"} \
   --consumer-radii ${RADII} \
   --consumer-keep-last 2 \
   --objective-mode weighted \

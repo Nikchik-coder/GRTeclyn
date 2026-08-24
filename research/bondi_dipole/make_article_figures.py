@@ -89,6 +89,7 @@ DOUBLE = 7.0
 # told from the data by dash pattern alone (Okabe--Ito vermillion: colour-blind
 # safe, and still a mid grey if the page is printed in black and white).
 FIT = "#D55E00"
+SUM = "#0072B2"   # signed-momentum accent (Okabe-Ito blue)
 
 # The frame stills carry locked colour scales (measured off their own colour
 # bars, identical on every frame kept): activity 0 -> 4.0e-2 in viridis, and
@@ -150,10 +151,12 @@ def bary(cell):
 
 
 def dyn(cell):
-    """t, sub-cell core positions, peaks, coordinate gap, sector momenta."""
+    """t, sub-cell core positions, peaks, coordinate and proper gap,
+    sector momenta, and the shift evaluated at each core."""
     d = load(cell, "sector_dynamics.dat")
     return dict(t=d[:, 0], xc=d[:, 1], xp=d[:, 5], pkc=d[:, 4], pkp=d[:, 8],
-                sep=d[:, 9], pxc=d[:, 11], pxp=d[:, 12], pxt=d[:, 13])
+                sep=d[:, 9], psep=d[:, 10], pxc=d[:, 11], pxp=d[:, 12],
+                pxt=d[:, 13], bxc=d[:, 14], bxp=d[:, 15])
 
 
 def midpoint(cell):
@@ -497,7 +500,7 @@ def fig_chase_frames():
 
 # ------------------------------------------------------------ fig: trajectories
 def fig_trajectories():
-    fig, (ax, bx, cx) = plt.subplots(1, 3, figsize=(DOUBLE, 2.35))
+    fig, (ax, bx, cx, px) = plt.subplots(1, 4, figsize=(DOUBLE, 2.42))
 
     # (a) core worldlines of the headline cell: both accelerate, gap holds
     D = dyn(HEAD[256])
@@ -505,17 +508,21 @@ def fig_trajectories():
     ax.fill_between(t, xp, xc, color="0.93", lw=0)
     ax.plot(t, xc, color="k", ls="-", lw=1.0)
     ax.plot(t, xp, color="k", ls="--", lw=1.0)
-    ax.text(8, 38.4, r"canonical, $M_+>0$", color="k", fontsize=7.0)
-    ax.text(8, 25.0, r"phantom, $M_-<0$", color="k", fontsize=7.0)
+    ax.text(6, 41.4, r"canonical, $M_+>0$", color="k", fontsize=6.4,
+            ha="left", va="top")
+    ax.text(6, 25.0, r"phantom, $M_-<0$", color="k", fontsize=6.4,
+            ha="left", va="bottom")
     for tt in (12.0, 100.0, 188.0):
         a = float(np.interp(tt, t, xc))
         b = float(np.interp(tt, t, xp))
         ax.annotate("", xy=(tt, b), xytext=(tt, a),
                     arrowprops=dict(arrowstyle="<->", lw=0.6, color="0.35",
                                     shrinkA=0, shrinkB=0))
+        if tt == 100.0:
+            continue          # middle arrow unlabelled: no room at this width
         ax.annotate(f"${a - b:.2f}$", xy=(tt, (a + b) / 2),
                     xytext=(tt + (5 if tt < 150 else -5), (a + b) / 2),
-                    fontsize=6.8, color="0.35", va="center",
+                    fontsize=6.6, color="0.35", va="center",
                     ha="left" if tt < 150 else "right")
     ax.set_xlim(0, 205)
     ax.set_ylim(24, 42)
@@ -530,15 +537,15 @@ def fig_trajectories():
     m = tL >= 5
     fit = np.polyfit(tL[m], dL[m], 2)
     bx.plot(tL, dL, color="k", ls="-", lw=1.0, zorder=4,
-            label=r"$N=128$, $t\le400$")
+            label=r"$N{=}128$, $t{\le}400$")
     bx.plot(tL, np.polyval(fit, tL), color=FIT, ls=(0, (3.4, 1.5)), lw=1.5,
             zorder=6,
-            label=rf"fit $\ddot{{X}}={aL * 1e4:.2f}\times10^{{-4}}$")
+            label=rf"fit, ${aL * 1e4:.2f}{{\times}}10^{{-4}}$")
     t3, m3 = midpoint(HEAD[256])
-    bx.plot(t3, m3 - m3[0], color="0.3", ls="--", lw=0.9, zorder=3,
-            label=r"$N=256$, $t\le200$")
-    bx.legend(loc="upper left", borderaxespad=0.4, fontsize=6.6,
-              handlelength=1.9, labelspacing=0.3, borderpad=0.2)
+    bx.plot(t3, m3 - m3[0], color="0.3", ls="--", lw=0.9, zorder=3)
+    bx.legend(loc="upper left", borderaxespad=0.2, fontsize=5.8,
+              handlelength=1.15, handletextpad=0.42, labelspacing=0.2,
+              borderpad=0.16, framealpha=0.0)
     bx.set_xlim(0, 410)
     bx.set_ylim(-0.4, 12.4)
     bx.set_xlabel("$t$")
@@ -561,9 +568,9 @@ def fig_trajectories():
     bmm = bary(MM[128])
     cx.plot(bmm["t"], np.abs(bmm["xp"] - bmm["xp"][0]), color="0.35",
             ls=(0, (5, 1.5)), lw=0.8)
-    cx.text(200, 6.5, "mixed pair", fontsize=6.8, ha="right", va="center")
+    cx.text(200, 5.6, "mixed pair", fontsize=6.6, ha="right", va="center")
     # the four nulls all live in one decade; label the band, not the lines
-    cx.text(200, 8.6e-6, "lone stars, same-sign pairs", fontsize=6.4,
+    cx.text(200, 1.05e-5, "nulls", fontsize=6.4,
             ha="right", va="bottom", color="0.3",
             bbox=dict(facecolor="white", edgecolor="none", pad=0.8))
     # the separation bar: both tips land on the curves they measure --
@@ -586,7 +593,36 @@ def fig_trajectories():
     cx.set_ylabel(r"$|\Delta X|$")
     cx.set_title("(c)", loc="left")
 
-    fig.subplots_adjust(wspace=0.36)
+    # (d) the Bondi signature itself: each sector's volume-integrated matter
+    # momentum grows like M|v| while the *signed* sum of Eq. (4) stays at
+    # zero.  Plotted for the base and finest rungs; the signed sum is
+    # magnified x10 to be visible on the same axis as its own terms; the base
+    # rung's residual is the larger of the two, so the cancellation improves
+    # with resolution rather than sitting at a diagnostic floor.
+    for n, (lw, al) in ((128, (0.8, 0.45)), (256, (1.1, 1.0))):
+        Dn = dyn(HEAD[n])
+        px.plot(Dn["t"], Dn["pxc"] * 1e4, color="k", ls="-", lw=lw, alpha=al)
+        px.plot(Dn["t"], np.abs(Dn["pxp"]) * 1e4, color="0.45", ls="--",
+                lw=lw, alpha=al)
+        px.plot(Dn["t"], Dn["pxt"] * 1e4 * 10, color=SUM, ls="-", lw=lw,
+                alpha=al)
+    px.axhline(0, color="0.75", lw=0.5, zorder=0)
+    D2 = dyn(HEAD[256])
+    px.text(158, D2["pxc"][-1] * 1e4 - 0.55, r"$P_+,\ |P_-|$", fontsize=6.6,
+            ha="right", va="top", color="k")
+    px.text(7, 6.55, r"$(P_++P_-)\times10$", fontsize=6.3,
+            ha="left", va="top", color="k")
+    _lab = dict(fontsize=5.9, ha="right", va="center", color="k",
+                bbox=dict(facecolor="white", edgecolor="none", pad=0.6))
+    px.text(203, 4.02, r"$N{=}128$", **_lab)
+    px.text(203, 0.78, r"$N{=}256$", **_lab)
+    px.set_xlim(0, 205)
+    px.set_ylim(-0.55, 6.9)
+    px.set_xlabel("$t$")
+    px.set_ylabel(r"sector momentum $[10^{-4}]$")
+    px.set_title("(d)", loc="left")
+
+    fig.subplots_adjust(wspace=0.50)
     fig.savefig(os.path.join(OUT, "fig_trajectories.pdf"))
     plt.close(fig)
 
@@ -1201,6 +1237,118 @@ def print_numbers():
         print(f"  {c}: {h:.1f} h")
 
 
+# ------------------------------------------- gauge, invariants, energy budget
+def print_gauge_and_invariants():
+    """The numbers that answer the coordinate-dependence, energy-condition and
+    radiation-budget questions.  All of them are post-processing on the packed
+    streams; none needs a new run."""
+    print("=" * 72)
+    print("GAUGE, INVARIANTS, RADIATION BUDGET")
+    print("=" * 72)
+
+    # --- is the drift coordinate dragging?  Decompose the shift at the two
+    # cores into the part that can translate the pair (the mean) and the part
+    # that can only change its separation (the difference).
+    for n in (128, 256):
+        D = dyn(HEAD[n])
+        t, bc, bp = D["t"], D["bxc"], D["bxp"]
+        sym = 0.5 * (bc + bp)          # translational
+        anti = 0.5 * (bp - bc)         # separation-changing
+        xmid = 0.5 * (D["xc"] + D["xp"])
+        v = np.gradient(xmid, t)[-1]
+        drag = np.trapz(np.abs(sym), t)
+        print(f"shift at cores, N={n}: max|beta_x| = {np.abs(np.r_[bc, bp]).max():.2e}; "
+              f"antisymmetric part at t=200 = {anti[-1]:.2e}")
+        print(f"  translational (mean) part: max = {np.abs(sym).max():.2e}, "
+              f"vs core velocity {v:.3e} -- ratio {v / np.abs(sym).max():.0f}x")
+        print(f"  integral |mean shift| dt = {drag:.2e} = "
+              f"{drag / (xmid[-1] - xmid[0]) * 100:.3f}% of the measured drift "
+              f"{xmid[-1] - xmid[0]:+.4f}")
+
+    # --- coordinate vs proper separation between the cores
+    for n in (128, 256):
+        D = dyn(HEAD[n])
+        c, pr = D["sep"], D["psep"]
+        print(f"separation N={n}: coordinate {c[0]:.4f} -> {c[-1]:.4f} "
+              f"({(c[-1] / c[0] - 1) * 100:+.2f}%); "
+              f"proper {pr[0]:.4f} -> {pr[-1]:.4f} "
+              f"({(pr[-1] / pr[0] - 1) * 100:+.2f}%)")
+    D = dyn(LONGRUN)
+    print(f"  longrun t=400: coordinate {D['sep'][-1]:.3f}, "
+          f"proper {D['psep'][-1]:.3f} -- the late opening is not gauge")
+
+    # --- energy conditions: violation localised to the phantom, and flat
+    for lab, cell in (("mixed pair N=256", HEAD[256]),
+                      ("lone canonical", LONE_P), ("lone phantom", LONE_M)):
+        e = load(cell, "energy_conditions.dat")
+        print(f"NEC {lab}: min over run {e[:, 1].min():+.3e} "
+              f"(t=0 {e[0, 1]:+.3e}, end {e[-1, 1]:+.3e}); "
+              f"min WEC {e[:, 2].min():+.3e}")
+
+    # --- constraint spike relaxation: it is gone before the fit window opens
+    for n in (128, 192, 256):
+        d = load(HEAD[n], "constraint_norms.dat")
+        t, H = d[:, 0], d[:, 1]
+        pk = H[:20].max()
+        late = H[t >= 150].mean()
+        t10 = t[np.where((t > t[np.argmax(H[:20])]) & (H <= 0.1 * pk))[0][0]]
+        t2 = t[np.where((t > t[np.argmax(H[:20])]) & (H <= 2 * late))[0][0]]
+        print(f"constraint spike N={n}: peak {pk:.2e} -> 10% by t={t10:.1f}, "
+              f"within 2x of the late plateau ({late:.2e}) by t={t2:.1f}")
+
+    # --- the signed mass quadrupole and the radiated energy it implies
+    D = dyn(HEAD[256])
+    t = D["t"]
+    xc, xp = D["xc"] - 32.0, D["xp"] - 32.0
+    Q = M_P * xc ** 2 - M_M * xp ** 2          # signed: sum_s eps_s M_s x_s^2
+    m = (t >= 20) & (t <= 190)
+    pol = np.poly1d(np.polyfit(t[m], Q[m], 4))
+    Qdd, Qddd = np.polyder(pol, 2)(t[m]), np.polyder(pol, 3)(t[m])
+    a256 = fit_a(*midpoint(HEAD[256]))
+    lum = np.mean(Qddd ** 2) / 45.0
+    print(f"signed quadrupole: Qdd = {Qdd.mean():.3e} "
+          f"(analytic 2*Mbar*a*d = {2 * MBAR * a256 * 10:.3e}), "
+          f"constant to {(Qdd.max() - Qdd.min()) / 2 / Qdd.mean() * 100:.0f}%")
+    print(f"  |Qddd| <= {np.abs(Qddd).max():.1e}; quadrupole luminosity "
+          f"~(1/45)<Qddd^2> = {lum:.1e}")
+    print(f"  energy radiated over t=200 ~ {lum * 200:.1e}, against the pair's "
+          f"total mass {M_P - M_M:.2e} -- {np.log10((M_P - M_M) / (lum * 200)):.0f} "
+          f"orders below")
+
+    # --- the mass-ladder sign flip: where it lands under other conventions
+    ratios = {"heavy": M_M / M_LADDER[0.81], "matched": M_M / M_P,
+              "w0804": M_LADDER[0.804] / M_P, "w088": M_LADDER[0.88] / M_P}
+    keys = ("w088", "w0804", "matched", "heavy")
+
+    def cross(vals):
+        xs = np.array([ratios[k] for k in keys])
+        ys = np.array([vals[k] for k in keys])
+        i = int(np.searchsorted(ys, 0.0))
+        return xs[i - 1] + (xs[i] - xs[i - 1]) * (-ys[i - 1]) / (ys[i] - ys[i - 1])
+
+    def gap_bary(k, tt=None, avg_from=None):
+        b = bary(MASS[k])
+        g = np.abs(b["xc"] - b["xp"])
+        if avg_from is not None:
+            return g[b["t"] >= avg_from].mean() - g[0]
+        return (g[-1] if tt is None else float(np.interp(tt, b["t"], g))) - g[0]
+
+    conv = {
+        "barycentre gap at t=200 (paper)": {k: gap_bary(k) for k in keys},
+        "core gap at t=200": {k: dyn(MASS[k])["sep"][-1] - dyn(MASS[k])["sep"][0]
+                              for k in keys},
+        "proper gap at t=200": {k: dyn(MASS[k])["psep"][-1] - dyn(MASS[k])["psep"][0]
+                                for k in keys},
+        "barycentre gap, mean over [190,200]": {k: gap_bary(k, avg_from=190)
+                                                for k in keys},
+    }
+    xs = [cross(v) for v in conv.values()]
+    for lab, v in conv.items():
+        print(f"sign flip, {lab}: ratio {cross(v):.4f}")
+    print(f"  end-of-run convention spread: {min(xs):.3f}--{max(xs):.3f} "
+          f"-> quote 0.995 +- {max(max(xs) - 0.995, 0.995 - min(xs)):.2f}")
+
+
 def main():
     fig_schematic()
     fig_family()
@@ -1213,6 +1361,7 @@ def main():
     fig_wavezone()
     fig_constraints()
     print_numbers()
+    print_gauge_and_invariants()
     print("wrote figures to", OUT)
 
 
