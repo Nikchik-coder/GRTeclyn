@@ -1491,6 +1491,12 @@ implementation-test legs all passed — see
 `runs/bondi/staging/treadmill_pair_d10_L64_N128_lev0/README.md`. This document
 is the record of the t = 200 campaign; the chase is the follow-up paper's.
 
+The chase has since been run and stopped, together with a treadmill-free control
+that reaches t = 600 — **see §6 below**. Short version: the recentring box is
+exonerated, the pair's separation opens anyway, and the resolution ladder says
+that opening is a third-order discretisation error rather than physics. 0.3c is
+not reachable at N = 128.
+
 ---
 
 ## 5. The referee response — the 2026-08-24 review, item by item
@@ -1690,3 +1696,172 @@ in the pack, so major 1 needed reading rather than running.
   now exposes `proper_sep` and the per-core shift columns.
 - The paper is **13 pages** after all of this (it was 12; the cap for this
   revision was 13 with the bibliography allowed to run onto the last page).
+
+---
+
+## 6. The late-time separation, and what opens it (2026-08-24)
+
+Two follow-up cells were run past the campaign's `t = 200` horizon, and between
+them they answer the question §8 of `CHASE_TO_03C.md` named as "the risk that
+dominates everything": does the pair hold its acceleration, and if the gap
+opens, is that physics or is it the instrument?
+
+**It is neither the instrument nor, on the evidence here, physics. It is the
+grid.**
+
+### The two cells
+
+| cell | box | what it is | reached |
+|---|---|---|---|
+| `chase03c_pair_d10_L64_N128_lev0` | recentring ("treadmill") box, pair held at box centre | the 0.3c chase | `t = 783.9`, 19 shifts |
+| `nomill_left_pair_d10_L64_N128_lev0` | static box, pair started 10 units left of centre | the treadmill-free control | `t = 600.0`, no shifts |
+
+Both reuse the archived `t = 400` cell's `initial_data.gridinit` — no new
+elliptic solve — so they differ from the published `longrun` cell only in how
+the box is handled and where the pair sits in it. The control's gridinit is the
+archive's file with its header `origin` shifted by `-10` in `x` and the payload
+byte-identical; `center` moved to `22 32 32` while `sponge_center` was pinned at
+`32 32 32` so the absorbing shell stayed with the box, not with the stars.
+
+Constraint health over the whole of both runs: Hamiltonian `L2` **falls** from
+`1.99e-04` to `3.28e-05` (chase) and from `1.91e-04` to `4.05e-05` (control).
+Neither run is degrading; whatever opens the gap is not a run going bad.
+
+### The gap opens, and the recentring box is not doing it
+
+Coordinate separation, the two cells against each other:
+
+| `t` | control (static box) | chase (treadmill) | difference |
+|---|---|---|---|
+| 100 | 10.0004 | 10.0003 | `+0.00%` |
+| 200 | 10.1036 | 10.1072 | `−0.04%` |
+| 300 | 10.5840 | 10.5968 | `−0.12%` |
+| 400 | 11.8236 | 11.8548 | `−0.26%` |
+| 450 | 12.8999 | 12.9004 | `−0.00%` |
+| 500 | 14.2126 | 14.2864 | `−0.52%` |
+| 550 | 16.0045 | 16.0535 | `−0.31%` |
+| 600 | 17.9677 | 18.2339 | `−1.46%` |
+
+Maximum departure anywhere in the 600-unit overlap: **0.2662, or 1.46%**, at the
+last point. The two curves cross back and forth rather than drifting apart, so
+this is scatter, not a bias.
+
+This test was **pre-registered**. Before the control was launched, the archive's
+own trend was extrapolated and the predicted control separations written down:
+`10.000, 10.107, 10.597, 11.855, 12.900, 14.286, 16.054` at
+`t = 100 … 550`. The measured values came back `10.0004, 10.104, 10.584,
+11.824, 12.900, 14.213, 16.004`. The prediction could have failed and did not.
+
+The independent field-content check agrees: integrated activity per sector at
+`t = 600` is `6.8181 / 7.2431` (chase) against `6.8723 / 7.2414` (control), and
+at `t = 400` both sit within `0.15%` of the archived static-box cell. Three
+evolutions, two box treatments, one answer.
+
+**Conclusion: the recentring box does not open the gap.** That closes the
+implementation question. It leaves the physical one.
+
+### What does open it: the grid
+
+The campaign already had the discriminating measurement, at `t = 200`, in the
+resolution ladder:
+
+| rung | separation at `t = 200` | opening | cell size `dx` |
+|---|---|---|---|
+| `N = 128` | 10.1072 | `+0.1072` | 0.500 |
+| `N = 192` | 10.0286 | `+0.0286` | 0.333 |
+| `N = 256` | 10.0127 | `+0.0127` | 0.250 |
+
+Halving the cell size cuts the opening **8.44-fold**, and the three rungs fit a
+clean convergence order:
+
+| refinement | opening ratio | order `p` |
+|---|---|---|
+| `128 → 192` | 3.75 | 3.26 |
+| `192 → 256` | 2.25 | 2.82 |
+| `128 → 256` | 8.44 | 3.08 |
+
+**Third order in `dx`, over a factor of two in resolution.** A physical
+separation does not converge away as the mesh is refined; a discretisation error
+does, and this one does so at the rate the evolution scheme's own truncation
+error would predict. The gap opening at `N = 128` is dominated by numerics.
+
+This is consistent with the known initial-data aliasing bias documented in
+`grteclyn-wrapper/scripts/campaigns/bondi_dipole/run_pair_selfgrav.sh`: at
+`N = 128` the solved metric lands roughly `0.10` cells below the matter it was
+solved for, so each star is born marginally off the centre of its own well —
+canonical falls into it, phantom is pushed out of it, and the pair pries apart.
+The sign is right and the magnitude scales the right way.
+
+### The consequence for the chase
+
+The chase's own trajectory shows exactly the decay §8 warned about, and it
+shows it because the gap is opening:
+
+| `t` | leader speed | leader acceleration | gap |
+|---|---|---|---|
+| 200 | 0.0302c | `1.57e-04` | 10.11 |
+| 400 | 0.0663c | `1.85e-04` | 11.85 |
+| 600 | 0.0998c | `1.56e-04` | 18.23 |
+| 784 | 0.1226c | `1.16e-04` | 30.07 |
+
+Acceleration peaks near `t = 400` and is down by a third at the end. **0.3c is
+not reachable at `N = 128`**: the pair stops being a pair long before it gets
+there. The `t ≈ 1970` and 11 GPU-hour figures in §1 of `CHASE_TO_03C.md` are
+void at this resolution, and the cost of the chase must be re-derived on
+whatever rung actually holds the pair together.
+
+Nothing here disturbs the published `t = 200` result. At `t = 200` the opening is
+`+0.013` at `N = 256` — 0.13% of the separation — which is what "constant
+separation" was claimed on, and the claim was always made at the converged rung.
+What is new is that at the base rung the error grows fast enough with time to
+dominate by `t = 400`.
+
+### What is still open, honestly
+
+1. **The ladder has no late-time rung.** Third-order convergence is measured at
+   `t = 200` only. That the same error accounts for the `+8.0` opening at
+   `t = 600` is an inference from its sign, its scaling and the aliasing
+   mechanism — not a measurement. The cell that would measure it is the one
+   `CHASE_TO_03C.md` §8 already specifies: **`chase_pair_d10_recentred_L64_N192_lev0`
+   to `t = 400`**, ≈11 GPU-hours plus a ~4 h solve. It is now the single highest-value
+   cell the follow-up can buy, and it should be bought before any further chase time.
+2. **Both stars gain field content, and the pair was tuned not to.** Integrated
+   activity per sector nearly doubles by `t = 700` (canonical `3.911 → 7.488`,
+   phantom `4.037 → 8.023`) while both rms radii stay near 5. The archive
+   reproduces this to 0.15%, so it is not a treadmill or a box effect — but all
+   three cells are `N = 128`, so it cannot yet be separated from the same
+   discretisation error. The mass-matching that defines this configuration
+   degrades with it: the phantom's excess over the canonical widens from
+   `3.2%` at `t = 0` to `7.1%` at `t = 700`, which is itself a gap-opening
+   mechanism (the leader is pushed harder than the trailer is pulled).
+3. **The leading star's thrust falls far slower than any inverse-square law.**
+   Over `t = 0 → 700` the gap goes `10 → 23.9`, so a `1/d²` push should drop
+   `5.7×`; measured, it drops `1.2×`. Folding in the field-content growth above
+   still predicts a `2.9×` drop. The residual is unexplained. The cheap
+   discriminating experiment is a **lone canonical star with the phantom
+   deleted**: if it still accelerates, the push is not coming from its partner
+   and the whole picture needs revisiting.
+
+### Where the data is
+
+Both cells are packed under `results/bondi-dipole-runaway/campaign/`, frames
+excluded (`FRAMES_SKIP`), by `research/bondi_dipole/pack_runaway.sh`. The chase
+carries `treadmill.dat`, which holds the odometer — without it a recentred
+trajectory cannot be reconstructed at all. Movies for both are in the gitignored
+run tree at `runs/bondi/staging/_movies/`.
+
+**One data-handling defect, found and repaired.** The control cell's
+`params.txt` was derived from the chase's by hand and its `output_path` was not
+changed, so from the moment the control started, both executables appended to
+the same four in-situ diagnostic files in the chase's `data/` directory. The
+streams were line-interleaved but perfectly separable — the chase was past
+`t = 723` when the control began at `t = 0.01`, and the chase exited before the
+control reached `t = 100`, so the two never overlap in time. They were split
+back apart and the row counts confirm the split is lossless: 78 386 rows for the
+chase (its exact step count) and 60 001 for the control (likewise), both
+strictly monotonic in time. The raw interleaved originals are kept under the
+chase cell's `_interleaved_raw/`. Neither cell's headline stream was affected:
+`sector_dynamics.dat`, `sector_barycenters.dat` and `treadmill.dat` are written
+elsewhere and were always clean. **A hand-derived `params.txt` must have its
+`output_path` checked before launch** — nothing in the code prevents two runs
+from sharing one.

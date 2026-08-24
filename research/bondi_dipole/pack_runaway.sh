@@ -70,9 +70,10 @@ collect() {  # $1 = directory to walk, $2 = name prefix for cells found in it
         # treadmill directories are implementation tests for the recentring
         # box: they reuse another cell's initial data, answer engineering
         # questions rather than physics ones, and carry their own README.
-        # chase03c is the 0.3c follow-up run, not part of this paper's campaign, and
-        # it is still evolving -- a partial time series must not ship as a result.
-        case " ${CELLS_SKIP:-treadmill_pair_d10_L64_N128_lev0 chase03c_pair_d10_L64_N128_lev0} " in
+        # chase03c and nomill_left are the 0.3c follow-up pair -- not part of
+        # this paper's campaign, but both finished (2026-08-24) and both carry
+        # the separation measurement the follow-up rests on, so they pack.
+        case " ${CELLS_SKIP:-treadmill_pair_d10_L64_N128_lev0} " in
           *" ${name} "*) echo "[pack-runaway] ${name}: not a campaign cell -- skipping" ;;
           *)             cells+=("${prefix}${name}|${sub%/}") ;;
         esac ;;
@@ -84,7 +85,12 @@ collect "${RUNS}" ""
 for entry in "${cells[@]}"; do
   cell="${entry%%|*}"
   celldir="${entry#*|}"
+  # Wrapper-launched cells hold their streams in a 'bondi_sg_*' episode
+  # directory.  A cell driven straight from the executable -- nomill_left is
+  # the first -- has no episode layer, so the cell directory is the run
+  # directory.  Fall back to it rather than reporting a finished cell as empty.
   run="$(find "${celldir}" -maxdepth 1 -type d -name 'bondi_sg_*' | head -n 1)"
+  [[ -z "${run}" && -d "${celldir}/small_data" ]] && run="${celldir}"
   if [[ -z "${run}" ]] || ! compgen -G "${run}/small_data/*.dat" > /dev/null; then
     echo "[pack-runaway] ${cell}: no time series yet -- skipping"
     continue
@@ -106,11 +112,13 @@ for entry in "${cells[@]}"; do
   done
 
   # The launch configuration.  Cells launched by hand carry their own
-  # launch.sh; the first four came off the job queue, where the equivalent
-  # record is the .job file.  Either way the packed copy is what lets a reader
-  # rebuild the cell without reading a params file line by line.
-  if [[ -f "${celldir}/launch.sh" ]]; then
-    cp "${celldir}/launch.sh" "${out}/launch_config.sh"
+  # launch.sh (or launch_<something>.sh, as the two follow-up cells do); the
+  # first four came off the job queue, where the equivalent record is the .job
+  # file.  Either way the packed copy is what lets a reader rebuild the cell
+  # without reading a params file line by line.
+  hand_launch="$(ls "${celldir}"/launch*.sh 2>/dev/null | head -n 1 || true)"
+  if [[ -n "${hand_launch}" ]]; then
+    cp "${hand_launch}" "${out}/launch_config.sh"
   else
     job="$(ls -t "${RUNS}"/_queue/{done,failed,running}/*_"${cell}".job 2>/dev/null | head -n 1 || true)"
     [[ -n "${job}" ]] && cp "${job}" "${out}/launch_config.sh"
@@ -122,6 +130,12 @@ for entry in "${cells[@]}"; do
   # names the evolution code emits (RadialRecipeLevel.cpp write_header_line).
   # Header-only addition: the columns themselves are untouched, and every
   # reader already skips '#' lines.
+  # The recentring box writes its own stream beside them.  It is already at
+  # every-20-steps cadence and it carries the odometer, without which a
+  # treadmill cell's trajectory cannot be reconstructed at all -- so it is
+  # copied whole rather than downsampled.
+  [[ -f "${run}/data/treadmill.dat" ]] && cp "${run}/data/treadmill.dat" "${out}/"
+
   for stream in constraint_norms energy_conditions curvature_invariants collapse_diagnostics; do
     [[ -f "${run}/data/${stream}.dat" ]] || continue
     case "${stream}" in
@@ -166,8 +180,12 @@ PY
   # FRAMES_SKIP names cells whose frames are deliberately NOT packed.  The
   # t = 400 cell exists for one moving picture, not for stills: it is twice as
   # long as every other cell, so its stills cost twice as much, and no number in
-  # the analysis is read off them.  Its movie lives in the run tree.
-  case " ${FRAMES_SKIP:-longrun_pair_d10_t400_L64_N128_lev0} " in
+  # the analysis is read off them.  Its movie lives in the run tree.  The two
+  # 0.3c follow-up cells are skipped for the same reason and more so: they are
+  # three and six times longer again, and their result is a separation curve
+  # read off sector_dynamics.dat, never off a still.  Movies for both are in
+  # runs/bondi/staging/_movies/.
+  case " ${FRAMES_SKIP:-longrun_pair_d10_t400_L64_N128_lev0 chase03c_pair_d10_L64_N128_lev0 nomill_left_pair_d10_L64_N128_lev0} " in
     *" ${cell} "*) frames_wanted=0 ;;
     *)             frames_wanted=1 ;;
   esac

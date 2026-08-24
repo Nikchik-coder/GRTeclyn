@@ -201,6 +201,42 @@ One thing does change over the longer window: the separation *opens*,
 is unaffected, but any statement that the pair moves rigidly belongs to
 `t ≤ 200` only.
 
+### The follow-up cells — the opening chased down, and its cause
+
+Two cells added 2026-08-24 carry that opening much further and identify it.
+Neither belongs to the `t = 200` paper; both are the follow-up's, and they are
+packed here because they are the only measurements of what the base rung does at
+late times.
+
+| cell | box | `t_end` | separation | what it is for |
+|---|---|---|---|---|
+| `chase03c_pair_d10_L64_N128_lev0` | recentring ("treadmill") box | `783.9` | `10.000 → 30.131` | the 0.3c chase; 19 shifts; carries `treadmill.dat` |
+| `nomill_left_pair_d10_L64_N128_lev0` | static, pair started 10 left of centre | `600.0` | `10.000 → 17.968` | its treadmill-free control |
+
+**The recentring box does not open the gap.** The two separations agree to
+`1.46%` worst-case over the whole 600-unit overlap, and the control was run
+against a *pre-registered* prediction that it met. Field content per sector
+agrees to `0.15%` with the archived static-box cell as well.
+
+**The grid does.** The resolution ladder above already measured it at `t = 200`:
+the opening is `+0.1072` at `N = 128`, `+0.0286` at `N = 192`, `+0.0127` at
+`N = 256` — a fall of `8.44×` for a factor of two in resolution, which fits
+**third order in `dx`** (`p = 3.26 / 2.82 / 3.08` across the three rung pairs).
+Physics does not converge away under refinement; truncation error does. The
+mechanism is the known initial-data aliasing bias — at `N = 128` the solved
+metric lands ~`0.10` cells below its matter, so each star is born off the centre
+of its own well and the pair pries apart.
+
+Consequences: the pair's acceleration is **not** constant at this rung (it peaks
+near `t = 400` and is down a third by `t = 784`), and **0.3c is not reachable at
+`N = 128`**. Nothing here touches the published `t = 200` numbers, which were
+always quoted at the converged rung where the opening is `0.13%` of the
+separation. The ladder has no late-time rung yet, so that the *same* error
+accounts for the `+8.0` opening at `t = 600` is inference, not measurement — the
+cell that would measure it is `chase_pair_d10_recentred_L64_N192_lev0` to
+`t = 400`. Full record, and two genuinely open questions, in
+`research/bondi_dipole/docs/GPU_RUN_PAPER.md` §6.
+
 ### The same-sign nulls — the pairs merge, and the centroid still does not move
 
 `control_pair_pp_*` and `control_pair_mm_*` put two stars of the *same* mass
@@ -413,6 +449,7 @@ stress-energy trace, these same initial-data bytes drove the lapse to
 | `collapse_diagnostics.dat` | lapse, `chi`, `K` — downsampled to `dt = 0.5` |
 | `constraint_norms.dat`, `energy_conditions.dat`, `curvature_invariants.dat` | likewise downsampled |
 | `psi4_*.dat` | extracted wave content |
+| `treadmill.dat` (recentring-box cells only) | per-sector core position in grid coordinates, cells shifted, and the odometer. **True position = grid position + `odometer_length` (column 7).** Without it a recentred trajectory cannot be reconstructed, so it is packed whole rather than downsampled |
 | `well_tracking.dat` (the same-sign cells that cached slices: PP N=256, MM N=128 `_frames`) | the two lumps' positions vs time, derived from the `chi_minus_1` slice cache by `analysis/track_wells.py` — the merger record, and the only per-star measurement a same-sign pair has |
 | `Ham_and_Mom_errors.txt` | elliptic solve convergence history |
 | `evolution_params.txt`, `grtresna_params.txt` | what was evolved, what was solved |

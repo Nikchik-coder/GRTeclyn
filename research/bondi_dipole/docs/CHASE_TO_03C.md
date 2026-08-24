@@ -695,6 +695,20 @@ asks.**
 
 ## 8. The risk that dominates everything — is `a` actually constant?
 
+> **ANSWERED, 2026-08-24 — the risk was real and it has materialised.** `a` is
+> not constant: it peaks near `t = 400` and is down a third by `t = 784`, because
+> the gap opens (10 → 30). Two cells settled it — `chase03c_pair_d10_L64_N128_lev0`
+> (treadmill, `t = 784`) and `nomill_left_pair_d10_L64_N128_lev0` (static box,
+> pair started 10 left of centre, `t = 600`). They agree on separation to **1.46%
+> worst-case over 600 units**, against a **pre-registered** prediction, so the
+> recentring box is exonerated. The opening converges away at **third order in
+> `dx`** across the `N = 128/192/256` ladder, so it is discretisation, not
+> physics. **0.3c is not reachable at `N = 128`** and every `t` and cost figure
+> in §1 is void at that rung. Full record and open items:
+> `GPU_RUN_PAPER.md` §6. The de-risking cell named at the end of this section is
+> still the right next purchase, and is now the highest-value one the follow-up
+> can make.
+
 Every cost and every milestone above assumes the pair holds its acceleration. The
 campaign's own data does not yet establish that, and this is a larger threat to
 the chase cell than anything in the code.
