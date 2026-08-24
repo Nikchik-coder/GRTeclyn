@@ -259,13 +259,27 @@ for cores: multigrid sweeps over a 384³-512³ grid saturate memory traffic, and
 the evolution's host thread has to be scheduled promptly every step to keep its
 card fed. A GPU run can be starved by a machine that looks half idle.
 
-**The practical rule.** GPU-hours are the scarce resource in a campaign like
-this (~59 of them against ~14 hours of solving), so protect them: run at most
-**one 32-rank solve while four evolutions are in flight**, and let a solve
-queue wait on the number of live evolutions rather than on free cores or an
-idle-looking card. Check the *evolution rate* after starting anything new —
-`t/hour` from `sector_dynamics.dat` — because the card's utilisation percentage
-is bursty and will not tell you plainly.
+**The practical rule, and exactly what it protects.** GPU-hours are the scarce
+resource in a campaign like this (~59 of them against ~14 hours of solving), so
+protect them: run at most **one 32-rank solve while four evolutions are in
+flight**, and let a solve queue wait on **the number of live evolutions** rather
+than on free cores or an idle-looking card. Check the *evolution rate* after
+starting anything new — `t/hour` from `sector_dynamics.dat` — because the card's
+utilisation percentage is bursty and will not tell you plainly.
+
+**The cap is on solves competing with evolutions — not on solves as such.** The
+whole cost measured above is GPU work being descheduled; with **no evolution in
+flight there is nothing to starve**, and several 32-rank solves may be launched
+together. They will contend with each other for memory bandwidth and each will
+finish slower than it would alone, but that is CPU wall-clock, which this
+campaign has to spare, and no GPU-hour is lost. Clarified 2026-08-24, after the
+earlier wording was read as a blanket "one solve at a time" and serialised three
+solves on a completely idle node.
+
+So the live-evolution count is the thing to check before launching a batch, and
+`nvidia-smi` is enough for that — but read it as *other people's runs too*, not
+just this campaign's: an occupied card is a card whose evolution you can starve,
+whoever owns it.
 
 **Killing a solve is not the same as stopping it.** `kill -TERM` on the
 launcher's process group leaves the MPI ranks running: after three solves were

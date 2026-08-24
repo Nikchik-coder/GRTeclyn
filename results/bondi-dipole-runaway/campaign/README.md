@@ -58,11 +58,36 @@ One star, alone in an empty box, nothing to pull on it.
 |---|---|---|---|
 | `control_lone_canonical_L64_N128_lev0` | canonical, box centre | `1.8e-03` | `−0.48%` |
 | `control_lone_phantom_L64_N128_lev0` | phantom, off-centre at `x = 37` | `1.6e-03` | `−0.48%` |
+| `control_lone_phantom_t1000_L64_N128_lev0` | the same phantom, carried to `t = 1000` | `1.4e-01` at `t = 1000` | `−5.39%` at `t = 1000` |
 
 Drift is the largest displacement on any axis. The identical canonical run on
 the old initial data moved `−0.328` on all three axes — a `269×` reduction, and
 what remains is no longer diagonal, so it is noise rather than drift. The
 off-centre phantom is the sharper test: no symmetry forces it to stay put.
+
+**Which tracker you read matters, and the two disagree for the phantom.**
+`sector_dynamics.dat` carries a halo-free *core* position; `sector_barycenters.dat`
+carries the `|φ|²`-weighted *barycentre* over the whole box. The numbers above
+are core figures. On the barycentre tracker the off-centre phantom instead swings
+to `4.4e-02` around `t = 51` and relaxes back to `1.3e-02` by `t = 200` — that
+early excursion is the initial-data halo being shed, and the core does not move
+while it happens. **The runaway pairs' drift is quoted from the barycentre
+columns, so `1.3e-02` is the floor to set beside `+2.88`, not `1.8e-03`.** That
+is a `225×` margin rather than a `1600×` one; both numbers are right for what
+they measure, only one is the matching comparison.
+
+**Past `t = 400` the lone phantom is not static.** The `t1000` cell reproduces
+the `t = 200` cell digit for digit through their overlap, then keeps going, and
+what it shows is a slow, linear decline: peak field activity falls at
+**`−0.632%` per 100 code units** from `t ≈ 200` (sub-windows `−0.604`, `−0.648`,
+`−0.608`), reaching `−5.39%` at `t = 1000`. Over the same span the star swells
+(rms radius `4.41 → 4.83`) and leaks (confined fraction `0.736 → 0.670`), while
+`min χ` *rises* `1.00000 → 1.00033` and the Hamiltonian constraint norm *falls*
+`7.5e-04 → 1.7e-05`. So: no collapse and no blow-up, but not indefinitely static
+either — **stability claims in this pack are good to `t = 400`, not beyond.**
+The late position drift is toward the box centre and appears only in the
+off-centre cell, so it is more plausibly the box than the star; a centred lone
+phantom at `t = 1000` would settle that and was not run.
 
 ### The runaway pairs — the result
 

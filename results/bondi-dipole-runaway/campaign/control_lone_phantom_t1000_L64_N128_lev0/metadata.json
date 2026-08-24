@@ -99,6 +99,8 @@
   },
   "plotfile_dir": "/tmp/grteclyn_scratch/control_lone_phantom_t1000_L64_N128_lev0_bondi_sg_single_m_w07603_b188b072",
   "repo_root": "$GRTECLYN_ROOT",
+  "simulation_elapsed_seconds": 19379.31274805125,
+  "simulation_exit_code": 0,
   "solved_geometry_ftl": {
     "degenerate": 0.0,
     "f_op": 0.007441710648031457,

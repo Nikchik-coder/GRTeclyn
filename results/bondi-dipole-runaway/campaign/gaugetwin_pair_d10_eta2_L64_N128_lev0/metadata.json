@@ -101,6 +101,8 @@
   },
   "plotfile_dir": "/tmp/grteclyn_scratch/gaugetwin_pair_d10_eta2_L64_N128_lev0_bondi_sg_pair_pm_eqm_w075_03928b90",
   "repo_root": "$GRTECLYN_ROOT",
+  "simulation_elapsed_seconds": 3923.551482034847,
+  "simulation_exit_code": 0,
   "solved_geometry_ftl": {
     "degenerate": 0.0,
     "f_op": 0.0,

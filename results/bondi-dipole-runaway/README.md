@@ -204,7 +204,7 @@ absolute; drifts quoted anywhere in this pack are `x(t) − x(0)`.
 
 ## campaign/ — the cells behind the result (complete)
 
-Twenty-seven cells, one folder each, all on **uniform** grids: the convergence
+Thirty-one cells, one folder each, all on **uniform** grids: the convergence
 argument needs a single cell size everywhere, so nothing here uses mesh
 refinement — with one deliberate exception, `amrcheck_*`, which switches it on
 once to show the choice costs nothing. Each folder carries the same streams and provenance files — the
@@ -219,7 +219,8 @@ file is, the per-cell numbers, and the caveats. The short version:
 |---|---|---|
 | `runaway_pair_d{08,10,12,16,20}_L64_N128` | 5 | the separation law, `a ∝ d^−2.028` |
 | `runaway_pair_d10_L64_N{192,256}` | 2 | the resolution ladder's finer rungs — `d10_N128` above is its base. **The headline** |
-| `control_lone_{canonical,phantom}` | 2 | a lone star does not drift |
+| `control_lone_{canonical,phantom}` | 2 | a lone star does not drift over `t = 200` |
+| `control_lone_phantom_t1000_L64_N128` | 1 | the same phantom to `t = 1000` — it decays `−0.632%` per 100 units and the pack's stability claim stops at `t = 400` |
 | `control_pair_{pp,mm}_d10_L64_N128` | 2 | same-sign pairs merge yet their centroid never moves — no runaway |
 | `control_pair_pp_d10_L64_N{192,256}` | 2 | the null's own resolution ladder |
 | `control_pair_mm_d10_L64_N192` | 1 | the mm null's second rung |
@@ -228,6 +229,7 @@ file is, the per-cell numbers, and the caveats. The short version:
 | `massscale_*` + `massratio_*` (2) | 3 | the pull follows the partner's mass — and reverses with it |
 | `amrcheck_pair_d10_L64_N128_lev1` | 1 | mesh refinement changes nothing (six-digit match) |
 | `deepsolve_pair_d10_L64_N128` | 1 | a `4.4×` deeper constraint solve changes nothing — the base rung is grid-limited |
+| `gaugetwin_pair_d10_eta2_L64_N128` | 1 | doubling the Gamma-driver damping moves the shift `−4.95%` and the drift `−0.007%` — not gauge-limited |
 | `wavezone_pair_d10_L128_N256` | 1 | doubled box, four extraction shells |
 | `longrun_pair_d10_t400_L64_N128` | 1 | the acceleration is steady to `t = 400` |
 | `stability_canonical_w{075,080,085,090}` | 4 | the star family is stable at all |
