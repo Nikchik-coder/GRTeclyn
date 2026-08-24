@@ -47,8 +47,11 @@ why the cell name carries all three.
 ## Cells
 
 Shared by every cell: matter rung `m = 1`, `λ = 10240`, `μ = 21845333`;
-canonical star at `ω = 0.75` (`M = +0.014350`); phantom at `ω = 0.7603`
-(`M = −0.014350`, mass-matched); maximal slicing.
+maximal slicing. The default star pair is canonical at `ω = 0.75`
+(`M = +0.014350`) with a mass-matched phantom at `ω = 0.7603`
+(`M = −0.014350`); the cells that deliberately retune a star carry the
+frequency in their name (`w0804`, `w088`, `w0675`, `w0700`, `w0850`) and their
+own masses are listed in the section that discusses them.
 
 ### Controls — does a lone star sit still?
 

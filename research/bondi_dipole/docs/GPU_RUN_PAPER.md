@@ -672,6 +672,14 @@ Four cards, but only **one 32-rank elliptic solve may run at any moment**
 fifth speed). So each launch waits for the previous cell's solve to hand over
 to the GPU — that wait is a decision to take, not something to automate.
 
+**The cap is on solves competing with *evolutions*, not on solves as such.**
+With no GPU evolution in flight the CPU is otherwise idle and several solves may
+go up together: the equal-mass ladder (phase 3c) launched three 32-rank solves
+at once on a quiet node and each finished in ~19 min, and the three evolutions
+that followed held 182–183 code units/h on separate cards — within 0.5% of the
+single-occupancy rate. Check what is alive with `sweep_ranks.py` before relying
+on that; the rule reverts the moment any evolution starts.
+
 Wave B, in the intended order with its pinned card:
 
 | # | cell | card | ~GPU-hours |
@@ -1311,6 +1319,84 @@ without a fit that models the changing separation properly. That is a limitation
 of the analysis, not evidence against the scaling — the same fit returns 0.0161
 and 0.0119 on the matched cell for two constants both known to be 0.014350.
 
+### Phase 3c — the equal-mass ladder (three cells, ~1.4 h each) — run 2026-08-24
+
+Phases 3 and 3b measure the mass dependence *differentially*: change one star,
+watch what happens to its partner, quote the ratio. That is deliberately
+conservative — the section above shows why the constants from those fits are
+not quotable — but it leaves the mass axis of `a = GM/d²` stated as a ratio
+test rather than as a measured exponent, while the separation axis already has
+one (`a ∝ d^−2.028` over five separations). This phase supplies the missing
+exponent.
+
+**The design change that makes it possible: retune *both* stars together.**
+An unequal pair deforms — the gap moves by 0.6 to 1.4 over the run — and that
+is exactly what spoils the absolute fits in phase 3b. A pair that stays
+mass-matched stays rigid, so a plain quadratic fit is valid and the acceleration
+can be quoted as a number rather than a ratio. Equal mass needs *different*
+frequencies in the two sectors, because the sign of the field's energy changes
+how a star of a given mass self-gravitates; each phantom partner was root-found
+on the branch by secant refinement (CPU only, no GPU).
+
+Run at **d = 20, not the headline d = 10**, so the finite-size excess the
+separation scan mapped (+2.9% at d = 8, +0.07% at d = 20) starts negligible and
+the mass axis is clean. With the archived `runaway_pair_d20` cell as the fourth
+rung, the ladder spans ×2.46 in mass.
+
+| cell | ω canonical | ω phantom | pair mass | vs base | prediction `a = M/d²` |
+|---|---|---|---|---|---|
+| `masslaw_pair_d20_w0675_L64_N128_lev0` | 0.674989 | 0.686072 | 2.2541e-02 | ×1.571 | 5.635e-05 |
+| `masslaw_pair_d20_w0700_L64_N128_lev0` | 0.699991 | 0.710485 | 1.9173e-02 | ×1.336 | 4.793e-05 |
+| `runaway_pair_d20_L64_N128_lev0` (archived) | 0.750000 | 0.760300 | 1.4322e-02 | ×1.000 | 3.580e-05 |
+| `masslaw_pair_d20_w0850_L64_N128_lev0` | 0.849997 | 0.859098 | 9.1571e-03 | ×0.638 | 2.289e-05 |
+
+Gate: **p = 1 ± 0.1** in a ∝ M^p, and each rung's `a·d²/M` within a few percent
+of 1. A sublinear or superlinear exponent, or a rung that misses while its
+neighbours hit, fails the phase.
+
+**ω = 0.675 and 0.700 are outside the 0.75–0.90 band the stability survey
+covered**, so campaign rule 3 binds harder than usual here: read the matter
+diagnostics against each run's own t = 0 *before* believing any geometry.
+
+```bash
+# Three cells, cards 0/1/3, launched together 2026-08-24 13:07 — rule 10 allows
+# concurrent 32-rank solves while no evolution is in flight.  Baseline block
+# with these lines changed:
+BONDI_SEP=20 BONDI_STOP_TIME=200
+# w0675: BONDI_S0_OMEGA=0.6749887480927852 BONDI_S1_OMEGA=0.6860720218606876
+# w0700: BONDI_S0_OMEGA=0.6999914990212646 BONDI_S1_OMEGA=0.7104849879354665
+# w0850: BONDI_S0_OMEGA=0.8499970897108942 BONDI_S1_OMEGA=0.8590975998840956
+```
+
+### Result — the exponent is 1, and the constants are quotable at last
+
+**Measured 2026-08-24. Gate PASSED.** All three cells exited by the `converged`
+door at NL iteration 12 (Ham 9.72/9.53/9.06e-04% against the 0.002% gate) and
+ran to t = 200 with exit code 0. Matter checked first, as required: field peaks
+flat to the sixth digit, min χ moving by −1.9e-04 / −3.3e-04 / −1.3e-03 over
+the full run, L2 Ham *falling* 27–35×. The two off-band frequencies behave.
+
+Fit: quadratic on the pair midpoint, t ≥ 5, on the halo-free **core** tracker;
+per-rung error is the half-spread of four disjoint-window fits.
+
+| pair mass M | a measured | ± | a = M/d² | a·d²/M |
+|---|---|---|---|---|
+| 9.157e-03 | 2.345e-05 | 1.6e-06 | 2.289e-05 | 1.024 |
+| 1.432e-02 | 3.570e-05 | 0.9e-06 | 3.580e-05 | 0.997 |
+| 1.917e-02 | 4.739e-05 | 0.6e-06 | 4.793e-05 | 0.989 |
+| 2.254e-02 | 5.560e-05 | 1.4e-06 | 5.635e-05 | 0.987 |
+
+**a ∝ M^0.966 ± 0.061 against p = 1 predicted — 0.55σ.** Every rung's a·d²/M
+is individually within 2.4% of 1 (mean 0.9993), which is the phase's real
+content: the rigid pair lets each acceleration be compared with its own
+prediction as an absolute number, not just as a ratio against a neighbour. The
+residual tilt has the finite-size sign — the lightest star is the most diffuse
+and carries the largest envelope-overlap correction.
+
+Together with `a ∝ d^−2.028` from the separation scan, **both axes of
+`a = GM/d²` are now direct measurements.** Full run record, provenance, cost,
+and the tracker caveat this phase surfaced are in section 7.
+
 ### Phase 4 — the wave zone (one cell, ~9 h)
 
 Doubled box, same cell size, so the light-crossing distance grows without
@@ -1424,8 +1510,8 @@ a number instead of an argument.
 
 ### Measured wall time — the ledger, and the number to quote in the paper
 
-**The campaign cost about 73 GPU-hours on one H100 per cell.** That is the
-figure to quote: it is the card-time the 27 cells actually consume, computed
+**The campaign cost about 76 GPU-hours on one H100 per cell.** That is the
+figure to quote: it is the card-time the 30 cells actually consume, computed
 from each cell's own end time and the fastest clean rate measured for its grid.
 
 Two numbers exist and they are not the same, so it is worth being explicit about
@@ -1433,14 +1519,14 @@ which is which:
 
 | | hours | what it means |
 |---|---|---|
-| elapsed wall time, summed over cells | 81.6 | what each cell's own clock recorded |
-| **exclusive-equivalent card-time** | **73.0** | **the compute actually consumed** |
+| elapsed wall time, summed over cells | 84.9 | what each cell's own clock recorded |
+| **exclusive-equivalent card-time** | **76.3** | **the compute actually consumed** |
 
 They differ because several cells shared a card with another cell, and a shared
 cell's clock keeps running while the other one holds the GPU. Summing those
 elapsed times counts the same card-hour twice. The 73 h figure removes that
 double count by pricing every cell at the clean single-occupancy rate for its
-grid. Quote 73; mention 81.6 only if wall-clock duration is what is being
+grid. Quote 76; mention 84.9 only if wall-clock duration is what is being
 discussed.
 
 | cell | N | L | t | elapsed h | card-h | h / 1000 t |
@@ -1464,20 +1550,26 @@ discussed.
 | `massscale_pair_d10_w0804_L64_N128_lev0` | 128 | 64 | 200 | 1.40 † | 1.09 | 5.44 |
 | `massratio_w088_r060_d10_L64_N128_lev0` | 128 | 64 | 200 | 1.09 | 1.09 | 5.44 |
 | `massratio_heavyphantom_d10_L64_N128_lev0` | 128 | 64 | 200 | 1.22 † | 1.09 | 5.44 |
+| `masslaw_pair_d20_w0675_L64_N128_lev0` | 128 | 64 | 200 | 1.09 | 1.09 | 5.47 |
+| `masslaw_pair_d20_w0700_L64_N128_lev0` | 128 | 64 | 200 | 1.09 | 1.09 | 5.47 |
+| `masslaw_pair_d20_w0850_L64_N128_lev0` | 128 | 64 | 200 | 1.09 | 1.09 | 5.46 |
 | `amrcheck_pair_d10_L64_N128_lev1` | 128 | 64 | 200 | 2.99 † | 1.09 | 5.44 |
 | `deepsolve_pair_d10_L64_N128_lev0` | 128 | 64 | 200 | 1.11 | 1.09 | 5.44 |
 | `wavezone_pair_d10_L128_N256_lev0` | 256 | 128 | 200 | 7.37 | 7.35 | 36.76 |
 | `longrun_pair_d10_t400_L64_N128_lev0` | 128 | 64 | 400 | 3.82 † | 2.18 | 5.44 |
 | `stability_canonical_w{075,080,085,090}` ×4 | 128 | 64 | 120 | 2.63 | 2.61 | 5.44 |
-| **total** | | | | **81.6** | **73.0** | |
+| **total** | | | | **84.9** | **76.3** | |
 
 † shared a card with another cell for part of its run, so its elapsed time
 overstates the compute it consumed.
 
 **Cost per unit of evolution, measured.** At N = 128, L = 64 the cost is
 **5.44 GPU-hours per 1000 units of t**, and it does not vary by more than 2%
-across sixteen cells — separation, sector signs, star frequency, mesh
-refinement and frame rendering all cost the same. Run length is the only thing
+across nineteen cells — separation, sector signs, star frequency, mesh
+refinement and frame rendering all cost the same. The three equal-mass ladder
+cells ran three-to-a-node on separate cards and still came in at 5.46–5.47,
+which also prices the concurrency: three cards in parallel cost 0.5% each in
+rate, not 30%. Run length is the only thing
 that sets the bill at this grid.
 
 **The resolution scaling is shallower than N⁴.** The naive expectation is three
