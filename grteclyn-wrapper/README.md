@@ -1,23 +1,120 @@
 # grteclyn-wrapper
 
-Python orchestration layer that runs isolated **GRTeclyn** GPU episodes from the
-repo root (`GRTeclyn/`). For each candidate spacetime it asks the sibling
-**GRTresna** elliptic solver for constraint-satisfying initial data, hands that
-data to GRTeclyn for time evolution, streams plotfiles into `small_data/` +
-`frames/` during the GPU run, deletes the heavy HDF5 dirs afterward, and scores
-the result with a pluggable objective. On top of this episode loop sit
-quality-diversity (MAP-Elites) and CMA-ES search campaigns that explore
-matter/geometry configurations for FTL shortcuts, gravitational-wave beaming,
-spacetime shear, and critical collapse.
+A Python orchestration layer for numerical-relativity experiments built on
+**GRTeclyn** (GPU evolution, AMReX + CCZ4) and **GRTresna** (elliptic constraint
+solver, Chombo). It turns *"here is a candidate spacetime"* into a finished,
+constraint-satisfying, artefact-checked result.
 
-All commands run from **`grteclyn-wrapper/`**. Binaries must be built first —
-see [Operations](#operations). Site layout (sibling repos, OpenMPI, GRTresna
-env) is configured with a gitignored [`.env`](#site-paths-env) — see below.
+For each candidate it asks GRTresna for constraint-satisfying initial data,
+hands that data to GRTeclyn for time evolution, streams plotfiles into
+`small_data/` + `frames/` **while the GPU run is still going**, deletes the heavy
+HDF5 directories afterwards, and scores what is left with a pluggable objective.
+On top of that episode loop sit quality-diversity (MAP-Elites) and CMA-ES search
+campaigns over matter and geometry configurations.
 
-> **Roadmap:** critical review of the results' validity and the prioritized
-> implementation plan (probe calibration, gauge-honest baseline, ANEC/QI,
-> convergence, pump accounting, self-grav, wave-zone GW) live in
-> [`NextSteps.md`](NextSteps.md).
+> **This is research code, not a released library.** It is a fork of
+> [GRTeclyn](https://github.com/GRTLCollaboration/GRTeclyn) with a research tree
+> added under [`research/`](../research/), [`results/`](../results/) and
+> `grteclyn-wrapper/`. Interfaces change without notice. Results under
+> `results/` are packed, scrubbed and reproducible; lab journals under
+> `research/` are working notes, and not every claim in them survived later
+> scrutiny — the table below says which is which.
+
+---
+
+## What this produced
+
+| Result | Status | Where |
+|---|---|---|
+| **The Bondi dipole runaway.** A canonical (positive active mass) boson star paired with a phantom (negative active mass) one **self-accelerates** — no horizon forms, and the effect survives every artefact check we could build. Both axes of `a = GM/d²` are now direct measurements: `a ∝ d^−2.028` across `d = 8…20`, and `a ∝ M^0.966 ± 0.061` across a ×2.46 mass range. | **Complete and reproducible** | [packed campaign](../results/bondi-dipole-runaway/campaign/) · [full run record](../research/bondi_dipole/docs/GPU_RUN_PAPER.md) · [manuscript](../research/bondi_dipole/bondi_dipole.tex) |
+| **Automated search for transient spacetime shortcuts.** MAP-Elites and CMA-ES over matter/geometry ansätze, scored by a 4D null-geodesic probe rather than by coordinate speed. | Exploratory | [packed campaign](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/) |
+| **Rotating Q-torus wormhole.** A genuine stationary eigenstate, its support, and its collapse when that support is withdrawn. | Exploratory | [`research/rotatingwormhole/`](../research/rotatingwormhole/) |
+
+Three findings shape everything else here:
+
+1. **Gauge-invariant shortcuts exist with exotic matter, but they are transient.**
+   No configuration found so far holds one open while keeping its matter confined.
+2. **The validation pipeline *is* the result.** Several would-be headline numbers
+   turned out to be numerical artefacts. What separates a physical effect from a
+   coordinate one is the 4D evolving probe, the trust flags, and the resolution
+   ladder — see [what was fixed](#what-was-fixed--2026-08-21) and the eleven
+   rules below.
+3. **Ansatz and matter sector dominate the outcome.** Optimizer tuning is
+   secondary, and tuning it first wastes GPU time.
+
+---
+
+## Requirements
+
+| | |
+|---|---|
+| **GPU** | NVIDIA with CUDA 12.x — for the GRTeclyn evolution binary |
+| **CPU** | An MPI implementation (OpenMPI) — for the GRTresna elliptic solve |
+| **Python** | ≥ 3.10, managed with [`uv`](https://docs.astral.sh/uv/) |
+| **Siblings** | [GRTresna](https://github.com/GRTLCollaboration/GRTresna) and [Chombo](https://github.com/applied-numerical-algorithms-group-lbnl/Chombo), checked out beside this repository |
+
+The layout this expects is one parent directory holding `GRTeclyn/`,
+`GRTresna/`, `Chombo/` and a local `openmpi/`. Nothing about that layout is
+hard-coded — you declare it once in a gitignored `.env`, see
+[Site paths](#site-paths-env).
+
+Compilers: `nvcc` needs `gcc ≤ 12`, so build the GPU binary with the **system**
+compiler, not the conda environment used for GRTresna.
+
+## Quick start
+
+```bash
+# 1. Python environment — from the repository root
+uv sync
+
+# 2. Tell the wrapper where your sibling checkouts live
+cd grteclyn-wrapper
+cp .env.example .env          # set at least SIM_ROOT and GRTRESNA_ENV
+source scripts/lib/env.sh
+
+# 3. Run the test suite — needs no GPU, no solver, no built binary
+uv run pytest tests/ -q
+
+# 4. Build and smoke-test the GPU evolution binary
+BUILD=1 bash scripts/radial/run_radialrecipe_gpu_smoke.sh
+```
+
+Steps 1–2 are assumed by every command in this document. Full build recipes for
+both binaries are in [Operations](#operations).
+
+## Reproducing the published result
+
+The Bondi dipole campaign ships as git-friendly extracts — time series, solver
+parameters and gate verdicts, but no HDF5. You can re-derive the headline
+numbers on a laptop, with no GPU and no solver:
+
+```bash
+# from the repository root
+uv run python research/bondi_dipole/fit_mass_law.py
+```
+
+That refits the mass law from the packed cells and prints the exponent, the
+per-cell error bars and the deviation from the analytic prediction. The
+companion [campaign README](../results/bondi-dipole-runaway/campaign/README.md)
+explains the cell naming and every column in the data files.
+
+---
+
+## How to read this document
+
+It is long because it doubles as the campaign run-book. Start where your task is:
+
+| Part | Read it when |
+|---|---|
+| [Running a campaign without numerical artifacts](#running-a-campaign-without-numerical-artifacts) | **Before launching anything whose numbers you intend to believe.** Eleven rules, each one there because breaking it silently produced a clean-looking wrong answer. |
+| [What was fixed](#what-was-fixed--2026-08-21) | You are re-deriving an older result and need to know what was invalid, and what was not. |
+| [What is implemented](#what-is-implemented) | You want to know whether a capability already exists before writing it. |
+| [Campaigns](#campaigns) · [How to run](#how-to-run) | You are launching a search. |
+| [Metrics & scoring](#metrics--scoring) | You are changing an objective, or trying to read a score someone else produced. |
+| [Operations](#operations) | Building binaries, multi-GPU, triage, stopping a campaign safely. |
+| [Reference](#reference) | "Where do I edit X, and what do I run to check it." |
+
+Unless a command says otherwise, run it from **`grteclyn-wrapper/`**.
 
 ---
 
@@ -259,13 +356,27 @@ for cores: multigrid sweeps over a 384³-512³ grid saturate memory traffic, and
 the evolution's host thread has to be scheduled promptly every step to keep its
 card fed. A GPU run can be starved by a machine that looks half idle.
 
-**The practical rule.** GPU-hours are the scarce resource in a campaign like
-this (~59 of them against ~14 hours of solving), so protect them: run at most
-**one 32-rank solve while four evolutions are in flight**, and let a solve
-queue wait on the number of live evolutions rather than on free cores or an
-idle-looking card. Check the *evolution rate* after starting anything new —
-`t/hour` from `sector_dynamics.dat` — because the card's utilisation percentage
-is bursty and will not tell you plainly.
+**The practical rule, and exactly what it protects.** GPU-hours are the scarce
+resource in a campaign like this (~59 of them against ~14 hours of solving), so
+protect them: run at most **one 32-rank solve while four evolutions are in
+flight**, and let a solve queue wait on **the number of live evolutions** rather
+than on free cores or an idle-looking card. Check the *evolution rate* after
+starting anything new — `t/hour` from `sector_dynamics.dat` — because the card's
+utilisation percentage is bursty and will not tell you plainly.
+
+**The cap is on solves competing with evolutions — not on solves as such.** The
+whole cost measured above is GPU work being descheduled; with **no evolution in
+flight there is nothing to starve**, and several 32-rank solves may be launched
+together. They will contend with each other for memory bandwidth and each will
+finish slower than it would alone, but that is CPU wall-clock, which this
+campaign has to spare, and no GPU-hour is lost. Clarified 2026-08-24, after the
+earlier wording was read as a blanket "one solve at a time" and serialised three
+solves on a completely idle node.
+
+So the live-evolution count is the thing to check before launching a batch, and
+`nvidia-smi` is enough for that — but read it as *other people's runs too*, not
+just this campaign's: an occupied card is a card whose evolution you can starve,
+whoever owns it.
 
 **Killing a solve is not the same as stopping it.** `kill -TERM` on the
 launcher's process group leaves the MPI ranks running: after three solves were
@@ -286,8 +397,9 @@ grteclyn-wrapper/scripts/ops/sweep_ranks.py --kill solves
 grteclyn-wrapper/scripts/ops/sweep_ranks.py --kill all --match <cell-name>
 ```
 
-**Why the ordinary tools cannot help here.** `/proc/stat` and `/proc/loadavg`
-are broken on this node (`Transport endpoint is not connected`), so `ps`,
+**Why the ordinary tools cannot help here.** On some container hosts — including
+the one this campaign ran on — `/proc/stat` and `/proc/loadavg` are broken
+(`Transport endpoint is not connected`), so `ps`,
 `top`, `uptime`, `pgrep`, `pkill`, `killall` and `free` all fail or return
 nothing, and `nvidia-smi --query-compute-apps` reports no PIDs. Counting
 `pout.N` files is not a substitute either — they persist after the writer dies,
@@ -374,14 +486,14 @@ The corrected campaign and its data are in
 | **4D null-geodesic probe** — gauge-invariant FTL shortcut measurement | `src/.../metrics/probes/ftl/` | `search` (cheap) and `hq` (full verify) profiles; continuous emission sweep |
 | **Falsification tiers** — T0 constructed → T6 analytic | `scripts/search/validate_tiers.py` | Offline ladder; no rerun needed |
 | **Geometry-first projection** — motif scout → GRTresna solve | `src/.../initial_data/motif.py`, `grtresna/fit/motif.py`, `projection/` | Additive second stage; never push fitted matter directly into GRTeclyn |
-| **Pure-geometry MAP-Elites atlas** — Stage-1 stationary metric scout | `src/.../search/geometry_atlas/`, `scripts/campaigns/geometry_atlas/run.sh` | Searches broad asymptotically flat 4-metrics (no matter); scores frozen `f_geo` + stationary `f_ff` vs exotic-energy cost; see [`docs/GeometryFirst.md`](docs/GeometryFirst.md) |
+| **Pure-geometry MAP-Elites atlas** — Stage-1 stationary metric scout | `src/.../search/geometry_atlas/`, `scripts/campaigns/geometry_atlas/run.sh` | Searches broad asymptotically flat 4-metrics (no matter); scores frozen `f_geo` + stationary `f_ff` vs exotic-energy cost; see [`research/legacy/geometryfirst/LabJournal.md`](../research/legacy/geometryfirst/LabJournal.md) |
 | **Iterative matter adjustment** — CMA-ES loop over lump params (GRTresna-only) | `projection/iterate.py`, `projection/mismatch.py` | `--iterate N` on `project_geometry_motif.py`; L2 geometry-mismatch fitness; closes the fit→solve→compare loop |
 | **Post-load constraint gate** — short GPU load check of `.gridinit` | `projection/postload_gate.py` | Rejects bad loads before the expensive main evolution |
 | **Solved-FTL gate** — cheap t=0 filter on `.gridinit` | `search/solved_ftl_gate.py` | ~1 s/candidate; rejects flat/degenerate slices |
 | **Visualization** — constraint plots, GW panels, frame movies | `src/.../visualisation/`, `scripts/plot/` | Article-style 6-panel Ψ₄ figures; `make_movies.sh` |
 | **LIGO matched-filter search** — methodology + reference script | `src/.../gw_search/` | Intermediate-mass collapse templates vs GWOSC; see [`src/.../gw_search/README.md`](src/grteclyn_wrapper/gw_search/README.md) |
-| **RL chassis** — pump/transport training launcher | `scripts/campaigns/rl/` | Opt-in stage 1.5; handoff in [`research/RL/LabJournal.md`](../research/RL/LabJournal.md) |
-| **Self-gravitating boson star seed** — stationary single-star confinement | `grtresna/profiles/boson_star_ode.py`, GRTresna C++ | Four-bug fix; see [Self-gravitating boson star](#self-gravitating-boson-star) and [`SELFGRAV_HANDOFF.md`](SELFGRAV_HANDOFF.md) |
+| **RL chassis** — pump/transport training launcher | `scripts/campaigns/rl/` | Opt-in stage 1.5; handoff in [`research/legacy/RL/LabJournal.md`](../research/legacy/RL/LabJournal.md) |
+| **Self-gravitating boson star seed** — stationary single-star confinement | `grtresna/profiles/boson_star_ode.py`, GRTresna C++ | Four-bug fix; see [Self-gravitating boson star](#self-gravitating-boson-star) |
 
 ---
 
@@ -511,13 +623,14 @@ Python `from grteclyn_wrapper.core.site_paths import grteclyn_root`.
 
 ### Stage 0 — MAP-Elites (QD)
 
-**Generic launch** (background, 8 GPUs, pipelined GRTresna + GPU):
+**Generic launch** (background, pipelined GRTresna + GPU). `GPU_IDS` lists the
+CUDA devices to use — set it to whatever your node actually has:
 
 ```bash
 QD_NAME=my_campaign_v1 \
 QD_TARGET_EVALS=200 \
 OBJECTIVE_MODE=ftl_first \
-GPU_IDS="0 1 2 3 4 5 6 7" \
+GPU_IDS="0 1 2 3" \
 GPU_SLOTS_PER_DEVICE=1 \
 MAX_CONCURRENT_GRTRESNA=3 \
   nohup bash scripts/campaigns/qd/run.sh \
@@ -530,7 +643,7 @@ MAX_CONCURRENT_GRTRESNA=3 \
 BRANCH=wormhole \
 QD_NAME=general_ftl_wormhole_v22 \
 QD_TARGET_EVALS=200 \
-GPU_IDS="0 1 2 3 4 5 6 7" \
+GPU_IDS="0 1 2 3" \
   nohup bash scripts/campaigns/general_ftl/run_all.sh \
   > ../runs/general_ftl_wormhole_v22.launch.log 2>&1 &
 ```
@@ -560,7 +673,7 @@ GRTRESNA_MATTER_SECTOR=boson_star GRTRESNA_MATTER_COUPLING=canonical \
 # Bosonic shell + FTL (RL chassis), ~18-D, exotic wedge ON:
 QD_NAME=boson_shell_ftl_rl_v1 QD_TARGET_EVALS=200 QD_ITERATIONS=30 \
 STOP_TIME=16.0 PLOT_INTERVAL=320 GRTECLYN_FRAMES=1 \
-GPU_IDS="0 1 2 3 4 5 6 7" MAX_CONCURRENT_GRTRESNA=5 BATCH_SIZE=8 \
+GPU_IDS="0 1 2 3" MAX_CONCURRENT_GRTRESNA=5 BATCH_SIZE=8 \
   nohup bash scripts/campaigns/boson_star/ftl_shell_run.sh \
   > ../runs/boson_shell_ftl_rl_v1.launch.log 2>&1 &
 ```
@@ -594,7 +707,7 @@ OBJECTIVE_MODE=general_ftl \
 WARM_START_TRAJECTORY="${GRTECLYN_ROOT}/runs/grtresna_qd/general_ftl_wormhole_v21/trajectory.jsonl" \
 WARM_START_TOP_K=1 WARM_START_JITTER=0.05 SIGMA0=0.05 \
 TARGET_EVALS=150 MAX_GENERATIONS=50 KEEP_TOP_EVAL_DIRS=3 \
-GPU_IDS="0 1 2 3 4 5 6 7" MAX_CONCURRENT_GRTRESNA=3 \
+GPU_IDS="0 1 2 3" MAX_CONCURRENT_GRTRESNA=3 \
 PIN_DIMS="$(bash -c 'source scripts/campaigns/lib/general_ftl_pins.sh && ftl_general_ftl_wormhole_pins')" \
   nohup bash scripts/campaigns/cmaes/run.sh \
   > ../runs/general_ftl_wormhole_cmaes_v1.launch.log 2>&1 &
@@ -1122,8 +1235,9 @@ ODE solver for genuine self-gravitating boson stars (gravity provides the
 binding, not an artificial pump well): `grtresna/profiles/boson_star_ode.py`.
 After a four-bug fix a single stable-branch star holds confinement ~0.90 at
 t=16 (was 0.58, dispersed); `max_level=3` still develops NaNs at t~6-9 -- an
-open numerical-stability issue, not seed/pump physics. Full handoff:
-[`SELFGRAV_HANDOFF.md`](SELFGRAV_HANDOFF.md).
+open numerical-stability issue, not seed/pump physics. The campaign that
+built on this seed, and its artefact checks, are written up in
+[`research/bondi_dipole/docs/GPU_RUN_PAPER.md`](../research/bondi_dipole/docs/GPU_RUN_PAPER.md).
 
 ---
 
@@ -1290,11 +1404,11 @@ Run-by-run results live outside this README:
 
 | Where | What |
 |-------|------|
-| [`MapElites.md`](../research/neuralspacetime/MapElites.md) | FTL search lab journal (SH, shell, wormhole) |
-| [`MapElitesDynamics.md`](../research/neuralspacetime/MapElitesDynamics.md) | Trajectory FTL campaign lab journal |
-| [`grlab/LabJournal.md`](../research/grlab/LabJournal.md) | GW beam + splash lab journal |
+| [`results/matter-first…/`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/README.md) | Packed FTL search campaigns — the publishable extracts |
+| [`…/search/README.md`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/search/README.md) | Per-campaign trajectory FTL results and what each one settled |
+| [`research/legacy/grlab/LabJournal.md`](../research/legacy/grlab/LabJournal.md) | GW beam + splash lab journal |
 | [`results/`](../results/) | Git-friendly campaign extracts, e.g. [`qball-trajectory-evolving-geodesic-shortcut-search/CAMPAIGN_RESULTS.md`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/search/qball-trajectory-evolving-geodesic-shortcut-search/CAMPAIGN_RESULTS.md) |
-| [`NextSteps.md`](NextSteps.md) | Critical review of the claims' validity + hardening plan |
+| [`research/nextsteps.md`](../research/nextsteps.md) | Critical review of the claims' validity + hardening plan |
 
 Three takeaways that shape current work: (1) genuine gauge-invariant FTL
 shortcuts exist with exotic matter but are transient -- no configuration yet
@@ -1364,12 +1478,12 @@ Produces `main3d.gnu.MPI.CUDA.ex` (~137 MB). HQ replay / validation launchers
 drive it with explicit GPU binding:
 
 ```bash
-# 2 ranks on physical GPUs 4 and 5, reusing an existing gridinit
+# 2 ranks on physical GPUs 0 and 1, reusing an existing gridinit
 GRTECLYN_FRAMES=0 GRTECLYN_PSI4=1 \
 uv run python grteclyn-wrapper/scripts/campaigns/hq/replay_eval.py \
   runs/grtresna_qd/qball_traj_spiral_v2/eval_000118 \
   --name e118_dl_L160_N320_t30_mpi2_hq_eval000118 \
-  --gpu 4,5 --evolution-mpi-ranks 2 \
+  --gpu 0,1 --evolution-mpi-ranks 2 \
   --n-full 320 --l-full 160 --stop-time 30 \
   --evolving-geodesic --objective-mode general_ftl \
   --gridinit runs/grtresna_promote/e118_dl_L160_N320_t30_hq_eval000118/initial_data.gridinit
@@ -1590,16 +1704,16 @@ multi-GPU runs** (needed when a single H100 OOMs under deep AMR, e.g. fine
 convergence rungs). Pass `--np N` and an explicit GPU list:
 
 ```bash
-# 4 ranks on physical GPUs 0,1,2,4 (OOM-prone fine dx / high max_level)
+# 4 ranks on physical GPUs 0,1,2,3 (OOM-prone fine dx / high max_level)
 bash grteclyn-wrapper/scripts/wormhole/run/wormhole_case.sh --gridinit "$G" --full-box \
   --omega 0.25067 --m 1 --dx 0.333 --box-size 64 --max-level 3 --stop-time 40 \
   --mass 0.5 --lambda 170 --mu6 14450 --sponge --no-frames \
   --support-ramp-t-start 8 --support-ramp-t-end 10 --support-ramp-floor 0 \
-  --run-suffix conv_dx033 --np 4 --gpus 0,1,2,4
+  --run-suffix conv_dx033 --np 4 --gpus 0,1,2,3
 
 # 2 ranks; if --gpus is omitted, uses consecutive devices from --gpu
-bash grteclyn-wrapper/scripts/wormhole/run/wormhole_case.sh ... --np 2 --gpu 6
-# equivalent: --np 2 --gpus 6,7
+bash grteclyn-wrapper/scripts/wormhole/run/wormhole_case.sh ... --np 2 --gpu 2
+# equivalent: --np 2 --gpus 2,3
 ```
 
 | Flag | Effect |
@@ -1746,12 +1860,28 @@ PY
 
 ### Stop and verify
 
+Use the campaign stopper, scoped to one named campaign. It is the only method
+that actually works — see
+[Stopping detached campaigns](#stopping-detached-campaigns--kill-the-orchestrator-first)
+for why.
+
 ```bash
-pkill -TERM -f 'runs/grtresna_search|runs/grtresna_qd|campaigns/qd/run.sh|campaigns/cmaes/run.sh'
-sleep 5
-pkill -KILL -f 'runs/grtresna_search|runs/grtresna_qd|campaigns/qd/run.sh|campaigns/cmaes/run.sh'
-nvidia-smi   # expect 0 MiB, no running processes
+# Always preview first — this touches nothing:
+bash scripts/campaigns/stop_campaign.sh --dry-run <runs_dir | campaign_name>
+
+# Then stop for real. It kills the orchestrator first, sweeps the workers,
+# and verifies before returning.
+bash scripts/campaigns/stop_campaign.sh <runs_dir | campaign_name>
+
+nvidia-smi   # your cards should now be free
 ```
+
+> **Do not stop a campaign with a bare `pkill -f` on a run path or binary name.**
+> Two things go wrong. Killing workers by path pattern leaves the orchestrator
+> alive, so it sees a "finished" step and *launches the next run* — the campaign
+> looks unkillable. And on a shared node a pattern broad enough to catch your
+> processes will also catch someone else's. Scope every stop to a named
+> campaign, never to an executable or a GPU.
 
 ### Research manuscript (TikZ / tectonic)
 
@@ -1771,9 +1901,11 @@ First run downloads TeX support files (needs network access once). Source:
 | [`src/grteclyn_wrapper/grtresna/README.md`](src/grteclyn_wrapper/grtresna/README.md) | GRTresna bridge deep docs |
 | [`src/grteclyn_wrapper/gw_search/README.md`](src/grteclyn_wrapper/gw_search/README.md) | LIGO matched-filter methodology |
 | [`src/grteclyn_wrapper/visualisation/README.md`](src/grteclyn_wrapper/visualisation/README.md) | Plotting module reference |
-| [`SELFGRAV_HANDOFF.md`](SELFGRAV_HANDOFF.md) | Self-grav boson star fix + caveats |
 | [`../research/neuralspacetime/article/research.tex`](../research/neuralspacetime/article/research.tex) | Manuscript source (compile with tectonic above) |
-| [`../research/neuralspacetime/MapElitesDynamics.md`](../research/neuralspacetime/MapElitesDynamics.md) | FTL trajectory campaign lab journal |
+| [`../results/matter-first…/search/`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/search/README.md) | Packed FTL trajectory campaign results |
 | [`../research/rotatingwormhole/OrbitalPumpPlan.md`](../research/rotatingwormhole/OrbitalPumpPlan.md) | Rotating wormhole: Q-torus eigenstate support, collapse trigger |
-| [`../research/grlab/LabJournal.md`](../research/grlab/LabJournal.md) | GW beam + splash lab journal || [`../research/RL/LabJournal.md`](../research/RL/LabJournal.md) | RL chassis handoff |
+| [`../research/legacy/grlab/LabJournal.md`](../research/legacy/grlab/LabJournal.md) | GW beam + splash lab journal |
+| [`../research/legacy/RL/LabJournal.md`](../research/legacy/RL/LabJournal.md) | RL chassis handoff |
+| [`../research/bondi_dipole/docs/GPU_RUN_PAPER.md`](../research/bondi_dipole/docs/GPU_RUN_PAPER.md) | Bondi dipole: full campaign plan, every cell, every gate |
+| [`../results/bondi-dipole-runaway/campaign/README.md`](../results/bondi-dipole-runaway/campaign/README.md) | Bondi dipole: packed data and how to read it |
 

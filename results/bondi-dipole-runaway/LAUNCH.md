@@ -72,8 +72,9 @@ under `small_data/`, plotfiles under `data/`, and the solver's own output under
 | `BONDI_NFULL` | `128`, `192`, `256` | evolution cells per side — the resolution ladder |
 | `BONDI_LFULL` | `64`, `128` | box side in code units (`128` only for the wave-zone cell) |
 | `BONDI_MAXLEVEL` | `0`, `1` | mesh refinement. **`0` everywhere** except the one `amrcheck_*` cell that exists to show refinement changes nothing |
-| `BONDI_STOP_TIME` | `200`, `400` | end time; `400` only for the long run |
-| `BONDI_PLOT_INTERVAL` | `80`, `120`, `160` | steps between plotfiles (scaled so every cell writes a comparable number) |
+| `BONDI_STOP_TIME` | `200`, `400`, `1000` | end time; `400` only for the long pair run, `1000` only for the extended lone-phantom control |
+| `BONDI_PLOT_INTERVAL` | `80`, `120`, `160`, `400` | steps between plotfiles (scaled so every cell writes a comparable number). `400` on the `t = 1000` cell: at the default cadence the frame consumer falls behind the GPU and the scratch tree grows without bound |
+| `BONDI_CHECKPOINT_INTERVAL` | unset, `40000` | rolling checkpoint. Set only on the `t = 1000` cell, which is five times longer than anything else in the campaign |
 
 **The configuration under test**
 
@@ -82,6 +83,9 @@ under `small_data/`, plotfiles under `data/`, and the solver's own output under
 | `BONDI_SEP` | `8`, `10`, `12`, `16`, `20` | separation of the two stars; `0` for a centred single star |
 | `BONDI_S0`, `BONDI_S1` | `0` or `1` per lump | sector of each star: `0` canonical, `1` phantom. `0 1` is the runaway, `1 0` its mirror, `0 0` and `1 1` the same-sign nulls |
 | `BONDI_S0_OMEGA`, `BONDI_S1_OMEGA` | `0.75`, `0.7603`, `0.8040`, `0.81`, `0.88` | each star's frequency, which sets its mass. `0.75` canonical and `0.7603` phantom are the mass-matched pair (`\|M\| = 0.014350` both); the others build the mass ladder |
+| `BONDI_OMEGA` | `0.7603` | single-star cells only — the lone star's frequency |
+| `BONDI_EXTRA` | unset, `eta=2.0` | raw `params.txt` overrides, for evolution-gauge knobs (`eta`, `shift_Gamma_coeff`, `lapse_power`) that the environment cannot otherwise reach. Defaults to empty, so every other cell reproduces bit-for-bit |
+| `BONDI_GRTRESNA_MAXIMAL_SLICING` | `1` | forces the `K = 0` path. Required on any **all-canonical** cell, because the solver picks that path by itself whenever a lump carries negative energy — see rule 9 in `grteclyn-wrapper/README.md` |
 | `BONDI_EXOTIC` | `0`, `1` | single-star cells only: which sector the lone star belongs to |
 
 **The elliptic solve**
@@ -89,8 +93,8 @@ under `small_data/`, plotfiles under `data/`, and the solver's own output under
 | variable | values used | meaning |
 |---|---|---|
 | `BONDI_GRTRESNA_N` | `256`, `384`, `512` | solve grid — always `2×` the evolution grid |
-| `BONDI_NL_TOL` | `0.002`, `0.000395`, `0.000125` | convergence gate, scaled as `dx⁴` off the base rung (`0.002 × (128/N)⁴`) |
-| `BONDI_NL_STALL_TOL` | `4e-05`, `7.9e-06`, `2.5e-06` | give-up threshold when the residual stops improving |
+| `BONDI_NL_TOL` | `0.002`, `0.000395`, `0.000125`, `0.0002` | convergence gate, scaled as `dx⁴` off the base rung (`0.002 × (128/N)⁴`). `0.0002` is off-schedule: the deep-solve twin tightens the base rung `10×` at fixed grid, to separate solve error from grid error |
+| `BONDI_NL_STALL_TOL` | `4e-05`, `7.9e-06`, `2.5e-06`, `4e-06` | give-up threshold when the residual stops improving. **Check which door the solve left by** — `converged`, `stalled` and the iteration cap are not the same thing; see rule 8 in `grteclyn-wrapper/README.md` |
 | `BONDI_GRTRESNA_RANKS` | `32` | MPI ranks for the solve |
 | `BONDI_GRTRESNA_TIMEOUT` | `21600`, `43200` | wall-clock ceiling in seconds |
 
@@ -116,7 +120,7 @@ affects physics.
 
 ## 4. What each cell was given
 
-Twenty cells carry a launch record. The four `stability_canonical_w*` cells
+Twenty-seven of the thirty-one cells carry a launch record. The four `stability_canonical_w*` cells
 predate the campaign's staging layout and reuse cached initial data, so they
 have no `launch_config.sh` — their configuration is in their `metadata.json`.
 
@@ -139,6 +143,22 @@ have no `launch_config.sh` — their configuration is in their `metadata.json`.
 | `amrcheck_pair_d10_L64_N128_lev1` | 128 | 64 | 10 | 0/1 | 200 | 256 | 0.002 |
 | `wavezone_pair_d10_L128_N256_lev0` | 256 | 128 | 10 | 0/1 | 200 | 512 | 0.002 |
 | `longrun_pair_d10_t400_L64_N128_lev0` | 128 | 64 | 10 | 0/1 | 400 | 256 | 0.002 |
+| `runaway_pair_d20_L64_N128_lev0` | 128 | 64 | 20 | 0/1 | 200 | 256 | 0.002 |
+| `deepsolve_pair_d10_L64_N128_lev0` | 128 | 64 | 10 | 0/1 | 200 | 256 | **0.0002** |
+| `gaugetwin_pair_d10_eta2_L64_N128_lev0` | 128 | 64 | 10 | 0/1 | 200 | 256 | 0.002 |
+| `control_lone_phantom_t1000_L64_N128_lev0` | 128 | 64 | off-centre | single, exotic | **1000** | 256 | 0.002 |
+| `control_pair_mm_d10_L64_N128_lev0_frames` | 128 | 64 | 10 | 1/1 | 200 | 256 | 0.002 |
+
+The last two rows of the runaway series are the two referee-response cells of
+2026-08-24. Their launch records name a fresh elliptic solve rather than a
+reused `initial_data.gridinit`: the archived gridinit files had been pruned from
+the staging tree, and the solve is deterministic at fixed settings, so both
+re-solved and both landed on the same `converged` door at NL iteration 12 of 50
+that every archived cell used.
+
+`chase03c_pair_d10_L64_N128_lev0` and `nomill_left_pair_d10_L64_N128_lev0` are
+in the pack but belong to the 0.3c follow-up rather than this campaign; see
+`research/bondi_dipole/docs/CHASE_TO_03C.md`.
 
 The mass ladder's frequencies are the part not visible in that table:
 `massscale_*` sets `S1_OMEGA=0.8040`, `massratio_w088_r060` sets `0.88`, and

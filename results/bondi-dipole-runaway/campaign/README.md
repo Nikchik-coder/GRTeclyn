@@ -47,8 +47,11 @@ why the cell name carries all three.
 ## Cells
 
 Shared by every cell: matter rung `m = 1`, `λ = 10240`, `μ = 21845333`;
-canonical star at `ω = 0.75` (`M = +0.014350`); phantom at `ω = 0.7603`
-(`M = −0.014350`, mass-matched); maximal slicing.
+maximal slicing. The default star pair is canonical at `ω = 0.75`
+(`M = +0.014350`) with a mass-matched phantom at `ω = 0.7603`
+(`M = −0.014350`); the cells that deliberately retune a star carry the
+frequency in their name (`w0804`, `w088`, `w0675`, `w0700`, `w0850`) and their
+own masses are listed in the section that discusses them.
 
 ### Controls — does a lone star sit still?
 
@@ -58,11 +61,36 @@ One star, alone in an empty box, nothing to pull on it.
 |---|---|---|---|
 | `control_lone_canonical_L64_N128_lev0` | canonical, box centre | `1.8e-03` | `−0.48%` |
 | `control_lone_phantom_L64_N128_lev0` | phantom, off-centre at `x = 37` | `1.6e-03` | `−0.48%` |
+| `control_lone_phantom_t1000_L64_N128_lev0` | the same phantom, carried to `t = 1000` | `1.4e-01` at `t = 1000` | `−5.39%` at `t = 1000` |
 
 Drift is the largest displacement on any axis. The identical canonical run on
 the old initial data moved `−0.328` on all three axes — a `269×` reduction, and
 what remains is no longer diagonal, so it is noise rather than drift. The
 off-centre phantom is the sharper test: no symmetry forces it to stay put.
+
+**Which tracker you read matters, and the two disagree for the phantom.**
+`sector_dynamics.dat` carries a halo-free *core* position; `sector_barycenters.dat`
+carries the `|φ|²`-weighted *barycentre* over the whole box. The numbers above
+are core figures. On the barycentre tracker the off-centre phantom instead swings
+to `4.4e-02` around `t = 51` and relaxes back to `1.3e-02` by `t = 200` — that
+early excursion is the initial-data halo being shed, and the core does not move
+while it happens. **The runaway pairs' drift is quoted from the barycentre
+columns, so `1.3e-02` is the floor to set beside `+2.88`, not `1.8e-03`.** That
+is a `225×` margin rather than a `1600×` one; both numbers are right for what
+they measure, only one is the matching comparison.
+
+**Past `t = 400` the lone phantom is not static.** The `t1000` cell reproduces
+the `t = 200` cell digit for digit through their overlap, then keeps going, and
+what it shows is a slow, linear decline: peak field activity falls at
+**`−0.632%` per 100 code units** from `t ≈ 200` (sub-windows `−0.604`, `−0.648`,
+`−0.608`), reaching `−5.39%` at `t = 1000`. Over the same span the star swells
+(rms radius `4.41 → 4.83`) and leaks (confined fraction `0.736 → 0.670`), while
+`min χ` *rises* `1.00000 → 1.00033` and the Hamiltonian constraint norm *falls*
+`7.5e-04 → 1.7e-05`. So: no collapse and no blow-up, but not indefinitely static
+either — **stability claims in this pack are good to `t = 400`, not beyond.**
+The late position drift is toward the box centre and appears only in the
+off-centre cell, so it is more plausibly the box than the star; a centred lone
+phantom at `t = 1000` would settle that and was not run.
 
 ### The runaway pairs — the result
 
@@ -200,6 +228,42 @@ One thing does change over the longer window: the separation *opens*,
 `10.000 → 11.741`, having stayed flat all the way to `t = 200`. The acceleration
 is unaffected, but any statement that the pair moves rigidly belongs to
 `t ≤ 200` only.
+
+### The follow-up cells — the opening chased down, and its cause
+
+Two cells added 2026-08-24 carry that opening much further and identify it.
+Neither belongs to the `t = 200` paper; both are the follow-up's, and they are
+packed here because they are the only measurements of what the base rung does at
+late times.
+
+| cell | box | `t_end` | separation | what it is for |
+|---|---|---|---|---|
+| `chase03c_pair_d10_L64_N128_lev0` | recentring ("treadmill") box | `783.9` | `10.000 → 30.131` | the 0.3c chase; 19 shifts; carries `treadmill.dat` |
+| `nomill_left_pair_d10_L64_N128_lev0` | static, pair started 10 left of centre | `600.0` | `10.000 → 17.968` | its treadmill-free control |
+
+**The recentring box does not open the gap.** The two separations agree to
+`1.46%` worst-case over the whole 600-unit overlap, and the control was run
+against a *pre-registered* prediction that it met. Field content per sector
+agrees to `0.15%` with the archived static-box cell as well.
+
+**The grid does.** The resolution ladder above already measured it at `t = 200`:
+the opening is `+0.1072` at `N = 128`, `+0.0286` at `N = 192`, `+0.0127` at
+`N = 256` — a fall of `8.44×` for a factor of two in resolution, which fits
+**third order in `dx`** (`p = 3.26 / 2.82 / 3.08` across the three rung pairs).
+Physics does not converge away under refinement; truncation error does. The
+mechanism is the known initial-data aliasing bias — at `N = 128` the solved
+metric lands ~`0.10` cells below its matter, so each star is born off the centre
+of its own well and the pair pries apart.
+
+Consequences: the pair's acceleration is **not** constant at this rung (it peaks
+near `t = 400` and is down a third by `t = 784`), and **0.3c is not reachable at
+`N = 128`**. Nothing here touches the published `t = 200` numbers, which were
+always quoted at the converged rung where the opening is `0.13%` of the
+separation. The ladder has no late-time rung yet, so that the *same* error
+accounts for the `+8.0` opening at `t = 600` is inference, not measurement — the
+cell that would measure it is `chase_pair_d10_recentred_L64_N192_lev0` to
+`t = 400`. Full record, and two genuinely open questions, in
+`research/bondi_dipole/docs/GPU_RUN_PAPER.md` §6.
 
 ### The same-sign nulls — the pairs merge, and the centroid still does not move
 
@@ -366,6 +430,46 @@ matched mass. Past those the stars grow heavier again, and at `ω = 1.0` neither
 branch has a bound star at all. A rung at `0.40` of matched cannot be built, on
 either side.
 
+### The mass law — the exponent, from the equal-mass ladder
+
+The mass-ratio cells above are differential tests (change one star, watch the
+partner) and quotable only as ratios. This ladder is the direct measurement of
+the mass axis of `a = GM/d²`: **four pairs at `d = 20`, both stars retuned
+together so the pair stays mass-matched, spanning `×2.46` in mass.** Wide
+separation was chosen so the finite-size excess the separation scan mapped
+(`+2.9%` at `d = 8`, `+0.07%` at `d = 20`) starts negligible. The three new
+pairs are matched inside the pair to better than `0.02%` — about 20× tighter
+than the archived base cell — with the phantom frequency root-found per rung
+(equal mass needs *different* frequencies in the two sectors).
+
+`a` is fitted to the pair midpoint from `t ≥ 5` on the **core** (halo-free)
+tracker; the per-rung error bar is the half-spread of four disjoint-window fits
+(`5–50 / 50–100 / 100–150 / 150–200`), which dominates every other uncertainty.
+
+| cell | pair mass `M` | `a` measured | ± | `a = M/d²` | `a·d²/M` |
+|---|---|---|---|---|---|
+| `masslaw_pair_d20_w0850_L64_N128_lev0` | `9.157e-03` | `2.345e-05` | `1.6e-06` | `2.289e-05` | `1.024` |
+| `runaway_pair_d20_L64_N128_lev0` | `1.432e-02` | `3.570e-05` | `0.9e-06` | `3.580e-05` | `0.997` |
+| `masslaw_pair_d20_w0700_L64_N128_lev0` | `1.917e-02` | `4.739e-05` | `0.6e-06` | `4.793e-05` | `0.989` |
+| `masslaw_pair_d20_w0675_L64_N128_lev0` | `2.254e-02` | `5.560e-05` | `1.4e-06` | `5.635e-05` | `0.987` |
+
+**Weighted power law: `a ∝ M^0.966 ± 0.061` against `p = 1` predicted** —
+agreement at `0.55σ`, and each rung's `a·d²/M` is individually within `2.4%`
+of 1 (mean `0.9993`). With `a ∝ d^−2.028` from the separation scan, both axes
+of the law are now measured directly. The residual tilt has the finite-size
+sign: the lightest star is the most diffuse and carries the largest
+envelope-overlap correction.
+
+**One tracker caveat this ladder surfaced.** On the lightest cell the
+barycentre (`|φ|²`-weighted) tracker fits `18%` low and swings ×2 between
+windows, because the early relaxation halo — shed by every cell — is a much
+larger *fraction* of the most diffuse star's sector (its rms radius jumps
+`5.1 → 8.5` by `t = 50`). The core tracker is stable there and the two agree to
+under `1%` on all other rungs: **for diffuse stars the barycentre tracker
+measures the halo, not the star.** The fitted table, exponent and per-rung
+errors are in `mass_law.csv`, regenerated by
+`research/bondi_dipole/fit_mass_law.py` from these extracts.
+
 ### Mesh refinement — does the uniform-grid choice shape the result?
 
 The campaign runs uniform grids so the convergence ladder means exactly one
@@ -413,6 +517,7 @@ stress-energy trace, these same initial-data bytes drove the lapse to
 | `collapse_diagnostics.dat` | lapse, `chi`, `K` — downsampled to `dt = 0.5` |
 | `constraint_norms.dat`, `energy_conditions.dat`, `curvature_invariants.dat` | likewise downsampled |
 | `psi4_*.dat` | extracted wave content |
+| `treadmill.dat` (recentring-box cells only) | per-sector core position in grid coordinates, cells shifted, and the odometer. **True position = grid position + `odometer_length` (column 7).** Without it a recentred trajectory cannot be reconstructed, so it is packed whole rather than downsampled |
 | `well_tracking.dat` (the same-sign cells that cached slices: PP N=256, MM N=128 `_frames`) | the two lumps' positions vs time, derived from the `chi_minus_1` slice cache by `analysis/track_wells.py` — the merger record, and the only per-star measurement a same-sign pair has |
 | `Ham_and_Mom_errors.txt` | elliptic solve convergence history |
 | `evolution_params.txt`, `grtresna_params.txt` | what was evolved, what was solved |

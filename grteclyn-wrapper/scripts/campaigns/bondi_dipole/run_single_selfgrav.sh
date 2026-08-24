@@ -212,6 +212,20 @@ if [[ "${SPONGE}" != "0" ]]; then
   )
 fi
 
+# Steps between plotfiles.  Default 80 preserves every archived cell; a long
+# run (t >> 200) should raise it so the frame consumer keeps up with the GPU
+# and the scratch tree stays bounded -- same knob as the pair launcher.
+PLOT_INTERVAL="${BONDI_PLOT_INTERVAL:-80}"
+
+# Steps between checkpoints (template ships -1 = off).  A multi-hour cell wants
+# a coarse rolling cadence so a crash does not restart from t=0 -- same knob
+# and same caveats as the pair launcher (old checkpoints are not pruned).
+CHECKPOINT_INTERVAL="${BONDI_CHECKPOINT_INTERVAL:-}"
+checkpoint_args=()
+if [[ -n "${CHECKPOINT_INTERVAL}" ]]; then
+  checkpoint_args=(--extra-override checkpoint_interval="${CHECKPOINT_INTERVAL}")
+fi
+
 # Print the resolved parameter set and exit without solving or touching a GPU.
 dryrun_args=()
 if [[ "${BONDI_DRYRUN:-0}" != "0" ]]; then
@@ -238,7 +252,7 @@ PYTHONPATH="${WRAPPER_DIR}/src" "${WRAPPER_DIR}/.venv/bin/python" \
   --evolution-mpi-ranks "${EVO_RANKS}" \
   --n-full "${NFULL}" --l-full "${LFULL}" \
   --max-level "${MAXLEVEL}" --regrid-threshold 0.02 \
-  --stop-time "${STOP_TIME}" --plot-interval 80 \
+  --stop-time "${STOP_TIME}" --plot-interval "${PLOT_INTERVAL}" \
   --ftl-L 8.0 \
   --grtresna-ranks "${GRTRESNA_RANKS}" \
   --grtresna-iterations 50 \
@@ -249,6 +263,7 @@ PYTHONPATH="${WRAPPER_DIR}/src" "${WRAPPER_DIR}/.venv/bin/python" \
   --grtresna-n "${GRTRESNA_N}" \
   "${MAXIMAL_SLICING_FLAG[@]}" \
   "${GRIDINIT_FLAG[@]}" \
+  ${checkpoint_args[@]+"${checkpoint_args[@]}"} \
   --grtresna-timeout "${GRTRESNA_TIMEOUT}" \
   --consumer-radii ${RADII} \
   --consumer-keep-last 2 \

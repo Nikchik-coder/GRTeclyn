@@ -61,6 +61,28 @@ Tick a box only when the cell has passed its gate and been moved into
 - [x] `deepsolve_pair_d10_L64_N128_lev0` — **evolved to t=200 on 2026-08-24**; referee-proofing the other way. The headline cell with the elliptic tolerance alone tightened 8.6e-04% → 2e-04% (exit at pass 16, Ham 1.94e-04%, a 4.4× deeper solve). The drift is unchanged to four decimals over the whole run (2.88122 vs 2.88117 at t = 200, 0.0015%; a = 1.4634e-04 in both), while N128 → N192 changes it by 4.6%. **The base rung is grid-limited, not solve-limited** — and the t = 0 constraint violation barely moved (2.022e-04 → 1.999e-04), because it is grid-transfer noise. See "the deep-solve twin"
 - [ ] `chase_pair_d08_v03c_Lx352_L64_N128_lev0` — ~1.7 GPU-days; ride the runaway to 0.3c in a long box. **Superseded by the recentring box — implemented and implementation-tested 2026-08-23; plan and build record in `CHASE_TO_03C.md`.** Follow-up paper material either way
 
+**Referee-response runs (from the 2026-08-24 review).** The paper is submittable
+without these — every major review point is already closed from packed data, see
+section 5 — but each of these hardens one point from "measured" to "measured and
+twinned". **Both were re-solved from scratch rather than reusing an archived
+`initial_data.gridinit`**: the archived gridinit files had been pruned from the
+staging tree, and the solve is deterministic at fixed settings, so a fresh solve
+is the cleaner provenance anyway. Both reproduced their reference solve exactly
+(exit at NL iteration 12 of 50, the same door as every archived cell).
+
+- [x] `gaugetwin_pair_d10_eta2_L64_N128_lev0` — **evolved to t=200 on 2026-08-24**; the headline N=128 cell with Gamma-driver damping doubled (`eta = 2.0`, confirmed in the live `params.txt` against the archived `eta = 1.0`). **Gate PASSED**: drift 2.88127 against 2.88147 (−0.007%) and a = 1.4478e-04 against 1.4481e-04 (−0.019%), while the gauge itself moved — max|shift| 7.7286e-04 → 7.3457e-04, **−4.95%**. The knob bit the coordinates and left the physics alone. Completes the trilogy: not solve-limited, not grid-limited, not gauge-limited. See "Result — Run A"
+- [x] `control_lone_phantom_t1000_L64_N128_lev0` — **evolved to t=1000 on 2026-08-24**, 5.38 GPU-h, the campaign's longest single run. Reproduces the archived t=200 cell **digit for digit** on every diagnostic through its whole overlap. **Gate FAILED, informatively**: peak field activity is not flat to 1% — it decays **linearly at −0.632% per 100 code units** from t ≈ 200 onward, reaching **−5.39%** at t = 1000 (it is −0.48% at t=200 and −1.62% at t=400, which is why nothing shorter caught it). No collapse, no blow-up: min χ rises 1.00000 → 1.00033, the star swells (rms 4.41 → 4.83) and leaks (confined fraction 0.736 → 0.670). The softened "stable over the 400 time units evolved" wording is therefore the correct one, and the decay rate is itself a quotable result. See "Result — Run B"
+- [~] `control_pair_pp_d10_phase_pi_L64_N128_lev0` — **not required, and not buildable as a knob.** The review asked for an in-phase control on the assumption that the campaign was seeded anti-phase. It is the other way round (section 5), so the informative control is the *anti-phase* one, and seeding δ = π needs a per-lump internal-phase sign in the matter painter that does not exist yet. Bonus confirmation, not a gap
+
+**The equal-mass ladder (2026-08-24).** Three pairs at d = 20 with both stars
+retuned together, so with the archived d = 20 cell the mass axis of `a = GM/d²`
+is measured directly as an exponent — the distance axis's counterpart. Full
+record in section 7.
+
+- [x] `masslaw_pair_d20_w0675_L64_N128_lev0` — **evolved to t=200 on 2026-08-24**; heaviest rung, M = 0.02254 (×1.571 base), pair matched to −0.016%. a = 5.560e-05, a·d²/M = 0.987. ω = 0.675 is outside the stability-scanned band; matter checked first and clean (peak flat to the 6th digit, min χ −1.9e-04)
+- [x] `masslaw_pair_d20_w0700_L64_N128_lev0` — **evolved to t=200 on 2026-08-24**; M = 0.01917 (×1.336), matched to −0.008%. a = 4.739e-05, a·d²/M = 0.989, the tightest error bar of the four
+- [x] `masslaw_pair_d20_w0850_L64_N128_lev0` — **evolved to t=200 on 2026-08-24**; lightest rung, M = 0.00916 (×0.638), matched to +0.006%. a = 2.345e-05 on the core tracker, a·d²/M = 1.024 — and the cell that exposed the barycentre tracker's halo contamination on diffuse stars (see section 7)
+
 ---
 
 ## Findings for the paper — what each cell established, verified against the packed data
@@ -79,7 +101,7 @@ midpoint over the last two thirds unless a window is named.
 | `runaway_pair_d10_L64_N256` | **the quotable cell**: drift +3.0016, a = 1.5958e-04, px_total 3.8e-06 |
 | `runaway_pair_d{08,12,16,20}` | with d10: a ∝ d^−2.028 over five separations; a·d² → GM to 0.1% from d = 12 out, so the close-pair excess is finite-size, not a floor |
 | `control_mirror_mp` | swap the sectors, the runaway reverses: drift ratio −1.000022, a ratio −1.000025 |
-| `control_lone_{canonical,phantom}` | a star alone moves ≤ 1.8e-03 in 200 — the single-star noise floor |
+| `control_lone_{canonical,phantom}` | a star alone moves ≤ 1.8e-03 in 200 on the **core** tracker (1.3e-02 on the **barycentre** tracker for the off-centre phantom) — the single-star noise floor. Quote whichever tracker the signal beside it was measured with |
 | `control_pair_pp` ×3 rungs | two positive stars merge at t ≈ 35; their centroid moves ≤ 7.3e-04 all run |
 | `control_pair_mm` ×2 rungs + `_frames` | centroid ≤ 3.5e-04; the pair **merges at t = 32.8**, against PP's 33.6 — the driving force is sign-blind. min χ = 1.00000 is the diagnostic's blindness to hills, not flat geometry |
 | `massscale_w0804` | phantom ×0.7995 → canonical pull ×0.809 (pred 0.7995) |
@@ -90,6 +112,7 @@ midpoint over the last two thirds unless a window is named.
 | `longrun_t400` | a within 2% of 1.43e-04 in every late window; velocity still growing at t = 400 |
 | `deepsolve_pair_d10_L64_N128` | solve tolerance 4.4× tighter changes the drift by 0.0015% (2.88117 → 2.88122) — the base rung is grid-limited, not solve-limited |
 | `stability_w{075..090}` | the canonical family is stable where it is used |
+| `masslaw_pair_d20_w{0675,0700,0850}` | with the archived d20 cell: **a ∝ M^0.966±0.061** across ×2.46 in mass at fixed d = 20 — the mass law's exponent, measured; every rung's a·d²/M within 2.4% of 1 |
 
 ### The two interaction channels — the paper's defence, as headlines with the runs behind them
 
@@ -264,8 +287,12 @@ above is constructed.
 | run 2× longer | a within 2% of the t ≤ 200 value; velocity still growing linearly |
 | initial-data solve 4.4× deeper | 0.0015% on drift, 0.001% on a — the base rung is not solve-limited |
 
-And the null side: lone stars ≤ 1.8e-03, same-sign centroids ≤ 7.3e-04 —
-2000–4000× below the signal. Total momentum stays consistent with zero while
+And the null side: same-sign centroids ≤ 7.3e-04, ~4000× below the signal; lone
+stars ≤ 1.8e-03 on the core tracker, but the +2.88 signal is a **barycentre**
+number and the matching barycentre floor is the off-centre phantom's 1.3e-02 at
+t = 200 — so the defensible ratio is **225×**, not 1600×. Still decisive, and it
+is the number a referee can reproduce from the packed columns. Total momentum
+stays consistent with zero while
 the pair displaces by 3: px_total = 3.7e-05 at N128 falling to **3.8e-06 at
 N256** — displacement without momentum is the Bondi signature, and it converges
 *toward* zero, not away from it.
@@ -326,6 +353,18 @@ the pair stays near-rigid and visibly is not once the gap moves by >1;
 ratios of the changed partner are the quotable numbers, constants never are
 (on the matched cell the same fit returns 0.0161 and 0.0119 for two constants
 both known to be 0.01435).
+
+### The mass law — the exponent, measured on the equal-mass ladder
+
+The section above varies the separation at fixed mass; this one varies the mass
+at fixed separation. Four mass-matched pairs at d = 20 spanning ×2.46 in mass
+(three run 2026-08-24 plus the archived d = 20 cell) give **a ∝ M^0.966 ± 0.061**
+against p = 1 predicted, with every rung's a·d²/M within 2.4% of 1. Together
+with a ∝ d^−2.028 this closes both axes of `a = GM/d²` as direct measurements
+rather than ratio tests. Full run record, gates, the per-rung table, and the
+tracker caveat it surfaced (the barycentre tracker follows the relaxation halo
+on diffuse stars; the ladder is fitted on the halo-free core tracker) are in
+section 7.
 
 ### What t = 400 adds
 
@@ -633,6 +672,14 @@ Four cards, but only **one 32-rank elliptic solve may run at any moment**
 fifth speed). So each launch waits for the previous cell's solve to hand over
 to the GPU — that wait is a decision to take, not something to automate.
 
+**The cap is on solves competing with *evolutions*, not on solves as such.**
+With no GPU evolution in flight the CPU is otherwise idle and several solves may
+go up together: the equal-mass ladder (phase 3c) launched three 32-rank solves
+at once on a quiet node and each finished in ~19 min, and the three evolutions
+that followed held 182–183 code units/h on separate cards — within 0.5% of the
+single-occupancy rate. Check what is alive with `sweep_ranks.py` before relying
+on that; the rule reverts the moment any evolution starts.
+
 Wave B, in the intended order with its pinned card:
 
 | # | cell | card | ~GPU-hours |
@@ -687,7 +734,9 @@ Paper-ready, in `runs/bondi/staging/archive/` (details in its README):
 | `control_lone_canonical…` / `control_lone_phantom…` (off-centre, x=37), t=200 | single-star null rows of the run matrix |
 | `stability/canonical_w{075,080,085,090}…`, t=120 | stability survey section |
 
-Measured anchors these provide: lone-star drift ≤ 1.8e-03 over t=200; the
+Measured anchors these provide: lone-star drift ≤ 1.8e-03 over t=200 on the core
+tracker (1.3e-02 on the barycentre tracker, and see Run B for what the phantom
+does past t=400); the
 separation scan gives exponent −2.051 on its original four points (−2.028 once
 d = 20 was added, exact −2) and a·d² → 0.014350; d=10 acceleration constant
 across four disjoint fit windows.
@@ -1270,6 +1319,84 @@ without a fit that models the changing separation properly. That is a limitation
 of the analysis, not evidence against the scaling — the same fit returns 0.0161
 and 0.0119 on the matched cell for two constants both known to be 0.014350.
 
+### Phase 3c — the equal-mass ladder (three cells, ~1.4 h each) — run 2026-08-24
+
+Phases 3 and 3b measure the mass dependence *differentially*: change one star,
+watch what happens to its partner, quote the ratio. That is deliberately
+conservative — the section above shows why the constants from those fits are
+not quotable — but it leaves the mass axis of `a = GM/d²` stated as a ratio
+test rather than as a measured exponent, while the separation axis already has
+one (`a ∝ d^−2.028` over five separations). This phase supplies the missing
+exponent.
+
+**The design change that makes it possible: retune *both* stars together.**
+An unequal pair deforms — the gap moves by 0.6 to 1.4 over the run — and that
+is exactly what spoils the absolute fits in phase 3b. A pair that stays
+mass-matched stays rigid, so a plain quadratic fit is valid and the acceleration
+can be quoted as a number rather than a ratio. Equal mass needs *different*
+frequencies in the two sectors, because the sign of the field's energy changes
+how a star of a given mass self-gravitates; each phantom partner was root-found
+on the branch by secant refinement (CPU only, no GPU).
+
+Run at **d = 20, not the headline d = 10**, so the finite-size excess the
+separation scan mapped (+2.9% at d = 8, +0.07% at d = 20) starts negligible and
+the mass axis is clean. With the archived `runaway_pair_d20` cell as the fourth
+rung, the ladder spans ×2.46 in mass.
+
+| cell | ω canonical | ω phantom | pair mass | vs base | prediction `a = M/d²` |
+|---|---|---|---|---|---|
+| `masslaw_pair_d20_w0675_L64_N128_lev0` | 0.674989 | 0.686072 | 2.2541e-02 | ×1.571 | 5.635e-05 |
+| `masslaw_pair_d20_w0700_L64_N128_lev0` | 0.699991 | 0.710485 | 1.9173e-02 | ×1.336 | 4.793e-05 |
+| `runaway_pair_d20_L64_N128_lev0` (archived) | 0.750000 | 0.760300 | 1.4322e-02 | ×1.000 | 3.580e-05 |
+| `masslaw_pair_d20_w0850_L64_N128_lev0` | 0.849997 | 0.859098 | 9.1571e-03 | ×0.638 | 2.289e-05 |
+
+Gate: **p = 1 ± 0.1** in a ∝ M^p, and each rung's `a·d²/M` within a few percent
+of 1. A sublinear or superlinear exponent, or a rung that misses while its
+neighbours hit, fails the phase.
+
+**ω = 0.675 and 0.700 are outside the 0.75–0.90 band the stability survey
+covered**, so campaign rule 3 binds harder than usual here: read the matter
+diagnostics against each run's own t = 0 *before* believing any geometry.
+
+```bash
+# Three cells, cards 0/1/3, launched together 2026-08-24 13:07 — rule 10 allows
+# concurrent 32-rank solves while no evolution is in flight.  Baseline block
+# with these lines changed:
+BONDI_SEP=20 BONDI_STOP_TIME=200
+# w0675: BONDI_S0_OMEGA=0.6749887480927852 BONDI_S1_OMEGA=0.6860720218606876
+# w0700: BONDI_S0_OMEGA=0.6999914990212646 BONDI_S1_OMEGA=0.7104849879354665
+# w0850: BONDI_S0_OMEGA=0.8499970897108942 BONDI_S1_OMEGA=0.8590975998840956
+```
+
+### Result — the exponent is 1, and the constants are quotable at last
+
+**Measured 2026-08-24. Gate PASSED.** All three cells exited by the `converged`
+door at NL iteration 12 (Ham 9.72/9.53/9.06e-04% against the 0.002% gate) and
+ran to t = 200 with exit code 0. Matter checked first, as required: field peaks
+flat to the sixth digit, min χ moving by −1.9e-04 / −3.3e-04 / −1.3e-03 over
+the full run, L2 Ham *falling* 27–35×. The two off-band frequencies behave.
+
+Fit: quadratic on the pair midpoint, t ≥ 5, on the halo-free **core** tracker;
+per-rung error is the half-spread of four disjoint-window fits.
+
+| pair mass M | a measured | ± | a = M/d² | a·d²/M |
+|---|---|---|---|---|
+| 9.157e-03 | 2.345e-05 | 1.6e-06 | 2.289e-05 | 1.024 |
+| 1.432e-02 | 3.570e-05 | 0.9e-06 | 3.580e-05 | 0.997 |
+| 1.917e-02 | 4.739e-05 | 0.6e-06 | 4.793e-05 | 0.989 |
+| 2.254e-02 | 5.560e-05 | 1.4e-06 | 5.635e-05 | 0.987 |
+
+**a ∝ M^0.966 ± 0.061 against p = 1 predicted — 0.55σ.** Every rung's a·d²/M
+is individually within 2.4% of 1 (mean 0.9993), which is the phase's real
+content: the rigid pair lets each acceleration be compared with its own
+prediction as an absolute number, not just as a ratio against a neighbour. The
+residual tilt has the finite-size sign — the lightest star is the most diffuse
+and carries the largest envelope-overlap correction.
+
+Together with `a ∝ d^−2.028` from the separation scan, **both axes of
+`a = GM/d²` are now direct measurements.** Full run record, provenance, cost,
+and the tracker caveat this phase surfaced are in section 7.
+
 ### Phase 4 — the wave zone (one cell, ~9 h)
 
 Doubled box, same cell size, so the light-crossing distance grows without
@@ -1383,8 +1510,8 @@ a number instead of an argument.
 
 ### Measured wall time — the ledger, and the number to quote in the paper
 
-**The campaign cost about 73 GPU-hours on one H100 per cell.** That is the
-figure to quote: it is the card-time the 27 cells actually consume, computed
+**The campaign cost about 76 GPU-hours on one H100 per cell.** That is the
+figure to quote: it is the card-time the 30 cells actually consume, computed
 from each cell's own end time and the fastest clean rate measured for its grid.
 
 Two numbers exist and they are not the same, so it is worth being explicit about
@@ -1392,14 +1519,14 @@ which is which:
 
 | | hours | what it means |
 |---|---|---|
-| elapsed wall time, summed over cells | 81.6 | what each cell's own clock recorded |
-| **exclusive-equivalent card-time** | **73.0** | **the compute actually consumed** |
+| elapsed wall time, summed over cells | 84.9 | what each cell's own clock recorded |
+| **exclusive-equivalent card-time** | **76.3** | **the compute actually consumed** |
 
 They differ because several cells shared a card with another cell, and a shared
 cell's clock keeps running while the other one holds the GPU. Summing those
 elapsed times counts the same card-hour twice. The 73 h figure removes that
 double count by pricing every cell at the clean single-occupancy rate for its
-grid. Quote 73; mention 81.6 only if wall-clock duration is what is being
+grid. Quote 76; mention 84.9 only if wall-clock duration is what is being
 discussed.
 
 | cell | N | L | t | elapsed h | card-h | h / 1000 t |
@@ -1423,20 +1550,26 @@ discussed.
 | `massscale_pair_d10_w0804_L64_N128_lev0` | 128 | 64 | 200 | 1.40 † | 1.09 | 5.44 |
 | `massratio_w088_r060_d10_L64_N128_lev0` | 128 | 64 | 200 | 1.09 | 1.09 | 5.44 |
 | `massratio_heavyphantom_d10_L64_N128_lev0` | 128 | 64 | 200 | 1.22 † | 1.09 | 5.44 |
+| `masslaw_pair_d20_w0675_L64_N128_lev0` | 128 | 64 | 200 | 1.09 | 1.09 | 5.47 |
+| `masslaw_pair_d20_w0700_L64_N128_lev0` | 128 | 64 | 200 | 1.09 | 1.09 | 5.47 |
+| `masslaw_pair_d20_w0850_L64_N128_lev0` | 128 | 64 | 200 | 1.09 | 1.09 | 5.46 |
 | `amrcheck_pair_d10_L64_N128_lev1` | 128 | 64 | 200 | 2.99 † | 1.09 | 5.44 |
 | `deepsolve_pair_d10_L64_N128_lev0` | 128 | 64 | 200 | 1.11 | 1.09 | 5.44 |
 | `wavezone_pair_d10_L128_N256_lev0` | 256 | 128 | 200 | 7.37 | 7.35 | 36.76 |
 | `longrun_pair_d10_t400_L64_N128_lev0` | 128 | 64 | 400 | 3.82 † | 2.18 | 5.44 |
 | `stability_canonical_w{075,080,085,090}` ×4 | 128 | 64 | 120 | 2.63 | 2.61 | 5.44 |
-| **total** | | | | **81.6** | **73.0** | |
+| **total** | | | | **84.9** | **76.3** | |
 
 † shared a card with another cell for part of its run, so its elapsed time
 overstates the compute it consumed.
 
 **Cost per unit of evolution, measured.** At N = 128, L = 64 the cost is
 **5.44 GPU-hours per 1000 units of t**, and it does not vary by more than 2%
-across sixteen cells — separation, sector signs, star frequency, mesh
-refinement and frame rendering all cost the same. Run length is the only thing
+across nineteen cells — separation, sector signs, star frequency, mesh
+refinement and frame rendering all cost the same. The three equal-mass ladder
+cells ran three-to-a-node on separate cards and still came in at 5.46–5.47,
+which also prices the concurrency: three cards in parallel cost 0.5% each in
+rate, not 30%. Run length is the only thing
 that sets the bill at this grid.
 
 **The resolution scaling is shallower than N⁴.** The naive expectation is three
@@ -1480,3 +1613,605 @@ plan: it is implemented (`Source/Grids/GridTreadmill.hpp`,
 implementation-test legs all passed — see
 `runs/bondi/staging/treadmill_pair_d10_L64_N128_lev0/README.md`. This document
 is the record of the t = 200 campaign; the chase is the follow-up paper's.
+
+The chase has since been run and stopped, together with a treadmill-free control
+that reaches t = 600 — **see §6 below**. Short version: the recentring box is
+exonerated, the pair's separation opens anyway, and the resolution ladder says
+that opening is a third-order discretisation error rather than physics. 0.3c is
+not reachable at N = 128.
+
+---
+
+## 5. The referee response — the 2026-08-24 review, item by item
+
+A pre-submission review of `bondi_dipole.tex` raised three points it expected a
+referee to "draw blood" on (gauge dependence of the headline numbers, the
+relative phase of the same-field controls, the provenance of the mass-ladder
+table) plus four smaller majors and a list of minors. **Most of it closed with
+zero GPU time**, because the packed streams already carry the quantities
+involved — `sector_dynamics.dat` has per-core shift and proper separation
+columns, and `energy_conditions.dat` has the NEC monitors. What follows is the
+ledger, then the two runs that are still worth buying.
+
+Every number below is printed by
+`research/bondi_dipole/make_article_figures.py`, which grew a
+`print_gauge_and_invariants()` block for exactly this purpose. Run it and the
+whole ledger reprints; nothing here is hand-copied.
+
+### What closed with no GPU time
+
+| review point | how it closed | the number |
+|---|---|---|
+| **major 1** — is the drift coordinate dragging? | the shift at the two cores is **antisymmetric**, so the only part that can *translate* the pair is its mean | max mean shift `1.07e-05` against a core velocity of `3.04e-02` — **2830×** apart. Integrated over the run it accounts for `4.0e-04` of displacement, **0.013%** of the measured `+3.03` |
+| **major 1** — is "constant separation" a gauge statement? | `proper_sep` (∫√γ_xx dx between the sub-cell cores) was already in the stream | N=256: coordinate `10.0000 → 10.0127` (+0.13%), **proper `10.0001 → 10.0244` (+0.24%)**. Both sub-percent. At N=128 the proper gap is the *steadier* of the two (+0.06% vs +1.07%) |
+| **major 1** — is the late gap opening gauge? | same column on the long run | t=400: coordinate `11.844`, proper `11.877` — the opening is physical |
+| **major 2** — how does an anti-phase pair attract? | **it isn't anti-phase.** See below — this was a wrong claim in the paper, now corrected | δ = 0, and δ = 0 is the *attracting* configuration |
+| **major 3** — does the script reproduce table III? | ran it | yes, digit for digit: pull ratios `0.618` (+3.1%), `0.810` (+0.9%), `0.756` (+1.1%), controls `1.028 / 1.011 / 1.001` |
+| **major 3** — uncertainty on the 0.995 crossing | recomputed the crossing under every end-of-run gap convention | barycentre `0.9951`, proper `0.9936`, core `0.9608`, late-window mean `1.0018` → quote **0.995 ± 0.03** |
+| **major 3** — 7.3e-04 vs 7.8e-04 for the PP centroid | convention clash: endpoint vs max-over-run | standardised on **max-over-run** (`7.8e-04` PP, `5.3e-04` MM) everywhere, and the table footnote now says "largest excursion" |
+| **major 4** — why not fix the handoff? | the spike is a t=0 object that radiates away before any fit window opens | falls to 10% of peak by t = **3.0 / 2.0 / 1.5** down the ladder — *faster on finer grids*, as a grid-scale transient should — and onto its late plateau by t ≈ 4, against a fit window that opens at t = 5 |
+| **major 5** — "zero total momentum" of what? | named precisely in the text | it is the volume-integrated **matter** momentum of Eq. (4), not the ADM momentum; the field's own momentum is excluded, immaterial at `M/R ~ 3e-03` |
+| **major 6** — "stable" and "first" | softened to what is evolved | "stable over the 400 time units evolved". The t=1000 run below upgrades it |
+| **major 7** — the mirror is oversold | reworded | the mirror excludes machine asymmetries *not sourced by the matter*; matter-sourced ones (the retired displaced-data artefact would have passed) are excluded by the force law, the mass ladder and the nulls |
+| minor — quantify "far below" in the radiation section | computed the signed quadrupole from the trajectories | `Q̈ = 4.5e-05` measured against `2M̄ad = 4.4e-05` predicted, **constant to 7%** → nothing radiates at leading order. `|Q⃛| ≤ 6.2e-08`, luminosity `~3.7e-17`, **`~7.4e-15` radiated over the run — ten orders below the pair's total mass** `5.5e-05` |
+| minor — what did the energy-condition monitors show? | read them | min NEC `-2.20e-04` in every cell holding a phantom, **flat over the run** (t=0 `-2.19e-04`, end `-2.19e-04`); lone canonical returns `+7.5e-42`, i.e. no violation. Violation localised to the phantom, not growing with the runaway |
+
+### The phase finding — the paper was wrong, and the correction helps
+
+The review's sharpest question was: the paper says all pairs are seeded with
+U(1) phases 0 and π, and the established lore (Battye–Sutcliffe for Q-balls,
+Palenzuela–Lehner–Liebling for boson stars) is that **anti-phase same-field
+pairs repel** — so how does an anti-phase pair attract at 35× gravity?
+
+It doesn't, and it never did. `trajectory_lump{0,1}_phase0` is **not** a U(1)
+internal phase — it is the lump's **initial azimuthal position** on a ring of
+radius `R0`:
+
+```
+# src/grteclyn_wrapper/search/optimize/config.py:309
+phase0 = get_float(f"{pfx}phase0", 2.0 * math.pi * k / num_lumps)
+x_orb  = R0 * math.cos(phase0)
+y_orb  = R0 * math.sin(phase0)
+```
+
+`phase0 = 0, π` therefore means *diametrically opposite positions* — which is
+why every packed `initial_data.matter.json` reads
+`lump_centers: [[5.0, 0.0, -0.0], [-5.0, 6.123233995736766e-16, 0.0]]`, that
+last entry being `5·sin(π)`. `spaces.py:625` documents the parameter as
+"initial azimuthal position" in as many words.
+
+The actual internal phase comes from the matter painter, and for a spherical
+star (no winding) it is zero for **both** lumps:
+
+```
+# src/grteclyn_wrapper/grtresna/matter/profile_contract.py:179
+if spec.winding: ...            # not taken for spherical stars
+else:
+    phi1 = modulus              # real, positive
+    phi2 = np.zeros_like(modulus)
+```
+
+So every pair in the campaign is seeded **in phase, δ = 0** — and δ = 0 is
+precisely the *attracting* configuration in the Q-ball literature. The
+mechanism attribution in the paper was right; only its stated premise was
+wrong. Two independent confirmations that δ = 0 is what actually ran:
+
+1. δ = π with symmetric placement makes the configuration exactly antisymmetric
+   about the midplane, a symmetry the evolution preserves, so Φ would have to
+   hold a node at x = 32 forever and could never form a single centred lump.
+   The frames show a single centred lump from t = 33.6 (PP) / 32.8 (MM).
+2. Attraction at ~35× gravity is what δ = 0 predicts and what was measured.
+
+The paper now states the placement correctly, cites Battye–Sutcliffe and
+Palenzuela *et al.* for the phase rule, and notes that the sign-blindness
+conclusion — PP and MM share a merger clock, so the force cannot be reading the
+sign of the mass — needs none of that microphysics anyway.
+
+### Run A — the gauge twin
+
+**Why.** Major 1 is already closed by measurement (the shift decomposition
+above), but a twin turns Sec. V C's pair of loophole-closing runs into a
+trilogy: solve-limited? grid-limited? gauge-limited? — each answered with a run
+rather than an argument. Expected change: percent-level.
+
+**Cost as planned.** ~1.1 GPU-h, no CPU solve — the initial data is
+gauge-independent, so this was to reuse the archived N=128 cell's
+`initial_data.gridinit`. **As run:** 1.73 GPU-h plus an 18-minute 32-rank solve,
+because that gridinit had been pruned from the staging tree.
+
+**Prerequisite (done 2026-08-24).** `run_pair_selfgrav.sh` gained a `BONDI_EXTRA`
+knob for raw `params.txt` overrides, because the evolution gauge (`eta`,
+`shift_Gamma_coeff`, `lapse_power`) was not reachable from the environment. It
+defaults to empty, so every archived cell still reproduces bit-for-bit.
+
+```bash
+# card 1, 1.73 h as run.  Identical to runaway_pair_d10_L64_N128_lev0 except eta,
+# with a fresh solve (the archived gridinit had been pruned; the solve is
+# deterministic at fixed settings and reproduced it at NL iteration 12 of 50).
+REPO="$GRTECLYN_ROOT"; cd "${REPO}"
+BONDI_GPU=0 BONDI_STOP_TIME=200 BONDI_NFULL=128 BONDI_LFULL=64 BONDI_MAXLEVEL=0 \
+BONDI_PLOT_INTERVAL=80 BONDI_SCRUTINY=1 BONDI_SPONGE=1 BONDI_SEP=10 \
+BONDI_S0=0 BONDI_S1=1 BONDI_S0_OMEGA=0.75 BONDI_S1_OMEGA=0.7603 \
+BONDI_NL_TOL=0.002 BONDI_NL_STALL_TOL=0.00004 \
+BONDI_EXTRA="eta=2.0" \
+BONDI_GRTRESNA_N=256 BONDI_GRTRESNA_MAXLEVEL=0 BONDI_GRTRESNA_RANKS=32 BONDI_GRTRESNA_TIMEOUT=21600 \
+BONDI_RUNS_DIR="${REPO}/runs/bondi/staging/gaugetwin_pair_d10_eta2_L64_N128_lev0" \
+  bash "${REPO}/grteclyn-wrapper/scripts/campaigns/bondi_dipole/run_pair_selfgrav.sh"
+```
+
+**Gate.** Drift and fitted acceleration within a few percent of `+2.8815` /
+`1.4481e-04`. Under ~2% and the paper says "and gauge-limited? no"; a
+double-digit shift instead means the headline needs a gauge-spread error bar,
+which would be a real finding and worth the 1.1 h to know either way.
+
+**Check first.** Confirm `eta = 2.0` actually landed — `grep eta
+<cell>/evolution_params.txt` — before trusting a null result. A knob that
+silently did nothing reproduces the original cell perfectly.
+
+### Result — Run A: the gauge twin (evolved 2026-08-24, gate PASSED)
+
+Launched with a **fresh elliptic solve** rather than the archived gridinit named
+above — those files had been pruned from the staging tree, and the solve is
+deterministic at fixed settings. It landed on the `converged` door at NL
+iteration 12 of 50 (Ham 8.621021e-04 %, Mom 8.000045e-04 %), matching the
+archived cell's solve exactly.
+
+The check-first test passes: `eta = 2.0` in the live `params.txt`, `eta = 1.0`
+in the archived cell's.
+
+| quantity | archived, `eta = 1` | twin, `eta = 2` | change |
+|---|---|---|---|
+| drift at t = 200 | 2.88147 | 2.88127 | **−0.007%** |
+| fitted a (t ≥ 5) | 1.4481e-04 | 1.4478e-04 | **−0.019%** |
+| max abs shift | 7.7286e-04 | 7.3457e-04 | **−4.95%** |
+
+That third row is what makes the first two mean something. Doubling the
+Gamma-driver damping is supposed to change the coordinates, and it did — the
+shift is 5% smaller everywhere. The drift and the acceleration moved by two
+parts in ten thousand and two parts in ten thousand respectively, which is
+three hundred times less. **The gauge moved and the physics did not.**
+
+So Sec. V C's loophole list is now a trilogy answered by runs rather than by
+argument: solve-limited? no (the deep-solve twin, 0.0015%). Grid-limited? yes,
+and measured (N128 → N192 moves the drift 4.6%). Gauge-limited? **no** (this
+cell, 0.007%).
+
+### Run B — the lone phantom to t = 1000
+
+**Why.** Major 6. The negative-mass-star stability claim currently rests on a
+t=200 lone run and a t=400 pair run; the abstract has been softened to "stable
+over the 400 time units evolved" to match. 1000 units restores the stronger
+sentence, and the phantom is the cheapest place to buy it — it is the
+better-behaved star of the two.
+
+**Cost as planned.** ~5.4 GPU-h (N=128, L=64 runs at 5.44 GPU-h per 1000 units
+of t), no CPU solve. **As run:** 5.38 GPU-h — the scaling law predicted this one
+almost exactly — plus an 18-minute 32-rank solve, the archived gridinit having
+been pruned.
+
+```bash
+# card 2, 5.38 h as run.  Same cell as control_lone_phantom, five times longer,
+# re-solved from scratch for the same reason as run A.
+REPO="$GRTECLYN_ROOT"; cd "${REPO}"
+BONDI_GPU=1 BONDI_STOP_TIME=1000 BONDI_NFULL=128 BONDI_LFULL=64 BONDI_MAXLEVEL=0 \
+BONDI_PLOT_INTERVAL=400 BONDI_SCRUTINY=1 BONDI_SPONGE=1 BONDI_SEP=10 \
+BONDI_GRTRESNA_MAXIMAL_SLICING=1 BONDI_EXOTIC=1 BONDI_OMEGA=0.7603 \
+BONDI_CHECKPOINT_INTERVAL=40000 \
+BONDI_NL_TOL=0.002 BONDI_NL_STALL_TOL=0.00004 \
+BONDI_GRTRESNA_N=256 BONDI_GRTRESNA_MAXLEVEL=0 BONDI_GRTRESNA_RANKS=32 BONDI_GRTRESNA_TIMEOUT=21600 \
+BONDI_RUNS_DIR="${REPO}/runs/bondi/staging/control_lone_phantom_t1000_L64_N128_lev0" \
+  bash "${REPO}/grteclyn-wrapper/scripts/campaigns/bondi_dipole/run_single_selfgrav.sh"
+```
+
+`BONDI_PLOT_INTERVAL` is raised to 400 and a rolling checkpoint switched on:
+this cell is five times longer than anything else in the campaign, and the
+default cadence would have the frame consumer falling behind the GPU and the
+scratch tree growing without bound.
+
+**Gate.** Peak field activity flat to ~1% over the full 1000 (it holds to 0.5%
+over 200), min lapse and min χ steady, core drift staying in the few × 10⁻³
+band the t=200 cell established. Pass → the abstract and Sec. VIII item (4) go
+back to a 1000-unit stability statement. Fail → the softened wording already in
+the paper is the correct one, and *when* it breaks is itself a result worth a
+sentence.
+
+### Result — Run B: the lone phantom at t = 1000 (evolved 2026-08-24, gate FAILED)
+
+**Provenance first.** Re-solved from scratch (the archived gridinit had been
+pruned); the solve landed on the `converged` door at NL iteration 12 of 50, Ham
+1.133819e-03 %, Mom 6.145523e-04 %. Through the whole 200 units it overlaps the
+archived `control_lone_phantom_L64_N128_lev0` cell, the new run reproduces it
+**digit for digit** — total activity 5.65188 / 6.26701 / 6.82471 at t = 0 / 100
+/ 200 in both, peak, rms radius and confined fraction likewise, and the
+sector-dynamics activity change agreeing to the printed digit (−0.110% at
+t=100, −0.477% at t=200). The longer run is the same physics carried further,
+not a different cell.
+
+**The gate fails, and it fails smoothly.** Peak field activity does not hold to
+1%:
+
+| window | 0–100 | 100–200 | 200–300 | 300–400 | 400–500 | 500–600 | 600–700 | 700–800 | 800–900 | 900–1000 |
+|---|---|---|---|---|---|---|---|---|---|---|
+| mean activity vs t=0 | −0.03% | −0.28% | −0.74% | −1.32% | −1.95% | −2.60% | −3.26% | −3.90% | −4.52% | −5.12% |
+
+Endpoint **−5.39%** at t = 1000. The decay is **linear, not exponential and not
+accelerating** — a straight-line fit over t ≥ 200 gives **−0.632% per 100 code
+units**, and the sub-windows agree: −0.604 (t 200–500), −0.648 (500–800),
+−0.608 (700–1000).
+
+**Why no shorter run could have caught it.** The same curve reads −0.48% at
+t = 200 and −1.62% at t = 400. The campaign's t=200 controls were inside their
+own gate; the effect is real and was simply below the resolution of the window
+that had been evolved.
+
+**It is not a collapse, and not a blow-up.** Every other diagnostic stays
+benign, and they tell a consistent story of a star slowly *relaxing outward*
+rather than failing:
+
+| | t = 0 | t = 500 | t = 1000 |
+|---|---|---|---|
+| peak activity | 0.034186 | 0.033558 | 0.031910 |
+| rms radius | 4.4071 | 4.4941 | 4.8323 |
+| confined fraction | 0.73599 | 0.73593 | 0.67034 |
+| min χ | 1.00000 | 1.00028 | 1.00033 |
+
+min χ *rises* — the phantom makes a hill, not a well, exactly as the same-sign
+null cells showed — and the Hamiltonian constraint norm falls over the run
+(7.5e-04 → 1.7e-05) as the initial transient radiates away. What the star does
+is swell by 10% in rms radius and let 9% of its confined matter escape the
+confinement shell. That is a slow leak, not an instability.
+
+**The star also moves, and the mover matters.** This cell sits **off-centre at
+x = 37** (5 from the box centre), because it is the lone-star control for the
+pair geometry. Its two trackers disagree, and the disagreement is the point:
+
+| t | 50 | 100 | 200 | 400 | 600 | 800 | 1000 |
+|---|---|---|---|---|---|---|---|
+| barycentre \|Δ\| | 4.41e-02 | 2.00e-02 | 1.28e-02 | 1.41e-02 | 3.86e-02 | 9.65e-02 | 1.57e-01 |
+| core \|Δ\| | 1.17e-04 | 3.88e-04 | 1.59e-03 | 4.88e-03 | 2.75e-02 | 7.45e-02 | 1.39e-01 |
+
+The early barycentre excursion (peaking at 4.4e-02 around t = 51 and relaxing
+back) is the initial-data halo being shed — the core does not move at all while
+it happens. From t ≈ 600 the two trackers agree, which is the signature of the
+*bulk* star moving. And it moves **toward the box centre** (x decreasing from
+37), at 0.16 by t = 1000, while the centred canonical control moves 1.8e-03 in
+200. A drift that points at the box centre and only appears in the off-centre
+cell is much more likely to be the box than the star; testing that would need a
+centred lone phantom carried to t=1000, which was not run.
+
+**Consequences for the paper.**
+
+1. The abstract and Sec. VIII item (4) **keep** the softened wording — "stable
+   over the 400 time units evolved". The 1000-unit statement is not available.
+2. The decay rate becomes a positive result worth its own sentence: a lone
+   phantom star loses **0.63% of its central field amplitude per 100 code
+   units**, linearly, with no sign of collapse — over five times longer than
+   any other run in the campaign.
+3. **Quote the null against the matching tracker.** The pair's +2.88 drift is a
+   *barycentre* number, so the honest lone-star floor beside it is the phantom's
+   barycentre figure of 1.3e-02 at t = 200 — a factor 225, not the factor 1600
+   that the *core* figure of 1.8e-03 would suggest. Both numbers are correct for
+   what they measure; only one of them is the right comparison.
+
+### What was deliberately not run
+
+- **The anti-phase (δ = π) same-field control.** Would be a nice positive
+  confirmation — δ = π should *not* merge on the δ = 0 clock — but the campaign
+  is δ = 0, so nothing in the paper depends on it, and seeding δ = π needs a
+  per-lump internal-phase sign in the matter painter
+  (`profile_contract.py`, and the C++ repaint that mirrors it) plus its own
+  consistency test. Follow-up work, not a referee gap.
+- **A converged (N=256) separation scan.** Named in the paper as the natural
+  sequel; ~4 × 14.6 h and it changes no conclusion, only the absolute
+  normalisation away from d = 10, which the paper already flags as unmeasured.
+- **An N=320 rung.** The review's one expensive contingency (~30–35 h) if a
+  referee demands more ladder. The fine-pair agreement (0.4% on drift, 0.5% on
+  acceleration) makes it unlikely to be asked for.
+
+### Cost of the whole response
+
+| item | GPU-h planned | GPU-h **measured** | CPU solve |
+|---|---|---|---|
+| majors 1, 3, 4, 5, 7 + all minors + the phase correction | **0** | **0** | 0 |
+| run A, gauge twin | ~1.1 | **1.73** | one 32-rank N=256 solve, 18 min |
+| run B, lone phantom to t=1000 | ~5.4 | **5.38** | one 32-rank N=256 solve, ~18 min |
+| **total** | **~6.5** | **7.1** | ~0.6 CPU-h |
+
+Both estimates assumed the archived `initial_data.gridinit` files could be
+reused. They had been pruned from the staging tree, so both cells re-solved from
+scratch — about 0.6 CPU-hours that the plan had budgeted at zero, and no GPU
+time at all. Run A came in above its estimate (1.73 h against 1.1) because the
+1.1 h figure counted evolution only and this cell also rendered and consumed
+plotfiles; run B landed on its estimate almost exactly, which is the better
+check of the 5.44 GPU-h per 1000 units of t scaling since it *is* 1000 units.
+
+Against a 73 GPU-hour campaign, and against the review's own ~8.5 h estimate —
+the difference being that the shift and proper-separation columns were already
+in the pack, so major 1 needed reading rather than running.
+
+### Figure and paper changes made alongside
+
+- **Fig. 5 gained panel (d)** — the signed-momentum panel: `P₊(t)`, `|P₋(t)|`
+  climbing to `~5e-04`, and the signed sum (×10) holding at zero, at N = 128 and
+  256, with the base rung's residual visibly the larger so the cancellation
+  reads as converging rather than as a floor. The figure went 1×3 → 1×4 at
+  essentially unchanged height, so it cost no page.
+- **Proper-vs-coordinate separation** went into the text rather than an inset in
+  Fig. 5(a); the panel is too narrow at quarter width to carry one.
+- `make_article_figures.py` gained `print_gauge_and_invariants()` and `dyn()`
+  now exposes `proper_sep` and the per-core shift columns.
+- The paper is **13 pages** after all of this (it was 12; the cap for this
+  revision was 13 with the bibliography allowed to run onto the last page).
+
+---
+
+## 6. The late-time separation, and what opens it (2026-08-24)
+
+Two follow-up cells were run past the campaign's `t = 200` horizon, and between
+them they answer the question §8 of `CHASE_TO_03C.md` named as "the risk that
+dominates everything": does the pair hold its acceleration, and if the gap
+opens, is that physics or is it the instrument?
+
+**It is neither the instrument nor, on the evidence here, physics. It is the
+grid.**
+
+### The two cells
+
+| cell | box | what it is | reached |
+|---|---|---|---|
+| `chase03c_pair_d10_L64_N128_lev0` | recentring ("treadmill") box, pair held at box centre | the 0.3c chase | `t = 783.9`, 19 shifts |
+| `nomill_left_pair_d10_L64_N128_lev0` | static box, pair started 10 units left of centre | the treadmill-free control | `t = 600.0`, no shifts |
+
+Both reuse the archived `t = 400` cell's `initial_data.gridinit` — no new
+elliptic solve — so they differ from the published `longrun` cell only in how
+the box is handled and where the pair sits in it. The control's gridinit is the
+archive's file with its header `origin` shifted by `-10` in `x` and the payload
+byte-identical; `center` moved to `22 32 32` while `sponge_center` was pinned at
+`32 32 32` so the absorbing shell stayed with the box, not with the stars.
+
+Constraint health over the whole of both runs: Hamiltonian `L2` **falls** from
+`1.99e-04` to `3.28e-05` (chase) and from `1.91e-04` to `4.05e-05` (control).
+Neither run is degrading; whatever opens the gap is not a run going bad.
+
+### The gap opens, and the recentring box is not doing it
+
+Coordinate separation, the two cells against each other:
+
+| `t` | control (static box) | chase (treadmill) | difference |
+|---|---|---|---|
+| 100 | 10.0004 | 10.0003 | `+0.00%` |
+| 200 | 10.1036 | 10.1072 | `−0.04%` |
+| 300 | 10.5840 | 10.5968 | `−0.12%` |
+| 400 | 11.8236 | 11.8548 | `−0.26%` |
+| 450 | 12.8999 | 12.9004 | `−0.00%` |
+| 500 | 14.2126 | 14.2864 | `−0.52%` |
+| 550 | 16.0045 | 16.0535 | `−0.31%` |
+| 600 | 17.9677 | 18.2339 | `−1.46%` |
+
+Maximum departure anywhere in the 600-unit overlap: **0.2662, or 1.46%**, at the
+last point. The two curves cross back and forth rather than drifting apart, so
+this is scatter, not a bias.
+
+This test was **pre-registered**. Before the control was launched, the archive's
+own trend was extrapolated and the predicted control separations written down:
+`10.000, 10.107, 10.597, 11.855, 12.900, 14.286, 16.054` at
+`t = 100 … 550`. The measured values came back `10.0004, 10.104, 10.584,
+11.824, 12.900, 14.213, 16.004`. The prediction could have failed and did not.
+
+The independent field-content check agrees: integrated activity per sector at
+`t = 600` is `6.8181 / 7.2431` (chase) against `6.8723 / 7.2414` (control), and
+at `t = 400` both sit within `0.15%` of the archived static-box cell. Three
+evolutions, two box treatments, one answer.
+
+**Conclusion: the recentring box does not open the gap.** That closes the
+implementation question. It leaves the physical one.
+
+### What does open it: the grid
+
+The campaign already had the discriminating measurement, at `t = 200`, in the
+resolution ladder:
+
+| rung | separation at `t = 200` | opening | cell size `dx` |
+|---|---|---|---|
+| `N = 128` | 10.1072 | `+0.1072` | 0.500 |
+| `N = 192` | 10.0286 | `+0.0286` | 0.333 |
+| `N = 256` | 10.0127 | `+0.0127` | 0.250 |
+
+Halving the cell size cuts the opening **8.44-fold**, and the three rungs fit a
+clean convergence order:
+
+| refinement | opening ratio | order `p` |
+|---|---|---|
+| `128 → 192` | 3.75 | 3.26 |
+| `192 → 256` | 2.25 | 2.82 |
+| `128 → 256` | 8.44 | 3.08 |
+
+**Third order in `dx`, over a factor of two in resolution.** A physical
+separation does not converge away as the mesh is refined; a discretisation error
+does, and this one does so at the rate the evolution scheme's own truncation
+error would predict. The gap opening at `N = 128` is dominated by numerics.
+
+This is consistent with the known initial-data aliasing bias documented in
+`grteclyn-wrapper/scripts/campaigns/bondi_dipole/run_pair_selfgrav.sh`: at
+`N = 128` the solved metric lands roughly `0.10` cells below the matter it was
+solved for, so each star is born marginally off the centre of its own well —
+canonical falls into it, phantom is pushed out of it, and the pair pries apart.
+The sign is right and the magnitude scales the right way.
+
+### The consequence for the chase
+
+The chase's own trajectory shows exactly the decay §8 warned about, and it
+shows it because the gap is opening:
+
+| `t` | leader speed | leader acceleration | gap |
+|---|---|---|---|
+| 200 | 0.0302c | `1.57e-04` | 10.11 |
+| 400 | 0.0663c | `1.85e-04` | 11.85 |
+| 600 | 0.0998c | `1.56e-04` | 18.23 |
+| 784 | 0.1226c | `1.16e-04` | 30.07 |
+
+Acceleration peaks near `t = 400` and is down by a third at the end. **0.3c is
+not reachable at `N = 128`**: the pair stops being a pair long before it gets
+there. The `t ≈ 1970` and 11 GPU-hour figures in §1 of `CHASE_TO_03C.md` are
+void at this resolution, and the cost of the chase must be re-derived on
+whatever rung actually holds the pair together.
+
+Nothing here disturbs the published `t = 200` result. At `t = 200` the opening is
+`+0.013` at `N = 256` — 0.13% of the separation — which is what "constant
+separation" was claimed on, and the claim was always made at the converged rung.
+What is new is that at the base rung the error grows fast enough with time to
+dominate by `t = 400`.
+
+### What is still open, honestly
+
+1. **The ladder has no late-time rung.** Third-order convergence is measured at
+   `t = 200` only. That the same error accounts for the `+8.0` opening at
+   `t = 600` is an inference from its sign, its scaling and the aliasing
+   mechanism — not a measurement. The cell that would measure it is the one
+   `CHASE_TO_03C.md` §8 already specifies: **`chase_pair_d10_recentred_L64_N192_lev0`
+   to `t = 400`**, ≈11 GPU-hours plus a ~4 h solve. It is now the single highest-value
+   cell the follow-up can buy, and it should be bought before any further chase time.
+2. **Both stars gain field content, and the pair was tuned not to.** Integrated
+   activity per sector nearly doubles by `t = 700` (canonical `3.911 → 7.488`,
+   phantom `4.037 → 8.023`) while both rms radii stay near 5. The archive
+   reproduces this to 0.15%, so it is not a treadmill or a box effect — but all
+   three cells are `N = 128`, so it cannot yet be separated from the same
+   discretisation error. The mass-matching that defines this configuration
+   degrades with it: the phantom's excess over the canonical widens from
+   `3.2%` at `t = 0` to `7.1%` at `t = 700`, which is itself a gap-opening
+   mechanism (the leader is pushed harder than the trailer is pulled).
+3. **The leading star's thrust falls far slower than any inverse-square law.**
+   Over `t = 0 → 700` the gap goes `10 → 23.9`, so a `1/d²` push should drop
+   `5.7×`; measured, it drops `1.2×`. Folding in the field-content growth above
+   still predicts a `2.9×` drop. The residual is unexplained. The cheap
+   discriminating experiment is a **lone canonical star with the phantom
+   deleted**: if it still accelerates, the push is not coming from its partner
+   and the whole picture needs revisiting.
+
+### Where the data is
+
+Both cells are packed under `results/bondi-dipole-runaway/campaign/`, frames
+excluded (`FRAMES_SKIP`), by `research/bondi_dipole/pack_runaway.sh`. The chase
+carries `treadmill.dat`, which holds the odometer — without it a recentred
+trajectory cannot be reconstructed at all. Movies for both are in the gitignored
+run tree at `runs/bondi/staging/_movies/`.
+
+**One data-handling defect, found and repaired.** The control cell's
+`params.txt` was derived from the chase's by hand and its `output_path` was not
+changed, so from the moment the control started, both executables appended to
+the same four in-situ diagnostic files in the chase's `data/` directory. The
+streams were line-interleaved but perfectly separable — the chase was past
+`t = 723` when the control began at `t = 0.01`, and the chase exited before the
+control reached `t = 100`, so the two never overlap in time. They were split
+back apart and the row counts confirm the split is lossless: 78 386 rows for the
+chase (its exact step count) and 60 001 for the control (likewise), both
+strictly monotonic in time. The raw interleaved originals are kept under the
+chase cell's `_interleaved_raw/`. Neither cell's headline stream was affected:
+`sector_dynamics.dat`, `sector_barycenters.dat` and `treadmill.dat` are written
+elsewhere and were always clean. **A hand-derived `params.txt` must have its
+`output_path` checked before launch** — nothing in the code prevents two runs
+from sharing one.
+
+## 7. The equal-mass ladder — the mass law measured as an exponent (2026-08-24)
+
+The force law (section above, five separations) fixed the *distance* dependence:
+a ∝ d^−2.028. The mass side of `a = GM/d²` rested on ratio tests at unequal
+masses (phases 3 and 3b), which are differential and quotable only as ratios.
+This ladder measures the mass dependence directly: **four pairs, all at
+d = 20, all mass-matched inside the pair, spanning ×2.46 in mass** — and asks
+for the exponent p in a ∝ M^p. The law says p = 1: each star is pushed by its
+*partner's* mass, so doubling both masses doubles both accelerations and the
+pair stays rigid.
+
+### Design
+
+d = 20 (not the headline d = 10) so the finite-size excess that contaminates
+close pairs — +2.9% at d = 8, +0.07% at d = 20 — starts negligible and the mass
+axis is clean. Equal mass inside a pair needs *different* frequencies for the
+two sectors, because the sign of the field's energy changes how a star of given
+mass self-gravitates; the phantom partner for each canonical frequency was
+root-found by secant refinement on the branch (no GPU). The solver's own
+`params.txt` confirms the frequencies landed to ~1 part in 10⁵:
+
+| cell | ω canonical | ω phantom | M canonical | M phantom | mismatch | M vs base |
+|---|---|---|---|---|---|---|
+| `masslaw_pair_d20_w0675` | 0.674989 | 0.686072 | 2.25430e-02 | 2.25394e-02 | −0.016% | ×1.571 |
+| `masslaw_pair_d20_w0700` | 0.699991 | 0.710485 | 1.91736e-02 | 1.91721e-02 | −0.008% | ×1.336 |
+| `runaway_pair_d20` (archived) | 0.750000 | 0.760300 | 1.43500e-02 | 1.42947e-02 | −0.385% | ×1.000 |
+| `masslaw_pair_d20_w0850` | 0.849997 | 0.859098 | 9.15681e-03 | 9.15734e-03 | +0.006% | ×0.638 |
+
+The three new pairs are mass-matched ~20× tighter than the archived base cell.
+Masses are recomputed from the solver's recorded frequencies by
+`research/bondi_dipole/fit_mass_law.py`, not read from the launch intent.
+
+ω = 0.675 and 0.700 sit *outside* the 0.75–0.90 band the stability survey ever
+covered, so per campaign rule 3 the matter diagnostics were read before any
+geometry was believed (below: they pass).
+
+```bash
+# Launched 2026-08-24 13:07, cards 0/1/3, one N=256 solve each (32 ranks,
+# ~19 min, all three by the `converged` door at NL iteration 12 of 50),
+# then ~1.1 h of GPU evolution each at 183–187 code units/h.
+BONDI_SEP=20 BONDI_STOP_TIME=200 BONDI_NFULL=128 BONDI_LFULL=64 BONDI_MAXLEVEL=0
+BONDI_S0=0 BONDI_S1=1
+# per cell:
+#   w0675: BONDI_S0_OMEGA=0.6749887480927852 BONDI_S1_OMEGA=0.6860720218606876
+#   w0700: BONDI_S0_OMEGA=0.6999914990212646 BONDI_S1_OMEGA=0.7104849879354665
+#   w0850: BONDI_S0_OMEGA=0.8499970897108942 BONDI_S1_OMEGA=0.8590975998840956
+```
+
+### Gates — all three cells pass
+
+Solve: `converged` door, Ham 9.72e-04% / 9.53e-04% / 9.06e-04% against the
+0.002% gate — 2× under it, stall detector never fired. Matter (checked first,
+against each run's own t = 0): field peaks flat to the sixth digit between the
+initial relaxation and the end; min χ moves by −1.9e-04 / −3.3e-04 / −1.3e-03
+over the full 200. The two heavier cells show ~3% steps in the *sampled* peak
+at the times their drift crosses half a grid cell — the reporting grid point
+changes, the star does not; the lightest cell, which drifts only 0.47, shows
+none. Constraints: L2 Ham *falls* 27–35× over the run in all three. Exit code 0
+at t = 200 in all three.
+
+### Result — the exponent is 1, and the halo-free tracker is the one that measures it
+
+Fit: quadratic in t on the pair midpoint, t ≥ 5, the campaign's standard
+convention. Per-cell error bar = half-spread of the four disjoint-window fits
+(5–50 / 50–100 / 100–150 / 150–200), the same test the pack README applies to
+the headline cell — the window dependence dominates every other uncertainty.
+
+| pair mass M | a measured (core) | ± | a = M/d² predicted | a·d²/M |
+|---|---|---|---|---|
+| 9.157e-03 | 2.345e-05 | 1.6e-06 | 2.289e-05 | 1.024 |
+| 1.432e-02 | 3.570e-05 | 0.9e-06 | 3.580e-05 | 0.997 |
+| 1.917e-02 | 4.739e-05 | 0.6e-06 | 4.793e-05 | 0.989 |
+| 2.254e-02 | 5.560e-05 | 1.4e-06 | 5.635e-05 | 0.987 |
+
+**Weighted power law: p = 0.966 ± 0.061 against p = 1 predicted — agreement at
+0.55σ.** Every rung's a·d²/M is within 2.4% of 1 (mean 0.9993), i.e. each
+measured acceleration individually validates the prediction a = M/d² inside its
+own error bar. The residual tilt has the expected sign: the lightest star is
+the most diffuse (rms radius 5.1 against 4.3), so its rung carries the largest
+finite-size envelope-overlap correction, the same correction the separation
+scan showed decaying from d = 8 outward.
+
+**Tracker finding, worth its own paragraph.** On the barycentre
+(|φ|²-weighted) tracker the lightest cell's fitted a is 18% low and swings by
+a factor 2 between windows; on the halo-free core tracker it is stable to 7%.
+The cause is in the barycentre file itself: between t = 25 and t = 50 the
+lightest pair's sector rms radius jumps 5.1 → 8.5 and its integrated field
+content rises 14% — the early relaxation halo, which every cell sheds, occupies
+a much larger *fraction* of the most diffuse star's sector and drags the
+weighted centroid. On the other three cells the two trackers agree to under 1%.
+This sharpens the existing verdict-table note ("quote whichever tracker the
+signal beside it was measured with") into a rule: **for diffuse stars the
+barycentre tracker measures the halo, not the star — the core tracker is the
+quotable one, and this ladder is fitted on it.**
+
+### Cost and where the data is
+
+3 × (0.31 h solve on 32 CPU ranks + 1.09 h GPU) ≈ 3.3 GPU-hours, run in
+parallel on cards 0/1/3 — 1.5 h wall clock from launch to t = 200. The three
+cells are packed under `results/bondi-dipole-runaway/campaign/`, and the fitted
+table with the exponent is `campaign/mass_law.csv`, written by
+`research/bondi_dipole/fit_mass_law.py` (its own module, its own output file,
+per the separation rule; re-run it to regenerate the CSV from the packed data).
