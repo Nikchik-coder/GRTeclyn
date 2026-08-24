@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
-"""A schematic of the Bondi dipole: the bend, and the band it sweeps.
+"""A schematic of the Bondi dipole: the bend, and the worldlines it draws.
 
-Drawn, not measured -- the shapes are softened point-mass potentials, so the
-caption must call this a schematic.  Fonts come from pdflatex through
-matplotlib's pgf backend, so it matches the article's typography.
+Drawn, not measured -- the shape is a pair of softened point-mass
+potentials, so the caption must call this a schematic.  Line art in black
+and white throughout, so the two panels read as one figure and the thing
+survives a greyscale print.  Fonts come from pdflatex through matplotlib's
+pgf backend, so it matches the article's typography.
 
-  (a) one spatial slice as a rubber sheet.  The phantom star is a hill and
-      the canonical star a well -- blue up, red down, the sign convention of
-      the article's chi - 1 panels.  Each body is accelerated by the
-      *other's* active mass, so both arrows point the same way.
+  (a) one spatial slice as a rubber sheet.  The phantom star raises a hill,
+      the canonical star sinks a well.  A body follows the slope the *other*
+      one made, never its own -- and at a body's own centre its own dimple
+      is flat, so the sheet's tangent there IS the partner's slope.  Both
+      tangents run the same way, so the two arrows come out parallel.
 
   (b) the same pair in spacetime.  Both worldlines lean and curve; the width
-      of the band between them does not change.
+      of the band between them never changes.
 
 Writes research/bondi_dipole/figures/fig_spacetime_bend.pdf.
 """
@@ -25,7 +28,7 @@ import matplotlib
 
 matplotlib.use("pgf")
 import matplotlib.pyplot as plt  # noqa: E402
-from matplotlib.colors import TwoSlopeNorm  # noqa: E402
+from matplotlib.transforms import Bbox  # noqa: E402
 from mpl_toolkits.mplot3d import proj3d  # noqa: E402
 
 # .../GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/bondi_dipole
@@ -48,7 +51,7 @@ plt.rcParams.update(
     }
 )
 
-DOUBLE = 7.0
+SINGLE = 3.375  # PRD column width, inches
 
 D0 = 5.0        # half-separation of the pair
 SOFT = 3.0      # core softening: these stars are extended, not points
@@ -71,70 +74,60 @@ def proj(ax, p):
     return proj3d.proj_transform(*p, ax.get_proj())[:2]
 
 
-def flat_arrow(ax, p0, p1, color="k", lw=0.9, head=6.0, zorder=8):
-    """A 2D arrow between two 3D points, drawn in the projected frame.
+def callout(ax, p, text, offset, va, fontsize=6.9):
+    """Label a 3D point with a short leader, offset in typographic points.
 
-    mplot3d's own quiver puts the head in the data volume, where it
-    foreshortens into a smudge; projecting first keeps every head the same
-    size on the page.
+    Offsetting from the projected point rather than anchoring to a panel
+    corner keeps the leader short and the bounding box tight, whatever the
+    view angle does to the surface.
     """
-    ax.annotate("", xy=proj(ax, p1), xytext=proj(ax, p0), xycoords="data",
-                textcoords="data", zorder=zorder,
-                arrowprops=dict(arrowstyle="-|>", mutation_scale=head,
-                                lw=lw, color=color, shrinkA=0, shrinkB=0))
-
-
-def callout(ax, p, text, xy_axes, ha, va):
-    """Label a 3D point from a fixed corner of the panel.
-
-    Anchoring the text in axes fractions and running a leader to the point
-    is the only placement that cannot drift onto the surface when the view
-    or the panel size changes.
-    """
-    ax.annotate(text, xy=proj(ax, p), xycoords="data", xytext=xy_axes,
-                textcoords="axes fraction", ha=ha, va=va, ma="left",
-                fontsize=7.2, color="0.1", zorder=9,
+    ax.annotate(text, xy=proj(ax, p), xycoords="data", xytext=offset,
+                textcoords="offset points", ha="center", va=va, ma="center",
+                fontsize=fontsize, color="0.1", zorder=9,
                 arrowprops=dict(arrowstyle="-", lw=0.55, color="0.45",
                                 shrinkA=1, shrinkB=3))
 
 
 def panel_bend(ax):
-    x = np.linspace(-14, 14, 161)
-    y = np.linspace(-9, 9, 101)
+    # the sample counts are 8n+1 and 6m+1 so that the strides below divide
+    # them exactly -- otherwise plot_surface leaves a sliver row and a
+    # sliver column at two edges, and the mesh looks unfinished there
+    x = np.linspace(-14.5, 14.5, 8 * 22 + 1)
+    y = np.linspace(-9.0, 9.0, 6 * 18 + 1)
     X, Y = np.meshgrid(x, y)
     Z = sheet(X, Y)
     lim = float(np.abs(Z).max())
 
-    norm = TwoSlopeNorm(vmin=-lim, vcenter=0.0, vmax=lim)
-    ax.plot_surface(X, Y, Z, cmap="RdBu", norm=norm, rstride=2, cstride=2,
-                    linewidth=0, antialiased=True, shade=False, alpha=0.95,
-                    rasterized=True, zorder=2)
-    ax.plot_wireframe(X, Y, Z, rstride=6, cstride=8, color="0.30",
-                      linewidth=0.25, alpha=0.55, zorder=3)
+    # An opaque white sheet whose own polygons carry the mesh: one call, so
+    # the far side of the surface hides the lines behind it.  Line art beats
+    # grey wash here -- the figure has to survive a greyscale print at one
+    # column wide, and the mesh is what tells hill from well.
+    ax.plot_surface(X, Y, Z, color="white", edgecolor="0.22", linewidth=0.3,
+                    rstride=6, cstride=8, shade=False, antialiased=True,
+                    zorder=2)
+    # the sheet is exactly level along x = 0: hill on one side, well on the
+    # other, and the divide is where the two contributions cancel
+    ax.plot(np.zeros_like(y), y, np.zeros_like(y), color="k", lw=0.75,
+            ls=(0, (2.5, 1.5)), zorder=4)
 
     ax.set_axis_off()
-    ax.set_box_aspect((2.0, 1.15, 0.66), zoom=1.15)
-    ax.set_zlim(-1.05 * lim, 1.05 * lim)
-    ax.view_init(elev=32, azim=-60)
+    # orthographic, so the two acceleration arrows -- equal vectors at
+    # different depths -- project to exactly equal lengths, and the hill and
+    # the well are drawn at the same scale
+    ax.set_proj_type("ortho")
+    ax.set_box_aspect((2.0, 1.12, 0.74), zoom=1.26)
+    ax.set_zlim(-1.06 * lim, 1.06 * lim)
+    ax.view_init(elev=32, azim=-70)
 
     zh, zw = float(profile(-D0)), float(profile(D0))
     for xs, zs, mk in ((-D0, zh, "s"), (D0, zw, "o")):
         ax.plot([xs], [0], [zs], marker=mk, ms=4.2, markerfacecolor="white",
                 markeredgecolor="k", markeredgewidth=0.75, zorder=6)
 
-    # both accelerations point the same way -- that is the whole effect
-    for xs, zs, lab in ((-D0, zh, "$a_-$"), (D0, zw, "$a_+$")):
-        flat_arrow(ax, (xs + 1.2, 0, zs), (xs + 6.0, 0, zs))
-        ax.annotate(lab, xy=proj(ax, (xs + 3.6, 0, zs)), xycoords="data",
-                    xytext=(0, 4), textcoords="offset points",
-                    ha="center", va="bottom", fontsize=7.4, color="0.1",
-                    zorder=9)
-
     callout(ax, (-D0, 0, zh), "phantom, $M_-<0$:\na \\emph{hill}",
-            (0.015, 0.96), "left", "top")
+            (-4, 17), "bottom")
     callout(ax, (D0, 0, zw), "canonical, $M_+>0$:\na \\emph{well}",
-            (0.985, 0.04), "right", "bottom")
-    ax.set_title("(a)", loc="left", pad=-2)
+            (4, -18), "top")
 
 
 def panel_band(ax):
@@ -143,7 +136,8 @@ def panel_band(ax):
     xm, xp = -D0 + drift, D0 + drift
 
     ax.fill_betweenx(t, xm, xp, color="0.905", lw=0, zorder=1)
-    ax.plot([0, 0], [0, 1], color="0.62", ls=(0, (1, 2)), lw=0.6, zorder=2)
+    ax.plot([0, 0], [0, 1], color="0.62", ls=(0, (1, 2)), lw=0.6,
+            zorder=2)
     ax.plot(xm, t, color="k", ls=(0, (3, 1.6)), lw=1.1, zorder=4)
     ax.plot(xp, t, color="k", ls="-", lw=1.1, zorder=4)
     ax.plot(0.5 * (xm + xp), t, color="0.45", ls=(0, (1, 1.4)), lw=0.9,
@@ -151,7 +145,7 @@ def panel_band(ax):
 
     for xs, mk in ((-D0, "s"), (D0, "o")):
         for tt in (0.0, 1.0):
-            ax.plot([xs + DRIFT * tt ** 2], [tt], marker=mk, ms=4.0,
+            ax.plot([xs + DRIFT * tt ** 2], [tt], marker=mk, ms=3.8,
                     markerfacecolor="white", markeredgecolor="k",
                     markeredgewidth=0.75, zorder=6, clip_on=False)
 
@@ -161,40 +155,61 @@ def panel_band(ax):
                 arrowprops=dict(arrowstyle="<->", mutation_scale=6, lw=0.7,
                                 color="0.35", shrinkA=0, shrinkB=0))
     ax.text(xb - D0 - 0.7, tb, "$d$ fixed", ha="right", va="center",
-            fontsize=7.2, color="0.3")
+            fontsize=6.9, color="0.3")
 
     # the headline quantity: the midpoint itself moves
     ax.annotate("", xy=(DRIFT, 1.055), xytext=(0.0, 1.055),
                 annotation_clip=False,
                 arrowprops=dict(arrowstyle="-|>", mutation_scale=6, lw=0.8,
                                 color="0.3", shrinkA=0, shrinkB=0))
-    ax.text(0.5 * DRIFT, 1.08, r"midpoint drift $\Delta X$", ha="center",
-            va="bottom", fontsize=7.2, color="0.3", clip_on=False)
+    ax.text(0.5 * DRIFT, 1.085, r"midpoint drift $\Delta X$", ha="center",
+            va="bottom", fontsize=6.9, color="0.3", clip_on=False)
 
-    tl = 0.88
-    ax.text(-D0 + DRIFT * tl ** 2 - 0.7, tl, "phantom", ha="right",
-            va="center", fontsize=7.2, color="0.1")
-    ax.text(D0 + DRIFT * tl ** 2 + 0.7, tl, "canonical", ha="left",
-            va="center", fontsize=7.2, color="0.1")
+    tl = 0.87
+    ax.text(-D0 + DRIFT * tl ** 2 - 0.8, tl, "phantom", ha="right",
+            va="center", fontsize=6.9, color="0.1")
+    ax.text(D0 + DRIFT * tl ** 2 + 0.8, tl, "canonical", ha="left",
+            va="center", fontsize=6.9, color="0.1")
 
-    ax.set_xlim(-D0 - 5.5, D0 + DRIFT + 7.5)
-    ax.set_ylim(-0.012, 1.012)
-    ax.set_xlabel("$x$", labelpad=1.5, loc="right")
-    ax.set_ylabel("time", labelpad=3)
+    x0, x1 = -D0 - 5.5, D0 + DRIFT + 7.5
+    y0, y1 = -0.03, 1.03
+    ax.set_xlim(x0, x1)
+    ax.set_ylim(y0, y1)
     ax.set_xticks([])
     ax.set_yticks([])
-    ax.set_title("(b)", loc="left")
+    for side in ("top", "right", "bottom", "left"):
+        ax.spines[side].set_visible(False)
+
+    # a spacetime diagram wants axes that point, not a box
+    for xy, xytext in (((x1, y0), (x0, y0)), ((x0, y1), (x0, y0))):
+        ax.annotate("", xy=xy, xytext=xytext, annotation_clip=False,
+                    zorder=7,
+                    arrowprops=dict(arrowstyle="-|>", mutation_scale=7,
+                                    lw=0.7, color="k", shrinkA=0, shrinkB=0))
+    ax.text(x1, y0 - 0.05, "$x$", ha="right", va="top", fontsize=8.5,
+            clip_on=False)
+    ax.text(x0 - 0.9, y1, "time", ha="center", va="top", rotation=90,
+            fontsize=8.5, clip_on=False)
 
 
 def build(path=None):
-    fig = plt.figure(figsize=(DOUBLE, 2.85))
-    gs = fig.add_gridspec(1, 2, width_ratios=(1.30, 1.0), wspace=0.08,
-                          left=0.005, right=0.965, bottom=0.10, top=0.885)
-    panel_bend(fig.add_subplot(gs[0, 0], projection="3d"))
-    panel_band(fig.add_subplot(gs[0, 1]))
+    # mplot3d reports a square bounding box whatever the surface looks
+    # like, so a tight save wastes half the column on white.  Oversize the
+    # 3D axes instead, sit the spacetime panel under it, and save the
+    # canvas verbatim at exactly one column.
+    height = 3.80
+    fig = plt.figure(figsize=(SINGLE, height))
+    ax = fig.add_axes([-0.055, 0.3211, 1.11, 0.7526], projection="3d")
+    panel_bend(ax)
+    bx = fig.add_axes([0.135, 0.0813, 0.840, 0.2937])
+    panel_band(bx)
+    fig.text(0.012, 0.988, "(a)", ha="left", va="top", fontsize=8.5)
+    fig.text(0.012, 0.4092, "(b)", ha="left", va="top", fontsize=8.5)
+
     path = path or os.path.join(OUT, "fig_spacetime_bend.pdf")
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    fig.savefig(path, dpi=400)
+    fig.savefig(path, dpi=400, pad_inches=0.0,
+                bbox_inches=Bbox([[0.0, 0.0], [SINGLE, height]]))
     plt.close(fig)
     return path
 
