@@ -74,6 +74,15 @@ is the cleaner provenance anyway. Both reproduced their reference solve exactly
 - [x] `control_lone_phantom_t1000_L64_N128_lev0` — **evolved to t=1000 on 2026-08-24**, 5.38 GPU-h, the campaign's longest single run. Reproduces the archived t=200 cell **digit for digit** on every diagnostic through its whole overlap. **Gate FAILED, informatively**: peak field activity is not flat to 1% — it decays **linearly at −0.632% per 100 code units** from t ≈ 200 onward, reaching **−5.39%** at t = 1000 (it is −0.48% at t=200 and −1.62% at t=400, which is why nothing shorter caught it). No collapse, no blow-up: min χ rises 1.00000 → 1.00033, the star swells (rms 4.41 → 4.83) and leaks (confined fraction 0.736 → 0.670). The softened "stable over the 400 time units evolved" wording is therefore the correct one, and the decay rate is itself a quotable result. See "Result — Run B"
 - [~] `control_pair_pp_d10_phase_pi_L64_N128_lev0` — **not required, and not buildable as a knob.** The review asked for an in-phase control on the assumption that the campaign was seeded anti-phase. It is the other way round (section 5), so the informative control is the *anti-phase* one, and seeding δ = π needs a per-lump internal-phase sign in the matter painter that does not exist yet. Bonus confirmation, not a gap
 
+**The equal-mass ladder (2026-08-24).** Three pairs at d = 20 with both stars
+retuned together, so with the archived d = 20 cell the mass axis of `a = GM/d²`
+is measured directly as an exponent — the distance axis's counterpart. Full
+record in section 7.
+
+- [x] `masslaw_pair_d20_w0675_L64_N128_lev0` — **evolved to t=200 on 2026-08-24**; heaviest rung, M = 0.02254 (×1.571 base), pair matched to −0.016%. a = 5.560e-05, a·d²/M = 0.987. ω = 0.675 is outside the stability-scanned band; matter checked first and clean (peak flat to the 6th digit, min χ −1.9e-04)
+- [x] `masslaw_pair_d20_w0700_L64_N128_lev0` — **evolved to t=200 on 2026-08-24**; M = 0.01917 (×1.336), matched to −0.008%. a = 4.739e-05, a·d²/M = 0.989, the tightest error bar of the four
+- [x] `masslaw_pair_d20_w0850_L64_N128_lev0` — **evolved to t=200 on 2026-08-24**; lightest rung, M = 0.00916 (×0.638), matched to +0.006%. a = 2.345e-05 on the core tracker, a·d²/M = 1.024 — and the cell that exposed the barycentre tracker's halo contamination on diffuse stars (see section 7)
+
 ---
 
 ## Findings for the paper — what each cell established, verified against the packed data
@@ -103,6 +112,7 @@ midpoint over the last two thirds unless a window is named.
 | `longrun_t400` | a within 2% of 1.43e-04 in every late window; velocity still growing at t = 400 |
 | `deepsolve_pair_d10_L64_N128` | solve tolerance 4.4× tighter changes the drift by 0.0015% (2.88117 → 2.88122) — the base rung is grid-limited, not solve-limited |
 | `stability_w{075..090}` | the canonical family is stable where it is used |
+| `masslaw_pair_d20_w{0675,0700,0850}` | with the archived d20 cell: **a ∝ M^0.966±0.061** across ×2.46 in mass at fixed d = 20 — the mass law's exponent, measured; every rung's a·d²/M within 2.4% of 1 |
 
 ### The two interaction channels — the paper's defence, as headlines with the runs behind them
 
@@ -343,6 +353,18 @@ the pair stays near-rigid and visibly is not once the gap moves by >1;
 ratios of the changed partner are the quotable numbers, constants never are
 (on the matched cell the same fit returns 0.0161 and 0.0119 for two constants
 both known to be 0.01435).
+
+### The mass law — the exponent, measured on the equal-mass ladder
+
+The section above varies the separation at fixed mass; this one varies the mass
+at fixed separation. Four mass-matched pairs at d = 20 spanning ×2.46 in mass
+(three run 2026-08-24 plus the archived d = 20 cell) give **a ∝ M^0.966 ± 0.061**
+against p = 1 predicted, with every rung's a·d²/M within 2.4% of 1. Together
+with a ∝ d^−2.028 this closes both axes of `a = GM/d²` as direct measurements
+rather than ratio tests. Full run record, gates, the per-rung table, and the
+tracker caveat it surfaced (the barycentre tracker follows the relaxation halo
+on diffuse stars; the ladder is fitted on the halo-free core tracker) are in
+section 7.
 
 ### What t = 400 adds
 
@@ -1997,3 +2019,107 @@ chase cell's `_interleaved_raw/`. Neither cell's headline stream was affected:
 elsewhere and were always clean. **A hand-derived `params.txt` must have its
 `output_path` checked before launch** — nothing in the code prevents two runs
 from sharing one.
+
+## 7. The equal-mass ladder — the mass law measured as an exponent (2026-08-24)
+
+The force law (section above, five separations) fixed the *distance* dependence:
+a ∝ d^−2.028. The mass side of `a = GM/d²` rested on ratio tests at unequal
+masses (phases 3 and 3b), which are differential and quotable only as ratios.
+This ladder measures the mass dependence directly: **four pairs, all at
+d = 20, all mass-matched inside the pair, spanning ×2.46 in mass** — and asks
+for the exponent p in a ∝ M^p. The law says p = 1: each star is pushed by its
+*partner's* mass, so doubling both masses doubles both accelerations and the
+pair stays rigid.
+
+### Design
+
+d = 20 (not the headline d = 10) so the finite-size excess that contaminates
+close pairs — +2.9% at d = 8, +0.07% at d = 20 — starts negligible and the mass
+axis is clean. Equal mass inside a pair needs *different* frequencies for the
+two sectors, because the sign of the field's energy changes how a star of given
+mass self-gravitates; the phantom partner for each canonical frequency was
+root-found by secant refinement on the branch (no GPU). The solver's own
+`params.txt` confirms the frequencies landed to ~1 part in 10⁵:
+
+| cell | ω canonical | ω phantom | M canonical | M phantom | mismatch | M vs base |
+|---|---|---|---|---|---|---|
+| `masslaw_pair_d20_w0675` | 0.674989 | 0.686072 | 2.25430e-02 | 2.25394e-02 | −0.016% | ×1.571 |
+| `masslaw_pair_d20_w0700` | 0.699991 | 0.710485 | 1.91736e-02 | 1.91721e-02 | −0.008% | ×1.336 |
+| `runaway_pair_d20` (archived) | 0.750000 | 0.760300 | 1.43500e-02 | 1.42947e-02 | −0.385% | ×1.000 |
+| `masslaw_pair_d20_w0850` | 0.849997 | 0.859098 | 9.15681e-03 | 9.15734e-03 | +0.006% | ×0.638 |
+
+The three new pairs are mass-matched ~20× tighter than the archived base cell.
+Masses are recomputed from the solver's recorded frequencies by
+`research/bondi_dipole/fit_mass_law.py`, not read from the launch intent.
+
+ω = 0.675 and 0.700 sit *outside* the 0.75–0.90 band the stability survey ever
+covered, so per campaign rule 3 the matter diagnostics were read before any
+geometry was believed (below: they pass).
+
+```bash
+# Launched 2026-08-24 13:07, cards 0/1/3, one N=256 solve each (32 ranks,
+# ~19 min, all three by the `converged` door at NL iteration 12 of 50),
+# then ~1.1 h of GPU evolution each at 183–187 code units/h.
+BONDI_SEP=20 BONDI_STOP_TIME=200 BONDI_NFULL=128 BONDI_LFULL=64 BONDI_MAXLEVEL=0
+BONDI_S0=0 BONDI_S1=1
+# per cell:
+#   w0675: BONDI_S0_OMEGA=0.6749887480927852 BONDI_S1_OMEGA=0.6860720218606876
+#   w0700: BONDI_S0_OMEGA=0.6999914990212646 BONDI_S1_OMEGA=0.7104849879354665
+#   w0850: BONDI_S0_OMEGA=0.8499970897108942 BONDI_S1_OMEGA=0.8590975998840956
+```
+
+### Gates — all three cells pass
+
+Solve: `converged` door, Ham 9.72e-04% / 9.53e-04% / 9.06e-04% against the
+0.002% gate — 2× under it, stall detector never fired. Matter (checked first,
+against each run's own t = 0): field peaks flat to the sixth digit between the
+initial relaxation and the end; min χ moves by −1.9e-04 / −3.3e-04 / −1.3e-03
+over the full 200. The two heavier cells show ~3% steps in the *sampled* peak
+at the times their drift crosses half a grid cell — the reporting grid point
+changes, the star does not; the lightest cell, which drifts only 0.47, shows
+none. Constraints: L2 Ham *falls* 27–35× over the run in all three. Exit code 0
+at t = 200 in all three.
+
+### Result — the exponent is 1, and the halo-free tracker is the one that measures it
+
+Fit: quadratic in t on the pair midpoint, t ≥ 5, the campaign's standard
+convention. Per-cell error bar = half-spread of the four disjoint-window fits
+(5–50 / 50–100 / 100–150 / 150–200), the same test the pack README applies to
+the headline cell — the window dependence dominates every other uncertainty.
+
+| pair mass M | a measured (core) | ± | a = M/d² predicted | a·d²/M |
+|---|---|---|---|---|
+| 9.157e-03 | 2.345e-05 | 1.6e-06 | 2.289e-05 | 1.024 |
+| 1.432e-02 | 3.570e-05 | 0.9e-06 | 3.580e-05 | 0.997 |
+| 1.917e-02 | 4.739e-05 | 0.6e-06 | 4.793e-05 | 0.989 |
+| 2.254e-02 | 5.560e-05 | 1.4e-06 | 5.635e-05 | 0.987 |
+
+**Weighted power law: p = 0.966 ± 0.061 against p = 1 predicted — agreement at
+0.55σ.** Every rung's a·d²/M is within 2.4% of 1 (mean 0.9993), i.e. each
+measured acceleration individually validates the prediction a = M/d² inside its
+own error bar. The residual tilt has the expected sign: the lightest star is
+the most diffuse (rms radius 5.1 against 4.3), so its rung carries the largest
+finite-size envelope-overlap correction, the same correction the separation
+scan showed decaying from d = 8 outward.
+
+**Tracker finding, worth its own paragraph.** On the barycentre
+(|φ|²-weighted) tracker the lightest cell's fitted a is 18% low and swings by
+a factor 2 between windows; on the halo-free core tracker it is stable to 7%.
+The cause is in the barycentre file itself: between t = 25 and t = 50 the
+lightest pair's sector rms radius jumps 5.1 → 8.5 and its integrated field
+content rises 14% — the early relaxation halo, which every cell sheds, occupies
+a much larger *fraction* of the most diffuse star's sector and drags the
+weighted centroid. On the other three cells the two trackers agree to under 1%.
+This sharpens the existing verdict-table note ("quote whichever tracker the
+signal beside it was measured with") into a rule: **for diffuse stars the
+barycentre tracker measures the halo, not the star — the core tracker is the
+quotable one, and this ladder is fitted on it.**
+
+### Cost and where the data is
+
+3 × (0.31 h solve on 32 CPU ranks + 1.09 h GPU) ≈ 3.3 GPU-hours, run in
+parallel on cards 0/1/3 — 1.5 h wall clock from launch to t = 200. The three
+cells are packed under `results/bondi-dipole-runaway/campaign/`, and the fitted
+table with the exponent is `campaign/mass_law.csv`, written by
+`research/bondi_dipole/fit_mass_law.py` (its own module, its own output file,
+per the separation rule; re-run it to regenerate the CSV from the packed data).
