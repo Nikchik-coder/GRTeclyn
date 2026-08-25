@@ -316,7 +316,9 @@ BRANCH=wormhole PIPELINE_MONITOR=1 \
   bash scripts/campaigns/general_ftl/run_all.sh
 ```
 
-See [MapElites.md v21](../../../../research/neuralspacetime/MapElites.md#v21-multi-slot-gpu-pipeline-5-evols-per-gpu-2026-06-17) for VRAM sizing notes.
+Multi-slot GPU pipelining (several evolutions per card) is bounded by VRAM,
+not by compute — size `GPU_SLOTS_PER_DEVICE` against a single cell's measured
+footprint before raising it.
 
 `PIPELINE_MONITOR=1` writes `runs/_logs/${QD_NAME}.pipeline_monitor.csv` and `.pipeline_summary.txt`.
 Preflight smokes stay in `scripts/campaigns/smoke_test.sh` — not under `general_ftl/`.

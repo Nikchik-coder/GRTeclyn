@@ -7,8 +7,8 @@ perturbation). The rotating ID is produced by a **constraint-clean GRTresna
 solve**, which removes the O(ω) momentum-constraint defect that made naive
 analytic initial data diverge.
 
-Full program, status, and physics rationale:
-[`grteclyn-wrapper/docs/RotatingWormholePlan.md`](../../grteclyn-wrapper/docs/RotatingWormholePlan.md).
+The full program, status and physics rationale are kept with the campaign
+working notes.
 
 ---
 

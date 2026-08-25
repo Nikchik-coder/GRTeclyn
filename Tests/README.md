@@ -9,7 +9,7 @@ tests](#building-and-running-the-tests).
 
 ### Source
 
-The doctest code is contained within a single header: [doctest.h](../External/doctest/doctest.h).
+The doctest code is contained within a single header: [doctest.h](../external/doctest/doctest.h).
 
 ### Basic doctest syntax
 
