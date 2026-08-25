@@ -1052,7 +1052,7 @@ justifies the grander claims). Each is gated on the confinement question above.
   `min_theta_plus<0` / `max_ah_r>0` in `collapse_diagnostics.dat`, then Ψ₄
   ringdown + Kerr-QNM remnant spin cross-checked against swallowed `J_z`.
 - **Bar-mode (m=2) at high spin.** 3D non-axisymmetric fragmentation of a
-  collapsing/​bouncing throat as an ℓ=2, m=2 GW source. High-res, compute-heavy.
+  collapsing/bouncing throat as an ℓ=2, m=2 GW source. High-res, compute-heavy.
 - **Active support (RL matter pump, Rung 2).** Closed-loop control reading
   `min_chi` / `Q_sphere` and injecting phantom matter to hold the throat — the
   natural response to an intrinsically non-confining static configuration.
