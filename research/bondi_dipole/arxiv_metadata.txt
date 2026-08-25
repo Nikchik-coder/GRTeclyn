@@ -1,0 +1,14 @@
+========== TITLE ==========
+The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive-Negative Mass Binary
+
+========== AUTHORS ==========
+Nikita M. Shirokov
+
+========== ABSTRACT ==========
+Bondi showed in 1957 that bodies of opposite active gravitational mass self-accelerate: the negative chases the positive it repels, and the pair runs off together. We evolve this "Bondi dipole" in $3+1$ numerical relativity: two complex scalars share identical Klein-Gordon dynamics; only the phantom enters Einstein's equations with a minus sign -- inertial and passive masses positive, active mass negative. Across thirty-four evolutions, a mass-matched pair released at rest accelerates as a unit. The midpoint moves $3.00\pm0.01$ by $t=200$ with the separation held to 1%, and reaches $0.056c$ by $t=400$ with the rate steady to 2%; the total signed momentum holds at zero to $\lesssim 1$%. The force is gravity on both of its axes: $a\propto d^{-2.03\pm0.01}$ over $d=8$ to $20$, $a\propto M^{0.97\pm0.06}$ over a factor $2.5$ in mass, and $a\,d^2/\bar{M}=1$ within 2.4% on the equal-mass ladder. Swapping the sectors inverts the acceleration to two parts in $10^5$; gauge, solver-depth and mesh variations move the drift by $\lesssim 0.01$% and box doubling by 4%; same-sign control pairs hold their centroids to $\lesssim 8\times10^{-4}$ even while merging. The runaway carries no detectable gravitational radiation: the signed dipole cannot radiate, the quadrupole's $\ddot{Q}$ is constant, and the measured $\ell=2$ amplitude falls as $r^{-4.8}$ -- near zone, not flux. The phantom star is, to our knowledge, the first asymptotically flat body of negative ADM mass evolved in numerical relativity; alone it survives to $t=1000$, slowly relaxing outward.
+
+========== COMMENTS ==========
+13 pages, 10 figures, 4 ancillary movies. Code, run matrix and packed campaign data: https://github.com/Nikchik-coder/GRTeclyn (tag v1.0-bondi-dipole)
+
+========== LEAVE BLANK ==========
+Report number, Journal reference, External DOI, ACM class, MSC class
