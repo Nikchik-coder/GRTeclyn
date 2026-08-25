@@ -6,7 +6,7 @@
 The same repository holds the evolution and initial-data code that produced it;
 the version behind the article is identified by its git tag. The article is
 `research/bondi_dipole/bondi_dipole.tex`, and every number and figure in it is
-reprinted by `research/bondi_dipole/make_article_figures.py` from this pack
+reprinted by `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/bondi_dipole/article_figures.py` from this pack
 alone — if a number here and a number there disagree, the script is the arbiter.
 
 A positive-active-mass and a negative-active-mass soliton, released at rest in
@@ -35,7 +35,7 @@ refinement**:
 
 Accelerations are twice the quadratic coefficient of the pair midpoint over
 `5 ≤ t ≤ 200` — the article's convention, and the one
-`make_article_figures.py` prints. Separations are barycentre gaps.
+`article_figures.py` prints. Separations are barycentre gaps.
 
 The two finest grids agree to `0.4%` on drift and `0.5%` on acceleration. That
 is the shape of a converging quantity: refining does not push the effect toward
@@ -140,9 +140,10 @@ prediction confirmed, not merely a bound stated.
 
 Per-cell numbers, the caveats in full, and how to read a cell name are in
 [`campaign/README.md`](campaign/README.md). The pre-submission review of the
-article, what it asked for, and the two runs still worth buying (a gauge twin
-and the lone phantom to `t = 1000`, `~6.5` GPU-h together) are recorded with
-the campaign working notes, which are not part of this pack.
+article, what it asked for, and the two runs it asked for — the gauge twin
+(the drift moves `-0.007%`) and the lone phantom to `t = 1000` (the peak
+decays `0.63%` per 100 time units), both since run and folded in — are
+recorded with the campaign working notes, which are not part of this pack.
 
 ## What is where
 
@@ -334,13 +335,11 @@ To re-run the physics itself, see [`LAUNCH.md`](LAUNCH.md).
   matter with per-lump signs), 32 MPI ranks on CPU, one solve at a time.
 - Evolution: **GRTeclyn** (`RadialRecipe`, CCZ4 + bicomplex scalar matter),
   single rank, one GPU per cell, no mesh refinement.
-- Compute: **≈73 GPU-hours** of NVIDIA H100 time across the 27 evolutions, one
+- Compute: **≈99 GPU-hours** of NVIDIA H100 time across the 34 evolutions, one
   card per evolution. At `N = 128`, `L = 64` the cost is `5.44` GPU-hours per
   1000 units of evolution time, flat to `2%` across sixteen cells; the ladder
   rungs scale `4.4×` (N=192) and `13.4×` (N=256) off that, shallower than the
-  naive `N⁴`. Summed wall-clock is `81.6` h, larger only because some cells
-  shared a card and a shared cell's clock keeps running while the other holds
-  the GPU. The elliptic solves are CPU work on top of this — 20 min (256³) to
+  naive `N⁴`. The elliptic solves are CPU work on top of this — 20 min (256³) to
   ~4 h (512³) per cell on 32 ranks, overlapping other cells' GPU time. The
   per-cell ledger is kept with the campaign working notes.
 - Working notes are narrative and deliberately not part of this pack — every

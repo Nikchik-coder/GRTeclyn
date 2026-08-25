@@ -14,7 +14,8 @@ Outputs (research/bondi_dipole/figures/):
   fig_chase_frames.pdf   activity and chi-1 stills of the headline N=256 cell
                          with the tracked cores overlaid
   fig_trajectories.pdf   worldlines / drift+fit to t=400 / signal vs nulls
-  fig_forcelaw.pdf       a(d) power law and a d^2 against the pair mass
+  fig_forcelaw.pdf       both axes of a = M/d^2: the separation scan at fixed
+                         mass, and the equal-mass ladder at fixed separation
   fig_convergence.pdf    resolution ladder + deep-solve/AMR twins; the two
                          error sources with opposite grid behaviour
   fig_samesign.pdf       the same-sign controls merge on one clock; their
@@ -30,6 +31,7 @@ Run it from anywhere; it prints every number quoted in the article text.
 
 import os
 import csv
+import re
 import json
 
 import numpy as np
@@ -345,51 +347,30 @@ def fig_family():
                     fam[r["sector"]][round(float(r["omega_requested"]), 5)] \
                         = float(r["adm_mass"])
 
-    fig, ax = plt.subplots(figsize=(SINGLE, 2.7))
-    for sector, ls, marker in [("canonical", "-", "o"),
-                               ("phantom", "--", "s")]:
+    fig, ax = plt.subplots(figsize=(SINGLE, 2.30))
+    for sector, ls, lab, ly, va in [
+            ("canonical", "-", "canonical", 0.047, "bottom"),
+            ("phantom", (0, (4, 1.6)), "phantom", -0.054, "top")]:
         om = np.array(sorted(fam[sector]))
         m = np.array([fam[sector][o] for o in om])
-        ax.plot(om, m, color="k", ls=ls, marker=marker, ms=2.4, lw=0.9,
-                markerfacecolor="white", markeredgewidth=0.7)
-    ax.text(0.607, 0.047, "canonical", fontsize=7.3, color="0.1",
-            ha="left", va="bottom")
-    ax.text(0.607, -0.054, "phantom", fontsize=7.3, color="0.1",
-            ha="left", va="top")
+        ax.plot(om, m, color="k", ls=ls, lw=1.05)
+        ax.text(0.607, ly, lab, fontsize=7.3, color="0.1", ha="left", va=va)
 
     ax.axhline(0, color="0.5", lw=0.5)
-    ax.axvspan(0.500, 0.5265, color="0.90", zorder=0, lw=0)
-    ax.text(0.5133, -0.016, "no dressed star", rotation=90, ha="center",
-            va="center", fontsize=6.4, color="0.4", zorder=4,
-            bbox=dict(facecolor="0.90", edgecolor="none", pad=1.2))
+    ax.axvspan(0.500, 0.5265, color="0.92", zorder=0, lw=0)
+    ax.text(0.5133, -0.014, "no dressed star", rotation=90, ha="center",
+            va="center", fontsize=6.2, color="0.45", zorder=4)
 
-    # the working pair: canonical at 0.75, phantom retuned to 0.7603 so the
-    # ADM masses match to 0.4%
-    # the two stars sit at different frequencies on purpose: the phantom is
-    # retuned until the mass magnitudes match, which is why they are not
-    # vertically opposite each other
-    ax.plot([0.75], [M_P], marker="*", ms=9, color="k", ls="none", zorder=5)
-    ax.plot([0.7603], [-M_M], marker="*", ms=9, color="k",
+    # the working pair (mass-matched to 0.4%; the caption carries the
+    # numbers).  The two stars sit at different frequencies on purpose: the
+    # phantom is retuned until the mass magnitudes match, which is why the
+    # stars are not vertically opposite each other.
+    ax.plot([0.75], [M_P], marker="*", ms=8.5, color="k", ls="none", zorder=5)
+    ax.plot([0.7603], [-M_M], marker="*", ms=8.5, color="k",
             markerfacecolor="white", markeredgewidth=0.8, ls="none", zorder=5)
-    ax.annotate("the pair, mass-matched:\n"
-                r"$\omega=0.750$ / $0.7603$," "\n"
-                r"$M_\pm = +0.01435/{-0.01429}$",
-                xy=(0.7603, -0.0143), xytext=(0.995, -0.049), fontsize=6.6,
-                color="0.2", ha="right", va="center", ma="left",
-                arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",
-                                shrinkA=2, shrinkB=3))
-
-    # the light-star floors: neither branch goes below ~0.54 of the working
-    # mass, and neither has a bound star at omega = 1
-    ax.annotate("floors: $|M|_{\\min}\\simeq0.0078$\n"
-                r"at $\omega\simeq0.92$--$0.94$",
-                xy=(0.921, 0.0080), xytext=(0.995, 0.068), fontsize=6.6,
-                color="0.2", ha="right", va="center", ma="left",
-                arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",
-                                shrinkA=2, shrinkB=3))
 
     ax.set_xlim(0.50, 1.005)
-    ax.set_ylim(-0.108, 0.092)
+    ax.set_ylim(-0.105, 0.085)
     ax.set_xlabel(r"$\omega$")
     ax.set_ylabel(r"$M_{\rm ADM}$")
     fig.savefig(os.path.join(OUT, "fig_family.pdf"))
@@ -632,7 +613,43 @@ def fig_trajectories():
 
 
 # ------------------------------------------------------------ fig: force law
+def mass_ladder():
+    """The equal-mass ladder at fixed d = 20, as the pack's mass_law.csv holds it.
+
+    Four mass-matched pairs spanning a factor 2.46 in mass.  Matching the two
+    stars is what makes the absolute constant quotable: an unequal pair deforms
+    over the run (Sec. V F), and a quadratic fit to a moving separation is not
+    a measurement of anything.  A matched pair stays rigid, so a alone answers
+    a = M/d^2.
+
+    Each row carries the acceleration on the halo-free CORE tracker (the
+    reported one), its window spread, and the whole-domain barycentre as the
+    cross-check -- the two part company only on the lightest, most diffuse
+    pair, whose shed halo drags the barycentre fit 18% off.  The file is
+    written by research/bondi_dipole/fit_mass_law.py, which recomputes the
+    masses from the frequencies the elliptic solver itself recorded.
+    """
+    with open(os.path.join(CAMP, "mass_law.csv")) as fh:
+        text = fh.read()
+    slope = re.search(r"^# slope p = ([-\d.]+) \+/- ([\d.]+)", text, re.M)
+    if slope is None:
+        raise SystemExit("mass_law.csv carries no fitted slope header")
+    rows = sorted(
+        csv.DictReader(ln for ln in text.splitlines() if not ln.startswith("#")),
+        key=lambda r: float(r["m_mean"]),
+    )
+    return (
+        dict(m=np.array([float(r["m_mean"]) for r in rows]),
+             a=np.array([float(r["a"]) for r in rows]),
+             aerr=np.array([float(r["a_err"]) for r in rows]),
+             abar=np.array([float(r["a_bary"]) for r in rows]),
+             d=float(rows[0]["d"])),
+        float(slope.group(1)), float(slope.group(2)),
+    )
+
+
 def fig_forcelaw():
+    # --- left column: the separation axis, at fixed mass -------------------
     ds = np.array(sorted(SCAN))
     accs = np.array([fit_a(*midpoint(SCAN[d])) for d in ds])
     slope, off = np.polyfit(np.log(ds), np.log(accs), 1)
@@ -642,8 +659,16 @@ def fig_forcelaw():
         (np.log(ds) - np.mean(np.log(ds))) ** 2)
     slope_err = np.sqrt(var)
 
-    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 3.62))
+    # --- right column: the mass axis, at fixed separation ------------------
+    ml, pslope, pslope_err = mass_ladder()
+    mm, am, aerr, abar, dm = ml["m"], ml["a"], ml["aerr"], ml["abar"], ml["d"]
+    m2 = mm * 100.0                      # plotted in units of 10^-2
+    ratio_m = am * dm ** 2 / mm
+    poff = np.mean(np.log(am) - pslope * np.log(mm))
 
+    fig, ((ax, cx), (bx, dx)) = plt.subplots(2, 2, figsize=(SINGLE, 4.05))
+
+    # (a) a(d) at fixed mass
     ax.plot(ds, accs, ls="none", marker="o", ms=4, color="k",
             markerfacecolor="white", markeredgewidth=0.9, zorder=5)
     dd = np.linspace(7.2, 22, 100)
@@ -651,8 +676,8 @@ def fig_forcelaw():
             label=r"$\bar M/d^2$ (point mass)")
     ax.plot(dd, np.exp(off) * dd ** slope, color=FIT, ls=(0, (3.4, 1.5)),
             lw=1.4, label=rf"fit $d^{{{slope:.2f}}}$")
-    ax.legend(loc="upper right", borderaxespad=0.5, fontsize=6.8,
-              handlelength=1.9, labelspacing=0.4, borderpad=0.2)
+    ax.legend(loc="upper right", borderaxespad=0.4, fontsize=6.3,
+              handlelength=1.6, labelspacing=0.35, borderpad=0.2)
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xticks([8, 10, 12, 16, 20])
@@ -662,7 +687,7 @@ def fig_forcelaw():
     ax.set_ylim(2.4e-5, 7.5e-4)      # headroom so the legend clears the data
     ax.set_xlabel("$d$")
     ax.set_ylabel(r"$a$")
-    ax.set_title("(a)", loc="left")
+    ax.set_title(r"(a)\quad vary $d$, mass fixed", loc="left", fontsize=7.5)
 
     # (b) a d^2 over the pair mass: the excess fades with separation
     ratio = accs * ds ** 2 / MBAR
@@ -674,25 +699,56 @@ def fig_forcelaw():
     a256 = fit_a(*midpoint(HEAD[256]))
     bx.plot([10], [a256 * 100 / MBAR], marker="D", ms=4, color="k",
             ls="none", markerfacecolor="0.75", markeredgewidth=0.8, zorder=6)
-    bx.annotate(r"$d=10$ at $N=256$:" "\n" r"the $+7\%$ grid calibration",
-                xy=(10.1, a256 * 100 / MBAR), xytext=(12.6, 1.070),
-                fontsize=6.8, color="0.2",
-                arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",
-                                shrinkA=2, shrinkB=2))
-    bx.annotate("base grid $N=128$: the excess\nfades with separation",
-                xy=(12, ratio[2]), xytext=(11.6, 1.033), fontsize=6.8,
-                color="0.2", ha="left",
-                arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",
-                                shrinkA=2, shrinkB=2))
     bx.text(7.3, 1.0043, r"$\pm1\%$", fontsize=6.4, color="0.45",
             va="center", ha="left")
     bx.set_xlim(7, 21)
     bx.set_ylim(0.985, 1.095)
     bx.set_xlabel("$d$")
     bx.set_ylabel(r"$a\,d^2/\bar M$")
-    bx.set_title("(b)", loc="left")
+    bx.set_title("(b)", loc="left", fontsize=7.5)
 
-    fig.subplots_adjust(hspace=0.42)
+    # (c) a(M) at fixed separation -- the other axis of a = M/d^2
+    mmline = np.linspace(0.80, 2.45, 100)
+    cx.plot(mmline, mmline * 1e-2 / dm ** 2, color="0.5", ls="-", lw=0.8,
+            label=rf"$\bar M/d^2$, $d={dm:.0f}$")
+    cx.plot(mmline, np.exp(poff) * (mmline * 1e-2) ** pslope, color=FIT,
+            ls=(0, (3.4, 1.5)), lw=1.4,
+            label=rf"fit $M^{{{pslope:.2f}}}$")
+    cx.errorbar(m2, am, yerr=aerr, ls="none", marker="o", ms=4, color="k",
+                markerfacecolor="white", markeredgewidth=0.9, elinewidth=0.7,
+                capsize=1.6, zorder=5)
+    cx.legend(loc="upper left", borderaxespad=0.4, fontsize=6.3,
+              handlelength=1.6, labelspacing=0.35, borderpad=0.2)
+    cx.set_xscale("log")
+    cx.set_yscale("log")
+    cx.set_xticks([0.9, 1.2, 1.6, 2.2])
+    cx.set_xticklabels(["$0.9$", "$1.2$", "$1.6$", "$2.2$"])
+    cx.minorticks_off()
+    cx.set_yticks([2e-5, 3e-5, 4e-5, 6e-5])
+    cx.set_yticklabels(["$2$", "$3$", "$4$", "$6$"])
+    cx.set_xlim(0.80, 2.72)
+    cx.set_ylim(1.9e-5, 7.6e-5)
+    cx.set_xlabel(r"$\bar M\ [10^{-2}]$")
+    cx.set_ylabel(r"$a\ [10^{-5}]$")
+    cx.set_title(r"(c)\quad vary mass, $d$ fixed", loc="left", fontsize=7.5)
+
+    # (d) the same ladder compensated: a d^2 / M, rung by rung
+    dx.axhspan(0.99, 1.01, color="0.93", zorder=0, lw=0)
+    dx.axhline(1.0, color="0.5", lw=0.6)
+    dx.errorbar(m2, ratio_m, yerr=aerr * dm ** 2 / mm, marker="o", ms=4,
+                color="k", ls="-", lw=0.8, markerfacecolor="white",
+                markeredgewidth=0.9, elinewidth=0.7, capsize=1.6, zorder=5)
+    dx.text(2.44, 1.0055, r"$\pm1\%$", fontsize=6.4, color="0.45",
+            va="center", ha="right")
+    dx.set_xticks([0.9, 1.2, 1.6, 2.0, 2.4])
+    dx.set_xticklabels(["$0.9$", "$1.2$", "$1.6$", "$2.0$", "$2.4$"])
+    dx.set_xlim(0.80, 2.45)
+    dx.set_ylim(0.935, 1.098)
+    dx.set_xlabel(r"$\bar M\ [10^{-2}]$")
+    dx.set_ylabel(r"$a\,d^2/\bar M$")
+    dx.set_title("(d)", loc="left", fontsize=7.5)
+
+    fig.subplots_adjust(hspace=0.58, wspace=0.55)
     fig.savefig(os.path.join(OUT, "fig_forcelaw.pdf"))
     plt.close(fig)
 
@@ -706,6 +762,13 @@ def fig_forcelaw():
           f"4-pt (no d=20): "
           f"{np.polyfit(np.log(ds[:4]), np.log(accs[:4]), 1)[0]:.3f}")
     print(f"  N=256 d=10: a={a256:.4e}, a*d2/Mbar={a256 * 100 / MBAR:.4f}")
+    print(f"  mass ladder at d={dm:.0f} (core tracker, barycentre in brackets):")
+    for m, a, e, ab in zip(mm, am, aerr, abar):
+        print(f"    M={m:.5e}: a={a:.4e} +- {e:.1e}  a*d2/M={a * dm ** 2 / m:.4f}"
+              f"  [bary {ab * dm ** 2 / m:.4f}]")
+    print(f"  power law: M^({pslope:.3f} +- {pslope_err:.3f}); "
+          f"mass span x{mm.max() / mm.min():.2f}; "
+          f"|a d^2/M - 1| max {np.max(np.abs(ratio_m - 1)) * 100:.2f}%")
 
 
 # ---------------------------------------------------------- fig: convergence
