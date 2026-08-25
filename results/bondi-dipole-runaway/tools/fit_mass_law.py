@@ -37,7 +37,7 @@ from pathlib import Path
 
 import numpy as np
 
-REPO = Path(__file__).resolve().parents[2]
+REPO = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(REPO / "grteclyn-wrapper" / "src"))
 
 from grteclyn_wrapper.grtresna.profiles.boson_star_ode import (  # noqa: E402

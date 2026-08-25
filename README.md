@@ -9,14 +9,13 @@
 > |---|---|
 > | [`grteclyn-wrapper/`](grteclyn-wrapper/README.md) | Python orchestration layer — GRTresna initial data → GPU evolution → scoring, plus MAP-Elites / CMA-ES search campaigns. **Start here.** |
 > | [`results/`](results/) | Packed, scrubbed campaign extracts. Reproducible without a GPU. |
-> | [`research/`](research/) | Manuscripts, run records and lab journals. |
 >
 > **Headline result — the Bondi dipole runaway.** A positive-mass boson star
 > paired with a negative-mass phantom one self-accelerates, with no horizon and
 > no numerical artefact. Both axes of `a = GM/d²` are measured directly:
 > `a ∝ d^−2.028` across separations, `a ∝ M^0.966 ± 0.061` across a ×2.46 mass
-> range. Data: [`results/bondi-dipole-runaway/campaign/`](results/bondi-dipole-runaway/campaign/) ·
-> Run record: [`research/bondi_dipole/docs/GPU_RUN_PAPER.md`](research/bondi_dipole/docs/GPU_RUN_PAPER.md)
+> range. Data and method:
+> [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/)
 >
 > Upstream GRTeclyn is BSD-3-Clause; see [LICENSE](LICENSE). The research tree
 > inherits it.

@@ -141,8 +141,8 @@ prediction confirmed, not merely a bound stated.
 Per-cell numbers, the caveats in full, and how to read a cell name are in
 [`campaign/README.md`](campaign/README.md). The pre-submission review of the
 article, what it asked for, and the two runs still worth buying (a gauge twin
-and the lone phantom to `t = 1000`, `~6.5` GPU-h together) are in section 5 of
-[`../../research/bondi_dipole/docs/GPU_RUN_PAPER.md`](../../research/bondi_dipole/docs/GPU_RUN_PAPER.md).
+and the lone phantom to `t = 1000`, `~6.5` GPU-h together) are recorded with
+the campaign working notes, which are not part of this pack.
 
 ## What is where
 
@@ -342,8 +342,8 @@ To re-run the physics itself, see [`LAUNCH.md`](LAUNCH.md).
   shared a card and a shared cell's clock keeps running while the other holds
   the GPU. The elliptic solves are CPU work on top of this — 20 min (256³) to
   ~4 h (512³) per cell on 32 ranks, overlapping other cells' GPU time. The
-  per-cell ledger is in `research/bondi_dipole/docs/GPU_RUN_PAPER.md`.
-- Working notes (narrative, not part of this pack): [`research/bondi_dipole/docs/`](../../research/bondi_dipole/docs/)
-  (working copy: `research/bondi_dipole_debug.md`).
+  per-cell ledger is kept with the campaign working notes.
+- Working notes are narrative and deliberately not part of this pack — every
+  number quoted here is re-derivable from the data shipped alongside it.
 - Code state: wrapper commit recorded per cell in `campaign/<cell>/metadata.json`;
   the GRTresna matter modifications are in [`patches/`](patches/).

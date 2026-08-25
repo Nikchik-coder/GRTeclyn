@@ -14,11 +14,10 @@ campaigns over matter and geometry configurations.
 
 > **This is research code, not a released library.** It is a fork of
 > [GRTeclyn](https://github.com/GRTLCollaboration/GRTeclyn) with a research tree
-> added under [`research/`](../research/), [`results/`](../results/) and
-> `grteclyn-wrapper/`. Interfaces change without notice. Results under
-> `results/` are packed, scrubbed and reproducible; lab journals under
-> `research/` are working notes, and not every claim in them survived later
-> scrutiny — the table below says which is which.
+> with a research tree added under `grteclyn-wrapper/` and
+> [`results/`](../results/). Interfaces change without notice. What is published
+> under `results/` is packed, scrubbed and reproducible from the data shipped
+> with it.
 
 ---
 
@@ -26,9 +25,7 @@ campaigns over matter and geometry configurations.
 
 | Result | Status | Where |
 |---|---|---|
-| **The Bondi dipole runaway.** A canonical (positive active mass) boson star paired with a phantom (negative active mass) one **self-accelerates** — no horizon forms, and the effect survives every artefact check we could build. Both axes of `a = GM/d²` are now direct measurements: `a ∝ d^−2.028` across `d = 8…20`, and `a ∝ M^0.966 ± 0.061` across a ×2.46 mass range. | **Complete and reproducible** | [packed campaign](../results/bondi-dipole-runaway/campaign/) · [full run record](../research/bondi_dipole/docs/GPU_RUN_PAPER.md) · [manuscript](../research/bondi_dipole/bondi_dipole.tex) |
-| **Automated search for transient spacetime shortcuts.** MAP-Elites and CMA-ES over matter/geometry ansätze, scored by a 4D null-geodesic probe rather than by coordinate speed. | Exploratory | [packed campaign](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/) |
-| **Rotating Q-torus wormhole.** A genuine stationary eigenstate, its support, and its collapse when that support is withdrawn. | Exploratory | [`research/rotatingwormhole/`](../research/rotatingwormhole/) |
+| **The Bondi dipole runaway.** A canonical (positive active mass) boson star paired with a phantom (negative active mass) one **self-accelerates** — no horizon forms, and the effect survives every artefact check we could build. Both axes of `a = GM/d²` are direct measurements: `a ∝ d^−2.028` across `d = 8…20`, and `a ∝ M^0.966 ± 0.061` across a ×2.46 mass range. | **Complete and reproducible** | [packed campaign](../results/bondi-dipole-runaway/) |
 
 Three findings shape everything else here:
 
@@ -90,7 +87,7 @@ numbers on a laptop, with no GPU and no solver:
 
 ```bash
 # from the repository root
-uv run python research/bondi_dipole/fit_mass_law.py
+uv run python results/bondi-dipole-runaway/tools/fit_mass_law.py
 ```
 
 That refits the mass law from the packed cells and prints the exponent, the
@@ -122,8 +119,7 @@ Unless a command says otherwise, run it from **`grteclyn-wrapper/`**.
 
 Read this before launching anything whose numbers will be believed. Rules 9 and 10 are the preflight — run them first; 9 checks the cell, 10 checks the machine; 11 is how to tell a launch actually happened. Every rule
 below is here because breaking it silently produced a result that looked clean
-and was wrong. The full diagnosis of each is in
-[`research/bondi_dipole/docs/MatterDebugg.md`](../research/bondi_dipole/docs/MatterDebugg.md).
+and was wrong.
 
 ### 1. The solve grid must land exactly on the evolution grid
 
@@ -486,13 +482,13 @@ The corrected campaign and its data are in
 | **4D null-geodesic probe** — gauge-invariant FTL shortcut measurement | `src/.../metrics/probes/ftl/` | `search` (cheap) and `hq` (full verify) profiles; continuous emission sweep |
 | **Falsification tiers** — T0 constructed → T6 analytic | `scripts/search/validate_tiers.py` | Offline ladder; no rerun needed |
 | **Geometry-first projection** — motif scout → GRTresna solve | `src/.../initial_data/motif.py`, `grtresna/fit/motif.py`, `projection/` | Additive second stage; never push fitted matter directly into GRTeclyn |
-| **Pure-geometry MAP-Elites atlas** — Stage-1 stationary metric scout | `src/.../search/geometry_atlas/`, `scripts/campaigns/geometry_atlas/run.sh` | Searches broad asymptotically flat 4-metrics (no matter); scores frozen `f_geo` + stationary `f_ff` vs exotic-energy cost; see [`research/legacy/geometryfirst/LabJournal.md`](../research/legacy/geometryfirst/LabJournal.md) |
+| **Pure-geometry MAP-Elites atlas** — Stage-1 stationary metric scout | `src/.../search/geometry_atlas/`, `scripts/campaigns/geometry_atlas/run.sh` | Searches broad asymptotically flat 4-metrics (no matter); scores frozen `f_geo` + stationary `f_ff` vs exotic-energy cost |
 | **Iterative matter adjustment** — CMA-ES loop over lump params (GRTresna-only) | `projection/iterate.py`, `projection/mismatch.py` | `--iterate N` on `project_geometry_motif.py`; L2 geometry-mismatch fitness; closes the fit→solve→compare loop |
 | **Post-load constraint gate** — short GPU load check of `.gridinit` | `projection/postload_gate.py` | Rejects bad loads before the expensive main evolution |
 | **Solved-FTL gate** — cheap t=0 filter on `.gridinit` | `search/solved_ftl_gate.py` | ~1 s/candidate; rejects flat/degenerate slices |
 | **Visualization** — constraint plots, GW panels, frame movies | `src/.../visualisation/`, `scripts/plot/` | Article-style 6-panel Ψ₄ figures; `make_movies.sh` |
 | **LIGO matched-filter search** — methodology + reference script | `src/.../gw_search/` | Intermediate-mass collapse templates vs GWOSC; see [`src/.../gw_search/README.md`](src/grteclyn_wrapper/gw_search/README.md) |
-| **RL chassis** — pump/transport training launcher | `scripts/campaigns/rl/` | Opt-in stage 1.5; handoff in [`research/legacy/RL/LabJournal.md`](../research/legacy/RL/LabJournal.md) |
+| **RL chassis** — pump/transport training launcher | `scripts/campaigns/rl/` | Opt-in stage 1.5 |
 | **Self-gravitating boson star seed** — stationary single-star confinement | `grtresna/profiles/boson_star_ode.py`, GRTresna C++ | Four-bug fix; see [Self-gravitating boson star](#self-gravitating-boson-star) |
 
 ---
@@ -1125,7 +1121,7 @@ The wormhole support is a genuine 2D spinning Q-ball eigenstate
 (bordered Newton + amplitude continuation) and painted into GRTresna as
 `profile == 4`. (The old `(sinθ)^m`-twisted sphere was not stationary and
 drained its Noether charge, half-life t~13-16.) Journal:
-[`OrbitalPumpPlan.md`](../research/rotatingwormhole/OrbitalPumpPlan.md) Phase 8.
+the rotating-wormhole orbital pump plan, Phase 8.
 
 **Solve an isolated torus ID** (throat-free flat background; validates the
 eigenstate on its own). `EXOTIC=1` matches the phantom evolution matter;
@@ -1235,9 +1231,7 @@ ODE solver for genuine self-gravitating boson stars (gravity provides the
 binding, not an artificial pump well): `grtresna/profiles/boson_star_ode.py`.
 After a four-bug fix a single stable-branch star holds confinement ~0.90 at
 t=16 (was 0.58, dispersed); `max_level=3` still develops NaNs at t~6-9 -- an
-open numerical-stability issue, not seed/pump physics. The campaign that
-built on this seed, and its artefact checks, are written up in
-[`research/bondi_dipole/docs/GPU_RUN_PAPER.md`](../research/bondi_dipole/docs/GPU_RUN_PAPER.md).
+open numerical-stability issue, not seed/pump physics.
 
 ---
 
@@ -1404,11 +1398,9 @@ Run-by-run results live outside this README:
 
 | Where | What |
 |-------|------|
-| [`results/matter-first…/`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/README.md) | Packed FTL search campaigns — the publishable extracts |
-| [`…/search/README.md`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/search/README.md) | Per-campaign trajectory FTL results and what each one settled |
-| [`research/legacy/grlab/LabJournal.md`](../research/legacy/grlab/LabJournal.md) | GW beam + splash lab journal |
-| [`results/`](../results/) | Git-friendly campaign extracts, e.g. [`qball-trajectory-evolving-geodesic-shortcut-search/CAMPAIGN_RESULTS.md`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/search/qball-trajectory-evolving-geodesic-shortcut-search/CAMPAIGN_RESULTS.md) |
-| [`research/nextsteps.md`](../research/nextsteps.md) | Critical review of the claims' validity + hardening plan |
+| [`results/bondi-dipole-runaway/`](../results/bondi-dipole-runaway/) | The published campaign — packed extracts, every cell, every gate verdict |
+| [`results/bondi-dipole-runaway/campaign/README.md`](../results/bondi-dipole-runaway/campaign/README.md) | How to read a cell name and every column in the data files |
+| [`results/bondi-dipole-runaway/tools/fit_mass_law.py`](../results/bondi-dipole-runaway/tools/fit_mass_law.py) | Refits the mass law from the packed data — no GPU needed |
 
 Three takeaways that shape current work: (1) genuine gauge-invariant FTL
 shortcuts exist with exotic matter but are transient -- no configuration yet
@@ -1883,15 +1875,6 @@ nvidia-smi   # your cards should now be free
 > processes will also catch someone else's. Scope every stop to a named
 > campaign, never to an executable or a GPU.
 
-### Research manuscript (TikZ / tectonic)
-
-```bash
-cd ../research/neuralspacetime/article && tectonic --keep-logs research.tex   # -> research.pdf
-```
-
-First run downloads TeX support files (needs network access once). Source:
-[`article/research.tex`](../research/neuralspacetime/article/research.tex).
-
 ### Related docs
 
 | Doc | Content |
@@ -1901,11 +1884,6 @@ First run downloads TeX support files (needs network access once). Source:
 | [`src/grteclyn_wrapper/grtresna/README.md`](src/grteclyn_wrapper/grtresna/README.md) | GRTresna bridge deep docs |
 | [`src/grteclyn_wrapper/gw_search/README.md`](src/grteclyn_wrapper/gw_search/README.md) | LIGO matched-filter methodology |
 | [`src/grteclyn_wrapper/visualisation/README.md`](src/grteclyn_wrapper/visualisation/README.md) | Plotting module reference |
-| [`../research/neuralspacetime/article/research.tex`](../research/neuralspacetime/article/research.tex) | Manuscript source (compile with tectonic above) |
-| [`../results/matter-first…/search/`](../results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/search/README.md) | Packed FTL trajectory campaign results |
-| [`../research/rotatingwormhole/OrbitalPumpPlan.md`](../research/rotatingwormhole/OrbitalPumpPlan.md) | Rotating wormhole: Q-torus eigenstate support, collapse trigger |
-| [`../research/legacy/grlab/LabJournal.md`](../research/legacy/grlab/LabJournal.md) | GW beam + splash lab journal |
-| [`../research/legacy/RL/LabJournal.md`](../research/legacy/RL/LabJournal.md) | RL chassis handoff |
-| [`../research/bondi_dipole/docs/GPU_RUN_PAPER.md`](../research/bondi_dipole/docs/GPU_RUN_PAPER.md) | Bondi dipole: full campaign plan, every cell, every gate |
 | [`../results/bondi-dipole-runaway/campaign/README.md`](../results/bondi-dipole-runaway/campaign/README.md) | Bondi dipole: packed data and how to read it |
+| [`../results/bondi-dipole-runaway/tools/fit_mass_law.py`](../results/bondi-dipole-runaway/tools/fit_mass_law.py) | Bondi dipole: refit the mass law from the packed data |
 

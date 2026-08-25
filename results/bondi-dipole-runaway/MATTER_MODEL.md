@@ -91,8 +91,7 @@ so ω = 0.55 always means 45 % binding. What changes is the amplitude scale
 | **ultraweak** | **10 240** | **21 845 333** | **0.0197** | **yes** |
 
 The ultraweak rung is the first at which a gravitationally dressed ω = 0.55 star
-exists at all — the discovery that unblocked the campaign
-([`DEBUGGING.md`](../../research/bondi_dipole/docs/DEBUGGING.md) §2).
+exists at all — the discovery that unblocked the campaign.
 
 ## 3. Dressed-star initial data
 
