@@ -568,9 +568,6 @@ def fig_trajectories():
     cx.annotate("", xy=(t_bar, floor), xytext=(t_bar, sig),
                 arrowprops=dict(arrowstyle="<->", lw=0.6, color="0.45",
                                 shrinkA=0, shrinkB=0))
-    cx.text(t_bar - 6, np.sqrt(sig * floor),
-            rf"$\sim\!{round(sig / floor, -3):.0f}\times$", fontsize=6.8,
-            color="0.35", ha="right", va="center")
     cx.set_yscale("log")
     cx.set_xlim(0, 205)
     cx.set_ylim(6.5e-6, 16)
@@ -666,7 +663,7 @@ def fig_forcelaw():
     ratio_m = am * dm ** 2 / mm
     poff = np.mean(np.log(am) - pslope * np.log(mm))
 
-    fig, ((ax, cx), (bx, dx)) = plt.subplots(2, 2, figsize=(SINGLE, 4.05))
+    fig, ((ax, cx), (bx, dx)) = plt.subplots(2, 2, figsize=(SINGLE, 3.80))
 
     # (a) a(d) at fixed mass
     ax.plot(ds, accs, ls="none", marker="o", ms=4, color="k",
