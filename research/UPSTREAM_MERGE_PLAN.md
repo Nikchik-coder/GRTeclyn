@@ -212,16 +212,29 @@ compares against — intended) and `INFO(...)` strings in `CCZ4GeometryUnitTest`
 
 **On the node (node naming: fork = `myfork`, collaboration = `origin`).**
 
+A campaign may be running from the node checkout, and its wrapper scripts,
+params files and executable all live inside that tree — so never `git checkout`
+or `make` there while it runs. Work in a second worktree instead (own HEAD,
+index and build dirs; shared object store, so commits are visible everywhere):
+
 ```bash
-cd /home/jovyan/nachevsky/test/simulation/GRTeclyn
+cd /home/jovyan/nachevsky/test/simulation/GRTeclyn        # campaign tree: fetch only, no checkout, no make
 git fetch myfork --tags
-git checkout -b chore/merge-upstream-2026-08 myfork/chore/merge-upstream-2026-08
+git worktree add ../GRTeclyn-merge chore/merge-upstream-2026-08
+cd ../GRTeclyn-merge
 # 1. drivers first — Tests/ instantiates CCZ4RHSWithMatter/ConstraintsWithMatter/Weyl4WithMatter with ScalarField
-cd Tests && make -j16 USE_MPI=FALSE USE_CUDA=FALSE && ./Tests3d.gnu.ex   # BSSNMatterTest, EMTensorTest, Weyl4WithMatterTest
+cd Tests && nice make -j8 USE_MPI=FALSE USE_CUDA=FALSE && ./Tests3d.gnu.ex   # BSSNMatterTest, EMTensorTest, Weyl4WithMatterTest
 # 2. then our classes — RadialRecipe instantiates all of them through RadialRecipeMatterDispatch
-cd ../Examples/RadialRecipe && make -j16 USE_CUDA=TRUE ...               # the campaign build line
-# 3. wormhole examples, 4. regression vs a known-good checkpoint with UNCHANGED params (§7.4), 5. stage 2 (§0.5 step 3)
+cd ../Examples/RadialRecipe && nice make -j8 USE_CUDA=TRUE ...               # the campaign build line
+# 3. wormhole examples, 4. regression vs a known-good checkpoint with UNCHANGED params (§7.4)
+#    — on a GPU the campaign is not using (CUDA_VISIBLE_DEVICES), 5. stage 2 (§0.5 step 3)
 ```
+
+`nice -j8` rather than `-j16` so the nvcc build does not starve the campaign's
+host threads. Already-running processes are safe from a rebuild either way
+(Linux keeps the old inode); the danger is the campaign wrapper's *next*
+launch picking up a new executable — which the separate worktree prevents.
+When done: `git worktree remove ../GRTeclyn-merge`.
 
 Fix compile errors on this branch and commit them as ordinary commits on top
 of the merge commit (no need to amend it). Escape hatch unchanged:
