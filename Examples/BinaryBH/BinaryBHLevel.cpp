@@ -70,12 +70,42 @@ void BinaryBHLevel::initData()
         amrex::Print() << "BinaryBHLevel::initialData " << Level() << "\n";
     }
 #ifdef USE_TWOPUNCTURES
-    // xxxxx USE_TWOPUNCTURES todo
-    TwoPuncturesInitialData two_punctures_initial_data(
-        m_dx, m_p.center, m_tp_amr.m_two_punctures);
-    // Can't use simd with this initial data
-    BoxLoops::loop(two_punctures_initial_data, m_state_new, m_state_new,
-                   INCLUDE_GHOST_CELLS, disable_simd());
+    TwoPuncturesInitialData two_punctures_initial_data(Geom().CellSize(0),
+                                                       simParams().center);
+
+    two_punctures_initial_data.solve(); // only solves first time
+
+    amrex::MultiFab &state_new = get_new_data(state_index);
+#ifdef AMREX_USE_GPU
+    amrex::MFInfo mf_info;
+    mf_info.SetArena(amrex::The_Cpu_Arena());
+    amrex::MultiFab host_state(state_new.boxArray(),
+                               state_new.DistributionMap(), state_new.nComp(),
+                               state_new.nGrowVect(), mf_info);
+#else
+    amrex::MultiFab &host_state = state_new;
+#endif
+
+#ifdef AMREX_USE_OMP
+#pragma omp parallel if (amrex::Gpu::notInLaunchRegion())
+#endif
+    for (amrex::MFIter mfi(state_new, amrex::TilingIfNotGPU()); mfi.isValid();
+         ++mfi)
+    {
+        const amrex::Box &grown_tile_box = mfi.growntilebox();
+        const auto &state_array          = host_state.array(mfi);
+
+        amrex::LoopOnCpu(
+            grown_tile_box, [=](int ix, int iy, int iz)
+            { two_punctures_initial_data(ix, iy, iz, state_array); });
+#ifdef AMREX_USE_GPU
+        // Copy to device
+        amrex::Gpu::htod_memcpy_async(
+            state_new[mfi].dataPtr(), host_state[mfi].dataPtr(),
+            host_state[mfi].size() * sizeof(amrex::Real));
+#endif
+    }
+
 #else
     // Set up the compute class for the BinaryBH initial data
     double dx = Geom().CellSize(0);
@@ -149,12 +179,64 @@ void BinaryBHLevel::specificEvalRHS(amrex::MultiFab &a_soln,
             simParams().ccz4_params, Geom().CellSize(0), simParams().sigma,
             simParams().formulation);
 
+        // NB: These are split up to avoid having to pre-compute all the
+        //  first and second derivatives in memory on the GPU at once.
+
         amrex::ParallelFor(
             a_rhs,
             [=] AMREX_GPU_DEVICE(int box_no, int ix, int iy, int iz)
             {
-                ccz4rhs(ix, iy, iz, rhs_arrays[box_no],
+                ccz4rhs.compute_chi_and_h_ij(ix, iy, iz, rhs_arrays[box_no],
+                                             const_soln_arrays[box_no]);
+            });
+
+        amrex::ParmParse pp;
+
+        int my_formulation{0};
+        int my_covariantZ4{1};
+        pp.query("formulation", my_formulation);
+        pp.query("covariantZ4", my_covariantZ4);
+
+        // amrex::AnyCTO allows for runtime options to be evaluated at
+        // compile time via fold expressions.
+        // The compiler generates expressions for both options but only
+        // the relevent option is selected at runtime.
+        // This reduces branching inside GPU kernels which is bad for
+        // performance as it results in workgroup/warp divergence.
+
+        amrex::AnyCTO(
+            amrex::TypeList<
+                amrex::CompileTimeOptions<
+                    CCZ4RHS<MovingPunctureGauge,
+                            FourthOrderDerivatives>::formulations::USE_CCZ4,
+                    CCZ4RHS<MovingPunctureGauge,
+                            FourthOrderDerivatives>::formulations::USE_BSSN>,
+                amrex::CompileTimeOptions<
+                    CCZ4RHS<MovingPunctureGauge,
+                            FourthOrderDerivatives>::covariantZ4::YES,
+                    CCZ4RHS<MovingPunctureGauge,
+                            FourthOrderDerivatives>::covariantZ4::NO>>{},
+            {my_formulation, my_covariantZ4},
+            [&](auto cto_func) { amrex::ParallelFor(a_rhs, cto_func); },
+            [=] AMREX_GPU_DEVICE(int box_no, int ix, int iy, int iz,
+                                 auto formulation, auto covariantZ4)
+            {
+                //
+                ccz4rhs
+                    .compute_A_ij_and_Theta_and_Gamma<formulation, covariantZ4>(
+                        ix, iy, iz, rhs_arrays[box_no],
                         const_soln_arrays[box_no]);
+            });
+
+        amrex::ParallelFor(
+            a_rhs,
+            [=] AMREX_GPU_DEVICE(int box_no, int ix, int iy, int iz)
+            {
+                ccz4rhs.calculate_gauge_rhs(ix, iy, iz, rhs_arrays[box_no],
+                                            const_soln_arrays[box_no]);
+
+                ccz4rhs.apply_dissipation(ix, iy, iz, rhs_arrays[box_no],
+                                          const_soln_arrays[box_no]);
             });
     }
     else if (simParams().max_spatial_derivative_order == 6)

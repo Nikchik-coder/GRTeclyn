@@ -1,36 +1,37 @@
-GRTECLYN_CEXE_headers += ControllerReservoirMatter.hpp \
-                         ConstraintsWithMatter.hpp \
-                         ConstraintsWithMatter.impl.hpp \
-                         DefaultPotential.hpp \
-                         EMTensor.hpp \
-                         EMTensor.impl.hpp \
+GRTECLYN_CEXE_headers += BiComplexScalarField.hpp \
+                         BiComplexScalarField.impl.hpp \
+                         BiComplexScalarFieldVars.hpp \
                          CCZ4RHSWithMatter.hpp \
                          CCZ4RHSWithMatter.impl.hpp \
-                         Weyl4WithMatter.hpp \
-                         Weyl4WithMatter.impl.hpp \
-                         MovingPunctureGaugeWithMatter \
-                         ScalarField.hpp \
-                         ScalarField.impl.hpp \
-                         ScalarFieldVars.hpp \
-                         ScalarFieldAdvecVars.hpp \
-                         ScalarFieldD1Vars.hpp \
-                         ScalarFieldD2Vars.hpp \
-                         ExoticScalarField.hpp \
-                         ExoticScalarField.impl.hpp \
-                         ComplexScalarFieldVars.hpp \
-                         ComplexScalarFieldAdvecVars.hpp \
-                         ComplexScalarFieldD1Vars.hpp \
-                         ComplexScalarFieldD2Vars.hpp \
                          ComplexExoticScalarField.hpp \
                          ComplexExoticScalarField.impl.hpp \
-                         ComplexScalarPotential.hpp \
                          ComplexScalarField.hpp \
                          ComplexScalarField.impl.hpp \
-                         GRTresnaScalarLayout.hpp \
-                         GRTresnaScalarPotential.hpp \
+                         ComplexScalarFieldVars.hpp \
+                         ComplexScalarPotential.hpp \
+                         ConstraintsWithMatter.hpp \
+                         ConstraintsWithMatter.impl.hpp \
+                         ControllerReservoirMatter.hpp \
+                         DefaultPotential.hpp \
+                         DustMatter.hpp \
+                         DustMatterVars.hpp \
+                         EMTensor.hpp \
+                         EMTensor.impl.hpp \
+                         EffectiveTeoMatter.hpp \
+                         ExoticScalarField.hpp \
+                         ExoticScalarField.impl.hpp \
                          GRTresnaIndependentScalars.hpp \
                          GRTresnaIndependentScalars.impl.hpp \
                          GRTresnaIndependentScalarsVars.hpp \
-                         GRTresnaIndependentScalarsD1Vars.hpp \
-                         GRTresnaIndependentScalarsD2Vars.hpp \
-                         GRTresnaIndependentScalarsAdvecVars.hpp
+                         GRTresnaScalarLayout.hpp \
+                         GRTresnaScalarPotential.hpp \
+                         MatterDispatch.hpp \
+                         MovingPunctureGaugeWithMatter.hpp \
+                         NoMatter.hpp \
+                         OscillonPotential.hpp \
+                         ScalarField.hpp \
+                         ScalarField.impl.hpp \
+                         ScalarFieldKernels.hpp \
+                         ScalarFieldVars.hpp \
+                         Weyl4WithMatter.hpp \
+                         Weyl4WithMatter.impl.hpp

@@ -237,7 +237,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
 
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else if (simParams().wormhole_matter_model == "effective_teo")
     {
@@ -250,7 +250,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
 
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else if (simParams().wormhole_matter_model == "dust")
     {
@@ -263,7 +263,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
 
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else if (simParams().wormhole_matter_model == "oscillon_scalar")
     {
@@ -278,7 +278,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
 
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else if (simParams().wormhole_matter_model == "complex_scalar")
     {
@@ -297,7 +297,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
 
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else
     {
@@ -312,7 +312,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
 
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
 
     // Sponge zone: extra radially-ramped KO dissipation in the outer shell to

@@ -5,6 +5,7 @@
 #include "Coordinates.hpp"
 #include "DimensionDefinitions.hpp"
 #include "FourthOrderDerivatives.hpp"
+#include "MatterDispatch.hpp"
 #include "RLMatterPumpParams.hpp"
 #include "RLPumpForce.hpp"
 #include "StateVariables.hpp"
@@ -43,95 +44,16 @@
 //! ∇_μ T_c^{μν} = −f^ν false and the mode-2 Bianchi argument invalid.
 //!
 //! IsBicomplex selects the field layout / force-density accessors at
-//! compile time so BiComplex and single-complex D1Vars stay incompatible.
+//! compile time.  Derivatives are fetched on demand from the deriv_t object
+//! (upstream matter interface), so no nested D1Vars/AdvecVars are needed.
+//! Both the plain and the (coords, time) overloads are provided and forward
+//! to the inner matter through MatterDispatch, so the inner class need not
+//! implement the time-dependent overloads itself.
 template <class InnerMatter, bool IsBicomplex>
 class ControllerReservoirMatter
 {
   public:
-    using Vars       = typename InnerMatter::Vars;
-    using InnerD1    = typename InnerMatter::D1Vars;
-    using InnerAdvec = typename InnerMatter::AdvecVars;
-    using D2Vars     = typename InnerMatter::D2Vars;
-
-    //! Inner D1Vars plus first derivatives of the four reservoir components.
-    class D1Vars : public InnerD1
-    {
-      public:
-        // NOLINTBEGIN(cppcoreguidelines-pro-type-member-init)
-        AMREX_GPU_DEVICE
-        D1Vars(int ix, int iy, int iz,
-               const amrex::Array4<const amrex::Real> &state,
-               const FourthOrderDerivatives &a_deriv)
-            : InnerD1(ix, iy, iz, state, a_deriv)
-        {
-            m_rho_ctrl_d1 =
-                a_deriv.diff1_scalar(ix, iy, iz, state, c_rho_ctrl);
-            const Tensor<1, amrex::Real> dj1 =
-                a_deriv.diff1_scalar(ix, iy, iz, state, c_jctrl1);
-            const Tensor<1, amrex::Real> dj2 =
-                a_deriv.diff1_scalar(ix, iy, iz, state, c_jctrl2);
-            const Tensor<1, amrex::Real> dj3 =
-                a_deriv.diff1_scalar(ix, iy, iz, state, c_jctrl3);
-            FOR (i)
-            {
-                m_jctrl_d1[0][i] = dj1[i];
-                m_jctrl_d1[1][i] = dj2[i];
-                m_jctrl_d1[2][i] = dj3[i];
-            }
-        }
-        // NOLINTEND(cppcoreguidelines-pro-type-member-init)
-
-        Tensor<1, amrex::Real> m_rho_ctrl_d1; //!< ∂_i ρ_c
-        Tensor<2, amrex::Real> m_jctrl_d1;    //!< m_jctrl_d1[k][i] = ∂_i j_{ck}
-
-        [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE const amrex::Real &
-        rho_ctrl(int i) const
-        {
-            return m_rho_ctrl_d1[i];
-        }
-        [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE const amrex::Real &
-        jctrl(int k, int i) const
-        {
-            return m_jctrl_d1[k][i];
-        }
-    };
-
-    //! Inner AdvecVars plus upwinded β^k∂_k of the reservoir components.
-    class AdvecVars : public InnerAdvec
-    {
-      public:
-        // NOLINTBEGIN(cppcoreguidelines-pro-type-member-init)
-        AMREX_GPU_DEVICE
-        AdvecVars(int ix, int iy, int iz,
-                  const amrex::Array4<const amrex::Real> &state,
-                  const FourthOrderDerivatives &a_deriv)
-            : InnerAdvec(ix, iy, iz, state, a_deriv)
-        {
-            m_rho_ctrl_advec = a_deriv.advec_scalar(
-                ix, iy, iz, state, this->m_shift_vector, c_rho_ctrl);
-            m_jctrl_advec[0] = a_deriv.advec_scalar(
-                ix, iy, iz, state, this->m_shift_vector, c_jctrl1);
-            m_jctrl_advec[1] = a_deriv.advec_scalar(
-                ix, iy, iz, state, this->m_shift_vector, c_jctrl2);
-            m_jctrl_advec[2] = a_deriv.advec_scalar(
-                ix, iy, iz, state, this->m_shift_vector, c_jctrl3);
-        }
-        // NOLINTEND(cppcoreguidelines-pro-type-member-init)
-
-        amrex::Real m_rho_ctrl_advec;
-        Tensor<1, amrex::Real> m_jctrl_advec;
-
-        [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE const amrex::Real &
-        rho_ctrl() const
-        {
-            return m_rho_ctrl_advec;
-        }
-        [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE const amrex::Real &
-        jctrl(int k) const
-        {
-            return m_jctrl_advec[k];
-        }
-    };
+    using Vars = typename InnerMatter::Vars;
 
     ControllerReservoirMatter(InnerMatter a_inner, RLMatterPumpParams a_pump,
                               int a_mode, bool a_include_emtensor)
@@ -140,46 +62,56 @@ class ControllerReservoirMatter
     {
     }
 
+    template <class deriv_t>
     [[nodiscard]] AMREX_GPU_DEVICE emtensor_t compute_emtensor(
-        const Vars &vars, const D1Vars &d1, const Tensor<2, amrex::Real> &h_UU,
-        const Tensor<3, amrex::Real> &chris_ULL) const
+        const int ix, const int iy, const int iz,
+        const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+        const Tensor::Rank2 &h_UU) const
     {
-        auto em = m_inner.compute_emtensor(vars, d1, h_UU, chris_ULL);
-        add_reservoir_to_emtensor(em, vars);
+        emtensor_t em =
+            m_inner.compute_emtensor(ix, iy, iz, state, a_deriv, h_UU);
+        add_reservoir_to_emtensor(em, state.cellData(ix, iy, iz));
         return em;
     }
 
-    [[nodiscard]] AMREX_GPU_DEVICE emtensor_t
-    compute_emtensor(const Vars &vars, const D1Vars &d1,
-                     const Tensor<2, amrex::Real> &h_UU,
-                     const Tensor<3, amrex::Real> &chris_ULL,
-                     const Coordinates &coords, amrex::Real time) const
+    template <class deriv_t>
+    [[nodiscard]] AMREX_GPU_DEVICE emtensor_t compute_emtensor(
+        const int ix, const int iy, const int iz,
+        const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+        const Tensor::Rank2 &h_UU, const Coordinates &coords,
+        amrex::Real time) const
     {
-        auto em =
-            m_inner.compute_emtensor(vars, d1, h_UU, chris_ULL, coords, time);
-        add_reservoir_to_emtensor(em, vars);
+        emtensor_t em = MatterDispatch::compute_emtensor(
+            m_inner, ix, iy, iz, state, a_deriv, h_UU, coords, time);
+        add_reservoir_to_emtensor(em, state.cellData(ix, iy, iz));
         return em;
     }
 
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                   const D1Vars &d1, const D2Vars &d2,
-                   const AdvecVars &advec) const
+    add_matter_rhs(const int ix, const int iy, const int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state,
+                   const deriv_t &a_deriv) const
     {
-        m_inner.add_matter_rhs(rhs, vars, d1, d2, advec);
+        m_inner.add_matter_rhs(ix, iy, iz, rhs_state, state, a_deriv);
     }
 
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                   const D1Vars &d1, const D2Vars &d2, const AdvecVars &advec,
-                   const Coordinates &coords, amrex::Real time) const
+    add_matter_rhs(const int ix, const int iy, const int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state,
+                   const deriv_t &a_deriv, const Coordinates &coords,
+                   amrex::Real time) const
     {
-        m_inner.add_matter_rhs(rhs, vars, d1, d2, advec, coords, time);
+        MatterDispatch::add_matter_rhs(m_inner, ix, iy, iz, rhs_state, state,
+                                       a_deriv, coords, time);
         if (m_mode < 1)
         {
             return;
         }
-        add_reservoir_rhs(rhs, vars, d1, advec, coords, time);
+        add_reservoir_rhs(ix, iy, iz, rhs_state, state, a_deriv, coords, time);
     }
 
   private:
@@ -188,47 +120,81 @@ class ControllerReservoirMatter
     int m_mode{0};
     bool m_include_emtensor{false};
 
-    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_reservoir_to_emtensor(emtensor_t &em, const Vars &vars) const
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void add_reservoir_to_emtensor(
+        emtensor_t &em,
+        const amrex::CellData<const amrex::Real> &cell_data) const
     {
         if (!m_include_emtensor || m_mode < 1)
         {
             return;
         }
         // S_c^{ij} = 0, so only rho and j_i are contributed (trS untouched).
-        em.rho += vars.cell_data[c_rho_ctrl];
-        em.j[0] += vars.cell_data[c_jctrl1];
-        em.j[1] += vars.cell_data[c_jctrl2];
-        em.j[2] += vars.cell_data[c_jctrl3];
+        em.rho += cell_data[c_rho_ctrl];
+        em.j(0) += cell_data[c_jctrl1];
+        em.j(1) += cell_data[c_jctrl2];
+        em.j(2) += cell_data[c_jctrl3];
     }
 
     //! Reservoir evolution: standard 3+1 conservation with S_c^{ij} = 0 and
     //! the pump 4-force as source. See the class comment for the derivation
     //! and for why the momentum source is +f_i while the energy source is
     //! −f_⊥, and why neither carries a lapse.
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_reservoir_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                      const D1Vars &d1, const AdvecVars &advec,
-                      const Coordinates &coords, amrex::Real time) const
+    add_reservoir_rhs(const int ix, const int iy, const int iz,
+                      const amrex::Array4<amrex::Real> &rhs_state,
+                      const amrex::Array4<const amrex::Real> &state,
+                      const deriv_t &a_deriv, const Coordinates &coords,
+                      amrex::Real time) const
     {
+        const amrex::CellData<amrex::Real> &rhs =
+            rhs_state.cellData(ix, iy, iz);
+        const amrex::CellData<const amrex::Real> &cell_data =
+            state.cellData(ix, iy, iz);
+        const Vars vars(cell_data);
+
         const amrex::Real lapse = vars.lapse();
         const amrex::Real K     = vars.K();
         const amrex::Real chi   = vars.chi();
-        const amrex::Real rho_c = vars.cell_data[c_rho_ctrl];
+        const amrex::Real rho_c = cell_data[c_rho_ctrl];
 
-        Tensor<1, amrex::Real> j_c;
-        j_c[0] = vars.cell_data[c_jctrl1];
-        j_c[1] = vars.cell_data[c_jctrl2];
-        j_c[2] = vars.cell_data[c_jctrl3];
+        constexpr int j_comps[3] = {c_jctrl1, c_jctrl2, c_jctrl3};
+        const Tensor::Rank1 j_c{cell_data[c_jctrl1], cell_data[c_jctrl2],
+                                cell_data[c_jctrl3]};
 
         const auto h_UU = CCZ4Geometry::compute_inverse_metric(vars);
 
+        // Derivatives of the geometry: d1_shift(k, i) = ∂_i β^k,
+        // d1_h(k, l, i) = ∂_i h_{kl}.
+        const Tensor::Rank1 d1_chi = a_deriv.d1_scalar(ix, iy, iz, state, c_chi);
+        const Tensor::Rank1 d1_lapse =
+            a_deriv.d1_scalar(ix, iy, iz, state, c_lapse);
+        const Tensor::Rank2 d1_shift =
+            a_deriv.d1_vector(ix, iy, iz, state, c_shift1);
+        const Tensor::Sym12Rank3 d1_h =
+            a_deriv.d1_sym_tensor(ix, iy, iz, state, c_h11);
+
+        // d1_j[k](i) = ∂_i j_{ck}
+        const Tensor::Rank1 d1_j[3] = {
+            a_deriv.d1_scalar(ix, iy, iz, state, c_jctrl1),
+            a_deriv.d1_scalar(ix, iy, iz, state, c_jctrl2),
+            a_deriv.d1_scalar(ix, iy, iz, state, c_jctrl3)};
+
+        const Tensor::Rank1 shift_vector{vars.shift(0), vars.shift(1),
+                                         vars.shift(2)};
+        const amrex::Real advec_rho =
+            a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_rho_ctrl);
+        const amrex::Real advec_j[3] = {
+            a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_jctrl1),
+            a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_jctrl2),
+            a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_jctrl3)};
+
         // Physical inverse spatial metric γ^{ij} = χ h^{ij}; raise the index.
-        Tensor<1, amrex::Real> j_cU;
+        Tensor::Rank1 j_cU;
         FOR (i)
         {
-            j_cU[i] = 0.0;
-            FOR (j) { j_cU[i] += chi * h_UU[i][j] * j_c[j]; }
+            j_cU(i) = 0.0;
+            FOR (j) { j_cU(i) += chi * h_UU(i, j) * j_c(j); }
         }
 
         // D_i j_c^i = ∂_i j_c^i + j_c^i ∂_i ln√γ, with √γ = χ^{-3/2}
@@ -239,80 +205,94 @@ class ControllerReservoirMatter
         amrex::Real div_j = 0.0;
         FOR (i, j)
         {
-            div_j += d1.chi(i) * h_UU[i][j] * j_c[j];
-            div_j += chi * h_UU[i][j] * d1.jctrl(j, i);
+            div_j += d1_chi(i) * h_UU(i, j) * j_c(j);
+            div_j += chi * h_UU(i, j) * d1_j[j](i);
         }
         FOR (i, j)
         {
             FOR (k, l)
             {
-                div_j += -chi * h_UU[i][k] * h_UU[j][l] * d1.h(k, l, i) * j_c[j];
+                div_j +=
+                    -chi * h_UU(i, k) * h_UU(j, l) * d1_h(k, l, i) * j_c(j);
             }
         }
         const amrex::Real inv_chi = 1.0 / chi;
-        FOR (i) { div_j += -1.5 * j_cU[i] * d1.chi(i) * inv_chi; }
+        FOR (i) { div_j += -1.5 * j_cU(i) * d1_chi(i) * inv_chi; }
 
         amrex::Real j_dot_dalpha = 0.0;
-        FOR (i) { j_dot_dalpha += j_cU[i] * d1.lapse(i); }
+        FOR (i) { j_dot_dalpha += j_cU(i) * d1_lapse(i); }
 
         // Pump 4-force from the shared RLPumpForce law (same source as the RHS).
-        const RLPumpForceDensity force = compute_force(vars, d1, coords, time);
+        const RLPumpForceDensity force =
+            compute_force(ix, iy, iz, state, a_deriv, cell_data, coords, time);
 
-        rhs[c_rho_ctrl] += advec.rho_ctrl() + lapse * K * rho_c -
-                           lapse * div_j - 2.0 * j_dot_dalpha - force.f_perp;
+        rhs[c_rho_ctrl] += advec_rho + lapse * K * rho_c - lapse * div_j -
+                           2.0 * j_dot_dalpha - force.f_perp;
 
-        Tensor<1, amrex::Real> f_i;
-        f_i[0] = force.f_x;
-        f_i[1] = force.f_y;
-        f_i[2] = force.f_z;
+        const amrex::Real f_i[3] = {force.f_x, force.f_y, force.f_z};
 
-        const int j_comps[3] = {c_jctrl1, c_jctrl2, c_jctrl3};
         FOR (i)
         {
             amrex::Real shift_term = 0.0;
-            // j_{ck} ∂_i β^k, with d1.shift(k, i) = ∂_i β^k.
-            FOR (k) { shift_term += j_c[k] * d1.shift(k, i); }
-            rhs[j_comps[i]] += advec.jctrl(i) + lapse * K * j_c[i] +
-                               shift_term - rho_c * d1.lapse(i) + f_i[i];
+            // j_{ck} ∂_i β^k
+            FOR (k) { shift_term += j_c(k) * d1_shift(k, i); }
+            rhs[j_comps[i]] += advec_j[i] + lapse * K * j_c(i) + shift_term -
+                               rho_c * d1_lapse(i) + f_i[i];
         }
     }
 
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE RLPumpForceDensity
-    compute_force(const Vars &vars, const D1Vars &d1, const Coordinates &coords,
-                  amrex::Real time) const
+    compute_force(const int ix, const int iy, const int iz,
+                  const amrex::Array4<const amrex::Real> &state,
+                  const deriv_t &a_deriv,
+                  const amrex::CellData<const amrex::Real> &cell_data,
+                  const Coordinates &coords, amrex::Real time) const
     {
-        const amrex::Real lapse = vars.lapse();
+        const amrex::Real lapse = cell_data[c_lapse];
         if constexpr (IsBicomplex)
         {
-            const amrex::Real phi1p = vars.cell_data[c_phi];
-            const amrex::Real Pi1p  = vars.cell_data[c_Pi];
-            const amrex::Real phi2p = vars.cell_data[c_phi2];
-            const amrex::Real Pi2p  = vars.cell_data[c_Pi2];
-            const amrex::Real phi1m = vars.cell_data[c_phi_m];
-            const amrex::Real Pi1m  = vars.cell_data[c_Pi_m];
-            const amrex::Real phi2m = vars.cell_data[c_phi2_m];
-            const amrex::Real Pi2m  = vars.cell_data[c_Pi2_m];
+            const amrex::Real phi1p = cell_data[c_phi];
+            const amrex::Real Pi1p  = cell_data[c_Pi];
+            const amrex::Real phi2p = cell_data[c_phi2];
+            const amrex::Real Pi2p  = cell_data[c_Pi2];
+            const amrex::Real phi1m = cell_data[c_phi_m];
+            const amrex::Real Pi1m  = cell_data[c_Pi_m];
+            const amrex::Real phi2m = cell_data[c_phi2_m];
+            const amrex::Real Pi2m  = cell_data[c_Pi2_m];
+            const Tensor::Rank1 d1_phi1p =
+                a_deriv.d1_scalar(ix, iy, iz, state, c_phi);
+            const Tensor::Rank1 d1_phi2p =
+                a_deriv.d1_scalar(ix, iy, iz, state, c_phi2);
+            const Tensor::Rank1 d1_phi1m =
+                a_deriv.d1_scalar(ix, iy, iz, state, c_phi_m);
+            const Tensor::Rank1 d1_phi2m =
+                a_deriv.d1_scalar(ix, iy, iz, state, c_phi2_m);
             const RLPumpSources src = RLPumpForce::compute_bicomplex_sources(
                 m_pump, coords.x, coords.y, coords.z, time, lapse, phi1p, phi2p,
                 Pi1p, Pi2p, phi1m, phi2m, Pi1m, Pi2m);
             return RLPumpForce::force_density_from_sources(
-                src, 1.0, Pi1p, Pi2p, d1.phi1p(0), d1.phi1p(1), d1.phi1p(2),
-                d1.phi2p(0), d1.phi2p(1), d1.phi2p(2), -1.0, Pi1m, Pi2m,
-                d1.phi1m(0), d1.phi1m(1), d1.phi1m(2), d1.phi2m(0), d1.phi2m(1),
-                d1.phi2m(2));
+                src, 1.0, Pi1p, Pi2p, d1_phi1p(0), d1_phi1p(1), d1_phi1p(2),
+                d1_phi2p(0), d1_phi2p(1), d1_phi2p(2), -1.0, Pi1m, Pi2m,
+                d1_phi1m(0), d1_phi1m(1), d1_phi1m(2), d1_phi2m(0),
+                d1_phi2m(1), d1_phi2m(2));
         }
         else
         {
-            const amrex::Real phi1 = vars.cell_data[c_phi];
-            const amrex::Real Pi1  = vars.cell_data[c_Pi];
-            const amrex::Real phi2 = vars.cell_data[c_phi2];
-            const amrex::Real Pi2  = vars.cell_data[c_Pi2];
+            const amrex::Real phi1 = cell_data[c_phi];
+            const amrex::Real Pi1  = cell_data[c_Pi];
+            const amrex::Real phi2 = cell_data[c_phi2];
+            const amrex::Real Pi2  = cell_data[c_Pi2];
+            const Tensor::Rank1 d1_phi1 =
+                a_deriv.d1_scalar(ix, iy, iz, state, c_phi);
+            const Tensor::Rank1 d1_phi2 =
+                a_deriv.d1_scalar(ix, iy, iz, state, c_phi2);
             const RLPumpSources src = RLPumpForce::compute_single_field_sources(
                 m_pump, coords.x, coords.y, coords.z, time, lapse, phi1, phi2,
                 Pi1, Pi2);
             return RLPumpForce::force_density_single(
-                src, 1.0, Pi1, Pi2, d1.phi1(0), d1.phi1(1), d1.phi1(2),
-                d1.phi2(0), d1.phi2(1), d1.phi2(2));
+                src, 1.0, Pi1, Pi2, d1_phi1(0), d1_phi1(1), d1_phi1(2),
+                d1_phi2(0), d1_phi2(1), d1_phi2(2));
         }
     }
 };

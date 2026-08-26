@@ -7,12 +7,11 @@
 #define CONSTRAINTSWITHMATTER_HPP_
 
 #include "CCZ4Geometry.hpp"
-#include "Cell.hpp"
-#include "Coordinates.hpp"
 #include "Constraints.hpp"
+#include "Coordinates.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "GRInterval.hpp"
-#include "Tensor.hpp"
+#include "MatterDispatch.hpp"
 #include <array>
 
 //!  Calculates the Hamiltonian and Momentum constraints with matter fields

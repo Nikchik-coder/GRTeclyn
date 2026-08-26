@@ -137,6 +137,97 @@ On the GPU build node replace `upstream` with `origin` (§4) — and `7dc7c8b5` 
 
 §5 (the architectural change), §6 (the 7 resolutions), §7 (the vacuum/matter split trap — still the highest-priority correctness item), §8 (port inventory, now +`GridTreadmill.hpp`, `SpongeZone.hpp`, `VarsTools.hpp` as extra callers), §9 (derivative API), §10 (toolchain trap on the build node, `env.sh` is for running not building), §12.2–12.3 (open questions for upstream).
 
+### 0.7 Stage-1 execution log (2026-08-26, authoring machine) — what is on the branch
+
+**State.** Branch `chore/merge-upstream-2026-08` = `9c18b6b5` (tag
+`pre-upstream-merge-2026-08-26`) + the merge of `7dc7c8b5` + the port below,
+committed as ONE merge commit and pushed to the fork. **Nothing has been
+compiled.** A CPU build of `Tests/` was started on the authoring machine and
+killed after 62 AMReX objects — it never reached a GRTeclyn source file, so it
+proves nothing. The build/fix loop moves to the GPU node.
+
+**Design chosen for the 7 conflicts (§6).** Rather than force `(coords, time)`
+overloads onto every matter class, the drivers dispatch at compile time:
+
+| File | What it is now |
+|---|---|
+| `Source/Matter/MatterDispatch.hpp` (**new**) | `MatterDispatch::compute_emtensor(matter, ix,iy,iz, state, deriv, h_UU, coords, time)` and `MatterDispatch::add_matter_rhs(matter, …, coords, time)`. Detects via SFINAE whether `matter_t` has the 8-arg / 8-arg `(coords, time)` overload and calls it, else calls the plain upstream 6-arg / 6-arg one. Upstream's `ScalarField` therefore stays byte-identical; our pump/support classes keep their time-dependent physics. |
+| `Source/Matter/ScalarFieldKernels.hpp` (**new**) | `Pi_gradient_terms(vars, h_UU, chris, d1_chi, d1_lapse, d1_phi, d2_phi)` (the h^{ij}(…) + Christoffel term of the Π equation), `kinetic_invariant(vars, h_UU, Pi, d1_phi)` (= −Π² + χ h^{ij}∂φ∂φ), `zero(emtensor_t&)`. Shared by every scalar class so the Klein–Gordon RHS is written once. |
+| `CCZ4RHSWithMatter.hpp/.impl.hpp` | Upstream's `operator()<formulation, covZ4>(ix,iy,iz, rhs, state)` kept with upstream semantics: **matter contribution only** (§7.1). Added `compute_full_rhs(ix,iy,iz, rhs, state)` = `compute_chi_and_h_ij` + runtime switch on `m_formulation`/`m_params.covariantZ4` into `compute_A_ij_and_Theta_and_Gamma<…>` + `calculate_gauge_rhs` + matter (via `MatterDispatch`, with `Coordinates(IntVect, m_dx, m_center)` and `m_time`) + `add_dissipation` — i.e. the pre-#172 one-kernel semantics. Our constructors `(params, dx, sigma, formulation, G_Newton, center, time)` and `(matter, params, …)` are unchanged, so Level classes only rename the call. |
+| `ConstraintsWithMatter.hpp/.impl.hpp` | Upstream structure; `chris = compute_christoffel(d1_h, h_UU)`, EMT via `MatterDispatch::compute_emtensor(my_matter, …, m_deriv, h_UU, coords, m_time)`. Our `(center, time)` constructors kept. `compute_mf` is upstream's (`pp.get("G_Newton", …, 0)` — see §12.4). |
+| `Weyl4WithMatter.hpp/.impl.hpp` | `add_matter_EB(EBFields_t&, ix,iy,iz, state, epsilon3_LUU, h_UU, chris)`; EMT via `MatterDispatch` with `m_time`. `compute_mf` still reads `extraction_center`, `formulation`, `G_newton`. |
+| `ScalarField.hpp/.impl.hpp` | Upstream (`template <potential_t, deriv_t>`), plus our `trS` fix (`chi * trace(S)`, no extra `−3V`). |
+
+**Matter classes ported to `template <class deriv_t> … (ix,iy,iz, state, a_deriv, h_UU)`**, each keeping its own EMT convention verbatim (phantom sign, `−support_strength`, `½Π²` in GRTresna, U(1)-coupled potentials):
+
+| Class | plain overloads | `(coords, time)` overloads | why |
+|---|---|---|---|
+| `ExoticScalarField<potential_t>` | EMT, RHS | EMT | `local_support_strength(coords, time)` ramp |
+| `ComplexScalarField` | EMT, RHS | RHS | pump `compute_single_field_sources` |
+| `ComplexExoticScalarField<potential_t>` | EMT, RHS | RHS | pump |
+| `BiComplexScalarField` | EMT, RHS | RHS | pump `compute_bicomplex_sources` |
+| `GRTresnaIndependentScalars` | EMT, RHS | RHS | per-lump spotlight pump |
+| `ControllerReservoirMatter<Inner, IsBicomplex>` | EMT, RHS | EMT, RHS | reservoir transport needs `d1_vector(c_shift1)` = ∂_iβ^k as `(k,i)`, `d1_sym_tensor(c_h11)` as `(k,l,i)`, advection of ρ_c/j_c; forwards to `Inner` through `MatterDispatch`, so `Inner` needs no time overloads. Nested `D1Vars/AdvecVars` gone. |
+| `NoMatter`, `DustMatter`, `EffectiveTeoMatter` | EMT, RHS | — | trivial |
+
+Deleted (9 files, `git rm`): `ComplexScalarField{D1,D2,Advec}Vars.hpp`,
+`BiComplexScalarField{D1,D2,Advec}Vars.hpp`,
+`GRTresnaIndependentScalars{D1,D2,Advec}Vars.hpp`. Upstream already deleted
+`ScalarField{D1,D2,Advec}Vars.hpp` and `CCZ4{D1,D2,Advec}Vars.hpp`.
+`Source/Matter/Make.package` was regenerated from the directory (37 headers;
+the old one listed the deleted files and a `MovingPunctureGaugeWithMatter`
+entry without `.hpp`). Stage 2 deletes Make.package anyway (§0.4).
+
+**Callers.** 14 sites `ccz4rhs(i, j, k, rhs, state)` →
+`ccz4rhs.compute_full_rhs(i, j, k, rhs, state)`:
+`Examples/RadialRecipe/RadialRecipeMatterDispatch.hpp` (7),
+`Examples/RotatingWormholeCollapse/SupportedWormholeLevel.cpp` (6),
+`Examples/SupportedWormholeCollapse/SupportedWormholeLevel.cpp` (1).
+`Examples/RadialRecipe/RadialRecipeLevel.cpp`: `reduce_ec_margins` EMT now
+`matter.compute_emtensor(i,j,k, st, deriv, h_UU)` with `emt.j(i)`/`emt.S(i,j)`;
+the curvature-invariant diagnostic (~line 1540) fetches `d1_chi, d1_Gamma
+(d1_vector c_Gamma1), d1_h, d2_chi, d2_h (d2_sym_tensor)` and calls the 8-arg
+`CCZ4Geometry::compute_ricci(vars, d1_chi, d1_Gamma, d1_h, d2_chi, d2_h, h_UU, chris)`
+(`CCZ4Geometry.hpp:400`), `ricci.LL(a,b)`. `SpongeZone.hpp` needs nothing
+(`add_dissipation(i,j,k, rhs_cell, state, sigma)` — `num_vars` defaults to
+`NUM_VARS`). `Source/Grids/VarsTools.hpp` (namespace `Old`, self-contained) was
+left alone.
+
+A `grep` for the old API outside `Source/Matter/` (`D1Vars|AdvecVars|diff1_|diff2_|\.ULL\[|h_UU\[|Tensor<[123],`)
+now only hits `Tests/CCZ4RHSTest/*-fdf5a7a.*` (frozen old-code copies the test
+compares against — intended) and `INFO(...)` strings in `CCZ4GeometryUnitTest`.
+
+**Where the compiler will complain first (guesses, in order of likelihood; `d1_vector` = `(icomp, idir)`, the `MatterDispatch` `Coordinates` construction and `ScalarFieldVars` were verified by reading the headers).**
+1. `Tensor::Rank1 x{a, b, c}` brace-init — used because upstream's
+   `ScalarField.impl.hpp:95` does it; if `Rank1` is not an aggregate on the
+   node's compiler, switch to element assignment.
+2. `constexpr int j_comps[3] = {c_jctrl1, …}` and `const Tensor::Rank1 d1_j[3] = {…}`
+   inside a device lambda path (`ControllerReservoirMatter::add_reservoir_rhs`).
+3. The anonymous-namespace `AMREX_GPU_DEVICE` helper in
+   `BiComplexScalarField.impl.hpp` (fine for nvcc as inline, but check `-Wunused`
+   under host-only builds).
+4. `emtensor_t` members: upstream's struct is `{Tensor::Rank2 S; Tensor::Rank1 j; Real trS, rho}`;
+   classes that accumulate call `ScalarFieldKernels::zero(out)` first — the ones
+   that assign every component (`Exotic*`, `Dust`, `Teo`) do not, on purpose.
+
+**On the node (node naming: fork = `myfork`, collaboration = `origin`).**
+
+```bash
+cd /home/jovyan/nachevsky/test/simulation/GRTeclyn
+git fetch myfork --tags
+git checkout -b chore/merge-upstream-2026-08 myfork/chore/merge-upstream-2026-08
+# 1. drivers first — Tests/ instantiates CCZ4RHSWithMatter/ConstraintsWithMatter/Weyl4WithMatter with ScalarField
+cd Tests && make -j16 USE_MPI=FALSE USE_CUDA=FALSE && ./Tests3d.gnu.ex   # BSSNMatterTest, EMTensorTest, Weyl4WithMatterTest
+# 2. then our classes — RadialRecipe instantiates all of them through RadialRecipeMatterDispatch
+cd ../Examples/RadialRecipe && make -j16 USE_CUDA=TRUE ...               # the campaign build line
+# 3. wormhole examples, 4. regression vs a known-good checkpoint with UNCHANGED params (§7.4), 5. stage 2 (§0.5 step 3)
+```
+
+Fix compile errors on this branch and commit them as ordinary commits on top
+of the merge commit (no need to amend it). Escape hatch unchanged:
+`git checkout feature/grteclyn-wrapper` — the tag pins the pre-merge state and
+nothing on the research branch was touched.
+
 ---
 
 ## 1. TL;DR

@@ -192,22 +192,19 @@ reduce_ec_margins(const amrex::MultiFab &state_fine, const matter_t &matter,
                 const amrex::CellData<const amrex::Real> &cell =
                     st.cellData(i, j, k);
                 typename matter_t::Vars vars(cell);
-                const typename matter_t::D1Vars d1(i, j, k, st, deriv);
                 const auto h_UU = CCZ4Geometry::compute_inverse_metric(vars);
-                const auto chris =
-                    CCZ4Geometry::compute_christoffel(d1, h_UU);
                 const auto emt =
-                    matter.compute_emtensor(vars, d1, h_UU, chris.ULL);
+                    matter.compute_emtensor(i, j, k, st, deriv, h_UU);
 
                 const amrex::Real rho    = emt.rho;
-                const amrex::Real jin[3] = {emt.j[0], emt.j[1], emt.j[2]};
+                const amrex::Real jin[3] = {emt.j(0), emt.j(1), emt.j(2)};
                 amrex::Real Sin[3][3];
-                Sin[0][0] = emt.S[0][0];
-                Sin[0][1] = Sin[1][0] = emt.S[0][1];
-                Sin[0][2] = Sin[2][0] = emt.S[0][2];
-                Sin[1][1] = emt.S[1][1];
-                Sin[1][2] = Sin[2][1] = emt.S[1][2];
-                Sin[2][2] = emt.S[2][2];
+                Sin[0][0] = emt.S(0, 0);
+                Sin[0][1] = Sin[1][0] = emt.S(0, 1);
+                Sin[0][2] = Sin[2][0] = emt.S(0, 2);
+                Sin[1][1] = emt.S(1, 1);
+                Sin[1][2] = Sin[2][1] = emt.S(1, 2);
+                Sin[2][2] = emt.S(2, 2);
 
                 const amrex::Real chi = st(i, j, k, c_chi);
                 const amrex::Real inv_chi =
@@ -1543,20 +1540,25 @@ void RadialRecipeLevel::specificPostTimeStep()
                         const FourthOrderDerivatives deriv(ci_dx);
                         const amrex::CellData<const amrex::Real> &cell =
                             st.cellData(i, j, k);
-                        ScalarField<DefaultPotential>::Vars vars(cell);
-                        const ScalarField<DefaultPotential>::D1Vars d1(
-                            i, j, k, st, deriv);
-                        const Tensor<2, amrex::Real> d2_chi =
-                            deriv.diff2(i, j, k, st, c_chi);
-                        const Tensor<4, amrex::Real> d2_h =
-                            deriv.diff2_tensor(i, j, k, st, c_h11);
+                        const ScalarFieldVars vars(cell);
+                        const Tensor::Rank1 d1_chi =
+                            deriv.d1_scalar(i, j, k, st, c_chi);
+                        const Tensor::Rank2 d1_Gamma =
+                            deriv.d1_vector(i, j, k, st, c_Gamma1);
+                        const Tensor::Sym12Rank3 d1_h =
+                            deriv.d1_sym_tensor(i, j, k, st, c_h11);
+                        const Tensor::Sym12Rank2 d2_chi =
+                            deriv.d2_scalar(i, j, k, st, c_chi);
+                        const Tensor::Sym12Sym34Rank4 d2_h =
+                            deriv.d2_sym_tensor(i, j, k, st, c_h11);
 
                         const auto h_UU =
                             CCZ4Geometry::compute_inverse_metric(vars);
                         const auto chris =
-                            CCZ4Geometry::compute_christoffel(d1, h_UU);
+                            CCZ4Geometry::compute_christoffel(d1_h, h_UU);
                         const auto ricci = CCZ4Geometry::compute_ricci(
-                            vars, d1, d2_chi, d2_h, h_UU, chris);
+                            vars, d1_chi, d1_Gamma, d1_h, d2_chi, d2_h, h_UU,
+                            chris);
 
                         const amrex::Real R3 = ricci.scalar;
 
@@ -1568,9 +1570,9 @@ void RadialRecipeLevel::specificPostTimeStep()
                                 for (int c = 0; c < 3; ++c)
                                     for (int d = 0; d < 3; ++d)
                                         ricci_sq +=
-                                            (chi * h_UU[a][c]) *
-                                            (chi * h_UU[b][d]) *
-                                            ricci.LL[a][b] * ricci.LL[c][d];
+                                            (chi * h_UU(a, c)) *
+                                            (chi * h_UU(b, d)) *
+                                            ricci.LL(a, b) * ricci.LL(c, d);
 
                         const amrex::Real Aij_sq =
                             CCZ4Geometry::compute_Aij_squared(vars, h_UU);

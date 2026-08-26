@@ -7,9 +7,6 @@
 #define COMPLEXEXOTICSCALARFIELD_HPP_
 
 #include "CCZ4Geometry.hpp"
-#include "ComplexScalarFieldAdvecVars.hpp"
-#include "ComplexScalarFieldD1Vars.hpp"
-#include "ComplexScalarFieldD2Vars.hpp"
 #include "ComplexScalarFieldVars.hpp"
 #include "Coordinates.hpp"
 #include "DefaultPotential.hpp"
@@ -18,6 +15,7 @@
 #include "GRParmParse.hpp"
 #include "RLMatterPumpParams.hpp"
 #include "RLPumpForce.hpp"
+#include "ScalarFieldKernels.hpp"
 #include "StateVariables.hpp"
 #include "Tensor.hpp"
 #include "TensorAlgebra.hpp"
@@ -56,33 +54,28 @@ template <class potential_t = DefaultPotential> class ComplexExoticScalarField
             pp.load("wormhole_support_strength", m_support_strength, 1.0);
     }
 
-    using Vars      = ComplexScalarFieldVars;
-    using D1Vars    = ComplexScalarFieldD1Vars;
-    using D2Vars    = ComplexScalarFieldD2Vars;
-    using AdvecVars = ComplexScalarFieldAdvecVars;
+    using Vars = ComplexScalarFieldVars;
 
-    [[nodiscard]]
-    AMREX_GPU_DEVICE emtensor_t
-    compute_emtensor(const Vars &vars, const D1Vars &d1,
-                     const Tensor<2, amrex::Real> &h_UU,
-                     const Tensor<3, amrex::Real> &chris_ULL) const;
+    template <class deriv_t>
+    [[nodiscard]] AMREX_GPU_DEVICE emtensor_t compute_emtensor(
+        const int ix, const int iy, const int iz,
+        const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+        const Tensor::Rank2 &h_UU) const;
 
-    [[nodiscard]]
-    AMREX_GPU_DEVICE emtensor_t
-    compute_emtensor(const Vars &vars, const D1Vars &d1,
-                     const Tensor<2, amrex::Real> &h_UU,
-                     const Tensor<3, amrex::Real> &chris_ULL,
-                     const Coordinates &coords, amrex::Real time) const;
-
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                   const D1Vars &d1, const D2Vars &d2,
-                   const AdvecVars &advec) const;
+    add_matter_rhs(const int ix, const int iy, const int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state,
+                   const deriv_t &a_deriv) const;
 
+    //! As above plus the pump source terms, which need position and time.
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                   const D1Vars &d1, const D2Vars &d2,
-                   const AdvecVars &advec, const Coordinates &coords,
+    add_matter_rhs(const int ix, const int iy, const int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state,
+                   const deriv_t &a_deriv, const Coordinates &coords,
                    amrex::Real time) const;
 };
 

@@ -249,7 +249,7 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                     params.formulation, 1.0, center, time);
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else if (uses_complex_scalar(params))
     {
@@ -274,7 +274,7 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                         params.formulation, 1.0, center, time);
             amrex::ParallelFor(
                 a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+                { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
         }
         else
         {
@@ -284,7 +284,7 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                         params.formulation, 1.0, center, time);
             amrex::ParallelFor(
                 a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+                { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
         }
     }
     else if (uses_bicomplex_scalar(params))
@@ -307,7 +307,7 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                         params.formulation, 1.0, center, time);
             amrex::ParallelFor(
                 a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+                { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
         }
         else
         {
@@ -318,7 +318,7 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                         params.formulation, 1.0, center, time);
             amrex::ParallelFor(
                 a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+                { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
         }
     }
     else if (params.recipe_exotic_matter)
@@ -331,7 +331,7 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                     params.formulation, 1.0, center, time);
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else
     {
@@ -342,7 +342,7 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
                     params.formulation, 1.0, center, time);
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
 
     // Sponge zone: apply extra radially-ramped KO dissipation in the outer

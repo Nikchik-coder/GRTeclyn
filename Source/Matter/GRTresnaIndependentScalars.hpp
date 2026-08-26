@@ -5,18 +5,17 @@
 #include "Coordinates.hpp"
 #include "DimensionDefinitions.hpp"
 #include "FourthOrderDerivatives.hpp"
-#include "GRTresnaIndependentScalarsAdvecVars.hpp"
-#include "GRTresnaIndependentScalarsD1Vars.hpp"
-#include "GRTresnaIndependentScalarsD2Vars.hpp"
+#include "GRParmParse.hpp"
 #include "GRTresnaIndependentScalarsVars.hpp"
 #include "GRTresnaScalarLayout.hpp"
 #include "GRTresnaScalarPotential.hpp"
-#include "GRParmParse.hpp"
 #include "RLMatterPumpParams.hpp"
+#include "ScalarFieldKernels.hpp"
 #include "Tensor.hpp"
 #include "TensorAlgebra.hpp"
 
 #include <array>
+#include <cmath>
 #include <sstream>
 #include <string>
 
@@ -75,33 +74,30 @@ class GRTresnaIndependentScalars
 
     [[nodiscard]] int num_fields() const { return m_num_fields; }
 
-    using Vars      = GRTresnaIndependentScalarsVars;
-    using D1Vars    = GRTresnaIndependentScalarsD1Vars;
-    using D2Vars    = GRTresnaIndependentScalarsD2Vars;
-    using AdvecVars = GRTresnaIndependentScalarsAdvecVars;
+    using Vars = GRTresnaIndependentScalarsVars;
 
-    [[nodiscard]]
-    AMREX_GPU_DEVICE emtensor_t
-    compute_emtensor(const Vars &vars, const D1Vars &d1,
-                     const Tensor<2, amrex::Real> &h_UU,
-                     const Tensor<3, amrex::Real> &chris_ULL) const;
+    template <class deriv_t>
+    [[nodiscard]] AMREX_GPU_DEVICE emtensor_t compute_emtensor(
+        const int ix, const int iy, const int iz,
+        const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+        const Tensor::Rank2 &h_UU) const;
 
-    [[nodiscard]]
-    AMREX_GPU_DEVICE emtensor_t
-    compute_emtensor(const Vars &vars, const D1Vars &d1,
-                     const Tensor<2, amrex::Real> &h_UU,
-                     const Tensor<3, amrex::Real> &chris_ULL,
-                     const Coordinates &coords, amrex::Real time) const;
-
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                   const D1Vars &d1, const D2Vars &d2,
-                   const AdvecVars &advec) const;
+    add_matter_rhs(const int ix, const int iy, const int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state,
+                   const deriv_t &a_deriv) const;
 
+    //! As above plus the per-lump spotlight pump, which needs position and
+    //! time.
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                   const D1Vars &d1, const D2Vars &d2, const AdvecVars &advec,
-                   const Coordinates &coords, amrex::Real time) const;
+    add_matter_rhs(const int ix, const int iy, const int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state,
+                   const deriv_t &a_deriv, const Coordinates &coords,
+                   amrex::Real time) const;
 
   private:
     int m_num_fields{};
