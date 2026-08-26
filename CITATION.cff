@@ -1,0 +1,40 @@
+cff-version: 1.2.0
+title: "GRTeclyn research fork — Bondi dipole campaign"
+message: >-
+  If you use this code or the packed campaign data, please cite the
+  paper under "preferred-citation" below.
+type: software
+authors:
+  - family-names: Shirokov
+    given-names: "Nikita M."
+    email: shirokov.nm@phystech.edu
+    affiliation: "Independent Researcher, Moscow, Russia"
+repository-code: "https://github.com/Nikchik-coder/GRTeclyn"
+url: "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole"
+license: BSD-3-Clause
+version: v1.0-bondi-dipole
+date-released: "2026-08-25"
+keywords:
+  - numerical relativity
+  - negative mass
+  - Bondi dipole
+  - boson stars
+  - phantom scalar field
+  - AMReX
+  - GPU
+preferred-citation:
+  type: article
+  title: >-
+    The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating
+    Positive-Negative Mass Binary
+  authors:
+    - family-names: Shirokov
+      given-names: "Nikita M."
+      email: shirokov.nm@phystech.edu
+      affiliation: "Independent Researcher, Moscow, Russia"
+  year: 2026
+  month: 8
+  journal: "arXiv e-prints"
+  doi: 10.48550/arXiv.2608.24577
+  url: "https://arxiv.org/abs/2608.24577"
+  notes: "arXiv:2608.24577 [gr-qc]"

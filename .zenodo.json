@@ -1,0 +1,34 @@
+{
+  "upload_type": "software",
+  "title": "GRTeclyn research fork — Bondi dipole campaign",
+  "description": "<p>Code, run matrix and packed campaign data behind <em>The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive-Negative Mass Binary</em> (arXiv:2608.24577).</p><p>A GRTeclyn (AMReX/GPU) research fork with a Python orchestration layer: GRTresna constraint-solved initial data for dressed soliton stars of both mass signs, CCZ4 evolution of a bicomplex scalar in which only the phantom sector enters Einstein's equations with a minus sign, and the diagnostics that measure the runaway. Includes the scrubbed per-cell time series, dressed-star tables, solve and evolution parameters, curated frames and movies, and the refit tooling — reproducible without a GPU.</p>",
+  "creators": [
+    {
+      "name": "Shirokov, Nikita M.",
+      "affiliation": "Independent Researcher, Moscow, Russia"
+    }
+  ],
+  "license": "BSD-3-Clause",
+  "access_right": "open",
+  "keywords": [
+    "numerical relativity",
+    "negative mass",
+    "Bondi dipole",
+    "boson stars",
+    "phantom scalar field",
+    "AMReX",
+    "GPU"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "arXiv:2608.24577",
+      "relation": "isSupplementTo",
+      "scheme": "arxiv"
+    },
+    {
+      "identifier": "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}
