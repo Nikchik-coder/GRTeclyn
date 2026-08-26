@@ -214,7 +214,23 @@ def run_qd_search(
             print(f"[qd] target_evals={target_evals} already reached; nothing to do.")
             return archive
     else:
-        qd_dir.mkdir(parents=True, exist_ok=False)
+        try:
+            qd_dir.mkdir(parents=True, exist_ok=False)
+        except FileExistsError:
+            # Campaign launchers register their stop handle (launcher.pid,
+            # scripts/campaigns/lib/launcher_common.sh) before the driver
+            # starts, pre-creating the campaign dir.  Accept that single
+            # artifact; anything else means a prior campaign lives here and
+            # must not be clobbered.
+            leftovers = [
+                p.name for p in qd_dir.iterdir() if p.name != "launcher.pid"
+            ]
+            if leftovers:
+                raise FileExistsError(
+                    f"{qd_dir} already holds campaign output "
+                    f"({', '.join(sorted(leftovers)[:5])}); use QD_RESUME=1 "
+                    "to continue it or choose a new QD_NAME"
+                ) from None
         archive = QDArchive(bins=bins)
         trajectory = []
         if target_evals is not None:

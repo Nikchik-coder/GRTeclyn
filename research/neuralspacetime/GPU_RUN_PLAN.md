@@ -22,9 +22,11 @@ commit → push → pull only.
 
 ## The scoreboard
 
-- [ ] **Phase 0** — cluster preflight: env, tests, binary
-- [ ] **Phase 1** — stable-matter gate (**GO/NO-GO**)
-- [ ] **Phase 2** — MAP-Elites `qball_traj_fgeo_v2` (200 evals)
+- [x] **Phase 0** — cluster preflight: env, tests, binary (2026-08-26)
+- [x] **Phase 1** — stable-matter gate (**GO/NO-GO**) — **GO**, 2026-08-26,
+      all boxes green (A/B vs old binary impossible: `.pre_trsfix` deleted)
+- [ ] **Phase 2** — MAP-Elites `qball_traj_fgeo_v2` (200 evals) — **launched
+      2026-08-26 ~12:45, unseeded** (v1 tree gone from disk)
 - [ ] **Phase 3** — CMA-ES `qball_traj_fgeo_max_cmaes_v2` (200 evals)
 - [ ] **Phase 4** — freeze the champion + HQ promotion (FMAX-RM v2)
 - [ ] **Phase 5** — refinement matrix (convergence + domain + controls)
@@ -113,10 +115,20 @@ in flight, solves may run freely.
 
 ## Phase 0 — cluster preflight (no GPU time)
 
-- [ ] `git pull` this branch on the cluster; `uv sync` (Python 3.12 — 3.14
+- [x] `git pull` this branch on the cluster; `uv sync` (Python 3.12 — 3.14
       breaks lalsuite); full `pytest tests/ -q` in `grteclyn-wrapper/` passes
       with only the 4 known environmental failures.
-- [ ] **Evolution binary post-dates `92e2d3a6`** (the trS fix). Rebuild if in
+      *(2026-08-26: pytest had to be installed into the wrapper venv — it is
+      not a declared dependency. 1043 passed + the 4 documented failures; a
+      5th failure was a stale test asserting the pre-`08a3dcf5` unigrid
+      `regrid_interval` — test fixed. Two launch-blocking regressions found
+      and fixed on the way: the campaign's exported
+      `GRTRESNA_REQUIRE_ALIGNED_SOLVE=1` leaked into the pytest gate's
+      fixture tests (now stripped by `tests/grtresna/conftest.py`), and the
+      fresh-run QD driver refused the dir pre-created by
+      `campaign_register_launcher` for `launcher.pid` (driver now tolerates
+      exactly that one artifact).)*
+- [x] **Evolution binary post-dates `92e2d3a6`** (the trS fix). Rebuild if in
       doubt; `main3d.gnu.MPI.CUDA.ex.pre_trsfix` is the broken binary kept
       for A/B — verify no launcher can pick it up:
 
@@ -125,12 +137,17 @@ in flight, solves may run freely.
       ls -l Examples/*/main3d.gnu.MPI.CUDA.ex        # mtime after the pull that brought 92e2d3a6
       ```
 
-- [ ] GRTresna needs **no rebuild**: `maximal_slicing` is a params.txt key of
+- [x] GRTresna needs **no rebuild**: `maximal_slicing` is a params.txt key of
       the CTTKHybrid method the BosonStarBH example is already compiled with.
-      Confirm the sibling checkout is on `feature/interstellar`, pulled.
-- [ ] Disk: ≥ 150 GB free under `runs/`.
-- [ ] No orphaned orchestrators or solvers alive from earlier sessions
+      Confirm the sibling checkout is on `feature/grteclyn-wrapper` (the
+      2026-08-26 rewrite; ex-`feature/interstellar`), pulled.
+      *(Verified: content byte-identical to the compiled Aug 6 binary's
+      source, Q-torus work committed.)*
+- [x] Disk: ≥ 150 GB free under `runs/` *(3.5 TB free)*.
+- [x] No orphaned orchestrators or solvers alive from earlier sessions
       (`pgrep -af "grteclyn_wrapper|grtresna|main3d|gpu_queue"`).
+      *(One caveat found during 0: `main3d...ex.pre_trsfix` no longer exists
+      anywhere — the optional Phase 1b A/B is impossible.)*
 
 ---
 
@@ -158,36 +175,52 @@ below do not depend on which genome ran.)
 
 ### 1b — the checks, every one green
 
-- [ ] **Solve params as intended** — in `eval_*/grtresna/params.txt`:
+- [x] **Solve params as intended** — in `eval_*/grtresna/params.txt`:
       `N = 256 256 256`, `max_level = 0`, `NL_exit_tolerance = 0.1`,
-      `maximal_slicing = 1`.
-- [ ] **Exit door** — `metadata.json` →
+      `maximal_slicing = 1`. *(All exact, plus `NL_stall_tolerance = 0.002`.)*
+- [x] **Exit door** — `metadata.json` →
       `grtresna_convergence.exit_door == "converged"`, and the standalone
-      twin agrees:
+      twin agrees: *(converged at iteration 8/50, Ham 0.029% / Mom 0.054%,
+      1.8× headroom; checker PASS, exit 0.)*
 
       ```bash
       .venv/bin/python ../research/bondi_dipole/check_solve_exit.py <eval dir>   # exit 0
       ```
 
-- [ ] **Alignment** — no `Chombo level ... does not match target dx` warning
+- [x] **Alignment** — no `Chombo level ... does not match target dx` warning
       anywhere in the eval log (the rail refuses misaligned solves outright,
       the paint path warns if anything still slips through);
       `check_gridinit_alignment.py` on the gridinit reports centroid offset
-      0.0000.
-- [ ] **Born at rest** — `collapse_diagnostics.dat` col 4: `max|K| ~ 1e-5`
+      0.0000. *(Zero warnings; solve dx 0.5 == gridinit dx 0.5, straight
+      copy. Caveat learned here: the centroid script's symmetry premise only
+      holds for the Bondi pair geometry — on an asymmetric search genome it
+      reports superposed-well physics, not the transfer bug. For campaign
+      evals the rail + equal-dx + born-centred are the check.)*
+- [x] **Born at rest** — `collapse_diagnostics.dat` col 4: `max|K| ~ 1e-5`
       at t=0. A value ~1e-1 is the CTTK birth kick — the slicing fix is not
-      reaching the solve.
-- [ ] **Born centred** — t=0 row of `small_data/sector_barycenters.dat`
+      reaching the solve. *(Better: K, shift, B identically ZERO in the
+      gridinit; lapse ≡ 1. The .dat starts at t=0.01 already gauge-evolved
+      (7.6e-3), so read birth-K from the gridinit, not the file.)*
+- [x] **Born centred** — t=0 row of `small_data/sector_barycenters.dat`
       matches the painted lump positions; no directional drift in the first
       few code units that all lumps share (the rule-1 artefact signature).
-- [ ] **Matter behaves** — confinement is scored relative to the run's own
+      *(This campaign's consumer does not pass `--sector-barycenters`, so the
+      .dat does not exist; measured instead from `initial_data.gridinit` +
+      `initial_data.matter.json`: phantom sector barycentre within 0.04 of
+      painted, per-lump windows ≤ 0.4 with each residual pointing at its
+      same-sector neighbour (tail contamination) — no shared direction.)*
+- [x] **Matter behaves** — confinement is scored relative to the run's own
       t=0 (`metadata.json` score components carry
       `confinement_final_frac` + the initial→final note); any DISPERSED
       verdict quotes t=0-relative retention, not the absolute constant.
-- [ ] **Old binary A/B (optional but cheap)** — the same eval on
-      `*.pre_trsfix` should reproduce the old spurious dispersal; the fixed
-      binary should not. This is the "as in bondi" demonstration in one
-      picture.
+      *(Verdict text: "confined fraction fell to 18% of its t=0 value" —
+      the fixed wording. The throwaway genome dispersed 74%→13% and
+      late-collapsed (trapped surface t=25.6); rails all fired: 4D trace
+      flagged unreliable and zeroed, coordinate-FTL down-gated for
+      dispersal.)*
+- [ ] ~~**Old binary A/B (optional but cheap)**~~ — impossible: no
+      `*.pre_trsfix` binary survives anywhere on this machine (verified in
+      Phase 0). The "as in bondi" one-picture demonstration cannot be made.
 
 ### 1c — 5-eval smoke of the full campaign loop (~2 h, 4 GPUs)
 
@@ -196,11 +229,14 @@ QD_NAME=preflight_smoke_v2 QD_TARGET_EVALS=5 GPU_IDS="0 1 2 3" \
   bash scripts/campaigns/qball_trajectory/run_fgeo.sh
 ```
 
-- [ ] All 5 evals: exit door `converged`, no alignment warnings, sane scores.
-- [ ] Solve wall time ~7 min at `RANKS=8` (if ~46 min, the ranks knob is not
+- [x] All 5 evals: exit door `converged`, no alignment warnings, sane scores.
+      *(5/5 converged in 8–9 iterations, Ham ≤ 0.063% / Mom ≤ 0.084%,
+      postload gates PASS, scores 27.7–646.5, 4 elites, tiers up to
+      "operational". Whole smoke: ~35 min on 4 GPUs.)*
+- [x] Solve wall time ~7 min at `RANKS=8` (if ~46 min, the ranks knob is not
       reaching mpirun; if mpirun segfaults at DVM start-up, fall back
-      `RANKS=1` and accept the cost).
-- [ ] Delete both preflight run dirs afterwards.
+      `RANKS=1` and accept the cost). *(7:40–9:20 per solve.)*
+- [x] Delete both preflight run dirs afterwards. *(Done 2026-08-26 ~12:40.)*
 
 **NO-GO:** any red box above. Do not tune around a failure — find it. The v1
 campaigns are what "tune around it" produces.
@@ -208,6 +244,11 @@ campaigns are what "tune around it" produces.
 ---
 
 ## Phase 2 — MAP-Elites `qball_traj_fgeo_v2` (200 evals, 4 GPUs, ~2–3 days)
+
+> **Launched 2026-08-26 ~12:45**, detached, **unseeded** — the v1 tree no
+> longer exists on disk, so `SEED_EVAL_DIRS` expanded empty (the sanctioned
+> fallback below). Measured Phase-1 cost basis: ~8.5 min solve + ~10 min
+> evolution ≈ 21 min/eval end-to-end.
 
 The paper's gated lineage (`f_geo_max`: evolving-geodesic shortcut ×
 persistence), re-run from scratch on the corrected physics, seeded from the
