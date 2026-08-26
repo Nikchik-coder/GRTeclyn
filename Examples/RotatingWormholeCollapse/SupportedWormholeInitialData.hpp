@@ -7,7 +7,6 @@
 #define SUPPORTEDWORMHOLEINITIALDATA_HPP_
 
 #include "CCZ4StateVariables.hpp"
-#include "Cell.hpp"
 #include "Coordinates.hpp"
 #include "Tensor.hpp"
 #include "VarsTools.hpp"
