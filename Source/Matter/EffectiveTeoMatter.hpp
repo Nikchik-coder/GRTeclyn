@@ -38,7 +38,9 @@ class EffectiveTeoMatterVars : public CCZ4Vars
     [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE const amrex::Real &
     teo_S(int i, int j) const
     {
-        return cell_data[VAR_IDX(c_teo_S11, i, j)];
+        // packed symmetric index: S11,S12,S13,S22,S23,S33 (was VAR_IDX,
+        // deleted upstream with the old variables layer)
+        return cell_data[c_teo_S11 + i + j + ((i * j != 0) ? 1 : 0)];
     }
 };
 
