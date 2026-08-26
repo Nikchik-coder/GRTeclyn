@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import os
 
 from .types import ScoringContext
 
@@ -12,6 +13,18 @@ _RHO_PERSISTENCE_FLOOR: float = 1.0e-8
 # The trajectory pump injects energy, so some rho growth is physical.  Only
 # penalise when final peak rho exceeds initial by more than this factor.
 _RHO_GROWTH_TOLERANCE: float = 3.0
+
+# Baseline for the confinement-retention gate (README rule 3).  "t0" judges
+# dispersal against the run's OWN initial confined fraction; "absolute" is the
+# pre-2026-08-26 behaviour (raw final fraction vs a fixed threshold), kept
+# reachable for A/B against old campaigns.  A t=0 fraction below this floor
+# means the profile never was confined and the ratio would divide noise.
+_CONFINEMENT_BASELINE_ENV = "SCORE_CONFINEMENT_BASELINE"
+_CONFINEMENT_INITIAL_FLOOR: float = 1.0e-6
+
+
+def _confinement_baseline_is_t0() -> bool:
+    return os.environ.get(_CONFINEMENT_BASELINE_ENV, "t0").lower() != "absolute"
 
 
 def compute_survival_components(ctx: ScoringContext) -> None:
@@ -108,13 +121,30 @@ def compute_survival_components(ctx: ScoringContext) -> None:
     # scale (4*well_width of the true matter barycentre); it falls precisely when
     # the matter de-localizes, regardless of peak.  Defaults to 1.0 (un-gated)
     # when confinement.dat is unavailable, so older episodes are unaffected.
+    #
+    # Rule 3 (wrapper README / bondi 2026-08-21): retention is judged against
+    # the run's OWN t=0 confined fraction, not an absolute threshold.  A star
+    # family that sits at 27% confinement by construction is perfectly stable
+    # at 27%; the old absolute gate flagged it DISPERSED while letting a
+    # 99%->55% collapse pass untouched.  Falls back to the absolute fraction
+    # when t=0 is unavailable (older confinement.dat) or itself ~0, and the
+    # old behaviour stays reachable via SCORE_CONFINEMENT_BASELINE=absolute.
     confinement_retention = 1.0
     confinement = metrics.confinement
     if confinement is not None and confinement.final_confined_frac is not None:
-        confinement_retention = float(
-            min(max(confinement.final_confined_frac, 0.0), 1.0)
-        )
-        components["confinement_final_frac"] = confinement_retention
+        final_frac = float(min(max(confinement.final_confined_frac, 0.0), 1.0))
+        initial_frac = confinement.initial_confined_frac
+        if (
+            _confinement_baseline_is_t0()
+            and initial_frac is not None
+            and initial_frac > _CONFINEMENT_INITIAL_FLOOR
+        ):
+            confinement_retention = float(
+                min(max(final_frac / float(initial_frac), 0.0), 1.0)
+            )
+        else:
+            confinement_retention = final_frac
+        components["confinement_final_frac"] = final_frac
         if confinement.spread_ratio is not None:
             components["confinement_spread_ratio"] = float(confinement.spread_ratio)
         if confinement.min_confined_frac is not None:
@@ -135,9 +165,12 @@ def compute_survival_components(ctx: ScoringContext) -> None:
             else ""
         )
         notes.append(
-            f"matter DISPERSED: only {confinement_retention:.0%} of matter remains "
-            f"confined to the lumps by t={confinement.final_time}{spread} "
-            f"(rms {confinement.initial_rms_radius}->{confinement.final_rms_radius})"
+            f"matter DISPERSED: confined fraction fell to "
+            f"{confinement_retention:.0%} of its t=0 value by "
+            f"t={confinement.final_time}{spread} "
+            f"(confined {confinement.initial_confined_frac}->"
+            f"{confinement.final_confined_frac}, "
+            f"rms {confinement.initial_rms_radius}->{confinement.final_rms_radius})"
         )
     if structural_persistence < 0.5:
         notes.append(

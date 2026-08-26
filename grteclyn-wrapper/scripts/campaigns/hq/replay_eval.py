@@ -288,32 +288,50 @@ def main() -> int:
     )
     parser.add_argument("--ftl-L", type=float, default=8.0)
     parser.add_argument("--grtresna-ranks", type=int, default=8)
-    parser.add_argument("--grtresna-iterations", type=int, default=30)
+    parser.add_argument("--grtresna-iterations", type=int, default=50)
     parser.add_argument(
-        "--grtresna-nl-exit-tolerance", type=float, default=1.0,
-        help="NL solve exit tolerance in %% (Ham AND Mom). The default 1.0 "
-        "leaves a ~0.6%% momentum residual that radiates as a metric ring at "
-        "launch -- tighten (e.g. 0.05) for equilibrium-star seeds.",
+        "--grtresna-nl-exit-tolerance", type=float, default=0.1,
+        help="NL solve exit tolerance in %% (Ham AND Mom). The pre-2026-08-26 "
+        "default of 1.0 was a search-campaign throughput value that anything "
+        "not overriding it silently inherited into paper runs (rule 8); 0.1 "
+        "is the bondi-tightened default -- tighten further (e.g. 0.001) for "
+        "equilibrium-star seeds and convergence ladders.",
     )
     parser.add_argument(
-        "--grtresna-nl-stall-tolerance", type=float, default=0.02,
+        "--grtresna-nl-stall-tolerance", type=float, default=0.002,
     )
-    parser.add_argument("--grtresna-max-level", type=int, default=3)
+    parser.add_argument(
+        "--grtresna-max-level", type=int, default=0,
+        help="GRTresna solve AMR depth. Default 0 (rule 1): refined solve "
+        "cells re-enter the last-source-wins copy and displace the metric.",
+    )
     parser.add_argument("--grtresna-refine-threshold", type=float, default=0.5)
     parser.add_argument("--grtresna-regrid-radius", type=float, default=0.0)
     parser.add_argument("--grtresna-jacobian-cap", type=float, default=25.0)
     parser.add_argument(
         "--grtresna-maximal-slicing",
-        action="store_true",
+        action=argparse.BooleanOptionalAction,
+        default=True,
         help=(
-            "Force the K=0 York/Lichnerowicz solve for NON-exotic matter too. "
-            "By default maximal slicing is switched on only when exotic "
-            "(negative-energy) lumps are present, because the CTTK ansatz "
-            "K=sign*sqrt(24 pi G rho) is imaginary for rho<0.  Canonical "
-            "matter therefore silently gets K != 0 -- a slice that is already "
-            "collapsing at birth -- while its phantom counterpart starts at "
-            "rest.  This flag removes that asymmetry so the two sectors differ "
-            "only in the sign of the energy."
+            "Build the K=0 York/Lichnerowicz solve for NON-exotic matter too "
+            "(default ON since 2026-08-26). Without it maximal slicing is "
+            "switched on only when exotic (negative-energy) lumps are "
+            "present, because the CTTK ansatz K=sign*sqrt(24 pi G rho) is "
+            "imaginary for rho<0.  Canonical matter then silently gets "
+            "K != 0 -- a slice that is already collapsing at birth -- while "
+            "its phantom counterpart starts at rest.  Pass "
+            "--no-grtresna-maximal-slicing only to reproduce a legacy CTTK "
+            "construction deliberately."
+        ),
+    )
+    parser.add_argument(
+        "--grtresna-require-converged",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "Reject a solve whose nonlinear loop exited by the stalled or "
+            "iteration-cap door instead of genuinely meeting "
+            "NL_exit_tolerance (rule 8)."
         ),
     )
     parser.add_argument(
@@ -326,16 +344,14 @@ def main() -> int:
         "--grtresna-n",
         type=int,
         default=None,
-        help="GRTresna solve cells per axis (default: same as --n-full). The "
-        "solve box is normally WIDER than the evolution box so the outer "
-        "boundary condition sits far from the matter; leaving this at the "
-        "default therefore makes the solve cell coarser than the evolution "
-        "cell by exactly that width ratio. The Hamiltonian constraint takes "
-        "second derivatives, so the interpolation noise that leaves is "
-        "amplified as 1/dx^2 and REFINING the evolution grid makes the t=0 "
-        "violation worse, not better. Set this to "
-        "n_full * (grtresna_domain_l / l_full) to match cell sizes -- on "
-        "aligned centres that makes the transfer a straight copy.",
+        help="GRTresna solve cells per axis. Default (since 2026-08-26): the "
+        "ALIGNED value n_full * (grtresna_domain_l / l_full), so the solve "
+        "cell equals the evolution cell and the transfer is a straight copy "
+        "(rule 1). The old fallback was n_full, which made the solve cell "
+        "coarser by exactly the box-width ratio; the Hamiltonian constraint "
+        "takes second derivatives, so that interpolation noise is amplified "
+        "as 1/dx^2 and REFINING the evolution grid made the t=0 violation "
+        "worse, not better.",
     )
     parser.add_argument("--grtresna-timeout", type=int, default=3600)
     parser.add_argument("--grtresna-max-ham-pct", type=float, default=5.0)
@@ -436,7 +452,14 @@ def main() -> int:
     grtresna_domain_l = (
         float(args.grtresna_domain_l) if args.grtresna_domain_l is not None else l_full
     )
-    grtresna_n = int(args.grtresna_n) if args.grtresna_n is not None else n
+    # Rule 1 default: solve cell == evolution cell.  n_full * (domain_L /
+    # L_full) cells over the (usually wider) solve box give exactly the
+    # evolution spacing, making the metric transfer a straight copy.
+    grtresna_n = (
+        int(args.grtresna_n)
+        if args.grtresna_n is not None
+        else int(round(n * grtresna_domain_l / l_full))
+    )
     overrides = _promotion_overrides(
         base_overrides,
         n_full=n,
@@ -506,6 +529,7 @@ def main() -> int:
     grtresna_convergence_config = GRTresnaConvergenceConfig(
         max_ham_pct=args.grtresna_max_ham_pct,
         max_mom_pct=args.grtresna_max_mom_pct,
+        require_converged=args.grtresna_require_converged,
     )
     if use_grtresna:
         grtresna_config = GRTresnaConfig(

@@ -122,3 +122,50 @@ def config_has_exotic_lump(cfg: GRTresnaConfig) -> bool:
     if cfg.lumps:
         return any(int(lump.get("exotic", 0)) for lump in cfg.lumps)
     return bool(cfg.lump_exotic)
+
+
+#: Env switch: refuse to run a misaligned solve instead of only warning.
+#: Exported by the campaign libs (search_common.sh / promote_common.sh) so
+#: every QD / CMA-ES / HQ launch fails closed; one-off tools keep working
+#: with a warning unless they opt in.
+REQUIRE_ALIGNED_SOLVE_ENV = "GRTRESNA_REQUIRE_ALIGNED_SOLVE"
+
+
+def aligned_solve_enforced() -> bool:
+    return os.environ.get(REQUIRE_ALIGNED_SOLVE_ENV, "0") == "1"
+
+
+def solve_grid_alignment_error(cfg: GRTresnaConfig) -> str | None:
+    """Why this solve violates the aligned-grid rule, or ``None`` if it doesn't.
+
+    Wrapper README rule 1 / bondi MatterDebugg 2026-08-21: the solved metric is
+    copied onto the target grid piecewise-constant with last-source-wins and an
+    ``int()``-truncating fallback, while the matter is repainted analytically.
+    Whenever a solve cell differs from a target cell the metric therefore
+    arrives displaced by a fraction of a cell and every lump is born off the
+    centre of its own gravitational well -- a directional artefact that looks
+    exactly like a physical interaction and does not converge away.  The copy
+    is exact only when the base spacings are equal and the solve does not
+    refine at all.
+    """
+    if cfg.gridinit_export is not None:
+        target_dx = cfg.gridinit_export.dx_xyz
+    else:
+        target_dx = tuple(
+            cfg.L / n for n in (cfg.gridinit_nx, cfg.gridinit_ny, cfg.gridinit_nz)
+        )
+    solve_dx = tuple(cfg.L / n for n in cfg.N)
+    problems: list[str] = []
+    for axis, (sdx, tdx) in enumerate(zip(solve_dx, target_dx)):
+        if abs(sdx - tdx) > 1.0e-9 * max(tdx, 1.0e-15):
+            problems.append(
+                f"axis {'xyz'[axis]}: solve dx={sdx:g} != gridinit dx={tdx:g}"
+            )
+    if cfg.max_level != 0:
+        problems.append(
+            f"solve max_level={cfg.max_level} != 0 "
+            "(refined solve cells re-enter the last-source-wins copy)"
+        )
+    if not problems:
+        return None
+    return "; ".join(problems)

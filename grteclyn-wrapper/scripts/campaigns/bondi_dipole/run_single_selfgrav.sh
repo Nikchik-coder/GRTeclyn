@@ -140,9 +140,13 @@ GRTRESNA_DOMAIN_L="${BONDI_GRTRESNA_DOMAIN_L:-128}"
 GRTRESNA_MAXLEVEL="${BONDI_GRTRESNA_MAXLEVEL:-3}"
 GRTRESNA_N="${BONDI_GRTRESNA_N:-${NFULL}}"
 GRTRESNA_MAXIMAL_SLICING="${BONDI_GRTRESNA_MAXIMAL_SLICING:-0}"
-MAXIMAL_SLICING_FLAG=()
+# replay_eval.py defaults to maximal slicing since 2026-08-26, so the "0"
+# branch must say so explicitly to keep this script's env semantics
+# (BONDI_GRTRESNA_MAXIMAL_SLICING=0 => legacy CTTK construction) bit-for-bit.
 if [[ "${GRTRESNA_MAXIMAL_SLICING}" != "0" ]]; then
   MAXIMAL_SLICING_FLAG=(--grtresna-maximal-slicing)
+else
+  MAXIMAL_SLICING_FLAG=(--no-grtresna-maximal-slicing)
 fi
 
 # BONDI_GRIDINIT -- reuse an already-solved initial_data.gridinit and skip the

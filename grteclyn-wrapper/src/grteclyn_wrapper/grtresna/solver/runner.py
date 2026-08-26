@@ -14,8 +14,13 @@ from ..io.conversion import convert_chombo_to_gridinit
 from ..matter.models import finalize_solver_config
 from ..matter.sign_consistency import enforce_id_evolution_sign_consistency
 from ..matter.wiring import write_matter_metadata
-from .config import GRTresnaConfig
-from .convergence import parse_convergence
+from .config import (
+    GRTresnaConfig,
+    aligned_solve_enforced,
+    REQUIRE_ALIGNED_SOLVE_ENV,
+    solve_grid_alignment_error,
+)
+from .convergence import CONVERGED_DOOR, parse_convergence
 from .params import write_grtresna_params
 
 logger = logging.getLogger(__name__)
@@ -147,6 +152,25 @@ def solve(
     # Refuse to solve when ID exotic signs disagree with the evolution model
     # (single-complex + per-lump phantom is the eval-118 failure mode).
     enforce_id_evolution_sign_consistency(cfg)
+    # Aligned-grid rail (README rule 1): a solve cell that differs from the
+    # gridinit cell lands the metric displaced by a fraction of a cell while
+    # the matter is repainted exactly.  Campaign launches export
+    # GRTRESNA_REQUIRE_ALIGNED_SOLVE=1 and fail closed; everything else warns.
+    alignment_error = solve_grid_alignment_error(cfg)
+    if alignment_error is not None:
+        if aligned_solve_enforced():
+            raise RuntimeError(
+                f"misaligned GRTresna solve grid: {alignment_error}. "
+                "Set the solve cells so dx matches the gridinit/evolution dx "
+                "(N_solve = N_full * domain_L / L_full) and max_level=0, or "
+                f"unset {REQUIRE_ALIGNED_SOLVE_ENV} for a deliberate "
+                "misaligned experiment."
+            )
+        logger.warning(
+            "Misaligned GRTresna solve grid (%s): the solved metric will land "
+            "displaced by a fraction of a cell (README rule 1).",
+            alignment_error,
+        )
     exe = _find_executable(cfg)
 
     outputs_dir = work_dir / "Outputs"
@@ -219,10 +243,30 @@ def solve(
 
     convergence = parse_convergence(work_dir)
     if convergence:
-        logger.info(
-            "GRTresna converged: iter=%d, Ham=%.4f%%, Mom=%.4f%%",
-            convergence["iteration"], convergence["ham_pct"], convergence["mom_pct"],
-        )
+        # Rule 8: "converged" is a verdict, not a label.  The solver leaves by
+        # three doors and only one of them means the tolerance was met.
+        door = convergence.get("exit_door", "unknown")
+        if door == CONVERGED_DOOR:
+            logger.info(
+                "GRTresna converged: iter=%d, Ham=%.4f%%, Mom=%.4f%% "
+                "(%.0fx inside the requested %s%%)",
+                convergence["iteration"],
+                convergence["ham_pct"],
+                convergence["mom_pct"],
+                convergence.get("tolerance_headroom", float("nan")),
+                convergence.get("nl_exit_tolerance"),
+            )
+        else:
+            logger.warning(
+                "GRTresna solve exit door=%s: iter=%s, Ham=%.4f%%, Mom=%.4f%% "
+                "(requested NL_exit_tolerance=%s%%) -- the initial data did "
+                "not certifiably meet the requested tolerance (README rule 8)",
+                door,
+                convergence["iteration"],
+                convergence["ham_pct"],
+                convergence["mom_pct"],
+                convergence.get("nl_exit_tolerance"),
+            )
 
     chombo_hdf5 = outputs_dir / "InitialDataFinal.3d.hdf5"
     if not chombo_hdf5.exists():

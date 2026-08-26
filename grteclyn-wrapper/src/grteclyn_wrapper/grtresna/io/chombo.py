@@ -214,6 +214,21 @@ def _paint_level(
     # target index; those levels must paint sequentially to preserve the
     # coarse-to-fine overwrite order.
     can_parallel = _is_aligned_1to1(dx_lev, dx_target)
+    if not can_parallel:
+        # Non-aligned paint: piecewise-constant, last-source-wins, with an
+        # int()-truncating nearest-cell fallback.  This displaces the copied
+        # fields by a fraction of a target cell -- a directional bias that
+        # does not converge away (wrapper README rule 1, bondi MatterDebugg
+        # 2026-08-21).  Aligned solves (solve dx == target dx, max_level=0)
+        # never reach this path.
+        logger.warning(
+            "Chombo level %d dx=%g does not match target dx=%s: "
+            "piecewise-constant transfer will displace the painted fields by "
+            "a fraction of a cell (README rule 1).",
+            level,
+            dx_lev,
+            tuple(float(d) for d in dx_target),
+        )
     if num_workers <= 1 or len(boxes) <= 1 or not can_parallel:
         for box in boxes:
             _paint_one(box)

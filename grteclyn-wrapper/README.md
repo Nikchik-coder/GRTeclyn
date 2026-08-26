@@ -140,6 +140,18 @@ BONDI_GRTRESNA_N        = NFULL * (GRTRESNA_DOMAIN_L / LFULL)
 BONDI_GRTRESNA_MAXLEVEL = 0
 ```
 
+**Enforced in the campaign path since 2026-08-26.** The QD/CMA-ES and HQ libs
+(`search_common.sh`, `promote_common.sh`) now *compute* the aligned solve N by
+default (`GRTRESNA_DOMAIN_NX = N_full * domain_L / L_full`, solve
+`GRTRESNA_MAX_LEVEL = 0`) and export `GRTRESNA_REQUIRE_ALIGNED_SOLVE=1`, which
+makes both the CLI context and the solver runner **refuse** a misaligned solve
+at launch (`solve_grid_alignment_error` in `grtresna/solver/config.py`); the
+Chombo transfer also warns whenever the non-aligned paint path actually runs.
+Before this, search solves ran at dx = 2.0 against an evolution dx of 0.5 with
+3 levels of solve AMR — every candidate's lumps were born off-centre. One-off
+tools outside the campaign libs get the warning but not the hard failure;
+opt in with the same env var.
+
 For the standard `L = 64`, `N = 128` grid solved in an `L = 128` box that is
 `N = 256`, no refinement. Resolving the initial data *finer* than the grid it
 will be evolved on buys nothing and costs exactly this.
@@ -167,10 +179,19 @@ convergence. Rule 1 is what keeps the pair matched.
 A star that has quietly dissolved makes every geometry diagnostic look perfect —
 lapse flat, constraints small, no collapse. Confirm the peak amplitude and the
 confined fraction are steady over the run *first*; only then read the geometry.
-Beware the reverse error too: the campaign scorer flags "matter DISPERSED"
-against an absolute threshold, so a star family that sits at 27% confinement by
-construction trips it while being perfectly stable. Compare against the run's
-own `t = 0`, not against a constant.
+Beware the reverse error too: the campaign scorer used to flag "matter
+DISPERSED" against an absolute threshold, so a star family that sits at 27%
+confinement by construction tripped it while being perfectly stable. Compare
+against the run's own `t = 0`, not against a constant.
+
+**The scorer does this itself since 2026-08-26**: `confinement_retention` in
+`metrics/score/survival.py` is now `final_confined_frac / initial_confined_frac`
+(the run's own t = 0), falling back to the absolute fraction only when t = 0 is
+unavailable. `SCORE_CONFINEMENT_BASELINE=absolute` restores the old behaviour
+for A/B. Because this factor multiplies the dominant `f_geo` terms through
+structural persistence, **scores are not comparable across the change** — which
+costs nothing, since every pre-fix campaign score is void anyway (the trS
+binary, defect 1 of [What was fixed](#what-was-fixed--2026-08-21)).
 
 ### 4. Never trust a diagnostic quantised coarser than its signal
 
@@ -285,6 +306,18 @@ ladder will not be so lucky.
 Remember which side binds: the phantom sector's residual is the one that
 approaches the gate, the canonical sector's sits far inside it. Reading only
 the canonical number will tell you everything is fine when it is not.
+
+**Enforced in the campaign path since 2026-08-26.** The wrapper now classifies
+the exit door itself (`classify_solve_exit` in `grtresna/solver/convergence.py`
+— the library twin of `check_solve_exit.py`, met-on-last-iteration counts as
+`cap`), logs the truth instead of the unconditional "converged" label, records
+the door in every eval's `metadata.json`, and — with
+`GRTRESNA_REQUIRE_CONVERGED=1`, the campaign-lib default — **rejects** stalled
+and capped solves before GPU time. The search-tier tolerance defaults also
+dropped from the throughput values to the bondi-tightened ones
+(`NL_exit 1.0% → 0.1%`, stall `0.005 → 0.002`); pay for them with solver ranks
+(`RANKS=8`, re-verified digit-identical and 6.6× faster at 256³), not by
+loosening the target.
 
 ### 9. Preflight every cell against the cell it will be compared with
 
@@ -676,7 +709,12 @@ GPU_IDS="0 1 2 3" MAX_CONCURRENT_GRTRESNA=5 BATCH_SIZE=8 \
 
 | Knob | Default (search) | Notes |
 |------|------------------|-------|
-| Grid | N=128, L=64, ml=1–2 | GRTresna solve on 128³ domain |
+| Grid | N=128, L=64, ml=1–2 | GRTresna solve: **aligned 256³ uniform** on the 128³-wide domain (dx = evolution dx, solve ml=0, computed by `search_common.sh`; rule 1) |
+| Solve tolerance | `NL_exit 0.1%`, stall `0.002` | `GRTRESNA_NL_EXIT_TOLERANCE` / `GRTRESNA_NL_STALL_TOLERANCE`; rule 8 |
+| Solve ranks | `RANKS=8` | pays for the aligned 256³ solves (~7 min measured); mind rule 10 with `MAX_CONCURRENT_GRTRESNA` |
+| Slicing | K=0 for **every** candidate | `GRTRESNA_MAXIMAL_SLICING=1` — no CTTK birth-kick asymmetry between canonical and phantom candidates |
+| Exit-door gate | on | `GRTRESNA_REQUIRE_CONVERGED=1` rejects stalled/capped solves pre-GPU |
+| Alignment rail | on | `GRTRESNA_REQUIRE_ALIGNED_SOLVE=1` refuses misaligned solve grids at launch |
 | Stop time | t=16 | `STOP_TIME=16.0` |
 | Archive | 8×8 bins | `BINS=8` |
 | Frames | **off** (search) / **on** (GW beam, boson shell) | `GRTECLYN_FRAMES=0` for speed |
@@ -1026,9 +1064,14 @@ GRTresna (sibling repo, ../GRTresna)        GRTeclyn (this repo, .)
 
 ### Per-eval loop (every CMA-ES member and QD candidate)
 
-1. **Sample ansatz parameters → GRTresna MPI solve** (Ham + Mom). Exotic
-   (`rho<0`) candidates auto-switch to the K=0 maximal-slicing solver
-   (`apply_exotic_safe_solver`).
+1. **Sample ansatz parameters → GRTresna MPI solve** (Ham + Mom). Since
+   2026-08-26 campaigns build **every** candidate on the K=0 maximal-slicing
+   path (`GRTRESNA_MAXIMAL_SLICING=1` → `--grtresna-maximal-slicing`), so
+   canonical and phantom candidates are constructed identically except for the
+   sign of `rho`. The old behaviour — exotic (`rho<0`) candidates auto-switch
+   via `apply_exotic_safe_solver`, canonical ones silently keep the CTTK
+   `K∝√rho` ansatz and are born mid-collapse — remains only as the fallback
+   when the flag is off.
 2. **Reject** if convergence missing, NaN, or above threshold.
 3. **Solved-geometry FTL gate** on `.gridinit` (cheap, pre-GPU, ~1 s).
 4. **Post-load constraint gate** — short GPU launch (`stop_time=0.01`, **no**

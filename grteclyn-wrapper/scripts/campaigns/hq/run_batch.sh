@@ -172,6 +172,27 @@ for entry in "${CANDIDATE_ENTRIES[@]}"; do
     geodesic_args=(--evolving-geodesic)
   fi
 
+  # Solve wiring from promote_common.sh (wrapper README rules 1/8/9): aligned
+  # solve grid, no solve refinement, tightened tolerances, uniform K=0
+  # slicing, and the genuine-convergence gate.  Before 2026-08-26 none of
+  # these were forwarded, so replay_eval's legacy defaults silently applied.
+  solve_args=(
+    --grtresna-n "${GRTRESNA_N}"
+    --grtresna-max-level "${GRTRESNA_MAX_LEVEL}"
+    --grtresna-nl-exit-tolerance "${GRTRESNA_NL_EXIT_TOLERANCE}"
+    --grtresna-nl-stall-tolerance "${GRTRESNA_NL_STALL_TOLERANCE}"
+  )
+  if [[ "${GRTRESNA_MAXIMAL_SLICING}" == "1" ]]; then
+    solve_args+=(--grtresna-maximal-slicing)
+  else
+    solve_args+=(--no-grtresna-maximal-slicing)
+  fi
+  if [[ "${GRTRESNA_REQUIRE_CONVERGED}" == "1" ]]; then
+    solve_args+=(--grtresna-require-converged)
+  else
+    solve_args+=(--no-grtresna-require-converged)
+  fi
+
   # Auto-detect matter model/sector from source eval metadata so promote_common.sh
   # can pick the correct FRAMES_FIELDS / PROJECTION_FIELDS branch
   # (boson_star → phi/Pi/phi_lump0/Pi_lump0; scalar_shell → lump_activity/phi_lump_sum).
@@ -206,6 +227,7 @@ for entry in "${CANDIDATE_ENTRIES[@]}"; do
       --grtresna-timeout "${GRTRESNA_TIMEOUT}" \
       --grtresna-max-ham-pct "${GRTRESNA_MAX_HAM_PCT}" \
       --grtresna-max-mom-pct "${GRTRESNA_MAX_MOM_PCT}" \
+      "${solve_args[@]}" \
       --consumer-keep-last "${CONSUMER_KEEP_LAST}" \
       --objective-mode "${OBJECTIVE_MODE}" \
       "${geodesic_args[@]}" \
@@ -231,6 +253,7 @@ for entry in "${CANDIDATE_ENTRIES[@]}"; do
       --grtresna-timeout "${GRTRESNA_TIMEOUT}" \
       --grtresna-max-ham-pct "${GRTRESNA_MAX_HAM_PCT}" \
       --grtresna-max-mom-pct "${GRTRESNA_MAX_MOM_PCT}" \
+      "${solve_args[@]}" \
       --consumer-keep-last "${CONSUMER_KEEP_LAST}" \
       --objective-mode "${OBJECTIVE_MODE}" \
       "${geodesic_args[@]}" \

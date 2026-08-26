@@ -48,10 +48,13 @@ if [[ -z "${SEED_EVAL_DIRS:-}" && -d "${FGEO_V1_DIR}" ]]; then
 fi
 export SEED_EVAL_DIRS
 
-# This node: 4 GPUs, and mpirun segfaults cluster-wide — GRTresna must run as
-# single-rank singleton solves (see runner.py).  Do not raise RANKS here.
 export GPU_IDS="${GPU_IDS:-0 1 2 3}"
-export RANKS="${RANKS:-1}"
+# Solve cores: the aligned 256^3 uniform solves (rule 1) are heavier than the
+# old 64^3+AMR ones, so multi-rank solves are the default -- 8 ranks were
+# re-verified 2026-08-19 digit-identical to 1 rank and 6.6x faster.  On a node
+# whose mpirun is broken (PRRTE segfault at DVM start-up, the reason this used
+# to pin RANKS=1), set RANKS=1 to fall back to singleton solves.
+export RANKS="${RANKS:-8}"
 
 # Stop handle for scripts/campaigns/stop_campaign.sh.  exec preserves the PID,
 # so registering here records the pid run.sh will actually run under.

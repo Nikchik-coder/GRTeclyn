@@ -460,6 +460,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional absolute cap for the maximal-slicing psi Jacobian; exotic candidates set a safe default.",
     )
     opt.add_argument(
+        "--grtresna-maximal-slicing",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Build EVERY candidate on the K=0 maximal-slicing path (with the "
+             "exotic-safe psi relaxation/floor and arithmetic averaging), not "
+             "only phantom-bearing ones. Without this, slicing is a side "
+             "effect of each candidate's exotic dials: canonical-only "
+             "candidates get the CTTK K~sqrt(rho) birth kick while mixed ones "
+             "get K=0 -- two construction methods in one archive (bondi "
+             "MatterDebugg 2026-08-21).",
+    )
+    opt.add_argument(
+        "--grtresna-require-converged",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Reject solves whose nonlinear loop exited by the stalled or "
+             "iteration-cap door instead of genuinely meeting "
+             "NL_exit_tolerance (README rule 8).",
+    )
+    opt.add_argument(
         "--grtresna-keep-source", action="store_true", default=False,
         help="Keep the GRTresna Chombo HDF5 + workdir per eval (disables cleanup). "
              "Use for conversion validation/debugging; consumes much more disk.",
@@ -640,6 +660,22 @@ def build_parser() -> argparse.ArgumentParser:
     qd.add_argument("--grtresna-psi-relaxation", type=float, default=1.0)
     qd.add_argument("--grtresna-psi-floor", type=float, default=-1.0)
     qd.add_argument("--grtresna-jacobian-cap", type=float, default=-1.0)
+    qd.add_argument(
+        "--grtresna-maximal-slicing",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Build EVERY candidate on the K=0 maximal-slicing path, not only "
+             "phantom-bearing ones (one construction method per archive; see "
+             "the optimize subcommand's help for the full rationale).",
+    )
+    qd.add_argument(
+        "--grtresna-require-converged",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Reject solves whose nonlinear loop exited by the stalled or "
+             "iteration-cap door instead of genuinely meeting "
+             "NL_exit_tolerance (README rule 8).",
+    )
     qd.add_argument(
         "--grtresna-keep-source", action="store_true", default=False,
         help="Keep the GRTresna Chombo HDF5 + workdir per eval (disables cleanup). "

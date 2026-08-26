@@ -24,18 +24,50 @@ else
 fi
 
 # ---- GRTresna elliptic solve -------------------------------------------------
+# Retrofitted 2026-08-26 from the bondi-dipole campaign findings (wrapper
+# README rules 1/8/9, research/bondi_dipole/docs/MatterDebugg.md).  Every
+# value below is env-overridable, but the DEFAULTS are the corrected ones:
+# aligned uniform solve, tightened tolerances, one slicing for every
+# candidate, and a genuine-convergence gate.  Overriding any of them back to
+# the pre-fix values is a deliberate, visible act.
+#
+# RANKS is the "use more cores" knob for the bigger aligned solves: 8 ranks at
+# N=256 was re-verified 2026-08-19 digit-identical to 1 rank and 6.6x faster
+# (~46 min -> ~7 min).  Mind README rule 10: solves starve GPU evolutions
+# through memory bandwidth, so cap RANKS x MAX_CONCURRENT_GRTRESNA while
+# evolutions are in flight (with no evolution running, several solves may run
+# together freely).
 : "${RANKS:=8}"
 : "${ITERATIONS:=50}"
-: "${GRTRESNA_NL_EXIT_TOLERANCE:=1.0}"
-: "${GRTRESNA_NL_STALL_TOLERANCE:=0.005}"
+# Rule 8: 1.0 (one percent) was the old throughput default and silently made
+# every campaign a measurement of the error floor.  0.1% / 0.002 are the
+# bondi-tightened values.
+: "${GRTRESNA_NL_EXIT_TOLERANCE:=0.1}"
+: "${GRTRESNA_NL_STALL_TOLERANCE:=0.002}"
 : "${GRTRESNA_GRIDINIT_WORKERS:=0}"
-: "${GRTRESNA_MAX_LEVEL:=3}"
+# Rule 1: the solve must NOT refine -- refined solve cells re-enter the
+# last-source-wins copy and displace the metric.
+: "${GRTRESNA_MAX_LEVEL:=0}"
 : "${GRTRESNA_REFINE_THRESHOLD:=0.5}"
 : "${GRTRESNA_REGRID_RADIUS:=0}"
 : "${GRTRESNA_JACOBIAN_CAP:=25.0}"
-: "${GRTRESNA_TIMEOUT:=900}"
+# Aligned 256^3 uniform solves are heavier than the old 64^3+AMR ones; the
+# timeout scales with them (8 ranks at 256^3 measured ~7 min).
+: "${GRTRESNA_TIMEOUT:=2400}"
 : "${GRTRESNA_MAX_HAM_PCT:=5.0}"
 : "${GRTRESNA_MAX_MOM_PCT:=5.0}"
+# One construction method for EVERY candidate (K=0 maximal slicing + the
+# exotic-safe relaxation), not a side effect of each candidate's exotic
+# dials.  Without it, canonical-only candidates are born mid-collapse (CTTK
+# K~sqrt(rho) birth kick) while phantom-bearing ones start at rest -- two
+# construction methods in one archive.
+: "${GRTRESNA_MAXIMAL_SLICING:=1}"
+# Rule 8 gate: reject solves that exited by the stalled / iteration-cap door.
+: "${GRTRESNA_REQUIRE_CONVERGED:=1}"
+# Rule 1 rail: refuse to launch a misaligned solve (checked at startup by the
+# CLI context AND per-solve by the runner).
+: "${GRTRESNA_REQUIRE_ALIGNED_SOLVE:=1}"
+export GRTRESNA_REQUIRE_ALIGNED_SOLVE
 
 # ---- Evolution grid (dx = L_full / N_full = 64/128 = 0.5) ------------------
 : "${GRTRESNA_EVOLUTION_L_FULL:=64.0}"
@@ -48,8 +80,19 @@ fi
 # segfaults.  0.1 keeps refinement on the central collapse region (~4% of box).
 : "${GRTRESNA_EVOLUTION_REGRID_THRESHOLD:=0.1}"
 : "${GRTRESNA_DOMAIN_L:=128.0}"
-: "${GRTRESNA_DOMAIN_NX:=64}"
-: "${GRTRESNA_DOMAIN_NY:=64}"
+# Rule 1: the solve cell must equal the evolution cell, so the default solve
+# N is COMPUTED as N_full * (domain_L / L_full) -- 256 for the standard
+# L=64/N=128 evolution solved in an L=128 box.  The old hard-coded 64 gave a
+# solve dx of 2.0 against an evolution dx of 0.5: every lump was born off the
+# centre of its own well and drifted for no physical reason.
+if [[ -z "${GRTRESNA_DOMAIN_NX:-}" ]]; then
+  GRTRESNA_DOMAIN_NX=$(awk -v n="${GRTRESNA_EVOLUTION_N_FULL}" \
+    -v l="${GRTRESNA_EVOLUTION_L_FULL}" -v d="${GRTRESNA_DOMAIN_L}" \
+    'BEGIN{printf "%d", (n * d / l) + 0.5}')
+fi
+: "${GRTRESNA_DOMAIN_NY:=${GRTRESNA_DOMAIN_NX}}"
+# NZ stays empty by default: the domain mapper derives nx (full-z) or nx/2
+# (half-z) so dz == dx either way.
 : "${GRTRESNA_DOMAIN_NZ:=}"
 : "${GRTRESNA_GRIDINIT_NX:=128}"
 : "${GRTRESNA_GRIDINIT_NY:=128}"
@@ -157,6 +200,8 @@ ftl_search_common_grtresna_args() {
     --grtresna-refine-threshold "${GRTRESNA_REFINE_THRESHOLD}"
     --grtresna-regrid-radius "${GRTRESNA_REGRID_RADIUS}"
     --grtresna-jacobian-cap "${GRTRESNA_JACOBIAN_CAP}"
+    "$([[ "${GRTRESNA_MAXIMAL_SLICING}" == "1" ]] && echo --grtresna-maximal-slicing || echo --no-grtresna-maximal-slicing)"
+    "$([[ "${GRTRESNA_REQUIRE_CONVERGED}" == "1" ]] && echo --grtresna-require-converged || echo --no-grtresna-require-converged)"
     --grtresna-max-ham-pct "${GRTRESNA_MAX_HAM_PCT}"
     --grtresna-max-mom-pct "${GRTRESNA_MAX_MOM_PCT}"
     --solved-ftl-f-op-floor "${SOLVED_FTL_F_OP_FLOOR}"
