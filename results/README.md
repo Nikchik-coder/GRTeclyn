@@ -10,6 +10,7 @@ directory — there are no loose campaign folders at this level.
 | Paper pack | Status |
 |---|---|
 | [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | Complete. Data, derived tables and the refit tooling ship together. |
+| [`wormhole-dynamics/`](wormhole-dynamics/) | Complete. Published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071). |
 
 The pack scripts scrub machine identity at runtime through the shared scrubber
 [`grteclyn_wrapper.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py)
@@ -39,3 +40,18 @@ uv run python results/bondi-dipole-runaway/tools/fit_mass_law.py
 Start with [`bondi-dipole-runaway/README.md`](bondi-dipole-runaway/README.md),
 then [`campaign/README.md`](bondi-dipole-runaway/campaign/README.md) for how to
 read a cell name and every column in the data files.
+
+### `wormhole-dynamics/`
+
+Nonlinear collapse of a traversable wormhole and the gravitational waves it
+emits, published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071). Two
+configurations share throat radius `R = 0.5` and width `sigma = 0.5`:
+
+- `unperturbed/` — `A0 = 0.0`, `A2 = 0.0`: the control.
+- `perturbed/` — `A0 = 0.0`, `A2 = 0.02`: the quadrupolar perturbation that
+  drives the collapse and sources the `ℓ = 2` signal.
+
+Each holds the constraint and collapse-diagnostic plots, the embedding and
+`K_z` panels, the six-panel `psi4` gravitational-wave analyses at several
+mass/distance configurations, the run parameters (`params_2gpu.txt`) and the
+consume-state record — as `.pdf` and `.png`.
