@@ -254,6 +254,39 @@ The paper's gated lineage (`f_geo_max`: evolving-geodesic shortcut ×
 persistence), re-run from scratch on the corrected physics, seeded from the
 v1 elites (re-evaluated and re-scored — their old scores are void).
 
+**What this campaign optimizes — precisely** (`objectives.py::_f_geo_max_total`):
+
+```
+score = 10000 · ftl_geo_evolving            ← squash(f_geo_evol) × structural_persistence
+      +   100 · operational_ftl_geodesic    ← frozen-geodesic credit (zero when 4D trace ran)
+      +    60 · ftl_persistence  +  40 · curvature_activity
+      + gate · (30·survival + 10·stability + 5·constraint_health)
+      +    40 · pump_energy_penalty  (≤ 0)  +  200 · horizon_penalty  (≤ 0)
+```
+
+- The **only first-order reward** is the 4D evolving-geodesic shortcut: null
+  rays traced through the live evolving metric, scored by fractional
+  arrival-time advantage over flat space (1% shortcut = 100 pts), squashed
+  toward saturation and **multiplied by matter survival** — a dissolved
+  star's shortcut keeps only its persistence fraction.
+- **Exotic matter is deliberately free fuel**: there is NO exotic_penalty
+  term in this mode (`SCORE_EXOTIC_PENALTY_WEIGHT` is ignored by
+  construction). Phantom-heavy genomes pay nothing here. The exotic-penalty
+  components are still *computed and stored* in every `score.json`, so
+  champions can be ranked by exoticity post-hoc; the reckoning is deferred
+  to the refinement matrix (Phase 5) and the paper's framing — these are
+  shortcut-depth candidates fueled by phantom matter, not
+  energy-condition-respecting solutions.
+- **Not a naked maximization**: collapse can't fake a shortcut (graded
+  horizon penalty ×200), pump inflation is taxed, and the hard gates sit
+  upstream of scoring entirely (require-converged solve, post-load
+  constraint gate Ham L2 < 3e-2, 4D-trace h_rel honesty rail, frozen
+  credit zeroed when the evolving trace is authoritative,
+  coordinate-speed channels down-gated on dispersal).
+- **MAP-Elites, not a single optimizer**: elites are kept per cell of an
+  8×8 archive over shortcut-strength × shortcut-lifetime descriptors —
+  it maps the territory rather than climbing one number.
+
 ```bash
 cd grteclyn-wrapper
 setsid nohup /usr/bin/env \
