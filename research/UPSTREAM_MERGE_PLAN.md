@@ -218,7 +218,7 @@ or `make` there while it runs. Work in a second worktree instead (own HEAD,
 index and build dirs; shared object store, so commits are visible everywhere):
 
 ```bash
-cd /home/jovyan/nachevsky/test/simulation/GRTeclyn        # campaign tree: fetch only, no checkout, no make
+cd <campaign checkout>            # campaign tree: fetch only, no checkout, no make
 git fetch myfork --tags
 git worktree add ../GRTeclyn-merge chore/merge-upstream-2026-08
 cd ../GRTeclyn-merge
@@ -240,6 +240,78 @@ Fix compile errors on this branch and commit them as ordinary commits on top
 of the merge commit (no need to amend it). Escape hatch unchanged:
 `git checkout feature/grteclyn-wrapper` — the tag pins the pre-merge state and
 nothing on the research branch was touched.
+
+### 0.8 Stage-1 execution log (2026-08-27, node) — build/fix loop DONE, regression in flight
+
+Worktree recipe above followed as written; the campaign ran uninterrupted
+throughout (tree, executables and orchestrator verified untouched after every
+step, and it advanced evals while the builds ran).
+
+**Builds — all four targets link.** Toolchain: CUDA 12.1 + the local
+OpenMPI 5.0.8 prefix from the wrapper `.env` + system g++ 11.4 (per the
+wrapper README: never build with the GRTresna conda env's gcc 15).
+
+| Target | Result | Fix needed |
+|---|---|---|
+| `Tests/` CPU (`USE_MPI=FALSE USE_CUDA=FALSE`) | clean first pass | none — none of §0.7's four predicted error classes fired |
+| `Examples/RadialRecipe` MPI+CUDA (campaign line, `CUDA_ARCH=90`) | links, 157 MB | dead `#include "Cell.hpp"` ×4 (`d7109f27`) |
+| `Examples/RotatingWormholeCollapse` MPI+CUDA | links | `VAR_IDX` — macro deleted upstream; its packed-symmetric-index arithmetic is now inlined at the single remaining use, `EffectiveTeoMatter.hpp` (`faf209c7`) |
+| `Examples/SupportedWormholeCollapse` MPI+CUDA | links | same commit: GNUmakefile dropped the deleted `Source/AMRInterpolator` src_dir (nothing in the example includes it) |
+
+`Examples/ScalarField` still includes the deleted `Cell.hpp` **on purpose** —
+upstream itself only fixed that example after the stage-1 merge point, so the
+fix arrives with stage 2; it is not in our build (§7.2).
+
+**Test suite — 16/16 pass, and the h5diff checks are real.** Two traps worth
+recording for whoever reruns this:
+
+1. The five matter-critical cases (`BSSNMatter`, `Constraints`, `EMTensor`,
+   `Weyl4`, `Weyl4WithMatter`) are doctest **skip-by-default** — a green
+   default run proves nothing about the port. Run with `--dt-no-skip=true`
+   (the binary uses `--dt-`-prefixed doctest options; bare `-ltc`/`-tc` are
+   silently ignored).
+2. Their real assertions — `h5diff` vs the stored GRChombo reference files at
+   `1e-10` — are compiled out entirely without `USE_HDF5=TRUE`. The build
+   needs a **serial** HDF5 (`HDF5_HOME=<serial hdf5 prefix>`; the GRTresna
+   env's HDF5 is MPI-flavoured and will not link a serial test build), and the
+   run needs `h5diff` on `PATH` plus that prefix's `lib` on `LD_LIBRARY_PATH`.
+
+With both in place: 16/16 cases, 13,327 assertions, including all five h5diff
+comparisons — the ported drivers reproduce GRChombo numerics to 1e-10 with
+upstream's `ScalarField` (zero-potential caveat stands: these tests say
+nothing about potential-dependent matter terms).
+
+**§7.1 verified statically.** `compute_full_rhs` composes
+`compute_chi_and_h_ij` → `compute_A_ij_and_Theta_and_Gamma<…>` (runtime switch
+on formulation/covariantZ4) → `calculate_gauge_rhs` → matter contribution,
+which applies dissipation once at the end; no matter Level calls
+`apply_dissipation` (the only caller is vacuum BinaryBH), and all 14 call
+sites use `compute_full_rhs` (7 RadialRecipe dispatch + 6 Rotating + 1
+Supported).
+
+**Regression (§7.4) — launched, not yet judged.** Reference: a completed
+campaign eval (`qball_traj_fgeo_v2/eval_000123`, sim ≈ 503 s on one GPU,
+exit 0) whose `initial_data.gridinit`, byte-identical `params.txt` and full
+`small_data/` diagnostics all survive on disk. Replay = merge-worktree
+RadialRecipe binary, same params file, only `output_path`/`amr.plot_file`/
+`amr.check_file` overridden **on the command line** (ParmParse), output under
+`runs/merge_regression/eval_000123_stage1`. Note the packed paper cells under
+`results/` keep params + reference diagnostics but their gridinits were
+cleaned from `runs/` (scratch policy), so campaign evals with surviving
+gridinit are the practical reference pool.
+
+**Left to do, in order.**
+1. Judge the regression: compare `small_data/*.dat` replay vs reference
+   (tolerance call — GPU runs are not bit-reproducible; §7.3's dormant-bugfix
+   caveat applies if a real diff shows up, and per standing policy a
+   *validated* numerics change is a decision point, not a merge task).
+2. Stage 2 (§0.5 step 3): merge `upstream/develop` (167 commits) — expect the
+   4 modify/delete `Make.package` conflicts + the same 7 driver files; then
+   the PR #215 params port (`params_t::fill_params`, key-rename converter over
+   the params files and the wrapper's param writers, `GRTeclynCore/RL` into
+   `src_dirs`).
+3. Rerun the same regression with CONVERTED params.
+4. Fast-forward `feature/grteclyn-wrapper` only after both regressions pass.
 
 ---
 
