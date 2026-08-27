@@ -25,7 +25,9 @@
 #endif
 
 #include <fstream>
+#include <functional>
 #include <iostream>
+#include <type_traits>
 
 #ifndef GRTECLYN_VERSION
 #define GRTECLYN_VERSION "unknown"
@@ -47,6 +49,37 @@
     return false;
 }
 
+namespace grteclyn_detail
+{
+/// Examples using the upstream parameter scheme expose a static
+/// `check_params()` for AMReX to call once the ParmParse table is built.
+/// Examples still using the legacy flat-key scheme validate inside the
+/// SimulationParameters constructor instead and have only a member function of
+/// that name, so no callback is handed to AMReX for them.
+template <typename T, typename = void>
+struct has_static_check_params : std::false_type
+{
+};
+
+template <typename T>
+struct has_static_check_params<T, std::void_t<decltype(T::check_params())>>
+    : std::true_type
+{
+};
+
+template <typename T> std::function<void()> make_check_params_callback()
+{
+    if constexpr (has_static_check_params<T>::value)
+    {
+        return std::function<void()>(T::check_params);
+    }
+    else
+    {
+        return {};
+    }
+}
+} // namespace grteclyn_detail
+
 // NOLINTBEGIN(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
 /// This function calls MPI_Init
 void mainSetup(int argc, char *argv[]);
@@ -59,7 +92,8 @@ void mainSetup(int argc, char *argv[])
     // NOLINTEND(cppcoreguidelines-avoid-c-arrays,modernize-avoid-c-arrays)
     // NOLINTNEXTLINE(bugprone-casting-through-void)
     amrex::Initialize(
-        argc, argv, std::function<void()>(SimulationParameters::check_params));
+        argc, argv,
+        grteclyn_detail::make_check_params_callback<SimulationParameters>());
 
     if (amrex::ParallelDescriptor::IOProcessor())
     {
