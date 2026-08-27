@@ -1,0 +1,122 @@
+# BinaryWormholeMerger -- Phase 0 smoke test (research/merger/Plan.md).
+# Tiny box, single level, stop_time = 0.5: exercises the whole plumbing
+# (two-throat ID with bare masses, matter RHS, diagnostics, Weyl4 derive)
+# without doing any physics.
+#
+# Launch through the campaign launcher, never directly:
+#   WHM_PARAMS=params_test.txt bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+# The three path keys below are placeholders the launcher rewrites (each must
+# appear exactly once).
+
+verbosity = 1
+
+output_path    = "./output"
+amr.plot_file  = "./scratch/BinaryWormholePlt"
+amr.check_file = "./scratch/BinaryWormholeChk"
+
+checkpoint_interval = -1
+plot_interval       = 10
+
+amr.plot_vars = chi K lapse phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+
+#################################################
+# Two-throat initial data (Route A, analytic superposition)
+
+wormhole_initial_lapse_type = 0
+wormhole_metric_type = 2            # support machinery: nearest of TWO throats
+
+wormhole_throat_radius_A = 0.5
+wormhole_throat_radius_B = 0.5
+
+# Massive drainhole branch: m/(2r) puncture piece so the pair attracts.
+# m/b = 0.5 here -- massless throats (m = 0) do not fall together at all.
+wormhole_bare_mass_A = 0.25
+wormhole_bare_mass_B = 0.25
+
+# Offsets relative to `center`; B defaults to the mirror of A.
+wormhole_centerA = 0.0 0.0 2.0
+
+# Released from rest -- the smoke test checks plumbing, not dynamics.
+wormhole_momentumA = 0.0 0.0 0.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_phi_monopole_amplitude     = 0.0
+wormhole_phi_perturbation_amplitude = 0.0
+wormhole_phi_perturbation_width     = 0.5
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid
+
+L = 16.0
+N1 = 64
+N2 = 64
+N3 = 64
+
+center = 8.0 8.0 8.0
+
+max_level = 0                        # single level: this is a smoke test
+regrid_interval = 32
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution
+
+dt_multiplier = 0.1
+stop_time = 0.5
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 2.0                            # ~ 1/M_ADM, M_ADM = 0.5
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 2.0
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Diagnostics + extraction
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 2
+binary_diag_split_coord = 0.0
+# binary_diag_min_radius defaults to max(b_A, b_B)
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576

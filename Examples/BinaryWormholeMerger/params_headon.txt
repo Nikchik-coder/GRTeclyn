@@ -1,0 +1,132 @@
+# BinaryWormholeMerger -- Phase 3 head-on, GRAVITY-DRIVEN FROM REST.
+# Two massive Ellis-Bronnikov throats (m/b = 0.5) released with ZERO momenta:
+# the bare-mass term gives each throat M_ADM = 0.25, so they fall together
+# under their own gravity -- nothing artificial.  Newtonian free-fall time
+# t_ff ~ pi sqrt(d^3/(8 M_total)) ~ 50 for d = 10, M_total = 0.5.
+#
+# This file is the LADDER STARTING POINT (Plan.md Phase 3): bare-mass ladder
+# m/b in {0.1, 0.25, 0.5, 1.0} and the m = 0 massless control both run off
+# this file with only wormhole_bare_mass_A changed.
+#
+# Launch through the campaign launcher, never directly:
+#   WHM_PARAMS=params_headon.txt bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+
+verbosity = 1
+
+output_path    = "./output"
+amr.plot_file  = "./scratch/BinaryWormholePlt"
+amr.check_file = "./scratch/BinaryWormholeChk"
+
+checkpoint_interval = 2000
+plot_interval       = 100
+
+amr.plot_vars = chi K lapse phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+
+#################################################
+# Two-throat initial data (Route A, analytic superposition)
+
+wormhole_initial_lapse_type = 0
+wormhole_metric_type = 2
+
+wormhole_throat_radius_A = 0.5
+wormhole_throat_radius_B = 0.5
+
+# Massive drainhole branch (the gravity).  Ladder knob.
+wormhole_bare_mass_A = 0.25
+wormhole_bare_mass_B = 0.25
+
+# d = 10 along z; superposition errors: O(b^2/d^2) ~ 2.5e-3, O(m/d) ~ 5e-2.
+wormhole_centerA = 0.0 0.0 5.0
+
+# FROM REST.  No Bowen-York momenta -- the fall is the physics being tested.
+wormhole_momentumA = 0.0 0.0 0.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_phi_monopole_amplitude     = 0.0
+wormhole_phi_perturbation_amplitude = 0.0
+wormhole_phi_perturbation_width     = 0.5
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid
+
+L = 64.0
+N1 = 64
+N2 = 64
+N3 = 64
+
+center = 32.0 32.0 32.0
+
+# dx_coarse = 1; level 5 dx = 1/32 -> ~16 cells across a b = 0.5 throat
+max_level = 5
+regrid_interval = 2 2 2 2 2 2
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution
+
+dt_multiplier = 0.1
+stop_time = 80.0                     # t_ff ~ 50 + merger/ringdown margin
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 2.0                            # ~ 1/M_ADM, M_ADM = 0.5
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 2.0
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Diagnostics + extraction
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 2
+binary_diag_split_coord = 0.0
+
+activate_extraction = 1
+num_extraction_radii = 2
+extraction_radii = 12.0 20.0
+extraction_levels = 0 0
+num_points_phi = 24
+num_points_theta = 37
+num_modes = 3
+modes = 2 0 \
+        2 2 \
+        4 0
+
+amrex.the_arena_init_size = 1048576

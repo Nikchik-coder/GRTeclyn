@@ -1,0 +1,138 @@
+# BinaryWormholeMerger -- Phase 4 spiralling merger (the headline run).
+# Two massive Ellis-Bronnikov throats on a quasi-circular orbit, exactly the
+# BBH recipe: the bare masses provide the gravity (each M_ADM = 0.5), the
+# transverse Bowen-York momenta only SET THE INITIAL ORBIT, and
+# gravitational-wave emission drives the inspiral.
+#
+# Starting values (Plan.md Phase 4 tunes P_t from here):
+#   M_total = 1, d = 8  ->  Newtonian circular P_t = m sqrt(M_total/d)/2 ~ 0.088
+#   orbital period T ~ 2 pi sqrt(d^3/M_total) ~ 142;  GW inspiral time from
+#   d/M = 8 is a few hundred M  ->  stop_time = 600 covers >= 2 orbits + merger
+#   + >= 100 M of post-merger.
+#
+# Launch through the campaign launcher, never directly:
+#   WHM_PARAMS=params_spiral.txt bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+
+verbosity = 1
+
+output_path    = "./output"
+amr.plot_file  = "./scratch/BinaryWormholePlt"
+amr.check_file = "./scratch/BinaryWormholeChk"
+
+checkpoint_interval = 2000
+plot_interval       = 200
+
+amr.plot_vars = chi K lapse phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+
+#################################################
+# Two-throat initial data (Route A, analytic superposition)
+
+wormhole_initial_lapse_type = 0
+wormhole_metric_type = 2
+
+wormhole_throat_radius_A = 0.5
+wormhole_throat_radius_B = 0.5
+
+# m/b = 1: heavy rung, needed to keep the GW inspiral time affordable.
+# O(m/d) superposition error ~ 0.125 -- Route B (solved data) is the plan for
+# the publication-quality version of this run (Plan.md Phase 7).
+wormhole_bare_mass_A = 0.5
+wormhole_bare_mass_B = 0.5
+
+# d = 8 along z; orbit in the y-z plane.
+wormhole_centerA = 0.0 0.0 4.0
+
+# Transverse momentum: Newtonian circular value for M_total = 1, d = 8.
+# B defaults to -A (zero total momentum).
+wormhole_momentumA = 0.0 0.088 0.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_phi_monopole_amplitude     = 0.0
+wormhole_phi_perturbation_amplitude = 0.0
+wormhole_phi_perturbation_width     = 0.5
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid
+
+L = 96.0
+N1 = 96
+N2 = 96
+N3 = 96
+
+center = 48.0 48.0 48.0
+
+# dx_coarse = 1; level 5 dx = 1/32 -> ~16 cells across a b = 0.5 throat
+max_level = 5
+regrid_interval = 2 2 2 2 2 2
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution
+
+dt_multiplier = 0.1
+stop_time = 600.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0                            # ~ 1/M_ADM, M_ADM = 1
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 2.0
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Diagnostics + extraction
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 2
+binary_diag_split_coord = 0.0
+
+activate_extraction = 1
+num_extraction_radii = 2
+extraction_radii = 16.0 28.0
+extraction_levels = 0 0
+num_points_phi = 24
+num_points_theta = 37
+num_modes = 4
+modes = 2 0 \
+        2 1 \
+        2 2 \
+        4 0
+
+amrex.the_arena_init_size = 1048576
