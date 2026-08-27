@@ -13,7 +13,6 @@
 #include <AMReX_AmrLevel.H>
 
 #include "CCZ4Geometry.hpp"
-#include "Cell.hpp"
 #include "DimensionDefinitions.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "Interval.hpp"
@@ -38,7 +37,7 @@ amrex::Vector<std::string> EMTensor<matter_t, em_tensor_options>::var_names()
 }
 
 template <class matter_t, enum EMTensorOptions em_tensor_options>
-EMTensor<matter_t, em_tensor_options>::EMTensor(double a_dx, int a_dcomp)
+EMTensor<matter_t, em_tensor_options>::EMTensor(amrex::Real a_dx, int a_dcomp)
     : m_deriv(a_dx), m_dcomp(a_dcomp)
 {
 }
@@ -55,12 +54,11 @@ EMTensor<matter_t, em_tensor_options>::operator()(
     const amrex::CellData<const amrex::Real> &state_cell_data =
         state.cellData(ix, iy, iz);
     Vars vars(state_cell_data);
-    const typename matter_t::D1Vars d1(ix, iy, iz, state, m_deriv);
 
-    const auto h_UU  = CCZ4Geometry::compute_inverse_metric(vars);
-    const auto chris = CCZ4Geometry::compute_christoffel(d1, h_UU);
+    const auto h_UU = CCZ4Geometry::compute_inverse_metric(vars);
 
-    const auto emtensor = m_matter.compute_emtensor(vars, d1, h_UU, chris.ULL);
+    const auto emtensor =
+        m_matter.compute_emtensor(ix, iy, iz, state, m_deriv, h_UU);
 
     emtensor_out(ix, iy, iz, m_dcomp) = emtensor.rho;
 
@@ -71,7 +69,7 @@ EMTensor<matter_t, em_tensor_options>::operator()(
 #if DEFAULT_TENSOR_DIM == 3
         FOR (i)
         {
-            emtensor_out(ix, iy, iz, m_dcomp + 1 + i) = emtensor.j[i];
+            emtensor_out(ix, iy, iz, m_dcomp + 1 + i) = emtensor.j(i);
         }
 #endif
     }
@@ -79,12 +77,12 @@ EMTensor<matter_t, em_tensor_options>::operator()(
     if constexpr (em_tensor_options == EMTensorOptions::allDensities)
     {
 #if DEFAULT_TENSOR_DIM == 3
-        emtensor_out(ix, iy, iz, m_dcomp + 4) = emtensor.S[0][0];
-        emtensor_out(ix, iy, iz, m_dcomp + 5) = emtensor.S[0][1];
-        emtensor_out(ix, iy, iz, m_dcomp + 6) = emtensor.S[0][2];
-        emtensor_out(ix, iy, iz, m_dcomp + 7) = emtensor.S[1][1];
-        emtensor_out(ix, iy, iz, m_dcomp + 8) = emtensor.S[1][2];
-        emtensor_out(ix, iy, iz, m_dcomp + 9) = emtensor.S[2][2];
+        emtensor_out(ix, iy, iz, m_dcomp + 4) = emtensor.S(0, 0);
+        emtensor_out(ix, iy, iz, m_dcomp + 5) = emtensor.S(0, 1);
+        emtensor_out(ix, iy, iz, m_dcomp + 6) = emtensor.S(0, 2);
+        emtensor_out(ix, iy, iz, m_dcomp + 7) = emtensor.S(1, 1);
+        emtensor_out(ix, iy, iz, m_dcomp + 8) = emtensor.S(1, 2);
+        emtensor_out(ix, iy, iz, m_dcomp + 9) = emtensor.S(2, 2);
     }
 }
 #endif

@@ -9,14 +9,13 @@
 #define CONSTRAINTS_HPP_
 
 // GRTeclyn includes
-#include "CCZ4D1Vars.hpp"
 #include "CCZ4Geometry.hpp"
 #include "CCZ4Vars.hpp"
-#include "Cell.hpp"
 #include "DimensionDefinitions.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "GRInterval.hpp"
 #include "Interval.hpp"
+
 #include "Tensor.hpp"
 #include "TensorAlgebra.hpp"
 
@@ -44,8 +43,8 @@ class Constraints
     {
         amrex::Real Ham{};
         amrex::Real Ham_abs_terms{};
-        Tensor<1, amrex::Real> Mom;
-        Tensor<1, amrex::Real> Mom_abs_terms;
+        Tensor::Rank1 Mom{};
+        Tensor::Rank1 Mom_abs_terms{};
     };
 
     // Constructor which allows specifying Ham and Mom vars
@@ -59,10 +58,10 @@ class Constraints
     // a_c_moms_abs_terms then it must have length consistent with
     // s_calc_mom_norm
     AMREX_FORCE_INLINE
-    Constraints(double dx, int a_c_Ham, const Interval &a_c_Moms,
+    Constraints(amrex::Real dx, int a_c_Ham, const Interval &a_c_Moms,
                 int a_c_Ham_abs_terms              = -1,
                 const Interval &a_c_Moms_abs_terms = Interval(),
-                double cosmological_constant       = 0.0);
+                amrex::Real cosmological_constant  = 0.0);
 
     AMREX_FORCE_INLINE AMREX_GPU_DEVICE void
     operator()(int ix, int iy, int iz,
@@ -90,14 +89,15 @@ class Constraints
     Interval m_c_Moms;
     int m_c_Ham_abs_terms = -1;
     Interval m_c_Moms_abs_terms;
-    double m_cosmological_constant;
+    amrex::Real m_cosmological_constant;
 
     [[nodiscard]]
     AMREX_FORCE_INLINE AMREX_GPU_DEVICE constraints_t constraint_equations(
-        const CCZ4Vars &vars, const CCZ4D1Vars &d1,
-        const Tensor<2, amrex::Real> &d2_chi,
-        const Tensor<4, amrex::Real> &d2_h, const Tensor<2, amrex::Real> &h_UU,
-        const chris_t &chris) const;
+        const CCZ4Vars &vars, const Tensor::Rank1 &d1_chi,
+        const Tensor::Rank2 &d1_Gamma, const Tensor::Sym12Rank3 &d1_h,
+        const Tensor::Rank1 &d1_K, const Tensor::Sym12Rank3 &d1_A,
+        const Tensor::Sym12Rank2 &d2_chi, const Tensor::Sym12Sym34Rank4 &d2_h,
+        const Tensor::Rank2 &h_UU, const chris_t &chris) const;
 
     AMREX_FORCE_INLINE AMREX_GPU_DEVICE void
     store_vars(const constraints_t &out,

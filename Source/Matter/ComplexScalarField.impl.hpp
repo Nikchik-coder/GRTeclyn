@@ -5,23 +5,23 @@
 #ifndef COMPLEXSCALARFIELD_IMPL_HPP_
 #define COMPLEXSCALARFIELD_IMPL_HPP_
 
-AMREX_GPU_DEVICE AMREX_FORCE_INLINE emtensor_t ComplexScalarField::compute_emtensor(
-    const Vars &vars, const D1Vars &d1, const Tensor<2, amrex::Real> &h_UU,
-    const Tensor<3, amrex::Real> &chris_ULL) const
+template <class deriv_t>
+AMREX_GPU_DEVICE AMREX_FORCE_INLINE emtensor_t
+ComplexScalarField::compute_emtensor(
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+    const Tensor::Rank2 &h_UU) const
 {
-    (void)chris_ULL;
+    const amrex::CellData<const amrex::Real> &state_cell_data =
+        state.cellData(ix, iy, iz);
+    const Vars vars(state_cell_data);
+
+    const Tensor::Rank1 d1_phi1 = a_deriv.d1_scalar(ix, iy, iz, state, c_phi);
+    const Tensor::Rank1 d1_phi2 = a_deriv.d1_scalar(ix, iy, iz, state, c_phi2);
+
     const amrex::Real sign = m_sign;
     emtensor_t out;
-    out.rho = 0.0;
-    out.trS = 0.0;
-    FOR (i)
-    {
-        out.j[i] = 0.0;
-    }
-    FOR (i, j)
-    {
-        out.S[i][j] = 0.0;
-    }
+    ScalarFieldKernels::zero(out);
 
     amrex::Real V_of_phi = 0.0;
     amrex::Real dVdphi1  = 0.0;
@@ -31,40 +31,28 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE emtensor_t ComplexScalarField::compute_emten
 
     for (int comp = 0; comp < 2; ++comp)
     {
-        const amrex::Real Pi_k = (comp == 0) ? vars.Pi1() : vars.Pi2();
+        const amrex::Real Pi_k       = (comp == 0) ? vars.Pi1() : vars.Pi2();
+        const Tensor::Rank1 &d1_phi  = (comp == 0) ? d1_phi1 : d1_phi2;
 
-        amrex::Real Vt_k = -Pi_k * Pi_k;
-        FOR (i, j)
-        {
-            const amrex::Real dphi_i =
-                (comp == 0) ? d1.phi1(i) : d1.phi2(i);
-            const amrex::Real dphi_j =
-                (comp == 0) ? d1.phi1(j) : d1.phi2(j);
-            Vt_k += vars.chi() * h_UU[i][j] * dphi_i * dphi_j;
-        }
+        const amrex::Real Vt_k =
+            ScalarFieldKernels::kinetic_invariant(vars, h_UU, Pi_k, d1_phi);
 
         out.rho += Pi_k * Pi_k + 0.5 * Vt_k;
         FOR (i)
         {
-            const amrex::Real dphi_i =
-                (comp == 0) ? d1.phi1(i) : d1.phi2(i);
-            out.j[i] += -Pi_k * dphi_i;
+            out.j(i) += -Pi_k * d1_phi(i);
         }
         FOR (i, j)
         {
-            const amrex::Real dphi_i =
-                (comp == 0) ? d1.phi1(i) : d1.phi2(i);
-            const amrex::Real dphi_j =
-                (comp == 0) ? d1.phi1(j) : d1.phi2(j);
-            out.S[i][j] += -0.5 * vars.h(i, j) * Vt_k / vars.chi() +
-                           dphi_i * dphi_j;
+            out.S(i, j) += -0.5 * vars.h(i, j) * Vt_k / vars.chi() +
+                           d1_phi(i) * d1_phi(j);
         }
     }
 
     out.rho += V_of_phi;
     FOR (i, j)
     {
-        out.S[i][j] -= vars.h(i, j) * V_of_phi / vars.chi();
+        out.S(i, j) -= vars.h(i, j) * V_of_phi / vars.chi();
     }
 
     // Phantom sign: flip entire T_ab for sign == -1. The field EOM (RHS) is
@@ -73,11 +61,11 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE emtensor_t ComplexScalarField::compute_emten
     out.rho *= sign;
     FOR (i)
     {
-        out.j[i] *= sign;
+        out.j(i) *= sign;
     }
     FOR (i, j)
     {
-        out.S[i][j] *= sign;
+        out.S(i, j) *= sign;
     }
     // out.S already carries the sign-flipped -gamma_ij V term, so its trace
     // supplies the -3V; adding that again double-counts the potential.
@@ -86,22 +74,40 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE emtensor_t ComplexScalarField::compute_emten
     return out;
 }
 
-AMREX_GPU_DEVICE AMREX_FORCE_INLINE emtensor_t ComplexScalarField::compute_emtensor(
-    const Vars &vars, const D1Vars &d1, const Tensor<2, amrex::Real> &h_UU,
-    const Tensor<3, amrex::Real> &chris_ULL, const Coordinates &coords,
-    amrex::Real time) const
-{
-    (void)coords;
-    (void)time;
-    return compute_emtensor(vars, d1, h_UU, chris_ULL);
-}
-
+template <class deriv_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void ComplexScalarField::add_matter_rhs(
-    const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-    const D1Vars &d1, const D2Vars &d2, const AdvecVars &advec) const
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<amrex::Real> &rhs_state,
+    const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv) const
 {
+    const amrex::CellData<amrex::Real> &rhs = rhs_state.cellData(ix, iy, iz);
+    const amrex::CellData<const amrex::Real> &state_cell_data =
+        state.cellData(ix, iy, iz);
+    const Vars vars(state_cell_data);
+
     const auto h_UU  = CCZ4Geometry::compute_inverse_metric(vars);
-    const auto chris = CCZ4Geometry::compute_christoffel(d1, h_UU);
+    const auto d1_h  = a_deriv.d1_sym_tensor(ix, iy, iz, state, c_h11);
+    const auto chris = CCZ4Geometry::compute_christoffel(d1_h, h_UU);
+
+    const Tensor::Rank1 d1_chi   = a_deriv.d1_scalar(ix, iy, iz, state, c_chi);
+    const Tensor::Rank1 d1_lapse = a_deriv.d1_scalar(ix, iy, iz, state, c_lapse);
+    const Tensor::Rank1 d1_phi1  = a_deriv.d1_scalar(ix, iy, iz, state, c_phi);
+    const Tensor::Rank1 d1_phi2  = a_deriv.d1_scalar(ix, iy, iz, state, c_phi2);
+    const Tensor::Sym12Rank2 d2_phi1 =
+        a_deriv.d2_scalar(ix, iy, iz, state, c_phi);
+    const Tensor::Sym12Rank2 d2_phi2 =
+        a_deriv.d2_scalar(ix, iy, iz, state, c_phi2);
+
+    const Tensor::Rank1 shift_vector{vars.shift(0), vars.shift(1),
+                                     vars.shift(2)};
+    const amrex::Real advec_phi1 =
+        a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_phi);
+    const amrex::Real advec_Pi1 =
+        a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_Pi);
+    const amrex::Real advec_phi2 =
+        a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_phi2);
+    const amrex::Real advec_Pi2 =
+        a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_Pi2);
 
     amrex::Real V_of_phi = 0.0;
     amrex::Real dVdphi1  = 0.0;
@@ -109,42 +115,32 @@ AMREX_GPU_DEVICE AMREX_FORCE_INLINE void ComplexScalarField::add_matter_rhs(
     m_potential.compute_potential(V_of_phi, dVdphi1, dVdphi2, vars.phi1(),
                                   vars.phi2());
 
-    rhs[c_phi]  = vars.lapse() * vars.Pi1() + advec.phi1();
-    rhs[c_Pi]   = vars.lapse() * (vars.K() * vars.Pi1() - dVdphi1) + advec.Pi1();
-    rhs[c_phi2] = vars.lapse() * vars.Pi2() + advec.phi2();
-    rhs[c_Pi2]  = vars.lapse() * (vars.K() * vars.Pi2() - dVdphi2) + advec.Pi2();
-
-    FOR (i, j)
-    {
-        rhs[c_Pi] += h_UU[i][j] *
-                     (-0.5 * d1.chi(j) * vars.lapse() * d1.phi1(i) +
-                      vars.chi() * vars.lapse() * d2.phi1[i][j] +
-                      vars.chi() * d1.lapse(i) * d1.phi1(j));
-        rhs[c_Pi2] += h_UU[i][j] *
-                      (-0.5 * d1.chi(j) * vars.lapse() * d1.phi2(i) +
-                       vars.chi() * vars.lapse() * d2.phi2[i][j] +
-                       vars.chi() * d1.lapse(i) * d1.phi2(j));
-        FOR (k)
-        {
-            rhs[c_Pi] += -vars.chi() * vars.lapse() * h_UU[i][j] *
-                         chris.ULL[k][i][j] * d1.phi1(k);
-            rhs[c_Pi2] += -vars.chi() * vars.lapse() * h_UU[i][j] *
-                          chris.ULL[k][i][j] * d1.phi2(k);
-        }
-    }
+    rhs[c_phi]  = vars.lapse() * vars.Pi1() + advec_phi1;
+    rhs[c_Pi]   = vars.lapse() * (vars.K() * vars.Pi1() - dVdphi1) + advec_Pi1 +
+                ScalarFieldKernels::Pi_gradient_terms(
+                    vars, h_UU, chris, d1_chi, d1_lapse, d1_phi1, d2_phi1);
+    rhs[c_phi2] = vars.lapse() * vars.Pi2() + advec_phi2;
+    rhs[c_Pi2]  = vars.lapse() * (vars.K() * vars.Pi2() - dVdphi2) + advec_Pi2 +
+                 ScalarFieldKernels::Pi_gradient_terms(
+                     vars, h_UU, chris, d1_chi, d1_lapse, d1_phi2, d2_phi2);
 }
 
+template <class deriv_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void ComplexScalarField::add_matter_rhs(
-    const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-    const D1Vars &d1, const D2Vars &d2, const AdvecVars &advec,
-    const Coordinates &coords, amrex::Real time) const
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<amrex::Real> &rhs_state,
+    const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+    const Coordinates &coords, const amrex::Real time) const
 {
-    add_matter_rhs(rhs, vars, d1, d2, advec);
+    add_matter_rhs(ix, iy, iz, rhs_state, state, a_deriv);
 
     if (m_pump.num_sites < 1)
     {
         return;
     }
+
+    const amrex::CellData<amrex::Real> &rhs = rhs_state.cellData(ix, iy, iz);
+    const Vars vars(state.cellData(ix, iy, iz));
 
     const RLPumpSources src = RLPumpForce::compute_single_field_sources(
         m_pump, coords.x, coords.y, coords.z, time, vars.lapse(), vars.phi1(),

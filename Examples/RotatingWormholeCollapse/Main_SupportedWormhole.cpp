@@ -33,7 +33,7 @@ int runGRTeclyn(int /*argc*/, char * /*argv*/[])
     if (sim_params.just_check_params)
         return 0;
 
-    GRAMR::set_simulation_parameters(sim_params);
+    SupportedWormholeLevel::set_sim_params(&sim_params);
 
     DefaultLevelFactory<SupportedWormholeLevel> wh_level_bld;
 

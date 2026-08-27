@@ -137,6 +137,353 @@ On the GPU build node replace `upstream` with `origin` (§4) — and `7dc7c8b5` 
 
 §5 (the architectural change), §6 (the 7 resolutions), §7 (the vacuum/matter split trap — still the highest-priority correctness item), §8 (port inventory, now +`GridTreadmill.hpp`, `SpongeZone.hpp`, `VarsTools.hpp` as extra callers), §9 (derivative API), §10 (toolchain trap on the build node, `env.sh` is for running not building), §12.2–12.3 (open questions for upstream).
 
+### 0.7 Stage-1 execution log (2026-08-26, authoring machine) — what is on the branch
+
+**State.** Branch `chore/merge-upstream-2026-08` = `9c18b6b5` (tag
+`pre-upstream-merge-2026-08-26`) + the merge of `7dc7c8b5` + the port below,
+committed as ONE merge commit and pushed to the fork. **Nothing has been
+compiled.** A CPU build of `Tests/` was started on the authoring machine and
+killed after 62 AMReX objects — it never reached a GRTeclyn source file, so it
+proves nothing. The build/fix loop moves to the GPU node.
+
+**Design chosen for the 7 conflicts (§6).** Rather than force `(coords, time)`
+overloads onto every matter class, the drivers dispatch at compile time:
+
+| File | What it is now |
+|---|---|
+| `Source/Matter/MatterDispatch.hpp` (**new**) | `MatterDispatch::compute_emtensor(matter, ix,iy,iz, state, deriv, h_UU, coords, time)` and `MatterDispatch::add_matter_rhs(matter, …, coords, time)`. Detects via SFINAE whether `matter_t` has the 8-arg / 8-arg `(coords, time)` overload and calls it, else calls the plain upstream 6-arg / 6-arg one. Upstream's `ScalarField` therefore stays byte-identical; our pump/support classes keep their time-dependent physics. |
+| `Source/Matter/ScalarFieldKernels.hpp` (**new**) | `Pi_gradient_terms(vars, h_UU, chris, d1_chi, d1_lapse, d1_phi, d2_phi)` (the h^{ij}(…) + Christoffel term of the Π equation), `kinetic_invariant(vars, h_UU, Pi, d1_phi)` (= −Π² + χ h^{ij}∂φ∂φ), `zero(emtensor_t&)`. Shared by every scalar class so the Klein–Gordon RHS is written once. |
+| `CCZ4RHSWithMatter.hpp/.impl.hpp` | Upstream's `operator()<formulation, covZ4>(ix,iy,iz, rhs, state)` kept with upstream semantics: **matter contribution only** (§7.1). Added `compute_full_rhs(ix,iy,iz, rhs, state)` = `compute_chi_and_h_ij` + runtime switch on `m_formulation`/`m_params.covariantZ4` into `compute_A_ij_and_Theta_and_Gamma<…>` + `calculate_gauge_rhs` + matter (via `MatterDispatch`, with `Coordinates(IntVect, m_dx, m_center)` and `m_time`) + `add_dissipation` — i.e. the pre-#172 one-kernel semantics. Our constructors `(params, dx, sigma, formulation, G_Newton, center, time)` and `(matter, params, …)` are unchanged, so Level classes only rename the call. |
+| `ConstraintsWithMatter.hpp/.impl.hpp` | Upstream structure; `chris = compute_christoffel(d1_h, h_UU)`, EMT via `MatterDispatch::compute_emtensor(my_matter, …, m_deriv, h_UU, coords, m_time)`. Our `(center, time)` constructors kept. `compute_mf` is upstream's (`pp.get("G_Newton", …, 0)` — see §12.4). |
+| `Weyl4WithMatter.hpp/.impl.hpp` | `add_matter_EB(EBFields_t&, ix,iy,iz, state, epsilon3_LUU, h_UU, chris)`; EMT via `MatterDispatch` with `m_time`. `compute_mf` still reads `extraction_center`, `formulation`, `G_newton`. |
+| `ScalarField.hpp/.impl.hpp` | Upstream (`template <potential_t, deriv_t>`), plus our `trS` fix (`chi * trace(S)`, no extra `−3V`). |
+
+**Matter classes ported to `template <class deriv_t> … (ix,iy,iz, state, a_deriv, h_UU)`**, each keeping its own EMT convention verbatim (phantom sign, `−support_strength`, `½Π²` in GRTresna, U(1)-coupled potentials):
+
+| Class | plain overloads | `(coords, time)` overloads | why |
+|---|---|---|---|
+| `ExoticScalarField<potential_t>` | EMT, RHS | EMT | `local_support_strength(coords, time)` ramp |
+| `ComplexScalarField` | EMT, RHS | RHS | pump `compute_single_field_sources` |
+| `ComplexExoticScalarField<potential_t>` | EMT, RHS | RHS | pump |
+| `BiComplexScalarField` | EMT, RHS | RHS | pump `compute_bicomplex_sources` |
+| `GRTresnaIndependentScalars` | EMT, RHS | RHS | per-lump spotlight pump |
+| `ControllerReservoirMatter<Inner, IsBicomplex>` | EMT, RHS | EMT, RHS | reservoir transport needs `d1_vector(c_shift1)` = ∂_iβ^k as `(k,i)`, `d1_sym_tensor(c_h11)` as `(k,l,i)`, advection of ρ_c/j_c; forwards to `Inner` through `MatterDispatch`, so `Inner` needs no time overloads. Nested `D1Vars/AdvecVars` gone. |
+| `NoMatter`, `DustMatter`, `EffectiveTeoMatter` | EMT, RHS | — | trivial |
+
+Deleted (9 files, `git rm`): `ComplexScalarField{D1,D2,Advec}Vars.hpp`,
+`BiComplexScalarField{D1,D2,Advec}Vars.hpp`,
+`GRTresnaIndependentScalars{D1,D2,Advec}Vars.hpp`. Upstream already deleted
+`ScalarField{D1,D2,Advec}Vars.hpp` and `CCZ4{D1,D2,Advec}Vars.hpp`.
+`Source/Matter/Make.package` was regenerated from the directory (37 headers;
+the old one listed the deleted files and a `MovingPunctureGaugeWithMatter`
+entry without `.hpp`). Stage 2 deletes Make.package anyway (§0.4).
+
+**Callers.** 14 sites `ccz4rhs(i, j, k, rhs, state)` →
+`ccz4rhs.compute_full_rhs(i, j, k, rhs, state)`:
+`Examples/RadialRecipe/RadialRecipeMatterDispatch.hpp` (7),
+`Examples/RotatingWormholeCollapse/SupportedWormholeLevel.cpp` (6),
+`Examples/SupportedWormholeCollapse/SupportedWormholeLevel.cpp` (1).
+`Examples/RadialRecipe/RadialRecipeLevel.cpp`: `reduce_ec_margins` EMT now
+`matter.compute_emtensor(i,j,k, st, deriv, h_UU)` with `emt.j(i)`/`emt.S(i,j)`;
+the curvature-invariant diagnostic (~line 1540) fetches `d1_chi, d1_Gamma
+(d1_vector c_Gamma1), d1_h, d2_chi, d2_h (d2_sym_tensor)` and calls the 8-arg
+`CCZ4Geometry::compute_ricci(vars, d1_chi, d1_Gamma, d1_h, d2_chi, d2_h, h_UU, chris)`
+(`CCZ4Geometry.hpp:400`), `ricci.LL(a,b)`. `SpongeZone.hpp` needs nothing
+(`add_dissipation(i,j,k, rhs_cell, state, sigma)` — `num_vars` defaults to
+`NUM_VARS`). `Source/Grids/VarsTools.hpp` (namespace `Old`, self-contained) was
+left alone.
+
+A `grep` for the old API outside `Source/Matter/` (`D1Vars|AdvecVars|diff1_|diff2_|\.ULL\[|h_UU\[|Tensor<[123],`)
+now only hits `Tests/CCZ4RHSTest/*-fdf5a7a.*` (frozen old-code copies the test
+compares against — intended) and `INFO(...)` strings in `CCZ4GeometryUnitTest`.
+
+**Where the compiler will complain first (guesses, in order of likelihood; `d1_vector` = `(icomp, idir)`, the `MatterDispatch` `Coordinates` construction and `ScalarFieldVars` were verified by reading the headers).**
+1. `Tensor::Rank1 x{a, b, c}` brace-init — used because upstream's
+   `ScalarField.impl.hpp:95` does it; if `Rank1` is not an aggregate on the
+   node's compiler, switch to element assignment.
+2. `constexpr int j_comps[3] = {c_jctrl1, …}` and `const Tensor::Rank1 d1_j[3] = {…}`
+   inside a device lambda path (`ControllerReservoirMatter::add_reservoir_rhs`).
+3. The anonymous-namespace `AMREX_GPU_DEVICE` helper in
+   `BiComplexScalarField.impl.hpp` (fine for nvcc as inline, but check `-Wunused`
+   under host-only builds).
+4. `emtensor_t` members: upstream's struct is `{Tensor::Rank2 S; Tensor::Rank1 j; Real trS, rho}`;
+   classes that accumulate call `ScalarFieldKernels::zero(out)` first — the ones
+   that assign every component (`Exotic*`, `Dust`, `Teo`) do not, on purpose.
+
+**On the node (node naming: fork = `myfork`, collaboration = `origin`).**
+
+A campaign may be running from the node checkout, and its wrapper scripts,
+params files and executable all live inside that tree — so never `git checkout`
+or `make` there while it runs. Work in a second worktree instead (own HEAD,
+index and build dirs; shared object store, so commits are visible everywhere):
+
+```bash
+cd <campaign checkout>            # campaign tree: fetch only, no checkout, no make
+git fetch myfork --tags
+git worktree add ../GRTeclyn-merge chore/merge-upstream-2026-08
+cd ../GRTeclyn-merge
+# 1. drivers first — Tests/ instantiates CCZ4RHSWithMatter/ConstraintsWithMatter/Weyl4WithMatter with ScalarField
+cd Tests && nice make -j8 USE_MPI=FALSE USE_CUDA=FALSE && ./Tests3d.gnu.ex   # BSSNMatterTest, EMTensorTest, Weyl4WithMatterTest
+# 2. then our classes — RadialRecipe instantiates all of them through RadialRecipeMatterDispatch
+cd ../Examples/RadialRecipe && nice make -j8 USE_CUDA=TRUE ...               # the campaign build line
+# 3. wormhole examples, 4. regression vs a known-good checkpoint with UNCHANGED params (§7.4)
+#    — on a GPU the campaign is not using (CUDA_VISIBLE_DEVICES), 5. stage 2 (§0.5 step 3)
+```
+
+`nice -j8` rather than `-j16` so the nvcc build does not starve the campaign's
+host threads. Already-running processes are safe from a rebuild either way
+(Linux keeps the old inode); the danger is the campaign wrapper's *next*
+launch picking up a new executable — which the separate worktree prevents.
+When done: `git worktree remove ../GRTeclyn-merge`.
+
+Fix compile errors on this branch and commit them as ordinary commits on top
+of the merge commit (no need to amend it). Escape hatch unchanged:
+`git checkout feature/grteclyn-wrapper` — the tag pins the pre-merge state and
+nothing on the research branch was touched.
+
+### 0.8 Stage-1 execution log (2026-08-27, node) — DONE: one real bug found and fixed, regression PASSED
+
+Worktree recipe above followed as written; the campaign ran uninterrupted
+throughout (tree, executables and orchestrator verified untouched after every
+step, and it advanced evals while the builds ran).
+
+**Builds — all four targets link.** Toolchain: CUDA 12.1 + the local
+OpenMPI 5.0.8 prefix from the wrapper `.env` + system g++ 11.4 (per the
+wrapper README: never build with the GRTresna conda env's gcc 15).
+
+| Target | Result | Fix needed |
+|---|---|---|
+| `Tests/` CPU (`USE_MPI=FALSE USE_CUDA=FALSE`) | clean first pass | none — none of §0.7's four predicted error classes fired |
+| `Examples/RadialRecipe` MPI+CUDA (campaign line, `CUDA_ARCH=90`) | links, 157 MB | dead `#include "Cell.hpp"` ×4 (`d7109f27`) |
+| `Examples/RotatingWormholeCollapse` MPI+CUDA | links | `VAR_IDX` — macro deleted upstream; its packed-symmetric-index arithmetic is now inlined at the single remaining use, `EffectiveTeoMatter.hpp` (`faf209c7`) |
+| `Examples/SupportedWormholeCollapse` MPI+CUDA | links | same commit: GNUmakefile dropped the deleted `Source/AMRInterpolator` src_dir (nothing in the example includes it) |
+
+`Examples/ScalarField` still includes the deleted `Cell.hpp` **on purpose** —
+upstream itself only fixed that example after the stage-1 merge point, so the
+fix arrives with stage 2; it is not in our build (§7.2).
+
+**Test suite — 16/16 pass, and the h5diff checks are real.** Two traps worth
+recording for whoever reruns this:
+
+1. The five matter-critical cases (`BSSNMatter`, `Constraints`, `EMTensor`,
+   `Weyl4`, `Weyl4WithMatter`) are doctest **skip-by-default** — a green
+   default run proves nothing about the port. Run with `--dt-no-skip=true`
+   (the binary uses `--dt-`-prefixed doctest options; bare `-ltc`/`-tc` are
+   silently ignored).
+2. Their real assertions — `h5diff` vs the stored GRChombo reference files at
+   `1e-10` — are compiled out entirely without `USE_HDF5=TRUE`. The build
+   needs a **serial** HDF5 (`HDF5_HOME=<serial hdf5 prefix>`; the GRTresna
+   env's HDF5 is MPI-flavoured and will not link a serial test build), and the
+   run needs `h5diff` on `PATH` plus that prefix's `lib` on `LD_LIBRARY_PATH`.
+
+With both in place: 16/16 cases, 13,327 assertions, including all five h5diff
+comparisons — the ported drivers reproduce GRChombo numerics to 1e-10 with
+upstream's `ScalarField` (zero-potential caveat stands: these tests say
+nothing about potential-dependent matter terms).
+
+**§7.1 verified statically.** `compute_full_rhs` composes
+`compute_chi_and_h_ij` → `compute_A_ij_and_Theta_and_Gamma<…>` (runtime switch
+on formulation/covariantZ4) → `calculate_gauge_rhs` → matter contribution,
+which applies dissipation once at the end; no matter Level calls
+`apply_dissipation` (the only caller is vacuum BinaryBH), and all 14 call
+sites use `compute_full_rhs` (7 RadialRecipe dispatch + 6 Rotating + 1
+Supported).
+
+**Regression (§7.4) — found a real port bug, fixed it, regression now PASSES.**
+
+The first full replays NaN-aborted in `phi_lump3` / `jctrl1` one step after the
+first mid-run plotfile (or after level-1 creation), while replays with plots
+and derives disabled ran fine — and `compute-sanitizer memcheck` was clean.
+Diagnosis chain: `amrex.init_snan=1` (signalling-NaN fill of every FAB
+allocation) made the failure deterministic at step 1 even with plots, derives
+and regridding all off — pure evolution was reading uninitialized memory; the
+same poisoned config on the pre-merge campaign binary ran clean, pinning it on
+the port. Root cause: `compute_full_rhs` builds the RHS componentwise — the
+vacuum and gauge kernels assign every CCZ4 component, but the matter kernels
+only assign the components the active model evolves, while `add_dissipation`
+accumulates (`+=`) into all `NUM_VARS`. Matter components the active model
+does not evolve (with the bicomplex model: `phi_lump3/4`, `Pi_lump3/4`; plus
+`rho_ctrl`/`jctrl1-3`, which `ControllerReservoirMatter` itself writes with
+`+=`) therefore integrated whatever the rhs MultiFab allocation happened to
+contain. The pre-#172 code was immune: it built the RHS in a zero-initialized
+`Vars` struct and `store_vars` wrote every component — implicit zeros for
+inactive slots. GPU arena recycling usually returns near-zero garbage, which
+is why short replays matched the reference bit-for-bit, why the trigger looked
+like "plotfiles + derives" (they churn the arena into returning poison), and
+why the sanitizer (which perturbs allocation) saw nothing.
+
+Fix (`29c060e5`): `compute_full_rhs` zero-fills components
+`[NUM_CCZ4_VARS, NUM_VARS)` before any kernel runs — 11 lines in
+`Source/Matter/CCZ4RHSWithMatter.impl.hpp`, restoring the old implicit-zero
+semantics for all 14 call sites and the Tests. Verified: the three
+formerly-failing `init_snan` configs now run clean, Tests still 16/16 (13,327
+assertions incl. the h5diff comparisons), both wormhole examples rebuild and
+run (exit 0).
+
+Reference switched to the campaign's **top-score eval** (`eval_000100`) after
+retention (`--keep-top-eval-dirs 3`) deleted `eval_000123` mid-diagnosis; its
+params, gridinit, matter json and diagnostics are snapshotted under
+`runs/merge_regression/ref_eval_000100/` so no future replay can lose its
+reference. Verdict on the full replay with ORIGINAL params (stop_time 26, AMR
+to level 1, regrid every 16, plotfiles + `Weyl4 rho_req` derives — through
+every previous crash point): exit 0, zero NaNs, all four `.dat` diagnostics
+complete at 2600/2600 rows, max relative difference ~1e-10 against the
+reference and `energy_conditions.dat` bit-identical. That is GPU run-to-run
+noise: **stage 1 passes §7.4**.
+
+**Left to do, in order.**
+1. Stage 2 (§0.5 step 3): merge `upstream/develop` (167 commits) — expect the
+   4 modify/delete `Make.package` conflicts + the same 7 driver files; then
+   the PR #215 params port (`params_t::fill_params`, key-rename converter over
+   the params files and the wrapper's param writers, `GRTeclynCore/RL` into
+   `src_dirs`). `Examples/ScalarField`'s `Cell.hpp` fix arrives with this
+   merge.
+2. Rerun the same regression with CONVERTED params (reference stays
+   `ref_eval_000100/`).
+3. Fast-forward `feature/grteclyn-wrapper` only after both regressions pass.
+
+### 0.9 Stage-2 execution log (2026-08-27, node) — merge + PR #215 params port
+
+Merge commit `04026918` (`origin/develop`, 167 commits) on
+`chore/merge-upstream-2026-08`. The campaign ran uninterrupted throughout: its
+tree, executables and orchestrator were verified untouched after every step and
+it advanced evals (150 → 153) while the builds and replays ran on other cards.
+
+**Design deviation from §0.5 step 3: no params converter.** The plan called for
+a key-rename converter run over the params files and the wrapper's param
+writers. That was dropped in favour of **injection shims**, because a converter
+would have forced a lockstep change to the live wrapper, every stored campaign
+params file, and every archived reproduction — for no numerical gain.
+
+Instead, two fork-local headers restored under `Source/GRTeclynCore/`:
+
+| Header | Role |
+|---|---|
+| `AMReXParameters.hpp` | reads the ORIGINAL flat grid/boundary/output keys |
+| `SimulationParametersBase.hpp` | reads the ORIGINAL CCZ4, gauge, dissipation and extraction keys |
+
+Both then **inject** the new-scheme keys into the ParmParse table
+(`pp.add`/`pp.addarr`) so upstream's self-reading constructors find what they
+now require: `evolution.{sigma,nan_check,num_ghosts,dt_multiplier}`,
+`ccz4.{formulation,kappa1,kappa2,kappa3,covariantZ4,min_chi,min_lapse}`,
+`gauge.{lapse_advec_coeff,lapse_power,lapse_coeff,shift_Gamma_coeff,shift_advec_coeff,eta}`,
+`tagging.thresholds`, `grteclyn.output_path`, `geometry.center`,
+`boundary.{hi,lo}_condition` and `weyl_extraction.center`. Consequences:
+
+* **Params files, the wrapper and the campaign are unchanged.** The stage-2
+  regression replays the *identical* params file as stage 1 — only the three
+  path lines (`output_path`, `amr.check_file`, `amr.plot_file`) are rewritten
+  so the replay does not write into a live eval directory.
+* Every injection is **guarded on the key being absent**, so a params file
+  written in the new style wins and the fork can migrate file-by-file later.
+* Injection runs **after** `check_params()`, deliberately: the BSSN branch
+  zeroes the kappas, and the injected values must be the ones the solver
+  actually used before.
+
+Three port details worth recording, all traps if you redo this:
+
+1. **The boundary enum shifted.** Upstream's new `BoundaryConditions` moved
+   `REFLECTIVE_BC` from 2 to 3, so the shim carries the ORIGINAL integer codes
+   and maps them to the new *name strings* (`1 → SOMMERFELD_BC`,
+   `2 → REFLECTIVE_BC`, `3 → FIRST_ORDER_EXTRAPOLATION_BC`, periodic
+   directions → `UNSET_BC`; the old `0`/`4` codes abort). Reading the old
+   integers straight into the new enum would have silently changed the
+   boundary condition.
+2. **Sommerfeld asymptotics are now compile-time.** `nonzero_asymptotic_vars`
+   / `_values` no longer exist; the values come from
+   `StateVariables::asymptotic_values`. `CCZ4StateVariables` supplies
+   `chi = h11 = h22 = h33 = lapse = 1`, everything else 0 — value-identical to
+   what the campaign params set, so the boundary is bit-for-bit unchanged. The
+   three examples gained a zero-filled `additional_asymptotic_values` for their
+   own variables. The old keys are accepted and ignored.
+3. **`GRAMR::set_simulation_parameters` is gone.** Each Level class now owns a
+   file-scope `const SimulationParameters *` set from its Main
+   (`<Level>::set_sim_params(&sim_params)`). Pointer, not copy — the RL bridge
+   mutates `sim_params` at runtime and the levels must see it.
+
+`RLActionApplier` was ported the same way: `MovingPunctureGauge` is now
+constructed per RHS evaluation and self-reads `gauge.*`, so the applier's EMA
+reads the current value out of ParmParse and `add`s the update back (ParmParse
+returns the last entry, so `add` overrides).
+
+**Builds — all four targets link.** Same toolchain as stage 1.
+
+| Target | Result | Fix needed |
+|---|---|---|
+| `Tests/` CPU + HDF5 | links | `rm -rf tmp_build_dir` first — see trap below |
+| `Examples/RadialRecipe` MPI+CUDA | links, 157 MB | the four API classes below |
+| `Examples/RotatingWormholeCollapse` MPI+CUDA | links | same |
+| `Examples/SupportedWormholeCollapse` MPI+CUDA | links | same + a missing `DimensionDefinitions.hpp` include in the shim (`FOR` was only reaching it transitively via RadialRecipe's include order) |
+
+Four upstream API changes account for every build error:
+
+* `FilesystemTools::directory_exists` / `mkdir_recursive` are gone; only
+  `ensure_directory_exists(path)` remains.
+* `SmallDataIO::write_time_data_line` is now a template — a braced initialiser
+  list can no longer deduce its argument, so all 9 call sites pass an explicit
+  `std::vector<double>{…}`.
+* `PositiveChiAndLapse` self-reads `ccz4.min_chi` / `ccz4.min_lapse` from a
+  default constructor; the two-argument form is gone (12 call sites).
+* `SimulationParameters::check_params` is now a **static** callback handed to
+  `amrex::Initialize`. Legacy-scheme examples validate in their constructor and
+  have only a member function of that name, so `SetupFunctions.hpp` now detects
+  a static `check_params()` and passes no callback when there isn't one —
+  upstream's own examples keep theirs.
+
+**Build trap: stale objects survive a source rename.** `Tests/tmp_build_dir`
+held pre-merge `.o` files that make did not rebuild, so the suite aborted on a
+params filename that no longer exists in the merged source. Delete
+`tmp_build_dir` before trusting any post-merge build.
+
+**Test suite — 16/16 cases, 24,591 assertions, with real h5diff checks**
+(`--dt-no-skip=true`, `USE_HDF5=TRUE` against a serial HDF5, `h5diff` on
+`PATH`). Up from 13,327 assertions at stage 1 — upstream added coverage. The
+five matter-critical cases still compare against the stored GRChombo reference
+files at 1e-10.
+
+**Regression (§7.4) — PASSED, and `init_snan` is clean.**
+
+Reference: `runs/merge_regression/ref_eval_000100/` (unchanged from stage 1).
+
+Two runs against it, both on GPU 3 with the merged
+`main3d.gnu.MPI.CUDA.ex`, params identical to the reference apart from output
+paths (a diff confirmed it):
+
+- **Poisoned-allocation smoke test** (`amrex.init_snan=1`,
+  `amrex.fpe_trap_invalid=1`, 200 steps): exit 0, no FPE trap, results match
+  the reference to 7.2e-11 with three of four `.dat` files bit-identical. This
+  is the technique that exposed the uninitialized-RHS bug at stage 1; the new
+  parameter path is clean under it.
+- **Full replay** (2600 steps, the campaign's exact top-elite params): exit 0,
+  all four diagnostic files complete at 2600/2600 rows.
+
+| file | max rel diff vs reference |
+|---|---|
+| collapse_diagnostics.dat | 9.8e-11 |
+| curvature_invariants.dat | 6.3e-11 |
+| constraint_norms.dat | 1.2e-11 |
+| energy_conditions.dat | identical |
+
+NaN patterns match row-for-row (the NaNs in `collapse_diagnostics` column 9
+are pre-existing in the reference, not a merge artifact). Differences are GPU
+run-to-run noise — the same magnitude two runs of the *pre-merge* binary show
+against each other.
+
+### What's left after stage 2
+
+1. **Merge back into `feature/grteclyn-wrapper`** (§11 — note the branch name
+   there is stale; the target is `feature/grteclyn-wrapper`, not
+   `feature/interstellar`). Blocked on purpose: that branch is checked out in
+   the main tree, which the live MAP-Elites campaign runs from. Merging now
+   would rewrite the campaign's source tree mid-run. Do it after the campaign
+   stops, or from a fresh checkout once the user gives the word.
+2. **Rebuild the campaign executables from the merged branch** after the merge
+   back, and rerun the wrapper's `check_params=1` gate (already verified to
+   exit 0 against the merged binary).
+3. Optional cleanup: drop the `runs/merge_regression/stage2_*` scratch outputs
+   once nothing refers to them (`ref_eval_000100` stays — it is the packed
+   reference).
+
 ---
 
 ## 1. TL;DR
@@ -554,8 +901,10 @@ Suggested order:
 
 ```bash
 # only once tests are green AND a regression run matches a known-good checkpoint
-git checkout feature/interstellar
-git merge chore/merge-upstream
+# (branch names updated 2026-08-27: the target is feature/grteclyn-wrapper;
+#  feature/interstellar no longer exists)
+git checkout feature/grteclyn-wrapper
+git merge chore/merge-upstream-2026-08
 ```
 
 Merging `develop` is a separate, optional exercise — it produces the same 7 conflicts but does **not**

@@ -12,19 +12,24 @@
 
 // Calculate the stress energy tensor elements
 template <class potential_t>
-AMREX_GPU_DEVICE emtensor_t ExoticScalarField<potential_t>::compute_emtensor(
-    const Vars &vars, const D1Vars &d1, const Tensor<2, amrex::Real> &h_UU,
-    const Tensor<3, amrex::Real> &chris_ULL) const
+template <class deriv_t>
+AMREX_GPU_DEVICE emtensor_t
+ExoticScalarField<potential_t>::emtensor_with_strength(
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+    const Tensor::Rank2 &h_UU, const double support_strength) const
 {
-    const double support_strength = m_support_strength;
     emtensor_t out;
 
+    const amrex::CellData<const amrex::Real> &state_cell_data =
+        state.cellData(ix, iy, iz);
+    const Vars vars(state_cell_data);
+
+    const Tensor::Rank1 d1_phi = a_deriv.d1_scalar(ix, iy, iz, state, c_phi);
+
     //    Useful quantity Vt
-    amrex::Real Vt = -vars.Pi() * vars.Pi();
-    FOR (i, j)
-    {
-        Vt += vars.chi() * h_UU[i][j] * d1.phi(i) * d1.phi(j);
-    }
+    const amrex::Real Vt =
+        ScalarFieldKernels::kinetic_invariant(vars, h_UU, vars.Pi(), d1_phi);
 
     // set the potential values
     amrex::Real V_of_phi = 0.0;
@@ -37,8 +42,9 @@ AMREX_GPU_DEVICE emtensor_t ExoticScalarField<potential_t>::compute_emtensor(
     // S = T_ij
     FOR (i, j)
     {
-        out.S[i][j] = -support_strength *
-                      (-0.5 * vars.h(i, j) * Vt / vars.chi() + d1.phi(i) * d1.phi(j) -
+        out.S(i, j) = -support_strength *
+                      (-0.5 * vars.h(i, j) * Vt / vars.chi() +
+                       d1_phi(i) * d1_phi(j) -
                        vars.h(i, j) * V_of_phi / vars.chi());
     }
 
@@ -52,58 +58,33 @@ AMREX_GPU_DEVICE emtensor_t ExoticScalarField<potential_t>::compute_emtensor(
     //    j_i (note lower index) = - n^a T_ai
     FOR (i)
     {
-        out.j[i] = -support_strength * (-d1.phi(i) * vars.Pi());
+        out.j(i) = -support_strength * (-d1_phi(i) * vars.Pi());
     }
 
     return out;
 }
 
 template <class potential_t>
+template <class deriv_t>
 AMREX_GPU_DEVICE emtensor_t ExoticScalarField<potential_t>::compute_emtensor(
-    const Vars &vars, const D1Vars &d1, const Tensor<2, amrex::Real> &h_UU,
-    const Tensor<3, amrex::Real> &chris_ULL, const Coordinates &coords,
-    amrex::Real time) const
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+    const Tensor::Rank2 &h_UU) const
 {
-    const double support_strength = local_support_strength(coords, time);
-    emtensor_t out;
+    return emtensor_with_strength(ix, iy, iz, state, a_deriv, h_UU,
+                                  m_support_strength);
+}
 
-    //    Useful quantity Vt
-    amrex::Real Vt = -vars.Pi() * vars.Pi();
-    FOR (i, j)
-    {
-        Vt += vars.chi() * h_UU[i][j] * d1.phi(i) * d1.phi(j);
-    }
-
-    // set the potential values
-    amrex::Real V_of_phi = 0.0;
-    amrex::Real dVdphi   = 0.0;
-
-    // compute potential and add constributions to EM Tensor
-    m_potential.compute_potential(V_of_phi, dVdphi, vars);
-
-    // Calculate components of EM Tensor
-    // S = T_ij
-    FOR (i, j)
-    {
-        out.S[i][j] = -support_strength *
-                      (-0.5 * vars.h(i, j) * Vt / vars.chi() + d1.phi(i) * d1.phi(j) -
-                       vars.h(i, j) * V_of_phi / vars.chi());
-    }
-
-    // rho = n^a n^b T_ab
-    out.rho = -support_strength * (vars.Pi() * vars.Pi() + 0.5 * Vt + V_of_phi);
-
-    // trS = Tr_S_ij.  out.S already carries the potential term (scaled by
-    // support_strength), so its trace supplies it; adding it again double-counts.
-    out.trS = vars.chi() * TensorAlgebra::compute_trace(out.S, h_UU);
-
-    //    j_i (note lower index) = - n^a T_ai
-    FOR (i)
-    {
-        out.j[i] = -support_strength * (-d1.phi(i) * vars.Pi());
-    }
-
-    return out;
+template <class potential_t>
+template <class deriv_t>
+AMREX_GPU_DEVICE emtensor_t ExoticScalarField<potential_t>::compute_emtensor(
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+    const Tensor::Rank2 &h_UU, const Coordinates &coords,
+    const amrex::Real time) const
+{
+    return emtensor_with_strength(ix, iy, iz, state, a_deriv, h_UU,
+                                  local_support_strength(coords, time));
 }
 
 template <class potential_t>
@@ -162,14 +143,35 @@ ExoticScalarField<potential_t>::local_support_strength(
 
 // Adds in the RHS for the matter vars
 template <class potential_t>
+template <class deriv_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
 ExoticScalarField<potential_t>::add_matter_rhs(
-    const amrex::CellData<amrex::Real> &rhs, const Vars &vars, const D1Vars &d1,
-    const D2Vars &d2, const AdvecVars &advec) const
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<amrex::Real> &rhs_state,
+    const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv) const
 {
+    const amrex::CellData<amrex::Real> &rhs = rhs_state.cellData(ix, iy, iz);
+    const amrex::CellData<const amrex::Real> &state_cell_data =
+        state.cellData(ix, iy, iz);
+    const Vars vars(state_cell_data);
+
     // call the function for the rhs excluding the potential
     const auto h_UU  = CCZ4Geometry::compute_inverse_metric(vars);
-    const auto chris = CCZ4Geometry::compute_christoffel(d1, h_UU);
+    const auto d1_h  = a_deriv.d1_sym_tensor(ix, iy, iz, state, c_h11);
+    const auto chris = CCZ4Geometry::compute_christoffel(d1_h, h_UU);
+
+    const Tensor::Rank1 d1_chi   = a_deriv.d1_scalar(ix, iy, iz, state, c_chi);
+    const Tensor::Rank1 d1_lapse = a_deriv.d1_scalar(ix, iy, iz, state, c_lapse);
+    const Tensor::Rank1 d1_phi   = a_deriv.d1_scalar(ix, iy, iz, state, c_phi);
+    const Tensor::Sym12Rank2 d2_phi =
+        a_deriv.d2_scalar(ix, iy, iz, state, c_phi);
+
+    const Tensor::Rank1 shift_vector{vars.shift(0), vars.shift(1),
+                                     vars.shift(2)};
+    const amrex::Real advec_phi =
+        a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_phi);
+    const amrex::Real advec_Pi =
+        a_deriv.advec_scalar(ix, iy, iz, state, shift_vector, c_Pi);
 
     // set the potential values
     amrex::Real V_of_phi = 0.0;
@@ -177,22 +179,11 @@ ExoticScalarField<potential_t>::add_matter_rhs(
     m_potential.compute_potential(V_of_phi, dVdphi, vars);
 
     // evolution equations for scalar field and (minus) its conjugate momentum
-    rhs[c_phi] = vars.lapse() * vars.Pi() + advec.phi();
+    rhs[c_phi] = vars.lapse() * vars.Pi() + advec_phi;
 
-    rhs[c_Pi] = vars.lapse() * (vars.K() * vars.Pi() - dVdphi) + advec.Pi();
-
-    FOR (i, j)
-    {
-        // includes non conformal parts of chris not included in chris_ULL
-        rhs[c_Pi] += h_UU[i][j] * (-0.5 * d1.chi(j) * vars.lapse() * d1.phi(i) +
-                                   vars.chi() * vars.lapse() * d2.phi[i][j] +
-                                   vars.chi() * d1.lapse(i) * d1.phi(j));
-        FOR (k)
-        {
-            rhs[c_Pi] += -vars.chi() * vars.lapse() * h_UU[i][j] *
-                         chris.ULL[k][i][j] * d1.phi(k);
-        }
-    }
+    rhs[c_Pi] = vars.lapse() * (vars.K() * vars.Pi() - dVdphi) + advec_Pi +
+                ScalarFieldKernels::Pi_gradient_terms(
+                    vars, h_UU, chris, d1_chi, d1_lapse, d1_phi, d2_phi);
 }
 
 #endif /* EXOTICSCALARFIELD_IMPL_HPP_ */

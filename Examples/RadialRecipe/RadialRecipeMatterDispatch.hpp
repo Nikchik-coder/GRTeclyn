@@ -245,11 +245,10 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
             params.recipe_scalar_mass, params.recipe_scalar_lambda, pump);
         CCZ4RHSWithMatter<GRTresnaIndependentScalars,
                           MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
-            ccz4rhs(matter, params.ccz4_params, dx, params.sigma,
-                    params.formulation, 1.0, center, time);
+            ccz4rhs(matter, dx, 1.0, center, time);
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else if (uses_complex_scalar(params))
     {
@@ -270,21 +269,19 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
             Wrapped matter(inner, pump, mode, include_em);
             CCZ4RHSWithMatter<Wrapped, MovingPunctureGaugeWithMatter,
                               FourthOrderDerivatives>
-                ccz4rhs(matter, params.ccz4_params, dx, params.sigma,
-                        params.formulation, 1.0, center, time);
+                ccz4rhs(matter, dx, 1.0, center, time);
             amrex::ParallelFor(
                 a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+                { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
         }
         else
         {
             CCZ4RHSWithMatter<ComplexScalarField, MovingPunctureGaugeWithMatter,
                               FourthOrderDerivatives>
-                ccz4rhs(inner, params.ccz4_params, dx, params.sigma,
-                        params.formulation, 1.0, center, time);
+                ccz4rhs(inner, dx, 1.0, center, time);
             amrex::ParallelFor(
                 a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+                { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
         }
     }
     else if (uses_bicomplex_scalar(params))
@@ -303,22 +300,20 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
             Wrapped matter(inner, pump, mode, include_em);
             CCZ4RHSWithMatter<Wrapped, MovingPunctureGaugeWithMatter,
                               FourthOrderDerivatives>
-                ccz4rhs(matter, params.ccz4_params, dx, params.sigma,
-                        params.formulation, 1.0, center, time);
+                ccz4rhs(matter, dx, 1.0, center, time);
             amrex::ParallelFor(
                 a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+                { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
         }
         else
         {
             CCZ4RHSWithMatter<BiComplexScalarField,
                               MovingPunctureGaugeWithMatter,
                               FourthOrderDerivatives>
-                ccz4rhs(inner, params.ccz4_params, dx, params.sigma,
-                        params.formulation, 1.0, center, time);
+                ccz4rhs(inner, dx, 1.0, center, time);
             amrex::ParallelFor(
                 a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+                { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
         }
     }
     else if (params.recipe_exotic_matter)
@@ -327,22 +322,20 @@ inline void eval_rhs(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
             DefaultPotential(), params.recipe_support_strength);
         CCZ4RHSWithMatter<ExoticScalarField<DefaultPotential>,
                           MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
-            ccz4rhs(exotic_scalar, params.ccz4_params, dx, params.sigma,
-                    params.formulation, 1.0, center, time);
+            ccz4rhs(exotic_scalar, dx, 1.0, center, time);
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
     else
     {
         ScalarField<DefaultPotential> scalar_field;
         CCZ4RHSWithMatter<ScalarField<DefaultPotential>,
                           MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
-            ccz4rhs(scalar_field, params.ccz4_params, dx, params.sigma,
-                    params.formulation, 1.0, center, time);
+            ccz4rhs(scalar_field, dx, 1.0, center, time);
         amrex::ParallelFor(
             a_rhs, [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-            { ccz4rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
+            { ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no], soln_c_arrs[box_no]); });
     }
 
     // Sponge zone: apply extra radially-ramped KO dissipation in the outer

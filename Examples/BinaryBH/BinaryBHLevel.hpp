@@ -6,10 +6,9 @@
 #ifndef BINARYBHLEVEL_HPP_
 #define BINARYBHLEVEL_HPP_
 
+#include "BHAMR.hpp"
 #include "DefaultLevelFactory.hpp"
 #include "GRAMRLevel.hpp"
-// TPAMR.hpp includes BHAMR.hpp
-#include "TPAMR.hpp"
 
 class BinaryBHLevel : public GRAMRLevel
 {
@@ -35,7 +34,7 @@ class BinaryBHLevel : public GRAMRLevel
 
     /// Calculation of the right hand side for the time stepping
     void specificEvalRHS(amrex::MultiFab &a_soln, amrex::MultiFab &a_rhs,
-                         const double a_time) override;
+                         const amrex::Real a_time) override;
 
     /// Things to do after dt*rhs has been added to the solution
     void specificUpdateODE(amrex::MultiFab &a_soln) override;

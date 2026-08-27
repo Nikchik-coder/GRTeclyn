@@ -7,12 +7,11 @@
 #define CONSTRAINTSWITHMATTER_HPP_
 
 #include "CCZ4Geometry.hpp"
-#include "Cell.hpp"
-#include "Coordinates.hpp"
 #include "Constraints.hpp"
+#include "Coordinates.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "GRInterval.hpp"
-#include "Tensor.hpp"
+#include "MatterDispatch.hpp"
 #include <array>
 
 //!  Calculates the Hamiltonian and Momentum constraints with matter fields
@@ -33,13 +32,14 @@ template <class matter_t> class ConstraintsWithMatter : public Constraints
         Can specify the vars of the constraint vars instead of using the
         hardcoded ones.
     */
-    ConstraintsWithMatter(double dx, double G_Newton, int a_c_Ham,
+    ConstraintsWithMatter(amrex::Real dx, amrex::Real G_Newton, int a_c_Ham,
                           const Interval &a_c_Moms,
                           std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0, 0.0},
                           amrex::Real a_time = 0.0, int a_c_Ham_abs_terms = -1,
                           const Interval &a_c_Moms_abs_terms = Interval());
 
-    ConstraintsWithMatter(matter_t a_matter, double dx, double G_Newton, int a_c_Ham,
+    ConstraintsWithMatter(matter_t a_matter, amrex::Real dx,
+                          amrex::Real G_Newton, int a_c_Ham,
                           const Interval &a_c_Moms,
                           std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0, 0.0},
                           amrex::Real a_time = 0.0, int a_c_Ham_abs_terms = -1,
@@ -62,9 +62,9 @@ template <class matter_t> class ConstraintsWithMatter : public Constraints
                            int /*level*/);
 
   protected:
-    matter_t my_matter; //!< The matter object, e.g. a scalar field
-    double m_G_Newton;  //!< Newton's constant, set to one by default.
-    double m_dx;
+    matter_t my_matter;     //!< The matter object, e.g. a scalar field
+    amrex::Real m_G_Newton; //!< Newton's constant, set to one by default.
+    amrex::Real m_dx;
     std::array<double, AMREX_SPACEDIM> m_center;
     amrex::Real m_time;
 };

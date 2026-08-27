@@ -26,7 +26,7 @@ int runGRTeclyn(int /*argc*/, char * /*argv*/[])
     if (sim_params.just_check_params)
         return 0;
 
-    GRAMR::set_simulation_parameters(sim_params);
+    RadialRecipeLevel::set_sim_params(&sim_params);
 
     DefaultLevelFactory<RadialRecipeLevel> recipe_level_bld;
 
@@ -146,7 +146,7 @@ int runGRTeclyn(int /*argc*/, char * /*argv*/[])
                                  sim_params.rl_pump_frequency,
                                  sim_params.rl_pump_phase,
                                  sim_params.rl_pump_max_amplitude,
-                                 sim_params.ccz4_params, actions);
+                                 actions);
             }
 
             if (get_rl_bridge().terminate_requested())

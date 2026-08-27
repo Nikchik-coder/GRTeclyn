@@ -8,16 +8,102 @@
 
 // General includes
 #include "ArrayTools.hpp"
-#include "BoundaryConditions.hpp"
+#include "DimensionDefinitions.hpp"
 #include "FilesystemTools.hpp"
 #include "GRParmParse.hpp"
-#include "StateVariables.hpp"
-#include "VariableType.hpp"
 
 #include <algorithm>
+#include <array>
+#include <filesystem>
 #include <cmath>
 #include <string>
+#include <vector>
 #include <unistd.h> // gives 'access'
+
+// -----------------------------------------------------------------------------
+// Fork-local compatibility shim (kept after the 2026-08 upstream merge).
+//
+// Upstream PR #215 moved all parameter reading into the classes themselves
+// under a new key scheme (evolution.*, ccz4.*, gauge.*, boundary.*, ...) and
+// deleted this header.  We restore it so existing params files keep working
+// unchanged: it reads the ORIGINAL key scheme and injects the values into the
+// ParmParse table under the new names the merged core reads.  No params-file
+// conversion is needed anywhere.  Injections are guarded so a params file
+// that already uses a new-scheme key wins over the legacy one.
+// -----------------------------------------------------------------------------
+
+// Reads the original boundary keys (isPeriodic / hi_boundary / lo_boundary
+// with integer codes).  The integer codes here are the ORIGINAL enum values,
+// which differ from the merged BoundaryConditions enum; new_condition_name()
+// maps them to the condition-name strings the merged core reads.
+// Sommerfeld asymptotic values now come from the compile-time
+// StateVariables::asymptotic_values array, so the old nonzero_asymptotic_vars
+// / nonzero_asymptotic_values keys are accepted but ignored - the arrays in
+// each example's StateVariables.hpp must hold the same values.
+struct LegacyBoundaryParams
+{
+    enum
+    {
+        STATIC_BC        = 0,
+        SOMMERFELD_BC    = 1,
+        REFLECTIVE_BC    = 2,
+        EXTRAPOLATING_BC = 3,
+        MIXED_BC         = 4
+    };
+
+    std::array<int, AMREX_SPACEDIM> hi_boundary{};
+    std::array<int, AMREX_SPACEDIM> lo_boundary{};
+    std::array<bool, AMREX_SPACEDIM> is_periodic{};
+    bool nonperiodic_boundaries_exist{false};
+    bool reflective_boundaries_exist{false};
+
+    void read_params(GRParmParse &pp)
+    {
+        std::array<int, AMREX_SPACEDIM> is_periodic_int{AMREX_D_DECL(1, 1, 1)};
+        pp.load("isPeriodic", is_periodic_int, is_periodic_int);
+        for (int dir = 0; dir < AMREX_SPACEDIM; ++dir)
+        {
+            is_periodic[dir] = (is_periodic_int[dir] != 0);
+            if (!is_periodic[dir])
+            {
+                nonperiodic_boundaries_exist = true;
+            }
+        }
+
+        std::array<int, AMREX_SPACEDIM> default_boundary{};
+        pp.load("hi_boundary", hi_boundary, default_boundary);
+        pp.load("lo_boundary", lo_boundary, default_boundary);
+
+        for (int dir = 0; dir < AMREX_SPACEDIM; ++dir)
+        {
+            if (!is_periodic[dir] && (lo_boundary[dir] == REFLECTIVE_BC ||
+                                      hi_boundary[dir] == REFLECTIVE_BC))
+            {
+                reflective_boundaries_exist = true;
+            }
+        }
+    }
+
+    //! Map an original integer code to the condition-name string the merged
+    //! BoundaryConditions::read_conditions accepts.
+    [[nodiscard]] static std::string new_condition_name(int a_old_code)
+    {
+        switch (a_old_code)
+        {
+        case SOMMERFELD_BC:
+            return "SOMMERFELD_BC";
+        case REFLECTIVE_BC:
+            return "REFLECTIVE_BC";
+        case EXTRAPOLATING_BC:
+            return "FIRST_ORDER_EXTRAPOLATION_BC";
+        default:
+            amrex::Abort("Boundary code " + std::to_string(a_old_code) +
+                         " (STATIC/MIXED) no longer exists after the "
+                         "upstream params rework");
+            return "UNSET_BC";
+        }
+    }
+};
 
 class AMReXParameters
 {
@@ -179,10 +265,7 @@ class AMReXParameters
 
 #ifdef AMREX_USE_MPI
         // change pout base name!
-        if (!FilesystemTools::directory_exists(pout_path))
-        {
-            FilesystemTools::mkdir_recursive(pout_path);
-        }
+        FilesystemTools::ensure_directory_exists(pout_path);
         // xxxxx setPoutBaseName(pout_path + pout_prefix);
 #endif
 
@@ -265,9 +348,9 @@ class AMReXParameters
             if (Ni[dir] > 0)
             {
                 if (boundary_params.lo_boundary[dir] ==
-                        BoundaryConditions::REFLECTIVE_BC ||
+                        LegacyBoundaryParams::REFLECTIVE_BC ||
                     boundary_params.hi_boundary[dir] ==
-                        BoundaryConditions::REFLECTIVE_BC)
+                        LegacyBoundaryParams::REFLECTIVE_BC)
                 {
 
                     Ni_full[dir] = Ni[dir] * 2;
@@ -280,9 +363,9 @@ class AMReXParameters
             else
             {
                 if (boundary_params.lo_boundary[dir] ==
-                        BoundaryConditions::REFLECTIVE_BC ||
+                        LegacyBoundaryParams::REFLECTIVE_BC ||
                     boundary_params.hi_boundary[dir] ==
-                        BoundaryConditions::REFLECTIVE_BC)
+                        LegacyBoundaryParams::REFLECTIVE_BC)
                 {
                     check_parameter("N" + std::to_string(dir) + "_full",
                                     Ni_full[dir], Ni_full[dir] % 2 == 0,
@@ -335,12 +418,12 @@ class AMReXParameters
         FOR (idir)
         {
             reflective_domain_lo[idir] = ((boundary_params.lo_boundary[idir] ==
-                                           BoundaryConditions::REFLECTIVE_BC)
+                                           LegacyBoundaryParams::REFLECTIVE_BC)
                                               ? -1.0
                                               : 0.0) *
                                          (ivN[idir] + 1) * coarsest_dx;
             reflective_domain_hi[idir] = ((boundary_params.hi_boundary[idir] ==
-                                           BoundaryConditions::REFLECTIVE_BC)
+                                           LegacyBoundaryParams::REFLECTIVE_BC)
                                               ? 2.0
                                               : 1.0) *
                                          (ivN[idir] + 1) * coarsest_dx;
@@ -359,16 +442,16 @@ class AMReXParameters
         FOR (idir)
         {
             if ((boundary_params.lo_boundary[idir] ==
-                 BoundaryConditions::REFLECTIVE_BC) &&
+                 LegacyBoundaryParams::REFLECTIVE_BC) &&
                 (boundary_params.hi_boundary[idir] !=
-                 BoundaryConditions::REFLECTIVE_BC))
+                 LegacyBoundaryParams::REFLECTIVE_BC))
             {
                 default_center[idir] = 0.;
             }
             else if ((boundary_params.hi_boundary[idir] ==
-                      BoundaryConditions::REFLECTIVE_BC) &&
+                      LegacyBoundaryParams::REFLECTIVE_BC) &&
                      (boundary_params.lo_boundary[idir] !=
-                      BoundaryConditions::REFLECTIVE_BC))
+                      LegacyBoundaryParams::REFLECTIVE_BC))
             {
                 default_center[idir] = coarsest_dx * Ni[idir];
             }
@@ -448,7 +531,7 @@ class AMReXParameters
                         "must be > 0 and <= 1");
 
         check_parameter("output_path", output_path,
-                        FilesystemTools::directory_exists(output_path),
+                        std::filesystem::is_directory(output_path),
                         "should be a valid directory");
         // pout directory exists - we create it in read_filesystem_params()
         // can't check hdf5 directory yet - only created after
@@ -476,6 +559,9 @@ class AMReXParameters
                     static_cast<int>(boundary_params.is_periodic[i]);
             }
             pp.addarr("is_periodic", is_periodic);
+
+            pp.addarr("center",
+                      std::vector<double>{center[0], center[1], center[2]});
         }
         {
             amrex::ParmParse pp("amr");
@@ -490,6 +576,61 @@ class AMReXParameters
             pp.addarr("regrid_int", regrid_interval);
             pp.add("check_int", checkpoint_interval);
             pp.add("plot_int", plot_interval);
+        }
+        {
+            // Boundary conditions under the new names.  Periodic directions
+            // get UNSET_BC, which the merged core ignores.
+            amrex::ParmParse pp("boundary");
+            if (!pp.contains("hi_condition") && !pp.contains("lo_condition"))
+            {
+                std::vector<std::string> hi_names(AMREX_SPACEDIM);
+                std::vector<std::string> lo_names(AMREX_SPACEDIM);
+                for (int i = 0; i < AMREX_SPACEDIM; ++i)
+                {
+                    hi_names[i] = boundary_params.is_periodic[i]
+                                      ? "UNSET_BC"
+                                      : LegacyBoundaryParams::new_condition_name(
+                                            boundary_params.hi_boundary[i]);
+                    lo_names[i] = boundary_params.is_periodic[i]
+                                      ? "UNSET_BC"
+                                      : LegacyBoundaryParams::new_condition_name(
+                                            boundary_params.lo_boundary[i]);
+                }
+                pp.addarr("hi_condition", hi_names);
+                pp.addarr("lo_condition", lo_names);
+            }
+        }
+        {
+            // Evolution / tagging / output keys the merged core reads
+            // directly from the table.
+            inject("evolution.num_ghosts", num_ghosts);
+            inject("evolution.dt_multiplier", dt_multiplier);
+            inject_arr("tagging.thresholds", regrid_thresholds);
+            inject("grteclyn.output_path",
+                   output_path.empty() ? std::string(".") : output_path);
+        }
+    }
+
+    //! Add a value under a new-scheme key name unless the params file
+    //! already provides that key itself.
+    template <typename T>
+    static void inject(const std::string &a_name, const T &a_value)
+    {
+        amrex::ParmParse pp;
+        if (!pp.contains(a_name.c_str()))
+        {
+            pp.add(a_name, a_value);
+        }
+    }
+
+    template <typename T>
+    static void inject_arr(const std::string &a_name,
+                           const std::vector<T> &a_values)
+    {
+        amrex::ParmParse pp;
+        if (!pp.contains(a_name.c_str()))
+        {
+            pp.addarr(a_name, a_values);
         }
     }
 
@@ -526,7 +667,7 @@ class AMReXParameters
         dx{}; // location of coarsest origin and dx
 
     // Boundary conditions
-    BoundaryConditions::params_t boundary_params; // set boundaries in each dir
+    LegacyBoundaryParams boundary_params; // set boundaries in each dir
 
     // For tagging
     amrex::Vector<double> regrid_thresholds;
