@@ -241,7 +241,7 @@ of the merge commit (no need to amend it). Escape hatch unchanged:
 `git checkout feature/grteclyn-wrapper` — the tag pins the pre-merge state and
 nothing on the research branch was touched.
 
-### 0.8 Stage-1 execution log (2026-08-27, node) — build/fix loop DONE, regression in flight
+### 0.8 Stage-1 execution log (2026-08-27, node) — DONE: one real bug found and fixed, regression PASSED
 
 Worktree recipe above followed as written; the campaign ran uninterrupted
 throughout (tree, executables and orchestrator verified untouched after every
@@ -289,29 +289,58 @@ which applies dissipation once at the end; no matter Level calls
 sites use `compute_full_rhs` (7 RadialRecipe dispatch + 6 Rotating + 1
 Supported).
 
-**Regression (§7.4) — launched, not yet judged.** Reference: a completed
-campaign eval (`qball_traj_fgeo_v2/eval_000123`, sim ≈ 503 s on one GPU,
-exit 0) whose `initial_data.gridinit`, byte-identical `params.txt` and full
-`small_data/` diagnostics all survive on disk. Replay = merge-worktree
-RadialRecipe binary, same params file, only `output_path`/`amr.plot_file`/
-`amr.check_file` overridden **on the command line** (ParmParse), output under
-`runs/merge_regression/eval_000123_stage1`. Note the packed paper cells under
-`results/` keep params + reference diagnostics but their gridinits were
-cleaned from `runs/` (scratch policy), so campaign evals with surviving
-gridinit are the practical reference pool.
+**Regression (§7.4) — found a real port bug, fixed it, regression now PASSES.**
+
+The first full replays NaN-aborted in `phi_lump3` / `jctrl1` one step after the
+first mid-run plotfile (or after level-1 creation), while replays with plots
+and derives disabled ran fine — and `compute-sanitizer memcheck` was clean.
+Diagnosis chain: `amrex.init_snan=1` (signalling-NaN fill of every FAB
+allocation) made the failure deterministic at step 1 even with plots, derives
+and regridding all off — pure evolution was reading uninitialized memory; the
+same poisoned config on the pre-merge campaign binary ran clean, pinning it on
+the port. Root cause: `compute_full_rhs` builds the RHS componentwise — the
+vacuum and gauge kernels assign every CCZ4 component, but the matter kernels
+only assign the components the active model evolves, while `add_dissipation`
+accumulates (`+=`) into all `NUM_VARS`. Matter components the active model
+does not evolve (with the bicomplex model: `phi_lump3/4`, `Pi_lump3/4`; plus
+`rho_ctrl`/`jctrl1-3`, which `ControllerReservoirMatter` itself writes with
+`+=`) therefore integrated whatever the rhs MultiFab allocation happened to
+contain. The pre-#172 code was immune: it built the RHS in a zero-initialized
+`Vars` struct and `store_vars` wrote every component — implicit zeros for
+inactive slots. GPU arena recycling usually returns near-zero garbage, which
+is why short replays matched the reference bit-for-bit, why the trigger looked
+like "plotfiles + derives" (they churn the arena into returning poison), and
+why the sanitizer (which perturbs allocation) saw nothing.
+
+Fix (`29c060e5`): `compute_full_rhs` zero-fills components
+`[NUM_CCZ4_VARS, NUM_VARS)` before any kernel runs — 11 lines in
+`Source/Matter/CCZ4RHSWithMatter.impl.hpp`, restoring the old implicit-zero
+semantics for all 14 call sites and the Tests. Verified: the three
+formerly-failing `init_snan` configs now run clean, Tests still 16/16 (13,327
+assertions incl. the h5diff comparisons), both wormhole examples rebuild and
+run (exit 0).
+
+Reference switched to the campaign's **top-score eval** (`eval_000100`) after
+retention (`--keep-top-eval-dirs 3`) deleted `eval_000123` mid-diagnosis; its
+params, gridinit, matter json and diagnostics are snapshotted under
+`runs/merge_regression/ref_eval_000100/` so no future replay can lose its
+reference. Verdict on the full replay with ORIGINAL params (stop_time 26, AMR
+to level 1, regrid every 16, plotfiles + `Weyl4 rho_req` derives — through
+every previous crash point): exit 0, zero NaNs, all four `.dat` diagnostics
+complete at 2600/2600 rows, max relative difference ~1e-10 against the
+reference and `energy_conditions.dat` bit-identical. That is GPU run-to-run
+noise: **stage 1 passes §7.4**.
 
 **Left to do, in order.**
-1. Judge the regression: compare `small_data/*.dat` replay vs reference
-   (tolerance call — GPU runs are not bit-reproducible; §7.3's dormant-bugfix
-   caveat applies if a real diff shows up, and per standing policy a
-   *validated* numerics change is a decision point, not a merge task).
-2. Stage 2 (§0.5 step 3): merge `upstream/develop` (167 commits) — expect the
+1. Stage 2 (§0.5 step 3): merge `upstream/develop` (167 commits) — expect the
    4 modify/delete `Make.package` conflicts + the same 7 driver files; then
    the PR #215 params port (`params_t::fill_params`, key-rename converter over
    the params files and the wrapper's param writers, `GRTeclynCore/RL` into
-   `src_dirs`).
-3. Rerun the same regression with CONVERTED params.
-4. Fast-forward `feature/grteclyn-wrapper` only after both regressions pass.
+   `src_dirs`). `Examples/ScalarField`'s `Cell.hpp` fix arrives with this
+   merge.
+2. Rerun the same regression with CONVERTED params (reference stays
+   `ref_eval_000100/`).
+3. Fast-forward `feature/grteclyn-wrapper` only after both regressions pass.
 
 ---
 
