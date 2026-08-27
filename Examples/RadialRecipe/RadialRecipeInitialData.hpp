@@ -2,7 +2,6 @@
 #define RADIALRECIPEINITIALDATA_HPP_
 
 #include "CCZ4StateVariables.hpp"
-#include "Cell.hpp"
 #include "Coordinates.hpp"
 #include "SphericalHarmonics.hpp"
 #include "StateVariables.hpp"

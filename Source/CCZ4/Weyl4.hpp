@@ -8,7 +8,6 @@
 
 #include "CCZ4Geometry.hpp"
 #include "CCZ4RHS.hpp"
-#include "Cell.hpp"
 #include "Coordinates.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "GRParmParse.hpp"
@@ -19,6 +18,7 @@
 
 // AMReX Includes
 #include <AMReX_AmrLevel.H>
+#include <AMReX_Array.H>
 
 // This class only works for 3+1D
 static_assert(GR_SPACEDIM == 3, "GR_SPACEDIM must be 3");
@@ -26,16 +26,16 @@ static_assert(GR_SPACEDIM == 3, "GR_SPACEDIM must be 3");
 //! Struct for the E and B fields
 struct EBFields_t
 {
-    Tensor<2, amrex::Real> E; //!< Electric component of Weyltensor
-    Tensor<2, amrex::Real> B; //!< Magnetic component of Weyltensor
+    Tensor::Rank2 E{}; //!< Electric component of Weyltensor
+    Tensor::Rank2 B{}; //!< Magnetic component of Weyltensor
 };
 
 //! Struct for the null tetrad
 struct Tetrad_t
 {
-    Tensor<1, amrex::Real> u; //!< the vector u^i
-    Tensor<1, amrex::Real> v; //!< the vector v^i
-    Tensor<1, amrex::Real> w; //!< the vector w^i
+    Tensor::Rank1 u{}; //!< the vector u^i
+    Tensor::Rank1 v{}; //!< the vector v^i
+    Tensor::Rank1 w{}; //!< the vector w^i
 };
 
 //! Struct for the Newman Penrose scalar
@@ -69,12 +69,14 @@ class Weyl4
         Takes in the centre for the calculation of the tetrads, grid spacing and
         the formulation.
     */
-    // TODO: Remove dependence on formulation?
-    Weyl4(const std::array<double, AMREX_SPACEDIM> &a_center, double a_dx,
-          int a_out_comp, int a_formulation = CCZ4RHS<>::USE_CCZ4)
-        : m_center(a_center), m_dx(a_dx), m_deriv(a_dx), m_out_comp(a_out_comp),
-          m_formulation(a_formulation)
+
+    Weyl4(amrex::Real a_dx, int a_out_comp)
+        : m_dx(a_dx), m_deriv(a_dx), m_out_comp(a_out_comp)
     {
+        GRParmParse pp;
+        GRParmParse extraction_pp("weyl_extraction");
+        extraction_pp.get("center", m_center);
+        pp.get("ccz4.formulation", m_formulation);
     }
     // NOLINTEND(bugprone-easily-swappable-parameters)
 
@@ -93,39 +95,37 @@ class Weyl4
                amrex::Real /*time*/, const int * /*bcrec*/, int /*level*/);
 
   protected:
-    std::array<double, AMREX_SPACEDIM> m_center; //!< The grid center
-    double m_dx;                                 //!< the grid spacing
+    std::array<amrex::Real, AMREX_SPACEDIM> m_center; //!< The grid center
+    amrex::Real m_dx;                                 //!< the grid spacing
     FourthOrderDerivatives m_deriv; //!< for calculating derivs of vars
-    int m_out_comp;    //!< Which commponent to store Weyl4_Re (Weyl4_Im will be
-                       //!< m_out_comp+1)
-    int m_formulation; //!< CCZ4 or BSSN?
+    int m_out_comp; //!< Which commponent to store Weyl4_Re (Weyl4_Im will be
+                    //!< m_out_comp+1)
+    int m_formulation{}; //!< CCZ4 or BSSN?
 
     //! Compute spatial volume element
-    [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE Tensor<3, amrex::Real>
-    compute_epsilon3_LUU(const CCZ4Vars &vars,
-                         const Tensor<2, amrex::Real> &h_UU) const;
+
+    [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE Tensor::Rank3
+    compute_epsilon3_LUU(const CCZ4Vars &vars, const Tensor::Rank2 &h_UU) const;
 
     //! Calculation of Weyl_4 scalar
     [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE weyl_scalar_t
     compute_Weyl4(const EBFields_t &ebfields, const CCZ4Vars &vars,
-                  const Tensor<2, amrex::Real> &h_UU,
-                  const Coordinates &coords) const;
+                  const Tensor::Rank2 &h_UU, const Coordinates &coords) const;
 
     //! Calculation of the tetrads
     [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE Tetrad_t
-    compute_null_tetrad(const CCZ4Vars &vars,
-                        const Tensor<2, amrex::Real> &h_UU,
+    compute_null_tetrad(const CCZ4Vars &vars, const Tensor::Rank2 &h_UU,
                         const Coordinates &coords) const;
 
-    //! Calulation of the decomposition of the Weyl tensor in Electric and
-    //! Magnetic fields
     [[nodiscard]] AMREX_GPU_DEVICE AMREX_FORCE_INLINE EBFields_t
-    compute_EB_fields(const CCZ4Vars &vars, const CCZ4D1Vars &d1,
-                      const Tensor<2, amrex::Real> &d2_chi,
-                      const Tensor<4, amrex::Real> &d2_h,
-                      const Tensor<3, amrex::Real> &epsilon3_LUU,
-                      const Tensor<2, amrex::Real> &h_UU,
-                      const chris_t &chris) const;
+    compute_EB_fields(const CCZ4Vars &vars, const Tensor::Rank1 &d1_chi,
+                      const Tensor::Rank2 &d1_Gamma,
+                      const Tensor::Sym12Rank3 &d1_h, const Tensor::Rank1 &d1_K,
+                      const Tensor::Sym12Rank3 &d1_A,
+                      const Tensor::Sym12Rank2 &d2_chi,
+                      const Tensor::Sym12Sym34Rank4 &d2_h,
+                      const Tensor::Rank3 &epsilon3_LUU,
+                      const Tensor::Rank2 &h_UU, const chris_t &chris) const;
 };
 
 #include "Weyl4.impl.hpp"

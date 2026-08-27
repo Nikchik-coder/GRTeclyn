@@ -8,11 +8,40 @@
 
 // General includes
 #include "AMReXParameters.hpp"
-#include "BoundaryConditions.hpp"
 #include "CCZ4RHS.hpp"
 #include "GRParmParse.hpp"
 #include "SphericalExtractionParameters.hpp"
 #include <limits>
+
+// -----------------------------------------------------------------------------
+// Fork-local compatibility shim (kept after the 2026-08 upstream merge).
+//
+// Upstream PR #215 deleted this class: the merged core now reads its own
+// parameters from the ParmParse table under new key names (evolution.*,
+// ccz4.*, gauge.*, weyl_extraction.*).  This restored version keeps reading
+// the ORIGINAL flat keys our params files use and injects the values under
+// the new names (see inject_new_scheme_params below), so no params file has
+// to change.  Injections are guarded: a params file that already provides a
+// new-scheme key wins over the legacy one.
+// -----------------------------------------------------------------------------
+
+//! Holds the gauge and damping values read from the original flat keys.  The
+//! merged core no longer takes these as constructor arguments - it reads them
+//! back from the ParmParse table itself - so this struct only feeds the
+//! injection and the parameter checks below.
+struct legacy_ccz4_params_t
+{
+    double lapse_advec_coeff{};
+    double lapse_coeff{};
+    double lapse_power{};
+    double shift_advec_coeff{};
+    double shift_Gamma_coeff{};
+    double eta{};
+    double kappa1{};
+    double kappa2{};
+    double kappa3{};
+    bool covariantZ4{};
+};
 
 class SimulationParametersBase : public AMReXParameters
 {
@@ -21,6 +50,9 @@ class SimulationParametersBase : public AMReXParameters
     {
         read_params(pp);
         check_params();
+        // must run after check_params: the BSSN branch zeroes the kappas and
+        // the injected values must match what the solver used before
+        inject_new_scheme_params();
     }
 
   private:
@@ -38,14 +70,10 @@ class SimulationParametersBase : public AMReXParameters
 
         // CCZ4 parameters
         pp.load("formulation", formulation, 0);
-        pp.load("kappa1", ccz4_base_params.kappa1, 0.1);
-        pp.load("kappa2", ccz4_base_params.kappa2, 0.0);
-        pp.load("kappa3", ccz4_base_params.kappa3, 1.0);
-        pp.load("covariantZ4", ccz4_base_params.covariantZ4, true);
-        ccz4_params.kappa1      = ccz4_base_params.kappa1;
-        ccz4_params.kappa2      = ccz4_base_params.kappa2;
-        ccz4_params.kappa3      = ccz4_base_params.kappa3;
-        ccz4_params.covariantZ4 = ccz4_base_params.covariantZ4;
+        pp.load("kappa1", ccz4_params.kappa1, 0.1);
+        pp.load("kappa2", ccz4_params.kappa2, 0.0);
+        pp.load("kappa3", ccz4_params.kappa3, 1.0);
+        pp.load("covariantZ4", ccz4_params.covariantZ4, true);
 
         // Dissipation
         pp.load("sigma", sigma, 0.1);
@@ -69,6 +97,7 @@ class SimulationParametersBase : public AMReXParameters
 
         // Extraction params
         pp.load("activate_extraction", activate_extraction, false);
+        extraction_params.enabled = activate_extraction;
 
         if (activate_extraction)
         {
@@ -177,6 +206,44 @@ class SimulationParametersBase : public AMReXParameters
         }
     }
 
+    //! Publish the legacy values under the new key names the merged core
+    //! reads directly from the ParmParse table.
+    void inject_new_scheme_params()
+    {
+        inject("evolution.sigma", sigma);
+        inject("evolution.nan_check", nan_check);
+
+        inject("ccz4.formulation", formulation);
+        inject("ccz4.kappa1", ccz4_params.kappa1);
+        inject("ccz4.kappa2", ccz4_params.kappa2);
+        inject("ccz4.kappa3", ccz4_params.kappa3);
+        inject("ccz4.covariantZ4", ccz4_params.covariantZ4);
+        inject("ccz4.min_chi", min_chi);
+        inject("ccz4.min_lapse", min_lapse);
+
+        inject("gauge.lapse_advec_coeff", ccz4_params.lapse_advec_coeff);
+        inject("gauge.lapse_power", ccz4_params.lapse_power);
+        inject("gauge.lapse_coeff", ccz4_params.lapse_coeff);
+        inject("gauge.shift_Gamma_coeff", ccz4_params.shift_Gamma_coeff);
+        inject("gauge.shift_advec_coeff", ccz4_params.shift_advec_coeff);
+        inject("gauge.eta", ccz4_params.eta);
+
+        // Weyl4's base constructor requires weyl_extraction.center whenever a
+        // Weyl4 compute class is built, extraction active or not.  Use the
+        // old flat extraction_center key when present, the grid center
+        // otherwise (the old default).
+        amrex::ParmParse table_pp;
+        if (!table_pp.contains("weyl_extraction.center"))
+        {
+            std::array<double, AMREX_SPACEDIM> weyl_center = center;
+            GRParmParse flat_pp;
+            flat_pp.load("extraction_center", weyl_center, center);
+            table_pp.addarr("weyl_extraction.center",
+                            std::vector<double>{weyl_center[0], weyl_center[1],
+                                                weyl_center[2]});
+        }
+    }
+
     void check_params()
     {
         check_parameter("dt_multiplier", dt_multiplier, dt_multiplier < 1.0,
@@ -190,10 +257,6 @@ class SimulationParametersBase : public AMReXParameters
                         "(see Alcubierre p344)");
         warn_parameter("nan_check", nan_check, nan_check,
                        "should not normally be disabled");
-        // not sure these are necessary hence commented out
-        // check_parameter("min_chi", min_chi, (min_chi >= 0.0), "must be >=
-        // 0.0"); check_parameter("min_lapse", min_lapse, (min_lapse >= 0.0)
-        // "must be >= 0.0");
         check_parameter("formulation", formulation,
                         (formulation == CCZ4RHS<>::USE_CCZ4) ||
                             (formulation == CCZ4RHS<>::USE_BSSN),
@@ -319,11 +382,6 @@ class SimulationParametersBase : public AMReXParameters
         }
     }
 
-  protected:
-    // This is just the CCZ4 damping parameters in case you want to use
-    // a different gauge (with different parameters)
-    CCZ4_base_params_t ccz4_base_params{};
-
   public:
     double sigma{}; // Kreiss-Oliger dissipation parameter
 
@@ -333,14 +391,12 @@ class SimulationParametersBase : public AMReXParameters
 
     int formulation{}; // Whether to use BSSN or CCZ4
 
-    // Collection of parameters necessary for the CCZ4 RHS
-    // Note the gauge parameters are specific to MovingPunctureGauge
-    // If you are using a different gauge, you need to load your parameters
-    // in your own SimulationParameters class.
-    CCZ4_params_t<> ccz4_params{};
+    // Gauge and damping values read from the original keys (see
+    // legacy_ccz4_params_t above)
+    legacy_ccz4_params_t ccz4_params{};
 
     bool activate_extraction{};
-    spherical_extraction_params_t extraction_params{};
+    spherical_extraction_params_t extraction_params{"weyl_extraction"};
 
     std::string data_path;
 };

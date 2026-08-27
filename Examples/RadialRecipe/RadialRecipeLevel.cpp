@@ -1,6 +1,7 @@
 #include "ExternalGridInitialData.hpp"
 #include "RadialRecipeInitialData.hpp"
 #include "RadialRecipeLevel.hpp"
+#include "SimulationParameters.hpp"
 #include "RadialRecipeMatterConstraints.hpp"
 #include "RadialRecipeMatterDispatch.hpp"
 #include "RecentringBox.hpp"
@@ -26,6 +27,25 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+
+namespace
+{
+const SimulationParameters *s_sim_params = nullptr;
+} // namespace
+
+void RadialRecipeLevel::set_sim_params(const SimulationParameters *a_sim_params)
+{
+    s_sim_params = a_sim_params;
+}
+
+const SimulationParameters &RadialRecipeLevel::simParams()
+{
+    AMREX_ALWAYS_ASSERT_WITH_MESSAGE(
+        s_sim_params != nullptr,
+        "set_sim_params must be called before simParams");
+    return *s_sim_params;
+}
+
 
 namespace
 {
@@ -192,22 +212,19 @@ reduce_ec_margins(const amrex::MultiFab &state_fine, const matter_t &matter,
                 const amrex::CellData<const amrex::Real> &cell =
                     st.cellData(i, j, k);
                 typename matter_t::Vars vars(cell);
-                const typename matter_t::D1Vars d1(i, j, k, st, deriv);
                 const auto h_UU = CCZ4Geometry::compute_inverse_metric(vars);
-                const auto chris =
-                    CCZ4Geometry::compute_christoffel(d1, h_UU);
                 const auto emt =
-                    matter.compute_emtensor(vars, d1, h_UU, chris.ULL);
+                    matter.compute_emtensor(i, j, k, st, deriv, h_UU);
 
                 const amrex::Real rho    = emt.rho;
-                const amrex::Real jin[3] = {emt.j[0], emt.j[1], emt.j[2]};
+                const amrex::Real jin[3] = {emt.j(0), emt.j(1), emt.j(2)};
                 amrex::Real Sin[3][3];
-                Sin[0][0] = emt.S[0][0];
-                Sin[0][1] = Sin[1][0] = emt.S[0][1];
-                Sin[0][2] = Sin[2][0] = emt.S[0][2];
-                Sin[1][1] = emt.S[1][1];
-                Sin[1][2] = Sin[2][1] = emt.S[1][2];
-                Sin[2][2] = emt.S[2][2];
+                Sin[0][0] = emt.S(0, 0);
+                Sin[0][1] = Sin[1][0] = emt.S(0, 1);
+                Sin[0][2] = Sin[2][0] = emt.S(0, 2);
+                Sin[1][1] = emt.S(1, 1);
+                Sin[1][2] = Sin[2][1] = emt.S(1, 2);
+                Sin[2][2] = emt.S(2, 2);
 
                 const amrex::Real chi = st(i, j, k, c_chi);
                 const amrex::Real inv_chi =
@@ -305,8 +322,7 @@ void RadialRecipeLevel::specificAdvance()
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(S_new,
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -374,8 +390,7 @@ void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     }
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -395,8 +410,7 @@ void RadialRecipeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
     amrex::ParallelFor(a_soln, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        {
@@ -930,7 +944,7 @@ void RadialRecipeLevel::specificPostTimeStep()
                  "Linf_Ham_amr", "L2_Ham_amr_ref"});
         }
         constraints_file.write_time_data_line(
-            {L2_Ham, L2_Mom, static_cast<double>(min_rho_req),
+            std::vector<double>{L2_Ham, L2_Mom, static_cast<double>(min_rho_req),
              static_cast<double>(max_rho_req),
              static_cast<double>(sum_neg_rho), L2_Ham_rel, L2_Mom_rel,
              static_cast<double>(pump_force_L2), governor_val,
@@ -961,8 +975,7 @@ void RadialRecipeLevel::specificPostTimeStep()
         {
             const auto &arrs = state_fine.arrays();
             TraceARemoval trace_A_removal;
-            PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                                   simParams().min_lapse);
+            PositiveChiAndLapse positive_chi_lapse;
             amrex::ParallelFor(state_fine, amrex::IntVect(0),
                                [=] AMREX_GPU_DEVICE(int box_no, int i, int j,
                                                     int k)
@@ -1394,7 +1407,7 @@ void RadialRecipeLevel::specificPostTimeStep()
                  "r_at_min_theta_plus",
                  "min_phi", "max_phi", "min_Pi", "max_Pi", "pump_work"});
         }
-        diag_file.write_time_data_line({static_cast<double>(min_lapse),
+        diag_file.write_time_data_line(std::vector<double>{static_cast<double>(min_lapse),
                                         static_cast<double>(min_chi),
                                         static_cast<double>(max_abs_K),
                                         static_cast<double>(min_lapse_x),
@@ -1506,7 +1519,7 @@ void RadialRecipeLevel::specificPostTimeStep()
                                            "matter_integral_NEC_violation"});
             }
             ec_file.write_time_data_line(
-                {static_cast<double>(min_nec), static_cast<double>(min_wec),
+                std::vector<double>{static_cast<double>(min_nec), static_cast<double>(min_wec),
                  static_cast<double>(min_sec), static_cast<double>(min_dec),
                  static_cast<double>(integral_nec)});
         }
@@ -1543,20 +1556,25 @@ void RadialRecipeLevel::specificPostTimeStep()
                         const FourthOrderDerivatives deriv(ci_dx);
                         const amrex::CellData<const amrex::Real> &cell =
                             st.cellData(i, j, k);
-                        ScalarField<DefaultPotential>::Vars vars(cell);
-                        const ScalarField<DefaultPotential>::D1Vars d1(
-                            i, j, k, st, deriv);
-                        const Tensor<2, amrex::Real> d2_chi =
-                            deriv.diff2(i, j, k, st, c_chi);
-                        const Tensor<4, amrex::Real> d2_h =
-                            deriv.diff2_tensor(i, j, k, st, c_h11);
+                        const ScalarFieldVars vars(cell);
+                        const Tensor::Rank1 d1_chi =
+                            deriv.d1_scalar(i, j, k, st, c_chi);
+                        const Tensor::Rank2 d1_Gamma =
+                            deriv.d1_vector(i, j, k, st, c_Gamma1);
+                        const Tensor::Sym12Rank3 d1_h =
+                            deriv.d1_sym_tensor(i, j, k, st, c_h11);
+                        const Tensor::Sym12Rank2 d2_chi =
+                            deriv.d2_scalar(i, j, k, st, c_chi);
+                        const Tensor::Sym12Sym34Rank4 d2_h =
+                            deriv.d2_sym_tensor(i, j, k, st, c_h11);
 
                         const auto h_UU =
                             CCZ4Geometry::compute_inverse_metric(vars);
                         const auto chris =
-                            CCZ4Geometry::compute_christoffel(d1, h_UU);
+                            CCZ4Geometry::compute_christoffel(d1_h, h_UU);
                         const auto ricci = CCZ4Geometry::compute_ricci(
-                            vars, d1, d2_chi, d2_h, h_UU, chris);
+                            vars, d1_chi, d1_Gamma, d1_h, d2_chi, d2_h, h_UU,
+                            chris);
 
                         const amrex::Real R3 = ricci.scalar;
 
@@ -1568,9 +1586,9 @@ void RadialRecipeLevel::specificPostTimeStep()
                                 for (int c = 0; c < 3; ++c)
                                     for (int d = 0; d < 3; ++d)
                                         ricci_sq +=
-                                            (chi * h_UU[a][c]) *
-                                            (chi * h_UU[b][d]) *
-                                            ricci.LL[a][b] * ricci.LL[c][d];
+                                            (chi * h_UU(a, c)) *
+                                            (chi * h_UU(b, d)) *
+                                            ricci.LL(a, b) * ricci.LL(c, d);
 
                         const amrex::Real Aij_sq =
                             CCZ4Geometry::compute_Aij_squared(vars, h_UU);
@@ -1605,7 +1623,7 @@ void RadialRecipeLevel::specificPostTimeStep()
                                            "max_Kij_sq", "L2_ricci_scalar"});
             }
             ci_file.write_time_data_line(
-                {static_cast<double>(max_abs_R3),
+                std::vector<double>{static_cast<double>(max_abs_R3),
                  static_cast<double>(max_ricci_sq),
                  static_cast<double>(max_KijKij),
                  static_cast<double>(std::sqrt(sum_R3sq_vol))});
@@ -1673,8 +1691,8 @@ void RadialRecipeLevel::configure_recentring_box()
     }
 
     const std::vector<double> asymptotic(
-        params.boundary_params.vars_asymptotic_values.begin(),
-        params.boundary_params.vars_asymptotic_values.end());
+        StateVariables::asymptotic_values.begin(),
+        StateVariables::asymptotic_values.end());
 
     GRParmParse pp;
     std::string output_path = "./";

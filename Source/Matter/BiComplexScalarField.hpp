@@ -1,9 +1,6 @@
 #ifndef BICOMPLEXSCALARFIELD_HPP_
 #define BICOMPLEXSCALARFIELD_HPP_
 
-#include "BiComplexScalarFieldAdvecVars.hpp"
-#include "BiComplexScalarFieldD1Vars.hpp"
-#include "BiComplexScalarFieldD2Vars.hpp"
 #include "BiComplexScalarFieldVars.hpp"
 #include "CCZ4Geometry.hpp"
 #include "ComplexScalarPotential.hpp"
@@ -13,6 +10,7 @@
 #include "GRParmParse.hpp"
 #include "RLMatterPumpParams.hpp"
 #include "RLPumpForce.hpp"
+#include "ScalarFieldKernels.hpp"
 #include "StateVariables.hpp"
 #include "Tensor.hpp"
 #include "TensorAlgebra.hpp"
@@ -54,33 +52,29 @@ class BiComplexScalarField
         m_potential = ComplexScalarPotential(mass, lam, mu);
     }
 
-    using Vars      = BiComplexScalarFieldVars;
-    using D1Vars    = BiComplexScalarFieldD1Vars;
-    using D2Vars    = BiComplexScalarFieldD2Vars;
-    using AdvecVars = BiComplexScalarFieldAdvecVars;
+    using Vars = BiComplexScalarFieldVars;
 
-    [[nodiscard]]
-    AMREX_GPU_DEVICE emtensor_t
-    compute_emtensor(const Vars &vars, const D1Vars &d1,
-                     const Tensor<2, amrex::Real> &h_UU,
-                     const Tensor<3, amrex::Real> &chris_ULL) const;
+    template <class deriv_t>
+    [[nodiscard]] AMREX_GPU_DEVICE emtensor_t compute_emtensor(
+        const int ix, const int iy, const int iz,
+        const amrex::Array4<const amrex::Real> &state, const deriv_t &a_deriv,
+        const Tensor::Rank2 &h_UU) const;
 
-    [[nodiscard]]
-    AMREX_GPU_DEVICE emtensor_t
-    compute_emtensor(const Vars &vars, const D1Vars &d1,
-                     const Tensor<2, amrex::Real> &h_UU,
-                     const Tensor<3, amrex::Real> &chris_ULL,
-                     const Coordinates &coords, amrex::Real time) const;
-
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                   const D1Vars &d1, const D2Vars &d2,
-                   const AdvecVars &advec) const;
+    add_matter_rhs(const int ix, const int iy, const int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state,
+                   const deriv_t &a_deriv) const;
 
+    //! As above plus the pump source terms, which need position and time.
+    template <class deriv_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    add_matter_rhs(const amrex::CellData<amrex::Real> &rhs, const Vars &vars,
-                   const D1Vars &d1, const D2Vars &d2, const AdvecVars &advec,
-                   const Coordinates &coords, amrex::Real time) const;
+    add_matter_rhs(const int ix, const int iy, const int iz,
+                   const amrex::Array4<amrex::Real> &rhs_state,
+                   const amrex::Array4<const amrex::Real> &state,
+                   const deriv_t &a_deriv, const Coordinates &coords,
+                   amrex::Real time) const;
 
   private:
     ComplexScalarPotential m_potential;

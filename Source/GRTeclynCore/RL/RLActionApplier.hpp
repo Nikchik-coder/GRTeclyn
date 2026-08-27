@@ -1,10 +1,10 @@
 #ifndef RL_ACTION_APPLIER_HPP_
 #define RL_ACTION_APPLIER_HPP_
 
-#include "CCZ4RHS.hpp"
 #include "GRTresnaScalarLayout.hpp" // GRTRESNA_MAX_INDEPENDENT_SCALARS
 
 #include <AMReX_BLassert.H>
+#include <AMReX_ParmParse.H>
 
 #include <algorithm>
 #include <array>
@@ -23,8 +23,7 @@ inline void apply_rl_actions(
     std::array<double, GRTRESNA_MAX_INDEPENDENT_SCALARS> &pump_amplitude,
     std::array<double, GRTRESNA_MAX_INDEPENDENT_SCALARS> &pump_frequency,
     std::array<double, GRTRESNA_MAX_INDEPENDENT_SCALARS> &pump_phase,
-    double pump_max_amplitude, CCZ4_params_t<> &ccz4_params,
-    const std::vector<double> &actions)
+    double pump_max_amplitude, const std::vector<double> &actions)
 {
     constexpr double k_ema = 0.2;
 
@@ -64,10 +63,22 @@ inline void apply_rl_actions(
         std::clamp(1.0 + actions[g + 0] * 0.5, 0.5, 1.5);
     const double requested_shift =
         std::clamp(0.75 + actions[g + 1] * 0.25, 0.5, 1.0);
-    ccz4_params.lapse_advec_coeff =
-        (1.0 - k_ema) * ccz4_params.lapse_advec_coeff + k_ema * requested_lapse;
-    ccz4_params.shift_Gamma_coeff =
-        (1.0 - k_ema) * ccz4_params.shift_Gamma_coeff + k_ema * requested_shift;
+    // After the upstream params rework the gauge coefficients live in the
+    // ParmParse table (gauge.*) and are re-read every time a CCZ4 RHS compute
+    // class is constructed, i.e. each step.  EMA against the current table
+    // value and append the update; ParmParse returns the last entry for a
+    // key, so add() acts as an override.
+    amrex::ParmParse gauge_pp("gauge");
+    double lapse_advec_coeff = 0.0;
+    double shift_Gamma_coeff = 0.0;
+    gauge_pp.get("lapse_advec_coeff", lapse_advec_coeff);
+    gauge_pp.get("shift_Gamma_coeff", shift_Gamma_coeff);
+    lapse_advec_coeff =
+        (1.0 - k_ema) * lapse_advec_coeff + k_ema * requested_lapse;
+    shift_Gamma_coeff =
+        (1.0 - k_ema) * shift_Gamma_coeff + k_ema * requested_shift;
+    gauge_pp.add("lapse_advec_coeff", lapse_advec_coeff);
+    gauge_pp.add("shift_Gamma_coeff", shift_Gamma_coeff);
 }
 
 #endif /* RL_ACTION_APPLIER_HPP_ */

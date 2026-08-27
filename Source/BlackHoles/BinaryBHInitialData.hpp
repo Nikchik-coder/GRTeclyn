@@ -7,7 +7,6 @@
 #define BINARYBHINITIALDATA_HPP_
 
 #include "BoostedBHInitialData.hpp"
-#include "Cell.hpp"
 #include "Coordinates.hpp"
 #include "StateVariables.hpp" //This files needs NUM_VARS - total number of components
 #include "Tensor.hpp"
@@ -23,7 +22,7 @@ enum Lapse
 class BinaryBHInitialData
 {
   protected:
-    double m_dx;
+    amrex::Real m_dx;
     BoostedBHInitialData bh1;
     BoostedBHInitialData bh2;
     int m_initial_lapse;
@@ -31,9 +30,7 @@ class BinaryBHInitialData
   public:
     // NOLINTBEGIN(bugprone-easily-swappable-parameters)
     AMREX_FORCE_INLINE
-    BinaryBHInitialData(BoostedBHInitialData::params_t a_bh1_params,
-                        BoostedBHInitialData::params_t a_bh2_params,
-                        double a_dx,
+    BinaryBHInitialData(amrex::Real a_dx,
                         int a_initial_lapse = Lapse::PRE_COLLAPSED);
     // NOLINTEND(bugprone-easily-swappable-parameters)
 
@@ -45,7 +42,7 @@ class BinaryBHInitialData
     [[nodiscard]] AMREX_FORCE_INLINE AMREX_GPU_DEVICE amrex::Real
     compute_chi(Coordinates coords) const;
 
-    [[nodiscard]] AMREX_FORCE_INLINE AMREX_GPU_DEVICE Tensor<2, amrex::Real>
+    [[nodiscard]] AMREX_FORCE_INLINE AMREX_GPU_DEVICE Tensor::Rank2
     compute_A(amrex::Real chi, Coordinates coords) const;
 };
 

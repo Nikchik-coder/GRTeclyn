@@ -17,12 +17,9 @@
 
 // Constructor
 // NOLINTBEGIN(bugprone-easily-swappable-parameters)
-AMREX_FORCE_INLINE BinaryBHInitialData::BinaryBHInitialData(
-    BoostedBHInitialData::params_t a_bh1_params,
-    BoostedBHInitialData::params_t a_bh2_params, double a_dx,
-    int a_initial_lapse)
-    : m_dx(a_dx), bh1(a_bh1_params), bh2(a_bh2_params),
-      m_initial_lapse(a_initial_lapse)
+AMREX_FORCE_INLINE BinaryBHInitialData::BinaryBHInitialData(amrex::Real a_dx,
+                                                            int a_initial_lapse)
+    : m_dx(a_dx), bh1(1), bh2(2), m_initial_lapse(a_initial_lapse)
 // NOLINTEND(bugprone-easily-swappable-parameters)
 {
 }
@@ -35,17 +32,17 @@ BinaryBHInitialData::compute_chi(Coordinates coords) const
     return pow(psi, -4);
 }
 
-[[nodiscard]] AMREX_FORCE_INLINE AMREX_GPU_DEVICE Tensor<2, amrex::Real>
+[[nodiscard]] AMREX_FORCE_INLINE AMREX_GPU_DEVICE Tensor::Rank2
 BinaryBHInitialData::compute_A(amrex::Real chi, Coordinates coords) const
 {
 
-    Tensor<2, amrex::Real> Aij1 = bh1.Aij(coords);
-    Tensor<2, amrex::Real> Aij2 = bh2.Aij(coords);
-    Tensor<2, amrex::Real> Aij_total;
+    Tensor::Rank2 Aij1 = bh1.Aij(coords);
+    Tensor::Rank2 Aij2 = bh2.Aij(coords);
+    Tensor::Rank2 Aij_total;
 
     // Aij(CCZ4) = psi^(-6) * Aij(Baumgarte&Shapiro book)
     FOR (i, j)
-        Aij_total[i][j] = pow(chi, 3 / 2.) * (Aij1[i][j] + Aij2[i][j]);
+        Aij_total(i, j) = pow(chi, 3 / 2.) * (Aij1(i, j) + Aij2(i, j));
 
     return Aij_total;
 }
@@ -67,11 +64,14 @@ AMREX_GPU_DEVICE // or AMREX_GPU_HOST_DEVICE depending on what's needed
 
     FOR2_SYM(i, j)
     {
-        state_cell_data[VAR_IDX(c_h11, i, j)] = TensorAlgebra::delta(i, j);
+        state_cell_data[sym_var_idx(c_h11, i, j)] = TensorAlgebra::delta(i, j);
     }
 
-    Tensor<2, amrex::Real> total_A_LL = compute_A(chi, coords);
-    FOR2_SYM(i, j) { state_cell_data[VAR_IDX(c_A11, i, j)] = total_A_LL[i][j]; }
+    auto total_A_LL = compute_A(chi, coords);
+    FOR2_SYM(i, j)
+    {
+        state_cell_data[sym_var_idx(c_A11, i, j)] = total_A_LL(i, j);
+    }
 
     switch (m_initial_lapse)
     {

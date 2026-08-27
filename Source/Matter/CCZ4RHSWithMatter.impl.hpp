@@ -10,148 +10,174 @@
 #ifndef CCZ4RHSWITHMATTER_IMPL_HPP_
 #define CCZ4RHSWITHMATTER_IMPL_HPP_
 #include "DimensionDefinitions.hpp"
-#include "ComplexScalarField.hpp"
-#include "GRTresnaIndependentScalars.hpp"
-
-//! Detection trait: true if matter_t has the 7-arg add_matter_rhs overload
-//! (rhs, vars, d1, d2, advec, coords, time) used by the pump/trajectory system.
-//! Matter classes without it (e.g. ExoticScalarField, NoMatter, DustMatter)
-//! fall through to the 5-arg overload.  Uses the void_t detection idiom so it
-//! works for any matter class, not just the two hard-coded ones.
-namespace detail_matter
-{
-template <class T, class = void>
-struct has_time_rhs : std::false_type
-{
-};
-
-template <class T>
-struct has_time_rhs<
-    T, std::void_t<decltype(std::declval<const T &>().add_matter_rhs(
-           std::declval<const amrex::CellData<amrex::Real> &>(),
-           std::declval<const typename T::Vars &>(),
-           std::declval<const typename T::D1Vars &>(),
-           std::declval<const typename T::D2Vars &>(),
-           std::declval<const typename T::AdvecVars &>(),
-           std::declval<const Coordinates &>(), std::declval<amrex::Real>()))>>
-    : std::true_type
-{
-};
-
-template <class T>
-inline constexpr bool has_time_rhs_v = has_time_rhs<T>::value;
-} // namespace detail_matter
-
-#include <type_traits>
 
 template <class matter_t, class gauge_t, class deriv_t>
 CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::CCZ4RHSWithMatter(
-    CCZ4_params_t<typename gauge_t::params_t> a_params, double a_dx,
-    double a_sigma, int a_formulation, double a_G_Newton,
+    amrex::Real a_dx, amrex::Real a_G_Newton,
     std::array<double, AMREX_SPACEDIM> a_center, amrex::Real a_time)
-    : CCZ4RHS<gauge_t, deriv_t>(a_params, a_dx, a_sigma, a_formulation,
-                                0.0 /*No cosmological constant*/),
-      m_matter(matter_t()), m_G_Newton(a_G_Newton), m_dx(a_dx),
-      m_center(a_center), m_time(a_time)
+    : CCZ4RHSWithMatter(matter_t(), a_dx, a_G_Newton, a_center, a_time)
 {
 }
 
 template <class matter_t, class gauge_t, class deriv_t>
 CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::CCZ4RHSWithMatter(
-    matter_t a_matter, CCZ4_params_t<typename gauge_t::params_t> a_params, double a_dx,
-    double a_sigma, int a_formulation, double a_G_Newton,
+    matter_t a_matter, amrex::Real a_dx, amrex::Real a_G_Newton,
     std::array<double, AMREX_SPACEDIM> a_center, amrex::Real a_time)
-    : CCZ4RHS<gauge_t, deriv_t>(a_params, a_dx, a_sigma, a_formulation,
-                                0.0 /*No cosmological constant*/),
+    : CCZ4RHS<gauge_t, deriv_t>(a_dx, 0.0 /*No cosmological constant*/),
       m_matter(a_matter), m_G_Newton(a_G_Newton), m_dx(a_dx),
       m_center(a_center), m_time(a_time)
 {
+    GRParmParse pp;
+    pp.get("ccz4.formulation", m_formulation);
+}
+
+template <class matter_t, class gauge_t, class deriv_t>
+template <int formulation, int use_covariant_Z4>
+AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::operator()(
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<amrex::Real> &rhs_state,
+    const amrex::Array4<amrex::Real const> &state) const
+{
+    // NB: the vacuum solution needs to be computed elsewhere!
+    // This will only compute the matter contribution
+    add_matter_contribution(ix, iy, iz, rhs_state, state);
 }
 
 template <class matter_t, class gauge_t, class deriv_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::operator()(
-    int ix, int iy, int iz, const amrex::Array4<amrex::Real> &rhs_state,
+CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::compute_full_rhs(
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<amrex::Real> &rhs_state,
     const amrex::Array4<amrex::Real const> &state) const
 {
-
-    const amrex::CellData<const amrex::Real> &state_cell_data =
-        state.cellData(ix, iy, iz);
-    const typename matter_t::Vars vars(state_cell_data);
-
-    // Get the derivatives
-    const typename matter_t::D1Vars d1(ix, iy, iz, state, this->m_deriv);
-    const typename matter_t::D2Vars d2(ix, iy, iz, state, this->m_deriv);
-    const typename matter_t::AdvecVars advec(ix, iy, iz, state, this->m_deriv);
-    const Coordinates coords(amrex::IntVect{AMREX_D_DECL(ix, iy, iz)}, m_dx, m_center);
-
-    const amrex::CellData<amrex::Real> &rhs_cell_data =
-        rhs_state.cellData(ix, iy, iz);
-    for (int n = 0; n < rhs_cell_data.nComp(); ++n)
+    // The vacuum and gauge kernels below assign every CCZ4 component, but the
+    // matter kernels only assign the components their model evolves, and
+    // add_dissipation accumulates (+=) into all NUM_VARS.  Matter components
+    // the active model does not evolve must therefore be defined here, or they
+    // integrate whatever the rhs allocation happened to contain (the old
+    // store_vars(Vars{}) path zeroed them implicitly).
+    for (int n = NUM_CCZ4_VARS; n < NUM_VARS; ++n)
     {
-        rhs_cell_data[n] = 0.0;
+        rhs_state(ix, iy, iz, n) = 0.0;
     }
 
-    this->rhs_equation(rhs_cell_data, vars, d1, d2, advec);
+    // Vacuum part: the three CCZ4RHS kernels, in the order of
+    // Tests/BSSNMatterTest.  compute_A_ij_and_Theta_and_Gamma is templated on
+    // the formulation and on covariantZ4, so select the instantiation from the
+    // runtime parameters here.  The branch is uniform across a kernel launch.
+    this->compute_chi_and_h_ij(ix, iy, iz, rhs_state, state);
 
-    // add RHS matter terms from EM Tensor
-    add_emtensor_rhs(rhs_cell_data, vars, d1, coords);
-
-    // add evolution of matter fields themselves
-    if constexpr (std::is_same_v<matter_t, GRTresnaIndependentScalars> ||
-                  std::is_same_v<matter_t, ComplexScalarField> ||
-                  detail_matter::has_time_rhs_v<matter_t>)
+    const bool use_bssn     = (this->m_formulation == CCZ4::USE_BSSN);
+    const bool covariant_Z4 = this->m_params.covariantZ4;
+    if (use_bssn)
     {
-        m_matter.add_matter_rhs(rhs_cell_data, vars, d1, d2, advec, coords,
-                                m_time);
+        if (covariant_Z4)
+        {
+            this->template compute_A_ij_and_Theta_and_Gamma<CCZ4::USE_BSSN, 1>(
+                ix, iy, iz, rhs_state, state);
+        }
+        else
+        {
+            this->template compute_A_ij_and_Theta_and_Gamma<CCZ4::USE_BSSN, 0>(
+                ix, iy, iz, rhs_state, state);
+        }
     }
     else
     {
-        m_matter.add_matter_rhs(rhs_cell_data, vars, d1, d2, advec);
+        if (covariant_Z4)
+        {
+            this->template compute_A_ij_and_Theta_and_Gamma<CCZ4::USE_CCZ4, 1>(
+                ix, iy, iz, rhs_state, state);
+        }
+        else
+        {
+            this->template compute_A_ij_and_Theta_and_Gamma<CCZ4::USE_CCZ4, 0>(
+                ix, iy, iz, rhs_state, state);
+        }
     }
+
+    this->calculate_gauge_rhs(ix, iy, iz, rhs_state, state);
+
+    // Matter part.  This also applies the Kreiss-Oliger dissipation to every
+    // variable, so CCZ4RHS::apply_dissipation must NOT be called as well.
+    add_matter_contribution(ix, iy, iz, rhs_state, state);
+}
+
+template <class matter_t, class gauge_t, class deriv_t>
+AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::add_matter_contribution(
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<amrex::Real> &rhs_state,
+    const amrex::Array4<const amrex::Real> &state) const
+{
+    const amrex::CellData<amrex::Real> &rhs_cell_data =
+        rhs_state.cellData(ix, iy, iz);
+
+    const Coordinates coords(amrex::IntVect{AMREX_D_DECL(ix, iy, iz)}, m_dx,
+                             m_center);
+
+    // add RHS matter terms from EM Tensor
+    add_emtensor_rhs(ix, iy, iz, rhs_state, state);
+
+    // add evolution of matter fields themselves
+    MatterDispatch::add_matter_rhs(m_matter, ix, iy, iz, rhs_state, state,
+                                   this->m_deriv, coords, m_time);
 
     // Add dissipation to all terms
     this->m_deriv.add_dissipation(ix, iy, iz, rhs_cell_data, state,
-                                  this->m_sigma);
+                                  this->m_sigma, NUM_VARS);
 }
 
 // Function to add in EM Tensor matter terms to CCZ4 rhs
 template <class matter_t, class gauge_t, class deriv_t>
 AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
 CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::add_emtensor_rhs(
-    const amrex::CellData<amrex::Real> &rhs,
-    const typename matter_t::Vars &vars,
-    const typename matter_t::D1Vars &d1, const Coordinates &coords) const
+    const int ix, const int iy, const int iz,
+    const amrex::Array4<amrex::Real> &rhs_state,
+    const amrex::Array4<const amrex::Real> &state) const
 {
-    const auto h_UU  = CCZ4Geometry::compute_inverse_metric(vars);
-    const auto chris = CCZ4Geometry::compute_christoffel(d1, h_UU);
+    const amrex::CellData<amrex::Real> &rhs_cell_data =
+        rhs_state.cellData(ix, iy, iz);
+    const amrex::CellData<const amrex::Real> &state_cell_data =
+        state.cellData(ix, iy, iz);
+
+    const typename matter_t::Vars vars(state_cell_data);
+
+    const auto h_UU = CCZ4Geometry::compute_inverse_metric(vars);
+
+    const Coordinates coords(amrex::IntVect{AMREX_D_DECL(ix, iy, iz)}, m_dx,
+                             m_center);
 
     // Calculate elements of the decomposed stress energy tensor
-    const auto emtensor =
-        m_matter.compute_emtensor(vars, d1, h_UU, chris.ULL, coords, m_time);
+    const auto emtensor = MatterDispatch::compute_emtensor(
+        m_matter, ix, iy, iz, state, this->m_deriv, h_UU, coords, m_time);
 
     // Update RHS for K and Theta depending on formulation
-    if (this->m_formulation == CCZ4RHS<>::USE_BSSN)
+    if (m_formulation == CCZ4RHS<>::USE_BSSN)
     {
-        rhs[c_K] += 4.0 * M_PI * m_G_Newton * vars.lapse() *
-                    (emtensor.trS + emtensor.rho);
-        rhs[c_Theta] = 0.0;
+        rhs_cell_data[c_K] += 4.0 * M_PI * m_G_Newton * vars.lapse() *
+                              (emtensor.trS + emtensor.rho);
+        rhs_cell_data[c_Theta] = 0.0;
     }
     else
     {
-        rhs[c_K] += 4.0 * M_PI * m_G_Newton * vars.lapse() *
-                    (emtensor.trS - 3 * emtensor.rho);
-        rhs[c_Theta] += -8.0 * M_PI * m_G_Newton * vars.lapse() * emtensor.rho;
+        rhs_cell_data[c_K] += 4.0 * M_PI * m_G_Newton * vars.lapse() *
+                              (emtensor.trS - 3 * emtensor.rho);
+        rhs_cell_data[c_Theta] +=
+            -8.0 * M_PI * m_G_Newton * vars.lapse() * emtensor.rho;
     }
 
     // Update RHS for other variables
-    Tensor<2, amrex::Real> S_TF = emtensor.S;
+    Tensor::Rank2 S_TF = emtensor.S;
+
     CCZ4Geometry::make_trace_free(S_TF, vars, h_UU);
 
     FOR2_SYM(i, j)
     {
-        rhs[VAR_IDX(c_A11, i, j)] +=
-            -8.0 * M_PI * m_G_Newton * vars.chi() * vars.lapse() * S_TF[i][j];
+
+        rhs_cell_data[sym_var_idx(c_A11, i, j)] +=
+            -8.0 * M_PI * m_G_Newton * vars.chi() * vars.lapse() * S_TF(i, j);
     }
 
     FOR (i)
@@ -160,14 +186,14 @@ CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::add_emtensor_rhs(
         FOR (j)
         {
             matter_term_Gamma += -16.0 * M_PI * m_G_Newton * vars.lapse() *
-                                 h_UU[i][j] * emtensor.j[j];
+                                 h_UU(i, j) * emtensor.j(j);
         }
-        rhs[c_Gamma1 + i] += matter_term_Gamma;
+        rhs_cell_data[c_Gamma1 + i] += matter_term_Gamma;
     }
 
     // Add matter contribution to RHS of gauge evolution
-    this->m_gauge.rhs_gauge_add_matter_terms(rhs, vars, h_UU, emtensor,
-                                             m_G_Newton);
+    this->m_gauge.rhs_gauge_add_matter_terms(rhs_cell_data, vars, h_UU,
+                                             emtensor, m_G_Newton);
 }
 
 #endif /* CCZ4RHSWITHMATTER_IMPL_HPP_ */

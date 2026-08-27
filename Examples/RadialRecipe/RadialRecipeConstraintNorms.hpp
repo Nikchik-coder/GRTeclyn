@@ -2,6 +2,7 @@
 #define RADIALRECIPE_CONSTRAINT_NORMS_HPP_
 
 #include "RadialRecipeLevel.hpp"
+#include "SimulationParameters.hpp"
 #include "RadialRecipeMatterDispatch.hpp"
 #include "SetupFunctions.hpp"
 #include "StateTypes.hpp"
