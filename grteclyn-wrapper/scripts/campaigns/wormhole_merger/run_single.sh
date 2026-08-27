@@ -7,6 +7,16 @@
 # scratch.  Never invoke the binary on a params file directly -- clone-and-
 # rewrite here is what keeps plotfiles off NFS and the run stoppable.
 #
+# "Never directly" also includes quick throwaway tests, and that is not a style
+# preference.  AMReX writes `parameters_and_version.txt` into the binary's
+# CURRENT WORKING DIRECTORY on every run, and that file records the absolute
+# output_path / plot_file / check_file it was given.  Run the binary from the
+# repo root or from the example directory and you have just written your home
+# directory into a tracked location; it reached a commit that way on
+# 2026-08-27.  This launcher cd's into the run directory under runs/, which is
+# gitignored, so the artefact lands somewhere harmless.  Machine paths come
+# from the .env overlay below, so nothing here has to know them.
+#
 # Usage (attached, foreground -- detach only with explicit permission):
 #   bash scripts/campaigns/wormhole_merger/run_single.sh
 # Overrides:
@@ -29,7 +39,15 @@
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
-REPO_ROOT="$(cd -- "${WRAPPER_DIR}/.." && pwd)"
+
+# Machine paths come from the gitignored .env overlay, never from this file and
+# never from wherever the caller happened to be standing.  env.sh leaves
+# already-exported variables alone, so WHM_*/GRTECLYN_SCRATCH overrides still
+# win.  Sourcing it is also what makes REPO_ROOT authoritative rather than a
+# guess from BASH_SOURCE.
+# shellcheck source=../../lib/env.sh
+source "${WRAPPER_DIR}/scripts/lib/env.sh"
+REPO_ROOT="${GRTECLYN_ROOT:-$(cd -- "${WRAPPER_DIR}/.." && pwd)}"
 EXAMPLE_DIR="${REPO_ROOT}/Examples/BinaryWormholeMerger"
 
 PARAMS="${WHM_PARAMS:-params_test.txt}"
