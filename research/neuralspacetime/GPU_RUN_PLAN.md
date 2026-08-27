@@ -25,8 +25,10 @@ commit → push → pull only.
 - [x] **Phase 0** — cluster preflight: env, tests, binary (2026-08-26)
 - [x] **Phase 1** — stable-matter gate (**GO/NO-GO**) — **GO**, 2026-08-26,
       all boxes green (A/B vs old binary impossible: `.pre_trsfix` deleted)
-- [ ] **Phase 2** — MAP-Elites `qball_traj_fgeo_v2` (200 evals) — **launched
-      2026-08-26 ~12:45, unseeded** (v1 tree gone from disk)
+- [x] **Phase 2** — MAP-Elites `qball_traj_fgeo_v2` (200 evals) — **DONE
+      2026-08-27 06:00**, 200/200 in 17h15m, unseeded (v1 tree gone from
+      disk). Champion `eval_000194`, score 3945.3 (f_geo 15.6%, survival
+      0.495); 9 elites, 14% coverage; 59% of evals scored.
 - [ ] **Phase 3** — CMA-ES `qball_traj_fgeo_max_cmaes_v2` (200 evals)
 - [ ] **Phase 4** — freeze the champion + HQ promotion (FMAX-RM v2)
 - [ ] **Phase 5** — refinement matrix (convergence + domain + controls)
@@ -317,15 +319,101 @@ bash scripts/campaigns/stop_campaign.sh ../runs/neuralspacetime/search/map_elite
 
 **Pass gate:**
 
-- [ ] Watch the require-converged rejection rate over the first ~20 evals.
-      Rejections are the gate working — but if a large fraction of the space
-      stalls at 0.1%, record the fraction and decide *by hand* whether the
-      genome region or the tolerance is at fault. Never silently loosen.
-- [ ] Spot-check 3 random evals: exit door, `max|K|` at birth, no alignment
-      warnings.
-- [ ] Archive has a filled front (coverage comparable to v1's shape — not
-      its scores).
-- [ ] Champion identified; its eval dir preserved.
+- [x] Rejection rate recorded and inspected by hand (see below). **Not**
+      loosened.
+- [x] Spot-checked evals 58 / 131 / 138 (+ the champion, 194): all four exited
+      the solver through the `converged` door at NL iteration 8, all passed the
+      post-load gate, all evolved to `exit_code 0`. The only warnings in the
+      logs are `shell extraction failed ...` from the psi4 shell extractor,
+      which the campaign runs with `--no-psi4` — cosmetic, no alignment
+      warnings anywhere.
+- [x] Archive front filled: 9 elites, all on the `ftl_lifetime = 1.0` edge.
+- [x] Champion identified (`eval_000194`) and its directory survived the
+      pruner.
+
+### Phase 2 results — COMPLETE 2026-08-27 06:00
+
+200/200 evals in **17h15m** wall (11.6 evals/hour, solve-bound throughout;
+the four GPUs were never the bottleneck).
+
+| outcome | n | share |
+|---|---|---|
+| scored (`gpu_ok`) | 118 | 59.0% |
+| post-load constraint gate | 62 | 31.0% |
+| GPU evolution failed | 10 | 5.0% |
+| solver rejected (not converged) | 7 | 3.5% |
+| solver crashed | 3 | 1.5% |
+
+Scored-tier histogram: 64 `operational`, 29 `nontrivial`, 23 `constructed`,
+2 `rejected`. Median scored eval 316, mean 744, max 3945.
+
+**Archive:** 9 elites, coverage 9/64 = 14%, flat from ~eval 90 onward. Every
+elite sits in the top row of the lifetime axis (`ftl_lifetime = 1.0`) — the
+shortcut channel, when it exists at all, is open for the whole 26-unit window.
+The strength axis spreads across cells 5–7. The empty 55 cells are short-lived
+channels, which this matter model appears not to produce.
+
+**Top elites** (`f_geo` = raw 4D arrival-time advantage; `surv` = matter
+survival multiplier; score = 10000 · (f_geo−0.001)/0.199 · surv + shaping):
+
+| rank | eval | score | f_geo | surv | cell |
+|---|---|---|---|---|---|
+| 1 | **194** | **3945.3** | 0.156 | 0.495 | [6,7] |
+| 2 | 100 | 3577.3 | 0.147 | 0.480 | [5,7] |
+| 3 | 173 | 3331.4 | 0.176 | 0.371 | [7,7] |
+| 4 | 156 | 3310.9 | 0.178 | 0.365 | [7,7] |
+| 5 | 24 | 3063.6 | 0.170 | 0.350 | [6,7] |
+| 8 | 104 | 2498.1 | **0.200** | 0.246 | [7,7] |
+
+The board is a clean **depth-vs-survival trade**: the deepest shortcut found
+(eval 104, 20.0%) ranks 8th because three-quarters of its matter is gone by
+t=26. The survival multiplier, not the shortcut term, decides the ranking.
+
+**Champion `eval_000194`** — 15.6% shortcut along the z axis, rays launched at
+t=8, arriving t=20.15 against a flat-space reference of 14.4. 3/3 rays reached
+the detector, none captured, null condition held to 4.6e-4. Solver exited
+`converged` at NL iteration 8 (Ham 0.077% against the 0.1% door, headroom
+1.16×); post-load Ham L2 0.0259 against the 0.03 threshold. 498 s of GPU time.
+
+Physically it is a **stationary, continuously pumped cloud**, not a travelling
+bubble: activity 67 → 227, rms radius 6.5 → 16.1 (2.5× spread), confined
+fraction 0.658 → 0.326 (retention 0.495). The phantom component drains outward
+faster than the canonical one — canonical share climbs 0.20 → 0.40 over the
+run.
+
+### Caveats carried forward to Phase 5
+
+Three, all recorded rather than acted on:
+
+1. **Most of the shortcut is initial data, not dynamics.** The emission sweep
+   fires ray fans at t = 0, 2, … 12. For the champion it reads
+   0.137 → 0.141 → 0.147 → 0.155 → **0.156** → 0.145 → 0.000(no rays). So 88%
+   of the peak is already present at t=0 and the evolution adds ~14% on top.
+   Eval 100 is the same story (0.120 at t=0 vs 0.147 peak, 82%). The frozen
+   final-snapshot probe independently returns 0.144 for eval 100 against the
+   evolving 0.147 — a 2% difference. The 4D machinery is genuinely dynamical
+   (seven launch times give seven different answers, which a static metric
+   cannot do), but *these particular solutions are nearly stationary*. Do not
+   describe them as dynamically grown corridors.
+2. **The champion's well is deepening fast at the end of the window.** min χ
+   runs 1.00 → 0.955 → 0.920 → 0.931 → 0.903 → 0.890 → 0.741 → **0.715** over
+   t = 0 … 26. No horizon forms inside the window (`horizon_penalty = 0`) but
+   the last three samples are a steep dive, and the t=12 ray launch failed to
+   reach the detector at all. Phase 5 should re-run this genome past t=26 to
+   see whether it collapses just outside the scoring window.
+3. **The post-load rejections cluster just above the line.** The 62 rejected
+   evals have Ham L2 between 0.0320 and 0.0785, median 0.0380, against a
+   0.03 threshold — the median failure is 27% over, not orders of magnitude.
+   The population sits *on* the gate rather than far from it, so the 31%
+   rejection rate is sensitive to the exact threshold. Left untouched: this is
+   a finding about where the genome space lives, not a reason to move a
+   tolerance mid-campaign. Revisit only with a deliberate, documented decision.
+
+**Pruning note:** the campaign's own pruner kept 7 eval directories
+(3, 58, 100, 131, 138, 173, 194). The top three elites survived; the other six
+elites' directories were pruned. Their genomes are preserved in `archive.json`
+and `trajectory.jsonl`, so they are reproducible, but their plotfile-derived
+`small_data` is gone. Re-solve from the genome if Phase 5 needs them.
 
 ---
 
