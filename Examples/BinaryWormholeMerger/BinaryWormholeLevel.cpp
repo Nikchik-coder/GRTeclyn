@@ -248,10 +248,21 @@ void BinaryWormholeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
     amrex::Gpu::streamSynchronize();
 }
 
-// NOLINTNEXTLINE(readability-function-cognitive-complexity)
-void BinaryWormholeLevel::specificPostTimeStep()
+void BinaryWormholeLevel::specific_post_init()
 {
-    BL_PROFILE("BinaryWormholeLevel::specificPostTimeStep");
+    BL_PROFILE("BinaryWormholeLevel::specific_post_init");
+
+    // AMReX builds the whole initial hierarchy and calls computeInitialDt
+    // before post_init, so dtLevel(0) and the fine levels are both valid here.
+    // Emitting the t = 0 row from this hook is what makes Phase 1 of
+    // research/merger/Plan.md measurable at all - see the header comment.
+    write_scalar_diagnostics();
+}
+
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
+void BinaryWormholeLevel::write_scalar_diagnostics()
+{
+    BL_PROFILE("BinaryWormholeLevel::write_scalar_diagnostics");
 
     // ---- Constraint norms -------------------------------------------------
     if (simParams().calculate_constraint_norms && Level() == 0)
@@ -560,6 +571,13 @@ void BinaryWormholeLevel::specificPostTimeStep()
                 dt, time, restart_time, first_step);
         }
     }
+}
+
+void BinaryWormholeLevel::specificPostTimeStep()
+{
+    BL_PROFILE("BinaryWormholeLevel::specificPostTimeStep");
+
+    write_scalar_diagnostics();
 
     // ---- In-code Weyl4 / Psi4 spherical-harmonic extraction ---------------
     // SphericalExtraction interpolates the "Weyl4" derived variable onto the

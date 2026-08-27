@@ -92,3 +92,8 @@ __pycache__/
 /results/**/__pycache__/
 /results/**/*.pyc
 *.ex.*
+
+# AMReX drops this in the binary's cwd on every run, and it records the
+# absolute output/plotfile paths of whoever ran it -- home dirs and scratch
+# paths that must never enter git.  It is a run artefact, not configuration.
+parameters_and_version.txt

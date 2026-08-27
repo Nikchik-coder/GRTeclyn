@@ -73,12 +73,24 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_support_strength", wormhole_params.support_strength,
                 1.0);
 
-        pp.load("wormhole_phi_monopole_amplitude",
-                wormhole_params.phi_monopole_amplitude, 0.0);
-        pp.load("wormhole_phi_perturbation_amplitude",
-                wormhole_params.phi_perturbation_amplitude, 0.0);
-        pp.load("wormhole_phi_perturbation_width",
-                wormhole_params.phi_perturbation_width, 0.0);
+        // The seeded Gaussian scalar perturbation of the single-throat example
+        // has NO place in a merger: there the point was to pick the
+        // Shinkai-Hayward collapse or expansion branch by hand, here the other
+        // throat is the perturbation and pre-destabilising the pair would
+        // contaminate the result.  Reject stale params files loudly instead of
+        // silently ignoring the keys.
+        for (const auto *removed_key :
+             {"wormhole_phi_monopole_amplitude",
+              "wormhole_phi_perturbation_amplitude",
+              "wormhole_phi_perturbation_width"})
+        {
+            check_parameter(removed_key, std::string("<set>"),
+                            !pp.contains(removed_key),
+                            "no longer exists in BinaryWormholeMerger: the "
+                            "throats start in their own exact equilibrium and "
+                            "the merger itself provides the perturbation.  "
+                            "Delete this key from the params file.");
+        }
 
         pp.load("wormhole_subtract_phi_asymptote",
                 wormhole_params.subtract_phi_asymptote, 1);
@@ -134,14 +146,6 @@ class SimulationParameters : public SimulationParametersBase
         check_parameter("wormhole_bare_mass_B", wormhole_params.bare_mass_B,
                         wormhole_params.bare_mass_B >= 0.0, "must be >= 0");
 
-        check_parameter(
-            "wormhole_phi_perturbation_width",
-            wormhole_params.phi_perturbation_width,
-            (wormhole_params.phi_perturbation_amplitude == 0.0 &&
-             wormhole_params.phi_monopole_amplitude == 0.0) ||
-                (wormhole_params.phi_perturbation_width > 0.0),
-            "must be > 0 when any phi perturbation amplitude is nonzero");
-
         check_parameter("binary_diag_axis", binary_diag_params.axis,
                         (binary_diag_params.axis >= 0) &&
                             (binary_diag_params.axis < AMREX_SPACEDIM),
@@ -157,21 +161,30 @@ class SimulationParameters : public SimulationParametersBase
                        "shift invariant).  Set it to 0, or accept that the "
                        "potential is being evaluated about a shifted field.");
 
-        // The two throats must actually be distinct.
+        // Object B is absent in the single-throat regression mode (b_B = 0 and
+        // no bare mass).  Everything below compares the two centres, and none
+        // of it means anything when there is only one object: with centerA at
+        // the origin, centerB defaults to its mirror image, which is the SAME
+        // point, and a coincidence check would reject a perfectly valid
+        // single-throat run.
+        const bool object_B_absent = (wormhole_params.b0_B == 0.0) &&
+                                     (wormhole_params.bare_mass_B == 0.0);
+
         const double dx_sep = wormhole_params.centerA[0] - wormhole_params.centerB[0];
         const double dy_sep = wormhole_params.centerA[1] - wormhole_params.centerB[1];
         const double dz_sep = wormhole_params.centerA[2] - wormhole_params.centerB[2];
         const double separation =
             std::sqrt(dx_sep * dx_sep + dy_sep * dy_sep + dz_sep * dz_sep);
-        check_parameter("wormhole_centerA/B", separation, separation > 0.0,
+        check_parameter("wormhole_centerA/B", separation,
+                        object_B_absent || (separation > 0.0),
                         "the two throats must be at different positions");
 
         // The superposition error scales as (b/d)^2; warn once it stops being
-        // a small correction.
+        // a small correction.  There is no superposition with one object.
         const double b_max =
             std::max(wormhole_params.b0_A, wormhole_params.b0_B);
         warn_parameter("wormhole_centerA/B", separation,
-                       separation > 4.0 * b_max,
+                       object_B_absent || (separation > 4.0 * b_max),
                        "throats are close enough that the analytic "
                        "superposition error (O(b^2/d^2)) is no longer small; "
                        "prefer constraint-solved initial data at this "
@@ -181,7 +194,7 @@ class SimulationParameters : public SimulationParametersBase
         const double m_total =
             wormhole_params.bare_mass_A + wormhole_params.bare_mass_B;
         warn_parameter("wormhole_bare_mass_A/B", m_total,
-                       m_total < 0.2 * separation,
+                       object_B_absent || (m_total < 0.2 * separation),
                        "bare masses are large enough that the O(m/d) "
                        "superposition error is no longer small; prefer "
                        "constraint-solved initial data (Route B)");
@@ -206,8 +219,6 @@ class SimulationParameters : public SimulationParametersBase
 
         // A stray Bowen-York term with nothing at its centre is valid data
         // but pure junk radiation - flag it in the single-throat mode.
-        const bool object_B_absent = (wormhole_params.b0_B == 0.0) &&
-                                     (wormhole_params.bare_mass_B == 0.0);
         warn_parameter("wormhole_momentumB", wormhole_params.momentumB[0],
                        !object_B_absent ||
                            ((wormhole_params.momentumB[0] == 0.0) &&

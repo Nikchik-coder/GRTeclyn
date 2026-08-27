@@ -29,6 +29,9 @@ data_subpath = "data"
 
 print_progress_only_to_rank_0 = 1
 
+# Required (ParmParse get) by the BHAMR Weyl4 particle interpolator
+particle_interpolator.verbosity = 0
+
 #################################################
 # Two-throat initial data (Route A, analytic superposition)
 
@@ -49,9 +52,6 @@ wormhole_centerA = 0.0 0.0 5.0
 wormhole_momentumA = 0.0 0.0 0.0
 
 wormhole_subtract_phi_asymptote = 1
-wormhole_phi_monopole_amplitude     = 0.0
-wormhole_phi_perturbation_amplitude = 0.0
-wormhole_phi_perturbation_width     = 0.5
 wormhole_support_strength = 1.0
 phantom_mass = 0.0
 

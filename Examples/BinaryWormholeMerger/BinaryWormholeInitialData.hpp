@@ -123,14 +123,6 @@ class BinaryWormholeInitialData
         std::array<double, AMREX_SPACEDIM> momentumA;
         std::array<double, AMREX_SPACEDIM> momentumB;
 
-        //! Gaussian perturbation applied around EACH throat:
-        //!   phi -> phi + (A_0 + A_phi Y20) exp(-r_X^2 / width^2)
-        //! A_0 < 0 seeds the compressive (collapse) branch, A_0 > 0 the
-        //! rarefactive (expansion) branch - see Shinkai & Hayward.
-        double phi_monopole_amplitude;
-        double phi_perturbation_amplitude;
-        double phi_perturbation_width;
-
         //! 1 = shift phi so that it tends to 0 at spatial infinity
         int subtract_phi_asymptote;
 
@@ -264,24 +256,13 @@ class BinaryWormholeInitialData
                             (M_PI / 2.0));
         }
 
-        const double phi_mono  = m_params.phi_monopole_amplitude;
-        const double phi_amp   = m_params.phi_perturbation_amplitude;
-        const double phi_width = m_params.phi_perturbation_width;
-        if ((phi_mono != 0.0 || phi_amp != 0.0) && phi_width > 0.0)
-        {
-            const data_t sig2     = (data_t)(phi_width * phi_width);
-            const data_t Y20_norm = (data_t)sqrt(5.0 / (16.0 * M_PI));
-
-            const data_t cosA_sq = dzA * dzA / rA2_reg;
-            const data_t Y20_A   = Y20_norm * (3.0 * cosA_sq - 1.0);
-            phi += ((data_t)phi_mono + (data_t)phi_amp * Y20_A) *
-                   exp(-rA2 / sig2);
-
-            const data_t cosB_sq = dzB * dzB / rB2_reg;
-            const data_t Y20_B   = Y20_norm * (3.0 * cosB_sq - 1.0);
-            phi += ((data_t)phi_mono + (data_t)phi_amp * Y20_B) *
-                   exp(-rB2 / sig2);
-        }
+        // NOTE: there is deliberately NO seeded Gaussian perturbation here.
+        // The single-throat example needs one (its whole point is to pick the
+        // Shinkai-Hayward compressive or rarefactive branch); a merger does
+        // not.  The other throat IS the perturbation, and pre-destabilising
+        // the throats would contaminate the very thing this run measures -
+        // whether gravity alone drives them together and what happens when
+        // they meet.  Start each throat in its own exact equilibrium.
 
         // Pi = 0: the scalar is momentarily static, so the matter momentum
         // density vanishes and the Bowen-York A_ij solves the momentum

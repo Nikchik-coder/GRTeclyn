@@ -56,9 +56,13 @@ object B entirely — the single-throat regression mode.
 - `constraint_norms.dat` — as elsewhere.
 - `collapse_diagnostics.dat` — the **unchanged 13-column single-throat contract**.
 - `binary_throat_diagnostics.dat` — 17 columns: separation, per-throat barycentre
-  /χ/lapse minima, θ₊ minima and trapped radii about throat A, throat B and their
-  midpoint. θ₊ < 0 inside `binary_diag_min_radius` of a throat is the coordinate
-  inversion, not a horizon — only the common-centre scan is evidence of fusion.
+  /χ/lapse minima, θ₊ and the outermost trapped radius about throat A, throat B and
+  their midpoint. θ₊ is reduced as a **maximum per radial shell**, since a surface is
+  trapped only when θ₊ ≤ 0 everywhere on it; a shell the finest AMR level does not
+  cover gets no verdict and reads 1e30. θ₊ < 0 inside `binary_diag_min_radius` of a
+  throat is the coordinate inversion, not a horizon — only the common-centre scan,
+  whose cut is raised to sep/2 + min_radius so the sphere encloses both throats, is
+  evidence of fusion.
 - `Weyl4_mode_*.dat` — in-code Ψ₄ spherical-harmonic extraction (`BHAMR`).
 
 ## Running

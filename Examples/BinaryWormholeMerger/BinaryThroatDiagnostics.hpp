@@ -10,6 +10,8 @@
 #include "StateVariables.hpp"
 
 #include <AMReX_Geometry.H>
+#include <AMReX_GpuAtomic.H>
+#include <AMReX_GpuContainers.H>
 #include <AMReX_MultiFab.H>
 #include <AMReX_ParallelDescriptor.H>
 #include <AMReX_Reduce.H>
@@ -39,18 +41,37 @@
         indicators.
       * The outgoing-null-expansion proxy
             theta_+ = 2 sqrt(chi)/r - (d chi/dr)/sqrt(chi) + A_rr - (2/3) K
-        about EACH throat and about the midpoint between them.  The midpoint
-        scan is the common-horizon detector: theta_+ <= 0 on a sphere that
-        encloses both throats is the signature of fusion into a single trapped
-        region.
+        on COORDINATE SPHERES about each throat and about the midpoint between
+        them.  The midpoint scan is the common-horizon detector: theta_+ <= 0
+        on a sphere enclosing both throats is the signature of fusion into a
+        single trapped region.
 
-    IMPORTANT - the min_radius parameter.  For an Ellis-Bronnikov throat the
-    coordinate origin r -> 0 is the OTHER asymptotic infinity, not a centre, and
-    there theta_+ -> -8 r / b^2 < 0 identically.  A naive scan therefore always
-    reports a "trapped surface" hugging each throat, which is a coordinate
-    artefact of the inversion, not a horizon.  min_radius excludes that region;
-    set it to at least the isotropic throat radius b/2, and for the
-    common-horizon scan to something comparable to half the initial separation.
+    IMPORTANT - theta_+ is reduced per RADIAL SHELL, taking the MAXIMUM over
+    each shell, and the reported horizon radius is the outermost shell whose
+    maximum is <= 0.  A surface is trapped only when theta_+ <= 0 everywhere on
+    it, so a global minimum over all points is not merely conservative, it is
+    wrong: a single point of a large sphere about throat A that grazes throat B
+    sits in B's steep chi gradient, which overwhelms the 2 sqrt(chi)/r term of
+    the distant centre A and drives theta_+ negative there.  Reducing a minimum
+    turns that one point into a phantom trapped surface straddling the whole
+    binary at t = 0, at a radius set by the SEPARATION, so no exclusion radius
+    can suppress it.  Taking the shell maximum removes it exactly, because the
+    rest of that same sphere is far from both throats and expanding.
+
+    A shell the finest level does not cover carries NO verdict - under AMR the
+    fine grid is a small patch around the throats.  Coverage is checked against
+    the shell volume in cells; if no shell is covered the reported theta is the
+    sentinel 1e30, meaning "not measured", and the horizon radius stays 0.
+
+    The min_radius parameter.  For an Ellis-Bronnikov throat the coordinate
+    origin r -> 0 is the OTHER asymptotic infinity, not a centre.  For the
+    massless throat theta_+ = 2 (1 - u) / (r (1 + u)^2) with u = b^2/(4 r^2), so
+    theta_+ < 0 on the WHOLE sphere for r < b/2: a genuine, unavoidable
+    coordinate artefact of the inversion rather than a horizon.  min_radius
+    excludes it and need only exceed the isotropic throat radius b/2 (the
+    default, the throat radius b, is twice that).  The common-horizon scan
+    raises its own cut to sep/2 + min_radius automatically, so that a sphere
+    only counts as "common" once it encloses both throats.
 */
 struct BinaryThroatDiagnostics
 {
@@ -88,7 +109,6 @@ struct BinaryThroatDiagnostics
         const int axis              = a_params.axis;
         const amrex::Real split     = a_params.split_coord;
         const amrex::Real min_r     = a_params.min_radius;
-        const amrex::Real min_r_sq  = min_r * min_r;
 
         // ---- Pass 1: per-half-space minima of chi and lapse -----------------
         amrex::Real min_chi_A = BIG;
@@ -209,31 +229,66 @@ struct BinaryThroatDiagnostics
                                      0.5 * (posA[1] + posB[1]),
                                      0.5 * (posA[2] + posB[2])};
 
-        // ---- Pass 3: theta_+ about throat A, throat B and their midpoint ----
-        amrex::Real theta_A = BIG, theta_B = BIG, theta_C = BIG;
-        amrex::Real ah_r_A = 0.0, ah_r_B = 0.0, ah_r_C = 0.0;
+        // ---- Pass 3: theta_+ on radial SHELLS about A, B and their midpoint --
+        //
+        // A closed surface is trapped when theta_+ <= 0 EVERYWHERE on it, so
+        // the statistic that matters per coordinate sphere is the MAXIMUM of
+        // theta_+ over that sphere.  Reducing a global minimum over all points
+        // instead - the obvious but wrong thing - declares a horizon as soon as
+        // a SINGLE point of a large sphere about throat A happens to graze
+        // throat B, where B's steep chi gradient overwhelms the 2 sqrt(chi)/r
+        // term.  That produces an enormous phantom "trapped surface" straddling
+        // the whole binary at t = 0, and no exclusion radius fixes it: the
+        // grazing region extends over a distance set by the separation, not by
+        // the throat radius.
+        //
+        // Shells the finest level does not COVER carry no verdict.  Under AMR
+        // the fine grid is a small patch around the throats, so most large
+        // shells are empty or partial; an unsampled shell must read "unknown",
+        // never "trapped".  Coverage is tested against the shell volume in
+        // cells; uncovered shells are skipped and, if none is covered, the
+        // reported theta is the BIG sentinel (1e30 = no verdict).
+        constexpr int NSHELL       = 256;
+        const amrex::Real shell_dr = amrex::max(
+            dx_arr[0], amrex::max(dx_arr[1], amrex::Real(dx_arr[2])));
+        const amrex::Real cell_vol = dx_arr[0] * dx_arr[1] * dx_arr[2];
+
+        // Inner cut per scan centre.  A and B only have to clear their own
+        // inversion region (theta_+ < 0 for r < b/2 exactly, see above).  The
+        // midpoint scan is the COMMON-horizon detector, so it must additionally
+        // enclose both throats to mean anything: r >= sep/2 + min_radius.
+        const amrex::Real min_r_c[3] = {min_r, min_r,
+                                        amrex::max(min_r, 0.5 * sep + min_r)};
+
+        amrex::Real theta_shell[3] = {BIG, BIG, BIG};
+        amrex::Real ah_r_shell[3]  = {0.0, 0.0, 0.0};
         {
             const amrex::Real aX = posA[0], aY = posA[1], aZ = posA[2];
             const amrex::Real bX = posB[0], bY = posB[1], bZ = posB[2];
             const amrex::Real mX = posC[0], mY = posC[1], mZ = posC[2];
+            const amrex::Real cut0 = min_r_c[0], cut1 = min_r_c[1],
+                              cut2 = min_r_c[2];
 
-            amrex::ReduceOps<amrex::ReduceOpMin, amrex::ReduceOpMax,
-                             amrex::ReduceOpMin, amrex::ReduceOpMax,
-                             amrex::ReduceOpMin, amrex::ReduceOpMax>
-                ops;
-            amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real,
-                              amrex::Real, amrex::Real>
-                data(ops);
-            using Tuple = typename decltype(data)::Type;
+            constexpr int NBIN = 3 * NSHELL;
+            amrex::Gpu::DeviceVector<amrex::Real> d_shell_max(NBIN);
+            amrex::Gpu::DeviceVector<amrex::Real> d_shell_cnt(NBIN);
+            amrex::Real *p_max = d_shell_max.data();
+            amrex::Real *p_cnt = d_shell_cnt.data();
+            amrex::ParallelFor(NBIN,
+                               [=] AMREX_GPU_DEVICE(int n)
+                               {
+                                   p_max[n] = -BIG;
+                                   p_cnt[n] = 0.0;
+                               });
 
             for (amrex::MFIter mfi(a_state, amrex::TilingIfNotGPU());
                  mfi.isValid(); ++mfi)
             {
                 const amrex::Box &bx = mfi.validbox();
                 const auto arr       = a_state.const_array(mfi);
-                ops.eval(
-                    bx, data,
-                    [=] AMREX_GPU_DEVICE(int i, int j, int k) -> Tuple
+                amrex::ParallelFor(
+                    bx,
+                    [=] AMREX_GPU_DEVICE(int i, int j, int k)
                     {
                         const amrex::Real px =
                             prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0] - cx;
@@ -266,12 +321,10 @@ struct BinaryThroatDiagnostics
                         const amrex::Real sqrt_chi =
                             std::sqrt(amrex::max(chi, amrex::Real(1.0e-20)));
 
-                        amrex::Real th[3]{BIG, BIG, BIG};
-                        amrex::Real ah[3]{0.0, 0.0, 0.0};
-
-                        const amrex::Real ox[3] = {px - aX, px - bX, px - mX};
-                        const amrex::Real oy[3] = {py - aY, py - bY, py - mY};
-                        const amrex::Real oz[3] = {pz - aZ, pz - bZ, pz - mZ};
+                        const amrex::Real ox[3]  = {px - aX, px - bX, px - mX};
+                        const amrex::Real oy[3]  = {py - aY, py - bY, py - mY};
+                        const amrex::Real oz[3]  = {pz - aZ, pz - bZ, pz - mZ};
+                        const amrex::Real cut[3] = {cut0, cut1, cut2};
 
                         for (int c = 0; c < 3; ++c)
                         {
@@ -279,11 +332,20 @@ struct BinaryThroatDiagnostics
                             const amrex::Real Y  = oy[c];
                             const amrex::Real Z  = oz[c];
                             const amrex::Real r2 = X * X + Y * Y + Z * Z;
-                            if (r2 <= min_r_sq || r2 <= 1.0e-12)
+                            if (r2 <= 1.0e-12)
                             {
                                 continue;
                             }
                             const amrex::Real r = std::sqrt(r2);
+                            if (r <= cut[c])
+                            {
+                                continue;
+                            }
+                            const int ib = static_cast<int>(r / shell_dr);
+                            if (ib >= NSHELL)
+                            {
+                                continue;
+                            }
 
                             const amrex::Real Arr =
                                 (A11 * X * X + A22 * Y * Y + A33 * Z * Z +
@@ -297,27 +359,57 @@ struct BinaryThroatDiagnostics
                                 2.0 * sqrt_chi / r - dchi_dr / sqrt_chi + Arr -
                                 (2.0 / 3.0) * K;
 
-                            th[c] = theta_plus;
-                            ah[c] = (theta_plus <= 0.0) ? r : amrex::Real(0.0);
+                            amrex::Gpu::Atomic::Max(&p_max[c * NSHELL + ib],
+                                                    theta_plus);
+                            amrex::Gpu::Atomic::AddNoRet(&p_cnt[c * NSHELL + ib],
+                                                         amrex::Real(1.0));
                         }
-
-                        return {th[0], ah[0], th[1], ah[1], th[2], ah[2]};
                     });
             }
-            const auto vals = data.value();
-            theta_A         = amrex::get<0>(vals);
-            ah_r_A          = amrex::get<1>(vals);
-            theta_B         = amrex::get<2>(vals);
-            ah_r_B          = amrex::get<3>(vals);
-            theta_C         = amrex::get<4>(vals);
-            ah_r_C          = amrex::get<5>(vals);
-            amrex::ParallelDescriptor::ReduceRealMin(theta_A);
-            amrex::ParallelDescriptor::ReduceRealMax(ah_r_A);
-            amrex::ParallelDescriptor::ReduceRealMin(theta_B);
-            amrex::ParallelDescriptor::ReduceRealMax(ah_r_B);
-            amrex::ParallelDescriptor::ReduceRealMin(theta_C);
-            amrex::ParallelDescriptor::ReduceRealMax(ah_r_C);
+            amrex::Gpu::streamSynchronize();
+
+            std::vector<amrex::Real> shell_max(NBIN);
+            std::vector<amrex::Real> shell_cnt(NBIN);
+            amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_shell_max.begin(),
+                             d_shell_max.end(), shell_max.begin());
+            amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_shell_cnt.begin(),
+                             d_shell_cnt.end(), shell_cnt.begin());
+            amrex::ParallelDescriptor::ReduceRealMax(shell_max.data(), NBIN);
+            amrex::ParallelDescriptor::ReduceRealSum(shell_cnt.data(), NBIN);
+
+            for (int c = 0; c < 3; ++c)
+            {
+                for (int ib = 0; ib < NSHELL; ++ib)
+                {
+                    const amrex::Real r_hi = amrex::Real(ib + 1) * shell_dr;
+                    const amrex::Real r_lo =
+                        amrex::max(amrex::Real(ib) * shell_dr, min_r_c[c]);
+                    if (r_hi <= r_lo)
+                    {
+                        continue;
+                    }
+                    // Cells the shell would hold if the finest level covered it.
+                    const amrex::Real expected =
+                        (4.0 / 3.0) * M_PI *
+                        (r_hi * r_hi * r_hi - r_lo * r_lo * r_lo) / cell_vol;
+                    if (shell_cnt[c * NSHELL + ib] < 0.5 * expected)
+                    {
+                        continue; // not covered -> no verdict from this shell
+                    }
+                    const amrex::Real th = shell_max[c * NSHELL + ib];
+                    theta_shell[c]       = amrex::min(theta_shell[c], th);
+                    if (th <= 0.0)
+                    {
+                        // Outermost trapped shell wins (apparent horizon).
+                        ah_r_shell[c] = amrex::max(ah_r_shell[c], r_hi);
+                    }
+                }
+            }
         }
+
+        const amrex::Real theta_A = theta_shell[0], ah_r_A = ah_r_shell[0];
+        const amrex::Real theta_B = theta_shell[1], ah_r_B = ah_r_shell[1];
+        const amrex::Real theta_C = theta_shell[2], ah_r_C = ah_r_shell[2];
 
         // ---- Write ----------------------------------------------------------
         if (!a_out_dir.empty())
