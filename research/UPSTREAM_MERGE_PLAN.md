@@ -342,6 +342,148 @@ noise: **stage 1 passes §7.4**.
    `ref_eval_000100/`).
 3. Fast-forward `feature/grteclyn-wrapper` only after both regressions pass.
 
+### 0.9 Stage-2 execution log (2026-08-27, node) — merge + PR #215 params port
+
+Merge commit `04026918` (`origin/develop`, 167 commits) on
+`chore/merge-upstream-2026-08`. The campaign ran uninterrupted throughout: its
+tree, executables and orchestrator were verified untouched after every step and
+it advanced evals (150 → 153) while the builds and replays ran on other cards.
+
+**Design deviation from §0.5 step 3: no params converter.** The plan called for
+a key-rename converter run over the params files and the wrapper's param
+writers. That was dropped in favour of **injection shims**, because a converter
+would have forced a lockstep change to the live wrapper, every stored campaign
+params file, and every archived reproduction — for no numerical gain.
+
+Instead, two fork-local headers restored under `Source/GRTeclynCore/`:
+
+| Header | Role |
+|---|---|
+| `AMReXParameters.hpp` | reads the ORIGINAL flat grid/boundary/output keys |
+| `SimulationParametersBase.hpp` | reads the ORIGINAL CCZ4, gauge, dissipation and extraction keys |
+
+Both then **inject** the new-scheme keys into the ParmParse table
+(`pp.add`/`pp.addarr`) so upstream's self-reading constructors find what they
+now require: `evolution.{sigma,nan_check,num_ghosts,dt_multiplier}`,
+`ccz4.{formulation,kappa1,kappa2,kappa3,covariantZ4,min_chi,min_lapse}`,
+`gauge.{lapse_advec_coeff,lapse_power,lapse_coeff,shift_Gamma_coeff,shift_advec_coeff,eta}`,
+`tagging.thresholds`, `grteclyn.output_path`, `geometry.center`,
+`boundary.{hi,lo}_condition` and `weyl_extraction.center`. Consequences:
+
+* **Params files, the wrapper and the campaign are unchanged.** The stage-2
+  regression replays the *identical* params file as stage 1 — only the three
+  path lines (`output_path`, `amr.check_file`, `amr.plot_file`) are rewritten
+  so the replay does not write into a live eval directory.
+* Every injection is **guarded on the key being absent**, so a params file
+  written in the new style wins and the fork can migrate file-by-file later.
+* Injection runs **after** `check_params()`, deliberately: the BSSN branch
+  zeroes the kappas, and the injected values must be the ones the solver
+  actually used before.
+
+Three port details worth recording, all traps if you redo this:
+
+1. **The boundary enum shifted.** Upstream's new `BoundaryConditions` moved
+   `REFLECTIVE_BC` from 2 to 3, so the shim carries the ORIGINAL integer codes
+   and maps them to the new *name strings* (`1 → SOMMERFELD_BC`,
+   `2 → REFLECTIVE_BC`, `3 → FIRST_ORDER_EXTRAPOLATION_BC`, periodic
+   directions → `UNSET_BC`; the old `0`/`4` codes abort). Reading the old
+   integers straight into the new enum would have silently changed the
+   boundary condition.
+2. **Sommerfeld asymptotics are now compile-time.** `nonzero_asymptotic_vars`
+   / `_values` no longer exist; the values come from
+   `StateVariables::asymptotic_values`. `CCZ4StateVariables` supplies
+   `chi = h11 = h22 = h33 = lapse = 1`, everything else 0 — value-identical to
+   what the campaign params set, so the boundary is bit-for-bit unchanged. The
+   three examples gained a zero-filled `additional_asymptotic_values` for their
+   own variables. The old keys are accepted and ignored.
+3. **`GRAMR::set_simulation_parameters` is gone.** Each Level class now owns a
+   file-scope `const SimulationParameters *` set from its Main
+   (`<Level>::set_sim_params(&sim_params)`). Pointer, not copy — the RL bridge
+   mutates `sim_params` at runtime and the levels must see it.
+
+`RLActionApplier` was ported the same way: `MovingPunctureGauge` is now
+constructed per RHS evaluation and self-reads `gauge.*`, so the applier's EMA
+reads the current value out of ParmParse and `add`s the update back (ParmParse
+returns the last entry, so `add` overrides).
+
+**Builds — all four targets link.** Same toolchain as stage 1.
+
+| Target | Result | Fix needed |
+|---|---|---|
+| `Tests/` CPU + HDF5 | links | `rm -rf tmp_build_dir` first — see trap below |
+| `Examples/RadialRecipe` MPI+CUDA | links, 157 MB | the four API classes below |
+| `Examples/RotatingWormholeCollapse` MPI+CUDA | links | same |
+| `Examples/SupportedWormholeCollapse` MPI+CUDA | links | same + a missing `DimensionDefinitions.hpp` include in the shim (`FOR` was only reaching it transitively via RadialRecipe's include order) |
+
+Four upstream API changes account for every build error:
+
+* `FilesystemTools::directory_exists` / `mkdir_recursive` are gone; only
+  `ensure_directory_exists(path)` remains.
+* `SmallDataIO::write_time_data_line` is now a template — a braced initialiser
+  list can no longer deduce its argument, so all 9 call sites pass an explicit
+  `std::vector<double>{…}`.
+* `PositiveChiAndLapse` self-reads `ccz4.min_chi` / `ccz4.min_lapse` from a
+  default constructor; the two-argument form is gone (12 call sites).
+* `SimulationParameters::check_params` is now a **static** callback handed to
+  `amrex::Initialize`. Legacy-scheme examples validate in their constructor and
+  have only a member function of that name, so `SetupFunctions.hpp` now detects
+  a static `check_params()` and passes no callback when there isn't one —
+  upstream's own examples keep theirs.
+
+**Build trap: stale objects survive a source rename.** `Tests/tmp_build_dir`
+held pre-merge `.o` files that make did not rebuild, so the suite aborted on a
+params filename that no longer exists in the merged source. Delete
+`tmp_build_dir` before trusting any post-merge build.
+
+**Test suite — 16/16 cases, 24,591 assertions, with real h5diff checks**
+(`--dt-no-skip=true`, `USE_HDF5=TRUE` against a serial HDF5, `h5diff` on
+`PATH`). Up from 13,327 assertions at stage 1 — upstream added coverage. The
+five matter-critical cases still compare against the stored GRChombo reference
+files at 1e-10.
+
+**Regression (§7.4) — PASSED, and `init_snan` is clean.**
+
+Reference: `runs/merge_regression/ref_eval_000100/` (unchanged from stage 1).
+
+Two runs against it, both on GPU 3 with the merged
+`main3d.gnu.MPI.CUDA.ex`, params identical to the reference apart from output
+paths (a diff confirmed it):
+
+- **Poisoned-allocation smoke test** (`amrex.init_snan=1`,
+  `amrex.fpe_trap_invalid=1`, 200 steps): exit 0, no FPE trap, results match
+  the reference to 7.2e-11 with three of four `.dat` files bit-identical. This
+  is the technique that exposed the uninitialized-RHS bug at stage 1; the new
+  parameter path is clean under it.
+- **Full replay** (2600 steps, the campaign's exact top-elite params): exit 0,
+  all four diagnostic files complete at 2600/2600 rows.
+
+| file | max rel diff vs reference |
+|---|---|
+| collapse_diagnostics.dat | 9.8e-11 |
+| curvature_invariants.dat | 6.3e-11 |
+| constraint_norms.dat | 1.2e-11 |
+| energy_conditions.dat | identical |
+
+NaN patterns match row-for-row (the NaNs in `collapse_diagnostics` column 9
+are pre-existing in the reference, not a merge artifact). Differences are GPU
+run-to-run noise — the same magnitude two runs of the *pre-merge* binary show
+against each other.
+
+### What's left after stage 2
+
+1. **Merge back into `feature/grteclyn-wrapper`** (§11 — note the branch name
+   there is stale; the target is `feature/grteclyn-wrapper`, not
+   `feature/interstellar`). Blocked on purpose: that branch is checked out in
+   the main tree, which the live MAP-Elites campaign runs from. Merging now
+   would rewrite the campaign's source tree mid-run. Do it after the campaign
+   stops, or from a fresh checkout once the user gives the word.
+2. **Rebuild the campaign executables from the merged branch** after the merge
+   back, and rerun the wrapper's `check_params=1` gate (already verified to
+   exit 0 against the merged binary).
+3. Optional cleanup: drop the `runs/merge_regression/stage2_*` scratch outputs
+   once nothing refers to them (`ref_eval_000100` stays — it is the packed
+   reference).
+
 ---
 
 ## 1. TL;DR
@@ -759,8 +901,10 @@ Suggested order:
 
 ```bash
 # only once tests are green AND a regression run matches a known-good checkpoint
-git checkout feature/interstellar
-git merge chore/merge-upstream
+# (branch names updated 2026-08-27: the target is feature/grteclyn-wrapper;
+#  feature/interstellar no longer exists)
+git checkout feature/grteclyn-wrapper
+git merge chore/merge-upstream-2026-08
 ```
 
 Merging `develop` is a separate, optional exercise — it produces the same 7 conflicts but does **not**
