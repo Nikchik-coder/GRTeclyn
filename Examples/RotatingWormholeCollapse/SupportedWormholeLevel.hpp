@@ -5,6 +5,8 @@
 #include "DefaultLevelFactory.hpp"
 #include "GRAMRLevel.hpp"
 
+class SimulationParameters;
+
 class SupportedWormholeLevel : public GRAMRLevel
 {
   public:
@@ -18,6 +20,15 @@ class SupportedWormholeLevel : public GRAMRLevel
     static void variableSetUp();
 
     using GRAMRLevel::GRAMRLevel;
+
+    //! Fork-local replacement for the GRAMR simulation-parameters store that
+    //! upstream deleted: main() hands this class a pointer to its
+    //! SimulationParameters before Amr::init.  Pointer semantics preserve the
+    //! old behaviour where runtime updates made in main (RL pump state) are
+    //! visible from the levels.
+    static void set_sim_params(const SimulationParameters *a_sim_params);
+    static const SimulationParameters &simParams();
+
 
     //! Access the owning BHAMR (for its m_weyl_interpolator).
     BHAMR<num_punctures> *get_bhamr_ptr();

@@ -1,4 +1,5 @@
 #include "SupportedWormholeLevel.hpp"
+#include "SimulationParameters.hpp"
 #include "CCZ4RHSWithMatter.hpp"
 #include "ChiTagger.hpp"
 #include "ConstraintsWithMatter.hpp"
@@ -24,6 +25,25 @@
 #include <AMReX_Reduce.H>
 #include <AMReX_Utility.H>
 #include <cmath>
+
+namespace
+{
+const SimulationParameters *s_sim_params = nullptr;
+} // namespace
+
+void SupportedWormholeLevel::set_sim_params(const SimulationParameters *a_sim_params)
+{
+    s_sim_params = a_sim_params;
+}
+
+const SimulationParameters &SupportedWormholeLevel::simParams()
+{
+    AMREX_ALWAYS_ASSERT_WITH_MESSAGE(
+        s_sim_params != nullptr,
+        "set_sim_params must be called before simParams");
+    return *s_sim_params;
+}
+
 
 //! Build the multi-site matter pump for the wormhole's complex_scalar branch.
 //! Mirrors RadialRecipeMatterDispatch::build_rl_pump but uses the wormhole
@@ -122,8 +142,7 @@ void SupportedWormholeLevel::specificAdvance()
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(S_new,
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -216,8 +235,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     const auto &soln_c_arrs = a_soln.const_arrays();
     const auto &rhs_arrs    = a_rhs.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -231,8 +249,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
         NoMatter no_matter;
         CCZ4RHSWithMatter<NoMatter, MovingPunctureGaugeWithMatter,
                           FourthOrderDerivatives>
-            ccz4rhs(no_matter, simParams().ccz4_params, Geom().CellSize(0),
-                    simParams().sigma, simParams().formulation, 1.0,
+            ccz4rhs(no_matter, Geom().CellSize(0), 1.0,
                     simParams().wormhole_params.grid_center, a_time);
 
         amrex::ParallelFor(
@@ -244,8 +261,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
         EffectiveTeoMatter teo_matter;
         CCZ4RHSWithMatter<EffectiveTeoMatter, MovingPunctureGaugeWithMatter,
                           FourthOrderDerivatives>
-            ccz4rhs(teo_matter, simParams().ccz4_params, Geom().CellSize(0),
-                    simParams().sigma, simParams().formulation, 1.0,
+            ccz4rhs(teo_matter, Geom().CellSize(0), 1.0,
                     simParams().wormhole_params.grid_center, a_time);
 
         amrex::ParallelFor(
@@ -257,8 +273,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
         DustMatter dust_matter;
         CCZ4RHSWithMatter<DustMatter, MovingPunctureGaugeWithMatter,
                           FourthOrderDerivatives>
-            ccz4rhs(dust_matter, simParams().ccz4_params, Geom().CellSize(0),
-                    simParams().sigma, simParams().formulation, 1.0,
+            ccz4rhs(dust_matter, Geom().CellSize(0), 1.0,
                     simParams().wormhole_params.grid_center, a_time);
 
         amrex::ParallelFor(
@@ -272,8 +287,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
             potential, simParams().wormhole_params.support_strength);
         CCZ4RHSWithMatter<ExoticScalarField<OscillonPotential>,
                           MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
-            ccz4rhs(oscillon_scalar, simParams().ccz4_params, Geom().CellSize(0),
-                    simParams().sigma, simParams().formulation, 1.0,
+            ccz4rhs(oscillon_scalar, Geom().CellSize(0), 1.0,
                     simParams().wormhole_params.grid_center, a_time);
 
         amrex::ParallelFor(
@@ -291,8 +305,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
             potential, simParams().wormhole_params.support_strength, pump);
         CCZ4RHSWithMatter<ComplexExoticScalarField<ComplexScalarPotential>,
                           MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
-            ccz4rhs(complex_scalar, simParams().ccz4_params, Geom().CellSize(0),
-                    simParams().sigma, simParams().formulation, 1.0,
+            ccz4rhs(complex_scalar, Geom().CellSize(0), 1.0,
                     simParams().wormhole_params.grid_center, a_time);
 
         amrex::ParallelFor(
@@ -306,8 +319,7 @@ void SupportedWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
             potential, simParams().wormhole_params.support_strength);
         CCZ4RHSWithMatter<ExoticScalarField<PhantomDecayPotential>,
                           MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
-            ccz4rhs(exotic_scalar, simParams().ccz4_params, Geom().CellSize(0),
-                    simParams().sigma, simParams().formulation, 1.0,
+            ccz4rhs(exotic_scalar, Geom().CellSize(0), 1.0,
                     simParams().wormhole_params.grid_center, a_time);
 
         amrex::ParallelFor(
@@ -335,8 +347,7 @@ void SupportedWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
     amrex::ParallelFor(a_soln, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        {
@@ -547,7 +558,7 @@ void SupportedWormholeLevel::specificPostTimeStep()
         {
             constraints_file.write_header_line({"L2_Ham", "L2_Mom"});
         }
-        constraints_file.write_time_data_line({L2_Ham, L2_Mom});
+        constraints_file.write_time_data_line(std::vector<double>{L2_Ham, L2_Mom});
     }
 
     if (Level() == 0)
@@ -567,8 +578,7 @@ void SupportedWormholeLevel::specificPostTimeStep()
         {
             const auto &arrs = state_diag.arrays();
             TraceARemoval trace_A_removal;
-            PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                                   simParams().min_lapse);
+            PositiveChiAndLapse positive_chi_lapse;
             amrex::ParallelFor(state_diag, amrex::IntVect(0),
                                [=] AMREX_GPU_DEVICE(int box_no, int i, int j,
                                                     int k)
@@ -1129,7 +1139,7 @@ void SupportedWormholeLevel::specificPostTimeStep()
                  "barycenter_x", "barycenter_y", "barycenter_z", "rho_sum",
                  "J_z", "Q_total", "Q_sphere", "rho_sphere", "pump_work"});
         }
-        diag_file.write_time_data_line({static_cast<double>(min_lapse),
+        diag_file.write_time_data_line(std::vector<double>{static_cast<double>(min_lapse),
                                         static_cast<double>(min_chi),
                                         static_cast<double>(max_abs_K),
                                         static_cast<double>(min_lapse_x),

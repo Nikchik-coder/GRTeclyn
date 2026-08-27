@@ -1,6 +1,7 @@
 #include "ExternalGridInitialData.hpp"
 #include "RadialRecipeInitialData.hpp"
 #include "RadialRecipeLevel.hpp"
+#include "SimulationParameters.hpp"
 #include "RadialRecipeMatterConstraints.hpp"
 #include "RadialRecipeMatterDispatch.hpp"
 #include "RecentringBox.hpp"
@@ -26,6 +27,25 @@
 #include <algorithm>
 #include <array>
 #include <cmath>
+
+namespace
+{
+const SimulationParameters *s_sim_params = nullptr;
+} // namespace
+
+void RadialRecipeLevel::set_sim_params(const SimulationParameters *a_sim_params)
+{
+    s_sim_params = a_sim_params;
+}
+
+const SimulationParameters &RadialRecipeLevel::simParams()
+{
+    AMREX_ALWAYS_ASSERT_WITH_MESSAGE(
+        s_sim_params != nullptr,
+        "set_sim_params must be called before simParams");
+    return *s_sim_params;
+}
+
 
 namespace
 {
@@ -302,8 +322,7 @@ void RadialRecipeLevel::specificAdvance()
     amrex::MultiFab &S_new = get_new_data(state_index);
     const auto &arrs       = S_new.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(S_new,
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -371,8 +390,7 @@ void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     }
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
 
     amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
@@ -392,8 +410,7 @@ void RadialRecipeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
 {
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
-    PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                           simParams().min_lapse);
+    PositiveChiAndLapse positive_chi_lapse;
     amrex::ParallelFor(a_soln, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        {
@@ -927,7 +944,7 @@ void RadialRecipeLevel::specificPostTimeStep()
                  "Linf_Ham_amr", "L2_Ham_amr_ref"});
         }
         constraints_file.write_time_data_line(
-            {L2_Ham, L2_Mom, static_cast<double>(min_rho_req),
+            std::vector<double>{L2_Ham, L2_Mom, static_cast<double>(min_rho_req),
              static_cast<double>(max_rho_req),
              static_cast<double>(sum_neg_rho), L2_Ham_rel, L2_Mom_rel,
              static_cast<double>(pump_force_L2), governor_val,
@@ -958,8 +975,7 @@ void RadialRecipeLevel::specificPostTimeStep()
         {
             const auto &arrs = state_fine.arrays();
             TraceARemoval trace_A_removal;
-            PositiveChiAndLapse positive_chi_lapse(simParams().min_chi,
-                                                   simParams().min_lapse);
+            PositiveChiAndLapse positive_chi_lapse;
             amrex::ParallelFor(state_fine, amrex::IntVect(0),
                                [=] AMREX_GPU_DEVICE(int box_no, int i, int j,
                                                     int k)
@@ -1391,7 +1407,7 @@ void RadialRecipeLevel::specificPostTimeStep()
                  "r_at_min_theta_plus",
                  "min_phi", "max_phi", "min_Pi", "max_Pi", "pump_work"});
         }
-        diag_file.write_time_data_line({static_cast<double>(min_lapse),
+        diag_file.write_time_data_line(std::vector<double>{static_cast<double>(min_lapse),
                                         static_cast<double>(min_chi),
                                         static_cast<double>(max_abs_K),
                                         static_cast<double>(min_lapse_x),
@@ -1503,7 +1519,7 @@ void RadialRecipeLevel::specificPostTimeStep()
                                            "matter_integral_NEC_violation"});
             }
             ec_file.write_time_data_line(
-                {static_cast<double>(min_nec), static_cast<double>(min_wec),
+                std::vector<double>{static_cast<double>(min_nec), static_cast<double>(min_wec),
                  static_cast<double>(min_sec), static_cast<double>(min_dec),
                  static_cast<double>(integral_nec)});
         }
@@ -1607,7 +1623,7 @@ void RadialRecipeLevel::specificPostTimeStep()
                                            "max_Kij_sq", "L2_ricci_scalar"});
             }
             ci_file.write_time_data_line(
-                {static_cast<double>(max_abs_R3),
+                std::vector<double>{static_cast<double>(max_abs_R3),
                  static_cast<double>(max_ricci_sq),
                  static_cast<double>(max_KijKij),
                  static_cast<double>(std::sqrt(sum_R3sq_vol))});
@@ -1675,8 +1691,8 @@ void RadialRecipeLevel::configure_recentring_box()
     }
 
     const std::vector<double> asymptotic(
-        params.boundary_params.vars_asymptotic_values.begin(),
-        params.boundary_params.vars_asymptotic_values.end());
+        StateVariables::asymptotic_values.begin(),
+        StateVariables::asymptotic_values.end());
 
     GRParmParse pp;
     std::string output_path = "./";

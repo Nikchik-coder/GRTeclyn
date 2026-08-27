@@ -64,7 +64,7 @@ class TreadmillLog
                                     "odometer_cells", "odometer_length",
                                     "midpoint_true"});
         }
-        file.write_time_data_line({static_cast<double>(a_step), a_core0,
+        file.write_time_data_line(std::vector<double>{static_cast<double>(a_step), a_core0,
                                    a_core1, a_midpoint_grid,
                                    static_cast<double>(a_cells_shifted),
                                    static_cast<double>(a_odometer_cells),
