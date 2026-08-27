@@ -55,6 +55,17 @@ CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::compute_full_rhs(
     const amrex::Array4<amrex::Real> &rhs_state,
     const amrex::Array4<amrex::Real const> &state) const
 {
+    // The vacuum and gauge kernels below assign every CCZ4 component, but the
+    // matter kernels only assign the components their model evolves, and
+    // add_dissipation accumulates (+=) into all NUM_VARS.  Matter components
+    // the active model does not evolve must therefore be defined here, or they
+    // integrate whatever the rhs allocation happened to contain (the old
+    // store_vars(Vars{}) path zeroed them implicitly).
+    for (int n = NUM_CCZ4_VARS; n < NUM_VARS; ++n)
+    {
+        rhs_state(ix, iy, iz, n) = 0.0;
+    }
+
     // Vacuum part: the three CCZ4RHS kernels, in the order of
     // Tests/BSSNMatterTest.  compute_A_ij_and_Theta_and_Gamma is templated on
     // the formulation and on covariantZ4, so select the instantiation from the
