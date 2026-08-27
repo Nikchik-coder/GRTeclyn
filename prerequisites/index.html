@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Prerequisites - GRTeclyn</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" rel="stylesheet" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Prerequisites";
+        var mkdocs_page_input_path = "prerequisites.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../img/grteclyn-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../capabilities/">Capabilities</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../license_and_citation/">License and citation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Prerequisites</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#required-software">Required Software</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#obtaining-the-amrex-and-grteclyn-codes">Obtaining the AMReX and GRTeclyn codes</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../building_cpus/">Building and running on CPUs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../building_gpus/">Building and running on GPUs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../example_configs/">Example configs for specific HPC systems</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Running and modifying examples</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../bbh_example/">Running the binary black hole example</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sf_example/">Running the scalar field example</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../visualising_outputs/">Visualising outputs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kg_example/">Testing with the Klein Gordon example</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../parameters/">Parameters guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../performance_optimisation/">Performance optimisation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../convergence_testing/">Convergence testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developing code</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../moving_from_grchombo/">Moving from GRChombo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../code_structure/">Code structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../coding_conventions/">Coding conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pull_requests/">Pull requests</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../updating_docs/">Updating the docs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Other features and tools</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../initial_data/">Initial data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../two_punctures/">TwoPunctures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../particle_interpolator/">Particle interpolator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../extraction/">Extraction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ah_finder/">Apparent horizon finder</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Misc resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../useful_resources/">Useful resources</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../contact_us/">Contact us</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">GRTeclyn</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Getting started</li>
+      <li class="breadcrumb-item active">Prerequisites</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="prerequisites">Prerequisites</h1>
+<p>To compile and run <strong>GRTeclyn</strong>, you will need the following software and tools:</p>
+<hr />
+<h2 id="required-software">Required Software</h2>
+<ul>
+<li><strong>C++ compiler with C++20 support</strong>
+  GRTeclyn uses modern C++20 features. Supported compilers include:</li>
+<li>GCC ≥ 11</li>
+<li>LLVM Clang ≥ 14</li>
+<li>NVIDIA CUDA Toolkit ≥ 12.2 (for CUDA builds)</li>
+<li>AMD ROCm/HIP ≥ 6.0    (for HIP builds)</li>
+<li>Intel oneAPI ≥ 2025.2 (for SYCL builds)</li>
+</ul>
+<p>WARNING: The use of C++20 is stricter than GRChombo’s C++14 requirement. Older compilers that worked with GRChombo may not work here — but if you have a newer one available, and could build GRChombo, you can likely build GRTeclyn too.</p>
+<ul>
+<li><strong><a href="https://www.mpi-forum.org/">MPI</a></strong> (optional but recommended)
+  Required for running in parallel across nodes or cores.
+  Supported implementations: OpenMPI, MPICH, Intel MPI, etc.</li>
+</ul>
+<p>Many computer clusters use some form of <code>modules</code> command to control the environment. They will probably have the C++ and MPI prerequisites installed above but you will need to manually load them (and unload any preloaded conflicting ones).</p>
+<p>Here are some useful module commands:</p>
+<ul>
+<li><code>module avail [&lt;name&gt;]</code></li>
+<li>What modules are available/available with name <code>&lt;name&gt;</code>?</li>
+<li><code>module [un]load &lt;module name&gt;</code></li>
+<li>Load/unload a module.</li>
+<li><code>module swap &lt;old module&gt; &lt;new module&gt;</code></li>
+<li>Swap <code>&lt;old module&gt;</code> for <code>&lt;new module&gt;</code>.</li>
+<li><code>module list</code></li>
+<li>What modules are loaded currently?</li>
+<li><code>module display &lt;module name&gt;</code></li>
+<li>Tell me more about <code>&lt;module name&gt;</code>: how does it change the environment?</li>
+</ul>
+<p>Some newer clusters use <a href="https://spack.io/">spack</a> to manage the installation of modules. On these systems, modules installed with spack will typically be appended by a 7 character hash (e.g. <code>hdf5-1.10.4-gcc-5.4.0-7zl2gou</code> on the CSD3 cluster). If there are multiple modules with similar names that only differ by their hash, you can can query the dependencies with the command <code>spack find -lvd &lt;name&gt;</code>.</p>
+<blockquote>
+<p><strong>Warning</strong>  See <a href="https://amrex-codes.github.io/amrex/docs_html/BuildingAMReX.html#gcc-on-macos">this page</a> if you want to build on macOS using Homebrew GCC.</p>
+</blockquote>
+<p>The following are required, but are likely to be loaded by default on most systems:</p>
+<ul>
+<li>
+<p><strong><a href="https://git-scm.com/">Git</a></strong>
+  Used to obtain GRTeclyn and AMReX.</p>
+</li>
+<li>
+<p><strong><a href="https://www.gnu.org/software/make/">GNU Make</a></strong> (version ≥ 3.81)
+  Standard build system used across the codebase.</p>
+</li>
+<li>
+<p><strong><a href="https://www.python.org/">Python</a></strong> (version ≥ 2.7)
+  Used in build and analysis utilities.</p>
+</li>
+<li>
+<p><strong>Unix-like environment</strong> with:</p>
+</li>
+<li><code>perl</code></li>
+<li><code>sed</code></li>
+<li>Standard shell tools
+  These are available by default on most Linux/macOS systems.</li>
+</ul>
+<hr />
+<h2 id="obtaining-the-amrex-and-grteclyn-codes">Obtaining the AMReX and GRTeclyn codes</h2>
+<p>First <code>cd</code> into a directory you are happy to clone the code into. For simplicity, we shall assume that is your home directory (so adjust any commands below accordingly if not).</p>
+<p>The AMReX source code is hosted on <a href="https://github.com/AMReX-Codes/amrex">GitHub</a>. Clone this with the command</p>
+<p><pre class="highlight"><code class="language-bash">git clone https://github.com/AMReX-Codes/amrex.git</code></pre>
+It will be cloned to the <code>amrex</code> directory.</p>
+<p>Next, clone the GRTeclyn repository
+<pre class="highlight"><code class="language-bash">git clone https://github.com/GRTLCollaboration/GRTeclyn.git</code></pre></p>
+<p><strong>Note</strong>
+We have assumed that you have cloned both of these repositories to the same directory so that the <code>amrex</code> and <code>GRTeclyn</code> directories share the same parent directory. This fact is used to locate AMReX when GRTeclyn builds its examples, and it is recommended as it makes it easier to be sure about the version you are using.</p>
+<p>If you want to keep AMReX elsewhere, you need to set the <code>AMREX_HOME</code> environment variable appropriately in your shell
+<pre class="highlight"><code class="language-bash">export AMREX_HOME=/path/to/amrex</code></pre>
+(and you probably want to add this to your <code>.bashrc</code> file in your home directory too so it is run automatically when you log into the cluster you are using).</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../license_and_citation/" class="btn btn-neutral float-left" title="License and citation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../building_cpus/" class="btn btn-neutral float-right" title="Building and running on CPUs">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../license_and_citation/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../building_cpus/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script>
+      <script src="../javascripts/katex-render.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Running the scalar field example - GRTeclyn</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" rel="stylesheet" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Running the scalar field example";
+        var mkdocs_page_input_path = "sf_example.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../img/grteclyn-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../capabilities/">Capabilities</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../license_and_citation/">License and citation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../prerequisites/">Prerequisites</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../building_cpus/">Building and running on CPUs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../building_gpus/">Building and running on GPUs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../example_configs/">Example configs for specific HPC systems</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Running and modifying examples</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../bbh_example/">Running the binary black hole example</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Running the scalar field example</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#physical-scenario">Physical scenario</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#initial-data">Initial data</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#diagnostics">Diagnostics</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#computational-set-up">Computational set up</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#checking-the-outputs">Checking the outputs</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#viewing-3d-data-and-2d-slices">Viewing 3D data and 2D slices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#plots-from-data-files">Plots from data files</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../visualising_outputs/">Visualising outputs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kg_example/">Testing with the Klein Gordon example</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../parameters/">Parameters guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../performance_optimisation/">Performance optimisation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../convergence_testing/">Convergence testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developing code</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../moving_from_grchombo/">Moving from GRChombo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../code_structure/">Code structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../coding_conventions/">Coding conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pull_requests/">Pull requests</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../updating_docs/">Updating the docs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Other features and tools</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../initial_data/">Initial data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../two_punctures/">TwoPunctures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../particle_interpolator/">Particle interpolator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../extraction/">Extraction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ah_finder/">Apparent horizon finder</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Misc resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../useful_resources/">Useful resources</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../contact_us/">Contact us</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">GRTeclyn</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Running and modifying examples</li>
+      <li class="breadcrumb-item active">Running the scalar field example</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="running-the-scalar-field-example">Running the scalar field example</h1>
+<p>Here we explain the scalar field example found in the code, which implements an oscillaton, which is a compact object where the scalar field gradients balance the gravitational attraction, leading to a long-lived, local, oscillating configuration.</p>
+<p>The parameters that are provided give a good enough resolution for the physical problem, and can be run relatively quickly on a laptop. For that reason it is a good initial test of running the code. However, to test the performance of the code on a larger system we recommend the <a href="../bbh_example/"><strong>Binary BH example</strong></a>.</p>
+<h2 id="physical-scenario">Physical scenario</h2>
+<p>This page describes running the Scalar Field example using the parameters found in <a href="https://github.com/GRTLCollaboration/GRTeclyn/blob/develop/Examples/ScalarField/params.txt">this parameter file</a>.</p>
+<h3 id="initial-data">Initial data</h3>
+<p>The initial scalar field profile is set in <a href="https://github.com/GRTLCollaboration/GRTeclyn/blob/develop/Examples/ScalarField/OscillatonInitialData.hpp"><code>OscillatonInitialData.hpp</code></a>).</p>
+<p>This uses a quasi-stationary solution obtained from a shooting method, which has then been interpolated using chebychev polynomials to give something we can impose analytically. At large radius it reduces to the Schwarzschild metric. </p>
+<p>The values for <span class="arithmatex">\(\Gamma^i\)</span> could be calculated analytically from derivatives of the conformal metric, but instead we calculate it numerically using the <code>GammaCalculator.hpp</code> tool, which is necessary where the initial data is not conformally flat.</p>
+<p>Time-symmetric metric data for the fitted ground-state oscillaton profile is supplied in areal-polar coordinates,</p>
+<div class="arithmatex">\[ dl^2 = g_{rr}(r) dr^2 + r^2 d\Omega^2. \]</div>
+<p>In Cartesian coordinates this is</p>
+<div class="arithmatex">\[ \gamma_{ij} = \delta_{ij} + (g_{rr} - 1) n_i n_j. \]</div>
+<p>The CCZ4 variables are <code>chi</code><span class="arithmatex">\(= det(\gamma)^{-1/3} = g_{rr}^{-1/3}\)</span> and <code>h</code><span class="arithmatex">\(= \chi \gamma_{ij}\)</span>. The components of the extrinsic curvature <code>K</code> and <code>A</code><span class="arithmatex">\(=\tilde A_{ij}\)</span> are zero.  At the initial oscillaton phase the field profile <code>phi</code> is zero and its conjugate momentum <code>Pi</code> is nonzero, which means it can satisfy the constraints for any scalar potential (but it will only be stationary for the massive potential corresponding to the solution). </p>
+<p>The conformal connection <code>Gamma</code><span class="arithmatex">\(=\tilde{\Gamma}^i\)</span> is evaluated numerically from <code>h</code> using a separate class <code>GammaCalculator</code>, which is required for consistency since the metric is not conformally flat.</p>
+<p>The fitted profiles are finite Chebyshev expansions in</p>
+<div class="arithmatex">\[s = r^2 / (r^2 + L^2), \quad   x = 2s - 1.\]</div>
+<p>They are smooth and even at the origin.  </p>
+<p>The geometry approaches a Schwarzschild solution of mass <span class="arithmatex">\(M=0.52459888\)</span> at large r.</p>
+<p>Note that this profile uses a scalar mass <span class="arithmatex">\(\mu=1\)</span> and Newton's constant <span class="arithmatex">\(G=1\)</span>.</p>
+<p>We currently impose a fixed hierarchy of 2:1 refinement grids.</p>
+<h3 id="diagnostics">Diagnostics</h3>
+<p>In this example we show how to extract evolution and diagnostic data along a line through the centre of the oscillaton using the particle interpolator.</p>
+<p>Further details are below.</p>
+<h2 id="computational-set-up">Computational set up</h2>
+<p>Please read the <a href="../performance_optimisation/">Performance Optimisation</a> guide to understand how to divide the domain into boxes that are shared over the MPI ranks, as this is crucial for obtaining good performance on HPC systems. When GRTeclyn regrids (always at the first step, and at later steps as requested by the user), it will output the grid setup to the output file. This tells you how many boxes are on each level, and what their sizes are. This is very useful for understanding if you are load balancing appropriately.</p>
+<p>The parameters should be mostly self explanatory if you are familiar with NR, but you can look at the <a href="../parameters/"><strong>Parameters</strong></a> guide for more details.</p>
+<p>Typically, on an old M1 Macbook laptop with no MPI, we obtain a speed of 650 M/hr in code units with the provided parameters. If your speeds are significantly below this, something is wrong.</p>
+<h2 id="checking-the-outputs">Checking the outputs</h2>
+<h3 id="viewing-3d-data-and-2d-slices">Viewing 3D data and 2D slices</h3>
+<p>See <a href="../visualising_outputs/"><strong>Visualising Ouputs</strong></a> for details on visualising. Note that checkpoint files are not viewable with AMReX, only plot files are.</p>
+<p>You probably want to look at the scalar profile <code>phi</code>, and perhaps also the conformal factor <code>chi</code>. Both should oscillate during the evolution.</p>
+<h3 id="plots-from-data-files">Plots from data files</h3>
+<p>The example also outputs some ASCII datafiles for post processing in a <code>data</code> folder. Firstly, it gives a file <code>scalar_profile.dat</code>, which gives the scalar profile over time.</p>
+<p>This can be plotted using the <code>python</code> script <code>plot_lineouts.png</code> found in the example folder.</p>
+<p>The resulting image should look like <img alt="this" src="../img/lineouts.png" /> </p>
+<p>Note that the small oscillation in the density over time is expected - for a real scalar field oscillon, the stress energy tensor is not completely stationary. However, it should not decay noticeably over time and the amplitude of the oscillations should remain just above 0.04.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../bbh_example/" class="btn btn-neutral float-left" title="Running the binary black hole example"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../visualising_outputs/" class="btn btn-neutral float-right" title="Visualising outputs">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../bbh_example/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../visualising_outputs/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script>
+      <script src="../javascripts/katex-render.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

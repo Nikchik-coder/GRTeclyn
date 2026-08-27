@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Running the binary black hole example - GRTeclyn</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" rel="stylesheet" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Running the binary black hole example";
+        var mkdocs_page_input_path = "bbh_example.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../img/grteclyn-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../capabilities/">Capabilities</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../license_and_citation/">License and citation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../prerequisites/">Prerequisites</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../building_cpus/">Building and running on CPUs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../building_gpus/">Building and running on GPUs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../example_configs/">Example configs for specific HPC systems</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Running and modifying examples</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Running the binary black hole example</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#physical-scenario">Physical scenario</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#computational-set-up">Computational set up</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#checking-the-outputs">Checking the outputs</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#viewing-data-in-visit">Viewing data in VisIt</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#puncture-plots">Puncture plots</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gravitational-wave-plots">Gravitational Wave plots</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-next">What next?</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sf_example/">Running the scalar field example</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../visualising_outputs/">Visualising outputs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kg_example/">Testing with the Klein Gordon example</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../parameters/">Parameters guide</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../performance_optimisation/">Performance optimisation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../convergence_testing/">Convergence testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developing code</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../moving_from_grchombo/">Moving from GRChombo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../code_structure/">Code structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../coding_conventions/">Coding conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pull_requests/">Pull requests</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../updating_docs/">Updating the docs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Other features and tools</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../initial_data/">Initial data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../two_punctures/">TwoPunctures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../particle_interpolator/">Particle interpolator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../extraction/">Extraction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ah_finder/">Apparent horizon finder</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Misc resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../useful_resources/">Useful resources</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../contact_us/">Contact us</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">GRTeclyn</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Running and modifying examples</li>
+      <li class="breadcrumb-item active">Running the binary black hole example</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="running-the-binary-black-hole-example">Running the binary black hole example</h1>
+<p>The following gives some instructions on running the binary black hole example.</p>
+<p>This is the classic NR problem, but it is also quite an expensive example to run, so if you just want to try out running GRTeclyn on your laptop or a small cluster, we recommend you start with the <a href="../sf_example/"><strong>Scalar Field Example</strong></a> instead.</p>
+<h2 id="physical-scenario">Physical scenario</h2>
+<p>This page describes running the Binary BH example using the parameters found in <a href="https://github.com/GRTLCollaboration/GRTeclyn/blob/develop/Examples/BinaryBH/params_profile.txt">this parameter file</a>.</p>
+<p>The initial conditions consist of a superposition of two equal mass black holes, with initial momenta and positions chosen to give approximately 10 circular orbits before merger.</p>
+<p>Note that finding the right momenta for an initial circular trajectory is in general a hard problem in NR - simply setting the momentum to the Newtonian approximation will result in elliptic orbits even for well separated initial BHs. One must use the Post-Newtonian approximations, and then adjust the momentum manually over several iterations to achieve an initial eccentricity of less than 1%. We are grateful to Dr Sebastian Khan at Cardiff University for providing us with these initial data values.</p>
+<p>Note that this is a realistic example but not production quality for generating BBH waveforms (one should have a larger wave zone, and better resolution at the horizon). Production level parameters are provided in <code>params_production.txt</code>.</p>
+<p>The initial data solves the Momentum constraint exactly but uses an approximation for low boosts to solve the Hamiltonian constraint (see <a href="https://doi.org/10.1017/CBO9781139193344">Baumgarte and Shapiro</a>, pg 73-74) which is accurate up to order P⁴, where P is the momentum of the BH.</p>
+<p>One can also use the <a href="../two_punctures/"><strong>Two Punctures Initial Data</strong></a> extension for more accurate initial data, in which case one needs to use <code>params_twopunctures.txt</code>.</p>
+<h2 id="computational-set-up">Computational set up</h2>
+<p>Please read the <a href="../performance_optimisation/">Performance Optimisation</a> guide to understand how to divide the domain into boxes that are shared over the MPI ranks, as this is crucial for obtaining good performance on HPC systems. When GRTeclyn regrids (always at the first step, and at later steps as requested by the user), it will output the grid setup to the output file. This tells you how many boxes are on each level, and what their sizes are. This is very useful for understanding if you are load balancing appropriately.</p>
+<p>The parameters should be mostly self explanatory if you are familiar with NR, but you can look at the <a href="../parameters/"><strong>Parameters</strong></a> guide for more details.</p>
+<p>Typically, on a CPU system, dividing the domain up into 16^3 boxes, and running on 512 CPU cores with 512 MPI ranks, we obtain a speed of 30 M/hr in code units. The speed is output at every timestep to the output file. This is just a rough measure obtained by dividing the current simulation time by the total runtime, so if the simulation freezes it won't go immediately to zero.</p>
+<p>Typically, on a GPU system, dividing the domain up into 32^3 boxes, and running on 8 GPUs (1 node) with 8 MPI ranks, we obtain a speed of 300 M/hr in code units.</p>
+<p>If you are seeing speeds significantly less than these you may have some memory bottleneck on your system. It will be worth trying to resolve this rather than running at a slower speed - your system admins should be able to advise on how to do this.</p>
+<h2 id="checking-the-outputs">Checking the outputs</h2>
+<h3 id="viewing-data-in-visit">Viewing data in VisIt</h3>
+<p>See <a href="../visualising_outputs/"><strong>Visualising Ouputs</strong></a> for details on visualising. Note that checkpoint files are not viewable with AMReX, only plot files are.</p>
+<p>The most enlightening variable to look at in the outputs is chi, the conformal factor of the metric, which goes to zero at the centres of the BHs. When (for example in VisIt) the Pseudocolour plot is viewed on a slice through the centre of the grid, normal to the z axis, the black holes should be seen to inspiral and merge.</p>
+<p>Note that you can look at these files even when the job is still running. It is always a good idea to check the files after a few timesteps to make sure it is doing something sensible.</p>
+<h3 id="puncture-plots">Puncture plots</h3>
+<p>The example also outputs some ASCII datafiles for post processing in a <code>data</code> folder. Firstly, it gives a file <code>punctures.dat</code> which gives the location at each timestep of the two BHs.</p>
+<p>This can be plotted using a <code>gnuplot</code> command:</p>
+<p><code>f='punctures.dat'; L=256; plot f using ($2-L):($3-L) with lines, f using ($5-L):($6-L) with lines</code></p>
+<p>or a <code>python</code> script such as:</p>
+<pre class="highlight"><code class="language-python">
+# A simple python script to plot the puncture
+# tracks over time. This helps with setting up
+# circular orbits. The params.txt file should
+# give around 8-9 orbits before merger.
+
+import numpy as np;
+import matplotlib.pyplot as plt;
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+
+# location of center of grid
+L = 256
+# half the separation of punctures
+r = 6
+# output data from running merger
+data = np.loadtxt("data/punctures.dat")
+
+# make the plot
+fig = plt.figure()
+
+# first puncture
+x1 = data[:,1]-L
+y1 = data[:,2]-L
+plt.plot(x1,y1)
+
+# second puncture
+x2 = data[:,4]-L
+y2 = data[:,5]-L
+plt.plot(x2,y2)
+
+# make the plot look nice
+plt.xlabel("x")
+plt.ylabel("y")
+plt.axis('equal')
+plt.ylim(-r-1,r+1)
+
+# save as png image
+plt.savefig("PunctureTracks.png")</code></pre>
+<p>The resulting image should look like <img alt="this" src="../img/BBHPunctures.png" />.</p>
+<h3 id="gravitational-wave-plots">Gravitational Wave plots</h3>
+<p>The other data files starting with <code>Weyl_integral_</code> give the spin weight -2 spherical harmonic components of the Weyl Scalar Ψ₄ as calculated at each of the selected extraction radii. The aim of these files is to check that the signal has converged and so is similar at the different extraction radii, and also that one obtains a correct signal for a binary merger.</p>
+<p>Again, these can be plotted using a <code>gnuplot</code> command, for example:</p>
+<p><code>f='Weyl_integral_22.dat'; plot f using ($1-50):2 with lines, f using ($1-100):4 with lines</code></p>
+<p>or a <code>python</code> script such as:</p>
+<pre class="highlight"><code class="language-python">
+# A simple python script to plot the GW
+# signals over time, for a chosen mode
+
+import numpy as np;
+import matplotlib.pyplot as plt;
+from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator, FormatStrFormatter
+
+# coord locations of extraction radii
+R0 = 50
+R1 = 100
+# Total ADM mass
+M = 1.0
+# The mode, as text
+mode = "22"
+# output data from running merger
+data = np.loadtxt("Weyl_integral_" + mode + ".dat")
+
+# make the plot
+fig = plt.figure()
+
+# first radius
+r0 = R0 + M*np.log(R0/(2.0*M) - 1.0)
+timedata0 = (data[:,0] - r0) / M
+fluxdata0 = data[:,1]
+plt.plot(timedata0, fluxdata0, ':', lw = 0.5, label="r0")
+
+# second radius
+r1 = R1 + M*np.log(R1/(2.0*M) - 1.0)
+timedata1 = (data[:,0] - r1) / M
+fluxdata1 = data[:,3]
+plt.plot(timedata1, fluxdata1, '-', lw = 0.75, label="r1")
+
+# make the plot look nice
+plt.xlabel("time t / M")
+plt.ylabel("Re (Psi4) el, em = " + mode)
+plt.xlim(0, 2200)
+plt.ylim(-0.061, 0.061)
+
+# save as png image
+filename = "Weyl_" + mode + ".png"
+plt.savefig(filename)</code></pre>
+<p>The resulting image should look like <img alt="this" src="../img/WeylScalar22.png" />.</p>
+<h3 id="what-next">What next?</h3>
+<p>Congratulations - you have successfully run a binary black hole simulation with GRTeclyn! We suggest that you try amending some of the variables in the parameters and rerun the code to understand what they do.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../example_configs/" class="btn btn-neutral float-left" title="Example configs for specific HPC systems"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../sf_example/" class="btn btn-neutral float-right" title="Running the scalar field example">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../example_configs/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../sf_example/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script>
+      <script src="../javascripts/katex-render.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

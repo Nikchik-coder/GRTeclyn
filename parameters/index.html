@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Parameters guide - GRTeclyn</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css" rel="stylesheet" />
+        <link href="../stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Parameters guide";
+        var mkdocs_page_input_path = "parameters.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="..">
+          <img src="../img/grteclyn-logo.png" class="logo" alt="Logo"/>
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption"><span class="caption-text">Home</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="..">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../capabilities/">Capabilities</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../license_and_citation/">License and citation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../prerequisites/">Prerequisites</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../building_cpus/">Building and running on CPUs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../building_gpus/">Building and running on GPUs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../example_configs/">Example configs for specific HPC systems</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Running and modifying examples</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../bbh_example/">Running the binary black hole example</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../sf_example/">Running the scalar field example</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../visualising_outputs/">Visualising outputs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../kg_example/">Testing with the Klein Gordon example</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Parameters guide</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#where-parameters-are-loaded">Where parameters are loaded</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#common-scopes">Common scopes</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#physical-boundary-conditions">Physical boundary conditions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#twopunctures-parameters">TwoPunctures parameters</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#checking-a-parameter-file-without-running">Checking a parameter file without running</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../performance_optimisation/">Performance optimisation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../convergence_testing/">Convergence testing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Developing code</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../moving_from_grchombo/">Moving from GRChombo</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../code_structure/">Code structure</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../coding_conventions/">Coding conventions</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pull_requests/">Pull requests</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../updating_docs/">Updating the docs</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Other features and tools</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../initial_data/">Initial data</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../two_punctures/">TwoPunctures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../particle_interpolator/">Particle interpolator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../extraction/">Extraction</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../ah_finder/">Apparent horizon finder</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Misc resources</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../useful_resources/">Useful resources</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../contact_us/">Contact us</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">GRTeclyn</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Running and modifying examples</li>
+      <li class="breadcrumb-item active">Parameters guide</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="parameters-guide">Parameters guide</h1>
+<p>GRTeclyn uses the AMReX <a href="https://amrex-codes.github.io/amrex/docs_html/Basics.html#parmparse"><code>ParmParse</code></a> system for runtime parameters. At start-up, AMReX reads the parameter file and any command-line overrides into a global table. The GRTeclyn wrapper <code>GRParmParse</code> provides access to this table: an unscoped parser can look up a full name, while a scoped parser automatically adds its prefix. For example,</p>
+<pre class="highlight"><code class="language-cpp">GRParmParse evolution_pp("evolution");
+evolution_pp.get("sigma", sigma);</code></pre>
+<p>reads <code>evolution.sigma</code>. Required values are normally read with <code>get</code>, while <code>queryAdd</code> is used to supply a default and add the resolved value to the table.</p>
+<h2 id="where-parameters-are-loaded">Where parameters are loaded</h2>
+<p>Parameters normally live in the class that uses them, often in a nested <code>params_t</code> structure. That class reads its values from <code>GRParmParse</code> when they are needed. Keeping the values close to the relevant code makes ownership and defaults easier to identify and avoids passing unrelated parameters throughout the code.</p>
+<div class="admonition note">
+<p class="admonition-title">For GRChombo users</p>
+<p>GRTeclyn does not construct and pass around a single <code>sim_params</code> object. <code>SimulationParameters.hpp</code> coordinates parameter validation, but it is not a container holding every parameter in the simulation.</p>
+</div>
+<p>Each example's <code>SimulationParameters.hpp</code> calls the shared checks in <code>BaseParameterChecker</code> and the checks supplied by its problem-specific classes. These checks run during AMReX initialisation, after the parameter table has been populated but before the classes load the values for use in the simulation. A new parameter-owning class may provide a static <code>check_params()</code> function and register it here when early validation is useful. This can check allowed values and relationships between parameters, and can issue warnings or stop with a clear error message.</p>
+<h2 id="common-scopes">Common scopes</h2>
+<p>Parameter names use dot-separated scopes. The main scopes include:</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Typical contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>amr</code></td>
+<td>Cell counts, refinement levels, regridding, grid-box sizes and output intervals</td>
+</tr>
+<tr>
+<td><code>geometry</code> and <code>boundary</code></td>
+<td>Domain size and centre, periodicity and physical boundary conditions</td>
+</tr>
+<tr>
+<td><code>evolution</code></td>
+<td>Time step, stopping conditions, derivative order, dissipation and runtime checks</td>
+</tr>
+<tr>
+<td><code>ccz4</code> and <code>gauge</code></td>
+<td>Formulation and moving-puncture gauge parameters</td>
+</tr>
+<tr>
+<td><code>tagging</code></td>
+<td>Refinement thresholds and tagging controls</td>
+</tr>
+<tr>
+<td><code>weyl_extraction</code> and <code>puncture_tracking</code></td>
+<td>Gravitational-wave extraction and black-hole tracking</td>
+</tr>
+<tr>
+<td>Example-specific scopes</td>
+<td>For example <code>bh1</code> and <code>bh2</code></td>
+</tr>
+</tbody>
+</table>
+<p>This is only a guide to the organisation. The example <code>params_*.txt</code> files document the available parameters, defaults and suggested values for each executable, and we have tried to add useful comments where the naming is unclear.</p>
+<p>Note that for parameters that are common with AMReX, we keep the (sometimes ugly) AMReX naming, to avoid any confusion or duplication. Again the comments in the params files are there to help.</p>
+<h3 id="physical-boundary-conditions">Physical boundary conditions</h3>
+<p>For each non-periodic direction, <code>boundary.hi_condition</code> and <code>boundary.lo_condition</code> select one of the following options:</p>
+<ul>
+<li><code>FIRST_ORDER_EXTRAPOLATION_BC</code> uses AMReX's <code>foextrap</code> condition, which copies the current value in the nearest interior cell into the exterior ghost cells. This is constant extrapolation in space, not a boundary value held fixed in time.</li>
+<li><code>SOMMERFELD_BC</code> applies an outgoing-radiation condition to the RHS in the outer valid cells. Its asymptotic values come from the state-variable definitions and may be changed through <code>set_vars_asymptotic_values()</code>.</li>
+<li><code>REFLECTIVE_BC</code> fills ghost cells using the parity assigned to each state variable.</li>
+</ul>
+<p>Use <code>UNSET_BC</code> for periodic directions, where physical boundary conditions do not apply. A condition supplied for a periodic direction is ignored.</p>
+<h2 id="twopunctures-parameters">TwoPunctures parameters</h2>
+<p>When GRTeclyn is built with TwoPunctures support, its initial-data parameters use the <code>two_punctures</code> scope. They include the bare or target masses, the plus and minus puncture offsets, momenta and spins, the initial lapse, spectral resolution and nonlinear solver settings. See the BinaryBH parameter files and the <a href="../two_punctures/">TwoPunctures guide</a> for some helpful tips.</p>
+<h2 id="checking-a-parameter-file-without-running">Checking a parameter file without running</h2>
+<p>To validate a parameter file and exit before constructing the grid or evolving, place the GRTeclyn option after AMReX's <code>--</code> command-line separator:</p>
+<pre class="highlight"><code class="language-bash">./BinaryBH3d.gnu.ex params_test.txt -- -check_params</code></pre>
+<p>For an MPI build, use the same arguments after the executable, for example:</p>
+<pre class="highlight"><code class="language-bash">mpiexec -n 4 ./BinaryBH3d.gnu.MPI.ex params_test.txt -- -check_params</code></pre>
+<p>The <code>--</code> and <code>-check_params</code> are separate arguments. The checker loads the parameter table, applies registered defaults, reports warnings or errors, writes the resolved table to <code>parameters_and_version.txt</code>, and then exits without starting the simulation.</p>
+<p>The checker prints a short summary stating whether any warnings were found. Warnings do not prevent a simulation from running, but you should understand why they can safely be ignored before continuing. The checks catch selected parameter errors but cannot guarantee that a simulation will run successfully, so inspect <code>parameters_and_version.txt</code> to confirm that the resolved values match your intentions.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../kg_example/" class="btn btn-neutral float-left" title="Testing with the Klein Gordon example"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../performance_optimisation/" class="btn btn-neutral float-right" title="Performance optimisation">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../kg_example/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../performance_optimisation/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"></script>
+      <script src="../javascripts/katex-render.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
