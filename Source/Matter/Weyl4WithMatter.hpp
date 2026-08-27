@@ -20,16 +20,10 @@ template <class matter_t> class Weyl4WithMatter : public Weyl4
 {
   public:
     //! Constructor
-
-    // NOLINTBEGIN(bugprone-easily-swappable-parameters)
-    Weyl4WithMatter(const std::array<double, AMREX_SPACEDIM> a_center,
-                    const double a_dx, const int a_dcomp,
-                    const int a_formulation = CCZ4RHS<>::USE_CCZ4,
-                    double a_G_Newton       = 1.0,
-                    amrex::Real a_time      = 0.0)
-        : Weyl4(a_center, a_dx, a_dcomp, a_formulation), m_dcomp(a_dcomp),
-          m_G_Newton(a_G_Newton), m_time(a_time)
-    // NOLINTEND(bugprone-easily-swappable-parameters)
+    Weyl4WithMatter(const amrex::Real a_dx, const int a_dcomp,
+                    amrex::Real a_G_Newton = 1.0, amrex::Real a_time = 0.0)
+        : Weyl4(a_dx, a_dcomp), m_dcomp(a_dcomp), m_G_Newton(a_G_Newton),
+          m_time(a_time)
     {
     }
 
@@ -55,8 +49,8 @@ template <class matter_t> class Weyl4WithMatter : public Weyl4
   protected:
 
     matter_t m_matter;
-    int m_dcomp;       //!< index for storing the results of compute
-    double m_G_Newton; //!< Newton's constant, set to one by default
+    int m_dcomp;            //!< index for storing the results of compute
+    amrex::Real m_G_Newton; //!< Newton's constant, set to one by default
     amrex::Real m_time;
 
     //! Add matter terms to electric and magnetic parts

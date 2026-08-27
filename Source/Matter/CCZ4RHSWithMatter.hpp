@@ -48,27 +48,24 @@ class CCZ4RHSWithMatter : public CCZ4RHS<gauge_t, deriv_t>
     // Use this alias for the same template instantiation as this class
     using CCZ4 = CCZ4RHS<gauge_t, deriv_t>;
 
-    using params_t = CCZ4_params_t<typename gauge_t::params_t>;
+    using params_t = CCZ4_params_t;
 
     //!  Constructor of class MatterCCZ4
     /*!
-       Inputs are the grid spacing, plus the CCZ4 evolution parameters and a
-       matter object. It also takes the dissipation parameter sigma, and allows
-       the formulation to be toggled between CCZ4 and BSSN. The default is CCZ4.
-       It allows the user to set the value of Newton's constant, which is set to
-       one by default.  The grid centre and the current time are handed to
-       matter classes that need coordinates (pumps, support ramps).
+       Inputs are the grid spacing and optionally a matter object, Newton's
+       constant, the grid centre and the current time (the latter two are
+       handed to matter classes that need coordinates — pumps, support ramps).
+       The CCZ4 damping parameters, the dissipation coefficient
+       (evolution.sigma) and the formulation (ccz4.formulation) are read from
+       ParmParse, as in the base class.
     */
-    CCZ4RHSWithMatter(params_t a_params, double a_dx, double a_sigma,
-                      int a_formulation = CCZ4RHS<>::USE_CCZ4,
-                      double a_G_Newton = 1.0,
+    CCZ4RHSWithMatter(amrex::Real a_dx, amrex::Real a_G_Newton = 1.0,
                       std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0,
                                                                      0.0},
                       amrex::Real a_time = 0.0);
 
-    CCZ4RHSWithMatter(matter_t a_matter, params_t a_params, double a_dx,
-                      double a_sigma, int a_formulation = CCZ4RHS<>::USE_CCZ4,
-                      double a_G_Newton = 1.0,
+    CCZ4RHSWithMatter(matter_t a_matter, amrex::Real a_dx,
+                      amrex::Real a_G_Newton = 1.0,
                       std::array<double, AMREX_SPACEDIM> a_center = {0.0, 0.0,
                                                                      0.0},
                       amrex::Real a_time = 0.0);
@@ -107,9 +104,10 @@ class CCZ4RHSWithMatter : public CCZ4RHS<gauge_t, deriv_t>
         const;
 
     // Class members
-    matter_t m_matter; //!< The matter object, e.g. a scalar field.
-    double m_G_Newton; //!< Newton's constant, set to one by default.
-    double m_dx;
+    matter_t m_matter;      //!< The matter object, e.g. a scalar field.
+    amrex::Real m_G_Newton; //!< Newton's constant, set to one by default.
+    int m_formulation{};
+    amrex::Real m_dx;
     std::array<double, AMREX_SPACEDIM> m_center;
     amrex::Real m_time;
 };

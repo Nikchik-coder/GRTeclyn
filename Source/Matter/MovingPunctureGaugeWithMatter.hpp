@@ -26,16 +26,13 @@ class MovingPunctureGaugeWithMatter : public MovingPunctureGauge
 {
 
   public:
-    MovingPunctureGaugeWithMatter(const params_t &a_params)
-        : MovingPunctureGauge(a_params)
-    {
-    }
+    MovingPunctureGaugeWithMatter() = default;
 
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE static void
     rhs_gauge_add_matter_terms(const amrex::CellData<amrex::Real> &rhs,
                                const CCZ4Vars &vars, const Tensor::Rank2 &h_UU,
                                const emtensor_t &emtensor,
-                               const double &G_Newton)
+                               const amrex::Real &G_Newton)
     {
         FOR (i)
         {

@@ -16,7 +16,7 @@
 
 template <class matter_t>
 ConstraintsWithMatter<matter_t>::ConstraintsWithMatter(
-    double dx, double G_Newton, int a_c_Ham, const Interval &a_c_Moms,
+    amrex::Real dx, amrex::Real G_Newton, int a_c_Ham, const Interval &a_c_Moms,
     std::array<double, AMREX_SPACEDIM> a_center, amrex::Real a_time,
     int a_c_Ham_abs_terms /* defaulted*/,
     const Interval &a_c_Moms_abs_terms /*defaulted*/)
@@ -29,7 +29,7 @@ ConstraintsWithMatter<matter_t>::ConstraintsWithMatter(
 
 template <class matter_t>
 ConstraintsWithMatter<matter_t>::ConstraintsWithMatter(
-    matter_t a_matter, double dx, double G_Newton, int a_c_Ham,
+    matter_t a_matter, amrex::Real dx, amrex::Real G_Newton, int a_c_Ham,
     const Interval &a_c_Moms, std::array<double, AMREX_SPACEDIM> a_center,
     amrex::Real a_time, int a_c_Ham_abs_terms /* defaulted*/,
     const Interval &a_c_Moms_abs_terms /*defaulted*/)

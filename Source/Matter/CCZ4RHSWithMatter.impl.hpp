@@ -13,26 +13,22 @@
 
 template <class matter_t, class gauge_t, class deriv_t>
 CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::CCZ4RHSWithMatter(
-    CCZ4_params_t<typename gauge_t::params_t> a_params, double a_dx,
-    double a_sigma, int a_formulation, double a_G_Newton,
+    amrex::Real a_dx, amrex::Real a_G_Newton,
     std::array<double, AMREX_SPACEDIM> a_center, amrex::Real a_time)
-    : CCZ4RHS<gauge_t, deriv_t>(a_params, a_dx, a_sigma, a_formulation,
-                                0.0 /*No cosmological constant*/),
-      m_matter(matter_t()), m_G_Newton(a_G_Newton), m_dx(a_dx),
-      m_center(a_center), m_time(a_time)
+    : CCZ4RHSWithMatter(matter_t(), a_dx, a_G_Newton, a_center, a_time)
 {
 }
 
 template <class matter_t, class gauge_t, class deriv_t>
 CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::CCZ4RHSWithMatter(
-    matter_t a_matter, CCZ4_params_t<typename gauge_t::params_t> a_params,
-    double a_dx, double a_sigma, int a_formulation, double a_G_Newton,
+    matter_t a_matter, amrex::Real a_dx, amrex::Real a_G_Newton,
     std::array<double, AMREX_SPACEDIM> a_center, amrex::Real a_time)
-    : CCZ4RHS<gauge_t, deriv_t>(a_params, a_dx, a_sigma, a_formulation,
-                                0.0 /*No cosmological constant*/),
+    : CCZ4RHS<gauge_t, deriv_t>(a_dx, 0.0 /*No cosmological constant*/),
       m_matter(a_matter), m_G_Newton(a_G_Newton), m_dx(a_dx),
       m_center(a_center), m_time(a_time)
 {
+    GRParmParse pp;
+    pp.get("ccz4.formulation", m_formulation);
 }
 
 template <class matter_t, class gauge_t, class deriv_t>
@@ -158,7 +154,7 @@ CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::add_emtensor_rhs(
         m_matter, ix, iy, iz, state, this->m_deriv, h_UU, coords, m_time);
 
     // Update RHS for K and Theta depending on formulation
-    if (this->m_formulation == CCZ4RHS<>::USE_BSSN)
+    if (m_formulation == CCZ4RHS<>::USE_BSSN)
     {
         rhs_cell_data[c_K] += 4.0 * M_PI * m_G_Newton * vars.lapse() *
                               (emtensor.trS + emtensor.rho);
