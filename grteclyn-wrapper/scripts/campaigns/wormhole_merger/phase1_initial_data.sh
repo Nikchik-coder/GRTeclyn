@@ -49,7 +49,7 @@ REF_DIR="${REPO_ROOT}/Examples/SupportedWormholeCollapse"
 
 GPU="${P1_GPU:-0}"
 RUNS_DIR="${P1_RUNS_DIR:-${REPO_ROOT}/runs/wormhole_merger}"
-ONLY="${P1_ONLY:-A,B,C,D,E}"
+ONLY="${P1_ONLY:-A,B,C,D,E,F,G}"
 PREFIX="phase1"
 GEN_DIR="${RUNS_DIR}/${PREFIX}_params"
 
@@ -225,9 +225,14 @@ EOF
 }
 
 # $1 run name, $2 params file, $3 binary
+#
+# WHM_CONSUME=0: the launcher's consumer sidecar deletes plotfiles as it
+# reduces them, which is right for an evolution and wrong here.  Phase 1 writes
+# exactly one plotfile per run, at t = 0, and checks F and G read it afterwards
+# with `shells`.  Letting the sidecar collect it would delete the measurement.
 launch() {
   WHM_PARAMS="$2" WHM_NAME="$1" WHM_GPU="${GPU}" WHM_RUNS_DIR="${RUNS_DIR}" \
-    WHM_EXE="$3" \
+    WHM_EXE="$3" WHM_CONSUME=0 \
     bash "${SCRIPT_DIR}/run_single.sh" > "${GEN_DIR}/$1.launch.log" 2>&1 \
     || { echo "[p1] run $1 FAILED -- see ${GEN_DIR}/$1.launch.log" >&2; return 1; }
 }
@@ -455,6 +460,181 @@ for a_lab, b_lab in (("d = 4", "d = 8"), ("d = 8", "d = 16")):
     sig = "  [BELOW THE ERROR BAR - not a measurement]" if min(abs(a), abs(b)) < 2 * err else ""
     print(f"   {a_lab} -> {b_lab}: ratio {a / b:6.2f}   (predicted 4){sig}")
 PYEOF
+fi
+
+# ---------------------------------------------------------------------------
+# Shell profiles.  The plotfile consumer already knows how to reduce a plotfile
+# onto spherical shells, so nothing here parses a plotfile itself.  Runs after
+# the fact on the plotfile the run left on scratch -- Phase 1 sets max_steps = 0,
+# so there is exactly one, at t = 0.
+#
+# $1 run name, $2 radii (space separated), $3 fields (space separated),
+# $4 domain centre (a single coordinate; the grid is a cube centred on L/2)
+# ---------------------------------------------------------------------------
+shells() {
+  local name=$1 radii=$2 fields=$3 c=$4
+  local scratch="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}/${name}"
+  local out="${RUNS_DIR}/${name}/small_data"
+  mkdir -p "${out}"
+  # shellcheck disable=SC2086
+  "${WRAPPER_DIR}/.venv/bin/python" -m \
+    grteclyn_wrapper.visualisation.process_wave.consume_plotfiles \
+    --data "${scratch}" --out "${out}" --no-psi4 \
+    --shell-fields ${fields} --radii ${radii} --n-points 32 \
+    --center "${c}" "${c}" "${c}" --stable-seconds 0 >/dev/null 2>&1
+  echo "${out}/shell_profiles.dat"
+}
+
+# ---------------------------------------------------------------------------
+# Check F -- phi really does tend to zero at the outer boundary
+#
+# The gate exists because the Sommerfeld boundary condition assumes the field
+# it is applied to decays to zero there.  An Ellis-Bronnikov scalar does not:
+# it tends to a CONSTANT, and if that constant is left in place the boundary
+# condition is wrong from the first step.  wormhole_subtract_phi_asymptote
+# removes it.
+#
+# The gate cannot be "phi < 1e-3 at the boundary", though, and the plan's
+# wording asks for exactly that.  After the constant is removed what is left is
+# the physical tail, and for this field that tail falls like 1/r -- so pushing
+# it below 1e-3 needs a domain hundreds of throat radii wide, which no run in
+# this campaign will ever have.  Fitting the constant out of a single run does
+# not work either: over the radii a finite box offers, a constant, a 1/r and a
+# 1/r^2 term are not separable, and the fitted constant moves around with the
+# radius range and even changes sign.
+#
+# So F measures the constant directly instead, by DIFFERENCING two runs that
+# are identical but for the subtraction.  That difference is the subtracted
+# constant, with nothing else in it, and no fit involved.
+# ---------------------------------------------------------------------------
+if want F; then
+  echo
+  echo "== F. phi at the outer boundary (subtraction on vs off) =="
+  RADII_F="6 8 10 12 14 15"
+  for sub in 0 1; do
+    gen_merger "${GEN_DIR}/F_sub${sub}.txt" 32 192 1.0 0.0 0.0 "0.0 0.0 0.0" 0.0 "${sub}"
+    launch "${PREFIX}_F_sub${sub}" "${GEN_DIR}/F_sub${sub}.txt" "${MERGER_EXE}"
+    shells "${PREFIX}_F_sub${sub}" "${RADII_F}" "chi phi" 16 >/dev/null
+  done
+  python3 - "${RUNS_DIR}" "${PREFIX}" ${RADII_F} <<'F_PY'
+import sys
+runs_dir, prefix = sys.argv[1], sys.argv[2]
+R = [int(x) for x in sys.argv[3:]]
+
+def prof(name):
+    path = f"{runs_dir}/{name}/small_data/shell_profiles.dat"
+    lines = [l for l in open(path) if l.strip()]
+    hdr = lines[0].lstrip("#").split()
+    return dict(zip(hdr, lines[1].split()))
+
+off, on = prof(f"{prefix}_F_sub0"), prof(f"{prefix}_F_sub1")
+print(f"   {'r':>4} {'phi (sub OFF)':>15} {'phi (sub ON)':>15} {'difference':>13} {'phi_on * r':>11}")
+diffs = []
+for r in R:
+    a = float(off[f"phi_mean_R{r}"]); b = float(on[f"phi_mean_R{r}"])
+    diffs.append(a - b)
+    print(f"   {r:>4} {a:15.6e} {b:15.6e} {a-b:13.6f} {b*r:11.5f}")
+
+spread = max(diffs) - min(diffs)
+mean = sum(diffs) / len(diffs)
+print(f"\n   subtracted constant = {mean:.6f}  (spread across radii {spread:.2e})")
+print("   A constant is constant: the spread is the check that this is really")
+print("   an offset and not something with structure that happens to be large.")
+
+bound_off = float(off[f"phi_mean_R{R[-1]}"]); bound_on = float(on[f"phi_mean_R{R[-1]}"])
+print(f"\n   at the outermost shell r = {R[-1]}:")
+print(f"     subtraction OFF : phi = {bound_off:+.4f}   <- what Sommerfeld would see")
+print(f"     subtraction ON  : phi = {bound_on:+.4f}   ({abs(bound_off/bound_on):.0f}x smaller)")
+prods = [float(on[f"phi_mean_R{r}"]) * r for r in R]
+print(f"\n   phi_on * r over r = {R[0]}..{R[-1]}: {prods[0]:.4f} -> {prods[-1]:.4f}")
+print("   Near-constant means the residual is the physical 1/r tail with no")
+print("   constant left in it -- a leftover offset would make this grow with r.")
+F_PY
+fi
+
+# ---------------------------------------------------------------------------
+# Check G -- the bare-mass tail weighs what the orbit calculation assumes
+#
+# Phase 3 picks its separation and stop_time from a Newtonian free-fall time
+# built out of m_A + m_B.  That is only meaningful if the spacetime really
+# carries that much mass, so read the ADM mass off the far field and compare.
+#
+# psi -> 1 + M/(2r) at large r.  The fit deliberately has NO constant term:
+# psi tends to exactly 1 by construction, and leaving a constant free is what
+# made the phi fit in F degenerate.  The 1/r^2 term is the throat's own
+# structure, which has to be there or it contaminates the 1/r coefficient.
+# ---------------------------------------------------------------------------
+if want G; then
+  echo
+  echo "== G. Bare-mass tail: does psi - 1 recover m_A + m_B? =="
+  # Two domains with the SAME physics (throats at z = +-4, b = 1, m = 0.25
+  # each).  L = 32 leaves only r = 8..15 of far field -- barely a factor of two
+  # in r, with the throats' own 1/r^2 structure and the binary's quadrupole
+  # still large there, so the fitted mass depends on how many terms are kept.
+  # L = 64 pushes the outermost shell to r = 30, where those corrections are
+  # down by roughly (8/30)^2.  If M converges on m_A + m_B as the far field
+  # opens up, the tail is right and the L = 32 spread was series truncation.
+  gen_merger "${GEN_DIR}/G_mass_L32.txt" 32 192 1.0 1.0 4.0 "0.0 0.0 0.0" 0.25 1
+  launch "${PREFIX}_G_mass_L32" "${GEN_DIR}/G_mass_L32.txt" "${MERGER_EXE}"
+  shells "${PREFIX}_G_mass_L32" "8 10 12 14 15" "chi" 16 >/dev/null
+
+  gen_merger "${GEN_DIR}/G_mass_L64.txt" 64 384 1.0 1.0 4.0 "0.0 0.0 0.0" 0.25 1
+  launch "${PREFIX}_G_mass_L64" "${GEN_DIR}/G_mass_L64.txt" "${MERGER_EXE}"
+  shells "${PREFIX}_G_mass_L64" "12 16 20 24 28 30" "chi" 32 >/dev/null
+
+  python3 - "${RUNS_DIR}" "${PREFIX}" <<'G_PY'
+import sys
+runs_dir, prefix = sys.argv[1], sys.argv[2]
+M_EXPECTED = 0.5   # m_A + m_B, both 0.25
+
+LADDER = [("L=32", f"{prefix}_G_mass_L32", [8, 10, 12, 14, 15]),
+          ("L=64", f"{prefix}_G_mass_L64", [12, 16, 20, 24, 28, 30])]
+
+def lstsq(basis, y):
+    n, m = len(y), len(basis)
+    A = [[sum(basis[i][k] * basis[j][k] for k in range(n)) for j in range(m)] for i in range(m)]
+    b = [sum(basis[i][k] * y[k] for k in range(n)) for i in range(m)]
+    for i in range(m):
+        p = max(range(i, m), key=lambda r_: abs(A[r_][i]))
+        A[i], A[p] = A[p], A[i]; b[i], b[p] = b[p], b[i]
+        for r_ in range(i + 1, m):
+            f = A[r_][i] / A[i][i]
+            for c in range(i, m):
+                A[r_][c] -= f * A[i][c]
+            b[r_] -= f * b[i]
+    x = [0.0] * m
+    for i in reversed(range(m)):
+        x[i] = (b[i] - sum(A[i][j] * x[j] for j in range(i + 1, m))) / A[i][i]
+    return x
+
+print(f"   expected m_A + m_B = {M_EXPECTED:.5f}\n")
+print(f"   {'domain':>7} {'r range':>10} {'M (1 term)':>12} {'M (2 terms)':>12} "
+      f"{'M (3 terms)':>12} {'dev':>7} {'rms resid':>10}")
+for label, name, R in LADDER:
+    path = f"{runs_dir}/{name}/small_data/shell_profiles.dat"
+    lines = [l for l in open(path) if l.strip()]
+    d = dict(zip(lines[0].lstrip("#").split(), lines[1].split()))
+    # chi = psi^-4  =>  psi = chi^(-1/4)
+    psi = [float(d[f"chi_mean_R{r}"]) ** -0.25 for r in R]
+    y = [p - 1.0 for p in psi]
+    powers = [[1.0 / r ** k for r in R] for k in (1, 2, 3)]
+    Ms, rms = [], None
+    for nterm in (1, 2, 3):
+        basis = powers[:nterm]
+        c = lstsq(basis, y)
+        Ms.append(2 * c[0])
+        pred = [sum(b[k] * ci for b, ci in zip(basis, c)) for k in range(len(R))]
+        rms = (sum((a - b) ** 2 for a, b in zip(y, pred)) / len(y)) ** 0.5
+    dev = 100 * abs(Ms[-1] - M_EXPECTED) / M_EXPECTED
+    print(f"   {label:>7} {f'{R[0]}-{R[-1]}':>10} {Ms[0]:12.5f} {Ms[1]:12.5f} "
+          f"{Ms[2]:12.5f} {dev:6.2f}% {rms:10.2e}")
+
+print("\n   Read the 3-term column, and read it across the two domains rather")
+print("   than as a single number: psi-1 is an asymptotic series, so each")
+print("   truncation lands on alternating sides of the true mass, and what")
+print("   shows the tail is right is the deviation shrinking as the far field")
+print("   opens up.")
+G_PY
 fi
 
 echo

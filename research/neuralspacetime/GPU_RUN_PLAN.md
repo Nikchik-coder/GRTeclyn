@@ -419,6 +419,37 @@ and `trajectory.jsonl`, so they are reproducible, but their plotfile-derived
 
 ## Phase 3 — CMA-ES `qball_traj_fgeo_max_cmaes_v2` (200 evals, 4 GPUs, ~1–2 days)
 
+> **Post-merge rebuild, 2026-08-27 09:45.** Work moved to branch
+> `feature/merger`, which carries the 167-commit upstream merge (ParmParse
+> params rework + `Make.package` removal) plus the BinaryWormholeMerger
+> example. `Examples/RadialRecipe/main3d.gnu.MPI.CUDA.ex` was rebuilt from
+> scratch (`make -j16 USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90`,
+> exit 0, 157.7 MB). The champion's `params.txt` re-parses clean under the
+> new `BaseParameterChecker` (`check_params=1`, exit 0, no unknown or
+> deprecated keys). The pre-merge binary is kept aside for A/B.
+>
+> **⚠ Binary discontinuity.** Phase 2 ran end-to-end on the *pre-merge*
+> binary (2026-08-23). Phase 3 runs on the post-merge one, so the warm-start
+> champion's 3945.3 was not scored by the code that will refine it. CMA-ES
+> generation 1 re-evaluates genomes jittered around that champion, so
+> generation-1 scores are the A/B: if they land near 3900 the merge is
+> score-neutral and the ladder is sound; if they collapse, Phase 2 must be
+> re-run on the new binary before the ladder means anything. **Check
+> generation 1 before trusting anything downstream.**
+>
+> **RESOLVED 2026-08-27 11:19 — the merge is score-neutral.** Generation 1
+> (16 evals, 12 scored) reproduced the Phase 2 champion on the post-merge
+> binary at **3945.09 vs 3945.3** (0.005% apart), with the generation top at
+> **3949.4**. Eight of twelve scored evals sit in the champion basin
+> (3532-3949); the other four collapsed (697, 413, 29, -5), which is normal
+> sigma0=0.05 exploration, not a code regression. Phase 2 does **not** need
+> re-running; the ladder holds.
+>
+> Post-load gate rejected 4/16 (25%) in generation 1, all clustered just
+> above the 3e-2 threshold (Ham L2 0.0331, 0.0368, 0.0377, 0.0382) - the
+> same near-miss band recorded for Phase 2. Recorded, not acted on; the
+> threshold stays where it is.
+
 Covariance refinement of the Phase-2 champion under the same gated objective,
 same window, same gates — the ladder rung the paper reads as "QD finds the
 basin, CMA-ES climbs it".
@@ -432,7 +463,7 @@ setsid nohup /usr/bin/env \
   WARM_START_TOP_K=1 WARM_START_JITTER=0.05 \
   POPULATION=16 MAX_GENERATIONS=13 TARGET_EVALS=200 \
   SIGMA0=0.05 SEED=22 \
-  GPU_IDS="0 1 2 3" MAX_CONCURRENT_GRTRESNA=2 \
+  GPU_IDS="0 1 2 3" MAX_CONCURRENT_GRTRESNA=3 \
   STOP_TIME=26 \
   RL_PUMP_STOP_TIME=-1 GEODESIC_EMIT_MIN_TIME=4 \
   SCORE_EXOTIC_PENALTY_WEIGHT=0 \
@@ -446,6 +477,15 @@ bicomplex-era defaults that differ from the fgeo parent): `RL_PUMP_STOP_TIME`
 + `GEODESIC_EMIT_MIN_TIME` (launcher refuses to run without them),
 `SCORE_EXOTIC_PENALTY_WEIGHT=0`, `STOP_TIME=26`. Population 16 = 4× GPU
 slots, never = GPU count.
+
+**Solve concurrency raised 2 → 3**, on the Phase-2 measurement rather than a
+guess: that campaign was solve-bound for all 17h (11.6 evals/h against a
+2-solve ceiling of ~14/h) while the four GPUs idled — the champion's evolution
+took only 498 s. Three concurrent 8-rank solves lift the ceiling to ~21/h and
+still use just 24 of 128 cores. `USE_PIPELINE=1` (launcher default) streams
+candidates within a generation, and population 16 keeps the `tell()` barrier
+amortized, so solves run continuously exactly as they did under MAP-Elites —
+no batch-wait between generations.
 
 Resume repeats the same env block with `RESUME=1`.
 

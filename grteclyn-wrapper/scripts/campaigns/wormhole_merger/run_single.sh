@@ -30,12 +30,22 @@
 #                 (equal-mass ladder knob, Plan.md Phase 3; appends _mXXX to
 #                 the run name so ladder rungs never clobber each other)
 #   WHM_DRYRUN=1  resolve and print everything, touch nothing, exit
+#   WHM_CONSUME   run the plotfile consumer sidecar (default 1)
+#   WHM_CONSUME_ARGS  extra consumer flags, e.g. "--shell-fields chi phi"
+#   WHM_KEEP_PLOTFILES=1  keep the heavy HDF5 on scratch (no --delete)
+#   WHM_KEEP_LAST  plotfiles the consumer leaves behind (default 3)
 #
 # Stop:  bash scripts/campaigns/stop_campaign.sh [--dry-run] <runs_dir>
 #
-# NOTE there is no plotfile consumer for this example yet: plotfiles STAY on
-# scratch.  Copy what the analysis needs off /tmp before any purge -- scratch
-# does not survive a node swap.  Budget with `df -h /tmp` before long runs.
+# Plotfiles stream through the consumer sidecar while the run is going
+# (grteclyn-wrapper/README.md, "ALWAYS extract frames on the fly"): reductions
+# land in <run dir>/small_data on NFS and the heavy HDF5 is deleted from
+# scratch behind them.  WHM_CONSUME=0 turns it off for a t = 0 probe whose
+# plotfile you want to keep and analyse yourself.
+#
+# Deciding WHAT to extract is a launch-time decision and cannot be revisited:
+# deletion is ledger-gated, so anything not extracted during the run is gone
+# with the plotfile.  Pass extra extractions through WHM_CONSUME_ARGS.
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
@@ -47,6 +57,10 @@ WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
 # guess from BASH_SOURCE.
 # shellcheck source=../../lib/env.sh
 source "${WRAPPER_DIR}/scripts/lib/env.sh"
+# env.sh computes a SCRIPT_DIR of its own and exports it, so after sourcing it
+# SCRIPT_DIR points at scripts/lib rather than at this directory.  Re-derive it:
+# every relative source below (launcher_common.sh) resolves against it.
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="${GRTECLYN_ROOT:-$(cd -- "${WRAPPER_DIR}/.." && pwd)}"
 EXAMPLE_DIR="${REPO_ROOT}/Examples/BinaryWormholeMerger"
 
@@ -142,6 +156,34 @@ if [[ -n "${WHM_BARE_MASS:-}" ]]; then
   echo "[whm] bare-mass override: m_A = m_B = ${WHM_BARE_MASS}"
 fi
 
+# ---------------------------------------------------------------------------
+# Plotfile consumer sidecar.
+# ---------------------------------------------------------------------------
+CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
+CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
+CONSUMER_PID=""
+consumer_args=(--data "${SCRATCH_DIR}" --out "${RUN_DIR}/small_data")
+if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
+  consumer_args+=(--delete --keep-last "${WHM_KEEP_LAST:-3}")
+fi
+# shellcheck disable=SC2206
+consumer_args+=(${WHM_CONSUME_ARGS:-})
+
+if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
+  if [[ ! -x "${CONSUMER_PY}" ]]; then
+    echo "[whm] consumer requested but ${CONSUMER_PY} is missing -- run 'uv sync'" >&2
+    exit 1
+  fi
+  mkdir -p "${RUN_DIR}/small_data"
+  "${CONSUMER_PY}" -m "${CONSUMER_MOD}" "${consumer_args[@]}" --watch \
+    > "${RUN_DIR}/consumer.log" 2>&1 &
+  CONSUMER_PID=$!
+  echo "[whm] consumer  : pid ${CONSUMER_PID} -> ${RUN_DIR}/small_data"
+  if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
+    echo "[whm]            deleting processed plotfiles, keeping last ${WHM_KEEP_LAST:-3}"
+  fi
+fi
+
 echo "[whm] === launching ${NAME} (attached; Ctrl-C or stop_campaign.sh to stop) ==="
 status=0
 (
@@ -149,11 +191,27 @@ status=0
   CUDA_VISIBLE_DEVICES="${GPU}" "${EXE}" "${RUN_PARAMS}"
 ) 2>&1 | tee "${RUN_DIR}/run.log" || status=$?
 
+# Drain before reporting.  The watcher is stopped and then a single one-shot
+# pass picks up whatever it had not reached: deletion is ledger-gated, so an
+# extraction interrupted by the TERM is retried here rather than lost, and a
+# plotfile that never got extracted is never collected.
+if [[ -n "${CONSUMER_PID}" ]]; then
+  kill "${CONSUMER_PID}" 2>/dev/null || true
+  wait "${CONSUMER_PID}" 2>/dev/null || true
+  echo "[whm] draining consumer (final pass) ..."
+  "${CONSUMER_PY}" -m "${CONSUMER_MOD}" "${consumer_args[@]}" \
+    >> "${RUN_DIR}/consumer.log" 2>&1 || \
+    echo "[whm] final consumer pass reported an error -- see ${RUN_DIR}/consumer.log" >&2
+fi
+
 if [[ "${status}" -ne 0 ]]; then
   echo "[whm] run FAILED (exit ${status}) -- see ${RUN_DIR}/run.log" >&2
   exit "${status}"
 fi
 
 echo "[whm] run complete: ${RUN_DIR}"
-echo "[whm] plotfiles are on node-local scratch: ${SCRATCH_DIR}"
-echo "[whm] copy what the analysis needs off /tmp before purging."
+if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
+  echo "[whm] reductions : ${RUN_DIR}/small_data"
+fi
+left="$(find "${SCRATCH_DIR}" -maxdepth 1 -name '*Plt*' -type d 2>/dev/null | wc -l)"
+echo "[whm] plotfiles left on scratch: ${left} (${SCRATCH_DIR})"

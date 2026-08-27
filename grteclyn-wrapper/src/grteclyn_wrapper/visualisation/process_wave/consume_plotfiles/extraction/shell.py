@@ -69,7 +69,17 @@ def _extract_shell_field_stats(
                 continue
 
             pts = np.column_stack((sx[idxs], sy[idxs], sz[idxs]))
-            vals = ds.find_field_values_at_points(yt_fields, pts)
+            vals = np.asarray(
+                ds.find_field_values_at_points(yt_fields, pts), dtype=float
+            )
+            # yt returns one flat per-point array when a SINGLE field is asked
+            # for, and a sequence of per-field arrays when several are.  Without
+            # this, zip(fields, vals) below pairs the one field name with a
+            # single scalar, every radius fails the size test, and the caller
+            # is told "no valid samples at any radius" -- which reads as a bad
+            # plotfile rather than as a one-element list.
+            if vals.ndim == 1:
+                vals = vals[np.newaxis, :]
             tag = f"R{radius:g}"
             for field, samples in zip(fields, vals):
                 arr = np.asarray(samples, dtype=float).reshape(-1)
