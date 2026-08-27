@@ -28,10 +28,13 @@ src_dirs := $(GRTECLYN_SOURCE)/CCZ4 \
             $(GRTECLYN_SOURCE)/ParticleInterpolator \
             $(GRTECLYN_SOURCE)/Tagging
 
-src_pack := $(foreach dir, $(src_dirs), $(dir)/Make.package)
-include $(src_pack)
+# The example's own Make.package (included above) fills GRTECLYN_CEXE_*;
+# Source/ dirs no longer carry Make.package files, so glob them instead
+# (same scheme as the upstream examples).
 CEXE_sources += $(GRTECLYN_CEXE_sources)
 CEXE_headers += $(GRTECLYN_CEXE_headers)
+CEXE_sources += $(notdir $(foreach dir, $(src_dirs), $(wildcard $(dir)/*.cpp)))
+CEXE_headers += $(notdir $(foreach dir, $(src_dirs), $(wildcard $(dir)/*.hpp)))
 VPATH_LOCATIONS += $(src_dirs)
 INCLUDE_LOCATIONS += $(realpath .) $(src_dirs)
 
