@@ -40,7 +40,11 @@ def _auto_zlim_from_array(values: np.ndarray, field_name: str) -> tuple[float, f
             lo, hi = mid - 0.5 * min_span, mid + 0.5 * min_span
             span = min_span
         pad = max(0.05 * span, 0.005)
-        return (max(0.05, lo - pad), min(1.05, hi + pad))
+        # No ceiling: chi <= 1 holds for black holes, not for these
+        # matter spacetimes -- the champion reaches chi ~ 1.44, and a 1.05 cap
+        # saturates the whole structure into one flat colour.  The 99.5th
+        # percentile above already keeps outliers from setting the scale.
+        return (max(0.05, lo - pad), hi + pad)
 
     if field_name in {"shift1", "shift2", "shift3"}:
         max_abs = float(np.nanpercentile(np.abs(finite), 99.5))

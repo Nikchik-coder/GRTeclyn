@@ -65,7 +65,19 @@ export GRTECLYN_FREEFALL_OBSERVER_TIMING="${GRTECLYN_FREEFALL_OBSERVER_TIMING:-1
 export FRAMES_FIELDS="${FRAMES_FIELDS:-scalar_activity phi Pi phi_lump0 Pi_lump0 phi_lump1 Pi_lump1 phi_lump2 Pi_lump2 chi chi_minus_1 local_speed shift1 rho_req Weyl4_Re Weyl4_Im Weyl4_Mag}"
 export PROJECTION_FIELDS="${PROJECTION_FIELDS:-scalar_activity phi}"
 export GRTECLYN_FRAMES_ZOOM="${GRTECLYN_FRAMES_ZOOM:-none}"
-export GRTECLYN_FRAMES_STABLE_MOVIE="${GRTECLYN_FRAMES_STABLE_MOVIE:-1}"
+# Colour scales: cache every 2-D slice during the run (~200 KB each, against a
+# ~3 GB plotfile that is deleted moments later), then re-render the whole series
+# afterwards on one fixed scale with scripts/plot/rerender_frames.py.
+#
+# STABLE_MOVIE is OFF here on purpose. It strips the per-frame rescale from the
+# fields flagged for it (chi, chi-1) and falls back to a hand-set preset --
+# chi's is (0.1, 1.05), written for black holes where chi <= 1. This champion
+# reaches chi = 1.45, so that preset saturated every frame into one flat colour.
+# With the cache in place, a still colourbar comes from the re-render, which
+# measures the true envelope over the finished run instead of guessing it in
+# advance. Live frames rescale per frame and are provisional.
+export GRTECLYN_FRAMES_CACHE_SLICES="${GRTECLYN_FRAMES_CACHE_SLICES:-1}"
+export GRTECLYN_FRAMES_STABLE_MOVIE="${GRTECLYN_FRAMES_STABLE_MOVIE:-0}"
 unset GRTECLYN_FRAMES_AUTO_ZLIM 2>/dev/null || true
 export GRTECLYN_FRAMES_DPI="${GRTECLYN_FRAMES_DPI:-110}"
 export GRTECLYN_FRAMES_BUFF_CAP="${GRTECLYN_FRAMES_BUFF_CAP:-768}"

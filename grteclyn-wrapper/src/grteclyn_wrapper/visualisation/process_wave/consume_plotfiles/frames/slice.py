@@ -305,22 +305,47 @@ def _render_slice_frame(
     #   z-axis normal -> x horizontal, y vertical
     # Let's assume standard behavior first.
 
+    # The FRB is the array yt is about to draw.  Pull it out once: the colour
+    # scale is measured from it, and it is also the thing worth caching, being
+    # ~1e4 times smaller than the plotfile that produced it.
     try:
-        zlim = _resolve_plot_zlim(
-            field,
-            np.asarray(slc.frb[plot_field]),
-            cfg,
-            auto_zlim=auto_zlim,
-            frame_zlims=frame_zlims,
-            use_global_zlim=use_global_zlim,
-        )
+        frb_arr = np.asarray(slc.frb[plot_field])
     except Exception:
+        frb_arr = None
+
+    if frb_arr is None:
         zlim = cfg["zlim"]
+    else:
+        try:
+            zlim = _resolve_plot_zlim(
+                field,
+                frb_arr,
+                cfg,
+                auto_zlim=auto_zlim,
+                frame_zlims=frame_zlims,
+                use_global_zlim=use_global_zlim,
+            )
+        except Exception:
+            zlim = cfg["zlim"]
     if zlim[0] is not None:
         slc.set_zlim(plot_field, zlim[0], zlim[1])
     slc.set_cmap(plot_field, cfg["cmap"])
 
     coord_val = _clean_zero(physics_center[{"x": 0, "y": 1, "z": 2}[axis]])
+
+    if cache_slices and frb_arr is not None:
+        # yt hands back the buffer indexed [y, x] with ``bounds`` as
+        # (x_lo, x_hi, y_lo, y_hi) -- exactly what draw_slice_png feeds to
+        # imshow(origin="lower", extent=...), so a redraw from the cache lands
+        # on the same axes as the live frame.
+        try:
+            cache_slice(
+                frames_out_dir, field, axis, frame_idx,
+                frb_arr, [float(b) for b in slc.frb.bounds],
+                time=float(ds.current_time), coord_val=coord_val,
+            )
+        except Exception as exc:
+            print(f"WARNING: slice cache failed for {field}_{axis}: {exc}")
 
     # Format title with LaTeX
     title_text = r"%s $\quad t=%.2f \quad %s=%g$" % (cfg["label"], float(ds.current_time), axis, coord_val)
