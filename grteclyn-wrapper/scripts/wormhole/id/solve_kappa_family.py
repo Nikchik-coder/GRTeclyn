@@ -56,7 +56,13 @@ DEFAULT_L = 64.0
 EVO_L = float(os.environ.get("EVO_L", str(DEFAULT_L)))
 RES_N = int(os.environ.get("RES_N", os.environ.get("EVO_N", "64")))
 EVO_N = RES_N
-EVO_CENTER = (EVO_L / 2.0, EVO_L / 2.0, 0.0)
+# EVO_CZ places the z-centre of the exported gridinit.  0.0 (the default, and
+# every ID solved before 2026-08-28) is the half-z octant recipe: the object sits
+# on the reflective z boundary.  Set EVO_CZ = L/2 for a FULL-BOX CENTERED
+# gridinit, which is what wormhole_case.py --full-box evolves and what a binary
+# needs -- two throats cannot both sit on a symmetry corner.
+EVO_CZ = float(os.environ.get("EVO_CZ", "0.0"))
+EVO_CENTER = (EVO_L / 2.0, EVO_L / 2.0, EVO_CZ)
 # Field mass mu for the confining potential V = 1/2 mu^2 |Phi|^2.  MASS=0 is the
 # massless ghost (dispersive, the default studied so far); MASS>0 binds the
 # phantom cloud into a soliton so the throat keeps its support.  This value must
@@ -86,6 +92,15 @@ LUMP_MODE = int(os.environ.get("LUMP_MODE", "1"))
 # winding is set to 0 (orbital AM replaces phase winding); exotic=1 (phantom).
 # NUM_LUMPS <= 1 keeps the original single-winding-throat behaviour (backward
 # compatible with every existing kappa/Q-ball run).
+# THROAT_MASS overrides the base params' bh1_bare_mass, i.e. the Bowen-York
+# puncture that plays the role of the throat: psi ~ 1 + m/(2r), so the areal
+# radius R = psi^2 r has its minimum at isotropic r = m/2 with R_min = 2m.
+# RESOLUTION, not taste, sets the floor here: the gridinit is flattened to the
+# evolution's level-0 dx (lesson L2), so a throat at r = m/2 below one cell is
+# simply absent from the initial data and no amount of AMR recovers it.
+# m/2 >= 2*dx (i.e. m >= 4*L/N) is the minimum for a throat that exists.
+# Negative (the default) keeps whatever the base params file says.
+THROAT_MASS = float(os.environ.get("THROAT_MASS", "-1.0"))
 NUM_LUMPS = int(os.environ.get("NUM_LUMPS", "1"))
 ORBIT_RADIUS = float(os.environ.get("ORBIT_RADIUS", "6.0"))
 ORBIT_OMEGA = float(os.environ.get("ORBIT_OMEGA", "0.1"))
@@ -234,6 +249,9 @@ def _write_scaled_params(dst: Path, base_text: str, amp: float) -> None:
     # qball_profile_path at the solved phi0(r) table.  The C++ potential_value
     # matches (V = 1/2 m^2|Phi|^2 - 1/4 lam|Phi|^4 + 1/6 mu|Phi|^6), so the
     # solved ID stays in equilibrium under the matching evolution potential.
+    if THROAT_MASS >= 0.0:
+        text = re.sub(r"^(\s*bh1_bare_mass\s*=\s*).*$",
+                      rf"\g<1>{THROAT_MASS:.10g}", text, flags=re.MULTILINE)
     if LAMBDA > 0.0:
         text = re.sub(r"^(\s*scalar_lambda\s*=\s*).*$",
                       rf"\g<1>{LAMBDA:.10g}", text, flags=re.MULTILINE)
@@ -289,6 +307,22 @@ def _qball_suffix() -> str:
     return f"_qball_lam{LAMBDA:g}_mu6{MU6:g}".replace(".", "p")
 
 
+def _throat_suffix() -> str:
+    """Append _thr<val> only when bh1_bare_mass is overridden (backward compat
+    with every ID solved at the base file's 0.25)."""
+    if THROAT_MASS < 0.0:
+        return ""
+    return f"_thr{THROAT_MASS:g}".replace(".", "p")
+
+
+def _center_suffix() -> str:
+    """Append _cz<val> only when the gridinit is full-box centered (backward
+    compat: every half-z octant ID keeps its existing directory name)."""
+    if abs(EVO_CZ) < 1.0e-9:
+        return ""
+    return f"_cz{EVO_CZ:g}".replace(".", "p")
+
+
 def _constellation_suffix() -> str:
     """Append _nlump<N>_R<R0>_worb<omega> for a multi-lump constellation ID.
     Must match wormhole_case.py's constellation suffix so the evolution finds it."""
@@ -304,7 +338,8 @@ def _run_tag(kappa: float) -> str:
     omega_tag = f"{LUMP_OMEGA:.2f}".replace(".", "p")
     return (f"rotwh_omega_p{omega_tag}_m{LUMP_MODE}_kappa_{kappa:.2f}_{dx_tag}"
             f"{_L_suffix()}{_mass_suffix()}{_qball_suffix()}"
-            f"{_constellation_suffix()}").replace(".", "p")
+            f"{_constellation_suffix()}{_throat_suffix()}"
+            f"{_center_suffix()}").replace(".", "p")
 
 
 def solve_one(kappa: float, base_amp: float, base_text: str, nranks: int) -> dict:
