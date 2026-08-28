@@ -6,6 +6,7 @@
 #include "ExternalGridInitialData.hpp"
 #include "GRParmParse.hpp"
 #include "SimulationParametersBase.hpp"
+#include "SpongeZone.hpp"
 
 #include <array>
 #include <string>
@@ -18,6 +19,7 @@ class SimulationParameters : public SimulationParametersBase
         read_shared_params(pp);
         read_wormhole_params(pp);
         read_diagnostics_params(pp);
+        read_sponge_params(pp);
         check_params();
     }
 
@@ -122,6 +124,28 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("binary_diag_min_radius", binary_diag_params.min_radius,
                 default_min_radius);
         binary_diag_params.grid_center = wormhole_params.grid_center;
+    }
+
+    void read_sponge_params(GRParmParse &pp)
+    {
+        // Radially-ramped extra Kreiss-Oliger dissipation in an outer shell,
+        // shared with RadialRecipe via Source/Grids/SpongeZone.hpp.  Off by
+        // default so no archived run changes.
+        //
+        // Defaults are scaled to the box rather than copied from RadialRecipe:
+        // that example runs L = 64 with the source at the centre and sponges
+        // r in [24, 32], i.e. the outer quarter of the half-width.  Expressing
+        // that as fractions of L/2 keeps the same geometry at any box size,
+        // which matters here because the merger sweeps L with the separation.
+        const double half_L = 0.5 * L; // L: physical sidelength of the box
+        pp.load("sponge_enabled", sponge_params.enabled, false);
+        pp.load("sponge_inner_radius", sponge_params.inner_radius,
+                0.75 * half_L);
+        pp.load("sponge_outer_radius", sponge_params.outer_radius, half_L);
+        pp.load("sponge_strength", sponge_params.strength, 4.0);
+        pp.load("sponge_ramp_power", sponge_params.ramp_power, 4);
+        pp.load("sponge_center", sponge_params.center,
+                wormhole_params.grid_center);
     }
 
     void check_params()
@@ -240,6 +264,9 @@ class SimulationParameters : public SimulationParametersBase
 
     BinaryWormholeInitialData::params_t wormhole_params{};
     BinaryThroatDiagnostics::params_t binary_diag_params{};
+
+    // Numerical sponge zone (radially-ramped extra KO dissipation).
+    SpongeZoneParams sponge_params{};
 };
 
 #endif /* SIMULATIONPARAMETERS_HPP */

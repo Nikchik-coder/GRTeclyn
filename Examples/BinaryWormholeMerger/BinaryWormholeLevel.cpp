@@ -11,6 +11,7 @@
 #include "PositiveChiAndLapse.hpp"
 #include "SimulationParameters.hpp"
 #include "SmallDataIO.hpp"
+#include "SpongeZone.hpp"
 #include "TraceARemoval.hpp"
 #include "Weyl4WithMatter.hpp"
 #include "WeylExtraction.hpp"
@@ -202,6 +203,26 @@ void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                            ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no],
                                                     soln_c_arrs[box_no]);
                        });
+
+    // Sponge zone: extra radially-ramped Kreiss-Oliger dissipation in an outer
+    // shell, damping outgoing junk before it reaches the Sommerfeld boundary
+    // and returns as a reflection.  Superposed initial data is constraint-
+    // violating by construction, so the first thing this example emits is a
+    // burst of gauge and constraint junk propagating outward from the throat --
+    // clearly visible as concentric rings in the chi slices.  Without a sponge
+    // that burst reflects and comes back through the throat at t ~ L, which is
+    // exactly when the throat's own dynamics are being measured.
+    if (simParams().sponge_params.enabled)
+    {
+        const SpongeZone sponge(simParams().sponge_params,
+                                Geom().CellSize(0));
+        amrex::ParallelFor(a_rhs,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           {
+                               sponge.apply(i, j, k, rhs_arrs[box_no],
+                                            soln_c_arrs[box_no]);
+                           });
+    }
 
     amrex::Gpu::streamSynchronize();
 }

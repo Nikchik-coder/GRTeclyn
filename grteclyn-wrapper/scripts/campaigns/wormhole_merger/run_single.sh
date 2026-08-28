@@ -203,7 +203,13 @@ if [[ -n "${CONSUMER_PID}" ]]; then
   kill "${CONSUMER_PID}" 2>/dev/null || true
   wait "${CONSUMER_PID}" 2>/dev/null || true
   echo "[whm] draining consumer (final pass) ..."
+  # --keep-existing-frames is load-bearing here.  The consumer clears the frames
+  # for every requested field at startup, which is right for a fresh run and
+  # catastrophic for a second pass over the same run: without it this drain
+  # deletes every PNG the watcher rendered during the evolution, and if the run
+  # aborted there are no plotfiles left to re-render them from.
   "${CONSUMER_PY}" -m "${CONSUMER_MOD}" "${consumer_args[@]}" \
+    --keep-existing-frames \
     >> "${RUN_DIR}/consumer.log" 2>&1 || \
     echo "[whm] final consumer pass reported an error -- see ${RUN_DIR}/consumer.log" >&2
 fi
