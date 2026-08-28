@@ -250,7 +250,11 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
         if args_dict.get("areal_radius"):
             if ("boxlib", "chi") in ds.field_list:
                 try:
-                    R_min, r_min = _extract_areal_radius_min(ds, center=args_dict["center"])
+                    R_min, r_min = _extract_areal_radius_min(
+                        ds,
+                        center=args_dict["center"],
+                        min_radius=args_dict.get("areal_min_radius", 0.0),
+                    )
                     result["areal_line"] = f"{t:.16e}  {R_min:.16e}  {r_min:.16e}"
                 except Exception as exc:
                     if args_dict.get("verbose", False):

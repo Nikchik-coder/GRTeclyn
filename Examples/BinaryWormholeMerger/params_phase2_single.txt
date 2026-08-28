@@ -27,7 +27,12 @@ amr.plot_file  = "./scratch/BinaryWormholePlt"
 amr.check_file = "./scratch/BinaryWormholeChk"
 
 checkpoint_interval = -1
-plot_interval       = 50
+# dt on level 0 is dt_multiplier * dx_coarse = 0.02 * 0.5 = 0.01, so this is a
+# plotfile every 0.2 in time: ~40 samples of R_areal(t) across stop_time = 8.
+# The thing being measured is where equilibrium ends and the rarefactive
+# runaway begins, and at lambda ~ 9 that transition is over in well under 1 M,
+# so a 0.5 cadence would straddle it in a single sample.
+plot_interval       = 20
 
 amr.plot_vars = chi K lapse phi Pi
 amr.derive_plot_vars = Weyl4

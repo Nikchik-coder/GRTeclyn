@@ -34,6 +34,14 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_initial_lapse_type",
                 wormhole_params.initial_lapse_type, 0);
 
+        // Origin-isolating lapse (type 4) collar shape.  Defaults reproduce
+        // the published 0.3 / 8; lower BOTH to widen the collar when the grid
+        // cannot resolve it (see BinaryWormholeInitialData.hpp, type 4).
+        pp.load("wormhole_lapse_core_fraction",
+                wormhole_params.lapse_core_fraction, 0.3);
+        pp.load("wormhole_lapse_core_power",
+                wormhole_params.lapse_core_power, 8.0);
+
         pp.load("center", wormhole_params.grid_center, center);
 
         // Throat radii.  B defaults to A (equal-throat binary); B = 0 removes

@@ -29,6 +29,9 @@
 #   WHM_BARE_MASS override wormhole_bare_mass_A AND _B in the cloned params
 #                 (equal-mass ladder knob, Plan.md Phase 3; appends _mXXX to
 #                 the run name so ladder rungs never clobber each other)
+#   WHM_MAX_LEVEL override max_level in the cloned params, rewriting
+#                 regrid_interval to match (AMReX aborts if it does not carry
+#                 exactly max_level values)
 #   WHM_DRYRUN=1  resolve and print everything, touch nothing, exit
 #   WHM_CONSUME   run the plotfile consumer sidecar (default 1)
 #   WHM_CONSUME_ARGS  extra consumer flags, e.g. "--shell-fields chi phi"
@@ -154,6 +157,42 @@ if [[ -n "${WHM_BARE_MASS:-}" ]]; then
     sed -i "s|^${key}[[:space:]]*=.*|${key} = ${WHM_BARE_MASS}|" "${RUN_PARAMS}"
   done
   echo "[whm] bare-mass override: m_A = m_B = ${WHM_BARE_MASS}"
+fi
+
+# Refinement-depth override (Plan.md Phase 2 resolution study, and the origin
+# instability it is chasing).  This exists because max_level cannot be changed
+# on its own: regrid_interval must carry exactly max_level values or AMReX
+# aborts with "queryarr too many values requested", so the two keys have to be
+# rewritten together.  The interval is taken from the template's first value
+# and repeated, which is what every merger template does anyway.
+#
+# Refining is not automatically safer here.  The throats are compactified at
+# r = 0 -- chi vanishes like r^4 because that point is the other universe's
+# spatial infinity -- and CCZ4 divides by chi.  Each extra level halves the
+# distance from the innermost cell centre to that point and drops chi there by
+# ~16x, so depth makes the origin stencil worse, not better, and the run NaNs
+# in h11 on the finest level while the throat itself is still healthy.
+if [[ -n "${WHM_MAX_LEVEL:-}" ]]; then
+  for key in max_level regrid_interval; do
+    n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+    if [[ "${n}" != "1" ]]; then
+      echo "[whm] WHM_MAX_LEVEL needs '${key}' exactly once in the template (found ${n})" >&2
+      exit 1
+    fi
+  done
+  ri_first="$(grep "^regrid_interval[[:space:]]*=" "${RUN_PARAMS}" \
+              | sed -e 's/#.*//' -e 's/.*=//' | awk '{print $1}')"
+  if [[ -z "${ri_first}" ]]; then
+    echo "[whm] could not read regrid_interval from the template" >&2
+    exit 1
+  fi
+  ri_list=""
+  for ((i = 0; i < WHM_MAX_LEVEL; i++)); do ri_list+="${ri_first} "; done
+  sed -i \
+    -e "s|^max_level[[:space:]]*=.*|max_level = ${WHM_MAX_LEVEL}|" \
+    -e "s|^regrid_interval[[:space:]]*=.*|regrid_interval = ${ri_list% }|" \
+    "${RUN_PARAMS}"
+  echo "[whm] refinement override: max_level = ${WHM_MAX_LEVEL}, regrid_interval = ${ri_list% }"
 fi
 
 # ---------------------------------------------------------------------------

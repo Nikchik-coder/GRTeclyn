@@ -174,6 +174,17 @@ def main() -> None:
         help="Extract minimum areal radius R_areal = r/sqrt(chi) along x-axis to areal_radius.dat.",
     )
     parser.add_argument(
+        "--areal-min-radius",
+        type=float,
+        default=0.0,
+        help=(
+            "Exclude r < this from the areal-radius minimum.  Required for wormhole "
+            "initial data, where r = 0 is a compactified origin: the unresolved "
+            "inner cells win the argmin and report a collapse that is not happening. "
+            "Use a value below the throat radius b/2 (e.g. 0.1 for b = 0.5)."
+        ),
+    )
+    parser.add_argument(
         "--ftl-timeseries",
         action="store_true",
         help="Per-plotfile FTL features (operational + gated geodesic) to ftl_timeseries.dat.",

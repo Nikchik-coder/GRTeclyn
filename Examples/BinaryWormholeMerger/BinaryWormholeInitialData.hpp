@@ -98,6 +98,13 @@ class BinaryWormholeInitialData
         //! 0 = 1, 1 = sqrt(chi), 2 = 1 - 3 ln(chi), 3 = chi
         int initial_lapse_type;
 
+        //! Origin-isolating lapse (type 4) collar: alpha = 1 - exp(-(r/f b)^p)
+        //! with f = lapse_core_fraction and p = lapse_core_power.  Defaults
+        //! reproduce the published 0.3 / 8; see the type 4 branch below for
+        //! why lowering both is what makes the collar resolvable.
+        double lapse_core_fraction{0.3};
+        double lapse_core_power{8.0};
+
         //! Grid center used for index -> physical coordinate mapping
         std::array<double, AMREX_SPACEDIM> grid_center;
 
@@ -295,16 +302,45 @@ class BinaryWormholeInitialData
             // are >= 16 cells), and evolving that region with a flat lapse
             // produces NaN in h_ij at max_level >= 3 within two coarse steps.
             //
-            // alpha = prod_c [1 - exp(-(r_c / 0.3 b_c)^8)] freezes each
-            // origin (alpha -> 0 as r_c -> 0) while the EIGHTH power makes
-            // the cutoff so sharp that alpha = 1 to machine precision by the
-            // time it reaches the throat: at r = b/2 the exponent is
-            // (1/0.6)^8 ~ 60, and exp(-60) is below double precision.  The
-            // published flat-lapse physics is therefore untouched everywhere
-            // it is being measured.  That sharpness is the whole point, and
-            // it is what makes this preferable to alpha = sqrt(chi), which
-            // suppresses the lapse everywhere chi < 1 -- including at the
-            // throat, i.e. exactly where the dynamics under study lives.
+            // alpha = prod_c [1 - exp(-(r_c / f b_c)^p)] freezes each origin
+            // (alpha -> 0 as r_c -> 0) while a steep enough ramp leaves
+            // alpha = 1 at the throat: with the defaults f = 0.3, p = 8 the
+            // exponent at r = b/2 is (1/0.6)^8 ~ 60, and exp(-60) is below
+            // double precision.  That is what makes this preferable to
+            // alpha = sqrt(chi), which suppresses the lapse everywhere
+            // chi < 1 -- including at the throat, i.e. exactly where the
+            // dynamics under study lives.
+            //
+            // f and p are tunable because the sharpness that protects the
+            // throat is also what makes the collar hard to resolve, and the
+            // two requirements pull against each other.  With f = 0.3, p = 8
+            // on a b = 0.5 throat, alpha climbs from 0.1 to 0.9 across
+            // r in [0.113, 0.167] -- a collar 0.054 wide.  At max_level = 3
+            // (dx = 0.0625) that entire transition fits inside ONE cell: the
+            // 4th-order stencil sees a step function, and the run NaNs at
+            // t ~ 0.2 with K blowing up at the origin.  max_level = 4
+            // (dx = 0.03125) gives 1.7 cells and survives to t ~ 2.4.  So the
+            // collar, not the depth, is what sets the usable resolution, and
+            // coarsening to escape the origin makes things strictly worse.
+            //
+            // To widen it, lower BOTH f and p: the collar width scales with
+            // f, and p controls how abruptly it opens.  Widening is not
+            // automatically a trade, because "alpha = 1 at the throat" is a
+            // threshold and not a gradient -- once exp(-(b/2f b)^p) is under
+            // double precision, making the ramp gentler costs nothing at all.
+            // For b = 0.5:
+            //
+            //   f     p    collar        width   cells@ml4   1 - alpha(throat)
+            //   0.3   8    [0.113,0.167] 0.053   1.7         0          <- default
+            //   0.2   4    [0.057,0.123] 0.066   2.1         0
+            //   0.15  2    [0.024,0.114] 0.090   2.9         1.5e-5
+            //
+            // f = 0.2, p = 4 is therefore free: 25% more collar for exactly
+            // the same untouched throat.  f = 0.15, p = 2 buys another 40%
+            // and does cost 1.5e-5 of lapse at the throat -- still three
+            // orders of magnitude below the constraint violation the
+            // superposed initial data already carries, so it is worth
+            // reaching for if the collar is still the binding constraint.
             //
             // A binary needs the product: each throat carries its own
             // compactified origin and neither can be put on a symmetry
@@ -313,22 +349,20 @@ class BinaryWormholeInitialData
             if (m_params.b0_A > 0.0 || m_params.bare_mass_A > 0.0)
             {
                 const data_t core_A =
-                    (data_t)(0.3 * (m_params.b0_A > 0.0
-                                        ? m_params.b0_A
-                                        : m_params.bare_mass_A));
-                const data_t s2 = (rA / core_A) * (rA / core_A);
-                const data_t s8 = s2 * s2 * s2 * s2;
-                lapse *= 1.0 - exp(-s8);
+                    (data_t)(m_params.lapse_core_fraction *
+                             (m_params.b0_A > 0.0 ? m_params.b0_A
+                                                   : m_params.bare_mass_A));
+                const data_t s = rA / core_A;
+                lapse *= 1.0 - exp(-pow(s, (data_t)m_params.lapse_core_power));
             }
             if (m_params.b0_B > 0.0 || m_params.bare_mass_B > 0.0)
             {
                 const data_t core_B =
-                    (data_t)(0.3 * (m_params.b0_B > 0.0
-                                        ? m_params.b0_B
-                                        : m_params.bare_mass_B));
-                const data_t s2 = (rB / core_B) * (rB / core_B);
-                const data_t s8 = s2 * s2 * s2 * s2;
-                lapse *= 1.0 - exp(-s8);
+                    (data_t)(m_params.lapse_core_fraction *
+                             (m_params.b0_B > 0.0 ? m_params.b0_B
+                                                   : m_params.bare_mass_B));
+                const data_t s = rB / core_B;
+                lapse *= 1.0 - exp(-pow(s, (data_t)m_params.lapse_core_power));
             }
         }
         if (lapse < (data_t)1.0e-10)
