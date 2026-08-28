@@ -29,7 +29,7 @@ commit → push → pull only.
       2026-08-27 06:00**, 200/200 in 17h15m, unseeded (v1 tree gone from
       disk). Champion `eval_000194`, score 3945.3 (f_geo 15.6%, survival
       0.495); 9 elites, 14% coverage; 59% of evals scored.
-- [ ] **Phase 3** — CMA-ES `qball_traj_fgeo_max_cmaes_v2` (200 evals)
+- [x] **Phase 3** — CMA-ES `qball_traj_fgeo_max_cmaes_v2` (200 evals) — **DONE 2026-08-28 01:25**, 200/200 in 15h30m. Champion `eval_000187`, score 4169.2 (+5.7% over the Phase-2 champion; f_geo 15.82%, survival 0.516, persistence 0.840); 9.0% gate rejections, 1 solver crash in 200.
 - [ ] **Phase 4** — freeze the champion + HQ promotion (FMAX-RM v2)
 - [ ] **Phase 5** — refinement matrix (convergence + domain + controls)
 - [ ] **Phase 6** — canonical-only control v2
@@ -491,24 +491,153 @@ Resume repeats the same env block with `RESUME=1`.
 
 **Pass gate:**
 
-- [ ] Gate-rejection rate below ~15% (else shrink `SIGMA0` to 0.03 — never
-      loosen the Hamiltonian gate).
-- [ ] Improvement over the Phase-2 champion, or an honest "eval-N of QD is
-      already the optimum" — either closes the ladder.
-- [ ] **Freeze the champion**: copy its eval dir to
+- [x] Gate-rejection rate below ~15% (else shrink `SIGMA0` to 0.03 — never
+      loosen the Hamiltonian gate). **9.0%** (18/200) — `SIGMA0` stays 0.05.
+- [x] Improvement over the Phase-2 champion, or an honest "eval-N of QD is
+      already the optimum" — either closes the ladder. **Improvement: +223.9
+      (+5.7%)**, monotonic across 12 of 13 generations.
+- [x] **Freeze the champion**: copy its eval dir to
       `runs/neuralspacetime/hq/sources/qball_traj_fgeo_max_cmaes_v2/` before
-      anything else runs.
+      anything else runs. **Frozen 2026-08-28 01:45** via
+      `scripts/campaigns/promote/lib/freeze_champion.sh` (112 KB:
+      `CHAMPION.json` + `eval_000187/` genome + provenance). The tool
+      deliberately omits `initial_data.gridinit` — promotion re-solves at the
+      HQ resolution, so the 531 MB search-grid file is dead weight.
+      **Freeze by hand and you get it wrong twice**: the flattened layout the
+      Phase-3 wording implies is not what Phase 4 reads, and `CHAMPION.json`
+      takes `matter_model` / `rl_pump_stop_time` from the *shell environment*,
+      not from the eval — call the lib without `campaign.env.sh` and it
+      silently records `rl_pump_stop_time=4.0` (the `:-4` default) against a
+      campaign that ran `-1`. Both were hit and corrected on 2026-08-28;
+      verify those two fields after any freeze.
+
+### Phase 3 results — COMPLETE 2026-08-28 01:25:33
+
+Launched 2026-08-27 ~09:55, finished 2026-08-28 01:25:33 — **15 h 30 m**,
+200/200 evaluations over 13 generations (generation 13 stopped at 8 of 16 when
+the 200-eval target was hit). Ran unattended; nothing was tuned mid-flight.
+
+| outcome | count | share |
+|---|---|---|
+| scored | 181 | 90.5% |
+| post-load gate rejections | 18 | 9.0% |
+| solver crashes | 1 | 0.5% |
+
+**Score climbed monotonically in 12 of 13 generations**, then flattened —
+the signature of convergence rather than a truncated run:
+
+| gen | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| best | 3949 | 3975 | 3996 | 4023 | 4019 | 4041 | 4093 | 4098 | 4126 | 4142 | 4160 | **4169** | 4168 |
+
+Per-generation gains decayed +18 → +8.8 → 0. Generation 13 produced nothing
+above generation 12, so the search had stopped finding new ground; a longer
+run would not obviously have helped.
+
+**Champion — `eval_000187`, score 4169.2** (Phase-2 champion 3945.3;
+**+223.9, +5.7%**). Frozen to `runs/neuralspacetime/hq/sources/qball_traj_fgeo_max_cmaes_v2/`.
+
+| quantity | Phase 2 champ | Phase 3 champ | change |
+|---|---|---|---|
+| 4D evolving shortcut `f_geo` | 15.63% | **15.82%** | +1.2% |
+| matter survival | 0.495 | **0.516** | +4.2% |
+| `ftl_persistence` | 0.673 | **0.840** | **+24.8%** |
+| curvature activity | 0.670 | 0.687 | +2.5% |
+
+The score gain is **not** a matter-retention artefact — the concern raised at
+generation 2, when depth had dipped to 15.51% while survival rose. Over the
+full run all three moved together, and the largest single gain is
+`ftl_persistence`: the corridor stays open a quarter longer. Depth itself
+improved only marginally (+0.19 points of f_geo), so the honest headline is
+**"CMA-ES bought duration, not depth."**
+
+Honesty rails on the champion, all verified from its own record:
+
+- `operational_ftl_geodesic = 0.0` — frozen-snapshot credit zeroed because the
+  4D evolving trace ran and is authoritative (`score.json` notes say so
+  explicitly: *"frozen f_geo timeavg (6.126e-01) ignored"*). The uncorrected
+  frozen number is 4x the honest one; this rail is doing real work.
+- Emission sweep genuinely time-dependent: 13.83 / 14.71 / 14.75 / 15.56 /
+  **15.82** / 15.07 / 0.00 % at t = 0…12. Peak at t=8; the t=12 fan returns
+  zero because those rays would outlive the metric stack — anti-cheat firing
+  as designed. Launches at t=0 and t=2 discarded by the emit floor.
+- 3/3 rays reached, null-condition drift 5.1e-4, `h_quality_ok = true`.
+- `horizon_penalty = 0`, `constraint_spike_penalty = 0`, `boundary_penalty = 0`.
+- Coordinate-speed channel down-gated for dispersal (multiplier 0.52), as it
+  should be — *"a channel that opens as the matter disperses is not a
+  traversable warp"*.
+- Solve exited converged at Ham 0.078% (headroom 1.18); post-load gate passed
+  at Ham L2 0.0260.
+
+### Caveats carried forward to Phase 5
+
+1. **Champion post-load headroom is thin.** It passed at 0.0260 against the
+   0.03 threshold — only 13% of margin. Phase 2's champion had 0.0259. Both
+   sit close to the wall, so the gate is materially shaping which genomes
+   survive, not merely rejecting broken ones.
+2. **The 18 rejections cluster just above the threshold** (Ham L2 0.0313 to
+   0.0505, median 0.0376). Same near-miss band as Phase 2. Recorded and *not*
+   acted on — the threshold was not touched, and must not be loosened to
+   improve the yield. See [[initial-data-noise-scales-as-inverse-dx2]].
+3. **Still stationary and dispersing, not a travelling bubble.** Same physical
+   character as the Phase-2 champion: a pumped, breathing, slowly dispersing
+   cloud. `survival = 0.516` means about half the matter is gone by t=26, and
+   the score notes still record *"geometry changes rapidly over the evolution
+   window"* with co-moving stability falling back to Eulerian.
+4. **Open-system accounting.** The pump runs the full window
+   (`RL_PUMP_STOP_TIME=-1`), so this is not a closed GR solution; pump work is
+   taxed (`pump_energy_penalty = -0.061`) but the result must never be quoted
+   as a self-sustaining spacetime. Exotic matter is required
+   (`exotic_penalty = -1.6`, disabled by construction in this objective).
+
+### Throughput notes (for sizing later phases)
+
+Measured, not estimated: **GPU duty cycle ~35%** — confirmed two independent
+ways (evolution-seconds vs wall-clock, and a timestamped 15-minute
+`nvidia-smi` sample: cards 0/2/3 at 42-44% mean, card 1 at 10%). Cards run at
+~85% *when fed*, so the shortfall is starvation, not slow compute. The
+campaign stayed **solve-bound even at `MAX_CONCURRENT_GRTRESNA=3`**: three
+8-rank solves deliver one candidate every ~147 s while four GPUs can absorb
+one every ~118 s (evolution median 470 s). A fourth concurrent solve would
+close the gap and still use only 32 of 128 cores — **the single highest-value
+change for Phase 4+**. Generations ran ~68 min steady-state.
+
+Two operational findings worth keeping:
+
+- **Failed solves leave large debris.** The one crash (`eval_000032`, exit
+  code 2 — the solver converged to 0.41% then diverged to 5.6% at NL step 5)
+  left **17 GB** of HDF5 in `grtresna/Outputs`. It was collected at the next
+  generation boundary, so there is no leak, but a crash-heavy run could
+  transiently need ~17 GB per failure on top of the normal footprint.
+- **Retention keeps more than `keep_top_eval_dirs` suggests.** The current
+  generation is always protected on top of the top-N, so the tree sawtooths
+  between ~26 and ~42 dirs (24-48 GB) rather than sitting at 10. It settled at
+  19 dirs / 11 GB after the final prune.
 
 ---
 
 ## Phase 4 — HQ promotion: FMAX-RM v2 (1–3 GPUs, ~1 day + analysis)
 
-- [ ] Clone the promotion campaign:
+- [x] Clone the promotion campaign:
       `scripts/campaigns/promote/fgeo_max_cmaes_v1` →
       `.../fgeo_max_cmaes_v2`. In the clone's `campaign.env.sh`: point the
       source at the v2 freeze, and **delete the `GRTRESNA_RANKS=1` pin**
       (the lib default is now 8). Manifests: `grteclyn_frames: 1` on every
       cell — check it, there is no env override.
+      **Done 2026-08-28.** `CAMPAIGN_NAME`, `LIVE_RUN`, `FREEZE_ROOT` and the
+      `source_run` in all three manifests repointed to v2; all 9 cells across
+      the three manifests already carry `grteclyn_frames: 1`; all 5 cells of
+      `manifest.json` resolve under `DRY_RUN=1`.
+
+      > **⚠ Correction to this step: do NOT delete the rank pin — set it to 8.**
+      > `hq/run_batch.sh` runs under `set -euo pipefail` and expands
+      > `"${GRTRESNA_RANKS}"` with no `:-` fallback (line 225/251), unlike
+      > `EVOLUTION_MPI_RANKS` one line above. An unset value aborts the cell
+      > with `unbound variable` on reaching the solve — `replay_eval.py`'s
+      > argparse default of 8 never applies, because `run_batch.sh` always
+      > passes the flag explicitly. The v2 clone therefore carries
+      > `export GRTRESNA_RANKS="${GRTRESNA_RANKS:-8}"`. Latent in the shared
+      > lib; left unpatched to keep the blast radius on this campaign only.
 - [ ] Launch the headline cell through the framework (it forwards all solve
       knobs and sets HQ geodesic mode itself):
 
