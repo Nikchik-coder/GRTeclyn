@@ -129,8 +129,12 @@ class SimulationParameters : public SimulationParametersBase
         check_parameter("wormhole_initial_lapse_type",
                         wormhole_params.initial_lapse_type,
                         (wormhole_params.initial_lapse_type >= 0) &&
-                            (wormhole_params.initial_lapse_type <= 3),
-                        "must be 0, 1, 2 or 3");
+                            (wormhole_params.initial_lapse_type <= 4),
+                        "must be 0 (flat), 1 (sqrt(chi)), 2 (1-3ln(chi)), "
+                        "3 (chi) or 4 (origin-isolating).  Type 4 is the one "
+                        "to use with AMR: a flat lapse NaNs at max_level >= 3 "
+                        "because refining the throat drags cells into the "
+                        "compactified origin where chi ~ r^4.");
 
         check_parameter("wormhole_throat_radius_A", wormhole_params.b0_A,
                         wormhole_params.b0_A > 0.0, "must be positive");

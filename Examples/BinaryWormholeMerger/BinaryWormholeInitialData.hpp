@@ -283,6 +283,54 @@ class BinaryWormholeInitialData
         {
             lapse = chi;
         }
+        else if (m_params.initial_lapse_type == 4)
+        {
+            // Origin-isolating lapse, ported from
+            // Examples/SupportedWormholeCollapse and generalised to two
+            // throats.  This exists because of a specific, reproducible
+            // failure: at r -> 0 an Ellis-Bronnikov throat has chi ~ r^4, so
+            // the coordinate origin is the OTHER universe's spatial infinity
+            // squeezed into a point.  Refining the throat necessarily drags
+            // cells into it (the throat sits at r = b/2 and refinement boxes
+            // are >= 16 cells), and evolving that region with a flat lapse
+            // produces NaN in h_ij at max_level >= 3 within two coarse steps.
+            //
+            // alpha = prod_c [1 - exp(-(r_c / 0.3 b_c)^8)] freezes each
+            // origin (alpha -> 0 as r_c -> 0) while the EIGHTH power makes
+            // the cutoff so sharp that alpha = 1 to machine precision by the
+            // time it reaches the throat: at r = b/2 the exponent is
+            // (1/0.6)^8 ~ 60, and exp(-60) is below double precision.  The
+            // published flat-lapse physics is therefore untouched everywhere
+            // it is being measured.  That sharpness is the whole point, and
+            // it is what makes this preferable to alpha = sqrt(chi), which
+            // suppresses the lapse everywhere chi < 1 -- including at the
+            // throat, i.e. exactly where the dynamics under study lives.
+            //
+            // A binary needs the product: each throat carries its own
+            // compactified origin and neither can be put on a symmetry
+            // boundary, which is how the single-throat example avoided this.
+            lapse = 1.0;
+            if (m_params.b0_A > 0.0 || m_params.bare_mass_A > 0.0)
+            {
+                const data_t core_A =
+                    (data_t)(0.3 * (m_params.b0_A > 0.0
+                                        ? m_params.b0_A
+                                        : m_params.bare_mass_A));
+                const data_t s2 = (rA / core_A) * (rA / core_A);
+                const data_t s8 = s2 * s2 * s2 * s2;
+                lapse *= 1.0 - exp(-s8);
+            }
+            if (m_params.b0_B > 0.0 || m_params.bare_mass_B > 0.0)
+            {
+                const data_t core_B =
+                    (data_t)(0.3 * (m_params.b0_B > 0.0
+                                        ? m_params.b0_B
+                                        : m_params.bare_mass_B));
+                const data_t s2 = (rB / core_B) * (rB / core_B);
+                const data_t s8 = s2 * s2 * s2 * s2;
+                lapse *= 1.0 - exp(-s8);
+            }
+        }
         if (lapse < (data_t)1.0e-10)
             lapse = (data_t)1.0e-10;
 

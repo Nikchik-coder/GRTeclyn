@@ -1,0 +1,137 @@
+# BinaryWormholeMerger -- Phase 2 single-throat regression (research/merger/Plan.md).
+#
+# The new binary example run in its SINGLE-THROAT mode (throat B removed
+# entirely), reproducing the unperturbed configuration of
+# research/wormholedynamics/article.md.  The gate is that the published
+# physics comes back out: the throat sits in saddle-point equilibrium at
+# R_areal = 0.50 for t ~< 1.5, then truncation noise tips it into the
+# RAREFACTIVE branch and it expands exponentially at lambda ~ 9.012.
+# Any disagreement is a bug in this example, not new physics.
+#
+# Only the UNPERTURBED branch is reproduced here.  The article's perturbed
+# collapse also needs a seeded Gaussian scalar perturbation (A_phi = +0.02,
+# sigma_phi = 0.5), and those knobs were deliberately removed from this
+# example -- a merger must not start with pre-destabilised throats, since the
+# other throat is the perturbation.  Reproducing that branch needs the knobs
+# back, gated to single-throat mode; see Plan.md Phase 2.
+#
+# Launch through the campaign launcher, never directly:
+#   WHM_PARAMS=params_phase2_single.txt bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+# The three path keys below are placeholders the launcher rewrites (each must
+# appear exactly once).
+
+verbosity = 1
+
+output_path    = "./output"
+amr.plot_file  = "./scratch/BinaryWormholePlt"
+amr.check_file = "./scratch/BinaryWormholeChk"
+
+checkpoint_interval = -1
+plot_interval       = 40
+
+amr.plot_vars = chi K lapse phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Single-throat initial data: throat B removed (b_B = 0, no bare mass).
+
+wormhole_initial_lapse_type = 4      # origin-isolating: alpha -> 0 only inside 0.3*b of each
+                                     # compactified origin, alpha = 1 to machine precision
+                                     # at the throat.  Flat alpha=1 NaNs at max_level >= 3.
+wormhole_metric_type = 2
+
+wormhole_throat_radius_A = 0.5       # b_0 = 0.5, as published
+wormhole_throat_radius_B = 0.0       # throat B absent
+
+# No bare mass: the published run is the massless, ultrastatic Ellis-Bronnikov
+# throat.  There is nothing for it to attract, which is the point -- this run
+# is about the throat's OWN instability, not about a merger.
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+wormhole_centerA = 0.0 0.0 0.0       # at the domain centre
+wormhole_momentumA = 0.0 0.0 0.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0      # FULL support: the unperturbed baseline
+phantom_mass = 0.0
+
+#################################################
+# Grid.  Published: L = 64, N = 256, 5 levels.  This first pass runs at
+# N = 128 (dx_coarse = 0.5) with 4 levels -> dx_fine = 0.03125, which still
+# puts ~16 cells across the throat radius.
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+
+center = 32.0 32.0 32.0
+
+max_level = 4
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  dt_multiplier = 0.02 is the published value; the equilibrium
+# this run has to hold is a saddle point, so the timestep is part of the test.
+# stop_time = 8 covers the whole story -- equilibrium to t ~ 1.5, then the
+# exponential runaway, which at lambda ~ 9 is over within a few M.
+
+dt_multiplier = 0.02
+stop_time = 8.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 2.0
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Diagnostics.  No extraction: the unperturbed branch stays spherically
+# symmetric, so there is no l = 2 signal to extract.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 2
+binary_diag_split_coord = 0.0
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576

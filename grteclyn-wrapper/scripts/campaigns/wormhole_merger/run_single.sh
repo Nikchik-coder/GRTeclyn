@@ -162,7 +162,11 @@ fi
 CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
 CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
 CONSUMER_PID=""
-consumer_args=(--data "${SCRATCH_DIR}" --out "${RUN_DIR}/small_data")
+# --frames-out defaults to a directory inside the wrapper SOURCE tree, which is
+# not gitignored, so frames from every run pile up there and are invisible from
+# the run directory.  Anchor them next to the run they came from.
+consumer_args=(--data "${SCRATCH_DIR}" --out "${RUN_DIR}/small_data"
+               --frames-out "${RUN_DIR}/frames")
 if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
   consumer_args+=(--delete --keep-last "${WHM_KEEP_LAST:-3}")
 fi
