@@ -32,6 +32,13 @@
 #   WHM_MAX_LEVEL override max_level in the cloned params, rewriting
 #                 regrid_interval to match (AMReX aborts if it does not carry
 #                 exactly max_level values)
+#   WHM_SIGMA     override the Kreiss-Oliger coefficient `sigma` in the cloned
+#                 params (appends _sgN to the run name).  A first-class knob for
+#                 drainhole data, not a tuning detail: measured 2026-08-28, the
+#                 inherited sigma = 2.0 kills a unigrid drainhole at t = 0.22 by
+#                 driving chi in the single innermost cell to the min_chi floor
+#                 while its neighbour is still at 3e-2, and CCZ4 divides by chi.
+#                 sigma = 0 survives and is 20x more accurate AT THE THROAT.
 #   WHM_LAPSE_TYPE override wormhole_initial_lapse_type in the cloned params
 #                 (appends _lapseN to the run name).  The collar A/B of
 #                 FIx.md Stage 1.3 is this knob and nothing else: 5 is the
@@ -93,6 +100,9 @@ if [[ -n "${WHM_BARE_MASS:-}" ]]; then
 fi
 if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
   NAME="${NAME}_lapse${WHM_LAPSE_TYPE}"
+fi
+if [[ -n "${WHM_SIGMA:-}" ]]; then
+  NAME="${NAME}_sg$(printf '%s' "${WHM_SIGMA}" | tr -d '.')"
 fi
 RUN_DIR="${RUNS_DIR}/${NAME}"
 SCRATCH_DIR="${SCRATCH_ROOT}/${NAME}"
@@ -174,6 +184,17 @@ fi
 # FIx.md Stage 1.3, so it gets an override rather than a forked params file --
 # a duplicated 130-line template would drift and the comparison would stop being
 # an A/B.
+if [[ -n "${WHM_SIGMA:-}" ]]; then
+  key=sigma
+  n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+  if [[ "${n}" != "1" ]]; then
+    echo "[whm] WHM_SIGMA needs '${key}' exactly once in the template (found ${n})" >&2
+    exit 1
+  fi
+  sed -i "s|^${key}[[:space:]]*=.*|${key} = ${WHM_SIGMA}|" "${RUN_PARAMS}"
+  echo "[whm] dissipation override: ${key} = ${WHM_SIGMA}"
+fi
+
 if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
   key=wormhole_initial_lapse_type
   n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"

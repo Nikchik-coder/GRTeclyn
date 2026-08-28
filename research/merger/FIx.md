@@ -8,7 +8,7 @@ deep-research report it was derived from, unedited.
 | Stage | What it settles | Status |
 | --- | --- | --- |
 | 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
-| 1 | Single regular throat holds still, charge/geometry drift bounded | **running 2026-08-28** |
+| 1 | Single regular throat holds still, charge/geometry drift bounded | **1.1–1.4 done 2026-08-28; 1.5 open** |
 | 2 | Two-throat data: superposition + correction, then a CTTK solve | not started |
 | 3 | Head-on merger with ADM mass, Ψ₄ out | not started |
 | 4 | Write | not started |
@@ -127,12 +127,113 @@ Past that, χ_throat starts falling back toward puncture values. A heavier binar
 - [x] **1.1** Params file: one throat, α = e^u exactly, 1+log, Gamma-driver from β = 0,
   `covariantZ4 = 0`, Kreiss–Oliger σ ≈ 1–2, Sommerfeld out —
   [params_stage1_hold.txt](../../Examples/BinaryWormholeMerger/params_stage1_hold.txt)
-- [ ] **1.2** Run to t ≳ 20–30 M and measure: R_min drift, constraint norms, whether the
-  lapse collar is still needed once χ is O(1) at the throat — *running, 40 M, a = 2, m = 1*
-- [ ] **1.3** Decide the collar's fate — if a regular throat no longer needs it, delete it
+- [x] **1.2** Run to t ≳ 20–30 M and measure: R_min drift, constraint norms, whether the
+  lapse collar is still needed once χ is O(1) at the throat — five arms, 2026-08-28
+- [x] **1.3** Decide the collar's fate — **KEEP IT.** It is not the perturbation that
+  matters; it is the only thing holding the origin. See "What 1.2–1.4 measured" below
+- [x] **1.4** Discriminate mesh vs. wormhole for the late blow-up: two unigrid arms,
+  `max_level = 0` at dx = 0.50 and 0.25 —
+  [params_stage1_unigrid256.txt](../../Examples/BinaryWormholeMerger/params_stage1_unigrid256.txt)
+- [ ] **1.5** Stop the mesh chasing the error. The σ = 0 arm ended at t = 35.2 in
+  **out of memory**, not instability: this example tags on χ gradients (`ChiTagger`),
+  level 2 grew to 24 % of the domain / 32.8M cells / 30.6 GB. Add `FixedGridsTagger`
+  (already in `Source/Tagging/`) as a **default-off** tagger choice — a static nested
+  box on the origin, which is where χ → 0 actually needs the resolution — then run
+  collar **on** with σ = 0 and hold R_min = 3.8895 through 40 M
 
 **Benchmark:** no gauge detonation, R_min drift attributable to the known EB unstable mode
 (one growing mode, timescale ~ throat/c) rather than to the grid.
+
+#### What 1.2–1.4 measured
+
+Five arms on the same file, a = 2, m = 1, `max_level = 2` unless stated. Exact answer:
+`R_min = 3.8895`. The launcher knobs `WHM_SIGMA` and `WHM_LAPSE_TYPE` keep the arms
+identical in every other line.
+
+| σ | collar | R_min reached | Hamiltonian L2 | ends |
+| --- | --- | --- | --- | --- |
+| 2.0 | no | **2.578** at t = 40 | 1.3e-3, flat throughout | ran to completion |
+| 2.0 | yes | — | — | NaN at t = 21.7 |
+| 0.1 | no | 3.894 — 0.1 % | 2.5e-3 flat, then spikes | NaN at t = 24.2 |
+| 0.1 | yes | 3.127 — 20 % low | 3.7e+12 | NaN at t = 31.4 |
+| 0.0 | no | 3.87–3.95, oscillating | 2e-3 → 1.2e-1, doubling ~ every 5 M | **out of memory** at t = 35.2 |
+
+**1.2, first half — the σ = 2.0 default is not conservative, it is wrong.** It shrinks the
+throat by 34 % over 40 M *while every constraint norm reads flat at 1.3e-3*. Dissipation
+large enough to hide the error is also large enough to destroy the solution it is
+smoothing, and the error monitors cannot see it because a smoothed solution violates the
+constraints less, not more. The overshoot on the way (R = 4.40 at t = 20, above the
+initial 3.89) settles the direction: no collapsing object grows first. At σ = 0.1 and
+σ = 0 the same run holds the throat to 0.1–0.5 %. **σ = 2.0 was inherited from the
+puncture era and must not ship.**
+
+**1.2, second half — the constraint norms are honest only at low σ.** The σ = 0 arm is the
+only one whose Hamiltonian norm grows visibly, and that growth (doubling every ~5 M) is
+the run telling the truth about an instability the σ = 2.0 arm suppressed into silence.
+
+#### 1.3 — the collar's fate, and a reversal
+
+The plan above predicted the collar was a needless perturbation on a throat that no longer
+needs protecting. **That prediction is wrong, and the origin diagnostic is what shows it.**
+`chiA_min` in binary_throat_diagnostics.dat is the *origin* health monitor (the throat is
+tracked by the areal radius instead — see the note in the params file), and it is the
+single controlling variable in every arm:
+
+| arm | dx at the origin | χ at the origin, t = 0 | χ reaches the 1e-8 floor |
+| --- | --- | --- | --- |
+| unigrid, no collar | 0.5 | 2.44e-3 | **t = 6.6** |
+| unigrid, no collar | 0.25 | 1.33e-4 | **t = 1.2** |
+| `max_level` 2, no collar, σ = 0.1 | 0.125 | 7.19e-6 | t = 9.0 |
+| `max_level` 2, **collar**, σ = 0.1 | 0.125 | 7.19e-6 | **t = 31.4** |
+| `max_level` 2, no collar, σ = 0 | 0.125 | 7.19e-6 | **never** (t = 34.7 and running) |
+
+The collar buys a factor of 3.5 in how long the origin survives, which is exactly the job
+it was built for in Stage 0.2. What it costs is 20 % on the throat radius. Collar and
+dissipation are therefore **two independent trade-offs, not one bad inherited setting**,
+and 1.5 exists because the favourable corner of that 2×2 — collar on, σ = 0 — was never
+run.
+
+#### The σ = 0 arm did not go unstable — it ran out of memory
+
+It ended at t = 35.2 with the throat still at 3.87–3.95 and the origin never floored,
+killed by the GPU running out of memory. The cause is the tagging criterion, not the
+physics: `BinaryWormholeLevel::tag_cells` uses `ChiTagger`, so refinement follows χ
+gradients, and with no dissipation the numerical junk grows (Hamiltonian norm 2e-3 →
+1.2e-1) and spreads until the mesh is chasing it everywhere — level 2 ended at
+**1000 grids, 32.8M cells, 24 % of the domain**, footprint 3.9 GB → 30.6 GB.
+
+So the 2×2 of (collar, σ) is now complete and **every corner fails differently**:
+σ = 2.0 destroys the throat, σ = 0.1 NaNs, σ = 0 outgrows the card. The knob that has
+never been touched is the third one — *where* the grid refines. `FixedGridsTagger` is
+already in `Source/Tagging/` and tags a static nested box around the centre, which is
+exactly where a wormhole needs resolution (χ → 0 at the compactified far infinity) and
+is fixed in size by construction. That is 1.5, and it matters for Stage 2 as well: two
+throats on a χ-gradient tagger will run away sooner, not later.
+
+#### 1.4 — the late blow-up is not the refinement boundary
+
+Both σ = 0.1 arms died with a NaN on **level 2**, which reads like a refinement-boundary
+failure. It is not. Two arms with `max_level = 0`, no refinement boundary anywhere in the
+domain, otherwise byte-identical:
+
+| grid | NaN in | dies |
+| --- | --- | --- |
+| uniform dx = 0.50 | `K`, level 0 | t = 6.6 |
+| uniform dx = 0.25 | `h11`, level 0 | t = 1.2 |
+
+Removing refinement makes it **four times worse**; refining uniformly makes it **twenty
+times worse**. Refinement is the protector here, not the killer, and Stage 2 is not
+blocked on an AMR bug. The pre-registered reading of "finer dies sooner" was "a real
+growing mode", but the χ column above supplies the mechanism directly and it is not the
+Ellis–Bronnikov mode: χ vanishes like r̄⁴ at the compactified far infinity, so halving dx
+puts the innermost cell twice as close and drops χ there by 2⁴ (measured: 2.44e-3 →
+1.33e-4 → 7.19e-6, ratios 18.4 and 18.5). CCZ4 divides by χ. **A uniform grid cannot be
+refined at the origin without refining it everywhere, and that is what kills the unigrid
+arms** — which is the argument for AMR plus the collar, i.e. exactly the 1.5 configuration.
+
+Note also that reaching the floor is a precursor, not the death itself: the no-collar
+σ = 0.1 arm floored at t = 9.0 and ran on to t = 24.2.
+
 
 #### Why this run can give a clean answer
 
