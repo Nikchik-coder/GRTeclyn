@@ -87,6 +87,27 @@ The sign-dependence result is the strongest predictor: outcomes bifurcate into b
 Status legend: `- [ ]` not started · `- [x]` done (date) · **GO/NO-GO** marks a gate that
 must be green before the next phase is allowed to consume GPU time.
 
+> ## 🛑 EXECUTION BLOCKED — 2026-08-28
+>
+> **Phases 3 – 6 are stopped. No merger run may consume GPU time until
+> [MatterDebug.md](MatterDebug.md) clears its exit condition.**
+>
+> Why: the throat this project builds is a Bowen–York puncture, and it cannot be resolved.
+> One cell at the puncture is 6.2 proper units wide against a throat of areal radius 4.5;
+> mesh refinement erases the throat before the first timestep; and the Noether charge that
+> was supposed to hold the throat open loses 80 % in the interior. That makes *every* matter
+> model untestable on this geometry — the Q-ball included, which was run on 2026-08-28 and
+> returned no verdict for this reason.
+>
+> **Exit condition:** a regular, finite-χ throat (χ of order 1 at the minimal surface, so
+> proper cell width ≈ dx) on which the Noether charge holds to a few per cent over a run.
+>
+> **What may proceed meanwhile:** Phase 0 – 2 tooling only, specifically the throat-readout
+> sharpening (sub-grid minimum + per-step output). Nothing that needs a merger.
+>
+> All runs from the 2026-08-28 investigation are stopped; the evidence directories are
+> listed in [MatterDebug.md](MatterDebug.md).
+
 Implementation details, physics derivations and the file-by-file design live in
 [research/merger/Implementation.md](Implementation.md).
 Code lives in [Examples/BinaryWormholeMerger/](../../Examples/BinaryWormholeMerger/).
@@ -309,290 +330,55 @@ black-hole merger.
 d = 8b and m = αb, t_ff = πb√(32/α) ∝ b, while λ ∝ 1/b makes the window ∝ b as well.
 The ratio is a pure number. Rescaling b moves both sides equally.
 
-### Matter available in-tree — the constraint is EB's, not the project's
+### Matter, and why Phase 3 cannot proceed — moved out
 
-Everything above is a property of the **massless real phantom scalar** with a zero
-potential, which is what `ExoticScalarField` + `DefaultPotential` gives and what
-`BinaryWormholeMerger` currently uses. It is a saddle because it has no preferred
-size: nothing pulls the throat back. That is not a property of wormholes in general,
-and `Source/Matter` already carries the alternatives.
-
-| Model | Kind | Already used by |
-| --- | --- | --- |
-| `ExoticScalarField` | real, phantom | **`BinaryWormholeMerger` today**, `SupportedWormholeCollapse` |
-| `ComplexExoticScalarField` | complex, phantom, templated potential, conserved U(1) charge | `RotatingWormholeCollapse` |
-| `BiComplexScalarField` | canonical **and** phantom complex pair | `RadialRecipe` (Bondi campaign) |
-| `EffectiveTeoMatter` | prescribed rotating-wormhole stress-energy | `RotatingWormholeCollapse` |
-| `ComplexScalarField`, `ScalarField`, `DustMatter`, `NoMatter` | canonical / vacuum | — |
-
-Potentials: `DefaultPotential` (zero — **what EB uses**), `PhantomDecayPotential`
-(½m²φ²), `OscillonPotential` (real sextic, self-described as metastable),
-`ComplexScalarPotential` (**complex sextic on |Φ|², a true Q-ball**),
-`GRTresnaScalarPotential` (solver side).
-
-**The Q-ball claim in earlier drafts of this section was wrong. 2026-08-28, on inspection
-of the run's own diagnostics.** The run cited as proof,
-`runs/rotating_wormhole/evo_omega_p0p00_m0_kappa_1p00_dx0p5_ml2_..._qball_lam170_mu614450_..._proven`,
-does not do what it was said to do:
-
-| | claimed here | what `collapse_diagnostics.dat` says |
-| --- | --- | --- |
-| usable window | ~11 | lapse collapses 1.0 → 0.31 by t = 3.5; NaN at t = 12.34 |
-| horizon | none | outgoing-ray expansion θ₊ ≤ 0 from t = 2.25 at r = 0.43 |
-| matter | held | `rho_sum` 23.6 → 9.4 by t = 7 — **42 % kept** |
-| what the run is | a stability test | a **collapse** test: `support_ramp` cuts the exotic support to zero over t = 8–10 |
-
-The constraint norms are healthy throughout (Ham 3.6e-3 → 1.5e-2, Mom 2.9e-5 → 2.4e-2), so
-none of that is numerical junk — the configuration really does shed most of its matter and
-really does die. Note also that θ₊ ≤ 0 near a puncture is not by itself a dynamical
-horizon: an Einstein–Rosen bridge has a minimal surface at t = 0 by construction. The
-matter loss and the lapse collapse are the load-bearing numbers, not the θ₊ flag.
-
-**What the cause is not.** A first pass at this blamed the internal frequency: the run is
-tagged `omega_p0p00`, and with ω = 0 there would be no Noether charge and so no preferred
-size. That is wrong — the tag records the solver's *target* frequency while the initial
-data carries the *solved* eigenfrequency, and the run's charge is Q = −3.30, conserved to
-4.7 % over t = 0 → 8. It is charged. Recorded here because the tag will mislead the next
-reader the same way.
-
-**What distinguishes it from the runs that behave, then, is still open.** Over the same
-pre-ramp window t = 0 → 8:
-
-| t = 0 → 8 | the "proven" run (m = 0) | ω = 0.25 m = 1, L = 128 N = 256 | ω = 0.25 m = 1, L = 64 ml = 3 |
-| --- | --- | --- | --- |
-| charge drift | **−4.7 %** | −0.5 % | −0.1 % |
-| `rho_sum` | 23.6 → 10.0 (**42 % kept**) | 13.3 → 29.6 (223 %) | 13.3 → 31.6 (238 %) |
-| `min_chi` | 0.091 → 0.194 | 0.086 → 0.117 | 0.084 → 0.117 |
-| J_z | 0 | −1.47 → −1.30 | −1.47 → −1.29 |
-
-The two well-behaved runs are at different box sizes and different refinement depths and
-agree with each other to 7 %, so their behaviour is a property of the configuration, not of
-the grid. They also both **spin**, and they both cut their support at t = 8, so neither is
-the run the merger needs.
-
-The best available hypothesis for the m = 0 run's matter loss is that **its matter was
-never a stationary solution**. It was painted from the 2D Q-torus solver at m_az = 0, and
-that solver imposes axis regularity as f(0, z) = 0 — correct for a winding torus, wrong for
-a spherical lump, which should have zero *derivative* on the axis instead. It now refuses
-m_az < 1 outright for exactly this reason. A hollow, non-stationary lump disperses. This is
-a hypothesis and not a measurement: that initial data no longer exists on disk. The runs
-under test avoid the question by taking their profile from the 1D spherical Q-ball radial
-ODE solver, which has the right boundary condition.
-
-#### The throat is not in the initial data
-
-Measured directly from a freshly solved gridinit (ω = 0.25, m = 0, `bh1_bare_mass` = 0.25,
-the base-file value, at the L = 64 / N = 128 grid every run in this family uses):
-
-```
-   r      chi      R = r/sqrt(chi)
- 0.250   0.3841        0.403
- 0.750   0.6092        0.961
- 1.250   0.7440        1.449
- 1.750   0.8233        1.929      ... monotonic all the way out
-```
-
-**R has no interior minimum.** There is no throat in this initial data — only a mild
-central dip in a nearly flat space. The reason is arithmetic, and it applies to the whole
-family:
-
-- the solver builds the throat as a Bowen–York puncture, ψ = 1 + m/(2r), whose areal
-  radius R = ψ²r bottoms out at **isotropic r = m/2** with **R_min = 2m**;
-- the solved data is flattened to the evolution's level-0 dx before it is evolved
-  (lesson L2), so anything below one cell is simply **absent from the initial data**, and
-  no amount of AMR during the evolution puts it back;
-- at `bh1_bare_mass` = 0.25 the throat sits at r = 0.125 = **a quarter of one cell** at
-  dx = 0.5.
-
-So the resolution rule is **m/2 ≥ 2 dx**, i.e. **m ≥ 4 dx**, giving an areal throat radius
-R = 2m ≥ 8 dx. At L = 64 / N = 128 that is m ≥ 2 and R ≥ 4. The `_proven` run's m = 1 puts
-the throat on the single innermost cell — present, but on the edge of meaning anything.
-
-> **Superseded 2026-08-28.** This rule is necessary but nowhere near sufficient: it is
-> stated in coordinate distance, and what the evolution resolves is *proper* distance
-> dx/√χ, which blows up at a puncture. Measured below, m = 2 satisfies this rule and the
-> throat is still only ~1 cell wide in proper distance.
-
-The matter side of that same solve is correct and worth recording as the positive result:
-the painted amplitude φ(0) = 0.0997 matches the independently solved flat-space Q-ball
-eigenstate (0.0991), and Π₂ = −ωφ holds to every printed digit, so the charge really is
-there. The Hamiltonian residual converges 100 % → 0.77 % and the momentum residual is
-identically zero, as it must be for a non-rotating, unboosted configuration.
-
-**What this costs the merger geometry.** Three constraints now have to hold at once:
-a resolved throat (b ≥ 8 dx in areal radius), isolation (d ≥ 8 b as Phase 1 requires), and
-a boundary far enough away (d ≲ L/3). Together they force **N ≥ 96**, and at L = 64 /
-N = 128 they leave d ∈ [16, 21] with m = 2. Free-fall over that separation is
-t_ff ≈ 50 rather than 8.89. That is a much longer run than Phase 3 was scoped for — though
-not an impossible one: the archived charged runs already reach t = 40 and t = 80. This is
-now the binding design constraint, and it is a *resolution* constraint, not a matter one.
-
-> **Tested 2026-08-28 — the test ran, and it does not answer the question.** The missing
-> cell was run: charged (ω = 0.25), non-rotating (m = 0), support held on, full box with
-> the throat centred, `bh1_bare_mass` raised to 1 and 2, out to t = 14, at three
-> refinement depths. Two default-off additions made it runnable: `EVO_CZ` in
-> `solve_kappa_family.py` (the ID solver could only place matter on a symmetry corner)
-> and `--areal-radius` in `wormhole_case.py` (the throat readout was never wired into
-> this campaign). `THROAT_MASS` overrides the puncture mass. What came back is below.
-
-#### Refinement below the gridinit's own dx destroys the throat
-
-The first result is a pipeline bug, not physics, and it invalidates every AMR run in this
-family as a throat measurement.
-
-The gridinit is ingested **exactly** — chi on the evolution's level 0 matches the file
-cell for cell to the last digit, verified for both `bh1_bare_mass` = 1 and 2. At m = 2
-that file contains a genuine throat: an interior minimum of R at r = 1.299, R = 4.507
-(analytic: r = 1.0, R = 4.0). At m = 1 there is none — the throat sits below one cell,
-exactly as the rule above predicts.
-
-But the *evolved* data at max_level 1 or 2 has **no interior minimum at any time,
-including t = 0**. Prolongation fills the puncture interior with a nearly constant
-chi ≈ 0.0064, so R rises linearly from the centre and the minimum is gone before the
-first step. Lesson L2 is usually read as "do not evolve finer than the ID's native dx or
-you lose accuracy". The sharper statement is: refining below the ID's dx does not fail to
-add detail, it **invents smooth wrong detail**, and here that detail is the absence of a
-wormhole. Only `max_level = 0` preserves the throat.
-
-| max_level | throat in the ID file | throat at t = 0 in the evolution |
-| --- | --- | --- |
-| 0 | yes (r = 1.299, R = 4.507) | **yes**, R = 4.507 |
-| 1 | yes | **no** — monotonic |
-| 2 | yes | **no** — monotonic |
-
-#### At unigrid the throat is real, and it closes
-
-| t | 0 | 2 | 4 | 6 | 14 |
-| --- | --- | --- | --- | --- | --- |
-| throat radius R | 4.51 | 4.43 | 4.00 | **gone** | gone |
-
-By t = 6 R is monotonic; by t = 14 the lapse is 0.28 and the trapped region has grown to
-r = 11.7. The Q-ball matter did not hold the throat open. All three refinement depths end
-in the same state (lapse ≈ 0.3, Q ≈ −2.1, trapped region ≈ 11.8), so the collapse itself
-is robust to the grid — refinement changed only whether the throat was visible at t = 0.
-
-#### Why that number cannot be believed either: the charge is not conserved
-
-| | t = 0 | t = 14 |
-| --- | --- | --- |
-| Noether charge Q | −10.52 | −2.09 (**−80 %**) |
-| charge inside the extraction sphere | −10.52 | tracks Q_total to 3 digits until t ≥ 12 |
-| net flux through the outer boundary | — | ~1e-11, i.e. nothing |
-
-Nothing leaves the box, so the charge is being destroyed *in the interior*, and it decays
-fastest over exactly the interval in which the throat closes (t = 1 → 6). The field
-amplitude meanwhile barely moves (max φ 0.0997 → 0.075). A conserved quantity losing 80 %
-while its own field stands still is a numerical statement, not a physical one — and the
-matter whose conservation law was supposed to hold the throat open is the thing
-dissolving. This is [check matter before believing geometry] applied to the charge rather
-than the density.
-
-#### The binding number: one cell is wider than the throat
-
-The coordinate-resolution rule stated above (m ≥ 4 dx) is **not sufficient**, and the
-reason is that it is stated in the wrong distance. What the evolution resolves is proper
-distance, dx/√chi, and near a puncture chi → 0. Measured on the m = 2 gridinit that
-*does* contain a throat:
-
-```
-   r      chi     R_areal   proper cell width dx/sqrt(chi)
- 0.433  0.00644    5.396          6.231
- 0.829  0.03297    4.567          2.754
- 1.299  0.08309    4.507          1.735   <- the throat
- 1.785  0.14430    4.700          1.316
- 2.278  0.20828    4.991          1.096
-```
-
-The throat's areal radius is 4.5. The innermost cell is **6.2 proper units wide — wider
-than the throat it is meant to resolve**, and the whole throat region spans ~13 proper
-units in 5 cells. The throat is resolved by of order *one* cell. Neither the closure time
-nor the charge loss survives that.
-
-Getting proper cell width down to ~0.5 at the puncture needs dx ≈ 0.04, i.e. **N ≈ 1600**
-uniform — the gridinit alone would be ~7 TB. This is not a grid that can be bought.
-
-**Raising the puncture mass is not the way out either.** `bh1_bare_mass` = 4 was tried:
-the GRTresna nonlinear solve **stalls** — Ham residual 100 % → 99.08 % in one iteration
-with max|δψ| = 0.005, versus a clean 100 % → 0.48 % at m = 2. It exits early reporting
-"Converged" and writes an `InitialDataFinal` that does not solve the constraints. Anything
-built on it would be garbage; the solve was deleted.
-
-#### What this means for option 1
-
-The Q-ball matter model is **not the thing that failed, and it has still not been tested.**
-Its own numbers are clean: the painted amplitude matches the independently solved
-flat-space eigenstate, Π₂ = −ωφ holds to every digit, the Hamiltonian residual converges
-to 0.48 %, and the momentum residual is identically zero. What failed is the *geometry it
-was placed in*: a Bowen–York puncture throat cannot be resolved in proper distance on a
-uniform gridinit, and the uniform gridinit is forced by L2 because AMR cannot be allowed
-to touch it.
-
-That is a contradiction in the pipeline, not a physics result:
-
-- a puncture throat **requires** mesh refinement to resolve chi → 0;
-- refinement below the gridinit's dx **destroys** the throat (measured above);
-- so the ID must already be fine enough everywhere, which costs N ≈ 1600.
-
-The way out is to stop using a singular throat. A **regular** Ellis–Bronnikov throat keeps
-chi of order 1 at the throat, so proper cell width ≈ dx and the resolution problem
-disappears. Until the throat geometry is regular, no matter model can be evaluated on it —
-including this one.
-
-One correction to earlier drafts survives all of this and is worth keeping: the constraint
-solver is **not** something to be built. `RotatingWormholeCollapse` already drives a
-GRTresna solve for exotic complex-scalar throats through a CLI pipeline, and it produces
-data with *zero* initial constraint defect — precisely the 1.4e-2 seed that drives the EB
-runaway. Changing matter is not a research programme here; it is selecting a model that is
-already implemented and already solved for. What is *not* yet established is that any
-member of this family is a traversable throat at all.
-
-### Mitigation — ranked, with what each actually buys
-
-| # | Approach | What it buys | Verdict |
-| --- | --- | --- | --- |
-| 1 | **`ComplexExoticScalarField` + Q-ball sextic, on GRTresna-solved data** | charge conservation gives the matter a preferred size, which the massless EB phantom has no analogue of | **Blocked, not refuted.** Ran 2026-08-28: the matter solves clean, but on a puncture throat it cannot be evaluated — the throat is ~1 cell wide in proper distance and 80 % of the charge dissolves. Needs a regular throat first (row 8) |
-| 2 | Sharpen the throat readout (sub-grid minimum + per-step output) | makes λ measurable, closes the Phase 2 tick | Do regardless; cheap, no new physics, no new runs to design it |
-| 3 | Same as 1 but rotating (ω ≠ 0) | a *natural* ℓ = 2 quadrupole with no artificial perturbation | Hold for Phase 4 — spin makes the head-on a different problem |
-| 4 | Keep EB, use solved data to reach d/b ≈ 3 | t_ff = 2.04 against a window of 2 | Works, but marginal by construction, and fights the instability rather than removing it |
-| 5 | Accept that both throats destabilise and study *that* | the bifurcation this document already predicts | Legitimate science, but a different paper — decide deliberately, not by discovering it late |
-| 6 | Reduce the t = 0 seed by other means | ~0.25 of window per decade | Nowhere near sufficient alone |
-| 7 | Refine the grid | nothing — measured, not assumed | Ruled out |
-| 8 | **Replace the singular puncture throat with a regular (finite-χ) Ellis–Bronnikov throat** | proper cell width ≈ dx at the throat instead of 6× the throat radius; makes every other row testable | **Now the prerequisite for all of them.** Nothing above can be measured until this is done |
-
-**Recommended reading of this:** do 2 now. Do **8 before anything else in this table** —
-as of 2026-08-28 no matter model can be evaluated on a puncture throat at any grid this
-project can afford, so rows 1, 3 and 4 are all blocked behind it, and Phase 3 cannot be
-committed to any of them. The open work after that is still a **two-centre solve**, which
-has not been done. The resolution bill is now quantified and it is not payable in
-coordinate resolution: at dx = 0.5 one cell at the puncture is 6.2 proper units, against a
-throat of areal radius 4.5.
-
+> **BLOCKER, 2026-08-28. See [MatterDebug.md](MatterDebug.md).**
+>
+> The whole matter investigation — which models `Source/Matter` already carries, the
+> correction of the earlier Q-ball claim, the 2026-08-28 Q-ball test, the throat-resolution
+> measurements, and the ranked mitigation table — now lives in
+> [research/merger/MatterDebug.md](MatterDebug.md). It was split out because it is a debug
+> log, not a plan.
+>
+> **The result in one line:** the Q-ball matter is not refuted, it is *untested* — the
+> Bowen–York puncture throat it was placed in cannot be resolved. One cell at the puncture
+> is 6.2 proper units wide against a throat of areal radius 4.5, mesh refinement erases the
+> throat before the first step, and 80 % of the conserved charge dissolves in the interior.
+>
+> **Consequence for this plan: Phases 3 onwards are blocked.** No GPU time on a merger
+> until [MatterDebug.md](MatterDebug.md) clears its exit condition — a regular, finite-χ
+> throat on which the Noether charge holds to a few per cent. The only Phase 2 work that
+> may proceed meanwhile is the throat-readout sharpening (mitigation row 2 there), which
+> needs no new physics and no new runs.
 ## Phase 3 — Head-on merger (calibration run)
 
 Head-on first: it is cheaper, it is axisymmetric, and it gives the l = 2, m = 0 benchmark
 the literature already has for black holes. **Gravity-driven, from rest**: with bare
 masses on, the throats genuinely attract — zero momenta, full support, nothing artificial.
 
-> **Do not run this on the current matter model (2026-08-28).** Phase 2 measured the
-> expansion window at t ≲ 2 while free-fall at Phase 1's `d/b ≥ 8` takes 8.89 — with a
-> massless phantom scalar and no potential, the throats expand out from under the merger
-> 4.4× before it completes, and that gap cannot be closed by refinement, by a better
-> seed, or by rescaling b.
+> ## 🛑 BLOCKED — do not consume GPU time on Phase 3 (2026-08-28)
 >
-> The candidate fix is the matter, not the separation: `ComplexExoticScalarField` with the
-> Q-ball sextic gives the throat's support a conserved charge, and so a preferred size that
-> the massless EB phantom has no analogue of. **That candidate is not yet demonstrated** —
-> the run this document previously cited as proof carried no charge at all, and the runs
-> that do carry charge all spin and all cut their support at t = 8. The measurement that
-> settles it is under way. Switching would cost a two-centre GRTresna solve; it is not new
-> physics and not new code, but it is also not yet a result. A second gate sits in front of
-> it: at dx = 0.5 the throat of every run in this family is one cell wide or less, so the
-> solved initial data does not actually contain a throat. See *Matter available in-tree*
-> and *Mitigation* under Phase 2.
+> **Gate: [MatterDebug.md](MatterDebug.md) must clear its exit condition first.** Two
+> independent problems stack, and neither is fixed:
+>
+> 1. **The matter.** Phase 2 measured the expansion window at t ≲ 2 while free-fall at
+>    Phase 1's `d/b ≥ 8` takes 8.89 — with a massless phantom scalar and no potential the
+>    throats expand out from under the merger 4.4× before it completes, and that gap
+>    cannot be closed by refinement, by a better seed, or by rescaling b.
+> 2. **The geometry.** The candidate fix — `ComplexExoticScalarField` with the Q-ball
+>    sextic, whose conserved charge would give the support a preferred size — **was run on
+>    2026-08-28 and could not be evaluated.** The Bowen–York puncture throat is ~1 cell
+>    wide in proper distance, refinement erases it before the first step, and 80 % of the
+>    charge dissolves in the interior. Full write-up in [MatterDebug.md](MatterDebug.md).
+>
+> So there is currently **no matter model this phase can be committed to**, and no throat
+> on which one could be chosen. Unblocking needs a regular, finite-χ throat, and then a
+> two-centre GRTresna solve — neither of which is new physics or new code, but both of
+> which are unfinished.
 >
 > (An earlier revision of this note gated Phase 3 on reaching d/b ≈ 3 with solved EB
-> data. That still works, but it is option 4, not option 1 — it races the instability
-> with a window of 2 against a free-fall of 2.04 instead of removing it.)
+> data. That still works, but it is mitigation option 4, not option 1 — it races the
+> instability with a window of 2 against a free-fall of 2.04 instead of removing it.)
 
 - [ ] **Phase 3** — two massive throats released from rest fall together along the z axis
   - [ ] bare-mass ladder on `m/b` (0.1 → 0.25 → 0.5 → 1.0) at fixed separation: the
@@ -609,6 +395,10 @@ masses on, the throats genuinely attract — zero momenta, full support, nothing
 
 ## Phase 4 — Spiralling merger (headline run)
 
+> **Blocked behind Phase 3** — see the execution blocker at the top of this plan and
+> [MatterDebug.md](MatterDebug.md).
+
+
 - [ ] **Phase 4** — quasi-circular inspiral and merger of two static throats
   - [ ] bare masses from the Phase 3 ladder; tangential momenta set the *initial orbit*
         exactly as in a BBH run — start from the Newtonian circular value
@@ -624,6 +414,10 @@ masses on, the throats genuinely attract — zero momenta, full support, nothing
 
 ## Phase 5 — Waveforms and energetics
 
+> **Blocked behind Phase 3** — see the execution blocker at the top of this plan and
+> [MatterDebug.md](MatterDebug.md).
+
+
 - [ ] **Phase 5** — extract and benchmark the radiation
   - [ ] Ψ₄ modes (2,0), (2,1), (2,2), (4,0) at ≥ 2 extraction radii, extrapolated
   - [ ] radiated energy fraction, compared with the 0.055 % head-on BBH figure
@@ -633,6 +427,10 @@ masses on, the throats genuinely attract — zero momenta, full support, nothing
   - [ ] detectability framed strictly as a mass-scaling statement
 
 ## Phase 6 — Convergence and error budget
+
+> **Blocked behind Phase 3** — see the execution blocker at the top of this plan and
+> [MatterDebug.md](MatterDebug.md).
+
 
 - [ ] **Phase 6** — the run is defensible
   - [ ] three resolutions, Ψ₄ amplitude and phase convergence order measured
@@ -689,11 +487,7 @@ produced a result worth improving.
 | θ₊ < 0 near each throat | r → 0 is the *other* infinity, not a centre — the proxy always fires there | `binary_diag_min_radius` excludes r < b/2; θ₊ is reduced as a **max per radial shell**, so a sphere counts as trapped only if θ₊ ≤ 0 all over it; only the common-centre scan is evidence of fusion |
 | φ asymptote | a plain sum of two atan profiles tends to ≈ 0.886, but the boundary condition assumes 0 | subtract the constant in the initial data (free for a massless field) |
 | Solved-ID resolution wall | the `.gridinit` bridge pins the evolution to near-unigrid | split-ID loader (Phase 7) |
-| **Throat expands before the merger finishes** | the unperturbed EB throat is a saddle *because its potential is zero* — nothing sets a preferred size. It runs away at λ = 9.012, giving a window of t ≲ 2, while free-fall at `d/b = 8` takes 8.89. Confirmed against `results/wormhole-dynamics/unperturbed` — the reference expands the same way and also dies near t ≈ 3 | **change the matter, not the separation**: `ComplexExoticScalarField` + Q-ball sextic gives the support a conserved charge and so a preferred size. **The ~11 window previously claimed here was wrong** — that run lost 58 % of its matter by t = 7, collapsed its lapse to 0.31 by t = 3.5, and died at t = 12.3 with its support deliberately ramped off at t = 8. The runs that behave far better over the same window all spin and all ramp, so none of them is the measurement this needs. First honest measurement under way 2026-08-28; open work after it is a two-centre solve. **Not** fixable by refinement (the t = 0 violation is identical at `max_level` 4 and 5), nor by a better seed (would need ~1e-37), nor by rescaling b (t_ff and the window are both ∝ b) |
+| **Throat expands before the merger finishes** | the unperturbed EB throat is a saddle *because its potential is zero* — nothing sets a preferred size. It runs away at λ = 9.012, giving a window of t ≲ 2, while free-fall at `d/b = 8` takes 8.89. Confirmed against `results/wormhole-dynamics/unperturbed` — the reference expands the same way and also dies near t ≈ 3 | **change the matter, not the separation**: `ComplexExoticScalarField` + Q-ball sextic gives the support a conserved charge and so a preferred size. **Tested 2026-08-28 and still unresolved** — the matter is clean but the puncture throat it sits on cannot be resolved, so the model returned no verdict; see [MatterDebug.md](MatterDebug.md). **The ~11 window previously claimed here was wrong** — that run lost 58 % of its matter by t = 7, collapsed its lapse to 0.31 by t = 3.5, and died at t = 12.3 with its support deliberately ramped off at t = 8. The runs that behave far better over the same window all spin and all ramp, so none of them is the measurement this needs. The honest measurement ran on 2026-08-28 and was blocked by throat resolution, not by matter; open work is a regular throat, then a two-centre solve. **Not** fixable by refinement (the t = 0 violation is identical at `max_level` 4 and 5), nor by a better seed (would need ~1e-37), nor by rescaling b (t_ff and the window are both ∝ b) |
+| **Throat resolution — the whole matter question is blocked on it** | a Bowen–York puncture throat is ~1 cell wide in proper distance at any affordable grid, refinement erases it before the first step, and the Noether charge loses 80 % in the interior. Four separate risks used to live here; they are one fault | **owned by [MatterDebug.md](MatterDebug.md)** — measurements, mitigation ranking and exit condition are all there. Nothing in Phases 3 – 6 may run until it clears |
 | Compactified origin blows up when centred | at r → 0, chi ~ r⁴ — that point is the *other* universe's infinity, and CCZ4 divides by chi. The published example dodges it with octant symmetry (`lo_boundary = 2 2 2`), which a binary cannot use: two origins, neither on a corner. Centred runs NaN in h11 on the finest level at t = 2.42 | `wormhole_initial_lapse_type = 4` buys time but is *initial data only* — the gauge relaxes and the lapse at the origin climbs back from 1e-10 to 0.33 by t ≈ 2.4, whereupon it detonates. A durable fix has to be a gauge source term, not initial data. **Open for Phase 3** |
 | Lapse collar is thinner than the stencil | the type-4 collar spans 0.053 in r; that is 0.9 cells at `max_level = 3` and 1.7 at 4, so the stencil sees a step and the run dies at t ≈ 0.2. Coarsening to escape the origin makes it strictly worse | `wormhole_lapse_core_fraction` / `_power` now expose the shape; f = 0.2, p = 4 gives 25% more collar with a bit-identical throat |
-| **Solved initial data contains no throat** | the throat is a Bowen–York puncture, ψ = 1 + m/(2r), whose minimal surface sits at isotropic r = m/2; the `.gridinit` bridge flattens the solve to the evolution's level-0 dx, so a throat below one cell is absent from the data and AMR cannot put it back. At the family's standard `bh1_bare_mass` = 0.25 and dx = 0.5 the throat is at r = 0.125 — **a quarter of a cell**. Measured: R = r/√chi rises monotonically from the first cell out, no interior minimum | `THROAT_MASS` now overrides the puncture mass, and at m ≥ 4 dx the throat does appear in the file (m = 2, dx = 0.5: interior minimum at r = 1.299, R = 4.507). **But that is not enough, and the coordinate rule is superseded** — see the next two rows. **The binding constraint on Phase 3 is resolution, not matter** |
-| **Refining below the gridinit's dx destroys the throat** | prolongation cannot recover sub-cell structure, so it fills the puncture interior with a nearly constant χ ≈ 0.0064; R then rises linearly from the centre and the interior minimum is gone **before the first step**. Measured 2026-08-28 on identical data: `max_level` 0 keeps the throat at t = 0, `max_level` 1 and 2 both lose it. Level-0 ingestion itself is byte-exact, so the file is not the problem | run throat diagnostics at **`max_level = 0` only**, or teach the evolution to set χ analytically at the puncture instead of interpolating. Every AMR run in this family is void as a throat measurement |
-| **A puncture throat cannot be resolved in proper distance** | the evolution resolves dx/√χ, and χ → 0 at a puncture. On the m = 2 gridinit — which satisfies m ≥ 4 dx and does contain a throat of areal radius 4.5 — the innermost cell is **6.2 proper units wide**, wider than the throat itself, and the whole throat region spans ~13 proper units in 5 cells. Reaching ~0.5 proper units needs dx ≈ 0.04, i.e. N ≈ 1600 uniform (~7 TB of gridinit). Raising the mass instead does not work: at m = 4 the GRTresna solve stalls at 99.08 % Ham residual and falsely reports convergence | **use a regular, finite-χ throat**, where proper cell width ≈ dx. Until then no matter model can be evaluated on this geometry, this one included |
-| **The Noether charge is not conserved on this geometry** | Q falls −10.52 → −2.09 (**−80 %**) by t = 14 while the field amplitude barely moves and the boundary flux is ~1e-11 — so it is destroyed in the interior, fastest over exactly the interval in which the throat closes. The quantity whose conservation was supposed to give the matter a preferred size is the quantity dissolving | a consequence of the row above, not an independent fault. **Treat charge conservation as a resolution diagnostic**: until Q holds to a few per cent, no collapse or survival time from this family means anything |
-| Throat readout lands on the innermost cell | R = r/√chi *diverges* at the compactified origin, but the unresolved inner cells report it as small, so a bare argmin tracks a "collapse" that is not happening — 0.152 instead of 0.498 on a b = 0.5 throat | `--areal-min-radius` excludes an inner ball. **Archived `areal_radius.dat` columns predating this are unreliable** — several older runs report exactly dx/2, i.e. pure grid artefact |
