@@ -3,7 +3,7 @@
 > Rewritten 2026-07-08 against the verified state of the GRTresna→GRTeclyn
 > pipeline. Supersedes the earlier speculative five-phase sketch. Companion
 > journals: [`../neuralspacetime/MapElitesDynamics.md`](../neuralspacetime/MapElitesDynamics.md),
-> [`../rotatingwormhole/RotatingWormholePlan.md`](../rotatingwormhole/RotatingWormholePlan.md),
+> [`../rotatingwormhole/RotatingWormhole.md`](../rotatingwormhole/RotatingWormhole.md),
 > [`../grlab/LabJournal.md`](../grlab/LabJournal.md),
 > [`../../grteclyn-wrapper/README.md`](../../grteclyn-wrapper/README.md).
 
@@ -140,7 +140,7 @@ For the cylinder, two profile routes, in order of preference:
    profile 4, ID driver `scripts/wormhole/id/solve_torus.{py,sh}`) and
    validated it in evolution: charge-retention half-life ≈ 27–28 vs 13–16 for
    twisted painted profiles, and the t≈13.5 blow-up gone
-   ([OrbitalPumpPlan Phase 8](../rotatingwormhole/OrbitalPumpPlan.md)). Build
+   ([RotatingWormhole.md §4.7](../rotatingwormhole/RotatingWormhole.md)). Build
    the finite column as a **z-stack of 3–5 profile-4 tori** re-solved by
    GRTresna as one constraint solve. This is the only rotating object class
    the pipeline has shown to both rotate and persist.
@@ -179,7 +179,7 @@ the frames, not assumed.
 
 > **Update 2026-07-16: answered.** The isolated exotic profile-4 Q-torus
 > (m=1, ω=0.25) evolved cleanly to t=30 with no non-axisymmetric blow-up and
-> roughly doubled charge retention (OrbitalPumpPlan Phase 8). It still slowly
+> roughly doubled charge retention (RotatingWormhole.md §4.7). It still slowly
 > spreads (flat-space eigenstate + phantom self-repulsion) — a *canonical*
 > profile-4 torus, which this plan can use, may do better and has not yet been
 > evolved (needs the non-exotic complex evolution branch).
@@ -357,7 +357,7 @@ end-effect-limited.
    eval 008 was a low-res artifact; eval 118's channel *decayed* under the
    longer HQ window. Assume the same until shown otherwise.
 2. **Boundary/box study** for any persistent signal (the t≈5 dispersal protocol
-   from RotatingWormholePlan applies verbatim).
+   from RotatingWormhole.md §4.3 applies verbatim).
 3. **Geodesic trust flags** required on every Sagnac number (drift, step
    sizing, no NaNs); ω=0 control run must show zero asymmetry (built-in null
    test), and a slow-ω run should match the linear frame-dragging expectation

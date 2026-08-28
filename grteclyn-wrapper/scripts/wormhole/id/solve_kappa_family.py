@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Amplitude-reduction (kappa) initial-data family for the rotating wormhole.
 
-Phase B4/B5 of docs/RotatingWormholePlan.md.  Reuses the *same* runtime machinery
+Solved-ID pipeline; see research/rotatingwormhole/RotatingWormhole.md §4.1.  Reuses the *same* runtime machinery
 the QD campaign uses under the hood -- the validated GRTresna BosonStarBH solve
 binary plus ``convert_chombo_to_gridinit`` -- rather than the search-space CLI
 (whose ``scalar``/``boson_star`` sectors do not express the exotic-winding throat).
@@ -83,7 +83,7 @@ MU6 = float(os.environ.get("MU6", "0.0"))
 LUMP_OMEGA = float(os.environ.get("LUMP_OMEGA", "0.05"))
 LUMP_MODE = int(os.environ.get("LUMP_MODE", "1"))
 
-# --- Constellation (multi-lump orbital) ID (Phase 2, OrbitalPumpPlan) ---------
+# --- Constellation (multi-lump orbital) ID (RotatingWormhole.md §4.6) ---------
 # NUM_LUMPS > 1 replaces the single winding throat lump with N Q-ball lumps
 # equally spaced on a circle of radius ORBIT_RADIUS in the z=0 plane, each with
 # a tangential boost velocity v = ORBIT_OMEGA * ORBIT_RADIUS (so the constellation
