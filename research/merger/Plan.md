@@ -339,12 +339,43 @@ m = 0, not rotating**:
 | --- | --- | --- |
 | usable window | **2** | **~11** |
 | max curvature | runs away | bounded, ~0.5 |
-| throat depth | real (chi → floor) | real (chi ≈ 0.09…0.19) |
+| min chi | falls to the 1e-8 **floor** | bottoms out at **0.09** |
 | horizon | none | none |
 | behaviour | monotonic exponential departure | wanders and returns; no runaway |
+| grid setup needed | octant corner, or it dies at the origin | **centred**, L = 64, N = 128, no lapse collar |
+| throat radius parameter | 0.5 | **0.5 — the same** |
 
 It is not eternal — it ends at t = 12.3 — but it does not run away, and 11 is the number
 that matters here, because free-fall at `d/b = 8` is 8.89. **The merger fits.**
+
+**The `min_chi` row is the important one, and it is not a difference of degree.** EB's
+chi collapses to the floor because r = 0 is a compactified origin — the other universe's
+infinity squeezed to a point, where chi ~ r⁴ and CCZ4 divides by it. The Q-ball
+configuration squeezes space elevenfold and *stops*. There is no such point, so there is
+nothing for the origin pathology to happen at — which is why that run evolves **centred**,
+with no octant symmetry and no origin-isolating lapse, and survives eleven time units
+doing what killed every centred EB run on 2026-08-28.
+
+For a binary that matters more than any other line in the table: two throats mean two
+origins, and neither can be put on a symmetry corner. A model with no compactified origin
+removes the structural obstacle rather than working around it.
+
+**Two things this is NOT, recorded because both were briefly believed.** The Q-ball throat
+is **not smaller** — `wormhole_throat_radius = 0.5`, identical to EB. The 0.09…0.19
+figures are `min_chi`, a squeeze factor, not an areal radius; setting them beside EB's
+R_areal invites a comparison between two different quantities. And box size was never the
+binding constraint anyway: `d/b ≥ 8` puts the throats at ±2 inside L = 64, and the Bondi
+campaign routinely fits a pair at separation 10.
+
+> **Open check before this becomes the Phase 3 baseline.** The proven run's initial data
+> comes from `runs/rotating_torus_id/torus_m0_om0p000_..._exotic_throat1/initial_data.gridinit`
+> — note **torus**. What is confirmed: stable, centred, exotic, bounded curvature, no
+> horizon, a genuine chi dip. What is **not** confirmed: that it is a traversable throat
+> in the sense this project needs, i.e. that the areal radius R = r/√chi has an interior
+> minimum. That run has no `areal_radius.dat` — its throat size was never extracted, and
+> the configuration may be toroidal rather than a spherical wormhole. This is now a cheap
+> check (`--areal-radius --areal-min-radius`, fixed 2026-08-28) and it should be done
+> before any Phase 3 commitment rests on this model.
 
 Two corrections to earlier drafts of this document follow from that. The constraint
 solver is **not** something to be built: `RotatingWormholeCollapse` already drives a
