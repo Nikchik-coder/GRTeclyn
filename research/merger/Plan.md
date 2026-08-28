@@ -238,18 +238,104 @@ evolution. Nothing downstream is allowed to run until every box here is green.
 
 ## Phase 2 — Single-throat regression
 
-- [ ] **Phase 2** — the new example reproduces the published single-throat physics
-  - [ ] rerun the `research/wormholedynamics/article.md` configuration through the new
-        binary example with `b_B = 0`
-  - [ ] recover the expansion rate λ ≈ 9.012/M and the areal-radius bounce 0.50 → 0.14 → 0.28
-  - [ ] recover the ringdown frequency f ≈ 0.403/M
-  - [ ] **gate:** any disagreement here is a bug in the new example, not new physics
+- [ ] **Phase 2 — qualitatively reproduced, not yet measured** (2026-08-28). The
+      unperturbed throat behaves as the reference does, and for the same reason. What
+      is still missing is precision, not physics: the throat readout cannot resolve the
+      window the published growth rate is fitted over. See *Phase 2 findings* below,
+      which also carries the consequence for Phase 3 — and it is not a small one.
+  - [x] rerun the `research/wormholedynamics/article.md` configuration through the new
+        binary example with `b_B = 0` — done as `params_phase2_symmetric.txt`, whose
+        physics settings are **identical** to `results/wormhole-dynamics/unperturbed/params_2gpu.txt`
+        on every key that matters (dissipation `sigma`, all three `kappa`, `formulation`,
+        `covariantZ4`, shift `eta` and `shift_Gamma_coeff`, `lapse_coeff`, both floors,
+        `wormhole_support_strength`, `phantom_mass`). Only `N_full` (192 vs 256) and
+        `stop_time` differ.
+  - [x] **the unperturbed throat expands, exactly as the reference does** — the reference's
+        own panel (g) shows R_areal flat at 0.500 and then climbing to 0.64, and its
+        panel (l) is where λ = 9.0120 is fitted. This is the *unperturbed* rate; it is
+        not a property of the perturbed branch. Ours: R = 0.4998 ± 0.0001 flat to
+        t = 1.2, departure from t ≈ 1.33, and |ΔR| growing cleanly by e-folding after.
+        The reference run also terminates near t ≈ 3 despite asking for `stop_time = 30`.
+  - [ ] recover the expansion rate λ ≈ 9.012 — **blocked on diagnostics, not on physics.**
+        The published fit spans t = 0.1…1.0, where |ΔR| runs 1e-8 → 1e-4. Our readout
+        floor is ~1e-4, so that entire window is under our noise. Fitting the only part
+        we can see (t = 1.33…2.13, already past the linear phase) gives 5.8, and the
+        reference curve is also flatter than 9.012 there — the two are not in conflict.
+        Needs (a) a sub-grid fit through the minimum of R(r) instead of the smallest
+        grid sample, and (b) output every coarse step, as the reference used, instead
+        of every twentieth.
+  - [ ] recover the areal-radius bounce 0.50 → 0.14 → 0.28 and ringdown f ≈ 0.403/M —
+        these are the **perturbed** branch and need the Gaussian perturbation knobs
+        (`wormhole_phi_monopole_amplitude`, `_perturbation_amplitude`, `_width`), which
+        the reference params carry and the merger example does not yet expose.
+  - [x] **gate:** no disagreement found. The behaviour, the settings, and the failure
+        time all match the reference.
+
+### Phase 2 findings — the expansion is real, and it costs Phase 3 its margin
+
+**The expansion is published physics, not a bug.** An Ellis–Bronnikov throat is a saddle:
+any nudge and it runs away, collapsing or expanding depending on the sign. The reference
+run — finer than ours, same everything else — expands at λ = 9.012 and dies at t ≈ 3.
+
+**Refinement cannot fix it, and this was tested rather than assumed.** Three things rule
+it out. The reference is finer than anything we ran and expands identically. The t = 0
+constraint violation, which is what kicks the throat off the saddle, is
+**1.38165e-2 at both `max_level` 4 and 5 — identical to six digits**, so refining does not
+reduce the kick at all. And the growth is exponential, so halving the kick buys exactly
+one e-folding: worth ~0.1 in time, not the factor of several that would be needed.
+
+**Better initial data cannot fix it either.** The window closes when the instability
+reaches a few percent, i.e. window = ln(0.03/ε)/λ. A seed of 1e-9 gives 1.9; 1e-16 gives
+3.7; 1e-30 gives 7.3. Buying the free-fall time Phase 3 needs would take a seed of
+~1e-37. The logarithm is the whole problem — the returns are brutal.
+
+**The hard consequence for Phase 3.** The usable window is t ≲ 2. Free-fall time from
+rest, on this document's own estimate t_ff ≈ π√(d³/(8 M_total)), for throats of radius
+b = 0.5:
+
+| d | d/b | m = 0.25 | m = 0.5 | m = 1.0 |
+| --- | --- | --- | --- | --- |
+| 1.5 | 3 | 2.89 | **2.04** | 1.44 |
+| 2 | 4 | 4.44 | 3.14 | 2.22 |
+| 3 | 6 | 8.16 | 5.77 | 4.08 |
+| 4 | 8 | 12.57 | **8.89** | 6.28 |
+
+Phase 1's operating constraint is `d/b ≥ 8`, i.e. d ≥ 4, which lands on t_ff = 8.89 —
+**4.4× longer than the window**. Raising the mass instead does not rescue it: the bare
+mass has to stay around m/b ≲ 1 or the horizon swallows the throat and the run is a
+black-hole merger.
+
+**And the problem is scale-invariant, so shrinking the throat is not a way out.** With
+d = 8b and m = αb, t_ff = πb√(32/α) ∝ b, while λ ∝ 1/b makes the window ∝ b as well.
+The ratio is a pure number. Rescaling b moves both sides equally.
+
+### Mitigation — ranked, with what each actually buys
+
+| # | Approach | What it buys | Verdict |
+| --- | --- | --- | --- |
+| 1 | **Constraint-solved initial data (Phase 7) to lift `d/b ≥ 8`** | at d/b = 3 (d = 1.5, m = 0.5) t_ff = 2.04, which fits the window | **The only lever that closes the gap.** Promotes Phase 7 from optional Route B to a *prerequisite* for Phase 3 |
+| 2 | Sharpen the throat readout (sub-grid minimum + per-step output) | makes λ measurable, closes the Phase 2 tick | Do regardless; cheap, no new physics |
+| 3 | Reduce the t = 0 seed by any other means | ~0.25 in window per decade | Worth having, nowhere near sufficient alone |
+| 4 | Accept that both throats destabilise and study *that* | the bifurcation this document already predicts | Legitimate science, but it is a different paper — decide deliberately, not by discovering it late |
+| 5 | Refine the grid | nothing — measured, not assumed | Ruled out |
+| 6 | Switch to a throat model that is not a saddle | removes the constraint entirely | Largest change; last resort |
+
+**Recommended reading of this:** do 2 now, and treat 1 as gating Phase 3. Going into a
+head-on run at d/b = 8 with a window of 2 spends wall time on throats that will expand
+out from under the merger before it completes.
 
 ## Phase 3 — Head-on merger (calibration run)
 
 Head-on first: it is cheaper, it is axisymmetric, and it gives the l = 2, m = 0 benchmark
 the literature already has for black holes. **Gravity-driven, from rest**: with bare
 masses on, the throats genuinely attract — zero momenta, full support, nothing artificial.
+
+> **Gated on Phase 7 as of 2026-08-28.** Phase 2 measured the expansion window at t ≲ 2,
+> and at Phase 1's `d/b ≥ 8` the free-fall time is 8.89 — the throats expand out from
+> under the merger 4.4× before it completes. Superposed data cannot go closer without
+> violating the Phase 1 constraint, so the head-on run needs solved data at d/b ≈ 3 to
+> have a merger left to measure. Running Phase 3 on Route A first would burn wall time
+> to rediscover this. See *Phase 2 findings*.
 
 - [ ] **Phase 3** — two massive throats released from rest fall together along the z axis
   - [ ] bare-mass ladder on `m/b` (0.1 → 0.25 → 0.5 → 1.0) at fixed separation: the
@@ -346,3 +432,7 @@ produced a result worth improving.
 | θ₊ < 0 near each throat | r → 0 is the *other* infinity, not a centre — the proxy always fires there | `binary_diag_min_radius` excludes r < b/2; θ₊ is reduced as a **max per radial shell**, so a sphere counts as trapped only if θ₊ ≤ 0 all over it; only the common-centre scan is evidence of fusion |
 | φ asymptote | a plain sum of two atan profiles tends to ≈ 0.886, but the boundary condition assumes 0 | subtract the constant in the initial data (free for a massless field) |
 | Solved-ID resolution wall | the `.gridinit` bridge pins the evolution to near-unigrid | split-ID loader (Phase 7) |
+| **Throat expands before the merger finishes** | the unperturbed EB throat is a saddle: it runs away at λ = 9.012, giving a window of t ≲ 2, while free-fall at `d/b = 8` takes 8.89. Confirmed against `results/wormhole-dynamics/unperturbed` — the reference expands the same way and also dies near t ≈ 3 | solved initial data (Phase 7) to reach d/b ≈ 3, where t_ff = 2.04. **Not** fixable by refinement (the t = 0 violation is identical at `max_level` 4 and 5), nor by a better seed (would need ~1e-37), nor by rescaling b (t_ff and the window are both ∝ b) |
+| Compactified origin blows up when centred | at r → 0, chi ~ r⁴ — that point is the *other* universe's infinity, and CCZ4 divides by chi. The published example dodges it with octant symmetry (`lo_boundary = 2 2 2`), which a binary cannot use: two origins, neither on a corner. Centred runs NaN in h11 on the finest level at t = 2.42 | `wormhole_initial_lapse_type = 4` buys time but is *initial data only* — the gauge relaxes and the lapse at the origin climbs back from 1e-10 to 0.33 by t ≈ 2.4, whereupon it detonates. A durable fix has to be a gauge source term, not initial data. **Open for Phase 3** |
+| Lapse collar is thinner than the stencil | the type-4 collar spans 0.053 in r; that is 0.9 cells at `max_level = 3` and 1.7 at 4, so the stencil sees a step and the run dies at t ≈ 0.2. Coarsening to escape the origin makes it strictly worse | `wormhole_lapse_core_fraction` / `_power` now expose the shape; f = 0.2, p = 4 gives 25% more collar with a bit-identical throat |
+| Throat readout lands on the innermost cell | R = r/√chi *diverges* at the compactified origin, but the unresolved inner cells report it as small, so a bare argmin tracks a "collapse" that is not happening — 0.152 instead of 0.498 on a b = 0.5 throat | `--areal-min-radius` excludes an inner ball. **Archived `areal_radius.dat` columns predating this are unreliable** — several older runs report exactly dx/2, i.e. pure grid artefact |
