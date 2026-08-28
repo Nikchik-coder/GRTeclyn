@@ -8,7 +8,7 @@ deep-research report it was derived from, unedited.
 | Stage | What it settles | Status |
 | --- | --- | --- |
 | 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
-| 1 | Single regular throat holds still, charge/geometry drift bounded | next |
+| 1 | Single regular throat holds still, charge/geometry drift bounded | **running 2026-08-28** |
 | 2 | Two-throat data: superposition + correction, then a CTTK solve | not started |
 | 3 | Head-on merger with ADM mass, Ψ₄ out | not started |
 | 4 | Write | not started |
@@ -124,14 +124,47 @@ Past that, χ_throat starts falling back toward puncture values. A heavier binar
 
 ### Stage 1 — single regular throat, static hold
 
-- [ ] **1.1** Params file: one throat, α = e^u exactly, 1+log, Gamma-driver from β = 0,
-  `covariantZ4 = 0`, Kreiss–Oliger σ ≈ 1–2, Sommerfeld out
+- [x] **1.1** Params file: one throat, α = e^u exactly, 1+log, Gamma-driver from β = 0,
+  `covariantZ4 = 0`, Kreiss–Oliger σ ≈ 1–2, Sommerfeld out —
+  [params_stage1_hold.txt](../../Examples/BinaryWormholeMerger/params_stage1_hold.txt)
 - [ ] **1.2** Run to t ≳ 20–30 M and measure: R_min drift, constraint norms, whether the
-  lapse collar is still needed once χ is O(1) at the throat
+  lapse collar is still needed once χ is O(1) at the throat — *running, 40 M, a = 2, m = 1*
 - [ ] **1.3** Decide the collar's fate — if a regular throat no longer needs it, delete it
 
 **Benchmark:** no gauge detonation, R_min drift attributable to the known EB unstable mode
 (one growing mode, timescale ~ throat/c) rather than to the grid.
+
+#### Why this run can give a clean answer
+
+The single massive drainhole is not merely *good* initial data — it is an **exact fixed
+point of the entire evolved system**, which the puncture data never was:
+
+| evolved variable | value at t = 0 | why its RHS vanishes |
+| --- | --- | --- |
+| `chi`, `h_ij` | γ̃_ij = δ_ij exactly | γ_ij = e^{−2u} Ω² δ_ij is conformally flat |
+| `Gamma^i` | 0 | follows from γ̃_ij = δ_ij; the code initialises it to 0, which is *correct* here rather than an omission |
+| `K`, `A_ij`, `Theta` | 0 | time-symmetric slice of a static spacetime |
+| `lapse` | e^u | 1+log is ∂_t α = −2αK, and K = 0 |
+| `shift`, `B^i` | 0 | Gamma-driver is sourced by ∂_t Γ̃^i, which is 0 |
+
+So there is no initial transient to ride out and no gauge relaxation to disentangle from
+the physics. **Any** drift is either the discretisation or the genuine Ellis–Bronnikov
+unstable mode. The superposed puncture data had a constraint-violating burst at t = 0 that
+made exactly this measurement impossible.
+
+The one thing that is deliberately *not* a fixed point is the origin-isolating collar:
+α = e^u · collar is not the static lapse, so lapse type 6 injects a real perturbation near
+r̄ = 0 by construction. That makes 1.3 a straight A/B on one params file, launched through
+the new `WHM_LAPSE_TYPE` override so the two arms cannot drift apart:
+
+```
+WHM_NAME=stage1 WHM_PARAMS=params_stage1_hold.txt WHM_MAX_LEVEL=2 \
+  WHM_CONSUME_ARGS="--areal-radius --areal-min-radius 0.8" \
+  WHM_LAPSE_TYPE=5 WHM_GPU=0 bash .../wormhole_merger/run_single.sh   # no collar
+  WHM_LAPSE_TYPE=6 WHM_GPU=1 ...                                      # with collar
+```
+
+The two cloned params files differ in exactly one line, verified after launch.
 
 ### Stage 2 — two-throat initial data
 

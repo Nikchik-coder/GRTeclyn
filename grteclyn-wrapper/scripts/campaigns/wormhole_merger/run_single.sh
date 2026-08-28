@@ -32,6 +32,11 @@
 #   WHM_MAX_LEVEL override max_level in the cloned params, rewriting
 #                 regrid_interval to match (AMReX aborts if it does not carry
 #                 exactly max_level values)
+#   WHM_LAPSE_TYPE override wormhole_initial_lapse_type in the cloned params
+#                 (appends _lapseN to the run name).  The collar A/B of
+#                 FIx.md Stage 1.3 is this knob and nothing else: 5 is the
+#                 drainhole's bare static lapse, 6 is that lapse times the
+#                 origin-isolating collar.
 #   WHM_DRYRUN=1  resolve and print everything, touch nothing, exit
 #   WHM_CONSUME   run the plotfile consumer sidecar (default 1)
 #   WHM_CONSUME_ARGS  extra consumer flags, e.g. "--shell-fields chi phi"
@@ -85,6 +90,9 @@ fi
 NAME="${WHM_NAME:-$(basename "${TEMPLATE}" .txt)}"
 if [[ -n "${WHM_BARE_MASS:-}" ]]; then
   NAME="${NAME}_m$(printf '%s' "${WHM_BARE_MASS}" | tr -d '.' )"
+fi
+if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
+  NAME="${NAME}_lapse${WHM_LAPSE_TYPE}"
 fi
 RUN_DIR="${RUNS_DIR}/${NAME}"
 SCRATCH_DIR="${SCRATCH_ROOT}/${NAME}"
@@ -159,6 +167,24 @@ if [[ -n "${WHM_BARE_MASS:-}" ]]; then
   echo "[whm] bare-mass override: m_A = m_B = ${WHM_BARE_MASS}"
 fi
 
+# Initial-lapse override.  The lapse is not a free gauge choice for a drainhole:
+# alpha = e^{u} is part of the static solution, so type 5 makes the data an exact
+# fixed point of the evolved system and type 6 multiplies in the origin-isolating
+# collar, which deliberately breaks that.  Comparing the two is the whole of
+# FIx.md Stage 1.3, so it gets an override rather than a forked params file --
+# a duplicated 130-line template would drift and the comparison would stop being
+# an A/B.
+if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
+  key=wormhole_initial_lapse_type
+  n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+  if [[ "${n}" != "1" ]]; then
+    echo "[whm] WHM_LAPSE_TYPE needs '${key}' exactly once in the template (found ${n})" >&2
+    exit 1
+  fi
+  sed -i "s|^${key}[[:space:]]*=.*|${key} = ${WHM_LAPSE_TYPE}|" "${RUN_PARAMS}"
+  echo "[whm] lapse override: ${key} = ${WHM_LAPSE_TYPE}"
+fi
+
 # Refinement-depth override (Plan.md Phase 2 resolution study, and the origin
 # instability it is chasing).  This exists because max_level cannot be changed
 # on its own: regrid_interval must carry exactly max_level values or AMReX
@@ -216,6 +242,27 @@ CONSUMER_PID=""
 # the run directory.  Anchor them next to the run they came from.
 consumer_args=(--data "${SCRATCH_DIR}" --out "${RUN_DIR}/small_data"
                --frames-out "${RUN_DIR}/frames")
+
+# The consumer's --center defaults to (0,0,0), but every merger template puts
+# the physics at center = L/2.  Nothing errors when they disagree: the
+# extractions still run, they just run in the far field, and --areal-radius
+# happily reports r/sqrt(chi) ~ r off in the asymptotically flat region as if it
+# were the throat.  Measured 2026-08-28 on a stage-1 drainhole: 0.845 at
+# r = 0.829, against a throat of areal radius 3.890 at r = 1.618.  Read the
+# centre off the params the run is actually using so the two cannot disagree.
+# It goes in BEFORE WHM_CONSUME_ARGS, so an explicit --center there still wins.
+if grep -qE "^center[[:space:]]*=" "${RUN_PARAMS}"; then
+  # shellcheck disable=SC2207
+  center_vals=($(grep -E "^center[[:space:]]*=" "${RUN_PARAMS}" \
+                 | head -n 1 | sed -e 's/#.*//' -e 's/.*=//'))
+  if [[ "${#center_vals[@]}" -eq 3 ]]; then
+    consumer_args+=(--center "${center_vals[@]}")
+    echo "[whm] consumer centre: ${center_vals[*]} (from the run's params)"
+  else
+    echo "[whm] WARNING: could not parse 'center' from params (got ${#center_vals[@]} values);" >&2
+    echo "[whm]          consumer will use its (0,0,0) default -- pass --center yourself." >&2
+  fi
+fi
 if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
   consumer_args+=(--delete --keep-last "${WHM_KEEP_LAST:-3}")
 fi
