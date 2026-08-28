@@ -188,11 +188,21 @@ if [[ -n "${WHM_MAX_LEVEL:-}" ]]; then
   fi
   ri_list=""
   for ((i = 0; i < WHM_MAX_LEVEL; i++)); do ri_list+="${ri_first} "; done
+  # max_level = 0 is the unigrid case and it needs ZERO regrid intervals, but
+  # `regrid_interval =` with nothing after it is a ParmParse hard error
+  # ("no values for definition regrid_interval"), so the key cannot simply be
+  # emptied.  A unigrid run never regrids, so the values are dead either way:
+  # leave the template's list alone and rewrite only max_level.
+  if [[ "${WHM_MAX_LEVEL}" -eq 0 ]]; then
+    sed -i -e "s|^max_level[[:space:]]*=.*|max_level = 0|" "${RUN_PARAMS}"
+    echo "[whm] refinement override: max_level = 0 (unigrid; regrid_interval left as-is)"
+  else
   sed -i \
     -e "s|^max_level[[:space:]]*=.*|max_level = ${WHM_MAX_LEVEL}|" \
     -e "s|^regrid_interval[[:space:]]*=.*|regrid_interval = ${ri_list% }|" \
     "${RUN_PARAMS}"
   echo "[whm] refinement override: max_level = ${WHM_MAX_LEVEL}, regrid_interval = ${ri_list% }"
+  fi
 fi
 
 # ---------------------------------------------------------------------------

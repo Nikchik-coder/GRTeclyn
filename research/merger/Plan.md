@@ -87,7 +87,27 @@ The sign-dependence result is the strongest predictor: outcomes bifurcate into b
 Status legend: `- [ ]` not started · `- [x]` done (date) · **GO/NO-GO** marks a gate that
 must be green before the next phase is allowed to consume GPU time.
 
-> ## 🛑 EXECUTION BLOCKED — 2026-08-28
+> ## ⚠️ EXECUTION REDIRECTED — 2026-08-28 (was BLOCKED, same day)
+>
+> **The geometry blocker is cleared and the block is lifted, but Phases 3 – 6 do not
+> simply resume.** Work now runs through the staged plan at the top of
+> [FIx.md](FIx.md), which supersedes Phase 3's ordering.
+>
+> What changed: the throat is no longer a Bowen–York puncture. `wormhole_id_type = 1`
+> builds a **regular massive Ellis–Bronnikov drainhole**, which earns its ADM mass from
+> the lapse (α = e^u) instead of from a m/(2r) term in the conformal factor. Measured
+> 2026-08-28: χ at the minimal surface is 0.17, one cell there is **0.31 proper units
+> against a throat of areal radius 3.89** (the puncture: 6.2 against 4.5), and refinement
+> *sharpens* the throat — R_min recovered to 0.01 % at `max_level` 1 and 0.06 % at 2,
+> where the puncture lost it entirely. It is also an exact static solution, so unlike the
+> superposed puncture data it satisfies both constraints identically at t = 0.
+>
+> What is still open: no matter model has been run on the new geometry, and the exit
+> condition's charge half cannot be posed until the real phantom scalar is swapped for a
+> charged one. **Two-throat data is the next unsolved problem** (FIx.md Stage 2), not the
+> head-on itself.
+>
+> The original block, kept for the record:
 >
 > **Phases 3 – 6 are stopped. No merger run may consume GPU time until
 > [MatterDebug.md](MatterDebug.md) clears its exit condition.**
@@ -125,11 +145,20 @@ no pull at any distance: the phantom scalar's negative energy exactly cancels th
 field energy, so the 1/r "Newtonian" piece of the metric is absent and M_ADM = 0. Curved
 does not mean attracting. Two massless throats released from rest just sit there. The fix
 is the *other branch of the same solution family*: Ellis drainholes with genuine positive
-ADM mass (the Lanzhou solutions above). `wormhole_bare_mass_A/B` adds that m/(2r) piece,
+ADM mass (the Lanzhou solutions above).
+`wormhole_drainhole_mass_A/B` (with `wormhole_id_type = 1`) puts that mass in the **lapse**,
 each throat then weighs m, and the pair falls together **under its own gravity** — from
 rest for the head-on, or with transverse momenta setting the initial orbit for the
 inspiral, exactly as in every BBH run (the momenta choose the orbit; gravitational-wave
 emission does the inspiralling).
+
+> **Corrected 2026-08-28.** The original form of this decision used
+> `wormhole_bare_mass_A/B`, a Brill–Lindquist m/(2r) term added to ψ. The physics decision
+> stands; the mechanism was wrong. A puncture buys ADM mass at the price of χ → 0 **at the
+> minimal surface**, which is what made the throat unresolvable
+> ([MatterDebug.md](MatterDebug.md)). The drainhole buys the same mass from the lapse and
+> costs nothing in resolution — χ_throat only falls 0.25 → 0.15 as m/a goes 0 → 1.
+> `wormhole_bare_mass_A/B` is now **rejected outright** under `wormhole_id_type = 1`.
 
 Launch policy (2026-08-27): **every run goes through the wrapper campaign launcher**
 ([grteclyn-wrapper/scripts/campaigns/wormhole_merger/](../../grteclyn-wrapper/scripts/campaigns/wormhole_merger/)),

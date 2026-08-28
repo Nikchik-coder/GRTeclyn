@@ -42,6 +42,12 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_lapse_core_power",
                 wormhole_params.lapse_core_power, 8.0);
 
+        // Initial-data family.  0 = the original isotropic Ellis throat plus a
+        // Brill-Lindquist bare mass; 1 = the regular massive drainhole, which
+        // carries its ADM mass in the lapse instead and so keeps chi = O(1) at
+        // the throat.  Default 0 so that no archived run changes.
+        pp.load("wormhole_id_type", wormhole_params.id_type, 0);
+
         pp.load("center", wormhole_params.grid_center, center);
 
         // Throat radii.  B defaults to A (equal-throat binary); B = 0 removes
@@ -58,6 +64,15 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_bare_mass_A", wormhole_params.bare_mass_A, 0.0);
         pp.load("wormhole_bare_mass_B", wormhole_params.bare_mass_B,
                 wormhole_params.bare_mass_A);
+
+        // Drainhole ADM masses (id_type = 1).  These enter through the lapse,
+        // alpha = e^{u}, not through the conformal factor, so unlike
+        // wormhole_bare_mass they cost nothing in resolution at the throat.
+        // B defaults to A (equal-mass binary).
+        pp.load("wormhole_drainhole_mass_A", wormhole_params.drainhole_mass_A,
+                0.0);
+        pp.load("wormhole_drainhole_mass_B", wormhole_params.drainhole_mass_B,
+                wormhole_params.drainhole_mass_A);
 
         // Throat positions, as offsets relative to `center`.  B defaults to the
         // mirror image of A, which is the symmetric binary.
@@ -158,15 +173,86 @@ class SimulationParameters : public SimulationParametersBase
 
     void check_params()
     {
+        check_parameter("wormhole_id_type", wormhole_params.id_type,
+                        (wormhole_params.id_type == 0) ||
+                            (wormhole_params.id_type == 1),
+                        "must be 0 (isotropic Ellis + Brill-Lindquist bare "
+                        "mass, the original) or 1 (regular massive drainhole)");
+
         check_parameter("wormhole_initial_lapse_type",
                         wormhole_params.initial_lapse_type,
                         (wormhole_params.initial_lapse_type >= 0) &&
-                            (wormhole_params.initial_lapse_type <= 4),
+                            (wormhole_params.initial_lapse_type <= 6),
                         "must be 0 (flat), 1 (sqrt(chi)), 2 (1-3ln(chi)), "
-                        "3 (chi) or 4 (origin-isolating).  Type 4 is the one "
-                        "to use with AMR: a flat lapse NaNs at max_level >= 3 "
-                        "because refining the throat drags cells into the "
-                        "compactified origin where chi ~ r^4.");
+                        "3 (chi), 4 (origin-isolating), 5 (the drainhole's "
+                        "exact static lapse e^u) or 6 (5 x the type-4 collar). "
+                        " With id_type = 0 use type 4 for AMR: a flat lapse "
+                        "NaNs at max_level >= 3 because refining the throat "
+                        "drags cells into the compactified origin where "
+                        "chi ~ r^4.  With id_type = 1 use 5, or 6 under AMR.");
+
+        // The two mass knobs belong to different initial-data families and
+        // mixing them is always a mistake, not a blend: bare_mass is the very
+        // puncture that id_type = 1 exists to remove, and drainhole_mass has no
+        // meaning without the e^{2u} conformal factor that id_type = 0 lacks.
+        check_parameter("wormhole_bare_mass_A/B",
+                        wormhole_params.bare_mass_A + wormhole_params.bare_mass_B,
+                        (wormhole_params.id_type == 0) ||
+                            ((wormhole_params.bare_mass_A == 0.0) &&
+                             (wormhole_params.bare_mass_B == 0.0)),
+                        "is a Brill-Lindquist puncture and must be zero when "
+                        "wormhole_id_type = 1: adding it drives chi -> 0 at "
+                        "the throat, which is exactly the failure the "
+                        "drainhole branch exists to remove.  Use "
+                        "wormhole_drainhole_mass_A/B instead.");
+
+        check_parameter("wormhole_drainhole_mass_A/B",
+                        wormhole_params.drainhole_mass_A +
+                            wormhole_params.drainhole_mass_B,
+                        (wormhole_params.id_type == 1) ||
+                            ((wormhole_params.drainhole_mass_A == 0.0) &&
+                             (wormhole_params.drainhole_mass_B == 0.0)),
+                        "is ignored unless wormhole_id_type = 1.  Set "
+                        "wormhole_id_type = 1, or use wormhole_bare_mass_A/B.");
+
+        check_parameter("wormhole_drainhole_mass_A",
+                        wormhole_params.drainhole_mass_A,
+                        wormhole_params.drainhole_mass_A >= 0.0,
+                        "must be >= 0 (it is the throat's ADM mass)");
+        check_parameter("wormhole_drainhole_mass_B",
+                        wormhole_params.drainhole_mass_B,
+                        wormhole_params.drainhole_mass_B >= 0.0,
+                        "must be >= 0 (it is the throat's ADM mass)");
+
+        // alpha = e^{u} is part of the drainhole solution, not a gauge taste:
+        // with any other initial lapse the configuration is not static and
+        // starts moving for a reason that has nothing to do with the binary.
+        warn_parameter("wormhole_initial_lapse_type",
+                       wormhole_params.initial_lapse_type,
+                       (wormhole_params.id_type == 0) ||
+                           (wormhole_params.initial_lapse_type == 5) ||
+                           (wormhole_params.initial_lapse_type == 6),
+                       "is not the drainhole's own static lapse.  With "
+                       "wormhole_id_type = 1 the exact static lapse is "
+                       "alpha = e^{u} (type 5, or 6 under AMR); anything else "
+                       "makes the initial data non-static by construction.");
+
+        // chi at the throat is e^{2u(m)} / Omega^2 and falls monotonically with
+        // m/a: 0.25 at m/a = 0, 0.19 at 0.3, 0.15 at 1.0.  Past about 1 the
+        // proper cell width at the throat starts climbing back towards the
+        // puncture values this branch exists to escape.
+        const double a_max =
+            std::max(wormhole_params.b0_A, wormhole_params.b0_B);
+        const double m_drain_max = std::max(wormhole_params.drainhole_mass_A,
+                                            wormhole_params.drainhole_mass_B);
+        warn_parameter("wormhole_drainhole_mass_A/B", m_drain_max,
+                       (wormhole_params.id_type == 0) || (a_max <= 0.0) ||
+                           (m_drain_max <= a_max),
+                       "exceeds the throat radius.  chi at the throat falls "
+                       "with m/a (0.25 at 0, 0.19 at 0.3, 0.15 at 1), so a "
+                       "large ratio gives back the resolution the drainhole "
+                       "branch was adopted to gain.  Prefer a bigger throat "
+                       "over a heavier one.");
 
         check_parameter("wormhole_throat_radius_A", wormhole_params.b0_A,
                         wormhole_params.b0_A > 0.0, "must be positive");
@@ -204,7 +290,8 @@ class SimulationParameters : public SimulationParametersBase
         // point, and a coincidence check would reject a perfectly valid
         // single-throat run.
         const bool object_B_absent = (wormhole_params.b0_B == 0.0) &&
-                                     (wormhole_params.bare_mass_B == 0.0);
+                                     (wormhole_params.bare_mass_B == 0.0) &&
+                                     (wormhole_params.drainhole_mass_B == 0.0);
 
         const double dx_sep = wormhole_params.centerA[0] - wormhole_params.centerB[0];
         const double dy_sep = wormhole_params.centerA[1] - wormhole_params.centerB[1];
@@ -217,23 +304,25 @@ class SimulationParameters : public SimulationParametersBase
 
         // The superposition error scales as (b/d)^2; warn once it stops being
         // a small correction.  There is no superposition with one object.
-        const double b_max =
-            std::max(wormhole_params.b0_A, wormhole_params.b0_B);
         warn_parameter("wormhole_centerA/B", separation,
-                       object_B_absent || (separation > 4.0 * b_max),
+                       object_B_absent || (separation > 4.0 * a_max),
                        "throats are close enough that the analytic "
                        "superposition error (O(b^2/d^2)) is no longer small; "
                        "prefer constraint-solved initial data at this "
                        "separation");
 
-        // Bare masses reintroduce a BBH-like O(m/d) superposition error.
-        const double m_total =
-            wormhole_params.bare_mass_A + wormhole_params.bare_mass_B;
-        warn_parameter("wormhole_bare_mass_A/B", m_total,
+        // Mass of either kind reintroduces a BBH-like O(m/d) superposition
+        // error, because both give the one-body solution a 1/r tail.
+        const double m_total = wormhole_params.bare_mass_A +
+                               wormhole_params.bare_mass_B +
+                               wormhole_params.drainhole_mass_A +
+                               wormhole_params.drainhole_mass_B;
+        warn_parameter("wormhole_bare_mass/drainhole_mass_A/B", m_total,
                        object_B_absent || (m_total < 0.2 * separation),
-                       "bare masses are large enough that the O(m/d) "
-                       "superposition error is no longer small; prefer "
-                       "constraint-solved initial data (Route B)");
+                       "masses are large enough that the O(m/d) superposition "
+                       "error is no longer small; prefer the Helfer/Ning "
+                       "conformal-factor correction or constraint-solved "
+                       "initial data (Route B)");
 
         // A massless throat is ultrastatic (M_ADM = 0): two of them do not
         // attract, so with no bare mass, no momenta and full support the run
@@ -244,14 +333,15 @@ class SimulationParameters : public SimulationParametersBase
                                   (wormhole_params.momentumB[0] != 0.0) ||
                                   (wormhole_params.momentumB[1] != 0.0) ||
                                   (wormhole_params.momentumB[2] != 0.0);
-        warn_parameter("wormhole_bare_mass_A/B", m_total,
+        warn_parameter("wormhole_bare_mass/drainhole_mass_A/B", m_total,
                        (m_total > 0.0) || any_momentum ||
                            (wormhole_params.support_strength != 1.0),
-                       "both bare masses are zero, all momenta are zero and "
-                       "the support is at full strength: massless throats do "
-                       "not attract, so the pair will not fall together.  Set "
-                       "wormhole_bare_mass_A/B > 0 for a gravity-driven "
-                       "merger.");
+                       "every mass is zero, all momenta are zero and the "
+                       "support is at full strength: massless throats are "
+                       "ultrastatic (M_ADM = 0) and do not attract, so the "
+                       "pair will not fall together.  Set "
+                       "wormhole_drainhole_mass_A/B > 0 (with "
+                       "wormhole_id_type = 1) for a gravity-driven merger.");
 
         // A stray Bowen-York term with nothing at its centre is valid data
         // but pure junk radiation - flag it in the single-throat mode.

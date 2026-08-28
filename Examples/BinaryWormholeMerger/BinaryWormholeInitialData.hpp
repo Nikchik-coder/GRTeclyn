@@ -79,6 +79,61 @@
     massless field; it is NOT free if phantom_mass != 0, and SimulationParameters
     warns in that case.
 
+    ---- ID TYPE 1: THE REGULAR MASSIVE DRAINHOLE (recommended) -------------
+    Everything above is id_type = 0, and it has a measured, fatal flaw: the
+    bare-mass term is a Brill-Lindquist puncture, so psi -> m/(2r) and chi -> 0
+    AT THE THROAT ITSELF.  The minimal surface sits at r = m/2 where chi = 1/16,
+    i.e. the proper cell width dx/sqrt(chi) there is 4 dx, and it keeps growing
+    inwards - measured 6.2 proper units at dx = 0.5 on an m = 2 solve, against a
+    throat of areal radius 4.5.  One cell was wider than the throat, and no
+    matter model could be evaluated on the geometry (research/merger/MatterDebug.md).
+
+    id_type = 1 earns the same ADM mass from the LAPSE instead, and leaves the
+    spatial conformal factor bounded.  With the Ellis coordinate
+
+        X     = (r - a^2/(4 r)) / a,        Omega = 1 + a^2/(4 r^2),
+
+    the massive Ellis-Bronnikov drainhole is, exactly,
+
+        u     = (m/a) (atan X - pi/2)                 -> 0 at infinity
+        alpha = e^{u}                                 the exact static lapse
+        gamma_ij = e^{-2u} Omega^2 delta_ij   =>  chi = e^{2u} / Omega^2
+        phi   = sqrt(a^2 + m^2) / (a sqrt(4 pi)) * atan X
+        K = 0,  A_ij = 0,  Pi = 0.
+
+    a is `wormhole_throat_radius_X` (at m = 0 it IS the areal throat radius) and
+    m is `wormhole_drainhole_mass_X`, which is the ADM mass.  Setting m = 0
+    recovers the massless Ellis throat of id_type = 0 with bare_mass = 0, so the
+    two branches agree where they overlap.
+
+    This is an exact static solution of Einstein + massless phantom scalar, so
+    for a SINGLE throat both constraints hold identically at t = 0 - unlike the
+    superposed puncture data, which carried a Hamiltonian defect by construction.
+
+    Properties that are derived, not assumed (verified numerically by
+    grteclyn-wrapper/scripts/validation/drainhole_throat_check.py):
+
+      * the minimal surface is at l = m, i.e. r = (m + sqrt(m^2 + a^2)) / 2 -
+        NOT at l = 0, which is where the massless case would put it;
+      * R_min = e^{-u(m)} sqrt(m^2 + a^2);
+      * chi at the throat stays in [0.15, 0.25] for m/a in [0, 1], so the proper
+        cell width there is 2.0-2.6 dx whatever the mass.  That is the point of
+        the whole exercise: mass no longer costs resolution;
+      * the genuinely unresolvable region (chi < 0.01) is the compactified far
+        universe and it sits well INSIDE the minimal surface (0.98 against a
+        throat at 2.69 for a = 4, m = 1.2), so lapse type 6 can freeze it
+        without touching the throat.
+
+    Superposition for two throats, in the same excess form as id_type = 0:
+
+        u_sum = u_A + u_B,        alpha = e^{u_sum}
+        psi   = 1 + [sqrt(Omega_A) - 1] + [sqrt(Omega_B) - 1],
+        chi   = e^{2 u_sum} psi^{-4},       phi = phi_A + phi_B.
+
+    Each u_X vanishes at infinity, so the ADM masses add.  Exact for one throat;
+    for two the error is the usual O(a^2/d^2) plus O(m/d) - Plan.md Stage 2
+    replaces it with the Helfer/Ning correction and then a CTTK solve.
+
     Momentum: Bowen-York extrinsic curvature per throat,
 
         Ahat_ij = (3 / (2 r^2)) [ P_i n_j + P_j n_i - (delta_ij - n_i n_j) P.n ],
@@ -108,8 +163,15 @@ class BinaryWormholeInitialData
         //! Grid center used for index -> physical coordinate mapping
         std::array<double, AMREX_SPACEDIM> grid_center;
 
+        //! Initial-data family: 0 = isotropic Ellis + Brill-Lindquist bare
+        //! mass (the original, kept so archived runs reproduce), 1 = regular
+        //! massive drainhole (see the class comment).  Default 0.
+        int id_type;
+
         //! Throat radii.  b0_B = 0 removes throat B entirely (the
-        //! single-throat regression mode of Plan.md Phases 1-2).
+        //! single-throat regression mode of Plan.md Phases 1-2).  Under
+        //! id_type = 1 this is the drainhole scale a, which at m = 0 is the
+        //! areal throat radius exactly.
         double b0_A;
         double b0_B;
 
@@ -119,6 +181,12 @@ class BinaryWormholeInitialData
         //! under its own gravity (see the class comment).
         double bare_mass_A;
         double bare_mass_B;
+
+        //! Drainhole ADM masses (id_type = 1 only).  Unlike bare_mass these
+        //! enter through the lapse, not the conformal factor, so raising them
+        //! does NOT degrade chi at the throat.
+        double drainhole_mass_A;
+        double drainhole_mass_B;
 
         //! Throat positions, as OFFSETS RELATIVE TO grid_center (Coordinates
         //! has already subtracted grid_center by the time these are used).
@@ -188,11 +256,33 @@ class BinaryWormholeInitialData
         {
             psi += sqrt(1.0 + (data_t)bB_sq / (4.0 * rB2_reg)) - 1.0;
         }
-        psi += (data_t)(0.5 * m_params.bare_mass_A) / rA +
-               (data_t)(0.5 * m_params.bare_mass_B) / rB;
+
+        // u_sum is the drainhole static-lapse exponent and it is what carries
+        // the ADM mass under id_type = 1: chi = e^{2 u_sum} psi^{-4} and
+        // alpha = e^{u_sum}.  Under id_type = 0 it stays identically zero, so
+        // exp(2 u_sum) is exactly 1.0 and every archived run reproduces bit for
+        // bit; the bare-mass puncture is added to psi instead, which is what
+        // drove chi -> 0 at the throat.
+        data_t u_sum = 0.0;
+        if (m_params.id_type == 1)
+        {
+            if (bA > 0.0 && m_params.drainhole_mass_A != 0.0)
+            {
+                u_sum += drainhole_u(rA, bA, m_params.drainhole_mass_A);
+            }
+            if (bB > 0.0 && m_params.drainhole_mass_B != 0.0)
+            {
+                u_sum += drainhole_u(rB, bB, m_params.drainhole_mass_B);
+            }
+        }
+        else
+        {
+            psi += (data_t)(0.5 * m_params.bare_mass_A) / rA +
+                   (data_t)(0.5 * m_params.bare_mass_B) / rB;
+        }
 
         const data_t psi2 = psi * psi;
-        data_t chi        = 1.0 / (psi2 * psi2);
+        data_t chi        = exp(2.0 * u_sum) / (psi2 * psi2);
         if (chi < (data_t)1.0e-10)
             chi = (data_t)1.0e-10;
 
@@ -240,27 +330,31 @@ class BinaryWormholeInitialData
         // ---- Matter: superposed phantom scalar ------------------------------
         // One atan profile per PRESENT throat (b_X > 0).  A bare-mass-only
         // puncture carries no scalar - it is a plain Brill-Lindquist term.
-        const data_t norm = (data_t)(1.0 / sqrt(4.0 * M_PI));
-        data_t phi        = 0.0;
-        int n_throats     = 0;
+        // The amplitude is 1/sqrt(4 pi) for a massless throat and
+        // sqrt(a^2+m^2)/(a sqrt(4 pi)) for the drainhole - the field-equation
+        // constraint 4 pi C^2 = a^2 + m^2 that makes the closed form an exact
+        // solution rather than an ansatz.  It reduces to the first at m = 0.
+        data_t phi           = 0.0;
+        double phi_asymptote = 0.0;
         if (bA > 0.0)
         {
+            const double normA = phi_norm(bA, m_params.drainhole_mass_A);
             const data_t argA = (rA - (data_t)bA_sq / (4.0 * rA)) / (data_t)bA;
-            phi += norm * atan(argA);
-            ++n_throats;
+            phi += (data_t)normA * atan(argA);
+            phi_asymptote += normA * (M_PI / 2.0);
         }
         if (bB > 0.0)
         {
+            const double normB = phi_norm(bB, m_params.drainhole_mass_B);
             const data_t argB = (rB - (data_t)bB_sq / (4.0 * rB)) / (data_t)bB;
-            phi += norm * atan(argB);
-            ++n_throats;
+            phi += (data_t)normB * atan(argB);
+            phi_asymptote += normB * (M_PI / 2.0);
         }
 
         if (m_params.subtract_phi_asymptote != 0)
         {
             // Each atan -> +pi/2 as r -> infinity.
-            phi -= (data_t)((double)n_throats * (1.0 / sqrt(4.0 * M_PI)) *
-                            (M_PI / 2.0));
+            phi -= (data_t)phi_asymptote;
         }
 
         // NOTE: there is deliberately NO seeded Gaussian perturbation here.
@@ -345,24 +439,32 @@ class BinaryWormholeInitialData
             // A binary needs the product: each throat carries its own
             // compactified origin and neither can be put on a symmetry
             // boundary, which is how the single-throat example avoided this.
-            lapse = 1.0;
-            if (m_params.b0_A > 0.0 || m_params.bare_mass_A > 0.0)
+            lapse = collar_factor(rA, rB);
+        }
+        else if (m_params.initial_lapse_type == 5 ||
+                 m_params.initial_lapse_type == 6)
+        {
+            // Type 5: the drainhole's OWN exact static lapse, alpha = e^{u_sum}.
+            // This is not a gauge preference, it is part of the solution: the
+            // massive drainhole is static only with this lapse, and it is the
+            // reason chi can stay O(1) at the throat while the object still has
+            // ADM mass.  It tends to 1 at infinity, so 1+log slicing leaves it
+            // alone until the geometry actually moves.  Under id_type = 0
+            // u_sum is zero and this is just alpha = 1, i.e. type 0.
+            //
+            // Type 6: the same thing multiplied by the type-4 collar, for AMR.
+            // chi still vanishes like r^4 at each compactified origin - that
+            // is intrinsic to holding a wormhole in one Cartesian box, not a
+            // defect of this branch - so deep refinement still needs the origin
+            // frozen.  What HAS changed is that the collar no longer has to
+            // fight the throat for room: the region with chi < 0.01 now sits
+            // well inside the minimal surface (0.98 against a throat at 2.69
+            // for a = 4, m = 1.2), so a collar sized to the throat scale
+            // freezes only what is genuinely unresolvable.
+            lapse = exp(u_sum);
+            if (m_params.initial_lapse_type == 6)
             {
-                const data_t core_A =
-                    (data_t)(m_params.lapse_core_fraction *
-                             (m_params.b0_A > 0.0 ? m_params.b0_A
-                                                   : m_params.bare_mass_A));
-                const data_t s = rA / core_A;
-                lapse *= 1.0 - exp(-pow(s, (data_t)m_params.lapse_core_power));
-            }
-            if (m_params.b0_B > 0.0 || m_params.bare_mass_B > 0.0)
-            {
-                const data_t core_B =
-                    (data_t)(m_params.lapse_core_fraction *
-                             (m_params.b0_B > 0.0 ? m_params.b0_B
-                                                   : m_params.bare_mass_B));
-                const data_t s = rB / core_B;
-                lapse *= 1.0 - exp(-pow(s, (data_t)m_params.lapse_core_power));
+                lapse *= collar_factor(rA, rB);
             }
         }
         if (lapse < (data_t)1.0e-10)
@@ -399,6 +501,58 @@ class BinaryWormholeInitialData
     }
 
   protected:
+    //! Static lapse exponent of one drainhole,
+    //!     u = (m/a) [ atan X - pi/2 ],   X = (r - a^2/(4 r)) / a,
+    //! which tends to 0 at infinity (so the ADM masses of several throats add)
+    //! and to -pi m / a at the compactified far infinity r -> 0.
+    template <class data_t>
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE static data_t
+    drainhole_u(const data_t r, const double a, const double m)
+    {
+        const data_t X = (r - (data_t)(a * a) / (4.0 * r)) / (data_t)a;
+        return (data_t)(m / a) * (atan(X) - (data_t)(M_PI / 2.0));
+    }
+
+    //! Amplitude of the phantom profile phi = C atan X.  The field equations
+    //! fix 4 pi C^2 = a^2 + m^2, so C = sqrt(a^2+m^2)/(a sqrt(4 pi)) once the
+    //! argument is written as X = l/a.  m = 0 gives the familiar 1/sqrt(4 pi).
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE double phi_norm(const double a,
+                                                        const double m) const
+    {
+        const double amp =
+            (m_params.id_type == 1) ? sqrt(a * a + m * m) / a : 1.0;
+        return amp / sqrt(4.0 * M_PI);
+    }
+
+    //! Origin-isolating collar, one factor per object: see lapse type 4 above
+    //! for why it exists and how f and p trade collar width against the lapse
+    //! left at the throat.  Shared by types 4 and 6.
+    template <class data_t>
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE data_t collar_factor(const data_t rA,
+                                                             const data_t rB) const
+    {
+        data_t factor = 1.0;
+        if (m_params.b0_A > 0.0 || m_params.bare_mass_A > 0.0)
+        {
+            const data_t core_A =
+                (data_t)(m_params.lapse_core_fraction *
+                         (m_params.b0_A > 0.0 ? m_params.b0_A
+                                              : m_params.bare_mass_A));
+            const data_t s = rA / core_A;
+            factor *= 1.0 - exp(-pow(s, (data_t)m_params.lapse_core_power));
+        }
+        if (m_params.b0_B > 0.0 || m_params.bare_mass_B > 0.0)
+        {
+            const data_t core_B =
+                (data_t)(m_params.lapse_core_fraction *
+                         (m_params.b0_B > 0.0 ? m_params.b0_B
+                                              : m_params.bare_mass_B));
+            const data_t s = rB / core_B;
+            factor *= 1.0 - exp(-pow(s, (data_t)m_params.lapse_core_power));
+        }
+        return factor;
+    }
+
     //! Accumulate one Bowen-York term into the (still conformal-unscaled)
     //! Ahat_ij.  (nx,ny,nz) is the unit radial vector from the throat and r2
     //! the (regularised) squared distance to it.

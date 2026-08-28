@@ -1,6 +1,21 @@
 # Matter Debug — why no matter model can currently be tested on this throat
 
-> **Status 2026-08-28: BLOCKING.** The merger execution plan
+> **Status 2026-08-28: the geometry half is FIXED; the matter question is reopened, not
+> answered.** The throat is no longer a Brill-Lindquist puncture. The
+> [regular massive drainhole](FIx.md) carries its ADM mass in the lapse instead of in the
+> conformal factor, and it measures χ = 0.16–0.21 at the minimal surface against the
+> puncture's effective ~0.006, so one cell there is **0.31 proper units instead of 6.2**.
+> Refinement now sharpens the throat rather than erasing it: R_min is recovered to 0.01 %
+> at `max_level` 1 and 0.06 % at 2, where the puncture lost the throat entirely. Execution
+> resumes through the staged plan at the top of [FIx.md](FIx.md), **not** by picking
+> Plan.md Phase 3 back up where it stopped.
+>
+> What is *not* settled: no matter model has yet been run on the new geometry, and the
+> exit condition's second half — Noether charge conserved to a few per cent — cannot even
+> be posed until the merger's real phantom scalar is swapped for a charged one. That is
+> Stage 1.
+>
+> **Superseded status (kept for the record).** The merger execution plan
 > ([Plan.md](Plan.md)) is halted at Phase 3 until the issue on this page is fixed.
 > Everything here was split out of the Plan on 2026-08-28 so that the Plan stays a plan
 > and this stays a debug log. All runs from this investigation are **stopped**.
@@ -295,9 +310,13 @@ member of this family is a traversable throat at all.
 | 5 | Accept that both throats destabilise and study *that* | the bifurcation this document already predicts | Legitimate science, but a different paper — decide deliberately, not by discovering it late |
 | 6 | Reduce the t = 0 seed by other means | ~0.25 of window per decade | Nowhere near sufficient alone |
 | 7 | Refine the grid | nothing — measured, not assumed | Ruled out |
-| 8 | **Replace the singular puncture throat with a regular (finite-χ) Ellis–Bronnikov throat** | proper cell width ≈ dx at the throat instead of 6× the throat radius; makes every other row testable | **Now the prerequisite for all of them.** Nothing above can be measured until this is done |
+| 8 | **Replace the singular puncture throat with a regular (finite-χ) Ellis–Bronnikov throat** | proper cell width ≈ dx at the throat instead of 6× the throat radius; makes every other row testable | **DONE 2026-08-28.** `wormhole_id_type = 1` in `BinaryWormholeMerger` — the massive drainhole, ADM mass in the lapse. Measured: χ_throat 0.16–0.21, one cell 0.31 proper units, R_min preserved to ≤ 0.06 % at `max_level` 0/1/2. Rows 1, 3 and 4 are unblocked |
 
-**Recommended reading of this:** do 2 now. Do **8 before anything else in this table** —
+**Recommended reading of this, as of 2026-08-28: row 8 is done, so read the table again.**
+Rows 1, 3 and 4 were blocked only by the geometry and are now testable; row 7 (refine the
+grid) stays ruled out, but for a different reason — refinement is no longer *needed* at the
+throat, not merely useless. Row 2 is still worth doing on its own. The original reading
+follows. Do 2 now. Do **8 before anything else in this table** —
 as of 2026-08-28 no matter model can be evaluated on a puncture throat at any grid this
 project can afford, so rows 1, 3 and 4 are all blocked behind it, and Phase 3 cannot be
 committed to any of them. The open work after that is still a **two-centre solve**, which
@@ -315,7 +334,7 @@ made it visible.
 | Risk | Why it bites | Mitigation |
 | --- | --- | --- |
 | **Solved initial data contains no throat** | the throat is a Bowen–York puncture, ψ = 1 + m/(2r), whose minimal surface sits at isotropic r = m/2; the `.gridinit` bridge flattens the solve to the evolution's level-0 dx, so a throat below one cell is absent from the data and AMR cannot put it back. At the family's standard `bh1_bare_mass` = 0.25 and dx = 0.5 the throat is at r = 0.125 — **a quarter of a cell**. Measured: R = r/√chi rises monotonically from the first cell out, no interior minimum | `THROAT_MASS` now overrides the puncture mass, and at m ≥ 4 dx the throat does appear in the file (m = 2, dx = 0.5: interior minimum at r = 1.299, R = 4.507). **But that is not enough, and the coordinate rule is superseded** — see the next two rows. **The binding constraint on Phase 3 is resolution, not matter** |
-| **Refining below the gridinit's dx destroys the throat** | prolongation cannot recover sub-cell structure, so it fills the puncture interior with a nearly constant χ ≈ 0.0064; R then rises linearly from the centre and the interior minimum is gone **before the first step**. Measured 2026-08-28 on identical data: `max_level` 0 keeps the throat at t = 0, `max_level` 1 and 2 both lose it. Level-0 ingestion itself is byte-exact, so the file is not the problem | run throat diagnostics at **`max_level = 0` only**, or teach the evolution to set χ analytically at the puncture instead of interpolating. Every AMR run in this family is void as a throat measurement |
-| **A puncture throat cannot be resolved in proper distance** | the evolution resolves dx/√χ, and χ → 0 at a puncture. On the m = 2 gridinit — which satisfies m ≥ 4 dx and does contain a throat of areal radius 4.5 — the innermost cell is **6.2 proper units wide**, wider than the throat itself, and the whole throat region spans ~13 proper units in 5 cells. Reaching ~0.5 proper units needs dx ≈ 0.04, i.e. N ≈ 1600 uniform (~7 TB of gridinit). Raising the mass instead does not work: at m = 4 the GRTresna solve stalls at 99.08 % Ham residual and falsely reports convergence | **use a regular, finite-χ throat**, where proper cell width ≈ dx. Until then no matter model can be evaluated on this geometry, this one included |
+| **Refining below the gridinit's dx destroys the throat** (Route B only) | prolongation cannot recover sub-cell structure, so it fills the puncture interior with a nearly constant χ ≈ 0.0064; R then rises linearly from the centre and the interior minimum is gone **before the first step**. Measured 2026-08-28 on identical data: `max_level` 0 keeps the throat at t = 0, `max_level` 1 and 2 both lose it. Level-0 ingestion itself is byte-exact, so the file is not the problem | run throat diagnostics at **`max_level = 0` only**, or teach the evolution to set χ analytically at the puncture instead of interpolating. Every AMR run in this family is void as a throat measurement. **Scope narrowed 2026-08-28:** this is a property of *file-based* initial data. Route A's analytic ID is evaluated at each level's own dx by `BinaryWormholeLevel::initData`, so nothing is prolonged and refinement adds real detail — measured, R_min recovered to 0.01 % at `max_level` 1. The risk stands undiminished for Route B |
+| ~~**A puncture throat cannot be resolved in proper distance**~~ **RESOLVED 2026-08-28** | the evolution resolves dx/√χ, and χ → 0 at a puncture. On the m = 2 gridinit — which satisfies m ≥ 4 dx and does contain a throat of areal radius 4.5 — the innermost cell is **6.2 proper units wide**, wider than the throat itself, and the whole throat region spans ~13 proper units in 5 cells. Reaching ~0.5 proper units needs dx ≈ 0.04, i.e. N ≈ 1600 uniform (~7 TB of gridinit). Raising the mass instead does not work: at m = 4 the GRTresna solve stalls at 99.08 % Ham residual and falsely reports convergence | **Done.** `wormhole_id_type = 1` is the regular drainhole: χ_throat = 0.17, one cell 0.31 proper units at `max_level` 2, against a throat of areal radius 3.89. The ADM mass moved into the lapse (α = e^u), which is what let mass and resolution stop competing |
 | **The Noether charge is not conserved on this geometry** | Q falls −10.52 → −2.09 (**−80 %**) by t = 14 while the field amplitude barely moves and the boundary flux is ~1e-11 — so it is destroyed in the interior, fastest over exactly the interval in which the throat closes. The quantity whose conservation was supposed to give the matter a preferred size is the quantity dissolving | a consequence of the row above, not an independent fault. **Treat charge conservation as a resolution diagnostic**: until Q holds to a few per cent, no collapse or survival time from this family means anything |
 | Throat readout lands on the innermost cell | R = r/√chi *diverges* at the compactified origin, but the unresolved inner cells report it as small, so a bare argmin tracks a "collapse" that is not happening — 0.152 instead of 0.498 on a b = 0.5 throat | `--areal-min-radius` excludes an inner ball. **Archived `areal_radius.dat` columns predating this are unreliable** — several older runs report exactly dx/2, i.e. pure grid artefact |
