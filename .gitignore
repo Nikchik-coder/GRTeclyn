@@ -97,3 +97,9 @@ __pycache__/
 # absolute output/plotfile paths of whoever ran it -- home dirs and scratch
 # paths that must never enter git.  It is a run artefact, not configuration.
 parameters_and_version.txt
+
+# Frames belong to the run that produced them, under runs/<campaign>/<run>/frames.
+# consume_plotfiles once defaulted --frames-out into this source directory, so
+# PNGs from unrelated runs accumulated here and 16 of them got committed.  The
+# default now points at the working directory; this keeps any stragglers out.
+grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/*/

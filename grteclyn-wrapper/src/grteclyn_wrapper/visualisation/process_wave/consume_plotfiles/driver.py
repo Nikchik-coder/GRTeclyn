@@ -148,7 +148,7 @@ def main() -> None:
         help="Scan every Nth plotfile instead of all of them (default 1). The last "
              "plotfile is always scanned.",
     )
-    parser.add_argument("--frames-out", default=_default_frames_out_dir(), help="Frames output base dir (default: grteclyn_wrapper/visualisation/visualize).")
+    parser.add_argument("--frames-out", default=_default_frames_out_dir(), help="Frames output base dir (default: ./frames in the working directory).")
     parser.add_argument(
         "--projection-fields",
         nargs="+",

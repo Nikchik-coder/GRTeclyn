@@ -3,7 +3,8 @@ from __future__ import annotations
 import os
 from typing import Dict
 
-from ....core.config import VISUALISATION_DIR, default_sim_data_dir
+from ....core.config import default_sim_data_dir
+
 
 def _env_int(name: str, default: int) -> int:
     raw = os.environ.get(name, "").strip()
@@ -27,7 +28,17 @@ def _default_data_dir() -> str:
 
 
 def _default_frames_out_dir() -> str:
-    return str(VISUALISATION_DIR / "visualize")
+    """Frames belong to the run that produced them, not to the source tree.
+
+    This used to return ``VISUALISATION_DIR / "visualize"``, so any invocation
+    that forgot ``--frames-out`` wrote PNGs into the package directory, where
+    frames from unrelated runs piled up and some were committed.  Every real
+    launcher passes ``--frames-out`` (campaigns go through
+    ``core/plot_consumer.py``, which sets it to the episode's frames dir), so
+    this default is only reached by ad-hoc calls -- and for those the working
+    directory is both harmless and where the caller will look.
+    """
+    return os.path.join(os.getcwd(), "frames")
 
 
 def _frames_auto_zlim_enabled(explicit: bool | None = None) -> bool:

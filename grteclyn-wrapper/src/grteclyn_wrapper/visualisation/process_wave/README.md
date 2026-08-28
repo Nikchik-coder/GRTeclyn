@@ -184,7 +184,7 @@ uv run python -m grteclyn_wrapper.visualisation.process_wave.plot_extracted_psi4
 - `--frames-zoom WIDTH`: plot width (code units)
 - `--frames-center x y z`: explicit plot center
 - `--frames-corner`: corner mode for symmetry-reduced domains
-- `--frames-out PATH`: base output dir for frames (default: `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize`)
+- `--frames-out PATH`: base output dir for frames (default: `./frames` in the working directory; every launcher sets this explicitly to the run's own frames dir)
 - `--delete`: delete processed plotfile directories after successful extraction
 - `--keep-last N`: keep newest N plotfiles (don’t delete them)
 
