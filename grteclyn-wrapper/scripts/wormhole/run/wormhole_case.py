@@ -254,6 +254,11 @@ data_subpath = "data"
 
 print_progress_only_to_rank_0 = 1
 
+# Required since the 2026-02 upstream merge: ParticleInterpolator does a hard
+# `get` on this, and nothing else in the parameter set adds it, so the run
+# SIGABRTs at the first spherical extraction (right after plotfile 00000).
+particle_interpolator.verbosity = 0
+
 recipe_initial_data_file = "{gridinit}"
 wormhole_matter_model = "complex_scalar"
 

@@ -348,28 +348,36 @@ really does die. Note also that θ₊ ≤ 0 near a puncture is not by itself a d
 horizon: an Einstein–Rosen bridge has a minimal surface at t = 0 by construction. The
 matter loss and the lapse collapse are the load-bearing numbers, not the θ₊ flag.
 
-**The cause is in the run's name: ω = 0.** The whole argument for a Q-ball is that a
-conserved U(1) charge gives the lump a preferred size. The internal frequency is what
-creates that charge, and it was zero — `Q_total` is 1e-8, i.e. exactly nothing, for the
-entire run. That configuration is not a Q-ball. It is an uncharged exotic blob sitting on
-a throat, and blobs disperse.
+**What the cause is not.** A first pass at this blamed the internal frequency: the run is
+tagged `omega_p0p00`, and with ω = 0 there would be no Noether charge and so no preferred
+size. That is wrong — the tag records the solver's *target* frequency while the initial
+data carries the *solved* eigenfrequency, and the run's charge is Q = −3.30, conserved to
+4.7 % over t = 0 → 8. It is charged. Recorded here because the tag will mislead the next
+reader the same way.
 
-**But the mechanism is real, and the archive shows it.** Over the same pre-ramp window
-t = 0 → 8, with everything else comparable:
+**What distinguishes it from the runs that behave, then, is still open.** Over the same
+pre-ramp window t = 0 → 8:
 
-| t = 0 → 8 | ω = 0 (the "proven" run) | ω = 0.25, L = 128 N = 256 | ω = 0.25, L = 64 ml = 3 |
+| t = 0 → 8 | the "proven" run (m = 0) | ω = 0.25 m = 1, L = 128 N = 256 | ω = 0.25 m = 1, L = 64 ml = 3 |
 | --- | --- | --- | --- |
-| Noether charge | 0 → 0 | −1.4724 → −1.3017 (−11.6 %) | −1.4726 → −1.2919 (−12.3 %) |
-| `rho_sum` | 23.6 → 10.0 (**42 %**) | 13.3 → 29.6 (223 %) | 13.3 → 31.6 (238 %) |
+| charge drift | **−4.7 %** | −0.5 % | −0.1 % |
+| `rho_sum` | 23.6 → 10.0 (**42 % kept**) | 13.3 → 29.6 (223 %) | 13.3 → 31.6 (238 %) |
 | `min_chi` | 0.091 → 0.194 | 0.086 → 0.117 | 0.084 → 0.117 |
+| J_z | 0 | −1.47 → −1.30 | −1.47 → −1.29 |
 
-Charge is the discriminator, exactly as the physics says. The two charged runs are at
-different box sizes and different refinement depths and agree with each other to 7 %, so
-this is a property of the configuration and not of the grid. Two caveats kept in view: the
-charged runs *gain* stress-energy by a factor ≈ 2.3 rather than holding steady, which is
-not obviously benign; and every charged run in the archive also **spins** (m = 1) and also
-cuts its support at t = 8. There is no archived run that is charged, non-rotating, and
-support-held — which is precisely the run the merger needs.
+The two well-behaved runs are at different box sizes and different refinement depths and
+agree with each other to 7 %, so their behaviour is a property of the configuration, not of
+the grid. They also both **spin**, and they both cut their support at t = 8, so neither is
+the run the merger needs.
+
+The best available hypothesis for the m = 0 run's matter loss is that **its matter was
+never a stationary solution**. It was painted from the 2D Q-torus solver at m_az = 0, and
+that solver imposes axis regularity as f(0, z) = 0 — correct for a winding torus, wrong for
+a spherical lump, which should have zero *derivative* on the axis instead. It now refuses
+m_az < 1 outright for exactly this reason. A hollow, non-stationary lump disperses. This is
+a hypothesis and not a measurement: that initial data no longer exists on disk. The runs
+under test avoid the question by taking their profile from the 1D spherical Q-ball radial
+ODE solver, which has the right boundary condition.
 
 #### The throat is not in the initial data
 
@@ -571,7 +579,7 @@ produced a result worth improving.
 | θ₊ < 0 near each throat | r → 0 is the *other* infinity, not a centre — the proxy always fires there | `binary_diag_min_radius` excludes r < b/2; θ₊ is reduced as a **max per radial shell**, so a sphere counts as trapped only if θ₊ ≤ 0 all over it; only the common-centre scan is evidence of fusion |
 | φ asymptote | a plain sum of two atan profiles tends to ≈ 0.886, but the boundary condition assumes 0 | subtract the constant in the initial data (free for a massless field) |
 | Solved-ID resolution wall | the `.gridinit` bridge pins the evolution to near-unigrid | split-ID loader (Phase 7) |
-| **Throat expands before the merger finishes** | the unperturbed EB throat is a saddle *because its potential is zero* — nothing sets a preferred size. It runs away at λ = 9.012, giving a window of t ≲ 2, while free-fall at `d/b = 8` takes 8.89. Confirmed against `results/wormhole-dynamics/unperturbed` — the reference expands the same way and also dies near t ≈ 3 | **change the matter, not the separation**: `ComplexExoticScalarField` + Q-ball sextic gives the support a conserved charge and so a preferred size. **The ~11 window previously claimed here was wrong** — that run had ω = 0, i.e. no charge, lost 58 % of its matter by t = 7, and died at t = 12.3 with its support deliberately ramped off at t = 8. The charged runs behave far better over the same window but all spin and all ramp. First honest measurement under way 2026-08-28; open work after it is a two-centre solve. **Not** fixable by refinement (the t = 0 violation is identical at `max_level` 4 and 5), nor by a better seed (would need ~1e-37), nor by rescaling b (t_ff and the window are both ∝ b) |
+| **Throat expands before the merger finishes** | the unperturbed EB throat is a saddle *because its potential is zero* — nothing sets a preferred size. It runs away at λ = 9.012, giving a window of t ≲ 2, while free-fall at `d/b = 8` takes 8.89. Confirmed against `results/wormhole-dynamics/unperturbed` — the reference expands the same way and also dies near t ≈ 3 | **change the matter, not the separation**: `ComplexExoticScalarField` + Q-ball sextic gives the support a conserved charge and so a preferred size. **The ~11 window previously claimed here was wrong** — that run lost 58 % of its matter by t = 7, collapsed its lapse to 0.31 by t = 3.5, and died at t = 12.3 with its support deliberately ramped off at t = 8. The runs that behave far better over the same window all spin and all ramp, so none of them is the measurement this needs. First honest measurement under way 2026-08-28; open work after it is a two-centre solve. **Not** fixable by refinement (the t = 0 violation is identical at `max_level` 4 and 5), nor by a better seed (would need ~1e-37), nor by rescaling b (t_ff and the window are both ∝ b) |
 | Compactified origin blows up when centred | at r → 0, chi ~ r⁴ — that point is the *other* universe's infinity, and CCZ4 divides by chi. The published example dodges it with octant symmetry (`lo_boundary = 2 2 2`), which a binary cannot use: two origins, neither on a corner. Centred runs NaN in h11 on the finest level at t = 2.42 | `wormhole_initial_lapse_type = 4` buys time but is *initial data only* — the gauge relaxes and the lapse at the origin climbs back from 1e-10 to 0.33 by t ≈ 2.4, whereupon it detonates. A durable fix has to be a gauge source term, not initial data. **Open for Phase 3** |
 | Lapse collar is thinner than the stencil | the type-4 collar spans 0.053 in r; that is 0.9 cells at `max_level = 3` and 1.7 at 4, so the stencil sees a step and the run dies at t ≈ 0.2. Coarsening to escape the origin makes it strictly worse | `wormhole_lapse_core_fraction` / `_power` now expose the shape; f = 0.2, p = 4 gives 25% more collar with a bit-identical throat |
 | **Solved initial data contains no throat** | the throat is a Bowen–York puncture, ψ = 1 + m/(2r), whose minimal surface sits at isotropic r = m/2; the `.gridinit` bridge flattens the solve to the evolution's level-0 dx, so a throat below one cell is absent from the data and AMR cannot put it back. At the family's standard `bh1_bare_mass` = 0.25 and dx = 0.5 the throat is at r = 0.125 — **a quarter of a cell**. Measured: R = r/√chi rises monotonically from the first cell out, no interior minimum | `THROAT_MASS` now overrides the puncture mass. Rule: **m ≥ 4 dx** (areal radius 2m ≥ 8 dx). This collides with `d ≥ 8b` and `d ≲ L/3`, forcing N ≥ 96 and pushing free-fall from 8.89 to ≈ 50 at L = 64 / N = 128. **The binding constraint on Phase 3 is now resolution, not matter** |

@@ -33,7 +33,16 @@ def _extract_areal_radius_min(
     c = np.asarray(center, dtype=float)
     ray = ds.ray(c, [right, c[1], c[2]])
 
-    r_arr = np.asarray(ray[("index", "x")], dtype=float) - c[0]
+    # The radius must be the true |x - center|, not the x-offset alone.  When the
+    # run center falls on a cell corner -- which it does for any centred box whose
+    # center is L/2 with an even cell count -- the ray runs along a cell edge and
+    # every cell it picks up is offset in y and z by half a cell.  Ignoring that
+    # offset understates r by 70% at the innermost sample (0.25 instead of 0.433
+    # at dx = 0.5), which is exactly where the throat is.
+    dx_arr = np.asarray(ray[("index", "x")], dtype=float) - c[0]
+    dy_arr = np.asarray(ray[("index", "y")], dtype=float) - c[1]
+    dz_arr = np.asarray(ray[("index", "z")], dtype=float) - c[2]
+    r_arr = np.sqrt(dx_arr**2 + dy_arr**2 + dz_arr**2)
     chi_arr = np.asarray(ray[("boxlib", "chi")], dtype=float)
 
     order = np.argsort(r_arr)
