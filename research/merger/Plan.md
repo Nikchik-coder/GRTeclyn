@@ -309,20 +309,66 @@ black-hole merger.
 d = 8b and m = αb, t_ff = πb√(32/α) ∝ b, while λ ∝ 1/b makes the window ∝ b as well.
 The ratio is a pure number. Rescaling b moves both sides equally.
 
+### Matter available in-tree — the constraint is EB's, not the project's
+
+Everything above is a property of the **massless real phantom scalar** with a zero
+potential, which is what `ExoticScalarField` + `DefaultPotential` gives and what
+`BinaryWormholeMerger` currently uses. It is a saddle because it has no preferred
+size: nothing pulls the throat back. That is not a property of wormholes in general,
+and `Source/Matter` already carries the alternatives.
+
+| Model | Kind | Already used by |
+| --- | --- | --- |
+| `ExoticScalarField` | real, phantom | **`BinaryWormholeMerger` today**, `SupportedWormholeCollapse` |
+| `ComplexExoticScalarField` | complex, phantom, templated potential, conserved U(1) charge | `RotatingWormholeCollapse` |
+| `BiComplexScalarField` | canonical **and** phantom complex pair | `RadialRecipe` (Bondi campaign) |
+| `EffectiveTeoMatter` | prescribed rotating-wormhole stress-energy | `RotatingWormholeCollapse` |
+| `ComplexScalarField`, `ScalarField`, `DustMatter`, `NoMatter` | canonical / vacuum | — |
+
+Potentials: `DefaultPotential` (zero — **what EB uses**), `PhantomDecayPotential`
+(½m²φ²), `OscillonPotential` (real sextic, self-described as metastable),
+`ComplexScalarPotential` (**complex sextic on |Φ|², a true Q-ball**),
+`GRTresnaScalarPotential` (solver side).
+
+**A throat that outlives the EB one by 5× already exists in this repository.** The run
+`runs/rotating_wormhole/evo_omega_p0p00_m0_kappa_1p00_dx0p5_ml2_..._qball_lam170_mu614450_..._proven`
+is `ComplexExoticScalarField` with the Q-ball sextic, and — note the name — **ω = 0,
+m = 0, not rotating**:
+
+| | EB, zero potential (current) | Q-ball phantom, ω = 0 |
+| --- | --- | --- |
+| usable window | **2** | **~11** |
+| max curvature | runs away | bounded, ~0.5 |
+| throat depth | real (chi → floor) | real (chi ≈ 0.09…0.19) |
+| horizon | none | none |
+| behaviour | monotonic exponential departure | wanders and returns; no runaway |
+
+It is not eternal — it ends at t = 12.3 — but it does not run away, and 11 is the number
+that matters here, because free-fall at `d/b = 8` is 8.89. **The merger fits.**
+
+Two corrections to earlier drafts of this document follow from that. The constraint
+solver is **not** something to be built: `RotatingWormholeCollapse` already drives a
+GRTresna solve for exotic complex-scalar throats through a CLI pipeline, and it produces
+data with *zero* initial constraint defect — precisely the 1.4e-2 seed that drives the
+EB runaway. And changing matter is **not** a research programme here; it is selecting a
+model that is already implemented, already solved for, and already evolved.
+
 ### Mitigation — ranked, with what each actually buys
 
 | # | Approach | What it buys | Verdict |
 | --- | --- | --- | --- |
-| 1 | **Constraint-solved initial data (Phase 7) to lift `d/b ≥ 8`** | at d/b = 3 (d = 1.5, m = 0.5) t_ff = 2.04, which fits the window | **The only lever that closes the gap.** Promotes Phase 7 from optional Route B to a *prerequisite* for Phase 3 |
-| 2 | Sharpen the throat readout (sub-grid minimum + per-step output) | makes λ measurable, closes the Phase 2 tick | Do regardless; cheap, no new physics |
-| 3 | Reduce the t = 0 seed by any other means | ~0.25 in window per decade | Worth having, nowhere near sufficient alone |
-| 4 | Accept that both throats destabilise and study *that* | the bifurcation this document already predicts | Legitimate science, but it is a different paper — decide deliberately, not by discovering it late |
-| 5 | Refine the grid | nothing — measured, not assumed | Ruled out |
-| 6 | Switch to a throat model that is not a saddle | removes the constraint entirely | Largest change; last resort |
+| 1 | **`ComplexExoticScalarField` + Q-ball sextic, on GRTresna-solved data** | window ~11 against a free-fall of 8.89 at the *existing* `d/b ≥ 8` — the constraint dissolves rather than being squeezed past | **The answer.** Removes the instability instead of racing it, and needs no separation compromise |
+| 2 | Sharpen the throat readout (sub-grid minimum + per-step output) | makes λ measurable, closes the Phase 2 tick | Do regardless; cheap, no new physics, no new runs to design it |
+| 3 | Same as 1 but rotating (ω ≠ 0) | a *natural* ℓ = 2 quadrupole with no artificial perturbation | Hold for Phase 4 — spin makes the head-on a different problem |
+| 4 | Keep EB, use solved data to reach d/b ≈ 3 | t_ff = 2.04 against a window of 2 | Works, but marginal by construction, and fights the instability rather than removing it |
+| 5 | Accept that both throats destabilise and study *that* | the bifurcation this document already predicts | Legitimate science, but a different paper — decide deliberately, not by discovering it late |
+| 6 | Reduce the t = 0 seed by other means | ~0.25 of window per decade | Nowhere near sufficient alone |
+| 7 | Refine the grid | nothing — measured, not assumed | Ruled out |
 
-**Recommended reading of this:** do 2 now, and treat 1 as gating Phase 3. Going into a
-head-on run at d/b = 8 with a window of 2 spends wall time on throats that will expand
-out from under the merger before it completes.
+**Recommended reading of this:** do 2 now; make 1 the Phase 3 baseline. The open work for
+1 is a **two-centre solve**, which has not been done — the proven run is a single throat
+at `max_level = 2`, dx = 0.5, so it is also coarse. Neither is a new research programme,
+and both are smaller than the alternative of racing an exponential.
 
 ## Phase 3 — Head-on merger (calibration run)
 
@@ -330,12 +376,20 @@ Head-on first: it is cheaper, it is axisymmetric, and it gives the l = 2, m = 0 
 the literature already has for black holes. **Gravity-driven, from rest**: with bare
 masses on, the throats genuinely attract — zero momenta, full support, nothing artificial.
 
-> **Gated on Phase 7 as of 2026-08-28.** Phase 2 measured the expansion window at t ≲ 2,
-> and at Phase 1's `d/b ≥ 8` the free-fall time is 8.89 — the throats expand out from
-> under the merger 4.4× before it completes. Superposed data cannot go closer without
-> violating the Phase 1 constraint, so the head-on run needs solved data at d/b ≈ 3 to
-> have a merger left to measure. Running Phase 3 on Route A first would burn wall time
-> to rediscover this. See *Phase 2 findings*.
+> **Do not run this on the current matter model (2026-08-28).** Phase 2 measured the
+> expansion window at t ≲ 2 while free-fall at Phase 1's `d/b ≥ 8` takes 8.89 — with a
+> massless phantom scalar and no potential, the throats expand out from under the merger
+> 4.4× before it completes, and that gap cannot be closed by refinement, by a better
+> seed, or by rescaling b.
+>
+> The fix is the matter, not the separation: `ComplexExoticScalarField` with the Q-ball
+> sextic holds for ~11 on solved data, which fits 8.89 at the separation Phase 1 already
+> sanctions. Switching costs a two-centre GRTresna solve; it is not new physics and not
+> new code. See *Matter available in-tree* and *Mitigation* under Phase 2.
+>
+> (An earlier revision of this note gated Phase 3 on reaching d/b ≈ 3 with solved EB
+> data. That still works, but it is option 4, not option 1 — it races the instability
+> with a window of 2 against a free-fall of 2.04 instead of removing it.)
 
 - [ ] **Phase 3** — two massive throats released from rest fall together along the z axis
   - [ ] bare-mass ladder on `m/b` (0.1 → 0.25 → 0.5 → 1.0) at fixed separation: the
@@ -432,7 +486,7 @@ produced a result worth improving.
 | θ₊ < 0 near each throat | r → 0 is the *other* infinity, not a centre — the proxy always fires there | `binary_diag_min_radius` excludes r < b/2; θ₊ is reduced as a **max per radial shell**, so a sphere counts as trapped only if θ₊ ≤ 0 all over it; only the common-centre scan is evidence of fusion |
 | φ asymptote | a plain sum of two atan profiles tends to ≈ 0.886, but the boundary condition assumes 0 | subtract the constant in the initial data (free for a massless field) |
 | Solved-ID resolution wall | the `.gridinit` bridge pins the evolution to near-unigrid | split-ID loader (Phase 7) |
-| **Throat expands before the merger finishes** | the unperturbed EB throat is a saddle: it runs away at λ = 9.012, giving a window of t ≲ 2, while free-fall at `d/b = 8` takes 8.89. Confirmed against `results/wormhole-dynamics/unperturbed` — the reference expands the same way and also dies near t ≈ 3 | solved initial data (Phase 7) to reach d/b ≈ 3, where t_ff = 2.04. **Not** fixable by refinement (the t = 0 violation is identical at `max_level` 4 and 5), nor by a better seed (would need ~1e-37), nor by rescaling b (t_ff and the window are both ∝ b) |
+| **Throat expands before the merger finishes** | the unperturbed EB throat is a saddle *because its potential is zero* — nothing sets a preferred size. It runs away at λ = 9.012, giving a window of t ≲ 2, while free-fall at `d/b = 8` takes 8.89. Confirmed against `results/wormhole-dynamics/unperturbed` — the reference expands the same way and also dies near t ≈ 3 | **change the matter, not the separation**: `ComplexExoticScalarField` + Q-ball sextic holds ~11 (proven, non-rotating, in `runs/rotating_wormhole/`), which fits 8.89 at the *existing* d/b. Open work is a two-centre solve. **Not** fixable by refinement (the t = 0 violation is identical at `max_level` 4 and 5), nor by a better seed (would need ~1e-37), nor by rescaling b (t_ff and the window are both ∝ b) |
 | Compactified origin blows up when centred | at r → 0, chi ~ r⁴ — that point is the *other* universe's infinity, and CCZ4 divides by chi. The published example dodges it with octant symmetry (`lo_boundary = 2 2 2`), which a binary cannot use: two origins, neither on a corner. Centred runs NaN in h11 on the finest level at t = 2.42 | `wormhole_initial_lapse_type = 4` buys time but is *initial data only* — the gauge relaxes and the lapse at the origin climbs back from 1e-10 to 0.33 by t ≈ 2.4, whereupon it detonates. A durable fix has to be a gauge source term, not initial data. **Open for Phase 3** |
 | Lapse collar is thinner than the stencil | the type-4 collar spans 0.053 in r; that is 0.9 cells at `max_level = 3` and 1.7 at 4, so the stencil sees a step and the run dies at t ≈ 0.2. Coarsening to escape the origin makes it strictly worse | `wormhole_lapse_core_fraction` / `_power` now expose the shape; f = 0.2, p = 4 gives 25% more collar with a bit-identical throat |
 | Throat readout lands on the innermost cell | R = r/√chi *diverges* at the compactified origin, but the unresolved inner cells report it as small, so a bare argmin tracks a "collapse" that is not happening — 0.152 instead of 0.498 on a b = 0.5 throat | `--areal-min-radius` excludes an inner ball. **Archived `areal_radius.dat` columns predating this are unreliable** — several older runs report exactly dx/2, i.e. pure grid artefact |
