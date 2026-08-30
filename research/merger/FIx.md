@@ -8,19 +8,18 @@ deep-research report it was derived from, unedited.
 | Stage | What it settles | Status |
 | --- | --- | --- |
 | 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
-| 1 | Single regular throat holds still, charge/geometry drift bounded | **exit condition NOT met.** 1.1–1.5 done; blocked at 1.6 — no arm holds 40 M, and the mesh is excluded |
+| 1 | Single regular throat holds still, charge/geometry drift bounded | **exit condition MET 2026-08-30** at `max_level = 3`: 40 M, no NaN, throat −0.36 %. 1.1–1.6 done |
 | 2 | Two-throat data: superposition + correction, then a CTTK solve | not started; **2.0 (tagger for two moving throats) added 2026-08-30** |
-| 3 | Head-on merger with ADM mass, Ψ₄ out | not started; **separation is set by 1.6's answer** |
+| 3 | Head-on merger with ADM mass, Ψ₄ out | not started; 1.6 raises the usable window past 40 M, so the wide separation is affordable |
 | 4 | Write | not started |
 
-### Current state, 2026-08-30
+### Current state, 2026-08-30 (evening)
 
-**Stage 1's exit condition is not met and Stages 2–4 are blocked behind it.** One throat
-was supposed to sit still for 40 M. Across eight arms it does not: every configuration
-either dies between t = 21.7 and 35.2, or survives only by smoothing away the object being
-measured. Nothing downstream is safe until this is understood — two throats that
-individually cannot hold for 40 M will not merge cleanly in a run that needs at least that
-long.
+**Stage 1's exit condition is met.** `s16ml3_lapse5_sg01_fg` — the σ = 0.1, no-collar,
+fixed-box arm with one extra refinement level and *nothing else changed* — ran the full
+40 M with no NaN and the throat down 0.36 %. That is the first drainhole arm to finish
+without either dying or being smoothed flat, and it supersedes the reading recorded
+earlier today, which had this section saying the exit condition was out of reach.
 
 What *is* settled, and does not need revisiting:
 
@@ -32,10 +31,13 @@ What *is* settled, and does not need revisiting:
 | the refinement boundary is innocent | unigrid arms die sooner (1.4); and moving the boundary does not move the death (1.5) |
 | the mesh is not the killer | fixed boxes hold 13.32 GB flat and change the death time by 0.03 at σ = 0.1 (1.5) |
 | the collar buys time and costs geometry | +2.7 to +7 units, −7.3 % on the throat (1.3, confirmed 1.5) |
+| **the compactified origin is not the killer either** | **refining it made every error smaller and moved the wall from 24.17 to past 40 (1.6)** |
+| **something real is still growing** | **the momentum constraint is rising exponentially at t = 40, doubling every ~1.6 (1.6)** |
 
-**The open question is single and specific: what happens at t ≈ 24, and is it a bug or a
-result?** That is 1.6. It has two live explanations that predict opposite things under
-refinement, which is what makes it cheap to settle.
+**The open question is no longer "bug or result" — it is whether the surviving mode
+saturates.** 40 M is a longer fuse, not stability: the run ends while the growth is
+accelerating. Stage 3 can be designed against a 40 M budget, but not against an unbounded
+one, and no run has yet been taken past 40 to find out which it is.
 
 **One deliberate departure from the report, recorded here because it changes Stage 0.**
 The report says to swap the isotropic chart for the proper-radial (Ellis) chart
@@ -173,11 +175,11 @@ Past that, χ_throat starts falling back toward puncture values. A heavier binar
   about the physics — all three arms NaN between t = 23.5 and 26.2. Necessary, not
   sufficient; see "1.5 — the fixed-box tagger" below
 
-- [ ] **1.6** Settle the wall at t ≈ 24: bug or result. Two explanations survive the
-  evidence — the compactified origin, and the Ellis–Bronnikov mode being real — and they
-  predict **opposite signs** under refinement, so one `max_level = 3` run decides it.
-  Print the NaN's position first; the abort gives variable and level but no coordinates,
-  and the arms did not all die the same way. See "1.6 — the wall at t ≈ 24" below
+- [x] **1.6** Settle the wall at t ≈ 24: bug or result. **Done 2026-08-30.** One
+  `max_level = 3` run of the σ = 0.1 no-collar arm, nothing else changed. The wall moved
+  **later** — past the full 40 M — which is the sign that excludes the compactified origin
+  and leaves a genuine growing mode. Printing the NaN's position was listed first and
+  turned out not to be needed: the run did not NaN. See "1.6 — the wall at t ≈ 24" below
 
 **Benchmark:** no gauge detonation, R_min drift attributable to the known EB unstable mode
 (one growing mode, timescale ~ throat/c) rather than to the grid.
@@ -435,6 +437,7 @@ With 1.5 done, every arm run on the massive drainhole can be put on one axis:
 | 0 | no | χ | t = 35.2, OOM, no NaN | the card, not the physics |
 | 0 | no | fixed | NaN 23.54 | Mom runs away from t = 13; lapse at the origin collapses 18–22 |
 | 0 | yes | fixed | NaN 26.23 | **the throat**, monotone to −7.3 %; origin healthy throughout |
+| 0.1 | no | fixed, **`max_level = 3`** | **reaches t = 40, no NaN** | nothing — throat −0.36 %, Ham flat, Mom still rising at the finish |
 
 Two explanations survive the evidence. They are not both right, and they disagree about
 what refinement will do — which is the whole reason 1.6 is cheap.
@@ -481,7 +484,18 @@ resolution (t = 6.6 at dx = 0.5, t = 1.2 at dx = 0.25). So:
 | | adding a refinement level predicts |
 | --- | --- |
 | **A — the origin** | the wall moves **earlier** |
-| **B — the EB mode** | the wall **does not move** |
+| **B — the EB mode** | the wall moves **later**, by about 4 · ln(seed ratio) |
+
+**Corrected 2026-08-30, in flight.** This table first read "B — the wall does not move",
+which was wrong, and wrong in a way that would have made a clean 40 look like a refutation
+of B. A growing mode starts from the discretisation error in the initial data, and
+refinement lowers that error, so B predicts a *later* wall, not an unmoved one — the
+question was only ever the sign, and it still is. The size is now measured rather than
+assumed: at t = 12 the `max_level = 3` arm carries a momentum-constraint norm of 7.5e-7
+against 6.8e-5 for the identical arm one level shallower, a factor of 90. At an e-folding
+time of 4 that is 4 · ln 90 ≈ 18 units of delay, which puts the predicted wall near 42 —
+**off the end of a `stop_time = 40` run.** So reaching 40 without a NaN is a B outcome and
+not evidence against B; only a wall arriving *early* speaks for A.
 
 There is no configuration in which both are right, and the run is affordable for the first
 time because 1.5 made the footprint a property of the parameters. **This is the experiment
@@ -489,15 +503,76 @@ to run.** Note it cannot separate origin-refinement from throat-refinement — t
 boxes are centred, so a deeper level refines both — but it does not need to, because the
 two hypotheses differ in sign.
 
+##### The answer, measured 2026-08-30
+
+`s16ml3_lapse5_sg01_fg`: the σ = 0.1, no-collar, fixed-box arm, `WHM_MAX_LEVEL=3`, every
+other line of the params file identical to the arm that died at 24.17. Level 3 has
+dx = 0.0625 and covers |x − c|_∞ < 4, so it holds both the throat at r̄ = 1.618 and the
+compactified origin. 16.5 GB flat against 13.32 GB, 18.2 code units/h, 2.2 h wall.
+
+**It ran the full 40 M and did not NaN.** Same arm, same file, one extra level:
+
+| | `max_level = 2` | `max_level = 3` |
+| --- | --- | --- |
+| outcome | NaN at 24.17 | **t = 40, clean** |
+| R_min at t = 0 | 3.891721 (0.057 % above exact) | 3.889973 (**0.012 %**) |
+| R_min drift at t = 12 | +0.035 % | +0.0005 % |
+| L2 Ham at t = 12 | 2.48e-3 | 2.51e-3 |
+| L2 Mom at t = 12 | 6.80e-5 | **7.51e-7** |
+| χ at the origin | 7.19e-6, falling, floors from t = 9 | 4.11e-7 → 9.95e-6, **rising all run** |
+| α at the origin | 0.2315 → 0.2404 | 0.2194 → 0.1322 |
+
+**The wall moved later, which is the sign that excludes A.** Refining the origin was
+supposed to poison it — 1.4 measured χ there dropping 2⁴ per halving and the unigrid arms
+dying sooner at finer resolution. It did drop, exactly as predicted (7.19e-6 → 4.11e-7),
+and the run got *better* in every column. The origin is not what was killing these runs.
+
+**What is left is a real growing mode, and it is still growing at the finish.** L2 Mom over
+the run: 7.5e-7 (t = 12) → 5.1e-6 (17.6) → 1.4e-5 (26) → 3.3e-6 (34) → 3.9e-5 (40). The
+early growth has an e-folding time of 4.4 against a predicted throat/c ≈ 4, which is the
+one number Explanation B put on the table in advance. It then *dips* around t = 34 and
+returns steeper, doubling every ~1.6 — which no single exponential explains and which no
+run has yet been taken far enough to resolve.
+
+The frames say the same thing in a different currency. Rendered on a log scale with the
+throat drawn on (`grteclyn-wrapper/scripts/plot/frames_logscale.py --ring 1.618`), K at
+t = 1 is a **square** blob at the origin with corners on the grid axes and four diagonal
+lobes — the cubic mesh's own signature, on a solution that should have K = 0 everywhere.
+By t = 39.5 it is smooth, round, single-signed and monotone toward the centre, thirty times
+larger. Grid junk does not become spherically symmetric; a physical mode does.
+
+**So Stage 1's exit condition is met, and its benchmark is met in the exact terms it was
+written in** — "R_min drift attributable to the known EB unstable mode rather than to the
+grid". −0.36 % over 40 M, with the mode identified and its rate measured.
+
+**What this does not settle: whether the mode saturates.** 40 M is a longer fuse, not
+stability. Refinement cut the seed ~90x, which at an e-folding time of 4 is ~18 units of
+delay, and the run ends inside the window that buys. The honest next measurement is the
+same configuration with a larger `stop_time`; it was offered on 2026-08-30 and declined as
+unnecessary for Stage 3, which needs 40 M and now has it.
+
+##### A note on what refinement can and cannot buy
+
+Depth is not free and it runs out. Each level halves dx, so χ at the innermost cell falls
+16x: 4.11e-7 at `max_level = 3`, ~2.6e-8 at 4, ~1.6e-9 at 5. `min_chi = 1.0e-8`, so
+**level 5 starts below the floor** and level 4 sits 2.6x above it. Each level also roughly
+doubles the wall clock (18.2 → ~9 → ~4.5 units/h). Level 4 is reachable; level 5 is not,
+without changing the floor or the criterion.
+
+The criterion is the thing to change. `FixedGridsTagger` boxes are centred, so one level
+refines the throat and the origin together and there is no setting that refines one without
+the other — which is also why 1.6 could establish a sign but not attribute it. A
+**shell-shaped tagger** (refine the annulus about r̄ ≈ 1.0–2.5, leave the middle coarse)
+removes the floor problem entirely and is the same piece of work Stage 2.0 needs for two
+moving throats. That is where the next tagger effort belongs.
+
 ##### Ordered plan
 
-1. **Print the NaN's position.** The abort gives `level=2 component=1 name=h11` and no
-   coordinates, so we do not know whether a given arm died at the origin or at the throat —
-   and the table above shows they did not all die the same way. A few lines. Do this first;
-   everything below reads differently depending on the answer.
-2. **Refinement test** (`max_level` 3, everything else fixed). Settles A vs B by the sign of
-   the shift. Run the σ = 0.1 no-collar arm, which reproduces its death time to 0.03 across
-   two completely different meshes and is therefore the most reliable clock we have.
+~~1. **Print the NaN's position.**~~ Listed first, and overtaken: step 2 ran without a
+   NaN, so there is no position to print. Still worth the few lines before the *next* arm
+   that dies — the abort gives `level=2 component=1 name=h11` and no coordinates.
+2. ~~**Refinement test**~~ **Done 2026-08-30, and it answered.** See "The answer" above:
+   the wall moved later, past 40 M, which excludes A.
 3. **Domain control** (L = 96 or 128 at the same dx). Rules out the Sommerfeld boundary and
    the sponge. Mesh-independence says the killer is not the refinement structure; it does
    not by itself say *origin* rather than *outer edge*.
@@ -507,36 +582,40 @@ two hypotheses differ in sign.
    1e-8 in 208 of 1405 samples from t = 9.0 and ran on regardless. If B: there is nothing to
    cure, and the wall is a **result**.
 
-**Do not run a deep fixed box on the origin as a fix.** 1.5 has made it cheap and 1.4 has
-already measured that it is the poison rather than the cure. It is only worth running as
-step 2 above, where its *failure* is the informative outcome.
+~~**Do not run a deep fixed box on the origin as a fix.**~~ **Measured and wrong,
+2026-08-30.** This warning was written from 1.4, which measured that refining a *unigrid*
+domain kills it sooner, and it read that across to a nested level. It does not carry: the
+deep box was run as step 2 and it was the cure, not the poison. 1.4's finding stands for
+what it actually measured — halving dx everywhere, which also halves dt and rebuilds the
+whole solution — and should not be extrapolated to adding a level.
 
 **Not a candidate: σ = 2.0.** It is the only setting that reaches t = 40 and it gets there
 by destroying the throat, which is 1.2's finding and has not changed.
 
-##### What this costs Stage 3 if B is right
+##### What this costs Stage 3 — revised 2026-08-30
 
-A physical mode with an e-folding time of ~4 puts a hard ceiling of roughly 24 M on any run
-using this throat, and that ceiling is a property of the object rather than of the code. A
-head-on merger has to fit inside it. Free-fall from rest at separation d with total mass 2M
-is ≈ (π/2)·√(d³/8M): d = 16 gives ~25 M, which does not fit; d = 10 gives ~12 M, which
-does, at the price of starting the throats close enough that the Helfer/Ning correction is
-working hard. **Stage 3's separation is therefore set by 1.6's answer, and 2.1 should not be
-built before it is known.**
+This section previously read "if B is right", and put a hard ceiling of ~24 M on any run
+using this throat. **The ceiling measured 40 M, not 24.** Refinement moved it, so it is a
+property of the discretisation as much as of the object, and the arithmetic below has to be
+redone against the number we now have:
 
-### Stage 2 — two-throat initial data
+| separation d | free-fall time ≈ (π/2)·√(d³/8M) | fits in 40 M? |
+| --- | --- | --- |
+| 10 | ~12 M | yes, easily — but the throats start close enough that the Helfer/Ning correction works hard |
+| 16 | ~25 M | **yes**, with 15 M of margin for ringdown and extraction |
+| 20 | ~35 M | marginal; no room after merger |
 
-- [ ] **2.0** Replace the fixed box before adding a second throat: moving boxes on
-  the two throats (`PunctureTagger` + a throat locator for `PunctureTracker`) plus
-  static wave-zone shells (`ExtractionTagger`). See "2.0" below — this blocks 3.1,
-  not 2.1
-- [ ] **2.1** Superpose two drainholes with the **Helfer/Ning correction**
-  (`γ_ij = γ_ij^A + γ_ij^B − γ_ij^B(x_A)`), not plain superposition
-- [ ] **2.2** Measure the Hamiltonian defect vs separation; establish the d/a floor
-- [ ] **2.3** If the defect is too large: GRTresna **CTTK** solve (algebraic K, no source
-  rescaling — the escape hatch for phantom matter). Watch for K² < 0 nodes
+So the wide separation the superposition error wants (d/b ≥ 8, i.e. d = 16 at b = 2) is now
+affordable, which it was not this morning. That is what 1.6 bought Stage 3, and it is the
+main practical consequence of the whole stage.
 
-**Benchmark:** Ham and Mom L₂ converging at ≥ 2nd order; χ = O(1) at *both* throats.
+**The caveat that survives.** The mode is still growing at t = 40 and doubling every ~1.6
+there, so 40 M is a fuse length rather than a guarantee. Two throats will also seed it
+harder than one sitting at a fixed point: the superposed data is not an exact solution, so
+its initial constraint violation starts well above this run's 2.5e-3 floor, and a growing
+mode starting from a larger seed reaches trouble sooner. Budget the merger to *finish*
+inside 40 M rather than to run up to it, and re-measure the growth rate on the two-throat
+data rather than assuming this one carries over.
 
 #### 2.0 — the tagger does not survive the jump to two throats
 
