@@ -8,10 +8,34 @@ deep-research report it was derived from, unedited.
 | Stage | What it settles | Status |
 | --- | --- | --- |
 | 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
-| 1 | Single regular throat holds still, charge/geometry drift bounded | **1.1–1.5 done; blocked at 1.6 — every arm dies at t = 23.5–26.2 and the mesh is now excluded** |
+| 1 | Single regular throat holds still, charge/geometry drift bounded | **exit condition NOT met.** 1.1–1.5 done; blocked at 1.6 — no arm holds 40 M, and the mesh is excluded |
 | 2 | Two-throat data: superposition + correction, then a CTTK solve | not started; **2.0 (tagger for two moving throats) added 2026-08-30** |
-| 3 | Head-on merger with ADM mass, Ψ₄ out | not started |
+| 3 | Head-on merger with ADM mass, Ψ₄ out | not started; **separation is set by 1.6's answer** |
 | 4 | Write | not started |
+
+### Current state, 2026-08-30
+
+**Stage 1's exit condition is not met and Stages 2–4 are blocked behind it.** One throat
+was supposed to sit still for 40 M. Across eight arms it does not: every configuration
+either dies between t = 21.7 and 35.2, or survives only by smoothing away the object being
+measured. Nothing downstream is safe until this is understood — two throats that
+individually cannot hold for 40 M will not merge cleanly in a run that needs at least that
+long.
+
+What *is* settled, and does not need revisiting:
+
+| | |
+| --- | --- |
+| the throat is regular | χ = 0.17 at the minimal surface, not the puncture's ~0.006 (Stage 0) |
+| the ADM mass goes in the lapse | `wormhole_id_type = 1`; the puncture route destroys the throat it is meant to weigh |
+| σ = 2.0 must not ship | costs 34 % of the throat while every constraint norm reads flat (1.2) |
+| the refinement boundary is innocent | unigrid arms die sooner (1.4); and moving the boundary does not move the death (1.5) |
+| the mesh is not the killer | fixed boxes hold 13.32 GB flat and change the death time by 0.03 at σ = 0.1 (1.5) |
+| the collar buys time and costs geometry | +2.7 to +7 units, −7.3 % on the throat (1.3, confirmed 1.5) |
+
+**The open question is single and specific: what happens at t ≈ 24, and is it a bug or a
+result?** That is 1.6. It has two live explanations that predict opposite things under
+refinement, which is what makes it cheap to settle.
 
 **One deliberate departure from the report, recorded here because it changes Stage 0.**
 The report says to swap the isotropic chart for the proper-radial (Ellis) chart
@@ -149,9 +173,11 @@ Past that, χ_throat starts falling back toward puncture values. A heavier binar
   about the physics — all three arms NaN between t = 23.5 and 26.2. Necessary, not
   sufficient; see "1.5 — the fixed-box tagger" below
 
-- [ ] **1.6** Find out *where* the NaN is, then treat the compactified origin. All eight
-  arms to date die or degrade on the same axis, and the mesh has now been excluded as the
-  cause. See "1.6 — the wall at t ≈ 24" below
+- [ ] **1.6** Settle the wall at t ≈ 24: bug or result. Two explanations survive the
+  evidence — the compactified origin, and the Ellis–Bronnikov mode being real — and they
+  predict **opposite signs** under refinement, so one `max_level = 3` run decides it.
+  Print the NaN's position first; the abort gives variable and level but no coordinates,
+  and the arms did not all die the same way. See "1.6 — the wall at t ≈ 24" below
 
 **Benchmark:** no gauge detonation, R_min drift attributable to the known EB unstable mode
 (one growing mode, timescale ~ throat/c) rather than to the grid.
@@ -397,60 +423,106 @@ The two cloned params files differ in exactly one line, verified after launch.
 
 #### 1.6 — the wall at t ≈ 24
 
-With 1.5 done, every arm run on the massive drainhole can be put on one axis, and the
-ordering is the finding:
+With 1.5 done, every arm run on the massive drainhole can be put on one axis:
 
-| σ | collar | tagging | outcome |
-| --- | --- | --- | --- |
-| 2.0 | no | χ | **reaches t = 40** — but dissipation has eaten 34 % of the throat |
-| 2.0 | yes | χ | NaN 21.7 |
-| 0.1 | no | χ | NaN 24.2 |
-| 0.1 | no | fixed | NaN 24.17 |
-| 0.1 | yes | χ | NaN 31.4 |
-| 0 | no | χ | t = 35.2, OOM, no NaN |
-| 0 | no | fixed | NaN 23.54 |
-| 0 | yes | fixed | NaN 26.23 |
+| σ | collar | tagging | outcome | what failed |
+| --- | --- | --- | --- | --- |
+| 2.0 | no | χ | **reaches t = 40** | nothing — but dissipation ate 34 % of the throat |
+| 2.0 | yes | χ | NaN 21.7 | — |
+| 0.1 | no | χ | NaN 24.2 | — |
+| 0.1 | no | fixed | NaN 24.17 | constraints flat at 3e-3 to the last step; sudden |
+| 0.1 | yes | χ | NaN 31.4 | — |
+| 0 | no | χ | t = 35.2, OOM, no NaN | the card, not the physics |
+| 0 | no | fixed | NaN 23.54 | Mom runs away from t = 13; lapse at the origin collapses 18–22 |
+| 0 | yes | fixed | NaN 26.23 | **the throat**, monotone to −7.3 %; origin healthy throughout |
 
-**Everything that buys time is something that suppresses the compactified origin, and
-nothing so far cures it.** Dissipation damps it (σ = 2.0 is the only setting that reaches
-40, at the cost of the object being studied). The collar freezes it (+7 units at σ = 0.1,
-+2.7 at σ = 0). Runaway refinement resolves it (+12 units at σ = 0, until the card fills).
-Three unrelated mechanisms, one target. That is a stronger identification than any single
-arm gives, and it is consistent with 1.4: χ vanishes like r̄⁴ at r̄ → 0, CCZ4 divides by χ,
-and the innermost cell is the least resolved point in the domain by a wide margin.
+Two explanations survive the evidence. They are not both right, and they disagree about
+what refinement will do — which is the whole reason 1.6 is cheap.
 
-**Refining the origin is not the cure — it is the poison.** 1.4 measured it directly:
-halving dx puts the innermost cell twice as close to r̄ → 0 and drops χ there by 2⁴
-(2.44e-3 → 1.33e-4 → 7.19e-6), and the unigrid arms die *sooner* at finer resolution
-(t = 6.6 at dx = 0.5, t = 1.2 at dx = 0.25). A deep fixed box on the origin is now cheap
-under 1.5's tagger and would make things worse, not better. Do not run it.
+##### Explanation A — the compactified origin
 
-**First, close the diagnostic gap.** The abort prints `level=2 component=1 name=h11` and
-nothing about *position*, so we do not actually know whether these arms die at the origin
-or at the throat — and there is direct evidence they do not all die the same way. The
-collar arm's origin was frozen and healthy throughout (χ never floored, 6.0–7.5e-6) while
-its **throat** shrank monotonically to −7.3 %; the collar-free arms held the throat to
-0.06 % and had their origins fail instead. Printing the cell coordinates with the NaN is a
-few lines and would settle which failure each arm actually suffered. **Do this before
-choosing a cure.**
+χ vanishes like r̄⁴ at r̄ → 0, CCZ4 divides by χ, and the innermost cell is by a wide margin
+the least resolved point in the domain. Under this reading the run dies of an
+under-resolved region that seeds junk into everything else.
 
-**Then, ranked by what each buys:**
+*For:* every mechanism that buys time suppresses that region, and they are unrelated to
+each other — dissipation damps it (σ = 2.0 is the only setting that reaches 40), the collar
+freezes it (+7 units at σ = 0.1, +2.7 at σ = 0), runaway refinement resolves it (+12 units
+at σ = 0). Three different levers, one target. Directly observed in the σ = 0 no-collar
+arm: the lapse at the origin falls 0.20 → floor over t = 18–22, four units before the NaN.
 
-1. **Locate the NaN** (above). Cheap, decisive, blocks the rest.
-2. **Excise the inner region** — a timelike inner boundary inside the throat, which removes
-   the compactified universe from the grid instead of trying to survive it. Already named
-   in the decision gates, where instability here means abandoning true topology for this
-   paper.
-3. **Raise the χ floor / regularise near r̄ → 0** — cheaper than excision, and the floor is
-   demonstrably load-bearing already: the σ = 0.1 arm clipped 1e-8 in 208 of 1405 samples
-   from t = 9.0 and ran on to 24.17 regardless.
-4. **Domain-size control** — L = 128 with everything else fixed, to rule out the Sommerfeld
-   boundary and the sponge before attributing the wall to the origin. The two σ = 0.1 arms
-   dying 0.03 apart with different meshes says mesh-independent; it does not by itself say
-   *origin* rather than *outer boundary*.
+*Against:* the collar arm froze the origin completely — its χ there never floored, holding
+6.0–7.5e-6 for the whole run, and its lapse was pinned at zero by design from t = 10 — and
+it **still died**, at 26.2, with the *throat* collapsing instead. Freezing the suspect
+delayed the death by 2.7 units rather than curing it.
+
+##### Explanation B — the Ellis–Bronnikov mode is real and this is it
+
+EB has one growing mode with timescale ~ throat/c ~ 4. Growing from the initial
+discretisation floor (Ham ≈ 2e-3 at t = 0) to O(1) takes ≈ 4·ln(500) ≈ 25.
+
+*For:* that arithmetic lands on the wall. The throat's shape is the exponential signature —
+arms A and C hold to +0.06 % and +0.04 % for twenty-three units and then go in the last
+one, which is what exponential growth looks like when you plot it linearly. And the two
+σ = 0.1 arms died **0.03 apart** with the refinement boundary in completely different
+places; a numerical problem is rarely that indifferent to the mesh.
+
+*Against:* it is an order-of-magnitude argument, not a derivation. A factor of ten in the
+assumed seed moves the predicted time by 9 units, which is most of the spread in the table
+above, so the agreement is suggestive rather than probative.
+
+##### The test that separates them
+
+**They predict opposite signs under refinement.** 1.4 measured that refining the origin
+makes things *worse*: halving dx puts the innermost cell twice as close to r̄ → 0 and drops
+χ there by 2⁴ (2.44e-3 → 1.33e-4 → 7.19e-6), and the unigrid arms died sooner at finer
+resolution (t = 6.6 at dx = 0.5, t = 1.2 at dx = 0.25). So:
+
+| | adding a refinement level predicts |
+| --- | --- |
+| **A — the origin** | the wall moves **earlier** |
+| **B — the EB mode** | the wall **does not move** |
+
+There is no configuration in which both are right, and the run is affordable for the first
+time because 1.5 made the footprint a property of the parameters. **This is the experiment
+to run.** Note it cannot separate origin-refinement from throat-refinement — the fixed
+boxes are centred, so a deeper level refines both — but it does not need to, because the
+two hypotheses differ in sign.
+
+##### Ordered plan
+
+1. **Print the NaN's position.** The abort gives `level=2 component=1 name=h11` and no
+   coordinates, so we do not know whether a given arm died at the origin or at the throat —
+   and the table above shows they did not all die the same way. A few lines. Do this first;
+   everything below reads differently depending on the answer.
+2. **Refinement test** (`max_level` 3, everything else fixed). Settles A vs B by the sign of
+   the shift. Run the σ = 0.1 no-collar arm, which reproduces its death time to 0.03 across
+   two completely different meshes and is therefore the most reliable clock we have.
+3. **Domain control** (L = 96 or 128 at the same dx). Rules out the Sommerfeld boundary and
+   the sponge. Mesh-independence says the killer is not the refinement structure; it does
+   not by itself say *origin* rather than *outer edge*.
+4. **Only then choose a cure.** If A: excision of the inner region (already in the decision
+   gates, where instability there means abandoning true topology for this paper), or raising
+   the χ floor — which is demonstrably load-bearing already, since the σ = 0.1 arm clipped
+   1e-8 in 208 of 1405 samples from t = 9.0 and ran on regardless. If B: there is nothing to
+   cure, and the wall is a **result**.
+
+**Do not run a deep fixed box on the origin as a fix.** 1.5 has made it cheap and 1.4 has
+already measured that it is the poison rather than the cure. It is only worth running as
+step 2 above, where its *failure* is the informative outcome.
 
 **Not a candidate: σ = 2.0.** It is the only setting that reaches t = 40 and it gets there
 by destroying the throat, which is 1.2's finding and has not changed.
+
+##### What this costs Stage 3 if B is right
+
+A physical mode with an e-folding time of ~4 puts a hard ceiling of roughly 24 M on any run
+using this throat, and that ceiling is a property of the object rather than of the code. A
+head-on merger has to fit inside it. Free-fall from rest at separation d with total mass 2M
+is ≈ (π/2)·√(d³/8M): d = 16 gives ~25 M, which does not fit; d = 10 gives ~12 M, which
+does, at the price of starting the throats close enough that the Helfer/Ning correction is
+working hard. **Stage 3's separation is therefore set by 1.6's answer, and 2.1 should not be
+built before it is known.**
 
 ### Stage 2 — two-throat initial data
 
