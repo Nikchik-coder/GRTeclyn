@@ -44,6 +44,20 @@
 #                 FIx.md Stage 1.3 is this knob and nothing else: 5 is the
 #                 drainhole's bare static lapse, 6 is that lapse times the
 #                 origin-isolating collar.
+#   WHM_TAGGING_TYPE override tagging_type in the cloned params (appends _fg
+#                 when 1).  0 = refine on chi gradients (ChiTagger, the
+#                 default); 1 = static nested boxes on tagging_center
+#                 (FixedGridsTagger).  FIx.md Stage 1.5: chi tagging follows
+#                 the ERROR, so the sigma = 0 arm's mesh chased its own junk
+#                 to 32.8M cells and died out-of-memory at t = 35.2 with the
+#                 throat still healthy to 0.5 %.  The drainhole's resolution
+#                 demand is static -- the throat and the compactified origin,
+#                 both at the grid centre -- so a fixed box is the honest
+#                 criterion and the footprint is bounded by construction.
+#   WHM_TAGGING_L override tagging_L (appends _tlN).  Level-0 boxes have
+#                 half-width tagging_L / 4 and each finer level halves that.
+#                 Defaults to the domain L, i.e. the stock "inner L/4".
+#                 Only meaningful with WHM_TAGGING_TYPE=1.
 #   WHM_DRYRUN=1  resolve and print everything, touch nothing, exit
 #   WHM_CONSUME   run the plotfile consumer sidecar (default 1)
 #   WHM_CONSUME_ARGS  extra consumer flags, e.g. "--shell-fields chi phi"
@@ -103,6 +117,12 @@ if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
 fi
 if [[ -n "${WHM_SIGMA:-}" ]]; then
   NAME="${NAME}_sg$(printf '%s' "${WHM_SIGMA}" | tr -d '.')"
+fi
+if [[ "${WHM_TAGGING_TYPE:-0}" != "0" ]]; then
+  NAME="${NAME}_fg"
+fi
+if [[ -n "${WHM_TAGGING_L:-}" ]]; then
+  NAME="${NAME}_tl$(printf '%s' "${WHM_TAGGING_L}" | tr -d '.')"
 fi
 RUN_DIR="${RUNS_DIR}/${NAME}"
 SCRATCH_DIR="${SCRATCH_ROOT}/${NAME}"
@@ -204,6 +224,32 @@ if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
   fi
   sed -i "s|^${key}[[:space:]]*=.*|${key} = ${WHM_LAPSE_TYPE}|" "${RUN_PARAMS}"
   echo "[whm] lapse override: ${key} = ${WHM_LAPSE_TYPE}"
+fi
+
+# Tagging-criterion override (FIx.md Stage 1.5).  Unlike sigma and the lapse
+# these keys are NEW, so most templates predate them and do not carry them at
+# all; append rather than refuse, or every older params file would have to be
+# touched just to make the knob reachable.
+whm_set_or_append() {
+  local key="$1" value="$2" label="$3"
+  local n
+  n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+  case "${n}" in
+    0) printf '\n# %s (set by run_single.sh)\n%s = %s\n' \
+         "${label}" "${key}" "${value}" >> "${RUN_PARAMS}" ;;
+    1) sed -i "s|^${key}[[:space:]]*=.*|${key} = ${value}|" "${RUN_PARAMS}" ;;
+    *) echo "[whm] '${key}' appears ${n} times in the template; fix it" >&2
+       exit 1 ;;
+  esac
+  echo "[whm] ${label}: ${key} = ${value}"
+}
+
+if [[ -n "${WHM_TAGGING_TYPE:-}" ]]; then
+  whm_set_or_append tagging_type "${WHM_TAGGING_TYPE}" "tagging override"
+fi
+
+if [[ -n "${WHM_TAGGING_L:-}" ]]; then
+  whm_set_or_append tagging_L "${WHM_TAGGING_L}" "tagging-box override"
 fi
 
 # Refinement-depth override (Plan.md Phase 2 resolution study, and the origin

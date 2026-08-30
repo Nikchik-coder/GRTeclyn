@@ -6,6 +6,7 @@
 #include "ConstraintsWithMatter.hpp"
 #include "ExoticScalarField.hpp"
 #include "ExternalGridInitialData.hpp"
+#include "FixedGridsTagger.hpp"
 #include "GRParmParse.hpp"
 #include "PhantomDecayPotential.hpp"
 #include "PositiveChiAndLapse.hpp"
@@ -244,6 +245,13 @@ void BinaryWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
 
 void BinaryWormholeLevel::pre_tag_cells()
 {
+    // The ghost fill exists solely so ChiTagger can take second derivatives
+    // of chi.  The fixed-box tagger never reads the state, so skip it.
+    if (simParams().tagging_type != 0)
+    {
+        return;
+    }
+
     amrex::MultiFab &state_new = get_new_data(state_index);
     const auto cur_time        = get_state_data(state_index).curTime();
     FillPatch(*this, state_new, 2, cur_time, state_index, c_chi, 1);
@@ -255,6 +263,29 @@ void BinaryWormholeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
     BL_PROFILE("BinaryWormholeLevel::tag_cells()");
     amrex::MultiFab &state_new = get_new_data(state_index);
     const auto &tag_arrs       = a_tag_box_array.arrays();
+
+    // Fixed nested boxes on a static centre: refinement does not respond to
+    // the solution, so the footprint is bounded by construction and cannot
+    // chase growing error out to an out-of-memory death.  See
+    // read_tagging_params() for why that is the right trade here.
+    if (simParams().tagging_type == 1)
+    {
+        const std::array<amrex::Real, AMREX_SPACEDIM> tag_center{
+            AMREX_D_DECL(simParams().tagging_center[0],
+                         simParams().tagging_center[1],
+                         simParams().tagging_center[2])};
+
+        FixedGridsTagger fixed_tagger(Geom().CellSize(0), Level(),
+                                      simParams().tagging_L, tag_center);
+
+        amrex::ParallelFor(
+            a_tag_box_array,
+            [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+            { fixed_tagger(i, j, k, tag_arrs[box_no]); });
+        amrex::Gpu::streamSynchronize();
+        return;
+    }
+
     const auto &state_new_arrs = state_new.const_arrays();
 
     ChiTagger chi_tagger(Geom().CellSize(0), a_regrid_threshold);

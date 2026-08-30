@@ -20,6 +20,7 @@ class SimulationParameters : public SimulationParametersBase
         read_wormhole_params(pp);
         read_diagnostics_params(pp);
         read_sponge_params(pp);
+        read_tagging_params(pp);
         check_params();
     }
 
@@ -171,8 +172,59 @@ class SimulationParameters : public SimulationParametersBase
                 wormhole_params.grid_center);
     }
 
+    void read_tagging_params(GRParmParse &pp)
+    {
+        // Which criterion decides where to refine.  0 = chi gradients
+        // (ChiTagger), the default, and what every archived run used;
+        // 1 = static nested boxes about a fixed centre (FixedGridsTagger,
+        // shared from Source/Tagging).  Default 0 so no archived run changes.
+        //
+        // Why the choice matters here.  Chi-gradient tagging follows the
+        // *error*, so once a run develops junk the mesh chases it and the
+        // footprint runs away: the Stage 1 sigma = 0 arm ended in out-of-
+        // memory at t = 35.2 with level 2 covering 24 % of the domain and
+        // 32.8M cells, while the throat itself was still healthy to 0.5 %
+        // (research/merger/FIx.md, 1.5).  The drainhole's resolution demand
+        // is by contrast *static*: it sits at the throat and at the
+        // compactified far universe, r -> 0, both fixed at the grid centre
+        // for a single throat.  A fixed box asks for resolution where the
+        // solution needs it rather than where the error happens to be.
+        pp.load("tagging_type", tagging_type, 0);
+
+        // FixedGridsTagger tags |x - tagging_center|_inf < tagging_L *
+        // 2^-(level+2): the level-0 boxes have half-width tagging_L / 4 and
+        // every finer level halves that again.  Defaulting tagging_L to the
+        // domain length L reproduces the stock "refine the inner L/4"
+        // behaviour of the KleinGordon example; shrink it to wrap the boxes
+        // around the throat instead of a quarter of the box.
+        pp.load("tagging_L", tagging_L, L);
+
+        // For a single throat this is the grid centre.  A binary needs boxes
+        // on each throat, which this tagger cannot express - Stage 2 will
+        // need either a two-centre tagger or a return to chi tagging with a
+        // bounded footprint.
+        pp.load("tagging_center", tagging_center, center);
+    }
+
     void check_params()
     {
+        check_parameter("tagging_type", tagging_type,
+                        (tagging_type == 0) || (tagging_type == 1),
+                        "must be 0 (refine on chi gradients, the default) or "
+                        "1 (refine static nested boxes on tagging_center)");
+
+        check_parameter("tagging_L", tagging_L, tagging_L > 0.0,
+                        "must be positive: it is the length whose inner "
+                        "quarter the level-0 fixed boxes cover");
+
+        // regrid_threshold is ChiTagger's trigger and has no meaning for the
+        // fixed tagger.  Silently ignoring it would let someone tune a knob
+        // that does nothing and conclude the tagger did not help.
+        warn_parameter("tagging_type", tagging_type, tagging_type == 0,
+                       "selects the fixed-box tagger, so regrid_threshold is "
+                       "ignored: refinement no longer responds to the "
+                       "solution at all.  Set tagging_L to control the boxes.");
+
         check_parameter("wormhole_id_type", wormhole_params.id_type,
                         (wormhole_params.id_type == 0) ||
                             (wormhole_params.id_type == 1),
@@ -356,6 +408,11 @@ class SimulationParameters : public SimulationParametersBase
     }
 
     bool calculate_constraint_norms{};
+
+    // Refinement criterion: 0 = ChiTagger (default), 1 = FixedGridsTagger.
+    int tagging_type{};
+    double tagging_L{};
+    std::array<double, AMREX_SPACEDIM> tagging_center{};
 
     std::string recipe_initial_data_file;
     ExternalGridInitialData::params_t external_grid_params{};

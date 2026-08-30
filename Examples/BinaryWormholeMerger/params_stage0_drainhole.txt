@@ -137,7 +137,11 @@ kappa2 = 0.
 kappa3 = 1.
 covariantZ4 = 0
 
-sigma = 2.0
+# Kreiss-Oliger dissipation.  0.1, not the inherited 2.0: measured 2026-08-30,
+# sigma = 2.0 shrinks this throat 34 % over 40 M while every constraint norm
+# reads flat, because smoothing lowers the constraint violation it causes.
+# See params_stage1_hold.txt and research/merger/FIx.md Stage 1.2.
+sigma = 0.1
 
 puncture_tracking.enabled = 0
 calculate_constraint_norms = 1

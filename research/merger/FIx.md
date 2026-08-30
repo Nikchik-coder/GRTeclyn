@@ -8,7 +8,7 @@ deep-research report it was derived from, unedited.
 | Stage | What it settles | Status |
 | --- | --- | --- |
 | 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
-| 1 | Single regular throat holds still, charge/geometry drift bounded | **1.1–1.4 done 2026-08-28; 1.5 open** |
+| 1 | Single regular throat holds still, charge/geometry drift bounded | **1.1–1.4 done 2026-08-28; 1.5 code landed 2026-08-30, arms running** |
 | 2 | Two-throat data: superposition + correction, then a CTTK solve | not started |
 | 3 | Head-on merger with ADM mass, Ψ₄ out | not started |
 | 4 | Write | not started |
@@ -139,7 +139,9 @@ Past that, χ_throat starts falling back toward puncture values. A heavier binar
   level 2 grew to 24 % of the domain / 32.8M cells / 30.6 GB. Add `FixedGridsTagger`
   (already in `Source/Tagging/`) as a **default-off** tagger choice — a static nested
   box on the origin, which is where χ → 0 actually needs the resolution — then run
-  collar **on** with σ = 0 and hold R_min = 3.8895 through 40 M
+  collar **on** with σ = 0 and hold R_min = 3.8895 through 40 M.
+  **Code landed 2026-08-30** (`tagging_type` / `tagging_L`, default 0 = unchanged);
+  three arms launched, see "1.5 — the fixed-box tagger" below
 
 **Benchmark:** no gauge detonation, R_min drift attributable to the known EB unstable mode
 (one growing mode, timescale ~ throat/c) rather than to the grid.
@@ -233,6 +235,68 @@ arms** — which is the argument for AMR plus the collar, i.e. exactly the 1.5 c
 
 Note also that reaching the floor is a precursor, not the death itself: the no-collar
 σ = 0.1 arm floored at t = 9.0 and ran on to t = 24.2.
+
+#### 1.5 — the fixed-box tagger
+
+Two new keys on `BinaryWormholeMerger`, both defaulting to the old behaviour so that no
+archived run changes:
+
+| key | default | meaning |
+| --- | --- | --- |
+| `tagging_type` | `0` | 0 = `ChiTagger` (refine on χ gradients, as before); 1 = `FixedGridsTagger` |
+| `tagging_L` | `L` | fixed boxes: level 0 tags \|x − centre\|_∞ < `tagging_L`/4, each finer level halves that |
+| `tagging_center` | `center` | where the boxes sit |
+
+`FixedGridsTagger` was already in `Source/Tagging/` and is used unmodified — KleinGordon
+and two unit tests depend on it, so its semantics are left alone and the example passes
+its own `tagging_L` instead. `pre_tag_cells()` now skips the χ ghost-fill entirely under
+the fixed tagger, which only exists to feed `ChiTagger`'s second derivatives.
+
+The point is not that fixed boxes are more accurate. They are **less** adaptive by
+definition, and `regrid_threshold` stops doing anything at all — the parameter reader
+warns about exactly that, because a knob that silently does nothing is how someone
+concludes the tagger did not help. The point is that the footprint becomes a property of
+the *parameters* rather than of the *error*, so the run can no longer die of its own
+mesh. Measured over a 30-step smoke run at `max_level = 2`, `tagging_L = 64`:
+
+| level | cells | varies over the run? |
+| --- | --- | --- |
+| 0 | 2 097 152 | — |
+| 1 | 4 096 000 | **no** |
+| 2 | 4 096 000 | **no** |
+
+against level 2 climbing to 32.8M cells under χ tagging. Cost is ~15 GB of arena, flat,
+and ~23 code units per hour, so 40 M is under two hours.
+
+**Three arms launched 2026-08-30**, all `max_level = 2`, `tagging_type = 1`:
+
+| arm | σ | collar | what it settles |
+| --- | --- | --- | --- |
+| `s15_lapse5_sg00_fg` | 0 | no | the direct repeat of the out-of-memory arm — does the tagger alone buy the full 40 M? |
+| `s15_lapse6_sg00_fg` | 0 | yes | the corner of the (collar, σ) square that was never reachable before |
+| `s15_lapse5_sg01_fg` | 0.1 | no | the shipped defaults; under χ tagging this one NaN'd on level 2 at t = 24.2 |
+
+**Pre-registered readings.** The tagger is vindicated if the σ = 0 arm reaches t = 40
+with R_min within ~1 % of 3.8895 — it had the throat and the origin both healthy when
+the memory ran out, so nothing else should stop it. If it instead NaNs at a *later* time
+than 35.2, the growing junk was real and the OOM merely got there first; if it NaNs
+*earlier*, the fixed boxes are under-resolving something the adaptive mesh was covering,
+and `tagging_L` is too small rather than the criterion being wrong. The σ = 0.1 arm is
+the one that can falsify the "refinement boundary is innocent" claim of 1.4: it died on
+level 2 before, and its level-2 boundary has now moved.
+
+#### σ = 2.0 no longer ships
+
+Changed 2026-08-30 in the three drainhole templates (`params_stage0_drainhole.txt`,
+`params_stage1_hold.txt`, `params_stage1_unigrid256.txt`): `sigma = 0.1`. The
+puncture-era templates are left at 2.0 — the measurement above is about drainhole data,
+and silently retuning runs it does not cover would be worse than leaving them.
+
+The justification is 1.2: at σ = 2.0 the throat loses 34 % over 40 M while every
+constraint norm reads flat, because smoothing *lowers* the constraint violation it
+causes. That is a failure mode the monitors are structurally unable to see, so it has to
+be pinned by the geometry, and 0.1 rather than 0 because a little dissipation still buys
+stability at the refinement boundaries for ~0.1 % on R_min.
 
 
 #### Why this run can give a clean answer

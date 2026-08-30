@@ -145,10 +145,50 @@ kappa2 = 0.
 kappa3 = 1.
 covariantZ4 = 0
 
-sigma = 2.0
+# Kreiss-Oliger dissipation.  Was 2.0 (inherited from the puncture era) until
+# 2026-08-30; changed on the Stage 1 measurement, FIx.md Stage 1.2.
+#
+# sigma = 2.0 does NOT show up as a constraint violation, which is exactly why
+# it had to be measured against the geometry instead: over 40 M it shrinks the
+# throat 34 % (R_min 3.89 -> 2.58) while every constraint norm reads flat at
+# 1.3e-3, because a smoothed solution violates the constraints LESS.  The same
+# run at sigma = 0.1 holds R_min to 0.1 %, and at sigma = 0 to 0.5 %.  It is
+# not collapse either: R overshoots to 4.40 at t = 20 before coming down, and
+# collapse is monotone.
+#
+# 0.1 rather than 0 because the drainhole is an exact fixed point only in the
+# continuum; a little dissipation still buys stability at the refinement
+# boundaries for the price of ~0.1 % on the throat.
+sigma = 0.1
 
 puncture_tracking.enabled = 0
 calculate_constraint_norms = 1
+
+
+#################################################
+# Refinement criterion (FIx.md Stage 1.5).
+#
+# 0 = ChiTagger, refine where chi's second derivatives are large.  This is the
+# default and what every run before 2026-08-30 used.  Its failure mode is that
+# it follows the ERROR: once junk grows anywhere the mesh chases it, and the
+# sigma = 0 arm ended in out-of-memory at t = 35.2 with level 2 covering 24 %
+# of the domain at 32.8M cells -- while the throat itself was still good to
+# 0.5 %.  The run did not go unstable; it drowned in its own grid.
+#
+# 1 = FixedGridsTagger, static nested boxes about tagging_center: level 0 tags
+# |x - centre|_inf < tagging_L / 4, and each finer level halves that.  The
+# footprint is then bounded by construction.  This is the honest criterion for
+# a single drainhole, whose resolution demand does not move -- the throat sits
+# at rbar = 1.618 and the compactified far universe at rbar -> 0, both at the
+# grid centre.
+#
+# It does NOT generalise to two throats: a single box cannot straddle both.
+# Stage 2 needs either a two-centre tagger or chi tagging with a cap.
+#
+# Left at 0 here so the template reproduces the archived arms; the Stage 1.5
+# runs set WHM_TAGGING_TYPE=1 on the launcher.
+tagging_type = 0
+tagging_L = 64.0
 
 #################################################
 # Diagnostics.
