@@ -31,7 +31,7 @@ commit → push → pull only.
       0.495); 9 elites, 14% coverage; 59% of evals scored.
 - [x] **Phase 3** — CMA-ES `qball_traj_fgeo_max_cmaes_v2` (200 evals) — **DONE 2026-08-28 01:25**, 200/200 in 15h30m. Champion `eval_000187`, score 4169.2 (+5.7% over the Phase-2 champion; f_geo 15.82%, survival 0.516, persistence 0.840); 9.0% gate rejections, 1 solver crash in 200.
 - [x] **Phase 4** — freeze the champion + HQ promotion (FMAX-RM v2) — **DONE 2026-08-29**, 6.23 h, solve converged (ham 0.078%, mom 0.085%). **The champion did not survive promotion:** HQ score **26.5** against a search score of 4169.2. Matter dispersed to 18% confined fraction (persistence 0.01), a horizon formed and collapsed at t=34.67/64, and the FTL channel was gated to ×0.01. Ray trace blind for 52% of the run; only t ≤ 26 is quotable.
-- [ ] **Phase 5** — refinement matrix (convergence + domain + controls) — 4 cells launched 2026-08-30 01:1x, one per card (RC/RI/DS/DS2), all four solves converged (ham 0.077–0.078%, mom 0.082–0.085%). Re-scoped by Phase 4: now a test of whether the dispersal and collapse are numerical or physical, not a convergence check on a positive result.
+- [x] **Phase 5** — refinement matrix: 4 cells **DONE 2026-08-30**, all four solves converged. **f_geo spread 1.2% across a 33% change in spacing and box size** (0.1549–0.1568, tolerance 10%) — geometry converged. Critically the **dispersal converges too** (retention 0.429–0.442, spread ×3.01–3.07), so the matter coming apart is physical, not numerical, and the Phase-4 refutation stands. Remaining: pump-free twin + 3 free-fall companions.
 - [ ] **Phase 6** — canonical-only control v2
 - [ ] **Phase 7** — optional: depth lineage v2 · FRONTIER-1
 - [ ] **Phase 8** — packs + paper gate
@@ -802,14 +802,69 @@ grteclyn-wrapper/.venv/bin/python \
 
 **Pre-registered acceptance (fixed now, before launch):**
 
-- [ ] Fine–medium relative difference ≤ 10% on peak f_geo; full ray bundles
+- [x] Fine–medium relative difference ≤ 10% on peak f_geo; full ray bundles
       at the quoted launch; grid-to-grid **spread** quoted as the error bar
       (no order fit on f_geo — measure observed order on composite
       constraint norms instead).
-- [ ] Compare cells at a common launch time safely inside every cell's
+- [x] Compare cells at a common launch time safely inside every cell's
       window — never at each cell's own peak.
 - [ ] If AMR regridding noise spoils the ladder: fall back to the
       bondi-proven unigrid methodology (max_level 0, three cell sizes).
+
+
+### Phase 5 results — matrix COMPLETE 2026-08-30, dispersal is physical
+
+Four cells, one card each, launched 01:02 and all scored by 05:48. Every
+solve converged identically (ham 0.077–0.078 %, mom 0.082–0.085 %, iteration
+8), so the ladder starts from matched initial data.
+
+| cell | L | N | h | f_geo_evol | max c | retention | spread | persist | horizon |
+|---|---|---|---|---|---|---|---|---|---|
+| DS  |  96 | 192 | 0.500 | 0.1549 | 1.440 | 0.429 | ×3.06 | 0.026 | 0 |
+| RC  | 128 | 192 | 0.667 | 0.1568 | 1.442 | 0.442 | ×3.01 | 0.024 | 0 |
+| DS2 | 112 | 224 | 0.500 | 0.1559 | 1.441 | 0.429 | ×3.07 | 0.026 | 0 |
+| RI  | 128 | 240 | 0.533 | 0.1565 | 1.442 | 0.431 | ×3.06 | 0.024 | 0 |
+| RM  | 128 | 256 | 0.500 | 0.1565 | 1.459 | 0.178 | ×6.16 | 0.009 | −0.46 |
+
+**Convergence: PASS.** `f_geo_evol` spans 0.1549–0.1568 — a **1.2 % spread**
+against the pre-registered 10 % tolerance — across a 33 % change in grid
+spacing *and* a 33 % change in box size. Max coordinate speed agrees to
+0.14 %. RM, at a sixth grid and twice the duration, lands on 0.1565 as well.
+Quote the grid-to-grid spread (1.2 %) as the error bar; no order fit on
+f_geo, per the pre-registration.
+
+**The decisive result is that the dispersal converges too.** Confinement
+retention 0.429–0.442, spread ratio 3.01–3.07, structural persistence
+0.024–0.026. Refining the grid does not slow the matter coming apart, and
+neither does enlarging the box. **The dispersal is physical, not a numerical
+artefact** — which is what the Phase-4 refutation needed in order to stand.
+
+**Dispersal is a function of time, not resolution.** RM shares DS/DS2's
+spacing and differs only in running to t=64: retention falls 0.43 → 0.18,
+spread doubles ×3.1 → ×6.2, persistence 0.026 → 0.009, and the horizon
+penalty switches on. The t=32 cells catch the process halfway; none of them
+reaches the t=34.67 collapse, so all four report `horizon_penalty = 0`.
+
+**Do not read the totals as an improvement.** DS 226.1, DS2 228.3, RC 212.6
+and RI 212.4 sit far above RM's 26.5 only because they stop at t=32, before
+the horizon forms and before dispersal deepens. Same configuration, shorter
+window. Every cell repeats Phase 4's verdict verbatim — *a channel that opens
+as the matter disperses is not a traversable warp* — with the coordinate FTL
+channel down-gated by its own persistence (multiplier 0.02–0.03) and exotic
+matter still required (matter = 1.60).
+
+**Disk.** The five `small_data/metric_stack` caches cost 74 GB. The four
+matrix stacks were deleted after scoring (score.json and the `.dat` outputs
+survive); RM's 34 GB is retained as the only 3D record of the headline run.
+Tree went 114 GB → 48 GB, also reclaiming 27.2 GB of `initial_data.gridinit`
+that nothing cleans up — `artifact_cleanup.py`'s `full_non_hq` tier removes
+exactly these but is never invoked; `evaluation.py` only ever asks for
+`plotfiles_only`. Worth wiring up before the next campaign.
+
+**Cost note for sizing Phase 6.** Post-processing dominates, not evolution.
+Evolution took 0.9–1.5 h per cell; the geodesic scoring pass took a further
+2–2.5 h (RM: 6.2 h evolution, then 5 h scoring on 90 stack files, ~3.3
+min/file, single-threaded).
 
 ---
 
