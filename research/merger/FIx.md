@@ -8,7 +8,7 @@ deep-research report it was derived from, unedited.
 | Stage | What it settles | Status |
 | --- | --- | --- |
 | 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
-| 1 | Single regular throat holds still, charge/geometry drift bounded | **1.1–1.4 done 2026-08-28; 1.5 arms running, interim at t = 13 — and they challenge 1.3** |
+| 1 | Single regular throat holds still, charge/geometry drift bounded | **1.1–1.5 done; blocked at 1.6 — every arm dies at t = 23.5–26.2 and the mesh is now excluded** |
 | 2 | Two-throat data: superposition + correction, then a CTTK solve | not started; **2.0 (tagger for two moving throats) added 2026-08-30** |
 | 3 | Head-on merger with ADM mass, Ψ₄ out | not started |
 | 4 | Write | not started |
@@ -131,20 +131,27 @@ Past that, χ_throat starts falling back toward puncture values. A heavier binar
   lapse collar is still needed once χ is O(1) at the throat — five arms, 2026-08-28
 - [x] **1.3** Decide the collar's fate — **KEEP IT.** It is not the perturbation that
   matters; it is the only thing holding the origin. See "What 1.2–1.4 measured" below.
-  **Under challenge as of 2026-08-30:** that verdict was measured under a mesh chasing
-  its own error; with the mesh pinned the collar arm is the worst of the three at t = 13.
-  See the interim readings under 1.5
+  **Challenged at t = 13 and confirmed at t = 26:** with the mesh pinned the collar arm
+  looked worst of the three at t = 13, but it outlived both others (26.2 against 23.5
+  and 24.2) and failed the way 1.3 predicted — through the throat, not the origin.
+  See the results under 1.5
 - [x] **1.4** Discriminate mesh vs. wormhole for the late blow-up: two unigrid arms,
   `max_level = 0` at dx = 0.50 and 0.25 —
   [params_stage1_unigrid256.txt](../../Examples/BinaryWormholeMerger/params_stage1_unigrid256.txt)
-- [ ] **1.5** Stop the mesh chasing the error. The σ = 0 arm ended at t = 35.2 in
+- [x] **1.5** Stop the mesh chasing the error. The σ = 0 arm ended at t = 35.2 in
   **out of memory**, not instability: this example tags on χ gradients (`ChiTagger`),
   level 2 grew to 24 % of the domain / 32.8M cells / 30.6 GB. Add `FixedGridsTagger`
   (already in `Source/Tagging/`) as a **default-off** tagger choice — a static nested
   box on the origin, which is where χ → 0 actually needs the resolution — then run
   collar **on** with σ = 0 and hold R_min = 3.8895 through 40 M.
-  **Code landed 2026-08-30** (`tagging_type` / `tagging_L`, default 0 = unchanged);
-  three arms launched, see "1.5 — the fixed-box tagger" below
+  **Done 2026-08-30** (`tagging_type` / `tagging_L`, default 0 = unchanged). Answer:
+  the tagger removes the out-of-memory failure mode completely and changes nothing
+  about the physics — all three arms NaN between t = 23.5 and 26.2. Necessary, not
+  sufficient; see "1.5 — the fixed-box tagger" below
+
+- [ ] **1.6** Find out *where* the NaN is, then treat the compactified origin. All eight
+  arms to date die or degrade on the same axis, and the mesh has now been excluded as the
+  cause. See "1.6 — the wall at t ≈ 24" below
 
 **Benchmark:** no gauge detonation, R_min drift attributable to the known EB unstable mode
 (one growing mode, timescale ~ throat/c) rather than to the grid.
@@ -288,45 +295,59 @@ and `tagging_L` is too small rather than the criterion being wrong. The σ = 0.1
 the one that can falsify the "refinement boundary is innocent" claim of 1.4: it died on
 level 2 before, and its level-2 boundary has now moved.
 
-**Interim readings at t ≈ 13, taken 2026-08-30 01:45 with all three arms still running.**
-Recorded because two of them already contradict conclusions written above, and the
-contradiction should be on the page before the runs land rather than after. Box 1.5 stays
-unticked until t = 40. Drift is against each run's *own* t = 0 value, 3.8917205 (the
-analytic 3.8895 plus a constant 0.06 % discretisation offset), not against 3.8895.
+**Results, 2026-08-30. All three arms are dead; none reached t = 40.** Every one ended
+`NaN ... level=2 component=1 name=h11`, between t = 23.5 and t = 26.2. Drift is against
+each run's own t = 0 value, 3.8917205 (the analytic 3.8895 plus a constant 0.06 %
+discretisation offset), not against 3.8895.
 
-| arm | σ | collar | t | R_min drift | throat cell | origin | Ham L2 | Mom L2 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| `s15_lapse5_sg00_fg` | 0 | no | 13.0 | **+0.006 %** | unmoved | flat at 7.20e-6, **never floored** | 2.50e-3 | 8.2e-5 |
-| `s15_lapse6_sg00_fg` | 0 | yes | 12.5 | −0.88 % | **moved one cell out** | χ −13 %; **lapse floored at 1e-10 from t = 10** | 2.38e-3 | **1.3e-3** |
-| `s15_lapse5_sg01_fg` | 0.1 | no | 13.0 | +0.04 % | unmoved | **floored in 208 of 1405 samples from t = 9.0** | 2.37e-3 | 5.8e-5 |
+| arm | σ | collar | NaN at | throat at death | origin χ | how it got there |
+| --- | --- | --- | --- | --- | --- | --- |
+| `s15_lapse5_sg00_fg` | 0 | no | **23.54** | +0.06 % until the last unit | never floored, flat 7.19e-6 | Mom doubling every ~0.5 from t = 13; Ham follows at 17; lapse at the origin 0.20 → floor over t = 18–22 |
+| `s15_lapse6_sg00_fg` | 0 | yes | **26.23** | **−7.3 %, monotone** | never floored | constraints jump at t = 17–20 and sit at 2–3e-1; throat shrinks steadily throughout |
+| `s15_lapse5_sg01_fg` | 0.1 | no | **24.17** | +0.04 % | clips the 1e-8 floor from t = 9.0 | **constraints flat at 3e-3 to the last step**; death is sudden and local |
 
-**The tagger works, and that part is already settled.** All three arms are pinned at
-13 967 682 FAB kilobyte (13.32 GB), identical across ranks and unchanged since launch,
-with levels 1 and 2 frozen at 4 096 000 cells and no regrid churn. The footprint is a
-property of the parameters, as designed. Arm A is past t = 13 with the throat held to six
-parts in a hundred thousand and the origin sitting on its t = 0 value to three digits;
-under χ tagging the same configuration was already growing its mesh by then.
+**The memory question is settled and the tagger wins it outright.** All three arms held
+13 967 682 FAB kilobyte (13.32 GB) from first step to last, identical across ranks, levels
+1 and 2 frozen at 4 096 000 cells. No arm came near the card. The footprint is a property
+of the parameters, exactly as designed, and the out-of-memory failure mode is gone.
 
-**1.3 is now the arm most likely to be reversed.** The collar was kept because it bought a
-factor 3.5 on origin survival — but that factor was measured under a mesh that was chasing
-its own error. With the mesh pinned, the collar arm is the *worst* of the three by every
-column: it is the only one whose throat has moved, its momentum constraint is fifteen
-times arm A's, and its lapse hit the floor at t = 10 and stayed there, while the
-collar-*free* arm never floored anything at all. If that ordering survives to t = 40, the
-collar was defending against damage the old tagger was causing, and 1.3 flips.
+**It does not, however, save the run — and the two clean A/Bs against χ tagging disagree
+with each other.** Same params file, same σ, same lapse type, `tagging_type` the only
+difference:
 
-**σ = 0.1 is also under challenge, for a mechanism that was not anticipated.** Arm C's
-origin drained smoothly from t = 7, hit the 1e-8 floor at t = 9.0, sat on it for ~1.5, and
-has been clipping on and off since, swinging over three orders of magnitude between clips
-— while the σ = 0 arm with otherwise identical settings never came within two decades of
-the floor. Dissipation is a high-order derivative operator and the compactified far
-universe is where χ ~ r̄⁴ is least resolved, so σ acts hardest exactly there and pushes χ
-down. The justification written under "σ = 2.0 no longer ships" — 0.1 rather than 0 "for
-stability at the refinement boundaries" — was reasoning about a mesh whose boundaries
-moved. Under fixed boxes they do not, and the stated price may be buying nothing.
+| σ | collar | χ tagging | fixed boxes | verdict |
+| --- | --- | --- | --- | --- |
+| 0.1 | no | NaN at **24.2** | NaN at **24.17** | tagger irrelevant — 0.03 apart |
+| 0 | no | t = **35.2**, OOM, no NaN | NaN at **23.54** | tagger costs **12 units** |
 
-Neither reversal is acted on yet: 27 of 40 units remain and interim orderings are not
-results.
+The σ = 0.1 pair is the sharper result. Those two runs put the level-2 boundary in
+completely different places and died at the same instant, in the same variable, with the
+throat 0.04 % from its start. Whatever kills them is **mesh-independent**, which
+independently confirms 1.4's "the refinement boundary is innocent" by a route that does not
+depend on the unigrid arms.
+
+The σ = 0 pair explains the other half. With no dissipation the only thing suppressing the
+junk was the runaway refinement itself, so removing it lets Mom run away from t = 13 —
+doubling every half unit, far too fast for the EB mode's ~4 timescale. **The junk has to be
+either damped or resolved; the run needs one of the two, and χ tagging was silently
+supplying the second at a price it could not afford.** That is why σ = 0 + fixed boxes is
+the worst corner of the three, not the best.
+
+**1.3 stands, and the interim reading that doubted it was wrong.** At t = 13 the collar arm
+looked worst by every column and this page recorded that it might flip. It did not: the
+collar arm outlived both others (26.2 against 23.5 and 24.2), and it paid the price 1.3
+already named — the throat shrinks monotonically to −7.3 %, the only arm where the throat
+is what fails. Collar buys time, costs geometry. Unchanged.
+
+Also corrected: the collar arm's lapse sitting at the 1e-10 floor at the origin is **not** a
+failure. It starts at 2.6e-7 by construction — freezing the far universe is what the collar
+is *for*. The arm that floored its lapse pathologically is the collar-free one, which began
+at 0.23 and collapsed there over t = 18–22.
+
+**What 1.5 actually settled.** The tagger is necessary and not sufficient: it removes the
+memory failure mode permanently and changes nothing about the physics failure. The blocker
+for Stage 1 is no longer the mesh. It is the wall at t ≈ 24, and 1.6 is now the item that
+matters.
 
 #### σ = 2.0 no longer ships
 
@@ -373,6 +394,63 @@ WHM_NAME=stage1 WHM_PARAMS=params_stage1_hold.txt WHM_MAX_LEVEL=2 \
 ```
 
 The two cloned params files differ in exactly one line, verified after launch.
+
+#### 1.6 — the wall at t ≈ 24
+
+With 1.5 done, every arm run on the massive drainhole can be put on one axis, and the
+ordering is the finding:
+
+| σ | collar | tagging | outcome |
+| --- | --- | --- | --- |
+| 2.0 | no | χ | **reaches t = 40** — but dissipation has eaten 34 % of the throat |
+| 2.0 | yes | χ | NaN 21.7 |
+| 0.1 | no | χ | NaN 24.2 |
+| 0.1 | no | fixed | NaN 24.17 |
+| 0.1 | yes | χ | NaN 31.4 |
+| 0 | no | χ | t = 35.2, OOM, no NaN |
+| 0 | no | fixed | NaN 23.54 |
+| 0 | yes | fixed | NaN 26.23 |
+
+**Everything that buys time is something that suppresses the compactified origin, and
+nothing so far cures it.** Dissipation damps it (σ = 2.0 is the only setting that reaches
+40, at the cost of the object being studied). The collar freezes it (+7 units at σ = 0.1,
++2.7 at σ = 0). Runaway refinement resolves it (+12 units at σ = 0, until the card fills).
+Three unrelated mechanisms, one target. That is a stronger identification than any single
+arm gives, and it is consistent with 1.4: χ vanishes like r̄⁴ at r̄ → 0, CCZ4 divides by χ,
+and the innermost cell is the least resolved point in the domain by a wide margin.
+
+**Refining the origin is not the cure — it is the poison.** 1.4 measured it directly:
+halving dx puts the innermost cell twice as close to r̄ → 0 and drops χ there by 2⁴
+(2.44e-3 → 1.33e-4 → 7.19e-6), and the unigrid arms die *sooner* at finer resolution
+(t = 6.6 at dx = 0.5, t = 1.2 at dx = 0.25). A deep fixed box on the origin is now cheap
+under 1.5's tagger and would make things worse, not better. Do not run it.
+
+**First, close the diagnostic gap.** The abort prints `level=2 component=1 name=h11` and
+nothing about *position*, so we do not actually know whether these arms die at the origin
+or at the throat — and there is direct evidence they do not all die the same way. The
+collar arm's origin was frozen and healthy throughout (χ never floored, 6.0–7.5e-6) while
+its **throat** shrank monotonically to −7.3 %; the collar-free arms held the throat to
+0.06 % and had their origins fail instead. Printing the cell coordinates with the NaN is a
+few lines and would settle which failure each arm actually suffered. **Do this before
+choosing a cure.**
+
+**Then, ranked by what each buys:**
+
+1. **Locate the NaN** (above). Cheap, decisive, blocks the rest.
+2. **Excise the inner region** — a timelike inner boundary inside the throat, which removes
+   the compactified universe from the grid instead of trying to survive it. Already named
+   in the decision gates, where instability here means abandoning true topology for this
+   paper.
+3. **Raise the χ floor / regularise near r̄ → 0** — cheaper than excision, and the floor is
+   demonstrably load-bearing already: the σ = 0.1 arm clipped 1e-8 in 208 of 1405 samples
+   from t = 9.0 and ran on to 24.17 regardless.
+4. **Domain-size control** — L = 128 with everything else fixed, to rule out the Sommerfeld
+   boundary and the sponge before attributing the wall to the origin. The two σ = 0.1 arms
+   dying 0.03 apart with different meshes says mesh-independent; it does not by itself say
+   *origin* rather than *outer boundary*.
+
+**Not a candidate: σ = 2.0.** It is the only setting that reaches t = 40 and it gets there
+by destroying the throat, which is 1.2's finding and has not changed.
 
 ### Stage 2 — two-throat initial data
 
