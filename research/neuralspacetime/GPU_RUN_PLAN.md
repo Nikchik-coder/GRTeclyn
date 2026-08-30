@@ -30,8 +30,8 @@ commit → push → pull only.
       disk). Champion `eval_000194`, score 3945.3 (f_geo 15.6%, survival
       0.495); 9 elites, 14% coverage; 59% of evals scored.
 - [x] **Phase 3** — CMA-ES `qball_traj_fgeo_max_cmaes_v2` (200 evals) — **DONE 2026-08-28 01:25**, 200/200 in 15h30m. Champion `eval_000187`, score 4169.2 (+5.7% over the Phase-2 champion; f_geo 15.82%, survival 0.516, persistence 0.840); 9.0% gate rejections, 1 solver crash in 200.
-- [ ] **Phase 4** — freeze the champion + HQ promotion (FMAX-RM v2)
-- [ ] **Phase 5** — refinement matrix (convergence + domain + controls)
+- [x] **Phase 4** — freeze the champion + HQ promotion (FMAX-RM v2) — **DONE 2026-08-29**, 6.23 h, solve converged (ham 0.078%, mom 0.085%). **The champion did not survive promotion:** HQ score **26.5** against a search score of 4169.2. Matter dispersed to 18% confined fraction (persistence 0.01), a horizon formed and collapsed at t=34.67/64, and the FTL channel was gated to ×0.01. Ray trace blind for 52% of the run; only t ≤ 26 is quotable.
+- [ ] **Phase 5** — refinement matrix (convergence + domain + controls) — 4 cells launched 2026-08-30 01:1x, one per card (RC/RI/DS/DS2), all four solves converged (ham 0.077–0.078%, mom 0.082–0.085%). Re-scoped by Phase 4: now a test of whether the dispersal and collapse are numerical or physical, not a convergence check on a positive result.
 - [ ] **Phase 6** — canonical-only control v2
 - [ ] **Phase 7** — optional: depth lineage v2 · FRONTIER-1
 - [ ] **Phase 8** — packs + paper gate
@@ -638,7 +638,7 @@ Two operational findings worth keeping:
       > passes the flag explicitly. The v2 clone therefore carries
       > `export GRTRESNA_RANKS="${GRTRESNA_RANKS:-8}"`. Latent in the shared
       > lib; left unpatched to keep the blast radius on this campaign only.
-- [ ] Launch the headline cell through the framework (it forwards all solve
+- [x] Launch the headline cell through the framework (it forwards all solve
       knobs and sets HQ geodesic mode itself):
 
 ```bash
@@ -680,11 +680,84 @@ before fixing Phase 5.
 
 **Pass gate:**
 
-- [ ] Solve: `converged` door, alignment clean (same checks as Phase 1b).
+- [x] Solve: `converged` door, alignment clean (same checks as Phase 1b).
 - [ ] `cache_fidelity` PASS; 4D trace reports `mode=hq` on its first stdout
       line; 5/5 rays at the quoted launch.
-- [ ] Memory curve + transport curve extracted → matrix window decided and
+- [x] Memory curve + transport curve extracted → matrix window decided and
       written into the manifest before Phase 5.
+
+
+### Phase 4 results — COMPLETE 2026-08-29, and the champion did not survive it
+
+Run `fmax_rm_L128_N256_t64_hq_eval000187`, one card, 22 442 s = **6.23 h**
+wall, evolution exit 0 at t = 64.
+
+**The initial data is sound.** Solve door `converged` at iteration 8,
+ham 0.078 %, mom 0.085 % against a 5 % gate — 60× inside it. Nothing below
+is an initial-data artefact.
+
+**The evolution refutes the champion.**
+
+| | Phase 3 search | Phase 4 HQ |
+|---|---|---|
+| score | 4169.20 | **26.53** |
+
+A 157× drop, and the scorer's own diagnosis is specific:
+
+- **Matter dispersed.** Confined fraction fell to **18 %** of its t=0 value,
+  spatial spread ×6.16, `structural_persistence` 0.01, `density_retention`
+  0.05.
+- **A horizon formed and collapsed at t = 34.67 / 64.00** — survived 54.2 %
+  of the run; graded horizon penalty −0.458.
+- **The FTL channel was gated away.** Verbatim: *"coordinate operational FTL
+  down-gated for dispersal (structural_persistence=0.01, gate_strength=1.00,
+  multiplier=0.01): a channel that opens as the matter disperses is not a
+  traversable warp."*
+- Exotic matter still required (matter = 1.60).
+
+This is the standing failure mode — a dissolved star makes every geometry
+diagnostic look healthy. `f_geo` peaks at **0.2019 at t = 4.32** and stays
+positive, and max coordinate speed reaches 1.46, *because* the matter is no
+longer there to constrain them. The geometry headline and the matter state
+must be read together or not at all.
+
+**The ray trace goes blind for half the run.** 47 of 90 rows (**52 %**) are
+untrusted:
+
+| window | rays | drift | verdict |
+|---|---|---|---|
+| t = 0 → 26 | 5/5 | ~3e-4 | trusted |
+| t = 27 → 59 | 0/5 – 3/5 | → 1.0, once 35.5 | **blind** |
+| t = 60.5 → 63.4 | 5/5 | small | trusted |
+
+The blackout begins at t ≈ 27 and the horizon appears at t = 34.67; the χ
+movie shows two wells deepening to χ → 0.2 from t ≈ 32. The tracer is not
+broken — it is being asked to integrate through a forming horizon. **Only
+t ≤ 26 is quotable.**
+
+**Both memory priors are refuted — do not carry them forward.**
+
+| prior | measured here |
+|---|---|
+| memory ceiling at t ≈ 51 | none; peak 19.2 GB/card from a 15.4 GB floor |
+| growth ~2 GB/card/unit | **0.06 GB/unit**, ~30× lower |
+
+Plotfile retention held at exactly `CONSUMER_KEEP_LAST=3` (9.3–12 GB) for the
+whole run — no disk risk at this cadence.
+
+**Pass-gate outcome:** solve ✅. `cache_fidelity` and the `mode=hq` stdout
+banner ⚠ **not found in the log** — unverified, not failed; check the emitter
+before quoting either. Memory and transport curves ✅ extracted (above).
+
+**Ruling for Phase 5:** the matrix stops being a convergence check on a
+positive result — there is no positive result to converge. It becomes the
+test of whether the dispersal and the t = 34.67 collapse are **numerical or
+physical**. If coarser grids disperse worse, resolution is implicated; if all
+four disperse alike, the champion genuinely does not hold together. The
+comparison window moves from t = 32 to **t ≤ 26**, inside the trusted trace.
+The cells' `stop_time = 32` is kept as-is: it covers the trusted window and
+additionally brackets the blackout onset, so it also reports whether that
+onset moves with resolution.
 
 ---
 
