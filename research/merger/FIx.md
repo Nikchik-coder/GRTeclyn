@@ -8,8 +8,8 @@ deep-research report it was derived from, unedited.
 | Stage | What it settles | Status |
 | --- | --- | --- |
 | 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
-| 1 | Single regular throat holds still, charge/geometry drift bounded | **1.1–1.4 done 2026-08-28; 1.5 code landed 2026-08-30, arms running** |
-| 2 | Two-throat data: superposition + correction, then a CTTK solve | not started |
+| 1 | Single regular throat holds still, charge/geometry drift bounded | **1.1–1.4 done 2026-08-28; 1.5 arms running, interim at t = 13 — and they challenge 1.3** |
+| 2 | Two-throat data: superposition + correction, then a CTTK solve | not started; **2.0 (tagger for two moving throats) added 2026-08-30** |
 | 3 | Head-on merger with ADM mass, Ψ₄ out | not started |
 | 4 | Write | not started |
 
@@ -130,7 +130,10 @@ Past that, χ_throat starts falling back toward puncture values. A heavier binar
 - [x] **1.2** Run to t ≳ 20–30 M and measure: R_min drift, constraint norms, whether the
   lapse collar is still needed once χ is O(1) at the throat — five arms, 2026-08-28
 - [x] **1.3** Decide the collar's fate — **KEEP IT.** It is not the perturbation that
-  matters; it is the only thing holding the origin. See "What 1.2–1.4 measured" below
+  matters; it is the only thing holding the origin. See "What 1.2–1.4 measured" below.
+  **Under challenge as of 2026-08-30:** that verdict was measured under a mesh chasing
+  its own error; with the mesh pinned the collar arm is the worst of the three at t = 13.
+  See the interim readings under 1.5
 - [x] **1.4** Discriminate mesh vs. wormhole for the late blow-up: two unigrid arms,
   `max_level = 0` at dx = 0.50 and 0.25 —
   [params_stage1_unigrid256.txt](../../Examples/BinaryWormholeMerger/params_stage1_unigrid256.txt)
@@ -285,6 +288,46 @@ and `tagging_L` is too small rather than the criterion being wrong. The σ = 0.1
 the one that can falsify the "refinement boundary is innocent" claim of 1.4: it died on
 level 2 before, and its level-2 boundary has now moved.
 
+**Interim readings at t ≈ 13, taken 2026-08-30 01:45 with all three arms still running.**
+Recorded because two of them already contradict conclusions written above, and the
+contradiction should be on the page before the runs land rather than after. Box 1.5 stays
+unticked until t = 40. Drift is against each run's *own* t = 0 value, 3.8917205 (the
+analytic 3.8895 plus a constant 0.06 % discretisation offset), not against 3.8895.
+
+| arm | σ | collar | t | R_min drift | throat cell | origin | Ham L2 | Mom L2 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `s15_lapse5_sg00_fg` | 0 | no | 13.0 | **+0.006 %** | unmoved | flat at 7.20e-6, **never floored** | 2.50e-3 | 8.2e-5 |
+| `s15_lapse6_sg00_fg` | 0 | yes | 12.5 | −0.88 % | **moved one cell out** | χ −13 %; **lapse floored at 1e-10 from t = 10** | 2.38e-3 | **1.3e-3** |
+| `s15_lapse5_sg01_fg` | 0.1 | no | 13.0 | +0.04 % | unmoved | **floored in 208 of 1405 samples from t = 9.0** | 2.37e-3 | 5.8e-5 |
+
+**The tagger works, and that part is already settled.** All three arms are pinned at
+13 967 682 FAB kilobyte (13.32 GB), identical across ranks and unchanged since launch,
+with levels 1 and 2 frozen at 4 096 000 cells and no regrid churn. The footprint is a
+property of the parameters, as designed. Arm A is past t = 13 with the throat held to six
+parts in a hundred thousand and the origin sitting on its t = 0 value to three digits;
+under χ tagging the same configuration was already growing its mesh by then.
+
+**1.3 is now the arm most likely to be reversed.** The collar was kept because it bought a
+factor 3.5 on origin survival — but that factor was measured under a mesh that was chasing
+its own error. With the mesh pinned, the collar arm is the *worst* of the three by every
+column: it is the only one whose throat has moved, its momentum constraint is fifteen
+times arm A's, and its lapse hit the floor at t = 10 and stayed there, while the
+collar-*free* arm never floored anything at all. If that ordering survives to t = 40, the
+collar was defending against damage the old tagger was causing, and 1.3 flips.
+
+**σ = 0.1 is also under challenge, for a mechanism that was not anticipated.** Arm C's
+origin drained smoothly from t = 7, hit the 1e-8 floor at t = 9.0, sat on it for ~1.5, and
+has been clipping on and off since, swinging over three orders of magnitude between clips
+— while the σ = 0 arm with otherwise identical settings never came within two decades of
+the floor. Dissipation is a high-order derivative operator and the compactified far
+universe is where χ ~ r̄⁴ is least resolved, so σ acts hardest exactly there and pushes χ
+down. The justification written under "σ = 2.0 no longer ships" — 0.1 rather than 0 "for
+stability at the refinement boundaries" — was reasoning about a mesh whose boundaries
+moved. Under fixed boxes they do not, and the stated price may be buying nothing.
+
+Neither reversal is acted on yet: 27 of 40 units remain and interim orderings are not
+results.
+
 #### σ = 2.0 no longer ships
 
 Changed 2026-08-30 in the three drainhole templates (`params_stage0_drainhole.txt`,
@@ -333,6 +376,10 @@ The two cloned params files differ in exactly one line, verified after launch.
 
 ### Stage 2 — two-throat initial data
 
+- [ ] **2.0** Replace the fixed box before adding a second throat: moving boxes on
+  the two throats (`PunctureTagger` + a throat locator for `PunctureTracker`) plus
+  static wave-zone shells (`ExtractionTagger`). See "2.0" below — this blocks 3.1,
+  not 2.1
 - [ ] **2.1** Superpose two drainholes with the **Helfer/Ning correction**
   (`γ_ij = γ_ij^A + γ_ij^B − γ_ij^B(x_A)`), not plain superposition
 - [ ] **2.2** Measure the Hamiltonian defect vs separation; establish the d/a floor
@@ -340,6 +387,80 @@ The two cloned params files differ in exactly one line, verified after launch.
   rescaling — the escape hatch for phantom matter). Watch for K² < 0 nodes
 
 **Benchmark:** Ham and Mom L₂ converging at ≥ 2nd order; χ = O(1) at *both* throats.
+
+#### 2.0 — the tagger does not survive the jump to two throats
+
+Recorded 2026-08-30, before 2.1 starts, because the fixed box that makes Stage 1.5 work is
+the one piece of it that cannot be carried over. Two independent reasons: the throats
+*move*, and one box cannot straddle both; and a merger has to resolve a wave zone that a
+single central box does not cover.
+
+The instinct that follows — build a smarter criterion that can tell numerical junk from
+real structure, and refine only the latter — is the wrong target. Of the four taggers in
+`Source/Tagging/`, exactly one reads the solution:
+
+| tagger | criterion | reads state? |
+| --- | --- | --- |
+| `ChiTagger` | \|∂²χ\| above a threshold | **yes** |
+| `PunctureTagger` | distance to each tracked centre, radius from its mass | no |
+| `ExtractionTagger` | distance to each extraction radius, enforces a *required level* | no |
+| `FixedGridsTagger` | distance to a fixed centre | no |
+
+That is the field's answer, and it is structural rather than clever: production black-hole
+codes refine on **geometry decided before the run starts** — moving boxes on the sources,
+static shells guaranteeing a minimum level out to each extraction radius. Junk never gets a
+vote because the solution never gets a vote, and the footprint is bounded by the parameters
+in exactly the sense 1.5 relies on.
+
+**The wave zone is the easy half.** Radiation wavelengths are long compared with the
+sources, so the wave zone wants adequate-but-coarse resolution sized in advance, not fine
+grids chasing wavefronts. `ExtractionTagger` already expresses this: for each extraction
+radius it enforces a required level inside `1.2 ×` that radius. It is `FixedGridsTagger`
+with a different shape, and it composes with it.
+
+**The sources are the real work.** `PunctureTagger` is already a moving multi-centre tagger
+(nested boxes sized as `1.5 × 2^min(max_level−level−1,1) × mass`), and `PunctureTracker`
+already exists as an `amrex::ParticleContainer` — both present, both switched off
+(`puncture_tracking.enabled = 0` in every merger params file). The gap is that the tracker
+locates a puncture by advecting a particle backwards along the shift, and a wormhole throat
+is not a point. It has to be found as the **interior minimum of the areal radius**
+`R = r̄/√χ`, or as the peak of the phantom field — the same distinction that made the
+original throat measurement read the compactified far infinity instead of the throat.
+
+**A wormhole-specific complication black holes do not have:** the numerically fragile spot
+is the compactified far universe at r̄ → 0, which in these coordinates sits at the *centre*
+of each throat. Every moving box therefore carries its own soft spot along with it, and
+whatever 1.3 concludes about the collar has to hold under a box that is moving.
+
+**If state-based tagging is wanted anyway**, the honest menu, and why `ChiTagger` as
+written fails: it is a bare second-derivative magnitude with no amplitude reference, no
+scale test and no cap, so a small sharp ripple trips it exactly as readily as a real
+feature.
+
+1. **Normalise or floor the amplitude** — divide by local \|χ\| or require an absolute
+   size. One line, kills most small-amplitude junk.
+2. **Test resolvedness, not sharpness** — junk lives at 2–4 cells and does not converge
+   under refinement; real structure does. Compare the same quantity at `dx` and `2dx`.
+   This is the only criterion that discriminates junk *in principle*.
+3. **Tag on the matter, not the metric** — the phantom scalar has support only where the
+   wormhole is, and metric junk does not manufacture it. Not immune (the two couple), but
+   far quieter.
+4. **Fence the region** — allow adaptivity only inside the source boxes and the wave shell.
+5. **Cap cells per level** regardless of criterion. Insurance, not a criterion.
+
+**The obvious answer that fails:** textbook Berger–Oliger truncation-error tagging. Junk
+has enormous truncation error by construction, so that criterion chases it harder than
+`ChiTagger` does.
+
+**And the point underneath all of it:** refining junk feeds junk — a finer grid resolves
+more of the noise spectrum, which pulls in more grid. That is the loop that ended the
+σ = 0 arm at t = 35.2, and no threshold makes a runaway loop safe, it only sets the length
+of the fuse. The correct response to junk is to **damp** it (constraint damping, modest
+dissipation) while refinement goes where it was told to go.
+
+**Plan for Stage 2/3:** moving boxes on the two throats + static extraction shells, no
+state-based tagging at all; the deliverable is a throat locator to drive the existing
+tracker, not a new criterion.
 
 ### Stage 3 — the run
 
