@@ -7,6 +7,7 @@
 #include "GRParmParse.hpp"
 #include "SimulationParametersBase.hpp"
 #include "SpongeZone.hpp"
+#include "ThroatTracker.hpp"
 
 #include <array>
 #include <string>
@@ -200,18 +201,51 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("tagging_L", tagging_L, L);
 
         // For a single throat this is the grid centre.  A binary needs boxes
-        // on each throat, which this tagger cannot express - Stage 2 will
-        // need either a two-centre tagger or a return to chi tagging with a
-        // bounded footprint.
+        // on each throat, which tagging_type = 1 cannot express - that is
+        // what tagging_type = 2 is for.
         pp.load("tagging_center", tagging_center, center);
+
+        // Throat tracking (FIx.md Stage 2.0): locate each throat as the chi
+        // pit it carries at its centre and follow it, one row per coarse step
+        // in throat_track.dat.  Default off so no archived run changes.  The
+        // moving-box tagger (tagging_type = 2) requires it - the boxes are
+        // centred on whatever the tracker last measured.
+        pp.load("throat_tracking", throat_tracker_params.enabled, false);
+
+        // The search sphere around the last known position.  It only has to
+        // cover one coarse step of motion (~2e-3 for v = 0.2) but must stay
+        // small enough to see only its own throat's pit; the throat scale a
+        // is a safe default for any sane separation.
+        pp.load("throat_track_search_radius",
+                throat_tracker_params.search_radius,
+                std::max(wormhole_params.b0_A, wormhole_params.b0_B));
+        throat_tracker_params.grid_center = wormhole_params.grid_center;
     }
 
     void check_params()
     {
         check_parameter("tagging_type", tagging_type,
-                        (tagging_type == 0) || (tagging_type == 1),
-                        "must be 0 (refine on chi gradients, the default) or "
-                        "1 (refine static nested boxes on tagging_center)");
+                        (tagging_type >= 0) && (tagging_type <= 2),
+                        "must be 0 (refine on chi gradients, the default), "
+                        "1 (static nested boxes on tagging_center) or "
+                        "2 (moving nested boxes on the tracked throats, plus "
+                        "the extraction shells when extraction is on)");
+
+        // The moving boxes are centred on whatever the tracker last measured,
+        // so running them without the tracker would freeze them at the t = 0
+        // positions - i.e. silently degrade to tagging_type = 1 with worse
+        // provenance.
+        check_parameter("throat_tracking", throat_tracker_params.enabled,
+                        (tagging_type != 2) || throat_tracker_params.enabled,
+                        "must be 1 when tagging_type = 2: the moving boxes "
+                        "follow the tracked throat positions and are "
+                        "meaningless without the tracker");
+
+        check_parameter("throat_track_search_radius",
+                        throat_tracker_params.search_radius,
+                        !throat_tracker_params.enabled ||
+                            (throat_tracker_params.search_radius > 0.0),
+                        "must be positive when throat_tracking = 1");
 
         check_parameter("tagging_L", tagging_L, tagging_L > 0.0,
                         "must be positive: it is the length whose inner "
@@ -221,9 +255,10 @@ class SimulationParameters : public SimulationParametersBase
         // fixed tagger.  Silently ignoring it would let someone tune a knob
         // that does nothing and conclude the tagger did not help.
         warn_parameter("tagging_type", tagging_type, tagging_type == 0,
-                       "selects the fixed-box tagger, so regrid_threshold is "
-                       "ignored: refinement no longer responds to the "
-                       "solution at all.  Set tagging_L to control the boxes.");
+                       "selects a geometric tagger (fixed or moving boxes), "
+                       "so regrid_threshold is ignored: refinement no longer "
+                       "responds to the solution at all.  Set tagging_L to "
+                       "control the boxes.");
 
         check_parameter("wormhole_id_type", wormhole_params.id_type,
                         (wormhole_params.id_type == 0) ||
@@ -419,6 +454,7 @@ class SimulationParameters : public SimulationParametersBase
 
     BinaryWormholeInitialData::params_t wormhole_params{};
     BinaryThroatDiagnostics::params_t binary_diag_params{};
+    ThroatTracker::params_t throat_tracker_params{};
 
     // Numerical sponge zone (radially-ramped extra KO dissipation).
     SpongeZoneParams sponge_params{};

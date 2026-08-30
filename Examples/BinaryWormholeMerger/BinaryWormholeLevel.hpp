@@ -57,6 +57,14 @@ class BinaryWormholeLevel : public GRAMRLevel
     //! write identical columns to the same files.  Public only because nvcc
     //! refuses extended __device__ lambdas inside a private member function.
     void write_scalar_diagnostics();
+
+    //! ABSOLUTE coordinates of the tracked throat centres, A then B, seeded
+    //! from the params-file positions by set_sim_params and updated every
+    //! coarse step by ThroatTracker (when throat_tracking = 1).  Static
+    //! because tag_cells needs them on every level and the tracker updates
+    //! them on level 0 only; every MPI rank computes the same reduced values,
+    //! so no broadcast is needed.
+    static std::array<amrex::Real, 2 * AMREX_SPACEDIM> s_throat_centers;
 };
 
 #endif /* BINARYWORMHOLELEVEL_HPP_ */

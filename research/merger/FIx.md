@@ -9,7 +9,7 @@ deep-research report it was derived from, unedited.
 | --- | --- | --- |
 | 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
 | 1 | Single regular throat holds still, charge/geometry drift bounded | **exit condition MET 2026-08-30** at `max_level = 3`: 40 M, no NaN, throat −0.36 %. 1.1–1.6 done |
-| 2 | Two-throat data: superposition + correction, then a CTTK solve | not started; **2.0 (tagger for two moving throats) added 2026-08-30** |
+| 2 | Two-throat data: superposition + correction, then a CTTK solve | **2.0 implemented 2026-08-31** (tracker + moving boxes + shells); shakedown = the boosted-throat run, in flight |
 | 3 | Head-on merger with ADM mass, Ψ₄ out | not started; 1.6 raises the usable window past 40 M, so the wide separation is affordable |
 | 4 | Write | not started |
 
@@ -690,6 +690,59 @@ dissipation) while refinement goes where it was told to go.
 **Plan for Stage 2/3:** moving boxes on the two throats + static extraction shells, no
 state-based tagging at all; the deliverable is a throat locator to drive the existing
 tracker, not a new criterion.
+
+##### 2.0 implemented, 2026-08-31
+
+Three pieces, all in the example, none touching shared code:
+
+| piece | where | what it does |
+| --- | --- | --- |
+| throat locator | [ThroatTracker.hpp](../../Examples/BinaryWormholeMerger/ThroatTracker.hpp) | finds each throat every coarse step, writes `throat_track.dat`; default off (`throat_tracking`) |
+| moving boxes | `tagging_type = 2` | the fixed tagger's own box arithmetic, centred on the tracked positions instead of the grid centre |
+| wave-zone shells | same branch | the stock `ExtractionTagger`, composed in; a no-op while extraction is off |
+
+**The locator is simpler than planned, and the reason is a wormhole-specific gift.** The
+plan said "interior minimum of the areal radius, or the peak of the phantom field" — a
+minimal-surface search in 3D. Neither is needed for the *boxes*: what the tagger wants is
+the throat's **centre**, and in this chart every throat carries its own compactified far
+universe exactly there, where χ falls like r̄⁴ to values orders of magnitude below
+anything else in the field. The centre is located as the χ pit inside a small search
+sphere around the last known position — a min-reduce plus a centroid over the
+near-minimum cells (which also handles a floor-clipped plateau), the same pattern the
+collapse diagnostics already use for the minimum-lapse position. The very feature that
+makes the origin numerically fragile makes it an unmissable beacon. The minimal surface
+stays what it always was, a *diagnostic*, extracted post-hoc from the plotfiles.
+
+`PunctureTracker` stays off: it advects a particle backwards along the shift, which
+locates a coordinate singularity these data do not have. The pit is measured from the
+state instead, so the tracker cannot drift away from the object it is following.
+
+**The shakedown is the boosted-throat run, and it doubles as the first physics of
+Stage 2** (`s20_boost_p02`, launched 2026-08-31 on the Stage 1 baseline configuration —
+a = 2, m = 1, σ = 0.1, lapse 5, `max_level = 3`, `tagging_L = 64` — with one addition: a
+Bowen–York momentum P = 0.2 along z, [params_stage2_boosted.txt](../../Examples/BinaryWormholeMerger/params_stage2_boosted.txt)).
+Every piece of Stage 1's evidence was collected with the throat pinned to the grid centre
+by construction; a merger needs the throat to survive *crossing the grid* at late-inspiral
+speed (0.2 ≈ the per-throat Newtonian speed of an equal-mass pair at d = 16). Two
+questions, in order:
+
+1. **Infrastructure** — does the tracker hold the throat and do the moving boxes keep it
+   resolved across cells, refinement boundaries and box edges? Read `throat_track.dat`:
+   position advancing at ~P/M, `nA` > 0 throughout. A zero in `nA` means the boxes lost
+   the throat — the failure this run exists to catch, visible rather than silent.
+2. **Physics** — the boost makes the data inexact, so the growing mode starts from a
+   larger seed. Measured at t = 0: L2 Mom = 4.5e-6 (the discretisation residual of the
+   analytically divergence-free Bowen–York term) against the resting arm's exact zero,
+   with L2 Ham unchanged at 2.1e-3. The Stage 1 growth model then predicts the wall
+   *earlier* than the resting arm's ~42, by roughly 4·ln(seed ratio) — and where it
+   actually lands is the number Stage 3 needs before it can budget the infall.
+
+Momentum stays a validation tool: the merger itself remains gravity-driven (two throats
+released from rest). One params-file trap worth recording: `wormhole_momentumB` defaults
+to **minus** `momentumA` (the zero-total-momentum binary convention), so a single-throat
+boost must pin it to zero explicitly or the code silently plants an equal-and-opposite
+Bowen–York term at the mirror point — which for a throat at the origin is the *same*
+point, cancelling the boost exactly.
 
 ### Stage 3 — the run
 

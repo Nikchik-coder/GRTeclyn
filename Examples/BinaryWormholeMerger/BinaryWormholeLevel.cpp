@@ -6,6 +6,7 @@
 #include "ConstraintsWithMatter.hpp"
 #include "ExoticScalarField.hpp"
 #include "ExternalGridInitialData.hpp"
+#include "ExtractionTagger.hpp"
 #include "FixedGridsTagger.hpp"
 #include "GRParmParse.hpp"
 #include "PhantomDecayPotential.hpp"
@@ -13,6 +14,7 @@
 #include "SimulationParameters.hpp"
 #include "SmallDataIO.hpp"
 #include "SpongeZone.hpp"
+#include "ThroatTracker.hpp"
 #include "TraceARemoval.hpp"
 #include "Weyl4WithMatter.hpp"
 #include "WeylExtraction.hpp"
@@ -49,10 +51,28 @@ std::string resolve_out_dir()
 }
 } // namespace
 
+std::array<amrex::Real, 2 * AMREX_SPACEDIM>
+    BinaryWormholeLevel::s_throat_centers{};
+
 void BinaryWormholeLevel::set_sim_params(
     const SimulationParameters *a_sim_params)
 {
     s_sim_params = a_sim_params;
+
+    // Seed the tracked throat centres from the params-file positions
+    // (wormhole_centerA/B are offsets relative to the grid centre).  The
+    // tracker refines these every coarse step; until it first runs - and
+    // whenever it is disabled - the boxes sit exactly where tagging_type = 1
+    // would have put them for a centred single throat.
+    const auto &wp = a_sim_params->wormhole_params;
+    for (int d = 0; d < AMREX_SPACEDIM; ++d)
+    {
+        s_throat_centers[d] = static_cast<amrex::Real>(wp.grid_center[d]) +
+                              static_cast<amrex::Real>(wp.centerA[d]);
+        s_throat_centers[AMREX_SPACEDIM + d] =
+            static_cast<amrex::Real>(wp.grid_center[d]) +
+            static_cast<amrex::Real>(wp.centerB[d]);
+    }
 }
 
 const SimulationParameters &BinaryWormholeLevel::simParams()
@@ -263,6 +283,46 @@ void BinaryWormholeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
     BL_PROFILE("BinaryWormholeLevel::tag_cells()");
     amrex::MultiFab &state_new = get_new_data(state_index);
     const auto &tag_arrs       = a_tag_box_array.arrays();
+
+    // Moving nested boxes on the tracked throat centres (FIx.md Stage 2.0):
+    // the same box arithmetic as tagging_type = 1 - half-width
+    // tagging_L * 2^-(level+2) per level, footprint bounded by construction -
+    // but centred on wherever ThroatTracker last measured each throat, so
+    // the boxes follow the throats instead of pinning them to the grid
+    // centre.  The wave zone composes in via the stock ExtractionTagger,
+    // which enforces its required level inside 1.2x each extraction radius
+    // and compiles to a no-op when extraction is off.
+    if (simParams().tagging_type == 2)
+    {
+        const amrex::Real dx0 = Geom().CellSize(0);
+        const std::array<amrex::Real, AMREX_SPACEDIM> center_A{
+            s_throat_centers[0], s_throat_centers[1], s_throat_centers[2]};
+        const std::array<amrex::Real, AMREX_SPACEDIM> center_B{
+            s_throat_centers[3], s_throat_centers[4], s_throat_centers[5]};
+
+        const FixedGridsTagger tagger_A(dx0, Level(), simParams().tagging_L,
+                                        center_A);
+        const FixedGridsTagger tagger_B(dx0, Level(), simParams().tagging_L,
+                                        center_B);
+        const bool has_B = simParams().wormhole_params.b0_B > 0.0;
+
+        // simParams() outlives every kernel, as ExtractionTagger requires.
+        const ExtractionTagger shell_tagger(dx0, Level(),
+                                            simParams().extraction_params);
+
+        amrex::ParallelFor(a_tag_box_array,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           {
+                               tagger_A(i, j, k, tag_arrs[box_no]);
+                               if (has_B)
+                               {
+                                   tagger_B(i, j, k, tag_arrs[box_no]);
+                               }
+                               shell_tagger(i, j, k, tag_arrs[box_no]);
+                           });
+        amrex::Gpu::streamSynchronize();
+        return;
+    }
 
     // Fixed nested boxes on a static centre: refinement does not respond to
     // the solution, so the footprint is bounded by construction and cannot
@@ -621,6 +681,21 @@ void BinaryWormholeLevel::write_scalar_diagnostics()
             BinaryThroatDiagnostics::execute(
                 state_fine, fine_geom, simParams().binary_diag_params, out_dir,
                 dt, time, restart_time, first_step);
+        }
+
+        // ---- Throat tracking (own module, own file, own switch) -----------
+        // Updates s_throat_centers in place, which is what the moving-box
+        // tagger (tagging_type = 2) reads at the next regrid.  state_fine has
+        // already been FillPatched and sanitised above.
+        if (simParams().throat_tracker_params.enabled)
+        {
+            const std::array<bool, 2> present = {
+                simParams().wormhole_params.b0_A > 0.0,
+                simParams().wormhole_params.b0_B > 0.0};
+            ThroatTracker::execute(state_fine, fine_geom,
+                                   simParams().throat_tracker_params, present,
+                                   s_throat_centers, out_dir, dt, time,
+                                   restart_time, first_step);
         }
     }
 }
