@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# BinaryWormholeMerger -- single-run launcher (research/merger/Plan.md).
+# BinaryWormholeMerger -- single-run launcher (research/merger/Reference.md).
 #
 # One run of Examples/BinaryWormholeMerger through the campaign contract
 # (scripts/campaigns/README.md): launcher.pid registered for stop_campaign.sh,
@@ -27,7 +27,7 @@
 #   WHM_NAME      run name (default: params basename without .txt)
 #   WHM_EXE       evolution binary (default: newest main3d.*.ex in the example)
 #   WHM_BARE_MASS override wormhole_bare_mass_A AND _B in the cloned params
-#                 (equal-mass ladder knob, Plan.md Phase 3; appends _mXXX to
+#                 (equal-mass ladder knob, Plan.md Stage 3; appends _mXXX to
 #                 the run name so ladder rungs never clobber each other)
 #   WHM_MAX_LEVEL override max_level in the cloned params, rewriting
 #                 regrid_interval to match (AMReX aborts if it does not carry
@@ -41,13 +41,13 @@
 #                 sigma = 0 survives and is 20x more accurate AT THE THROAT.
 #   WHM_LAPSE_TYPE override wormhole_initial_lapse_type in the cloned params
 #                 (appends _lapseN to the run name).  The collar A/B of
-#                 FIx.md Stage 1.3 is this knob and nothing else: 5 is the
+#                 Plan.md Stage 1.3 is this knob and nothing else: 5 is the
 #                 drainhole's bare static lapse, 6 is that lapse times the
 #                 origin-isolating collar.
 #   WHM_TAGGING_TYPE override tagging_type in the cloned params (appends _fg
 #                 when 1).  0 = refine on chi gradients (ChiTagger, the
 #                 default); 1 = static nested boxes on tagging_center
-#                 (FixedGridsTagger).  FIx.md Stage 1.5: chi tagging follows
+#                 (FixedGridsTagger).  Plan.md Stage 1.5: chi tagging follows
 #                 the ERROR, so the sigma = 0 arm's mesh chased its own junk
 #                 to 32.8M cells and died out-of-memory at t = 35.2 with the
 #                 throat still healthy to 0.5 %.  The drainhole's resolution
@@ -201,7 +201,7 @@ fi
 # alpha = e^{u} is part of the static solution, so type 5 makes the data an exact
 # fixed point of the evolved system and type 6 multiplies in the origin-isolating
 # collar, which deliberately breaks that.  Comparing the two is the whole of
-# FIx.md Stage 1.3, so it gets an override rather than a forked params file --
+# Plan.md Stage 1.3, so it gets an override rather than a forked params file --
 # a duplicated 130-line template would drift and the comparison would stop being
 # an A/B.
 if [[ -n "${WHM_SIGMA:-}" ]]; then
@@ -226,7 +226,7 @@ if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
   echo "[whm] lapse override: ${key} = ${WHM_LAPSE_TYPE}"
 fi
 
-# Tagging-criterion override (FIx.md Stage 1.5).  Unlike sigma and the lapse
+# Tagging-criterion override (Plan.md Stage 1.5).  Unlike sigma and the lapse
 # these keys are NEW, so most templates predate them and do not carry them at
 # all; append rather than refuse, or every older params file would have to be
 # touched just to make the knob reachable.
@@ -252,7 +252,7 @@ if [[ -n "${WHM_TAGGING_L:-}" ]]; then
   whm_set_or_append tagging_L "${WHM_TAGGING_L}" "tagging-box override"
 fi
 
-# Refinement-depth override (Plan.md Phase 2 resolution study, and the origin
+# Refinement-depth override (Reference.md Phase 2 resolution study, and the origin
 # instability it is chasing).  This exists because max_level cannot be changed
 # on its own: regrid_interval must carry exactly max_level values or AMReX
 # aborts with "queryarr too many values requested", so the two keys have to be

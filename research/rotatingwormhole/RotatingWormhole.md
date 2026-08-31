@@ -803,5 +803,7 @@ the collapse/burst morphology has been measured; the rest are open and most are
 gated on §9's tier 2–3.
 
 **Binary wormhole merger** is a separate line, now in
-[`../merger/Plan.md`](../merger/Plan.md) — and currently blocked on throat
-resolution, see [`../merger/MatterDebug.md`](../merger/MatterDebug.md).
+[`../merger/Plan.md`](../merger/Plan.md), with the prior-art scan and the
+file-by-file design in [`../merger/Reference.md`](../merger/Reference.md).  The
+throat-resolution block that stopped it was cleared on 2026-08-28 by the regular
+drainhole (Plan.md Stage 0).

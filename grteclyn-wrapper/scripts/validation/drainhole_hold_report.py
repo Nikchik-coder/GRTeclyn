@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Score a single-drainhole static-hold run against the closed form.
 
-research/merger/FIx.md, implementation plan Stage 1.
+research/merger/Plan.md, implementation plan Stage 1.
 
 The massive Ellis-Bronnikov drainhole is an EXACT fixed point of the evolved
 CCZ4 + 1+log + Gamma-driver system: the spatial metric is conformally flat so

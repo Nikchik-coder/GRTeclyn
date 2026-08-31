@@ -1,5 +1,5 @@
 # BinaryWormholeMerger -- Stage 1: does ONE regular throat hold still?
-# (research/merger/FIx.md, implementation plan Stage 1.)
+# (research/merger/Plan.md, implementation plan Stage 1.)
 #
 # Stage 0 proved the throat survives being put on a grid.  This asks the next
 # question and it is a much sharper one, because the single massive drainhole
@@ -21,7 +21,7 @@
 # alpha = e^{u} * collar is not the static lapse, so lapse type 6 injects a
 # real perturbation near rbar = 0 by construction.  It exists because chi still
 # vanishes like rbar^4 at the compactified far infinity and CCZ4 divides by
-# chi.  Which of the two survives is FIx.md Stage 1.3, and it is run as a
+# chi.  Which of the two survives is Plan.md Stage 1.3, and it is run as a
 # straight A/B on this one file:
 #
 #   WHM_NAME=stage1 WHM_PARAMS=params_stage1_hold.txt WHM_MAX_LEVEL=2 \
@@ -146,7 +146,7 @@ kappa3 = 1.
 covariantZ4 = 0
 
 # Kreiss-Oliger dissipation.  Was 2.0 (inherited from the puncture era) until
-# 2026-08-30; changed on the Stage 1 measurement, FIx.md Stage 1.2.
+# 2026-08-30; changed on the Stage 1 measurement, Plan.md Stage 1.2.
 #
 # sigma = 2.0 does NOT show up as a constraint violation, which is exactly why
 # it had to be measured against the geometry instead: over 40 M it shrinks the
@@ -166,7 +166,7 @@ calculate_constraint_norms = 1
 
 
 #################################################
-# Refinement criterion (FIx.md Stage 1.5).
+# Refinement criterion (Plan.md Stage 1.5).
 #
 # 0 = ChiTagger, refine where chi's second derivatives are large.  This is the
 # default and what every run before 2026-08-30 used.  Its failure mode is that

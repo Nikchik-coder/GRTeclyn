@@ -45,7 +45,7 @@ class BinaryWormholeLevel : public GRAMRLevel
         specificPostTimeStep first runs at t = dt, so without this the .dat
         files begin one step in - and their `first_step = (time == 0)` test
         never fires, so they never get a header line either.  Phase 1 of
-        research/merger/Plan.md is entirely a set of statements about the
+        research/merger/Reference.md is entirely a set of statements about the
         INITIAL data (the momentum constraint is analytically zero at t = 0,
         the Hamiltonian defect scales as 1/d^2 at t = 0), so a t = 0 row is
         not a nicety here, it is the measurement.

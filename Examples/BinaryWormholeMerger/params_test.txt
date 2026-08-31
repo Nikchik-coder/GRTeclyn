@@ -1,4 +1,4 @@
-# BinaryWormholeMerger -- Phase 0 smoke test (research/merger/Plan.md).
+# BinaryWormholeMerger -- Phase 0 smoke test (research/merger/Reference.md).
 # Tiny box, single level, stop_time = 0.5: exercises the whole plumbing
 # (two-throat ID with bare masses, matter RHS, diagnostics, Weyl4 derive)
 # without doing any physics.

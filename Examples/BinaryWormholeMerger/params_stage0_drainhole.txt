@@ -1,12 +1,12 @@
 # BinaryWormholeMerger -- Stage 0.6: does the REGULAR throat survive refinement?
-# (research/merger/FIx.md, implementation plan Stage 0.)
+# (research/merger/Plan.md, implementation plan Stage 0.)
 #
 # This is a t = 0 probe, not a physics run.  It exists to answer the one
 # question that killed the previous geometry: put a wormhole throat in the
 # initial data, refine the grid, and is the throat still there?
 #
 # With the Brill-Lindquist puncture throat the answer was NO.  Measured
-# 2026-08-28 on identical data (research/merger/MatterDebug.md): the throat was
+# 2026-08-28 on identical data (research/merger/Plan.md, "Route B traps"): the throat was
 # present at max_level = 0 and GONE at max_level 1 and 2, because the solved
 # data arrived as a file at level-0 resolution and prolongation filled the
 # puncture interior with a nearly constant chi.  R then rose monotonically from
@@ -140,7 +140,7 @@ covariantZ4 = 0
 # Kreiss-Oliger dissipation.  0.1, not the inherited 2.0: measured 2026-08-30,
 # sigma = 2.0 shrinks this throat 34 % over 40 M while every constraint norm
 # reads flat, because smoothing lowers the constraint violation it causes.
-# See params_stage1_hold.txt and research/merger/FIx.md Stage 1.2.
+# See params_stage1_hold.txt and research/merger/Plan.md Stage 1.2.
 sigma = 0.1
 
 puncture_tracking.enabled = 0

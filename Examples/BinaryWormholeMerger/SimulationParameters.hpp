@@ -53,7 +53,7 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("center", wormhole_params.grid_center, center);
 
         // Throat radii.  B defaults to A (equal-throat binary); B = 0 removes
-        // throat B entirely (single-throat regression mode, Plan.md Phase 1-2).
+        // throat B entirely (single-throat regression mode, Reference.md Phase 1-2).
         pp.load("wormhole_throat_radius_A", wormhole_params.b0_A, 1.0);
         pp.load("wormhole_throat_radius_B", wormhole_params.b0_B,
                 wormhole_params.b0_A);
@@ -185,7 +185,7 @@ class SimulationParameters : public SimulationParametersBase
         // footprint runs away: the Stage 1 sigma = 0 arm ended in out-of-
         // memory at t = 35.2 with level 2 covering 24 % of the domain and
         // 32.8M cells, while the throat itself was still healthy to 0.5 %
-        // (research/merger/FIx.md, 1.5).  The drainhole's resolution demand
+        // (research/merger/Plan.md, 1.5).  The drainhole's resolution demand
         // is by contrast *static*: it sits at the throat and at the
         // compactified far universe, r -> 0, both fixed at the grid centre
         // for a single throat.  A fixed box asks for resolution where the
@@ -205,7 +205,7 @@ class SimulationParameters : public SimulationParametersBase
         // what tagging_type = 2 is for.
         pp.load("tagging_center", tagging_center, center);
 
-        // Throat tracking (FIx.md Stage 2.0): locate each throat as the chi
+        // Throat tracking (Plan.md Stage 2.0): locate each throat as the chi
         // pit it carries at its centre and follow it, one row per coarse step
         // in throat_track.dat.  Default off so no archived run changes.  The
         // moving-box tagger (tagging_type = 2) requires it - the boxes are

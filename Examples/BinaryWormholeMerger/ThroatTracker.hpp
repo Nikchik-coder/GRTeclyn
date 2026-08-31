@@ -21,7 +21,7 @@
 
 //! Locates each wormhole throat during the evolution and follows it.
 /*!
-    FIx.md Stage 2.0.  The moving-box tagger needs the CENTRE of each throat
+    Plan.md Stage 2.0.  The moving-box tagger needs the CENTRE of each throat
     at regrid time, and a wormhole throat is not a puncture: PunctureTracker
     advects a particle backwards along the shift, which locates a coordinate
     singularity that these data do not have.

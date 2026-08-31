@@ -3,7 +3,8 @@
 Merger of **two phantom-supported Ellis–Bronnikov wormhole throats** — the binary
 generalisation of `Examples/SupportedWormholeCollapse`, built on the two-body
 conventions of `Examples/BinaryBH`. Governing plan:
-`research/merger/Plan.md` (kept out of the public tree).
+`research/merger/Plan.md`, with the prior art and file-by-file design in
+`research/merger/Reference.md` (both kept out of the public tree).
 
 ## The one piece of physics you need to know
 

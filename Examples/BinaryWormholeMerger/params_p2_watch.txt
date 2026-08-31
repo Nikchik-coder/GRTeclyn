@@ -1,4 +1,4 @@
-# BinaryWormholeMerger -- Phase 2 single-throat regression (research/merger/Plan.md).
+# BinaryWormholeMerger -- Phase 2 single-throat regression (research/merger/Reference.md).
 #
 # The new binary example run in its SINGLE-THROAT mode (throat B removed
 # entirely), reproducing the unperturbed configuration of
@@ -13,7 +13,7 @@
 # sigma_phi = 0.5), and those knobs were deliberately removed from this
 # example -- a merger must not start with pre-destabilised throats, since the
 # other throat is the perturbation.  Reproducing that branch needs the knobs
-# back, gated to single-throat mode; see Plan.md Phase 2.
+# back, gated to single-throat mode; see Reference.md Phase 2.
 #
 # Launch through the campaign launcher, never directly:
 #   WHM_PARAMS=params_phase2_single.txt bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh

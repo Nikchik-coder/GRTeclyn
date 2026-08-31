@@ -128,7 +128,7 @@ void BinaryWormholeLevel::initData()
         // Route B: constraint-solved data produced by the GRTresna bridge.
         // NOTE: the loader interpolates the file on the level-0 grid spacing,
         // so the solved route is currently limited to near-unigrid resolution.
-        // See Phase 7 of research/merger/Plan.md for the split-ID fix.
+        // See Stage 2.2 of research/merger/Plan.md for the split-ID fix.
         ExternalGridInitialData ext_data(simParams().external_grid_params,
                                          Geom().CellSize(0));
 
@@ -284,7 +284,7 @@ void BinaryWormholeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
     amrex::MultiFab &state_new = get_new_data(state_index);
     const auto &tag_arrs       = a_tag_box_array.arrays();
 
-    // Moving nested boxes on the tracked throat centres (FIx.md Stage 2.0):
+    // Moving nested boxes on the tracked throat centres (Plan.md Stage 2.0):
     // the same box arithmetic as tagging_type = 1 - half-width
     // tagging_L * 2^-(level+2) per level, footprint bounded by construction -
     // but centred on wherever ThroatTracker last measured each throat, so
@@ -367,7 +367,7 @@ void BinaryWormholeLevel::specific_post_init()
     // AMReX builds the whole initial hierarchy and calls computeInitialDt
     // before post_init, so dtLevel(0) and the fine levels are both valid here.
     // Emitting the t = 0 row from this hook is what makes Phase 1 of
-    // research/merger/Plan.md measurable at all - see the header comment.
+    // research/merger/Reference.md measurable at all - see the header comment.
     write_scalar_diagnostics();
 }
 

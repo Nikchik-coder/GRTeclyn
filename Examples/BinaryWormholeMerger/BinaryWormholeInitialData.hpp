@@ -43,7 +43,7 @@
 
     The fix is NOT to push them artificially.  The Ellis drainhole is a
     one-parameter family, and its other branch carries genuine positive ADM
-    mass (the Lanzhou solutions quoted in research/merger/Plan.md).
+    mass (the Lanzhou solutions quoted in research/merger/Reference.md).
     bare_mass_X adds the puncture-like m/(2r) piece of that branch, so each
     throat has M_ADM ~ m and the pair falls together UNDER ITS OWN GRAVITY -
     released from rest for a head-on, or with transverse Bowen-York momenta
@@ -86,7 +86,7 @@
     i.e. the proper cell width dx/sqrt(chi) there is 4 dx, and it keeps growing
     inwards - measured 6.2 proper units at dx = 0.5 on an m = 2 solve, against a
     throat of areal radius 4.5.  One cell was wider than the throat, and no
-    matter model could be evaluated on the geometry (research/merger/MatterDebug.md).
+    matter model could be evaluated on the geometry (research/merger/Plan.md, "Route B traps").
 
     id_type = 1 earns the same ADM mass from the LAPSE instead, and leaves the
     spatial conformal factor bounded.  With the Ellis coordinate
@@ -169,7 +169,7 @@ class BinaryWormholeInitialData
         int id_type;
 
         //! Throat radii.  b0_B = 0 removes throat B entirely (the
-        //! single-throat regression mode of Plan.md Phases 1-2).  Under
+        //! single-throat regression mode of Reference.md Phases 1-2).  Under
         //! id_type = 1 this is the drainhole scale a, which at m = 0 is the
         //! areal throat radius exactly.
         double b0_A;

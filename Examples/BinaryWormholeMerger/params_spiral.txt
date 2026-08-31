@@ -4,7 +4,7 @@
 # transverse Bowen-York momenta only SET THE INITIAL ORBIT, and
 # gravitational-wave emission drives the inspiral.
 #
-# Starting values (Plan.md Phase 4 tunes P_t from here):
+# Starting values (Reference.md Phase 4 tunes P_t from here):
 #   M_total = 1, d = 8  ->  Newtonian circular P_t = m sqrt(M_total/d)/2 ~ 0.088
 #   orbital period T ~ 2 pi sqrt(d^3/M_total) ~ 142;  GW inspiral time from
 #   d/M = 8 is a few hundred M  ->  stop_time = 600 covers >= 2 orbits + merger
@@ -45,7 +45,7 @@ wormhole_throat_radius_B = 0.5
 
 # m/b = 1: heavy rung, needed to keep the GW inspiral time affordable.
 # O(m/d) superposition error ~ 0.125 -- Route B (solved data) is the plan for
-# the publication-quality version of this run (Plan.md Phase 7).
+# the publication-quality version of this run (Reference.md Phase 7).
 wormhole_bare_mass_A = 0.5
 wormhole_bare_mass_B = 0.5
 

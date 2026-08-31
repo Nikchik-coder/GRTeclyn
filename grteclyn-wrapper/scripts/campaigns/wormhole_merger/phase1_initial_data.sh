@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
-# BinaryWormholeMerger -- Phase 1 initial-data validation (research/merger/Plan.md).
+# BinaryWormholeMerger -- Phase 1 initial-data validation (research/merger/Reference.md).
 #
 # Phase 1 is the GO/NO-GO gate: every statement in it is about the data AT
 # t = 0, so every run here sets `max_steps = 0`.  The evolution never starts;
 # BinaryWormholeLevel::specific_post_init writes the t = 0 row of
 # constraint_norms.dat and the step-0 plotfile, and that is the measurement.
 #
-# Checks.  A/B/C are the three gates Plan.md names; D and E exist because the
+# Checks.  A/B/C are the three gates Reference.md names; D and E exist because the
 # first pass at B and C measured the grid rather than the physics.
 #   A  single-throat limit -- b_B = 0, no bare mass, no momenta, reproduces
 #      Examples/SupportedWormholeCollapse on the same grid (fcompare on chi;

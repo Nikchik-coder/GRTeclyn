@@ -1,8 +1,8 @@
 # Background: regular wormhole coordinates, two-throat data, and the fallbacks
 
-The deep-research report the implementation plan in [FIx.md](FIx.md) was derived from.
+The deep-research report the implementation plan in [Plan.md](Plan.md) was derived from.
 Kept unedited: literature, citations, and the ranked fallback strategies. The plan
-itself, and everything measured since, lives in FIx.md.
+itself, and everything measured since, lives in Plan.md.
 
 ---
 

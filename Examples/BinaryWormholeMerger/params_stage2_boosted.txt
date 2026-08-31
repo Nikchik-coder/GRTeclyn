@@ -1,5 +1,5 @@
 # BinaryWormholeMerger -- Stage 2.0 shakedown: does a MOVING throat survive?
-# (research/merger/FIx.md, Stage 2.0.)
+# (research/merger/Plan.md, Stage 2.0.)
 #
 # Stage 1 proved the throat can sit still for 40 M.  A merger needs more than
 # that: during infall and any spiralling each throat has to cross the grid,
@@ -29,7 +29,7 @@
 # inside the sponge at 24.
 #
 # This is a VALIDATION arm, not the merger.  The merger itself stays
-# gravity-driven (two throats released from rest, FIx.md Stage 3); aimed
+# gravity-driven (two throats released from rest, Plan.md Stage 3); aimed
 # momenta are never used to fake an attraction there.
 #
 # The three path keys below are placeholders the launcher rewrites.
@@ -147,7 +147,7 @@ puncture_tracking.enabled = 0
 calculate_constraint_norms = 1
 
 #################################################
-# Refinement: MOVING nested boxes on the tracked throat (FIx.md Stage 2.0).
+# Refinement: MOVING nested boxes on the tracked throat (Plan.md Stage 2.0).
 #
 # tagging_type = 2 uses the same nested-box arithmetic as the fixed tagger -
 # level-l boxes have half-width tagging_L * 2^-(l+2), footprint bounded by

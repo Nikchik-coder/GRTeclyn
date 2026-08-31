@@ -4,7 +4,7 @@
 # under their own gravity -- nothing artificial.  Newtonian free-fall time
 # t_ff ~ pi sqrt(d^3/(8 M_total)) ~ 50 for d = 10, M_total = 0.5.
 #
-# This file is the LADDER STARTING POINT (Plan.md Phase 3): bare-mass ladder
+# This file is the LADDER STARTING POINT (Reference.md Phase 3): bare-mass ladder
 # m/b in {0.1, 0.25, 0.5, 1.0} and the m = 0 massless control both run off
 # this file with only wormhole_bare_mass_A changed.
 #
