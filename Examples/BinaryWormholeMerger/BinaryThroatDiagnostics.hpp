@@ -88,6 +88,19 @@ struct BinaryThroatDiagnostics
         double split_coord{0.0};
         //! Radii below this are excluded from every theta_+ scan (see above).
         double min_radius{0.0};
+        //! A half-space counts as COLLAPSED once its lapse minimum falls
+        //! below this.  Every uncollapsed throat on record sits at
+        //! lapse ~ 2e-1; a collapsing core plunges to the min_lapse floor,
+        //! so the two regimes are five orders of magnitude apart.
+        double collapsed_lapse{1.0e-6};
+        //! Scan floor used INSTEAD of min_radius once collapsed.  The r < b/2
+        //! inversion region that min_radius protects against belongs to an
+        //! uncollapsed throat; after collapse it is trumpet interior and the
+        //! artefact is gone, while the horizon's coordinate radius shrinks
+        //! with chi and falls below the uncollapsed cut -- which is exactly
+        //! how the common-horizon track was lost after t = 32.7 on the d12
+        //! merger.  A few finest cells keeps the floored centre itself out.
+        double collapsed_min_radius{0.5};
     };
 
     // NOLINTNEXTLINE(readability-function-cognitive-complexity)
@@ -257,8 +270,21 @@ struct BinaryThroatDiagnostics
         // inversion region (theta_+ < 0 for r < b/2 exactly, see above).  The
         // midpoint scan is the COMMON-horizon detector, so it must additionally
         // enclose both throats to mean anything: r >= sep/2 + min_radius.
-        const amrex::Real min_r_c[3] = {min_r, min_r,
-                                        amrex::max(min_r, 0.5 * sep + min_r)};
+        //
+        // Once a half-space has collapsed (lapse pinned far below any throat
+        // value) its inversion artefact no longer exists and the cut drops to
+        // collapsed_min_radius, so the shrinking horizon stays tracked.
+        const amrex::Real coll_r = a_params.collapsed_min_radius;
+        const amrex::Real cut_A =
+            (min_lap_A < a_params.collapsed_lapse) ? coll_r : min_r;
+        const amrex::Real cut_B =
+            (min_lap_B < a_params.collapsed_lapse) ? coll_r : min_r;
+        const amrex::Real floor_C = (min_lap_A < a_params.collapsed_lapse &&
+                                     min_lap_B < a_params.collapsed_lapse)
+                                        ? coll_r
+                                        : min_r;
+        const amrex::Real min_r_c[3] = {
+            cut_A, cut_B, amrex::max(floor_C, 0.5 * sep + floor_C)};
 
         amrex::Real theta_shell[3] = {BIG, BIG, BIG};
         amrex::Real ah_r_shell[3]  = {0.0, 0.0, 0.0};

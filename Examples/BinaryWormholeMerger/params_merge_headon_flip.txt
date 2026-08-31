@@ -61,7 +61,7 @@ checkpoint_interval = -1
 
 plot_interval = 50
 
-amr.plot_vars = chi h11 h12 h13 h22 h23 h33 K lapse shift1 shift2 shift3 phi Pi
+amr.plot_vars = chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2 shift3 phi Pi
 amr.derive_plot_vars = Weyl4
 
 hdf5_subpath = "hdf5"
@@ -142,6 +142,19 @@ nan_check = 1
 
 min_chi = 1.0e-8
 min_lapse = 1.0e-10
+
+# Matter half of the puncture trick (CoreMatterDamping.hpp): once the lapse
+# collapses below 1e-6 -- five orders under any live throat, unambiguously
+# inside the trapped surface -- the scalar is exponentially damped so its
+# stress stops sharpening the metric at the floor boundary.  Without this the
+# run dies of a core NaN ~20 units after horizon formation (measured t=52.07).
+core_matter_damping = 1
+# Window retuned after the first damped run died at t = 52.09 (old undamped death
+# t = 52.07): with lapse_start = 1e-6 the window covered only ~3 finest cells while
+# the scalar bulk (|phi| up to 0.53) sat at lapse 1e-6..3e-2.  Measured at t = 51.5:
+# lapse < 3e-2 reaches r = 0.63, safely inside the common apparent horizon r = 0.875.
+core_damping_lapse_start = 3.0e-2
+core_damping_lapse_full = 1.0e-3
 
 lapse_advec_coeff = 1.0
 lapse_coeff = 2.0

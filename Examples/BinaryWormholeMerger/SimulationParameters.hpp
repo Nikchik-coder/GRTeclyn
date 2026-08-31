@@ -2,6 +2,7 @@
 #define SIMULATIONPARAMETERS_HPP
 
 #include "BinaryThroatDiagnostics.hpp"
+#include "CoreMatterDamping.hpp"
 #include "BinaryWormholeInitialData.hpp"
 #include "ExternalGridInitialData.hpp"
 #include "GRParmParse.hpp"
@@ -20,6 +21,7 @@ class SimulationParameters : public SimulationParametersBase
         read_shared_params(pp);
         read_wormhole_params(pp);
         read_diagnostics_params(pp);
+        read_core_damping_params(pp);
         read_sponge_params(pp);
         read_tagging_params(pp);
         check_params();
@@ -158,7 +160,24 @@ class SimulationParameters : public SimulationParametersBase
             std::max(wormhole_params.b0_A, wormhole_params.b0_B);
         pp.load("binary_diag_min_radius", binary_diag_params.min_radius,
                 default_min_radius);
+        pp.load("binary_diag_collapsed_lapse",
+                binary_diag_params.collapsed_lapse, 1.0e-6);
+        pp.load("binary_diag_collapsed_min_radius",
+                binary_diag_params.collapsed_min_radius, 0.5);
         binary_diag_params.grid_center = wormhole_params.grid_center;
+    }
+
+    void read_core_damping_params(GRParmParse &pp)
+    {
+        // Matter analogue of the puncture trick -- see CoreMatterDamping.hpp.
+        // Own module, default off; the damping window sits inside the
+        // trapped surface so the exterior is untouched by construction.
+        pp.load("core_matter_damping", core_damping_params.enabled, false);
+        pp.load("core_damping_lapse_start", core_damping_params.lapse_start,
+                3.0e-2);
+        pp.load("core_damping_lapse_full", core_damping_params.lapse_full,
+                1.0e-3);
+        pp.load("core_damping_tau", core_damping_params.tau, 0.25);
     }
 
     void read_sponge_params(GRParmParse &pp)
@@ -464,6 +483,7 @@ class SimulationParameters : public SimulationParametersBase
 
     BinaryWormholeInitialData::params_t wormhole_params{};
     BinaryThroatDiagnostics::params_t binary_diag_params{};
+    CoreMatterDamping::params_t core_damping_params{};
     ThroatTracker::params_t throat_tracker_params{};
 
     // Numerical sponge zone (radially-ramped extra KO dissipation).

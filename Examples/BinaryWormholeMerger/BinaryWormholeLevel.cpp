@@ -1,5 +1,6 @@
 #include "BinaryWormholeLevel.hpp"
 #include "BinaryThroatDiagnostics.hpp"
+#include "CoreMatterDamping.hpp"
 #include "BinaryWormholeInitialData.hpp"
 #include "CCZ4RHSWithMatter.hpp"
 #include "ChiTagger.hpp"
@@ -114,6 +115,19 @@ void BinaryWormholeLevel::specificAdvance()
                            trace_A_removal(i, j, k, arrs[box_no]);
                            positive_chi_lapse(i, j, k, arrs[box_no]);
                        });
+
+    // Matter half of the puncture trick (CoreMatterDamping.hpp): damp the
+    // scalar deep inside a collapsed core, where the floors above already
+    // own the geometry.  Applied here so it runs exactly once per step per
+    // level, next to the other interior regularisers.
+    if (simParams().core_damping_params.enabled)
+    {
+        const CoreMatterDamping damp(simParams().core_damping_params,
+                                     parent->dtLevel(level));
+        amrex::ParallelFor(S_new,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           { damp(i, j, k, arrs[box_no]); });
+    }
 }
 
 void BinaryWormholeLevel::initData()
