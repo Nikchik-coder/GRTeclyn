@@ -122,8 +122,10 @@ void BinaryWormholeLevel::specificAdvance()
     // level, next to the other interior regularisers.
     if (simParams().core_damping_params.enabled)
     {
-        const CoreMatterDamping damp(simParams().core_damping_params,
-                                     parent->dtLevel(level));
+        const CoreMatterDamping damp(
+            simParams().core_damping_params, parent->dtLevel(level),
+            Geom().CellSizeArray(), Geom().ProbLoArray(),
+            get_state_data(state_index).curTime());
         amrex::ParallelFor(S_new,
                            [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                            { damp(i, j, k, arrs[box_no]); });

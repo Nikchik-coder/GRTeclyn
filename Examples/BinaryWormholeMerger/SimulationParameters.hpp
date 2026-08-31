@@ -178,6 +178,16 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("core_damping_lapse_full", core_damping_params.lapse_full,
                 1.0e-3);
         pp.load("core_damping_tau", core_damping_params.tau, 0.25);
+        // Radius window (default off): the lapse window defeats itself once
+        // wrong-sign K re-inflates the lapse over the sickest cells -- see
+        // CoreMatterDamping.hpp.  Set per-run from a measured horizon.
+        pp.load("core_damping_radius_start",
+                core_damping_params.radius_start, 0.0);
+        pp.load("core_damping_radius_full", core_damping_params.radius_full,
+                0.0);
+        pp.load("core_damping_radius_from_time",
+                core_damping_params.from_time, 0.0);
+        core_damping_params.grid_center = wormhole_params.grid_center;
     }
 
     void read_sponge_params(GRParmParse &pp)

@@ -155,6 +155,15 @@ core_matter_damping = 1
 # lapse < 3e-2 reaches r = 0.63, safely inside the common apparent horizon r = 0.875.
 core_damping_lapse_start = 3.0e-2
 core_damping_lapse_full = 1.0e-3
+# Radius window, added after the wide lapse window still died at t = 52.86:
+# wrong-sign K pockets at the bar ends re-inflate the lapse (up to 0.43) and
+# lift the surviving scalar (|phi| = 0.82 at r = 0.30) out of any lapse
+# threshold.  Radius does not care.  Full damping inside r = 0.5, ramp to
+# zero at r = 0.7 -- strictly inside the measured common apparent horizon
+# r = 0.875.  Engages at t = 33, once the common horizon exists (t = 29.9-32.7).
+core_damping_radius_start = 0.70
+core_damping_radius_full = 0.50
+core_damping_radius_from_time = 33.0
 
 lapse_advec_coeff = 1.0
 lapse_coeff = 2.0
