@@ -52,16 +52,26 @@ grouped by campaign stage with a `NOTES.md` per stage.
   wormhole–anti-wormhole (`wormhole_phi_sign_B = -1`) — **all three passed** 2026-08-31.
   A separates from rest, B's push falls 3.0× at half width, C falls together; the
   C/A ratio is 1.511 ± 0.033 against a predicted 1.500 (§8)
-- [ ] **2.7** The merger run `merge_orbit_flip_d12`: the baseline orbit with the sign
-  flipped, one line different — in flight 2026-08-31, contact expected t ≈ 30 (§8)
+- [x] **2.7** The merger run `merge_orbit_flip_d12`: the baseline orbit with the sign
+  flipped, one line different — **merged** 2026-08-31: common trapped surface from
+  t = 29.9, single whirling core, endpoint is a black hole (§9)
 
 ### Stage 3 — the merger
 
-- [ ] **3.1** Head-on from rest at d = 16, gravity-driven, no aimed momenta
-- [ ] **3.2** Ψ₄ at several radii + the v ≈ c propagation test, to separate real radiation
-  from superluminal constraint modes
-- [ ] **3.3** Convergence and error budget
+- [ ] **3.1** Head-on from rest, gravity-driven, no aimed momenta — probe
+  `merge_headon_flip_d12` in flight 2026-08-31 (t ≈ 11)
+- [x] **3.2** Ψ₄ at several radii + the v ≈ c propagation test — **passed** 2026-08-31:
+  the R = 30 mode series lags R = 14 by exactly Δr = 16, so the quadrupole burst
+  (m = 2 amplitude 2.5e-2 peaking t = 37.5) is real outgoing radiation, not a
+  constraint mode. The second, larger swell was truncated by the t = 52 NaN — the
+  restarted run records it whole
+- [ ] **3.3** Convergence and error budget — n160 probe in flight (t ≈ 5); p045 spin
+  variation in flight (t ≈ 11)
 - [x] **3.0** Checkpointing switched on and the restart path verified — 2026-08-31, below
+- [ ] **3.4** Survive the collapsed core: matter damping inside the horizon (§9) —
+  window measured and retuned 2026-08-31, revalidation run `r04000` in flight
+- [ ] **3.5** Offline Θ = 0 horizon finder on the full-state snapshots (h_ij, A_ij now
+  plotted) — the definitive black-hole call, horizon area and mass
 
 ### Stage 4 — write
 
@@ -98,6 +108,10 @@ grouped by campaign stage with a `NOTES.md` per stage.
 | **the merger route is proven** | flipping one throat's field turns the 5× push into a 5× pull: measured C/A ratio 1.511 ± 0.033 vs 1.500 predicted, over 15 matched times (§8) |
 | the scalar force scales with *width*, not mass | halving the throat radius cut the push 3.0×; a mass-tracking force would not have moved at all (§8) |
 | the flip costs no stability | φ → −φ leaves geometry, ADM mass, supporting energy and the growth mode identical; only the pair interaction sees it (§8) |
+| **the horizon fused at t ≈ 30** | shell-max θ₊ ≤ 0 on spheres enclosing both throats from t = 29.93 to 32.74, deepest −0.033; the visual "contact" at t ≈ 45 was interior coordinate motion (§9) |
+| **the radiation is real** | Ψ₄ at R = 30 is a time-shifted copy of R = 14 with lag Δt = Δr = 16 — outgoing at v ≈ c |
+| the collapsed core outlives the vacuum trick | NaN at t = 52.07 with the scalar still at 84 % on the frozen core; the puncture floors protect geometry, not matter (§9) |
+| the matter cure must reach the matter | first damping window (lapse < 1e-6) covered ~3 cells and moved the death 0.02; the scalar bulk sits at lapse 1e-6..3e-2, inside the horizon — window retuned, revalidation in flight (§9) |
 
 **What 40 M is:** a fuse length, not stability. The run ends while the growth is
 accelerating. Stage 3 can be budgeted against 40 M; it cannot be budgeted against an
@@ -566,6 +580,35 @@ as they close, puts contact near t ≈ 29 and coalescence near t ≈ 31; the orb
 arrives later by whatever the angular momentum buys.
 
 ---
+
+### 9. The puncture floors assume vacuum — the phantom core does not comply
+
+The merger run formed its common trapped surface at t ≈ 30 and died at t = 52.07:
+`NaN … name=h11` at level 3, in the core. The moving-puncture floors
+(`min_chi = 1e-8`, `min_lapse = 1e-10`) keep collapsed *geometry* representable, but
+they were built for vacuum interiors. Here the phantom scalar collapses with the
+core and keeps sourcing the metric at the edge of the floored region — at death the
+scalar still held 84 % of its throat value on a core the lapse had frozen 25 units
+earlier. The gradients at the floor boundary steepen step after step until h11
+leaves the reals.
+
+The cure is the matter half of the puncture trick: exponentially damp φ and Π deep
+inside the collapsed region, identified by the lapse (`CoreMatterDamping`, own
+module, default off). The first window — full strength below lapse 1e-8 — was aimed
+five orders too deep: it covered ~3 finest cells and moved the death from t = 52.07
+to t = 52.09. The slice caches gave the real map: the collapsed scalar (|φ| up to
+0.53) sits at lapse 1e-6..3e-2, and the lapse < 3e-2 contour reaches r = 0.63 while
+the common apparent horizon sits at r = 0.875. The retuned window (3e-2 → 1e-3,
+cosine ramp in log lapse, τ = 0.25) therefore acts strictly inside the horizon: no
+damped signal can reach the wave zone, by construction. Revalidation from the t = 40
+checkpoint is in flight.
+
+Same session, same failure mode, second fix: the θ₊ scan's inner cut (built to mask
+the Ellis–Bronnikov inversion artefact of an *uncollapsed* throat) was excluding the
+coordinate-shrinking horizon after collapse. The scan now drops its floor to r = 0.5
+once a half-space's minimum lapse falls below 1e-6 — and re-acquired the common
+horizon at r ≈ 0.875, right up to the crash. That number is what certified the
+damping window as causally safe.
 
 ## Traps that must not regress
 
