@@ -15,7 +15,7 @@
 set -euo pipefail
 SPIRAL_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
-export WHM_PARAMS="${WHM_PARAMS:-params_orbit_drainhole.txt}"
+export WHM_PARAMS="${WHM_PARAMS:-params_merge_orbit_flip.txt}"
 export WHM_NAME="${WHM_NAME:-orbit_d12_p012}"
 
 # The orbit lives in the x-y plane at z = 32.  --frames-coord is NOT
