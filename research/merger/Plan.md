@@ -6,6 +6,9 @@ gates and the file-by-file design: [Reference.md](Reference.md).
 
 ---
 
+Every run cited below lives under [`runs/wormhole_merger`](../../runs/wormhole_merger/README.md),
+grouped by campaign stage with a `NOTES.md` per stage.
+
 ## The plan
 
 ### Stage 0 — put a real throat on the grid — **done 2026-08-28**
@@ -432,7 +435,8 @@ released from rest, ADM mass in the lapse, never aimed momenta.
 ### 8. The throats repel — and reversing one makes them fall
 
 `orbit_d12_p012`, launched 2026-08-31
-([params_orbit_drainhole.txt](../../Examples/BinaryWormholeMerger/params_orbit_drainhole.txt),
+([run](../../runs/wormhole_merger/03_two_throats/orbit_d12_p012),
+[params_orbit_drainhole.txt](../../Examples/BinaryWormholeMerger/params_orbit_drainhole.txt),
 entry point [run_spiral.sh](../../grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_spiral.sh)):
 two equal drainholes, a = 2, m = 1, at d = 12 on the x-axis, tangential Bowen–York
 P = ±0.12 on y — 59 % of the Newtonian circular value 0.204, so the pair is bound and should
@@ -481,9 +485,9 @@ window.
 
 | arm | run | prediction | measured | verdict |
 | --- | --- | --- | --- | --- |
-| A `ctrl_rest_d12` | [run](../../runs/wormhole_merger/ctrl_rest_d12), [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest.txt) | separates, net ≈ 4× g outward | **+0.0127 outward**, +0.47 by t = 11.5 | repulsion confirmed at zero momentum |
-| B `ctrl_rest_a1` | [run](../../runs/wormhole_merger/ctrl_rest_a1), [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest_a1.txt) | separates ≈ 4× weaker (net 1× g vs 4×) | **+0.0042 outward**, 3.0× weaker | charge set by *width*: confirmed, 25 % under |
-| C `ctrl_flip_d12` | [run](../../runs/wormhole_merger/ctrl_flip_d12), [params](../../Examples/BinaryWormholeMerger/params_ctrl_flip.txt) | **falls together, net ≈ 6× g** | **−0.0196 inward**, −0.56 by t = 10.5 | merger route confirmed |
+| A `ctrl_rest_d12` | [run](../../runs/wormhole_merger/03_two_throats/ctrl_rest_d12), [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest.txt) | separates, net ≈ 4× g outward | **+0.0127 outward**, +0.47 by t = 11.5 | repulsion confirmed at zero momentum |
+| B `ctrl_rest_a1` | [run](../../runs/wormhole_merger/03_two_throats/ctrl_rest_a1), [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest_a1.txt) | separates ≈ 4× weaker (net 1× g vs 4×) | **+0.0042 outward**, 3.0× weaker | charge set by *width*: confirmed, 25 % under |
+| C `ctrl_flip_d12` | [run](../../runs/wormhole_merger/03_two_throats/ctrl_flip_d12), [params](../../Examples/BinaryWormholeMerger/params_ctrl_flip.txt) | **falls together, net ≈ 6× g** | **−0.0196 inward**, −0.56 by t = 10.5 | merger route confirmed |
 
 **The sign rule is measured, not assumed.** The decisive number is the ratio of arm C's
 infall to arm A's escape at matched times. Same masses, same widths, same separation, same
