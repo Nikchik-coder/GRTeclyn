@@ -1,0 +1,30 @@
+##### merge_orbit_flip_d12_r04000/BinaryWormholePlt05150
+BinaryWormholePlt05150  t=51.50
+  shell-max crossing (in-code convention): r = 1.070 (shell max there -0.013; next shell +0.047)
+  rays trapped: 30%   r_AH min/mean/max = 1.074 / 1.634 / 2.290
+  along +z: nan   along -z: nan   equator min/max: 1.074/1.912
+##### merge_orbit_flip_d12_r04000/BinaryWormholePlt05200
+BinaryWormholePlt05200  t=52.00
+  shell-max crossing (in-code convention): r = 1.050 (shell max there -0.028; next shell +0.016)
+  rays trapped: 36%   r_AH min/mean/max = 1.064 / 1.725 / 2.290
+  along +z: nan   along -z: nan   equator min/max: 1.064/2.283
+##### merge_orbit_flip_d12_r04000/BinaryWormholePlt05250
+BinaryWormholePlt05250  t=52.50
+  shell-max crossing (in-code convention): r = 1.030 (shell max there -0.010; next shell +0.041)
+  rays trapped: 54%   r_AH min/mean/max = 1.034 / 1.899 / 2.288
+  along +z: 2.237   along -z: 2.237   equator min/max: 1.034/2.193
+##### merge_orbit_flip_d12_rw_r05000/BinaryWormholePlt05400
+BinaryWormholePlt05400  t=54.00
+  shell-max crossing (in-code convention): r = 0.890 (shell max there -0.052; next shell +0.029)
+  rays trapped: 60%   r_AH min/mean/max = 0.904 / 1.854 / 2.282
+  along +z: 2.076   along -z: 2.076   equator min/max: 0.904/1.963
+##### merge_orbit_flip_d12_rw_r05000/BinaryWormholePlt05450
+BinaryWormholePlt05450  t=54.50
+  shell-max crossing (in-code convention): r = 0.830 (shell max there -0.066; next shell +0.036)
+  rays trapped: 63%   r_AH min/mean/max = 0.844 / 1.842 / 2.285
+  along +z: 2.036   along -z: 2.036   equator min/max: 0.844/2.278
+##### merge_orbit_flip_d12_rw_r05000/BinaryWormholePlt05500
+BinaryWormholePlt05500  t=55.00
+  shell-max crossing (in-code convention): r = 0.590 (shell max there -0.089; next shell +0.154)
+  rays trapped: 63%   r_AH min/mean/max = 0.597 / 1.818 / 2.284
+  along +z: 1.999   along -z: 1.999   equator min/max: 0.601/2.216

@@ -112,13 +112,18 @@ grouped by campaign stage with a `NOTES.md` per stage.
 | Run | What happened |
 | --- | --- |
 | **r03000** (main arm, no damping) | Throats merge, common horizon at t ≈ 30, radiation burst confirmed real — then the phantom core kills it: NaN at t = 52.07 |
-| **r05000** (narrow lapse window) | Damping aimed too deep (covered ~3 cells) — died t = 52.09, no gain |
+| **r05000** (narrow lapse window) | Damping aimed too deep (covered ~3 cells) — died t = 52.09, no gain. Its streams were deleted before extraction; only the log survives |
 | **r04000** (wide lapse window) | Cleaned the core to \|φ\| ~ 1e-10, but the sick cells re-inflate their own lapse and escape the window — died t = 52.86 |
 | **sg10** (dissipation σ = 1.0) | Backfired — dissipation attacks the puncture structure itself, died *earlier*, t = 51.68; scratch deleted |
 | **rw** (radius window) | Longest survivor, t = 55.00 — and its snapshots caught the discovery: the horizon shrinking 1.07 → 0.59, dissolving under phantom accretion (§10) |
 | **headon** probe | Died t = 44 at its own core collapse (old binary, no damping) — awaits rerun once the recipe settles |
 | **p045** probe | **Completed t = 60, zero NaN** — never merges: periapsis at t = 40 (separation 3.95), then the throats fly apart again |
 | **n160** probe | Still running 2026-08-31 (t ≈ 26, ~4.9 units/h) — the convergence check on the merger era |
+| **ml2** probe | `max_level = 2`: NaN at t = 9.42, long before the throats meet — three refinement levels is the floor for the binary too |
+
+The packed, git-committed extract of all nine — streams, waveforms, movies, stills,
+the horizon scan and generated summary tables — is [`results/merger/`](../../results/merger/),
+rebuilt by `research/merger/pack_results.sh`.
 
 The one-paragraph story: when the throats *do* merge (all the orbit-flip arms), a
 horizon forms at t ≈ 30 and the phantom scalar then destroys everything — first

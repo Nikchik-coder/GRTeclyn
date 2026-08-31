@@ -1,0 +1,12 @@
+[whm] name     : merge_headon_flip_d12
+[whm] template : Examples/BinaryWormholeMerger/params_merge_headon_flip.txt
+[whm] binary   : Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex
+[whm] gpu      : 1
+[whm] run dir  : runs/wormhole_merger/merge_headon_flip_d12          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/merge_headon_flip_d12      (node-local: plotfiles, checkpoints)
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] consumer  : pid 1397166 -> runs/wormhole_merger/merge_headon_flip_d12/small_data
+[whm]            deleting processed plotfiles, keeping last 3
+[whm] === launching merge_headon_flip_d12 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[whm] draining consumer (final pass) ...
+[whm] run FAILED (exit 6) -- see runs/wormhole_merger/merge_headon_flip_d12/run.log

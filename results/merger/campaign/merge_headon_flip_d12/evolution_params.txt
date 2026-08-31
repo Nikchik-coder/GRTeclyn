@@ -1,0 +1,196 @@
+# BinaryWormholeMerger -- Stage 2.7: the MERGER run.  Two drainhole throats
+# on a bound orbit, with OPPOSITE scalar orientation (wormhole + anti-
+# wormhole).  (research/merger/Plan.md Stage 2.6/2.7.)
+#
+# This is params_orbit_drainhole.txt with one line added -- everything else
+# is byte-for-byte identical, so the pair differs from the archived
+# like-charge baseline (orbit_d12_p012) in the scalar sign alone.
+#
+# WHY THE FLIP.  The like-charge baseline does not merge and cannot be made
+# to: the support field is phantom (rho < 0), so it REPELS like charges with
+# |F_phi/F_grav| = (a^2 + m^2)/m^2 = 5 for a = 2, m = 1 -- greater than one
+# at every choice of parameters.  Measured 2026-08-31 on the controls:
+#
+#   arm A  ctrl_rest_d12  released from rest, a = 2   accel +0.0118 APART
+#   arm B  ctrl_rest_a1   released from rest, a = 1   accel +0.0037 apart
+#                         (push scales with throat WIDTH, not mass)
+#   arm C  ctrl_flip_d12  phi_sign_B = -1, from rest  accel -0.0185 TOGETHER
+#
+# Arm C's pull/push ratio held at 1.50 across five separate times against a
+# prediction of exactly 6/4 = 1.50, which fixes both the magnitude (5x
+# gravity) and the sign rule (same orientation repels, opposite attracts).
+#
+# The flip costs no stability.  Every ONE-throat property depends on the
+# field through its slope squared, so geometry, ADM mass, supporting energy
+# density and the growth mode are all invariant under phi -> -phi: an
+# isolated anti-wormhole is the Stage 1/2.0 throat, and inherits its
+# 40 M shakedown record wholesale.  Orientation only acts BETWEEN bodies.
+#
+#   net radial pull  = (1 + 5) x gravity = 6x,  vs 4x outward like-charge.
+#
+# P = 0.12 per throat is kept unchanged, and is now only 24 % of the
+# circular momentum for a 6x central force (sqrt(6) x 0.204 = 0.50), so
+# expect a fast plunging spiral rather than several wide orbits.  The
+# momenta only SET THE INITIAL ORBIT -- the infall is gravity-plus-scalar
+# driven, per the standing rule -- and stay well below the P = 0.2 that
+# collapsed a single Stage 2.0 throat at t = 36.7.
+#
+# WHAT TO EXPECT AT THE END.  Opposite orientations cannot survive as one
+# throat: the merged object has zero net scalar charge, and a throat cannot
+# stay open without its field.  The predicted endpoint is collapse to an
+# ordinary black hole plus radiated scalar -- horizon-formation time and
+# radiated fraction are the two numbers this run exists to produce.
+#
+# Checkpoints every 1000 coarse steps = every 10 time units (dt_coarse =
+# dt_multiplier * L/N1 = 0.01), twice as often as the baseline: the head-on
+# arm projects contact near t = 26, and a 20-unit cadence would put the
+# nearest restart point an hour of wall-clock behind the merger.
+#
+# The orbit lives in the x-y plane, so the consumer's default z slice
+# through the grid centre shows the whole motion.
+#
+# The three path keys below are placeholders the launcher rewrites.
+
+verbosity = 1
+
+output_path = "runs/wormhole_merger/merge_headon_flip_d12"
+amr.plot_file = "/tmp/grteclyn_scratch/merge_headon_flip_d12/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/merge_headon_flip_d12/BinaryWormholeChk"
+
+checkpoint_interval = -1
+
+plot_interval = 50
+
+amr.plot_vars = chi K lapse phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: TWO regular massive drainhole throats, tangentially boosted.
+
+wormhole_id_type = 1
+
+# Each body's exact static lapse (superposed); 1+log takes over from there.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a, throat A
+wormhole_throat_radius_B = 2.0       # throat B on: the binary
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1 each, carried by the lapse
+wormhole_drainhole_mass_B = 1.0
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`: d = 12 along x.  B defaults to -A; set both anyway.
+wormhole_centerA = -6.0 0.0 0.0
+wormhole_centerB =  6.0 0.0 0.0
+
+# Head-on: zero momenta, released from rest.  Purest infall of the opposite-
+# flow pair; the endpoint arrives first here, with no orbital complications.
+wormhole_momentumA = 0.0  0.0  0.0
+wormhole_momentumB = 0.0  0.0  0.0
+
+# THE ONE PHYSICS LINE THAT DIFFERS FROM THE BASELINE.  -1 mirrors throat
+# B's scalar profile: same geometry, same mass, reversed drainhole flow.
+# The two pi/2 tails then cancel and phi -> 0 at infinity on its own.
+wormhole_phi_sign_B = -1.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid.  Identical to the Stage 1/2.0 base: L = 64, N = 128, max_level = 3,
+# dx = 0.0625 on the finest level.  Both throats and the whole d = 12 orbit
+# sit inside the sponge at r = 24.
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Identical to the Stage 1/2.0 base.
+
+dt_multiplier = 0.02
+stop_time = 60.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: MOVING nested boxes on BOTH tracked throats (the tagger unions
+# boxes on A and B whenever throat B is on).  Same box arithmetic as the
+# Stage 2.0 arm: level-l half-width tagging_L * 2^-(l+2), so level 3 has
+# half-width 4 around each throat.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  Same battery as Stage 2.0.  The split plane separates A and
+# B along x at t = 0; once the orbit winds past a quarter turn the A/B
+# attribution in binary_diag degrades -- throat_track.dat (which follows
+# both centres) is the moving-frame truth.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576

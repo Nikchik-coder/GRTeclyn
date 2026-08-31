@@ -1,0 +1,13 @@
+[whm] name     : merge_orbit_flip_d12_rw_r05000
+[whm] template : Examples/BinaryWormholeMerger/params_merge_orbit_flip.txt
+[whm] binary   : Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex
+[whm] gpu      : 0
+[whm] run dir  : runs/wormhole_merger/merge_orbit_flip_d12_rw_r05000          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/merge_orbit_flip_d12_rw_r05000      (node-local: plotfiles, checkpoints)
+[whm] restart  : /tmp/grteclyn_scratch/merge_orbit_flip_d12_r04000/BinaryWormholeChk05000
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] consumer  : pid 1449502 -> runs/wormhole_merger/merge_orbit_flip_d12_rw_r05000/small_data
+[whm]            deleting processed plotfiles, keeping last 3
+[whm] === launching merge_orbit_flip_d12_rw_r05000 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[whm] draining consumer (final pass) ...
+[whm] run FAILED (exit 6) -- see runs/wormhole_merger/merge_orbit_flip_d12_rw_r05000/run.log

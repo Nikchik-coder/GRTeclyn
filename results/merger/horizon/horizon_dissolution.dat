@@ -1,0 +1,11 @@
+# Offline apparent-horizon radius of the merged core.
+# Theta = 0 crossing of the outermost FULLY trapped coordinate sphere
+# (shell-maximum convention -- the same test the in-code scan applies).
+# Produced by grteclyn-wrapper/scripts/validation/ah_radial_scan.py.
+# time  r_AH  source_plotfile
+   51.50   1.070  merge_orbit_flip_d12_r04000/BinaryWormholePlt05150
+   52.00   1.050  merge_orbit_flip_d12_r04000/BinaryWormholePlt05200
+   52.50   1.030  merge_orbit_flip_d12_r04000/BinaryWormholePlt05250
+   54.00   0.890  merge_orbit_flip_d12_rw_r05000/BinaryWormholePlt05400
+   54.50   0.830  merge_orbit_flip_d12_rw_r05000/BinaryWormholePlt05450
+   55.00   0.590  merge_orbit_flip_d12_rw_r05000/BinaryWormholePlt05500

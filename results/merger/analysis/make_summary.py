@@ -1,0 +1,181 @@
+#!/usr/bin/env python3
+"""Build summary.csv and summary.md from the packed merger campaign streams.
+
+One row per run.  Every number is read out of the packed `.dat` files, so the
+table cannot drift away from the data beside it.
+
+The *last clean* columns are deliberately not the final row: a run that dies of
+a NaN writes one last step in which the fields have already blown up (max |K| of
+3648, an L2 Hamiltonian of 4.4).  Quoting that row as the state of the spacetime
+would be quoting the crash.  These columns come from the row half a time unit
+earlier, which is the last state the run actually computed.
+
+Usage: make_summary.py <pack-root>          (default: this file's parent's parent)
+"""
+
+from __future__ import annotations
+
+import csv
+import pathlib
+import re
+import sys
+
+import numpy as np
+
+# What each run changes relative to the main arm.  Kept in step with
+# runs/wormhole_merger/README.md, which explains them at length.
+WHAT = {
+    "merge_orbit_flip_d12_r03000": "main arm, no damping (its __part1 files are t = 0 -> 30.5)",
+    "merge_orbit_flip_d12_r05000": "narrow lapse window (1e-6 -> 1e-8, the built-in default)",
+    "merge_orbit_flip_d12_r04000": "wide lapse window (3e-2 -> 1e-3), full metric plotted",
+    "merge_orbit_flip_d12_sg10_r05000": "wide lapse window, dissipation sigma 0.1 -> 1.0",
+    "merge_orbit_flip_d12_rw_r05000": "radius window: full inside r = 0.5, off by 0.7, from t = 33",
+    "merge_headon_flip_d12": "head-on: no orbital momentum",
+    "merge_orbit_flip_d12_p045": "momentum 0.45 instead of 0.12",
+    "merge_orbit_flip_d12_n160": "160 cells per side instead of 128",
+    "merge_orbit_flip_d12_ml2": "max_level = 2 instead of 3",
+}
+# The order the campaign reads in: the restart chain, then the probes.
+ORDER = [
+    "merge_orbit_flip_d12_r03000",
+    "merge_orbit_flip_d12_r05000",
+    "merge_orbit_flip_d12_r04000",
+    "merge_orbit_flip_d12_sg10_r05000",
+    "merge_orbit_flip_d12_rw_r05000",
+    "merge_headon_flip_d12",
+    "merge_orbit_flip_d12_p045",
+    "merge_orbit_flip_d12_n160",
+    "merge_orbit_flip_d12_ml2",
+]
+CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
+
+FIELDS = [
+    "run", "what_is_different", "t_start", "t_end", "outcome",
+    "min_lapse", "min_chi", "max_abs_K", "L2_Ham", "L2_Mom",
+    "sep_start", "sep_min", "t_sep_min", "sep_end",
+    "t_common_ah", "ah_r_max_incode",
+]
+
+
+def load(path: pathlib.Path):
+    if not path.exists():
+        return None
+    try:
+        a = np.loadtxt(path)
+    except Exception:
+        return None
+    return a if a.ndim == 2 and a.size else None
+
+
+def outcome(run_dir: pathlib.Path, t_end) -> str:
+    tail = run_dir / "run_tail.log"
+    if tail.exists():
+        text = tail.read_text(errors="replace")
+        if "NaN" in text:
+            return f"NaN at t = {t_end:.2f}"
+        if "stop_time" in text or "Run time" in text:
+            return f"finished clean at t = {t_end:.2f}"
+    if t_end is not None and t_end >= 59.9:
+        return f"finished clean at t = {t_end:.2f}"
+    return "still running" if t_end is not None else "no time series"
+
+
+def summarise(run_dir: pathlib.Path) -> dict:
+    run = run_dir.name
+    row = {k: "" for k in FIELDS}
+    row["run"] = run
+    row["what_is_different"] = WHAT.get(run, "")
+
+    coll = load(run_dir / "collapse_diagnostics.dat")
+    if coll is None:
+        # A log-only arm: the death time is all that survives it.
+        tail = run_dir / "run_tail.log"
+        times = ([float(m) for m in re.findall(r"TIME = ([\d.]+)", tail.read_text(errors="replace"))]
+                 if tail.exists() else [])
+        t_end = max(times) if times else None
+        if t_end is not None:
+            row["t_end"] = f"{t_end:.2f}"
+            row["outcome"] = outcome(run_dir, t_end) + " (streams lost, log only)"
+        else:
+            row["outcome"] = "data lost"
+        return row
+
+    t = coll[:, 0]
+    row["t_start"], row["t_end"] = f"{t[0]:.2f}", f"{t[-1]:.2f}"
+    row["outcome"] = outcome(run_dir, t[-1])
+    # min_lapse min_chi max_abs_K sit in columns 1..3.
+    i = int(np.argmin(np.abs(t - (t[-1] - CLEAN_BACK))))
+    row["min_lapse"] = f"{coll[i, 1]:.3e}"
+    row["min_chi"] = f"{coll[i, 2]:.3e}"
+    row["max_abs_K"] = f"{coll[i, 3]:.3f}"
+
+    cons = load(run_dir / "constraint_norms.dat")
+    if cons is not None:
+        j = int(np.argmin(np.abs(cons[:, 0] - (cons[-1, 0] - CLEAN_BACK))))
+        row["L2_Ham"] = f"{cons[j, 1]:.3e}"
+        row["L2_Mom"] = f"{cons[j, 2]:.3e}"
+
+    bt = load(run_dir / "binary_throat_diagnostics.dat")
+    if bt is not None:
+        sep, ah = bt[:, 1], bt[:, 17]
+        tb = bt[:, 0]
+        # One-sample tracker glitches: when the throats swap sides both finders
+        # can latch onto the same one for a single row, reporting sep ~ 0
+        # between neighbours of ~4.  Drop rows that disagree with both
+        # neighbours by more than half the local scale.
+        good = np.ones(sep.size, bool)
+        if sep.size > 2:
+            nb = 0.5 * (sep[:-2] + sep[2:])
+            good[1:-1] = np.abs(sep[1:-1] - nb) < 0.5 * np.maximum(nb, 1e-9)
+        s = sep[good]
+        tg = tb[good]
+        row["sep_start"] = f"{sep[0]:.2f}"
+        row["sep_min"] = f"{s.min():.2f}"
+        row["t_sep_min"] = f"{tg[int(np.argmin(s))]:.2f}"
+        row["sep_end"] = f"{s[-1]:.2f}"
+        hit = np.where(ah > 0)[0]
+        row["t_common_ah"] = f"{tb[hit[0]]:.2f}" if hit.size else "-"
+        row["ah_r_max_incode"] = f"{ah.max():.2f}" if hit.size else "-"
+    return row
+
+
+def main(argv: list[str]) -> int:
+    root = pathlib.Path(argv[1]) if len(argv) > 1 else pathlib.Path(__file__).resolve().parents[1]
+    camp = root / "campaign"
+    dirs = {d.name: d for d in camp.iterdir() if d.is_dir()}
+    ordered = [dirs[n] for n in ORDER if n in dirs]
+    ordered += [d for n, d in sorted(dirs.items()) if n not in ORDER]
+    rows = [summarise(d) for d in ordered]
+
+    with open(root / "summary.csv", "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=FIELDS)
+        w.writeheader()
+        w.writerows(rows)
+
+    show = ["run", "what_is_different", "t_start", "t_end", "outcome",
+            "sep_min", "t_common_ah", "min_lapse", "L2_Ham"]
+    head = {"run": "run", "what_is_different": "what is different", "t_start": "from",
+            "t_end": "to", "outcome": "outcome", "sep_min": "min throat sep",
+            "t_common_ah": "common horizon at", "min_lapse": "min lapse*",
+            "L2_Ham": "L2 Ham*"}
+    with open(root / "summary.md", "w", encoding="utf-8") as fh:
+        fh.write("# Merger campaign — one row per run\n\n")
+        fh.write("Generated by `analysis/make_summary.py` from the packed streams; do not\n"
+                 "hand-edit. Columns marked \\* are read half a time unit before the end, so a\n"
+                 "dead run is described by its last computed state rather than by its crash.\n"
+                 "Times are quantised to the packed dt = 0.05. `min throat sep` is the closest\n"
+                 "the two throat finders ever came; once the throats have merged they are both\n"
+                 "reading structure inside one collapsed core, so on the restart arms that\n"
+                 "number describes the core, not an approach.\n\n")
+        fh.write("| " + " | ".join(head[c] for c in show) + " |\n")
+        fh.write("|" + "|".join(["---"] * len(show)) + "|\n")
+        for r in rows:
+            fh.write("| " + " | ".join(r[c] or "-" for c in show) + " |\n")
+        fh.write("\nFull column set, including the constraint and geometry extrema, is in\n"
+                 "`summary.csv`.\n")
+    print(f"[pack-merger] analysis: summary.csv, summary.md ({len(rows)} runs)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv))

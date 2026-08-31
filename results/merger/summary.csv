@@ -1,0 +1,10 @@
+run,what_is_different,t_start,t_end,outcome,min_lapse,min_chi,max_abs_K,L2_Ham,L2_Mom,sep_start,sep_min,t_sep_min,sep_end,t_common_ah,ah_r_max_incode
+merge_orbit_flip_d12_r03000,"main arm, no damping (its __part1 files are t = 0 -> 30.5)",30.01,52.06,NaN at t = 52.06,1.000e-10,1.000e-08,1.668,4.475e-03,1.052e-02,2.66,0.30,51.63,0.60,30.01,3.44
+merge_orbit_flip_d12_r05000,"narrow lapse window (1e-6 -> 1e-8, the built-in default)",,52.09,"NaN at t = 52.09 (streams lost, log only)",,,,,,,,,,,
+merge_orbit_flip_d12_r04000,"wide lapse window (3e-2 -> 1e-3), full metric plotted",40.01,52.86,NaN at t = 52.86,1.000e-10,2.950e-07,2.253,4.817e-03,1.173e-02,0.92,0.36,45.31,0.51,51.06,1.00
+merge_orbit_flip_d12_sg10_r05000,"wide lapse window, dissipation sigma 0.1 -> 1.0",50.01,51.68,NaN at t = 51.68,1.000e-10,1.000e-08,2.047,4.278e-03,9.590e-03,0.55,0.14,51.45,0.62,50.41,1.06
+merge_orbit_flip_d12_rw_r05000,"radius window: full inside r = 0.5, off by 0.7, from t = 33",50.01,55.00,NaN at t = 55.00,1.000e-10,2.371e-06,3.087,5.673e-03,1.653e-02,0.55,0.32,52.66,0.42,51.06,1.00
+merge_headon_flip_d12,head-on: no orbital momentum,0.00,44.00,NaN at t = 44.00,1.527e-03,3.059e-06,0.536,2.182e-03,4.425e-03,11.94,0.44,39.85,0.63,29.05,3.62
+merge_orbit_flip_d12_p045,momentum 0.45 instead of 0.12,0.00,60.01,finished clean at t = 60.01,9.786e-04,3.179e-04,0.154,1.545e-02,7.600e-03,11.94,3.95,40.00,4.61,42.30,6.19
+merge_orbit_flip_d12_n160,160 cells per side instead of 128,0.00,29.05,still running,5.221e-02,5.466e-06,0.159,2.510e-03,5.290e-04,11.95,3.11,28.85,3.15,-,-
+merge_orbit_flip_d12_ml2,max_level = 2 instead of 3,0.00,9.42,NaN at t = 9.42,2.162e-01,1.000e-08,0.509,1.442e-02,2.107e-04,11.88,11.63,7.45,12.13,-,-

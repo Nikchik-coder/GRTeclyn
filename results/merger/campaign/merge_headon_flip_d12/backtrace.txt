@@ -1,0 +1,57 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x2c37f5) [0x5609136fc7f5]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at amrex/Src/Base/AMReX_BLBackTrace.cpp:205
+
+ 1: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x2c6df5) [0x5609136ffdf5]
+    amrex::BLBackTrace::handler(int) at amrex/Src/Base/AMReX_BLBackTrace.cpp:99
+
+ 2: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x521c2f) [0x56091395ac2f]
+    std::_Function_base::~_Function_base() at /usr/include/c++/11/bits/std_function.h:244
+ (inlined by) std::function<void (amrex::BoxND<3> const&, amrex::FArrayBox&, int, int, amrex::Geometry const&, double, amrex::Vector<amrex::BCRec, std::allocator<amrex::BCRec> > const&, int, int)>::~function() at /usr/include/c++/11/bits/std_function.h:334
+ (inlined by) amrex::StateDescriptor::BndryFunc::~BndryFunc() at amrex/Src/Amr/AMReX_StateDescriptor.H:46
+ (inlined by) GRAMRLevel::stateVariableSetUp() at Source/GRTeclynCore/GRAMRLevel.cpp:67
+
+ 3: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4078e0) [0x5609138408e0]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2121
+
+ 4: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4078bd) [0x5609138408bd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2111
+
+ 5: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4078bd) [0x5609138408bd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2111
+
+ 6: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4078bd) [0x5609138408bd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2111
+
+ 7: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x406051) [0x56091383f051]
+    amrex::Amr::coarseTimeStep(double) at amrex/Src/Amr/AMReX_Amr.cpp:2172
+
+ 8: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x50108a) [0x56091393a08a]
+    std::_Vector_base<double, std::allocator<double> >::~_Vector_base() at /usr/include/c++/11/bits/stl_vector.h:335
+ (inlined by) std::vector<double, std::allocator<double> >::~vector() at /usr/include/c++/11/bits/stl_vector.h:683
+ (inlined by) amrex::Vector<double, std::allocator<double> >::~Vector() at amrex/Src/Base/AMReX_Vector.H:25
+ (inlined by) AMReXParameters::~AMReXParameters() at Source/GRTeclynCore/AMReXParameters.hpp:108
+ (inlined by) SimulationParametersBase::~SimulationParametersBase() at Source/GRTeclynCore/SimulationParametersBase.hpp:46
+ (inlined by) SimulationParameters::~SimulationParameters() at Examples/BinaryWormholeMerger/./SimulationParameters.hpp:16
+ (inlined by) runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:54
+
+ 9: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4040f) [0x56091347940f]
+    main at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:57
+
+10: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7f6dc346dd90]
+
+11: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7f6dc346de40]
+
+12: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x416b5) [0x56091347a6b5]
+    ?? ??:0
+

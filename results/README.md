@@ -12,6 +12,7 @@ directory — there are no loose campaign folders at this level.
 | [`matter-first-automated-discovery-of-transient-spacetime-shortcuts/`](matter-first-automated-discovery-of-transient-spacetime-shortcuts/) | [`research/neuralspacetime/article/research.tex`](../research/neuralspacetime/article/research.tex) | [`pack_publishable_results.sh`](../research/neuralspacetime/pack_publishable_results.sh) (figures, tables, promotion runs) · [`pack_search_campaigns.sh`](../research/neuralspacetime/pack_search_campaigns.sh) (`search/`) |
 | [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | in preparation — source material in the pack itself | [`pack_results.sh`](../research/bondi_dipole/pack_results.sh) (published cells) · [`pack_campaign.sh`](../research/bondi_dipole/pack_campaign.sh) (`campaign/`) |
 | [`wormhole-dynamics/`](wormhole-dynamics/) | [`research/wormholedynamics/article.md`](../research/wormholedynamics/article.md) — published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`plot_diagnostic.sh`](../grteclyn-wrapper/scripts/plot/plot_diagnostic.sh) (diagnostics, embedding, `K_z` panels) · [`plot_extracted_psi4.py`](../grteclyn-wrapper/src/grteclyn_wrapper/visualisation/process_wave/plot_extracted_psi4.py) (`--combined --strain` GW panels) |
+| [`merger/`](merger/) | [`research/merger/article/research.tex`](../research/merger/article/research.tex) — in preparation | [`pack_results.sh`](../research/merger/pack_results.sh) (`campaign/`, `horizon/`, the summary tables) |
 
 All pack scripts scrub machine identity at runtime through the shared scrubber
 [`grteclyn_wrapper.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py)
@@ -62,3 +63,16 @@ Figures ship as `.pdf` and `.png`. The `.eps` renders of the three `psi4`
 panels were dropped: matplotlib emitted every scatter point as vector geometry,
 making them ~215× the size of the `.pdf` of the same figure at no added
 fidelity.
+
+### `merger/`
+
+Two exotic-matter wormhole throats merged in full 3+1 NR, and what became of the object
+they made. Reversing one throat's scalar field is the only gravity-driven route to a
+merger; the pair then forms a common horizon at t ≈ 30 and radiates — and the horizon
+afterwards **shrinks**, 1.07 → 0.59 between t = 51.5 and t = 55.0, as the infalling
+phantom matter eats it. A high-angular-momentum control that never merges runs clean to
+t = 60, which is what separates the physics from a code failure.
+
+Holds the four evolution streams per run (thinned, with the death window kept whole), the
+extracted waveforms at two radii, the launch and parameter provenance, movies, thinned
+stills, the offline horizon scan, and generated summary tables.

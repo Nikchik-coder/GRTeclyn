@@ -1,0 +1,46 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x2c37f5) [0x55c2205517f5]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at /usr/include/x86_64-linux-gnu/bits/unistd.h:284
+ (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at amrex/Src/Base/AMReX_BLBackTrace.cpp:215
+
+ 1: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x2c6df5) [0x55c220554df5]
+    amrex::BLBackTrace::handler(int) at amrex/Src/Base/AMReX_BLBackTrace.cpp:103
+
+ 2: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x521c2f) [0x55c2207afc2f]
+    GRAMRLevel::post_timestep(int) at Source/GRTeclynCore/GRAMRLevel.cpp:228
+
+ 3: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4078e0) [0x55c2206958e0]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2124
+
+ 4: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4078bd) [0x55c2206958bd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+ 5: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4078bd) [0x55c2206958bd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+ 6: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x406051) [0x55c220694051]
+    amrex::Amr::coarseTimeStep(double) at amrex/Src/Amr/AMReX_Amr.cpp:2175
+
+ 7: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x50108a) [0x55c22078f08a]
+    runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:32
+
+ 8: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x4040f) [0x55c2202ce40f]
+    main at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:59
+
+ 9: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7ff432781d90]
+
+10: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7ff432781e40]
+
+11: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x416b5) [0x55c2202cf6b5]
+    ?? ??:0
+
