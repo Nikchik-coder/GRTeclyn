@@ -59,19 +59,35 @@ grouped by campaign stage with a `NOTES.md` per stage.
 ### Stage 3 — the merger
 
 - [ ] **3.1** Head-on from rest, gravity-driven, no aimed momenta — probe
-  `merge_headon_flip_d12` in flight 2026-08-31 (t ≈ 11)
+  `merge_headon_flip_d12` died t = 44, the same core NaN (`h11`, level 3), exactly as
+  predicted for its damping-free binary; no checkpoints, so the rerun (once the damping
+  recipe settles) is from scratch
 - [x] **3.2** Ψ₄ at several radii + the v ≈ c propagation test — **passed** 2026-08-31:
   the R = 30 mode series lags R = 14 by exactly Δr = 16, so the quadrupole burst
   (m = 2 amplitude 2.5e-2 peaking t = 37.5) is real outgoing radiation, not a
   constraint mode. The second, larger swell was truncated by the t = 52 NaN — the
   restarted run records it whole
-- [ ] **3.3** Convergence and error budget — n160 probe in flight (t ≈ 5); p045 spin
-  variation in flight (t ≈ 11)
+- [ ] **3.3** Convergence and error budget — n160 probe in flight (t ≈ 26, ~4.9
+  units/h, ETA ≈ 7 h to t = 60); **p045 momentum variation COMPLETED t = 60 with zero
+  NaN, 2026-08-31 — because it never merges**: at p = 0.45 the orbit does not decay
+  in 60 units, the throats end still ≈ 4.6 apart, and the frames show expansion,
+  not collapse. Zero NaN over the full span is the clean control: the death is tied
+  to merger + core collapse, not to long evolution itself. (Its theta scan reports a
+  brief common-trapped flicker at r ≈ 5.1, t ≈ 52 — a sphere grazing both throats,
+  the §-documented artefact regime; treat as unverified, the offline finder cannot
+  check it since p045 predates the h_ij/A_ij plot list)
 - [x] **3.0** Checkpointing switched on and the restart path verified — 2026-08-31, below
 - [ ] **3.4** Survive the collapsed core: matter damping inside the horizon (§9) —
-  window measured and retuned 2026-08-31, revalidation run `r04000` in flight
-- [ ] **3.5** Offline Θ = 0 horizon finder on the full-state snapshots (h_ij, A_ij now
-  plotted) — the definitive black-hole call, horizon area and mass
+  three arms dead (lapse window t = 52.86, dissipation t = 51.68, radius window
+  t = 55.00), each cure reaching more matter and buying more time; now entangled
+  with the §10 discovery — the horizon the damping hides inside is itself dissolving,
+  so no fixed window can stay causally sealed. Strategy decision pending
+- [x] **3.5** Offline Θ = 0 horizon finder — **built and validated 2026-08-31**
+  (`grteclyn-wrapper/scripts/validation/ah_radial_scan.py`): full-metric radial Θ scan,
+  shell-max statistic matches the in-code proxy (1.07 offline vs ≈ 1.0 in-code at
+  t = 51.5). Limitation: runs launched before 2026-08-31 did not plot h_ij/A_ij, so
+  r03000 and headon snapshots cannot be measured — the truly undamped control is
+  unmeasurable, permanently
 
 ### Stage 4 — write
 
@@ -108,6 +124,9 @@ grouped by campaign stage with a `NOTES.md` per stage.
 | **the merger route is proven** | flipping one throat's field turns the 5× push into a 5× pull: measured C/A ratio 1.511 ± 0.033 vs 1.500 predicted, over 15 matched times (§8) |
 | the scalar force scales with *width*, not mass | halving the throat radius cut the push 3.0×; a mass-tracking force would not have moved at all (§8) |
 | the flip costs no stability | φ → −φ leaves geometry, ADM mass, supporting energy and the growth mode identical; only the pair interaction sees it (§8) |
+| **the horizon is dissolving** | fully-trapped sphere 1.07 → 0.59 over t = 51.5–55.0, accelerating; phantom accretion, two damping arms agree (§10) |
+| the offline Θ finder is live | full-metric radial scan, validated 1.07 vs ≈ 1.0 against the in-code proxy at t = 51.5 (§10) |
+| p045 never merges | orbit holds at p = 0.45, throats end 4.6 apart, zero NaN to t = 60 — the death is merger + collapse, not evolution length |
 | **the horizon fused at t ≈ 30** | shell-max θ₊ ≤ 0 on spheres enclosing both throats from t = 29.93 to 32.74, deepest −0.033; the visual "contact" at t ≈ 45 was interior coordinate motion (§9) |
 | **the radiation is real** | Ψ₄ at R = 30 is a time-shifted copy of R = 14 with lag Δt = Δr = 16 — outgoing at v ≈ c |
 | the collapsed core outlives the vacuum trick | NaN at t = 52.07 with the scalar still at 84 % on the frozen core; the puncture floors protect geometry, not matter (§9) |
@@ -600,8 +619,23 @@ to t = 52.09. The slice caches gave the real map: the collapsed scalar (|φ| up 
 0.53) sits at lapse 1e-6..3e-2, and the lapse < 3e-2 contour reaches r = 0.63 while
 the common apparent horizon sits at r = 0.875. The retuned window (3e-2 → 1e-3,
 cosine ramp in log lapse, τ = 0.25) therefore acts strictly inside the horizon: no
-damped signal can reach the wave zone, by construction. Revalidation from the t = 40
-checkpoint is in flight.
+damped signal can reach the wave zone, by construction.
+
+The revalidation run cleaned the core to |φ| ~ 1e-10 — and died anyway, t = 52.86,
+because the lapse window defeats itself: wrong-sign K pockets (K down to −2, pure
+checkerboard) form at the ends of the collapsed bar, 1+log slicing re-inflates the
+lapse there (∂ₜα = −2αK), and exactly the sickest cells rise *out* of the window —
+measured |φ| = 0.82 surviving at r = 0.30 under lapse up to 0.43, unreachable by any
+lapse threshold that spares healthy regions. A Kreiss–Oliger arm (σ 0.1 → 1.0) died
+*earlier*, t = 51.68, NaN in K: dissipation attacks the puncture structure itself —
+the same failure class as §2, measured again from the other side. The third cure, a
+radius window (full damping inside r = 0.5, cosine ramp to zero at r = 0.7, engaging
+at t = 33 once the common horizon exists — `core_damping_radius_*`), does not care
+what the lapse does and bought the longest life yet: death t = 55.00, NaN in K, at
+the *next* ring of un-damped scalar (r = 0.7–1.1, |φ| = 0.5–0.6). Four deaths, one
+law: wherever un-damped phantom sits on collapsed geometry, the run dies there —
+each window extension pushes the death outward and buys 1–2.5 units. Why the outward
+march cannot terminate is §10.
 
 Same session, same failure mode, second fix: the θ₊ scan's inner cut (built to mask
 the Ellis–Bronnikov inversion artefact of an *uncollapsed* throat) was excluding the
@@ -609,6 +643,51 @@ coordinate-shrinking horizon after collapse. The scan now drops its floor to r =
 once a half-space's minimum lapse falls below 1e-6 — and re-acquired the common
 horizon at r ≈ 0.875, right up to the crash. That number is what certified the
 damping window as causally safe.
+
+### 10. The horizon is dissolving — phantom accretion is destroying the black hole
+
+The offline Θ = 0 finder (`grteclyn-wrapper/scripts/validation/ah_radial_scan.py`:
+full physical-metric radial scan, shell-max statistic, validated against the in-code
+proxy — 1.07 offline vs ≈ 1.0 in-code at t = 51.5) measured the fully-trapped
+sphere on every death-era snapshot that carries h_ij/A_ij:
+
+| t | arm | trapped-sphere radius |
+| --- | --- | --- |
+| 51.5 | lapse window | 1.07 |
+| 52.0 | lapse window | 1.05 |
+| 52.5 | lapse window | 1.03 |
+| 54.0 | radius window | 0.89 |
+| 54.5 | radius window | 0.83 |
+| 55.0 | radius window | 0.59 |
+
+Two different damping schemes, one accelerating dissolution curve — the last half
+unit loses 0.24 in radius, four times the early rate; extrapolated, the trapped
+surface vanishes around t ≈ 56. The trapped *region* is strongly deformed: it
+reaches past r = 2 along the poles while pinching to 0.6 in the tightest equatorial
+direction — which is also why the in-code proxy (built for near-round geometry)
+went blind on the radius-window arm.
+
+This is phantom accretion doing what theory says it does (Babichev et al.: negative
+energy crossing a horizon shrinks it). The surviving scalar ring at r = 0.7–1.1
+straddles the horizon and falls in; the horizon pays for every unit of it. The
+damping cannot be the culprit — deleting *negative*-energy matter pushes the mass
+budget toward growth, so the measured shrinkage survives its own systematic. The
+p045 arm corroborates from the other side: with enough angular momentum to avoid
+merger there is no collapse at all, no NaN, a clean t = 60 — the phantom resists
+the black hole by every route it has.
+
+Consequences. (1) The §9 outward march of damping windows cannot terminate: the
+causal seal every window relies on is itself shrinking toward zero. (2) The
+"endpoint" headline may not be a Schwarzschild remnant plus ringdown but *horizon
+formation at t ≈ 30 followed by destruction at t ≈ 56* — with the still-rising
+second Ψ₄ swell as its outgoing signature. (3) Watching the dissolution to the end
+needs a window that tracks the measured horizon down, accepts visible damping in
+the final moments, or accepts the NaN as the end of the record. Not chosen yet.
+
+Limitation for the record: runs launched before 2026-08-31 (r03000, headon, p045,
+n160) did not plot h_ij/A_ij, so the finder cannot measure them — the truly
+undamped control is unmeasurable, permanently. Every future launch keeps the full
+plot list.
 
 ## Traps that must not regress
 
