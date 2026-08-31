@@ -479,11 +479,35 @@ timetable that used to sit here (merger t ≈ 37–39) is void — the orbit is 
 
 Arm C is new physics support: `wormhole_phi_sign_B` (SimulationParameters +
 BinaryWormholeInitialData, default +1, archived runs bit-identical) flips throat B's
-scalar orientation. φ → −φ is exact for one drainhole, so either sign is a valid body;
-the *relative* sign sets the pair's scalar force, and opposite charges turn the 5× push
-into a 5× pull. A wormhole–anti-wormhole pair merges at ~6× Newtonian (from-rest meet
-t ≈ 32.6/√6 ≈ 13 in design time). What the merged object can be is itself the paper: the
-scalar charges cancel, and a throat cannot stay open without its field.
+scalar orientation. A wormhole–anti-wormhole pair merges at ~6× Newtonian (from-rest
+meet t ≈ 32.6/√6 ≈ 13 in design time).
+
+**What an anti-wormhole is, and why it needs no new stability argument.** The drainhole
+scalar has a *direction* — the "flow" through the throat that gave Ellis's drainhole its
+name — and φ → −φ reverses it. That flip is exact for a single body: every one-throat
+property is sign-invariant, because each depends on the field only through its slope
+*squared*.
+
+| property of one throat | under φ → −φ |
+| --- | --- |
+| geometry (throat shape, radius) | identical |
+| ADM mass (+1, same far-field pull) | identical |
+| supporting energy density ρ ∝ −(∇φ)² | identical |
+| equilibrium + growth mode (the 40 M shakedown) | identical |
+
+So an isolated anti-wormhole is *indistinguishable* from the original — no local
+measurement can tell which one it is, and the Stage 1/2.0 stability record transfers
+wholesale. The orientation only matters between TWO throats, through the overlap of
+their fields: same orientation reinforces (the measured 5× push), opposite orientations
+cancel between the bodies (a 5× pull on top of gravity). Same rule as charges, sign
+flipped because the field's energy is negative.
+
+**Where stability genuinely ends: the merger itself.** Opposite orientations cannot
+survive as one throat — the net scalar charge of the merged object is zero, and a
+throat cannot stay open without its field. The expected endpoint is collapse to an
+ordinary black hole plus radiated scalar, which is not a failure mode but the headline:
+*wormhole + anti-wormhole → black hole* is the paper, with the horizon-formation time
+and the radiated fraction as its two numbers.
 
 ---
 
