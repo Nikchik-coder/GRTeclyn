@@ -57,7 +57,7 @@ output_path = "PLACEHOLDER_REWRITTEN_BY_LAUNCHER"
 amr.plot_file = "PLACEHOLDER_REWRITTEN_BY_LAUNCHER/BinaryWormholePlt"
 amr.check_file = "PLACEHOLDER_REWRITTEN_BY_LAUNCHER/BinaryWormholeChk"
 
-checkpoint_interval = 1000
+checkpoint_interval = -1
 
 plot_interval = 50
 
@@ -92,10 +92,10 @@ wormhole_bare_mass_B = 0.0
 wormhole_centerA = -6.0 0.0 0.0
 wormhole_centerB =  6.0 0.0 0.0
 
-# Tangential Bowen-York momenta, equal and opposite: net P = 0, orbit in the
-# x-y plane.  0.12 = 59 % of the Newtonian circular momentum at d = 12.
-wormhole_momentumA = 0.0  0.12 0.0
-wormhole_momentumB = 0.0 -0.12 0.0
+# Head-on: zero momenta, released from rest.  Purest infall of the opposite-
+# flow pair; the endpoint arrives first here, with no orbital complications.
+wormhole_momentumA = 0.0  0.0  0.0
+wormhole_momentumB = 0.0  0.0  0.0
 
 # THE ONE PHYSICS LINE THAT DIFFERS FROM THE BASELINE.  -1 mirrors throat
 # B's scalar profile: same geometry, same mass, reversed drainhole flow.
