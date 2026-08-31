@@ -58,6 +58,17 @@
 #                 half-width tagging_L / 4 and each finer level halves that.
 #                 Defaults to the domain L, i.e. the stock "inner L/4".
 #                 Only meaningful with WHM_TAGGING_TYPE=1.
+#   WHM_RESTART   absolute path to an AMReX checkpoint directory
+#                 (…/BinaryWormholeChkNNNNN).  Injects `amr.restart` into the
+#                 cloned params -- the ONLY key AMReX actually reads for this;
+#                 the root-level `restart_file` key is a trap (never loaded,
+#                 so its existence check runs on an empty path and aborts).
+#                 Appends _rNNNNN to the run name, so the continuation gets
+#                 its own run dir and scratch and never clobbers the parent
+#                 run's streams.  Restart fidelity is measured, not assumed:
+#                 interior bit-exact, but the outer zone (r > 6) re-seeds at
+#                 ~1.5 % relative, so domain-wide norms are contaminated from
+#                 the restart on and no growth-rate fit may cross one.
 #   WHM_DRYRUN=1  resolve and print everything, touch nothing, exit
 #   WHM_CONSUME   run the plotfile consumer sidecar (default 1)
 #   WHM_CONSUME_ARGS  extra consumer flags, e.g. "--shell-fields chi phi"
@@ -123,6 +134,14 @@ if [[ "${WHM_TAGGING_TYPE:-0}" != "0" ]]; then
 fi
 if [[ -n "${WHM_TAGGING_L:-}" ]]; then
   NAME="${NAME}_tl$(printf '%s' "${WHM_TAGGING_L}" | tr -d '.')"
+fi
+if [[ -n "${WHM_RESTART:-}" ]]; then
+  if [[ ! -d "${WHM_RESTART}" || ! -f "${WHM_RESTART}/Header" ]]; then
+    echo "[whm] WHM_RESTART is not a checkpoint directory: ${WHM_RESTART}" >&2
+    exit 1
+  fi
+  # Suffix from the checkpoint's step number: .../BinaryWormholeChk02000 -> _r02000
+  NAME="${NAME}_r${WHM_RESTART##*Chk}"
 fi
 RUN_DIR="${RUNS_DIR}/${NAME}"
 SCRATCH_DIR="${SCRATCH_ROOT}/${NAME}"
@@ -296,6 +315,19 @@ if [[ -n "${WHM_MAX_LEVEL:-}" ]]; then
     "${RUN_PARAMS}"
   echo "[whm] refinement override: max_level = ${WHM_MAX_LEVEL}, regrid_interval = ${ri_list% }"
   fi
+fi
+
+# Restart injection.  Appended, never rewritten: no shipped template carries
+# amr.restart (a fresh run must not), so the key is new to every clone.
+if [[ -n "${WHM_RESTART:-}" ]]; then
+  n="$(grep -c "^amr.restart[[:space:]]*=" "${RUN_PARAMS}" || true)"
+  if [[ "${n}" != "0" ]]; then
+    echo "[whm] template already sets amr.restart -- refusing to double it" >&2
+    exit 1
+  fi
+  printf '\n# restart (set by run_single.sh)\namr.restart = "%s"\n' \
+    "${WHM_RESTART}" >> "${RUN_PARAMS}"
+  echo "[whm] restart  : ${WHM_RESTART}"
 fi
 
 # ---------------------------------------------------------------------------
