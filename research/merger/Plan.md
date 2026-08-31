@@ -42,8 +42,12 @@ gates and the file-by-file design: [Reference.md](Reference.md).
 - [ ] **2.1** Superposed two-throat data with the Helfer/Ning companion correction, d = 16
 - [ ] **2.2** CTTK solve in GRTresna; watch for K² < 0
 - [ ] **2.3** Re-measure the growth rate on two-throat data — do not assume Stage 1 carries
-- [ ] **2.5** Two throats in orbit, gravity-driven, d = 12 — **in flight** 2026-08-31.
-  Rotation yes, inspiral not yet; the verdict number is the separation at t ≈ 15–20 (§8)
+- [x] **2.5** Two throats in orbit, gravity-driven, d = 12 — **answered** 2026-08-31:
+  they REPEL. The phantom support field out-pushes gravity (a²+m²)/m² = 5× at any
+  parameters; like-charge throats never merge (§8)
+- [ ] **2.6** Repulsion controls A/B (from rest, a = 2 and a = 1) + arm C
+  wormhole–anti-wormhole (`wormhole_phi_sign_B = -1`) — **in flight** 2026-08-31; C is
+  the merger route if it falls (§8)
 
 ### Stage 3 — the merger
 
@@ -84,7 +88,8 @@ gates and the file-by-file design: [Reference.md](Reference.md).
 | a *moving* throat also survives 40 M | boosted arm crossed 3.3 units of grid, zero lost rows, no NaN |
 | that growth may have a ceiling | on the boosted arm L2 Mom flattens after t ≈ 30 (+8 % over the last 10 units, against doubling every ~12 before) — one arm, not yet a result |
 | the compactified origin fills in | χ at the pit rises ×400 and the origin lapse falls 0.22 → 0.13 over 40 M; slow, never fatal |
-| **the orbit does not yet fall inward** | 7 units in: rotation real but slow, coordinate separation drifting *out* by 0.5 % |
+| **the throats repel, and must** | phantom support field carries scalar charge set by throat *width*; push/pull = 1 + a²/m² > 1 always — like-charge pairs are unbound at any parameters (§8) |
+| the merger route is charge flip | `wormhole_phi_sign_B = -1` (anti-wormhole) turns the 5× push into a 5× pull; arm C tests it |
 
 **What 40 M is:** a fuse length, not stability. The run ends while the growth is
 accelerating. Stage 3 can be budgeted against 40 M; it cannot be budgeted against an
@@ -448,29 +453,37 @@ ample for that.
 of arc by t = 7. **The separation is going the wrong way**: outward by 0.5 %, accelerating,
 where Newtonian gravity on M_tot = 2 at d = 12 asks for 0.17 *inward* per throat by now.
 
-Two readings, and they are not yet separable:
+**Answered 2026-08-31, by t = 10: they repel, and the repulsion is the physics, not a
+bug.** The measured relative acceleration is +0.0131 *outward* (quadratic fit over t ≥ 4,
+slice-cache centroids) against −0.0139 Newtonian inward. The cause is the support field
+itself: ρ < 0 at every point of the z = 32 slice (max exactly −0.0, min −2.7e-3,
+`ExoticScalarField.impl.hpp:52` carries the phantom sign), and a phantom scalar *repels*
+like charges where a normal one attracts. Each drainhole carries scalar charge
+q = √(a²+m²)/√(4π) — set by the throat *radius*, not the mass — so
 
-* **Gauge.** §7 measured a coordinate speed running at 20–60 % of the physical one, with a
-  ramp lasting tens of units. Applying that lag to the tangential channel here
-  (0.10 observed against 0.84 designed) predicts a coordinate infall of only ~0.02 by t = 7
-  — below the drift we see. On this reading the run is fine and merely slow to show it.
-* **No pull.** The mass is in the geometry with the right sign — `drainhole_u` → −m/r, so
-  χ = e^{2u}ψ⁻⁴ → 1 − 2m/r and the ADM mass reads +1 off the spatial metric, not just off
-  the lapse. But superposed, unsolved data at d = 12 carry an O(m/d) constraint violation
-  that the pair has to shed before it behaves like two masses.
+    F_scalar / F_gravity = 4πq²/m² = (a² + m²)/m²  =  5.00  for a = 2, m = 1,
 
-**The test that separates them is the separation at t ≈ 15–20**, where gravity asks for
-1.5–2.5 units of infall — 10× any drift or lag seen so far, and impossible to confuse with
-either. Nothing before then decides anything, and no intermediate reading should be quoted
-as if it did. If the separation is still flat or growing at t = 20, the orbit setup is
-wrong and more running will not fix it; the next move is then Stage 2.1/2.2 (Helfer/Ning,
-then a real CTTK solve) *before* another orbit, not a bigger kick — a bigger kick is an
-aimed momentum, which this campaign does not do.
+net design acceleration 4× gravity, outward. Measured far-field charge fit: q_tot = 1.55
+vs 1.26 predicted. Predicted outward 0.056 vs measured 0.013 — right sign, right shape,
+4× down, which is the §7 coordinate under-read. **The ratio is 1 + a²/m² > 1 for every a
+and m: like-charge drainholes can never merge under their own gravity**, and the Kepler
+timetable that used to sit here (merger t ≈ 37–39) is void — the orbit is unbound.
 
-**Free-fall arithmetic, for the record.** Two masses of 1 released from rest at d = 12 meet
-at t = (π/2)√(d³/2M_tot) = 32.6. The plan's earlier "merger at t ≈ 20–30" was optimistic;
-with tangential momentum added it is longer still, so `stop_time = 60` is the right size but
-leaves little margin. Budget a restart from the t = 40 checkpoint if the merger is late.
+**Controls, all from rest at d = 12, launched 2026-08-31** (GPUs 1–3, main run untouched):
+
+| arm | params | prediction if the mechanism is right |
+| --- | --- | --- |
+| A `ctrl_rest_d12` | [params_ctrl_rest.txt](../../Examples/BinaryWormholeMerger/params_ctrl_rest.txt) | separates from rest (gravity alone: falls); net ≈ 4× g outward |
+| B `ctrl_rest_a1` | [params_ctrl_rest_a1.txt](../../Examples/BinaryWormholeMerger/params_ctrl_rest_a1.txt), a = 1 | still separates, but ~4× weaker (ratio 2 vs 5) |
+| C `ctrl_flip_d12` | [params_ctrl_flip.txt](../../Examples/BinaryWormholeMerger/params_ctrl_flip.txt), `wormhole_phi_sign_B = -1` | **falls together at ~6× g** — the merger route |
+
+Arm C is new physics support: `wormhole_phi_sign_B` (SimulationParameters +
+BinaryWormholeInitialData, default +1, archived runs bit-identical) flips throat B's
+scalar orientation. φ → −φ is exact for one drainhole, so either sign is a valid body;
+the *relative* sign sets the pair's scalar force, and opposite charges turn the 5× push
+into a 5× pull. A wormhole–anti-wormhole pair merges at ~6× Newtonian (from-rest meet
+t ≈ 32.6/√6 ≈ 13 in design time). What the merged object can be is itself the paper: the
+scalar charges cancel, and a throat cannot stay open without its field.
 
 ---
 

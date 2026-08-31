@@ -1,0 +1,150 @@
+# BinaryWormholeMerger -- arm C: wormhole + ANTI-wormhole released from rest
+# at d = 12 (Plan.md, Stage 2.5 controls).  Throat B carries the OPPOSITE
+# scalar orientation (wormhole_phi_sign_B = -1), turning the phantom force
+# from a 5x-gravity push into a 5x-gravity pull: net infall ~6x Newtonian.
+# Free-fall from rest at 6g meets at t = 32.6/sqrt(6) ~ 13; stop_time = 30
+# leaves margin for the gauge under-read.  If this pair merges, this params
+# file is the route to the merger paper.
+#
+# The three path keys below are placeholders the launcher rewrites.
+
+verbosity = 1
+
+output_path = "PLACEHOLDER_REWRITTEN_BY_LAUNCHER"
+amr.plot_file = "PLACEHOLDER_REWRITTEN_BY_LAUNCHER/BinaryWormholePlt"
+amr.check_file = "PLACEHOLDER_REWRITTEN_BY_LAUNCHER/BinaryWormholeChk"
+
+checkpoint_interval = 2000
+
+plot_interval = 50
+
+amr.plot_vars = chi K lapse phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: TWO regular massive drainhole throats, tangentially boosted.
+
+wormhole_id_type = 1
+
+# Each body's exact static lapse (superposed); 1+log takes over from there.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a, throat A
+wormhole_throat_radius_B = 2.0       # throat B on: the binary
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1 each, carried by the lapse
+wormhole_drainhole_mass_B = 1.0
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`: d = 12 along x.  B defaults to -A; set both anyway.
+wormhole_centerA = -6.0 0.0 0.0
+wormhole_centerB =  6.0 0.0 0.0
+
+# From rest: the whole relative motion is the A-B force, nothing else.
+wormhole_momentumA = 0.0 0.0 0.0
+wormhole_momentumB = 0.0 0.0 0.0
+
+wormhole_subtract_phi_asymptote = 1
+
+# Opposite scalar orientation: the phantom force flips from push to pull.
+wormhole_phi_sign_B = -1.0
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid.  Identical to the Stage 1/2.0 base: L = 64, N = 128, max_level = 3,
+# dx = 0.0625 on the finest level.  Both throats and the whole d = 12 orbit
+# sit inside the sponge at r = 24.
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Identical to the Stage 1/2.0 base.
+
+dt_multiplier = 0.02
+stop_time = 30.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: MOVING nested boxes on BOTH tracked throats (the tagger unions
+# boxes on A and B whenever throat B is on).  Same box arithmetic as the
+# Stage 2.0 arm: level-l half-width tagging_L * 2^-(l+2), so level 3 has
+# half-width 4 around each throat.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  Same battery as Stage 2.0.  The split plane separates A and
+# B along x at t = 0; once the orbit winds past a quarter turn the A/B
+# attribution in binary_diag degrades -- throat_track.dat (which follows
+# both centres) is the moving-frame truth.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576

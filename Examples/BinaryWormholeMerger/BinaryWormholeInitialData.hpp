@@ -201,6 +201,17 @@ class BinaryWormholeInitialData
         //! 1 = shift phi so that it tends to 0 at spatial infinity
         int subtract_phi_asymptote;
 
+        //! Sign of throat B's scalar profile (+1.0 or -1.0, default +1.0).
+        //! phi -> -phi is exact for a single drainhole (the mirror throat:
+        //! same geometry, opposite scalar orientation), so either sign is a
+        //! valid body.  The RELATIVE sign sets the scalar force between the
+        //! pair: a phantom field REPELS like charges and ATTRACTS opposite
+        //! ones, with |F_phi/F_grav| = (a^2+m^2)/m^2 -- always > 1, so
+        //! like-charge throats can never merge under their own gravity
+        //! (measured on orbit_d12_p012, 2026-08-31).  -1 turns that push
+        //! into a pull and is the gravity-driven route to a merger.
+        double phi_sign_B;
+
         double phantom_mass;
         double support_strength;
     };
@@ -345,7 +356,13 @@ class BinaryWormholeInitialData
         }
         if (bB > 0.0)
         {
-            const double normB = phi_norm(bB, m_params.drainhole_mass_B);
+            // phi_sign_B multiplies the whole profile INCLUDING its
+            // asymptote, so with opposite equal throats the two pi/2 tails
+            // cancel and phi -> 0 at infinity on its own.  The constraint
+            // sees only (grad phi)^2 per body; the cross term changes at
+            // the same O(m/d) as the superposition error already present.
+            const double normB = m_params.phi_sign_B *
+                                 phi_norm(bB, m_params.drainhole_mass_B);
             const data_t argB = (rB - (data_t)bB_sq / (4.0 * rB)) / (data_t)bB;
             phi += (data_t)normB * atan(argB);
             phi_asymptote += normB * (M_PI / 2.0);

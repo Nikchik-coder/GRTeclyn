@@ -122,6 +122,16 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_subtract_phi_asymptote",
                 wormhole_params.subtract_phi_asymptote, 1);
 
+        // Relative scalar orientation of throat B (+1 or -1; see the
+        // params_t comment).  +1 keeps every archived run bit-identical.
+        pp.load("wormhole_phi_sign_B", wormhole_params.phi_sign_B, 1.0);
+        check_parameter("wormhole_phi_sign_B", wormhole_params.phi_sign_B,
+                        wormhole_params.phi_sign_B == 1.0 ||
+                            wormhole_params.phi_sign_B == -1.0,
+                        "must be +1 or -1: the closed-form drainhole scalar "
+                        "is exact only at full amplitude, any other value "
+                        "breaks the Hamiltonian constraint at O(1)");
+
         // Optional GRTresna-solved initial data (Route B).  Empty => use the
         // analytic superposition above.
         pp.load("recipe_initial_data_file", recipe_initial_data_file,
