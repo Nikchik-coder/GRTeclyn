@@ -1,301 +1,224 @@
-# Building and Merging Two Regular Exotic-Matter Wormhole Throats in 3D Cartesian CCZ4: A Methodology
+# Merging two regular exotic-matter wormhole throats in 3D Cartesian CCZ4
 
-## Implementation plan — status board
+Working document: the plan, and the log of what was broken and what fixed it.
+Started 2026-08-28. The literature review this plan came from is in
+[background.md](background.md), unedited.
 
-Started 2026-08-28. This section is the working checklist; everything below it is the
-deep-research report it was derived from, unedited.
+---
 
-| Stage | What it settles | Status |
-| --- | --- | --- |
-| 0 | Kill the coordinate bug — a throat with χ = O(1) at the minimal surface | **done 2026-08-28** |
-| 1 | Single regular throat holds still, charge/geometry drift bounded | **exit condition MET 2026-08-30** at `max_level = 3`: 40 M, no NaN, throat −0.36 %. 1.1–1.6 done |
-| 2 | Two-throat data: superposition + correction, then a CTTK solve | **2.0 implemented 2026-08-31** (tracker + moving boxes + shells); shakedown = the boosted-throat run, in flight |
-| 3 | Head-on merger with ADM mass, Ψ₄ out | not started; 1.6 raises the usable window past 40 M, so the wide separation is affordable |
-| 4 | Write | not started |
+## The plan
 
-### Current state, 2026-08-30 (evening)
+### Stage 0 — put a real throat on the grid — **done 2026-08-28**
 
-**Stage 1's exit condition is met.** `s16ml3_lapse5_sg01_fg` — the σ = 0.1, no-collar,
-fixed-box arm with one extra refinement level and *nothing else changed* — ran the full
-40 M with no NaN and the throat down 0.36 %. That is the first drainhole arm to finish
-without either dying or being smoothed flat, and it supersedes the reading recorded
-earlier today, which had this section saying the exit condition was out of reach.
-
-What *is* settled, and does not need revisiting:
-
-| | |
-| --- | --- |
-| the throat is regular | χ = 0.17 at the minimal surface, not the puncture's ~0.006 (Stage 0) |
-| the ADM mass goes in the lapse | `wormhole_id_type = 1`; the puncture route destroys the throat it is meant to weigh |
-| σ = 2.0 must not ship | costs 34 % of the throat while every constraint norm reads flat (1.2) |
-| the refinement boundary is innocent | unigrid arms die sooner (1.4); and moving the boundary does not move the death (1.5) |
-| the mesh is not the killer | fixed boxes hold 13.32 GB flat and change the death time by 0.03 at σ = 0.1 (1.5) |
-| the collar buys time and costs geometry | +2.7 to +7 units, −7.3 % on the throat (1.3, confirmed 1.5) |
-| **the compactified origin is not the killer either** | **refining it made every error smaller and moved the wall from 24.17 to past 40 (1.6)** |
-| **something real is still growing** | **the momentum constraint is rising exponentially at t = 40, doubling every ~1.6 (1.6)** |
-
-**The open question is no longer "bug or result" — it is whether the surviving mode
-saturates.** 40 M is a longer fuse, not stability: the run ends while the growth is
-accelerating. Stage 3 can be designed against a 40 M budget, but not against an unbounded
-one, and no run has yet been taken past 40 to find out which it is.
-
-**One deliberate departure from the report, recorded here because it changes Stage 0.**
-The report says to swap the isotropic chart for the proper-radial (Ellis) chart
-`ds² = −e^{2u}dt² + e^{−2u}[dl² + (l²+a²)dΩ²]`. That chart covers `l ∈ (−∞,∞)`, so its
-spatial slice has topology `R × S²`, which **cannot** be embedded in one Cartesian box —
-§3(a) of the report says as much. The two charts are related by the exact map
-`l = r̄ − a²/(4r̄)`, and the isotropic form is *equally regular at the throat*; what it does
-extra is compactify the far universe to `r̄ → 0`, which is unavoidable in a single box.
-
-So the isotropic chart was never the bug. **The bug was earning the ADM mass with a
-Brill–Lindquist puncture**, `ψ += m/(2r̄)`, which drives χ → 0 *at the throat itself*. The
-massive drainhole earns the same ADM mass from the **lapse** instead, and leaves the
-spatial conformal factor bounded. That is the fix, and it is a ~15-line change to the
-initial data rather than a new chart.
-
-### Stage 0 — regular throat (kill the coordinate bug)
-
-- [x] **0.1** Derive the massive Ellis–Bronnikov drainhole in the isotropic coordinates the
-  code already uses; verify it solves the Hamiltonian constraint exactly
+- [x] **0.1** Derive the massive Ellis–Bronnikov drainhole in the isotropic chart the code
+  already uses; check it solves the constraints exactly
 - [x] **0.2** Standalone check, no GPU: interior minimum of R exists, χ at the throat,
-  proper cell width, the m/a ceiling, the collar zone, free-fall time
-- [x] **0.3** Implement as a new **default-off** initial-data mode in
-  [BinaryWormholeInitialData.hpp](../../Examples/BinaryWormholeMerger/BinaryWormholeInitialData.hpp);
+  proper cell width, the m/a ceiling, free-fall time
+- [x] **0.3** Implement as a **default-off** initial-data mode
+  ([BinaryWormholeInitialData.hpp](../../Examples/BinaryWormholeMerger/BinaryWormholeInitialData.hpp));
   no archived run may change
 - [x] **0.4** Parameters + sanity net in
   [SimulationParameters.hpp](../../Examples/BinaryWormholeMerger/SimulationParameters.hpp)
 - [x] **0.5** Build clean (CPU, then CUDA)
-- [x] **0.6** In-code verification at t = 0: χ_throat O(1) and R_min preserved at
-  `max_level` 0, 1 **and** 2 — the AMR test the puncture failed
+- [x] **0.6** Verify at t = 0 that χ_throat is O(1) and R_min holds at `max_level` 0, 1
+  **and** 2 — the refinement test the puncture failed
 
-**Proceed-benchmark (report Stage 0): PASSED**, 2026-08-28. χ_throat within a small factor
-of 1, R_min stable to < 1 % under refinement, before the first timestep.
+### Stage 1 — one throat holds still — **exit condition met 2026-08-30**
 
-#### What 0.6 measured
+- [x] **1.1** Params file: one throat, α = e^u exactly, 1+log, Gamma-driver from β = 0,
+  `covariantZ4 = 0`, Sommerfeld out —
+  [params_stage1_hold.txt](../../Examples/BinaryWormholeMerger/params_stage1_hold.txt)
+- [x] **1.2** Run to t ≳ 20–30 M; measure R_min drift and constraint norms — five arms
+- [x] **1.3** Decide the collar's fate — **keep it**, and know what it costs
+- [x] **1.4** Mesh or wormhole? Two unigrid arms at dx = 0.50 and 0.25
+- [x] **1.5** Stop the mesh chasing the error: add `FixedGridsTagger` as a default-off
+  tagger choice
+- [x] **1.6** Settle the wall at t ≈ 24 — bug or result. One extra refinement level
 
-`params_stage0_drainhole.txt`, one throat, a = 2, m = 1, L = 64, N = 128, run at three
-refinement depths. Analytic prediction: r̄ = 1.6180, R_min = 3.8895, χ_throat = 0.1731.
+### Stage 2 — two throats
 
-| `max_level` | dx at the throat | throat under the **puncture** | throat under the **drainhole** | error vs analytic |
-| --- | --- | --- | --- | --- |
-| 0 | 0.5 | present | present, R = 3.908 | 0.48 % |
-| 1 | 0.25 | **gone — monotonic** | present, R = 3.890 | **0.01 %** |
-| 2 | 0.125 | **gone — monotonic** | present, R = 3.892 | 0.06 % |
+- [x] **2.0** Throat locator + moving boxes + wave-zone shells — implemented 2026-08-31;
+  shakedown (boosted single throat) **in flight**
+- [ ] **2.1** Superposed two-throat data with the Helfer/Ning companion correction, d = 16
+- [ ] **2.2** CTTK solve in GRTresna; watch for K² < 0
+- [ ] **2.3** Re-measure the growth rate on two-throat data — do not assume Stage 1 carries
 
-Refinement now **sharpens** the throat instead of erasing it, and it is still there after
-two timesteps, unmoved to four digits. The 0.48 % at `max_level` 0 is the grid straddling
-the minimum (nearest sample r̄ = 1.785), not an error in the data.
+### Stage 3 — the merger
 
-The proper-distance picture at `max_level` 2, which is the number that mattered:
+- [ ] **3.1** Head-on from rest at d = 16, gravity-driven, no aimed momenta
+- [ ] **3.2** Ψ₄ at several radii + the v ≈ c propagation test, to separate real radiation
+  from superluminal constraint modes
+- [ ] **3.3** Convergence and error budget
 
-| | throat areal radius | width of one cell there, in proper distance |
-| --- | --- | --- |
-| Brill–Lindquist puncture (measured 2026-08-28) | 4.5 | **6.2 — wider than the throat** |
-| massive drainhole (measured 2026-08-28) | 3.89 | **0.31** |
+### Stage 4 — write
 
-The throat region now spans ~16 cells of proper width 0.2–0.5. That is a factor of ~20 in
-proper resolution at the throat, bought with no extra grid at all — the same L = 64,
-N = 128 box that could not resolve the puncture.
+- [ ] **4.1** If 1–3 hold: two-throat head-on with Ψ₄
+- [ ] **4.2** If 2 or 3 stalls: methods Letter on the regular two-throat data, or the
+  exotic-lump head-on
 
-**The block's first half is cleared.** MatterDebug.md's exit condition has two parts —
-χ of order 1 at the minimal surface, and Noether charge conserved to a few per cent. The
-first is done. The second cannot even be posed yet: the merger's matter is a *real*
-phantom scalar, which carries no Noether charge. It becomes a Stage 1 question.
+### Open, not blocking
 
-#### What 0.1–0.2 established
+- [ ] Domain control (L = 96 or 128 at the same dx) — rules out the outer boundary and the
+  sponge, which mesh-independence alone does not
+- [ ] Does the surviving growing mode saturate? No run has gone past 40 M
+- [ ] Print the NaN's position before the next arm that dies — the abort gives
+  `level=… name=h11` and no coordinates
+- [ ] Fix the phantom potential-sign inconsistency **before** any `phantom_mass ≠ 0` work
 
-The solution, in the isotropic radius the code already uses. With
-`X = (r̄ − a²/4r̄)/a` and `Ω = 1 + a²/(4r̄²)`:
+---
+
+## Status at a glance
 
 | | |
 | --- | --- |
-| static lapse exponent | `u = (m/a)(arctan X − π/2)`, → 0 at infinity |
+| the throat is regular | χ = 0.17 at the minimal surface, against the puncture's ~0.006 |
+| the ADM mass goes in the lapse | `wormhole_id_type = 1`; the puncture route destroys the throat it is meant to weigh |
+| one throat survives 40 M | −0.36 % on the throat radius, no NaN |
+| the mesh is not the killer | fixed boxes hold 13.32 GB flat; moving the refinement boundary moves the death by 0.03 |
+| the compactified origin is not the killer | refining it made every error smaller and pushed the wall past 40 M |
+| **something real is still growing** | the momentum constraint rises exponentially and is still rising at t = 40 |
+| two moving throats are now trackable | locator + moving boxes shipped 2026-08-31 |
+
+**What 40 M is:** a fuse length, not stability. The run ends while the growth is
+accelerating. Stage 3 can be budgeted against 40 M; it cannot be budgeted against an
+unbounded window.
+
+---
+
+## What was broken, and what fixed it
+
+### 1. The throat was not on the grid at all
+
+**Broken.** The ADM mass was earned with a Brill–Lindquist puncture, `ψ += m/(2r̄)`, which
+drives χ → 0 **at the throat itself**. Refining then *erased* the throat rather than
+sharpening it. One cell at the minimal surface was 6.2 units of proper width — wider than
+the throat it was meant to resolve.
+
+**Fixed.** The massive Ellis–Bronnikov drainhole earns the same ADM mass from the **lapse**
+and leaves the spatial conformal factor bounded. ~15 lines of initial data, no new chart.
+With `X = (r̄ − a²/4r̄)/a` and `Ω = 1 + a²/(4r̄²)`:
+
+| | |
+| --- | --- |
+| lapse exponent | `u = (m/a)(arctan X − π/2)` → 0 at infinity |
 | lapse | `α = e^u` — part of the solution, not a gauge choice |
 | conformal factor | `χ = e^{2u} / Ω²` |
 | scalar | `φ = √(a²+m²)/(a√(4π)) · arctan X` |
 | | `K = 0`, `A_ij = 0`, `Π = 0`, `M_ADM = m` |
 
 The amplitude is fixed by the field equations (`4π C² = a² + m²`), not chosen, which is
-what makes both constraints hold **identically** at t = 0 for a single throat — the
-superposed puncture data carried a Hamiltonian defect by construction. Verified to
-roundoff (residual 1e-10, growing as h shrinks, i.e. pure roundoff) by
+what makes both constraints hold identically at t = 0. Verified to roundoff by
 [drainhole_throat_check.py](../../grteclyn-wrapper/scripts/validation/drainhole_throat_check.py).
 
-Three properties are **derived, and two of them contradict the obvious guess**:
+**Measured, 0.6** — a = 2, m = 1, L = 64, N = 128. Analytic: r̄ = 1.6180, R_min = 3.8895,
+χ_throat = 0.1731.
 
-- the minimal surface is at `l = m`, i.e. `r̄ = (m + √(m²+a²))/2` — *not* at `l = 0`, which
-  is where the massless case puts it;
-- `R_min = e^{−u(m)}√(m²+a²)`;
-- **χ at the throat barely moves with mass**: 0.25 at m/a = 0, 0.19 at 0.3, 0.15 at 1.0.
-  The throat migrates outward as m grows, and the larger Ω⁻² almost exactly cancels the
-  smaller e^{2u}. Proper cell width there is 2.0–2.6 dx *whatever the mass*.
+| `max_level` | dx at the throat | puncture | drainhole | error |
+| --- | --- | --- | --- | --- |
+| 0 | 0.5 | present | R = 3.908 | 0.48 % |
+| 1 | 0.25 | **gone** | R = 3.890 | **0.01 %** |
+| 2 | 0.125 | **gone** | R = 3.892 | 0.06 % |
 
-That last one is the whole result. **Mass no longer costs resolution.** Against the
-puncture it replaces:
-
-| | proper cell width at the minimal surface | and inward |
+| at `max_level` 2 | throat areal radius | proper width of one cell there |
 | --- | --- | --- |
-| Brill–Lindquist puncture | 4 dx (χ = 1/16, mass-independent) | keeps falling — 12.5 dx measured at dx = 0.5, m = 2 |
-| massive drainhole | 2.0–2.6 dx | χ < 0.01 only inside r̄ = 0.98, against a throat at 2.69 |
+| Brill–Lindquist puncture | 4.5 | **6.2 — wider than the throat** |
+| massive drainhole | 3.89 | **0.31** |
 
-The unresolvable region does not go away — χ still vanishes like r̄⁴ at the compactified
-far infinity, which is intrinsic to holding a wormhole in one Cartesian box — but it now
-sits **well inside** the minimal surface, so the origin-isolating collar can freeze it
-without touching the throat. That is lapse type 6.
+A factor ~20 in proper resolution at the throat, bought with no extra grid.
 
-**The one new design constraint**, which the report does not state: `m/a` is capped near 1.
-Past that, χ_throat starts falling back toward puncture values. A heavier binary wants a
-*bigger* throat, not a heavier one — and a bigger throat means a longer free-fall time
-(t_ff ∝ a at fixed m/a), so this is the trade that now sets the grid.
+**Three derived properties, two of them against the obvious guess:**
 
-### Stage 1 — single regular throat, static hold
+- the minimal surface is at `l = m`, i.e. `r̄ = (m + √(m²+a²))/2` — *not* at `l = 0`;
+- `R_min = e^{−u(m)}√(m²+a²)`;
+- **χ at the throat barely moves with mass** (0.25 at m/a = 0, 0.15 at 1.0): the throat
+  migrates outward as m grows and the larger Ω⁻² almost cancels the smaller e^{2u}. Proper
+  cell width there is 2.0–2.6 dx whatever the mass. **Mass no longer costs resolution.**
 
-- [x] **1.1** Params file: one throat, α = e^u exactly, 1+log, Gamma-driver from β = 0,
-  `covariantZ4 = 0`, Kreiss–Oliger σ ≈ 1–2, Sommerfeld out —
-  [params_stage1_hold.txt](../../Examples/BinaryWormholeMerger/params_stage1_hold.txt)
-- [x] **1.2** Run to t ≳ 20–30 M and measure: R_min drift, constraint norms, whether the
-  lapse collar is still needed once χ is O(1) at the throat — five arms, 2026-08-28
-- [x] **1.3** Decide the collar's fate — **KEEP IT.** It is not the perturbation that
-  matters; it is the only thing holding the origin. See "What 1.2–1.4 measured" below.
-  **Challenged at t = 13 and confirmed at t = 26:** with the mesh pinned the collar arm
-  looked worst of the three at t = 13, but it outlived both others (26.2 against 23.5
-  and 24.2) and failed the way 1.3 predicted — through the throat, not the origin.
-  See the results under 1.5
-- [x] **1.4** Discriminate mesh vs. wormhole for the late blow-up: two unigrid arms,
-  `max_level = 0` at dx = 0.50 and 0.25 —
-  [params_stage1_unigrid256.txt](../../Examples/BinaryWormholeMerger/params_stage1_unigrid256.txt)
-- [x] **1.5** Stop the mesh chasing the error. The σ = 0 arm ended at t = 35.2 in
-  **out of memory**, not instability: this example tags on χ gradients (`ChiTagger`),
-  level 2 grew to 24 % of the domain / 32.8M cells / 30.6 GB. Add `FixedGridsTagger`
-  (already in `Source/Tagging/`) as a **default-off** tagger choice — a static nested
-  box on the origin, which is where χ → 0 actually needs the resolution — then run
-  collar **on** with σ = 0 and hold R_min = 3.8895 through 40 M.
-  **Done 2026-08-30** (`tagging_type` / `tagging_L`, default 0 = unchanged). Answer:
-  the tagger removes the out-of-memory failure mode completely and changes nothing
-  about the physics — all three arms NaN between t = 23.5 and 26.2. Necessary, not
-  sufficient; see "1.5 — the fixed-box tagger" below
+**New design constraint, not in the report:** `m/a` is capped near 1 — past that χ_throat
+falls back toward puncture values. A heavier binary wants a *bigger* throat, not a heavier
+one, and a bigger throat means a longer free-fall time (t_ff ∝ a at fixed m/a).
 
-- [x] **1.6** Settle the wall at t ≈ 24: bug or result. **Done 2026-08-30.** One
-  `max_level = 3` run of the σ = 0.1 no-collar arm, nothing else changed. The wall moved
-  **later** — past the full 40 M — which is the sign that excludes the compactified origin
-  and leaves a genuine growing mode. Printing the NaN's position was listed first and
-  turned out not to be needed: the run did not NaN. See "1.6 — the wall at t ≈ 24" below
+**Why the report's own fix was not taken.** It said to swap the isotropic chart for the
+proper-radial (Ellis) chart. That chart's slice has topology `R × S²`, which cannot be
+embedded in one Cartesian box — the report says so itself. The two charts are related by
+`l = r̄ − a²/(4r̄)` and the isotropic form is equally regular at the throat; what it does
+extra is compactify the far universe to r̄ → 0, which is unavoidable in a single box. The
+chart was never the bug.
 
-**Benchmark:** no gauge detonation, R_min drift attributable to the known EB unstable mode
-(one growing mode, timescale ~ throat/c) rather than to the grid.
+### 2. Dissipation was destroying the throat while every monitor read clean
 
-#### What 1.2–1.4 measured
+**Broken.** The inherited default `sigma = 2.0` shrinks the throat by **34 % over 40 M
+while every constraint norm sits flat at 1.3e-3.** Smoothing *lowers* the violation it
+causes, so the error monitors are structurally unable to see this failure. The overshoot on
+the way (R = 4.40 at t = 20, above the initial 3.89) settles the direction — no collapsing
+object grows first.
 
-Five arms on the same file, a = 2, m = 1, `max_level = 2` unless stated. Exact answer:
-`R_min = 3.8895`. The launcher knobs `WHM_SIGMA` and `WHM_LAPSE_TYPE` keep the arms
-identical in every other line.
+**Fixed.** `sigma = 0.1` in the three drainhole templates, 2026-08-30. Not 0, because a
+little dissipation still buys stability at the refinement boundaries for ~0.1 % on R_min.
+The puncture-era templates are left at 2.0 — the measurement is about drainhole data, and
+silently retuning runs it does not cover would be worse.
+
+**The five arms** (a = 2, m = 1, `max_level = 2`; exact answer R_min = 3.8895):
 
 | σ | collar | R_min reached | Hamiltonian L2 | ends |
 | --- | --- | --- | --- | --- |
 | 2.0 | no | **2.578** at t = 40 | 1.3e-3, flat throughout | ran to completion |
-| 2.0 | yes | — | — | NaN at t = 21.7 |
-| 0.1 | no | 3.894 — 0.1 % | 2.5e-3 flat, then spikes | NaN at t = 24.2 |
-| 0.1 | yes | 3.127 — 20 % low | 3.7e+12 | NaN at t = 31.4 |
-| 0.0 | no | 3.87–3.95, oscillating | 2e-3 → 1.2e-1, doubling ~ every 5 M | **out of memory** at t = 35.2 |
+| 2.0 | yes | — | — | NaN at 21.7 |
+| 0.1 | no | 3.894 — 0.1 % | 2.5e-3 flat, then spikes | NaN at 24.2 |
+| 0.1 | yes | 3.127 — 20 % low | 3.7e+12 | NaN at 31.4 |
+| 0.0 | no | 3.87–3.95, oscillating | 2e-3 → 1.2e-1, doubling ~5 M | **out of memory** at 35.2 |
 
-**1.2, first half — the σ = 2.0 default is not conservative, it is wrong.** It shrinks the
-throat by 34 % over 40 M *while every constraint norm reads flat at 1.3e-3*. Dissipation
-large enough to hide the error is also large enough to destroy the solution it is
-smoothing, and the error monitors cannot see it because a smoothed solution violates the
-constraints less, not more. The overshoot on the way (R = 4.40 at t = 20, above the
-initial 3.89) settles the direction: no collapsing object grows first. At σ = 0.1 and
-σ = 0 the same run holds the throat to 0.1–0.5 %. **σ = 2.0 was inherited from the
-puncture era and must not ship.**
+The σ = 0 arm is the only one whose norm grows visibly — that growth is the run telling the
+truth about an instability σ = 2.0 suppressed into silence.
 
-**1.2, second half — the constraint norms are honest only at low σ.** The σ = 0 arm is the
-only one whose Hamiltonian norm grows visibly, and that growth (doubling every ~5 M) is
-the run telling the truth about an instability the σ = 2.0 arm suppressed into silence.
+### 3. The collar: predicted useless, measured load-bearing
 
-#### 1.3 — the collar's fate, and a reversal
+**Broken prediction.** The plan said the origin-isolating collar (lapse type 6) was a
+needless perturbation once χ was O(1) at the throat. Wrong.
 
-The plan above predicted the collar was a needless perturbation on a throat that no longer
-needs protecting. **That prediction is wrong, and the origin diagnostic is what shows it.**
-`chiA_min` in binary_throat_diagnostics.dat is the *origin* health monitor (the throat is
-tracked by the areal radius instead — see the note in the params file), and it is the
-single controlling variable in every arm:
+**What the origin monitor shows.** `chiA_min` is the *origin* health monitor, not a throat
+tracker, and it is the controlling variable in every arm:
 
-| arm | dx at the origin | χ at the origin, t = 0 | χ reaches the 1e-8 floor |
+| arm | dx at the origin | χ there at t = 0 | reaches the 1e-8 floor |
 | --- | --- | --- | --- |
 | unigrid, no collar | 0.5 | 2.44e-3 | **t = 6.6** |
 | unigrid, no collar | 0.25 | 1.33e-4 | **t = 1.2** |
 | `max_level` 2, no collar, σ = 0.1 | 0.125 | 7.19e-6 | t = 9.0 |
 | `max_level` 2, **collar**, σ = 0.1 | 0.125 | 7.19e-6 | **t = 31.4** |
-| `max_level` 2, no collar, σ = 0 | 0.125 | 7.19e-6 | **never** (t = 34.7 and running) |
+| `max_level` 2, no collar, σ = 0 | 0.125 | 7.19e-6 | **never** |
 
-The collar buys a factor of 3.5 in how long the origin survives, which is exactly the job
-it was built for in Stage 0.2. What it costs is 20 % on the throat radius. Collar and
-dissipation are therefore **two independent trade-offs, not one bad inherited setting**,
-and 1.5 exists because the favourable corner of that 2×2 — collar on, σ = 0 — was never
-run.
+Collar buys a factor 3.5 in origin survival and costs 20 % of the throat radius. Collar and
+dissipation are **two independent trade-offs, not one bad inherited setting**.
 
-#### The σ = 0 arm did not go unstable — it ran out of memory
+**Confirmed at t = 26, after an interim reading doubted it.** At t = 13 the collar arm
+looked worst of three; it then outlived both (26.2 against 23.5 and 24.2) and failed the way
+1.3 predicted — through the *throat* (−7.3 %, monotone), not the origin. Also corrected:
+the collar arm's lapse sitting at the 1e-10 floor at the origin is **not** a failure — it
+starts at 2.6e-7 by construction, because freezing the far universe is what the collar is
+*for*. The pathological one is the collar-free arm, whose lapse began at 0.23 and collapsed
+to the floor over t = 18–22.
 
-It ended at t = 35.2 with the throat still at 3.87–3.95 and the origin never floored,
-killed by the GPU running out of memory. The cause is the tagging criterion, not the
-physics: `BinaryWormholeLevel::tag_cells` uses `ChiTagger`, so refinement follows χ
-gradients, and with no dissipation the numerical junk grows (Hamiltonian norm 2e-3 →
-1.2e-1) and spreads until the mesh is chasing it everywhere — level 2 ended at
-**1000 grids, 32.8M cells, 24 % of the domain**, footprint 3.9 GB → 30.6 GB.
+### 4. The mesh chased its own noise until the card ran out
 
-So the 2×2 of (collar, σ) is now complete and **every corner fails differently**:
-σ = 2.0 destroys the throat, σ = 0.1 NaNs, σ = 0 outgrows the card. The knob that has
-never been touched is the third one — *where* the grid refines. `FixedGridsTagger` is
-already in `Source/Tagging/` and tags a static nested box around the centre, which is
-exactly where a wormhole needs resolution (χ → 0 at the compactified far infinity) and
-is fixed in size by construction. That is 1.5, and it matters for Stage 2 as well: two
-throats on a χ-gradient tagger will run away sooner, not later.
+**Broken.** `ChiTagger` refines on χ gradients. With no dissipation the junk grows and
+spreads, and the mesh follows it everywhere: level 2 ended at 1000 grids, 32.8M cells, 24 %
+of the domain, 3.9 → 30.6 GB. That is what ended the σ = 0 arm at t = 35.2 — **memory, not
+instability**, with the throat still at 3.87–3.95.
 
-#### 1.4 — the late blow-up is not the refinement boundary
-
-Both σ = 0.1 arms died with a NaN on **level 2**, which reads like a refinement-boundary
-failure. It is not. Two arms with `max_level = 0`, no refinement boundary anywhere in the
-domain, otherwise byte-identical:
-
-| grid | NaN in | dies |
-| --- | --- | --- |
-| uniform dx = 0.50 | `K`, level 0 | t = 6.6 |
-| uniform dx = 0.25 | `h11`, level 0 | t = 1.2 |
-
-Removing refinement makes it **four times worse**; refining uniformly makes it **twenty
-times worse**. Refinement is the protector here, not the killer, and Stage 2 is not
-blocked on an AMR bug. The pre-registered reading of "finer dies sooner" was "a real
-growing mode", but the χ column above supplies the mechanism directly and it is not the
-Ellis–Bronnikov mode: χ vanishes like r̄⁴ at the compactified far infinity, so halving dx
-puts the innermost cell twice as close and drops χ there by 2⁴ (measured: 2.44e-3 →
-1.33e-4 → 7.19e-6, ratios 18.4 and 18.5). CCZ4 divides by χ. **A uniform grid cannot be
-refined at the origin without refining it everywhere, and that is what kills the unigrid
-arms** — which is the argument for AMR plus the collar, i.e. exactly the 1.5 configuration.
-
-Note also that reaching the floor is a precursor, not the death itself: the no-collar
-σ = 0.1 arm floored at t = 9.0 and ran on to t = 24.2.
-
-#### 1.5 — the fixed-box tagger
-
-Two new keys on `BinaryWormholeMerger`, both defaulting to the old behaviour so that no
-archived run changes:
+**Fixed.** `FixedGridsTagger` (already in `Source/Tagging/`, used unmodified) offered as a
+default-off tagger choice. The footprint becomes a property of the *parameters* rather than
+of the *error*, so the run can no longer die of its own mesh.
 
 | key | default | meaning |
 | --- | --- | --- |
-| `tagging_type` | `0` | 0 = `ChiTagger` (refine on χ gradients, as before); 1 = `FixedGridsTagger` |
-| `tagging_L` | `L` | fixed boxes: level 0 tags \|x − centre\|_∞ < `tagging_L`/4, each finer level halves that |
+| `tagging_type` | `0` | 0 = `ChiTagger`; 1 = fixed boxes; 2 = moving boxes (Stage 2.0) |
+| `tagging_L` | `L` | level 0 tags \|x − centre\|_∞ < `tagging_L`/4, each finer level halves it |
 | `tagging_center` | `center` | where the boxes sit |
 
-`FixedGridsTagger` was already in `Source/Tagging/` and is used unmodified — KleinGordon
-and two unit tests depend on it, so its semantics are left alone and the example passes
-its own `tagging_L` instead. `pre_tag_cells()` now skips the χ ghost-fill entirely under
-the fixed tagger, which only exists to feed `ChiTagger`'s second derivatives.
-
-The point is not that fixed boxes are more accurate. They are **less** adaptive by
-definition, and `regrid_threshold` stops doing anything at all — the parameter reader
-warns about exactly that, because a knob that silently does nothing is how someone
-concludes the tagger did not help. The point is that the footprint becomes a property of
-the *parameters* rather than of the *error*, so the run can no longer die of its own
-mesh. Measured over a 30-step smoke run at `max_level = 2`, `tagging_L = 64`:
+`pre_tag_cells()` skips the χ ghost-fill entirely under the geometric taggers — it only
+existed to feed `ChiTagger`'s second derivatives. `regrid_threshold` then does nothing, and
+the parameter reader warns about exactly that, because a knob that silently does nothing is
+how someone concludes the tagger did not help.
 
 | level | cells | varies over the run? |
 | --- | --- | --- |
@@ -303,574 +226,271 @@ mesh. Measured over a 30-step smoke run at `max_level = 2`, `tagging_L = 64`:
 | 1 | 4 096 000 | **no** |
 | 2 | 4 096 000 | **no** |
 
-against level 2 climbing to 32.8M cells under χ tagging. Cost is ~15 GB of arena, flat,
-and ~23 code units per hour, so 40 M is under two hours.
+**Result, 2026-08-30: the memory failure mode is gone permanently, and the physics is
+unchanged.** All three arms held 13.32 GB from first step to last. All three still died,
+between t = 23.5 and 26.2, every one in `h11` on level 2.
 
-**Three arms launched 2026-08-30**, all `max_level = 2`, `tagging_type = 1`:
+| arm | σ | collar | NaN at | throat at death | how it got there |
+| --- | --- | --- | --- | --- | --- |
+| `s15_lapse5_sg00_fg` | 0 | no | **23.54** | +0.06 % until the last unit | Mom doubling every ~0.5 from t = 13; origin lapse 0.20 → floor over 18–22 |
+| `s15_lapse6_sg00_fg` | 0 | yes | **26.23** | **−7.3 %, monotone** | constraints jump at 17–20, sit at 2–3e-1; throat shrinks throughout |
+| `s15_lapse5_sg01_fg` | 0.1 | no | **24.17** | +0.04 % | **constraints flat at 3e-3 to the last step**; sudden and local |
 
-| arm | σ | collar | what it settles |
-| --- | --- | --- | --- |
-| `s15_lapse5_sg00_fg` | 0 | no | the direct repeat of the out-of-memory arm — does the tagger alone buy the full 40 M? |
-| `s15_lapse6_sg00_fg` | 0 | yes | the corner of the (collar, σ) square that was never reachable before |
-| `s15_lapse5_sg01_fg` | 0.1 | no | the shipped defaults; under χ tagging this one NaN'd on level 2 at t = 24.2 |
-
-**Pre-registered readings.** The tagger is vindicated if the σ = 0 arm reaches t = 40
-with R_min within ~1 % of 3.8895 — it had the throat and the origin both healthy when
-the memory ran out, so nothing else should stop it. If it instead NaNs at a *later* time
-than 35.2, the growing junk was real and the OOM merely got there first; if it NaNs
-*earlier*, the fixed boxes are under-resolving something the adaptive mesh was covering,
-and `tagging_L` is too small rather than the criterion being wrong. The σ = 0.1 arm is
-the one that can falsify the "refinement boundary is innocent" claim of 1.4: it died on
-level 2 before, and its level-2 boundary has now moved.
-
-**Results, 2026-08-30. All three arms are dead; none reached t = 40.** Every one ended
-`NaN ... level=2 component=1 name=h11`, between t = 23.5 and t = 26.2. Drift is against
-each run's own t = 0 value, 3.8917205 (the analytic 3.8895 plus a constant 0.06 %
-discretisation offset), not against 3.8895.
-
-| arm | σ | collar | NaN at | throat at death | origin χ | how it got there |
-| --- | --- | --- | --- | --- | --- | --- |
-| `s15_lapse5_sg00_fg` | 0 | no | **23.54** | +0.06 % until the last unit | never floored, flat 7.19e-6 | Mom doubling every ~0.5 from t = 13; Ham follows at 17; lapse at the origin 0.20 → floor over t = 18–22 |
-| `s15_lapse6_sg00_fg` | 0 | yes | **26.23** | **−7.3 %, monotone** | never floored | constraints jump at t = 17–20 and sit at 2–3e-1; throat shrinks steadily throughout |
-| `s15_lapse5_sg01_fg` | 0.1 | no | **24.17** | +0.04 % | clips the 1e-8 floor from t = 9.0 | **constraints flat at 3e-3 to the last step**; death is sudden and local |
-
-**The memory question is settled and the tagger wins it outright.** All three arms held
-13 967 682 FAB kilobyte (13.32 GB) from first step to last, identical across ranks, levels
-1 and 2 frozen at 4 096 000 cells. No arm came near the card. The footprint is a property
-of the parameters, exactly as designed, and the out-of-memory failure mode is gone.
-
-**It does not, however, save the run — and the two clean A/Bs against χ tagging disagree
-with each other.** Same params file, same σ, same lapse type, `tagging_type` the only
-difference:
+**The tagger is necessary and not sufficient.** Two clean A/Bs against χ tagging:
 
 | σ | collar | χ tagging | fixed boxes | verdict |
 | --- | --- | --- | --- | --- |
 | 0.1 | no | NaN at **24.2** | NaN at **24.17** | tagger irrelevant — 0.03 apart |
 | 0 | no | t = **35.2**, OOM, no NaN | NaN at **23.54** | tagger costs **12 units** |
 
-The σ = 0.1 pair is the sharper result. Those two runs put the level-2 boundary in
-completely different places and died at the same instant, in the same variable, with the
-throat 0.04 % from its start. Whatever kills them is **mesh-independent**, which
-independently confirms 1.4's "the refinement boundary is innocent" by a route that does not
-depend on the unigrid arms.
+The σ = 0.1 pair is the sharp one: two runs with the level-2 boundary in completely
+different places died at the same instant, in the same variable, with the throat 0.04 % from
+its start. **Whatever kills them is mesh-independent.** The σ = 0 pair explains the rest —
+with no dissipation the only thing suppressing the junk *was* the runaway refinement, so
+removing it lets Mom run away from t = 13, far too fast for the physical mode. **The junk
+must be either damped or resolved; χ tagging was silently supplying the second at a price it
+could not afford.**
 
-The σ = 0 pair explains the other half. With no dissipation the only thing suppressing the
-junk was the runaway refinement itself, so removing it lets Mom run away from t = 13 —
-doubling every half unit, far too fast for the EB mode's ~4 timescale. **The junk has to be
-either damped or resolved; the run needs one of the two, and χ tagging was silently
-supplying the second at a price it could not afford.** That is why σ = 0 + fixed boxes is
-the worst corner of the three, not the best.
+### 5. The refinement boundary was innocent — and so was the origin
 
-**1.3 stands, and the interim reading that doubted it was wrong.** At t = 13 the collar arm
-looked worst by every column and this page recorded that it might flip. It did not: the
-collar arm outlived both others (26.2 against 23.5 and 24.2), and it paid the price 1.3
-already named — the throat shrinks monotonically to −7.3 %, the only arm where the throat
-is what fails. Collar buys time, costs geometry. Unchanged.
+**Suspected.** Both σ = 0.1 arms died on level 2, which reads like a refinement-boundary
+failure.
 
-Also corrected: the collar arm's lapse sitting at the 1e-10 floor at the origin is **not** a
-failure. It starts at 2.6e-7 by construction — freezing the far universe is what the collar
-is *for*. The arm that floored its lapse pathologically is the collar-free one, which began
-at 0.23 and collapsed there over t = 18–22.
+**Measured (1.4).** Two `max_level = 0` arms, no refinement boundary anywhere:
 
-**What 1.5 actually settled.** The tagger is necessary and not sufficient: it removes the
-memory failure mode permanently and changes nothing about the physics failure. The blocker
-for Stage 1 is no longer the mesh. It is the wall at t ≈ 24, and 1.6 is now the item that
-matters.
-
-#### σ = 2.0 no longer ships
-
-Changed 2026-08-30 in the three drainhole templates (`params_stage0_drainhole.txt`,
-`params_stage1_hold.txt`, `params_stage1_unigrid256.txt`): `sigma = 0.1`. The
-puncture-era templates are left at 2.0 — the measurement above is about drainhole data,
-and silently retuning runs it does not cover would be worse than leaving them.
-
-The justification is 1.2: at σ = 2.0 the throat loses 34 % over 40 M while every
-constraint norm reads flat, because smoothing *lowers* the constraint violation it
-causes. That is a failure mode the monitors are structurally unable to see, so it has to
-be pinned by the geometry, and 0.1 rather than 0 because a little dissipation still buys
-stability at the refinement boundaries for ~0.1 % on R_min.
-
-
-#### Why this run can give a clean answer
-
-The single massive drainhole is not merely *good* initial data — it is an **exact fixed
-point of the entire evolved system**, which the puncture data never was:
-
-| evolved variable | value at t = 0 | why its RHS vanishes |
+| grid | NaN in | dies |
 | --- | --- | --- |
-| `chi`, `h_ij` | γ̃_ij = δ_ij exactly | γ_ij = e^{−2u} Ω² δ_ij is conformally flat |
-| `Gamma^i` | 0 | follows from γ̃_ij = δ_ij; the code initialises it to 0, which is *correct* here rather than an omission |
-| `K`, `A_ij`, `Theta` | 0 | time-symmetric slice of a static spacetime |
-| `lapse` | e^u | 1+log is ∂_t α = −2αK, and K = 0 |
-| `shift`, `B^i` | 0 | Gamma-driver is sourced by ∂_t Γ̃^i, which is 0 |
+| uniform dx = 0.50 | `K`, level 0 | t = 6.6 |
+| uniform dx = 0.25 | `h11`, level 0 | t = 1.2 |
 
-So there is no initial transient to ride out and no gauge relaxation to disentangle from
-the physics. **Any** drift is either the discretisation or the genuine Ellis–Bronnikov
-unstable mode. The superposed puncture data had a constraint-violating burst at t = 0 that
-made exactly this measurement impossible.
+Removing refinement makes it **four times worse**; refining uniformly makes it **twenty
+times worse**. Refinement is the protector. The mechanism is in the χ column above: χ
+vanishes like r̄⁴ at the compactified far infinity, so halving dx puts the innermost cell
+twice as close and drops χ there by 2⁴ (measured ratios 18.4 and 18.5) — and CCZ4 divides by
+χ. A uniform grid cannot be refined at the origin without refining it everywhere. Reaching
+the floor is a precursor, not the death: the no-collar σ = 0.1 arm floored at t = 9.0 and
+ran to 24.2.
 
-The one thing that is deliberately *not* a fixed point is the origin-isolating collar:
-α = e^u · collar is not the static lapse, so lapse type 6 injects a real perturbation near
-r̄ = 0 by construction. That makes 1.3 a straight A/B on one params file, launched through
-the new `WHM_LAPSE_TYPE` override so the two arms cannot drift apart:
+**Then the wall at t ≈ 24: bug or result.** Two explanations survived, and they predict
+**opposite signs** under one extra refinement level:
 
-```
-WHM_NAME=stage1 WHM_PARAMS=params_stage1_hold.txt WHM_MAX_LEVEL=2 \
-  WHM_CONSUME_ARGS="--areal-radius --areal-min-radius 0.8" \
-  WHM_LAPSE_TYPE=5 WHM_GPU=0 bash .../wormhole_merger/run_single.sh   # no collar
-  WHM_LAPSE_TYPE=6 WHM_GPU=1 ...                                      # with collar
-```
-
-The two cloned params files differ in exactly one line, verified after launch.
-
-#### 1.6 — the wall at t ≈ 24
-
-With 1.5 done, every arm run on the massive drainhole can be put on one axis:
-
-| σ | collar | tagging | outcome | what failed |
-| --- | --- | --- | --- | --- |
-| 2.0 | no | χ | **reaches t = 40** | nothing — but dissipation ate 34 % of the throat |
-| 2.0 | yes | χ | NaN 21.7 | — |
-| 0.1 | no | χ | NaN 24.2 | — |
-| 0.1 | no | fixed | NaN 24.17 | constraints flat at 3e-3 to the last step; sudden |
-| 0.1 | yes | χ | NaN 31.4 | — |
-| 0 | no | χ | t = 35.2, OOM, no NaN | the card, not the physics |
-| 0 | no | fixed | NaN 23.54 | Mom runs away from t = 13; lapse at the origin collapses 18–22 |
-| 0 | yes | fixed | NaN 26.23 | **the throat**, monotone to −7.3 %; origin healthy throughout |
-| 0.1 | no | fixed, **`max_level = 3`** | **reaches t = 40, no NaN** | nothing — throat −0.36 %, Ham flat, Mom still rising at the finish |
-
-Two explanations survive the evidence. They are not both right, and they disagree about
-what refinement will do — which is the whole reason 1.6 is cheap.
-
-##### Explanation A — the compactified origin
-
-χ vanishes like r̄⁴ at r̄ → 0, CCZ4 divides by χ, and the innermost cell is by a wide margin
-the least resolved point in the domain. Under this reading the run dies of an
-under-resolved region that seeds junk into everything else.
-
-*For:* every mechanism that buys time suppresses that region, and they are unrelated to
-each other — dissipation damps it (σ = 2.0 is the only setting that reaches 40), the collar
-freezes it (+7 units at σ = 0.1, +2.7 at σ = 0), runaway refinement resolves it (+12 units
-at σ = 0). Three different levers, one target. Directly observed in the σ = 0 no-collar
-arm: the lapse at the origin falls 0.20 → floor over t = 18–22, four units before the NaN.
-
-*Against:* the collar arm froze the origin completely — its χ there never floored, holding
-6.0–7.5e-6 for the whole run, and its lapse was pinned at zero by design from t = 10 — and
-it **still died**, at 26.2, with the *throat* collapsing instead. Freezing the suspect
-delayed the death by 2.7 units rather than curing it.
-
-##### Explanation B — the Ellis–Bronnikov mode is real and this is it
-
-EB has one growing mode with timescale ~ throat/c ~ 4. Growing from the initial
-discretisation floor (Ham ≈ 2e-3 at t = 0) to O(1) takes ≈ 4·ln(500) ≈ 25.
-
-*For:* that arithmetic lands on the wall. The throat's shape is the exponential signature —
-arms A and C hold to +0.06 % and +0.04 % for twenty-three units and then go in the last
-one, which is what exponential growth looks like when you plot it linearly. And the two
-σ = 0.1 arms died **0.03 apart** with the refinement boundary in completely different
-places; a numerical problem is rarely that indifferent to the mesh.
-
-*Against:* it is an order-of-magnitude argument, not a derivation. A factor of ten in the
-assumed seed moves the predicted time by 9 units, which is most of the spread in the table
-above, so the agreement is suggestive rather than probative.
-
-##### The test that separates them
-
-**They predict opposite signs under refinement.** 1.4 measured that refining the origin
-makes things *worse*: halving dx puts the innermost cell twice as close to r̄ → 0 and drops
-χ there by 2⁴ (2.44e-3 → 1.33e-4 → 7.19e-6), and the unigrid arms died sooner at finer
-resolution (t = 6.6 at dx = 0.5, t = 1.2 at dx = 0.25). So:
-
-| | adding a refinement level predicts |
+| | adding a level predicts |
 | --- | --- |
-| **A — the origin** | the wall moves **earlier** |
-| **B — the EB mode** | the wall moves **later**, by about 4 · ln(seed ratio) |
+| **A — the under-resolved compactified origin** | the wall moves **earlier** |
+| **B — the real Ellis–Bronnikov growing mode** | the wall moves **later**, by ~4·ln(seed ratio) |
 
-**Corrected 2026-08-30, in flight.** This table first read "B — the wall does not move",
-which was wrong, and wrong in a way that would have made a clean 40 look like a refutation
-of B. A growing mode starts from the discretisation error in the initial data, and
-refinement lowers that error, so B predicts a *later* wall, not an unmoved one — the
-question was only ever the sign, and it still is. The size is now measured rather than
-assumed: at t = 12 the `max_level = 3` arm carries a momentum-constraint norm of 7.5e-7
-against 6.8e-5 for the identical arm one level shallower, a factor of 90. At an e-folding
-time of 4 that is 4 · ln 90 ≈ 18 units of delay, which puts the predicted wall near 42 —
-**off the end of a `stop_time = 40` run.** So reaching 40 without a NaN is a B outcome and
-not evidence against B; only a wall arriving *early* speaks for A.
+*For A:* three unrelated levers all buy time and all target that region — dissipation damps
+it, the collar freezes it, runaway refinement resolves it. *Against A:* the collar arm froze
+the origin completely and still died, at 26.2, through the throat.
 
-There is no configuration in which both are right, and the run is affordable for the first
-time because 1.5 made the footprint a property of the parameters. **This is the experiment
-to run.** Note it cannot separate origin-refinement from throat-refinement — the fixed
-boxes are centred, so a deeper level refines both — but it does not need to, because the
-two hypotheses differ in sign.
+*For B:* EB has one growing mode with timescale ~ throat/c ~ 4; growing from the
+discretisation floor (2e-3) to O(1) takes ≈ 4·ln(500) ≈ 25, which lands on the wall. And the
+two σ = 0.1 arms died 0.03 apart with the mesh completely rearranged. *Against B:* it is an
+order-of-magnitude argument — a factor 10 in the seed moves the prediction by 9 units.
 
-##### The answer, measured 2026-08-30
-
-`s16ml3_lapse5_sg01_fg`: the σ = 0.1, no-collar, fixed-box arm, `WHM_MAX_LEVEL=3`, every
-other line of the params file identical to the arm that died at 24.17. Level 3 has
-dx = 0.0625 and covers |x − c|_∞ < 4, so it holds both the throat at r̄ = 1.618 and the
-compactified origin. 16.5 GB flat against 13.32 GB, 18.2 code units/h, 2.2 h wall.
-
-**It ran the full 40 M and did not NaN.** Same arm, same file, one extra level:
+**The answer, 2026-08-30** — `s16ml3_lapse5_sg01_fg`, the σ = 0.1 no-collar fixed-box arm
+with `max_level = 3` and *nothing else changed*. Level 3 has dx = 0.0625 and covers
+|x − c|_∞ < 4, holding both the throat and the compactified origin. 16.5 GB flat, 18.2 code
+units/h, 2.2 h wall.
 
 | | `max_level = 2` | `max_level = 3` |
 | --- | --- | --- |
 | outcome | NaN at 24.17 | **t = 40, clean** |
-| R_min at t = 0 | 3.891721 (0.057 % above exact) | 3.889973 (**0.012 %**) |
+| R_min at t = 0 | 3.891721 (0.057 % high) | 3.889973 (**0.012 %**) |
 | R_min drift at t = 12 | +0.035 % | +0.0005 % |
 | L2 Ham at t = 12 | 2.48e-3 | 2.51e-3 |
 | L2 Mom at t = 12 | 6.80e-5 | **7.51e-7** |
-| χ at the origin | 7.19e-6, falling, floors from t = 9 | 4.11e-7 → 9.95e-6, **rising all run** |
+| χ at the origin | 7.19e-6, floors from t = 9 | 4.11e-7 → 9.95e-6, **rising all run** |
 | α at the origin | 0.2315 → 0.2404 | 0.2194 → 0.1322 |
 
-**The wall moved later, which is the sign that excludes A.** Refining the origin was
-supposed to poison it — 1.4 measured χ there dropping 2⁴ per halving and the unigrid arms
-dying sooner at finer resolution. It did drop, exactly as predicted (7.19e-6 → 4.11e-7),
-and the run got *better* in every column. The origin is not what was killing these runs.
+**The wall moved later, which excludes A.** Refining the origin was supposed to poison it —
+and χ there did drop exactly as predicted (7.19e-6 → 4.11e-7) while every column got
+*better*. The origin is not what was killing these runs.
 
-**What is left is a real growing mode, and it is still growing at the finish.** L2 Mom over
-the run: 7.5e-7 (t = 12) → 5.1e-6 (17.6) → 1.4e-5 (26) → 3.3e-6 (34) → 3.9e-5 (40). The
-early growth has an e-folding time of 4.4 against a predicted throat/c ≈ 4, which is the
-one number Explanation B put on the table in advance. It then *dips* around t = 34 and
-returns steeper, doubling every ~1.6 — which no single exponential explains and which no
-run has yet been taken far enough to resolve.
+**What is left is a real growing mode, still growing at the finish.** L2 Mom: 7.5e-7
+(t = 12) → 5.1e-6 (17.6) → 1.4e-5 (26) → 3.3e-6 (34) → 3.9e-5 (40). The early e-folding time
+is 4.4 against a predicted throat/c ≈ 4 — the one number Explanation B put on the table in
+advance. It then dips near t = 34 and returns steeper, doubling every ~1.6, which no single
+exponential explains and which no run has been taken far enough to resolve.
 
-The frames say the same thing in a different currency. Rendered on a log scale with the
-throat drawn on (`grteclyn-wrapper/scripts/plot/frames_logscale.py --ring 1.618`), K at
-t = 1 is a **square** blob at the origin with corners on the grid axes and four diagonal
-lobes — the cubic mesh's own signature, on a solution that should have K = 0 everywhere.
-By t = 39.5 it is smooth, round, single-signed and monotone toward the centre, thirty times
-larger. Grid junk does not become spherically symmetric; a physical mode does.
+The frames say it in another currency: on a log scale with the throat drawn on
+(`grteclyn-wrapper/scripts/plot/frames_logscale.py --ring 1.618`), K at t = 1 is a **square**
+blob with corners on the grid axes and four diagonal lobes — the cubic mesh's own signature,
+on a solution that should have K = 0 everywhere. By t = 39.5 it is smooth, round,
+single-signed and monotone toward the centre, thirty times larger. Grid junk does not become
+spherically symmetric; a physical mode does.
 
-**So Stage 1's exit condition is met, and its benchmark is met in the exact terms it was
-written in** — "R_min drift attributable to the known EB unstable mode rather than to the
-grid". −0.36 % over 40 M, with the mode identified and its rate measured.
+**So Stage 1's benchmark is met in the terms it was written in** — "R_min drift attributable
+to the known EB unstable mode rather than to the grid": −0.36 % over 40 M, mode identified,
+rate measured.
 
-**What this does not settle: whether the mode saturates.** 40 M is a longer fuse, not
-stability. Refinement cut the seed ~90x, which at an e-folding time of 4 is ~18 units of
-delay, and the run ends inside the window that buys. The honest next measurement is the
-same configuration with a larger `stop_time`; it was offered on 2026-08-30 and declined as
-unnecessary for Stage 3, which needs 40 M and now has it.
+**Retracted along the way, because both would mislead a reader of the raw tables:**
 
-##### A note on what refinement can and cannot buy
+- *"B predicts the wall does not move."* Wrong: a growing mode starts from the
+  discretisation error, and refinement lowers it, so B predicts a **later** wall. Measured
+  seed ratio 90 at t = 12 → ~18 units of delay → predicted wall near 42, off the end of a
+  `stop_time = 40` run. Reaching 40 cleanly is a **B outcome**, not evidence against B.
+- *"Do not run a deep fixed box on the origin as a fix."* Written from 1.4 and read across
+  to a nested level, which it does not survive: the deep box was the cure, not the poison.
+  1.4 stands for what it measured — halving dx *everywhere*, which also halves dt and
+  rebuilds the whole solution.
 
-Depth is not free and it runs out. Each level halves dx, so χ at the innermost cell falls
-16x: 4.11e-7 at `max_level = 3`, ~2.6e-8 at 4, ~1.6e-9 at 5. `min_chi = 1.0e-8`, so
-**level 5 starts below the floor** and level 4 sits 2.6x above it. Each level also roughly
-doubles the wall clock (18.2 → ~9 → ~4.5 units/h). Level 4 is reachable; level 5 is not,
-without changing the floor or the criterion.
+**What refinement can still buy.** Each level halves dx, so χ at the innermost cell falls
+16×: 4.11e-7 at level 3, ~2.6e-8 at 4, ~1.6e-9 at 5. With `min_chi = 1e-8`, **level 5 starts
+below the floor** and level 4 sits 2.6× above it; each level also roughly doubles the wall
+clock. Level 4 is reachable, level 5 is not. The thing to change is the *criterion*: centred
+boxes refine throat and origin together, and a **shell-shaped tagger** removes the floor
+problem entirely — the same work Stage 2.0 needed anyway.
 
-The criterion is the thing to change. `FixedGridsTagger` boxes are centred, so one level
-refines the throat and the origin together and there is no setting that refines one without
-the other — which is also why 1.6 could establish a sign but not attribute it. A
-**shell-shaped tagger** (refine the annulus about r̄ ≈ 1.0–2.5, leave the middle coarse)
-removes the floor problem entirely and is the same piece of work Stage 2.0 needs for two
-moving throats. That is where the next tagger effort belongs.
+### 6. The fixed box cannot survive two throats
 
-##### Ordered plan
+**Broken by construction.** The throats *move*, one box cannot straddle both, and a merger
+has to resolve a wave zone a single central box does not cover.
 
-~~1. **Print the NaN's position.**~~ Listed first, and overtaken: step 2 ran without a
-   NaN, so there is no position to print. Still worth the few lines before the *next* arm
-   that dies — the abort gives `level=2 component=1 name=h11` and no coordinates.
-2. ~~**Refinement test**~~ **Done 2026-08-30, and it answered.** See "The answer" above:
-   the wall moved later, past 40 M, which excludes A.
-3. **Domain control** (L = 96 or 128 at the same dx). Rules out the Sommerfeld boundary and
-   the sponge. Mesh-independence says the killer is not the refinement structure; it does
-   not by itself say *origin* rather than *outer edge*.
-4. **Only then choose a cure.** If A: excision of the inner region (already in the decision
-   gates, where instability there means abandoning true topology for this paper), or raising
-   the χ floor — which is demonstrably load-bearing already, since the σ = 0.1 arm clipped
-   1e-8 in 208 of 1405 samples from t = 9.0 and ran on regardless. If B: there is nothing to
-   cure, and the wall is a **result**.
-
-~~**Do not run a deep fixed box on the origin as a fix.**~~ **Measured and wrong,
-2026-08-30.** This warning was written from 1.4, which measured that refining a *unigrid*
-domain kills it sooner, and it read that across to a nested level. It does not carry: the
-deep box was run as step 2 and it was the cure, not the poison. 1.4's finding stands for
-what it actually measured — halving dx everywhere, which also halves dt and rebuilds the
-whole solution — and should not be extrapolated to adding a level.
-
-**Not a candidate: σ = 2.0.** It is the only setting that reaches t = 40 and it gets there
-by destroying the throat, which is 1.2's finding and has not changed.
-
-##### What this costs Stage 3 — revised 2026-08-30
-
-This section previously read "if B is right", and put a hard ceiling of ~24 M on any run
-using this throat. **The ceiling measured 40 M, not 24.** Refinement moved it, so it is a
-property of the discretisation as much as of the object, and the arithmetic below has to be
-redone against the number we now have:
-
-| separation d | free-fall time ≈ (π/2)·√(d³/8M) | fits in 40 M? |
-| --- | --- | --- |
-| 10 | ~12 M | yes, easily — but the throats start close enough that the Helfer/Ning correction works hard |
-| 16 | ~25 M | **yes**, with 15 M of margin for ringdown and extraction |
-| 20 | ~35 M | marginal; no room after merger |
-
-So the wide separation the superposition error wants (d/b ≥ 8, i.e. d = 16 at b = 2) is now
-affordable, which it was not this morning. That is what 1.6 bought Stage 3, and it is the
-main practical consequence of the whole stage.
-
-**The caveat that survives.** The mode is still growing at t = 40 and doubling every ~1.6
-there, so 40 M is a fuse length rather than a guarantee. Two throats will also seed it
-harder than one sitting at a fixed point: the superposed data is not an exact solution, so
-its initial constraint violation starts well above this run's 2.5e-3 floor, and a growing
-mode starting from a larger seed reaches trouble sooner. Budget the merger to *finish*
-inside 40 M rather than to run up to it, and re-measure the growth rate on the two-throat
-data rather than assuming this one carries over.
-
-#### 2.0 — the tagger does not survive the jump to two throats
-
-Recorded 2026-08-30, before 2.1 starts, because the fixed box that makes Stage 1.5 work is
-the one piece of it that cannot be carried over. Two independent reasons: the throats
-*move*, and one box cannot straddle both; and a merger has to resolve a wave zone that a
-single central box does not cover.
-
-The instinct that follows — build a smarter criterion that can tell numerical junk from
-real structure, and refine only the latter — is the wrong target. Of the four taggers in
-`Source/Tagging/`, exactly one reads the solution:
+**The tempting wrong answer:** build a smarter criterion that tells junk from real structure.
+Of the four taggers in `Source/Tagging/`, exactly one reads the solution — and that is the
+field's answer, not an oversight:
 
 | tagger | criterion | reads state? |
 | --- | --- | --- |
 | `ChiTagger` | \|∂²χ\| above a threshold | **yes** |
-| `PunctureTagger` | distance to each tracked centre, radius from its mass | no |
-| `ExtractionTagger` | distance to each extraction radius, enforces a *required level* | no |
+| `PunctureTagger` | distance to each tracked centre | no |
+| `ExtractionTagger` | distance to each extraction radius, enforces a required level | no |
 | `FixedGridsTagger` | distance to a fixed centre | no |
 
-That is the field's answer, and it is structural rather than clever: production black-hole
-codes refine on **geometry decided before the run starts** — moving boxes on the sources,
-static shells guaranteeing a minimum level out to each extraction radius. Junk never gets a
-vote because the solution never gets a vote, and the footprint is bounded by the parameters
-in exactly the sense 1.5 relies on.
+Production black-hole codes refine on **geometry decided before the run starts**. Junk never
+gets a vote because the solution never gets a vote. The point underneath: **refining junk
+feeds junk** — a finer grid resolves more of the noise spectrum, which pulls in more grid.
+That loop ended the σ = 0 arm at 35.2, and no threshold makes a runaway loop safe; it only
+sets the fuse length. Damp the junk; send refinement where it was told to go. (Textbook
+Berger–Oliger truncation-error tagging fails for the same reason, harder: junk has enormous
+truncation error by construction.)
 
-**The wave zone is the easy half.** Radiation wavelengths are long compared with the
-sources, so the wave zone wants adequate-but-coarse resolution sized in advance, not fine
-grids chasing wavefronts. `ExtractionTagger` already expresses this: for each extraction
-radius it enforces a required level inside `1.2 ×` that radius. It is `FixedGridsTagger`
-with a different shape, and it composes with it.
-
-**The sources are the real work.** `PunctureTagger` is already a moving multi-centre tagger
-(nested boxes sized as `1.5 × 2^min(max_level−level−1,1) × mass`), and `PunctureTracker`
-already exists as an `amrex::ParticleContainer` — both present, both switched off
-(`puncture_tracking.enabled = 0` in every merger params file). The gap is that the tracker
-locates a puncture by advecting a particle backwards along the shift, and a wormhole throat
-is not a point. It has to be found as the **interior minimum of the areal radius**
-`R = r̄/√χ`, or as the peak of the phantom field — the same distinction that made the
-original throat measurement read the compactified far infinity instead of the throat.
-
-**A wormhole-specific complication black holes do not have:** the numerically fragile spot
-is the compactified far universe at r̄ → 0, which in these coordinates sits at the *centre*
-of each throat. Every moving box therefore carries its own soft spot along with it, and
-whatever 1.3 concludes about the collar has to hold under a box that is moving.
-
-**If state-based tagging is wanted anyway**, the honest menu, and why `ChiTagger` as
-written fails: it is a bare second-derivative magnitude with no amplitude reference, no
-scale test and no cap, so a small sharp ripple trips it exactly as readily as a real
-feature.
-
-1. **Normalise or floor the amplitude** — divide by local \|χ\| or require an absolute
-   size. One line, kills most small-amplitude junk.
-2. **Test resolvedness, not sharpness** — junk lives at 2–4 cells and does not converge
-   under refinement; real structure does. Compare the same quantity at `dx` and `2dx`.
-   This is the only criterion that discriminates junk *in principle*.
-3. **Tag on the matter, not the metric** — the phantom scalar has support only where the
-   wormhole is, and metric junk does not manufacture it. Not immune (the two couple), but
-   far quieter.
-4. **Fence the region** — allow adaptivity only inside the source boxes and the wave shell.
-5. **Cap cells per level** regardless of criterion. Insurance, not a criterion.
-
-**The obvious answer that fails:** textbook Berger–Oliger truncation-error tagging. Junk
-has enormous truncation error by construction, so that criterion chases it harder than
-`ChiTagger` does.
-
-**And the point underneath all of it:** refining junk feeds junk — a finer grid resolves
-more of the noise spectrum, which pulls in more grid. That is the loop that ended the
-σ = 0 arm at t = 35.2, and no threshold makes a runaway loop safe, it only sets the length
-of the fuse. The correct response to junk is to **damp** it (constraint damping, modest
-dissipation) while refinement goes where it was told to go.
-
-**Plan for Stage 2/3:** moving boxes on the two throats + static extraction shells, no
-state-based tagging at all; the deliverable is a throat locator to drive the existing
-tracker, not a new criterion.
-
-##### 2.0 implemented, 2026-08-31
-
-Three pieces, all in the example, none touching shared code:
+**Fixed, 2026-08-31.** Three pieces, all in the example, none touching shared code:
 
 | piece | where | what it does |
 | --- | --- | --- |
 | throat locator | [ThroatTracker.hpp](../../Examples/BinaryWormholeMerger/ThroatTracker.hpp) | finds each throat every coarse step, writes `throat_track.dat`; default off (`throat_tracking`) |
-| moving boxes | `tagging_type = 2` | the fixed tagger's own box arithmetic, centred on the tracked positions instead of the grid centre |
+| moving boxes | `tagging_type = 2` | the fixed tagger's box arithmetic, centred on the tracked positions |
 | wave-zone shells | same branch | the stock `ExtractionTagger`, composed in; a no-op while extraction is off |
 
-**The locator is simpler than planned, and the reason is a wormhole-specific gift.** The
-plan said "interior minimum of the areal radius, or the peak of the phantom field" — a
-minimal-surface search in 3D. Neither is needed for the *boxes*: what the tagger wants is
-the throat's **centre**, and in this chart every throat carries its own compactified far
-universe exactly there, where χ falls like r̄⁴ to values orders of magnitude below
-anything else in the field. The centre is located as the χ pit inside a small search
-sphere around the last known position — a min-reduce plus a centroid over the
-near-minimum cells (which also handles a floor-clipped plateau), the same pattern the
-collapse diagnostics already use for the minimum-lapse position. The very feature that
-makes the origin numerically fragile makes it an unmissable beacon. The minimal surface
-stays what it always was, a *diagnostic*, extracted post-hoc from the plotfiles.
+**The locator is simpler than planned, and the reason is a wormhole-specific gift.** The plan
+said "interior minimum of the areal radius, or the peak of the phantom field" — a
+minimal-surface search in 3D. Neither is needed for the *boxes*: what the tagger wants is the
+throat's **centre**, and in this chart every throat carries its own compactified far universe
+exactly there, where χ falls like r̄⁴ to values orders of magnitude below anything else in the
+field. The centre is the χ pit inside a small search sphere around the last known position —
+a min-reduce plus a centroid over the near-minimum cells, which also handles a floor-clipped
+plateau. **The very feature that makes the origin numerically fragile makes it an unmissable
+beacon.** The minimal surface stays what it always was: a diagnostic, extracted post-hoc.
 
-`PunctureTracker` stays off: it advects a particle backwards along the shift, which
-locates a coordinate singularity these data do not have. The pit is measured from the
-state instead, so the tracker cannot drift away from the object it is following.
+`PunctureTracker` stays off — it advects a particle backwards along the shift, locating a
+coordinate singularity these data do not have. The pit is measured from the state, so the
+tracker cannot drift away from the object it follows.
 
-**The shakedown is the boosted-throat run, and it doubles as the first physics of
-Stage 2** (`s20_boost_p02`, launched 2026-08-31 on the Stage 1 baseline configuration —
-a = 2, m = 1, σ = 0.1, lapse 5, `max_level = 3`, `tagging_L = 64` — with one addition: a
-Bowen–York momentum P = 0.2 along z, [params_stage2_boosted.txt](../../Examples/BinaryWormholeMerger/params_stage2_boosted.txt)).
-Every piece of Stage 1's evidence was collected with the throat pinned to the grid centre
-by construction; a merger needs the throat to survive *crossing the grid* at late-inspiral
-speed (0.2 ≈ the per-throat Newtonian speed of an equal-mass pair at d = 16). Two
-questions, in order:
+### 7. In flight: does a *moving* throat survive?
+
+Every piece of Stage 1's evidence was collected with the throat pinned to the grid centre by
+construction. A merger needs it to survive **crossing the grid**.
+
+`s20_boost_p02`, launched 2026-08-31: the Stage 1 baseline (a = 2, m = 1, σ = 0.1, lapse 5,
+`max_level = 3`, `tagging_L = 64`) plus one addition — a Bowen–York momentum P = 0.2 along z
+([params_stage2_boosted.txt](../../Examples/BinaryWormholeMerger/params_stage2_boosted.txt)).
+0.2 is the per-throat Newtonian speed of an equal-mass pair at d = 16, i.e. a genuine
+late-inspiral speed. Two questions, in order:
 
 1. **Infrastructure** — does the tracker hold the throat and do the moving boxes keep it
    resolved across cells, refinement boundaries and box edges? Read `throat_track.dat`:
-   position advancing at ~P/M, `nA` > 0 throughout. A zero in `nA` means the boxes lost
-   the throat — the failure this run exists to catch, visible rather than silent.
-2. **Physics** — the boost makes the data inexact, so the growing mode starts from a
-   larger seed. Measured at t = 0: L2 Mom = 4.5e-6 (the discretisation residual of the
-   analytically divergence-free Bowen–York term) against the resting arm's exact zero,
-   with L2 Ham unchanged at 2.1e-3. The Stage 1 growth model then predicts the wall
-   *earlier* than the resting arm's ~42, by roughly 4·ln(seed ratio) — and where it
-   actually lands is the number Stage 3 needs before it can budget the infall.
+   `nA > 0` throughout. A zero means the boxes lost the throat — the failure this run exists
+   to catch, visible rather than silent.
+2. **Physics** — the boost makes the data inexact, so the mode starts from a larger seed.
+   At t = 0: L2 Mom = 4.5e-6 (the discretisation residual of the analytically
+   divergence-free Bowen–York term) against the resting arm's **exact zero**, with L2 Ham
+   essentially unchanged at 2.10e-3 — the existing discretisation error is ~100× what the
+   boost adds, so the seed grows only modestly and the wall may land near 40 rather than
+   well before it.
 
-Momentum stays a validation tool: the merger itself remains gravity-driven (two throats
-released from rest). One params-file trap worth recording: `wormhole_momentumB` defaults
-to **minus** `momentumA` (the zero-total-momentum binary convention), so a single-throat
-boost must pin it to zero explicitly or the code silently plants an equal-and-opposite
-Bowen–York term at the mirror point — which for a throat at the origin is the *same*
-point, cancelling the boost exactly.
+**Readings to t ≈ 11** (run continuing): zero lost rows; throat radius and origin lapse each
+within ~1 %; Ham peaked at 3.22e-3 near t = 8 and is **falling**; Mom doubling every ~6.6
+units, *slower* than the resting arm's 4.4. Coordinate speed ramps 0.02 → 0.09 as the shift
+builds from zero — the tracked position is a **coordinate** speed, not the physical one,
+which is fixed at 0.2 by construction. If it settles near 0.2 the grid has locked onto the
+object; if it plateaus low, the boxes trail a throat that is still moving at 0.2.
 
-### Stage 3 — the run
-
-- [ ] **3.1** Head-on first (axisymmetric, cheapest, still gives ℓ = 2 Ψ₄)
-- [ ] **3.2** Ψ₄ at multiple radii; apply the v ≈ c propagation test to separate physical
-  radiation from superluminal CCZ4 constraint modes
-- [ ] **3.3** Convergence and error budget
-
-### Stage 4 — write
-
-- [ ] **4.1** If 1–3 hold: two-throat head-on with Ψ₄
-- [ ] **4.2** If 2 or 3 stalls: methods Letter on the regular two-throat data (report
-  fallback c), or the exotic-lump head-on (fallback e)
-
-### Decision gates (from the report, kept literally)
-
-| If | Then |
-| --- | --- |
-| Regular-chart single throat still loses charge > few % | the instability is *physical*, not numerical — reframe as collapse/expansion of a two-throat system |
-| CTTK returns K² < 0 with two exotic lumps | past the existence boundary — reduce ADM mass, increase separation, and **report the boundary as a finding** |
-| Timelike inner boundary (excision) unstable | abandon true topology for this paper |
+Momentum stays a validation tool. **The merger itself remains gravity-driven** — two throats
+released from rest, ADM mass in the lapse, never aimed momenta.
 
 ---
 
+## Traps that must not regress
 
-## TL;DR
-- **Your blocker is a coordinate choice, not a physics wall.** You mapped the *second universe onto the grid origin* (compactified infinity, χ→0) — exactly what the single-throat GRTeclyn paper (arXiv:2604.00071) does. The fix is to place the throat at a **finite** radius where the conformal factor is O(1): in isotropic coordinates the throat sits at r̄ = b₀/2 where ψ = √(1+b₀²/4r̄²) = √2 and χ = ψ⁻⁴ = 1/4 (proper cell width ≈ 2·dx), and better still in the proper-radial (Ellis) chart ds² = −e^{2u}dt² + e^{−2u}[dl² + (l²+a²)dΩ²], where the throat at l=0 is regular by construction (χ = e^{2u} is O(1), R(l) never reaches zero).
-- **The most time-efficient route to a two-throat merger with Ψ₄ extraction** is: (i) build each throat in the proper-radial chart; (ii) add ADM mass through the massive Bronnikov/"drainhole" branch (M = mγ) so the pair attracts; (iii) superpose the two with the Helfer/Ning conformal-factor-correction; (iv) solve the constraints with GRTresna's **CTTK** method, which is purpose-built to avoid the wrong-sign Lichnerowicz existence problem for exotic (phantom) sources.
-- **If a clean constraint-satisfying two-throat solve is out of reach in a month, two honest fallbacks are near-guaranteed:** an axisymmetric (2+1) two-throat head-on, or a two-exotic-lump (boson-star-style) head-on. Both keep χ~O(1), have direct 3D Cartesian precedent, and give inspiral/merger + Ψ₄ — at the cost of the literal "first wormhole-topology merger" claim.
+| trap | what happens | guard |
+| --- | --- | --- |
+| `sigma = 2.0` | eats 34 % of the throat while every norm reads flat | 0.1 in all drainhole templates |
+| `wormhole_momentumB` default | it is **minus** `momentumA`; for a single centred throat that plants an equal-and-opposite term at the *same* point and cancels the boost exactly, silently | pin it to `0 0 0` |
+| puncture route to ADM mass | destroys the throat it is meant to weigh | `wormhole_id_type = 1` + `drainhole_mass` |
+| `regrid_threshold` under a geometric tagger | does nothing at all | the parameter reader warns |
+| `tagging_type = 2` without `throat_tracking` | boxes centred on stale positions | rejected in `check_params` |
+| frame slice plane | the default cuts the plane the motion is perpendicular to — a moving throat simply fades | pick the plane from the arm's physics at launch |
+| areal radius under drift | it rays from the *static* grid centre, so it under-reads once the throat moves | re-extract post-hoc with the per-time centres in `throat_track.dat` |
 
-## Key Findings
+**Not a candidate: σ = 2.0 as a stability fix.** It is the only setting that reaches t = 40
+at `max_level = 2`, and it gets there by destroying the throat.
 
-**1. Your diagnosed blocker is precisely the construction in arXiv:2604.00071 — and that paper is a cautionary tale, not a template.** Shirokov's single-throat GRTeclyn run explicitly maps "the secondary asymptotic region … compactified such that its spatial infinity maps exactly to the grid origin r̄→0 (ψ→∞)," then evolves χ = (4r̄²/(4r̄²+b₀²))² which "smoothly vanishes at the origin (χ→0)." That is the same χ→0 puncture interior you are fighting. It did *not* hold: with a χ_min=10⁻⁸ floor, interior noise from the compactified origin destroyed the static equilibrium by t≈1.5M and the moving-puncture gauge failed at v>0.6c "anti-collapse." The paper's own "Future work" calls for "fully constraint-satisfying initial data (via an elliptic solver)." Reuse its numerical *settings* (κ₁=3, κ₂=0, covariantZ4=0, octant symmetry, AMR on χ-gradients, Sommerfeld outer BCs, RK4), but reject its *geometry*.
+## Known inconsistencies in the matter sector
 
-**2. There is a regular chart that keeps χ finite at the throat — the one every 1D/2D wormhole evolution uses.** The proper-radial (Ellis) form ds² = −e^{2u(l)}dt² + e^{−2u(l)}[dl² + (l²+a²)dΩ²], with u(l) = (m/a)(arctan(l/a) − π/2), has areal radius R(l) = e^{−u}√(l²+a²) that never reaches zero, and the spatial conformal factor e^{−2u} is finite and O(1) at the throat (e^{πm/a} at l=0; exactly 1 in the massless m=0 case, giving ds² = −dt² + dl² + (l²+a²)dΩ², φ ∝ arctan(l/a)). This is the chart of Shinkai–Hayward (gr-qc/0205041), González–Guzmán–Sarbach (0806.0608, 0806.1370), and Kain (2210.04905, 2602.18231).
+Flagged 2026-08-31 in review; none affects any run so far, all use `phantom_mass = 0`.
 
-**3. The isotropic chart can be made regular too — the key is that the isotropic radial coordinate is double-valued.** The map l = r̄ − b²/(4r̄) sends *both* r̄∈(b/2,∞) and r̄∈(0,b/2) onto the two universes, throat at the finite radius r̄ = b/2 where ψ is finite. Compactifying one universe to r̄→0 (as 2604.00071 did) is a *choice* that produces χ→0, not a necessity. Placing the throat at r̄ = b/2 with χ = 1/4 and handling the far universe by truncation/excision (rather than crushing it to a point) is the fix.
+1. `ExoticScalarField` multiplies the *entire* T_μν — kinetic **and** potential — by
+   −`support_strength`, while `add_matter_rhs` keeps the standard-sign `dVdphi`. Not
+   derivable from one action once `phantom_mass ≠ 0`. **Fix before any massive-phantom or
+   Q-ball work.**
+2. Two-throat data is plain excess-sum superposition — no Helfer/Ning correction, no solve.
+   That is exactly Stage 2.1/2.2.
+3. `support_strength ≠ 1` scales gravity but not the field equation, so ∇·T ≠ 0. Diagnostic
+   knob only.
 
-**4. Two-throat initial data has an exact precedent (Smirnov, 2312.09622) and a robust, generalizable superposition fix (Helfer 2022 / Ning 2024).** Smirnov gives a rigorous existence proof for two-mouth phantom data but for *one* wormhole (topology S²×S¹ minus a point); the boson-star superposition-plus-correction machinery is the transferable route for two *independent* throats.
+## Decision gates (kept literally from the report)
 
-**5. Adding ADM mass while keeping the throat regular is analytically solved:** the massive Bronnikov/drainhole branch (M = mγ) does exactly this in the proper-radial chart, and the Lanzhou group (2407.09591) gives a regular ansatz on a compactified coordinate with ADM mass tunable through zero.
+| If | Then |
+| --- | --- |
+| Regular-chart single throat still loses charge > few % | the instability is *physical* — reframe as collapse/expansion of a two-throat system |
+| CTTK returns K² < 0 with two exotic lumps | past the existence boundary — reduce ADM mass, increase separation, and **report the boundary as a finding** |
+| Timelike inner boundary (excision) unstable | abandon true topology for this paper |
 
-## Details
+## What Stage 3 costs, against the 40 M window
 
-### 1. Regular wormhole coordinates for Cartesian NR
+| separation d | free-fall time ≈ (π/2)·√(d³/8M) | fits in 40 M? |
+| --- | --- | --- |
+| 10 | ~12 M | easily — but the throats start close enough that the superposition correction works hard |
+| 16 | ~25 M | **yes**, with 15 M of margin for ringdown and extraction |
+| 20 | ~35 M | marginal; no room after merger |
 
-**Proper-radial / global chart (recommended primary route).** Write each throat as
-ds² = −e^{2u(l)}dt² + e^{−2u(l)}[dl² + (l²+a²)(dθ²+sin²θdφ²)],
-massless case u=0. The two sheets l>0 and l<0 are two copies of R³ glued at the l=0 throat two-sphere. In a single Cartesian box one radial coordinate cannot cover both sheets — that is the crux — so you choose one of the far-universe treatments in §3. The 3+1 split γ_ij = e^{−2u}(dl²+(l²+a²)dΩ²) gives χ = e^{2u} that is O(1) everywhere; your exit condition is met by construction, and the interior minimum of R(l) survives because the chart never compresses it to a point.
+The wide separation the superposition error wants (d/b ≥ 8, i.e. d = 16 at b = 2) is
+affordable. That is what 1.6 bought.
 
-*Consequence of the second asymptotic region.* Every self-consistent evolution covering both universes uses a 1D radial line: Shinkai–Hayward's dual-null grid "covers both universes connected by the wormhole throat"; González–Guzmán–Sarbach evolve x∈(−∞,∞) with outgoing-wave BCs "pushed far from the throat" so the extraction region is causally disconnected from the artificial boundary. In 3D Cartesian you cannot hold both R³ sheets in one chart. You must (a) use a multi-block/wormhole-adapted grid (not native to GRTeclyn/GRChombo), (b) excise/truncate the second universe near the throat, or (c) compactify it (the failed 2604.00071 route).
+**The caveat that survives.** The mode is still growing at t = 40 and doubling every ~1.6
+there. Two throats seed it harder than one sitting at an exact fixed point, since superposed
+data starts well above this run's 2.5e-3 floor. **Budget the merger to finish inside 40 M
+rather than to run up to it, and re-measure the growth rate on two-throat data** rather than
+assuming this one carries over.
 
-**Kain's codes (2210.04905, 2602.18231) — the gold standard for regularity.** Kain uses **double-null coordinates** ds² = −e^{2σ(u,v)}dudv + r²(u,v)dΩ² and evolves the areal radius r directly, so regularity at the throat is automatic (r has a nonzero minimum, σ is finite, no conformal factor to blow up). Static seed: ds² = −(1/a²)dt² + a²dx² + a²(x₀²+x²)dΩ², a(x)=exp[−a₁arctan(x/x₀)], φ=φ₁arctan(x/x₀), x∈(−∞,∞), throat at x_th = a₁x₀, r_th = a₂x₀√(1+a₁²)e^{−a₁arctan(a₁)}, ADM masses M_± = ±a₁a₂x₀e^{∓a₁π/2}; a₁=0 is the massless symmetric zero-mass wormhole. This is spherically symmetric (1+1D) and radiates no gravitational waves (lowest radiative multipole ℓ=2) — which is exactly why you need 3D — but the coordinate philosophy (evolve the areal radius / use a regular chart with no puncture) is what transfers.
+---
 
-**González–Guzmán–Sarbach (0806.0608 linear; 0806.1370 nonlinear).** Metric ds² = e^{2a}(−e^{4λc̄}dt²+dx²) + (x²+b²)e^{2c̄}dΩ², x∈(−∞,∞), gauge d = a+2λc̄ (λ=0 gives principal part = flat wave operator ∂_t²−∂_x², no shock formation, good for expansion; λ=1 is singularity-avoiding, good for collapse). Static solution d = −a = γ₁arctan(x/b), c̄ = −γ₁arctan(x/b), Φ = Φ₁arctan(x/b), with −κΦ₁² = 2(1+γ₁²), throat at x_th = γ₁b, r_th = b√(1+γ₁²)e^{−γ₁arctan(γ₁)}, ADM masses m_∞ = bγ₁e^{−γ₁π/2}, m_{−∞} = −bγ₁e^{γ₁π/2}. Per González, Guzmán & Sarbach (CQG 26, 015010, 2009, arXiv:0806.0608), "all these solutions are unstable with respect to linear fluctuations and possess precisely one unstable, exponentially in time growing mode. The associated time scale is shown to be of the order of the wormhole throat divided by the speed of light." Transferable technique: they build constraint-satisfying time-symmetric perturbed data by perturbing c̄ (areal radius) and solving the Hamiltonian constraint for Φ_x.
+## Why a single-throat run can give a clean answer at all
 
-**Shinkai–Hayward (gr-qc/0205041).** Dual-null, grid covers both universes; positive-energy pulse → black-hole collapse, negative-energy (ghost) pulse → inflationary expansion — the bifurcation you will see. Confirms substantial mass can be radiated during destabilization.
+The massive drainhole is not merely good initial data — it is an **exact fixed point of the
+whole evolved system**, which the puncture data never was:
 
-### 2. Isotropic Ellis throat without a puncture — the crucial point
+| evolved variable | at t = 0 | why its RHS vanishes |
+| --- | --- | --- |
+| `chi`, `h_ij` | γ̃_ij = δ_ij exactly | γ_ij = e^{−2u} Ω² δ_ij is conformally flat |
+| `Gamma^i` | 0 | follows from γ̃_ij = δ_ij; initialising to 0 is *correct* here, not an omission |
+| `K`, `A_ij`, `Theta` | 0 | time-symmetric slice of a static spacetime |
+| `lapse` | e^u | 1+log is ∂_t α = −2αK, and K = 0 |
+| `shift`, `B^i` | 0 | Gamma-driver is sourced by ∂_t Γ̃^i, which is 0 |
 
-The isotropic radius is *double-valued* under the inversion r̄ → b²/(4r̄) (Smirnov's map J: ρ ↦ a²/4ρ, throat as fixed point). Two copies of r̄>0 each cover one universe, glued at r̄ = b/2, where ψ = √(1+1) = √2, so χ = ψ⁻⁴ = 1/4 — O(1), proper cell width dx/√χ = 2·dx, fully resolvable. **This is the fix.** Your error (and 2604.00071's) was using a *single* r̄∈(0,∞), which forces one universe onto r̄→0, the compactified point where χ→0.
-
-To place the throat at finite radius with χ~O(1): make the box *one universe plus the throat*, physical region r̄∈[b/2,∞), throat two-sphere at r̄ = b/2 (χ = 1/4). The region r̄<b/2 is the other universe — do **not** compactify it to the origin. Either (a) include a finite shell of it (a second copy — impractical in one box), (b) excise it just inside the throat (§3), or (c) fold both universes onto r̄∈(0,∞) via the inversion with an isometry (inversion) boundary condition at the throat sphere — Smirnov's construction. The proper-radial chart of §1 makes all of this automatic (l=0 throat, l≷0 the two sheets) and is preferable.
-
-### 3. Excision vs. full-domain
-
-- **(a) Both universes in the box.** Tractable only in 1D/2D (dual-null, spherical). In 3D Cartesian AMR no single chart smoothly covers both R³ sheets glued at a two-sphere; you'd need multi-block/wormhole-adapted grids not native to GRTeclyn/GRChombo. **Not recommended in a month.**
-- **(b) Excision at/just inside the throat.** Turns each wormhole into a one-sided object. The obstacle: a traversable throat has **no horizon**, so the excision boundary is **timelike**, and you genuinely need physical inner boundary conditions (unlike BH excision, where the boundary sits inside a horizon and can be pure outflow). Standard BH excision (Alcubierre–Brügmann gr-qc/0008067) and turduckening (Brown et al. 0707.3101, "Excision without excision") both rely on the excised region being causally disconnected inside a horizon; turduckening's rigorous guarantee that "constraints propagate causally and so any constraint violations introduced inside the black holes cannot affect the exterior" holds only for the BSSN parameter range 1/4<m≤1 **and** a horizon. Neither transfers to a horizonless throat. Isometry/inversion boundary conditions at the throat (Smirnov; classic Misner-data work) are the principled choice, but **no one has demonstrated them stably in 3D Cartesian CCZ4** — flag as research-grade risk.
-- **(c) Compactify the second universe (2604.00071 route).** Produces χ→0 and NaNs. **This is your blocker. Do not use.**
-
-**Bottom line:** for a first result, avoid the timelike-inner-boundary problem by using the proper-radial chart with the far universe truncated at large-but-finite |l| under a Sommerfeld condition (as GGS do at finite x), or reframe the objects as horizonless lumps (§7) so there is no second universe.
-
-### 4. Two-throat / multi-throat initial data
-
-**Smirnov (2312.09622).** Time-symmetric (K_ij=0) IDP for GR + phantom scalar (+Maxwell). The phantom kinetic term's wrong sign forces the metric potential ψ to be a *complex* harmonic function, ψ(ρ) = 1 + iA/ρ, generalizing the real Brill–Lindquist potential; complexifying the *Misner* image-charge series ψ = 1 + Σ aₙ(1/|r+dₙ| + 1/|r−dₙ|) yields data for two interacting mouths. Per Smirnov (arXiv:2312.09622), "the main focus is on initial data sets describing two interacting mouths of the same traversable wormhole. These data sets are similar in many respects to the Misner initial data with two black holes," and — importantly for your use — the paper's own conclusions note that "the formal proof of the regularity of data sets has not been given." Two caveats for you: (i) it is a punctured-R³ construction, so naive moving-puncture χ evolution reinherits puncture-interior issues; (ii) it is two mouths of *one* wormhole (an intra-universe "handle," topology S²×S¹ minus a point), not two independent wormholes. Generalizing to two distinct wormholes (four asymptotic ends) is not done in the paper and is non-trivial. Use it as the rigorous existence proof and as the natural target for a methods Letter (§7c).
-
-**The wrong-sign Lichnerowicz problem, and why CTTK is your tool.** The standard York–Lichnerowicz method conformally rescales the source; for a phantom scalar the negative energy density flips the sign of the source in Δψ = −(source)ψ^p, and the maximum principle guaranteeing a unique positive ψ can fail. GRChombo/GRTresna's **CTTK** method is built for exactly this. Per Aurrekoetxea, Clough & Lim (CQG 40, 075003, 2023, arXiv:2207.03125): "instead of solving the Hamiltonian constraint as a 2nd order elliptic equation for a choice of mean curvature K, we solve an algebraic equation for K for a choice of conformal factor. By doing so, we evade the existence and uniqueness problem of solutions of the Hamiltonian constraint without using the usual conformal rescaling of the source terms." Removing the source rescaling is precisely the escape hatch for phantom matter. It is implemented in GRTresna (Aurrekoetxea, Brady, Aresté-Saló, Clough, Helfer, Lim et al., "GRTresna: An open-source code to solve the initial data constraints in numerical relativity," arXiv:2501.13046, 2025), "a multigrid solver … based on the formalism in arXiv:2207.03125," released at github.com/GRTLCollaboration/GRTresna, outputting a GRChombo/GRTeclyn-compatible checkpoint. **Caveat to check at runtime:** with two exotic lumps the algebraic equation for K² can go negative near the existence boundary — monitor for K²<0 nodes.
-
-**Boson-star superposition fix (Helfer et al.; Ning et al.).** Plain superposition γ_ij = γ_ij^A + γ_ij^B − δ_ij spuriously alters the volume element at each center, mimicking a squeeze that triggers pulsation/collapse — worse for horizonless objects "due to the lack of a horizon and its potentially protective character." Per Helfer, Sperhake, Croft, Radia, Ge & Lim ("Malaise and remedy of binary boson-star initial data," CQG 39, 074001, 2022, arXiv:2108.11995), "evolutions starting from a plain superposition of individual boosted boson-star spacetimes are vulnerable to significant unphysical artefacts … we argue that this vulnerability is universal and present in other kinds of exotic compact systems and hence needs to be addressed." The fix (their Eq. 45): γ_ij = γ_ij^A + γ_ij^B − γ_ij^B(x_A) — subtract the companion's value at *this* star's center rather than the flat metric. Ning et al. (arXiv:2604.15240) extend this to a "one-body conformal-factor correction" for BS–BH binaries and find it "substantially suppresses these artifacts." **Directly transferable to two regular throats once the puncture is removed:** superpose the two proper-radial-chart metrics and subtract the companion's conformal-factor contribution at each throat. Exact only for equal masses; use the weighted-subtraction generalization (Croft et al.) for unequal masses. This cures the near-throat constraint defect.
-
-### 5. Gauge and evolution variables
-
-**Lapse.** The massless Ellis throat is ultrastatic (α=1 is the exact static lapse), and a flat α(t=0)=1 is required to keep Π=0 for the phantom field, since ∂_tΠ ∝ ∇α·∇φ (2604.00071). But 1+log slicing ∂_tα = −2α(K−K₀) keeps α=1 as long as K=0, so α=1 initial data is fully compatible with 1+log — the lapse only moves once the throat dynamically evolves (K≠0), which is what you want. **Recommendation: α(t=0)=1, 1+log slicing, Gamma-driver shift from β=0** — the combination used in essentially all boson-star runs and in the single-throat wormhole paper. Do **not** use a pre-collapsed α=χ or a "type-4 collar": a spatially varying α near χ→0 induces immediate slicing shear, and with χ in the denominator it detonates. Your collar that "relaxes and detonates by t~2.4" is almost certainly a *symptom of the puncture coordinate* and should vanish in a regular chart. If a residual gauge instability persists after the coordinate fix, treat it as an independent problem with Kreiss–Oliger dissipation and Gamma-driver η tuning.
-
-**The χ-in-the-denominator problem.** CCZ4 divides by χ and α; χ→0 at a compactified origin NaNs. The single-throat paper's χ_min=10⁻⁸ floor is exactly what seeded the noise that destroyed its equilibrium. In a regular chart χ~O(1) at the throat, so the denominator problem does not arise there. It *can* arise if a horizon forms during collapse (χ→0 physically) — there the moving-puncture machinery is designed to cope, and setting covariantZ4=0 avoided extreme stiffness as α→0 in 2604.00071. Adopt that. Keep CCZ4 constraint damping (κ₁~0.1–3, κ₂=0) and the Θ-field on so the scalar (spin-0) constraint residual is damped independently and does not contaminate Ψ₄.
-
-### 6. Making the merger gravitationally bound
-
-Two massless Ellis throats (M_ADM=0) do not attract. Add positive ADM mass *without* re-introducing a puncture:
-
-- **Massive Bronnikov/drainhole branch (recommended — scalar only).** ds² = −e^{2u(l)}dt² + e^{−2u(l)}[dl²+(l²+a²)dΩ²], u(l) = (m/a)(arctan(l/a) − π/2). Asymptotics e^{2u} → 1−2m/l (l→+∞) give ADM mass m on the "+" side; the throat stays regular because e^{−2u} is finite and O(1) there (e^{πm/a} at l=0). In the isotropic-massive form the ADM mass is M = mγ with the field-equation constraint 2δ² = 1+γ² (γ=0 recovers the massless symmetric wormhole). The two ends carry *opposite-sign* masses (m_+ = +bγ₁e^{−γ₁π/2}, m_− = −bγ₁e^{+γ₁π/2}); the far universe is repulsive — fine if you have truncated/excised it. Use two positive-mass "+" ends so the pair attracts. This keeps the gravity+scalar sector you already have.
-- **Lanzhou regular ansatz (Su, Hao, Fang & Wang).** ds² = −e^{B}dt² + Ce^{−B}[dr²+(r²+r₀²)dΩ²], r∈(−∞,∞), compactified via r = tan(πx/2), x∈(−1,1), ADM mass from g_tt = −1+2M/r+…. Per Su, Hao, Fang & Wang ("Generalized Bronnikov–Ellis wormhole with nonlinear electromagnetic field," Eur. Phys. J. C 85, 1040, 2025, arXiv:2407.09591), the solution "violates the Null Energy Condition (NEC), and as the parameters change, the ADM mass of the entire spacetime changes from positive to negative": a "type 0" branch with constant positive ADM mass and "type I"/"type II" branches reaching negative ADM mass (e.g. M<0 for throat radius r₀<0.153). Advantage: mass symmetric on both sides (positive both ends). Cost: introduces a Hayward nonlinear-EM sector — new matter physics in your code.
-- **Simplest pragmatic choice:** massive drainhole branch (scalar only), truncate the negative-mass far side, let the two positive-mass "+" ends attract.
-
-### 7. Fallback strategies, ranked for a one-month first paper
-
-**(d) Axisymmetric (2+1) two-throat head-on — BEST risk/reward.** Cuts cost by ~two orders of magnitude, still a genuine first *dynamical two-throat* result, still extracts ℓ=2 Ψ₄ (head-on is axisymmetric). χ~O(1) in the proper-radial chart, two centers on the symmetry axis in one asymptotically flat domain. Run effectively-2D via the modified-cartoon method in GRChombo/GRTeclyn or a dedicated 2+1 code. Failure modes: the timelike-inner-boundary problem for the far universes remains (mitigate by truncation); axisymmetry forbids the spiralling phase (head-on only).
-
-**(e) Two boson-star-style exotic lumps (no throat topology) — MOST ROBUST, honest reframing.** Represent each object as a horizonless NEC-violating lump (phantom/ghost or solitonic scalar configuration) with fully regular, constraint-satisfying data — χ~O(1) everywhere, no second universe, no excision, no puncture. This is the mature 3D Cartesian program (Palenzuela et al.; Helfer et al.; Ge et al. 2410.23839; Bezares et al.; in GRChombo/BAM/SpEC) and gives inspiral + merger + Ψ₄ directly. **What is lost:** the actual wormhole *topology* and the literal "first wormhole merger" claim — you'd be simulating "the merger of two exotic negative-energy compact objects," scientifically honest and novel if the matter model genuinely violates the NEC, but not a topological wormhole. Recommend as the guaranteed-deliverable backbone with the topological version as the stretch goal.
-
-**(c) Publish the two-throat REGULAR initial-data construction + short evolution as a methods Letter.** Build constraint-satisfying two-throat data (Smirnov-style complexified potential, or superposition + CTTK + Helfer correction), demonstrate χ~O(1) at both throats and Noether-charge conservation over a short stable evolution, and present the machinery. Initial-data papers are a recognized genre; this de-risks the full inspiral for a follow-up. Lower novelty ceiling, very high completion probability.
-
-**(a) Thin-shell / Visser wormhole.** Cut-and-paste at r=a with a surface layer (Darmois–Israel). Each glued copy is regular, so it avoids χ→0 in that sense, but it introduces a **distributional** (delta-function) stress-energy at the junction, hard to represent in finite-difference CCZ4 and, to my knowledge, **never evolved in 3D Cartesian NR** — all thin-shell "dynamics" in the literature is the 1D Israel-junction ODE ä = f(a) (Poisson–Visser and successors), not a field evolution. **Not recommended for 3D in a month.**
-
-**(b) Rounded/regularized throat with a χ floor by construction.** Give χ a small positive floor by construction, not a numerical clamp. This is option (e) in disguise once χ_min is O(1); push it toward the true throat value and you re-inherit the resolution problem. Useful as a *continuation parameter* (dial χ_min from O(1) toward the throat value to study convergence), not as an endpoint.
-
-## Recommendations
-
-**Stage 0 (days 1–3): kill the coordinate bug.** Re-derive the single throat in the proper-radial chart ds² = −e^{2u}dt² + e^{−2u}[dl²+(l²+a²)dΩ²]; verify in-code that χ = e^{2u} is O(1) at l=0 (≈1 massless, e^{πm/a} massive) and that R_min survives on max_level 1 and 2. **Proceed-benchmark:** χ_throat within a small factor of 1, R_min preserved to <1% under refinement, before the first timestep.
-
-**Stage 1 (days 3–10): single regular throat, static hold + Noether charge.** Evolve one massless throat, α=1, 1+log, Gamma-driver, covariantZ4=0, Kreiss–Oliger σ≈1–2, far universe truncated at large |l| with Sommerfeld BCs. **Benchmark (your exit condition):** complex-scalar Noether charge conserved to a few percent over t≳20–30M, no gauge detonation. If the collar death recurs even in the regular chart, it is an independent gauge issue — retune Gamma-driver η, add dissipation.
-
-**Stage 2 (days 8–18): constraint-satisfying data via GRTresna/CTTK.** Solve the single-throat constraints with CTTK (algebraic-K, no source rescaling); watch for K²<0 nodes. Then superpose two throats with the Helfer/Ning conformal-factor correction and re-solve. **Benchmark:** Hamiltonian and momentum L₂ norms converging at ≥2nd order; χ~O(1) at *both* throats.
-
-**Stage 3 (days 15–25): the run.** Add ADM mass via the massive drainhole branch (M = mγ). Do the **head-on** first (axisymmetric, cheapest, ℓ=2 Ψ₄). Extract Ψ₄ at multiple radii; apply the v≈c propagation test (2604.00071 Eq. 19) to separate physical radiation from superluminal CCZ4 constraint modes. **Inspiral-benchmark:** clean head-on with χ~O(1) through merger and a coherent outgoing Ψ₄ wavefront.
-
-**Stage 4 (days 25–30): write.** If Stages 1–3 hold, publish the two-throat head-on with Ψ₄. If Stage 2 or 3 stalls, pivot to the methods Letter (fallback c) at whatever stage you reached, or to the exotic-lump head-on (fallback e), which is essentially guaranteed.
-
-**Decision thresholds that change the plan:**
-- Regular-chart single throat still loses Noether charge >few% → the instability is *physical* (Ellis throats have exactly one unstable mode; GGS 0806.0608), not numerical. Reframe as "collapse/expansion of a two-throat system," lean on the short-evolution Letter.
-- CTTK returns K²<0 with two exotic lumps → past the existence boundary; reduce ADM mass / increase separation / reduce phantom support until a real K solution exists, and report the boundary as a finding.
-- Timelike inner boundary (excision) unstable → abandon true topology for this paper; use truncated-far-universe or the exotic-lump reframing.
-
-## Caveats
-
-- **arXiv:2604.00071 is a preprint by an independent researcher whose central geometric choice is the very bug you diagnosed.** Treat its methods (compactified second universe, χ_min floor) as what to avoid; its numerical settings are reasonable to reuse. Its physics claims (phantom bounce, "effectively infinite damping time τ~5×10⁶M" QNM) are explicitly flagged *in the paper itself* as grid-contamination artifacts, not physical results.
-- **No one has demonstrated a stable horizonless-throat excision (timelike inner boundary) in 3D Cartesian CCZ4.** The turduckening/excision guarantees require a horizon and a specific BSSN parameter range; they do not transfer to a traversable throat. This is the single biggest research risk in the "true topology" route.
-- **Ellis–Bronnikov throats are linearly unstable** (exactly one exponentially growing mode, timescale ~throat/c; GGS 0806.0608/0806.1370, Shinkai–Hayward gr-qc/0205041). A "long-lived bound inspiral" of two of them may be physically impossible on the orbital timescale — they may collapse to BHs or inflate before completing an orbit. This may be a *feature*: a merger-and-collapse with a distinctive burst signal. Frame the science accordingly.
-- **Smirnov's construction is two mouths of ONE wormhole**, and the paper states "the formal proof of the regularity of data sets has not been given"; generalizing to four asymptotic ends (two distinct wormholes) is unproven.
-- **The Lanzhou massive solution requires a nonlinear-EM matter sector** — new gravity-sector-adjacent physics with its own well-posedness burden. The scalar-only massive drainhole branch avoids this.
-- The isotropic-massive coefficients (e.g. M = mγ, 2δ² = 1+γ²) are quoted from a secondary accretion-paper's presentation of the standard Ellis/Bronnikov solution and are cross-checked against GGS and Kain; verify the exact coefficients against Bronnikov's original (Acta Phys. Polon. B 4, 251, 1973) before publication.
+No initial transient to ride out, no gauge relaxation to disentangle from the physics. Any
+drift is either discretisation or the genuine Ellis–Bronnikov mode. The one deliberate
+exception is the collar — α = e^u · collar is *not* the static lapse — which is why 1.3 was
+run as a straight one-line A/B through `WHM_LAPSE_TYPE`.
