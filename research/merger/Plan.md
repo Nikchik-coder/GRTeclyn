@@ -38,10 +38,12 @@ gates and the file-by-file design: [Reference.md](Reference.md).
 ### Stage 2 — two throats
 
 - [x] **2.0** Throat locator + moving boxes + wave-zone shells — implemented 2026-08-31;
-  shakedown (boosted single throat) **in flight**
+  shakedown (boosted single throat) **passed to t = 40**, zero lost rows, no NaN
 - [ ] **2.1** Superposed two-throat data with the Helfer/Ning companion correction, d = 16
 - [ ] **2.2** CTTK solve in GRTresna; watch for K² < 0
 - [ ] **2.3** Re-measure the growth rate on two-throat data — do not assume Stage 1 carries
+- [ ] **2.5** Two throats in orbit, gravity-driven, d = 12 — **in flight** 2026-08-31.
+  Rotation yes, inspiral not yet; the verdict number is the separation at t ≈ 15–20 (§8)
 
 ### Stage 3 — the merger
 
@@ -79,6 +81,10 @@ gates and the file-by-file design: [Reference.md](Reference.md).
 | the compactified origin is not the killer | refining it made every error smaller and pushed the wall past 40 M |
 | **something real is still growing** | the momentum constraint rises exponentially and is still rising at t = 40 |
 | two moving throats are now trackable | locator + moving boxes shipped 2026-08-31 |
+| a *moving* throat also survives 40 M | boosted arm crossed 3.3 units of grid, zero lost rows, no NaN |
+| that growth may have a ceiling | on the boosted arm L2 Mom flattens after t ≈ 30 (+8 % over the last 10 units, against doubling every ~12 before) — one arm, not yet a result |
+| the compactified origin fills in | χ at the pit rises ×400 and the origin lapse falls 0.22 → 0.13 over 40 M; slow, never fatal |
+| **the orbit does not yet fall inward** | 7 units in: rotation real but slow, coordinate separation drifting *out* by 0.5 % |
 
 **What 40 M is:** a fuse length, not stability. The run ends while the growth is
 accelerating. Stage 3 can be budgeted against 40 M; it cannot be budgeted against an
@@ -379,15 +385,92 @@ late-inspiral speed. Two questions, in order:
    Bowen–York term) against the resting arm's **exact zero**, L2 Ham unchanged at 2.10e-3.
    The existing error is ~100× what the boost adds, so the wall may land near 40.
 
-**Readings to t ≈ 17** (continuing): zero lost rows; throat radius and origin lapse within
-~1 %; Ham oscillating in 2.5–3.2e-3 with no trend; Mom doubling every ~12 units, *slower*
-than the resting arm's 4.4. Coordinate speed ramps 0.02 → 0.115 as the shift builds from
-zero — that is a **coordinate** speed, not the physical one, which is fixed at 0.2 by
-construction. Settling near 0.2 means the grid has locked onto the object; plateauing low
-means the boxes trail a throat still moving at 0.2.
+**Answered: it does. Ran to t = 40, 2026-08-31.** No NaN, no abort, and `nA = 4` on every
+one of the 4001 rows — the boxes never lost the throat across cells, refinement boundaries
+or box edges. The infrastructure question is closed.
+
+| | t = 0 | t = 20 | t = 40 |
+| --- | --- | --- | --- |
+| L2 Ham | 2.10e-3 | 2.34e-3 | **1.20e-3** |
+| L2 Mom | 4.53e-6 | 9.55e-5 | 2.03e-4 |
+| origin lapse | 0.219 | 0.197 | 0.130 |
+| χ at the pit | 4.1e-7 | 8.3e-6 | 1.6e-4 |
+| tracked z | 0 | 1.59 | 3.28 |
+
+Three things in that table are worth more than the pass mark:
+
+1. **The Hamiltonian constraint fell by 43 %.** Every resting arm grew it. Motion is not
+   what feeds the mode.
+2. **The momentum constraint looks like it saturates.** It doubles every ~7 units to
+   t = 20, then adds only 8 % between 30 and 40. That is the first evidence bearing on the
+   open question "does the growing mode have a ceiling?" — one arm, so it is a lead, not a
+   finding, but it is the first run to even look like a ceiling.
+3. **The compactified origin is filling in** — χ at the pit up ×400, origin lapse down to
+   0.13. Slow, monotone, never fatal in 40 units, and worth a column in every future run:
+   it is the quantity that would eventually end a long merger.
+
+**The coordinate speed under-reads the physical one, badly, and that is now measured.** It
+ramps from 0.06 at t = 5 to 0.125 by t = 20, holds to t = 30, then decays to 0.03 — against
+a physical speed fixed at 0.2 by construction. So the tracked position lags the object by a
+factor that is itself time-dependent: **a coordinate trajectory in this gauge cannot be read
+as a velocity measurement.** It can be read for *sign* and for *large* displacements. This
+is the single most important calibration for reading §8.
 
 Momentum stays a validation tool. **The merger itself remains gravity-driven** — two throats
 released from rest, ADM mass in the lapse, never aimed momenta.
+
+### 8. In flight: the orbit turns, but does not yet fall
+
+`orbit_d12_p012`, launched 2026-08-31
+([params_orbit_drainhole.txt](../../Examples/BinaryWormholeMerger/params_orbit_drainhole.txt),
+entry point [run_spiral.sh](../../grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_spiral.sh)):
+two equal drainholes, a = 2, m = 1, at d = 12 on the x-axis, tangential Bowen–York
+P = ±0.12 on y — 59 % of the Newtonian circular value 0.204, so the pair is bound and should
+plunge rather than circle. `max_level = 3`, L = 64, checkpoints every 20 code units,
+`stop_time = 60`.
+
+**The tracker cannot resolve this motion and that is not a bug.** `throat_track.dat` is a
+centroid over near-minimum χ cells at dx = 0.0625, so its quantum is ~0.03 — the whole
+displacement so far. The numbers below come from the cached χ slices instead
+(`frames/_slice_cache/chi_z`, an inverse-χ-weighted centroid of the pit), which is
+sub-cell and smooth at the 1e-4 level. **Any future orbit question should be asked of the
+slice cache, not of the tracker;** the tracker exists to aim refinement boxes, and 0.03 is
+ample for that.
+
+| t | y of throat A | r of throat A | separation |
+| --- | --- | --- | --- |
+| 0 | 0 | 6.0117 | 12.023 |
+| 2 | 0.0037 | 6.0120 | 12.024 |
+| 4 | 0.0318 | 6.0201 | 12.040 |
+| 7 | 0.0997 | 6.0669 | 12.134 |
+
+**Rotation is real.** Both throats swing the same way, consistently, monotonically — 0.95°
+of arc by t = 7. **The separation is going the wrong way**: outward by 0.5 %, accelerating,
+where Newtonian gravity on M_tot = 2 at d = 12 asks for 0.17 *inward* per throat by now.
+
+Two readings, and they are not yet separable:
+
+* **Gauge.** §7 measured a coordinate speed running at 20–60 % of the physical one, with a
+  ramp lasting tens of units. Applying that lag to the tangential channel here
+  (0.10 observed against 0.84 designed) predicts a coordinate infall of only ~0.02 by t = 7
+  — below the drift we see. On this reading the run is fine and merely slow to show it.
+* **No pull.** The mass is in the geometry with the right sign — `drainhole_u` → −m/r, so
+  χ = e^{2u}ψ⁻⁴ → 1 − 2m/r and the ADM mass reads +1 off the spatial metric, not just off
+  the lapse. But superposed, unsolved data at d = 12 carry an O(m/d) constraint violation
+  that the pair has to shed before it behaves like two masses.
+
+**The test that separates them is the separation at t ≈ 15–20**, where gravity asks for
+1.5–2.5 units of infall — 10× any drift or lag seen so far, and impossible to confuse with
+either. Nothing before then decides anything, and no intermediate reading should be quoted
+as if it did. If the separation is still flat or growing at t = 20, the orbit setup is
+wrong and more running will not fix it; the next move is then Stage 2.1/2.2 (Helfer/Ning,
+then a real CTTK solve) *before* another orbit, not a bigger kick — a bigger kick is an
+aimed momentum, which this campaign does not do.
+
+**Free-fall arithmetic, for the record.** Two masses of 1 released from rest at d = 12 meet
+at t = (π/2)√(d³/2M_tot) = 32.6. The plan's earlier "merger at t ≈ 20–30" was optimistic;
+with tangential momentum added it is longer still, so `stop_time = 60` is the right size but
+leaves little margin. Budget a restart from the t = 40 checkpoint if the merger is late.
 
 ---
 
@@ -401,6 +484,8 @@ released from rest, ADM mass in the lapse, never aimed momenta.
 | `regrid_threshold` under a geometric tagger | does nothing at all | the parameter reader warns |
 | `tagging_type = 2` without `throat_tracking` | boxes centred on stale positions | rejected in `check_params` |
 | frame slice plane | the default cuts the plane the motion is perpendicular to — a moving throat simply fades | pick the plane from the arm's physics at launch |
+| a fixed colour scale on a growing field | K grows ~30× over an inspiral; locked at merger amplitude every inspiral frame renders blank white, locked early every late frame saturates. Nothing errors — the movie is simply empty | `GRTECLYN_FRAMES_PER_FRAME_ZLIM=K` (default off, per field); re-fix a stable scale for the paper movie afterwards from the slice cache |
+| throat tracker across a restart | the centres re-seed from the **params-file** positions, not from where the throats got to. Inside the search radius (2.0) it re-locks in one step; further out the search finds nothing, `nA` reads 0, and the refinement boxes stay at the seed | safe to restart from t = 20; before restarting from a later checkpoint, check `throat_track.dat` — if a throat has moved more than 2.0 from its params centre, seed the tracker from the last recorded row instead |
 | areal radius under drift | it rays from the *static* grid centre, so it under-reads once the throat moves | re-extract post-hoc with the per-time centres in `throat_track.dat` |
 | `checkpoint_interval` after a grid change | it counts **coarse steps**, not code units, and nothing re-derives it — `params_headon.txt` carried 2000 against a run only 800 steps long, so it never fired once | recompute `stop_time / (dt_multiplier · L/N1)` whenever any of those change |
 | root-level `restart_file` | the key exists in `AMReXParameters.hpp` but the string behind it is never read back, so it aborts on an empty path instead of restarting | `amr.restart` — the key AMReX itself reads |
@@ -415,7 +500,16 @@ Stage 3 runs are long enough that losing one to a crash is expensive, so checkpo
 now on in `params_headon.txt` (every 10 code units) and `params_spiral.txt` (every 25).
 Measured 2026-08-31 on the smoke-test grid: checkpoints hold all 27 evolved variables plus
 3 ghost cells in double precision, and a restart resumes at the right step and runs to
-completion. It is **not** a continuation of the same calculation, though. Comparing one
+completion.
+
+**Re-verified on the production orbit grid, 2026-08-31.** `orbit_d12_p012` was restarted
+from its t = 0 checkpoint and run to t = 1: the log reports the restart time correctly, no
+NaN, and the tracked throat positions and pit-χ values are digit-for-digit identical to the
+parent run's at t = 0.99 and t = 1.00 — across a regrid. The restart path is production-ready
+on the real grid, not just the smoke test. (The tracker's re-seed caveat in the table above
+is separate and only bites from *late* checkpoints.)
+
+It is **not** a continuation of the same calculation, though. Comparing one
 step taken from a restored checkpoint against the same step in a continuous run:
 
 | region | max ΔK, one step after restart | after 0.2 |
