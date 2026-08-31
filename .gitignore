@@ -5,6 +5,9 @@ f/
 o/
 t/
 *.ex
+# A live run holds its executable open, so rebuilding means moving the old one
+# aside first (ETXTBSY otherwise).  Those copies are 120 MB compiled binaries.
+main3d*.bak
 *.dSYM
 *.[oa]
 TAGS
