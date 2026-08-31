@@ -476,6 +476,60 @@ cell is suspect, check for an evolution log and a non-empty `data/` before
 believing it; the dry-run signature is everything written within one second
 and `data/` empty. Delete the debris and launch again.
 
+### 12. Launch detached, and prove it detached by ancestry — not by a printed PID
+
+**What was measured, 2026-08-31.** Four H100 runs launched as children of the
+editor session died the moment the editor was restarted — twice in one morning.
+The run that carried a checkpoint resumed with 0.5 code units lost; the three
+launched without checkpoints lost 11, 11 and 3 units and had to start over.
+A launcher backgrounded with plain `&` from an agent/editor shell is *not*
+detached, however healthy it looks.
+
+**The launch form.** Variables first, then the whole `setsid nohup` chain —
+this is rule 11 applied to a detached launch, and `env` is still fatal here:
+
+```bash
+# from the repository root
+WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=my_cell WHM_GPU=0 \
+  WHM_CONSUME_ARGS="--frames-fields chi chi_minus_1 K lapse shift1 phi Pi \
+                    Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed \
+                    --frames-coord 32.0 --frames-zoom 32 \
+                    --frames-cache-slices --frames-auto-zlim" \
+  setsid nohup bash scripts/campaigns/wormhole_merger/run_single.sh \
+  > runs/wormhole_merger/detached_gpu0.log 2>&1 < /dev/null &
+```
+
+`setsid nohup env WHM_...=... bash run_single.sh` exits 0 in under a second and
+writes a zero-byte log. That is rule 11, not a detachment problem, and it is
+the single easiest way to lose an afternoon.
+
+**The verification.** A printed PID proves nothing — the shell prints it before
+the child can die. Detachment means the launcher is a *session leader whose
+parent is init*:
+
+```bash
+ps -eo pid,ppid,sess,args --no-headers | grep "[r]un_single.sh"
+# each launcher must show ppid = 1 and sess = its own pid
+```
+
+Anything else — `ppid` pointing at a `claude`/`node`/editor process, or a
+session id shared with the caller — means the run will die with the session.
+Trace it if unsure: `ps -o ppid= -p <pid>` up the chain must reach `init`
+without passing through the editor.
+
+**A resume writes to a NEW run directory.** `WHM_RESTART` appends `_rNNNNN` to
+the run name (rule: a continuation never clobbers its parent's streams). The
+parent directory stops gaining frames at the restart point and that is correct,
+not a stalled consumer — new frames, `_slice_cache/` and `.dat` streams all
+land under `<name>_rNNNNN`. Two consequences that have both bitten:
+
+* Any watcher, movie build or separation measurement must be re-pointed at the
+  continuation, and a full-history plot has to stitch parent + continuation.
+* Any janitor that protects or prunes **by run name** must match the
+  continuation too. A checkpoint pruner keyed on the bare name treats
+  `<name>_r03000` as an unrelated run and will delete the live run's only
+  restart point. Match `^<name>(_r[0-9]+)?$`, not `<name>`.
+
 ## What was fixed — 2026-08-21
 
 Five defects, found while chasing a spurious drift in the Bondi dipole campaign.
