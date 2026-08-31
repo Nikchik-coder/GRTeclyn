@@ -45,9 +45,12 @@ gates and the file-by-file design: [Reference.md](Reference.md).
 - [x] **2.5** Two throats in orbit, gravity-driven, d = 12 — **answered** 2026-08-31:
   they REPEL. The phantom support field out-pushes gravity (a²+m²)/m² = 5× at any
   parameters; like-charge throats never merge (§8)
-- [ ] **2.6** Repulsion controls A/B (from rest, a = 2 and a = 1) + arm C
-  wormhole–anti-wormhole (`wormhole_phi_sign_B = -1`) — **in flight** 2026-08-31; C is
-  the merger route if it falls (§8)
+- [x] **2.6** Repulsion controls A/B (from rest, a = 2 and a = 1) + arm C
+  wormhole–anti-wormhole (`wormhole_phi_sign_B = -1`) — **all three passed** 2026-08-31.
+  A separates from rest, B's push falls 3.0× at half width, C falls together; the
+  C/A ratio is 1.511 ± 0.033 against a predicted 1.500 (§8)
+- [ ] **2.7** The merger run `merge_orbit_flip_d12`: the baseline orbit with the sign
+  flipped, one line different — in flight 2026-08-31, contact expected t ≈ 30 (§8)
 
 ### Stage 3 — the merger
 
@@ -89,7 +92,9 @@ gates and the file-by-file design: [Reference.md](Reference.md).
 | that growth may have a ceiling | on the boosted arm L2 Mom flattens after t ≈ 30 (+8 % over the last 10 units, against doubling every ~12 before) — one arm, not yet a result |
 | the compactified origin fills in | χ at the pit rises ×400 and the origin lapse falls 0.22 → 0.13 over 40 M; slow, never fatal |
 | **the throats repel, and must** | phantom support field carries scalar charge set by throat *width*; push/pull = 1 + a²/m² > 1 always — like-charge pairs are unbound at any parameters (§8) |
-| the merger route is charge flip | `wormhole_phi_sign_B = -1` (anti-wormhole) turns the 5× push into a 5× pull; arm C tests it |
+| **the merger route is proven** | flipping one throat's field turns the 5× push into a 5× pull: measured C/A ratio 1.511 ± 0.033 vs 1.500 predicted, over 15 matched times (§8) |
+| the scalar force scales with *width*, not mass | halving the throat radius cut the push 3.0×; a mass-tracking force would not have moved at all (§8) |
+| the flip costs no stability | φ → −φ leaves geometry, ADM mass, supporting energy and the growth mode identical; only the pair interaction sees it (§8) |
 
 **What 40 M is:** a fuse length, not stability. The run ends while the growth is
 accelerating. Stage 3 can be budgeted against 40 M; it cannot be budgeted against an
@@ -424,7 +429,7 @@ is the single most important calibration for reading §8.
 Momentum stays a validation tool. **The merger itself remains gravity-driven** — two throats
 released from rest, ADM mass in the lapse, never aimed momenta.
 
-### 8. In flight: the orbit turns, but does not yet fall
+### 8. The throats repel — and reversing one makes them fall
 
 `orbit_d12_p012`, launched 2026-08-31
 ([params_orbit_drainhole.txt](../../Examples/BinaryWormholeMerger/params_orbit_drainhole.txt),
@@ -469,18 +474,50 @@ vs 1.26 predicted. Predicted outward 0.056 vs measured 0.013 — right sign, rig
 and m: like-charge drainholes can never merge under their own gravity**, and the Kepler
 timetable that used to sit here (merger t ≈ 37–39) is void — the orbit is unbound.
 
-**Controls, all from rest at d = 12, launched 2026-08-31** (GPUs 1–3, main run untouched):
+**Controls, all from rest at d = 12, run 2026-08-31 — all three verdicts in.** Launched on
+GPUs 1–3 with the baseline untouched. Each reached t ≈ 11 before an editor restart took the
+session down, which is well past the ~5-unit gauge ramp and so deep inside the readable
+window.
 
-| arm | params | prediction if the mechanism is right |
-| --- | --- | --- |
-| A `ctrl_rest_d12` | [params_ctrl_rest.txt](../../Examples/BinaryWormholeMerger/params_ctrl_rest.txt) | separates from rest (gravity alone: falls); net ≈ 4× g outward |
-| B `ctrl_rest_a1` | [params_ctrl_rest_a1.txt](../../Examples/BinaryWormholeMerger/params_ctrl_rest_a1.txt), a = 1 | still separates, but ~4× weaker (ratio 2 vs 5) |
-| C `ctrl_flip_d12` | [params_ctrl_flip.txt](../../Examples/BinaryWormholeMerger/params_ctrl_flip.txt), `wormhole_phi_sign_B = -1` | **falls together at ~6× g** — the merger route |
+| arm | run | prediction | measured | verdict |
+| --- | --- | --- | --- | --- |
+| A `ctrl_rest_d12` | [run](../../runs/wormhole_merger/ctrl_rest_d12), [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest.txt) | separates, net ≈ 4× g outward | **+0.0127 outward**, +0.47 by t = 11.5 | repulsion confirmed at zero momentum |
+| B `ctrl_rest_a1` | [run](../../runs/wormhole_merger/ctrl_rest_a1), [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest_a1.txt) | separates ≈ 4× weaker (net 1× g vs 4×) | **+0.0042 outward**, 3.0× weaker | charge set by *width*: confirmed, 25 % under |
+| C `ctrl_flip_d12` | [run](../../runs/wormhole_merger/ctrl_flip_d12), [params](../../Examples/BinaryWormholeMerger/params_ctrl_flip.txt) | **falls together, net ≈ 6× g** | **−0.0196 inward**, −0.56 by t = 10.5 | merger route confirmed |
 
-Arm C is new physics support: `wormhole_phi_sign_B` (SimulationParameters +
-BinaryWormholeInitialData, default +1, archived runs bit-identical) flips throat B's
-scalar orientation. A wormhole–anti-wormhole pair merges at ~6× Newtonian (from-rest
-meet t ≈ 32.6/√6 ≈ 13 in design time).
+**The sign rule is measured, not assumed.** The decisive number is the ratio of arm C's
+infall to arm A's escape at matched times. Same masses, same widths, same separation, same
+grid, same binary: the two runs differ in `wormhole_phi_sign_B` and in nothing else, so the
+ratio isolates the scalar force from every other effect in the problem — including the
+coordinate under-read, which cancels between them.
+
+    |Δd_C| / |Δd_A| = (1 + 5) / (5 − 1) = 1.500        predicted
+                    = 1.511 ± 0.033                   measured, 15 matched times, t = 3.5 … 10.5
+
+| t | A: like charges | C: opposite | ratio |
+| --- | --- | --- | --- |
+| 4.0 | +0.0146 apart | −0.0219 together | 1.49 |
+| 6.0 | +0.0679 apart | −0.0998 together | 1.47 |
+| 8.0 | +0.1672 apart | −0.2478 together | 1.48 |
+| 10.0 | +0.3172 apart | −0.4827 together | 1.52 |
+
+That one number fixes both halves of the claim at once: the scalar force is 5× gravity (not
+2×, not 10×), **and it changes sign with the relative field orientation**. Two independent
+checks agree. Arm A separates released from rest with no momentum at all, so the baseline's
+escape was never a leftover of the initial kick. Arm B's push falls 3.0× when the throat
+width halves, where a force tracking *mass* rather than width would not have changed at all
+(predicted 4.0×; the 25 % gap is the §7 coordinate under-read, which does *not* cancel here
+because the two arms have different throat widths).
+
+**So, on this code and at these parameters: same orientation repels, opposite orientations
+attract.** Like-charge throats are unbound at every a and m; the flip is the only
+gravity-driven route to a merger.
+
+Arm C rests on new initial-data support: `wormhole_phi_sign_B` (SimulationParameters +
+BinaryWormholeInitialData, default +1, so every archived run stays bit-identical) flips
+throat B's scalar orientation. Verified in the data, not just the parameter file — on the
+t = 0 slice the field is exactly antisymmetric about the midplane (left half −0.9044 …
+−0.0002, right half +0.0002 … +0.9044, mirror residual identically zero).
 
 **What an anti-wormhole is, and why it needs no new stability argument.** The drainhole
 scalar has a *direction* — the "flow" through the throat that gave Ellis's drainhole its
@@ -508,6 +545,21 @@ throat cannot stay open without its field. The expected endpoint is collapse to 
 ordinary black hole plus radiated scalar, which is not a failure mode but the headline:
 *wormhole + anti-wormhole → black hole* is the paper, with the horizon-formation time
 and the radiated fraction as its two numbers.
+
+**Stage 2.7 — the merger run.** `merge_orbit_flip_d12`
+([run](../../runs/wormhole_merger/merge_orbit_flip_d12),
+[params_merge_orbit_flip.txt](../../Examples/BinaryWormholeMerger/params_merge_orbit_flip.txt)),
+launched 2026-08-31 on GPU 0 after the like-charge baseline was stopped at t = 20 having
+opened by 2.02 units and still accelerating apart. It is `params_orbit_drainhole.txt` with
+**one physics line changed** — `wormhole_phi_sign_B = -1` — so masses, widths, separation,
+orbital momenta, grid and binary are all identical to the baseline and any difference in
+outcome is the sign and nothing else. `stop_time = 60`, checkpoints every 10 code units.
+
+The retained P = 0.12 was tuned against gravity alone and is only ~24 % of the circular
+value for a 6× central force (√6 × 0.204 = 0.50), so expect a fast plunging spiral rather
+than several wide orbits. The head-on arm C trajectory, extrapolated with the pull growing
+as they close, puts contact near t ≈ 29 and coalescence near t ≈ 31; the orbital case
+arrives later by whatever the angular momentum buys.
 
 ---
 
