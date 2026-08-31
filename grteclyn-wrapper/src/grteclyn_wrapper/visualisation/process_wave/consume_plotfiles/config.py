@@ -137,6 +137,15 @@ def _frames_stable_movie_enabled() -> bool:
 
 def _field_frame_config(field: str) -> dict:
     cfg = dict(_FIELD_FRAME_CONFIGS.get(field, {"zlim": (None, None), "cmap": "viridis", "label": field}))
+    # Opt-in per-frame scaling for named fields (comma-separated), e.g.
+    # GRTECLYN_FRAMES_PER_FRAME_ZLIM=K.  For a field that grows by orders of
+    # magnitude over a run, any fixed scale hides one end: locked at the final
+    # amplitude the early frames render blank, locked early the late frames
+    # saturate.  Default off; an explicit GRTECLYN_FRAMES_ZLIM_<FIELD> or
+    # GRTECLYN_FRAMES_STABLE_MOVIE below still wins.
+    per_frame_fields = os.environ.get("GRTECLYN_FRAMES_PER_FRAME_ZLIM", "")
+    if field in {p.strip() for p in per_frame_fields.split(",") if p.strip()}:
+        cfg["per_frame_zlim"] = True
     env_key = f"GRTECLYN_FRAMES_ZLIM_{field.upper()}"
     override = os.environ.get(env_key, "").strip()
     if override:
