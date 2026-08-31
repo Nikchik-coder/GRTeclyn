@@ -19,7 +19,27 @@ output_path    = "./output"
 amr.plot_file  = "./scratch/BinaryWormholePlt"
 amr.check_file = "./scratch/BinaryWormholeChk"
 
-checkpoint_interval = 2000
+# checkpoint_interval counts COARSE (level-0) STEPS, not code units:
+#
+#     dt_coarse   = dt_multiplier * L / N1 = 0.1 * 96 / 96 = 0.1
+#     total steps = stop_time / dt_coarse  = 600 / 0.1      = 6000
+#
+# so the 2000 this file used to carry fired three times in a 600-unit run --
+# a crash could throw away 200 code units, many hours of it.  250 steps = 25
+# code units gives 24 checkpoints.  This is the longest run in the campaign;
+# it is the one that most needs to be resumable.
+#
+# AMReX does not prune old checkpoints and each holds all 27 evolved variables
+# on every level, so 24 of them is real disk.  Delete the superseded ones as
+# the run advances rather than letting scratch fill.
+#
+# Re-derive if dt_multiplier, L, N1 or stop_time change.  To resume:
+#     amr.restart = /tmp/grteclyn_scratch/<run>/BinaryWormholeChk01250
+#
+# It must be amr.restart, not the root-level `restart_file` key that also
+# appears in AMReXParameters.hpp -- that one is never read back from the params
+# file and makes the run abort with a parameter error.  See params_headon.txt.
+checkpoint_interval = 250
 plot_interval       = 200
 
 amr.plot_vars = chi K lapse phi Pi
