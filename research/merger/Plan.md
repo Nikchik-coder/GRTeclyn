@@ -69,10 +69,11 @@ grouped by campaign stage with a `NOTES.md` per stage.
   restarted run records it whole
 - [ ] **3.3** Convergence and error budget — n160 probe in flight (t ≈ 26, ~4.9
   units/h, ETA ≈ 7 h to t = 60); **p045 momentum variation COMPLETED t = 60 with zero
-  NaN, 2026-08-31 — because it never merges**: at p = 0.45 the orbit does not decay
-  in 60 units, the throats end still ≈ 4.6 apart, and the frames show expansion,
-  not collapse. Zero NaN over the full span is the clean control: the death is tied
-  to merger + core collapse, not to long evolution itself. (Its theta scan reports a
+  NaN, 2026-08-31 — because it never merges**: it is a periapsis passage. Validated
+  against the tracker: separation 11.9 → minimum 3.95 at t = 40 (closest approach)
+  → receding to 4.6 by t = 60, with the movie showing the same turn-and-expand.
+  Zero NaN over the full span is the clean control: the death is tied to merger +
+  core collapse, not to long evolution itself. (Its theta scan reports a
   brief common-trapped flicker at r ≈ 5.1, t ≈ 52 — a sphere grazing both throats,
   the §-documented artefact regime; treat as unverified, the offline finder cannot
   check it since p045 predates the h_ij/A_ij plot list)
@@ -659,6 +660,11 @@ sphere on every death-era snapshot that carries h_ij/A_ij:
 | 54.0 | radius window | 0.89 |
 | 54.5 | radius window | 0.83 |
 | 55.0 | radius window | 0.59 |
+
+Validation: every snapshot's scan region is free of NaN/inf (the fatal NaN
+post-dates the last write), and doubling both the angular and radial sampling of
+the scan moves the crossings by ≤ 0.01 — the numbers are converged, the death-step
+point included.
 
 Two different damping schemes, one accelerating dissolution curve — the last half
 unit loses 0.24 in radius, four times the early rate; extrapolated, the trapped
