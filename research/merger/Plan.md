@@ -42,21 +42,39 @@ gate is green.
   - [x] serial build clean; MPI+CUDA production binary rebuilt
   - [x] old executable preserved as `main3d.gnu.MPI.CUDA.ex.pre_ahfix`
   - [x] tainted-data warning written into Plan + both READMEs
-- [ ] **M2 — validation restart** *(~30 min; GATE for everything below)*. Restart
-  chk 03000 (t = 30) with the fixed binary to t ≈ 33.
-  - **Pass:** the fixed scan reports **no** common trapping over t = 30–33, where the
-    old scan reported θ = −0.032 on r ≈ 3 spheres continuously.
-  - **Fail:** artefact persists → the fix is wrong or incomplete; back to M1, nothing
-    else moves.
-- [ ] **M3 — Run B, phase 1: certify the horizon.** Restart chk 05000 (t = 50) with
-  the fixed binary, **damping off**.
-  - **Pass:** fixed scan certifies a fully-trapped sphere at t ≈ 51.1 ± 0.5 with
-    r ≈ 1.0 (offline scanner said 1.07 at t = 51.5 — the two must agree to ~10 %).
-  - Also re-records t = 50–52 with trustworthy θ columns at full cadence.
-- [ ] **M4 — Run B, phase 2: the sealed window.** From certification, engage
-  radius-window damping strictly inside the horizon: full below r = 0.8, cosine-off
-  by 0.95. Causally sealed while the horizon covers it, so the collapse waveform —
-  already emitted — reaches R = 14 uncontaminated.
+- [x] **M2 — validation restart** *(done 2026-09-01; GATE for everything below)*.
+  The t = 30 checkpoint no longer existed on scratch, so M2 and M3 were run as **one
+  undamped restart from chk 04000 (t = 40)** to the natural death — which covers the
+  two-wells-in-one-sphere regime the artefact lived in and reaches the real horizon
+  in the same pass (`merger_fix/val_ahfix_r04000`, 39 min, 18.2 units/h).
+  - [x] **PASS — specificity:** the fixed scan is **silent** over t = 40 → 51.02
+    (min θ = **+0.158**), where the old scan reported continuous trapping. The
+    artefact is gone.
+  - [x] **PASS — regression:** evolution columns bit-identical to r03000 through
+    t ≈ 44.9 — the kernel change is diagnostic-only, as claimed.
+- [x] **M3 — Run B, phase 1: certify the horizon** *(done 2026-09-01, same run)*.
+  - [x] **PASS:** first θ < 0 at **t = 51.03, r = 1.0625**; sustained from t = 51.47.
+    Offline `ah_radial_scan.py` on this run's own plotfiles gives r = 1.070 at
+    t = 51.5 — **0.7 %** apart, inside one grid cell (dx = 0.03125). The required
+    agreement was 10 %.
+  - [x] The old scan found **nothing** anywhere over t = 40–52: it missed this real
+    horizon as well as inventing the false one.
+  - [x] Died `NaN in post_timestep`, component K, level 3, at **t = 51.71**
+    (r03000 died 52.06) — the expected undamped death, not a new failure.
+- [ ] **M4 — Run B, phase 2: the sealed window** *(LAUNCHED 2026-09-01 02:44, in
+  flight)*. From certification, engage radius-window damping strictly inside the
+  horizon: full below r = 0.8, cosine-off by 0.95. Causally sealed while the horizon
+  covers it, so the collapse waveform — already emitted — reaches R = 14
+  uncontaminated. `merger_fix/m4_sealed_r04000`, GPU 0, to stop_time = 66.
+  - [x] **Restarts from chk 04000 (t = 40), not 05000.** Chk05000 carries r04000's
+    *lapse-window* damping straight through the collapse at t = 44–47 — the very
+    burst M7 must record. Restarting undamped at t = 40 with the radius window gated
+    to t = 51.2 buys a clean collapse and a sealed core both. Costs ≈ 36 min.
+  - [x] **The lapse window is switched off** (`core_damping_lapse_start = 0`).
+    `CoreMatterDamping` combines the windows as `w = max(w_lapse, w_radius)` and the
+    lapse branch is live whenever damping is on, so leaving it at 3e-2 would damp
+    cells *wherever they sit* and r_damp,max would not be a constant — the causal-seal
+    proof below would have nothing constant to compare against.
   - **Pass:** run alive and NaN-free past t = 56 (the rw death and the extrapolated
     dissolution time both behind it).
   - **Fail (expected risk):** dies ≈ 55 like rw at the un-damped ring r = 0.7–1.1,
@@ -70,6 +88,19 @@ gate is green.
     r_AH(t) track decides it: **frozen ⇒ the interior phantom was the driver and M4
     wins outright; on the 1.07 → 0.59 curve ⇒ exterior accretion drives it, the seal
     fails by ≈ 54, and M4b is next.** Either outcome is a measurement worth having.
+    - **First evidence, from M3 (2026-09-01): the horizon is contracting from the
+      moment it forms**, with no damping anywhere in the run — r = 1.110 (t = 50.5),
+      1.090 (51.0), 1.070 (51.5), i.e. ≈ 0.04 per code unit. Extrapolated linearly it
+      crosses M4's r = 0.95 edge at **t ≈ 54.5**: that is the measured lifetime of the
+      seal, and it is against the freeze hypothesis. M4's own r_AH(t) track is the
+      decider; this only says the null hypothesis is already in trouble.
+  - [x] **Post-floor trajectories are not run-to-run reproducible** — measured on
+    M2/M3 against r03000. Streams are bit-identical from the restart until χ first
+    touches min_chi at t ≈ 44.9, then decohere (separation 0.477 vs 0.569 at t = 48;
+    the two deaths 0.35 units apart). Floor clipping plus non-deterministic GPU
+    reductions. The *physics* repeats (horizon ≈ 51, death ≈ 52); the trajectory does
+    not. **No convergence or overlap claim — M6 included — may be stated tighter than
+    that**, and per-run numbers must be quoted per run, never averaged as if replicas.
   - **Causal-seal record for the paper:** r_damp,max is a build-time constant and
     r_AH(t) streams from the fixed scan, so the published proof of purity is one
     plot — r_AH(t) − r_damp,max staying strictly > 0 over the whole window the
@@ -108,6 +139,16 @@ Standing instrumentation for every launch from M2 on: full plot list including h
 and A_ij (their absence made r03000/headon/p045/n160 permanently unmeasurable
 offline), NaN coordinates printed at abort, checkpoints every 5 units near the death
 window, frame plane chosen from the arm's motion.
+
+Checkpoints every 5 units is affordable only because of `checkpoint_keep` (added
+2026-09-01): a checkpoint of this grid is ≈ 10 GB, so a clean pass to t = 66 would
+otherwise strand ~50 GB nobody restarts from. `GRAMR::checkPoint()` writes through
+AMReX as before and then drops all but the newest N — **after** the write returns, so
+a run killed mid-write still has its predecessor. Default `0` keeps every checkpoint,
+so no archived run changes meaning; the merger templates set `1`. Two guards beyond
+that: a directory is a candidate only if it holds a complete `Header`, and the
+checkpoint a run was **restarted from** is never deleted. Verified end to end on a
+32³ smoke run — eight written, seven deleted, one on disk throughout.
 
 **Success = M7 + M6:** one run whose R = 14 Ψ₄ stream is clean through t ≈ 66, with
 an overlap-validated waveform and an honestly-labelled interior.
@@ -168,7 +209,7 @@ precisely where it fails, and the p045 control that exposes it was only run late
 | 29.95–32.71 | *(artefact — no horizon)* old scan's "fusion" | convicted above |
 | 33–43 | horizonless whirling double core, sep 1.8 → 0.8 | slice caches; max\|K\| falling 0.13 → 0.08 |
 | 44–47 | **collapse** — the merger proper | min χ → 1e-8 floor at 44.9, max\|K\| ×18; movies' crush at ≈ 45 |
-| 51.06–51.5 | **first genuine common trapped surface**, r ≈ 1.0–1.07 | full-metric in-code scan; offline scanner |
+| 51.03–51.5 | **first genuine common trapped surface**, r = 1.0625 → 1.070 (sustained from 51.47) | fixed in-code scan (M3); offline scanner on the same run's plotfiles, 0.7 % apart |
 | 51.5–55 | horizon dissolves 1.07 → 0.59, accelerating; extrapolated gone ≈ 56 | two damped arms, one curve; sampling-doubling moves crossings ≤ 0.01 |
 | 52.06–55.0 | NaN deaths (r03000 52.06, n160 53.61, rw 55.00) | abort logs + last stream rows agree |
 | 58–65.5 | collapse signature crosses R = 14 — **never recorded** (44–47 collapse arrives 58–61; the 51.5 horizon formation arrives 65.5 ⇒ `stop_time` must reach ≈ 66) | propagation at v ≈ c (measured on the first burst) |
@@ -191,7 +232,7 @@ is wrong and is being corrected with this document.
 | Zero φ/Π inside r = 1.5 "right after horizon formation (t = 35)" | Right spirit, wrong clock: **no horizon exists at t = 35** — engaging then changes the physics under study (that mistake is already in the rw arm's t = 50–51 window, ~1 unit early). Earliest defensible engagement is horizon certification, t ≈ 51.1 |
 | "You already have the main GW burst" | **Half wrong**: the recorded burst is plunge/whirl radiation. The collapse signature (source 44–51.5) has never been recorded — it is the missing piece, and it needs t ≈ 66, not t ≈ 85 |
 | Two-run split: pure-physics arm + post-horizon damped arm, causality argument | **Adopted** — it is steps 3–4 above. Corrections: undamped arms cannot supply the dissolution measurement (no h_ij in their plots — that stays with r04000/rw); and interior damping is causally sealed only while the horizon covers the window, which the dissolution itself un-does — hence the B/B2 split and the overlap test |
-| Interior damping halts the accretion ⇒ horizon freezes at ≈ 1.0, M4 risk "actually zero" | **Testable, not assumable — folded into M4.** The causal seal cuts both ways: a window strictly inside the horizon cannot influence the flux crossing it from outside, and r04000/rw dissolved with damping active. The r_AH(t) track decides; both outcomes are physics |
+| Interior damping halts the accretion ⇒ horizon freezes at ≈ 1.0, M4 risk "actually zero" | **Testable, not assumable — folded into M4, and the first evidence is against it.** The causal seal cuts both ways: a window strictly inside the horizon cannot influence the flux crossing it from outside, and r04000/rw dissolved with damping active. M3 now measures the horizon *contracting from birth with no damping in the run at all* — 1.110 → 1.070 over t = 50.5–51.5, ≈ 0.04/unit, crossing M4's edge at t ≈ 54.5. M4's own r_AH(t) track is still the decider; both outcomes are physics |
 | Steepen the ramp (tanh, zero by r = 1.0) before widening the window | **Adopted as M4b** — the intermediate fallback; M5 demoted to last-resort diagnostic |
 | `causal_seal.dat` logging r_AH − r_damp | **Adopted as a derived plot, not new code** — the fixed scan already streams r_AH and the static window edge is a constant; a logger is only needed if the window ever moves |
 
@@ -227,6 +268,8 @@ merger claims must be rewritten to this timeline.
 | `..._p045` | momentum 0.45 | **60.01 clean** | never merges (periapsis 3.95 at t = 40) — the healthy control, and the run that convicts the old θ scan |
 | `..._n160` | 160³ instead of 128³ | 53.61 | everything pre-collapse converged; death moved +1.55 units and stayed |
 | `..._ml2` | max_level 2 | 9.42 | three refinement levels is the floor |
+| `merger_fix/val_ahfix_r04000` | fixed θ kernel, **no damping**, from t = 40 | 51.71 | the M2+M3 gate: artefact gone, real horizon found at 51.03/r = 1.0625, evolution bit-identical to r03000 to t ≈ 44.9 |
+| `merger_fix/m4_sealed_r04000` | radius window r < 0.80/0.95, engaging t = 51.2, lapse window off | *(live)* | M4, from t = 40 to stop_time 66 |
 
 ---
 
@@ -274,7 +317,25 @@ merger claims must be rewritten to this timeline.
     log-fit says t = 60 undamped needs N ≈ 400 ≈ 90× the compute. Closed.
 11. **The in-code θ scan was conformally flat and invented the t ≈ 30 merger.**
     The headline error of the campaign — see *The timing bug* above. Fixed in code
-    2026-09-01; all pre-fix θ columns tainted; timeline rewritten.
+    2026-09-01; all pre-fix θ columns tainted; timeline rewritten. **Fix validated
+    the same day** on a dedicated undamped restart (M2+M3): silent through t = 51.02
+    where the old scan cried merger, first genuine trapped surface at t = 51.03 and
+    r = 1.0625 — 0.7 % from the offline scanner, inside one cell — and the evolution
+    bit-identical to the pre-fix run. The old scan had also missed the *real* horizon
+    entirely; the instrument was wrong in both directions.
+12. **Post-floor, the run is not reproducible from its own checkpoint.** Restarts
+    agree to every printed digit until χ first touches min_chi (t ≈ 44.9), then
+    diverge: separation 0.477 vs 0.569 at t = 48, deaths 0.35 units apart. Floor
+    clipping plus non-deterministic GPU reductions; there is no bug to fix. **Effect
+    on claims:** the physics repeats (horizon ≈ 51, death ≈ 52) but the trajectory is
+    a sample, not a replica — quote per-run numbers per run, and pitch no overlap or
+    convergence claim tighter than the scatter between two restarts of one arm.
+13. **Checkpoints were never being deleted and ~10 GB each.** `--keep-last` only ever
+    covered plotfiles, so the death-window cadence the plan now requires would strand
+    ~50 GB per run. **Fix:** `checkpoint_keep` in `GRAMR::checkPoint()` (own module,
+    `Source/GRTeclynCore/CheckpointRetention.hpp`), pruning only after a successful
+    write, never a checkpoint lacking a complete `Header`, never the one the run was
+    restarted from, and default 0 = keep everything so no archived run is touched.
 
 ## Traps that must not regress
 
@@ -292,6 +353,10 @@ merger claims must be rewritten to this timeline.
 | root-level `restart_file` | dead key; use `amr.restart` |
 | restart outer boundary | interior bit-exact; boundary error walks inward at ~c — no domain-wide norms or waves across a restart window (Ψ₄ at R = 14 clean ~20 units after; R = 30 ~12) |
 | plot list | h_ij + A_ij always — their absence is why four runs are offline-unmeasurable forever |
+| damping windows combine as `max(w_lapse, w_radius)` | the lapse branch fires whenever damping is on, so a radius-only window needs `core_damping_lapse_start = 0` — otherwise the damped region is not bounded by a constant radius and the causal-seal proof has nothing to stand on |
+| restarting from a checkpoint that already carries damping | Chk05000 damps straight through the collapse M7 must record; restart earlier and gate the window by time instead |
+| relative paths handed to `run_single.sh` | it `cd`s into the run directory and uses `WHM_EXE`/`WHM_RUNS_DIR` verbatim — a relative value dies as exit 127 or `Couldn't open …/params.txt`, and the stub run directory must be removed before retrying |
+| comparing two restarts of one arm past the floor | they decohere at t ≈ 44.9 by construction — no claim tighter than the run-to-run scatter |
 
 ## Dormant traps for Stage 2.2 (file-based initial data)
 
