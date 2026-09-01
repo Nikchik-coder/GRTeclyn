@@ -33,7 +33,7 @@ construction, issue 12). Every interior knob has been turned and priced:
 | knob | best effect on the wall |
 | --- | --- |
 | **grid refinement on restart (M4e)** | **the only real axis, and its yield GROWS: +1.01 then +2.50 per halving of dx; stacks with damping** |
-| matter deletion (full window × rate plane) | +0.33 at the measured optimum τ = 0.05; window shape/size irrelevant |
+| matter deletion (full window × rate plane) | +0.33 at level 3, +0.65 at level 4, **−0.84 at level 5** — it compensates for under-resolution and turns harmful once the grid resolves the region |
 | timestep | 0 — **dt-converged** (halving: +0.17 inside scatter; quartering: −0.39) |
 | Kreiss–Oliger dissipation | flat plateau, harm at the high end (σ 1.0 died earlier) |
 | slicing-source cancellation | 0 (taper-only arm = undamped baseline to 0.03) |
@@ -129,6 +129,28 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
     moved onto the newest finest level: the shock is a real feature that
     sharpens into whatever grid resolves it, but refinement is now **outrunning**
     it rather than merely delaying it.
+  - [x] **The two ladders diverge, and matter damping crosses over from help
+    to harm.** Damped rungs: 52.42 → 53.75 → **54.76** (increments +1.33,
+    +1.01 — *decelerating*), against undamped 52.09 → 53.10 → 55.60
+    (+1.01, +2.50 — *accelerating*). Damping's effect by level: **+0.33,
+    +0.65, −0.84**. Reading: the deletion was compensating for an
+    under-resolved region; once the grid resolves that region the deletion
+    is just an unphysical perturbation and it costs time. **The clean
+    no-surgery route is winning outright** — which is also the route whose
+    waveform needs no M6 overlap caveat.
+  - [ ] **Open question the running arms answer: does adding a level even
+    touch the failure site?** The tagger's boxes are 160³ cells at every
+    level, so their half-widths *halve* as levels are added: level 4 reaches
+    r = 2.5, level 5 → 1.25, level 6 → 0.625, level 7 → 0.3125. The imaged
+    blowup ring sits at r ≈ 1–2. So in the lvl6 and lvl7 runs the resolution
+    **at r ≈ 1 is still level 5's dx = 0.015625** — identical to the lvl5
+    run. Sharp prediction: if the failure is at r ≈ 1, lvl6_plain dies near
+    55.6 like lvl5_plain and the ladder is over; if it dies near the
+    super-linear projection (~62), the failure is genuinely inside r = 0.625
+    and levels keep paying. **Do not launch level 8 before lvl6_plain
+    reports** — it would refine r < 0.156, almost certainly irrelevant.
+    If the box-coverage reading is right, the next axis is *wider* fine
+    boxes at the failure radius (a tagger change), not deeper ones.
   - [ ] Live: **level 7 undamped** (dx 0.00390625, user go-ahead 2026-09-01 —
     launched on the card the level-5 death freed, rather than waiting for the
     level-6 verdict, because if the trend holds it is the arm that reaches the
@@ -314,7 +336,7 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 | `merger_fix/m4e_lvl4_plain_r05000` | **+1 AMR level on restart** (dx 0.03125), no damping | **53.10** (h11, lvl 4) | resolution is a real axis: +1.01 vs 52.09 — first knob outside the scatter |
 | `merger_fix/m4e_lvl4_fast_r05000` | +1 level + matter τ 0.05 ring | **53.75** (h11, lvl 4) | stacks with damping: +1.33 vs 52.42 — clean-cohort record (rw's 55.00 is collapse-tainted) |
 | `merger_fix/m4e_lvl5_plain_r05000` | +2 levels (dx 0.015625), no damping | **55.60** (h11, lvl 5) | **all-time record, and the first clean one**: +2.50 over its lvl4 twin — the ladder is super-linear |
-| `merger_fix/m4e_lvl5_fast_r05000` | +2 levels + matter ring | *(live)* | |
+| `merger_fix/m4e_lvl5_fast_r05000` | +2 levels + matter ring | **54.76** (h11, lvl 5) | **damping now COSTS 0.84** against the undamped twin's 55.60 — the crossover: it helped at levels 3–4, hurts at level 5 |
 | `merger_fix/m4e_lvl6_plain_r05000` | +3 levels (dx 0.0078125), no damping | *(live)* | first test of the super-linear projection (~61.8) |
 | `merger_fix/m4e_lvl6_fast_r05000` | +3 levels + matter ring | *(live)* | |
 | `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | *(live)* | projected ~77 ⇒ the arm that could reach t = 66 outright; ~59 GB of 81 on the card |
