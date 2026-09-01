@@ -10,13 +10,15 @@ Runs live under `runs/wormhole_merger/` (not in git, own README); the packed ext
 **The campaign in one line:** two drainhole throats merge only if one field is flipped;
 the merged object collapses, briefly holds a horizon, and the phantom scalar then
 destroys first the run (NaN at t ≈ 52–57) and then the horizon itself. Every knob
-inside the formulation is measured dead except grid refinement, which is **linear at
-+1.43 per level** over four measured rungs — enough to reach the *start* of the
-window we need (level 7–8), far short of its end (level ~13, past the memory
-ceiling). **User decision 2026-09-01: the merger signal at any price** — the route
-to the whole burst is late smooth-fill excision (M9b — coded, built, default-off, and
-**live since 2026-09-01 in two arms** that differ only in the fill radius), with the
-ladder continuing as the independent cross-check.
+inside the formulation is measured dead, and the refinement ladder — linear +1.43/level
+over four rungs — **turned over at level 7 (56.20 < level 6's 56.71): refinement is
+finished as a route, by measurement**. The route that worked is **M9b smooth-fill
+excision: on 2026-09-01 both freeze arms COMPLETED t = 66 — the first runs in
+campaign history to reach their stop time — with the full R = 14 window on disk,
+the waveform identical between the two fill radii and identical to every unfrozen
+arm over shared times.** The window shows a smooth decaying tail, not a distinct
+burst; wave 7 (both arms re-run to t = 80) gives the R = 30 sphere a causally clean
+independent look at the collapse to settle whether that tail *is* the signature.
 
 ---
 
@@ -302,13 +304,22 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
     (lego boundary inside r ≈ 1, one-sided stencils, boundary tracked to stay
     inside the fill region), only if M9b's blend zone proves unfixable. Everything
     M9b learns about radii and engagement transfers.
-- [ ] **M6 — overlap test** *(validates any surviving arm)*. Ψ₄ at R = 14 must match
-  the undamped arms (r03000 to 52.06, n160 to 53.61, m4e_lvl4_plain to 53.10) over
-  the shared window to the few-% level — no claim tighter than the ±0.35
-  reproducibility scatter (issue 12). For M9b arms, extended by the fill-radius
-  insensitivity ladder above.
-- [ ] **M7 — the record.** One run clean through **t ≈ 66**: the collapse signature
-  (source 44–51.5) on disk at R = 14. Optional stretch: 82 for R = 30.
+- [x] **M6 — overlap test** *(PASSED 2026-09-01, stronger than asked)*. The freeze
+  arms match the unfrozen level-5/6/7 arms at R = 14 not to the few-% level but
+  **bit-identically (5 digits) at every shared sample, before and after the
+  freeze engages** — and the two fill radii match each other the same way over
+  the entire causally clean window 58–65.0. The fill is invisible at the
+  detector and the radius is not in the physics.
+- [x] **M7 — the record** *(ACHIEVED at R = 14, 2026-09-01)*. Both freeze arms ran
+  clean through t = 66.0 — zero NaN, first completions in campaign history — with
+  the full window 58–65.5 on disk at R = 14. **Caveat that motivates wave 7:** the
+  window contains a smooth decaying tail (m=2 peak 0.0296 at 55.5 falling to
+  0.0174; m=0 falling to ~0.0015), not a distinct burst. Either the phantom
+  dissolution radiates no sharp feature, or the arrival estimate is off. The
+  stretch goal is now the main question: both arms re-launched to **t = 80**
+  (`m9b_fill80`, `m9b_fillwide80`, rolling checkpoints keep-1), because R = 30
+  sees the collapse over 73–80.5 while freeze contamination arrives there only
+  at ≥ 81.0 — an independent, fully clean second measurement.
 - [ ] **M8 — endpoint honesty in the paper.** The post-fill core is a numerically
   sustained ("zombie") interior — state it, with the causal-arrival plot next to
   the waveform. Framing (review, 2026-09-01): the M4/M4b/M4d falsification table
@@ -422,10 +433,12 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 | `merger_fix/m4e_lvl5_fast_r05000` | +2 levels + matter ring | 54.76 (h11, lvl 5) | low arm of the same pair; read alone it said "damping now harms" and was wrong. Pair mean **55.18** |
 | `merger_fix/m4e_lvl6_plain_r05000` | +3 levels (dx 0.0078125), no damping | 56.13 (h11, lvl 6) | clean record; +0.53 read alone ⇒ the (withdrawn) saturating story |
 | `merger_fix/m4e_lvl6_fast_r05000` | +3 levels + matter ring | **56.71** (h11, lvl 6) | **all-time record**; +1.95 read alone ⇒ the opposite story, 34 min later. Pair mean **56.42**, and the ladder is linear at +1.43/level |
-| `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | *(live)* | **the discriminator**: linear fit says 57.9, the withdrawn saturating fit said 56.3. At 57.9 it touches the window start; ~59 GB of 81 |
+| `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | **56.20** (h11, lvl 7) | **the ladder TURNED OVER**: below level 6's 56.71 and both fits' projections (linear 57.9, saturating 56.3). Refinement is finished as a route — measured, not extrapolated |
 | `merger_fix/m4e_lvl5_dt001_r05000` | +2 levels, dt halved (0.01) | **55.96** (h11, lvl 5) | dt-convergence control at depth: **+0.36 vs the 55.60 twin, against a ±0.35 floor** — sitting on the boundary, one arm, and read as *no effect*. Second convergence pillar for M8: the ladder is a resolution ladder, not a timestep artefact |
-| `merger_fix/m9b_fill_r05000` | **first interior freeze**: +2 levels, RHS × (1−W) inside 1.3/1.8 from t = 53 | *(live)* | M9b arm A. Past 55.2 (the level-5 pair mean) it is beyond anything refinement reached; contamination at R = 14 only from 65.2 |
-| `merger_fix/m9b_fillwide_r05000` | same, skin 1.5/2.0 | *(live)* | M9b arm B — the radius-insensitivity twin. Differs from arm A in two numbers and nothing else |
+| `merger_fix/m9b_fill_r05000` | **first interior freeze**: +2 levels, RHS × (1−W) inside 1.3/1.8 from t = 53 | **COMPLETED t = 66.0** | **first run in campaign history to reach its stop time.** Zero NaN; the whole R = 14 window 58–65.5 on disk |
+| `merger_fix/m9b_fillwide_r05000` | same, skin 1.5/2.0 | **COMPLETED t = 66.0** | the radius-insensitivity twin: waveform identical to arm A to 5 digits at every sample — the fill radius is not in the physics. Also identical to the unfrozen lvl-5/6/7 arms over all shared times: the freeze is invisible at the detector |
+| `merger_fix/m9b_fill80_r05000` | arm A re-run, stop 80, rolling checkpoints (keep 1) | *(live)* | wave 7: R = 30 sees the collapse over 73–80.5; freeze contamination reaches R = 30 only at ≥ 81.0 — a second, causally clean measurement at an independent radius |
+| `merger_fix/m9b_fillwide80_r05000` | arm B re-run, stop 80 | *(live)* | wave 7 twin; differs in the two radii only |
 
 ---
 
