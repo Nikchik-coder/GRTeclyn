@@ -229,6 +229,30 @@ gate is green.
     engagement, faster than any arm has ever died. Scaling the shift/B RHS by
     (1 − W), even C²-smoothly, strangles the Gamma-driver mid-collapse; the
     guard stays off everywhere. The three guard-less arms run on.
+  - [x] **Final result: all four dead — gauge-source surgery is falsified
+    alongside matter surgery.** freeze **52.04** (h11), freezewide **52.03**
+    (h12 — first off-diagonal death), freezeonly **52.12** (h11).
+    - **freezeonly ≈ the undamped baseline** (52.12 vs r05000's 52.09):
+      cancelling the Bona-Masso source in the core changed *nothing*. The
+      K → lapse re-inflation loop is not the load-bearing mechanism — the
+      conformal metric h_ij blows up at the bar ends regardless of what the
+      slicing source does.
+    - **Taper + matter < matter alone** (52.04/52.03 vs fast's 52.42): the
+      taper engaged (measurable −0.4 shift against its exact matter-only twin
+      — that shift is the proof of engagement) and was mildly harmful.
+  - [x] **The wall verdict.** The t ≈ 52 death (Chk05000 cohort) has now
+    survived every interior intervention: resolution (+1.55 per 25%),
+    dissipation (−0.4), matter deletion at every window and rate (+0.5 max),
+    slicing-source cancellation (0), shift freezing (−1.8). It is
+    intervention-independent. Causal arithmetic: capturing the full burst at
+    radius R needs survival to ≈ 51.5 + R; the all-time record is 55.0 → R ≈
+    3.5, inside the near zone. The gap to R = 14 is ~13 units and no measured
+    knob moves it more than half a unit. **The wall is a property of the
+    phantom dissolution in moving-puncture CCZ4, not of any tunable.** The
+    remaining moves are formulation-level (true excision; a different slicing
+    family) or an M8 pivot: publish the convergent wall itself — inspiral
+    waveform clean at R = 14 to t ≈ 52, the dissolution and its falsification
+    table as the discovery.
 - [x] **M4b wave 3b — damp through the collapse: VETOED before launch**
   *(causality trap, caught in review 2026-09-01)*. The collapse at t ≈ 44–51.5
   is the physical *source* of the burst; matter damping during that window
@@ -236,6 +260,25 @@ gate is green.
   overlap by construction — it deletes the physics it is trying to record. rw's
   55.00 stands as evidence about engagement timing, not as a recipe. Chk04000
   stays in scratch as a fallback restart point only.
+- [ ] **M4b wave 4 — the last interior knobs: timestep and dissipation
+  direction** *(LAUNCHED 2026-09-01, user-proposed)*. The proposal was
+  dt_multiplier = 0.02 and sigma = 0.1 — both turn out to be the campaign
+  baseline already, in every run. So wave 4 tests the two *live* directions:
+  dt LOWER than baseline (a genuinely unmeasured axis), and sigma LOWER
+  (following the measured trend: sigma 1.0 died at 51.68, 0.1 at 52.09 — more
+  dissipation is worse, so less might be better). Same restart (Chk05000),
+  engagement 50.0, checkpoints off:
+
+  | arm | GPU | change vs baseline | matter damping | tests |
+  | --- | --- | --- | --- | --- |
+  | `m4d_dt001_fast` | 0 | dt_multiplier 0.02 → **0.01** | τ 0.05 ring | dt axis at the best-known config |
+  | `m4d_dt001_plain` | 1 | dt_multiplier 0.02 → **0.01** | none | dt axis in isolation vs undamped 52.09 |
+  | `m4d_dt0005_fast` | 2 | dt_multiplier 0.02 → **0.005** | τ 0.05 ring | 4× cut — amplifies any dt signal |
+  | `m4d_sig002_fast` | 3 | sigma 0.1 → **0.02** | τ 0.05 ring | dissipation lowered along the trend |
+
+  If the deaths sit at 52.0–52.6 again, the wall is confirmed
+  timestep-independent and the interior-knob space is exhausted in full; the
+  campaign decision (formulation-level move vs M8 pivot) is then forced.
 - [x] **M5 — Run B2, the wide window** *(folded into the sweep as `m4b_sledge`,
   same publishable-only-via-M6 status)*.
   - **Fallback inside the sweep** if 1+log re-inflation again lifts sick cells out of
@@ -408,9 +451,13 @@ merger claims must be rewritten to this timeline.
 | `merger_fix/m4b2_vfast_r05000` | radius 1.00/1.30 from t = 50, τ 0.02 | 51.88 | NaN in **K** — 2.5× past the optimum gave all the gain back and shocked the gauge: rate axis peaked at τ ≈ 0.05 |
 | `merger_fix/m4b2_fastsledge_r05000` | radius 2.00/2.50 from t = 50, τ 0.05 | **52.55** | NaN in h11 — nominal record among damped arms, but +0.13 over fast is inside the scatter: coverage falsified at the winning rate too |
 | `merger_fix/m4b2_fastcombo_r05000` | lapse 3e-2/1e-3 + radius 1.00/1.30 from t = 50, τ 0.05 | 52.42 | NaN in h11 — identical to fast: lapse selection adds nothing at any rate |
-| `merger_fix/m4c_freeze_r05000` | matter τ 0.05 ring + lapse-source taper 1.00/1.30, from t = 50 | *(live)* | wave 3a: freeze window = matter ring |
-| `merger_fix/m4c_freezewide_r05000` | matter τ 0.05 ring + lapse-source taper 2.00/2.50, from t = 50 | *(live)* | wave 3a: freeze covers the imaged K-pockets |
-| `merger_fix/m4c_freezeonly_r05000` | **no matter damping**, lapse-source taper 2.00/2.50, from t = 50 | *(live)* | wave 3a: the gauge fix in isolation |
+| `merger_fix/m4c_freeze_r05000` | matter τ 0.05 ring + lapse-source taper 1.00/1.30, from t = 50 | 52.04 | NaN in h11 — taper negated the matter gain: −0.4 vs its matter-only twin |
+| `merger_fix/m4c_freezewide_r05000` | matter τ 0.05 ring + lapse-source taper 2.00/2.50, from t = 50 | 52.03 | NaN in **h12** — first off-diagonal death; covering the pockets changed nothing |
+| `merger_fix/m4c_freezeonly_r05000` | **no matter damping**, lapse-source taper 2.00/2.50, from t = 50 | 52.12 | NaN in h11 — ≈ undamped baseline (52.09): slicing source is not the killer |
+| `merger_fix/m4d_dt001_fast_r05000` | dt_multiplier 0.01 (2× cut) + matter τ 0.05 ring | *(live)* | wave 4: dt axis, best-known config |
+| `merger_fix/m4d_dt001_plain_r05000` | dt_multiplier 0.01, no damping | *(live)* | wave 4: dt axis in isolation |
+| `merger_fix/m4d_dt0005_fast_r05000` | dt_multiplier 0.005 (4× cut) + matter τ 0.05 ring | *(live)* | wave 4: amplified dt signal |
+| `merger_fix/m4d_sig002_fast_r05000` | sigma 0.02 (5× down) + matter τ 0.05 ring | *(live)* | wave 4: dissipation lowered along the measured trend |
 | `merger_fix/m4c_freezeshift_r05000` | matter τ 0.05 ring + taper 2.00/2.50 + shift/B RHS × (1−W), from t = 50 | 50.24 | NaN in K — the shift guard is fatal: strangling the Gamma-driver mid-collapse kills in 0.24 units, the fastest death on record |
 
 ---
