@@ -9,12 +9,12 @@ Runs live under `runs/wormhole_merger/` (not in git, own README); the packed ext
 
 **The campaign in one line:** two drainhole throats merge only if one field is flipped;
 the merged object collapses, briefly holds a horizon, and the phantom scalar then
-destroys first the run (NaN at t ≈ 52–55) and then the horizon itself. Every knob
-inside the formulation is measured dead **except grid refinement, whose yield is
-super-linear** (+1.01 for the first doubling, +2.50 for the second) — so refinement
-is a candidate cure, not merely a delay. **User decision 2026-09-01: the merger
-signal at any price** — the plan is the refinement ladder (live to level 7) with
-late smooth-fill excision (M9b, coded and default-off) as insurance.
+destroys first the run (NaN at t ≈ 52–56) and then the horizon itself. Every knob
+inside the formulation is measured dead, and grid refinement — the one that looked
+like a cure — is now measured to **saturate at t ≈ 56**, two units short of the
+window we need to open. **User decision 2026-09-01: the merger signal at any
+price** — with the ladder spent, the route is late smooth-fill excision (M9b,
+coded, built and default-off).
 
 ---
 
@@ -32,8 +32,8 @@ construction, issue 12). Every interior knob has been turned and priced:
 
 | knob | best effect on the wall |
 | --- | --- |
-| **grid refinement on restart (M4e)** | **the only real axis, and its yield GROWS: +1.01 then +2.50 per halving of dx; stacks with damping** |
-| matter deletion (full window × rate plane) | +0.33 at level 3, +0.65 at level 4, **−0.84 at level 5** — it compensates for under-resolution and turns harmful once the grid resolves the region |
+| **grid refinement on restart (M4e)** | the only axis that ever moved the wall, but it **saturates**: +1.01, +2.50, **+0.53** per halving of dx — four rungs asymptote to t ≈ 56 |
+| matter deletion (full window × rate plane) | +0.33, +0.65, −0.84, **+0.05 or better at level 6** — no consistent sign; inside the ±0.35 floor at three of four levels |
 | timestep | 0 — **dt-converged** (halving: +0.17 inside scatter; quartering: −0.39) |
 | Kreiss–Oliger dissipation | flat plateau, harm at the high end (σ 1.0 died earlier) |
 | slicing-source cancellation | 0 (taper-only arm = undamped baseline to 0.03) |
@@ -45,15 +45,27 @@ construction, issue 12). Every interior knob has been turned and priced:
 newly created finest level). Both are signatures of a feature of the continuum
 solution, not of the integrator or the grid.
 
-**The arithmetic, revised twice in one day.** On the level-4 rung alone the ladder
-read +1 per doubling, needing level 17 to reach t = 66 — priced out, and M9 was
-forced. The level-5 rung then came in at **+2.50, two and a half times the
-previous rung**, and the two-point ratio (2.48) projects level 6 ≈ 61.8 and
-level 7 ≈ 77.2. If that holds, **refinement alone clears t = 66 at level 7**, which
-is inside the memory ceiling (≈ 7 GB per level; level 6 measured at 52 GB of 81).
-Two increments do not make a law: levels 6 and 7 are running and measure it
-directly. Plan for both outcomes — the ladder as the primary route, M9b as
-insurance that also buys the *fill-radius* validation the paper wants either way.
+**The arithmetic, revised three times in one day, and now closed.** On the level-4
+rung the ladder read +1 per doubling — level 17 to reach t = 66, priced out, M9
+forced. The level-5 rung then came in at **+2.50**, and the two-point ratio (2.48)
+projected level 6 ≈ 61.8 and level 7 ≈ 77.2 — refinement as an outright cure. Level 6
+measured it and the projection failed: **56.13, only +0.53**. The four clean rungs
+
+| level | dx | death | gain |
+| --- | --- | --- | --- |
+| 3 (baseline) | 0.0625 | 52.09 | — |
+| 4 | 0.03125 | 53.10 | +1.01 |
+| 5 | 0.015625 | 55.60 | +2.50 |
+| 6 | 0.0078125 | **56.13** | +0.53 |
+
+are a **saturating** sequence, not a growing one; level 5 was the outlier, not the
+law. Extrapolating the last gain, level 7 lands near 56.3 and level 8 near 56.4 —
+both far short of 58, where the target window even *begins*. **The ladder is spent as
+a route to the signal.** Two increments never made a law, and this one did not
+survive its first test. What refinement did buy is real and kept: +4.0 units of wall,
+and the strongest evidence in the campaign that the blowup is a continuum feature
+(the NaN moves onto each newly created finest level, every time, in h11).
+**M9b is no longer insurance — it is the route.**
 
 ---
 
@@ -129,38 +141,46 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
     moved onto the newest finest level: the shock is a real feature that
     sharpens into whatever grid resolves it, but refinement is now **outrunning**
     it rather than merely delaying it.
-  - [x] **The two ladders diverge, and matter damping crosses over from help
-    to harm.** Damped rungs: 52.42 → 53.75 → **54.76** (increments +1.33,
-    +1.01 — *decelerating*), against undamped 52.09 → 53.10 → 55.60
-    (+1.01, +2.50 — *accelerating*). Damping's effect by level: **+0.33,
-    +0.65, −0.84**. Reading: the deletion was compensating for an
-    under-resolved region; once the grid resolves that region the deletion
-    is just an unphysical perturbation and it costs time. **The clean
-    no-surgery route is winning outright** — which is also the route whose
-    waveform needs no M6 overlap caveat.
-  - [ ] **Open question the running arms answer: does adding a level even
-    touch the failure site?** The tagger's boxes are 160³ cells at every
-    level, so their half-widths *halve* as levels are added: level 4 reaches
-    r = 2.5, level 5 → 1.25, level 6 → 0.625, level 7 → 0.3125. The imaged
-    blowup ring sits at r ≈ 1–2. So in the lvl6 and lvl7 runs the resolution
-    **at r ≈ 1 is still level 5's dx = 0.015625** — identical to the lvl5
-    run. Sharp prediction: if the failure is at r ≈ 1, lvl6_plain dies near
-    55.6 like lvl5_plain and the ladder is over; if it dies near the
-    super-linear projection (~62), the failure is genuinely inside r = 0.625
-    and levels keep paying. **Do not launch level 8 before lvl6_plain
-    reports** — it would refine r < 0.156, almost certainly irrelevant.
-    If the box-coverage reading is right, the next axis is *wider* fine
-    boxes at the failure radius (a tagger change), not deeper ones.
-  - [ ] Live: **level 7 undamped** (dx 0.00390625, user go-ahead 2026-09-01 —
-    launched on the card the level-5 death freed, rather than waiting for the
-    level-6 verdict, because if the trend holds it is the arm that reaches the
-    signal), plus lvl5_fast and lvl6 ×2. `regrid_interval` needs **seven**
+  - [x] **Level 6 result: the ladder saturates and the campaign forks.**
+    Undamped 55.60 → **56.13** (h11, on the new level 6): **+0.53**, a fifth
+    of the previous rung. The super-linear projection (~61.8) is falsified by
+    5.7 units. Four rungs now read 52.09 / 53.10 / 55.60 / 56.13 — asymptotic
+    to t ≈ 56. The NaN did again move onto the newest finest level, so the
+    *diagnostic* claim survives intact; only the *cure* claim dies.
+  - [x] **Damping shows no consistent sign — the "crossover" was noise.**
+    Damped rungs 52.42 → 53.75 → 54.76 → **56.18+**; damping's effect by
+    level reads +0.33, +0.65, −0.84, **≥ +0.05**. With a ±0.35 reproducibility
+    floor, three of the four are consistent with zero and the level-5 −0.84
+    stands alone. Do not build on it: the honest statement is **matter
+    deletion buys nothing that survives refinement**, in either direction.
+    Practical consequence unchanged and now better founded — run the clean
+    arms, which need no M6 overlap caveat.
+  - [x] **Box coverage: mostly confirmed, and it explains the saturation.**
+    The tagger's boxes are 160³ cells at every level, so their half-widths
+    *halve* as levels are added: level 4 reaches r = 2.5, level 5 → 1.25,
+    level 6 → 0.625, level 7 → 0.3125, level 8 → 0.156. The imaged blowup
+    ring sits at r ≈ 1–2. The prediction on record was: die near 55.6 and the
+    ladder is over; die near 62 and deeper levels keep paying. **It died at
+    56.13** — the near end. Deeper levels refine a shrinking ball that the
+    failure has already left, which is exactly what a saturating sequence
+    looks like. **Level 8 stays cancelled** (it would refine r < 0.156). The
+    surviving refinement idea is *wider* fine boxes at r ≈ 1–2, a tagger
+    change — parked as M4f behind M9b, since it costs code and its ceiling is
+    the same continuum shock.
+  - [ ] Live, and now expected to confirm rather than win: **level 7 undamped**
+    (dx 0.00390625, launched on the card the level-5 death freed *before* the
+    level-6 verdict, on the then-live super-linear trend). Post-saturation its
+    projected death is ≈ 56.3, so it is a ~20 h confirmation of the asymptote,
+    not a route to the signal — **flagged for the user as a candidate to stop
+    and reassign to the first M9b arm.** Also live: `m4e_lvl6_fast` and the
+    halved-timestep control `m4e_lvl5_dt001`. `regrid_interval` needs **seven**
     entries at max_level 7. All ladder rungs run the *same* binary
     (`…ex.pre_fill`) so the ladder stays a single-variable experiment while the
-    production binary rebuilds with M9b.
+    production binary carries M9b.
 - [ ] **M9 — the formulation ladder** *(NEW 2026-09-01; user decision: the merger
-  signal at any price)*. What the field actually does about singular/violent
-  interiors, in ascending order of surgery:
+  signal at any price; **promoted from insurance to primary route** the same day,
+  when the level-6 rung saturated the refinement ladder at t ≈ 56)*. What the field
+  actually does about singular/violent interiors, in ascending order of surgery:
   1. *Moving punctures* — let the slicing hide the interior behind a horizon.
      **Our current method; measured insufficient here**: the killer sits at and
      outside the horizon, and the phantom dissolves the horizon itself.
@@ -335,11 +355,12 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 | `merger_fix/m4d_sig002_fast_r05000` | σ 0.02 + matter ring | 52.27 (h22) | dissipation flat at the low end too |
 | `merger_fix/m4e_lvl4_plain_r05000` | **+1 AMR level on restart** (dx 0.03125), no damping | **53.10** (h11, lvl 4) | resolution is a real axis: +1.01 vs 52.09 — first knob outside the scatter |
 | `merger_fix/m4e_lvl4_fast_r05000` | +1 level + matter τ 0.05 ring | **53.75** (h11, lvl 4) | stacks with damping: +1.33 vs 52.42 — clean-cohort record (rw's 55.00 is collapse-tainted) |
-| `merger_fix/m4e_lvl5_plain_r05000` | +2 levels (dx 0.015625), no damping | **55.60** (h11, lvl 5) | **all-time record, and the first clean one**: +2.50 over its lvl4 twin — the ladder is super-linear |
-| `merger_fix/m4e_lvl5_fast_r05000` | +2 levels + matter ring | **54.76** (h11, lvl 5) | **damping now COSTS 0.84** against the undamped twin's 55.60 — the crossover: it helped at levels 3–4, hurts at level 5 |
-| `merger_fix/m4e_lvl6_plain_r05000` | +3 levels (dx 0.0078125), no damping | *(live)* | first test of the super-linear projection (~61.8) |
-| `merger_fix/m4e_lvl6_fast_r05000` | +3 levels + matter ring | *(live)* | |
-| `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | *(live)* | projected ~77 ⇒ the arm that could reach t = 66 outright; ~59 GB of 81 on the card |
+| `merger_fix/m4e_lvl5_plain_r05000` | +2 levels (dx 0.015625), no damping | 55.60 (h11, lvl 5) | +2.50 over its lvl4 twin — the rung that looked super-linear; **the outlier, not the law** |
+| `merger_fix/m4e_lvl5_fast_r05000` | +2 levels + matter ring | 54.76 (h11, lvl 5) | −0.84 against its undamped twin — the only negative in the damping series, and level 6 does not repeat it |
+| `merger_fix/m4e_lvl6_plain_r05000` | +3 levels (dx 0.0078125), no damping | **56.13** (h11, lvl 6) | **all-time record, and clean** — but only **+0.53**: the ladder saturates and the super-linear projection (~61.8) is falsified |
+| `merger_fix/m4e_lvl6_fast_r05000` | +3 levels + matter ring | *(live, past 56.18)* | already past its undamped twin ⇒ damping's sign flips back; treat the series as zero |
+| `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | *(live)* | projected ≈ 56.3 post-saturation — now a confirmation arm, not a route to the signal; ~59 GB of 81 on the card |
+| `merger_fix/m4e_lvl5_dt001_r05000` | +2 levels, dt halved (0.01) | *(live)* | dt-convergence control at depth: does the level-5 record reproduce at half the timestep |
 
 ---
 
