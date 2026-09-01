@@ -14,8 +14,9 @@ inside the formulation is measured dead except grid refinement, which is **linea
 +1.43 per level** over four measured rungs — enough to reach the *start* of the
 window we need (level 7–8), far short of its end (level ~13, past the memory
 ceiling). **User decision 2026-09-01: the merger signal at any price** — the route
-to the whole burst is late smooth-fill excision (M9b, coded, built and default-off),
-with the ladder continuing as the independent cross-check.
+to the whole burst is late smooth-fill excision (M9b — coded, built, default-off, and
+**live since 2026-09-01 in two arms** that differ only in the fill radius), with the
+ladder continuing as the independent cross-check.
 
 ---
 
@@ -237,12 +238,16 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
     −(α² + κ)(K − 2Θ), κ ≈ 1. Prior: **low** — wave 3a showed the slicing source is
     not load-bearing, and h_ij is what blows — but falsifying it costs two GPU-hours
     and closes bullet 2 with data. Pass: death moves > +1 outside scatter.
-  - [ ] **M9b — smooth-fill excision: the main move** *(new default-off module,
-    ~1 day of code)*. At engagement time, snapshot every evolved field inside
-    r < r_start; after every full RK step (and after each regrid), overwrite
-    u ← (1 − W)·u + W·u_frozen with the C² quintic W (1 inside r_full, 0 at
-    r_start). The interior becomes static junk; the shock site r ≈ 1–2 sits
-    *inside* the fill and cannot steepen. Design answers to the three measured
+  - [ ] **M9b — smooth-fill excision: the main move** *(module `CoreFreezeFill`,
+    coded, built, default-off; two arms live since 2026-09-01)*. **What shipped
+    differs from the design sketched here and is simpler**: instead of snapshotting
+    the interior and overwriting the state after each RK step, the module multiplies
+    the *entire assembled RHS* by (1 − W) with the C² quintic W (1 inside r_full, 0
+    at r_start), applied **last** in `specificEvalRHS` so it freezes the sum. Same
+    end state — du/dt = 0 inside r_full, so the interior holds whatever it had at
+    engagement — with no snapshot buffer and nothing to re-apply after a regrid.
+    The shock site r ≈ 1–2 sits *inside* the fill and cannot steepen. Design answers
+    to the three measured
     failure modes: matter damping lost a *race* (rate-limited) — overwrite is
     instantaneous, so **late engagement is safe for a fill** (unlike damping);
     freezeshift died of a *partial* freeze — the fill freezes every field
@@ -264,9 +269,32 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
     - **Failure mode to watch:** the blend zone itself shocking. First answers:
       widen the ramp; engage slightly earlier; fill with a static smooth profile
       instead of the snapshot. If the blend zone is unfixable → M9c.
-    - Arms are proposed after the M4e read-out (they run on the best refined +
-      τ = 0.05 restart, engagement at wall − 0.3). Cost per arm ≈ the lvl4/5
-      arms' 3–4 cu/h → a full pass to 66 is an afternoon, not days.
+    - **The two arms actually launched (2026-09-01, wave 6).** Both restart from
+      Chk05000, undamped, `max_level = 5`, `stop_time = 66`, engagement
+      `from_time = 53.0`; they differ in **nothing but the skin radii**, so the
+      radius-insensitivity test is a genuine single-variable experiment (verified by
+      diff against the shared parent template and against each other).
+
+      | arm | r_full / r_start | contamination reaches R = 14 at | target window 58–65.5 |
+      | --- | --- | --- | --- |
+      | `m9b_fill` | 1.3 / 1.8 | 53 + (14 − 1.8) = **65.2** | clean |
+      | `m9b_fillwide` | 1.5 / 2.0 | 53 + (14 − 2.0) = **65.0** | clean |
+
+    - **Why max_level 5 and not a cheap coarse grid, given the freeze does the
+      work.** The arm must *reach* the engagement time under its own power. Level 3
+      dies at 52.09/52.42 — ~0.8 **before** t = 53, so it would never live to be
+      frozen; level 4 (53.10/53.75) is within the ±0.35 floor of engagement, a coin
+      flip. Level 5 (55.60/54.76) clears it by ~2 units. Engaging *earlier* to let a
+      coarse grid reach it fails twice over: the collapse is still sourcing the burst
+      until 51.5 (freezing before that deletes the signal), and engaging at 51.5 puts
+      contamination at R = 14 at 63.7 — *inside* the window. 53.0 is the only
+      comfortable slot, and level 5 is the cheapest grid that gets there.
+    - **Watch t = 53.0–53.5.** `CoreLapseFreeze`'s partial freeze died 0.24 code units
+      after switch-on, so a blend zone that fails, fails fast. Past 55.6 is new ground.
+    - **Follow-up once the fill holds** (not before): the frozen core no longer needs
+      fine cells, yet the geometric tagger keeps refining it. Moving the fine boxes
+      off the dead zone is worth roughly 3× speed and costs nothing physically.
+    - Cost per arm ≈ 4.3 cu/h → a full pass to 66 is an afternoon, not days.
   - [ ] **M9c — true excision** *(weeks; last resort)*. A real hole in the grid
     (lego boundary inside r ≈ 1, one-sided stencils, boundary tracked to stay
     inside the fill region), only if M9b's blend zone proves unfixable. Everything
@@ -393,6 +421,8 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 | `merger_fix/m4e_lvl6_fast_r05000` | +3 levels + matter ring | **56.71** (h11, lvl 6) | **all-time record**; +1.95 read alone ⇒ the opposite story, 34 min later. Pair mean **56.42**, and the ladder is linear at +1.43/level |
 | `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | *(live)* | **the discriminator**: linear fit says 57.9, the withdrawn saturating fit said 56.3. At 57.9 it touches the window start; ~59 GB of 81 |
 | `merger_fix/m4e_lvl5_dt001_r05000` | +2 levels, dt halved (0.01) | *(live)* | dt-convergence control at depth: does the level-5 record reproduce at half the timestep |
+| `merger_fix/m9b_fill_r05000` | **first interior freeze**: +2 levels, RHS × (1−W) inside 1.3/1.8 from t = 53 | *(live)* | M9b arm A. Past 55.2 (the level-5 pair mean) it is beyond anything refinement reached; contamination at R = 14 only from 65.2 |
+| `merger_fix/m9b_fillwide_r05000` | same, skin 1.5/2.0 | *(live)* | M9b arm B — the radius-insensitivity twin. Differs from arm A in two numbers and nothing else |
 
 ---
 
