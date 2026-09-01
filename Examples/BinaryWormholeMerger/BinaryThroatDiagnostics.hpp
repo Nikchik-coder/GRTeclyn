@@ -39,12 +39,28 @@
       * The coordinate separation of those two barycentres.
       * min(chi) and min(lapse) in each half-space - the per-throat collapse
         indicators.
-      * The outgoing-null-expansion proxy
-            theta_+ = 2 sqrt(chi)/r - (d chi/dr)/sqrt(chi) + A_rr - (2/3) K
-        on COORDINATE SPHERES about each throat and about the midpoint between
-        them.  The midpoint scan is the common-horizon detector: theta_+ <= 0
-        on a sphere enclosing both throats is the signature of fusion into a
-        single trapped region.
+      * The outgoing null expansion theta_+ of COORDINATE SPHERES about each
+        throat and about the midpoint between them, computed with the FULL
+        spatial metric (gamma_ij = h_ij/chi, det h = 1):
+            theta_+ = div_gamma(s) + K_ij s^i s^j - K,
+        s the unit gamma-normal of the sphere -- the same formula as the
+        validated offline scanner ah_radial_scan.py.  The midpoint scan is the
+        common-horizon detector: theta_+ <= 0 on a sphere enclosing both
+        throats is the signature of fusion into a single trapped region.
+
+    HISTORY - until 2026-09-01 this scan used the conformally-flat shortcut
+        theta_+ ~ 2 sqrt(chi)/r - (d chi/dr)/sqrt(chi) + A_rr - (2/3) K,
+    i.e. it dropped h_ij entirely.  That error is O(1) exactly where two deep
+    lapse/chi wells deform the conformal metric, and it produced false trapped
+    verdicts there: theta_common < 0 continuously over t = 42.3-60 in p045 (a
+    run with no collapse at all, throats receding), and the transient
+    t = 29.9-32.7 "fusion" signal on the d12 merger, six times shallower than
+    the p045 false positive.  Every binary_throat_diagnostics.dat written
+    before this date carries that artefact in its theta columns whenever the
+    scan sphere encloses or grazes both throats; per-throat columns far from
+    the companion are mildly affected.  The first genuine common trapped
+    surface on the d12 merger is t = 51.06 (this scan, full metric, r = 1.0),
+    offline-confirmed at t = 51.5 (r = 1.07).
 
     IMPORTANT - theta_+ is reduced per RADIAL SHELL, taking the MAXIMUM over
     each shell, and the reported horizon radius is the outermost shell whose
@@ -96,10 +112,10 @@ struct BinaryThroatDiagnostics
         //! Scan floor used INSTEAD of min_radius once collapsed.  The r < b/2
         //! inversion region that min_radius protects against belongs to an
         //! uncollapsed throat; after collapse it is trumpet interior and the
-        //! artefact is gone, while the horizon's coordinate radius shrinks
-        //! with chi and falls below the uncollapsed cut -- which is exactly
-        //! how the common-horizon track was lost after t = 32.7 on the d12
-        //! merger.  A few finest cells keeps the floored centre itself out.
+        //! artefact is gone, while a genuine horizon's coordinate radius is
+        //! small (r ~ 1 on the d12 merger) and would sit below the
+        //! uncollapsed cut.  A few finest cells keeps the floored centre
+        //! itself out.
         double collapsed_min_radius{0.5};
     };
 
@@ -249,8 +265,8 @@ struct BinaryThroatDiagnostics
         // theta_+ over that sphere.  Reducing a global minimum over all points
         // instead - the obvious but wrong thing - declares a horizon as soon as
         // a SINGLE point of a large sphere about throat A happens to graze
-        // throat B, where B's steep chi gradient overwhelms the 2 sqrt(chi)/r
-        // term.  That produces an enormous phantom "trapped surface" straddling
+        // throat B, where B's steep gradients drive theta_+ locally negative.
+        // That produces an enormous phantom "trapped surface" straddling
         // the whole binary at t = 0, and no exclusion radius fixes it: the
         // grazing region extends over a distance set by the separation, not by
         // the throat radius.
@@ -323,20 +339,47 @@ struct BinaryThroatDiagnostics
                         const amrex::Real pz =
                             prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2] - cz;
 
-                        // The radial derivative of chi is centre independent;
-                        // only the direction cosines change, so compute the
-                        // Cartesian gradient once.
-                        const amrex::Real dchi_dx =
-                            (arr(i + 1, j, k, c_chi) - arr(i - 1, j, k, c_chi)) /
-                            (2.0 * dx_arr[0]);
-                        const amrex::Real dchi_dy =
-                            (arr(i, j + 1, k, c_chi) - arr(i, j - 1, k, c_chi)) /
-                            (2.0 * dx_arr[1]);
-                        const amrex::Real dchi_dz =
-                            (arr(i, j, k + 1, c_chi) - arr(i, j, k - 1, c_chi)) /
-                            (2.0 * dx_arr[2]);
-
-                        const amrex::Real chi = arr(i, j, k, c_chi);
+                        // Full-metric expansion of the coordinate sphere:
+                        //   theta_+ = div_gamma(s) + K_ij s^i s^j - K
+                        // with gamma_ij = h_ij/chi (det h = 1) and s the unit
+                        // gamma-normal of r = const.  Both terms are
+                        // homogeneous of degree 0 in the (un-normalised)
+                        // direction X_i, so no ray normalisation is needed:
+                        //   u^a       = hi^{ab} X_b        (hi = h^{-1} = adj h)
+                        //   un        = X_a hi^{ab} X_b    (> 0 for SPD h)
+                        //   sqrt(g) s^a = u^a / (chi sqrt(un))     [the "flux"]
+                        //   div_gamma(s) = chi^{3/2} d_a(flux^a)
+                        //   K_ij s^i s^j - K = A_ab u^a u^b / un - (2/3) K
+                        // The divergence needs the flux at the six face
+                        // neighbours, so gather chi and adj h on the stencil
+                        // once; the adjugates are centre independent.
+                        constexpr amrex::Real CHI_FLOOR = 1.0e-12;
+                        const int off[7][3] = {{0, 0, 0},  {1, 0, 0}, {-1, 0, 0},
+                                               {0, 1, 0},  {0, -1, 0},
+                                               {0, 0, 1},  {0, 0, -1}};
+                        amrex::Real s_chi[7];
+                        // adj h, symmetric storage: 11, 12, 13, 22, 23, 33
+                        amrex::Real s_hi[7][6];
+                        for (int q = 0; q < 7; ++q)
+                        {
+                            const int ii = i + off[q][0];
+                            const int jj = j + off[q][1];
+                            const int kk = k + off[q][2];
+                            const amrex::Real h11 = arr(ii, jj, kk, c_h11);
+                            const amrex::Real h12 = arr(ii, jj, kk, c_h12);
+                            const amrex::Real h13 = arr(ii, jj, kk, c_h13);
+                            const amrex::Real h22 = arr(ii, jj, kk, c_h22);
+                            const amrex::Real h23 = arr(ii, jj, kk, c_h23);
+                            const amrex::Real h33 = arr(ii, jj, kk, c_h33);
+                            s_hi[q][0] = h22 * h33 - h23 * h23;
+                            s_hi[q][1] = h13 * h23 - h12 * h33;
+                            s_hi[q][2] = h12 * h23 - h13 * h22;
+                            s_hi[q][3] = h11 * h33 - h13 * h13;
+                            s_hi[q][4] = h12 * h13 - h11 * h23;
+                            s_hi[q][5] = h11 * h22 - h12 * h12;
+                            s_chi[q]   = amrex::max(arr(ii, jj, kk, c_chi),
+                                                    CHI_FLOOR);
+                        }
                         const amrex::Real K   = arr(i, j, k, c_K);
                         const amrex::Real A11 = arr(i, j, k, c_A11);
                         const amrex::Real A22 = arr(i, j, k, c_A22);
@@ -344,8 +387,6 @@ struct BinaryThroatDiagnostics
                         const amrex::Real A12 = arr(i, j, k, c_A12);
                         const amrex::Real A13 = arr(i, j, k, c_A13);
                         const amrex::Real A23 = arr(i, j, k, c_A23);
-                        const amrex::Real sqrt_chi =
-                            std::sqrt(amrex::max(chi, amrex::Real(1.0e-20)));
 
                         const amrex::Real ox[3]  = {px - aX, px - bX, px - mX};
                         const amrex::Real oy[3]  = {py - aY, py - bY, py - mY};
@@ -373,17 +414,75 @@ struct BinaryThroatDiagnostics
                                 continue;
                             }
 
-                            const amrex::Real Arr =
-                                (A11 * X * X + A22 * Y * Y + A33 * Z * Z +
-                                 2.0 * A12 * X * Y + 2.0 * A13 * X * Z +
-                                 2.0 * A23 * Y * Z) /
-                                r2;
-                            const amrex::Real dchi_dr =
-                                (X * dchi_dx + Y * dchi_dy + Z * dchi_dz) / r;
+                            // div_gamma(s): centred difference of the flux.
+                            bool ok         = true;
+                            amrex::Real div = 0.0;
+                            for (int d = 0; d < 3 && ok; ++d)
+                            {
+                                amrex::Real F[2]; // +, -
+                                for (int s = 0; s < 2 && ok; ++s)
+                                {
+                                    const int q = 1 + 2 * d + s;
+                                    const amrex::Real nx =
+                                        X + amrex::Real(off[q][0]) * dx_arr[0];
+                                    const amrex::Real ny =
+                                        Y + amrex::Real(off[q][1]) * dx_arr[1];
+                                    const amrex::Real nz =
+                                        Z + amrex::Real(off[q][2]) * dx_arr[2];
+                                    const amrex::Real u0 = s_hi[q][0] * nx +
+                                                           s_hi[q][1] * ny +
+                                                           s_hi[q][2] * nz;
+                                    const amrex::Real u1 = s_hi[q][1] * nx +
+                                                           s_hi[q][3] * ny +
+                                                           s_hi[q][4] * nz;
+                                    const amrex::Real u2 = s_hi[q][2] * nx +
+                                                           s_hi[q][4] * ny +
+                                                           s_hi[q][5] * nz;
+                                    const amrex::Real un =
+                                        u0 * nx + u1 * ny + u2 * nz;
+                                    if (un <= 0.0)
+                                    {
+                                        ok = false; // h not SPD: no verdict
+                                        break;
+                                    }
+                                    const amrex::Real ud =
+                                        (d == 0) ? u0 : ((d == 1) ? u1 : u2);
+                                    F[s] = ud / (s_chi[q] * std::sqrt(un));
+                                }
+                                if (ok)
+                                {
+                                    div += (F[0] - F[1]) / (2.0 * dx_arr[d]);
+                                }
+                            }
 
+                            // K_ij s^i s^j - K at the centre cell.
+                            const amrex::Real u0 = s_hi[0][0] * X +
+                                                   s_hi[0][1] * Y +
+                                                   s_hi[0][2] * Z;
+                            const amrex::Real u1 = s_hi[0][1] * X +
+                                                   s_hi[0][3] * Y +
+                                                   s_hi[0][4] * Z;
+                            const amrex::Real u2 = s_hi[0][2] * X +
+                                                   s_hi[0][4] * Y +
+                                                   s_hi[0][5] * Z;
+                            const amrex::Real un = u0 * X + u1 * Y + u2 * Z;
+                            if (un <= 0.0)
+                            {
+                                ok = false;
+                            }
+
+                            // A cell the formula cannot be trusted on (h not
+                            // positive definite) must read "not trapped", never
+                            // poison a shell into a false horizon: send +BIG.
                             const amrex::Real theta_plus =
-                                2.0 * sqrt_chi / r - dchi_dr / sqrt_chi + Arr -
-                                (2.0 / 3.0) * K;
+                                ok ? std::sqrt(s_chi[0]) * s_chi[0] * div +
+                                         (A11 * u0 * u0 + A22 * u1 * u1 +
+                                          A33 * u2 * u2 +
+                                          2.0 * (A12 * u0 * u1 + A13 * u0 * u2 +
+                                                 A23 * u1 * u2)) /
+                                             un -
+                                         (2.0 / 3.0) * K
+                                   : BIG;
 
                             amrex::Gpu::Atomic::Max(&p_max[c * NSHELL + ib],
                                                     theta_plus);
