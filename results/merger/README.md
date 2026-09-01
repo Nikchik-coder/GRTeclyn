@@ -1,6 +1,6 @@
-# Wormhole merger — packed campaign results
+# Drainhole merger — packed campaign results
 
-Two exotic-matter (phantom scalar) wormhole throats, given a gentle orbital push,
+Two exotic-matter (phantom scalar) drainhole throats, given a gentle orbital push,
 spiralling together in full 3+1 numerical relativity. This directory is the light
 extract of that campaign: every number the analysis rests on, the movies, a thinned set
 of stills, and enough provenance to rebuild any run. It is what survives if the machine
@@ -93,6 +93,160 @@ different Kreiss–Oliger dissipation.
 Everything not named above is identical across all nine: two drainhole throats, scale
 `a = 2`, ADM mass 1 each carried by the lapse, separation 12, box `L = 64`, `N = 128`,
 `max_level = 3`, Sommerfeld boundaries, σ = 0.1, `stop_time = 60`.
+
+## How these runs were launched
+
+Every run went through one launcher,
+[`grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh`](../../grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh),
+from the repository root, on a single node with four H100s. **The binary is never
+invoked directly** — AMReX writes `parameters_and_version.txt` into the working
+directory with the absolute output paths it was given, and that file reached a commit
+that way once. The launcher clones the params template, rewrites its path keys to point
+at node-local scratch, `cd`s into the (gitignored) run directory, registers a
+`launcher.pid`, and starts the plotfile consumer sidecar beside the evolution.
+
+Two frame sets were used. The first five runs asked for the six evolved fields; the
+damping arms added the metric and the derived views, which is also when `h_ij`/`A_ij`
+entered the plot list:
+
+```bash
+F6="--frames-fields chi K lapse phi Pi Weyl4_Re \
+    --frames-coord 32.0 --frames-zoom 32 --frames-cache-slices --frames-auto-zlim"
+
+F12="--frames-fields chi chi_minus_1 K lapse shift1 phi Pi \
+     Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed \
+     --frames-coord 32.0 --frames-zoom 32 --frames-cache-slices --frames-auto-zlim"
+
+L=grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+R=runs/wormhole_merger
+```
+
+### The four independent runs, one per card
+
+Launched together, detached, 2026-08-31:
+
+```bash
+WHM_PARAMS=params_merge_orbit_flip.txt      WHM_NAME=merge_orbit_flip_d12 \
+  WHM_GPU=0 WHM_CONSUME_ARGS="$F6" \
+  setsid nohup bash $L > $R/detached_gpu0.log 2>&1 < /dev/null &
+
+WHM_PARAMS=params_merge_headon_flip.txt     WHM_NAME=merge_headon_flip_d12 \
+  WHM_GPU=1 WHM_CONSUME_ARGS="$F6" \
+  setsid nohup bash $L > $R/detached_gpu1.log 2>&1 < /dev/null &
+
+WHM_PARAMS=params_merge_orbit_flip_n160.txt WHM_NAME=merge_orbit_flip_d12_n160 \
+  WHM_GPU=2 WHM_CONSUME_ARGS="$F6" \
+  setsid nohup bash $L > $R/detached_gpu2.log 2>&1 < /dev/null &
+
+WHM_PARAMS=params_merge_orbit_flip_p045.txt WHM_NAME=merge_orbit_flip_d12_p045 \
+  WHM_GPU=3 WHM_CONSUME_ARGS="$F6" \
+  setsid nohup bash $L > $R/detached_gpu3.log 2>&1 < /dev/null &
+```
+
+The `ml2` probe is the same orbit template with one knob, and it ran attached:
+
+```bash
+WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=merge_orbit_flip_d12_ml2 \
+  WHM_GPU=2 WHM_MAX_LEVEL=2 WHM_CONSUME_ARGS="$F6" bash $L
+```
+
+`WHM_MAX_LEVEL` rewrites `regrid_interval` to match — AMReX aborts if it does not
+carry exactly `max_level` values.
+
+### The restart chain
+
+Only `params_merge_orbit_flip.txt` sets `checkpoint_interval` (1000 coarse steps, every
+10 code units). The other three templates have it at `-1`, which is why `headon`, `n160`
+and `p045` cannot be continued and why the whole damping investigation happens on the
+orbit arm. Each restart names its **parent**; the launcher appends `_rNNNNN` itself, so
+a continuation gets its own run directory and scratch and never clobbers the parent's
+streams:
+
+```bash
+# r03000 -- the main arm resumed from the base run's newest checkpoint
+CK=$(ls -d /tmp/grteclyn_scratch/merge_orbit_flip_d12/*Chk[0-9]* | sort -V | tail -1)
+WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=merge_orbit_flip_d12 \
+  WHM_GPU=0 WHM_RESTART="$CK" WHM_CONSUME_ARGS="$F6" \
+  setsid nohup bash $L > $R/detached_gpu0.log 2>&1 < /dev/null &
+
+# r05000 -- damping on, thresholds left at the built-in defaults
+WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=merge_orbit_flip_d12 WHM_GPU=0 \
+  WHM_RESTART=/tmp/grteclyn_scratch/merge_orbit_flip_d12_r03000/BinaryWormholeChk05000 \
+  WHM_CONSUME_ARGS="$F12" \
+  setsid nohup bash $L > $R/detached_gpu0_r05000.log 2>&1 < /dev/null &
+
+# r04000 -- the wide lapse window, written into the template before launch
+WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=merge_orbit_flip_d12 WHM_GPU=0 \
+  WHM_RESTART=/tmp/grteclyn_scratch/merge_orbit_flip_d12_r03000/BinaryWormholeChk04000 \
+  WHM_CONSUME_ARGS="$F12" \
+  setsid nohup bash $L > $R/detached_gpu0_r04000.log 2>&1 < /dev/null &
+
+# sg10 -- same window, dissipation raised; WHM_SIGMA appends _sg10 to the name
+WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=merge_orbit_flip_d12 WHM_GPU=0 \
+  WHM_SIGMA=1.0 \
+  WHM_RESTART=/tmp/grteclyn_scratch/merge_orbit_flip_d12_r04000/BinaryWormholeChk05000 \
+  WHM_CONSUME_ARGS="$F12" \
+  setsid nohup bash $L > $R/detached_gpu0_sg10_r05000.log 2>&1 < /dev/null &
+
+# rw -- the radius window, also a template edit; renamed by hand to keep it apart
+WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=merge_orbit_flip_d12_rw WHM_GPU=0 \
+  WHM_RESTART=/tmp/grteclyn_scratch/merge_orbit_flip_d12_r04000/BinaryWormholeChk05000 \
+  WHM_CONSUME_ARGS="$F12" \
+  setsid nohup bash $L > $R/detached_gpu0_rw_r05000.log 2>&1 < /dev/null &
+```
+
+**The three damping arms differ from each other by edits to the params template, not by
+environment variables.** `core_damping_enabled`, the lapse thresholds and the radius
+window were written into `params_merge_orbit_flip.txt` between launches, so the template
+in git today is the *last* of them. The authoritative record of what each run actually
+executed is its own `evolution_params.txt` in this pack — that is the cloned copy, taken
+at launch.
+
+### Four things that will cost you a day if you skip them
+
+1. **No `env` prefix.** `setsid nohup env WHM_...=... bash $L` exits 0 in under a second
+   and writes a zero-byte log. Variables go *before* the whole `setsid nohup` chain, as
+   above.
+2. **A printed PID proves nothing.** Four runs launched with a plain `&` from an editor
+   session died when the editor restarted, losing 11, 11 and 3 code units on the arms
+   that had no checkpoints. Detachment means the launcher is a session leader whose
+   parent is init — check it, do not assume it:
+   ```bash
+   ps -eo pid,ppid,sess,args --no-headers | grep "[r]un_single.sh"
+   # each launcher must show ppid = 1 and sess = its own pid
+   ```
+3. **Decide what to extract before launching.** The consumer deletes each plotfile once
+   it has processed it (`--keep-last 3`), so anything not named in `WHM_CONSUME_ARGS`
+   is gone with the plotfile. The five runs launched without `h_ij`/`A_ij` in
+   `amr.plot_vars` can never be measured by the offline horizon finder — permanently.
+   Frames also need `--frames-auto-zlim`: the preset colour ranges are black-hole
+   values and wormhole frames come out blank without it.
+4. **Dry-run first.** `WHM_DRYRUN=1` resolves the name, template, binary, scratch,
+   restart checkpoint and consumer command, prints them, and touches nothing.
+
+Stop a run with the campaign stopper, never by pattern-killing the binary — other
+people's jobs share these cards:
+
+```bash
+bash grteclyn-wrapper/scripts/campaigns/stop_campaign.sh [--dry-run] runs/wormhole_merger/<run>
+```
+
+### After the run
+
+```bash
+# redraw every cached slice on one fixed colour scale, then stitch the movies
+.venv/bin/python grteclyn-wrapper/scripts/plot/rerender_frames.py <run>/frames --movies
+
+# the offline horizon scan (needs h_ij/A_ij in the plotfile)
+.venv/bin/python grteclyn-wrapper/scripts/validation/ah_radial_scan.py <plotfile>
+
+# rebuild this pack
+bash research/merger/pack_results.sh                  # streams, movies, stills, tables
+PACK_HORIZON=1 bash research/merger/pack_results.sh   # and re-run the horizon scan
+```
+
+Live frames are scaled per frame, so the colourbar moves; `rerender_frames.py` is what
+makes a colour mean the same value in every frame of a movie.
 
 ## `horizon/` — the dissolution measurement
 
