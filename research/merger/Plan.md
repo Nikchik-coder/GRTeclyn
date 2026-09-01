@@ -61,11 +61,12 @@ gate is green.
     horizon as well as inventing the false one.
   - [x] Died `NaN in post_timestep`, component K, level 3, at **t = 51.71**
     (r03000 died 52.06) — the expected undamped death, not a new failure.
-- [ ] **M4 — Run B, phase 2: the sealed window** *(LAUNCHED 2026-09-01 02:44, in
-  flight)*. From certification, engage radius-window damping strictly inside the
-  horizon: full below r = 0.8, cosine-off by 0.95. Causally sealed while the horizon
-  covers it, so the collapse waveform — already emitted — reaches R = 14
-  uncontaminated. `merger_fix/m4_sealed_r04000`, GPU 0, to stop_time = 66.
+- [x] **M4 — Run B, phase 2: the sealed window** *(ran 2026-09-01 — **FAILED, and
+  the failure is itself the decisive measurement**)*. From certification, engage
+  radius-window damping strictly inside the horizon: full below r = 0.8, cosine-off
+  by 0.95. Causally sealed while the horizon covers it, so the collapse waveform —
+  already emitted — reaches R = 14 uncontaminated. `merger_fix/m4_sealed_r04000`,
+  GPU 0, to stop_time = 66.
   - [x] **Restarts from chk 04000 (t = 40), not 05000.** Chk05000 carries r04000's
     *lapse-window* damping straight through the collapse at t = 44–47 — the very
     burst M7 must record. Restarting undamped at t = 40 with the radius window gated
@@ -75,10 +76,22 @@ gate is green.
     lapse branch is live whenever damping is on, so leaving it at 3e-2 would damp
     cells *wherever they sit* and r_damp,max would not be a constant — the causal-seal
     proof below would have nothing constant to compare against.
-  - **Pass:** run alive and NaN-free past t = 56 (the rw death and the extrapolated
-    dissolution time both behind it).
-  - **Fail (expected risk):** dies ≈ 55 like rw at the un-damped ring r = 0.7–1.1,
-    which sits at and *outside* a shrinking horizon → escalate to M4b.
+  - [x] **Result: died t = 51.6925, NaN in h11, level 3 — 0.015 units before the
+    undamped validation death (51.7075). The certified seal bought zero time.** The
+    damping itself demonstrably engaged and worked where it reached: |φ|max fell
+    0.82 → 0.57 at exactly t = 51.2, then stalled — two e-folding times of
+    full-weight damping (τ = 0.25) producing only 1.5× total decay — while max|Π|
+    kept growing 0.64 → 0.74 to the end. The surviving driver therefore sits where
+    the window's weight is small or zero: the ring r ≈ 0.95–1.3, at and outside the
+    horizon. Issue 8's law holds exactly — the death sits at the edge of what was
+    cleaned.
+  - [x] **Why rw (t = 55.00) beat the certified seal (t = 51.69): engagement time
+    is load-bearing.** rw's window ran from t = 50 on a core the r04000 lapse
+    window had already cleaned; the seal engaged at t = 51.2 on a full-strength
+    scalar with 0.5 units left to the crisis. Certification-gated engagement is too
+    late *by construction* — the cure must be in place before the ring goes
+    hypercritical, and publishability must be recovered through the M6 overlap
+    test instead of the engagement clock.
   - **The freeze question — measure it, don't assume it.** External hypothesis: the
     damping deletes the phantom that drives the shrinkage, so r_AH freezes at ≈ 1.0
     and the window is sealed forever. The counterargument is the seal itself, which
@@ -94,6 +107,16 @@ gate is green.
       crosses M4's r = 0.95 edge at **t ≈ 54.5**: that is the measured lifetime of the
       seal, and it is against the freeze hypothesis. M4's own r_AH(t) track is the
       decider; this only says the null hypothesis is already in trouble.
+    - [x] **Answered by M4 (2026-09-01): not frozen — the contraction accelerates.**
+      With the seal active, the in-code scan tracked r_AH = 1.0625 (t = 51.5) →
+      1.0000 (t = 51.65–51.69): ≈ 0.3 per code unit against 0.04 at birth. The
+      offline scanner on M4's own plotfiles reproduces the birth curve
+      (1.110 / 1.090 / 1.070 at 50.5 / 51.0 / 51.5) to the same shells as the
+      validation run — the physics repeats across restarts even though trajectories
+      don't. Interior damping does not halt the shrinkage: the driver crosses from
+      outside, exactly as the causal-seal argument said it must, and the linear
+      t ≈ 54.5 seal-lifetime estimate was optimistic by ≈ 3 units. A static radius
+      strictly inside this horizon has no runway at all.
   - [x] **Post-floor trajectories are not run-to-run reproducible** — measured on
     M2/M3 against r03000. Streams are bit-identical from the restart until χ first
     touches min_chi at t ≈ 44.9, then decohere (separation 0.477 vs 0.569 at t = 48;
@@ -106,21 +129,86 @@ gate is green.
     plot — r_AH(t) − r_damp,max staying strictly > 0 over the whole window the
     waveform is claimed from. No new code; if the window is ever slaved to the AH
     track, the moving edge must be logged too.
-- [ ] **M4b — steepen, don't widen** *(only if M4 dies at the ring)*. Swap the cosine
-  ramp for a sharp tanh step: full strength to r = 0.95, strictly zero by 1.0 —
-  reaches the inner half of the rw killer ring while still inside the certified
-  horizon at engagement. A static edge at 1.0 stays covered only until the
-  dissolution curve crosses it (≈ 52.5–53 on the measured track): this buys margin,
-  not immunity.
-  - **Pass:** alive past t = 56 with the causal-seal plot > 0 while the seal is
-    claimed. **Fail:** → M5.
-- [ ] **M5 — Run B2, the wide window** *(last resort, only if M4 and M4b both fail)*.
-  Full damping inside r = 1.5, off by 2.0 — reaches the killer, but the horizon
-  never exceeded 1.07, so this *guarantees* damping in the causal exterior. Expect
-  Ψ₄ contamination; treat M5 as a diagnostic arm, publishable only if M6 passes
-  anyway.
-  - **Pass:** alive past t = 56 **and** the M6 overlap test passes.
-  - **Fallback inside M4/M4b/M5** if 1+log re-inflation again lifts sick cells out of
+- [ ] **M4b — the four-arm sweep** *(LAUNCHED 2026-09-01, one arm per GPU, in
+  flight)*. M4 measured that (a) the killer lives at r ≈ 0.95–1.3, (b) engagement at
+  certification is too late, and (c) the horizon overruns any static inside-horizon
+  edge — so the old "steepen the ramp" M4b is superseded: a sharper edge at 0.95
+  seals faster what already bought nothing. All four arms restart from m4_sealed's
+  own Chk05000 (t = 50, clean — its damping never fired before 51.2), engage at
+  t = 50.0, run with **checkpoints off** to stop_time = 66:
+
+  | arm | GPU | window (full/zero radii) | what it tests |
+  | --- | --- | --- | --- |
+  | `m4b_wide` | 0 | radius 1.00 / 1.30, τ = 0.25 | the ring itself |
+  | `m4b_combo` | 1 | lapse 3e-2 → 1e-3 **and** radius 1.00 / 1.30 | rw's best-ever lapse window with its one escape route (re-inflated pockets at r ≈ 0.3) covered by the radius window |
+  | `m4b_fast` | 2 | radius 1.00 / 1.30, τ = 0.05 | window right but rate losing to the growth? |
+  | `m4b_sledge` | 3 | radius 2.00 / 2.50, τ = 0.25 | existence proof: full damping over the *whole* merged object (trapped-shell mean radius 1.63, equator max 2.3) — if even this dies, matter surgery is the wrong knife |
+
+  - Engagement at t = 50.0 predates horizon certification (51.03), so every arm is
+    diagnostic in old-M5's sense: publishable only through the M6 overlap test. The
+    collapse burst (source 44–47) predates t = 50 and stays clean in all arms.
+  - Resolution is **not** an arm: the ladder is closed (ml2 died 9.42, base ≈ 52,
+    n160 53.61 — a 25 % refinement bought 1.55 units, log-fit says t = 60 undamped
+    needs ~90× the compute), and this death sits at r ≈ 1.0, spanning ~32 finest
+    cells — not a resolution-starved feature. Neither is Kreiss–Oliger dissipation
+    (sg10 died *earlier*, 51.68).
+  - **Read-out:** survivors past t = 56 graduate to M6/M7. wide vs fast splits
+    window-vs-rate; combo vs wide isolates the lapse window's contribution; sledge
+    failing falsifies matter surgery entirely → the gauge route (lapse-freeze
+    fallback below) or accept that the record ends at horizon formation.
+  - [x] **Wave-1 result (2026-09-01): the rate is the control variable; window
+    shape and size are irrelevant.** wide 51.94, combo 51.94, sledge 51.91 — the
+    three τ = 0.25 arms died together (scatter below the 0.35 reproducibility
+    floor) regardless of whether the window covered the ring, added the lapse
+    branch, or swallowed the whole object. fast — identical to wide except
+    τ = 0.05 — outlived all of them and the undamped arm, dying at **52.42**. All
+    four: NaN in h11, level 3. 5× the rate bought 0.5 units: damping helps at the
+    rate axis and only there, and at τ = 0.25 it loses the race outright.
+  - [x] **The mechanism, imaged** (fast arm frames at t = 52.0, 0.4 before its
+    death): φ cleaned white inside r ≈ 1 with saturated crescents pinned at the
+    window edge; **wrong-sign K pockets (K ≈ −0.07) wrapped around the bar ends at
+    r ≈ 1–2** exactly where the crescents sit — the rw re-inflation loop
+    photographed; and Weyl4 showing the whirling bar radiating a clean quadrupole
+    spiral — **the collapse signature is being emitted and is in flight**; the
+    campaign needs only a run that survives long enough for it to arrive.
+- [x] **M4b wave 2** *(2026-09-01: all three arms dead in 8 minutes — the
+  (window, rate) plane is exhausted)*. The winning rate pushed and crossed with
+  the windows; same restart, engagement and checkpoints-off as wave 1:
+
+  | arm | GPU | window (full/zero) | τ | died | NaN |
+  | --- | --- | --- | --- | --- | --- |
+  | `m4b2_vfast` | 0 | radius 1.00 / 1.30 | **0.02** | **51.88** | **K**, level 3 |
+  | `m4b2_fastsledge` | 1 | radius 2.00 / 2.50 | 0.05 | **52.55** | h11, level 3 |
+  | `m4b2_fastcombo` | 3 | lapse 3e-2/1e-3 + radius 1.00 / 1.30 | 0.05 | **52.42** | h11, level 3 |
+
+  - [x] **The rate axis is non-monotonic and its peak is measured.** τ = 0.25 →
+    ~51.9, τ = 0.05 → 52.42, τ = 0.02 → 51.88: pushing 2.5× past the winner gave
+    *all* the gain back, and vfast alone died in **K** rather than h11 —
+    removing matter that violently shocks the gauge itself. The optimum sits at
+    τ ≈ 0.05 and buys ~0.5 units, full stop.
+  - [x] **Coverage and lapse-selection add nothing even at the winning rate.**
+    fastsledge (K-pockets fully inside the window) 52.55 = fast + 0.13, inside
+    the ±0.35 scatter; fastcombo 52.42 = fast exactly.
+  - [x] **Verdict: post-collapse matter surgery is falsified at every point of
+    the (window, rate) plane.** Best achievable ≈ 52.5 against a target of 66.
+    The killer the frames imaged — wrong-sign-K lapse re-inflation at the bar
+    ends — is a *gauge* instability that matter deletion can delay by half a
+    unit and no more.
+- [ ] **M4b wave 3 — attack the gauge** *(designed, NOT launched; needs
+  explicit go-ahead — new code and/or a new restart chain)*. Two independent
+  moves, combinable:
+  - **(a) Lapse freeze:** ∂ₜα = 0 inside the damping window (own default-off
+    flag in the gauge RHS, per the SOLID rule) so the imaged K < 0 pockets
+    cannot re-inflate. Restart from Chk05000 (t = 50), τ = 0.05 ring — the
+    measured optimum with its one failure mode surgically removed.
+  - **(b) Damp through the collapse:** restart from r03000's Chk04000 (t = 40)
+    with damping from ≈ 44 — how rw actually earned 55.00. Note rw *still
+    died*, so (b) alone likely buys ~3 more units, not 14; (a)+(b) together is
+    the strongest configuration on the table. Publishability of any (b) arm
+    rests entirely on the M6 overlap over the burst.
+- [x] **M5 — Run B2, the wide window** *(folded into the sweep as `m4b_sledge`,
+  same publishable-only-via-M6 status)*.
+  - **Fallback inside the sweep** if 1+log re-inflation again lifts sick cells out of
     the window: freeze the lapse in the damping zone (∂ₜα = 0 there, own default-off
     flag).
 - [ ] **M6 — overlap test** *(validates whichever of M4/M5 survived)*. Ψ₄ at R = 14
@@ -149,6 +237,12 @@ so no archived run changes meaning; the merger templates set `1`. Two guards bey
 that: a directory is a candidate only if it holds a complete `Header`, and the
 checkpoint a run was **restarted from** is never deleted. Verified end to end on a
 32³ smoke run — eight written, seven deleted, one on disk throughout.
+
+The M4b sweep itself runs with checkpoints **off** entirely (user call, 2026-09-01):
+four concurrent arms × 10 GB, all short and all restartable from the one kept parent
+— m4_sealed's Chk05000 (t = 50), which stays on scratch until the sweep concludes.
+M4's death-window plotfiles were pruned (7.2 GB) once the offline horizon scan on
+them was recorded.
 
 **Success = M7 + M6:** one run whose R = 14 Ψ₄ stream is clean through t ≈ 66, with
 an overlap-validated waveform and an honestly-labelled interior.
@@ -211,7 +305,7 @@ precisely where it fails, and the p045 control that exposes it was only run late
 | 44–47 | **collapse** — the merger proper | min χ → 1e-8 floor at 44.9, max\|K\| ×18; movies' crush at ≈ 45 |
 | 51.03–51.5 | **first genuine common trapped surface**, r = 1.0625 → 1.070 (sustained from 51.47) | fixed in-code scan (M3); offline scanner on the same run's plotfiles, 0.7 % apart |
 | 51.5–55 | horizon dissolves 1.07 → 0.59, accelerating; extrapolated gone ≈ 56 | two damped arms, one curve; sampling-doubling moves crossings ≤ 0.01 |
-| 52.06–55.0 | NaN deaths (r03000 52.06, n160 53.61, rw 55.00) | abort logs + last stream rows agree |
+| 51.69–55.0 | NaN deaths (m4_sealed 51.69, val 51.71, r03000 52.06, n160 53.61, rw 55.00) | abort logs + last stream rows agree |
 | 58–65.5 | collapse signature crosses R = 14 — **never recorded** (44–47 collapse arrives 58–61; the 51.5 horizon formation arrives 65.5 ⇒ `stop_time` must reach ≈ 66) | propagation at v ≈ c (measured on the first burst) |
 
 The black hole lives ~5 units, not the ~26 previously claimed: **it is born at t ≈ 51
@@ -232,8 +326,8 @@ is wrong and is being corrected with this document.
 | Zero φ/Π inside r = 1.5 "right after horizon formation (t = 35)" | Right spirit, wrong clock: **no horizon exists at t = 35** — engaging then changes the physics under study (that mistake is already in the rw arm's t = 50–51 window, ~1 unit early). Earliest defensible engagement is horizon certification, t ≈ 51.1 |
 | "You already have the main GW burst" | **Half wrong**: the recorded burst is plunge/whirl radiation. The collapse signature (source 44–51.5) has never been recorded — it is the missing piece, and it needs t ≈ 66, not t ≈ 85 |
 | Two-run split: pure-physics arm + post-horizon damped arm, causality argument | **Adopted** — it is steps 3–4 above. Corrections: undamped arms cannot supply the dissolution measurement (no h_ij in their plots — that stays with r04000/rw); and interior damping is causally sealed only while the horizon covers the window, which the dissolution itself un-does — hence the B/B2 split and the overlap test |
-| Interior damping halts the accretion ⇒ horizon freezes at ≈ 1.0, M4 risk "actually zero" | **Testable, not assumable — folded into M4, and the first evidence is against it.** The causal seal cuts both ways: a window strictly inside the horizon cannot influence the flux crossing it from outside, and r04000/rw dissolved with damping active. M3 now measures the horizon *contracting from birth with no damping in the run at all* — 1.110 → 1.070 over t = 50.5–51.5, ≈ 0.04/unit, crossing M4's edge at t ≈ 54.5. M4's own r_AH(t) track is still the decider; both outcomes are physics |
-| Steepen the ramp (tanh, zero by r = 1.0) before widening the window | **Adopted as M4b** — the intermediate fallback; M5 demoted to last-resort diagnostic |
+| Interior damping halts the accretion ⇒ horizon freezes at ≈ 1.0, M4 risk "actually zero" | **Testable, not assumable — folded into M4, and the first evidence is against it.** The causal seal cuts both ways: a window strictly inside the horizon cannot influence the flux crossing it from outside, and r04000/rw dissolved with damping active. M3 now measures the horizon *contracting from birth with no damping in the run at all* — 1.110 → 1.070 over t = 50.5–51.5, ≈ 0.04/unit, crossing M4's edge at t ≈ 54.5. M4's own r_AH(t) track is still the decider; both outcomes are physics. **Answered by M4 itself (2026-09-01): on the curve and accelerating** — 1.0625 → 1.000 over t = 51.5 → 51.69 with the seal active. The freeze hypothesis is dead, and M4 died with it |
+| Steepen the ramp (tanh, zero by r = 1.0) before widening the window | ~~Adopted as M4b~~ **Superseded by the M4 measurement**: the 0.95 seal bought 0.015 units, so a sharper edge at the same radius seals nothing. M4b became the four-arm sweep |
 | `causal_seal.dat` logging r_AH − r_damp | **Adopted as a derived plot, not new code** — the fixed scan already streams r_AH and the static window edge is a constant; a logger is only needed if the window ever moves |
 
 ---
@@ -269,7 +363,14 @@ merger claims must be rewritten to this timeline.
 | `..._n160` | 160³ instead of 128³ | 53.61 | everything pre-collapse converged; death moved +1.55 units and stayed |
 | `..._ml2` | max_level 2 | 9.42 | three refinement levels is the floor |
 | `merger_fix/val_ahfix_r04000` | fixed θ kernel, **no damping**, from t = 40 | 51.71 | the M2+M3 gate: artefact gone, real horizon found at 51.03/r = 1.0625, evolution bit-identical to r03000 to t ≈ 44.9 |
-| `merger_fix/m4_sealed_r04000` | radius window r < 0.80/0.95, engaging t = 51.2, lapse window off | *(live)* | M4, from t = 40 to stop_time 66 |
+| `merger_fix/m4_sealed_r04000` | radius window r < 0.80/0.95, engaging t = 51.2, lapse window off | 51.69 | M4 FAIL: the certified seal bought 0.015 units; killer measured at r ≈ 0.95–1.3, outside the window; NaN in h11 |
+| `merger_fix/m4b_wide_r05000` | radius 1.00/1.30 from t = 50, τ 0.25 — from M4's clean Chk05000 | 51.94 | NaN in h11 — window over the ring bought 0.25 units |
+| `merger_fix/m4b_combo_r05000` | lapse 3e-2/1e-3 **+** radius 1.00/1.30 from t = 50 | 51.94 | NaN in h11 — identical to wide: the lapse window added nothing |
+| `merger_fix/m4b_fast_r05000` | radius 1.00/1.30 from t = 50, **τ 0.05** | **52.42** | NaN in h11 — outlived every τ = 0.25 arm and the undamped arm: **the rate is the control variable** |
+| `merger_fix/m4b_sledge_r05000` | radius 2.00/2.50 from t = 50, τ 0.25 | 51.91 | NaN in h11 — damping the *whole object* at τ 0.25 changed nothing: window size falsified |
+| `merger_fix/m4b2_vfast_r05000` | radius 1.00/1.30 from t = 50, τ 0.02 | 51.88 | NaN in **K** — 2.5× past the optimum gave all the gain back and shocked the gauge: rate axis peaked at τ ≈ 0.05 |
+| `merger_fix/m4b2_fastsledge_r05000` | radius 2.00/2.50 from t = 50, τ 0.05 | **52.55** | NaN in h11 — nominal record among damped arms, but +0.13 over fast is inside the scatter: coverage falsified at the winning rate too |
+| `merger_fix/m4b2_fastcombo_r05000` | lapse 3e-2/1e-3 + radius 1.00/1.30 from t = 50, τ 0.05 | 52.42 | NaN in h11 — identical to fast: lapse selection adds nothing at any rate |
 
 ---
 
@@ -336,6 +437,15 @@ merger claims must be rewritten to this timeline.
     `Source/GRTeclynCore/CheckpointRetention.hpp`), pruning only after a successful
     write, never a checkpoint lacking a complete `Header`, never the one the run was
     restarted from, and default 0 = keep everything so no archived run is touched.
+14. **A causally sealed window engaged at certification buys nothing.** M4: the
+    r < 0.95 seal, gated to t = 51.2, died at 51.6925 (NaN in h11) — 0.015 units
+    before the undamped death — while the damping demonstrably worked where it
+    reached (|φ|max 0.82 → 0.57 at engagement, then stalled; |Π|max grew to the
+    end). Two lessons, both measured: the killer sits at r ≈ 0.95–1.3, outside any
+    inside-horizon window; and rw's 55.00 came from *early* engagement (t = 50, on
+    an inherited-clean core), not from its window's shape. Certification-first
+    sequencing sacrifices the run to save the proof — the M4b sweep inverts that
+    and buys the proof back through the M6 overlap test.
 
 ## Traps that must not regress
 
@@ -357,6 +467,8 @@ merger claims must be rewritten to this timeline.
 | restarting from a checkpoint that already carries damping | Chk05000 damps straight through the collapse M7 must record; restart earlier and gate the window by time instead |
 | relative paths handed to `run_single.sh` | it `cd`s into the run directory and uses `WHM_EXE`/`WHM_RUNS_DIR` verbatim — a relative value dies as exit 127 or `Couldn't open …/params.txt`, and the stub run directory must be removed before retrying |
 | comparing two restarts of one arm past the floor | they decohere at t ≈ 44.9 by construction — no claim tighter than the run-to-run scatter |
+| certification-gated damping engagement | engaging at t = 51.2 on a full-strength scalar reproduced the undamped death to 0.015 units; the cure must precede the crisis (engage ≤ t = 50) and publishability is recovered through the M6 overlap test, not the engagement clock |
+| re-opening closed cures | resolution (ml2/base/n160 ladder, ~90× compute for t = 60) and Kreiss–Oliger dissipation (sg10 died earlier) are both measured dead ends — spend GPUs on window shape, rate and engagement time instead |
 
 ## Dormant traps for Stage 2.2 (file-based initial data)
 
