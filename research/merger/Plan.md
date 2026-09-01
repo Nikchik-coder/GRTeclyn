@@ -36,7 +36,7 @@ construction, issue 12). Every interior knob has been turned and priced:
 | --- | --- |
 | **grid refinement on restart (M4e)** | the only axis that ever moved the wall: **linear, +1.43 per level** over four rungs (arm-pair means). Delivers the window's leading edge by level 7–8; its *end* needs level ~13, past the memory ceiling |
 | matter deletion (full window × rate plane) | +0.33, +0.65, −0.84, **+0.05 or better at level 6** — no consistent sign; inside the ±0.35 floor at three of four levels |
-| timestep | 0 — **dt-converged** (halving: +0.17 inside scatter; quartering: −0.39) |
+| timestep | 0 — **dt-converged at two depths**. Level 3: halving +0.17, quartering −0.39. Level 5: halving **+0.36** against a ±0.35 floor — the weakest possible "outside scatter", same death signature (h11, level 5), and priced out as a cure regardless (+0.36 per halving ⇒ ~2²³ × cost to reach t = 64) |
 | Kreiss–Oliger dissipation | flat plateau, harm at the high end (σ 1.0 died earlier) |
 | slicing-source cancellation | 0 (taper-only arm = undamped baseline to 0.03) |
 | shift freezing | fatal — −1.8, dead 0.24 units after engagement |
@@ -204,8 +204,11 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
     apart and the run settles it. It was flagged as a stop candidate under the
     saturating reading — **that recommendation is withdrawn; let it run.** At
     57.9 it would also be the first arm to reach the *start* of the target
-    window (58) to within the noise floor. Also live: the halved-timestep
-    control `m4e_lvl5_dt001`. `regrid_interval` needs **seven** entries at
+    window (58) to within the noise floor. **The halved-timestep control at the
+    same depth is done: 55.96 vs its twin's 55.60, +0.36 against a ±0.35 floor,
+    same h11 death on level 5 — no effect, and the ladder is confirmed a
+    resolution ladder rather than a timestep artefact.** `regrid_interval` needs
+    **seven** entries at
     max_level 7. All ladder rungs run the *same* binary (`…ex.pre_fill`) so
     the ladder stays a single-variable experiment while the production binary
     carries M9b.
@@ -420,7 +423,7 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 | `merger_fix/m4e_lvl6_plain_r05000` | +3 levels (dx 0.0078125), no damping | 56.13 (h11, lvl 6) | clean record; +0.53 read alone ⇒ the (withdrawn) saturating story |
 | `merger_fix/m4e_lvl6_fast_r05000` | +3 levels + matter ring | **56.71** (h11, lvl 6) | **all-time record**; +1.95 read alone ⇒ the opposite story, 34 min later. Pair mean **56.42**, and the ladder is linear at +1.43/level |
 | `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | *(live)* | **the discriminator**: linear fit says 57.9, the withdrawn saturating fit said 56.3. At 57.9 it touches the window start; ~59 GB of 81 |
-| `merger_fix/m4e_lvl5_dt001_r05000` | +2 levels, dt halved (0.01) | *(live)* | dt-convergence control at depth: does the level-5 record reproduce at half the timestep |
+| `merger_fix/m4e_lvl5_dt001_r05000` | +2 levels, dt halved (0.01) | **55.96** (h11, lvl 5) | dt-convergence control at depth: **+0.36 vs the 55.60 twin, against a ±0.35 floor** — sitting on the boundary, one arm, and read as *no effect*. Second convergence pillar for M8: the ladder is a resolution ladder, not a timestep artefact |
 | `merger_fix/m9b_fill_r05000` | **first interior freeze**: +2 levels, RHS × (1−W) inside 1.3/1.8 from t = 53 | *(live)* | M9b arm A. Past 55.2 (the level-5 pair mean) it is beyond anything refinement reached; contamination at R = 14 only from 65.2 |
 | `merger_fix/m9b_fillwide_r05000` | same, skin 1.5/2.0 | *(live)* | M9b arm B — the radius-insensitivity twin. Differs from arm A in two numbers and nothing else |
 
