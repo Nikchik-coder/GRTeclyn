@@ -2,6 +2,7 @@
 #define SIMULATIONPARAMETERS_HPP
 
 #include "BinaryThroatDiagnostics.hpp"
+#include "CoreFreezeFill.hpp"
 #include "CoreLapseFreeze.hpp"
 #include "CoreMatterDamping.hpp"
 #include "BinaryWormholeInitialData.hpp"
@@ -24,6 +25,7 @@ class SimulationParameters : public SimulationParametersBase
         read_diagnostics_params(pp);
         read_core_damping_params(pp);
         read_core_lapse_freeze_params(pp);
+        read_core_freeze_fill_params(pp);
         read_sponge_params(pp);
         read_tagging_params(pp);
         check_params();
@@ -210,6 +212,24 @@ class SimulationParameters : public SimulationParametersBase
         GRParmParse gauge_pp("gauge");
         gauge_pp.load("lapse_coeff", lapse_freeze_params.lapse_coeff, 2.0);
         gauge_pp.load("lapse_power", lapse_freeze_params.lapse_power, 1.0);
+    }
+
+    void read_core_freeze_fill_params(GRParmParse &pp)
+    {
+        // Smooth interior fill -- see CoreFreezeFill.hpp.  Own module,
+        // default off.  Unlike the damping window this one is NOT causally
+        // sealed: its radius comes from the measured failure site (r ~ 1-2),
+        // and purity is established by the causal-arrival budget plus the
+        // fill-radius insensitivity ladder, not by a horizon argument.
+        pp.load("core_freeze_fill", freeze_fill_params.enabled, false);
+        pp.load("core_fill_radius_start", freeze_fill_params.radius_start,
+                0.0);
+        pp.load("core_fill_radius_full", freeze_fill_params.radius_full, 0.0);
+        // Engage LATE: the fill has no rate to lose a race with, so it is
+        // spent as late as the wall allows, keeping the contaminated light
+        // cone out of the extraction window.
+        pp.load("core_fill_from_time", freeze_fill_params.from_time, 0.0);
+        freeze_fill_params.grid_center = wormhole_params.grid_center;
     }
 
     void read_sponge_params(GRParmParse &pp)
@@ -517,6 +537,7 @@ class SimulationParameters : public SimulationParametersBase
     BinaryThroatDiagnostics::params_t binary_diag_params{};
     CoreMatterDamping::params_t core_damping_params{};
     CoreLapseFreeze::params_t lapse_freeze_params{};
+    CoreFreezeFill::params_t freeze_fill_params{};
     ThroatTracker::params_t throat_tracker_params{};
 
     // Numerical sponge zone (radially-ramped extra KO dissipation).

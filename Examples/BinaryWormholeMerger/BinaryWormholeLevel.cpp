@@ -1,5 +1,6 @@
 #include "BinaryWormholeLevel.hpp"
 #include "BinaryThroatDiagnostics.hpp"
+#include "CoreFreezeFill.hpp"
 #include "CoreLapseFreeze.hpp"
 #include "CoreMatterDamping.hpp"
 #include "BinaryWormholeInitialData.hpp"
@@ -278,6 +279,22 @@ void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                                freeze(i, j, k, rhs_arrs[box_no],
                                       soln_c_arrs[box_no]);
                            });
+    }
+
+    // Smooth interior fill (CoreFreezeFill.hpp): scale the WHOLE assembled
+    // RHS by (1 - W) so the core stops evolving and becomes static junk,
+    // leaving the exterior -- and the wave zone -- untouched.  Applied last,
+    // after every other RHS contributor, because it must freeze the sum: a
+    // term added after it would evolve the region this module froze, which
+    // is precisely the partial freeze that killed the freeze_shift arm.
+    if (simParams().freeze_fill_params.enabled)
+    {
+        const CoreFreezeFill fill(simParams().freeze_fill_params,
+                                  Geom().CellSizeArray(), Geom().ProbLoArray(),
+                                  a_time);
+        amrex::ParallelFor(a_rhs,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           { fill(i, j, k, rhs_arrs[box_no]); });
     }
 
     amrex::Gpu::streamSynchronize();
