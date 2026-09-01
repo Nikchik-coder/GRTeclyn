@@ -17,7 +17,7 @@ number describes the core, not an approach.
 | merge_orbit_flip_d12_rw_r05000 | radius window: full inside r = 0.5, off by 0.7, from t = 33 | 50.01 | 55.00 | NaN at t = 55.00 | 0.32 | 51.06 | 1.000e-10 | 5.673e-03 |
 | merge_headon_flip_d12 | head-on: no orbital momentum | 0.00 | 44.00 | NaN at t = 44.00 | 0.44 | 29.05 | 1.527e-03 | 2.182e-03 |
 | merge_orbit_flip_d12_p045 | momentum 0.45 instead of 0.12 | 0.00 | 60.01 | finished clean at t = 60.01 | 3.95 | 42.30 | 9.786e-04 | 1.545e-02 |
-| merge_orbit_flip_d12_n160 | 160 cells per side instead of 128 | 0.00 | 29.05 | still running | 3.11 | - | 5.221e-02 | 2.510e-03 |
+| merge_orbit_flip_d12_n160 | 160 cells per side instead of 128 | 0.00 | 53.61 | NaN at t = 53.61 | 0.05 | 29.79 | 1.000e-10 | 3.835e-03 |
 | merge_orbit_flip_d12_ml2 | max_level = 2 instead of 3 | 0.00 | 9.42 | NaN at t = 9.42 | 11.63 | - | 2.162e-01 | 1.442e-02 |
 
 Full column set, including the constraint and geometry extrema, is in

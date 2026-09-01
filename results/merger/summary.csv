@@ -6,5 +6,5 @@ merge_orbit_flip_d12_sg10_r05000,"wide lapse window, dissipation sigma 0.1 -> 1.
 merge_orbit_flip_d12_rw_r05000,"radius window: full inside r = 0.5, off by 0.7, from t = 33",50.01,55.00,NaN at t = 55.00,1.000e-10,2.371e-06,3.087,5.673e-03,1.653e-02,0.55,0.32,52.66,0.42,51.06,1.00
 merge_headon_flip_d12,head-on: no orbital momentum,0.00,44.00,NaN at t = 44.00,1.527e-03,3.059e-06,0.536,2.182e-03,4.425e-03,11.94,0.44,39.85,0.63,29.05,3.62
 merge_orbit_flip_d12_p045,momentum 0.45 instead of 0.12,0.00,60.01,finished clean at t = 60.01,9.786e-04,3.179e-04,0.154,1.545e-02,7.600e-03,11.94,3.95,40.00,4.61,42.30,6.19
-merge_orbit_flip_d12_n160,160 cells per side instead of 128,0.00,29.05,still running,5.221e-02,5.466e-06,0.159,2.510e-03,5.290e-04,11.95,3.11,28.85,3.15,-,-
+merge_orbit_flip_d12_n160,160 cells per side instead of 128,0.00,53.61,NaN at t = 53.61,1.000e-10,2.095e-06,0.917,3.835e-03,9.539e-03,11.95,0.05,52.82,0.45,29.79,3.40
 merge_orbit_flip_d12_ml2,max_level = 2 instead of 3,0.00,9.42,NaN at t = 9.42,2.162e-01,1.000e-08,0.509,1.442e-02,2.107e-04,11.88,11.63,7.45,12.13,-,-

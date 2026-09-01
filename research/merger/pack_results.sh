@@ -61,7 +61,7 @@ mkdir -p "${DEST}/campaign" "${DEST}/horizon"
 # matched to how long the run is: the whole point of a still here is to show the
 # merger, the burst and the dissolution, not to re-store the movie frame by
 # frame.  "<run>:<dt>" -- any run not named gets movies but no stills.
-STILLS="merge_orbit_flip_d12_r03000:5 merge_orbit_flip_d12_rw_r05000:1 merge_orbit_flip_d12_p045:10 merge_headon_flip_d12:5"
+STILLS="merge_orbit_flip_d12_r03000:5 merge_orbit_flip_d12_rw_r05000:1 merge_orbit_flip_d12_p045:10 merge_headon_flip_d12:5 merge_orbit_flip_d12_n160:10"
 STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 
 # ---------------------------------------------------------------------------

@@ -6,8 +6,10 @@ gates and the file-by-file design: [Reference.md](Reference.md).
 
 ---
 
-Every run cited below lives under [`runs/wormhole_merger`](../../runs/wormhole_merger/README.md),
-grouped by campaign stage with a `NOTES.md` per stage.
+Every run cited below lives under `runs/wormhole_merger/`, which is **not in git** —
+it is the working tree on the machine that produced it, grouped by campaign stage
+with a `NOTES.md` per stage and a `README.md` explaining each run. What is in git is
+the light extract: [`results/merger/`](../../results/merger/README.md).
 
 ## The plan
 
@@ -67,8 +69,12 @@ grouped by campaign stage with a `NOTES.md` per stage.
   (m = 2 amplitude 2.5e-2 peaking t = 37.5) is real outgoing radiation, not a
   constraint mode. The second, larger swell was truncated by the t = 52 NaN — the
   restarted run records it whole
-- [ ] **3.3** Convergence and error budget — n160 probe in flight (t ≈ 26, ~4.9
-  units/h, ETA ≈ 7 h to t = 60); **p045 momentum variation COMPLETED t = 60 with zero
+- [x] **3.3** Convergence and error budget — **n160 done 2026-09-01, and it settles
+  the resolution question (§11)**: N = 160 undamped died at t = 53.61 against the
+  coarse arm's 52.06, while the inspiral (≤ 1.8 %, two trackers), the common trapped
+  region (0.19 units, 1 % in radius) and the Ψ₄ amplitude (0.2–4 %, two radii) all
+  converged. Refining postpones the death by 3 % and removes nothing; reaching t = 60
+  this way would cost ~90×. **p045 momentum variation COMPLETED t = 60 with zero
   NaN, 2026-08-31 — because it never merges**: it is a periapsis passage. Validated
   against the tracker: separation 11.9 → minimum 3.95 at t = 40 (closest approach)
   → receding to 4.6 by t = 60, with the movie showing the same turn-and-expand.
@@ -118,7 +124,7 @@ grouped by campaign stage with a `NOTES.md` per stage.
 | **rw** (radius window) | Longest survivor, t = 55.00 — and its snapshots caught the discovery: the horizon shrinking 1.07 → 0.59, dissolving under phantom accretion (§10) |
 | **headon** probe | Died t = 44 at its own core collapse (old binary, no damping) — awaits rerun once the recipe settles |
 | **p045** probe | **Completed t = 60, zero NaN** — never merges: periapsis at t = 40 (separation 3.95), then the throats fly apart again |
-| **n160** probe | Still running 2026-08-31 (t ≈ 26, ~4.9 units/h) — the convergence check on the merger era |
+| **n160** probe (25 % finer grid) | Died t = 53.61, same NaN — but everything before the collapse converged with the coarse run. Refining buys 1.55 units and removes nothing (§11) |
 | **ml2** probe | `max_level = 2`: NaN at t = 9.42, long before the throats meet — three refinement levels is the floor for the binary too |
 
 The packed, git-committed extract of all nine — streams, waveforms, movies, stills,
@@ -155,6 +161,8 @@ The black hole, not the wormhole pair, is the fragile object in this system.
 | the offline Θ finder is live | full-metric radial scan, validated 1.07 vs ≈ 1.0 against the in-code proxy at t = 51.5 (§10) |
 | p045 never merges | orbit holds at p = 0.45, throats end 4.6 apart, zero NaN to t = 60 — the death is merger + collapse, not evolution length |
 | **the horizon fused at t ≈ 30** | shell-max θ₊ ≤ 0 on spheres enclosing both throats from t = 29.93 to 32.74, deepest −0.033; the visual "contact" at t ≈ 45 was interior coordinate motion (§9) |
+| **the merger itself is converged** | 25 % finer grid: inspiral within 1.8 % on two trackers, horizon 0.19 units earlier and 1 % in radius, Ψ₄ within 0.2–4 % at two radii (§11) |
+| **resolution is not the cure** | 1.25× finer buys 1.55 code units of survival; reaching t = 60 undamped would need ~400 cells per side, ~90× the cost (§11) |
 | **the radiation is real** | Ψ₄ at R = 30 is a time-shifted copy of R = 14 with lag Δt = Δr = 16 — outgoing at v ≈ c |
 | the collapsed core outlives the vacuum trick | NaN at t = 52.07 with the scalar still at 84 % on the frozen core; the puncture floors protect geometry, not matter (§9) |
 | the matter cure must reach the matter | first damping window (lapse < 1e-6) covered ~3 cells and moved the death 0.02; the scalar bulk sits at lapse 1e-6..3e-2, inside the horizon — window retuned, revalidation in flight (§9) |
@@ -495,7 +503,7 @@ released from rest, ADM mass in the lapse, never aimed momenta.
 ### 8. The throats repel — and reversing one makes them fall
 
 `orbit_d12_p012`, launched 2026-08-31
-([run](../../runs/wormhole_merger/03_two_throats/orbit_d12_p012),
+(run `03_two_throats/orbit_d12_p012`,
 [params_orbit_drainhole.txt](../../Examples/BinaryWormholeMerger/params_orbit_drainhole.txt),
 entry point [run_spiral.sh](../../grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_spiral.sh)):
 two equal drainholes, a = 2, m = 1, at d = 12 on the x-axis, tangential Bowen–York
@@ -545,9 +553,9 @@ window.
 
 | arm | run | prediction | measured | verdict |
 | --- | --- | --- | --- | --- |
-| A `ctrl_rest_d12` | [run](../../runs/wormhole_merger/03_two_throats/ctrl_rest_d12), [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest.txt) | separates, net ≈ 4× g outward | **+0.0127 outward**, +0.47 by t = 11.5 | repulsion confirmed at zero momentum |
-| B `ctrl_rest_a1` | [run](../../runs/wormhole_merger/03_two_throats/ctrl_rest_a1), [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest_a1.txt) | separates ≈ 4× weaker (net 1× g vs 4×) | **+0.0042 outward**, 3.0× weaker | charge set by *width*: confirmed, 25 % under |
-| C `ctrl_flip_d12` | [run](../../runs/wormhole_merger/03_two_throats/ctrl_flip_d12), [params](../../Examples/BinaryWormholeMerger/params_ctrl_flip.txt) | **falls together, net ≈ 6× g** | **−0.0196 inward**, −0.56 by t = 10.5 | merger route confirmed |
+| A `ctrl_rest_d12` | run `03_two_throats/ctrl_rest_d12`, [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest.txt) | separates, net ≈ 4× g outward | **+0.0127 outward**, +0.47 by t = 11.5 | repulsion confirmed at zero momentum |
+| B `ctrl_rest_a1` | run `03_two_throats/ctrl_rest_a1`, [params](../../Examples/BinaryWormholeMerger/params_ctrl_rest_a1.txt) | separates ≈ 4× weaker (net 1× g vs 4×) | **+0.0042 outward**, 3.0× weaker | charge set by *width*: confirmed, 25 % under |
+| C `ctrl_flip_d12` | run `03_two_throats/ctrl_flip_d12`, [params](../../Examples/BinaryWormholeMerger/params_ctrl_flip.txt) | **falls together, net ≈ 6× g** | **−0.0196 inward**, −0.56 by t = 10.5 | merger route confirmed |
 
 **The sign rule is measured, not assumed.** The decisive number is the ratio of arm C's
 infall to arm A's escape at matched times. Same masses, same widths, same separation, same
@@ -611,7 +619,7 @@ ordinary black hole plus radiated scalar, which is not a failure mode but the he
 and the radiated fraction as its two numbers.
 
 **Stage 2.7 — the merger run.** `merge_orbit_flip_d12`
-([run](../../runs/wormhole_merger/merge_orbit_flip_d12),
+(run `merge_orbit_flip_d12`,
 [params_merge_orbit_flip.txt](../../Examples/BinaryWormholeMerger/params_merge_orbit_flip.txt)),
 launched 2026-08-31 on GPU 0 after the like-charge baseline was stopped at t = 20 having
 opened by 2.02 units and still accelerating apart. It is `params_orbit_drainhole.txt` with
@@ -720,6 +728,58 @@ Limitation for the record: runs launched before 2026-08-31 (r03000, headon, p045
 n160) did not plot h_ij/A_ij, so the finder cannot measure them — the truly
 undamped control is unmeasurable, permanently. Every future launch keeps the full
 plot list.
+
+### 11. Refining the grid delays the death — it does not remove it
+
+The obvious first answer to a NaN is "resolve it". `merge_orbit_flip_d12_n160`
+tests that directly: 160 cells per side instead of 128 (dx 0.4 instead of 0.5,
+25 % finer, ×2.4 the cost), everything else identical, **no damping at all**, and
+run from t = 0 to death in one piece — the only undamped arm with no restart
+boundary anywhere in it.
+
+It died 2026-09-01 with the same NaN in `h11` on level 3, at **t = 53.61**.
+
+| | N = 128, undamped | N = 160, undamped |
+| --- | --- | --- |
+| death | NaN at **t = 52.06** | NaN at **t = 53.61** (+1.55) |
+| separation at t = 0 / 20 / 28 / 32 | 11.938 / 8.256 / 3.611 / 2.063 | 11.950 / 8.330 / 3.612 / 2.070 |
+| common trapped region first seen | t = 29.93 | t = 29.74 |
+| its largest radius | 3.438 | 3.400 |
+| L2 Ham at t = 0 / 20 / 30 | 2.99e-3 / 4.39e-3 / 3.56e-3 | 2.53e-3 / 2.78e-3 / 2.52e-3 |
+| min χ at t = 10 / 20 / 30 | 3.58e-6 / 8.05e-6 / 1.28e-5 | 1.71e-6 / 3.47e-6 / 5.67e-6 |
+| last clean state (0.5 before the end) | min χ 1.0e-8 (floored), max\|K\| 1.67 | min χ 2.1e-6, max\|K\| 0.92 |
+
+**Everything before the collapse converges.** The inspiral agrees to ≤ 1.8 % at
+every matched time out to t = 32 on *both* trackers independently; the common
+trapped region appears 0.19 units earlier and reaches within 1 % of the same
+radius; the extracted Ψ₄ ℓ = 2, m = 0 amplitude at R = 14 matches the coarse run
+to 0.2–4 % over t = 5–30, at both extraction radii. The physics of the merger is
+not a resolution artefact.
+
+**The death is not removed, it is postponed.** A 1.25× finer grid buys 1.55 code
+units — 3 %. Fitting the two points to a logarithm (which is an extrapolation
+from two points, not a measurement) gives ≈ 7 units of survival per e-folding of
+resolution, so reaching t = 60 undamped would need N ≈ 400: 3× finer in each of
+three dimensions and in time, roughly **90× the cost of the run that already takes
+9 hours**. Refinement is not the cure. It is worth saying plainly because it was
+the cheapest hypothesis on the list and it is now closed.
+
+**What the finer grid does change** is the character of the death. min χ tracks
+lower everywhere on the finer grid — 2.3× lower at matched times, the origin
+resolving deeper as it should — and at the end it has *not* reached the 1e-8 floor
+that the coarse run sits on from t = 50, while max \|K\| at the last clean step is
+0.92 against 1.67. The finer run dies later and dies softer, with the puncture
+floors less engaged. That is consistent with §9: the floors protect geometry and
+not matter, and postponing the moment the geometry floors postpones the NaN.
+
+Validation. Death time from two sources — the abort line in `run.log` and the last
+row of `collapse_diagnostics.dat`, agreeing at 53.61. Inspiral from two independent
+trackers (`binary_throat_diagnostics.dat` and `throat_track.dat`), agreeing on both
+runs. Waveform at two extraction radii. The horizon numbers are the in-code radial
+proxy on both runs — the same instrument on both sides, so the *comparison* is
+sound even though the absolute value is not offline-verified: n160 predates the
+h_ij/A_ij plot list, so §10's finder cannot be run on it. That gap is now closed
+for future launches, not for this one.
 
 ## Traps that must not regress
 

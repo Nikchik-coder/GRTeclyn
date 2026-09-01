@@ -8,7 +8,8 @@ that produced it does not.
 
 - The reasoning and the full argument: [`research/merger/Plan.md`](../../research/merger/Plan.md)
 - The article in preparation: [`research/merger/article/research.tex`](../../research/merger/article/research.tex)
-- The working run tree (gitignored, ~1.5 GB): [`runs/wormhole_merger/`](../../runs/wormhole_merger/README.md)
+- The working run tree, **not in git** (~1.6 GB, on the machine that produced it):
+  `runs/wormhole_merger/`, which carries its own README and a `NOTES.md` per stage
 - Rebuild this directory: `bash research/merger/pack_results.sh`
 
 ## The result, in five lines
@@ -26,6 +27,10 @@ that produced it does not.
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy to t = 60 with no NaN at all**. The instability belongs to the merged core,
    not to the code.
+6. And it is not a resolution artefact. A 25 % finer grid reproduces the inspiral to
+   within 1.8 %, the horizon formation to within 0.19 units and the waveform to within
+   4 % — and then dies of the same NaN 1.55 units later. Refining postpones the failure
+   by 3 %; reaching t = 60 that way would cost roughly 90× the compute.
 
 ## Layout
 
@@ -61,8 +66,14 @@ Not packed, and not recoverable from here: plotfiles, checkpoints, the full fram
 
 Nine runs. The first five are one chain — each restarts from the previous one's
 checkpoint, changing exactly one thing, hunting the same failure. The rest are
-independent probes. [`runs/wormhole_merger/README.md`](../../runs/wormhole_merger/README.md)
-tells the same story at length; `summary.md` has the measured columns.
+independent probes. `summary.md` has the measured columns for all of them.
+
+Reading a name: `merge_orbit_flip_d12_rw_r05000` is a **merge** run, throats on an
+**orbit** (given tangential momentum) rather than dropped head-on, one throat's scalar
+field **flipped** in sign, started **d = 12** apart, using the **r**adius **w**indow
+damping, **r**estarted from checkpoint **05000**. `_pNNN` is a different tangential
+momentum, `_nNNN` a different cell count, `_mlN` a different `max_level`, `_sgNN` a
+different Kreiss–Oliger dissipation.
 
 | run | what is different | ran to | what happened |
 | --- | --- | --- | --- |
@@ -73,7 +84,7 @@ tells the same story at length; `summary.md` has the measured columns.
 | `..._rw_r05000` | damping anchored in **radius**, not lapse | **55.00** | Longest survivor, and the one that caught the horizon dissolving. |
 | `merge_headon_...` | dropped head-on, no orbital momentum | 44.00 | Merges harder and sooner (horizon at t = 29), dies the same death. |
 | `..._p045` | momentum 0.45 instead of 0.12 | **60.01, clean** | Never merges: closest approach 3.95 at t = 40, then back out to 4.6. The healthy control. |
-| `..._n160` | 160 cells per side instead of 128 | running | The convergence check on the merger era. |
+| `..._n160` | 160 cells per side instead of 128 | 53.61 | The convergence check, and the only undamped arm that ran t = 0 → death in one piece. Everything before the collapse converged; the death moved by 3 % and stayed. |
 | `..._ml2` | `max_level = 2` instead of 3 | 9.42 | Dies before the throats meet. Three levels is the floor, not a luxury. |
 
 Everything not named above is identical across all nine: two drainhole throats, scale
