@@ -194,18 +194,48 @@ gate is green.
     The killer the frames imaged — wrong-sign-K lapse re-inflation at the bar
     ends — is a *gauge* instability that matter deletion can delay by half a
     unit and no more.
-- [ ] **M4b wave 3 — attack the gauge** *(designed, NOT launched; needs
-  explicit go-ahead — new code and/or a new restart chain)*. Two independent
-  moves, combinable:
-  - **(a) Lapse freeze:** ∂ₜα = 0 inside the damping window (own default-off
-    flag in the gauge RHS, per the SOLID rule) so the imaged K < 0 pockets
-    cannot re-inflate. Restart from Chk05000 (t = 50), τ = 0.05 ring — the
-    measured optimum with its one failure mode surgically removed.
-  - **(b) Damp through the collapse:** restart from r03000's Chk04000 (t = 40)
-    with damping from ≈ 44 — how rw actually earned 55.00. Note rw *still
-    died*, so (b) alone likely buys ~3 more units, not 14; (a)+(b) together is
-    the strongest configuration on the table. Publishability of any (b) arm
-    rests entirely on the M6 overlap over the burst.
+- [ ] **M4b wave 3a — attack the gauge** *(LAUNCHED 2026-09-01, four arms on
+  all four GPUs; go-ahead given with tactical direction)*. New module
+  `CoreLapseFreeze.hpp` (own default-off flag, per the SOLID rule): the
+  Bona-Masso *source* of the lapse is tapered to zero inside a central window —
+  ∂ₜα = advec − (1 − W(r))·c·αᵖ·(K − 2Θ) — so the imaged K < 0 pockets lose
+  their re-inflation motor. Three design constraints, all deliberate:
+  - **Source-only, advection intact.** Killing the whole lapse RHS while the
+    shift keeps moving the grid creates a lapse-vs-shift shear boundary; the
+    taper touches only the −2αK term, exactly cancelled from the same solution
+    array the gauge RHS read.
+  - **C² smooth in space.** W(r) is a quintic smootherstep (continuous first
+    *and* second derivatives), one degree smoother than the matter window's
+    cosine ramp, because this weight multiplies a RHS the finite differencing
+    then differentiates. A boolean freeze would NaN on the spot.
+  - **Gamma-driver guard pre-built.** `core_freeze_shift` scales the shift and
+    B RHS by (1 − W) in the same window — default off, flipped without a
+    rebuild if the shift tears the grid over the tapered core.
+
+  All arms restart from Chk05000 (t = 50), engage at 50.0, checkpoints off:
+
+  | arm | GPU | matter damping | freeze window (full/zero) | shift guard |
+  | --- | --- | --- | --- | --- |
+  | `m4c_freeze` | 0 | τ 0.05 ring | 1.00 / 1.30 (= matter ring) | off |
+  | `m4c_freezewide` | 1 | τ 0.05 ring | 2.00 / 2.50 (covers imaged pockets) | off |
+  | `m4c_freezeonly` | 2 | **none** | 2.00 / 2.50 | off |
+  | `m4c_freezeshift` | 3 | τ 0.05 ring | 2.00 / 2.50 | **on** |
+
+  `freezeonly` is the clean experiment: if the gauge fix alone survives, the
+  scalar was never the killer. Publishability of every freeze arm rests on the
+  M6 overlap — the window is *not* strictly inside the trapped surface.
+  - [x] **First result, minutes in: the shift guard is fatal, not protective.**
+    `m4c_freezeshift` died at **50.24** (NaN in K) — 0.24 units after
+    engagement, faster than any arm has ever died. Scaling the shift/B RHS by
+    (1 − W), even C²-smoothly, strangles the Gamma-driver mid-collapse; the
+    guard stays off everywhere. The three guard-less arms run on.
+- [x] **M4b wave 3b — damp through the collapse: VETOED before launch**
+  *(causality trap, caught in review 2026-09-01)*. The collapse at t ≈ 44–51.5
+  is the physical *source* of the burst; matter damping during that window
+  alters the stress-energy actively sourcing Ψ₄, so a 3b arm would fail the M6
+  overlap by construction — it deletes the physics it is trying to record. rw's
+  55.00 stands as evidence about engagement timing, not as a recipe. Chk04000
+  stays in scratch as a fallback restart point only.
 - [x] **M5 — Run B2, the wide window** *(folded into the sweep as `m4b_sledge`,
   same publishable-only-via-M6 status)*.
   - **Fallback inside the sweep** if 1+log re-inflation again lifts sick cells out of
@@ -222,6 +252,13 @@ gate is green.
   what stops the dissolution. Waveform from Run B; the dissolution claim from the
   damped-arm measurements (§9) plus the undamped deaths; stated explicitly, with the
   causal-seal plot (M4) printed next to the waveform.
+  - **Framing (from review, 2026-09-01):** present the M4/M4b failure as a
+    physical discovery, not a failed numerical trick — standard interior matter
+    excision could not stabilise the spacetime post-merger because phantom
+    accretion drives extrinsic-curvature shocks (K < 0) in the surrounding
+    geometry faster than the interior can be excised, forcing an explicit
+    freeze of the slicing source to extract the final wave. The extremity of
+    the matter is the story; the gauge surgery is its measurement.
 
 Standing instrumentation for every launch from M2 on: full plot list including h_ij
 and A_ij (their absence made r03000/headon/p045/n160 permanently unmeasurable
@@ -371,6 +408,10 @@ merger claims must be rewritten to this timeline.
 | `merger_fix/m4b2_vfast_r05000` | radius 1.00/1.30 from t = 50, τ 0.02 | 51.88 | NaN in **K** — 2.5× past the optimum gave all the gain back and shocked the gauge: rate axis peaked at τ ≈ 0.05 |
 | `merger_fix/m4b2_fastsledge_r05000` | radius 2.00/2.50 from t = 50, τ 0.05 | **52.55** | NaN in h11 — nominal record among damped arms, but +0.13 over fast is inside the scatter: coverage falsified at the winning rate too |
 | `merger_fix/m4b2_fastcombo_r05000` | lapse 3e-2/1e-3 + radius 1.00/1.30 from t = 50, τ 0.05 | 52.42 | NaN in h11 — identical to fast: lapse selection adds nothing at any rate |
+| `merger_fix/m4c_freeze_r05000` | matter τ 0.05 ring + lapse-source taper 1.00/1.30, from t = 50 | *(live)* | wave 3a: freeze window = matter ring |
+| `merger_fix/m4c_freezewide_r05000` | matter τ 0.05 ring + lapse-source taper 2.00/2.50, from t = 50 | *(live)* | wave 3a: freeze covers the imaged K-pockets |
+| `merger_fix/m4c_freezeonly_r05000` | **no matter damping**, lapse-source taper 2.00/2.50, from t = 50 | *(live)* | wave 3a: the gauge fix in isolation |
+| `merger_fix/m4c_freezeshift_r05000` | matter τ 0.05 ring + taper 2.00/2.50 + shift/B RHS × (1−W), from t = 50 | 50.24 | NaN in K — the shift guard is fatal: strangling the Gamma-driver mid-collapse kills in 0.24 units, the fastest death on record |
 
 ---
 

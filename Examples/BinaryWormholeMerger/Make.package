@@ -1,2 +1,2 @@
 GRTECLYN_CEXE_sources += BinaryWormholeLevel.cpp Main_BinaryWormhole.cpp
-GRTECLYN_CEXE_headers += BinaryWormholeLevel.hpp SimulationParameters.hpp StateVariables.hpp BinaryWormholeInitialData.hpp BinaryThroatDiagnostics.hpp CoreMatterDamping.hpp PhantomDecayPotential.hpp ExternalGridInitialData.hpp
+GRTECLYN_CEXE_headers += BinaryWormholeLevel.hpp SimulationParameters.hpp StateVariables.hpp BinaryWormholeInitialData.hpp BinaryThroatDiagnostics.hpp CoreLapseFreeze.hpp CoreMatterDamping.hpp PhantomDecayPotential.hpp ExternalGridInitialData.hpp

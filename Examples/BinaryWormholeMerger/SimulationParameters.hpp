@@ -2,6 +2,7 @@
 #define SIMULATIONPARAMETERS_HPP
 
 #include "BinaryThroatDiagnostics.hpp"
+#include "CoreLapseFreeze.hpp"
 #include "CoreMatterDamping.hpp"
 #include "BinaryWormholeInitialData.hpp"
 #include "ExternalGridInitialData.hpp"
@@ -22,6 +23,7 @@ class SimulationParameters : public SimulationParametersBase
         read_wormhole_params(pp);
         read_diagnostics_params(pp);
         read_core_damping_params(pp);
+        read_core_lapse_freeze_params(pp);
         read_sponge_params(pp);
         read_tagging_params(pp);
         check_params();
@@ -188,6 +190,26 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("core_damping_radius_from_time",
                 core_damping_params.from_time, 0.0);
         core_damping_params.grid_center = wormhole_params.grid_center;
+    }
+
+    void read_core_lapse_freeze_params(GRParmParse &pp)
+    {
+        // Gauge half of the post-collapse cure -- see CoreLapseFreeze.hpp.
+        // Own module, default off; the window is set per-run from the
+        // measured position of the wrong-sign-K re-inflation pockets.
+        pp.load("core_lapse_freeze", lapse_freeze_params.enabled, false);
+        pp.load("core_freeze_radius_start", lapse_freeze_params.radius_start,
+                0.0);
+        pp.load("core_freeze_radius_full", lapse_freeze_params.radius_full,
+                0.0);
+        pp.load("core_freeze_from_time", lapse_freeze_params.from_time, 0.0);
+        pp.load("core_freeze_shift", lapse_freeze_params.freeze_shift, false);
+        lapse_freeze_params.grid_center = wormhole_params.grid_center;
+        // The add-back must cancel the exact Bona-Masso source the gauge
+        // wrote, so mirror the gauge block's own coefficients.
+        GRParmParse gauge_pp("gauge");
+        gauge_pp.load("lapse_coeff", lapse_freeze_params.lapse_coeff, 2.0);
+        gauge_pp.load("lapse_power", lapse_freeze_params.lapse_power, 1.0);
     }
 
     void read_sponge_params(GRParmParse &pp)
@@ -494,6 +516,7 @@ class SimulationParameters : public SimulationParametersBase
     BinaryWormholeInitialData::params_t wormhole_params{};
     BinaryThroatDiagnostics::params_t binary_diag_params{};
     CoreMatterDamping::params_t core_damping_params{};
+    CoreLapseFreeze::params_t lapse_freeze_params{};
     ThroatTracker::params_t throat_tracker_params{};
 
     // Numerical sponge zone (radially-ramped extra KO dissipation).

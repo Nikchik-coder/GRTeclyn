@@ -1,5 +1,6 @@
 #include "BinaryWormholeLevel.hpp"
 #include "BinaryThroatDiagnostics.hpp"
+#include "CoreLapseFreeze.hpp"
 #include "CoreMatterDamping.hpp"
 #include "BinaryWormholeInitialData.hpp"
 #include "CCZ4RHSWithMatter.hpp"
@@ -258,6 +259,24 @@ void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                            {
                                sponge.apply(i, j, k, rhs_arrs[box_no],
                                             soln_c_arrs[box_no]);
+                           });
+    }
+
+    // Gauge half of the post-collapse cure (CoreLapseFreeze.hpp): taper the
+    // Bona-Masso source of the lapse to zero inside a central window so
+    // wrong-sign-K pockets cannot re-inflate it, leaving the advection term
+    // intact.  Applied to the assembled RHS on every RK substep, reading the
+    // same solution array the gauge RHS just read.
+    if (simParams().lapse_freeze_params.enabled)
+    {
+        const CoreLapseFreeze freeze(simParams().lapse_freeze_params,
+                                     Geom().CellSizeArray(),
+                                     Geom().ProbLoArray(), a_time);
+        amrex::ParallelFor(a_rhs,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           {
+                               freeze(i, j, k, rhs_arrs[box_no],
+                                      soln_c_arrs[box_no]);
                            });
     }
 
