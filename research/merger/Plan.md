@@ -260,8 +260,9 @@ gate is green.
   overlap by construction — it deletes the physics it is trying to record. rw's
   55.00 stands as evidence about engagement timing, not as a recipe. Chk04000
   stays in scratch as a fallback restart point only.
-- [ ] **M4b wave 4 — the last interior knobs: timestep and dissipation
-  direction** *(LAUNCHED 2026-09-01, user-proposed)*. The proposal was
+- [x] **M4b wave 4 — the last interior knobs: timestep and dissipation
+  direction** *(COMPLETE 2026-09-01, user-proposed; all four dead, wall
+  confirmed timestep-independent)*. The proposal was
   dt_multiplier = 0.02 and sigma = 0.1 — both turn out to be the campaign
   baseline already, in every run. So wave 4 tests the two *live* directions:
   dt LOWER than baseline (a genuinely unmeasured axis), and sigma LOWER
@@ -276,9 +277,51 @@ gate is green.
   | `m4d_dt0005_fast` | 2 | dt_multiplier 0.02 → **0.005** | τ 0.05 ring | 4× cut — amplifies any dt signal |
   | `m4d_sig002_fast` | 3 | sigma 0.1 → **0.02** | τ 0.05 ring | dissipation lowered along the trend |
 
-  If the deaths sit at 52.0–52.6 again, the wall is confirmed
-  timestep-independent and the interior-knob space is exhausted in full; the
-  campaign decision (formulation-level move vs M8 pivot) is then forced.
+  **Result — every arm inside the wall band, nothing outside the ±0.35 scatter:**
+
+  | arm | death | NaN in | its exact twin | shift |
+  | --- | --- | --- | --- | --- |
+  | `m4d_dt001_plain` | **52.26** | h11 | undamped `r05000` 52.09 | **+0.17** |
+  | `m4d_sig002_fast` | **52.27** | h22 | `m4b_fast` 52.42 | −0.15 |
+  | `m4d_dt001_fast` | **52.07** | h11 | `m4b_fast` 52.42 | −0.35 |
+  | `m4d_dt0005_fast` | **52.03** | K | `m4b_fast` 52.42 | −0.39 |
+
+  - **The timestep axis does not exist.** `dt001_plain` is the clean isolated
+    measurement — dt halved, nothing else changed — and it moved the death by
+    +0.17 against a reproducibility scatter of ±0.35. Quartering dt (4× the
+    substeps, 4× the cost, 4.58 code units/h against 18.07) moved it *backwards*
+    by 0.39. The blowup is **dt-converged**: refining the time integrator
+    reproduces it rather than removing it, which is the signature of a feature
+    of the continuum solution (or of the spatial discretisation), not of a CFL
+    instability. This is a load-bearing result for M8 — the curvature shock is
+    physics the integrator is faithfully reporting, not an integrator artefact.
+  - **The dissipation axis is flat in both directions.** sigma 0.02 lands within
+    scatter of sigma 0.1 (52.27 vs 52.42); together with sigma 1.0 → 51.68 the
+    picture is a broad plateau with harm only at the high end. Nothing to buy.
+  - **Verdict: the interior-knob space is exhausted in full.** Resolution,
+    dissipation, timestep, matter deletion across the whole (window, rate)
+    plane, slicing-source cancellation, shift freezing — every knob reachable
+    from inside the current formulation has now been turned, and the death
+    stays in 52.0 ± 0.4. The campaign decision (formulation-level move vs M8
+    pivot) is forced.
+- [ ] **M4e — refine on restart: extra AMR levels from Chk05000**
+  *(user-proposed 2026-09-01; the one untried axis that is cheap)*. Wave 4
+  closed dt; the resolution ladder (n160, +1.55 per 25% refinement) was never
+  closed, only priced out — a full N = 160 chain reruns from t = 0 at ~90×
+  compute and starts handicapped, because initial-data constraint noise scales
+  as 1/dx². **Restarting an existing checkpoint with a higher `max_level`
+  dodges both costs.** AMReX supports it explicitly (`Amr::restart` fills
+  `dt_level`/`level_steps`/`level_count` for every level above the
+  checkpoint's), the new level's geometry comes from the inputs file, and
+  GRTeclyn's tagger is *geometric* (`tagging_type = 2`, half-width
+  L·2^−(l+2) about each tracked throat), so the level materialises
+  deterministically at the first regrid rather than waiting on a threshold.
+  Level 4 is a cube of half-width **2** at dx = 0.03125 — it lands exactly on
+  the r ≈ 1–2 bar ends where h11/h22/K blow up; level 5 is half-width 1 at
+  dx = 0.015625, the core. Refinement is 2×/4× on the finest level against
+  n160's 1.25×, on the *live* solution, with the pre-t=50 history unchanged
+  (so it tests resolution at shock formation, which is the only place it can
+  matter — the shock forms at t ≈ 51–52).
 - [x] **M5 — Run B2, the wide window** *(folded into the sweep as `m4b_sledge`,
   same publishable-only-via-M6 status)*.
   - **Fallback inside the sweep** if 1+log re-inflation again lifts sick cells out of
@@ -454,10 +497,10 @@ merger claims must be rewritten to this timeline.
 | `merger_fix/m4c_freeze_r05000` | matter τ 0.05 ring + lapse-source taper 1.00/1.30, from t = 50 | 52.04 | NaN in h11 — taper negated the matter gain: −0.4 vs its matter-only twin |
 | `merger_fix/m4c_freezewide_r05000` | matter τ 0.05 ring + lapse-source taper 2.00/2.50, from t = 50 | 52.03 | NaN in **h12** — first off-diagonal death; covering the pockets changed nothing |
 | `merger_fix/m4c_freezeonly_r05000` | **no matter damping**, lapse-source taper 2.00/2.50, from t = 50 | 52.12 | NaN in h11 — ≈ undamped baseline (52.09): slicing source is not the killer |
-| `merger_fix/m4d_dt001_fast_r05000` | dt_multiplier 0.01 (2× cut) + matter τ 0.05 ring | *(live)* | wave 4: dt axis, best-known config |
-| `merger_fix/m4d_dt001_plain_r05000` | dt_multiplier 0.01, no damping | *(live)* | wave 4: dt axis in isolation |
-| `merger_fix/m4d_dt0005_fast_r05000` | dt_multiplier 0.005 (4× cut) + matter τ 0.05 ring | *(live)* | wave 4: amplified dt signal |
-| `merger_fix/m4d_sig002_fast_r05000` | sigma 0.02 (5× down) + matter τ 0.05 ring | *(live)* | wave 4: dissipation lowered along the measured trend |
+| `merger_fix/m4d_dt001_fast_r05000` | dt_multiplier 0.01 (2× cut) + matter τ 0.05 ring | **52.07** (h11) | wave 4: dt axis, best-known config — no gain |
+| `merger_fix/m4d_dt001_plain_r05000` | dt_multiplier 0.01, no damping | **52.26** (h11) | wave 4: dt axis in isolation — +0.17 vs 52.09, inside scatter |
+| `merger_fix/m4d_dt0005_fast_r05000` | dt_multiplier 0.005 (4× cut) + matter τ 0.05 ring | **52.03** (K) | wave 4: 4× cut moved it backwards — the blowup is dt-converged |
+| `merger_fix/m4d_sig002_fast_r05000` | sigma 0.02 (5× down) + matter τ 0.05 ring | **52.27** (h22) | wave 4: dissipation flat at the low end too |
 | `merger_fix/m4c_freezeshift_r05000` | matter τ 0.05 ring + taper 2.00/2.50 + shift/B RHS × (1−W), from t = 50 | 50.24 | NaN in K — the shift guard is fatal: strangling the Gamma-driver mid-collapse kills in 0.24 units, the fastest death on record |
 
 ---
