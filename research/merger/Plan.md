@@ -9,12 +9,13 @@ Runs live under `runs/wormhole_merger/` (not in git, own README); the packed ext
 
 **The campaign in one line:** two drainhole throats merge only if one field is flipped;
 the merged object collapses, briefly holds a horizon, and the phantom scalar then
-destroys first the run (NaN at t ≈ 52–56) and then the horizon itself. Every knob
-inside the formulation is measured dead, and grid refinement — the one that looked
-like a cure — is now measured to **saturate at t ≈ 56**, two units short of the
-window we need to open. **User decision 2026-09-01: the merger signal at any
-price** — with the ladder spent, the route is late smooth-fill excision (M9b,
-coded, built and default-off).
+destroys first the run (NaN at t ≈ 52–57) and then the horizon itself. Every knob
+inside the formulation is measured dead except grid refinement, which is **linear at
++1.43 per level** over four measured rungs — enough to reach the *start* of the
+window we need (level 7–8), far short of its end (level ~13, past the memory
+ceiling). **User decision 2026-09-01: the merger signal at any price** — the route
+to the whole burst is late smooth-fill excision (M9b, coded, built and default-off),
+with the ladder continuing as the independent cross-check.
 
 ---
 
@@ -32,7 +33,7 @@ construction, issue 12). Every interior knob has been turned and priced:
 
 | knob | best effect on the wall |
 | --- | --- |
-| **grid refinement on restart (M4e)** | the only axis that ever moved the wall, but it **saturates**: +1.01, +2.50, **+0.53** per halving of dx — four rungs asymptote to t ≈ 56 |
+| **grid refinement on restart (M4e)** | the only axis that ever moved the wall: **linear, +1.43 per level** over four rungs (arm-pair means). Delivers the window's leading edge by level 7–8; its *end* needs level ~13, past the memory ceiling |
 | matter deletion (full window × rate plane) | +0.33, +0.65, −0.84, **+0.05 or better at level 6** — no consistent sign; inside the ±0.35 floor at three of four levels |
 | timestep | 0 — **dt-converged** (halving: +0.17 inside scatter; quartering: −0.39) |
 | Kreiss–Oliger dissipation | flat plateau, harm at the high end (σ 1.0 died earlier) |
@@ -58,14 +59,36 @@ measured it and the projection failed: **56.13, only +0.53**. The four clean run
 | 5 | 0.015625 | 55.60 | +2.50 |
 | 6 | 0.0078125 | **56.13** | +0.53 |
 
-are a **saturating** sequence, not a growing one; level 5 was the outlier, not the
-law. Extrapolating the last gain, level 7 lands near 56.3 and level 8 near 56.4 —
-both far short of 58, where the target window even *begins*. **The ladder is spent as
-a route to the signal.** Two increments never made a law, and this one did not
-survive its first test. What refinement did buy is real and kept: +4.0 units of wall,
-and the strongest evidence in the campaign that the blowup is a continuum feature
-(the NaN moves onto each newly created finest level, every time, in h11).
-**M9b is no longer insurance — it is the route.**
+look **saturating** — but that reading lasted twenty minutes. The damped level-6 arm
+then died at **56.71**, its own largest gain (+1.95), and the two ladders are simply
+noisy samples of one wall. Averaging each level's arm pair cancels the damping noise
+(which is measured to be zero, below) and gives the robust estimator:
+
+| level | clean | damped | pair mean | gain |
+| --- | --- | --- | --- | --- |
+| 3 | 52.09 | 52.42 | 52.26 | — |
+| 4 | 53.10 | 53.75 | 53.43 | +1.17 |
+| 5 | 55.60 | 54.76 | 55.18 | +1.76 |
+| 6 | 56.13 | 56.71 | 56.42 | +1.24 |
+
+**The ladder is LINEAR at +1.43 per level** (least-squares over four rungs; the three
+increments 1.17/1.76/1.24 scatter by ±0.3, the size of the reproducibility floor).
+Neither the super-linear reading nor the saturating one survives; both were
+single-arm artefacts. Level 5 clean was high and level 5 damped was low, and each
+in isolation told a different story.
+
+**What linear means for the campaign.** Projected: level 7 ≈ **57.9**, level 8 ≈ 59.3,
+level 9 ≈ 60.7. Reaching the *start* of the target window (58) takes level 7.1 —
+essentially the arm now running. Reaching the *end* (66) takes **level 12.7**, far
+beyond the memory ceiling (≈ 7 GB per level; level 7 measured at 57.5 GB of 81.5,
+so level 9 is the last comfortable rung and level 10 is marginal). So refinement
+alone can deliver the **leading edge** of the collapse burst and never the whole of
+it. **M9b is promoted from insurance to the route to the complete signal**, with the
+ladder continuing as the independent cross-check that M6 overlap needs.
+
+What refinement has bought is real and kept: +4.6 units of wall, and the strongest
+evidence in the campaign that the blowup is a continuum feature — the NaN moves onto
+each newly created finest level, every time, in h11.
 
 ---
 
@@ -141,45 +164,54 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
     moved onto the newest finest level: the shock is a real feature that
     sharpens into whatever grid resolves it, but refinement is now **outrunning**
     it rather than merely delaying it.
-  - [x] **Level 6 result: the ladder saturates and the campaign forks.**
-    Undamped 55.60 → **56.13** (h11, on the new level 6): **+0.53**, a fifth
-    of the previous rung. The super-linear projection (~61.8) is falsified by
-    5.7 units. Four rungs now read 52.09 / 53.10 / 55.60 / 56.13 — asymptotic
-    to t ≈ 56. The NaN did again move onto the newest finest level, so the
-    *diagnostic* claim survives intact; only the *cure* claim dies.
-  - [x] **Damping shows no consistent sign — the "crossover" was noise.**
-    Damped rungs 52.42 → 53.75 → 54.76 → **56.18+**; damping's effect by
-    level reads +0.33, +0.65, −0.84, **≥ +0.05**. With a ±0.35 reproducibility
-    floor, three of the four are consistent with zero and the level-5 −0.84
-    stands alone. Do not build on it: the honest statement is **matter
-    deletion buys nothing that survives refinement**, in either direction.
-    Practical consequence unchanged and now better founded — run the clean
-    arms, which need no M6 overlap caveat.
+  - [x] **Level 6, both arms: the ladder is LINEAR, and single arms lie.**
+    Undamped 55.60 → **56.13** (+0.53); damped 54.76 → **56.71** (+1.95).
+    Both h11, both on the new level 6, 34 minutes apart. Read alone, the clean
+    ladder said "saturating at 56" and the damped one said "accelerating" —
+    and *both readings were wrong*, as the super-linear reading taken from
+    clean level 5 had been. The arm-pair means (52.26, 53.43, 55.18, 56.42)
+    are linear at **+1.43 per level**, increments 1.17/1.76/1.24 scattering by
+    exactly the ±0.35 reproducibility floor. **Lesson for this campaign,
+    recorded because it has now cost three reversals in one day: a ladder
+    increment measured on ONE arm is at the noise floor and must not be
+    extrapolated.** Quote pair means, or quote nothing.
+  - [x] **Damping's effect is zero.** By level: +0.33, +0.65, −0.84, **+0.58**.
+    Mean +0.18 against a ±0.35 floor; the signs alternate. The level-5
+    "crossover from help to harm" was noise and is withdrawn. **Matter
+    deletion buys nothing that survives refinement, in either direction** —
+    so run the clean arms, which need no M6 overlap caveat, and use the
+    damped arms only as the second sample that makes the pair mean possible.
+    The NaN moved onto the newest finest level in every arm at every level:
+    the *diagnostic* claim is untouched by any of these reversals.
   - [x] **Box coverage: mostly confirmed, and it explains the saturation.**
     The tagger's boxes are 160³ cells at every level, so their half-widths
     *halve* as levels are added: level 4 reaches r = 2.5, level 5 → 1.25,
     level 6 → 0.625, level 7 → 0.3125, level 8 → 0.156. The imaged blowup
     ring sits at r ≈ 1–2. The prediction on record was: die near 55.6 and the
-    ladder is over; die near 62 and deeper levels keep paying. **It died at
-    56.13** — the near end. Deeper levels refine a shrinking ball that the
-    failure has already left, which is exactly what a saturating sequence
-    looks like. **Level 8 stays cancelled** (it would refine r < 0.156). The
-    surviving refinement idea is *wider* fine boxes at r ≈ 1–2, a tagger
-    change — parked as M4f behind M9b, since it costs code and its ceiling is
-    the same continuum shock.
-  - [ ] Live, and now expected to confirm rather than win: **level 7 undamped**
-    (dx 0.00390625, launched on the card the level-5 death freed *before* the
-    level-6 verdict, on the then-live super-linear trend). Post-saturation its
-    projected death is ≈ 56.3, so it is a ~20 h confirmation of the asymptote,
-    not a route to the signal — **flagged for the user as a candidate to stop
-    and reassign to the first M9b arm.** Also live: `m4e_lvl6_fast` and the
-    halved-timestep control `m4e_lvl5_dt001`. `regrid_interval` needs **seven**
-    entries at max_level 7. All ladder rungs run the *same* binary
-    (`…ex.pre_fill`) so the ladder stays a single-variable experiment while the
-    production binary carries M9b.
+    ladder is over; die near 62 and deeper levels keep paying. The pair mean
+    came in at **56.42** — the near end, but the ladder did *not* stop. So
+    coverage is a real drag (it is why the gain is +1.4 and not +2.5) without
+    being a wall. **Level 8 is uncancelled but demoted** — under the linear
+    fit it buys +1.4 to ≈ 59.3, real but not the signal, at ~64 GB of 81.
+    The better refinement move is *wider* fine boxes at r ≈ 1–2 rather than
+    deeper ones: **M4f**, a tagger change, which would restore the full +2.5
+    if coverage is the whole story. Both sit behind M9b.
+  - [ ] Live and now the **discriminating** arm: **level 7 undamped**
+    (dx 0.00390625, launched on the card the level-5 death freed, before the
+    level-6 verdict). The linear fit projects **57.9**; the saturating reading
+    briefly entertained after clean level 6 projected 56.3. Those are 1.6 units
+    apart and the run settles it. It was flagged as a stop candidate under the
+    saturating reading — **that recommendation is withdrawn; let it run.** At
+    57.9 it would also be the first arm to reach the *start* of the target
+    window (58) to within the noise floor. Also live: the halved-timestep
+    control `m4e_lvl5_dt001`. `regrid_interval` needs **seven** entries at
+    max_level 7. All ladder rungs run the *same* binary (`…ex.pre_fill`) so
+    the ladder stays a single-variable experiment while the production binary
+    carries M9b.
 - [ ] **M9 — the formulation ladder** *(NEW 2026-09-01; user decision: the merger
   signal at any price; **promoted from insurance to primary route** the same day,
-  when the level-6 rung saturated the refinement ladder at t ≈ 56)*. What the field
+  when the level-6 rungs fixed the refinement ladder at a linear +1.43/level —
+  which reaches the window's start but needs level ~13 for its end)*. What the field
   actually does about singular/violent interiors, in ascending order of surgery:
   1. *Moving punctures* — let the slicing hide the interior behind a horizon.
      **Our current method; measured insufficient here**: the killer sits at and
@@ -355,11 +387,11 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 | `merger_fix/m4d_sig002_fast_r05000` | σ 0.02 + matter ring | 52.27 (h22) | dissipation flat at the low end too |
 | `merger_fix/m4e_lvl4_plain_r05000` | **+1 AMR level on restart** (dx 0.03125), no damping | **53.10** (h11, lvl 4) | resolution is a real axis: +1.01 vs 52.09 — first knob outside the scatter |
 | `merger_fix/m4e_lvl4_fast_r05000` | +1 level + matter τ 0.05 ring | **53.75** (h11, lvl 4) | stacks with damping: +1.33 vs 52.42 — clean-cohort record (rw's 55.00 is collapse-tainted) |
-| `merger_fix/m4e_lvl5_plain_r05000` | +2 levels (dx 0.015625), no damping | 55.60 (h11, lvl 5) | +2.50 over its lvl4 twin — the rung that looked super-linear; **the outlier, not the law** |
-| `merger_fix/m4e_lvl5_fast_r05000` | +2 levels + matter ring | 54.76 (h11, lvl 5) | −0.84 against its undamped twin — the only negative in the damping series, and level 6 does not repeat it |
-| `merger_fix/m4e_lvl6_plain_r05000` | +3 levels (dx 0.0078125), no damping | **56.13** (h11, lvl 6) | **all-time record, and clean** — but only **+0.53**: the ladder saturates and the super-linear projection (~61.8) is falsified |
-| `merger_fix/m4e_lvl6_fast_r05000` | +3 levels + matter ring | *(live, past 56.18)* | already past its undamped twin ⇒ damping's sign flips back; treat the series as zero |
-| `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | *(live)* | projected ≈ 56.3 post-saturation — now a confirmation arm, not a route to the signal; ~59 GB of 81 on the card |
+| `merger_fix/m4e_lvl5_plain_r05000` | +2 levels (dx 0.015625), no damping | 55.60 (h11, lvl 5) | high arm of the level-5 pair; read alone it said "super-linear" and was wrong |
+| `merger_fix/m4e_lvl5_fast_r05000` | +2 levels + matter ring | 54.76 (h11, lvl 5) | low arm of the same pair; read alone it said "damping now harms" and was wrong. Pair mean **55.18** |
+| `merger_fix/m4e_lvl6_plain_r05000` | +3 levels (dx 0.0078125), no damping | 56.13 (h11, lvl 6) | clean record; +0.53 read alone ⇒ the (withdrawn) saturating story |
+| `merger_fix/m4e_lvl6_fast_r05000` | +3 levels + matter ring | **56.71** (h11, lvl 6) | **all-time record**; +1.95 read alone ⇒ the opposite story, 34 min later. Pair mean **56.42**, and the ladder is linear at +1.43/level |
+| `merger_fix/m4e_lvl7_plain_r05000` | +4 levels (dx 0.00390625), no damping | *(live)* | **the discriminator**: linear fit says 57.9, the withdrawn saturating fit said 56.3. At 57.9 it touches the window start; ~59 GB of 81 |
 | `merger_fix/m4e_lvl5_dt001_r05000` | +2 levels, dt halved (0.01) | *(live)* | dt-convergence control at depth: does the level-5 record reproduce at half the timestep |
 
 ---
@@ -406,6 +438,7 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 
 | trap | guard |
 | --- | --- |
+| **extrapolating a ladder increment from ONE arm** | a single rung-to-rung difference is the size of the ±0.35 reproducibility floor. On 2026-09-01 this produced three contradictory laws in one day from the same four levels — "super-linear", "saturating", "accelerating" — each falsified within hours. **Quote arm-pair means and a fit over ≥ 3 increments, or quote nothing.** Never launch on a two-point ratio |
 | flat-conformal θ₊ shortcut | full-metric scan only; never reduce the h_ij dependence "for speed" |
 | σ = 2.0 | 0.1 in all drainhole templates |
 | `wormhole_momentumB` default | it is **minus** momentumA — pin `0 0 0` for a single throat |
