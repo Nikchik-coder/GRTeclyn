@@ -16,8 +16,11 @@ that produced it does not.
 
 1. Two identical throats **repel**. Reversing one throat's scalar field is the only
    gravity-driven way to make them fall together — no aimed momenta, no support cuts.
-2. Flipped and pushed, they **merge**: a common trapped region at t ≈ 30, and a
-   gravitational-wave burst that survives every check made on it.
+2. Flipped and pushed, they **merge**: collapse of the whirling double core at t ≈ 45,
+   a genuine common trapped surface at t ≈ 51, and a gravitational-wave burst that
+   survives every check made on it. (The "merged at t ≈ 30" this file used to claim
+   was a false verdict of the old in-code horizon scan, which assumed a conformally
+   flat metric — fixed in code 2026-09-01; see `research/merger/Plan.md`.)
 3. Then the merged object **dies** — a NaN wherever un-damped phantom matter sits on
    collapsed geometry. Four arms, four different treatments, four deaths between
    t = 51.7 and t = 55.0.
@@ -28,9 +31,9 @@ that produced it does not.
    **healthy to t = 60 with no NaN at all**. The instability belongs to the merged core,
    not to the code.
 6. And it is not a resolution artefact. A 25 % finer grid reproduces the inspiral to
-   within 1.8 %, the horizon formation to within 0.19 units and the waveform to within
-   4 % — and then dies of the same NaN 1.55 units later. Refining postpones the failure
-   by 3 %; reaching t = 60 that way would cost roughly 90× the compute.
+   within 1.8 % and the waveform to within 4 % — and then dies of the same NaN
+   1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
+   would cost roughly 90× the compute.
 
 ## Layout
 
@@ -77,12 +80,12 @@ different Kreiss–Oliger dissipation.
 
 | run | what is different | ran to | what happened |
 | --- | --- | --- | --- |
-| `..._r03000` | **the main arm** — no damping | 52.06 | Merged at t ≈ 30, radiated, then the phantom core blew up. Everything after this is an attempt to save it. |
+| `..._r03000` | **the main arm** — no damping | 52.06 | Inspiral to t ≈ 33, whirling double core, collapse at t ≈ 45, horizon at t ≈ 51 — then the phantom core blew up. Everything after this is an attempt to save it. |
 | `..._r05000` | damping on, built-in thresholds (≈3 cells) | 52.09 | Bought 0.02 units. Aimed too deep to touch the matter that kills it. **Its streams were deleted before extraction — only the log survives.** |
 | `..._r04000` | window widened 1000× (lapse 3e-2 → 1e-3) | 52.86 | Core cleaned to φ ≈ 1e-10 and it still died: 1+log slicing lets the sickest cells re-inflate their own lapse and climb out of a lapse-defined window. |
 | `..._sg10_r05000` | dissipation σ 0.1 → 1.0 | 51.68 | Backfired — died *earlier*. The dissipation attacks the puncture structure itself. |
 | `..._rw_r05000` | damping anchored in **radius**, not lapse | **55.00** | Longest survivor, and the one that caught the horizon dissolving. |
-| `merge_headon_...` | dropped head-on, no orbital momentum | 44.00 | Merges harder and sooner (horizon at t = 29), dies the same death. |
+| `merge_headon_...` | dropped head-on, no orbital momentum | 44.00 | Merges harder and sooner, dies the same death. (Its "horizon at t = 29" was the old-scan artefact; true timing unverifiable — no metric in its plots.) |
 | `..._p045` | momentum 0.45 instead of 0.12 | **60.01, clean** | Never merges: closest approach 3.95 at t = 40, then back out to 4.6. The healthy control. |
 | `..._n160` | 160 cells per side instead of 128 | 53.61 | The convergence check, and the only undamped arm that ran t = 0 → death in one piece. Everything before the collapse converged; the death moved by 3 % and stayed. |
 | `..._ml2` | `max_level = 2` instead of 3 | 9.42 | Dies before the throats meet. Three levels is the floor, not a luxury. |
@@ -130,12 +133,15 @@ arm still exist. Without that flag the committed copy is left alone.
   finders can latch onto the same one; `p045` reads 0.06 at t = 38.46 between neighbours
   of 4.06. Its true closest approach is 3.95 at t = 40, and both trackers agree on it.
   `make_summary.py` drops rows that disagree with both neighbours by more than half.
-- **`ah_r_common` in `binary_throat_diagnostics.dat` is a radial proxy, not a horizon
-  finder.** It grows to r = 6.2 in `p045` — a run with no collapse anywhere — because a
-  large enough sphere encloses both deep lapse wells. Trust it only where the offline
-  scan confirms it, which needs `h_ij` and `A_ij` in the plotfiles: only `r04000`, `rw`
-  and `sg10` were launched with them, so the undamped main arm can never be checked this
-  way. That is permanent.
+- **The θ/AH columns (13–18) of every `binary_throat_diagnostics.dat` in this pack are
+  tainted.** All were written by the pre-2026-09-01 scan, which assumed a conformally
+  flat metric; wherever one scan sphere encloses two wells it produces false trapped
+  verdicts — the t ≈ 30 "fusion" on the merger arms, and continuous trapping out to
+  r = 6.2 over t ≈ 42–60 in `p045`, a run with no collapse anywhere. Trust only the
+  offline scan (`horizon/`), which needs `h_ij` and `A_ij` in the plotfiles: only
+  `r04000`, `rw` and `sg10` were launched with them, so the undamped main arm can never
+  be checked this way. That is permanent. The in-code scan computes the full-metric
+  expansion since 2026-09-01; streams written after that date are trustworthy.
 - **Waveforms across a restart.** The interior of a restart restores exactly; the outer
   boundary does not, and the error walks inward at roughly the speed of light. Do not
   read `psi4` at R = 30 across a restart boundary without allowing for it.
