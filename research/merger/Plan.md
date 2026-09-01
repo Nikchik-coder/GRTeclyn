@@ -1,4 +1,4 @@
-# Merging two regular exotic-matter wormhole throats in 3D Cartesian CCZ4
+# Merging two regular exotic-matter drainhole throats in 3D Cartesian CCZ4
 
 Working document: the current plan and the concise log of what broke and what fixed it.
 Started 2026-08-28, rewritten 2026-09-01 after the horizon-timing bug was found.
@@ -16,7 +16,9 @@ destroys first the run (NaN at t ≈ 52–55) and then the horizon itself.
 
 **What is at stake.** The collapse (source time 44–51.5) emits the one waveform this
 campaign exists to record. Signal at radius R lags the source by R, so it crosses the
-R = 14 extraction sphere at t ≈ 58–65.5 — **after every arm so far has died**. The
+R = 14 extraction sphere at t ≈ 58–65.5 (the t = 44–47 collapse arrives over t = 58–61;
+the t = 51.5 horizon formation arrives at 65.5 — that is exactly where the t ≈ 66
+stopping requirement comes from) — **after every arm so far has died**. The
 recorded burst peaking at t = 37.5 is plunge/whirl radiation (source ≈ 23.5), not the
 collapse. To capture the collapse signature the wave zone must survive to **t ≈ 66**
 (R = 30 would need t ≈ 82 — optional, not required).
@@ -58,13 +60,38 @@ gate is green.
   - **Pass:** run alive and NaN-free past t = 56 (the rw death and the extrapolated
     dissolution time both behind it).
   - **Fail (expected risk):** dies ≈ 55 like rw at the un-damped ring r = 0.7–1.1,
-    which sits at and *outside* a shrinking horizon → escalate to M5.
-- [ ] **M5 — Run B2, the wide window** *(only if M4 fails)*. Full damping inside
-  r = 1.5, off by 2.0 — reaches the killer, gives up strict causal purity for source
-  times > 51.5 (the burst itself is already out).
+    which sits at and *outside* a shrinking horizon → escalate to M4b.
+  - **The freeze question — measure it, don't assume it.** External hypothesis: the
+    damping deletes the phantom that drives the shrinkage, so r_AH freezes at ≈ 1.0
+    and the window is sealed forever. The counterargument is the seal itself, which
+    cuts both ways: nothing strictly inside the horizon can influence the horizon,
+    so a window at r < 0.95 cannot stop the flux crossing at r ≈ 1.0 from *outside* —
+    and r04000/rw dissolved 1.07 → 0.59 with damping active. The now-trustworthy
+    r_AH(t) track decides it: **frozen ⇒ the interior phantom was the driver and M4
+    wins outright; on the 1.07 → 0.59 curve ⇒ exterior accretion drives it, the seal
+    fails by ≈ 54, and M4b is next.** Either outcome is a measurement worth having.
+  - **Causal-seal record for the paper:** r_damp,max is a build-time constant and
+    r_AH(t) streams from the fixed scan, so the published proof of purity is one
+    plot — r_AH(t) − r_damp,max staying strictly > 0 over the whole window the
+    waveform is claimed from. No new code; if the window is ever slaved to the AH
+    track, the moving edge must be logged too.
+- [ ] **M4b — steepen, don't widen** *(only if M4 dies at the ring)*. Swap the cosine
+  ramp for a sharp tanh step: full strength to r = 0.95, strictly zero by 1.0 —
+  reaches the inner half of the rw killer ring while still inside the certified
+  horizon at engagement. A static edge at 1.0 stays covered only until the
+  dissolution curve crosses it (≈ 52.5–53 on the measured track): this buys margin,
+  not immunity.
+  - **Pass:** alive past t = 56 with the causal-seal plot > 0 while the seal is
+    claimed. **Fail:** → M5.
+- [ ] **M5 — Run B2, the wide window** *(last resort, only if M4 and M4b both fail)*.
+  Full damping inside r = 1.5, off by 2.0 — reaches the killer, but the horizon
+  never exceeded 1.07, so this *guarantees* damping in the causal exterior. Expect
+  Ψ₄ contamination; treat M5 as a diagnostic arm, publishable only if M6 passes
+  anyway.
   - **Pass:** alive past t = 56 **and** the M6 overlap test passes.
-  - **Fallback inside M4/M5** if 1+log re-inflation again lifts sick cells out of the
-    window: freeze the lapse in the damping zone (∂ₜα = 0 there, own default-off flag).
+  - **Fallback inside M4/M4b/M5** if 1+log re-inflation again lifts sick cells out of
+    the window: freeze the lapse in the damping zone (∂ₜα = 0 there, own default-off
+    flag).
 - [ ] **M6 — overlap test** *(validates whichever of M4/M5 survived)*. Ψ₄ at R = 14
   must match the undamped arms (r03000 to 52.06, n160 to 53.61) over the shared
   window to the few-% level. **Fail:** the damping is visible in the wave zone → the
@@ -74,7 +101,8 @@ gate is green.
 - [ ] **M8 — endpoint honesty in the paper.** After engagement the core is a
   numerically sustained ("zombie") black hole — deleting infalling phantom is exactly
   what stops the dissolution. Waveform from Run B; the dissolution claim from the
-  damped-arm measurements (§9) plus the undamped deaths; stated explicitly.
+  damped-arm measurements (§9) plus the undamped deaths; stated explicitly, with the
+  causal-seal plot (M4) printed next to the waveform.
 
 Standing instrumentation for every launch from M2 on: full plot list including h_ij
 and A_ij (their absence made r03000/headon/p045/n160 permanently unmeasurable
@@ -143,7 +171,7 @@ precisely where it fails, and the p045 control that exposes it was only run late
 | 51.06–51.5 | **first genuine common trapped surface**, r ≈ 1.0–1.07 | full-metric in-code scan; offline scanner |
 | 51.5–55 | horizon dissolves 1.07 → 0.59, accelerating; extrapolated gone ≈ 56 | two damped arms, one curve; sampling-doubling moves crossings ≤ 0.01 |
 | 52.06–55.0 | NaN deaths (r03000 52.06, n160 53.61, rw 55.00) | abort logs + last stream rows agree |
-| 58–65.5 | collapse signature crosses R = 14 — **never recorded** | propagation at v ≈ c (measured on the first burst) |
+| 58–65.5 | collapse signature crosses R = 14 — **never recorded** (44–47 collapse arrives 58–61; the 51.5 horizon formation arrives 65.5 ⇒ `stop_time` must reach ≈ 66) | propagation at v ≈ c (measured on the first burst) |
 
 The black hole lives ~5 units, not the ~26 previously claimed: **it is born at t ≈ 51
 already dissolving**, not born at t ≈ 30 and eaten slowly. Downstream corrections:
@@ -163,6 +191,9 @@ is wrong and is being corrected with this document.
 | Zero φ/Π inside r = 1.5 "right after horizon formation (t = 35)" | Right spirit, wrong clock: **no horizon exists at t = 35** — engaging then changes the physics under study (that mistake is already in the rw arm's t = 50–51 window, ~1 unit early). Earliest defensible engagement is horizon certification, t ≈ 51.1 |
 | "You already have the main GW burst" | **Half wrong**: the recorded burst is plunge/whirl radiation. The collapse signature (source 44–51.5) has never been recorded — it is the missing piece, and it needs t ≈ 66, not t ≈ 85 |
 | Two-run split: pure-physics arm + post-horizon damped arm, causality argument | **Adopted** — it is steps 3–4 above. Corrections: undamped arms cannot supply the dissolution measurement (no h_ij in their plots — that stays with r04000/rw); and interior damping is causally sealed only while the horizon covers the window, which the dissolution itself un-does — hence the B/B2 split and the overlap test |
+| Interior damping halts the accretion ⇒ horizon freezes at ≈ 1.0, M4 risk "actually zero" | **Testable, not assumable — folded into M4.** The causal seal cuts both ways: a window strictly inside the horizon cannot influence the flux crossing it from outside, and r04000/rw dissolved with damping active. The r_AH(t) track decides; both outcomes are physics |
+| Steepen the ramp (tanh, zero by r = 1.0) before widening the window | **Adopted as M4b** — the intermediate fallback; M5 demoted to last-resort diagnostic |
+| `causal_seal.dat` logging r_AH − r_damp | **Adopted as a derived plot, not new code** — the fixed scan already streams r_AH and the static window edge is a constant; a logger is only needed if the window ever moves |
 
 ---
 
