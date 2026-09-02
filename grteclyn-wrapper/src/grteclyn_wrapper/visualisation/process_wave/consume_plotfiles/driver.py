@@ -17,6 +17,10 @@ from .extraction.confinement import CONFINEMENT_TIMESERIES_HEADER
 from .extraction.sector_barycenters import SECTOR_BARYCENTERS_HEADER
 from .extraction.sector_dynamics import SECTOR_DYNAMICS_HEADER
 from .extraction.psi4_higher_l import higher_l_header as _higher_l_header
+from .extraction.scalar_modes import (
+    parse_scalar_ells as _parse_scalar_ells,
+    scalar_modes_header as _scalar_modes_header,
+)
 from .extraction.ftl import FTL_TIMESERIES_HEADER
 from .extraction.shell import _shell_stats_header
 from .fields import _canonical_field_name
@@ -99,6 +103,30 @@ def main() -> None:
         type=int,
         default=[3, 4],
         help="Multipoles for --psi4-higher-l (supported: 2 3 4; default: 3 4).",
+    )
+    parser.add_argument(
+        "--scalar-modes",
+        action="store_true",
+        help=(
+            "Project the scalar field phi and its momentum Pi onto s=0 "
+            "spherical harmonics on the extraction spheres, into its own "
+            "stream scalar_modes.dat (plus a kinematic scalar flux per "
+            "radius).  Off by default; costs three extra sphere samplings "
+            "per plotfile.  Leaves every existing stream untouched."
+        ),
+    )
+    parser.add_argument(
+        "--scalar-mode-ells",
+        nargs="+",
+        type=int,
+        default=[0, 1, 2],
+        help="Multipoles for --scalar-modes (supported: 0..4; default: 0 1 2).",
+    )
+    parser.add_argument(
+        "--scalar-flux-delta",
+        type=float,
+        default=0.5,
+        help="Radial half-step for the d_r phi central difference (default: 0.5).",
     )
     parser.add_argument(
         "--shell-fields",
@@ -362,6 +390,7 @@ def main() -> None:
     psi4_all_out_path = out_dir / "psi4_mode_l2_all.dat"
     psi4_directional_out_path = out_dir / "psi4_directional.dat"
     psi4_higher_l_out_path = out_dir / "psi4_mode_higher_l.dat"
+    scalar_modes_out_path = out_dir / "scalar_modes.dat"
     areal_out_path = out_dir / "areal_radius.dat"
     shell_out_path = out_dir / "shell_profiles.dat"
     boundary_flux_out_path = out_dir / "boundary_flux.dat"
@@ -387,6 +416,8 @@ def main() -> None:
     psi4_directional_header = "# time  P_total  P_z_beam  beam_ratio  beaming_gain  wavezone_std"
     psi4_higher_l_ells = tuple(sorted(set(int(x) for x in args.psi4_ells)))
     psi4_higher_l_header = _higher_l_header(psi4_higher_l_ells, args.radii)
+    scalar_modes_ells = _parse_scalar_ells(args.scalar_mode_ells)
+    scalar_modes_header_str = _scalar_modes_header(scalar_modes_ells, args.radii)
     areal_header = "# time  R_areal_min  r_at_R_areal_min"
     shell_header = _shell_stats_header(args.radii, args.shell_fields)
 
@@ -402,6 +433,8 @@ def main() -> None:
         _truncate_if_exists(psi4_directional_out_path)
         if args.psi4_higher_l:
             _truncate_if_exists(psi4_higher_l_out_path)
+        if args.scalar_modes:
+            _truncate_if_exists(scalar_modes_out_path)
         _truncate_if_exists(areal_out_path)
         if args.shell_fields:
             _truncate_if_exists(shell_out_path)
@@ -654,6 +687,12 @@ def main() -> None:
                                     header=psi4_higher_l_header,
                                     line=res["psi4_higher_l_line"],
                                 )
+                            if res.get("scalar_modes_line"):
+                                _append_line(
+                                    scalar_modes_out_path,
+                                    header=scalar_modes_header_str,
+                                    line=res["scalar_modes_line"],
+                                )
                             if res["areal_line"]:
                                 _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
                             if res["shell_line"]:
@@ -727,6 +766,12 @@ def main() -> None:
                             psi4_higher_l_out_path,
                             header=psi4_higher_l_header,
                             line=res["psi4_higher_l_line"],
+                        )
+                    if res.get("scalar_modes_line"):
+                        _append_line(
+                            scalar_modes_out_path,
+                            header=scalar_modes_header_str,
+                            line=res["scalar_modes_line"],
                         )
                     if res["areal_line"]:
                         _append_line(areal_out_path, header=areal_header, line=res["areal_line"])

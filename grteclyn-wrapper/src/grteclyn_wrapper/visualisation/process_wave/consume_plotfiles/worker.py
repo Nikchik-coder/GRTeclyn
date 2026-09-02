@@ -19,6 +19,11 @@ from .extraction.psi4_higher_l import (
     higher_l_line as _higher_l_line,
     parse_ells as _parse_ells,
 )
+from .extraction.scalar_modes import (
+    extract_scalar_modes,
+    parse_scalar_ells as _parse_scalar_ells,
+    scalar_modes_line as _scalar_modes_line,
+)
 from .extraction.shell import _extract_shell_field_stats, _format_shell_stats_line
 from .fields import _canonical_field_name
 from .frames.embedding import _render_embedding_frame
@@ -170,6 +175,28 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                 except Exception as exc:
                     if args_dict.get("verbose", False):
                         print(f"WARNING: higher-l Psi4 extraction failed for {key}: {exc}")
+
+        # Scalar-field modes (phi, Pi on the same spheres) -- own stream, own
+        # flag, off by default; independent of --psi4 so it survives --no-psi4.
+        # Failure must not take down any published stream; log and carry on.
+        if args_dict.get("scalar_modes"):
+            try:
+                s_ells = _parse_scalar_ells(args_dict.get("scalar_mode_ells"))
+                s_radii = [float(r) for r in args_dict["radii"]]
+                phi_modes, pi_modes, s_fluxes = extract_scalar_modes(
+                    ds,
+                    radii=s_radii,
+                    n_points=int(args_dict["n_points"]),
+                    center=args_dict["center"],
+                    ells=s_ells,
+                    flux_delta=float(args_dict.get("scalar_flux_delta", 0.5)),
+                )
+                result["scalar_modes_line"] = _scalar_modes_line(
+                    t, phi_modes, pi_modes, s_fluxes, s_ells, len(s_radii)
+                )
+            except Exception as exc:
+                if args_dict.get("verbose", False):
+                    print(f"WARNING: scalar mode extraction failed for {key}: {exc}")
 
         shell_fields = list(args_dict.get("shell_fields") or [])
         if shell_fields:

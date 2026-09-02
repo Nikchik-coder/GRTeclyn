@@ -61,6 +61,14 @@ uv run python -m grteclyn_wrapper.visualisation.process_wave.consume_plotfiles \
 
 **Outputs:** `.../small_data/psi4_mode_l2m0.dat`, `consume_state.json`
 
+**Optional scalar-field stream:** add `--scalar-modes` to also project the
+scalar field `phi` and its momentum `Pi` onto s=0 spherical harmonics
+(default l = 0, 1, 2, all m) on the same extraction spheres, into its own
+file `scalar_modes.dat`, together with a kinematic scalar energy flux per
+radius.  Off by default; the existing streams are untouched.  Conventions
+(R scaling, flux sign, the un-applied phantom sign) are documented in
+`consume_plotfiles/extraction/scalar_modes.py`.
+
 ### Rendering field frames while consuming plotfiles
 
 You can render 2D slice frames (like `grteclyn_wrapper.visualisation.visualize`) **while** consuming plotfiles, and still delete plotfiles to avoid disk overload.
