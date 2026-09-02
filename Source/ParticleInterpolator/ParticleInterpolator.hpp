@@ -48,7 +48,10 @@ class ParticleInterpolator
     amrex::GpuArray<bool, AMREX_SPACEDIM> m_hi_boundary_reflective{{false}};
 
     static constexpr int s_interp_order = 4;
-    static constexpr int s_num_ghosts   = s_interp_order / 2;
+    // A particle in the outer half-cell of a box has its Lagrange stencil
+    // centre rounded into the first ghost cell, so the stencil reaches
+    // 1 + s_interp_order / 2 ghost cells deep (Lagrange::build_stencil).
+    static constexpr int s_num_ghosts   = s_interp_order / 2 + 1;
 
     bool m_verbosity{false};
 

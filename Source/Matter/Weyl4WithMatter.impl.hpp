@@ -128,7 +128,7 @@ void Weyl4WithMatter<matter_t>::compute_mf(amrex::MultiFab &out_mf,
                                                    out_comp, G_Newton, time);
 
     amrex::ParallelFor(
-        out_mf,
+        out_mf, out_mf.nGrowVect(),
         [=] AMREX_GPU_DEVICE(int box_no, int ix, int iy, int iz) noexcept
         {
             my_weyl4_with_matter(ix, iy, iz, out_arrays[box_no],

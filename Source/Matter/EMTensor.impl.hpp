@@ -120,7 +120,7 @@ AMREX_FORCE_INLINE void EMTensor<matter_t, em_tensor_options>::compute_mf(
                                                     dcomp);
 
     amrex::ParallelFor(
-        out_mf,
+        out_mf, out_mf.nGrowVect(),
         [=] AMREX_GPU_DEVICE(int box_no, int ix, int iy, int iz) noexcept
         { em_tensor(ix, iy, iz, emtensor_out[box_no], state[box_no]); });
 }
