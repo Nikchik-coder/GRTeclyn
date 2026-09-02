@@ -28,7 +28,7 @@ what did not, and the comparison arms it added.*
 - [ ] Scouts p025 / p035 / p045 → capture boundary **+ the fuse audit** (§2): a p qualifies only if both throats are still throats at periapsis
 
 **Cheap, next, no GPU conflict (each still needs one by-hand approval)**
-- [ ] Re-run initial-data check E on the production drainhole template — max_steps = 0, minutes (§3)
+- [x] Re-run initial-data check E on the production drainhole template — **done 2026-09-02, §3**: d/b = 6 is not a cliff (1.58× the d/b = 8 defect), but the defect never falls below the floor, so the Helfer/Ning correction is now indicated
 - [ ] L = 128 / N = 256 smoke test, t = 5: memory + speed (§3)
 - [ ] Switch on in-code Weyl extraction in the production templates — params-only (§3)
 - [ ] BBH vacuum control, same masses and momenta (§8.1)
@@ -277,6 +277,65 @@ spurious squeeze/pulsation in horizonless objects, and our central
 unexplained event is a collapse.  The check-E re-run bounds the defect the
 correction would remove; implementing the correction itself is initial-data
 level and cheap if the bound comes back non-negligible.
+
+**Check E re-run — RESULT (2026-09-02, drainhole branch, b = 2).**  18 jobs,
+L = 64, `max_level = 0`, initial data only, ladder N = 192 / 288 / 384 at
+each separation; defect `A` from the `L2_Ham(N) = A + B·N^-p` fit.
+
+> **First, the diagnostic had to be repaired.**  The whole-domain `L2_Ham`
+> in `constraint_norms.dat` *rises* with resolution — even for the single
+> throat, which is an **exact** solution and must converge.  Cause, measured
+> from the t = 0 constraint field: **93.7 % (N = 192) → 99.98 % (N = 384) of
+> the total Ham² lives in the outermost 2 cells**, the layer whose stencils
+> read boundary ghosts; widening the excluded layer to 3, 4, 6 or 10 cells
+> changes nothing, so it is exactly the ghost layer and not a corner-volume
+> effect.  Drop those 2 cells and the exact throat converges at **4th order**
+> (3.89) to `A = 8e-7`, i.e. zero — the method validates itself.  **The
+> in-code whole-domain `L2_Ham` is unusable for convergence or defect work**;
+> any past claim resting on it needs re-reading (this is a *second*,
+> more serious artefact than the level-0-only one noted above).
+
+| ladder | N=192 | N=288 | N=384 | **A (defect)** | vs error bar |
+| --- | --- | --- | --- | --- | --- |
+| single throat (exact — zero control) | 3.64e-4 | 7.57e-5 | 2.52e-5 | **8e-7** ≈ 0 | — |
+| d = 8  (d/b = 4) | 6.37e-4 | 5.02e-4 | 4.93e-4 | **4.92e-4** | 603× |
+| d = 12 (d/b = 6) **production** | 5.22e-4 | 3.03e-4 | 2.89e-4 | **2.87e-4** | 352× |
+| d = 16 (d/b = 8) *old gate* | 4.89e-4 | 2.07e-4 | 1.86e-4 | **1.82e-4** | 223× |
+| d = 24 (d/b = 12) | 4.81e-4 | 1.34e-4 | 9.70e-5 | **8.61e-5** | 106× |
+| d = 12 + BY momenta p = 0.35 | 5.25e-4 | 3.08e-4 | 2.95e-4 | **2.92e-4** | 359× |
+
+- **d/b = 6 is not a cliff.**  The production separation costs **1.58×** the
+  old gate's d/b = 8 defect, and d/b = 4 only 2.70× — a smooth `A ~ d^-1.6`
+  power law with no threshold anywhere in 4 ≤ d/b ≤ 12.  The Phase 1 gate
+  "run at d/b ≥ 8" was inherited from the massless b = 1 EB branch, where
+  d/b = 4 was an *order of magnitude* worse; **the drainhole branch is far
+  more forgiving, and d = 12 needs no apology.**
+- **But the defect never hides under the floor.**  Unlike the b = 1 branch
+  (where d/b ≥ 8 sat below the discretisation floor and d = 8 / d = 16 were
+  indistinguishable), here every separation is 100–600× the error bar and
+  cleanly ordered.  The d/b = 6 defect exceeds the code's own discretisation
+  error for any grid finer than **dx ≈ 0.31**; the production base grid is
+  dx = 0.5, but its refined levels reach dx = 0.0625, so **over the region
+  that actually resolves the throats the superposition defect — not
+  truncation — is the dominant t = 0 error, and refining does not remove it.**
+- **Bowen–York momenta add 1.9 %** at d = 12 — the tangential boost is not a
+  meaningful extra defect source, so the orbit parameters are exonerated.
+- **Decision, per this section's own rule: the bound came back
+  non-negligible, so the Helfer/Ning one-body conformal correction is now
+  indicated** (known inconsistency 2).  It is the one thing that would
+  actually lower the number, and the literature attributes exactly the
+  spurious squeeze/pulsation we see in a horizonless object to its absence.
+- *Validated two ways.*  The primary metric (drop the 2-cell ghost layer) and
+  a completely independent volume restriction (`r < 24`, inside the sponge)
+  give **identical** ratios — 1.58, 2.70, +1.9 %, `d^-1.6` — on different
+  cell sets.  Caveat kept honest: `A` is an unnormalised RMS, so the
+  *relative* statements above are solid while "how big is 2.9e-4 physically"
+  needs `Ham / Ham_abs_terms`, which this pass did not record.
+- *Trap for the next person:* setting `amr.derive_plot_vars = constraints`
+  aborts the run unless `G_Newton` is defined in the params — the derived
+  path does a hard `pp.get` with no default, while the in-code norm hardcodes
+  1.0.  Templates: `params_checkE*_<tag>_n<N>.txt`; runs under
+  `runs/wormhole_merger/checkE/` (plotfiles deleted, `.dat` streams kept).
 
 **Cost of the bigger box (estimated, then smoke-tested).**  The AMR hierarchy
 currently carries ~4.1 M cells *per level*; fine levels dominate runtime
