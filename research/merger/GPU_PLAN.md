@@ -202,6 +202,29 @@ cache small.  The domain is genuinely 64.)
   Plotfiles stay at plot_interval 50 for frames and the consumer streams —
   which also makes the consumer-side Ψ₄ an *independent cross-check* of the
   in-code stream, the two-source validation rule for free.
+- **In-code extraction: two bugs found and fixed before first use (2026-09-02).**
+  The stream was junk on matter runs — NaN rows and O(0.4) plateaus on
+  ~55 % of sphere points, clustered within 2 cells of internal grid-box
+  faces.  (a) `ParticleInterpolator` allocated 2 ghost cells but the
+  4th-order Lagrange stencil reaches 3 when the centre rounds into the
+  first ghost layer — out-of-bounds GPU reads (`s_num_ghosts = order/2 + 1`).
+  (b) The matter-sector derived functions (`Weyl4WithMatter`,
+  `ConstraintsWithMatter`, `EMTensor`) called `amrex::ParallelFor(out_mf, …)`
+  without the ghost argument, so when `derive(…, ngrow=3)` feeds the
+  interpolator, the derived MultiFab's ghost cells were **never computed**
+  and held stale arena memory.  The vacuum `Weyl4` passes
+  `out_mf.nGrowVect()`; the matter variants didn't — which is why every
+  upstream (vacuum BBH) test passes while every matter extraction is junk,
+  and why plotfiles (derived with ngrow = 0) always looked clean.
+  Validated two ways: a printf inside the interpolation kernel counted
+  3 083–3 323 garbage stencil reads per 15-step window before the fix and
+  the mechanism is gone after; and a point-by-point comparison of the fixed
+  extraction stream against the same-step plotfile via the consumer pipeline
+  (1 776 sphere points) — 0 plateaus, 0 NaN, the only residual disagreements
+  are the poles and 4 zero-crossings where nearest-cell plotfile sampling
+  itself is the cruder method (quadrant-average and neighbour-range checks
+  confirm the in-code value).  Fix is 4 files, upstream-relevant.
+  **Extraction-key templates are unblocked.**
 - Consumer-side radii remain a free post-processing choice; every production
   launch adds `--scalar-modes` to `WHM_CONSUME_ARGS` so each arm records the
   scalar l ≤ 2 modes and the kinematic flux on the same spheres (§7 leg 1).
