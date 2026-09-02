@@ -165,6 +165,18 @@ this: the throats have opposite scalar signs, so φ at the ring is a *dipole*
 power sits in the m = 1 azimuthal harmonic.  Figure and script:
 `runs/wormhole_merger/merger_fix/plots/scalar_vs_psi4_R14.{png,py}`.
 
+**Is the ringing an artifact of the frozen core?  Tested — no.**  The
+freeze only holds a tiny ball (fully frozen inside r = 1.3 for fill, 1.5 for
+fillwide, blended out by 1.8 / 2.0); R = 14 is ten freeze-radii away, in fully
+evolving field.  A frozen ball is still an artificial inner boundary, so the
+check is whether the period follows the freeze geometry: fill vs fillwide
+differ by ~15 % in freeze radius, and a cavity mode set by that boundary
+would shift by roughly as much.  Measured: fill 17.3 / 17.0 / 17.7 vs
+fillwide 17.7 / 17.7 / 18.0 (Ψ4 / φ m=1 / ∂t φ m=1) — a ~2 % shift, within
+the 4-crossing precision — and the dipole precession rate matches to 0.2 %
+(0.1537 vs 0.1540 rad/unit).  The mode belongs to the remnant and its halo,
+not to the freeze ball.
+
 Production implication: slice caches only reach r = 16, so this check cannot
 be done at R = 30 or on the four production radii.  The production runs
 should extract scalar modes on the same spheres as Ψ4 — per the diagnostics
