@@ -47,22 +47,32 @@ a result.  But an eccentric-capture arm alongside it is much stronger, and the
 capture boundary itself (merge vs escape as a function of p) is a figure no
 one has published.  The scan *is* paper content, not just tuning.
 
-**Proposal: a four-point p-scan (the capture ladder).**
+**Revised 2026-09-02 — the archive already held the key data point.**  A
+p = 0.45 arm ran on 2026-08-31 (`merge_orbit_flip_d12_p045`): separation fell
+12 → 3.95 by t = 40, swung back out to 4.61 by t = 60 — and the run *stopped
+there*, mid-orbit, on the outbound leg.  Since 0.45 is 90% of circular
+momentum for the 6× pull, that is a bound eccentric orbit cut off after one
+periapsis, not an observed escape.  The run wrote no checkpoints
+(checkpoint_interval = -1), so it cannot be continued — the decisive part,
+t > 60, has to be re-simulated from t = 0.
 
-| Scout | p | Expectation |
+**The ladder as launched** — max_level 3, the campaign's own proven
+orbit-phase configuration (levels 4–5 were always added on restart near
+collapse; scouts classify trajectories, so no extra refinement):
+
+| Scout | p | Status / expectation |
 |---|---|---|
-| S1 | 0.12 | the known plunge (re-used, not re-run) |
-| S2 | 0.25 | bent plunge, maybe a half orbit |
-| S3 | 0.35 | eccentric capture, ~1 orbit then plunge |
-| S4 | 0.45 | 1–2 orbits, the candidate paper IVP |
-| S5 | 0.55 | likely escape/expansion — brackets the boundary |
+| S1 | 0.12 | plunge, merges at 44.9 — in hand, re-used |
+| S2 | 0.25 | queued for the next free card — bent plunge, maybe a half orbit |
+| S3 | 0.35 | queued — eccentric-capture candidate |
+| S4 | 0.45 | **LAUNCHED 2026-09-02** (t = 0 → 200) — does the swing-out return and merge? |
+| S5 | 0.55 | optional, above circular (0.50) — only if the boundary needs bracketing from above |
 
-Scouts run at **max_level 4, L = 64, t = 200** — classification (merge /
-capture / escape) needs trajectories, not waveforms, and level 4 tracked the
-throats fine in the m4e ladder.  Cost: 200 / 9.0 u/h ≈ **22 h each**, one per
-card, all four scouts in a day.  Whichever p gives the longest-lived orbit
-*that still merges* becomes the production spiral IVP.  If S4/S5 both escape,
-bisect once; the boundary itself gets a panel either way.
+All scouts: L = 64, N = 128, max_level 3, stop_time 200, and
+checkpoint_interval 2000 — every 20 time units — so any arm can be extended
+by restart (the p045 lesson).  Measured speed at launch ~10 u/h → ~20 h per
+scout.  Templates live in `runs/wormhole_merger/templates_scan/`; each launch
+is one by-hand invocation of `launch_capture_scan.sh <p> <gpu>`.
 
 Caveat: higher p delays collapse by roughly the orbital time — expect
 t_collapse ≈ 120–170 for the spiral arm, not 45.  Production stop_time must be
@@ -113,7 +123,10 @@ cells, weight 1 of ~62), so the slowdown should be modest — estimate
 **3.5–4.0 u/h at level 5**, i.e. ~10–25% below today's 4.3.  Memory is the
 real risk: current arms sit at 48–52 GB of 80; +14.7 M base cells adds an
 estimated ~25 GB → ~75 GB, tight.  **A t = 5 smoke run measures both numbers
-before anything is committed.**  Fallback if it doesn't fit: L = 96 / N = 192
+before anything is committed.**  (2026-09-02: if one card is tight, the
+declared fallback is MPI multi-rank across cards — the known AMR crash is
+specific to the radial regrid recipe, and the merger tags with type 2 — so
+memory alone does not force L = 96.)  Fallback if it doesn't fit: L = 96 / N = 192
 (sponge 40 → 48, radii 20/26/32/38) — still fixes issues 1–2.
 
 ---
@@ -148,7 +161,7 @@ re-run once at L = 128 to re-validate the method at the production geometry.
 | Phase | Runs | Cards | Wall time |
 |---|---|---|---|
 | 0 (now) | wave 8 drains (fill100/fillwide100 → t = 100, late6 → 80); then the wave-8 checks: second peak at R = 30 near t ≈ 93, late6 no-shift | 3 | ~4 h |
-| 1 | p-scan scouts S2–S5 (lvl 4, L = 64, t = 200) | 4 | ~22 h |
+| 1 | p-scan scouts (lvl 3, L = 64, t = 200): S4 live on card 3; S2/S3 follow as wave 8 drains | 3–4 | ~20 h each |
 | 1b | L = 128 smoke test (t = 5: memory + speed); repulsion a-points | any free | hours |
 | 2 | production: spiral arm (chosen p, L = 128, lvl 5) + its seam twin; baseline p = 0.12 arm at L = 128; level-6 companion of the spiral arm | 4 | lvl-5 arms ~2.5–3 days; lvl-6 companion ~5–6 days |
 | 2b | late-engagement control at L = 128 (restart segment, ~40 units) | 1, after a twin frees | ~12 h |
