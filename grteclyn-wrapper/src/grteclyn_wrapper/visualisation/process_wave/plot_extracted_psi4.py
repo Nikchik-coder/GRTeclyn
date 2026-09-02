@@ -29,6 +29,12 @@ from scipy.signal.windows import tukey
 
 matplotlib.use("Agg")
 
+MODE = "2,0"  # (l,m) label used in axis titles; set via --mode-label
+
+
+def _mode(label: str) -> str:
+    return label.replace("{MODE}", MODE)
+
 M_SUN_KG = 1.98892e30
 G_SI = 6.67430e-11
 C_SI = 2.99792458e8
@@ -453,7 +459,7 @@ def _draw_waveform(
             m &= x <= t_max
         ax.plot(x[m], y[m], color="black", linestyle=ls, linewidth=1.0, label=rf"$R={R:g}$")
     ax.set_xlabel(r"$t$" if time_axis == "simulation" else r"$t - R_{\mathrm{ext}}$")
-    ax.set_ylabel(r"$r\,\mathrm{Re}\!\left(\Psi_4^{2,0}\right)$")
+    ax.set_ylabel(_mode(r"$r\,\mathrm{Re}\!\left(\Psi_4^{{MODE}}\right)$"))
     ax.legend(loc="upper right", frameon=True, framealpha=0.9, fontsize=9)
     ax.grid(True, which="both", ls="--", alpha=0.6)
     ax.tick_params(axis="both", which="major", direction="in", top=True, right=True)
@@ -492,7 +498,7 @@ def _draw_psd(ax, radii, stored_psd, linestyles, smooth_w, smooth_p,
         ax.set_xlim(0.0, float(f_max))
 
     ax.set_xlabel(r"$f\,(M^{-1})$")
-    ax.set_ylabel(r"$\mathrm{PSD}\left[r\,\Psi_4^{2,0}\right]$")
+    ax.set_ylabel(_mode(r"$\mathrm{PSD}\left[r\,\Psi_4^{{MODE}}\right]$"))
     ax.legend(loc="upper right", frameon=True, framealpha=0.9, fontsize=9)
     ax.grid(True, which="major", ls="--", alpha=0.6)
     ax.tick_params(axis="both", which="major", direction="in", top=True, right=True)
@@ -610,7 +616,7 @@ def _draw_propagation(ax, t, radii, series, linestyles):
         y_text -= 0.08
 
     ax.set_xlabel(r"Retarded time $t - R_{\mathrm{ext}}$")
-    ax.set_ylabel(r"$|r\,\Psi_4^{2,0}|$")
+    ax.set_ylabel(_mode(r"$|r\,\Psi_4^{{MODE}}|$"))
     ax.legend(loc="upper right", frameon=True, framealpha=0.9, fontsize=9)
     ax.grid(True, which="both", ls="--", alpha=0.6)
     ax.tick_params(axis="both", which="major", direction="in", top=True, right=True)
@@ -735,7 +741,7 @@ def _plot_combined(t, radii, series, stored_psd, args, linestyles, fs):
                    t_min=args.t_min, t_max=args.t_max)
 
     R_inner = radii[0]
-    qnm_result = _fit_qnm(t, series[R_inner], R_inner)
+    qnm_result = None if args.no_qnm else _fit_qnm(t, series[R_inner], R_inner)
     if qnm_result is not None:
         t0 = qnm_result["t_ret_start"]
         t1 = qnm_result["t_ret_end"]
@@ -816,8 +822,8 @@ def _plot_combined(t, radii, series, stored_psd, args, linestyles, fs):
                         ha="center", va="center", fontsize=12)
 
     titles = [
-        r"Waveform $r\,\mathrm{Re}(\Psi_4^{2,0})$",
-        r"Waveform $r\,\mathrm{Re}(\Psi_4^{2,0})$ (retarded) + QNM fit",
+        _mode(r"Waveform $r\,\mathrm{Re}(\Psi_4^{{MODE}})$"),
+        _mode(r"Waveform $r\,\mathrm{Re}(\Psi_4^{{MODE}})$ (retarded) + QNM fit"),
         r"Power Spectral Density of $\Psi_4$",
         "Propagation speed analysis",
         rf"Spectrogram (time-frequency, $R={R_spec:g}$)",
@@ -851,9 +857,9 @@ def _plot_stacked(t, radii, series, stored_psd, args, linestyles, fs):
     ax_wave = axes_arr[ax_idx]; ax_idx += 1
     _draw_waveform(ax_wave, t, radii, series, linestyles, args.time_axis,
                    t_min=args.t_min, t_max=args.t_max)
-    label = (r"Radius-scaled waveform $r\,\mathrm{Re}(\Psi_4^{2,0})$"
+    label = (_mode(r"Radius-scaled waveform $r\,\mathrm{Re}(\Psi_4^{{MODE}})$")
              if args.time_axis == "simulation"
-             else r"Radius-scaled waveform $r\,\mathrm{Re}(\Psi_4^{2,0})$ (retarded)")
+             else _mode(r"Radius-scaled waveform $r\,\mathrm{Re}(\Psi_4^{{MODE}})$ (retarded)"))
     ax_wave.set_title(label)
 
     if args.plot_psd:
@@ -958,6 +964,17 @@ def main() -> None:
     )
     parser.add_argument("--propagation-speed", action="store_true", help="Measure propagation speed across extraction radii")
     parser.add_argument(
+        "--mode-label", default="2,0",
+        help="(l,m) label shown in axis titles, e.g. '2,2' when the input file "
+             "holds the m=2 mode. Purely cosmetic.",
+    )
+    parser.add_argument(
+        "--no-qnm", action="store_true",
+        help="Suppress the QNM ringdown fit overlay. Use when the signal is not a "
+             "ringdown or is too sparsely sampled for the fit to be meaningful "
+             "(the fit is unconstrained above the Nyquist frequency).",
+    )
+    parser.add_argument(
         "--pert-sigma", type=float, default=None,
         help="Width sigma_K of the initial Gaussian K perturbation (code units). "
              "When set, overlays the perturbation's spectral content on the PSD panel "
@@ -980,6 +997,8 @@ def main() -> None:
     )
 
     args = parser.parse_args()
+    global MODE
+    MODE = args.mode_label
 
     in_path = Path(args.input).expanduser().resolve()
     if not in_path.exists():
