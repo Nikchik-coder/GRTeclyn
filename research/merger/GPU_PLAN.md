@@ -337,6 +337,79 @@ each separation; defect `A` from the `L2_Ham(N) = A + B·N^-p` fit.
   1.0.  Templates: `params_checkE*_<tag>_n<N>.txt`; runs under
   `runs/wormhole_merger/checkE/` (plotfiles deleted, `.dat` streams kept).
 
+**Helfer/Ning one-body correction — IMPLEMENTED AND MEASURED (2026-09-02).**
+Step (iii) of the background.md route is in the code as
+`wormhole_helfer_correction` (default **0 = off**; also
+`wormhole_helfer_width`, `wormhole_helfer_power`).  It removes the constants
+the companion leaves at each throat's centre — Helfer Eq. 45,
+`γ_ij = γ_ij^A + γ_ij^B − γ_ij^B(x_A)` — windowed onto each body with
+`W = exp[−(r/w)^p]` so spatial infinity, and with it asymptotic flatness and
+the Sommerfeld boundary condition, never sees the subtraction.
+
+> **What the artefact actually is, measured.**  Expand the plain superposition
+> about throat A: the companion hands it two constants, `dpsi = 3.47e-3` and
+> `du = −0.0834`.  `du` is the dominant one by 24×.  Together they rescale
+> throat A's spatial metric by `e^{−2du}(1+dpsi/psi_A)^4`, so the throat
+> starts **+8.1 % (away) / +10.9 % (toward)** larger in areal radius than the
+> static solution its own field equations support — it is not in equilibrium,
+> and it rings.  That is exactly the failure Helfer et al. diagnose, and the
+> reason they call it worse for horizonless objects.
+
+**The correction works, and it is not free.**  Both halves were measured at
+`a = 2, m = 1, d = 12, N = 192`, throat size from the analytic areal radius
+(isolated = 3.88955), `L2_Ham` on the repaired 2-cell-excluded metric:
+
+| window `w / p` | throat size error | `L2_Ham` | vs plain |
+|---|---|---|---|
+| plain superposition | +8.1 % / +10.9 % | 5.22e-4 | 1.00× |
+| `0.4d / 6` (literal Eq. 45) | −1.1 % / +1.5 % | 4.71e-3 | 9.02× |
+| `0.5d / 3` | −0.9 % / +1.6 % | 1.75e-3 | 3.36× |
+| **`d/3 / 2` (the default)** | **+0.2 % / +2.8 %** | **9.60e-4** | **1.84×** |
+| `d/4 / 2` | +1.1 % / +3.7 % | 8.68e-4 | 1.66× |
+| `d/6 / 2` | +3.1 % / +5.6 % | 7.97e-4 | 1.53× |
+
+- *The window is the whole engineering problem.*  A window that switches off
+  over a length `w` has curvature `~1/w²`, and the Hamiltonian constraint sees
+  that curvature times the constant being removed.  So the correction repairs
+  the size by adding a defect of its own.  The default is the knee: **84 % of
+  the spurious inflation removed for 1.8×**, where insisting on the last 16 %
+  costs 9×.
+- *Both columns are continuum properties.*  The corrected defect moves 1.5 %
+  between N = 192 and N = 384 (d = 12: 4.71e-3 → 4.61e-3 at the old default),
+  i.e. it does not converge away — same character as the superposition defect
+  it trades against.  Full corrected ladder, all four separations × three
+  resolutions, recorded alongside the plain ladder.
+- *Regression, verified two ways.*  With the flag **off** the new binary
+  reproduces the pre-change baseline **bit for bit** — d = 12, N = 192 gives
+  `5.218469e-04 / 1.074869e-03 / 2.620791e-03`, all three columns identical to
+  the 2026-09-02 plain run.  And the auto default reproduces the explicit
+  `w = 4, p = 2` run to all seven digits (`9.602813e-04`), confirming
+  `w_auto = d/3` is wired as documented.
+
+**WHICH COLUMN MATTERS IS NOT SETTLED, AND THIS PASS CANNOT SETTLE IT.**
+Helfer et al.'s claim is about **dynamics** — a body that starts the wrong size
+rings, and the ringing is what destroys horizonless objects — not about the
+initial constraint norm, which their fix also worsens.  Nothing above is
+evidence either way about the collapse.  **The decisive test is an evolution:**
+one arm with `wormhole_helfer_correction = 1` against the matched plain twin,
+same everything else, watching the throat-radius oscillation and the collapse
+time.  If the correction is what the literature claims, the corrected arm
+should ring less and survive longer *despite* starting with 1.8× the
+constraint violation.  Until that run exists, the honest statement is: this
+flag trades a measured 9.5 % error in each throat's initial size for a
+measured 1.8× increase in the initial Hamiltonian violation.
+
+- *Whether it lets us drop the core freeze* is the same open question in
+  different words, and the same run answers it.  Do not assume it does — the
+  Ellis drainhole throat has its own linear instability, and if the collapse
+  is physical no initial-data fix removes it.
+- *Operational note:* N = 384 no longer fits one H100 with the constraints
+  derive on (79 GB arena, OOM).  `run_single.sh` now takes `WHM_RANKS=2`
+  with `WHM_GPU=0,1` and binds each rank to its own card inside the rank, per
+  the wrapper README's binding rule — measured **55.5 GB per card**, run
+  clean.  Probe templates now carry `amr.checkpoint_files_output = 0`: the
+  first ladder left 87 GB of dead `Chk00001` dirs from `max_steps = 1` runs.
+
 **Cost of the bigger box (estimated, then smoke-tested).**  The AMR hierarchy
 currently carries ~4.1 M cells *per level*; fine levels dominate runtime
 (level ℓ substeps 2^ℓ times).  Doubling L only grows level 0 (2.1 → 16.8 M

@@ -134,6 +134,92 @@
     for two the error is the usual O(a^2/d^2) plus O(m/d) - Plan.md Stage 2
     replaces it with the Helfer/Ning correction and then a CTTK solve.
 
+    ---- THE HELFER/NING ONE-BODY CORRECTION (helfer_correction = 1) --------
+    Plain superposition is not innocent near a throat.  Expand it about throat
+    A's centre: the companion's fields are smooth there, so to leading order
+
+        psi   -> psi_A(r_A) + [psi_B(x_A) - 1],     u -> u_A(r_A) + u_B(x_A),
+
+    i.e. throat A is handed two CONSTANTS it did not ask for.  They rescale its
+    spatial metric by a uniform factor,
+
+        gamma_ij(near A) = e^{-2 u_B(x_A)} (1 + dpsi / psi_A)^4 x [isolated A],
+
+    which for the production binary (a = 2, m = 1, d = 12) is e^{+0.167} = 1.18
+    on lengths and 1.28 on the volume element.  Throat A therefore starts 18%
+    larger than the static solution its own field equations support, so it is
+    not in equilibrium and it rings - which is precisely the failure Helfer,
+    Sperhake, Croft, Radia, Ge & Lim diagnose ("Malaise and remedy of binary
+    boson-star initial data", CQG 39, 074001, 2022, arXiv:2108.11995): "the
+    spurious alteration of the volume element ... mimics a squeeze", and it is
+    WORSE for horizonless objects "due to the lack of a horizon and its
+    potentially protective character".  Ning et al. (arXiv:2604.15240) carry
+    the same idea to a one-body conformal-factor correction and report that it
+    "substantially suppresses these artifacts".
+
+    Their remedy (Helfer Eq. 45) is to subtract the companion's value AT THIS
+    BODY'S CENTRE instead of the flat metric,
+
+        gamma_ij = gamma_ij^A + gamma_ij^B - gamma_ij^B(x_A),
+
+    which is exactly "give each throat back its own constants".  Applied
+    literally and globally it would leave psi and alpha away from 1 at spatial
+    infinity, breaking asymptotic flatness and the Sommerfeld boundary
+    condition that reads the asymptotic values off StateVariables.  So the
+    subtraction is WINDOWED onto the body it repairs:
+
+        psi   -= W_A dpsi_A + W_B dpsi_B,   u_sum -= W_A du_A + W_B du_B,
+        W_X(r_X) = exp[-(r_X / w)^p],
+        dpsi_A = psi_B(x_A) - 1,  du_A = u_B(x_A),   (and A <-> B)
+
+    with w = helfer_width (default d/3) and p = helfer_power (default 2).
+
+    THE WINDOW IS NOT FREE, AND ITS SHAPE IS THE WHOLE ENGINEERING PROBLEM.
+    A window that turns off over a length w has curvature ~1/w^2, and the
+    Hamiltonian constraint sees that curvature multiplied by the constant being
+    removed (du = -0.083 at the production binary, which is the DOMINANT piece
+    - it is 24x larger than dpsi).  So the correction repairs the throat's size
+    by adding a constraint defect of its own.  Both halves of that trade were
+    measured, at a = 2, m = 1, d = 12, N = 192, against a plain-superposition
+    L2_Ham of 5.22e-4 (throat size from the analytic areal radius, on-axis
+    towards and away from the companion; isolated = 3.88955):
+
+       w / p     throat size error      L2_Ham      vs plain
+       plain     +8.1% / +10.9%         5.22e-4      1.00x
+       0.4d / 6  -1.1% /  +1.5%         4.71e-3      9.02x   <- literal Eq. 45
+       0.5d / 3  -0.9% /  +1.6%         1.75e-3      3.36x
+       d/3  / 2  +0.2% /  +2.8%         9.60e-4      1.84x   <- default
+       d/4  / 2  +1.1% /  +3.7%         8.68e-4      1.66x
+       d/6  / 2  +3.1% /  +5.6%         7.97e-4      1.53x
+
+    The default is the knee: it removes 84% of the spurious inflation for less
+    than 2x the constraint defect, where insisting on the last 16% costs 9x.
+    Both columns are continuum properties - the corrected defect changes by
+    1.5% between N = 192 and N = 384, i.e. it does not converge away, exactly
+    like the superposition defect it is trading against.
+
+    WHICH COLUMN MATTERS IS AN EMPIRICAL QUESTION AND IS NOT SETTLED HERE.
+    Helfer et al.'s claim is about DYNAMICS - a body that starts the wrong size
+    rings, and the ringing is what destroys horizonless objects - not about the
+    initial constraint norm, which their fix also worsens.  The decisive test
+    is an evolution, not this table.  Until that test is run, the honest
+    reading is: this flag trades a measured 9.5% error in each throat's initial
+    size for a measured 1.8x increase in the initial Hamiltonian violation.
+
+    The SCALAR needs no correction.  The companion leaves a constant offset at
+    x_A there too, but for a massless phantom the constraints see only
+    (grad phi)^2, so that constant is exactly free - the same argument that
+    makes subtract_phi_asymptote free.  It is NOT free at phantom_mass != 0.
+
+    Exact only for equal bodies: the subtracted constant is a one-body value,
+    and for unequal masses the weighted-subtraction generalisation of Croft
+    et al. is needed instead.  SimulationParameters warns if the two throats
+    differ.  This corrects the CONSTANT part of the cross term, i.e. each
+    throat's equilibrium size; it does not touch the O(a^2/d^2) gradient part,
+    which only a constraint solve (Route B) removes.  Default is 0 = off, and
+    with it off not one expression below changes, so archived runs reproduce
+    bit for bit.
+
     Momentum: Bowen-York extrinsic curvature per throat,
 
         Ahat_ij = (3 / (2 r^2)) [ P_i n_j + P_j n_i - (delta_ij - n_i n_j) P.n ],
@@ -212,6 +298,22 @@ class BinaryWormholeInitialData
         //! into a pull and is the gravity-driven route to a merger.
         double phi_sign_B;
 
+        //! Helfer/Ning one-body correction: 0 = off (plain superposition, the
+        //! archived behaviour, bit for bit), 1 = on.  See the class comment.
+        int helfer_correction{0};
+
+        //! Width w of the correction window exp[-(r/w)^p], in code units.
+        //! 0 (the default) means auto: 1/3 of the throat separation, which
+        //! leaves exp(-9) = 1.2e-4 of the correction at the companion whatever
+        //! the separation is.
+        double helfer_width{0.0};
+
+        //! Exponent p of the correction window.  Large p buys a flatter core
+        //! but a sharper shoulder, and the shoulder is what costs Hamiltonian
+        //! constraint - see the trade-off table in the class comment for why
+        //! the default is 2 and not the 6 that a flat core would want.
+        double helfer_power{2.0};
+
         double phantom_mass;
         double support_strength;
     };
@@ -219,6 +321,57 @@ class BinaryWormholeInitialData
     BinaryWormholeInitialData(params_t a_params, double a_dx)
         : m_params(a_params), m_dx(a_dx)
     {
+        // Precompute the four Helfer constants once on the host: they are
+        // pure functions of the parameters, so the device kernel only pays
+        // for the two windows.
+        const double bA = m_params.b0_A;
+        const double bB = m_params.b0_B;
+        if (m_params.helfer_correction == 0 || bA <= 0.0 || bB <= 0.0)
+        {
+            return; // off, or only one body present - nothing to correct
+        }
+
+        double d2 = 0.0;
+        for (int idir = 0; idir < AMREX_SPACEDIM; ++idir)
+        {
+            const double dd = m_params.centerA[idir] - m_params.centerB[idir];
+            d2 += dd * dd;
+        }
+        if (d2 <= 0.0)
+        {
+            return; // coincident throats: there is no "companion's centre"
+        }
+        const double d = std::sqrt(d2);
+
+        m_helfer_on = true;
+        m_helfer_w  = (m_params.helfer_width > 0.0) ? m_params.helfer_width
+                                                    : d / 3.0;
+
+        // dpsi_A is what throat B adds to psi AT throat A's centre, etc.
+        m_helfer_dpsi_A = std::sqrt(1.0 + bB * bB / (4.0 * d2)) - 1.0;
+        m_helfer_dpsi_B = std::sqrt(1.0 + bA * bA / (4.0 * d2)) - 1.0;
+
+        if (m_params.id_type == 1)
+        {
+            // The mass rides in u, so that is where its constant lives.
+            if (m_params.drainhole_mass_B != 0.0)
+            {
+                m_helfer_du_A =
+                    drainhole_u<double>(d, bB, m_params.drainhole_mass_B);
+            }
+            if (m_params.drainhole_mass_A != 0.0)
+            {
+                m_helfer_du_B =
+                    drainhole_u<double>(d, bA, m_params.drainhole_mass_A);
+            }
+        }
+        else
+        {
+            // id_type = 0 puts the mass in psi as a Brill-Lindquist puncture,
+            // so the companion's m/(2r) tail is part of the same constant.
+            m_helfer_dpsi_A += 0.5 * m_params.bare_mass_B / d;
+            m_helfer_dpsi_B += 0.5 * m_params.bare_mass_A / d;
+        }
     }
 
     template <class data_t>
@@ -290,6 +443,21 @@ class BinaryWormholeInitialData
         {
             psi += (data_t)(0.5 * m_params.bare_mass_A) / rA +
                    (data_t)(0.5 * m_params.bare_mass_B) / rB;
+        }
+
+        // ---- Helfer/Ning one-body correction --------------------------------
+        // Hand each throat back the constants the companion left at its
+        // centre, windowed so spatial infinity never sees the subtraction.
+        // See the class comment for why this is Helfer Eq. 45 and why the
+        // window is needed.  m_helfer_on is false unless BOTH throats are
+        // present and the correction was asked for, so the single-throat
+        // regression mode and every archived run are untouched.
+        if (m_helfer_on)
+        {
+            const data_t WA = helfer_window(rA);
+            const data_t WB = helfer_window(rB);
+            psi -= WA * (data_t)m_helfer_dpsi_A + WB * (data_t)m_helfer_dpsi_B;
+            u_sum -= WA * (data_t)m_helfer_du_A + WB * (data_t)m_helfer_du_B;
         }
 
         const data_t psi2 = psi * psi;
@@ -523,7 +691,7 @@ class BinaryWormholeInitialData
     //! which tends to 0 at infinity (so the ADM masses of several throats add)
     //! and to -pi m / a at the compactified far infinity r -> 0.
     template <class data_t>
-    AMREX_GPU_DEVICE AMREX_FORCE_INLINE static data_t
+    AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE static data_t
     drainhole_u(const data_t r, const double a, const double m)
     {
         const data_t X = (r - (data_t)(a * a) / (4.0 * r)) / (data_t)a;
@@ -539,6 +707,15 @@ class BinaryWormholeInitialData
         const double amp =
             (m_params.id_type == 1) ? sqrt(a * a + m * m) / a : 1.0;
         return amp / sqrt(4.0 * M_PI);
+    }
+
+    //! Correction window W(r) = exp[-(r/w)^p], centred on one throat: unity
+    //! across the body it repairs, zero at the companion and at infinity.
+    template <class data_t>
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE data_t
+    helfer_window(const data_t r) const
+    {
+        return exp(-pow(r / (data_t)m_helfer_w, (data_t)m_params.helfer_power));
     }
 
     //! Origin-isolating collar, one factor per object: see lapse type 4 above
@@ -595,6 +772,15 @@ class BinaryWormholeInitialData
 
     params_t m_params;
     double m_dx;
+
+    //! Helfer/Ning correction, precomputed in the constructor.  All zero and
+    //! m_helfer_on false unless the correction is on and both throats exist.
+    bool m_helfer_on{false};
+    double m_helfer_w{1.0};
+    double m_helfer_dpsi_A{0.0};
+    double m_helfer_dpsi_B{0.0};
+    double m_helfer_du_A{0.0};
+    double m_helfer_du_B{0.0};
 };
 
 #endif /* BINARYWORMHOLEINITIALDATA_HPP_ */

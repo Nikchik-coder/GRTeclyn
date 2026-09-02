@@ -13,6 +13,7 @@
 #include "ThroatTracker.hpp"
 
 #include <array>
+#include <cmath>
 #include <string>
 
 class SimulationParameters : public SimulationParametersBase
@@ -137,6 +138,13 @@ class SimulationParameters : public SimulationParametersBase
                         "must be +1 or -1: the closed-form drainhole scalar "
                         "is exact only at full amplitude, any other value "
                         "breaks the Hamiltonian constraint at O(1)");
+
+        // Helfer/Ning one-body correction (see BinaryWormholeInitialData's
+        // class comment).  Default 0 keeps every archived run bit-identical.
+        pp.load("wormhole_helfer_correction",
+                wormhole_params.helfer_correction, 0);
+        pp.load("wormhole_helfer_width", wormhole_params.helfer_width, 0.0);
+        pp.load("wormhole_helfer_power", wormhole_params.helfer_power, 2.0);
 
         // Optional GRTresna-solved initial data (Route B).  Empty => use the
         // analytic superposition above.
@@ -340,6 +348,71 @@ class SimulationParameters : public SimulationParametersBase
                        "so regrid_threshold is ignored: refinement no longer "
                        "responds to the solution at all.  Set tagging_L to "
                        "control the boxes.");
+
+        check_parameter("wormhole_helfer_correction",
+                        wormhole_params.helfer_correction,
+                        (wormhole_params.helfer_correction == 0) ||
+                            (wormhole_params.helfer_correction == 1),
+                        "must be 0 (plain superposition) or 1 (subtract the "
+                        "companion's value at each throat's centre, Helfer "
+                        "Eq. 45).");
+
+        check_parameter("wormhole_helfer_width", wormhole_params.helfer_width,
+                        wormhole_params.helfer_width >= 0.0,
+                        "must be >= 0 (0 means auto: a third of the throat "
+                        "separation).");
+
+        check_parameter("wormhole_helfer_power", wormhole_params.helfer_power,
+                        wormhole_params.helfer_power > 0.0,
+                        "must be > 0: the window exp[-(r/w)^p] is not a "
+                        "window otherwise.");
+
+        {
+            double d2_helfer = 0.0;
+            for (int idir = 0; idir < AMREX_SPACEDIM; ++idir)
+            {
+                const double dd = wormhole_params.centerA[idir] -
+                                  wormhole_params.centerB[idir];
+                d2_helfer += dd * dd;
+            }
+            const double d_helfer   = std::sqrt(d2_helfer);
+            const bool helfer_on    = (wormhole_params.helfer_correction == 1);
+            const bool two_throats  = (wormhole_params.b0_A > 0.0) &&
+                                     (wormhole_params.b0_B > 0.0);
+            const double w_helfer =
+                (wormhole_params.helfer_width > 0.0)
+                    ? wormhole_params.helfer_width
+                    : d_helfer / 3.0;
+
+            warn_parameter("wormhole_helfer_correction",
+                           wormhole_params.helfer_correction,
+                           !helfer_on || two_throats,
+                           "is ignored unless BOTH throats are present: with "
+                           "one body there is no companion constant to "
+                           "subtract, and the data is already exact.");
+
+            warn_parameter(
+                "wormhole_helfer_width", w_helfer,
+                !helfer_on || !two_throats || (w_helfer < 0.5 * d_helfer),
+                "reaches at least halfway to the companion, so the two "
+                "correction windows overlap and each throat starts eating "
+                "the other's correction.  Keep it below half the separation "
+                "(the auto default is a third of the separation).");
+
+            warn_parameter(
+                "wormhole_helfer_correction",
+                wormhole_params.helfer_correction,
+                !helfer_on || !two_throats ||
+                    ((wormhole_params.b0_A == wormhole_params.b0_B) &&
+                     (wormhole_params.drainhole_mass_A ==
+                      wormhole_params.drainhole_mass_B) &&
+                     (wormhole_params.bare_mass_A ==
+                      wormhole_params.bare_mass_B)),
+                "is exact only for EQUAL bodies (Helfer Eq. 45 subtracts a "
+                "one-body constant).  These throats differ, so the residual "
+                "is O(delta m / d); the weighted-subtraction generalisation "
+                "of Croft et al. is what unequal masses need.");
+        }
 
         check_parameter("wormhole_id_type", wormhole_params.id_type,
                         (wormhole_params.id_type == 0) ||

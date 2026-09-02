@@ -22,7 +22,13 @@
 # Overrides:
 #   WHM_PARAMS    params template, resolved against Examples/BinaryWormholeMerger
 #                 if not an existing path (default params_test.txt)
-#   WHM_GPU       CUDA device (default 0)
+#   WHM_GPU       CUDA device (default 0).  With WHM_RANKS > 1 this is a
+#                 COMMA-SEPARATED list of physical ids, one per rank, e.g. "0,1"
+#   WHM_RANKS     MPI ranks for the evolution (default 1 = no mpirun).  Use it
+#                 only to buy VRAM headroom for a grid that will not fit on one
+#                 card: measured throughput is unchanged, memory genuinely
+#                 splits (README, "Multi-GPU").  Must equal the number of ids
+#                 in WHM_GPU, and needs the MPI binary (main3d.*.MPI.*.ex)
 #   WHM_RUNS_DIR  campaign root (default <repo>/runs/wormhole_merger)
 #   WHM_NAME      run name (default: params basename without .txt)
 #   WHM_EXE       evolution binary (default: newest main3d.*.ex in the example)
@@ -106,6 +112,7 @@ EXAMPLE_DIR="${REPO_ROOT}/Examples/BinaryWormholeMerger"
 
 PARAMS="${WHM_PARAMS:-params_test.txt}"
 GPU="${WHM_GPU:-0}"
+RANKS="${WHM_RANKS:-1}"
 RUNS_DIR="${WHM_RUNS_DIR:-${REPO_ROOT}/runs/wormhole_merger}"
 SCRATCH_ROOT="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}"
 
@@ -383,11 +390,38 @@ if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
   fi
 fi
 
+# Multi-GPU: one rank per physical card.  The binding is done INSIDE each rank
+# and not by exporting CUDA_VISIBLE_DEVICES="0,1" to the parent, because
+# OpenMPI/prterun drops that env often enough that ranks silently pile onto
+# card 0 (README, "Binding rule").  Each rank reads its own id out of
+# GRTECLYN_GPU_IDS by local rank instead.
+if [[ "${RANKS}" -gt 1 ]]; then
+  IFS="," read -ra _gpu_ids <<< "${GPU}"
+  if [[ "${#_gpu_ids[@]}" -ne "${RANKS}" ]]; then
+    echo "[whm] ERROR: WHM_RANKS=${RANKS} needs exactly ${RANKS} comma-separated" >&2
+    echo "[whm]        ids in WHM_GPU, got '${GPU}' (${#_gpu_ids[@]})." >&2
+    exit 2
+  fi
+  if [[ "${EXE}" != *".MPI."* ]]; then
+    echo "[whm] ERROR: WHM_RANKS=${RANKS} needs an MPI binary, but WHM_EXE is" >&2
+    echo "[whm]        ${EXE}.  Build with USE_MPI=TRUE USE_CUDA=TRUE." >&2
+    exit 2
+  fi
+  echo "[whm] ranks    : ${RANKS} (MPI), one per card: ${GPU}"
+fi
+
 echo "[whm] === launching ${NAME} (attached; Ctrl-C or stop_campaign.sh to stop) ==="
 status=0
 (
   cd "${RUN_DIR}"
-  CUDA_VISIBLE_DEVICES="${GPU}" "${EXE}" "${RUN_PARAMS}"
+  if [[ "${RANKS}" -gt 1 ]]; then
+    GRTECLYN_GPU_IDS="${GPU}" mpirun -n "${RANKS}" bash -c \
+      'IFS="," read -ra _g <<< "${GRTECLYN_GPU_IDS}"; \
+       export CUDA_VISIBLE_DEVICES="${_g[${OMPI_COMM_WORLD_LOCAL_RANK:-0}]}"; \
+       exec "$0" "$1"' "${EXE}" "${RUN_PARAMS}"
+  else
+    CUDA_VISIBLE_DEVICES="${GPU}" "${EXE}" "${RUN_PARAMS}"
+  fi
 ) 2>&1 | tee "${RUN_DIR}/run.log" || status=$?
 
 # Drain before reporting.  The watcher is stopped and then a single one-shot
