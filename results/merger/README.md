@@ -35,6 +35,18 @@ that produced it does not.
    1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
    would cost roughly 90× the compute.
 
+## `figures/` — the campaign figures (2026-09-02)
+
+| file | what it shows |
+| --- | --- |
+| `psi4_analysis_m9b_fillwide80.{png,pdf}` | six-panel analysis of the (2,0) breathing mode, full history t = 0–80 stitched across the restart chain: waveform at both radii, retarded-time overlay, PSD, propagation speed (0.889 of coordinate light — see the speed check below), spectrogram, strain vs Advanced LIGO |
+| `psi4_analysis_m9b_fillwide80_m2.{png,pdf}` | same six panels for the (2,2) whirl mode — the channel that carries the plunge burst |
+| `merger_ladder_psi4_R14/R30.png` | every campaign arm overlaid at each detector: the freeze arms run exactly under the unfrozen ladder arms wherever they overlap |
+| `ladder_psi4_R14_lvl6.png` | the refinement-ladder arms alone at R = 14 |
+| `merger_constraints_t80.png` | Hamiltonian and momentum L2 for both completed t = 80 freeze arms, t = 0–80: the spikes before t = 34 are regrid transients; the smooth bump is the collapse; after the freeze engages at 53 both norms sit flat for 27 units |
+| `wave_speed_check.png` | why 0.889 c is not sub-luminal junk: the metric's own local light speed along the extraction path predicts a 14→30 crossing of ~19.5; the wave took 18.0. Constraint/gauge modes travel at √2 × light and are excluded |
+| `seam_ring_rescaling.png` | why the freeze-arm frames *look* like the signal vanishes: a growing Ψ₄ artefact confined to the freeze seam hijacks the per-frame colour scale; the radiation field is bit-identical to the unfrozen twin beyond r = 6 |
+
 ## Layout
 
 ```

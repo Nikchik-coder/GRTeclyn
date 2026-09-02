@@ -255,7 +255,22 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 3. Derived summary table over the packed streams
+# 3. Campaign figures (waveform, constraints, validation checks)
+# ---------------------------------------------------------------------------
+# PNG and PDF only: the dpi-600 EPS twins are ~39 MB each and add nothing the
+# PDF does not carry.
+FIGS="${RUNS}/merger_fix/plots"
+if [[ -d "${FIGS}" ]]; then
+  mkdir -p "${DEST}/figures"
+  find "${FIGS}" -maxdepth 1 \( -name "*.png" -o -name "*.pdf" \) \
+    -exec cp -p {} "${DEST}/figures/" \;
+  echo "[pack-merger] figures: $(ls "${DEST}/figures" | wc -l) files"
+else
+  echo "[pack-merger] figures: no ${FIGS#"${ROOT}"/} -- skipped"
+fi
+
+# ---------------------------------------------------------------------------
+# 4. Derived summary table over the packed streams
 # ---------------------------------------------------------------------------
 "${PY_BIN}" "${DEST}/analysis/make_summary.py" "${DEST}"
 
