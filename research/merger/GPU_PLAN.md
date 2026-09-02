@@ -7,6 +7,40 @@ the design for the production data that goes into the article.*
 Everything here is a **proposal** — no run in this file starts until it is
 approved and launched by hand, one at a time, through `run_single.sh`.
 
+*Revised 2026-09-02 after an external review of the plan.  Every claim in that
+review was checked against Plan.md, Reference.md and the tree before anything
+changed; the corrections are marked in place, and §8 records what survived,
+what did not, and the comparison arms it added.*
+
+---
+
+## 0. The plan at a glance
+
+**In hand**
+- [x] The three headline results, measured and validated (§1)
+- [x] Scout ladder relaunched at N = 128 after the N = 64 NaN (§2)
+- [x] Scalar-mode extraction module `--scalar-modes`, validated three ways (§7 leg 1)
+- [x] Freeze-artifact test on the ringdown period — fill vs fillwide, ~2 % (§3)
+- [x] External review absorbed: §4 ladder corrected, causal budget stated (§7), comparison arms added (§8)
+
+**In flight**
+- [ ] Wave 8 drains to t = 100 (~93.6 as of this revision) → close-out: second peak at R = 30 near t ≈ 93; R = 30 tail past ceiling 84.5
+- [ ] Scouts p025 / p035 / p045 → capture boundary **+ the fuse audit** (§2): a p qualifies only if both throats are still throats at periapsis
+
+**Cheap, next, no GPU conflict (each still needs one by-hand approval)**
+- [ ] Re-run initial-data check E on the production drainhole template — max_steps = 0, minutes (§3)
+- [ ] L = 128 / N = 256 smoke test, t = 5: memory + speed (§3)
+- [ ] Switch on in-code Weyl extraction in the production templates — params-only (§3)
+- [ ] BBH vacuum control, same masses and momenta (§8.1)
+
+**Blocked on §6 decisions**
+- [ ] Production arms at L = 128: headline + seam twin + third-fill-radius arm + level-6 twin (§4, §7)
+- [ ] Head-on freeze arm (§8.2); N = 192 wave-zone twin (§8.4); +150 tail (§6.5)
+- [ ] Repulsion a-scan with the scalar-charge prediction attached (§8.7)
+
+**Analysis once the data lands (§5 phase 3)**
+- [ ] 4-radius extrapolation in retarded time; energy/mass balance (§8.3); remnant-mass QNM discriminator (§8.5); dissolution re-measured on the undamped arm (§8.6); frames re-rendered (issue 17); pack + push
+
 ---
 
 ## 1. What the paper already has
@@ -20,9 +54,14 @@ publication-grade, not to discover them.
 | **Opposite-oriented throats attract and merge** — gravity-driven (drainhole mass in the lapse), collapse at t ≈ 45, common horizon | Both freeze arms completed t = 80 | Plan.md M6/M7, results pack |
 | **The interior freeze survives the merger** and the recorded signal is a genuine gravitational wave (speed, 1/R falloff, static-offset, not-freeze-junk checks) | Closed 2026-09-02 | Plan.md, "Is the recorded signal a genuine gravitational wave?" |
 
-The freeze method's own validation (seam-radius twins bitwise-identical outside
-r = 6, late-engagement control ≤ 0.003%, constraints flat for 27 time units
-post-freeze) is also paper material — it is the method section.
+The freeze method's own validation is also paper material — it is the method
+section.  Stated precisely (an earlier draft of this line conflated two
+different comparisons): the two seam-radius twins agree to 5 digits at every
+shared waveform sample (0.000 %); the frozen arm is bit-identical to its
+*unfrozen* twin everywhere beyond r = 6 at t = 55 (that is where "outside
+r = 6" belongs — issue 17); the late-engagement control (freeze at 55.5
+instead of 53, finer grid) moves the R = 14 window ≤ 0.003 % (m = 2) /
+0.022 % (m = 0); and constraints stay flat for 27 time units post-freeze.
 
 ---
 
@@ -81,7 +120,30 @@ is one by-hand invocation of `launch_capture_scan.sh <p> <gpu>`.
 
 Caveat: higher p delays collapse by roughly the orbital time — expect
 t_collapse ≈ 120–170 for the spiral arm, not 45.  Production stop_time must be
-set per-IVP as **t_collapse (from the scout) + 100**.
+set per-IVP as **t_collapse (from the scout) + 100** (or + 150 if §6.5 is
+taken).
+
+**The fuse audit — a scout does not qualify its p by trajectory alone
+(added 2026-09-02).**  Plan.md's standing caveat is that the single-throat
+growing mode is still growing at t = 40: the 40 M window is a fuse, not
+stability.  The Stage 1 record (in git history; the live docs compress it)
+says the growing quantity is the L2 momentum-constraint norm, early e-fold
+≈ 4.4 ≈ throat/c, and it *steepens* after t ≈ 34 — doubling every ~1.6 —
+which no single exponential explains.  The spiral IVP plans 120–170 units
+of orbit before collapse: three to four fuses deep.  So every scout gets a
+throat-integrity audit through the orbit — min χ at each throat and the
+throat's size, read from the **slice cache, never the tracker** (the tracker
+under-reads speeds up to ~4×, issue 6) — plus the constraint norms, and a p
+qualifies only if **both throats are still throats at periapsis**.  If they
+are not, a production arm at that p would record two already-runaway objects
+colliding, and the paper's headline IVP is the plunge.
+
+**Periapsis overlap.**  The p = 0.45 swing-back bottomed at separation 3.95
+with throat width a = 2 — the scalar profiles interpenetrate at closest
+approach, and "bound eccentric orbit" is Newtonian point-particle intuition
+applied exactly where it breaks.  The scout decides; the spiral is not
+written into the schedule as the likely headline until it merges *and*
+passes the fuse audit.
 
 **Repulsion side-figure (cheap).**  One or two extra throat-width points
 (a = 1.5, a = 3 at rest, level 3–4, t ≈ 20, measure the initial acceleration)
@@ -108,18 +170,70 @@ cache small.  The domain is genuinely 64.)
 
 **Proposal: L = 128, N = 256 — same dx, twice the room.**
 
-- Base dx stays 0.5.  This matters: initial-data noise scales as 1/dx², so
-  *refining* would handicap t = 0 constraints, while *widening* at fixed dx
-  costs nothing at t = 0.  N = 256 is not "more resolution", it is the same
-  resolution with the boundary pushed out.
+- Base dx stays 0.5; N = 256 is not "more resolution", it is the same
+  resolution with the boundary pushed out.  (A "1/dx² initial-data noise"
+  justification used to live here and is **withdrawn 2026-09-02** — the n160
+  arm's own t = 0 row refutes it: refining the base 128³ → 160³ *lowered*
+  L2_Ham by 15 % and halved L2_Mom, where 1/dx² predicts a 1.56× rise.  The
+  claim was a fossil of the puncture era — the archive notes even say "more
+  refinement helps here, opposite to puncture data".  Relatedly,
+  Reference.md's "t = 0 violation identical to six digits at max_level 4 and
+  5" is an artefact of the diagnostic: L2_Ham is computed over level 0 only,
+  and level-0 data is analytic, so the number is max_level-independent by
+  construction — bit-identical across ml2…ml5 in the archive.  The widening
+  case stands on the sponge and the radii alone, and needs nothing else.)
 - Sponge moves to 48 → 64 (radius from centre).  Extraction spheres at
   **R = 20, 28, 36, 44** — four radii, all in clean, un-sponged vacuum, wave
   zone resolved with ~30 base points per dominant wavelength (~15 units).
-- Extraction radii are a *consumer-side* (post-processing) choice, so four
-  radii cost the run nothing; halve plot_interval to 25 for 0.25-unit waveform
-  sampling (2× plotfiles, rolling retention absorbs it).
+- **Waveform sampling: switch on the in-code extraction — params-only
+  (revised 2026-09-02, replaces "halve plot_interval").**  GRTeclyn's
+  `WeylExtraction` is already wired into the merger example
+  (`BinaryWormholeLevel.cpp:765`) and has sat at `activate_extraction = 0` in
+  every template to date.  Enabled, it integrates r·Ψ₄ modes on the
+  extraction spheres **every coarse timestep** (dt = 0.01 — 50× finer than
+  plotfile sampling; the QNM-comb class of aliasing error dies here) and
+  writes its own `Weyl4_mode_lm.dat` stream.  Production templates set:
+  `activate_extraction = 1`, `extraction_radii = 20 28 36 44`,
+  `extraction_levels = 0 0 0 0`, `num_points_phi/theta` ≥ 24/37, and modes
+  through **l = 4, all m** listed explicitly (the spiral would be
+  (2,±2)/(3,±3)/(2,±1) dominated; the legacy parameter path validates
+  nothing, so list every pair).  Working reference config:
+  `Examples/RotatingWormholeCollapse/params_rotating_grtresna_exotic.txt:83-95`.
+  Plotfiles stay at plot_interval 50 for frames and the consumer streams —
+  which also makes the consumer-side Ψ₄ an *independent cross-check* of the
+  in-code stream, the two-source validation rule for free.
+- Consumer-side radii remain a free post-processing choice; every production
+  launch adds `--scalar-modes` to `WHM_CONSUME_ARGS` so each arm records the
+  scalar l ≤ 2 modes and the kinematic flux on the same spheres (§7 leg 1).
+- **Ψ₄ in a non-vacuum exterior — name it, then defend it.**  |φ| ~ 6e-3 at
+  R = 14 with a 1/r tail means no extraction sphere we can afford is in
+  vacuum.  Defences to quote: the measured 1/R amplitude falloff, and — new
+  with the scalar-modes stream — the ratio of scalar kinematic flux to GW
+  flux at each radius.  If that ratio is small and falls with R, extraction
+  stands on measurement, not assumption.
 - stop_time per §2: baseline arm ~150, spiral arm t_collapse + 100 (~250).
   Long enough for the signal, the second peak, and the tail to clear R = 44.
+
+**Re-run the initial-data gate on the production template (cheap, before
+phase 2 — added 2026-09-02).**  The Phase 1 gate "run at d/b ≥ 8" was
+measured on the massless Ellis–Bronnikov branch at b = 1 (Reference.md
+check E, max_steps = 0 jobs).  The production IVP is b = 2 at d = 12 —
+**d/b = 6, 25 % inside a gate the docs twice call "still binds"** — and the
+gate has never been re-run on the drainhole branch.  Check E costs minutes:
+re-run the defect ladder (d = 8, 12, 16, 24 at b = 2, plus the single-throat
+zero control) on the production drainhole template before committing phase 2.
+Two traps for the re-run: the check-F-style angular mean cancels on the
+flipped binary (the dipole trap below) — read the defect from the constraint
+norms and the l = 1 scalar mode instead; and the original ladder found the
+defect below the discretisation floor for d/b ≥ 8, so the interesting number
+is precisely where d/b = 6 sits relative to that floor.  Related, worth one
+line in the method section either way: the two-throat data is plain
+superposition with **no Helfer/Ning one-body conformal correction** (known
+inconsistency 2) — the literature says exactly this correction suppresses
+spurious squeeze/pulsation in horizonless objects, and our central
+unexplained event is a collapse.  The check-E re-run bounds the defect the
+correction would remove; implementing the correction itself is initial-data
+level and cheap if the bound comes back non-negligible.
 
 **Cost of the bigger box (estimated, then smoke-tested).**  The AMR hierarchy
 currently carries ~4.1 M cells *per level*; fine levels dominate runtime
@@ -187,25 +301,55 @@ rule, its own small module with its own output file, default off.
 ## 4. Max level: 5 for production, 6 as the convergence companion, 7 never by default
 
 The question "start at max level 7, run till collapse, then freeze?" has a
-measured answer — the m4e ladder:
+measured answer — the m4e ladder.  *(Corrected 2026-09-02: the first draft of
+this table quoted two readings Plan.md had already withdrawn the same day.)*
 
-| max_level | speed (u/h, one card) | what the ladder showed |
-|---|---|---|
-| 4 | 9.0 | scout grade |
-| 5 | 4.3 | **production** — damping crosses from cure to cost here; the validated freeze config |
-| 6 | 2.2 | companion — bought +0.53 where the linear law projected +6; the ladder saturates |
-| 7 | 1.1 | t = 250 would take ~9.5 days; single-arm increments at this rung are *inside the noise floor* (three wrong "laws" in one day) |
+| max_level | speed (u/h, one card) | death, pair mean | gain per level |
+|---|---|---|---|
+| 3 | (scout ladder) | 52.26 | — |
+| 4 | 9.0 | 53.43 | +1.17 |
+| 5 | 4.3 | 55.18 | +1.76 |
+| 6 | 2.2 | 56.42 | +1.24 |
+| 7 | 1.1 | 56.20 — **one arm, no twin** | −0.22 vs the lvl-6 pair |
 
-So: **production arms at max_level 5**, one **level-6 twin** of the headline
-arm as the convergence/error-bar companion (that pair is also the paper's
-resolution study).  Level 7 only if a referee demands it, and then as a short
-restart segment around collapse, never from t = 0 (the 1/dx² initial-noise
-penalty plus 4× the cost buys nothing the ladder can detect).
+What the ladder actually established, in Plan.md's final wording:
+- The pair-mean ladder is **linear at +1.43 per level over four rungs**; the
+  increments scatter by ±0.3, the size of the ±0.35 reproducibility floor.
+  No super-linear cure and no saturation — both were single-arm artefacts
+  (the "three laws in one day" trap).
+- **Damping's effect is zero** (by level +0.33 / +0.65 / −0.84 / +0.58, mean
+  +0.18 against a ±0.35 floor, alternating sign).  The "crossover from cure
+  to cost at level 5" is withdrawn; production runs the **clean** config.
+- Level 7's 56.20 sits below the level-6 pair mean and both fits — but it is
+  a single arm, exactly the read the trap table forbids, and it is *above*
+  level 6's clean arm (56.13).  Honest wording: **consistent with saturation
+  within the noise floor**, not "turned over".  Either way refinement is
+  priced out as a route: even on the linear law, t ≈ 66 sits ~7 levels and
+  ~10² × cost away, and the freeze delivered the window instead.
+- The claim that survives every reversal: **the NaN lands on each newly
+  created finest level, every time** (h11, every m4e arm) — the blowup is a
+  feature of the continuum solution, not of the grid.
 
-Freeze protocol unchanged from M9b: evolve through collapse, engage
-`CoreFreezeFill` ~8 units after collapse (t_collapse + 8), fill radius
-1.5 / 2.0 wide arm, with the seam twin and one late-engagement control
-re-run once at L = 128 to re-validate the method at the production geometry.
+So: **production arms at max_level 5** (also the cheapest grid that reliably
+reaches the engagement time — level 4 is a coin flip against its own death),
+one **level-6 twin** of the headline arm as the convergence/error-bar
+companion (that pair is also the paper's source-resolution study; the wave
+zone gets its own twin, §8.4).  Level 7 only if a referee demands it, and
+then as a **paired** short restart segment around collapse — never from
+t = 0, and never as one arm.
+
+**Engagement is a criterion, not a constant (revised 2026-09-02).**  The
+first draft said "engage ~8 units after collapse"; that +8 was post-hoc
+arithmetic.  What actually chose t_e = 53 was a three-way squeeze (Plan.md):
+the collapse still sources the burst until ~51.5, so freezing earlier
+deletes signal; the arm must *reach* t_e under its own power (level 5 clears
+it by ~2 units); and t_e sets the contamination ceiling at every radius
+(§7's causal budget).  For production — where the spiral's collapse time is
+unmeasured — t_e is set per-IVP by the same squeeze: read t_collapse and the
+burst-sourcing end from the level-3 scout, confirm at level 5, engage after
+the burst closes, and print the resulting ceilings next to the windows
+before launch.  Fill radius 1.5 / 2.0-wide twin, the seam twin, and one
+late-engagement control re-run once at L = 128, all unchanged from M9b.
 
 ---
 
@@ -213,12 +357,16 @@ re-run once at L = 128 to re-validate the method at the production geometry.
 
 | Phase | Runs | Cards | Wall time |
 |---|---|---|---|
-| 0 (now) | wave 8 drains (fill100/fillwide100 → t = 100, late6 → 80); then the wave-8 checks: second peak at R = 30 near t ≈ 93, late6 no-shift | 3 | ~4 h |
-| 1 | p-scan scouts (lvl 3, N = 128, t = 200): S4 solo on card 2, S2+S3 sharing card 3 | 2–3 | ≤20 h worst case, mergers end sooner |
-| 1b | L = 128 smoke test (t = 5: memory + speed); repulsion a-points | any free | hours |
-| 2 | production: spiral arm (chosen p, L = 128, lvl 5) + its seam twin; baseline p = 0.12 arm at L = 128; level-6 companion of the spiral arm | 4 | lvl-5 arms ~2.5–3 days; lvl-6 companion ~5–6 days |
-| 2b | late-engagement control at L = 128 (restart segment, ~40 units) | 1, after a twin frees | ~12 h |
-| 3 | analysis: 4-radius extrapolation, speed check at the new radii, constraints, frames re-rendered with colour limits taken outside r = 3 (Plan.md issue 17), pack + push | — | — |
+| 0 (now) | wave 8 drains (fill100/fillwide100 → t = 100); then the wave-8 checks: second peak at R = 30 near t ≈ 93, R = 30 tail past ceiling 84.5 | 2 | ~1.5 h |
+| 1 | p-scan scouts (lvl 3, N = 128, t = 200) **+ the §2 fuse audit per scout**: S4 solo on card 2, S2+S3 sharing card 3 | 2–3 | ≤20 h worst case, mergers end sooner |
+| 1b — starts the moment a wave-8 card frees; waits for nothing | check E re-run on the drainhole template (max_steps = 0, minutes); L = 128 smoke test (t = 5: memory + speed); **BBH vacuum control** (§8.1); repulsion a-points with the charge prediction (§8.7) | 2 | check E minutes; smoke hours; BBH ~1 day |
+| 2 | production at L = 128, lvl 5, in-code extraction ON, `--scalar-modes` ON: baseline p = 0.12 arm + seam twin + **third-fill-radius arm** (§7 causal budget); spiral arm only if its scout merged and passed the fuse audit; level-6 companion of the headline arm | 4 | lvl-5 arms ~2.5–3 days; lvl-6 companion ~5–6 days |
+| 2b | late-engagement control at L = 128 (restart segment, ~40 units); **head-on freeze arm** (§8.2); N = 192 wave-zone twin (§8.4) if §6.7 taken | 1–2, as twins free | ~12 h + ~1 d + ~2 d |
+| 3 | analysis: 4-radius extrapolation **in retarded time using the measured 1.125× speed** (turns issue 16 into a remark, not an apology); energy/mass balance and remnant-mass discriminator (§8.3, §8.5); dissolution re-measure on the undamped arm (§8.6); constraints; frames re-rendered with colour limits from outside r = 3 (issue 17); pack + push | — | — |
+
+**The minimum publishable set**, if the clock runs short: baseline arm +
+seam twin + level-6 twin + BBH control + head-on.  The spiral and the scan
+boundary are upgrades, not prerequisites.
 
 Calendar total: **~1.5 weeks of compute** if phases overlap sensibly.
 Checkpoints prune by hand as always (they are never auto-deleted); heavy data
@@ -232,22 +380,35 @@ nothing: the schedule above assumes single-card throughout.
 
 ---
 
-## 6. Decisions needed before phase 1
+## 6. Decisions needed before phase 2 — now eight
+
+The external review recommended answers, noted in brackets; **nothing here
+is approved until the author says so**, and every launch still goes through
+the launcher, by hand, one approval each.
 
 1. **Approve the scan values** p = 0.25 / 0.35 / 0.45 / 0.55 (S1 = 0.12 is
-   re-used).
-2. **Headline IVP intent**: is the paper led by the eccentric-capture spiral
-   (if one merges) with the p = 0.12 plunge as baseline, or the reverse?
-   The schedule is the same either way; the writing is not.
-3. **L = 128 vs the L = 96 fallback** — decided by the smoke test, but say now
-   if 2.5–3 days per arm is too slow regardless.
+   re-used).  *(Scouts already live per the earlier approval; review: keep.)*
+2. **Headline IVP intent**: spiral-led or plunge-led?  *(Review: lead with
+   the plunge unless a scout merges cleanly AND passes the §2 fuse audit.)*
+3. **L = 128 vs the L = 96 fallback** — decided by the smoke test, but say
+   now if 2.5–3 days per arm is too slow regardless.  *(Review: take 128;
+   let the memory number decide.)*
 4. Whether the repulsion a-scan points are wanted for a power-law panel.
+   *(Review: yes, with the §8.7 charge prediction attached — it upgrades the
+   panel to an analytic check.)*
 5. **Tail length for the headline arm** (from §7): stop_time collapse + 150
    instead of + 100, to buy a credible decay-time measurement for the
-   scalar-coupled ringdown (~+12 h at level-5 speed).
+   scalar-coupled ringdown (~+12 h at level-5 speed).  *(Review: yes.)*
+6. **The comparison arms** (§8.1–8.2): BBH vacuum control at matched
+   masses/momenta, and a head-on freeze arm.  *(Review: run the control
+   first; together they are the energy-budget table.)*
+7. **The N = 192 wave-zone twin** (§8.4): one more ~2-day arm so the
+   extracted waveform, not just the source, has a convergence factor.
+8. **A twin-from-t = 0 of the headline arm** (§8.8): only if a per-waveform
+   reproducibility bar is wanted beyond the quoted ±0.35 floor — no
+   deterministic-reductions build flag exists to buy it cheaper.
 
-Nothing launches until these are answered; every launch goes through the
-launcher, by hand, one approval each.
+Nothing launches until these are answered.
 
 ## 7. The exotic-matter ringdown as a detection signature (experimental thoughts, 2026-09-02)
 
@@ -294,7 +455,29 @@ prediction; and there is **no ringdown convergence point yet** — the kept
 lvl6 arm died at t = 56, before the window opens, so period convergence
 rests entirely on the production level-6 twin.
 
-**Verdict on the proposed further investigation — proceed, on three legs:**
+**The causal budget — stated plainly (added 2026-09-02).**  The clean
+window at any radius is set by the engagement delay, not by R: the burst
+from the collapse arrives at ≈ t_c + 1.125·R, and freeze contamination
+from r_s = 2 arrives at ≈ t_e + 1.125·(R − 2).  With t_c ≈ 45 and
+t_e = 53 that is ~6–8 units of freeze-clean burst at R = 14 (ceiling
+66.5) — and the *same* ~6–8 units at R = 44.  Pushing the spheres out
+buys sponge-clean amplitude; it buys no freeze-clean time.  **The entire
+17-unit-period ringdown, at every radius, sits inside the freeze's causal
+cone.**  "Four radii, all causally clean" is true of the burst's leading
+edge only.  The ringdown's credibility therefore rests on
+freeze-insensitivity — the standard excision-radius argument, and the
+right kind — which today has exactly two fill radii and ±2 % on a
+4-crossing period.  Production upgrades, each cheap relative to the arm
+it rides on:
+1. **a third fill radius** (e.g. 1.0 / 1.4) so period-vs-fill-radius is a
+   flat *trend*, not a two-point difference;
+2. the engagement-time pair (t_e, t_e + 2.5) re-run at L = 128, as
+   already planned;
+3. **the causal-arrival plot printed under every published waveform**,
+   clean window shaded per radius — the figure that turns this from a
+   buried caveat into a method.
+
+**Verdict on the proposed further investigation — proceed, on four legs:**
 1. **Scalar-mode extraction module** — **IMPLEMENTED 2026-09-02**
    (consumer-side: `extraction/scalar_modes.py`, own stream
    `scalar_modes.dat`, off by default).  Projects φ and Π onto s = 0
@@ -314,7 +497,101 @@ rests entirely on the production level-6 twin.
 3. **Ringdown convergence via the level-6 twin** (already planned §4): the
    17.3-unit period and the τ estimate must reproduce at level 6 with the
    freeze armed, or they are grid numbers.
+4. **The remnant-mass discriminator (added 2026-09-02)**: a vacuum
+   Schwarzschild l = 2 fundamental rings with period ≈ 16.8 M, so the
+   measured 17.3 is what a plain BH of M ≈ 1.03 would do — while this
+   system's ADM mass is ≈ 2, which would ring at ~34.  Measure M_ADM(t) of
+   the remnant (§8.3's mass balance produces it); if M_remnant ≈ 1.9–2.0,
+   the "it's just a BH ringdown" reading dies by a factor of two in one
+   line.  The cheapest Letter-grade check on the list; no new runs.
 
 Tier framing ("PRL vs PRD") is an author decision; the data case either way
-is the three legs above.  Figures: `runs/wormhole_merger/merger_fix/plots/`
+is the four legs above, and the Letter version of the story — scalar-charge
+dynamics, a horizon born dissolving, a hairy remnant ringing at 10× a
+vacuum Q against a same-IVP BBH control — needs §8.1 and legs 2–4 to close,
+with the freeze method and its validation as the companion-PRD material.
+Figures: `runs/wormhole_merger/merger_fix/plots/`
 (scalar_vs_psi4_R14 and the fillwide twin).
+
+---
+
+## 8. Comparison arms and budgets (added 2026-09-02, external review absorbed)
+
+An external review of this plan was checked claim-by-claim against Plan.md,
+Reference.md, the on-disk run data, and the code tree.  Its two structural
+corrections — the withdrawn §4 readings and the causal budget — are folded
+in above.  Two of its claims did **not** survive the check and are recorded
+here so they are not re-imported later: "death time is bounded at 56–57
+over levels 5–7" (three level-5 arms died below 56: 54.76 / 55.60 / 55.96),
+and "the scalar charge is already measured per-throat to 0.3 %" (check F
+was a *single* throat and an *angular-mean* estimator — the very estimator
+the flipped binary cancels; the 0.3 % number is real but is the
+single-throat tail, not a per-throat charge).  What follows is the review's
+list of what a referee asks for first, sized against this tree.
+
+**8.1 The vacuum BBH control — run it first.**  `Examples/BinaryBH` is
+in-tree, same build system, in-code Weyl extraction already enabled in its
+production params.  The same-IVP BBH waveform beside the wormhole waveform
+is the standard figure of every boson-star and Proca-star merger paper — it
+turns "a signature no vacuum BBH can produce" (§3) from a sentence into a
+measurement.  Momenta are params-only (Bowen–York P *is* the ADM momentum:
+`bh1.momentum` / `bh2.momentum`).  Masses carry one caveat: the default
+`BoostedBHInitialData` takes a *bare* puncture mass, so matching the
+target ADM mass means a short offline iteration on that number — or clone
+TwoPunctures (external repo + GSL, `two_punctures.calculate_target_masses`)
+for exact targets.  Vacuum steps are cheap; one card, roughly a day.
+
+**8.2 A head-on arm with the freeze.**  The only configuration with a
+literature number (BBH head-on from rest radiates ≈ 0.055 % of M, l = 2
+m = 0 dominated); the campaign's old head-on died at its own collapse
+before the freeze existed.  Shortest production run on the list, and with
+8.1 it gives the paper an energy-budget table: wormhole vs BBH, head-on
+and orbital.
+
+**8.3 Energy/mass balance — the sum rule.**  M_ADM(t) at the outer
+boundary versus E_GW from the in-code Ψ₄ stream (double-integrated, static
+offset removed) plus the scalar kinematic flux from `--scalar-modes` —
+which is *negative* for a phantom field.  Either the sum closes, or its
+failure is itself a finding.  Angular-momentum balance for the spiral arm
+if one qualifies.  Consumer-side work; no new runs.
+
+**8.4 A resolution ladder that touches the wave zone.**  The level-6 twin
+refines only the core; R = 20–44 sit on level 0 at dx = 0.5 in every arm,
+so today the extracted waveform has no convergence factor of its own.  One
+**N = 192 twin** of the headline arm (same L = 128, same max_level, base
+dx = 2/3) is cheaper than the arm it shadows and gives the wave zone its
+second point; with the level-6 twin that is three grids covering source
+*and* wave zone.  Decision §6.7.
+
+**8.5 The remnant-mass discriminator** — §7 leg 4.
+
+**8.6 Horizon birth and dissolution, re-measured clean.**  The quoted
+1.07 → 0.59 dissolution is a **two-arm splice whose late half comes from
+the `rw` arm** — an arm the campaign itself disqualifies for wave physics
+(lapse damping through collapse; admitted as timing evidence only).  The
+trapped region is also strongly deformed (past r = 2 at the poles, ~0.6 at
+the equator — results pack), which is why the radial in-code proxy loses
+it.  Re-measure the full curve on the undamped level-5 headline arm with
+the offline θ₊ scan over the ~4–5 units between collapse and freeze.  A
+true MOTS finder does not exist in-tree (`docs/ah_finder.md` is a stub);
+BHaHAHA goes on the infrastructure list — wanted for horizon mass/spin and
+the angular-momentum budget, but not load-bearing for the dissolution
+curve itself.
+
+**8.7 Predict the scalar force, then measure it.**  The repulsion a-scan
+becomes an analytic check if each throat's scalar charge q is read from
+the l = 1 mode of the `--scalar-modes` stream (per-throat spheres; the old
+check-F angular mean cancels on the flipped binary) and
+F_scalar ∝ q_A·q_B is predicted alongside gravity.  The 6/4 pull/push
+ratio and the 5× at a = 2 should both follow — the paper's cleanest
+analytic check, for the price of a side figure.
+
+**8.8 Reproducibility bar (issue 12) — closed, differently than the review
+proposed.**  The review asked for a deterministic-GPU-reductions build
+flag; **none exists in this tree** (AMReX's only determinism switch is a
+C++ argument on `SumBoundary`, unreachable from GRTeclyn; the Ψ₄ surface
+integral is already serial and deterministic on rank 0 — the
+non-deterministic sums live in the diagnostics kernels).  The waveform's
+reproducibility bar is therefore the *measured* ±0.35 twin floor: quote
+it, and if a referee wants a per-waveform number, a twin-from-t = 0 of the
+headline arm is one more arm (decision §6.8).
