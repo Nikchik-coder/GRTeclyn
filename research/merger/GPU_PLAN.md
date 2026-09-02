@@ -25,7 +25,8 @@ what did not, and the comparison arms it added.*
 
 **In flight**
 - [ ] Wave 8 drains to t = 100 (~93.6 as of this revision) → close-out: second peak at R = 30 near t ≈ 93; R = 30 tail past ceiling 84.5
-- [ ] Scouts p025 / p035 / p045 → capture boundary **+ the fuse audit** (§2): a p qualifies only if both throats are still throats at periapsis
+- [ ] Scouts p025 / p035 / p045 → capture boundary **+ the fuse audit** (§2): a p qualifies only if both throats are still throats at periapsis — p045 verdict so far in §2 (fly-by through t = 84)
+- [ ] **Helfer twin pair, launched 2026-09-02 09:06** — `merge_twin_p012_{helfer,plain}_t100` on GPUs 0/1, the proven p = 0.12 plunge-merger with NO core freeze (damping only), differing in `wormhole_helfer_correction` alone (diff of the two templates is one line).  Checkpoints every 10 u pruned in-code to 3; in-code Weyl4 extraction on (r = 14/20/26/30, l ≤ 4, every coarse step) with the python consumer as cross-check.  The question: does the corrected start survive past the ~t = 52 no-freeze death?  Merger due ~t = 45, death window ~52, stop_time 100.
 
 **Cheap, next, no GPU conflict (each still needs one by-hand approval)**
 - [x] Re-run initial-data check E on the production drainhole template — **done 2026-09-02, §3**: d/b = 6 is not a cliff (1.58× the d/b = 8 defect), but the defect never falls below the floor, so the Helfer/Ning correction is now indicated
@@ -104,7 +105,7 @@ collapse; scouts classify trajectories, so no extra refinement):
 | S1 | 0.12 | plunge, merges at 44.9 — in hand, re-used |
 | S2 | 0.25 | **LIVE 2026-09-02**, sharing card 3 — bent plunge, maybe a half orbit |
 | S3 | 0.35 | **LIVE 2026-09-02**, sharing card 3 — eccentric-capture candidate |
-| S4 | 0.45 | **LIVE 2026-09-02**, solo on card 2 (t = 0 → 200) — does the swing-out return and merge? |
+| S4 | 0.45 | **LIVE 2026-09-02**, solo on card 2 — **fly-by through t = 84**, see the verdict block below; still waiting on the return leg |
 | S5 | 0.55 | optional, above circular (0.50) — only if the boundary needs bracketing from above |
 
 All scouts: L = 64, **N = 128 (dx = 0.5)**, max_level 3, stop_time 200,
@@ -117,6 +118,48 @@ At N = 128 expect ~10–12 u/h solo (~20 h worst case to t = 200) and roughly
 half that for two arms sharing a card; a merger ends the run sooner.
 Templates live in `runs/wormhole_merger/templates_scan/`; each launch
 is one by-hand invocation of `launch_capture_scan.sh <p> <gpu>`.
+
+**S4 = p 0.45, verdict through t = 84 (2026-09-02, frames + matter check; theta columns junk).**
+A fly-by, not a merger: separation fell 12 → **3.95 at t = 40** (glitch-cleaned;
+the tracker's momentary sub-1 spikes near the split plane are attribution
+failures, not physics), and has climbed monotonically since (6.30 at t = 89).  What the encounter did to the throats:
+
+- **They survive.**  φ still holds two clean lobes at ±0.88 against ±0.90 at
+  t = 0 (−2.5 % over 84 u), and on a log colour scale both χ wells are present
+  throughout — shallower (min χ per half-space **rose** 3.5e-7 → 7.6e-4) and
+  broader, i.e. relaxed, not collapsed and not dissolved.  The huge black disc
+  in the linear-scale frames is a colour artefact: the ejecta stretch the
+  auto colour range to χ ≈ 9, so everything under ~0.5 renders black.
+- **The encounter ejected phantom shells.**  Two χ > 1 crescents (peak ≈ 9 —
+  *less* volume than flat space, the negative-energy signature) spiral
+  outward; Pi went 0 → ±0.5.  The cores deflected a quarter-turn.
+- **Why no collapse:** the perturbation was a transient *stretch* (mutual
+  gravity + opposite-sign scalar attraction pull each throat toward the
+  companion), passing in ~10 u — the Shinkai-Hayward collapse branch wants a
+  sustained squeeze, which only a capture delivers.  Contrast the p = 0.12
+  plunge: throats settle on top of each other → genuine trapped surface.
+- **The lapse is not evidence:** α fell to ~2e-5 across the whole central
+  band (slicing response, gauge).  And this run predates the 2026-09-01 theta
+  fix, so its `theta_common`/`ah_r_common` columns carry the DOCUMENTED false
+  positive of the conformally-flat scan (BinaryThroatDiagnostics.hpp history
+  note names this exact run and window, t = 42.3–60) — a "common horizon at
+  t = 43.3" read from that column is an artefact, twice fallen for now.
+  Trajectory + matter + log-χ frames are the believable instruments here.
+- Movies: 12 fields under `merge_orbit_flip_d12_p045_t200/movies/`.
+- **Paper figures** (git-tracked, `results/merger/figures/`):
+  [separation + χ-well](../../results/merger/figures/p045_flyby_separation.png) ·
+  [log-χ trio, throats present throughout](../../results/merger/figures/p045_flyby_logchi.png) ·
+  [linear-χ sequence t = 0/43/60/84](../../results/merger/figures/p045_flyby_chi_linear.png) ·
+  [φ launch vs t = 84](../../results/merger/figures/p045_flyby_phi.png) ·
+  [lapse t = 84](../../results/merger/figures/p045_flyby_lapse_t84.png) ·
+  [|Ψ₄| t = 60](../../results/merger/figures/p045_flyby_weyl4mag_t60.png).
+- Open: 0.45 is 90 % of circular momentum, so the orbit should be bound —
+  whether the receding leg turns around before t = 200, and whether the
+  post-encounter ringing tips a throat later, is what the rest of the run is
+  for.  HOW validated: separation/φ/χ numbers from
+  `binary_throat_diagnostics.dat` + `collapse_diagnostics.dat`, cross-checked
+  visually against linear and log-scale renders of the cached slices — two
+  independent sources per claim.
 
 Caveat: higher p delays collapse by roughly the orbital time — expect
 t_collapse ≈ 120–170 for the spiral arm, not 45.  Production stop_time must be
