@@ -68,10 +68,11 @@ collapse; scouts classify trajectories, so no extra refinement):
 | S4 | 0.45 | **LAUNCHED 2026-09-02** (t = 0 → 200) — does the swing-out return and merge? |
 | S5 | 0.55 | optional, above circular (0.50) — only if the boundary needs bracketing from above |
 
-All scouts: L = 64, N = 128, max_level 3, stop_time 200, and
-checkpoint_interval 2000 — every 20 time units — so any arm can be extended
-by restart (the p045 lesson).  Measured speed at launch ~10 u/h → ~20 h per
-scout.  Templates live in `runs/wormhole_merger/templates_scan/`; each launch
+All scouts: L = 64, **N = 64 (dx = 1)**, max_level 3, stop_time 200,
+checkpoints every 20 time units with `checkpoint_keep = 3` — pruned to the
+last three, and any arm extends by restart (the p045 lesson).  Measured
+speed at launch ~96 u/h → **~2 h worst case** per scout; a merger ends the
+run sooner.  Templates live in `runs/wormhole_merger/templates_scan/`; each launch
 is one by-hand invocation of `launch_capture_scan.sh <p> <gpu>`.
 
 Caveat: higher p delays collapse by roughly the orbital time — expect
@@ -161,7 +162,7 @@ re-run once at L = 128 to re-validate the method at the production geometry.
 | Phase | Runs | Cards | Wall time |
 |---|---|---|---|
 | 0 (now) | wave 8 drains (fill100/fillwide100 → t = 100, late6 → 80); then the wave-8 checks: second peak at R = 30 near t ≈ 93, late6 no-shift | 3 | ~4 h |
-| 1 | p-scan scouts (lvl 3, L = 64, t = 200): S4 live on card 3; S2/S3 follow as wave 8 drains | 3–4 | ~20 h each |
+| 1 | p-scan scouts (lvl 3, N = 64, t = 200): S4 live on card 3; S2/S3 follow as wave 8 drains | 3–4 | ~2 h each |
 | 1b | L = 128 smoke test (t = 5: memory + speed); repulsion a-points | any free | hours |
 | 2 | production: spiral arm (chosen p, L = 128, lvl 5) + its seam twin; baseline p = 0.12 arm at L = 128; level-6 companion of the spiral arm | 4 | lvl-5 arms ~2.5–3 days; lvl-6 companion ~5–6 days |
 | 2b | late-engagement control at L = 128 (restart segment, ~40 units) | 1, after a twin frees | ~12 h |
