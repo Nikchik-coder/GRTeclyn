@@ -242,6 +242,73 @@ nothing: the schedule above assumes single-card throughout.
 3. **L = 128 vs the L = 96 fallback** — decided by the smoke test, but say now
    if 2.5–3 days per arm is too slow regardless.
 4. Whether the repulsion a-scan points are wanted for a power-law panel.
+5. **Tail length for the headline arm** (from §7): stop_time collapse + 150
+   instead of + 100, to buy a credible decay-time measurement for the
+   scalar-coupled ringdown (~+12 h at level-5 speed).
 
 Nothing launches until these are answered; every launch goes through the
 launcher, by hand, one approval each.
+
+## 7. The exotic-matter ringdown as a detection signature (experimental thoughts, 2026-09-02)
+
+The post-merger tail is the paper's potential physics headline, so this
+section records what the data actually supports, what it refutes, and what
+we do about it.  All numbers from the m9b fill chain at R = 14, window
+t = 60–91 (~1.8 cycles), cross-validated between the independently evolved
+φ and ∂t φ and the psi4 mode files.
+
+**Established (each with its test):**
+- The remnant is hairy: a dipolar phantom-scalar halo (|φ| ~ 6e-3 at R = 14)
+  survives the merger and rings with the metric at the same ~17.3-unit
+  period (§3 table).
+- The channels are phase-locked: φ m=1 amplitude vs Ψ4 m=0 cross-correlate
+  at |r| = 0.95 with lag +0.5 units — a quarter-period would be 4.3, so this
+  is in-phase to measurement precision.  That is what one coupled eigenmode
+  of the Einstein–Klein–Gordon system looks like, and what grid junk does
+  not look like.
+- The tail is long-lived but decaying: envelope fit over five extrema gives
+  τ ≈ 150 units, i.e. quality factor Q ≈ 28 — an order of magnitude above a
+  vacuum Schwarzschild l = 2 ringdown (Q ~ 3).  "Slow beat that outlives a
+  vacuum ringdown by 10×" is the defensible headline; "continuous emission"
+  is not (it decays), and τ from 1.8 cycles carries large error bars.
+- Not a freeze artifact: 15 % change in freeze radius moves the period 2 %
+  and the precession rate 0.2 % (§3).
+- The story closes on the initial data: merging a +/− scalar pair (the sign
+  flip that turned 5× repulsion into 6× attraction) is exactly what leaves a
+  scalar dipole on the remnant.  The end of the run validates the beginning.
+
+**Refuted by our own data — keep out of the paper:**
+- The "lighthouse" mechanism (precessing dipole pumps the GW at twice its
+  rotation rate).  Prediction: m = ±2 period π/0.1537 = 20.4.  Measured:
+  m = ±2 rings at 17.3, same as m = 0, and its phase drifts at 0.187 rad/u,
+  not 2 × 0.154.  All Ψ4 channels ring at the breathing period; the ~41-unit
+  dipole precession is a separate, slower clock that does not detectably
+  drive Ψ4.  The driver is the halo's amplitude breathing, not its rotation.
+
+**Standing caveats for the writing:** the azimuthal ring harmonic is not a
+proper spherical l = 1 mode (production fixes this); the true nature of the
+core is masked by the freeze even though the exterior ignores the ball
+size; phantom matter violates energy conditions, so "detection signature"
+means "signature of this class of exotic matter", not an astrophysical
+prediction; and there is **no ringdown convergence point yet** — the kept
+lvl6 arm died at t = 56, before the window opens, so period convergence
+rests entirely on the production level-6 twin.
+
+**Verdict on the proposed further investigation — proceed, on three legs:**
+1. **Scalar-mode extraction module** (consumer-side, own module + own output
+   file, default off): decompose φ and ∂t φ into real spherical harmonics
+   (l = 0..2, all m) on the same spheres as Ψ4 at the four production radii.
+   Upgrades the ring harmonic to the real observable and gives the scalar/GW
+   energy-budget ratio the referees will want.
+2. **A longer tail for the headline arm**: measuring τ ≈ 150 credibly needs
+   ~1 e-fold of decay, i.e. ~150 units past merger.  Baseline stop_time 150
+   gives only ~0.6 e-folds; extending the headline arm to collapse + 150
+   buys the τ measurement for roughly +12 h at level-5 speed.  Added to §6
+   as a decision.
+3. **Ringdown convergence via the level-6 twin** (already planned §4): the
+   17.3-unit period and the τ estimate must reproduce at level 6 with the
+   freeze armed, or they are grid numbers.
+
+Tier framing ("PRL vs PRD") is an author decision; the data case either way
+is the three legs above.  Figures: `runs/wormhole_merger/merger_fix/plots/`
+(scalar_vs_psi4_R14 and the fillwide twin).
