@@ -63,16 +63,20 @@ collapse; scouts classify trajectories, so no extra refinement):
 | Scout | p | Status / expectation |
 |---|---|---|
 | S1 | 0.12 | plunge, merges at 44.9 — in hand, re-used |
-| S2 | 0.25 | queued for the next free card — bent plunge, maybe a half orbit |
-| S3 | 0.35 | queued — eccentric-capture candidate |
-| S4 | 0.45 | **LAUNCHED 2026-09-02** (t = 0 → 200) — does the swing-out return and merge? |
+| S2 | 0.25 | **LIVE 2026-09-02**, sharing card 3 — bent plunge, maybe a half orbit |
+| S3 | 0.35 | **LIVE 2026-09-02**, sharing card 3 — eccentric-capture candidate |
+| S4 | 0.45 | **LIVE 2026-09-02**, solo on card 2 (t = 0 → 200) — does the swing-out return and merge? |
 | S5 | 0.55 | optional, above circular (0.50) — only if the boundary needs bracketing from above |
 
-All scouts: L = 64, **N = 64 (dx = 1)**, max_level 3, stop_time 200,
-checkpoints every 20 time units with `checkpoint_keep = 3` — pruned to the
-last three, and any arm extends by restart (the p045 lesson).  Measured
-speed at launch ~96 u/h → **~2 h worst case** per scout; a merger ends the
-run sooner.  Templates live in `runs/wormhole_merger/templates_scan/`; each launch
+All scouts: L = 64, **N = 128 (dx = 0.5)**, max_level 3, stop_time 200,
+checkpoints every 10 time units with `checkpoint_keep = 3` — pruned to the
+last three, and any arm extends by restart (the p045 lesson).  An N = 64
+(dx = 1) economy attempt was tried first and is **dead**: all three arms
+NaN'd in h11 on level 3 at t ≈ 7–8, independent of p — a throat resolved by
+only 16 cells does not survive, so dx = 0.5 is the floor even for scouts.
+At N = 128 expect ~10–12 u/h solo (~20 h worst case to t = 200) and roughly
+half that for two arms sharing a card; a merger ends the run sooner.
+Templates live in `runs/wormhole_merger/templates_scan/`; each launch
 is one by-hand invocation of `launch_capture_scan.sh <p> <gpu>`.
 
 Caveat: higher p delays collapse by roughly the orbital time — expect
@@ -162,7 +166,7 @@ re-run once at L = 128 to re-validate the method at the production geometry.
 | Phase | Runs | Cards | Wall time |
 |---|---|---|---|
 | 0 (now) | wave 8 drains (fill100/fillwide100 → t = 100, late6 → 80); then the wave-8 checks: second peak at R = 30 near t ≈ 93, late6 no-shift | 3 | ~4 h |
-| 1 | p-scan scouts (lvl 3, N = 64, t = 200): S4 live on card 3; S2/S3 follow as wave 8 drains | 3–4 | ~2 h each |
+| 1 | p-scan scouts (lvl 3, N = 128, t = 200): S4 solo on card 2, S2+S3 sharing card 3 | 2–3 | ≤20 h worst case, mergers end sooner |
 | 1b | L = 128 smoke test (t = 5: memory + speed); repulsion a-points | any free | hours |
 | 2 | production: spiral arm (chosen p, L = 128, lvl 5) + its seam twin; baseline p = 0.12 arm at L = 128; level-6 companion of the spiral arm | 4 | lvl-5 arms ~2.5–3 days; lvl-6 companion ~5–6 days |
 | 2b | late-engagement control at L = 128 (restart segment, ~40 units) | 1, after a twin frees | ~12 h |
