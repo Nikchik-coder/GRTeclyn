@@ -134,6 +134,42 @@ specific to the radial regrid recipe, and the merger tags with type 2 — so
 memory alone does not force L = 96.)  Fallback if it doesn't fit: L = 96 / N = 192
 (sponge 40 → 48, radii 20/26/32/38) — still fixes issues 1–2.
 
+**The oscillation is scalar-coupled, not a quiet-matter ringdown
+(checked 2026-09-02).**  Question posed: is the post-merger waveform
+oscillation driven by vacuum ringing of the remnant, or by the leftover
+phantom scalar sloshing around it?  Answer from the m9b fill chain
+(t = 60–91, R = 14, cached mid-plane slices every 0.5 units): **the scalar
+rings in lockstep with the metric.**
+
+| signal at R = 14 | period |
+|---|---|
+| Ψ4 (l = 2, m = 0) | ~17.3 |
+| φ, m = 1 ring amplitude | ~17.0 |
+| ∂t φ, m = 1 ring amplitude | ~17.7 |
+| φ ring rms | ~17.0 |
+
+The remnant keeps a live dipolar scalar halo at the extraction radius
+(|φ| ~ 6e-3 — nothing like vacuum) whose amplitude oscillates by ±19 % at
+the same period as Ψ4; the dipole pattern also precesses slowly (~41 units
+per turn).  Framing for the paper: identical periods prove a **coupled
+scalar–metric mode of the remnant** — not which channel drives which; in a
+scalar-tensor system they ring together.  Either way it answers the reviewer
+question "why does the waveform oscillate": the merged object retains
+sloshing phantom matter, a signature no vacuum BBH can produce.
+
+Method notes (validated two ways: φ and ∂t φ are independently evolved
+fields and give the same period, cross-checked against the psi4 mode file;
+window ends at t = 91 on a live, NaN-free run).  Trap for whoever repeats
+this: the throats have opposite scalar signs, so φ at the ring is a *dipole*
+— an angular mean cancels to 1e-10 and falsely reads "scalar quiet"; the
+power sits in the m = 1 azimuthal harmonic.  Figure and script:
+`runs/wormhole_merger/merger_fix/plots/scalar_vs_psi4_R14.{png,py}`.
+
+Production implication: slice caches only reach r = 16, so this check cannot
+be done at R = 30 or on the four production radii.  The production runs
+should extract scalar modes on the same spheres as Ψ4 — per the diagnostics
+rule, its own small module with its own output file, default off.
+
 ---
 
 ## 4. Max level: 5 for production, 6 as the convergence companion, 7 never by default
