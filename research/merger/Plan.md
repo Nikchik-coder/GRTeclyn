@@ -22,7 +22,22 @@ independent look at the collapse to settle whether that tail *is* the signature.
 
 ---
 
-## Where we stand (2026-09-01)
+## Where we stand (2026-09-02)
+
+**The record is in hand.** M7+M6 passed 2026-09-01: the freeze arms completed
+(first completions in campaign history), re-ran clean to t = 80, and the R = 14
+window is on disk and triple-validated (seam-radius twins identical, bit-identical
+overlap with the unfrozen ladder arms, late-engagement control ≤ 0.003 %). What it
+shows is not a burst: the waveform **oscillates** — it falls through a node at
+t ≈ 66 and rises to a second peak ≈ 75, period ≈ 20. Measured propagation is
+**1.125× slower than coordinate light** (R = 30 lags R = 14 by 18.0 over 16 units,
+correlation 0.9998; 1/R falloff holds to 1.3 %), which moves the R = 30 collapse
+window to **76.1–83.6** — so t = 80 stopped ~4 units short. Wave 8 is live: both
+arms continued to t = 100 (from Chk08000, rolling checkpoints), plus the level-6
+late-freeze control to t = 80. It closes the R = 30 window and tests whether the
+second peak is real: it must reappear at R = 30 near t ≈ 93, and the late-freeze
+arm's copy must not shift by 2.5. Everything below this paragraph is the history
+of how the wall fell.
 
 **The target.** The collapse (source time 44–51.5) emits the one waveform this
 campaign exists to record. Signal at radius R lags the source by R, so it crosses the
@@ -92,6 +107,12 @@ ladder continuing as the independent cross-check that M6 overlap needs.
 What refinement has bought is real and kept: +4.6 units of wall, and the strongest
 evidence in the campaign that the blowup is a continuum feature — the NaN moves onto
 each newly created finest level, every time, in h11.
+
+*(Superseded later the same day: level 7 measured **56.20**, below level 6 and below
+both fits' projections — the ladder TURNED OVER, and the linear law fell like the two
+before it. Refinement is closed as a route by measurement; the freeze delivered the
+window instead. The paragraphs above stand as the record of how three laws were read
+from four rungs in one day.)*
 
 ---
 
@@ -309,7 +330,9 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
   **bit-identically (5 digits) at every shared sample, before and after the
   freeze engages** — and the two fill radii match each other the same way over
   the entire causally clean window 58–65.0. The fill is invisible at the
-  detector and the radius is not in the physics.
+  detector and the radius is not in the physics. The last freedom — engagement
+  time — closed 2026-09-02: freezing at 55.5 instead of 53, on a finer grid,
+  changes the R = 14 window by ≤ 0.003 % (m = 2) / 0.022 % (m = 0).
 - [x] **M7 — the record** *(ACHIEVED at R = 14, 2026-09-01)*. Both freeze arms ran
   clean through t = 66.0 — zero NaN, first completions in campaign history — with
   the full window 58–65.5 on disk at R = 14. **Caveat that motivates wave 7:** the
@@ -320,6 +343,15 @@ Nothing launches without an explicit go-ahead; no step starts below a red gate.
   (`m9b_fill80`, `m9b_fillwide80`, rolling checkpoints keep-1), because R = 30
   sees the collapse over 73–80.5 while freeze contamination arrives there only
   at ≥ 81.0 — an independent, fully clean second measurement.
+  **Resolved (2026-09-02, wave-7 data):** the "smooth decaying tail" was the
+  descent of an oscillation — with data to t = 80 the waveform passes through a
+  node at t ≈ 66 and rises to a second peak ≈ 75 (period ≈ 20). The measured
+  1.125× propagation slowdown revises the arrival arithmetic: R = 30 window
+  76.1–83.6, contamination ceilings 66.5 (R = 14) and 84.5 (R = 30) — so t = 80
+  stopped ~4 units short ⇒ wave 8 continues both arms to t = 100. The second
+  peak at R = 14 sits past that detector's ceiling; its reality rests on three
+  tests: the two seam radii already agree exactly, the late-engagement arm must
+  not shift it by 2.5, and it must reappear at R = 30 near t ≈ 93.
 - [ ] **M8 — endpoint honesty in the paper.** The post-fill core is a numerically
   sustained ("zombie") interior — state it, with the causal-arrival plot next to
   the waveform. Framing (review, 2026-09-01): the M4/M4b/M4d falsification table
@@ -355,7 +387,7 @@ interior.
 | 51.03–51.5 | **first genuine common trapped surface**, r = 1.0625 → 1.070 (sustained from 51.47) | fixed in-code scan (M3); offline scanner on the same run's plotfiles, 0.7 % apart |
 | 51.5–55 | horizon dissolves 1.07 → 0.59, accelerating; extrapolated gone ≈ 56 | two damped arms, one curve; sampling-doubling moves crossings ≤ 0.01 |
 | 51.7–55.0 | NaN deaths (sealed 51.69, val 51.71, r03000 52.06, n160 53.61, rw 55.00; +1/refinement doubling) | abort logs + last stream rows agree |
-| 58–65.5 | collapse signature crosses R = 14 — **never yet recorded** (44–47 collapse arrives 58–61; 51.5 horizon formation arrives 65.5 ⇒ stop_time ≈ 66) | propagation at v ≈ c (measured on the first burst) |
+| 58–65.5 | collapse signature crosses R = 14 — **RECORDED 2026-09-01** (freeze arms). Not a burst: a descent through a node at t ≈ 66, then a second peak ≈ 75 (period ≈ 20) | triple-validated (seam-radius twins, unfrozen-arm overlap, late-engagement control); measured propagation 1.125× slower than coordinate light (lag 18.0/16.0, corr 0.9998, 1/R falloff to 1.3 %) |
 
 The black hole lives ~5 units, not the ~26 once claimed: **born at t ≈ 51 already
 dissolving**. Every "merged at t ≈ 30" sentence in older READMEs/drafts is wrong;
@@ -437,8 +469,11 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 | `merger_fix/m4e_lvl5_dt001_r05000` | +2 levels, dt halved (0.01) | **55.96** (h11, lvl 5) | dt-convergence control at depth: **+0.36 vs the 55.60 twin, against a ±0.35 floor** — sitting on the boundary, one arm, and read as *no effect*. Second convergence pillar for M8: the ladder is a resolution ladder, not a timestep artefact |
 | `merger_fix/m9b_fill_r05000` | **first interior freeze**: +2 levels, RHS × (1−W) inside 1.3/1.8 from t = 53 | **COMPLETED t = 66.0** | **first run in campaign history to reach its stop time.** Zero NaN; the whole R = 14 window 58–65.5 on disk |
 | `merger_fix/m9b_fillwide_r05000` | same, skin 1.5/2.0 | **COMPLETED t = 66.0** | the radius-insensitivity twin: waveform identical to arm A to 5 digits at every sample — the fill radius is not in the physics. Also identical to the unfrozen lvl-5/6/7 arms over all shared times: the freeze is invisible at the detector |
-| `merger_fix/m9b_fill80_r05000` | arm A re-run, stop 80, rolling checkpoints (keep 1) | *(live)* | wave 7: R = 30 sees the collapse over 73–80.5; freeze contamination reaches R = 30 only at ≥ 81.0 — a second, causally clean measurement at an independent radius |
-| `merger_fix/m9b_fillwide80_r05000` | arm B re-run, stop 80 | *(live)* | wave 7 twin; differs in the two radii only |
+| `merger_fix/m9b_fill80_r05000` | arm A re-run, stop 80, rolling checkpoints (keep 1) | **COMPLETED t = 80.0** | wave 7: measured the propagation speed (R = 30 lags R = 14 by 18.0 over 16 units, corr 0.9998 — 1.125× slower than coordinate light) and the 1/R falloff (1.3 % at R = 14). Moves the R = 30 window to 76.1–83.6: t = 80 was ~4 units short ⇒ wave 8 |
+| `merger_fix/m9b_fillwide80_r05000` | arm B re-run, stop 80 | **COMPLETED t = 80.0** | wave 7 twin: identical waveform at both radii — two seam radii, one signal |
+| `merger_fix/m9b_late6_r05000` | freeze at **55.5** (not 53) on **max_level 6**, stop 80 | *(live)* | engagement-time control: 2.5 extra units of real core history on a finer grid change the R = 14 window by ≤ 0.003 % (m = 2) / 0.022 % (m = 0) — the freeze clips nothing. Also the discriminator for the t ≈ 75 second peak: seam junk would shift by 2.5 here |
+| `merger_fix/m9b_fill100_r08000` | arm A continued from Chk08000, stop 100 | *(live)* | wave 8: covers the full revised R = 30 window 76.1–83.6 and the second peak's predicted R = 30 arrival ≈ 93 |
+| `merger_fix/m9b_fillwide100_r08000` | arm B continued, stop 100 | *(live)* | wave 8 twin |
 
 ---
 
@@ -479,6 +514,26 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 14. **A causally sealed window engaged at certification buys nothing** (M4):
     the cure must precede the crisis for rate-limited damping — but *not* for the
     M9b fill, which is instantaneous; that asymmetry is what makes late fill viable.
+15. **The R = 30 extraction sphere sits inside the sponge layer** (absorber ramps
+    r = 24 → 32, quartic, strength 4; at r = 30 the extra dissipation is ~13× base;
+    the Sommerfeld outer boundary is the backup behind it). R = 14 is clear. Use
+    R = 30 for timing and shape, never absolute amplitude; future runs put the
+    outer sphere below r = 24. Radii deliberately unchanged mid-campaign so the
+    continuation's columns concatenate.
+16. **Propagation is 1.125× slower than coordinate light** (measured: lag 18.0
+    over 16 coordinate units between spheres, correlation 0.9998). Every arrival
+    estimate computed at v = c was ~11 % early; all windows and contamination
+    ceilings revised accordingly.
+17. **The freeze seam ring hijacks the frame colour scale.** Ψ₄ across the
+    frozen/evolving junction grows ~×370 (0.02 → 9.0 by t = 79.5) while the real
+    radiation out at r > 6 is ~0.001; per-frame auto colour limits scale to the
+    ring, so every frame after engagement *looks* like the signal was deleted.
+    It wasn't: at t = 55 the frozen arm is identical to its unfrozen twin to the
+    last bit everywhere beyond r = 6, and the outgoing field stays put for the
+    next 25 units. The ring itself stays confined to the seam. **TODO: re-render
+    the freeze arms' frames with colour limits taken from the field outside
+    r = 3** so the movies show the radiation, not the artefact
+    (`runs/.../plots/seam_ring_rescaling.png` is the demonstration).
 
 ## Traps that must not regress
 
@@ -502,6 +557,7 @@ collapse waveform is the missing piece. **Stage 4**: write — blocked on M7.
 | relative paths handed to `run_single.sh` | it `cd`s into the run dir; relative WHM values die as exit 127 — and remove the stub run dir before retrying |
 | comparing two restarts of one arm past the floor | decoherence at t ≈ 44.9 by construction — no claim tighter than the scatter |
 | damping engagement late | rate-limited damping must precede the crisis (≤ t = 50); the M9b *fill* is exempt — overwrite has no rate |
+| auto colour limits on freeze-arm frames | the seam ring grows without bound and blanks the real radiation — take frame colour limits from the field outside the freeze band (r > 3), else every post-engagement frame reads "signal lost" |
 | re-opening closed cures | timestep, dissipation, matter windows, slicing-source taper, shift freeze: all measured dead; resolution buys runway only |
 | partial-sector freezes | freezing shift/B while the metric evolves killed in 0.24 units; any freeze must take every field or none |
 | higher max_level on restart | works, but `regrid_interval` needs max_level entries — templates carry six |

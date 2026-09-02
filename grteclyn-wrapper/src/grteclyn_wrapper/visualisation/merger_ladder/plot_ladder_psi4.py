@@ -28,11 +28,27 @@ import numpy as np
 
 # The physics the plot is drawn against; see research/merger/Plan.md.
 COLLAPSE_SOURCE = (44.0, 51.5)
-EXTRACTION_RADIUS = 14.0
-TARGET_WINDOW = (
-    COLLAPSE_SOURCE[0] + EXTRACTION_RADIUS,
-    COLLAPSE_SOURCE[1] + EXTRACTION_RADIUS,
-)
+SOURCE_RADIUS = 1.5  # where the collapsing core radiates from
+
+# Signals do not travel at coordinate speed 1: cross-correlating the two
+# extraction spheres on the completed t = 80 arms puts the lag at 18.0 code
+# units over their 16.0 of coordinate separation (correlation 0.9998).  The
+# 12.5 % excess is propagation delay through the mass.  Using the naive
+# straight-line estimate put the R = 30 arrival window 3 units early and cost
+# a run that stopped at 80 with under half of that window recorded.
+PROPAGATION_SLOWDOWN = 18.0 / 16.0
+
+# The sponge zone (extra ramped dissipation, SpongeZone.hpp) occupies
+# r = 24 -> 32 in these runs.  R = 30 sits INSIDE it, so that sphere is
+# measured in an absorbing layer; flagged on the figure rather than silently
+# plotted as if it were a clean detector.
+SPONGE_INNER = 24.0
+
+
+def target_window(radius: float) -> tuple[float, float]:
+    """When the collapse signature crosses the sphere at ``radius``."""
+    delay = (radius - SOURCE_RADIUS) * PROPAGATION_SLOWDOWN
+    return COLLAPSE_SOURCE[0] + delay, COLLAPSE_SOURCE[1] + delay
 
 # Column layout of psi4_mode_l2_all.dat: time, then (Re, Im) for m = -2..2 at
 # R = 14, then the same five pairs at R = 30.
@@ -62,7 +78,7 @@ def load_modes(path: Path) -> dict:
     return out
 
 
-def _plot_channel(ax, runs, m, ridx, scale, title, ylabel):
+def _plot_channel(ax, runs, m, ridx, scale, title, ylabel, window, radius):
     for label, data, colour in runs:
         key = (m, ridx)
         if key not in data["amp"]:
@@ -88,11 +104,11 @@ def _plot_channel(ax, runs, m, ridx, scale, title, ylabel):
         )
 
     ax.axvspan(
-        *TARGET_WINDOW,
+        *window,
         color="tab:green",
         alpha=0.13,
         zorder=0,
-        label=f"collapse signature at R = {EXTRACTION_RADIUS:g}",
+        label=f"collapse signature at R = {radius:g}  ({window[0]:.1f}-{window[1]:.1f})",
     )
     ax.set_title(title, fontsize=11)
     ax.set_ylabel(ylabel)
@@ -100,8 +116,9 @@ def _plot_channel(ax, runs, m, ridx, scale, title, ylabel):
     ax.legend(fontsize=8, loc="upper left")
 
 
-def make_figure(runs, radius_label, ridx, scale, out_path: Path) -> Path:
-    fig, axes = plt.subplots(2, 1, figsize=(11, 8), sharex=True)
+def make_figure(runs, radius_label, ridx, scale, out_path: Path, radius: float) -> Path:
+    fig, axes = plt.subplots(2, 1, figsize=(12, 8.5), sharex=True)
+    window = target_window(radius)
 
     _plot_channel(
         axes[0],
@@ -110,7 +127,9 @@ def make_figure(runs, radius_label, ridx, scale, out_path: Path) -> Path:
         ridx=ridx,
         scale=scale,
         title="Spinning quadrupole (l = 2, m = 2) -- the binary channel",
-        ylabel=r"$|\Psi_4|$",
+        ylabel=r"$r\,|\Psi_4|$",
+        window=window,
+        radius=radius,
     )
     _plot_channel(
         axes[1],
@@ -119,18 +138,26 @@ def make_figure(runs, radius_label, ridx, scale, out_path: Path) -> Path:
         ridx=ridx,
         scale=scale,
         title="Axisymmetric channel (l = 2, m = 0) -- the head-on-style burst",
-        ylabel=r"$|\Psi_4|$",
+        ylabel=r"$r\,|\Psi_4|$",
+        window=window,
+        radius=radius,
     )
 
     axes[1].set_xlabel("t  (code units)")
-    right = max(TARGET_WINDOW[1] + 2.0, max(d["t"][-1] for _, d, _ in runs) + 2.0)
+    right = max(window[1] + 2.0, max(d["t"][-1] for _, d, _ in runs) + 2.0)
     axes[1].set_xlim(left=min(d["t"][0] for _, d, _ in runs) - 1.0, right=right)
 
+    sponge_note = (
+        "  --  NB: this sphere lies INSIDE the sponge zone (r = 24-32), an "
+        "absorbing layer; treat amplitudes as indicative"
+        if radius > SPONGE_INNER
+        else ""
+    )
     fig.suptitle(
-        f"Wormhole merger: Psi4 l = 2 at {radius_label} across the refinement ladder\n"
-        "crosses mark each run's NaN death; the shaded band is the collapse "
-        "signature we are trying to reach",
-        fontsize=12,
+        f"Wormhole merger: r*Psi4 l = 2 at {radius_label}\n"
+        "crosses mark each run's end (NaN death, or stop time reached); the "
+        f"shaded band is the collapse signature{sponge_note}",
+        fontsize=11,
     )
     fig.tight_layout(rect=(0, 0, 1, 0.94))
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -159,13 +186,21 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
 
     ridx = 0 if args.radius == "14" else 1
-    # R = 30 amplitudes are compared after the 1/R falloff is divided out.
-    scale = 1.0 if ridx == 0 else 30.0 / 14.0
-    radius_label = (
-        "R = 14" if ridx == 0 else "R = 30 (scaled by R/14)"
-    )
+    # No rescaling: the extractor already folds the radius into the mode
+    # amplitude (`amp = sum(psi4 * conj(Ylm) * W) * r`), so the columns hold
+    # r*Psi4 and are directly comparable between spheres.  Measured on the
+    # completed t = 80 arms, r*Psi4 at R = 30 matches R = 14 to 1.3 % once the
+    # 18-unit light-travel lag is removed -- i.e. Psi4 falls as 1/R, the
+    # signature of genuine outgoing radiation.  An extra R/14 here would have
+    # double-counted that factor and invented a 2.1x discrepancy.
+    scale = 1.0
+    radius_label = "R = 14" if ridx == 0 else "R = 30"
 
-    palette = ["#777777", "tab:blue", "tab:red", "tab:green", "tab:purple"]
+
+    palette = [
+        "#777777", "tab:blue", "tab:red", "tab:green", "tab:purple",
+        "tab:orange", "tab:brown", "tab:cyan",
+    ]
     runs = []
     for i, spec in enumerate(args.run):
         label, _, path = spec.partition("=")
@@ -174,10 +209,12 @@ def main(argv=None) -> int:
             raise SystemExit(f"no such stream: {p}")
         runs.append((label, load_modes(p), palette[i % len(palette)]))
 
-    out = make_figure(runs, radius_label, ridx, scale, args.out)
+    radius = 14.0 if ridx == 0 else 30.0
+    out = make_figure(runs, radius_label, ridx, scale, args.out, radius)
     print(f"wrote {out}")
+    window = target_window(radius)
     for label, data, _ in runs:
-        gap = TARGET_WINDOW[0] - data["t"][-1]
+        gap = window[0] - data["t"][-1]
         print(
             f"  {label}: stream ends t = {data['t'][-1]:.2f}, "
             f"{gap:+.2f} from the start of the target window"
