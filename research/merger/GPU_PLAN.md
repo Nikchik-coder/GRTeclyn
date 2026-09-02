@@ -223,8 +223,28 @@ cache small.  The domain is genuinely 64.)
   (1 776 sphere points) — 0 plateaus, 0 NaN, the only residual disagreements
   are the poles and 4 zero-crossings where nearest-cell plotfile sampling
   itself is the cruder method (quadrant-average and neighbour-range checks
-  confirm the in-code value).  Fix is 4 files, upstream-relevant.
+  confirm the in-code value).  Fix is 4 files; the code-only subset (3 files
+  — EMTensor was independently fixed on upstream main) is submitted upstream
+  from the `fix/derived-ghost-cells` fork branch.
   **Extraction-key templates are unblocked.**
+- **Mode integration validated too (2026-09-02) — the in-code stream is now
+  the primary waveform instrument.**  Second rung of the chain: an
+  independent Simpson quadrature of the raw sphere points against the
+  spin-weight −2 (2,2) harmonic reproduces `Weyl4_mode_22.dat` to **1e-8
+  relative at both radii** — the print-precision floor of the .dat file,
+  i.e. exact.  (Trapezoid lands at 1e-3–6e-3, so the in-code integrator is
+  Simpson-consistent, not trapezoid.)  With point values verified against
+  plotfiles and the harmonic integrals verified against independent
+  quadrature, the in-code extraction is validated end-to-end and supersedes
+  the consumer Ψ₄ for waveforms: 50× finer time sampling (every coarse step,
+  dt = 0.01) and 4th-order interpolation vs the consumer's nearest-cell
+  plotfile reads (demonstrably cruder at the sphere poles and at sign
+  crossings).  The consumer Ψ₄ is **demoted to cross-check**, not deleted —
+  plotfiles stay at interval 50, so every production arm still gets the
+  two-source comparison for free, and the wrapper keeps its exclusive jobs
+  (frames, scalar modes, kinematic flux).  Verification record:
+  `runs/wormhole_merger/merger_fix/m9b_weyldiag10_r09000` (kept; the other
+  diag runs and their scratch plotfiles are deleted).
 - Consumer-side radii remain a free post-processing choice; every production
   launch adds `--scalar-modes` to `WHM_CONSUME_ARGS` so each arm records the
   scalar l ≤ 2 modes and the kinematic flux on the same spheres (§7 leg 1).
