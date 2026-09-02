@@ -395,6 +395,48 @@ the headon arm's "horizon at 29" is the same artefact; n160's "horizon convergen
 was the artefact converging with the geometry it is a function of (its inspiral and
 waveform convergence stand).
 
+## Is the recorded signal a genuine gravitational wave? (2026-09-02)
+
+Challenged twice ("slower than light = junk?", "R = 14 starts high"), answered by
+measurement. Figures: `results/merger/figures/wave_speed_check.png` and the two
+six-panel analyses next to it.
+
+**The speed.** The wave crossed 14 → 30 in 18.0 time units — 0.889 of coordinate
+light speed. That is not sub-luminal: *coordinate* light is also slower than 1 out
+there, because near a mass clocks run slow and space is stretched, so everything
+covers fewer coordinate units per coordinate second. The run records its own local
+light speed on every slice: 0.75 at r = 13, still only 0.82 at r = 21. Integrating
+that profile, **light itself needs ~19.5 units to make the equatorial 14 → 30
+crossing; the wave took 18.0** — slightly faster than the in-plane light average,
+exactly right for a sphere-averaged mode whose off-plane paths cross shallower
+gravity. An arrival at coordinate speed 1.0 would have been the actual alarm
+(faster than local light). And the real junk of this formulation — constraint and
+gauge modes — travels at **√2 × light**, which would have crossed in ~13.8 units:
+excluded by the measured 18.0. (The perturbed-pack reference figure shows the same
+physics from the other side: its sphere-pair speeds read 0.995 c, 1.028 c, 1.085 c
+— coordinate speeds scatter around c.)
+
+**The falloff and the shape.** r·Ψ₄ is equal at both spheres to 1.3 % (m = 2) —
+the 1/distance dilution of genuine radiation — and the two detectors' waveforms
+correlate at 0.9998 in retarded time. In the six-panel figures the two curves
+collapse onto one.
+
+**The t = 0 offset at R = 14.** Nothing has arrived at either sphere at t = 0;
+that offset is the *static* near-zone curvature of the freshly laid-down two-throat
+data. It dies as ~1/r⁴ (measured sphere ratio 16–20), while radiation keeps r·Ψ₄
+equal between spheres — which is why R = 30 starts at essentially zero and why the
+offset is not part of the signal.
+
+**Not freeze junk either.** Two seam radii, one waveform (0.000 %); engagement
+moved 53 → 55.5 on a finer grid changes the window by ≤ 0.003 %; constraint norms
+sit flat for 27 units after engagement (`merger_constraints_t80.png` — the spike
+forest before t = 34 is regrid transients, the smooth bump at 41 is the collapse
+itself).
+
+Open item, closes with wave 8: the t ≈ 75 second peak at R = 14 must reappear at
+R = 30 near t ≈ 93 with the same 1/R dilution, and must not shift by 2.5 in the
+late-engagement arm.
+
 ## The timing bug (found and fixed 2026-09-01)
 
 The in-code common-horizon scan
