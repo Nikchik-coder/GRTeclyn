@@ -563,6 +563,7 @@ The corrected campaign and its data are in
 | **Matter-profile contract (rail)** — single source of truth + t=0 cross-code consistency gate | `grtresna/matter/profile_contract.py`, `tests/grtresna/test_profile_contract.py` | Catches stale-binary empty fields / sign flips / wrong-ω / center bugs before evolution; see [Matter-profile contract](#matter-profile-contract--the-rail-for-adding-new-profiles-safely) |
 | **Plotfile consumer** — streaming `small_data/` + PNG `frames/` + HDF5 deletion | `scripts/lib/`, `src/.../visualisation/` | `consume_plotfiles` sidecar; **required** for every production run |
 | **Ψ₄ / GW extraction** — in-code C++ `WeylExtraction` (spherical-harmonic modes) | `Examples/RotatingWormholeCollapse/`, `src/.../visualisation/process_wave/` | **Primary: in-code GRTeclyn `SphericalExtraction`** → `data/Weyl4_mode_2{0,1,2}.dat`, dense (every coarse step), multi-radius, decoupled from plotfiles. Python `process_wave` sidecar still extracts a coarse cross-check + drives frames |
+| **Scalar-field mode extraction** — s=0 harmonics of `phi`/`Pi` on the Ψ₄ spheres + kinematic flux | `src/.../consume_plotfiles/extraction/scalar_modes.py` | Own stream `small_data/scalar_modes.dat`; **off by default**, enable with `--scalar-modes` in `WHM_CONSUME_ARGS`; see [Scalar-field mode extraction](#scalar-field-mode-extraction---scalar-modes-own-stream-off-by-default) |
 | **Search algorithms** — MAP-Elites (QD) archive, CMA-ES hill-climb | `src/.../search/qd_search/`, `src/.../search/optimize/` | Shared pre-evolution gates; warm-start from any trajectory |
 | **Objectives** — `ftl_first`, `robust_ftl`, `general_ftl`, `f_geo_max`, `f_geo_depth`, `critical_collapse`, `gw_beam`, `spacetime_shear` | `src/.../metrics/score/objectives.py` | See [Campaigns](#campaigns) for which objective each campaign uses |
 | **Descriptors** — `ftl_lifetime`, `speed_horizon`, `wave_focusing`, `spacetime_shear`, `gw_beam` | `src/.../search/qd_search/descriptors.py` | Behavior axes for the MAP-Elites archive |
@@ -1304,6 +1305,44 @@ bash grteclyn-wrapper/scripts/wormhole/run/wormhole_case.sh --gridinit "$G" --fu
 Implementation note: the wormhole `Main` builds a `BHAMR<1>` purely to reuse
 its `m_weyl_interpolator` (puncture tracking stays disabled) -- requires the
 MPI+CUDA rebuild below.
+
+#### Scalar-field mode extraction (`--scalar-modes`, own stream, off by default)
+
+Added 2026-09-02 for the wormhole-merger ringdown work: the post-merger tail
+is a *coupled* scalar-metric mode, so the scalar field needs the same
+sphere-mode treatment as Ψ₄.  The consumer module
+`consume_plotfiles/extraction/scalar_modes.py` projects `phi` and `Pi` onto
+proper s=0 spherical harmonics (default l = 0, 1, 2, all m -- note l = 0 and
+l = 1 exist for a scalar, unlike for Ψ₄) on the **same extraction spheres**
+as Ψ₄, at every `--radii` value, plus a kinematic scalar energy flux per
+radius (three concentric spheres give the radial derivative).  All radii and
+shells go in one batched field query per plotfile.
+
+- **Own output file** `small_data/scalar_modes.dat` with a self-describing
+  header (`R14_phi_l1_m-1_re`, ..., `R14_scalar_flux_kin`) -- no existing
+  column contract is touched.
+- **Off by default.**  Enable per launch by adding `--scalar-modes` to the
+  consumer arguments -- for campaign launches that means `WHM_CONSUME_ARGS`:
+
+  ```bash
+  WHM_CONSUME_ARGS="--scalar-modes --frames-fields chi phi Pi ..." \
+    bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+  ```
+
+  Optional tuning: `--scalar-mode-ells 0 1 2` (supported 0..4) and
+  `--scalar-flux-delta 0.5` (radial half-step of the derivative stencil).
+- **Failure-isolated**: an exception in this stream is caught and logged
+  without harming the published Ψ₄ streams, and it works even with
+  `--no-psi4`.
+- **Two honesty caveats**, documented in the module docstring: the flux is a
+  *coordinate* proxy (no lapse/shift factors applied), and the **phantom
+  kinetic sign is not applied** -- for phantom matter the physical energy
+  flux is the negative of the canonical-scalar expression.
+
+Validated three ways (see `research/merger/GPU_PLAN.md` section 7): analytic
+selftest (`scalar_modes.selftest()`: orthonormality + projection
+round-trip), mode symmetries on a live merger plotfile, and a 7 % match
+against the independent slice-cache ring harmonic at the same instant.
 
 ### One-off GRTresna solve
 
