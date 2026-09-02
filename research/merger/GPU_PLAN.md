@@ -295,11 +295,17 @@ lvl6 arm died at t = 56, before the window opens, so period convergence
 rests entirely on the production level-6 twin.
 
 **Verdict on the proposed further investigation — proceed, on three legs:**
-1. **Scalar-mode extraction module** (consumer-side, own module + own output
-   file, default off): decompose φ and ∂t φ into real spherical harmonics
-   (l = 0..2, all m) on the same spheres as Ψ4 at the four production radii.
-   Upgrades the ring harmonic to the real observable and gives the scalar/GW
-   energy-budget ratio the referees will want.
+1. **Scalar-mode extraction module** — **IMPLEMENTED 2026-09-02**
+   (consumer-side: `extraction/scalar_modes.py`, own stream
+   `scalar_modes.dat`, off by default).  Projects φ and Π onto s = 0
+   spherical harmonics (default l = 0..2, all m) on the same spheres as Ψ4,
+   plus a kinematic scalar flux per radius for the energy budget.  Enable
+   per launch by adding `--scalar-modes` to `WHM_CONSUME_ARGS`.  Validated
+   three ways: analytic selftest (orthonormality + projection round-trip),
+   physics of a live p045 plotfile at t = 13 (dipole |l1 m±1| = 0.76
+   dominating by 4 orders, exact ± symmetry, zero z-dipole), and a 7 %
+   match against the independent slice-cache ring harmonic at the same
+   instant (residual = l = 3 leakage into the equatorial trace).
 2. **A longer tail for the headline arm**: measuring τ ≈ 150 credibly needs
    ~1 e-fold of decay, i.e. ~150 units past merger.  Baseline stop_time 150
    gives only ~0.6 e-folds; extending the headline arm to collapse + 150
