@@ -8,11 +8,11 @@ that produced it does not.
 
 - The reasoning and the full argument: [`research/merger/Plan.md`](../../research/merger/Plan.md)
 - The article in preparation: [`research/merger/article/research.tex`](../../research/merger/article/research.tex)
-- The working run tree, **not in git** (~7 GB, on the machine that produced it):
+- The working run tree, **not in git** (~11 GB, on the machine that produced it):
   `runs/wormhole_merger/`, which carries its own README and a `NOTES.md` per stage
 - Rebuild this directory: `bash research/merger/pack_results.sh`
 
-## The result, in six lines
+## The result, in seven lines
 
 1. Two identical throats **repel**. Reversing one throat's scalar field is the only
    gravity-driven way to make them fall together — no aimed momenta, no support cuts.
@@ -36,6 +36,11 @@ that produced it does not.
    within 1.8 % and the waveform to within 4 % — and then dies of the same NaN
    1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
    would cost roughly 90× the compute.
+7. The result survived its credibility batch (2026-09-03/04): turn the core damping
+   off and nothing claimed changes; change the slicing and the *physics* holds while
+   the crash time moves 8.4 units (the wall is gauge, not an event); rerun a scout
+   and it dies on the identical step (deterministic); and the same pipeline, fed
+   vacuum black holes, recovers the textbook Kerr ringdown to a few percent.
 
 ## The paper's claims, and the runs behind each
 
@@ -43,8 +48,8 @@ Written claim-first so a paper subsection can be lifted straight from here:
 what the text asserts, the runs that establish it, and where the numbers sit.
 Runs overlap between claims — that is the point of the map. *(pack)* = has a
 directory under `campaign/`; *(run tree)* = lives only in the gitignored
-`runs/wormhole_merger/` tree on the production machine; *(in flight)* = still
-on a GPU as of 2026-09-03, so its pack entry is a mid-run snapshot.
+`runs/wormhole_merger/` tree on the production machine. As of 2026-09-04
+**nothing is in flight** — every pack entry is a finished run.
 
 ### The initial data is validated: a single throat holds 40 time units
 - **Claim.** The grid represents each wormhole by folding its entire far
@@ -121,8 +126,10 @@ on a GPU as of 2026-09-03, so its pack entry is a mid-run snapshot.
   refinement ladder, levels 4–7 with twins *(run tree —
   `runs/wormhole_merger/merger_fix/`, LAUNCHES.md and the ladder archives)* —
   pair-mean deaths 52.26 / 53.43 / 55.18 / 56.42, level-7 single arm 56.20;
-  `..._p020_lvl5_t200` and `..._p025_lvl5_t200` *(in flight)* — the level-5
-  wall probed on the scan orbits.
+  `..._p020_lvl5_t200` and `..._p025_lvl5_t200` *(pack)* — level 5 run
+  from t = 0 dies at the level-3 wall (52.07 / 52.79): the +1.4/level gain
+  belongs to the *restart* recipe (χ already clipped at the pits when a
+  run starts deep), so depth must be added mid-run, not from birth.
 
 ### The interior freeze rescues the ringdown window
 - **Claim.** Freezing the collapsed interior after the burst closes carries
@@ -153,10 +160,17 @@ on a GPU as of 2026-09-03, so its pack entry is a mid-run snapshot.
   wall first, so "no completed merger at p ≠ 0.12" is untested, not
   established.
 - **Runs.** `..._p020_t200`, `..._p025_t200`, `..._p035_t200`,
-  `..._p045_t200` *(pack)*; `..._p020_nofill_t060` *(in flight)* — p = 0.20
-  with damping off and in-code Weyl4, the run that answers where the throats
-  are when the wall hits; the two lvl5 arms *(in flight)* — the same question
-  at production depth.
+  `..._p045_t200` *(pack)*; `..._p020_nofill_t060` *(pack)* — p = 0.20 with
+  damping off and in-code Weyl4: **hovered at sep 1.08 from t = 46 until the
+  wall (52.08)** — captured but not fusing; the two lvl5 arms *(pack)* —
+  the same answer at depth.  And the boundary is finer than "0.12 fuses,
+  0.20 hovers": `..._p015_nofill_t060` and its insured rerun
+  `..._p015_rr_t060` *(pack)* put **p = 0.15 on the fusing branch** —
+  plateau at pit sep 0.816 (p012's was 0.815), dive to 0.70 with the core
+  lapse *rising* (p012's endgame signature) — but the wall (53.35, the
+  same step in both runs) cut it before the pits coincided.  So the fusing/
+  hovering divide sits between 0.15 and 0.20, and p = 0.15 needs the
+  restart-refinement recipe to finish what it starts.
 
 ### The Helfer correction: better initial data, worse evolution
 - **Claim.** The correction removes the superposition's constraint defect at
@@ -187,14 +201,66 @@ on a GPU as of 2026-09-03, so its pack entry is a mid-run snapshot.
 - **Runs.** The Helfer twins *(pack)* — the clean zombie; `..._p025_t200`
   *(pack)* — the NaN side of the race; `..._p035_t200` *(pack)* — a slow
   zombie with no Helfer correction at all, proving the wall is not
-  Helfer-specific; the in-flight unmasked runs are the live test. The
-  validation and the slice-probe evidence are written up in
-  `research/merger/GPU_PLAN.md` §9.
+  Helfer-specific; the unmasked runs (`_nofill`, damping off) confirmed it
+  on p = 0.15 and 0.20. The validation and the slice-probe evidence are
+  written up in `research/merger/GPU_PLAN.md` §9.
 
-## `figures/` — the campaign figures (2026-09-02)
+### The wall time is gauge + resolution, not physics
+- **Claim.** The t ≈ 52–53 death time must never be read as a physical event.
+  Three independent handles each move it while the physics underneath holds:
+  refinement moves it +1.4 units per level (the ladder above); halving the
+  slicing's `lapse_coeff` (2 → 1) moves it **8.4 units earlier** — to
+  t = 43.64 — while the blob still nucleates on schedule, capture and plunge
+  proceed, and the pits close to 0.442; and at fixed gauge + resolution it is
+  *deterministic*: the p015 rerun died at the same step (5335, t = 53.35) as
+  its original. The crash is the 1+log slicing losing its
+  singularity-avoidance race, not the singularity arriving.
+- **Runs.** `merge_twin_p012_lc1_t060` *(pack)* — the one-knob gauge arm;
+  `merge_orbit_flip_d12_p015_nofill_t060` + `..._p015_rr_t060` *(pack)* — the
+  determinism pair; the m4e ladder *(run tree)* — the resolution axis.
+- **Say it as.** Every claimed event (blob, capture, fusion, burst) completes
+  *before* the wall of the run that claims it; the wall itself is quoted only
+  as the limit of the numerical window.
+
+### The core damping shapes nothing that is claimed
+- **Claim.** Every scan/twin verdict was originally taken with
+  CoreMatterDamping engaged from t ≈ 30. The damping-off twin shows this
+  never mattered: at t = 32 the damped and undamped runs agree to 3 decimals
+  in separation, midpoint lapse, |φ| and scalar activity (the files are
+  verifiably different — max |Δφ| = 0.0056, so this is agreement, not a
+  copy), and the wall moves only 52.06 → 51.53 (~1 %, the arm-pair noise
+  floor). Damping neither causes the blob, nor the merger, nor the wall —
+  and production can run clean (damping off) with its behaviour measured
+  rather than assumed.
+- **Runs.** `merge_twin_p012_nodamp_t060` vs `merge_twin_p012_plain_t100`
+  *(pack)* — the one-knob pair.
+
+### The vacuum BBH control recovers the known answer
+- **Claim.** The same grid, gauge, extraction chain and orbit (d = 12,
+  p = ±0.12, ADM mass 1 each), with black holes instead of throats, does
+  everything textbook: merger at t ≈ 70, then a ringdown whose fitted QNM
+  (period 28.8–29.7, damping time 23–27) matches a Kerr remnant of
+  M ≈ 1.9 with modest spin (Schwarzschild reference 16.8 M / 11.2 M —
+  spin shortens the period exactly as seen); both extraction radii agree to
+  3–7 %. The instruments cross-validate: the independent plotfile consumer
+  and the in-code stream match to 0.31 % of peak (correlation 0.999999).
+  Boundaries hold for 150 units with Sommerfeld alone — χ scatter *falls*
+  outward, no reflected ripples (the sponge exists only in the wormhole
+  code path; the vacuum run needs none, by construction). And at the same
+  detector (R = 14) the wormhole merger is **~2.3× louder** than the BBH —
+  with an extra (2,0) breathing channel 5.5× the BBH's.
+- **Runs.** `bbh_control_d12_p012_t150` *(pack)* — the control;
+  `bbh_control_d12_p012` *(pack)* — its t = 100 predecessor;
+  `merge_twin_p012_plain_t100` *(pack)* — the wormhole side of the
+  comparison. Figures: `figures/bbh_t150_ringdown.*`,
+  `figures/bbh_vs_wormhole_psi4.*`.
+
+## `figures/` — the campaign figures (2026-09-02 → 04)
 
 | file | what it shows |
 | --- | --- |
+| `bbh_t150_ringdown.{png,pdf}` | the BBH control's full (2,2) ringdown at R = 30 with the QNM fit (period 29.7, τ 27.1) and the Kerr known-answer comparison |
+| `bbh_vs_wormhole_psi4.{png,pdf}` | same masses, same orbit, different object: wormhole vs BBH waveforms, envelopes (2.3× / 5.5×), PSD |
 | `psi4_analysis_m9b_fillwide80.{png,pdf}` | six-panel analysis of the (2,0) breathing mode, full history t = 0–80 stitched across the restart chain: waveform at both radii, retarded-time overlay, PSD, propagation speed (0.889 of coordinate light — see the speed check below), spectrogram, strain vs Advanced LIGO |
 | `psi4_analysis_m9b_fillwide80_m2.{png,pdf}` | same six panels for the (2,2) whirl mode — the channel that carries the plunge burst |
 | `merger_ladder_psi4_R14/R30.png` | every campaign arm overlaid at each detector: the freeze arms run exactly under the unfrozen ladder arms wherever they overlap |

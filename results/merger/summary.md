@@ -37,11 +37,11 @@ t = 51.4+) are evidence of a common horizon.
 | merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07 | 0.00 | 52.07 | NaN at t = 52.07 | 0.02 | - | 3.384e-03 | 4.238e-02 |
 | merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79 | 0.00 | 52.79 | NaN at t = 52.79 | 0.06 | - | 3.569e-03 | 6.891e-02 |
 | merge_orbit_flip_d12_p015_nofill_t060 | scout p = 0.15 unmasked: fusing branch (plateau 0.816, dive to 0.70, core lapse rising) but pits not coincident when the wall hit at t = 53.35 | 0.00 | 53.35 | NaN at t = 53.35 | 0.06 | 31.25 | 9.378e-05 | 1.557e-02 |
+| merge_orbit_flip_d12_p015_rr_t060 | p = 0.15 rerun with insured checkpoints: wall reproduced at the same step (t = 53.35); the t = 50 seed for the phase-2 refinement is held | 0.00 | 53.35 | NaN at t = 53.35 | 0.06 | 31.25 | 9.378e-05 | 1.557e-02 |
 | bbh_control_d12_p012 | vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100 | - | 100.00 | finished clean at t = 100.00 (vacuum control: waveform streams in hand) | - | - | - | - |
 | bbh_control_d12_p012_t150 | BBH control rerun to t = 150, fixed-center consumer: full ringdown in hand, instruments agree to 0.3 %, QNM fit consistent with a Kerr remnant (~15.6M / ~14.2M at R = 30) | - | 150.00 | finished clean at t = 150.00 (vacuum control: waveform streams in hand) | - | - | - | - |
-| merge_orbit_flip_d12_p015_rr_t060 | - | 0.00 | 7.84 | still running | 11.69 | - | 2.021e-01 | 5.985e-03 |
-| merge_twin_p012_lc1_t060 | - | 0.00 | 43.44 | still running | 0.06 | 28.95 | 1.000e-10 | 5.429e-03 |
-| merge_twin_p012_nodamp_t060 | - | 0.00 | 43.77 | still running | 0.81 | 30.80 | 2.321e-03 | 9.200e-03 |
+| merge_twin_p012_lc1_t060 | gauge arm (#15), lapse_coeff 2 -> 1: blob and plunge intact (sep 0.442) but the wall moved to t = 43.64 -- wall time is gauge, not physics | 0.00 | 43.64 | NaN at t = 43.64 | 0.06 | 28.95 | 1.000e-10 | 5.381e-03 |
+| merge_twin_p012_nodamp_t060 | damping-off arm (#14): blob nucleates identically without damping (t = 32 slices match plain to 3 decimals); wall at t = 51.53 vs plain 52.06 -- damping neither causes nor delays the wall | 0.00 | 51.53 | NaN at t = 51.53 | 0.36 | 30.80 | 1.257e-03 | 4.470e-03 |
 
 Full column set, including the constraint and geometry extrema, is in
 `summary.csv`.

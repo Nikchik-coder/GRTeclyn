@@ -51,7 +51,8 @@ WHAT = {
     "merge_orbit_flip_d12_p025_lvl5_t200": "scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79",
     "merge_orbit_flip_d12_p015_nofill_t060": "scout p = 0.15 unmasked: fusing branch (plateau 0.816, dive to 0.70, core lapse rising) but pits not coincident when the wall hit at t = 53.35",
     "merge_twin_p012_lc1_t060": "gauge arm (#15), lapse_coeff 2 -> 1: blob and plunge intact (sep 0.442) but the wall moved to t = 43.64 -- wall time is gauge, not physics",
-    "merge_twin_p012_nodamp_t060": "damping-off arm (#14): blob nucleates identically without damping (t = 32 slices match plain to 2 %)",
+    "merge_twin_p012_nodamp_t060": "damping-off arm (#14): blob nucleates identically without damping (t = 32 slices match plain to 3 decimals); wall at t = 51.53 vs plain 52.06 -- damping neither causes nor delays the wall",
+    "merge_orbit_flip_d12_p015_rr_t060": "p = 0.15 rerun with insured checkpoints: wall reproduced at the same step (t = 53.35); the t = 50 seed for the phase-2 refinement is held",
     "bbh_control_d12_p012": "vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100",
     "bbh_control_d12_p012_t150": "BBH control rerun to t = 150, fixed-center consumer: full ringdown in hand, instruments agree to 0.3 %, QNM fit consistent with a Kerr remnant (~15.6M / ~14.2M at R = 30)",
 }
@@ -79,6 +80,7 @@ ORDER = [
     "merge_orbit_flip_d12_p020_lvl5_t200",
     "merge_orbit_flip_d12_p025_lvl5_t200",
     "merge_orbit_flip_d12_p015_nofill_t060",
+    "merge_orbit_flip_d12_p015_rr_t060",
 ]
 CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
 

@@ -37,7 +37,16 @@ argmin-neighbourhood fix of §9 stands).*
   proven IVP.  Checkpoints were LOST (uninsured name — sweeper rule now
   fixed to cover all p-scan names); the last 3 plotfiles (t = 52.0/52.5/
   53.0, post-dive) are HELD on scratch for the horizon scan alongside
-  p020's.  (Superseded queue text kept below for the record.)
+  p020's.  **RERUN with insurance (2026-09-04):**
+  `merge_orbit_flip_d12_p015_rr_t060` (card 0, identical template)
+  reproduced the wall at **t = 53.35 — the very same step (5335) as the
+  original: the wall is deterministic at this resolution** — and this
+  time the checkpoints survived:
+  **Chk05000 (t = 50) held** plus a sweeper-proof `hold_seed_t50` hardlink
+  copy — the seed for phase 2 (restart at max_level 5, ~+1.4 wall units
+  per level, aiming the wall past the ~53–54 fusion completion).  Its own
+  death plotfiles (t = 52.0/52.5/53.0) held too.
+  (Superseded queue text kept below for the record.)
 - [~] *(was)* **p015 scout** — `merge_orbit_flip_d12_p015_nofill_t060`, card 0.
   Does p = 0.15 fuse before the t ≈ 52 wall?  Fuse → production-p candidate
   (~10–15 % more m = ±2 signal, longer whirl); hover like p020 → the
@@ -94,8 +103,9 @@ argmin-neighbourhood fix of §9 stands).*
 
 **Credibility tests — run BEFORE any production launch.**  They decide
 what the production arms are allowed to claim.  All level-3 runs or short
-restart segments, ~1 day of one card total; no useful checkpoint survives
-anywhere, so the bases start from t = 0.
+restart segments, ~1 day of one card total.  (2026-09-04: two t = 50 seeds
+now exist — nodamp Chk05000 for #16, p015_rr Chk05000 for the p015
+phase-2 refinement — both with sweeper-proof hold copies on scratch.)
 
 - [ ] **#13 Blob nature test — no GPU.**  Gauge-invariant scalars at the
   inter-throat midpoint from existing plotfiles (the 3 held p020 files of
@@ -107,16 +117,18 @@ anywhere, so the bases start from t = 0.
   peaks at the φ = 0 midpoint, so the blob may be a genuine negative-energy
   sink the throats dug between themselves — a paper paragraph if measured,
   a retraction risk if asserted.
-- [ ] **#14 Damping-off p012 plain twin** — **LAUNCHED 2026-09-03, card 1** as
-  `merge_twin_p012_nodamp_t060` (single knob: core_matter_damping = 0;
-  ~9.6 u/h, t = 60 in ~6 h; checkpoints on, name insured in the sweeper).
-  From t = 0, level 3, with
-  insured checkpoints.  Every scan/twin verdict so far was taken with
-  CoreMatterDamping engaged on the blob from t ≈ 30 (its stated rationale
-  is false, §9); the measured death-time effect is zero (§5) but the effect
-  on blob morphology and waveform is unmeasured.  Production runs clean, so
-  this twin IS the production config — and its checkpoints double as the
-  #16 base.
+- [x] **#14 Damping-off p012 plain twin — ANSWERED (2026-09-04): damping
+  changes nothing that matters.**  `merge_twin_p012_nodamp_t060` died at
+  **t = 51.53** (h11 NaN, level 3) vs the plain twin's 52.06 — the wall
+  moved by 0.5 units (~1 %), within the arm-pair noise floor, so damping
+  neither causes nor delays the wall.  Pre-collapse the twins are
+  numerically indistinguishable: at t = 32 sep/mid-lapse/|φ|/activity all
+  match plain to 3 decimals (files verifiably different, max |Δφ| = 0.0056).
+  Verdict: every scan/twin result stands as-is with damping off, and the
+  production config (damping off) is now measured, not assumed.  Assets
+  held: **Chk05000 (t = 50) — the #16 ladder base** — plus a sweeper-proof
+  `hold_seed_t50` hardlink copy; death plotfiles t = 50.5/51.0/51.5 on
+  scratch; in-code streams complete to 51.53.
 - [x] **#15 Gauge-change arm — ANSWERED (2026-09-03): the physics
   survives the slicing change, the WALL TIME does not.**
   `merge_twin_p012_lc1_t060` (single knob: lapse_coeff 2.0 → 1.0) died at
@@ -138,8 +150,9 @@ anywhere, so the bases start from t = 0.
   The shock-avoiding lapse f = 1 + kappa/alpha^2 would need code; not
   worth it now that the params-only arm has answered.)
 - [ ] **#16 χ-floor ladder** — `min_chi` is a flat params key (production
-  value 1.0e-8): restart segments t ≈ 48 → 53 from a #14 checkpoint with
-  levels 4–5 added, at min_chi 1e-8 / 1e-10 / 1e-12 (~1–2 h each).  A
+  value 1.0e-8): restart segments t = 50 → ~53 from the #14 base **(in
+  hand: nodamp Chk05000, t = 50, hold copy on scratch)** with levels 4–5
+  added, at min_chi 1e-8 / 1e-10 / 1e-12 (~1–2 h each).  A
   horizon that moves with the floor is the floor.  Extend the ladder read
   to the R = 14 waveform over the shared window — floor-independence of
   the signal is the check a referee will demand on seeing "χ clipped at
@@ -303,7 +316,7 @@ at d = 12 needs p ≈ 0.5 (measured 6× coupling); Newtonian escape ~0.7.
 | p | run(s) | outcome |
 |---|---|---|
 | 0.12 | production family | merges: sep 2.0 at t ≈ 32, fusion 48–51 — the headline plunge |
-| 0.15 | p015_nofill (LIVE) | fuse-or-hover verdict pending (#1) |
+| 0.15 | p015_nofill, p015_rr | fusing branch, wall-cut mid-fusion (dive to 0.69, lapse rising); wall at 53.35 in both, same step — needs the #17 recipe to finish (#1) |
 | 0.20 | p020_nofill, p020_lvl5 | captured; hovered at sep 1.08–1.19; wall at 52.08 / 52.07 — cannot fuse |
 | 0.25 | p025, p025_lvl5 | captured to sep ~1.5–1.9; wall at 52.98 / 52.79 — cannot fuse |
 | 0.35 | p035 | fly-by: min sep 2.75 at t = 42.4, receding when stopped |
@@ -666,6 +679,24 @@ Consequences:
 - Results pack: **23 runs** (~67 MB) including the BBH control;
   `summary.md`/`.csv` regenerated; `results/merger/README.md` opens with
   the claim-by-claim map (paper subsection → backing runs → numbers).
+
+## 10b. Audit after the credibility batch (2026-09-04)
+
+- **All cards idle; every queued run finished.**  Walls this batch: nodamp
+  51.53, lc1 43.64, p015_rr 53.35 (all h11/K NaN on the finest level);
+  BBH control reached t = 150 clean.  Verdicts folded into #1/#2/#14/#15.
+- **Scratch pruned to intent** (~75 GB): per run, only the held seeds
+  (nodamp + p015_rr Chk05000 with `hold_seed_t50` hardlink copies), the
+  held death plotfiles (p015 52.0–53.0, p015_rr 52.0–53.0, p020 51.0–52.0,
+  nodamp 50.5–51.5, lc1 42.5–43.5), lc1's Chk04000 (t = 40, only gauge-arm
+  checkpoint), and the BBH final Chk01200.  Superseded t = 40 checkpoints
+  and the consumed BBH plotfiles deleted.
+- **Logs packed**: all nine top-level `detached_gpu*.log` gzipped into
+  their run directories, `run.log` gzipped in every finished run, sweeper
+  log archived — `runs/wormhole_merger` top level holds only tooling,
+  manifests and run dirs (~11 GB).
+- **Every run directory kept** — each is packed or cited; the folder audit
+  and keep-rationale are in `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-04.md`.
   `pack_results.sh` now sweeps `bbh_control_*` too.
 - Figures in `results/merger/figures/`: `psi4_analysis_bbh_control{,_m2}`,
   `bbh_vs_wormhole_psi4`, the p045 fly-by set.  The comparison plotter is
