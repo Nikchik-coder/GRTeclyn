@@ -33,9 +33,10 @@ t = 51.4+) are evidence of a common horizon.
 | merge_twin_p012_helfer_lvl4_t100 | Helfer twin at max_level = 4: reproduces the stall, stopped by hand | 0.00 | 48.57 | still running | 4.94 | - | 2.898e-05 | 2.724e-02 |
 | merge_twin_p012_helfer_lvl5_t100 | Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5 | 0.00 | 32.06 | still running | 5.15 | - | 6.912e-02 | 4.347e-03 |
 | merge_twin_p012_helfer_w2_t060 | Helfer twin, window halved to 2.0: stalled worse (sep 5.10 at t = 32 gate), stopped at t = 33.1 | 0.00 | 33.10 | still running | 5.06 | 30.90 | 3.044e-03 | 3.980e-03 |
-| merge_orbit_flip_d12_p020_nofill_t060 | p = 0.20 unmasked, damping off, in-code Weyl4 (in flight) | 0.00 | 41.21 | still running | 1.31 | - | 4.029e-03 | 2.460e-02 |
-| merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5, unmasked (in flight) | 0.00 | 41.56 | still running | 0.03 | - | 3.816e-03 | 2.859e-02 |
-| merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5, unmasked (in flight) | 0.00 | 39.36 | still running | 2.11 | - | 5.605e-03 | 3.354e-03 |
+| merge_orbit_flip_d12_p020_nofill_t060 | p = 0.20 unmasked, damping off: hovered at sep 1.08 from t = 46, NaN at t = 52.08 | 0.00 | 52.08 | NaN at t = 52.08 | 1.06 | 52.08 | 3.492e-03 | 4.737e-02 |
+| merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07 | 0.00 | 52.07 | NaN at t = 52.07 | 0.02 | - | 3.384e-03 | 4.238e-02 |
+| merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79 | 0.00 | 52.79 | NaN at t = 52.79 | 0.06 | - | 3.569e-03 | 6.891e-02 |
+| merge_orbit_flip_d12_p015_nofill_t060 | scout p = 0.15 unmasked, damping off, in-code Weyl4 (in flight) | 0.00 | 22.99 | still running | 6.62 | - | 1.797e-01 | 4.814e-03 |
 
 Full column set, including the constraint and geometry extrema, is in
 `summary.csv`.

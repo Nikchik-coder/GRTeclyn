@@ -46,9 +46,10 @@ WHAT = {
     "merge_twin_p012_helfer_lvl5_t100": "Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5",
     "merge_twin_p012_helfer_w2_t060": "Helfer twin, window halved to 2.0: stalled worse (sep 5.10 at t = 32 gate), stopped at t = 33.1",
     # The unmasked wall probes (2026-09-03).
-    "merge_orbit_flip_d12_p020_nofill_t060": "p = 0.20 unmasked, damping off, in-code Weyl4 (in flight)",
-    "merge_orbit_flip_d12_p020_lvl5_t200": "scout p = 0.20 at max_level = 5, unmasked (in flight)",
-    "merge_orbit_flip_d12_p025_lvl5_t200": "scout p = 0.25 at max_level = 5, unmasked (in flight)",
+    "merge_orbit_flip_d12_p020_nofill_t060": "p = 0.20 unmasked, damping off: hovered at sep 1.08 from t = 46, NaN at t = 52.08",
+    "merge_orbit_flip_d12_p020_lvl5_t200": "scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07",
+    "merge_orbit_flip_d12_p025_lvl5_t200": "scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79",
+    "merge_orbit_flip_d12_p015_nofill_t060": "scout p = 0.15 unmasked, damping off, in-code Weyl4 (in flight)",
 }
 # The order the campaign reads in: the restart chain, then the probes.
 ORDER = [
@@ -73,6 +74,7 @@ ORDER = [
     "merge_orbit_flip_d12_p020_nofill_t060",
     "merge_orbit_flip_d12_p020_lvl5_t200",
     "merge_orbit_flip_d12_p025_lvl5_t200",
+    "merge_orbit_flip_d12_p015_nofill_t060",
 ]
 CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
 
