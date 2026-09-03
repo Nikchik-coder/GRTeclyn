@@ -8,11 +8,11 @@ that produced it does not.
 
 - The reasoning and the full argument: [`research/merger/Plan.md`](../../research/merger/Plan.md)
 - The article in preparation: [`research/merger/article/research.tex`](../../research/merger/article/research.tex)
-- The working run tree, **not in git** (~1.6 GB, on the machine that produced it):
+- The working run tree, **not in git** (~7 GB, on the machine that produced it):
   `runs/wormhole_merger/`, which carries its own README and a `NOTES.md` per stage
 - Rebuild this directory: `bash research/merger/pack_results.sh`
 
-## The result, in five lines
+## The result, in six lines
 
 1. Two identical throats **repel**. Reversing one throat's scalar field is the only
    gravity-driven way to make them fall together — no aimed momenta, no support cuts.
@@ -28,12 +28,137 @@ that produced it does not.
    t = 51.5 down to 0.59 at t = 55.0, and accelerating. Phantom matter falling in
    carries negative energy across the horizon, and the horizon pays for it.
 5. Give the pair enough angular momentum that it never merges and the evolution is
-   **healthy to t = 60 with no NaN at all**. The instability belongs to the merged core,
-   not to the code.
+   **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
+   (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and
+   `..._p035_t200` (closest approach 2.75, run to t = 73.9). The instability belongs
+   to the merged core, not to the code.
 6. And it is not a resolution artefact. A 25 % finer grid reproduces the inspiral to
    within 1.8 % and the waveform to within 4 % — and then dies of the same NaN
    1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
    would cost roughly 90× the compute.
+
+## The paper's claims, and the runs behind each
+
+Written claim-first so a paper subsection can be lifted straight from here:
+what the text asserts, the runs that establish it, and where the numbers sit.
+Runs overlap between claims — that is the point of the map. *(pack)* = has a
+directory under `campaign/`; *(run tree)* = lives only in the gitignored
+`runs/wormhole_merger/` tree on the production machine; *(in flight)* = still
+on a GPU as of 2026-09-03, so its pack entry is a mid-run snapshot.
+
+### Like-oriented throats repel; flipping one is what makes a binary
+- **Claim.** Two identical throats push apart (5× gravity at a = 2, m = 1, the
+  push scaling with throat *width*, not mass; pull/push ratio 1.50 measured vs
+  1.5 predicted). Reversing one throat's scalar field turns the push into a
+  pull — the only gravity-driven route to a merger.
+- **Runs.** The Stage-2.5/2.6 control pairs under
+  `runs/wormhole_merger/03_two_throats/` *(run tree — see its NOTES.md)*;
+  every `merge_*flip*` run below is the attracting configuration in action.
+
+### The p = 0.12 pair merges
+- **Claim.** Inspiral to t ≈ 33, whirling double core, collapse at t ≈ 45, a
+  genuine common trapped surface at t ≈ 51, and a gravitational-wave burst.
+- **Runs.** `merge_orbit_flip_d12_r03000` *(pack)* — the discovery arm (its
+  `__part1` streams are t = 0 → 30.5); `merge_headon_flip_d12` *(pack)* — the
+  no-orbit version, merges sooner; `merge_twin_p012_plain_t100` *(pack)* — an
+  independent from-scratch rerun 2026-09-02 that retraced the record (sep 2.06
+  at t = 32.00 vs the original's 2.0) and closed to sep 0.81 by t = 44: the
+  reproducibility twin.
+- **Numbers.** `campaign/<run>/binary_throat_diagnostics.dat` (separation),
+  `collapse_diagnostics.dat` (collapse), `horizon/` (the trapped surface).
+
+### The merged object is a black hole that dissolves
+- **Claim.** The common horizon shrinks — 1.07 at t = 51.5 down to 0.59 at
+  t = 55, accelerating — as phantom matter carries negative energy across it.
+- **Runs.** `merge_orbit_flip_d12_r04000` and `..._rw_r05000` *(pack)* — two
+  independent damping schemes, one dissolution curve; `..._sg10_r05000`
+  *(pack)* corroborates the death; the measurement itself is the offline scan
+  in `horizon/`.
+
+### The instability belongs to the merged core, not the code
+- **Claim.** Deny the merger and the evolution is healthy.
+- **Runs.** `merge_orbit_flip_d12_p045` *(pack)* — clean to t = 60;
+  `..._p045_t200` *(pack)* — the same fly-by held to t = 200, source of the
+  six survival figures; `..._p035_t200` *(pack)* — a second fly-by (min sep
+  2.75), though its inter-throat midpoint shows the slow lapse collapse of
+  the freeze wall (last claim below), so "healthy" there needs the
+  qualification.
+
+### Resolution postpones the wall, never removes it
+- **Claim.** The death time climbs +1.43 per refinement level, linearly over
+  four rungs, no saturation and no cure; the NaN lands on each newly created
+  finest level, so the blowup is a property of the continuum solution.
+  Reaching t = 60 by refinement alone would cost ~10² × the compute.
+- **Runs.** `merge_orbit_flip_d12_ml2` *(pack)* — level 2 dies at t = 9.4,
+  before the throats meet; `..._r03000` (level 3, death 52.06) and `..._n160`
+  *(pack)* — 25 % finer, same physics to 1.8 %, death 3 % later; the m4e
+  refinement ladder, levels 4–7 with twins *(run tree —
+  `runs/wormhole_merger/merger_fix/`, LAUNCHES.md and the ladder archives)* —
+  pair-mean deaths 52.26 / 53.43 / 55.18 / 56.42, level-7 single arm 56.20;
+  `..._p020_lvl5_t200` and `..._p025_lvl5_t200` *(in flight)* — the level-5
+  wall probed on the scan orbits.
+
+### The interior freeze rescues the ringdown window
+- **Claim.** Freezing the collapsed interior after the burst closes carries
+  the evolution to t = 100 with flat constraints for 27+ units; the exterior
+  is bit-identical to the unfrozen twin beyond r = 6, the two seam-radius
+  twins agree to five digits at every shared waveform sample, and the
+  late-engagement control moves the R = 14 waveform ≤ 0.003 % (m = 2) /
+  0.022 % (m = 0).
+- **Runs.** The M9b program *(run tree — `runs/wormhole_merger/merger_fix/`)*:
+  `m9b_fill80_r05000` / `m9b_fillwide80_r05000` (the t = 80 twins),
+  `m9b_fill100_r08000` / `m9b_fillwide100_r08000` (the t = 100 drains), plus
+  the seam and late-engagement controls in the merger_fix archives.
+  Figures in `figures/`.
+
+### The recorded signal is a genuine gravitational wave
+- **Claim.** Propagation at 0.889 of coordinate light matches the metric's
+  own local light speed along the extraction path (14→30 crossing predicted
+  ~19.5, measured 18.0); 1/R falloff holds; the (2,0) breathing and (2,2)
+  whirl channels separate cleanly; the in-code mode integrals match an
+  independent Simpson quadrature to 1e-8.
+- **Runs.** The same M9b freeze arms *(run tree)*; the evidence is
+  `figures/psi4_analysis_m9b_fillwide80*` and `figures/wave_speed_check.png`.
+
+### Where the capture boundary sits in orbital momentum
+- **Claim.** p = 0.20 and 0.25 are captured, p = 0.35 and 0.45 fly by — the
+  boundary sits between 0.25 and 0.35 (50–70 % of circular). Whether a
+  captured scout *completes* its merger is open: every one hits the t ≈ 53
+  wall first, so "no completed merger at p ≠ 0.12" is untested, not
+  established.
+- **Runs.** `..._p020_t200`, `..._p025_t200`, `..._p035_t200`,
+  `..._p045_t200` *(pack)*; `..._p020_nofill_t060` *(in flight)* — p = 0.20
+  with damping off and in-code Weyl4, the run that answers where the throats
+  are when the wall hits; the two lvl5 arms *(in flight)* — the same question
+  at production depth.
+
+### The Helfer correction: better initial data, worse evolution
+- **Claim.** The correction removes the superposition's constraint defect at
+  the throats but parks a fade-zone defect between them; at the default
+  window (d/3 = 4) the orbit stalls at sep ≈ 4.7 and the run freezes —
+  reproduced at levels 3, 4 and 5, so converged, not under-resolution.
+  Production runs plain superposition (its +9.5 % initial-size artefact
+  accepted) unless the halved window clears it.
+- **Runs.** `merge_twin_p012_helfer_t100` vs `..._plain_t100` *(pack)* — the
+  one-flag twins; `..._helfer_lvl4_t100` *(pack)* — stall reproduced to < 2 %
+  in the lapse trace; `..._helfer_lvl5_t100` *(pack)* — stalled the same at
+  production depth, stopped at t = 31.5; `..._helfer_w2_t060` *(in flight)* —
+  window halved to 2.0, verdict at t ≈ 32: sep < 3 re-admits the correction,
+  sep > 4.5 kills it.
+
+### The freeze wall itself: lapse collapse at the midpoint, not the throats
+- **Claim.** In every binary the lapse collapses at the inter-throat midpoint
+  (where the opposite scalar profiles cancel), never at the throat cores (the
+  pits hold lapse 0.05–0.24 throughout). If the midpoint reaches the 1e-10
+  floor the evolution goes static without a NaN — the "zombie"; if it hovers
+  above, the run dies of the h11 NaN instead. Mergers interrupt the collapse;
+  stalls and fly-bys let it finish.
+- **Runs.** The Helfer twins *(pack)* — the clean zombie; `..._p025_t200`
+  *(pack)* — the NaN side of the race; `..._p035_t200` *(pack)* — a slow
+  zombie with no Helfer correction at all, proving the wall is not
+  Helfer-specific; the in-flight unmasked runs are the live test. The
+  validation and the slice-probe evidence are written up in
+  `research/merger/GPU_PLAN.md` §9.
 
 ## `figures/` — the campaign figures (2026-09-02)
 
@@ -77,9 +202,10 @@ plotfile and are packed whole.
 Not packed, and not recoverable from here: plotfiles, checkpoints, the full frame series
 (~250 per field) and the slice caches (7–260 MB per run). Those live in the run tree.
 
-## The runs
+## The stage-3 chain in detail
 
-Nine runs. The first five are one chain — each restarts from the previous one's
+Nine runs (the 2026-09-02/03 scan, twin and wall runs are described in the
+claim map above and carry rows in `summary.md`). The first five are one chain — each restarts from the previous one's
 checkpoint, changing exactly one thing, hunting the same failure. The rest are
 independent probes. `summary.md` has the measured columns for all of them.
 

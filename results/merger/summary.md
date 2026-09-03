@@ -19,6 +19,18 @@ number describes the core, not an approach.
 | merge_orbit_flip_d12_p045 | momentum 0.45 instead of 0.12 | 0.00 | 60.01 | finished clean at t = 60.01 | 3.95 | 42.30 | 9.786e-04 | 1.545e-02 |
 | merge_orbit_flip_d12_n160 | 160 cells per side instead of 128 | 0.00 | 53.61 | NaN at t = 53.61 | 0.05 | 29.79 | 1.000e-10 | 3.835e-03 |
 | merge_orbit_flip_d12_ml2 | max_level = 2 instead of 3 | 0.00 | 9.42 | NaN at t = 9.42 | 11.63 | - | 2.162e-01 | 1.442e-02 |
+| merge_orbit_flip_d12_p020_t200 | scout p = 0.20: captured, stopped by hand at t = 47.8 | 0.00 | 47.85 | still running | 1.06 | - | 2.840e-03 | 7.301e-03 |
+| merge_orbit_flip_d12_p025_t200 | scout p = 0.25: captured to sep 1.5, h11 NaN | 0.00 | 52.98 | NaN at t = 52.98 | 1.50 | 52.97 | 3.088e-03 | 7.604e-02 |
+| merge_orbit_flip_d12_p035_t200 | scout p = 0.35: fly-by (min sep 2.75), stopped by hand | 0.00 | 73.93 | finished clean at t = 73.93 | 2.75 | 49.25 | 2.251e-04 | 4.818e-01 |
+| merge_orbit_flip_d12_p045_t200 | scout p = 0.45: fly-by, the healthy control at t200 | 0.00 | 90.97 | finished clean at t = 90.97 | 3.95 | 43.30 | 5.663e-06 | 1.190e+00 |
+| merge_twin_p012_plain_t100 | p = 0.12 twin, plain superposition: merged, stopped by hand at t = 44 | 0.00 | 44.03 | still running | 0.81 | 30.80 | 1.901e-03 | 7.780e-03 |
+| merge_twin_p012_helfer_t100 | p = 0.12 twin, Helfer correction (auto width 4): stalled, zombie, stopped at t = 60.3 | 0.00 | 60.31 | finished clean at t = 60.31 | 4.56 | 29.50 | 1.000e-10 | 1.054e-01 |
+| merge_twin_p012_helfer_lvl4_t100 | Helfer twin at max_level = 4: reproduces the stall, stopped by hand | 0.00 | 48.57 | still running | 4.94 | - | 2.898e-05 | 2.724e-02 |
+| merge_twin_p012_helfer_lvl5_t100 | Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5 | 0.00 | 32.06 | still running | 5.15 | - | 6.912e-02 | 4.347e-03 |
+| merge_twin_p012_helfer_w2_t060 | Helfer twin, window halved to 2.0 (in flight 2026-09-03) | 0.00 | 7.59 | still running | 11.69 | - | 2.187e-01 | 5.505e-03 |
+| merge_orbit_flip_d12_p020_nofill_t060 | p = 0.20 unmasked, damping off, in-code Weyl4 (in flight) | 0.00 | 11.96 | still running | 11.10 | - | 1.999e-01 | 8.129e-03 |
+| merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5, unmasked (in flight) | 0.00 | 33.09 | still running | 2.44 | - | 1.809e-02 | 3.245e-03 |
+| merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5, unmasked (in flight) | 0.00 | 33.57 | still running | 2.76 | - | 1.793e-02 | 2.399e-03 |
 
 Full column set, including the constraint and geometry extrema, is in
 `summary.csv`.

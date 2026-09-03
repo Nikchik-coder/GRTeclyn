@@ -25,8 +25,14 @@ what did not, and the comparison arms it added.*
 
 **In flight**
 - [ ] Wave 8 drains to t = 100 (~93.6 as of this revision) → close-out: second peak at R = 30 near t ≈ 93; R = 30 tail past ceiling 84.5
-- [ ] Scouts p025 / p035 / p045 → capture boundary **+ the fuse audit** (§2): a p qualifies only if both throats are still throats at periapsis — p045 verdict so far in §2 (fly-by through t = 84)
-- [ ] **Helfer twin pair, launched 2026-09-02 09:06** — `merge_twin_p012_{helfer,plain}_t100` on GPUs 0/1, the proven p = 0.12 plunge-merger with NO core freeze (damping only), differing in `wormhole_helfer_correction` alone (diff of the two templates is one line).  Checkpoints every 10 u pruned in-code to 3; in-code Weyl4 extraction on (r = 14/20/26/30, l ≤ 4, every coarse step) with the python consumer as cross-check.  The question: does the corrected start survive past the ~t = 52 no-freeze death?  Merger due ~t = 45, death window ~52, stop_time 100.
+- [ ] Scouts → capture boundary **+ the fuse audit** (§2).  Status 2026-09-03: **p020 CAPTURED** (crossed p012's sep-2.0 fusion mark at t ≈ 33.5, reached 1.08) but **froze** at sep 1.08 before fusing (stopped t = 47.8); **p025 captured-then-died** (reached sep 1.5, froze, h11 NaN at t = 52.98); **p035 fly-by** (min sep 2.746 at t = 42.4, receding to 4.0 when stopped at t = 73.9); p045 fly-by (§2).  Boundary sits between p = 0.25 and 0.35 (50–70 % of circular).  **No completed merger at any p ≠ 0.12 yet** — every capture above p012 hits the freeze first; the max_level = 5 reruns of p020/p025 (in flight) are the live test of whether depth clears it. **[Validation 2026-09-03, §9: p020 was NOT frozen — it was ~4 time units behind p012's own slow phase when stopped; p025 died of the known t ≈ 53 level-3 h11 wall with no fill armed; and the L5 arms' lapse diagnostics do not see the collapse site at all. "No completed merger at p ≠ 0.12" is untested, not established.]**  NOTE for mode extraction: those two L5 arms were launched from the scan template, which has **no in-code Weyl4 streams** — only the consumer psi4 at plot cadence (0.5 u).  Whatever p is chosen for the production waveform must be relaunched from a template with in-code extraction ON.
+- [x] **Helfer twin pair — RESOLVED 2026-09-03, and the answer is the wrong way round: the correction is REJECTED for production.**  `merge_twin_p012_{helfer,plain}_t100`, identical but for the one flag.  **Plain merged** — retraced the p = 0.12 record (sep 2.06 at t = 32.00 vs the original's 2.0 at 32) and closed to **sep 0.81 by t = 44** before being stopped.  **Helfer stalled** — orbit died at sep ≈ 4.7 by t ≈ 30 (7° of orbit swept over t = 26–34 vs plain's 35°), cores collapsed to the 1e-10 lapse floor by t ≈ 55, then ran as a zombie (frozen, no NaN) to t = 60.3.  A **max_level = 4 rerun reproduces the stall to < 2 % in the lapse trace at every epoch** (1.45e-3/1.46e-3 at t = 34 … 3.84e-5/3.81e-5 at t = 47), so at production-class depth the freeze is *converged*, not under-resolution. **[Validation 2026-09-03, §9: the cores never collapsed — the throat pits keep lapse 0.07–0.20 and |φ| ≈ 0.9 to t = 60; what hit the floor is a growing blob at the inter-throat MIDPOINT (φ = 0 by symmetry, K > 0). The stall verdict stands; the stated mechanism does not.]**  Validated three ways: both twins' `binary_throat_diagnostics.dat` (independent streams), the L4 rerun's `.dat`, and the φ frames — helfer's matter swells into static ~8-unit lobes while plain's stays compact and orbits.  **Production arms therefore run plain superposition**; the known +9.5 % initial-size artefact is the price of an evolution that actually evolves.  One escape hatch is still in flight: `merge_twin_p012_helfer_lvl5_t100` (max_level 5 = the production finest dx) had cores 7× shallower than L3/L4 at t = 27 — if it demonstrably merges, the correction may be re-admitted at level 5 only; verdict due at its twin's stall epoch t ≈ 34.
+
+**Decisions from the validation pass (§9), 2026-09-03 — run in order, one card at a time**
+- [ ] **1. p020 at level 3, unmasked, to the wall** — first launched 2026-09-03 with the p012 production fill armed at t = 53; **stopped at t = 2.7 and withdrawn**: p020's merger time is unknown, so a fixed-time fill can freeze the throats mid-approach and hide the merger (the fill was tuned to p012, whose throats had already met at t = 48–51).  Relaunch as `merge_orbit_flip_d12_p020_nofill_t060` (`launch_p020_nofill.sh 0`): plain-twin template with p = 0.20, damping off, **no fill**, in-code Weyl4 streams, checkpoints every 10 units.  9.5 u/h → the wall (t ≈ 53) in ~5.5 h.  The question it answers: where are the throats when the wall hits — met (as p012 at 48–51) or still apart.  Only then, if they met, arm the fill from Chk05000 at a time *after* the meeting, the way p012 was done.  Doubles as the p020 damping-off control against `merge_orbit_flip_d12_p020_t200`.
+- [ ] **2. Plain p012 twin with damping off to t = 50** — cannot start cleanly from a checkpoint: only Chk04000 (t = 40) survived the prune and the damping had been active since t = 30.35.  From scratch ~5 h.  Deferred: decision 1 answers the same question for p020 at no extra cost.
+- [x] **3. Helfer at level 3 with the window halved** (`wormhole_helfer_width = 2.0`; the auto width is d/3 = 4.0) — an initial-data change, so it must start at t = 0; no checkpoint can seed it.  Launched 2026-09-03 on GPU 1 as `merge_twin_p012_helfer_w2_t060` (no checkpoints, ~6.5 h to t = 60): verdict at t ≈ 32 — sep < 3 means it tracks plain (window placement was the problem, correction re-admitted); sep > 4.5 means the correction itself is dead.
+- [ ] **4. The level-5 arms** — corrected reading 2026-09-03: `p020_lvl5` and `p025_lvl5` carry no fill, so they are *unmasked* runs whose wall is pushed to t ≈ 55 by resolution (m4e ladder: L5 died 54.8, L6 56.1/56.7, L7 56.2).  They are the highest-resolution look at where the throats are when the wall hits, ~11 h from this revision; keep them.  Their in-code lapse diagnostics stay blind to the midpoint until sep < 2.5, but the half-space throat positions are valid (the finest blocks contain the pits) and the orbit agrees with L3 to 2 % through t = 29.  `helfer_lvl5` was stopped 2026-09-03 at t = 31.5 (stalled at sep 5.3 like L3/L4, nothing left to learn) and its scratch (43 GB: Chk03000 + plotfiles) was removed at user request — it cannot be resumed; GPU 1 now runs the w2 test.
 
 **Cheap, next, no GPU conflict (each still needs one by-hand approval)**
 - [x] Re-run initial-data check E on the production drainhole template — **done 2026-09-02, §3**: d/b = 6 is not a cliff (1.58× the d/b = 8 defect), but the defect never falls below the floor, so the Helfer/Ning correction is now indicated
@@ -446,6 +452,18 @@ measured 1.8× increase in the initial Hamiltonian violation.
   different words, and the same run answers it.  Do not assume it does — the
   Ellis drainhole throat has its own linear instability, and if the collapse
   is physical no initial-data fix removes it.
+- **ANSWERED 2026-09-03 (the twin ran — see the In-flight close-out above):
+  the correction makes the dynamics WORSE at level 3/4, not better.**  The
+  corrected arm did not ring less and survive longer; its cores collapsed
+  *faster* (6× deeper in lapse at matched t ≈ 28), its orbit stalled at
+  sep ≈ 4.7, and the whole system froze — while the plain twin, spurious
+  +9.5 % size artefact and all, sailed through its merger.  The prediction
+  quoted above is falsified at those depths, and the L3 = L4 lapse-trace
+  agreement (< 2 %) says this is converged behaviour, not resolution error.
+  The correction stays in the code, default off, and out of the production
+  configuration; only a demonstrated level-5 merger of the still-running
+  `helfer_lvl5` arm could re-admit it, and then only at level-5 cost
+  (measured 5× wall-clock). **[Validation 2026-09-03, §9: "cores collapsed faster" should read "the inter-throat lapse collapse nucleates 5 units earlier (3e-2 at t = 25.4 vs 30.4)"; the `helfer_lvl5` arm cannot re-admit anything while its finest-level-only diagnostics exclude the midpoint (sep > 2.5).]**
 - *Operational note:* N = 384 no longer fits one H100 with the constraints
   derive on (79 GB arena, OOM).  `run_single.sh` now takes `WHM_RANKS=2`
   with `WHM_GPU=0,1` and binds each rank to its own card inside the rank, per
@@ -813,3 +831,162 @@ non-deterministic sums live in the diagnostics kernels).  The waveform's
 reproducibility bar is therefore the *measured* ±0.35 twin floor: quote
 it, and if a referee wants a per-waveform number, a twin-from-t = 0 of the
 headline arm is one more arm (decision §6.8).
+
+## 9. Validation pass 2026-09-03: C++ audit, build, and where the lapse actually collapses
+
+Requested before the article: validate the merger implementation and build, and
+explain the "zombie" (frozen, NaN-free) runs.  Method: a read-through of the
+example's C++ (initial data, gauge, matter coupling, floors, damping/freeze
+modules, tracker, diagnostics); a clean rebuild of a scratch copy of the
+example; and a direct look at the cached z = 0 slices (χ, lapse, K, φ, Π,
+shift) of nine runs at 2–6 epochs each, cross-checked against the `.dat`
+streams.  Slices (yt covering grids from plotfiles) and `.dat` files (in-code
+reductions) are independent instruments.
+
+### 9.1 The lapse never collapses at the throats
+
+In every binary run, at every epoch to the end, the two χ pits keep lapse
+0.05–0.24 and |φ| 0.79–0.92.  The 3e-2 → 1e-3 → 1e-10 collapse that this plan
+calls "core freeze" / "cores collapsed" sits at the **midpoint between the
+throats**, where φ ≡ 0 by symmetry, K > 0 and the shift ≈ 0.  The isolated
+throat never shows it (lapse 0.13 at t = 40).
+
+| run | t | lapse at the pits | lapse at the midpoint | \|φ\| at the pits | K (sign, extent) |
+|---|---|---|---|---|---|
+| p020 L3 | 32.0 | 0.164 | 2.1e-2 | 0.87 | +0.14 |
+| p020 L3 | 47.5 | 0.125 | 3.0e-3 | 0.87 | +0.20, no K < 0 core |
+| plain p012 L3 | 43.5 | 0.134 | 1.9e-3 | 0.86 | — |
+| helfer L3 | 30.0 | 0.175 | 5e-3 | 0.90 | — |
+| helfer L3 | 60.0 | 0.073 | 1e-10 (floor) | 0.89 | +1.0, 5224 cells > 0.3 |
+| helfer L4 | 48.0 | 0.177 | 3.1e-5 | 0.91 | +1.59, 1258 cells > 0.3 |
+| helfer L5 | 28.0 | 0.209 | 1.08e-2 | 0.92 | +0.18 |
+| p035 fly-by L3 | 73.5 | 0.046 | 1e-3 | — | +1.6, 7828 cells > 0.3 |
+| p012 r03000 | 44.0 | 0.138 | blob to r ≈ 0.7 | 0.85 | +0.07 |
+| p012 r03000 | 51.0 | 0.15–0.24 (rising) | shell: lapse < 3e-2 at r ≈ 0.5–0.85 | 0.79–0.83 | −1.5 at the core (K < 0) |
+
+The midpoint value is the same at three resolutions (helfer L3/L4/L5 all
+1.08e-2 at t = 28), so the collapse is converged: a property of these
+equations, this gauge and this initial data, not of the grid.
+
+### 9.2 Consequences for the readings above
+
+- **"Zombie" explained.**  In helfer the floored region is a blob about the
+  midpoint that grows outward (lapse < 1e-3 reaches 2.5 from a pit at t = 36,
+  5.9 at t = 60; the K > 0.3 area grows 25× over t = 36–60; L2_Ham 5e-3 →
+  1.1e-1).  At α = 1e-10 every α-proportional right-hand-side term vanishes,
+  so the blob is static and NaN-free.  The runs that died of the level-3 h11
+  NaN (r03000 52.06, n160 53.6, p025 52.98) had the midpoint lapse hovering
+  near 3e-3, never floored — that is the t ≈ 52–53 wall, and reaching the
+  floor is not what triggers it.
+- **Helfer verdict.**  The stall is real (sep 4.7 → 5.3, 7° swept) and the
+  REJECT stands, but the mechanism is the earlier nucleation of the midpoint
+  blob (3e-2 at t = 25.4 vs 30.4 plain), which the throats then stall
+  against.  Hypothesis worth one run: the window's constraint defect
+  (1.8×) is concentrated near r ≈ width = 4 from each throat, i.e. at the
+  midpoint; halving `wormhole_helfer_width` should move the nucleation.
+- **p020 was not frozen.**  Half-space separation 1.44 (t = 40) → 1.19 (44)
+  → 1.064 (45.5) → 1.079 (47.85, stopped by hand).  The merged p012 arm sat
+  at 0.815 for 3.5 units (t = 40.5–44) before dropping to ~0.5 at t = 48.
+  p020 at 47.5 (blob radius, pit lapse 0.125, K max +0.2, no K < 0 core yet)
+  matches p012 at t ≈ 44: about 4 units behind the same sequence.  Its L3
+  checkpoints were pruned; the L5 arm reaches this phase in ~10 h, a fresh
+  L3 rerun to t = 60 in ~6 h.
+- **p025 died of the wall, not of a freeze.**  Same level-3 h11 NaN at
+  52.98 as the undamped p012 restart (52.06) and n160 (53.6).  The
+  production p012 dodged it only because the freeze fill was armed at 53.4;
+  p025 had no fill.  Its "freeze" is the same coordinate slow-down (shift → 0
+  at the pits below sep ≈ 1) that p012 shows.
+- **p012 endgame.**  At t = 48–51.5 the pits coincide within 0.2–0.6, the
+  core lapse *rises* (0.14 → 0.24) with K < 0 (−0.8 → −1.6), and the
+  collapsed-lapse region has become a shell at r ≈ 0.5–0.85 around the
+  core.  The reported common trapped surface at r = 1.0 (t = 51.06) sits on
+  that shell, where χ is at its floor and the constraints are rising.  It
+  is consistent with black-hole formation in 1+log slicing, but it needs an
+  independent apparent-horizon check on the t = 51 plotfile before the
+  article says "common horizon".  The large-radius trapped verdicts in
+  helfer (4.6 → 7.2), p035 (3.6–6.3) and p025 (2.06–2.12) coincide with the
+  K ≈ 1 rim of the midpoint blob and are not credible.
+- **The L5 arms cannot see the collapse.**  `collapse_diagnostics`,
+  `binary_throat_diagnostics` and the tracker all reduce over the finest
+  level only (`finest_lev` in `BinaryWormholeLevel.cpp`).  At t ≈ 29 the
+  level-5 blocks sit within ±1.25 of each pit and none contains the midpoint
+  (plotfile headers of all three L5 arms), so the "slower" L5 collapse
+  (0.115 vs 0.0108 at t = 28, helfer) is the near-pit minimum, not the
+  midpoint.  The L5 slices give the midpoint 1.08e-2 — identical to L3/L4.
+  Depth is not being tested until sep < 2.5.  The level-5 grid also clips χ
+  at the pits to the 1e-8 floor at t = 0 (level 3 does not), so L3 → L5 is
+  not a clean refinement rung.
+- **Tracker degeneracy.**  `throat_track.dat` places both throats at the
+  origin with sep 0.000 from the moment sep < search radius 2.0 (p020 36.0,
+  plain 32.0, headon 31.1, r04000 40.0): pass 2 of `ThroatTracker` averages
+  every in-sphere cell within 1e-6 of χ_min, and both pits qualify by
+  symmetry.  Moving boxes then centre on the origin (still covering both
+  pits, so refinement is unaffected).  Every sub-2 separation quoted in this
+  plan comes from the half-space method, which stays valid by symmetry but
+  is cell-quantised (0.06 hops).  Fix: restrict pass 2 to the neighbourhood
+  of the pass-1 argmin cell, or split the search by half-space while
+  sep < 2 × radius.
+- **CoreMatterDamping is aimed at the wrong place.**  It is on in every
+  scan/twin template (lapse window 3e-2 → 1e-3) and engages at t ≈ 30 on
+  the midpoint blob, when no trapped surface exists (ah_r = 0) — the
+  template's "unambiguously inside the trapped surface" rationale is false.
+  Since φ ≈ 0 on the blob's core its direct erasure is small; whether it
+  feeds the K growth at the rim needs a damping-off control.
+
+### 9.3 Code and build
+
+- Clean scratch rebuild (copy of the example, same flags): 114 compile
+  units, 0 errors, links.  Warnings only: `maybe_unused` attribute ignored
+  (`SmallDataIO.hpp:83–85`) and an unused `num_ghosts` (`Weyl4.impl.hpp:345`).
+  The binary the arms are running (Sep 2 08:40) is content-current; make
+  wants a rebuild only because one header's mtime was touched with zero
+  content change.
+- No sign or coupling error found: the phantom sign enters only T_μν, the
+  Klein–Gordon right-hand side is standard, the matter momentum feeds the
+  B-driver, 1+log and Gamma-driver are standard, floors run at every RK
+  stage, Bowen–York and the Helfer window match their documentation.
+- Hygiene: `Make.package` omits `CoreFreezeFill.hpp` and `ThroatTracker.hpp`
+  from the header list (fine with dependency files present, fragile on a
+  fresh clone); `parameters_and_version.txt` records the version as
+  "(unknown)"; `collapse_diagnostics` writes the floors into the finest
+  state before reducing (harmless, but a diagnostic should not mutate
+  state).
+
+### 9.4 What this changes
+
+- Rename "core freeze" → "inter-throat lapse collapse" throughout; the
+  throats never collapse.
+- Drop "no merger at p ≠ 0.12" and "every capture hits the freeze"; p020
+  was mid-sequence, p025 hit the wall.
+- The p012 common horizon needs an independent horizon check before the
+  article.
+- Runs that answer "does p020 / p025 merge" without masking: level-3 p020
+  with damping off and **no fill** to the wall (~5.5 h; relaunch pending),
+  and the running level-5 p020/p025 arms (no fill, wall ≈ 55).  A fill is
+  armed only afterwards, from a checkpoint, at a time after the throats have
+  met.  Helfer L3 with `wormhole_helfer_width` halved (~6 h) remains the one
+  test of the correction; the plain-p012 damping-off twin is deferred (no
+  clean checkpoint; the p020 run covers it).
+
+### 9.5 Housekeeping and results refresh, 2026-09-03
+
+The run tree was cleaned and the git pack brought up to date with everything
+Stage 4 has produced so far (`runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-03.md`
+has the ledger):
+
+- **Removed:** only `ABORTED_p020_fill53_t060` (the withdrawn fill-at-53
+  launch, decision 1). Every other run directory is evidence for a claim and
+  stays — including the stopped helfer_lvl5 twin (the level-5 stall
+  datapoint) and the old p045 (the packed healthy control).
+- **Logs:** finished runs' launcher logs gzipped into their run directories;
+  a top-level `detached_gpu*.log` now always means a run live on that card.
+- **Results pack refreshed:** `results/merger/` went from 9 packed runs to
+  **21** (67 MB) — the four t200 scouts, the five Helfer/plain twins, and
+  mid-run snapshots of the four in-flight arms; `summary.md`/`.csv`
+  regenerated with per-run fates. `results/merger/README.md` now opens with
+  a **claim-by-claim map** (paper subsection → runs that back it → where the
+  numbers sit), written to be lifted straight into the article.
+- **Snapshot at pack time (~03:50):** p020_lvl5 at t = 33.1, sep 2.44;
+  p025_lvl5 at t = 33.6, sep 2.76 — both level-5 arms are *closing*, well
+  inside their level-3 twins' capture tracks. helfer_w2 at t = 7.6 and
+  p020_nofill at t = 12.0, too early to read.

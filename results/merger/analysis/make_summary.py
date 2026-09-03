@@ -34,6 +34,21 @@ WHAT = {
     "merge_orbit_flip_d12_p045": "momentum 0.45 instead of 0.12",
     "merge_orbit_flip_d12_n160": "160 cells per side instead of 128",
     "merge_orbit_flip_d12_ml2": "max_level = 2 instead of 3",
+    # The capture scan (2026-09-02): same template, damping on, stop_time 200.
+    "merge_orbit_flip_d12_p020_t200": "scout p = 0.20: captured, stopped by hand at t = 47.8",
+    "merge_orbit_flip_d12_p025_t200": "scout p = 0.25: captured to sep 1.5, h11 NaN",
+    "merge_orbit_flip_d12_p035_t200": "scout p = 0.35: fly-by (min sep 2.75), stopped by hand",
+    "merge_orbit_flip_d12_p045_t200": "scout p = 0.45: fly-by, the healthy control at t200",
+    # The Helfer twins (2026-09-02/03): p = 0.12, identical but for initial data.
+    "merge_twin_p012_plain_t100": "p = 0.12 twin, plain superposition: merged, stopped by hand at t = 44",
+    "merge_twin_p012_helfer_t100": "p = 0.12 twin, Helfer correction (auto width 4): stalled, zombie, stopped at t = 60.3",
+    "merge_twin_p012_helfer_lvl4_t100": "Helfer twin at max_level = 4: reproduces the stall, stopped by hand",
+    "merge_twin_p012_helfer_lvl5_t100": "Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5",
+    "merge_twin_p012_helfer_w2_t060": "Helfer twin, window halved to 2.0 (in flight 2026-09-03)",
+    # The unmasked wall probes (2026-09-03).
+    "merge_orbit_flip_d12_p020_nofill_t060": "p = 0.20 unmasked, damping off, in-code Weyl4 (in flight)",
+    "merge_orbit_flip_d12_p020_lvl5_t200": "scout p = 0.20 at max_level = 5, unmasked (in flight)",
+    "merge_orbit_flip_d12_p025_lvl5_t200": "scout p = 0.25 at max_level = 5, unmasked (in flight)",
 }
 # The order the campaign reads in: the restart chain, then the probes.
 ORDER = [
@@ -46,6 +61,18 @@ ORDER = [
     "merge_orbit_flip_d12_p045",
     "merge_orbit_flip_d12_n160",
     "merge_orbit_flip_d12_ml2",
+    "merge_orbit_flip_d12_p020_t200",
+    "merge_orbit_flip_d12_p025_t200",
+    "merge_orbit_flip_d12_p035_t200",
+    "merge_orbit_flip_d12_p045_t200",
+    "merge_twin_p012_plain_t100",
+    "merge_twin_p012_helfer_t100",
+    "merge_twin_p012_helfer_lvl4_t100",
+    "merge_twin_p012_helfer_lvl5_t100",
+    "merge_twin_p012_helfer_w2_t060",
+    "merge_orbit_flip_d12_p020_nofill_t060",
+    "merge_orbit_flip_d12_p020_lvl5_t200",
+    "merge_orbit_flip_d12_p025_lvl5_t200",
 ]
 CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
 
