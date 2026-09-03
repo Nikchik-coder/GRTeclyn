@@ -1,996 +1,607 @@
 # GPU plan for the paper runs
 
-*Drafted 2026-09-02, while wave 8 (fill100 / fillwide100 / late6) was still on the
-cards.  Companion to `Plan.md`, which holds the campaign record; this file holds
-the design for the production data that goes into the article.*
+Companion to `Plan.md`, which holds the campaign record; this file holds the
+design and the decision ledger for the production data behind the article.
+**Nothing here launches without a by-hand approval, one run at a time,
+through `run_single.sh`.**  Rewritten 2026-09-03: compacted, duplications
+removed; the full narrative history is in this file's git history.
 
-Everything here is a **proposal** — no run in this file starts until it is
-approved and launched by hand, one at a time, through `run_single.sh`.
-
-*Revised 2026-09-02 after an external review of the plan.  Every claim in that
-review was checked against Plan.md, Reference.md and the tree before anything
-changed; the corrections are marked in place, and §8 records what survived,
-what did not, and the comparison arms it added.*
+*Second external review absorbed 2026-09-03.  Adopted: the credibility batch
+(#13-#17, runs before production), the fast-characteristic ceiling (§6), the
+restart-recipe documentation (§5), the Helfer mechanism (§1), the BBH
+known-answer calibration (§7.8).  Checked against the tree and REJECTED — do
+not re-import: "p020's Chk05000 exists, 2 GPU-h restart" (the sweeper took
+every p020_nofill and plain-twin checkpoint — uninsured names; only the 3
+held plotfiles survive); "Plan.md states the sqrt(2) characteristic" (no such
+line exists — the physics is adopted on its own merit); the hardcoded
+x>0 / x<0 tracker split (the binary's axis rotates with the orbit — the
+argmin-neighbourhood fix of §9 stands).*
 
 ---
 
-## 0. The plan at a glance
-
-**In hand**
-- [x] The three headline results, measured and validated (§1)
-- [x] Scout ladder relaunched at N = 128 after the N = 64 NaN (§2)
-- [x] Scalar-mode extraction module `--scalar-modes`, validated three ways (§7 leg 1)
-- [x] Freeze-artifact test on the ringdown period — fill vs fillwide, ~2 % (§3)
-- [x] External review absorbed: §4 ladder corrected, causal budget stated (§7), comparison arms added (§8)
+## 0. The plan
 
 **In flight**
-- [ ] Wave 8 drains to t = 100 (~93.6 as of this revision) → close-out: second peak at R = 30 near t ≈ 93; R = 30 tail past ceiling 84.5
-- [ ] Scouts → capture boundary **+ the fuse audit** (§2).  Status 2026-09-03: **p020 CAPTURED** (crossed p012's sep-2.0 fusion mark at t ≈ 33.5, reached 1.08) but **froze** at sep 1.08 before fusing (stopped t = 47.8); **p025 captured-then-died** (reached sep 1.5, froze, h11 NaN at t = 52.98); **p035 fly-by** (min sep 2.746 at t = 42.4, receding to 4.0 when stopped at t = 73.9); p045 fly-by (§2).  Boundary sits between p = 0.25 and 0.35 (50–70 % of circular).  **No completed merger at any p ≠ 0.12 yet** — every capture above p012 hits the freeze first; the max_level = 5 reruns of p020/p025 (in flight) are the live test of whether depth clears it. **[Validation 2026-09-03, §9: p020 was NOT frozen — it was ~4 time units behind p012's own slow phase when stopped; p025 died of the known t ≈ 53 level-3 h11 wall with no fill armed; and the L5 arms' lapse diagnostics do not see the collapse site at all. "No completed merger at p ≠ 0.12" is untested, not established.]**  NOTE for mode extraction: those two L5 arms were launched from the scan template, which has **no in-code Weyl4 streams** — only the consumer psi4 at plot cadence (0.5 u).  Whatever p is chosen for the production waveform must be relaunched from a template with in-code extraction ON.  **DECIDED 2026-09-03 (user): production goes with p = 0.12.**  Basis: `p020_nofill` died at t = 52.08 (K NaN, level 3, dead centre of the 52.0 ± 0.4 wall) with the throats hovering at sep ~ 1.08, never fused — slice-probed at t = 46 and 49.5: two intact cores (|phi| = 0.87), pit separation static, max |K| tripling — so at level 3 only p = 0.12 completes a merger.  The in-flight `p020_lvl5` remains the discriminator between "wall arrived too soon" and "p = 0.20 cannot fuse"; a fuse there would be a bonus result, not a change of production plan.  **Discriminator answered later the same day: p020_lvl5 died at t = 52.07 (level 3: 52.08) with two intact throats at sep 1.19 — resolution does not move the wall; p = 0.20 cannot fuse (item 4).**  **Addendum (user, same morning): p = 0.15 scout launched** as `merge_orbit_flip_d12_p015_nofill_t060` on card 0 (nofill template, only the momenta changed to ±0.15; in-code Weyl4 streams on) — the 0.12-0.20 gap was never scanned, and the mode streams show m = ±2 already dominates p012 (peak 0.0249 vs m = 0's 0.0176; p020 reached 0.0290), so a fusing p015 would buy ~10-15 % more spiral signal and a longer whirl.  If it fuses before the wall it becomes a production-p candidate; if it hovers like p020, the boundary "captures but cannot fuse" moves down to 0.15 and p012 stands.
-- [x] **Helfer twin pair — RESOLVED 2026-09-03, and the answer is the wrong way round: the correction is REJECTED for production.**  `merge_twin_p012_{helfer,plain}_t100`, identical but for the one flag.  **Plain merged** — retraced the p = 0.12 record (sep 2.06 at t = 32.00 vs the original's 2.0 at 32) and closed to **sep 0.81 by t = 44** before being stopped.  **Helfer stalled** — orbit died at sep ≈ 4.7 by t ≈ 30 (7° of orbit swept over t = 26–34 vs plain's 35°), cores collapsed to the 1e-10 lapse floor by t ≈ 55, then ran as a zombie (frozen, no NaN) to t = 60.3.  A **max_level = 4 rerun reproduces the stall to < 2 % in the lapse trace at every epoch** (1.45e-3/1.46e-3 at t = 34 … 3.84e-5/3.81e-5 at t = 47), so at production-class depth the freeze is *converged*, not under-resolution. **[Validation 2026-09-03, §9: the cores never collapsed — the throat pits keep lapse 0.07–0.20 and |φ| ≈ 0.9 to t = 60; what hit the floor is a growing blob at the inter-throat MIDPOINT (φ = 0 by symmetry, K > 0). The stall verdict stands; the stated mechanism does not.]**  Validated three ways: both twins' `binary_throat_diagnostics.dat` (independent streams), the L4 rerun's `.dat`, and the φ frames — helfer's matter swells into static ~8-unit lobes while plain's stays compact and orbits.  **Production arms therefore run plain superposition**; the known +9.5 % initial-size artefact is the price of an evolution that actually evolves.  One escape hatch is still in flight: `merge_twin_p012_helfer_lvl5_t100` (max_level 5 = the production finest dx) had cores 7× shallower than L3/L4 at t = 27 — if it demonstrably merges, the correction may be re-admitted at level 5 only; verdict due at its twin's stall epoch t ≈ 34.
 
-**Decisions from the validation pass (§9), 2026-09-03 — run in order, one card at a time**
-- [ ] **1. p020 at level 3, unmasked, to the wall** — first launched 2026-09-03 with the p012 production fill armed at t = 53; **stopped at t = 2.7 and withdrawn**: p020's merger time is unknown, so a fixed-time fill can freeze the throats mid-approach and hide the merger (the fill was tuned to p012, whose throats had already met at t = 48–51).  Relaunch as `merge_orbit_flip_d12_p020_nofill_t060` (`launch_p020_nofill.sh 0`): plain-twin template with p = 0.20, damping off, **no fill**, in-code Weyl4 streams, checkpoints every 10 units.  9.5 u/h → the wall (t ≈ 53) in ~5.5 h.  The question it answers: where are the throats when the wall hits — met (as p012 at 48–51) or still apart.  Only then, if they met, arm the fill from Chk05000 at a time *after* the meeting, the way p012 was done.  **ANSWERED 2026-09-03: still apart.**  Died t = 52.08 (K NaN, level 3); sep pinned at 1.079 from t = 46, cores intact in the slices, midpoint collapse deepening.  The throats never met, so the fill rescue is void for p020 at level 3; final plotfiles (t = 51.0/51.5/52.0) held on scratch for the independent horizon scan.  Doubles as the p020 damping-off control against `merge_orbit_flip_d12_p020_t200`.
-- [ ] **2. Plain p012 twin with damping off to t = 50** — cannot start cleanly from a checkpoint: only Chk04000 (t = 40) survived the prune and the damping had been active since t = 30.35.  From scratch ~5 h.  Deferred: decision 1 answers the same question for p020 at no extra cost.
-- [x] **3. Helfer at level 3 with the window halved** (`wormhole_helfer_width = 2.0`; the auto width is d/3 = 4.0) — an initial-data change, so it must start at t = 0; no checkpoint can seed it.  Launched 2026-09-03 on GPU 1 as `merge_twin_p012_helfer_w2_t060` (no checkpoints, ~6.5 h to t = 60): verdict at t ≈ 32 — sep < 3 means it tracks plain (window placement was the problem, correction re-admitted); sep > 4.5 means the correction itself is dead.  **VERDICT 2026-09-03 ~06:30: the correction is dead at both widths.**  w2 read sep 5.22 at t = 32.0 (stream) / 5.10 at t = 32.4 (monitor) — above the 4.5 kill line and above even the old wide-window run's 4.73.  The trajectory: glued to plain superposition to t = 14 (11.08 = 11.08), then a growing deficit from t ~ 16 (0.1 at 16, 0.5 at 22, 1.6 at 26.7) — it never got the old run's early fast dive, and braked earlier.  Window placement was NOT the problem; the Helfer volume-element correction itself spoils the phantom binary's infall.  Validated from two sources: the monitor milestone stream and a direct read of `binary_throat_diagnostics.dat` at the gate.  Run stopped by hand at t = 33.1 (~06:45, launcher-first, card 1 verified free); its launcher log is gzipped in the run dir, and the dead-run scratch was cleared per the batch-cleanup rule (w2's last plotfiles + the plain-twin and p035 stray checkpoints, ~31 GB).
-- [x] **4. The level-5 arms** — corrected reading 2026-09-03: `p020_lvl5` and `p025_lvl5` carry no fill, so they are *unmasked* runs whose wall is pushed to t ≈ 55 by resolution (m4e ladder: L5 died 54.8, L6 56.1/56.7, L7 56.2).  They are the highest-resolution look at where the throats are when the wall hits, ~11 h from this revision; keep them.  **VERDICT 2026-09-03 (p020_lvl5): the wall does not move with resolution — NaN (h11, level 4) at t = 52.07 vs the level-3 twin's 52.08, sep 1.146 vs 1.079.**  Slice-probed at t = 50 and 51.5: two intact throats (|phi| = 0.92, pit lapse 0.19) at true sep 1.19, static, while the inter-throat midpoint collapses (lapse 3.6e-3, max|K| 0.57 rising) — the identical disease, the identical clock, at 4x the resolution.  The m4e-ladder hope that resolution pushes the wall to t ~ 55 is refuted for the binary: depth does NOT clear the freeze, so "p = 0.20 cannot fuse before the wall" is now the *established* reading, not the harsh one, and the p = 0.12 production decision stands on measurement.  Validated from two sources: the monitor death event and the run's own log (amrex::Abort NaN in post_timestep) + stream last row t = 52.07.  **VERDICT 2026-09-03 (p025_lvl5): the second point on the same line — NaN (h11, level 4) at t = 52.79 vs the level-3 twin's 52.98.**  Slices at t = 52.5: two intact throats (|phi| = 0.92, pit lapse 0.18) at true sep 1.87, never fused (the tracker's 0.25-0.27 was the known <2 artifact throughout).  Both level-5 arms now confirm independently that the t ~ 52-53 wall is resolution-independent for the binary: p020 52.07/52.08, p025 52.79/52.98.  Item CLOSED; validated from the monitor death event + the run's own abort log (amrex::Abort NaN in post_timestep, stream last row t = 52.79).  Their in-code lapse diagnostics stay blind to the midpoint until sep < 2.5, but the half-space throat positions are valid (the finest blocks contain the pits) and the orbit agrees with L3 to 2 % through t = 29.  `helfer_lvl5` was stopped 2026-09-03 at t = 31.5 (stalled at sep 5.3 like L3/L4, nothing left to learn) and its scratch (43 GB: Chk03000 + plotfiles) was removed at user request — it cannot be resumed; GPU 1 now runs the w2 test.
+- [ ] **#1 p015 scout** — `merge_orbit_flip_d12_p015_nofill_t060`, card 0.
+  Does p = 0.15 fuse before the t ≈ 52 wall?  Fuse → production-p candidate
+  (~10–15 % more m = ±2 signal, longer whirl); hover like p020 → the
+  "captures but cannot fuse" boundary moves down to 0.15 and p = 0.12
+  stands.  Reference marks: p012 crossed sep 2.0 at t ≈ 32 and fused by
+  48–51; p020 hovered at 1.08; the wall ≈ 52.  Sub-2 separations are a
+  tracker artifact — read the slices.  Last read t = 34.3, sep 1.69: no
+  call yet.
+- [ ] **#2 BBH control to t = 150** — `bbh_control_d12_p012_t150`, card 2,
+  from scratch, ~4.5 h (the t = 100 checkpoint was lost, §1).  Buys the full
+  ringdown (t100 ended at 96 % of peak envelope) and the Python cross-check
+  the t100 run lost to the center bug.  On finish: consumer vs in-code
+  comparison, repack, ringdown fit on the full tail, figures with R = 30.
 
-**Cheap, next, no GPU conflict (each still needs one by-hand approval)**
-- [x] Re-run initial-data check E on the production drainhole template — **done 2026-09-02, §3**: d/b = 6 is not a cliff (1.58× the d/b = 8 defect), but the defect never falls below the floor, so the Helfer/Ning correction is now indicated
-- [ ] L = 128 / N = 256 smoke test, t = 5: memory + speed (§3)
-- [ ] Switch on in-code Weyl extraction in the production templates — params-only (§3)
-- [x] BBH vacuum control, same masses and momenta (§8.1) — **launched 2026-09-03 ~06:45 on card 1** as `bbh_control_d12_p012` (bare 0.9615 -> ADM ~ 1 each, d = 12, p = ±0.12, wormhole box + spheres, CCZ4 constants matched, vacuum dt/sigma); ~27 u/h, stop 100, pericenter ~43 expected.  **FINISHED CLEAN 2026-09-03: ran to stop_time = 100, no NaN (STEP 800, TIME = 100 in the log; punctures coincident at sep 4e-4).**  Headline numbers vs the wormhole p012 twin on the identical orbit: (1) infall — BBH punctures met at t ~ 70 vs throats fusing at ~ 48-51, i.e. the scalar clouds buy ~ 20 time units of faster infall at matched ADM mass, d and p (sep at t = 30: BBH 10.3 vs wormhole 2.7); (2) brightness — l=2 m=2 peak at r = 14: BBH 0.0108 (t = 89) vs wormhole 0.0249, so the wormhole merger is ~ 2.3x brighter in the spiral channel, and its m = 0 channel (0.0176) dwarfs the BBH's 0.0032; (3) the naive Newtonian pericenter-at-43 estimate was wrong — the plunge just steepened through it, no turnaround.  Ringdown from t = 89 to 100 decays only ~ 4% — slower than a remnant-QNM guess; the §8.3/8.5 four-radius analysis should check near-zone contamination at r = 14 before quoting a Q.  Validated: monitor stream + the run's own log and puncture/mode files.  **Packed 2026-09-03**: pack_results.sh now sweeps bbh_control_* too (in-code extraction + puncture streams thinned like data/, consumer psi4 whole).  **Figures 2026-09-03** (all from the C++ in-code mode streams, radii 14/20; QNM-fit overlay suppressed — the ringdown was truncated): `psi4_analysis_bbh_control_m2` and `_bbh_control` (m=0) via process_wave/plot_extracted_psi4.py --combined (speed panel: merger peak propagates at 0.906c), and the object-vs-object comparison `bbh_vs_wormhole_psi4` from the new module `grteclyn_wrapper.visualisation.merger` (bondi_dipole-style package; reads the packed campaign; `python -m grteclyn_wrapper.visualisation.merger`).  **Ringdown was cut at stop_time = 100** (envelope still at 96% of peak) and the t = 100 checkpoint was LOST — bbh_control was not in the prune script's insured set, so the sweep kept zero checkpoints and removed Chk00800 after the clean finish.  Fix + rerun (user, same day): prune_checkpoints.sh MAIN_RE now insures bbh_control_*, and `bbh_control_d12_p012_t150` was launched from scratch on card 2 (~4.5 h, only change stop_time = 150) to record the full ringdown; the t <= 100 waveform reproduces deterministically.  **Cross-check C++ vs Python (2026-09-03, user asked): on the wormhole p020_nofill run the two agree to 0.2% (complex ratio 1.0022-0.0072i, median residual 0.2% of peak) — the chain is sound.  On the BBH t100 run the Python consumer's psi4 files are JUNK: the BinaryBH params had no flat `center =` key, run_single.sh greps exactly that key to pass --center to the consumer, and the consumer's silent default is the DOMAIN CORNER (0,0,0) — its 'modes' are static ~0.006 offsets with no rotating phase.  The C++ in-code stream is unaffected (weyl_extraction.center defaults to the grid center in SimulationParametersBase.hpp), so every figure and quoted number stands.  Both BBH params files now carry `center = 32.0 32.0 32.0`; the t150 run was killed 20 min in (user's word) and relaunched with the fixed params so its consumer extracts at the physics.  TODO after current runs end (run_single.sh is live, do not edit): make the launcher fall back to the grid center or refuse to start when the params has no center key, instead of warning into a detached log nobody reads.**
+**Next — cheap, no GPU conflict, one approval each**
 
-**Blocked on §6 decisions**
-- [ ] Production arms at L = 128: headline + seam twin + third-fill-radius arm + level-6 twin (§4, §7)
-- [ ] Head-on freeze arm (§8.2); N = 192 wave-zone twin (§8.4); +150 tail (§6.5)
-- [ ] Repulsion a-scan with the scalar-charge prediction attached (§8.7)
+- [ ] **#3 p012 horizon re-check** — offline theta+ scan of the t = 51
+  plotfile (§9: the trapped ring sits on a collapsed-lapse shell).  Alone
+  it is NOT decisive: the offline scanner reads the same chi-clipped state
+  as the in-code scan, so their 0.7 % agreement is one instrument twice.
+  The decisive test is the #16 floor ladder; run this scan as its cheap
+  companion.
+- [ ] **#4 p020 horizon scan** — 3 held final plotfiles (t = 51.0/51.5/52.0,
+  7.1 G scratch); needs a centre/half CLI variant of `ah_radial_scan.py`;
+  delete the plotfiles after.
+- [ ] **#5 L = 128 / N = 256 smoke test** — t = 5; measures memory (~75 GB
+  estimate, tight) and speed; decides L = 128 vs the L = 96 fallback (§4).
+- [ ] **#6 Production templates** — in-code Weyl extraction ON (params-only):
+  radii 20/28/36/44, levels 0, modes through l = 4 all m, sphere points
+  ≥ 24/37; `--scalar-modes` in `WHM_CONSUME_ARGS` (§4).
+- [ ] **#7 Launcher hardening** — `run_single.sh` falls back to the grid
+  centre or refuses to start when the params has no `center` key (the
+  consumer-junk bug, §1).  Only after the current runs end — the script is
+  live under two launchers.
+- [ ] **#8 Repulsion a-points** — a = 1.5 and 3 at rest, level 3–4, t ≈ 20,
+  initial acceleration; scalar-charge prediction F ∝ q_A·q_B attached
+  (§7.6).  Hours.
+- [ ] **#9 Wave-8 close-out checks** — second peak at R = 30 near t ≈ 93;
+  R = 30 tail past ceiling 84.5.  Data on disk; the analysis never ran.
 
-**Analysis once the data lands (§5 phase 3)**
-- [ ] 4-radius extrapolation in retarded time; energy/mass balance (§8.3); remnant-mass QNM discriminator (§8.5); dissolution re-measured on the undamped arm (§8.6); frames re-rendered (issue 17); pack + push
+**Credibility tests — run BEFORE any production launch.**  They decide
+what the production arms are allowed to claim.  All level-3 runs or short
+restart segments, ~1 day of one card total; no useful checkpoint survives
+anywhere, so the bases start from t = 0.
+
+- [ ] **#13 Blob nature test — no GPU.**  Gauge-invariant scalars at the
+  inter-throat midpoint from existing plotfiles (the 3 held p020 files of
+  #4, plus packed p012/helfer ones): the Hamiltonian-constraint field, the
+  energy density (its sign!), the areal radius of small spheres about the
+  midpoint; Kretschmann if derivable.  Curvature bounded while the lapse
+  runs to 1e-10 = slicing; curvature and constraint growing together =
+  constraint mode.  Hypothesis to test, not assume: the phantom gradient
+  peaks at the φ = 0 midpoint, so the blob may be a genuine negative-energy
+  sink the throats dug between themselves — a paper paragraph if measured,
+  a retraction risk if asserted.
+- [ ] **#14 Damping-off p012 plain twin** — from t = 0, level 3, ~5 h, with
+  insured checkpoints.  Every scan/twin verdict so far was taken with
+  CoreMatterDamping engaged on the blob from t ≈ 30 (its stated rationale
+  is false, §9); the measured death-time effect is zero (§5) but the effect
+  on blob morphology and waveform is unmeasured.  Production runs clean, so
+  this twin IS the production config — and its checkpoints double as the
+  #16 base.
+- [ ] **#15 Gauge-change arm** — level-3 p012, ~5 h: the never-run M9a
+  shock-avoiding lapse (f = 1 + kappa/alpha^2) or a different
+  lapse_coeff/eta.  If the blob, its nucleation time and the t ≈ 52 wall
+  survive a slicing change they are geometry; if the wall moves ~10 units
+  the campaign has been describing a gauge shock.  (Wave 3a tested the
+  source term, not the slicing — different question.)
+- [ ] **#16 χ-floor ladder** — `min_chi` is a flat params key (production
+  value 1.0e-8): restart segments t ≈ 48 → 53 from a #14 checkpoint with
+  levels 4–5 added, at min_chi 1e-8 / 1e-10 / 1e-12 (~1–2 h each).  A
+  horizon that moves with the floor is the floor.  Extend the ladder read
+  to the R = 14 waveform over the shared window — floor-independence of
+  the signal is the check a referee will demand on seeing "χ clipped at
+  t = 44.9".  This ladder, not the author, answers §8 decision 7 (whether
+  the horizon sentence is in the paper).
+- [ ] **#17 p020 restart-refinement** — the only version of "does p = 0.20
+  fuse" that tests what it claims: fresh L3 p020 to t ≈ 50 with insured
+  checkpoints (~5.5 h), then levels 4–5 added at the checkpoint — the m4e
+  recipe that bought the p012 family +1.4 units of wall per level.  The
+  from-t = 0 L5 arm got none of that gain (χ clipped at the pits at t = 0,
+  §9).  This run rescues — or honestly kills — the capture-boundary
+  figure; same recipe p015 needs if it hovers.
+
+**Production — blocked on the open decisions (§8)**
+
+- [ ] **#10 Headline arm** — p = 0.12 plunge at L = 128, max_level 5,
+  extraction per #6; plus seam twin, third-fill-radius arm, level-6
+  companion (§4–6).
+- [ ] **#11 Comparison arms** — head-on freeze arm (§7.1); N = 192 wave-zone
+  twin (§7.3) and the +150 tail if taken (§8).
+
+**Analysis once the data lands**
+
+- [ ] **#12** 4-radius extrapolation in retarded time (measured speed
+  1.125×); **proper separation** — integrate ~χ^(-1/2) along the pit axis
+  from the slice cache, the invariant answer to "static or still closing"
+  that coordinate sep 1.08 cannot give; energy/mass balance with the
+  negative scalar flux (§7.2);
+  remnant-mass QNM discriminator (§7.4); dissolution re-measured on the
+  undamped arm (§7.5); frames re-rendered with colour limits taken outside
+  r = 3 (Plan.md issue 17); pack + push.
+
+**Minimum publishable set** if the clock runs short: headline arm + seam
+twin + level-6 twin + BBH control (done) + head-on.
 
 ---
 
-## 1. What the paper already has
+## 1. Decision ledger — settled, with the number that settled it
 
-Three results are in hand and validated; the production runs exist to make them
-publication-grade, not to discover them.
+- [x] **Production p = 0.12** (user, 2026-09-03).  Only p that completes a
+  merger: p020_nofill died at t = 52.08 with the throats pinned at sep 1.08
+  from t = 46, never fused (slices at t = 46/49.5: two intact cores,
+  |φ| = 0.87, midpoint collapse deepening).  p015 (#1) is the one live
+  challenger — a fusing p015 upgrades the choice, a hovering one confirms it.
+- [x] **The t ≈ 52–53 wall is resolution-independent.**  Level-5 vs level-3
+  deaths: p020 52.07 / 52.08, p025 52.79 / 52.98 — same h11 NaN, and the L5
+  slices show two intact throats (|φ| ≈ 0.92, pit lapse ~0.18) with the
+  inter-throat midpoint collapsing (lapse ~3.5e-3, max|K| 0.6–0.7).
+  From-t = 0 depth does not move the wall; "p ≥ 0.20 does not fuse before
+  the wall" is established on two independent p's.  Validated per arm:
+  monitor death event + the run's own abort log + stream last row.
+  **Caveat (second-pass review, adopted):** the from-t = 0 L5 arms are not
+  a clean refinement rung (χ clipped at the pits at t = 0) and both died
+  with the NaN on level 4, not the finest level; the restart-refinement
+  recipe that bought the p012 family +1.4 units/level was never applied to
+  p020.  Until #17 runs, "captures but cannot fuse" describes a NaN, not
+  physics, and the capture-boundary figure is not publishable as a
+  boundary.
+- [x] **Helfer/Ning correction REJECTED for production.**  The decisive
+  twin: plain merged (retraced the p012 record, sep 0.81 by t = 44); helfer
+  stalled at sep ≈ 4.7 (7° of orbit over t = 26–34 vs plain's 35°),
+  converged at L3 = L4 (< 2 % lapse-trace agreement).  Mechanism (§9): the
+  midpoint lapse-collapse blob nucleates 5 units earlier (3e-2 at t = 25.4
+  vs 30.4) and the throats stall against it.  The w = 2 window test killed
+  the placement excuse (sep 5.22 at t = 32.0 — worse than the wide window);
+  helfer_lvl5 was stopped at t = 31.5, stalled like L3/L4.  The flag stays
+  in the code, default off.  Production runs plain superposition; the
+  measured +8–11 % initial-size artefact is the price of an evolution that
+  evolves.  Static trade recorded in §4.  **Mechanism (second pass):**
+  du = −0.0834 = −M_B/d — the subtracted "constant" is the companion's
+  Newtonian potential at the throat, so the windowed subtraction leaves a
+  spurious potential shell at r ≈ w around each body, and the stall
+  follows; w = 2 braking *earlier* than w = 4 fits (closer shell).  Paper
+  wording: a correction designed for conformal-factor mass is inapplicable
+  when the mass lives in the lapse; the honest alternative is a
+  constraint-solved IVP, and the affordable substitute is the d = 16–18
+  robustness arm (§8 decision 8).
+- [x] **BBH vacuum control FINISHED CLEAN** (`bbh_control_d12_p012`,
+  t = 100, no NaN; matched IVP: ADM ≈ 1 each, d = 12, p = ±0.12, wormhole
+  box and spheres).  Vs the wormhole p012 twin: punctures met at t ≈ 70 vs
+  throats fusing 48–51 — the scalar clouds buy ~20 units of faster infall
+  (sep at t = 30: 10.3 vs 2.7); l = 2 m = 2 peak at r = 14: 0.0108 vs
+  0.0249 (wormhole 2.3× brighter); m = 0: 0.0032 vs 0.0176 (5.5×); the
+  Newtonian pericenter-at-43 guess was wrong — the plunge steepened through
+  it.  Ringdown only ~4 % decayed by t = 100 → the t150 rerun (#2).
+  Packed; figures from the C++ in-code streams (merger peak propagates at
+  0.906c): `psi4_analysis_bbh_control{,_m2}` and the object-vs-object
+  `bbh_vs_wormhole_psi4` from the new `grteclyn_wrapper.visualisation.merger`
+  module.
+- [x] **The consumer center bug — found and fixed.**  The BinaryBH params
+  had no flat `center =` key; `run_single.sh` greps exactly that key for
+  the consumer's `--center`, whose silent default is the DOMAIN CORNER
+  (0,0,0) — the t100 consumer psi4 files are junk (static ~0.006 "modes",
+  no rotating phase).  The C++ in-code stream is unaffected
+  (`weyl_extraction.center` defaults to the grid centre), so every figure
+  and quoted number stands.  Wormhole-side control on p020_nofill: C++ vs
+  Python agree to 0.2 % (complex ratio 1.0022 − 0.0072i) — the chain is
+  sound.  Both BBH params files now carry `center = 32.0 32.0 32.0`; the
+  t150 run was killed 20 min in (user's word) and relaunched on the fixed
+  params.  Launcher-side fix is #7.
+- [x] **In-code extraction is the primary waveform instrument.**  Two ghost
+  bugs fixed (interpolator ghost count 2 → 3; matter-sector derived
+  functions never filled ghost cells — stale arena memory on ~55 % of
+  sphere points), validated by a kernel printf count and a 1 776-point
+  plotfile cross-check (0 plateaus, 0 NaN); mode integrals reproduce an
+  independent Simpson quadrature to 1e-8 at both radii.  50× finer sampling
+  than plotfiles (every coarse step, dt = 0.01).  The consumer Ψ₄ is
+  demoted to cross-check; the code-only fix subset is submitted upstream
+  from `fix/derived-ghost-cells`.
+- [x] **Check E on the drainhole branch: d = 12 needs no apology, but the
+  defect is real.**  d/b = 6 costs 1.58× the old d/b = 8 gate on a smooth
+  A ~ d^-1.6 power law (no cliff in 4 ≤ d/b ≤ 12); Bowen–York momenta add
+  1.9 %.  But the superposition defect (2.87e-4 at d = 12) sits 100–600×
+  above the discretisation floor at every separation — over the refined
+  region it, not truncation, is the dominant t = 0 error.  Table in §4.
+- [x] **Capture boundary between p = 0.25 and 0.35.**  p ≤ 0.25 is captured
+  (then hits the wall); p035 (min sep 2.75 at t = 42.4) and p045 (min sep
+  3.95 at t = 40) are fly-bys with surviving throats (§3).
+- [x] **max_level 5 for production, 6 as companion, 7 never by default**
+  (m4e ladder, §5): pair-mean death ladder linear at +1.43/level against a
+  ±0.35 reproducibility floor; refinement priced out as a route; damping's
+  effect on death time is zero — production runs the clean config.
+- [x] **Wording rule: "core freeze" → "inter-throat lapse collapse".**  The
+  throats never collapse (pit lapse 0.05–0.24, |φ| 0.79–0.92, every run,
+  every epoch); what collapses is the midpoint blob (§9).  The freeze
+  module keeps its name; the physics claim changes.
 
-| Result | Status | Where recorded |
+**Withdrawn — do not re-import:** the 1/dx² initial-data-noise argument
+(n160's own t = 0 row refutes it); the whole-domain `L2_Ham` as a
+convergence metric (93.7–99.98 % of it lives in the 2-cell boundary-ghost
+layer, §4); "death time bounded 56–57 over levels 5–7"; per-throat scalar
+charge from check F (single throat, angular-mean estimator — cancels on the
+flipped binary); the lighthouse mechanism (m = ±2 rings at 17.3, not 2× the
+dipole precession, §6); "the cores collapse" (it is the midpoint, §9); the
+p045 "common horizon at t = 43.3" (documented theta false positive).
+
+---
+
+## 2. Results in hand (the paper's spine)
+
+| Result | Status |
+|---|---|
+| **Like-oriented throats repel** — 5× gravity at a = 2, m = 1; push scales with throat width, not mass; pull/push 1.50 vs 6/4 predicted | three control arms, 2026-08-31 |
+| **Opposite-oriented throats attract and merge** — gravity-driven, collapse t ≈ 45, common horizon (pending re-check #3) | both freeze arms to t = 80 |
+| **The interior freeze survives the merger; the signal is a genuine GW** — speed, 1/R falloff, static-offset and not-freeze-junk checks | closed 2026-09-02 |
+| **Same IVP, different object** — the wormhole merger beats the vacuum BBH by ~20 units of infall and 2.3× (m = 2) / 5.5× (m = 0) in brightness | BBH control, 2026-09-03 |
+
+Freeze-method validation (the method section): the seam-radius twins agree
+to 5 digits at every shared waveform sample; the frozen arm is bit-identical
+to its unfrozen twin beyond r = 6 at t = 55; late engagement (55.5 vs 53)
+moves the R = 14 window ≤ 0.003 % (m = 2) / 0.022 % (m = 0); constraints
+stay flat for 27 units post-freeze.
+
+---
+
+## 3. The p-scan record
+
+IVP family: d = 12, opposite orientation, tangential momenta ±p.  Circular
+at d = 12 needs p ≈ 0.5 (measured 6× coupling); Newtonian escape ~0.7.
+
+| p | run(s) | outcome |
 |---|---|---|
-| **Like-oriented throats repel** — 5× gravity at a=2, m=1, and the push scales with throat *width*, not mass; pull/push ratio 1.50 measured vs 6/4 predicted | Measured on three control arms, 2026-08-31 | params header of the merger IVP; Plan.md Stage 2.6 |
-| **Opposite-oriented throats attract and merge** — gravity-driven (drainhole mass in the lapse), collapse at t ≈ 45, common horizon | Both freeze arms completed t = 80 | Plan.md M6/M7, results pack |
-| **The interior freeze survives the merger** and the recorded signal is a genuine gravitational wave (speed, 1/R falloff, static-offset, not-freeze-junk checks) | Closed 2026-09-02 | Plan.md, "Is the recorded signal a genuine gravitational wave?" |
+| 0.12 | production family | merges: sep 2.0 at t ≈ 32, fusion 48–51 — the headline plunge |
+| 0.15 | p015_nofill (LIVE) | fuse-or-hover verdict pending (#1) |
+| 0.20 | p020_nofill, p020_lvl5 | captured; hovered at sep 1.08–1.19; wall at 52.08 / 52.07 — cannot fuse |
+| 0.25 | p025, p025_lvl5 | captured to sep ~1.5–1.9; wall at 52.98 / 52.79 — cannot fuse |
+| 0.35 | p035 | fly-by: min sep 2.75 at t = 42.4, receding when stopped |
+| 0.45 | p045 | fly-by: min sep 3.95 at t = 40, outbound at stop (t = 84); no checkpoints, not resumable |
 
-The freeze method's own validation is also paper material — it is the method
-section.  Stated precisely (an earlier draft of this line conflated two
-different comparisons): the two seam-radius twins agree to 5 digits at every
-shared waveform sample (0.000 %); the frozen arm is bit-identical to its
-*unfrozen* twin everywhere beyond r = 6 at t = 55 (that is where "outside
-r = 6" belongs — issue 17); the late-engagement control (freeze at 55.5
-instead of 53, finer grid) moves the R = 14 window ≤ 0.003 % (m = 2) /
-0.022 % (m = 0); and constraints stay flat for 27 time units post-freeze.
+p045 post-encounter physics (kept for the paper): the throats survive the
+pass (φ lobes −2.5 % over 84 units; the χ wells relax, not collapse); two
+χ > 1 phantom crescents are ejected; the cores deflect a quarter-turn.  The
+transient stretch passes in ~10 units — the collapse branch wants the
+sustained squeeze only a capture delivers.  Its `theta_common`/`ah_r_common`
+columns carry the documented false positive; trajectory + matter + log-χ
+frames are the instruments.  Figures: `results/merger/figures/p045_flyby_*`.
+
+**Fuse audit — a scout qualifies its p only if both throats are still
+throats at periapsis**, read from the slice cache, never the tracker (it
+under-reads speeds up to 4× and degenerates below sep 2, §9).  The
+single-throat growing mode makes the 40 M window a fuse; a spiral IVP would
+sit 3–4 fuses deep, so throat integrity through the orbit is the gate, not
+trajectory alone.
+
+stop_time is set per-IVP: t_collapse (from the scout) + 100, or + 150 if
+the §8 tail decision is taken.
 
 ---
 
-## 2. The IVP question: how much orbit do we want?
+## 4. Production grid and extraction (the L = 128 proposal)
 
-**Where we are.**  The current IVP is d = 12, tangential momenta ±0.12,
-opposite orientation.  A Newtonian estimate with the measured 6× coupling says
-a *circular* orbit at d = 12 needs p ≈ 0.5 per body (and the period would be
-~75 time units).  At p = 0.12 we are at 24% of circular — which is why the
-trajectory is a bent plunge, not a spiral.
+Current geometry: L = 64, N = 128 (base dx = 0.5), max_level 5 (finest
+dx = 1/64); slice caches store only the central 32-wide window.  Wrong for a
+paper waveform: R = 30 sits inside the sponge (24 → 32, ~13× base
+dissipation, Plan.md issue 15); two radii cannot extrapolate R → ∞;
+0.5-unit plotfile sampling aliased once already (the QNM comb).
 
-**The tension.**  More tangential momentum buys a visually and physically
-richer inspiral (an l=2, m=2 chirp instead of a near-head-on burst), but past
-some threshold the pair does not merge — the observed behaviour is expansion.
-The Newtonian escape speed at d = 12 is ~0.7, so somewhere in p ≈ 0.45–0.7 the
-capture boundary should sit; below it, eccentric capture with one or two
-decaying orbits, then plunge.
+**Proposal — same dx, twice the room:** L = 128, N = 256; sponge 48 → 64;
+spheres at R = 20/28/36/44, all in un-sponged vacuum, ~30 base points per
+dominant wavelength.  In-code extraction ON (#6) supersedes plot-cadence
+sampling; plotfiles stay at interval 50 so the consumer remains a free
+second source, plus its exclusive jobs (frames, scalar modes, kinematic
+flux).  Cost estimate: 3.5–4.0 u/h at level 5 (vs 4.3 today); memory
+~75 GB of 80 — the smoke test (#5) decides.  Fallback: L = 96 / N = 192
+(sponge 40 → 48, radii 20/26/32/38).  MPI note: the known AMR crash is
+radial-recipe-specific and the merger tags type 2; a 2-rank smoke test is
+worth a slot — if it holds, the level-6 companion halves to ~3 days.
 
-**Is the low-p data bad for the paper?**  No — it is the clean baseline: the
-first controlled wormhole–anti-wormhole merger does not need an inspiral to be
-a result.  But an eccentric-capture arm alongside it is much stronger, and the
-capture boundary itself (merge vs escape as a function of p) is a figure no
-one has published.  The scan *is* paper content, not just tuning.
+**Ψ₄ in a non-vacuum exterior** (|φ| ~ 6e-3 at R = 14): defend with the
+measured 1/R falloff and the scalar-to-GW flux ratio per radius from
+`--scalar-modes`; if that ratio is small and falls with R, extraction
+stands on measurement, not assumption.
 
-**Revised 2026-09-02 — the archive already held the key data point.**  A
-p = 0.45 arm ran on 2026-08-31 (`merge_orbit_flip_d12_p045`): separation fell
-12 → 3.95 by t = 40, swung back out to 4.61 by t = 60 — and the run *stopped
-there*, mid-orbit, on the outbound leg.  Since 0.45 is 90% of circular
-momentum for the 6× pull, that is a bound eccentric orbit cut off after one
-periapsis, not an observed escape.  The run wrote no checkpoints
-(checkpoint_interval = -1), so it cannot be continued — the decisive part,
-t > 60, has to be re-simulated from t = 0.
+**Check E (drainhole branch, b = 2, 2026-09-02).**  Defect A from the
+L2_Ham(N) = A + B·N^-p fit, N = 192/288/384, on the repaired metric — the
+2-cell boundary layer dropped, because the whole-domain norm is unusable
+(93.7–99.98 % of Ham² lives in the ghost-reading outer layer; with it
+dropped, the exact single throat converges at 4th order to A ≈ 8e-7):
 
-**The ladder as launched** — max_level 3, the campaign's own proven
-orbit-phase configuration (levels 4–5 were always added on restart near
-collapse; scouts classify trajectories, so no extra refinement):
-
-| Scout | p | Status / expectation |
+| ladder | A (defect) | vs error bar |
 |---|---|---|
-| S1 | 0.12 | plunge, merges at 44.9 — in hand, re-used |
-| S2 | 0.25 | **LIVE 2026-09-02**, sharing card 3 — bent plunge, maybe a half orbit |
-| S3 | 0.35 | **LIVE 2026-09-02**, sharing card 3 — eccentric-capture candidate |
-| S4 | 0.45 | **LIVE 2026-09-02**, solo on card 2 — **fly-by through t = 84**, see the verdict block below; still waiting on the return leg |
-| S5 | 0.55 | optional, above circular (0.50) — only if the boundary needs bracketing from above |
+| single throat (exact zero control) | ~0 (8e-7) | — |
+| d = 8 (d/b = 4) | 4.92e-4 | 603× |
+| **d = 12 (d/b = 6, production)** | **2.87e-4** | **352×** |
+| d = 16 (d/b = 8, old gate) | 1.82e-4 | 223× |
+| d = 24 (d/b = 12) | 8.61e-5 | 106× |
+| d = 12 + p = 0.35 momenta | 2.92e-4 | 359× |
 
-All scouts: L = 64, **N = 128 (dx = 0.5)**, max_level 3, stop_time 200,
-checkpoints every 10 time units with `checkpoint_keep = 3` — pruned to the
-last three, and any arm extends by restart (the p045 lesson).  An N = 64
-(dx = 1) economy attempt was tried first and is **dead**: all three arms
-NaN'd in h11 on level 3 at t ≈ 7–8, independent of p — a throat resolved by
-only 16 cells does not survive, so dx = 0.5 is the floor even for scouts.
-At N = 128 expect ~10–12 u/h solo (~20 h worst case to t = 200) and roughly
-half that for two arms sharing a card; a merger ends the run sooner.
-Templates live in `runs/wormhole_merger/templates_scan/`; each launch
-is one by-hand invocation of `launch_capture_scan.sh <p> <gpu>`.
+Smooth A ~ d^-1.6, no threshold; momenta +1.9 % — the orbit parameters are
+exonerated.  The defect does not converge away with refinement.  Validated
+on two independent cell sets (ghost-drop vs r < 24: identical ratios).
+Caveat: A is an unnormalised RMS — relative statements are solid; absolute
+size needs Ham/Ham_abs_terms.  Trap: `amr.derive_plot_vars = constraints`
+aborts unless `G_Newton` is in the params.  Runs:
+`runs/wormhole_merger/checkE/`.
 
-**S4 = p 0.45, verdict through t = 84 (2026-09-02, frames + matter check; theta columns junk).**
-A fly-by, not a merger: separation fell 12 → **3.95 at t = 40** (glitch-cleaned;
-the tracker's momentary sub-1 spikes near the split plane are attribution
-failures, not physics), and has climbed monotonically since (6.30 at t = 89).  What the encounter did to the throats:
+**Helfer correction, static trade** (a = 2, m = 1, d = 12, N = 192).  Plain
+superposition starts each throat +8.1 % (away) / +10.9 % (toward) too large
+(the companion's du = −0.0834 dominates dpsi by 24×), so it rings.  The
+windowed subtraction (`wormhole_helfer_correction`, default off) repairs the
+size at the price of window curvature (~1/w²) in Ham:
 
-- **They survive.**  φ still holds two clean lobes at ±0.88 against ±0.90 at
-  t = 0 (−2.5 % over 84 u), and on a log colour scale both χ wells are present
-  throughout — shallower (min χ per half-space **rose** 3.5e-7 → 7.6e-4) and
-  broader, i.e. relaxed, not collapsed and not dissolved.  The huge black disc
-  in the linear-scale frames is a colour artefact: the ejecta stretch the
-  auto colour range to χ ≈ 9, so everything under ~0.5 renders black.
-- **The encounter ejected phantom shells.**  Two χ > 1 crescents (peak ≈ 9 —
-  *less* volume than flat space, the negative-energy signature) spiral
-  outward; Pi went 0 → ±0.5.  The cores deflected a quarter-turn.
-- **Why no collapse:** the perturbation was a transient *stretch* (mutual
-  gravity + opposite-sign scalar attraction pull each throat toward the
-  companion), passing in ~10 u — the Shinkai-Hayward collapse branch wants a
-  sustained squeeze, which only a capture delivers.  Contrast the p = 0.12
-  plunge: throats settle on top of each other → genuine trapped surface.
-- **The lapse is not evidence:** α fell to ~2e-5 across the whole central
-  band (slicing response, gauge).  And this run predates the 2026-09-01 theta
-  fix, so its `theta_common`/`ah_r_common` columns carry the DOCUMENTED false
-  positive of the conformally-flat scan (BinaryThroatDiagnostics.hpp history
-  note names this exact run and window, t = 42.3–60) — a "common horizon at
-  t = 43.3" read from that column is an artefact, twice fallen for now.
-  Trajectory + matter + log-χ frames are the believable instruments here.
-- Movies: 12 fields under `merge_orbit_flip_d12_p045_t200/movies/`.
-- **Paper figures** (git-tracked, `results/merger/figures/`):
-  [separation + χ-well](../../results/merger/figures/p045_flyby_separation.png) ·
-  [log-χ trio, throats present throughout](../../results/merger/figures/p045_flyby_logchi.png) ·
-  [linear-χ sequence t = 0/43/60/84](../../results/merger/figures/p045_flyby_chi_linear.png) ·
-  [φ launch vs t = 84](../../results/merger/figures/p045_flyby_phi.png) ·
-  [lapse t = 84](../../results/merger/figures/p045_flyby_lapse_t84.png) ·
-  [|Ψ₄| t = 60](../../results/merger/figures/p045_flyby_weyl4mag_t60.png).
-- Open: 0.45 is 90 % of circular momentum, so the orbit should be bound —
-  whether the receding leg turns around before t = 200, and whether the
-  post-encounter ringing tips a throat later, is what the rest of the run is
-  for.  HOW validated: separation/φ/χ numbers from
-  `binary_throat_diagnostics.dat` + `collapse_diagnostics.dat`, cross-checked
-  visually against linear and log-scale renders of the cached slices — two
-  independent sources per claim.
+| window w / p | size error | L2_Ham vs plain |
+|---|---|---|
+| plain superposition | +8.1 % / +10.9 % | 1.00× |
+| 0.4d / 6 (literal Helfer Eq. 45) | −1.1 % / +1.5 % | 9.02× |
+| **d/3 / 2 (the default)** | **+0.2 % / +2.8 %** | **1.84×** |
+| d/6 / 2 | +3.1 % / +5.6 % | 1.53× |
 
-Caveat: higher p delays collapse by roughly the orbital time — expect
-t_collapse ≈ 120–170 for the spiral arm, not 45.  Production stop_time must be
-set per-IVP as **t_collapse (from the scout) + 100** (or + 150 if §6.5 is
-taken).
-
-**The fuse audit — a scout does not qualify its p by trajectory alone
-(added 2026-09-02).**  Plan.md's standing caveat is that the single-throat
-growing mode is still growing at t = 40: the 40 M window is a fuse, not
-stability.  The Stage 1 record (in git history; the live docs compress it)
-says the growing quantity is the L2 momentum-constraint norm, early e-fold
-≈ 4.4 ≈ throat/c, and it *steepens* after t ≈ 34 — doubling every ~1.6 —
-which no single exponential explains.  The spiral IVP plans 120–170 units
-of orbit before collapse: three to four fuses deep.  So every scout gets a
-throat-integrity audit through the orbit — min χ at each throat and the
-throat's size, read from the **slice cache, never the tracker** (the tracker
-under-reads speeds up to ~4×, issue 6) — plus the constraint norms, and a p
-qualifies only if **both throats are still throats at periapsis**.  If they
-are not, a production arm at that p would record two already-runaway objects
-colliding, and the paper's headline IVP is the plunge.
-
-**Periapsis overlap.**  The p = 0.45 swing-back bottomed at separation 3.95
-with throat width a = 2 — the scalar profiles interpenetrate at closest
-approach, and "bound eccentric orbit" is Newtonian point-particle intuition
-applied exactly where it breaks.  The scout decides; the spiral is not
-written into the schedule as the likely headline until it merges *and*
-passes the fuse audit.
-
-**Repulsion side-figure (cheap).**  One or two extra throat-width points
-(a = 1.5, a = 3 at rest, level 3–4, t ≈ 20, measure the initial acceleration)
-turn the three existing control arms into a power-law figure for the
-width-scaling claim.  Hours, not days.
+The dynamics verdict (§1) rejects the correction regardless; this table is
+the method-section record of the trade.  Regression: flag off reproduces
+the pre-change baseline bit for bit.  Operational: N = 384 needs
+`WHM_RANKS=2` (55.5 GB/card, binding per the wrapper README); probe
+templates carry `amr.checkpoint_files_output = 0`.
 
 ---
 
-## 3. Grid design for correct GW extraction
+## 5. Resolution and freeze engagement
 
-**Current geometry, for the record.**  L = 64 (domain 64³, centre at 32),
-**N = 128** base cells — so base dx = 0.5, and max_level 5 puts finest
-dx = 1/64 on the throats.  (The plots that "only show 32" are zoomed: the
-slice cache stores the central 32-wide window, r ≤ 16 from centre, to keep the
-cache small.  The domain is genuinely 64.)
+The m4e ladder (pair means, p012 family):
 
-**What is wrong with it for a paper waveform:**
-1. The outer detector R = 30 sits *inside* the sponge (24 → 32), soaking ~13×
-   base dissipation (Plan.md issue 15).  Amplitude there is timing-grade only.
-2. Two radii is not enough for an R → ∞ extrapolation; standard practice is
-   4–6.
-3. Waveform sampling is 0.5 time units (plot_interval 50) — coarse enough that
-   a careless fit aliased (the QNM comb incident).
+| max_level | u/h (one card) | death, pair mean |
+|---|---|---|
+| 3 | — | 52.26 |
+| 4 | 9.0 | 53.43 |
+| 5 | 4.3 | 55.18 |
+| 6 | 2.2 | 56.42 |
+| 7 | 1.1 | 56.20 (one arm, no twin) |
 
-**Proposal: L = 128, N = 256 — same dx, twice the room.**
+Linear at +1.43/level, scatter at the ±0.35 floor; level 7 is consistent
+with saturation within noise but single-arm.  "The NaN lands on each newly
+created finest level every time" held for every m4e (restart) arm — but
+both from-t = 0 L5 binary arms died on **level 4**, and their death-step
+plotfiles are deleted, so box coverage of the death site is unverified (at
+t ≈ 29 the L5 boxes covered only the pits).  Treat the finest-level claim
+as restart-recipe-specific until re-checked on #17.  Caveat (2026-09-03):
+the p020/p025 level-5 arms died on the level-3 clock (52.07 / 52.79) — the
+ladder's gain did not transfer to from-t = 0 launches; treat +1.4/level as
+the restart recipe's, p012-family.
 
-- Base dx stays 0.5; N = 256 is not "more resolution", it is the same
-  resolution with the boundary pushed out.  (A "1/dx² initial-data noise"
-  justification used to live here and is **withdrawn 2026-09-02** — the n160
-  arm's own t = 0 row refutes it: refining the base 128³ → 160³ *lowered*
-  L2_Ham by 15 % and halved L2_Mom, where 1/dx² predicts a 1.56× rise.  The
-  claim was a fossil of the puncture era — the archive notes even say "more
-  refinement helps here, opposite to puncture data".  Relatedly,
-  Reference.md's "t = 0 violation identical to six digits at max_level 4 and
-  5" is an artefact of the diagnostic: L2_Ham is computed over level 0 only,
-  and level-0 data is analytic, so the number is max_level-independent by
-  construction — bit-identical across ml2…ml5 in the archive.  The widening
-  case stands on the sponge and the radii alone, and needs nothing else.)
-- Sponge moves to 48 → 64 (radius from centre).  Extraction spheres at
-  **R = 20, 28, 36, 44** — four radii, all in clean, un-sponged vacuum, wave
-  zone resolved with ~30 base points per dominant wavelength (~15 units).
-- **Waveform sampling: switch on the in-code extraction — params-only
-  (revised 2026-09-02, replaces "halve plot_interval").**  GRTeclyn's
-  `WeylExtraction` is already wired into the merger example
-  (`BinaryWormholeLevel.cpp:765`) and has sat at `activate_extraction = 0` in
-  every template to date.  Enabled, it integrates r·Ψ₄ modes on the
-  extraction spheres **every coarse timestep** (dt = 0.01 — 50× finer than
-  plotfile sampling; the QNM-comb class of aliasing error dies here) and
-  writes its own `Weyl4_mode_lm.dat` stream.  Production templates set:
-  `activate_extraction = 1`, `extraction_radii = 20 28 36 44`,
-  `extraction_levels = 0 0 0 0`, `num_points_phi/theta` ≥ 24/37, and modes
-  through **l = 4, all m** listed explicitly (the spiral would be
-  (2,±2)/(3,±3)/(2,±1) dominated; the legacy parameter path validates
-  nothing, so list every pair).  Working reference config:
-  `Examples/RotatingWormholeCollapse/params_rotating_grtresna_exotic.txt:83-95`.
-  Plotfiles stay at plot_interval 50 for frames and the consumer streams —
-  which also makes the consumer-side Ψ₄ an *independent cross-check* of the
-  in-code stream, the two-source validation rule for free.
-- **In-code extraction: two bugs found and fixed before first use (2026-09-02).**
-  The stream was junk on matter runs — NaN rows and O(0.4) plateaus on
-  ~55 % of sphere points, clustered within 2 cells of internal grid-box
-  faces.  (a) `ParticleInterpolator` allocated 2 ghost cells but the
-  4th-order Lagrange stencil reaches 3 when the centre rounds into the
-  first ghost layer — out-of-bounds GPU reads (`s_num_ghosts = order/2 + 1`).
-  (b) The matter-sector derived functions (`Weyl4WithMatter`,
-  `ConstraintsWithMatter`, `EMTensor`) called `amrex::ParallelFor(out_mf, …)`
-  without the ghost argument, so when `derive(…, ngrow=3)` feeds the
-  interpolator, the derived MultiFab's ghost cells were **never computed**
-  and held stale arena memory.  The vacuum `Weyl4` passes
-  `out_mf.nGrowVect()`; the matter variants didn't — which is why every
-  upstream (vacuum BBH) test passes while every matter extraction is junk,
-  and why plotfiles (derived with ngrow = 0) always looked clean.
-  Validated two ways: a printf inside the interpolation kernel counted
-  3 083–3 323 garbage stencil reads per 15-step window before the fix and
-  the mechanism is gone after; and a point-by-point comparison of the fixed
-  extraction stream against the same-step plotfile via the consumer pipeline
-  (1 776 sphere points) — 0 plateaus, 0 NaN, the only residual disagreements
-  are the poles and 4 zero-crossings where nearest-cell plotfile sampling
-  itself is the cruder method (quadrant-average and neighbour-range checks
-  confirm the in-code value).  Fix is 4 files; the code-only subset (3 files
-  — EMTensor was independently fixed on upstream main) is submitted upstream
-  from the `fix/derived-ghost-cells` fork branch.
-  **Extraction-key templates are unblocked.**
-- **Mode integration validated too (2026-09-02) — the in-code stream is now
-  the primary waveform instrument.**  Second rung of the chain: an
-  independent Simpson quadrature of the raw sphere points against the
-  spin-weight −2 (2,2) harmonic reproduces `Weyl4_mode_22.dat` to **1e-8
-  relative at both radii** — the print-precision floor of the .dat file,
-  i.e. exact.  (Trapezoid lands at 1e-3–6e-3, so the in-code integrator is
-  Simpson-consistent, not trapezoid.)  With point values verified against
-  plotfiles and the harmonic integrals verified against independent
-  quadrature, the in-code extraction is validated end-to-end and supersedes
-  the consumer Ψ₄ for waveforms: 50× finer time sampling (every coarse step,
-  dt = 0.01) and 4th-order interpolation vs the consumer's nearest-cell
-  plotfile reads (demonstrably cruder at the sphere poles and at sign
-  crossings).  The consumer Ψ₄ is **demoted to cross-check**, not deleted —
-  plotfiles stay at interval 50, so every production arm still gets the
-  two-source comparison for free, and the wrapper keeps its exclusive jobs
-  (frames, scalar modes, kinematic flux).  Verification record:
-  `runs/wormhole_merger/merger_fix/m9b_weyldiag10_r09000` (kept; the other
-  diag runs and their scratch plotfiles are deleted).
-- Consumer-side radii remain a free post-processing choice; every production
-  launch adds `--scalar-modes` to `WHM_CONSUME_ARGS` so each arm records the
-  scalar l ≤ 2 modes and the kinematic flux on the same spheres (§7 leg 1).
-- **Ψ₄ in a non-vacuum exterior — name it, then defend it.**  |φ| ~ 6e-3 at
-  R = 14 with a 1/r tail means no extraction sphere we can afford is in
-  vacuum.  Defences to quote: the measured 1/R amplitude falloff, and — new
-  with the scalar-modes stream — the ratio of scalar kinematic flux to GW
-  flux at each radius.  If that ratio is small and falls with R, extraction
-  stands on measurement, not assumption.
-- stop_time per §2: baseline arm ~150, spiral arm t_collapse + 100 (~250).
-  Long enough for the signal, the second peak, and the tail to clear R = 44.
+Production: **max_level 5** (cheapest grid that reliably reaches
+engagement; level 4 is a coin flip against its own death); one **level-6
+twin** of the headline arm as the convergence companion; level 7 only as a
+paired restart segment around collapse if a referee demands it.
 
-**Re-run the initial-data gate on the production template (cheap, before
-phase 2 — added 2026-09-02).**  The Phase 1 gate "run at d/b ≥ 8" was
-measured on the massless Ellis–Bronnikov branch at b = 1 (Reference.md
-check E, max_steps = 0 jobs).  The production IVP is b = 2 at d = 12 —
-**d/b = 6, 25 % inside a gate the docs twice call "still binds"** — and the
-gate has never been re-run on the drainhole branch.  Check E costs minutes:
-re-run the defect ladder (d = 8, 12, 16, 24 at b = 2, plus the single-throat
-zero control) on the production drainhole template before committing phase 2.
-Two traps for the re-run: the check-F-style angular mean cancels on the
-flipped binary (the dipole trap below) — read the defect from the constraint
-norms and the l = 1 scalar mode instead; and the original ladder found the
-defect below the discretisation floor for d/b ≥ 8, so the interesting number
-is precisely where d/b = 6 sits relative to that floor.  Related, worth one
-line in the method section either way: the two-throat data is plain
-superposition with **no Helfer/Ning one-body conformal correction** (known
-inconsistency 2) — the literature says exactly this correction suppresses
-spurious squeeze/pulsation in horizonless objects, and our central
-unexplained event is a collapse.  The check-E re-run bounds the defect the
-correction would remove; implementing the correction itself is initial-data
-level and cheap if the bound comes back non-negligible.
+**The production recipe, explicitly:** level 3 from t = 0 through the
+orbit, levels 4–5 added at a pre-collapse checkpoint, then the freeze —
+the validated m4e path.  A from-t = 0 max_level-5 launch clips χ at the
+pits at t = 0 and forfeits the ladder's gain (§9, the L5 arms).  The
+paper's resolution study is therefore a restart-refinement study and must
+say so.
 
-**Check E re-run — RESULT (2026-09-02, drainhole branch, b = 2).**  18 jobs,
-L = 64, `max_level = 0`, initial data only, ladder N = 192 / 288 / 384 at
-each separation; defect `A` from the `L2_Ham(N) = A + B·N^-p` fit.
+**Engagement is a criterion, not a constant:** the collapse sources the
+burst until ~51.5 (freezing earlier deletes signal); the arm must reach
+t_e under its own power (level 5 clears it by ~2 units); and t_e sets the
+contamination ceiling at every radius (§6).  For production: read
+t_collapse and the burst end from the level-3 scout, confirm at level 5,
+engage after the burst closes, print the ceilings next to the windows
+before launch.  Fill 1.5 / 2.0-wide twin, seam twin, and one
+late-engagement control re-run once at L = 128, unchanged from M9b.
 
-> **First, the diagnostic had to be repaired.**  The whole-domain `L2_Ham`
-> in `constraint_norms.dat` *rises* with resolution — even for the single
-> throat, which is an **exact** solution and must converge.  Cause, measured
-> from the t = 0 constraint field: **93.7 % (N = 192) → 99.98 % (N = 384) of
-> the total Ham² lives in the outermost 2 cells**, the layer whose stencils
-> read boundary ghosts; widening the excluded layer to 3, 4, 6 or 10 cells
-> changes nothing, so it is exactly the ghost layer and not a corner-volume
-> effect.  Drop those 2 cells and the exact throat converges at **4th order**
-> (3.89) to `A = 8e-7`, i.e. zero — the method validates itself.  **The
-> in-code whole-domain `L2_Ham` is unusable for convergence or defect work**;
-> any past claim resting on it needs re-reading (this is a *second*,
-> more serious artefact than the level-0-only one noted above).
+---
 
-| ladder | N=192 | N=288 | N=384 | **A (defect)** | vs error bar |
-| --- | --- | --- | --- | --- | --- |
-| single throat (exact — zero control) | 3.64e-4 | 7.57e-5 | 2.52e-5 | **8e-7** ≈ 0 | — |
-| d = 8  (d/b = 4) | 6.37e-4 | 5.02e-4 | 4.93e-4 | **4.92e-4** | 603× |
-| d = 12 (d/b = 6) **production** | 5.22e-4 | 3.03e-4 | 2.89e-4 | **2.87e-4** | 352× |
-| d = 16 (d/b = 8) *old gate* | 4.89e-4 | 2.07e-4 | 1.86e-4 | **1.82e-4** | 223× |
-| d = 24 (d/b = 12) | 4.81e-4 | 1.34e-4 | 9.70e-5 | **8.61e-5** | 106× |
-| d = 12 + BY momenta p = 0.35 | 5.25e-4 | 3.08e-4 | 2.95e-4 | **2.92e-4** | 359× |
+## 6. Ringdown physics (m9b chain, R = 14, window t = 60–91)
 
-- **d/b = 6 is not a cliff.**  The production separation costs **1.58×** the
-  old gate's d/b = 8 defect, and d/b = 4 only 2.70× — a smooth `A ~ d^-1.6`
-  power law with no threshold anywhere in 4 ≤ d/b ≤ 12.  The Phase 1 gate
-  "run at d/b ≥ 8" was inherited from the massless b = 1 EB branch, where
-  d/b = 4 was an *order of magnitude* worse; **the drainhole branch is far
-  more forgiving, and d = 12 needs no apology.**
-- **But the defect never hides under the floor.**  Unlike the b = 1 branch
-  (where d/b ≥ 8 sat below the discretisation floor and d = 8 / d = 16 were
-  indistinguishable), here every separation is 100–600× the error bar and
-  cleanly ordered.  The d/b = 6 defect exceeds the code's own discretisation
-  error for any grid finer than **dx ≈ 0.31**; the production base grid is
-  dx = 0.5, but its refined levels reach dx = 0.0625, so **over the region
-  that actually resolves the throats the superposition defect — not
-  truncation — is the dominant t = 0 error, and refining does not remove it.**
-- **Bowen–York momenta add 1.9 %** at d = 12 — the tangential boost is not a
-  meaningful extra defect source, so the orbit parameters are exonerated.
-- **Decision, per this section's own rule: the bound came back
-  non-negligible, so the Helfer/Ning one-body conformal correction is now
-  indicated** (known inconsistency 2).  It is the one thing that would
-  actually lower the number, and the literature attributes exactly the
-  spurious squeeze/pulsation we see in a horizonless object to its absence.
-- *Validated two ways.*  The primary metric (drop the 2-cell ghost layer) and
-  a completely independent volume restriction (`r < 24`, inside the sponge)
-  give **identical** ratios — 1.58, 2.70, +1.9 %, `d^-1.6` — on different
-  cell sets.  Caveat kept honest: `A` is an unnormalised RMS, so the
-  *relative* statements above are solid while "how big is 2.9e-4 physically"
-  needs `Ham / Ham_abs_terms`, which this pass did not record.
-- *Trap for the next person:* setting `amr.derive_plot_vars = constraints`
-  aborts the run unless `G_Newton` is defined in the params — the derived
-  path does a hard `pp.get` with no default, while the in-code norm hardcodes
-  1.0.  Templates: `params_checkE*_<tag>_n<N>.txt`; runs under
-  `runs/wormhole_merger/checkE/` (plotfiles deleted, `.dat` streams kept).
-
-**Helfer/Ning one-body correction — IMPLEMENTED AND MEASURED (2026-09-02).**
-Step (iii) of the background.md route is in the code as
-`wormhole_helfer_correction` (default **0 = off**; also
-`wormhole_helfer_width`, `wormhole_helfer_power`).  It removes the constants
-the companion leaves at each throat's centre — Helfer Eq. 45,
-`γ_ij = γ_ij^A + γ_ij^B − γ_ij^B(x_A)` — windowed onto each body with
-`W = exp[−(r/w)^p]` so spatial infinity, and with it asymptotic flatness and
-the Sommerfeld boundary condition, never sees the subtraction.
-
-> **What the artefact actually is, measured.**  Expand the plain superposition
-> about throat A: the companion hands it two constants, `dpsi = 3.47e-3` and
-> `du = −0.0834`.  `du` is the dominant one by 24×.  Together they rescale
-> throat A's spatial metric by `e^{−2du}(1+dpsi/psi_A)^4`, so the throat
-> starts **+8.1 % (away) / +10.9 % (toward)** larger in areal radius than the
-> static solution its own field equations support — it is not in equilibrium,
-> and it rings.  That is exactly the failure Helfer et al. diagnose, and the
-> reason they call it worse for horizonless objects.
-
-**The correction works, and it is not free.**  Both halves were measured at
-`a = 2, m = 1, d = 12, N = 192`, throat size from the analytic areal radius
-(isolated = 3.88955), `L2_Ham` on the repaired 2-cell-excluded metric:
-
-| window `w / p` | throat size error | `L2_Ham` | vs plain |
-|---|---|---|---|
-| plain superposition | +8.1 % / +10.9 % | 5.22e-4 | 1.00× |
-| `0.4d / 6` (literal Eq. 45) | −1.1 % / +1.5 % | 4.71e-3 | 9.02× |
-| `0.5d / 3` | −0.9 % / +1.6 % | 1.75e-3 | 3.36× |
-| **`d/3 / 2` (the default)** | **+0.2 % / +2.8 %** | **9.60e-4** | **1.84×** |
-| `d/4 / 2` | +1.1 % / +3.7 % | 8.68e-4 | 1.66× |
-| `d/6 / 2` | +3.1 % / +5.6 % | 7.97e-4 | 1.53× |
-
-- *The window is the whole engineering problem.*  A window that switches off
-  over a length `w` has curvature `~1/w²`, and the Hamiltonian constraint sees
-  that curvature times the constant being removed.  So the correction repairs
-  the size by adding a defect of its own.  The default is the knee: **84 % of
-  the spurious inflation removed for 1.8×**, where insisting on the last 16 %
-  costs 9×.
-- *Both columns are continuum properties.*  The corrected defect moves 1.5 %
-  between N = 192 and N = 384 (d = 12: 4.71e-3 → 4.61e-3 at the old default),
-  i.e. it does not converge away — same character as the superposition defect
-  it trades against.  Full corrected ladder, all four separations × three
-  resolutions, recorded alongside the plain ladder.
-- *Regression, verified two ways.*  With the flag **off** the new binary
-  reproduces the pre-change baseline **bit for bit** — d = 12, N = 192 gives
-  `5.218469e-04 / 1.074869e-03 / 2.620791e-03`, all three columns identical to
-  the 2026-09-02 plain run.  And the auto default reproduces the explicit
-  `w = 4, p = 2` run to all seven digits (`9.602813e-04`), confirming
-  `w_auto = d/3` is wired as documented.
-
-**WHICH COLUMN MATTERS IS NOT SETTLED, AND THIS PASS CANNOT SETTLE IT.**
-Helfer et al.'s claim is about **dynamics** — a body that starts the wrong size
-rings, and the ringing is what destroys horizonless objects — not about the
-initial constraint norm, which their fix also worsens.  Nothing above is
-evidence either way about the collapse.  **The decisive test is an evolution:**
-one arm with `wormhole_helfer_correction = 1` against the matched plain twin,
-same everything else, watching the throat-radius oscillation and the collapse
-time.  If the correction is what the literature claims, the corrected arm
-should ring less and survive longer *despite* starting with 1.8× the
-constraint violation.  Until that run exists, the honest statement is: this
-flag trades a measured 9.5 % error in each throat's initial size for a
-measured 1.8× increase in the initial Hamiltonian violation.
-
-- *Whether it lets us drop the core freeze* is the same open question in
-  different words, and the same run answers it.  Do not assume it does — the
-  Ellis drainhole throat has its own linear instability, and if the collapse
-  is physical no initial-data fix removes it.
-- **ANSWERED 2026-09-03 (the twin ran — see the In-flight close-out above):
-  the correction makes the dynamics WORSE at level 3/4, not better.**  The
-  corrected arm did not ring less and survive longer; its cores collapsed
-  *faster* (6× deeper in lapse at matched t ≈ 28), its orbit stalled at
-  sep ≈ 4.7, and the whole system froze — while the plain twin, spurious
-  +9.5 % size artefact and all, sailed through its merger.  The prediction
-  quoted above is falsified at those depths, and the L3 = L4 lapse-trace
-  agreement (< 2 %) says this is converged behaviour, not resolution error.
-  The correction stays in the code, default off, and out of the production
-  configuration; only a demonstrated level-5 merger of the still-running
-  `helfer_lvl5` arm could re-admit it, and then only at level-5 cost
-  (measured 5× wall-clock). **[Validation 2026-09-03, §9: "cores collapsed faster" should read "the inter-throat lapse collapse nucleates 5 units earlier (3e-2 at t = 25.4 vs 30.4)"; the `helfer_lvl5` arm cannot re-admit anything while its finest-level-only diagnostics exclude the midpoint (sep > 2.5).]**
-- *Operational note:* N = 384 no longer fits one H100 with the constraints
-  derive on (79 GB arena, OOM).  `run_single.sh` now takes `WHM_RANKS=2`
-  with `WHM_GPU=0,1` and binds each rank to its own card inside the rank, per
-  the wrapper README's binding rule — measured **55.5 GB per card**, run
-  clean.  Probe templates now carry `amr.checkpoint_files_output = 0`: the
-  first ladder left 87 GB of dead `Chk00001` dirs from `max_steps = 1` runs.
-
-**Cost of the bigger box (estimated, then smoke-tested).**  The AMR hierarchy
-currently carries ~4.1 M cells *per level*; fine levels dominate runtime
-(level ℓ substeps 2^ℓ times).  Doubling L only grows level 0 (2.1 → 16.8 M
-cells, weight 1 of ~62), so the slowdown should be modest — estimate
-**3.5–4.0 u/h at level 5**, i.e. ~10–25% below today's 4.3.  Memory is the
-real risk: current arms sit at 48–52 GB of 80; +14.7 M base cells adds an
-estimated ~25 GB → ~75 GB, tight.  **A t = 5 smoke run measures both numbers
-before anything is committed.**  (2026-09-02: if one card is tight, the
-declared fallback is MPI multi-rank across cards — the known AMR crash is
-specific to the radial regrid recipe, and the merger tags with type 2 — so
-memory alone does not force L = 96.)  Fallback if it doesn't fit: L = 96 / N = 192
-(sponge 40 → 48, radii 20/26/32/38) — still fixes issues 1–2.
-
-**The oscillation is scalar-coupled, not a quiet-matter ringdown
-(checked 2026-09-02).**  Question posed: is the post-merger waveform
-oscillation driven by vacuum ringing of the remnant, or by the leftover
-phantom scalar sloshing around it?  Answer from the m9b fill chain
-(t = 60–91, R = 14, cached mid-plane slices every 0.5 units): **the scalar
-rings in lockstep with the metric.**
+**Established, each with its test:**
+- The remnant is hairy: a dipolar phantom halo (|φ| ~ 6e-3 at R = 14) rings
+  with the metric at one period; the trap is that an angular mean cancels
+  the dipole to 1e-10 — the power is in the m = 1 azimuthal harmonic.
 
 | signal at R = 14 | period |
 |---|---|
-| Ψ4 (l = 2, m = 0) | ~17.3 |
+| Ψ₄ (l = 2, m = 0) | ~17.3 |
 | φ, m = 1 ring amplitude | ~17.0 |
 | ∂t φ, m = 1 ring amplitude | ~17.7 |
-| φ ring rms | ~17.0 |
 
-The remnant keeps a live dipolar scalar halo at the extraction radius
-(|φ| ~ 6e-3 — nothing like vacuum) whose amplitude oscillates by ±19 % at
-the same period as Ψ4; the dipole pattern also precesses slowly (~41 units
-per turn).  Framing for the paper: identical periods prove a **coupled
-scalar–metric mode of the remnant** — not which channel drives which; in a
-scalar-tensor system they ring together.  Either way it answers the reviewer
-question "why does the waveform oscillate": the merged object retains
-sloshing phantom matter, a signature no vacuum BBH can produce.
+- Phase-locked channels: |r| = 0.95 at lag +0.5 units (a quarter-period
+  would be 4.3) — one coupled Einstein–Klein–Gordon eigenmode.
+- Long-lived but decaying: τ ≈ 150, Q ≈ 28 — 10× a vacuum Schwarzschild
+  l = 2 ringdown; τ from 1.8 cycles carries large error bars.
+- Not a freeze artifact: 15 % change in fill radius moves the period ~2 %
+  (fill 17.3/17.0/17.7 vs fillwide 17.7/17.7/18.0) and the dipole
+  precession rate 0.2 % (0.1537 vs 0.1540 rad/unit).
+- The story closes on the initial data: merging a ± scalar pair is exactly
+  what leaves a scalar dipole on the remnant.
 
-Method notes (validated two ways: φ and ∂t φ are independently evolved
-fields and give the same period, cross-checked against the psi4 mode file;
-window ends at t = 91 on a live, NaN-free run).  Trap for whoever repeats
-this: the throats have opposite scalar signs, so φ at the ring is a *dipole*
-— an angular mean cancels to 1e-10 and falsely reads "scalar quiet"; the
-power sits in the m = 1 azimuthal harmonic.  Figure and script:
-`runs/wormhole_merger/merger_fix/plots/scalar_vs_psi4_R14.{png,py}`.
+**Refuted — keep out of the paper:** the lighthouse mechanism.  Prediction
+m = ±2 period π/0.1537 = 20.4; measured 17.3, same as m = 0, phase drift
+0.187 rad/u ≠ 2 × 0.154.  The ~41-unit dipole precession is a separate,
+slower clock; the driver is the halo's amplitude breathing.
 
-**Is the ringing an artifact of the frozen core?  Tested — no.**  The
-freeze only holds a tiny ball (fully frozen inside r = 1.3 for fill, 1.5 for
-fillwide, blended out by 1.8 / 2.0); R = 14 is ten freeze-radii away, in fully
-evolving field.  A frozen ball is still an artificial inner boundary, so the
-check is whether the period follows the freeze geometry: fill vs fillwide
-differ by ~15 % in freeze radius, and a cavity mode set by that boundary
-would shift by roughly as much.  Measured: fill 17.3 / 17.0 / 17.7 vs
-fillwide 17.7 / 17.7 / 18.0 (Ψ4 / φ m=1 / ∂t φ m=1) — a ~2 % shift, within
-the 4-crossing precision — and the dipole precession rate matches to 0.2 %
-(0.1537 vs 0.1540 rad/unit).  The mode belongs to the remnant and its halo,
-not to the freeze ball.
+**The causal budget:** the burst arrives at ≈ t_c + 1.125·R; freeze
+contamination from r_s = 2 arrives at ≈ t_e + 1.125·(R − 2).  Every radius
+gets the same ~6–8 freeze-clean units — pushing spheres out buys
+sponge-clean amplitude, not freeze-clean time.  **Fast-characteristic
+caveat (second pass, adopted):** the seam is a constraint source and CCZ4
+gauge/constraint modes run up to ~sqrt(2)× local light, so the conservative
+ceiling at R = 14 is ≈ 62.5, not 66.5 — inside the burst window.  The real
+defence is empirical (the late-engagement control moved the window
+≤ 0.003 %): quote that, and print the ceilings at the fast characteristic.  **The whole 17-unit-period
+ringdown sits inside the freeze's causal cone at every radius**; its
+credibility rests on freeze-insensitivity.  Hence, on the production arm: a
+third fill radius (a flat trend, not a two-point difference); the
+engagement pair re-run at L = 128; and the causal-arrival plot printed
+under every published waveform, clean window shaded per radius.
 
-Production implication: slice caches only reach r = 16, so this check cannot
-be done at R = 30 or on the four production radii.  The production runs
-should extract scalar modes on the same spheres as Ψ4 — per the diagnostics
-rule, its own small module with its own output file, default off.
-
----
-
-## 4. Max level: 5 for production, 6 as the convergence companion, 7 never by default
-
-The question "start at max level 7, run till collapse, then freeze?" has a
-measured answer — the m4e ladder.  *(Corrected 2026-09-02: the first draft of
-this table quoted two readings Plan.md had already withdrawn the same day.)*
-
-| max_level | speed (u/h, one card) | death, pair mean | gain per level |
-|---|---|---|---|
-| 3 | (scout ladder) | 52.26 | — |
-| 4 | 9.0 | 53.43 | +1.17 |
-| 5 | 4.3 | 55.18 | +1.76 |
-| 6 | 2.2 | 56.42 | +1.24 |
-| 7 | 1.1 | 56.20 — **one arm, no twin** | −0.22 vs the lvl-6 pair |
-
-What the ladder actually established, in Plan.md's final wording:
-- The pair-mean ladder is **linear at +1.43 per level over four rungs**; the
-  increments scatter by ±0.3, the size of the ±0.35 reproducibility floor.
-  No super-linear cure and no saturation — both were single-arm artefacts
-  (the "three laws in one day" trap).
-- **Damping's effect is zero** (by level +0.33 / +0.65 / −0.84 / +0.58, mean
-  +0.18 against a ±0.35 floor, alternating sign).  The "crossover from cure
-  to cost at level 5" is withdrawn; production runs the **clean** config.
-- Level 7's 56.20 sits below the level-6 pair mean and both fits — but it is
-  a single arm, exactly the read the trap table forbids, and it is *above*
-  level 6's clean arm (56.13).  Honest wording: **consistent with saturation
-  within the noise floor**, not "turned over".  Either way refinement is
-  priced out as a route: even on the linear law, t ≈ 66 sits ~7 levels and
-  ~10² × cost away, and the freeze delivered the window instead.
-- The claim that survives every reversal: **the NaN lands on each newly
-  created finest level, every time** (h11, every m4e arm) — the blowup is a
-  feature of the continuum solution, not of the grid.
-
-So: **production arms at max_level 5** (also the cheapest grid that reliably
-reaches the engagement time — level 4 is a coin flip against its own death),
-one **level-6 twin** of the headline arm as the convergence/error-bar
-companion (that pair is also the paper's source-resolution study; the wave
-zone gets its own twin, §8.4).  Level 7 only if a referee demands it, and
-then as a **paired** short restart segment around collapse — never from
-t = 0, and never as one arm.
-
-**Engagement is a criterion, not a constant (revised 2026-09-02).**  The
-first draft said "engage ~8 units after collapse"; that +8 was post-hoc
-arithmetic.  What actually chose t_e = 53 was a three-way squeeze (Plan.md):
-the collapse still sources the burst until ~51.5, so freezing earlier
-deletes signal; the arm must *reach* t_e under its own power (level 5 clears
-it by ~2 units); and t_e sets the contamination ceiling at every radius
-(§7's causal budget).  For production — where the spiral's collapse time is
-unmeasured — t_e is set per-IVP by the same squeeze: read t_collapse and the
-burst-sourcing end from the level-3 scout, confirm at level 5, engage after
-the burst closes, and print the resulting ceilings next to the windows
-before launch.  Fill radius 1.5 / 2.0-wide twin, the seam twin, and one
-late-engagement control re-run once at L = 128, all unchanged from M9b.
+Standing caveats: the azimuthal ring harmonic is not a proper l = 1 mode
+(production's scalar-mode spheres fix this); phantom matter means
+"signature of this class of exotic matter", not an astrophysical
+prediction; no ringdown convergence point exists until the level-6 twin.
+Figure + script: `runs/wormhole_merger/merger_fix/plots/scalar_vs_psi4_R14.*`.
 
 ---
 
-## 5. GPU schedule (4 × H100 80 GB, one run per card)
+## 7. Comparison arms and analysis items
 
-| Phase | Runs | Cards | Wall time |
-|---|---|---|---|
-| 0 (now) | wave 8 drains (fill100/fillwide100 → t = 100); then the wave-8 checks: second peak at R = 30 near t ≈ 93, R = 30 tail past ceiling 84.5 | 2 | ~1.5 h |
-| 1 | p-scan scouts (lvl 3, N = 128, t = 200) **+ the §2 fuse audit per scout**: S4 solo on card 2, S2+S3 sharing card 3 | 2–3 | ≤20 h worst case, mergers end sooner |
-| 1b — starts the moment a wave-8 card frees; waits for nothing | check E re-run on the drainhole template (max_steps = 0, minutes); L = 128 smoke test (t = 5: memory + speed); **BBH vacuum control** (§8.1); repulsion a-points with the charge prediction (§8.7) | 2 | check E minutes; smoke hours; BBH ~1 day |
-| 2 | production at L = 128, lvl 5, in-code extraction ON, `--scalar-modes` ON: baseline p = 0.12 arm + seam twin + **third-fill-radius arm** (§7 causal budget); spiral arm only if its scout merged and passed the fuse audit; level-6 companion of the headline arm | 4 | lvl-5 arms ~2.5–3 days; lvl-6 companion ~5–6 days |
-| 2b | late-engagement control at L = 128 (restart segment, ~40 units); **head-on freeze arm** (§8.2); N = 192 wave-zone twin (§8.4) if §6.7 taken | 1–2, as twins free | ~12 h + ~1 d + ~2 d |
-| 3 | analysis: 4-radius extrapolation **in retarded time using the measured 1.125× speed** (turns issue 16 into a remark, not an apology); energy/mass balance and remnant-mass discriminator (§8.3, §8.5); dissolution re-measure on the undamped arm (§8.6); constraints; frames re-rendered with colour limits from outside r = 3 (issue 17); pack + push | — | — |
+1. **Head-on freeze arm** — the only configuration with a literature number
+   (BBH head-on from rest radiates ≈ 0.055 % of M, l = 2 m = 0); with the
+   BBH control it makes the paper's energy-budget table.  Shortest
+   production run on the list.
+2. **Energy/mass balance** — M_ADM(t) at the boundary vs E_GW from the
+   in-code Ψ₄ (double-integrated, static offset removed) plus the
+   *negative* scalar kinematic flux.  Either the sum closes or its failure
+   is a finding.  Consumer-side; no new runs.
+3. **Wave-zone convergence** — R = 20–44 sit on level 0 at dx = 0.5 in
+   every arm; the extracted waveform has no convergence factor of its own.
+   The N = 192 twin is a *coarse* rung (dx = 2/3, ~22 points per dominant
+   wavelength at 4th order) — legitimate, but the plan must call it a
+   coarsening.  The cheaper refined third point is a static level-1 box
+   tagged out to R = 44 inside the headline arm (decision §8).
+4. **Remnant-mass QNM discriminator** — the 17.3-unit period is what a
+   vacuum BH of M ≈ 1.03 rings at; this system's ADM ≈ 2 would ring at
+   ~34.  If M_remnant ≈ 2 (from item 2), "it's just a BH ringdown" dies by
+   a factor of two in one line.  No new runs.
+5. **Dissolution re-measured** — the quoted 1.07 → 0.59 curve splices in
+   the disqualified `rw` arm; re-measure on the undamped level-5 headline
+   arm with the offline theta+ scan.  Agreed phrasing: *the merger produces
+   a short-lived black hole that dissolves by swallowing its own exotic
+   matter* — classical negative-energy accretion, not Hawking radiation.
+   A true MOTS finder (BHaHAHA) stays on the infrastructure list, not
+   load-bearing.
+6. **Scalar-charge prediction** — read q per throat from the l = 1
+   `--scalar-modes` stream (per-throat spheres; the check-F angular mean
+   cancels on the flipped binary), predict F ∝ q_A·q_B beside gravity; the
+   6/4 pull/push ratio and the 5× at a = 2 should both follow.  The
+   cleanest analytic check, for the price of a side figure (#8).
+7. **Reproducibility bar** — no deterministic-reductions build flag exists
+   in this tree (the Ψ₄ integral is already serial-deterministic; the
+   non-deterministic sums live in diagnostics kernels).  The bar is the
+   measured ±0.35 twin floor; a per-waveform number costs a twin-from-t = 0
+   (decision §8).
+8. **BBH known-answer calibration** — the t150 ringdown (#2) must match
+   the Schwarzschild QNM of the final puncture mass (period ≈ 16.8 M,
+   damping ≈ 11.2 M) and E_rad must close against ADM minus horizon mass:
+   one check that calibrates the whole extraction chain — interpolator,
+   mode integrals, retarded-time extrapolation, energy integral — on the
+   same radii and grid the wormhole arms use, and turns item 4 into a
+   calibrated measurement.  Write down now: R = 14 ≈ 7 M is near-zone for
+   the BBH (the production control belongs at L = 128 like everything
+   else); the "2.3× brighter" claim must become an *energy* ratio, not a
+   peak amplitude at a near-zone radius; and a phantom halo radiates
+   negative energy, so the wormhole remnant's ADM may legitimately exceed
+   2 — read the §7.2 sum rule with that sign in mind, not as a bug.
 
-**The minimum publishable set**, if the clock runs short: baseline arm +
-seam twin + level-6 twin + BBH control + head-on.  The spiral and the scan
-boundary are upgrades, not prerequisites.
-
-Calendar total: **~1.5 weeks of compute** if phases overlap sensibly.
-Checkpoints prune by hand as always (they are never auto-deleted); heavy data
-stays on scratch, run dirs keep params/logs/small_data only.
-
-**Multi-GPU note.**  MPI itself works on this node; the known AMR crash is
-specific to the radial regrid recipe, and the merger uses tagging_type 2.  A
-cheap 2-rank smoke test on the L = 128 box is worth one slot in phase 1b — if
-it holds, the level-6 companion halves to ~3 days.  If it crashes, we lose
-nothing: the schedule above assumes single-card throughout.
-
----
-
-## 6. Decisions needed before phase 2 — now eight
-
-The external review recommended answers, noted in brackets; **nothing here
-is approved until the author says so**, and every launch still goes through
-the launcher, by hand, one approval each.
-
-1. **Approve the scan values** p = 0.25 / 0.35 / 0.45 / 0.55 (S1 = 0.12 is
-   re-used).  *(Scouts already live per the earlier approval; review: keep.)*
-2. **Headline IVP intent**: spiral-led or plunge-led?  *(Review: lead with
-   the plunge unless a scout merges cleanly AND passes the §2 fuse audit.)*
-3. **L = 128 vs the L = 96 fallback** — decided by the smoke test, but say
-   now if 2.5–3 days per arm is too slow regardless.  *(Review: take 128;
-   let the memory number decide.)*
-4. Whether the repulsion a-scan points are wanted for a power-law panel.
-   *(Review: yes, with the §8.7 charge prediction attached — it upgrades the
-   panel to an analytic check.)*
-5. **Tail length for the headline arm** (from §7): stop_time collapse + 150
-   instead of + 100, to buy a credible decay-time measurement for the
-   scalar-coupled ringdown (~+12 h at level-5 speed).  *(Review: yes.)*
-6. **The comparison arms** (§8.1–8.2): BBH vacuum control at matched
-   masses/momenta, and a head-on freeze arm.  *(Review: run the control
-   first; together they are the energy-budget table.)*
-7. **The N = 192 wave-zone twin** (§8.4): one more ~2-day arm so the
-   extracted waveform, not just the source, has a convergence factor.
-8. **A twin-from-t = 0 of the headline arm** (§8.8): only if a per-waveform
-   reproducibility bar is wanted beyond the quoted ±0.35 floor — no
-   deterministic-reductions build flag exists to buy it cheaper.
-
-Nothing launches until these are answered.
-
-## 7. The exotic-matter ringdown as a detection signature (experimental thoughts, 2026-09-02)
-
-The post-merger tail is the paper's potential physics headline, so this
-section records what the data actually supports, what it refutes, and what
-we do about it.  All numbers from the m9b fill chain at R = 14, window
-t = 60–91 (~1.8 cycles), cross-validated between the independently evolved
-φ and ∂t φ and the psi4 mode files.
-
-**Established (each with its test):**
-- The remnant is hairy: a dipolar phantom-scalar halo (|φ| ~ 6e-3 at R = 14)
-  survives the merger and rings with the metric at the same ~17.3-unit
-  period (§3 table).
-- The channels are phase-locked: φ m=1 amplitude vs Ψ4 m=0 cross-correlate
-  at |r| = 0.95 with lag +0.5 units — a quarter-period would be 4.3, so this
-  is in-phase to measurement precision.  That is what one coupled eigenmode
-  of the Einstein–Klein–Gordon system looks like, and what grid junk does
-  not look like.
-- The tail is long-lived but decaying: envelope fit over five extrema gives
-  τ ≈ 150 units, i.e. quality factor Q ≈ 28 — an order of magnitude above a
-  vacuum Schwarzschild l = 2 ringdown (Q ~ 3).  "Slow beat that outlives a
-  vacuum ringdown by 10×" is the defensible headline; "continuous emission"
-  is not (it decays), and τ from 1.8 cycles carries large error bars.
-- Not a freeze artifact: 15 % change in freeze radius moves the period 2 %
-  and the precession rate 0.2 % (§3).
-- The story closes on the initial data: merging a +/− scalar pair (the sign
-  flip that turned 5× repulsion into 6× attraction) is exactly what leaves a
-  scalar dipole on the remnant.  The end of the run validates the beginning.
-
-**Refuted by our own data — keep out of the paper:**
-- The "lighthouse" mechanism (precessing dipole pumps the GW at twice its
-  rotation rate).  Prediction: m = ±2 period π/0.1537 = 20.4.  Measured:
-  m = ±2 rings at 17.3, same as m = 0, and its phase drifts at 0.187 rad/u,
-  not 2 × 0.154.  All Ψ4 channels ring at the breathing period; the ~41-unit
-  dipole precession is a separate, slower clock that does not detectably
-  drive Ψ4.  The driver is the halo's amplitude breathing, not its rotation.
-
-**Standing caveats for the writing:** the azimuthal ring harmonic is not a
-proper spherical l = 1 mode (production fixes this); the true nature of the
-core is masked by the freeze even though the exterior ignores the ball
-size; phantom matter violates energy conditions, so "detection signature"
-means "signature of this class of exotic matter", not an astrophysical
-prediction; and there is **no ringdown convergence point yet** — the kept
-lvl6 arm died at t = 56, before the window opens, so period convergence
-rests entirely on the production level-6 twin.
-
-**The causal budget — stated plainly (added 2026-09-02).**  The clean
-window at any radius is set by the engagement delay, not by R: the burst
-from the collapse arrives at ≈ t_c + 1.125·R, and freeze contamination
-from r_s = 2 arrives at ≈ t_e + 1.125·(R − 2).  With t_c ≈ 45 and
-t_e = 53 that is ~6–8 units of freeze-clean burst at R = 14 (ceiling
-66.5) — and the *same* ~6–8 units at R = 44.  Pushing the spheres out
-buys sponge-clean amplitude; it buys no freeze-clean time.  **The entire
-17-unit-period ringdown, at every radius, sits inside the freeze's causal
-cone.**  "Four radii, all causally clean" is true of the burst's leading
-edge only.  The ringdown's credibility therefore rests on
-freeze-insensitivity — the standard excision-radius argument, and the
-right kind — which today has exactly two fill radii and ±2 % on a
-4-crossing period.  Production upgrades, each cheap relative to the arm
-it rides on:
-1. **a third fill radius** (e.g. 1.0 / 1.4) so period-vs-fill-radius is a
-   flat *trend*, not a two-point difference;
-2. the engagement-time pair (t_e, t_e + 2.5) re-run at L = 128, as
-   already planned;
-3. **the causal-arrival plot printed under every published waveform**,
-   clean window shaded per radius — the figure that turns this from a
-   buried caveat into a method.
-
-**Verdict on the proposed further investigation — proceed, on four legs:**
-1. **Scalar-mode extraction module** — **IMPLEMENTED 2026-09-02**
-   (consumer-side: `extraction/scalar_modes.py`, own stream
-   `scalar_modes.dat`, off by default).  Projects φ and Π onto s = 0
-   spherical harmonics (default l = 0..2, all m) on the same spheres as Ψ4,
-   plus a kinematic scalar flux per radius for the energy budget.  Enable
-   per launch by adding `--scalar-modes` to `WHM_CONSUME_ARGS`.  Validated
-   three ways: analytic selftest (orthonormality + projection round-trip),
-   physics of a live p045 plotfile at t = 13 (dipole |l1 m±1| = 0.76
-   dominating by 4 orders, exact ± symmetry, zero z-dipole), and a 7 %
-   match against the independent slice-cache ring harmonic at the same
-   instant (residual = l = 3 leakage into the equatorial trace).
-2. **A longer tail for the headline arm**: measuring τ ≈ 150 credibly needs
-   ~1 e-fold of decay, i.e. ~150 units past merger.  Baseline stop_time 150
-   gives only ~0.6 e-folds; extending the headline arm to collapse + 150
-   buys the τ measurement for roughly +12 h at level-5 speed.  Added to §6
-   as a decision.
-3. **Ringdown convergence via the level-6 twin** (already planned §4): the
-   17.3-unit period and the τ estimate must reproduce at level 6 with the
-   freeze armed, or they are grid numbers.
-4. **The remnant-mass discriminator (added 2026-09-02)**: a vacuum
-   Schwarzschild l = 2 fundamental rings with period ≈ 16.8 M, so the
-   measured 17.3 is what a plain BH of M ≈ 1.03 would do — while this
-   system's ADM mass is ≈ 2, which would ring at ~34.  Measure M_ADM(t) of
-   the remnant (§8.3's mass balance produces it); if M_remnant ≈ 1.9–2.0,
-   the "it's just a BH ringdown" reading dies by a factor of two in one
-   line.  The cheapest Letter-grade check on the list; no new runs.
-
-Tier framing ("PRL vs PRD") is an author decision; the data case either way
-is the four legs above, and the Letter version of the story — scalar-charge
-dynamics, a horizon born dissolving, a hairy remnant ringing at 10× a
-vacuum Q against a same-IVP BBH control — needs §8.1 and legs 2–4 to close,
-with the freeze method and its validation as the companion-PRD material.
-Figures: `runs/wormhole_merger/merger_fix/plots/`
-(scalar_vs_psi4_R14 and the fillwide twin).
+**Scalar-mode module** (in hand): consumer-side
+`extraction/scalar_modes.py`, own stream, default off, enabled per launch
+via `--scalar-modes`.  Validated three ways: orthonormality/round-trip
+selftest; p045 dipole physics (|l1 m±1| = 0.76 dominating by 4 orders,
+exact ± symmetry); 7 % match vs the independent slice-cache ring harmonic.
 
 ---
 
-## 8. Comparison arms and budgets (added 2026-09-02, external review absorbed)
+## 8. Open decisions before production (author's call)
 
-An external review of this plan was checked claim-by-claim against Plan.md,
-Reference.md, the on-disk run data, and the code tree.  Its two structural
-corrections — the withdrawn §4 readings and the causal budget — are folded
-in above.  Two of its claims did **not** survive the check and are recorded
-here so they are not re-imported later: "death time is bounded at 56–57
-over levels 5–7" (three level-5 arms died below 56: 54.76 / 55.60 / 55.96),
-and "the scalar charge is already measured per-throat to 0.3 %" (check F
-was a *single* throat and an *angular-mean* estimator — the very estimator
-the flipped binary cancels; the 0.3 % number is real but is the
-single-throat tail, not a per-throat charge).  What follows is the review's
-list of what a referee asks for first, sized against this tree.
+1. **L = 128 vs L = 96** — the smoke test (#5) supplies the memory number;
+   say now if 2.5–3 days per arm is too slow regardless.  (Review: take 128.)
+2. **Tail +150** for the headline arm — τ ≈ 150 needs ~1 e-fold ≈ 150 units
+   past merger; baseline +100 gives 0.6 e-folds.  ~+12 h at level-5 speed.
+   (Review: yes.)
+3. **Head-on freeze arm** (§7.1).  (Review: yes, with the BBH control.)
+4. **Repulsion a-points** for the power-law panel (#8).  (Review: yes.)
+5. **N = 192 wave-zone twin** (§7.3).
+6. **Twin-from-t = 0** of the headline arm (§7.7) — only if a per-waveform
+   reproducibility bar is wanted beyond the quoted ±0.35 floor.
+7. **The horizon sentence** — is it in the paper at all?  Answered by the
+   #16 floor ladder, not by the author.  Until it passes, "a short-lived
+   black hole that dissolves" is written as contingent and the Letter
+   framing does not lean on it.
+8. **Initial-separation robustness arm** — one plunge from d = 16–18 at
+   rescaled p (superposition defect 0.63× per the d^-1.6 law; ~1 day at
+   level 3 + restart).  If the collapse sequence, wall and waveform shape
+   reproduce, the superposition defect is exonerated by measurement — the
+   affordable substitute for a constraint-solved IVP (§1 Helfer entry).
+9. **Wave-zone third point** — the level-1 box to R = 44 in the headline
+   arm vs the N = 192 coarse twin (§7.3): pick one.
 
-**8.1 The vacuum BBH control — run it first.**  `Examples/BinaryBH` is
-in-tree, same build system, in-code Weyl extraction already enabled in its
-production params.  The same-IVP BBH waveform beside the wormhole waveform
-is the standard figure of every boson-star and Proca-star merger paper — it
-turns "a signature no vacuum BBH can produce" (§3) from a sentence into a
-measurement.  Momenta are params-only (Bowen–York P *is* the ADM momentum:
-`bh1.momentum` / `bh2.momentum`).  Masses carry one caveat: the default
-`BoostedBHInitialData` takes a *bare* puncture mass, so matching the
-target ADM mass means a short offline iteration on that number — or clone
-TwoPunctures (external repo + GSL, `two_punctures.calculate_target_masses`)
-for exact targets.  Vacuum steps are cheap; one card, roughly a day.
+Answered by events: scan values — run; headline intent — plunge-led,
+p = 0.12 decided; BBH control — done; the damping-off control is no longer
+deferred — it is #14 in the credibility batch.  Nothing above launches
+until answered; every launch is one by-hand approval.
 
-**8.2 A head-on arm with the freeze.**  The only configuration with a
-literature number (BBH head-on from rest radiates ≈ 0.055 % of M, l = 2
-m = 0 dominated); the campaign's old head-on died at its own collapse
-before the freeze existed.  Shortest production run on the list, and with
-8.1 it gives the paper an energy-budget table: wormhole vs BBH, head-on
-and orbital.
+---
 
-**8.3 Energy/mass balance — the sum rule.**  M_ADM(t) at the outer
-boundary versus E_GW from the in-code Ψ₄ stream (double-integrated, static
-offset removed) plus the scalar kinematic flux from `--scalar-modes` —
-which is *negative* for a phantom field.  Either the sum closes, or its
-failure is itself a finding.  Angular-momentum balance for the spiral arm
-if one qualifies.  Consumer-side work; no new runs.
+## 9. Validation pass 2026-09-03 (C++ audit, build, slices)
 
-**8.4 A resolution ladder that touches the wave zone.**  The level-6 twin
-refines only the core; R = 20–44 sit on level 0 at dx = 0.5 in every arm,
-so today the extracted waveform has no convergence factor of its own.  One
-**N = 192 twin** of the headline arm (same L = 128, same max_level, base
-dx = 2/3) is cheaper than the arm it shadows and gives the wave zone its
-second point; with the level-6 twin that is three grids covering source
-*and* wave zone.  Decision §6.7.
+Method: read-through of the example's C++; a clean scratch rebuild; direct
+z = 0 slice reads of nine runs at 2–6 epochs, cross-checked against the
+`.dat` streams (independent instruments).
 
-**8.5 The remnant-mass discriminator** — §7 leg 4.
+**The lapse never collapses at the throats.**  Every binary run, every
+epoch: the χ pits keep lapse 0.05–0.24 and |φ| 0.79–0.92.  The
+3e-2 → 1e-3 → 1e-10 collapse sits at the **inter-throat midpoint** (φ ≡ 0
+by symmetry, K > 0, shift ≈ 0); the isolated throat never shows it.  The
+midpoint value is identical at L3/L4/L5 (1.08e-2 at t = 28, helfer) —
+converged: a property of the equations, gauge and data, not the grid.
 
-**8.6 Horizon birth and dissolution, re-measured clean.**  The quoted
-1.07 → 0.59 dissolution is a **two-arm splice whose late half comes from
-the `rw` arm** — an arm the campaign itself disqualifies for wave physics
-(lapse damping through collapse; admitted as timing evidence only).  The
-trapped region is also strongly deformed (past r = 2 at the poles, ~0.6 at
-the equator — results pack), which is why the radial in-code proxy loses
-it.  Re-measure the full curve on the undamped level-5 headline arm with
-the offline θ₊ scan over the ~4–5 units between collapse and freeze.  A
-true MOTS finder does not exist in-tree (`docs/ah_finder.md` is a stub);
-BHaHAHA goes on the infrastructure list — wanted for horizon mass/spin and
-the angular-momentum budget, but not load-bearing for the dissolution
-curve itself.  Agreed paper phrasing (2026-09-03): *the merger produces a
-short-lived black hole that dissolves by swallowing its own exotic matter*
-— classical negative-energy accretion, not Hawking radiation; "evaporates
-classically" / "is extinguished by negative-energy accretion" are the
-stronger variants if "dissolves" reads too soft.
-
-**8.7 Predict the scalar force, then measure it.**  The repulsion a-scan
-becomes an analytic check if each throat's scalar charge q is read from
-the l = 1 mode of the `--scalar-modes` stream (per-throat spheres; the old
-check-F angular mean cancels on the flipped binary) and
-F_scalar ∝ q_A·q_B is predicted alongside gravity.  The 6/4 pull/push
-ratio and the 5× at a = 2 should both follow — the paper's cleanest
-analytic check, for the price of a side figure.
-
-**8.8 Reproducibility bar (issue 12) — closed, differently than the review
-proposed.**  The review asked for a deterministic-GPU-reductions build
-flag; **none exists in this tree** (AMReX's only determinism switch is a
-C++ argument on `SumBoundary`, unreachable from GRTeclyn; the Ψ₄ surface
-integral is already serial and deterministic on rank 0 — the
-non-deterministic sums live in the diagnostics kernels).  The waveform's
-reproducibility bar is therefore the *measured* ±0.35 twin floor: quote
-it, and if a referee wants a per-waveform number, a twin-from-t = 0 of the
-headline arm is one more arm (decision §6.8).
-
-## 9. Validation pass 2026-09-03: C++ audit, build, and where the lapse actually collapses
-
-Requested before the article: validate the merger implementation and build, and
-explain the "zombie" (frozen, NaN-free) runs.  Method: a read-through of the
-example's C++ (initial data, gauge, matter coupling, floors, damping/freeze
-modules, tracker, diagnostics); a clean rebuild of a scratch copy of the
-example; and a direct look at the cached z = 0 slices (χ, lapse, K, φ, Π,
-shift) of nine runs at 2–6 epochs each, cross-checked against the `.dat`
-streams.  Slices (yt covering grids from plotfiles) and `.dat` files (in-code
-reductions) are independent instruments.
-
-### 9.1 The lapse never collapses at the throats
-
-In every binary run, at every epoch to the end, the two χ pits keep lapse
-0.05–0.24 and |φ| 0.79–0.92.  The 3e-2 → 1e-3 → 1e-10 collapse that this plan
-calls "core freeze" / "cores collapsed" sits at the **midpoint between the
-throats**, where φ ≡ 0 by symmetry, K > 0 and the shift ≈ 0.  The isolated
-throat never shows it (lapse 0.13 at t = 40).
-
-| run | t | lapse at the pits | lapse at the midpoint | \|φ\| at the pits | K (sign, extent) |
+| run | t | lapse at pits | lapse at midpoint | \|φ\| at pits | K |
 |---|---|---|---|---|---|
-| p020 L3 | 32.0 | 0.164 | 2.1e-2 | 0.87 | +0.14 |
 | p020 L3 | 47.5 | 0.125 | 3.0e-3 | 0.87 | +0.20, no K < 0 core |
 | plain p012 L3 | 43.5 | 0.134 | 1.9e-3 | 0.86 | — |
-| helfer L3 | 30.0 | 0.175 | 5e-3 | 0.90 | — |
-| helfer L3 | 60.0 | 0.073 | 1e-10 (floor) | 0.89 | +1.0, 5224 cells > 0.3 |
-| helfer L4 | 48.0 | 0.177 | 3.1e-5 | 0.91 | +1.59, 1258 cells > 0.3 |
+| helfer L3 | 60.0 | 0.073 | 1e-10 (floor) | 0.89 | +1.0 |
+| helfer L4 | 48.0 | 0.177 | 3.1e-5 | 0.91 | +1.59 |
 | helfer L5 | 28.0 | 0.209 | 1.08e-2 | 0.92 | +0.18 |
-| p035 fly-by L3 | 73.5 | 0.046 | 1e-3 | — | +1.6, 7828 cells > 0.3 |
-| p012 r03000 | 44.0 | 0.138 | blob to r ≈ 0.7 | 0.85 | +0.07 |
-| p012 r03000 | 51.0 | 0.15–0.24 (rising) | shell: lapse < 3e-2 at r ≈ 0.5–0.85 | 0.79–0.83 | −1.5 at the core (K < 0) |
+| p035 L3 | 73.5 | 0.046 | 1e-3 | — | +1.6 |
+| p012 r03000 | 51.0 | 0.15–0.24 (rising) | shell at r ≈ 0.5–0.85 | 0.79–0.83 | −1.5 at the core |
 
-The midpoint value is the same at three resolutions (helfer L3/L4/L5 all
-1.08e-2 at t = 28), so the collapse is converged: a property of these
-equations, this gauge and this initial data, not of the grid.
+Consequences:
+- **"Zombie" explained**: at α = 1e-10 every α-proportional RHS term
+  vanishes — the floored midpoint blob is static and NaN-free.  The
+  h11-NaN deaths (the wall) happen with the midpoint near 3e-3, never
+  floored: reaching the floor is not the trigger.
+- **p012 endgame**: pits coincide within 0.2–0.6 by t = 48–51.5, core
+  lapse *rises* (0.14 → 0.24) with K < 0, and the collapsed-lapse region
+  becomes a shell at r ≈ 0.5–0.85.  The reported trapped surface at
+  r = 1.0 (t = 51.06) sits on that shell — consistent with BH formation in
+  1+log slicing, but #3 must run before the article says "common horizon"
+  unhedged.  Large-radius trapped verdicts in helfer/p035/p025 coincide
+  with the K ≈ 1 rim of the blob and are not credible.
+- **Finest-level-only diagnostics are blind to the midpoint** until
+  sep < 2.5 (`finest_lev` reductions in `BinaryWormholeLevel.cpp`);
+  half-space throat positions stay valid but cell-quantised.  The tracker
+  degenerates below sep 2 (pass 2 averages both pits); fix: restrict
+  pass 2 to the pass-1 argmin neighbourhood.
+- **CoreMatterDamping engages on the midpoint blob** (~t = 30) with no
+  trapped surface — the template's rationale is false; its measured effect
+  on death time is zero (§5), production runs clean.
+- **Build**: clean scratch rebuild, 114 units, 0 errors; no sign or
+  coupling error found (phantom sign only in T_μν, standard KG/1+log/
+  Gamma-driver, floors at every RK stage).  Hygiene: `Make.package` omits
+  two headers; `parameters_and_version.txt` records "(unknown)";
+  `collapse_diagnostics` writes floors into state before reducing.
 
-### 9.2 Consequences for the readings above
+---
 
-- **"Zombie" explained.**  In helfer the floored region is a blob about the
-  midpoint that grows outward (lapse < 1e-3 reaches 2.5 from a pit at t = 36,
-  5.9 at t = 60; the K > 0.3 area grows 25× over t = 36–60; L2_Ham 5e-3 →
-  1.1e-1).  At α = 1e-10 every α-proportional right-hand-side term vanishes,
-  so the blob is static and NaN-free.  The runs that died of the level-3 h11
-  NaN (r03000 52.06, n160 53.6, p025 52.98) had the midpoint lapse hovering
-  near 3e-3, never floored — that is the t ≈ 52–53 wall, and reaching the
-  floor is not what triggers it.
-- **Helfer verdict.**  The stall is real (sep 4.7 → 5.3, 7° swept) and the
-  REJECT stands, but the mechanism is the earlier nucleation of the midpoint
-  blob (3e-2 at t = 25.4 vs 30.4 plain), which the throats then stall
-  against.  Hypothesis worth one run: the window's constraint defect
-  (1.8×) is concentrated near r ≈ width = 4 from each throat, i.e. at the
-  midpoint; halving `wormhole_helfer_width` should move the nucleation.
-- **p020 was not frozen.**  Half-space separation 1.44 (t = 40) → 1.19 (44)
-  → 1.064 (45.5) → 1.079 (47.85, stopped by hand).  The merged p012 arm sat
-  at 0.815 for 3.5 units (t = 40.5–44) before dropping to ~0.5 at t = 48.
-  p020 at 47.5 (blob radius, pit lapse 0.125, K max +0.2, no K < 0 core yet)
-  matches p012 at t ≈ 44: about 4 units behind the same sequence.  Its L3
-  checkpoints were pruned; the L5 arm reaches this phase in ~10 h, a fresh
-  L3 rerun to t = 60 in ~6 h.
-- **p025 died of the wall, not of a freeze.**  Same level-3 h11 NaN at
-  52.98 as the undamped p012 restart (52.06) and n160 (53.6).  The
-  production p012 dodged it only because the freeze fill was armed at 53.4;
-  p025 had no fill.  Its "freeze" is the same coordinate slow-down (shift → 0
-  at the pits below sep ≈ 1) that p012 shows.
-- **p012 endgame.**  At t = 48–51.5 the pits coincide within 0.2–0.6, the
-  core lapse *rises* (0.14 → 0.24) with K < 0 (−0.8 → −1.6), and the
-  collapsed-lapse region has become a shell at r ≈ 0.5–0.85 around the
-  core.  The reported common trapped surface at r = 1.0 (t = 51.06) sits on
-  that shell, where χ is at its floor and the constraints are rising.  It
-  is consistent with black-hole formation in 1+log slicing, but it needs an
-  independent apparent-horizon check on the t = 51 plotfile before the
-  article says "common horizon".  The large-radius trapped verdicts in
-  helfer (4.6 → 7.2), p035 (3.6–6.3) and p025 (2.06–2.12) coincide with the
-  K ≈ 1 rim of the midpoint blob and are not credible.
-- **The L5 arms cannot see the collapse.**  `collapse_diagnostics`,
-  `binary_throat_diagnostics` and the tracker all reduce over the finest
-  level only (`finest_lev` in `BinaryWormholeLevel.cpp`).  At t ≈ 29 the
-  level-5 blocks sit within ±1.25 of each pit and none contains the midpoint
-  (plotfile headers of all three L5 arms), so the "slower" L5 collapse
-  (0.115 vs 0.0108 at t = 28, helfer) is the near-pit minimum, not the
-  midpoint.  The L5 slices give the midpoint 1.08e-2 — identical to L3/L4.
-  Depth is not being tested until sep < 2.5.  The level-5 grid also clips χ
-  at the pits to the 1e-8 floor at t = 0 (level 3 does not), so L3 → L5 is
-  not a clean refinement rung.
-- **Tracker degeneracy.**  `throat_track.dat` places both throats at the
-  origin with sep 0.000 from the moment sep < search radius 2.0 (p020 36.0,
-  plain 32.0, headon 31.1, r04000 40.0): pass 2 of `ThroatTracker` averages
-  every in-sphere cell within 1e-6 of χ_min, and both pits qualify by
-  symmetry.  Moving boxes then centre on the origin (still covering both
-  pits, so refinement is unaffected).  Every sub-2 separation quoted in this
-  plan comes from the half-space method, which stays valid by symmetry but
-  is cell-quantised (0.06 hops).  Fix: restrict pass 2 to the neighbourhood
-  of the pass-1 argmin cell, or split the search by half-space while
-  sep < 2 × radius.
-- **CoreMatterDamping is aimed at the wrong place.**  It is on in every
-  scan/twin template (lapse window 3e-2 → 1e-3) and engages at t ≈ 30 on
-  the midpoint blob, when no trapped surface exists (ah_r = 0) — the
-  template's "unambiguously inside the trapped surface" rationale is false.
-  Since φ ≈ 0 on the blob's core its direct erasure is small; whether it
-  feeds the K growth at the rim needs a damping-off control.
+## 10. Housekeeping (2026-09-03)
 
-### 9.3 Code and build
-
-- Clean scratch rebuild (copy of the example, same flags): 114 compile
-  units, 0 errors, links.  Warnings only: `maybe_unused` attribute ignored
-  (`SmallDataIO.hpp:83–85`) and an unused `num_ghosts` (`Weyl4.impl.hpp:345`).
-  The binary the arms are running (Sep 2 08:40) is content-current; make
-  wants a rebuild only because one header's mtime was touched with zero
-  content change.
-- No sign or coupling error found: the phantom sign enters only T_μν, the
-  Klein–Gordon right-hand side is standard, the matter momentum feeds the
-  B-driver, 1+log and Gamma-driver are standard, floors run at every RK
-  stage, Bowen–York and the Helfer window match their documentation.
-- Hygiene: `Make.package` omits `CoreFreezeFill.hpp` and `ThroatTracker.hpp`
-  from the header list (fine with dependency files present, fragile on a
-  fresh clone); `parameters_and_version.txt` records the version as
-  "(unknown)"; `collapse_diagnostics` writes the floors into the finest
-  state before reducing (harmless, but a diagnostic should not mutate
-  state).
-
-### 9.4 What this changes
-
-- Rename "core freeze" → "inter-throat lapse collapse" throughout; the
-  throats never collapse.
-- Drop "no merger at p ≠ 0.12" and "every capture hits the freeze"; p020
-  was mid-sequence, p025 hit the wall.
-- The p012 common horizon needs an independent horizon check before the
-  article.
-- Runs that answer "does p020 / p025 merge" without masking: level-3 p020
-  with damping off and **no fill** to the wall (~5.5 h; relaunch pending),
-  and the running level-5 p020/p025 arms (no fill, wall ≈ 55).  A fill is
-  armed only afterwards, from a checkpoint, at a time after the throats have
-  met.  Helfer L3 with `wormhole_helfer_width` halved (~6 h) remains the one
-  test of the correction; the plain-p012 damping-off twin is deferred (no
-  clean checkpoint; the p020 run covers it).
-
-### 9.5 Housekeeping and results refresh, 2026-09-03
-
-The run tree was cleaned and the git pack brought up to date with everything
-Stage 4 has produced so far (`runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-03.md`
-has the ledger):
-
-- **Removed:** only `ABORTED_p020_fill53_t060` (the withdrawn fill-at-53
-  launch, decision 1). Every other run directory is evidence for a claim and
-  stays — including the stopped helfer_lvl5 twin (the level-5 stall
-  datapoint) and the old p045 (the packed healthy control).
-- **Logs:** finished runs' launcher logs gzipped into their run directories;
-  a top-level `detached_gpu*.log` now always means a run live on that card.
-- **Results pack refreshed:** `results/merger/` went from 9 packed runs to
-  **21** (67 MB) — the four t200 scouts, the five Helfer/plain twins, and
-  mid-run snapshots of the four in-flight arms; `summary.md`/`.csv`
-  regenerated with per-run fates. `results/merger/README.md` now opens with
-  a **claim-by-claim map** (paper subsection → runs that back it → where the
-  numbers sit), written to be lifted straight into the article.
-- **Snapshot at pack time (~03:50):** p020_lvl5 at t = 33.1, sep 2.44;
-  p025_lvl5 at t = 33.6, sep 2.76 — both level-5 arms are *closing*, well
-  inside their level-3 twins' capture tracks. helfer_w2 at t = 7.6 and
-  p020_nofill at t = 12.0, too early to read.
+- Results pack: **23 runs** (~67 MB) including the BBH control;
+  `summary.md`/`.csv` regenerated; `results/merger/README.md` opens with
+  the claim-by-claim map (paper subsection → backing runs → numbers).
+  `pack_results.sh` now sweeps `bbh_control_*` too.
+- Figures in `results/merger/figures/`: `psi4_analysis_bbh_control{,_m2}`,
+  `bbh_vs_wormhole_psi4`, the p045 fly-by set.  The comparison plotter is
+  a package: `python -m grteclyn_wrapper.visualisation.merger`.
+- `prune_checkpoints.sh` MAIN_RE now insures `bbh_control_*` — the t100
+  final checkpoint was swept after the clean finish, which is why the t150
+  rerun starts from scratch.
+- Scratch cleanup: dead p020_lvl5 (26 G), p025_lvl5 (26 G) and the t100
+  BBH (3.5 G) removed; scratch holds the two live runs, `_cache`, and
+  p020_nofill's 3 held plotfiles (#4).  Run dirs keep params/logs/data
+  streams only — the packed campaign is thinned from them; never delete.
+- Earlier clean-up ledger: `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-03.md`.
