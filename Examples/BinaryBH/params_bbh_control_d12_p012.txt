@@ -52,6 +52,13 @@ ccz4.covariantZ4 = false
 
 gauge.shift_advec_coeff = 1.0
 
+# The flat 'center' key: the C++ Weyl extraction would default to the grid
+# center anyway, but run_single.sh greps this exact key to hand the Python
+# consumer its extraction center -- without it the consumer silently
+# integrates spheres at the DOMAIN CORNER (0,0,0) and writes junk modes
+# (measured on bbh_control_d12_p012: static ~0.006 'signal', no wave).
+center = 32.0 32.0 32.0
+
 # ---- extraction: the wormhole spheres ----
 weyl_extraction.enabled = true
 weyl_extraction.num_radii = 4
