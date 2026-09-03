@@ -46,6 +46,27 @@ directory under `campaign/`; *(run tree)* = lives only in the gitignored
 `runs/wormhole_merger/` tree on the production machine; *(in flight)* = still
 on a GPU as of 2026-09-03, so its pack entry is a mid-run snapshot.
 
+### The initial data is validated: a single throat holds 40 time units
+- **Claim.** The grid represents each wormhole by folding its entire far
+  universe into the ball inside the throat sphere (the other side's infinity
+  lands on the throat's centre point) — the route the background survey said
+  to avoid, because the published single-throat attempt (arXiv:2604.00071)
+  died of it at t ~ 1.5. We used it anyway and measured it instead of
+  assuming: refining the origin made every error *smaller*, a small lapse
+  collar over the centre bought ~3.5x on origin survival, the mass was put in
+  the lapse (drainhole) rather than the spatial metric (which crushes the
+  throat), and a single static throat then held **40 time units with -0.36 %
+  drift**, constraints exact at t = 0. This is the initial-data validation
+  every merger run inherits.
+- **Runs.** The Stage-1 ladder under `runs/wormhole_merger/01_single_throat/`
+  *(run tree — see its NOTES.md)*: the lapse/collar/dissipation grid
+  (`stage1_lapse5*`, `stage1_lapse6*`), the uniform-grid origin pair
+  (`s1uni128`, `s1uni256`), and the long holds (`s15_*`, `s16ml3_*`).
+- **Caveat.** The 40-unit window is a fuse, not stability: the known
+  Ellis-Bronnikov growing mode (e-fold ~ 4.4, about one throat-light-crossing)
+  is still growing at t = 40. Every production arm is budgeted to finish
+  inside the fuse.
+
 ### Like-oriented throats repel; flipping one is what makes a binary
 - **Claim.** Two identical throats push apart (5× gravity at a = 2, m = 1, the
   push scaling with throat *width*, not mass; pull/push ratio 1.50 measured vs
@@ -74,6 +95,11 @@ on a GPU as of 2026-09-03, so its pack entry is a mid-run snapshot.
   independent damping schemes, one dissolution curve; `..._sg10_r05000`
   *(pack)* corroborates the death; the measurement itself is the offline scan
   in `horizon/`.
+- **Say it as.** The merger produces a short-lived black hole that dissolves
+  by swallowing its own exotic matter. If "dissolves" reads too soft,
+  "evaporates classically" or "is extinguished by negative-energy accretion"
+  are accurate alternatives — the process is classical accretion with the
+  wrong sign of energy, nothing to do with Hawking radiation.
 
 ### The instability belongs to the merged core, not the code
 - **Claim.** Deny the merger and the evolution is healthy.

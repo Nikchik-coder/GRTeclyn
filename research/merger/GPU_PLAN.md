@@ -812,7 +812,11 @@ the offline θ₊ scan over the ~4–5 units between collapse and freeze.  A
 true MOTS finder does not exist in-tree (`docs/ah_finder.md` is a stub);
 BHaHAHA goes on the infrastructure list — wanted for horizon mass/spin and
 the angular-momentum budget, but not load-bearing for the dissolution
-curve itself.
+curve itself.  Agreed paper phrasing (2026-09-03): *the merger produces a
+short-lived black hole that dissolves by swallowing its own exotic matter*
+— classical negative-energy accretion, not Hawking radiation; "evaporates
+classically" / "is extinguished by negative-energy accretion" are the
+stronger variants if "dissolves" reads too soft.
 
 **8.7 Predict the scalar force, then measure it.**  The repulsion a-scan
 becomes an analytic check if each throat's scalar charge q is read from
