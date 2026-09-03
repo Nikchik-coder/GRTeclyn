@@ -50,6 +50,7 @@ WHAT = {
     "merge_orbit_flip_d12_p020_lvl5_t200": "scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07",
     "merge_orbit_flip_d12_p025_lvl5_t200": "scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79",
     "merge_orbit_flip_d12_p015_nofill_t060": "scout p = 0.15 unmasked, damping off, in-code Weyl4 (in flight)",
+    "bbh_control_d12_p012": "vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100",
 }
 # The order the campaign reads in: the restart chain, then the probes.
 ORDER = [

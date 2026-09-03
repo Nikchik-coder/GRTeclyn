@@ -36,7 +36,9 @@ t = 51.4+) are evidence of a common horizon.
 | merge_orbit_flip_d12_p020_nofill_t060 | p = 0.20 unmasked, damping off: hovered at sep 1.08 from t = 46, NaN at t = 52.08 | 0.00 | 52.08 | NaN at t = 52.08 | 1.06 | 52.08 | 3.492e-03 | 4.737e-02 |
 | merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07 | 0.00 | 52.07 | NaN at t = 52.07 | 0.02 | - | 3.384e-03 | 4.238e-02 |
 | merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79 | 0.00 | 52.79 | NaN at t = 52.79 | 0.06 | - | 3.569e-03 | 6.891e-02 |
-| merge_orbit_flip_d12_p015_nofill_t060 | scout p = 0.15 unmasked, damping off, in-code Weyl4 (in flight) | 0.00 | 22.99 | still running | 6.62 | - | 1.797e-01 | 4.814e-03 |
+| merge_orbit_flip_d12_p015_nofill_t060 | scout p = 0.15 unmasked, damping off, in-code Weyl4 (in flight) | 0.00 | 28.02 | still running | 3.72 | - | 7.548e-02 | 5.908e-03 |
+| bbh_control_d12_p012 | vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100 | - | 100.00 | finished clean at t = 100.00 (streams lost, log only) | - | - | - | - |
+| bbh_control_d12_p012_t150 | - | - | 0.12 | still running (streams lost, log only) | - | - | - | - |
 
 Full column set, including the constraint and geometry extrema, is in
 `summary.csv`.

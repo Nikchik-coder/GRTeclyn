@@ -67,14 +67,14 @@ STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 # ---------------------------------------------------------------------------
 # 1. Per-run extract
 # ---------------------------------------------------------------------------
-for rundir in "${RUNS}"/merge_*/; do
+for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/; do
   run="$(basename "${rundir%/}")"
   out="${DEST}/campaign/${run}"
   rm -rf "${out}"
   mkdir -p "${out}"
 
   # An arm whose run directory was lost keeps only its note and its log.
-  if [[ ! -d "${rundir}/data" ]]; then
+  if [[ ! -d "${rundir}/data" && ! -d "${rundir}/extraction_data" ]]; then
     for f in LOST.md launch_banner.txt; do
       [[ -f "${rundir}/${f}" ]] && cp "${rundir}/${f}" "${out}/"
     done
@@ -89,7 +89,7 @@ for rundir in "${RUNS}"/merge_*/; do
 
   # Evolution streams, thinned.  __part1 files are the pre-restart episode of
   # the same run and are packed beside it under their own name.
-  for src in "${rundir}"data/*.dat; do
+  for src in "${rundir}"data/*.dat "${rundir}"extraction_data/*.dat "${rundir}"punctures_output/*.dat; do
     [[ -f "${src}" ]] || continue
     base="$(basename "${src}")"
     "${PY_BIN}" - "${src}" "${out}/${base}" <<'PY'

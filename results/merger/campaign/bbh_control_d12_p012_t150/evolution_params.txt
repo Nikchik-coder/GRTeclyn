@@ -1,0 +1,68 @@
+# BBH vacuum control for the wormhole merger campaign (GPU_PLAN section 8.1).
+#
+# Same IVP as the headline p = 0.12 drainhole arm: two M_ADM ~ 1 objects,
+# d = 12 apart along x, transverse Bowen-York momenta +/-0.12 y, same L = 64
+# box.  Bare puncture mass 0.9615 gives per-hole ADM ~ 1.00 at this
+# separation (Brill-Lindquist: M_ADM = m_bare(1 + m_other/(2d)) = 0.9615 *
+# 1.0401; the P^2 contribution adds under 1 %).
+#
+# CCZ4 constants match the wormhole campaign (kappa1 = 3, kappa2 = 0,
+# covariantZ4 off, derivative order 4).  dt_multiplier and sigma are NOT the
+# wormhole values: 0.02/0.1 there are phantom-stiffness choices; vacuum runs
+# the standard 0.25/0.5.  Same initial data, standard vacuum numerics.
+
+amr.verbose = 1
+amr.check_int = 100
+amr.plot_int = 4
+amr.plot_vars = chi K lapse shift1 shift2 shift3
+amr.derive_plot_vars = Weyl4
+
+# ---- initial data: the matched IVP ----
+bh1.mass = 0.9615
+bh2.mass = 0.9615
+bh1.offset = -6.0 0.0 0.0
+bh2.offset =  6.0 0.0 0.0
+bh1.momentum = 0.0  0.12 0.0
+bh2.momentum = 0.0 -0.12 0.0
+
+# ---- grid: the wormhole box ----
+amr.n_cell = 128 128 128
+geometry.prob_extent = 64 64 64
+amr.max_level = 5
+amr.regrid_int = 2 4 8 16 32
+tagging.threshold = 0.014
+amr.max_grid_size = 64
+amr.blocking_factor = 16
+
+geometry.is_periodic = 0 0 0
+boundary.hi_condition = "SOMMERFELD_BC" "SOMMERFELD_BC" "SOMMERFELD_BC"
+boundary.lo_condition = "SOMMERFELD_BC" "SOMMERFELD_BC" "SOMMERFELD_BC"
+
+# ---- evolution ----
+evolution.dt_multiplier = 0.25
+evolution.stop_time = 150.0
+evolution.spatial_derivative_order = 4
+evolution.nan_check = true
+evolution.sigma = 0.5
+
+ccz4.kappa1 = 3.0
+ccz4.kappa2 = 0.0
+ccz4.kappa3 = 1.0
+ccz4.covariantZ4 = false
+
+gauge.shift_advec_coeff = 1.0
+
+# ---- extraction: the wormhole spheres ----
+weyl_extraction.enabled = true
+weyl_extraction.num_radii = 4
+weyl_extraction.radii = 14.0 20.0 26.0 30.0
+weyl_extraction.levels = 0 0 0 0
+weyl_extraction.num_points_phi = 72
+weyl_extraction.num_points_theta = 37
+
+puncture_tracking.enabled = true
+
+# ---- rewritten by run_single.sh at clone time ----
+output_path = "runs/wormhole_merger/bbh_control_d12_p012_t150"
+amr.plot_file = "/tmp/grteclyn_scratch/bbh_control_d12_p012_t150/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/bbh_control_d12_p012_t150/BinaryWormholeChk"

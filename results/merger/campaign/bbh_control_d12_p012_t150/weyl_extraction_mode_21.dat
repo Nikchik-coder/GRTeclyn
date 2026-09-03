@@ -1,0 +1,4 @@
+# thinned to dt=0.05 from the every-step stream; the last 1 time units are kept whole (the death window)
+#       time         integral Re         integral Im         integral Re         integral Im         integral Re         integral Im         integral Re         integral Im
+#       r =            14.000000           14.000000           20.000000           20.000000           26.000000           26.000000           30.000000           30.000000
+   0.1250000   -7.9061902556e-10   -3.2077569135e-09   -3.0538010243e-11   -2.7010481900e-10    2.4320497640e-13   -3.8956771402e-11   -2.3364971197e-12    8.1579749218e-11
