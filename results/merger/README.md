@@ -163,14 +163,19 @@ on a GPU as of 2026-09-03, so its pack entry is a mid-run snapshot.
   the throats but parks a fade-zone defect between them; at the default
   window (d/3 = 4) the orbit stalls at sep ≈ 4.7 and the run freezes —
   reproduced at levels 3, 4 and 5, so converged, not under-resolution.
-  Production runs plain superposition (its +9.5 % initial-size artefact
-  accepted) unless the halved window clears it.
+  The halved window (2.0) did NOT clear it: the w2 twin tracked plain
+  superposition exactly to t ≈ 14, then fell progressively behind and read
+  sep 5.10 at the pre-registered t = 32 gate — above the 4.5 kill line and
+  above even the wide-window run's 4.73 (plain: 2.06). Window placement was
+  not the problem; the correction itself spoils the phantom binary's infall.
+  Production therefore runs plain superposition (its +9.5 % initial-size
+  artefact accepted).
 - **Runs.** `merge_twin_p012_helfer_t100` vs `..._plain_t100` *(pack)* — the
   one-flag twins; `..._helfer_lvl4_t100` *(pack)* — stall reproduced to < 2 %
   in the lapse trace; `..._helfer_lvl5_t100` *(pack)* — stalled the same at
-  production depth, stopped at t = 31.5; `..._helfer_w2_t060` *(in flight)* —
-  window halved to 2.0, verdict at t ≈ 32: sep < 3 re-admits the correction,
-  sep > 4.5 kills it.
+  production depth, stopped at t = 31.5; `..._helfer_w2_t060` *(pack)* —
+  window halved to 2.0, killed by its pre-registered verdict (sep 5.10 > 4.5
+  at t = 32), stopped by hand at t = 33.1.
 
 ### The freeze wall itself: lapse collapse at the midpoint, not the throats
 - **Claim.** In every binary the lapse collapses at the inter-throat midpoint

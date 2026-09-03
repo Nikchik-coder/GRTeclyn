@@ -6,7 +6,12 @@ dead run is described by its last computed state rather than by its crash.
 Times are quantised to the packed dt = 0.05. `min throat sep` is the closest
 the two throat finders ever came; once the throats have merged they are both
 reading structure inside one collapsed core, so on the restart arms that
-number describes the core, not an approach.
+number describes the core, not an approach. `common horizon at` is the
+IN-CODE radial proxy and fires spuriously on the collapsing inter-throat
+midpoint: every level-3 twin reports t = 29-31 — including the stalled
+Helfer runs with throats 5 apart, where no horizon is possible. Only hits
+corroborated by the offline scan in `horizon/` (the headline arms,
+t = 51.4+) are evidence of a common horizon.
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
@@ -27,10 +32,10 @@ number describes the core, not an approach.
 | merge_twin_p012_helfer_t100 | p = 0.12 twin, Helfer correction (auto width 4): stalled, zombie, stopped at t = 60.3 | 0.00 | 60.31 | finished clean at t = 60.31 | 4.56 | 29.50 | 1.000e-10 | 1.054e-01 |
 | merge_twin_p012_helfer_lvl4_t100 | Helfer twin at max_level = 4: reproduces the stall, stopped by hand | 0.00 | 48.57 | still running | 4.94 | - | 2.898e-05 | 2.724e-02 |
 | merge_twin_p012_helfer_lvl5_t100 | Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5 | 0.00 | 32.06 | still running | 5.15 | - | 6.912e-02 | 4.347e-03 |
-| merge_twin_p012_helfer_w2_t060 | Helfer twin, window halved to 2.0 (in flight 2026-09-03) | 0.00 | 7.59 | still running | 11.69 | - | 2.187e-01 | 5.505e-03 |
-| merge_orbit_flip_d12_p020_nofill_t060 | p = 0.20 unmasked, damping off, in-code Weyl4 (in flight) | 0.00 | 11.96 | still running | 11.10 | - | 1.999e-01 | 8.129e-03 |
-| merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5, unmasked (in flight) | 0.00 | 33.09 | still running | 2.44 | - | 1.809e-02 | 3.245e-03 |
-| merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5, unmasked (in flight) | 0.00 | 33.57 | still running | 2.76 | - | 1.793e-02 | 2.399e-03 |
+| merge_twin_p012_helfer_w2_t060 | Helfer twin, window halved to 2.0: stalled worse (sep 5.10 at t = 32 gate), stopped at t = 33.1 | 0.00 | 33.10 | still running | 5.06 | 30.90 | 3.044e-03 | 3.980e-03 |
+| merge_orbit_flip_d12_p020_nofill_t060 | p = 0.20 unmasked, damping off, in-code Weyl4 (in flight) | 0.00 | 41.21 | still running | 1.31 | - | 4.029e-03 | 2.460e-02 |
+| merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5, unmasked (in flight) | 0.00 | 41.56 | still running | 0.03 | - | 3.816e-03 | 2.859e-02 |
+| merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5, unmasked (in flight) | 0.00 | 39.36 | still running | 2.11 | - | 5.605e-03 | 3.354e-03 |
 
 Full column set, including the constraint and geometry extrema, is in
 `summary.csv`.

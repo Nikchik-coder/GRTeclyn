@@ -16,7 +16,7 @@ merge_twin_p012_plain_t100,"p = 0.12 twin, plain superposition: merged, stopped 
 merge_twin_p012_helfer_t100,"p = 0.12 twin, Helfer correction (auto width 4): stalled, zombie, stopped at t = 60.3",0.00,60.31,finished clean at t = 60.31,1.000e-10,4.566e-04,0.883,1.054e-01,4.652e-02,11.94,4.56,36.25,5.32,29.50,7.19
 merge_twin_p012_helfer_lvl4_t100,"Helfer twin at max_level = 4: reproduces the stall, stopped by hand",0.00,48.57,still running,2.898e-05,2.489e-05,1.638,2.724e-02,2.868e-02,11.97,4.94,34.25,5.38,-,-
 merge_twin_p012_helfer_lvl5_t100,"Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5",0.00,32.06,still running,6.912e-02,4.647e-07,0.067,4.347e-03,2.086e-03,12.00,5.15,31.74,5.16,-,-
-merge_twin_p012_helfer_w2_t060,"Helfer twin, window halved to 2.0 (in flight 2026-09-03)",0.00,7.59,still running,2.187e-01,3.282e-06,0.010,5.505e-03,8.194e-05,11.94,11.69,7.44,11.69,-,-
-merge_orbit_flip_d12_p020_nofill_t060,"p = 0.20 unmasked, damping off, in-code Weyl4 (in flight)",0.00,11.96,still running,1.999e-01,4.459e-06,0.010,8.129e-03,8.783e-05,11.94,11.10,11.96,11.10,-,-
-merge_orbit_flip_d12_p020_lvl5_t200,"scout p = 0.20 at max_level = 5, unmasked (in flight)",0.00,33.09,still running,1.809e-02,5.761e-08,0.129,3.245e-03,1.702e-03,12.00,2.44,33.00,2.44,-,-
-merge_orbit_flip_d12_p025_lvl5_t200,"scout p = 0.25 at max_level = 5, unmasked (in flight)",0.00,33.57,still running,1.793e-02,6.822e-08,0.125,2.399e-03,1.378e-03,12.00,2.76,33.55,2.76,-,-
+merge_twin_p012_helfer_w2_t060,"Helfer twin, window halved to 2.0: stalled worse (sep 5.10 at t = 32 gate), stopped at t = 33.1",0.00,33.10,still running,3.044e-03,9.502e-05,0.224,3.980e-03,2.017e-03,11.94,5.06,32.20,5.10,30.90,5.06
+merge_orbit_flip_d12_p020_nofill_t060,"p = 0.20 unmasked, damping off, in-code Weyl4 (in flight)",0.00,41.21,still running,4.029e-03,1.136e-05,0.085,2.460e-02,1.722e-02,11.94,1.31,40.51,1.44,-,-
+merge_orbit_flip_d12_p020_lvl5_t200,"scout p = 0.20 at max_level = 5, unmasked (in flight)",0.00,41.56,still running,3.816e-03,4.212e-08,0.401,2.859e-02,2.063e-02,12.00,0.03,41.55,0.03,-,-
+merge_orbit_flip_d12_p025_lvl5_t200,"scout p = 0.25 at max_level = 5, unmasked (in flight)",0.00,39.36,still running,5.605e-03,6.605e-08,0.239,3.354e-03,3.753e-03,12.00,2.11,39.18,2.11,-,-

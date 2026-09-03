@@ -44,7 +44,7 @@ WHAT = {
     "merge_twin_p012_helfer_t100": "p = 0.12 twin, Helfer correction (auto width 4): stalled, zombie, stopped at t = 60.3",
     "merge_twin_p012_helfer_lvl4_t100": "Helfer twin at max_level = 4: reproduces the stall, stopped by hand",
     "merge_twin_p012_helfer_lvl5_t100": "Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5",
-    "merge_twin_p012_helfer_w2_t060": "Helfer twin, window halved to 2.0 (in flight 2026-09-03)",
+    "merge_twin_p012_helfer_w2_t060": "Helfer twin, window halved to 2.0: stalled worse (sep 5.10 at t = 32 gate), stopped at t = 33.1",
     # The unmasked wall probes (2026-09-03).
     "merge_orbit_flip_d12_p020_nofill_t060": "p = 0.20 unmasked, damping off, in-code Weyl4 (in flight)",
     "merge_orbit_flip_d12_p020_lvl5_t200": "scout p = 0.20 at max_level = 5, unmasked (in flight)",
@@ -193,7 +193,12 @@ def main(argv: list[str]) -> int:
                  "Times are quantised to the packed dt = 0.05. `min throat sep` is the closest\n"
                  "the two throat finders ever came; once the throats have merged they are both\n"
                  "reading structure inside one collapsed core, so on the restart arms that\n"
-                 "number describes the core, not an approach.\n\n")
+                 "number describes the core, not an approach. `common horizon at` is the\n"
+                 "IN-CODE radial proxy and fires spuriously on the collapsing inter-throat\n"
+                 "midpoint: every level-3 twin reports t = 29-31 — including the stalled\n"
+                 "Helfer runs with throats 5 apart, where no horizon is possible. Only hits\n"
+                 "corroborated by the offline scan in `horizon/` (the headline arms,\n"
+                 "t = 51.4+) are evidence of a common horizon.\n\n")
         fh.write("| " + " | ".join(head[c] for c in show) + " |\n")
         fh.write("|" + "|".join(["---"] * len(show)) + "|\n")
         for r in rows:
