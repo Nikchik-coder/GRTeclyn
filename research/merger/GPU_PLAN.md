@@ -23,7 +23,22 @@ argmin-neighbourhood fix of §9 stands).*
 
 **In flight**
 
-- [ ] **#1 p015 scout** — `merge_orbit_flip_d12_p015_nofill_t060`, card 0.
+- [x] **#1 p015 scout — ANSWERED 2026-09-03: p = 0.15 is on the FUSING
+  branch, but the wall cut it short of coincidence.**  Died t = 53.35 (h11
+  NaN, level 3 — the wall, slightly late).  The sequence, slice-audited
+  (tracker + slices agree): plateau at pit sep 0.816 (p012's plateau was
+  0.815), dive to 0.69–0.70 by t = 50.5–53.0, core lapse RISING 0.13 → 0.21
+  (p012's endgame signature; p020 never showed any of this — it hovered at
+  1.08 with falling pit lapse), χ on the floor from t = 50.5.  But the pits
+  never closed to p012's 0.2–0.6 coincidence: fusion was in progress, not
+  complete, when the wall hit.  Production implication: p = 0.15 is a real
+  candidate but needs the restart-refinement recipe (#17-style, wall
+  pushed ~+1.4/level) or a later-armed fill to finish; p = 0.12 remains the
+  proven IVP.  Checkpoints were LOST (uninsured name — sweeper rule now
+  fixed to cover all p-scan names); the last 3 plotfiles (t = 52.0/52.5/
+  53.0, post-dive) are HELD on scratch for the horizon scan alongside
+  p020's.  (Superseded queue text kept below for the record.)
+- [~] *(was)* **p015 scout** — `merge_orbit_flip_d12_p015_nofill_t060`, card 0.
   Does p = 0.15 fuse before the t ≈ 52 wall?  Fuse → production-p candidate
   (~10–15 % more m = ±2 signal, longer whirl); hover like p020 → the
   "captures but cannot fuse" boundary moves down to 0.15 and p = 0.12
@@ -31,11 +46,25 @@ argmin-neighbourhood fix of §9 stands).*
   48–51; p020 hovered at 1.08; the wall ≈ 52.  Sub-2 separations are a
   tracker artifact — read the slices.  Last read t = 34.3, sep 1.69: no
   call yet.
-- [ ] **#2 BBH control to t = 150** — `bbh_control_d12_p012_t150`, card 2,
-  from scratch, ~4.5 h (the t = 100 checkpoint was lost, §1).  Buys the full
-  ringdown (t100 ended at 96 % of peak envelope) and the Python cross-check
-  the t100 run lost to the center bug.  On finish: consumer vs in-code
-  comparison, repack, ringdown fit on the full tail, figures with R = 30.
+- [x] **#2 BBH control to t = 150 — DONE (2026-09-03), all four close-out
+  checks pass.**  `bbh_control_d12_p012_t150` reached t = 150 on card 2.
+  (1) Instruments agree: Python consumer (plotfiles, fixed center) vs
+  in-code stream match to 0.31 % / 0.35 % of peak (R = 14 / 30), corr
+  0.999999 — the center bug is retired.  (2) Known-answer ringdown: fitted
+  period 28.8–29.7, damping tau 25–27 (late-window 28.9 / 22.9), i.e.
+  ~15.2 M / ~12.1 M for M_f ≈ 1.9 — consistent with a Kerr remnant of
+  M ≈ 1.9–2.0 with modest spin (Schwarzschild reference 16.8 M / 11.2 M;
+  spin shortens the period exactly as seen).  Both radii agree within
+  3–7 %.  (3) Boundary audit at t = 150 (full-domain plotfile scan +
+  slice-cache time series): chi scatter *decreases* outward (0.33 % →
+  0.26 %), max |K| in the outer shells 4e-4, no growing ripples —
+  Sommerfeld held for 150 units with no sponge; pre-signal junk floor at
+  R = 30 is 12 % of peak but sits entirely before the chirp, and R20→R30
+  envelope coherence bounds in-band contamination at ~3.5 %.  (4) Signal
+  comparison at equal R = 14: BBH peak (2,2) 1.08e-2 vs wormhole p012
+  2.49e-2 — the wormhole is ~2.3x louder (understated: the twin stream
+  cut at t = 44, before collapse finished radiating).  Remaining: repack
+  + paper figures with R = 30 (after the drain completes).
 
 **Next — cheap, no GPU conflict, one approval each**
 
@@ -78,19 +107,36 @@ anywhere, so the bases start from t = 0.
   peaks at the φ = 0 midpoint, so the blob may be a genuine negative-energy
   sink the throats dug between themselves — a paper paragraph if measured,
   a retraction risk if asserted.
-- [ ] **#14 Damping-off p012 plain twin** — from t = 0, level 3, ~5 h, with
+- [ ] **#14 Damping-off p012 plain twin** — **LAUNCHED 2026-09-03, card 1** as
+  `merge_twin_p012_nodamp_t060` (single knob: core_matter_damping = 0;
+  ~9.6 u/h, t = 60 in ~6 h; checkpoints on, name insured in the sweeper).
+  From t = 0, level 3, with
   insured checkpoints.  Every scan/twin verdict so far was taken with
   CoreMatterDamping engaged on the blob from t ≈ 30 (its stated rationale
   is false, §9); the measured death-time effect is zero (§5) but the effect
   on blob morphology and waveform is unmeasured.  Production runs clean, so
   this twin IS the production config — and its checkpoints double as the
   #16 base.
-- [ ] **#15 Gauge-change arm** — level-3 p012, ~5 h: the never-run M9a
-  shock-avoiding lapse (f = 1 + kappa/alpha^2) or a different
-  lapse_coeff/eta.  If the blob, its nucleation time and the t ≈ 52 wall
-  survive a slicing change they are geometry; if the wall moves ~10 units
-  the campaign has been describing a gauge shock.  (Wave 3a tested the
-  source term, not the slicing — different question.)
+- [x] **#15 Gauge-change arm — ANSWERED (2026-09-03): the physics
+  survives the slicing change, the WALL TIME does not.**
+  `merge_twin_p012_lc1_t060` (single knob: lapse_coeff 2.0 → 1.0) died at
+  **t = 43.64** (K NaN, level 3) vs the plain wall at 52.06 — the wall
+  moved **8.4 units earlier**, which is the pre-registered "gauge" branch
+  of the test.  But the physics sequence held: blob nucleated on schedule
+  (t = 32 slice: mid lapse 0.009, |phi| 0.53 — deeper/stronger than
+  plain, as a slower lapse response should give), capture and plunge
+  proceeded, sep 0.442 at death.  Reading: the crash is the slicing
+  losing its singularity-avoidance race (halving lapse_coeff weakens the
+  gauge's protective collapse, so the code meets the forming singularity
+  ~8 units sooner) — **the t ≈ 52 number is a property of gauge +
+  resolution, not a physical event, and the paper must never present it
+  as one.**  The physical claims (blob, capture, fusion sequence) are
+  what survived; p012's headline is untouched (its fusion completed at
+  48–51, before its wall).  Assets held: Chk04000 (t = 40), death
+  plotfiles t = 42.5/43.0/43.5, in-code stream complete to 43.64.
+  (Wave 3a tested the source term, not the slicing — different question.
+  The shock-avoiding lapse f = 1 + kappa/alpha^2 would need code; not
+  worth it now that the params-only arm has answered.)
 - [ ] **#16 χ-floor ladder** — `min_chi` is a flat params key (production
   value 1.0e-8): restart segments t ≈ 48 → 53 from a #14 checkpoint with
   levels 4–5 added, at min_chi 1e-8 / 1e-10 / 1e-12 (~1–2 h each).  A
@@ -485,18 +531,45 @@ Figure + script: `runs/wormhole_merger/merger_fix/plots/scalar_vs_psi4_R14.*`.
    non-deterministic sums live in diagnostics kernels).  The bar is the
    measured ±0.35 twin floor; a per-waveform number costs a twin-from-t = 0
    (decision §8).
-8. **BBH known-answer calibration** — the t150 ringdown (#2) must match
-   the Schwarzschild QNM of the final puncture mass (period ≈ 16.8 M,
-   damping ≈ 11.2 M) and E_rad must close against ADM minus horizon mass:
-   one check that calibrates the whole extraction chain — interpolator,
-   mode integrals, retarded-time extrapolation, energy integral — on the
-   same radii and grid the wormhole arms use, and turns item 4 into a
-   calibrated measurement.  Write down now: R = 14 ≈ 7 M is near-zone for
-   the BBH (the production control belongs at L = 128 like everything
-   else); the "2.3× brighter" claim must become an *energy* ratio, not a
-   peak amplitude at a near-zone radius; and a phantom halo radiates
-   negative energy, so the wormhole remnant's ADM may legitimately exceed
-   2 — read the §7.2 sum rule with that sign in mind, not as a bug.
+8. **BBH known-answer calibration — RUN DONE (2026-09-03), QNM leg
+   passed; E_rad closure still owed.**  The t150 ringdown fits period
+   28.8–29.7, tau 25–27 (damped-sinusoid fit on the tail; late-window
+   28.9 / 22.9), i.e. ≈ 15.2–15.6 M / ≈ 12.1–14.2 M for M_f ≈ 1.9.
+   That is the Kerr (2,2,0) of a modestly spinning remnant — the
+   Schwarzschild reference (16.8 M / 11.2 M) is approached from exactly
+   the spin-shifted side it should be, and the two spheres (R = 14, 30)
+   agree within 3–7 %.  Instruments cross-checked: Python consumer
+   (plotfiles, fixed center) vs in-code stream match to 0.31 % / 0.35 %
+   of peak — the extraction chain is calibrated end to end.  Figures in
+   the pack: `bbh_t150_ringdown` (QNM fit overlay), `bbh_vs_wormhole_psi4`
+   (now sourced from t150).  Still owed for the paper: E_rad vs
+   ADM-minus-horizon-mass closure, and a paired tau error bar (the tail
+   sub-windows drift 38 → 30 → 23, so quote the late window with the
+   drift as the systematic).  Standing caveats unchanged: R = 14 ≈ 7 M is
+   near-zone for the BBH; the "2.3× brighter" claim must become an
+   *energy* ratio; a phantom halo radiates negative energy, so the
+   wormhole remnant's ADM may legitimately exceed 2.
+
+   **Boundary & extraction facts for the methods section (audited
+   2026-09-03 on the t150 run):**
+   - Extraction spheres r = 14, 20, 26, 30 in both campaigns; box faces
+     at 32 from center.  In the *wormhole* runs the sponge ramp starts at
+     r = 24, so r = 26/30 sit inside it — r = 14/20 are the quoted
+     instruments there; in the BBH all four are clean.
+   - The BBH has **no sponge by construction, not omission**: the sponge
+     is extra dissipation inside the wormhole *matter* dispatch
+     (`SpongeZone.hpp`, ramp r = 24 → 32, strength 4), built because the
+     phantom scalar reflects badly off radiative boundaries.  Vacuum GW
+     + Sommerfeld is the standard treatment and holds here.
+   - Reflection audit, four independent checks: (1) the initial-junk echo
+     transits the spheres by t ≈ 60, the signal reaches R = 30 only after
+     t ≈ 95 — wrong time to contaminate; (2) pre-signal ambient floor at
+     R = 30 is 12 % of peak but entirely before the chirp; in-band, the
+     R20→R30 envelope coherence bounds contamination at ~3.5 % of peak;
+     (3) independent ringdown fits at r = 14 and r = 30 agree to 3–7 %;
+     (4) full-domain scan of the t = 150 plotfile: chi scatter *falls*
+     outward (0.33 % → 0.26 %), max |K| in the outer shells 4e-4, no
+     standing ripples after 150 units.
 
 **Scalar-mode module** (in hand): consumer-side
 `extraction/scalar_modes.py`, own stream, default off, enabled per launch

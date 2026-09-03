@@ -49,8 +49,11 @@ WHAT = {
     "merge_orbit_flip_d12_p020_nofill_t060": "p = 0.20 unmasked, damping off: hovered at sep 1.08 from t = 46, NaN at t = 52.08",
     "merge_orbit_flip_d12_p020_lvl5_t200": "scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07",
     "merge_orbit_flip_d12_p025_lvl5_t200": "scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79",
-    "merge_orbit_flip_d12_p015_nofill_t060": "scout p = 0.15 unmasked, damping off, in-code Weyl4 (in flight)",
+    "merge_orbit_flip_d12_p015_nofill_t060": "scout p = 0.15 unmasked: fusing branch (plateau 0.816, dive to 0.70, core lapse rising) but pits not coincident when the wall hit at t = 53.35",
+    "merge_twin_p012_lc1_t060": "gauge arm (#15), lapse_coeff 2 -> 1: blob and plunge intact (sep 0.442) but the wall moved to t = 43.64 -- wall time is gauge, not physics",
+    "merge_twin_p012_nodamp_t060": "damping-off arm (#14): blob nucleates identically without damping (t = 32 slices match plain to 2 %)",
     "bbh_control_d12_p012": "vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100",
+    "bbh_control_d12_p012_t150": "BBH control rerun to t = 150, fixed-center consumer: full ringdown in hand, instruments agree to 0.3 %, QNM fit consistent with a Kerr remnant (~15.6M / ~14.2M at R = 30)",
 }
 # The order the campaign reads in: the restart chain, then the probes.
 ORDER = [
@@ -125,7 +128,12 @@ def summarise(run_dir: pathlib.Path) -> dict:
         t_end = max(times) if times else None
         if t_end is not None:
             row["t_end"] = f"{t_end:.2f}"
-            row["outcome"] = outcome(run_dir, t_end) + " (streams lost, log only)"
+            # vacuum controls never write collapse diagnostics but do carry
+            # their waveform streams; only call the streams lost if they are
+            if (run_dir / "weyl_extraction_mode_22.dat").exists():
+                row["outcome"] = outcome(run_dir, t_end) + " (vacuum control: waveform streams in hand)"
+            else:
+                row["outcome"] = outcome(run_dir, t_end) + " (streams lost, log only)"
         else:
             row["outcome"] = "data lost"
         return row

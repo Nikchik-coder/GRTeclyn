@@ -64,7 +64,7 @@ def main() -> int:
         args.out = str(pack / "figures")
 
     wh_dir = camp / "merge_twin_p012_plain_t100"
-    bh_dir = camp / "bbh_control_d12_p012"
+    bh_dir = camp / "bbh_control_d12_p012_t150"
     series = {
         ("wh", 2): load_mode(wh_dir / "Weyl4_mode_22.dat", R_PLOT),
         ("wh", 0): load_mode(wh_dir / "Weyl4_mode_20.dat", R_PLOT),
