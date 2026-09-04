@@ -55,7 +55,7 @@ WHAT = {
     "merge_orbit_flip_d12_p015_rr_t060": "p = 0.15 rerun with insured checkpoints: wall reproduced at the same step (t = 53.35); the t = 50 seed for the phase-2 refinement is held",
     "merge_orbit_flip_d12_p015_lvl5_t060_r05000": "p = 0.15 refined restart (max_level 5 from the t = 50 seed): wall pushed only +0.88 (h11 NaN t = 54.23), no trapped surface at death, waveform still rising at 3.14e-2 -- wall-cut mid-fusion a third time",
     # The floor ladder (#16, 2026-09-04): chi_floor rungs restarted from the t = 50 seed.
-    "merge_twin_p012_cf08_t060_r05000": "floor ladder rung chi_floor 1e-8 (the reference control), restart from t = 50 -- IN FLIGHT",
+    "merge_twin_p012_cf08_t060_r05000": "floor ladder rung chi_floor 1e-8 (the reference control), restart from t = 50 with levels 4-5: healthy to t = 55.53 (h11 NaN, level 5) -- longest-lived p012 arm; level-5 scan holds a trapped shell r = 0.94 -> 0.90 over its last unit",
     "merge_twin_p012_cf10_t060_r05000": "floor ladder rung chi_floor 1e-10: NaN 0.006 after restart -- the t = 50 state is floor-regularized, restarts cannot certify floor-independence",
     "merge_twin_p012_cf12_t060_r05000": "floor ladder rung chi_floor 1e-12: NaN 0.049 after restart -- same verdict as cf10",
     "merge_twin_p012_nodamp_cf10_t060": "the decisive floor test: damping off AND min_chi 1e-10 from t = 0 (not a restart) -- IN FLIGHT",

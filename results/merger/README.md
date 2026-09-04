@@ -23,13 +23,20 @@ that produced it does not.
    flat metric — fixed in code 2026-09-01; see `research/merger/Plan.md`.)
 3. Then the merged object **dies** — a NaN wherever un-damped phantom matter sits on
    collapsed geometry. Four arms, four different treatments, four deaths between
-   t = 51.7 and t = 55.0.
-4. The arm that lived longest measured the horizon **shrinking**, 1.07 at t = 51.5 down
-   to 0.59 at t = 55.0, and accelerating. The natural reading — infalling phantom matter
-   carrying negative energy across the horizon — survives every exclusion test run so
-   far (damping the matter away pushes the budget the *other* way), but the energy-density
-   sign at the horizon has not yet been measured directly (GPU_PLAN #13); until it is,
-   the mechanism is stated as inference, the shrinkage as measurement.
+   t = 51.7 and t = 55.0; a fifth (the floor-ladder reference rung, refined to
+   level 5) pushed the record to t = 55.53.
+4. The arm that lived longest measured the horizon **shrinking** — but how fast depends
+   on how deep the scan looks. The level-3 curve read 1.07 at t = 51.5 down to 0.59 at
+   t = 55.0 and accelerating; the level-5 scan of the record arm holds a trapped shell
+   at 0.94 → 0.90 over t = 54.5–55.5, shrinking slowly, and the same files scanned at
+   level 3 show nothing (the Theta ≈ −0.03 margin washes out) — so shrinkage is
+   established, its *rate* is a scan-depth systematic to be re-measured (GPU_PLAN #12).
+   The mechanism's ingredients are now measured (#13, 2026-09-04): negative-energy
+   matter is concentrated exactly at the horizon ring (three orders above ambient),
+   the net energy flux out of the enclosed ball has the sign that shrinks the mass,
+   and the interior's areal radius is collapsing. The full energy/mass balance (#12)
+   and the floor gate are still open; until both close, the mechanism is stated as
+   strongly supported inference, the shrinkage as measurement.
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
    (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and
@@ -53,10 +60,9 @@ what the text asserts, the runs that establish it, and where the numbers sit.
 Runs overlap between claims — that is the point of the map. *(pack)* = has a
 directory under `campaign/`; *(run tree)* = lives only in the gitignored
 `runs/wormhole_merger/` tree on the production machine. As of 2026-09-04
-two pack entries are snapshots of runs **still in flight** — the floor-ladder
-reference rung `merge_twin_p012_cf08_t060_r05000` and the decisive from-t = 0
-low-floor twin `merge_twin_p012_nodamp_cf10_t060`; both will be repacked at
-their close-out. Every other pack entry is a finished run.
+one pack entry is a snapshot of a run **still in flight** — the decisive
+from-t = 0 low-floor twin `merge_twin_p012_nodamp_cf10_t060`, to be repacked
+at its close-out. Every other pack entry is a finished run.
 
 ### The initial data is validated: a single throat holds 40 time units
 - **Claim.** The grid represents each wormhole by folding its entire far
@@ -106,16 +112,26 @@ their close-out. Every other pack entry is a finished run.
   giving one dissolution curve. The run dies at t = 55 with the surface still
   shrinking: this is the **onset** of dissolution, not its endpoint, and the
   paper must not claim the completed disappearance.
-- **Mechanism (inference, not yet measurement).** Phantom matter carrying
-  negative energy across the horizon fits every exclusion test (deleting the
-  matter by damping pushes the energy budget the other way), but the
-  energy-density sign at the horizon is the still-unrun GPU_PLAN #13
-  measurement. Until #13 lands, the paper states the shrinkage and *offers*
-  the mechanism; it does not assert it.
+- **Mechanism (ingredients measured, balance still open).** Phantom matter
+  carrying negative energy across the horizon fits every exclusion test
+  (deleting the matter by damping pushes the energy budget the other way),
+  and the GPU_PLAN #13 scan (2026-09-04, `blob_nature_scan.py` on the
+  longest-lived arm's death window) now measures the ingredients directly:
+  ρ < 0 concentrated at the horizon ring r ≈ 0.9–1.2 (pointwise to −0.9,
+  three orders above ambient), net Eulerian energy flux out of the enclosed
+  ball (+2.6 → +3.3 — the sign that shrinks the enclosed mass), and the
+  interior bag's areal radius collapsing 22 % in the last time unit — all on
+  NaN-free slices whose constraints hold to 3–7 % at proper scan depth.
+  What is NOT yet done is the quantitative energy/mass balance (#12): until
+  the flux integral is shown to account for the horizon's mass loss, the
+  paper states the shrinkage and calls the mechanism strongly supported
+  inference; it does not assert cause.
 - **Runs.** `merge_orbit_flip_d12_r04000` and `..._rw_r05000` *(pack)* — two
-  independent damping schemes, one dissolution curve; `..._sg10_r05000`
-  *(pack)* corroborates the death; the measurement itself is the offline scan
-  in `horizon/`.
+  independent damping schemes, one dissolution curve;
+  `merge_twin_p012_cf08_t060_r05000` *(pack)* — the record arm behind the
+  #13 numbers and the level-5 shell track 0.94 → 0.90; `..._sg10_r05000`
+  *(pack)* corroborates the death; the measurements themselves are the
+  offline scans in `horizon/`.
 - **Say it as.** The merger produces a short-lived black hole that dissolves
   by swallowing its own exotic matter — written as **contingent** (GPU_PLAN
   §8 decision 7). Two gates before the hedge comes off: (1) the 2026-09-04

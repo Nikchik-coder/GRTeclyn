@@ -139,9 +139,17 @@ no exceptions, no ad-hoc shortcuts:
   centre or refuses to start when the params has no `center` key (the
   consumer-junk bug, §1).  Only after the current runs end — the script is
   live under two launchers.
-- [ ] **#8 Repulsion a-points** — a = 1.5 and 3 at rest, level 3–4, t ≈ 20,
-  initial acceleration; scalar-charge prediction F ∝ q_A·q_B attached
-  (§7.6).  Hours.
+- [ ] **#8 Repulsion a-points — IN FLIGHT (launched 2026-09-04, user
+  approval on record).**  `ctrl_rest_a15` (card 3) and `ctrl_rest_a3`
+  (card 0): like-oriented pairs from rest, throat radius 1.5 / 3.0,
+  otherwise byte-identical to the Stage-2.5 controls (a = 1, 2 already
+  measured: +0.0042 / +0.0127 outward — ratio 3.0 vs 4.0 predicted).
+  Four a-points test F ∝ q_A·q_B, q set by throat width; predicted
+  repulsion/gravity = (a² + m²)/m².  Templates
+  `templates_scan/params_ctrl_rest_a{15,3}_t015.txt`, launcher
+  `launch_apoint.sh`; checkpoints off (probe policy); measurement =
+  chi_z slice-cache pit centroid, window t = 3.5–10.5, per
+  `03_two_throats/NOTES.md`.
 - [x] **#9 Wave-8 close-out checks — ANSWERED (2026-09-04): the second
   peak is a real outgoing wave, and the tail past the ceiling is clean.**
   (a) The R = 14 second peak (t = 75.1, rΨ₄ = +1.63e-2) reappears at
@@ -158,16 +166,40 @@ restart segments, ~1 day of one card total.  (2026-09-04: two t = 50 seeds
 now exist — nodamp Chk05000 for #16, p015_rr Chk05000 for the p015
 phase-2 refinement — both with sweeper-proof hold copies on scratch.)
 
-- [ ] **#13 Blob nature test — no GPU.**  Gauge-invariant scalars at the
-  inter-throat midpoint from existing plotfiles (the 3 held p020 files of
-  #4, plus packed p012/helfer ones): the Hamiltonian-constraint field, the
-  energy density (its sign!), the areal radius of small spheres about the
-  midpoint; Kretschmann if derivable.  Curvature bounded while the lapse
-  runs to 1e-10 = slicing; curvature and constraint growing together =
-  constraint mode.  Hypothesis to test, not assume: the phantom gradient
-  peaks at the φ = 0 midpoint, so the blob may be a genuine negative-energy
-  sink the throats dug between themselves — a paper paragraph if measured,
-  a retraction risk if asserted.
+- [x] **#13 Blob nature test — ANSWERED (2026-09-04): the blob is a
+  genuine slicing-regularized negative-energy structure, not a constraint
+  mode.**  Tool: `grteclyn-wrapper/scripts/validation/blob_nature_scan.py`
+  (offline, from the raw CCZ4 state: ρ with the code's exact
+  ExoticScalarField convention, Hamiltonian constraint with an FD Ricci,
+  areal radii, Eulerian energy flux j·s; raw output packed under
+  `results/merger/horizon/`).  Run on the held p020 trio (t = 51–52) and
+  the cf08 trio (t = 54.5–55.5), with a level-3-vs-4 depth check.
+  (a) **p020 blob**: Ham violation 1–3 % on every shell, 3-Ricci bounded
+  (−0.4 to −1.0) and static while the lapse sits at 4e-3 — the plan's own
+  discriminator reads SLICING, not constraint mode, not a singularity.
+  ρ < 0 concentrated at the midpoint (−1.7e-2 shell mean; −3.4e-2 center)
+  and the throat ring (pointwise −1.2); the coordinate ball r ≤ 0.9 hides
+  areal radii up to ~35 — the folded drainhole interiors, a bag-of-gold
+  geometry.  The "negative-energy sink between the throats" hypothesis is
+  MEASURED as presence + concentration; "sink" as accretion needs #12's
+  balance integral.
+  (b) **cf08 collapsed core**: outside the needle pit (r ≳ 0.3 at scan
+  level 4) constraints are 3–7 % and curvature bounded; the pit interior
+  itself is a floor-regularized junk region ≲ 0.3 wide (level-3 FD across
+  it fakes R ~ 1e9; at level 4 the same shell is clean — scan artifact).
+  ρ < 0 is concentrated exactly at the horizon ring r ≈ 0.9–1.2
+  (pointwise to −0.9, three orders above ambient), the net Eulerian
+  energy flux through r = 0.9 is outward (+2.6 → +3.3 over the last
+  unit — the enclosed mass DECREASING, consistent with the shrinking
+  shell), and the interior bag's areal radius collapses 25.6 → 19.1
+  (−22 %) over the same unit (level-3 magnitudes; trend robust across
+  same-level snapshots).  Kretschmann: not derivable at acceptable cost —
+  |Weyl4| + FD 3-Ricci stand in, both bounded.
+  README consequence: the mechanism's INGREDIENTS (negative-energy matter
+  present and flowing at the shrinking horizon) are now measured; the
+  full energy/mass balance stays #12, and everything remains gated on the
+  nodamp_cf10 floor test.  p020 + cf08 held plotfiles are KEPT for #12's
+  balance integral (manifest updated) — delete only after it runs.
 - [x] **#14 Damping-off p012 plain twin — ANSWERED (2026-09-04): damping
   changes nothing that matters.**  `merge_twin_p012_nodamp_t060` died at
   **t = 51.53** (h11 NaN, level 3) vs the plain twin's 52.06 — the wall
@@ -205,7 +237,19 @@ phase-2 refinement — both with sweeper-proof hold copies on scratch.)
   run off the nodamp t = 50 seed with levels 4–5 added: cf10 (min_chi
   1e-10) NaN at t + 0.049 on the new level 4; cf12 (1e-12) NaN at
   t + 0.006 on level 3; cf08 (floor unchanged at 1e-8, same added levels)
-  runs on healthily past t = 52.5 — a clean one-knob attribution.
+  ran healthily to **t = 55.53** (h11 NaN, level 5) — a clean one-knob
+  attribution, and the longest-lived p012-family arm on record (previous
+  deaths 51.7–55.0).  Its close-out (2026-09-04): death window NaN-free,
+  and the offline scan of its held plotfiles at **level 5** finds a
+  fully-trapped shell r = 0.94 / 0.92 / 0.90 at t = 54.5 / 55.0 / 55.5 —
+  shrinking slowly, NOT accelerating — that passes the §9 rim filter
+  (on-shell chi ≈ 0.5, lapse ≈ 0.6, K ≈ 0).  WARNING for #4/#12: the same
+  file scanned at level 3/4 reports NO trapped surface (the Theta ≈ −0.03
+  margin washes out on coarse sampling), so the historic level-3
+  dissolution curve (1.07 → 0.59, "accelerating") carries a scan-depth
+  systematic and the 0.59 endpoint must not be quoted against cf08's
+  0.92 as if commensurable; dissolution re-measurement (#12, §7.5) should
+  scan at the finest level held.
   Verdict: **the t = 50 collapsed-core state is floor-regularized** —
   releasing the floor on it is instantly fatal, so no restart-based ladder
   can separate "the horizon is real" from "the horizon is the floor".
@@ -246,7 +290,15 @@ phase-2 refinement — both with sweeper-proof hold copies on scratch.)
   in one picture (review suggestion 2026-09-04); **radiated-energy
   integrals** — flyby burst vs merger chirp+ringdown: the peaks say the
   flyby wins (§2), the energy integral is the merger's rebuttal and nobody
-  has computed it; pack + push.
+  has computed it; **event-horizon tracer on the production plotfile stack**
+  (user suggestion 2026-09-04) — null rays through the wrapper's
+  `EvolvingMetricField` (the f_geo_evol machinery): the last outgoing ray
+  that escapes IS the event horizon, the slicing-independent answer the
+  Theta scan cannot give.  Needs the run's FUTURE on disk — dense plotfile
+  cadence over the whole window — so it is a production-run deliverable,
+  useless on the 3-file death stacks; mind the env-var trap
+  (`score_evolving_geodesic.py` silently wrong in default search mode);
+  pack + push.
 
 **Minimum publishable set** if the clock runs short: headline arm + seam
 twin + level-6 twin + BBH control (done) + head-on.

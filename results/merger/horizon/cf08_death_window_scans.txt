@@ -1,0 +1,60 @@
+# Offline scans of the cf08 (floor-ladder reference) death window, 2026-09-04.
+# ah_radial_scan.py at level 5 (--half 2.0 --rmin 0.06) after the level-3
+# default scan reported no trapped surface; the level ladder on Plt05500
+# isolates the scan-depth systematic.  Run: merge_twin_p012_cf08_t060_r05000.
+
+== level-5 scans + NaN checks, all three files
+##### BinaryWormholePlt05450
+  chi: nan=0  min=1.000e-08  max=3.754e-01
+  h11: nan=0  min=6.895e-01  max=3.104e+00
+  lapse: nan=0  min=1.000e-10  max=2.307e+00
+  K: nan=0  min=-7.415e-01  max=7.379e-01
+BinaryWormholePlt05450  t=54.50
+  shell-max crossing (in-code convention): r = 0.940 (shell max there -0.025; next shell +0.079)
+  rays trapped: 20%   r_AH min/mean/max = 0.949 / 1.363 / 1.772
+  along +z: nan   along -z: nan   equator min/max: 0.949/1.744
+##### BinaryWormholePlt05500
+  chi: nan=0  min=1.000e-08  max=3.775e-01
+  h11: nan=0  min=6.943e-01  max=3.142e+00
+  lapse: nan=0  min=1.000e-10  max=2.980e+00
+  K: nan=0  min=-7.736e-01  max=9.082e-01
+BinaryWormholePlt05500  t=55.00
+  shell-max crossing (in-code convention): r = 0.920 (shell max there -0.029; next shell +0.108)
+  rays trapped: 19%   r_AH min/mean/max = 0.146 / 1.378 / 1.780
+  along +z: nan   along -z: nan   equator min/max: 0.930/1.562
+##### BinaryWormholePlt05550
+  chi: nan=0  min=1.000e-08  max=3.798e-01
+  h11: nan=0  min=6.619e-01  max=4.888e+00
+  lapse: nan=0  min=1.000e-10  max=3.497e+00
+  K: nan=0  min=-2.226e+00  max=1.133e+00
+BinaryWormholePlt05550  t=55.50
+  shell-max crossing (in-code convention): r = 0.900 (shell max there -0.023; next shell +0.146)
+  rays trapped: 20%   r_AH min/mean/max = 0.141 / 1.377 / 1.772
+  along +z: nan   along -z: nan   equator min/max: 0.908/1.559
+
+== level ladder + shell K/lapse/chi credibility check, Plt05500
+##### level 3
+BinaryWormholePlt05500  t=55.00
+  no fully-trapped shell
+  NO trapped surface found on any ray
+##### level 4
+BinaryWormholePlt05500  t=55.00
+  no fully-trapped shell
+  rays trapped: 0%   r_AH min/mean/max = 1.682 / 1.724 / 1.770
+  along +z: nan   along -z: nan   equator min/max: nan/nan
+##### level 5
+BinaryWormholePlt05500  t=55.00
+  shell-max crossing (in-code convention): r = 0.920 (shell max there -0.029; next shell +0.108)
+  rays trapped: 19%   r_AH min/mean/max = 0.146 / 1.378 / 1.780
+  along +z: nan   along -z: nan   equator min/max: 0.930/1.562
+##### K-rim credibility (shell K/lapse/chi)
+BinaryWormholePlt05500  t=55.00  (level 4)
+   r    K mean/max      lapse mean/min   chi mean/min
+   0.5   +0.000/ +0.002   6.563e-01/5.985e-01   5.713e-01/5.137e-01
+   1.0   +0.000/ +0.005   6.577e-01/5.210e-01   5.730e-01/4.361e-01
+   1.5   +0.001/ +0.013   6.611e-01/4.212e-01   5.768e-01/3.349e-01
+   2.0   +0.001/ +0.030   6.677e-01/2.896e-01   5.841e-01/2.041e-01
+   2.1   +0.001/ +0.035   6.694e-01/2.595e-01   5.860e-01/1.759e-01
+   2.5   +0.002/ +0.065   6.786e-01/1.255e-01   5.963e-01/6.679e-02
+   3.0   +0.001/ +0.086   6.957e-01/1.005e-02   6.149e-01/1.345e-03
+   3.3   +0.001/ +0.086   7.085e-01/4.649e-02   6.284e-01/1.913e-02

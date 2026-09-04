@@ -21,6 +21,8 @@ ap.add_argument('--half', type=float, default=2.5,
                 help='half-width of the covering box (also the ray ceiling)')
 ap.add_argument('--level', type=int, default=3,
                 help='covering-grid level (capped at the finest in the file)')
+ap.add_argument('--rmin', type=float, default=0.25,
+                help='innermost ray radius (default 0.25, the historic value)')
 args = ap.parse_args()
 plt_path = args.plt_path
 CEN = np.array(args.center)
@@ -75,7 +77,7 @@ th = np.linspace(0.02, np.pi - 0.02, nth)
 ph = np.linspace(0, 2 * np.pi, nph, endpoint=False)
 TH, PH = np.meshgrid(th, ph, indexing='ij')
 nvec = np.stack([np.sin(TH) * np.cos(PH), np.sin(TH) * np.sin(PH), np.cos(TH)])
-rs = np.arange(0.25, HALF - 0.2, 0.02)
+rs = np.arange(args.rmin, HALF - 0.2, 0.02)
 pts = nvec[:, None] * rs[None, :, None, None]        # (3, nr, nth, nph)
 idx = (pts + HALF) / dx - 0.5
 Tray = map_coordinates(Theta, idx.reshape(3, -1), order=1).reshape(rs.size, nth, nph)
