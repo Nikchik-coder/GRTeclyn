@@ -77,20 +77,39 @@ argmin-neighbourhood fix of §9 stands).*
 
 **Next — cheap, no GPU conflict, one approval each**
 
-- [ ] **#3 p012 horizon re-check** — offline theta+ scan of the t = 51
-  plotfile (§9: the trapped ring sits on a collapsed-lapse shell).  Alone
-  it is NOT decisive: the offline scanner reads the same chi-clipped state
-  as the in-code scan, so their 0.7 % agreement is one instrument twice.
-  The decisive test is the #16 floor ladder; run this scan as its cheap
-  companion.
-- [ ] **#4 p020 horizon scan** — 3 held final plotfiles (t = 51.0/51.5/52.0,
-  7.1 G scratch); needs a centre/half CLI variant of `ah_radial_scan.py`;
-  delete the plotfiles after.
+- [x] **#3 p012 horizon re-check — ANSWERED (2026-09-04): the offline scan
+  confirms the trapped shell at r ≈ 1.**  Run on the nodamp twin's held
+  death plotfiles (twin ≡ plain per #14; level 3): outermost fully-trapped
+  shell r = 1.11 / 1.09 / 1.07 at t = 50.5 / 51.0 / 51.5, vs the in-code
+  refined-run r = 1.0 at t = 51.06 — a different run, different resolution,
+  different implementation, same verdict.  The standing caveat stands
+  unchanged: both instruments read the same chi-clipped state, so this is
+  supporting, not decisive — the decisive word is the from-t = 0 low-floor
+  twin (nodamp_cf10, in flight).
+- [x] **#4 p020 horizon scan — ANSWERED (2026-09-04): p = 0.20 has a
+  credible common trapped surface, larger than p012's.**  All 3 held
+  plotfiles scanned (CLI variant of `ah_radial_scan.py` added:
+  `--center/--half/--level`, defaults unchanged for the pack script):
+  outermost fully-trapped shell r = 2.07 / 2.11 / 2.13 at
+  t = 51.0 / 51.5 / 52.0 (ray-mean r_AH 2.72–2.74, 78 % of rays).
+  Credibility checks PASS where helfer/p035 failed: K on the r = 2.1 shell
+  is 0.04 mean / 0.13 max — nowhere near the K ≈ 1 blob rim — and the
+  shell sits in healthy data (chi ≥ 0.10, lapse ≥ 0.09, five orders above
+  the floor), unlike p012's shell.  Plotfiles NOT deleted yet: #13
+  explicitly needs these same 3 files — delete after #13 runs.
 - [ ] **#5 L = 128 / N = 256 smoke test** — t = 5; measures memory (~75 GB
   estimate, tight) and speed; decides L = 128 vs the L = 96 fallback (§4).
-- [ ] **#6 Production templates** — in-code Weyl extraction ON (params-only):
-  radii 20/28/36/44, levels 0, modes through l = 4 all m, sphere points
-  ≥ 24/37; `--scalar-modes` in `WHM_CONSUME_ARGS` (§4).
+- [x] **#6 Production templates — DONE (2026-09-04, params-only, nothing
+  launched).**  `templates_scan/params_prod_L128_p012_t060.txt` (headline)
+  and `params_prod_L96_p012_t060.txt` (s4 fallback: sponge 40→48, radii
+  20/26/32/38), both derived from the smoke template whose extraction
+  block (radii 20/28/36/44, levels 0, l ≤ 4 all m, points 24/37) the live
+  smoke run is validating right now; production deltas: stop_time 60,
+  checkpoints ON every 10 units keep 3, probe key dropped.
+  `launch_production_L128.sh` carries `--scalar-modes 0 1 2` in
+  `WHM_CONSUME_ARGS` (the s4 non-vacuum-exterior defence) and a VARIANT=L96
+  switch; both variants dry-run clean.  Launch gated on the #5 memory
+  number and explicit approval.
 - [ ] **#7 Launcher hardening** — `run_single.sh` falls back to the grid
   centre or refuses to start when the params has no `center` key (the
   consumer-junk bug, §1).  Only after the current runs end — the script is
@@ -98,8 +117,15 @@ argmin-neighbourhood fix of §9 stands).*
 - [ ] **#8 Repulsion a-points** — a = 1.5 and 3 at rest, level 3–4, t ≈ 20,
   initial acceleration; scalar-charge prediction F ∝ q_A·q_B attached
   (§7.6).  Hours.
-- [ ] **#9 Wave-8 close-out checks** — second peak at R = 30 near t ≈ 93;
-  R = 30 tail past ceiling 84.5.  Data on disk; the analysis never ran.
+- [x] **#9 Wave-8 close-out checks — ANSWERED (2026-09-04): the second
+  peak is a real outgoing wave, and the tail past the ceiling is clean.**
+  (a) The R = 14 second peak (t = 75.1, rΨ₄ = +1.63e-2) reappears at
+  R = 30 at t = 94.0 — delay 18.9 vs the wave-7 main-signal lag 18.0 —
+  with rΨ₄ ratio 1.085 vs 1.0 for pure 1/R (R = 30 is in-sponge; shape
+  and timing only, per the wave-8 caveat).  Identical in both arms.
+  (b) Tail past the causal ceiling 84.5: the seam-radius twins (fill vs
+  fillwide) agree to 0.09 % of the tail peak, corr 1.000000 — the tail is
+  not seam-written; the R = 30 late data is usable.
 
 **Credibility tests — run BEFORE any production launch.**  They decide
 what the production arms are allowed to claim.  All level-3 runs or short
@@ -164,7 +190,9 @@ phase-2 refinement — both with sweeper-proof hold copies on scratch.)
   recipe that bought the p012 family +1.4 units of wall per level.  The
   from-t = 0 L5 arm got none of that gain (χ clipped at the pits at t = 0,
   §9).  This run rescues — or honestly kills — the capture-boundary
-  figure; same recipe p015 needs if it hovers.
+  figure; same recipe p015 needs if it hovers.  (2026-09-04: #4's offline
+  scan already finds a credible L3 common trapped shell at r ≈ 2.1 in
+  p020 — the boundary figure starts from strength.)
 
 **Production — blocked on the open decisions (§8)**
 

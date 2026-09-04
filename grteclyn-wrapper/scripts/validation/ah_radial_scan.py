@@ -6,18 +6,28 @@ that direction.  Physical metric gamma_ij = h_ij/chi (det h = 1), physical
 K_ij = (A_ij + h_ij K/3)/chi, sqrt(gamma) = chi^-1.5.
 Theta = div_gamma(s) + K_ij s^i s^j - K,  s = unit gamma-normal of r=const.
 """
-import sys, warnings
+import argparse, sys, warnings
 import numpy as np
 warnings.filterwarnings('ignore')
 import yt
 yt.set_log_level(50)
 from scipy.ndimage import map_coordinates
 
-plt_path = sys.argv[1]
-CEN = np.array([32.0, 32.0, 32.0])
-HALF, LEVEL = 2.5, 3
+ap = argparse.ArgumentParser(description=__doc__)
+ap.add_argument('plt_path')
+ap.add_argument('--center', nargs=3, type=float, default=[32.0, 32.0, 32.0],
+                metavar=('X', 'Y', 'Z'))
+ap.add_argument('--half', type=float, default=2.5,
+                help='half-width of the covering box (also the ray ceiling)')
+ap.add_argument('--level', type=int, default=3,
+                help='covering-grid level (capped at the finest in the file)')
+args = ap.parse_args()
+plt_path = args.plt_path
+CEN = np.array(args.center)
+HALF, LEVEL = args.half, args.level
 
 ds = yt.load(plt_path)
+LEVEL = min(LEVEL, ds.index.max_level)
 dx = float(ds.index.get_smallest_dx())
 N = int(round(2 * HALF / dx))
 cg = ds.covering_grid(LEVEL, left_edge=CEN - HALF, dims=[N] * 3)
@@ -65,7 +75,7 @@ th = np.linspace(0.02, np.pi - 0.02, nth)
 ph = np.linspace(0, 2 * np.pi, nph, endpoint=False)
 TH, PH = np.meshgrid(th, ph, indexing='ij')
 nvec = np.stack([np.sin(TH) * np.cos(PH), np.sin(TH) * np.sin(PH), np.cos(TH)])
-rs = np.arange(0.25, 2.30, 0.02)
+rs = np.arange(0.25, HALF - 0.2, 0.02)
 pts = nvec[:, None] * rs[None, :, None, None]        # (3, nr, nth, nph)
 idx = (pts + HALF) / dx - 0.5
 Tray = map_coordinates(Theta, idx.reshape(3, -1), order=1).reshape(rs.size, nth, nph)
