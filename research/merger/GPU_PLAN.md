@@ -324,9 +324,13 @@ p045 "common horizon at t = 43.3" (documented theta false positive).
 | Result | Status |
 |---|---|
 | **Like-oriented throats repel** — 5× gravity at a = 2, m = 1; push scales with throat width, not mass; pull/push 1.50 vs 6/4 predicted | three control arms, 2026-08-31 |
-| **Opposite-oriented throats attract and merge** — gravity-driven, collapse t ≈ 45, common horizon (pending re-check #3) | both freeze arms to t = 80 |
-| **The interior freeze survives the merger; the signal is a genuine GW** — speed, 1/R falloff, static-offset and not-freeze-junk checks | closed 2026-09-02 |
+| **Opposite-oriented throats attract and merge** — gravity-driven; common trapped surface at r ≈ 1.0 confirmed by two instruments (in-code refined run + offline twin scan, #3); p = 0.20 has its own, larger one at r ≈ 2.1 that passes the K-rim filter (#4) | #3/#4 closed 2026-09-04; floor-independence pending nodamp_cf10 |
+| **The wall (t ≈ 52 death) is gauge + resolution, not physics** — one gauge knob moves it 8.4 units (#15); it reproduces on the identical step (#1 rerun); refinement pushes it +1.4 units/level; damping does not touch it (#14, Δ 0.5 units ≈ noise) | credibility batch, 2026-09-03/04 |
+| **The merger's true peak is measured: \|rΨ₄\| (2,2) = 2.96e-2 at R = 14, t = 55.5** — ~3 units past the wall, via the freeze; R = 30 confirms (2.996e-2 at t = 73.5, lag 18, 1/R to 1.3 %); freeze arm matches the unfrozen twin to 0.7 % pre-wall.  L = 64 box — production re-measures clean | freeze chain, computed 2026-09-04 |
+| **The interior freeze survives the merger; the signal is a genuine GW** — speed, 1/R falloff, static-offset and not-freeze-junk checks; second peak propagates 14 → 30 with the measured lag and clean post-ceiling tail (#9) | closed 2026-09-02; #9 2026-09-04 |
 | **Same IVP, different object** — the wormhole merger beats the vacuum BBH by ~20 units of infall and 2.3× (m = 2) / 5.5× (m = 0) in brightness | BBH control, 2026-09-03 |
+| **Flybys radiate a real GW burst, louder in raw peak than the merger** — p035 4.5e-2, p045 5.6e-2 (rΨ₄ (2,2), R = 14), both propagating 14 → 30 with the right delay; merger peak 2.96e-2.  Faster encounter, stronger bremsstrahlung burst; the merger's edge is the chirp + ringdown, not the peak.  Caveats: p045 R = 14 past t ≈ 70 is ejected phantom crescents crossing the sphere, not GW; t = 10–20 bumps are ID junk | computed 2026-09-04 |
+| **p = 0.15 outradiates p = 0.12** — 3.05e-2 at its wall and still rising, already above p012's *complete* peak (2.96e-2); the fusing branch is the louder merger | partial (wall-cut); p015_lvl5 in flight |
 
 Freeze-method validation (the method section): the seam-radius twins agree
 to 5 digits at every shared waveform sample; the frozen arm is bit-identical
