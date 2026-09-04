@@ -19,6 +19,31 @@ argmin-neighbourhood fix of §9 stands).*
 
 ---
 
+## Working a run, systematically
+
+Every campaign run, when it terminates, goes through the same close-out —
+no exceptions, no ad-hoc shortcuts:
+
+1. **run → finished** — confirm from `ADVANCE at time` lines (never
+   "TimeStep time:", which is wall-clock), and read the death step's data
+   for NaN pollution before quoting any number from it.
+2. **check tmp for pollution** — leftover plotfiles/checkpoints on
+   `/tmp/grteclyn_scratch/<run>/` and in the run dir.
+3. **prune if needed** — after any offline scan that still needs the
+   plotfiles; log every deletion in the current `MANIFEST_CLEANUP_*.md`.
+4. **check results → valuable → copy from runs/ to results/** — add the
+   run to `results/merger/analysis/make_summary.py` (WHAT + ORDER), then
+   `bash research/merger/pack_results.sh`; results/ is the git-kept
+   record, runs/ is not.
+5. **update the results README exactly where needed** — the claim-first
+   sections each name the statement being proved; the new run goes into
+   that statement's Claim/Runs lines, and the "nothing in flight" note is
+   kept truthful.
+6. **update this plan** — §2 spine, §3 table, and the numbered item the
+   run answers.
+
+---
+
 ## 0. The plan
 
 **In flight**
@@ -175,15 +200,20 @@ phase-2 refinement — both with sweeper-proof hold copies on scratch.)
   (Wave 3a tested the source term, not the slicing — different question.
   The shock-avoiding lapse f = 1 + kappa/alpha^2 would need code; not
   worth it now that the params-only arm has answered.)
-- [ ] **#16 χ-floor ladder** — `min_chi` is a flat params key (production
-  value 1.0e-8): restart segments t = 50 → ~53 from the #14 base **(in
-  hand: nodamp Chk05000, t = 50, hold copy on scratch)** with levels 4–5
-  added, at min_chi 1e-8 / 1e-10 / 1e-12 (~1–2 h each).  A
-  horizon that moves with the floor is the floor.  Extend the ladder read
-  to the R = 14 waveform over the shared window — floor-independence of
-  the signal is the check a referee will demand on seeing "χ clipped at
-  t = 44.9".  This ladder, not the author, answers §8 decision 7 (whether
-  the horizon sentence is in the paper).
+- [x] **#16 χ-floor ladder — ANSWERED (2026-09-04), and the answer is a
+  warning: the restart route CANNOT certify floor-independence.**  Ladder
+  run off the nodamp t = 50 seed with levels 4–5 added: cf10 (min_chi
+  1e-10) NaN at t + 0.049 on the new level 4; cf12 (1e-12) NaN at
+  t + 0.006 on level 3; cf08 (floor unchanged at 1e-8, same added levels)
+  runs on healthily past t = 52.5 — a clean one-knob attribution.
+  Verdict: **the t = 50 collapsed-core state is floor-regularized** —
+  releasing the floor on it is instantly fatal, so no restart-based ladder
+  can separate "the horizon is real" from "the horizon is the floor".
+  The decisive test moved to the from-t = 0 twin at min_chi 1e-10
+  (`merge_twin_p012_nodamp_cf10_t060`, in flight): if it reproduces the
+  blob, wall and horizon, the claim is floor-independent and the §8.7
+  hedge comes off; if it diverges, the horizon sentence leaves the paper.
+  Until then every horizon/dissolution number is written as contingent.
 - [ ] **#17 p020 restart-refinement** — the only version of "does p = 0.20
   fuse" that tests what it claims: fresh L3 p020 to t ≈ 50 with insured
   checkpoints (~5.5 h), then levels 4–5 added at the checkpoint — the m4e
@@ -211,7 +241,12 @@ phase-2 refinement — both with sweeper-proof hold copies on scratch.)
   negative scalar flux (§7.2);
   remnant-mass QNM discriminator (§7.4); dissolution re-measured on the
   undamped arm (§7.5); frames re-rendered with colour limits taken outside
-  r = 3 (Plan.md issue 17); pack + push.
+  r = 3 (Plan.md issue 17); **causal-diagram figure** — light cones from
+  the freeze seam vs the R = 14/30 extraction windows, the freeze defence
+  in one picture (review suggestion 2026-09-04); **radiated-energy
+  integrals** — flyby burst vs merger chirp+ringdown: the peaks say the
+  flyby wins (§2), the energy integral is the merger's rebuttal and nobody
+  has computed it; pack + push.
 
 **Minimum publishable set** if the clock runs short: headline arm + seam
 twin + level-6 twin + BBH control (done) + head-on.
@@ -330,7 +365,7 @@ p045 "common horizon at t = 43.3" (documented theta false positive).
 | **The interior freeze survives the merger; the signal is a genuine GW** — speed, 1/R falloff, static-offset and not-freeze-junk checks; second peak propagates 14 → 30 with the measured lag and clean post-ceiling tail (#9) | closed 2026-09-02; #9 2026-09-04 |
 | **Same IVP, different object** — the wormhole merger beats the vacuum BBH by ~20 units of infall and 2.3× (m = 2) / 5.5× (m = 0) in brightness | BBH control, 2026-09-03 |
 | **Flybys radiate a real GW burst, louder in raw peak than the merger** — p035 4.5e-2, p045 5.6e-2 (rΨ₄ (2,2), R = 14), both propagating 14 → 30 with the right delay; merger peak 2.96e-2.  Faster encounter, stronger bremsstrahlung burst; the merger's edge is the chirp + ringdown, not the peak.  Caveats: p045 R = 14 past t ≈ 70 is ejected phantom crescents crossing the sphere, not GW; t = 10–20 bumps are ID junk | computed 2026-09-04 |
-| **p = 0.15 outradiates p = 0.12** — 3.05e-2 at its wall and still rising, already above p012's *complete* peak (2.96e-2); the fusing branch is the louder merger | partial (wall-cut); p015_lvl5 in flight |
+| **p = 0.15 outradiates p = 0.12** — the lvl5 arm reached 3.14e-2 at t = 54.2, 6 % above p012's *complete* peak (2.96e-2) and still climbing at death, with no trapped surface formed yet; the fusing branch is the louder merger and its peak is still unmeasured | partial (wall-cut ×3); freeze continuation is the path to its full signal |
 
 Freeze-method validation (the method section): the seam-radius twins agree
 to 5 digits at every shared waveform sample; the frozen arm is bit-identical
@@ -348,7 +383,7 @@ at d = 12 needs p ≈ 0.5 (measured 6× coupling); Newtonian escape ~0.7.
 | p | run(s) | outcome |
 |---|---|---|
 | 0.12 | production family | merges: sep 2.0 at t ≈ 32, fusion 48–51 — the headline plunge |
-| 0.15 | p015_nofill, p015_rr | fusing branch, wall-cut mid-fusion (dive to 0.69, lapse rising); wall at 53.35 in both, same step — needs the #17 recipe to finish (#1) |
+| 0.15 | p015_nofill, p015_rr, p015_lvl5 | fusing branch, wall-cut mid-fusion three times: L3 wall at 53.35 (twice, same step); the levels-4–5 restart pushed it to **54.23** (+0.88) and STILL no fully-trapped shell (offline scan t = 54.0: 1 % of rays) while the waveform kept climbing (3.14e-2 at death, 6 % above p012's complete peak).  Refinement alone cannot outrun this wall — finishing p015 means the freeze (#1) |
 | 0.20 | p020_nofill, p020_lvl5 | captured; hovered at sep 1.08–1.19; wall at 52.08 / 52.07 — cannot fuse |
 | 0.25 | p025, p025_lvl5 | captured to sep ~1.5–1.9; wall at 52.98 / 52.79 — cannot fuse |
 | 0.35 | p035 | fly-by: min sep 2.75 at t = 42.4, receding when stopped |
@@ -636,10 +671,14 @@ exact ± symmetry); 7 % match vs the independent slice-cache ring harmonic.
 5. **N = 192 wave-zone twin** (§7.3).
 6. **Twin-from-t = 0** of the headline arm (§7.7) — only if a per-waveform
    reproducibility bar is wanted beyond the quoted ±0.35 floor.
-7. **The horizon sentence** — is it in the paper at all?  Answered by the
-   #16 floor ladder, not by the author.  Until it passes, "a short-lived
-   black hole that dissolves" is written as contingent and the Letter
-   framing does not lean on it.
+7. **The horizon sentence** — is it in the paper at all?  Not the author's
+   call.  The #16 ladder answered with a warning (the t = 50 state is
+   floor-regularized; restarts cannot certify), so the question now hangs
+   on the from-t = 0 low-floor twin (nodamp_cf10, in flight).  Until it
+   passes, "a short-lived black hole that dissolves" is written as
+   contingent and the Letter framing does not lean on it; the
+   negative-energy-accretion *mechanism* is additionally gated on #13
+   (README wording aligned 2026-09-04).
 8. **Initial-separation robustness arm** — one plunge from d = 16–18 at
    rescaled p (superposition defect 0.63× per the d^-1.6 law; ~1 day at
    level 3 + restart).  If the collapse sequence, wall and waveform shape
@@ -652,6 +691,23 @@ Answered by events: scan values — run; headline intent — plunge-led,
 p = 0.12 decided; BBH control — done; the damping-off control is no longer
 deferred — it is #14 in the credibility batch.  Nothing above launches
 until answered; every launch is one by-hand approval.
+
+**External review pass (2026-09-04), checked against the ledger.**  Kept:
+(a) the flyby-louder-than-merger peak is *gravitational bremsstrahlung* —
+h ∝ Q̈, and p = 0.45 carries ~4× the transverse momentum, so the periapsis
+whip out-peaks the low-momentum plunge; the merger's edge is chirp +
+ringdown + (to be computed, #12) total energy.  (b) Paper framing: this is
+the **merger–ringdown phase of an exotic-compact-object binary**, not an
+astrophysical detection template — a quasi-circular inspiral cannot be
+simulated here because the single-throat growing mode makes the 40 M
+window a fuse (§3 fuse audit); note in the article that detector templates
+would stitch PN/EOB inspiral onto this NR plunge.  (c) The causal-diagram
+figure and the d = 16 robustness arm (decision 8) flagged as the two
+strongest referee defences — both already tracked (#12, §8.8).
+Rejected: the review asserted "confirmation of classical negative-energy
+accretion" — that is the unmeasured #13 hypothesis; README wording
+re-hedged the same day (shrinkage = measurement, mechanism = inference,
+both contingent on the floor gate in #16/§8.7).
 
 ---
 

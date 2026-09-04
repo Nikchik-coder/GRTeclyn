@@ -53,6 +53,12 @@ WHAT = {
     "merge_twin_p012_lc1_t060": "gauge arm (#15), lapse_coeff 2 -> 1: blob and plunge intact (sep 0.442) but the wall moved to t = 43.64 -- wall time is gauge, not physics",
     "merge_twin_p012_nodamp_t060": "damping-off arm (#14): blob nucleates identically without damping (t = 32 slices match plain to 3 decimals); wall at t = 51.53 vs plain 52.06 -- damping neither causes nor delays the wall",
     "merge_orbit_flip_d12_p015_rr_t060": "p = 0.15 rerun with insured checkpoints: wall reproduced at the same step (t = 53.35); the t = 50 seed for the phase-2 refinement is held",
+    "merge_orbit_flip_d12_p015_lvl5_t060_r05000": "p = 0.15 refined restart (max_level 5 from the t = 50 seed): wall pushed only +0.88 (h11 NaN t = 54.23), no trapped surface at death, waveform still rising at 3.14e-2 -- wall-cut mid-fusion a third time",
+    # The floor ladder (#16, 2026-09-04): chi_floor rungs restarted from the t = 50 seed.
+    "merge_twin_p012_cf08_t060_r05000": "floor ladder rung chi_floor 1e-8 (the reference control), restart from t = 50 -- IN FLIGHT",
+    "merge_twin_p012_cf10_t060_r05000": "floor ladder rung chi_floor 1e-10: NaN 0.006 after restart -- the t = 50 state is floor-regularized, restarts cannot certify floor-independence",
+    "merge_twin_p012_cf12_t060_r05000": "floor ladder rung chi_floor 1e-12: NaN 0.049 after restart -- same verdict as cf10",
+    "merge_twin_p012_nodamp_cf10_t060": "the decisive floor test: damping off AND min_chi 1e-10 from t = 0 (not a restart) -- IN FLIGHT",
     "bbh_control_d12_p012": "vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100",
     "bbh_control_d12_p012_t150": "BBH control rerun to t = 150, fixed-center consumer: full ringdown in hand, instruments agree to 0.3 %, QNM fit consistent with a Kerr remnant (~15.6M / ~14.2M at R = 30)",
 }
@@ -81,6 +87,11 @@ ORDER = [
     "merge_orbit_flip_d12_p025_lvl5_t200",
     "merge_orbit_flip_d12_p015_nofill_t060",
     "merge_orbit_flip_d12_p015_rr_t060",
+    "merge_orbit_flip_d12_p015_lvl5_t060_r05000",
+    "merge_twin_p012_cf08_t060_r05000",
+    "merge_twin_p012_cf10_t060_r05000",
+    "merge_twin_p012_cf12_t060_r05000",
+    "merge_twin_p012_nodamp_cf10_t060",
 ]
 CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
 

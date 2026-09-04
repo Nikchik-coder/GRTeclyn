@@ -24,9 +24,12 @@ that produced it does not.
 3. Then the merged object **dies** — a NaN wherever un-damped phantom matter sits on
    collapsed geometry. Four arms, four different treatments, four deaths between
    t = 51.7 and t = 55.0.
-4. The arm that lived longest measured why: the common horizon is **shrinking**, 1.07 at
-   t = 51.5 down to 0.59 at t = 55.0, and accelerating. Phantom matter falling in
-   carries negative energy across the horizon, and the horizon pays for it.
+4. The arm that lived longest measured the horizon **shrinking**, 1.07 at t = 51.5 down
+   to 0.59 at t = 55.0, and accelerating. The natural reading — infalling phantom matter
+   carrying negative energy across the horizon — survives every exclusion test run so
+   far (damping the matter away pushes the budget the *other* way), but the energy-density
+   sign at the horizon has not yet been measured directly (GPU_PLAN #13); until it is,
+   the mechanism is stated as inference, the shrinkage as measurement.
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
    (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and
@@ -35,7 +38,8 @@ that produced it does not.
 6. And it is not a resolution artefact. A 25 % finer grid reproduces the inspiral to
    within 1.8 % and the waveform to within 4 % — and then dies of the same NaN
    1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
-   would cost roughly 90× the compute.
+   would cost roughly 90× the compute. (Confirmed again on p = 0.15: a max_level 5
+   restart bought +0.88 over the level-3 wall and still died mid-fusion.)
 7. The result survived its credibility batch (2026-09-03/04): turn the core damping
    off and nothing claimed changes; change the slicing and the *physics* holds while
    the crash time moves 8.4 units (the wall is gauge, not an event); rerun a scout
@@ -49,7 +53,10 @@ what the text asserts, the runs that establish it, and where the numbers sit.
 Runs overlap between claims — that is the point of the map. *(pack)* = has a
 directory under `campaign/`; *(run tree)* = lives only in the gitignored
 `runs/wormhole_merger/` tree on the production machine. As of 2026-09-04
-**nothing is in flight** — every pack entry is a finished run.
+two pack entries are snapshots of runs **still in flight** — the floor-ladder
+reference rung `merge_twin_p012_cf08_t060_r05000` and the decisive from-t = 0
+low-floor twin `merge_twin_p012_nodamp_cf10_t060`; both will be repacked at
+their close-out. Every other pack entry is a finished run.
 
 ### The initial data is validated: a single throat holds 40 time units
 - **Claim.** The grid represents each wormhole by folding its entire far
@@ -94,17 +101,30 @@ directory under `campaign/`; *(run tree)* = lives only in the gitignored
   `collapse_diagnostics.dat` (collapse), `horizon/` (the trapped surface).
 
 ### The merged object is a black hole that dissolves
-- **Claim.** The common horizon shrinks — 1.07 at t = 51.5 down to 0.59 at
-  t = 55, accelerating — as phantom matter carries negative energy across it.
+- **Claim (measured).** The common trapped surface shrinks — 1.07 at t = 51.5
+  down to 0.59 at t = 55, accelerating — on two independent damping schemes
+  giving one dissolution curve. The run dies at t = 55 with the surface still
+  shrinking: this is the **onset** of dissolution, not its endpoint, and the
+  paper must not claim the completed disappearance.
+- **Mechanism (inference, not yet measurement).** Phantom matter carrying
+  negative energy across the horizon fits every exclusion test (deleting the
+  matter by damping pushes the energy budget the other way), but the
+  energy-density sign at the horizon is the still-unrun GPU_PLAN #13
+  measurement. Until #13 lands, the paper states the shrinkage and *offers*
+  the mechanism; it does not assert it.
 - **Runs.** `merge_orbit_flip_d12_r04000` and `..._rw_r05000` *(pack)* — two
   independent damping schemes, one dissolution curve; `..._sg10_r05000`
   *(pack)* corroborates the death; the measurement itself is the offline scan
   in `horizon/`.
 - **Say it as.** The merger produces a short-lived black hole that dissolves
-  by swallowing its own exotic matter. If "dissolves" reads too soft,
-  "evaporates classically" or "is extinguished by negative-energy accretion"
-  are accurate alternatives — the process is classical accretion with the
-  wrong sign of energy, nothing to do with Hawking radiation.
+  by swallowing its own exotic matter — written as **contingent** (GPU_PLAN
+  §8 decision 7). Two gates before the hedge comes off: (1) the 2026-09-04
+  floor ladder showed the collapsed-core state is floor-regularized (a
+  relaxed χ-floor on the t = 50 state is instantly fatal), so horizon and
+  dissolution numbers stand only if the from-t = 0 low-floor twin reproduces
+  them; (2) "extinguished by negative-energy accretion" and "evaporates
+  classically" are allowed only after #13 measures the sign. Nothing here is
+  Hawking radiation either way.
 
 ### The instability belongs to the merged core, not the code
 - **Claim.** Deny the merger and the evolution is healthy.
@@ -169,8 +189,16 @@ directory under `campaign/`; *(run tree)* = lives only in the gitignored
   plateau at pit sep 0.816 (p012's was 0.815), dive to 0.70 with the core
   lapse *rising* (p012's endgame signature) — but the wall (53.35, the
   same step in both runs) cut it before the pits coincided.  So the fusing/
-  hovering divide sits between 0.15 and 0.20, and p = 0.15 needs the
-  restart-refinement recipe to finish what it starts.
+  hovering divide sits between 0.15 and 0.20.  The restart-refinement
+  recipe was then tried and is **not enough**:
+  `..._p015_lvl5_t060_r05000` *(pack)* — max_level 5 from the insured
+  t = 50 seed — pushed the wall only +0.88 (h11 NaN at t = 54.23), the
+  offline scan of its last plotfiles finds **no trapped surface** (1 % of
+  rays at t = 54.0), and the (2,2) waveform was *still climbing* at death:
+  3.14e-2, already 6 % above p012's complete peak.  p = 0.15 was wall-cut
+  mid-fusion a third time; refinement alone cannot outrun the wall, and
+  finishing p = 0.15 — and its full, larger signal — means the core-freeze
+  continuation validated on p012.
 
 ### The Helfer correction: better initial data, worse evolution
 - **Claim.** The correction removes the superposition's constraint defect at

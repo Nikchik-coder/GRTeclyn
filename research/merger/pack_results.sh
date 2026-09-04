@@ -73,13 +73,19 @@ for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/; do
   rm -rf "${out}"
   mkdir -p "${out}"
 
-  # An arm whose run directory was lost keeps only its note and its log.
+  # An arm with no evolution streams (lost, or dead before the first
+  # extraction step) keeps its note, its provenance and the log with the
+  # abort in it -- that is the whole evidence such an arm contributes.
   if [[ ! -d "${rundir}/data" && ! -d "${rundir}/extraction_data" ]]; then
     for f in LOST.md launch_banner.txt; do
       [[ -f "${rundir}/${f}" ]] && cp "${rundir}/${f}" "${out}/"
     done
+    [[ -f "${rundir}/params.txt" ]] && cp "${rundir}/params.txt" "${out}/evolution_params.txt"
+    [[ -f "${rundir}/Backtrace.0" ]] && cp "${rundir}/Backtrace.0" "${out}/backtrace.txt"
     if [[ -f "${rundir}/run.log.gz" ]]; then
       zcat "${rundir}/run.log.gz" | tail -n 200 > "${out}/run_tail.log"
+    elif [[ -f "${rundir}/run.log" ]]; then
+      tail -n 200 "${rundir}/run.log" > "${out}/run_tail.log"
     fi
     found=$(find "${out}" -maxdepth 1 -type f \( -name '*.txt' -o -name '*.md' -o -name '*.log' \))
     [[ -n "${found}" ]] && scrub ${found}
