@@ -283,6 +283,25 @@ at its close-out. Every other pack entry is a finished run.
   production depth, stopped at t = 31.5; `..._helfer_w2_t060` *(pack)* —
   window halved to 2.0, killed by its pre-registered verdict (sep 5.10 > 4.5
   at t = 32), stopped by hand at t = 33.1.
+- **The fly-by test, and why the initial size artefact is the point**
+  *(2026-09-04)*. `merge_orbit_flip_d12_p045_helfer_t090` *(pack)* ran the
+  correction on an arm that never merges, against the existing plain
+  `..._p045_t200` as an exact one-flag control, to ask whether the late
+  accuracy loss is an initial-data artefact. Answer, from t = 30 on: the plain
+  arm's Hamiltonian norm sits flat at 2.15–2.21e-03 while the corrected arm
+  grows 3.18e-03 → 1.59e-02, a factor 5 in seven units. Because the
+  denominator is constant this is a real signal, not the ratio noise that
+  earlier readings of this pair mistook for one (the pointwise ratio swings
+  940× on regrid steps; quote rolling medians only).
+  **Read it with the isolated-throat control, not alone.** `single_hold_t100`
+  shows one throat, no companion and no superposition defect at all, holding
+  its exact areal radius for 26 units and then contracting exponentially. The
+  clocks match (26 vs 30). So the correction is not "worse initial data" — its
+  +9.5 % change in each throat's initial size is a large perturbation of an
+  *unstable equilibrium*, and it simply reaches the mode sooner. The honest
+  claim is that the late degradation is neither an initial-data artefact nor a
+  binary effect, but the constituent's own instability. Stopped by request at
+  t = 37.29 of 90, short of the pre-registered t = 50–70 verdict point.
 
 ### The freeze wall itself: lapse collapse at the midpoint, not the throats
 - **Claim.** In every binary the lapse collapses at the inter-throat midpoint

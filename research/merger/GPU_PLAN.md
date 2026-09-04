@@ -151,9 +151,14 @@ windowed so infinity never sees the subtraction:
     W_X(r_X) = exp[ -(r_X / w)^p ],       w = helfer_width (0 = auto = d/3),
                                           p = helfer_power (default 2)
 
-It trades a measured ~9.5% error in each throat's initial size for a measured
-1.8x increase in the initial Hamiltonian violation.  REJECTED for production
-(it stalls mergers); currently under test on a fly-by as **B6**.
+It trades a measured ~9.5% error in each throat's initial size for a **1.13x**
+increase in the initial Hamiltonian violation.  (CORRECTED 2026-09-04: this
+line read "1.8x", which was wrong.  Checked across all seven arms that carry
+the correction and all three that do not — every corrected arm starts at
+3.34-3.38e-03 and every plain arm at 2.99e-03, so the ratio is 1.12-1.13 with
+no spread worth quoting.  The 1.8x came from reading a regrid-spiked sample as
+if it were a level; see B6 for how that statistic misbehaves.)  REJECTED for
+production (it stalls mergers); currently under test on a fly-by as **B6**.
 
 ### M4. Gravity sector and gauge — the production values
 
@@ -551,24 +556,78 @@ mergers because the mass lives in the lapse rather than the conformal factor.
 That objection does not apply to a fly-by, which never merges.  This run is a
 diagnostic, not a production candidate.)*
 
-**Early reading, t <= 10 of 90 — leaning INTRINSIC, i.e. the bad outcome:**
+**WITHDRAWN — the early "leaning INTRINSIC" reading (2026-09-04).**  It was
+built on the helfer/plain ratio at four sample times (1.13, 1.22, 1.78, 1.59 at
+t = 0/4/8/10) read as a widening gap.  **That statistic does not exist.**
+Sampled every 0.1 units to t = 30 the pointwise ratio runs from 0.02 to 18.3 —
+a 940x swing in the orbit pair, and 127000x in the twin pair.  The L2 Hamiltonian
+norm spikes by an order of magnitude on regrid steps in BOTH arms independently,
+so their ratio is dominated by whether the two runs happened to regrid at the
+same instant.  The 1.78 at t = 8 is one draw from that; so is the 0.20 at t = 24
+that would have "proved" the opposite.  Same error the a-ladder made: one arm's
+increment read without its error bar.
 
-  t      helfer      plain    ratio
-  0     3.38e-03   2.99e-03    1.13
-  4     4.59e-03   3.77e-03    1.22
-  8     6.99e-03   3.92e-03    1.78
-  10    7.54e-03   4.76e-03    1.59
+**The spike-insensitive version.**  Rolling 5-unit median of each series, then
+the ratio of the medians:
 
-The corrected arm is *worse* than plain and the gap is widening.  If that
-holds, better initial data does not fix the late-time degradation and the
-"artefact" branch is dead.
+  pair            t=0 ratio   median-of-ratio   ratio-of-medians @ t=30   band, t>10
+  orbit p045        1.131          1.079                 1.133             0.63-1.37
+  twin p012         1.129          0.781                 0.525             0.37-1.12
 
-**Do not conclude anything from the table above yet.**  These are pre-floor
-transients: the plain twin's own Hamiltonian floor is not until t ~ 34, and
-both arms are still settling.  A t = 0 offset is expected in any case, since
-the correction changes the initial data.  The verdict point is **t = 50-70**,
-where plain sits 15-100x above its floor and the two curves must separate by
-far more than this to mean anything.  Monitor reports at t = 30/50/70/90.
+Three things follow, and two of them reverse what was written here before:
+
+1. **The t = 0 cost of the Helfer correction is 13%, not 1.8x.**  Both pairs give
+   1.13 independently, and t = 0 is deterministic with no regridding, so this is
+   the one number here that is solid.  **Correct the "1.8x initial Hamiltonian
+   violation" claim wherever it appears** — it came from reading a spiked sample.
+2. **In evolution the correction is neutral-to-beneficial, not harmful.**  The
+   orbit pair is a wash (medians 1.08-1.13, i.e. the 13% initial offset simply
+   persists).  The twin pair is *better* with the correction — ratio of medians
+   0.525 at t = 30, band 0.37-1.12.
+3. So the evidence to date leans **ARTEFACT**, the opposite of the withdrawn
+   reading, but softly: the twin band's upper edge touches 1.12, so the honest
+   statement is "no worse, often better", not "halves it".
+
+**RESULT — stopped by the user at t = 37.29 of 90, clean (zero NaN).**  The
+signal is real and it starts at t ~ 30, which is why both earlier readings of
+this run were wrong: the t <= 10 table was noise, and the "neutral to
+beneficial" correction was made on data that stopped at t = 30, one unit before
+the departure.
+
+  t      helfer      plain     median-ratio
+  20    2.44e-03   3.65e-03      0.73
+  30    3.18e-03   2.21e-03      1.16
+  33    6.99e-03   2.15e-03      1.56
+  35    1.12e-02   2.15e-03      2.81
+  37    1.59e-02   2.16e-03      4.88
+
+**This one is not a ratio artefact: the denominator is constant.**  The plain arm
+sits at 2.15-2.21e-03 across the whole t = 30-37 window while the corrected arm
+grows 5x, e-folding ~4.3 units.  Final state t = 37.29: L2_Ham 1.66e-02, L2_Mom
+5.53e-03, min_lapse 1.23e-03 (collapsing), min_chi 3.59e-04.
+
+**Interpretation, and it is not "Helfer makes things worse".**  On the same day,
+`single_hold_t100` showed an ISOLATED throat sitting still for 26 units and then
+contracting exponentially (e-fold ~2.6-3.4, error profile peaked at the throat,
+constraints flat).  The two clocks match: the single throat departs at t ~ 26,
+this arm at t ~ 30.  The coherent reading is that **both are the same throat
+instability**, and the Helfer correction is not a small fix but a ~9.5%
+perturbation of each throat's initial size — an enormous seed for an unstable
+equilibrium compared with truncation error.  So it reaches the mode sooner.
+
+That resolves B6's original question in a way neither branch anticipated: the
+late accuracy loss is neither an initial-data artefact nor a binary effect.  It
+is the constituent's own instability, and better initial data cannot fix it
+because the object being prepared is itself unstable.  **Do not spend the
+GRTresna constraint-solve on this until Stage 0 finishes** — see
+GPU_PLAN_UPDATED.md.
+
+**Caveat.** Stopped 13-33 units short of the t = 50-70 verdict point, so the
+t > 30 departure is 7 units of data, not a converged rate.  Chk03000 (t = 30,
+the departure point) is held on scratch as a restart seed, with the t = 36/36.5/
+37 plotfiles, so the "where does the violation live" question can still be asked
+without re-running.  The statistic rule stands: ratio of rolling medians with its
+band, never a pointwise ratio at a named time.
 
 ### What this blocks, and what it does not
 

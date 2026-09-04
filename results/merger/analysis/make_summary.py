@@ -65,6 +65,8 @@ WHAT = {
     "ctrl_rest_d14": "separation ladder rung d = 14, released from rest with a = 2 and m = 1 fixed so ONLY the gap differs from the d = 12 control: clean to t = 15, separated 0.3699 by t = 11.5",
     "ctrl_rest_d16": "separation ladder rung d = 16, same recipe: clean to t = 15, separated 0.2980 by t = 11.5",
     "ctrl_rest_d18": "separation ladder rung d = 18, same recipe: clean to t = 15, separated 0.2438 by t = 11.5 -- the blind test of the offset law fitted on d = 12/14/16, which predicted 0.243 against pure 1/d^2's 0.209",
+    # Stage 0 of the external audit (2026-09-04): the isolated-throat control.
+    "single_hold_t100": "ONE drainhole throat, exact static data, at rest, production settings (max_level 3, sigma 0.1), t = 100 -- the decisive test of whether the 44-56 unit wall is the Gonzalez-Guzman-Sarbach radial mode of the constituent rather than a binary effect: the exact solution is a fixed point, so every deviation is error or instability with no physics mixed in",
     "bbh_control_d12_p012": "vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100",
     "bbh_control_d12_p012_t150": "BBH control rerun to t = 150, fixed-center consumer: full ringdown in hand, instruments agree to 0.3 %, QNM fit consistent with a Kerr remnant (~15.6M / ~14.2M at R = 30)",
 }
@@ -103,6 +105,7 @@ ORDER = [
     "ctrl_rest_d14",
     "ctrl_rest_d16",
     "ctrl_rest_d18",
+    "single_hold_t100",
 ]
 CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
 
@@ -124,7 +127,21 @@ def load(path: pathlib.Path):
     return a if a.ndim == 2 and a.size else None
 
 
+# Runs deliberately killed before stop_time.  A SIGTERM'd run writes neither a
+# NaN nor AMReX's "finalized", so the heuristic below would call it "still
+# running" forever.  Name them here, with the reason.
+STOPPED = {
+    "merge_orbit_flip_d12_p045_helfer_t090":
+        "stopped by request at t = {t:.2f} of 90, clean (B6 answered early: the "
+        "corrected arm departs from its plain twin at t ~ 30 and grows 5x by "
+        "t = 37 against a flat baseline)",
+}
+
+
 def outcome(run_dir: pathlib.Path, t_end) -> str:
+    stopped = STOPPED.get(run_dir.name)
+    if stopped is not None and t_end is not None:
+        return stopped.format(t=t_end)
     tail = run_dir / "run_tail.log"
     if tail.exists():
         text = tail.read_text(errors="replace")

@@ -69,7 +69,10 @@ STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 # ---------------------------------------------------------------------------
 # smoke_*/ is deliberately NOT packed: sizing and throughput probes are plan
 # material (GPU_PLAN #5), not campaign results.
-for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/ "${RUNS}"/ctrl_*/; do
+# single_*/ IS packed: the isolated-throat control is the Stage 0 experiment the
+# whole instability question turns on, not a probe.
+for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/ "${RUNS}"/ctrl_*/ \
+              "${RUNS}"/single_*/; do
   [[ -d "${rundir}" ]] || continue   # an unmatched glob expands to itself
   run="$(basename "${rundir%/}")"
   out="${DEST}/campaign/${run}"
