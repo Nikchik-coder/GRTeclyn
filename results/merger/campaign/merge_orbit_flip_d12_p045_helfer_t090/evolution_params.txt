@@ -1,0 +1,191 @@
+# BinaryWormholeMerger -- GPU_PLAN BLOCKER series: does the late-time accuracy
+# loss come from the initial data, or is it intrinsic?
+#
+# Byte-identical to merge_orbit_flip_d12_p045_t200 (the long fly-by, p = 0.45,
+# which reached t = 91 with plain superposition) EXCEPT the Helfer/Ning
+# initial-data correction is switched on, and stop_time is 90.
+#
+# WHY THIS ARM.  The Helfer correction was rejected for production because it
+# STALLS mergers (throats hang at sep 4.7).  A fly-by is not trying to merge,
+# so the rejection reason does not apply here -- this is the one orbit where
+# the correction is harmless.  The plain twin already exists at t = 91, so the
+# comparison is exact and costs one run, not two.
+#
+# WHAT IT DECIDES.  The plain fly-by loses accuracy exponentially, e-folding
+# every ~9-10 time units (L2_Ham 2.15e-3 -> 1.26 by t = 91, a factor 586).
+# Same orbit, same damping, only the initial data differs:
+#   growth rate UNCHANGED  -> intrinsic (Ellis-Bronnikov mode); no initial-data
+#                             fix helps, and that is a publishable statement.
+#   growth rate CHANGED    -> the late-time trouble is self-inflicted by the
+#                             plain superposition.
+# Caveat on record: Helfer is not "cleaner" data -- it leaves its own spurious
+# potential shell at r ~ w around each body (s9).  This is a different-data
+# test, decisive only in the "unchanged" direction.
+#
+# Checkpoints left ON as in the baseline arm: a ~10 h run needs restart
+# insurance, and keeping the baseline's setting preserves the one-knob diff.
+#
+# The three path keys below are placeholders the launcher rewrites.
+
+verbosity = 1
+
+output_path = "runs/wormhole_merger/merge_orbit_flip_d12_p045_helfer_t090"
+amr.plot_file = "/tmp/grteclyn_scratch/merge_orbit_flip_d12_p045_helfer_t090/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/merge_orbit_flip_d12_p045_helfer_t090/BinaryWormholeChk"
+
+checkpoint_interval = 1000
+checkpoint_keep = 3
+
+plot_interval = 50
+
+amr.plot_vars = chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2 shift3 phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: TWO regular massive drainhole throats, tangentially boosted.
+
+wormhole_id_type = 1
+
+# Each body's exact static lapse (superposed); 1+log takes over from there.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a, throat A
+wormhole_throat_radius_B = 2.0       # throat B on: the binary
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1 each, carried by the lapse
+wormhole_drainhole_mass_B = 1.0
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`: d = 12 along x.  B defaults to -A; set both anyway.
+wormhole_centerA = -6.0 0.0 0.0
+wormhole_centerB =  6.0 0.0 0.0
+
+# Tangential Bowen-York momenta, equal and opposite: net P = 0, orbit in the
+# x-y plane.  0.45 = 90 % of the circular momentum for the ACTUAL 6x pull
+# (sqrt(6) x 0.204 = 0.50) -- a real orbit attempt, not a plunge.
+wormhole_momentumA = 0.0  0.45 0.0
+wormhole_momentumB = 0.0 -0.45 0.0
+
+# THE ONE PHYSICS LINE THAT DIFFERS FROM THE BASELINE.  -1 mirrors throat
+# B's scalar profile: same geometry, same mass, reversed drainhole flow.
+# The two pi/2 tails then cancel and phi -> 0 at infinity on its own.
+wormhole_phi_sign_B = -1.0
+
+# GPU_PLAN B-series (2026-09-04): the ONE knob under test.  Width left at
+# the automatic d/3 = 4.0 -- the w = 2 variant tested worse (s9 decision 3).
+wormhole_helfer_correction = 1
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid.  Identical to the Stage 1/2.0 base: L = 64, N = 128, max_level = 3,
+# dx = 0.0625 on the finest level.  Both throats and the whole d = 12 orbit
+# sit inside the sponge at r = 24.
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Identical to the Stage 1/2.0 base.
+
+dt_multiplier = 0.02
+stop_time = 90.0                     # matches the plain p045 arm's usable span
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+# Matter half of the puncture trick (CoreMatterDamping.hpp): once the lapse
+# collapses below 1e-6 -- five orders under any live throat, unambiguously
+# inside the trapped surface -- the scalar is exponentially damped so its
+# stress stops sharpening the metric at the floor boundary.  Without this the
+# run dies of a core NaN ~20 units after horizon formation (measured t=52.07).
+core_matter_damping = 1
+# Window retuned after the first damped run died at t = 52.09 (old undamped death
+# t = 52.07): with lapse_start = 1e-6 the window covered only ~3 finest cells while
+# the scalar bulk (|phi| up to 0.53) sat at lapse 1e-6..3e-2.  Measured at t = 51.5:
+# lapse < 3e-2 reaches r = 0.63, safely inside the common apparent horizon r = 0.875.
+core_damping_lapse_start = 3.0e-2
+core_damping_lapse_full = 1.0e-3
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: MOVING nested boxes on BOTH tracked throats (the tagger unions
+# boxes on A and B whenever throat B is on).  Same box arithmetic as the
+# Stage 2.0 arm: level-l half-width tagging_L * 2^-(l+2), so level 3 has
+# half-width 4 around each throat.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  Same battery as Stage 2.0.  The split plane separates A and
+# B along x at t = 0; once the orbit winds past a quarter turn the A/B
+# attribution in binary_diag degrades -- throat_track.dat (which follows
+# both centres) is the moving-frame truth.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576

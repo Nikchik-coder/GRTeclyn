@@ -86,12 +86,61 @@ at its close-out. Every other pack entry is a finished run.
   inside the fuse.
 
 ### Like-oriented throats repel; flipping one is what makes a binary
-- **Claim.** Two identical throats push apart (5× gravity at a = 2, m = 1, the
-  push scaling with throat *width*, not mass; pull/push ratio 1.50 measured vs
-  1.5 predicted). Reversing one throat's scalar field turns the push into a
-  pull — the only gravity-driven route to a merger.
+- **Claim (measured).** Two identical throats push apart, and the push scales
+  with throat *width*, not mass. Reversing one throat's scalar field turns the
+  push into a pull — the only gravity-driven route to a merger. At a = 2 the
+  magnitude is pinned by the orientation flip, where the coordinate under-read
+  cancels between two arms of the same width: pull/push 1.511 ± 0.033 measured
+  against 1.500 predicted.
+- **The magnitude law is NOT yet confirmed across widths** (#8, 2026-09-04).
+  Four rest-release arms at a = 1 / 1.5 / 2 / 3, byte-identical but for the
+  radius, give displacements by t = 11 of 0.147 / 0.283 / 0.416 / 0.615 —
+  ratios 1.00 / 1.92 / 2.82 / 4.18 against the predicted a² = 1 / 2.25 / 4 / 9.
+  The push is real and grows with width at every rung, but the measured
+  exponent is ≈ 1.36 and *falling*, and at a = 3 the prediction overshoots by
+  2.2×. Under-resolution is excluded — both new throats sit on the finest
+  level, 48 and 96 cells across, so the widest arm is the *best* resolved.
+  What remains is the coordinate under-read (which does not cancel between
+  different widths) or genuine finite-size corrections to a point-charge
+  formula at a/d = 0.25; like-charge arms alone cannot separate them. The
+  decisive test is two flip arms at a = 1.5 and a = 3, where the under-read
+  cancels within each width and the predictions are far apart (1.889 and
+  1.222 against a = 2's confirmed 1.500). **The separation ladder below now
+  favours the finite-size branch**: it finds an effective separation exceeding
+  the coordinate one by about a throat radius, which is exactly the correction
+  a point-charge formula is missing, and it does so in a geometry where the
+  width is held fixed.
+- **The DISTANCE law is confirmed, and it is inverse-square in an effective
+  separation** (#8b, 2026-09-04). The width ladder above could never settle
+  this, because `a` is a coordinate label whose physical meaning moves as you
+  turn it (tripling `a` grows the measured throat radius only 1.6×). Holding
+  the throat fixed and varying only the gap does settle it. Four rest-release
+  pairs at d = 12 / 14 / 16 / 18, byte-identical but for the centres, give
+  displacements at a common t = 11.5 of 0.4696 / 0.3699 / 0.2980 / 0.2438.
+  - Pure 1/d² is **excluded**: F·d² rises monotonically 67.6 → 79.0, a 15.4%
+    spread, far outside the scatter. The push falls off *more slowly* than
+    inverse-square.
+  - F ∝ 1/(d + δ)² with **δ ≈ 3.5** fits; all six rung pairs give δ =
+    3.77 / 3.67 / 3.47 / 3.54 / 3.27 / 2.95.
+  - This was a **blind prediction**. δ = 3.4 was fitted on d = 12/14/16 alone,
+    before d = 18 reached t = 11.5. It predicts 0.243 there; pure 1/d² predicts
+    0.209; the measurement is **0.2438** — 0.3% from the offset model, 17% from
+    inverse-square.
+  - δ ≈ 3.5 is comparable to the independently measured physical throat radius
+    at a = 2, which is **4.29**. The reading is that the coordinate centre
+    separation is not the physical separation.
+- **Say it as.** The push exists, is outward at every width and every
+  separation, and grows with throat width — quote the four displacements, not
+  a² (unverified). For the distance dependence, say the force is inverse-square
+  in an *effective* separation that exceeds the coordinate separation by about
+  one throat radius. Do **not** write "the repulsion violates the inverse-square
+  law": the deviation is in the distance label, not in the law.
 - **Runs.** The Stage-2.5/2.6 control pairs under
   `runs/wormhole_merger/03_two_throats/` *(run tree — see its NOTES.md)*;
+  the two a-points `ctrl_rest_a15` and `ctrl_rest_a3` *(pack)* and the width
+  measurement in `scalar_charge_apoints_2026-09-04.txt`; the three separation
+  rungs `ctrl_rest_d14` / `d16` / `d18` *(pack)* and the distance measurement
+  in `separation_ladder_2026-09-04.txt`;
   every `merge_*flip*` run below is the attracting configuration in action.
 
 ### The p = 0.12 pair merges

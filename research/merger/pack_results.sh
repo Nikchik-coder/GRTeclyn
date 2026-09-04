@@ -67,7 +67,10 @@ STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 # ---------------------------------------------------------------------------
 # 1. Per-run extract
 # ---------------------------------------------------------------------------
-for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/; do
+# smoke_*/ is deliberately NOT packed: sizing and throughput probes are plan
+# material (GPU_PLAN #5), not campaign results.
+for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/ "${RUNS}"/ctrl_*/; do
+  [[ -d "${rundir}" ]] || continue   # an unmatched glob expands to itself
   run="$(basename "${rundir%/}")"
   out="${DEST}/campaign/${run}"
   rm -rf "${out}"

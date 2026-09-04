@@ -30,7 +30,12 @@ HALF, LEVEL = args.half, args.level
 
 ds = yt.load(plt_path)
 LEVEL = min(LEVEL, ds.index.max_level)
-dx = float(ds.index.get_smallest_dx())
+# dx MUST be the requested level's cell size, not the finest one: yt sizes a
+# covering grid as dims * dds(level), so feeding it the finest-level dims at a
+# coarser level silently covers 2^(max-LEVEL) times the requested width AND
+# shifts the box centre off the object (left_edge is what is honoured).  Every
+# --level < max_level scan written before 2026-09-04 is wrong for this reason.
+dx = float(ds.index.get_smallest_dx()) * 2 ** (ds.index.max_level - LEVEL)
 N = int(round(2 * HALF / dx))
 cg = ds.covering_grid(LEVEL, left_edge=CEN - HALF, dims=[N] * 3)
 

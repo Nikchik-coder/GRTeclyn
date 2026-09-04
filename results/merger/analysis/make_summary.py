@@ -59,6 +59,12 @@ WHAT = {
     "merge_twin_p012_cf10_t060_r05000": "floor ladder rung chi_floor 1e-10: NaN 0.006 after restart -- the t = 50 state is floor-regularized, restarts cannot certify floor-independence",
     "merge_twin_p012_cf12_t060_r05000": "floor ladder rung chi_floor 1e-12: NaN 0.049 after restart -- same verdict as cf10",
     "merge_twin_p012_nodamp_cf10_t060": "the decisive floor test: damping off AND min_chi 1e-10 from t = 0 (not a restart) -- IN FLIGHT",
+    # The #8 scalar-charge ladder (2026-09-04): rest-release arms, radius only.
+    "ctrl_rest_a15": "repulsion a-point a = 1.5, released from rest at d = 12, identical to the a = 1 / a = 2 controls but for the throat radius: clean to t = 15, separated 0.283 by t = 11 (1.9x the a = 1 arm, against 2.25 predicted)",
+    "ctrl_rest_a3": "repulsion a-point a = 3, same recipe: clean to t = 15, separated 0.615 by t = 11 -- only 4.2x the a = 1 arm against 9x predicted, so the a^2 magnitude law overshoots badly at wide throats",
+    "ctrl_rest_d14": "separation ladder rung d = 14, released from rest with a = 2 and m = 1 fixed so ONLY the gap differs from the d = 12 control: clean to t = 15, separated 0.3699 by t = 11.5",
+    "ctrl_rest_d16": "separation ladder rung d = 16, same recipe: clean to t = 15, separated 0.2980 by t = 11.5",
+    "ctrl_rest_d18": "separation ladder rung d = 18, same recipe: clean to t = 15, separated 0.2438 by t = 11.5 -- the blind test of the offset law fitted on d = 12/14/16, which predicted 0.243 against pure 1/d^2's 0.209",
     "bbh_control_d12_p012": "vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100",
     "bbh_control_d12_p012_t150": "BBH control rerun to t = 150, fixed-center consumer: full ringdown in hand, instruments agree to 0.3 %, QNM fit consistent with a Kerr remnant (~15.6M / ~14.2M at R = 30)",
 }
@@ -92,6 +98,11 @@ ORDER = [
     "merge_twin_p012_cf10_t060_r05000",
     "merge_twin_p012_cf12_t060_r05000",
     "merge_twin_p012_nodamp_cf10_t060",
+    "ctrl_rest_a15",
+    "ctrl_rest_a3",
+    "ctrl_rest_d14",
+    "ctrl_rest_d16",
+    "ctrl_rest_d18",
 ]
 CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
 
@@ -119,7 +130,13 @@ def outcome(run_dir: pathlib.Path, t_end) -> str:
         text = tail.read_text(errors="replace")
         if "NaN" in text:
             return f"NaN at t = {t_end:.2f}"
-        if "stop_time" in text or "Run time" in text:
+        # "AMReX ... finalized" is printed only on a normal shutdown; a NaN
+        # abort never reaches it (checked across the campaign, 2026-09-04), and
+        # the NaN test above wins anyway.  Without this, any run that simply
+        # reached its stop_time short of t = 59.9 was mislabelled "still
+        # running" -- which is how the finished a-points first showed up.
+        if ("stop_time" in text or "Run time" in text
+                or "finalized" in text):
             return f"finished clean at t = {t_end:.2f}"
     if t_end is not None and t_end >= 59.9:
         return f"finished clean at t = {t_end:.2f}"

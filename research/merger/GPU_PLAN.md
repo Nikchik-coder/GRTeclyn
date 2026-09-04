@@ -19,6 +19,206 @@ argmin-neighbourhood fix of §9 stands).*
 
 ---
 
+## THE MODEL — exactly what the code solves
+
+*Read out of the source 2026-09-04, not from memory.  Files:
+`Examples/BinaryWormholeMerger/BinaryWormholeInitialData.hpp` (initial data),
+`Source/Matter/ExoticScalarField.{hpp,impl.hpp}` (matter),
+`Examples/BinaryWormholeMerger/PhantomDecayPotential.hpp` (potential),
+`Source/Matter/ScalarFieldKernels.hpp` (kinetic invariant).  Every formula
+below is transcribed from the code, with the production parameter values that
+actually appear in the params files.*
+
+### M1. The system
+
+Einstein + one real scalar field whose stress-energy enters with the WRONG
+SIGN.  In geometric units G = c = 1:
+
+    G_ab = 8 pi T_ab^(phantom),        T_ab^(phantom) = -s T_ab^(canonical)
+
+`s` is `wormhole_support_strength` = **1.0** in every campaign run, so the
+model is exactly "canonical scalar, negated stress-energy".  s is not a
+fudge factor in production; it exists only so a support-removal experiment can
+ramp it (`support_ramp_start` / `_duration`, with an optional causal delay
+`support_causal_speed`).  Negating T_ab is what violates the null energy
+condition and is what holds a throat open.
+
+### M2. Matter — the exact expressions in the code
+
+Variables: scalar `phi`, and `Pi` = its normal derivative, defined by the code's
+own evolution equation `d_t phi = alpha Pi + beta.d phi`, i.e.
+
+    Pi = n^a d_a phi                          (Lie derivative along the normal)
+
+Kinetic invariant (`ScalarFieldKernels::kinetic_invariant`), with h^ij the
+inverse conformal metric and chi the conformal factor:
+
+    Vt = -Pi^2 + chi h^{ij} d_i phi d_j phi   ( = g^{ab} d_a phi d_b phi )
+
+Stress-energy handed to the CCZ4 equations (`emtensor_with_strength`), all four
+pieces carrying the same overall `-s`:
+
+    rho   = -s ( Pi^2 + Vt/2 + V )          =  -s ( Pi^2/2 + |Dphi|^2/2 + V )
+    j_i   = -s ( -d_i phi  Pi )             =  +s Pi d_i phi
+    S_ij  = -s ( d_i phi d_j phi - (h_ij/chi)( Vt/2 + V ) )
+    trS   = chi h^{ij} S_ij
+
+So **rho < 0** wherever the field is non-trivial: that is the whole mechanism.
+
+Field equations (`add_matter_rhs`) — note these are the CANONICAL Klein-Gordon
+equations, unmodified:
+
+    d_t phi = alpha Pi + beta^i d_i phi
+    d_t Pi  = alpha ( K Pi - dV/dphi ) + beta^i d_i Pi + [gradient terms]
+
+Potential (`PhantomDecayPotential`):
+
+    V(phi) = (1/2) m_phi^2 phi^2,      dV/dphi = m_phi^2 phi
+
+with `phantom_mass` = m_phi = **0.0 in every campaign run**, so
+**V == 0 and dV/dphi == 0 identically** — the scalar is massless and the
+potential never enters anything.
+
+> **A modelling subtlety, recorded so nobody trips on it later.**  The code
+> negates T_ab but evolves the *canonical* KG equation (`box phi = dV/dphi`).
+> A true phantom Lagrangian L = +(1/2)(d phi)^2 - V would instead give
+> `box phi = -dV/dphi`.  **The two are identical when V == 0**, which is our
+> case, so nothing in this campaign is affected.  They differ the moment
+> `phantom_mass != 0`, and that choice would have to be made deliberately
+> before any massive-scalar run.  See also: the GRTeclyn test suite runs a
+> zero potential, so it does not exercise this at all.
+
+### M3. Initial data — `wormhole_id_type = 1`, the regular massive drainhole
+
+Per throat, with `a` = `wormhole_throat_radius_X` and `m` =
+`wormhole_drainhole_mass_X` (**m IS the ADM mass**), in isotropic radius r:
+
+    X     = ( r - a^2/(4r) ) / a
+    Omega = 1 + a^2/(4 r^2)
+    u     = (m/a) ( atan X - pi/2 )                  -> 0 at infinity
+    alpha = e^u                                       exact static lapse
+    gamma_ij = e^{-2u} Omega^2 delta_ij   =>  chi = e^{2u} / Omega^2
+    phi   = sqrt(a^2 + m^2) / ( a sqrt(4 pi) ) * atan X
+    K = 0,   A_ij = 0,   Pi = 0
+
+The amplitude is not free: the field equations fix `4 pi C^2 = a^2 + m^2`,
+which is what makes this an exact solution rather than an ansatz.  For ONE
+throat both constraints hold identically at t = 0.
+
+**The mass rides in the LAPSE, not in the conformal factor.**  That is the
+whole reason for id_type = 1: the old id_type = 0 added a Brill-Lindquist
+puncture `m/(2r)` to psi, which drove chi -> 0 at the throat itself
+(chi = 1/16 at the minimal surface, proper cell width 4 dx and growing) and
+made the matter unevaluable there.  Under id_type = 1, chi at the throat stays
+in [0.15, 0.25] for m/a in [0, 1] — mass no longer costs resolution.
+Derived, not assumed: the minimal surface is at l = m, i.e.
+r = (m + sqrt(m^2+a^2))/2, with areal radius R_min = e^{-u(m)} sqrt(m^2+a^2).
+
+**Superposition for the binary** (this is where exactness is lost):
+
+    u_sum = u_A + u_B,                       alpha = e^{u_sum}
+    psi   = 1 + [sqrt(Omega_A) - 1] + [sqrt(Omega_B) - 1]
+    chi   = e^{2 u_sum} psi^{-4}
+    phi   = phi_A + sigma_B phi_B,           sigma_B = wormhole_phi_sign_B
+
+Error is O(a^2/d^2) plus O(m/d).  **Only the Hamiltonian constraint is
+violated at t = 0** — with K = 0 and Pi = 0 the matter momentum density
+vanishes and the Bowen-York A_ij is flat-space divergence-free, so the
+momentum constraint holds exactly.
+
+**`phi_sign_B` is the physics knob for the whole repulsion result.**
+`phi -> -phi` is an exact symmetry of a single drainhole (same geometry,
+mirrored scalar), so either sign is a legitimate body; the RELATIVE sign sets
+the scalar force between the pair.  A phantom field REPELS like charges and
+ATTRACTS opposite ones, with
+
+    |F_phi / F_grav| = (a^2 + m^2) / m^2      ( = 5 at a = 2, m = 1 )
+
+always > 1, so like-oriented throats can NEVER merge under their own gravity.
+`phi_sign_B = -1` turns the push into a pull and is the only gravity-driven
+route to a merger.
+
+**Momenta** — Bowen-York per throat, summed, then converted:
+
+    Ahat_ij = (3/(2 r^2)) [ P_i n_j + P_j n_i - (delta_ij - n_i n_j) P.n ]
+    A_ij    = chi^{3/2} Ahat_ij
+
+**Helfer/Ning correction** (`wormhole_helfer_correction`, default 0 = off):
+hands each throat back the constants its companion leaves at its centre,
+windowed so infinity never sees the subtraction:
+
+    psi   -= W_A dpsi_A + W_B dpsi_B,     u_sum -= W_A du_A + W_B du_B
+    W_X(r_X) = exp[ -(r_X / w)^p ],       w = helfer_width (0 = auto = d/3),
+                                          p = helfer_power (default 2)
+
+It trades a measured ~9.5% error in each throat's initial size for a measured
+1.8x increase in the initial Hamiltonian violation.  REJECTED for production
+(it stalls mergers); currently under test on a fly-by as **B6**.
+
+### M4. Gravity sector and gauge — the production values
+
+    formulation = 0            CCZ4
+    kappa1 = 3.0,  kappa2 = 0.0,  kappa3 = 1.0,  covariantZ4 = 0
+    max_spatial_derivative_order = 4
+
+    lapse:  1+log slicing, lapse_coeff = 2.0, lapse_power = 1.0,
+            lapse_advec_coeff = 1.0,  min_lapse = 1.0e-10
+    shift:  Gamma-driver, shift_Gamma_coeff = 0.75, eta = 1.0,
+            shift_advec_coeff = 1.0
+
+    initial lapse: wormhole_initial_lapse_type = 5
+                   = the drainhole's OWN exact static lapse alpha = e^{u_sum}
+
+Type 5 is not a gauge preference — the massive drainhole is static only with
+that lapse.  Type 6 is the same thing times an origin-isolating collar
+`prod_c [1 - exp(-(r_c / f a_c)^p)]`, needed at deep refinement because
+chi ~ r^4 at each compactified origin (the far universe squeezed to a point).
+
+### M5. Production parameter set (the merger arms)
+
+    wormhole_id_type            = 1
+    wormhole_throat_radius_A/B  = 2.0        (a)
+    wormhole_drainhole_mass_A/B = 1.0        (M_ADM = 1 each)
+    wormhole_bare_mass_A/B      = 0.0        (id_type 0 leftover, unused)
+    wormhole_centerA/B          = -+ d/2 on x      (d = 12 nominal)
+    wormhole_momentumA/B        = -+ p transverse  (p = 0.12 ... 0.45)
+    wormhole_phi_sign_B         = -1.0       (attracting; +1 for repulsion arms)
+    wormhole_subtract_phi_asymptote = 1
+    wormhole_support_strength   = 1.0
+    phantom_mass                = 0.0
+
+### M6. What is NOT part of the physical model
+
+These are numerical devices added at EVOLUTION time.  Anything measured while
+they are active is a statement about the scheme as much as about the physics,
+and the paper must say which arms used them:
+
+- **`core_matter_damping`** (production arms: ON, window
+  `core_damping_lapse_start = 3.0e-2` -> `core_damping_lapse_full = 1.0e-3`) —
+  drives phi and Pi exponentially to zero deep inside a collapsed core, the
+  matter half of the puncture trick.  Without it the phantom keeps sourcing the
+  metric at the edge of the floored region and the run NaNs.  #14 measured its
+  effect on the death time at ~0.5 units, i.e. noise.
+- **`CoreLapseFreeze` / `CoreFreezeFill`** — the interior freeze used to push
+  the waveform past the wall (§5, §6).  Validated separately: frozen arm
+  bit-identical to its unfrozen twin beyond r = 6.
+- **Floors:** `min_lapse = 1e-10`, and the initial data clamps chi at 1e-10.
+
+### M7. Where the model is known to be weakest
+
+1. **Superposed initial data carries a Hamiltonian defect by construction**
+   (O(a^2/d^2) + O(m/d)).  A CTTK solve (Route B) removes it; not done.
+2. **The scalar's cross term is untreated.**  Each throat's atan tends to
+   +pi/2, and `subtract_phi_asymptote = 1` removes the constant — exactly free
+   for a massless field, NOT free at phantom_mass != 0.
+3. **Helfer/Ning is off in production**, so each throat starts ~18% larger on
+   lengths than its own field equations support, and rings.  B6 is testing
+   whether that is what drives the late accuracy loss.
+4. **The canonical-KG-with-negated-T_ab choice** (M2) is unexercised by the
+   test suite and only innocuous because V == 0.
+
+---
+
 ## Working a run, systematically
 
 Every campaign run, when it terminates, goes through the same close-out —
@@ -31,6 +231,11 @@ no exceptions, no ad-hoc shortcuts:
    `/tmp/grteclyn_scratch/<run>/` and in the run dir.
 3. **prune if needed** — after any offline scan that still needs the
    plotfiles; log every deletion in the current `MANIFEST_CLEANUP_*.md`.
+   **The manifest is APPEND-ONLY and is not in git** (`runs/` is never
+   tracked), so it has no undo: add to it with `cat >> …  <<'EOF'` and
+   never with a whole-file write.  On 2026-09-04 a whole-file write
+   destroyed a day of close-out entries; they were reconstructible from the
+   session transcript that time, which is luck, not a recovery procedure.
 4. **check results → valuable → copy from runs/ to results/** — add the
    run to `results/merger/analysis/make_summary.py` (WHAT + ORDER), then
    `bash research/merger/pack_results.sh`; results/ is the git-kept
@@ -41,6 +246,355 @@ no exceptions, no ad-hoc shortcuts:
    kept truthful.
 6. **update this plan** — §2 spine, §3 table, and the numbered item the
    run answers.
+
+---
+
+## CRITICAL BUG BEFORE PRODUCTION RUN
+
+*Found 2026-09-04, during the close-out of the L = 128 sizing probe.  Two
+separate defects in how this campaign has been measuring horizons.  One is a
+coding bug and is fixed; the other is a physics misreading and is NOT fixed —
+it invalidates the way the black-hole claim has been stated.  Nothing here
+changes the production grid, the box or the schedule; it changes what the
+production run must MEASURE and what the paper may SAY.*
+
+### Defect 1 — coarse-level scans read the wrong region (FIXED)
+
+`ah_radial_scan.py` sized its covering grid with the *finest* level's cell
+size no matter what `--level` was asked for.  yt sizes a covering grid as
+`dims * dds(level)` and honours `left_edge`, so a level-3 request on a
+max_level-5 file covered **4x the requested width, with the box centre
+displaced 6 code units off the object**.  Measured directly:
+
+  level 5: dds 0.015625  covers 30.000 .. 34.000  (requested 30 .. 34)  OK
+  level 4: dds 0.031250  covers 30.000 .. 38.000                        WRONG
+  level 3: dds 0.062500  covers 30.000 .. 46.000                        WRONG
+
+- Inert whenever `--level` equals the file's max_level.  Every level-5 scan
+  of a level-5 file, and every historic level-3 scan of a level-3 file, is
+  therefore UNAFFECTED — including the 1.07 -> 0.59 dissolution curve.
+- Fatal for the cf08 "level ladder".  The recorded finding that the same file
+  shows a trapped shell at level 5 and **nothing** at level 3 was this bug:
+  the coarse scan was looking at empty space six units away.
+- **The "scan-depth systematic" recorded in #16 and in the results README is
+  WITHDRAWN.**  Re-run after the fix, cf08 Plt05500 gives r = 0.920 / 0.920 /
+  0.940 at levels 5 / 4 / 3 — the shell is resolution-robust, which makes the
+  measurement stronger than it was, not weaker.  #16's WARNING paragraph and
+  the README's "rate is a scan-depth systematic" sentence must both be
+  corrected.
+- Fix applied: `dx = smallest_dx * 2 ** (max_level - LEVEL)`, matching
+  `blob_nature_scan.py`, which always had it right (so every #13 number
+  stands).
+
+### Defect 2 — a trapped shell inside a throat is not a horizon (OPEN)
+
+The radial scan defines "outward" as increasing coordinate r.  **Inside a
+wormhole throat that is the wrong direction** — coordinate-outward there runs
+toward the other mouth, where the surface area is falling.  Theta computed
+with `s = +dr` is then the INgoing expansion, and its negativity means
+nothing.  Consequence: the scan labels the interior of *any* throat "trapped",
+collapsed or not.
+
+Control, on a throat that certainly has not collapsed — the sizing probe at
+t = 5, K ~ 4e-3, five time units into a healthy inspiral:
+
+  ah_radial_scan  -> "rays trapped: 100%", shell r = 1.340, M_irr = 2.613
+  areal radius    -> 25.0 (r=0.2), 4.45 (r=1.2), **4.255 (r=1.5, minimum)**,
+                     4.27 (r=1.8), 4.85 (r=2.8)
+
+The "horizon" at 1.34 sits inside the areal minimum at ~1.5.  It is the
+throat, reported as a black hole.
+
+Applying the discriminator (is the shell inside or outside the areal-radius
+minimum?) to **both merged arms on disk** — independent damping treatments,
+independent resolutions, one a restart and one from t = 0:
+
+  arm              times        areal minimum          coordinate shell
+  cf08 (lvl 5)     54.5..55.5   4.128 -> 4.085  r~1.0  0.94 -> 0.92 -> 0.90
+  nodamp (lvl 3)   50.5..51.5   4.297 -> 4.257  r~1.2  1.12 -> 1.08 -> 1.06
+
+Three findings, both arms agreeing:
+
+1. **The trapped shell lies INSIDE the areal minimum on both arms** (0.92 vs
+   1.0; 1.06 vs 1.2) — the same configuration the uncollapsed control
+   produces.  Outside the minimum, where the outward direction is
+   unambiguous, NEITHER arm has a trapped surface.  The trapped-surface
+   evidence therefore does not distinguish the merged core from an ordinary
+   wormhole throat, and **"the merger produces a black hole" is not supported
+   by it**.
+2. **The contraction is real and gauge-independent**: the throat's minimum
+   areal radius falls ~1.0 %/unit (cf08) and ~0.9 %/unit (nodamp).  Two
+   independent arms, a measure no coordinate change can touch.
+3. **The coordinate rate overstates it 4-5x** on both arms.  The quoted
+   1.07 -> 0.59 "accelerating" curve is a coordinate curve; the acceleration
+   is a gauge effect.  Withdraw the rate and the word.
+
+Caveat on the caveat: the radial scan tests coordinate spheres about a chosen
+centre.  A true marginal surface need not be one, so "no trapped surface
+outside the minimum" holds within that approximation.  That is exactly why
+the proposals below do not lean on it either.
+
+### Proposals — decide BEFORE the production launch, no code yet
+
+- **P1 (cheapest, do first).  Make the areal radius the headline measure.**
+  Track the minimum of the areal radius on coordinate spheres about the core
+  and quote its time derivative.  It is invariant under coordinate changes,
+  it already reproduces across two arms, and it needs nothing new — only that
+  the production run write plotfiles often enough to differentiate it.  The
+  present 0.5-unit cadence gives ~2 usable points per unit; 0.1 would give a
+  real curve.
+- **P2.  Report the orientation test beside every horizon number.**  A
+  trapped shell is only quotable as a horizon if it sits at or outside the
+  areal-radius minimum and Theta > 0 outside it.  Both current arms fail this
+  test; if the production run passes it, the black-hole claim returns on
+  honest evidence.  Costs one extra column in the scan output.
+- **P3.  A real MOTS finder (BHaHAHA or equivalent).**  Solves the marginal
+  surface properly instead of assuming coordinate spheres, and handles the
+  orientation question correctly by construction.  This is the only way to
+  settle "is there a horizon" rather than bounding it.  Previously parked as
+  infrastructure; Defect 2 promotes it to **load-bearing** if the paper wants
+  to keep any horizon language.
+- **P4.  Event-horizon tracer on the production stack (#12).**  Null rays
+  traced backwards through the wrapper's `EvolvingMetricField` give the event
+  horizon, which is defined causally and is immune to both defects above.  It
+  needs the run's FUTURE on disk, so it is a production-run deliverable and
+  cannot be retrofitted onto the 3-file death stacks.  This is the strongest
+  available answer to "did a horizon form", and it is the reason the
+  production run's plotfile cadence is a physics decision, not a disk one.
+- **P5.  Decide the paper's wording now, not after the run.**  On present
+  evidence: keep "the throat contracts, ~1 %/unit, measured invariantly on
+  two independent arms"; drop "black hole that dissolves" and the
+  1.07 -> 0.59 rate until P3 or P4 supports them.  If the production run plus
+  P3/P4 do support a horizon, the claim returns stronger than it ever was.
+
+**Gate: the production run should not launch until P1's cadence and the P3/P4
+choice are settled, because both are decisions about what the run writes to
+disk — and neither can be fixed after the fact.**
+
+---
+
+## BLOCKER BEFORE PAPER GPU LAUNCH
+
+*Found 2026-09-04, by plotting the waveform against the fly-by control for the
+first time and then chasing why the control misbehaved.  This section is
+separate from the CRITICAL BUG section above: that one is about how we MEASURE
+horizons, this one is about whether the runs are accurate at the times we make
+claims.  Every number below is from streams already on disk; no new runs.*
+
+### B1 — there are TWO failure modes, and only one of them is a constraint problem
+
+*Rewritten 2026-09-04 (second pass).  The first version of this section used
+"time to cross 3x / 100x the floor" as the statistic and concluded that
+accuracy bottoms out at t ~ 30-36 in every arm, so every claim sits after the
+turn.  That was wrong on both counts: the crossing times were set by transient
+spikes, not by the trend, and reading the LAST steps of each arm instead shows
+the merging arms die with clean constraints.  The old table is withdrawn.*
+
+`constraint_norms.dat`, L2 Hamiltonian.  Exponential fit runs from each arm's
+floor to the last point below 100x that floor, so the terminal blow-up is
+excluded from the fit and cannot manufacture the trend.
+
+**Mode A — sudden local death, constraints clean right up to it.**  The tight
+and the merging arms.  The last recorded Ham is at or near the arm's floor,
+and the run is gone within two or three steps of it:
+
+  arm                     dies at   Ham at death   x floor   e-fold   last 3 steps
+  p = 0.12  L5 cf10        44.94       4.03e-03      1.3      ~60     4.16e-3 -> 4.06e-3 -> 4.03e-3  (FALLING)
+  p = 0.12  L3 nodamp      51.53       4.77e-03      1.8      6.1     4.77e-3 -> 1.70 -> 49.2
+  p = 0.20                 47.85       7.90e-03      3.0     17.3     7.87e-3 -> 7.88e-3 -> 7.90e-3
+
+The L5 arm is the sharpest statement available: its Hamiltonian is *decreasing*
+on the three steps before it dies.  A global constraint monitor gives no
+warning at all in this mode, so **"the constraints had already degraded" is not
+an available explanation for the merger arms' deaths** — whatever kills them is
+local, and it is invisible to every norm we currently compute (which is a
+Level-0 volume-diluted number anyway, see the L2-norm note under #16).
+
+**Mode B — slow global exponential accuracy loss, run survives well past it.**
+The wide, high-momentum arms that never merge:
+
+  arm                     floor    at t    100x by   ran to   Ham at end   e-fold
+  p = 0.25               2.39e-03  32.7      52.8      53.0     1.17         5.3
+  p = 0.35 (no merge)    2.21e-03  36.1      67.7      73.9     0.506        6.0
+  p = 0.45 (no merge)    2.15e-03  34.2      76.3      91.0     1.26         8.3
+
+Here the degradation is real, smooth, and enormous: p = 0.45 ends 584x above
+its own floor.  Note the ordering — the e-fold time *lengthens* with the width
+of the encounter (5.3 -> 6.0 -> 8.3), i.e. the closer the throats come the
+faster the global accuracy is lost.
+
+**The separation control confirms the mechanism.**  Four at-rest arms, a and m
+identical, ONLY the gap changed (#8b ladder), measured over one common window
+t = 0 -> 11.5 so nothing else can differ:
+
+  d = 12    growth 1.46x    e-fold  43
+  d = 14    growth 1.40x    e-fold  60
+  d = 16    growth 1.33x    e-fold  85
+  d = 18    growth 1.28x    e-fold 120
+
+Perfectly monotonic.  The degradation rate is a function of separation, and at
+these separations it is mild — a factor 1.3-1.5 over 11.5 units, nothing like
+the 100x of Mode B.  So Mode B is not "binaries degrade"; it is specifically
+the close, fast, high-momentum passage that does it.
+
+**Missing control — the isolated throat.**  The withdrawn table carried a row
+"single throat (static), no 3x crossing in 40 units".  That row could not be
+re-sourced in this pass: every `checkE_single_*` directory holds a single-line
+convergence probe, and no long isolated-throat history exists anywhere under
+`runs/`.  It is therefore NOT an established result and must not be cited.
+It is also the cheapest missing control in the campaign — one throat, level 3,
+t = 40, one card, ~4 h — and it is the only thing that separates "our initial
+data is fine and the binary setup is what degrades" from "everything degrades
+and the binary is merely faster".  Run it before the paper launch.
+
+**What this changes:**
+
+1. **The merger claims are not invalidated by constraint growth.**  They are
+   measured on arms whose constraints are at their floor when the run ends.
+   This is the opposite of what the previous version of B1 said.
+2. **The fly-by "control" is the degraded one**, by two to three orders of
+   magnitude, at exactly the late times where we read its waveform.  That is
+   B2's problem, and B1 is now evidence *for* B2 rather than a separate issue.
+3. **The open question is Mode A, and it is not a constraint question.**  A run
+   that dies with a falling Hamiltonian is dying at one point, not everywhere.
+   Until we know where, "the simulation ends at t = 44.9" cannot be reported as
+   a physical statement about the throats.  Finding it is a plotfile-local
+   question (min lapse / max |K| / chi floor per level at the death step), not
+   a norms question.
+
+### B2 — the fly-by "healthy control" is neither healthy nor a fly-by
+
+`merge_orbit_flip_d12_p045_t200`, quoted in the results README as *"healthy
+with no NaN at all"*:
+
+  t      L2_Ham     min lapse   max|K|    throat pit chi
+  40    2.40e-03    7.26e-03     0.16        9.78e-05
+  60    3.18e-02    9.45e-04     0.71        3.27e-04
+  90    1.14e+00    6.21e-06     3.33        9.19e-04
+
+- Hamiltonian violation grows **477x and reaches order 1**; the lapse collapses
+  five orders; |K| grows 20x.  "No NaN" is not "healthy" — this run is
+  diverging, it simply diverges slowly enough to reach t = 91.
+- It is **not a fly-by**: the throats spiral from d = 12 in to separation 4.0
+  by t = 40 and drift back out only to 6.4 by t = 90 (r_A = 5.97 -> 2.04 ->
+  3.18, never above 6).  It is a bound, non-merging binary.
+- **The throats dissolve with no merger involved**: the pit chi climbs
+  3.5e-07 -> 9.2e-04 over the run.  Whatever eats these throats does not need
+  a merger to do it.
+- **README ACTION REQUIRED**: the claim "give the pair enough angular momentum
+  that it never merges and the evolution is healthy with no NaN at all" is
+  false as written and must be corrected before anything is published.
+
+### B3 — the Psi4 blow-up at R = 14 is the solution, not the extraction
+
+Previously hand-waved (including by me) as "the fly-by's throats cross the
+extraction sphere".  They do not — they never exceed r = 6.  The R = 14 sphere
+is sampling a diverging interior; R = 30 looks calm only because the sponge
+(24–32) damps it.  Any waveform quoted from a time when B1/B2 say the run has
+turned is measuring the divergence.
+
+### B4 — the fly-by radiates HARDER than the merger, and neither chirps
+
+Psi4, l = 2, extraction R = 14, largest excursions per epoch:
+
+  merger arm p = 0.12 :  +0.0135 (t=18.5)   +0.0292 (t=55)   -0.0258 (t=73)
+  fly-by     p = 0.45 :  -0.0215 (t=29.5)   -0.0490 (t=37.5) -0.0303 (t=69)
+
+- Over t = 0–25 the two are **superposed** — same shape, same phase, same
+  amplitude — despite p = 0.12 vs p = 0.45.  Two different orbits cannot
+  radiate identically; whatever dominates that window is not orbital.
+- In the clean window the **non-merging arm radiates ~1.7x harder** than the
+  merging one.  Nothing in the merger arm's waveform can be attributed to a
+  merger while that is true.
+- Across the full stitched history t = 0 -> 97 there is **no chirp and no
+  ringdown** — no epoch where the amplitude grows and then decays.
+  Figures: `results/merger/figures/gw_merger_full_history_0_97.png`,
+  `gw_merger_vs_flyby_full.png`; stitched stream
+  `results/merger/psi4_merger_stitched_0_97.dat` (r03000 joined 0–50.5 |
+  m9b_fillwide80 50.5–79.5 | m9b_fillwide100 80.5–97, both restarts
+  continuous across the seam).
+
+### B5 — the death time is set by numerical parameters
+
+Same seed, same physics, one knob at a time:
+
+  floor 1e-10, level 3  ->  dies t = 44.95   (chi = 6.6e-06, far above floor)
+  floor 1e-8,  level 3  ->  dies t = 51.53   (chi = 1.0e-08, ON the floor)
+  floor 1e-8,  level 5  ->  dies t = 55.53
+
+The longer-lived run was being **held up by the floor** — its geometry pinned
+against the clamp.  Death time spans 44.9–55.5 across two purely numerical
+knobs and converges on nothing.  The decisive missing point is a **level-4
+restart from the t = 50 seed already on disk**: if the sequence flattens
+toward ~56 the singularity is physical and no resolution ever fixes it; if the
+spacing stays even it is numerical.  One run, a few hours.
+
+### B6 — the test of whether the late accuracy loss is an initial-data artefact (IN FLIGHT)
+
+B1's Mode B says the wide arms lose accuracy exponentially, e-fold 5-8 units,
+reaching 584x by t = 91 in p = 0.45.  Two explanations, with opposite
+consequences for the paper:
+
+- **Artefact** — plain superposition of two Ellis-Bronnikov throats is not a
+  solution of the constraints, and the initial violation grows.  Fixable:
+  better initial data, and the late waveform becomes usable.
+- **Intrinsic** — the throats themselves carry a growing mode.  Not fixable by
+  initial data, and no amount of resolution rescues the late signal.
+
+`merge_orbit_flip_d12_p045_helfer_t090` (launched 2026-09-04, card 1) decides
+it.  Two lines differ from `merge_orbit_flip_d12_p045_t200`, verified by diff:
+`wormhole_helfer_correction = 1` and `stop_time = 90.0`.  The existing plain
+twin ran to t = 91, so it is an exact control at zero extra cost.
+
+*(The Helfer correction is REJECTED for production, §1 line 745 — it stalls
+mergers because the mass lives in the lapse rather than the conformal factor.
+That objection does not apply to a fly-by, which never merges.  This run is a
+diagnostic, not a production candidate.)*
+
+**Early reading, t <= 10 of 90 — leaning INTRINSIC, i.e. the bad outcome:**
+
+  t      helfer      plain    ratio
+  0     3.38e-03   2.99e-03    1.13
+  4     4.59e-03   3.77e-03    1.22
+  8     6.99e-03   3.92e-03    1.78
+  10    7.54e-03   4.76e-03    1.59
+
+The corrected arm is *worse* than plain and the gap is widening.  If that
+holds, better initial data does not fix the late-time degradation and the
+"artefact" branch is dead.
+
+**Do not conclude anything from the table above yet.**  These are pre-floor
+transients: the plain twin's own Hamiltonian floor is not until t ~ 34, and
+both arms are still settling.  A t = 0 offset is expected in any case, since
+the correction changes the initial data.  The verdict point is **t = 50-70**,
+where plain sits 15-100x above its floor and the two curves must separate by
+far more than this to mean anything.  Monitor reports at t = 30/50/70/90.
+
+### What this blocks, and what it does not
+
+**Blocks:** any production launch whose purpose is to measure the merger, the
+common horizon, the throat contraction rate, or a merger waveform.  Running
+the same initial data at L = 128 and level 5 buys resolution, and B5 says
+resolution moves the death time without converging it — so a production run
+today would produce a more expensive version of the same unusable late-time
+data.
+
+**Does not block:** the inspiral before the turn (t < ~30), the repulsion /
+sign-rule results (#8, rest-release arms all finish by t = 15, far inside the
+clean window), the initial-data validation, and the separation ladder (#8b,
+CLOSED 2026-09-04 — all four rungs clean to t = 15, constraint growth 1.28-1.46x,
+nothing like Mode B).  Those are unaffected by everything above.
+
+**Order of work before any paper launch:**
+1. Level-4 restart from the held t = 50 seed (B5) — decides physical vs
+   numerical death.  Cheapest, most decisive.
+2. A real MOTS finder (CRITICAL BUG P3) — decides whether a common horizon
+   forms at all, which is the only definition of "merger" available here.
+3. Only then choose production parameters.  If B5 says the death is physical
+   and P3 finds no common horizon, the honest paper is *"exotic matter
+   prevents these wormholes from merging; the binary degrades and the
+   collision goes singular"* — and it needs no production run at all beyond
+   what is already on disk.
 
 ---
 
@@ -139,17 +693,116 @@ no exceptions, no ad-hoc shortcuts:
   centre or refuses to start when the params has no `center` key (the
   consumer-junk bug, §1).  Only after the current runs end — the script is
   live under two launchers.
-- [ ] **#8 Repulsion a-points — IN FLIGHT (launched 2026-09-04, user
-  approval on record).**  `ctrl_rest_a15` (card 3) and `ctrl_rest_a3`
-  (card 0): like-oriented pairs from rest, throat radius 1.5 / 3.0,
-  otherwise byte-identical to the Stage-2.5 controls (a = 1, 2 already
-  measured: +0.0042 / +0.0127 outward — ratio 3.0 vs 4.0 predicted).
-  Four a-points test F ∝ q_A·q_B, q set by throat width; predicted
-  repulsion/gravity = (a² + m²)/m².  Templates
-  `templates_scan/params_ctrl_rest_a{15,3}_t015.txt`, launcher
-  `launch_apoint.sh`; checkpoints off (probe policy); measurement =
-  chi_z slice-cache pit centroid, window t = 3.5–10.5, per
-  `03_two_throats/NOTES.md`.
+- [x] **#8 Repulsion a-points — ANSWERED 2026-09-04: the push is real and
+  grows with throat width at every rung, but the a² magnitude law
+  OVERSHOOTS, by 2.2× at a = 3.**  `ctrl_rest_a15` and `ctrl_rest_a3` both
+  reached t = 15 clean (zero NaN, L2_Ham 6.3e-3 / 2.6e-3), giving four
+  rest-release arms byte-identical but for the radius.  New tool
+  `apoint_repulsion.py`, validated by reproducing both archived numbers
+  (+0.0042 → +0.00441, +0.0127 → +0.01274) before it was pointed at the
+  new arms.
+
+  Displacement by t = 11 (the robust statistic — no differentiation, no
+  fit window): 0.147 / 0.283 / 0.416 / 0.615 for a = 1 / 1.5 / 2 / 3, i.e.
+  ratios 1.00 / 1.92 / 2.82 / 4.18 against the predicted a² = 1 / 2.25 /
+  4 / 9.  Ratios stable to a few per cent at t = 6, 8, 10, 11 and
+  insensitive to the centroid window (±1.5, ±3, ±5 agree to 2 %).  Fitted
+  exponent ≈ 1.36 and *falling* (local slope 1.58 → 1.27), so it is not a
+  clean power law but a flattening one.
+
+  **Methodological warning for anyone re-using the archived statistic:**
+  the quadratic-coefficient "acceleration" over a fixed window is NOT
+  stable — a = 3 reads 3.93 / 4.52 / 8.91 relative to a = 1 on windows
+  6–10.5 / 3.5–10.5 / 8–14.5, because by t = 10 the arms sit at different
+  separations and the force is being sampled at different distances.  The
+  formal ±0.0003 fit errors understate this by two orders.  Quote
+  displacements at matched times, not accelerations.
+
+  Systematics: under-resolution is ELIMINATED — both new throats sit on the
+  finest level, 48 and 96 cells across the throat width, so the widest arm
+  is the best resolved, not the worst.  What survives is the coordinate
+  under-read (which does not cancel between different widths) and genuine
+  finite-size correction to a point-charge formula at a/d = 0.25.  Four
+  like-charge arms cannot separate the two.
+
+  **Follow-up that decides it (~2 GPU-h each, not launched):** flip arms at
+  a = 1.5 and a = 3.  Within one width the under-read cancels, exactly as
+  it did at a = 2 (1.511 ± 0.033 measured vs 1.500 predicted), and the
+  predictions |infall|/|escape| = (1+R)/(R−1) are far apart: 1.889 at
+  a = 1.5 and 1.222 at a = 3.  If they land, the law is right and the
+  shortfall is all coordinate; if not, (a²+m²)/m² needs revisiting at
+  finite size.  Full measurement and systematics:
+  `results/merger/scalar_charge_apoints_2026-09-04.txt`.
+- [x] **#8b Separation ladder — ANSWERED 2026-09-04: the force is
+  inverse-square in an EFFECTIVE separation, d + 3.5, not in the coordinate
+  separation.**  Four rest-release pairs at d = 12 / 14 / 16 / 18, a = 2 and
+  m = 1 held fixed, params diffed to confirm only the centres differ.  The
+  three new rungs all reached t = 15.01 clean (zero NaN).  Displacement at a
+  common t = 11.5 (window set by d = 12, which only ran to t = 11.8):
+  0.4696 / 0.3699 / 0.2980 / 0.2438.
+
+  Why this ladder and not the a-ladder: `a` is a coordinate label whose
+  physical meaning moves as you turn it, so #8 could never isolate the law.
+  Fixing the throat and varying only the gap makes the coordinate distortion
+  identical in every rung, so it cancels in the ratios.
+
+  1. **Pure 1/d² is excluded.**  F·d² rises monotonically 67.6 → 72.5 → 76.3
+     → 79.0, a 15.4 % spread — the push falls off *more slowly* than
+     inverse-square.
+  2. **F ∝ 1/(d + δ)² with δ ≈ 3.5 fits.**  All six rung pairs: 3.77 / 3.67 /
+     3.47 / 3.54 / 3.27 / 2.95.
+  3. **Blind prediction, confirmed.**  δ = 3.4 was fitted on d = 12/14/16
+     alone, before d = 18 reached t = 11.5.  Predicted there: 0.243 (offset)
+     vs 0.209 (pure 1/d²).  Measured **0.2438** — 0.3 % from the offset model,
+     17 % from inverse-square.
+  4. **δ ≈ 3.5 ≈ the measured throat radius 4.29** at a = 2.  The deviation is
+     in the distance label, not the law: these are extended objects, and the
+     coordinate centre separation understates the physical one by about a
+     throat radius.
+
+  This also **favours the finite-size branch of #8's open question** — the
+  a-ladder's shortfall was either coordinate under-read or finite-size
+  correction to a point-charge formula, and here is a finite-size correction
+  of exactly the expected size, measured at fixed width.  The flip-arm test
+  above is still what settles #8 itself.
+
+  **Is it just because the throats are moving?  No — dynamics biases the
+  wrong way.**  Over the window the d = 12 pair separates by 3.9 % and the
+  d = 18 pair by 1.35 %, so the close rung's force weakens more *during* the
+  measurement.  That makes the apparent falloff *steeper*, i.e. pushes the
+  result toward 1/d².  We measure shallower than 1/d² regardless, so the true
+  δ is if anything larger than quoted.  The effect is a static property of the
+  initial data (extended sources), not a dynamical artefact.
+
+  δ is not perfectly constant — it trends 3.77 → 2.95 as the pairs widen — so
+  the offset model is an approximation, not exact.  Full measurement and
+  systematics: `results/merger/separation_ladder_2026-09-04.txt`.
+
+  **WHAT THIS MEANS FOR THE PAPER**
+
+  1. **A defensible headline claim, gained.**  "The repulsion between
+     like-oriented drainhole throats is inverse-square in an effective
+     separation exceeding the coordinate separation by about one throat
+     radius."  Quantitative, falsifiable, and *cheap for a referee to
+     reproduce* — level 3, ~1 GPU-h per rung, four rungs.  The blind
+     prediction is the strongest single number in the repulsion section and
+     should be stated as one: the law was fitted on d = 12/14/16 and the
+     d = 18 point was predicted before it was measured.
+  2. **The a² claim, lost.**  The width law stays unverified (#8).  The paper
+     quotes displacements per width and does not assert a².  The flip-arm
+     test at a = 1.5 and a = 3 is what would settle it.
+  3. **Wording is now fixed — do NOT write "violates the inverse-square
+     law".**  That invites the referee to ask what new physics is being
+     proposed, and the honest answer is none: the deviation is in the
+     distance label, not in the law.  Write that it is inverse-square once
+     the distance is measured between the sources rather than between
+     coordinate centres.
+  4. **The known exposure — resolution.**  All four rungs are level 3, so a
+     resolution error common to the ladder cancels in the *ratios* (which is
+     what is claimed) but survives in the *absolute* displacements (which are
+     not).  Say so explicitly rather than waiting to be asked.  If a referee
+     presses on convergence, one rung repeated at level 4 answers it — a few
+     GPU-h, and it is the single cheapest defensive run in the campaign.
 - [x] **#9 Wave-8 close-out checks — ANSWERED (2026-09-04): the second
   peak is a real outgoing wave, and the tail past the ceiling is clean.**
   (a) The R = 14 second peak (t = 75.1, rΨ₄ = +1.63e-2) reappears at
@@ -243,13 +896,18 @@ phase-2 refinement — both with sweeper-proof hold copies on scratch.)
   and the offline scan of its held plotfiles at **level 5** finds a
   fully-trapped shell r = 0.94 / 0.92 / 0.90 at t = 54.5 / 55.0 / 55.5 —
   shrinking slowly, NOT accelerating — that passes the §9 rim filter
-  (on-shell chi ≈ 0.5, lapse ≈ 0.6, K ≈ 0).  WARNING for #4/#12: the same
-  file scanned at level 3/4 reports NO trapped surface (the Theta ≈ −0.03
-  margin washes out on coarse sampling), so the historic level-3
-  dissolution curve (1.07 → 0.59, "accelerating") carries a scan-depth
-  systematic and the 0.59 endpoint must not be quoted against cf08's
-  0.92 as if commensurable; dissolution re-measurement (#12, §7.5) should
-  scan at the finest level held.
+  (on-shell chi ≈ 0.5, lapse ≈ 0.6, K ≈ 0).  **CORRECTED 2026-09-04.**  This
+  block previously carried a WARNING that the same file scanned at level 3/4
+  showed no trapped surface, and concluded that a scan-depth systematic made
+  0.59 and 0.92 incommensurable.  That was the coarse-level covering-grid bug
+  (see CRITICAL BUG BEFORE PRODUCTION RUN, Defect 1), not physics: after the
+  fix the shell reads 0.920 / 0.920 / 0.940 at levels 5 / 4 / 3, so it is
+  resolution-robust and the systematic is WITHDRAWN.  What replaces it is
+  Defect 2, which is worse for the claim: on this arm and on nodamp the
+  trapped shell sits INSIDE the throat's areal-radius minimum, exactly where
+  an uncollapsed throat also reads as trapped, so these shell radii may not be
+  quoted as a horizon at all.  The gauge-independent replacement is the
+  minimum areal radius, 4.128 → 4.085 over t = 54.5 → 55.5 (−1.0 %/unit).
   Verdict: **the t = 50 collapsed-core state is floor-regularized** —
   releasing the floor on it is instantly fatal, so no restart-based ladder
   can separate "the horizon is real" from "the horizon is the floor".
@@ -410,7 +1068,8 @@ p045 "common horizon at t = 43.3" (documented theta false positive).
 
 | Result | Status |
 |---|---|
-| **Like-oriented throats repel** — 5× gravity at a = 2, m = 1; push scales with throat width, not mass; pull/push 1.50 vs 6/4 predicted | three control arms, 2026-08-31 |
+| **Like-oriented throats repel** — 5× gravity at a = 2, m = 1; push scales with throat width, not mass; pull/push 1.50 vs 6/4 predicted.  The **a² magnitude law is NOT verified** (overshoots 2.2× at a = 3, #8) — quote the four displacements, never a² | three control arms, 2026-08-31; #8 measured 2026-09-04 |
+| **The repulsion is inverse-square in an EFFECTIVE separation d + 3.5**, not in the coordinate separation — pure 1/d² excluded at 15 % across d = 12/14/16/18, and the offset δ ≈ 3.5 matches the measured throat radius 4.29.  Fitted on three rungs, then **blind-predicted the fourth to 0.3 %** (0.243 predicted, 0.2438 measured, vs 0.209 for 1/d²) | #8b ladder, 2026-09-04 |
 | **Opposite-oriented throats attract and merge** — gravity-driven; common trapped surface at r ≈ 1.0 confirmed by two instruments (in-code refined run + offline twin scan, #3); p = 0.20 has its own, larger one at r ≈ 2.1 that passes the K-rim filter (#4) | #3/#4 closed 2026-09-04; floor-independence pending nodamp_cf10 |
 | **The wall (t ≈ 52 death) is gauge + resolution, not physics** — one gauge knob moves it 8.4 units (#15); it reproduces on the identical step (#1 rerun); refinement pushes it +1.4 units/level; damping does not touch it (#14, Δ 0.5 units ≈ noise) | credibility batch, 2026-09-03/04 |
 | **The merger's true peak is measured: \|rΨ₄\| (2,2) = 2.96e-2 at R = 14, t = 55.5** — ~3 units past the wall, via the freeze; R = 30 confirms (2.996e-2 at t = 73.5, lag 18, 1/R to 1.3 %); freeze arm matches the unfrozen twin to 0.7 % pre-wall.  L = 64 box — production re-measures clean | freeze chain, computed 2026-09-04 |
@@ -648,11 +1307,16 @@ Figure + script: `runs/wormhole_merger/merger_fix/plots/scalar_vs_psi4_R14.*`.
    a factor of two in one line.  No new runs.
 5. **Dissolution re-measured** — the quoted 1.07 → 0.59 curve splices in
    the disqualified `rw` arm; re-measure on the undamped level-5 headline
-   arm with the offline theta+ scan.  Agreed phrasing: *the merger produces
-   a short-lived black hole that dissolves by swallowing its own exotic
-   matter* — classical negative-energy accretion, not Hawking radiation.
-   A true MOTS finder (BHaHAHA) stays on the infrastructure list, not
-   load-bearing.
+   arm.  **REWRITTEN 2026-09-04:** re-measure it as the minimum AREAL radius,
+   not the coordinate theta+ shell — the coordinate rate overstates the
+   contraction 4–5x on both merged arms (CRITICAL BUG, Defect 2), so the
+   1.07 → 0.59 curve and the word "accelerating" are withdrawn.  The agreed
+   phrasing *"a short-lived black hole that dissolves by swallowing its own
+   exotic matter"* is SUSPENDED: the trapped-surface evidence behind the
+   words "black hole" fails the orientation test on both arms.  What survives
+   is the invariant contraction, ~1 %/unit on two independent arms.  A true
+   MOTS finder (BHaHAHA) is therefore no longer infrastructure — it is
+   **load-bearing** for any horizon language (proposals P3/P4).
 6. **Scalar-charge prediction** — read q per throat from the l = 1
    `--scalar-modes` stream (per-throat spheres; the check-F angular mean
    cancels on the flipped binary), predict F ∝ q_A·q_B beside gravity; the
