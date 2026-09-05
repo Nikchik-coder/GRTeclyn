@@ -23,10 +23,13 @@ a verdict to be adopted.*
   **Status: the bug is identified and written up as Defect 2 in GPU_PLAN
   ("a trapped shell inside a throat is not a horizon"), still OPEN. Defect 1
   (coarse-level scans reading the wrong region) is FIXED.**
-- [~] **3. Isolated-throat stability control.** Evolve one exact static throat, long.
-  **Status: IN FLIGHT — `single_hold_t100`, launched 2026-09-04 on card 0,
-  production settings, t = 100. Seven older Stage-1 arms exist and they do NOT
-  support the audit; see CONTESTED below.**
+- [x] **3. Isolated-throat stability control.** Evolve one exact static throat, long.
+  **Status: DONE. `single_hold_t100` reached t = 100 with zero NaN. The throat
+  holds its exact radius for 26 units, then contracts exponentially with
+  e-folding τ = 5.86 coordinate units, reaching −35% by t = 65.** Full
+  systematics in `results/merger/single_throat/INSTABILITY.md`, regenerated from
+  the packed streams by `analysis/single_throat_instability.py`. The CONTESTED
+  section below is superseded — the Stage-1 arms were simply too short.
 - [x] **4. Remove `core_matter_damping` and the interior freeze.** *"If the run then
   NaNs immediately, that is the physical result."*
   **Status: DONE, and the audit's expectation is not what happened.** The
@@ -37,12 +40,16 @@ a verdict to be adopted.*
 
 ### Tier (ii) — the audit's proposed cause of the wall
 
-- [~] **5. The single unstable radial mode**, truncation-seeded. **LOOKING
-  CONFIRMED at t = 33 of 100** — the isolated throat is contracting exponentially
-  with e-folding ≈ 2.6 units, constraints flat, error profile peaked at the throat
-  and decaying both ways. Extrapolates to death at t ≈ 53, inside the 44–56 binary
-  wall. See STAGE 0 INTERIM RESULT. Not final: the fit is 6 points and a growing
-  oscillation is not yet excluded.
+- [~] **5. The single unstable radial mode**, truncation-seeded. **CONFIRMED at
+  one resolution.** The isolated throat departs exponentially at a rate that is
+  constant over 2 e-foldings (τ = 5.86 ± 0.11 coordinate units, t = 49–61) while
+  the constraint norms stay flat. Converted to proper time at the throat this is
+  T = 0.867 against González et al.'s 0.68–0.76 — the right mode at the right
+  rate to about 15%. **Still `[~]` and not `[x]` for one reason: the rate has
+  been measured at a single resolution.** The two half-resolution arms die within
+  3 units of their own turnover, so they give a departure *time* to compare but
+  never a *rate*, and two resolutions with one rate between them cannot separate
+  "delayed at fixed rate" from "slower at coarse dx". See item 10.
 - [ ] **6. Gauge shock in 1+log** amplifying the midpoint blob. Test the
   shock-avoiding Bona–Massó family f(α) = 1 + κ/α² (arXiv:2207.06376) and a flat
   initial lapse. **Status: not started.** Our `lc1` arm (lapse_coeff 1 instead of
@@ -79,6 +86,12 @@ a verdict to be adopted.*
 
 - [ ] **Scalar-channel extraction** E_Φ = ∫dt (d(rφ)/dt)² alongside Ψ₄, so the energy
   budget is complete (audit §7 is right that Ψ₄ misses the scalar channel entirely).
+- [ ] **10. Resolution ladder on the isolated throat — now the single most
+  decisive open test.** Repeat `single_hold_t100` at max_level = 4 (dx = 0.03125)
+  and re-run max_level = 2 to t = 100 with the tagger that lets it survive.
+  *Benchmark:* τ unchanged across all three and the turnover moving later by a
+  fixed ~5.5 units per halving ⇒ physical, converged. τ moving with dx ⇒ not.
+  Three cards, ~1 day.
 - [ ] **CFL halving test** — cheap, and immediately rules the gauge-speed violation
   in or out. One card, a few hours.
 - [ ] **Controlled ±ε sign test** to select the collapse vs expansion branch per
@@ -88,75 +101,119 @@ a verdict to be adopted.*
 
 ---
 
-## STAGE 0 INTERIM RESULT (t = 33 of 100, 2026-09-04) — the audit is looking RIGHT
+## STAGE 0 RESULT (complete, t = 100 of 100, 2026-09-05) — the audit is RIGHT
 
-**The isolated throat is going unstable, and it looks like the real thing.** The
-CONTESTED section below is preserved as written, but its conclusion is now
-superseded: the Stage-1 arms were simply too short, exactly as the caveat there
-warned. Read this block first.
+**A single drainhole throat, alone in an empty box with no companion, no orbit and
+no superposition defect, destroys itself.** `single_hold_t100` ran the full t = 100
+with **zero NaN**. The CONTESTED section below is superseded: the Stage-1 arms were
+too short, exactly as the caveat there warned.
 
-**Phase structure of R_areal_min(t)** (exact: 3.8895):
+The numbers, the systematics and the caveats are generated from the packed streams
+by `results/merger/analysis/single_throat_instability.py` and live in
+**`results/merger/single_throat/INSTABILITY.md`**. That file is the citable record;
+this is the summary.
+
+### What happened
 
 | window | behaviour |
 |---|---|
-| t = 0–8 | flat to **9 significant figures**. A genuine fixed point. |
-| t = 8–26 | slow swell, +7×10⁻⁴, turning over at t = 26 |
-| t = 26–33 | **monotone contraction, rate growing exponentially** |
+| t = 0–26 | flat. 8 significant figures at t = 1, 6 at t = 4, 5 at t = 12. A genuine fixed point. |
+| t = 26–31 | turns over; back through the exact value at t = 31 |
+| t = 31–65 | monotone exponential contraction: −0.4% at t = 40, −2.9% at 50, −35% at 65 |
+| t = 61.3 | chi at the compactified origin reaches its 1e-8 floor — **numerics take over here** |
+| t > 65 | the areal-minimum diagnostic is clipped; the apparent R ≈ 1.92 plateau is a boundary reading, not an endpoint |
 
-Successive dR/dt: −1.04e-4, −1.86e-4, −2.94e-4, −4.34e-4, −6.07e-4, −7.03e-4.
-Fit over t ≥ 28: **e-folding τ ≈ 2.6 coordinate units.** R crossed below the exact
-value at t ≈ 31.5. Excursions are growing, not ringing: 7.7e-6 → 7.1e-4 → 2.0e-3.
+### The rate, and why it is not a fit
 
-**Four independent reasons this is physical, not numerical:**
+A least-squares slope returns a number whatever the data does. The local
+logarithmic derivative d ln|R₀−R|/dt shows whether there is a constant rate to
+quote at all — and there is, over t = 49–61:
 
-1. **Constraints are flat.** L2_Ham = 2.5058e-03 at t = 33 against 2.5089e-03 at
-   t = 1 — slightly *decreasing* while the throat collapses. This is the audit's
-   Finding 5 exactly: a growing mode *satisfies* the constraints, so global norms
-   give no warning. It is also Mode A of B1, now reproduced in a one-body system.
-2. **The origin is not the culprit.** chi at the compactified origin *rose* from
-   7.7e-7 to 8.9e-6 — twelve times further from the 1e-8 floor. The Stage-1
-   failure mode is absent.
-3. **The error profile discriminator says THROAT, not origin.** `drainhole_hold_
-   report.py` at t = 31/32/33 (|chi_num − chi_exact|/chi_exact):
+> **0.1706 ± 0.0031 per unit → τ = 5.86 coordinate units**, flat across 2.0
+> e-foldings while the deviation grows from 2.4% to 18.7% of the throat radius.
 
-   | rbar | t=31 | t=32 | t=33 | |
-   |---|---|---|---|---|
-   | 0.33 | 4.89e-3 | 4.19e-3 | 3.08e-3 | falling |
-   | 0.82 | 2.13e-3 | 1.57e-3 | 7.21e-4 | falling |
-   | 1.19 | 1.16e-3 | 7.96e-4 | 2.58e-4 | falling |
-   | **1.57 ← throat** | 5.34e-5 | 3.16e-4 | **6.77e-4** | **growing 13×** |
-   | 1.94 | 9.41e-4 | 1.17e-3 | 1.45e-3 | growing |
-   | 2.94 | 1.76e-3 | 1.98e-3 | 2.22e-3 | growing |
-   | 4.88 | 1.08e-3 | 1.27e-3 | 1.48e-3 | growing |
-   | 9.76 | 1.53e-4 | 1.23e-4 | 8.07e-5 | falling |
+Counter-intuitively it is the **small-amplitude window that cannot be fitted**.
+R swells before it contracts, so mode and settling transient cancel near t = 31
+and the log of a near-zero difference has a spurious derivative — which is what
+produced the "τ ≈ 2.6" quoted in the interim note at t = 33. That number was an
+artefact of the crossing and is withdrawn.
 
-   The interior is getting **cleaner** while the throat and near-exterior degrade.
-   An origin front would do the opposite. This is the test the script was built
-   for and it returns the answer that favours a genuine mode.
-4. **The growing structure has the right shape.** It is a bump peaking near
-   rbar ≈ 3, decaying both inward and outward, gone by rbar ≈ 10 — regular at the
-   throat, exponentially decaying in the asymptotic region. That is González,
-   Guzmán & Sarbach's description of their unstable radial mode.
+| quantity | value |
+|---|---|
+| e-folding, coordinate time | 5.86 |
+| × α_throat = e^{u(X=½)} = 0.5749 → proper time at the throat | 3.37 |
+| **T = τ_proper / r_throat** | **0.867** |
+| González, Guzmán & Sarbach at m/a = 0.5, interpolated | 0.68–0.76 |
+| their full tabulated range over γ₁ | 0.590–0.846 |
 
-**The number that matters for the campaign.** At τ = 2.6, growing the current
-5.2×10⁻⁴ relative deviation to O(1) takes ≈ 20 further units → **death at t ≈ 53**.
-The binary wall is 44–56. **A single throat, alone, with no companion, no orbit
-and no superposition defect, dies on the same clock as every binary arm.** If that
-holds, the wall was never a binary phenomenon and B1/B5 need rewriting around it.
+**The right mode at the right rate to about 15%**, sitting just outside the
+tabulated range at the γ₁ = 0 end. The residual is comfortably inside the
+interpolation of their Table I and the (a,m) ↔ (B,γ₁) mapping, neither of which
+we have checked line by line (see Caveats).
 
-**What is still open at t = 33.** Six points in the fit; successive ratios are
-still drifting down (1.79 → 1.40), so τ could be 2.6–3.8. A growing *oscillation*
-is not yet excluded — it swelled before it shrank, and one more turnover would
-change the reading. The measured T = τ_proper/R_throat ≈ 0.38 (using α_throat =
-e^{u(X=½)} = 0.575) is **faster than González et al.'s 0.590–0.846 range**, which
-is either a real parametrisation difference, an artefact of the unconverged fit,
-or a sign the (a,m) ↔ (B,γ₁) mapping in the Caveats is wrong. Do not quote T until
-the run finishes. The next ~10 units settle all of it.
+### Why this is physics and not our own error
 
-**Prediction scorecard.** The prediction fixed this morning — "≈5% off exact by
-t = 100, O(1) at t ≈ 117" — is wrong in the conservative direction. It assumed the
-2.85e-9 t=0→1 drift was the seed and τ = 5.97. In fact the settling transient
-(7×10⁻⁴ by t = 26) is the effective seed and τ ≈ 2.6, roughly 4× faster.
+1. **The constraints never notice.** L2_Ham is 2.509e-03 at t = 1 and 1.166e-03
+   at t = 65 — *decreasing* while the throat loses a third of its radius. A
+   growing mode of the constrained system satisfies the constraints. This is the
+   audit's Finding 5 reproduced in a one-body system, and it means **no
+   constraint norm anywhere in this campaign can certify a wormhole run healthy.**
+2. **The origin is not the culprit, until it is.** chi at the origin *rose* through
+   the growth phase and only reached its floor at t = 61.3 — after the throat had
+   already lost 19%. The constraint blow-up (doubling every 4.2 units) starts at
+   the floor, not at the departure. Two separate events, in the right order.
+3. **The error profile changes character with them.** At t = 31–33 it peaks *at
+   the throat* and decays both ways — a regular mode. At t = 98–100 it is a front
+   peaking at the origin and decaying outward — contamination. The discriminator
+   the script was built for returns "mode" during the mode and "contamination"
+   during the contamination.
+4. **No horizon ever formed.** max r_AH = 0 for the whole run. Nothing collapsed
+   to a black hole; the throat simply closed.
+
+### The honest gap
+
+**The rate has been measured at one resolution.** Halving dx from 0.125 to 0.0625
+delays the turnover by +5.5 units (20.5 → 26.0) and shrinks the seed 3.5× — the
+signature of a fixed-rate mode with a converging truncation seed. But both
+half-resolution arms die within ~3 units of their own turnover, so neither ever
+shows a *rate*. Two resolutions with one rate between them cannot distinguish
+"delayed at fixed rate" from "slower at coarse dx". **TODO item 10 is now the
+single most decisive open test in the campaign.**
+
+Also note that `s16ml3_lapse5_sg01_fg` is **not** a second opinion: it differs
+only in tagger, and for a single centred throat the two taggers build identical
+grids, so it agrees bit for bit. It is a determinism check, nothing more.
+
+### Prediction scorecard
+
+The prediction fixed before the answer was known — *"≈5% off exact by t = 100,
+clean exponential over the last ~30 units, O(1) at t ≈ 117"* — was **right about
+the rate and wrong about the clock.**
+
+| | predicted | measured |
+|---|---|---|
+| e-folding, coordinate time | 5.97 | 5.86 (−2%) |
+| 5% deviation reached at | t = 100 | t ≈ 53 |
+| clean exponential visible | last ~30 units | t = 49–61 ✓ |
+
+The rate was called to 2%. The timing missed by 47 units because the seed was
+taken to be the t = 0→1 drift (2.85e-9); the effective seed is the settling
+transient, ~7e-4 by t = 26, five orders of magnitude larger. **Lesson for the
+next prediction: the seed, not the rate, is what you cannot guess.**
+
+The 5.97 also used α_throat = 0.456, which was wrong; the correct 0.5749 predicts
+τ = 4.73 and would have been 19% low. The 2% agreement is partly luck and should
+not be quoted as a validated prediction of the rate.
+
+### What this does to the campaign
+
+The isolated throat passes −5% at t ≈ 53 and −35% by t = 65. **The binary wall is
+44–56.** A single throat with nothing done to it dies on the same clock as every
+binary arm. B1's two-mode framing, B5 ("death time is set by numerical
+parameters") and §2's spine all have to be rewritten around this, and
+constraint-solved initial data becomes *less* urgent, not more: better initial
+data cannot stabilise an unstable equilibrium, it only cleans up the seed and
+buys the logarithm of the improvement.
 
 ---
 
@@ -415,16 +472,22 @@ Polon. B4, 251 (1973).
 
 ## Recommended sequence
 
-**Stage 0 (days, decisive) — RUNNING.** Isolated single throat, exact static data,
-production settings, t ≳ 100. `single_hold_t100`, card 0, launched 2026-09-04.
-Measurement: R_areal_min(t) from `small_data/areal_radius.dat`, scored by
-`drainhole_hold_report.py`, which also gives the error profile err(r,t) that separates
-a throat-peaked mode from an origin-born front. *If it diverges with e-folding ~R_throat,
-the wall is the physical instability and the paper pivots to scattering/no-merger
-immediately. If it holds to t = 100 at production resolution, Finding 1 does not
-explain our wall and the audit's Tier (ii) fails for our parametrisation.*
+**Stage 0 (days, decisive) — DONE 2026-09-05, and it diverged.** Isolated single
+throat, exact static data, production settings, t = 100. `single_hold_t100`, card 0.
+The stated fork was: *"if it diverges with e-folding ~R_throat, the wall is the
+physical instability and the paper pivots to scattering/no-merger immediately."*
+It diverged, with τ_proper/R_throat = 0.867. **The pivot is now owed.**
+
+**Stage 0b (1 day, three cards) — the only thing still standing between this and a
+result we can publish.** The resolution ladder, TODO item 10. τ was measured at one
+dx. Until it is measured at two more, "the throat is unstable" is an observation at
+one resolution, not a converged rate, and a referee will say so first.
 
 ### Stage 0's falsifiable prediction, fixed before the answer is known
+
+*(SCORED 2026-09-05 — rate right to 2%, timing wrong by 47 units. See the
+prediction scorecard in the Stage 0 result above. Kept verbatim below because a
+prediction is only worth anything if the record shows it unedited.)*
 
 First two samples, 2026-09-04 (exact closed form: R = 3.8895):
 
@@ -497,7 +560,13 @@ sub-result becomes defensible — still not a "wormhole merger" paper.
 - Whether 1+log specifically forms a *shock* in this negative-energy configuration is a
   plausible inference from Alcubierre's analysis, not a published result for phantom
   matter. Stage 2 is the test.
-- **Ours:** the audit's Finding 1 is stated with more confidence than our own
-  single-throat data currently supports. It is the single most consequential claim in
-  the document and it is under test right now. Nothing in the paper should be reframed
-  around it until `single_hold_t100` reports.
+- **Ours (updated 2026-09-05):** the audit's Finding 1 is now supported by our own
+  data — `single_hold_t100` reproduces the mode and its rate to ~15%. The remaining
+  reservation is narrower and specific: **the rate is measured at one resolution.**
+  The paper may now be reframed around the instability, but the reframing should not
+  be *published* before TODO item 10 returns, because a single-resolution growth rate
+  is the first thing a referee will challenge and the cheapest thing for us to fix.
+- **Ours:** the α_throat = 0.456 used in the pre-registered prediction was wrong
+  (correct: 0.5749, from X = ½ at the minimal surface). The prediction's 2% hit on τ
+  is therefore partly luck. Any future translation between coordinate and proper time
+  must use 0.5749.

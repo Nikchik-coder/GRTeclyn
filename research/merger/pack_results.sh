@@ -21,6 +21,11 @@
 # last time unit of every run, which is kept at full cadence, because that is
 # where a dying run does everything interesting.
 #
+# STAGE-1 SINGLE THROAT
+# results/merger/single_throat/ holds the isolated-throat arms and the derived
+# INSTABILITY.md systematics.  They are not merger runs and are kept out of
+# campaign/ so they cannot leak into the campaign summary table.
+#
 # HORIZON SCAN
 # results/merger/horizon/ holds the offline Theta = 0 scan behind the horizon-
 # dissolution result.  Re-running it needs plotfiles that the consumer deletes
@@ -224,6 +229,60 @@ PY
 done
 
 # ---------------------------------------------------------------------------
+# 1b. Stage-1 single-throat arms
+# ---------------------------------------------------------------------------
+# These live one level down, under 01_single_throat/, and are packed separately
+# from the campaign because they are not merger runs and must not appear in the
+# campaign summary table.  Only the streams the instability systematics reads
+# are kept -- they are a few kB each, and they are what makes the resolution
+# comparison reproducible from the repository alone.
+for rundir in "${RUNS}"/01_single_throat/*/; do
+  [[ -d "${rundir}" ]] || continue
+  arm="$(basename "${rundir%/}")"
+  out="${DEST}/single_throat/${arm}"
+  rm -rf "${out}"
+  mkdir -p "${out}"
+
+  [[ -f "${rundir}small_data/areal_radius.dat" ]] && cp "${rundir}small_data/areal_radius.dat" "${out}/"
+  for base in constraint_norms.dat collapse_diagnostics.dat; do
+    src="${rundir}data/${base}"
+    [[ -f "${src}" ]] || continue
+    "${PY_BIN}" - "${src}" "${out}/${base}" <<'PY'
+import sys
+
+src, dst = sys.argv[1], sys.argv[2]
+STEP = 0.05                       # dt of the thinned stream
+
+head, rows = [], []
+with open(src, encoding="utf-8") as fh:
+    for line in fh:
+        (head if line.startswith("#") or not line.strip() else rows).append(line)
+with open(dst, "w", encoding="utf-8") as out:
+    out.write(f"# thinned to dt={STEP:g} from the every-step stream\n")
+    out.writelines(head)
+    last = None
+    for line in rows:
+        t = float(line.split()[0])
+        if last is None or t - last >= STEP - 1e-9:
+            out.write(line)
+            last = t
+PY
+  done
+  [[ -f "${rundir}params.txt" ]] && cp "${rundir}params.txt" "${out}/evolution_params.txt"
+
+  if [[ -z "$(ls -A "${out}")" ]]; then
+    rmdir "${out}"
+    continue
+  fi
+  found=$(find "${out}" -maxdepth 1 -type f \( -name '*.txt' -o -name '*.md' \))
+  [[ -n "${found}" ]] && scrub ${found}
+  echo "[pack-merger] single_throat/${arm}: $(find "${out}" -type f | wc -l) files"
+done
+[[ -f "${RUNS}/01_single_throat/NOTES.md" ]] && \
+  cp "${RUNS}/01_single_throat/NOTES.md" "${DEST}/single_throat/NOTES.md" && \
+  scrub "${DEST}/single_throat/NOTES.md"
+
+# ---------------------------------------------------------------------------
 # 2. Offline horizon scan (opt-in: needs plotfiles that are deleted as runs go)
 # ---------------------------------------------------------------------------
 if [[ "${PACK_HORIZON:-0}" == "1" ]]; then
@@ -285,6 +344,7 @@ fi
 # 4. Derived summary table over the packed streams
 # ---------------------------------------------------------------------------
 "${PY_BIN}" "${DEST}/analysis/make_summary.py" "${DEST}"
+"${PY_BIN}" "${DEST}/analysis/single_throat_instability.py" "${DEST}"
 
 echo "[pack-merger] total size: $(du -sh "${DEST}" | cut -f1)"
 echo "[pack-merger] done"

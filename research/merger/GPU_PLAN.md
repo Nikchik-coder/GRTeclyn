@@ -629,6 +629,64 @@ the departure point) is held on scratch as a restart seed, with the t = 36/36.5/
 without re-running.  The statistic rule stands: ratio of rolling medians with its
 band, never a pointwise ratio at a named time.
 
+### B7 — Stage 0 answers B1 and B5: the throat is unstable on its own (2026-09-05)
+
+*The evidence is `single_hold_t100`: one throat, exact static data, empty box,
+production settings, t = 0 to 100 with zero NaN.  Numbers and systematics in
+`results/merger/single_throat/INSTABILITY.md`, regenerated from the packed
+streams by `results/merger/analysis/single_throat_instability.py`.*
+
+**A single drainhole throat, with no companion, no orbit, no superposition
+defect and no damping, closes itself.**  R_areal_min holds the exact value to
+8 significant figures at t = 1 and 5 at t = 12, turns over at t = 26, and then
+contracts exponentially:
+
+| t | 26 | 35 | 40 | 45 | 50 | 55 | 60 | 65 |
+|---|---|---|---|---|---|---|---|---|
+| vs t = 0 | +0.018% | -0.089% | -0.402% | -1.16% | -2.89% | -6.80% | -15.8% | -34.9% |
+
+Rate, read as a plateau in d ln|R0-R|/dt rather than as a fit over a chosen
+window: **0.1706 +/- 0.0031 per unit, tau = 5.86 coordinate units**, flat across
+2.0 e-foldings from 2.4% to 18.7% deviation.  In proper time at the throat
+(alpha = 0.5749) that is T = tau/r_throat = 0.867, against 0.68-0.76 predicted
+by Gonzalez, Guzman & Sarbach for this parametrisation.
+
+**What it does to B1.**  Mode A -- sudden local failure with globally clean
+constraints -- is now explained.  L2_Ham goes 2.509e-03 (t = 1) to 1.166e-03
+(t = 65) while the throat loses a third of its radius: *decreasing* through the
+whole collapse.  A growing mode of the constrained system satisfies the
+constraints, so **no constraint norm in this campaign can certify a wormhole run
+as healthy**, and B1's two-mode framing should be rewritten as one physical mode
+plus one numerical one rather than two failure modes of equal standing.
+
+**What it does to B5.**  "The death time is set by numerical parameters" is now
+too strong.  The isolated throat passes -5% at t ~ 53 and -35% by t = 65; the
+binary wall is 44-56.  Numerical parameters move the *seed*, and the seed enters
+only through its logarithm -- halving dx bought 5.5 units, not a converged
+answer.  The death time is set by the physical rate; the numerics set the offset.
+
+**What it does NOT do.**  It does not make the late-time binary data usable, and
+it does not settle the rate.  tau was measured at one resolution.  The two
+half-resolution arms die within 3 units of their own turnover, so they give a
+departure *time* to compare but never a *rate*, and two resolutions with one rate
+between them cannot separate "delayed at fixed rate" from "slower at coarse dx".
+That is the first thing a referee will ask and the cheapest thing to fix.
+
+**Where the run stops being readable.**  Two hard limits, both earlier than the
+run's end, and nothing past them may be quoted:
+
+* **t = 61.3** -- chi at the compactified origin reaches its 1e-8 floor.  After
+  that the evolved system is not the PDE: L2_Ham starts doubling every 4.2 units
+  and the error profile flips from throat-peaked to a front peaking at the origin.
+* **t = 65** -- the areal-minimum scan's minimum reaches the inner cutoff of its
+  own search window (rbar = 0.53).  The apparent R ~ 1.92 plateau over t = 66-99
+  is that boundary reading and **is not a new equilibrium**.
+
+No apparent horizon formed at any time (max r_AH = 0).  Nothing collapsed to a
+black hole; the throat simply closed.
+
+---
+
 ### What this blocks, and what it does not
 
 **Blocks:** any production launch whose purpose is to measure the merger, the
@@ -644,16 +702,19 @@ clean window), the initial-data validation, and the separation ladder (#8b,
 CLOSED 2026-09-04 — all four rungs clean to t = 15, constraint growth 1.28-1.46x,
 nothing like Mode B).  Those are unaffected by everything above.
 
-**Order of work before any paper launch:**
-1. Level-4 restart from the held t = 50 seed (B5) — decides physical vs
-   numerical death.  Cheapest, most decisive.
+**Order of work before any paper launch** *(reordered 2026-09-05 by B7)*:
+1. The isolated-throat resolution ladder — max_level 4, and max_level 2 re-run
+   to t = 100.  B7 measured the growth rate at one dx; this converges it.  One
+   day, three cards, and it is now the most decisive test we have, because
+   every other item below is downstream of whether that rate is real.
 2. A real MOTS finder (CRITICAL BUG P3) — decides whether a common horizon
    forms at all, which is the only definition of "merger" available here.
-3. Only then choose production parameters.  If B5 says the death is physical
-   and P3 finds no common horizon, the honest paper is *"exotic matter
-   prevents these wormholes from merging; the binary degrades and the
-   collision goes singular"* — and it needs no production run at all beyond
-   what is already on disk.
+3. Only then choose production parameters.  B7 has largely answered the old
+   item 1 (physical vs numerical death) in favour of physical, so the honest
+   paper is *"exotic matter prevents these wormholes from merging: each throat
+   is individually unstable on the orbital timescale, the binary degrades and
+   the collision goes singular"* — and it needs no production run at all beyond
+   what is already on disk, plus the ladder.
 
 ---
 

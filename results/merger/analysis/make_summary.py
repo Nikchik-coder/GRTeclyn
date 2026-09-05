@@ -138,10 +138,28 @@ STOPPED = {
 }
 
 
+# "Finished clean" means the solver reached stop_time without a NaN.  It does
+# NOT mean the late-time data is usable, and for one run those two are very far
+# apart: single_hold_t100 ran to t = 100 with zero NaN while its constraints grew
+# 52x and its throat diagnostic ran off the edge of its own search window.  A
+# reader scanning this column would take "finished clean at t = 100" as a clean bill
+# of health, so the qualification is attached to the outcome itself rather than
+# left to the README.
+CAVEAT = {
+    "single_hold_t100":
+        " -- but readable only to t = 65 (areal-minimum scan clipped) and only "
+        "to t = 61.3 as the PDE (chi floored); see single_throat/INSTABILITY.md",
+}
+
+
 def outcome(run_dir: pathlib.Path, t_end) -> str:
     stopped = STOPPED.get(run_dir.name)
     if stopped is not None and t_end is not None:
         return stopped.format(t=t_end)
+    return _outcome(run_dir, t_end) + CAVEAT.get(run_dir.name, "")
+
+
+def _outcome(run_dir: pathlib.Path, t_end) -> str:
     tail = run_dir / "run_tail.log"
     if tail.exists():
         text = tail.read_text(errors="replace")

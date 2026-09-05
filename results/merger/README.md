@@ -37,11 +37,23 @@ that produced it does not.
    and the interior's areal radius is collapsing. The full energy/mass balance (#12)
    and the floor gate are still open; until both close, the mechanism is stated as
    strongly supported inference, the shrinkage as measurement.
+4b. **And a single throat, alone, does the same thing.** `single_hold_t100` (2026-09-05):
+   one throat, exact static data, empty box, t = 100 with zero NaN. It holds its exact
+   radius for 26 units and then contracts exponentially, tau = 5.86, reaching -35 % by
+   t = 65 — while the constraint norms *fall*. That is the Ellis-Bronnikov growing mode
+   at the rate Gonzalez, Guzman & Sarbach predict for this parametrisation, to ~15 %.
+   The binary wall is 44-56; a throat with nothing done to it dies on the same clock.
+   **Everything above about the merged core has to be read against this.** Measured at
+   one resolution so far — see [`single_throat/INSTABILITY.md`](single_throat/INSTABILITY.md).
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
    (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and
-   `..._p035_t200` (closest approach 2.75, run to t = 73.9). The instability belongs
-   to the merged core, not to the code.
+   `..._p035_t200` (closest approach 2.75, run to t = 73.9). ~~The instability belongs
+   to the merged core, not to the code.~~ **Withdrawn 2026-09-05 by 4b:** the instability
+   belongs to a *single throat*, so it is neither the merged core's nor the code's. It is
+   the solution's. The fly-by arms are not counter-evidence — they were stopped or died
+   at t = 60-91, and an isolated throat is already 35 % gone by t = 65. ("Healthy with no
+   NaN at all" also overstates them; see B2 in `research/merger/GPU_PLAN.md`.)
 6. And it is not a resolution artefact. A 25 % finer grid reproduces the inspiral to
    within 1.8 % and the waveform to within 4 % — and then dies of the same NaN
    1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
@@ -64,7 +76,10 @@ one pack entry is a snapshot of a run **still in flight** — the decisive
 from-t = 0 low-floor twin `merge_twin_p012_nodamp_cf10_t060`, to be repacked
 at its close-out. Every other pack entry is a finished run.
 
-### The initial data is validated: a single throat holds 40 time units
+### The initial data is exact, and the throat is unstable anyway
+*(rewritten 2026-09-05; this section used to be titled "the initial data is
+validated: a single throat holds 40 time units". The 40-unit number was right
+and the framing was wrong — see below.)*
 - **Claim.** The grid represents each wormhole by folding its entire far
   universe into the ball inside the throat sphere (the other side's infinity
   lands on the throat's centre point) — the route the background survey said
@@ -73,17 +88,39 @@ at its close-out. Every other pack entry is a finished run.
   assuming: refining the origin made every error *smaller*, a small lapse
   collar over the centre bought ~3.5x on origin survival, the mass was put in
   the lapse (drainhole) rather than the spatial metric (which crushes the
-  throat), and a single static throat then held **40 time units with -0.36 %
-  drift**, constraints exact at t = 0. This is the initial-data validation
-  every merger run inherits.
-- **Runs.** The Stage-1 ladder under `runs/wormhole_merger/01_single_throat/`
-  *(run tree — see its NOTES.md)*: the lapse/collar/dissipation grid
-  (`stage1_lapse5*`, `stage1_lapse6*`), the uniform-grid origin pair
-  (`s1uni128`, `s1uni256`), and the long holds (`s15_*`, `s16ml3_*`).
-- **Caveat.** The 40-unit window is a fuse, not stability: the known
-  Ellis-Bronnikov growing mode (e-fold ~ 4.4, about one throat-light-crossing)
-  is still growing at t = 40. Every production arm is budgeted to finish
-  inside the fuse.
+  throat), and the resulting data is an exact fixed point of the evolved
+  system — R_areal_min holds its closed-form value to **8 significant figures
+  at t = 1 and 5 at t = 12**, with the constraints exact at t = 0.
+- **And then it goes.** Run long enough and the same throat, alone in an empty
+  box, closes itself: turnover at t = 26, then exponential contraction at
+  **tau = 5.86 coordinate units** (0.1706 +/- 0.0031 per unit, flat over 2
+  e-foldings), reaching -35 % by t = 65. In proper time at the throat that is
+  T = 0.867 against the 0.68-0.76 predicted for this parametrisation by
+  Gonzalez, Guzman & Sarbach (arXiv:0806.0608) — the predicted mode at the
+  predicted rate to about 15 %. **The initial data is not the problem; the
+  solution it represents is unstable.**
+- **The constraints never see it.** L2_Ham *falls* from 2.509e-03 to 1.166e-03
+  while the throat loses a third of its radius. A growing mode of the
+  constrained system satisfies the constraints. Nothing in this campaign may
+  be certified healthy on a constraint norm alone.
+- **Runs.** `campaign/single_hold_t100/` *(pack)* — one throat, exact static
+  data, production settings, t = 0 to 100 with zero NaN. The Stage-1 ladder is
+  packed alongside it under `single_throat/` *(pack)*: the lapse/collar/
+  dissipation grid, the uniform-grid origin pair, and the long holds. The
+  derived systematics, regenerated from those streams by
+  `analysis/single_throat_instability.py`, are in
+  [`single_throat/INSTABILITY.md`](single_throat/INSTABILITY.md).
+- **Caveat — read INSTABILITY.md before quoting a rate.** (a) The growth rate
+  is measured at **one resolution**; the two half-resolution arms die within 3
+  units of their own turnover and give a departure time but never a rate.
+  (b) Nothing past **t = 65** may be quoted: the areal-minimum scan's minimum
+  reaches the inner edge of its own search window there, and the apparent
+  R ~ 1.92 plateau over t = 66-99 is that boundary reading, not an endpoint.
+  (c) Nothing past **t = 61.3** is the PDE at all: chi at the compactified
+  origin reaches its floor, after which L2_Ham doubles every 4.2 units and the
+  error profile flips from throat-peaked to origin-peaked. (d) The older
+  "e-fold ~ 4.4, about one throat-light-crossing" estimate in this file was a
+  literature figure, not a measurement, and is superseded by the 5.86 above.
 
 ### Like-oriented throats repel; flipping one is what makes a binary
 - **Claim (measured).** Two identical throats push apart, and the push scales
@@ -398,8 +435,17 @@ campaign/<run>/                 one directory per run
   movies/                         the stitched .mp4s, one per field
   frames/                         thinned stills, where the pictures carry a result
   part1/, *__part1*.dat           the pre-restart episode of the same run
+single_throat/<arm>/            the Stage-1 isolated-throat ladder: areal_radius,
+                                constraints, collapse diagnostics, params.  Kept
+                                out of campaign/ because these are not merger
+                                runs and must not enter the campaign table.
+single_throat/INSTABILITY.md    the isolated-throat systematics, generated
+single_throat/NOTES.md          the Stage-1 working notes, copied from the run tree
 horizon/                        the offline Theta = 0 scan behind result 4
 analysis/make_summary.py        builds the two summary tables from the above
+analysis/single_throat_instability.py
+                                builds INSTABILITY.md from single_throat/ and
+                                campaign/single_hold_t100/
 summary.md, summary.csv         one row per run, generated -- do not hand-edit
 ```
 
