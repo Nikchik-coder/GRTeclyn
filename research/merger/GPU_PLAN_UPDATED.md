@@ -10,6 +10,69 @@ external five-phase proposal checked item by item against the code and the data.
 
 ---
 
+## The plan, plain English (2026-09-08)
+
+**Goal:** two wormholes approach, touch while still wormholes, collapse together,
+one black hole forms around the merged pair, and we record the gravitational
+waves. No crashes, no fake tricks.
+
+**Step 0 — Look at what we already have (this week, free).** Autopsy the crash:
+restart an old run 50 steps before it dies with full logging and find out exactly
+which term, in which cell, blows up first. Recheck the finished single-wormhole
+run with fixed tools — it may have formed a black hole that the broken horizon
+finder missed *(only the post-floor plotfiles survive, so the real recheck is the
+Step-2 rerun with its plotfiles kept)*. And rescan the old dead binary runs for a
+merged surface we may have mislabelled.
+
+**Step 1 — Fix the code (1–2 weeks, in parallel).** Delete the three cheats: the
+freeze, the matter-deleter, and the hard clamp on χ (the clamp's edge is where
+the crash is born — replace it with smooth handling). Add: a mesh that chases
+the collapsing region instead of sitting still; starting data that actually
+solves the equations; a horizon finder that knows which way "outward" points;
+and a health metric that notices a dying throat (the old one stayed green through
+the whole collapse).
+
+**Step 2 — One wormhole, all the way down (days).** Prove the fix: a single
+wormhole collapses into a black hole and the code sails through — no crash, no
+freeze, running long after the horizon forms. This is what the code family does
+routinely with normal matter, so there is no excuse. Gate: no pass, no binary.
+
+**Step 3 — The simplest merger (a week).** Two wormholes, close together,
+released from rest, head-on. Run it untouched and believe what happens. Expected
+sequence: approach → touch as wormholes *(≈ t = 17 from d = 8 by our calibrated
+law; the t ≈ 50 figure was the d = 12 orbit)* → the squeezed pair collapses → one
+horizon wraps the merged blob last → ringdown. Success = the surface counter
+reads two, then one.
+
+**Step 4 — Production run with the recorders on (2–3 weeks).** The big-box
+version of Step 3 with a plunge orbit. Record both channels — gravity waves and
+scalar waves (this matter radiates negative energy in the scalar channel; skip
+it and the books do not balance). Check the balance sheet closes: mass lost =
+energy radiated. Deliverables: the full waveform, and the final black hole's
+ringing tone against an ordinary black hole's — the number a detector could test.
+
+**Rules that keep it physics:** nothing modifies Einstein's equations mid-run,
+ever; the untouched natural run comes first and its verdict counts; every result
+must survive changing the resolution, the gauge, and the small perturbation dial;
+"merger" means 2 → 1 surfaces confirmed by light-ray tracing, nothing less.
+
+**If the natural run refuses to merge** — the throats dissolve, the geometry
+pinches with no horizon, or the black holes shrink away by eating the
+negative-energy cloud (our own cf08 arm measured that shrinkage) — that is a real
+answer too, and we measure it instead of hiding it.
+
+**Approval queue:** ① autopsy restart (2 GPU-h) → ② single-throat ladder → ③ the
+Step-2 run → ④ the Step-3 head-on → ⑤ the Step-4 production. Code work needs no
+approval and starts now. Today only one card is free.
+
+**Side tracks (block nothing):** the handle version (true single-wormhole
+formation), code-only for now; the tidal and scattering calculations on one card.
+
+*The detailed version, with every item checked against the code and the data, is
+the FORWARD PLAN section below.*
+
+---
+
 ## TODO — the audit's action list, with our real status
 
 `[x]` done · `[~]` partial, or evidence exists but is not conclusive · `[ ]` not started
