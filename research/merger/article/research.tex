@@ -1,0 +1,230 @@
+\documentclass[twocolumn,floatfix,aps,prd,nofootinbib]{revtex4-2}
+
+% Engine guard: glyphtounicode and \pdfgentounicode are pdfTeX primitives.
+% Under LuaLaTeX/XeLaTeX they are undefined, the run aborts in the preamble,
+% and every \cite comes out as "??".  LuaTeX and XeTeX emit correct ToUnicode
+% maps on their own, so the block is simply skipped there.
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\else
+  \usepackage{fontspec}
+  \setmainfont{Latin Modern Roman}
+  \setsansfont{Latin Modern Sans}
+  \setmonofont{Latin Modern Mono}
+\fi
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{textcase}
+\usepackage{placeins}
+\usepackage[protrusion=true,expansion=false]{microtype}
+
+\graphicspath{{figures/}}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=blue,
+}
+\urlstyle{same}
+\emergencystretch=2em
+
+\begin{document}
+
+% Working title.  Results sections are deliberately absent: the campaign is
+% in progress (research/merger/GPU_PLAN_UPDATED.md) and only the motivation
+% is settled.
+\title{\texorpdfstring{\MakeTextUppercase{Foam-Born Wormhole Pairs in Full Numerical Relativity: Merger, Scattering and Collapse as a Race between Collision and Decay}}{Foam-Born Wormhole Pairs in Full Numerical Relativity: Merger, Scattering and Collapse as a Race between Collision and Decay}}
+
+\author{\MakeTextUppercase{Nikita M. Shirokov}}
+\email{shirokov.nm@phystech.edu}
+\affiliation{\textit{Independent Researcher, Moscow, Russia}}
+\date{\today}
+
+\begin{abstract}
+% To be written once the campaign closes.  Nothing here may precede the data.
+\end{abstract}
+
+\maketitle
+
+\section{Introduction}
+\label{sec:intro}
+
+Wheeler's picture of spacetime at the Planck scale is a foam of handles---wormholes that open and close on the Planck time, both mouths in the same space~\cite{wheeler1955,wheeler1957,misner_wheeler1957}. Whether any of them reach macroscopic size is a question about inflation, and the literature answers it in the affirmative more than once. Roman showed that a Planck-scale Lorentzian wormhole caught in an inflating background is stretched with it and emerges macroscopic, its throat held open by the same exotic stress that drives the expansion~\cite{roman1993}; the bubble and domain-wall mechanisms of Garriga, Vilenkin and collaborators produce, without tuning, regions of the post-inflationary universe joined to one another and to baby universes through wormholes~\cite{garriga2016,deng2017}; and Kirillov and Savelova built a cosmology on a gas of relic wormholes and followed what it does to structure formation~\cite{kirillov2008,kirillov2011}. What none of this work evolves is the aftermath: what a relic wormhole does once it is macroscopic and classical, and what two of them do to each other.
+
+The classical theory has two firm things to say about that aftermath, and they pull in opposite directions. The first is that a wormhole held open by a ghost scalar---the Ellis--Bronnikov drainhole~\cite{ellis1973,bronnikov1973}, the simplest traversable wormhole in the sense of Morris and Thorne~\cite{morris_thorne1988,visser1995} and the one that can be evolved as a dynamical solution of Einstein's equations---is unstable. Shinkai and Hayward found its two fates numerically~\cite{shinkai2002}, and Gonz\'alez, Guzm\'an and Sarbach established them at the linear and the nonlinear level~\cite{gonzalez2009}: perturbed one way the throat collapses to a black hole, perturbed the other way it inflates, on a timescale set by the throat radius. An isolated drainhole is a fixed point with one unstable direction and a sign rule that selects the exit. The second is Geroch's theorem~\cite{geroch1967,tipler1977}: a classical, causal evolution cannot create or destroy a handle. It can move one, deform it or hide it behind a horizon, but two wormholes cannot classically fuse into one, and one cannot classically be born. Birth is quantum by necessity---Hawking's Euclidean wormholes and their descendants are the semiclassical account~\cite{hawking1988}---and a simulation takes over at $t=0$ with the newborn state as its initial data. That stipulation, that formation \emph{is} the initial data, is the one every numerical-relativity binary makes; here it comes with a physical story attached.
+
+Together the two facts close a loophole and open a channel. The loophole is the standing objection to any wormhole binary: it has no astrophysical assembly channel, because each constituent destroys itself on its own clock, faster than capture or inspiral could bring two independent throats together. A foam-born pair sidesteps the objection completely. There is nothing to assemble---creation and collision are the same event---and the pair is born at a separation of order the objects themselves, which is exactly what foam produces. The race is then collision time against decay time, and both are properties of the classical solution that an evolution measures. A pair born close enough merges before either throat has noticed that it is dying; a pair born too far apart decays separately, into two black holes or two inflating regions, and never meets. The instability of the constituent is therefore not an obstacle to the merger problem but its first selection rule, and the cutoff separation between the two outcomes is the number an evolution is the instrument for.
+
+The scalar's sign supplies a second selection rule at no extra cost. The drainhole is a scalar charge, and foam does not choose its orientation: nearest-neighbour pairs are like-signed or opposite-signed with equal probability. Like-signed throats repel through their shared scalar with a force that adds to gravity, so they scatter and never merge; opposite-signed throats attract on both channels and fall together. The sign rule of Ref.~\cite{gonzalez2009} splits the singles the same way: a newborn throat kicked inward collapses---a wormhole-to-primordial-black-hole channel that sits beside the standard collapse routes~\cite{zeldovich1967,carr_hawking1974,carr2021}---and one kicked outward inflates. A foam population thus fans out into four fates---merge, scatter, collapse, inflate---and the boundaries between them lie in the three-parameter space of birth separation, perturbation amplitude and relative sign. That space is what a family of evolutions maps. In this framing the exact static solution is the idealisation and the perturbed family is the physics: a newborn throat is not the fixed point but the fixed point plus a perturbation of random sign and amplitude, and the ensemble, not its unperturbed member, is what the early universe contains.
+
+Foam wormholes are handles, not bridges: both mouths open into the same space. The binary evolved here has three asymptotic ends---the common exterior and one far side per throat---and is the exterior approximation of a pair of handles, exact as long as the far sides play no dynamical role. What the evolution merges is not two wormholes into a larger wormhole, which Geroch forbids, but two wormholes into one black hole with both throats inside it; the horizon does the work that topology change cannot.
+
+The observable follows from the epoch rather than from any surviving binary. It is not a chirp in a ground-based detector but a stochastic background from the merger epoch, redshifted to whichever band the mass scale and the redshift put it in~\cite{caprini2018}---pulsar timing~\cite{nanograv2023}, a space interferometer~\cite{lisa2017} or the ground-based network~\cite{lvk2021}---with both parameters free \emph{a priori}. The clean deliverable is therefore dimensionless and epoch-independent: the energy radiated per merger and its spectral shape in units of the throat mass. That converts any observed bound on $\Omega_{\rm GW}$ into a bound on the comoving abundance of primordial wormhole mergers, and the cosmological cap on the total gravitational-wave energy density from nucleosynthesis and the microwave background~\cite{pagano2016} into a bound that holds outside every detector band. The statement is invertible without a rate: if foam-born wormhole mergers occurred, present backgrounds limit their density as a function of mass. Two caveats travel with it. The ghost scalar must exist at that epoch to hold the newborn throats open---foam supplies geometry, not matter---and the merger's scalar channel radiates negative energy into the early universe, whose cosmological consequence is genuinely open.
+
+The programme of this paper: the drainhole binary as a solution of the Einstein--ghost-scalar system with the sign structure that makes both selection rules possible; the isolated throat as the calibration of the decay clock, its unstable mode measured at more than one resolution; the head-on pair released from rest as the calibration of the collision clock; the family in birth separation, perturbation amplitude and relative sign, whose phase boundaries are the result; and the merger's radiated energy and spectrum in throat-mass units as the cosmological deliverable. Every evolution runs on GPUs with \texttt{GRTeclyn}~\cite{grteclyn}, the AMReX-based~\cite{amrex} port of \texttt{GRChombo}~\cite{grchombo}, continuing the campaign of Ref.~\cite{shirokov2026}; the phantom sector's gravitational sign is the one evolved in isolation in Ref.~\cite{shirokov2026b}. Throughout, $G=c=1$.
+
+\begin{thebibliography}{99}
+
+\bibitem{wheeler1955}
+J.~A.~Wheeler,
+\newblock ``Geons,''
+\newblock Phys.\ Rev.\ \textbf{97}, 511 (1955).
+
+\bibitem{wheeler1957}
+J.~A.~Wheeler,
+\newblock ``On the nature of quantum geometrodynamics,''
+\newblock Ann.\ Phys.\ (N.Y.) \textbf{2}, 604 (1957).
+
+\bibitem{misner_wheeler1957}
+C.~W.~Misner and J.~A.~Wheeler,
+\newblock ``Classical physics as geometry,''
+\newblock Ann.\ Phys.\ (N.Y.) \textbf{2}, 525 (1957).
+
+\bibitem{roman1993}
+T.~A.~Roman,
+\newblock ``Inflating Lorentzian wormholes,''
+\newblock Phys.\ Rev.\ D \textbf{47}, 1370 (1993).
+
+\bibitem{garriga2016}
+J.~Garriga, A.~Vilenkin, and J.~Zhang,
+\newblock ``Black holes and the multiverse,''
+\newblock J.\ Cosmol.\ Astropart.\ Phys.\ \textbf{02}, 064 (2016).
+
+\bibitem{deng2017}
+H.~Deng, J.~Garriga, and A.~Vilenkin,
+\newblock ``Primordial black hole and wormhole formation by domain walls,''
+\newblock J.\ Cosmol.\ Astropart.\ Phys.\ \textbf{04}, 050 (2017).
+
+\bibitem{kirillov2008}
+A.~A.~Kirillov and E.~P.~Savelova,
+\newblock ``Dark matter from a gas of wormholes,''
+\newblock Phys.\ Lett.\ B \textbf{660}, 93 (2008).
+
+\bibitem{kirillov2011}
+A.~A.~Kirillov and E.~P.~Savelova,
+\newblock ``Density perturbations in a gas of wormholes,''
+\newblock Mon.\ Not.\ R.\ Astron.\ Soc.\ \textbf{412}, 1710 (2011).
+
+\bibitem{ellis1973}
+H.~G.~Ellis,
+\newblock ``Ether flow through a drainhole: A particle model in general relativity,''
+\newblock J.\ Math.\ Phys.\ \textbf{14}, 104 (1973).
+
+\bibitem{bronnikov1973}
+K.~A.~Bronnikov,
+\newblock ``Scalar-tensor theory and scalar charge,''
+\newblock Acta Phys.\ Polon.\ B \textbf{4}, 251 (1973).
+
+\bibitem{morris_thorne1988}
+M.~S.~Morris and K.~S.~Thorne,
+\newblock ``Wormholes in spacetime and their use for interstellar travel: A tool for teaching general relativity,''
+\newblock Am.\ J.\ Phys.\ \textbf{56}, 395 (1988).
+
+\bibitem{visser1995}
+M.~Visser,
+\newblock \emph{Lorentzian Wormholes: From Einstein to Hawking}
+\newblock (AIP Press, Woodbury, NY, 1995).
+
+\bibitem{shinkai2002}
+H.~Shinkai and S.~A.~Hayward,
+\newblock ``Fate of the first traversible wormhole: Black-hole collapse or inflationary expansion,''
+\newblock Phys.\ Rev.\ D \textbf{66}, 044005 (2002).
+
+\bibitem{gonzalez2009}
+J.~A.~Gonz\'alez, F.~S.~Guzm\'an, and O.~Sarbach,
+\newblock ``Instability of wormholes supported by a ghost scalar field. II. Nonlinear evolution,''
+\newblock Class.\ Quantum Grav.\ \textbf{26}, 015011 (2009); see also \textbf{26}, 015010 (2009).
+
+\bibitem{geroch1967}
+R.~Geroch,
+\newblock ``Topology in general relativity,''
+\newblock J.\ Math.\ Phys.\ \textbf{8}, 782 (1967).
+
+\bibitem{tipler1977}
+F.~J.~Tipler,
+\newblock ``Singularities and causality violation,''
+\newblock Ann.\ Phys.\ (N.Y.) \textbf{108}, 1 (1977).
+
+\bibitem{hawking1988}
+S.~W.~Hawking,
+\newblock ``Wormholes in spacetime,''
+\newblock Phys.\ Rev.\ D \textbf{37}, 904 (1988).
+
+\bibitem{zeldovich1967}
+Ya.~B.~Zel'dovich and I.~D.~Novikov,
+\newblock ``The hypothesis of cores retarded during expansion and the hot cosmological model,''
+\newblock Sov.\ Astron.\ \textbf{10}, 602 (1967).
+
+\bibitem{carr_hawking1974}
+B.~J.~Carr and S.~W.~Hawking,
+\newblock ``Black holes in the early Universe,''
+\newblock Mon.\ Not.\ R.\ Astron.\ Soc.\ \textbf{168}, 399 (1974).
+
+\bibitem{carr2021}
+B.~Carr, K.~Kohri, Y.~Sendouda, and J.~Yokoyama,
+\newblock ``Constraints on primordial black holes,''
+\newblock Rep.\ Prog.\ Phys.\ \textbf{84}, 116902 (2021).
+
+\bibitem{caprini2018}
+C.~Caprini and D.~G.~Figueroa,
+\newblock ``Cosmological backgrounds of gravitational waves,''
+\newblock Class.\ Quantum Grav.\ \textbf{35}, 163001 (2018).
+
+\bibitem{nanograv2023}
+G.~Agazie \emph{et al.} (NANOGrav Collaboration),
+\newblock ``The NANOGrav 15 yr data set: Evidence for a gravitational-wave background,''
+\newblock Astrophys.\ J.\ Lett.\ \textbf{951}, L8 (2023).
+
+\bibitem{lisa2017}
+P.~Amaro-Seoane \emph{et al.},
+\newblock ``Laser Interferometer Space Antenna,''
+\newblock arXiv:1702.00786 [astro-ph.IM] (2017).
+
+\bibitem{lvk2021}
+R.~Abbott \emph{et al.} (LIGO Scientific, Virgo and KAGRA Collaborations),
+\newblock ``Upper limits on the isotropic gravitational-wave background from Advanced LIGO and Advanced Virgo's third observing run,''
+\newblock Phys.\ Rev.\ D \textbf{104}, 022004 (2021).
+
+\bibitem{pagano2016}
+L.~Pagano, L.~Salvati, and A.~Melchiorri,
+\newblock ``New constraints on primordial gravitational waves from Planck 2015,''
+\newblock Phys.\ Lett.\ B \textbf{760}, 823 (2016).
+
+\bibitem{grteclyn}
+GRTL Collaboration,
+\newblock \texttt{GRTeclyn},
+\newblock \url{https://github.com/GRTLCollaboration/GRTeclyn}.
+
+\bibitem{amrex}
+W.~Zhang \emph{et al.},
+\newblock ``AMReX: a framework for block-structured adaptive mesh refinement,''
+\newblock J.\ Open Source Softw.\ \textbf{4}, 1370 (2019).
+
+\bibitem{grchombo}
+T.~Andrade \emph{et al.},
+\newblock ``GRChombo: an adaptable numerical relativity code for fundamental physics,''
+\newblock J.\ Open Source Softw.\ \textbf{6}, 3703 (2021).
+
+\bibitem{shirokov2026}
+N.~M.~Shirokov,
+\newblock ``Wormhole dynamics: nonlinear collapse and gravitational-wave emission,''
+\newblock arXiv:2604.00071 [gr-qc] (2026).
+
+\bibitem{shirokov2026b}
+N.~M.~Shirokov,
+\newblock ``The Bondi dipole in full numerical relativity: a self-accelerating positive--negative mass binary,''
+\newblock submitted (2026).
+
+\end{thebibliography}
+
+\end{document}

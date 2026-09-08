@@ -721,6 +721,61 @@ in a single step next to it — the same picture the single-throat ladder gives
 at its compactified origin. The χ regularisation item (Phase 1) stands, and
 the autopsy says where to apply it: the floored core, not the throat.
 
+### Where we stand, and what changes (2026-09-08, after the ladder, the time-step bracket and the autopsy)
+
+| phase | state |
+|---|---|
+| Stage 0 — is a lone throat stable? | **done: no.** Departs at t ≈ 26 at the Gonzalez–Guzman–Sarbach rate. |
+| Phase 2 — V0 ladder + time-step bracket | ladder done but for the ml4 pair (ends ~13:00); bracket done; the ±ε arms wait on Phase 1 |
+| Phase 1 — code | tagger, det-h rescale, shock-avoiding lapse, ε seed: coded + smoke-tested. **χ regularisation: not started.** |
+| Phase 3 — V1 head-on from rest | not started |
+| Phase 4 — V2 production + extraction | not started |
+
+What the runs prove, each on two independent streams (details in the
+sections above and in `results/merger/README.md`): (1) the constituent is
+unstable alone, so the binary wall was never a binary effect; (2) the crash
+and the physics are separate things — one halving of dx turns a t = 24 death
+into a clean t = 100 with the throat untouched; (3) the 0.02 step is
+necessary — 0.05 survives and is the wrong solution; (4) the binary dies as
+the lone throat does: floored core, vertical gradient beside it, one-step
+overflow.
+
+**Three adjustments.**
+
+1. **χ regularisation goes first.** Promoted to the head of Phase 1, ahead of
+   the GRTresna phantom sign, the boosted Π and the per-mouth metric. Its test
+   is a re-run of the ml3 lone throat (`single_hold_t100` twin) with it on:
+   success = the origin never reaches the clamp before t = 100. Every later
+   run's usable window depends on this one item.
+2. **ml5 is dropped, not deferred.** Vacuous with the present clamp, and level
+   5 costs days. Fix the clamp instead of climbing past it. This supersedes
+   "await a decision on rescaling `min_chi`".
+3. **Phase 3's drop height is set by the decay clock.** The pair must touch
+   before the lone throat's t ≈ 26 departure: d = 8 (contact ≈ 17 by the
+   calibrated law) satisfies it, d = 12 (contact ≈ 30) does not. Written as a
+   gate: if the throats cannot meet in time from rest at any separation the
+   superposition tolerates, that *is* Phase 3's result and V2 is not budgeted.
+
+**One reinterpretation — the foam-born pair** (written up as the introduction
+of `article/research.tex`, 2026-09-08; nothing numerical changes this week).
+A wormhole binary has no astrophysical assembly channel because the
+constituents die on their own clock; a pair born from spacetime foam and
+inflated to macroscopic size (Wheeler; Roman 1993; Garriga–Vilenkin–Zhang
+2016; Deng–Garriga–Vilenkin 2017; Kirillov–Savelova 2008/2011) has nothing to
+assemble — creation and collision are one event, at separations of order the
+objects. Then the instability is a *selection rule* (born close ⇒ merge
+before decay; born wide ⇒ decay separately), the scalar's random sign is a
+second one (like-signed scatter, opposite-signed merge; the GGS sign splits
+the singles into collapse-to-PBH and inflate), and the (d, ε, sign) family
+of Phase 3 is the *ensemble*, not a control — ε = 0 is the idealisation. V2's
+deliverable gains a cosmological reading at no GPU cost: E_rad/M and the
+spectral shape per merger, dimensionless and epoch-independent, which turns
+any Ω_GW bound (PTA / LISA / LVK, or the BBN–CMB ΔN_eff cap outside every
+band) into an abundance bound on primordial wormhole mergers. Two caveats
+ride along: birth is semiclassical nucleation and the simulation starts with
+the newborn state; and the ghost scalar must exist at that epoch — foam
+supplies geometry, not matter.
+
 ---
 
 ## CONTESTED — where our data does not match the audit
