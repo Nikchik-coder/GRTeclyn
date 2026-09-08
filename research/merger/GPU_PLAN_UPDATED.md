@@ -423,8 +423,10 @@ Phase 3).
    Second result from the same file: the consumer's r/√χ proxy for the areal
    radius reads 5.0–5.2 at the throat against the true 4.1–4.2 — **20% high**,
    because h_ij ≠ δ_ij there. INSTABILITY.md's radii come from that proxy on a
-   single throat with far less shift; the ladder arms carry h_ij and will
-   measure the correction. **Full batch done (2026-09-08): all 21 held stacks — nodamp ×3,
+   single throat with far less shift; **measured on ml2 (full-state plotfiles,
+   2026-09-08): oriented scan gives R_throat = 3.882 at t = 0 (r = 1.62) and 3.883
+   at t = 18, against the consumer proxy 3.8917 — 0.25 % high on the isolated
+   throat, so INSTABILITY.md's radii stand; the 20 % is a binary-only effect.** **Full batch done (2026-09-08): all 21 held stacks — nodamp ×3,
    p015 ×3, p020 ×3, cf08 ×3, lc1 ×3, nodamp_cf10 ×3 (p015_rr and p015_nofill are
    byte-identical, counted once), plus the Stage-0 Plt10000 which has no h_ij and
    cannot be scanned — no MOTS on any of them.** Throat areal radius R = 4.1–5.0
