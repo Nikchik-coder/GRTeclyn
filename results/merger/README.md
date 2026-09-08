@@ -107,7 +107,12 @@ and the framing was wrong — see below.)*
   data, production settings, t = 0 to 100 with zero NaN. Its one-knob twins
   (2026-09-08) *(pack)*: `single_hold_ml2_t100` — level 2, h11 NaN at
   t = 24.17 with the throat radius still exact to 0.12 %, so the origin death
-  is resolution and the throat is innocent; `single_hold_dt01_t070` — Courant
+  is resolution and the throat is innocent (confirmed 2026-09-08 by
+  `single_hold_ml2_chireg_t100`, the same arm with the two 1/χ terms of the
+  evolution floored at 1e-8 and the state clamp lowered to 1e-20: K NaN at
+  t = 24.13, origin χ through 1e-8 at t = 8.95 in both, throat radius within
+  2e-4 of the reference to the end — neither the clamp nor the 1/χ terms are
+  the killer); `single_hold_dt01_t070` — Courant
   0.1, origin blow-up, NaN at t = 16.07; `single_hold_dt005_t070` — Courant
   0.05, no NaN to t = 70 but off the 0.02 solution from t ≈ 33 (constraints
   35× by t = 40, lapse floored at 61.1), not usable. Three levels and the
@@ -262,7 +267,7 @@ and the framing was wrong — see below.)*
   belongs to the *restart* recipe (χ already clipped at the pits when a
   run starts deep), so depth must be added mid-run, not from birth.
 - **The isolated throat on the same ladder (2026-09-08).** `single_hold_ml2_t100`
-  *(pack)* dies at t = 24.17; `single_hold_t100`, one level finer, reaches
+  *(pack)* dies at t = 24.17 (its χ-regularised twin at 24.13); `single_hold_t100`, one level finer, reaches
   t = 100. For the lone throat one halving of dx buys more than 75 units,
   against the binary's 1.4 per level. Read with the χ-floor caveat in the
   plan: the origin monitor starts 16× closer to its floor per added level, so

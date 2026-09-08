@@ -59,6 +59,10 @@ t = 51.4+) are evidence of a common horizon.
 | merge_orbit_flip_d12_p045_helfer_t090 | - | 0.00 | 37.29 | stopped by request at t = 37.29 of 90, clean (B6 answered early: the corrected arm departs from its plain twin at t ~ 30 and grows 5x by t = 37 against a flat baseline) | 7.96 | - | 1.422e-03 | 1.535e-02 |
 | merge_twin_p012_lc1_t060 | gauge arm (#15), lapse_coeff 2 -> 1: blob and plunge intact (sep 0.442) but the wall moved to t = 43.64 -- wall time is gauge, not physics | 0.00 | 43.64 | NaN at t = 43.64 | 0.06 | 28.95 | 1.000e-10 | 5.381e-03 |
 | merge_twin_p012_nodamp_t060 | damping-off arm (#14): blob nucleates identically without damping (t = 32 slices match plain to 3 decimals); wall at t = 51.53 vs plain 52.06 -- damping neither causes nor delays the wall | 0.00 | 51.53 | NaN at t = 51.53 | 0.36 | 30.80 | 1.257e-03 | 4.470e-03 |
+| single_hold_chireg_t100 | - | 0.00 | 12.91 | still running | 0.06 | - | 2.156e-01 | 2.512e-03 |
+| single_hold_ml2_chireg_t100 | - | 0.00 | 24.12 | NaN at t = 24.12 | 0.12 | - | 3.254e-01 | 2.722e-03 |
+| single_hold_ml4_lowfloor_t100 | - | 0.00 | 56.73 | still running | 0.03 | - | 1.521e-01 | 2.386e-03 |
+| single_hold_ml4_t100 | - | 0.00 | 56.46 | still running | 0.03 | - | 1.527e-01 | 2.393e-03 |
 
 Full column set, including the constraint and geometry extrema, is in
 `summary.csv`.

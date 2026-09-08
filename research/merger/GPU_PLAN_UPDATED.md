@@ -453,7 +453,7 @@ Phase 3).
 
 | change | where | size | status today |
 |---|---|---|---|
-| χ: point-of-use regularisation in the RHS, *or* evolve W = √χ | `Source/CCZ4/` + matter RHS | moderate, core, every example | **✓ coded + built + smoke-tested 2026-09-08 07:16** — key `chi_rhs_floor` (default 0 = the old code; verified bit-identical over 24 steps against the pre-change binary on all four `.dat` streams). On: the two genuine divisions in the evolution — the (∂χ)²/χ curvature term and the A^ij ∂_jχ/χ term of the Γ̃ equation — use max(χ, floor), and the matter source is assembled as χ S_ij *before* its trace is removed (the old order subtracted two numbers of size 1/χ). The state clamp `min_chi` is untouched and becomes a safety net. W = √χ not done. **Under test since 07:20:** `single_hold_chireg_t100` (card 0, ml3 twin, ~13:00) and `single_hold_ml2_chireg_t100` (card 1, ml2 twin, ~09:30), both `chi_rhs_floor = 1e-8`, `min_chi = 1e-20`, `nan_autopsy = 1`, frozen binary `bin/main3d_chireg_2026-09-08.ex`, launcher `launch_chireg.sh`. |
+| χ: point-of-use regularisation in the RHS, *or* evolve W = √χ | `Source/CCZ4/` + matter RHS | moderate, core, every example | **✓ coded + built + smoke-tested 2026-09-08 07:16** — key `chi_rhs_floor` (default 0 = the old code; verified bit-identical over 24 steps against the pre-change binary on all four `.dat` streams). On: the two genuine divisions in the evolution — the (∂χ)²/χ curvature term and the A^ij ∂_jχ/χ term of the Γ̃ equation — use max(χ, floor), and the matter source is assembled as χ S_ij *before* its trace is removed (the old order subtracted two numbers of size 1/χ). The state clamp `min_chi` is untouched and becomes a safety net. W = √χ not done. **Under test since 07:20:** `single_hold_chireg_t100` (card 0, ml3 twin, ~13:00) and `single_hold_ml2_chireg_t100` (card 1, ml2 twin, ~09:30), both `chi_rhs_floor = 1e-8`, `min_chi = 1e-20`, `nan_autopsy = 1`, frozen binary `bin/main3d_chireg_2026-09-08.ex`, launcher `launch_chireg.sh`. **ml2 twin verdict, 2026-09-08 07:57: the same death.** NaN at t = 24.13 (in `K`, level 2, the eight cells round the origin; the armed autopsy names them) against the reference's t = 24.17 (in `h11`, 18 fine steps later). Origin χ fell through 1e-8 at t = 8.95 in both runs and went straight to the 1e-20 safety floor in the twin, then recovered to ~1e-6 by t = 12 in both. From t = 12 to 24 the origin lapse, max|K|, min φ and the constraint norms track the reference to a few per cent, and the throat is untouched: consumer areal radius within 2e-4 of the reference to t = 23, in-code throat χ and lapse matching at t = 24.0 and 24.1. The blow-up itself is not a 1/χ event: at t = 24.12 max|K| was 3; three fine steps later the origin cells held h_ij ~ 1e11, K ~ 1e14, A_ij ~ 1e17 with the lapse at its floor. Neither the clamp nor the floored terms killed ml2 — the level-2 grid did. Validated on the evolution log (autopsy at step 9652, t 24.1275 → 24.13) and `collapse_diagnostics.dat` (last clean row 24.12), throat on `areal_radius.dat` plus `binary_throat_diagnostics.dat`. Card 1 free. The ml3 twin on card 0 remains the test that matters. |
 | Solution-following tagger with ∂φ and K terms; `n_error_buf` 3 | `Source/Tagging/ChiTagger.hpp`, params | small | **✓ coded 2026-09-08** — `ChiPhiKTagger.hpp` (own module), keys `tagging_phi_weight` / `tagging_K_weight` (default 0 = ChiTagger exactly); `amr.n_error_buf` is a params line. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
 | det h̃ = 1 rescale beside trace-Ã removal | `Source/CCZ4/TraceARemoval.hpp` | ~10 lines | **✓ coded 2026-09-08** — `DetHRescale.hpp` (own module, h̃ only, McLachlan-style), key `rescale_det_h` (default off), runs before trace removal at the RHS fill and every RK substage. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
 | Shock-avoiding lapse f = 1 + κ/α² as a params-selectable family | `Source/CCZ4/MovingPunctureGauge.hpp` | ~10 lines | **✓ coded 2026-09-08** — key `gauge.lapse_shock_kappa` (default 0): ∂ₜα gains −κ(K−2Θ); with `lapse_power = 2`, `lapse_coeff = 1` it is exactly ∂ₜα = −(α²+κ)K. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
@@ -626,7 +626,7 @@ because none exists for unstable constituents.
 | 7 | V2 headline | 1 × ~1 day (L5) | G2 |
 | 8 | V2 twins | 3 × 1–2 days | G2 |
 
-Cards 0 and 1 hold the χ-regularisation twins since 2026-09-08 07:20 (ml2 twin ~09:30, ml3 twin ~13:00); item 1's two ml4 arms
+Card 0 holds the ml3 χ-regularisation twin since 2026-09-08 07:20 (~13:00); the ml2 twin on card 1 ended 07:57 with the same death as its reference (Phase-1 table) and card 1 is free; item 1's two ml4 arms
 hold cards 2 and 3 until about 13:00. Phase-0 scripts and Phase-1 code need
 no approval and start now.
 
@@ -654,7 +654,7 @@ falls ~2⁴ per rung. Measured, not assumed:
 
 | arm | max_level | χ_origin(t = 0) | headroom over `min_chi` = 1e-8 | clamp time | outcome |
 |---|---|---|---|---|---|
-| ml2 | 2 | 7.19e-06 | 719× | t = 8.95 | NaN death t = 24.17 |
+| ml2 | 2 | 7.19e-06 | 719× | t = 8.95 | NaN death t = 24.17 (χ-regularised twin, floor 1e-20: t = 24.13) |
 | ml3 | 3 | 4.11e-07 | 41× | t = 61.3 | survived to t = 100 |
 | ml4 | 4 | 2.44e-08 *(measured at launch; 2.35e-08 predicted)* | 2.4× | **not by t = 45** — the pit χ *rose* to 1.04e-06 in both arms (equal to 7 digits) | running, t ≈ 45 of 100 at 06:40 |
 | ml5 | 5 | ~1.3e-09 *(predicted)* | **0.13× — below the floor** | t = 0 | not launched |
@@ -753,6 +753,10 @@ overflow.
    reference clamped at t = 8.95 and died at t = 24.17 with the throat still
    exact, so it gives a yes/no the ml3 twin cannot: past t = 24.17 with the
    throat still exact ⇒ the clamp killed ml2; the same death ⇒ the grid did.
+   **Answered 07:57: the same death.** NaN at t = 24.13 against 24.17, origin
+   χ through 1e-8 at t = 8.95 in both, throat radius within 2e-4 of the
+   reference to the end. The grid killed ml2 — not the clamp and not the 1/χ
+   terms (details in the Phase-1 table). The ml3 twin is the real test.
    Three readings for the ml3 twin: origin χ never falls to 1e-8 ⇒ the clamp
    was driving the collapse; it falls below 1e-8 but the throat matches the
    reference to t = 100 ⇒ the clamp was never load-bearing; NaN ⇒ the
