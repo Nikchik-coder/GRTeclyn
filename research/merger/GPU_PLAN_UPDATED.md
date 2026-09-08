@@ -5,6 +5,9 @@ against every claim. Where our measurements contradict the audit that is said
 plainly and marked **CONTESTED** — this document is a review to be tested, not
 a verdict to be adopted.*
 
+*Forward plan (phases 0–4) added 2026-09-08, after the Stage 0 result: an
+external five-phase proposal checked item by item against the code and the data.*
+
 ---
 
 ## TODO — the audit's action list, with our real status
@@ -17,6 +20,9 @@ a verdict to be adopted.*
   CTTK / CTTK-Hybrid (arXiv:2207.03125, 2501.13046). *Benchmark:* the Hamiltonian
   defect converges at 4th order in Δx, not the d^−1.6 we measure now.
   **Status: not started. Highest priority. GRTresna is already in our stack.**
+  *(2026-09-08: two routes — GRTresna through the existing `.gridinit` bridge,
+  needing only a phantom sign on its real scalar; or a standalone K = 0 solve,
+  which the phantom sign makes monotone. Forward Plan, Phase 1.)*
 - [~] **2. Horizon-finder orientation bug.** Compute θ± with outward = increasing
   *areal* radius; classify with the MOTS stability eigenvalue; adopt BHaHAHA.
   *Benchmark:* zero trapped surfaces on a demonstrably healthy throat.
@@ -54,6 +60,9 @@ a verdict to be adopted.*
   shock-avoiding Bona–Massó family f(α) = 1 + κ/α² (arXiv:2207.06376) and a flat
   initial lapse. **Status: not started.** Our `lc1` arm (lapse_coeff 1 instead of
   2, died 43.64) probes lapse *sensitivity*, not shock-avoidance — a different test.
+  *(2026-09-08: not a params change — the gauge family in code is
+  ∂ₜα = −c α^p K; the +κ term is ~10 lines. Phase 1. The params-only arm that
+  IS available is `lapse_coeff = 4.0`, NaN program step 4.)*
 
 ### Tier (iii) — accept, do not fight
 
@@ -92,12 +101,22 @@ a verdict to be adopted.*
   *Benchmark:* τ unchanged across all three and the turnover moving later by a
   fixed ~5.5 units per halving ⇒ physical, converged. τ moving with dx ⇒ not.
   Three cards, ~1 day.
-- [ ] **CFL halving test** — cheap, and immediately rules the gauge-speed violation
-  in or out. One card, a few hours.
+  *(2026-09-08, pre-registered fork: a 4th-order truncation seed predicts +16
+  units per halving (τ ln 16); our one measured shift is +5.5, order 1.8. The
+  ladder decides which. Forward Plan, Phase 2.)*
+- [ ] **CFL — the question is the other way round (2026-09-08).** Every arm runs
+  at Courant number 0.02 (`dt_multiplier = 0.02`: dt = 0.01 at dx = 0.5), 10×
+  below normal and 35× below the gauge-speed limit, for no recorded reason. A
+  gauge-speed violation is impossible at that step; the useful test is a
+  `dt_multiplier = 0.1` twin of the isolated throat — same τ ⇒ every later run
+  is 5× cheaper. One card, ~1 h. Forward Plan, Phase 2.
 - [ ] **Controlled ±ε sign test** to select the collapse vs expansion branch per
   González et al., converting an uncontrolled truncation-seeded blow-up into a
   physics result. Note `BinaryWormholeInitialData` deliberately seeds **no**
   perturbation, so this needs a code change.
+  *(2026-09-08: the seeded Gaussian exists in `SupportedWormholeCollapse`;
+  porting it per throat with a sign is ~20 lines, under a new key since the
+  merger reader rejects the old ones on purpose. Phase 1.)*
 
 ---
 
@@ -214,6 +233,280 @@ parameters") and §2's spine all have to be rewritten around this, and
 constraint-solved initial data becomes *less* urgent, not more: better initial
 data cannot stabilise an unstable equilibrium, it only cleans up the seed and
 buys the logarithm of the improvement.
+
+---
+
+## FORWARD PLAN (2026-09-08) — phases 0–4, checked against the code and the data
+
+*An external five-phase proposal (received 2026-09-08) was checked line by line
+against this tree: every module it names, every seed it assumes is on disk, every
+number it quotes. What follows is that proposal with each item marked by what is
+actually true here. Marks: **✓** exists / already the case · **△** exists, but not
+as described · **✗** not in the tree, or contradicted by our own data. The phase
+and gate labels (V0–V2, G0–G3) are the proposal's and are kept so the two
+documents can be read side by side.*
+
+### One plan, read three ways
+
+The proposal arrived in three pieces — the five phases, a plain-English
+account, and a NaN-elimination work order with gates T1–T3 — and they are one
+plan at three zooms: **T1 = V0, T2 = V1, T3 = V2**; the NaN work order is
+Phase 1's fine print; the signal discriminators are Phase 4's deliverables.
+
+Its central move is a reading of B7 rather than a fight with it: **the collapse
+is the mechanism.** Each throat destroys itself on its own clock; a collapsing
+throat becomes a black hole; black holes are the one thing this code — and all of
+numerical relativity — merges routinely, because their bad regions sit behind
+horizons. Our binaries die because the bad region (the midpoint blob) develops in
+the open with nothing covering it. So the plan reorders events: bring the throats
+together *fast* (d = 8, rest release, contact ≈ 17), let the touched pair collapse
+as it wants to, and let the horizon wrap the merged core last. What merges is two
+wormholes into one black hole with both throats inside it; two wormholes fusing
+into a bigger wormhole is the separate handle track.
+
+**The physics risk the framing must carry, from our own ledger.** "Black holes are
+the one thing the code knows how to merge" assumes the horizons *persist*. Here
+they need not: the area theorem requires the NEC, González et al. watch the
+horizon's areal radius *fall* as it swallows the negative-energy scalar and report
+a remnant of only m_AH ≈ 0.22 in throat units, and cf08 measured exactly that
+shrinkage (−1 %/unit, gauge-invariantly). The endpoint may therefore be two small
+black holes plus a large radiated scalar cloud rather than one ringing remnant of
+mass ≈ 2. That is still a result — but Gate G1 below must include "the horizon
+persists, or its shrinkage is measured, for ≥ 30 units", and no wording may assume
+the remnant mass before Phase 4 measures it.
+
+### What checking the proposal found
+
+| the proposal assumes | what the tree says |
+|---|---|
+| "Retire the freeze, the fill, the lapse-window damping and the χ clamp" | **△** The first three are default-off flags (`core_lapse_freeze`, `core_freeze_fill`, `core_matter_damping`) and have been off in every arm since #14. Retiring them costs nothing; deleting the code is a separate housekeeping call. The χ clamp is different: `PositiveChiAndLapse` is core code (`Source/CCZ4/`), applied after every RK stage in every example, and the RHS divides by χ raw (`CCZ4RHS.impl.hpp:276`, `CCZ4Geometry.hpp:175,316`) — there is no point-of-use regularisation to fall back on. Unclamping χ therefore means adding one, or evolving W = √χ. Moderate, core, touches every example. |
+| "CFL ≤ 0.25 audit" | **✗ — in the useful direction.** Every arm in this campaign runs at `dt_multiplier = 0.02`, i.e. Courant number 0.02 on every level (dt = 0.01 at dx = 0.5, confirmed from the ADVANCE lines). That is 10× below the usual 0.2–0.25 and 35× below the √2 gauge-speed limit, and no document records why. The audit item is not "is the step small enough" but "what does a 5× larger step change" — see Phase 2. If the answer is nothing, every run after that is 5× cheaper. |
+| "Per-level KO dissipation incl. φ, Π" | **✓ already.** `CCZ4RHSWithMatter` adds dissipation to all NUM_VARS, and each level builds its own derivative operator at its own dx. Nothing to do. |
+| "≥5th-order prolongation, buffer ≥ 3" | **△** Prolongation is `cell_quartic_interp` (degree 4, 5th-order accurate) — already. It is not positivity-limited, and χ near the compactified origin is exactly where a quartic can undershoot to a value the clamp then hides. The buffer is AMReX's default `n_error_buf = 1`; raising it is one params line. |
+| "Front-tracking retag on ∂χ, ∂φ, K" | **△** `ChiTagger` tags on dx·\|∂²χ\| only; the production tagger (type 2) is moving boxes on the tracked throats and does not look at the solution at all. Adding φ and K terms is small. The solution-following tagger was abandoned after the Stage-1 σ = 0 arm ran the card out of memory on a runaway footprint — that constraint returns with any solution-following tagger. |
+| "Verify det h̃ = 1 and tr Ã = 0 are enforced every RK substage" | **△** `TraceARemoval` runs at every RK stage (`specificUpdateODE`) and after each step — but it removes the trace of Ã only. det h̃ = 1 is enforced nowhere. Adding the rescale is ~10 lines. |
+| "Shock-avoiding lapse, mostly params" | **✗ params.** The gauge family in code is ∂ₜα = −c α^p K (`lapse_coeff`, `lapse_power`); f = 1 + κ/α² needs the +κ term, ~10 lines in `MovingPunctureGauge`. Small, but code. |
+| "ε seed per throat, ~20 lines" | **✓ as sized.** `BinaryWormholeInitialData` seeds nothing, and the parameter reader rejects the old keys loudly on purpose. The seeded Gaussian it refers to lives in `SupportedWormholeCollapse` (`phi_perturbation_amplitude/width`); porting it per throat with a sign is the 20 lines. The proposal wants the seed on the areal-radius *function* (González et al.'s ε), not on φ; either seeds the mode, but only the metric one carries their sign convention. |
+| "Boosted Π for p ≠ 0 arms" | **△** Today Π = 0 with Bowen–York Ã, so the momentum constraint is exact by construction. A boosted Π breaks that unless the vector Laplacian is re-solved. Not needed for V1 (rest release); V2 only. |
+| "~200-line offline Lichnerowicz solve" | **△ — something better may already exist.** GRTresna is a sibling checkout with CTTK and CTTK-Hybrid, and the bridge into this example is built and in use (`recipe_initial_data_file` → `ExternalGridInitialData`, the route RotatingWormholeCollapse takes). What it lacks is a phantom sign on its real `ScalarField` (its boson-star matter already has an `exotic` flag to copy). The proposal's monotonicity point — with φ, Π held fixed and K = 0 the phantom's source terms enter with ∂f/∂ψ > 0, so the only non-monotone term left is the ordinary Bowen–York one and the problem is as well-posed as vacuum puncture data — is right on paper and reverses the audit's Finding 4 for this matter; it must be written down before it is cited. Open risk: whether a flat-background multigrid takes the compactified throat (ψ → ∞ at a point, the puncture situation). The standalone solver is the fallback. |
+| "Branch selection from the slice caches" | **✗** The slice cache stores the rendered frame field only (K, Π, Weyl4 on one plane), not the metric; the areal-radius consumer scans a single ray from one centre. Per-throat R_min(t) over a whole run exists for **no binary arm** — plotfiles were pruned as the runs went. What is on disk: the held 3-file death stacks, one checkpoint per insured arm, and per-throat pit χ and lapse every step in `binary_throat_diagnostics.dat` for every arm. |
+| "Trumpet signature at t = 80–100 on the single throat" | **✗** Those plotfiles are post-floor (χ clamped from t = 61.3); INSTABILITY.md forbids quoting them. The clean-window plotfiles (t = 40–70) were pruned — the logged mistake. Any trumpet or Misner–Sharp reading needs the Stage 0b re-run with plotfiles kept. |
+| "Your queued ±ε ladder … +16/level onset prediction" | **△** Nothing is queued; TODO item 10 is written, not launched. The +16 figure is what a 4th-order truncation seed predicts (τ ln 16 = 16.2 units per halving). **Our data already says +5.5** (seed ratio 3.5×, order 1.8). The ladder decides between those two numbers; it does not assume either. |
+| "Held death stacks p012, p015_rr, p020, cf08" | **✓** On scratch today: nodamp (the p012 family, t = 50.5–51.5 + Chk t = 50), p015_rr (52–53 + Chk t = 50), p015_nofill (52–53), p020 (51–52), cf08 (54.5–55.5), lc1 (42.5–43.5 + Chk t = 40), nodamp_cf10 (43.5–44.5), p045_helfer (36–37 + Chk t = 30), single_hold (98–100). |
+| "#8b displacements + 6× coupling ⇒ contact by t ≈ 20–25 at d = 8" | **△ — earlier.** The rest-release flipped pair at d = 12 already exists (`merge_headon_flip_d12`): separation 11.94 → 2.44 at t = 29.85, tracker merge ≈ 31, NaN at 44.00. Integrating the measured (d + 3.5)⁻² law calibrated on that trajectory gives sep 2.4 at **t ≈ 17** from d = 8 (t ≈ 23 from d = 10). The price is the superposition defect: 603× the floor at d = 8 against 352× at d = 12 (Check E). |
+| "1.125 speed, 17.3-vs-34, m4e recipe, L = 128 grid, ε_eff +8–11 %, 2.87e-4" | **✓** all as in GPU_PLAN §4–§7. |
+
+Two findings of our own fall out of the check and go straight into the plan:
+the **Courant number of 0.02** (Phase 2), and that **the branch-selection
+measurement cannot be made from disk** (Phase 0 → Phase 3).
+
+### Phase 0 — from disk, no GPU (this week)
+
+1. **Per-throat clock comparison, every arm at once.** `binary_throat_diagnostics.dat`
+   carries each throat's pit χ and lapse every step for every arm;
+   `single_hold_t100`'s `collapse_diagnostics.dat` carries the same for the isolated
+   throat. Plot the binary pits against the isolated one on the same clock,
+   normalised at t = 0. If a throat in a binary leaves the isolated curve *before*
+   the isolated throat turns over at 26, the environment is selecting a branch; if
+   the curves lie on top of each other until the plunge, it is neutral and V1's
+   natural run cannot form horizons unassisted. Gauge-dependent, so this is a clock
+   comparison, not a radius — the radius version is the V1 scout in Phase 3. Zero
+   GPU, one script, packs under `results/merger/analysis/`.
+2. **Single-throat post-mortem, on what is readable.** Misner–Sharp is not a new
+   tool: on areal spheres 2M/R = 1 ⟺ θ₊θ₋ = 0, so it *is* the corrected-orientation
+   surface test, and one script serves both (extend `ah_radial_scan.py` with the
+   areal-outward sign — P2). Run it on the three held single-throat plotfiles
+   knowing they are post-floor: that is a check of the tool on contaminated data,
+   not a physics reading. The physics reading waits for Stage 0b's kept plotfiles.
+   Damping-engagement audit: nothing to audit — no evolution-time module was on.
+   **Gate G0 as stated is therefore not decidable from disk; Stage 0b decides it.**
+3. **Common-surface rescan of the death stacks at r ≈ 3–6, corrected orientation** —
+   same script, `--half 6`, scan level per the covering-grid rule. Cheap, and the
+   one place a merger might already be on disk. Both p015 stacks, p020, cf08,
+   nodamp, lc1, nodamp_cf10.
+4. **NaN autopsy** — restart nodamp from Chk05000 (t = 50; wall at 51.53) with a
+   plotfile every step over the last 20 steps and per-term RHS output: which field,
+   which term, which cell, χ against the floor, distance to the refinement boundary.
+   ~2 GPU-h, one approval. Narrower than the proposal frames it: B7 already shows
+   the chain floor → constraint doubling on the isolated throat, so the autopsy's
+   job is to confirm the binary death is the same chain and not a prolongation
+   undershoot — the one alternative left, and one the clamp would hide.
+
+### Phase 1 — code, in the existing layers (1–2 weeks, parallel with Phase 0)
+
+| change | where | size | status today |
+|---|---|---|---|
+| χ: point-of-use regularisation in the RHS, *or* evolve W = √χ | `Source/CCZ4/` + matter RHS | moderate, core, every example | no regularisation exists; clamp in the state only |
+| Solution-following tagger with ∂φ and K terms; `n_error_buf` 3 | `Source/Tagging/ChiTagger.hpp`, params | small | ChiTagger is χ-only; buffer is 1 |
+| det h̃ = 1 rescale beside trace-Ã removal | `Source/CCZ4/TraceARemoval.hpp` | ~10 lines | not enforced anywhere |
+| Shock-avoiding lapse f = 1 + κ/α² as a params-selectable family | `Source/CCZ4/MovingPunctureGauge.hpp` | ~10 lines | family is c α^p K only |
+| ε seed per throat, with sign, on the areal-radius function | `BinaryWormholeInitialData.hpp` | ~20 lines | seeds nothing; old keys rejected |
+| Boosted Π + momentum-constraint residual | same file | ~20 lines | V2 only |
+| Constraint-solved ψ, K = 0, phantom sign: GRTresna route first (add the sign to its `ScalarField`; the bridge exists), standalone solver as fallback | sibling GRTresna + `ExternalGridInitialData` | days to a week | bridge built; sign missing; throat topology untested |
+| Diagnostics: corrected θ± (outward = increasing areal R) with Misner–Sharp in the same pass; outermost-surface count; per-mouth health metric log(R_min/R_exact − 1) | `ah_radial_scan.py`, consumer | small | P2 not started; the health metric is INSTABILITY.md's deviation, per throat |
+| KO dissipation on φ, Π, per level | — | — | **already the case** |
+| ≥5th-order prolongation | — | — | **already the case** (quartic); positivity limiting is not |
+
+
+**The NaN program — Phase 1's work order, in the order to apply it.** The chain it
+targets is built from five facts already in the ledger: the NaN lands in h̃₁₁ or K
+on the newest finest level with the lapse near 3e-3, *not* at the floor (the
+floored blob is a static, NaN-free zombie); death moves +1.43 units per level, i.e.
+a front steepening with an e-folding of ~2 units, racing the grid; constraints are
+clean to the end (Mode A: a local blow-up of a valid solution); the ledger's own
+sentence "the phantom keeps sourcing the metric at the edge of the floored region
+and the run NaNs" names the clamp edge as a source; and the code family collapses
+*canonical* scalar clouds to black holes routinely with no damping and no freeze,
+while the phantom evolves the identical V = 0 wave equation — only the metric
+source sign differs. Chain, most likely: front steepens under a 3e-3 lapse →
+regrid drops a new level on it → prolongation of near-floor, clamp-kinked χ
+produces an inconsistent fine state → the ∂χ/χ and h_ij/χ terms spike → h̃₁₁ NaN
+within a few steps.
+
+0. **Autopsy first** (Phase 0 item 4). Everything below is ranked by its result.
+1. **Kill the clamp, not the matter.** Unclamp evolved χ; regularise only at the
+   point of use (`max(χ, ε)` inside the RHS kernels); audit every S_ij/χ-type
+   expression so it is assembled as χ·S_ij before any division; optionally
+   W = √χ. Highest expected value of any single change.
+2. **Fix the regrid transient.** Positivity limiter on χ and α in the (already
+   quartic) prolongation; `n_error_buf` 3–4 so the front never sits at a fresh
+   boundary; one extra Kreiss–Oliger pass on a new level before normal evolution.
+   If the autopsy reads "steps since regrid: few", this is the killer.
+3. **Let the mesh chase the front.** Retag every coarse step (today
+   `regrid_interval = 16`) on |∂χ|, |∂φ|, |K| set to lead the front by ~2
+   e-folds; levels 6–8 transiently in boxes a few core-widths wide. Only needed
+   for the ~5–10 units between contact and horizon; once the horizon wraps the
+   pair the interior goes trumpet-stationary and the deep levels retire. Memory
+   is the binding constraint (the σ = 0 runaway).
+4. **Help the gauge win its race.** Two cheap arms: `lapse_coeff = 4.0` (lc1 showed
+   halving it kills the run 8.4 units *earlier*, so doubling should buy time — a
+   params-only twin), and the shock-avoiding f = 1 + κ/α² as the gauge control.
+   `min_lapse` stays but is never load-bearing: an outcome that changes with the
+   floor value is not converged.
+5. **Hygiene.** σ ramped up on the collapse levels (already applied to φ, Π per
+   level); the Courant question per Phase 2.
+6. **Matter damping: deleted**, not re-scoped. If 1–5 reach parity with
+   canonical-scalar collapse it was never needed; if they do not, the autopsy
+   will have named a genuinely phantom-specific term, and that is the finding to
+   understand, not suppress.
+
+**Per-run acceptance, every arm from T1 on:** no NaN through +30 units past
+horizon formation; outcome unchanged under floor ×100, one extra level, and the
+gauge-arm swap; constraints bounded outside the horizon.
+
+The rule that survives from the proposal unchanged: **no module touches the
+evolution equations at run time.** The three freeze/damping flags stay off; if a
+post-horizon interior ever needs treatment it is excision strictly inside 0.6 r_AH
+of a *found* horizon, validated by an untreated twin. If the ψ-solve slips, the
+natural member is superposed data with its seed declared and measured (+8–11 %
+size error, sign recorded) — never pretended absent.
+
+### Phase 2 — V0 (= T1), the isolated throat (days)
+
+Stage 0b plus what the proposal adds. Every arm writes a plotfile at least every
+unit through t = 20–70 and **keeps them** — the collapse window is what was lost
+last time.
+
+| arm | tests | cards × wall (18.4 u/h measured at ml3) |
+|---|---|---|
+| ml4 (dx = 0.03125) to t = 100 | the rate at a second resolution | 1 × ~10 h |
+| ml2 rerun to t = 100, fixed-box tagger | the rate at a third. May still die at the origin near t ≈ 24 as the old ml2 arms did; if so the third rung is ml5 (1 × ~25 h) | 1 × ~2 h |
+| **dt_multiplier 0.1 twin of ml3, to t = 70** | the Courant question: same τ and turnover ⇒ the whole campaign runs 5× cheaper from here on; different ⇒ time discretisation is in the seed | 1 × ~1 h |
+| ±ε at 10⁻³, 10⁻², 10⁻¹, both signs (needs the Phase-1 seed) | rate independent of amplitude and sign; t_AH(ε) on the collapse branch; one −ε arm to see inflation | 6 × ~5 h |
+| μ = 2 (m = 4 at a = 2), small +ε | M_rem(μ): does the remnant swallow a fraction of m (GGS II: m_AH ≈ 0.22 in throat units) or all of it | 1 × ~5 h |
+| `lapse_coeff = 4.0` twin, +ε | the gauge-race arm from the NaN program, step 4 | 1 × ~5 h |
+
+**Pre-registered fork for the ladder.** The turnover moves by **+5.5 per halving**
+(seed order ≈ 2) or by **+16** (order 4). Our one measured shift says 5.5; a
+second-order seed points at the initial-data sampling, not at the fourth-order
+evolution. τ = 5.86 ± 0.11 unchanged across rungs ⇒ physical; τ moving with dx ⇒
+not.
+
+**Gate G1 (= T1):** τ converged; on the +ε branch a horizon found by *both* Misner–Sharp
+and corrected θ±, a stationary trumpet, the health metric flat after the horizon,
+NaN-free; **the horizon persists, or its shrinkage rate is measured, for ≥ 30 units after it forms.** This is the certificate that collapse is survivable in this code without
+freezing — and it needs the χ change from Phase 1, because B7's floor at t = 61.3
+is exactly where the trumpet would form. M_rem(μ) fixes production μ.
+
+### Phase 3 — V1 (= T2), head-on from rest, the first physical merger run (~1 week)
+
+IVP: φ-sign flipped, **d = 8**, released from rest — K = 0, Π = 0, the momentum
+constraint exact, no Bowen–York, no boost. Contact (sep 2.4) at **t ≈ 17** by the
+calibrated law, endgame by ~35–40. At d = 12 the same release contacted at 30 and
+died at 44, its endgame at t = 40–44 where the isolated throat is already
+0.4–1 % contracted; at d = 8 the endgame lands where it is 0.1–0.4 % off. A
+hundredfold cleaner, not clean — say so. Level-3 scout first (~5 h, plotfiles
+every 0.5 kept — this is also the first per-throat R_min(t) curve of any binary,
+the measurement Phase 0 could not make), then the m4e restart to level 5.
+
+**Run order is the honesty structure.**
+1. *Natural member first, no ε, believed whatever it does:* (a) tidal squeeze →
+   collapse → two trumpets → common horizon, an unassisted merger; (b) inflation →
+   dissolution, published as the family's answer; (c) a naked pinch → measured
+   critical-collapse style (blow-up exponent, trapped-surface census into the
+   endpoint), a censorship result.
+2. *ε-family around it,* ±ε on both mouths, 3–4 values — the declared axis. The
+   early-collapse corner is a "BBH-limit" control, never the headline.
+
+Merger criterion, gauge-free: outermost marginal-surface count 2 → 1, cross-checked
+by the event-horizon tracer (P4 — needs dense plotfiles, a launch decision, not a
+disk one). **Gate G2:** 2 → 1 on some declared member with constraints bounded
+outside the horizon, or the physical alternative documented. The trade the
+proposal does not mention: d = 8 nearly doubles the superposition defect relative
+to production (603× against 352×), which is why the constraint-solved data of
+Phase 1 is on V1's critical path, not only V2's.
+
+### Phase 4 — V2 (= T3), plunge production with extraction (~2–3 weeks)
+
+Reuses GPU_PLAN §4 exactly: L = 128 / N = 256, spheres 20/28/36/44 un-sponged,
+sponge 48 → 64, in-code extraction primary, `--scalar-modes` on, plotfiles every
+0.1 through the merger window for the tracer. IVP: d = 8–10, p rescaled from
+0.12, boosted Π, ε per V1's verdict. Twins replacing the retired freeze controls:
+a level-6 restart (convergence), the shock-avoiding lapse (gauge), one ε-shifted
+(family). Deliverables: the waveform through common-horizon formation and
+ringdown; energy balance Ṁ_ADM = −F_GW − F_φ with F_φ < 0 allowed — **Gate G3**,
+the validity certificate for extraction in a non-vacuum exterior; 4-radius
+retarded-time extrapolation at the measured 1.125; M_rem and spin from the
+horizon; the remnant QNM against the vacuum prediction (the 17.3-vs-34 line,
+GPU_PLAN §7.4). At the measured level-5 speed (4.2 u/h) a t = 100 arm is ~1 day;
+the level-6 twin ~2 days.
+
+### Parallel, non-blocking
+
+None of these had a plan entry; listed so they are not lost. v4 single-throat
+scattering at μ ≥ 1.2 — first check a light ring exists by null-geodesic
+integration through the initial data (the `EvolvingMetricField` machinery, an
+afternoon); the k₂(μ) tidal ODE, offline; the handle / isometry-boundary track,
+its first GPU-hours gated on V2 existing as its validation target; rotation
+parked.
+
+### What makes a headline claim physical here
+
+Constraint-level data, or a declared and measured seed; no evolution-time modules;
+2 → 1 surface count plus the event-horizon tracer — never θ₊ on coordinate
+spheres; energy balance closed; robustness across the ε, gauge and resolution
+twins; the per-mouth health metric quoted, with L2_Ham demoted to secondary (B7
+proved it blind); the wording fixed in advance — "common-horizon merger of a
+wormhole binary", the remnant a black hole containing both throats;
+"single-wormhole formation" reserved for the handle track; no chirp claimed,
+because none exists for unstable constituents.
+
+### Approval queue (one run at a time, every launch by hand)
+
+| # | what | cards × wall | needs first |
+|---|---|---|---|
+| 1 | Phase 2 ladder: ml4, ml2 rerun, dt ×5 twin | 3 × ≤10 h, or ~13 h serial on one card | nothing — the template exists |
+| 2 | NaN autopsy restart | 1 × 2 h | a per-term output hook |
+| 3 | V0 ε / μ arms | 7 × 5 h | Phase-1 seed + χ change |
+| 4 | V1 level-3 scout, d = 8 | 1 × 5 h | nothing (superposed data, seed declared) |
+| 5 | V1 natural, refined | 1 × ~1 day | scout + ψ-solve or declared seed |
+| 6 | V1 ε-family | 3–4 × ~1 day | the ε seed |
+| 7 | V2 headline | 1 × ~1 day (L5) | G2 |
+| 8 | V2 twins | 3 × 1–2 days | G2 |
+
+Today only card 3 is free — cards 0–2 are busy with another project on this
+machine — so item 1 runs serially unless that changes. Phase-0 scripts and
+Phase-1 code need no approval and start now.
 
 ---
 
@@ -471,6 +764,9 @@ Polon. B4, 251 (1973).
 ---
 
 ## Recommended sequence
+
+*(Superseded 2026-09-08 by the FORWARD PLAN section above; kept as the
+audit-era sequence. Its Stage 0b is Phase 2 there.)*
 
 **Stage 0 (days, decisive) — DONE 2026-09-05, and it diverged.** Isolated single
 throat, exact static data, production settings, t = 100. `single_hold_t100`, card 0.
