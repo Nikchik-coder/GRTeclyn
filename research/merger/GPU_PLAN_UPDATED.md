@@ -528,7 +528,7 @@ arms that radiate nothing; the dt twin wrote no `areal_radius.dat` for that reas
 | arm | tests | cards × wall (18.4 u/h measured at ml3) |
 |---|---|---|
 | ml4 (dx = 0.03125) to t = 100 | the rate at a second resolution | 1 × ~10 h |
-| ml2 rerun to t = 100, fixed-box tagger | the rate at a third. May still die at the origin near t ≈ 24 as the old ml2 arms did; if so the third rung is ml5 (1 × ~25 h) | 1 × ~2 h |
+| ml2 rerun to t = 100, fixed-box tagger | the rate at a third. **✓ done 2026-09-08: it did die at the origin, t = 24.17.** The pre-registered follow-up was ml5; ml5 is instead *withdrawn* because its origin monitor starts below the χ floor, and the low-floor ml4 control takes its place | 1 × ~2 h |
 | **dt_multiplier 0.1 twin of ml3, to t = 70** — `single_hold_dt01_t070` | **✗ RAN 2026-09-08, UNSTABLE.** 4.8× faster (89 u/h) and bit-identical to Stage 0 to t ≈ 10 (L2_Ham 2.5137e-3 vs 2.5119e-3, origin χ and lapse equal to 4 digits); then a slow numerical instability at the compactified origin: L2_Ham 6e-3 at t = 12, 0.24 at 14, 0.41 at 16; the origin lapse 0.21 → 0.16 (t = 15) → 0.11 (15.5) → floor (16.0); h11 NaN on level 3 at **t = 16.07**. The 5× is not available at 0.1. | 1 × 12 min (died) |
 | **dt_multiplier 0.05 twin, to t = 70** | brackets the stable step between 0.02 and 0.1; if it holds, every later arm is 2.5× cheaper, if not, 0.02 was necessary and the origin is stiff | 1 × ~1.5 h, queued after the autopsy |
 | ±ε at 10⁻³, 10⁻², 10⁻¹, both signs (needs the Phase-1 seed) | rate independent of amplitude and sign; t_AH(ε) on the collapse branch; one −ε arm to see inflation | 6 × ~5 h — **templates written 2026-09-08** (`params_single_eps_{p,m}1e{1,2,3}_t100.txt`, frozen binary `bin/main3d_phase1_2026-09-08.ex`, full-state plotfiles every unit); not launched |
@@ -614,7 +614,7 @@ because none exists for unstable constituents.
 
 | # | what | cards × wall | needs first |
 |---|---|---|---|
-| 1 | Phase 2 ladder, card 3, in the user's order: dt ×5 twin **✗ done, unstable** → ml2 rerun (**running**, 39 u/h; origin χ hit the 1e-8 floor at t ≈ 9.0, against 61.3 on ml3 — the coarse rung loses the origin ~50 units early; letting it run to see whether it dies or zombies) → autopsy (launcher points at a frozen copy of the hook build, `bin/main3d_autopsy_2026-09-08.ex`) → dt 0.05 bracket (template `params_single_hold_dt005_t070.txt` written) → ml4 (template `params_single_hold_ml4_t100.txt` written: nested rule, level-4 box half-width 1.0 covers the origin, throat stays on level 3 — the same step ml2→ml3 took; `tagging_L = 128` wide variant is the fallback) | serial on one card | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
+| 1 | Phase 2 ladder. **✓ ml2 DONE 2026-09-08** (see the ladder result below); dt ×5 twin ✗ unstable. **Now running on all four cards:** autopsy (card 0), dt 0.05 bracket (card 1), ml4 (card 2), ml4 low-floor control (card 3). ml5 **withdrawn as specified** — at max_level 5 the origin monitor starts *below* its own floor (see below); it needs a rescaled `min_chi` before it means anything. | 4 cards, ~11 h | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
 | 2 | NaN autopsy restart | 1 × 2 h | a per-term output hook |
 | 3 | V0 ε / μ arms | 7 × 5 h | Phase-1 seed + χ change |
 | 4 | V1 level-3 scout, d = 8 | 1 × 5 h | nothing (superposed data, seed declared) |
@@ -623,9 +623,54 @@ because none exists for unstable constituents.
 | 7 | V2 headline | 1 × ~1 day (L5) | G2 |
 | 8 | V2 twins | 3 × 1–2 days | G2 |
 
-Today only card 3 is free — cards 0–2 are busy with another project on this
-machine — so item 1 runs serially unless that changes. Phase-0 scripts and
-Phase-1 code need no approval and start now.
+All four cards are free as of 2026-09-08 01:30 and item 1 now runs in
+parallel across them. Phase-0 scripts and Phase-1 code need no approval and
+start now.
+
+### Ladder result: the origin death is a resolution artefact, and the throat is innocent
+
+**ml2 (max_level 2, dx = 0.125) died at t = 24.17**, aborted on a NaN in `h11`
+at level 2. **ml3 (max_level 3, dx = 0.0625) reached stop_time t = 100 with no
+death at all.** One halving of the grid spacing turns a death at t = 24 into a
+clean run four times longer. Validated on two independent streams: the
+constraint norms jump from 2.2e-03 to 7.5e+08 in a single coarse step at
+t = 24.17, and the evolution log names the NaN variable and level. No NaN
+polluted any earlier row of any `.dat` stream.
+
+**The throat never moved.** ml2's consumer areal radius holds at
+R = 3.894 at t = 23 against the exact static 3.8895 (+0.12 %), one time unit
+before the abort. Whatever killed ml2 did not touch the minimal surface. This
+is the Stage-1 picture confirmed on the current code: the deaths are at the
+compactified origin, not at the throat, so they are not the
+Gonzalez–Guzman–Sarbach mode, which peaks at the throat.
+
+**The origin monitor is not comparable across rungs, and this was missed until
+now.** Near the compactified origin χ ~ rbar⁴, and each added level puts the
+innermost cell centre 2× closer to rbar = 0, so the *starting* value of χ_A(0)
+falls ~2⁴ per rung. Measured, not assumed:
+
+| arm | max_level | χ_origin(t = 0) | headroom over `min_chi` = 1e-8 | clamp time | outcome |
+|---|---|---|---|---|---|
+| ml2 | 2 | 7.19e-06 | 719× | t = 8.95 | NaN death t = 24.17 |
+| ml3 | 3 | 4.11e-07 | 41× | t = 61.3 | survived to t = 100 |
+| ml4 | 4 | 2.44e-08 *(measured at launch; 2.35e-08 predicted)* | 2.4× | ~immediate | running |
+| ml5 | 5 | ~1.3e-09 *(predicted)* | **0.13× — below the floor** | t = 0 | not launched |
+
+Two consequences. First, the ml2 → ml3 result is *stronger* than it looks: ml3
+starts 17.5× closer to its floor than ml2 and still holds the origin ~50 units
+longer. Second, **ml5 as templated is a vacuous experiment** — its origin
+monitor is clamped from step 0, so it cannot measure a clamp time and its
+interior is modified everywhere from the start. It is withdrawn pending a
+decision on rescaling `min_chi`, which is a change to the regularisation and
+not a resolution knob.
+
+**ml4 therefore runs as a pair** (`params_single_hold_ml4_t100.txt` and
+`params_single_hold_ml4_lowfloor_t100.txt`, identical but for
+`min_chi` 1.0e-8 → 5.0e-10, chosen to give ml4 the same ~45× headroom ml3 had).
+Both die at the same time ⇒ the death is resolution or physics. The low-floor
+arm lives longer ⇒ the ladder has been measuring the clamp, not the grid. The
+floor is known not to be immediately fatal: ml3 clamped at t = 61.3 and still
+finished cleanly, ml2 clamped at t = 8.95 and ran 15 more units.
 
 ---
 
