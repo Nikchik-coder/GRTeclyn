@@ -1,0 +1,46 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x2c3e15) [0x56224428ce15]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at /usr/include/x86_64-linux-gnu/bits/unistd.h:284
+ (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at amrex/Src/Base/AMReX_BLBackTrace.cpp:215
+
+ 1: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x2c7415) [0x562244290415]
+    amrex::BLBackTrace::handler(int) at amrex/Src/Base/AMReX_BLBackTrace.cpp:103
+
+ 2: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x52b0ef) [0x5622444f40ef]
+    GRAMRLevel::post_timestep(int) at Source/GRTeclynCore/GRAMRLevel.cpp:228
+
+ 3: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x407f00) [0x5622443d0f00]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2124
+
+ 4: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x407edd) [0x5622443d0edd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+ 5: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x407edd) [0x5622443d0edd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+ 6: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x406671) [0x5622443cf671]
+    amrex::Amr::coarseTimeStep(double) at amrex/Src/Amr/AMReX_Amr.cpp:2175
+
+ 7: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x504862) [0x5622444cd862]
+    runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:32
+
+ 8: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x40a2f) [0x562244009a2f]
+    main at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:59
+
+ 9: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7f4d51b81d90]
+
+10: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7f4d51b81e40]
+
+11: runs/wormhole_merger/bin/main3d_stage0_2026-09-02.ex(+0x41cd5) [0x56224400acd5]
+    ?? ??:0
+

@@ -41,6 +41,10 @@ difference from the isolated throat in dex, `same` within 0.10.
 | arm | throat | ran to | peak x / at t | t=10 | t=20 | t=26 | t=30 | t=40 | t=50 | t=60 | floor | verdict |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **single_hold_t100** | A | 100.0 | x2667.4 / 84.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.38 | +1.37 | +0.86 | 61.3 | reference |
+| `autopsy_nodamp_r05000` | A | 51.5 | x409.3 / 51.4 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
+| `autopsy_nodamp_r05000` | B | 51.5 | x567.8 / 50.9 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
+| `autopsy_nodamp_r05000_HOOKFAIL_2026-09-08` | A | 51.5 | x409.3 / 51.4 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
+| `autopsy_nodamp_r05000_HOOKFAIL_2026-09-08` | B | 51.5 | x567.8 / 50.9 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
 | `ctrl_rest_a15` | A | 15.0 | x26.8 / 14.7 | +1.25 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_a15` | B | 15.0 | x26.8 / 14.7 | +1.25 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_a3` | A | 15.0 | x7.6 / 15.0 | +0.65 | - | - | - | - | - | - | - | too short |
@@ -107,10 +111,16 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_twin_p012_nodamp_t060` | B | 51.5 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
 | `merge_twin_p012_plain_t100` | A | 44.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.33 | - | - | - | late (+0.26 dex) |
 | `merge_twin_p012_plain_t100` | B | 44.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.33 | - | - | - | late (+0.26 dex) |
+| `single_hold_dt005_t070` | A | 70.0 | x33.8 / 45.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.40 | +1.48 | +1.06 | - | same (-0.00 dex) |
+| `single_hold_dt005_t070` | B | 70.0 | x33.8 / 45.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.40 | +1.48 | +1.06 | - | same (-0.00 dex) |
+| `single_hold_dt01_t070` | A | 16.1 | x13.0 / 16.1 | +0.96 | - | - | - | - | - | - | - | too short |
+| `single_hold_dt01_t070` | B | 16.1 | x13.0 / 16.1 | +0.96 | - | - | - | - | - | - | - | too short |
+| `single_hold_ml2_t100` | A | 24.2 | x28.9 / 24.2 | -2.86 | +0.33 | - | - | - | - | - | 8.9 | too short |
+| `single_hold_ml2_t100` | B | 24.2 | x28.9 / 24.2 | -2.86 | +0.33 | - | - | - | - | - | 8.9 | too short |
 
 ## Reading
 
-Throats read at t = 30: 4 early, 0 same, 38 late, 12 too short, 12 restart arms (own clock only).
+Throats read at t = 30: 4 early, 2 same, 38 late, 16 too short, 16 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

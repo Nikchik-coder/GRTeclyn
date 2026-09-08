@@ -104,7 +104,14 @@ and the framing was wrong — see below.)*
   constrained system satisfies the constraints. Nothing in this campaign may
   be certified healthy on a constraint norm alone.
 - **Runs.** `campaign/single_hold_t100/` *(pack)* — one throat, exact static
-  data, production settings, t = 0 to 100 with zero NaN. The Stage-1 ladder is
+  data, production settings, t = 0 to 100 with zero NaN. Its one-knob twins
+  (2026-09-08) *(pack)*: `single_hold_ml2_t100` — level 2, h11 NaN at
+  t = 24.17 with the throat radius still exact to 0.12 %, so the origin death
+  is resolution and the throat is innocent; `single_hold_dt01_t070` — Courant
+  0.1, origin blow-up, NaN at t = 16.07; `single_hold_dt005_t070` — Courant
+  0.05, no NaN to t = 70 but off the 0.02 solution from t ≈ 33 (constraints
+  35× by t = 40, lapse floored at 61.1), not usable. Three levels and the
+  0.02 step are both necessary. The Stage-1 ladder is
   packed alongside it under `single_throat/` *(pack)*: the lapse/collar/
   dissipation grid, the uniform-grid origin pair, and the long holds. The
   derived systematics, regenerated from those streams by
@@ -112,7 +119,9 @@ and the framing was wrong — see below.)*
   [`single_throat/INSTABILITY.md`](single_throat/INSTABILITY.md).
 - **Caveat — read INSTABILITY.md before quoting a rate.** (a) The growth rate
   is measured at **one resolution**; the two half-resolution arms die within 3
-  units of their own turnover and give a departure time but never a rate.
+  units of their own turnover and give a departure time but never a rate. The
+  2026-09-08 level-2 twin dies at t = 24.17, again before its turnover; the
+  level-4 pair is running.
   (b) Nothing past **t = 65** may be quoted: the areal-minimum scan's minimum
   reaches the inner edge of its own search window there, and the apparent
   R ~ 1.92 plateau over t = 66-99 is that boundary reading, not an endpoint.
@@ -252,6 +261,12 @@ and the framing was wrong — see below.)*
   from t = 0 dies at the level-3 wall (52.07 / 52.79): the +1.4/level gain
   belongs to the *restart* recipe (χ already clipped at the pits when a
   run starts deep), so depth must be added mid-run, not from birth.
+- **The isolated throat on the same ladder (2026-09-08).** `single_hold_ml2_t100`
+  *(pack)* dies at t = 24.17; `single_hold_t100`, one level finer, reaches
+  t = 100. For the lone throat one halving of dx buys more than 75 units,
+  against the binary's 1.4 per level. Read with the χ-floor caveat in the
+  plan: the origin monitor starts 16× closer to its floor per added level, so
+  the level-4 arm runs as a pair with a lowered floor.
 
 ### The interior freeze rescues the ringdown window
 - **Claim.** Freezing the collapsed interior after the burst closes carries
@@ -367,6 +382,17 @@ and the framing was wrong — see below.)*
 - **Runs.** `merge_twin_p012_lc1_t060` *(pack)* — the one-knob gauge arm;
   `merge_orbit_flip_d12_p015_nofill_t060` + `..._p015_rr_t060` *(pack)* — the
   determinism pair; the m4e ladder *(run tree)* — the resolution axis.
+- **Autopsy (2026-09-08).** `autopsy_nodamp_r05000` *(pack)* — the
+  no-damping twin restarted from t = 50 with the per-cell NaN report armed:
+  same step as the original (t = 51.53), deterministic. The report
+  (`run_tail.log`) puts the death ~0.8 units off the merged core, ≥ 16 cells
+  from any patch edge or the domain wall, 11 steps after a regrid, with every
+  field overflowed to finite 1e+88–1e+163 in one step and only A_ij true NaN;
+  the core itself has sat on the χ floor since t ≈ 50.1 (`throat_track.dat`).
+  Same mechanism as the isolated throat's origin death — a floored core with a
+  vertical gradient beside it — so the fix belongs at the floor, not the
+  throat. `..._HOOKFAIL_2026-09-08` *(pack)* is the identical death with the
+  report silently disarmed, kept as the evidence behind the fix.
 - **Say it as.** Every claimed event (blob, capture, fusion, burst) completes
   *before* the wall of the run that claims it; the wall itself is quoted only
   as the limit of the numerical window.

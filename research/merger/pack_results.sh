@@ -76,8 +76,10 @@ STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 # material (GPU_PLAN #5), not campaign results.
 # single_*/ IS packed: the isolated-throat control is the Stage 0 experiment the
 # whole instability question turns on, not a probe.
+# autopsy_*/ IS packed: a NaN-autopsy restart of a campaign run carries the
+# per-cell death report in its run_tail.log, and that report is the result.
 for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/ "${RUNS}"/ctrl_*/ \
-              "${RUNS}"/single_*/; do
+              "${RUNS}"/single_*/ "${RUNS}"/autopsy_*/; do
   [[ -d "${rundir}" ]] || continue   # an unmatched glob expands to itself
   run="$(basename "${rundir%/}")"
   out="${DEST}/campaign/${run}"

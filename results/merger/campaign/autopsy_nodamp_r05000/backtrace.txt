@@ -1,0 +1,49 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x2c4015) [0x55a64cb32015]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at /usr/include/x86_64-linux-gnu/bits/unistd.h:284
+ (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at amrex/Src/Base/AMReX_BLBackTrace.cpp:215
+
+ 1: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x2c7615) [0x55a64cb35615]
+    amrex::BLBackTrace::handler(int) at amrex/Src/Base/AMReX_BLBackTrace.cpp:103
+
+ 2: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x52e512) [0x55a64cd9c512]
+    GRAMRLevel::post_timestep(int) at Source/GRTeclynCore/GRAMRLevel.cpp:240
+
+ 3: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x408100) [0x55a64cc76100]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2124
+
+ 4: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x4080dd) [0x55a64cc760dd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+ 5: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x4080dd) [0x55a64cc760dd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+ 6: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x4080dd) [0x55a64cc760dd]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+ 7: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x406871) [0x55a64cc74871]
+    amrex::Amr::coarseTimeStep(double) at amrex/Src/Amr/AMReX_Amr.cpp:2175
+
+ 8: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x504d42) [0x55a64cd72d42]
+    runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:32
+
+ 9: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x40c2f) [0x55a64c8aec2f]
+    main at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:59
+
+10: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7f31c5c6dd90]
+
+11: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7f31c5c6de40]
+
+12: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x41ed5) [0x55a64c8afed5]
+    ?? ??:0
+

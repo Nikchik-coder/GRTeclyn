@@ -67,6 +67,13 @@ WHAT = {
     "ctrl_rest_d18": "separation ladder rung d = 18, same recipe: clean to t = 15, separated 0.2438 by t = 11.5 -- the blind test of the offset law fitted on d = 12/14/16, which predicted 0.243 against pure 1/d^2's 0.209",
     # Stage 0 of the external audit (2026-09-04): the isolated-throat control.
     "single_hold_t100": "ONE drainhole throat, exact static data, at rest, production settings (max_level 3, sigma 0.1), t = 100 -- the decisive test of whether the 44-56 unit wall is the Gonzalez-Guzman-Sarbach radial mode of the constituent rather than a binary effect: the exact solution is a fixed point, so every deviation is error or instability with no physics mixed in",
+    # Phase 2 of the forward plan (2026-09-08): one-knob twins of single_hold_t100
+    # (the resolution ladder and the time-step bracket) and the NaN autopsy.
+    "single_hold_ml2_t100": "single_hold_t100 with max_level 2 (dx 0.125 at the origin instead of 0.0625): h11 NaN on level 2 at t = 24.17 while the throat radius still sits at +0.12 % of exact -- the origin death is a resolution artefact and the throat is innocent",
+    "single_hold_dt01_t070": "single_hold_t100 with dt_multiplier 0.1 instead of 0.02 (Courant 0.1), to t = 70: 4.8x faster and bit-identical to t ~ 10, then a slow blow-up at the compactified origin, lapse floored at t = 16.0, h11 NaN at t = 16.07",
+    "single_hold_dt005_t070": "single_hold_t100 with dt_multiplier 0.05 (Courant 0.05), to t = 70: reaches stop_time with no NaN but is NOT the same solution -- identical to the 0.02 reference to t ~ 30, then max|K| 30x by t = 35, L2_Ham 35x by t = 40 (reference flat), lapse floored at t = 61.1, throat 4 % smaller at t = 69",
+    "autopsy_nodamp_r05000": "restart of merge_twin_p012_nodamp_t060 from its t = 50 checkpoint with the per-cell NaN autopsy report armed: dies at the same step as the original (t = 51.53, h11 NaN on level 3) and the report names the cells -- ~0.8 units off the merged core, 16+ cells from any patch edge, every field overflowed to finite 1e+88..1e+163 in one step and only A_ij true NaN",
+    "autopsy_nodamp_r05000_HOOKFAIL_2026-09-08": "the same restart with the report silently disarmed (params key read without its evolution. prefix): identical death, no report -- kept as the evidence behind the fix in SimulationParametersBase.hpp",
     "bbh_control_d12_p012": "vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100",
     "bbh_control_d12_p012_t150": "BBH control rerun to t = 150, fixed-center consumer: full ringdown in hand, instruments agree to 0.3 %, QNM fit consistent with a Kerr remnant (~15.6M / ~14.2M at R = 30)",
 }
@@ -106,6 +113,11 @@ ORDER = [
     "ctrl_rest_d16",
     "ctrl_rest_d18",
     "single_hold_t100",
+    "single_hold_ml2_t100",
+    "single_hold_dt01_t070",
+    "single_hold_dt005_t070",
+    "autopsy_nodamp_r05000_HOOKFAIL_2026-09-08",
+    "autopsy_nodamp_r05000",
 ]
 CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
 
@@ -149,6 +161,9 @@ CAVEAT = {
     "single_hold_t100":
         " -- but readable only to t = 65 (areal-minimum scan clipped) and only "
         "to t = 61.3 as the PDE (chi floored); see single_throat/INSTABILITY.md",
+    "single_hold_dt005_t070":
+        " -- but NOT the dt = 0.02 solution past t ~ 33: max|K| 30x and L2_Ham "
+        "35x the reference by t = 40, lapse floored at t = 61.1",
 }
 
 

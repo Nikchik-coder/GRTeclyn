@@ -183,8 +183,10 @@ the FORWARD PLAN section below.*
   Whether the physics survives the larger step is read at t ≈ 50–65.
   **Result (2026-09-08): it does not — dt_multiplier 0.1 is unstable** (identical
   to Stage 0 to t ≈ 10, then a slow blow-up at the compactified origin, h11 NaN at
-  t = 16.07). The stable step lies in 0.02–0.1; a 0.05 twin is queued. Forward
-  Plan, Phase 2.
+  t = 16.07). **And 0.05 (2026-09-08, `single_hold_dt005_t070`): no NaN to
+  t = 70, but the solution leaves the 0.02 reference at t ≈ 33 — constraints
+  35× by t = 40, lapse floored at 61.1 (Phase 2 table). The 0.02 step stays;
+  the origin is stiff.** Forward Plan, Phase 2.
 - [ ] **Controlled ±ε sign test** to select the collapse vs expansion branch per
   González et al., converting an uncontrolled truncation-seeded blow-up into a
   physics result. Note `BinaryWormholeInitialData` deliberately seeds **no**
@@ -530,7 +532,7 @@ arms that radiate nothing; the dt twin wrote no `areal_radius.dat` for that reas
 | ml4 (dx = 0.03125) to t = 100 | the rate at a second resolution | 1 × ~10 h |
 | ml2 rerun to t = 100, fixed-box tagger | the rate at a third. **✓ done 2026-09-08: it did die at the origin, t = 24.17.** The pre-registered follow-up was ml5; ml5 is instead *withdrawn* because its origin monitor starts below the χ floor, and the low-floor ml4 control takes its place | 1 × ~2 h |
 | **dt_multiplier 0.1 twin of ml3, to t = 70** — `single_hold_dt01_t070` | **✗ RAN 2026-09-08, UNSTABLE.** 4.8× faster (89 u/h) and bit-identical to Stage 0 to t ≈ 10 (L2_Ham 2.5137e-3 vs 2.5119e-3, origin χ and lapse equal to 4 digits); then a slow numerical instability at the compactified origin: L2_Ham 6e-3 at t = 12, 0.24 at 14, 0.41 at 16; the origin lapse 0.21 → 0.16 (t = 15) → 0.11 (15.5) → floor (16.0); h11 NaN on level 3 at **t = 16.07**. The 5× is not available at 0.1. | 1 × 12 min (died) |
-| **dt_multiplier 0.05 twin, to t = 70** | brackets the stable step between 0.02 and 0.1; if it holds, every later arm is 2.5× cheaper, if not, 0.02 was necessary and the origin is stiff | 1 × ~1.5 h, queued after the autopsy |
+| **dt_multiplier 0.05 twin, to t = 70** — `single_hold_dt005_t070` | **✓ RAN 2026-09-08 — reached t = 70 with no NaN, and is still the wrong answer.** Equal to Stage 0 to t = 30 (min lapse, origin χ and max\|K\| to 4 digits); then max\|K\| 1.2e-2 → 5.6e-1 by t = 35 and 1.4 by t = 40 against the reference's 1.5e-2; L2_Ham 2.8e-3 → 1.2e-2 (t = 35) → 8.8e-2 (t = 40) → 4.8e-1 (t = 70) against a reference that stays in 1.4e-3–2.3e-3; origin lapse 0.13 at t = 40 (still equal) → 0.045 (t = 50) → floor at t = 61.1; areal radius 3.73 at t = 69 against the reference's 3.87 at t = 40. Validated on three streams (collapse_diagnostics, constraint_norms, consumer areal radius) against the dt 0.02 run at matched times. A run that reaches stop_time is not thereby a solution. **0.02 was necessary — the origin is stiff — and the 2.5× is not available either.** | 1 × 1.6 h (ran) |
 | ±ε at 10⁻³, 10⁻², 10⁻¹, both signs (needs the Phase-1 seed) | rate independent of amplitude and sign; t_AH(ε) on the collapse branch; one −ε arm to see inflation | 6 × ~5 h — **templates written 2026-09-08** (`params_single_eps_{p,m}1e{1,2,3}_t100.txt`, frozen binary `bin/main3d_phase1_2026-09-08.ex`, full-state plotfiles every unit); not launched |
 | μ = 2, small +ε — **at a = 1, m = 2, not m = 4 at a = 2**: the m = 4 throat sits at r_t = 4.24, outside the ml3 level-3 box (half-width 2.0); at a = 1 it is at 2.12 and `tagging_L = 96` wraps it (half-width 3.0), stop_time 50 = t 100 in a = 2 units | M_rem(μ): does the remnant swallow a fraction of m (GGS II: m_AH ≈ 0.22 in throat units) or all of it | 1 × ~9 h (box 3.4× ml3) — **template written 2026-09-08** (`params_single_mu2_eps_p1e2_t100.txt`); not launched |
 | `lapse_coeff = 4.0` twin, +ε | the gauge-race arm from the NaN program, step 4 | 1 × ~5 h — **template written 2026-09-08** (`params_single_lc4_eps_p1e2_t100.txt`); not launched |
@@ -614,8 +616,8 @@ because none exists for unstable constituents.
 
 | # | what | cards × wall | needs first |
 |---|---|---|---|
-| 1 | Phase 2 ladder. **✓ ml2 DONE 2026-09-08** (see the ladder result below); dt ×5 twin ✗ unstable. **Now running on all four cards:** autopsy (card 0), dt 0.05 bracket (card 1), ml4 (card 2), ml4 low-floor control (card 3). ml5 **withdrawn as specified** — at max_level 5 the origin monitor starts *below* its own floor (see below); it needs a rescaled `min_chi` before it means anything. | 4 cards, ~11 h | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
-| 2 | NaN autopsy restart | 1 × 0.5 h | **✓ hook fixed and rerunning 2026-09-08.** The first restart (01:39) reproduced the death exactly — NaN in `h11` at level 3, t = 51.53, constraint norms 2.7e+00 → 1.7e+02 over the last two steps — but produced **no report**: `GRAMRLevel` queries `evolution.nan_autopsy` while the params file sets the key bare, and unlike its sibling `nan_check` nothing injected the prefixed name, so the flag stayed `false` and the report was never reached. Same failure mode as the gauge keys earlier the same day. Fixed by loading it bare and injecting `evolution.nan_autopsy` in `SimulationParametersBase.hpp`; rebuilt and re-frozen as `bin/main3d_autopsy_2026-09-08b.ex`. Dead run preserved as `autopsy_nodamp_r05000_HOOKFAIL_2026-09-08` |
+| 1 | Phase 2 ladder. **✓ ml2 DONE 2026-09-08** (see the ladder result below); dt ×5 twin ✗ unstable; **✓ dt ×2.5 twin DONE 2026-09-08 — reaches t = 70 without a NaN and is still not the solution** (time-step bracket below); the 0.02 step stays. **Still running:** ml4 (card 2) and its low-floor control (card 3), t ≈ 45 of 100 at 06:40, equal to seven digits so far. ml5 **withdrawn as specified** — at max_level 5 the origin monitor starts *below* its own floor (see below); it needs a rescaled `min_chi` before it means anything. | 4 cards, ~11 h | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
+| 2 | NaN autopsy restart | 1 × 0.5 h | **✓ DONE 2026-09-08 — verdict in the section below.** The rerun with the fixed binary died at the same step, digit for digit, and this time reported; packed as `results/merger/campaign/autopsy_nodamp_r05000/` (report in `run_tail.log`). The first restart (01:39) reproduced the death exactly — NaN in `h11` at level 3, t = 51.53, constraint norms 2.7e+00 → 1.7e+02 over the last two steps — but produced **no report**: `GRAMRLevel` queries `evolution.nan_autopsy` while the params file sets the key bare, and unlike its sibling `nan_check` nothing injected the prefixed name, so the flag stayed `false` and the report was never reached. Same failure mode as the gauge keys earlier the same day. Fixed by loading it bare and injecting `evolution.nan_autopsy` in `SimulationParametersBase.hpp`; rebuilt and re-frozen as `bin/main3d_autopsy_2026-09-08b.ex`. Dead run preserved as `autopsy_nodamp_r05000_HOOKFAIL_2026-09-08` |
 | 3 | V0 ε / μ arms | 7 × 5 h | Phase-1 seed + χ change |
 | 4 | V1 level-3 scout, d = 8 | 1 × 5 h | nothing (superposed data, seed declared) |
 | 5 | V1 natural, refined | 1 × ~1 day | scout + ψ-solve or declared seed |
@@ -623,9 +625,9 @@ because none exists for unstable constituents.
 | 7 | V2 headline | 1 × ~1 day (L5) | G2 |
 | 8 | V2 twins | 3 × 1–2 days | G2 |
 
-All four cards are free as of 2026-09-08 01:30 and item 1 now runs in
-parallel across them. Phase-0 scripts and Phase-1 code need no approval and
-start now.
+Cards 0 and 1 are free again as of 2026-09-08 06:40; item 1's two ml4 arms
+hold cards 2 and 3 until about 13:00. Phase-0 scripts and Phase-1 code need
+no approval and start now.
 
 ### Ladder result: the origin death is a resolution artefact, and the throat is innocent
 
@@ -653,7 +655,7 @@ falls ~2⁴ per rung. Measured, not assumed:
 |---|---|---|---|---|---|
 | ml2 | 2 | 7.19e-06 | 719× | t = 8.95 | NaN death t = 24.17 |
 | ml3 | 3 | 4.11e-07 | 41× | t = 61.3 | survived to t = 100 |
-| ml4 | 4 | 2.44e-08 *(measured at launch; 2.35e-08 predicted)* | 2.4× | ~immediate | running |
+| ml4 | 4 | 2.44e-08 *(measured at launch; 2.35e-08 predicted)* | 2.4× | **not by t = 45** — the pit χ *rose* to 1.04e-06 in both arms (equal to 7 digits) | running, t ≈ 45 of 100 at 06:40 |
 | ml5 | 5 | ~1.3e-09 *(predicted)* | **0.13× — below the floor** | t = 0 | not launched |
 
 Two consequences. First, the ml2 → ml3 result is *stronger* than it looks: ml3
@@ -671,6 +673,53 @@ Both die at the same time ⇒ the death is resolution or physics. The low-floor
 arm lives longer ⇒ the ladder has been measuring the clamp, not the grid. The
 floor is known not to be immediately fatal: ml3 clamped at t = 61.3 and still
 finished cleanly, ml2 clamped at t = 8.95 and ran 15 more units.
+
+### Time-step bracket: 0.02 was necessary
+
+Three isolated-throat twins that differ only in the step:
+
+| `dt_multiplier` | speed | outcome | where it leaves the 0.02 solution |
+|---|---|---|---|
+| 0.1 | 89 u/h (4.8×) | h11 NaN at t = 16.07 | t ≈ 10 |
+| 0.05 | 45 u/h (2.5×) | **no NaN, reaches t = 70** | **t ≈ 33** — max\|K\| 30×, L2_Ham 35× by t = 40; lapse floored at 61.1 |
+| 0.02 | 18 u/h | reaches t = 100 | — (the reference) |
+
+The 0.05 arm is the trap: it finishes, its constraint norms stay finite, and
+it is a different run from t ≈ 33 on. It was caught only because the 0.02
+twin exists to compare against at matched times. Every later wall-clock
+budget stays at the 0.02 rate, and any future step change needs a twin, not
+a survival test.
+
+### Autopsy verdict: the binary dies the way the single throat dies
+
+`autopsy_nodamp_r05000` — the no-damping twin restarted from its t = 50
+checkpoint with the per-cell NaN report armed — died at the same step as the
+original and as its own hook-failed first attempt (level 3 step 41227,
+t = 51.53, h11 NaN), the last three constraint rows equal to the digit. The
+death is deterministic. The report, packed in
+`results/merger/campaign/autopsy_nodamp_r05000/run_tail.log`:
+
+| what the report says | reading |
+|---|---|
+| three cells at x ≈ 32.1, 31.7–31.8, 31.2 (grid centre 32), dx = 0.0625 | ~0.8 units from the merged core |
+| `16(+)` in all six directions | ≥ 16 cells from any coarse-fine face and from the domain wall: not a boundary artefact |
+| 11 steps since the level was last regridded (interval 16) | not a regrid step |
+| old values healthy: χ 0.038, h11 0.77, h22 0.96, h33 1.36, lapse 0.073; the six neighbours' χ 0.033–0.044 | the cell was ordinary one step earlier |
+| new values: χ 1.5e+125, h_ij ±1e+158–1e+162, K −1.6e+154, Θ 5.8e+163, lapse 1.1e+88, φ −2.4e+149, Π 3.1e+149 — all **finite** | the whole state overflows in one step; not a slow drift |
+| A11…A33 `-nan`, the only non-finite entries | the traceless curvature is renormalised against det h, which has already overflowed — the last thing computed, not the first thing wrong |
+
+Where the core was: `throat_track.dat` has the two throats at ±4.03 with pit
+χ 0.41 at t = 50.01, and from t = 50.14 a single centroid within 0.3 of the
+origin whose pit χ reads exactly 1.0e-08 — the floor — in most rows and
+1e-07–5e-07 in the rest. The throats had merged into one clamped core about
+1.4 units before the abort, and the death cells sit in the steep χ gradient
+just outside it.
+
+So: not the regridder, not a boundary, not the throat, not a random glitch.
+A χ-floored core with a vertical gradient beside it, and the state blowing up
+in a single step next to it — the same picture the single-throat ladder gives
+at its compactified origin. The χ regularisation item (Phase 1) stands, and
+the autopsy says where to apply it: the floored core, not the throat.
 
 ---
 
