@@ -83,6 +83,11 @@ class SimulationParametersBase : public AMReXParameters
 
         // Nan Check and min chi and lapse values
         pp.load("nan_check", nan_check, true);
+        // Read bare, like nan_check, and injected as evolution.nan_autopsy
+        // below.  GRAMRLevel queries the prefixed name; without the inject the
+        // key in the params file is silently ignored and the report never
+        // fires (that is what happened to the 2026-09-08 autopsy run).
+        pp.load("nan_autopsy", nan_autopsy, false);
         pp.load("min_chi", min_chi, 1e-4);
         pp.load("min_lapse", min_lapse, 1e-4);
 
@@ -215,6 +220,7 @@ class SimulationParametersBase : public AMReXParameters
     {
         inject("evolution.sigma", sigma);
         inject("evolution.nan_check", nan_check);
+        inject("evolution.nan_autopsy", nan_autopsy);
 
         inject("ccz4.formulation", formulation);
         inject("ccz4.kappa1", ccz4_params.kappa1);
@@ -390,6 +396,8 @@ class SimulationParametersBase : public AMReXParameters
     double sigma{}; // Kreiss-Oliger dissipation parameter
 
     bool nan_check{};
+
+    bool nan_autopsy{};
 
     double min_chi{}, min_lapse{};
 

@@ -615,7 +615,7 @@ because none exists for unstable constituents.
 | # | what | cards × wall | needs first |
 |---|---|---|---|
 | 1 | Phase 2 ladder. **✓ ml2 DONE 2026-09-08** (see the ladder result below); dt ×5 twin ✗ unstable. **Now running on all four cards:** autopsy (card 0), dt 0.05 bracket (card 1), ml4 (card 2), ml4 low-floor control (card 3). ml5 **withdrawn as specified** — at max_level 5 the origin monitor starts *below* its own floor (see below); it needs a rescaled `min_chi` before it means anything. | 4 cards, ~11 h | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
-| 2 | NaN autopsy restart | 1 × 2 h | a per-term output hook |
+| 2 | NaN autopsy restart | 1 × 0.5 h | **✓ hook fixed and rerunning 2026-09-08.** The first restart (01:39) reproduced the death exactly — NaN in `h11` at level 3, t = 51.53, constraint norms 2.7e+00 → 1.7e+02 over the last two steps — but produced **no report**: `GRAMRLevel` queries `evolution.nan_autopsy` while the params file sets the key bare, and unlike its sibling `nan_check` nothing injected the prefixed name, so the flag stayed `false` and the report was never reached. Same failure mode as the gauge keys earlier the same day. Fixed by loading it bare and injecting `evolution.nan_autopsy` in `SimulationParametersBase.hpp`; rebuilt and re-frozen as `bin/main3d_autopsy_2026-09-08b.ex`. Dead run preserved as `autopsy_nodamp_r05000_HOOKFAIL_2026-09-08` |
 | 3 | V0 ε / μ arms | 7 × 5 h | Phase-1 seed + χ change |
 | 4 | V1 level-3 scout, d = 8 | 1 × 5 h | nothing (superposed data, seed declared) |
 | 5 | V1 natural, refined | 1 × ~1 day | scout + ψ-solve or declared seed |
