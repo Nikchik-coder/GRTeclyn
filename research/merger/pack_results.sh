@@ -345,6 +345,7 @@ fi
 # ---------------------------------------------------------------------------
 "${PY_BIN}" "${DEST}/analysis/make_summary.py" "${DEST}"
 "${PY_BIN}" "${DEST}/analysis/single_throat_instability.py" "${DEST}"
+"${PY_BIN}" "${DEST}/analysis/throat_clock_comparison.py" "${DEST}" || echo "[pack-merger] clock comparison failed -- continuing"
 
 echo "[pack-merger] total size: $(du -sh "${DEST}" | cut -f1)"
 echo "[pack-merger] done"

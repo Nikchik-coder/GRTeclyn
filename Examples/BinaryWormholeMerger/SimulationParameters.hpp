@@ -103,6 +103,27 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_momentumB", wormhole_params.momentumB,
                 default_momentumB);
 
+        // The perturbation dial (research/merger/GPU_PLAN_UPDATED.md, Forward
+        // Plan, Phase 1).  A unit Gaussian shell on each throat's minimal
+        // surface, multiplied into the conformal factor,
+        //     psi -> psi (1 + eps exp[-((r - r_t)/w)^2]),
+        // so the areal radius of that throat moves by ~2 eps with the SIGN of
+        // eps.  This is the declared, signed, measured seed for the
+        // Gonzalez-Guzman-Sarbach radial mode, in place of whatever the
+        // truncation error happens to supply -- it turns the isolated throat's
+        // instability from an observation into a measurement (rate vs
+        // amplitude, rate vs sign, collapse branch vs inflation branch).  It
+        // violates the Hamiltonian constraint at O(eps), which is the point:
+        // the seed is declared, not hidden.  Default 0 = off, bit for bit.
+        // Width 0 = auto (a/4).  B defaults to A.
+        pp.load("wormhole_seed_amplitude_A", wormhole_params.seed_amplitude_A,
+                0.0);
+        pp.load("wormhole_seed_amplitude_B", wormhole_params.seed_amplitude_B,
+                wormhole_params.seed_amplitude_A);
+        pp.load("wormhole_seed_width_A", wormhole_params.seed_width_A, 0.0);
+        pp.load("wormhole_seed_width_B", wormhole_params.seed_width_B,
+                wormhole_params.seed_width_A);
+
         pp.load("phantom_mass", wormhole_params.phantom_mass, 0.0);
         pp.load("wormhole_support_strength", wormhole_params.support_strength,
                 1.0);
@@ -412,6 +433,27 @@ class SimulationParameters : public SimulationParametersBase
                 "one-body constant).  These throats differ, so the residual "
                 "is O(delta m / d); the weighted-subtraction generalisation "
                 "of Croft et al. is what unequal masses need.");
+        }
+
+        for (const auto &[key, eps] :
+             {std::pair<const char *, double>{"wormhole_seed_amplitude_A",
+                                              wormhole_params.seed_amplitude_A},
+              std::pair<const char *, double>{"wormhole_seed_amplitude_B",
+                                              wormhole_params.seed_amplitude_B}})
+        {
+            check_parameter(key, eps, std::abs(eps) < 0.5,
+                            "is a linear-regime seed on the areal radius "
+                            "(~2 eps); |eps| >= 0.5 is not a perturbation");
+        }
+        for (const auto &[key, w] :
+             {std::pair<const char *, double>{"wormhole_seed_width_A",
+                                              wormhole_params.seed_width_A},
+              std::pair<const char *, double>{"wormhole_seed_width_B",
+                                              wormhole_params.seed_width_B}})
+        {
+            check_parameter(key, w, w >= 0.0,
+                            "must be >= 0 (0 = auto, a quarter of the throat "
+                            "scale)");
         }
 
         check_parameter("wormhole_id_type", wormhole_params.id_type,

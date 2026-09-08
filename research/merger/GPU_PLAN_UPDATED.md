@@ -173,6 +173,18 @@ the FORWARD PLAN section below.*
   gauge-speed violation is impossible at that step; the useful test is a
   `dt_multiplier = 0.1` twin of the isolated throat — same τ ⇒ every later run
   is 5× cheaper. One card, ~1 h. Forward Plan, Phase 2.
+  **Where it came from (traced 2026-09-08):** inherited from
+  `Examples/SupportedWormholeCollapse/params_2gpu.txt` when the merger example
+  was cloned from it (first commit e97920d1, 2026-08-28) and never re-derived;
+  the merger example's own `params_test.txt` says 0.1 and `BinaryBH` 0.25. Every
+  arm in this campaign, every wall-clock budget in this document and in
+  GPU_PLAN.md, was paid at 5× the necessary cost. **Measured on the twin
+  (`single_hold_dt01_t070`, launched 2026-09-08): 89 u/h against 18.4 — 4.8×.**
+  Whether the physics survives the larger step is read at t ≈ 50–65.
+  **Result (2026-09-08): it does not — dt_multiplier 0.1 is unstable** (identical
+  to Stage 0 to t ≈ 10, then a slow blow-up at the compactified origin, h11 NaN at
+  t = 16.07). The stable step lies in 0.02–0.1; a 0.05 twin is queued. Forward
+  Plan, Phase 2.
 - [ ] **Controlled ±ε sign test** to select the collapse vs expansion branch per
   González et al., converting an uncontrolled truncation-seeded blow-up into a
   physics result. Note `BinaryWormholeInitialData` deliberately seeds **no**
@@ -360,12 +372,26 @@ the remnant mass before Phase 4 measures it.
 | "1.125 speed, 17.3-vs-34, m4e recipe, L = 128 grid, ε_eff +8–11 %, 2.87e-4" | **✓** all as in GPU_PLAN §4–§7. |
 
 Two findings of our own fall out of the check and go straight into the plan:
-the **Courant number of 0.02** (Phase 2), and that **the branch-selection
-measurement cannot be made from disk** (Phase 0 → Phase 3).
+the **Courant number of 0.02** (Phase 2 — and the first test says 0.1 is *unstable*,
+so the step can be raised but the free 5× is not there; 0.05 is being bracketed),
+and that **the branch-selection measurement cannot be made from disk** (Phase 0 →
+Phase 3).
 
 ### Phase 0 — from disk, no GPU (this week)
 
-1. **Per-throat clock comparison, every arm at once.** `binary_throat_diagnostics.dat`
+1. **✓ DONE 2026-09-08 — per-throat clock comparison, every arm at once**
+   (`analysis/throat_clock_comparison.py` → `single_throat/CLOCK_COMPARISON.md`,
+   figure `figures/throat_clock_comparison.png`). Preliminary reading, gauge caveat
+   attached: at t = 30, *before any d = 12 pair has touched*, every binary throat's
+   origin χ sits **above** the isolated throat's by 0.2–0.7 dex (head-on +0.22,
+   nodamp +0.26, the p035/p045 fly-bys +0.6/+0.7 and still rising at t = 74/91 with
+   no floor in sight, against the isolated floor at 61.3). Read literally: the
+   companion *holds the throat open*, most strongly on the arms that never merge —
+   the inflation branch, not the collapse branch. Read cautiously: the binary arms
+   carry an orbital shift the isolated throat does not, and the origin χ is a gauge
+   quantity, so this is a hypothesis for the V1 scout's areal radius to test, not a
+   result. The 12 restart arms and the 12 t = 15 controls cannot be read at t = 30.
+   *(Original item:)* `binary_throat_diagnostics.dat`
    carries each throat's pit χ and lapse every step for every arm;
    `single_hold_t100`'s `collapse_diagnostics.dat` carries the same for the isolated
    throat. Plot the binary pits against the isolated one on the same clock,
@@ -383,7 +409,31 @@ measurement cannot be made from disk** (Phase 0 → Phase 3).
    not a physics reading. The physics reading waits for Stage 0b's kept plotfiles.
    Damping-engagement audit: nothing to audit — no evolution-time module was on.
    **Gate G0 as stated is therefore not decidable from disk; Stage 0b decides it.**
-3. **Common-surface rescan of the death stacks at r ≈ 3–6, corrected orientation** —
+3. **✓ DONE 2026-09-08 — common-surface rescan of the death stacks at r ≈ 3–6, corrected orientation**
+   — tool built 2026-09-08 (`grteclyn-wrapper/scripts/validation/ah_oriented_scan.py`:
+   areal radius of every coordinate sphere from its induced 2-metric, outward =
+   increasing R, both null expansions, Misner–Sharp mass per shell). **First
+   result, cf08 at t = 55.5 (the record arm, the strongest horizon claim in the
+   campaign): no marginal surface anywhere in r = 0.3–5.8.** The "trapped shell at
+   r = 0.90–0.94" of #16 is the naive orientation reading the throat's interior
+   (r = 0.32–0.90 with +r taken as outward); the areal minimum sits at r = 0.98,
+   R = 4.086 — the exact number GPU_PLAN already quotes for it — and outside it
+   θ_out > 0, θ_in < 0, plain untrapped space with M_MS ≈ 2.2–2.3 (the pair's
+   ADM mass, as it should be). Defect 2 is confirmed on the arm that mattered.
+   Second result from the same file: the consumer's r/√χ proxy for the areal
+   radius reads 5.0–5.2 at the throat against the true 4.1–4.2 — **20% high**,
+   because h_ij ≠ δ_ij there. INSTABILITY.md's radii come from that proxy on a
+   single throat with far less shift; the ladder arms carry h_ij and will
+   measure the correction. **Full batch done (2026-09-08): all 21 held stacks — nodamp ×3,
+   p015 ×3, p020 ×3, cf08 ×3, lc1 ×3, nodamp_cf10 ×3 (p015_rr and p015_nofill are
+   byte-identical, counted once), plus the Stage-0 Plt10000 which has no h_ij and
+   cannot be scanned — no MOTS on any of them.** Throat areal radius R = 4.1–5.0
+   shrinking at ≈ −1 %/unit on every arm; every naive "trapped" range is the
+   interior side of the areal minimum. Table and raw per-shell output:
+   `results/merger/horizon/ORIENTED_RESCAN_2026-09-08.md` and
+   `oriented_rescan_death_stacks_2026-09-08.txt`. Defect 2 is confirmed on every
+   arm, not only cf08. *(Original
+   item:)*
    same script, `--half 6`, scan level per the covering-grid rule. Cheap, and the
    one place a merger might already be on disk. Both p015 stacks, p020, cf08,
    nodamp, lc1, nodamp_cf10.
@@ -467,14 +517,18 @@ size error, sign recorded) — never pretended absent.
 ### Phase 2 — V0 (= T1), the isolated throat (days)
 
 Stage 0b plus what the proposal adds. Every arm writes a plotfile at least every
-unit through t = 20–70 and **keeps them** — the collapse window is what was lost
-last time.
+unit through t = 20–70 with the **full state** (the Stage-0 files carried only 7
+variables, so no h_ij/A_ij scan can be run on them) and **keeps them** — the collapse
+window is what was lost last time. Trap measured 2026-09-08: the plotfile consumer
+refuses any file without `amr.derive_plot_vars = Weyl4`, so that line stays even on
+arms that radiate nothing; the dt twin wrote no `areal_radius.dat` for that reason.
 
 | arm | tests | cards × wall (18.4 u/h measured at ml3) |
 |---|---|---|
 | ml4 (dx = 0.03125) to t = 100 | the rate at a second resolution | 1 × ~10 h |
 | ml2 rerun to t = 100, fixed-box tagger | the rate at a third. May still die at the origin near t ≈ 24 as the old ml2 arms did; if so the third rung is ml5 (1 × ~25 h) | 1 × ~2 h |
-| **dt_multiplier 0.1 twin of ml3, to t = 70** | the Courant question: same τ and turnover ⇒ the whole campaign runs 5× cheaper from here on; different ⇒ time discretisation is in the seed | 1 × ~1 h |
+| **dt_multiplier 0.1 twin of ml3, to t = 70** — `single_hold_dt01_t070` | **✗ RAN 2026-09-08, UNSTABLE.** 4.8× faster (89 u/h) and bit-identical to Stage 0 to t ≈ 10 (L2_Ham 2.5137e-3 vs 2.5119e-3, origin χ and lapse equal to 4 digits); then a slow numerical instability at the compactified origin: L2_Ham 6e-3 at t = 12, 0.24 at 14, 0.41 at 16; the origin lapse 0.21 → 0.16 (t = 15) → 0.11 (15.5) → floor (16.0); h11 NaN on level 3 at **t = 16.07**. The 5× is not available at 0.1. | 1 × 12 min (died) |
+| **dt_multiplier 0.05 twin, to t = 70** | brackets the stable step between 0.02 and 0.1; if it holds, every later arm is 2.5× cheaper, if not, 0.02 was necessary and the origin is stiff | 1 × ~1.5 h, queued after the autopsy |
 | ±ε at 10⁻³, 10⁻², 10⁻¹, both signs (needs the Phase-1 seed) | rate independent of amplitude and sign; t_AH(ε) on the collapse branch; one −ε arm to see inflation | 6 × ~5 h |
 | μ = 2 (m = 4 at a = 2), small +ε | M_rem(μ): does the remnant swallow a fraction of m (GGS II: m_AH ≈ 0.22 in throat units) or all of it | 1 × ~5 h |
 | `lapse_coeff = 4.0` twin, +ε | the gauge-race arm from the NaN program, step 4 | 1 × ~5 h |
@@ -558,7 +612,7 @@ because none exists for unstable constituents.
 
 | # | what | cards × wall | needs first |
 |---|---|---|---|
-| 1 | Phase 2 ladder: ml4, ml2 rerun, dt ×5 twin | 3 × ≤10 h, or ~13 h serial on one card | nothing — the template exists |
+| 1 | Phase 2 ladder, card 3, in the user's order: dt ×5 twin **✗ done, unstable** → ml2 rerun (**running**, 39 u/h) → autopsy → dt 0.05 bracket → ml4 | serial on one card | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
 | 2 | NaN autopsy restart | 1 × 2 h | a per-term output hook |
 | 3 | V0 ε / μ arms | 7 × 5 h | Phase-1 seed + χ change |
 | 4 | V1 level-3 scout, d = 8 | 1 × 5 h | nothing (superposed data, seed declared) |

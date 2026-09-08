@@ -7,6 +7,13 @@
 #include "NullBCFill.hpp"
 #include "StateTypes.hpp"
 
+#include <AMReX_FArrayBox.H>
+#include <AMReX_ParmParse.H>
+
+#include <cmath>
+#include <iomanip>
+#include <sstream>
+
 void GRAMRLevel::stateVariableSetUp()
 {
     GRParmParse pp;
@@ -82,6 +89,7 @@ GRAMRLevel::GRAMRLevel(amrex::Amr &papa, int lev, const amrex::Geometry &geom,
 {
     GRParmParse pp;
     pp.get("evolution.nan_check", nan_check);
+    pp.query("evolution.nan_autopsy", nan_autopsy);
     m_boundaries.define(geom);
 }
 
@@ -221,6 +229,10 @@ void GRAMRLevel::post_timestep(int /*iteration*/)
                     break;
                 }
             }
+            if (nan_autopsy)
+            {
+                nan_autopsy_report(state_new);
+            }
             amrex::Abort("NaN in GRAMRLevel::post_timestep");
         }
     }
@@ -228,8 +240,183 @@ void GRAMRLevel::post_timestep(int /*iteration*/)
     specificPostTimeStep();
 }
 
+void GRAMRLevel::nan_autopsy_report(amrex::MultiFab &a_state_new)
+{
+    // Abort path only.  Each box is copied to pinned host memory and scanned
+    // there: at this point nothing may be asked of a device kernel that has
+    // to survive the NaN itself.
+    const int lev             = Level();
+    const int ncomp           = a_state_new.nComp();
+    const auto dx             = Geom().CellSizeArray();
+    const auto prob_lo        = Geom().ProbLoArray();
+    const amrex::Box domain   = Geom().Domain();
+    const amrex::BoxArray &ba = a_state_new.boxArray();
+    amrex::MultiFab &state_old = get_old_data(state_index);
+    const amrex::Real t_new   = get_state_data(state_index).curTime();
+    const amrex::Real t_old   = get_state_data(state_index).prevTime();
+    const amrex::Real dt      = t_new - t_old;
+    const int step            = parent->levelSteps(lev);
+
+    amrex::Real min_chi = -1.0, min_lapse = -1.0;
+    {
+        amrex::ParmParse ccz4_pp("ccz4");
+        ccz4_pp.query("min_chi", min_chi);
+        ccz4_pp.query("min_lapse", min_lapse);
+    }
+    int c_chi_idx = -1, c_lapse_idx = -1;
+    for (int c = 0; c < ncomp; ++c)
+    {
+        if (StateVariables::names[c] == "chi")
+        {
+            c_chi_idx = c;
+        }
+        if (StateVariables::names[c] == "lapse")
+        {
+            c_lapse_idx = c;
+        }
+    }
+
+    constexpr int max_reports = 3;
+    constexpr int max_probe   = 16;
+    int reports               = 0;
+    for (amrex::MFIter mfi(a_state_new); mfi.isValid() && reports < max_reports;
+         ++mfi)
+    {
+        const amrex::Box &bx = mfi.validbox();
+        amrex::FArrayBox hnew(bx, ncomp, amrex::The_Pinned_Arena());
+        amrex::FArrayBox hold(bx, ncomp, amrex::The_Pinned_Arena());
+        hnew.copy<amrex::RunOn::Device>(a_state_new[mfi], bx, 0, bx, 0, ncomp);
+        hold.copy<amrex::RunOn::Device>(state_old[mfi], bx, 0, bx, 0, ncomp);
+        amrex::Gpu::streamSynchronize();
+        const auto anew = hnew.const_array();
+        const auto aold = hold.const_array();
+        const auto lo   = amrex::lbound(bx);
+        const auto hi   = amrex::ubound(bx);
+        for (int k = lo.z; k <= hi.z && reports < max_reports; ++k)
+        {
+            for (int j = lo.y; j <= hi.y && reports < max_reports; ++j)
+            {
+                for (int i = lo.x; i <= hi.x && reports < max_reports; ++i)
+                {
+                    bool bad = false;
+                    for (int c = 0; c < ncomp; ++c)
+                    {
+                        if (!std::isfinite(anew(i, j, k, c)))
+                        {
+                            bad = true;
+                            break;
+                        }
+                    }
+                    if (!bad)
+                    {
+                        continue;
+                    }
+                    ++reports;
+                    const amrex::IntVect iv(AMREX_D_DECL(i, j, k));
+                    std::ostringstream os;
+                    os << std::setprecision(10);
+                    os << "NaN autopsy [rank "
+                       << amrex::ParallelDescriptor::MyProc() << "]: level "
+                       << lev << " step " << step << " ("
+                       << step - m_last_regrid_step
+                       << " steps since this level was last regridded)"
+                       << " t_old " << t_old << " -> t_new " << t_new
+                       << " dt " << dt << "\n";
+                    os << "  cell (" << i << "," << j << "," << k << ") at x = ("
+                       << prob_lo[0] + (i + 0.5) * dx[0] << ", "
+                       << prob_lo[1] + (j + 0.5) * dx[1] << ", "
+                       << prob_lo[2] + (k + 0.5) * dx[2] << "), dx = " << dx[0]
+                       << "\n";
+                    os << "  cells to the edge of this level's grids "
+                          "(+x -x +y -y +z -z; c/f = coarse-fine, dom = "
+                          "domain):";
+                    for (int d = 0; d < AMREX_SPACEDIM; ++d)
+                    {
+                        for (int sgn : {+1, -1})
+                        {
+                            int n = 0;
+                            amrex::IntVect p = iv;
+                            while (n < max_probe)
+                            {
+                                p[d] += sgn;
+                                if (!ba.contains(p))
+                                {
+                                    break;
+                                }
+                                ++n;
+                            }
+                            os << " " << n;
+                            if (n < max_probe)
+                            {
+                                os << (domain.contains(p) ? "(c/f)" : "(dom)");
+                            }
+                            else
+                            {
+                                os << "(+)";
+                            }
+                        }
+                    }
+                    os << "\n  floors: min_chi " << min_chi << " min_lapse "
+                       << min_lapse << "\n";
+                    os << "  variable: old -> new   [|new-old|/dt when both "
+                          "finite]\n";
+                    for (int c = 0; c < ncomp; ++c)
+                    {
+                        const amrex::Real o  = aold(i, j, k, c);
+                        const amrex::Real nn = anew(i, j, k, c);
+                        os << "    " << std::setw(8) << StateVariables::names[c]
+                           << ": " << o << " -> " << nn;
+                        if (std::isfinite(o) && std::isfinite(nn) && dt > 0.0)
+                        {
+                            os << "   [" << std::abs(nn - o) / dt << "]";
+                        }
+                        else if (!std::isfinite(nn))
+                        {
+                            os << "   <-- NON-FINITE";
+                        }
+                        os << "\n";
+                    }
+                    if (c_chi_idx >= 0 && c_lapse_idx >= 0)
+                    {
+                        os << "  old chi/lapse at the six neighbours "
+                              "(-x +x -y +y -z +z; '-' = outside this box):";
+                        for (int d = 0; d < AMREX_SPACEDIM; ++d)
+                        {
+                            for (int sgn : {-1, +1})
+                            {
+                                amrex::IntVect p = iv;
+                                p[d] += sgn;
+                                if (bx.contains(p))
+                                {
+                                    os << " " << aold(p, c_chi_idx) << "/"
+                                       << aold(p, c_lapse_idx);
+                                }
+                                else
+                                {
+                                    os << " -/-";
+                                }
+                            }
+                        }
+                        os << "\n";
+                    }
+                    amrex::AllPrint() << os.str() << std::flush;
+                }
+            }
+        }
+    }
+    if (reports == 0)
+    {
+        amrex::AllPrint() << "NaN autopsy [rank "
+                          << amrex::ParallelDescriptor::MyProc()
+                          << "]: no non-finite cell in this rank's boxes on "
+                             "level "
+                          << lev << " (it is on another rank)\n";
+    }
+}
+
 void GRAMRLevel::post_regrid(int a_lbase, int a_new_finest)
 {
+    m_last_regrid_step = parent->levelSteps(Level());
     specific_post_regrid(a_lbase, a_new_finest);
 }
 

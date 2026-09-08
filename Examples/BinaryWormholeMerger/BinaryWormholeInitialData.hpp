@@ -316,6 +316,14 @@ class BinaryWormholeInitialData
 
         double phantom_mass;
         double support_strength;
+
+        //! The perturbation dial (see SimulationParameters): amplitude eps and
+        //! width w of a unit Gaussian shell on each throat's minimal surface,
+        //! multiplied into psi.  0 = off, bit for bit; width 0 = a/4.
+        double seed_amplitude_A{0.0};
+        double seed_amplitude_B{0.0};
+        double seed_width_A{0.0};
+        double seed_width_B{0.0};
     };
 
     BinaryWormholeInitialData(params_t a_params, double a_dx)
@@ -458,6 +466,24 @@ class BinaryWormholeInitialData
             const data_t WB = helfer_window(rB);
             psi -= WA * (data_t)m_helfer_dpsi_A + WB * (data_t)m_helfer_dpsi_B;
             u_sum -= WA * (data_t)m_helfer_du_A + WB * (data_t)m_helfer_du_B;
+        }
+
+        // ---- Declared perturbation seed (Forward Plan, Phase 1) ------------
+        // psi -> psi (1 + eps g(r)), g a unit Gaussian shell on the minimal
+        // surface, so the throat's areal radius R = r psi^2 e^{-u} moves by
+        // ~2 eps with the sign of eps.  The branch is skipped at eps = 0, so
+        // every archived run reproduces bit for bit.
+        if (bA > 0.0 && m_params.seed_amplitude_A != 0.0)
+        {
+            psi *= 1.0 + (data_t)m_params.seed_amplitude_A *
+                             seed_shell(rA, bA, m_params.drainhole_mass_A,
+                                        m_params.seed_width_A);
+        }
+        if (bB > 0.0 && m_params.seed_amplitude_B != 0.0)
+        {
+            psi *= 1.0 + (data_t)m_params.seed_amplitude_B *
+                             seed_shell(rB, bB, m_params.drainhole_mass_B,
+                                        m_params.seed_width_B);
         }
 
         const data_t psi2 = psi * psi;
@@ -707,6 +733,23 @@ class BinaryWormholeInitialData
         const double amp =
             (m_params.id_type == 1) ? sqrt(a * a + m * m) / a : 1.0;
         return amp / sqrt(4.0 * M_PI);
+    }
+
+    //! Unit Gaussian shell on one throat's minimal surface, for the
+    //! perturbation dial.  The minimal surface of the massive drainhole sits
+    //! at l = m, i.e. r_t = (m + sqrt(m^2 + a^2))/2 (a/2 for the massless
+    //! throat and for id_type = 0).  Width 0 = a/4: 8 cells at the production
+    //! dx, and 3e-5 of the shell left at the compactified origin.
+    template <class data_t>
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE data_t
+    seed_shell(const data_t r, const double a, const double m,
+               const double w_in) const
+    {
+        const double mm  = (m_params.id_type == 1) ? m : 0.0;
+        const double r_t = 0.5 * (mm + sqrt(mm * mm + a * a));
+        const double w   = (w_in > 0.0) ? w_in : 0.25 * a;
+        const data_t s   = (r - (data_t)r_t) / (data_t)w;
+        return exp(-s * s);
     }
 
     //! Correction window W(r) = exp[-(r/w)^p], centred on one throat: unity
