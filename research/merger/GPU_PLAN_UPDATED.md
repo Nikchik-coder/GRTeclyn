@@ -453,7 +453,7 @@ Phase 3).
 
 | change | where | size | status today |
 |---|---|---|---|
-| χ: point-of-use regularisation in the RHS, *or* evolve W = √χ | `Source/CCZ4/` + matter RHS | moderate, core, every example | no regularisation exists; clamp in the state only |
+| χ: point-of-use regularisation in the RHS, *or* evolve W = √χ | `Source/CCZ4/` + matter RHS | moderate, core, every example | **✓ coded + built + smoke-tested 2026-09-08 07:16** — key `chi_rhs_floor` (default 0 = the old code; verified bit-identical over 24 steps against the pre-change binary on all four `.dat` streams). On: the two genuine divisions in the evolution — the (∂χ)²/χ curvature term and the A^ij ∂_jχ/χ term of the Γ̃ equation — use max(χ, floor), and the matter source is assembled as χ S_ij *before* its trace is removed (the old order subtracted two numbers of size 1/χ). The state clamp `min_chi` is untouched and becomes a safety net. W = √χ not done. **Under test since 07:20:** `single_hold_chireg_t100` (card 0, ml3 twin, ~13:00) and `single_hold_ml2_chireg_t100` (card 1, ml2 twin, ~09:30), both `chi_rhs_floor = 1e-8`, `min_chi = 1e-20`, `nan_autopsy = 1`, frozen binary `bin/main3d_chireg_2026-09-08.ex`, launcher `launch_chireg.sh`. |
 | Solution-following tagger with ∂φ and K terms; `n_error_buf` 3 | `Source/Tagging/ChiTagger.hpp`, params | small | **✓ coded 2026-09-08** — `ChiPhiKTagger.hpp` (own module), keys `tagging_phi_weight` / `tagging_K_weight` (default 0 = ChiTagger exactly); `amr.n_error_buf` is a params line. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
 | det h̃ = 1 rescale beside trace-Ã removal | `Source/CCZ4/TraceARemoval.hpp` | ~10 lines | **✓ coded 2026-09-08** — `DetHRescale.hpp` (own module, h̃ only, McLachlan-style), key `rescale_det_h` (default off), runs before trace removal at the RHS fill and every RK substage. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
 | Shock-avoiding lapse f = 1 + κ/α² as a params-selectable family | `Source/CCZ4/MovingPunctureGauge.hpp` | ~10 lines | **✓ coded 2026-09-08** — key `gauge.lapse_shock_kappa` (default 0): ∂ₜα gains −κ(K−2Θ); with `lapse_power = 2`, `lapse_coeff = 1` it is exactly ∂ₜα = −(α²+κ)K. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
@@ -484,7 +484,8 @@ within a few steps.
 1. **Kill the clamp, not the matter.** Unclamp evolved χ; regularise only at the
    point of use (`max(χ, ε)` inside the RHS kernels); audit every S_ij/χ-type
    expression so it is assembled as χ·S_ij before any division; optionally
-   W = √χ. Highest expected value of any single change.
+   W = √χ. Highest expected value of any single change. **In code 2026-09-08
+   (`chi_rhs_floor`, Phase 1 table); the two twins that test it are running.**
 2. **Fix the regrid transient.** Positivity limiter on χ and α in the (already
    quartic) prolongation; `n_error_buf` 3–4 so the front never sits at a fresh
    boundary; one extra Kreiss–Oliger pass on a new level before normal evolution.
@@ -625,7 +626,7 @@ because none exists for unstable constituents.
 | 7 | V2 headline | 1 × ~1 day (L5) | G2 |
 | 8 | V2 twins | 3 × 1–2 days | G2 |
 
-Cards 0 and 1 are free again as of 2026-09-08 06:40; item 1's two ml4 arms
+Cards 0 and 1 hold the χ-regularisation twins since 2026-09-08 07:20 (ml2 twin ~09:30, ml3 twin ~13:00); item 1's two ml4 arms
 hold cards 2 and 3 until about 13:00. Phase-0 scripts and Phase-1 code need
 no approval and start now.
 
@@ -727,7 +728,7 @@ the autopsy says where to apply it: the floored core, not the throat.
 |---|---|
 | Stage 0 — is a lone throat stable? | **done: no.** Departs at t ≈ 26 at the Gonzalez–Guzman–Sarbach rate. |
 | Phase 2 — V0 ladder + time-step bracket | ladder done but for the ml4 pair (ends ~13:00); bracket done; the ±ε arms wait on Phase 1 |
-| Phase 1 — code | tagger, det-h rescale, shock-avoiding lapse, ε seed: coded + smoke-tested. **χ regularisation: not started.** |
+| Phase 1 — code | tagger, det-h rescale, shock-avoiding lapse, ε seed: coded + smoke-tested. **χ regularisation: coded + smoke-tested 2026-09-08 07:16; its two test twins are running on cards 0 and 1 (below).** |
 | Phase 3 — V1 head-on from rest | not started |
 | Phase 4 — V2 production + extraction | not started |
 
@@ -747,6 +748,15 @@ overflow.
    is a re-run of the ml3 lone throat (`single_hold_t100` twin) with it on:
    success = the origin never reaches the clamp before t = 100. Every later
    run's usable window depends on this one item.
+   *Launched 2026-09-08 07:20: `single_hold_chireg_t100` (card 0), plus the
+   cheaper ml2 twin `single_hold_ml2_chireg_t100` (card 1) — the coarse
+   reference clamped at t = 8.95 and died at t = 24.17 with the throat still
+   exact, so it gives a yes/no the ml3 twin cannot: past t = 24.17 with the
+   throat still exact ⇒ the clamp killed ml2; the same death ⇒ the grid did.
+   Three readings for the ml3 twin: origin χ never falls to 1e-8 ⇒ the clamp
+   was driving the collapse; it falls below 1e-8 but the throat matches the
+   reference to t = 100 ⇒ the clamp was never load-bearing; NaN ⇒ the
+   regularisation is harmful, and the armed autopsy says where.*
 2. **ml5 is dropped, not deferred.** Vacuous with the present clamp, and level
    5 costs days. Fix the clamp instead of climbing past it. This supersedes
    "await a decision on rescaling `min_chi`".

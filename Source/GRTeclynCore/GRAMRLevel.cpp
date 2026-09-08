@@ -257,11 +257,12 @@ void GRAMRLevel::nan_autopsy_report(amrex::MultiFab &a_state_new)
     const amrex::Real dt      = t_new - t_old;
     const int step            = parent->levelSteps(lev);
 
-    amrex::Real min_chi = -1.0, min_lapse = -1.0;
+    amrex::Real min_chi = -1.0, min_lapse = -1.0, chi_rhs_floor = 0.0;
     {
         amrex::ParmParse ccz4_pp("ccz4");
         ccz4_pp.query("min_chi", min_chi);
         ccz4_pp.query("min_lapse", min_lapse);
+        ccz4_pp.query("chi_rhs_floor", chi_rhs_floor);
     }
     int c_chi_idx = -1, c_lapse_idx = -1;
     for (int c = 0; c < ncomp; ++c)
@@ -357,7 +358,8 @@ void GRAMRLevel::nan_autopsy_report(amrex::MultiFab &a_state_new)
                         }
                     }
                     os << "\n  floors: min_chi " << min_chi << " min_lapse "
-                       << min_lapse << "\n";
+                       << min_lapse << " chi_rhs_floor " << chi_rhs_floor
+                       << "\n";
                     os << "  variable: old -> new   [|new-old|/dt when both "
                           "finite]\n";
                     for (int c = 0; c < ncomp; ++c)

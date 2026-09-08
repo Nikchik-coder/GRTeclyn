@@ -115,8 +115,18 @@ CCZ4RHS<gauge_t, deriv_t>::compute_A_ij_and_Theta_and_Gamma(
     Tensor::Rank1 d1_chi      = m_deriv.d1_scalar(ix, iy, iz, state, c_chi);
     Tensor::Sym12Rank2 d2_chi = m_deriv.d2_scalar(ix, iy, iz, state, c_chi);
 
-    auto ricci = CCZ4Geometry::compute_ricci_Z(
-        vars, d1_chi, d1_Gamma, d1_h, d2_h, d2_chi, h_UU, chris, Z_over_chi);
+    // Point-of-use chi regularisation (CCZ4_params_t::chi_rhs_floor):
+    // 1/chi -> 1/max(chi, floor) where the RHS genuinely divides by chi.
+    // Default 0 = untouched.
+    const amrex::Real chi_den =
+        (m_params.chi_rhs_floor > 0.0)
+            ? amrex::max(vars.chi(), m_params.chi_rhs_floor)
+            : vars.chi();
+
+    auto ricci = CCZ4Geometry::compute_ricci_Z(vars, d1_chi, d1_Gamma, d1_h,
+                                               d2_h, d2_chi, h_UU, chris,
+                                               Z_over_chi,
+                                               m_params.chi_rhs_floor);
 
     Tensor::Rank2 d1_shift = m_deriv.d1_vector(ix, iy, iz, state, c_shift1);
     amrex::Real divshift   = CCZ4Geometry::compute_divshift(d1_shift);
@@ -273,7 +283,7 @@ CCZ4RHS<gauge_t, deriv_t>::compute_A_ij_and_Theta_and_Gamma(
                                  (amrex::Real)GR_SPACEDIM) *
                                     h_UU(i, j) * d1_K(j) +
                                 (amrex::Real)GR_SPACEDIM * A_UU(i, j) *
-                                    d1_chi(j) / vars.chi()) -
+                                    d1_chi(j) / chi_den) -
                 (chris.contracted(j) + 2.0 * m_params.kappa3 * Z_over_chi(j)) *
                     d1_shift(i, j);
 

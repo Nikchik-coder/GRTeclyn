@@ -90,6 +90,8 @@ class SimulationParametersBase : public AMReXParameters
         pp.load("nan_autopsy", nan_autopsy, false);
         pp.load("min_chi", min_chi, 1e-4);
         pp.load("min_lapse", min_lapse, 1e-4);
+        // Point-of-use chi regularisation in the RHS (CCZ4RHS.hpp); 0 = off.
+        pp.load("chi_rhs_floor", chi_rhs_floor, 0.0);
 
         // directory to store data (extraction files, puncture data, constraint
         // norms)
@@ -229,6 +231,7 @@ class SimulationParametersBase : public AMReXParameters
         inject("ccz4.covariantZ4", ccz4_params.covariantZ4);
         inject("ccz4.min_chi", min_chi);
         inject("ccz4.min_lapse", min_lapse);
+        inject("ccz4.chi_rhs_floor", chi_rhs_floor);
 
         inject("gauge.lapse_advec_coeff", ccz4_params.lapse_advec_coeff);
         inject("gauge.lapse_power", ccz4_params.lapse_power);
@@ -400,6 +403,7 @@ class SimulationParametersBase : public AMReXParameters
     bool nan_autopsy{};
 
     double min_chi{}, min_lapse{};
+    double chi_rhs_floor{};
 
     int formulation{}; // Whether to use BSSN or CCZ4
 
