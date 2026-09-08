@@ -38,6 +38,13 @@ class MovingPunctureGauge
                                        //!  \beta^i =  F B^i\f$
         amrex::Real shift_advec_coeff; //!< Switches advection terms in the
                                        //! shift condition on/off
+        amrex::Real lapse_shock_kappa; //!< kappa in the shock-avoiding lapse
+                                       //!< family: adds -kappa (K - 2 Theta) to
+                                       //!< d_t alpha.  With lapse_power = 2 and
+                                       //!< lapse_coeff = 1 this is Alcubierre's
+                                       //!< f(alpha) = 1 + kappa/alpha^2, i.e.
+                                       //!< d_t alpha = -(alpha^2 + kappa) K.
+                                       //!< Default 0 = off (1+log unchanged).
         amrex::Real eta; //!< The eta in \f$\partial_t B^i = \partial_t \tilde
                          //!\Gamma - \eta B^i\f$
 
@@ -98,6 +105,14 @@ class MovingPunctureGauge
                     "eta",
                     "usually O(1/M_ADM) so typically O(1) in code units");
             }
+            amrex::Real lapse_shock_kappa = 0.0;
+            gauge_pp.queryAdd("lapse_shock_kappa", lapse_shock_kappa);
+            if (lapse_shock_kappa < 0.0)
+            {
+                gauge_pp.warning("lapse_shock_kappa",
+                                 "negative kappa makes the lapse speed "
+                                 "imaginary at small alpha; use kappa >= 0");
+            }
         }
 
         void fill_params()
@@ -111,6 +126,8 @@ class MovingPunctureGauge
             gauge_pp.get("shift_Gamma_coeff", shift_Gamma_coeff);
             gauge_pp.get("shift_advec_coeff", shift_advec_coeff);
             gauge_pp.get("eta", eta);
+            lapse_shock_kappa = 0.0;
+            gauge_pp.query("lapse_shock_kappa", lapse_shock_kappa);
         }
     };
 
@@ -131,8 +148,9 @@ class MovingPunctureGauge
     // readability-convert-member-functions-to-static)
     {
         rhs_cell_data[c_lapse] = m_params.lapse_advec_coeff * advec_lapse -
-                                 m_params.lapse_coeff *
-                                     pow(vars.lapse(), m_params.lapse_power) *
+                                 (m_params.lapse_coeff *
+                                      pow(vars.lapse(), m_params.lapse_power) +
+                                  m_params.lapse_shock_kappa) *
                                      (vars.K() - 2.0 * vars.Theta());
 
         FOR (i)

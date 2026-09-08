@@ -37,6 +37,7 @@ struct legacy_ccz4_params_t
     double shift_advec_coeff{};
     double shift_Gamma_coeff{};
     double eta{};
+    double lapse_shock_kappa{};
     double kappa1{};
     double kappa2{};
     double kappa3{};
@@ -67,6 +68,8 @@ class SimulationParametersBase : public AMReXParameters
         pp.load("shift_advec_coeff", ccz4_params.shift_advec_coeff, 0.0);
         pp.load("shift_Gamma_coeff", ccz4_params.shift_Gamma_coeff, 0.75);
         pp.load("eta", ccz4_params.eta, 1.0);
+        // Shock-avoiding lapse term, -kappa (K - 2 Theta); 0 = off.
+        pp.load("lapse_shock_kappa", ccz4_params.lapse_shock_kappa, 0.0);
 
         // CCZ4 parameters
         pp.load("formulation", formulation, 0);
@@ -227,6 +230,7 @@ class SimulationParametersBase : public AMReXParameters
         inject("gauge.shift_Gamma_coeff", ccz4_params.shift_Gamma_coeff);
         inject("gauge.shift_advec_coeff", ccz4_params.shift_advec_coeff);
         inject("gauge.eta", ccz4_params.eta);
+        inject("gauge.lapse_shock_kappa", ccz4_params.lapse_shock_kappa);
 
         // Weyl4's base constructor requires weyl_extraction.center whenever a
         // Weyl4 compute class is built, extraction active or not.  Use the

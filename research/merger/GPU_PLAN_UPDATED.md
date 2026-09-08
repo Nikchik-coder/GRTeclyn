@@ -450,10 +450,10 @@ Phase 3).
 | change | where | size | status today |
 |---|---|---|---|
 | χ: point-of-use regularisation in the RHS, *or* evolve W = √χ | `Source/CCZ4/` + matter RHS | moderate, core, every example | no regularisation exists; clamp in the state only |
-| Solution-following tagger with ∂φ and K terms; `n_error_buf` 3 | `Source/Tagging/ChiTagger.hpp`, params | small | ChiTagger is χ-only; buffer is 1 |
-| det h̃ = 1 rescale beside trace-Ã removal | `Source/CCZ4/TraceARemoval.hpp` | ~10 lines | not enforced anywhere |
-| Shock-avoiding lapse f = 1 + κ/α² as a params-selectable family | `Source/CCZ4/MovingPunctureGauge.hpp` | ~10 lines | family is c α^p K only |
-| ε seed per throat, with sign, on the areal-radius function | `BinaryWormholeInitialData.hpp` | ~20 lines | seeds nothing; old keys rejected |
+| Solution-following tagger with ∂φ and K terms; `n_error_buf` 3 | `Source/Tagging/ChiTagger.hpp`, params | small | **✓ coded 2026-09-08** — `ChiPhiKTagger.hpp` (own module), keys `tagging_phi_weight` / `tagging_K_weight` (default 0 = ChiTagger exactly); `amr.n_error_buf` is a params line. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
+| det h̃ = 1 rescale beside trace-Ã removal | `Source/CCZ4/TraceARemoval.hpp` | ~10 lines | **✓ coded 2026-09-08** — `DetHRescale.hpp` (own module, h̃ only, McLachlan-style), key `rescale_det_h` (default off), runs before trace removal at the RHS fill and every RK substage. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
+| Shock-avoiding lapse f = 1 + κ/α² as a params-selectable family | `Source/CCZ4/MovingPunctureGauge.hpp` | ~10 lines | **✓ coded 2026-09-08** — key `gauge.lapse_shock_kappa` (default 0): ∂ₜα gains −κ(K−2Θ); with `lapse_power = 2`, `lapse_coeff = 1` it is exactly ∂ₜα = −(α²+κ)K. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
+| ε seed per throat, with sign, on the areal-radius function | `BinaryWormholeInitialData.hpp` | ~20 lines | **✓ coded + built 2026-09-08** — `wormhole_seed_amplitude_A/B`, `wormhole_seed_width_A/B` (Gaussian shell on ψ at the throat radius; 0 = off). Parsed and run in the 2026-09-08 smoke test; not yet used in a physics run. |
 | Boosted Π + momentum-constraint residual | same file | ~20 lines | V2 only |
 | Constraint-solved ψ, K = 0, phantom sign: GRTresna route first (add the sign to its `ScalarField`; the bridge exists), standalone solver as fallback | sibling GRTresna + `ExternalGridInitialData` | days to a week | bridge built; sign missing; throat topology untested |
 | Diagnostics: corrected θ± (outward = increasing areal R) with Misner–Sharp in the same pass; outermost-surface count; per-mouth health metric log(R_min/R_exact − 1) | `ah_radial_scan.py`, consumer | small | P2 not started; the health metric is INSTABILITY.md's deviation, per throat |
@@ -612,7 +612,7 @@ because none exists for unstable constituents.
 
 | # | what | cards × wall | needs first |
 |---|---|---|---|
-| 1 | Phase 2 ladder, card 3, in the user's order: dt ×5 twin **✗ done, unstable** → ml2 rerun (**running**, 39 u/h) → autopsy → dt 0.05 bracket → ml4 | serial on one card | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
+| 1 | Phase 2 ladder, card 3, in the user's order: dt ×5 twin **✗ done, unstable** → ml2 rerun (**running**, 39 u/h; origin χ hit the 1e-8 floor at t ≈ 9.0, against 61.3 on ml3 — the coarse rung loses the origin ~50 units early; letting it run to see whether it dies or zombies) → autopsy (launcher points at a frozen copy of the hook build, `bin/main3d_autopsy_2026-09-08.ex`) → dt 0.05 bracket (template `params_single_hold_dt005_t070.txt` written) → ml4 (template `params_single_hold_ml4_t100.txt` written: nested rule, level-4 box half-width 1.0 covers the origin, throat stays on level 3 — the same step ml2→ml3 took; `tagging_L = 128` wide variant is the fallback) | serial on one card | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
 | 2 | NaN autopsy restart | 1 × 2 h | a per-term output hook |
 | 3 | V0 ε / μ arms | 7 × 5 h | Phase-1 seed + χ change |
 | 4 | V1 level-3 scout, d = 8 | 1 × 5 h | nothing (superposed data, seed declared) |

@@ -315,6 +315,24 @@ class SimulationParameters : public SimulationParametersBase
         // what tagging_type = 2 is for.
         pp.load("tagging_center", tagging_center, center);
 
+        // Solution-following criterion (tagging_type = 0 only): weights on
+        // the second derivatives of phi and of K added in quadrature to the
+        // chi term, dx * sqrt(|d2 chi|^2 + w_phi^2 |d2 phi|^2 + w_K^2 |d2 K|^2)
+        // >= regrid_threshold.  Both default 0, which is exactly ChiTagger,
+        // so no archived run changes.  Forward Plan Phase 1: refine the
+        // steepening front before it outruns the mesh.
+        pp.load("tagging_phi_weight", tagging_phi_weight, 0.0);
+        pp.load("tagging_K_weight", tagging_K_weight, 0.0);
+        if (tagging_phi_weight < 0.0 || tagging_K_weight < 0.0)
+        {
+            amrex::Abort("tagging_phi_weight / tagging_K_weight must be >= 0");
+        }
+
+        // Algebraic det(h~) = 1 enforcement beside the trace-A~ removal at
+        // every RK substage (DetHRescale.hpp).  Default off so no archived
+        // run changes.  Forward Plan Phase 1.
+        pp.load("rescale_det_h", rescale_det_h, 0);
+
         // Throat tracking (Plan.md Stage 2.0): locate each throat as the chi
         // pit it carries at its centre and follow it, one row per coarse step
         // in throat_track.dat.  Default off so no archived run changes.  The
@@ -643,6 +661,9 @@ class SimulationParameters : public SimulationParametersBase
     // Refinement criterion: 0 = ChiTagger (default), 1 = FixedGridsTagger.
     int tagging_type{};
     double tagging_L{};
+    double tagging_phi_weight{};
+    double tagging_K_weight{};
+    int rescale_det_h{};
     std::array<double, AMREX_SPACEDIM> tagging_center{};
 
     std::string recipe_initial_data_file;

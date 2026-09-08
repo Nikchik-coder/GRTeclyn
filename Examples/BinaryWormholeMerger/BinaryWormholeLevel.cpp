@@ -5,7 +5,9 @@
 #include "CoreMatterDamping.hpp"
 #include "BinaryWormholeInitialData.hpp"
 #include "CCZ4RHSWithMatter.hpp"
+#include "ChiPhiKTagger.hpp"
 #include "ChiTagger.hpp"
+#include "DetHRescale.hpp"
 #include "ConstraintsWithMatter.hpp"
 #include "ExoticScalarField.hpp"
 #include "ExternalGridInitialData.hpp"
@@ -220,10 +222,16 @@ void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     const auto &rhs_arrs    = a_rhs.arrays();
     TraceARemoval trace_A_removal;
     PositiveChiAndLapse positive_chi_lapse;
+    DetHRescale det_h_rescale;
+    const bool do_det_h = (simParams().rescale_det_h != 0);
 
     amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        {
+                           if (do_det_h)
+                           {
+                               det_h_rescale(i, j, k, soln_arrs[box_no]);
+                           }
                            trace_A_removal(i, j, k, soln_arrs[box_no]);
                            positive_chi_lapse(i, j, k, soln_arrs[box_no]);
                        });
@@ -305,9 +313,15 @@ void BinaryWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
     PositiveChiAndLapse positive_chi_lapse;
+    DetHRescale det_h_rescale;
+    const bool do_det_h = (simParams().rescale_det_h != 0);
     amrex::ParallelFor(a_soln, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        {
+                           if (do_det_h)
+                           {
+                               det_h_rescale(i, j, k, soln_arrs[box_no]);
+                           }
                            trace_A_removal(i, j, k, soln_arrs[box_no]);
                            positive_chi_lapse(i, j, k, soln_arrs[box_no]);
                        });
@@ -400,7 +414,11 @@ void BinaryWormholeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
 
     const auto &state_new_arrs = state_new.const_arrays();
 
-    ChiTagger chi_tagger(Geom().CellSize(0), a_regrid_threshold);
+    // ChiTagger's criterion, plus optional phi and K second-derivative terms
+    // (tagging_phi_weight / tagging_K_weight, both 0 by default = ChiTagger).
+    ChiPhiKTagger chi_tagger(Geom().CellSize(0), a_regrid_threshold,
+                             simParams().tagging_phi_weight,
+                             simParams().tagging_K_weight, c_chi, c_phi, c_K);
 
     amrex::ParallelFor(state_new, amrex::IntVect(0),
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
