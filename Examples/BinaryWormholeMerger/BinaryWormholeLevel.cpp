@@ -529,6 +529,27 @@ void BinaryWormholeLevel::write_scalar_diagnostics()
         }
         constraints_file.write_time_data_line(
             std::vector<double>{L2_Ham, L2_Mom});
+
+        // Boosted scalar (V2 only): the Bowen-York A_ij solves the vacuum
+        // momentum constraint, so with Pi != 0 the t = 0 residual is the
+        // number to read.  Same value as the first row above, labelled.
+        if (first_step)
+        {
+            const auto &vA = simParams().wormhole_params.boost_velocity_A;
+            const auto &vB = simParams().wormhole_params.boost_velocity_B;
+            bool boosted   = false;
+            for (int idir = 0; idir < AMREX_SPACEDIM; ++idir)
+            {
+                boosted = boosted || (vA[idir] != 0.0) || (vB[idir] != 0.0);
+            }
+            if (boosted)
+            {
+                amrex::Print() << "Boosted scalar initial data: momentum-"
+                                  "constraint residual at t = 0, L2_Mom = "
+                               << L2_Mom << " (L2_Ham = " << L2_Ham
+                               << "); exactly 0 without the boost.\n";
+            }
+        }
     }
 
     // ---- Global collapse diagnostics (single-centre, unchanged contract) ---

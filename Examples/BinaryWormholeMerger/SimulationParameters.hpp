@@ -103,6 +103,20 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_momentumB", wormhole_params.momentumB,
                 default_momentumB);
 
+        // Boost velocity of each throat's scalar profile (V2 only; see
+        // BinaryWormholeInitialData): Pi = -(v . grad phi) / alpha per
+        // throat, so the scalar moves with the Bowen-York momentum.  Breaks
+        // the momentum constraint at O(v); the residual is the t = 0 L2_Mom.
+        // Default 0 = off, bit for bit.  B defaults to -A.
+        pp.load("wormhole_boost_velocity_A", wormhole_params.boost_velocity_A,
+                zero3);
+        std::array<double, AMREX_SPACEDIM> default_boost_B = {
+            -wormhole_params.boost_velocity_A[0],
+            -wormhole_params.boost_velocity_A[1],
+            -wormhole_params.boost_velocity_A[2]};
+        pp.load("wormhole_boost_velocity_B", wormhole_params.boost_velocity_B,
+                default_boost_B);
+
         // The perturbation dial (research/merger/GPU_PLAN_UPDATED.md, Forward
         // Plan, Phase 1).  A unit Gaussian shell on each throat's minimal
         // surface, multiplied into the conformal factor,
@@ -462,6 +476,29 @@ class SimulationParameters : public SimulationParametersBase
             check_parameter(key, eps, std::abs(eps) < 0.5,
                             "is a linear-regime seed on the areal radius "
                             "(~2 eps); |eps| >= 0.5 is not a perturbation");
+        }
+        for (const auto &[key, v] :
+             {std::pair<const char *, std::array<double, AMREX_SPACEDIM>>{
+                  "wormhole_boost_velocity_A",
+                  wormhole_params.boost_velocity_A},
+              std::pair<const char *, std::array<double, AMREX_SPACEDIM>>{
+                  "wormhole_boost_velocity_B",
+                  wormhole_params.boost_velocity_B}})
+        {
+            const double speed =
+                std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+            check_parameter(key, speed, speed < 1.0,
+                            "is a coordinate speed; |v| >= 1 is superluminal");
+            // Throat B's default is -A; do not warn about a throat that is
+            // not there (b0_B = 0 => no scalar profile to boost).
+            const bool absent =
+                (std::string(key) == "wormhole_boost_velocity_B") &&
+                (wormhole_params.b0_B == 0.0);
+            warn_parameter(key, speed, speed == 0.0 || absent,
+                           "boosts the scalar profile (Pi = -(v . grad phi) / "
+                           "alpha): the momentum constraint is violated at "
+                           "O(v).  Read the residual off the t = 0 L2_Mom in "
+                           "constraint_norms.dat before trusting the run");
         }
         for (const auto &[key, w] :
              {std::pair<const char *, double>{"wormhole_seed_width_A",

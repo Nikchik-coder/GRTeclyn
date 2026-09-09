@@ -11,6 +11,7 @@ import yt
 
 from grteclyn_wrapper.objective_modes import QD_OBJECTIVE_MODES
 
+from .extraction.horizon import HORIZON_HEADER
 from .config import _default_data_dir, _default_frames_out_dir, _frames_auto_zlim_enabled
 from .extraction.central import CENTRAL_TIMESERIES_HEADER
 from .extraction.confinement import CONFINEMENT_TIMESERIES_HEADER
@@ -48,6 +49,16 @@ from grteclyn_wrapper.metrics.splash_early_term import evaluate_splash_early_ter
 def _append_radial_block(path: Path, block: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
+        handle.write(block)
+
+
+def _append_block_with_header(path: Path, header: str, block: str) -> None:
+    """Append a multi-row block, writing the column header once on an empty file."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    need_header = (not path.exists()) or path.stat().st_size == 0
+    with path.open("a", encoding="utf-8") as handle:
+        if need_header:
+            handle.write(header.rstrip("\n") + "\n")
         handle.write(block)
 
 
@@ -211,6 +222,44 @@ def main() -> None:
             "inner cells win the argmin and report a collapse that is not happening. "
             "Use a value below the throat radius b/2 (e.g. 0.1 for b = 0.5)."
         ),
+    )
+    parser.add_argument(
+        "--horizon-scan",
+        action="store_true",
+        help=(
+            "Orientation-corrected marginal-surface scan per plotfile to horizon_scan.dat: "
+            "areal radius of coordinate spheres about each mouth, outward = increasing R, "
+            "both null expansions, Misner-Sharp mass, outermost MOTS, trapped-shell counts, "
+            "per-mouth health metric R_min/R_exact - 1 and the outermost-surface count. "
+            "Needs full-state plotfiles (chi K h_ij A_ij)."
+        ),
+    )
+    parser.add_argument(
+        "--horizon-centers",
+        type=float,
+        nargs="+",
+        default=None,
+        help="Mouth centres as x y z triples (absolute). Default: --center.",
+    )
+    parser.add_argument(
+        "--horizon-track",
+        type=str,
+        default=None,
+        help=(
+            "Path to binary_throat_diagnostics.dat; mouth centres are read from it at each "
+            "plotfile time (positions relative to --center). Overrides --horizon-centers."
+        ),
+    )
+    parser.add_argument("--horizon-half", type=float, default=2.5, help="Half-width of the scan box about each mouth.")
+    parser.add_argument("--horizon-level", type=int, default=3, help="Covering-grid level for the mouth scans (capped at the finest).")
+    parser.add_argument("--horizon-common-level", type=int, default=1, help="Covering-grid level for the common (midpoint) scan of a pair.")
+    parser.add_argument("--horizon-rmin", type=float, default=0.25, help="Innermost shell radius; keep it inside the throat (r < b/2).")
+    parser.add_argument("--horizon-dr", type=float, default=0.02, help="Shell spacing.")
+    parser.add_argument(
+        "--horizon-r-exact",
+        type=float,
+        default=None,
+        help="Exact static throat areal radius for the health metric R_min/R_exact - 1 (e.g. 3.8895).",
     )
     parser.add_argument(
         "--ftl-timeseries",
@@ -400,6 +449,7 @@ def main() -> None:
     sector_dynamics_out_path = out_dir / "sector_dynamics.dat"
     central_out_path = out_dir / "central_timeseries.dat"
     central_radial_out_path = out_dir / "central_radial_profile.dat"
+    horizon_out_path = out_dir / "horizon_scan.dat"
     score_ts_path = out_dir / "score_timeseries.jsonl"
     stop_sim_path = Path(args.stop_sim_path) if args.stop_sim_path else Path(data_dir) / ".stop_sim"
     header = "# time  " + "  ".join([f"Re(R={R:g})  Im(R={R:g})" for R in args.radii])
@@ -450,6 +500,8 @@ def main() -> None:
             _truncate_if_exists(central_out_path)
         if args.central_radial_profile:
             _truncate_if_exists(central_radial_out_path)
+        if args.horizon_scan:
+            _truncate_if_exists(horizon_out_path)
         if args.incremental_score:
             _truncate_if_exists(score_ts_path)
         _save_state(state_path, {})
@@ -523,6 +575,8 @@ def main() -> None:
                     )
         if res.get("central_radial_block"):
             _append_radial_block(central_radial_out_path, res["central_radial_block"])
+        if res.get("horizon_block"):
+            _append_block_with_header(horizon_out_path, HORIZON_HEADER, res["horizon_block"])
 
     # If rendering frames, clear existing frames for the requested fields/axis at startup.
     frame_fields_startup = [_canonical_field_name(f) for f in args.frames_fields]

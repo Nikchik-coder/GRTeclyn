@@ -229,6 +229,23 @@
     With K = 0 and Pi = 0 the matter momentum density vanishes and Ahat_ij is
     flat-space divergence free, so the MOMENTUM constraint is satisfied
     EXACTLY - only the Hamiltonian constraint is violated at t = 0.
+
+    Boosted scalar (V2 only, default off): a throat profile moving rigidly
+    with coordinate velocity v has d_t phi = -v . grad phi, and with the
+    evolution convention d_t phi = alpha Pi + beta . grad phi (beta = 0 at
+    t = 0) that is
+
+        Pi = -(v_A . grad phi_A + v_B . grad phi_B) / alpha,
+
+    each throat's own analytic gradient, so the scalar starts moving WITH the
+    Bowen-York momentum instead of being left behind by it.  This breaks the
+    momentum constraint at O(v): the scalar now carries the momentum density
+    S_i = -Pi d_i phi (with the phantom sign) that Bowen-York knows nothing
+    about, and only a re-solve of the vector Laplacian would absorb it.  The
+    residual is measured, not hidden: it is the t = 0 row of
+    constraint_norms.dat (L2_Mom, exactly 0 without the boost), repeated in
+    the log with a "boost" label.  Pi is finite at the compactified origins
+    (grad phi -> 4 C / b there) unless the lapse itself is floored.
 */
 class BinaryWormholeInitialData
 {
@@ -284,6 +301,12 @@ class BinaryWormholeInitialData
         std::array<double, AMREX_SPACEDIM> momentumA;
         std::array<double, AMREX_SPACEDIM> momentumB;
 
+        //! Coordinate boost velocity of each throat's scalar profile (V2
+        //! only): Pi = -(v . grad phi) / alpha per throat, see the class
+        //! comment.  Default 0 = off, bit for bit.  B defaults to -A.
+        std::array<double, AMREX_SPACEDIM> boost_velocity_A{{0.0, 0.0, 0.0}};
+        std::array<double, AMREX_SPACEDIM> boost_velocity_B{{0.0, 0.0, 0.0}};
+
         //! 1 = shift phi so that it tends to 0 at spatial infinity
         int subtract_phi_asymptote;
 
@@ -334,6 +357,13 @@ class BinaryWormholeInitialData
         // for the two windows.
         const double bA = m_params.b0_A;
         const double bB = m_params.b0_B;
+        for (int idir = 0; idir < AMREX_SPACEDIM; ++idir)
+        {
+            m_boost_A = m_boost_A || (m_params.boost_velocity_A[idir] != 0.0);
+            m_boost_B = m_boost_B || (m_params.boost_velocity_B[idir] != 0.0);
+        }
+        m_boost_A = m_boost_A && (bA > 0.0);
+        m_boost_B = m_boost_B && (bB > 0.0);
         if (m_params.helfer_correction == 0 || bA <= 0.0 || bB <= 0.0)
         {
             return; // off, or only one body present - nothing to correct
@@ -541,12 +571,22 @@ class BinaryWormholeInitialData
         // solution rather than an ansatz.  It reduces to the first at m = 0.
         data_t phi           = 0.0;
         double phi_asymptote = 0.0;
+        // v . grad phi summed over boosted throats; turned into Pi once the
+        // lapse is known (below).  Stays exactly 0 with the boost off.
+        data_t v_dot_grad_phi = 0.0;
         if (bA > 0.0)
         {
             const double normA = phi_norm(bA, m_params.drainhole_mass_A);
             const data_t argA = (rA - (data_t)bA_sq / (4.0 * rA)) / (data_t)bA;
             phi += (data_t)normA * atan(argA);
             phi_asymptote += normA * (M_PI / 2.0);
+            if (m_boost_A)
+            {
+                v_dot_grad_phi += boost_term(
+                    normA, argA, bA, bA_sq, rA, dxA, dyA, dzA,
+                    m_params.boost_velocity_A[0], m_params.boost_velocity_A[1],
+                    m_params.boost_velocity_A[2]);
+            }
         }
         if (bB > 0.0)
         {
@@ -560,6 +600,13 @@ class BinaryWormholeInitialData
             const data_t argB = (rB - (data_t)bB_sq / (4.0 * rB)) / (data_t)bB;
             phi += (data_t)normB * atan(argB);
             phi_asymptote += normB * (M_PI / 2.0);
+            if (m_boost_B)
+            {
+                v_dot_grad_phi += boost_term(
+                    normB, argB, bB, bB_sq, rB, dxB, dyB, dzB,
+                    m_params.boost_velocity_B[0], m_params.boost_velocity_B[1],
+                    m_params.boost_velocity_B[2]);
+            }
         }
 
         if (m_params.subtract_phi_asymptote != 0)
@@ -578,8 +625,9 @@ class BinaryWormholeInitialData
 
         // Pi = 0: the scalar is momentarily static, so the matter momentum
         // density vanishes and the Bowen-York A_ij solves the momentum
-        // constraint exactly.
-        const data_t Pi = 0.0;
+        // constraint exactly.  Overwritten below, after the lapse, when a
+        // boost is on.
+        data_t Pi = 0.0;
 
         // ---- Gauge ----------------------------------------------------------
         data_t lapse = 1.0;
@@ -680,6 +728,12 @@ class BinaryWormholeInitialData
         }
         if (lapse < (data_t)1.0e-10)
             lapse = (data_t)1.0e-10;
+
+        // ---- Boosted scalar (V2 only): Pi = -(v . grad phi) / alpha -------
+        if (m_boost_A || m_boost_B)
+        {
+            Pi = -v_dot_grad_phi / lapse;
+        }
 
         cell(i, j, k, c_chi) = chi;
         cell(i, j, k, c_h11) = h11;
@@ -813,8 +867,32 @@ class BinaryWormholeInitialData
         A23 += f * ((data_t)Py * nz + (data_t)Pz * ny + ny * nz * Pn);
     }
 
+    //! v . grad phi of one drainhole profile phi = C atan(X),
+    //! X = (r - b^2 / 4 r) / b: dphi/dr = C (1 + b^2 / 4 r^2) / (b (1 + X^2)),
+    //! grad phi = dphi/dr (dx, dy, dz) / r.  C already carries the sign of
+    //! the profile (phi_sign_B for throat B).
+    template <class data_t>
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE static data_t
+    // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
+    boost_term(const double C, const data_t X, const double b,
+               const double b_sq, const data_t r, const data_t dx,
+               const data_t dy, const data_t dz, const double vx,
+               const double vy, const double vz)
+    {
+        const data_t dphi_dr = (data_t)C * (1.0 + (data_t)b_sq / (4.0 * r * r)) /
+                               ((data_t)b * (1.0 + X * X));
+        const data_t v_dot_n =
+            ((data_t)vx * dx + (data_t)vy * dy + (data_t)vz * dz) / r;
+        return dphi_dr * v_dot_n;
+    }
+
     params_t m_params;
     double m_dx;
+
+    //! Boost flags, precomputed in the constructor: a throat is boosted when
+    //! it exists (b > 0) and its velocity is nonzero.
+    bool m_boost_A{false};
+    bool m_boost_B{false};
 
     //! Helfer/Ning correction, precomputed in the constructor.  All zero and
     //! m_helfer_on false unless the correction is on and both throats exist.

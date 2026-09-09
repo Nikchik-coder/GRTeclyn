@@ -13,6 +13,7 @@ from .extraction.confinement import _extract_confinement_line
 from .extraction.sector_barycenters import _extract_sector_barycenters_line
 from .extraction.sector_dynamics import _extract_sector_dynamics_line
 from .extraction.ftl import _extract_ftl_timeseries_line
+from .extraction.horizon import horizon_block as _horizon_block
 from .extraction.psi4 import _extract_mode_amps_l2m0, _extract_mode_amps_l2_all
 from .extraction.psi4_higher_l import (
     extract_higher_l_modes,
@@ -78,6 +79,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
         "confinement_line": None,
         "central_line": None,
         "central_radial_block": None,
+        "horizon_block": None,
         "success": False,
         "deleted": False,
         "status_str": "",
@@ -289,6 +291,13 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
             elif args_dict.get("verbose", False):
                 print(f"WARNING: plotfile {key} missing chi field; skipping areal radius.")
 
+        if args_dict.get("horizon_scan"):
+            try:
+                result["horizon_block"] = _horizon_block(ds, t, args_dict)
+            except Exception as exc:
+                if args_dict.get("verbose", False):
+                    print(f"WARNING: horizon scan failed for {key}: {exc}")
+
         if args_dict.get("embedding"):
             if ("boxlib", "chi") in ds.field_list:
                 e_idx = _parse_plot_index(key)
@@ -390,6 +399,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
             or result.get("confinement_line")
             or result.get("central_line")
             or result.get("central_radial_block")
+            or result.get("horizon_block")
             or frame_fields
             or projection_fields
         )
