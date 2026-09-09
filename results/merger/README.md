@@ -360,7 +360,15 @@ and the framing was wrong — see below.)*
   window — no wall echo. The head-on's seam is *not* the orbital's five digits:
   the twins agree to 3e-4 of peak until each fill's imprint arrives, then differ by
   1–5 % of peak at R = 10 and 3–12 % at R = 14 (t = 50–100); at R = 18 both grow a
-  grid-scale wobble from t ≈ 80. And the constraints are not flat here: Hamiltonian
+  grid-scale wobble from t ≈ 80. **That drift is not the fill (2026-09-09):** the
+  narrow-fill twin, the no-fill level-5 arm and the no-fill level-3 down-step agree
+  with one another to 0.01–0.02 % of peak, and each differs from V1c by the same
+  amount — the drift belongs to V1c, the only arm never restarted, and the likely
+  cause is the regrid phase (a restart regrids 8 steps out of step with a continuous
+  run). The control that settles it — a restart from the t = 22 checkpoint carrying
+  V1c's own fill 1.2/1.8 — has not been run. What holds regardless: a run with a
+  fill and a run with none agree to 0.01 % of peak, so the interior treatment does
+  not reach the wave. And the constraints are not flat here: Hamiltonian
   3.3e-3 (t = 30–40) → 5.8e-3 (90–100), doubling every ~80 units, in both twins.
   `figures/headon_freeze_psi4_20_R10_14_18_t100.png`.
 
