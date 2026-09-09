@@ -73,6 +73,15 @@ that produced it does not.
    the solution's. The fly-by arms are not counter-evidence — they were stopped or died
    at t = 60-91, and an isolated throat is already 35 % gone by t = 65. ("Healthy with no
    NaN at all" also overstates them; see B2 in `research/merger/archive/GPU_PLAN_2026-09-03.md`.)
+   **Re-read 2026-09-09 (p = 0.45 t200, packed streams + slice cache):** a bound pair, not a
+   fly-by — closest approach 3.95 at t = 40, a common trapped surface about the midpoint from
+   t = 43.3 (R = 4.0, both throats inside it 4 apart; live level-1 scan), the collapsed-lapse
+   region doubling every ~7 units to an equivalent radius 6.8 by t = 90, and from t ≈ 50 the
+   phantom field blown outward at 0.37 per unit (χ > 1 front, lapse arc, K shell, the ±0.8
+   scalar lobes, wound into a spiral by the orbit — the "phantom bounce" after horizon
+   formation). The Hamiltonian norm e-folds every 7–9 units from t = 45 on that outflow;
+   nothing after t ≈ 65 is trustworthy. The geometry collapses and the field expands; the
+   throat radius itself was never measured in this run.
 6. And it is not a resolution artefact. A 25 % finer grid reproduces the inspiral to
    within 1.8 % and the waveform to within 4 % — and then dies of the same NaN
    1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
