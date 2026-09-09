@@ -90,10 +90,11 @@ Written claim-first so a paper subsection can be lifted straight from here:
 what the text asserts, the runs that establish it, and where the numbers sit.
 Runs overlap between claims — that is the point of the map. *(pack)* = has a
 directory under `campaign/`; *(run tree)* = lives only in the gitignored
-`runs/wormhole_merger/` tree on the production machine. As of 2026-09-04
-one pack entry is a snapshot of a run **still in flight** — the decisive
-from-t = 0 low-floor twin `merge_twin_p012_nodamp_cf10_t060`, to be repacked
-at its close-out. Every other pack entry is a finished run.
+`runs/wormhole_merger/` tree on the production machine. As of 2026-09-09
+every pack entry is a finished run (the from-t = 0 low-floor twin
+`merge_twin_p012_nodamp_cf10_t060` died at t = 44.94 and is packed whole).
+The Phase-3 head-on scout `merge_headon_flip_d8_v1_t100` is the next launch;
+it enters this pack at its close-out.
 
 ### The initial data is exact, and the throat is unstable anyway
 *(rewritten 2026-09-05; this section used to be titled "the initial data is
