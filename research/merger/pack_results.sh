@@ -78,8 +78,10 @@ STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 # whole instability question turns on, not a probe.
 # autopsy_*/ IS packed: a NaN-autopsy restart of a campaign run carries the
 # per-cell death report in its run_tail.log, and that report is the result.
+# place_*/ IS packed (2026-09-09): the one-step placement probes behind
+# PLACEMENT_CURVE.md -- a t = 0 horizon-scan number each, no evolution.
 for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/ "${RUNS}"/ctrl_*/ \
-              "${RUNS}"/single_*/ "${RUNS}"/autopsy_*/; do
+              "${RUNS}"/single_*/ "${RUNS}"/autopsy_*/ "${RUNS}"/place_*/; do
   [[ -d "${rundir}" ]] || continue   # an unmatched glob expands to itself
   run="$(basename "${rundir%/}")"
   out="${DEST}/campaign/${run}"
@@ -348,6 +350,7 @@ fi
 "${PY_BIN}" "${DEST}/analysis/make_summary.py" "${DEST}"
 "${PY_BIN}" "${DEST}/analysis/single_throat_instability.py" "${DEST}"
 "${PY_BIN}" "${DEST}/analysis/throat_clock_comparison.py" "${DEST}" || echo "[pack-merger] clock comparison failed -- continuing"
+"${PY_BIN}" "${DEST}/analysis/placement_curve.py" "${DEST}" || echo "[pack-merger] placement curve failed -- continuing"
 
 echo "[pack-merger] total size: $(du -sh "${DEST}" | cut -f1)"
 echo "[pack-merger] done"

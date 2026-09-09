@@ -91,10 +91,13 @@ what the text asserts, the runs that establish it, and where the numbers sit.
 Runs overlap between claims — that is the point of the map. *(pack)* = has a
 directory under `campaign/`; *(run tree)* = lives only in the gitignored
 `runs/wormhole_merger/` tree on the production machine. As of 2026-09-09
-every pack entry is a finished run (the from-t = 0 low-floor twin
+every pack entry but one is a finished run (the from-t = 0 low-floor twin
 `merge_twin_p012_nodamp_cf10_t060` died at t = 44.94 and is packed whole).
-The Phase-3 head-on scout `merge_headon_flip_d8_v1_t100` is the next launch;
-it enters this pack at its close-out.
+The exception is the Phase-3 head-on scout `merge_headon_flip_d8_v1_t100`,
+launched 2026-09-09 01:09: the pack glob copies it as it stands at each pack,
+so its entry is partial until its close-out. The eight one-step placement
+probes `place_d*_step1` (2026-09-09 02:06–02:27) are finished and packed;
+their result is `PLACEMENT_CURVE.md`, regenerated at every pack.
 
 ### The initial data is exact, and the throat is unstable anyway
 *(rewritten 2026-09-05; this section used to be titled "the initial data is
@@ -470,6 +473,48 @@ and the framing was wrong — see below.)*
   comparison. Figures: `figures/bbh_t150_ringdown.*`,
   `figures/bbh_vs_wormhole_psi4.*`.
 
+### The neighbour is on the ruler; the interaction squeezes the throats before contact
+*(2026-09-09, during the V1 scout's approach)*
+
+- **Claim.** Two exact drainhole throats simply *placed* at rest read wider at
+  each mouth than an isolated throat, the more so the closer they sit: +7.5 %
+  at d = 14, +9.0 % at d = 12, +14.4 % at d = 8, +20.5 % at d = 6, falling
+  close to 1/d. That is the neighbour's field on the ruler, not a wider throat.
+  Against that placement curve, the scout's mouths during the approach are
+  *narrower* than placed throats at the same separation: −0.6 % at t = 7,
+  −1.7 % at t = 10, −4.0 % at t = 13 (separation 6.06), the deficit growing
+  with the closing speed. The lone throat at level 3 is exact to 0.1 % until
+  t = 35, so this is the interaction alone: it squeezes, in the direction of
+  the collapse branch, and there is no expansion phase for the individual
+  throats. The 14 % apparent widening of the d = 8 pair at t = 0, and the 9 %
+  of every d = 12 pair of the earlier campaign, was placement.
+- **Runs.** `place_d8_step1`, `place_d75_step1`, `place_d7_step1`,
+  `place_d65_step1`, `place_d6_step1`, `place_d10_step1`, `place_d12_step1`,
+  `place_d14_step1` *(pack)* — initial data plus one step each, scanned at
+  t = 0 with the scout's per-mouth horizon scan (mouth A and B agree to 1e-5;
+  the d = 8 probe reproduces the scout's own t = 0 row to ten digits); the
+  scout `merge_headon_flip_d8_v1_t100` *(pack, partial)* for the pre-contact
+  rows.
+- **Where.** `PLACEMENT_CURVE.md` (tables, generated), `figures/placement_curve.png`,
+  `analysis/placement_curve.py`.
+- **Caveats.** The tracker snaps the mouth centres to the finest grid, so the
+  reported separation at rest is 7.94 for a true 8.00 — that is the −0.13 %
+  seen before the throats move, and the size of the systematic. Motion cannot
+  fake the sign: a boost contracts the throat in coordinates but not in area,
+  and a coordinate sphere cannot read below the least-area surface it encloses,
+  so a pure boost pushes the scan *up*; the squeeze is if anything
+  underestimated. Below d ≈ 4 the mouths overlap in coordinates and a per-mouth
+  radius stops meaning much — the probes stop at 6, and the scout's rows below
+  that separation are flagged in the table, not interpreted. What the merged
+  core does after contact is a separate question, read from the sphere about
+  the midpoint.
+- **What it retires.** The Phase-3 gate "both throats within 0.1 % of exact at
+  contact" (GPU_PLAN.md) cannot be met by construction and is replaced by "no
+  trapped and no anti-trapped surface at either mouth before contact". The
+  CLOCK_COMPARISON.md hypothesis that the companion *holds the throat open*
+  (origin χ higher than the lone throat's) is not what the mouths measure: at
+  the mouths, relative to placement, the companion squeezes.
+
 ## `figures/` — the campaign figures (2026-09-02 → 04)
 
 | file | what it shows |
@@ -510,6 +555,8 @@ single_throat/BRANCHES.md       the level-3 / level-4 ladder read (two fates), g
 single_throat/CLOCK_COMPARISON.md
                                 the throat clocks across arms, generated
 single_throat/NOTES.md          the Stage-1 working notes, copied from the run tree
+PLACEMENT_CURVE.md              the placement curve (eight one-step probes) and the V1
+                                scout's own pre-contact response against it, generated
 horizon/                        the offline Theta = 0 scan behind result 4
 runs_registry.tsv               ONE line per run: what is different, caveat, stopped
                                 note -- the only place a run is registered (the
@@ -518,6 +565,8 @@ analysis/make_summary.py        builds the two summary tables from the above
                                 and runs_registry.tsv
 analysis/single_throat_branches.py
                                 builds BRANCHES.md and figures/single_throat_branches.png
+analysis/placement_curve.py     builds PLACEMENT_CURVE.md and figures/placement_curve.png
+                                from campaign/place_d*_step1/ and the scout's entry
 analysis/single_throat_instability.py
                                 builds INSTABILITY.md from single_throat/ and
                                 campaign/single_hold_t100/

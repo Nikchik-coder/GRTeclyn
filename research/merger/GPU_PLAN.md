@@ -45,7 +45,8 @@ refuses to merge, that is the result and we measure it.
   - [ ] MOTS stability eigenvalue
 - [ ] **Phase 3 — V1, head-on from rest, d = 8** → archive "Phase 3"
   - [ ] scout at level 3: **IN FLIGHT since 2026-09-09 01:09, card 0** — `merge_headon_flip_d8_v1_t100` (template `templates_scan/params_v1_headon_d8_t100.txt`, launcher `launch_v1_scout.sh`, binary `bin/main3d_boost_2026-09-08.ex`), ~12 code units/h so contact (t ≈ 17) about 02:35 and t = 100 about 09:35; frames χ K lapse φ Π, horizon scan about the tracked mouths, ψ4 at R = 14/30. The seed is the superposition defect (the code warns at d = 8, m = 1 that it is not small — declared, not hidden)
-  - [ ] gate: the throats touch (t ≈ 17) as wormholes, both within 0.1 % of exact at contact
+  - [x] **placement curve** (2026-09-09 02:06–02:27, card 1, eight one-step probes `place_d{6,65,7,75,8,10,12,14}_step1`): placed throats read +7.5 % (d = 14) to +20.5 % (d = 6) above exact — the neighbour is on the ruler, ∝ d^−1.2; against it the scout's mouths are *squeezed* −0.6 % (t = 7), −1.7 % (t = 10), −4.0 % (t = 13, sep 6.06), growing with the closing speed, no expansion phase; the lone throat is exact to 0.1 % until t = 35 → the interaction alone. `PLACEMENT_CURVE.md`, README (placement section)
+  - [ ] gate: the throats touch (t ≈ 17) as wormholes — no trapped and no anti-trapped surface at either mouth before contact (the old wording "within 0.1 % of exact" is retired: placement puts the mouths 14 % above exact at d = 8 by construction, and the interaction squeezes them 4 % by t = 13)
   - [ ] the merged core: collapse with the surface count 2 → 1 (unassisted merger), or inflation/dissolution, or a naked pinch — whichever, believed and measured
   - [ ] no NaN through +30 units past horizon formation; constraints bounded outside the horizon
   - [ ] refined member (one level finer) and the ±ε family around it: outcome unchanged
@@ -58,8 +59,8 @@ refuses to merge, that is the result and we measure it.
   - [ ] balance: mass lost = energy radiated
   - [ ] ringdown against Kerr
 
-Cards: 0 busy (the scout), 1–3 free. Scratch: ~750 GB free (everything pruned
-2026-09-09 on the user's word). Frames: every launch now renders χ, K, lapse, φ, Π
+Cards: 0 busy (the scout), 1–3 free (the placement probes used card 1 for 21 minutes, 02:06–02:27). Scratch: ~750 GB free (everything pruned
+2026-09-09 on the user's word; the probes deleted their own plotfiles). Frames: every launch now renders χ, K, lapse, φ, Π
 by default (launcher, 2026-09-09) — the ladder runs rendered χ only, and no other
 movie of the collapse or the inflation can be made.
 
@@ -68,6 +69,7 @@ movie of the collapse or the inflation can be made.
 | ✓ | # | what | cards × wall | decides | success reads |
 |---|---|---|---|---|---|
 | 🚀 in flight 2026-09-09 01:09 | 1 | **V1 scout: head-on from rest, d = 8, level 3** — φ-sign flipped, K = 0, Π = 0, no boost; production settings of `single_hold_t100` (L 64, N 128, max_level 3, σ 0.1, dt 0.02) with `chi_rhs_floor` on; frames χ K lapse φ Π in the plane of the motion; θ± scan on; no checkpoints; NaN autopsy armed | 1 × ~10 h | Do the throats meet as wormholes before their own decay, and does the merged core collapse (2 → 1 surfaces) — from NaN to a black hole — or something else? | contact by t ≈ 17 with both throats within 0.1 % of exact; surface count 2 → 1 by the θ± scan; no NaN through +30 past the horizon |
+| ☑ done 2026-09-09 02:27 | 1b | **placement curve**: the scout's two throats placed at rest at d = 6, 6.5, 7, 7.5, 8, 10, 12, 14, one step each, per-mouth horizon scan at t = 0 (foreground on card 1; the launcher's consumer sees nothing in a 12-second run — its 30 s Header guard — so each probe was scanned by an explicit second pass over its t = 0 plotfile, `runs/wormhole_merger/launch_placement_probes.sh`) | 8 × 1 min | Is the scout's apparent mouth widening the neighbour's field or the throat? | placement curve ∝ d^−1.2; the scout's mouths *below* it, −4.0 % by t = 13 → the interaction squeezes; no expansion phase. `PLACEMENT_CURVE.md` |
 | ☐ | 2 | **±ε arms at level 3**: seed ±1e-3, ±1e-2, ±1e-1 on the areal-radius function (`wormhole_seed_amplitude_A`), six runs from `single_hold_t100`'s template, frozen `bin/main3d_boost_2026-09-08.ex`, frames χ K lapse φ Π, plotfiles kept-last for the θ± scan, no checkpoints | 6 × ~5 h | The branch by choice instead of by grid noise: τ and the horizon time per branch; the onset against ln ε; whether −ε reproduces level 4's inflation *with* the inner-sheet deformation (physics) or without it (the origin failing); the ε at which noise stops mattering | +ε collapse with MOTS and mass loss; −ε inflation with an anti-trapped shell; onset(ε) linear in ln ε, slope ≈ −5.9 |
 | ☐ | 3 | GRTresna outer boundary condition on ψ_reg → 1 − b/2r; re-solve `params_drainhole_test.txt`; push the solution through `ExternalGridInitialData` | code, no GPU | Constraint-solved data for V1/V2 (the +8–11 % superposition error, or the seed, is otherwise in every claim) | solved ψ within 1 % of the exact drainhole at N = 64, throat at R = 2.0; the bridged run holds the throat to t = 20 |
 | ☐ | 4 | V1 refined + ε family (both signs, d = 8) | 3–4 × ~1 day | The natural merger and its ensemble | outcome unchanged under one level, the gauge swap and the sign of ε |
@@ -86,7 +88,8 @@ introduction), the handle version, the tidal and scattering estimates.
 - **Seen before in 3D** for the massless Ellis–Bronnikov throat (Shirokov 2026, arXiv:2604.00071, 5 levels): noise → inflation; support cut + quadrupole → collapse, horizon, "phantom bounce" at t ≈ 4 M, horizon destroyed by t ≈ 18.5 M. The massive drainhole shows no bounce in 40 units; whether one comes later is open.
 - **dt_multiplier 0.02 is necessary.** `single_hold_dt01_t070`, `single_hold_dt005_t070`. archive "Time-step bracket".
 - **The binary dies as the lone throat dies** (floored core, vertical gradient beside it, one-step overflow). `autopsy_nodamp_r05000`. archive "Autopsy verdict"; README.
-- **The companion holds the throat open** at t = 30 (origin χ 0.2–0.7 dex above the isolated throat's, strongest on the fly-bys) — a hypothesis with a gauge caveat, for the V1 scout's areal radius to test. CLOCK_COMPARISON.md.
+- **The companion holds the throat open** at t = 30 (origin χ 0.2–0.7 dex above the isolated throat's, strongest on the fly-bys) — a hypothesis with a gauge caveat, for the V1 scout's areal radius to test. CLOCK_COMPARISON.md. **Tested 2026-09-09 at the mouths: the opposite.** Relative to two throats placed at the same separation, the scout's mouths are squeezed −4 % by t = 13; the origin-χ reading and the mouth-radius reading disagree in sign, and the mouth radius is the geometric one. PLACEMENT_CURVE.md.
+- **The neighbour is on the ruler; the interaction squeezes.** Placed throats read +7.5 % (d = 14) … +20.5 % (d = 6) above exact, ∝ d^−1.2 — every d = 12 pair of the earlier campaign started 9 % "wide" by placement alone. Against the curve the scout's mouths shrink −0.6 % (t = 7) → −4.0 % (t = 13), growing with the closing speed; no expansion phase; the lone throat is exact until t = 35, so this is the interaction. Eight `place_d*_step1` + the scout. PLACEMENT_CURVE.md; README (placement section).
 - Earlier, unchanged since 2026-09-04: like-oriented throats repel and one must be flipped; the p = 0.12 pair merges; the merged object is a black hole that dissolves; the wall is gauge + resolution, not physics; the Helfer correction is better data and a worse evolution; damping shapes nothing; the vacuum BBH control recovers the known answer. README, one section each.
 
 ## 5. Open questions
@@ -95,7 +98,7 @@ introduction), the handle version, the tidal and scattering estimates.
 2. The inflation branch's inner-sheet deformation (R(r) non-monotonic inside the throat by t = 100): physics of the branch or the origin? The −ε arm at level 3 answers it.
 3. Does the collapse-branch MOTS settle, and at what fraction of m? Needs a longer run or the stability eigenvalue.
 4. GRTresna: the ψ_reg boundary condition; the bridge into the merger example.
-5. Can the merger be modelled with the throats meeting before branching? Yes in principle — at level 3 the lone throat is exact to 0.1 % until t = 35 and to 1 % until t = 44, so a d = 8 pair (contact ≈ 17) collides as wormholes; and the collision is itself a large compressive perturbation, so the merged core's branch should be set by the collision, not by noise. That is Phase 3's premise and it is not yet demonstrated: item 1 measures how small a seed already decides the branch, item 3 tests it on the pair.
+5. Can the merger be modelled with the throats meeting before branching? Yes in principle — at level 3 the lone throat is exact to 0.1 % until t = 35 and to 1 % until t = 44, so a d = 8 pair (contact ≈ 17) collides as wormholes; and the collision is itself a large compressive perturbation, so the merged core's branch should be set by the collision, not by noise. That is Phase 3's premise and it is not yet demonstrated: item 1 measures how small a seed already decides the branch, item 3 tests it on the pair. First data point (2026-09-09, before contact): the interaction squeezes each throat, −4 % by t = 13 relative to placement, in the collapse direction and with no expansion phase — the compressive-perturbation reading of the collision is so far borne out at the mouths. Whether the merged core collapses is still the scout's to answer.
 
 ## 6. Rules
 
