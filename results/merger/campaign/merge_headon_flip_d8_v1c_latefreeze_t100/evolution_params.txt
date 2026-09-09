@@ -1,0 +1,194 @@
+# V1c -- THE LATE-FREEZE ARM (Phase 3, GPU_PLAN.md queue 1c, 2026-09-09 05:00).
+#
+# THE RUN.  Byte-for-byte the V1 scout (merge_headon_flip_d8_v1_t100: two exact
+# drainhole throats a = 2, m = 1, superposed at x = -4 and +4, one scalar sign
+# flipped so the pair attracts, released from rest, level 3, chi_rhs_floor 1e-8,
+# min_chi 1e-20, NaN autopsy armed) with four additions and nothing else:
+#
+#   1. the smooth interior fill (CoreFreezeFill) engaged at t = 26.5,
+#   2. in-code Weyl4 extraction at R = 10, 14, 18,
+#   3. a rolling checkpoint (every 1.0 units, only the newest kept),
+#   4. stop_time 100 (the scout died at 26.91).
+#
+# WHY THE FREEZE COMES AS LATE AS IT POSSIBLY CAN.  The whole point is to capture
+# the merger, not to replace it with junk: every unit the fill is engaged early
+# is a unit of real interior dynamics thrown away and frozen as a static
+# boundary condition for the remaining 73 units.  So the fill is armed at the
+# last moment the scout was still healthy.  The scout's own numbers set that
+# moment -- this run is identical to it until the fill engages, so its clock is
+# this run's clock:
+#
+#     t = 24.5   chi at the midpoint first touches the 1e-20 floor
+#     t = 25.3   K at the midpoint starts doubling every ~0.3 units
+#     t = 26.50  K = 0.47, lapse 0.020 -- still finite, still small: THE ARM POINT
+#     t = 26.75  K = 0.54
+#     t = 26.89  K = 7.3
+#     t = 26.90  K = 209
+#     t = 26.91  h11 overflows in one step, 0.9 from the midpoint -> NaN
+#
+# The blowup is entirely inside the last 0.15 units, so t = 26.5 keeps 0.41 units
+# (about two minutes of wall clock) of margin while giving up nothing physical:
+# everything the merger does is already in hand at that point.  Arming any later
+# risks freezing a RHS that has already overflowed, and 0 * inf is NaN, which
+# would kill the run through the very mechanism the fill is there to stop.
+#
+# THE RADII.  radius_full 1.2 (solid) and radius_start 1.8 (taper ends) come from
+# the scout's measurements: the failure site sits at r = 0.89, inside the solid
+# part, and by t = 26 the common trapped surface has SHRUNK to r = 1.98, so the
+# whole frozen region is still inside the horizon -- which it would not be at the
+# 2.0 used before.  The blend zone is 0.6 wide, 9.6 cells at the level-3
+# dx = 0.0625.  core_lapse_freeze stays off: a partial (shift-only) freeze is the
+# fastest death on record, 0.24 code units.
+#
+# THE ROLLING CHECKPOINT.  Every 1.0 code units, newest only (checkpoint_keep = 1,
+# each write ~4-8 s, ~10 GB on scratch).  If the run dies before t = 26.5 -- GPU
+# reductions are not bit-reproducible, so the wall can shift a little -- the
+# newest checkpoint is at most one unit back and the arm can be retried from it
+# with an earlier arm point, instead of re-running 26 units.
+#
+# HONESTY ABOUT THE SEAL.  An apparent horizon seals its interior only under the
+# null energy condition, which the phantom field violates -- the scout's horizon
+# SHRANK from t = 24 (areal radius 5.71 -> 4.72 by t = 26).  So the seal is an
+# argument, not a theorem, and the module's causal budget still has to be quoted:
+# contamination from r_s = 1.8 engaged at t_e = 26.5 reaches R = 10 at t = 34.7,
+# R = 14 at 38.7, R = 18 at 42.7.  The merger burst itself arrives at those
+# spheres well before that, so the burst is clean by construction; the late
+# ringdown rests on the seal, and the fill-radius insensitivity arm is what
+# settles it.
+#
+# WHAT WOULD FALSIFY THE RUN.  (a) NaN anyway: the wall is not the interior's, or
+# the taper 1.2 -> 1.8 is the new failure site (watch the blend zone in the
+# frames).  (b) The horizon jumps or vanishes when the fill engages: the fill is
+# in the physics, not in the junk.  (c) The R = 10 waveform moves when the fill
+# radius moves: same verdict, and the fill has to go deeper.
+#
+# WHAT IS MEASURED.  Two independent Weyl4 streams: the in-code spherical
+# harmonic extraction (data/Weyl4_mode_*.dat, every coarse step, R = 10/14/18)
+# and the python consumer's own psi4 from the plotfiles at the same three radii
+# -- they must agree.  Plus the per-mouth and common horizon scan (the common one
+# at level 3: the level-1 default lost the MOTS at t = 23-25 on the scout), the
+# areal radius, the throat diagnostics, and frames of chi, K, lapse, phi, Pi and
+# Weyl4_Re over a 40-wide window so the wave zone out to R = 18 is on film with
+# the core.
+#
+verbosity = 1
+output_path = "runs/wormhole_merger/merge_headon_flip_d8_v1c_latefreeze_t100"
+amr.plot_file = "/tmp/grteclyn_scratch/merge_headon_flip_d8_v1c_latefreeze_t100/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/merge_headon_flip_d8_v1c_latefreeze_t100/BinaryWormholeChk"
+checkpoint_interval = 100          # every 1.0 code unit (dt = 0.01 on level 0)
+amr.checkpoint_files_output = 1    # PRODUCTION run: restartable from at most 1 unit back
+checkpoint_keep = 1                # ROLLING: the newest only, the previous deleted as it lands
+plot_interval = 100    # every 1.0 time unit; the consumer scans and deletes
+amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
+amr.derive_plot_vars = Weyl4
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+wormhole_id_type = 1
+wormhole_initial_lapse_type = 5
+wormhole_throat_radius_A = 2.0       # drainhole scale a
+wormhole_throat_radius_B = 2.0    # throat B on: the binary, a = 2 as A
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_drainhole_mass_B = 1.0    # M_ADM = 1 each, carried by the lapse
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+wormhole_centerA = -4.0 0.0 0.0    # d = 8: throat A at x = -4 from the box centre
+wormhole_centerB =  4.0 0.0 0.0    # throat B at x = +4
+wormhole_momentumA = 0.0 0.0 0.0    # from rest: K = 0, Pi = 0, momentum constraint exact
+wormhole_momentumB = 0.0 0.0 0.0
+wormhole_phi_sign_B = -1.0    # flipped: like-oriented throats repel, the flipped pair attracts
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+wormhole_helfer_correction = 0
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+max_box_size = 32
+min_box_size = 16
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+dt_multiplier = 0.02
+stop_time = 100.0
+max_spatial_derivative_order = 4
+nan_check = 1
+nan_autopsy = 1
+min_chi = 1.0e-20   # CHI-REG TWIN: state clamp lowered to a pure safety net (was 1.0e-8)
+chi_rhs_floor = 1.0e-8
+min_lapse = 1.0e-10
+core_matter_damping = 0
+# ---------------------------------------------------------------------------
+# Smooth interior fill (CoreFreezeFill): d/dt u_n -> (1 - W(r)) d/dt u_n for
+# EVERY evolved variable, W a C^2 quintic smootherstep, so r < radius_full stops
+# evolving and becomes static junk while the exterior -- horizon, wave zone,
+# extraction spheres -- evolves untouched.  Engaged 0.5 units after the common
+# trapped surface forms (t = 22) and 4.4 units before the scout's NaN (26.91).
+# Radii from the scout's measurements, not from a formula: failure site r = 0.89
+# (inside radius_full), trapped surface r = 3.17 at t = 22 growing to 3.66 at
+# t = 24 (outside radius_start).  The blend zone 1.2 -> 2.0 is 12.8 cells at the
+# level-3 dx = 0.0625 -- the one place this scheme can fail, so watch it in the
+# frames.  NO partial freeze: core_lapse_freeze stays off (a shift-only freeze
+# is the fastest death on record, 0.24 code units).
+core_freeze_fill = 1
+core_fill_radius_full  = 1.2       # solid: no variable evolves inside this (failure site r = 0.89)
+core_fill_radius_start = 1.8       # taper ends here; inside the t = 26 trapped surface at r = 1.98
+core_fill_from_time    = 26.5      # AS LATE AS IT GOES: 0.41 units before the scout's NaN
+core_lapse_freeze = 0
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+sigma = 0.1
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+tagging_type = 2
+tagging_L = 64.0
+throat_tracking = 1
+throat_track_search_radius = 2.0
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+# ---------------------------------------------------------------------------
+# In-code Weyl4 / Psi4 spherical-harmonic extraction, every coarse step and
+# decoupled from the plotfile cadence -- the primary waveform stream.  The
+# python consumer computes its own psi4 from the plotfiles at the SAME three
+# radii (launcher: --radii 10 14 18) as the independent cross-check.
+# R = 10, 14, 18 all sit inside the sponge's inner edge (24.0).  Level 0 for the
+# spheres (dx = 0.5) is the validated choice of the 2026-09 waveform runs and
+# makes the ExtractionTagger a no-op, so the grid is the scout's grid.
+activate_extraction = 1
+write_extraction = 0               # mode time series only, not the raw spheres
+extraction_subpath = "data"
+extraction_center = 32.0 32.0 32.0
+num_extraction_radii = 3
+extraction_radii = 10.0 14.0 18.0
+extraction_levels = 0 0 0
+num_points_phi = 24
+num_points_theta = 37
+num_modes = 21
+modes = 2 -2  2 -1  2 0  2 1  2 2 \
+        3 -3  3 -2  3 -1  3 0  3 1  3 2  3 3 \
+        4 -4  4 -3  4 -2  4 -1  4 0  4 1  4 2  4 3  4 4
+amrex.the_arena_init_size = 1048576

@@ -319,6 +319,25 @@ and the framing was wrong — see below.)*
   5e-10) also reaches t = 100, byte-identical across its two floors — and on
   the other branch of the instability: the throat inflates instead of
   collapsing (`single_throat/BRANCHES.md`).
+- **The head-on is the exception — preliminary (2026-09-09).**
+  `merge_headon_flip_d8_v1_lvl5_t100_r02200` *(pack, in flight)*: the head-on
+  at max_level 5, restarted from the freeze arm's t = 22 checkpoint with the
+  fill off, passes the level-3 wall (26.91) at 27.05 and is at t = 42.9 with the
+  constraint norms *falling* — Hamiltonian 1.5e-3 (t = 27–29) → 6.7e-4 (41–43),
+  momentum 3.0e-3 → 1.1e-3, five times below the initial data's 3.2e-3 — while
+  the level-3 freeze arm climbs from 2.5e-3 to 3.8e-3 over the same window. The
+  orbital law above (two levels on restart = +2.9 units) predicted a delayed death
+  at t ≈ 29.8; it did not come. The midpoint lapse sat on its 1e-10 floor from
+  t = 38.5 to 41 and lifted again; chi touched its floor in single samples and
+  is rising; max|K| peaked at 0.78 (t = 33) and reads 0.36. Not a fate yet:
+  t = 100 is ~13.6 h away at 4.2 units/h. The horizon is there and clean:
+  the fine oriented scan on the level-5 plotfiles (level 3, dx 0.0625) finds the
+  outermost MOTS at r = 3.31 / areal radius 4.92 / Misner-Sharp mass 2.53 at
+  t = 42.5 and r = 3.25 / 4.87 / 2.52 at t = 43.0, every shell inside fully
+  trapped from r = 0.25, none anti-trapped, no throat left; against the scout's
+  last reading (t = 26: r 1.98, R 4.72, M 3.16) the horizon has regrown to
+  R ≈ 4.9 and shrinks slowly (−0.08 per unit). Scan text in the run's
+  `small_data/horizon_offline_scan_lvl5_t42.5_43.dat` *(pack)*.
 
 ### The interior freeze rescues the ringdown window
 - **Claim.** Freezing the collapsed interior after the burst closes carries
@@ -332,6 +351,18 @@ and the framing was wrong — see below.)*
   `m9b_fill100_r08000` / `m9b_fillwide100_r08000` (the t = 100 drains), plus
   the seam and late-engagement controls in the merger_fix archives.
   Figures in `figures/`.
+- **The head-on freeze arms (2026-09-09).** `merge_headon_flip_d8_v1c_latefreeze_t100`
+  *(pack)* — the scout with the fill (r_full 1.2 / r_start 1.8) armed at t = 26.5,
+  0.41 units before the scout's NaN — and its seam twin
+  `merge_headon_flip_d8_v1c_fillnarrow_t100_r02200` *(pack)* (fill 1.0/1.5, from the
+  t = 22 checkpoint) both reach t = 100 with no NaN. The (2,0) wave at R = 10/14/18
+  swings three times (period ≈ 33, ×0.6 per half-swing) and is outgoing in every
+  window — no wall echo. The head-on's seam is *not* the orbital's five digits:
+  the twins agree to 3e-4 of peak until each fill's imprint arrives, then differ by
+  1–5 % of peak at R = 10 and 3–12 % at R = 14 (t = 50–100); at R = 18 both grow a
+  grid-scale wobble from t ≈ 80. And the constraints are not flat here: Hamiltonian
+  3.3e-3 (t = 30–40) → 5.8e-3 (90–100), doubling every ~80 units, in both twins.
+  `figures/headon_freeze_psi4_20_R10_14_18_t100.png`.
 
 ### The recorded signal is a genuine gravitational wave
 - **Claim.** Propagation at 0.889 of coordinate light matches the metric's
@@ -580,6 +611,13 @@ and the framing was wrong — see below.)*
   interior freeze of the stage-3 chain applied once the common horizon exists
   (physically legitimate: nothing inside it reaches the outside), which ran the
   fill arms clean to t = 66 in 2026-09.
+- **Update (2026-09-09, 11:35).** Both freeze arms ran to t = 100 (the freeze
+  section above) and the level-5 restart with no fill is past the wall and past
+  the orbital law's delayed death, at t = 42.9 with the constraints falling (the
+  resolution section above) and a clean horizon on the fine scan (R ≈ 4.9,
+  M_MS ≈ 2.5 at t = 43). The halved-mass control formed a horizon anyway and
+  died earlier (the next section). Open: the level-5 arm to t = 100 and the
+  ringdown against Kerr.
 
 ### Halving the mass does not avoid the horizon: the drainhole's size is not set by its mass
 
@@ -639,7 +677,8 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
 | `merger_constraints_t80.png` | Hamiltonian and momentum L2 for both completed t = 80 freeze arms, t = 0–80: the spikes before t = 34 are regrid transients; the smooth bump is the collapse; after the freeze engages at 53 both norms sit flat for 27 units |
 | `wave_speed_check.png` | why 0.889 c is not sub-luminal junk: the metric's own local light speed along the extraction path predicts a 14→30 crossing of ~19.5; the wave took 18.0. Constraint/gauge modes travel at √2 × light and are excluded |
 | `headon_freeze_psi4_20_R10_14_18_t38.png` | the head-on freeze arm's (2,0) mode at R = 10/14/18 to t = 38 (live snapshot, 2026-09-09; superseded by the t = 54 figure below): one slow swing, trough −0.15 at t = 14/18/23, peak +0.23/0.29/0.34 at t = 28.2/32.2/36.7, walking out at 0.94 c — emitted at contact (t ≈ 18–20), before the fill armed at 26.5 (black dotted); the narrow-fill twin (dashed) lies on it to 3e-4 of the peak, and the fill's own imprint cannot reach each sphere before the red dotted line, so the seam test starts at t ≈ 37 at R = 10. Amplitude still grows with R (inside one wavelength); not a ringdown yet |
-| `headon_freeze_psi4_20_R10_14_18_t54.png` | the head-on freeze arm's (2,0) mode at R = 10/14/18 to t = 54 (live snapshot, 2026-09-09; supersedes the t = 38 one): **the merged object rings** — after the first swing (trough −0.15 at t = 14/18/23, peak +0.23/0.29/0.34 at 28.2/32.2/36.7) a second trough of −0.18/−0.25/−0.32 at t = 43.6/48.0/52.4, period ≈ 30, walking out at 0.94 c, the same period as the lapse blob's squeeze-and-rebound along the axis; decaying slowly (0.18 against 0.23 at R = 10). The fill twin (dashed, fill 1.0/1.5) lies on the V1c curve to 3e-4 of peak until each fill's imprint arrives (red dotted), then drifts to 1–2 % of peak by t = 52; the level-5 arm with no fill (dotted, to t = 30) lies on both. Amplitude still grows with R, so R = 18 is not yet in the wave zone. |
+| `headon_freeze_psi4_20_R10_14_18_t54.png` | the head-on freeze arm's (2,0) mode at R = 10/14/18 to t = 54 (live snapshot, 2026-09-09; superseded by the t = 100 figure below): **the merged object rings** — after the first swing (trough −0.15 at t = 14/18/23, peak +0.23/0.29/0.34 at 28.2/32.2/36.7) a second trough of −0.18/−0.25/−0.32 at t = 43.6/48.0/52.4, period ≈ 30, walking out at 0.94 c, the same period as the lapse blob's squeeze-and-rebound along the axis; decaying slowly (0.18 against 0.23 at R = 10). The fill twin (dashed, fill 1.0/1.5) lies on the V1c curve to 3e-4 of peak until each fill's imprint arrives (red dotted), then drifts to 1–2 % of peak by t = 52; the level-5 arm with no fill (dotted, to t = 30) lies on both. Amplitude still grows with R, so R = 18 is not yet in the wave zone. |
+| `headon_freeze_psi4_20_R10_14_18_t100.png` | the head-on freeze arm's (2,0) mode at R = 10/14/18 to t = 100 (final, 2026-09-09): **three swings of the merged object, outgoing all the way** — at R = 10 peak +0.23 (t = 28.2), trough −0.18 (43.6), peak +0.11 (62.7), trough −0.06 (79.0), period ≈ 33 and ×0.6 per half-swing; R = 14 and 18 the same, each ~4 units later per 4 units of radius. The cross-correlation lag from R = 10 to 18 is positive in every window, so nothing comes back from the wall (an echo of the main burst would have reached R = 18 first at t ≈ 69). The fill twin (dashed, 1.0/1.5) lies on V1c to 3e-4 of peak until each fill's imprint arrives (red dotted), then differs by 1–5 % of peak at R = 10 and 3–12 % at R = 14; at R = 18 both runs grow a grid-scale wobble (period ≈ 1.5) from t ≈ 80 — the late R = 18 signal is noise, the slow swing agrees. The level-5 arm with no fill (dotted, to t = 42.6) lies on both to 0.5 % of peak. Amplitude still grows with R: R = 18 is not the wave zone. |
 | `seam_ring_rescaling.png` | why the freeze-arm frames *look* like the signal vanishes: a growing Ψ₄ artefact confined to the freeze seam hijacks the per-frame colour scale; the radiation field is bit-identical to the unfrozen twin beyond r = 6 |
 
 ## Layout
