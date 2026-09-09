@@ -86,10 +86,11 @@ the FORWARD PLAN section below.*
   *(2026-09-08: two routes — GRTresna through the existing `.gridinit` bridge,
   needing only a phantom sign on its real scalar; or a standalone K = 0 solve,
   which the phantom sign makes monotone. Forward Plan, Phase 1.)*
-- [~] **2. Horizon-finder orientation bug.** Compute θ± with outward = increasing
+- [x] **2. Horizon-finder orientation bug** *(the θ± part; the eigenvalue and BHaHAHA remain open)*. Compute θ± with outward = increasing
   *areal* radius; classify with the MOTS stability eigenvalue; adopt BHaHAHA.
   *Benchmark:* zero trapped surfaces on a demonstrably healthy throat.
   **Status: the bug is identified and written up as Defect 2 in GPU_PLAN
+  **Done 2026-09-08 23:50 (θ± part):** the consumer computes θ± with outward = increasing areal R, Misner–Sharp per shell, the health metric and the outermost-surface count (`--horizon-scan`, own file `horizon_scan.dat`, `extraction/horizon.py`; analytic tests on Kerr–Schild Schwarzschild and the Ellis throat; zero crossings at extrema of R(r), where the orientation itself flips, are rejected). First reading on real data (BRANCHES.md): the collapsed level-3 throat carries a MOTS, R = 3.23 at t = 61 shrinking to 2.37 at t = 100; the inflating level-4 throat carries none. The MOTS stability eigenvalue and BHaHAHA are not done.
   ("a trapped shell inside a throat is not a horizon"), still OPEN. Defect 1
   (coarse-level scans reading the wrong region) is FIXED.**
 - [x] **3. Isolated-throat stability control.** Evolve one exact static throat, long.
@@ -364,11 +365,11 @@ the remnant mass before Phase 4 measures it.
 | "Verify det h̃ = 1 and tr Ã = 0 are enforced every RK substage" | **△** `TraceARemoval` runs at every RK stage (`specificUpdateODE`) and after each step — but it removes the trace of Ã only. det h̃ = 1 is enforced nowhere. Adding the rescale is ~10 lines. |
 | "Shock-avoiding lapse, mostly params" | **✗ params.** The gauge family in code is ∂ₜα = −c α^p K (`lapse_coeff`, `lapse_power`); f = 1 + κ/α² needs the +κ term, ~10 lines in `MovingPunctureGauge`. Small, but code. |
 | "ε seed per throat, ~20 lines" | **✓ as sized.** `BinaryWormholeInitialData` seeds nothing, and the parameter reader rejects the old keys loudly on purpose. The seeded Gaussian it refers to lives in `SupportedWormholeCollapse` (`phi_perturbation_amplitude/width`); porting it per throat with a sign is the 20 lines. The proposal wants the seed on the areal-radius *function* (González et al.'s ε), not on φ; either seeds the mode, but only the metric one carries their sign convention. |
-| "Boosted Π for p ≠ 0 arms" | **△** Today Π = 0 with Bowen–York Ã, so the momentum constraint is exact by construction. A boosted Π breaks that unless the vector Laplacian is re-solved. Not needed for V1 (rest release); V2 only. |
+| "Boosted Π for p ≠ 0 arms" | **△ → ✓ coded 2026-09-08.** Today Π = 0 with Bowen–York Ã, so the momentum constraint is exact by construction. A boosted Π breaks that unless the vector Laplacian is re-solved. Not needed for V1 (rest release); V2 only. Keys `wormhole_boost_velocity_A/B` (rigid motion, Π = −(v·∇φ)/α with the analytic radial gradient; default 0 = off, bit-identical to the frozen binary on all four streams); the t = 0 L2_Mom is printed as the residual and the key is warned on. Smoke: v = 0.1 along −z gives L2_Mom 2.78e-3 at t = 0 against exactly 0 off. Frozen as `bin/main3d_boost_2026-09-08.ex`. |
 | "~200-line offline Lichnerowicz solve" | **△ — something better may already exist.** GRTresna is a sibling checkout with CTTK and CTTK-Hybrid, and the bridge into this example is built and in use (`recipe_initial_data_file` → `ExternalGridInitialData`, the route RotatingWormholeCollapse takes). What it lacks is a phantom sign on its real `ScalarField` (its boson-star matter already has an `exotic` flag to copy). The proposal's monotonicity point — with φ, Π held fixed and K = 0 the phantom's source terms enter with ∂f/∂ψ > 0, so the only non-monotone term left is the ordinary Bowen–York one and the problem is as well-posed as vacuum puncture data — is right on paper and reverses the audit's Finding 4 for this matter; it must be written down before it is cited. Open risk: whether a flat-background multigrid takes the compactified throat (ψ → ∞ at a point, the puncture situation). The standalone solver is the fallback. |
 | "Branch selection from the slice caches" | **✗** The slice cache stores the rendered frame field only (K, Π, Weyl4 on one plane), not the metric; the areal-radius consumer scans a single ray from one centre. Per-throat R_min(t) over a whole run exists for **no binary arm** — plotfiles were pruned as the runs went. What is on disk: the held 3-file death stacks, one checkpoint per insured arm, and per-throat pit χ and lapse every step in `binary_throat_diagnostics.dat` for every arm. |
-| "Trumpet signature at t = 80–100 on the single throat" | **✗** Those plotfiles are post-floor (χ clamped from t = 61.3); INSTABILITY.md forbids quoting them. The clean-window plotfiles (t = 40–70) were pruned — the logged mistake. Any trumpet or Misner–Sharp reading needs the Stage 0b re-run with plotfiles kept. |
-| "Your queued ±ε ladder … +16/level onset prediction" | **△** Nothing is queued; TODO item 10 is written, not launched. The +16 figure is what a 4th-order truncation seed predicts (τ ln 16 = 16.2 units per halving). **Our data already says +5.5** (seed ratio 3.5×, order 1.8). The ladder decides between those two numbers; it does not assume either. |
+| "Trumpet signature at t = 80–100 on the single throat" | **✗ → readable since 2026-09-08 23:50.** The χ twin shows the floor changes nothing measurable (4 digits at t = 100), so the post-61.3 plotfiles may be read; the shell scans of the twin's own plotfiles (kept every unit from t = 61) are in BRANCHES.md. What they show is a marginally trapped surface shrinking from R = 3.23 to 2.37 with the Misner–Sharp mass inside it falling 1.62 → 1.23 — a black hole losing mass to the phantom field — not a stationary trumpet yet. |
+| "Your queued ±ε ladder … +16/level onset prediction" | **△** Nothing is queued; TODO item 10 is written, not launched. The +16 figure is what a 4th-order truncation seed predicts (τ ln 16 = 16.2 units per halving). **Our data already says +5.5** (seed ratio 3.5×, order 1.8). The ladder decides between those two numbers; it does not assume either. **Measured 2026-09-08 (ml3 → ml4): +5.6 to +8.7 per halving** (0.1 %, 1 %, 10 % onset thresholds), τ 5.86 → 5.3 — the low-order seed, not the fourth-order one; and the seed changed sign (BRANCHES.md). |
 | "Held death stacks p012, p015_rr, p020, cf08" | **✓** On scratch today: nodamp (the p012 family, t = 50.5–51.5 + Chk t = 50), p015_rr (52–53 + Chk t = 50), p015_nofill (52–53), p020 (51–52), cf08 (54.5–55.5), lc1 (42.5–43.5 + Chk t = 40), nodamp_cf10 (43.5–44.5), p045_helfer (36–37 + Chk t = 30), single_hold (98–100). |
 | "#8b displacements + 6× coupling ⇒ contact by t ≈ 20–25 at d = 8" | **△ — earlier.** The rest-release flipped pair at d = 12 already exists (`merge_headon_flip_d12`): separation 11.94 → 2.44 at t = 29.85, tracker merge ≈ 31, NaN at 44.00. Integrating the measured (d + 3.5)⁻² law calibrated on that trajectory gives sep 2.4 at **t ≈ 17** from d = 8 (t ≈ 23 from d = 10). The price is the superposition defect: 603× the floor at d = 8 against 352× at d = 12 (Check E). |
 | "1.125 speed, 17.3-vs-34, m4e recipe, L = 128 grid, ε_eff +8–11 %, 2.87e-4" | **✓** all as in GPU_PLAN §4–§7. |
@@ -458,9 +459,9 @@ Phase 3).
 | det h̃ = 1 rescale beside trace-Ã removal | `Source/CCZ4/TraceARemoval.hpp` | ~10 lines | **✓ coded 2026-09-08** — `DetHRescale.hpp` (own module, h̃ only, McLachlan-style), key `rescale_det_h` (default off), runs before trace removal at the RHS fill and every RK substage. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
 | Shock-avoiding lapse f = 1 + κ/α² as a params-selectable family | `Source/CCZ4/MovingPunctureGauge.hpp` | ~10 lines | **✓ coded 2026-09-08** — key `gauge.lapse_shock_kappa` (default 0): ∂ₜα gains −κ(K−2Θ); with `lapse_power = 2`, `lapse_coeff = 1` it is exactly ∂ₜα = −(α²+κ)K. Built + smoke-tested 2026-09-08 (24 steps, every new key on, no NaN). Not yet used in a physics run. |
 | ε seed per throat, with sign, on the areal-radius function | `BinaryWormholeInitialData.hpp` | ~20 lines | **✓ coded + built 2026-09-08** — `wormhole_seed_amplitude_A/B`, `wormhole_seed_width_A/B` (Gaussian shell on ψ at the throat radius; 0 = off). Parsed and run in the 2026-09-08 smoke test; not yet used in a physics run. |
-| Boosted Π + momentum-constraint residual | same file | ~20 lines | V2 only |
-| Constraint-solved ψ, K = 0, phantom sign: GRTresna route first (add the sign to its `ScalarField`; the bridge exists), standalone solver as fallback | sibling GRTresna + `ExternalGridInitialData` | days to a week | bridge built; sign missing; throat topology untested |
-| Diagnostics: corrected θ± (outward = increasing areal R) with Misner–Sharp in the same pass; outermost-surface count; per-mouth health metric log(R_min/R_exact − 1) | `ah_radial_scan.py`, consumer | small | P2 not started; the health metric is INSTABILITY.md's deviation, per throat |
+| Boosted Π + momentum-constraint residual | same file | ~20 lines | **✓ coded + built + smoke-tested 2026-09-08** (claims table above); default off; V2 only by policy |
+| Constraint-solved ψ, K = 0, phantom sign: GRTresna route first (add the sign to its `ScalarField`; the bridge exists), standalone solver as fallback | sibling GRTresna + `ExternalGridInitialData` | days to a week | **sign added 2026-09-08** (`background_exotic` in ScalarFieldBH, sibling branch `feature/grteclyn-wrapper`; default path agrees with the pre-change binary to 7e-16) plus a drainhole lump `profile = 2` (atan profile, exempt from the amplitude damping) paired with `bh1_bare_mass = b` so the puncture carries the throat's b/2r singularity. `params_drainhole_test.txt` (N = 64, L = 32, b = 2): φ painted exactly, the solved ψ has a throat (areal minimum 2.15 at r = 0.83 against the exact 2.0 at 1.0), sitting +2–5 % above the exact ψ everywhere — the outer boundary condition on ψ_reg is 1 where the exact answer tends to 1 − b/2r. **Throat topology works; the boundary condition is the next fix; the bridge into this example is untested with this data.** |
+| Diagnostics: corrected θ± (outward = increasing areal R) with Misner–Sharp in the same pass; outermost-surface count; per-mouth health metric log(R_min/R_exact − 1) | `ah_radial_scan.py`, consumer | small | **✓ done 2026-09-08** — consumer `--horizon-scan` → `horizon_scan.dat` (per mouth and common centre: R_min, dev, log10\|dev\|, θ± at the minimum, MOTS radius/R/M_MS, trapped and anti-trapped counts, outermost count); tested on Kerr–Schild Schwarzschild (finds r = 2M, M_MS = M) and the Ellis throat (no MOTS, no trapped shell). MOTS stability eigenvalue not done. First data reading in BRANCHES.md. |
 | KO dissipation on φ, Π, per level | — | — | **already the case** |
 | ≥5th-order prolongation | — | — | **already the case** (quartic); positivity limiting is not |
 
@@ -530,7 +531,7 @@ arms that radiate nothing; the dt twin wrote no `areal_radius.dat` for that reas
 
 | arm | tests | cards × wall (18.4 u/h measured at ml3) |
 |---|---|---|
-| ml4 (dx = 0.03125) to t = 100 | the rate at a second resolution | 1 × ~10 h |
+| ml4 (dx = 0.03125) to t = 100 | the rate at a second resolution. **✓ done 2026-09-08: clean to t = 100 as a byte-identical pair (floors 1e-8 / 5e-10, never engaged); τ ≈ 5.3 against 5.86; the throat INFLATES — Ladder result II below** | 1 × ~10 h |
 | ml2 rerun to t = 100, fixed-box tagger | the rate at a third. **✓ done 2026-09-08: it did die at the origin, t = 24.17.** The pre-registered follow-up was ml5; ml5 is instead *withdrawn* because its origin monitor starts below the χ floor, and the low-floor ml4 control takes its place | 1 × ~2 h |
 | **dt_multiplier 0.1 twin of ml3, to t = 70** — `single_hold_dt01_t070` | **✗ RAN 2026-09-08, UNSTABLE.** 4.8× faster (89 u/h) and bit-identical to Stage 0 to t ≈ 10 (L2_Ham 2.5137e-3 vs 2.5119e-3, origin χ and lapse equal to 4 digits); then a slow numerical instability at the compactified origin: L2_Ham 6e-3 at t = 12, 0.24 at 14, 0.41 at 16; the origin lapse 0.21 → 0.16 (t = 15) → 0.11 (15.5) → floor (16.0); h11 NaN on level 3 at **t = 16.07**. The 5× is not available at 0.1. | 1 × 12 min (died) |
 | **dt_multiplier 0.05 twin, to t = 70** — `single_hold_dt005_t070` | **✓ RAN 2026-09-08 — reached t = 70 with no NaN, and is still the wrong answer.** Equal to Stage 0 to t = 30 (min lapse, origin χ and max\|K\| to 4 digits); then max\|K\| 1.2e-2 → 5.6e-1 by t = 35 and 1.4 by t = 40 against the reference's 1.5e-2; L2_Ham 2.8e-3 → 1.2e-2 (t = 35) → 8.8e-2 (t = 40) → 4.8e-1 (t = 70) against a reference that stays in 1.4e-3–2.3e-3; origin lapse 0.13 at t = 40 (still equal) → 0.045 (t = 50) → floor at t = 61.1; areal radius 3.73 at t = 69 against the reference's 3.87 at t = 40. Validated on three streams (collapse_diagnostics, constraint_norms, consumer areal radius) against the dt 0.02 run at matched times. A run that reaches stop_time is not thereby a solution. **0.02 was necessary — the origin is stiff — and the 2.5× is not available either.** | 1 × 1.6 h (ran) |
@@ -617,7 +618,7 @@ because none exists for unstable constituents.
 
 | # | what | cards × wall | needs first |
 |---|---|---|---|
-| 1 | Phase 2 ladder. **✓ ml2 DONE 2026-09-08** (see the ladder result below); dt ×5 twin ✗ unstable; **✓ dt ×2.5 twin DONE 2026-09-08 — reaches t = 70 without a NaN and is still not the solution** (time-step bracket below); the 0.02 step stays. **Still running:** ml4 (card 2) and its low-floor control (card 3), t ≈ 45 of 100 at 06:40, equal to seven digits so far. ml5 **withdrawn as specified** — at max_level 5 the origin monitor starts *below* its own floor (see below); it needs a rescaled `min_chi` before it means anything. | 4 cards, ~11 h | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
+| 1 | Phase 2 ladder. **✓ ml2 DONE 2026-09-08** (see the ladder result below); dt ×5 twin ✗ unstable; **✓ dt ×2.5 twin DONE 2026-09-08 — reaches t = 70 without a NaN and is still not the solution** (time-step bracket below); the 0.02 step stays. **✓ ml4 pair DONE 2026-09-08 (read 23:50)** — both clean to t = 100 and byte-identical on every stream (the floor never engaged), on the inflation branch (Ladder result II below). ml5 **withdrawn as specified** — at max_level 5 the origin monitor starts *below* its own floor (see below); it needs a rescaled `min_chi` before it means anything. | 4 cards, ~11 h | frozen Stage-0 binary `runs/…/bin/main3d_stage0_2026-09-02.ex` for every ladder arm |
 | 2 | NaN autopsy restart | 1 × 0.5 h | **✓ DONE 2026-09-08 — verdict in the section below.** The rerun with the fixed binary died at the same step, digit for digit, and this time reported; packed as `results/merger/campaign/autopsy_nodamp_r05000/` (report in `run_tail.log`). The first restart (01:39) reproduced the death exactly — NaN in `h11` at level 3, t = 51.53, constraint norms 2.7e+00 → 1.7e+02 over the last two steps — but produced **no report**: `GRAMRLevel` queries `evolution.nan_autopsy` while the params file sets the key bare, and unlike its sibling `nan_check` nothing injected the prefixed name, so the flag stayed `false` and the report was never reached. Same failure mode as the gauge keys earlier the same day. Fixed by loading it bare and injecting `evolution.nan_autopsy` in `SimulationParametersBase.hpp`; rebuilt and re-frozen as `bin/main3d_autopsy_2026-09-08b.ex`. Dead run preserved as `autopsy_nodamp_r05000_HOOKFAIL_2026-09-08` |
 | 3 | V0 ε / μ arms | 7 × 5 h | Phase-1 seed + χ change |
 | 4 | V1 level-3 scout, d = 8 | 1 × 5 h | nothing (superposed data, seed declared) |
@@ -626,9 +627,9 @@ because none exists for unstable constituents.
 | 7 | V2 headline | 1 × ~1 day (L5) | G2 |
 | 8 | V2 twins | 3 × 1–2 days | G2 |
 
-Card 0 holds the ml3 χ-regularisation twin since 2026-09-08 07:20 (~13:00); the ml2 twin on card 1 ended 07:57 with the same death as its reference (Phase-1 table) and card 1 is free; item 1's two ml4 arms
-hold cards 2 and 3 until about 13:00. Phase-0 scripts and Phase-1 code need
-no approval and start now.
+All four cards are free (2026-09-08 23:50): the ml3 χ twin and the ml4 pair
+reached t = 100 around 13:00 and are packed; nothing is queued. Phase-0
+scripts and Phase-1 code need no approval and start now.
 
 ### Ladder result: the origin death is a resolution artefact, and the throat is innocent
 
@@ -655,8 +656,8 @@ falls ~2⁴ per rung. Measured, not assumed:
 | arm | max_level | χ_origin(t = 0) | headroom over `min_chi` = 1e-8 | clamp time | outcome |
 |---|---|---|---|---|---|
 | ml2 | 2 | 7.19e-06 | 719× | t = 8.95 | NaN death t = 24.17 (χ-regularised twin, floor 1e-20: t = 24.13) |
-| ml3 | 3 | 4.11e-07 | 41× | t = 61.3 | survived to t = 100 |
-| ml4 | 4 | 2.44e-08 *(measured at launch; 2.35e-08 predicted)* | 2.4× | **not by t = 45** — the pit χ *rose* to 1.04e-06 in both arms (equal to 7 digits) | running, t ≈ 45 of 100 at 06:40 |
+| ml3 | 3 | 4.11e-07 | 41× | t = 61.3 (1.4 units at the floor, in the reference *and* in the χ twin whose floor is 1e-20) | survived to t = 100; **collapse branch** — MOTS R 3.23 (t = 61) → 2.37 (t = 100); twin equal to 4 digits at t = 100 |
+| ml4 | 4 | 2.44e-08 *(measured at launch; 2.35e-08 predicted)* | 2.4× | **never** — the origin χ rose monotonically to 3.9e-04 by t = 100; the two arms are byte-identical | clean to t = 100; **inflation branch** — R_min 3.89 → 10.0, the minimum moving out from r = 1.6 to 8.4 |
 | ml5 | 5 | ~1.3e-09 *(predicted)* | **0.13× — below the floor** | t = 0 | not launched |
 
 Two consequences. First, the ml2 → ml3 result is *stronger* than it looks: ml3
@@ -674,6 +675,55 @@ Both die at the same time ⇒ the death is resolution or physics. The low-floor
 arm lives longer ⇒ the ladder has been measuring the clamp, not the grid. The
 floor is known not to be immediately fatal: ml3 clamped at t = 61.3 and still
 finished cleanly, ml2 clamped at t = 8.95 and ran 15 more units.
+**Outcome (2026-09-08 23:50): neither reading — the pair never touched either
+floor and is byte-identical to the end.** The ml4 result is floor-independent
+by construction, and the ml3 twin (below) makes the level-3 result so as well.
+
+### Ladder result II (2026-09-08 23:50): two resolutions, two fates
+
+The same unstable mode, the same rate to 9 %, the opposite sign — measured on
+two streams per arm (`areal_radius.dat` and the oriented shell scans of the
+kept plotfiles; `collapse_diagnostics.dat` as the third where quoted;
+`results/merger/single_throat/BRANCHES.md`):
+
+| | level 3 (`single_hold_t100`, χ twin identical) | level 4 (pair, byte-identical) |
+|---|---|---|
+| departure from R = 3.8895 by 0.1 % / 1 % / 10 % | t = 35.3 / 44.2 / 57.3 | t = 40.9 / 52.9 / 65.2 |
+| plateau rate d ln\|δR\|/dt over t = 49–61 | 0.170 ± 0.003 (τ = 5.88) | 0.190 ± 0.002 (τ = 5.26) |
+| sign of δR | **negative — collapse** | **positive — inflation** |
+| R_min at t = 100 | 1.72 at the inner edge of the fine window (throat gone) | 10.0 at r = 8.4 (throat pushed outward) |
+| marginally trapped surface | yes from t ≤ 61: R = 3.23 (M_MS 1.62) → 2.79 (66) → 2.53 (72) → 2.46 (85) → 2.37 (100, M_MS 1.23); trapped band fills the inner window | none; an anti-trapped shell (both expansions ≥ 0) at r ≈ 4–12 grows from 21 to 58 shells between t = 77 and 100 |
+| origin χ | to the floor for 1.4 units at t = 61.3, then 1e-3 | rises 2.4e-8 → 3.9e-4, never near a floor |
+| finest-level φ range at t = 100 | [0.007, 0.018]: the scalar has left the origin | [−0.96, −0.84]: the scalar wall has moved off the finest level outward |
+| L2_Ham t = 75 → 100 | 1.8e-3 → 1.3e-1 (60×) | 1.6e-3 → 1.2e-2 (6×) |
+
+Reading. (1) The rate is converged to ~10 % and moving toward the
+Gonzalez–Guzman–Sarbach band (T = 0.87 → 0.78 in their units against 0.68–0.76),
+so the mode is physics. (2) The onset moves +5.6 to +8.7 units per halving, the
+pre-registered low-order figure and not the fourth-order +16 — the truncation
+seed is of order 1.5–2.3, which points at the origin treatment or the
+regrid structure rather than the smooth interior error. (3) **The sign of the
+seed is not controlled**: it flipped between levels, so a fate observed at one
+resolution says nothing about the fate at another, and nothing about the
+physics. Every "collapse" in this campaign — the binary cores included — was
+on the branch the grid happened to seed. (4) The collapse branch ends in a
+black hole that *loses* mass: the Misner–Sharp mass inside the MOTS falls
+1.62 → 1.23 over 40 units (phantom accretion, as expected for this matter);
+GGS II's remnant fraction is not reproduced yet (their 0.22 in throat units
+against our ≈ 1.2 at m = 1 — different parameters, and the horizon is still
+shrinking). (5) The inflation branch deforms the compactified inner sheet:
+by t = 100 R(r) inside the throat is no longer monotonic (a maximum R ≈ 49 at
+r ≈ 1.2 against R ≈ 12 at the innermost shell) — the origin is not a faithful
+"other infinity" once the throat has moved eight units away from it. (6) The
+late constraint growth is real on both branches and is not the floor's doing.
+
+Consequences for the plan. The ±ε arms (queue item 3) stop being a check and
+become the experiment: with a declared seed of either sign at 10⁻² the branch is
+chosen, and the ladder then measures τ and t_AH per branch. Gate G1's
+"horizon found by both θ± and Misner–Sharp" is met on the natural ml3 branch
+already (the two agree at every scanned time); its ≥ 30-unit persistence is
+met too (t = 61 → 100), but on a surface still shrinking. The −ε arm answers
+whether the inflating branch's inner-sheet deformation is physics or the origin.
 
 ### Time-step bracket: 0.02 was necessary
 
@@ -727,8 +777,8 @@ the autopsy says where to apply it: the floored core, not the throat.
 | phase | state |
 |---|---|
 | Stage 0 — is a lone throat stable? | **done: no.** Departs at t ≈ 26 at the Gonzalez–Guzman–Sarbach rate. |
-| Phase 2 — V0 ladder + time-step bracket | ladder done but for the ml4 pair (ends ~13:00); bracket done; the ±ε arms wait on Phase 1 |
-| Phase 1 — code | tagger, det-h rescale, shock-avoiding lapse, ε seed: coded + smoke-tested. **χ regularisation: coded + smoke-tested 2026-09-08 07:16; its two test twins are running on cards 0 and 1 (below).** |
+| Phase 2 — V0 ladder + time-step bracket | **ladder done** (ml2 dies at the origin, ml3 collapses, ml4 inflates — Ladder result II); bracket done; the ±ε arms are the critical path and need nothing but a launch |
+| Phase 1 — code | tagger, det-h rescale, shock-avoiding lapse, ε seed, χ regularisation, boosted Π, corrected horizon scan: coded + smoke-tested; both χ twins done (the floor is not load-bearing at level 2 or 3). GRTresna: phantom sign + drainhole profile coded, one solve done (throat present, +2–5 % boundary offset to fix). |
 | Phase 3 — V1 head-on from rest | not started |
 | Phase 4 — V2 production + extraction | not started |
 
@@ -757,6 +807,14 @@ overflow.
    χ through 1e-8 at t = 8.95 in both, throat radius within 2e-4 of the
    reference to the end. The grid killed ml2 — not the clamp and not the 1/χ
    terms (details in the Phase-1 table). The ml3 twin is the real test.
+   **Answered ~13:00, read 23:50: reading two.** The twin's origin χ falls
+   through 1e-8 at t = 61.3 exactly as the reference's does and sits at its
+   own floor (1e-20) for the same 1.4 units; during that window the two differ
+   by ≤ 0.25 % in the constraint norms and 7 % in max|K| at the spike, and by
+   t = 66 they agree to 4 digits again — constraints, origin lapse, throat
+   radius, all to t = 100. Before t = 61.3 they agree to 10 digits. The clamp
+   was never load-bearing; the χ regularisation stays in as a safety net and
+   fixes nothing that was observed.
    Three readings for the ml3 twin: origin χ never falls to 1e-8 ⇒ the clamp
    was driving the collapse; it falls below 1e-8 but the throat matches the
    reference to t = 100 ⇒ the clamp was never load-bearing; NaN ⇒ the

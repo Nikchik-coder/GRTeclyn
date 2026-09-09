@@ -111,8 +111,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_twin_p012_nodamp_t060` | B | 51.5 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
 | `merge_twin_p012_plain_t100` | A | 44.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.33 | - | - | - | late (+0.26 dex) |
 | `merge_twin_p012_plain_t100` | B | 44.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.33 | - | - | - | late (+0.26 dex) |
-| `single_hold_chireg_t100` | A | 12.9 | x11.0 / 12.9 | +0.96 | - | - | - | - | - | - | - | too short |
-| `single_hold_chireg_t100` | B | 12.9 | x11.0 / 12.9 | +0.96 | - | - | - | - | - | - | - | too short |
+| `single_hold_chireg_t100` | A | 100.0 | x2667.4 / 84.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.38 | +1.37 | +0.86 | 61.3 | same (+0.00 dex) |
+| `single_hold_chireg_t100` | B | 100.0 | x2667.4 / 84.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.38 | +1.37 | +0.86 | 61.3 | same (+0.00 dex) |
 | `single_hold_dt005_t070` | A | 70.0 | x33.8 / 45.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.40 | +1.48 | +1.06 | - | same (-0.00 dex) |
 | `single_hold_dt005_t070` | B | 70.0 | x33.8 / 45.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.40 | +1.48 | +1.06 | - | same (-0.00 dex) |
 | `single_hold_dt01_t070` | A | 16.1 | x13.0 / 16.1 | +0.96 | - | - | - | - | - | - | - | too short |
@@ -121,14 +121,14 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_hold_ml2_chireg_t100` | B | 24.1 | x3.6 / 13.2 | -14.86 | +0.34 | - | - | - | - | - | 8.9 | too short |
 | `single_hold_ml2_t100` | A | 24.2 | x28.9 / 24.2 | -2.86 | +0.33 | - | - | - | - | - | 8.9 | too short |
 | `single_hold_ml2_t100` | B | 24.2 | x28.9 / 24.2 | -2.86 | +0.33 | - | - | - | - | - | 8.9 | too short |
-| `single_hold_ml4_lowfloor_t100` | A | 56.7 | x57.6 / 56.7 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | - | - | late (+0.16 dex) |
-| `single_hold_ml4_lowfloor_t100` | B | 56.7 | x57.6 / 56.7 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | - | - | late (+0.16 dex) |
-| `single_hold_ml4_t100` | A | 56.5 | x57.0 / 56.5 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | - | - | late (+0.16 dex) |
-| `single_hold_ml4_t100` | B | 56.5 | x57.0 / 56.5 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | - | - | late (+0.16 dex) |
+| `single_hold_ml4_lowfloor_t100` | A | 100.0 | x15891.0 / 100.0 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | +1.82 | - | late (+0.16 dex) |
+| `single_hold_ml4_lowfloor_t100` | B | 100.0 | x15891.0 / 100.0 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | +1.82 | - | late (+0.16 dex) |
+| `single_hold_ml4_t100` | A | 100.0 | x15891.0 / 100.0 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | +1.82 | - | late (+0.16 dex) |
+| `single_hold_ml4_t100` | B | 100.0 | x15891.0 / 100.0 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | +1.82 | - | late (+0.16 dex) |
 
 ## Reading
 
-Throats read at t = 30: 4 early, 2 same, 42 late, 20 too short, 16 restart arms (own clock only).
+Throats read at t = 30: 4 early, 4 same, 42 late, 18 too short, 16 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

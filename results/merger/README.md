@@ -43,8 +43,15 @@ that produced it does not.
    t = 65 — while the constraint norms *fall*. That is the Ellis-Bronnikov growing mode
    at the rate Gonzalez, Guzman & Sarbach predict for this parametrisation, to ~15 %.
    The binary wall is 44-56; a throat with nothing done to it dies on the same clock.
-   **Everything above about the merged core has to be read against this.** Measured at
-   one resolution so far — see [`single_throat/INSTABILITY.md`](single_throat/INSTABILITY.md).
+   **Everything above about the merged core has to be read against this.** See
+   [`single_throat/INSTABILITY.md`](single_throat/INSTABILITY.md) for the level-3 analysis and
+   [`single_throat/BRANCHES.md`](single_throat/BRANCHES.md) for the ladder (2026-09-08): one level
+   finer (`single_hold_ml4_t100`) the same mode grows at the same rate to 9 % — with the
+   opposite sign. Level 3 collapses to a black hole (a marginally trapped surface at
+   R = 3.23 by t = 61, shrinking to 2.37 by t = 100); level 4 inflates (throat radius 3.89 → 10
+   by t = 100, an expanding anti-trapped shell around it). Both fates of Shinkai & Hayward
+   (2002) are in the code, and which one a run takes is set by the truncation seed, not by
+   the physics. **No fate may be quoted for any arm until the sign of its seed is controlled.**
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
    (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and
@@ -112,7 +119,14 @@ and the framing was wrong — see below.)*
   evolution floored at 1e-8 and the state clamp lowered to 1e-20: K NaN at
   t = 24.13, origin χ through 1e-8 at t = 8.95 in both, throat radius within
   2e-4 of the reference to the end — neither the clamp nor the 1/χ terms are
-  the killer); `single_hold_dt01_t070` — Courant
+  the killer); `single_hold_chireg_t100` — the level-3 reference with the same
+  χ regularisation: identical to 10 digits until the origin reaches the floor at
+  t = 61.3, to 4 digits at t = 100 (constraints, origin, throat radius), so the
+  floor is not load-bearing at level 3 either; `single_hold_ml4_t100` and
+  `single_hold_ml4_lowfloor_t100` — the level-4 pair (floors 1e-8 and 5e-10),
+  byte-identical on every stream because the origin χ never fell (2.4e-8 at t = 0,
+  rising to 3.9e-4), clean to t = 100 and on the **inflation branch**
+  (`single_throat/BRANCHES.md`); `single_hold_dt01_t070` — Courant
   0.1, origin blow-up, NaN at t = 16.07; `single_hold_dt005_t070` — Courant
   0.05, no NaN to t = 70 but off the 0.02 solution from t ≈ 33 (constraints
   35× by t = 40, lapse floored at 61.1), not usable. Three levels and the
@@ -122,17 +136,24 @@ and the framing was wrong — see below.)*
   derived systematics, regenerated from those streams by
   `analysis/single_throat_instability.py`, are in
   [`single_throat/INSTABILITY.md`](single_throat/INSTABILITY.md).
-- **Caveat — read INSTABILITY.md before quoting a rate.** (a) The growth rate
-  is measured at **one resolution**; the two half-resolution arms die within 3
-  units of their own turnover and give a departure time but never a rate. The
-  2026-09-08 level-2 twin dies at t = 24.17, again before its turnover; the
-  level-4 pair is running.
-  (b) Nothing past **t = 65** may be quoted: the areal-minimum scan's minimum
-  reaches the inner edge of its own search window there, and the apparent
-  R ~ 1.92 plateau over t = 66-99 is that boundary reading, not an endpoint.
-  (c) Nothing past **t = 61.3** is the PDE at all: chi at the compactified
-  origin reaches its floor, after which L2_Ham doubles every 4.2 units and the
-  error profile flips from throat-peaked to origin-peaked. (d) The older
+- **Caveat — read INSTABILITY.md and BRANCHES.md before quoting a rate.** (a) The
+  growth rate is measured at **two resolutions** (2026-09-08): τ = 5.86 at level 3
+  and τ ≈ 5.3 at level 4, 9 % apart and moving toward the Gonzalez–Guzman–Sarbach
+  band; the level-2 arms die at t = 24 before their turnover and give no rate.
+  The onset moves later by +5.6 to +8.7 units per halving of dx (0.1 %, 1 % and
+  10 % thresholds), against +16 for a fourth-order truncation seed — the seed is
+  low-order, and it changes sign between the two levels.
+  (b) Nothing past **t = 65** may be quoted from `areal_radius.dat` at level 3: the
+  areal-minimum scan's minimum reaches the inner edge of its own search window
+  there, and the apparent R ~ 1.92 plateau over t = 66-99 is that boundary
+  reading. The shell scans in BRANCHES.md read the collapsed state directly instead.
+  (c) χ at the compactified origin reaches its floor at **t = 61.3** and sits there
+  for 1.4 units. The χ-regularised twin with the floor at 1e-20 reproduces the
+  reference to 4 digits at t = 100 (≤ 0.25 % apart in the constraint norms during
+  the event, 7 % in max|K| at its spike), so the clamp is not load-bearing and the
+  late data may be read. The late constraint growth is real though — L2_Ham 60× by
+  t = 100 at level 3, 6× at level 4 where nothing was ever clamped — and is not
+  explained by the floor. (d) The older
   "e-fold ~ 4.4, about one throat-light-crossing" estimate in this file was a
   literature figure, not a measurement, and is superseded by the 5.86 above.
 
@@ -269,9 +290,10 @@ and the framing was wrong — see below.)*
 - **The isolated throat on the same ladder (2026-09-08).** `single_hold_ml2_t100`
   *(pack)* dies at t = 24.17 (its χ-regularised twin at 24.13); `single_hold_t100`, one level finer, reaches
   t = 100. For the lone throat one halving of dx buys more than 75 units,
-  against the binary's 1.4 per level. Read with the χ-floor caveat in the
-  plan: the origin monitor starts 16× closer to its floor per added level, so
-  the level-4 arm runs as a pair with a lowered floor.
+  against the binary's 1.4 per level. The level-4 pair (floors 1e-8 and
+  5e-10) also reaches t = 100, byte-identical across its two floors — and on
+  the other branch of the instability: the throat inflates instead of
+  collapsing (`single_throat/BRANCHES.md`).
 
 ### The interior freeze rescues the ringdown window
 - **Claim.** Freezing the collapsed interior after the burst closes carries

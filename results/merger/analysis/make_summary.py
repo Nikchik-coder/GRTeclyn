@@ -70,6 +70,10 @@ WHAT = {
     # Phase 2 of the forward plan (2026-09-08): one-knob twins of single_hold_t100
     # (the resolution ladder and the time-step bracket) and the NaN autopsy.
     "single_hold_ml2_t100": "single_hold_t100 with max_level 2 (dx 0.125 at the origin instead of 0.0625): h11 NaN on level 2 at t = 24.17 while the throat radius still sits at +0.12 % of exact -- the origin death is a resolution artefact and the throat is innocent",
+    "single_hold_ml2_chireg_t100": "single_hold_ml2_t100 with the chi regularisation on (chi_rhs_floor 1e-8, min_chi 1e-20): K NaN on level 2 at t = 24.13 against 24.17, origin chi through 1e-8 at t = 8.95 in both, throat radius within 2e-4 of the reference to the end -- the grid killed ml2, not the clamp",
+    "single_hold_chireg_t100": "single_hold_t100 with the chi regularisation on (chi_rhs_floor 1e-8, min_chi 1e-20): equal to the reference to 10 digits until the origin reaches the floor at t = 61.3, within 0.3 % in the norms during the 1.4-unit floor event, equal to 4 digits at t = 100 -- the floor is not load-bearing; collapse branch, marginally trapped surface R 3.23 (t = 61) -> 2.37 (t = 100)",
+    "single_hold_ml4_t100": "single_hold_t100 with max_level 4 (dx 0.03125 at the origin): clean to t = 100, origin chi never below 2.4e-8; the SAME unstable mode at the same rate to 9 % (tau 5.26 vs 5.88) with the OPPOSITE sign -- the throat inflates, R_min 3.89 -> 10.0, no horizon, an anti-trapped shell growing around it",
+    "single_hold_ml4_lowfloor_t100": "single_hold_ml4_t100 with min_chi 5e-10 instead of 1e-8: byte-identical to it on every stream -- the floor never engaged at level 4",
     "single_hold_dt01_t070": "single_hold_t100 with dt_multiplier 0.1 instead of 0.02 (Courant 0.1), to t = 70: 4.8x faster and bit-identical to t ~ 10, then a slow blow-up at the compactified origin, lapse floored at t = 16.0, h11 NaN at t = 16.07",
     "single_hold_dt005_t070": "single_hold_t100 with dt_multiplier 0.05 (Courant 0.05), to t = 70: reaches stop_time with no NaN but is NOT the same solution -- identical to the 0.02 reference to t ~ 30, then max|K| 30x by t = 35, L2_Ham 35x by t = 40 (reference flat), lapse floored at t = 61.1, throat 4 % smaller at t = 69",
     "autopsy_nodamp_r05000": "restart of merge_twin_p012_nodamp_t060 from its t = 50 checkpoint with the per-cell NaN autopsy report armed: dies at the same step as the original (t = 51.53, h11 NaN on level 3) and the report names the cells -- ~0.8 units off the merged core, 16+ cells from any patch edge, every field overflowed to finite 1e+88..1e+163 in one step and only A_ij true NaN",
@@ -114,6 +118,10 @@ ORDER = [
     "ctrl_rest_d18",
     "single_hold_t100",
     "single_hold_ml2_t100",
+    "single_hold_ml2_chireg_t100",
+    "single_hold_chireg_t100",
+    "single_hold_ml4_t100",
+    "single_hold_ml4_lowfloor_t100",
     "single_hold_dt01_t070",
     "single_hold_dt005_t070",
     "autopsy_nodamp_r05000_HOOKFAIL_2026-09-08",
@@ -159,8 +167,17 @@ STOPPED = {
 # left to the README.
 CAVEAT = {
     "single_hold_t100":
-        " -- but readable only to t = 65 (areal-minimum scan clipped) and only "
-        "to t = 61.3 as the PDE (chi floored); see single_throat/INSTABILITY.md",
+        " -- but areal_radius.dat is readable only to t = 65 (scan clipped); the "
+        "chi floor at t = 61.3 is shown not to matter by its twin single_hold_chireg_t100; "
+        "see single_throat/INSTABILITY.md and BRANCHES.md",
+    "single_hold_chireg_t100":
+        " -- same clipping of areal_radius.dat past t = 65 as its reference; the "
+        "kept plotfiles are read in single_throat/BRANCHES.md instead",
+    "single_hold_ml4_t100":
+        " -- on the INFLATION branch: throat radius 3.89 -> 10.0 by t = 100, no "
+        "horizon; a fate at one resolution is not the physics (BRANCHES.md)",
+    "single_hold_ml4_lowfloor_t100":
+        " -- byte-identical to single_hold_ml4_t100 (inflation branch)",
     "single_hold_dt005_t070":
         " -- but NOT the dt = 0.02 solution past t ~ 33: max|K| 30x and L2_Ham "
         "35x the reference by t = 40, lapse floored at t = 61.1",
