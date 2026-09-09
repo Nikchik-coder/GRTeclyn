@@ -581,6 +581,51 @@ and the framing was wrong — see below.)*
   (physically legitimate: nothing inside it reaches the outside), which ran the
   fill arms clean to t = 66 in 2026-09.
 
+### Halving the mass does not avoid the horizon: the drainhole's size is not set by its mass
+
+`merge_headon_flip_d6_m05_t100` (2026-09-09, level 3, fill off, frozen binary
+`main3d_boost_2026-09-08.ex`). Two drainholes of mass 0.5 each — half the
+scout's — released from rest at d = 6, the closest placement whose throats do
+not overlap. The point was to put the merged mass below the hoop line and see
+what two throats do when they touch *without* a horizon.
+
+- **They still form one.** The offline level-3 scan about the midpoint finds a
+  common marginally-outer-trapped surface at **t = 12** (coordinate radius
+  2.28, areal radius **3.83**, Misner–Sharp mass **2.16**, 6 trapped rays) and
+  a bigger one at **t = 13** (2.62, areal **3.91**, M_MS **2.05**, 18 trapped
+  rays, outermost). The live level-1 scan, which is coarse, saw it from
+  t = 12.32 to 13.37 and then lost it — the fine scan is the one to quote.
+- **Why the mass knob failed.** The drainhole's mass parameter sets the pull,
+  not the size. At m = 0.5 the throat's own areal radius is 3.18, against 3.89
+  at m = 1: halving the mass shrinks the throat by 18 %. Two objects of areal
+  radius 3.2 released 6 apart enclose a large area from the start, and the
+  mass that ends up inside the surface is 2.05–2.16 — twice the sum of the two
+  mass parameters, because the phantom field outside carries negative energy.
+  Against R_mots 3.91 the hoop line 2·M_MS is 4.10: the configuration is on the
+  line, exactly as the m = 1 pair was. The size of a drainhole is set by its
+  phantom parameter, so lowering m cannot get a binary under the hoop.
+- **The same wall, 12.9 units earlier.** The lapse falls from 0.44 (t = 7.5) to
+  0.036 (t = 13); χ touches the 1e-20 floor from t = 6.80; the tracker merges
+  the two mouths at t = 11.07. NaN at **t = 14.00** on level 3, in cells about
+  1.0 from the box centre, 16 cells from every grid edge, with the lapse driven
+  onto its 1e-10 floor in one step and χ, h_ij, K overflowing together. The
+  Hamiltonian norm is flat at 3.4e-3 until the final step. Anatomy identical to
+  the m = 1, d = 8 scout at t = 26.91 — so **the wall is not a mass effect**.
+- **Read the mouths' radii with care.** The consumer was given the m = 1 exact
+  throat radius (3.8895) as its reference, so the deviation column of this run
+  is against the wrong number and only its trend means anything. The trend: the
+  minimum areal radius rises 3.18 → 3.52 between t = 0 and t = 13, but from
+  t ≈ 11 the two mouth centres are less than 0.7 apart, so after that the
+  "per-mouth" scan is reading the merged region, not two throats.
+- **What it opens.** A lone throat at m = 0.5 has never been run. Its own
+  instability clock (onset 26, e-fold 5.9 are m = 1 numbers, and the rate
+  depends on m/a) is what dates whether these mouths were already collapsing
+  before they touched. Until that control exists, nothing here separates
+  contact from self-decay.
+
+Frames (χ, K, lapse, φ, Π, Weyl4), the slice cache and all Weyl4 modes at
+R = 10/14/18 were written before the abort, so the run is fully analysable.
+
 ## `figures/` — the campaign figures (2026-09-02 → 04)
 
 | file | what it shows |
