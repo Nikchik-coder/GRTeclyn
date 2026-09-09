@@ -1,3 +1,5 @@
+> **Frozen 2026-09-09.** Background only; the living plan is `GPU_PLAN_UPDATED.md`, the run record is `results/merger/README.md`.
+
 # GPU plan for the paper runs
 
 Companion to `Plan.md`, which holds the campaign record; this file holds the

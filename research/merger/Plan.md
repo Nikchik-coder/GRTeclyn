@@ -1,3 +1,5 @@
+> **Frozen 2026-09-09.** Background only; the living plan is `GPU_PLAN_UPDATED.md`, the run record is `results/merger/README.md`.
+
 # Merging two regular exotic-matter drainhole throats in 3D Cartesian CCZ4
 
 Working document: the current plan and the concise log of what broke and what fixed it.

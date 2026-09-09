@@ -22,111 +22,39 @@ import sys
 
 import numpy as np
 
-# What each run changes relative to the main arm.  Kept in step with
-# runs/wormhole_merger/README.md, which explains them at length.
-WHAT = {
-    "merge_orbit_flip_d12_r03000": "main arm, no damping (its __part1 files are t = 0 -> 30.5)",
-    "merge_orbit_flip_d12_r05000": "narrow lapse window (1e-6 -> 1e-8, the built-in default)",
-    "merge_orbit_flip_d12_r04000": "wide lapse window (3e-2 -> 1e-3), full metric plotted",
-    "merge_orbit_flip_d12_sg10_r05000": "wide lapse window, dissipation sigma 0.1 -> 1.0",
-    "merge_orbit_flip_d12_rw_r05000": "radius window: full inside r = 0.5, off by 0.7, from t = 33",
-    "merge_headon_flip_d12": "head-on: no orbital momentum",
-    "merge_orbit_flip_d12_p045": "momentum 0.45 instead of 0.12",
-    "merge_orbit_flip_d12_n160": "160 cells per side instead of 128",
-    "merge_orbit_flip_d12_ml2": "max_level = 2 instead of 3",
-    # The capture scan (2026-09-02): same template, damping on, stop_time 200.
-    "merge_orbit_flip_d12_p020_t200": "scout p = 0.20: captured, stopped by hand at t = 47.8",
-    "merge_orbit_flip_d12_p025_t200": "scout p = 0.25: captured to sep 1.5, h11 NaN",
-    "merge_orbit_flip_d12_p035_t200": "scout p = 0.35: fly-by (min sep 2.75), stopped by hand",
-    "merge_orbit_flip_d12_p045_t200": "scout p = 0.45: fly-by, the healthy control at t200",
-    # The Helfer twins (2026-09-02/03): p = 0.12, identical but for initial data.
-    "merge_twin_p012_plain_t100": "p = 0.12 twin, plain superposition: merged, stopped by hand at t = 44",
-    "merge_twin_p012_helfer_t100": "p = 0.12 twin, Helfer correction (auto width 4): stalled, zombie, stopped at t = 60.3",
-    "merge_twin_p012_helfer_lvl4_t100": "Helfer twin at max_level = 4: reproduces the stall, stopped by hand",
-    "merge_twin_p012_helfer_lvl5_t100": "Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5",
-    "merge_twin_p012_helfer_w2_t060": "Helfer twin, window halved to 2.0: stalled worse (sep 5.10 at t = 32 gate), stopped at t = 33.1",
-    # The unmasked wall probes (2026-09-03).
-    "merge_orbit_flip_d12_p020_nofill_t060": "p = 0.20 unmasked, damping off: hovered at sep 1.08 from t = 46, NaN at t = 52.08",
-    "merge_orbit_flip_d12_p020_lvl5_t200": "scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07",
-    "merge_orbit_flip_d12_p025_lvl5_t200": "scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79",
-    "merge_orbit_flip_d12_p015_nofill_t060": "scout p = 0.15 unmasked: fusing branch (plateau 0.816, dive to 0.70, core lapse rising) but pits not coincident when the wall hit at t = 53.35",
-    "merge_twin_p012_lc1_t060": "gauge arm (#15), lapse_coeff 2 -> 1: blob and plunge intact (sep 0.442) but the wall moved to t = 43.64 -- wall time is gauge, not physics",
-    "merge_twin_p012_nodamp_t060": "damping-off arm (#14): blob nucleates identically without damping (t = 32 slices match plain to 3 decimals); wall at t = 51.53 vs plain 52.06 -- damping neither causes nor delays the wall",
-    "merge_orbit_flip_d12_p015_rr_t060": "p = 0.15 rerun with insured checkpoints: wall reproduced at the same step (t = 53.35); the t = 50 seed for the phase-2 refinement is held",
-    "merge_orbit_flip_d12_p015_lvl5_t060_r05000": "p = 0.15 refined restart (max_level 5 from the t = 50 seed): wall pushed only +0.88 (h11 NaN t = 54.23), no trapped surface at death, waveform still rising at 3.14e-2 -- wall-cut mid-fusion a third time",
-    # The floor ladder (#16, 2026-09-04): chi_floor rungs restarted from the t = 50 seed.
-    "merge_twin_p012_cf08_t060_r05000": "floor ladder rung chi_floor 1e-8 (the reference control), restart from t = 50 with levels 4-5: healthy to t = 55.53 (h11 NaN, level 5) -- longest-lived p012 arm; level-5 scan holds a trapped shell r = 0.94 -> 0.90 over its last unit",
-    "merge_twin_p012_cf10_t060_r05000": "floor ladder rung chi_floor 1e-10: NaN 0.006 after restart -- the t = 50 state is floor-regularized, restarts cannot certify floor-independence",
-    "merge_twin_p012_cf12_t060_r05000": "floor ladder rung chi_floor 1e-12: NaN 0.049 after restart -- same verdict as cf10",
-    "merge_twin_p012_nodamp_cf10_t060": "the decisive floor test: damping off AND min_chi 1e-10 from t = 0 (not a restart) -- IN FLIGHT",
-    # The #8 scalar-charge ladder (2026-09-04): rest-release arms, radius only.
-    "ctrl_rest_a15": "repulsion a-point a = 1.5, released from rest at d = 12, identical to the a = 1 / a = 2 controls but for the throat radius: clean to t = 15, separated 0.283 by t = 11 (1.9x the a = 1 arm, against 2.25 predicted)",
-    "ctrl_rest_a3": "repulsion a-point a = 3, same recipe: clean to t = 15, separated 0.615 by t = 11 -- only 4.2x the a = 1 arm against 9x predicted, so the a^2 magnitude law overshoots badly at wide throats",
-    "ctrl_rest_d14": "separation ladder rung d = 14, released from rest with a = 2 and m = 1 fixed so ONLY the gap differs from the d = 12 control: clean to t = 15, separated 0.3699 by t = 11.5",
-    "ctrl_rest_d16": "separation ladder rung d = 16, same recipe: clean to t = 15, separated 0.2980 by t = 11.5",
-    "ctrl_rest_d18": "separation ladder rung d = 18, same recipe: clean to t = 15, separated 0.2438 by t = 11.5 -- the blind test of the offset law fitted on d = 12/14/16, which predicted 0.243 against pure 1/d^2's 0.209",
-    # Stage 0 of the external audit (2026-09-04): the isolated-throat control.
-    "single_hold_t100": "ONE drainhole throat, exact static data, at rest, production settings (max_level 3, sigma 0.1), t = 100 -- the decisive test of whether the 44-56 unit wall is the Gonzalez-Guzman-Sarbach radial mode of the constituent rather than a binary effect: the exact solution is a fixed point, so every deviation is error or instability with no physics mixed in",
-    # Phase 2 of the forward plan (2026-09-08): one-knob twins of single_hold_t100
-    # (the resolution ladder and the time-step bracket) and the NaN autopsy.
-    "single_hold_ml2_t100": "single_hold_t100 with max_level 2 (dx 0.125 at the origin instead of 0.0625): h11 NaN on level 2 at t = 24.17 while the throat radius still sits at +0.12 % of exact -- the origin death is a resolution artefact and the throat is innocent",
-    "single_hold_ml2_chireg_t100": "single_hold_ml2_t100 with the chi regularisation on (chi_rhs_floor 1e-8, min_chi 1e-20): K NaN on level 2 at t = 24.13 against 24.17, origin chi through 1e-8 at t = 8.95 in both, throat radius within 2e-4 of the reference to the end -- the grid killed ml2, not the clamp",
-    "single_hold_chireg_t100": "single_hold_t100 with the chi regularisation on (chi_rhs_floor 1e-8, min_chi 1e-20): equal to the reference to 10 digits until the origin reaches the floor at t = 61.3, within 0.3 % in the norms during the 1.4-unit floor event, equal to 4 digits at t = 100 -- the floor is not load-bearing; collapse branch, marginally trapped surface R 3.23 (t = 61) -> 2.37 (t = 100)",
-    "single_hold_ml4_t100": "single_hold_t100 with max_level 4 (dx 0.03125 at the origin): clean to t = 100, origin chi never below 2.4e-8; the SAME unstable mode at the same rate to 9 % (tau 5.26 vs 5.88) with the OPPOSITE sign -- the throat inflates, R_min 3.89 -> 10.0, no horizon, an anti-trapped shell growing around it",
-    "single_hold_ml4_lowfloor_t100": "single_hold_ml4_t100 with min_chi 5e-10 instead of 1e-8: byte-identical to it on every stream -- the floor never engaged at level 4",
-    "single_hold_dt01_t070": "single_hold_t100 with dt_multiplier 0.1 instead of 0.02 (Courant 0.1), to t = 70: 4.8x faster and bit-identical to t ~ 10, then a slow blow-up at the compactified origin, lapse floored at t = 16.0, h11 NaN at t = 16.07",
-    "single_hold_dt005_t070": "single_hold_t100 with dt_multiplier 0.05 (Courant 0.05), to t = 70: reaches stop_time with no NaN but is NOT the same solution -- identical to the 0.02 reference to t ~ 30, then max|K| 30x by t = 35, L2_Ham 35x by t = 40 (reference flat), lapse floored at t = 61.1, throat 4 % smaller at t = 69",
-    "autopsy_nodamp_r05000": "restart of merge_twin_p012_nodamp_t060 from its t = 50 checkpoint with the per-cell NaN autopsy report armed: dies at the same step as the original (t = 51.53, h11 NaN on level 3) and the report names the cells -- ~0.8 units off the merged core, 16+ cells from any patch edge, every field overflowed to finite 1e+88..1e+163 in one step and only A_ij true NaN",
-    "autopsy_nodamp_r05000_HOOKFAIL_2026-09-08": "the same restart with the report silently disarmed (params key read without its evolution. prefix): identical death, no report -- kept as the evidence behind the fix in SimulationParametersBase.hpp",
-    "bbh_control_d12_p012": "vacuum BBH control, same ADM masses/d/p as p012: merged t ~ 70, clean to t = 100",
-    "bbh_control_d12_p012_t150": "BBH control rerun to t = 150, fixed-center consumer: full ringdown in hand, instruments agree to 0.3 %, QNM fit consistent with a Kerr remnant (~15.6M / ~14.2M at R = 30)",
-}
-# The order the campaign reads in: the restart chain, then the probes.
-ORDER = [
-    "merge_orbit_flip_d12_r03000",
-    "merge_orbit_flip_d12_r05000",
-    "merge_orbit_flip_d12_r04000",
-    "merge_orbit_flip_d12_sg10_r05000",
-    "merge_orbit_flip_d12_rw_r05000",
-    "merge_headon_flip_d12",
-    "merge_orbit_flip_d12_p045",
-    "merge_orbit_flip_d12_n160",
-    "merge_orbit_flip_d12_ml2",
-    "merge_orbit_flip_d12_p020_t200",
-    "merge_orbit_flip_d12_p025_t200",
-    "merge_orbit_flip_d12_p035_t200",
-    "merge_orbit_flip_d12_p045_t200",
-    "merge_twin_p012_plain_t100",
-    "merge_twin_p012_helfer_t100",
-    "merge_twin_p012_helfer_lvl4_t100",
-    "merge_twin_p012_helfer_lvl5_t100",
-    "merge_twin_p012_helfer_w2_t060",
-    "merge_orbit_flip_d12_p020_nofill_t060",
-    "merge_orbit_flip_d12_p020_lvl5_t200",
-    "merge_orbit_flip_d12_p025_lvl5_t200",
-    "merge_orbit_flip_d12_p015_nofill_t060",
-    "merge_orbit_flip_d12_p015_rr_t060",
-    "merge_orbit_flip_d12_p015_lvl5_t060_r05000",
-    "merge_twin_p012_cf08_t060_r05000",
-    "merge_twin_p012_cf10_t060_r05000",
-    "merge_twin_p012_cf12_t060_r05000",
-    "merge_twin_p012_nodamp_cf10_t060",
-    "ctrl_rest_a15",
-    "ctrl_rest_a3",
-    "ctrl_rest_d14",
-    "ctrl_rest_d16",
-    "ctrl_rest_d18",
-    "single_hold_t100",
-    "single_hold_ml2_t100",
-    "single_hold_ml2_chireg_t100",
-    "single_hold_chireg_t100",
-    "single_hold_ml4_t100",
-    "single_hold_ml4_lowfloor_t100",
-    "single_hold_dt01_t070",
-    "single_hold_dt005_t070",
-    "autopsy_nodamp_r05000_HOOKFAIL_2026-09-08",
-    "autopsy_nodamp_r05000",
-]
+# What each run changes, the order the campaign reads in, the caveat attached to
+# a finished-clean outcome and the stopped-by-hand notes all live in ONE file
+# beside the packs, runs_registry.tsv, so registering a run is one appended line
+# (the launcher writes it when WHM_WHAT is set) and never a code edit.
+REGISTRY = "runs_registry.tsv"
+WHAT: dict[str, str] = {}
+ORDER: list[str] = []
+STOPPED: dict[str, str] = {}
+CAVEAT: dict[str, str] = {}
+
+
+def load_registry(path: pathlib.Path) -> None:
+    """Fill WHAT / ORDER / STOPPED / CAVEAT from the tab-separated registry."""
+    WHAT.clear(); ORDER.clear(); STOPPED.clear(); CAVEAT.clear()
+    if not path.exists():
+        print(f"[pack-merger] WARNING: no {path.name} -- every run is unregistered")
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        parts = [p.strip() for p in line.split("\t")]
+        parts += [""] * (4 - len(parts))
+        run, what, caveat, stopped = parts[:4]
+        if run in WHAT:
+            raise SystemExit(f"{path.name}: {run} registered twice")
+        ORDER.append(run)
+        WHAT[run] = what
+        if caveat:
+            CAVEAT[run] = " " + caveat
+        if stopped:
+            STOPPED[run] = stopped
+
+
 CLEAN_BACK = 0.5   # how far before the end the "last clean" row is taken
 
 FIELDS = [
@@ -145,43 +73,6 @@ def load(path: pathlib.Path):
     except Exception:
         return None
     return a if a.ndim == 2 and a.size else None
-
-
-# Runs deliberately killed before stop_time.  A SIGTERM'd run writes neither a
-# NaN nor AMReX's "finalized", so the heuristic below would call it "still
-# running" forever.  Name them here, with the reason.
-STOPPED = {
-    "merge_orbit_flip_d12_p045_helfer_t090":
-        "stopped by request at t = {t:.2f} of 90, clean (B6 answered early: the "
-        "corrected arm departs from its plain twin at t ~ 30 and grows 5x by "
-        "t = 37 against a flat baseline)",
-}
-
-
-# "Finished clean" means the solver reached stop_time without a NaN.  It does
-# NOT mean the late-time data is usable, and for one run those two are very far
-# apart: single_hold_t100 ran to t = 100 with zero NaN while its constraints grew
-# 52x and its throat diagnostic ran off the edge of its own search window.  A
-# reader scanning this column would take "finished clean at t = 100" as a clean bill
-# of health, so the qualification is attached to the outcome itself rather than
-# left to the README.
-CAVEAT = {
-    "single_hold_t100":
-        " -- but areal_radius.dat is readable only to t = 65 (scan clipped); the "
-        "chi floor at t = 61.3 is shown not to matter by its twin single_hold_chireg_t100; "
-        "see single_throat/INSTABILITY.md and BRANCHES.md",
-    "single_hold_chireg_t100":
-        " -- same clipping of areal_radius.dat past t = 65 as its reference; the "
-        "kept plotfiles are read in single_throat/BRANCHES.md instead",
-    "single_hold_ml4_t100":
-        " -- on the INFLATION branch: throat radius 3.89 -> 10.0 by t = 100, no "
-        "horizon; a fate at one resolution is not the physics (BRANCHES.md)",
-    "single_hold_ml4_lowfloor_t100":
-        " -- byte-identical to single_hold_ml4_t100 (inflation branch)",
-    "single_hold_dt005_t070":
-        " -- but NOT the dt = 0.02 solution past t ~ 33: max|K| 30x and L2_Ham "
-        "35x the reference by t = 40, lapse floored at t = 61.1",
-}
 
 
 def outcome(run_dir: pathlib.Path, t_end) -> str:
@@ -214,7 +105,7 @@ def summarise(run_dir: pathlib.Path) -> dict:
     run = run_dir.name
     row = {k: "" for k in FIELDS}
     row["run"] = run
-    row["what_is_different"] = WHAT.get(run, "")
+    row["what_is_different"] = WHAT.get(run, "(not in runs_registry.tsv)")
 
     coll = load(run_dir / "collapse_diagnostics.dat")
     if coll is None:
@@ -276,6 +167,7 @@ def summarise(run_dir: pathlib.Path) -> dict:
 
 def main(argv: list[str]) -> int:
     root = pathlib.Path(argv[1]) if len(argv) > 1 else pathlib.Path(__file__).resolve().parents[1]
+    load_registry(root / REGISTRY)
     camp = root / "campaign"
     dirs = {d.name: d for d in camp.iterdir() if d.is_dir()}
     ordered = [dirs[n] for n in ORDER if n in dirs]

@@ -48,10 +48,22 @@ that produced it does not.
    [`single_throat/BRANCHES.md`](single_throat/BRANCHES.md) for the ladder (2026-09-08): one level
    finer (`single_hold_ml4_t100`) the same mode grows at the same rate to 9 % — with the
    opposite sign. Level 3 collapses to a black hole (a marginally trapped surface at
-   R = 3.23 by t = 61, shrinking to 2.37 by t = 100); level 4 inflates (throat radius 3.89 → 10
-   by t = 100, an expanding anti-trapped shell around it). Both fates of Shinkai & Hayward
-   (2002) are in the code, and which one a run takes is set by the truncation seed, not by
-   the physics. **No fate may be quoted for any arm until the sign of its seed is controlled.**
+   R = 3.23 by t = 61, shrinking to 2.37 by t = 100 with the Misner-Sharp mass inside it
+   falling 1.62 → 1.23, the lapse at the origin down to 0.016 and no bounce of the areal
+   radius by t = 100 — a black hole slowly eating the phantom field; the constraint norms
+   grow 60× from t ≈ 75, unexplained and not the floor's); level 4 inflates (throat radius
+   3.89 → 10 by t = 100, an expanding anti-trapped shell around it, no horizon at any time).
+   Both fates of Shinkai & Hayward (2002) are in the code, and which one a run takes is set
+   by the truncation seed, not by the physics. **No fate may be quoted for any arm until the
+   sign of its seed is controlled.** The same split was seen in 3D before, for the massless
+   Ellis-Bronnikov throat (Shirokov 2026, arXiv:2604.00071): noise alone drove that run to
+   the inflation branch at five levels of refinement, and halving the phantom support with a
+   quadrupolar seed forced the collapse branch — horizon, then a "phantom bounce" of the
+   swallowed field at t ≈ 4 M. Here the massive drainhole shows no bounce in 40 units after
+   its horizon forms; whether one comes later is open. Movies: χ in the x–y plane only
+   (`campaign/<run>/movies/movie_chi_z.mp4`), one frame per time unit — these launches
+   rendered no other field, and the plotfiles are gone, so no lapse, K or scalar movie of
+   either branch exists (launch policy fixed 2026-09-09: several fields by default).
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
    (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and
@@ -493,9 +505,18 @@ single_throat/<arm>/            the Stage-1 isolated-throat ladder: areal_radius
                                 out of campaign/ because these are not merger
                                 runs and must not enter the campaign table.
 single_throat/INSTABILITY.md    the isolated-throat systematics, generated
+single_throat/BRANCHES.md       the level-3 / level-4 ladder read (two fates), generated
+single_throat/CLOCK_COMPARISON.md
+                                the throat clocks across arms, generated
 single_throat/NOTES.md          the Stage-1 working notes, copied from the run tree
 horizon/                        the offline Theta = 0 scan behind result 4
+runs_registry.tsv               ONE line per run: what is different, caveat, stopped
+                                note -- the only place a run is registered (the
+                                launcher appends it when WHM_WHAT is set)
 analysis/make_summary.py        builds the two summary tables from the above
+                                and runs_registry.tsv
+analysis/single_throat_branches.py
+                                builds BRANCHES.md and figures/single_throat_branches.png
 analysis/single_throat_instability.py
                                 builds INSTABILITY.md from single_throat/ and
                                 campaign/single_hold_t100/
@@ -680,6 +701,11 @@ bash grteclyn-wrapper/scripts/campaigns/stop_campaign.sh [--dry-run] runs/wormho
 ### After the run
 
 ```bash
+# the whole close-out, mechanically: live check, scratch report, NaN check of the
+# death window, registry check, movies on one fixed colour scale, repack,
+# machine-identity grep, and the two edits left by hand (README claim, plan row)
+bash research/merger/closeout.sh <run> [<run> ...]
+
 # redraw every cached slice on one fixed colour scale, then stitch the movies
 .venv/bin/python grteclyn-wrapper/scripts/plot/rerender_frames.py <run>/frames --movies
 

@@ -80,6 +80,9 @@
 #   WHM_CONSUME_ARGS  extra consumer flags, e.g. "--shell-fields chi phi"
 #   WHM_KEEP_PLOTFILES=1  keep the heavy HDF5 on scratch (no --delete)
 #   WHM_KEEP_LAST  plotfiles the consumer leaves behind (default 3)
+#   WHM_WHAT      one line on what the run is for -> results/merger/runs_registry.tsv
+#   WHM_FRAMES_FIELDS  frame fields when WHM_CONSUME_ARGS names none
+#                 (default: chi K lapse phi Pi -- never launch with one field)
 #
 # Stop:  bash scripts/campaigns/stop_campaign.sh [--dry-run] <runs_dir>
 #
@@ -180,6 +183,19 @@ fi
 if [[ -d "${RUN_DIR}" ]]; then
   echo "[whm] ${RUN_DIR} already exists -- delete it or set WHM_NAME/WHM_RUNS_DIR" >&2
   exit 1
+fi
+
+# Register the run (2026-09-09): one tab-separated line in the pack's registry,
+# so the summary table needs no code edit per run.  Only when the launch says
+# what the run is for; research/merger/closeout.sh warns about the rest.
+REGISTRY="${WHM_REGISTRY:-${REPO_ROOT}/results/merger/runs_registry.tsv}"
+if [[ -n "${WHM_WHAT:-}" && -f "${REGISTRY}" ]]; then
+  if grep -qP "^${NAME}\t" "${REGISTRY}"; then
+    echo "[whm] registry : ${NAME} already registered (WHM_WHAT ignored)"
+  else
+    printf '%s\t%s\t\t\n' "${NAME}" "${WHM_WHAT}" >> "${REGISTRY}"
+    echo "[whm] registry : ${NAME} -> ${REGISTRY#"${REPO_ROOT}"/}"
+  fi
 fi
 
 mkdir -p "${RUN_DIR}" "${SCRATCH_DIR}"
@@ -374,6 +390,28 @@ if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
 fi
 # shellcheck disable=SC2206
 consumer_args+=(${WHM_CONSUME_ARGS:-})
+
+# Frames for SEVERAL fields, every launch (2026-09-09).  The ladder runs of
+# 2026-09-08 were launched with chi frames only; the consumer deleted the
+# plotfiles behind them, so no lapse / K / scalar movie of the collapse or the
+# inflation can ever be made.  A launch that does not name --frames-fields in
+# WHM_CONSUME_ARGS gets this set, with the slice cache (one fixed colour scale
+# per run through rerender_frames.py) and per-frame auto limits (wormhole
+# values are not the black-hole presets).  WHM_FRAMES_FIELDS changes the list;
+# an explicit --frames-fields in WHM_CONSUME_ARGS wins over both.
+FRAMES_DEFAULT="${WHM_FRAMES_FIELDS:-chi K lapse phi Pi}"
+if [[ " ${WHM_CONSUME_ARGS:-} " != *" --frames-fields "* ]]; then
+  # shellcheck disable=SC2206
+  consumer_args+=(--frames-fields ${FRAMES_DEFAULT})
+  [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-cache-slices"* ]] || consumer_args+=(--frames-cache-slices)
+  [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-auto-zlim"* ]] || consumer_args+=(--frames-auto-zlim)
+  echo "[whm] frames   : ${FRAMES_DEFAULT} (launcher default -- name --frames-fields in WHM_CONSUME_ARGS to choose)"
+else
+  echo "[whm] frames   : as given in WHM_CONSUME_ARGS"
+fi
+if [[ " ${WHM_CONSUME_ARGS:-} " != *"--frames-zoom"* ]]; then
+  echo "[whm] WARNING: no --frames-zoom in WHM_CONSUME_ARGS -- frames will show the whole box" >&2
+fi
 
 if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
   if [[ ! -x "${CONSUMER_PY}" ]]; then
