@@ -203,8 +203,11 @@ def main() -> None:
     if resid:
         ax1.plot([r[1] for r in resid], [r[2] for r in resid], "s", ms=4, color="#c0392b",
                  label="scout mouths at the separation reached")
-    ax1.set_xlabel("separation d"); ax1.set_ylabel("per-mouth minimum areal radius"); ax1.legend(fontsize=8)
-    ax1.set_title("the neighbour is on the ruler", fontsize=10)
+    ax1.set_xscale("log")
+    ax1.set_xticks(ds[::2] if len(ds) > 8 else ds); ax1.set_xticklabels([f"{d:g}" for d in (ds[::2] if len(ds) > 8 else ds)], fontsize=8)
+    ax1.minorticks_off()
+    ax1.set_xlabel("separation d (log scale)"); ax1.set_ylabel("per-mouth minimum areal radius"); ax1.legend(fontsize=8)
+    ax1.set_title(f"the neighbour is on the ruler: excess ∝ d^{slope:.2f}", fontsize=10)
     if resid:
         tt = [r[0] for r in resid]; rr = [100 * (r[2] / r[3] - 1) for r in resid]
         inside = [r[4] for r in resid]

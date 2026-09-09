@@ -96,7 +96,7 @@ every pack entry but one is a finished run (the from-t = 0 low-floor twin
 The exception is the Phase-3 head-on scout `merge_headon_flip_d8_v1_t100`,
 launched 2026-09-09 01:09: the pack glob copies it as it stands at each pack,
 so its entry is partial until its close-out. The eight one-step placement
-probes `place_d*_step1` (2026-09-09 02:06–02:27) are finished and packed;
+probes `place_d*_step1` (eighteen, 2026-09-09 02:06–02:48) are finished and packed;
 their result is `PLACEMENT_CURVE.md`, regenerated at every pack.
 
 ### The initial data is exact, and the throat is unstable anyway
@@ -477,9 +477,12 @@ and the framing was wrong — see below.)*
 *(2026-09-09, during the V1 scout's approach)*
 
 - **Claim.** Two exact drainhole throats simply *placed* at rest read wider at
-  each mouth than an isolated throat, the more so the closer they sit: +7.5 %
-  at d = 14, +9.0 % at d = 12, +14.4 % at d = 8, +20.5 % at d = 6, falling
-  close to 1/d. That is the neighbour's field on the ruler, not a wider throat.
+  each mouth than an isolated throat, the more so the closer they sit: +1.8 %
+  at d = 48 (the throat centres at the sponge's inner edge, the widest the
+  box allows), +5.0 % at d = 20, +9.0 % at d = 12, +14.4 % at d = 8, +20.5 %
+  at d = 6, falling as d^−1.16 over 6 ≤ d ≤ 48, close to the 1/d of a
+  mass-like field. That is the neighbour's field on the ruler, not a wider
+  throat.
   Against that placement curve, the scout's mouths during the approach are
   *narrower* than placed throats at the same separation: −0.6 % at t = 7,
   −1.7 % at t = 10, −4.0 % at t = 13 (separation 6.06), the deficit growing
@@ -488,9 +491,8 @@ and the framing was wrong — see below.)*
   the collapse branch, and there is no expansion phase for the individual
   throats. The 14 % apparent widening of the d = 8 pair at t = 0, and the 9 %
   of every d = 12 pair of the earlier campaign, was placement.
-- **Runs.** `place_d8_step1`, `place_d75_step1`, `place_d7_step1`,
-  `place_d65_step1`, `place_d6_step1`, `place_d10_step1`, `place_d12_step1`,
-  `place_d14_step1` *(pack)* — initial data plus one step each, scanned at
+- **Runs.** Eighteen probes `place_d{6,65,7,75,8,10,12,14,16,18,20,24,28,32,36,40,44,48}_step1`
+  *(pack)* — initial data plus one step each, scanned at
   t = 0 with the scout's per-mouth horizon scan (mouth A and B agree to 1e-5;
   the d = 8 probe reproduces the scout's own t = 0 row to ten digits); the
   scout `merge_headon_flip_d8_v1_t100` *(pack, partial)* for the pre-contact
@@ -555,7 +557,7 @@ single_throat/BRANCHES.md       the level-3 / level-4 ladder read (two fates), g
 single_throat/CLOCK_COMPARISON.md
                                 the throat clocks across arms, generated
 single_throat/NOTES.md          the Stage-1 working notes, copied from the run tree
-PLACEMENT_CURVE.md              the placement curve (eight one-step probes) and the V1
+PLACEMENT_CURVE.md              the placement curve (eighteen one-step probes, d = 6 to 48) and the V1
                                 scout's own pre-contact response against it, generated
 horizon/                        the offline Theta = 0 scan behind result 4
 runs_registry.tsv               ONE line per run: what is different, caveat, stopped

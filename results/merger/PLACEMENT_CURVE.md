@@ -23,8 +23,18 @@ interaction: negative = squeezed, positive = widened.
 | 10.0 | 4.3207 | +11.1 % | 9.374 | `place_d10_step1` |
 | 12.0 | 4.2386 | +9.0 % | 10.216 | `place_d12_step1` |
 | 14.0 | 4.1820 | +7.5 % | 11.091 | `place_d14_step1` |
+| 16.0 | 4.1407 | +6.5 % | 11.997 | `place_d16_step1` |
+| 18.0 | 4.1093 | +5.7 % | 12.920 | `place_d18_step1` |
+| 20.0 | 4.0845 | +5.0 % | 13.863 | `place_d20_step1` |
+| 24.0 | 4.0480 | +4.1 % | 15.779 | `place_d24_step1` |
+| 28.0 | 4.0225 | +3.4 % | 17.727 | `place_d28_step1` |
+| 32.0 | 4.0036 | +2.9 % | 19.696 | `place_d32_step1` |
+| 36.0 | 3.9890 | +2.6 % | 21.680 | `place_d36_step1` |
+| 40.0 | 3.9774 | +2.3 % | 23.672 | `place_d40_step1` |
+| 44.0 | 3.9681 | +2.0 % | 25.666 | `place_d44_step1` |
+| 48.0 | 3.9603 | +1.8 % | 27.667 | `place_d48_step1` |
 
-The excess over the isolated value falls as d^-1.18 across the probed range,
+The excess over the isolated value falls as d^-1.16 across the probed range,
 close to the 1/d of a mass-like field. Mouth A and mouth B agree to 1e-5 in every probe.
 
 ## 2. The scout `merge_headon_flip_d8_v1_t100` against the curve, before contact
@@ -49,6 +59,8 @@ close to the 1/d of a mass-like field. Mouth A and mouth B agree to 1e-5 in ever
 | 15 | 5.188 | 4.5234 | 4.6885 | -3.52 % (below the probed range: curve held at its last point) |
 | 16 | 4.562 | 4.5474 | 4.6885 | -3.01 % (below the probed range: curve held at its last point) |
 | 17 | 4.062 | 4.5621 | 4.6885 | -2.70 % (below the probed range: curve held at its last point) |
+| 18 | 3.562 | 4.5748 | 4.6885 | -2.42 % (below the probed range: curve held at its last point) |
+| 19 | 2.938 | 4.5901 | 4.6885 | -2.10 % (below the probed range: curve held at its last point) |
 
 Last point inside the probed range: t = 13, separation 6.062, own response -3.97 %. The lone throat at level 3 is exact to 0.1 % until t = 35.
 
