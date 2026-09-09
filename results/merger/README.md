@@ -638,6 +638,7 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
 | `ladder_psi4_R14_lvl6.png` | the refinement-ladder arms alone at R = 14 |
 | `merger_constraints_t80.png` | Hamiltonian and momentum L2 for both completed t = 80 freeze arms, t = 0–80: the spikes before t = 34 are regrid transients; the smooth bump is the collapse; after the freeze engages at 53 both norms sit flat for 27 units |
 | `wave_speed_check.png` | why 0.889 c is not sub-luminal junk: the metric's own local light speed along the extraction path predicts a 14→30 crossing of ~19.5; the wave took 18.0. Constraint/gauge modes travel at √2 × light and are excluded |
+| `headon_freeze_psi4_20_R10_14_18_t38.png` | the head-on freeze arm's (2,0) mode at R = 10/14/18 to t = 38 (live snapshot, 2026-09-09): one slow swing, trough −0.15 at t = 14/18/23, peak +0.23/0.29/0.34 at t = 28.2/32.2/36.7, walking out at 0.94 c — emitted at contact (t ≈ 18–20), before the fill armed at 26.5 (black dotted); the narrow-fill twin (dashed) lies on it to 3e-4 of the peak, and the fill's own imprint cannot reach each sphere before the red dotted line, so the seam test starts at t ≈ 37 at R = 10. Amplitude still grows with R (inside one wavelength); not a ringdown yet |
 | `seam_ring_rescaling.png` | why the freeze-arm frames *look* like the signal vanishes: a growing Ψ₄ artefact confined to the freeze seam hijacks the per-frame colour scale; the radiation field is bit-identical to the unfrozen twin beyond r = 6 |
 
 ## Layout
