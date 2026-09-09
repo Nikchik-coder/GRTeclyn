@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# BinaryWormholeMerger -- spiral/orbit entry point (Plan.md Stage 2.5).
+# BinaryWormholeMerger -- spiral/orbit entry point (research/merger/archive/Plan_2026-09-02.md Stage 2.5).
 #
 # Thin front-end over run_single.sh ("single" = one run at a time, not one
 # wormhole): sets the two-throat orbit defaults and delegates, so the 400

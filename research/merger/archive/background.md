@@ -1,8 +1,10 @@
+> **Archived 2026-09-09, verbatim.** The deep-research report the first implementation plan was derived from. The one living plan is `research/merger/GPU_PLAN.md`.
+
 # Background: regular wormhole coordinates, two-throat data, and the fallbacks
 
-The deep-research report the implementation plan in [Plan.md](Plan.md) was derived from.
+The deep-research report the implementation plan in [Plan_2026-09-02.md](Plan_2026-09-02.md) was derived from.
 Kept unedited: literature, citations, and the ranked fallback strategies. The plan
-itself, and everything measured since, lives in Plan.md.
+itself, and everything measured since, lives in Plan_2026-09-02.md.
 
 ---
 

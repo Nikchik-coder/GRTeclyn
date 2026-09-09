@@ -1,11 +1,13 @@
+> **Archived 2026-09-09, verbatim.** Reference material behind the campaign (code map, traps, superseded routes) as of 2026-08-31. The one living plan is `research/merger/GPU_PLAN.md`.
+
 # BinaryWormholeMerger — reference: prior art, validated initial data, code design
 
-**This is not a plan.** The plan is [Plan.md](Plan.md), Stages 0–4. This file holds what
+**This is not a plan.** The plan is [Plan_2026-09-02.md](Plan_2026-09-02.md), Stages 0–4. This file holds what
 stays true whichever stage is running: the novelty scan, the initial-data gates and what
 they measured, the standing physics decisions, and the file-by-file design of the example.
 Kept under `research/merger/` for the same reason as the rest — out of the public tree.
 
-Superseded and removed 2026-08-31: the Phase 3–8 execution checklists (now Plan.md Stages
+Superseded and removed 2026-08-31: the Phase 3–8 execution checklists (now Plan_2026-09-02.md Stages
 2–4) and the 2026-08-28 blocker banners, which described a puncture throat that no longer
 exists. Code comments citing phase numbers resolve through the map below.
 
@@ -13,13 +15,13 @@ exists. Code comments citing phase numbers resolve through the map below.
 | --- | --- |
 | 0 — build and smoke test | done 2026-08-27; the launcher contract is below |
 | 1 — initial-data gates | **kept below**, passed 2026-08-28; its `d/b ≥ 8` constraint still binds |
-| 2 — single-throat regression | **kept below**; superseded as a goal by Plan.md Stage 1, which met its exit condition on the drainhole |
-| 3 — head-on merger | Plan.md Stage 3.1 |
-| 4 — spiralling merger | Plan.md Stage 3, after the head-on |
-| 5 — waveforms and energetics | Plan.md Stage 3.2 |
-| 6 — convergence and error budget | Plan.md Stage 3.3 |
-| 7 — constraint-solved data | Plan.md Stage 2.2 (GRTresna/CTTK) |
-| 8 — paper | Plan.md Stage 4 |
+| 2 — single-throat regression | **kept below**; superseded as a goal by Plan_2026-09-02.md Stage 1, which met its exit condition on the drainhole |
+| 3 — head-on merger | Plan_2026-09-02.md Stage 3.1 |
+| 4 — spiralling merger | Plan_2026-09-02.md Stage 3, after the head-on |
+| 5 — waveforms and energetics | Plan_2026-09-02.md Stage 3.2 |
+| 6 — convergence and error budget | Plan_2026-09-02.md Stage 3.3 |
+| 7 — constraint-solved data | Plan_2026-09-02.md Stage 2.2 (GRTresna/CTTK) |
+| 8 — paper | Plan_2026-09-02.md Stage 4 |
 
 ---
 
@@ -239,8 +241,8 @@ on L = 32, where only r = 8…15 is far field, M comes out 0.587 / 0.452 / 0.524
 
 ## Part 4 — Single-throat regression (Phase 2), and the instability it exposed
 
-**Superseded as a goal by Plan.md Stage 1**, which met its exit condition on the drainhole.
-Kept because the instability measured here is the physics Plan.md's growing mode is a
+**Superseded as a goal by Plan_2026-09-02.md Stage 1**, which met its exit condition on the drainhole.
+Kept because the instability measured here is the physics Plan_2026-09-02.md's growing mode is a
 *different* manifestation of, and because the arithmetic below is what killed the massless
 route.
 
@@ -293,7 +295,7 @@ black-hole merger. **And the problem is scale-invariant**: with d = 8b and m = �
 t_ff = πb√(32/α) ∝ b while λ ∝ 1/b makes the window ∝ b as well. The ratio is a pure number;
 rescaling b moves both sides equally.
 
-*This is what sent the project to the drainhole. Plan.md Stage 1 measured a 40 M window on
+*This is what sent the project to the drainhole. Plan_2026-09-02.md Stage 1 measured a 40 M window on
 the massive throat with the mass in the lapse — the same object, a different branch.*
 
 ---
@@ -305,7 +307,7 @@ Code: [Examples/BinaryWormholeMerger/](../../Examples/BinaryWormholeMerger/).
 ### Initial data (Route A — analytic superposition)
 
 `BinaryWormholeInitialData.hpp`, following `BinaryBHInitialData` conventions. **Historical
-form**, `wormhole_id_type = 0`; the drainhole (`id_type = 1`, Plan.md Stage 0) replaces the
+form**, `wormhole_id_type = 0`; the drainhole (`id_type = 1`, Plan_2026-09-02.md Stage 0) replaces the
 bare-mass terms with the lapse:
 
 ```
@@ -378,7 +380,7 @@ produces data with zero initial constraint defect. Changing matter is model sele
 a research programme. What is *not* established is that any member of that family is a
 traversable throat at all.
 
-### Route B — GRTresna-solved data (Plan.md Stage 2.2)
+### Route B — GRTresna-solved data (Plan_2026-09-02.md Stage 2.2)
 
 - GRTresna already sums two punctures (`PsiAndAijFunctions.cpp`); `bh1_*`/`bh2_*` keys exist
   end-to-end through the wrapper's params writer. **No solver C++ changes needed.**
@@ -404,7 +406,7 @@ traversable throat at all.
 | `Main_BinaryWormhole.cpp` | `BHAMR<2>` so the Weyl4 particle interpolator exists |
 | `SimulationParameters.hpp` | all `wormhole_*` / `binary_diag_*` keys, defaults, sanity net |
 | `BinaryThroatDiagnostics.hpp` | own module, own file, default-off |
-| `ThroatTracker.hpp` | throat locator for the moving boxes (Plan.md Stage 2.0), default-off |
+| `ThroatTracker.hpp` | throat locator for the moving boxes (Plan_2026-09-02.md Stage 2.0), default-off |
 | `StateVariables.hpp` | CCZ4 + `c_phi`, `c_Pi` (both even parity, asymptote 0) |
 | `PhantomDecayPotential.hpp`, `ExternalGridInitialData.hpp` | copied from the single-throat examples |
 | `params_*.txt` | smoke, gate ladders, Stage 0/1/2 templates |
@@ -469,7 +471,7 @@ machinery — full box. An optimisation to revisit only if head-on wall times de
 | φ asymptote | a plain sum of two atan profiles tends to ≈ 0.886, but the boundary condition assumes 0 | subtract the constant in the initial data — free for a massless field |
 | Solved-ID resolution wall | the `.gridinit` bridge pins the evolution near-unigrid | split-ID loader |
 | `wormhole_support_strength` re-read footgun | `ExoticScalarField` re-reads the key from ParmParse when constructed with strength exactly 1.0 | keep the key present in every params file |
-| **Massless throat expands before the merger finishes** | window t ≲ 2 against free-fall 8.89 at `d/b = 8`; not fixable by refinement (t = 0 violation identical at `max_level` 4 and 5), by a better seed (~1e-37 needed), or by rescaling b (both sides ∝ b) | **superseded**: the massive drainhole holds 40 M (Plan.md Stage 1). The complex-scalar Q-ball route was tried on the puncture throat and returned no verdict — see "Route B traps" in Plan.md |
-| **Puncture throat cannot be resolved** | one cell 6.2 proper units wide against a throat of areal radius 4.5; refinement erases it before the first step; 80 % of the Noether charge dissolves in the interior | **solved** — the drainhole puts the mass in the lapse; one cell is 0.31 proper units against 3.89, and refinement sharpens the throat (Plan.md Stage 0) |
-| Compactified origin blows up when centred | χ ~ r̄⁴ there and CCZ4 divides by χ; the published single-throat example dodges it with octant symmetry, which a binary cannot use — two origins, neither on a corner | **cleared as the killer** by Plan.md 1.6: refining the origin made every error *smaller* and moved the wall past 40 M. The collar (`initial_lapse_type = 6`) still buys ~3.5× on origin survival at 20 % of the throat radius |
+| **Massless throat expands before the merger finishes** | window t ≲ 2 against free-fall 8.89 at `d/b = 8`; not fixable by refinement (t = 0 violation identical at `max_level` 4 and 5), by a better seed (~1e-37 needed), or by rescaling b (both sides ∝ b) | **superseded**: the massive drainhole holds 40 M (Plan_2026-09-02.md Stage 1). The complex-scalar Q-ball route was tried on the puncture throat and returned no verdict — see "Route B traps" in Plan_2026-09-02.md |
+| **Puncture throat cannot be resolved** | one cell 6.2 proper units wide against a throat of areal radius 4.5; refinement erases it before the first step; 80 % of the Noether charge dissolves in the interior | **solved** — the drainhole puts the mass in the lapse; one cell is 0.31 proper units against 3.89, and refinement sharpens the throat (Plan_2026-09-02.md Stage 0) |
+| Compactified origin blows up when centred | χ ~ r̄⁴ there and CCZ4 divides by χ; the published single-throat example dodges it with octant symmetry, which a binary cannot use — two origins, neither on a corner | **cleared as the killer** by Plan_2026-09-02.md 1.6: refining the origin made every error *smaller* and moved the wall past 40 M. The collar (`initial_lapse_type = 6`) still buys ~3.5× on origin survival at 20 % of the throat radius |
 | Lapse collar thinner than the stencil | the type-4 collar spans 0.053 in r — 0.9 cells at `max_level` 3 — so the stencil sees a step and the run dies at t ≈ 0.2 | `wormhole_lapse_core_fraction` / `_power` expose the shape; f = 0.2, p = 4 gives 25 % more collar with a bit-identical throat |

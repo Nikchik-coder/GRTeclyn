@@ -194,7 +194,7 @@ def main(argv: list[str]) -> int:
         w(f"| {thr:.0e} | t = {c3:.1f} | t = {c4:.1f} | {c4-c3:+.1f} |")
     w("\nA fourth-order truncation seed would move the onset by tau ln 16 ≈ 16 units per halving;")
     w("+5.6 to +8.7 at a rate of 0.18 is a seed of order 1.5-2.3 (amplitude ratio 3-5x). The pre-registered fork in")
-    w("GPU_PLAN_UPDATED.md (+5.5 vs +16) resolves to the low-order side.\n")
+    w("archive/GPU_PLAN_UPDATED_2026-09-08.md (+5.5 vs +16) resolves to the low-order side.\n")
 
     # --- 5. shell scans -----------------------------------------------------------------
     w("## 5. What the kept plotfiles show (oriented shell scans)\n")

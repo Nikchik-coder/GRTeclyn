@@ -20,7 +20,7 @@
 #   7. greps the pack and the plan for machine identity (patterns are derived
 #      from the environment at run time, so none is written here);
 #   8. prints the two edits that remain by hand: the README claim line and the
-#      status row in research/merger/GPU_PLAN_UPDATED.md, plus commit and push.
+#      status row in research/merger/GPU_PLAN.md, plus commit and push.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -121,7 +121,7 @@ cat <<TXT
 ==================================================================
 [closeout] by hand, in this order:
   - results/merger/README.md: the Claim/Runs line of the section the run answers
-  - research/merger/GPU_PLAN_UPDATED.md: the status row and the queue
+  - research/merger/GPU_PLAN.md: the status row and the queue
   - scratch prune on the user's word, logged in runs/wormhole_merger/MANIFEST_CLEANUP_*.md
   - git add results/merger research/merger; commit (no Co-Authored-By); push to myfork
 [closeout] problems flagged: ${problems}

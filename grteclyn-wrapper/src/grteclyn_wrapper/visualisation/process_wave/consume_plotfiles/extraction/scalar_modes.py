@@ -6,7 +6,7 @@ The Psi4 streams are published column contracts and must not widen.  This
 module owns its own stream (``scalar_modes.dat``) and is **off by default**,
 enabled per campaign with ``--scalar-modes`` in the consumer arguments.
 
-Physics motivation (GPU_PLAN.md section 7)
+Physics motivation (archive/GPU_PLAN_2026-09-03.md section 7)
 ------------------------------------------
 The post-merger tail is a coupled scalar-metric mode: the equatorial ring
 harmonic showed the phi dipole amplitude phase-locked to Psi4 (|r| = 0.95,

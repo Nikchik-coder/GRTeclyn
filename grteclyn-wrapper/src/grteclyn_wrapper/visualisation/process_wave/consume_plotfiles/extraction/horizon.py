@@ -1,6 +1,6 @@
 """Orientation-corrected marginal-surface scan, one pass per plotfile.
 
-Why this exists (research/merger/GPU_PLAN_UPDATED.md, Defect 2): the historic
+Why this exists (research/merger/archive/GPU_PLAN_UPDATED_2026-09-08.md, Defect 2): the historic
 apparent-horizon scan takes "outward" to be +d/dr on every coordinate sphere.
 Inside a wormhole throat that direction points toward the OTHER mouth, where
 the areal radius DEcreases, so the scan computes the ingoing expansion, calls

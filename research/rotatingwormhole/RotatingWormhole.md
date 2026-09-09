@@ -806,4 +806,4 @@ gated on §9's tier 2–3.
 [`../merger/Plan.md`](../merger/Plan.md), with the prior-art scan and the
 file-by-file design in [`../merger/Reference.md`](../merger/Reference.md).  The
 throat-resolution block that stopped it was cleared on 2026-08-28 by the regular
-drainhole (Plan.md Stage 0).
+drainhole (research/merger/archive/Plan_2026-09-02.md Stage 0).

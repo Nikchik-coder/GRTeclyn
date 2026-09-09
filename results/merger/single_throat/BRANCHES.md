@@ -93,7 +93,7 @@ The rate moves 9 % toward the predicted band per halving of dx; the sign flips.
 
 A fourth-order truncation seed would move the onset by tau ln 16 ≈ 16 units per halving;
 +5.6 to +8.7 at a rate of 0.18 is a seed of order 1.5-2.3 (amplitude ratio 3-5x). The pre-registered fork in
-GPU_PLAN_UPDATED.md (+5.5 vs +16) resolves to the low-order side.
+archive/GPU_PLAN_UPDATED_2026-09-08.md (+5.5 vs +16) resolves to the low-order side.
 
 ## 5. What the kept plotfiles show (oriented shell scans)
 

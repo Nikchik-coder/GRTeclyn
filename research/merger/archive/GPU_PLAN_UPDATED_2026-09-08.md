@@ -1,4 +1,4 @@
-> **Archived 2026-09-09, verbatim.** The living plan is `research/merger/GPU_PLAN_UPDATED.md`; this file keeps the external audit, the forward plan checked against the code, the Stage-0 result, the ladder narratives, the autopsy and the time-step bracket as they were written. Section names cited elsewhere resolve here.
+> **Archived 2026-09-09, verbatim.** The living plan is `research/merger/GPU_PLAN.md`; this file keeps the external audit, the forward plan checked against the code, the Stage-0 result, the ladder narratives, the autopsy and the time-step bracket as they were written. Section names cited elsewhere resolve here.
 
 # Validation Audit — external review of the drainhole-binary campaign
 

@@ -72,7 +72,7 @@ that produced it does not.
    belongs to a *single throat*, so it is neither the merged core's nor the code's. It is
    the solution's. The fly-by arms are not counter-evidence — they were stopped or died
    at t = 60-91, and an isolated throat is already 35 % gone by t = 65. ("Healthy with no
-   NaN at all" also overstates them; see B2 in `research/merger/GPU_PLAN.md`.)
+   NaN at all" also overstates them; see B2 in `research/merger/archive/GPU_PLAN_2026-09-03.md`.)
 6. And it is not a resolution artefact. A 25 % finer grid reproduces the inspiral to
    within 1.8 % and the waveform to within 4 % — and then dies of the same NaN
    1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
@@ -406,7 +406,7 @@ and the framing was wrong — see below.)*
   zombie with no Helfer correction at all, proving the wall is not
   Helfer-specific; the unmasked runs (`_nofill`, damping off) confirmed it
   on p = 0.15 and 0.20. The validation and the slice-probe evidence are
-  written up in `research/merger/GPU_PLAN.md` §9.
+  written up in `research/merger/archive/GPU_PLAN_2026-09-03.md` §9.
 
 ### The wall time is gauge + resolution, not physics
 - **Claim.** The t ≈ 52–53 death time must never be read as a physical event.
