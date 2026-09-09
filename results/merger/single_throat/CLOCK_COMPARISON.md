@@ -57,8 +57,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `ctrl_rest_d18` | B | 15.0 | x13.4 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
 | `merge_headon_flip_d12` | A | 44.0 | x38.5 / 43.8 | +0.99 | +1.30 | +1.50 | +1.53 | +0.17 | - | - | 39.9 | late (+0.22 dex) |
 | `merge_headon_flip_d12` | B | 44.0 | x38.5 / 43.8 | +0.99 | +1.30 | +1.50 | +1.53 | +0.17 | - | - | 39.9 | late (+0.22 dex) |
-| `merge_headon_flip_d8_v1_t100` | A | 22.0 | x20.9 / 20.4 | +1.00 | +1.24 | - | - | - | - | - | - | too short |
-| `merge_headon_flip_d8_v1_t100` | B | 22.0 | x20.9 / 20.4 | +1.00 | +1.24 | - | - | - | - | - | - | too short |
+| `merge_headon_flip_d8_v1_t100` | A | 26.9 | x57.4 / 26.9 | +1.00 | +1.24 | -13.50 | - | - | - | - | 24.4 | too short |
+| `merge_headon_flip_d8_v1_t100` | B | 26.9 | x57.4 / 26.9 | +1.00 | +1.24 | -13.50 | - | - | - | - | 24.4 | too short |
 | `merge_orbit_flip_d12_ml2` | A | 9.4 | x1.1 / 1.3 | - | - | - | - | - | - | - | 7.3 | too short |
 | `merge_orbit_flip_d12_ml2` | B | 9.4 | x1.1 / 1.3 | - | - | - | - | - | - | - | 7.3 | too short |
 | `merge_orbit_flip_d12_n160` | A | 53.6 | x63.9 / 52.6 | +1.08 | +1.39 | +1.60 | +1.60 | +1.30 | -1.14 | - | 47.0 | late (+0.29 dex) |

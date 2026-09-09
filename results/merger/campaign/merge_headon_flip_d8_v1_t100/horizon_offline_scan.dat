@@ -1,0 +1,11 @@
+# Offline fine-grid oriented shell scan about the midpoint (scripts/validation/ah_oriented_scan.py,
+# level 3, dx 0.0625, half 4.0, rmin 0.25, dr 0.02), run at close-out on the kept plotfiles
+# Plt02200..02600 of merge_headon_flip_d8_v1_t100 (2026-09-09).  The live consumer's common scan
+# runs on level 1 with dr 0.08 and lost the MOTS crossing at t = 23-25; these rows are the record.
+# Coordinate spheres inside r ~ 0.9 cut through the two mouths (R -> 35 .. 5e4) and mean nothing.
+# time  r_mots  R_mots  M_MS_mots  r_trapped_in  r_trapped_out  r_at_R_min  R_min
+22.0  3.171  5.564  2.991  2.390  3.170  2.250  5.268
+23.0  3.442  5.636  2.935  1.910  3.430  2.050  5.079
+24.0  3.659  5.713  2.886  1.490  3.650  1.850  4.917
+25.0  2.854  5.157  3.030  1.150  2.850  1.710  4.777
+26.0  1.982  4.722  3.159  0.950  1.970  1.550  4.655

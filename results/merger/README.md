@@ -91,13 +91,13 @@ what the text asserts, the runs that establish it, and where the numbers sit.
 Runs overlap between claims — that is the point of the map. *(pack)* = has a
 directory under `campaign/`; *(run tree)* = lives only in the gitignored
 `runs/wormhole_merger/` tree on the production machine. As of 2026-09-09
-every pack entry but one is a finished run (the from-t = 0 low-floor twin
+every pack entry is a finished run (the from-t = 0 low-floor twin
 `merge_twin_p012_nodamp_cf10_t060` died at t = 44.94 and is packed whole).
-The exception is the Phase-3 head-on scout `merge_headon_flip_d8_v1_t100`,
-launched 2026-09-09 01:09: the pack glob copies it as it stands at each pack,
-so its entry is partial until its close-out. The eight one-step placement
-probes `place_d*_step1` (eighteen, 2026-09-09 02:06–02:48) are finished and packed;
-their result is `PLACEMENT_CURVE.md`, regenerated at every pack.
+The Phase-3 head-on scout `merge_headon_flip_d8_v1_t100` (2026-09-09
+01:09–03:04) died at t = 26.91 and is packed whole, with its fine-grid horizon
+history in `horizon_offline_scan.dat`. The eighteen one-step placement probes
+`place_d*_step1` (2026-09-09 02:06–02:48) are finished and packed; their result
+is `PLACEMENT_CURVE.md`, regenerated at every pack.
 
 ### The initial data is exact, and the throat is unstable anyway
 *(rewritten 2026-09-05; this section used to be titled "the initial data is
@@ -495,7 +495,7 @@ and the framing was wrong — see below.)*
   *(pack)* — initial data plus one step each, scanned at
   t = 0 with the scout's per-mouth horizon scan (mouth A and B agree to 1e-5;
   the d = 8 probe reproduces the scout's own t = 0 row to ten digits); the
-  scout `merge_headon_flip_d8_v1_t100` *(pack, partial)* for the pre-contact
+  scout `merge_headon_flip_d8_v1_t100` *(pack)* for the pre-contact
   rows.
 - **Where.** `PLACEMENT_CURVE.md` (tables, generated), `figures/placement_curve.png`,
   `analysis/placement_curve.py`.
@@ -516,6 +516,61 @@ and the framing was wrong — see below.)*
   CLOCK_COMPARISON.md hypothesis that the companion *holds the throat open*
   (origin χ higher than the lone throat's) is not what the mouths measure: at
   the mouths, relative to placement, the companion squeezes.
+
+### The head-on pair forms a black hole, and the code dies inside it five units later
+*(Phase 3 scout, 2026-09-09; from NaN to a black hole — half way)*
+
+- **Claim.** Two exact drainhole throats (a = 2, m = 1, one scalar sign flipped)
+  released from rest at d = 8 at level 3 fall together on an inverse-square law
+  and touch at t ≈ 20 as wormholes: no trapped and no anti-trapped surface at
+  either mouth, each mouth squeezed 4 % relative to placement. Two units later a
+  single marginally trapped surface encloses both mouths — no mouth ever had its
+  own, so the surface count goes 0 → 1 about the midpoint. It grows until t = 24
+  and then shrinks fast, the phantom dissolution seen before; the lapse at the
+  midpoint collapses (0.09 at contact, 0.02 at death); chi at the midpoint
+  reaches the 1e-20 floor from t ≈ 24.5; K there doubles every 0.3 units from
+  t ≈ 25.3; and at t = 26.91 a cell 0.9 from the midpoint overflows in one step.
+  Same anatomy as `autopsy_nodamp_r05000` (floored core, one-step overflow away
+  from it, far from any grid edge). The point-of-use chi regularisation and the
+  1e-20 floor changed the timing, not the outcome. New against every d = 12
+  pair: the black hole is *seen forming before* the wall, on two instruments,
+  and lasts at least four units.
+- **Horizon history** (fine-grid oriented scan about the midpoint, level 3,
+  `horizon_offline_scan.dat`; the live consumer's level-1 common scan lost the
+  crossing at t = 23–25 and is not the record):
+
+  | t | MOTS coordinate radius | areal radius | Misner-Sharp mass | fully trapped shells |
+  |---|---|---|---|---|
+  | 22 | 3.17 | 5.56 | 2.99 | 2.39–3.17 |
+  | 23 | 3.44 | 5.64 | 2.94 | 1.91–3.43 |
+  | 24 | 3.66 | 5.71 | 2.89 | 1.49–3.65 |
+  | 25 | 2.85 | 5.16 | 3.03 | 1.15–2.85 |
+  | 26 | 1.98 | 4.72 | 3.16 | 0.95–1.97 |
+
+- **Runs.** `merge_headon_flip_d8_v1_t100` *(pack)*: `binary_throat_diagnostics.dat`
+  (contact), `collapse_diagnostics.dat` (midpoint lapse, chi floor, K runaway),
+  `constraint_norms.dat` (flat at 2.3e-3 until the last half unit, 13.6 at
+  death), `horizon_scan.dat` (live, per mouth and common), `horizon_offline_scan.dat`,
+  `run_tail.log` (the NaN autopsy: cells (516,511,498–499), chi 0.031 → 1e190 in
+  one step, neighbours chi 0.030–0.033 and lapse 0.09–0.10), frames and movies of
+  chi, lapse, K, phi, Pi to t = 26.
+- **Caveats.** The horizon is read on coordinate spheres about the midpoint;
+  the true surface is a peanut, so the Misner-Sharp numbers are ±20 % and the
+  areal radii of the flagged spheres are upper bounds on the true minimal one.
+  A shrinking horizon is allowed here (the phantom field violates the null
+  energy condition) but the shrink from t = 24 coincides with chi reaching the
+  floor at the midpoint, so interior numerics and interior physics are not yet
+  separated. Infall in coordinates is 25 % slower than Newtonian free fall of
+  two unit masses (contact 19.9 vs 16.4); the d = 12 head-on agreed to 5 %; the
+  coordinate centre separation is not the physical one (see the like-oriented
+  section, δ ≈ 3.5).
+- **What it settles and what it opens.** Settled: the merger of two massive
+  drainhole throats ends in a black hole, not in inflation or a stall, and the
+  code reaches it. Open: the interior. The wall follows the horizon by five
+  units and is the same one-step overflow as before, so the next arm is the
+  interior freeze of the stage-3 chain applied once the common horizon exists
+  (physically legitimate: nothing inside it reaches the outside), which ran the
+  fill arms clean to t = 66 in 2026-09.
 
 ## `figures/` — the campaign figures (2026-09-02 → 04)
 
