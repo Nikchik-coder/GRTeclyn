@@ -14,8 +14,11 @@ in a binary leaves the isolated curve before the isolated throat itself turns
 over (t = 26), i.e. whether the companion selects a branch early, or whether
 the curves lie on top of each other until the plunge.
 
-Reads only the packed tree.  Writes single_throat/CLOCK_COMPARISON.md and
-figures/throat_clock_comparison.png.
+Reads only the packed tree.  Writes single_throat/CLOCK_COMPARISON.md -- the
+TABLE only.  The figure is
+``python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_throat_clock``,
+which reads the same packed streams: the pack has to stay runnable with nothing
+but a stock Python, and a figure has to obey the campaign's house style.
 """
 from __future__ import annotations
 
@@ -25,7 +28,7 @@ import sys
 import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from pack_paths import figure_dir, find_run, group_dir, iter_runs  # noqa: E402
+from pack_paths import find_run, group_dir, iter_runs  # noqa: E402
 
 REFERENCE = "single_hold_t100"
 # fixed times at which each throat's origin chi is read, as log10(chi/chi0)
@@ -203,31 +206,6 @@ def main() -> int:
     L("")
     (group_dir(root, "01_single_throat") / "CLOCK_COMPARISON.md").write_text("\n".join(lines) + "\n")
 
-    # figure
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-        fig, ax = plt.subplots(figsize=(9, 5.5))
-        for name, t, c, rowA, rowB in arms:
-            ratio = c[:, COL["chiA"]] / c[0, COL["chiA"]]
-            ax.plot(t, ratio, lw=0.8, alpha=0.6, label=None)
-            if rowB is not None:
-                ratioB = c[:, COL["chiB"]] / c[0, COL["chiB"]]
-                ax.plot(t, ratioB, lw=0.8, alpha=0.6, ls="--")
-        ax.plot(t_ref, c_ref[:, COL["chiA"]] / c_ref[0, COL["chiA"]], "k", lw=2.5,
-                label=f"{REFERENCE} (isolated)")
-        ax.axvline(T_TURNOVER, color="k", ls=":", lw=1)
-        ax.set_yscale("log")
-        ax.set_xlabel("t (code units)")
-        ax.set_ylabel("chi at the origin / its t = 0 value")
-        ax.set_title("origin-chi clock, every arm (thin: binaries, A solid / B dashed)")
-        ax.legend(loc="upper left")
-        ax.grid(alpha=0.3)
-        fig.tight_layout()
-        fig.savefig(figure_dir(root, "01_single_throat") / "throat_clock_comparison.png", dpi=130)
-    except Exception as e:  # noqa: BLE001
-        print("figure skipped:", e)
     print("wrote", group_dir(root, "01_single_throat") / "CLOCK_COMPARISON.md")
     return 0
 

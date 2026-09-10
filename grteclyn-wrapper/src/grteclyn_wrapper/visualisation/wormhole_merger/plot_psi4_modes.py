@@ -47,10 +47,10 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import find_run
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
+
 # …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger
 REPO = pathlib.Path(__file__).resolve().parents[5]
-STYLES = [("#d62728", "-", 2.0), ("#2ca02c", ":", 2.0), ("#ff7f0e", "--", 1.2),
-          ("#1f77b4", "-", 0.9), ("#9467bd", "-.", 1.2), ("#8c564b", ":", 1.2)]
 JUNK_BAND = (-4.0, 8.0)   # initial-data junk from the mouths reaches sphere R in t = R-4 .. R+8
 
 
@@ -125,59 +125,80 @@ def main(argv: list[str] | None = None) -> int:
         print(f"{labels[n]:<52s} t = {data[n][0, 0]:.2f} .. {data[n][-1, 0]:.2f}")
 
     # ---- figure ----------------------------------------------------------
-    fig, axs = plt.subplots(len(radii), 1, figsize=(10, 2.8 * len(radii)), sharex=True, squeeze=False)
+    style.paper(base=10.0)
+    # "20" -> "2,0", "2-2" -> "2,-2": the superscript is (l, m), and printing it
+    # as a bare pair of digits reads as the number twenty.
+    mode_lm = f"{args.mode[0]},{args.mode[1:]}"
+    # The subject is slot 0 (ink, solid) and is drawn last, on top; the arms it
+    # is compared with follow in the fixed order.
+    kws = style.family(len(names), lw=None)
+    fig, axs = plt.subplots(len(radii), 1, figsize=(8.6, 2.5 * len(radii)), sharex=True, squeeze=False)
     axs = axs[:, 0]
     t_max = max(data[n][-1, 0] for n in names)
     for k, R in enumerate(radii):
         ax, col = axs[k], 1 + 2 * k
-        ax.axvspan(R + JUNK_BAND[0], R + JUNK_BAND[1], color="0.85", lw=0, zorder=0)
+        ax.axvspan(R + JUNK_BAND[0], R + JUNK_BAND[1], color=style.GRID, lw=0, zorder=0)
         for j, n in reversed(list(enumerate(names))):     # subject drawn last, on top
-            c, ls, lw = STYLES[j % len(STYLES)]
             d = data[n]
-            ax.plot(d[:, 0], R * d[:, col], color=c, ls=ls, lw=lw, label=labels[n] if k == 0 else None,
-                    zorder=3 if j == 0 else 2)
+            ax.plot(d[:, 0], R * d[:, col], zorder=3 if j == 0 else 2, **kws[j])
         if args.restart is not None:
-            ax.axvline(args.restart, color="k", ls=":", lw=1)
-            ax.axvline(args.restart + R / args.speed, color="r", ls=":", lw=1)
+            ax.axvline(args.restart, color=style.MUTED, ls=(0, (1, 2)), lw=0.9)
+            ax.axvline(args.restart + R / args.speed, color=style.BURGUNDY, ls=(0, (1, 2)), lw=0.9)
         # the subject's extrema after the junk band (or the restart)
         after = args.annotate_after if args.annotate_after is not None else (
             args.restart if args.restart is not None else R + JUNK_BAND[1])
         d = data[subject]
         m = d[:, 0] > after
-        tt, yy = d[m, 0], np.convolve(R * d[m, col], np.ones(15) / 15, mode="same")
-        last = -99.0
+        # Smooth over ~2 code units, not over a fixed 15 samples: from t ~ 85
+        # these arms carry a grid-scale wobble of period ~1.5, which a 15-sample
+        # (0.75-unit) window leaves untouched, so every wobble crest counted as
+        # a swing and the labels landed on top of each other.
+        tt = d[m, 0]
+        win = max(3, int(round(2.0 / max(np.median(np.diff(tt)), 1e-9))) | 1)
+        yy = np.convolve(R * d[m, col], np.ones(win) / win, mode="same")
+        # Label the swings, but only the ones worth a label.  The late grid-scale
+        # wobble turns every third sample into an extremum, and labelling those
+        # printed five overlapping strings on top of each other; require a real
+        # amplitude AND a gap set by the span drawn, not a fixed six units.
+        gap = max(8.0, 0.12 * (tt[-1] - tt[0])) if len(tt) else 8.0
+        big = 0.30 * np.max(np.abs(yy)) if len(yy) else 0.0
+        last = -1e9
         for i in range(20, len(yy) - 20):
-            if (yy[i] - yy[i - 1]) * (yy[i + 1] - yy[i]) < 0 and abs(yy[i]) > 0.05 and tt[i] - last > 6 \
-                    and tt[i] < tt[-1] - 1.5:
+            if (yy[i] - yy[i - 1]) * (yy[i + 1] - yy[i]) < 0 and abs(yy[i]) > big \
+                    and tt[i] - last > gap and tt[i] < tt[-1] - 1.5:
                 last = tt[i]
-                ax.annotate(f"{yy[i]:+.2f} at t = {tt[i]:.1f}", (tt[i], yy[i]),
-                            xytext=(0, -16 if yy[i] > 0 else 8), textcoords="offset points",
-                            ha="center", fontsize=8, color="0.3")
-        ax.set_ylabel(f"Re r·ψ4 ({args.mode})\nR = {R:g}")
-        ax.grid(alpha=0.3)
+                ax.annotate(f"${yy[i]:+.2f}$ at $t={tt[i]:.0f}$", (tt[i], yy[i]),
+                            xytext=(0, -15 if yy[i] > 0 else 9), textcoords="offset points",
+                            ha="center", fontsize=8, color=style.MUTED)
+        ax.set_ylabel(rf"$r\,\mathrm{{Re}}\,\Psi_4^{{{mode_lm}}}$" "\n" rf"$R={R:g}$")
         ax.set_xlim(0, np.ceil(t_max / 5) * 5 + 1)
         ax.margins(y=0.25)
-    axs[0].legend(loc="upper left", fontsize=8.5, framealpha=0.9)
-    axs[-1].set_xlabel("t")
-    title = args.title or f"Re r·ψ4 ({args.mode}) at R = {' / '.join(f'{R:g}' for R in radii)}: {labels[subject]}"
-    fig.suptitle(title, fontsize=11, y=0.995)
-    sub = "grey: initial-data junk from the mouths"
+    # Legend in RUN order -- the curves are drawn back to front so the subject
+    # ends on top, and left to itself the key comes out upside down, naming the
+    # least important arm first.
+    handles = [plt.Line2D([], [], **kws[j]) for j in range(len(names))]
+    axs[0].legend(handles, [labels[n] for n in names], loc="upper left")
+    axs[-1].set_xlabel(r"$t$")
+    title = args.title or (rf"$r\,\mathrm{{Re}}\,\Psi_4^{{{mode_lm}}}$ at "
+                           f"$R={' / '.join(f'{R:g}' for R in radii)}$"
+                           f"   —   {labels[subject]}")
+    fig.suptitle(title, y=0.995)
+    sub = "grey band: initial-data junk from the mouths"
     if args.restart is not None:
-        sub += f";  black dotted: restart (t = {args.restart:g});  red dotted: earliest arrival of anything it changed, at {args.speed:g} c"
-    axs[0].set_title(sub, fontsize=8.5, color="0.35", pad=4)
+        sub += (f";  dotted: the restart at $t={args.restart:g}$;  red dotted: the earliest "
+                f"arrival of anything it changed, at ${args.speed:g}\\,c$")
+    axs[0].set_title(sub, fontsize=8.5, color=style.MUTED, pad=4, loc="left")
     fig.tight_layout(rect=(0, 0, 1, 0.975))
     out = pathlib.Path(args.out).expanduser() if args.out else \
         run_dirs[subject] / "frames" / f"psi4_{args.mode}_compare.png"
-    out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=110)
-    print("wrote", out)
+    print("wrote", style.save(fig, out))
 
     # ---- pairwise table ----------------------------------------------------
     if len(names) < 2:
         return 0
     pairs = list(itertools.combinations(range(len(names)), 2))
     wins = [parse_window(w, t_end) for w in args.windows]
-    print(f"\nmax |diff| of Re r·ψ4 ({args.mode}), % of the peak of '{labels[ref]}' after the junk band")
+    print(f"\nmax |diff| of Re r.psi4 ({mode_lm}), % of the peak of '{labels[ref]}' after the junk band")
     print("runs: " + "  ".join(f"[{j}] {labels[n]}" for j, n in enumerate(names)))
     print(f"{'window':>13s}  R  " + "  ".join(f"[{a}]-[{b}]" for a, b in pairs) + "   peak")
     for k, R in enumerate(radii):
@@ -192,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
                 cells.append("    n/a" if m.sum() < 5 else
                              f"{100 * np.max(np.abs(R * (A[m, col] - B[m, col]))) / peak:7.2f}")
             print(f"{lo:6.1f}-{hi:6.1f} {R:2g}  " + "  ".join(cells) + f"   {peak:.3f}")
-    print("\nmax |Re r·ψ4| per window, per run:")
+    print("\nmax |Re r.psi4| per window, per run:")
     for k, R in enumerate(radii):
         col = 1 + 2 * k
         for lo, hi in wins:

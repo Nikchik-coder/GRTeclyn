@@ -318,12 +318,31 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 4. Derived summary table over the packed streams
+# 4. Reductions: the generated notes and the small tables beside them
 # ---------------------------------------------------------------------------
+# These write markdown and .dat only, and import nothing outside the pack, so a
+# copy of results/merger stays runnable with a stock Python.  Figures are step 5.
 "${PY_BIN}" "${DEST}/analysis/make_summary.py" "${DEST}"
 "${PY_BIN}" "${DEST}/analysis/single_throat_instability.py" "${DEST}"
 "${PY_BIN}" "${DEST}/analysis/throat_clock_comparison.py" "${DEST}" || echo "[pack-merger] clock comparison failed -- continuing"
 "${PY_BIN}" "${DEST}/analysis/placement_curve.py" "${DEST}" || echo "[pack-merger] placement curve failed -- continuing"
+
+# ---------------------------------------------------------------------------
+# 5. Generated figures, from the campaign's figure package
+# ---------------------------------------------------------------------------
+# Every merger figure script lives in
+# grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/ so that
+# all of them share one house style; they resolve runs by NAME and write into
+# results/merger/figures/<group>/.  Each is allowed to fail without taking the
+# pack down: a figure whose arm has not been packed yet is not an error.
+VIS="grteclyn_wrapper.visualisation.wormhole_merger"
+export PYTHONPATH="${ROOT}/grteclyn-wrapper/src${PYTHONPATH:+:${PYTHONPATH}}"
+for mod in plot_branches plot_placement_curve plot_bbh_ringdown \
+           plot_bbh_vs_wormhole_psi4; do
+  "${PY_BIN}" -m "${VIS}.${mod}" --pack-root "${DEST}" \
+    || "${PY_BIN}" -m "${VIS}.${mod}" "${DEST}" \
+    || echo "[pack-merger] ${mod} failed -- continuing"
+done
 
 echo "[pack-merger] total size: $(du -sh "${DEST}" | cut -f1)"
 echo "[pack-merger] done"

@@ -49,7 +49,9 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import RUNS_ROOT, find_run  # noqa: E402
-from grteclyn_wrapper.visualisation.wormhole_merger.style import FAINT, INK, MUTED, paper  # noqa: E402
+from grteclyn_wrapper.visualisation.wormhole_merger.style import (  # noqa: E402
+    FAINT, INK, MUTED, paper, save, signed,
+)
 
 R_EXACT = 3.8895      # closed form for the drainhole a = 2, m = 1
 SEED_RATE = 0.1702    # level 3's own truncation-seed rate (BRANCHES.md)
@@ -222,12 +224,17 @@ def main(argv: list[str] | None = None) -> int:
                         top=1 - 0.22 / H, bottom=XLAB_H / H)
 
     def style_of(label: str) -> dict:
-        """Identity without colour.  The dash pattern is the SIGN of the kick and
-        the weight is its SIZE, so the two members of a pair read as a pair and
-        the two amplitudes stay apart."""
-        return dict(color=INK,
-                    linewidth=0.9 if abs(float(label)) < 5e-3 else 1.5,
-                    linestyle=(0, (4, 2.5)) if label.startswith("+") else "-")
+        """Identity three times over, so no single channel has to carry it.
+
+        Colour is the SIGN -- deep blue for a negative kick, burgundy for a
+        positive one, the campaign's two poles.  So is the dash pattern, which
+        is what keeps the figure readable in greyscale and to a colour-blind
+        reader.  The weight is the SIZE, so the two members of a pair read as a
+        pair and the two amplitudes stay apart.
+        """
+        return dict(color=signed(label),
+                    linewidth=1.0 if abs(float(label)) < 5e-3 else 1.6,
+                    linestyle=(0, (4, 2.5)) if label.startswith("+") else (0, ()))
 
     def tag(m: dict) -> str:
         return rf"$\varepsilon={m['label']}$" + (r"  (NaN)" if m["dead"] else "")
@@ -243,26 +250,26 @@ def main(argv: list[str] | None = None) -> int:
         excursion is thinner than the line).
         """
         x0, x1 = ax.get_xlim()
-        disp = [ax.transData.transform((x1, y))[1] for _, y, _ in items]
+        disp = [ax.transData.transform((x1, item[1]))[1] for item in items]
         at, prev = {}, None
         for i in sorted(range(len(items)), key=lambda j: disp[j]):
             prev = disp[i] if prev is None else max(disp[i], prev + gap)
             at[i] = prev
         inv = ax.transData.inverted()
-        for i, (xe, ye, text) in enumerate(items):
+        for i, (xe, ye, text, colour) in enumerate(items):
             yd = float(inv.transform((0.0, at[i]))[1])
             if xe < x1 - 0.01 * (x1 - x0):
                 ax.plot([xe, x1], [ye, yd], color=FAINT, linewidth=0.6,
                         linestyle=(0, (1, 2)), zorder=2, clip_on=False)
             ax.annotate(text, (x1, yd), textcoords="offset points", xytext=(6, 0),
-                        color=INK, va="center", ha="left", fontsize=9.5,
+                        color=colour, va="center", ha="left", fontsize=9.5,
                         annotation_clip=False)
 
     # ---- the throat ------------------------------------------------------
     if t_cross is not None:
         axA.axvline(t_cross, color=FAINT, linewidth=0.7, linestyle=(0, (2, 3)), zorder=1)
     axA.axhline(args.exact, color=MUTED, linewidth=0.8, linestyle=(0, (1, 2.5)), zorder=2)
-    labA = [(xhi, args.exact, r"$R_\star$")]
+    labA = [(xhi, args.exact, r"$R_\star$", MUTED)]
     for m in arms:
         st, k = style_of(m["label"]), m["clip"]
         # Past the cutoff the curve is the diagnostic, not the throat: draw it,
@@ -271,12 +278,12 @@ def main(argv: list[str] | None = None) -> int:
         axA.plot(m["t"][:k if k else None], m["R"][:k if k else None], zorder=3, **st)
         if k is not None:
             axA.plot(m["t"][k - 1:], m["R"][k - 1:], alpha=0.28, zorder=3, **st)
-            axA.plot(m["t"][k], m["R"][k], "o", color=INK, markersize=3.5,
+            axA.plot(m["t"][k], m["R"][k], "o", color=st["color"], markersize=3.5,
                      markeredgecolor="white", markeredgewidth=0.9, zorder=4)
-        axA.plot(m["t"][-1], m["R"][-1], "X" if m["dead"] else "o", color=INK,
+        axA.plot(m["t"][-1], m["R"][-1], "X" if m["dead"] else "o", color=st["color"],
                  markersize=6 if m["dead"] else 3.5, markeredgecolor="white",
                  markeredgewidth=1.0, alpha=0.28 if k is not None else 1.0, zorder=4)
-        labA.append((m["t"][-1], m["R"][-1], tag(m)))
+        labA.append((m["t"][-1], m["R"][-1], tag(m), st["color"]))
     axA.set_xlim(0, xhi)
     axA.set_xlabel(r"$t$")
     axA.set_ylabel(r"$R_{\mathrm{min}}$")
@@ -286,10 +293,8 @@ def main(argv: list[str] | None = None) -> int:
     out = pathlib.Path(args.out) if args.out else (
         root.parents[1] / "results" / "merger" / "figures" / "01_single_throat"
         / "single_throat_seed_branches.png")
-    out.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out, dpi=args.dpi)
-    fig.savefig(out.with_suffix(".pdf"))
-    print(f"[seed-branches] wrote {out} and {out.with_suffix('.pdf').name}")
+    png = save(fig, out, dpi=args.dpi)
+    print(f"[seed-branches] wrote {png} (+pdf)")
     return 0
 
 

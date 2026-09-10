@@ -26,6 +26,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
+
 # The physics the plot is drawn against; see research/merger/Plan.md.
 COLLAPSE_SOURCE = (44.0, 51.5)
 SOURCE_RADIUS = 1.5  # where the collapsing core radiates from
@@ -78,19 +80,36 @@ def load_modes(path: Path) -> dict:
     return out
 
 
-def _plot_channel(ax, runs, m, ridx, scale, title, ylabel, window, radius):
-    for label, data, colour in runs:
+def _plot_channel(ax, runs, m, ridx, scale, title, ylabel, window, radius, under=()):
+    # The band is the thing every arm is being measured against, so it is drawn
+    # first and in the grid's own tone: it is the ruler, not a fifth series.
+    ax.axvspan(
+        *window,
+        color=style.GRID,
+        zorder=0,
+        label=rf"collapse signature at $R={radius:g}$  ({window[0]:.1f}–{window[1]:.1f})",
+    )
+    # Arms drawn UNDER the ladder: a fat, pale burgundy stroke, so "the freeze
+    # arm runs exactly under the unfrozen one" is something the eye sees rather
+    # than something the caption claims.
+    for label, data, _kw in under:
+        key = (m, ridx)
+        if key in data["amp"]:
+            ax.plot(data["t"], data["amp"][key] * scale, color=style.BURGUNDY,
+                    lw=5.0, alpha=0.25, solid_capstyle="round", zorder=1,
+                    label=rf"{label}  (to $t={data['t'][-1]:.1f}$)")
+
+    for label, data, kw in runs:
         key = (m, ridx)
         if key not in data["amp"]:
             continue
         ax.plot(
             data["t"],
             data["amp"][key] * scale,
-            color=colour,
-            lw=1.8,
             marker="o",
-            ms=2.5,
-            label=f"{label}  (to t = {data['t'][-1]:.1f})",
+            ms=2.0,
+            label=rf"{label}  (to $t={data['t'][-1]:.1f}$)",
+            **kw,
         )
         # Mark where the stream stops: that is the run's death, and the whole
         # point of the figure is how far short of the window it falls.
@@ -98,26 +117,20 @@ def _plot_channel(ax, runs, m, ridx, scale, title, ylabel, window, radius):
             data["t"][-1],
             data["amp"][key][-1] * scale,
             marker="x",
-            ms=9,
-            mew=2,
-            color=colour,
+            ms=8,
+            mew=1.8,
+            color=kw["color"],
         )
 
-    ax.axvspan(
-        *window,
-        color="tab:green",
-        alpha=0.13,
-        zorder=0,
-        label=f"collapse signature at R = {radius:g}  ({window[0]:.1f}-{window[1]:.1f})",
-    )
-    ax.set_title(title, fontsize=11)
+    ax.set_title(title, loc="left")
     ax.set_ylabel(ylabel)
-    ax.grid(alpha=0.3)
-    ax.legend(fontsize=8, loc="upper left")
+    ax.legend(fontsize=8, loc="best")
 
 
-def make_figure(runs, radius_label, ridx, scale, out_path: Path, radius: float) -> Path:
-    fig, axes = plt.subplots(2, 1, figsize=(12, 8.5), sharex=True)
+def make_figure(runs, radius_label, ridx, scale, out_path: Path, radius: float, under=()) -> Path:
+    style.paper(base=10.0)
+    fig, axes = plt.subplots(2, 1, figsize=(8.6, 6.2), sharex=True,
+                             constrained_layout=True)
     window = target_window(radius)
 
     _plot_channel(
@@ -126,10 +139,11 @@ def make_figure(runs, radius_label, ridx, scale, out_path: Path, radius: float) 
         m=2,
         ridx=ridx,
         scale=scale,
-        title="Spinning quadrupole (l = 2, m = 2) -- the binary channel",
-        ylabel=r"$r\,|\Psi_4|$",
+        title=r"(a) spinning quadrupole $(\ell,m)=(2,2)$ — the binary channel",
+        ylabel=r"$r\,|\Psi_4^{2,2}|$",
         window=window,
         radius=radius,
+        under=under,
     )
     _plot_channel(
         axes[1],
@@ -137,15 +151,17 @@ def make_figure(runs, radius_label, ridx, scale, out_path: Path, radius: float) 
         m=0,
         ridx=ridx,
         scale=scale,
-        title="Axisymmetric channel (l = 2, m = 0) -- the head-on-style burst",
-        ylabel=r"$r\,|\Psi_4|$",
+        title=r"(b) axisymmetric channel $(\ell,m)=(2,0)$ — the head-on-style burst",
+        ylabel=r"$r\,|\Psi_4^{2,0}|$",
         window=window,
         radius=radius,
+        under=under,
     )
 
-    axes[1].set_xlabel("t  (code units)")
-    right = max(window[1] + 2.0, max(d["t"][-1] for _, d, _ in runs) + 2.0)
-    axes[1].set_xlim(left=min(d["t"][0] for _, d, _ in runs) - 1.0, right=right)
+    axes[1].set_xlabel(r"$t$")
+    every = list(runs) + list(under)
+    right = max(window[1] + 2.0, max(d["t"][-1] for _, d, _ in every) + 2.0)
+    axes[1].set_xlim(left=min(d["t"][0] for _, d, _ in every) - 1.0, right=right)
 
     sponge_note = (
         "  --  NB: this sphere lies INSIDE the sponge zone (r = 24-32), an "
@@ -154,16 +170,14 @@ def make_figure(runs, radius_label, ridx, scale, out_path: Path, radius: float) 
         else ""
     )
     fig.suptitle(
-        f"Wormhole merger: r*Psi4 l = 2 at {radius_label}\n"
+        rf"$r\,|\Psi_4|$, $\ell=2$, at ${radius_label}$" + "\n"
         "crosses mark each run's end (NaN death, or stop time reached); the "
         f"shaded band is the collapse signature{sponge_note}",
-        fontsize=11,
+        fontsize=9.5, color=style.MUTED,
     )
-    fig.tight_layout(rect=(0, 0, 1, 0.94))
-    out_path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(out_path, dpi=140)
+    out = style.save(fig, out_path)
     plt.close(fig)
-    return out_path
+    return out
 
 
 def main(argv=None) -> int:
@@ -175,6 +189,14 @@ def main(argv=None) -> int:
         metavar="LABEL=PATH",
         help="Label and path to a run's psi4_mode_l2_all.dat (repeatable, in "
         "ladder order).",
+    )
+    ap.add_argument(
+        "--under",
+        action="append",
+        default=[],
+        metavar="LABEL=PATH",
+        help="An arm to draw as a fat pale stroke BENEATH the ladder -- for showing "
+        "that one arm lies on another (repeatable).",
     )
     ap.add_argument("--out", required=True, type=Path, help="Output PNG path.")
     ap.add_argument(
@@ -194,26 +216,38 @@ def main(argv=None) -> int:
     # signature of genuine outgoing radiation.  An extra R/14 here would have
     # double-counted that factor and invented a 2.1x discrepancy.
     scale = 1.0
-    radius_label = "R = 14" if ridx == 0 else "R = 30"
+    radius_label = "R=14" if ridx == 0 else "R=30"
 
 
-    palette = [
-        "#777777", "tab:blue", "tab:red", "tab:green", "tab:purple",
-        "tab:orange", "tab:brown", "tab:cyan",
-    ]
+    # A refinement ladder is an ORDERED family: pale for the coarse arm, dark
+    # for the fine one, so the reading order of the legend is the reading order
+    # of the grid.  The dash cycle rides along, for greyscale.
+    specs = list(args.run)
+    # Always the ordinal ramp, however few arms there are: a refinement ladder
+    # is ordered by construction, and the four categorical hues would throw
+    # that away to say nothing in its place.
+    kws = style.ordinal_series(len(specs), lw=1.5)
     runs = []
-    for i, spec in enumerate(args.run):
+    for i, spec in enumerate(specs):
         label, _, path = spec.partition("=")
         p = Path(path)
         if not p.is_file():
             raise SystemExit(f"no such stream: {p}")
-        runs.append((label, load_modes(p), palette[i % len(palette)]))
+        runs.append((label, load_modes(p), kws[i]))
+
+    under = []
+    for spec in args.under:
+        label, _, path = spec.partition("=")
+        q = Path(path)
+        if not q.is_file():
+            raise SystemExit(f"no such stream: {q}")
+        under.append((label, load_modes(q), None))
 
     radius = 14.0 if ridx == 0 else 30.0
-    out = make_figure(runs, radius_label, ridx, scale, args.out, radius)
+    out = make_figure(runs, radius_label, ridx, scale, args.out, radius, under)
     print(f"wrote {out}")
     window = target_window(radius)
-    for label, data, _ in runs:
+    for label, data, _kw in runs:
         gap = window[0] - data["t"][-1]
         print(
             f"  {label}: stream ends t = {data['t'][-1]:.2f}, "

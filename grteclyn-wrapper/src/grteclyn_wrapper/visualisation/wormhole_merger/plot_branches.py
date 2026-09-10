@@ -7,7 +7,8 @@ regenerated from the packed streams under campaign/ and from the shell-scan
 table single_throat/branch_shell_scans_2026-09-08.dat (written from the kept
 plotfiles by the consumer's horizon module).  Do not hand-edit the outputs.
 
-    python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_branches [results/merger]
+    python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_branches \
+        [--pack-root results/merger]
 """
 from __future__ import annotations
 
@@ -23,6 +24,8 @@ _REPO = pathlib.Path(__file__).resolve().parents[5]
 sys.path.insert(0, str(_REPO / "results" / "merger" / "analysis"))
 from pack_paths import figure_dir, find_run, group_dir  # noqa: E402
 
+from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
+
 R_EXACT = 3.8895  # closed form for a = 2, m = 1 (INSTABILITY.md)
 ARMS = {
     "ml2": "single_hold_ml2_t100",
@@ -31,8 +34,12 @@ ARMS = {
     "ml4": "single_hold_ml4_t100",
     "ml4 low floor": "single_hold_ml4_lowfloor_t100",
 }
-# Categorical slots 1-3 of the reference palette, fixed order by level.
-COLOUR = {"ml2": "#2a78d6", "ml3": "#eb6834", "ml4": "#1baf7a"}
+# Refinement level is an ORDERED family, so it takes the ordinal ramp -- pale
+# for the coarse grid, dark for the fine one -- and the dash cycle with it, not
+# three unrelated hues that say nothing about which grid is which.
+_LEVELS = ("ml2", "ml3", "ml4")
+_KW = dict(zip(_LEVELS, style.ordinal_series(len(_LEVELS), lw=1.7)))
+COLOUR = {k: v["color"] for k, v in _KW.items()}
 
 
 def load(root: pathlib.Path, run: str, name: str) -> np.ndarray:
@@ -94,7 +101,19 @@ def parse_scans(path: pathlib.Path) -> tuple[list[dict], dict[str, np.ndarray]]:
 
 
 def main(argv: list[str]) -> int:
-    root = pathlib.Path(argv[1]) if len(argv) > 1 else pathlib.Path(__file__).resolve().parents[1]
+    """Pack root as a positional or as --pack-root; the packer uses the flag,
+    which every other module in this package also accepts."""
+    rest = [a for a in argv[1:] if a not in ("--pack-root",)]
+    prev_flag = False
+    positional = []
+    for a in argv[1:]:
+        if a == "--pack-root":
+            prev_flag = True
+            continue
+        if prev_flag or not a.startswith("-"):
+            positional.append(a)
+        prev_flag = False
+    root = pathlib.Path(positional[0]) if positional else _REPO / "results" / "merger"
     ar = {k: load(root, v, "areal_radius.dat") for k, v in ARMS.items()}
     cn = {k: load(root, v, "constraint_norms.dat") for k, v in ARMS.items()}
     cd = {k: load(root, v, "collapse_diagnostics.dat") for k, v in ARMS.items()}
@@ -260,68 +279,72 @@ def main(argv: list[str]) -> int:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    fig, axes = plt.subplots(1, 3, figsize=(15, 4.6), facecolor="#fcfcfb")
-    for ax in axes:
-        ax.set_facecolor("#fcfcfb")
-        ax.grid(True, color="#e6e5e1", linewidth=0.8)
-        for sp in ("top", "right"):
-            ax.spines[sp].set_visible(False)
-        ax.tick_params(colors="#52514e")
+    style.paper(base=10.0)
+    fig, axes = plt.subplots(1, 3, figsize=(12.4, 4.0), constrained_layout=True)
     axA, axB, axC = axes
-    axA.axhline(R_EXACT, color="#9a9890", linewidth=1, linestyle="--")
-    axA.text(1, R_EXACT + 0.15, "exact static throat", color="#52514e", fontsize=9)
+    axA.axhline(R_EXACT, color=style.FAINT, linewidth=0.8, linestyle=(0, (2, 2)))
+    # Right-hand end: the level-2 arm dies at t ~ 16 and its own end label sat
+    # exactly where this one used to be.
+    axA.text(110, R_EXACT + 0.15, "exact static throat", color=style.MUTED,
+             fontsize=8.5, ha="right")
     for k, lab in (("ml2", "level 2"), ("ml3", "level 3"), ("ml4", "level 4")):
         tt, RR = ar[k][:, 0], ar[k][:, 1]
         if k == "ml3":
             ok = tt <= 65
-            axA.plot(tt[ok], RR[ok], color=COLOUR[k], linewidth=2, label=lab)
-            axA.plot(tt[~ok], RR[~ok], color=COLOUR[k], linewidth=2, alpha=0.3)
-            axA.text(80, 2.25, "scan clipped at its\ninner cutoff (t > 65)", color="#52514e", fontsize=8, ha="center")
+            axA.plot(tt[ok], RR[ok], label=lab, **_KW[k])
+            axA.plot(tt[~ok], RR[~ok], alpha=0.3, **_KW[k])
+            axA.text(80, 2.25, "scan clipped at its\ninner cutoff ($t>65$)",
+                     color=style.MUTED, fontsize=8, ha="center")
         else:
-            axA.plot(tt, RR, color=COLOUR[k], linewidth=2, label=lab)
-        axA.text(tt[-1] + 1, RR[-1] + (0.12 if k == "ml2" else 0.0), lab, color=COLOUR[k], fontsize=9, va="center" if k != "ml2" else "bottom")
+            axA.plot(tt, RR, label=lab, **_KW[k])
+        axA.text(tt[-1] + 1, RR[-1] + (0.12 if k == "ml2" else 0.0), lab, color=COLOUR[k],
+                 fontsize=9, va="center" if k != "ml2" else "bottom")
     axA.set_xlim(0, 112)
-    axA.set_xlabel("t (code units)")
-    axA.set_ylabel("minimum areal radius R")
-    axA.set_title("The throat: collapse at level 3, inflation at level 4", fontsize=10, loc="left")
-    axA.legend(frameon=False, fontsize=9, loc="upper left")
+    axA.set_xlabel(r"$t$")
+    axA.set_ylabel(r"$R_{\mathrm{min}}$")
+    axA.set_title("(a) the throat: collapse at level 3, inflation at level 4", loc="left")
+    axA.legend(loc="upper left")
 
     for k, lab in (("ml3", "level 3"), ("ml4", "level 4")):
         tt = ar[k][:, 0]
         dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
         ok = (np.abs(dd) > 0) & (tt <= (65 if k == "ml3" else 100))
-        axB.plot(tt[ok], np.log10(np.abs(dd[ok])), color=COLOUR[k], linewidth=2, label=f"{lab} ({'shrinking' if dd[ok][-1] < 0 else 'growing'})")
+        axB.plot(tt[ok], np.log10(np.abs(dd[ok])),
+                 label=f"{lab} ({'shrinking' if dd[ok][-1] < 0 else 'growing'})", **_KW[k])
     for k, p, t0, t1 in (("ml3", p3, 49, 61), ("ml4", p4, 49, 61)):
         dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
         y0 = np.log10(abs(dd[int(np.argmin(np.abs(ar[k][:, 0] - t0)))]))
-        axB.plot([t0, t1], [y0, y0 + p[0] * (t1 - t0) / np.log(10)], color="#0b0b0b", linewidth=1)
-        axB.text(t1 + 1, y0 + p[0] * (t1 - t0) / np.log(10), f"tau = {1/p[0]:.2f}", fontsize=9, color="#0b0b0b", va="center")
+        axB.plot([t0, t1], [y0, y0 + p[0] * (t1 - t0) / np.log(10)],
+                 color=style.BURGUNDY, linewidth=1.1, linestyle=(0, (1.3, 1.7)))
+        axB.text(t1 + 1, y0 + p[0] * (t1 - t0) / np.log(10), rf"$\tau={1/p[0]:.2f}$",
+                 fontsize=9, color=style.BURGUNDY, va="center")
     axB.set_xlim(20, 105)
     axB.set_ylim(-4.5, 0.5)
-    axB.set_xlabel("t (code units)")
-    axB.set_ylabel("log10 |R − R(0)| / R(0)")
-    axB.set_title("Same rate to 9 %, opposite sign", fontsize=10, loc="left")
-    axB.legend(frameon=False, fontsize=9, loc="lower right")
+    axB.set_xlabel(r"$t$")
+    axB.set_ylabel(r"$\log_{10}\,|R-R_0|/R_0$")
+    axB.set_title("(b) same rate to 9 %, opposite sign", loc="left")
+    axB.legend(loc="lower right")
 
-    styles = {0: "-", 1: "--", 2: ":"}
+    styles = {0: (0, ()), 1: (0, (5, 2)), 2: (0, (1.3, 1.7))}
     for k, names in (("ml3", ["ml3_twin_t061", "ml3_twin_t072", "ml3_twin_t100"]), ("ml4", ["ml4_t077", "ml4_t088", "ml4_t100"])):
         for j, nm in enumerate(names):
             prof = profiles[nm]
             t = prof[0, 0]
-            axC.plot(prof[:, 4], prof[:, 5], color=COLOUR[k], linewidth=2, linestyle=styles[j], label=f"level {k[-1]}, t = {t:.0f}")
+            axC.plot(prof[:, 4], prof[:, 5], color=COLOUR[k], linewidth=1.6,
+                     linestyle=styles[j], label=rf"level {k[-1]}, $t={t:.0f}$")
             s = next(x for x in scans if x["scan"] == nm)
             if s["n_mots"] != "0":
-                axC.plot(float(s["r_mots"]), float(s["R_mots"]), "o", color=COLOUR[k], markersize=8, markeredgecolor="#fcfcfb", markeredgewidth=1.5)
-    axC.axhline(R_EXACT, color="#9a9890", linewidth=1, linestyle="--")
+                axC.plot(float(s["r_mots"]), float(s["R_mots"]), "o", color=COLOUR[k],
+                         markersize=6, markeredgecolor=style.GROUND, markeredgewidth=1.2)
+    axC.axhline(R_EXACT, color=style.FAINT, linewidth=0.8, linestyle=(0, (2, 2)))
     axC.set_xscale("log")
     axC.set_xlim(0.25, 16)
     axC.set_ylim(0, 22)
-    axC.set_xlabel("coordinate radius r from the throat centre")
-    axC.set_ylabel("areal radius R of the shell")
-    axC.set_title("Profiles: dots are marginally trapped surfaces", fontsize=10, loc="left")
-    axC.legend(frameon=False, fontsize=8, loc="upper right", ncol=2)
-    fig.tight_layout()
-    fig.savefig(figure_dir(root, "01_single_throat") / "single_throat_branches.png", dpi=130)
+    axC.set_xlabel(r"$r$")
+    axC.set_ylabel(r"$R$")
+    axC.set_title("(c) shell profiles: dots are marginally trapped surfaces", loc="left")
+    axC.legend(loc="upper right", ncol=2, fontsize=8)
+    style.save(fig, figure_dir(root, "01_single_throat") / "single_throat_branches.png")
     print("[branches] wrote campaign/01_single_throat/BRANCHES.md and figures/01_single_throat/single_throat_branches.png")
     return 0
 

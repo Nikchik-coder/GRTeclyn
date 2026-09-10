@@ -13,7 +13,7 @@ def main() -> int:
     print(_doc.rstrip() if _doc else "")
     print("\nRun one of:")
     for m in __all__:
-        if m != "run_tree":
+        if m not in ("run_tree", "streams", "style"):
             print(f"  python -m grteclyn_wrapper.visualisation.wormhole_merger.{m} --help")
     return 0
 

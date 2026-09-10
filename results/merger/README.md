@@ -703,34 +703,43 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
 
 ## `figures/` — the campaign figures, by group
 
-One folder per group, the same names as `campaign/`. The analysis scripts write
-into their own group at every pack (`01_single_throat/single_throat_branches.png`,
-`01_single_throat/throat_clock_comparison.png`, `04_binary_headon/placement_curve.png`);
-`pack_results.sh` copies the freeze programme's figures from the run tree into
-`05_binary_spiral/` (its two BBH-control panels into `07_bbh_control/`); the
-rest were placed by hand once and stay where git tracks them. The two
-live-snapshot figures of the head-on freeze arm (t = 38 and t = 54) were
-deleted on 2026-09-10 — the t = 100 figure supersedes both.
+One folder per group, the same names as `campaign/`.
+
+**Since 2026-09-10 every merger figure is drawn by one package**,
+`grteclyn_wrapper.visualisation.wormhole_merger`, in one house style: journal
+typography, at most three dark hues told apart by their dash pattern first,
+an ordinal ramp for ordered families (refinement levels, extraction radii),
+`cividis`/`RdBu_r` for anything two-dimensional, and symbols — not sentences —
+on the axes. Its README carries the palette and the rules. Every figure now
+ships a PDF beside its PNG.
+
+`pack_results.sh` runs the reductions (which write the generated notes and the
+small tables beside them) and then the figure modules that need no arguments.
+The rest are one command each, given below.
+
+Removed on 2026-09-10 along with their scripts: `throat_clock_comparison.png`
+(the origin-χ clock — a gauge-dependent monitor that could not be read as the
+throat quantity it looked like) and `scalar_vs_psi4_R14*.png`. The two
+live-snapshot figures of the head-on freeze arm (t = 38 and t = 54) went
+earlier the same day; the t = 100 figure supersedes both.
 
 | file | what it shows |
 | --- | --- |
 | `01_single_throat/single_throat_branches.png` | the level-3 / level-4 ladder of the lone throat: the same unstable mode at the same rate, opposite sign — collapse at level 3, inflation at level 4 (generated) |
-| `01_single_throat/throat_clock_comparison.png` | the origin-χ clock of every arm against the isolated throat (generated) |
-| `04_binary_headon/placement_curve.png` | the placement curve from the eighteen one-step probes (d = 6 → 48) and the V1 scout's mouths against it before contact (generated) |
+| `04_binary_headon/placement_curve.png` | the placement curve from the eighteen one-step probes (d = 6 → 48) and the V1 scout's mouths against it before contact. The reduction (`analysis/placement_curve.py`) writes `placement_curve.dat` and `placement_scout_residual.dat` beside the note; `plot_placement_curve` draws them (generated) |
+| `04_binary_headon/psi4_analysis_merge_headon_flip_d8_v1c_latefreeze_t100.{png,pdf}` | the six-panel wave analysis of the head-on programme, on V1c — the only head-on arm never restarted, so its spectrum carries no seam. The wave sits at f ≈ 0.03 and stays there: a bell, not a chirp. Most of the band is inside the wavelet's cone of influence (hatched), which is the honest statement that ~3 cycles is what the record holds. `plot_psi4_analysis` |
 | `04_binary_headon/headon_freeze_psi4_20_R10_14_18_t100.png` | the head-on freeze arm's (2,0) mode at R = 10/14/18 to t = 100 (final, 2026-09-09): **three swings of the merged object, outgoing all the way** — at R = 10 peak +0.23 (t = 28.2), trough −0.18 (43.6), peak +0.11 (62.7), trough −0.06 (79.0), period ≈ 33 and ×0.6 per half-swing; R = 14 and 18 the same, each ~4 units later per 4 units of radius. The cross-correlation lag from R = 10 to 18 is positive in every window, so nothing comes back from the wall. The fill twin (dashed, 1.0/1.5) lies on V1c to 3e-4 of peak until each fill's imprint arrives (red dotted), then differs by 1–5 % of peak at R = 10 and 3–12 % at R = 14 — a drift later shown to be V1c's own, not the fill's; at R = 18 both runs grow a grid-scale wobble (period ≈ 1.5) from t ≈ 80. Amplitude still grows with R: R = 18 is not the wave zone. |
 | `04_binary_headon/headon_downstep_psi4_20_R10_14_18_t100.png` | the level-3 down-step (restarted from the level-5 t = 35 checkpoint with max_level 3) against the level-5 arm, the narrow-fill twin and V1c: Re r·ψ4 (2,0) at R = 10/14/18 to t = 100 (2026-09-10). The down-step and the level-5 arm lie on top of each other to 0.05 / 0.19 / 0.25 % of peak through t = 98.4, the fill twin inside 0.07 / 0.14 / 0.25 %; V1c, the only never-restarted arm, drifts by 6 / 14 / 41 %. Grey band: initial-data junk; black dotted: the restart at t = 35; red dotted: the earliest arrival of anything the restart changed. Made by `python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_modes --restart 35 …` from the every-step Weyl4 streams. |
 | `05_binary_spiral/psi4_analysis_freeze_wide_t080.{png,pdf}` | six-panel analysis of the (2,0) breathing mode, full history t = 0–80 stitched across the restart chain: waveform at both radii, retarded-time overlay, PSD, propagation speed (0.889 of coordinate light — see the speed check below), spectrogram, strain vs Advanced LIGO |
 | `05_binary_spiral/psi4_analysis_freeze_wide_t080_m2.{png,pdf}` | same six panels for the (2,2) whirl mode — the channel that carries the plunge burst |
 | `05_binary_spiral/psi4_analysis_freeze_narrow_t100.{png,pdf}` | the six panels for the narrow-fill drain arm (fill 1.3/1.8) to t = 97 — the seam twin of the wide-fill analysis; the two agree to five digits outside the fill |
 | `05_binary_spiral/gw_merger_full_history_0_97.png` | the stitched p = 0.12 waveform t = 0 → 97 (`campaign/05_binary_spiral/psi4_merger_stitched_0_97.dat`: r03000 to 50.5, fillwide80 to 79.5, fillwide100 to 97): no chirp and no ringdown anywhere in it (archive GPU_PLAN_2026-09-03 §B4) |
-| `05_binary_spiral/merger_ladder_psi4_R14/R30.png` | every campaign arm overlaid at each detector: the freeze arms run exactly under the unfrozen ladder arms wherever they overlap |
-| `05_binary_spiral/ladder_psi4_R14_lvl6.png` | the refinement-ladder arms alone at R = 14 |
-| `05_binary_spiral/merger_constraints_t80.png` | Hamiltonian and momentum L2 for both completed t = 80 freeze arms, t = 0–80: the spikes before t = 34 are regrid transients; the smooth bump is the collapse; after the freeze engages at 53 both norms sit flat for 27 units |
+| `05_binary_spiral/merger_ladder_psi4_R14.png` | the refinement ladder (levels 4–7) at R = 14, with the two freeze arms drawn as a fat pale stroke beneath: every ladder arm dies at t = 53–56, short of the collapse band at 58–66, and lies exactly on the freeze arms where they overlap. `plot_ladder_psi4 --radius 14 --run "level N=…" --under "…freeze arm=…"` |
+| `05_binary_spiral/merger_constraints_t80.{png,pdf}` | Hamiltonian and momentum L2 for both completed t = 80 freeze arms, t = 0–80: the spikes before t = 34 are regrid transients; the smooth bump is the collapse; after the freeze engages at 53 both norms sit flat for 27 units |
 | `05_binary_spiral/wave_speed_check.png` | why 0.889 c is not sub-luminal junk: the metric's own local light speed along the extraction path predicts a 14→30 crossing of ~19.5; the wave took 18.0. Constraint/gauge modes travel at √2 × light and are excluded |
 | `05_binary_spiral/seam_ring_rescaling.png` | why the freeze-arm frames *look* like the signal vanishes: a growing Ψ₄ artefact confined to the freeze seam hijacks the per-frame colour scale; the radiation field is bit-identical to the unfrozen twin beyond r = 6 |
-| `05_binary_spiral/scalar_vs_psi4_R14.png`, `_fillwide.png` | the scalar-channel flux against Ψ₄ at R = 14 for the two fill arms (the negative-energy channel the balance sheet needs) |
 | `05_binary_spiral/bbh_vs_wormhole_psi4.{png,pdf}` | same masses, same orbit, different object: wormhole vs BBH waveforms, envelopes (2.3× / 5.5×), PSD |
-| `06_binary_flyby/p045_flyby_separation.png` | the p = 0.45 arm's separation to t = 60: closest approach 3.95 at t = 40, then out again (2026-09-02) |
+| `06_binary_flyby/p045_flyby_separation.{png,pdf}` | the p = 0.45 arm's separation to t = 91: closest approach 3.95 at t = 40.05, then out again, with each throat's own monitor below. Redrawn 2026-09-10 as two stacked panels — the earlier version put separation and min χ on a shared frame with a second y-axis, where the crossing of the two curves read as an event it is not. `plot_separation --run merge_orbit_flip_d12_p045_t200` |
 | `06_binary_flyby/p045_flyby_chi_linear.png`, `p045_flyby_logchi.png`, `p045_flyby_phi.png`, `p045_flyby_lapse_t84.png`, `p045_flyby_weyl4mag_t60.png` | slices of χ, φ, the lapse and \|Ψ₄\| through the fly-by (2026-09-02, drawn as "the throats survive it"). **Read with item 5 above:** from t ≈ 45 the midpoint lapse collapses and the Hamiltonian norm doubles every 5 units, so the frames after t ≈ 50 (the t = 60 and t = 84 ones here) show a run whose constraints are 3–100× the initial data's |
 | `06_binary_flyby/gw_flyby_vs_merger_m0_chain.png`, `gw_flyby_vs_merger_m2.png`, `gw_merger_vs_flyby_full.png` | the p = 0.12 chain's (2,0) and (2,2) modes against the p = 0.45 fly-by's (2026-09-04): superposed over t = 0–25 (the initial-data junk, not the orbit); in the clean window the fly-by radiates ~1.7× harder than the merger; across the stitched 0–97 no chirp and no ringdown (archive GPU_PLAN_2026-09-03 §B4) |
 | `07_bbh_control/bbh_t150_ringdown.{png,pdf}` | the BBH control's full (2,2) ringdown at R = 30 with the QNM fit (period 29.7, τ 27.1) and the Kerr known-answer comparison |
@@ -794,11 +803,16 @@ figures/<group>/                  the figures, by the same groups (table above)
 runs_registry.tsv                 ONE line per run: what is different, caveat, stopped
                                   note -- the only place a run is registered (the
                                   launcher appends it when WHM_WHAT is set)
-analysis/pack_paths.py            how every script finds a run by name, wherever filed
+analysis/pack_paths.py            how every script here finds a run by name, wherever filed
 analysis/make_summary.py          builds the two summary tables, one block per group
-analysis/single_throat_instability.py, single_throat_branches.py,
-analysis/throat_clock_comparison.py, placement_curve.py
-                                  build the generated notes and figures named above
+analysis/single_throat_instability.py, throat_clock_comparison.py,
+analysis/placement_curve.py       the REDUCTIONS: they write the generated notes above
+                                  (INSTABILITY.md, CLOCK_COMPARISON.md,
+                                  PLACEMENT_CURVE.md) plus the small .dat tables a
+                                  figure needs.  They draw nothing and import nothing
+                                  outside this folder, so a copy of the pack stays
+                                  runnable with a stock Python.  The FIGURES all live in
+                                  grteclyn_wrapper.visualisation.wormhole_merger
 summary.md, summary.csv           one row per run (csv: plus a `group` column), generated
 ```
 

@@ -15,8 +15,15 @@ evolution_params.txt, binary_throat_diagnostics.dat) or the run tree
 (runs/wormhole_merger: <run>/small_data/horizon_scan.dat, params.txt,
 data/binary_throat_diagnostics.dat).
 
-    python results/merger/analysis/placement_curve.py results/merger      # pack: writes PLACEMENT_CURVE.md + figures/placement_curve.png
+    python results/merger/analysis/placement_curve.py results/merger      # pack: writes PLACEMENT_CURVE.md + the two reduced tables
     python results/merger/analysis/placement_curve.py --runs runs/wormhole_merger   # run tree: prints only
+
+This is the REDUCTION only.  It reads the raw scans, writes the note and two
+small tables beside it, and draws nothing: the pack has to stay runnable with
+nothing but a stock Python, and a figure has to obey the campaign's house style.
+The figure is
+``python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_placement_curve``,
+which reads the two tables this writes.
 
 Method note (for anyone repeating the probes): the launcher's consumer sidecar only
 touches a plotfile whose Header is older than 30 s (its NFS guard), so a 12-second
@@ -36,7 +43,7 @@ import sys
 import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from pack_paths import figure_dir, find_run, group_dir, iter_runs  # noqa: E402
+from pack_paths import find_run, group_dir, iter_runs  # noqa: E402
 
 ISOLATED = 3.8895  # exact drainhole a = 2, m = 1, areal radius of the throat
 
@@ -203,38 +210,27 @@ def main() -> None:
         f.write(text)
     print(f"[placement] wrote {out_md} ({len(pts)} probes, {len(resid)} scout rows)")
 
-    try:
-        import matplotlib
-        matplotlib.use("Agg")
-        import matplotlib.pyplot as plt
-    except Exception as e:  # pragma: no cover
-        print(f"[placement] no matplotlib ({e}) -- figure skipped")
-        return
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4))
-    ax1.plot(ds, Rs, "o-", color="#1f4e79", label="placed at rest (t = 0 probes)")
-    ax1.axhline(ISOLATED, color="grey", ls="--", lw=1, label=f"isolated throat {ISOLATED}")
-    if resid:
-        ax1.plot([r[1] for r in resid], [r[2] for r in resid], "s", ms=4, color="#c0392b",
-                 label="scout mouths at the separation reached")
-    ax1.set_xscale("log")
-    ax1.set_xticks(ds[::2] if len(ds) > 8 else ds); ax1.set_xticklabels([f"{d:g}" for d in (ds[::2] if len(ds) > 8 else ds)], fontsize=8)
-    ax1.minorticks_off()
-    ax1.set_xlabel("separation d (log scale)"); ax1.set_ylabel("per-mouth minimum areal radius"); ax1.legend(fontsize=8)
-    ax1.set_title(f"the neighbour is on the ruler: excess ∝ d^{slope:.2f}", fontsize=10)
-    if resid:
-        tt = [r[0] for r in resid]; rr = [100 * (r[2] / r[3] - 1) for r in resid]
-        inside = [r[4] for r in resid]
-        ax2.plot([t for t, i in zip(tt, inside) if i], [v for v, i in zip(rr, inside) if i], "s-", color="#c0392b",
-                 label="inside the probed range")
-        ax2.plot([t for t, i in zip(tt, inside) if not i], [v for v, i in zip(rr, inside) if not i], "s", mfc="none",
-                 color="#c0392b", label="below the probed range")
-        ax2.axhline(0, color="grey", lw=1)
-        ax2.set_xlabel("t"); ax2.set_ylabel("own response (%)  − squeezed / + widened"); ax2.legend(fontsize=8)
-        ax2.set_title("the interaction squeezes the throats", fontsize=10)
-    fig.tight_layout()
-    out_png = str(figure_dir(pathlib.Path(root), "04_binary_headon") / "placement_curve.png")
-    fig.savefig(out_png, dpi=130)
-    print(f"[placement] wrote {out_png}")
+    # The reduced numbers, for the figure module and for anyone re-reading the
+    # note without re-deriving it.  Own module, own output file.
+    curve_dat = group_dir(pathlib.Path(root), "04_binary_headon") / "placement_curve.dat"
+    with open(curve_dat, "w", encoding="utf-8") as f:
+        f.write("# The placement curve: two exact throats at rest, read at t = 0.\n")
+        f.write(f"# Isolated drainhole (a = 2, m = 1) throat areal radius: {ISOLATED}\n")
+        f.write(f"# Excess over isolated falls as d^{slope:.4f} across the probed range.\n")
+        f.write("# separation  R_mouth  r_at_min  R_common  run\n")
+        for d, R, r, Rc, name in pts:
+            f.write(f"{d:10.4f}  {R:9.5f}  {r:8.4f}  {Rc:8.4f}  {name}\n")
+    print(f"[placement] wrote {curve_dat} ({len(pts)} probes)")
+
+    scout_dat = group_dir(pathlib.Path(root), "04_binary_headon") / "placement_scout_residual.dat"
+    with open(scout_dat, "w", encoding="utf-8") as f:
+        f.write(f"# Scout {a.scout} against the placement curve, before contact (sep >= {a.contact}).\n")
+        f.write("# own response = R_scout / R_placement - 1; negative = squeezed, positive = widened.\n")
+        f.write("# in_range = 1 where the curve is interpolated, 0 where it is held at its last point.\n")
+        f.write("# time  separation  R_scout  R_placement  response_pct  in_range\n")
+        for t, sep, R, Rp, inside in resid:
+            f.write(f"{t:8.2f}  {sep:10.4f}  {R:9.5f}  {Rp:9.5f}  {100 * (R / Rp - 1):+8.3f}  {int(inside)}\n")
+    print(f"[placement] wrote {scout_dat} ({len(resid)} scout rows)")
 
 
 if __name__ == "__main__":
