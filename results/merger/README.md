@@ -56,7 +56,17 @@ that produced it does not.
    3.89 → 10 by t = 100, an expanding anti-trapped shell around it, no horizon at any time).
    Both fates of Shinkai & Hayward (2002) are in the code, and which one a run takes is set
    by the truncation seed, not by the physics. **No fate may be quoted for any arm until the
-   sign of its seed is controlled.** The same split was seen in 3D before, for the massless
+   sign of its seed is controlled.**
+   **The declared-seed scan that controls it (2026-09-10, `campaign/01_single_throat/seed/`).**
+   The hidden seed is replaced by a stated one: at t = 0 the conformal factor is multiplied by
+   a Gaussian shell on the throat (centre r = 1.618, half-width 0.5) of amplitude ε, with the
+   velocity fields left at zero so the momentum constraint stays exact — measured 0.000e+00 at
+   t = 0 in every arm — and only the Hamiltonian constraint violated, at order ε.
+   **ε = ±0.1 is too large to be a perturbation:** both signs collapse and both NaN
+   (`single_eps_m1e1_t100` t = 15.17, `single_eps_p1e1_t100` t = 14.07), starting from a
+   Hamiltonian violation 3–5× the 1 % arms' and growing it to 0.40 and 55.6. The 1 % arms hold
+   theirs flat (2.21e-3 → 2.38e-3 over twenty units), so **1 % or below is the usable range**.
+   ε = ±0.01 is still running; it branches at t ≈ 13.5, with the sign reversed from the push. The same split was seen in 3D before, for the massless
    Ellis-Bronnikov throat (Shirokov 2026, arXiv:2604.00071): noise alone drove that run to
    the inflation branch at five levels of refinement, and halving the phantom support with a
    quadrupolar seed forced the collapse branch — horizon, then a "phantom bounce" of the
