@@ -1,0 +1,89 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x2c3e25) [0x562c186a7e25]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at amrex/Src/Base/AMReX_BLBackTrace.cpp:212
+
+ 1: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x2c7425) [0x562c186ab425]
+    std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*) at /usr/include/c++/11/ostream:616
+ (inlined by) amrex::BLBackTrace::handler(int) at amrex/Src/Base/AMReX_BLBackTrace.cpp:106
+
+ 2: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x529b0f) [0x562c1890db0f]
+    std::char_traits<char>::assign(char&, char const&) at /usr/include/c++/11/bits/char_traits.h:357
+ (inlined by) std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_S_move(char*, char const*, unsigned long) at /usr/include/c++/11/bits/basic_string.h:366
+ (inlined by) std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_replace(unsigned long, unsigned long, char const*, unsigned long) at /usr/include/c++/11/bits/basic_string.tcc:465
+ (inlined by) std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::replace(unsigned long, unsigned long, char const*, unsigned long) at /usr/include/c++/11/bits/basic_string.h:1960
+ (inlined by) std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::insert(unsigned long, char const*) at /usr/include/c++/11/bits/basic_string.h:1728
+ (inlined by) std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&&) at /usr/include/c++/11/bits/basic_string.h:6196
+ (inlined by) GRAMRLevel::stateVariableSetUp() at Source/GRTeclynCore/GRAMRLevel.cpp:56
+
+ 3: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407f10) [0x562c187ebf10]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2125
+
+ 4: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407eed) [0x562c187ebeed]
+    std::__uniq_ptr_impl<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::_M_ptr() const at /usr/include/c++/11/bits/unique_ptr.h:173
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::get() const at /usr/include/c++/11/bits/unique_ptr.h:422
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::operator->() const at /usr/include/c++/11/bits/unique_ptr.h:416
+ (inlined by) amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2121
+
+ 5: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407eed) [0x562c187ebeed]
+    std::__uniq_ptr_impl<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::_M_ptr() const at /usr/include/c++/11/bits/unique_ptr.h:173
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::get() const at /usr/include/c++/11/bits/unique_ptr.h:422
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::operator->() const at /usr/include/c++/11/bits/unique_ptr.h:416
+ (inlined by) amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2121
+
+ 6: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407eed) [0x562c187ebeed]
+    std::__uniq_ptr_impl<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::_M_ptr() const at /usr/include/c++/11/bits/unique_ptr.h:173
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::get() const at /usr/include/c++/11/bits/unique_ptr.h:422
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::operator->() const at /usr/include/c++/11/bits/unique_ptr.h:416
+ (inlined by) amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2121
+
+ 7: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407eed) [0x562c187ebeed]
+    std::__uniq_ptr_impl<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::_M_ptr() const at /usr/include/c++/11/bits/unique_ptr.h:173
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::get() const at /usr/include/c++/11/bits/unique_ptr.h:422
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::operator->() const at /usr/include/c++/11/bits/unique_ptr.h:416
+ (inlined by) amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2121
+
+ 8: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407eed) [0x562c187ebeed]
+    std::__uniq_ptr_impl<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::_M_ptr() const at /usr/include/c++/11/bits/unique_ptr.h:173
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::get() const at /usr/include/c++/11/bits/unique_ptr.h:422
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::operator->() const at /usr/include/c++/11/bits/unique_ptr.h:416
+ (inlined by) amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2121
+
+ 9: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407eed) [0x562c187ebeed]
+    std::__uniq_ptr_impl<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::_M_ptr() const at /usr/include/c++/11/bits/unique_ptr.h:173
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::get() const at /usr/include/c++/11/bits/unique_ptr.h:422
+ (inlined by) std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >::operator->() const at /usr/include/c++/11/bits/unique_ptr.h:416
+ (inlined by) amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2121
+
+10: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x406681) [0x562c187ea681]
+    std::vector<std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >, std::allocator<std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> > > >::operator[](unsigned long) at /usr/include/c++/11/bits/stl_vector.h:1046
+ (inlined by) amrex::Vector<std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> >, std::allocator<std::unique_ptr<amrex::AmrLevel, std::default_delete<amrex::AmrLevel> > > >::operator[](unsigned long) at amrex/Src/Base/AMReX_Vector.H:38
+ (inlined by) amrex::Amr::coarseTimeStep(double) at amrex/Src/Amr/AMReX_Amr.cpp:2185
+
+11: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x503d02) [0x562c188e7d02]
+    amrex::PODVector<int, amrex::ArenaAllocator<int> >::PODVector() at amrex/Src/Base/AMReX_PODVector.H:337
+ (inlined by) amrex::DenseBins<amrex::ParticleTileData<amrex::Particle<3, 1>, 0, 0> >::DenseBins() at amrex/Src/Particle/AMReX_DenseBins.H:76
+ (inlined by) amrex::ParticleContainer_impl<amrex::Particle<3, 1>, 0, 0, amrex::ArenaAllocator, amrex::DefaultAssignor>::ParticleContainer_impl() at amrex/Src/Particle/AMReX_ParticleContainer.H:207
+ (inlined by) PunctureTracker<2u>::PunctureTracker() at Source/BlackHoles/PunctureTracker.hpp:36
+ (inlined by) BHAMR<2>::BHAMR(amrex::LevelBld*) at Source/BlackHoles/BHAMR.hpp:31
+ (inlined by) runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:28
+
+12: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x40a3f) [0x562c18424a3f]
+    main at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:62
+
+13: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7f0209781d90]
+
+14: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7f0209781e40]
+
+15: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x41ce5) [0x562c18425ce5]
+    ?? ??:0
+

@@ -24,6 +24,9 @@ import sys
 
 import numpy as np
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from pack_paths import figure_dir, find_run, group_dir, iter_runs  # noqa: E402
+
 REFERENCE = "single_hold_t100"
 # fixed times at which each throat's origin chi is read, as log10(chi/chi0)
 MARKS = [10.0, 20.0, 26.0, 30.0, 40.0, 50.0, 60.0]
@@ -79,8 +82,8 @@ def fmt(v):
 
 def main() -> int:
     root = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else ".")
-    camp = root / "campaign"
-    ref_path = camp / REFERENCE / "binary_throat_diagnostics.dat"
+    ref_dir = find_run(root, REFERENCE)
+    ref_path = (ref_dir / "binary_throat_diagnostics.dat") if ref_dir else root / "campaign" / REFERENCE
     if not ref_path.exists():
         print("reference stream missing:", ref_path)
         return 1
@@ -88,7 +91,7 @@ def main() -> int:
     ref = describe(t_ref, c_ref[:, COL["chiA"]], c_ref[:, COL["lapseA"]])
 
     arms = []
-    for d in sorted(camp.iterdir()):
+    for _group, d in iter_runs(root):
         if d.name == REFERENCE or any(s in d.name for s in SKIP):
             continue
         p = d / "binary_throat_diagnostics.dat"
@@ -198,7 +201,7 @@ def main() -> int:
     L("half-space split loses meaning once the throats cross the midplane (sep < ~2),")
     L("so columns past contact (t >~ 30 head-on, >~ 45 orbital) read the merged core.")
     L("")
-    (root / "single_throat" / "CLOCK_COMPARISON.md").write_text("\n".join(lines) + "\n")
+    (group_dir(root, "01_single_throat") / "CLOCK_COMPARISON.md").write_text("\n".join(lines) + "\n")
 
     # figure
     try:
@@ -222,11 +225,10 @@ def main() -> int:
         ax.legend(loc="upper left")
         ax.grid(alpha=0.3)
         fig.tight_layout()
-        (root / "figures").mkdir(exist_ok=True)
-        fig.savefig(root / "figures" / "throat_clock_comparison.png", dpi=130)
+        fig.savefig(figure_dir(root, "01_single_throat") / "throat_clock_comparison.png", dpi=130)
     except Exception as e:  # noqa: BLE001
         print("figure skipped:", e)
-    print("wrote", root / "single_throat" / "CLOCK_COMPARISON.md")
+    print("wrote", group_dir(root, "01_single_throat") / "CLOCK_COMPARISON.md")
     return 0
 
 

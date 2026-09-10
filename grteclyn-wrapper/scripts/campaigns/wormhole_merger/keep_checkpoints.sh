@@ -42,6 +42,8 @@ set -uo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 CAMPAIGN="${REPO}/runs/wormhole_merger"
+# shellcheck source=lib/run_tree.sh
+source "${HERE}/lib/run_tree.sh"   # a run is found by name wherever it is filed
 
 RUN="" DEST="" STEPS="" SCRATCH=/tmp/grteclyn_scratch PREFIX=BinaryWormhole POLL=20 EXE_PAT=main3d
 while [[ $# -gt 0 ]]; do
@@ -62,7 +64,7 @@ for req in RUN DEST STEPS; do
 done
 
 SRC="${SCRATCH}/${RUN}"
-LOG="${CAMPAIGN}/${RUN}/run.log"
+LOG="$(run_tree_find "${CAMPAIGN}" "${RUN}" || printf '%s' "${CAMPAIGN}/${RUN}")/run.log"
 [[ -f "${LOG}" ]] || { echo "no run log at ${LOG} -- is the run up yet?" >&2; exit 1; }
 mkdir -p "${DEST}"
 echo "$(date +%T) keeping ${STEPS} from ${RUN} -> ${DEST}"

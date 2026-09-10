@@ -25,6 +25,8 @@ set -euo pipefail
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 CAMPAIGN="${REPO}/runs/wormhole_merger"
+# shellcheck source=lib/run_tree.sh
+source "${HERE}/lib/run_tree.sh"   # a run is found by name wherever it is filed
 
 APPLY=0
 LOGS=""
@@ -43,7 +45,7 @@ shopt -s nullglob
 for log in "${CAMPAIGN}"/logs/*.log "${CAMPAIGN}"/detached_gpu*.log; do
   base="$(basename "${log}")"
   name="${base%.log}"; name="${name#detached_gpu?_}"
-  run="${CAMPAIGN}/${name}"
+  run="$(run_tree_find "${CAMPAIGN}" "${name}" || printf '%s' "${CAMPAIGN}/${name}")"
   size=$(stat -c %s "${log}")
 
   if [[ -f "${run}/launcher.pid" ]] && kill -0 "$(cat "${run}/launcher.pid")" 2>/dev/null; then

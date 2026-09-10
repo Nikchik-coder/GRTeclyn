@@ -1,0 +1,200 @@
+[STEP 225] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 225 TIME = 1.125 DT = 0.005
+
+[Level 0 step 226] ADVANCE at time 1.125 with dt = 0.005
+[Level 0 step 226] average evolution speed = 25.42643426 code units/h
+[Level 0 step 226] Advanced 16777216 cells
+
+[STEP 226] Coarse TimeStep time: 0.687848857
+[STEP 226] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 226 TIME = 1.13 DT = 0.005
+
+[Level 0 step 227] ADVANCE at time 1.13 with dt = 0.005
+[Level 0 step 227] average evolution speed = 25.42962067 code units/h
+[Level 0 step 227] Advanced 16777216 cells
+
+[STEP 227] Coarse TimeStep time: 0.688682175
+[STEP 227] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 227 TIME = 1.135 DT = 0.005
+
+[Level 0 step 228] ADVANCE at time 1.135 with dt = 0.005
+[Level 0 step 228] average evolution speed = 25.4326472 code units/h
+[Level 0 step 228] Advanced 16777216 cells
+
+[STEP 228] Coarse TimeStep time: 0.689596874
+[STEP 228] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 228 TIME = 1.14 DT = 0.005
+
+[Level 0 step 229] ADVANCE at time 1.14 with dt = 0.005
+[Level 0 step 229] average evolution speed = 25.43550422 code units/h
+[Level 0 step 229] Advanced 16777216 cells
+
+[STEP 229] Coarse TimeStep time: 0.68913496
+[STEP 229] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 229 TIME = 1.145 DT = 0.005
+
+[Level 0 step 230] ADVANCE at time 1.145 with dt = 0.005
+[Level 0 step 230] average evolution speed = 25.4384097 code units/h
+[Level 0 step 230] Advanced 16777216 cells
+
+[STEP 230] Coarse TimeStep time: 0.688569168
+[STEP 230] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 230 TIME = 1.15 DT = 0.005
+
+[Level 0 step 231] ADVANCE at time 1.15 with dt = 0.005
+[Level 0 step 231] average evolution speed = 25.44137658 code units/h
+[Level 0 step 231] Advanced 16777216 cells
+
+[STEP 231] Coarse TimeStep time: 0.688608745
+[STEP 231] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 231 TIME = 1.155 DT = 0.005
+
+[Level 0 step 232] ADVANCE at time 1.155 with dt = 0.005
+[Level 0 step 232] average evolution speed = 25.444314 code units/h
+[Level 0 step 232] Advanced 16777216 cells
+
+[STEP 232] Coarse TimeStep time: 0.691570747
+[STEP 232] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 232 TIME = 1.16 DT = 0.005
+
+[Level 0 step 233] ADVANCE at time 1.16 with dt = 0.005
+[Level 0 step 233] average evolution speed = 25.44676776 code units/h
+[Level 0 step 233] Advanced 16777216 cells
+
+[STEP 233] Coarse TimeStep time: 0.689503515
+[STEP 233] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 233 TIME = 1.165 DT = 0.005
+
+[Level 0 step 234] ADVANCE at time 1.165 with dt = 0.005
+[Level 0 step 234] average evolution speed = 25.44951932 code units/h
+[Level 0 step 234] Advanced 16777216 cells
+
+[STEP 234] Coarse TimeStep time: 0.688171723
+[STEP 234] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 234 TIME = 1.17 DT = 0.005
+
+[Level 0 step 235] ADVANCE at time 1.17 with dt = 0.005
+[Level 0 step 235] average evolution speed = 25.4524535 code units/h
+[Level 0 step 235] Advanced 16777216 cells
+
+[STEP 235] Coarse TimeStep time: 0.688743925
+[STEP 235] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 235 TIME = 1.175 DT = 0.005
+
+[Level 0 step 236] ADVANCE at time 1.175 with dt = 0.005
+[Level 0 step 236] average evolution speed = 25.45527575 code units/h
+[Level 0 step 236] Advanced 16777216 cells
+
+[STEP 236] Coarse TimeStep time: 0.688711496
+[STEP 236] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 236 TIME = 1.18 DT = 0.005
+
+[Level 0 step 237] ADVANCE at time 1.18 with dt = 0.005
+[Level 0 step 237] average evolution speed = 25.45807965 code units/h
+[Level 0 step 237] Advanced 16777216 cells
+
+[STEP 237] Coarse TimeStep time: 0.687448858
+[STEP 237] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 237 TIME = 1.185 DT = 0.005
+
+[Level 0 step 238] ADVANCE at time 1.185 with dt = 0.005
+[Level 0 step 238] average evolution speed = 25.46105262 code units/h
+[Level 0 step 238] Advanced 16777216 cells
+
+[STEP 238] Coarse TimeStep time: 0.68837876
+[STEP 238] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 238 TIME = 1.19 DT = 0.005
+
+[Level 0 step 239] ADVANCE at time 1.19 with dt = 0.005
+[Level 0 step 239] average evolution speed = 25.46385976 code units/h
+[Level 0 step 239] Advanced 16777216 cells
+
+[STEP 239] Coarse TimeStep time: 0.687347597
+[STEP 239] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 239 TIME = 1.195 DT = 0.005
+
+[Level 0 step 240] ADVANCE at time 1.195 with dt = 0.005
+[Level 0 step 240] average evolution speed = 25.46680123 code units/h
+[Level 0 step 240] Advanced 16777216 cells
+
+[STEP 240] Coarse TimeStep time: 0.699567071
+[STEP 240] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 240 TIME = 1.2 DT = 0.005
+
+[Level 0 step 241] ADVANCE at time 1.2 with dt = 0.005
+[Level 0 step 241] average evolution speed = 25.46788169 code units/h
+[Level 0 step 241] Advanced 16777216 cells
+
+[STEP 241] Coarse TimeStep time: 0.687762303
+[STEP 241] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 241 TIME = 1.205 DT = 0.005
+
+[Level 0 step 242] ADVANCE at time 1.205 with dt = 0.005
+[Level 0 step 242] average evolution speed = 25.47072217 code units/h
+[Level 0 step 242] Advanced 16777216 cells
+
+[STEP 242] Coarse TimeStep time: 0.690018807
+[STEP 242] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 242 TIME = 1.21 DT = 0.005
+
+[Level 0 step 243] ADVANCE at time 1.21 with dt = 0.005
+[Level 0 step 243] average evolution speed = 25.4732028 code units/h
+[Level 0 step 243] Advanced 16777216 cells
+
+[STEP 243] Coarse TimeStep time: 0.686327122
+[STEP 243] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 243 TIME = 1.215 DT = 0.005
+
+[Level 0 step 244] ADVANCE at time 1.215 with dt = 0.005
+[Level 0 step 244] average evolution speed = 25.4762114 code units/h
+[Level 0 step 244] Advanced 16777216 cells
+
+[STEP 244] Coarse TimeStep time: 0.686930089
+[STEP 244] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 244 TIME = 1.22 DT = 0.005
+
+[Level 0 step 245] ADVANCE at time 1.22 with dt = 0.005
+[Level 0 step 245] average evolution speed = 25.47910699 code units/h
+[Level 0 step 245] Advanced 16777216 cells
+
+[STEP 245] Coarse TimeStep time: 0.686061235
+[STEP 245] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 245 TIME = 1.225 DT = 0.005
+
+[Level 0 step 246] ADVANCE at time 1.225 with dt = 0.005
+[Level 0 step 246] average evolution speed = 25.48210769 code units/h
+[Level 0 step 246] Advanced 16777216 cells
+
+[STEP 246] Coarse TimeStep time: 0.68682292
+[STEP 246] FAB kilobyte spread across MPI nodes: [31934304 ... 31934304]
+
+STEP = 246 TIME = 1.23 DT = 0.005
+
+[Level 0 step 247] ADVANCE at time 1.23 with dt = 0.005
+[Level 0 step 247] average evolution speed = 25.48497314 code units/h
+[Level 0 step 247] Advanced 16777216 cells
+NaN diagnostic: rank=0 level=0 component=1 name=h11
+amrex::Abort::0::NaN in GRAMRLevel::post_timestep !!!
+SIGABRT
+See Backtrace.0 file for details

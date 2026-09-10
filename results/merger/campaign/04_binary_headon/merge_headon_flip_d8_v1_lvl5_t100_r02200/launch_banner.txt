@@ -1,0 +1,17 @@
+[whm] name     : merge_headon_flip_d8_v1_lvl5_t100_r02200
+[whm] template : runs/wormhole_merger/templates_scan/params_v1_lvl5_d8_t100.txt
+[whm] binary   : runs/wormhole_merger/bin/main3d_boost_2026-09-08.ex
+[whm] gpu      : 2
+[whm] run dir  : runs/wormhole_merger/merge_headon_flip_d8_v1_lvl5_t100_r02200          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/merge_headon_flip_d8_v1_lvl5_t100_r02200      (node-local: plotfiles, checkpoints)
+[whm] registry : merge_headon_flip_d8_v1_lvl5_t100_r02200 -> results/merger/runs_registry.tsv
+[whm] restart  : /tmp/grteclyn_scratch/_keep_v1c/BinaryWormholeChk02200
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] frames   : as given in WHM_CONSUME_ARGS
+[whm] consumer  : pid 611421 -> runs/wormhole_merger/merge_headon_flip_d8_v1_lvl5_t100_r02200/small_data
+[whm]            deleting processed plotfiles, keeping last 3
+[whm] === launching merge_headon_flip_d8_v1_lvl5_t100_r02200 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[whm] draining consumer (final pass) ...
+[whm] run complete: runs/wormhole_merger/merge_headon_flip_d8_v1_lvl5_t100_r02200
+[whm] reductions : runs/wormhole_merger/merge_headon_flip_d8_v1_lvl5_t100_r02200/small_data
+[whm] plotfiles left on scratch: 4 (/tmp/grteclyn_scratch/merge_headon_flip_d8_v1_lvl5_t100_r02200)

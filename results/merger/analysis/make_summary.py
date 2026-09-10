@@ -22,6 +22,9 @@ import sys
 
 import numpy as np
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from pack_paths import iter_runs  # noqa: E402
+
 # What each run changes, the order the campaign reads in, the caveat attached to
 # a finished-clean outcome and the stopped-by-hand notes all live in ONE file
 # beside the packs, runs_registry.tsv, so registering a run is one appended line
@@ -61,7 +64,7 @@ FIELDS = [
     "run", "what_is_different", "t_start", "t_end", "outcome",
     "min_lapse", "min_chi", "max_abs_K", "L2_Ham", "L2_Mom",
     "sep_start", "sep_min", "t_sep_min", "sep_end",
-    "t_common_ah", "ah_r_max_incode",
+    "t_common_ah", "ah_r_max_incode", "group",
 ]
 
 
@@ -168,11 +171,20 @@ def summarise(run_dir: pathlib.Path) -> dict:
 def main(argv: list[str]) -> int:
     root = pathlib.Path(argv[1]) if len(argv) > 1 else pathlib.Path(__file__).resolve().parents[1]
     load_registry(root / REGISTRY)
-    camp = root / "campaign"
-    dirs = {d.name: d for d in camp.iterdir() if d.is_dir()}
-    ordered = [dirs[n] for n in ORDER if n in dirs]
-    ordered += [d for n, d in sorted(dirs.items()) if n not in ORDER]
-    rows = [summarise(d) for d in ordered]
+    # The pack is filed by physics (campaign/<group>/<run>); the table is one
+    # block per group, and inside a group the registry order.
+    groups: dict[str, dict[str, pathlib.Path]] = {}
+    for g, d in iter_runs(root):
+        groups.setdefault(g, {})[d.name] = d
+    rows = []
+    for g in sorted(groups):
+        dirs = groups[g]
+        ordered = [dirs[n] for n in ORDER if n in dirs]
+        ordered += [d for n, d in sorted(dirs.items()) if n not in ORDER]
+        for d in ordered:
+            r = summarise(d)
+            r["group"] = g
+            rows.append(r)
 
     with open(root / "summary.csv", "w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=FIELDS)
@@ -199,9 +211,13 @@ def main(argv: list[str]) -> int:
                  "Helfer runs with throats 5 apart, where no horizon is possible. Only hits\n"
                  "corroborated by the offline scan in `horizon/` (the headline arms,\n"
                  "t = 51.4+) are evidence of a common horizon.\n\n")
-        fh.write("| " + " | ".join(head[c] for c in show) + " |\n")
-        fh.write("|" + "|".join(["---"] * len(show)) + "|\n")
+        current = None
         for r in rows:
+            if r["group"] != current:
+                current = r["group"]
+                fh.write(f"\n## `{current or '(unfiled, still on a card)'}`\n\n")
+                fh.write("| " + " | ".join(head[c] for c in show) + " |\n")
+                fh.write("|" + "|".join(["---"] * len(show)) + "|\n")
             fh.write("| " + " | ".join(r[c] or "-" for c in show) + " |\n")
         fh.write("\nFull column set, including the constraint and geometry extrema, is in\n"
                  "`summary.csv`.\n")

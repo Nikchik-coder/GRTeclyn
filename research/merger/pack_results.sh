@@ -21,13 +21,20 @@
 # last time unit of every run, which is kept at full cadence, because that is
 # where a dying run does everything interesting.
 #
-# STAGE-1 SINGLE THROAT
-# results/merger/single_throat/ holds the isolated-throat arms and the derived
-# INSTABILITY.md systematics.  They are not merger runs and are kept out of
-# campaign/ so they cannot leak into the campaign summary table.
+# LAYOUT (2026-09-10)
+# The pack mirrors the run tree, which is filed by physics: campaign/<group>/<run>
+# with the groups 01_single_throat, 02_moving_throat, 03_two_throats,
+# 04_binary_headon (+ placement/), 05_binary_spiral (+ merger_fix/),
+# 06_binary_flyby, 07_bbh_control.  A run still on a card sits at the top of
+# both trees until closeout.sh and file_run.sh move it.  Each group's NOTES.md
+# is copied beside its runs; the generated notes (INSTABILITY.md, BRANCHES.md,
+# CLOCK_COMPARISON.md, PLACEMENT_CURVE.md) are written into their group by the
+# analysis scripts, which resolve runs by name through analysis/pack_paths.py.
+# 00_archive/ and 90_probes/ (build smoke tests, the initial-data check E) are
+# not packed: they are plan material, not results.
 #
 # HORIZON SCAN
-# results/merger/horizon/ holds the offline Theta = 0 scan behind the horizon-
+# results/merger/campaign/05_binary_spiral/horizon/ holds the offline Theta = 0 scan behind the horizon-
 # dissolution result.  Re-running it needs plotfiles that the consumer deletes
 # as it goes, so it is off by default and the committed copy is left alone.
 # PACK_HORIZON=1 regenerates it from whatever plotfiles still exist on scratch.
@@ -49,6 +56,8 @@ SIM_ROOT="$(cd -- "${ROOT}/.." && pwd)"
 RUNS="${ROOT}/runs/wormhole_merger"
 DEST="${ROOT}/results/merger"
 SCRATCH="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}"
+# shellcheck source=../../grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.sh
+source "${ROOT}/grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.sh"
 
 export ROOT SIM_ROOT
 PY_BIN="${ROOT}/.venv/bin/python"
@@ -60,7 +69,7 @@ if [[ ! -d "${RUNS}" ]]; then
   exit 0
 fi
 
-mkdir -p "${DEST}/campaign" "${DEST}/horizon"
+mkdir -p "${DEST}/campaign" "${DEST}/campaign/05_binary_spiral/horizon"
 
 # Stills are packed only where the pictures carry a result, and at a cadence
 # matched to how long the run is: the whole point of a still here is to show the
@@ -72,19 +81,17 @@ STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 # ---------------------------------------------------------------------------
 # 1. Per-run extract
 # ---------------------------------------------------------------------------
-# smoke_*/ is deliberately NOT packed: sizing and throughput probes are plan
-# material (GPU_PLAN #5), not campaign results.
-# single_*/ IS packed: the isolated-throat control is the Stage 0 experiment the
-# whole instability question turns on, not a probe.
-# autopsy_*/ IS packed: a NaN-autopsy restart of a campaign run carries the
-# per-cell death report in its run_tail.log, and that report is the result.
-# place_*/ IS packed (2026-09-09): the one-step placement probes behind
-# PLACEMENT_CURVE.md -- a t = 0 horizon-scan number each, no evolution.
-for rundir in "${RUNS}"/merge_*/ "${RUNS}"/bbh_control_*/ "${RUNS}"/ctrl_*/ \
-              "${RUNS}"/single_*/ "${RUNS}"/autopsy_*/ "${RUNS}"/place_*/; do
-  [[ -d "${rundir}" ]] || continue   # an unmatched glob expands to itself
+# Every run directory in the tree (a folder with params.txt, or a log-only
+# LOST.md stub), at the top level or filed in a group -- run_tree_runs skips
+# 00_archive, 90_probes, bin, logs and templates_scan.  The packed path mirrors
+# the run's path under runs/wormhole_merger.  Log-only stubs (a lost arm) and
+# NaN-autopsy restarts are packed like any run: their run_tail.log IS the result.
+while IFS= read -r rundir; do
+  [[ -d "${rundir}" ]] || continue
+  rundir="${rundir%/}/"
   run="$(basename "${rundir%/}")"
-  out="${DEST}/campaign/${run}"
+  rel="${rundir%/}"; rel="${rel#"${RUNS}"/}"
+  out="${DEST}/campaign/${rel}"
   rm -rf "${out}"
   mkdir -p "${out}"
 
@@ -229,68 +236,23 @@ PY
 
   found=$(find "${out}" -maxdepth 1 -type f \( -name '*.txt' -o -name '*.json' -o -name '*.md' -o -name '*.log' \))
   [[ -n "${found}" ]] && scrub ${found}
-  echo "[pack-merger] campaign/${run}: $(find "${out}" -type f | wc -l) files, $(du -sh "${out}" | cut -f1)"
+  echo "[pack-merger] campaign/${rel}: $(find "${out}" -type f | wc -l) files, $(du -sh "${out}" | cut -f1)"
+done < <(run_tree_runs "${RUNS}")
+
+# Each group's working notes travel with its runs.
+for notes in "${RUNS}"/[0-9][0-9]_*/NOTES.md "${RUNS}"/[0-9][0-9]_*/*/LAUNCHES.md; do
+  [[ -f "${notes}" ]] || continue
+  rel="${notes#"${RUNS}"/}"
+  case "${rel}" in 00_*|90_*) continue ;; esac   # dead ends and probes are not packed
+  mkdir -p "${DEST}/campaign/$(dirname "${rel}")"
+  cp "${notes}" "${DEST}/campaign/${rel}" && scrub "${DEST}/campaign/${rel}"
 done
-
-# ---------------------------------------------------------------------------
-# 1b. Stage-1 single-throat arms
-# ---------------------------------------------------------------------------
-# These live one level down, under 01_single_throat/, and are packed separately
-# from the campaign because they are not merger runs and must not appear in the
-# campaign summary table.  Only the streams the instability systematics reads
-# are kept -- they are a few kB each, and they are what makes the resolution
-# comparison reproducible from the repository alone.
-for rundir in "${RUNS}"/01_single_throat/*/; do
-  [[ -d "${rundir}" ]] || continue
-  arm="$(basename "${rundir%/}")"
-  out="${DEST}/single_throat/${arm}"
-  rm -rf "${out}"
-  mkdir -p "${out}"
-
-  [[ -f "${rundir}small_data/areal_radius.dat" ]] && cp "${rundir}small_data/areal_radius.dat" "${out}/"
-  for base in constraint_norms.dat collapse_diagnostics.dat; do
-    src="${rundir}data/${base}"
-    [[ -f "${src}" ]] || continue
-    "${PY_BIN}" - "${src}" "${out}/${base}" <<'PY'
-import sys
-
-src, dst = sys.argv[1], sys.argv[2]
-STEP = 0.05                       # dt of the thinned stream
-
-head, rows = [], []
-with open(src, encoding="utf-8") as fh:
-    for line in fh:
-        (head if line.startswith("#") or not line.strip() else rows).append(line)
-with open(dst, "w", encoding="utf-8") as out:
-    out.write(f"# thinned to dt={STEP:g} from the every-step stream\n")
-    out.writelines(head)
-    last = None
-    for line in rows:
-        t = float(line.split()[0])
-        if last is None or t - last >= STEP - 1e-9:
-            out.write(line)
-            last = t
-PY
-  done
-  [[ -f "${rundir}params.txt" ]] && cp "${rundir}params.txt" "${out}/evolution_params.txt"
-
-  if [[ -z "$(ls -A "${out}")" ]]; then
-    rmdir "${out}"
-    continue
-  fi
-  found=$(find "${out}" -maxdepth 1 -type f \( -name '*.txt' -o -name '*.md' \))
-  [[ -n "${found}" ]] && scrub ${found}
-  echo "[pack-merger] single_throat/${arm}: $(find "${out}" -type f | wc -l) files"
-done
-[[ -f "${RUNS}/01_single_throat/NOTES.md" ]] && \
-  cp "${RUNS}/01_single_throat/NOTES.md" "${DEST}/single_throat/NOTES.md" && \
-  scrub "${DEST}/single_throat/NOTES.md"
 
 # ---------------------------------------------------------------------------
 # 2. Offline horizon scan (opt-in: needs plotfiles that are deleted as runs go)
 # ---------------------------------------------------------------------------
 if [[ "${PACK_HORIZON:-0}" == "1" ]]; then
-  raw="${DEST}/horizon/ah_radial_scan_output.txt"
+  raw="${DEST}/campaign/05_binary_spiral/horizon/ah_radial_scan_output.txt"
   : > "${raw}"
   for plt in "${SCRATCH}"/merge_orbit_flip_d12_r04000/BinaryWormholePlt* \
              "${SCRATCH}"/merge_orbit_flip_d12_rw_r05000/BinaryWormholePlt*; do
@@ -299,7 +261,7 @@ if [[ "${PACK_HORIZON:-0}" == "1" ]]; then
     "${PY_BIN}" "${ROOT}/grteclyn-wrapper/scripts/validation/ah_radial_scan.py" "${plt}" \
       >> "${raw}" 2>&1 || echo "  scan failed" >> "${raw}"
   done
-  "${PY_BIN}" - "${raw}" "${DEST}/horizon/horizon_dissolution.dat" <<'PY'
+  "${PY_BIN}" - "${raw}" "${DEST}/campaign/05_binary_spiral/horizon/horizon_dissolution.dat" <<'PY'
 import re, sys
 
 raw, dst = sys.argv[1], sys.argv[2]
@@ -324,7 +286,7 @@ with open(dst, "w", encoding="utf-8") as out:
         out.write(f"{t:8.2f}  {r:6.3f}  {arm}\n")
 print(f"[pack-merger] horizon: {len(rows)} scans -> horizon_dissolution.dat")
 PY
-  scrub "${DEST}/horizon/ah_radial_scan_output.txt"
+  scrub "${DEST}/campaign/05_binary_spiral/horizon/ah_radial_scan_output.txt"
 else
   echo "[pack-merger] horizon: keeping the committed scan (PACK_HORIZON=1 to regenerate)"
 fi
@@ -334,12 +296,18 @@ fi
 # ---------------------------------------------------------------------------
 # PNG and PDF only: the dpi-600 EPS twins are ~39 MB each and add nothing the
 # PDF does not carry.
-FIGS="${RUNS}/merger_fix/plots"
+FIGS="${RUNS}/05_binary_spiral/merger_fix/plots"
 if [[ -d "${FIGS}" ]]; then
-  mkdir -p "${DEST}/figures"
-  find "${FIGS}" -maxdepth 1 \( -name "*.png" -o -name "*.pdf" \) \
-    -exec cp -p {} "${DEST}/figures/" \;
-  echo "[pack-merger] figures: $(ls "${DEST}/figures" | wc -l) files"
+  # The freeze programme's figures are the spiral's; the two BBH-control panels
+  # among them belong with the vacuum control.  Figures made by the analysis
+  # scripts land in their own group (single throat, head-on); hand-made ones
+  # are placed by hand, once, and stay where git tracks them.
+  mkdir -p "${DEST}/figures/05_binary_spiral" "${DEST}/figures/07_bbh_control"
+  find "${FIGS}" -maxdepth 1 \( -name "*.png" -o -name "*.pdf" \) ! -name "*bbh_control*" \
+    -exec cp -p {} "${DEST}/figures/05_binary_spiral/" \;
+  find "${FIGS}" -maxdepth 1 \( -name "*.png" -o -name "*.pdf" \) -name "*bbh_control*" \
+    -exec cp -p {} "${DEST}/figures/07_bbh_control/" \;
+  echo "[pack-merger] figures: $(find "${DEST}/figures" -type f | wc -l) files in $(find "${DEST}/figures" -mindepth 1 -type d | wc -l) groups"
 else
   echo "[pack-merger] figures: no ${FIGS#"${ROOT}"/} -- skipped"
 fi

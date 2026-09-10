@@ -45,6 +45,9 @@ import sys
 
 import numpy as np
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from pack_paths import find_run, group_dir  # noqa: E402
+
 # Closed form for a = 2, m = 1.  The minimal surface sits at
 # rbar = (m + sqrt(m^2 + a^2))/2 = 1.6180, where the isotropic radius parameter
 # X = 1/2, so u = (atan X - pi/2)/2 = -0.5536 and the throat lapse is e^u.
@@ -87,11 +90,9 @@ def find_arms(root: pathlib.Path) -> dict[str, pathlib.Path]:
     """Locate each arm's directory in the pack, wherever it was placed."""
     found = {}
     for name in ARMS:
-        for sub in ("campaign", "single_throat"):
-            d = root / sub / name
-            if (d / "areal_radius.dat").exists():
-                found[name] = d
-                break
+        d = find_run(root, name)
+        if d is not None and (d / "areal_radius.dat").exists():
+            found[name] = d
     return found
 
 
@@ -467,7 +468,7 @@ def main(root: pathlib.Path) -> None:
     w("  went; keep t = 40-70 next time.")
     w("")
 
-    dst = root / "single_throat" / "INSTABILITY.md"
+    dst = group_dir(root, "01_single_throat") / "INSTABILITY.md"
     dst.parent.mkdir(parents=True, exist_ok=True)
     dst.write_text("\n".join(out) + "\n")
     print(f"[single-throat] {dst.relative_to(root.parent)}: {len(out)} lines, "

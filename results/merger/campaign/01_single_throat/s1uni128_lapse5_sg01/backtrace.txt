@@ -1,0 +1,40 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x28fc05) [0x5587015eec05]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at /usr/include/x86_64-linux-gnu/bits/unistd.h:284
+ (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at amrex/Src/Base/AMReX_BLBackTrace.cpp:215
+
+ 1: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x2931f8) [0x5587015f21f8]
+    amrex::BLBackTrace::handler(int) at amrex/Src/Base/AMReX_BLBackTrace.cpp:103
+
+ 2: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x4a61f5) [0x5587018051f5]
+    GRAMRLevel::post_timestep(int) at Source/GRTeclynCore/GRAMRLevel.cpp:228
+
+ 3: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3b1a40) [0x558701710a40]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2124
+
+ 4: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3b0246) [0x55870170f246]
+    amrex::Amr::coarseTimeStep(double) at amrex/Src/Amr/AMReX_Amr.cpp:2175
+
+ 5: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x4869a2) [0x5587017e59a2]
+    runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:32
+
+ 6: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3c0cf) [0x55870139b0cf]
+    main at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:59
+
+ 7: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7f3767981d90]
+
+ 8: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7f3767981e40]
+
+ 9: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3d405) [0x55870139c405]
+    ?? ??:0
+

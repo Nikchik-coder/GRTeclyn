@@ -26,6 +26,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 RUNS="${ROOT}/runs/wormhole_merger"
+# shellcheck source=../../grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.sh
+source "${ROOT}/grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.sh"   # runs are filed by physics group
 
 # Colour scale for the movies.  A single LINEAR scale over a whole run is set by
 # the loudest moment -- the merged core -- and every quieter thing in the frame
@@ -50,10 +52,10 @@ fi
 problems=0
 for run in "$@"; do
   run="${run%/}"; run="$(basename "${run}")"
-  dir="${RUNS}/${run}"
   echo "=================================================================="
   echo "[closeout] ${run}"
-  if [[ ! -d "${dir}" ]]; then echo "  no such run directory"; problems=$((problems+1)); continue; fi
+  if ! dir="$(run_tree_find "${RUNS}" "${run}")"; then echo "  no such run directory"; problems=$((problems+1)); continue; fi
+  echo "  at ${dir#"${RUNS}"/}"
 
   # 1. still running?
   if [[ -f "${dir}/launcher.pid" ]]; then
@@ -133,6 +135,8 @@ fi
 cat <<TXT
 ==================================================================
 [closeout] by hand, in this order:
+  - file it: bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/file_run.sh --group <NN_group> <run>
+    (01_single_throat | 03_two_throats | 04_binary_headon | 05_binary_spiral | 06_binary_flyby | 07_bbh_control), then repack
   - results/merger/README.md: the Claim/Runs line of the section the run answers
   - research/merger/GPU_PLAN.md: the status row and the queue
   - scratch prune on the user's word, logged in runs/wormhole_merger/MANIFEST_CLEANUP_*.md

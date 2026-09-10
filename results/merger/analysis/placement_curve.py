@@ -29,10 +29,14 @@ from __future__ import annotations
 import argparse
 import glob
 import os
+import pathlib
 import re
 import sys
 
 import numpy as np
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pack_paths import figure_dir, find_run, group_dir, iter_runs  # noqa: E402
 
 ISOLATED = 3.8895  # exact drainhole a = 2, m = 1, areal radius of the throat
 
@@ -60,11 +64,16 @@ def sep_series(path: str):
 
 
 def run_files(root: str, run: str, pack: bool):
+    """The three files of a run, in the pack (resolved by name, wherever it is
+    filed) or in the run tree (top level, or one or two levels down)."""
     if pack:
-        d = os.path.join(root, "campaign", run)
+        d = find_run(pathlib.Path(root), run)
+        d = str(d) if d else os.path.join(root, "campaign", run)
         return (os.path.join(d, "horizon_scan.dat"), os.path.join(d, "evolution_params.txt"),
                 os.path.join(d, "binary_throat_diagnostics.dat"))
-    d = os.path.join(root, run)
+    hits = [os.path.join(root, run)] + glob.glob(os.path.join(root, "[0-9][0-9]_*", run)) \
+        + glob.glob(os.path.join(root, "[0-9][0-9]_*", "*", run))
+    d = next((h for h in hits if os.path.isdir(h)), os.path.join(root, run))
     return (os.path.join(d, "small_data", "horizon_scan.dat"), os.path.join(d, "params.txt"),
             os.path.join(d, "data", "binary_throat_diagnostics.dat"))
 
@@ -80,11 +89,15 @@ def main() -> None:
         ap.error("give the pack root or --runs")
     pack = a.runs is None
     root = a.pack if pack else a.runs
-    runs_glob = os.path.join(root, "campaign", "place_d*_step1") if pack else os.path.join(root, "place_d*_step1")
+    if pack:
+        probes = [str(d) for _, d in iter_runs(pathlib.Path(root)) if re.fullmatch(r"place_d\d+_step1", d.name)]
+    else:
+        probes = [d for pat in ("place_d*_step1", "*/place_d*_step1", "*/*/place_d*_step1")
+                  for d in glob.glob(os.path.join(root, pat)) if os.path.isdir(d)]
 
     # 1. placement curve
     pts = []
-    for run in sorted(glob.glob(runs_glob)):
+    for run in sorted(probes):
         name = os.path.basename(run)
         hs, pr, _ = run_files(root, name, pack)
         if not (os.path.exists(hs) and os.path.exists(pr)):
@@ -100,7 +113,7 @@ def main() -> None:
         pts.append((abs(xb - xa), float(np.mean([m[2] for m in mouths])), float(mouths[0][3]),
                     common[0][2] if common else float("nan"), name))
     if len(pts) < 2:
-        print(f"[placement] need >= 2 probes with t = 0 mouth rows under {runs_glob}, found {len(pts)} -- nothing written")
+        print(f"[placement] need >= 2 probes with t = 0 mouth rows under {root}, found {len(pts)} -- nothing written")
         return
     pts.sort()
     ds = np.array([p[0] for p in pts]); Rs = np.array([p[1] for p in pts])
@@ -185,7 +198,7 @@ def main() -> None:
     if not pack:
         print(text)
         return
-    out_md = os.path.join(root, "PLACEMENT_CURVE.md")
+    out_md = str(group_dir(pathlib.Path(root), "04_binary_headon") / "PLACEMENT_CURVE.md")
     with open(out_md, "w", encoding="utf-8") as f:
         f.write(text)
     print(f"[placement] wrote {out_md} ({len(pts)} probes, {len(resid)} scout rows)")
@@ -219,8 +232,7 @@ def main() -> None:
         ax2.set_xlabel("t"); ax2.set_ylabel("own response (%)  − squeezed / + widened"); ax2.legend(fontsize=8)
         ax2.set_title("the interaction squeezes the throats", fontsize=10)
     fig.tight_layout()
-    os.makedirs(os.path.join(root, "figures"), exist_ok=True)
-    out_png = os.path.join(root, "figures", "placement_curve.png")
+    out_png = str(figure_dir(pathlib.Path(root), "04_binary_headon") / "placement_curve.png")
     fig.savefig(out_png, dpi=130)
     print(f"[placement] wrote {out_png}")
 

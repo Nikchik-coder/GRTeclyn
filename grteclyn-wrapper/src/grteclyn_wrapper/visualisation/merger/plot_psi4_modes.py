@@ -42,6 +42,8 @@ import re
 import matplotlib
 import numpy as np
 
+from grteclyn_wrapper.visualisation.merger.run_tree import find_run
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -112,8 +114,9 @@ def main(argv: list[str] | None = None) -> int:
         labels[name] = label or name
     root = pathlib.Path(args.runs_root if args.source == "data" else args.pack_root).expanduser().resolve()
     data, radii = {}, list(args.radii)
+    run_dirs = {n: find_run(root, n) for n in names}   # by name, wherever filed
     for n in names:
-        p = root / n / ("data" if args.source == "data" else "") / f"Weyl4_mode_{args.mode}.dat"
+        p = run_dirs[n] / ("data" if args.source == "data" else "") / f"Weyl4_mode_{args.mode}.dat"
         data[n], radii = load_mode(p, radii)
     subject = names[0]
     ref = args.peak_ref or subject
@@ -164,7 +167,7 @@ def main(argv: list[str] | None = None) -> int:
     axs[0].set_title(sub, fontsize=8.5, color="0.35", pad=4)
     fig.tight_layout(rect=(0, 0, 1, 0.975))
     out = pathlib.Path(args.out).expanduser() if args.out else \
-        pathlib.Path(args.runs_root) / subject / "frames" / f"psi4_{args.mode}_compare.png"
+        run_dirs[subject] / "frames" / f"psi4_{args.mode}_compare.png"
     out.parent.mkdir(parents=True, exist_ok=True)
     fig.savefig(out, dpi=110)
     print("wrote", out)

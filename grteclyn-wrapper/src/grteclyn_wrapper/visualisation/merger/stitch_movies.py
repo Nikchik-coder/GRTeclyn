@@ -10,7 +10,8 @@ Usage:
 
   RUN_1 contributes its cached slices with t <= T_1, RUN_2 those with
   T_1 < t <= T_2, and the last run everything after the final switch time.
-  --runs-root  where the runs live (default: <repo>/runs/wormhole_merger)
+  --runs-root  where the runs live (default: <repo>/runs/wormhole_merger); a run
+               is found by name wherever it is filed (top level or NN_group/)
   --out DIR    where to build (default: <last run>/stitched_from_t0, in the run tree)
   --symlog F   comma-separated fields to draw on a symmetric-log colour scale
                (or "all").  A stitched series spans the whole history, so one
@@ -57,6 +58,8 @@ import pathlib
 import subprocess
 import sys
 
+from grteclyn_wrapper.visualisation.merger.run_tree import find_run
+
 # …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/merger
 REPO = pathlib.Path(__file__).resolve().parents[5]
 RERENDER = REPO / "grteclyn-wrapper" / "scripts" / "plot" / "rerender_frames.py"
@@ -97,11 +100,13 @@ def main(argv: list[str] | None = None) -> int:
 
     runs_root = pathlib.Path(args.runs_root).expanduser().resolve()
     runs, switches = parse_segments(args.segments)
-    caches = [runs_root / r / "frames" / "_slice_cache" for r in runs]
+    # runs are resolved by name wherever they are filed (top level or a group)
+    run_dirs = [find_run(runs_root, r) for r in runs]
+    caches = [d / "frames" / "_slice_cache" for d in run_dirs]
     for c in caches:
         if not c.is_dir():
             raise SystemExit(f"no slice cache under {c.parent}")
-    out = pathlib.Path(args.out).expanduser() if args.out else runs_root / runs[-1] / "stitched_from_t0"
+    out = pathlib.Path(args.out).expanduser() if args.out else run_dirs[-1] / "stitched_from_t0"
     out = out.resolve()
 
     print("segments:")

@@ -20,6 +20,8 @@
 
 SCRATCH=${SCRATCH:-/tmp/grteclyn_scratch}
 CAMPAIGN=${CAMPAIGN:?campaign runs dir required}
+# shellcheck source=lib/run_tree.sh
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)/lib/run_tree.sh"   # runs are filed by group since 2026-09-10
 MAIN_RE=${MAIN_RE:-^(bbh_control_[a-z0-9_]+|merge_orbit_flip_d12(_r[0-9]+)?|merge_twin_p012_[a-z0-9]+(_lvl[0-9]+)?_t[0-9]+|merge_orbit_flip_d12_p[0-9]+(_[a-z0-9]+)*_t[0-9]+)$}   # main merger + its _rNNNNN restarts, the twins, the t200 scouts, and the _lvlN refinement variants of either
 KEEP_MAIN=${KEEP_MAIN:-2}
 KEEP_OTHER=${KEEP_OTHER:-0}
@@ -29,7 +31,7 @@ lines=()
 
 for d in "$SCRATCH"/*/; do
   name=$(basename "$d")
-  [ -d "$CAMPAIGN/$name" ] || continue
+  run_tree_find "$CAMPAIGN" "$name" >/dev/null || continue   # only runs of this campaign, wherever filed
   if [[ "$name" =~ $MAIN_RE ]]; then keep=$KEEP_MAIN; else keep=$KEEP_OTHER; fi
 
   mapfile -t chks < <(find "$d" -maxdepth 1 -type d -name '*Chk[0-9]*' -printf '%f\n' 2>/dev/null | sort -V)

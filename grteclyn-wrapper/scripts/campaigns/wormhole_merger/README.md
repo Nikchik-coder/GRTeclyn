@@ -24,6 +24,8 @@ template, a name, a card and a profile. It is not a new script.**
 | `keep_checkpoints.sh` | Copies named checkpoints out of a rolling run before it deletes them. |
 | `prune_checkpoints.sh` | Drops restart checkpoints from scratch, per-run policy. |
 | `tidy_logs.sh` | Reduces a finished run's launcher log to the provenance banner. |
+| `file_run.sh` | Files a closed-out run into its physics group (`--group 04_binary_headon`), repairing the stitched-movie symlinks that point into it. |
+| `lib/run_tree.sh` | How every script here finds a run by name, wherever it is filed. The Python side is `grteclyn_wrapper.visualisation.merger.run_tree`; the pack's is `results/merger/analysis/pack_paths.py`. |
 
 ## Launching a run
 
@@ -123,10 +125,19 @@ these cards, and a loose pattern also matches your own shell.
    `run.log` plus about sixteen lines of provenance; this keeps the provenance
    as `<run>/launch_banner.txt` and drops the duplicate. On 2026-09-10 the
    backlog was 343 MB.
-3. Write the claim line in `results/merger/README.md` and the status row in
+3. `bash .../file_run.sh --group <NN_group> <run>` — a run lives at the top of
+   `runs/wormhole_merger/` while it is on a card and is filed with its question
+   once it is done: `01_single_throat`, `03_two_throats`, `04_binary_headon`,
+   `05_binary_spiral`, `06_binary_flyby`, `07_bbh_control`. Then
+   `bash research/merger/pack_results.sh` again, so the pack mirrors the move
+   (or `git mv` the packed directory by hand). The groups are the paper's
+   sections; the run tree's README describes each.
+4. Write the claim line in `results/merger/README.md` and the status row in
    `research/merger/GPU_PLAN.md`.
-4. Prune scratch only on the user's word, and log every deletion in
+5. Prune scratch only on the user's word, and log every deletion in
    `runs/wormhole_merger/MANIFEST_CLEANUP_*.md` (append with `cat >>`).
+   Frames and the slice cache are kept only on the runs whose pictures carry a
+   result (the user's rule, 2026-09-10); the run tree's README says which.
 
 ## Where the old scripts went
 

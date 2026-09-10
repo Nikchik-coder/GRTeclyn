@@ -16,6 +16,9 @@ import sys
 
 import numpy as np
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from pack_paths import figure_dir, find_run, group_dir  # noqa: E402
+
 R_EXACT = 3.8895  # closed form for a = 2, m = 1 (INSTABILITY.md)
 ARMS = {
     "ml2": "single_hold_ml2_t100",
@@ -28,8 +31,11 @@ ARMS = {
 COLOUR = {"ml2": "#2a78d6", "ml3": "#eb6834", "ml4": "#1baf7a"}
 
 
-def load(camp: pathlib.Path, run: str, name: str) -> np.ndarray:
-    return np.loadtxt(camp / run / name, comments="#", ndmin=2)
+def load(root: pathlib.Path, run: str, name: str) -> np.ndarray:
+    d = find_run(root, run)
+    if d is None:
+        raise FileNotFoundError(f"{run} is not in the pack")
+    return np.loadtxt(d / name, comments="#", ndmin=2)
 
 
 def at(a: np.ndarray, t: float) -> np.ndarray:
@@ -85,11 +91,10 @@ def parse_scans(path: pathlib.Path) -> tuple[list[dict], dict[str, np.ndarray]]:
 
 def main(argv: list[str]) -> int:
     root = pathlib.Path(argv[1]) if len(argv) > 1 else pathlib.Path(__file__).resolve().parents[1]
-    camp = root / "campaign"
-    ar = {k: load(camp, v, "areal_radius.dat") for k, v in ARMS.items()}
-    cn = {k: load(camp, v, "constraint_norms.dat") for k, v in ARMS.items()}
-    cd = {k: load(camp, v, "collapse_diagnostics.dat") for k, v in ARMS.items()}
-    scans, profiles = parse_scans(root / "single_throat" / "branch_shell_scans_2026-09-08.dat")
+    ar = {k: load(root, v, "areal_radius.dat") for k, v in ARMS.items()}
+    cn = {k: load(root, v, "constraint_norms.dat") for k, v in ARMS.items()}
+    cd = {k: load(root, v, "collapse_diagnostics.dat") for k, v in ARMS.items()}
+    scans, profiles = parse_scans(group_dir(root, "01_single_throat") / "branch_shell_scans_2026-09-08.dat")
     out: list[str] = []
     w = out.append
 
@@ -244,7 +249,7 @@ def main(argv: list[str]) -> int:
     w("- The inflation branch deforms the compactified inner sheet by t = 100; whether that is the")
     w("  physics of the branch or the origin failing is open (a −ε arm at level 3 answers it).")
     w("- The late constraint growth on both branches is unexplained.")
-    (root / "single_throat" / "BRANCHES.md").write_text("\n".join(out) + "\n")
+    (group_dir(root, "01_single_throat") / "BRANCHES.md").write_text("\n".join(out) + "\n")
 
     # --- figure ---------------------------------------------------------------------------
     import matplotlib
@@ -312,9 +317,8 @@ def main(argv: list[str]) -> int:
     axC.set_title("Profiles: dots are marginally trapped surfaces", fontsize=10, loc="left")
     axC.legend(frameon=False, fontsize=8, loc="upper right", ncol=2)
     fig.tight_layout()
-    (root / "figures").mkdir(exist_ok=True)
-    fig.savefig(root / "figures" / "single_throat_branches.png", dpi=130)
-    print("[branches] wrote single_throat/BRANCHES.md and figures/single_throat_branches.png")
+    fig.savefig(figure_dir(root, "01_single_throat") / "single_throat_branches.png", dpi=130)
+    print("[branches] wrote campaign/01_single_throat/BRANCHES.md and figures/01_single_throat/single_throat_branches.png")
     return 0
 
 

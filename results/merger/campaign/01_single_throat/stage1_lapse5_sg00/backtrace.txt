@@ -1,0 +1,105 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x28fc05) [0x55aa95423c05]
+    amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at /usr/include/x86_64-linux-gnu/bits/unistd.h:284
+ (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at amrex/Src/Base/AMReX_BLBackTrace.cpp:215
+
+ 1: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x2931f8) [0x55aa954271f8]
+    amrex::BLBackTrace::handler(int) at amrex/Src/Base/AMReX_BLBackTrace.cpp:103
+
+ 2: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0xf1bdb) [0x55aa95285bdb]
+    std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_data() const at /usr/include/c++/11/bits/basic_string.h:195
+ (inlined by) std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_is_local() const at /usr/include/c++/11/bits/basic_string.h:230
+ (inlined by) std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_dispose() at /usr/include/c++/11/bits/basic_string.h:239
+ (inlined by) std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::~basic_string() at /usr/include/c++/11/bits/basic_string.h:672
+ (inlined by) amrex::Arena::out_of_memory_abort(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned long, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) at amrex/Src/Base/AMReX_Arena.cpp:719
+
+ 3: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0xf2bba) [0x55aa95286bba]
+    amrex::Arena::allocate_system(unsigned long) at amrex/Src/Base/AMReX_Arena.cpp:322
+
+ 4: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0xfa4f3) [0x55aa9528e4f3]
+    amrex::CArena::alloc_protected(unsigned long) at amrex/Src/Base/AMReX_CArena.cpp:91
+ (inlined by) amrex::CArena::alloc(unsigned long) at amrex/Src/Base/AMReX_CArena.cpp:33
+
+ 5: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x16d16c) [0x55aa9530116c]
+    amrex::BaseFab<double>::define() at amrex/Src/Base/AMReX_BaseFab.H:1468
+
+ 6: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x167455) [0x55aa952fb455]
+    amrex::FArrayBox::FArrayBox(amrex::BoxND<3> const&, int, bool, bool, amrex::Arena*) at amrex/Src/Base/AMReX_FArrayBox.cpp:121
+
+ 7: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0xeaa2b) [0x55aa9527ea2b]
+    amrex::FArrayBox*& std::vector<amrex::FArrayBox*, std::allocator<amrex::FArrayBox*> >::emplace_back<amrex::FArrayBox*>(amrex::FArrayBox*&&) at /usr/include/c++/11/bits/vector.tcc:112
+ (inlined by) std::vector<amrex::FArrayBox*, std::allocator<amrex::FArrayBox*> >::push_back(amrex::FArrayBox*&&) at /usr/include/c++/11/bits/stl_vector.h:1204
+ (inlined by) amrex::FabArray<amrex::FArrayBox>::AllocFabs(amrex::FabFactory<amrex::FArrayBox> const&, amrex::Arena*, amrex::Vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&, bool) at amrex/Src/Base/AMReX_FabArray.H:2250
+
+ 8: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0xebbb7) [0x55aa9527fbb7]
+    amrex::FabArray<amrex::FArrayBox>::FabArray(amrex::BoxArray const&, amrex::DistributionMapping const&, int, amrex::IntVectND<3> const&, amrex::MFInfo const&, amrex::FabFactory<amrex::FArrayBox> const&) at amrex/Src/Base/AMReX_FabArray.H:2036
+
+ 9: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x18e72e) [0x55aa9532272e]
+    amrex::MultiFab::MultiFab(amrex::BoxArray const&, amrex::DistributionMapping const&, int, amrex::IntVectND<3> const&, amrex::MFInfo const&, amrex::FabFactory<amrex::FArrayBox> const&) at amrex/Src/Base/AMReX_MultiFab.cpp:478
+ (inlined by) amrex::MultiFab::MultiFab(amrex::BoxArray const&, amrex::DistributionMapping const&, int, int, amrex::MFInfo const&, amrex::FabFactory<amrex::FArrayBox> const&) at amrex/Src/Base/AMReX_MultiFab.cpp:465
+
+10: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3dd3fb) [0x55aa955713fb]
+    amrex::MultiFab amrex::detail::make_mf_fine_patch<amrex::MultiFab, 0>(amrex::FabArrayBase::FPinfo const&, int) at amrex/Src/AmrCore/AMReX_FillPatchUtil_I.H:340
+
+11: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3d3c4b) [0x55aa95567c4b]
+    decltype ({parm#1}({parm#2}[0], (amrex::BoxND<3>)(), {parm#3}, {parm#4})) amrex::detail::call_interp_hook<amrex::NullInterpHook<amrex::FArrayBox>, amrex::MultiFab>(amrex::NullInterpHook<amrex::FArrayBox> const&, amrex::MultiFab&, int, int) at amrex/Src/AmrCore/AMReX_FillPatchUtil_I.H:17
+ (inlined by) std::enable_if<amrex::IsFabArray<amrex::MultiFab, void>::value, int>::type amrex::detail::FillPatchTwoLevels_doit<amrex::MultiFab, amrex::StateDataPhysBCFunct, amrex::InterpBase, amrex::NullInterpHook<amrex::FArrayBox>, amrex::NullInterpHook<amrex::FArrayBox> >(amrex::MultiFab&, amrex::IntVectND<3> const&, double, amrex::Vector<amrex::MultiFab*, std::allocator<amrex::MultiFab*> > const&, amrex::Vector<double, std::allocator<double> > const&, amrex::Vector<amrex::MultiFab*, std::allocator<amrex::MultiFab*> > const&, amrex::Vector<double, std::allocator<double> > const&, int, int, int, amrex::Geometry const&, amrex::Geometry const&, amrex::StateDataPhysBCFunct&, int, amrex::StateDataPhysBCFunct&, int, amrex::IntVectND<3> const&, amrex::InterpBase*, amrex::Vector<amrex::BCRec, std::allocator<amrex::BCRec> > const&, int, amrex::NullInterpHook<amrex::FArrayBox> const&, amrex::NullInterpHook<amrex::FArrayBox> const&, amrex::EB2::IndexSpace const*, bool) at amrex/Src/AmrCore/AMReX_FillPatchUtil_I.H:593
+
+12: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3d4820) [0x55aa95568820]
+    std::vector<double, std::allocator<double> >::~vector() at /usr/include/c++/11/bits/stl_vector.h:680
+ (inlined by) amrex::Vector<double, std::allocator<double> >::~Vector() at amrex/Src/Base/AMReX_Vector.H:25
+ (inlined by) amrex::FillPatchIterator::FillFromTwoLevels(double, int, int, int, int) at amrex/Src/Amr/AMReX_AmrLevel.cpp:1157
+
+13: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3d4b7b) [0x55aa95568b7b]
+    std::vector<std::pair<int, int>, std::allocator<std::pair<int, int> > >::size() const at /usr/include/c++/11/bits/stl_vector.h:919 (discriminator 2)
+ (inlined by) amrex::FillPatchIterator::Initialize(int, double, int, int, int) at amrex/Src/Amr/AMReX_AmrLevel.cpp:1014 (discriminator 2)
+
+14: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3d57b1) [0x55aa955697b1]
+    amrex::AmrLevel::FillPatch(amrex::AmrLevel&, amrex::MultiFab&, int, double, int, int, int, int) at amrex/Src/Amr/AMReX_AmrLevel.cpp:2207
+
+15: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x438d80) [0x55aa955ccd80]
+    BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab&, amrex::MultiFab&, double) at Examples/BinaryWormholeMerger/BinaryWormholeLevel.cpp:176
+
+16: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x4b3ff0) [0x55aa95647ff0]
+    GRAMRLevel::advance(double, double, int, int) at Source/GRTeclynCore/GRAMRLevel.cpp:171
+ (inlined by) RK4<amrex::MultiFab, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&, const amrex::MultiFab&, amrex::Real, amrex::Real)>, amrex::AmrLevel::RK<GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&, const amrex::MultiFab&, amrex::Real, amrex::Real)>, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&)> >(int, int, amrex::Real, amrex::Real, int, int, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&, const amrex::MultiFab&, amrex::Real, amrex::Real)>&&, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&)>&&)::<lambda(int, amrex::MultiFab&, amrex::Real)>, amrex::AmrLevel::RK<GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&, const amrex::MultiFab&, amrex::Real, amrex::Real)>, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&)> >(int, int, amrex::Real, amrex::Real, int, int, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&, const amrex::MultiFab&, amrex::Real, amrex::Real)>&&, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&)>&&)::<lambda(amrex::Array<amrex::MultiFab, 4>&)>, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&)> > at amrex/Src/Base/AMReX_RungeKutta.H:261
+ (inlined by) RK<GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&, const amrex::MultiFab&, amrex::Real, amrex::Real)>, GRAMRLevel::advance(amrex::Real, amrex::Real, int, int)::<lambda(int, amrex::MultiFab&)> > at amrex/Src/Amr/AMReX_AmrLevel.H:644
+ (inlined by) GRAMRLevel::advance(double, double, int, int) at Source/GRTeclynCore/GRAMRLevel.cpp:164
+
+17: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3b18da) [0x55aa955458da]
+    std::vector<double, std::allocator<double> >::operator[](unsigned long) at /usr/include/c++/11/bits/stl_vector.h:1046
+ (inlined by) amrex::Vector<double, std::allocator<double> >::operator[](unsigned long) at amrex/Src/Base/AMReX_Vector.H:38
+ (inlined by) amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2067
+
+18: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3b1a1d) [0x55aa95545a1d]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+19: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3b1a1d) [0x55aa95545a1d]
+    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+
+20: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3b0246) [0x55aa95544246]
+    amrex::Amr::coarseTimeStep(double) at amrex/Src/Amr/AMReX_Amr.cpp:2175
+
+21: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x4869a2) [0x55aa9561a9a2]
+    runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:32
+
+22: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3c0cf) [0x55aa951d00cf]
+    main at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:59
+
+23: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7fcdde89ad90]
+
+24: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7fcdde89ae40]
+
+25: Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex(+0x3d405) [0x55aa951d1405]
+    ?? ??:0
+
