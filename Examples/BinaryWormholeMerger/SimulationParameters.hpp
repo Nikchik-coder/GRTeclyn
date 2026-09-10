@@ -137,6 +137,19 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_seed_width_A", wormhole_params.seed_width_A, 0.0);
         pp.load("wormhole_seed_width_B", wormhole_params.seed_width_B,
                 wormhole_params.seed_width_A);
+        // The quadrupolar seed: the same shell times P2(cos theta) about z,
+        //     psi -> psi (1 + eps2 exp[-((r - r_t)/w)^2] (3 z^2/r^2 - 1)/2).
+        // A spherical throat with a spherical kick has no gravitational-wave
+        // content at all, so this is the dial that gives one throat something
+        // to radiate.  It carries no spherical part and so does not pick the
+        // branch on its own; set wormhole_seed_amplitude_A beside it for that.
+        // Shares the width of the spherical seed.  Default 0 = off, bit for
+        // bit.  B defaults to A.
+        pp.load("wormhole_seed_l2_amplitude_A",
+                wormhole_params.seed_l2_amplitude_A, 0.0);
+        pp.load("wormhole_seed_l2_amplitude_B",
+                wormhole_params.seed_l2_amplitude_B,
+                wormhole_params.seed_l2_amplitude_A);
 
         pp.load("phantom_mass", wormhole_params.phantom_mass, 0.0);
         pp.load("wormhole_support_strength", wormhole_params.support_strength,
@@ -471,7 +484,13 @@ class SimulationParameters : public SimulationParametersBase
              {std::pair<const char *, double>{"wormhole_seed_amplitude_A",
                                               wormhole_params.seed_amplitude_A},
               std::pair<const char *, double>{"wormhole_seed_amplitude_B",
-                                              wormhole_params.seed_amplitude_B}})
+                                              wormhole_params.seed_amplitude_B},
+              std::pair<const char *, double>{
+                  "wormhole_seed_l2_amplitude_A",
+                  wormhole_params.seed_l2_amplitude_A},
+              std::pair<const char *, double>{
+                  "wormhole_seed_l2_amplitude_B",
+                  wormhole_params.seed_l2_amplitude_B}})
         {
             check_parameter(key, eps, std::abs(eps) < 0.5,
                             "is a linear-regime seed on the areal radius "

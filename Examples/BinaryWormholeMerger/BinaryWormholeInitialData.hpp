@@ -347,6 +347,12 @@ class BinaryWormholeInitialData
         double seed_amplitude_B{0.0};
         double seed_width_A{0.0};
         double seed_width_B{0.0};
+
+        //! The quadrupolar half of the dial: the same shell (same width) times
+        //! P2(cos theta) = (3 z^2/r^2 - 1)/2 about the z axis through each
+        //! throat's centre.  0 = off, bit for bit.
+        double seed_l2_amplitude_A{0.0};
+        double seed_l2_amplitude_B{0.0};
     };
 
     BinaryWormholeInitialData(params_t a_params, double a_dx)
@@ -512,6 +518,34 @@ class BinaryWormholeInitialData
         if (bB > 0.0 && m_params.seed_amplitude_B != 0.0)
         {
             psi *= 1.0 + (data_t)m_params.seed_amplitude_B *
+                             seed_shell(rB, bB, m_params.drainhole_mass_B,
+                                        m_params.seed_width_B);
+        }
+
+        // ---- Declared quadrupolar seed -------------------------------------
+        // The spherical seed above cannot radiate: for a spherical throat and a
+        // spherical kick every l >= 2 mode of Psi4 vanishes, black hole or not.
+        // This lays the same shell with an l = 2, m = 0 profile about the z
+        // axis through the throat,
+        //     psi -> psi (1 + eps2 g(r) P2),   P2 = (3 z^2/r^2 - 1)/2,
+        // which gives the throat a quadrupole to shed.  It has no spherical
+        // part, so on its own it does not choose the collapse or inflation
+        // branch -- pair it with the spherical seed for that.  It is a second
+        // factor rather than a term inside the first so that eps2 = 0 skips the
+        // branch and every existing run reproduces bit for bit; with both on the
+        // cross term is O(eps eps2).  K_ij and Pi are untouched, so the momentum
+        // constraint stays exact.
+        if (bA > 0.0 && m_params.seed_l2_amplitude_A != 0.0)
+        {
+            const data_t P2A = 1.5 * dzA * dzA / rA2_reg - 0.5;
+            psi *= 1.0 + (data_t)m_params.seed_l2_amplitude_A * P2A *
+                             seed_shell(rA, bA, m_params.drainhole_mass_A,
+                                        m_params.seed_width_A);
+        }
+        if (bB > 0.0 && m_params.seed_l2_amplitude_B != 0.0)
+        {
+            const data_t P2B = 1.5 * dzB * dzB / rB2_reg - 0.5;
+            psi *= 1.0 + (data_t)m_params.seed_l2_amplitude_B * P2B *
                              seed_shell(rB, bB, m_params.drainhole_mass_B,
                                         m_params.seed_width_B);
         }
