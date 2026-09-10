@@ -24,7 +24,8 @@
 # LAYOUT (2026-09-10)
 # The pack mirrors the run tree, which is filed by physics: campaign/<group>/<run>
 # with the groups 01_single_throat, 02_moving_throat, 03_two_throats,
-# 04_binary_headon (+ placement/), 05_binary_spiral (+ merger_fix/),
+# 04_binary_headon (+ placement/), 05_binary_spiral and 06_binary_flyby
+# (both filed by tangential kick: p012/ p012_freeze/ p012_ladder/ p015/ ... p045/),
 # 06_binary_flyby, 07_bbh_control.  A run still on a card sits at the top of
 # both trees until closeout.sh and file_run.sh move it.  Each group's NOTES.md
 # is copied beside its runs; the generated notes (INSTABILITY.md, BRANCHES.md,
@@ -296,7 +297,11 @@ fi
 # ---------------------------------------------------------------------------
 # PNG and PDF only: the dpi-600 EPS twins are ~39 MB each and add nothing the
 # PDF does not carry.
-FIGS="${RUNS}/05_binary_spiral/merger_fix/plots"
+# The hand-made figures now live ONLY here, committed under git: their old
+# staging folder (05_binary_spiral/merger_fix/plots) was deleted on 2026-09-10
+# after every PNG/PDF in it was verified byte-identical to the packed copy.
+# This block still runs if a staging folder reappears; otherwise it skips.
+FIGS="${RUNS}/05_binary_spiral/p012_freeze/plots"
 if [[ -d "${FIGS}" ]]; then
   # The freeze programme's figures are the spiral's; the two BBH-control panels
   # among them belong with the vacuum control.  Figures made by the analysis

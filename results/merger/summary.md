@@ -14,7 +14,37 @@ corroborated by the offline scan in `horizon/` (the headline arms,
 t = 51.4+) are evidence of a common horizon.
 
 
-## `01_single_throat`
+## `(unfiled, still on a card)`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| single_eps_m1e2_t100 | SEED ARM -0.01 (GPU_PLAN.md queue 2, launched 2026-09-10 on the user's word): single_eps_m1e2_t100 -- single_hold_t100 with a declared -1 % push IN on the throat (wormhole_seed_amplitude_A = -0.01); its twin single_eps_p1e2_t100 pushes OUT. Same grid (level 3), same everything: does the sign of the push pick the branch? | 0.00 | 17.42 | still running | 0.06 | - | 2.070e-01 | 2.530e-03 |
+| single_eps_p1e2_t100 | SEED ARM +0.01 (GPU_PLAN.md queue 2, launched 2026-09-10 on the user's word): single_eps_p1e2_t100 -- single_hold_t100 with a declared +1 % push OUT on the throat (wormhole_seed_amplitude_A = +0.01); its twin single_eps_m1e2_t100 pushes IN. Same grid (level 3), same everything: does the sign of the push pick the branch? | 0.00 | 17.36 | still running | 0.06 | - | 2.085e-01 | 2.451e-03 |
+| single_eps_m1e1_t100 | SEED ARM -0.1 (GPU_PLAN.md queue 2, launched 2026-09-10 on the user's word): single_eps_m1e1_t100 -- single_hold_t100 with a declared 10 % push IN on the throat (wormhole_seed_amplitude_A = -0.1); its twin single_eps_p1e1_t100 pushes the other way, and the 1 % pair single_eps_m1e2/p1e2_t100 is the quiet rung. Level 3, same grid as every arm: does the sign of the push pick the branch, and how does the onset move with the size? | 0.00 | 14.43 | still running | 0.06 | - | 2.463e-01 | 3.447e-03 |
+| single_eps_p1e1_t100 | SEED ARM 0.1 (GPU_PLAN.md queue 2, launched 2026-09-10 on the user's word): single_eps_p1e1_t100 -- single_hold_t100 with a declared 10 % push OUT on the throat (wormhole_seed_amplitude_A = 0.1); its twin single_eps_m1e1_t100 pushes the other way, and the 1 % pair single_eps_m1e2/p1e2_t100 is the quiet rung. Level 3, same grid as every arm: does the sign of the push pick the branch, and how does the onset move with the size? | 0.00 | 14.06 | NaN at t = 14.06 | 0.06 | 0.00 | 2.458e-01 | 3.207e-03 |
+
+## `01_single_throat/gauge`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| stage1_lapse5 | Stage 1: the drainhole's own static lapse (type 5), sigma 2.0, max_level 2 -- ran to t = 40 with the throat destroyed (R 3.89 -> 2.58) while every constraint norm read flat: sigma 2.0 must not ship | 0.00 | 40.00 | finished clean at t = 40.00 | 0.12 | 16.90 | 8.552e-03 | 1.323e-03 |
+| stage1_lapse6 | Stage 1: lapse type 6 (the origin-isolating collar), sigma 2.0, max_level 2 -- NaN at t = 21.7 | 0.00 | 21.66 | NaN at t = 21.66 | 0.12 | - | 4.618e-01 | 3.318e-03 |
+| stage1_lapse5_sg01 | Stage 1: lapse 5, sigma 0.1, max_level 2 -- NaN at t = 24.2 on level 2 with the throat still exact (3.894); the ml2 origin death, later shown to be the grid's | 0.00 | 24.16 | NaN at t = 24.16 | 0.12 | - | 3.249e-01 | 2.728e-03 |
+| stage1_lapse6_sg01 | Stage 1: the collar with sigma 0.1, max_level 2 -- NaN at t = 31.4, throat drifted to 3.127: the collar buys 3.5x in survival and costs 20 % on the radius (a finite perturbation of an unstable equilibrium, not a bias) | 0.00 | 31.38 | NaN at t = 31.38 | 0.12 | - | 1.000e-10 | 1.028e-02 |
+| stage1_lapse5_sg00 | Stage 1: lapse 5, sigma 0.0, max_level 2 -- never went unstable; the chi-gradient tagger chased the undissipated noise to 1000 grids and 24 % of the domain and the card ran out of memory at t = 35.2 (throat 3.87-3.95); why the campaign moved to fixed and tracked boxes | 0.00 | 35.20 | out of memory at t = 35.20, never unstable | 0.12 | 29.50 | 1.299e-01 | 1.130e-01 |
+
+## `01_single_throat/grid`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| s1uni128_lapse5_sg01 | Stage 1.4: unigrid control, N = 128 (dx 0.5 at the origin), lapse 5, sigma 0.1 -- NaN at t = 6.6 (K, level 0): removing the refinement makes the origin death 4x earlier | 0.00 | 6.62 | NaN at t = 6.62 | 0.50 | - | 6.550e-01 | 1.492e-02 |
+| s1uni256_lapse5_sg01 | Stage 1.4: unigrid N = 256 (dx 0.25), lapse 5, sigma 0.1 -- NaN at t = 1.2 (h11, level 0): refining uniformly makes it 20x earlier | 0.00 | 1.23 | NaN at t = 1.23 | 0.25 | - | 2.584e-01 | 1.593e-03 |
+| s15_lapse5_sg01_fg | Stage 1.5: lapse 5, sigma 0.1 on the fixed-grid tagger, max_level 2 (dx 0.125) -- the half-resolution rung of the instability ladder; turns over at t = 20.5 and dies within 3 units of it, so it shows no growth rate | 0.00 | 24.17 | NaN at t = 24.17 | 0.12 | - | 3.251e-01 | 2.730e-03 |
+| s15_lapse5_sg00_fg | Stage 1.5: sigma 0.0 on the fixed-grid tagger, max_level 2 -- the no-dissipation twin of the half-resolution rung | 0.00 | 23.53 | NaN at t = 23.53 | 0.12 | - | 1.000e-10 | 1.071e+00 |
+| s15_lapse6_sg00_fg | Stage 1.5: the collar with sigma 0.0 on the fixed-grid tagger, max_level 2 -- contracts monotonically from t = 0 (-0.31 % by t = 5, -7.3 % by t = 26): the collar excites the unstable mode from the start | 0.00 | 26.23 | NaN at t = 26.23 | 0.12 | - | 1.000e-10 | 2.332e-01 |
+| s16ml3_lapse5_sg01_fg | Stage 1.6: lapse 5, sigma 0.1, fixed-grid tagger, max_level 3 (dx 0.0625) -- THE SAME EVOLUTION as single_hold_t100 to t = 39.5 (identical R at every output, bit-identical norms: for one centred throat tagging types 1 and 2 build the same grids); do not cite the two as agreeing runs | 0.00 | 40.00 | finished clean at t = 40.00 | 0.06 | - | 1.340e-01 | 2.531e-03 |
+
+## `01_single_throat/hold`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
@@ -26,17 +56,6 @@ t = 51.4+) are evidence of a common horizon.
 | single_hold_ml4_lowfloor_t100 | single_hold_ml4_t100 with min_chi 5e-10 instead of 1e-8: byte-identical to it on every stream -- the floor never engaged at level 4 | 0.00 | 100.00 | finished clean at t = 100.00 -- byte-identical to single_hold_ml4_t100 (inflation branch) | 0.03 | 72.90 | 7.313e-02 | 1.388e-02 |
 | single_hold_dt01_t070 | single_hold_t100 with dt_multiplier 0.1 instead of 0.02 (Courant 0.1), to t = 70: 4.8x faster and bit-identical to t ~ 10, then a slow blow-up at the compactified origin, lapse floored at t = 16.0, h11 NaN at t = 16.07 | 0.00 | 16.05 | NaN at t = 16.05 | 0.06 | 16.00 | 1.041e-01 | 3.574e-01 |
 | single_hold_dt005_t070 | single_hold_t100 with dt_multiplier 0.05 (Courant 0.05), to t = 70: reaches stop_time with no NaN but is NOT the same solution -- identical to the 0.02 reference to t ~ 30, then max|K| 30x by t = 35, L2_Ham 35x by t = 40 (reference flat), lapse floored at t = 61.1, throat 4 % smaller at t = 69 | 0.00 | 70.03 | finished clean at t = 70.03 -- but NOT the dt = 0.02 solution past t ~ 33: max|K| 30x and L2_Ham 35x the reference by t = 40, lapse floored at t = 61.1 | 0.06 | 49.80 | 1.000e-10 | 4.757e-01 |
-| stage1_lapse5 | Stage 1: the drainhole's own static lapse (type 5), sigma 2.0, max_level 2 -- ran to t = 40 with the throat destroyed (R 3.89 -> 2.58) while every constraint norm read flat: sigma 2.0 must not ship | 0.00 | 40.00 | finished clean at t = 40.00 | 0.12 | 16.90 | 8.552e-03 | 1.323e-03 |
-| stage1_lapse6 | Stage 1: lapse type 6 (the origin-isolating collar), sigma 2.0, max_level 2 -- NaN at t = 21.7 | 0.00 | 21.66 | NaN at t = 21.66 | 0.12 | - | 4.618e-01 | 3.318e-03 |
-| stage1_lapse5_sg01 | Stage 1: lapse 5, sigma 0.1, max_level 2 -- NaN at t = 24.2 on level 2 with the throat still exact (3.894); the ml2 origin death, later shown to be the grid's | 0.00 | 24.16 | NaN at t = 24.16 | 0.12 | - | 3.249e-01 | 2.728e-03 |
-| stage1_lapse6_sg01 | Stage 1: the collar with sigma 0.1, max_level 2 -- NaN at t = 31.4, throat drifted to 3.127: the collar buys 3.5x in survival and costs 20 % on the radius (a finite perturbation of an unstable equilibrium, not a bias) | 0.00 | 31.38 | NaN at t = 31.38 | 0.12 | - | 1.000e-10 | 1.028e-02 |
-| stage1_lapse5_sg00 | Stage 1: lapse 5, sigma 0.0, max_level 2 -- never went unstable; the chi-gradient tagger chased the undissipated noise to 1000 grids and 24 % of the domain and the card ran out of memory at t = 35.2 (throat 3.87-3.95); why the campaign moved to fixed and tracked boxes | 0.00 | 35.20 | out of memory at t = 35.20, never unstable | 0.12 | 29.50 | 1.299e-01 | 1.130e-01 |
-| s1uni128_lapse5_sg01 | Stage 1.4: unigrid control, N = 128 (dx 0.5 at the origin), lapse 5, sigma 0.1 -- NaN at t = 6.6 (K, level 0): removing the refinement makes the origin death 4x earlier | 0.00 | 6.62 | NaN at t = 6.62 | 0.50 | - | 6.550e-01 | 1.492e-02 |
-| s1uni256_lapse5_sg01 | Stage 1.4: unigrid N = 256 (dx 0.25), lapse 5, sigma 0.1 -- NaN at t = 1.2 (h11, level 0): refining uniformly makes it 20x earlier | 0.00 | 1.23 | NaN at t = 1.23 | 0.25 | - | 2.584e-01 | 1.593e-03 |
-| s15_lapse5_sg01_fg | Stage 1.5: lapse 5, sigma 0.1 on the fixed-grid tagger, max_level 2 (dx 0.125) -- the half-resolution rung of the instability ladder; turns over at t = 20.5 and dies within 3 units of it, so it shows no growth rate | 0.00 | 24.17 | NaN at t = 24.17 | 0.12 | - | 3.251e-01 | 2.730e-03 |
-| s15_lapse5_sg00_fg | Stage 1.5: sigma 0.0 on the fixed-grid tagger, max_level 2 -- the no-dissipation twin of the half-resolution rung | 0.00 | 23.53 | NaN at t = 23.53 | 0.12 | - | 1.000e-10 | 1.071e+00 |
-| s15_lapse6_sg00_fg | Stage 1.5: the collar with sigma 0.0 on the fixed-grid tagger, max_level 2 -- contracts monotonically from t = 0 (-0.31 % by t = 5, -7.3 % by t = 26): the collar excites the unstable mode from the start | 0.00 | 26.23 | NaN at t = 26.23 | 0.12 | - | 1.000e-10 | 2.332e-01 |
-| s16ml3_lapse5_sg01_fg | Stage 1.6: lapse 5, sigma 0.1, fixed-grid tagger, max_level 3 (dx 0.0625) -- THE SAME EVOLUTION as single_hold_t100 to t = 39.5 (identical R at every output, bit-identical norms: for one centred throat tagging types 1 and 2 build the same grids); do not cite the two as agreeing runs | 0.00 | 40.00 | finished clean at t = 40.00 | 0.06 | - | 1.340e-01 | 2.531e-03 |
 
 ## `02_moving_throat`
 
@@ -94,7 +113,7 @@ t = 51.4+) are evidence of a common horizon.
 | place_d44_step1 | placement probe for the V1 scout: the scout's two throats at rest at d = 44, one step; per-mouth radius at t = 0 only (placement curve, subtracted from the scout's pre-contact readings) | 0.00 | 0.01 | finished clean at t = 0.01 | 43.94 | - | 2.145e-01 | 3.618e-03 |
 | place_d48_step1 | placement probe for the V1 scout: the scout's two throats at rest at d = 48, one step; per-mouth radius at t = 0 only (placement curve, subtracted from the scout's pre-contact readings) | 0.00 | 0.01 | finished clean at t = 0.01 | 47.94 | - | 2.149e-01 | 3.915e-03 |
 
-## `05_binary_spiral`
+## `05_binary_spiral/p012`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
@@ -105,19 +124,11 @@ t = 51.4+) are evidence of a common horizon.
 | merge_orbit_flip_d12_rw_r05000 | radius window: full inside r = 0.5, off by 0.7, from t = 33 | 50.01 | 55.00 | NaN at t = 55.00 | 0.32 | 51.06 | 1.000e-10 | 5.673e-03 |
 | merge_orbit_flip_d12_n160 | 160 cells per side instead of 128 | 0.00 | 53.61 | NaN at t = 53.61 | 0.05 | 29.79 | 1.000e-10 | 3.835e-03 |
 | merge_orbit_flip_d12_ml2 | max_level = 2 instead of 3 | 0.00 | 9.42 | NaN at t = 9.42 | 11.63 | - | 2.162e-01 | 1.442e-02 |
-| merge_orbit_flip_d12_p020_t200 | scout p = 0.20: captured, stopped by hand at t = 47.8 | 0.00 | 47.85 | still running | 1.06 | - | 2.840e-03 | 7.301e-03 |
-| merge_orbit_flip_d12_p025_t200 | scout p = 0.25: captured to sep 1.5, h11 NaN | 0.00 | 52.98 | NaN at t = 52.98 | 1.50 | 52.97 | 3.088e-03 | 7.604e-02 |
 | merge_twin_p012_plain_t100 | p = 0.12 twin, plain superposition: merged, stopped by hand at t = 44 | 0.00 | 44.03 | still running | 0.81 | 30.80 | 1.901e-03 | 7.780e-03 |
 | merge_twin_p012_helfer_t100 | p = 0.12 twin, Helfer correction (auto width 4): stalled, zombie, stopped at t = 60.3 | 0.00 | 60.31 | finished clean at t = 60.31 | 4.56 | 29.50 | 1.000e-10 | 1.054e-01 |
 | merge_twin_p012_helfer_lvl4_t100 | Helfer twin at max_level = 4: reproduces the stall, stopped by hand | 0.00 | 48.57 | still running | 4.94 | - | 2.898e-05 | 2.724e-02 |
 | merge_twin_p012_helfer_lvl5_t100 | Helfer twin at max_level = 5: stalled the same, stopped at t = 31.5 | 0.00 | 32.06 | still running | 5.15 | - | 6.912e-02 | 4.347e-03 |
 | merge_twin_p012_helfer_w2_t060 | Helfer twin, window halved to 2.0: stalled worse (sep 5.10 at t = 32 gate), stopped at t = 33.1 | 0.00 | 33.10 | still running | 5.06 | 30.90 | 3.044e-03 | 3.980e-03 |
-| merge_orbit_flip_d12_p020_nofill_t060 | p = 0.20 unmasked, damping off: hovered at sep 1.08 from t = 46, NaN at t = 52.08 | 0.00 | 52.08 | NaN at t = 52.08 | 1.06 | 52.08 | 3.492e-03 | 4.737e-02 |
-| merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07 | 0.00 | 52.07 | NaN at t = 52.07 | 0.02 | - | 3.384e-03 | 4.238e-02 |
-| merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79 | 0.00 | 52.79 | NaN at t = 52.79 | 0.06 | - | 3.569e-03 | 6.891e-02 |
-| merge_orbit_flip_d12_p015_nofill_t060 | scout p = 0.15 unmasked: fusing branch (plateau 0.816, dive to 0.70, core lapse rising) but pits not coincident when the wall hit at t = 53.35 | 0.00 | 53.35 | NaN at t = 53.35 | 0.06 | 31.25 | 9.378e-05 | 1.557e-02 |
-| merge_orbit_flip_d12_p015_rr_t060 | p = 0.15 rerun with insured checkpoints: wall reproduced at the same step (t = 53.35); the t = 50 seed for the phase-2 refinement is held | 0.00 | 53.35 | NaN at t = 53.35 | 0.06 | 31.25 | 9.378e-05 | 1.557e-02 |
-| merge_orbit_flip_d12_p015_lvl5_t060_r05000 | p = 0.15 refined restart (max_level 5 from the t = 50 seed): wall pushed only +0.88 (h11 NaN t = 54.23), no trapped surface at death, waveform still rising at 3.14e-2 -- wall-cut mid-fusion a third time | 50.01 | 54.22 | NaN at t = 54.22 | 0.07 | - | 3.073e-03 | 1.529e-02 |
 | merge_twin_p012_cf08_t060_r05000 | floor ladder rung chi_floor 1e-8 (the reference control), restart from t = 50 with levels 4-5: healthy to t = 55.53 (h11 NaN, level 5) -- longest-lived p012 arm; level-5 scan holds a trapped shell r = 0.94 -> 0.90 over its last unit | 50.01 | 55.52 | NaN at t = 55.52 | 0.23 | 54.51 | 1.000e-10 | 3.456e-03 |
 | merge_twin_p012_cf10_t060_r05000 | floor ladder rung chi_floor 1e-10: NaN 0.006 after restart -- the t = 50 state is floor-regularized, restarts cannot certify floor-independence | 50.01 | 50.04 | NaN at t = 50.04 | 4.07 | - | 4.293e-01 | 3.709e-03 |
 | merge_twin_p012_cf12_t060_r05000 | floor ladder rung chi_floor 1e-12: NaN 0.049 after restart -- same verdict as cf10 | - | 50.00 | NaN at t = 50.00 (streams lost, log only) | - | - | - | - |
@@ -127,24 +138,65 @@ t = 51.4+) are evidence of a common horizon.
 | merge_twin_p012_lc1_t060 | gauge arm (#15), lapse_coeff 2 -> 1: blob and plunge intact (sep 0.442) but the wall moved to t = 43.64 -- wall time is gauge, not physics | 0.00 | 43.64 | NaN at t = 43.64 | 0.06 | 28.95 | 1.000e-10 | 5.381e-03 |
 | merge_twin_p012_nodamp_t060 | damping-off arm (#14): blob nucleates identically without damping (t = 32 slices match plain to 3 decimals); wall at t = 51.53 vs plain 52.06 -- damping neither causes nor delays the wall | 0.00 | 51.53 | NaN at t = 51.53 | 0.36 | 30.80 | 1.257e-03 | 4.470e-03 |
 
-## `05_binary_spiral/merger_fix`
+## `05_binary_spiral/p012_freeze`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
-| m4e_lvl6_plain_r05000 | refinement ladder, top rung: the p = 0.12 merger restarted from Chk05000 with max_level 6 (dx 0.0078), undamped -- h11 NaN at t = 56.13 right after a regrid; the ladder reads 52.09 / 53.10 / 55.60 / 56.13 for levels 3 / 4 / 5 / 6 and saturates (+0.53 at the last rung) | 50.01 | 56.13 | NaN at t = 56.13 | 0.31 | 55.78 | 1.000e-10 | 3.244e-03 |
-| m9b_fill80_r05000 | the smooth interior fill (CoreFreezeFill r_full 1.3 / r_start 1.8) engaged at t = 53, restarted from Chk05000 at max_level 5 -- reached t = 80 with no NaN: the first p = 0.12 waveform carried past the wall | 50.01 | 80.00 | finished clean at t = 80.00 | 0.39 | - | 1.000e-10 | 5.424e-03 |
-| m9b_fillwide80_r05000 | the same fill one cell wider (r_full 1.5 / r_start 2.0), the seam-radius twin -- t = 80, no NaN; agrees with fill80 to five digits outside the fill and measured the propagation speed (R = 30 lags R = 14 by 18.0 over 16 units, 1.125x slower than coordinate light) | 50.01 | 80.00 | finished clean at t = 80.00 | 0.39 | - | 1.000e-10 | 7.471e-03 |
-| m9b_fill100_r08000 | fill80 continued from its t = 80 checkpoint towards t = 100 -- no NaN; its R = 30 stream completes the revised collapse window (76.1-83.6) and shows the second peak | 80.01 | 97.15 | stopped at t = 97.15 of 100, no NaN | 0.36 | 80.06 | 1.000e-10 | 6.412e-03 |
-| m9b_fillwide100_r08000 | fillwide80 continued from its t = 80 checkpoint towards t = 100, the wave-8 twin -- no NaN; the source of the stitched p = 0.12 waveform's last segment (psi4_merger_stitched_0_97.dat: r03000 0-50.5, fillwide80 50.5-79.5, fillwide100 80.5-97) | 80.01 | 97.18 | stopped at t = 97.18 of 100, no NaN | 0.36 | 80.06 | 1.000e-10 | 8.331e-03 |
-| m9b_weyltest_r09000 | Weyl-extraction smoke test (2026-09-02): fill100 restarted from Chk09000 (t = 90) with the in-code WeylExtraction stream on at the consumer's radii, to validate it against the plotfile psi4 on the same trajectory -- scratch-grade; NaN at t = 90.5 | 90.01 | 90.50 | NaN at t = 90.50 | 0.35 | 90.06 | 4.046e-01 | 5.949e-03 |
-| m9b_weyldiag10_r09000 | the Weyl-extraction diagnostic pass: the same restart run 0.15 units (t = 90 -> 90.15) with the extraction on and no consumer -- the stream-versus-plotfile comparison that certified the in-code Weyl4 for the Phase-3 head-on arms | 90.01 | 90.15 | finished clean at t = 90.15 | 0.35 | 90.06 | 4.046e-01 | 5.949e-03 |
+| freeze_narrow_t080_r05000 | the smooth interior fill (CoreFreezeFill r_full 1.3 / r_start 1.8) engaged at t = 53, restarted from Chk05000 at max_level 5 -- reached t = 80 with no NaN: the first p = 0.12 waveform carried past the wall | 50.01 | 80.00 | finished clean at t = 80.00 | 0.39 | - | 1.000e-10 | 5.424e-03 |
+| freeze_wide_t080_r05000 | the same fill one cell wider (r_full 1.5 / r_start 2.0), the seam-radius twin -- t = 80, no NaN; agrees with fill80 to five digits outside the fill and measured the propagation speed (R = 30 lags R = 14 by 18.0 over 16 units, 1.125x slower than coordinate light) | 50.01 | 80.00 | finished clean at t = 80.00 | 0.39 | - | 1.000e-10 | 7.471e-03 |
+| freeze_narrow_t100_r08000 | fill80 continued from its t = 80 checkpoint towards t = 100 -- no NaN; its R = 30 stream completes the revised collapse window (76.1-83.6) and shows the second peak | 80.01 | 97.15 | stopped at t = 97.15 of 100, no NaN | 0.36 | 80.06 | 1.000e-10 | 6.412e-03 |
+| freeze_wide_t100_r08000 | fillwide80 continued from its t = 80 checkpoint towards t = 100, the wave-8 twin -- no NaN; the source of the stitched p = 0.12 waveform's last segment (psi4_merger_stitched_0_97.dat: r03000 0-50.5, fillwide80 50.5-79.5, fillwide100 80.5-97) | 80.01 | 97.18 | stopped at t = 97.18 of 100, no NaN | 0.36 | 80.06 | 1.000e-10 | 8.331e-03 |
+| freeze_wave_crosscheck_r09000 | Weyl-extraction smoke test (2026-09-02): fill100 restarted from Chk09000 (t = 90) with the in-code WeylExtraction stream on at the consumer's radii, to validate it against the plotfile psi4 on the same trajectory -- scratch-grade; NaN at t = 90.5 | 90.01 | 90.50 | NaN at t = 90.50 | 0.35 | 90.06 | 4.046e-01 | 5.949e-03 |
+| freeze_wave_crosscheck_diag_r09000 | the Weyl-extraction diagnostic pass: the same restart run 0.15 units (t = 90 -> 90.15) with the extraction on and no consumer -- the stream-versus-plotfile comparison that certified the in-code Weyl4 for the Phase-3 head-on arms | 90.01 | 90.15 | finished clean at t = 90.15 | 0.35 | 90.06 | 4.046e-01 | 5.949e-03 |
+| freeze_narrow_late_t080_r05000 | (not in runs_registry.tsv) | - | 74.57 | finished clean at t = 74.57 (streams lost, log only) | - | - | - | - |
 
-## `06_binary_flyby`
+## `05_binary_spiral/p012_ladder`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| ladder_L6_r05000 | refinement ladder, top rung: the p = 0.12 merger restarted from Chk05000 with max_level 6 (dx 0.0078), undamped -- h11 NaN at t = 56.13 right after a regrid; the ladder reads 52.09 / 53.10 / 55.60 / 56.13 for levels 3 / 4 / 5 / 6 and saturates (+0.53 at the last rung) | 50.01 | 56.13 | NaN at t = 56.13 | 0.31 | 55.78 | 1.000e-10 | 3.244e-03 |
+| ladder_L4_damped_r05000 | (not in runs_registry.tsv) | - | 53.75 | NaN at t = 53.75 (streams lost, log only) | - | - | - | - |
+| ladder_L4_r05000 | (not in runs_registry.tsv) | - | 53.09 | NaN at t = 53.09 (streams lost, log only) | - | - | - | - |
+| ladder_L5_damped_r05000 | (not in runs_registry.tsv) | - | 54.76 | NaN at t = 54.76 (streams lost, log only) | - | - | - | - |
+| ladder_L5_halfstep_r05000 | (not in runs_registry.tsv) | - | 55.96 | NaN at t = 55.96 (streams lost, log only) | - | - | - | - |
+| ladder_L5_r05000 | (not in runs_registry.tsv) | - | 55.60 | NaN at t = 55.60 (streams lost, log only) | - | - | - | - |
+| ladder_L6_damped_r05000 | (not in runs_registry.tsv) | - | 56.70 | NaN at t = 56.70 (streams lost, log only) | - | - | - | - |
+| ladder_L7_r05000 | (not in runs_registry.tsv) | - | 56.20 | NaN at t = 56.20 (streams lost, log only) | - | - | - | - |
+
+## `05_binary_spiral/p015`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| merge_orbit_flip_d12_p015_nofill_t060 | scout p = 0.15 unmasked: fusing branch (plateau 0.816, dive to 0.70, core lapse rising) but pits not coincident when the wall hit at t = 53.35 | 0.00 | 53.35 | NaN at t = 53.35 | 0.06 | 31.25 | 9.378e-05 | 1.557e-02 |
+| merge_orbit_flip_d12_p015_rr_t060 | p = 0.15 rerun with insured checkpoints: wall reproduced at the same step (t = 53.35); the t = 50 seed for the phase-2 refinement is held | 0.00 | 53.35 | NaN at t = 53.35 | 0.06 | 31.25 | 9.378e-05 | 1.557e-02 |
+| merge_orbit_flip_d12_p015_lvl5_t060_r05000 | p = 0.15 refined restart (max_level 5 from the t = 50 seed): wall pushed only +0.88 (h11 NaN t = 54.23), no trapped surface at death, waveform still rising at 3.14e-2 -- wall-cut mid-fusion a third time | 50.01 | 54.22 | NaN at t = 54.22 | 0.07 | - | 3.073e-03 | 1.529e-02 |
+
+## `05_binary_spiral/p020`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| merge_orbit_flip_d12_p020_t200 | scout p = 0.20: captured, stopped by hand at t = 47.8 | 0.00 | 47.85 | still running | 1.06 | - | 2.840e-03 | 7.301e-03 |
+| merge_orbit_flip_d12_p020_nofill_t060 | p = 0.20 unmasked, damping off: hovered at sep 1.08 from t = 46, NaN at t = 52.08 | 0.00 | 52.08 | NaN at t = 52.08 | 1.06 | 52.08 | 3.492e-03 | 4.737e-02 |
+| merge_orbit_flip_d12_p020_lvl5_t200 | scout p = 0.20 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.07 | 0.00 | 52.07 | NaN at t = 52.07 | 0.02 | - | 3.384e-03 | 4.238e-02 |
+
+## `05_binary_spiral/p025`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| merge_orbit_flip_d12_p025_t200 | scout p = 0.25: captured to sep 1.5, h11 NaN | 0.00 | 52.98 | NaN at t = 52.98 | 1.50 | 52.97 | 3.088e-03 | 7.604e-02 |
+| merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79 | 0.00 | 52.79 | NaN at t = 52.79 | 0.06 | - | 3.569e-03 | 6.891e-02 |
+
+## `06_binary_flyby/p035`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| merge_orbit_flip_d12_p035_t200 | scout p = 0.35: fly-by (min sep 2.75), stopped by hand | 0.00 | 73.93 | finished clean at t = 73.93 | 2.75 | 49.25 | 2.251e-04 | 4.818e-01 |
+
+## `06_binary_flyby/p045`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
 | merge_orbit_flip_d12_p045 | momentum 0.45 instead of 0.12 | 0.00 | 60.01 | finished clean at t = 60.01 | 3.95 | 42.30 | 9.786e-04 | 1.545e-02 |
-| merge_orbit_flip_d12_p035_t200 | scout p = 0.35: fly-by (min sep 2.75), stopped by hand | 0.00 | 73.93 | finished clean at t = 73.93 | 2.75 | 49.25 | 2.251e-04 | 4.818e-01 |
 | merge_orbit_flip_d12_p045_t200 | scout p = 0.45: fly-by, the healthy control at t200 | 0.00 | 90.97 | finished clean at t = 90.97 | 3.95 | 43.30 | 5.663e-06 | 1.190e+00 |
 | merge_orbit_flip_d12_p045_helfer_t090 | - | 0.00 | 37.29 | stopped by request at t = 37.29 of 90, clean (B6 answered early: the corrected arm departs from its plain twin at t ~ 30 and grows 5x by t = 37 against a flat baseline) | 7.96 | - | 1.422e-03 | 1.535e-02 |
 

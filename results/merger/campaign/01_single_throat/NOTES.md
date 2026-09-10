@@ -14,6 +14,33 @@ Two knobs are varied, plus the refinement depth:
 * **sigma** -- Kreiss-Oliger dissipation.  `2.0` was inherited from the puncture era.
 * **max_level** -- 2 by default; `0` is the unigrid control (Stage 1.4).
 
+## Layout — three questions, three folders (2026-09-10)
+
+| folder | the question it answers | runs | size |
+| --- | --- | --- | --- |
+| `gauge/` | **Which lapse, and how much dissipation?** The original Stage-1 ladder, run with the mesh tagger that chases error. Answers: dissipation of 2.0 must not ship, and the origin collar is a real trade, not a needless perturbation | 5 | 31 M |
+| `grid/` | **Where should the fine cells go?** The same knobs once the refinement box was nailed down instead of chasing error (`_fg`), plus the two unigrid controls that show a uniform grid cannot be refined at the origin without refining everywhere | 6 | 78 M |
+| `hold/` | **Does one throat actually sit still — over a hundred time units?** The production run and its one-knob twins: refinement level 2 / 3 / 4, the χ floor two ways, the time step. **This is the group with the campaign's result** | 8 | 327 M |
+
+The ±ε seed scan now running (`single_eps_*`, four arms at the top level of the
+campaign) belongs here too and will be filed as a fourth folder when it closes out.
+
+## Reading a run name
+
+    stage1_lapse6_sg01          Stage-1 ladder | lapse type 6 (origin collar) | dissipation 0.1
+    s15_lapse5_sg00_fg          Stage 1.5     | lapse 5 (plain) | dissipation 0.0 | fixed grid box
+    s16ml3_lapse5_sg01_fg       Stage 1.6, refinement level 3, otherwise as above
+    s1uni128_lapse5_sg01        Stage 1, unigrid, 128 cells per side, no refinement at all
+    single_hold_ml4_t100        the production hold | refinement level 4 | to t = 100
+    single_hold_chireg_t100     ...with the chi floor moved off the state and onto the right-hand side
+    single_hold_ml4_lowfloor_t100   ...level 4 with the state clamp lowered 1e-8 -> 5e-10
+    single_hold_dt005_t070      ...with the time step halved (0.1 -> 0.05), to t = 70
+
+`lapse 5` is the drainhole's own static lapse and nothing else; `lapse 6` multiplies
+it by a collar that drives the lapse to zero in a small ball at the coordinate origin.
+`sgNN` is the Kreiss-Oliger dissipation (`sg01` = 0.1). `_fg` means the refinement box
+is fixed in place rather than tagged on chi gradients.
+
 ## Results, in one place
 
 **sigma = 2.0 must not ship.**  It shrinks the throat 34% over 40 M while every
@@ -93,7 +120,7 @@ the death: the no-collar sg0.1 arm floored at t = 9.0 and ran on to t = 24.2.
 
 ## Stage 0 close-out (2026-09-05): the throat IS unstable, and the Stage-1 window was the problem
 
-`../single_hold_t100` settles what none of the arms above could: it is the same
+`hold/single_hold_t100` settles what none of the arms above could: it is the same
 physics at max_level 3 (dx = 0.0625 at the origin, half of everything here), with
 the tagger that stops the mesh chasing origin junk, run to **t = 100 with zero NaN**.
 
@@ -129,5 +156,19 @@ resolution.  The arms were measuring the fuse, not the bomb.
 **What these arms still owe.**  Both dx = 0.125 arms die within 3 units of their own
 turnover, so neither ever shows a growth *rate*.  Until they are re-run to t = 100
 with the surviving tagger, and a dx = 0.03125 arm is added, tau is a single-resolution
-number.  That ladder is TODO item 10 in research/merger/archive/GPU_PLAN_UPDATED_2026-09-08.md and is now
-the most decisive open test in the campaign.
+number.  That ladder was TODO item 10 in research/merger/archive/GPU_PLAN_UPDATED_2026-09-08.md.
+
+**It has since been run, and it is the campaign's most important single-throat result
+(2026-09-10 note; the measurement is `results/merger/campaign/01_single_throat/BRANCHES.md`).**
+`hold/single_hold_ml4_t100` is the dx = 0.03125 arm, to t = 100 with no NaN. It does not
+merely change tau — **it changes the sign of the instability**. At level 3 the throat
+collapses, reaching -50.7 % of its exact radius by t = 100; at level 4 it inflates, to
++122.1 %. The growth rates agree to 9 % (0.1702 +/- 0.0025 against 0.1902 +/- 0.0022 per
+unit) and point opposite ways. The floors are not doing it: the level-3 pair with the χ
+clamp at 1e-8 and at 1e-20 re-converge to four digits, and the level-4 pair with 1e-8 and
+5e-10 is byte-identical.
+
+**So the fate of an isolated throat is set by the truncation error's seed, not by the
+resolution being insufficient.** Never compare fates across refinement levels in this
+campaign without a declared perturbation — which is what the ±ε seed scan exists to
+supply.

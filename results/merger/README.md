@@ -138,7 +138,7 @@ and the framing was wrong — see below.)*
   while the throat loses a third of its radius. A growing mode of the
   constrained system satisfies the constraints. Nothing in this campaign may
   be certified healthy on a constraint norm alone.
-- **Runs.** `campaign/01_single_throat/single_hold_t100/` *(pack)* — one throat, exact static
+- **Runs.** `campaign/01_single_throat/hold/single_hold_t100/` *(pack)* — one throat, exact static
   data, production settings, t = 0 to 100 with zero NaN. Its one-knob twins
   (2026-09-08) *(pack)*: `single_hold_ml2_t100` — level 2, h11 NaN at
   t = 24.17 with the throat radius still exact to 0.12 %, so the origin death
@@ -310,10 +310,13 @@ and the framing was wrong — see below.)*
   before the throats meet; `..._r03000` (level 3, death 52.06) and `..._n160`
   *(pack)* — 25 % finer, same physics to 1.8 %, death 3 % later; the m4e
   refinement ladder, levels 4–7 with twins *(the level-6 rung
-  `m4e_lvl6_plain_r05000` and LAUNCHES.md are packed under
-  `campaign/05_binary_spiral/merger_fix/`; the other rungs live only in that
+  `ladder_L6_r05000` and LAUNCHES.md are packed under
+  `campaign/05_binary_spiral/p012_ladder/`, every rung packed since 2026-09-10; the tarballs live in that
   folder's ladder archives in the run tree)* —
-  pair-mean deaths 52.26 / 53.43 / 55.18 / 56.42, level-7 single arm 56.20;
+  undamped-family deaths 52.07 / 53.10 / 55.60 / 56.13 / 56.20 for levels 3–7
+  (`campaign/05_binary_spiral/refinement_ladder.dat`) — monotone and saturating,
+  the last doubling buying 0.06; an earlier pair-mean quote that showed a
+  turnover at level 7 mixed damped and undamped arms and is withdrawn;
   `..._p020_lvl5_t200` and `..._p025_lvl5_t200` *(pack)* — level 5 run
   from t = 0 dies at the level-3 wall (52.07 / 52.79): the +1.4/level gain
   belongs to the *restart* recipe (χ already clipped at the pits when a
@@ -352,10 +355,10 @@ and the framing was wrong — see below.)*
   twins agree to five digits at every shared waveform sample, and the
   late-engagement control moves the R = 14 waveform ≤ 0.003 % (m = 2) /
   0.022 % (m = 0).
-- **Runs.** The M9b program *(pack since 2026-09-10 — `campaign/05_binary_spiral/merger_fix/`)*:
-  `m9b_fill80_r05000` / `m9b_fillwide80_r05000` (the t = 80 twins),
-  `m9b_fill100_r08000` / `m9b_fillwide100_r08000` (the t = 100 drains), plus
-  the seam and late-engagement controls in the merger_fix archives.
+- **Runs.** The freeze program *(pack since 2026-09-10 — `campaign/05_binary_spiral/p012_freeze/`)*:
+  `freeze_narrow_t080_r05000` / `freeze_wide_t080_r05000` (the t = 80 twins),
+  `freeze_narrow_t100_r08000` / `freeze_wide_t100_r08000` (the t = 100 drains), plus
+  the seam and late-engagement controls in `p012_freeze/`.
   Figures in `figures/`.
 - **The head-on freeze arms (2026-09-09).** `merge_headon_flip_d8_v1c_latefreeze_t100`
   *(pack)* — the scout with the fill (r_full 1.2 / r_start 1.8) armed at t = 26.5,
@@ -395,7 +398,7 @@ and the framing was wrong — see below.)*
   whirl channels separate cleanly; the in-code mode integrals match an
   independent Simpson quadrature to 1e-8.
 - **Runs.** The same M9b freeze arms *(run tree)*; the evidence is
-  `figures/05_binary_spiral/psi4_analysis_m9b_fillwide80*` and `figures/05_binary_spiral/wave_speed_check.png`.
+  `figures/05_binary_spiral/psi4_analysis_freeze_wide_t080*` and `figures/05_binary_spiral/wave_speed_check.png`.
 
 ### Where the capture boundary sits in orbital momentum
 - **Claim.** p = 0.20 and 0.25 are captured, p = 0.35 and 0.45 fly by — the
@@ -706,9 +709,9 @@ deleted on 2026-09-10 — the t = 100 figure supersedes both.
 | `04_binary_headon/placement_curve.png` | the placement curve from the eighteen one-step probes (d = 6 → 48) and the V1 scout's mouths against it before contact (generated) |
 | `04_binary_headon/headon_freeze_psi4_20_R10_14_18_t100.png` | the head-on freeze arm's (2,0) mode at R = 10/14/18 to t = 100 (final, 2026-09-09): **three swings of the merged object, outgoing all the way** — at R = 10 peak +0.23 (t = 28.2), trough −0.18 (43.6), peak +0.11 (62.7), trough −0.06 (79.0), period ≈ 33 and ×0.6 per half-swing; R = 14 and 18 the same, each ~4 units later per 4 units of radius. The cross-correlation lag from R = 10 to 18 is positive in every window, so nothing comes back from the wall. The fill twin (dashed, 1.0/1.5) lies on V1c to 3e-4 of peak until each fill's imprint arrives (red dotted), then differs by 1–5 % of peak at R = 10 and 3–12 % at R = 14 — a drift later shown to be V1c's own, not the fill's; at R = 18 both runs grow a grid-scale wobble (period ≈ 1.5) from t ≈ 80. Amplitude still grows with R: R = 18 is not the wave zone. |
 | `04_binary_headon/headon_downstep_psi4_20_R10_14_18_t100.png` | the level-3 down-step (restarted from the level-5 t = 35 checkpoint with max_level 3) against the level-5 arm, the narrow-fill twin and V1c: Re r·ψ4 (2,0) at R = 10/14/18 to t = 100 (2026-09-10). The down-step and the level-5 arm lie on top of each other to 0.05 / 0.19 / 0.25 % of peak through t = 98.4, the fill twin inside 0.07 / 0.14 / 0.25 %; V1c, the only never-restarted arm, drifts by 6 / 14 / 41 %. Grey band: initial-data junk; black dotted: the restart at t = 35; red dotted: the earliest arrival of anything the restart changed. Made by `python -m grteclyn_wrapper.visualisation.merger.plot_psi4_modes --restart 35 …` from the every-step Weyl4 streams. |
-| `05_binary_spiral/psi4_analysis_m9b_fillwide80.{png,pdf}` | six-panel analysis of the (2,0) breathing mode, full history t = 0–80 stitched across the restart chain: waveform at both radii, retarded-time overlay, PSD, propagation speed (0.889 of coordinate light — see the speed check below), spectrogram, strain vs Advanced LIGO |
-| `05_binary_spiral/psi4_analysis_m9b_fillwide80_m2.{png,pdf}` | same six panels for the (2,2) whirl mode — the channel that carries the plunge burst |
-| `05_binary_spiral/psi4_analysis_m9b_fill100.{png,pdf}` | the six panels for the narrow-fill drain arm (fill 1.3/1.8) to t = 97 — the seam twin of the wide-fill analysis; the two agree to five digits outside the fill |
+| `05_binary_spiral/psi4_analysis_freeze_wide_t080.{png,pdf}` | six-panel analysis of the (2,0) breathing mode, full history t = 0–80 stitched across the restart chain: waveform at both radii, retarded-time overlay, PSD, propagation speed (0.889 of coordinate light — see the speed check below), spectrogram, strain vs Advanced LIGO |
+| `05_binary_spiral/psi4_analysis_freeze_wide_t080_m2.{png,pdf}` | same six panels for the (2,2) whirl mode — the channel that carries the plunge burst |
+| `05_binary_spiral/psi4_analysis_freeze_narrow_t100.{png,pdf}` | the six panels for the narrow-fill drain arm (fill 1.3/1.8) to t = 97 — the seam twin of the wide-fill analysis; the two agree to five digits outside the fill |
 | `05_binary_spiral/gw_merger_full_history_0_97.png` | the stitched p = 0.12 waveform t = 0 → 97 (`campaign/05_binary_spiral/psi4_merger_stitched_0_97.dat`: r03000 to 50.5, fillwide80 to 79.5, fillwide100 to 97): no chirp and no ringdown anywhere in it (archive GPU_PLAN_2026-09-03 §B4) |
 | `05_binary_spiral/merger_ladder_psi4_R14/R30.png` | every campaign arm overlaid at each detector: the freeze arms run exactly under the unfrozen ladder arms wherever they overlap |
 | `05_binary_spiral/ladder_psi4_R14_lvl6.png` | the refinement-ladder arms alone at R = 14 |
@@ -751,7 +754,8 @@ campaign/
                                   (plain, Helfer x4, damping, gauge, floors), the capture
                                   scan p = 0.15 / 0.20 / 0.25 with their level-5 and no-fill
                                   arms, the two NaN autopsies
-    merger_fix/<arm>/               the refinement ladder's level-6 rung and the M9b freeze
+    p012_ladder/<arm>/             every rung of the refinement ladder, levels 3-7
+    p012_freeze/<arm>/             the interior-freeze programme, the headline waveform
                                     programme (fill80 / fillwide80 / fill100 / fillwide100,
                                     the Weyl-extraction tests) with its LAUNCHES.md
     horizon/                        the offline Theta = 0 scans behind the dissolution result

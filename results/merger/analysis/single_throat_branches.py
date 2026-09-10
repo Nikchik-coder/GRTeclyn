@@ -136,7 +136,7 @@ def main(argv: list[str]) -> int:
     w("t = 61.3 in both, sits there 1.4 units,")
     w("and the two runs re-converge to four digits by t = 66. The clamp value is not load-bearing.\n")
     same = all(
-        np.array_equal(load(camp, ARMS["ml4"], f), load(camp, ARMS["ml4 low floor"], f))
+        np.array_equal(load(root, ARMS["ml4"], f), load(root, ARMS["ml4 low floor"], f))
         for f in ("constraint_norms.dat", "collapse_diagnostics.dat", "binary_throat_diagnostics.dat", "areal_radius.dat")
     )
     w(f"Level 4 pair (min_chi 1e-8 vs 5e-10): all four streams byte-identical = **{same}**; origin chi")

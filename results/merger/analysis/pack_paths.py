@@ -1,10 +1,12 @@
 """Where a run's packed streams live in results/merger, by name.
 
 Since 2026-09-10 the pack is filed by physics, mirroring the run tree:
-campaign/<group>/<run>/ with the groups 01_single_throat, 03_two_throats,
+campaign/<group>/<run>/ with the groups 01_single_throat (filed by question:
+gauge/ grid/ hold/), 03_two_throats,
 04_binary_headon (its one-step placement probes one level deeper, under
-placement/), 05_binary_spiral (its freeze programme one level deeper, under
-merger_fix/), 06_binary_flyby, 07_bbh_control.  Every analysis script resolves
+placement/), 05_binary_spiral and 06_binary_flyby (both one level deeper, filed
+by the tangential kick that decides the outcome: p012/ p012_freeze/ p012_ladder/
+p015/ p020/ p025/ capture and merge, p035/ p045/ miss), 07_bbh_control.  Every analysis script resolves
 a run through here, so none of them knows the layout.
 
     from pack_paths import find_run, iter_runs, group_of

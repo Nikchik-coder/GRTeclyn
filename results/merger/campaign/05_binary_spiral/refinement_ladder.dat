@@ -1,0 +1,30 @@
+# The p = 0.12 orbital merger: how far a finer grid carries the run past the fusion.
+# Every arm restarts from the SAME state -- merge_orbit_flip_d12_r03000's checkpoint
+# at t = 50 -- and changes one thing.  Death = last time in the evolution log before
+# the NaN (h11 in every case).  Base grid L = 64, N = 128, so cell = 0.5 / 2^level.
+# Built 2026-09-10 from the run logs of runs/wormhole_merger/05_binary_spiral/p012_ladder.
+#
+# family: plain = core_matter_damping 0; damped = core_matter_damping 1 with the
+# lapse-keyed core damping engaged from t = 50.  The two are DIFFERENT physical
+# treatments and must not be averaged together.  dt_mult 0.02 unless stated.
+#
+# level   cell        family   dt_mult   t_death   run
+  3       0.06250     plain    0.02      52.0675   merge_orbit_flip_d12_r03000
+  4       0.03125     plain    0.02      53.0956   ladder_L4_r05000
+  5       0.01562     plain    0.02      55.6038   ladder_L5_r05000
+  6       0.00781     plain    0.02      56.1348   ladder_L6_r05000
+  7       0.00391     plain    0.02      56.1988   ladder_L7_r05000
+  3       0.06250     damped   0.02      52.0913   merge_orbit_flip_d12_r05000
+  4       0.03125     damped   0.02      53.7538   ladder_L4_damped_r05000
+  5       0.01562     damped   0.02      54.7631   ladder_L5_damped_r05000
+  6       0.00781     damped   0.02      56.7066   ladder_L6_damped_r05000
+  5       0.01562     plain    0.01      55.9614   ladder_L5_halfstep_r05000
+#
+# READING IT.  Within the plain family the ladder is monotone and saturating:
+# +1.03, +2.51, +0.53, +0.06 per doubling.  Sixteen times the resolution buys
+# 4.13 units and never reaches the wall; the last doubling buys 0.06.
+# The time-step control (last row) gains +0.36 over its own level-5 twin -- most of
+# the size of the level 5 -> 6 spatial gain -- so the top of the spatial ladder is
+# evidence of saturation, not a converged limit.
+# An earlier quote of this ladder ("turns over at level 7", 56.42 -> 56.20) averaged
+# each level's plain and damped arms and is withdrawn.

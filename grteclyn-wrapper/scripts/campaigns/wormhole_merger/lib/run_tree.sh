@@ -14,7 +14,7 @@
 #   run_tree_groups "${CAMPAIGN}"      # the group folders, one per line
 #
 # A name is matched at the top level first, then one and two levels down
-# (05_binary_spiral/merger_fix/<arm> is the deepest shape).  Folders whose
+# (05_binary_spiral/p012_freeze/<arm> is the deepest shape).  Folders whose
 # names start with 00_, 90_, bin, logs or templates_scan are never runs.
 
 run_tree_find() {
