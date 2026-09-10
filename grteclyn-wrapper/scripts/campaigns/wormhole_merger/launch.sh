@@ -48,6 +48,13 @@
 #                     regrid_interval to match; AMReX aborts otherwise)
 #   --what TEXT       the registry line.  Default: the template's first
 #                     comment line, which is why every template starts with one
+#   --label NAME      what the run calls itself in the machine's process table
+#                     (default "test").  The cards are shared and `ps aux` is
+#                     public, so every process of a run is started from the run
+#                     directory with relative paths and this name: "test
+#                     params.txt", "test_post post.py …", "tee run.log".  It
+#                     hides the subject, not the usage: the username and the
+#                     busy cards stay visible.  run_single.sh, "Process table"
 #   --foreground      run attached (dies with the shell; for probes only)
 #   --dry-run         resolve and print everything, touch nothing
 #
@@ -74,7 +81,7 @@ CAMPAIGN="${REPO}/runs/wormhole_merger"
 TEMPLATES="${CAMPAIGN}/templates_scan"
 
 TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 KEEP_LAST=3
-RESTART="" BINARY="" MAX_LEVEL="" WHAT="" FOREGROUND=0 DRYRUN=0
+RESTART="" BINARY="" MAX_LEVEL="" WHAT="" FOREGROUND=0 DRYRUN=0 LABEL="test"
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --template)   TEMPLATE="$2"; shift 2 ;;
@@ -89,6 +96,7 @@ while [[ $# -gt 0 ]]; do
     --binary)     BINARY="$2"; shift 2 ;;
     --max-level)  MAX_LEVEL="$2"; shift 2 ;;
     --what)       WHAT="$2"; shift 2 ;;
+    --label)      LABEL="$2"; shift 2 ;;
     --foreground) FOREGROUND=1; shift ;;
     --dry-run)    DRYRUN=1; shift ;;
     -h|--help)    sed -n '2,60p' "${BASH_SOURCE[0]}"; exit 0 ;;
@@ -156,6 +164,7 @@ env_args=(
   "WHM_RUNS_DIR=${CAMPAIGN}"
   "WHM_EXE=${BINARY}"
   "WHM_WHAT=${WHAT}"
+  "WHM_PROC_LABEL=${LABEL}"
 )
 [[ -n "${RESTART}" ]]   && env_args+=("WHM_RESTART=${RESTART}")
 [[ -n "${MAX_LEVEL}" ]] && env_args+=("WHM_MAX_LEVEL=${MAX_LEVEL}")
@@ -171,6 +180,7 @@ echo "[launch] binary   : ${BINARY#"${REPO}"/}"
 echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" ]] && echo " (OVERRIDDEN by --consume-args)") (zoom ${ZOOM}, coord ${COORD})   keep-last: ${KEEP_LAST}"
 [[ -n "${RESTART}" ]] && echo "[launch] restart  : ${RESTART}"
 echo "[launch] what     : ${WHAT}"
+echo "[launch] label    : ${LABEL}   (process table: '${LABEL} params.txt', '${LABEL}_post post.py …')"
 
 if (( DRYRUN )); then
   /usr/bin/env "${env_args[@]}" WHM_DRYRUN=1 bash "${HERE}/run_single.sh"
@@ -181,12 +191,21 @@ fi
 # installer directory first resolved `env` to uv's `env` *script* (meant to be
 # sourced, not run), which exports PATH and exits 0 without running anything --
 # four launches and their dry runs reported success and started nothing.
+# Started from the script's own directory and with a neutral argv[0], so the
+# supervisor shows as "<label>_job run_single.sh" rather than a campaign path
+# (run_single.sh, "Process table"); the same reason the log is opened by
+# redirection or written by a tee standing in the log directory.
 mkdir -p "${LOG_DIR}"
 if (( FOREGROUND )); then
   echo "[launch] attached -- dies with this shell; log also at ${LOG#"${REPO}"/}"
-  /usr/bin/env "${env_args[@]}" bash "${HERE}/run_single.sh" 2>&1 | tee "${LOG}"
+  ( cd "${LOG_DIR}" \
+    && /usr/bin/env "${env_args[@]}" bash -c 'cd "$3" && exec -a "$1" bash "$2"' \
+         _ "${LABEL}_job" run_single.sh "${HERE}" 2>&1 | tee "${FULL_NAME}.log" )
 else
-  /usr/bin/env "${env_args[@]}" setsid nohup bash "${HERE}/run_single.sh" > "${LOG}" 2>&1 < /dev/null &
+  ( cd "${HERE}" \
+    && /usr/bin/env "${env_args[@]}" setsid nohup \
+         bash -c 'exec -a "$1" bash "$2"' _ "${LABEL}_job" run_single.sh \
+         > "${LOG}" 2>&1 < /dev/null & )
   echo "[launch] detached on gpu ${GPU}; log: ${LOG#"${REPO}"/}"
   echo "[launch] stop it with the run's launcher.pid, never a pkill pattern."
 fi

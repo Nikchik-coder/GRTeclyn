@@ -83,6 +83,24 @@
 #   WHM_WHAT      one line on what the run is for -> results/merger/runs_registry.tsv
 #   WHM_FRAMES_FIELDS  frame fields when WHM_CONSUME_ARGS names none
 #                 (default: chi K lapse phi Pi -- never launch with one field)
+#   WHM_PROC_LABEL  what this run calls itself in the machine's process table
+#                 (default "test").  See "Process table" below
+#   WHM_PROC_ALIAS=0  run the binary from its real path instead of the neutral
+#                 copy (the GPU process list then shows the campaign path)
+#   WHM_PROC_BIN_DIR  where the neutral copies live (default /tmp/ml_jobs/bin)
+#
+# Process table.  The cards are shared, and `ps aux` / `nvidia-smi` are
+# readable by anyone who can see this machine's processes, so what a run calls
+# itself there is a launch-time decision like any other.  Every long-lived
+# process of a run is started from the run directory with RELATIVE paths and a
+# neutral argv[0]: `test params.txt` (evolution), `test_post post.py …`
+# (consumer), `tee run.log`.  The GPU process list shows the executable's real
+# path, which argv[0] cannot change, so the binary runs from a copy under
+# WHM_PROC_BIN_DIR named after the label and the binary's own checksum -- one
+# copy per distinct binary, reused by every later run.  What this does NOT
+# hide: the username, that the cards are busy, and the directory names on the
+# shared filesystem.  Nothing here changes what is computed; the real binary
+# and the real paths are logged in the run's own log.
 #
 # Stop:  bash scripts/campaigns/stop_campaign.sh [--dry-run] <runs_dir>
 #
@@ -97,6 +115,7 @@
 # with the plotfile.  Pass extra extractions through WHM_CONSUME_ARGS.
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SELF_DIR="${SCRIPT_DIR}"   # this directory, resolved BEFORE anything moves us
 WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
 
 # Machine paths come from the gitignored .env overlay, never from this file and
@@ -107,9 +126,13 @@ WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
 # shellcheck source=../../lib/env.sh
 source "${WRAPPER_DIR}/scripts/lib/env.sh"
 # env.sh computes a SCRIPT_DIR of its own and exports it, so after sourcing it
-# SCRIPT_DIR points at scripts/lib rather than at this directory.  Re-derive it:
-# every relative source below (launcher_common.sh) resolves against it.
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+# SCRIPT_DIR points at scripts/lib rather than at this directory.  Restore it
+# from the copy taken above -- every relative source below (launcher_common.sh)
+# resolves against it.  Not re-derived from BASH_SOURCE: when this script is
+# invoked by a relative name (which it is, so that the process table shows no
+# campaign path) a re-derivation resolves against the current directory, and
+# env.sh has already moved us to the repo root by this point.
+SCRIPT_DIR="${SELF_DIR}"
 REPO_ROOT="${GRTECLYN_ROOT:-$(cd -- "${WRAPPER_DIR}/.." && pwd)}"
 EXAMPLE_DIR="${REPO_ROOT}/Examples/BinaryWormholeMerger"
 
@@ -199,6 +222,30 @@ if [[ -n "${WHM_WHAT:-}" && -f "${REGISTRY}" ]]; then
 fi
 
 mkdir -p "${RUN_DIR}" "${SCRATCH_DIR}"
+
+# --- process table (see the header) ----------------------------------------
+# Everything below runs from RUN_DIR, so the scratch cell gets a link inside it
+# and the consumer can be given "scratch" instead of an absolute path.
+PROC_LABEL="${WHM_PROC_LABEL:-test}"
+[[ -e "${RUN_DIR}/scratch" ]] || ln -s "${SCRATCH_DIR}" "${RUN_DIR}/scratch"
+
+# The neutral copy the GPU process list will show.  Keyed by the binary's own
+# checksum, so two runs on different builds never share one and a rebuild
+# never silently reuses the old copy.
+EXE_RUN="${EXE}"
+if [[ "${WHM_PROC_ALIAS:-1}" != "0" ]]; then
+  PROC_BIN_DIR="${WHM_PROC_BIN_DIR:-/tmp/ml_jobs/bin}"
+  mkdir -p "${PROC_BIN_DIR}"
+  exe_sum="$(md5sum "${EXE}" | cut -c1-8)"
+  EXE_RUN="${PROC_BIN_DIR}/${PROC_LABEL}_${exe_sum}"
+  if [[ ! -x "${EXE_RUN}" ]]; then
+    cp "${EXE}" "${EXE_RUN}.part$$"
+    chmod +x "${EXE_RUN}.part$$"
+    mv "${EXE_RUN}.part$$" "${EXE_RUN}"
+  fi
+  echo "[whm] proc     : ${PROC_LABEL} (evolution runs from ${EXE_RUN})"
+fi
+
 
 # Stop handle for scripts/campaigns/stop_campaign.sh.  Registered per RUN dir,
 # not the campaign root: several singles run concurrently (one per GPU), and a
@@ -359,11 +406,27 @@ fi
 CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
 CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
 CONSUMER_PID=""
+
+# The consumer's public name (see "Process table").  Python locates its virtual
+# environment through argv[0], so simply renaming the process loses every
+# installed package ("No module named 'numpy'", measured 2026-09-10).  The
+# neutral name is therefore a real symlink inside the venv's own bin directory,
+# with that directory first on PATH: python looks the bare name up on PATH,
+# resolves the link and finds the environment, and the command line still shows
+# no path at all.
+CONSUMER_BIN="${CONSUMER_PY}"
+if [[ "${WHM_PROC_ALIAS:-1}" != "0" && -x "${CONSUMER_PY}" ]]; then
+  ln -sfn "$(basename "${CONSUMER_PY}")" "$(dirname "${CONSUMER_PY}")/${PROC_LABEL}_post"
+  PATH="$(dirname "${CONSUMER_PY}"):${PATH}"
+  export PATH
+  CONSUMER_BIN="${PROC_LABEL}_post"
+fi
 # --frames-out defaults to a directory inside the wrapper SOURCE tree, which is
 # not gitignored, so frames from every run pile up there and are invisible from
 # the run directory.  Anchor them next to the run they came from.
-consumer_args=(--data "${SCRATCH_DIR}" --out "${RUN_DIR}/small_data"
-               --frames-out "${RUN_DIR}/frames")
+# Relative, because the consumer is started from RUN_DIR and its command line
+# is public (see "Process table"): "scratch" is the link made above.
+consumer_args=(--data scratch --out small_data --frames-out frames)
 
 # The consumer's --center defaults to (0,0,0), but every merger template puts
 # the physics at center = L/2.  Nothing errors when they disagree: the
@@ -390,6 +453,18 @@ if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
 fi
 # shellcheck disable=SC2206
 consumer_args+=(${WHM_CONSUME_ARGS:-})
+
+# A profile hands over absolute paths into the run (the horizon track), and so
+# does a hand-written WHM_CONSUME_ARGS.  Fold both back to RUN_DIR-relative:
+# the consumer runs there, and the command line is public.
+for i in "${!consumer_args[@]}"; do
+  case "${consumer_args[i]}" in
+    "${RUN_DIR}")    consumer_args[i]="." ;;
+    "${RUN_DIR}"/*)  consumer_args[i]="${consumer_args[i]#"${RUN_DIR}"/}" ;;
+    "${SCRATCH_DIR}")   consumer_args[i]="scratch" ;;
+    "${SCRATCH_DIR}"/*) consumer_args[i]="scratch/${consumer_args[i]#"${SCRATCH_DIR}"/}" ;;
+  esac
+done
 
 # Frames for SEVERAL fields, every launch (2026-09-09).  The ladder runs of
 # 2026-09-08 were launched with chi frames only; the consumer deleted the
@@ -419,8 +494,19 @@ if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
     exit 1
   fi
   mkdir -p "${RUN_DIR}/small_data"
-  "${CONSUMER_PY}" -m "${CONSUMER_MOD}" "${consumer_args[@]}" --watch \
-    > "${RUN_DIR}/consumer.log" 2>&1 &
+  # `python -m <module>` would put the package's dotted name on a public
+  # command line, so the module is entered through a one-line file in the run
+  # directory instead and the process is named after the run's label.
+  cat > "${RUN_DIR}/post.py" <<PY
+# written by run_single.sh: entry point for the plotfile consumer
+import runpy
+runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
+PY
+  (
+    cd "${RUN_DIR}"
+    exec -a "${PROC_LABEL}_post" "${CONSUMER_BIN}" post.py "${consumer_args[@]}" \
+      --watch > consumer.log 2>&1
+  ) &
   CONSUMER_PID=$!
   echo "[whm] consumer  : pid ${CONSUMER_PID} -> ${RUN_DIR}/small_data"
   if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
@@ -450,17 +536,20 @@ fi
 
 echo "[whm] === launching ${NAME} (attached; Ctrl-C or stop_campaign.sh to stop) ==="
 status=0
+# From here on the shell stands in the run directory, so the evolution, the
+# log writer and the drain pass all quote relative paths (see "Process table").
+cd "${RUN_DIR}"
 (
-  cd "${RUN_DIR}"
   if [[ "${RANKS}" -gt 1 ]]; then
-    GRTECLYN_GPU_IDS="${GPU}" mpirun -n "${RANKS}" bash -c \
+    GRTECLYN_GPU_IDS="${GPU}" GRTECLYN_EXE="${EXE_RUN}" \
+    GRTECLYN_LABEL="${PROC_LABEL}" mpirun -n "${RANKS}" bash -c \
       'IFS="," read -ra _g <<< "${GRTECLYN_GPU_IDS}"; \
        export CUDA_VISIBLE_DEVICES="${_g[${OMPI_COMM_WORLD_LOCAL_RANK:-0}]}"; \
-       exec "$0" "$1"' "${EXE}" "${RUN_PARAMS}"
+       exec -a "${GRTECLYN_LABEL}" "${GRTECLYN_EXE}" params.txt'
   else
-    CUDA_VISIBLE_DEVICES="${GPU}" "${EXE}" "${RUN_PARAMS}"
+    CUDA_VISIBLE_DEVICES="${GPU}" exec -a "${PROC_LABEL}" "${EXE_RUN}" params.txt
   fi
-) 2>&1 | tee "${RUN_DIR}/run.log" || status=$?
+) 2>&1 | tee run.log || status=$?
 
 # Drain before reporting.  The watcher is stopped and then a single one-shot
 # pass picks up whatever it had not reached: deletion is ledger-gated, so an
@@ -475,9 +564,11 @@ if [[ -n "${CONSUMER_PID}" ]]; then
   # catastrophic for a second pass over the same run: without it this drain
   # deletes every PNG the watcher rendered during the evolution, and if the run
   # aborted there are no plotfiles left to re-render them from.
-  "${CONSUMER_PY}" -m "${CONSUMER_MOD}" "${consumer_args[@]}" \
-    --keep-existing-frames \
-    >> "${RUN_DIR}/consumer.log" 2>&1 || \
+  (
+    cd "${RUN_DIR}"
+    exec -a "${PROC_LABEL}_post" "${CONSUMER_BIN}" post.py "${consumer_args[@]}" \
+      --keep-existing-frames >> consumer.log 2>&1
+  ) || \
     echo "[whm] final consumer pass reported an error -- see ${RUN_DIR}/consumer.log" >&2
 fi
 

@@ -61,6 +61,50 @@ wrong by hand.
 Runs detach by default and survive the shell; `--foreground` attaches, which is
 for probes only. Detaching a real run needs the user's word first.
 
+## What the machine's process table says about a run
+
+The cards are shared, and `ps aux` and `nvidia-smi` can be read by anyone who
+sees this machine's processes. So a run says as little as possible there. Every
+long-lived process starts *from the run directory*, quotes relative paths, and
+carries a neutral `argv[0]` set by `--label` (default `test`):
+
+```
+test_job run_single.sh          the supervisor
+test params.txt                 the evolution
+tee run.log                     the log writer
+test_post post.py --data scratch --out small_data …   the plotfile consumer
+```
+
+Measured on 2026-09-10 with a half-unit probe: those four lines are the whole
+of it, `nvidia-smi` reports the compute process as `test`, and nothing in the
+table names the campaign, the code or the physics.
+
+Three pieces make that work, and each exists for a reason found the hard way:
+
+- `scratch` in the run directory is a link to the run's scratch cell, so the
+  consumer can be given `--data scratch` instead of an absolute path.
+- The evolution runs from a copy of the binary under `/tmp/ml_jobs/bin`, named
+  after the label and the binary's own checksum. `argv[0]` cannot change what
+  the GPU process list reports — that comes from the executable itself — so the
+  executable has to be somewhere neutral. One copy per distinct binary, reused.
+- The consumer is entered through a one-line `post.py` written into the run
+  directory (a dotted module name would otherwise be on the command line), and
+  its neutral name is a symlink inside the virtual environment's own `bin`,
+  with that directory first on `PATH`. Python finds its environment through
+  `argv[0]`: rename the process without the symlink and every installed package
+  disappears (`No module named 'numpy'`, measured the same day).
+
+`WHM_PROC_ALIAS=0` turns the aliasing off and runs the binary from its real
+path. What none of this hides: the username, the fact that the cards are busy,
+and the directory names on the shared filesystem. Nothing about the computation
+changes — the real binary and the real paths are in the run's own log, which is
+where provenance belongs.
+
+Because the supervisor is now started by a *relative* name, `run_single.sh`
+keeps the copy of its own directory it took before sourcing `env.sh`. Deriving
+it again later resolves against the working directory, and `env.sh` has moved
+by then; that mistake cost one failed launch on 2026-09-10.
+
 ## Consumer profiles
 
 `--profile` names what the consumer should extract. The flags live in

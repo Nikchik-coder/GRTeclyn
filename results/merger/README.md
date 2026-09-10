@@ -131,6 +131,29 @@ that produced it does not.
    symmetry — a quadrupolar kick instead of a spherical one, rotation, or a boosted throat. Movies
    of χ, K, the lapse, φ and Π on one fixed scale per field are in each seed run's `movies/` in the
    run tree.
+   **Four follow-up arms, stopped by hand on 2026-09-10 with the cards wanted elsewhere, and what
+   they had already settled.** (a) *A declared kick still picks the fate one level finer.*
+   `single_eps_{m,p}1e2_ml4_t060` reached t = 13.5 at level 4: the pushed-out arm has a marginally
+   trapped surface at t = 11 of areal radius 3.883 (level 3: t = 11, 3.88), and the twins cross at
+   t = 12.99 (level 3: 13.01). The branch, the horizon time and the crossing all survive the finer
+   grid; neither fate was followed to its end, so the level-4 statement stops there. (b) *A
+   quadrupolar kick on top of the spherical one moves neither the horizon nor the wave.*
+   `single_eps_p1e2_q1e2_t100` — the +0.01 spherical kick times an l = 2 shell of the same amplitude
+   and width, from the frozen build `bin/main3d_seedl2_2026-09-10.ex` — forms the same horizon,
+   areal radius 3.360 / 3.033 / 2.919 at t = 23 / 26 / 27 against the spherical arm's 3.371 / 3.046 /
+   2.933 (0.3–0.5 % apart), and then NaNs at t = 27.58 in h11 on level 3, with its horizon at
+   radius ≈ 2.9 — just inside the 3.10 at which the 0.1 % arm died, and inside the range the
+   spherical +1 % arm came through. Its (2,0) mode does leave the spherical arms' floor before it
+   dies (1.5e-4 at R = 14 against ≤ 1.5e-5), but the run-maximum r·Ψ4 over the four spheres
+   (R = 10 / 14 / 18 / 22) spans 6.0e-3 to 5.4e-4 instead of staying constant, and those are maxima
+   over the run, not one tracked wavefront. Nothing here is yet an outgoing wave, and the arm stopped
+   70 units before it could show one. (c) *The Ψ4 floor rise at t ≈ 40 is not the outer boundary.*
+   `single_hold_L128_t100` — the unkicked throat in a box twice as wide, the sponge moved out with
+   the edge, every refined box the same size — passes 3e-5 at R = 14 at **t = 41**, the same time as
+   the small box, where a boundary effect would have been delayed by the extra ~64 units of round
+   trip. The constraint half of that question stays open: the run stopped at t = 41, before the
+   t = 57–84 onsets. Read its constraint norm only as an onset time: the norm is a volume average
+   over the whole box, so the big box starts 3× lower (6.58e-4 against 2.10e-3) for that reason alone.
    The same split was seen in 3D before, for the massless
    Ellis-Bronnikov throat (Shirokov 2026, arXiv:2604.00071): noise alone drove that run to
    the inflation branch at five levels of refinement, and halving the phantom support with a
@@ -737,9 +760,13 @@ what two throats do when they touch *without* a horizon.
   rays, outermost). The live level-1 scan, which is coarse, saw it from
   t = 12.32 to 13.37 and then lost it — the fine scan is the one to quote.
 - **Why the mass knob failed.** The drainhole's mass parameter sets the pull,
-  not the size. At m = 0.5 the throat's own areal radius is 3.18, against 3.89
-  at m = 1: halving the mass shrinks the throat by 18 %. Two objects of areal
-  radius 3.2 released 6 apart enclose a large area from the start, and the
+  not the size. At m = 0.5 the throat's own areal radius is **2.872**, against
+  3.890 at m = 1 — the exact e^{−u(m)}·√(m² + a²), and what the lone half-mass
+  throat below reads at t = 0 — so halving the mass shrinks the throat by 26 %.
+  *(An earlier version of this line said 3.18 and "18 %". That 3.18 is this
+  run's own t = 0 scan value, which sits above the exact radius because the
+  neighbour is on the ruler at d = 6; it is not the throat's radius.)* Two
+  objects of areal radius ~2.9 released 6 apart enclose a large area, and the
   mass that ends up inside the surface is 2.05–2.16 — twice the sum of the two
   mass parameters, because the phantom field outside carries negative energy.
   Against R_mots 3.91 the hoop line 2·M_MS is 4.10: the configuration is on the
@@ -758,11 +785,23 @@ what two throats do when they touch *without* a horizon.
   minimum areal radius rises 3.18 → 3.52 between t = 0 and t = 13, but from
   t ≈ 11 the two mouth centres are less than 0.7 apart, so after that the
   "per-mouth" scan is reading the merged region, not two throats.
-- **What it opens.** A lone throat at m = 0.5 has never been run. Its own
-  instability clock (onset 26, e-fold 5.9 are m = 1 numbers, and the rate
-  depends on m/a) is what dates whether these mouths were already collapsing
-  before they touched. Until that control exists, nothing here separates
-  contact from self-decay.
+- **The control now exists, and it clears the throats: the death at t = 14
+  belongs to the pair.** `single_m05_t040` (2026-09-10, the same file without
+  throat B, stopped by hand at t = 26.3) is the lone half-mass throat. Its
+  areal radius reads **2.87173** at t = 0 — the exact value to six digits — and
+  stays within **0.02 %** of it through **t = 14**, the moment the pair died;
+  it first leaves 0.1 % at t ≈ 17, reaches −0.55 % at t = 22 and −1.56 % at
+  t = 26. So nothing had happened to these throats on their own by the time the
+  binary collapsed: the horizon at t = 12 and the wall at t = 14 are the
+  interaction's, not self-decay. The lone arm then dies on its own account at
+  **t = 26.28**, in K on level 3 at a cell 0.16 from the throat centre — the
+  compactified origin, with χ on its 1e-20 floor — and with **no horizon
+  anywhere** (the shell scan finds no trapped ray, and none anti-trapped, to
+  the end). **The lighter throat is the less stable one**: the m = 1 twin with
+  the same settings (`single_hold_chireg_t100`) holds its origin until t = 61.3
+  and runs clean to t = 100, and it stays within 0.1 % of exact until t ≈ 35,
+  where the half-mass arm leaves 0.1 % at t ≈ 17. One arm each, so this dates
+  the two clocks and does not measure how the rate scales with m/a.
 
 Frames (χ, K, lapse, φ, Π, Weyl4), the slice cache and all Weyl4 modes at
 R = 10/14/18 were written before the abort, so the run is fully analysable.
