@@ -81,6 +81,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_eps_m1e1_t100` | B | 15.2 | x5316.8 / 15.2 | +0.93 | - | - | - | - | - | - | 14.8 | too short |
 | `single_eps_p1e1_t100` | A | 14.1 | x1542.5 / 14.1 | +0.87 | - | - | - | - | - | - | 13.0 | too short |
 | `single_eps_p1e1_t100` | B | 14.1 | x1542.5 / 14.1 | +0.87 | - | - | - | - | - | - | 13.0 | too short |
+| `single_eps_p1e3_t100` | A | 40.1 | x4360.8 / 40.1 | +0.96 | +1.17 | +1.22 | +1.21 | +2.55 | - | - | 37.9 | early (-0.10 dex) |
+| `single_eps_p1e3_t100` | B | 40.1 | x4360.9 / 40.1 | +0.96 | +1.17 | +1.22 | +1.21 | +2.55 | - | - | 37.9 | early (-0.10 dex) |
 | `s20_boost_p02` | A | 40.0 | x400.6 / 40.0 | +1.06 | +1.30 | +1.58 | +1.79 | +2.60 | - | - | - | late (+0.48 dex) |
 | `s20_boost_p02` | B | 40.0 | x942124.5 / 35.0 | +4.00 | +5.57 | +5.85 | +5.94 | +5.92 | - | - | - | late (+4.63 dex) |
 | `ctrl_flip_d12` | A | 10.8 | x11.1 / 10.5 | +0.99 | - | - | - | - | - | - | - | too short |
@@ -189,14 +191,18 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_p045_helfer_t090` | B | 37.3 | x874.0 / 37.3 | +1.16 | +1.79 | +2.29 | +2.57 | - | - | - | - | late (+1.26 dex) |
 | `merge_orbit_flip_d12_p045_t200` | A | 91.0 | x2708.9 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
 | `merge_orbit_flip_d12_p045_t200` | B | 91.0 | x2709.0 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
-| `single_eps_m1e2_t100` | A | 19.9 | x18.4 / 19.9 | +0.97 | +1.27 | - | - | - | - | - | - | too short |
-| `single_eps_m1e2_t100` | B | 19.9 | x18.4 / 19.9 | +0.97 | +1.27 | - | - | - | - | - | - | too short |
-| `single_eps_p1e2_t100` | A | 19.8 | x12.0 / 18.0 | +0.96 | +1.07 | - | - | - | - | - | - | too short |
-| `single_eps_p1e2_t100` | B | 19.8 | x12.0 / 18.0 | +0.96 | +1.07 | - | - | - | - | - | - | too short |
+| `single_eps_m1e2_t100` | A | 67.6 | x9180.7 / 67.6 | +0.97 | +1.27 | +1.54 | +1.86 | +2.81 | +3.41 | +3.77 | - | late (+0.55 dex) |
+| `single_eps_m1e2_t100` | B | 67.6 | x9180.7 / 67.6 | +0.97 | +1.27 | +1.54 | +1.86 | +2.81 | +3.41 | +3.77 | - | late (+0.55 dex) |
+| `single_eps_m1e3_t100` | A | 44.2 | x187.6 / 44.2 | +0.96 | +1.19 | +1.31 | +1.41 | +1.90 | - | - | - | same (+0.10 dex) |
+| `single_eps_m1e3_t100` | B | 44.2 | x187.6 / 44.2 | +0.96 | +1.19 | +1.31 | +1.41 | +1.90 | - | - | - | same (+0.10 dex) |
+| `single_eps_p1e2_t100` | A | 67.3 | x2982.7 / 51.5 | +0.96 | +1.07 | -0.94 | +2.54 | +3.38 | +3.47 | +3.46 | 25.6 | late (+1.23 dex) |
+| `single_eps_p1e2_t100` | B | 67.3 | x2982.7 / 51.5 | +0.96 | +1.07 | -0.94 | +2.54 | +3.38 | +3.47 | +3.46 | 25.6 | late (+1.23 dex) |
+| `single_eps_p1e3_t100` | A | 40.1 | x4360.8 / 40.1 | +0.96 | +1.17 | +1.22 | +1.21 | +2.55 | - | - | 37.9 | early (-0.10 dex) |
+| `single_eps_p1e3_t100` | B | 40.1 | x4360.9 / 40.1 | +0.96 | +1.17 | +1.22 | +1.21 | +2.55 | - | - | 37.9 | early (-0.10 dex) |
 
 ## Reading
 
-Throats read at t = 30: 10 early, 6 same, 46 late, 52 too short, 38 restart arms (own clock only).
+Throats read at t = 30: 14 early, 8 same, 50 late, 48 too short, 38 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

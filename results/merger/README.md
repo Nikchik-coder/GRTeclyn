@@ -66,7 +66,26 @@ that produced it does not.
    (`single_eps_m1e1_t100` t = 15.17, `single_eps_p1e1_t100` t = 14.07), starting from a
    Hamiltonian violation 3–5× the 1 % arms' and growing it to 0.40 and 55.6. The 1 % arms hold
    theirs flat (2.21e-3 → 2.38e-3 over twenty units), so **1 % or below is the usable range**.
-   ε = ±0.01 is still running; it branches at t ≈ 13.5, with the sign reversed from the push. The same split was seen in 3D before, for the massless
+   **The branch point belongs to the throat, not to the kick.** Each arm first moves the way it
+   was pushed, comes back, crosses its twin, and only then runs apart — with the fate OPPOSITE to
+   the push, so the first separation is the transient and the second is the branch. Two amplitudes
+   a factor ten apart cross at the same time: **t = 13.01 for ε = ±0.01 and t = 13.04 for ε = ±0.001**,
+   a shift of 0.03 for a tenfold change in the seed. At t = 63 the ±0.01 pair stands at R = 7.8
+   (pushed in, inflating) against 1.9 (pushed out, collapsing); the ±0.001 pair is at 4.7 against
+   2.85 by t = 39. Figure: `figures/01_single_throat/single_throat_seed_branches.png`.
+   **Two caveats, both hard.** (i) The collapse arms outrun the diagnostic: the ray scan's areal
+   minimum reaches its inner cutoff at r = 0.533 (ε = +0.01, from t = 29), and past that R_min is
+   the areal radius AT the cutoff, not the throat — nothing after that point may be quoted as a
+   throat radius. (ii) `single_eps_p1e3_t100` **died**: NaN at t = 40.07, mid-collapse at R = 2.85,
+   so the 0.1 % collapse branch has no fate. It is not a faster collapse than ε = +0.01, which
+   passed that same radius at t ≈ 27 and lived — the difference is the gauge. The big kick drives
+   |K| to 0.5 and the lapse collapses to 0.0097, freezing the region; the small kick never gets
+   |K| above 0.06, the lapse sits at 0.19, and χ drains to its 1e-8 floor at t ≈ 38 with no gauge
+   response, after which |K| reaches 5.9 and the constraint norm goes 1.3e-3 → 28 in one step.
+   **A collapse can be too gentle to trigger the singularity avoidance that protects a violent one.**
+   No growth rate is quoted for any arm: the sliding-window rate is still falling everywhere
+   (0.04 and 0.20 for ±0.01, 0.26 for −0.001) against 0.1702 for level 3's own truncation seed.
+   The same split was seen in 3D before, for the massless
    Ellis-Bronnikov throat (Shirokov 2026, arXiv:2604.00071): noise alone drove that run to
    the inflation branch at five levels of refinement, and halving the phantom support with a
    quadrupolar seed forced the collapse branch — horizon, then a "phantom bounce" of the

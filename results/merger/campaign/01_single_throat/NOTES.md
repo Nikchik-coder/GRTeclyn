@@ -21,9 +21,43 @@ Two knobs are varied, plus the refinement depth:
 | `gauge/` | **Which lapse, and how much dissipation?** The original Stage-1 ladder, run with the mesh tagger that chases error. Answers: dissipation of 2.0 must not ship, and the origin collar is a real trade, not a needless perturbation | 5 | 31 M |
 | `grid/` | **Where should the fine cells go?** The same knobs once the refinement box was nailed down instead of chasing error (`_fg`), plus the two unigrid controls that show a uniform grid cannot be refined at the origin without refining everywhere | 6 | 78 M |
 | `hold/` | **Does one throat actually sit still — over a hundred time units?** The production run and its one-knob twins: refinement level 2 / 3 / 4, the χ floor two ways, the time step. **This is the group with the campaign's result** | 8 | 327 M |
+| `seed/` | **If the branch is set by the truncation seed, what happens when we declare the seed instead?** The ±ε kick scan: a Gaussian shell on the conformal factor at t = 0, centred on the throat, amplitude ε | 2 filed, 2 live | 1.3 G |
 
-The ±ε seed scan now running (`single_eps_*`, four arms at the top level of the
-campaign) belongs here too and will be filed as a fourth folder when it closes out.
+## `seed/` — the declared perturbation
+
+`hold/` showed the fate of an isolated throat is decided by the truncation error's
+seed: level 3 collapses, level 4 inflates, at the same rate. This scan replaces that
+hidden seed with a stated one. At t = 0 the conformal factor is multiplied by a
+Gaussian shell sitting on the throat (centre r = 1.618, half-width 0.5), amplitude ε.
+The velocity fields are left at zero, so the momentum constraint stays exact to machine
+precision — measured 0.000e+00 at t = 0 in every arm — and only the Hamiltonian
+constraint is violated, at order ε. That is the declared cost.
+
+| arm | ε | Ham at t = 0 | what happened |
+| --- | --- | --- | --- |
+| `single_eps_m1e1_t100` | −0.1 | 1.22e-2 | throat 3.15 → 2.25, monotone; **NaN at t = 15.17** |
+| `single_eps_p1e1_t100` | +0.1 | 7.58e-3 | throat out to 4.33 by t = 2, turns over, 3.07 by t = 13; **NaN at t = 14.07** |
+| `single_eps_m1e2_t100` | −0.01 | 2.21e-3 | live |
+| `single_eps_p1e2_t100` | +0.01 | 2.35e-3 | live |
+
+**Ten per cent is not a perturbation, it is a demolition.** Both signs collapse and
+both die inside 16 time units — there is no branch to read, because the throat is
+destroyed either way. The reason is in the constraints: the 10 % kick starts with a
+Hamiltonian violation 3–5× the 1 % arms' and then *grows* it, to 0.40 and 55.6 by
+death, while the 1 % arms are flat (2.21e-3 → 2.38e-3 over twenty units, and
+2.35e-3 → 2.55e-3). A seed this large is not a small departure from the solution being
+studied; it is different initial data.
+
+**So the usable seed amplitude is 1 % or below**, and the ±0.001 templates
+(`templates_scan/params_single_eps_{m,p}1e3_t100.txt`) are the next rung if 1 % still
+decides the branch too fast to measure a rate.
+
+**The 1 % arms branch, with the sign reversed from the push.** They separate in the
+direction of their own kick for the first few units, converge back through the exact
+throat at t ≈ 13.5, cross, and then run apart the other way: the arm pushed *in* is
+inflating (3.9604 at t = 18), the arm pushed *out* is collapsing (3.7623). The minimum
+stays put at r = 1.59–1.66 through the crossing, so it is the throat moving and not the
+diagnostic. The early separation is the transient; the branch is what survives it.
 
 ## Reading a run name
 
