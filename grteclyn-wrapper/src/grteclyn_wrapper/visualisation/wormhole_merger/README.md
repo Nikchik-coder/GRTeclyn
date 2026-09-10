@@ -24,7 +24,7 @@ them.
 | `plot_bbh_ringdown` | the vacuum control's ringdown and its quasi-normal fit — the known answer every instrument is calibrated against | the pack | `results/merger/figures/07_bbh_control/` |
 | `plot_merger_constraints` | how well the equations are actually satisfied through the merger, for the interior-freeze arms | the pack | `results/merger/figures/05_binary_spiral/` |
 | `plot_branches` | **the lone throat's two fates across resolution** — level 3 collapses, level 4 inflates, at the same rate. Also writes the note `BRANCHES.md` that carries the tables | the pack | `campaign/01_single_throat/BRANCHES.md` + `figures/01_single_throat/single_throat_branches.png` |
-| `plot_seed_branches` | **the same two fates chosen on purpose** — one resolution, one knob: the sign of a declared kick laid on the throat at t = 0 | the run tree, live runs included | `figures/01_single_throat/single_throat_seed_branches.png` |
+| `plot_seed_branches` | **the same two fates chosen on purpose** — one resolution, one knob: the sign and size of a declared kick laid on the throat at t = 0 | the run tree, live runs included | `figures/01_single_throat/single_throat_seed_branches.png` |
 | `stitch_movies` | several runs played as one movie per field on a single colour scale, for a run continued by restarts | each run's cached slices | the run tree (never `results/`) |
 | `run_tree` | not a figure — the helper the others use to find a run **by name**, wherever it is filed | — | — |
 
@@ -47,14 +47,22 @@ result: nobody chose that seed.
 `plot_seed_branches` is the controlled version. The resolution is fixed and the
 seed is declared: a Gaussian shell on the conformal factor at t = 0, amplitude ε,
 with the velocity fields left at zero so the momentum constraint stays exact and
-only the Hamiltonian is violated, at order ε. Its three panels are built to stop
-the two mistakes this measurement invites:
+only the Hamiltonian is violated, at order ε. It draws two amplitudes a factor
+ten apart (±0.01 and ±0.001) on one panel, and it is built to stop the two
+mistakes this measurement invites:
 
 - the arms first separate in the direction of their own kick, then come back,
   cross, and run apart the other way — **the first separation is the transient
-  and the second is the branch**, so the middle panel marks the crossing rather
-  than hiding it;
+  and the second is the branch**, so the crossing is marked with a dotted rule
+  rather than hidden. Both pairs cross within 0.03 of each other, which is what
+  says the crossing belongs to the throat's transient and not to the kick;
 - near that crossing the deviation passes through zero and its logarithmic
-  derivative is meaningless. The right-hand panel plots that derivative over a
-  sliding window and is titled *read the plateau*, because a fit through the
-  crossing reads far too steep.
+  derivative is meaningless, so no rate is drawn on the figure at all. The
+  sliding-window rate is printed to the console, and only from two windows past
+  each arm's own crossing.
+
+The figure carries no prose — no caption, no worded axis labels, no legend.
+Identity is in the line itself: the dash pattern is the sign of the kick, the
+weight is its size, and each arm is named in the right margin with a leader back
+to its own end. Pale grey marks the part of a curve the ray scan can no longer
+measure (its minimum has reached the scan's inner cutoff).

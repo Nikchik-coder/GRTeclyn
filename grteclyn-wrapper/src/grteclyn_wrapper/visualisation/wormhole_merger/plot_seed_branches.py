@@ -12,10 +12,12 @@ is violated, at order epsilon.
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_seed_branches \
         [--runs-root DIR] [--out FILE] [--exact 3.8895] [RUN=LABEL ...]
 
-DEFAULT: the +-0.01 pair, the arms that branch.  The +-0.1 pair is NOT drawn --
-those two collapse and NaN inside sixteen units without ever branching, so
-putting them on a figure about branching would say something untrue.  They are
-a separate statement (the amplitude bound) and can be added by naming them.
+DEFAULT: the +-0.01 and +-0.001 pairs -- two amplitudes a factor ten apart, so
+the figure can say whether the crossing time belongs to the kick or to the
+throat.  The +-0.1 pair is NOT drawn: those two collapse and NaN inside sixteen
+units without ever branching, so putting them on a figure about branching would
+say something untrue.  They are a separate statement (the amplitude bound) and
+can be added by naming them.
 
 WHAT IT HAS TO GET RIGHT
   * The arms do not start together, and that is the kick: psi -> psi(1 + eps)
@@ -27,7 +29,11 @@ WHAT IT HAS TO GET RIGHT
   * The growth rate was still falling at t = 27 (0.43 -> 0.21).  No rate is
     quoted and no fit is drawn until the sliding-window derivative goes flat.
 
-Everything explanatory lives in the caption, not on top of the curves.
+The figure carries no prose: no caption, no worded axis labels, no worded panel
+titles.  Identity is carried by the line itself -- the dash pattern is the SIGN
+of the kick, the weight is its SIZE -- and every arm is named at its own end.
+The numbers that used to sit in the caption (growth rates, how far each arm has
+run, where the scan clips) are printed to the console instead.
 """
 
 from __future__ import annotations
@@ -35,7 +41,6 @@ from __future__ import annotations
 import argparse
 import pathlib
 import sys
-import textwrap
 
 import matplotlib
 
@@ -44,14 +49,15 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import RUNS_ROOT, find_run  # noqa: E402
-from grteclyn_wrapper.visualisation.wormhole_merger.style import (  # noqa: E402
-    FAINT, GRID, INK, MUTED, SIGNED, paper,
-)
+from grteclyn_wrapper.visualisation.wormhole_merger.style import FAINT, INK, MUTED, paper  # noqa: E402
 
 R_EXACT = 3.8895      # closed form for the drainhole a = 2, m = 1
 SEED_RATE = 0.1702    # level 3's own truncation-seed rate (BRANCHES.md)
 
-DEFAULT_ARMS = [("single_eps_m1e2_t100", "-0.01"), ("single_eps_p1e2_t100", "+0.01")]
+DEFAULT_ARMS = [
+    ("single_eps_m1e2_t100", "-0.01"), ("single_eps_p1e2_t100", "+0.01"),
+    ("single_eps_m1e3_t100", "-0.001"), ("single_eps_p1e3_t100", "+0.001"),
+]
 
 
 def areal(run_dir: pathlib.Path) -> np.ndarray | None:
@@ -83,7 +89,13 @@ def clipped_from(r_at_min: np.ndarray, runs: int = 3) -> int | None:
     i = r_at_min.size - 1
     while i > 0 and at[i - 1]:
         i -= 1
-    return i if r_at_min.size - i >= runs else None
+    if r_at_min.size - i < runs:
+        return None
+    # A minimum that simply never moved is not a clipped one.  Only call it
+    # clipped if the scan walked INWARD to get there -- otherwise a quiet throat
+    # whose minimum sits on one grid point for the whole run reads as clipped
+    # from t = 0, which would grey out a perfectly good curve.
+    return i if i > 0 and r_at_min[:i].max() > floor * 1.05 else None
 
 
 def died(run_dir: pathlib.Path) -> bool:
@@ -144,6 +156,11 @@ def main(argv: list[str] | None = None) -> int:
         good = slice(0, m["clip"]) if m["clip"] is not None else slice(None)
         m["rate"] = np.full(m["t"].size, np.nan)
         m["rate"][good] = rate(m["t"][good], m["dev"][good], args.window)
+        # A window that reaches back across the crossing measures the crossing:
+        # |dev| there is on its way through zero, so the log derivative blows up
+        # and reads as a growth rate it is not.  It cost a 2.3x overestimate once.
+        if m["cross"] is not None:
+            m["rate"][m["t"] < m["cross"] + 2 * args.window] = np.nan
         arms.append(m)
         note = "   (NaN)" if m["dead"] else ""
         if m["clip"] is not None:
@@ -160,102 +177,111 @@ def main(argv: list[str] | None = None) -> int:
     crossings = [m["cross"] for m in arms if m["cross"] is not None]
     t_cross = float(np.mean(crossings)) if crossings else None
 
-    # ---- the caption decides the figure height, so build it first ----------
-    # The band under the axes has to hold the tick labels, the x-axis label AND
-    # the caption.  Reserving only the caption is what drove it through the
-    # x-labels twice; XLAB_H is the rest of that band, measured, not guessed.
-    now = ", ".join(rf"$\varepsilon={m['label']}$: {m['rate'][np.isfinite(m['rate'])][-1]:.2f}"
-                    for m in arms if np.isfinite(m["rate"]).any())
-    state = ", ".join(f"{m['label']} to $t={m['t'][-1]:.0f}$"
-                      + (" (NaN)" if m["dead"] else "") for m in arms)
-    clipped = [m for m in arms if m["clip"] is not None]
-    lines = [
-        r"A Gaussian shell of amplitude $\varepsilon$ multiplies the conformal factor at $t=0$. "
-        r"Since $R\propto\psi^{2}$ the arms start $2\varepsilon$ apart: that offset is the kick.",
-        r"Each throat first moves the way it was pushed, returns, and crosses "
-        + (rf"at $t\simeq{t_cross:.1f}$ (dotted). " if t_cross is not None else ". ")
-        + r"Only after the crossing does the fate declare itself, with the opposite sign.",
-    ]
-    if clipped:
-        which = ", ".join(rf"$\varepsilon={m['label']}$ from $t={m['t'][m['clip']]:.0f}$"
-                          for m in clipped)
-        lines.append(
-            r"Pale: the ray scan's minimum has reached its inner cutoff "
-            rf"($r={clipped[0]['r_at'][-1]:.2f}$) and no longer tracks the throat — {which}. "
-            r"Nothing after that point is a measurement of the throat.")
-    lines.append(
-        rf"Growth rate still settling ({now}; level 3's own seed gives {SEED_RATE:.2f}), so none "
-        rf"is quoted. Level 3, stop time 100; as of this build, {state}.")
+    # ---- where the two members of a pair cross EACH OTHER --------------------
+    # Not the same as where an arm crosses R_star: those four times are spread
+    # over 1.6 units, the pair crossings over 0.05.  The pair crossing is the
+    # branch point, so that is what gets marked.
+    pair_cross = []
+    for m in arms:
+        if not m["label"].startswith("-"):
+            continue
+        mag = abs(float(m["label"]))
+        p = next((x for x in arms if x["label"].startswith("+")
+                  and abs(abs(float(x["label"])) - mag) < 1e-12), None)
+        if p is None:
+            continue
+        tt = np.intersect1d(np.round(m["t"], 6), np.round(p["t"], 6))
+        if tt.size < 3:
+            continue
+        c = zero_crossing(tt, np.interp(tt, m["t"], m["R"]) - np.interp(tt, p["t"], p["R"]))
+        if c is not None:
+            pair_cross.append((mag, c))
+    if pair_cross:
+        t_cross = float(np.mean([c for _, c in pair_cross]))
+        for mag, c in sorted(pair_cross, reverse=True):
+            print(f"  pair +-{mag:g} crosses itself at t = {c:.2f}")
 
-    wrapped = []
-    for ln in lines:                      # mathtext spans never contain spaces
-        wrapped += textwrap.wrap(ln, width=150, break_long_words=False) or [""]
+    # ---- what used to be the caption, now printed ---------------------------
+    for m in arms:
+        f = np.isfinite(m["rate"])
+        r_now = f"{m['rate'][f][-1]:.2f}" if f.any() else "too soon (still near the crossing)"
+        print(f"  {m['label']:>7s}  growth rate {r_now}"
+              + (f"   scan clipped from t = {m['t'][m['clip']]:.0f} at r = {m['r_at'][-1]:.3f}"
+                 if m["clip"] is not None else ""))
+    print(f"  level 3's own truncation seed, for comparison: {SEED_RATE:.4f}")
 
-    AX_H, LINE_H, XLAB_H, PAD = 3.0, 0.145, 0.62, 0.16      # inches
-    cap_h = len(wrapped) * LINE_H + PAD
-    H = AX_H + XLAB_H + cap_h
-    fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.4, H))
-    fig.subplots_adjust(left=0.085, right=0.885, wspace=0.42,
-                        top=1 - 0.34 / H, bottom=(XLAB_H + cap_h) / H)
+    # ---- the canvas ---------------------------------------------------------
+    # No caption band any more: the strip under the axes holds only the tick
+    # labels and the x symbol.  XLAB_H is that strip, measured, not guessed.
+    # One panel.  Every arm is named in the right margin, so the right edge is
+    # reserved and nothing is written on top of the curves.
+    AX_H, XLAB_H = 3.0, 0.60                                 # inches
+    H = AX_H + XLAB_H
+    fig, axA = plt.subplots(1, 1, figsize=(5.9, H))
+    fig.subplots_adjust(left=0.115, right=0.795,
+                        top=1 - 0.22 / H, bottom=XLAB_H / H)
 
-    def label_end(ax, m, y, va="center"):
-        ax.annotate(rf"$\varepsilon={m['label']}$" + (r"  (NaN)" if m["dead"] else ""),
-                    (m["t"][-1], y), textcoords="offset points", xytext=(7, 0),
-                    color=SIGNED.get(m["label"], INK), va=va, ha="left",
-                    fontsize=9.5, annotation_clip=False)
+    def style_of(label: str) -> dict:
+        """Identity without colour.  The dash pattern is the SIGN of the kick and
+        the weight is its SIZE, so the two members of a pair read as a pair and
+        the two amplitudes stay apart."""
+        return dict(color=INK,
+                    linewidth=0.9 if abs(float(label)) < 5e-3 else 1.5,
+                    linestyle=(0, (4, 2.5)) if label.startswith("+") else "-")
 
-    # ---- (a) the throat ------------------------------------------------------
+    def tag(m: dict) -> str:
+        return rf"$\varepsilon={m['label']}$" + (r"  (NaN)" if m["dead"] else "")
+
+    def place_labels(ax, items, gap=11.0):
+        """The arms are named in the right margin, not at their own ends.
+
+        They do not all stop at the same time -- the small-kick pair is younger --
+        so a label parked at a curve's end would sit mid-axes on top of another
+        curve.  Each is parked at the right edge with a hairline leader back to
+        its curve, and pushed clear of its neighbour when two curves finish at
+        nearly the same height (the +-0.001 pair does, in panel (a): its whole
+        excursion is thinner than the line).
+        """
+        x0, x1 = ax.get_xlim()
+        disp = [ax.transData.transform((x1, y))[1] for _, y, _ in items]
+        at, prev = {}, None
+        for i in sorted(range(len(items)), key=lambda j: disp[j]):
+            prev = disp[i] if prev is None else max(disp[i], prev + gap)
+            at[i] = prev
+        inv = ax.transData.inverted()
+        for i, (xe, ye, text) in enumerate(items):
+            yd = float(inv.transform((0.0, at[i]))[1])
+            if xe < x1 - 0.01 * (x1 - x0):
+                ax.plot([xe, x1], [ye, yd], color=FAINT, linewidth=0.6,
+                        linestyle=(0, (1, 2)), zorder=2, clip_on=False)
+            ax.annotate(text, (x1, yd), textcoords="offset points", xytext=(6, 0),
+                        color=INK, va="center", ha="left", fontsize=9.5,
+                        annotation_clip=False)
+
+    # ---- the throat ------------------------------------------------------
     if t_cross is not None:
         axA.axvline(t_cross, color=FAINT, linewidth=0.7, linestyle=(0, (2, 3)), zorder=1)
-    axA.axhline(args.exact, color=MUTED, linewidth=0.8, linestyle=(0, (5, 4)), zorder=2,
-                label=rf"exact, $R_\star={args.exact:.4f}$")
+    axA.axhline(args.exact, color=MUTED, linewidth=0.8, linestyle=(0, (1, 2.5)), zorder=2)
+    labA = [(xhi, args.exact, r"$R_\star$")]
     for m in arms:
-        c = SIGNED.get(m["label"], INK)
-        k = m["clip"]
+        st, k = style_of(m["label"]), m["clip"]
         # Past the cutoff the curve is the diagnostic, not the throat: draw it,
         # because hiding it would leave an unexplained stop, but draw it as a
         # ghost so nobody reads a number off it.
-        axA.plot(m["t"][:k if k else None], m["R"][:k if k else None],
-                 color=c, linewidth=1.6, zorder=3)
+        axA.plot(m["t"][:k if k else None], m["R"][:k if k else None], zorder=3, **st)
         if k is not None:
-            axA.plot(m["t"][k - 1:], m["R"][k - 1:], color=c, linewidth=1.6,
-                     alpha=0.28, zorder=3)
-            axA.plot(m["t"][k], m["R"][k], "o", color=c, markersize=3.5,
+            axA.plot(m["t"][k - 1:], m["R"][k - 1:], alpha=0.28, zorder=3, **st)
+            axA.plot(m["t"][k], m["R"][k], "o", color=INK, markersize=3.5,
                      markeredgecolor="white", markeredgewidth=0.9, zorder=4)
-        axA.plot(m["t"][-1], m["R"][-1], "X" if m["dead"] else "o", color=c,
-                 markersize=6 if m["dead"] else 4, markeredgecolor="white",
+        axA.plot(m["t"][-1], m["R"][-1], "X" if m["dead"] else "o", color=INK,
+                 markersize=6 if m["dead"] else 3.5, markeredgecolor="white",
                  markeredgewidth=1.0, alpha=0.28 if k is not None else 1.0, zorder=4)
-        label_end(axA, m, m["R"][-1])
+        labA.append((m["t"][-1], m["R"][-1], tag(m)))
     axA.set_xlim(0, xhi)
-    axA.set_xlabel(r"$t$  (code units)")
-    axA.set_ylabel(r"minimum areal radius  $R_{\mathrm{min}}$")
-    axA.set_title(r"(a)  the fate is opposite to the push", loc="left", pad=7)
-    # Every curve carries its own epsilon at its end, so the legend has one job:
-    # name the dashed line.  Repeating the series here would be pure clutter.
-    axA.legend(loc="upper left", handlelength=1.8, borderaxespad=0.2, fontsize=8.5)
+    axA.set_xlabel(r"$t$")
+    axA.set_ylabel(r"$R_{\mathrm{min}}$")
+    place_labels(axA, labA)
 
-    # ---- (b) the separation, log --------------------------------------------
-    if t_cross is not None:
-        axB.axvline(t_cross, color=FAINT, linewidth=0.7, linestyle=(0, (2, 3)), zorder=1)
-    for m in arms:
-        c = SIGNED.get(m["label"], INK)
-        d = np.abs(m["dev"]) / args.exact
-        k = m["clip"]
-        ok = d > 0
-        head = ok.copy()
-        if k is not None:
-            head[k:] = False
-            tail = ok.copy(); tail[:k - 1] = False
-            axB.semilogy(m["t"][tail], d[tail], color=c, linewidth=1.6, alpha=0.28, zorder=3)
-        axB.semilogy(m["t"][head], d[head], color=c, linewidth=1.6, zorder=3)
-        label_end(axB, m, d[-1], va="bottom" if m["dev"][-1] < 0 else "top")
-    axB.set_xlim(0, xhi)
-    axB.set_xlabel(r"$t$  (code units)")
-    axB.set_ylabel(r"$|R_{\mathrm{min}}-R_\star|\,/\,R_\star$")
-    axB.set_title(r"(b)  the transient drains, then the branch grows", loc="left", pad=7)
-
-    fig.text(0.085, cap_h / H, "\n".join(wrapped),
-             color=MUTED, fontsize=7.6, va="top", ha="left", linespacing=1.6)
 
     out = pathlib.Path(args.out) if args.out else (
         root.parents[1] / "results" / "merger" / "figures" / "01_single_throat"
