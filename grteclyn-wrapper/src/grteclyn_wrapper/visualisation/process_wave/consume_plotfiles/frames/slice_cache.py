@@ -130,6 +130,33 @@ def series_zlim(paths: Iterable[str], field: str) -> tuple[float, float] | None:
     return (float(lo), float(hi))
 
 
+#: Decades of dynamic range a symmetric-log frame shows below its peak.  Two is
+#: about what a reader can still get values off a colourbar for; beyond three
+#: the quiet end is the field's own numerical noise floor, drawn large.
+DEFAULT_SYMLOG_DECADES = 2.0
+
+
+def series_linthresh(
+    zlim: Sequence[float], decades: float = DEFAULT_SYMLOG_DECADES
+) -> float | None:
+    """Where a symmetric-log scale should stop being linear.
+
+    Fixed at ``decades`` below the series peak, so the log part always spans a
+    known, readable range.
+
+    It is tempting to measure this from the data instead -- the quietest frame's
+    own auto-limit -- but that latches onto a degenerate frame and produces a
+    picture of noise.  Measured 2026-09-10 on the head-on stitch: K is exactly
+    zero at t = 0 (momentarily-static initial data), so the measured rule
+    returned the 5e-6 floor, 15000x below the peak, and every frame after the
+    merger came out uniformly saturated.
+    """
+    span = max(abs(float(zlim[0])), abs(float(zlim[1])))
+    if span <= 0.0 or decades <= 0.0:
+        return None
+    return span / (10.0 ** decades)
+
+
 def rerender_series(
     frames_out_dir: str,
     field: str,
@@ -138,6 +165,9 @@ def rerender_series(
     zlim: Sequence[float] | None = None,
     corner: bool = False,
     verbose: bool = False,
+    norm: str | None = None,
+    linthresh: float | None = None,
+    decades: float = DEFAULT_SYMLOG_DECADES,
 ) -> tuple[int, tuple[float, float] | None]:
     """Redraw every frame of one series against a single fixed scale.
 
@@ -154,6 +184,8 @@ def rerender_series(
     limits = tuple(zlim) if zlim is not None else series_zlim(paths, field)
     if limits is None:
         return (0, None)
+    if norm == "symlog" and linthresh is None:
+        linthresh = series_linthresh(limits, decades)
 
     cfg = _field_frame_config(field)
     written = 0
@@ -170,27 +202,53 @@ def rerender_series(
             coord_val=coord_val, time=time, zlim=limits,
             frames_out_dir=frames_out_dir, frame_idx=idx,
             corner=corner, verbose=verbose, note=" (cached)",
+            norm=norm, linthresh=linthresh,
         )
         written += 1
     return (written, (float(limits[0]), float(limits[1])))
 
 
 def rerender_all(
-    frames_out_dir: str, *, corner: bool = False, verbose: bool = False
+    frames_out_dir: str,
+    *,
+    corner: bool = False,
+    verbose: bool = False,
+    norms: dict[str, str] | None = None,
+    decades: float = DEFAULT_SYMLOG_DECADES,
+    field_decades: dict[str, float] | None = None,
+    only: Iterable[str] | None = None,
 ) -> dict[str, list[float]]:
-    """Redraw every cached series, each against its own fixed scale."""
+    """Redraw every cached series, each against its own fixed scale.
+
+    ``norms`` maps a field name to a colour normalisation ("symlog", "log") for
+    that field only; every field left out keeps the linear default.  A key of
+    ``"*"`` applies to every field that has no entry of its own.
+    ``field_decades`` overrides the symlog range for named fields -- fields do
+    not all want the same one: on the head-on stitch K and the scalar want two
+    decades, while Weyl4 at two decades is mostly the coarse grid's own noise
+    and reads better at 1.5.  ``only`` restricts the redraw to named fields.
+    """
     used: dict[str, list[float]] = {}
+    norms = norms or {}
+    field_decades = field_decades or {}
+    only = set(only) if only else None
     for field, axis in cached_fields(frames_out_dir):
+        if only is not None and field not in only:
+            continue
+        norm = norms.get(field, norms.get("*"))
         written, limits = rerender_series(
-            frames_out_dir, field, axis, corner=corner, verbose=verbose
+            frames_out_dir, field, axis, corner=corner, verbose=verbose,
+            norm=norm, decades=field_decades.get(field, decades),
         )
         if not written or limits is None:
             print(f"[rerender] {field}_{axis}: nothing cached, skipped")
             continue
         used[f"{field}_{axis}"] = [limits[0], limits[1]]
+        dec = field_decades.get(field, decades)
+        how = f" [{norm}, {dec:g} decades]" if norm == "symlog" else (f" [{norm}]" if norm else "")
         print(
             f"[rerender] {field}_{axis}: {written} frame(s) at a fixed "
-            f"{limits[0]:.6g} .. {limits[1]:.6g}"
+            f"{limits[0]:.6g} .. {limits[1]:.6g}{how}"
         )
     if used:
         record = os.path.join(frames_out_dir, CACHE_DIR_NAME, "rerender_zlims.json")

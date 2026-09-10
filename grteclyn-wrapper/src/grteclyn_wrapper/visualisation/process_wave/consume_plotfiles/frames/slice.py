@@ -6,6 +6,7 @@ from typing import Sequence
 import matplotlib.pyplot as plt
 import numpy as np
 import yt
+from matplotlib.colors import LogNorm, SymLogNorm
 from matplotlib.ticker import FuncFormatter
 
 from ..config import _FRAME_DPI, _field_frame_config
@@ -30,6 +31,8 @@ def draw_slice_png(
     corner: bool = False,
     verbose: bool = False,
     note: str = "",
+    norm: str | None = None,
+    linthresh: float | None = None,
 ) -> str:
     """Draw one slice PNG from an array that is already windowed.
 
@@ -38,6 +41,17 @@ def draw_slice_png(
     That is the only way to get a colourbar that does not move when the
     plotfiles are deleted as they are consumed.  Both callers must draw
     identically, so there is exactly one copy of this code.
+
+    ``norm`` selects how values map to colour.  The default, ``None``, is the
+    linear mapping every frame has always used.  ``"symlog"`` is for a field
+    whose range is set by one compact loud feature while the physics being
+    looked at is orders of magnitude quieter: the merged core's K is a hundred
+    times the ringdown wave crossing the same slice, so on a linear scale the
+    wave is white.  A symmetric log scale is linear within +/-``linthresh``
+    (so the zero crossings of a signed field stay readable, which a plain log
+    cannot do) and logarithmic outside it, showing both at once.  Pick
+    ``linthresh`` at the amplitude of the quiet feature; ``slice_cache``
+    measures it from the series rather than guessing.
     """
     plot_extent = list(plot_extent)
     plt.rcParams.update({
@@ -59,6 +73,20 @@ def draw_slice_png(
         coord_val,
     )
 
+    imshow_kw = {"vmin": zlim[0], "vmax": zlim[1]}
+    if norm == "symlog":
+        lt = float(linthresh) if linthresh else 0.0
+        span = max(abs(float(zlim[0])), abs(float(zlim[1])))
+        # A linthresh at or above the full range would flatten the picture back
+        # to linear, and a non-positive one is undefined; fall back to linear.
+        if 0.0 < lt < span:
+            imshow_kw = {"norm": SymLogNorm(
+                linthresh=lt, vmin=zlim[0], vmax=zlim[1], base=10)}
+    elif norm == "log":
+        lo = max(float(zlim[0]), 1.0e-30)
+        if float(zlim[1]) > lo:
+            imshow_kw = {"norm": LogNorm(vmin=lo, vmax=float(zlim[1]))}
+
     fig, ax = plt.subplots(figsize=(8, 7))
     im = ax.imshow(
         plot_arr,
@@ -66,9 +94,8 @@ def draw_slice_png(
         extent=plot_extent,
         aspect="equal",
         cmap=cfg["cmap"],
-        vmin=zlim[0],
-        vmax=zlim[1],
         interpolation="nearest",
+        **imshow_kw,
     )
     ax.set_xlabel(r"$%s$" % xlabel_name)
     ax.set_ylabel(r"$%s$" % ylabel_name)

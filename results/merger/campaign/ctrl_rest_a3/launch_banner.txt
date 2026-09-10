@@ -1,0 +1,14 @@
+[whm] name     : ctrl_rest_a3
+[whm] template : runs/wormhole_merger/templates_scan/params_ctrl_rest_a3_t015.txt
+[whm] binary   : Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex
+[whm] gpu      : 0
+[whm] run dir  : runs/wormhole_merger/ctrl_rest_a3          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/ctrl_rest_a3      (node-local: plotfiles, checkpoints)
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] consumer  : pid 2799021 -> runs/wormhole_merger/ctrl_rest_a3/small_data
+[whm]            deleting processed plotfiles, keeping last 3
+[whm] === launching ctrl_rest_a3 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[whm] draining consumer (final pass) ...
+[whm] run complete: runs/wormhole_merger/ctrl_rest_a3
+[whm] reductions : runs/wormhole_merger/ctrl_rest_a3/small_data
+[whm] plotfiles left on scratch: 3 (/tmp/grteclyn_scratch/ctrl_rest_a3)

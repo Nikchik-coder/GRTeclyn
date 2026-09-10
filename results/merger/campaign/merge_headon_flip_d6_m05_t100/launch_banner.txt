@@ -1,0 +1,14 @@
+[whm] name     : merge_headon_flip_d6_m05_t100
+[whm] template : runs/wormhole_merger/templates_scan/params_v1_m05_headon_d6_t100.txt
+[whm] binary   : runs/wormhole_merger/bin/main3d_boost_2026-09-08.ex
+[whm] gpu      : 1
+[whm] run dir  : runs/wormhole_merger/merge_headon_flip_d6_m05_t100          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/merge_headon_flip_d6_m05_t100      (node-local: plotfiles, checkpoints)
+[whm] registry : merge_headon_flip_d6_m05_t100 -> results/merger/runs_registry.tsv
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] frames   : as given in WHM_CONSUME_ARGS
+[whm] consumer  : pid 598769 -> runs/wormhole_merger/merge_headon_flip_d6_m05_t100/small_data
+[whm]            deleting processed plotfiles, keeping last 6
+[whm] === launching merge_headon_flip_d6_m05_t100 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[whm] draining consumer (final pass) ...
+[whm] run FAILED (exit 6) -- see runs/wormhole_merger/merge_headon_flip_d6_m05_t100/run.log

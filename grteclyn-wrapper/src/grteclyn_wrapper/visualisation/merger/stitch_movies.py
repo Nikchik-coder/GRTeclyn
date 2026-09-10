@@ -12,6 +12,18 @@ Usage:
   T_1 < t <= T_2, and the last run everything after the final switch time.
   --runs-root  where the runs live (default: <repo>/runs/wormhole_merger)
   --out DIR    where to build (default: <last run>/stitched_from_t0, in the run tree)
+  --symlog F   comma-separated fields to draw on a symmetric-log colour scale
+               (or "all").  A stitched series spans the whole history, so one
+               linear scale is set by the loudest moment -- the merged core --
+               and everything quieter is white: on the head-on stitch that is
+               the entire approach phase and the whole ringdown wave.  Symlog
+               shows both.  Default for the merger fields:
+               "K,phi,Pi,Weyl4_Re:1.5" -- chi and lapse are bounded and read
+               correctly on a linear scale, and Weyl4 takes a shallower range
+               because at two decades most of its frame is the coarse grid's
+               own noise rather than the wave.  A field may carry its own range
+               as FIELD:DECADES.
+  --symlog-decades N   default range for fields that do not name one (default 2)
 
 Example (2026-09-09, the head-on: level 3 -> level 5 through the merger -> level 3):
   python -m grteclyn_wrapper.visualisation.merger.stitch_movies \\
@@ -74,6 +86,9 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--runs-root", default=str(REPO / "runs" / "wormhole_merger"))
     ap.add_argument("--out", default=None)
+    ap.add_argument("--symlog", default="K,phi,Pi,Weyl4_Re:1.5",
+                    help="fields on a symmetric-log scale, 'all', or '' for none")
+    ap.add_argument("--symlog-decades", type=float, default=2.0)
     ap.add_argument("segments", nargs="+", metavar="RUN|T", help="RUN_1 T_1 RUN_2 [T_2 RUN_3 ...]")
     args = ap.parse_args(argv)
 
@@ -122,8 +137,10 @@ def main(argv: list[str] | None = None) -> int:
             counts.append(f"{n} from {runs[i]}")
         print(f"  {f}: " + "; ".join(counts) + f"; total {len(list(dst.glob('slice_*.npz')))}")
 
-    proc = subprocess.run([sys.executable, str(RERENDER), str(out / "frames"), "--movies"],
-                          capture_output=True, text=True)
+    cmd = [sys.executable, str(RERENDER), str(out / "frames"), "--movies"]
+    if args.symlog:
+        cmd += ["--symlog", args.symlog, "--symlog-decades", str(args.symlog_decades)]
+    proc = subprocess.run(cmd, capture_output=True, text=True)
     for line in proc.stdout.splitlines() + proc.stderr.splitlines():
         if line.startswith(("[rerender]", "[movie]", "[done]")):
             print(line)

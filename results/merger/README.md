@@ -369,9 +369,15 @@ and the framing was wrong — see below.)*
   V1c's own fill 1.2/1.8 — has not been run. What holds regardless: a run with a
   fill and a run with none agree to 0.01 % of peak, so the interior treatment does
   not reach the wave. The down-step itself reached t = 100 (2026-09-10): it tracks
-  the level-5 arm to 0.05 / 0.19 / 0.25 % of peak at R = 10 / 14 / 18 through t = 98.4
-  and matches its constraints to 2 %, so after the merger the coarse grid loses
-  nothing the wave can see (`figures/headon_downstep_psi4_20_R10_14_18_t100.png`).
+  the level-5 arm to 0.05 / 0.22 / 0.33 % of peak at R = 10 / 14 / 18 over t = 45–100
+  and matches its constraints to 0.05 % (Hamiltonian) and 1.4 % (momentum) at t = 100,
+  so after the merger the coarse grid loses nothing the wave can see
+  (`figures/headon_downstep_psi4_20_R10_14_18_t100.png`; both no-fill arms reached
+  t = 100 on 2026-09-10). **The fill is not free after all:** V1c ends with
+  Hamiltonian 6.06e-3 and momentum 5.78e-3 against 1.40e-3 and 1.30e-3 for either
+  no-fill arm — 4.3x worse. It does not reach the wave, but it does cost constraint
+  accuracy, so once resolution alone carries the run past the wall the fill is not
+  worth taking.
   And the constraints are not flat here: Hamiltonian
   3.3e-3 (t = 30–40) → 5.8e-3 (90–100), doubling every ~80 units, in both twins.
   `figures/headon_freeze_psi4_20_R10_14_18_t100.png`.
