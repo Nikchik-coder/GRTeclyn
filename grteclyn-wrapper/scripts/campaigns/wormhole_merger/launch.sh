@@ -173,16 +173,20 @@ echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" 
 echo "[launch] what     : ${WHAT}"
 
 if (( DRYRUN )); then
-  env "${env_args[@]}" WHM_DRYRUN=1 bash "${HERE}/run_single.sh"
+  /usr/bin/env "${env_args[@]}" WHM_DRYRUN=1 bash "${HERE}/run_single.sh"
   exit 0
 fi
 
+# /usr/bin/env BY PATH, never bare `env`: on 2026-09-10 a shell whose PATH put uv's
+# installer directory first resolved `env` to uv's `env` *script* (meant to be
+# sourced, not run), which exports PATH and exits 0 without running anything --
+# four launches and their dry runs reported success and started nothing.
 mkdir -p "${LOG_DIR}"
 if (( FOREGROUND )); then
   echo "[launch] attached -- dies with this shell; log also at ${LOG#"${REPO}"/}"
-  env "${env_args[@]}" bash "${HERE}/run_single.sh" 2>&1 | tee "${LOG}"
+  /usr/bin/env "${env_args[@]}" bash "${HERE}/run_single.sh" 2>&1 | tee "${LOG}"
 else
-  env "${env_args[@]}" setsid nohup bash "${HERE}/run_single.sh" > "${LOG}" 2>&1 < /dev/null &
+  /usr/bin/env "${env_args[@]}" setsid nohup bash "${HERE}/run_single.sh" > "${LOG}" 2>&1 < /dev/null &
   echo "[launch] detached on gpu ${GPU}; log: ${LOG#"${REPO}"/}"
   echo "[launch] stop it with the run's launcher.pid, never a pkill pattern."
 fi
