@@ -133,12 +133,12 @@ that produced it does not.
    run tree.
    **Four follow-up arms, stopped by hand on 2026-09-10 with the cards wanted elsewhere, and what
    they had already settled.** (a) *A declared kick still picks the fate one level finer.*
-   `single_eps_{m,p}1e2_ml4_t060` reached t = 13.5 at level 4: the pushed-out arm has a marginally
+   `single_eps_{m,p}1e2_ml4_t060` *(pack, `campaign/01_single_throat/seed/`)* reached t = 13.5 at level 4: the pushed-out arm has a marginally
    trapped surface at t = 11 of areal radius 3.883 (level 3: t = 11, 3.88), and the twins cross at
    t = 12.99 (level 3: 13.01). The branch, the horizon time and the crossing all survive the finer
    grid; neither fate was followed to its end, so the level-4 statement stops there. (b) *A
    quadrupolar kick on top of the spherical one moves neither the horizon nor the wave.*
-   `single_eps_p1e2_q1e2_t100` — the +0.01 spherical kick times an l = 2 shell of the same amplitude
+   `single_eps_p1e2_q1e2_t100` *(pack, `seed/`)* — the +0.01 spherical kick times an l = 2 shell of the same amplitude
    and width, from the frozen build `bin/main3d_seedl2_2026-09-10.ex` — forms the same horizon,
    areal radius 3.360 / 3.033 / 2.919 at t = 23 / 26 / 27 against the spherical arm's 3.371 / 3.046 /
    2.933 (0.3–0.5 % apart), and then NaNs at t = 27.58 in h11 on level 3, with its horizon at
@@ -156,7 +156,7 @@ that produced it does not.
    run-maxima as a failed falloff test. They are not one: the outer spheres had not been reached
    when the run ended.)* What the rerun needs is to survive its own interior — the freeze, or level
    4/5 through t ≈ 28 — and then t ≳ 45, where the burst has passed all four spheres. (c) *The Ψ4 floor rise at t ≈ 40 is not the outer boundary.*
-   `single_hold_L128_t100` — the unkicked throat in a box twice as wide, the sponge moved out with
+   `single_hold_L128_t100` *(pack, `campaign/01_single_throat/hold/`)* — the unkicked throat in a box twice as wide, the sponge moved out with
    the edge, every refined box the same size — passes 3e-5 at R = 14 at **t = 41**, the same time as
    the small box, where a boundary effect would have been delayed by the extra ~64 units of round
    trip. The constraint half of that question stays open: the run stopped at t = 41, before the
@@ -794,7 +794,7 @@ what two throats do when they touch *without* a horizon.
   t ≈ 11 the two mouth centres are less than 0.7 apart, so after that the
   "per-mouth" scan is reading the merged region, not two throats.
 - **The control now exists, and it clears the throats: the death at t = 14
-  belongs to the pair.** `single_m05_t040` (2026-09-10, the same file without
+  belongs to the pair.** `single_m05_t040` *(pack, `campaign/01_single_throat/hold/`)* (2026-09-10, the same file without
   throat B, stopped by hand at t = 26.3) is the lone half-mass throat. Its
   areal radius reads **2.87173** at t = 0 — the exact value to six digits — and
   stays within **0.02 %** of it through **t = 14**, the moment the pair died;
@@ -866,9 +866,14 @@ is still on a card sits at the top of `campaign/` until close-out files it.
 
 ```
 campaign/
-  01_single_throat/<run>/         one throat: the Stage-1 ladder (11 arms, old binary),
-                                  the production hold single_hold_t100 and its seven
-                                  one-knob twins (resolution, chi floor, time step)
+  01_single_throat/               one throat, filed by question:
+    gauge/<run>/, grid/<run>/       the Stage-1 ladder (11 arms, old binary): lapse and
+                                    dissipation, fine-cell placement and unigrid controls
+    hold/<run>/                     the production hold single_hold_t100 and its one-knob
+                                    twins (resolution, chi floor, time step, the L = 128
+                                    box), and the half-mass lone throat single_m05_t040
+    seed/<run>/                     the declared-kick scan (+-0.1 / 0.01 / 0.001), the
+                                    +-0.01 pair at level 4, the +0.01 arm with a quadrupole
     INSTABILITY.md                  the isolated-throat systematics, generated
     BRANCHES.md                     the level-3 / level-4 ladder read (two fates), generated
     CLOCK_COMPARISON.md             the throat clocks across arms, generated

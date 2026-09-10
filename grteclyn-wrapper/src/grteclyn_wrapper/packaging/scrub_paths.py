@@ -86,6 +86,11 @@ def scrub(path: pathlib.Path) -> None:
     text = re.sub(rf"(?i){home}[^/\s\"']+/[^\s\"']*", r"$HOME/<redacted>", text)
     text = re.sub(rf"(?i){home}[^/\s\"']+", r"$HOME/<redacted>", text)
 
+    # A host-name field names a machine by construction, and it may be a node
+    # other than this one (AMReX's Backtrace.<rank> records the node that
+    # crashed), which the environment-derived tokens below cannot know.
+    text = re.sub(r"(?im)^([ \t]*Host Name:[ \t]*)\S.*$", r"\1<redacted>", text)
+
     # Word-boundary replace so campaign names (bondi_sg_pair_pm) stay intact.
     for token in sorted(_identity_tokens(), key=len, reverse=True):
         text = re.sub(

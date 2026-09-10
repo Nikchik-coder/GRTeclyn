@@ -1,0 +1,12 @@
+[whm] name     : single_eps_m1e2_ml4_t060
+[whm] template : runs/wormhole_merger/templates_scan/params_single_eps_m1e2_ml4_t060.txt
+[whm] binary   : runs/wormhole_merger/bin/main3d_boost_2026-09-08.ex
+[whm] gpu      : 0
+[whm] run dir  : runs/wormhole_merger/single_eps_m1e2_ml4_t060          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/single_eps_m1e2_ml4_t060      (node-local: plotfiles, checkpoints)
+[whm] registry : single_eps_m1e2_ml4_t060 -> results/merger/runs_registry.tsv
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] frames   : as given in WHM_CONSUME_ARGS
+[whm] consumer  : pid 971190 -> runs/wormhole_merger/single_eps_m1e2_ml4_t060/small_data
+[whm]            deleting processed plotfiles, keeping last 40
+[whm] === launching single_eps_m1e2_ml4_t060 (attached; Ctrl-C or stop_campaign.sh to stop) ===
