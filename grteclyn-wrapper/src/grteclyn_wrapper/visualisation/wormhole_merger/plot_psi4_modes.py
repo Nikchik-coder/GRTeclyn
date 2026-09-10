@@ -3,7 +3,7 @@
 tabulate every pairwise difference -- the seam check for restarted runs.
 
 Usage:
-  python -m grteclyn_wrapper.visualisation.merger.plot_psi4_modes \\
+  python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_modes \\
       [--runs-root DIR] [--source data|pack] [--mode 20] [--radii 10 14 18] \\
       [--restart T] [--speed 0.94] [--windows 45:60 60:80 80:100] \\
       [--peak-ref RUN] [--title STR] [--out FILE] RUN[=LABEL] [RUN[=LABEL] ...]
@@ -26,7 +26,7 @@ Plotted quantity: Re(r * psi4) of the mode, the file holding raw psi4.
 Comparisons are time-aligned on rounded times (np.intersect1d), never by row.
 
 Example (2026-09-10, the head-on down-step against the level-5 arm it came from):
-  python -m grteclyn_wrapper.visualisation.merger.plot_psi4_modes --restart 35 \\
+  python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_modes --restart 35 \\
       merge_headon_flip_d8_v1_lvl3down_t100_r03500="level-3 down-step from t = 35" \\
       merge_headon_flip_d8_v1_lvl5_t100_r02200="level-5 arm from t = 22" \\
       merge_headon_flip_d8_v1c_latefreeze_t100="V1c late-freeze, never restarted"
@@ -42,12 +42,12 @@ import re
 import matplotlib
 import numpy as np
 
-from grteclyn_wrapper.visualisation.merger.run_tree import find_run
+from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import find_run
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-# …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/merger
+# …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger
 REPO = pathlib.Path(__file__).resolve().parents[5]
 STYLES = [("#d62728", "-", 2.0), ("#2ca02c", ":", 2.0), ("#ff7f0e", "--", 1.2),
           ("#1f77b4", "-", 0.9), ("#9467bd", "-.", 1.2), ("#8c564b", ":", 1.2)]

@@ -52,7 +52,7 @@ def load_mode(path: pathlib.Path, radius: float):
 
 
 def main() -> int:
-    # …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/merger
+    # …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger
     root = pathlib.Path(__file__).resolve().parents[5]
     parser = argparse.ArgumentParser()
     parser.add_argument("--pack-root", default=str(root / "results" / "merger"))

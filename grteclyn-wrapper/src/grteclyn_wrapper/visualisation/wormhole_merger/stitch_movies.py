@@ -5,7 +5,7 @@ grid, a coarser grid, a different interior fill) and the whole history should
 play as one movie.
 
 Usage:
-  python -m grteclyn_wrapper.visualisation.merger.stitch_movies \\
+  python -m grteclyn_wrapper.visualisation.wormhole_merger.stitch_movies \\
       [--runs-root DIR] [--out DIR] RUN_1 T_1 RUN_2 [T_2 RUN_3 ...]
 
   RUN_1 contributes its cached slices with t <= T_1, RUN_2 those with
@@ -30,7 +30,7 @@ Usage:
   --symlog-decades N   default range for fields that do not name one (default 2)
 
 Example (2026-09-09, the head-on: level 3 -> level 5 through the merger -> level 3):
-  python -m grteclyn_wrapper.visualisation.merger.stitch_movies \\
+  python -m grteclyn_wrapper.visualisation.wormhole_merger.stitch_movies \\
       merge_headon_flip_d8_v1c_latefreeze_t100 22 \\
       merge_headon_flip_d8_v1_lvl5_t100_r02200 35 \\
       merge_headon_flip_d8_v1_lvl3down_t100_r03500
@@ -58,9 +58,9 @@ import pathlib
 import subprocess
 import sys
 
-from grteclyn_wrapper.visualisation.merger.run_tree import find_run
+from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import find_run
 
-# …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/merger
+# …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger
 REPO = pathlib.Path(__file__).resolve().parents[5]
 RERENDER = REPO / "grteclyn-wrapper" / "scripts" / "plot" / "rerender_frames.py"
 

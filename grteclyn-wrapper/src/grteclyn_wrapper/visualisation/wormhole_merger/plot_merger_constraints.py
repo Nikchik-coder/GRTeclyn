@@ -7,7 +7,7 @@ Own module, own output file: reads one or more ``constraint_norms.dat``
 restart chain; vertical markers annotate chain joins and the freeze engagement.
 
 Usage:
-  python -m grteclyn_wrapper.visualisation.merger_ladder.plot_merger_constraints \
+  python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_merger_constraints \
       --run label:path/to/constraint_norms.dat [--run ...] \
       --vline 53:freeze --out plots/merger_constraints.png
 """

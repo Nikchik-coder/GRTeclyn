@@ -25,7 +25,7 @@ template, a name, a card and a profile. It is not a new script.**
 | `prune_checkpoints.sh` | Drops restart checkpoints from scratch, per-run policy. |
 | `tidy_logs.sh` | Reduces a finished run's launcher log to the provenance banner. |
 | `file_run.sh` | Files a closed-out run into its physics group (`--group 04_binary_headon`), repairing the stitched-movie symlinks that point into it. |
-| `lib/run_tree.sh` | How every script here finds a run by name, wherever it is filed. The Python side is `grteclyn_wrapper.visualisation.merger.run_tree`; the pack's is `results/merger/analysis/pack_paths.py`. |
+| `lib/run_tree.sh` | How every script here finds a run by name, wherever it is filed. The Python side is `grteclyn_wrapper.visualisation.wormhole_merger.run_tree`; the pack's is `results/merger/analysis/pack_paths.py`. |
 
 ## Launching a run
 

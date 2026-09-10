@@ -7,7 +7,7 @@ top level while it is on a card and is moved into its group by
 06_binary_flyby, 07_bbh_control, ...).  The shell side of the same rule is
 `scripts/campaigns/wormhole_merger/lib/run_tree.sh`.
 
-    from grteclyn_wrapper.visualisation.merger.run_tree import find_run
+    from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import find_run
     d = find_run(runs_root, "merge_headon_flip_d8_v1_lvl5_t100_r02200")
 """
 
@@ -17,7 +17,7 @@ import pathlib
 
 __all__ = ["find_run", "RUNS_ROOT"]
 
-# …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/merger
+# …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger
 _REPO = pathlib.Path(__file__).resolve().parents[5]
 RUNS_ROOT = _REPO / "runs" / "wormhole_merger"
 
