@@ -26,6 +26,18 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 RUNS="${ROOT}/runs/wormhole_merger"
+
+# Colour scale for the movies.  A single LINEAR scale over a whole run is set by
+# the loudest moment -- the merged core -- and every quieter thing in the frame
+# renders white: measured 2026-09-10, the level-5 arm's Pi and Weyl4 movies were
+# blank for most of their length while the fields were plainly doing something.
+# These signed fields get a symmetric-log scale instead (linear near zero so the
+# zero crossings stay readable, logarithmic outside), a fixed number of decades
+# below the peak.  Weyl4 takes a shallower range because at two decades most of
+# its frame is the coarse grid's own noise.  chi and lapse are bounded and read
+# correctly on a linear scale, so they are left off.  Override with WHM_SYMLOG,
+# or set it empty for the old all-linear behaviour.
+WHM_SYMLOG="${WHM_SYMLOG:-K,phi,Pi,chi_minus_1,shift1,Weyl4_Re:1.5,Weyl4_Im:1.5}"
 DEST="${ROOT}/results/merger"
 SCRATCH="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}"
 PY="${ROOT}/grteclyn-wrapper/.venv/bin/python"
@@ -85,7 +97,8 @@ for run in "$@"; do
     nser=$(find "${dir}/frames" -mindepth 1 -maxdepth 1 -type d ! -name '_*' | wc -l)
     echo "  frames: ${nser} field series"
     if [[ -d "${dir}/frames/_slice_cache" ]]; then
-      "${PY}" "${ROOT}/grteclyn-wrapper/scripts/plot/rerender_frames.py" "${dir}/frames" --movies 2>&1 | tail -n 3 | sed 's/^/  /'
+      "${PY}" "${ROOT}/grteclyn-wrapper/scripts/plot/rerender_frames.py" "${dir}/frames" \
+        --symlog "${WHM_SYMLOG}" --movies 2>&1 | tail -n 3 | sed 's/^/  /'
     else
       bash "${ROOT}/grteclyn-wrapper/scripts/plot/make_movies.sh" "${dir}" 2>&1 | tail -n 2 | sed 's/^/  /'
     fi
