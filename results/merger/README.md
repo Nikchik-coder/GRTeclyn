@@ -143,11 +143,19 @@ that produced it does not.
    areal radius 3.360 / 3.033 / 2.919 at t = 23 / 26 / 27 against the spherical arm's 3.371 / 3.046 /
    2.933 (0.3–0.5 % apart), and then NaNs at t = 27.58 in h11 on level 3, with its horizon at
    radius ≈ 2.9 — just inside the 3.10 at which the 0.1 % arm died, and inside the range the
-   spherical +1 % arm came through. Its (2,0) mode does leave the spherical arms' floor before it
-   dies (1.5e-4 at R = 14 against ≤ 1.5e-5), but the run-maximum r·Ψ4 over the four spheres
-   (R = 10 / 14 / 18 / 22) spans 6.0e-3 to 5.4e-4 instead of staying constant, and those are maxima
-   over the run, not one tracked wavefront. Nothing here is yet an outgoing wave, and the arm stopped
-   70 units before it could show one. (c) *The Ψ4 floor rise at t ≈ 40 is not the outer boundary.*
+   spherical +1 % arm came through. **It did catch the start of a signal, and that is worth
+   rerunning for.** The (2,0) mode climbs away from the spherical arms' floor from t ≈ 21 and reads
+   1.5e-4 at R = 14 by t = 24 — ten times what the spherical +0.01 arm reads at the same times
+   (8.2e-6 at t = 24, 1.5e-5 at t = 27), and 130 times below the head-on merger's 2.0e-2 — and it
+   reaches the spheres in order: at t = 24 the outer two are quiet (4.3e-5 at R = 18, 1.1e-6 at
+   R = 22) and by t = 27 both are climbing (1.25e-4 and 2.0e-5) while R = 10 is still rising
+   (6.0e-4). That is the opening of an outgoing quadrupolar burst, and it is all there is: the run
+   died 0.6 units later, before one swing had crossed a single sphere. No amplitude, no 1/R falloff
+   and no ringdown frequency may be quoted from this arm — and equally, nothing here says a
+   quadrupolar kick fails to radiate. *(An earlier version of this paragraph read the four spheres'
+   run-maxima as a failed falloff test. They are not one: the outer spheres had not been reached
+   when the run ended.)* What the rerun needs is to survive its own interior — the freeze, or level
+   4/5 through t ≈ 28 — and then t ≳ 45, where the burst has passed all four spheres. (c) *The Ψ4 floor rise at t ≈ 40 is not the outer boundary.*
    `single_hold_L128_t100` — the unkicked throat in a box twice as wide, the sponge moved out with
    the edge, every refined box the same size — passes 3e-5 at R = 14 at **t = 41**, the same time as
    the small box, where a boundary effect would have been delayed by the extra ~64 units of round
