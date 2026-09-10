@@ -48,6 +48,7 @@ See also the wrapper overview: [`grteclyn-wrapper/README.md`](../../../README.md
 | **`constraines/`** | Constraint norms \(L_2\) of Hamiltonian and momentum (`constraint_norms.dat`). |
 | **`figures/`** | Standalone publication-style schematic figures (not driven by simulation dumps). |
 | **`search/`** | QD / search campaign analytics from `trajectory.jsonl` (batch improvement, saturation). |
+| **`merger/`** | Wormhole-merger campaign figures: BBH-vs-wormhole ψ4 (`plot_bbh_vs_wormhole_psi4`), several runs' Weyl4 modes overlaid with every pairwise difference (`plot_psi4_modes`, the seam check for restarted runs), and `stitch_movies` — several runs' cached slices played as one movie per field on one colour scale (`RUN_1 T_1 RUN_2 [T_2 RUN_3 ...]`; movies stay in the run tree). |
 | **`grteclyn-wrapper/scripts/plot/`** | Shell automation: live plotfile processing (`plot_run.sh`), post-run figures (`plot_diagnostic.sh`), frame movies (`make_movies.sh`). |
 | **`grteclyn-wrapper/scripts/wormhole/`** | Archive wormhole runs + visuals to `SimResults/` (`move_files.sh`). |
 
