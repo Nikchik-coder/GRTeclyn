@@ -17,12 +17,15 @@ Usage:
                linear scale is set by the loudest moment -- the merged core --
                and everything quieter is white: on the head-on stitch that is
                the entire approach phase and the whole ringdown wave.  Symlog
-               shows both.  Default for the merger fields:
-               "K,phi,Pi,Weyl4_Re:1.5" -- chi and lapse are bounded and read
-               correctly on a linear scale, and Weyl4 takes a shallower range
-               because at two decades most of its frame is the coarse grid's
-               own noise rather than the wave.  A field may carry its own range
-               as FIELD:DECADES.
+               shows both.  Default for the merger fields: "K,phi,Pi,Weyl4_Re:2"
+               -- chi and lapse are bounded and read correctly on a linear
+               scale.  A field may carry its own range as FIELD:DECADES, and
+               Weyl4 needs one: how deep to go depends on what sets the peak.
+               A stitch that starts at t = 0 is scaled by the initial-data junk,
+               about 3x the merger burst, so the ringdown needs two decades to
+               show; a single run starting after the junk reads better at 1.5,
+               where two would be mostly the coarse grid's own noise.  Check a
+               late frame and adjust rather than trusting either number.
   --symlog-decades N   default range for fields that do not name one (default 2)
 
 Example (2026-09-09, the head-on: level 3 -> level 5 through the merger -> level 3):
@@ -86,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--runs-root", default=str(REPO / "runs" / "wormhole_merger"))
     ap.add_argument("--out", default=None)
-    ap.add_argument("--symlog", default="K,phi,Pi,Weyl4_Re:1.5",
+    ap.add_argument("--symlog", default="K,phi,Pi,Weyl4_Re:2",
                     help="fields on a symmetric-log scale, 'all', or '' for none")
     ap.add_argument("--symlog-decades", type=float, default=2.0)
     ap.add_argument("segments", nargs="+", metavar="RUN|T", help="RUN_1 T_1 RUN_2 [T_2 RUN_3 ...]")
