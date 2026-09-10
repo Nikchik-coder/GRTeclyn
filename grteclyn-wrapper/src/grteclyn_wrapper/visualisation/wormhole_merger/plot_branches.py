@@ -117,7 +117,7 @@ def main(argv: list[str]) -> int:
     ar = {k: load(root, v, "areal_radius.dat") for k, v in ARMS.items()}
     cn = {k: load(root, v, "constraint_norms.dat") for k, v in ARMS.items()}
     cd = {k: load(root, v, "collapse_diagnostics.dat") for k, v in ARMS.items()}
-    scans, profiles = parse_scans(group_dir(root, "01_single_throat") / "branch_shell_scans_2026-09-08.dat")
+    scans, _profiles = parse_scans(group_dir(root, "01_single_throat") / "branch_shell_scans_2026-09-08.dat")
     out: list[str] = []
     w = out.append
 
@@ -280,70 +280,58 @@ def main(argv: list[str]) -> int:
     import matplotlib.pyplot as plt
 
     style.paper(base=10.0)
-    fig, axes = plt.subplots(1, 3, figsize=(12.4, 4.0), constrained_layout=True)
-    axA, axB, axC = axes
+    fig, (axA, axB) = plt.subplots(1, 2, figsize=(9.0, 4.0), constrained_layout=True)
+
+    # No legend on this panel: every curve is named at its own right-hand end,
+    # and a key repeating those three names could only sit on top of them.
     axA.axhline(R_EXACT, color=style.FAINT, linewidth=0.8, linestyle=(0, (2, 2)))
-    # Right-hand end: the level-2 arm dies at t ~ 16 and its own end label sat
-    # exactly where this one used to be.
-    axA.text(110, R_EXACT + 0.15, "exact static throat", color=style.MUTED,
+    axA.text(112, R_EXACT + 0.13, "exact static throat", color=style.MUTED,
              fontsize=8.5, ha="right")
     for k, lab in (("ml2", "level 2"), ("ml3", "level 3"), ("ml4", "level 4")):
         tt, RR = ar[k][:, 0], ar[k][:, 1]
         if k == "ml3":
             ok = tt <= 65
-            axA.plot(tt[ok], RR[ok], label=lab, **_KW[k])
+            axA.plot(tt[ok], RR[ok], **_KW[k])
+            # Past the cutoff the scan is no longer measuring the throat, so
+            # the curve is drawn pale and said so BELOW itself -- the note used
+            # to sit in the gap between this tail and its own end label.
             axA.plot(tt[~ok], RR[~ok], alpha=0.3, **_KW[k])
-            axA.text(80, 2.25, "scan clipped at its\ninner cutoff ($t>65$)",
+            axA.text(80, 1.45, "scan clipped at its inner cutoff ($t>65$)",
                      color=style.MUTED, fontsize=8, ha="center")
         else:
-            axA.plot(tt, RR, label=lab, **_KW[k])
-        axA.text(tt[-1] + 1, RR[-1] + (0.12 if k == "ml2" else 0.0), lab, color=COLOUR[k],
-                 fontsize=9, va="center" if k != "ml2" else "bottom")
-    axA.set_xlim(0, 112)
+            axA.plot(tt, RR, **_KW[k])
+        axA.text(tt[-1] + 1.5, RR[-1] + (0.22 if k == "ml2" else 0.0), lab,
+                 color=COLOUR[k], fontsize=9,
+                 va="center" if k != "ml2" else "bottom")
+    axA.set_xlim(0, 118)
+    axA.set_ylim(1.2, None)
     axA.set_xlabel(r"$t$")
     axA.set_ylabel(r"$R_{\mathrm{min}}$")
     axA.set_title("(a) the throat: collapse at level 3, inflation at level 4", loc="left")
-    axA.legend(loc="upper left")
 
-    for k, lab in (("ml3", "level 3"), ("ml4", "level 4")):
+    # The rate goes in the key, not on the curve.  Written beside the line it
+    # measures it landed on both of them, and there is no free page inside this
+    # panel wide enough for two of them.
+    for k, p_, lab in (("ml3", p3, "level 3"), ("ml4", p4, "level 4")):
         tt = ar[k][:, 0]
         dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
         ok = (np.abs(dd) > 0) & (tt <= (65 if k == "ml3" else 100))
         axB.plot(tt[ok], np.log10(np.abs(dd[ok])),
-                 label=f"{lab} ({'shrinking' if dd[ok][-1] < 0 else 'growing'})", **_KW[k])
-    for k, p, t0, t1 in (("ml3", p3, 49, 61), ("ml4", p4, 49, 61)):
+                 label=rf"{lab}, {'shrinking' if dd[ok][-1] < 0 else 'growing'}"
+                       rf"  ($\tau={1/p_[0]:.2f}$)", **_KW[k])
+    for k, p_, t0, t1 in (("ml3", p3, 49, 61), ("ml4", p4, 49, 61)):
         dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
         y0 = np.log10(abs(dd[int(np.argmin(np.abs(ar[k][:, 0] - t0)))]))
-        axB.plot([t0, t1], [y0, y0 + p[0] * (t1 - t0) / np.log(10)],
-                 color=style.BURGUNDY, linewidth=1.1, linestyle=(0, (1.3, 1.7)))
-        axB.text(t1 + 1, y0 + p[0] * (t1 - t0) / np.log(10), rf"$\tau={1/p[0]:.2f}$",
-                 fontsize=9, color=style.BURGUNDY, va="center")
+        axB.plot([t0, t1], [y0, y0 + p_[0] * (t1 - t0) / np.log(10)],
+                 label="fitted rate" if k == "ml3" else None,
+                 **style.series(2, lw=1.1))
     axB.set_xlim(20, 105)
     axB.set_ylim(-4.5, 0.5)
     axB.set_xlabel(r"$t$")
     axB.set_ylabel(r"$\log_{10}\,|R-R_0|/R_0$")
     axB.set_title("(b) same rate to 9 %, opposite sign", loc="left")
-    axB.legend(loc="lower right")
+    style.legend(axB)
 
-    styles = {0: (0, ()), 1: (0, (5, 2)), 2: (0, (1.3, 1.7))}
-    for k, names in (("ml3", ["ml3_twin_t061", "ml3_twin_t072", "ml3_twin_t100"]), ("ml4", ["ml4_t077", "ml4_t088", "ml4_t100"])):
-        for j, nm in enumerate(names):
-            prof = profiles[nm]
-            t = prof[0, 0]
-            axC.plot(prof[:, 4], prof[:, 5], color=COLOUR[k], linewidth=1.6,
-                     linestyle=styles[j], label=rf"level {k[-1]}, $t={t:.0f}$")
-            s = next(x for x in scans if x["scan"] == nm)
-            if s["n_mots"] != "0":
-                axC.plot(float(s["r_mots"]), float(s["R_mots"]), "o", color=COLOUR[k],
-                         markersize=6, markeredgecolor=style.GROUND, markeredgewidth=1.2)
-    axC.axhline(R_EXACT, color=style.FAINT, linewidth=0.8, linestyle=(0, (2, 2)))
-    axC.set_xscale("log")
-    axC.set_xlim(0.25, 16)
-    axC.set_ylim(0, 22)
-    axC.set_xlabel(r"$r$")
-    axC.set_ylabel(r"$R$")
-    axC.set_title("(c) shell profiles: dots are marginally trapped surfaces", loc="left")
-    axC.legend(loc="upper right", ncol=2, fontsize=8)
     style.save(fig, figure_dir(root, "01_single_throat") / "single_throat_branches.png")
     print("[branches] wrote campaign/01_single_throat/BRANCHES.md and figures/01_single_throat/single_throat_branches.png")
     return 0

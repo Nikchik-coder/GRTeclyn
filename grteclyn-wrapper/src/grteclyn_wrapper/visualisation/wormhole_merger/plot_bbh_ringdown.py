@@ -86,17 +86,18 @@ def main() -> int:
             **style.series(2, lw=1.6))
     ax.set_ylabel(r"$\Psi_4^{2,2}$")
     ax.set_title(rf"(a) the $(2,2)$ mode at $R={R_PLOT:g}$, BBH control to $t=150$", loc="left")
-    ax.legend(loc="upper left", ncols=3, columnspacing=1.4)
     # Room below the trough for the calibration numbers: they are the point of
-    # the panel and must not be read through the curve.
+    # the panel and must not be read through the curve.  The note goes down
+    # first so the key knows it is there and picks another corner.
     lo, hi = ax.get_ylim()
     ax.set_ylim(lo - 0.30 * (hi - lo), hi)
-    ax.annotate(
+    style.note(
+        ax,
         rf"per $M_f\!\approx\!{M_F}$:  $T={period / M_F:.1f}\,M$,  $\tau={tau / M_F:.1f}\,M$"
         "\n"
         r"Schwarzschild $(2,2,0)$:  $T=16.8\,M$,  $\tau=11.2\,M$",
-        xy=(0.99, 0.03), xycoords="axes fraction", ha="right", va="bottom",
-        fontsize=8.5, color=style.MUTED, linespacing=1.5)
+        loc="lower right", fontsize=8.5)
+    style.legend(ax, ncols=3, columnspacing=1.4)
 
     # (b) the envelope.  The fit window is a band, not a line: it says which
     # part of the curve the two numbers above were measured on.
@@ -113,7 +114,7 @@ def main() -> int:
     ax.set_ylabel(r"$|\Psi_4^{2,2}|$")
     ax.set_xlabel(r"$t - R_{\mathrm{ext}}$")
     ax.set_title("(b) envelope and the fitted exponential decay", loc="left")
-    ax.legend(loc="lower left")
+    style.legend(ax)
 
     out = pathlib.Path(args.out) if args.out else figure_dir("07_bbh_control", args.pack_root)
     png = style.save(fig, (out / "bbh_t150_ringdown.png") if out.is_dir() else out)

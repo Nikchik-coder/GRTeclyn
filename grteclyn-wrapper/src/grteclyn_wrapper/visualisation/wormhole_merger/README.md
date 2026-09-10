@@ -21,7 +21,7 @@ them.
 | --- | --- | --- | --- |
 | `plot_psi4_modes` | one gravitational-wave mode of several runs overlaid at every extraction sphere, plus a table of every pairwise difference as a percentage of the peak | the run tree, or the thinned pack copy | `figures/04_binary_headon/` |
 | `plot_psi4_analysis` | **the six-panel analysis of one arm**: waveform, retarded time and the ringdown fit, power spectrum, propagation speed, spectrogram, strain against Advanced LIGO | the pack | `figures/<group>/psi4_analysis_*` |
-| `plot_ladder_psi4` | the refinement-ladder arms overlaid at one detector — do finer grids change the wave, or only how long the run survives | either tree | `figures/05_binary_spiral/` |
+| `plot_ladder_psi4` | one panel: the refinement-ladder arms and the freeze arms at one detector — do finer grids change the wave, or only how long the run survives | either tree | `figures/05_binary_spiral/` |
 | `plot_bbh_vs_wormhole_psi4` | same masses, same orbit, different object: the p = 0.12 wormhole pair against the vacuum black-hole control | the pack | `figures/05_binary_spiral/` |
 | `plot_bbh_ringdown` | the vacuum control's ringdown and its quasi-normal fit — the known answer every instrument is calibrated against | the pack | `figures/07_bbh_control/` |
 | `plot_merger_constraints` | how well the equations are actually satisfied, stitched across a restart chain | the pack | wherever `--out` says |
@@ -52,7 +52,7 @@ style.save(fig, out)                # PNG + PDF, same stem
 | helper | for | what it gives |
 | --- | --- | --- |
 | `series(i)` | an **unordered** family (this run against that one) | four fixed slots — ink, deep blue, burgundy, warm grey — each with its own dash. It raises on a fifth rather than inventing a hue. |
-| `ordinal(n)` / `ordinal_series(n)` | an **ordered** family (refinement levels, extraction radii, kick amplitudes) | `cividis` reversed, light → dark, cut before the pale end so the lightest line still clears 3:1 on white |
+| `ordinal(n)` / `ordinal_series(n)` | an **ordered** family (refinement levels, extraction radii, kick amplitudes) | `cividis` reversed, light → dark, cut before the pale end so the lightest line still clears 4.2:1 on white. `dash_offset` starts the dash cycle further along, which is how a figure draws an ordered family and a categorical curve on the same axes without the two reading as one |
 | `family(n)` | either | the fixed slots up to four, the ramp beyond |
 | `signed(label)` | a signed quantity (the declared kick) | deep blue for negative, burgundy for positive, shade by magnitude |
 | `SEQUENTIAL` | 2D magnitude | `cividis` (`SEQUENTIAL_HOT` = `inferno` when the top end needs contrast) |
@@ -64,6 +64,23 @@ of 15 and 8. Both signed pairs clear the same bars.
 
 **Axis labels are symbols.** `$d$`, `$R_{\mathrm{min}}$`, `$t - R_{\mathrm{ext}}$`
 — never a sentence. What the symbol means goes in the panel title, once.
+
+## Nothing is placed by hand
+
+A figure is only as good as the least legible thing on it, and the thing that
+goes illegible first is a key or a value label dropped on top of a curve. No
+module calls `ax.legend` or `ax.annotate` any more:
+
+| helper | what it does |
+| --- | --- |
+| `style.legend(ax, …)` | tries each corner, measures what is drawn there **and what text is already placed there**, and takes the emptiest; if every corner is occupied it extends the axis to open room rather than covering a curve |
+| `style.callout(ax, x, y, text, above=…)` | a value label on an opaque patch, leaning *away* from its own curve — above a maximum, below a minimum — and flipped to the other side rather than pushed out of the frame |
+| `style.note(ax, text, loc=…)` | the one-line caption inside a panel, on an opaque patch, anchored to the frame so it cannot run off the edge |
+
+Two of the three exist because of specific bugs: labels keyed off the sign of
+the *value* instead of the type of the extremum lay across every swing they
+named, and a caption centred on the band it described was wider than the band
+and ran off the panel.
 
 ## Four rules that keep biting
 
@@ -97,7 +114,11 @@ it — that is how `plot_placement_curve` gets its curve.
 `plot_branches` shows that the isolated throat's fate — collapse or inflation —
 is decided by the truncation error's seed: change only the refinement level and
 the sign of the outcome flips, at the same growth rate. That is a problem, not a
-result: nobody chose that seed.
+result: nobody chose that seed. Two panels: the radius, and its logarithmic
+deviation with each arm's fitted rate written into the key rather than beside
+the line it measures. It had a third panel of shell profiles whose own key
+covered its curves; the scans are a table in `BRANCHES.md`, which is where a
+reader can actually use them.
 
 `plot_seed_branches` is the controlled version. The resolution is fixed and the
 seed is declared: a Gaussian shell on the conformal factor at t = 0, amplitude ε,

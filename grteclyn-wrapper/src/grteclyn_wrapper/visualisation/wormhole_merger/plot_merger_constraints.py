@@ -108,7 +108,7 @@ def main() -> None:
         ax.grid(True, which="major", color=style.GRID, lw=0.6)
         ax.grid(True, which="minor", color=style.GRID, lw=0.3, alpha=0.6)
     if len(args.run) > 1:
-        ax_h.legend(loc="upper right")
+        style.legend(ax_h)
 
     out = style.save(fig, args.out)
     print(f"saved {out} (+pdf)")

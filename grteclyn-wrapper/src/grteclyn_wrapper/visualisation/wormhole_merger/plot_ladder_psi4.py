@@ -80,101 +80,69 @@ def load_modes(path: Path) -> dict:
     return out
 
 
-def _plot_channel(ax, runs, m, ridx, scale, title, ylabel, window, radius, under=()):
-    # The band is the thing every arm is being measured against, so it is drawn
-    # first and in the grid's own tone: it is the ruler, not a fifth series.
-    ax.axvspan(
-        *window,
-        color=style.GRID,
-        zorder=0,
-        label=rf"collapse signature at $R={radius:g}$  ({window[0]:.1f}–{window[1]:.1f})",
-    )
-    # Arms drawn UNDER the ladder: a fat, pale burgundy stroke, so "the freeze
-    # arm runs exactly under the unfrozen one" is something the eye sees rather
-    # than something the caption claims.
-    for label, data, _kw in under:
-        key = (m, ridx)
-        if key in data["amp"]:
-            ax.plot(data["t"], data["amp"][key] * scale, color=style.BURGUNDY,
-                    lw=5.0, alpha=0.25, solid_capstyle="round", zorder=1,
-                    label=rf"{label}  (to $t={data['t'][-1]:.1f}$)")
+def make_figure(runs, radius_label, ridx, scale, out_path, radius, m, under=()):
+    """One panel: every ladder arm and every freeze arm at one detector.
 
-    for label, data, kw in runs:
-        key = (m, ridx)
-        if key not in data["amp"]:
-            continue
-        ax.plot(
-            data["t"],
-            data["amp"][key] * scale,
-            marker="o",
-            ms=2.0,
-            label=rf"{label}  (to $t={data['t'][-1]:.1f}$)",
-            **kw,
-        )
-        # Mark where the stream stops: that is the run's death, and the whole
-        # point of the figure is how far short of the window it falls.
-        ax.plot(
-            data["t"][-1],
-            data["amp"][key][-1] * scale,
-            marker="x",
-            ms=8,
-            mew=1.8,
-            color=kw["color"],
-        )
+    It was two panels, (2,2) above and (2,0) below, which asked the reader to
+    hold two pictures at once to answer one question -- does any arm reach the
+    band?  One channel, chosen with --mode, answers it.
 
-    ax.set_title(title, loc="left")
-    ax.set_ylabel(ylabel)
-    ax.legend(fontsize=8, loc="best")
-
-
-def make_figure(runs, radius_label, ridx, scale, out_path: Path, radius: float, under=()) -> Path:
+    The freeze arms used to be laid down as a fat pale-burgundy stroke at a
+    quarter opacity, which prints as a mauve smear and is not a colour in this
+    package's palette.  They are ordinary lines now, in the two categorical
+    poles; the ladder keeps the ordinal ramp, offset off solid so the two
+    families cannot be read as one.
+    """
     style.paper(base=10.0)
-    fig, axes = plt.subplots(2, 1, figsize=(8.6, 6.2), sharex=True,
-                             constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(8.6, 4.9), constrained_layout=True)
     window = target_window(radius)
+    mode_lm = f"2,{m}"
 
-    _plot_channel(
-        axes[0],
-        runs,
-        m=2,
-        ridx=ridx,
-        scale=scale,
-        title=r"(a) spinning quadrupole $(\ell,m)=(2,2)$ — the binary channel",
-        ylabel=r"$r\,|\Psi_4^{2,2}|$",
-        window=window,
-        radius=radius,
-        under=under,
-    )
-    _plot_channel(
-        axes[1],
-        runs,
-        m=0,
-        ridx=ridx,
-        scale=scale,
-        title=r"(b) axisymmetric channel $(\ell,m)=(2,0)$ — the head-on-style burst",
-        ylabel=r"$r\,|\Psi_4^{2,0}|$",
-        window=window,
-        radius=radius,
-        under=under,
-    )
+    # The band is the ruler every arm is measured against, so it goes down
+    # first and in the grid's own tone -- not as a fifth series.
+    band = ax.axvspan(*window, color=style.GRID, zorder=0)
 
-    axes[1].set_xlabel(r"$t$")
+    # Every arm traces the same wave to the width of the line -- that IS the
+    # result -- so the drawing order decides what can be seen at all.  The
+    # freeze arms are the long context and go underneath; the ladder is the
+    # subject and goes on top, where its dashes let the arm beneath show
+    # through.  Drawn the other way round the ladder vanishes completely.
+    def draw(entries, zorder):
+        out = []
+        for label, data, kw in entries:
+            key = (m, ridx)
+            if key not in data["amp"]:
+                continue
+            y = data["amp"][key] * scale
+            line, = ax.plot(data["t"], y, zorder=zorder, **kw)
+            # Where the stream stops is the run's death, and how far short of
+            # the band it falls is the whole figure.
+            ax.plot(data["t"][-1], y[-1], marker="x", ms=6.5, mew=1.4,
+                    color=kw["color"], zorder=zorder + 2)
+            out.append((line, rf"{label}  (to $t={data['t'][-1]:.1f}$)"))
+        return out
+
+    freeze_keys = draw(under, 2)
+    keys = draw(runs, 5) + freeze_keys      # read the ladder first, then the freeze
+    keys.append((plt.Line2D([], [], marker="x", ms=6.5, mew=1.4, ls="none",
+                            color=style.MUTED), "end of the stream"))
+    keys.append((band, rf"collapse signature at $R={radius:g}$  "
+                       rf"(${window[0]:.1f}$–${window[1]:.1f}$)"))
+
+    ax.set_xlabel(r"$t$")
+    ax.set_ylabel(rf"$r\,|\Psi_4^{{{mode_lm}}}|$")
     every = list(runs) + list(under)
-    right = max(window[1] + 2.0, max(d["t"][-1] for _, d, _ in every) + 2.0)
-    axes[1].set_xlim(left=min(d["t"][0] for _, d, _ in every) - 1.0, right=right)
+    ax.set_xlim(min(d["t"][0] for _, d, _ in every) - 1.0,
+                max(window[1] + 2.0, max(d["t"][-1] for _, d, _ in every) + 2.0))
 
-    sponge_note = (
-        "  --  NB: this sphere lies INSIDE the sponge zone (r = 24-32), an "
-        "absorbing layer; treat amplitudes as indicative"
-        if radius > SPONGE_INNER
-        else ""
-    )
-    fig.suptitle(
-        rf"$r\,|\Psi_4|$, $\ell=2$, at ${radius_label}$" + "\n"
-        "crosses mark each run's end (NaN death, or stop time reached); the "
-        f"shaded band is the collapse signature{sponge_note}",
-        fontsize=9.5, color=style.MUTED,
-    )
+    sponge = ("  (inside the sponge zone, $r=24$–$32$: amplitudes indicative)"
+              if radius > SPONGE_INNER else "")
+    ax.set_title(rf"$r\,|\Psi_4^{{{mode_lm}}}|$ at ${radius_label}$ — "
+                 "the refinement ladder against the freeze arms" + sponge,
+                 loc="left")
+    style.legend(ax, [h for h, _ in keys], [t for _, t in keys],
+                 ncols=2, fontsize=8.5, columnspacing=1.4)
+
     out = style.save(fig, out_path)
     plt.close(fig)
     return out
@@ -195,8 +163,15 @@ def main(argv=None) -> int:
         action="append",
         default=[],
         metavar="LABEL=PATH",
-        help="An arm to draw as a fat pale stroke BENEATH the ladder -- for showing "
-        "that one arm lies on another (repeatable).",
+        help="An arm that is NOT part of the ladder -- a freeze arm -- drawn in "
+        "the categorical palette on top of it (repeatable, at most two).",
+    )
+    ap.add_argument(
+        "--mode",
+        choices=("22", "20"),
+        default="22",
+        help="l = 2 channel to plot: 22, the binary quadrupole (default), or "
+        "20, the head-on-style burst.",
     )
     ap.add_argument("--out", required=True, type=Path, help="Output PNG path.")
     ap.add_argument(
@@ -226,7 +201,9 @@ def main(argv=None) -> int:
     # Always the ordinal ramp, however few arms there are: a refinement ladder
     # is ordered by construction, and the four categorical hues would throw
     # that away to say nothing in its place.
-    kws = style.ordinal_series(len(specs), lw=1.5)
+    # Offset off solid: solid is reserved for the freeze arms below, which are
+    # a different family and must not read as another rung of this one.
+    kws = style.ordinal_series(len(specs), lw=1.5, dash_offset=1)
     runs = []
     for i, spec in enumerate(specs):
         label, _, path = spec.partition("=")
@@ -235,19 +212,23 @@ def main(argv=None) -> int:
             raise SystemExit(f"no such stream: {p}")
         runs.append((label, load_modes(p), kws[i]))
 
+    # The freeze arms are not rungs: they are what happens when the fill is
+    # turned on, and they are the only arms that reach the band.  Two
+    # categorical slots -- ink solid, burgundy dotted -- at a heavier weight.
     under = []
-    for spec in args.under:
+    for i, spec in enumerate(args.under):
         label, _, path = spec.partition("=")
         q = Path(path)
         if not q.is_file():
             raise SystemExit(f"no such stream: {q}")
-        under.append((label, load_modes(q), None))
+        under.append((label, load_modes(q), style.series(0 if i == 0 else 2, lw=1.9)))
 
     radius = 14.0 if ridx == 0 else 30.0
-    out = make_figure(runs, radius_label, ridx, scale, args.out, radius, under)
+    m = int(args.mode[1:])
+    out = make_figure(runs, radius_label, ridx, scale, args.out, radius, m, under)
     print(f"wrote {out}")
     window = target_window(radius)
-    for label, data, _kw in runs:
+    for label, data, _kw in list(runs) + list(under):
         gap = window[0] - data["t"][-1]
         print(
             f"  {label}: stream ends t = {data['t'][-1]:.2f}, "

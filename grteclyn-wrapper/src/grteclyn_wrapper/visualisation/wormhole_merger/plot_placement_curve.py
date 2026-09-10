@@ -117,8 +117,7 @@ def main(argv: list[str] | None = None) -> int:
     ax1.set_ylabel(r"$R_{\mathrm{mouth}}$")
     ax1.set_title(rf"(a) per-mouth areal radius vs separation (log):  "
                   rf"excess over isolated $\propto d^{{{slope:.2f}}}$", loc="left")
-    # The curve runs upper-left to lower-right, leaving the upper right quiet.
-    ax1.legend(loc="upper right")
+    style.legend(ax1)
 
     # ---- right: what is left once the ruler is subtracted ----------------
     if len(scout):
@@ -130,10 +129,10 @@ def main(argv: list[str] | None = None) -> int:
             # Held-curve stretch: a lower bound, not a measurement.
             t_edge = t[inside].max() if inside.any() else t.min()
             ax2.axvspan(t_edge, t.max(), color=style.GRID, lw=0, zorder=0)
-            ax2.annotate("closer than the closest probe\n(curve held: a lower bound)",
-                         (0.5 * (t_edge + t.max()), 0.97), xycoords=("data", "axes fraction"),
-                         ha="center", va="top", fontsize=8, color=style.MUTED,
-                         linespacing=1.4)
+            # Anchored to the frame, not centred on the band: centred, this
+            # two-line caption is wider than the band and ran off the panel.
+            style.note(ax2, "closer than the closest probe\n(curve held: a lower bound)",
+                       loc="upper right")
             ax2.plot(t[~inside], resp[~inside], ls="none", marker="s", ms=4,
                      mfc=style.GROUND, mec=style.CONTEXT, mew=1.2, zorder=4)
         ax2.plot(t[inside], resp[inside], marker="s", ms=4, zorder=5,

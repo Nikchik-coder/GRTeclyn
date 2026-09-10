@@ -118,11 +118,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--t-min", type=float, default=None)
     ap.add_argument("--t-max", type=float, default=None)
     ap.add_argument("--f-max", type=float, default=1.0, help="upper frequency on panel (c)")
-    ap.add_argument("--wavelet-w", type=float, default=6.0,
+    ap.add_argument("--wavelet-w", type=float, default=None,
                     help="Morlet cycles per wavelet on panel (e): higher = sharper in "
-                         "frequency, wider cone of influence")
+                         "frequency, wider cone of influence. Default: the widest "
+                         "that still leaves half the record outside the cone at the "
+                         "wave's own frequency.")
     ap.add_argument("--f-min", type=float, default=None,
-                    help="lower frequency on panel (e) (default: 1.5 cycles per record)")
+                    help="lower frequency on panel (e) (default: from the spectral peak)")
     ap.add_argument("--mass-msun", type=float, default=30.0)
     ap.add_argument("--distance-mpc", type=float, default=10.0)
     ap.add_argument("--psd-smooth-window", type=int, default=21)
@@ -183,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
         ax.axvline(s, color=style.FAINT, ls=(0, (1, 2)), lw=0.8)
     ax.set_xlabel(r"$t$")
     ax.set_ylabel(rf"$r\,\mathrm{{Re}}\,\Psi_4^{{{mode}}}$")
-    ax.legend(loc="upper right", ncols=len(radii), columnspacing=1.2)
+    style.legend(ax, ncols=len(radii), columnspacing=1.2)
 
     # ---- (b) retarded time: does it collapse onto one curve? ------------
     ax = axes[0, 1]
@@ -198,7 +200,7 @@ def main(argv: list[str] | None = None) -> int:
                                      qnm["f_qnm"], qnm["phi"]),
                 label=rf"ringdown fit: $f={qnm['f_qnm']:.3f}$, $\tau={qnm['tau']:.1f}$",
                 **style.series(2, lw=1.6))
-        ax.legend(loc="upper right")
+        style.legend(ax)
     ax.set_xlabel(r"$t - R_{\mathrm{ext}}$")
     ax.set_ylabel(rf"$r\,\mathrm{{Re}}\,\Psi_4^{{{mode}}}$")
 
@@ -229,10 +231,8 @@ def main(argv: list[str] | None = None) -> int:
         ax.plot(t_pk - r, np.abs(series[r])[j], marker="o", ms=5, zorder=6,
                 color=style.BURGUNDY, mec=style.GROUND, mew=0.8)
     if speeds:
-        ax.annotate("\n".join(rf"$R={a:g}\rightarrow{b:g}$:  $v={v:.3f}\,c$"
-                              for a, b, v in speeds),
-                    xy=(0.02, 0.97), xycoords="axes fraction", va="top",
-                    fontsize=8.5, color=style.MUTED, linespacing=1.5)
+        style.note(ax, "\n".join(rf"$R={a:g}\rightarrow{b:g}$:  $v={v:.3f}\,c$"
+                                 for a, b, v in speeds), fontsize=8.5)
     ax.set_xlabel(r"$t - R_{\mathrm{ext}}$")
     ax.set_ylabel(rf"$|r\,\Psi_4^{{{mode}}}|$")
 
@@ -245,30 +245,47 @@ def main(argv: list[str] | None = None) -> int:
     # record.  Bottom of the band = 1.5 cycles across the record, which is the
     # slowest thing the record can be said to resolve.
     T_rec = float(t[-1] - t[0])
-    f_lo = args.f_min if args.f_min else max(1.5 / T_rec, 1e-4)
-    f_hi = f_max
-    freqs, amp = wavelet_amplitude(np.real(series[R_spec]), dt, f_lo, f_hi, w=args.wavelet_w)
+    # Both ends of the band come from the wave, not from a constant.  Drawn to
+    # a fixed f = 1 the whole panel was a decade and a half of empty dark blue
+    # above a wave sitting at f ~ 0.03, and the cone of influence -- which
+    # widens as 1/f -- then covered nearly all of it.
+    f_pk_spec, p_pk_spec = spectra[R_spec]
+    f_pk = float(f_pk_spec[1:][np.argmax(p_pk_spec[1:])])
+    f_lo = args.f_min if args.f_min else max(1.5 / T_rec, 0.35 * f_pk)
+    f_hi = min(f_max, max(8.0 * f_pk, 4.0 * f_lo))
+    # The wavelet's width is the trade the panel lives or dies by: a wide one
+    # resolves frequency and cannot localise it in time, and this record holds
+    # only about three cycles of the wave.  Pick the widest wavelet that still
+    # leaves half the record outside the cone at the wave's own frequency,
+    # instead of a constant that made the whole panel an edge artefact.
+    w = args.wavelet_w if args.wavelet_w else float(
+        np.clip(2.0 * np.pi * f_pk * 0.25 * T_rec / np.sqrt(2.0), 3.0, 8.0))
+    freqs, amp = wavelet_amplitude(np.real(series[R_spec]), dt, f_lo, f_hi, w=w)
     x = t - R_spec
     pcm = ax.pcolormesh(x, freqs, amp, shading="auto", cmap=style.SEQUENTIAL,
                         vmin=0.0, vmax=1.0, rasterized=True)
-    # Cone of influence: within sqrt(2)*s of either end the wavelet overlaps
-    # the edge of the record and its amplitude is an artefact of the taper, not
-    # of the wave.  Cross-hatched, so the bright corners cannot be read as a
-    # burst -- which is exactly how they read before.
-    coi = np.sqrt(2.0) * args.wavelet_w / (2.0 * np.pi * freqs)
-    for lo_e, hi_e in ((x[0] * np.ones_like(coi), x[0] + coi), (x[-1] - coi, x[-1] * np.ones_like(coi))):
-        ax.fill_betweenx(freqs, lo_e, hi_e, facecolor="none", hatch="///",
-                         edgecolor=style.GROUND, linewidth=0.0, alpha=0.32, zorder=3)
+    # Cone of influence: within sqrt(2)*s of either end the wavelet overlaps the
+    # edge of the record, so its amplitude there is the taper's, not the wave's.
+    # Washed out rather than cross-hatched -- the hatching was two bright white
+    # curves and a screen of white strokes over most of the panel, which reads
+    # as a drawn object in its own right and was the first thing anyone asked
+    # about.  Faded means "do not read this", which is what it means.
+    coi = np.sqrt(2.0) * w / (2.0 * np.pi * freqs)
+    for lo_e, hi_e in ((np.full_like(coi, x[0]), np.minimum(x[0] + coi, x[-1])),
+                       (np.maximum(x[-1] - coi, x[0]), np.full_like(coi, x[-1]))):
+        ax.fill_betweenx(freqs, lo_e, hi_e, facecolor=style.GROUND,
+                         edgecolor="none", alpha=0.62, zorder=3)
     for edge in (x[0] + coi, x[-1] - coi):
-        ax.plot(edge, freqs, color=style.GROUND, lw=0.9, zorder=4)
+        ax.plot(np.clip(edge, x[0], x[-1]), freqs, color=style.GROUND, lw=0.8,
+                alpha=0.75, zorder=4)
     cb = fig.colorbar(pcm, ax=ax, pad=0.02)
     cb.set_label(r"$|W|$, normalised", fontsize=9)
     cb.ax.tick_params(labelsize=8, color=style.FAINT)
     cb.outline.set_edgecolor(style.FAINT)
     ax.set_yscale("log")
     ax.set_ylim(f_lo, f_hi)
-    ax.set_yticks([x for x in (0.02, 0.03, 0.05, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0, 3.0)
-                   if f_lo <= x <= f_hi])
+    ax.set_yticks([x for x in (0.005, 0.01, 0.02, 0.03, 0.05, 0.1, 0.2, 0.3,
+                               0.5, 1.0, 2.0, 3.0) if f_lo <= x <= f_hi])
     ax.yaxis.set_major_formatter(ScalarFormatter())
     ax.set_xlim(np.nanmin(x), np.nanmax(x))
     ax.set_xlabel(r"$t - R_{\mathrm{ext}}$")
@@ -294,19 +311,18 @@ def main(argv: list[str] | None = None) -> int:
     # integral is dominated by exactly that end. It is an order of magnitude,
     # and an order of magnitude does not belong on a figure as a number.
     snr = _compute_snr(f_hz, S_h, noise)
-    ax.annotate(rf"$M={args.mass_msun:g}\,M_\odot$,  $D={args.distance_mpc:g}$ Mpc",
-                xy=(0.02, 0.04), xycoords="axes fraction", va="bottom",
-                fontsize=8.5, color=style.MUTED)
+    style.note(ax, rf"$M={args.mass_msun:g}\,M_\odot$,  $D={args.distance_mpc:g}$ Mpc",
+               loc="lower left", fontsize=8.5)
     ax.set_xlabel(r"$f$ (Hz)")
     ax.set_ylabel(r"$\sqrt{S(f)}\ \ (\mathrm{Hz}^{-1/2})$")
-    ax.legend(loc="upper right")
+    style.legend(ax)
 
     titles = [
         "(a) waveform",
         "(b) retarded time, and the ringdown fit",
         "(c) power spectrum",
         "(d) envelope and the matched wavefront",
-        rf"(e) spectrogram at $R={R_spec:g}$ (hatched: edge of the record)",
+        rf"(e) spectrogram at $R={R_spec:g}$ (faded: the wavelet overruns the record)",
         "(f) strain against Advanced LIGO",
     ]
     for ax, title in zip(axes.flatten(), titles):
@@ -320,6 +336,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[psi4-analysis] ringdown fit at R = {radii[0]:g}: "
               f"f = {qnm['f_qnm']:.4f} 1/M, tau = {qnm['tau']:.2f} M")
     print(f"[psi4-analysis] Nyquist {f_nyq:.3f} 1/M (dt = {dt:g}); spectra drawn to {f_max:.3f}")
+    print(f"[psi4-analysis] spectrogram: peak at f = {f_pk:.4f} 1/M "
+          f"({1/f_pk:.1f} M per cycle, {T_rec*f_pk:.1f} cycles on the record), "
+          f"band {f_lo:.4f}-{f_hi:.4f}, Morlet w = {w:.2f}")
     print(f"[psi4-analysis] order-of-magnitude S/N at {args.mass_msun:g} Msun, "
           f"{args.distance_mpc:g} Mpc: {snr:.3g}")
 

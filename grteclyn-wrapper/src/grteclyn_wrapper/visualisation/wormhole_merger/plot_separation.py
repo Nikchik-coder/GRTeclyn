@@ -81,9 +81,9 @@ def main(argv: list[str] | None = None) -> int:
     ax_s.plot(t, sep, **style.series(0, lw=1.5))
     ax_s.plot(t[i_min], sep[i_min], marker="o", ms=5, color=style.BURGUNDY,
               mec=style.GROUND, mew=0.9, zorder=5)
-    ax_s.annotate(rf"closest approach ${sep[i_min]:.2f}$ at $t={t[i_min]:.1f}$",
-                  (t[i_min], sep[i_min]), xytext=(10, 10), textcoords="offset points",
-                  fontsize=8.5, color=style.BURGUNDY, va="bottom", ha="left")
+    style.callout(ax_s, t[i_min], sep[i_min],
+                  rf"closest approach ${sep[i_min]:.2f}$ at $t={t[i_min]:.1f}$",
+                  above=True, color=style.BURGUNDY, fontsize=8.5)
     ax_s.set_ylabel(r"$d$")
     ax_s.set_title("(a) tracked separation of the two throats", loc="left")
 
@@ -91,7 +91,7 @@ def main(argv: list[str] | None = None) -> int:
     chiB = c[:, COL["chiB"]]
     if np.all(np.isfinite(chiB)) and chiB[0] < 1.0:
         ax_c.semilogy(t, chiB, label="throat B", **style.series(1, lw=1.3))
-        ax_c.legend(loc="lower right", ncols=2)
+        style.legend(ax_c, ncols=2)
     for ax in (ax_s, ax_c):
         ax.axvline(t[i_min], color=style.FAINT, ls=(0, (2, 3)), lw=0.8, zorder=1)
     ax_c.set_ylabel(r"$\min\chi$")

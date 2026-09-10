@@ -132,7 +132,8 @@ def main(argv: list[str] | None = None) -> int:
     # The subject is slot 0 (ink, solid) and is drawn last, on top; the arms it
     # is compared with follow in the fixed order.
     kws = style.family(len(names), lw=None)
-    fig, axs = plt.subplots(len(radii), 1, figsize=(8.6, 2.5 * len(radii)), sharex=True, squeeze=False)
+    fig, axs = plt.subplots(len(radii), 1, figsize=(8.6, 2.5 * len(radii)),
+                            sharex=True, squeeze=False, constrained_layout=True)
     axs = axs[:, 0]
     t_max = max(data[n][-1, 0] for n in names)
     for k, R in enumerate(radii):
@@ -147,6 +148,10 @@ def main(argv: list[str] | None = None) -> int:
         # the subject's extrema after the junk band (or the restart)
         after = args.annotate_after if args.annotate_after is not None else (
             args.restart if args.restart is not None else R + JUNK_BAND[1])
+        # Never label a swing the figure's own caption calls junk: at the outer
+        # spheres the band outlasts the restart, and the first "extremum" after
+        # it was initial-data noise with a value written beside it.
+        after = max(after, R + JUNK_BAND[1])
         d = data[subject]
         m = d[:, 0] > after
         # Smooth over ~2 code units, not over a fixed 15 samples: from t ~ 85
@@ -155,7 +160,16 @@ def main(argv: list[str] | None = None) -> int:
         # a swing and the labels landed on top of each other.
         tt = d[m, 0]
         win = max(3, int(round(2.0 / max(np.median(np.diff(tt)), 1e-9))) | 1)
-        yy = np.convolve(R * d[m, col], np.ones(win) / win, mode="same")
+        # Normalise by the part of the kernel that is actually inside the
+        # record.  A plain 'same' convolution divides by the whole window even
+        # where half of it hangs off the end, which damps the first and last
+        # half-window toward zero: on the down-step arm, whose stream starts at
+        # the restart, the crest one unit later was labelled +0.20 when it is
+        # +0.28.  A wrong number on a figure is worse than no number.
+        kern = np.ones(win) / win
+        raw = R * d[m, col]
+        yy = (np.convolve(raw, kern, mode="same")
+              / np.convolve(np.ones_like(raw), kern, mode="same"))
         # Label the swings, but only the ones worth a label.  The late grid-scale
         # wobble turns every third sample into an extremum, and labelling those
         # printed five overlapping strings on top of each other; require a real
@@ -163,13 +177,17 @@ def main(argv: list[str] | None = None) -> int:
         gap = max(8.0, 0.12 * (tt[-1] - tt[0])) if len(tt) else 8.0
         big = 0.30 * np.max(np.abs(yy)) if len(yy) else 0.0
         last = -1e9
-        for i in range(20, len(yy) - 20):
+        for i in range(win, len(yy) - win):
             if (yy[i] - yy[i - 1]) * (yy[i + 1] - yy[i]) < 0 and abs(yy[i]) > big \
                     and tt[i] - last > gap and tt[i] < tt[-1] - 1.5:
                 last = tt[i]
-                ax.annotate(f"${yy[i]:+.2f}$ at $t={tt[i]:.0f}$", (tt[i], yy[i]),
-                            xytext=(0, -15 if yy[i] > 0 else 9), textcoords="offset points",
-                            ha="center", fontsize=8, color=style.MUTED)
+                # Away from the curve, not into it: a crest is labelled above
+                # itself and a trough below.  Keyed off the sign of the VALUE
+                # this was exactly backwards, and every label lay across the
+                # swing it was naming.
+                style.callout(ax, tt[i], yy[i],
+                              f"${yy[i]:+.2f}$ at $t={tt[i]:.0f}$",
+                              above=yy[i] > yy[i - 1])
         ax.set_ylabel(rf"$r\,\mathrm{{Re}}\,\Psi_4^{{{mode_lm}}}$" "\n" rf"$R={R:g}$")
         ax.set_xlim(0, np.ceil(t_max / 5) * 5 + 1)
         ax.margins(y=0.25)
@@ -177,18 +195,17 @@ def main(argv: list[str] | None = None) -> int:
     # ends on top, and left to itself the key comes out upside down, naming the
     # least important arm first.
     handles = [plt.Line2D([], [], **kws[j]) for j in range(len(names))]
-    axs[0].legend(handles, [labels[n] for n in names], loc="upper left")
+    style.legend(axs[0], handles, [labels[n] for n in names])
     axs[-1].set_xlabel(r"$t$")
     title = args.title or (rf"$r\,\mathrm{{Re}}\,\Psi_4^{{{mode_lm}}}$ at "
                            f"$R={' / '.join(f'{R:g}' for R in radii)}$"
                            f"   —   {labels[subject]}")
-    fig.suptitle(title, y=0.995)
+    fig.suptitle(title)
     sub = "grey band: initial-data junk from the mouths"
     if args.restart is not None:
         sub += (f";  dotted: the restart at $t={args.restart:g}$;  red dotted: the earliest "
                 f"arrival of anything it changed, at ${args.speed:g}\\,c$")
     axs[0].set_title(sub, fontsize=8.5, color=style.MUTED, pad=4, loc="left")
-    fig.tight_layout(rect=(0, 0, 1, 0.975))
     out = pathlib.Path(args.out).expanduser() if args.out else \
         run_dirs[subject] / "frames" / f"psi4_{args.mode}_compare.png"
     print("wrote", style.save(fig, out))

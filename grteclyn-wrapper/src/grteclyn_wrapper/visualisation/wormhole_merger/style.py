@@ -34,8 +34,22 @@ colour-blind reader; colour is the redundant channel, never the only one.
 ``ordinal(n)``  ORDERED families -- refinement levels, extraction radii, kick
                 amplitudes.  ``cividis`` reversed and cut off before its pale
                 end, so the ramp runs light-to-dark with the lightest step
-                still at 3.1:1 against white.  Reading order is the lightness,
+                still at 4.2:1 against white.  Reading order is the lightness,
                 which is what an ordered family should be read by.
+
+WHERE THE INK GOES
+------------------
+A curve the reader cannot see is worse than no curve, and a key sitting on top
+of the data is exactly that.  Nothing in this package calls ``ax.legend`` or
+``ax.annotate`` directly any more:
+
+``legend(ax)``  tries each corner, measures what is actually drawn there, and
+                takes the emptiest one; if every corner is occupied it opens
+                room by extending the axis rather than covering a curve.
+``callout()``   a value label placed clear of its own curve -- above a maximum,
+                below a minimum -- on an opaque patch.
+``note()``      the one-line caption inside a panel, likewise on an opaque
+                patch so it never reads as struck through.
 
 ``SEQUENTIAL``  2D magnitude (a slice of chi, a norm): perceptually uniform,
                 monotone in brightness.  ``cividis`` is the colour-blind
@@ -57,7 +71,8 @@ import numpy as np
 __all__ = [
     "BURGUNDY", "CONTEXT", "DEEP_BLUE", "DIVERGING", "FAINT", "GRID", "GROUND",
     "INK", "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
-    "family", "ordinal", "ordinal_series", "paper", "save", "series",
+    "callout", "family", "legend", "note", "ordinal", "ordinal_series",
+    "paper", "save", "series",
 ]
 
 # Ink, not black: pure black on white is harsher than print and reads as heavier
@@ -109,10 +124,12 @@ SEQUENTIAL_HOT = "inferno"   # magnitude, when the top end needs more contrast
 DIVERGING = "RdBu_r"         # signed about zero, neutral at the middle
 
 # The ordinal ramp: cividis from its dark end up to, but not into, the pale
-# yellow that a 1-pt line cannot hold on white.  0.62 is where the lightest
-# step still clears 3:1 against white (3.12), which a line needs and a heatmap
-# cell does not -- the cut is for LINES.
-_ORDINAL_CUT = 0.62
+# yellow that a 1-pt line cannot hold on white.  The cut is for LINES, not for
+# heatmap cells, so it is set by contrast against the page: at 0.50 the
+# lightest step is #7d7c78 at 4.2:1, which reads as a line of its own weight.
+# It was 0.62 (3.1:1) and the pale arm came out as a washed-out khaki that
+# vanished beside the dark end of the same ramp.
+_ORDINAL_CUT = 0.50
 
 
 def paper(base: float = 10.0) -> None:
@@ -198,12 +215,19 @@ def ordinal(n: int) -> list[str]:
             for x in np.linspace(_ORDINAL_CUT, 0.0, n)]
 
 
-def ordinal_series(n: int, lw: float = 1.4) -> list[dict]:
+def ordinal_series(n: int, lw: float = 1.4, dash_offset: int = 0) -> list[dict]:
     """``ordinal`` colours carrying the dash cycle too, so an ordered family is
-    still readable in greyscale."""
+    still readable in greyscale.
+
+    ``dash_offset`` starts the cycle further along.  Its one use is a figure
+    that draws an ordered family *and* a categorical curve on the same axes:
+    offsetting by one keeps solid free for the categorical one, so the two
+    families cannot be confused for each other.
+    """
     dashes = [(0, ()), (0, (6.5, 2.2)), (0, (1.3, 1.7)), (0, (7.0, 2.0, 1.3, 2.0)),
               (0, (3.0, 1.6)), (0, (1.0, 1.4, 4.0, 1.4))]
-    return [{"color": c, "linestyle": dashes[i % len(dashes)], "linewidth": lw}
+    return [{"color": c, "linestyle": dashes[(i + dash_offset) % len(dashes)],
+             "linewidth": lw}
             for i, c in enumerate(ordinal(n))]
 
 
@@ -218,3 +242,194 @@ def save(fig, path, dpi: int = 300, exts=("png", "pdf")) -> pathlib.Path:
     for ext in exts:
         fig.savefig(path.with_suffix(f".{ext}"), dpi=dpi)
     return path.with_suffix(f".{exts[0]}")
+
+
+# ---------------------------------------------------------------------------
+# Placement.  A figure is only as good as the least legible thing on it, and
+# the thing that goes illegible first is a key or a value label dropped on top
+# of a curve.  These three helpers make that a measured question rather than a
+# guess about where the data will end up.
+# ---------------------------------------------------------------------------
+
+_CORNERS = ("upper right", "upper left", "lower right", "lower left")
+
+
+def _drawn(ax) -> np.ndarray:
+    """Every plotted vertex of ``ax``, in axes-fraction coordinates.
+
+    Lines and marker collections only.  Shaded bands are deliberately not
+    counted: a band is the ruler the curves are read against, and a key may sit
+    on it.
+    """
+    chunks = []
+    for line in ax.lines:
+        xy = line.get_xydata()
+        if xy is not None and len(xy):
+            chunks.append(np.asarray(xy, dtype=float))
+    for coll in ax.collections:
+        try:
+            off = np.asarray(coll.get_offsets(), dtype=float)
+        except Exception:      # an image or a quadmesh has no offsets
+            continue
+        if off.ndim == 2 and len(off):
+            chunks.append(off)
+    if not chunks:
+        return np.empty((0, 2))
+    pts = (ax.transData + ax.transAxes.inverted()).transform(np.vstack(chunks))
+    return pts[np.isfinite(pts).all(axis=1)]
+
+
+def _text_boxes(ax) -> list:
+    """Boxes, in axes fraction, of the labels already placed inside ``ax``.
+
+    A key that lands on a caption is as unreadable as one that lands on a
+    curve, and the caption cannot be moved out of the way by growing the axis
+    -- it is anchored to the frame -- so this has to steer the choice of
+    corner rather than the growth.
+    """
+    inv = ax.transAxes.inverted()
+    boxes = []
+    for txt in ax.texts:
+        if not txt.get_visible() or not txt.get_text():
+            continue
+        try:
+            boxes.append(txt.get_window_extent().transformed(inv))
+        except Exception:
+            continue
+    return boxes
+
+
+def _covered(pts: np.ndarray, box, pad: float) -> int:
+    if not len(pts):
+        return 0
+    return int((
+        (pts[:, 0] > box.x0 - pad) & (pts[:, 0] < box.x1 + pad)
+        & (pts[:, 1] > box.y0 - pad) & (pts[:, 1] < box.y1 + pad)
+    ).sum())
+
+
+def _make_room(ax, corner: str, box, pad: float, max_grow: float) -> None:
+    """Extend the y axis until ``box`` sits over empty page."""
+    pts = _drawn(ax)
+    if not len(pts):
+        return
+    pts = pts[(pts[:, 0] > box.x0 - pad) & (pts[:, 0] < box.x1 + pad)]
+    if not len(pts):
+        return
+    lo, hi = ax.get_ylim()
+    log = ax.get_yscale() == "log"
+    if log:
+        if lo <= 0 or hi <= 0:
+            return
+        lo, hi = np.log10(lo), np.log10(hi)
+    span = hi - lo
+    if span <= 0:
+        return
+    if corner.startswith("upper"):
+        top = float(pts[:, 1].max())
+        edge = box.y0 - pad
+        if edge <= 0 or top <= edge:
+            return
+        hi = lo + min(top / edge, max_grow) * span
+    else:
+        bot = float(pts[:, 1].min())
+        edge = box.y1 + pad
+        if edge >= 1 or bot >= edge:
+            return
+        lo -= min(span * (edge - bot) / (1.0 - edge), (max_grow - 1.0) * span)
+    ax.set_ylim(10 ** lo, 10 ** hi) if log else ax.set_ylim(lo, hi)
+
+
+def legend(ax, *args, loc: str | None = None, pad: float = 0.015,
+           grow: bool = True, max_grow: float = 2.4, **kw):
+    """A key placed where it covers nothing, and room made for it if need be.
+
+    ``loc`` fixes the corner and only the growth is left to do; without it all
+    four corners are tried and the one covering the fewest drawn points wins.
+    """
+    fig = ax.figure
+    best = None
+    for corner in ((loc,) if loc else _CORNERS):
+        leg = ax.legend(*args, loc=corner, **kw)
+        fig.canvas.draw()
+        box = leg.get_window_extent().transformed(ax.transAxes.inverted())
+        on_data = _covered(_drawn(ax), box, pad)
+        on_text = sum(1 for b in _text_boxes(ax) if box.overlaps(b))
+        # A curve underneath can be moved out of the way; a caption cannot, so
+        # it outweighs any amount of data.
+        score = on_data + 1000 * on_text
+        if best is None or score < best[0]:
+            best = (score, corner, on_data)
+        if score == 0:
+            break
+    _, corner, hit = best
+    leg = ax.legend(*args, loc=corner, **kw)
+    if grow and hit:
+        fig.canvas.draw()
+        box = leg.get_window_extent().transformed(ax.transAxes.inverted())
+        _make_room(ax, corner, box, pad, max_grow)
+        fig.canvas.draw()
+    return leg
+
+
+def _y_fraction(ax, y: float) -> float:
+    """Where ``y`` will sit in the frame, allowing for autoscaling still to come.
+
+    Called while a figure is being built, ``get_ylim`` may still hold the
+    default 0..1: the real limits are not settled until the draw.  So the
+    estimate comes from the data limits and the axes' own margins whenever the
+    y axis is still on autoscale.
+    """
+    log = ax.get_yscale() == "log"
+    lo, hi = ax.get_ylim()
+    if ax.get_autoscaley_on():
+        d0, d1 = ax.dataLim.y0, ax.dataLim.y1
+        if np.isfinite(d0) and np.isfinite(d1) and d1 > d0:
+            if log and d0 > 0:
+                d0, d1 = np.log10(d0), np.log10(d1)
+                lo, hi = (np.log10(lo), np.log10(hi)) if lo > 0 else (d0, d1)
+            pad = ax.margins()[1] * (d1 - d0)
+            lo, hi = d0 - pad, d1 + pad
+            return float((np.log10(y) - lo) / (hi - lo)) if log else float((y - lo) / (hi - lo))
+    if log:
+        if lo <= 0 or hi <= 0 or y <= 0:
+            return 0.5
+        lo, hi, y = np.log10(lo), np.log10(hi), np.log10(y)
+    return float((y - lo) / (hi - lo)) if hi > lo else 0.5
+
+
+def callout(ax, x: float, y: float, text: str, *, above: bool = True,
+            color: str | None = None, dx: float = 0.0, gap: float = 12.0,
+            fontsize: float = 8.0, **kw):
+    """A value label set clear of its own curve, on an opaque patch.
+
+    ``above`` is the side to put it on: above a maximum, below a minimum, so
+    the label leans away from the curve instead of lying across it.  A label
+    for a point already at the top of the frame is flipped to the other side
+    rather than pushed out of the axes -- put above the highest peak in the
+    panel it landed on the panel's own title and printed through it.
+    """
+    frac = _y_fraction(ax, y)
+    if above and frac > 0.87:
+        above = False
+    elif not above and frac < 0.13:
+        above = True
+    ax.annotate(
+        text, (x, y), xytext=(dx, gap if above else -gap),
+        textcoords="offset points", ha="center",
+        va="bottom" if above else "top", fontsize=fontsize,
+        color=color if color is not None else MUTED, zorder=7,
+        bbox=dict(boxstyle="round,pad=0.15", fc=GROUND, ec="none"),
+        **kw)
+
+
+def note(ax, text: str, *, loc: str = "upper left", color: str | None = None,
+         fontsize: float = 8.0, **kw):
+    """The one-line caption inside a panel, on an opaque patch."""
+    x, ha = (0.015, "left") if "left" in loc else (0.985, "right")
+    y, va = (0.975, "top") if "upper" in loc else (0.025, "bottom")
+    return ax.text(
+        x, y, text, transform=ax.transAxes, ha=ha, va=va, fontsize=fontsize,
+        color=color if color is not None else MUTED, zorder=7, linespacing=1.45,
+        bbox=dict(boxstyle="round,pad=0.25", fc=GROUND, ec="none", alpha=0.85),
+        **kw)

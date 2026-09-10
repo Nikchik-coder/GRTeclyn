@@ -75,8 +75,7 @@ def main() -> int:
         i = int(np.argmax(y))
         peaks[(k, m)] = (t[i], y[i])
         ax.plot(t[i], y[i], marker="o", ms=4, color=KW[k]["color"], zorder=5)
-        ax.annotate(f"{y[i]:.4f}", (t[i], y[i]), textcoords="offset points",
-                    xytext=(6, 4), fontsize=8.5, color=style.MUTED)
+        style.callout(ax, t[i], y[i], f"{y[i]:.4f}", above=True, fontsize=8.5)
 
     def ratio(m: str) -> str:
         """The comparison the panel is making, measured rather than remembered.
