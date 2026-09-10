@@ -66,31 +66,78 @@ that produced it does not.
    (`single_eps_m1e1_t100` t = 15.17, `single_eps_p1e1_t100` t = 14.07), starting from a
    Hamiltonian violation 3–5× the 1 % arms' and growing it to 0.40 and 55.6. The 1 % arms hold
    theirs flat (2.21e-3 → 2.38e-3 over twenty units), so **1 % or below is the usable range**.
-   **The branch point belongs to the throat, not to the kick.** Each arm first moves the way it
-   was pushed, comes back, crosses its twin, and only then runs apart — with the fate OPPOSITE to
-   the push, so the first separation is the transient and the second is the branch. Two amplitudes
-   a factor ten apart cross at the same time: **t = 13.01 for ε = ±0.01 and t = 13.04 for ε = ±0.001**,
-   a shift of 0.03 for a tenfold change in the seed. At t = 63 the ±0.01 pair stands at R = 7.8
-   (pushed in, inflating) against 1.9 (pushed out, collapsing); the ±0.001 pair is at 4.7 against
-   2.85 by t = 39. Figure: `figures/01_single_throat/single_throat_seed_branches.png`.
-   **Two caveats, both hard.** (i) The collapse arms outrun the diagnostic: the ray scan's areal
-   minimum reaches its inner cutoff at r = 0.533 (ε = +0.01, from t = 29), and past that R_min is
-   the areal radius AT the cutoff, not the throat — nothing after that point may be quoted as a
-   throat radius. (ii) `single_eps_p1e3_t100` **died**: NaN at t = 40.07, mid-collapse at R = 2.85,
-   so the 0.1 % collapse branch has no fate. It is not a faster collapse than ε = +0.01, which
-   passed that same radius at t ≈ 27 and lived — the difference is the gauge. The big kick drives
-   |K| to 0.5 and the lapse collapses to 0.0097, freezing the region; the small kick never gets
-   |K| above 0.06, the lapse sits at 0.19, and χ drains to its 1e-8 floor at t ≈ 38 with no gauge
-   response, after which |K| reaches 5.9 and the constraint norm goes 1.3e-3 → 28 in one step.
-   **A collapse can be too gentle to trigger the singularity avoidance that protects a violent one.**
-   No growth rate is quoted for any arm: the sliding-window rate is still falling everywhere
-   (0.04 and 0.20 for ±0.01, 0.26 for −0.001) against 0.1702 for level 3's own truncation seed.
+   **The branch point belongs to the throat, not to the kick** (all four arms closed 2026-09-10,
+   three to t = 100). From t = 0 each arm moves BACK toward the exact radius — it does not first
+   move further the way it was pushed — crosses its twin, and only then runs away on the far side,
+   so **the fate is opposite to the push**: pushed in (ε < 0) inflates, pushed out (ε > 0) collapses.
+   Two amplitudes a factor ten apart cross at the same time, **t = 13.01 for ε = ±0.01 and t = 13.04
+   for ε = ±0.001**. That is what a linear response predicts: the initial gap between twins is exactly
+   ten times larger for the larger kick (ratio 10.00), and a decaying part and a growing part, both
+   proportional to ε, cancel at a time that does not depend on ε.
+   **Both fates, both amplitudes.** The collapse arms form black holes: a horizon from **t = 11**
+   (ε = +0.01, radius 3.88, Misner–Sharp mass 1.94) and from **t = 25** (ε = +0.001, radius 3.81,
+   mass 1.91). The +0.01 horizon shrinks to 2.34 by t = 47 and then grows slowly, to 2.57 by
+   t = 99, with the run clean to t = 100. The inflating arms never trap anything: each grows an
+   anti-trapped shell, peaking at t = 27 (ε = −0.01) and t = 37 (ε = −0.001), and its throat
+   expands to R ≈ 9 at r ≈ 9.5. Figure: `figures/01_single_throat/single_throat_seed_branches.png`.
+   **A tenfold smaller kick reaches the same state about 11–12 units later.** Measured on the
+   difference between twins, R(−ε) − R(+ε), where any offset common to both arms cancels, the delay
+   is 8.2 at a difference of 0.1, 11.3 at 1.0 and 11.6 at 1.8. The horizon radius gives 11.0 → 12.2
+   and the areal minimum 11.1 → 12.2 on the collapse side, and the anti-trapped peaks (27 → 37) and
+   the points where the scan loses the inflating throats (63 → 74) fall 10–11 units apart. The delay
+   is still lengthening, so it is quoted as a delay and never as a rate; level 3's own truncation-seed
+   rate, 0.1702, would give 13.5 per decade.
+   **Three limits, all hard.** (i) *The areal scan loses the throat in three arms.* It takes the
+   global minimum of the areal radius outside r = 0.5. The collapsing +0.01 throat walks inside that
+   by t = 29. The inflating throats are still out at r ≈ 9.5 when the minimum jumps to the scan's
+   inner edge, at t = 63 (ε = −0.01) and t = 74 (ε = −0.001). After those times R_min is not the
+   throat, and the figure stops each curve there. (ii) *`single_eps_p1e3_t100` died*, NaN at t = 40.07
+   with its horizon at radius 3.10, so the 0.1 % collapse has no late history. **Corrected the same
+   day:** an earlier version of this paragraph said the small kick died because its collapse was too
+   gentle to trigger the lapse collapse that protected the +0.01 arm. That compared the two at the
+   same clock time. Compared at the same horizon radius they are in the same state — lapse ≈ 0.2 in
+   both, χ on its 1e-8 floor in both, |K| 0.8 against 0.6 at radius ≈ 3.1. The +0.01 arm got through
+   that passage (t = 26–29) and collapsed its lapse only afterwards (t = 31–37); the +0.001 arm died
+   in it. One pair does not say why. (iii) *The late constraints grow in every arm, kicked or not.*
+   At t = 0 the kicked arms' Hamiltonian violation equals the unkicked `single_hold_t100`'s
+   (2.1–2.35e-3 against 2.10e-3), and the momentum violation the kick creates scales with ε (2.3e-4
+   against 2.2e-5 at t = 0.5). Both are flat or falling to t ≈ 55, then grow to 4.7e-2 – 9.2e-2 by
+   t = 100 — as the unkicked reference does (1.2e-1) — starting at t = 57, 67, 81 and 84 (ε = −0.01,
+   −0.001, +0.01, none). That is a property of this level-3 set-up, not of the kick, and nothing after
+   t ≈ 55 is quoted without it.
+   **No gravitational waves come out of the lone throat's collapse or inflation, and that is
+   physics, not a missing setting.** The throat, its scalar field and the kick are all spherical, and
+   a spherical spacetime has no gravitational-wave content at all: radiation needs a changing
+   quadrupole, and every l ≥ 2 mode of Ψ4 vanishes here, even while a black hole forms. Whatever the
+   collapse sheds leaves through the scalar field, as a monopole, which Ψ4 cannot see. Ψ4 was
+   extracted — the (2,0) mode and all l = 2 modes at R = 14 and 30 in every arm — and the record
+   agrees:
+
+   | the (2,0) mode at R = 14 | value |
+   | --- | --- |
+   | every lone-throat arm, kicked or not, t ≤ 35 | ≤ 1.5e-5, starting from the same 4.3e-7 at t = 0 in all five: the grid's floor |
+   | the head-on merger's peak, same sphere | 2.0e-2 |
+   | every arm, from t ≈ 40 | the floor rises at the same time in all five (past 3e-5 at t = 38–45), unkicked included |
+   | late, t ≳ 60 | up to 1e-1 at R = 14 but at most 2.4e-3 at R = 30 |
+
+   The late values fall 50–500× between the two spheres, where an outgoing wave would drop about
+   2×, so they are not radiation. R = 30 sits inside the sponge (r = 24–32), which makes that ratio
+   indicative rather than exact. The common rise at t ≈ 40 is not explained. Its timing would fit
+   an echo of the start-up burst from the outer layers, so the "no reflection" reading of the late
+   constraints does not extend to this low-level noise; it stays 200× below the merger's signal.
+   The six-panel wave analysis (`plot_psi4_analysis`) run on the +0.01 arm reports a radiated energy
+   of 2.4e-3 M, an Advanced-LIGO signal-to-noise of 41 and an infinite wavefront speed, all from this
+   noise, so no wave figure is made for these runs. A genuine wave from one throat needs broken
+   symmetry — a quadrupolar kick instead of a spherical one, rotation, or a boosted throat. Movies
+   of χ, K, the lapse, φ and Π on one fixed scale per field are in each seed run's `movies/` in the
+   run tree.
    The same split was seen in 3D before, for the massless
    Ellis-Bronnikov throat (Shirokov 2026, arXiv:2604.00071): noise alone drove that run to
    the inflation branch at five levels of refinement, and halving the phantom support with a
    quadrupolar seed forced the collapse branch — horizon, then a "phantom bounce" of the
    swallowed field at t ≈ 4 M. Here the massive drainhole shows no bounce in 40 units after
-   its horizon forms; whether one comes later is open. Movies: χ in the x–y plane only
+   its horizon forms, and the declared +0.01 arm follows its horizon for 89 units (shrinking to
+   2.34, then growing slowly to 2.57); whether a bounce comes later is open. Movies: χ in the x–y plane only
    (`campaign/01_single_throat/<run>/movies/movie_chi_z.mp4`), one frame per time unit — these launches
    rendered no other field, and the plotfiles are gone, so no lapse, K or scalar movie of
    either branch exists (launch policy fixed 2026-09-09: several fields by default).

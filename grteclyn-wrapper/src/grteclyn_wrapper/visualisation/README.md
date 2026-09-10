@@ -40,7 +40,7 @@ See also the wrapper overview: [`grteclyn-wrapper/README.md`](../../../README.md
 | Location | Role |
 |----------|------|
 | **`visualize/`** | 2D field slices from plotfiles; optional MP4 via `ffmpeg` or separate stitcher. |
-| **`visualize/make_movies.py`** | Stitch existing PNG frame folders into MP4 (slice or embedding layouts). |
+| **`grteclyn-wrapper/scripts/plot/rerender_frames.py`** | Redraw a run's frames from its slice cache on ONE fixed colour scale per field (linear, or `--symlog` for signed fields), then `--movies` stitches them. The movie path the merger close-out uses. |
 | **`make_evolution_panel/`** | Multi-panel strip figure from saved frame PNGs. |
 | **`extract_wave/`** | Extract \(\Psi_4\) from plotfiles and plot time series + PSD. |
 | **`process_wave/`** | Stream plotfiles to `psi4_mode_l2m0.dat`, render frames while consuming, plot from `.dat`, LIGO/strain propagation extras. |
@@ -48,9 +48,11 @@ See also the wrapper overview: [`grteclyn-wrapper/README.md`](../../../README.md
 | **`constraines/`** | Constraint norms \(L_2\) of Hamiltonian and momentum (`constraint_norms.dat`). |
 | **`figures/`** | Standalone publication-style schematic figures (not driven by simulation dumps). |
 | **`search/`** | QD / search campaign analytics from `trajectory.jsonl` (batch improvement, saturation). |
-| **`wormhole_merger/`** | Every figure and movie of the wormhole-merger campaign — the waveform (`plot_psi4_modes`, `plot_ladder_psi4`, `plot_bbh_vs_wormhole_psi4`, `plot_bbh_ringdown`), the spacetime (`plot_merger_constraints`, `plot_branches`, `plot_seed_branches`) and the movies (`stitch_movies`). Runs are resolved by NAME through `run_tree`, never by path. **See [`wormhole_merger/README.md`](wormhole_merger/README.md).** Merged 2026-09-10 from the former `merger/` and `merger_ladder/`, which were one campaign under two names. |
-| **`grteclyn-wrapper/scripts/plot/`** | Shell automation: live plotfile processing (`plot_run.sh`), post-run figures (`plot_diagnostic.sh`), frame movies (`make_movies.sh`). |
-| **`grteclyn-wrapper/scripts/wormhole/`** | Archive wormhole runs + visuals to `SimResults/` (`move_files.sh`). |
+| **`geometry_atlas/`** | Midplane field panels of the top MAP-Elites elites of a geometry-atlas campaign (`python -m grteclyn_wrapper.visualisation.geometry_atlas <campaign> --top 5`). |
+| **`bondi_dipole/`** | Every figure of the Bondi-dipole article, rebuilt from the packed campaign in `results/bondi-dipole-runaway/` (`article`), plus the schematic bend cartoon (`bend`); writes `research/bondi_dipole/figures/`. |
+| **`wormhole_merger/`** | Every figure and movie of the wormhole-merger campaign — the waveform (`plot_psi4_modes`, `plot_psi4_analysis`, `plot_ladder_psi4`, `plot_bbh_vs_wormhole_psi4`, `plot_bbh_ringdown`), the spacetime (`plot_merger_constraints`, `plot_separation`, `plot_placement_curve`, `plot_branches`, `plot_seed_branches`) and the movies (`stitch_movies`), all drawn through one house style (`style`) from one stream reader (`streams`). Runs are resolved by NAME through `run_tree`, never by path. **See [`wormhole_merger/README.md`](wormhole_merger/README.md).** Merged 2026-09-10 from the former `merger/` and `merger_ladder/`, which were one campaign under two names. |
+| **`grteclyn-wrapper/scripts/plot/`** | Shell automation: live plotfile processing (`plot_run.sh`), post-run figures (`plot_diagnostic.sh`), frame movies (`make_movies.sh`, `rerender_frames.py`). |
+| **`grteclyn-wrapper/scripts/wormhole/postrun/`** | Archive wormhole runs + visuals to `SimResults/` (`move_files.sh`). |
 
 More detail for live processing and `consume_plotfiles` options: [`process_wave/README.md`](process_wave/README.md).
 
@@ -120,24 +122,35 @@ mpirun -np 8 uv run python -m grteclyn_wrapper.visualisation.visualize --field K
 
 **Output layout:** `<out>/<field>_<axis>/frames/frame_<axis>_NNNN.png` and, if `--animate`, `movie_<field>_<axis>.mp4`.
 
-### 1a. `visualize/make_movies.py` — Stitch frames to MP4
+**Colour and sampling flags** not shown above: `--autoscale` ignores the preset colour limits (they are black-hole values, and a wormhole frame comes out blank without it); `--vmin` / `--vmax` pin the colour range; `--uniform-level N` renders from a uniform covering grid at level N instead of the mixed AMR hierarchy; `--mirror x|y|z` reflects a symmetry-reduced render back to the full plane.
 
-Use when you already have PNGs (e.g. from `visualize` without `--animate`, or from `consume_plotfiles` frames, or `embedding/frames/`). Scans `--root` for:
+### 1a. Stitch frames to MP4 — `make_movies.sh` and `rerender_frames.py`
 
-- `<field>_<axis>/frames/frame_<axis>_NNNN.png` → `movie_<field>_<axis>.mp4`
-- `<name>/frames/frame_NNNN.png` (e.g. embedding) → `movie_<name>.mp4`
+The Python stitcher that used to live at `visualize/make_movies.py` is gone; two
+scripts under `grteclyn-wrapper/scripts/plot/` replace it.
+
+`make_movies.sh` stitches frames that already exist.  For each run directory it
+reads `<run>/frames/<field>_<axis>/frames/frame_<axis>_NNNN.png` and writes
+`<run>/movies/movie_<field>_<axis>.mp4`, tolerating gapped numbering and mixed
+PNG sizes:
 
 ```bash
-# Default root: directory containing this script (visualize/)
-uv run python -m grteclyn_wrapper.visualisation.visualize.make_movies
-
-uv run python -m grteclyn_wrapper.visualisation.visualize.make_movies --root /path/to/visualize --framerate 10
-
-# Only selected folders under root
-uv run python -m grteclyn_wrapper.visualisation.visualize.make_movies --only K_z chi_z embedding
+bash grteclyn-wrapper/scripts/plot/make_movies.sh RUN_DIR [RUN_DIR ...] [--framerate N] [--only chi_z K_z]
 ```
 
-Requires `ffmpeg` on `PATH` (uses `subprocess`, not `os.system`).
+`rerender_frames.py` is the one to use when the run kept a slice cache
+(`<run>/frames/_slice_cache/`).  Frames rendered live each pick their own colour
+range, so a stitched movie flickers and its quiet stretches read as nothing
+happening; this redraws every frame of a field on one fixed scale first.  Signed
+fields take a symmetric-log scale, because one linear scale over a whole run is
+set by the loudest frame and turns everything else white:
+
+```bash
+python grteclyn-wrapper/scripts/plot/rerender_frames.py RUN_DIR/frames \
+    --symlog "K,phi,Pi,chi_minus_1,shift1,Weyl4_Re:1.5,Weyl4_Im:1.5" --movies
+```
+
+Both need `ffmpeg` on `PATH`.
 
 ---
 
@@ -283,7 +296,7 @@ clear wave burst. Early-run snapshots (few plotfiles consumed) produce empty or 
 Strain scaling: \(|\tilde{h}| = |\tilde{\Psi}_4| / (2\pi f)^2\); characteristic strain and detector
 overlays follow the implementation in `plot_extracted_psi4.py`.
 
-**Areal radius + embedding** (when consuming plotfiles): add `--areal-radius`, `--embedding`, `--embedding-rmax`; embedding frames go under `visualize/embedding/frames/` and match the layout expected by `make_movies.py`.
+**Areal radius + embedding** (when consuming plotfiles): add `--areal-radius`, `--embedding`, `--embedding-rmax`; embedding frames go under `visualize/embedding/frames/` and stitch with `scripts/plot/make_movies.sh`.
 
 ---
 
@@ -422,7 +435,7 @@ grteclyn-wrapper/src/grteclyn_wrapper/visualisation/
 
 ## Automation scripts
 
-Shell helpers live under **`grteclyn-wrapper/scripts/plot/`** (and `scripts/wormhole/move_files.sh`).
+Shell helpers live under **`grteclyn-wrapper/scripts/plot/`** (and `scripts/wormhole/postrun/move_files.sh`).
 Run them from the **GRTeclyn repository root** so `uv run --directory grteclyn-wrapper python -m grteclyn_wrapper.visualisation...` resolves correctly.
 
 ### `plot_run.sh` — Live processing during a simulation
@@ -545,11 +558,11 @@ The folder name is derived from wormhole parameters in the params file (e.g.
 
 ```bash
 # Supported wormhole run + data_supported
-./grteclyn-wrapper/scripts/wormhole/move_files.sh
-./grteclyn-wrapper/scripts/wormhole/move_files.sh SupportedWormholeCollapse
+./grteclyn-wrapper/scripts/wormhole/postrun/move_files.sh
+./grteclyn-wrapper/scripts/wormhole/postrun/move_files.sh SupportedWormholeCollapse
 
 # Other run type (uses data_2gpu and WormholeCollapse params)
-./grteclyn-wrapper/scripts/wormhole/move_files.sh WormholeCollapse
+./grteclyn-wrapper/scripts/wormhole/postrun/move_files.sh WormholeCollapse
 ```
 
 If `visualisation/plots/` is missing, the script warns to run `plot_diagnostic.sh` first (and
@@ -583,7 +596,7 @@ uv run python -m grteclyn_wrapper.visualisation.visualize.make_movies \
   --root grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize
 
 # Archive wormhole SimResults bundle
-./grteclyn-wrapper/scripts/wormhole/move_files.sh SupportedWormholeCollapse
+./grteclyn-wrapper/scripts/wormhole/postrun/move_files.sh SupportedWormholeCollapse
 ```
 
 **Extraction center:** wormhole runs use `--frames-corner` and Psi4 radii from `(0,0,0)`; full-box

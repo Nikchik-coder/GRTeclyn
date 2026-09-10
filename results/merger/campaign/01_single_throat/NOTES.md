@@ -21,7 +21,7 @@ Two knobs are varied, plus the refinement depth:
 | `gauge/` | **Which lapse, and how much dissipation?** The original Stage-1 ladder, run with the mesh tagger that chases error. Answers: dissipation of 2.0 must not ship, and the origin collar is a real trade, not a needless perturbation | 5 | 31 M |
 | `grid/` | **Where should the fine cells go?** The same knobs once the refinement box was nailed down instead of chasing error (`_fg`), plus the two unigrid controls that show a uniform grid cannot be refined at the origin without refining everywhere | 6 | 78 M |
 | `hold/` | **Does one throat actually sit still — over a hundred time units?** The production run and its one-knob twins: refinement level 2 / 3 / 4, the χ floor two ways, the time step. **This is the group with the campaign's result** | 8 | 327 M |
-| `seed/` | **If the branch is set by the truncation seed, what happens when we declare the seed instead?** The ±ε kick scan: a Gaussian shell on the conformal factor at t = 0, centred on the throat, amplitude ε | 2 filed, 2 live | 1.3 G |
+| `seed/` | **If the branch is set by the truncation seed, what happens when we declare the seed instead?** The ±ε kick scan: a Gaussian shell on the conformal factor at t = 0, centred on the throat, amplitude ε | 6 filed | 516M |
 
 ## `seed/` — the declared perturbation
 
@@ -37,8 +37,10 @@ constraint is violated, at order ε. That is the declared cost.
 | --- | --- | --- | --- |
 | `single_eps_m1e1_t100` | −0.1 | 1.22e-2 | throat 3.15 → 2.25, monotone; **NaN at t = 15.17** |
 | `single_eps_p1e1_t100` | +0.1 | 7.58e-3 | throat out to 4.33 by t = 2, turns over, 3.07 by t = 13; **NaN at t = 14.07** |
-| `single_eps_m1e2_t100` | −0.01 | 2.21e-3 | live |
-| `single_eps_p1e2_t100` | +0.01 | 2.35e-3 | live |
+| `single_eps_m1e2_t100` | −0.01 | 2.21e-3 | **inflates**, to t = 100: no horizon, anti-trapped shell (peak t = 27); scan loses the throat at t = 63 (R = 9.3) |
+| `single_eps_p1e2_t100` | +0.01 | 2.35e-3 | **black hole**, to t = 100: horizon from t = 11 (radius 3.88), shrinks to 2.34 by t = 47, 2.57 at t = 99; scan clips at t = 29 |
+| `single_eps_m1e3_t100` | −0.001 | 2.09e-3 | **inflates**, to t = 100: no horizon, shell peaks t = 37; scan loses the throat at t = 74 (R = 8.7) |
+| `single_eps_p1e3_t100` | +0.001 | 2.11e-3 | **black hole** from t = 25 (radius 3.81); **NaN at t = 40.07** with the horizon at 3.10 |
 
 **Ten per cent is not a perturbation, it is a demolition.** Both signs collapse and
 both die inside 16 time units — there is no branch to read, because the throat is
@@ -48,16 +50,44 @@ death, while the 1 % arms are flat (2.21e-3 → 2.38e-3 over twenty units, and
 2.35e-3 → 2.55e-3). A seed this large is not a small departure from the solution being
 studied; it is different initial data.
 
-**So the usable seed amplitude is 1 % or below**, and the ±0.001 templates
-(`templates_scan/params_single_eps_{m,p}1e3_t100.txt`) are the next rung if 1 % still
-decides the branch too fast to measure a rate.
+**So the usable seed amplitude is 1 % or below.**
 
-**The 1 % arms branch, with the sign reversed from the push.** They separate in the
-direction of their own kick for the first few units, converge back through the exact
-throat at t ≈ 13.5, cross, and then run apart the other way: the arm pushed *in* is
-inflating (3.9604 at t = 18), the arm pushed *out* is collapsing (3.7623). The minimum
-stays put at r = 1.59–1.66 through the crossing, so it is the throat moving and not the
-diagnostic. The early separation is the transient; the branch is what survives it.
+**The fate is opposite to the push, and the branch point belongs to the throat.**
+From t = 0 each arm moves back toward the exact radius (3.8895) — it does not first
+move further the way it was pushed — crosses its twin, and runs away on the far side.
+The twins cross at **t = 13.01 (±0.01) and t = 13.04 (±0.001)**: a tenfold change in the
+kick moves the branch point by 0.03, and the initial gap between twins is exactly ten
+times larger for the larger kick, so this is the linear response. (An earlier version of
+this note said the arms "separate in the direction of their own kick for the first few
+units". The data sampled every unit show no such phase.)
+
+**A tenfold smaller kick arrives about 11–12 units later.** On the difference between
+twins the delay runs 8.2 → 11.6 and is still lengthening; the horizon radius gives
+11.0 → 12.2. The anti-trapped peaks (27 → 37) and the scan's loss of the inflating throat
+(63 → 74) agree. Level 3's own rate, 0.1702, would give 13.5 per decade. It is a delay,
+never a rate.
+
+**Why +0.001 died and +0.01 did not is open.** Compared at the same horizon radius the
+two are in the same state: lapse ≈ 0.2, χ on its 1e-8 floor, |K| 0.8 against 0.6 at
+radius ≈ 3.1. The +0.01 arm got through that stretch (t = 26–29) and collapsed its lapse
+only afterwards; the +0.001 arm died in it. (First written up as "a collapse too gentle to
+trigger singularity avoidance" — that compared the arms at the same clock time, and it is
+withdrawn.)
+
+**Limits.** The areal scan takes the global minimum outside r = 0.5, so it loses the
+throat three times: the collapsing +0.01 throat walks inside by t = 29, and the inflating
+throats (still out at r ≈ 9.5) lose the minimum to the scan's inner edge at t = 63 and 74.
+The Hamiltonian constraint is flat to t ≈ 55 and then grows to 5–9e-2 by t = 100 in every
+arm, and the unkicked `hold/single_hold_t100` does the same (1.2e-1).
+
+**No gravitational waves, by symmetry.** Everything here is spherical, so every l ≥ 2
+mode of Ψ4 is zero. The (2,0) mode sits at the grid floor, ≤ 1.5e-5 at R = 14 to t = 35 in
+all five lone-throat arms, against 2.0e-2 for the head-on merger. Its late rise falls
+50–500× between R = 14 and R = 30, which no outgoing wave does. The full account, with the
+numbers, is in the results README's exact-data section.
+
+Movies of χ, K, the lapse, φ and Π, each on one fixed scale per field, are in every seed
+arm's `movies/`. The scratch plotfiles were pruned on 2026-09-10 (MANIFEST).
 
 ## Reading a run name
 

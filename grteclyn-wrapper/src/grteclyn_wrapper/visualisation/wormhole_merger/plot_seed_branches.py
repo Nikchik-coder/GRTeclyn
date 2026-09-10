@@ -22,12 +22,17 @@ can be added by naming them.
 WHAT IT HAS TO GET RIGHT
   * The arms do not start together, and that is the kick: psi -> psi(1 + eps)
     and R goes like psi^2, so R(0) is offset by ~2 eps.
-  * They move the way they were pushed for ten units, come back, CROSS, and
-    only then run apart -- with the fate OPPOSITE to the push.  Read the first
-    separation as the branch and the sign comes out backwards, so the crossing
-    is marked rather than hidden.
-  * The growth rate was still falling at t = 27 (0.43 -> 0.21).  No rate is
-    quoted and no fit is drawn until the sliding-window derivative goes flat.
+  * From t = 0 each arm moves BACK toward R_star -- it does not first move
+    further the way it was pushed -- crosses its twin, and only then runs away
+    on the far side, so the fate is OPPOSITE to the push.  Read the initial
+    offset as the branch and the sign comes out backwards; the crossing is
+    marked rather than hidden.  It falls at the same time for both amplitudes
+    (t = 13.01 and 13.04), which is what linearity predicts: a decaying and a
+    growing part, both proportional to eps, cancel at an eps-free time.
+  * No growth rate is drawn.  The sliding-window rate never went flat, and the
+    quotable number is a DELAY instead -- how much later the tenfold smaller kick
+    reaches the same state -- which the console prints from the pair
+    difference R(-eps) - R(+eps), where any offset common to both arms cancels.
 
 The figure carries no prose: no caption, no worded axis labels, no worded panel
 titles.  Identity is carried by the line itself -- the dash pattern is the SIGN
@@ -50,7 +55,7 @@ import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import RUNS_ROOT, find_run  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.style import (  # noqa: E402
-    FAINT, INK, MUTED, paper, save, signed,
+    FAINT, INK, MUTED, paper, save,
 )
 
 R_EXACT = 3.8895      # closed form for the drainhole a = 2, m = 1
@@ -174,7 +179,12 @@ def main(argv: list[str] | None = None) -> int:
 
     paper(base=10.0)
 
-    t_end = max(m["t"][-1] for m in arms)
+    # The axis ends where the last MEASUREMENT ends, not where the last run ends:
+    # a curve is cut at its scan clip (see the throat panel), so time after the
+    # latest clip would be empty frame.
+    def valid_end(m):
+        return m["clip"] - 1 if m["clip"] is not None else m["t"].size - 1
+    t_end = max(m["t"][valid_end(m)] for m in arms)
     xhi = t_end * 1.10
     crossings = [m["cross"] for m in arms if m["cross"] is not None]
     t_cross = float(np.mean(crossings)) if crossings else None
@@ -183,7 +193,7 @@ def main(argv: list[str] | None = None) -> int:
     # Not the same as where an arm crosses R_star: those four times are spread
     # over 1.6 units, the pair crossings over 0.05.  The pair crossing is the
     # branch point, so that is what gets marked.
-    pair_cross = []
+    pair_cross, pairs = [], {}
     for m in arms:
         if not m["label"].startswith("-"):
             continue
@@ -195,13 +205,42 @@ def main(argv: list[str] | None = None) -> int:
         tt = np.intersect1d(np.round(m["t"], 6), np.round(p["t"], 6))
         if tt.size < 3:
             continue
-        c = zero_crossing(tt, np.interp(tt, m["t"], m["R"]) - np.interp(tt, p["t"], p["R"]))
+        D = np.interp(tt, m["t"], m["R"]) - np.interp(tt, p["t"], p["R"])
+        c = zero_crossing(tt, D)
         if c is not None:
             pair_cross.append((mag, c))
+        # The pair difference is only as good as the worse of its two arms: stop
+        # it where either arm's scan clips.
+        ends = [x["t"][x["clip"]] for x in (m, p) if x["clip"] is not None]
+        keep = tt < min(ends) if ends else np.ones(tt.size, bool)
+        pairs[mag] = (tt[keep], D[keep])
     if pair_cross:
         t_cross = float(np.mean([c for _, c in pair_cross]))
         for mag, c in sorted(pair_cross, reverse=True):
             print(f"  pair +-{mag:g} crosses itself at t = {c:.2f}")
+
+    # ---- the delay per decade of kick ---------------------------------------
+    # How much later the smaller pair's difference reaches each value the larger
+    # pair's reached.  If the growth were one clean exponential this would be
+    # ln(10)/rate at every level; it lengthens instead while the decaying part of
+    # the response still matters, so it is printed as a table, never as one rate.
+    def reach(t, y, level):
+        i = np.where(y >= level)[0]
+        if not i.size or i[0] == 0:
+            return np.nan
+        j = i[0]
+        return t[j - 1] + (level - y[j - 1]) * (t[j] - t[j - 1]) / (y[j] - y[j - 1])
+    if len(pairs) >= 2:
+        big, small = sorted(pairs, reverse=True)[:2]
+        (tb, Db), (ts, Ds) = pairs[big], pairs[small]
+        top = min(Db.max(), Ds.max())
+        print(f"  delay, pair +-{small:g} after +-{big:g}, at the same R(-eps) - R(+eps)"
+              f"  (level 3's own rate {SEED_RATE} would give {np.log(10) / SEED_RATE:.1f}):")
+        for level in (0.1, 0.3, 1.0, 1.5, top * 0.98):
+            if level > top:
+                continue
+            d = reach(ts, Ds, level) - reach(tb, Db, level)
+            print(f"    at {level:5.2f}:  {d:6.2f}")
 
     # ---- what used to be the caption, now printed ---------------------------
     for m in arms:
@@ -224,15 +263,12 @@ def main(argv: list[str] | None = None) -> int:
                         top=1 - 0.22 / H, bottom=XLAB_H / H)
 
     def style_of(label: str) -> dict:
-        """Identity three times over, so no single channel has to carry it.
-
-        Colour is the SIGN -- deep blue for a negative kick, burgundy for a
-        positive one, the campaign's two poles.  So is the dash pattern, which
-        is what keeps the figure readable in greyscale and to a colour-blind
-        reader.  The weight is the SIZE, so the two members of a pair read as a
-        pair and the two amplitudes stay apart.
+        """Identity without colour -- the user's call for THIS figure
+        (2026-09-10: "no coloring"), which overrides the campaign palette.  The
+        dash pattern is the SIGN of the kick and the weight is its SIZE, so the
+        two members of a pair read as a pair and the two amplitudes stay apart.
         """
-        return dict(color=signed(label),
+        return dict(color=INK,
                     linewidth=1.0 if abs(float(label)) < 5e-3 else 1.6,
                     linestyle=(0, (4, 2.5)) if label.startswith("+") else (0, ()))
 
@@ -271,19 +307,19 @@ def main(argv: list[str] | None = None) -> int:
     axA.axhline(args.exact, color=MUTED, linewidth=0.8, linestyle=(0, (1, 2.5)), zorder=2)
     labA = [(xhi, args.exact, r"$R_\star$", MUTED)]
     for m in arms:
-        st, k = style_of(m["label"]), m["clip"]
-        # Past the cutoff the curve is the diagnostic, not the throat: draw it,
-        # because hiding it would leave an unexplained stop, but draw it as a
-        # ghost so nobody reads a number off it.
-        axA.plot(m["t"][:k if k else None], m["R"][:k if k else None], zorder=3, **st)
-        if k is not None:
-            axA.plot(m["t"][k - 1:], m["R"][k - 1:], alpha=0.28, zorder=3, **st)
-            axA.plot(m["t"][k], m["R"][k], "o", color=st["color"], markersize=3.5,
-                     markeredgecolor="white", markeredgewidth=0.9, zorder=4)
-        axA.plot(m["t"][-1], m["R"][-1], "X" if m["dead"] else "o", color=st["color"],
-                 markersize=6 if m["dead"] else 3.5, markeredgecolor="white",
-                 markeredgewidth=1.0, alpha=0.28 if k is not None else 1.0, zorder=4)
-        labA.append((m["t"][-1], m["R"][-1], tag(m), st["color"]))
+        st, e = style_of(m["label"]), valid_end(m)
+        # A curve ends at its last MEASUREMENT of the throat.  Past a scan clip
+        # the number is the areal radius at the scan's inner edge, and drawn --
+        # even pale -- it read as the throat turning over: both inflating arms
+        # appeared to fall from R ~ 9 to ~5, with their labels in the wrong
+        # order.  A dot marks a curve that stops because the scan lost the
+        # throat, a cross one that stops because the run died.
+        axA.plot(m["t"][:e + 1], m["R"][:e + 1], zorder=3, **st)
+        dead_here = m["dead"] and m["clip"] is None
+        axA.plot(m["t"][e], m["R"][e], "X" if dead_here else "o", color=st["color"],
+                 markersize=6 if dead_here else 3.5, markeredgecolor="white",
+                 markeredgewidth=1.0, zorder=4)
+        labA.append((m["t"][e], m["R"][e], tag(m), st["color"]))
     axA.set_xlim(0, xhi)
     axA.set_xlabel(r"$t$")
     axA.set_ylabel(r"$R_{\mathrm{min}}$")
