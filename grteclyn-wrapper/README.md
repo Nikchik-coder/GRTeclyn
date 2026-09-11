@@ -43,20 +43,103 @@ Three findings shape everything else here:
 
 ## Requirements
 
-| | |
-|---|---|
-| **GPU** | NVIDIA with CUDA 12.x — for the GRTeclyn evolution binary |
-| **CPU** | An MPI implementation (OpenMPI) — for the GRTresna elliptic solve |
-| **Python** | ≥ 3.10, managed with [`uv`](https://docs.astral.sh/uv/) |
-| **Siblings** | [GRTresna](https://github.com/GRTLCollaboration/GRTresna) and [Chombo](https://github.com/applied-numerical-algorithms-group-lbnl/Chombo), checked out beside this repository |
+Everything the research needs, as it stood when the merger and Bondi dipole
+campaigns were produced (audited 2026-09-11). **Two codes run the science** —
+GRTeclyn evolves spacetimes on GPUs, GRTresna solves for the initial data on
+CPUs — and each has its own library and its own toolchain. Keep the two
+toolchains apart: the GPU build breaks if the solver's compilers are on `PATH`.
 
-The layout this expects is one parent directory holding `GRTeclyn/`,
-`GRTresna/`, `Chombo/` and a local `openmpi/`. Nothing about that layout is
-hard-coded — you declare it once in a gitignored `.env`, see
-[Site paths](#site-paths-env).
+### The directory layout
 
-Compilers: `nvcc` needs `gcc ≤ 12`, so build the GPU binary with the **system**
-compiler, not the conda environment used for GRTresna.
+One parent directory, `$SIM_ROOT`, holds the codes side by side. Nothing about
+it is hard-coded — declare it once in the gitignored `.env`
+([Site paths](#site-paths-env)).
+
+```
+$SIM_ROOT/
+  GRTeclyn/              this repository: the evolution code, the wrapper, research/, results/
+  amrex/                 the mesh library GRTeclyn compiles against (found as ../../../amrex)
+  GRTresna/              the initial-data solver -- MUST be on the research branch
+  Chombo/                the mesh library GRTresna compiles against; lib/ holds the built archives
+  local/openmpi-5.0.8/   the MPI that GPU builds link and GPU runs launch with
+$GRTRESNA_ENV            a conda environment: the solver's compilers, MPI, HDF5, BLAS/LAPACK
+/usr/local/cuda          the CUDA toolkit
+```
+
+### What each piece is for, and who needs it
+
+| Piece | What it does | Merger (`research/merger`) | Initial-data campaigns (Bondi dipole, boson stars, Q-torus) | Pinned at |
+|---|---|---|---|---|
+| **GRTeclyn** | GPU evolution (CCZ4 + matter), the wrapper, the packing and analysis | required | required | this checkout |
+| **amrex** | adaptive mesh + GPU kernels under GRTeclyn | required (to build) | required (to build) | `26.02-12-gd7da50458`, unmodified |
+| **CUDA** | compiles the GPU kernels; `libcurand` at run time | required | required | 12.9; H100 = `CUDA_ARCH=90` |
+| **System gcc** | host compiler for the GPU build | required | required | 11.4 (CUDA needs ≤ 12) |
+| **OpenMPI** (`local/`) | MPI for the GPU binaries — every merger binary links `libmpi` | required | required | 5.0.8 |
+| **GRTresna** | solves the constraint equations for initial data (phantom / boson-star / Q-torus profiles) | not used — the drainhole data is built into the evolution code (`wormhole_id_type = 1`) | **required** | research branch `feature/grteclyn-wrapper` (12 commits past upstream `main`; upstream lacks the phantom and multi-lump profiles) |
+| **Chombo** | adaptive mesh + multigrid under GRTresna | not used | **required** | `8684f2e`, unmodified, built 3D / MPI / double / `OPT=HIGH` |
+| **`$GRTRESNA_ENV`** (conda) | the solver's toolchain: gcc/gfortran 15.2, OpenMPI 5.0.10, parallel HDF5 2.1.0, MKL BLAS/LAPACK, make | not used | **required** — Chombo and the solver binary are linked against it | as listed |
+| **ffmpeg** | stitches frames into movies | required for movies | required for movies | 4.4 |
+| **4× NVIDIA GPU** | the evolutions | one card per run | one card per run | H100 80 GB |
+
+**Chombo's build settings are not in git.** `Chombo/lib/mk/Make.defs.local` is
+gitignored by Chombo itself, and without it neither Chombo nor GRTresna
+rebuilds. What it must say:
+
+```make
+DIM = 3
+DEBUG = FALSE
+OPT = HIGH
+PRECISION = DOUBLE
+OPENMPCC = FALSE
+MPI = TRUE
+CXX = g++
+FC = gfortran
+MPICXX = $GRTRESNA_ENV/bin/mpicxx
+USE_HDF = TRUE
+HDFINCFLAGS    = -I$GRTRESNA_ENV/include
+HDFLIBFLAGS    = -L$GRTRESNA_ENV/lib -lhdf5 -lz -Wl,-rpath,$GRTRESNA_ENV/lib
+HDFMPIINCFLAGS = -I$GRTRESNA_ENV/include
+HDFMPILIBFLAGS = -L$GRTRESNA_ENV/lib -lhdf5 -lz -Wl,-rpath,$GRTRESNA_ENV/lib
+syslibflags = -lblas -llapack
+cxxoptflags = -march=x86-64-v3 -O3 -fpermissive
+```
+
+(written out with the environment path in place of `$GRTRESNA_ENV` — make does
+not read the shell variable). Build recipes for both codes: [Operations](#operations).
+
+### Python: two environments
+
+| Environment | Created by | Holds | Used by |
+|---|---|---|---|
+| `GRTeclyn/.venv` | `uv sync` in the repository root | numpy, scipy, matplotlib, yt, h5py, pycbc, gwpy | `research/merger/pack_results.sh`, the figure scripts, the gravitational-wave analysis |
+| `grteclyn-wrapper/.venv` | `uv sync` in `grteclyn-wrapper/` | the `grteclyn_wrapper` package itself, numpy, scipy, h5py, yt, matplotlib, cma, pytest | the plotfile consumer every run launches, `closeout.sh`, the search campaigns, the test suite |
+
+The wrapper package is **not** installed in the root environment; scripts that
+need it there set `PYTHONPATH=grteclyn-wrapper/src`.
+
+### Not required
+
+`GRChombo` — not to be confused with **Chombo**, which GRTresna cannot build
+without. GRChombo is the CPU predecessor of GRTeclyn; the `GRChombo*` names inside
+GRTresna (`GRChomboVariables.hpp`, …) are GRTresna's own files, and only GRTresna's
+upstream CI clones GRChombo, to borrow its example `Make.defs.local` templates. Also
+not required: OpenMPI's source tree and tarball (only to rebuild OpenMPI) and extra
+git worktrees of this repository. None of them is read by any local build, run or
+analysis.
+
+### Check an installation
+
+```bash
+source grteclyn-wrapper/scripts/lib/env.sh
+/usr/local/cuda/bin/nvcc --version | grep release          # 12.x
+gcc --version | head -1                                     # <= 12
+"$OPENMPI_ROOT/bin/mpirun" --version | head -1              # Open MPI 5.x
+"$GRTRESNA_ENV/bin/mpirun" --version | head -1              # the solver's MPI
+ls "$CHOMBO_HOME"/libamrelliptic3d.*.MPI.a                  # Chombo is built
+git -C "$GRTRESNA_ROOT" branch --show-current               # feature/grteclyn-wrapper
+git -C "$SIM_ROOT/amrex" describe --tags                    # 26.02-12-gd7da50458
+ffmpeg -version | head -1
+```
 
 ## Quick start
 
