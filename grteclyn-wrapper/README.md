@@ -141,6 +141,77 @@ git -C "$SIM_ROOT/amrex" describe --tags                    # 26.02-12-gd7da5045
 ffmpeg -version | head -1
 ```
 
+### Git: remotes, identity, and setting up a new machine
+
+**Two remotes, and only one is ever pushed to.** In the GRTeclyn and GRTresna
+checkouts `origin` is the public GRTLCollaboration project and `myfork` is the
+research fork. Every local branch tracks `myfork`; push with
+`git push -u myfork <branch>`. When a branch has no upstream yet, git suggests
+`git push --set-upstream origin <branch>` — that suggestion pushes research work
+into the public project. Ignore it.
+
+| Checkout | Comes from | Branch / commit |
+|---|---|---|
+| `GRTeclyn` | the research fork | `feature/merger` (the research: code, `research/`, every campaign pack); `develop` is the public face (code + the Bondi pack) |
+| `GRTresna` | the research fork | `feature/grteclyn-wrapper` (`5bfa15954815e7c799d6e32e9db30bd279e4c791` at the 2026-09-11 audit) |
+| `amrex` | `https://github.com/AMReX-Codes/amrex.git` | `d7da504589664922ce3e21972782713d31ec50e9` |
+| `Chombo` | `https://github.com/GRTLCollaboration/Chombo.git` | `8684f2e000106f1abadb72642e1d15351867f98f` |
+
+**Identity belongs to the checkout, not the machine.** The campaigns ran on a
+shared node whose home directory carries other people's global git identity and
+credentials. So the name, the email and the SSH key are set per repository
+(`git config`, no `--global`), and the key is named explicitly with
+`core.sshCommand` so git never falls back to whatever key the machine offers
+first. On a machine that is yours alone, `--global` is fine.
+
+A new machine, from an empty `$SIM_ROOT`:
+
+```bash
+# 1. A key for THIS machine -- never copy one from another host.
+#    Add the .pub to GitHub -> Settings -> SSH and GPG keys.
+ssh-keygen -t ed25519 -f ~/.ssh/github_research
+KEY='ssh -i ~/.ssh/github_research -o IdentitiesOnly=yes'
+
+# 2. The two research repositories, from the fork, with the upstream beside them.
+cd "$SIM_ROOT"
+for repo in GRTeclyn GRTresna; do
+  GIT_SSH_COMMAND="$KEY" git clone -o myfork "git@github.com:<your-github-user>/${repo}.git"
+  git -C "$repo" remote add origin "https://github.com/GRTLCollaboration/${repo}.git"
+  git -C "$repo" config user.name  "<your-github-user>"
+  git -C "$repo" config user.email "<you@example.com>"
+  git -C "$repo" config core.sshCommand "$KEY"
+done
+git -C GRTeclyn checkout feature/merger
+git -C GRTresna checkout feature/grteclyn-wrapper
+
+# 3. The two libraries, read-only, at the pinned commits.
+git clone https://github.com/AMReX-Codes/amrex.git
+git -C amrex checkout d7da504589664922ce3e21972782713d31ec50e9
+git clone https://github.com/GRTLCollaboration/Chombo.git
+git -C Chombo checkout 8684f2e000106f1abadb72642e1d15351867f98f
+#    then write Chombo/lib/mk/Make.defs.local (above) and build -- see Operations
+
+# 4. On an NFS mount that forces mode 777, every file looks modified until:
+for repo in GRTeclyn GRTresna amrex Chombo; do git -C "$repo" config core.fileMode false; done
+
+# 5. The gate that refuses a commit carrying machine paths or host names.
+cd GRTeclyn && python3 grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook
+
+# 6. Check: the first must greet the fork's account, the second must show -> myfork/...
+ssh -T -o IdentitiesOnly=yes -i ~/.ssh/github_research git@github.com
+git -C "$SIM_ROOT/GRTeclyn" for-each-ref --format='%(refname:short) -> %(upstream:short)' refs/heads/
+```
+
+The pre-commit hook lives in `.git/hooks/`, which git does not track, so every
+fresh clone needs step 5 again (and step 4, on NFS).
+
+**Leaving a shared machine.** Push every branch first
+(`git rev-list --count --all --not --remotes=myfork` must print 0 in each
+checkout), then delete that machine's key pair and revoke the same key on GitHub
+— it has sat on shared storage. The per-repository identity goes with the
+checkouts. Leave the machine's global `~/.gitconfig`, `~/.git-credentials` and
+`~/.ssh/` alone: on a shared node they belong to other people.
+
 ## Quick start
 
 ```bash
