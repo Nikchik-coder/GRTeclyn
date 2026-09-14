@@ -564,10 +564,15 @@ if [[ -n "${CONSUMER_PID}" ]]; then
   # catastrophic for a second pass over the same run: without it this drain
   # deletes every PNG the watcher rendered during the evolution, and if the run
   # aborted there are no plotfiles left to re-render them from.
+  # --stable-seconds 0 is load-bearing too.  The consumer skips a plotfile whose
+  # Header is younger than 30 s, a guard against reading one mid-write; this
+  # pass starts about a second after the evolution exits, so with the default
+  # the run's last plotfile was never extracted (measured 2026-09-14).  The
+  # binary has exited, so every plotfile on scratch is complete.
   (
     cd "${RUN_DIR}"
     exec -a "${PROC_LABEL}_post" "${CONSUMER_BIN}" post.py "${consumer_args[@]}" \
-      --keep-existing-frames >> consumer.log 2>&1
+      --keep-existing-frames --stable-seconds 0 >> consumer.log 2>&1
   ) || \
     echo "[whm] final consumer pass reported an error -- see ${RUN_DIR}/consumer.log" >&2
 fi
