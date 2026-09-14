@@ -132,8 +132,9 @@ analysis.
 ```bash
 source grteclyn-wrapper/scripts/lib/env.sh
 /usr/local/cuda/bin/nvcc --version | grep release          # 12.x
-gcc --version | head -1                                     # <= 12
-"$OPENMPI_ROOT/bin/mpirun" --version | head -1              # Open MPI 5.x
+/usr/bin/gcc --version | head -1                            # <= 12 (the gcc on PATH is now the solver's 15)
+LD_LIBRARY_PATH="$OPENMPI_ROOT/lib:$LD_LIBRARY_PATH" \
+  "$OPENMPI_ROOT/bin/mpirun" --version | head -1            # Open MPI 5.0.8
 "$GRTRESNA_ENV/bin/mpirun" --version | head -1              # the solver's MPI
 ls "$CHOMBO_HOME"/libamrelliptic3d.*.MPI.a                  # Chombo is built
 git -C "$GRTRESNA_ROOT" branch --show-current               # feature/grteclyn-wrapper
@@ -146,8 +147,14 @@ ffmpeg -version | head -1
 is the solver's (5.0.10), and the GPU binaries load the solver environment's `libmpi`
 and `libstdc++` ahead of their own `RUNPATH`. That links cleanly (no unresolved
 symbols, checked 2026-09-14) and it is how `run_single.sh` launches, but it is not
-the separation described above — call `"$OPENMPI_ROOT/bin/mpirun"` by its full path
-when the MPI version matters.
+the separation described above. When the MPI version matters, the full path alone is
+not enough: in that shell `"$OPENMPI_ROOT/bin/mpirun"` loads the solver environment's
+`libprrte` and `libpmix` and dumps core, even for `-np 1 hostname` (checked
+2026-09-14). Put its own libraries back in front for that command —
+`LD_LIBRARY_PATH="$OPENMPI_ROOT/lib:$LD_LIBRARY_PATH" "$OPENMPI_ROOT/bin/mpirun" ...`.
+The plain `mpirun` on `PATH` is unaffected, and so are the launchers that use it
+(`run_single.sh`, `wormhole_case.py --np`): the solver's `prterun` finds its own
+libraries.
 
 ### Git: remotes, identity, and setting up a new machine
 
