@@ -72,7 +72,7 @@ $GRTRESNA_ENV            a conda environment: the solver's compilers, MPI, HDF5,
 |---|---|---|---|---|
 | **GRTeclyn** | GPU evolution (CCZ4 + matter), the wrapper, the packing and analysis | required | required | this checkout |
 | **amrex** | adaptive mesh + GPU kernels under GRTeclyn | required (to build) | required (to build) | `26.02-12-gd7da50458`, unmodified |
-| **CUDA** | compiles the GPU kernels; `libcurand` at run time | required | required | 12.9; H100 = `CUDA_ARCH=90` |
+| **CUDA** | compiles the GPU kernels; `libcurand` at run time | required | required | 12.9; H100 = `CUDA_ARCH=90`. Existing binaries also run on a 12.1 runtime (merger smoke test, 2026-09-14); a 12.1 rebuild is untested |
 | **System gcc** | host compiler for the GPU build | required | required | 11.4 (CUDA needs ≤ 12) |
 | **OpenMPI** (`local/`) | MPI for the GPU binaries — every merger binary links `libmpi` | required | required | 5.0.8 |
 | **GRTresna** | solves the constraint equations for initial data (phantom / boson-star / Q-torus profiles) | not used — the drainhole data is built into the evolution code (`wormhole_id_type = 1`) | **required** | research branch `feature/grteclyn-wrapper` (12 commits past upstream `main`; upstream lacks the phantom and multi-lump profiles) |
@@ -141,14 +141,26 @@ git -C "$SIM_ROOT/amrex" describe --tags                    # 26.02-12-gd7da5045
 ffmpeg -version | head -1
 ```
 
+`scripts/lib/env.sh` puts `$GRTRESNA_ENV` on `PATH` and `LD_LIBRARY_PATH` *after*
+`$OPENMPI_ROOT`, which leaves it in front: in a shell that has sourced it, `mpirun`
+is the solver's (5.0.10), and the GPU binaries load the solver environment's `libmpi`
+and `libstdc++` ahead of their own `RUNPATH`. That links cleanly (no unresolved
+symbols, checked 2026-09-14) and it is how `run_single.sh` launches, but it is not
+the separation described above — call `"$OPENMPI_ROOT/bin/mpirun"` by its full path
+when the MPI version matters.
+
 ### Git: remotes, identity, and setting up a new machine
 
 **Two remotes, and only one is ever pushed to.** In the GRTeclyn and GRTresna
-checkouts `origin` is the public GRTLCollaboration project and `myfork` is the
-research fork. Every local branch tracks `myfork`; push with
+checkouts on the GPU nodes `origin` is the public GRTLCollaboration project and
+`myfork` is the research fork. Every local branch tracks `myfork`; push with
 `git push -u myfork <branch>`. When a branch has no upstream yet, git suggests
 `git push --set-upstream origin <branch>` — that suggestion pushes research work
-into the public project. Ignore it.
+into the public project. Ignore it. Keep `origin` on its `https://` URL, as step 2
+sets it: a push there then stops at a credentials prompt instead of going out
+over the machine's SSH key. A workstation clone may use the opposite names
+(`origin` = the fork, `upstream` = the public project), so run `git remote -v`
+before pasting a push or merge command from one checkout into another.
 
 | Checkout | Comes from | Branch / commit |
 |---|---|---|
@@ -205,10 +217,22 @@ git -C "$SIM_ROOT/GRTeclyn" for-each-ref --format='%(refname:short) -> %(upstrea
 The pre-commit hook lives in `.git/hooks/`, which git does not track, so every
 fresh clone needs step 5 again (and step 4, on NFS).
 
+**Moving to a node whose home directory differs.** A build remembers the absolute
+paths of the machine it was made on: `.env`, the OpenMPI prefix and every binary's
+`RUNPATH`, `Chombo/lib/mk/Make.defs.local`, the uv interpreter behind both `.venv`s,
+and the key named in `core.sshCommand`. If the new node mounts the same shared
+storage under a different home, nothing needs rebuilding: from the new home, link
+each directory the old paths go through (the parent of `$SIM_ROOT`, the conda
+environments, `~/.local/share/uv`) to where it really lives, then confirm with
+`ldd <binary> | grep 'not found'` (must print nothing) and the
+[installation check](#check-an-installation). Naming the key in `core.sshCommand`
+through the shared mount instead of a home path saves one of those links.
+
 **Leaving a shared machine.** Push every branch first
-(`git rev-list --count --all --not --remotes=myfork` must print 0 in each
-checkout), then delete that machine's key pair and revoke the same key on GitHub
-— it has sat on shared storage. The per-repository identity goes with the
+(`git rev-list --count --branches --not --remotes=myfork` must print 0 in each
+checkout — not `--all`, which also counts the public project's remote branches and
+can stay above 0 with everything pushed), then delete that machine's key pair and
+revoke the same key on GitHub — it has sat on shared storage. The per-repository identity goes with the
 checkouts. Leave the machine's global `~/.gitconfig`, `~/.git-credentials` and
 `~/.ssh/` alone: on a shared node they belong to other people.
 
@@ -851,6 +875,9 @@ Rules:
 - **`.env` is gitignored** — never commit it. Commit only [`.env.example`](.env.example).
 - Already-exported shell variables win over `.env` (safe to override per run).
 - `${VAR}` expansion is supported inside `.env` (e.g. `GRTECLYN_ROOT=${SIM_ROOT}/GRTeclyn`).
+- Every key is exported, not only the path knobs: `scripts/lib/env.sh` and
+  `site_paths` both load the whole file. A machine-level workaround such as
+  `HWLOC_COMPONENTS=-linuxio` ([MPI triage](#mpi-status-and-triage-runbook)) belongs here.
 - Shell scripts that `source scripts/lib/env.sh` pick up the same keys.
 - Python resolves the same layout via `site_paths` (loads `.env` on first use).
 - If `.env` is missing, `GRTECLYN_ROOT` is auto-detected from the wrapper layout;
@@ -1794,6 +1821,7 @@ of whichever node the pod currently sits on, not of this repo.
 | GRTeclyn RadialRecipe MPI+CUDA | **works** — 2 ranks, AMR max_level 3, clean past the old crash point | 2026-08-19 |
 | GRTeclyn RadialRecipe MPI+CUDA, 3 ranks | **works** — 3 ranks on `N=256, L=128, max_level 3`, first AMR advance clean, 22–23 GB per card | 2026-08-19 |
 | GRTresna solver multi-rank | **works** — 8 ranks reproduce the serial residuals digit-for-digit | 2026-08-19 |
+| `mpirun` on a node with NVLink version 6 | **segfaults at start-up, even `-np 1 hostname`, unless `HWLOC_COMPONENTS=-linuxio` is set**; with it 1–8 ranks start and exchange data, for both OpenMPI builds | 2026-09-14 |
 | GRTeclyn RotatingWormholeCollapse MPI+CUDA | worked multi-GPU, but only on an **older node** | 2026-06 |
 
 **The July RadialRecipe AMR crash does not reproduce (retested 2026-08-19).**
@@ -1821,7 +1849,14 @@ available if it ever pays.
 1. *Node-level.* On one node every MPI job died in PRRTE daemon start-up —
    even `mpirun -np 1 hostname`. Nothing in this repo could fix it; it went
    away when the pod moved. If this is happening, stop and check the node, do
-   not rebuild anything.
+   not rebuild anything — but first rule out the one known cause that *can* be
+   worked around. On 2026-09-14 the same silent segfault, in both OpenMPI
+   builds, came from the hwloc 2.7.1 they bundle: it crashes while listing OS
+   devices on a host with NVLink version 6 (`lstopo-no-graphics` warns
+   `Failed to recognize NVLink version 6`). `HWLOC_COMPONENTS=-linuxio` skips
+   that scan and MPI starts normally; put it in `.env`. `-pci`, `-nvml,-cuda`,
+   `PMIX_MCA_gds=hash`, `--bind-to none` and `plm_ssh_agent=false` do not help.
+   Single-rank runs start without `mpirun` and are unaffected.
 2. *Toolchain-level.* GRTresna died with SIGILL from mismatched
    `-march=native` objects. Fixed by rebuilding Chombo's MPI libs
    consistently: `scripts/build/rebuild_grtresna_mpi.sh` (it ends with its own
@@ -1840,6 +1875,7 @@ export LD_LIBRARY_PATH="$OPENMPI_ROOT/lib:${LD_LIBRARY_PATH:-}"
 
 # 1. Is MPI alive at all on this node?  (If this fails, it is the node.)
 mpirun -np 1 hostname
+HWLOC_COMPONENTS=-linuxio mpirun -np 1 hostname   # only if the line above segfaults
 mpirun -np 4 bash -c 'echo "rank $OMPI_COMM_WORLD_RANK of $OMPI_COMM_WORLD_SIZE"'
 
 # 2. Does the CPU solver run multi-rank?  (Wins ~40 min per HQ constraint solve.)
