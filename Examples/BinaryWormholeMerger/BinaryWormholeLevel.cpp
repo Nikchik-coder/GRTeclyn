@@ -24,6 +24,7 @@
 #include "Weyl4WithMatter.hpp"
 #include "WeylExtraction.hpp"
 
+#include <AMReX_MultiFabUtil.H>
 #include <AMReX_Reduce.H>
 #include <AMReX_Utility.H>
 #include <cmath>
@@ -783,9 +784,34 @@ void BinaryWormholeLevel::write_scalar_diagnostics()
                 amrex::max(1, simParams().core_profile_params.interval);
             if (parent->levelSteps(0) % interval == 0)
             {
+                // COMPOSITE over the whole hierarchy, not just the finest
+                // level: the finest level follows the throats, so a ball about
+                // the centre is only partly inside it and a finest-only scan
+                // reports biased min/max on the shells that stick out (measured
+                // 37 % coverage at r = 1.58, 1.5 % at r = 1.98).  Each level
+                // contributes where no finer level covers it, so every cell is
+                // used once and every shell is complete.
+                std::vector<amrex::iMultiFab> masks(finest_lev + 1);
+                std::vector<CoreRadialProfile::level_input_t> inputs;
+                inputs.reserve(finest_lev + 1);
+                for (int lev = 0; lev <= finest_lev; ++lev)
+                {
+                    auto &amr_lev = parent->getLevel(lev);
+                    CoreRadialProfile::level_input_t in;
+                    in.state = &amr_lev.get_new_data(state_index);
+                    in.geom  = &parent->Geom(lev);
+                    if (lev < finest_lev)
+                    {
+                        masks[lev] = amrex::makeFineMask(
+                            *in.state, parent->boxArray(lev + 1),
+                            parent->refRatio(lev), 0, 1);
+                        in.mask = &masks[lev];
+                    }
+                    inputs.push_back(in);
+                }
                 CoreRadialProfile::execute(
-                    state_fine, fine_geom, simParams().core_profile_params,
-                    out_dir, dt, time, restart_time, first_step);
+                    inputs, simParams().core_profile_params, out_dir, dt, time,
+                    restart_time, first_step);
             }
         }
 

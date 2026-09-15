@@ -13,6 +13,7 @@
 #include <AMReX_GpuAtomic.H>
 #include <AMReX_GpuContainers.H>
 #include <AMReX_MultiFab.H>
+#include <AMReX_iMultiFab.H>
 #include <AMReX_ParallelDescriptor.H>
 #include <AMReX_Utility.H>
 
@@ -46,13 +47,28 @@
     t = 57: this binning returns max|K| = 2.6192 and min(chi) = 6.795e-07, both
     equal to collapse_diagnostics.dat to every digit printed.
 
-    COVERAGE - under AMR the finest level does not cover every shell, and an
-    uncovered shell must read "unsampled", never "zero".  Each shell therefore
-    carries its own cell count, and shells the finest level does not reach come
-    out with n = 0 and the BIG/-BIG sentinels.  Early in a binary run the
-    centre is NOT refined (the throats are at +-d/2 and the moving-box tagger
-    follows them), so the inner shells are legitimately empty until the merger
-    brings the refinement in; that is a fact about the grid, not a failure.
+    COVERAGE - this is a COMPOSITE reduction over the WHOLE AMR hierarchy, not
+    a scan of the finest level.  Every cell is used exactly once: a level's cell
+    contributes only where no finer level covers it (amrex::makeFineMask), so
+    each shell is taken at the best resolution that actually exists there and
+    NO shell is ever partially sampled.
+
+    The first cut of this module reduced only the finest level, and that was
+    wrong in a way worth recording.  The finest level is laid down by the
+    moving-box tagger, which follows the throats, so it covers a box about them
+    and not a ball about the centre.  Measured on the live arm at t = 36.29 with
+    r_max = 2.0, the per-shell cell counts against the ideal shell volume ran
+    100 % out to r ~ 1.3 and then fell off a cliff -- 37 % at r = 1.58, 1.5 % at
+    r = 1.98.  Those outer shells were reporting min/max over whichever corners
+    of the shell the refinement happened to reach, which is not a spherical
+    reduction and is biased by the grid rather than by the physics.  Walking the
+    hierarchy removes the failure mode instead of documenting it, and r_max is
+    then free to be whatever the question needs.
+
+    Each shell still carries its own cell count, and also the dx of the finest
+    level that fed it, so the resolution behind every number is on the record.
+    A shell no level reaches at all (outside the domain) keeps n = 0 and the
+    sentinels.
 
     The shell width is a PARAMETER, not dx: the column count must not change
     when AMR adds or drops a level mid-run, or the file's own header stops
@@ -77,26 +93,34 @@ class CoreRadialProfile
         return amrex::max(1, amrex::min(n, s_max_shells));
     }
 
-    static void execute(const amrex::MultiFab &a_state,
-                        const amrex::Geometry &a_geom, const params_t &a_params,
-                        const std::string &a_out_dir, amrex::Real a_dt,
-                        amrex::Real a_time, amrex::Real a_restart_time,
-                        bool a_first_step)
+    //! One entry per AMR level, coarsest first.  ``mask`` is null on the finest
+    //! level and otherwise marks cells covered by the next finer one (1 =
+    //! covered, skip it) so every cell of the hierarchy is counted exactly once.
+    struct level_input_t
+    {
+        const amrex::MultiFab *state   = nullptr;
+        const amrex::Geometry *geom    = nullptr;
+        const amrex::iMultiFab *mask   = nullptr;
+    };
+
+    static void execute(const std::vector<level_input_t> &a_levels,
+                        const params_t &a_params, const std::string &a_out_dir,
+                        amrex::Real a_dt, amrex::Real a_time,
+                        amrex::Real a_restart_time, bool a_first_step)
     {
         BL_PROFILE("CoreRadialProfile::execute");
 
         constexpr amrex::Real BIG = 1.0e30;
         const int nsh             = n_shells(a_params);
         const amrex::Real dr      = a_params.dr;
+        const amrex::Real cx      = a_params.centre[0];
+        const amrex::Real cy      = a_params.centre[1];
+        const amrex::Real cz      = a_params.centre[2];
 
-        const auto prob_lo = a_geom.ProbLoArray();
-        const auto dx_arr  = a_geom.CellSizeArray();
-        const amrex::Real cx = a_params.centre[0];
-        const amrex::Real cy = a_params.centre[1];
-        const amrex::Real cz = a_params.centre[2];
-
-        // Four accumulators per shell: min chi, max |K|, min lapse, count.
-        const int NBIN = 4 * nsh;
+        // Five accumulators per shell: min chi, max |K|, min lapse, count, and
+        // the dx of the finest level that fed the shell.
+        const int NQ   = 5;
+        const int NBIN = NQ * nsh;
         std::vector<amrex::Real> host(NBIN);
         {
             amrex::Gpu::DeviceVector<amrex::Real> d_acc(NBIN);
@@ -105,46 +129,75 @@ class CoreRadialProfile
                                [=] AMREX_GPU_DEVICE(int n)
                                {
                                    const int q = n / nsh;
-                                   p[n]        = (q == 1) ? -BIG
+                                   p[n]        = (q == 1)   ? -BIG
                                                  : (q == 3) ? 0.0
                                                             : BIG;
                                });
 
-            for (amrex::MFIter mfi(a_state, amrex::TilingIfNotGPU());
-                 mfi.isValid(); ++mfi)
+            for (const auto &lev : a_levels)
             {
-                const amrex::Box &bx = mfi.validbox();
-                const auto arr       = a_state.const_array(mfi);
-                amrex::ParallelFor(
-                    bx,
-                    [=] AMREX_GPU_DEVICE(int i, int j, int k)
-                    {
-                        const amrex::Real x =
-                            prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0] - cx;
-                        const amrex::Real y =
-                            prob_lo[1] + (amrex::Real(j) + 0.5) * dx_arr[1] - cy;
-                        const amrex::Real z =
-                            prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2] - cz;
-                        const amrex::Real r =
-                            std::sqrt(x * x + y * y + z * z);
+                if (lev.state == nullptr || lev.geom == nullptr)
+                {
+                    continue;
+                }
+                const auto prob_lo = lev.geom->ProbLoArray();
+                const auto dx_arr  = lev.geom->CellSizeArray();
+                const amrex::Real dx_lev = dx_arr[0];
+                const amrex::iMultiFab *mask = lev.mask;
 
-                        const int ib = static_cast<int>(r / dr);
-                        if (ib < 0 || ib >= nsh)
+                for (amrex::MFIter mfi(*lev.state, amrex::TilingIfNotGPU());
+                     mfi.isValid(); ++mfi)
+                {
+                    const amrex::Box &bx = mfi.validbox();
+                    const auto arr       = lev.state->const_array(mfi);
+                    // A default Array4 reads as "not covered" when unused.
+                    const auto mrr = (mask != nullptr)
+                                         ? mask->const_array(mfi)
+                                         : amrex::Array4<const int>{};
+                    const bool have_mask = (mask != nullptr);
+                    amrex::ParallelFor(
+                        bx,
+                        [=] AMREX_GPU_DEVICE(int i, int j, int k)
                         {
-                            return;
-                        }
+                            // Covered by a finer level -> that level counts it.
+                            if (have_mask && mrr(i, j, k) != 0)
+                            {
+                                return;
+                            }
+                            const amrex::Real x = prob_lo[0] +
+                                                  (amrex::Real(i) + 0.5) *
+                                                      dx_arr[0] -
+                                                  cx;
+                            const amrex::Real y = prob_lo[1] +
+                                                  (amrex::Real(j) + 0.5) *
+                                                      dx_arr[1] -
+                                                  cy;
+                            const amrex::Real z = prob_lo[2] +
+                                                  (amrex::Real(k) + 0.5) *
+                                                      dx_arr[2] -
+                                                  cz;
+                            const amrex::Real r =
+                                std::sqrt(x * x + y * y + z * z);
 
-                        const amrex::Real chi   = arr(i, j, k, c_chi);
-                        const amrex::Real K     = arr(i, j, k, c_K);
-                        const amrex::Real lapse = arr(i, j, k, c_lapse);
+                            const int ib = static_cast<int>(r / dr);
+                            if (ib < 0 || ib >= nsh)
+                            {
+                                return;
+                            }
 
-                        amrex::Gpu::Atomic::Min(&p[ib], chi);
-                        amrex::Gpu::Atomic::Max(&p[nsh + ib],
-                                                amrex::Math::abs(K));
-                        amrex::Gpu::Atomic::Min(&p[2 * nsh + ib], lapse);
-                        amrex::Gpu::Atomic::AddNoRet(&p[3 * nsh + ib],
-                                                     amrex::Real(1.0));
-                    });
+                            const amrex::Real chi   = arr(i, j, k, c_chi);
+                            const amrex::Real K     = arr(i, j, k, c_K);
+                            const amrex::Real lapse = arr(i, j, k, c_lapse);
+
+                            amrex::Gpu::Atomic::Min(&p[ib], chi);
+                            amrex::Gpu::Atomic::Max(&p[nsh + ib],
+                                                    amrex::Math::abs(K));
+                            amrex::Gpu::Atomic::Min(&p[2 * nsh + ib], lapse);
+                            amrex::Gpu::Atomic::AddNoRet(&p[3 * nsh + ib],
+                                                         amrex::Real(1.0));
+                            amrex::Gpu::Atomic::Min(&p[4 * nsh + ib], dx_lev);
+                        });
+                }
             }
             amrex::Gpu::streamSynchronize();
             amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_acc.begin(),
@@ -156,6 +209,7 @@ class CoreRadialProfile
         amrex::ParallelDescriptor::ReduceRealMax(host.data() + nsh, nsh);
         amrex::ParallelDescriptor::ReduceRealMin(host.data() + 2 * nsh, nsh);
         amrex::ParallelDescriptor::ReduceRealSum(host.data() + 3 * nsh, nsh);
+        amrex::ParallelDescriptor::ReduceRealMin(host.data() + 4 * nsh, nsh);
 
         // ---- Write ----------------------------------------------------------
         if (!a_out_dir.empty())
@@ -189,8 +243,9 @@ class CoreRadialProfile
         {
             std::vector<std::string> cols;
             cols.reserve(NBIN);
-            const char *tag[4] = {"chi_min", "absK_max", "lapse_min", "n"};
-            for (int q = 0; q < 4; ++q)
+            const char *tag[NQ] = {"chi_min", "absK_max", "lapse_min", "n",
+                                   "dx"};
+            for (int q = 0; q < NQ; ++q)
             {
                 for (int ib = 0; ib < nsh; ++ib)
                 {
