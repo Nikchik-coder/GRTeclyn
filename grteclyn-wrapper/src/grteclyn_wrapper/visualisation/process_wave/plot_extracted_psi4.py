@@ -291,6 +291,15 @@ def _fit_qnm(
     Works on the retarded-time Re(r*Psi4) waveform at a single extraction
     radius.  Returns dict with fit parameters, or None if the fit fails.
     """
+    # Trailing exact zeros carry no signal -- they are gated or padded
+    # samples (gate_psi4_junk.py) and poison the fit if included.
+    envelope_full = np.abs(psi4_complex)
+    nz = np.nonzero(envelope_full > 0.0)[0]
+    if len(nz) < 10:
+        return None
+    t = t[: nz[-1] + 1]
+    psi4_complex = psi4_complex[: nz[-1] + 1]
+
     t_ret = t - R
     y = np.real(psi4_complex)
 
@@ -315,12 +324,20 @@ def _fit_qnm(
     A0 = float(np.max(env_fit)) if np.max(env_fit) > 0 else 1e-6
     tau0 = float(t_fit[-1] - t_fit[0]) / 2.0
 
-    peaks_idx, _ = find_peaks(np.abs(y_fit), prominence=0.1 * A0)
-    if len(peaks_idx) >= 2:
-        dt_peaks = np.median(np.diff(t_fit[peaks_idx]))
-        f0_guess = 1.0 / (2.0 * dt_peaks) if dt_peaks > 0 else 1.0
+    # Seed the frequency from the FFT peak of the fit segment and cap the
+    # fit at the segment's Nyquist frequency: with coarse sampling the old
+    # peak-spacing guess (fallback 2.0) let curve_fit converge onto aliased
+    # super-Nyquist solutions (seen 2026-09-15 on gated data: f = 0.95 for
+    # a 0.047 signal).
+    dt_med = float(np.median(np.diff(t_fit))) if len(t_fit) > 1 else 1.0
+    f_nyq = 0.5 / dt_med if dt_med > 0 else np.inf
+    yf = np.abs(np.fft.rfft(y_fit - np.mean(y_fit)))
+    ff = np.fft.rfftfreq(len(y_fit), dt_med)
+    if len(yf) > 1 and np.max(yf[1:]) > 0:
+        f0_guess = float(ff[1 + int(np.argmax(yf[1:]))])
     else:
-        f0_guess = 2.0
+        f0_guess = 0.5 * f_nyq
+    f0_guess = min(max(f0_guess, 2e-3), 0.9 * f_nyq)
 
     t_ret_fit_start = t_ret[i_peak] + t_fit_raw[0]
 
@@ -328,7 +345,7 @@ def _fit_qnm(
         popt, pcov = curve_fit(
             _damped_sinusoid, t_fit, y_fit,
             p0=[A0, tau0, f0_guess, 0.0],
-            bounds=([0, 1e-6, 1e-3, -2 * np.pi], [np.inf, np.inf, np.inf, 2 * np.pi]),
+            bounds=([0, 1e-6, 1e-3, -2 * np.pi], [np.inf, np.inf, f_nyq, 2 * np.pi]),
             maxfev=10000,
         )
         A, tau, f_qnm, phi = popt
