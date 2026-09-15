@@ -715,6 +715,30 @@ land under `<name>_rNNNNN`. Two consequences that have both bitten:
   `<name>_r03000` as an unrelated run and will delete the live run's only
   restart point. Match `^<name>(_r[0-9]+)?$`, not `<name>`.
 
+### 13. An off-axis frame window must be told its centre — eyeball frame 0
+
+Until 2026-09-15 the frame renderer defaulted its in-plane window centre to
+`z = 0` (`visualize/__main__.py` hard-coded `z_center = 0.0`; the consumer's
+`frames/center.py` copied it). `--frames-coord` overrides only the
+slice-normal component, so on the default `--frames-axis z` the bad component
+is always overwritten and the default never shows — but with
+`--frames-axis x` or `y` on a `[0, L]` domain the window sits at
+`z ∈ [-zoom/2, +zoom/2]` and the physics at `z = L/2` is **out of frame
+entirely**. The frames still render plausible-looking structure without
+erroring, and `--frames-cache-slices` stores only the cropped window, so once
+the plotfiles are deleted nothing can be recovered. This is how both queue-2e
+movies were lost on 2026-09-14 (defect 6 below).
+
+The default is now the domain midpoint on all three axes, but the rule stands:
+
+- any run with `--frames-axis x|y` passes `--frames-center x y z` explicitly;
+- **open the first rendered frame and compare it against a reference run's
+  frame before trusting the movie.** The check costs thirty seconds; skipping
+  it cost two paper movies.
+
+The wave `.dat` streams are extracted with the separate `--center` flag and
+were never affected.
+
 ## What was fixed — 2026-08-21
 
 Five defects, found while chasing a spurious drift in the Bondi dipole campaign.
@@ -738,6 +762,12 @@ The corrected campaign and its data are in
 [`results/bondi-dipole-runaway/campaign/`](../results/bondi-dipole-runaway/campaign/).
 
 ---
+
+## What was fixed — 2026-09-15
+
+| # | Defect | Why it went unseen | Effect once fixed |
+|---|---|---|---|
+| 6 | **Off-axis frame windows centred at `z = 0`, not the domain midpoint** (rule 13 above): `visualize/__main__.py` hard-coded `z_center = 0.0` and `consume_plotfiles/frames/center.py` copied it; `--frames-coord` overrides only the slice-normal component. | Every documented example slices along `z`, where the bad component is always overwritten. Mis-centred frames render plausible structure without erroring, and the slice cache keeps only the cropped window, so the loss is invisible until someone looks and unrecoverable after the plotfiles are gone. | Default centre is now the domain midpoint on all three axes. Both queue-2e movies (`--frames-axis y`, 2026-09-14) were lost to this; every axis-`z` run and all wave `.dat` streams were unaffected. |
 
 ## What is implemented
 

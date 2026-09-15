@@ -13,6 +13,10 @@
 #   consumer_profile <name> [zoom] [coord]
 # It echoes the flag string on stdout.  Unknown name -> exit 2 with the list.
 # Zoom is the full window width in code units (32 shows +/-16 around centre);
+# NB --frames-axis x|y: ALWAYS add --frames-center x y z to the extra args and
+#    eyeball the first rendered frame against a reference run (README rule 13).
+#    Before 2026-09-15 the in-plane centre defaulted to z=0 and axis-y frames
+#    missed the throat entirely -- both queue-2e movies were lost to this.
 # coord is the slice coordinate along the slice normal -- NOT optional in
 # spirit, because the consumer's default is 0, the domain boundary, and a
 # slice that misses the physics renders featureless frames without erroring
