@@ -14,6 +14,18 @@ corroborated by the offline scan in `horizon/` (the headline arms,
 t = 51.4+) are evidence of a common horizon.
 
 
+## `(unfiled, still on a card)`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| v2_spiral_d12_p012_L128_lvl5_t100_r03600 | V2 PRODUCTION SPIRAL, STAGE 2 (GPU_PLAN queue 5, launched 2026-09-15 on the user's word, one card): level 5 restarted from stage 1's t = 36 checkpoint, rolling checkpoints every 0.5 units (keep 3), stop_time 100 -- EXPECTED TO NaN AT THE WALL. Stage 1 stopped two units in front of it (stop_time 50; L = 64 died at 52.07 at level 3, 55.60 at level 5) with the approach in its last five units: min_chi on the 1e-8 floor from t = 45.5 as max_K jumped 0.08 -> 1.6, constraints turning back up from t = 47.5. The last clean checkpoint before the NaN is copied out and seeds stage 3: the same restart with the interior fill armed as late as it goes, to t = 150. Two levels added at the restart (dx 0.0625 -> 0.0156), as the head-on's level-5 arm did at t = 22 | 36.01 | 36.06 | still running | 1.27 | - | 4.357e-01 | 1.517e-03 |
+
+## `01_single_throat`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| bridge_grtresna_L64_t025 | QUEUE 3 BRIDGE TEST -- constraint-solved initial data through ExternalGridInitialData. | 0.00 | 5.31 | DIED at t = 5.31 on NaN in h11 (level 3, rank 0, amrex::Abort in GRAMRLevel::post_timestep), 05:40 2026-09-15, 19.7 units short. Ran 5.3 units first: min_chi rose 0.0244 -> 0.126 and min_lapse 0.156 -> 0.330 as the cusp smoothed out, L2_Ham 3.6e-3 -> 2.0e-2, then max_K ran 0.9 -> 390 in 0.3 units. Scratch pruned to BinaryWormholePlt00520 (the last state before the NaN); see runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-15.md. | 0.06 | - | 3.294e-01 | 1.295e-02 |
+
 ## `01_single_throat/gauge`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
@@ -158,20 +170,26 @@ t = 51.4+) are evidence of a common horizon.
 | freeze_wide_t100_r08000 | fillwide80 continued from its t = 80 checkpoint towards t = 100, the wave-8 twin -- no NaN; the source of the stitched p = 0.12 waveform's last segment (psi4_merger_stitched_0_97.dat: r03000 0-50.5, fillwide80 50.5-79.5, fillwide100 80.5-97) | 80.01 | 97.18 | stopped at t = 97.18 of 100, no NaN | 0.36 | 80.06 | 1.000e-10 | 8.331e-03 |
 | freeze_wave_crosscheck_r09000 | Weyl-extraction smoke test (2026-09-02): fill100 restarted from Chk09000 (t = 90) with the in-code WeylExtraction stream on at the consumer's radii, to validate it against the plotfile psi4 on the same trajectory -- scratch-grade; NaN at t = 90.5 | 90.01 | 90.50 | NaN at t = 90.50 | 0.35 | 90.06 | 4.046e-01 | 5.949e-03 |
 | freeze_wave_crosscheck_diag_r09000 | the Weyl-extraction diagnostic pass: the same restart run 0.15 units (t = 90 -> 90.15) with the extraction on and no consumer -- the stream-versus-plotfile comparison that certified the in-code Weyl4 for the Phase-3 head-on arms | 90.01 | 90.15 | finished clean at t = 90.15 | 0.35 | 90.06 | 4.046e-01 | 5.949e-03 |
-| freeze_narrow_late_t080_r05000 | (not in runs_registry.tsv) | - | 74.57 | finished clean at t = 74.57 (streams lost, log only) | - | - | - | - |
+| freeze_narrow_late_t080_r05000 | interior-freeze arm, narrow skin armed LATE, max_level 6, from Chk05000 -- ran to t = 74.57; the late/narrow corner of the fill grid whose radius insensitivity underwrites the freeze verdict | - | 74.57 | finished clean at t = 74.57 (streams lost, log only) | - | - | - | - |
 
 ## `05_binary_spiral/p012_ladder`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
 | ladder_L6_r05000 | refinement ladder, top rung: the p = 0.12 merger restarted from Chk05000 with max_level 6 (dx 0.0078), undamped -- h11 NaN at t = 56.13 right after a regrid; the ladder reads 52.09 / 53.10 / 55.60 / 56.13 for levels 3 / 4 / 5 / 6 and saturates (+0.53 at the last rung) | 50.01 | 56.13 | NaN at t = 56.13 | 0.31 | 55.78 | 1.000e-10 | 3.244e-03 |
-| ladder_L4_damped_r05000 | (not in runs_registry.tsv) | - | 53.75 | NaN at t = 53.75 (streams lost, log only) | - | - | - | - |
-| ladder_L4_r05000 | (not in runs_registry.tsv) | - | 53.09 | NaN at t = 53.09 (streams lost, log only) | - | - | - | - |
-| ladder_L5_damped_r05000 | (not in runs_registry.tsv) | - | 54.76 | NaN at t = 54.76 (streams lost, log only) | - | - | - | - |
-| ladder_L5_halfstep_r05000 | (not in runs_registry.tsv) | - | 55.96 | NaN at t = 55.96 (streams lost, log only) | - | - | - | - |
-| ladder_L5_r05000 | (not in runs_registry.tsv) | - | 55.60 | NaN at t = 55.60 (streams lost, log only) | - | - | - | - |
-| ladder_L6_damped_r05000 | (not in runs_registry.tsv) | - | 56.70 | NaN at t = 56.70 (streams lost, log only) | - | - | - | - |
-| ladder_L7_r05000 | (not in runs_registry.tsv) | - | 56.20 | NaN at t = 56.20 (streams lost, log only) | - | - | - | - |
+| ladder_L4_r05000 | refinement ladder, rung 2: the p = 0.12 merger restarted from Chk05000 with max_level 4 (dx 0.0156), undamped -- h11 NaN at t = 53.10, +1.01 on the level-3 wall at 52.09 | - | 53.09 | NaN at t = 53.09 (streams lost, log only) | - | - | - | - |
+| ladder_L4_damped_r05000 | refinement ladder, rung 2 with core matter damping ON, otherwise ladder_L4_r05000 byte for byte -- NaN at t = 53.75, +0.65 over the undamped rung: damping buys a fraction of a unit and changes no verdict | - | 53.75 | NaN at t = 53.75 the damping pair exists to show it shapes nothing that is claimed (streams lost, log only) | - | - | - | - |
+| ladder_L5_r05000 | refinement ladder, rung 3: max_level 5 (dx 0.0078 at the core), undamped -- NaN at t = 55.60, +2.50 on rung 2 and the largest single gain of the ladder | - | 55.60 | NaN at t = 55.60 (streams lost, log only) | - | - | - | - |
+| ladder_L5_damped_r05000 | refinement ladder, rung 3 with core matter damping ON -- NaN at t = 54.76, BELOW its undamped twin's 55.60: more damping is not more survival | - | 54.76 | NaN at t = 54.76 (streams lost, log only) | - | - | - | - |
+| ladder_L5_halfstep_r05000 | refinement ladder, rung 3 with dt_multiplier halved to 0.01, undamped -- NaN at t = 55.96 against the full-step twin's 55.60, so the wall is not a time-step effect at this resolution | - | 55.96 | NaN at t = 55.96 +0.36 is within the ladder's own scatter (streams lost, log only) | - | - | - | - |
+| ladder_L6_damped_r05000 | refinement ladder, rung 4 with core matter damping ON -- NaN at t = 56.71 against the undamped rung's 56.13 | - | 56.70 | NaN at t = 56.70 (streams lost, log only) | - | - | - | - |
+| ladder_L7_r05000 | refinement ladder, top rung: max_level 7, undamped -- NaN at t = 56.20, statistically the same as level 6's 56.13: the ladder has SATURATED and refinement is finished as a route through the orbital wall | - | 56.20 | NaN at t = 56.20 this is the measurement behind dropping queue 6 (streams lost, log only) | - | - | - | - |
+
+## `05_binary_spiral/p012_paper`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| v2_spiral_d12_p012_L128_lvl3_t050 | V2 PRODUCTION SPIRAL, STAGE 1 (GPU_PLAN queue 5, launched 2026-09-15 on the user's word, one card): L=128 N=256 d=12 p=0.12 at level 3 with a 2-unit checkpoint ladder to t=50 -- the ladder stage 2 restarts from at level 5, and the wall time measured on this grid rather than transferred from L=64. Frames 100 wide so all four extraction spheres (20/28/36/44) and the wave zone out to the sponge at 48 are in frame | 0.00 | 50.01 | finished clean at t = 50.01 | 0.20 | 30.80 | 1.380e-03 | 1.091e-03 |
 
 ## `05_binary_spiral/p015`
 

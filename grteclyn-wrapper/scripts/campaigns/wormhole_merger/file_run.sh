@@ -36,7 +36,7 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 [[ -n "${GROUP}" && ${#RUNS[@]} -gt 0 ]] || { sed -n '2,6p' "${BASH_SOURCE[0]}"; exit 2; }
-[[ "${GROUP}" =~ ^[0-9][0-9]_[a-z_]+(/[a-z_]+)?$ ]] || { echo "group must look like 04_binary_headon[/subfolder]: ${GROUP}" >&2; exit 2; }
+[[ "${GROUP}" =~ ^[0-9][0-9]_[a-z_]+(/[a-z0-9_]+)?$ ]] || { echo "group must look like 04_binary_headon[/subfolder]: ${GROUP}" >&2; exit 2; }
 
 dest_root="${CAMPAIGN}/${GROUP}"
 moved=()

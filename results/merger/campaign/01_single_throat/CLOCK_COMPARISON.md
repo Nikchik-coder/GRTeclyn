@@ -41,6 +41,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | arm | throat | ran to | peak x / at t | t=10 | t=20 | t=26 | t=30 | t=40 | t=50 | t=60 | floor | verdict |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **single_hold_t100** | A | 100.0 | x2667.4 / 84.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.38 | +1.37 | +0.86 | 61.3 | reference |
+| `bridge_grtresna_L64_t025` | A | 5.3 | x5.1 / 5.3 | - | - | - | - | - | - | - | - | too short |
+| `bridge_grtresna_L64_t025` | B | 5.3 | x5.1 / 5.3 | - | - | - | - | - | - | - | - | too short |
 | `stage1_lapse5` | A | 40.0 | x1008.3 / 10.7 | +2.88 | +2.92 | +1.48 | +1.77 | +2.39 | - | - | 0.5 | late (+0.46 dex) |
 | `stage1_lapse5` | B | 40.0 | x1008.3 / 10.7 | +2.88 | +2.92 | +1.48 | +2.49 | +2.39 | - | - | 0.5 | late (+1.19 dex) |
 | `stage1_lapse5_sg00` | A | 35.2 | x1.4 / 35.1 | +0.00 | -0.00 | -0.01 | -0.06 | - | - | - | - | early (-1.37 dex) |
@@ -189,6 +191,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `freeze_wide_t100_r08000` | B | 97.2 | x1.0 / 80.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 80.1 | restart -- own clock only |
 | `ladder_L6_r05000` | A | 56.1 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
 | `ladder_L6_r05000` | B | 56.1 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
+| `v2_spiral_d12_p012_L128_lvl3_t050` | A | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
+| `v2_spiral_d12_p012_L128_lvl3_t050` | B | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -0.37 | - | 44.9 | late (+0.26 dex) |
 | `merge_orbit_flip_d12_p015_lvl5_t060_r05000` | A | 54.2 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
 | `merge_orbit_flip_d12_p015_lvl5_t060_r05000` | B | 54.2 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
 | `merge_orbit_flip_d12_p015_nofill_t060` | A | 53.4 | x43.4 / 31.2 | +1.02 | +1.37 | +1.56 | +1.59 | +1.37 | -1.54 | - | 47.0 | late (+0.28 dex) |
@@ -216,7 +220,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 12 early, 10 same, 52 late, 58 too short, 40 restart arms (own clock only).
+Throats read at t = 30: 12 early, 10 same, 54 late, 60 too short, 40 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the
