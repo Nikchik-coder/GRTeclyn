@@ -29,7 +29,7 @@
 # 06_binary_flyby, 07_bbh_control.  A run still on a card sits at the top of
 # both trees until closeout.sh and file_run.sh move it.  Each group's NOTES.md
 # is copied beside its runs; the generated notes (INSTABILITY.md, BRANCHES.md,
-# CLOCK_COMPARISON.md, PLACEMENT_CURVE.md) are written into their group by the
+# CLOCK_COMPARISON.md, PLACEMENT_CURVE.md, QUEUE2E_GATES.md) are written into their group by the
 # analysis scripts, which resolve runs by name through analysis/pack_paths.py.
 # 00_archive/ and 90_probes/ (build smoke tests, the initial-data check E) are
 # not packed: they are plan material, not results.
@@ -326,6 +326,7 @@ fi
 "${PY_BIN}" "${DEST}/analysis/single_throat_instability.py" "${DEST}"
 "${PY_BIN}" "${DEST}/analysis/throat_clock_comparison.py" "${DEST}" || echo "[pack-merger] clock comparison failed -- continuing"
 "${PY_BIN}" "${DEST}/analysis/placement_curve.py" "${DEST}" || echo "[pack-merger] placement curve failed -- continuing"
+"${PY_BIN}" "${DEST}/analysis/queue2e_gates.py" "${DEST}" || echo "[pack-merger] queue 2e gates failed -- continuing"
 
 # ---------------------------------------------------------------------------
 # 5. Generated figures, from the campaign's figure package

@@ -11,28 +11,28 @@ Host Name: <redacted>
 
  0: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x2c3e15) [0x5562a5214e15]
     amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at /usr/include/x86_64-linux-gnu/bits/unistd.h:284
- (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at amrex/Src/Base/AMReX_BLBackTrace.cpp:215
+ (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at $SITE/<redacted>/test/simulation/amrex/Src/Base/AMReX_BLBackTrace.cpp:215
 
  1: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x2c7415) [0x5562a5218415]
-    amrex::BLBackTrace::handler(int) at amrex/Src/Base/AMReX_BLBackTrace.cpp:103
+    amrex::BLBackTrace::handler(int) at $SITE/<redacted>/test/simulation/amrex/Src/Base/AMReX_BLBackTrace.cpp:103
 
  2: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x52b0ef) [0x5562a547c0ef]
     GRAMRLevel::post_timestep(int) at Source/GRTeclynCore/GRAMRLevel.cpp:228
 
  3: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407f00) [0x5562a5358f00]
-    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2124
+    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2124
 
  4: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407edd) [0x5562a5358edd]
-    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2110
 
  5: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407edd) [0x5562a5358edd]
-    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2110
 
  6: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x407edd) [0x5562a5358edd]
-    amrex::Amr::timeStep(int, double, int, int, double) at amrex/Src/Amr/AMReX_Amr.cpp:2110
+    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2110
 
  7: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x406671) [0x5562a5357671]
-    amrex::Amr::coarseTimeStep(double) at amrex/Src/Amr/AMReX_Amr.cpp:2175
+    amrex::Amr::coarseTimeStep(double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2175
 
  8: Examples/BinaryWormholeMerger/main3d.gnu.MPI.CUDA.ex(+0x504862) [0x5562a5455862]
     runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:32
