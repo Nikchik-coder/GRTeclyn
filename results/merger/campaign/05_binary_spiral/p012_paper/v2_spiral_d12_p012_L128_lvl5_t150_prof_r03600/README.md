@@ -93,7 +93,14 @@ scratch.
 | `throat_track.dat`, `binary_throat_diagnostics.dat` | throat centres and per-side diagnostics. The A/B split degrades after the merger; the sentinels (1e30) in the latter are that, not corruption. |
 | `psi4_*.dat`, `scalar_modes.dat`, `boundary_flux.dat` | consumer streams, cross-check only |
 | `run_tail.log`, `Backtrace.0` | the death, verbatim (paths and host scrubbed) |
-| `params.txt`, `parameters_and_version.txt` | exact configuration |
+| `params.txt` | exact configuration. (`parameters_and_version.txt` is gitignored campaign-wide and stays in the run directory only — it records no version anyway, just "GRTeclyn version (unknown)".) |
+| `horizon_oriented_scan_t55-57.txt` | the oriented marginal-surface scan over the t = 55/56/57 plotfiles: **no MOTS** at level 3 or level 5, throat areal R = 4.104 / 4.062 / 4.018. Folded in 2026-09-16 from the superseded `_t100_r03600` pack. |
+| `collapse_region_profiles_OFFLINE_t55-57.png`, `core_radial_profile_OFFLINE_t57.dat` | the offline python shell profiles that motivated the in-code module, same provenance. Different layout from `core_radial_profile.dat.gz` — do not mix them. |
+
+**This pack supersedes `v2_spiral_d12_p012_L128_lvl5_t100_r03600`,** which was the same run
+killed at t = 59.84 for the rebuild and was dropped 2026-09-16: all 30 of its data files are a
+byte-exact prefix of the ones here, and its three unique artefacts were folded in above. The
+paper's p012 series is therefore two runs — stage 1 at level 3, and this one.
 
 Movies (12 fields, 24 frames each, t = 37–60) are in the run directory, not
 packed. Checkpoints t = 57/58/59/60 were held on scratch at close-out; **t = 57
