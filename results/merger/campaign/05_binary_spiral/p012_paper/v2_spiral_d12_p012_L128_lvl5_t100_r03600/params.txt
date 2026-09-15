@@ -1,0 +1,235 @@
+# QUEUE 5 STAGE 2 (authored 2026-09-15): V2 production spiral on the big grid,
+# LEVEL 5 restarted from stage 1's t = 36 checkpoint, rolling checkpoints, to
+# t = 100 -- the second of the three stages (level 3 to t = 50, level 5 through
+# the wall, then the freeze to t = 150).
+#
+# WHAT THIS STAGE IS FOR.  It is expected to NaN at the wall.  Stage 1 stopped
+# two units in front of it (stop_time 50; L = 64 died at 52.07 at level 3, 55.60
+# at level 5) with the approach already in its last five units: min_chi on the
+# 1e-8 floor from t = 45.5 at the very step max_K jumped 0.08 -> 1.6, the
+# constraints turning back up from t = 47.5, the lapse collapsing again.  This
+# stage runs level 5 into that wall with checkpoints every 0.5 units so that the
+# NaN leaves a checkpoint from within a unit of it; those are copied out to
+# /tmp/grteclyn_scratch/_keep_<tag> and the third stage restarts from the last
+# clean one with the interior fill armed as late as it goes (the head-on's
+# recipe: queue 1c, params_v1c_*, fill radii inside the trapped surface).  The
+# fill's radius has to come from THIS run's horizon scan -- level 3 lost the
+# common horizon after t = 32.89 (last r = 2.94) -- or from the head-on's
+# certified placement (r_full 0.8 / r_start 1.2), never from stage 1's data.
+# Stage 1 itself is the user's call to file under 05_binary_spiral/p012.
+#
+# RESTART.  The launcher injects amr.restart (WHM_RESTART); the checkpoint is
+# stage 1's BinaryWormholeChk03600 kept at
+# /tmp/grteclyn_scratch/_keep_spiral_premerger_decay/ -- t = 36, the earliest
+# surviving one (keep 4 at 2-unit spacing ate everything before it; every
+# pre-merger checkpoint is gone) and the cleanest (L2_Ham 1.5e-3, L2_Mom
+# 1.9e-3, ahead of the t = 38-43 merger transient).  Two levels are added at
+# the restart, as the head-on's level-5 arm did at t = 22.
+#
+# CHANGES FROM params_prod_L128_p012_lvl3_t050.txt (stage 1):
+#   max_level           3 -> 5    (regrid_interval carries six entries; AMReX
+#                                  aborts if it does not have max_level+1)
+#   stop_time          50 -> 100  past the wall either way; the NaN sets the end
+#   checkpoint_interval 200 -> 50   every 0.5 units, so the restart-with-fill
+#                                  re-evolves at most half a unit without it
+#   checkpoint_keep     4 -> 3    1-1.5 units of ladder behind the NaN.  SIZE IS
+#                                  UNMEASURED AT LEVEL 5 ON THIS GRID: stage 1
+#                                  wrote 24 GB per level-3 checkpoint and the
+#                                  arena is ~2.6x at level 5, so expect 40-60 GB
+#                                  each, 120-180 GB on scratch.  CHECK THE FIRST
+#                                  CHECKPOINT (~15 min in) against the free
+#                                  space on /tmp before letting the ladder fill
+#   plot_interval     100 (kept)  one plotfile per unit; the waveform is the
+#                                  in-code Weyl4 stream at dt = 0.01, not the
+#                                  plotfiles
+#
+# SIZING (probe 90_probes/smoke_L128_p012_t005, re-read 2026-09-15): level 5 on
+# this grid peaks at 57.8 GB of an 81 GB card from t = 0.  From a merged
+# remnant the tower is deepest -- that is this stage's risk, unmeasured; watch
+# the arena in the first regrids.  2.1 units/h measured on the probe.
+#
+# FRAMES.  As stage 1: slice normal z at coord 64, window 100 wide centred on
+# 64 64 64 (--center 64 64 64), so all four spheres and the sponge are in
+# frame.  EYEBALL FRAME 0 against stage 1's frame at t = 36 (wrapper README
+# rule 13): same throat, same window, only the grid finer.
+#
+verbosity = 1
+
+output_path = "/workspace-SR008.nfs1/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl5_t100_r03600"
+amr.plot_file = "/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t100_r03600/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t100_r03600/BinaryWormholeChk"
+
+checkpoint_interval = 50
+checkpoint_keep = 3
+
+plot_interval = 100
+
+amr.plot_vars = chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2 shift3 phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: TWO regular massive drainhole throats, tangentially boosted.
+
+wormhole_id_type = 1
+
+# Each body's exact static lapse (superposed); 1+log takes over from there.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a, throat A
+wormhole_throat_radius_B = 2.0       # throat B on: the binary
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1 each, carried by the lapse
+wormhole_drainhole_mass_B = 1.0
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`: d = 12 along x.  B defaults to -A; set both anyway.
+wormhole_centerA = -6.0 0.0 0.0
+wormhole_centerB =  6.0 0.0 0.0
+
+# Tangential Bowen-York momenta, equal and opposite: net P = 0, orbit in the
+# x-y plane.  0.45 = 90 % of the circular momentum for the ACTUAL 6x pull
+# (sqrt(6) x 0.204 = 0.50) -- a real orbit attempt, not a plunge.
+wormhole_momentumA = 0.0  0.12 0.0
+wormhole_momentumB = 0.0 -0.12 0.0
+
+# THE ONE PHYSICS LINE THAT DIFFERS FROM THE BASELINE.  -1 mirrors throat
+# B's scalar profile: same geometry, same mass, reversed drainhole flow.
+# The two pi/2 tails then cancel and phi -> 0 at infinity on its own.
+wormhole_phi_sign_B = -1.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid.  The production box (GPU_PLAN s4): same finest dx as the physics arms,
+# twice the room; spheres and sponge all in un-sponged vacuum.  The whole
+# d = 12 orbit sits deep inside the sponge.
+
+L = 128.0
+N1 = 256
+N2 = 256
+N3 = 256
+center = 64.0 64.0 64.0
+
+max_level = 5
+regrid_interval = 16 16 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Identical to the Stage 1/2.0 base.
+
+dt_multiplier = 0.02
+stop_time = 100.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+# Matter half of the puncture trick (CoreMatterDamping.hpp): once the lapse
+# collapses below 1e-6 -- five orders under any live throat, unambiguously
+# inside the trapped surface -- the scalar is exponentially damped so its
+# stress stops sharpening the metric at the floor boundary.  Without this the
+# run dies of a core NaN ~20 units after horizon formation (measured t=52.07).
+core_matter_damping = 0
+# Window retuned after the first damped run died at t = 52.09 (old undamped death
+# t = 52.07): with lapse_start = 1e-6 the window covered only ~3 finest cells while
+# the scalar bulk (|phi| up to 0.53) sat at lapse 1e-6..3e-2.  Measured at t = 51.5:
+# lapse < 3e-2 reaches r = 0.63, safely inside the common apparent horizon r = 0.875.
+core_damping_lapse_start = 3.0e-2
+core_damping_lapse_full = 1.0e-3
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: MOVING nested boxes on BOTH tracked throats (the tagger unions
+# boxes on A and B whenever throat B is on).  Same box arithmetic as the
+# Stage 2.0 arm: level-l half-width tagging_L * 2^-(l+2), so level 3 has
+# half-width 4 around each throat.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  Same battery as Stage 2.0.  The split plane separates A and
+# B along x at t = 0; once the orbit winds past a quarter turn the A/B
+# attribution in binary_diag degrades -- throat_track.dat (which follows
+# both centres) is the moving-frame truth.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+
+sponge_enabled     = 1
+sponge_inner_radius = 48.0
+sponge_outer_radius = 64.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+activate_extraction = 1
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576
+
+# ---- PRODUCTION headline arm (GPU_PLAN #10, params per #6) ----
+# p = 0.12 is the PROVEN plunge-merger (common horizon t = 44.9); the twin
+# pair differs in wormhole_helfer_correction only.  Checkpoints ON, pruned
+# in-code to the newest 4 (checkpoint_keep above), every 2 units.  In-code Weyl4 extraction
+# is the primary waveform stream; the python consumer renders Weyl4 frames
+# from plotfiles as the independent cross-check.
+extraction_subpath = "data"
+extraction_center = 64.0 64.0 64.0
+num_extraction_radii = 4
+extraction_radii = 20.0 28.0 36.0 44.0
+extraction_levels = 0 0 0 0
+num_points_phi = 24
+num_points_theta = 37
+num_modes = 21
+modes = 2 -2  2 -1  2 0  2 1  2 2 \
+        3 -3  3 -2  3 -1  3 0  3 1  3 2  3 3 \
+        4 -4  4 -3  4 -2  4 -1  4 0  4 1  4 2  4 3  4 4
+
+
+# restart (set by run_single.sh)
+amr.restart = "/tmp/grteclyn_scratch/_keep_spiral_premerger_decay/BinaryWormholeChk03600"
