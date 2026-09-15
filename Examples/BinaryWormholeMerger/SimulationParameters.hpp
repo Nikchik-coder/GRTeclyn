@@ -5,6 +5,7 @@
 #include "CoreFreezeFill.hpp"
 #include "CoreLapseFreeze.hpp"
 #include "CoreMatterDamping.hpp"
+#include "CoreRadialProfile.hpp"
 #include "BinaryWormholeInitialData.hpp"
 #include "ExternalGridInitialData.hpp"
 #include "GRParmParse.hpp"
@@ -225,6 +226,17 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("binary_diag_collapsed_min_radius",
                 binary_diag_params.collapsed_min_radius, 0.5);
         binary_diag_params.grid_center = wormhole_params.grid_center;
+
+        // Own module, own output file, default off (see CoreRadialProfile.hpp).
+        // Radially binned min(chi) / max(|K|) / min(lapse) about the centre:
+        // collapse_diagnostics.dat says WHEN, this says WHERE, and it replaces
+        // keeping 6 GB plotfiles to find out.  dr is a parameter and NOT dx, so
+        // the column count cannot change when AMR adds or drops a level.
+        pp.load("core_radial_profile", core_profile_params.enabled, false);
+        pp.load("core_profile_r_max", core_profile_params.r_max, 2.0);
+        pp.load("core_profile_dr", core_profile_params.dr, 0.03125);
+        pp.load("core_profile_interval", core_profile_params.interval, 1);
+        core_profile_params.centre = wormhole_params.grid_center;
     }
 
     void read_core_damping_params(GRParmParse &pp)
@@ -731,6 +743,7 @@ class SimulationParameters : public SimulationParametersBase
     CoreLapseFreeze::params_t lapse_freeze_params{};
     CoreFreezeFill::params_t freeze_fill_params{};
     ThroatTracker::params_t throat_tracker_params{};
+    CoreRadialProfile::params_t core_profile_params{};
 
     // Numerical sponge zone (radially-ramped extra KO dissipation).
     SpongeZoneParams sponge_params{};

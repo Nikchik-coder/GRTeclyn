@@ -774,6 +774,21 @@ void BinaryWormholeLevel::write_scalar_diagnostics()
                 dt, time, restart_time, first_step);
         }
 
+        // ---- Radially binned core profile (own module, own file, switch) --
+        // collapse_diagnostics.dat above says WHEN; this says WHERE, on the
+        // same finest level and the same FillPatched, sanitised state.
+        if (simParams().core_profile_params.enabled)
+        {
+            const int interval =
+                amrex::max(1, simParams().core_profile_params.interval);
+            if (parent->levelSteps(0) % interval == 0)
+            {
+                CoreRadialProfile::execute(
+                    state_fine, fine_geom, simParams().core_profile_params,
+                    out_dir, dt, time, restart_time, first_step);
+            }
+        }
+
         // ---- Throat tracking (own module, own file, own switch) -----------
         // Updates s_throat_centers in place, which is what the moving-box
         // tagger (tagging_type = 2) reads at the next regrid.  state_fine has
