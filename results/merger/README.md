@@ -344,9 +344,21 @@ and the framing was wrong — see below.)*
   E_rad 2.3e-6 M against their 1.4e-4 and 8.2e-5, **40 to 65× less energy**. One
   throat shedding its asymmetry is not a merger; it is a detectable signature
   that a wormhole collapsed non-spherically.
+- **Both kicks radiate — the weak one is not a null.** Against each arm's own
+  pre-arrival quiet at the same sphere (the causal window t < R, which cancels
+  the grid difference between the level-3 and level-4 legs), the burst stands at
+  76 / 25 / 35 / 28 times the floor at R = 10 / 14 / 18 / 22 for ε₂ = 0.05 and
+  **74 / 23 / 40 / 29 for ε₂ = 0.01** — the same, because the floor scales with
+  the kick as well (8.2e-6 against 3.9e-5 at R = 10). The weak arm arrives with
+  the same lags (17 / 22 / 26 / 31 against 13 / 18 / 22 / 27, both 5 / 4 / 5) and
+  is R-independent to 15 %. On a shared axis it looks like nothing next to the
+  strong arm; it is five times smaller, not absent.
 - **Caveats.** (a) The ε₂ = 0.01 arm reaches only t = 51 and is stitched from two
   legs, so gate 3 is read over u = 0–29 and says nothing about whether the ring
-  *frequency* is amplitude-independent — that needs a second long arm. (b) The
+  *frequency* is amplitude-independent — its per-sphere frequencies scatter
+  0.034–0.075 and it stops before the ring develops. **"No ring" is not "no
+  wave"**: the burst is unambiguous in that arm, only the ringdown is not. A
+  second long arm would settle the frequency. (b) The
   ringdown is an **inner-sphere measurement**: only R = 10 has 1.5 cycles of
   junk-free data after the burst; R = 14 / 18 / 22 have 0.9 / 0.7 / 0.5 and are
   not fitted. (c) The 21 % period deficit is against a *target*, not a
