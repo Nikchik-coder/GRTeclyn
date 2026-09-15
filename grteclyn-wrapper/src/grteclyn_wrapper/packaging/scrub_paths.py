@@ -86,6 +86,20 @@ def scrub(path: pathlib.Path) -> None:
     text = re.sub(rf"(?i){home}[^/\s\"']+/[^\s\"']*", r"$HOME/<redacted>", text)
     text = re.sub(rf"(?i){home}[^/\s\"']+", r"$HOME/<redacted>", text)
 
+    # A run made before the checkout moved carries the OLD absolute root, and no
+    # prefix derived from today's environment can match it: the packed path then
+    # keeps a site-shaped remainder ($SITE/<redacted>/.../GRTeclyn/runs/...) where
+    # every other run has a bare relative path.  Collapse anything up to and
+    # including the repository directory's OWN NAME -- taken from the environment,
+    # never written here -- so a packed path is relative wherever the run was made.
+    repo_name = pathlib.Path(os.environ.get("ROOT") or "").name
+    if repo_name:
+        text = re.sub(
+            rf"(?<![A-Za-z0-9_.-])(?:\$[A-Za-z_]\w*|/)[^\s\"']*/{re.escape(repo_name)}/",
+            "",
+            text,
+        )
+
     # A host-name field names a machine by construction, and it may be a node
     # other than this one (AMReX's Backtrace.<rank> records the node that
     # crashed), which the environment-derived tokens below cannot know.

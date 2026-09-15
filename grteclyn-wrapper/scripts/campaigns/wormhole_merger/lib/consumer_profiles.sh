@@ -10,13 +10,16 @@
 # a profile; it does not retype the flags and does not get a new script.
 #
 # CONTRACT.  Source this AFTER RUN_DIR is set, then call
-#   consumer_profile <name> [zoom] [coord]
+#   consumer_profile <name> [zoom] [coord] [center]
 # It echoes the flag string on stdout.  Unknown name -> exit 2 with the list.
 # Zoom is the full window width in code units (32 shows +/-16 around centre);
-# NB --frames-axis x|y: ALWAYS add --frames-center x y z to the extra args and
-#    eyeball the first rendered frame against a reference run (README rule 13).
-#    Before 2026-09-15 the in-plane centre defaulted to z=0 and axis-y frames
-#    missed the throat entirely -- both queue-2e movies were lost to this.
+# center is "x y z", passed straight to --frames-center; empty means the
+# renderer's own default, the domain midpoint on every axis.  PASS IT whenever
+# the box centre is not L/2 or the window is off-axis: before 2026-09-15 the
+# in-plane centre defaulted to z=0 and axis-y frames missed the throat
+# entirely -- both queue-2e movies were lost to this, unrecoverably, because
+# the slice cache stores only the cropped window.  Eyeball frame 0 against a
+# reference run either way (README rule 13).
 # coord is the slice coordinate along the slice normal -- NOT optional in
 # spirit, because the consumer's default is 0, the domain boundary, and a
 # slice that misses the physics renders featureless frames without erroring
@@ -52,7 +55,9 @@ _WHM_FRAME_TAIL='--frames-cache-slices --frames-auto-zlim'
 
 consumer_profile() {
   local name="${1:?consumer_profile <name> [zoom] [coord]}"
-  local zoom="${2:-32}" coord="${3:-32}"
+  local zoom="${2:-32}" coord="${3:-32}" center="${4:-}"
+  local center_arg=""
+  [[ -n "${center}" ]] && center_arg="--frames-center ${center}"
   local horizon_track="${RUN_DIR:?RUN_DIR must be set before sourcing a profile}/data/binary_throat_diagnostics.dat"
 
   case "${name}" in
@@ -61,29 +66,29 @@ consumer_profile() {
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
            "--horizon-common-level 3 --horizon-half 3.0" \
            "--frames-fields chi K lapse phi Pi Weyl4_Re" \
-           "--frames-coord ${coord} --frames-zoom ${zoom} ${_WHM_FRAME_TAIL}"
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     headon-scout)
       echo "--areal-radius --areal-min-radius 0.5" \
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
            "--frames-fields chi K lapse phi Pi" \
-           "--frames-coord ${coord} --frames-zoom ${zoom} ${_WHM_FRAME_TAIL}"
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     orbit)
       echo "--frames-fields chi chi_minus_1 K lapse shift1 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed" \
-           "--frames-coord ${coord} --frames-zoom ${zoom} ${_WHM_FRAME_TAIL}"
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     orbit-modes)
       echo "--frames-fields chi chi_minus_1 K lapse shift1 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed" \
-           "--frames-coord ${coord} --frames-zoom ${zoom} ${_WHM_FRAME_TAIL} --scalar-modes 0 1 2"
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes 0 1 2"
       ;;
     bbh)
       echo "--frames-fields chi K lapse shift1 Weyl4_Re Weyl4_Im Weyl4_Mag" \
-           "--frames-coord ${coord} --frames-zoom ${zoom} ${_WHM_FRAME_TAIL}"
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     chi)
       echo "--areal-radius --areal-min-radius 0.5" \
-           "--frames-fields chi --frames-coord ${coord} --frames-zoom ${zoom} ${_WHM_FRAME_TAIL}"
+           "--frames-fields chi --frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     none)
       echo ""

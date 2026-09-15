@@ -41,6 +41,13 @@
 #                     the box centre; the consumer's own default is 0, the
 #                     DOMAIN BOUNDARY, which renders featureless frames
 #                     without erroring)
+#   --center X Y Z    centre of the frame window, all three coordinates.  The
+#                     renderer defaults to the domain midpoint, which is right
+#                     for every [0, L] box this campaign uses -- but it
+#                     defaulted to z = 0 until 2026-09-15 and that silently
+#                     cost queue 2e both its movies, so on a box whose centre
+#                     is not L/2, or whenever the window is off-axis, SAY IT.
+#                     Either way: eyeball frame 0 (README rule 13)
 #   --keep-last N     plotfiles to keep on scratch (default 3)
 #   --restart DIR     checkpoint directory to continue from
 #   --binary PATH     evolution binary; default is the campaign pin below
@@ -80,7 +87,7 @@ REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 CAMPAIGN="${REPO}/runs/wormhole_merger"
 TEMPLATES="${CAMPAIGN}/templates_scan"
 
-TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 KEEP_LAST=3
+TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 CENTER="" KEEP_LAST=3
 RESTART="" BINARY="" MAX_LEVEL="" WHAT="" FOREGROUND=0 DRYRUN=0 LABEL="test"
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -91,6 +98,7 @@ while [[ $# -gt 0 ]]; do
     --consume-args) CONSUME_RAW="$2"; shift 2 ;;
     --zoom)       ZOOM="$2"; shift 2 ;;
     --coord)      COORD="$2"; shift 2 ;;
+    --center)     CENTER="$2 $3 $4"; shift 4 ;;
     --keep-last)  KEEP_LAST="$2"; shift 2 ;;
     --restart)    RESTART="$2"; shift 2 ;;
     --binary)     BINARY="$2"; shift 2 ;;
@@ -140,9 +148,9 @@ RUN_DIR="${CAMPAIGN}/${FULL_NAME}"
 source "${HERE}/lib/consumer_profiles.sh"
 if [[ -n "${CONSUME_RAW}" ]]; then
   CONSUME="${CONSUME_RAW}"
-  consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}" >/dev/null   # still validate the name
+  consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}" "${CENTER}" >/dev/null   # still validate the name
 else
-  CONSUME="$(consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}")"
+  CONSUME="$(consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}" "${CENTER}")"
 fi
 
 # --- the registry line ----------------------------------------------------
@@ -177,7 +185,7 @@ fi
 echo "[launch] run      : ${FULL_NAME}"
 echo "[launch] template : ${TEMPLATE_PATH#"${REPO}"/}"
 echo "[launch] binary   : ${BINARY#"${REPO}"/}"
-echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" ]] && echo " (OVERRIDDEN by --consume-args)") (zoom ${ZOOM}, coord ${COORD})   keep-last: ${KEEP_LAST}"
+echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" ]] && echo " (OVERRIDDEN by --consume-args)") (zoom ${ZOOM}, coord ${COORD}, centre ${CENTER:-domain midpoint})   keep-last: ${KEEP_LAST}"
 [[ -n "${RESTART}" ]] && echo "[launch] restart  : ${RESTART}"
 echo "[launch] what     : ${WHAT}"
 echo "[launch] label    : ${LABEL}   (process table: '${LABEL} params.txt', '${LABEL}_post post.py …')"

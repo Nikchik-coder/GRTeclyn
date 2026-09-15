@@ -33,9 +33,8 @@
 #                  checkpoint name (BinaryWormholeChk03500 -> 03500)
 #   --scratch DIR  scratch root (default /tmp/grteclyn_scratch)
 #   --prefix NAME  checkpoint name prefix (default BinaryWormhole)
-#   --exe PAT      pattern identifying the evolution process (default main3d).
-#                  The liveness check matches "<PAT>.*<run>" so it sees the
-#                  binary and not this keeper, whose own argv names the run
+#   --exe PAT      OBSOLETE since 2026-09-15 -- accepted and ignored.  Liveness
+#                  now comes from the run's launcher.pid; see the note below.
 #   --poll S       seconds between log checks (default 20)
 set -uo pipefail
 
@@ -53,7 +52,7 @@ while [[ $# -gt 0 ]]; do
     --steps)   STEPS="$2"; shift 2 ;;
     --scratch) SCRATCH="$2"; shift 2 ;;
     --prefix)  PREFIX="$2"; shift 2 ;;
-    --exe)     EXE_PAT="$2"; shift 2 ;;
+    --exe)     EXE_PAT="$2"; shift 2 ;;    # accepted, unused since 2026-09-15
     --poll)    POLL="$2"; shift 2 ;;
     -h|--help) sed -n '2,40p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *)         echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
@@ -64,15 +63,42 @@ for req in RUN DEST STEPS; do
 done
 
 SRC="${SCRATCH}/${RUN}"
-LOG="$(run_tree_find "${CAMPAIGN}" "${RUN}" || printf '%s' "${CAMPAIGN}/${RUN}")/run.log"
+RUNDIR="$(run_tree_find "${CAMPAIGN}" "${RUN}" || printf '%s' "${CAMPAIGN}/${RUN}")"
+LOG="${RUNDIR}/run.log"
+PIDFILE="${RUNDIR}/launcher.pid"
 [[ -f "${LOG}" ]] || { echo "no run log at ${LOG} -- is the run up yet?" >&2; exit 1; }
-mkdir -p "${DEST}"
-echo "$(date +%T) keeping ${STEPS} from ${RUN} -> ${DEST}"
+
+# IS THE RUN STILL UP?  The run's own launcher.pid, which run_single.sh
+# registers, is the only reliable answer, and it is now the ONLY one accepted.
+#
+# What was here before was `pgrep -f "<exe>.*<run>"`, and it could never work in
+# either direction.  It cannot MATCH a live run: every process of a run is
+# started from inside the run directory with relative paths and a neutral label
+# ("test params.txt"), precisely so the run name does not appear in a shared
+# machine's process table -- so the keeper decided the run was gone on its first
+# poll and gave up on every checkpoint not already written.  And when a pattern
+# like that does match, it is as likely to be matching the operator's own shell,
+# whose command line contains the pattern -- which would leave the keeper
+# polling a dead run forever.  This is the same reason the campaign README
+# forbids `pkill -f` patterns outright.
+#
+# So: no pidfile, no keeper.  Refusing here is better than either failure.
+[[ -f "${PIDFILE}" ]] || {
+  echo "no ${PIDFILE#"${CAMPAIGN}"/} -- the keeper needs the run's launcher.pid to know" >&2
+  echo "whether it is still up.  Start the keeper after the run is up, or pass a run" >&2
+  echo "that has one." >&2
+  exit 1
+}
+run_is_live() {
+  local pid
+  pid="$(cat "${PIDFILE}" 2>/dev/null || true)"
+  [[ -n "${pid}" ]] && kill -0 "${pid}" 2>/dev/null
+}
 
 for STEP in ${STEPS}; do
   CHK="${PREFIX}Chk${STEP}"
   while :; do
-    if ! pgrep -f "${EXE_PAT}.*${RUN}" >/dev/null 2>&1 \
+    if ! run_is_live \
        && ! grep -q "CHECKPOINT: file = .*${CHK}\$" "${LOG}" 2>/dev/null; then
       echo "$(date +%T) run is gone before ${CHK}; giving up on it"; break
     fi
