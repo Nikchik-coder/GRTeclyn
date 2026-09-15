@@ -87,6 +87,14 @@ class GRTresnaConfig:
     use_compact_Vi_ansatz: int = 1
     hi_boundary: tuple[int, int, int] = (0, 0, 0)
     lo_boundary: tuple[int, int, int] = (0, 0, 1)
+    # Outer condition on psi.  False pins psi_reg = 1 at the wall, which is only
+    # right when all the mass is in the punctures; True imposes (psi_reg - 1) ~
+    # 1/r and lets the solve find the coefficient.  On the drainhole test, where
+    # the answer is known exactly, the difference is 4.89 % against 0.68 %, and
+    # the throat radius 2.145 against 2.039 (exact 2.0).  Default False so that
+    # every solve made before 2026-09-15 reproduces digit-for-digit; turn it on
+    # for anything whose initial data has mass outside the punctures.
+    psi_robin_boundary: bool = False
 
     gridinit_nx: int = 64
     gridinit_ny: int = 64

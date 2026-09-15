@@ -237,6 +237,7 @@ def write_grtresna_params(cfg: GRTresnaConfig, path: Path) -> None:
         f"use_compact_Vi_ansatz = {cfg.use_compact_Vi_ansatz}",
         f"hi_boundary = {_fmt(cfg.hi_boundary)}",
         f"lo_boundary = {_fmt(cfg.lo_boundary)}",
+        f"psi_robin_boundary = {int(cfg.psi_robin_boundary)}",
         "",
         f"G_Newton = {cfg.G_Newton}",
         f"phi_0 = {cfg.phi_0}",
