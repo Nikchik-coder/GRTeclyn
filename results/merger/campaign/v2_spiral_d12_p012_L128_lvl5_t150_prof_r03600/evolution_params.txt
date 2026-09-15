@@ -1,0 +1,240 @@
+# QUEUE 5, THE PROFILED ARM (authored 2026-09-15, on the user's word): the V2
+# production spiral on the big grid, LEVEL 5 restarted from stage 1's t = 36
+# checkpoint, to t = 150, NO FREEZE, with the new in-code radial core profile on.
+#
+# WHY THIS REPLACES THE THREE-STAGE RECIPE.
+#   1. NO FREEZE.  The fill was only ever safe because it sat inside a trapped
+#      surface.  The oriented scan run by hand on 2026-09-15 over the preserved
+#      t = 55/56/57 plotfiles of `v2_spiral_d12_p012_L128_lvl5_t100_r03600`
+#      found NO MOTS at any of the three times, at level 3 (dx 0.0625,
+#      r = 0.15-4.0) and again at level 5 (dx 0.0156, r = 0.03-1.6): the throat
+#      is intact, areal R = 4.104 / 4.062 / 4.018, and the innermost shell
+#      scanned classifies "normal".  There is nothing to hide a fill inside, so
+#      it is off, and this arm runs to t = 150 in one leg instead of three.
+#   2. RESTART AT t = 36, NOT t = 0.  Every arm of this family that died was
+#      seeded at t = 50 (the ladder: 52.07 / 53.10 / 55.60 / 56.13 / 56.20 at
+#      levels 3-7, all from the same t = 50 checkpoint) -- it laid its fine
+#      levels onto a core a COARSER run had already dragged through the merger.
+#      Seeded at t = 36, before the merger, the same level 5 took its chi floor
+#      at t = 58.42 and kept going: max_K turned over at 4.81 and the
+#      constraints never moved.  Lead time is the variable, so this arm keeps
+#      the t = 36 seed and changes nothing else about the restart.
+#
+# WHAT IS NEW: `core_radial_profile = 1`.  Radially binned min(chi), max(|K|)
+# and min(lapse) about the grid centre, on the finest level, EVERY COARSE STEP,
+# to data/core_radial_profile.dat (CoreRadialProfile.hpp -- own module, own
+# file, default off).  collapse_diagnostics.dat says WHEN; this says WHERE.
+# It exists because the offline profiles of the preserved plotfiles showed
+# max|K| is NOT central but a thin spike ON the throat -- 0.07 outside, 2.62 at
+# r = 1.047, 0.07 again by r = 1.20, growing 0.98 -> 1.53 -> 2.60 over t = 55-57
+# while min(chi) and min(lapse) did not move at all.  A spike 0.25 wide is 1.5
+# pixels in the frame slice cache (dx = 0.195), so only the full state resolves
+# it, and a plotfile at this resolution is 6.2 GB with three kept.  The binned
+# reduction is a few tens of MB for the whole run at 100x the time resolution.
+# Verified against the in-code global reductions at t = 57: max|K| = 2.6192 and
+# min(chi) = 6.795e-07, both equal to collapse_diagnostics.dat to every digit.
+# Shells are coverage-guarded: dr is a PARAMETER and not dx, so the column count
+# cannot change when AMR adds or drops a level, and a shell the finest level
+# does not reach reports n = 0 and a sentinel, never a zero.  Early in the run
+# the centre is legitimately unrefined -- the throats are at +-6 and the
+# moving-box tagger follows them -- so the inner shells fill in at the merger.
+#
+# RESTART.  The launcher injects amr.restart (WHM_RESTART); the checkpoint is
+# stage 1's BinaryWormholeChk03600 kept at
+# /tmp/grteclyn_scratch/_keep_spiral_premerger_decay/ -- t = 36, the earliest
+# surviving one and the cleanest (L2_Ham 1.5e-3, L2_Mom 1.9e-3, ahead of the
+# merger excursion).  Two levels are added at the restart (dx 0.0625 -> 0.0156).
+#
+# CHECKPOINTS.  1-unit interval, keep 4, against stage 2's 0.5 and keep 3: this
+# leg is ~114 units at ~3.8 u/h, about 30 h, and a 26 GB checkpoint every 8
+# minutes is I/O the run does not need.  Keep 4 at 1 unit holds 4 units of
+# history against ~104 GB of scratch.
+#
+# BINARY.  Built 2026-09-15 from the tree carrying CoreRadialProfile.hpp.  Its
+# base is the 2026-09-10 seedl2 binary, which the plan records as verified
+# bit-for-bit with the seed off; the seed keys are absent here, so this arm is
+# the 2026-09-08 boost physics plus the new diagnostic.
+verbosity = 1
+
+output_path = "runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600"
+amr.plot_file = "/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600/BinaryWormholeChk"
+
+checkpoint_interval = 100
+checkpoint_keep = 4
+
+plot_interval = 100
+
+amr.plot_vars = chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2 shift3 phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: TWO regular massive drainhole throats, tangentially boosted.
+
+wormhole_id_type = 1
+
+# Each body's exact static lapse (superposed); 1+log takes over from there.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a, throat A
+wormhole_throat_radius_B = 2.0       # throat B on: the binary
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1 each, carried by the lapse
+wormhole_drainhole_mass_B = 1.0
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`: d = 12 along x.  B defaults to -A; set both anyway.
+wormhole_centerA = -6.0 0.0 0.0
+wormhole_centerB =  6.0 0.0 0.0
+
+# Tangential Bowen-York momenta, equal and opposite: net P = 0, orbit in the
+# x-y plane.  0.45 = 90 % of the circular momentum for the ACTUAL 6x pull
+# (sqrt(6) x 0.204 = 0.50) -- a real orbit attempt, not a plunge.
+wormhole_momentumA = 0.0  0.12 0.0
+wormhole_momentumB = 0.0 -0.12 0.0
+
+# THE ONE PHYSICS LINE THAT DIFFERS FROM THE BASELINE.  -1 mirrors throat
+# B's scalar profile: same geometry, same mass, reversed drainhole flow.
+# The two pi/2 tails then cancel and phi -> 0 at infinity on its own.
+wormhole_phi_sign_B = -1.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid.  The production box (GPU_PLAN s4): same finest dx as the physics arms,
+# twice the room; spheres and sponge all in un-sponged vacuum.  The whole
+# d = 12 orbit sits deep inside the sponge.
+
+L = 128.0
+N1 = 256
+N2 = 256
+N3 = 256
+center = 64.0 64.0 64.0
+
+max_level = 5
+regrid_interval = 16 16 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Identical to the Stage 1/2.0 base.
+
+dt_multiplier = 0.02
+stop_time = 150.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+# Matter half of the puncture trick (CoreMatterDamping.hpp): once the lapse
+# collapses below 1e-6 -- five orders under any live throat, unambiguously
+# inside the trapped surface -- the scalar is exponentially damped so its
+# stress stops sharpening the metric at the floor boundary.  Without this the
+# run dies of a core NaN ~20 units after horizon formation (measured t=52.07).
+core_matter_damping = 0
+# Window retuned after the first damped run died at t = 52.09 (old undamped death
+# t = 52.07): with lapse_start = 1e-6 the window covered only ~3 finest cells while
+# the scalar bulk (|phi| up to 0.53) sat at lapse 1e-6..3e-2.  Measured at t = 51.5:
+# lapse < 3e-2 reaches r = 0.63, safely inside the common apparent horizon r = 0.875.
+core_damping_lapse_start = 3.0e-2
+core_damping_lapse_full = 1.0e-3
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: MOVING nested boxes on BOTH tracked throats (the tagger unions
+# boxes on A and B whenever throat B is on).  Same box arithmetic as the
+# Stage 2.0 arm: level-l half-width tagging_L * 2^-(l+2), so level 3 has
+# half-width 4 around each throat.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  Same battery as Stage 2.0.  The split plane separates A and
+# B along x at t = 0; once the orbit winds past a quarter turn the A/B
+# attribution in binary_diag degrades -- throat_track.dat (which follows
+# both centres) is the moving-frame truth.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+core_radial_profile   = 1          # NEW: radially binned chi/K/lapse, every coarse step
+core_profile_r_max    = 4.0        # matches the oriented horizon scan range (0.15-4.0), so the two are comparable; the composite reduction covers every shell at any r_max
+core_profile_dr       = 0.03125    # 2 dx at level 5 -> 128 shells to r_max 4.0; a PARAMETER, not dx, so the column count cannot move when AMR adds or drops a level
+core_profile_interval = 1          # every coarse step (dt = 0.01)
+
+sponge_enabled     = 1
+sponge_inner_radius = 48.0
+sponge_outer_radius = 64.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+activate_extraction = 1
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576
+
+# ---- PRODUCTION headline arm (GPU_PLAN #10, params per #6) ----
+# p = 0.12 is the PROVEN plunge-merger (common horizon t = 44.9); the twin
+# pair differs in wormhole_helfer_correction only.  Checkpoints ON, pruned
+# in-code to the newest 4 (checkpoint_keep above), every 2 units.  In-code Weyl4 extraction
+# is the primary waveform stream; the python consumer renders Weyl4 frames
+# from plotfiles as the independent cross-check.
+extraction_subpath = "data"
+extraction_center = 64.0 64.0 64.0
+num_extraction_radii = 4
+extraction_radii = 20.0 28.0 36.0 44.0
+extraction_levels = 0 0 0 0
+num_points_phi = 24
+num_points_theta = 37
+num_modes = 21
+modes = 2 -2  2 -1  2 0  2 1  2 2 \
+        3 -3  3 -2  3 -1  3 0  3 1  3 2  3 3 \
+        4 -4  4 -3  4 -2  4 -1  4 0  4 1  4 2  4 3  4 4
+
+
+# restart (set by run_single.sh)
+amr.restart = "/tmp/grteclyn_scratch/_keep_spiral_premerger_decay/BinaryWormholeChk03600"

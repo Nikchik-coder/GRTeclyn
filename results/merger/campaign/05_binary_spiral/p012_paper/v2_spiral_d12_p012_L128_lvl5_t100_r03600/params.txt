@@ -55,7 +55,7 @@
 #
 verbosity = 1
 
-output_path = "/workspace-SR008.nfs1/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl5_t100_r03600"
+output_path = "<REPO>/runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl5_t100_r03600"
 amr.plot_file = "/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t100_r03600/BinaryWormholePlt"
 amr.check_file = "/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t100_r03600/BinaryWormholeChk"
 

@@ -1,3 +1,4 @@
+Host Name: <redacted>
 === If no file names and line numbers are shown below, one can run
             addr2line -Cpfie my_exefile my_line_address
     to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.

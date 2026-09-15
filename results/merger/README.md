@@ -509,6 +509,21 @@ and the framing was wrong — see below.)*
   from t = 0 dies at the level-3 wall (52.07 / 52.79): the +1.4/level gain
   belongs to the *restart* recipe (χ already clipped at the pits when a
   run starts deep), so depth must be added mid-run, not from birth.
+  **Extended 2026-09-16 — and t = 60 was reached, cheaply, by moving the
+  restart EARLIER rather than by refining.**
+  `v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600` *(pack)* — the same
+  level 5, restarted from t = 36 instead of the ladder's t = 50, dies at
+  **t = 60.445** (h11, level 5): +4.2 on the best ladder rung, past its
+  saturation, for 6 h 26 m on one card — not the ~10² × compute the claim
+  above estimates for reaching t = 60 by refinement alone. This is the same
+  "depth must be added mid-run" reading, with the further point that HOW
+  EARLY mid-run it is added still buys units after the resolution ladder has
+  stopped paying. It is not yet a clean measurement of that: the arm also
+  moved L = 64 → 128 (same dx0 = 0.5, same finest dx, so boundary and sponge
+  placement, not resolution), and the two changes are not separated.
+  Its in-code radial profile is the first measurement of WHERE the wall sits:
+  a narrow |K| spike whose outer edge widens to r = 1.359 at t = 51.4 and
+  then contracts to 1.172 by t = 57 while the peak grows 0.22 → 6.03.
 - **The isolated throat on the same ladder (2026-09-08).** `single_hold_ml2_t100`
   *(pack)* dies at t = 24.17 (its χ-regularised twin at 24.13); `single_hold_t100`, one level finer, reaches
   t = 100. For the lone throat one halving of dx buys more than 75 units,
