@@ -39,7 +39,13 @@
 #                 including the matter diagnostics that separate a dissolved
 #                 throat from a collapsed one.
 #   orbit-modes   orbit plus the scalar-mode decomposition, for production
-#                 arms that will be analysed spectrally.
+#                 arms that will be analysed spectrally.  NB the consumer takes
+#                 --scalar-modes as a BARE SWITCH and the multipoles separately
+#                 as --scalar-mode-ells; this profile said "--scalar-modes 0 1 2"
+#                 from the day it was written (2026-09-10) and argparse rejected
+#                 it, so the consumer died at startup and the run went on without
+#                 one -- no frames, no python psi4, and no plotfile deletion.
+#                 Caught 2026-09-15 on the first arm that ever used this profile.
 #   bbh           the vacuum BBH control: no matter fields exist in it.
 #   chi           cheap probes and ladders -- one field, one question.
 #   none          one-step probes: no consumer at all (sets WHM_CONSUME=0).
@@ -80,7 +86,7 @@ consumer_profile() {
       ;;
     orbit-modes)
       echo "--frames-fields chi chi_minus_1 K lapse shift1 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed" \
-           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes 0 1 2"
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2"
       ;;
     bbh)
       echo "--frames-fields chi K lapse shift1 Weyl4_Re Weyl4_Im Weyl4_Mag" \

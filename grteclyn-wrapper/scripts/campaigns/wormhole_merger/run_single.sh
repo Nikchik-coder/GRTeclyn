@@ -509,6 +509,23 @@ PY
   ) &
   CONSUMER_PID=$!
   echo "[whm] consumer  : pid ${CONSUMER_PID} -> ${RUN_DIR}/small_data"
+
+  # IS IT ACTUALLY UP?  A consumer that dies at startup -- one bad flag is
+  # enough, and argparse exits before it prints anything to the log tail anyone
+  # reads -- takes the frames, the python psi4 cross-check AND the plotfile
+  # deletion with it, and nothing downstream says so: the evolution runs its
+  # full length and scratch fills behind it.  That is exactly how the queue-5
+  # stage-1 arm of 2026-09-15 started (the orbit-modes profile had passed the
+  # multipoles to --scalar-modes, which is a bare switch).  Give it a moment to
+  # fail, then look; the cost is a few seconds once per run.
+  sleep 8
+  if ! kill -0 "${CONSUMER_PID}" 2>/dev/null; then
+    echo "[whm] !! THE CONSUMER DIED AT STARTUP -- no frames, no python psi4, and" >&2
+    echo "[whm]    NOTHING WILL DELETE PLOTFILES.  Last lines of consumer.log:" >&2
+    tail -n 12 "${RUN_DIR}/consumer.log" 2>/dev/null | sed 's/^/[whm]    /' >&2
+    echo "[whm]    Fix the consumer arguments (lib/consumer_profiles.sh) and relaunch." >&2
+    exit 1
+  fi
   if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
     echo "[whm]            deleting processed plotfiles, keeping last ${WHM_KEEP_LAST:-3}"
   fi
