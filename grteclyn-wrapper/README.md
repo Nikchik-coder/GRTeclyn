@@ -34,7 +34,7 @@ Three findings shape everything else here:
 2. **The validation pipeline *is* the result.** Several would-be headline numbers
    turned out to be numerical artefacts. What separates a physical effect from a
    coordinate one is the 4D evolving probe, the trust flags, and the resolution
-   ladder — see [what was fixed](#what-was-fixed--2026-08-21) and the eleven
+   ladder — see [what was fixed](#what-was-fixed--2026-08-21) and the fourteen
    rules below.
 3. **Ansatz and matter sector dominate the outcome.** Optimizer tuning is
    secondary, and tuning it first wastes GPU time.
@@ -288,7 +288,7 @@ It is long because it doubles as the campaign run-book. Start where your task is
 
 | Part | Read it when |
 |---|---|
-| [Running a campaign without numerical artifacts](#running-a-campaign-without-numerical-artifacts) | **Before launching anything whose numbers you intend to believe.** Eleven rules, each one there because breaking it silently produced a clean-looking wrong answer. |
+| [Running a campaign without numerical artifacts](#running-a-campaign-without-numerical-artifacts) | **Before launching anything whose numbers you intend to believe.** Fourteen rules, each one there because breaking it silently produced a clean-looking wrong answer. |
 | [What was fixed](#what-was-fixed--2026-08-21) | You are re-deriving an older result and need to know what was invalid, and what was not. |
 | [What is implemented](#what-is-implemented) | You want to know whether a capability already exists before writing it. |
 | [Campaigns](#campaigns) · [How to run](#how-to-run) | You are launching a search. |
@@ -739,6 +739,29 @@ The default is now the domain midpoint on all three axes, but the rule stands:
 The wave `.dat` streams are extracted with the separate `--center` flag and
 were never affected.
 
+### 14. A boundary condition on the CORRECTION constrains nothing once converged
+
+An iterative solve repeatedly computes a correction and adds it to its current
+answer. It is tempting to state the outer condition there, and on 2026-09-15
+that cost a rebuild and two 700-iteration solves: a converged state has zero
+correction, and zero satisfies any *homogeneous* condition trivially, so the
+condition permits the wall value to drift without pulling it anywhere. The
+final wall value comes out path-dependent rather than determined, and the
+answer relaxes back to whatever the un-fixed code gave (4.89 % → 4.55 %,
+against 0.68 % once the condition was stated properly).
+
+State it on the **solution**, in the fill that runs before the operator's
+coefficients and residual are built — in GRTresna that is
+`fill_boundary_cells_dir` with `filling_solver_vars == false`, which runs at the
+top of every nonlinear iteration and overwrites the solver-var fill. That path
+extrapolated ψ linearly, which carries no information about a 1/r tail.
+
+**And do not read a number off an unconverged solve.** The correction-only
+version read 2.67 % at its 50-iteration cap — a clean-looking near-halving of
+the error — and relaxed to 4.55 % by iteration 700. Quote a solve only once
+`max|dpsi|` has actually settled, and remember that `Converged!` is printed
+whatever happened (rule 8).
+
 ## What was fixed — 2026-08-21
 
 Five defects, found while chasing a spurious drift in the Bondi dipole campaign.
@@ -770,6 +793,7 @@ The corrected campaign and its data are in
 | 6 | **Off-axis frame windows centred at `z = 0`, not the domain midpoint** (rule 13 above): `visualize/__main__.py` hard-coded `z_center = 0.0` and `consume_plotfiles/frames/center.py` copied it; `--frames-coord` overrides only the slice-normal component. | Every documented example slices along `z`, where the bad component is always overwritten. Mis-centred frames render plausible structure without erroring, and the slice cache keeps only the cropped window, so the loss is invisible until someone looks and unrecoverable after the plotfiles are gone. | Default centre is now the domain midpoint on all three axes. Both queue-2e movies (`--frames-axis y`, 2026-09-14) were lost to this; every axis-`z` run and all wave `.dat` streams were unaffected. |
 | 7 | **`keep_checkpoints.sh` could never tell whether a run was alive**: its liveness test was `pgrep -f "<exe>.*<run>"`, but every process of a campaign run is deliberately started from inside the run directory with relative paths and a neutral label (`test params.txt`), so the run name is never in the process table. The keeper decided the run was gone on its first poll and abandoned every checkpoint not already written. | It fails silently and in the quiet direction — the keeper prints one "run is gone" line and exits 0, which reads like a finished job. The checkpoints it was told to preserve simply are not there later. | Liveness now comes from the run's own `launcher.pid`, and a missing pidfile is a hard error instead of a guess. The `pgrep` fallback was removed outright rather than kept: a `-f` pattern matches the operator's own shell as readily as the run (verified 2026-09-15), which would have left the keeper polling a dead run forever — the same reason the campaign README forbids `pkill -f`. |
 | 8 | **Frame windows were never stated, only defaulted**: no consumer profile emitted `--frames-center`, and `launch.sh` had no way to pass one. | Defect 6 made the default wrong for off-axis slices; nothing made the *window* visible at launch, so there was no line in the banner to check against. | `launch.sh --center X Y Z` threads an explicit centre through `consumer_profile` into every profile, and the launch banner now prints the window centre (or "domain midpoint" when defaulted). Rule 13's eyeball check stays mandatory regardless. |
+| 9 | **GRTresna pinned ψ_reg = 1 at the outer boundary** (`BoundaryConditions.cpp`, `fill_constant_cell(..., psi_comps, 1.0)`). The code splits ψ = ψ_reg + Σ m_i/(2 r_i), so ψ_reg approaches 1 − m/2r whenever any mass sits outside the punctures; asserting 1 hands the solve a false fact at the wall, which it propagates inward as a near-constant offset across the whole grid. | It looks like a converged solve. The residual is small, the star is intact, the throat is present — and `Converged!` is printed unconditionally (rule 8). The tell is only visible against a case whose exact answer is known, and only after fitting the 1/r coefficient: it is dragged toward 0 as the wall is approached (−0.46 at r = 8–12 against −0.28 at r = 12–16) instead of standing at −m/2. | `psi_robin_boundary = 1` imposes (ψ_reg − 1) ∼ 1/r and lets the solve find the coefficient. On the drainhole test (N = 64, L = 32, exact answer known) the worst ψ error falls 4.89 % → **0.68 %**, the throat 2.145 → **2.039** (exact 2.0), the fitted C −0.28 → **−0.93 and flat in r**, and the Ham residual reaches 3.6e-11 % instead of stalling at 9.6e-3 % — a boundary condition the solution can satisfy is one the solve can converge against. Off by default; with it off the binary reproduces the old answer digit-for-digit. GRTresna `7ae07cd`. |
 
 ## What is implemented
 
