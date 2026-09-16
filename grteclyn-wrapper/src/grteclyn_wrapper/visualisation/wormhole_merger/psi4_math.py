@@ -338,6 +338,42 @@ def _find_peak_times(
     return result
 
 
+def wavefront_speeds_xcorr(
+    t: np.ndarray, series: Dict[float, np.ndarray], radii: List[float],
+) -> List[Tuple[float, float, float, float]]:
+    """Propagation speed between neighbouring spheres from the lag of the
+    WHOLE complex waveform, not of one envelope peak.
+
+    ``(R1, R2, v, resid)`` per pair, where ``resid`` is the lag in excess of
+    light travel (so the matched front at R2 sits at retarded time
+    ``u(R1) + resid``).  Peak-to-peak timing fails two ways this survives:
+    a flat-topped envelope parks its maximum wherever noise tips it (the
+    BBH control's merger plateau is ~15 units wide at both spheres, and the
+    peak times alone read v = 0.57 where the waveform lag reads 0.82), and
+    a record that ends mid-burst has no outer peak at all.  Correlating
+    only over the retarded interval BOTH spheres cover keeps a truncated
+    record from biasing the lag toward zero.
+    """
+    out: List[Tuple[float, float, float, float]] = []
+    dt = float(t[1] - t[0])
+    for R1, R2 in zip(radii[:-1], radii[1:]):
+        m1 = t <= t[-1] - (R2 - R1) + 1e-9
+        m2 = t >= t[0] + (R2 - R1) - 1e-9
+        w1, w2 = series[R1][m1], series[R2][m2]
+        n = min(w1.size, w2.size)
+        cc = np.abs(np.correlate(w2[:n], w1[:n], mode="full"))
+        k = int(np.argmax(cc))
+        frac = 0.0
+        if 0 < k < cc.size - 1:
+            den = cc[k - 1] - 2.0 * cc[k] + cc[k + 1]
+            if den != 0.0:
+                frac = 0.5 * (cc[k - 1] - cc[k + 1]) / den
+        resid = (k - (n - 1) + frac) * dt
+        v = (R2 - R1) / (R2 - R1 + resid) if (R2 - R1 + resid) else np.inf
+        out.append((R1, R2, float(v), float(resid)))
+    return out
+
+
 def _compute_propagation_speeds(
     radii: List[float], peak_data: Dict[float, List[Tuple[float, float]]],
     t: np.ndarray = None, series: Dict[float, np.ndarray] = None,

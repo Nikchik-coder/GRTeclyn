@@ -23,6 +23,35 @@ alias psi4="grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.
 | `07_bbh_control/psi4_analysis_bbh_control` | `--run bbh_control_d12_p012_t150 --group 07_bbh_control` |
 | `07_bbh_control/psi4_analysis_bbh_control_m2` | `--run bbh_control_d12_p012_t150 --group 07_bbh_control --stream psi4_mode_l2_all.dat --m 2` |
 
+## The paper's `08_waves` figures (2026-09-16)
+
+The article's two wave figures live in `08_waves/`, cross-cutting because they
+belong to no single group. Both are drawn with no arguments:
+
+```
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_gallery
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_ligo
+```
+
+The scenario table (stream, mode, innermost sphere, gate) is `ARMS` in
+`plot_psi4_gallery.py` and the LIGO figure imports it, so the two figures
+cannot disagree about what a scenario is. The gates: the collapsing throat's
+stream is the queue-2e gated file clipped at t = 70 (QUEUE2E_GATES.md); the
+fly-by (`06_binary_flyby/p045/merge_orbit_flip_d12_p045_t200`, m = 2, packed
+at t = 90.5 of 200) is gated at t = 70 because |rΨ4| at R = 14 crosses 0.1 at
+t = 75.5 and sits three orders over the burst by t = 90 — the core's late
+disturbance reaching the sphere, while R = 30 stays clean throughout.
+
+The quoted v/c are **not** the dashboards' peak-to-peak numbers: they are the
+lag of the whole complex waveform between neighbouring spheres, correlated
+over the common retarded window (`psi4_math.wavefront_speeds_xcorr`). Peak
+timing fails twice here — the BBH control's merger envelope is a ~15-unit
+plateau at both spheres (peaks alone read v = 0.57 where the waveform lag
+reads 0.82), and the spiral's outer spheres have no peak inside the record at
+all (peak matching returned v = −0.90; the windowed lag reads 1.00). Measured:
+throat 0.91/0.95/0.98, head-on 0.96/0.90, spiral 1.00/1.00/1.00, fly-by 1.00,
+BBH twin 0.82. Both figures are re-drawn at the spiral and fly-by close-outs.
+
 ## How the commands were recovered, and why it can be trusted
 
 Each candidate was redrawn and compared with the published PNG **panel by
