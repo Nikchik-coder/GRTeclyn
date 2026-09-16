@@ -221,12 +221,12 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_p045_helfer_t090` | B | 37.3 | x874.0 / 37.3 | +1.16 | +1.79 | +2.29 | +2.57 | - | - | - | - | late (+1.26 dex) |
 | `merge_orbit_flip_d12_p045_t200` | A | 91.0 | x2708.9 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
 | `merge_orbit_flip_d12_p045_t200` | B | 91.0 | x2709.0 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
-| `merge_headon_flip_d8_v1c_eps_m1e2_t100` | A | 99.0 | x21.4 / 21.1 | +1.01 | +1.28 | +0.59 | +0.59 | +0.59 | +0.59 | +0.59 | 24.8 | early (-0.72 dex) |
-| `merge_headon_flip_d8_v1c_eps_m1e2_t100` | B | 99.0 | x21.4 / 21.1 | +1.01 | +1.28 | +0.59 | +0.59 | +0.59 | +0.59 | +0.59 | 24.8 | early (-0.72 dex) |
+| `merge_headon_flip_d8_v1c_eps_m1e2_t100` | A | 100.0 | x21.4 / 21.1 | +1.01 | +1.28 | +0.59 | +0.59 | +0.59 | +0.59 | +0.59 | 24.8 | early (-0.72 dex) |
+| `merge_headon_flip_d8_v1c_eps_m1e2_t100` | B | 100.0 | x21.4 / 21.1 | +1.01 | +1.28 | +0.59 | +0.59 | +0.59 | +0.59 | +0.59 | 24.8 | early (-0.72 dex) |
 | `merge_headon_flip_d8_v1c_eps_p1e2_t100` | A | 25.8 | x20.7 / 20.6 | +1.00 | +1.25 | -0.77 | - | - | - | - | 23.4 | too short |
 | `merge_headon_flip_d8_v1c_eps_p1e2_t100` | B | 25.8 | x20.7 / 20.6 | +1.00 | +1.25 | -0.77 | - | - | - | - | 23.4 | too short |
-| `merge_orbit_flip_d12_p045_L128_lvl5_t100` | A | 21.5 | x5.0 / 21.4 | +0.35 | +0.67 | - | - | - | - | - | 0.0 | too short |
-| `merge_orbit_flip_d12_p045_L128_lvl5_t100` | B | 21.5 | x5.0 / 21.4 | +0.35 | +0.67 | - | - | - | - | - | 0.0 | too short |
+| `merge_orbit_flip_d12_p045_L128_lvl5_t100` | A | 22.6 | x5.4 / 22.6 | +0.35 | +0.67 | - | - | - | - | - | 0.0 | too short |
+| `merge_orbit_flip_d12_p045_L128_lvl5_t100` | B | 22.6 | x5.4 / 22.6 | +0.35 | +0.67 | - | - | - | - | - | 0.0 | too short |
 
 ## Reading
 

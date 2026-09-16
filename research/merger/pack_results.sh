@@ -93,7 +93,15 @@ while IFS= read -r rundir; do
   run="$(basename "${rundir%/}")"
   rel="${rundir%/}"; rel="${rel#"${RUNS}"/}"
   out="${DEST}/campaign/${rel}"
-  rm -rf "${out}"
+  # Rebuild the pack, but KEEP anything the pack does not itself produce.
+  # Until 2026-09-16 this was a bare `rm -rf`, so every hand-added artefact --
+  # a run's README, an offline horizon scan, a gzipped radial profile, a
+  # scrubbed params.txt -- was destroyed on every pack and had to be restored
+  # from git afterwards.  The rebuild goes to a scratch dir; whatever the old
+  # pack held and the new one did not write is carried across.
+  keep="${out}.__keep"
+  rm -rf "${keep}"
+  [[ -d "${out}" ]] && mv "${out}" "${keep}"
   mkdir -p "${out}"
 
   # An arm with no evolution streams (lost, or dead before the first
@@ -121,6 +129,14 @@ while IFS= read -r rundir; do
   for src in "${rundir}"data/*.dat "${rundir}"extraction_data/*.dat "${rundir}"punctures_output/*.dat; do
     [[ -f "${src}" ]] || continue
     base="$(basename "${src}")"
+    # The in-code Weyl4 extraction is NOT thinned (2026-09-16).  It is the
+    # waveform the article quotes -- GPU_PLAN: "Quote the in-code files" -- and
+    # thinning dt = 0.01 to 0.05 threw away 80 % of the only stream that
+    # resolves the burst.  It is also what every psi4 figure reads.
+    if [[ "${base}" == Weyl4_mode_*.dat ]]; then
+      cp "${src}" "${out}/${base}"
+      continue
+    fi
     "${PY_BIN}" - "${src}" "${out}/${base}" <<'PY'
 import sys
 
@@ -179,6 +195,14 @@ PY
   # results/merger/movies/<group>/<run>/ and the per-run copies deleted.  A
   # repack must not put them back: add the movie to that folder instead, and
   # say in its README what it shows.
+
+  # Carry across every file the previous pack held that this one did not write.
+  if [[ -d "${keep}" ]]; then
+    (cd "${keep}" && find . -type f -print0) | while IFS= read -r -d "" f; do
+      [[ -e "${out}/${f}" ]] || { mkdir -p "$(dirname "${out}/${f}")"; cp "${keep}/${f}" "${out}/${f}"; }
+    done
+    rm -rf "${keep}"
+  fi
 
   # Stills, where the pictures carry a result.
   for spec in ${STILLS}; do
@@ -339,8 +363,10 @@ fi
 # pack down: a figure whose arm has not been packed yet is not an error.
 VIS="grteclyn_wrapper.visualisation.wormhole_merger"
 export PYTHONPATH="${ROOT}/grteclyn-wrapper/src${PYTHONPATH:+:${PYTHONPATH}}"
-for mod in plot_branches plot_placement_curve plot_bbh_ringdown \
-           plot_bbh_vs_wormhole_psi4; do
+# plot_bbh_vs_wormhole_psi4 is NOT in this list: its figure was retired by hand
+# (33bc4627, "remove outdated figures") and superseded by the 08_waves gallery.
+# A pack that regenerates it puts a retired figure back on every run.
+for mod in plot_branches plot_placement_curve plot_bbh_ringdown; do
   "${PY_BIN}" -m "${VIS}.${mod}" --pack-root "${DEST}" \
     || "${PY_BIN}" -m "${VIS}.${mod}" "${DEST}" \
     || echo "[pack-merger] ${mod} failed -- continuing"

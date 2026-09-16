@@ -1,4 +1,3 @@
-# thinned to dt=0.05 from the every-step stream; the last 1 time units are kept whole (the death window)
   90.0100000    2.6287723081e-01   -3.2866389790e-02   -3.7110742799e-01   -2.3139537326e-01
   90.0200000    4.9305752576e-02    4.1132898141e-02                -nan                -nan
   90.0300000    5.1030682839e-02    1.8892626806e-02   -1.2606981641e+00   -3.2722832397e-01

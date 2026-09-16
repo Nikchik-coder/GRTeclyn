@@ -1,0 +1,134 @@
+Initializing AMReX (26.02-12-gd7da50458966)...
+MPI initialized with 1 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+CUDA initialized with 1 device.
+AMReX (26.02-12-gd7da50458966) initialized
+GRTeclyn (unknown) initialized
+Parameter: num_ghosts not found in parameter file. It has been set to its default value = 3.
+Parameter: tag_buffer_size not found in parameter file. It has been set to its default value = 3.
+Parameter: grid_buffer_size not found in parameter file. It has been set to its default value = 8.
+Parameter: fill_ratio not found in parameter file. It has been set to its default value = 0.7.
+Using single regrid threshold.
+Parameter: max_steps not found in parameter file. It has been set to its default value = 1000000.
+Parameter: extraction_file_prefix not found in parameter file. It has been set to its default value = Weyl4_extraction_.
+Parameter: integral_file_prefix not found in parameter file. It has been set to its default value = Weyl4_mode_.
+Parameter: wormhole_lapse_core_fraction not found in parameter file. It has been set to its default value = 0.3.
+Parameter: wormhole_lapse_core_power not found in parameter file. It has been set to its default value = 8.
+Parameter: wormhole_helfer_correction not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_helfer_width not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_helfer_power not found in parameter file. It has been set to its default value = 2.
+Parameter: recipe_initial_data_file not found in parameter file. It has been set to its default value = .
+Parameter: binary_diag_min_radius not found in parameter file. It has been set to its default value = 2.
+Parameter: binary_diag_collapsed_lapse not found in parameter file. It has been set to its default value = 1e-06.
+Parameter: binary_diag_collapsed_min_radius not found in parameter file. It has been set to its default value = 0.5.
+Parameter: core_damping_tau not found in parameter file. It has been set to its default value = 0.25.
+Parameter: core_damping_radius_start not found in parameter file. It has been set to its default value = 0.
+Parameter: core_damping_radius_full not found in parameter file. It has been set to its default value = 0.
+Parameter: core_damping_radius_from_time not found in parameter file. It has been set to its default value = 0.
+Parameter: core_lapse_freeze not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_radius_start not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_radius_full not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_from_time not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_shift not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_fill not found in parameter file. It has been set to its default value = 0.
+Parameter: core_fill_radius_start not found in parameter file. It has been set to its default value = 0.
+Parameter: core_fill_radius_full not found in parameter file. It has been set to its default value = 0.
+Parameter: core_fill_from_time not found in parameter file. It has been set to its default value = 0.
+Parameter: sponge_center not found in parameter file. It has been set to its default value = 32 32 32.
+Parameter: tagging_center not found in parameter file. It has been set to its default value = 32 32 32.
+Parameter: tagging_type = 2 warning: selects a geometric tagger (fixed or moving boxes), so regrid_threshold is ignored: refinement no longer responds to the solution at all.  Set tagging_L to control the boxes.!
+Successfully read inputs file ... 
+Parameter: wormhole_support_ramp_start not found in parameter file. It has been set to its default value = -1.
+Parameter: wormhole_support_ramp_duration not found in parameter file. It has been set to its default value = 5.
+Parameter: wormhole_support_causal_speed not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_metric_type not found in parameter file. It has been set to its default value = 1.
+restarting calculation from file: /tmp/grteclyn_scratch/merge_twin_p012_nodamp_t060/BinaryWormholeChk05000
+Successfully read inputs file ... 
+Restart time = 4.53480674 seconds.
+Now regridding at level lbase = 1
+grid_places() time: 0.023454864 new finest: 4
+TIME = 50 : REGRID  with lbase = 1
+  Level 2   200 grids  6553600 cells  4.8828125 % of domain
+            smallest grid: 32 x 32 x 32  biggest grid: 32 x 32 x 32
+  Level 3   275 grids  9011200 cells  0.8392333984 % of domain
+            smallest grid: 32 x 32 x 32  biggest grid: 32 x 32 x 32
+  Level 4   100 grids  3276800 cells  0.03814697266 % of domain
+            smallest grid: 32 x 32 x 32  biggest grid: 32 x 32 x 32
+
+[Level 0 step 5001] ADVANCE at time 50 with dt = 0.01
+[Level 0 step 5001] average evolution speed = 0 code units/h
+[Level 0 step 5001] Advanced 2097152 cells
+[Level 1 step 10001] ADVANCE at time 50 with dt = 0.005
+[Level 1 step 10001] average evolution speed = 0 code units/h
+[Level 1 step 10001] Advanced 4096000 cells
+[Level 2 step 20001] ADVANCE at time 50 with dt = 0.0025
+[Level 2 step 20001] average evolution speed = 0 code units/h
+[Level 2 step 20001] Advanced 6553600 cells
+[Level 3 step 40001] ADVANCE at time 50 with dt = 0.00125
+[Level 3 step 40001] average evolution speed = 0 code units/h
+[Level 3 step 40001] Advanced 9011200 cells
+[Level 4 step 80001] ADVANCE at time 50 with dt = 0.000625
+[Level 4 step 80001] average evolution speed = 0 code units/h
+[Level 4 step 80001] Advanced 3276800 cells
+[Level 4 step 80002] ADVANCE at time 50.000625 with dt = 0.000625
+[Level 4 step 80002] average evolution speed = 1.4834041 code units/h
+[Level 4 step 80002] Advanced 3276800 cells
+[Level 3 step 40002] ADVANCE at time 50.00125 with dt = 0.00125
+[Level 3 step 40002] average evolution speed = 2.754967851 code units/h
+[Level 3 step 40002] Advanced 9011200 cells
+[Level 4 step 80003] ADVANCE at time 50.00125 with dt = 0.000625
+[Level 4 step 80003] average evolution speed = 2.366919239 code units/h
+[Level 4 step 80003] Advanced 3276800 cells
+[Level 4 step 80004] ADVANCE at time 50.001875 with dt = 0.000625
+[Level 4 step 80004] average evolution speed = 3.357065343 code units/h
+[Level 4 step 80004] Advanced 3276800 cells
+[Level 2 step 20002] ADVANCE at time 50.0025 with dt = 0.0025
+[Level 2 step 20002] average evolution speed = 4.194889346 code units/h
+[Level 2 step 20002] Advanced 6553600 cells
+[Level 3 step 40003] ADVANCE at time 50.0025 with dt = 0.00125
+[Level 3 step 40003] average evolution speed = 3.844526429 code units/h
+[Level 3 step 40003] Advanced 9011200 cells
+[Level 4 step 80005] ADVANCE at time 50.0025 with dt = 0.000625
+[Level 4 step 80005] average evolution speed = 3.448692641 code units/h
+[Level 4 step 80005] Advanced 3276800 cells
+[Level 4 step 80006] ADVANCE at time 50.003125 with dt = 0.000625
+[Level 4 step 80006] average evolution speed = 4.137393673 code units/h
+[Level 4 step 80006] Advanced 3276800 cells
+[Level 3 step 40004] ADVANCE at time 50.00375 with dt = 0.00125
+[Level 3 step 40004] average evolution speed = 4.762712745 code units/h
+[Level 3 step 40004] Advanced 9011200 cells
+[Level 4 step 80007] ADVANCE at time 50.00375 with dt = 0.000625
+[Level 4 step 80007] average evolution speed = 4.351376443 code units/h
+[Level 4 step 80007] Advanced 3276800 cells
+[Level 4 step 80008] ADVANCE at time 50.004375 with dt = 0.000625
+[Level 4 step 80008] average evolution speed = 4.903904116 code units/h
+[Level 4 step 80008] Advanced 3276800 cells
+[Level 1 step 10002] ADVANCE at time 50.005 with dt = 0.005
+[Level 1 step 10002] average evolution speed = 5.364159654 code units/h
+[Level 1 step 10002] Advanced 4096000 cells
+[Level 2 step 20003] ADVANCE at time 50.005 with dt = 0.0025
+[Level 2 step 20003] average evolution speed = 5.171017453 code units/h
+[Level 2 step 20003] Advanced 6553600 cells
+[Level 3 step 40005] ADVANCE at time 50.005 with dt = 0.00125
+[Level 3 step 40005] average evolution speed = 4.895669393 code units/h
+[Level 3 step 40005] Advanced 9011200 cells
+[Level 4 step 80009] ADVANCE at time 50.005 with dt = 0.000625
+[Level 4 step 80009] average evolution speed = 4.561369527 code units/h
+[Level 4 step 80009] Advanced 3276800 cells
+[Level 4 step 80010] ADVANCE at time 50.005625 with dt = 0.000625
+[Level 4 step 80010] average evolution speed = 4.992926889 code units/h
+[Level 4 step 80010] Advanced 3276800 cells
+NaN diagnostic: rank=0 level=3 component=1 name=h11
+amrex::Abort::0::NaN in GRAMRLevel::post_timestep !!!
+SIGABRT
+See Backtrace.0 file for details
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 0 in communicator MPI_COMM_WORLD
+  Proc: [[11865,0],0]
+  Errorcode: 6
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
