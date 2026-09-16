@@ -35,12 +35,16 @@ MODE = "2,0"  # (l,m) label used in axis titles; set via --mode-label
 def _mode(label: str) -> str:
     return label.replace("{MODE}", MODE)
 
-M_SUN_KG = 1.98892e30
-G_SI = 6.67430e-11
-C_SI = 2.99792458e8
-M_SUN_SEC = G_SI * M_SUN_KG / C_SI**3
-M_SUN_METER = G_SI * M_SUN_KG / C_SI**2
-MPC_METER = 3.08568e22
+# These live in the merger package so that every figure under
+# visualisation/wormhole_merger/ can be drawn from that folder alone.
+# Imported back here rather than duplicated: one implementation, no drift.
+from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (  # noqa: E402
+    C_SI, G_SI, MPC_METER, M_SUN_KG, M_SUN_METER, M_SUN_SEC,
+    _aLIGO_noise_psd, _burst_psd, _compute_propagation_speeds,
+    _compute_radiated_energy, _compute_snr, _damped_sinusoid,
+    _find_peak_times, _fit_qnm, _psd_psi4_to_strain, _scale_to_physical,
+    _smooth_psd,
+)
 
 
 from grteclyn_wrapper.core.config import default_sim_data_dir
@@ -50,29 +54,6 @@ def _default_data_dir() -> Path:
     return default_sim_data_dir()
 
 
-def _smooth_psd(psd: np.ndarray, window: int, polyorder: int) -> np.ndarray:
-    psd = np.asarray(psd, dtype=float)
-    out = psd.copy()
-    m = np.isfinite(psd) & (psd > 0)
-    if np.sum(m) < 7:
-        return out
-    y = np.log10(psd[m])
-    n = y.size
-    w = int(window)
-    if w < 5:
-        return out
-    if w % 2 == 0:
-        w += 1
-    if w > n:
-        w = n if (n % 2 == 1) else (n - 1)
-    p = int(polyorder)
-    if p < 1:
-        return out
-    if p >= w:
-        p = max(1, w - 2)
-    y_s = savgol_filter(y, window_length=w, polyorder=p, mode="interp")
-    out[m] = 10 ** y_s
-    return out
 
 
 def _parse_header_radii(header_line: str) -> List[float]:
@@ -151,117 +132,14 @@ def load_extracted(path: Path) -> Tuple[np.ndarray, List[float], Dict[float, np.
     return t_arr, radii, out
 
 
-def _burst_psd(
-    psi4_complex: np.ndarray, fs: float, tukey_alpha: float = 0.25
-) -> Tuple[np.ndarray, np.ndarray]:
-    """Compute the one-sided power spectral density of r*Psi4 for a burst.
-
-    Uses a Tukey window (to taper edges) and a straight FFT rather than
-    Welch's method, which is designed for stationary noise and destroys
-    frequency resolution of short transients.  Both the + and x
-    polarizations are included: PSD = (|FFT(Re)|^2 + |FFT(Im)|^2) * dt^2/T.
-    The 1/T normalization gives units of amplitude^2 / frequency.
-    """
-    N = len(psi4_complex)
-    win = tukey(N, alpha=tukey_alpha)
-    dt = 1.0 / fs
-    T = N * dt
-
-    re_part = np.real(psi4_complex) * win
-    im_part = np.imag(psi4_complex) * win
-
-    re_fft = np.fft.rfft(re_part)
-    im_fft = np.fft.rfft(im_part)
-    freqs = np.fft.rfftfreq(N, d=dt)
-
-    norm = dt**2 / T
-    esd = (np.abs(re_fft) ** 2 + np.abs(im_fft) ** 2) * norm
-    esd[1:-1] *= 2.0  # one-sided doubling (exclude DC and Nyquist)
-
-    return freqs, esd
 
 
-def _psd_psi4_to_strain(
-    freqs: np.ndarray,
-    psd_psi4: np.ndarray,
-    f_low_frac: float = 0.05,
-) -> np.ndarray:
-    """Convert Psi4 PSD to strain PSD: S_h(f) = S_{Psi4}(f) / (2*pi*f)^4.
-
-    A 4th-order Butterworth-style high-pass roll-off is applied below
-    ``f_low = f_low_frac * f_max`` to suppress the unphysical divergence
-    from dividing numerical noise by f^4 as f -> 0.
-    """
-    strain_psd = np.zeros_like(psd_psi4)
-    nz = freqs > 0
-    f_max = freqs[nz].max() if np.any(nz) else 1.0
-    f_low = f_low_frac * f_max
-
-    omega4 = (2.0 * np.pi * freqs[nz]) ** 4
-    strain_psd[nz] = psd_psi4[nz] / omega4
-
-    hp = 1.0 / (1.0 + (f_low / freqs[nz]) ** 8)
-    strain_psd[nz] *= hp
-
-    return strain_psd
 
 
-def _scale_to_physical(
-    freqs_code: np.ndarray,
-    strain_psd_code: np.ndarray,
-    mass_msun: float,
-    distance_mpc: float,
-) -> Tuple[np.ndarray, np.ndarray]:
-    """Convert code-unit strain PSD to physical (Hz, 1/Hz) units.
-
-    In code units (G=c=1, M=1) the time unit is T_M = M * M_sun_sec.
-    The radius-scaled quantity r*Psi4 is dimensionless; after dividing by
-    (2*pi*f_code)^2 the strain PSD in code units has dimensions M^3.
-    Physical scaling:
-        f_phys = f_code / T_M
-        S_h_phys = S_h_code * T_M * (M * M_sun_meter / D)^2
-    """
-    T_M = mass_msun * M_SUN_SEC
-    D_m = distance_mpc * MPC_METER
-
-    f_phys = freqs_code / T_M
-    amp_scale = (mass_msun * M_SUN_METER / D_m) ** 2 * T_M
-    S_h_phys = strain_psd_code * amp_scale
-    return f_phys, S_h_phys
 
 
-def _aLIGO_noise_psd(freqs_hz: np.ndarray) -> np.ndarray:
-    """Advanced LIGO design sensitivity noise PSD S_n(f) [1/Hz].
-
-    Analytic fit from Ajith et al. (2011) / LIGO-T0900288-v3,
-    valid for 10 Hz < f < 5000 Hz.  Outside this band we return +inf.
-    """
-    S = np.full_like(freqs_hz, np.inf)
-    f0 = 215.0  # Hz reference frequency
-    valid = (freqs_hz >= 10.0) & (freqs_hz <= 5000.0)
-    x = freqs_hz[valid] / f0
-
-    S0 = 1.0e-49  # 1/Hz overall scale (approximate design)
-    S[valid] = S0 * (
-        x ** (-4.14)
-        - 5.0 * x ** (-2)
-        + 111.0 * (1.0 - x**2 + 0.5 * x**4) / (1.0 + 0.5 * x**2)
-    )
-    S[valid] = np.abs(S[valid])
-    S[valid] = np.where(S[valid] > 0, S[valid], np.inf)
-    return S
 
 
-def _compute_snr(
-    freqs_hz: np.ndarray, strain_psd: np.ndarray, noise_psd: np.ndarray
-) -> float:
-    """Optimal matched-filter SNR^2 = 4 * int |h(f)|^2 / S_n(f) df."""
-    valid = np.isfinite(noise_psd) & (noise_psd > 0) & np.isfinite(strain_psd)
-    if np.sum(valid) < 2:
-        return 0.0
-    integrand = strain_psd[valid] / noise_psd[valid]
-    snr_sq = 4.0 * np.trapezoid(integrand, freqs_hz[valid])
-    return float(np.sqrt(max(0.0, snr_sq)))
 
 
 def _frequency_band_label(f_peak_hz: float) -> str:
@@ -276,88 +154,8 @@ def _frequency_band_label(f_peak_hz: float) -> str:
     return "above the LIGO band"
 
 
-def _damped_sinusoid(t, A, tau, f0, phi):
-    return A * np.exp(-t / tau) * np.sin(2.0 * np.pi * f0 * t + phi)
 
 
-def _fit_qnm(
-    t: np.ndarray,
-    psi4_complex: np.ndarray,
-    R: float,
-    tail_fraction: float = 0.4,
-) -> dict | None:
-    """Fit A*exp(-t/tau)*sin(2*pi*f*t + phi) to the late-time ringdown.
-
-    Works on the retarded-time Re(r*Psi4) waveform at a single extraction
-    radius.  Returns dict with fit parameters, or None if the fit fails.
-    """
-    # Trailing exact zeros carry no signal -- they are gated or padded
-    # samples (gate_psi4_junk.py) and poison the fit if included.
-    envelope_full = np.abs(psi4_complex)
-    nz = np.nonzero(envelope_full > 0.0)[0]
-    if len(nz) < 10:
-        return None
-    t = t[: nz[-1] + 1]
-    psi4_complex = psi4_complex[: nz[-1] + 1]
-
-    t_ret = t - R
-    y = np.real(psi4_complex)
-
-    envelope = np.abs(psi4_complex)
-    i_peak = np.argmax(envelope)
-    if i_peak >= len(t) - 10:
-        return None
-
-    t_tail = t_ret[i_peak:]
-    y_tail = y[i_peak:]
-    t_tail = t_tail - t_tail[0]
-
-    n_start = max(1, int(tail_fraction * len(t_tail)))
-    t_fit_raw = t_tail[n_start:]
-    y_fit = y_tail[n_start:]
-    if len(t_fit_raw) < 10:
-        return None
-
-    t_fit = t_fit_raw - t_fit_raw[0]
-
-    env_fit = np.abs(y_fit)
-    A0 = float(np.max(env_fit)) if np.max(env_fit) > 0 else 1e-6
-    tau0 = float(t_fit[-1] - t_fit[0]) / 2.0
-
-    # Seed the frequency from the FFT peak of the fit segment and cap the
-    # fit at the segment's Nyquist frequency: with coarse sampling the old
-    # peak-spacing guess (fallback 2.0) let curve_fit converge onto aliased
-    # super-Nyquist solutions (seen 2026-09-15 on gated data: f = 0.95 for
-    # a 0.047 signal).
-    dt_med = float(np.median(np.diff(t_fit))) if len(t_fit) > 1 else 1.0
-    f_nyq = 0.5 / dt_med if dt_med > 0 else np.inf
-    yf = np.abs(np.fft.rfft(y_fit - np.mean(y_fit)))
-    ff = np.fft.rfftfreq(len(y_fit), dt_med)
-    if len(yf) > 1 and np.max(yf[1:]) > 0:
-        f0_guess = float(ff[1 + int(np.argmax(yf[1:]))])
-    else:
-        f0_guess = 0.5 * f_nyq
-    f0_guess = min(max(f0_guess, 2e-3), 0.9 * f_nyq)
-
-    t_ret_fit_start = t_ret[i_peak] + t_fit_raw[0]
-
-    try:
-        popt, pcov = curve_fit(
-            _damped_sinusoid, t_fit, y_fit,
-            p0=[A0, tau0, f0_guess, 0.0],
-            bounds=([0, 1e-6, 1e-3, -2 * np.pi], [np.inf, np.inf, f_nyq, 2 * np.pi]),
-            maxfev=10000,
-        )
-        A, tau, f_qnm, phi = popt
-        perr = np.sqrt(np.diag(pcov))
-        return {
-            "A": A, "tau": tau, "f_qnm": f_qnm, "phi": phi,
-            "A_err": perr[0], "tau_err": perr[1], "f_qnm_err": perr[2],
-            "t_ret_start": t_ret_fit_start,
-            "t_ret_end": t_ret_fit_start + t_fit[-1],
-        }
-    except Exception:
-        return None
 
 
 _QNM_OMEGA_R_DIMLESS = 0.37367
@@ -371,84 +169,10 @@ def _schwarzschild_qnm_l2(M_bh: float) -> Tuple[float, float]:
     return f_code, tau_code
 
 
-def _compute_radiated_energy(
-    t: np.ndarray, psi4_complex: np.ndarray
-) -> float:
-    """E_rad = (1/16*pi) * int |r*Psi4|^2 dt  (code units, G=c=1)."""
-    integrand = np.abs(psi4_complex) ** 2
-    return float(np.trapezoid(integrand, t) / (16.0 * np.pi))
 
 
-def _find_peak_times(
-    t: np.ndarray,
-    series: Dict[float, np.ndarray],
-    radii: List[float],
-    t_skip_frac: float = 0.05,
-) -> Dict[float, List[Tuple[float, float]]]:
-    """For each radius find (t_peak, amplitude) of dominant and secondary peaks."""
-    result: Dict[float, List[Tuple[float, float]]] = {}
-    t_skip = t[0] + t_skip_frac * (t[-1] - t[0])
-
-    for R in radii:
-        psi4 = series[R]
-        envelope = np.abs(psi4)
-        mask = t >= t_skip
-        env_masked = envelope.copy()
-        env_masked[~mask] = 0.0
-
-        peaks_list: List[Tuple[float, float]] = []
-
-        prominence = 0.1 * np.max(env_masked[mask]) if np.any(mask) else 0.0
-        idxs, props = find_peaks(env_masked, prominence=max(prominence, 1e-30))
-        if len(idxs) > 0:
-            order = np.argsort(-env_masked[idxs])
-            for idx in idxs[order[:5]]:
-                peaks_list.append((float(t[idx]), float(envelope[idx])))
-        else:
-            i_max = np.argmax(env_masked)
-            peaks_list.append((float(t[i_max]), float(envelope[i_max])))
-
-        result[R] = peaks_list
-    return result
 
 
-def _compute_propagation_speeds(
-    radii: List[float], peak_data: Dict[float, List[Tuple[float, float]]],
-    t: np.ndarray = None, series: Dict[float, np.ndarray] = None,
-) -> List[Tuple[float, float, float]]:
-    """Return list of (R1, R2, speed).
-
-    Uses wavefront tracking: the dominant peak at the innermost radius
-    defines a reference retarded time.  At each subsequent radius, the
-    peak whose retarded time is closest to that reference is selected,
-    ensuring we track the *same* physical wavefront rather than jumping
-    to a different (potentially constraint-dominated) feature.
-    """
-    if not radii or not peak_data:
-        return []
-
-    R_ref = radii[0]
-    t_ref_sim = peak_data[R_ref][0][0]
-    t_ref_ret = t_ref_sim - R_ref
-
-    matched_sim: Dict[float, float] = {R_ref: t_ref_sim}
-    for R in radii[1:]:
-        best_t_sim = peak_data[R][0][0]
-        best_dt_ret = abs((best_t_sim - R) - t_ref_ret)
-        for (t_pk, _) in peak_data[R]:
-            dt_ret = abs((t_pk - R) - t_ref_ret)
-            if dt_ret < best_dt_ret:
-                best_dt_ret = dt_ret
-                best_t_sim = t_pk
-        matched_sim[R] = best_t_sim
-
-    speeds = []
-    for i in range(len(radii) - 1):
-        R1, R2 = radii[i], radii[i + 1]
-        dt = matched_sim[R2] - matched_sim[R1]
-        v = (R2 - R1) / dt if abs(dt) > 1e-15 else np.inf
-        speeds.append((R1, R2, v))
-    return speeds
 
 
 def _classify_signal(speed: float, tol: float = 0.15) -> str:

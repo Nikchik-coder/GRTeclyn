@@ -30,12 +30,6 @@ The waveform
 The spacetime
   ``plot_merger_constraints``  Hamiltonian and momentum norms, stitched across
                             a restart chain.
-  ``plot_series_constraints``  the same norms for ONE arm run in legs at
-                            different resolutions: every step under a running
-                            median (a level-3 leg is punctuated by regrid
-                            spikes a median would hide), plus the window both
-                            legs cover, so "does refinement move the global
-                            constraints?" is read off directly.
   ``plot_collapse_diagnostics``  the campaign's collapse diagnostics as ONE
                             lettered grid in the house look, with the panel list
                             built from what the run actually wrote -- the
@@ -78,7 +72,6 @@ __all__ = [
     "plot_psi4_analysis",
     "plot_psi4_modes",
     "plot_seed_branches",
-    "plot_series_constraints",
     "plot_separation",
     "run_tree",
     "stitch_movies",

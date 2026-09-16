@@ -47,7 +47,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 from matplotlib.ticker import ScalarFormatter  # noqa: E402
 
-from grteclyn_wrapper.visualisation.process_wave.plot_extracted_psi4 import (  # noqa: E402
+from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (  # noqa: E402
     _aLIGO_noise_psd, _burst_psd, _compute_propagation_speeds,
     _compute_radiated_energy, _compute_snr, _damped_sinusoid, _find_peak_times,
     _fit_qnm, _psd_psi4_to_strain, _scale_to_physical, _smooth_psd,

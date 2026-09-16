@@ -29,14 +29,39 @@ them.
 | `plot_placement_curve` | what two throats read simply by being placed near each other, and the throats' own response once that is subtracted | the two tables `analysis/placement_curve.py` writes | `figures/04_binary_headon/` |
 | `plot_branches` | **the lone throat's two fates across resolution** — level 3 collapses, level 4 inflates, at the same rate. Also writes the note `BRANCHES.md` | the pack | `BRANCHES.md` + `figures/01_single_throat/` |
 | `plot_seed_branches` | **the same two fates chosen on purpose** — one resolution, one knob: the sign and size of a declared kick laid on the throat at t = 0 | the run tree, live runs included | `figures/01_single_throat/` |
+| `plot_collapse_diagnostics` | **one filled grid of everything a run's core diagnostics say**: lapse, conformal factor, the scalar pair, the three collapse indicators rescaled onto a common range, and — when the run wrote `core_radial_profile.dat` — the same quantities against RADIUS, plus where the disturbance sits and how wide it is | the pack or the run tree | wherever `--out` says |
 | `stitch_movies` | several runs played as one movie per field on a single colour scale | each run's cached slices | the run tree (never `results/`) |
 | `style` | not a figure — the palette, the typography and `save()` | — | — |
 | `streams` | not a figure — one loader per data-file shape | — | — |
 | `run_tree` | not a figure — find a run **by name**, in either tree | — | — |
+| `psi4_math` | not a figure — the waveform mathematics (burst PSD, QNM fit, radiated energy, propagation speed, aLIGO strain and SNR) | — | — |
+
+## It draws from this folder alone
+
+Every **figure** module here imports only from this package. That was made true
+on 2026-09-16: `plot_psi4_analysis` used to reach into
+`visualisation/process_wave/plot_extracted_psi4` for eleven private helpers, so
+a merger figure could not be drawn without a module in another package. Those
+helpers and their physical constants now live in `psi4_math.py` **here**, and
+`plot_extracted_psi4` imports them back — a move, not a copy, so there is one
+implementation and the two cannot drift. Verified by importing all sixteen
+modules and grepping every `from grteclyn_wrapper...` line: none leaves
+`visualisation.wormhole_merger`.
+
+**The one exception is `stitch_movies`, and it is deliberate.** Movies are not
+figures: it shells out to `scripts/plot/rerender_frames.py`, which shells out to
+`make_movies.sh`, which needs `ffmpeg`. Vendoring a bash script and a binary
+dependency into a python package would buy nothing — `ffmpeg` is external
+whatever we do — so the chain stays where it is and this line is the warning.
 
 ## The house style
 
-`style.py` holds it; nothing else picks a colour. It follows the campaign's
+`style.py` holds it; nothing else picks a colour. `style.paper()` sets three
+things at once — the journal faces, a receded frame, and the categorical dash
+palette — and a module that brings its own ink wants only the first, so
+`style.typography()` is that first part on its own. Reach for it when an
+ORDERED family is being drawn: six members in the categorical dashes on a log
+axis come out as grey dashes a reader cannot separate. It follows the campaign's
 plotting rules: **line plots are told apart by dash pattern first and colour
 second**, so a figure survives a greyscale printer and a colour-blind reader.
 
