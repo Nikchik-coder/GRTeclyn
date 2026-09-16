@@ -67,7 +67,7 @@ Together the two facts turn the standing objection to wormhole binaries into a s
 
 The observable is not a chirp but a stochastic background from the merger epoch, redshifted to whichever band the mass scale puts it in~\cite{caprini2018,nanograv2023,lisa2017,lvk2021}. The clean deliverable is therefore dimensionless and epoch-independent: the energy radiated per merger and its spectral shape in throat-mass units, which converts any bound on $\Omega_{\rm GW}$---including the nucleosynthesis cap that holds outside every detector band~\cite{pagano2016}---into a bound on the comoving abundance of primordial wormhole mergers. Two caveats travel with the statement: the ghost scalar must exist at that epoch to hold the newborn throats open, and the merger's scalar channel radiates negative energy whose cosmological consequence is genuinely open.
 
-The paper is organised as follows. Sec.~\ref{sec:model} sets out the model: the Einstein--phantom-scalar system, the drainhole, the binary superposition with its sign rule, and the declared seeds. Sec.~\ref{sec:setup} gives the numerical setup and the run matrix. The results then follow the campaign from one throat to two: the lone wormhole---fixed point, unstable mode, branching, and the radiation of a quadrupolar-kicked collapse (Sec.~\ref{sec:single}); two throats at rest and the force between them (Sec.~\ref{sec:pair}); the head-on merger to a black hole (Sec.~\ref{sec:headon}); the spiral merger and its capture boundary (Sec.~\ref{sec:spiral}); the vacuum and numerical controls (Sec.~\ref{sec:controls}). Sec.~\ref{sec:ligo} confronts the rescaled waveforms with the LIGO--Virgo--KAGRA data products---template banks, ringdown, burst searches---and Sec.~\ref{sec:discussion} collects the findings. Every evolution runs on GPUs with \texttt{GRTeclyn}~\cite{grteclyn}, the AMReX-based~\cite{amrex} port of \texttt{GRChombo}~\cite{grchombo}, continuing the campaign of Refs.~\cite{shirokov2026,shirokov2026b}. Throughout, $G=c=1$.
+The paper is organised as follows. Sec.~\ref{sec:model} sets out the model: the Einstein--phantom-scalar system, the drainhole, the binary superposition with its sign rule, and the declared seeds. Sec.~\ref{sec:setup} gives the numerical setup and the run matrix. The results then follow the campaign from one throat to two: the lone wormhole---fixed point, unstable mode, branching and collapse (Sec.~\ref{sec:single}); two throats at rest and the force between them (Sec.~\ref{sec:pair}); the head-on merger to a black hole (Sec.~\ref{sec:headon}); the spiral merger and its capture boundary (Sec.~\ref{sec:spiral}); the gravitational waves of every channel---collapse, head-on, spiral, fly-by---gathered in one chapter with the vacuum twin (Sec.~\ref{sec:gw}); the numerical controls and systematics (Sec.~\ref{sec:controls}). Sec.~\ref{sec:ligo} confronts the rescaled waveforms with the LIGO--Virgo--KAGRA data products---template banks, ringdown, burst searches---and Sec.~\ref{sec:discussion} collects the findings. Every evolution runs on GPUs with \texttt{GRTeclyn}~\cite{grteclyn}, the AMReX-based~\cite{amrex} port of \texttt{GRChombo}~\cite{grchombo}, continuing the campaign of Refs.~\cite{shirokov2026,shirokov2026b}. Throughout, $G=c=1$.
 
 % ======================================================================
 % SKELETON.  Every section below is a placeholder: one comment names its
@@ -225,12 +225,6 @@ shakedown (archived) & gauge, dissipation, tagging & 12 & \ref{sec:setup:scheme}
 % branch; the inflation branch: anti-trapped shells, no horizon.
 % The half-mass throat: lighter is less stable.
 
-\subsection{Gravitational waves from a collapsing throat}
-\label{sec:single:gw}
-% Spherical collapse is silent (l = 2 floor); the quadrupolar seed radiates:
-% ordered arrival across spheres, 1/r amplitude, linearity in eps_2,
-% ringdown vs the horizon mass.  Data: 01_single_throat/seed + queue-2e legs.
-
 \section{Two throats at rest}
 \label{sec:pair}
 
@@ -278,11 +272,6 @@ shakedown (archived) & gauge, dissipation, tagging & 12 & \ref{sec:setup:scheme}
 % trapped with no throat left; down-step and fill arms as evidence the wave
 % is grid- and device-independent.
 
-\subsection{The ringdown wave}
-\label{sec:headon:wave}
-% (2,0) bell: swings, period, decay, outgoing across R = 10/14/18;
-% no chirp.  Figure: headon_downstep_psi4.
-
 \subsection{The half-mass pair}
 \label{sec:headon:halfmass}
 % m = 0.5, d = 6: earlier horizon, earlier death; mass sets the pull.
@@ -304,18 +293,63 @@ shakedown (archived) & gauge, dissipation, tagging & 12 & \ref{sec:setup:scheme}
 % The late-time failure is gauge + resolution, deterministic, saturating
 % with level; the freeze-fill carries the evolution to t = 100.
 
-\subsection{The carried burst}
+\section{Gravitational waves}
+\label{sec:gw}
+% Every run's radiation in ONE chapter: what each channel emits (the gallery),
+% whether it is radiation at all (the wavefront speeds), and what it would put
+% on a detector (the strain figure).  Streams, gates and innermost spheres are
+% the ARMS table of plot_psi4_gallery.py; both figures read the same table.
+
+\begin{figure*}[t]
+\centering
+\includegraphics{08_waves/psi4_gallery.pdf}
+\caption{The waveform gallery: every channel's radiation, one row per scenario, one retarded clock. Left column: $r\,\mathrm{Re}\,\Psi_4$ of the dominant mode at the innermost extraction sphere, each row on its own stated scale---the lone throat radiates an order of magnitude below the mergers, and the fly-by is the loudest channel of all. Half-height caps mark record ends: the collapsing throat's stream is junk-gated at $t=70$, the spiral record ends at $t=60$ with the run still in flight, and the fly-by is gated at $t=70$, where the core's late disturbance reaches the $R=14$ sphere (its close-out runs continue). Right column: the envelope $|r\Psi_4|$ at every extraction sphere on its own retarded time (ink to faint, inner to outer): a signal travelling at $c$ and falling as $1/r$ folds onto one curve. Burgundy dots mark the correlated wavefront, and the quoted $v/c$ is the lag of the whole complex waveform between neighbouring spheres over their common retarded window---peak-to-peak timing fails on flat-topped envelopes (the vacuum twin's merger plateau is ${\sim}15$ units wide at both spheres, and its peak times alone would read $v=0.57c$ where the waveform lag reads $0.82c$). Measured speeds: throat $0.91/0.95/0.98$, head-on $0.96/0.90$, spiral $1.00/1.00/1.00$, fly-by $1.00$, vacuum twin $0.82$. Every channel propagates at $c$ within the output cadence: radiation, not a gauge or constraint mode.}
+\label{fig:gw_gallery}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics{08_waves/psi4_ligo.pdf}
+\caption{Every source on a detector, at one shared calibration: total mass $M=30\,M_\odot$, distance $D=10$ Mpc; strain scales as $M/D$ and frequency as $1/M$. (a)~Strain amplitude spectral densities of the innermost-sphere records over the aLIGO design floor (burgundy). Every channel clears the floor around $100$ Hz: the fly-by peaks at $2.1\times10^{-20}\,\mathrm{Hz}^{-1/2}$ ($96$ Hz); the head-on, spiral and vacuum twin lie within a factor of two of one another ($3.4$--$5.6\times10^{-21}$); the lone collapsing throat sits an order below ($3.9\times10^{-22}$). The faint straight line is the analytic Newtonian inspiral of the same equal-mass binary, $|\tilde h(f)|\propto\mathcal{M}^{5/6}f^{-7/6}$, drawn to its ISCO at $147$ Hz through the same normalisation as the numerical record: the ramp an astrophysical binary rides into the band where the simulated signal begins. (b)~Peak-frequency tracks of the Morlet wavelet transform of each record (the line's width is the signal's own envelope; tracks are drawn only above $0.2$ of each record's peak and outside the cone of influence). The shapes separate the sources: the collapsing throat rings in an arch at $280$--$334$ Hz, the head-on bell slows from $210$ to $170$ Hz, the vacuum twin climbs through merger onto a $227$ Hz ringdown shelf, and the spiral and fly-by (records in flight) enter as rising arcs at $165$--$195$ Hz.}
+\label{fig:gw_ligo}
+\end{figure*}
+
+\subsection{The collapsing throat}
+\label{sec:single:gw}
+% Spherical collapse is silent (l = 2 floor); the quadrupolar seed radiates:
+% ordered arrival across spheres, 1/r amplitude, linearity in eps_2,
+% ringdown vs the horizon mass.  Data: 01_single_throat/seed + queue-2e legs,
+% junk-gated per QUEUE2E_GATES.md (R = 10 cut at t = 70).
+
+\subsection{The head-on ringdown}
+\label{sec:headon:wave}
+% (2,0) bell: swings, period, decay, outgoing across R = 10/14/18;
+% no chirp.  Gallery row (b); v/c = 0.96/0.90.
+
+\subsection{The spiral's carried burst}
 \label{sec:spiral:burst}
-% Peak (2,2)/(2,0) amplitudes, fill-free by causality, propagation 14 -> 30,
-% 1/r scaling; what the horizon scan does and does not find.
+% Peak (2,2)/(2,0) amplitudes, fill-free by causality; envelopes fold onto
+% one curve at v/c = 1.00/1.00/1.00 across R = 20--44; record ends t = 60
+% still rising (freeze arm in flight); what the horizon scan does and does
+% not find.
+
+\subsection{The fly-by burst}
+\label{sec:gw:flyby}
+% p = 0.45 scattering: a single (2,2) arch, no ringdown, v/c = 1.00 across
+% R = 14 -> 30; R = 14 contaminated from t ~ 75 when the core's late
+% disturbance arrives, so the record is gated at t = 70.  The p = 0.35 arm
+% and the t = 200 close-outs are in flight; this subsection and both
+% figures take their final rows at close-out.
+
+\subsection{The vacuum twin}
+\label{sec:controls:bbh}
+% Same d, p, masses in vacuum: merger, Kerr-consistent ringdown; the
+% wormhole binary is louder in (2,2) and (2,0).  The twin also calibrates
+% the wavefront method: its merger-envelope plateau defeats peak timing
+% (0.57c) where the waveform lag reads 0.82c.
 
 \section{Controls and systematics}
 \label{sec:controls}
-
-\subsection{The vacuum binary black hole}
-\label{sec:controls:bbh}
-% Same d, p, masses in vacuum: merger, Kerr-consistent ringdown; the
-% wormhole binary is louder in (2,2) and (2,0).  Figure: bbh_vs_wormhole.
 
 \subsection{Numerical systematics}
 \label{sec:controls:systematics}
