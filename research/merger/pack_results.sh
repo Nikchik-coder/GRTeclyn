@@ -5,7 +5,7 @@
 # WHAT IS COPIED
 # Per-run time series (the four evolution streams, downsampled), the psi4
 # streams whole, the evolution parameters, the launcher banner, the tail of the
-# evolution log with the abort in it, the movies, and a thinned set of stills
+# evolution log with the abort in it, and a thinned set of stills
 # for the runs whose pictures carry a result.  Everything a reader needs to
 # redraw a figure or re-read a number without the run tree.
 #
@@ -75,7 +75,7 @@ mkdir -p "${DEST}/campaign" "${DEST}/campaign/05_binary_spiral/horizon"
 # Stills are packed only where the pictures carry a result, and at a cadence
 # matched to how long the run is: the whole point of a still here is to show the
 # merger, the burst and the dissolution, not to re-store the movie frame by
-# frame.  "<run>:<dt>" -- any run not named gets movies but no stills.
+# frame.  "<run>:<dt>" -- any run not named gets no stills.
 STILLS="merge_orbit_flip_d12_r03000:5 merge_orbit_flip_d12_rw_r05000:1 merge_orbit_flip_d12_p045:10 merge_headon_flip_d12:5 merge_orbit_flip_d12_n160:10"
 STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 
@@ -173,11 +173,12 @@ PY
     tail -n 200 "${rundir}run.log" > "${out}/run_tail.log"
   fi
 
-  # Movies: ~1-3 MB per run for the whole set, so no curation is needed.
-  if compgen -G "${rundir}movies/*.mp4" > /dev/null; then
-    mkdir -p "${out}/movies"
-    cp "${rundir}"movies/*.mp4 "${out}/movies/"
-  fi
+  # Movies are NOT packed per run any more (2026-09-16).  Two hundred files
+  # across thirty-two runs was most of this pack's file count for a handful of
+  # sets anybody actually watches, so the ones worth keeping were curated into
+  # results/merger/movies/<group>/<run>/ and the per-run copies deleted.  A
+  # repack must not put them back: add the movie to that folder instead, and
+  # say in its README what it shows.
 
   # Stills, where the pictures carry a result.
   for spec in ${STILLS}; do
