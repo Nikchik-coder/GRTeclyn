@@ -84,25 +84,44 @@ def _burst_psd(
 def _psd_psi4_to_strain(
     freqs: np.ndarray,
     psd_psi4: np.ndarray,
-    f_low_frac: float = 0.05,
+    f_low: float | None = None,
+    cycles_per_record: float = 1.0,
 ) -> np.ndarray:
     """Convert Psi4 PSD to strain PSD: S_h(f) = S_{Psi4}(f) / (2*pi*f)^4.
 
-    A 4th-order Butterworth-style high-pass roll-off is applied below
-    ``f_low = f_low_frac * f_max`` to suppress the unphysical divergence
+    A high-pass roll-off below ``f_low`` suppresses the unphysical divergence
     from dividing numerical noise by f^4 as f -> 0.
+
+    THE CORNER IS SET BY THE RECORD, NOT BY THE SAMPLING RATE.  Until
+    2026-09-16 it was ``0.05 * freqs.max()``, i.e. 5 % of the NYQUIST -- which
+    is a property of how often the waveform was written out, not of the
+    physics.  Sampling the same signal more finely moved the corner up and
+    silently deleted the signal: measured on the p = 0.12 spiral, the in-code
+    stream (dt = 0.01, Nyquist 50) put the corner at f = 2.5 while the burst
+    sits at f = 0.033, so the 8th-order roll-off suppressed the peak by
+    (2.5/0.033)^8 ~ 8e14 and the strain came out 1e-29 instead of 1e-22.  The
+    same physics read from a dt = 0.5 stream (Nyquist 1.0) was barely touched.
+    Two arms of one campaign were being compared through different filters.
+
+    The defensible corner is the lowest frequency the RECORD resolves: one
+    cycle per record, ``df = 1/T``, which is the frequency spacing of the
+    transform.  Below that the spectrum is not measured, it is extrapolated,
+    and that is exactly the divergence this guard exists to remove.  Pass
+    ``f_low`` to override.
     """
     strain_psd = np.zeros_like(psd_psi4)
     nz = freqs > 0
-    f_max = freqs[nz].max() if np.any(nz) else 1.0
-    f_low = f_low_frac * f_max
+    if not np.any(nz):
+        return strain_psd
+
+    if f_low is None:
+        pos = freqs[nz]
+        df = float(np.min(np.diff(np.sort(pos)))) if pos.size > 1 else float(pos[0])
+        f_low = cycles_per_record * df
 
     omega4 = (2.0 * np.pi * freqs[nz]) ** 4
     strain_psd[nz] = psd_psi4[nz] / omega4
-
-    hp = 1.0 / (1.0 + (f_low / freqs[nz]) ** 8)
-    strain_psd[nz] *= hp
-
+    strain_psd[nz] *= 1.0 / (1.0 + (f_low / freqs[nz]) ** 8)
     return strain_psd
 
 
