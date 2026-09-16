@@ -33,12 +33,26 @@ WHAT IT HAS TO GET RIGHT
     quotable number is a DELAY instead -- how much later the tenfold smaller kick
     reaches the same state -- which the console prints from the pair
     difference R(-eps) - R(+eps), where any offset common to both arms cancels.
+  * A collapse arm does not end where its dot says: the dot is the SCAN losing
+    the throat (its minimum walks inside the inner cutoff), not the run dying.
+    The +0.01 run lives to t = 100 as a black hole whose radius has stalled
+    (horizon R 3.88 -> 2.34 -> 2.57, printed to the console), so from the dot
+    a flat MUTED line carries the last read value to the run's end -- stalled,
+    still alive.  The inflating arms' throats kept GROWING past their scan
+    loss, so a flat line there would lie and they get none; drawing the
+    horizon itself as a curve was tried twice (2026-09-16) and rejected as
+    clutter.
 
-The figure carries no prose: no caption, no worded axis labels, no worded panel
-titles.  Identity is carried by the line itself -- the dash pattern is the SIGN
-of the kick, the weight is its SIZE -- and every arm is named at its own end.
-The numbers that used to sit in the caption (growth rates, how far each arm has
-run, where the scan clips) are printed to the console instead.
+STYLE (2026-09-16, "PRD review style"): a single-column REVTeX figure -- full
+box frame, inward ticks on all four sides with minors, no grid, and NO boxed
+key: a five-row legend made the measuring `legend()` grow a dead band above
+the curves, so each arm is named in place along its own curve and the axis
+hugs the data (user, 2026-09-16).  NO colour: the
+user's call, twice (2026-09-10 "no coloring", 2026-09-16 again when a signed
+palette was tried) -- identity is the dash (solid in, dashed out) and the
+weight (the size).  The numbers that used to sit in the caption (growth rates,
+how far each arm has run, where the scan clips) are printed to the console
+instead.
 """
 
 from __future__ import annotations
@@ -55,7 +69,7 @@ import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import RUNS_ROOT, find_run  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.style import (  # noqa: E402
-    FAINT, INK, MUTED, paper, save,
+    BURGUNDY, FAINT, INK, MUTED, prd, save,
 )
 
 R_EXACT = 3.8895      # closed form for the drainhole a = 2, m = 1
@@ -103,6 +117,28 @@ def clipped_from(r_at_min: np.ndarray, runs: int = 3) -> int | None:
     # whose minimum sits on one grid point for the whole run reads as clipped
     # from t = 0, which would grey out a perfectly good curve.
     return i if i > 0 and r_at_min[:i].max() > floor * 1.05 else None
+
+
+def mots(run_dir: pathlib.Path) -> np.ndarray | None:
+    """(t, R_mots) of the outermost MOTS per output time, from the horizon
+    scan.  The scan probes several centres (A/B/C); per time the largest
+    horizon among the centres that found one is kept.  None when the run never
+    held a horizon -- the inflating arms."""
+    for rel in ("small_data/horizon_scan.dat", "horizon_scan.dat"):
+        f = run_dir / rel
+        if not f.is_file():
+            continue
+        # usecols skips the non-numeric centre column: time, n_mots, R_mots.
+        a = np.genfromtxt(f, usecols=(0, 9, 11), ndmin=2)
+        a = a[np.isfinite(a).all(axis=1) & (a[:, 1] > 0)] if a.size else a
+        if a.shape[0] == 0:
+            return None
+        out: dict[float, float] = {}
+        for t, _, R in a:
+            out[t] = max(out.get(t, -np.inf), R)
+        tt = np.array(sorted(out))
+        return np.column_stack([tt, [out[t] for t in tt]])
+    return None
 
 
 def died(run_dir: pathlib.Path) -> bool:
@@ -157,6 +193,15 @@ def main(argv: list[str] | None = None) -> int:
         if a is None or a.shape[0] < 3:
             print(f"  {name}: nothing to plot yet, skipped"); continue
         m = dict(name=name, label=label, t=a[:, 0], R=a[:, 1], r_at=a[:, 2], dead=died(d))
+        m["hz"] = mots(d)
+        if m["hz"] is not None:
+            # The scan's late-time false positives on the inflating arms sit at
+            # R ~ 33 -- a crossing out at the sponge, not a horizon (the
+            # registry: no horizon at any time on those arms).  A collapse
+            # horizon is born AT the throat's own size and shrinks, so any
+            # reading far above R_star is rejected, not drawn.
+            hz = m["hz"][m["hz"][:, 1] <= 1.2 * args.exact]
+            m["hz"] = hz if hz.shape[0] else None
         m["clip"] = clipped_from(m["r_at"])
         m["dev"] = m["R"] - args.exact
         m["cross"] = zero_crossing(m["t"], m["dev"])
@@ -172,20 +217,31 @@ def main(argv: list[str] | None = None) -> int:
         note = "   (NaN)" if m["dead"] else ""
         if m["clip"] is not None:
             note += f"   scan clipped from t = {m['t'][m['clip']]:.0f}"
+        if m["hz"] is not None:
+            note += (f"   horizon t = {m['hz'][0, 0]:.0f} .. {m['hz'][-1, 0]:.0f}"
+                     f" (R {m['hz'][0, 1]:.2f} -> {m['hz'][-1, 1]:.2f})")
         print(f"  {label:>7s}  {name:<24s} t = 0 .. {a[-1, 0]:6.2f}{note}")
 
     if not arms:
         raise SystemExit("no arm has data yet")
 
-    paper(base=10.0)
+    prd(base=10.0)
 
     # The axis ends where the last MEASUREMENT ends, not where the last run ends:
     # a curve is cut at its scan clip (see the throat panel), so time after the
     # latest clip would be empty frame.
     def valid_end(m):
         return m["clip"] - 1 if m["clip"] is not None else m["t"].size - 1
+    def stalled(m) -> bool:
+        """The one continuation that is true: a collapse arm (below R_star at
+        its dot) whose run outlived its scan with the radius stalled."""
+        e = valid_end(m)
+        return (m["clip"] is not None and not m["dead"]
+                and m["R"][e] < args.exact and m["t"][-1] > m["t"][e])
+
     t_end = max(m["t"][valid_end(m)] for m in arms)
-    xhi = t_end * 1.10
+    t_end = max([t_end] + [m["t"][-1] for m in arms if stalled(m)])
+    xhi = t_end * 1.05
     crossings = [m["cross"] for m in arms if m["cross"] is not None]
     t_cross = float(np.mean(crossings)) if crossings else None
 
@@ -252,60 +308,29 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  level 3's own truncation seed, for comparison: {SEED_RATE:.4f}")
 
     # ---- the canvas ---------------------------------------------------------
-    # No caption band any more: the strip under the axes holds only the tick
-    # labels and the x symbol.  XLAB_H is that strip, measured, not guessed.
-    # One panel.  Every arm is named in the right margin, so the right edge is
-    # reserved and nothing is written on top of the curves.
-    AX_H, XLAB_H = 3.0, 0.60                                 # inches
-    H = AX_H + XLAB_H
-    fig, axA = plt.subplots(1, 1, figsize=(5.9, H))
-    fig.subplots_adjust(left=0.115, right=0.795,
-                        top=1 - 0.22 / H, bottom=XLAB_H / H)
+    # PRD single-column (style.prd: full box frame, inward ticks with minors,
+    # no grid).  No boxed key, so nothing reserves space and the axis hugs
+    # the data; the arm names are written along the curves further down.
+    fig, axA = plt.subplots(1, 1, figsize=(3.4, 2.6))
+    fig.subplots_adjust(left=0.125, right=0.965, top=0.965, bottom=0.165)
 
     def style_of(label: str) -> dict:
-        """Identity without colour -- the user's call for THIS figure
-        (2026-09-10: "no coloring"), which overrides the campaign palette.  The
-        dash pattern is the SIGN of the kick and the weight is its SIZE, so the
-        two members of a pair read as a pair and the two amplitudes stay apart.
+        """Identity without colour -- the user's call for THIS figure (2026-09-10
+        "no coloring", reaffirmed 2026-09-16), overriding the campaign palette.
+        The dash pattern is the SIGN of the kick and the weight is its SIZE, so
+        the two members of a pair read as a pair and the amplitudes stay apart.
         """
         return dict(color=INK,
                     linewidth=1.0 if abs(float(label)) < 5e-3 else 1.6,
                     linestyle=(0, (4, 2.5)) if label.startswith("+") else (0, ()))
 
     def tag(m: dict) -> str:
-        return rf"$\varepsilon={m['label']}$" + (r"  (NaN)" if m["dead"] else "")
-
-    def place_labels(ax, items, gap=11.0):
-        """The arms are named in the right margin, not at their own ends.
-
-        They do not all stop at the same time -- the small-kick pair is younger --
-        so a label parked at a curve's end would sit mid-axes on top of another
-        curve.  Each is parked at the right edge with a hairline leader back to
-        its curve, and pushed clear of its neighbour when two curves finish at
-        nearly the same height (the +-0.001 pair does, in panel (a): its whole
-        excursion is thinner than the line).
-        """
-        x0, x1 = ax.get_xlim()
-        disp = [ax.transData.transform((x1, item[1]))[1] for item in items]
-        at, prev = {}, None
-        for i in sorted(range(len(items)), key=lambda j: disp[j]):
-            prev = disp[i] if prev is None else max(disp[i], prev + gap)
-            at[i] = prev
-        inv = ax.transData.inverted()
-        for i, (xe, ye, text, colour) in enumerate(items):
-            yd = float(inv.transform((0.0, at[i]))[1])
-            if xe < x1 - 0.01 * (x1 - x0):
-                ax.plot([xe, x1], [ye, yd], color=FAINT, linewidth=0.6,
-                        linestyle=(0, (1, 2)), zorder=2, clip_on=False)
-            ax.annotate(text, (x1, yd), textcoords="offset points", xytext=(6, 0),
-                        color=colour, va="center", ha="left", fontsize=9.5,
-                        annotation_clip=False)
+        return rf"$\varepsilon={m['label']}$" + (r" (NaN)" if m["dead"] else "")
 
     # ---- the throat ------------------------------------------------------
     if t_cross is not None:
         axA.axvline(t_cross, color=FAINT, linewidth=0.7, linestyle=(0, (2, 3)), zorder=1)
     axA.axhline(args.exact, color=MUTED, linewidth=0.8, linestyle=(0, (1, 2.5)), zorder=2)
-    labA = [(xhi, args.exact, r"$R_\star$", MUTED)]
     for m in arms:
         st, e = style_of(m["label"]), valid_end(m)
         # A curve ends at its last MEASUREMENT of the throat.  Past a scan clip
@@ -316,14 +341,96 @@ def main(argv: list[str] | None = None) -> int:
         # throat, a cross one that stops because the run died.
         axA.plot(m["t"][:e + 1], m["R"][:e + 1], zorder=3, **st)
         dead_here = m["dead"] and m["clip"] is None
+        # The stalled continuation: from the dot, flat and muted to the run's
+        # end -- the radius has settled and the run is still alive (the
+        # horizon numbers behind that statement are printed to the console).
+        if stalled(m):
+            axA.plot([m["t"][e], m["t"][-1]], [m["R"][e]] * 2, color=MUTED,
+                     linewidth=0.9, linestyle=st["linestyle"], zorder=2.5)
         axA.plot(m["t"][e], m["R"][e], "X" if dead_here else "o", color=st["color"],
-                 markersize=6 if dead_here else 3.5, markeredgecolor="white",
-                 markeredgewidth=1.0, zorder=4)
-        labA.append((m["t"][e], m["R"][e], tag(m), st["color"]))
+                 markersize=5 if dead_here else 3, markeredgecolor="white",
+                 markeredgewidth=0.8, zorder=4)
+    # ---- the exponential fit (asked for 2026-09-16) -----------------------
+    # Least squares on ln|R - R_star| over each +-0.01 arm's own window:
+    # inflation t = 18-34, collapse t = 16-26 (before its scan clip).  The
+    # windows are stated because the rate is NOT flat -- the kick's decaying
+    # transient runs through them -- so these are LOCAL e-folds, steeper than
+    # the unkicked mode's tau = 5.88, and the caption says so.
+    fit_top = None
+    for lab, (f0, f1) in (("-0.01", (18.0, 31.0)), ("+0.01", (16.0, 26.0))):
+        arm = next((m for m in arms if m["label"] == lab), None)
+        if arm is None:
+            continue
+        e = valid_end(arm)
+        tt, RR = arm["t"][:e + 1], arm["R"][:e + 1]
+        sel = (tt >= f0) & (tt <= f1) & (np.abs(RR - args.exact) > 0)
+        if sel.sum() < 4:
+            continue
+        lam, lnA = np.polyfit(tt[sel], np.log(np.abs(RR[sel] - args.exact)), 1)
+        sgn = np.sign(RR[sel][-1] - args.exact)
+        tg = np.linspace(f0, f1, 50)
+        axA.plot(tg, args.exact + sgn * np.exp(lnA + lam * tg),
+                 color=BURGUNDY, linewidth=1.0, zorder=5)
+        if sgn > 0:
+            fit_top = (f1, args.exact + np.exp(lnA + lam * f1))
+        print(f"  exp fit {lab:>6s} over t = {f0:.0f}-{f1:.0f}:"
+              f" rate {lam:.3f}, tau {1 / lam:.2f}")
+    # One burgundy name serves both burgundy lines, in equation form -- the
+    # user's call (2026-09-16): "exp. fit" out, the law itself in.  Up-left of
+    # the inflation fit's end, where the heavy arm has not yet risen.
+    if fit_top is not None:
+        axA.text(fit_top[0] - 1.0, fit_top[1] + 0.15, r"$\propto e^{t/\tau}$",
+                 color=BURGUNDY, fontsize=8, ha="right", va="bottom")
     axA.set_xlim(0, xhi)
     axA.set_xlabel(r"$t$")
     axA.set_ylabel(r"$R_{\mathrm{min}}$")
-    place_labels(axA, labA)
+    # ---- names written along the curves, no boxed key ----------------------
+    # A five-row key forced the measuring legend to grow the axis until a dead
+    # band sat above every curve; a two-column key still needed a third of the
+    # frame.  So the box went (user, 2026-09-16) and each arm is named in
+    # place: inflating arms along their rise (the heavy one up-left, the light
+    # one down-right, each on its own empty side), the stalled arm above its
+    # flat line, the dead arm at its cross.  Anchors are read off the data, so
+    # the names travel with the curves.
+    def t_at(m, level: float) -> float | None:
+        """First time an arm's curve reaches ``level``, by linear interpolation."""
+        e = valid_end(m)
+        tt, RR = m["t"][:e + 1], m["R"][:e + 1]
+        i = int(np.argmax(RR >= level))
+        if i == 0:
+            return None
+        return float(tt[i - 1] + (level - RR[i - 1]) * (tt[i] - tt[i - 1])
+                     / (RR[i] - RR[i - 1]))
+
+    for m in arms:
+        st, e = style_of(m["label"]), valid_end(m)
+        heavy = st["linewidth"] > 1.2
+        if m["R"][e] > args.exact:      # inflating: name it along the rise
+            level = args.exact + (0.55 if heavy else 0.42) * (m["R"][e] - args.exact)
+            ta = t_at(m, level)
+            if ta is None:
+                axA.text(m["t"][e] + 0.015 * xhi, m["R"][e], tag(m),
+                         fontsize=8, ha="left", va="center")
+            elif heavy:
+                axA.text(ta - 1.2, level + 0.08, tag(m),
+                         fontsize=8, ha="right", va="bottom")
+            else:
+                axA.text(ta + 1.2, level - 0.08, tag(m),
+                         fontsize=8, ha="left", va="top")
+        elif stalled(m):                # collapsed, alive: above the flat line,
+            # right-aligned at the run's end so it clears the dead arm's name
+            axA.text(m["t"][-1] - 0.02 * xhi, m["R"][e] + 0.10, tag(m),
+                     fontsize=8, ha="right", va="bottom")
+        else:                           # collapsed, dead: right of the cross
+            axA.text(m["t"][e] + 0.02 * xhi, m["R"][e], tag(m),
+                     fontsize=8, ha="left", va="center")
+    # The two rulers named in place, small and muted, clear of every curve.
+    axA.text(0.985 * xhi, args.exact, r"$R_\star$", color=MUTED, fontsize=8,
+             ha="right", va="bottom")
+    if t_cross is not None:
+        ylo, yhi_ = axA.get_ylim()
+        axA.text(t_cross + 0.012 * xhi, ylo + 0.035 * (yhi_ - ylo),
+                 r"$t_\times$", color=MUTED, fontsize=8, ha="left", va="bottom")
 
 
     out = pathlib.Path(args.out) if args.out else (

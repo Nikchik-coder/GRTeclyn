@@ -279,58 +279,81 @@ def main(argv: list[str]) -> int:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    style.paper(base=10.0)
-    fig, (axA, axB) = plt.subplots(1, 2, figsize=(9.0, 4.0), constrained_layout=True)
+    # PRD style (2026-09-16), the grammar of the seed-branches figure: NO
+    # colour (dashed = collapse, solid = inflation, muted grey = the arm that
+    # dies before branching), a dot where the scan loses the throat, an X
+    # where a run dies, a muted flat line for a run that is alive with its
+    # radius stalled, keys inside on opaque patches, panel tags not titles.
+    style.prd(base=10.0)
+    fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.05, 2.7),
+                                   constrained_layout=True)
+    KW = {
+        "ml2": dict(color=style.MUTED, linewidth=1.0, linestyle=(0, ())),
+        "ml3": dict(color=style.INK, linewidth=1.4, linestyle=(0, (4, 2.5))),
+        "ml4": dict(color=style.INK, linewidth=1.4, linestyle=(0, ())),
+    }
 
-    # No legend on this panel: every curve is named at its own right-hand end,
-    # and a key repeating those three names could only sit on top of them.
-    axA.axhline(R_EXACT, color=style.FAINT, linewidth=0.8, linestyle=(0, (2, 2)))
-    axA.text(112, R_EXACT + 0.13, "exact static throat", color=style.MUTED,
-             fontsize=8.5, ha="right")
-    for k, lab in (("ml2", "level 2"), ("ml3", "level 3"), ("ml4", "level 4")):
+    def endmark(ax, x, y, dead, colour):
+        ax.plot(x, y, "X" if dead else "o", color=colour,
+                markersize=5 if dead else 3, markeredgecolor="white",
+                markeredgewidth=0.8, zorder=4)
+
+    axA.axhline(R_EXACT, color=style.MUTED, linewidth=0.8,
+                linestyle=(0, (1, 2.5)), zorder=2)
+    hA, lA = [], []
+    for k, lab, dead in (("ml3", "level 3", False), ("ml4", "level 4", False),
+                         ("ml2", "level 2 (NaN)", True)):
         tt, RR = ar[k][:, 0], ar[k][:, 1]
+        ok = tt <= 65 if k == "ml3" else np.ones(tt.size, bool)
+        (ln,) = axA.plot(tt[ok], RR[ok], zorder=3, **KW[k])
+        hA.append(ln)
+        lA.append(lab)
         if k == "ml3":
-            ok = tt <= 65
-            axA.plot(tt[ok], RR[ok], **_KW[k])
-            # Past the cutoff the scan is no longer measuring the throat, so
-            # the curve is drawn pale and said so BELOW itself -- the note used
-            # to sit in the gap between this tail and its own end label.
-            axA.plot(tt[~ok], RR[~ok], alpha=0.3, **_KW[k])
-            axA.text(80, 1.45, "scan clipped at its inner cutoff ($t>65$)",
-                     color=style.MUTED, fontsize=8, ha="center")
-        else:
-            axA.plot(tt, RR, **_KW[k])
-        axA.text(tt[-1] + 1.5, RR[-1] + (0.22 if k == "ml2" else 0.0), lab,
-                 color=COLOUR[k], fontsize=9,
-                 va="center" if k != "ml2" else "bottom")
-    axA.set_xlim(0, 118)
-    axA.set_ylim(1.2, None)
+            # Alive to t = 100 behind a trapped surface with the last throat
+            # reading stalled: the seed figure's muted continuation.
+            axA.plot([tt[ok][-1], tt[-1]], [RR[ok][-1]] * 2, color=style.MUTED,
+                     linewidth=0.9, linestyle=KW[k]["linestyle"], zorder=2.5)
+            endmark(axA, tt[ok][-1], RR[ok][-1], False, KW[k]["color"])
+        elif dead:
+            endmark(axA, tt[-1], RR[-1], True, KW[k]["color"])
+    axA.set_xlim(0, 104)
     axA.set_xlabel(r"$t$")
     axA.set_ylabel(r"$R_{\mathrm{min}}$")
-    axA.set_title("(a) the throat: collapse at level 3, inflation at level 4", loc="left")
+    legA = style.legend(axA, hA, lA, loc="lower left", pad=0.03, fontsize=8,
+                        handlelength=2.5, labelspacing=0.3, borderaxespad=0.4,
+                        frameon=True, framealpha=1.0)
+    legA.get_frame().set(facecolor=style.GROUND, edgecolor="none")
+    axA.text(0.985 * 104, R_EXACT, r"$R_\star$", color=style.MUTED,
+             fontsize=8, ha="right", va="bottom")
+    axA.text(0.03, 0.955, "(a)", transform=axA.transAxes, ha="left", va="top",
+             fontsize=9, color=style.INK)
 
-    # The rate goes in the key, not on the curve.  Written beside the line it
-    # measures it landed on both of them, and there is no free page inside this
-    # panel wide enough for two of them.
-    for k, p_, lab in (("ml3", p3, "level 3"), ("ml4", p4, "level 4")):
+    # The rate goes in the key, not on the curve.
+    for k, p_, lab in (("ml3", p3, "level 3, shrinking"),
+                       ("ml4", p4, "level 4, growing")):
         tt = ar[k][:, 0]
         dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
         ok = (np.abs(dd) > 0) & (tt <= (65 if k == "ml3" else 100))
         axB.plot(tt[ok], np.log10(np.abs(dd[ok])),
-                 label=rf"{lab}, {'shrinking' if dd[ok][-1] < 0 else 'growing'}"
-                       rf"  ($\tau={1/p_[0]:.2f}$)", **_KW[k])
+                 label=rf"{lab}  ($\tau={1/p_[0]:.2f}$)", **KW[k])
     for k, p_, t0, t1 in (("ml3", p3, 49, 61), ("ml4", p4, 49, 61)):
         dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
         y0 = np.log10(abs(dd[int(np.argmin(np.abs(ar[k][:, 0] - t0)))]))
+        # BURGUNDY, not muted: laid over ink curves the muted fit vanished
+        # entirely (2026-09-16) -- the one colour on the figure is the fit.
         axB.plot([t0, t1], [y0, y0 + p_[0] * (t1 - t0) / np.log(10)],
-                 label="fitted rate" if k == "ml3" else None,
-                 **style.series(2, lw=1.1))
+                 color=style.BURGUNDY, linewidth=1.0, linestyle=(0, ()),
+                 label="fitted rate" if k == "ml3" else None, zorder=5)
     axB.set_xlim(20, 105)
     axB.set_ylim(-4.5, 0.5)
     axB.set_xlabel(r"$t$")
     axB.set_ylabel(r"$\log_{10}\,|R-R_0|/R_0$")
-    axB.set_title("(b) same rate to 9 %, opposite sign", loc="left")
-    style.legend(axB)
+    legB = style.legend(axB, loc="lower right", pad=0.03, fontsize=8,
+                        handlelength=2.5, labelspacing=0.3, borderaxespad=0.4,
+                        frameon=True, framealpha=1.0)
+    legB.get_frame().set(facecolor=style.GROUND, edgecolor="none")
+    axB.text(0.03, 0.955, "(b)", transform=axB.transAxes, ha="left", va="top",
+             fontsize=9, color=style.INK)
 
     style.save(fig, figure_dir(root, "01_single_throat") / "single_throat_branches.png")
     print("[branches] wrote campaign/01_single_throat/BRANCHES.md and figures/01_single_throat/single_throat_branches.png")

@@ -72,7 +72,7 @@ __all__ = [
     "BURGUNDY", "CONTEXT", "DEEP_BLUE", "DIVERGING", "FAINT", "GRID", "GROUND",
     "INK", "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
     "callout", "family", "legend", "note", "ordinal", "ordinal_series",
-    "paper", "save", "series", "typography",
+    "paper", "prd", "save", "series", "typography",
 ]
 
 # Ink, not black: pure black on white is harsher than print and reads as heavier
@@ -170,6 +170,26 @@ def paper(base: float = 10.0) -> None:
         "lines.dash_capstyle": "round",
         "axes.axisbelow": True,
         "image.cmap": SEQUENTIAL,
+    })
+
+
+def prd(base: float = 10.0) -> None:
+    """``paper`` plus the REVTeX frame the user asked for on the seed-branches
+    figure (2026-09-16, "PRD review style"), adopted for every article figure:
+    full box, inward major+minor ticks on all four sides, ink ticks, no grid.
+    Keys go INSIDE the axes, on an opaque patch, placed by ``legend``."""
+    paper(base)
+    matplotlib.rcParams.update({
+        "axes.spines.top": True, "axes.spines.right": True,
+        "axes.edgecolor": INK, "axes.linewidth": 0.8,
+        "axes.grid": False,
+        "xtick.direction": "in", "ytick.direction": "in",
+        "xtick.top": True, "ytick.right": True,
+        "xtick.color": INK, "ytick.color": INK,
+        "xtick.labelcolor": INK, "ytick.labelcolor": INK,
+        "xtick.minor.visible": True, "ytick.minor.visible": True,
+        "xtick.major.size": 3.4, "ytick.major.size": 3.4,
+        "xtick.minor.size": 1.9, "ytick.minor.size": 1.9,
     })
 
 
