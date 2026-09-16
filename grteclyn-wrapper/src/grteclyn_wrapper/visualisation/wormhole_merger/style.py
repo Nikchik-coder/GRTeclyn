@@ -72,7 +72,7 @@ __all__ = [
     "BURGUNDY", "CONTEXT", "DEEP_BLUE", "DIVERGING", "FAINT", "GRID", "GROUND",
     "INK", "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
     "callout", "family", "legend", "note", "ordinal", "ordinal_series",
-    "paper", "save", "series",
+    "paper", "save", "series", "typography",
 ]
 
 # Ink, not black: pure black on white is harsher than print and reads as heavier
@@ -170,6 +170,38 @@ def paper(base: float = 10.0) -> None:
         "lines.dash_capstyle": "round",
         "axes.axisbelow": True,
         "image.cmap": SEQUENTIAL,
+    })
+
+
+def typography(base: float = 10.0) -> None:
+    """The journal faces of ``paper`` WITHOUT its frame and palette.
+
+    ``paper`` does three things at once: it sets the STIX faces, it recedes the
+    frame to near-invisible, and it hands out the categorical dash palette.  The
+    first is wanted everywhere; the other two are not.  A six-member ORDERED
+    family on a log axis drawn in the categorical dashes comes out as grey
+    dashes a reader cannot separate, and the receded frame washes out a figure
+    whose subject is a single bright curve.  So a module that brings its own
+    ink calls this and keeps the typography only.
+    """
+    matplotlib.rcParams.update({
+        "font.family": "serif",
+        "font.serif": ["STIXGeneral", "DejaVu Serif"],
+        "mathtext.fontset": "stix",
+        "font.size": base,
+        "axes.titlesize": base * 1.05,
+        "axes.labelsize": base * 1.05,
+        "xtick.labelsize": base * 0.9,
+        "ytick.labelsize": base * 0.9,
+        "legend.fontsize": base * 0.9,
+        "figure.facecolor": GROUND,
+        "axes.facecolor": GROUND,
+        "savefig.facecolor": GROUND,
+        "axes.spines.top": False,
+        "axes.spines.right": False,
+        "axes.axisbelow": True,
+        "legend.frameon": False,
+        "lines.solid_capstyle": "round",
     })
 
 

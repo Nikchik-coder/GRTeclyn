@@ -30,6 +30,22 @@ The waveform
 The spacetime
   ``plot_merger_constraints``  Hamiltonian and momentum norms, stitched across
                             a restart chain.
+  ``plot_series_constraints``  the same norms for ONE arm run in legs at
+                            different resolutions: every step under a running
+                            median (a level-3 leg is punctuated by regrid
+                            spikes a median would hide), plus the window both
+                            legs cover, so "does refinement move the global
+                            constraints?" is read off directly.
+  ``plot_collapse_diagnostics``  the campaign's collapse diagnostics as ONE
+                            lettered grid in the house look, with the panel list
+                            built from what the run actually wrote -- the
+                            general plotter's fixed twelve-panel layout leaves
+                            six blank here, because BinaryWormholeMerger writes
+                            no horizon or areal-radius columns, and a blank
+                            panel reads as a null result when it is a missing
+                            column.  Carries the two constraint norms and the
+                            panel that settles whether the core and the
+                            constraints grow together.  They do not.
   ``plot_separation``       one binary arm's separation and throat monitors:
                             does it merge, or fly by?
   ``plot_placement_curve``  what two throats read simply by being near each
@@ -55,12 +71,14 @@ __all__ = [
     "plot_bbh_ringdown",
     "plot_bbh_vs_wormhole_psi4",
     "plot_branches",
+    "plot_collapse_diagnostics",
     "plot_ladder_psi4",
     "plot_merger_constraints",
     "plot_placement_curve",
     "plot_psi4_analysis",
     "plot_psi4_modes",
     "plot_seed_branches",
+    "plot_series_constraints",
     "plot_separation",
     "run_tree",
     "stitch_movies",
