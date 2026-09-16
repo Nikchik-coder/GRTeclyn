@@ -129,6 +129,13 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--distance-mpc", type=float, default=10.0)
     ap.add_argument("--psd-smooth-window", type=int, default=21)
     ap.add_argument("--psd-smooth-polyorder", type=int, default=5)
+    ap.add_argument("--strain-radius", type=float, default=None,
+                    help="extraction sphere panel (f) draws.  Default: the OUTERMOST, "
+                         "which is the right choice on principle -- it is the furthest "
+                         "from the source and so the least near-zone.  Name an inner "
+                         "sphere when the outer one is too quiet to read: on arms whose "
+                         "record is short the burst has barely reached it, and the "
+                         "spectrum there is mostly the high-pass cut.")
     ap.add_argument("--no-qnm", action="store_true")
     ap.add_argument("--m", type=int, default=None,
                     help="azimuthal mode to take out of a combined l = 2 stream")
@@ -295,6 +302,8 @@ def main(argv: list[str] | None = None) -> int:
     # ---- (f) what an instrument would see -------------------------------
     ax = axes[2, 1]
     R_strain = radii[-1]
+    if args.strain_radius is not None:
+        R_strain = min(radii, key=lambda r: abs(r - args.strain_radius))
     f_code, p_code = spectra[R_strain]
     strain_code = _psd_psi4_to_strain(
         f_code, _smooth_psd(p_code, args.psd_smooth_window, args.psd_smooth_polyorder))
