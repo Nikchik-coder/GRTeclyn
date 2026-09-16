@@ -80,7 +80,12 @@ GROUP = "08_waves"   # cross-cutting: the figure belongs to no single group
 #           up when the core disturbance reaches it -- |rPsi4| crosses 0.1
 #           at t = 75.5 and sits 3 orders over the burst by t = 90, while
 #           R=30 stays clean throughout -- so the row is gated at t = 70;
-#   spiral  record ends t = 60.4 with the freeze arm still running.
+#   spiral  the freeze arm finished t = 100 on 2026-09-16, so the SERIES now
+#           runs t = 0-100 in three legs and the row is NOT capped.  Its
+#           note records what the extra record cost: leg 3 holds the core
+#           frozen inside r = 1.40 from t = 57, which transports the burst
+#           the merger already made rather than evolving a remnant -- so
+#           read the late swings as propagation, not as a ringdown.
 ARMS = [
     ("collapsing throat", r"$\varepsilon_2=5\times10^{-2}$", "(2,0)",
      "01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/psi4_mode_l2m0_gated.dat",
@@ -90,7 +95,7 @@ ARMS = [
      None, 10.0, None, ""),
     ("spiral", r"$P=0.12$, $d=12$", "(2,2)",
      "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_SERIES/Weyl4_mode_22.dat",
-     None, 20.0, None, "run in flight"),
+     None, 20.0, None, r"core frozen $t{>}57$"),
     ("fly-by", r"$P=0.45$, $d=12$", "(2,2)",
      "06_binary_flyby/p045/merge_orbit_flip_d12_p045_t200/psi4_mode_l2_all.dat",
      2, 14.0, 70.0, r"gated $t{=}70$ (run in flight)"),
