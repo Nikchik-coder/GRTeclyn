@@ -284,8 +284,10 @@ def main(argv: list[str]) -> int:
     # dies before branching), a dot where the scan loses the throat, an X
     # where a run dies, a muted flat line for a run that is alive with its
     # radius stalled, keys inside on opaque patches, panel tags not titles.
+    # Single column, the two panels stacked (2026-09-16): the branching
+    # story is one column's worth, and the figure* width was air.
     style.prd(base=10.0)
-    fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.05, 2.7),
+    fig, (axA, axB) = plt.subplots(2, 1, figsize=(3.4, 4.2),
                                    constrained_layout=True)
     KW = {
         "ml2": dict(color=style.MUTED, linewidth=1.0, linestyle=(0, ())),

@@ -31,9 +31,10 @@ the closest probe, so the curve is held at its last point and the residual
 there is a lower bound.  That stretch is drawn in the recessive grey with open
 markers and its own band, so it cannot be read as measured.
 
-STYLE (2026-09-16, "PRD review style", the seed-branches grammar): figure*
-width (7.05 x 2.7), style.prd frame, no titles -- (a)/(b) tags inside and the
-semantics in the caption -- no boxed key: every series is named in place.
+STYLE (2026-09-16, "PRD review style", the seed-branches grammar): single
+column (3.4 x 4.6), the two panels stacked -- the pair earns no more than one
+column -- style.prd frame, no titles, (a)/(b) tags inside and the semantics
+in the caption, no boxed key: every series is named in place.
 Monochrome ink plus the one accent: BURGUNDY is the scout (its readings in
 panel a, its response in panel b); the calibration is ink; anything not
 backed by a probe is open-faced grey.  The isolated-throat rule is the same
@@ -92,7 +93,7 @@ def main(argv: list[str] | None = None) -> int:
     inside = scout[:, 5] > 0.5 if len(scout) else np.zeros(0, bool)
 
     style.prd(base=10.0)
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.05, 2.7), constrained_layout=True)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(3.4, 4.2), constrained_layout=True)
 
     # ---- (a) the calibration curve, and the scout laid against it --------
     # The isolated throat IS R_star of the single-throat figures: same rule,

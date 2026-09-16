@@ -30,7 +30,9 @@ frequency.  The ridge is refined by a parabola across the winning bin in
 log f -- without it the track is the frequency GRID, a staircase of bin
 edges, not the wave.
 
-STYLE (the seed-branches grammar): figure* width, style.prd frame, no boxed
+STYLE (the seed-branches grammar): single column (3.4 wide), the two panels
+stacked under one flat key -- the gallery is the chapter's figure* and this
+one earns a column, not a page -- style.prd frame, no boxed
 keys -- every curve is named in place, and each scenario keeps ONE identity
 (ink solid = spiral, ink dashed = head-on, ink dash-dot = fly-by, muted
 dotted = collapsing throat, grey solid = the vacuum control) across both
@@ -124,12 +126,12 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit("no arm has a packed stream yet")
 
     style.prd(base=10.0)
-    fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.05, 3.2),
+    fig, (axA, axB) = plt.subplots(2, 1, figsize=(3.4, 5.2),
                                    constrained_layout=True)
     # The key is one flat frameless strip over BOTH panels (the identities
     # are shared); constrained layout knows nothing about figure legends,
     # so the top band is reserved by hand.
-    fig.get_layout_engine().set(rect=(0, 0, 1, 0.89))
+    fig.get_layout_engine().set(rect=(0, 0, 1, 0.895))
 
     # ---- (a) strain spectra over the design floor -----------------------
     f_hz_band = np.logspace(np.log10(20.0), np.log10(5000.0), 600)
@@ -177,7 +179,7 @@ def main(argv: list[str] | None = None) -> int:
              transform=axA.transAxes, ha="right", va="top", fontsize=7,
              color=style.MUTED)
     fig.legend(*axA.get_legend_handles_labels(), loc="upper center",
-               bbox_to_anchor=(0.5, 1.0), ncols=4, fontsize=6.5,
+               bbox_to_anchor=(0.5, 1.0), ncols=2, fontsize=6.5,
                frameon=False, handlelength=2.4, columnspacing=1.2,
                borderaxespad=0.2)
 
