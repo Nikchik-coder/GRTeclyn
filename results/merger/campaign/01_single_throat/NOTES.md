@@ -86,8 +86,10 @@ all five lone-throat arms, against 2.0e-2 for the head-on merger. Its late rise 
 50–500× between R = 14 and R = 30, which no outgoing wave does. The full account, with the
 numbers, is in the results README's exact-data section.
 
-Movies of χ, K, the lapse, φ and Π, each on one fixed scale per field, are in every seed
-arm's `movies/`. The scratch plotfiles were pruned on 2026-09-10 (MANIFEST).
+Movies of χ, K, the lapse, φ and Π, each on one fixed scale per field, are kept for the
+ε = +0.01 arm only, under `results/merger/movies/01_single_throat/single_eps_p1e2_t100/`
+(the other five arms' movies were pruned 2026-09-16; see that folder's README). The scratch
+plotfiles were pruned on 2026-09-10 (MANIFEST).
 
 ## Reading a run name
 

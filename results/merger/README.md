@@ -130,8 +130,8 @@ that produced it does not.
    noise, so no wave figure is made for these runs. A genuine wave from one throat needs broken
    symmetry — a quadrupolar kick instead of a spherical one, rotation, or a boosted throat. **That
    was done, and it radiates: see "One throat radiates — if its collapse is not spherical" below.** Movies
-   of χ, K, the lapse, φ and Π on one fixed scale per field are in each seed run's `movies/` in the
-   run tree.
+   of χ, K, the lapse, φ and Π on one fixed scale per field, for the ε = +0.01 arm, are in
+   [`movies/01_single_throat/single_eps_p1e2_t100/`](movies/01_single_throat/single_eps_p1e2_t100).
    **Four follow-up arms, stopped by hand on 2026-09-10 with the cards wanted elsewhere, and what
    they had already settled.** (a) *A declared kick still picks the fate one level finer.*
    `single_eps_{m,p}1e2_ml4_t060` *(pack, `campaign/01_single_throat/seed/`)* reached t = 13.5 at level 4: the pushed-out arm has a marginally
@@ -173,7 +173,9 @@ that produced it does not.
    swallowed field at t ≈ 4 M. Here the massive drainhole shows no bounce in 40 units after
    its horizon forms, and the declared +0.01 arm follows its horizon for 89 units (shrinking to
    2.34, then growing slowly to 2.57); whether a bounce comes later is open. Movies: χ in the x–y plane only
-   (`campaign/01_single_throat/<run>/movies/movie_chi_z.mp4`), one frame per time unit — these launches
+   ([`movies/01_single_throat/hold_branch_expansion_ml4/`](movies/01_single_throat/hold_branch_expansion_ml4)
+   and [`hold_branch_collapse_lvl3/`](movies/01_single_throat/hold_branch_collapse_lvl3)),
+   one frame per time unit — these launches
    rendered no other field, and the plotfiles are gone, so no lapse, K or scalar movie of
    either branch exists (launch policy fixed 2026-09-09: several fields by default).
 5. Give the pair enough angular momentum that it never merges and the evolution is
@@ -1010,7 +1012,8 @@ campaign/<group>/<run>/           what every run directory holds
   launch_banner.txt               what the launcher resolved: template, binary,
                                   GPU, restart checkpoint, consumer arguments
   run_tail.log, backtrace.txt     the last 200 log lines and where it aborted
-  movies/                         the stitched .mp4s, one per field (where made)
+  (movies are no longer kept per run: the sets worth keeping are filed
+   together under results/merger/movies/, see its README)
   frames/                         thinned stills, where the pictures carry a result
   part1/, *__part1*.dat           the pre-restart episode of the same run
 
