@@ -231,40 +231,70 @@ def _fit_qnm(
     A0 = float(np.max(env_fit)) if np.max(env_fit) > 0 else 1e-6
     tau0 = float(t_fit[-1] - t_fit[0]) / 2.0
 
-    # Seed the frequency from the FFT peak of the fit segment and cap the
-    # fit at the segment's Nyquist frequency: with coarse sampling the old
-    # peak-spacing guess (fallback 2.0) let curve_fit converge onto aliased
-    # super-Nyquist solutions (seen 2026-09-15 on gated data: f = 0.95 for
-    # a 0.047 signal).
+    # Seed the frequency, and never trust ONE seed.  With coarse sampling the
+    # old peak-spacing guess (fallback 2.0) let curve_fit converge onto aliased
+    # super-Nyquist solutions (seen 2026-09-15 on gated data: f = 0.95 for a
+    # 0.047 signal), so the seed was moved to the FFT peak of the fit segment
+    # and the fit capped at that segment's Nyquist.  That traded one failure
+    # for another: on a short tail whose FFT peak lands in the wrong bin (the
+    # BBH control's (2,2) stream, 2026-09-16) curve_fit walks DOWN to the lower
+    # bound and returns f = 1e-3, tau = 1e-6 -- a flat line that is not a fit
+    # at all, and was drawn as one.  So: three independent seeds, every result
+    # that came to rest ON a bound rejected, and the best remaining one by
+    # residual.  A fit that reaches a bound is a failure however plausible its
+    # curve looks, and a failure must be None, not a red dashed line.
     dt_med = float(np.median(np.diff(t_fit))) if len(t_fit) > 1 else 1.0
     f_nyq = 0.5 / dt_med if dt_med > 0 else np.inf
+    f_lo, f_hi = 1e-3, f_nyq
+
+    seeds = []
     yf = np.abs(np.fft.rfft(y_fit - np.mean(y_fit)))
     ff = np.fft.rfftfreq(len(y_fit), dt_med)
     if len(yf) > 1 and np.max(yf[1:]) > 0:
-        f0_guess = float(ff[1 + int(np.argmax(yf[1:]))])
-    else:
-        f0_guess = 0.5 * f_nyq
-    f0_guess = min(max(f0_guess, 2e-3), 0.9 * f_nyq)
+        seeds.append(float(ff[1 + int(np.argmax(yf[1:]))]))
+    # Zero crossings: robust where the FFT of a sub-cycle tail is not.
+    y_c = y_fit - np.mean(y_fit)
+    n_cross = int(np.count_nonzero(np.diff(np.signbit(y_c))))
+    span = float(t_fit[-1] - t_fit[0])
+    if n_cross > 0 and span > 0:
+        seeds.append(0.5 * n_cross / span)
+    seeds.append(0.5 * f_nyq)
+    seeds = sorted({round(min(max(f, 2e-3), 0.9 * f_nyq), 10) for f in seeds})
 
     t_ret_fit_start = t_ret[i_peak] + t_fit_raw[0]
 
-    try:
-        popt, pcov = curve_fit(
-            _damped_sinusoid, t_fit, y_fit,
-            p0=[A0, tau0, f0_guess, 0.0],
-            bounds=([0, 1e-6, 1e-3, -2 * np.pi], [np.inf, np.inf, f_nyq, 2 * np.pi]),
-            maxfev=10000,
-        )
+    best = None
+    for f0_guess in seeds:
+        try:
+            popt, pcov = curve_fit(
+                _damped_sinusoid, t_fit, y_fit,
+                p0=[A0, tau0, f0_guess, 0.0],
+                bounds=([0, 1e-6, f_lo, -2 * np.pi], [np.inf, np.inf, f_hi, 2 * np.pi]),
+                maxfev=10000,
+            )
+        except Exception:
+            continue
         A, tau, f_qnm, phi = popt
-        perr = np.sqrt(np.diag(pcov))
-        return {
-            "A": A, "tau": tau, "f_qnm": f_qnm, "phi": phi,
-            "A_err": perr[0], "tau_err": perr[1], "f_qnm_err": perr[2],
-            "t_ret_start": t_ret_fit_start,
-            "t_ret_end": t_ret_fit_start + t_fit[-1],
-        }
-    except Exception:
-        return None
+        # Resting on a bound is the signature of a fit that never found the
+        # signal: the optimiser ran out of room, it did not converge.
+        if f_qnm <= f_lo * 1.01 or f_qnm >= f_hi * 0.99 or tau <= 1e-6 * 1.01:
+            continue
+        # An e-fold several times longer than the segment it was fitted on is
+        # not a measurement of a decay -- the record simply does not contain
+        # one, and quoting tau = 595 M off a 60 M window (the wide-fill (2,2)
+        # arm, 2026-09-16) reads as a ringdown that was never seen.
+        if tau > 5.0 * span:
+            continue
+        resid = float(np.sqrt(np.mean((y_fit - _damped_sinusoid(t_fit, *popt)) ** 2)))
+        if best is None or resid < best[0]:
+            perr = np.sqrt(np.diag(pcov))
+            best = (resid, {
+                "A": A, "tau": tau, "f_qnm": f_qnm, "phi": phi,
+                "A_err": perr[0], "tau_err": perr[1], "f_qnm_err": perr[2],
+                "t_ret_start": t_ret_fit_start,
+                "t_ret_end": t_ret_fit_start + t_fit[-1],
+            })
+    return best[1] if best is not None else None
 
 
 def _compute_radiated_energy(

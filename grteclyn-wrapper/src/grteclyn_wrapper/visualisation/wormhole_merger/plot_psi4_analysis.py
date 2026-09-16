@@ -146,6 +146,21 @@ def main(argv: list[str] | None = None) -> int:
     names = args.run.split("+")
     t, radii_all, series, seams = load_chain(names, args.pack_root, args.stream, args.m)
     radii = [r for r in (args.radii or radii_all) if r in series]
+    # --t-min/--t-max clip the RECORD, not just the x-axis of panel (a).
+    # Until 2026-09-16 they clipped the drawing only, so a figure captioned
+    # "to t = 80" showed 0-80 in (a) while (c)-(f) analysed everything the
+    # stream held -- one figure describing two different records.
+    if args.t_min is not None or args.t_max is not None:
+        keep = np.ones_like(t, dtype=bool)
+        if args.t_min is not None:
+            keep &= t >= args.t_min
+        if args.t_max is not None:
+            keep &= t <= args.t_max
+        if keep.sum() < 8:
+            raise SystemExit("--t-min/--t-max leave too little record to analyse")
+        t = t[keep]
+        series = {r: v[keep] for r, v in series.items()}
+        seams = [s_ for s_ in seams if t[0] <= s_ <= t[-1]]
     if not radii:
         raise SystemExit(f"none of {args.radii} in the stream (has {radii_all})")
     mode = args.mode_label or f"2,{args.m if args.m is not None else 0}"
