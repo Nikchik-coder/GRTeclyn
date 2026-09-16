@@ -26,7 +26,7 @@
 \usepackage{placeins}
 \usepackage[protrusion=true,expansion=false]{microtype}
 
-\graphicspath{{figures/}}
+\graphicspath{{figures/}{../../../results/merger/figures/}}
 
 \hypersetup{
     colorlinks=true,
@@ -40,9 +40,9 @@
 
 \begin{document}
 
-% Working title.  Results sections are deliberately absent: the campaign is
-% in progress (research/merger/archive/GPU_PLAN_UPDATED_2026-09-08.md) and only the motivation
-% is settled.
+% Working title.  Structure pass 2026-09-15: full chapter skeleton, placeholders
+% only -- no numbers may be written into a section before its runs are frozen
+% (results/merger/README.md, results/merger/runs_registry.tsv).
 \title{\texorpdfstring{\MakeTextUppercase{Foam-Born Wormhole Pairs in Full Numerical Relativity: Merger, Scattering and Collapse as a Race between Collision and Decay}}{Foam-Born Wormhole Pairs in Full Numerical Relativity: Merger, Scattering and Collapse as a Race between Collision and Decay}}
 
 \author{\MakeTextUppercase{Nikita M. Shirokov}}
@@ -59,19 +59,303 @@
 \section{Introduction}
 \label{sec:intro}
 
-Wheeler's picture of spacetime at the Planck scale is a foam of handles---wormholes that open and close on the Planck time, both mouths in the same space~\cite{wheeler1955,wheeler1957,misner_wheeler1957}. Whether any of them reach macroscopic size is a question about inflation, and the literature answers it in the affirmative more than once. Roman showed that a Planck-scale Lorentzian wormhole caught in an inflating background is stretched with it and emerges macroscopic, its throat held open by the same exotic stress that drives the expansion~\cite{roman1993}; the bubble and domain-wall mechanisms of Garriga, Vilenkin and collaborators produce, without tuning, regions of the post-inflationary universe joined to one another and to baby universes through wormholes~\cite{garriga2016,deng2017}; and Kirillov and Savelova built a cosmology on a gas of relic wormholes and followed what it does to structure formation~\cite{kirillov2008,kirillov2011}. What none of this work evolves is the aftermath: what a relic wormhole does once it is macroscopic and classical, and what two of them do to each other.
+Wheeler's spacetime foam is a sea of handles---wormholes that open and close on the Planck scale, both mouths in the same space~\cite{wheeler1955,wheeler1957,misner_wheeler1957}. More than one mechanism promotes them to macroscopic size: a Planck-scale Lorentzian wormhole caught in an inflating background is stretched with it and emerges macroscopic~\cite{roman1993}; bubble and domain-wall cosmologies produce, without tuning, post-inflationary regions joined through wormholes~\cite{garriga2016,deng2017}; and a gas of relic wormholes has been run as a cosmology in its own right~\cite{kirillov2008,kirillov2011}. What none of this work evolves is the aftermath: what a relic wormhole does once it is macroscopic and classical, and what two of them do to each other. That aftermath is this paper's subject.
 
-The classical theory has two firm things to say about that aftermath, and they pull in opposite directions. The first is that a wormhole held open by a ghost scalar---the Ellis--Bronnikov drainhole~\cite{ellis1973,bronnikov1973}, the simplest traversable wormhole in the sense of Morris and Thorne~\cite{morris_thorne1988,visser1995} and the one that can be evolved as a dynamical solution of Einstein's equations---is unstable. Shinkai and Hayward found its two fates numerically~\cite{shinkai2002}, and Gonz\'alez, Guzm\'an and Sarbach established them at the linear and the nonlinear level~\cite{gonzalez2009}: perturbed one way the throat collapses to a black hole, perturbed the other way it inflates, on a timescale set by the throat radius. An isolated drainhole is a fixed point with one unstable direction and a sign rule that selects the exit. The second is Geroch's theorem~\cite{geroch1967,tipler1977}: a classical, causal evolution cannot create or destroy a handle. It can move one, deform it or hide it behind a horizon, but two wormholes cannot classically fuse into one, and one cannot classically be born. Birth is quantum by necessity---Hawking's Euclidean wormholes and their descendants are the semiclassical account~\cite{hawking1988}---and a simulation takes over at $t=0$ with the newborn state as its initial data. That stipulation, that formation \emph{is} the initial data, is the one every numerical-relativity binary makes; here it comes with a physical story attached.
+The classical theory fixes its two clocks. First, the simplest evolvable traversable wormhole---the Ellis--Bronnikov drainhole held open by a ghost scalar~\cite{ellis1973,bronnikov1973,morris_thorne1988,visser1995}---is unstable: perturbed one way the throat collapses to a black hole, the other way it inflates, on a timescale set by the throat radius~\cite{shinkai2002,gonzalez2009}. Every constituent destroys itself on its own schedule. Second, Geroch's theorem forbids classical topology change~\cite{geroch1967,tipler1977}: two wormholes cannot fuse into one, and none can be born. Birth is quantum~\cite{hawking1988}, so a simulation takes over at $t=0$ with the newborn state as its initial data---the stipulation every numerical-relativity binary makes, here with a physical story attached.
 
-Together the two facts close a loophole and open a channel. The loophole is the standing objection to any wormhole binary: it has no astrophysical assembly channel, because each constituent destroys itself on its own clock, faster than capture or inspiral could bring two independent throats together. A foam-born pair sidesteps the objection completely. There is nothing to assemble---creation and collision are the same event---and the pair is born at a separation of order the objects themselves, which is exactly what foam produces. The race is then collision time against decay time, and both are properties of the classical solution that an evolution measures. A pair born close enough merges before either throat has noticed that it is dying; a pair born too far apart decays separately, into two black holes or two inflating regions, and never meets. The instability of the constituent is therefore not an obstacle to the merger problem but its first selection rule, and the cutoff separation between the two outcomes is the number an evolution is the instrument for.
+Together the two facts turn the standing objection to wormhole binaries into a selection rule. A binary has no astrophysical assembly channel---each throat dies faster than capture could pair two---but a foam-born pair needs none: creation and collision are the same event, at a birth separation of order the objects themselves. The race is collision against decay, and both rates belong to the classical solution. The scalar's sign adds a second rule at no cost: a phantom field repels like charges and attracts opposite ones, so like-signed pairs scatter while opposite-signed pairs fall together; and the sign of a lone throat's perturbation selects collapse---a wormhole-to-primordial-black-hole channel beside the standard routes~\cite{zeldovich1967,carr_hawking1974,carr2021}---or inflation. A foam population thus fans out into four fates---merge, scatter, collapse, inflate---across the three-parameter space of birth separation, perturbation and relative sign, and that space is what a family of evolutions maps. The binary evolved here is the exterior approximation of a pair of handles (three asymptotic ends, the far sides passive); what merges is not two wormholes into one, which Geroch forbids, but two wormholes into one black hole with both throats inside it---the horizon does the work that topology change cannot.
 
-The scalar's sign supplies a second selection rule at no extra cost. The drainhole is a scalar charge, and foam does not choose its orientation: nearest-neighbour pairs are like-signed or opposite-signed with equal probability. Like-signed throats repel through their shared scalar with a force that adds to gravity, so they scatter and never merge; opposite-signed throats attract on both channels and fall together. The sign rule of Ref.~\cite{gonzalez2009} splits the singles the same way: a newborn throat kicked inward collapses---a wormhole-to-primordial-black-hole channel that sits beside the standard collapse routes~\cite{zeldovich1967,carr_hawking1974,carr2021}---and one kicked outward inflates. A foam population thus fans out into four fates---merge, scatter, collapse, inflate---and the boundaries between them lie in the three-parameter space of birth separation, perturbation amplitude and relative sign. That space is what a family of evolutions maps. In this framing the exact static solution is the idealisation and the perturbed family is the physics: a newborn throat is not the fixed point but the fixed point plus a perturbation of random sign and amplitude, and the ensemble, not its unperturbed member, is what the early universe contains.
+The observable is not a chirp but a stochastic background from the merger epoch, redshifted to whichever band the mass scale puts it in~\cite{caprini2018,nanograv2023,lisa2017,lvk2021}. The clean deliverable is therefore dimensionless and epoch-independent: the energy radiated per merger and its spectral shape in throat-mass units, which converts any bound on $\Omega_{\rm GW}$---including the nucleosynthesis cap that holds outside every detector band~\cite{pagano2016}---into a bound on the comoving abundance of primordial wormhole mergers. Two caveats travel with the statement: the ghost scalar must exist at that epoch to hold the newborn throats open, and the merger's scalar channel radiates negative energy whose cosmological consequence is genuinely open.
 
-Foam wormholes are handles, not bridges: both mouths open into the same space. The binary evolved here has three asymptotic ends---the common exterior and one far side per throat---and is the exterior approximation of a pair of handles, exact as long as the far sides play no dynamical role. What the evolution merges is not two wormholes into a larger wormhole, which Geroch forbids, but two wormholes into one black hole with both throats inside it; the horizon does the work that topology change cannot.
+The paper is organised as follows. Sec.~\ref{sec:model} sets out the model: the Einstein--phantom-scalar system, the drainhole, the binary superposition with its sign rule, and the declared seeds. Sec.~\ref{sec:setup} gives the numerical setup and the run matrix. The results then follow the campaign from one throat to two: the lone wormhole---fixed point, unstable mode, branching, and the radiation of a quadrupolar-kicked collapse (Sec.~\ref{sec:single}); two throats at rest and the force between them (Sec.~\ref{sec:pair}); the head-on merger to a black hole (Sec.~\ref{sec:headon}); the spiral merger and its capture boundary (Sec.~\ref{sec:spiral}); the vacuum and numerical controls (Sec.~\ref{sec:controls}). Sec.~\ref{sec:ligo} confronts the rescaled waveforms with the LIGO--Virgo--KAGRA data products---template banks, ringdown, burst searches---and Sec.~\ref{sec:discussion} collects the findings. Every evolution runs on GPUs with \texttt{GRTeclyn}~\cite{grteclyn}, the AMReX-based~\cite{amrex} port of \texttt{GRChombo}~\cite{grchombo}, continuing the campaign of Refs.~\cite{shirokov2026,shirokov2026b}. Throughout, $G=c=1$.
 
-The observable follows from the epoch rather than from any surviving binary. It is not a chirp in a ground-based detector but a stochastic background from the merger epoch, redshifted to whichever band the mass scale and the redshift put it in~\cite{caprini2018}---pulsar timing~\cite{nanograv2023}, a space interferometer~\cite{lisa2017} or the ground-based network~\cite{lvk2021}---with both parameters free \emph{a priori}. The clean deliverable is therefore dimensionless and epoch-independent: the energy radiated per merger and its spectral shape in units of the throat mass. That converts any observed bound on $\Omega_{\rm GW}$ into a bound on the comoving abundance of primordial wormhole mergers, and the cosmological cap on the total gravitational-wave energy density from nucleosynthesis and the microwave background~\cite{pagano2016} into a bound that holds outside every detector band. The statement is invertible without a rate: if foam-born wormhole mergers occurred, present backgrounds limit their density as a function of mass. Two caveats travel with it. The ghost scalar must exist at that epoch to hold the newborn throats open---foam supplies geometry, not matter---and the merger's scalar channel radiates negative energy into the early universe, whose cosmological consequence is genuinely open.
+% ======================================================================
+% SKELETON.  Every section below is a placeholder: one comment names its
+% content and the data it will be filled from.  Fill order: model ->
+% setup -> results IV..VIII -> discussion.  No prose before the data.
+% ======================================================================
 
-The programme of this paper: the drainhole binary as a solution of the Einstein--ghost-scalar system with the sign structure that makes both selection rules possible; the isolated throat as the calibration of the decay clock, its unstable mode measured at more than one resolution; the head-on pair released from rest as the calibration of the collision clock; the family in birth separation, perturbation amplitude and relative sign, whose phase boundaries are the result; and the merger's radiated energy and spectrum in throat-mass units as the cosmological deliverable. Every evolution runs on GPUs with \texttt{GRTeclyn}~\cite{grteclyn}, the AMReX-based~\cite{amrex} port of \texttt{GRChombo}~\cite{grchombo}, continuing the campaign of Ref.~\cite{shirokov2026}; the phantom sector's gravitational sign is the one evolved in isolation in Ref.~\cite{shirokov2026b}. Throughout, $G=c=1$.
+\section{The model}
+\label{sec:model}
+
+\subsection{Field equations}
+\label{sec:model:field}
+
+The matter is a single real, massless phantom scalar: gravity couples to \emph{minus} the canonical stress tensor,
+\begin{equation}
+T_{ab} = -\Bigl(\nabla_a\phi\,\nabla_b\phi - \tfrac12 g_{ab}\,\nabla_c\phi\nabla^c\phi\Bigr),
+\qquad V(\phi)\equiv 0,
+\label{eq:phantom}
+\end{equation}
+so $\rho<0$ where the field's gradient dominates---the exotic stress that holds a throat open. With $V=0$ this is exactly a ghost field. The sign flip lives entirely in the coupling to geometry: the scalar itself obeys the canonical wave equation $\Box\phi=0$, evolved first order in $\phi$ and $\Pi=(\partial_t\phi-\beta^i\partial_i\phi)/\alpha$.
+
+\subsection{Drainhole initial data}
+\label{sec:model:drainhole}
+
+Each body is a massive Ellis--Bronnikov drainhole~\cite{ellis1973,bronnikov1973}. In isotropic radius $r$ about the throat centre, with
+\begin{equation}
+X = \frac{r - a^2/4r}{a},\quad
+\Omega = 1 + \frac{a^2}{4r^2},\quad
+u = \frac{m}{a}\Bigl(\arctan X - \frac{\pi}{2}\Bigr),
+\end{equation}
+the exact static solution of Eq.~\eqref{eq:phantom} is
+\begin{equation}
+\alpha = e^{u},\quad
+\gamma_{ij} = e^{-2u}\,\Omega^2\,\delta_{ij},\quad
+\phi = C\arctan X,
+\label{eq:drainhole}
+\end{equation}
+with $4\pi C^2 = a^2+m^2$, $K_{ij}=0$, $\Pi=0$ and zero shift; in the evolved conformal variables $\chi = e^{2u}\Omega^{-2}$ and $h_{ij}=\delta_{ij}$. Both constraints hold identically at $t=0$. Here $a$ is the throat scale and $m$ the ADM mass, carried by the \emph{lapse} rather than the conformal factor, so $\chi$ at the throat stays in $[0.15,0.25]$ for $m/a\le1$ and mass costs no grid resolution. The minimal surface sits at $r_t=\tfrac12\bigl(m+\sqrt{m^2+a^2}\bigr)$ with areal radius $R_{\min}=e^{-u(r_t)}\sqrt{a^2+m^2}$; the production throat $a=2$, $m=1$ has $R_{\min}=3.8895$ at $r_t=1.618$. The point $r\to0$ is the far universe's spatial infinity compactified ($\chi\sim r^4$). The mass matters: at $m=0$ the throat is ultrastatic ($\alpha\equiv1$, $M_{\rm ADM}=0$) and two of them do not attract at all.
+
+\subsection{The binary superposition}
+\label{sec:model:binary}
+
+Two throats at separation $d$ (one-body radii $r_A$, $r_B$) are superposed in excess form,
+\begin{equation}
+u = u_A + u_B,\qquad
+\psi = 1 + \bigl(\sqrt{\Omega_A}-1\bigr) + \bigl(\sqrt{\Omega_B}-1\bigr),
+\end{equation}
+with $\chi = e^{2u}\psi^{-4}$, $\alpha = e^{u}$ and $\phi = \phi_A + \sigma\,\phi_B$, $\sigma=\pm1$; the constant tail of the $\arctan$ profiles is subtracted so $\phi\to0$ at the boundary, which is free for a massless field. Momentum enters through one Bowen--York term~\cite{bowen_york1980} per throat,
+\begin{equation}
+\hat A_{ij} = \frac{3}{2r^2}\bigl[P_i n_j + P_j n_i - (\delta_{ij}-n_i n_j)\,P{\cdot}n\bigr],
+\end{equation}
+converted by $\tilde A_{ij} = \chi^{3/2}\hat A_{ij}$, with $K=0$. Since $\Pi=0$ the matter momentum density vanishes and $\hat A_{ij}$ is flat-space divergence free, so the momentum constraint is satisfied \emph{exactly} at $t=0$; only the Hamiltonian constraint carries the superposition defect, $O(a^2/d^2)+O(m/d)$. The relative sign $\sigma$ is the pair's one discrete parameter: $\phi\to-\phi$ is exact for a single body, but a phantom mediator \emph{repels} like scalar charges and \emph{attracts} opposite ones, with $|F_\phi/F_{\rm grav}| = (a^2+m^2)/m^2>1$ always ($=5$ for the production throat)---so like-signed pairs can never merge under their own gravity, and $\sigma=-1$ is the merger channel. A windowed one-body correction of the Helfer type~\cite{helfer2022} is implemented but off in production (Sec.~\ref{sec:controls:systematics}).
+
+\subsection{Declared seeds}
+\label{sec:model:seeds}
+
+The instability is probed with declared perturbations of the conformal factor only: a Gaussian shell on the minimal surface,
+\begin{equation}
+\psi \to \psi\bigl[1 + \varepsilon\, g(r)\bigr],\qquad
+g = e^{-(r-r_t)^2/w^2},\quad w = a/4,
+\label{eq:seed}
+\end{equation}
+which moves the throat's areal radius by ${\approx}2\varepsilon$ with the sign of $\varepsilon$, and a quadrupolar factor
+\begin{equation}
+\psi \to \psi\bigl[1 + \varepsilon_2\, g(r)\,P_2(\cos\theta)\bigr]
+\end{equation}
+about the $z$ axis through the throat. $K_{ij}$ and $\Pi$ are untouched, so the momentum constraint stays exact. The spherical seed selects the branch; the quadrupolar seed has no $\ell=0$ part---it gives a collapsing throat a quadrupole to shed---and with both on the cross term is $O(\varepsilon\varepsilon_2)$.
+
+\section{Numerical setup}
+\label{sec:setup}
+
+\subsection{Evolution scheme}
+\label{sec:setup:scheme}
+
+Evolutions use \texttt{GRTeclyn}: CCZ4~\cite{alic2012} with damping $(\kappa_1,\kappa_2,\kappa_3)=(3,0,1)$, $1{+}\log$ slicing~\cite{bona1995} started from the exact static lapse $\alpha=e^{u}$ of Eq.~\eqref{eq:drainhole}, a Gamma-driver shift~\cite{campanelli2006,baker2006} with $\eta=1$ started from zero, fourth-order stencils, RK4, and Kreiss--Oliger dissipation $\sigma=0.1$. The time step is $\Delta t=0.02\,\Delta x$, an order of magnitude below the usual CCZ4 Courant factor; the bracket in $\Delta t$ that makes it necessary is a control (Sec.~\ref{sec:controls:systematics}).
+
+\subsection{Grid, boundaries and regularisation}
+\label{sec:setup:grid}
+
+The domain is a cube of side $L=64$ with the system at its centre; the base grid is $128^3$ ($\Delta x=0.5$). Refinement is by moving nested boxes centred on the tracked throats, shrinking by a factor of two per level (half-width $4$ per throat at the production finest level) and re-drawn every $16$ steps. Production runs use three refinement levels (finest $\Delta x=1/16$); resolution arms raise this to levels $4$--$7$ where stated, and one control doubles the box to $L=128$. Outer boundaries are Sommerfeld, backed by an absorbing sponge over $r=24$--$32$ that ramps extra dissipation up to $\sigma_{\rm sp}=4$ as the fourth power of the depth into the layer; everything dynamical sits inside $r=24$.
+
+Each throat carries a compactified second infinity at its own centre, where $\chi\sim r^4$, so the evolved variables are floored: $\chi\ge10^{-8}$ and $\alpha\ge10^{-10}$ (a variant keeps $\chi$ unfloored down to $10^{-20}$ and applies the $10^{-8}$ floor only where $1/\chi$ is evaluated). Two further devices act only inside regions that are already trapped: an exponential damping of the scalar where the lapse has collapsed, and a smooth interior freeze that multiplies every right-hand side by $1-W(r)$, with $W$ a $C^2$ quintic step between an inner radius $r_{\rm full}$ and an outer $r_{\rm start}$. All three are numerical devices, not physics; whether any of them is load-bearing is itself measured by twin runs (Secs.~\ref{sec:headon:wall} and~\ref{sec:controls:systematics}).
+
+\subsection{Diagnostics}
+\label{sec:setup:diagnostics}
+
+$L^2$ norms of the Hamiltonian and momentum constraints over the box are written continuously. Both throat centres are tracked, and about each centre the areal radius $R(r)$ is scanned on coordinate spheres; its minimum is the throat radius. On the same spheres the two null expansions $\theta_\pm$ are computed with the outward direction fixed by \emph{increasing areal radius}: a marginally outer trapped surface is an outermost zero of $\theta_+$ with $\theta_-<0$ (crossings at extrema of $R(r)$ are rejected), while a dynamic wormhole throat is marginally \emph{anti}-trapped~\cite{hochberg_visser1998}. Masses of such surfaces are Misner--Sharp~\cite{misner_sharp1964}, $2M/R = 1 + \tfrac14 R^2\,\theta_+\theta_-$; the scan uses coordinate spheres rather than a deformable finder, and quoted masses carry that shape systematic. Radiation is read from $\Psi_4$ interpolated onto spheres at $R=10$, $14$, $18$ (and $22$ on the single-throat wave arms), decomposed in spin-weight $-2$ harmonics; all amplitudes are quoted as $r\Psi_4$. The in-code stream is cross-checked against an independent plotfile pipeline at the same radii. A per-cell autopsy reports the location and one-step history of any floating-point failure.
+
+\subsection{The campaign}
+\label{sec:setup:campaign}
+
+The campaign is one-knob: every run differs from a named reference in a single setting, and every run has one line---its difference, its outcome, its caveats---in a registry shipped with the results pack (Sec.~\ref{sec:repro}). Table~\ref{tab:matrix} groups the $111$ evolutions; the verdicts are the business of Secs.~\ref{sec:single}--\ref{sec:controls}. An archived shakedown stage ($12$ of the $111$) fixed the gauge, dissipation and tagging choices of Secs.~\ref{sec:setup:scheme}--\ref{sec:setup:grid} and is not used for physics.
+
+\begin{table}[t]
+\caption{The run matrix: $111$ evolutions, grouped. Every group varies one knob against a named reference; per-run lines live in the shipped registry. Body parameters are $a=2$, $m=1$ ($R_{\min}=3.89$), $\sigma=-1$ and $d=12$ unless stated.}
+\label{tab:matrix}
+\footnotesize
+\begin{ruledtabular}
+\begin{tabular}{llcc}
+group & knob(s) & cells & Sec. \\
+\hline
+lone throat & levels 2--4; $\chi$ floor; $\Delta t$; $L{=}128$ & 9 & \ref{sec:single} \\
+spherical kicks & $\varepsilon=\pm10^{-3}\ldots\pm10^{-1}$; level 4 & 8 & \ref{sec:single:branching} \\
+quadrupolar kicks & $\varepsilon_2=0.01,\,0.05$; levels 3--4 & 4 & \ref{sec:single:gw} \\
+two throats at rest & $\sigma$; $a=1$--$3$; $d=12$--$18$ & 9 & \ref{sec:pair} \\
+placement probes & $d=6$--$48$, one step each & 18 & \ref{sec:pair:placement} \\
+head-on, $d=8$ & fill; levels 3/5; down-step & 8 & \ref{sec:headon} \\
+half-mass, $m=0.5$ & pair at $d=6$; lone control & 2 & \ref{sec:headon:halfmass} \\
+spiral, $p=0.12$ & levels; $N$; gauge; floor; fill & 29 & \ref{sec:spiral} \\
+capture scan & $p=0.20$--$0.45$ & 4 & \ref{sec:spiral:capture} \\
+Helfer twins & correction; window; levels & 6 & \ref{sec:controls:systematics} \\
+vacuum BBH & same $d$, $p$, masses; no scalar & 2 & \ref{sec:controls:bbh} \\
+shakedown (archived) & gauge, dissipation, tagging & 12 & \ref{sec:setup:scheme} \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+\section{The single wormhole}
+\label{sec:single}
+
+\subsection{The static throat as a fixed point}
+\label{sec:single:fixedpoint}
+% Exact data holds the areal throat radius; departure time vs resolution;
+% what the constraint norms do and do not certify.
+
+\subsection{The unstable mode}
+\label{sec:single:instability}
+% Growth rate / e-fold time at levels 3 and 4; comparison to the GGS band;
+% the undeclared (truncation) seed and its level-dependent sign.
+% Fig.~\ref{fig:branches}.
+
+\begin{figure*}[t]
+\centering
+\includegraphics{01_single_throat/single_throat_branches.pdf}
+\caption{The undeclared seed: one exact throat, two resolutions, two fates. (a)~Minimal areal radius of the lone drainhole evolved from exact static data at refinement levels 2--4. The exact solution is a fixed point ($R_\star$, dotted); each level holds it until its own truncation error excites the unstable mode, and the fate flips with the grid: level 3 (dashed) collapses, level 4 (solid) inflates. Level 2 (grey) dies of an origin failure at $t=24.2$ (cross) with the throat still exact to $0.12\%$---too coarse to reach the branch at all. Dot and muted line as in Fig.~\ref{fig:seed_branches}: the scan loses the level-3 throat at $t=65$ while the run continues to $t=100$ behind a marginally trapped surface (areal radius $3.23\to2.37$). (b)~The deviation grows exponentially on both grids: plateau fits over $t=49$--$61$ give e-fold times $\tau=5.88$ (level 3) and $5.26$ (level 4)---the same unstable mode to $9\%$, $T=\tau\,\alpha_{\rm th}/R_\star=0.87$ and $0.78$ against the Gonz\'alez--Guzm\'an--Sarbach band $0.68$--$0.76$~\cite{gonzalez2009}---with opposite sign. The fate is the truncation seed's; the mode is the throat's.}
+\label{fig:branches}
+\end{figure*}
+
+\subsection{Branching: collapse versus inflation}
+\label{sec:single:branching}
+% Declared seed scan eps = +/-1e-2, +/-1e-3: fate opposite to the push,
+% linear response, twin crossing time, tenfold-smaller kick = fixed delay;
+% amplitude ceiling (eps = 0.1 is not a perturbation).  Fig.~\ref{fig:seed_branches}.
+
+\begin{figure}[t]
+\centering
+\includegraphics{01_single_throat/single_throat_seed_branches.pdf}
+\caption{Declared-seed branching of the lone throat (level 3). Areal throat radius of the drainhole ($a=2$, $m=1$; $R_\star=3.8895$, dotted) under the kick of Eq.~\eqref{eq:seed}: $\varepsilon=\pm10^{-2}$ (heavy), $\pm10^{-3}$ (light); dashed = outward ($\varepsilon>0$). The fate is opposite to the push, and each pair crosses itself at the $\varepsilon$-independent $t_\times\simeq13.0$---linear response. Burgundy: exponential fits $|R-R_\star|\propto e^{t/\tau}$, $\tau=4.5$ ($t=18$--$31$) and $4.0$ ($t=16$--$26$)---steeper than the unkicked mode's $5.88$ (Fig.~\ref{fig:branches}) while the kick's transient decays. Dots: the scan loses the throat (the inflating runs continue to $t=100$, still growing); cross: death at $t=40.1$. The $\varepsilon=+10^{-2}$ arm holds a horizon from $t=11$ (areal radius $3.88\to2.34\to2.57$) and runs clean to $t=100$; the muted line carries its last reading. A tenfold smaller kick arrives $8$--$12$ units later.}
+\label{fig:seed_branches}
+\end{figure}
+
+\subsection{The collapse endpoint}
+\label{sec:single:collapse}
+% MOTS formation, horizon mass, clean evolution to t = 100 on the collapse
+% branch; the inflation branch: anti-trapped shells, no horizon.
+% The half-mass throat: lighter is less stable.
+
+\subsection{Gravitational waves from a collapsing throat}
+\label{sec:single:gw}
+% Spherical collapse is silent (l = 2 floor); the quadrupolar seed radiates:
+% ordered arrival across spheres, 1/r amplitude, linearity in eps_2,
+% ringdown vs the horizon mass.  Data: 01_single_throat/seed + queue-2e legs.
+
+\section{Two throats at rest}
+\label{sec:pair}
+
+\subsection{The sign rule}
+\label{sec:pair:sign}
+% Like-signed throats repel, opposite-signed attract; measured pull/push
+% ratio vs the (a^2+m^2)/m^2 prediction.  Fig.~\ref{fig:sign_rule}.
+
+\begin{figure}[t]
+\centering
+\includegraphics{03_two_throats/sign_rule.pdf}
+\caption{Attraction and repulsion switched by one sign ($d=12$, released from rest). (a)~Separation change of three pairs one knob apart: the like-oriented pair ($\sigma=+1$, dashed) pushes apart; flipping one field ($\sigma=-1$, solid) turns the push into a pull; the narrow like pair ($a=1$, light) opens $2.9\times$ more slowly---the force follows the throat width (the scalar charge), not the mass, which is equal in all three. Separations are inverse-$\chi$-weighted centroids of the midplane $\chi$ pits, sub-cell where the mouth tracker's $0.03$ grid quantum would swamp the early motion. (b)~The flipped pair's infall over the like pair's escape: with $Q \equiv |F_\phi/F_{\rm grav}| = 5$ (Sec.~\ref{sec:model:binary}), pull and push are $(Q{+}1)$ and $(Q{-}1)$, predicting $3/2$ (burgundy); measured $1.52\pm0.02$ over $t=3.5$--$10.5$. Coordinates under-read the motion while the gauge settles (band), but that systematic is common to both arms and cancels in the ratio: the two runs differ in exactly one parameter.}
+\label{fig:sign_rule}
+\end{figure}
+
+\subsection{The force law}
+\label{sec:pair:force}
+% Distance ladder d = 12..18: 1/d^2 excluded, effective separation
+% F ~ 1/(d+delta)^2 with delta ~ throat radius; blind d = 18 test;
+% width ladder.
+
+\subsection{Placement systematics}
+\label{sec:pair:placement}
+% Superposition offset of the placed throat vs d; early squeeze of the
+% mouths.  Data: 04_binary_headon/placement_curve.  Fig.~\ref{fig:placement}.
+
+\begin{figure*}[t]
+\centering
+\includegraphics{04_binary_headon/placement_curve.pdf}
+\caption{Placement is on the ruler; the squeeze is not. (a)~Per-mouth areal radius of two exact drainhole throats placed at rest, read at $t=0$ by one-step probes at separations $d=6$--$48$ (ink): the pair reads wider than the isolated throat ($R_\star$, dotted), the excess falling as $d^{-1.16}$---the neighbour's field on the ruler, not a dynamical widening. Burgundy squares: the head-on scout's mouths (the $\sigma=-1$ pair released from rest at $d=8$, Sec.~\ref{sec:headon}) at the separation it had reached; open squares, here and in (b): the scout closer than the closest probe. (b)~The scout against the curve at its own separation, $\delta R/R = R_{\mathrm{scout}}/R_{\mathrm{place}}-1$. The $-0.13\%$ plateau to $t=5$ is the mouth tracker's grid snap ($d$ reads $7.94$ for a true $8$) and calibrates the systematic; the throats' own squeeze then grows to $-4.0\%$ by $t=13$ ($d=6.1$). In the band the curve is held at its last point, so the magnitude is a lower bound---the apparent recovery is the ruler's, not the throats'. A boost can only raise a coordinate-sphere reading, so a reading below the curve is a real squeeze, if anything underestimated.}
+\label{fig:placement}
+\end{figure*}
+
+\section{The head-on merger}
+\label{sec:headon}
+
+\subsection{Contact and the common horizon}
+\label{sec:headon:contact}
+% d = 8 from rest: contact as wormholes, common MOTS about the midpoint,
+% Misner--Sharp mass with the coordinate-sphere caveat.
+
+\subsection{Through the wall to a black hole}
+\label{sec:headon:wall}
+% Level-3 death anatomy; level-5 restart clean to t = 100; the remnant is
+% trapped with no throat left; down-step and fill arms as evidence the wave
+% is grid- and device-independent.
+
+\subsection{The ringdown wave}
+\label{sec:headon:wave}
+% (2,0) bell: swings, period, decay, outgoing across R = 10/14/18;
+% no chirp.  Figure: headon_downstep_psi4.
+
+\subsection{The half-mass pair}
+\label{sec:headon:halfmass}
+% m = 0.5, d = 6: earlier horizon, earlier death; mass sets the pull.
+
+\section{The spiral merger}
+\label{sec:spiral}
+
+\subsection{Capture and scattering}
+\label{sec:spiral:capture}
+% Momentum scan p = 0.12..0.45: fuse / hover / escape; the capture boundary;
+% flyby arm.  Data: 05_binary_spiral + 06_binary_flyby.
+
+\subsection{Inspiral and collapse}
+\label{sec:spiral:inspiral}
+% Orbit, whirl, double core, central collapse; resolution cross-check.
+
+\subsection{The wall}
+\label{sec:spiral:wall}
+% The late-time failure is gauge + resolution, deterministic, saturating
+% with level; the freeze-fill carries the evolution to t = 100.
+
+\subsection{The carried burst}
+\label{sec:spiral:burst}
+% Peak (2,2)/(2,0) amplitudes, fill-free by causality, propagation 14 -> 30,
+% 1/r scaling; what the horizon scan does and does not find.
+
+\section{Controls and systematics}
+\label{sec:controls}
+
+\subsection{The vacuum binary black hole}
+\label{sec:controls:bbh}
+% Same d, p, masses in vacuum: merger, Kerr-consistent ringdown; the
+% wormhole binary is louder in (2,2) and (2,0).  Figure: bbh_vs_wormhole.
+
+\subsection{Numerical systematics}
+\label{sec:controls:systematics}
+% chi-floor twins, fill on/off, damping, gauge, determinism, timestep,
+% boundary/sponge checks; the Helfer correction and why it is rejected.
+
+\section{Pattern matching against detector data}
+\label{sec:ligo}
+
+The simulated waveforms are scale-free: with the throat mass $M$ as the unit, $r\Psi_4$ rescales to detector strain by $h \propto M/D$ and $f \propto 1/M$, so one numerical waveform covers every candidate mass at once. This section confronts the rescaled $(2,2)$ and $(2,0)$ waveforms with the LIGO--Virgo--KAGRA data products on three fronts: matched filtering~\cite{allen2012}, the ringdown, and the unmodelled searches.
+
+\subsection{Fitting factor against the binary-black-hole bank}
+\label{sec:ligo:match}
+% Overlap/fitting factor of the wormhole merger waveform against the BBH
+% template families used in the LVK catalogues~\cite{gwtc3}, as a function of
+% M: where the bell-without-chirp morphology (Sec.~\ref{sec:spiral:burst})
+% loses match, and whether a wormhole merger would have been picked up or
+% missed by the modelled searches.
+
+\subsection{Ringdown discriminators}
+\label{sec:ligo:ringdown}
+% The (2,0)/(2,2) amplitude ratio and QNM period/decay of the remnant against
+% the Kerr control (Sec.~\ref{sec:controls:bbh}): what a ringdown-only
+% analysis of a catalogue event could exclude.
+
+\subsection{Burst searches and the background}
+\label{sec:ligo:burst}
+% Sensitivity of unmodelled burst pipelines to the rescaled bell; the energy
+% per merger in throat-mass units feeding the stochastic-background bound of
+% Sec.~\ref{sec:intro} (Omega_GW vs comoving merger abundance).
+
+\section{Discussion}
+\label{sec:discussion}
+% Numbered findings; the four fates (merge, scatter, collapse, inflate) as
+% the selection rules of Sec. I; what is NOT established (spiral horizon,
+% late-time spiral ringdown); the cosmological deliverable.
+
+\section{Reproducibility}
+\label{sec:repro}
+% Code, branch, parameter files, run registry, figure provenance.
 
 \begin{thebibliography}{99}
 
@@ -199,6 +483,56 @@ R.~Abbott \emph{et al.} (LIGO Scientific, Virgo and KAGRA Collaborations),
 L.~Pagano, L.~Salvati, and A.~Melchiorri,
 \newblock ``New constraints on primordial gravitational waves from Planck 2015,''
 \newblock Phys.\ Lett.\ B \textbf{760}, 823 (2016).
+
+\bibitem{allen2012}
+B.~Allen, W.~G.~Anderson, P.~R.~Brady, D.~A.~Brown, and J.~D.~E.~Creighton,
+\newblock ``FINDCHIRP: An algorithm for detection of gravitational waves from inspiraling compact binaries,''
+\newblock Phys.\ Rev.\ D \textbf{85}, 122006 (2012).
+
+\bibitem{gwtc3}
+R.~Abbott \emph{et al.} (LIGO Scientific, Virgo and KAGRA Collaborations),
+\newblock ``GWTC-3: Compact binary coalescences observed by LIGO and Virgo during the second part of the third observing run,''
+\newblock Phys.\ Rev.\ X \textbf{13}, 041039 (2023).
+
+\bibitem{misner_sharp1964}
+C.~W.~Misner and D.~H.~Sharp,
+\newblock ``Relativistic equations for adiabatic, spherically symmetric gravitational collapse,''
+\newblock Phys.\ Rev.\ \textbf{136}, B571 (1964).
+
+\bibitem{hochberg_visser1998}
+D.~Hochberg and M.~Visser,
+\newblock ``Dynamic wormholes, antitrapped surfaces, and energy conditions,''
+\newblock Phys.\ Rev.\ D \textbf{58}, 044021 (1998).
+
+\bibitem{bowen_york1980}
+J.~M.~Bowen and J.~W.~York,
+\newblock ``Time-asymmetric initial data for black holes and black-hole collisions,''
+\newblock Phys.\ Rev.\ D \textbf{21}, 2047 (1980).
+
+\bibitem{helfer2022}
+T.~Helfer, U.~Sperhake, R.~Croft, M.~Radia, B.-X.~Ge, and E.~A.~Lim,
+\newblock ``Malaise and remedy of binary boson-star initial data,''
+\newblock Class.\ Quantum Grav.\ \textbf{39}, 074001 (2022).
+
+\bibitem{alic2012}
+D.~Alic, C.~Bona-Casas, C.~Bona, L.~Rezzolla, and C.~Palenzuela,
+\newblock ``Conformal and covariant formulation of the Z4 system with constraint-violating solutions,''
+\newblock Phys.\ Rev.\ D \textbf{85}, 064040 (2012).
+
+\bibitem{bona1995}
+C.~Bona, J.~Mass\'o, E.~Seidel, and J.~Stela,
+\newblock ``New formalism for numerical relativity,''
+\newblock Phys.\ Rev.\ Lett.\ \textbf{75}, 600 (1995).
+
+\bibitem{campanelli2006}
+M.~Campanelli, C.~O.~Lousto, P.~Marronetti, and Y.~Zlochower,
+\newblock ``Accurate evolutions of orbiting black-hole binaries without excision,''
+\newblock Phys.\ Rev.\ Lett.\ \textbf{96}, 111101 (2006).
+
+\bibitem{baker2006}
+J.~G.~Baker, J.~Centrella, D.-I.~Choi, M.~Koppitz, and J.~van~Meter,
+\newblock ``Gravitational-wave extraction from an inspiraling configuration of merging black holes,''
+\newblock Phys.\ Rev.\ Lett.\ \textbf{96}, 111102 (2006).
 
 \bibitem{grteclyn}
 GRTL Collaboration,
