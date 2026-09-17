@@ -184,6 +184,7 @@ def main(argv: list[str] | None = None) -> int:
                borderaxespad=0.2)
 
     # ---- (b) the peak-frequency ridge of every source -------------------
+    f_seen: list[float] = []
     # The line's WIDTH is the signal's own envelope (the wavelet column
     # peak), so a track is not a wire: it swells where the source is loud
     # and tapers where it dies -- the "shape" a full spectrogram would
@@ -239,8 +240,11 @@ def main(argv: list[str] | None = None) -> int:
                  color=LOOKS[a["name"]]["color"], ha=ha, va=va)
         print(f"  {a['name']:<18s} ridge u = {uu[0]:.0f} .. {uu[-1]:.0f}, "
               f"f = {ff.min():.0f} .. {ff.max():.0f} Hz")
+        f_seen += [float(ff.min()), float(ff.max())]
     axB.set_xlim(-5, 118)
-    axB.set_ylim(135, 365)
+    # Limits follow the ridges: a hard-coded floor once cut the fly-by's
+    # 134 Hz track down to a sliver on the axis edge.
+    axB.set_ylim(0.90 * min(f_seen), 1.06 * max(f_seen))
     axB.set_xlabel(r"$t - R_{\mathrm{ext}}$")
     axB.set_ylabel(r"$f$  [Hz]")
     axB.text(0.03, 0.955, "(b)", transform=axB.transAxes, ha="left", va="top",
