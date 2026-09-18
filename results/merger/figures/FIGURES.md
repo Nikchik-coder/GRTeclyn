@@ -57,6 +57,61 @@ all (peak matching returned v = −0.90; the windowed lag reads 1.00). Measured:
 throat 0.91/0.95/0.98, head-on 0.96/0.90, spiral 0.95/1.00/1.00, fly-by
 1.00/1.00/1.00, BBH twin 0.82. Both figures are re-drawn at the spiral and fly-by close-outs.
 
+### psi4_ligo rebuilt: four panels, and two bugs it had carried (2026-09-18)
+
+`psi4_ligo` is now a two-column strip (`figure*`, 7.05 x 2.75): (a) the
+records' envelopes on a common merger clock, (b) strain over the aLIGO floor,
+(c) instantaneous frequency against the Newtonian point-mass chirp, (d) the
+radiated-energy ranking. It briefly had the |rPsi4|^2 power spectrum as (a),
+which is (b) times (2 pi f)^4 — one plot drawn twice; the time domain is what
+the strip was missing.
+
+**The calibration was not shared.** The caption says "total mass M = 30 Msun"
+and the conversion mapped ONE CODE UNIT to 30 Msun for every arm. Four of the
+five sources are binaries carrying M_ADM = 1 per body — 2 code units — and
+only the lone throat is a single unit mass (each run's `evolution_params.txt`;
+the BBH's bare 0.9615 gives per-hole ADM ~ 1.00). The binaries were therefore
+drawn as 60 Msun systems at half their frequency and 2.8x their strain, beside
+a 30 Msun throat. Every record is now reduced to units of its OWN total mass
+first (`M_CODE`). The check that settles it: the BBH control's peak |rPsi4|
+lands at f M = 0.065, the textbook merger value.
+
+**The wavelet ridge hid the chirp.** The old panel (b) drew the Morlet ridge,
+which needs the cone of influence trimmed off both ends — half of these short
+records — and smears a sweep into its own measurement band. The BBH twin,
+whose phase sweeps through a factor of 80, came out as a FLAT 227 Hz shelf.
+The frequency is now the phase derivative on the analytic signal,
+ENERGY-WEIGHTED over a cycle: the spiral's (2,2) envelope swings 2x within a
+carrier period, so its bare derivative swings 3 Hz to 7.6 kHz, and weighting
+by |A|^2 puts that variance at the nulls where it belongs. Also: |y| is not an
+envelope for the real (2,0) records (it is the rectified wave), so an
+amplitude gate on it kept one half-cycle lobe.
+
+**Radiated energy, and the two traps in it.** `psi4_math._compute_radiated_energy`
+squared Psi4 as it stood. Psi4 is h-double-dot, so it is integrated ONCE
+before squaring; the old form is not an energy and read an order low (the
+throat's burst was quoted at 2.3e-6 M and is 3.2e-5 M — the article carried
+the wrong number). The integral is done in the frequency domain, where the
+1/f^2 weight makes the one dangerous knob explicit; fixed-frequency
+integration is NOT used, because it CLAMPS the sub-corner band instead of
+removing it and let the fly-by's mouth expansion grow without bound as the
+gate opened. Every arm has a flat plateau in that cut over 0.02-0.45 of its
+peak. The second trap: the ARMS gate is a COORDINATE-time cap chosen at the
+innermost sphere, and the same physics reaches R later, so comparing spheres
+under it gave R = 44 sixteen masses of record against R = 20's twenty-eight
+and read a factor of twenty between them. Gate in RETARDED time and the
+fly-by's spread falls from 316 % to 40 %.
+
+Measured E_rad/M (dominant multipole, +-m doubled, sphere spread in brackets):
+fly-by 9.3e-2 [5.6-9.3e-2], spiral 2.2e-2 [1.7-2.2e-2], head-on 3.3e-3
+[2.9-3.3e-3], BBH twin 2.6e-3 [2.4-2.6e-3], throat 3.2e-5 [2.6-3.2e-5]. The
+two open burgundy bars in (d) are NOT runs of this campaign and NOT closed
+forms: they are the published equal-mass non-spinning vacuum results from rest
+at infinity, head-on 5.5e-4 and quasi-circular 1 - M_f/M = 4.84e-2. The twin
+sits just above the head-on end because its momentum is 59 % of circular
+(p = 0.12 against 0.204 at d = 12) — it is an eccentric plunge, not an
+inspiral, which is why its 0.26 % is nowhere near the textbook 4.8 %.
+
 ## The paper's spiral collapse page (2026-09-18)
 
 `05_binary_spiral/p012_paper/p012_collapse_diagnostics` is the article's
@@ -122,6 +177,34 @@ lapse rides the 1e-10 clamp t = 38.5-41.0, ends 1.1e-3; chi clamps at 1e-20
 0.86 -> 0.008 with |Pi| <= 0.069; (2,0) ringdown swings at t = 28.2/43.6/
 63.0/81.7, amplitude x0.6-0.8 per half-swing. Redraw only if a head-on arm
 is re-run with the scan aperture widened or new offline scans land.
+
+**Where the names sit, and why (the 2026-09-18 pass).** Five names on this
+page were struck through by what they named. The placements below are each
+the answer to a measurement, not a guess, and three of them cost frame:
+
+* (a) the black curve's name is under its own descent, on TWO lines. On one
+  line it is 23 t-units wide and no clear stretch of this strip is that wide:
+  over the curve it was struck through, above the flat start it ran through
+  the t = 22 rule AND out of the top.
+* (b) "level 3" is left-anchored at t = 1.5. Centred on 13.5 the name is 18
+  t-units wide and its tail crossed the MOTS rule.
+* (c) "onto the 1e-20 clamp" is right-anchored: left-anchored it ended half a
+  point from the right spine.
+* (e) the floor drops to 5e-5 (from 2.5e-4) and each norm is named off its
+  OWN curve at t = 52 / 62, where the two are furthest apart, with the
+  clearance in POINTS. H bottoms at 6.1e-4, which on the old floor left less
+  room under it than its own name needed, so the name printed through the
+  spine and through both H curves at once.
+* (h) the top goes to 0.86 and both thetas are named 4 pt above their own
+  curve on the flat left stretch, where they are 0.36 apart.
+
+A label inset given as a fraction of the axis is a different physical gap in
+every panel; every gap on this page is now in points. The check is
+mechanical, not visual -- a scratchpad probe walks every ax.text box against
+every drawn SEGMENT, the spines, the tick labels and the sibling labels, and
+this page is clean at 1.5 pt of demanded clearance. Careful: the probe pads
+in display pixels at the FIGURE's dpi (100), not at savefig's 300, so a pad
+of 5 "px" is 3.6 pt and lights up every deliberate 3 pt gap on the page.
 
 ## The paper's refinement-ladder figure (2026-09-18)
 

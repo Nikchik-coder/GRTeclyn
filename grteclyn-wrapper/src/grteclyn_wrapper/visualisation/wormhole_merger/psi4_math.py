@@ -298,11 +298,63 @@ def _fit_qnm(
 
 
 def _compute_radiated_energy(
-    t: np.ndarray, psi4_complex: np.ndarray
+    t: np.ndarray, psi4_complex: np.ndarray, *, m: int = 0,
+    f_lo_frac: float = 0.15, taper_frac: float = 0.05,
+    f_peak: float | None = None,
 ) -> float:
-    """E_rad = (1/16*pi) * int |r*Psi4|^2 dt  (code units, G=c=1)."""
-    integrand = np.abs(psi4_complex) ** 2
-    return float(np.trapezoid(integrand, t) / (16.0 * np.pi))
+    r"""E_rad of one mode, in the units of ``r*Psi4`` and ``t`` (G = c = 1).
+
+        dE/dt = (1/16 pi) sum_lm |int^t r Psi4_lm dt'|^2
+
+    Psi_4 is h-DOUBLE-dot, so it is integrated ONCE before it is squared.
+    Until 2026-09-18 this function squared Psi_4 as it stood, which is not an
+    energy at all and reads roughly an order low: the lone throat's burst was
+    quoted at 2.3e-6 M and is 3.2e-5 M.
+
+    The integral is done in the frequency domain, where by Parseval
+
+        E = (1/16 pi) int |rPsi4~(f)|^2 / (2 pi f)^2 df,
+
+    because that makes the one dangerous knob explicit.  The 1/f^2 weight is
+    unbounded as f -> 0, so a slow near-zone drift under the burst can carry
+    any amount of "energy"; ``f_lo_frac`` cuts the integral below that
+    fraction of the record's spectral peak.  Fixed-frequency integration is
+    NOT used here: it CLAMPS the sub-corner band instead of removing it, and
+    on the fly-by record that kept the mouths' expansion in the answer and
+    made it grow without bound as the gate was opened.  Every arm of this
+    campaign has a flat plateau in ``f_lo`` over 0.02-0.45 of its peak, which
+    is the check that the cut is not setting the answer.
+
+    ``m`` is the azimuthal index: a non-zero one is doubled for the
+    ``+-m`` pair, which for the equal-mass non-precessing binaries here is
+    exact.  The caller supplies ONE mode, so the result is the dominant
+    multipole's contribution -- a lower bound on the total.
+
+    ``f_peak`` is the band the cut is measured against.  Left to itself this
+    reads the largest bin of the raw transform, which a near-zone drift can
+    own outright -- on the fly-by's outer spheres that put the cut near DC
+    and let the drift back in.  Pass the SMOOTHED PSD's peak (``_burst_psd``
+    then ``_smooth_psd``) whenever the caller already has it.
+    """
+    n = psi4_complex.size
+    if n < 8:
+        return 0.0
+    dt = float(t[1] - t[0])
+    w = np.ones(n)
+    k = max(2, int(taper_frac * n))
+    ramp = 0.5 * (1.0 - np.cos(np.pi * np.arange(k) / k))
+    w[:k], w[-k:] = ramp, ramp[::-1]
+    Y = np.fft.fft(psi4_complex * w) * dt
+    freqs = np.fft.fftfreq(n, dt)
+    if f_peak is None:
+        pos = np.abs(freqs) > 0
+        f_peak = float(np.abs(freqs[pos][np.argmax(np.abs(Y[pos]))]))
+    band = np.abs(freqs) > f_lo_frac * f_peak
+    if not np.any(band):
+        return 0.0
+    E = float(np.sum(np.abs(Y[band] / (2.0 * np.pi * freqs[band])) ** 2)
+              / (n * dt) / (16.0 * np.pi))
+    return E * (2.0 if m != 0 else 1.0)
 
 
 def _find_peak_times(

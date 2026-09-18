@@ -233,8 +233,15 @@ def main(argv: list[str] | None = None) -> int:
     axA.set_ylim(-0.5, 9.4)
     axA.set_ylabel(r"$d$")
     axA.set_xlabel(r"$t$")
-    axA.text(2.0, 6.9, "separation of the $\\chi$ pits (level 3)", fontsize=8,
-             ha="left", va="top", color=style.INK)
+    # The black curve's name, in the corner its own descent encloses.  On one
+    # line it is 23 t-units wide, which is wider than every clear stretch this
+    # strip has: laid over the curve it was struck through by it, and pushed
+    # into the band above the flat start it ran through the t = 22 rule and out
+    # of the frame (2026-09-18).  Broken in two it fits under the descent, with
+    # the curve 3.5 pt clear of the block's top right corner.  7.5 pt, like the
+    # panel's other three names.
+    axA.text(0.0, 3.9, "separation of the $\\chi$ pits\n(level 3)", fontsize=7.5,
+             ha="left", va="top", color=style.INK, linespacing=1.25)
     axA.text(29.5, 5.6, "common MOTS, $t=22$", fontsize=7.5, ha="left",
              va="bottom", color=style.BURGUNDY)
     axA.text(29.5, 3.4, "level-3 wall, $t=26.9$", fontsize=7.5, ha="left",
@@ -251,14 +258,18 @@ def main(argv: list[str] | None = None) -> int:
     axB.set_ylim(1e-11, 3)
     axB.text(97.0, 2.2e-10, "clamp", fontsize=7.5, ha="right", va="bottom",
              color=style.MUTED)
-    axB.text(13.5, 1.1e-2, "level 3", fontsize=7.5, ha="center", va="top",
+    # Under the scout's flat stretch and anchored LEFT: centred on t = 13.5 the
+    # name is 18 t-units wide and its tail ran into the t = 22 MOTS rule.
+    axB.text(1.5, 1.1e-2, "level 3", fontsize=7.5, ha="left", va="top",
              color=style.CONTEXT)
 
     axC.semilogy(t_s, col_s["min_chi"], color=style.CONTEXT, lw=0.9)
     axC.semilogy(t_5, col_5["min_chi"], color=style.INK, lw=1.1)
     axC.set_ylabel(r"$\min\chi$")
     axC.set_ylim(1e-9, 4e-3)   # the clamp excursions leave the frame, honestly
-    axC.text(41.5, 2.6e-9, "onto the $10^{-20}$ clamp", fontsize=7.5, ha="left",
+    # Right-aligned: left-anchored the name ran to within half a point of the
+    # right spine, which is closer than anything else on the page comes.
+    axC.text(99.5, 2.6e-9, "onto the $10^{-20}$ clamp", fontsize=7.5, ha="right",
              va="bottom", color=style.MUTED)
 
     axD.semilogy(t_s, col_s["max_abs_K"], color=style.CONTEXT, lw=0.9)
@@ -278,14 +289,22 @@ def main(argv: list[str] | None = None) -> int:
     axE.semilogy(c3[:, 0], c3[:, 1], color=style.MUTED, lw=0.8, ls=(0, (4, 2.5)))
     axE.semilogy(c3[:, 0], c3[:, 2], color=style.MUTED, lw=0.8, ls=(0, (1, 1.8)))
     axE.set_ylabel(r"$L^2$ constraints")
-    axE.set_ylim(2.5e-4, 6e1)
+    # A decade of floor under the settled curves.  H bottoms at 6.1e-4, which
+    # on the old 2.5e-4 floor left 9 pt between the curve and the frame -- less
+    # than its own name, so the name printed through the spine and through both
+    # H curves at once (2026-09-18).
+    axE.set_ylim(5e-5, 6e1)
     axE.text(29.5, 6.0, "level 3", fontsize=7.5, ha="left", va="bottom",
              color=style.CONTEXT)
-    axE.text(47.0, 1.55e-3, r"$\|\mathcal{M}\|$", fontsize=7.5, ha="center",
-             va="bottom", color=style.INK)
-    axE.text(30.0, 6.4e-4, r"$\|\mathcal{H}\|$", fontsize=7.5, ha="center",
-             va="top", color=style.INK)
-    axE.text(66.0, 2.4e-2, "the down-step (level 3)\ncoincides with level 5",
+    # Each norm named off its OWN curve, at the t where the two are furthest
+    # apart, with the clearance in points rather than in decades.
+    axE.annotate(r"$\|\mathcal{M}\|$", (52.0, np.interp(52.0, c5[:, 0], c5[:, 2])),
+                 xytext=(0, 3), textcoords="offset points", fontsize=7.5,
+                 ha="center", va="bottom", color=style.INK)
+    axE.annotate(r"$\|\mathcal{H}\|$", (62.0, np.interp(62.0, c5[:, 0], c5[:, 1])),
+                 xytext=(0, -3), textcoords="offset points", fontsize=7.5,
+                 ha="center", va="top", color=style.INK)
+    axE.text(66.0, 3.2e-2, "the down-step (level 3)\ncoincides with level 5",
              fontsize=7.5, ha="center", va="bottom", color=style.MUTED,
              linespacing=1.25)
 
@@ -331,13 +350,19 @@ def main(argv: list[str] | None = None) -> int:
     axH.axhline(0.0, color=style.FAINT, lw=0.7)
     axH.axvline(T_MOTS, color=style.BURGUNDY, lw=0.7, ls=(0, (1, 2)), zorder=1)
     axH.set_xlim(13.4, 28.6)
-    axH.set_ylim(-0.62, 0.75)
+    axH.set_ylim(-0.62, 0.86)   # headroom for theta_+'s name over its flat start
     axH.set_xlabel(r"$t$")
     axH.set_ylabel(r"$\theta$ at areal min.")
-    axH.text(14.6, 0.58, r"$\theta_+$", fontsize=8, ha="left", va="bottom",
-             color=style.INK)
-    axH.text(14.8, 0.10, r"$\theta_-$", fontsize=8, ha="left", va="bottom",
-             color=style.MUTED)
+    # Both names sit 4 pt ABOVE their own curve on the flat left stretch, where
+    # the two are 0.36 apart: each is then unambiguously the curve beneath it.
+    # Set at fixed y the upper name touched the frame and the lower one lay
+    # along its own dashes (2026-09-18).
+    axH.annotate(r"$\theta_+$", (15.4, scC["th_out"][w][0]), xytext=(0, 4),
+                 textcoords="offset points", fontsize=8, ha="center",
+                 va="bottom", color=style.INK)
+    axH.annotate(r"$\theta_-$", (14.6, scC["th_in"][w][0]), xytext=(0, 4),
+                 textcoords="offset points", fontsize=8, ha="center",
+                 va="bottom", color=style.MUTED)
     axH.text(25.6, -0.45, "level 5", fontsize=7.5, ha="center", va="bottom",
              color=style.CONTEXT)
 
