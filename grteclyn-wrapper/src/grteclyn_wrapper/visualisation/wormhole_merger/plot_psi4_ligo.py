@@ -132,6 +132,17 @@ LOOKS = {
 }
 
 
+def _smooth_window(nbins: int) -> int:
+    """Savitzky-Golay width in BINS, as a fraction of the record's band.
+
+    It was a hard-coded 21 for every arm, which is not one filter but five:
+    these records differ by two orders of magnitude in length, so 21 bins is
+    a light touch on the spiral's 5000-bin spectrum and most of the band on
+    the throat's 36.  A fifth of the spectrum, odd, at least 5.
+    """
+    return max(5, min(21, (nbins // 5) | 1))
+
+
 def f_isco_M() -> float:
     """f_GW * M at the Schwarzschild ISCO of the total mass."""
     return 6.0 ** -1.5 / np.pi
@@ -245,7 +256,7 @@ def prepare(pack: pathlib.Path):
             f, S = _burst_psd(ww, (uu.size - 1) / (uu[-1] - uu[0]))
             return _compute_radiated_energy(
                 uu, ww, m=mm,
-                f_peak=float(f[1:][np.argmax(_smooth_psd(S, 21, 5)[1:])]))
+                f_peak=float(f[1:][np.argmax(_smooth_psd(S, _smooth_window(S.size), 5)[1:])]))
 
         E = band_energy(u, yy * M)
         spread = []
@@ -296,7 +307,7 @@ def main(argv: list[str] | None = None) -> int:
     # so a shape in (a) and a sweep in (c) are read off the same abscissa.
     for a in arms:
         f, S = _burst_psd(a["y"], 1.0 / a["dt"])
-        f_pk = float(f[1:][np.argmax(_smooth_psd(S, 21, 5)[1:])])
+        f_pk = float(f[1:][np.argmax(_smooth_psd(S, _smooth_window(S.size), 5)[1:])])
         env, _ = envelope_and_frequency(a["y"], a["dt"], f_pk)
         a["env"], a["f_pk"] = env, f_pk
         a["tau"] = a["u"] - a["u"][int(np.argmax(env))]
@@ -316,16 +327,42 @@ def main(argv: list[str] | None = None) -> int:
     axA.set_ylabel(r"$|r\Psi_4|\,M$")
 
     # ---- (b) strain over the design floor -------------------------------
+    # DRAWN ONLY WHERE THE RECORD MEASURES (2026-09-18).  This panel used to
+    # run from 20 Hz and quote the maximum of the curve.  After the 1/f^4
+    # weight the strain PSD of every one of these bursts still RISES toward
+    # low frequency, so that maximum landed wherever the high-pass guard
+    # stopped it -- and the guard is one cycle per record.  The quoted
+    # numbers were therefore 1/T_record wearing a physical name: throat
+    # 95.3 Hz against 1/T = 96.7, head-on 135.3 against 136.7, spiral 135.3
+    # against 135.3, fly-by 178.0 against 178.1, BBH twin 89.9 against 90.2.
+    # Lengthen a record or move its gate and every one of them moves.
+    #
+    # Below 1/T the spectrum is not measured, it is extrapolated, so the
+    # curve now STARTS at the record's own corner, the corner is ticked on
+    # the axis, and what is quoted is the strain at the one frequency in
+    # these records that is genuinely resolved: the Psi_4 band peak of
+    # panel (a) (bins 3-5, not bin 1).  Read this panel as a falling power
+    # law with a stated left edge, never as a bump with a peak.
     for a in arms:
         f, S = _burst_psd(a["y"], 1.0 / a["dt"])
-        S = _smooth_psd(S, 21, 5)
+        S = _smooth_psd(S, _smooth_window(S.size), 5)
         Sh = _psd_psi4_to_strain(f, S)
         f_hz, Sh_hz = _scale_to_physical(f, Sh, MASS_MSUN, DIST_MPC)
-        band = (f_hz >= 20.0) & (f_hz <= 5000.0) & np.isfinite(Sh_hz) & (Sh_hz > 0)
+        f_corner = to_hz / float(a["u"][-1] - a["u"][0])      # 1 cycle/record
+        band = ((f_hz >= f_corner) & (f_hz <= 5000.0)
+                & np.isfinite(Sh_hz) & (Sh_hz > 0))
         fb, hb = f_hz[band], np.sqrt(Sh_hz[band])
+        a["f_corner"], a["h_corner"] = f_corner, float(hb[0])
         axB.loglog(fb, hb, zorder=3, **LOOKS[a["name"]])
-        print(f"  {a['name']:<18s} strain peak {hb.max():.2e} at "
-              f"{fb[np.argmax(hb)]:.0f} Hz")
+        axB.plot([fb[0]], [hb[0]], marker="|", ms=4.5, mew=0.9, zorder=4,
+                 color=LOOKS[a["name"]]["color"])
+        h_at_pk = float(np.interp(a["f_pk"] * to_hz, fb, hb))
+        a["h_at_pk"] = h_at_pk
+        print(f"  {a['name']:<18s} strain {h_at_pk:.2e} at the resolved "
+              f"Psi_4 peak {a['f_pk'] * to_hz:.0f} Hz; record corner "
+              f"1/T = {f_corner:.0f} Hz (curve starts there, value "
+              f"{hb[0]:.2e}); logarithmic slope "
+              f"{np.polyfit(np.log(fb), np.log(hb), 1)[0]:+.2f}")
     # What the record cannot hold: the numerical BBH stream opens at the
     # last orbits, but an astrophysical binary of the SAME mass arrives
     # there up a long inspiral ramp.  The Newtonian chirp of the equal-mass

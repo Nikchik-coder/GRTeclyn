@@ -112,6 +112,65 @@ sits just above the head-on end because its momentum is 59 % of circular
 (p = 0.12 against 0.204 at d = 12) — it is an eccentric plunge, not an
 inspiral, which is why its 0.26 % is nowhere near the textbook 4.8 %.
 
+### psi4_ligo panel (b): every quoted peak frequency was 1/T_record (2026-09-18)
+
+Panel (b) ran from 20 Hz and quoted the maximum of each curve. Measured
+against the records themselves, those five "peak frequencies" were the
+inverse record lengths to two digits:
+
+| arm | quoted peak | 1/T_record | ratio |
+|---|---|---|---|
+| collapsing throat | 95.3 Hz | 96.7 Hz | 0.99 |
+| head-on | 135.3 | 136.7 | 0.99 |
+| spiral | 135.3 | 135.3 | 1.00 |
+| fly-by | **178.0** | **178.1** | 1.00 |
+| vacuum BBH twin | 89.9 | 90.2 | 1.00 |
+
+The cause is structural, not a typo. Psi_4 is h-double-dot, so the strain PSD
+carries a 1/f^4 weight, and after it *every one of these bursts still rises
+monotonically toward low frequency*. The plotted curve therefore peaks
+wherever the high-pass guard stops it, and that guard is one cycle per record
+(`_psd_psi4_to_strain`, 2026-09-16). The quoted AMPLITUDES were read at the
+same place, so they were knee values too, and both numbers moved whenever a
+record was lengthened or a gate was changed. The article carried
+"the fly-by peaks at 6.0e-21 Hz^-1/2 (178 Hz)" on that basis.
+
+Fixed: each curve now STARTS at its own corner, with the corner ticked on the
+curve, and nothing is quoted as a peak. What is quoted is the strain at the
+one frequency these records genuinely resolve -- the Psi_4 band peak, bins
+3-5 rather than bin 1 -- and the logarithmic slope, so the panel reads as a
+falling power law with a stated left edge:
+
+fly-by 1.21e-21 at 193 Hz (slope -4.9), head-on 1.10e-21 at 406 Hz (-5.5),
+spiral 9.25e-22 at 406 Hz (-5.7), BBH twin 3.00e-22 at 450 Hz (-5.9),
+throat 1.53e-22 at 286 Hz (-3.4). The BBH twin's Psi_4 peak at f M = 0.0664
+is the textbook equal-mass merger value, which is the check that the
+reduction to each source's own total mass is right.
+
+Also fixed in the same pass: `_smooth_psd(S, 21, 5)` was one hard-coded
+Savitzky-Golay width for five records differing by two orders of magnitude in
+length -- a light touch on the spiral's ~5000-bin spectrum and most of the
+band on the throat's 36. It is now a fifth of the spectrum, odd, at least 5
+(`_smooth_window`).
+
+### The fly-by row is gated at t = 70, not 76 (2026-09-18)
+
+t = 76.08 is where |rPsi4| at R = 20 TURNS BACK UP. That is the trough --
+the point where the mouths' expansion has grown to EQUAL the decaying burst,
+not where it arrives -- and by t = 100 the contaminant is 2.0x the burst
+peak. The gate is now set ahead of it at t = 70, which still keeps 15.5 units
+(7.8 M) past the R = 20 burst peak at t = 54.5. Consequences: E_rad/M falls
+9.3e-2 -> 7.4e-2 (sphere spread 43 %, the widest in the campaign), the
+fly-by's lead over the vacuum twin 36x -> 29x, and its band peak moves
+f M = 0.0263 -> 0.0286. The |rPsi4| peak itself (4.1e-2) does not move: it is
+at t = 54.5, far inside both gates.
+
+The retired note on this row claimed "R = 36/44 decay monotonically to the
+record's end". **They do not.** That reading normalised each sphere by its
+maximum over t <= 60, which truncates the OUTER spheres' bursts before they
+peak -- light travel puts the R = 44 burst at t ~ 78, not 60. In retarded
+time all four spheres peak together at t - R ~ 34.5, as radiation must.
+
 ## The paper's spiral collapse page (2026-09-18)
 
 `05_binary_spiral/p012_paper/p012_collapse_diagnostics` is the article's

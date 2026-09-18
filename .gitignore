@@ -106,3 +106,10 @@ parameters_and_version.txt
 # PNGs from unrelated runs accumulated here and 16 of them got committed.  The
 # default now points at the working directory; this keeps any stragglers out.
 grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/*/
+
+# Downloaded GWOSC strain: bulk detector data, re-fetchable from gwosc.org by
+# (ifo, gps_start, gps_end, rate) and never edited by hand.  The default cache
+# now lives outside the source tree (runs/gw_search/strain_cache); the second
+# line retires the one that was briefly written into the package itself.
+runs/gw_search/strain_cache/
+grteclyn-wrapper/src/grteclyn_wrapper/gw_search/data_cache/

@@ -77,13 +77,22 @@ GROUP = "08_waves"   # cross-cutting: the figure belongs to no single group
 #   single  QUEUE2E_GATES.md junk cuts (R=10 from t=70; the gated file holds
 #           zeros past each sphere's cut, trimmed per sphere below);
 #   fly-by  the L = 128 level-5 arm, finished t = 100 clean 2026-09-18 and
-#           filed under 06_binary_flyby/p045/.  No horizon
-#           ever forms: both mouths expand (areal R 4.2 -> 33 by t = 97)
-#           and the expansion's disturbance climbs |rPsi4| at R = 20 back
-#           off its post-burst trough at t = 76.1, ending 1.7x the burst
-#           peak, while R = 36/44 decay monotonically to the record's end
-#           -- so the row is gated at t = 76 (the R = 44 peak at t = 76.7
-#           is the one casualty of the shared gate);
+#           filed under 06_binary_flyby/p045/.  No horizon ever forms: both
+#           mouths expand (areal R 4.2 -> 33 by t = 97) and that expansion
+#           contaminates the innermost sphere, so the row is gated.
+#           GATED t = 70 (was 76 until 2026-09-18).  t = 76.08 is where
+#           |rPsi4| at R = 20 TURNS BACK UP -- the trough, i.e. the point
+#           where the contaminant has grown to EQUAL the decaying burst, not
+#           where it arrives.  It is already comparable well before that, and
+#           by t = 100 it is 2.0x the burst peak.  t = 70 keeps 15.5 units
+#           (7.8 M) past the R = 20 burst peak at t = 54.5 and leaves the
+#           contaminant sub-dominant throughout.
+#           The retired note on this row claimed "R = 36/44 decay
+#           monotonically to the record's end".  They do not: that reading
+#           normalised each sphere by its max over t <= 60, which truncates
+#           the OUTER spheres' bursts before they peak (light travel puts the
+#           R = 44 burst at t ~ 78, not 60).  In retarded time all four
+#           spheres peak together at u = t - R ~ 34.5, as radiation must;
 #   spiral  the freeze arm finished t = 100 on 2026-09-16, so the SERIES now
 #           runs t = 0-100 in three legs and the row is NOT capped.  Its
 #           note records what the extra record cost: leg 3 holds the core
@@ -102,7 +111,7 @@ ARMS = [
      None, 20.0, None, r"core frozen $t{>}57$"),
     ("fly-by", r"$P=0.45$, $d=12$", "(2,2)",
      "06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/Weyl4_mode_22.dat",
-     None, 20.0, 76.0, r"gated $t{=}76$ (mouths expand)"),
+     None, 20.0, 70.0, r"gated $t{=}70$ (mouths expand)"),
     ("vacuum BBH twin", r"$P=0.12$, $d=12$", "(2,2)",
      "07_bbh_control/bbh_control_d12_p012_t150/psi4_mode_l2_all.dat",
      2, 14.0, None, ""),
