@@ -19,7 +19,12 @@ together?".  They do not, and that panel is the evidence.
 
   python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_collapse_diagnostics \\
       --run v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600 --t-min 36 \\
-      --out results/merger/figures/05_binary_spiral/p012_paper/p012_collapse_diagnostics.png
+      --out /tmp/p012_collapse_dashboard.png
+
+NB the article's spiral collapse page at
+``figures/05_binary_spiral/p012_paper/p012_collapse_diagnostics`` is drawn by
+``plot_spiral_collapse.py`` (PRD grammar, horizon scans included) since
+2026-09-18 -- do not point ``--out`` there, this module would overwrite it.
 """
 from __future__ import annotations
 

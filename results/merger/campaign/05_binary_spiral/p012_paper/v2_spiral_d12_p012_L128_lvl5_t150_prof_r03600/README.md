@@ -74,12 +74,14 @@ for the whole run at 100× the plotfile time resolution.
 
 ## What it does NOT show
 
-No horizon scan was run on this arm (profile `orbit-modes` carries no
-`--horizon-scan`). The last oriented scan on this family, over the
-predecessor's t = 55/56/57 plotfiles, found **no MOTS**. Whether one has formed
-by t = 58–60, after the lapse collapsed, is unmeasured and answerable —
-`h_ij`/`A_ij` are in `amr.plot_vars` and `Plt05800/05900/06000` survive on
-scratch.
+No horizon scan was run on this arm live (profile `orbit-modes` carries no
+`--horizon-scan`). The oriented scan over the predecessor's t = 55/56/57
+plotfiles found **no MOTS**. The t = 58–60 question — whether one forms after
+the lapse collapses — was answered by hand afterwards over `Plt05800/05900/06000`
+(`horizon_oriented_scan_t58-60.txt`, at level 3 AND level 5): **still no MOTS
+at any of them**, throat areal R = 3.97 / 3.93 / 3.87, the two levels within
+0.2 %. So the whole measured record, t = 55–60, collapses with no horizon
+found; only the final 0.44 units are unscanned.
 
 ## Files
 
@@ -95,6 +97,7 @@ scratch.
 | `run_tail.log`, `Backtrace.0` | the death, verbatim (paths and host scrubbed) |
 | `params.txt` | exact configuration. (`parameters_and_version.txt` is gitignored campaign-wide and stays in the run directory only — it records no version anyway, just "GRTeclyn version (unknown)".) |
 | `horizon_oriented_scan_t55-57.txt` | the oriented marginal-surface scan over the t = 55/56/57 plotfiles: **no MOTS** at level 3 or level 5, throat areal R = 4.104 / 4.062 / 4.018. Folded in 2026-09-16 from the superseded `_t100_r03600` pack. |
+| `horizon_oriented_scan_t58-60.txt` | the same scan over t = 58/59/60, level 3 and level 5: **no MOTS**, throat areal R = 3.970 / 3.923 / 3.872 (level 5), levels within 0.2 %. The article's Fig. 5 panels (f)-(g) draw both scan files. |
 | `collapse_region_profiles_OFFLINE_t55-57.png`, `core_radial_profile_OFFLINE_t57.dat` | the offline python shell profiles that motivated the in-code module, same provenance. Different layout from `core_radial_profile.dat.gz` — do not mix them. |
 
 **This pack supersedes `v2_spiral_d12_p012_L128_lvl5_t100_r03600`,** which was the same run

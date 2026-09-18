@@ -57,6 +57,94 @@ all (peak matching returned v = −0.90; the windowed lag reads 1.00). Measured:
 throat 0.91/0.95/0.98, head-on 0.96/0.90, spiral 0.95/1.00/1.00, fly-by
 1.00/1.00/1.00, BBH twin 0.82. Both figures are re-drawn at the spiral and fly-by close-outs.
 
+## The paper's spiral collapse page (2026-09-18)
+
+`05_binary_spiral/p012_paper/p012_collapse_diagnostics` is the article's
+full-page Fig. 5 (`figure*[p]`, sec:spiral:inspiral), drawn with no arguments:
+
+```
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_collapse
+```
+
+It REPLACED the generic dashboard render of the same name (2026-09-16, Computer
+Modern, 9 boxed panels) with the seed-branches-grammar page: the inspiral strip
+(SERIES `binary_throat_diagnostics`, restart-settle rows t = 36.0-36.4 masked),
+the level-5 clocks and radial anatomy (the profiled arm's own streams), the
+level-3 constraint overlay (median 3.5 % / 0.7 % of the level-5 H / M over the
+shared t = 36-50 window; all 22 of leg 1's regrid spikes sit before t = 36),
+and the two oriented horizon scans as the only horizon instrument — throat
+r = 0.99 -> 0.73, areal R = 4.104 -> 3.872 (levels 3/5 within 0.2 %), **no MOTS
+at any of t = 55-60**. The in-code theta_common columns are deliberately not
+drawn (naive +r orientation; the withdrawn t = 30.77 "common horizon" was
+exactly that artefact). Validated at draw time against the pack READMEs:
+transient peak t = 41.21 (H 1.57e-2, M 4.06e-2), chi floor t = 58.43, min
+lapse 2.0e-3, max|K| 6.10, spike real from t = 49.09, edge widest 1.359 at
+t = 51.42, corr(K,H) = -0.35 / corr(K,M) = +0.04 after t = 40. Redraw only if
+the p012 series gains legs or the scan table gains rows.
+
+## The paper's head-on collapse page (2026-09-18)
+
+`04_binary_headon/headon_collapse_diagnostics` is the article's full-page
+head-on figure (`figure*[p]`, sec:headon:contact), drawn with no arguments:
+
+```
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_headon_collapse
+```
+
+The spiral collapse page's counterpart with the opposite verdict: the pair
+MAKES a black hole, and every horizon point is the corrected orientation
+(the oriented scan landed 2026-09-09 00:11, one hour before the head-on
+scout launched — the whole campaign ran it live; it is the SPIRAL p012 legs
+that lack the live flag, not the head-on). Reads the scout
+(`merge_headon_flip_d8_v1_t100`, level 3, dies at the wall t = 26.91), the
+paper's arm (`..._v1_lvl5_t100_r02200`, level 5, no fill, t = 100 clean) and
+the down-step (`..._v1_lvl3down_t100_r03500`). Horizon record: offline
+corrected scans (dx 0.0625) find formation at t = 22 (r = 3.171, R = 5.564,
+M_MS = 2.991), growth to R = 5.713 (t = 24), then 4.722 (26) and 4.915/4.874
+(42.5/43); the live scans' gaps are APERTURE (shells reach 0.5 sep + 2.3;
+once the pits merge the MOTS at r ~ 2.7-3.3 is outside while every shell
+inside reports trapped — 125 of 155 level-5 scans); where two arms see the
+surface at once they agree (t = 36: R 4.461/4.441, M_MS 2.736/2.737). Mass
+DRIFTS DOWN, -0.0066/unit on the down-step track (2.99 formation -> 2.17 at
+t = 99): phantom infall removes mass. theta_+ at the common areal minimum
+crosses zero between t = 20 and 21; no mouth ever has its own MOTS.
+
+**Trap, do not draw:** V1c's (`..._v1c_latefreeze_t100`) common-scan rows
+from t ~ 29 sit at r = 1.15 — INSIDE its own frozen fill (r_full = 1.2) —
+and its A/B rows claim "own MOTS" from t = 40 for the same reason. Fill
+artefacts, excluded by design here, like theta_common on the spiral page.
+
+Other validated numbers: level 5 walks the wall (scout max|K| 18.1 and
+H = 13.6 at death vs level-5 max|K| <= 1.34, H falling 4.6e-3 -> 1.4e-3);
+down-step lands on level 5 to median 0.08 % (H) / 1.48 % (M) over t = 35-100;
+lapse rides the 1e-10 clamp t = 38.5-41.0, ends 1.1e-3; chi clamps at 1e-20
+(scout from 24.4, level 5 over 26-38), ends 2.0e-5; field swallowed, max|phi|
+0.86 -> 0.008 with |Pi| <= 0.069; (2,0) ringdown swings at t = 28.2/43.6/
+63.0/81.7, amplitude x0.6-0.8 per half-swing. Redraw only if a head-on arm
+is re-run with the scan aperture widened or new offline scans land.
+
+## The paper's refinement-ladder figure (2026-09-18)
+
+`05_binary_spiral/spiral_refinement_ladder` is the article's sec:spiral:wall
+figure, drawn with no arguments:
+
+```
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_ladder
+```
+
+One data source: `campaign/05_binary_spiral/refinement_ladder.dat` (levels
+3-7 from the same t = 50 checkpoint; plain and damped families kept separate
+per that file's own warning — an earlier "turns over at level 7" quote that
+averaged them is withdrawn). Plain deaths 52.07 / 53.10 / 55.60 / 56.13 /
+56.20 (+1.03/+2.51/+0.53/+0.06 per doubling), halfstep control +0.36 on its
+level-5 twin, FAINT reference rule at 60.445 = the L = 128 production arm
+restarted at t = 36. No horizon at any rung; no burgundy on this figure.
+Redraw only if the ladder gains rungs.
+
+Same day, the article's gallery/ligo captions were synced to the current
+draws (fly-by close-out): gate t = 76, strain peak 1.7e-20 at 89 Hz, spiral
+speeds 0.95/1.00/1.00, fly-by ridge 134 Hz.
+
 ## How the commands were recovered, and why it can be trusted
 
 Each candidate was redrawn and compared with the published PNG **panel by
