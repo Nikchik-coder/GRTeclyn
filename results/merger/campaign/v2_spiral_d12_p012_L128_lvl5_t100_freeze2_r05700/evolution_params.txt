@@ -1,0 +1,281 @@
+# QUEUE 5 (f), THE RADIUS-INSENSITIVITY TWIN (designed 2026-09-17): the freeze arm byte-for-byte
+# with ONLY the fill window moved, 1.40/1.90 -> 1.25/1.75.  Same seed (t = 57 Chk05700), same
+# binary (main3d_coreprof_2026-09-15.ex, md5 32e12cc4), same grid, same stop_time 100.  If the
+# R = 20 waveform agrees to a few %, the fill is not in the physics and the late record is
+# quotable; if it moves with the window, the tail is the fill's.  Causal budget: 57 + (20-1.75) = 75.25.
+# QUEUE 5, STAGE 3 -- THE FREEZE ARM (authored 2026-09-16, on the user's word).
+# Level 5 restarted from the t = 57 checkpoint of the profiled arm, with
+# CoreFreezeFill armed from the restart, to t = 100.
+#
+# WHY t = 100 AND NOT 150.  The stop time is set by the CAUSAL BUDGET, not by
+# ambition.  Contamination from r_s = 1.90 armed at t = 57 reaches a sphere at
+# R at t = 57 + (R - 1.9): 75.1 at R = 20, 83.1 at 28, 91.1 at 36, 99.1 at 44.
+# Past ~99 NO sphere carries a quotable waveform, so the extra 50 units to 150
+# would be card time spent on signal that cannot be used.  43 units at ~3.8 u/h
+# is ~11.3 h.
+#
+# WHAT THIS ARM IS FOR, STATED PRECISELY.  The oriented scan run 2026-09-16 over
+# the predecessor's t = 58/59/60 plotfiles found NO MOTS at either resolution --
+# throat areal R = 3.973/3.970, 3.927/3.923, 3.878/3.872 at levels 3/5,
+# converged to 0.15% -- continuing 4.104/4.062/4.018 at t = 55/56/57.  The
+# remnant is STILL A WORMHOLE right up to the NaN, and the |K| spike sits ON the
+# throat: peak at r = 0.984/0.891/0.797 against a throat at 0.850/0.810/0.730,
+# both marching inward together.  So the fill at radius_full 1.40 FREEZES THE
+# THROAT, and unlike the black-hole case there is no horizon to hide it behind.
+# The consequence must be quoted with the waveform: this arm carries the
+# ALREADY-GENERATED merger burst (produced t ~ 40-45, arriving at R = 20 around
+# t ~ 60-65, which is exactly where the predecessor died) out to the spheres.
+# It does NOT give the true late ringdown, because the throat stops evolving at
+# t = 57.  Do not read its post-burst tail as the remnant's QNM.
+#
+# WHY t = 57 AND NOTHING LATER.  The predecessor
+# v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600 died at t = 60.445 (h11 NaN,
+# level 5).  Its min(chi) reached the 1e-8 floor at t = 58.43, so the t = 58,
+# 59 and 60 checkpoints all carry a core that is ALREADY broken and restarting
+# from them just re-runs the NaN at whatever resolution.  Chk05700 (t = 57.000,
+# finest 5, min_chi 6.8e-7) is the last checkpoint IN FRONT of the floor and is
+# the only valid seed.  Kept at /tmp/grteclyn_scratch/_keep_spiral_lvl5_t57_seed/.
+#
+# WHY THIS WINDOW, AND WHY IT IS 1.40 AND NOT 1.25.  The window is sized from
+# the predecessor's in-code radial profile -- the first measurement of WHERE the
+# wall is, rather than the guess CoreFreezeFill.hpp shipped with ("expect
+# radius_full ~ 1.2 to 1.5").  max|K| is not central: it is a narrow spike, and
+# the honest size measure is its outer edge, the outermost shell above
+# |K| = 0.2.  That edge WIDENS to 1.359 at t = 51.4 and only then contracts:
+# 1.266 (t = 55), 1.172 (t = 57), 1.109 (58), 1.078 (60.44).  radius_full 1.25
+# would cover an arming at t = 57 with 2.5 level-5 cells to spare but would NOT
+# have covered one at t ~ 52; 1.40 covers the disturbance's whole history, so
+# the window stays valid if this arm is ever re-armed earlier.  Note also there
+# is NO spike at all before t = 49.09 -- the profile is flat at |K| ~ 0.08 and
+# the peak-radius track there is argmax noise, not a feature.
+#
+# THE RAMP.  1.40 -> 1.90 is 0.50 wide = 32 cells at level 5 (dx 0.0156).  The
+# module asks for "many cells" and cites 13 as workable; the blend zone sits in
+# smooth field (|K| 0.04-0.06, chi monotone), which is where it must sit.
+#
+# CAUSALITY, THE MODULE'S OWN FORMULA.  Contamination from r_s armed at t_e
+# cannot reach extraction radius R before t_e + (R - r_s).  Here
+# 57 + (20 - 1.90) = 75.1, and the nearest sphere is R = 20 (not the head-on's
+# 14), so every sphere is clean for 18.1 units past engagement -- against a
+# predecessor that died at 60.44.  The head-on's budget had ~0.4 units.  The
+# fill is NOT claimed to be causally hidden: the last oriented scan on this
+# family found no MOTS at t = 55/56/57, and the module rests on this budget
+# instead of a horizon seal.
+#
+# WHY max_level 5 AND NOT THE DOWN-STEP.  With the core frozen inside 1.40 the
+# level-5 cells there do no work, and level 4 would run ~2x faster.  Level 5 is
+# kept anyway for ONE reason: the M6 overlap test compares this arm's Psi4 at
+# 20/28/36/44 against the predecessor's over the shared window t = 57-60.44, and
+# that comparison is clean only if the grid is identical.  ~3.8 u/h, 93 units,
+# ~24.5 h.
+#
+# WHAT THIS ARM DOES NOT SETTLE ON ITS OWN.  The module requires a
+# radius-insensitivity twin at a different (radius_full, radius_start) agreeing
+# at R = 20 to a few %, over and above the M6 overlap.  If the waveform moves
+# when the fill radius moves, the fill is in the physics and the waveform is not
+# quotable.  Plan for two arms.
+#
+# BINARY.  main3d_coreprof_2026-09-15.ex (md5 32e12cc4) -- unchanged, and NO
+# REBUILD IS NEEDED: it already carries core_freeze_fill, core_fill_radius_full,
+# core_fill_radius_start and core_fill_from_time (verified with strings).  The
+# same binary is bit-reproducible against the 2026-09-08 boost build over the
+# whole t = 36-59.84 window, so this arm differs from the physics baseline only
+# by the fill.
+verbosity = 1
+
+output_path = "runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700"
+amr.plot_file = "/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700/BinaryWormholeChk"
+
+checkpoint_interval = 100
+checkpoint_keep = 4
+
+plot_interval = 100
+
+amr.plot_vars = chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2 shift3 phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: TWO regular massive drainhole throats, tangentially boosted.
+
+wormhole_id_type = 1
+
+# Each body's exact static lapse (superposed); 1+log takes over from there.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a, throat A
+wormhole_throat_radius_B = 2.0       # throat B on: the binary
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1 each, carried by the lapse
+wormhole_drainhole_mass_B = 1.0
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`: d = 12 along x.  B defaults to -A; set both anyway.
+wormhole_centerA = -6.0 0.0 0.0
+wormhole_centerB =  6.0 0.0 0.0
+
+# Tangential Bowen-York momenta, equal and opposite: net P = 0, orbit in the
+# x-y plane.  0.45 = 90 % of the circular momentum for the ACTUAL 6x pull
+# (sqrt(6) x 0.204 = 0.50) -- a real orbit attempt, not a plunge.
+wormhole_momentumA = 0.0  0.12 0.0
+wormhole_momentumB = 0.0 -0.12 0.0
+
+# THE ONE PHYSICS LINE THAT DIFFERS FROM THE BASELINE.  -1 mirrors throat
+# B's scalar profile: same geometry, same mass, reversed drainhole flow.
+# The two pi/2 tails then cancel and phi -> 0 at infinity on its own.
+wormhole_phi_sign_B = -1.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid.  The production box (GPU_PLAN s4): same finest dx as the physics arms,
+# twice the room; spheres and sponge all in un-sponged vacuum.  The whole
+# d = 12 orbit sits deep inside the sponge.
+
+L = 128.0
+N1 = 256
+N2 = 256
+N3 = 256
+center = 64.0 64.0 64.0
+
+max_level = 5
+regrid_interval = 16 16 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Identical to the Stage 1/2.0 base.
+
+dt_multiplier = 0.02
+stop_time = 100.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+# Matter half of the puncture trick (CoreMatterDamping.hpp): once the lapse
+# collapses below 1e-6 -- five orders under any live throat, unambiguously
+# inside the trapped surface -- the scalar is exponentially damped so its
+# stress stops sharpening the metric at the floor boundary.  Without this the
+# run dies of a core NaN ~20 units after horizon formation (measured t=52.07).
+core_matter_damping = 0
+# Window retuned after the first damped run died at t = 52.09 (old undamped death
+# t = 52.07): with lapse_start = 1e-6 the window covered only ~3 finest cells while
+# the scalar bulk (|phi| up to 0.53) sat at lapse 1e-6..3e-2.  Measured at t = 51.5:
+# lapse < 3e-2 reaches r = 0.63, safely inside the common apparent horizon r = 0.875.
+core_damping_lapse_start = 3.0e-2
+core_damping_lapse_full = 1.0e-3
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: MOVING nested boxes on BOTH tracked throats (the tagger unions
+# boxes on A and B whenever throat B is on).  Same box arithmetic as the
+# Stage 2.0 arm: level-l half-width tagging_L * 2^-(l+2), so level 3 has
+# half-width 4 around each throat.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  Same battery as Stage 2.0.  The split plane separates A and
+# B along x at t = 0; once the orbit winds past a quarter turn the A/B
+# attribution in binary_diag degrades -- throat_track.dat (which follows
+# both centres) is the moving-frame truth.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+core_radial_profile   = 1          # NEW: radially binned chi/K/lapse, every coarse step
+core_profile_r_max    = 4.0        # matches the oriented horizon scan range (0.15-4.0), so the two are comparable; the composite reduction covers every shell at any r_max
+core_profile_dr       = 0.03125    # 2 dx at level 5 -> 128 shells to r_max 4.0; a PARAMETER, not dx, so the column count cannot move when AMR adds or drops a level
+core_profile_interval = 1          # every coarse step (dt = 0.01)
+
+# ---- THE FILL (CoreFreezeFill.hpp).  Sized from the profile above, not guessed.
+core_freeze_fill       = 1
+core_fill_radius_full  = 1.25      # covers the spike AT t = 57 engagement (edge 1.172, peak 1.047); NOT safe for arming earlier
+core_fill_radius_start = 1.75      # 0.50 ramp = 32 cells at level 5; the plan's original (b) design pair
+core_fill_from_time    = 57.0      # armed at the restart; a fill may be engaged LATE, unlike damping
+
+sponge_enabled     = 1
+sponge_inner_radius = 48.0
+sponge_outer_radius = 64.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+activate_extraction = 1
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576
+
+# ---- PRODUCTION headline arm (GPU_PLAN #10, params per #6) ----
+# p = 0.12 is the measured plunge-merger; the twin pair differs in
+# wormhole_helfer_correction only.  (The inherited "common horizon t = 44.9"
+# is REMOVED 2026-09-15: no horizon scan has ever been run on an L = 128 arm of
+# this family -- profile orbit-modes carries no --horizon-scan -- and the one
+# scan that was run by hand, over the predecessor's t = 55/56/57 plotfiles,
+# found NO MOTS at any of them.  Same class of claim as the t = 30.77 one
+# withdrawn from GPU_PLAN.md the same day.)  Checkpoints ON, pruned in-code to
+# the newest 4 (checkpoint_keep above), every 1 unit -- looser than the
+# predecessor's 0.5/keep-3 because this leg is ~30 h and a 26 GB checkpoint
+# every 8 minutes is I/O it does not need; keep 4 still lands a restart within
+# a unit of any death.  In-code Weyl4 extraction
+# is the primary waveform stream; the python consumer renders Weyl4 frames
+# from plotfiles as the independent cross-check.
+extraction_subpath = "data"
+extraction_center = 64.0 64.0 64.0
+num_extraction_radii = 4
+extraction_radii = 20.0 28.0 36.0 44.0
+extraction_levels = 0 0 0 0
+num_points_phi = 24
+num_points_theta = 37
+num_modes = 21
+modes = 2 -2  2 -1  2 0  2 1  2 2 \
+        3 -3  3 -2  3 -1  3 0  3 1  3 2  3 3 \
+        4 -4  4 -3  4 -2  4 -1  4 0  4 1  4 2  4 3  4 4
+
+
+# restart (set by run_single.sh)
+amr.restart = "/tmp/grteclyn_scratch/_keep_spiral_lvl5_t57_seed/BinaryWormholeChk05700"

@@ -490,6 +490,12 @@ and the framing was wrong — see below.)*
   2.75), though its inter-throat midpoint shows the slow lapse collapse of
   the freeze wall (last claim below), so "healthy" there needs the
   qualification.
+  `..._p045_L128_lvl5_t100` *(pack, 06_binary_flyby/p045/)* — the queue-7
+  closer: level 5 from t = 0 on the L = 128 box, t = 100 clean, zero aborts.
+  No MOTS at any time; both mouths expand (areal R 4.24 → 33.1, ×7.8), min χ
+  up three decades, the lapse recovering — and the constraint growth is the
+  expansion's bill (corr(log R, log L2_Ham) = 0.92), the opposite fate to
+  the plunging arms' wall.
 
 ### Resolution postpones the wall, never removes it
 - **Claim.** The death time climbs +1.43 per refinement level, linearly over

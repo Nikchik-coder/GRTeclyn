@@ -76,9 +76,8 @@ GROUP = "08_waves"   # cross-cutting: the figure belongs to no single group
 # be read as a short signal:
 #   single  QUEUE2E_GATES.md junk cuts (R=10 from t=70; the gated file holds
 #           zeros past each sphere's cut, trimmed per sphere below);
-#   fly-by  the L = 128 level-5 arm (packed at t = 97.6 of 100, 2026-09-17;
-#           still at the campaign top level -- update this path when
-#           file_run.sh moves it into 06_binary_flyby/p045/).  No horizon
+#   fly-by  the L = 128 level-5 arm, finished t = 100 clean 2026-09-18 and
+#           filed under 06_binary_flyby/p045/.  No horizon
 #           ever forms: both mouths expand (areal R 4.2 -> 33 by t = 97)
 #           and the expansion's disturbance climbs |rPsi4| at R = 20 back
 #           off its post-burst trough at t = 76.1, ending 1.7x the burst
@@ -102,7 +101,7 @@ ARMS = [
      "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_SERIES/Weyl4_mode_22.dat",
      None, 20.0, None, r"core frozen $t{>}57$"),
     ("fly-by", r"$P=0.45$, $d=12$", "(2,2)",
-     "merge_orbit_flip_d12_p045_L128_lvl5_t100/Weyl4_mode_22.dat",
+     "06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/Weyl4_mode_22.dat",
      None, 20.0, 76.0, r"gated $t{=}76$ (mouths expand)"),
     ("vacuum BBH twin", r"$P=0.12$, $d=12$", "(2,2)",
      "07_bbh_control/bbh_control_d12_p012_t150/psi4_mode_l2_all.dat",

@@ -11,28 +11,28 @@ Host Name: <redacted>
 
  0: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x2c4015) [0x55a64cb32015]
     amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at /usr/include/x86_64-linux-gnu/bits/unistd.h:284
- (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at $SITE/<redacted>/test/simulation/amrex/Src/Base/AMReX_BLBackTrace.cpp:215
+ (inlined by) amrex::BLBackTrace::print_backtrace_info(_IO_FILE*) at $SITE/<redacted>/amrex/Src/Base/AMReX_BLBackTrace.cpp:215
 
  1: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x2c7615) [0x55a64cb35615]
-    amrex::BLBackTrace::handler(int) at $SITE/<redacted>/test/simulation/amrex/Src/Base/AMReX_BLBackTrace.cpp:103
+    amrex::BLBackTrace::handler(int) at $SITE/<redacted>/amrex/Src/Base/AMReX_BLBackTrace.cpp:103
 
  2: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x52e512) [0x55a64cd9c512]
     GRAMRLevel::post_timestep(int) at Source/GRTeclynCore/GRAMRLevel.cpp:240
 
  3: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x408100) [0x55a64cc76100]
-    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2124
+    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/amrex/Src/Amr/AMReX_Amr.cpp:2124
 
  4: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x4080dd) [0x55a64cc760dd]
-    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2110
+    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/amrex/Src/Amr/AMReX_Amr.cpp:2110
 
  5: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x4080dd) [0x55a64cc760dd]
-    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2110
+    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/amrex/Src/Amr/AMReX_Amr.cpp:2110
 
  6: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x4080dd) [0x55a64cc760dd]
-    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2110
+    amrex::Amr::timeStep(int, double, int, int, double) at $SITE/<redacted>/amrex/Src/Amr/AMReX_Amr.cpp:2110
 
  7: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x406871) [0x55a64cc74871]
-    amrex::Amr::coarseTimeStep(double) at $SITE/<redacted>/test/simulation/amrex/Src/Amr/AMReX_Amr.cpp:2175
+    amrex::Amr::coarseTimeStep(double) at $SITE/<redacted>/amrex/Src/Amr/AMReX_Amr.cpp:2175
 
  8: runs/wormhole_merger/bin/main3d_autopsy_2026-09-08b.ex(+0x504d42) [0x55a64cd72d42]
     runGRTeclyn(int, char**) at Examples/BinaryWormholeMerger/Main_BinaryWormhole.cpp:32

@@ -23,6 +23,7 @@ these cannot be re-rendered larger.
 | `05_binary_spiral/v2_spiral_d12_p012_L128_lvl3_t050` | the same series' first leg alone (level 3, t = 0–50) |
 | `05_binary_spiral/v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600` | its second leg alone (level 5, t = 36–60.44, to the NaN) |
 | `06_binary_flyby/merge_orbit_flip_d12_p045_t200` | the p = 0.45 flyby to t = 200 — the pair that does not merge |
+| `06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl5_t100` | the fly-by at level 5 on L = 128, t = 0–100 — both mouths expand, no horizon ever |
 | `07_bbh_control/bbh_control_d12_p012_t150` | the black-hole binary control at the same separation and momentum, to t = 150 |
 
 ## Remaking one

@@ -20,7 +20,7 @@ alias psi4="grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.
 | `05_binary_spiral/psi4_analysis_freeze_narrow_t100` | `--run campaign/05_binary_spiral/p012/merge_orbit_flip_d12_r03000/part1/psi4_mode_l2m0.dat+merge_orbit_flip_d12_r03000+freeze_narrow_t080_r05000+freeze_narrow_t100_r08000 --group 05_binary_spiral` (first segment as an ABSOLUTE path) |
 | `05_binary_spiral/psi4_analysis_freeze_wide_t080_m2` | `--run campaign/05_binary_spiral/psi4_merger_stitched_0_97.dat --group 05_binary_spiral --m 2 --t-max 80` (absolute path) |
 | `05_binary_spiral/p012_paper/psi4_analysis_p012_series` | `--run v2_spiral_d12_p012_L128_SERIES --group 05_binary_spiral --name p012_paper/psi4_analysis_p012_series --stream Weyl4_mode_22.dat --m 2 --radii 20 28 36 44 --strain-radius 20` |
-| `06_binary_flyby/psi4_analysis_merge_orbit_flip_d12_p045_L128_lvl5_t100` | `--run merge_orbit_flip_d12_p045_L128_lvl5_t100 --group 06_binary_flyby --stream Weyl4_mode_22.dat --m 2 --radii 20 28 36 44 --strain-radius 20` (drawn in flight at t = 97.6 of 100, 2026-09-17; redraw at close-out) |
+| `06_binary_flyby/psi4_analysis_merge_orbit_flip_d12_p045_L128_lvl5_t100` | `--run merge_orbit_flip_d12_p045_L128_lvl5_t100 --group 06_binary_flyby --stream Weyl4_mode_22.dat --m 2 --radii 20 28 36 44 --strain-radius 20` (redrawn at close-out on the full t = 0–100 record) |
 | `07_bbh_control/psi4_analysis_bbh_control` | `--run bbh_control_d12_p012_t150 --group 07_bbh_control` |
 | `07_bbh_control/psi4_analysis_bbh_control_m2` | `--run bbh_control_d12_p012_t150 --group 07_bbh_control --stream psi4_mode_l2_all.dat --m 2` |
 
@@ -39,9 +39,8 @@ The scenario table (stream, mode, innermost sphere, gate) is `ARMS` in
 cannot disagree about what a scenario is. The gates: the collapsing throat's
 stream is the queue-2e gated file clipped at t = 70 (QUEUE2E_GATES.md); the
 fly-by row is now the L = 128 level-5 arm
-(`campaign/merge_orbit_flip_d12_p045_L128_lvl5_t100`, (2,2) single-mode file,
-packed in flight at t = 97.6 of 100 on 2026-09-17 — the path moves into
-`06_binary_flyby/p045/` at close-out). It is gated at t = 76: no horizon ever
+(`campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100`,
+(2,2) single-mode file; finished t = 100 clean on 2026-09-18). It is gated at t = 76: no horizon ever
 forms (horizon_scan n_mots = 0 throughout), both mouths expand (areal R
 4.2 → 33 by t = 97, corr(log R, log L2_Ham) = 0.92 — the expansion drives the
 constraint growth), and that expansion's disturbance lifts |rΨ4| at R = 20
