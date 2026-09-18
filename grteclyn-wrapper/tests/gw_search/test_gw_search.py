@@ -202,3 +202,44 @@ def test_injection_is_recovered_in_coloured_noise():
     assert 12.0 < best.snr < 40.0, f"recovered SNR {best.snr:.1f}, expected ~20"
     assert best.chisq_r < 4.0, "the veto rejected a real signal"
     assert best.stat > 0.7 * best.snr
+
+
+def test_proxy_is_removed_from_the_environment():
+    """The archive is reached over the cluster network, not the local proxy.
+
+    Guards the failure this was written for: the proxy is a single process
+    on 127.0.0.1, and when it went down mid-scan every in-flight fetch died
+    at once.  If someone reintroduces a per-request session that reads the
+    exported proxy, this catches it.
+    """
+    import os
+    from grteclyn_wrapper.gw_search.strain.gwosc import (
+        use_cluster_network_directly)
+
+    keep = {k: os.environ.get(k) for k in
+            ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY",
+             "no_proxy", "NO_PROXY", "GW_SEARCH_USE_PROXY")}
+    try:
+        for k in keep:
+            os.environ.pop(k, None)
+        os.environ["https_proxy"] = "http://127.0.0.1:8119"
+        os.environ["HTTP_PROXY"] = "http://127.0.0.1:8119"
+
+        dropped = use_cluster_network_directly()
+
+        assert set(dropped) == {"https_proxy", "HTTP_PROXY"}
+        assert "https_proxy" not in os.environ
+        assert "HTTP_PROXY" not in os.environ
+        assert os.environ["no_proxy"] == "*"
+
+        # ... unless the host really has no other way out.
+        os.environ["GW_SEARCH_USE_PROXY"] = "1"
+        os.environ["https_proxy"] = "http://127.0.0.1:8119"
+        assert use_cluster_network_directly() == []
+        assert os.environ["https_proxy"] == "http://127.0.0.1:8119"
+    finally:
+        for k, v in keep.items():
+            if v is None:
+                os.environ.pop(k, None)
+            else:
+                os.environ[k] = v

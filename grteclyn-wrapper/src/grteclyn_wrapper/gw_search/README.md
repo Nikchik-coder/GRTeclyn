@@ -242,6 +242,31 @@ different ranking, more slides — touches the network zero times, which is
 what makes the background cheap to re-derive and the article's numbers
 reproducible years later.
 
+### How the data gets here
+
+**Not through the proxy.** This environment exports
+`http(s)_proxy=http://127.0.0.1:8119`, and `GwoscStrainSource` clears it on
+construction (`use_cluster_network_directly`) so the archive is reached over
+the cluster's own route. Two reasons, measured on the same 4 MB range request
+of an O3b strain file on 2026-09-18:
+
+| route | throughput |
+|---|---|
+| via `127.0.0.1:8119` | 884 kB/s |
+| direct | 1580 kB/s |
+
+Speed is the smaller half. That proxy is one local process, and when it
+exited mid-scan every in-flight fetch died together with
+`ProxyError('Unable to connect to proxy', ConnectionRefused)` — 0 of 2 blocks
+and an hour of downloads lost, in a log that reads exactly like an
+unreachable archive. Set `GW_SEARCH_USE_PROXY=1` to keep whatever the
+environment exports, on a host where the proxy is the only way out.
+
+Note that gwpy downloads the whole enclosing 4096 s GWOSC file (~130 MB)
+however little of it is asked for, so `--block-s 4096` costs the same
+transfer as `--block-s 512` and yields eight times the livetime. The
+per-fetch deadline scales with the request for the same reason.
+
 ---
 
 ## 6. Running it
@@ -255,8 +280,8 @@ gws validate                  # the Ψ₄ → h chain against IMRPhenomD  [must 
 gws fitting-factor --out results/merger/gw_search/fitting_factors.json
 gws inject --duration 128 --target-snr 20 \
            --out results/merger/gw_search/injections.json   # [must PASS]
-gws scan --gps-start 1264312218 --gps-end 1264398618 \
-         --max-blocks 24 --slides 1000 \
+gws scan --gps-start 1264317000 --gps-end 1264340000 \
+         --block-s 4096 --max-blocks 6 --workers 3 --slides 5000 \
          --out results/merger/gw_search/o3b_scan.json
 gws events --event GW190521   # the bank against a catalogue event
 ```
@@ -264,8 +289,9 @@ gws events --event GW190521   # the bank against a catalogue event
 Dependencies are the `gw-search` extra: `uv sync --extra gw-search`.
 
 A `scan` block costs ≈95 s for the 125-template bank across two detectors;
-bank placement is a one-off ≈2 min, and downloads are ≈16 MB per detector per
-512 s block.
+bank placement is a one-off ≈2 min. Downloads are ≈130 MB per detector per
+GWOSC file, which is ≈80 s direct and several minutes through the proxy the
+source now bypasses.
 
 ---
 

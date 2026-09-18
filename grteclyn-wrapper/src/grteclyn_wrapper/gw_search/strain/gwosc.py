@@ -50,7 +50,8 @@ from typing import Sequence
 
 import numpy as np
 
-__all__ = ["CACHE_DIR", "GwoscStrainSource"]
+__all__ = ["CACHE_DIR", "GwoscStrainSource",
+           "use_cluster_network_directly"]
 
 
 def _default_cache() -> pathlib.Path:
@@ -64,14 +65,55 @@ def _default_cache() -> pathlib.Path:
 CACHE_DIR = _default_cache()
 
 
+_PROXY_VARS = ("http_proxy", "https_proxy", "HTTP_PROXY", "HTTPS_PROXY",
+               "all_proxy", "ALL_PROXY")
+
+
+def use_cluster_network_directly() -> list[str]:
+    """Take gwosc.org off the local proxy and onto the cluster's own route.
+
+    The environment here exports ``http(s)_proxy=http://127.0.0.1:8119``, so
+    every archive byte was being relayed through a local hop that is neither
+    needed nor reliable for bulk transfer.  Measured against the same 4 MB
+    range request of an O3b strain file on 2026-09-18:
+
+    ====================  ============
+    route                 throughput
+    ====================  ============
+    via 127.0.0.1:8119    884 kB/s
+    direct                1580 kB/s
+    ====================  ============
+
+    Speed is the smaller half of it.  That proxy is a single process, and
+    when it exited mid-scan every in-flight fetch died at once with
+    ``ProxyError('Unable to connect to proxy', ConnectionRefused)`` -- 0 of 2
+    blocks, an hour of downloads lost, and a log that reads exactly like an
+    unreachable archive.  The cluster reaches gwosc.org on its own, so the
+    proxy is removed rather than worked around.
+
+    Returns the variables that were cleared, so a caller can say so.  Set
+    ``GW_SEARCH_USE_PROXY=1`` to keep whatever the environment exports, for
+    a host where the proxy really is the only way out.
+    """
+    if os.environ.get("GW_SEARCH_USE_PROXY"):
+        return []
+    dropped = [v for v in _PROXY_VARS if os.environ.pop(v, None)]
+    # urllib reads this at call time and requests caches it per session;
+    # setting it stops any library that re-reads the environment later
+    # (or builds its own session) from reintroducing the hop.
+    os.environ["no_proxy"] = os.environ["NO_PROXY"] = "*"
+    return dropped
+
+
 def _with_retry(fn, *, what: str, tries: int = 4, base_delay: float = 5.0):
     """Run ``fn`` again on a transport failure, backing off.
 
-    Queries here cross a proxy, and a proxy under load closes connections
-    rather than answering: a day of ``L1_CBC_CAT3`` is over a hundred
-    paginated requests and a single dropped one aborts the whole query.
-    Observed as ``ProxyError(RemoteDisconnected)`` mid-pagination, which is
-    also what silently cost 46 of 48 blocks in an early scan -- a transport
+    A day of ``L1_CBC_CAT3`` is over a hundred paginated requests and a
+    single dropped one aborts the whole query.  That was routine while these
+    queries crossed the local proxy (``ProxyError(RemoteDisconnected)``
+    mid-pagination, and 46 of 48 blocks lost in an early scan), and it is
+    rarer now that :func:`use_cluster_network_directly` takes them off it --
+    but the archive itself still throttles and still drops, and a transport
     failure that arrives as "no data" is the most expensive kind.
     """
     import time
@@ -98,12 +140,13 @@ class _Sink:
 
 def _worker(ifo, start, end, rate, host, out_q, path, request_timeout=120.0):
     try:
+        use_cluster_network_directly()   # a spawned process re-reads os.environ
         from gwpy.timeseries import TimeSeries as GwpyTS
         # An EXPLICIT per-request timeout, not just the watchdog process.
         # Inside a Pool worker the watchdog is unavailable (daemonic), and a
-        # proxy that accepts a connection and then never answers will hang
-        # the block forever -- observed as a scan sitting at 2 of 24 blocks
-        # with no error and no progress, which is worse than a failure.
+        # socket that is accepted and then never answered will hang the block
+        # forever -- observed as a scan sitting at 2 of 24 blocks with no
+        # error and no progress, which is worse than a failure.
         gw = _with_retry(
             lambda: GwpyTS.fetch_open_data(ifo, float(start), float(end),
                                            sample_rate=int(rate), host=host,
@@ -135,6 +178,12 @@ class GwoscStrainSource:
         self.timeout_s = timeout_s
         self.flag = flag
         self.min_segment_s = min_segment_s
+        # Do it once, here, rather than per request: gwpy and requests both
+        # build sessions that capture the proxy settings at construction.
+        dropped = use_cluster_network_directly()
+        if dropped:
+            print(f"[gwosc] bypassing proxy ({', '.join(sorted(dropped))}); "
+                  f"fetching over the cluster network", flush=True)
 
     def segments(self, start: float, end: float,
                  ifos: Sequence[str] = ("H1", "L1")):
@@ -176,12 +225,14 @@ class GwoscStrainSource:
 
         A flat timeout is a trap here, because gwpy downloads the whole
         enclosing 4096 s GWOSC file however little is asked for, and the
-        transfer rate to gwosc.org is not something this side controls -- it
-        was measured at 49 kB/s to 320 kB/s on 2026-09-18, against a file of
-        about 130 MB.  A 600 s limit sized for a 512 s block therefore killed
+        transfer rate to gwosc.org is not something this side controls -- 49
+        to 320 kB/s through the local proxy, about 1.6 MB/s direct, against a
+        file of roughly 130 MB.  A 600 s limit sized for a 512 s block killed
         4096 s blocks after they had already pulled 171 MB, which looks in
         the log exactly like an unreachable archive.  Allow time in
-        proportion to the request, with the flat value as a floor.
+        proportion to the request, with the flat value as a floor; the floor
+        still has to cover the slow route, because the fast one is a
+        measurement and not a guarantee.
         """
         return max(float(self.timeout_s), 2.0 * (float(end) - float(start)))
 

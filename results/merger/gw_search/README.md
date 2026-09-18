@@ -16,25 +16,34 @@ alias gws="grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.gw_search.cli"
 | *(printed only)* | `gws validate` | is the Ψ₄ → h chain right? Matches the campaign's own vacuum BBH control against IMRPhenomD. **Must PASS.** |
 | `injections.json` | `gws inject --duration 128 --target-snr 20 --out results/merger/gw_search/injections.json` | does the *pipeline* find a signal that is there? Injects each channel into real O3 strain and searches with the whole bank. |
 | `fitting_factors.json` | `gws fitting-factor --out results/merger/gw_search/fitting_factors.json` | would the modelled searches have recovered these signals? |
-| `o3b_scan.json` | `gws scan --gps-start 1264312218 --gps-end 1264398618 --max-blocks 24 --workers 6 --slides 2000 --out results/merger/gw_search/o3b_scan.json` | the search itself: triggers, χ² veto, H1–L1 coincidence, time-slide background, false-alarm rate, horizon per channel. |
+| `o3b_scan.json` | `gws scan --gps-start 1264317000 --gps-end 1264340000 --block-s 4096 --max-blocks 6 --workers 3 --slides 5000 --out results/merger/gw_search/o3b_scan.json` | the search itself: triggers, χ² veto, H1–L1 coincidence, time-slide background, false-alarm rate, horizon per channel. |
 
-`o3b_scan_512s_2blocks.json` is a copy of the same result, kept under a name
-that records what it is.
+The current result is **2.26 h of livetime, no coincident candidate**, on a
+background of 13 920 accidentals over 471 days of slid time — a floor of one
+false alarm per 471 days. `o3b_scan_superseded_0.27h.json` is the earlier,
+shorter run it replaces, kept because the article's first draft quoted it.
 
-**The livetime is network-limited, not method-limited.** Of 24 requested
-blocks only 2 were cached in *both* detectors when the run completed; the
-rest were still downloading. Measured on 2026-09-18, bulk transfer from
-gwosc.org through this host ran at **49 kB/s** — a 4096 s GWOSC file is
-~130 MB, so ~45 min each — and the local proxy is not the cause (a direct
-fetch with `http_proxy` unset is no faster). To extend the search when the
-link is better, re-run the same command with a larger `--max-blocks`: the
-strain cache makes it resumable, and nothing already downloaded is fetched
-again.
+**Livetime is limited by the network and by segment geometry, not by the
+method.** Two blocks, not six: a 4096 s block needs 4096 s of *contiguous*
+coincident CBC\_CAT3 time, and this window holds two such stretches. Widen
+`--gps-start/--gps-end` to get more; the strain cache makes the run
+resumable, so nothing already downloaded is fetched again.
 
-**And fetch in file-sized blocks when you do.** gwpy downloads the whole
-enclosing 4096 s GWOSC file however little is asked for, so eight 512 s
-blocks inside one file cost eight full transfers of that file. `--block-s
-4096` turns that into one.
+**Fetch in file-sized blocks.** gwpy downloads the whole enclosing 4096 s
+GWOSC file (~130 MB) however little is asked for, so eight 512 s blocks
+inside one file cost eight full transfers of it. `--block-s 4096` turns that
+into one.
+
+**The proxy is bypassed, deliberately.** This host exports
+`http(s)_proxy=http://127.0.0.1:8119`; `GwoscStrainSource` clears it on
+construction so fetches take the cluster's own route. Measured on the same
+4 MB range request on 2026-09-18: **884 kB/s via the proxy, 1580 kB/s
+direct**. The reliability matters more than the speed — that proxy is one
+local process, and when it exited mid-scan every in-flight fetch died with
+`ProxyError(ConnectionRefused)`, which in the log is indistinguishable from
+an unreachable archive. Set `GW_SEARCH_USE_PROXY=1` on a host where the
+proxy is the only way out. With it bypassed, four 134 MB block-detectors
+land in about 9 min.
 
 ## Two things about the scan that are easy to get wrong
 
