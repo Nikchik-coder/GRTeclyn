@@ -69,7 +69,7 @@ import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import RUNS_ROOT, find_run  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.style import (  # noqa: E402
-    BURGUNDY, FAINT, INK, MUTED, prd, save,
+    BURGUNDY, FAINT, INK, MUTED, edge_label, prd, save,
 )
 
 R_EXACT = 3.8895      # closed form for the drainhole a = 2, m = 1
@@ -181,7 +181,35 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     root = pathlib.Path(args.runs_root).expanduser().resolve()
-    wanted = [tuple(a.split("=", 1)) for a in args.arms] if args.arms else DEFAULT_ARMS
+    wanted = [tuple(a.split("=", 1)) for a in args.arms] if args.arms else None
+
+    prd(base=10.0)
+    fig, axA = plt.subplots(1, 1, figsize=(3.4, 2.6))
+    fig.subplots_adjust(left=0.125, right=0.965, top=0.965, bottom=0.165)
+    figure_panel(axA, runs_root=root, arms_spec=wanted,
+                 exact=args.exact, window=args.window)
+
+    out = pathlib.Path(args.out) if args.out else (
+        root.parents[1] / "results" / "merger" / "figures" / "01_single_throat"
+        / "single_throat_seed_branches.png")
+    png = save(fig, out, dpi=args.dpi)
+    print(f"[seed-branches] wrote {png} (+pdf)")
+    return 0
+
+
+def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
+                 exact: float = R_EXACT, window: float = 3.0) -> None:
+    """The declared-seed branching panel drawn onto a SUPPLIED axis.
+
+    Everything the module docstring promises -- the crossing mark, the
+    stalled continuation, the exponential fits, the names in place --
+    happens here; ``main`` wraps it in its own single-column canvas, and
+    the article's combined strip (plot_single_throat_row, 2026-09-18) lays
+    it beside the undeclared-seed panels.  ``prd`` must already be active,
+    and no letter tag is drawn: the caller owns the lettering.
+    """
+    root = pathlib.Path(runs_root).expanduser().resolve()
+    wanted = list(arms_spec) if arms_spec else DEFAULT_ARMS
 
     arms = []
     for name, label in wanted:
@@ -200,19 +228,19 @@ def main(argv: list[str] | None = None) -> int:
             # registry: no horizon at any time on those arms).  A collapse
             # horizon is born AT the throat's own size and shrinks, so any
             # reading far above R_star is rejected, not drawn.
-            hz = m["hz"][m["hz"][:, 1] <= 1.2 * args.exact]
+            hz = m["hz"][m["hz"][:, 1] <= 1.2 * exact]
             m["hz"] = hz if hz.shape[0] else None
         m["clip"] = clipped_from(m["r_at"])
-        m["dev"] = m["R"] - args.exact
+        m["dev"] = m["R"] - exact
         m["cross"] = zero_crossing(m["t"], m["dev"])
         good = slice(0, m["clip"]) if m["clip"] is not None else slice(None)
         m["rate"] = np.full(m["t"].size, np.nan)
-        m["rate"][good] = rate(m["t"][good], m["dev"][good], args.window)
+        m["rate"][good] = rate(m["t"][good], m["dev"][good], window)
         # A window that reaches back across the crossing measures the crossing:
         # |dev| there is on its way through zero, so the log derivative blows up
         # and reads as a growth rate it is not.  It cost a 2.3x overestimate once.
         if m["cross"] is not None:
-            m["rate"][m["t"] < m["cross"] + 2 * args.window] = np.nan
+            m["rate"][m["t"] < m["cross"] + 2 * window] = np.nan
         arms.append(m)
         note = "   (NaN)" if m["dead"] else ""
         if m["clip"] is not None:
@@ -225,8 +253,6 @@ def main(argv: list[str] | None = None) -> int:
     if not arms:
         raise SystemExit("no arm has data yet")
 
-    prd(base=10.0)
-
     # The axis ends where the last MEASUREMENT ends, not where the last run ends:
     # a curve is cut at its scan clip (see the throat panel), so time after the
     # latest clip would be empty frame.
@@ -237,7 +263,7 @@ def main(argv: list[str] | None = None) -> int:
         its dot) whose run outlived its scan with the radius stalled."""
         e = valid_end(m)
         return (m["clip"] is not None and not m["dead"]
-                and m["R"][e] < args.exact and m["t"][-1] > m["t"][e])
+                and m["R"][e] < exact and m["t"][-1] > m["t"][e])
 
     t_end = max(m["t"][valid_end(m)] for m in arms)
     t_end = max([t_end] + [m["t"][-1] for m in arms if stalled(m)])
@@ -307,13 +333,6 @@ def main(argv: list[str] | None = None) -> int:
                  if m["clip"] is not None else ""))
     print(f"  level 3's own truncation seed, for comparison: {SEED_RATE:.4f}")
 
-    # ---- the canvas ---------------------------------------------------------
-    # PRD single-column (style.prd: full box frame, inward ticks with minors,
-    # no grid).  No boxed key, so nothing reserves space and the axis hugs
-    # the data; the arm names are written along the curves further down.
-    fig, axA = plt.subplots(1, 1, figsize=(3.4, 2.6))
-    fig.subplots_adjust(left=0.125, right=0.965, top=0.965, bottom=0.165)
-
     def style_of(label: str) -> dict:
         """Identity without colour -- the user's call for THIS figure (2026-09-10
         "no coloring", reaffirmed 2026-09-16), overriding the campaign palette.
@@ -330,7 +349,7 @@ def main(argv: list[str] | None = None) -> int:
     # ---- the throat ------------------------------------------------------
     if t_cross is not None:
         axA.axvline(t_cross, color=FAINT, linewidth=0.7, linestyle=(0, (2, 3)), zorder=1)
-    axA.axhline(args.exact, color=MUTED, linewidth=0.8, linestyle=(0, (1, 2.5)), zorder=2)
+    axA.axhline(exact, color=MUTED, linewidth=0.8, linestyle=(0, (1, 2.5)), zorder=2)
     for m in arms:
         st, e = style_of(m["label"]), valid_end(m)
         # A curve ends at its last MEASUREMENT of the throat.  Past a scan clip
@@ -363,16 +382,16 @@ def main(argv: list[str] | None = None) -> int:
             continue
         e = valid_end(arm)
         tt, RR = arm["t"][:e + 1], arm["R"][:e + 1]
-        sel = (tt >= f0) & (tt <= f1) & (np.abs(RR - args.exact) > 0)
+        sel = (tt >= f0) & (tt <= f1) & (np.abs(RR - exact) > 0)
         if sel.sum() < 4:
             continue
-        lam, lnA = np.polyfit(tt[sel], np.log(np.abs(RR[sel] - args.exact)), 1)
-        sgn = np.sign(RR[sel][-1] - args.exact)
+        lam, lnA = np.polyfit(tt[sel], np.log(np.abs(RR[sel] - exact)), 1)
+        sgn = np.sign(RR[sel][-1] - exact)
         tg = np.linspace(f0, f1, 50)
-        axA.plot(tg, args.exact + sgn * np.exp(lnA + lam * tg),
+        axA.plot(tg, exact + sgn * np.exp(lnA + lam * tg),
                  color=BURGUNDY, linewidth=1.0, zorder=5)
         if sgn > 0:
-            fit_top = (f1, args.exact + np.exp(lnA + lam * f1))
+            fit_top = (f1, exact + np.exp(lnA + lam * f1))
         print(f"  exp fit {lab:>6s} over t = {f0:.0f}-{f1:.0f}:"
               f" rate {lam:.3f}, tau {1 / lam:.2f}")
     # One burgundy name serves both burgundy lines, in equation form -- the
@@ -384,6 +403,12 @@ def main(argv: list[str] | None = None) -> int:
     axA.set_xlim(0, xhi)
     axA.set_xlabel(r"$t$")
     axA.set_ylabel(r"$R_{\mathrm{min}}$")
+    # Headroom under the lowest curve, for the stalled arm's name.  Stacked
+    # above its own flat line the name shared that line with the dead arm's
+    # (the row canvas, 2026-09-18, where the panel is a third of a page
+    # wide); the two now sit on opposite sides of it and cannot meet.
+    ylo, yhi_ = axA.get_ylim()
+    axA.set_ylim(ylo - 0.10 * (yhi_ - ylo), yhi_)
     # ---- names written along the curves, no boxed key ----------------------
     # A five-row key forced the measuring legend to grow the axis until a dead
     # band sat above every curve; a two-column key still needed a third of the
@@ -405,8 +430,8 @@ def main(argv: list[str] | None = None) -> int:
     for m in arms:
         st, e = style_of(m["label"]), valid_end(m)
         heavy = st["linewidth"] > 1.2
-        if m["R"][e] > args.exact:      # inflating: name it along the rise
-            level = args.exact + (0.55 if heavy else 0.42) * (m["R"][e] - args.exact)
+        if m["R"][e] > exact:      # inflating: name it along the rise
+            level = exact + (0.55 if heavy else 0.42) * (m["R"][e] - exact)
             ta = t_at(m, level)
             if ta is None:
                 axA.text(m["t"][e] + 0.015 * xhi, m["R"][e], tag(m),
@@ -417,28 +442,24 @@ def main(argv: list[str] | None = None) -> int:
             else:
                 axA.text(ta + 1.2, level - 0.08, tag(m),
                          fontsize=8, ha="left", va="top")
-        elif stalled(m):                # collapsed, alive: above the flat line,
-            # right-aligned at the run's end so it clears the dead arm's name
-            axA.text(m["t"][-1] - 0.02 * xhi, m["R"][e] + 0.10, tag(m),
-                     fontsize=8, ha="right", va="bottom")
-        else:                           # collapsed, dead: right of the cross
-            axA.text(m["t"][e] + 0.02 * xhi, m["R"][e], tag(m),
-                     fontsize=8, ha="left", va="center")
+        elif stalled(m):                # collapsed, alive: UNDER the flat line,
+            # right-aligned at the run's end, in the headroom opened above.
+            axA.annotate(tag(m), (m["t"][-1], m["R"][e]), xytext=(-2, -4),
+                         textcoords="offset points", fontsize=8,
+                         ha="right", va="top")
+        else:                           # collapsed, dead: above its cross, in
+            # the band between the stalled line and R_star.  The offsets are
+            # in POINTS, so the clearance is the same on a single column and
+            # on a third of a page.
+            axA.annotate(tag(m), (m["t"][e], m["R"][e]), xytext=(4, 4),
+                         textcoords="offset points", fontsize=8,
+                         ha="left", va="bottom")
     # The two rulers named in place, small and muted, clear of every curve.
-    axA.text(0.985 * xhi, args.exact, r"$R_\star$", color=MUTED, fontsize=8,
-             ha="right", va="bottom")
+    edge_label(axA, exact, r"$R_\star$")
     if t_cross is not None:
         ylo, yhi_ = axA.get_ylim()
         axA.text(t_cross + 0.012 * xhi, ylo + 0.035 * (yhi_ - ylo),
                  r"$t_\times$", color=MUTED, fontsize=8, ha="left", va="bottom")
-
-
-    out = pathlib.Path(args.out) if args.out else (
-        root.parents[1] / "results" / "merger" / "figures" / "01_single_throat"
-        / "single_throat_seed_branches.png")
-    png = save(fig, out, dpi=args.dpi)
-    print(f"[seed-branches] wrote {png} (+pdf)")
-    return 0
 
 
 if __name__ == "__main__":

@@ -23,8 +23,29 @@
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{textcase}
-\usepackage[section]{placeins}
+% placeins WITHOUT [section]: a two-column float can never be set on the page
+% it is declared on, so a per-section barrier strands any figure* whose own
+% section runs less than a page -- the next section's barrier flushes it to a
+% float page of its own (Fig. 2 did this, 2026-09-18).  The barrier the paper
+% actually needs is one, before the bibliography: that is where the LIGO
+% figure had drifted to.
+\usepackage{placeins}
 \usepackage[protrusion=true,expansion=false]{microtype}
+
+% A two-column strip plus its caption is about half a page, which the stock
+% dbl-float parameters answer by giving it a page of its own and leaving the
+% other half white (Fig. 2 did exactly that, 2026-09-18).  Raising the top
+% fraction lets a wide float own most of a page's top, and raising the float
+% -page fraction forbids a float page that would be less than three quarters
+% full -- so a half-page strip has to ride at the top of a text page.
+% REVTeX sets its own float parameters as the document opens, so these have
+% to be applied after that, not in the preamble proper.
+\AtBeginDocument{%
+  \renewcommand{\dbltopfraction}{0.85}%
+  \renewcommand{\dblfloatpagefraction}{0.75}%
+  \renewcommand{\textfraction}{0.1}%
+  \setcounter{dbltopnumber}{2}%
+}
 
 \graphicspath{{figures/}{../../../results/merger/figures/}}
 
@@ -189,6 +210,13 @@ shakedown (archived) & gauge, dissipation, tagging & 12 & \ref{sec:setup:scheme}
 \section{The single wormhole}
 \label{sec:single}
 
+\begin{figure*}[t]
+\centering
+\includegraphics{01_single_throat/single_throat_instability.pdf}
+\caption{The lone throat is unstable; unless the seed is declared, the grid picks which way it goes. (a)~Minimal areal radius of the drainhole evolved from exact static data at refinement levels 2--4. The exact solution is a fixed point ($R_\star$, dotted); each level holds it until its own truncation error excites the unstable mode, and the fate flips with the grid: level 3 (dashed) collapses, level 4 (solid) inflates. Level 2 (grey) dies of an origin failure at $t=24.2$ (cross) with the throat still exact to $0.12\%$---too coarse to reach the branch at all. A dot marks where the \emph{scan} loses the throat, not where the run ends: the level-3 throat is lost at $t=65$ while the run continues to $t=100$ behind a marginally trapped surface (areal radius $3.23\to2.37$), and the muted line carries its last reading. (b)~The deviation grows exponentially on both grids: plateau fits over $t=49$--$61$ give e-fold times $\tau=5.88$ (level 3) and $5.26$ (level 4)---the same unstable mode to $9\%$, $T=\tau\,\alpha_{\rm th}/R_\star=0.87$ and $0.78$ against the Gonz\'alez--Guzm\'an--Sarbach band $0.68$--$0.76$~\cite{gonzalez2009}---with opposite sign. The fate is the truncation seed's; the mode is the throat's. (c)~The same throat at one resolution (level 3) with the seed \emph{declared}, under the kick of Eq.~\eqref{eq:seed}: $\varepsilon=\pm10^{-2}$ (heavy), $\pm10^{-3}$ (light); dashed = outward ($\varepsilon>0$). The fate is opposite to the push, and each pair crosses itself at the $\varepsilon$-independent $t_\times\simeq13.0$---linear response. Burgundy: exponential fits $|R-R_\star|\propto e^{t/\tau}$, $\tau=4.5$ ($t=18$--$31$) and $4.0$ ($t=16$--$26$)---steeper than the unkicked mode of (b) while the kick's transient decays. Cross: death at $t=40.1$. The $\varepsilon=+10^{-2}$ arm holds a horizon from $t=11$ (areal radius $3.88\to2.34\to2.57$) and runs clean to $t=100$; its muted line is again a stalled radius, not a stopped run. A tenfold smaller kick arrives $8$--$12$ units later.}
+\label{fig:single_throat}
+\end{figure*}
+
 \subsection{The static throat as a fixed point}
 \label{sec:single:fixedpoint}
 % Exact data holds the areal throat radius; departure time vs resolution;
@@ -200,31 +228,17 @@ Evolved with no declared perturbation, the exact drainhole holds its areal throa
 \label{sec:single:instability}
 % Growth rate / e-fold time at levels 3 and 4; comparison to the GGS band;
 % the undeclared (truncation) seed and its level-dependent sign.
-% Fig.~\ref{fig:branches}.
+% Fig.~\ref{fig:single_throat}(a,b).
 
-The departure is a single exponential mode (Fig.~\ref{fig:branches}): plateau fits give e-fold times $\tau=5.88$ (level 3) and $5.26$ (level 4)---the same mode to $9\%$---at $T=\tau\,\alpha_{\rm th}/R_\star=0.87$ and $0.78$ against the Gonz\'alez--Guzm\'an--Sarbach band $0.68$--$0.76$ for the massless limit~\cite{gonzalez2009}. The instability is the throat's; only its seed is the grid's, and the seed's \emph{sign} flips with resolution: level 3 collapses, level 4 inflates. This confirms, from exact massive-drainhole data, the unstable behaviour and the two-branch structure found for the massless Ellis--Bronnikov throat in Ref.~\cite{shirokov2026}, where ambient noise drove inflation and a compressive perturbation drove collapse: the branches are the wormhole's, not an artefact of either code.
-
-\begin{figure}[t]
-\centering
-\includegraphics{01_single_throat/single_throat_branches.pdf}
-\caption{The undeclared seed: one exact throat, two resolutions, two fates. (a)~Minimal areal radius of the lone drainhole evolved from exact static data at refinement levels 2--4. The exact solution is a fixed point ($R_\star$, dotted); each level holds it until its own truncation error excites the unstable mode, and the fate flips with the grid: level 3 (dashed) collapses, level 4 (solid) inflates. Level 2 (grey) dies of an origin failure at $t=24.2$ (cross) with the throat still exact to $0.12\%$---too coarse to reach the branch at all. Dot and muted line as in Fig.~\ref{fig:seed_branches}: the scan loses the level-3 throat at $t=65$ while the run continues to $t=100$ behind a marginally trapped surface (areal radius $3.23\to2.37$). (b)~The deviation grows exponentially on both grids: plateau fits over $t=49$--$61$ give e-fold times $\tau=5.88$ (level 3) and $5.26$ (level 4)---the same unstable mode to $9\%$, $T=\tau\,\alpha_{\rm th}/R_\star=0.87$ and $0.78$ against the Gonz\'alez--Guzm\'an--Sarbach band $0.68$--$0.76$~\cite{gonzalez2009}---with opposite sign. The fate is the truncation seed's; the mode is the throat's.}
-\label{fig:branches}
-\end{figure}
+The departure is a single exponential mode (Fig.~\ref{fig:single_throat}(a,b)): plateau fits give e-fold times $\tau=5.88$ (level 3) and $5.26$ (level 4)---the same mode to $9\%$---at $T=\tau\,\alpha_{\rm th}/R_\star=0.87$ and $0.78$ against the Gonz\'alez--Guzm\'an--Sarbach band $0.68$--$0.76$ for the massless limit~\cite{gonzalez2009}. The instability is the throat's; only its seed is the grid's, and the seed's \emph{sign} flips with resolution: level 3 collapses, level 4 inflates. This confirms, from exact massive-drainhole data, the unstable behaviour and the two-branch structure found for the massless Ellis--Bronnikov throat in Ref.~\cite{shirokov2026}, where ambient noise drove inflation and a compressive perturbation drove collapse: the branches are the wormhole's, not an artefact of either code.
 
 \subsection{Branching: collapse versus inflation}
 \label{sec:single:branching}
 % Declared seed scan eps = +/-1e-2, +/-1e-3: fate opposite to the push,
 % linear response, twin crossing time, tenfold-smaller kick = fixed delay;
-% amplitude ceiling (eps = 0.1 is not a perturbation).  Fig.~\ref{fig:seed_branches}.
+% amplitude ceiling (eps = 0.1 is not a perturbation).  Fig.~\ref{fig:single_throat}(c).
 
-A declared kick removes the grid's vote (Fig.~\ref{fig:seed_branches}). At $\varepsilon=\pm10^{-2}$ and $\pm10^{-3}$ the fate is always opposite to the push, each $\pm$ pair crosses itself at the $\varepsilon$-independent $t_\times\simeq13.0$, and a tenfold smaller kick arrives $8$--$12$ units later---linear response riding the same unstable mode. The kick also sets the clock: the collapse branch forms its horizon at $t=11$ for $\varepsilon=+10^{-2}$ and $t=25$ for $+10^{-3}$, against $t\simeq61$ for the unkicked throat left to truncation noise---a driven branching an order of magnitude faster than the undeclared one. The dial has a ceiling: $\varepsilon=\pm0.1$ is not a perturbation---both signs collapse and die ($t=15.2/14.1$) with a Hamiltonian violation $3$--$5\times$ the $1\%$ arms' and growing---so the usable amplitude ends at $10^{-2}$.
-
-\begin{figure}[t]
-\centering
-\includegraphics{01_single_throat/single_throat_seed_branches.pdf}
-\caption{Declared-seed branching of the lone throat (level 3). Areal throat radius of the drainhole ($a=2$, $m=1$; $R_\star=3.8895$, dotted) under the kick of Eq.~\eqref{eq:seed}: $\varepsilon=\pm10^{-2}$ (heavy), $\pm10^{-3}$ (light); dashed = outward ($\varepsilon>0$). The fate is opposite to the push, and each pair crosses itself at the $\varepsilon$-independent $t_\times\simeq13.0$---linear response. Burgundy: exponential fits $|R-R_\star|\propto e^{t/\tau}$, $\tau=4.5$ ($t=18$--$31$) and $4.0$ ($t=16$--$26$)---steeper than the unkicked mode's $5.88$ (Fig.~\ref{fig:branches}) while the kick's transient decays. Dots: the scan loses the throat (the inflating runs continue to $t=100$, still growing); cross: death at $t=40.1$. The $\varepsilon=+10^{-2}$ arm holds a horizon from $t=11$ (areal radius $3.88\to2.34\to2.57$) and runs clean to $t=100$; the muted line carries its last reading. A tenfold smaller kick arrives $8$--$12$ units later.}
-\label{fig:seed_branches}
-\end{figure}
+A declared kick removes the grid's vote (Fig.~\ref{fig:single_throat}(c)). At $\varepsilon=\pm10^{-2}$ and $\pm10^{-3}$ the fate is always opposite to the push, each $\pm$ pair crosses itself at the $\varepsilon$-independent $t_\times\simeq13.0$, and a tenfold smaller kick arrives $8$--$12$ units later---linear response riding the same unstable mode. The kick also sets the clock: the collapse branch forms its horizon at $t=11$ for $\varepsilon=+10^{-2}$ and $t=25$ for $+10^{-3}$, against $t\simeq61$ for the unkicked throat left to truncation noise---a driven branching an order of magnitude faster than the undeclared one. The dial has a ceiling: $\varepsilon=\pm0.1$ is not a perturbation---both signs collapse and die ($t=15.2/14.1$) with a Hamiltonian violation $3$--$5\times$ the $1\%$ arms' and growing---so the usable amplitude ends at $10^{-2}$.
 
 \subsection{The collapse endpoint}
 \label{sec:single:collapse}
@@ -237,19 +251,22 @@ The collapse branch ends in a black hole that eats its own support: behind the m
 \section{Two throats at rest}
 \label{sec:pair}
 
+% [!t], not [t]: this section's prose is barely a page, so with the stock
+% restrictions the strip could not claim the top of the page its own text
+% is on and was exiled to a float page of its own (2026-09-18).
+\begin{figure*}[!t]
+\centering
+\includegraphics{03_two_throats/pair_interaction.pdf}
+\caption{Two throats at rest: what one sign does (a,b), and the ruler the effect is measured with (c,d). (a)~Separation change of three $d=12$ pairs one knob apart: the like-oriented pair ($\sigma=+1$, heavy dashed) pushes apart; flipping one field ($\sigma=-1$, solid) turns the push into a pull; the narrow like pair ($a=1$, light dashed) opens $2.9\times$ more slowly---the force follows the throat width (the scalar charge), not the mass, which is equal in all three. Separations are inverse-$\chi$-weighted centroids of the midplane $\chi$ pits, sub-cell where the mouth tracker's $0.03$ grid quantum would swamp the early motion. (b)~The flipped pair's infall over the like pair's escape: with $Q \equiv |F_\phi/F_{\rm grav}| = 5$ (Sec.~\ref{sec:model:binary}), pull and push are $(Q{+}1)$ and $(Q{-}1)$, predicting $(Q{+}1)/(Q{-}1)=3/2$ (burgundy); measured $1.52\pm0.02$ over $t=3.5$--$10.5$. Coordinates under-read the motion while the gauge settles (grey band), but that systematic is common to both arms and cancels in the ratio: the two runs differ in exactly one parameter. (c)~Per-mouth areal radius of two exact throats placed at rest, read at $t=0$ by one-step probes at separations $d=6$--$48$ (ink circles): the pair reads wider than the isolated throat ($R_\star$, dotted), the excess falling as $d^{-1.16}$---the neighbour's field on the ruler, not a dynamical widening. Burgundy squares: the head-on scout's mouths (the $\sigma=-1$ pair released from rest at $d=8$, Sec.~\ref{sec:headon}) at the separation it had reached. Open grey squares, here and in (d), are the scout closer than the closest probe, where no calibration backs the comparison. (d)~The scout against the curve at its own separation, $\delta R/R = R_{\mathrm{scout}}/R_{\mathrm{place}}-1$. The $-0.13\%$ plateau to $t=5$ is the mouth tracker's grid snap ($d$ reads $7.94$ for a true $8$) and calibrates the systematic; the throats' own squeeze then grows to $-4.0\%$ by $t=13$ ($d=6.1$). In the shaded band the curve is held at its last point, so the magnitude there is a lower bound---the apparent recovery is the ruler's, not the throats'. A boost can only raise a coordinate-sphere reading, so a reading below the curve is a real squeeze, if anything underestimated.}
+\label{fig:pair}
+\end{figure*}
+
 \subsection{The sign rule}
 \label{sec:pair:sign}
 % Like-signed throats repel, opposite-signed attract; measured pull/push
-% ratio vs the (a^2+m^2)/m^2 prediction.  Fig.~\ref{fig:sign_rule}.
+% ratio vs the (a^2+m^2)/m^2 prediction.  Fig.~\ref{fig:pair}(a,b).
 
-Two identical throats released from rest push apart; reversing one throat's scalar field turns the push into a pull (Fig.~\ref{fig:sign_rule}). That one sign is the only gravity-driven route to a merger in this model, and every merging binary in this paper carries it. The measured pull-to-push ratio at $a=2$ is $1.51\pm0.03$ against the predicted $3/2$, and the force follows the throat \emph{width}---the scalar charge---not the mass, which is equal in all arms.
-
-\begin{figure}[t]
-\centering
-\includegraphics{03_two_throats/sign_rule.pdf}
-\caption{Attraction and repulsion switched by one sign ($d=12$, released from rest). (a)~Separation change of three pairs one knob apart: the like-oriented pair ($\sigma=+1$, dashed) pushes apart; flipping one field ($\sigma=-1$, solid) turns the push into a pull; the narrow like pair ($a=1$, light) opens $2.9\times$ more slowly---the force follows the throat width (the scalar charge), not the mass, which is equal in all three. Separations are inverse-$\chi$-weighted centroids of the midplane $\chi$ pits, sub-cell where the mouth tracker's $0.03$ grid quantum would swamp the early motion. (b)~The flipped pair's infall over the like pair's escape: with $Q \equiv |F_\phi/F_{\rm grav}| = 5$ (Sec.~\ref{sec:model:binary}), pull and push are $(Q{+}1)$ and $(Q{-}1)$, predicting $3/2$ (burgundy); measured $1.52\pm0.02$ over $t=3.5$--$10.5$. Coordinates under-read the motion while the gauge settles (band), but that systematic is common to both arms and cancels in the ratio: the two runs differ in exactly one parameter.}
-\label{fig:sign_rule}
-\end{figure}
+Two identical throats released from rest push apart; reversing one throat's scalar field turns the push into a pull (Fig.~\ref{fig:pair}(a,b)). That one sign is the only gravity-driven route to a merger in this model, and every merging binary in this paper carries it. The measured pull-to-push ratio at $a=2$ is $1.51\pm0.03$ against the predicted $3/2$, and the force follows the throat \emph{width}---the scalar charge---not the mass, which is equal in all arms.
 
 \subsection{The force law}
 \label{sec:pair:force}
@@ -262,16 +279,9 @@ Four like-signed pairs, byte-identical but for the gap, give displacements at a 
 \subsection{Placement systematics}
 \label{sec:pair:placement}
 % Superposition offset of the placed throat vs d; early squeeze of the
-% mouths.  Data: 04_binary_headon/placement_curve.  Fig.~\ref{fig:placement}.
+% mouths.  Data: 04_binary_headon/placement_curve.  Fig.~\ref{fig:pair}(c,d).
 
-The superposition itself is on the ruler: freshly placed pairs read $+1.8\%$ ($d=48$) to $+20.5\%$ ($d=6$) wider than the isolated throat, falling as $d^{-1.16}$ (Fig.~\ref{fig:placement}), so every same-$d$ comparison in this paper is made against that curve rather than against the lone throat. Read that way, the released head-on pair's mouths are genuinely squeezed, $-0.6\%$ at $t=7$ growing to $-4.0\%$ by $t=13$---an interaction effect, not placement, since the lone throat is exact until $t=35$.
-
-\begin{figure}[t]
-\centering
-\includegraphics{04_binary_headon/placement_curve.pdf}
-\caption{Placement is on the ruler; the squeeze is not. (a)~Per-mouth areal radius of two exact drainhole throats placed at rest, read at $t=0$ by one-step probes at separations $d=6$--$48$ (ink): the pair reads wider than the isolated throat ($R_\star$, dotted), the excess falling as $d^{-1.16}$---the neighbour's field on the ruler, not a dynamical widening. Burgundy squares: the head-on scout's mouths (the $\sigma=-1$ pair released from rest at $d=8$, Sec.~\ref{sec:headon}) at the separation it had reached; open squares, here and in (b): the scout closer than the closest probe. (b)~The scout against the curve at its own separation, $\delta R/R = R_{\mathrm{scout}}/R_{\mathrm{place}}-1$. The $-0.13\%$ plateau to $t=5$ is the mouth tracker's grid snap ($d$ reads $7.94$ for a true $8$) and calibrates the systematic; the throats' own squeeze then grows to $-4.0\%$ by $t=13$ ($d=6.1$). In the band the curve is held at its last point, so the magnitude is a lower bound---the apparent recovery is the ruler's, not the throats'. A boost can only raise a coordinate-sphere reading, so a reading below the curve is a real squeeze, if anything underestimated.}
-\label{fig:placement}
-\end{figure}
+The superposition itself is on the ruler: freshly placed pairs read $+1.8\%$ ($d=48$) to $+20.5\%$ ($d=6$) wider than the isolated throat, falling as $d^{-1.16}$ (Fig.~\ref{fig:pair}(c,d)), so every same-$d$ comparison in this paper is made against that curve rather than against the lone throat. Read that way, the released head-on pair's mouths are genuinely squeezed, $-0.6\%$ at $t=7$ growing to $-4.0\%$ by $t=13$---an interaction effect, not placement, since the lone throat is exact until $t=35$.
 
 \section{The head-on merger}
 \label{sec:headon}
@@ -475,6 +485,10 @@ The simulated waveforms are scale-free: with the throat mass $M$ as the unit, $r
 \section{Reproducibility}
 \label{sec:repro}
 % Code, branch, parameter files, run registry, figure provenance.
+
+% Every float lands inside the body: without this the queue's tail printed
+% after the references.
+\FloatBarrier
 
 \begin{thebibliography}{99}
 

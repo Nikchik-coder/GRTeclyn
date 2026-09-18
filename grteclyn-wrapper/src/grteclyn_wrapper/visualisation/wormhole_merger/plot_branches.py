@@ -279,16 +279,46 @@ def main(argv: list[str]) -> int:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    # PRD style (2026-09-16), the grammar of the seed-branches figure: NO
-    # colour (dashed = collapse, solid = inflation, muted grey = the arm that
-    # dies before branching), a dot where the scan loses the throat, an X
-    # where a run dies, a muted flat line for a run that is alive with its
-    # radius stalled, keys inside on opaque patches, panel tags not titles.
-    # Single column, the two panels stacked (2026-09-16): the branching
-    # story is one column's worth, and the figure* width was air.
+    # PRD style (2026-09-16), the grammar of the seed-branches figure; the
+    # drawing itself lives in figure_panels so the article's combined strip
+    # (plot_single_throat_row, 2026-09-18) can lay the same two panels beside
+    # the declared-seed panel.  Single column, the two panels stacked
+    # (2026-09-16): the branching story is one column's worth.
     style.prd(base=10.0)
     fig, (axA, axB) = plt.subplots(2, 1, figsize=(3.4, 4.2),
                                    constrained_layout=True)
+    figure_panels(axA, axB, root)
+    for ax, letter in ((axA, "a"), (axB, "b")):
+        ax.text(0.03, 0.955, f"({letter})", transform=ax.transAxes, ha="left",
+                va="top", fontsize=9, color=style.INK)
+
+    style.save(fig, figure_dir(root, "01_single_throat") / "single_throat_branches.png")
+    print("[branches] wrote campaign/01_single_throat/BRANCHES.md and figures/01_single_throat/single_throat_branches.png")
+    return 0
+
+
+def plateau_rate(a: np.ndarray, lo: float = 49.0, hi: float = 61.0) -> tuple[float, float]:
+    """Mean and spread of the sliding-window growth rate of |R - R(0)| over
+    the plateau t = lo..hi -- the same windows, on the same grid of centres,
+    as the report's Sec. 3 table, so the figure and BRANCHES.md agree."""
+    d = a[:, 1] - a[0, 1]
+    v = np.array([log_slope(a[:, 0], d, t)
+                  for t in range(33, 67, 3) if lo <= t <= hi])
+    return float(v.mean()), float(v.std())
+
+
+def figure_panels(axA, axB, root: pathlib.Path) -> None:
+    """The two resolution-ladder panels drawn onto SUPPLIED axes.
+
+    NO colour (dashed = collapse, solid = inflation, muted grey = the arm
+    that dies before branching), a dot where the scan loses the throat, an X
+    where a run dies, a muted flat line for a run that is alive with its
+    radius stalled, keys inside on opaque patches.  No letter tags: the
+    caller owns the lettering ((a)/(b) alone in `main`, (a)/(b) of a longer
+    row in plot_single_throat_row).  ``style.prd`` must already be active.
+    """
+    ar = {k: load(root, ARMS[k], "areal_radius.dat") for k in ("ml2", "ml3", "ml4")}
+    p3, p4 = plateau_rate(ar["ml3"]), plateau_rate(ar["ml4"])
     KW = {
         "ml2": dict(color=style.MUTED, linewidth=1.0, linestyle=(0, ())),
         "ml3": dict(color=style.INK, linewidth=1.4, linestyle=(0, (4, 2.5))),
@@ -325,10 +355,7 @@ def main(argv: list[str]) -> int:
                         handlelength=2.5, labelspacing=0.3, borderaxespad=0.4,
                         frameon=True, framealpha=1.0)
     legA.get_frame().set(facecolor=style.GROUND, edgecolor="none")
-    axA.text(0.985 * 104, R_EXACT, r"$R_\star$", color=style.MUTED,
-             fontsize=8, ha="right", va="bottom")
-    axA.text(0.03, 0.955, "(a)", transform=axA.transAxes, ha="left", va="top",
-             fontsize=9, color=style.INK)
+    style.edge_label(axA, R_EXACT, r"$R_\star$")
 
     # The rate goes in the key, not on the curve.
     for k, p_, lab in (("ml3", p3, "level 3, shrinking"),
@@ -354,12 +381,6 @@ def main(argv: list[str]) -> int:
                         handlelength=2.5, labelspacing=0.3, borderaxespad=0.4,
                         frameon=True, framealpha=1.0)
     legB.get_frame().set(facecolor=style.GROUND, edgecolor="none")
-    axB.text(0.03, 0.955, "(b)", transform=axB.transAxes, ha="left", va="top",
-             fontsize=9, color=style.INK)
-
-    style.save(fig, figure_dir(root, "01_single_throat") / "single_throat_branches.png")
-    print("[branches] wrote campaign/01_single_throat/BRANCHES.md and figures/01_single_throat/single_throat_branches.png")
-    return 0
 
 
 if __name__ == "__main__":

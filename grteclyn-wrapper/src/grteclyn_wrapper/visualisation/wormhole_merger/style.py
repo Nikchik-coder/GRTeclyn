@@ -71,8 +71,8 @@ import numpy as np
 __all__ = [
     "BURGUNDY", "CONTEXT", "DEEP_BLUE", "DIVERGING", "FAINT", "GRID", "GROUND",
     "INK", "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
-    "callout", "family", "legend", "note", "ordinal", "ordinal_series",
-    "paper", "prd", "save", "series", "typography",
+    "callout", "edge_label", "family", "legend", "note", "ordinal",
+    "ordinal_series", "paper", "prd", "save", "series", "typography",
 ]
 
 # Ink, not black: pure black on white is harsher than print and reads as heavier
@@ -473,6 +473,26 @@ def callout(ax, x: float, y: float, text: str, *, above: bool = True,
         color=color if color is not None else MUTED, zorder=7,
         bbox=dict(boxstyle="round,pad=0.15", fc=GROUND, ec="none"),
         **kw)
+
+
+def edge_label(ax, y: float, text: str, *, color: str | None = None,
+               fontsize: float = 8.0, pad: float = 4.0, **kw):
+    """A name at the right edge of the frame, level with ``y``, inset in POINTS.
+
+    For the rule a panel is read against (``R_star``) and for a curve named
+    in the margin past its own end.  The x anchor is the spine itself, so
+    the text can never straddle it however narrow the panel gets -- which
+    is what a fraction of the axis could not promise: ``0.985`` left the
+    ``R_star`` subscript a comfortable 3 pt clear on a single column and
+    printed it through the spine on a quarter-page panel (2026-09-18, the
+    article's combined strips).
+    """
+    trans = matplotlib.transforms.blended_transform_factory(
+        ax.transAxes, ax.transData)
+    return ax.annotate(
+        text, (1.0, y), xycoords=trans, xytext=(-pad, 1.5),
+        textcoords="offset points", ha="right", va="bottom",
+        fontsize=fontsize, color=color if color is not None else MUTED, **kw)
 
 
 def note(ax, text: str, *, loc: str = "upper left", color: str | None = None,

@@ -76,7 +76,34 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", default=None)
     args = ap.parse_args(argv)
 
-    pack = pathlib.Path(args.pack_root).expanduser()
+    style.prd(base=10.0)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(3.4, 4.2), constrained_layout=True)
+    figure_panels(ax1, ax2, pack_root=args.pack_root)
+    for ax, letter in ((ax1, "a"), (ax2, "b")):
+        ax.text(0.03, 0.955, f"({letter})", transform=ax.transAxes, ha="left",
+                va="top", fontsize=9, color=style.INK)
+
+    png = style.save(fig, pathlib.Path(args.out) if args.out
+                     else figure_dir(GROUP, args.pack_root) / "placement_curve.png")
+    print(f"[placement] wrote {png} (+pdf)")
+    return 0
+
+
+def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
+    """The placement-curve panels drawn onto SUPPLIED axes.
+
+    Panel one is the calibration curve with the scout laid against it, panel
+    two the residual once the ruler is subtracted; ``main`` stacks them in
+    its own single column, the article's pair strip (plot_pair_row,
+    2026-09-18) lays them side by side.  ``style.prd`` must already be
+    active, and no letter tags are drawn: the caller owns the lettering.
+
+    ``stacked=False`` is that quarter-page placement: the decade carries
+    half as many tick numbers, the names step off their own markers into
+    the empty corners, and the held-band note loses the words the caption
+    already says.  Same data, same ink -- a narrower page.
+    """
+    pack = pathlib.Path(pack_root).expanduser()
     group = pack / "campaign" / GROUP
     curve_f, scout_f = group / "placement_curve.dat", group / "placement_scout_residual.dat"
     if not curve_f.exists():
@@ -91,9 +118,9 @@ def main(argv: list[str] | None = None) -> int:
     if scout.ndim == 1 and scout.size:
         scout = scout.reshape(1, -1)
     inside = scout[:, 5] > 0.5 if len(scout) else np.zeros(0, bool)
-
-    style.prd(base=10.0)
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(3.4, 4.2), constrained_layout=True)
+    print(f"[placement] {len(d)} probes, {len(scout)} scout rows, "
+          f"{int(inside.sum())} of them inside the probed range"
+          f" (isolated R = {isolated}, excess ~ d^{slope})")
 
     # ---- (a) the calibration curve, and the scout laid against it --------
     # The isolated throat IS R_star of the single-throat figures: same rule,
@@ -114,7 +141,10 @@ def main(argv: list[str] | None = None) -> int:
     # third of the panel unlabelled.  Log minors off: with hand-set ticks
     # they crowd the short decade.
     lo = min(d.min(), scout[:, 1].min()) if len(scout) else d.min()
-    ticks = [x for x in (3, 4, 6, 8, 12, 20, 32, 48) if lo * 0.95 <= x <= d.max() * 1.05]
+    # Eight numbers across a quarter page ran into one another (the user,
+    # 2026-09-18): the narrow canvas gets the factor-two ladder instead.
+    candidates = (3, 4, 6, 8, 12, 20, 32, 48) if stacked else (3, 6, 12, 24, 48)
+    ticks = [x for x in candidates if lo * 0.95 <= x <= d.max() * 1.05]
     ax1.set_xticks(ticks)
     ax1.set_xticklabels([f"{x:g}" for x in ticks])
     ax1.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
@@ -123,18 +153,24 @@ def main(argv: list[str] | None = None) -> int:
     # Names written in place, no boxed key (the seed-branches rule): the
     # probes above their own tail, the scout under its cluster, the open
     # run-in above its markers, the rule at the right edge.
-    ax1.text(d.max() * 0.96, isolated, r"$R_\star$", color=style.MUTED,
-             fontsize=8, ha="right", va="bottom")
-    ax1.text(14, 4.26, r"probes ($t=0$)", fontsize=8, ha="left", va="bottom")
-    if len(scout):
-        ax1.text(6.9, 4.415, "scout", fontsize=8, color=style.BURGUNDY,
-                 ha="center", va="top")
-        if (~inside).any():
-            # Under the open run-in, not over it: the (a) tag owns the corner.
-            ax1.text(3.8, 4.502, r"below probed $d$", fontsize=8,
-                     color=style.MUTED, ha="center", va="top")
-    ax1.text(0.03, 0.955, "(a)", transform=ax1.transAxes, ha="left", va="top",
-             fontsize=9, color=style.INK)
+    style.edge_label(ax1, isolated, r"$R_\star$")
+    if stacked:
+        ax1.text(14, 4.26, r"probes ($t=0$)", fontsize=8, ha="left", va="bottom")
+        if len(scout):
+            ax1.text(6.9, 4.415, "scout", fontsize=8, color=style.BURGUNDY,
+                     ha="center", va="top")
+            if (~inside).any():
+                # Under the open run-in, not over it: the (a) tag owns the corner.
+                ax1.text(3.8, 4.502, r"below probed $d$", fontsize=8,
+                         color=style.MUTED, ha="center", va="top")
+    else:
+        # The quarter-page panel: two names, both in the empty quadrant
+        # under the curve, neither touching its own markers.  The third
+        # ("below probed d") goes to the caption with the open-marker rule.
+        ax1.text(15, 4.34, "probes", fontsize=8, ha="left", va="bottom")
+        if len(scout):
+            ax1.text(6.9, 4.33, "scout", fontsize=8, color=style.BURGUNDY,
+                     ha="center", va="top")
 
     # ---- (b) what is left once the ruler is subtracted --------------------
     if len(scout):
@@ -148,8 +184,11 @@ def main(argv: list[str] | None = None) -> int:
             t_edge = t[inside].max() if inside.any() else t.min()
             ax2.axvspan(t_edge, ax2.get_xlim()[1], color=style.GRID, lw=0, zorder=0)
             y0, y1 = ax2.get_ylim()
+            # "(lower bound)" is wider than the band on the narrow canvas and
+            # spilled over the frame; the caption says it in words there.
             ax2.text(0.5 * (t_edge + ax2.get_xlim()[1]), y1 - 0.035 * (y1 - y0),
-                     "curve held\n(lower bound)", fontsize=7.5, color=style.MUTED,
+                     "curve held\n(lower bound)" if stacked else "curve\nheld",
+                     fontsize=7.5, color=style.MUTED,
                      ha="center", va="top", linespacing=1.2)
             ax2.plot(t[~inside], resp[~inside], ls="none", marker="s", ms=3.2,
                      mfc=style.GROUND, mec=style.CONTEXT, mew=1.0, zorder=4)
@@ -159,14 +198,6 @@ def main(argv: list[str] | None = None) -> int:
         ax2.set_ylabel(r"$\delta R\,/\,R$  (\%)"
                        if matplotlib.rcParams["text.usetex"]
                        else "$\\delta R\\,/\\,R$  (%)")
-        ax2.text(0.03, 0.955, "(b)", transform=ax2.transAxes, ha="left", va="top",
-                 fontsize=9, color=style.INK)
-
-    png = style.save(fig, pathlib.Path(args.out) if args.out
-                     else figure_dir(GROUP, args.pack_root) / "placement_curve.png")
-    print(f"[placement] wrote {png} (+pdf); {len(d)} probes, {len(scout)} scout rows, "
-          f"{int(inside.sum())} of them inside the probed range")
-    return 0
 
 
 if __name__ == "__main__":

@@ -145,6 +145,58 @@ Same day, the article's gallery/ligo captions were synced to the current
 draws (fly-by close-out): gate t = 76, strain peak 1.7e-20 at 89 Hz, spiral
 speeds 0.95/1.00/1.00, fly-by ridge 134 Hz.
 
+## The paper's two combined strips (2026-09-18)
+
+The article's first four single-column figures became two two-column strips
+at the tops of their pages (the user: "combine fig 1 with fig 2 ... make the
+horizontal layout ... and do the same with fig 3 and fig 4 cause now they
+span too much space"):
+
+```
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_single_throat_row
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_pair_row
+```
+
+`01_single_throat/single_throat_instability` (7.05 x 2.5) is the undeclared
+seed's two panels plus the declared-seed panel; `03_two_throats/
+pair_interaction` (7.05 x 2.4) is the sign rule's two panels plus the
+placement curve's two. **Neither composer draws anything itself.** Each
+panel is still drawn by its home module — `plot_branches.figure_panels`,
+`plot_seed_branches.figure_panel`, `plot_sign_rule.figure_panels`,
+`plot_placement_curve.figure_panels` — which the standalone single-column
+figures also call, so the two renderings of a panel can never drift apart.
+A change to what a panel says goes in its home module, where its provenance
+notes are; the composer owns only the canvas, the (a)...(d) lettering and
+the file. The four standalone figures are still produced and still correct;
+the paper just no longer includes them.
+
+**What a quarter-page panel needed that a single column did not.** Every
+label placed as a fraction of the axis is a different gap at strip width,
+and three of them broke: the `R_star` rule names printed across the right
+spine (now `style.edge_label`, which anchors to the spine and insets in
+POINTS — used in all three modules); the seed panel's two collapse-arm
+names met on the stalled line (now on opposite sides of it, with headroom
+opened below the lowest curve); the `a = 1` name had no room inside the
+frame at all (the like pair's curve passes a hair above it everywhere), so
+that panel carries a 1.22 -> 1.35 right margin and names the arm in it.
+The placement panel's narrow form (`stacked=False`) also thins the log
+decade from eight tick numbers to five (3/6/12/24/48, the user asked for
+fewer), drops "below probed d" to the caption and shortens the held-band
+note. Read the narrow branches only as a **placement** difference: the
+data, the ink and every number are the same objects the stacked form draws.
+
+**Float placement.** `\usepackage[section]{placeins}` had to go with them.
+A `figure*` can never be set on the page it is declared on, so a
+per-section barrier strands any two-column figure whose section runs less
+than a page: Fig. 2's section ends on the page before the earliest page the
+figure could take, and the next section's barrier flushed it to a float
+page of its own, half white. The article now loads plain `placeins` with
+one explicit `\FloatBarrier` before the bibliography — which is the only
+thing `[section]` was ever bought for (the LIGO figure printing after the
+references) — plus raised `\dbltopfraction` / `\dblfloatpagefraction` in an
+`\AtBeginDocument` hook, because REVTeX resets float parameters as the
+document opens. 13 pages, both engines, every figure inside the body.
+
 ## How the commands were recovered, and why it can be trusted
 
 Each candidate was redrawn and compared with the published PNG **panel by
