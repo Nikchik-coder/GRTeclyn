@@ -61,6 +61,7 @@ FLYBY = ("06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100",
          r"fly-by, $p=0.045$")
 FIT = (8.0, 25.0)        # shared window: both arms' scans are still disjoint
 T_MAX = 50.0             # the merger's record; the fly-by's own page runs to 100
+RULE_TOP = 9.0           # the rules stop below panel (a)'s label band
 
 
 def _scan(path: pathlib.Path):
@@ -119,23 +120,26 @@ def main(argv: list[str] | None = None) -> int:
         tail = slice(max(i - 1, 0), int(k.sum()))
         axA.plot(s["t"][tail], s["RA"][tail], color=col, linewidth=1.0,
                  linestyle=(0, (1.2, 1.8)), zorder=3)
-        axA.axvline(s["t"][i] if i < len(s["t"]) else T_MAX, color=style.FAINT,
-                    linewidth=0.7, zorder=1)
+        # The rules stop below the label band: a full-height axvline runs
+        # through the two notes that explain what the rules are for.
+        axA.vlines(s["t"][i] if i < len(s["t"]) else T_MAX, 3.6, RULE_TOP,
+                   color=style.FAINT, linewidth=0.7, zorder=1)
     kC = m["tC"] <= T_MAX
     axA.plot(m["tC"][kC], m["RC"][kC], color=style.MUTED, linewidth=1.0,
              linestyle=(0, (6.5, 2.4)), zorder=2)
     axA.set_ylabel(r"$R_{\rm areal}$ per mouth")
-    axA.set_ylim(3.6, 11.0)
-    # Everything is named inside the wedge between the common-centre curve
-    # (falling from 10.2) and the per-mouth curves (rising from 4.24), which
-    # is the only part of this frame with nothing drawn in it.
-    axA.text(2.0, 7.45, "common-centre scan", fontsize=7, color=style.MUTED)
-    axA.text(2.0, 5.55, "no MOTS, no trapped surface", fontsize=6.5,
+    # The ceiling is above the highest curve (the common-centre scan starts at
+    # 10.23) so that the two labels the data has no room for -- the rules' note
+    # and the fly-by's name -- get a band of their own instead of being wedged
+    # between curves.
+    axA.set_ylim(3.6, 12.0)
+    axA.text(2.0, 7.0, "common-centre scan", fontsize=7, color=style.MUTED)
+    axA.text(2.0, 6.1, "no MOTS, no trapped surface", fontsize=6.5,
              color=style.MUTED)
     axA.text(3.0, 4.55, MERGER[1], fontsize=7.5, color=style.INK)
-    axA.text(29.0, 7.5, FLYBY[1], fontsize=7.5, color=style.CONTEXT,
-             ha="left", va="bottom")
-    axA.text(32.0, 10.6, "past each rule the two\nscan spheres overlap",
+    axA.text(48.6, 9.9, FLYBY[1], fontsize=7.5, color=style.CONTEXT,
+             ha="right", va="top")
+    axA.text(26.0, 11.85, "past each rule the two\nscan spheres overlap",
              fontsize=6.5, color=style.MUTED, ha="center", va="top")
 
     # ---- (b) and meanwhile, what the orbit did ----------------------------
@@ -144,8 +148,11 @@ def main(argv: list[str] | None = None) -> int:
         axB.plot(s["t"][k], s["sep"][k], color=col, linewidth=1.4, zorder=3)
     axB.set_ylabel(r"separation $d$")
     axB.set_ylim(0.0, 12.9)
-    axB.text(35.0, 2.35, "contact", fontsize=7, color=style.INK)
-    axB.text(40.0, 6.1, "misses", fontsize=7, color=style.CONTEXT)
+    # Named so the panel reads without panel (a): each label says which arm
+    # and what its orbit did, rather than a bare verdict.
+    axB.text(33.5, 2.45, "merger: to contact", fontsize=7, color=style.INK)
+    axB.text(33.5, 6.3, f"fly-by: misses at {f['sep'].min():.1f}", fontsize=7,
+             color=style.CONTEXT)
 
     # ---- (c) the clock itself ---------------------------------------------
     for s, ex, col, tau in ((m, ex_m, style.INK, tau_m),
@@ -162,12 +169,15 @@ def main(argv: list[str] | None = None) -> int:
     axC.set_ylabel(r"$R_{\rm areal}/R_0 - 1$")
     axC.set_xlabel(r"$t$")
     # The two fits are within a factor 1.2 of each other, so their labels
-    # cannot sit on the lines; they go together in the empty lower right,
-    # each naming its arm, which is the comparison the panel exists for.
-    axC.text(30.0, 4.0e-3, rf"$\tau={tau_f:.1f}$   fly-by" "\n"
-             rf"$\tau={tau_m:.1f}$   merger", fontsize=7.5,
-             color=style.BURGUNDY, ha="left", va="top", linespacing=1.7)
-    axC.text(0.03, 0.95, rf"fitted $t={FIT[0]:g}$--${FIT[1]:g}$",
+    # cannot sit on the lines; they go together in the empty lower right.
+    # Each label wears ITS ARM'S colour, not the accent: both fitted lines are
+    # burgundy (that is what burgundy means here, "this is the fit"), so a
+    # burgundy label would say which quantity it is and not which arm.
+    axC.text(30.0, 4.5e-3, rf"$\tau={tau_f:.1f}$   fly-by", fontsize=7.5,
+             color=style.CONTEXT, ha="left", va="top")
+    axC.text(30.0, 1.3e-3, rf"$\tau={tau_m:.1f}$   merger", fontsize=7.5,
+             color=style.INK, ha="left", va="top")
+    axC.text(0.03, 0.95, rf"burgundy: fitted $t={FIT[0]:g}$--${FIT[1]:g}$",
              transform=axC.transAxes, fontsize=6.5, color=style.MUTED,
              va="top")
 
