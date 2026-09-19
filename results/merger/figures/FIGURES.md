@@ -68,13 +68,31 @@ in either arm.
 
 ## The paper's `08_waves` figures (2026-09-16)
 
-The article's two wave figures live in `08_waves/`, cross-cutting because they
-belong to no single group. Both are drawn with no arguments:
+The article's three wave figures live in `08_waves/`, cross-cutting because they
+belong to no single group. All are drawn with no arguments:
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_gallery
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_ligo
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_scalar_channel
 ```
+
+`08_waves/scalar_channel` (2026-09-19) — the SECOND radiation channel, the one
+Psi4 cannot see. Full-page row of three panels. (a) energy through R = 30
+against time, each arm normalised by its own E_GW at the rule: gravitational
+rises to +1, scalar falls to -2.3 (fly-by, solid) and -2.4 (spiral, dashed).
+The scalar curve is NEGATIVE because gravity couples to minus this field's
+stress tensor, so the stream's canonical-signed `flux_kin` has to be negated
+before it is energy. (b) the multipole decomposition of the scalar sector:
+l = 1 sits 10^7 above l = 0 and l = 2 -- two opposite scalar charges radiate
+at DIPOLE order, which a vacuum binary has no analogue for. (c) the
+systematic: |F_phi| at both spheres, with rules where the inflating mouths'
+areal radius passes each sphere's own radius, and the blue rule where the
+quoted numbers are taken. Reads `scalar_modes.dat` and `psi4_mode_l2_all.dat`
+from the same run so the two channels share their extraction spheres; no run
+was launched for it, the `orbit-modes` consumer profile has been writing the
+scalar stream since 2026-09-15. NOT available for the head-on or the single
+throat: those arms predate the stream and their plotfiles are gone.
 
 The scenario table (stream, mode, innermost sphere, gate) is `ARMS` in
 `plot_psi4_gallery.py` and the LIGO figure imports it, so the two figures

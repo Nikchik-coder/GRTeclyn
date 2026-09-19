@@ -384,13 +384,24 @@ def main(argv: list[str] | None = None) -> int:
              color=style.MUTED)
 
     # (j) the remnant rings ----------------------------------------------------
-    axJ.plot(wave[:, 0], 10.0 * wave[:, 1], color=style.INK, lw=1.0)
+    # NO r factor here.  `Weyl4_mode_20.dat` is already r*Psi4: the in-code
+    # extraction multiplies by the sphere radius before integrating
+    # (Source/ParticleInterpolator/WeylExtraction.hpp, "normalised by
+    # multiplying by radius"), exactly as the Python consumer's
+    # psi4_mode_l2m0.dat does, and the two agree to 0.1 % on this arm.  An
+    # earlier draft multiplied by R = 10 a second time, which put this panel a
+    # factor 10 above Fig. 8's same mode on the same sphere and sent +0.233
+    # into the ledger for a peak that is +0.0233.
+    axJ.plot(wave[:, 0], wave[:, 1], color=style.INK, lw=1.0)
     axJ.axhline(0.0, color=style.FAINT, lw=0.7)
     axJ.set_xlim(20.5, t_end + 1.5)
-    axJ.set_ylim(-0.27, 0.30)
+    axJ.set_ylim(-0.027, 0.030)
     axJ.set_xlabel(r"$t$")
     axJ.set_ylabel(r"$\mathrm{Re}\;r\psi_4^{(2,0)}$")
-    axJ.text(96.0, 0.20, "$(2,0)$ at $R=10$", fontsize=7.5, ha="right",
+    # Inside the frame: this label carried an absolute y from the old, tenfold
+    # ylim, and matplotlib does not clip text -- it floated out of (j) and
+    # landed in panel (d).
+    axJ.text(96.0, 0.020, "$(2,0)$ at $R=10$", fontsize=7.5, ha="right",
              va="bottom", color=style.INK)
 
     for ax, letter in zip(axes, "bcdefghij"):
