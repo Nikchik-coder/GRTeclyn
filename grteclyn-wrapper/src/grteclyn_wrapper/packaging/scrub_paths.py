@@ -100,6 +100,26 @@ def scrub(path: pathlib.Path) -> None:
             text,
         )
 
+    # Components of the site's own path (ROOT/SIM_ROOT) are identity even when
+    # they look generic: the close-out grep counts EVERY directory between the
+    # home and the checkout as a "/name/" fragment, and 2026-09-19 the packed
+    # backtraces re-leaked two of them because GENERIC exempted the words.
+    # Scrub them in path position only (never as bare words), then fold runs
+    # of <redacted> into one so the paths stay readable.
+    site_comps: set[str] = set()
+    for key in ("ROOT", "SIM_ROOT"):
+        for part in pathlib.Path(os.environ.get(key) or "").parts:
+            part = part.strip("/")
+            low = part.lower()
+            if not part or part == "home" or low in KEEP:
+                continue
+            if re.split(r"[-_]", low, maxsplit=1)[0] in KEEP:
+                continue
+            site_comps.add(part)
+    for comp in sorted(site_comps, key=len, reverse=True):
+        text = re.sub(rf"/{re.escape(comp)}(?=/)", "/<redacted>", text)
+    text = re.sub(r"(?:/<redacted>){2,}", "/<redacted>", text)
+
     # A host-name field names a machine by construction, and it may be a node
     # other than this one (AMReX's Backtrace.<rank> records the node that
     # crashed), which the environment-derived tokens below cannot know.

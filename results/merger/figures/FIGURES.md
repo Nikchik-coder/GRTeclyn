@@ -24,6 +24,29 @@ alias psi4="grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.
 | `07_bbh_control/psi4_analysis_bbh_control` | `--run bbh_control_d12_p012_t150 --group 07_bbh_control` |
 | `07_bbh_control/psi4_analysis_bbh_control_m2` | `--run bbh_control_d12_p012_t150 --group 07_bbh_control --stream psi4_mode_l2_all.dat --m 2` |
 
+## The validation figures (2026-09-19)
+
+Two figures certify the 2026-09-18/19 validation arms; both are drawn with
+no arguments:
+
+```
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_seed_linearity
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_fill_insensitivity
+```
+
+`01_single_throat/seed_linearity` — queue 2e gate 3: the (2,0) wave divided
+by its seed collapses across eps2 = 0.005/0.01/0.05 (linear to 1-16 %, the
+worst point the 0.05 arm's R = 10), the pure-quadrupole arm sits on the
+kicked one to 2-3 % (the radial kick contributes nothing to the wave), and
+the spherical control rules the floor.
+
+`05_binary_spiral/p012_paper/fill_insensitivity` — queue 5 (f): the freeze
+twin (fill 1.25/1.75) against the freeze arm (1.40/1.90), same t = 57 seed,
+same binary. Max |dPsi4|/peak 0.385/0.370/0.024/0.013 % at R = 20/28/36/44
+over t = 57-100; panel (b)'s onsets sit on the causal clock t = 57 + (R - 1.9)
+= 75/83/91/99. The fill is not in the physics; it certifies inertness, not a
+remnant ringdown.
+
 ## The paper's `08_waves` figures (2026-09-16)
 
 The article's two wave figures live in `08_waves/`, cross-cutting because they
