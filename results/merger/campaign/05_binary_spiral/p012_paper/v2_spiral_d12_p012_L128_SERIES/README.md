@@ -94,8 +94,11 @@ protects the waveform is amplitude (five orders below signal), not causality.
 The growth decelerates (e-fold 0.2 units early, 1.1 units by the end) but has
 not stopped when the comparison window closes.
 
-**So M6 validates t = 57–60.44 and nothing after it.** Past t = 60.44 there is
-no unfrozen twin, and the radius-insensitivity twin — a second arm at a
-different (radius_full, radius_start), required to agree at R = 20 to a few % —
-**has not been run.** Until it has, the late record is indicative, not
-quotable.
+**M6 validates t = 57–60.44 against the unfrozen twin; the radius-insensitivity
+twin covers the rest (2026-09-19).** `v2_spiral_d12_p012_L128_lvl5_t100_freeze2`
+re-ran the freeze arm from the same t = 57 checkpoint and binary with only the
+fill window moved, 1.40/1.90 → 1.25/1.75, and the (2,2) waveform moved by at
+most **0.385 / 0.370 / 0.024 / 0.013 % of peak at R = 20/28/36/44** over
+t = 57–100 (overlap 0.999999+). The fill is not in the physics, and **the late
+record is quotable** — still as transported burst plus contamination clocks,
+never as a remnant QNM (the physical caveats above stand unchanged).
