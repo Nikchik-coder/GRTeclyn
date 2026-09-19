@@ -756,7 +756,24 @@ and the framing was wrong — see below.)*
   code path; the vacuum run needs none, by construction). And at the same
   detector (R = 14) the wormhole merger is **~2.3× louder** than the BBH —
   with an extra (2,0) breathing channel 5.5× the BBH's.
+- **And a second control, at the fly-by's momentum** (measured 2026-09-19).
+  The control above carries the *spiral's* p = 0.12, so quoting the fly-by
+  against it compares a pass with a merger. One knob off the same template,
+  p = 0.45, gives the denominator the fly-by needs. In vacuum that momentum is
+  unbound (Newtonian circular 0.204, parabolic 0.289): where the drainhole pair
+  fell 12 → 4.8 on a 6× pull, the black holes start at periapsis and coast
+  apart, sweeping 96° while the separation opens 12 → 21 — visible in the
+  movies, which are worth watching beside the fly-by's. It radiates
+  **E/M = 1.05e-3 at R = 30, a factor 2.3 BELOW the merger control**, so the
+  fly-by outradiates a vacuum binary of its *own* parameters by **~70×**, not
+  29×. Read at R = 30 only: the punctures recede to r = 13.7 by t = 100, almost
+  onto the R = 14 sphere, whose reading is their own field sweeping past (22×
+  above R = 30 and still growing at the record's end, where the p012 twin's two
+  spheres agree to 6 %). Caveat: |P|/mass = 0.47 is past
+  `BoostedBHInitialData`'s 0.3 validity threshold, which inflates the vacuum
+  emission and so makes ~70× a lower bound.
 - **Runs.** `bbh_control_d12_p012_t150` *(pack)* — the control;
+  `bbh_control_d12_p045_t100` *(pack)* — the momentum-matched control;
   `bbh_control_d12_p012` *(pack)* — its t = 100 predecessor;
   `merge_twin_p012_plain_t100` *(pack)* — the wormhole side of the
   comparison. Figures: `figures/07_bbh_control/bbh_t150_ringdown.*`,

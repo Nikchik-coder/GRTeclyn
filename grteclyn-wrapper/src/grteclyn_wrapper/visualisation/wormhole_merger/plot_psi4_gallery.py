@@ -115,6 +115,17 @@ ARMS = [
     ("vacuum BBH twin", r"$P=0.12$, $d=12$", "(2,2)",
      "07_bbh_control/bbh_control_d12_p012_t150/psi4_mode_l2_all.dat",
      2, 14.0, None, ""),
+    # NOT a row here: bbh_control_d12_p045_t100, the momentum-matched vacuum
+    # control (2026-09-19).  Its energy is quoted in Sec. VIII of the article
+    # and in the GPU plan, but it cannot join this table, because the table's
+    # contract is "innermost sphere, spread over spheres as the error bar" and
+    # that arm has two spheres of which one is contaminated: its punctures
+    # recede to r = 13.7 by t = 100, almost onto R = 14, whose reading is their
+    # own field sweeping past (22x above R = 30, and still growing at the
+    # record's end).  One clean sphere cannot form a spread.  Reproduce the
+    # number with psi4_math._compute_radiated_energy on R = 30 of
+    # campaign/07_bbh_control/bbh_control_d12_p045_t100/psi4_mode_l2_all.dat,
+    # m = 2, M = 2.0: E/M = 1.05e-3.
 ]
 
 RAMP = [None, "MUTED", "CONTEXT", "FAINT"]   # inner -> outer; None = INK
