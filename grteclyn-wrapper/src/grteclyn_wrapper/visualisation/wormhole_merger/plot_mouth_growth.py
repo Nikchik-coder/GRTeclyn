@@ -183,6 +183,11 @@ def main(argv: list[str] | None = None) -> int:
              transform=axC.transAxes, fontsize=6.5, color=style.MUTED,
              va="top")
 
+    # Panel (c)'s decade ticks are far wider than (a)'s and (b)'s integers, so
+    # each y label would otherwise sit at its own indent and the stack would
+    # read as three figures rather than one page.
+    fig.align_ylabels((axA, axB, axC))
+
     for k, ax in enumerate((axA, axB, axC)):
         ax.text(0.0, 1.03, f"({'abc'[k]})", transform=ax.transAxes,
                 ha="left", va="bottom", fontsize=9, color=style.INK)
