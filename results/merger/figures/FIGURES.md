@@ -40,6 +40,12 @@ worst point the 0.05 arm's R = 10), the pure-quadrupole arm sits on the
 kicked one to 2-3 % (the radial kick contributes nothing to the wave), and
 the spherical control rules the floor.
 
+`01_single_throat/single_throat_collapse` — the single-throat analogue of
+the spiral collapse page, drawn from the pure-quadrupole arm by
+`plot_single_collapse` (no arguments): areal radius + MOTS strip over a 2×3
+grid of min α / min χ / max |K| / the radial shells (t = 33–55) / the
+constraints. MOTS from t = 33, R 3.80 → 2.41, M_MS 1.90 → 1.24.
+
 `05_binary_spiral/p012_paper/fill_insensitivity` — queue 5 (f): the freeze
 twin (fill 1.25/1.75) against the freeze arm (1.40/1.90), same t = 57 seed,
 same binary. Max |dPsi4|/peak 0.385/0.370/0.024/0.013 % at R = 20/28/36/44
