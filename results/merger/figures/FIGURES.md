@@ -32,6 +32,7 @@ no arguments:
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_seed_linearity
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_fill_insensitivity
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_mouth_growth
 ```
 
 `01_single_throat/seed_linearity` — queue 2e gate 3: the (2,0) wave divided
@@ -52,6 +53,18 @@ same binary. Max |dPsi4|/peak 0.385/0.370/0.024/0.013 % at R = 20/28/36/44
 over t = 57-100; panel (b)'s onsets sit on the causal clock t = 57 + (R - 1.9)
 = 75/83/91/99. The fill is not in the physics; it certifies inertness, not a
 remnant ringdown.
+
+`05_binary_spiral/p012_paper/mouth_growth` — the queue-8 gap closed: the
+mouths of the arm that MERGES, measured for the first time, against the
+fly-by's. Three stacked panels on one clock — per-mouth areal radius, the
+separation, and the growth excess on a log axis with both exponential fits.
+Merger +12.2 % by t = 28 with e-fold tau = 3.70; fly-by tau = 4.39 over the
+identical fitted window t = 8-25. Read the dash language: SOLID is a
+per-mouth measurement, DOTTED is the same scan after its sphere has
+swallowed the other mouth (t > 28 merger, t > 36 fly-by -- the apparent peak
+5.549 at t = 34 is that overlap, not a throat), and the long dash is the
+common-centre scan, a different instrument. No MOTS and no trapped surface
+in either arm.
 
 ## The paper's `08_waves` figures (2026-09-16)
 

@@ -201,6 +201,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `ladder_L6_r05000` | B | 56.1 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
 | `v2_spiral_d12_p012_L128_lvl3_t050` | A | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
 | `v2_spiral_d12_p012_L128_lvl3_t050` | B | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -0.37 | - | 44.9 | late (+0.26 dex) |
+| `v2_spiral_d12_p012_L128_lvl3_t050_mouths` | A | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
+| `v2_spiral_d12_p012_L128_lvl3_t050_mouths` | B | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -0.37 | - | 44.9 | late (+0.26 dex) |
 | `v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700` | A | 100.0 | x1.0 / 57.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 57.1 | restart -- own clock only |
 | `v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700` | B | 100.0 | x1.0 / 57.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 57.1 | restart -- own clock only |
 | `v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700` | A | 100.0 | x1.0 / 57.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 57.1 | restart -- own clock only |
@@ -233,10 +235,12 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_p045_helfer_t090` | B | 37.3 | x874.0 / 37.3 | +1.16 | +1.79 | +2.29 | +2.57 | - | - | - | - | late (+1.26 dex) |
 | `merge_orbit_flip_d12_p045_t200` | A | 91.0 | x2708.9 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
 | `merge_orbit_flip_d12_p045_t200` | B | 91.0 | x2709.0 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
+| `single_eps_m1e2_ml4_t100` | A | 42.1 | x1267.3 / 42.1 | +1.08 | +1.40 | +1.69 | +2.00 | +2.94 | - | - | - | late (+0.69 dex) |
+| `single_eps_m1e2_ml4_t100` | B | 42.1 | x1267.3 / 42.1 | +1.08 | +1.40 | +1.69 | +2.00 | +2.94 | - | - | - | late (+0.69 dex) |
 
 ## Reading
 
-Throats read at t = 30: 16 early, 10 same, 58 late, 62 too short, 46 restart arms (own clock only).
+Throats read at t = 30: 16 early, 10 same, 62 late, 62 too short, 46 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

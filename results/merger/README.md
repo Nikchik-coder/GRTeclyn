@@ -445,6 +445,17 @@ and the framing was wrong — see below.)*
   reproducibility twin.
 - **Numbers.** `campaign/05_binary_spiral/<run>/binary_throat_diagnostics.dat` (separation),
   `collapse_diagnostics.dat` (collapse), `campaign/05_binary_spiral/horizon/` (the trapped surface).
+- **And the throats that do it had already grown** (measured 2026-09-19,
+  `p012_paper/v2_spiral_d12_p012_L128_lvl3_t050_mouths` — stage 1 re-run with
+  the oriented per-mouth scan on, the campaign's first measurement of a
+  *merging* arm's mouths). Per-mouth areal radius **4.2385 → 4.7567, +12.2 %,
+  by t = 28** — the last sample where the two scan spheres are still disjoint —
+  while the separation closes 11.94 → 3.61; the growth excess is exponential
+  with **e-fold τ = 3.70**, against the fly-by's **4.39** fitted over the same
+  window t = 8–25. The instability clock is the throat's, not the encounter's.
+  **No MOTS, no trapped and no anti-trapped ray anywhere to t = 50**, on any of
+  the three scan centres: at this resolution the pair coalesces as wormholes.
+  `figures/05_binary_spiral/p012_paper/mouth_growth`.
 
 ### The merged object is a black hole that dissolves
 - **Claim (measured).** The common trapped surface shrinks — 1.07 at t = 51.5
