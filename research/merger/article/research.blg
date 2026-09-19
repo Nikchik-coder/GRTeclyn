@@ -50,7 +50,11 @@ Warning--I didn't find a database entry for "campanelli2006"
 Warning--I didn't find a database entry for "baker2006"
 Warning--I didn't find a database entry for "hochberg_visser1998"
 Warning--I didn't find a database entry for "misner_sharp1964"
+Warning--I didn't find a database entry for "gwtc3"
 Warning--I didn't find a database entry for "allen2012"
+Warning--I didn't find a database entry for "reisswig2011"
+Warning--I didn't find a database entry for "gwosc"
+Warning--I didn't find a database entry for "pycbc"
 control{REVTEX42Control}, control.key{N/A}, control.author{N/A}, control.editor{N/A}, control.title{N/A}, control.pages{N/A}, control.year{N/A}, control.eprint{N/A}, 
 control{apsrev42Control}, control.key{N/A}, control.author{08}, control.editor{1}, control.title{0}, control.pages{0}, control.year{1}, control.eprint{N/A}, 
 Warning--jnrlst (dependency: not reversed) set 1
@@ -66,7 +70,7 @@ Control: year (1) truncated
 Control: production of eprint (0) enabled
 You've used 2 entries,
             6079 wiz_defined-function locations,
-            1674 strings with 15461 characters,
+            1678 strings with 15488 characters,
 and the built_in function-call counts, 991 in all, are:
 = -- 12
 > -- 16
@@ -105,4 +109,4 @@ warning$ -- 1
 while$ -- 11
 width$ -- 0
 write$ -- 52
-(There were 40 warnings)
+(There were 44 warnings)
