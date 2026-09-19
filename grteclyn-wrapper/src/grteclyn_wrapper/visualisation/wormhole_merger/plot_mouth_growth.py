@@ -41,7 +41,7 @@ Reads ``horizon_scan.dat`` from both arms under ``campaign/`` and writes
 
 STYLE (the seed-branches grammar): single-column PRD frame, three stacked
 panels on one clock, no boxed key, every curve named in place, letter tags
-above the frames.  BURGUNDY is this package's horizon instrument and there is
+above the frames.  DEEP_GREEN is this package's horizon instrument and there is
 no horizon in either arm -- that is itself a result -- so the accent is spent
 on the fitted exponential instead, the one quantity the figure exists to
 compare, and the absence of a MOTS is written on panel (a) in words.
@@ -174,8 +174,10 @@ def main(argv: list[str] | None = None) -> int:
         axC.plot(s["t"][k], ex[k], color=col, linewidth=1.4, zorder=3)
     tt = np.array(FIT)
     for seed, tau in ((seed_m, tau_m), (seed_f, tau_f)):
-        axC.plot(tt, seed * np.exp(tt / tau), color=style.BURGUNDY,
-                 linewidth=0.9, zorder=4)
+        # Weight 1.9, the same as the seed panel's fits: at 0.9 the fit read
+        # as a hairline beside the arm rather than as a measurement on it.
+        axC.plot(tt, seed * np.exp(tt / tau), color=style.DEEP_GREEN,
+                 linewidth=1.9, zorder=4)
     axC.set_yscale("log")
     axC.set_ylim(3e-5, 2.0)
     axC.set_xlim(0, T_MAX)
@@ -184,14 +186,15 @@ def main(argv: list[str] | None = None) -> int:
     # The two fits are within a factor 1.2 of each other, so their labels
     # cannot sit on the lines; they go together in the empty lower right.
     # Each label wears ITS ARM'S colour, not the accent: both fitted lines are
-    # burgundy (that is what burgundy means here, "this is the fit"), so a
-    # burgundy label would say which quantity it is and not which arm.
+    # green (that is what green means here, "this is the fit"), so a green
+    # label would say which quantity it is and not which arm.  The legend
+    # below names the accent, so that one IS drawn in it.
     axC.text(30.0, 4.5e-3, rf"$\tau={tau_f:.1f}$   fly-by", fontsize=7.5,
              color=style.CONTEXT, ha="left", va="top")
     axC.text(30.0, 1.3e-3, rf"$\tau={tau_m:.1f}$   merger", fontsize=7.5,
              color=style.INK, ha="left", va="top")
-    axC.text(0.03, 0.95, rf"burgundy: fitted $t={FIT[0]:g}$--${FIT[1]:g}$",
-             transform=axC.transAxes, fontsize=6.5, color=style.MUTED,
+    axC.text(0.03, 0.95, rf"green: fitted $t={FIT[0]:g}$--${FIT[1]:g}$",
+             transform=axC.transAxes, fontsize=6.5, color=style.DEEP_GREEN,
              va="top")
 
     # Panel (c)'s decade ticks are far wider than (a)'s and (b)'s integers, so

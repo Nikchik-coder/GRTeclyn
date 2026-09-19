@@ -29,7 +29,7 @@ goes negative at t = 30.77 with the naive +r orientation -- near a wormhole
 throat +r is not the outgoing direction -- and that very signal was once quoted
 as a common horizon and withdrawn (GPU_PLAN, 2026-09-15).  The only horizon
 instrument in this figure is the ORIENTATION-CORRECTED offline scan, and its
-verdict is a burgundy set of throat measurements and the words "no MOTS".
+verdict is a deep green set of throat measurements and the words "no MOTS".
 
 *The restart-settle rows are masked, not smoothed.*  For its first steps a
 restart reduces over an incomplete hierarchy and reports coarse-grid extrema:
@@ -45,7 +45,7 @@ from the first time the peak stands 2x above the background.
 STYLE (2026-09-18, "PRD review style", the seed-branches grammar): full page
 (7.05 x 6.4), a wide context strip over a 3 x 3 grid; style.prd frame, no
 titles, letter tags above the frames, semantics in the caption; no boxed key,
-every series named in place.  Monochrome ink plus the one accent: BURGUNDY is
+every series named in place.  Monochrome ink plus the one accent: DEEP_GREEN is
 the oriented scan -- the horizon instrument -- and nothing else.  Ordered time
 families (the radial snapshots) are a grey ramp, light = early.
 """
@@ -307,7 +307,7 @@ def main(argv: list[str] | None = None) -> int:
             r_scan[tv] = (lv, r0, R0)
     t_sc = sorted(r_scan)
     axF.plot(t_sc, [r_scan[tv][1] for tv in t_sc], ls="none", marker="o",
-             ms=3.6, mfc=style.GROUND, mec=style.BURGUNDY, mew=1.1, zorder=5)
+             ms=3.6, mfc=style.GROUND, mec=style.DEEP_GREEN, mew=1.1, zorder=5)
     axF.axvline(t_floor, color=style.FAINT, lw=0.7, ls=(0, (1, 2)), zorder=1)
     axF.set_xlim(48.4, t_end + 0.7)
     axF.set_ylim(0.55, 1.52)
@@ -318,19 +318,19 @@ def main(argv: list[str] | None = None) -> int:
     axF.text(50.0, 1.05, r"peak of $|K|$", fontsize=7.5, ha="left",
              va="top", color=style.INK)
     axF.text(53.9, 0.86, "throat (scan)", fontsize=7.5, ha="right",
-             va="center", color=style.BURGUNDY)
+             va="center", color=style.DEEP_GREEN)
 
     # (g) the throat's areal radius; no horizon ever --------------------------
-    for lv, mfc in ((3, style.GROUND), (5, style.BURGUNDY)):
+    for lv, mfc in ((3, style.GROUND), (5, style.DEEP_GREEN)):
         pts = [(tv, R0) for tv, l, r0, R0 in scans if l == lv]
         if pts:
             xs, ys = zip(*pts)
             axG.plot(xs, ys, ls="none", marker="o", ms=3.6, mfc=mfc,
-                     mec=style.BURGUNDY, mew=1.1, zorder=5)
+                     mec=style.DEEP_GREEN, mew=1.1, zorder=5)
     axG.text(56.25, 4.077, "level 3", fontsize=7.5, ha="left", va="bottom",
-             color=style.BURGUNDY)
+             color=style.DEEP_GREEN)
     axG.text(58.6, 3.99, "level 5", fontsize=7.5, ha="left", va="bottom",
-             color=style.BURGUNDY)
+             color=style.DEEP_GREEN)
     axG.axvline(t_floor, color=style.FAINT, lw=0.7, ls=(0, (1, 2)), zorder=1)
     axG.set_xlim(54.4, 61.0)
     axG.set_ylim(3.82, 4.17)

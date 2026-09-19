@@ -79,11 +79,11 @@ def main(argv: list[str] | None = None) -> int:
                                      height_ratios=(1.25, 1.0))
 
     ax_s.plot(t, sep, **style.series(0, lw=1.5))
-    ax_s.plot(t[i_min], sep[i_min], marker="o", ms=5, color=style.BURGUNDY,
+    ax_s.plot(t[i_min], sep[i_min], marker="o", ms=5, color=style.DEEP_GREEN,
               mec=style.GROUND, mew=0.9, zorder=5)
     style.callout(ax_s, t[i_min], sep[i_min],
                   rf"closest approach ${sep[i_min]:.2f}$ at $t={t[i_min]:.1f}$",
-                  above=True, color=style.BURGUNDY, fontsize=8.5)
+                  above=True, color=style.DEEP_GREEN, fontsize=8.5)
     ax_s.set_ylabel(r"$d$")
     ax_s.set_title("(a) tracked separation of the two throats", loc="left")
 

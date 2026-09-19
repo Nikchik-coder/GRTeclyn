@@ -368,10 +368,12 @@ def figure_panels(axA, axB, root: pathlib.Path) -> None:
     for k, p_, t0, t1 in (("ml3", p3, 49, 61), ("ml4", p4, 49, 61)):
         dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
         y0 = np.log10(abs(dd[int(np.argmin(np.abs(ar[k][:, 0] - t0)))]))
-        # BURGUNDY, not muted: laid over ink curves the muted fit vanished
+        # DEEP_GREEN, not muted: laid over ink curves the muted fit vanished
         # entirely (2026-09-16) -- the one colour on the figure is the fit.
+        # Weight 1.9, matching the seed panel's fits: at 1.0 the fit read as a
+        # hairline under the ink arm rather than as a measurement on it.
         axB.plot([t0, t1], [y0, y0 + p_[0] * (t1 - t0) / np.log(10)],
-                 color=style.BURGUNDY, linewidth=1.0, linestyle=(0, ()),
+                 color=style.DEEP_GREEN, linewidth=1.9, linestyle=(0, ()),
                  label="fitted rate" if k == "ml3" else None, zorder=5)
     axB.set_xlim(20, 105)
     axB.set_ylim(-4.5, 0.5)

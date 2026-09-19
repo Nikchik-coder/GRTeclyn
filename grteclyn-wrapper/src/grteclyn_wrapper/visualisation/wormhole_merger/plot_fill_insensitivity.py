@@ -20,7 +20,7 @@ Reads both arms' in-code ``Weyl4_mode_22.dat`` (dt = 0.01, spheres
 
 STYLE (the seed-branches grammar): single-column PRD frame, two stacked
 panels on one clock, no boxed key, every curve named in place.  Panel (a)
-overlays the two arms at R = 20 -- ink solid under burgundy dots, so
+overlays the two arms at R = 20 -- ink solid under deep green dots, so
 agreement reads as one bicolour curve.  Panel (b) is the per-sphere
 difference against the few-percent gate, on a log axis, grey ramp inner to
 outer.  The caveat that travels with the arm travels with the figure: this
@@ -85,7 +85,7 @@ def main(argv: list[str] | None = None) -> int:
     wb = R0 * np.real(yb[R0][:n][keep])
     axA.axhline(0.0, color=style.FAINT, linewidth=0.7, zorder=1)
     axA.plot(t, wa, color=style.INK, linewidth=1.4, linestyle=(0, ()), zorder=3)
-    axA.plot(t, wb, color=style.BURGUNDY, linewidth=1.7,
+    axA.plot(t, wb, color=style.DEEP_GREEN, linewidth=1.7,
              linestyle=(0, (1.3, 1.7)), zorder=4)
     pk = np.abs(wa).max()
     axA.set_ylim(-1.25 * pk, 1.45 * pk)
@@ -96,7 +96,7 @@ def main(argv: list[str] | None = None) -> int:
     axA.text(0.35, 0.945, r"fill $1.40/1.90$", transform=axA.transAxes,
              ha="left", va="top", fontsize=7.5, color=style.INK)
     axA.text(0.35, 0.845, r"fill $1.25/1.75$ (twin)", transform=axA.transAxes,
-             ha="left", va="top", fontsize=7.5, color=style.BURGUNDY)
+             ha="left", va="top", fontsize=7.5, color=style.DEEP_GREEN)
 
     # ---- (b) what moving the window moved, sphere by sphere ---------------
     # The raw |delta| of two oscillating signals combs down the log axis at

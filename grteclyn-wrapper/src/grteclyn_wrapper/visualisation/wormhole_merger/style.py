@@ -24,12 +24,18 @@ its colour second, so the figure survives a greyscale printer and a
 colour-blind reader; colour is the redundant channel, never the only one.
 
 ``series(i)``   unordered families (this run against that one).  Four slots, in
-                a FIXED order -- ink, deep blue, burgundy, warm grey -- each
+                a FIXED order -- ink, deep blue, deep green, warm grey -- each
                 with its own dash.  There is no fifth: a fifth series means the
                 family is ordered (use ``ordinal``) or the figure is doing two
-                jobs.  The four were checked, not eyeballed: worst pair 21.7
-                OKLab dE under normal vision and 13.4 under simulated
-                protanopia, against thresholds of 15 and 8.
+                jobs.  The four were checked, not eyeballed: worst pair 18.1
+                OKLab dE under normal vision and 13.9 under simulated
+                protanopia (Vienot-Brettel-Mollon), against thresholds of 15
+                and 8.  The accent was a burgundy #9b2226 until 2026-09-19:
+                21.7 on the first number and only 10.6 on the second, and in
+                greyscale it landed at L* 34 -- on top of MUTED (39) and
+                DEEP_BLUE (32), an accent with the tone of the context it was
+                meant to stand out from.  Deep green sits at L* 44, clear of
+                DEEP_BLUE in tone and of every common deficiency in hue.
 
 ``ordinal(n)``  ORDERED families -- refinement levels, extraction radii, kick
                 amplitudes.  ``cividis`` reversed and cut off before its pale
@@ -69,8 +75,8 @@ import matplotlib
 import numpy as np
 
 __all__ = [
-    "BURGUNDY", "CONTEXT", "DEEP_BLUE", "DIVERGING", "FAINT", "GRID", "GROUND",
-    "INK", "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
+    "CONTEXT", "DEEP_BLUE", "DEEP_GREEN", "DIVERGING", "FAINT", "GRID",
+    "GROUND", "INK", "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
     "callout", "edge_label", "family", "legend", "note", "ordinal",
     "ordinal_series", "paper", "prd", "save", "series", "typography",
 ]
@@ -86,7 +92,7 @@ GROUND = "#ffffff"
 # The three dark hues the recommendation asks for, plus one recessive slot for
 # the curve that is context rather than a result.
 DEEP_BLUE = "#1f4e79"
-BURGUNDY = "#9b2226"
+DEEP_GREEN = "#1b7837"
 CONTEXT = "#8f8b81"
 
 # Fixed order, never cycled.  (colour, dash, linewidth) -- the dash is the
@@ -95,19 +101,21 @@ CONTEXT = "#8f8b81"
 _SERIES = (
     (INK, (0, ()), 1.4),
     (DEEP_BLUE, (0, (6.5, 2.2)), 1.5),
-    (BURGUNDY, (0, (1.3, 1.7)), 1.7),
+    (DEEP_GREEN, (0, (1.3, 1.7)), 1.7),
     (CONTEXT, (0, (7.0, 2.0, 1.3, 2.0)), 1.5),
 )
 
 # The SIGN of a declared kick is the thing the eye must read first on the seed
 # scan, so it takes the two poles of the campaign's own palette -- deep blue for
-# a negative kick, burgundy for a positive one -- and the shade tracks the
+# a negative kick, deep green for a positive one -- and the shade tracks the
 # amplitude.  Same-magnitude pairs, which are the comparison the figure exists
-# to make, separate by 23 (deep) and 17 (pale) OKLab dE under normal vision and
-# 13 / 12 under simulated protanopia.
+# to make, separate by 17 / 19 / 20 OKLab dE from the 0.1 rung to the 0.001 one
+# under normal vision and 19 / 19 / 27 under simulated protanopia -- better on
+# every rung than the burgundy family this replaced (17 / 23 / 17 and
+# 17 / 19 / 17), and the pale rung, the weakest of the three, gains the most.
 SIGNED = {
     "-0.1": "#0f3355", "-0.01": DEEP_BLUE, "-0.001": "#6a93bd",
-    "+0.001": "#c9706f", "+0.01": BURGUNDY, "+0.1": "#5f1214",
+    "+0.001": "#6da130", "+0.01": DEEP_GREEN, "+0.1": "#0f4e00",
 }
 
 
@@ -116,7 +124,7 @@ def signed(label: str) -> str:
     if label in SIGNED:
         return SIGNED[label]
     # An amplitude the table does not name: fall back to the pole of its sign.
-    return BURGUNDY if label.lstrip().startswith("+") else DEEP_BLUE
+    return DEEP_GREEN if label.lstrip().startswith("+") else DEEP_BLUE
 
 # 2D fields.  Named here so no module picks a colormap by hand.
 SEQUENTIAL = "cividis"       # magnitude, colour-blind optimised

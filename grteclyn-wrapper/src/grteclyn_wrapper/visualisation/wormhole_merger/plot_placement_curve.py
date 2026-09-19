@@ -23,7 +23,7 @@ panel, labelled in place, not a third curve competing for attention.
 
 *Two different measurements, not two series of one.*  Left panel: the probes
 are a calibration (ink, joined, because a curve is what they are for) and the
-scout's mouths are the thing being calibrated (burgundy, unjoined, because they
+scout's mouths are the thing being calibrated (deep green, unjoined, because they
 are readings at whatever separation the scout happened to reach).
 
 *Extrapolation is marked, not hidden.*  Past t = 13 the scout is closer than
@@ -35,7 +35,7 @@ STYLE (2026-09-16, "PRD review style", the seed-branches grammar): single
 column (3.4 x 4.6), the two panels stacked -- the pair earns no more than one
 column -- style.prd frame, no titles, (a)/(b) tags inside and the semantics
 in the caption, no boxed key: every series is named in place.
-Monochrome ink plus the one accent: BURGUNDY is the scout (its readings in
+Monochrome ink plus the one accent: DEEP_GREEN is the scout (its readings in
 panel a, its response in panel b); the calibration is ink; anything not
 backed by a probe is open-faced grey.  The isolated-throat rule is the same
 R_star dotted line, labelled the same way, as in the single-throat figures.
@@ -128,11 +128,11 @@ def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     ax1.axhline(isolated, color=style.MUTED, lw=0.8, ls=(0, (1, 2.5)), zorder=2)
     ax1.plot(d, R_mouth, color=style.INK, lw=1.2, marker="o", ms=2.6, zorder=4)
     if len(scout):
-        # Same in/out encoding as panel (b): burgundy where a probe backs the
+        # Same in/out encoding as panel (b): deep green where a probe backs the
         # comparison, open-faced where the scout has run in past the closest
         # probe (the reading is real; the calibration there is not).
         ax1.plot(scout[inside, 1], scout[inside, 2], ls="none", marker="s",
-                 ms=3.2, color=style.BURGUNDY, zorder=5)
+                 ms=3.2, color=style.DEEP_GREEN, zorder=5)
         ax1.plot(scout[~inside, 1], scout[~inside, 2], ls="none", marker="s",
                  ms=3.2, mfc=style.GROUND, mec=style.CONTEXT, mew=1.0, zorder=5)
     ax1.set_xscale("log")
@@ -157,7 +157,7 @@ def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     if stacked:
         ax1.text(14, 4.26, r"probes ($t=0$)", fontsize=8, ha="left", va="bottom")
         if len(scout):
-            ax1.text(6.9, 4.415, "scout", fontsize=8, color=style.BURGUNDY,
+            ax1.text(6.9, 4.415, "scout", fontsize=8, color=style.DEEP_GREEN,
                      ha="center", va="top")
             if (~inside).any():
                 # Under the open run-in, not over it: the (a) tag owns the corner.
@@ -169,7 +169,7 @@ def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
         # ("below probed d") goes to the caption with the open-marker rule.
         ax1.text(15, 4.34, "probes", fontsize=8, ha="left", va="bottom")
         if len(scout):
-            ax1.text(6.9, 4.33, "scout", fontsize=8, color=style.BURGUNDY,
+            ax1.text(6.9, 4.33, "scout", fontsize=8, color=style.DEEP_GREEN,
                      ha="center", va="top")
 
     # ---- (b) what is left once the ruler is subtracted --------------------
@@ -193,7 +193,7 @@ def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
             ax2.plot(t[~inside], resp[~inside], ls="none", marker="s", ms=3.2,
                      mfc=style.GROUND, mec=style.CONTEXT, mew=1.0, zorder=4)
         ax2.plot(t[inside], resp[inside], marker="s", ms=3.2, zorder=5,
-                 color=style.BURGUNDY, linestyle=(0, ()), linewidth=1.2)
+                 color=style.DEEP_GREEN, linestyle=(0, ()), linewidth=1.2)
         ax2.set_xlabel(r"$t$")
         ax2.set_ylabel(r"$\delta R\,/\,R$  (\%)"
                        if matplotlib.rcParams["text.usetex"]

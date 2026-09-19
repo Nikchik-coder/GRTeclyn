@@ -20,7 +20,7 @@ early displacement) and writes ``figures/03_two_throats/sign_rule``.
 
 STYLE (the seed-branches grammar): single-column PRD frame (style.prd), two
 stacked panels on one clock, no boxed key -- every curve named in place,
-(a)/(b) tags, monochrome ink with the one burgundy accent reserved for the
+(a)/(b) tags, monochrome ink with the one deep green accent reserved for the
 prediction line.  Dash = direction (dashed apart, solid together), weight =
 charge (a = 1 is the light arm).  The gauge-settling stretch t < 3.5 is a
 grey band in the ratio panel: the ratio there is 0/0, not a measurement.
@@ -129,7 +129,7 @@ def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     axB.axvspan(0, WINDOW[0], color=style.GRID, lw=0, zorder=0)
     axB.plot(t[fin], ratio[fin], ls="none", marker="o", ms=2.8,
              color=style.INK, zorder=4)
-    axB.axhline(PRED, color=style.BURGUNDY, linewidth=1.0, zorder=3)
+    axB.axhline(PRED, color=style.DEEP_GREEN, linewidth=1.0, zorder=3)
     lo, hi = 1.40, 1.63
     axB.set_ylim(lo, hi)
     axB.set_yticks([1.4, 1.5, 1.6])
@@ -139,13 +139,13 @@ def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True) -> None:
              linespacing=1.2)
     if stacked:
         axB.text(0.985 * xhi, PRED - 0.02 * (hi - lo), r"$(Q{+}1)/(Q{-}1)$",
-                 fontsize=7.5, color=style.BURGUNDY, ha="right", va="top")
+                 fontsize=7.5, color=style.DEEP_GREEN, ha="right", va="top")
     else:
         # A quarter-page panel has no room for the algebra beside the points:
         # the rule is named by its value, over the settling band where no
         # measurement lives, and the caption carries (Q+1)/(Q-1).
         axB.text(0.15, PRED + 0.03 * (hi - lo), r"$3/2$", fontsize=7.5,
-                 color=style.BURGUNDY, ha="left", va="bottom")
+                 color=style.DEEP_GREEN, ha="left", va="bottom")
     # Side by side the two panels are not on a shared axis the way the
     # stacked pair is, and two different clocks under one figure would be a
     # lie: (b) takes (a)'s limits explicitly.

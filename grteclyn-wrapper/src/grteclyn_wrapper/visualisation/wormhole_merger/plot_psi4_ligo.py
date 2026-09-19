@@ -60,7 +60,7 @@ under which this package draws a key -- style.prd frame, letter tags above
 the frames, semantics and the verified numbers in the caption.  Each
 scenario keeps ONE identity (ink solid = spiral, ink dashed = head-on, ink
 dash-dot = fly-by, muted dotted = collapsing throat, grey solid = the vacuum
-control) across all three panels.  The burgundy accent is the reference the
+control) across all three panels.  The deep green accent is the reference the
 panel is read against, and only that: the aLIGO design floor in (b), the
 analytic point-mass chirp in (c).
 """
@@ -383,7 +383,7 @@ def main(argv: list[str] | None = None) -> int:
     axB.plot(f_chirp[-1], htilde[-1] / np.sqrt(T_sec), marker="o", ms=3.0,
              mfc=style.GROUND, mec=style.FAINT, mew=1.0, zorder=2)
     axB.loglog(f_hz_band, np.sqrt(_aLIGO_noise_psd(f_hz_band)),
-               color=style.BURGUNDY, linewidth=1.2, zorder=2,
+               color=style.DEEP_GREEN, linewidth=1.2, zorder=2,
                label="aLIGO design")
     axB.set_xlim(20.0, 5000.0)
     axB.set_ylim(1e-25, 6e-20)
@@ -415,7 +415,7 @@ def main(argv: list[str] | None = None) -> int:
     # formula reaches the ringdown frequency and stops meaning anything.
     tau_end = 5.0 / 256.0 * (np.pi * f_qnm_M() / (ETA ** 0.6) ** -0.625) ** (-8.0 / 3.0)
     tau_an = np.linspace(60.0, tau_end, 400)
-    axC.plot(-tau_an, newtonian_chirp_M(tau_an) * to_hz, color=style.BURGUNDY,
+    axC.plot(-tau_an, newtonian_chirp_M(tau_an) * to_hz, color=style.DEEP_GREEN,
              linewidth=1.1, zorder=4)
     # The two rules are named at the LEFT edge, where only the chirp runs and
     # it is far below both: at the right edge the ringdown name sat on the
@@ -431,7 +431,7 @@ def main(argv: list[str] | None = None) -> int:
     # Under its own curve, where the panel is empty: laid along it the name
     # was struck through by the curve it names.
     axC.text(-43.0, 68.0, "point-mass\nchirp", fontsize=6.5, ha="left",
-             va="bottom", color=style.BURGUNDY, linespacing=1.2)
+             va="bottom", color=style.DEEP_GREEN, linespacing=1.2)
     axC.set_xlim(-45, 30)
     axC.set_ylim(55, 1300)
     axC.set_yscale("log")
@@ -441,7 +441,7 @@ def main(argv: list[str] | None = None) -> int:
     # ---- (d) how much went out, against the two vacuum answers -----------
     # The two vacuum answers are BARS, not rules: as vertical rules their
     # names had to be set rotated inside the bars they cross, and a reference
-    # a reader cannot name is not a reference.  As open burgundy bars in the
+    # a reader cannot name is not a reference.  As open deep green bars in the
     # same ranking they say the same thing and are read in the same glance.
     rows = [(SHORT[a["name"]], a["E"], a["E_lo"], a["E_hi"],
              LOOKS[a["name"]]["color"], True) for a in arms]
@@ -450,8 +450,8 @@ def main(argv: list[str] | None = None) -> int:
     # both are PUBLISHED numerical-relativity results for the equal-mass
     # non-spinning binary, not closed forms -- the only closed form on this
     # page is panel (c)'s Newtonian chirp.
-    rows += [("literature\nhead-on", E_BBH_HEADON, None, None, style.BURGUNDY, False),
-             ("literature\ncircular", E_BBH_CIRCULAR, None, None, style.BURGUNDY, False)]
+    rows += [("literature\nhead-on", E_BBH_HEADON, None, None, style.DEEP_GREEN, False),
+             ("literature\ncircular", E_BBH_CIRCULAR, None, None, style.DEEP_GREEN, False)]
     rows.sort(key=lambda r: r[1])
     for i, (lab, E, lo, hi, col, measured) in enumerate(rows):
         axD.barh(i, E, height=0.62, left=1e-6, zorder=3,

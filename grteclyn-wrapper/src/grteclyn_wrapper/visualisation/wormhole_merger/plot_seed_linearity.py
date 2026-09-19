@@ -99,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
                    if (seed / PURE / "small_data").exists()
                    else seed / PURE / "psi4_mode_l2m0.dat")
     keep = (tp >= 20) & (tp <= 50.0)
-    axA.plot(tp[keep], yp[R_SHOW][keep] / 0.01, color=style.BURGUNDY,
+    axA.plot(tp[keep], yp[R_SHOW][keep] / 0.01, color=style.DEEP_GREEN,
              linewidth=1.7, linestyle=(0, (1.3, 1.7)), zorder=4)
     amp_pure = {R: _rms(tp, yp[R]) for R in RADII}
     # The control's file has its own columns (R = 14 and 30, five in all),
@@ -119,7 +119,7 @@ def main(argv: list[str] | None = None) -> int:
     axA.text(0.98, 0.795, r"$0.005$", transform=axA.transAxes,
              ha="right", va="top", fontsize=7, color=style.DEEP_BLUE)
     axA.text(0.98, 0.715, r"$0.01$, no kick", transform=axA.transAxes,
-             ha="right", va="top", fontsize=7, color=style.BURGUNDY)
+             ha="right", va="top", fontsize=7, color=style.DEEP_GREEN)
 
     # ---- (b) amplitude against seed, and the slope-1 line -----------------
     marks = {10.0: "o", 14.0: "s", 18.0: "^"}
@@ -131,13 +131,13 @@ def main(argv: list[str] | None = None) -> int:
     e0 = 0.010
     ref = amps[e0][R_SHOW]
     xs = np.array([3.2e-3, 7.5e-2])
-    axB.plot(xs, ref * xs / e0, color=style.BURGUNDY, linewidth=0.9, zorder=2)
+    axB.plot(xs, ref * xs / e0, color=style.DEEP_GREEN, linewidth=0.9, zorder=2)
     axB.text(2.6e-2, ref * 2.6e-2 / e0 * 0.60, "slope 1", fontsize=7,
-             color=style.BURGUNDY, ha="left", va="top")
-    axB.plot([0.01], [amp_pure[R_SHOW]], "o", color=style.BURGUNDY,
+             color=style.DEEP_GREEN, ha="left", va="top")
+    axB.plot([0.01], [amp_pure[R_SHOW]], "o", color=style.DEEP_GREEN,
              markerfacecolor="none", markersize=6.0, zorder=5)
     axB.text(0.0112, amp_pure[R_SHOW] * 0.82, "no kick", fontsize=7,
-             color=style.BURGUNDY, ha="left", va="top")
+             color=style.DEEP_GREEN, ha="left", va="top")
     axB.axhline(floor, color=style.FAINT, linewidth=0.8,
                 linestyle=(0, (4, 2.5)), zorder=1)
     axB.text(3.4e-3, floor * 1.25, "spherical control", fontsize=7,

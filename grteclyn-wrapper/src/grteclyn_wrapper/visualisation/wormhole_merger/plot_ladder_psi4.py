@@ -87,7 +87,7 @@ def make_figure(runs, radius_label, ridx, scale, out_path, radius, m, under=()):
     hold two pictures at once to answer one question -- does any arm reach the
     band?  One channel, chosen with --mode, answers it.
 
-    The freeze arms used to be laid down as a fat pale-burgundy stroke at a
+    The freeze arms used to be laid down as a fat pale-deep green stroke at a
     quarter opacity, which prints as a mauve smear and is not a colour in this
     package's palette.  They are ordinary lines now, in the two categorical
     poles; the ladder keeps the ordinal ramp, offset off solid so the two
@@ -214,7 +214,7 @@ def main(argv=None) -> int:
 
     # The freeze arms are not rungs: they are what happens when the fill is
     # turned on, and they are the only arms that reach the band.  Two
-    # categorical slots -- ink solid, burgundy dotted -- at a heavier weight.
+    # categorical slots -- ink solid, deep green dotted -- at a heavier weight.
     under = []
     for i, spec in enumerate(args.under):
         label, _, path = spec.partition("=")
