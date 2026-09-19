@@ -174,35 +174,26 @@ $L^2$ norms of the Hamiltonian and momentum constraints over the box are written
 
 The campaign is one-knob: every run differs from a named reference in a single setting, and every run has one line---its difference, its outcome, its caveats---in a registry shipped with the results pack (Sec.~\ref{sec:repro}). Table~\ref{tab:matrix} groups the $130$ evolutions; the verdicts are the business of Secs.~\ref{sec:single}--\ref{sec:controls}. An archived shakedown stage ($12$ of the $130$) fixed the gauge, dissipation and tagging choices of Secs.~\ref{sec:setup:scheme}--\ref{sec:setup:grid} and is not used for physics.
 
-\begin{table}[t]
-\caption{The run matrix: $130$ evolutions, grouped. Every group varies one knob against a named reference; per-run lines live in the shipped registry. Body parameters are $a=2$, $m=1$ ($R_{\min}=3.89$), $\sigma=-1$, $d=12$ and $L=64$ unless stated.}
+\begin{table*}[t]
+\caption{The run matrix: $130$ evolutions, grouped. Every group varies one knob against a named reference; per-run lines live in the shipped registry. Body parameters are $a=2$, $m=1$ ($R_{\min}=3.89$), $\sigma=-1$, $d=12$ and $L=64$ unless stated. Left: the single throat, the pair and the head-on, with the controls. Right: the orbital family.}
 \label{tab:matrix}
-\footnotesize
+\scriptsize
 \begin{ruledtabular}
-\begin{tabular}{llcc}
-group & knob(s) & runs & Sec. \\
+\begin{tabular}{llcc|llcc}
+group & knob(s) & runs & Sec. & group & knob(s) & runs & Sec. \\
 \hline
-lone throat & levels 2--4; $\chi$ floor; $\Delta t$; $L{=}128$ & 9 & \ref{sec:single} \\
-spherical kicks & $\varepsilon=\pm10^{-3}\ldots\pm10^{-1}$; level 4 & 8 & \ref{sec:single:branching} \\
-quadrupolar kicks & $\varepsilon_2=0.005$--$0.05$; kick-free arm & 6 & \ref{sec:single:gw} \\
-two throats at rest & $\sigma$; $a=1$--$3$; $d=12$--$18$ & 9 & \ref{sec:pair} \\
-placement probes & $d=6$--$48$, one step each & 18 & \ref{sec:pair:placement} \\
-head-on, $d=8$ & fill; levels 3/5; down-step; $\pm\varepsilon$ & 9 & \ref{sec:headon} \\
-half-mass, $m=0.5$ & pair at $d=6$; lone control & 2 & \ref{sec:headon:halfmass} \\
-orbital chain, $p=0.12$ & gauge; $N$; levels; damping; $\chi$ floor & 16 & \ref{sec:spiral} \\
-refinement ladder & levels 3--7; $\Delta t$; damping & 8 & \ref{sec:spiral:wall} \\
-interior freeze, $L{=}64$ & skin radii; arming time; extraction & 7 & \ref{sec:spiral:burst} \\
-wall probes & $p=0.15$--$0.25$; levels; fill off & 6 & \ref{sec:spiral:wall} \\
-production spiral, $L{=}128$ & three-stage chain; fill-window twin & 5 & \ref{sec:spiral:inspiral} \\
-capture scan & $p=0.20$--$0.45$ & 4 & \ref{sec:spiral:capture} \\
-fly-by, $p=0.45$ & level 5 on the doubled box & 2 & \ref{sec:gw:flyby} \\
-Helfer twins & correction; window; levels & 6 & \ref{sec:controls:systematics} \\
-vacuum BBH & same $d$, $p$, masses; no scalar & 2 & \ref{sec:controls:bbh} \\
-constraint-solved data & \texttt{GRTresna} bridge & 1 & \ref{sec:controls:systematics} \\
-shakedown (archived) & gauge, dissipation, tagging & 12 & \ref{sec:setup:scheme} \\
+lone throat & levels 2--4; $\chi$ floor; $\Delta t$; $L{=}128$ & 9 & \ref{sec:single} & capture scan & $p=0.20$--$0.45$ & 4 & \ref{sec:spiral:capture} \\
+spherical kicks & $\varepsilon=\pm10^{-3}\ldots\pm10^{-1}$; level 4 & 8 & \ref{sec:single:branching} & fly-by, $p=0.45$ & level 5 on the doubled box & 2 & \ref{sec:gw:flyby} \\
+quadrupolar kicks & $\varepsilon_2=0.005$--$0.05$; kick-free arm & 6 & \ref{sec:single:gw} & orbital chain, $p=0.12$ & gauge; $N$; levels; damping; $\chi$ floor & 16 & \ref{sec:spiral} \\
+two throats at rest & $\sigma$; $a=1$--$3$; $d=12$--$18$ & 9 & \ref{sec:pair} & refinement ladder & levels 3--7; $\Delta t$; damping & 8 & \ref{sec:spiral:wall} \\
+placement probes & $d=6$--$48$, one step each & 18 & \ref{sec:pair:placement} & interior freeze, $L{=}64$ & skin radii; arming time; extraction & 7 & \ref{sec:spiral:burst} \\
+head-on, $d=8$ & fill; levels 3/5; down-step; $\pm\varepsilon$ & 9 & \ref{sec:headon} & wall probes & $p=0.15$--$0.25$; levels; fill off & 6 & \ref{sec:spiral:wall} \\
+half-mass, $m=0.5$ & pair at $d=6$; lone control & 2 & \ref{sec:headon:halfmass} & production spiral, $L{=}128$ & three-stage chain; fill-window twin & 5 & \ref{sec:spiral:inspiral} \\
+vacuum BBH & same $d$, $p$, masses; no scalar & 2 & \ref{sec:controls:bbh} & Helfer twins & correction; window; levels & 6 & \ref{sec:controls:systematics} \\
+constraint-solved data & \texttt{GRTresna} bridge & 1 & \ref{sec:controls:systematics} & shakedown (archived) & gauge, dissipation, tagging & 12 & \ref{sec:setup:scheme} \\
 \end{tabular}
 \end{ruledtabular}
-\end{table}
+\end{table*}
 
 \section{The single wormhole}
 \label{sec:single}
@@ -375,7 +366,7 @@ No grid gets the spiral through its merger. Restarting the $p=0.12$ run from the
 
 \begin{figure}[t]
 \centering
-\includegraphics{05_binary_spiral/spiral_refinement_ladder.pdf}
+\includegraphics[width=0.85\columnwidth]{05_binary_spiral/spiral_refinement_ladder.pdf}
 \caption{The wall does not move: death time of the $p=0.12$ spiral against refinement, every arm restarted from the same $t=50$ checkpoint, every death an $h_{11}$ NaN, no horizon at any rung. Filled: plain evolution, per-doubling gains marked. Open diamond: the level-5 arm at half the time step. Open circles: the core-damping family---a different treatment, dying on the same clock. Faint rule: the production chain (doubled base grid, restart at $t=36$), $4.2$ units past the whole ladder and still short of the merger's end.}
 \label{fig:spiral_ladder}
 \end{figure}
@@ -416,7 +407,7 @@ A lone throat radiates only if its collapse is not spherical. The spherically ki
 
 \begin{figure}[t]
 \centering
-\includegraphics{01_single_throat/seed_linearity.pdf}
+\includegraphics[width=0.85\columnwidth]{01_single_throat/seed_linearity.pdf}
 \caption{One throat's wave is linear in its deformation. (a)~$\mathrm{Re}\,\Psi_4^{2,0}$ at $R=14$, each arm divided by its own seed: $\varepsilon_2=0.005$, $0.01$, $0.05$ and the kick-free $0.01$ arm collapse onto one curve. (b)~rms amplitude over $t=30$--$50$ against $\varepsilon_2$ at three spheres, with the slope-one line through the $0.01$ arm: linear to $1$--$16\%$ across a decade. The open circle is the pure quadrupole---no radial kick---matching the kicked arm to $2$--$3\%$; the dashed rule is the spherical control's floor.}
 \label{fig:seed_linearity}
 \end{figure}
@@ -439,7 +430,7 @@ The spiral's $(2,2)$ burst peaks at $|r\Psi_4|=2.9\times10^{-2}$ and folds onto 
 
 \begin{figure}[t]
 \centering
-\includegraphics{05_binary_spiral/p012_paper/fill_insensitivity.pdf}
+\includegraphics[width=0.85\columnwidth]{05_binary_spiral/p012_paper/fill_insensitivity.pdf}
 \caption{Moving the fill window does not move the wave. (a)~$r\,\mathrm{Re}\,\Psi_4^{2,2}$ at $R=20$ for the freeze arm (fill $1.40/1.90$, ink) and its twin ($1.25/1.75$, burgundy dots), same $t=57$ checkpoint, same binary: one bicolour curve. (b)~The per-sphere envelope of the difference against the few-percent gate: at most $0.385\%$ of peak at $R=20$ and $0.013\%$ at $R=44$, each front arriving on the fill's causal clock $t=57+(R-1.9)$. The figure certifies the fill's inertness, not a remnant ringdown.}
 \label{fig:fill_insensitivity}
 \end{figure}
