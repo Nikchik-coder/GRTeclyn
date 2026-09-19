@@ -200,7 +200,7 @@ constraint-solved data & \texttt{GRTresna} bridge & 1 & \ref{sec:controls:system
 
 \begin{figure*}[t]
 \centering
-\includegraphics{01_single_throat/single_throat_instability.pdf}
+\includegraphics[width=0.80\textwidth]{01_single_throat/single_throat_instability.pdf}
 \caption{The lone throat is unstable; unless the seed is declared, the grid picks the branch. (a)~Minimal areal radius from exact static data at refinement levels 2--4: the exact solution is a fixed point ($R_\star$, dotted), held until each grid's own truncation noise excites the unstable mode---level 3 (dashed) collapses, level 4 (solid) inflates, level 2 (grey) dies of an origin failure first (cross). Dots mark where the \emph{scan} loses the throat, not where the run ends; muted lines carry the last reading (the level-3 run continues to $t=100$ behind a trapped surface). (b)~The deviation is a single exponential mode with a level-dependent sign: plateau fits give $\tau=5.88$/$5.26$ at levels 3/4, in the Gonz\'alez--Guzm\'an--Sarbach band~\cite{gonzalez2009}. (c)~Level 3 with the seed \emph{declared}, Eq.~\eqref{eq:seed}: $\varepsilon=\pm10^{-2}$ (heavy), $\pm10^{-3}$ (light); dashed = outward. The fate is opposite to the push, the twins cross at the $\varepsilon$-independent $t_\times\simeq13.0$, and a tenfold smaller kick arrives $8$--$14$ units later depending on the marker. Burgundy: exponential fits $|R-R_\star|\propto e^{t/\tau}$; cross: death at $t=40.1$.}
 \label{fig:single_throat}
 \end{figure*}
@@ -238,7 +238,7 @@ The collapse branch ends in a black hole that eats its own support: behind the m
 
 \begin{figure*}[t]
 \centering
-\includegraphics{01_single_throat/single_throat_collapse.pdf}
+\includegraphics[width=0.80\textwidth]{01_single_throat/single_throat_collapse.pdf}
 \caption{The pure quadrupole's collapse, fully instrumented (`no kick' arm: $\varepsilon_2=0.01$, radial kick zero). (a)~Minimal-surface areal radius (ink) and the oriented scan's MOTS (burgundy) from $t=33$: $R$ falls $3.80\to2.41$ and $M_{\rm MS}$ $1.90\to1.24$---phantom infall removes mass. (b)--(d)~Global $\min\alpha$, $\min\chi$ (the origin monitor, the far sheet's compactified infinity) and $\max|K|$; the violent phase is $t=45$--$55$. (e)--(f)~The radial profile's 128 shells over $t=33$--$55$ (light = early): $|K|$ grows inward while $\alpha$ pinches to zero at the centre. (g)~Constraint norms; the late rise from $t\gtrsim75$ is this family's known sphere-local floor growth, shared with the unkicked control.}
 \label{fig:single_collapse}
 \end{figure*}
@@ -251,7 +251,7 @@ The collapse branch ends in a black hole that eats its own support: behind the m
 % is on and was exiled to a float page of its own (2026-09-18).
 \begin{figure*}[!t]
 \centering
-\includegraphics{03_two_throats/pair_interaction.pdf}
+\includegraphics[width=0.80\textwidth]{03_two_throats/pair_interaction.pdf}
 \caption{Two throats at rest: the sign rule (a,b) and the ruler it is measured with (c,d). (a)~Separation change of three $d=12$ pairs one knob apart: the like pair ($\sigma=+1$, heavy dashed) pushes apart, flipping one field ($\sigma=-1$, solid) turns the push into a pull, and the narrow like pair ($a=1$, light dashed) opens $2.8\times$ more slowly---the force follows the throat width, not the mass. Separations are inverse-$\chi$-weighted centroids of the midplane $\chi$ pits, sub-cell where the tracker's $0.03$ grid quantum would swamp the early motion. (b)~Pull over push: with $Q\equiv|F_\phi/F_{\rm grav}|=5$ (Sec.~\ref{sec:model:binary}), the prediction is $(Q{+}1)/(Q{-}1)=3/2$ (burgundy); measured $1.518\pm0.021$. The gauge-settling systematic (grey band) is common to both arms and cancels in the ratio. (c)~Per-mouth areal radius of freshly placed pairs at $t=0$ (ink circles): wider than the isolated throat ($R_\star$, dotted) by an excess falling as $d^{-1.16}$---the neighbour's field on the ruler. Burgundy squares: the head-on scout's mouths (Sec.~\ref{sec:headon}) at the separation reached; open grey squares (here and in d) lie closer than the closest probe, where no calibration backs the comparison. (d)~The scout against the curve, $\delta R/R=R_{\rm scout}/R_{\rm place}-1$: the $-0.13\%$ plateau to $t=5$ calibrates the tracker's grid snap, and the throats' own squeeze then grows to $-4.0\%$ by $t=13$. In the shaded band the curve is held at its last point, so the magnitude is a lower bound; a boost can only raise a coordinate-sphere reading, so a reading below the curve is a real squeeze.}
 \label{fig:pair}
 \end{figure*}
@@ -293,7 +293,7 @@ Released from rest at $d=8$ with opposite scalar signs, the pair closes to conta
 
 \begin{figure*}[p]
 \centering
-\includegraphics{04_binary_headon/headon_collapse_diagnostics.pdf}
+\includegraphics[width=0.80\textwidth]{04_binary_headon/headon_collapse_diagnostics.pdf}
 \caption{The head-on merger makes a black hole ($d=8$ from rest, opposite scalar signs); every horizon point is the orientation-corrected scan.
 (a)~Separation of the $\chi$ pits: level 3 carries the approach from $d=7.94$ (the tracker's grid snap on a true $8$); the common MOTS forms at $t=22$ (burgundy rule in every time panel), the scout dies at the level-3 wall at $t=26.91$ (dashed rule), and the level-5 arm, restarted at $t=22$ with every interior device off, carries the merged pit to $t=100$ with no NaN.
 (b)~The minimum lapse (level 5, ink) rides the $10^{-10}$ clamp over $t=38.5$--$41.0$ and settles at $1.1\times10^{-3}$.
@@ -343,16 +343,14 @@ Every ``spiral'' in this campaign is a plunge, not an inspiral: with $M_{\rm ADM
 
 \begin{figure*}[p]
 \centering
-\includegraphics{05_binary_spiral/p012_paper/p012_collapse_diagnostics.pdf}
-\caption{The production spiral's collapse ($p=0.12$, $d=12$): the level-5 window from the restart at $t=36$ to the death by NaN at $t=60.44$, all of it unfrozen physics---the interior fill plays no part in any panel.
-(a)~Coordinate separation of the two $\chi$ pits over the whole history: the level-3 leg carries the plunge from $d=11.9$ to the handover at $t=36$ (solid rule); the constraint transient at $t=41.2$ (dashed rule here and in every time panel) marks the merger, after which the tracker follows a single merged pit (pale); the record ends at the NaN.
-(b)~The minimum lapse bottoms at $2.0\times10^{-3}$ and never reaches zero.
-(c)~The minimum conformal factor decays exponentially and sits on the code's $10^{-8}$ floor from $t=58.43$ (dotted rule in every time panel), at $r=0.078$.
-(d)~The scalar field's extrema hold $\pm0.89$ throughout while its momentum saturates at $\Pi=\pm4.1$: the profile survives, the momentum diverges.
-(e)~Growth compared, each curve $\log_{10}$-scaled onto $[0,1]$: the constraint norms peak at the merger and relax below where they started, while $\max|K|$ only begins its climb near $t=49$---after $t=40$, $\mathrm{corr}(\log\max|K|,\log\|\mathcal{H}\|)=-0.35$ and $\mathrm{corr}(\log\max|K|,\log\|\mathcal{M}\|)=+0.04$, so the death is not a constraint blow-up.  The pale curves are the level-3 leg's norms through the same transforms: they lie on the level-5 curves to a median $3.5\%$ ($\mathcal{H}$) and $0.7\%$ ($\mathcal{M}$) over the shared window $t=36$--$50$---the transient is resolved, not resolution.
-(f)~Where the curvature wall lives: the radius of the $|K|$ spike (steps; drawn from $t=49.1$, before which the profile is flat and an argmax is noise) and the disturbance's outer edge $|K|>0.2$ (dashed), widest at $r=1.36$ ($t=51.4$) and contracting after.  Burgundy circles: the throat's coordinate radius from the orientation-corrected marginal-surface scans---the spike rides just outside the throat and lands on it by the death.
-(g)~The same scans' throat areal radius: $R$ shrinks $4.10\to3.87$ ($-5.7\%$) over $t=55$--$60$, levels 3 and 5 agreeing to $0.2\%$, and \emph{no} marginally outer-trapped surface exists at any scan---the collapse runs to the end with no horizon found.  (The in-code $\theta_+$ columns are not drawn: their naive $+r$ orientation manufactures trapped verdicts near a throat, the artefact behind a withdrawn early horizon claim.)
-(h)--(j)~The radial anatomy at six equally spaced times, light ($t=36.1$) to dark ($t=60.4$): the per-shell $\max|K|$ grows $0.08\to6.1$ on a spike ${\sim}0.25$ wide migrating inward (h), while the $\chi$ pit (i) and the lapse pit (j) stay at $r\lesssim0.15$.  The gauge collapse and the curvature wall are different places: the pit at the centre, the wall on the throat.}
+\includegraphics[width=0.80\textwidth]{05_binary_spiral/p012_paper/p012_collapse_diagnostics.pdf}
+\caption{The production spiral's collapse ($p=0.12$, $d=12$): level 5 from the restart at $t=36$ to the death by NaN at $t=60.44$, no panel involving the interior fill.  Rules in every time panel: the handover at $t=36$ (solid), the merger transient at $t=41.2$ (dashed), the $\chi$ floor at $t=58.43$ (dotted).
+(a)~Separation of the two $\chi$ pits over the whole history---the level-3 leg carries the plunge from $d=11.9$, after which the tracker follows one merged pit (pale).
+(b)--(d)~$\min\alpha$ bottoms at $2.0\times10^{-3}$ without reaching zero; $\min\chi$ decays exponentially onto its $10^{-8}$ floor at $r=0.078$; the scalar holds $\pm0.89$ while $\Pi$ saturates at $\pm4.1$---the profile survives, the momentum diverges.
+(e)~Growth compared, each curve $\log_{10}$-scaled onto $[0,1]$: the constraint norms peak at the merger and relax below where they started, while $\max|K|$ climbs only from $t=49$, with $\mathrm{corr}(\log\max|K|,\log\|\mathcal{H}\|)=-0.35$ after $t=40$---the death is not a constraint blow-up.  Pale: the level-3 leg through the same transforms, median $3.5\%$ ($\mathcal{H}$) and $0.7\%$ ($\mathcal{M}$) over $t=36$--$50$.
+(f)~Radius of the $|K|$ spike (steps, drawn from $t=49.1$; earlier the profile is flat and an argmax is noise) and the $|K|>0.2$ edge (dashed), widest at $r=1.36$.  Burgundy: the throat radius from the corrected scans---the spike rides just outside the throat and lands on it by the death.
+(g)~Throat areal radius $4.10\to3.87$ over $t=55$--$60$, levels 3 and 5 agreeing to $0.2\%$, with \emph{no} marginally outer-trapped surface at any scan.  (The in-code $\theta_+$ columns are omitted: their naive $+r$ orientation manufactures trapped verdicts near a throat.)
+(h)--(j)~Radial anatomy at six equally spaced times, light ($t=36.1$) to dark ($t=60.4$): per-shell $\max|K|$ grows $0.08\to6.1$ on a spike ${\sim}0.25$ wide migrating inward, while the $\chi$ and lapse pits stay at $r\lesssim0.15$---the gauge collapse and the curvature wall are different places.}
 \label{fig:spiral_collapse}
 \end{figure*}
 
@@ -366,7 +364,7 @@ No grid gets the spiral through its merger. Restarting the $p=0.12$ run from the
 
 \begin{figure}[t]
 \centering
-\includegraphics[width=0.85\columnwidth]{05_binary_spiral/spiral_refinement_ladder.pdf}
+\includegraphics[width=0.70\columnwidth]{05_binary_spiral/spiral_refinement_ladder.pdf}
 \caption{The wall does not move: death time of the $p=0.12$ spiral against refinement, every arm restarted from the same $t=50$ checkpoint, every death an $h_{11}$ NaN, no horizon at any rung. Filled: plain evolution, per-doubling gains marked. Open diamond: the level-5 arm at half the time step. Open circles: the core-damping family---a different treatment, dying on the same clock. Faint rule: the production chain (doubled base grid, restart at $t=36$), $4.2$ units past the whole ladder and still short of the merger's end.}
 \label{fig:spiral_ladder}
 \end{figure}
@@ -384,14 +382,14 @@ The energy budget makes the same point without a detector: in the dominant multi
 
 \begin{figure*}[t]
 \centering
-\includegraphics{08_waves/psi4_gallery.pdf}
+\includegraphics[width=0.80\textwidth]{08_waves/psi4_gallery.pdf}
 \caption{The waveform gallery: every channel's radiation, one row per scenario, one retarded clock. Left column: $r\,\mathrm{Re}\,\Psi_4$ of the dominant mode at the innermost extraction sphere, each row on its own stated scale---the lone throat radiates an order of magnitude below the mergers, and the fly-by is the loudest channel of all. Half-height caps mark record ends: the collapsing throat's stream is junk-gated at $t=70$, the spiral record ends at $t=60$ with the run still in flight, and the fly-by---complete to $t=100$, no horizon ever forming---is gated at $t=70$, ahead of the $t=76.1$ trough where the mouths' expansion (areal radii growing $\times7.8$) has grown to equal the decaying burst at the $R=20$ sphere. Right column: the envelope $|r\Psi_4|$ at every extraction sphere on its own retarded time (ink to faint, inner to outer): a signal travelling at $c$ and falling as $1/r$ folds onto one curve. Burgundy dots mark the correlated wavefront, and the quoted $v/c$ is the lag of the whole complex waveform between neighbouring spheres over their common retarded window---peak-to-peak timing fails on flat-topped envelopes (the vacuum twin's merger plateau is ${\sim}15$ units wide at both spheres, and its peak times alone would read $v=0.57c$ where the waveform lag reads $0.82c$). Measured speeds: throat $0.91/0.95/0.98$, head-on $0.96/0.90$, spiral $0.95/1.00/1.00$, fly-by $1.00/1.00/1.00$, vacuum twin $0.82$. Every channel propagates at $c$ within the output cadence: radiation, not a gauge or constraint mode.}
 \label{fig:gw_gallery}
 \end{figure*}
 
 \begin{figure*}[t]
 \centering
-\includegraphics{08_waves/psi4_ligo.pdf}
+\includegraphics[width=0.80\textwidth]{08_waves/psi4_ligo.pdf}
 \caption{Every source on a detector at one shared calibration: total mass $M=30\,M_\odot$, distance $D=10$ Mpc, each record first reduced to units of its own total ADM mass; strain scales as $M/D$, frequency as $1/M$. (a)~Envelopes $|r\Psi_4|M$ at the innermost sphere on a common merger clock ($\tau=0$ at each peak): fly-by loudest ($8.2\times10^{-2}$), then spiral, head-on, vacuum twin, lone throat ($3.1\times10^{-3}$). (b)~Strain amplitude spectral densities over the aLIGO design floor (burgundy), each curve drawn from its own low-frequency corner (one cycle per record, ticked), below which a record of length $T$ cannot tell a wave from a drift. Read them as falling power laws (slopes $-3.3$ to $-5.9$) with no resolved maximum: any ``peak'' taken from this panel is the corner $1/T$; the values at the resolved $\Psi_4$ peaks are quoted in the text. Faint line: the Newtonian inspiral of the same binary, $|\tilde h|\propto f^{-7/6}$ to its ISCO at $147$ Hz---the ramp an astrophysical binary rides into the band where the simulated signal begins. (c)~Instantaneous frequency over each record's body against the point-mass chirp (burgundy), the ISCO ($147$ Hz) and the equal-mass Kerr ringdown ($599$ Hz): the vacuum twin climbs the chirp and peaks at $fM=0.065$, the textbook merger value; no wormhole channel does (tracks in Sec.~\ref{sec:ligo:ringdown}). (d)~Energy radiated in the dominant multipole, ranked; the tick on each bar is the spread over extraction spheres, the error bar that catches near-zone content posing as a wave (fly-by $43\%$, the widest: the expansion of its open mouths is near-zone content the outer spheres see less of). Open burgundy bars: the published equal-mass vacuum results from rest at infinity---head-on infall $5.5\times10^{-4}$, quasi-circular merger $4.84\times10^{-2}$---which bracket any vacuum binary; the spiral and fly-by outradiate the vacuum twin by $8.5\times$ and $29\times$. Energies are band integrals of $|\int r\Psi_4\,\mathrm{d}t'|^2$ over a common retarded window, doubled for the $\pm m$ pair; gravitational channel only---the scalar's own energy is invisible to $\Psi_4$.}
 \label{fig:gw_ligo}
 \end{figure*}
