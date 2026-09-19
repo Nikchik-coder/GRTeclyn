@@ -4,7 +4,7 @@ r"""The mouths inflate on the same clock whether the binary merges or misses.
 The campaign's lifetime claim rests on one number -- the e-fold time of the
 throat's unstable radial mode, tau ~ 4 units -- and until 2026-09-19 that
 number came only from arms that do NOT merge: the isolated throats and the
-p = 0.045 fly-by.  Every p = 0.12 arm, the ones that actually plunge, ran
+p = 0.45 fly-by.  Every p = 0.12 arm, the ones that actually plunge, ran
 before the per-mouth instruments existed, so nobody had watched a merging
 binary's throats.  `v2_spiral_d12_p012_L128_lvl3_t050_mouths` is stage 1 of
 that arm re-run with the oriented scan on, and this figure is the comparison
@@ -17,6 +17,12 @@ The verdict: the merging arm's mouths grow from the same initial areal radius
 against the fly-by's 4.4, over the same fitted window t = 8-25 -- while one
 binary closes from 11.9 to contact and the other misses at 4.8.  The clock
 belongs to the throat, not to the encounter.
+
+BOTH ARMS START AT d = 12, and the only thing that differs is the tangential
+momentum: p = 0.12 is about a quarter of the circular value for the actual
+central pull and plunges, p = 0.45 is 90 % of it and swings past.  So this is
+not a comparison of a close pair with a distant one -- it is the same initial
+separation, the same throats, two orbits.
 
 WHERE EACH CURVE STOPS BEING A MEASUREMENT
 
@@ -58,7 +64,7 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, f
 MERGER = ("05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl3_t050_mouths",
           r"merger, $p=0.12$")
 FLYBY = ("06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100",
-         r"fly-by, $p=0.045$")
+         r"fly-by, $p=0.45$")
 FIT = (8.0, 25.0)        # shared window: both arms' scans are still disjoint
 T_MAX = 50.0             # the merger's record; the fly-by's own page runs to 100
 RULE_TOP = 9.0           # the rules stop below panel (a)'s label band
@@ -151,7 +157,12 @@ def main(argv: list[str] | None = None) -> int:
     axB.set_ylabel(r"separation $d$")
     axB.set_ylim(0.0, 12.9)
     # Named so the panel reads without panel (a): each label says which arm
-    # and what its orbit did, rather than a bare verdict.
+    # and what its orbit did, rather than a bare verdict.  The shared start is
+    # stated because it is the point -- BOTH arms begin at d = 12 and the only
+    # difference between them is the tangential momentum, so this panel is not
+    # "near pair against far pair".
+    axB.text(1.5, 0.9, r"both from $d=12$; only $p$ differs", fontsize=6.5,
+             color=style.MUTED)
     axB.text(33.5, 2.45, "merger: to contact", fontsize=7, color=style.INK)
     axB.text(33.5, 6.3, f"fly-by: misses at {f['sep'].min():.1f}", fontsize=7,
              color=style.CONTEXT)
