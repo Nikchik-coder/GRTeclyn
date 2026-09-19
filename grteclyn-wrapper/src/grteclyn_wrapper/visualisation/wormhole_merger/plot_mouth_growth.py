@@ -139,7 +139,9 @@ def main(argv: list[str] | None = None) -> int:
     axA.text(3.0, 4.55, MERGER[1], fontsize=7.5, color=style.INK)
     axA.text(48.6, 9.9, FLYBY[1], fontsize=7.5, color=style.CONTEXT,
              ha="right", va="top")
-    axA.text(26.0, 11.85, "past each rule the two\nscan spheres overlap",
+    # Clear of the top spine AND of its inward ticks, which at 11.85 struck
+    # through the first line.
+    axA.text(26.0, 11.4, "past each rule the two\nscan spheres overlap",
              fontsize=6.5, color=style.MUTED, ha="center", va="top")
 
     # ---- (b) and meanwhile, what the orbit did ----------------------------
