@@ -99,11 +99,17 @@ def main(argv: list[str] | None = None) -> int:
              ha="left", va="top", fontsize=7.5, color=style.BURGUNDY)
 
     # ---- (b) what moving the window moved, sphere by sphere ---------------
+    # The raw |delta| of two oscillating signals combs down the log axis at
+    # every near-zero crossing; the ENVELOPE (rolling max over 2 units) is
+    # the quantity the gate is about, and it draws as one clean front per
+    # sphere arriving on the causal clock t = 57 + (R - 1.9).
+    w = max(1, int(round(2.0 / np.median(np.diff(t)))))
     for k, R in enumerate(RADII):
         da = np.abs(ya[R][:n][keep] - yb[R][:n][keep])
         ref = np.abs(ya[R][:n][keep]).max()
         frac = np.maximum(da / ref, 1e-12)
-        axB.plot(t, frac, color=RAMP[k], linewidth=1.0, zorder=3)
+        env = np.array([frac[max(0, i - w):i + 1].max() for i in range(len(frac))])
+        axB.plot(t, env, color=RAMP[k], linewidth=1.1, zorder=3)
         print(f"[fill-insensitivity] R = {R:g}: max |dPsi4|/peak = "
               f"{frac.max() * 100:.3f} %")
     axB.axhline(GATE, color=style.FAINT, linewidth=0.8,
