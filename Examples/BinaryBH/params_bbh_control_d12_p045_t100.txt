@@ -1,0 +1,101 @@
+# BBH vacuum control at the FLY-BY's momentum: d = 12, p = 0.45, no scalar.
+#
+# WHY.  The paper says the fly-by radiates "29x an equal-parameter vacuum
+# binary", and the vacuum binary it means is bbh_control_d12_p012_t150 --
+# which carries p = 0.12, the SPIRAL's momentum, not the fly-by's.  A vacuum
+# pass at p = 0.45 radiates far less than a vacuum merger, so 29x understates
+# the excess and the abstract underclaims through a mislabelled control.  This
+# arm is the missing denominator.
+#
+# ONE KNOB.  Byte-identical to params_bbh_control_d12_p012_t150.txt except:
+#   bh{1,2}.momentum  +/-0.12 -> +/-0.45 y   (the question)
+#   stop_time         150 -> 100            (nothing merges; see below)
+#   amr.check_int     100 -> -1             (no checkpoints, on the user's word)
+# The bare puncture masses are NOT retuned.  At p = 0.12 the P^2 contribution
+# to each puncture's ADM mass is under 1 % and the comment in the p012 template
+# says so; at p = 0.45 it is ~10 % (P^2/2m = 0.2025/1.923), so this pair is
+# heavier than the p012 control by about that much.  That is deliberate: the
+# wormhole fly-by dialled its momentum the same way, with the mass parameter
+# held at m = 1, and every energy in the paper is quoted in units of its own
+# record's ADM mass.  Read the actual masses off punctures_output/ before
+# quoting a ratio.
+#
+# WHAT TO EXPECT.  In vacuum the circular momentum at d = 12 is the Newtonian
+# 0.204 and the parabolic value is 0.289, so p = 0.45 is strongly hyperbolic:
+# unlike the wormhole fly-by -- which fell 12 -> 4.82 first, because its
+# scalar attraction is 6x gravity -- this pair starts AT periapsis and only
+# separates.  Relative v_inf ~ 0.69c, so the punctures reach the sponge
+# (r = 24) at t ~ 50 and the box edge at t ~ 75.  There is no close encounter
+# and no merger; the radiated energy will be small and partly initial-data
+# junk, which makes it an UPPER bound on a vacuum pass and therefore a LOWER
+# bound on the fly-by's excess.  That is the honest direction, and it is the
+# whole point of running it.  stop_time 100 is past the useful window twice
+# over; gate per sphere as everything else in this campaign is gated.
+#
+# CCZ4 constants match the wormhole campaign (kappa1 = 3, kappa2 = 0,
+# covariantZ4 off, derivative order 4).  dt_multiplier and sigma are NOT the
+# wormhole values: 0.02/0.1 there are phantom-stiffness choices; vacuum runs
+# the standard 0.25/0.5.  Same initial data, standard vacuum numerics.
+
+amr.verbose = 1
+amr.check_int = -1
+amr.plot_int = 4
+amr.plot_vars = chi K lapse shift1 shift2 shift3
+amr.derive_plot_vars = Weyl4
+
+# ---- initial data: the matched IVP ----
+bh1.mass = 0.9615
+bh2.mass = 0.9615
+bh1.offset = -6.0 0.0 0.0
+bh2.offset =  6.0 0.0 0.0
+bh1.momentum = 0.0  0.45 0.0
+bh2.momentum = 0.0 -0.45 0.0
+
+# ---- grid: the wormhole box ----
+amr.n_cell = 128 128 128
+geometry.prob_extent = 64 64 64
+amr.max_level = 5
+amr.regrid_int = 2 4 8 16 32
+tagging.threshold = 0.014
+amr.max_grid_size = 64
+amr.blocking_factor = 16
+
+geometry.is_periodic = 0 0 0
+boundary.hi_condition = "SOMMERFELD_BC" "SOMMERFELD_BC" "SOMMERFELD_BC"
+boundary.lo_condition = "SOMMERFELD_BC" "SOMMERFELD_BC" "SOMMERFELD_BC"
+
+# ---- evolution ----
+evolution.dt_multiplier = 0.25
+evolution.stop_time = 100.0
+evolution.spatial_derivative_order = 4
+evolution.nan_check = true
+evolution.sigma = 0.5
+
+ccz4.kappa1 = 3.0
+ccz4.kappa2 = 0.0
+ccz4.kappa3 = 1.0
+ccz4.covariantZ4 = false
+
+gauge.shift_advec_coeff = 1.0
+
+# The flat 'center' key: the C++ Weyl extraction would default to the grid
+# center anyway, but run_single.sh greps this exact key to hand the Python
+# consumer its extraction center -- without it the consumer silently
+# integrates spheres at the DOMAIN CORNER (0,0,0) and writes junk modes
+# (measured on bbh_control_d12_p012: static ~0.006 'signal', no wave).
+center = 32.0 32.0 32.0
+
+# ---- extraction: the wormhole spheres ----
+weyl_extraction.enabled = true
+weyl_extraction.num_radii = 4
+weyl_extraction.radii = 14.0 20.0 26.0 30.0
+weyl_extraction.levels = 0 0 0 0
+weyl_extraction.num_points_phi = 72
+weyl_extraction.num_points_theta = 37
+
+puncture_tracking.enabled = true
+
+# ---- rewritten by run_single.sh at clone time ----
+output_path = "./"
+amr.plot_file = "plots/plt"
+amr.check_file = "checkpoints/chk"
