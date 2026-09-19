@@ -32,6 +32,12 @@
 #                 horizon scanned on level 3 (level 1, the default, is too
 #                 coarse to resolve the merged surface), and six fields so the
 #                 collapse and the wave both have movies.
+#   headon-modes  headon plus the scalar-mode decomposition on the same
+#                 spheres (10/14/18) -- the head-on's scalar channel was never
+#                 recorded (the stream postdates those arms and their
+#                 plotfiles are pruned), so the 2026-09-19 re-run measures it.
+#                 Same bare-switch spelling as orbit-modes: --scalar-modes,
+#                 then --scalar-mode-ells 0 1 2.
 #   headon-scout  the first look at a new head-on configuration: horizon
 #                 tracking but no wave extraction (nothing has rung yet) and a
 #                 tight zoom on the throats.
@@ -74,6 +80,14 @@ consumer_profile() {
            "--frames-fields chi K lapse phi Pi Weyl4_Re" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
+    headon-modes)
+      echo "--areal-radius --areal-min-radius 0.5 --radii 10 14 18" \
+           "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
+           "--horizon-common-level 3 --horizon-half 3.0" \
+           "--frames-fields chi K lapse phi Pi Weyl4_Re" \
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}" \
+           "--scalar-modes --scalar-mode-ells 0 1 2"
+      ;;
     headon-scout)
       echo "--areal-radius --areal-min-radius 0.5" \
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
@@ -108,5 +122,5 @@ consumer_profile() {
 }
 
 consumer_profile_names() {
-  echo "headon headon-scout orbit orbit-modes bbh chi none"
+  echo "headon headon-modes headon-scout orbit orbit-modes bbh chi none"
 }

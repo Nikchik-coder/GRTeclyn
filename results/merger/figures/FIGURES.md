@@ -47,6 +47,16 @@ the spiral collapse page, drawn from the pure-quadrupole arm by
 grid of min α / min χ / max |K| / the radial shells (t = 33–55) / the
 constraints. MOTS from t = 33, R 3.80 → 2.41, M_MS 1.90 → 1.24.
 
+`01_single_throat/single_throat_inflation` — its mirror, by
+`plot_single_inflation` (no arguments): the ε = −0.01 level-4 arm to t = 100
+on the same 1 + 2×3 grammar, with the unkicked level-4 twin drawn beside it
+in (a) and the anti-trapped rows (θ₊ > 0 and θ₋ > 0, the MOTS's mirror)
+marked in green over t = 1–35. R 3.81 → 11.39 (×3.0) against the twin's ×2.2,
+parting by 10 % at t = 25. Panels (e)/(f) lead with χ, not |K|: the signature
+of this branch is the compactified inner sheet's χ-trough marching outward
+(r = 0.016 → 2.9), and |K| never leaves 0.06. That march is also why the
+θ₊ = 0 rows at R ≈ 60.7 after t = 85 are not a horizon and are not drawn.
+
 `05_binary_spiral/p012_paper/fill_insensitivity` — queue 5 (f): the freeze
 twin (fill 1.25/1.75) against the freeze arm (1.40/1.90), same t = 57 seed,
 same binary. Max |dPsi4|/peak 0.385/0.370/0.024/0.013 % at R = 20/28/36/44

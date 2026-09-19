@@ -80,6 +80,19 @@ that produced it does not.
    t = 99, with the run clean to t = 100. The inflating arms never trap anything: each grows an
    anti-trapped shell, peaking at t = 27 (ε = −0.01) and t = 37 (ε = −0.001), and its throat
    expands to R ≈ 9 at r ≈ 9.5. Figure: `figures/01_single_throat/single_throat_seed_branches.png`.
+   **And the inflating branch now has the collapse branch's instruments on it** (2026-09-19,
+   `single_eps_m1e2_ml4_t100`, ε = −0.01 at level 4 to t = 100). The throat grows ×3.0, areal
+   radius 3.812 → 11.388, with no marginally trapped surface anywhere about it, and carries the
+   MOTS's mirror instead: an anti-trapped shell (θ₊ > 0 **and** θ₋ > 0) at every scan centre over
+   t = 1–35 — the positive certificate the earlier arms could only report as an absence. Against
+   its unkicked level-4 twin (which inflates on truncation alone, ×2.2) it departs by **10 % at
+   t = 25**, the same clock on which the +0.01 twin at this level forms its horizon: the two signs
+   leave together and end apart. Plateau fit τ = 5.47, between the published 5.88 (level 3) and
+   5.26 (level 4); the growth then saturates, d ln R/dt 0.036 (t = 30–40) → 0.0023 (t = 90–100).
+   **What may not be quoted from it:** the flickering θ₊ = 0 rows at R ≈ 60.7 after t = 85 are not
+   a horizon — that areal peak exists from t = 0 at the innermost shell (the far universe's
+   compactified infinity) and the inflation walks its image out to r = 2.9, into the scan window.
+   Figure: `figures/01_single_throat/single_throat_inflation.png`.
    **A tenfold smaller kick reaches the same state about 11–12 units later.** Measured on the
    difference between twins, R(−ε) − R(+ε), where any offset common to both arms cancels, the delay
    is 8.2 at a difference of 0.1, 11.3 at 1.0 and 11.6 at 1.8. The horizon radius gives 11.0 → 12.2
