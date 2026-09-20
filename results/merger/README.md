@@ -214,6 +214,15 @@ that produced it does not.
    1.55 units later. Refining postpones the failure by 3 %; reaching t = 60 that way
    would cost roughly 90× the compute. (Confirmed again on p = 0.15: a max_level 5
    restart bought +0.88 over the level-3 wall and still died mid-fusion.)
+   **And it is not the grid's truncation seed either** (2026-09-20,
+   `v2_spiral_d12_p012_L128_lvl5from0_t100`). Run whole at level 5 — initial data to
+   the wall, no restart, no seam, and so a seed two refinement levels smaller than the
+   arm that inherits one from a level-3 checkpoint — the p = 0.12 merger dies at
+   **t = 59.943** (NaN in h11, level 5) against the seamed arm's **60.445**: the same
+   wall to 0.8 %, marginally *earlier*. Refinement applied earlier buys nothing, so the
+   refinement-time ladder does not extend and the wall is the merger's own dynamics.
+   *(Note for anyone comparing walls: the number 57 in this campaign's notes is the last
+   kept checkpoint, Chk05700 — where the freeze arms restart from — not a death time.)*
 7. The result survived its credibility batch (2026-09-03/04): turn the core damping
    off and nothing claimed changes; change the slicing and the *physics* holds while
    the crash time moves 8.4 units (the wall is gauge, not an event); rerun a scout
