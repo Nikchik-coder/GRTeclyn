@@ -249,6 +249,8 @@ class FlowResult:
     reason: str
     steps: int
     rms_theta: float
+    theta_mean: float  # area-weighted mean theta_out: a stall with |mean| << rms
+    frac_neg: float  # straddles zero (noise-floor MOTS); mean ~ +rms is a true miss
     max_abs_theta: float
     theta_in_max: float
     R_areal: float
@@ -257,6 +259,12 @@ class FlowResult:
     h_max: float
     deform: float  # max |a_lm| over l >= 1, in units of a_00 Y_00 (the radius)
     a_lm: np.ndarray
+    # Existence witnesses (Andersson-Metzger): a step whose whole surface was
+    # pointwise trapped (max theta_out < 0), resp. untrapped (min > 0).  A
+    # trapped witness inside an untrapped one proves a MOTS lies between them,
+    # whatever the flow's own tolerance verdict.
+    trap_wit: tuple | None = None  # (step, max_theta_out, h_min, h_max)
+    untrap_wit: tuple | None = None  # (step, min_theta_out, h_min, h_max)
 
 
 def flow(
@@ -283,15 +291,25 @@ def flow(
     ls = np.array([l for l, _ in box.pairs], dtype=float)
     gain = step_size / (1.0 + damp * ls * (ls + 1.0))
     state = None
+    tmean = fneg = math.nan
+    trap_wit = untrap_wit = None
     for k in range(steps):
         try:
             state = surface_expansion(box, a, nth, nph)
         except FloatingPointError as err:
             return FlowResult(
-                False, str(err), k, math.nan, math.nan, math.nan,
-                math.nan, math.nan, math.nan, math.nan, math.nan, a,
+                False, str(err), k, math.nan, math.nan, math.nan, math.nan,
+                math.nan, math.nan, math.nan, math.nan, math.nan, math.nan, a,
             )
         rms = float(np.sqrt(np.mean(state.theta_out**2)))
+        tmean = float((state.theta_out * w).sum() / w.sum())
+        fneg = float(((state.theta_out < 0.0) * w).sum() / w.sum())
+        tmax = float(state.theta_out.max())
+        tmin = float(state.theta_out.min())
+        if tmax < 0.0:
+            trap_wit = (k, tmax, state.h_min, state.h_max)
+        if tmin > 0.0:
+            untrap_wit = (k, tmin, state.h_min, state.h_max)
         scale = float(np.mean(np.abs(state.theta_out))) + 1.0e-12
         if rms < tol:
             deform = float(np.max(np.abs(a[1:]))) / abs(a[0]) if a.size > 1 else 0.0
@@ -299,9 +317,10 @@ def flow(
                 bool(float(state.theta_in.max()) < 0.0),
                 "theta_out -> 0"
                 + ("" if float(state.theta_in.max()) < 0.0 else " but theta_in >= 0"),
-                k, rms, float(np.max(np.abs(state.theta_out))),
+                k, rms, tmean, fneg, float(np.max(np.abs(state.theta_out))),
                 float(state.theta_in.max()), state.R_areal, state.M_MS,
                 state.h_min, state.h_max, deform, a,
+                trap_wit=trap_wit, untrap_wit=untrap_wit,
             )
         # project theta_out on the basis and step against it; the sign is
         # fixed by the orientation so the flow always moves the surface
@@ -312,12 +331,13 @@ def flow(
     deform = float(np.max(np.abs(a[1:]))) / abs(a[0]) if a.size > 1 else 0.0
     rms = float(np.sqrt(np.mean(state.theta_out**2))) if state else math.nan
     return FlowResult(
-        False, "flow stalled (no MOTS reached)", steps, rms,
+        False, "flow stalled (no MOTS reached)", steps, rms, tmean, fneg,
         float(np.max(np.abs(state.theta_out))) if state else math.nan,
         float(state.theta_in.max()) if state else math.nan,
         state.R_areal if state else math.nan, state.M_MS if state else math.nan,
         state.h_min if state else math.nan, state.h_max if state else math.nan,
         deform, a,
+        trap_wit=trap_wit, untrap_wit=untrap_wit,
     )
 
 
@@ -433,15 +453,22 @@ def run_plotfile(args) -> None:
     for r0 in args.seeds:
         variants = [(r0, 0.0)] + ([(r0, 0.12), (r0, -0.12)] if args.deformed_seeds else [])
         for rr, dent in variants:
-            res = flow(box, rr, seed_deform=dent)
+            res = flow(box, rr, seed_deform=dent, steps=args.steps)
             tag = "MOTS" if res.converged else "none"
             print(
                 f"seed r0={rr:<5} dent={dent:+.2f}: {tag:<4} {res.reason}; "
                 f"steps={res.steps} rms_theta={res.rms_theta:.2e} "
+                f"mean_theta={res.theta_mean:+.2e} frac_neg={res.frac_neg:.2f} "
                 f"R_areal={res.R_areal:.4f} M_MS={res.M_MS:.4f} "
                 f"h=[{res.h_min:.3f},{res.h_max:.3f}] deform={res.deform:.2e} "
                 f"theta_in_max={res.theta_in_max:+.4f}"
             )
+            for name, wit in (("trapped", res.trap_wit), ("untrapped", res.untrap_wit)):
+                if wit is not None:
+                    print(
+                        f"  witness {name}: step={wit[0]} extreme_theta_out={wit[1]:+.4f} "
+                        f"h=[{wit[2]:.3f},{wit[3]:.3f}]"
+                    )
             found += int(res.converged)
     print(f"# surfaces found: {found} (seeds x variants exhausted; lmax = {args.lmax})")
 
@@ -457,6 +484,7 @@ def main() -> None:
     p.add_argument("--lmax", type=int, default=4)
     p.add_argument("--seeds", nargs="+", type=float, default=[0.6, 1.0, 1.5, 2.2, 3.0])
     p.add_argument("--deformed-seeds", action="store_true")
+    p.add_argument("--steps", type=int, default=400)
     args = p.parse_args()
     if args.analytic:
         if args.analytic in ("schw", "all"):
