@@ -110,6 +110,60 @@ Status glyphs: **✅** done · **◐** partly answered · **✗** dropped or die
 Side tracks that block nothing: the foam-born-pair reading (`article/research.tex`
 introduction), the handle version, the tidal and scattering estimates.
 
+### Left to run — and none of it is necessary (2026-09-21)
+
+**The queue above has no open item.** Every claim the article makes is backed by
+a filed run; nothing below is load-bearing, and the paper is submittable without
+any of it. This is the list of what a free card could still buy, strongest
+first, so that "what next" has an answer that is not "re-read the queue".
+
+Costs are from each arm's own measured speed in `analysis/gpu_hours.py`, not
+estimated. All three obey §6: one at a time, through `launch.sh`, on the user's
+word.
+
+**1. Finish queue 2c — the unkicked throat on the big box. ~7 h.**
+`single_hold_L128_t100` (L = 128, N = 256) was stopped by hand at **t = 41.3 of
+100** when the cards were wanted elsewhere; at its measured 13.9 u/h the rest is
+7.2 h. §VIII.A states that the late Ψ₄ floor growth is **sphere-local, not a
+boundary reflection**, and rests it partly on a doubled-box arm that stops at
+t = 41 — *before* the t ≈ 57–84 onset it is meant to rule on. The sphere-local
+reading is independently supported (the spherical control's R = 14 climbs four
+decades while its own R = 30 never leaves 1.1e-3), so this does not rescue a
+claim — it turns an argument into a record, on the one arm that can carry it.
+Restart or re-run; nothing else changes.
+
+**2. Queue 8, the short version — the inspiral demonstration. ~17 h.**
+**Already demoted in its own row**, and the demotion stands: the e-fold budget
+(§IX.B) forbids a wormhole inspiral by arithmetic on measured numbers, and the
+5-hour mouth-growth measurement it was waiting on is done and came out in the
+claim's favour (`v2_spiral_d12_p012_L128_lvl3_t050_mouths`, τ = 3.70 against the
+fly-by's 4.39). So this is **a demonstration, not a prerequisite** — the only
+item on the plan with a named run, a full design and no data at all. If run:
+the SHORT version only, `merge_orbit_inspiral_d16_t700` at d = 16, **max_level 3,
+stop_time 150** — a quarter of the first orbit, 17 h at the 8.8 u/h queue 5
+stage 1 measured — whose picture is the mouths departing while the separation
+has barely moved. Decision point t = 75 (50 % on the isolated clock) costs ~11 h
+and already falsifies. **The 640-unit version buys nothing the budget has not
+settled** and must not be launched. `p` is NOT known at d = 16 and must not be
+guessed: 2–3 one-step probes first (queue 1b's machinery).
+
+**3. Open question 6 — does the head-on horizon shrink before χ floors? ~2 h.**
+At t = 24 → 25 the horizon's areal radius turns over AND χ reaches the floor at
+the midpoint, within the same unit, so physics and numerics are not separated —
+which is why §VII.A reports the shrink with that caveat instead of calling it.
+**Plotfiles every 0.25 units through t = 22–27 separate them.** Cheapest on the
+LEVEL-3 SCOUT (`merge_headon_flip_d8_v1_t100`, 13.95 u/h, dies at 26.91, so the
+whole window is inside its life): a re-run to t = 27 with the dense cadence is
+**~2 h** plus plotfile I/O. On the level-5 seamless arm it is 7.6 h from zero,
+because that arm kept no checkpoints and there is nothing at t = 22 to restart
+from. Nothing else changes; the offline scan at dx = 0.0625 does the reading.
+
+**What is NOT on this list, and why.** Queue 2b's +ε level-4 tail: its question
+is answered *inside* the record it already has (horizon at t = 11, R = 3.883,
+against the −ε twin inflating to t = 100), so only an uncited tail is missing.
+The single throat's scalar channel: in flight on GPU 1 as of 2026-09-21, which
+closes the last declared gap in §IX's open-questions list.
+
 ## 4. Results ledger — one line each, runs, where it is written
 
 - **A lone throat is unstable** at the GGS rate; the binary wall is its clock. `single_hold_t100`. README (exact data section), INSTABILITY.md.
@@ -170,7 +224,7 @@ introduction), the handle version, the tidal and scattering estimates.
 ## 5. Open questions
 
 
-- **Can a drainhole binary inspiral at all, or do its mouths outrun the orbit?** Measured inputs, no run yet: the orbit at d = 16 needs 640 units and 284 per revolution, while an isolated unkicked throat is 10 % off its exact areal radius by t = 58–66 and 50 % off by t ≈ 75, and a companion accelerates it (queue 7: e-fold 399 units far, 32 close). If the mouths win, every waveform this campaign can ever produce is a plunge waveform, and that is a statement about the matter model rather than a limitation of the code. Queue 8 settles it in 11 h.
+- **Can a drainhole binary inspiral at all, or do its mouths outrun the orbit?** Measured inputs, no run yet: the orbit at d = 16 needs 640 units and 284 per revolution, while an isolated unkicked throat is 10 % off its exact areal radius by t = 58–66 and 50 % off by t ≈ 75, and a companion accelerates it (queue 7: e-fold 399 units far, 32 close). If the mouths win, every waveform this campaign can ever produce is a plunge waveform, and that is a statement about the matter model rather than a limitation of the code. Queue 8 would settle it in 11 h, but it is **demoted**: the e-fold budget of §4 settles it by arithmetic, and the mouth-growth measurement it waited on is made. See “Left to run” at the end of §3 — a demonstration, not a prerequisite.
 1. The late constraint growth on both branches (t ≳ 75): where does it live — inside the trapped region or outside? The plotfiles carry no Hamiltonian; the next launch adds it to the plot variables or the θ± scan gains a constraint column.
 2. The inflation branch's inner-sheet deformation (R(r) non-monotonic inside the throat by t = 100): physics of the branch or the origin? The −ε arm at level 3 answers it.
 3. Does the collapse-branch MOTS settle, and at what fraction of m? Needs a longer run or the stability eigenvalue.
