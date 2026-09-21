@@ -311,9 +311,13 @@ NFS per the user's storage rule):**
 
 **SLICE-HUNT VERDICT (2026-09-21 06:59 — done in 25 min, not 2 h): the full
 life of the spiral's horizon.**
-- **t = 55.0: being born.** No closed surface; the outer flow stalls just
-  above tolerance (rms 2.77e-3) with θ_in ≈ −0.04 — marginal in BOTH null
-  directions at once. (Inner seed falls onto pit noise, θ_in > 0, rejected.)
+- **t = 55.0: already there, newly formed.** At lmax 6 the outer flow stalls
+  just above tolerance (rms 2.77e-3); **at lmax 8 it CONVERGES** (07:10 run):
+  R 4.83, M_MS 2.412, θ_in ≈ −0.05 — a valid MOTS with its ingoing expansion
+  barely off zero. Birth precedes every surviving slice; the [55, 56] bracket
+  below is superseded — the wall's lead is AT LEAST five units. (Inner seed
+  falls onto pit noise, θ_in > 0, rejected — the lmax-6 "being born" reading
+  was shape truncation, deform 6.1e-2 needing more modes.)
 - **t = 56.0: born.** Two-sided MOTS, R 4.795/4.805, M_MS 2.3999/2.3995.
 - **t = 57.0**: R 4.766/4.783, M 2.3877/2.3870, θ_in −0.12.
 - **t = 59.0** (from R0): R 4.709/4.732, M 2.3601/2.3611, θ_in −0.18.
