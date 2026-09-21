@@ -185,10 +185,14 @@ that produced it does not.
    quadrupolar seed forced the collapse branch — horizon, then a "phantom bounce" of the
    swallowed field at t ≈ 4 M. Here the massive drainhole shows no bounce in 40 units after
    its horizon forms, and the declared +0.01 arm follows its horizon for 89 units (shrinking to
-   2.34, then growing slowly to 2.57); whether a bounce comes later is open. Movies: χ in the x–y plane only
-   ([`movies/01_single_throat/hold_branch_expansion_ml4/`](movies/01_single_throat/hold_branch_expansion_ml4)
-   and [`hold_branch_collapse_lvl3/`](movies/01_single_throat/hold_branch_collapse_lvl3)),
-   one frame per time unit — these launches
+   2.34, then growing slowly to 2.57); whether a bounce comes later is open. Movies: the two-fates pair that used to sit here
+   (`hold_branch_expansion_ml4`, `hold_branch_collapse_lvl3`) carried χ alone and was pruned
+   2026-09-21 under the movies folder's one-folder-one-whole-run rule; the same two fates are
+   now shown in full instrument on
+   [`movies/01_single_throat/single_eps_m1e2_ml4_t100/`](movies/01_single_throat/single_eps_m1e2_ml4_t100)
+   (inflation) and
+   [`single_pureq_q1e2_ml4_t100/`](movies/01_single_throat/single_pureq_q1e2_ml4_t100)
+   (collapse). Those pruned launches
    rendered no other field, and the plotfiles are gone, so no lapse, K or scalar movie of
    either branch exists (launch policy fixed 2026-09-09: several fields by default).
 5. Give the pair enough angular momentum that it never merges and the evolution is

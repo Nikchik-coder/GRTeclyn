@@ -197,12 +197,28 @@ PY
   # say in its README what it shows.
 
   # Carry across every file the previous pack held that this one did not write.
+  # EXCEPT movies: the carry-across is what would quietly undo the curation
+  # above, because a pack made before 2026-09-16 still holds the per-run copies
+  # and every later repack would hand them forward for ever.  The curated folder
+  # is the only home, and the sets pruned from it on 2026-09-21 -- legs of
+  # restart chains, seam stitches, arms stopped short -- must not come back
+  # through this door either.
+  # NOT frames: ${out}/frames holds the STILLS written above, 153 files across
+  # five runs whose scratch frames are long pruned, so the carry-across is the
+  # only thing keeping them.  Excluding them here would delete a result.
   if [[ -d "${keep}" ]]; then
     (cd "${keep}" && find . -type f -print0) | while IFS= read -r -d "" f; do
+      case "${f#./}" in
+        movies/*|*/movies/*|*.mp4) continue ;;
+      esac
       [[ -e "${out}/${f}" ]] || { mkdir -p "$(dirname "${out}/${f}")"; cp "${keep}/${f}" "${out}/${f}"; }
     done
     rm -rf "${keep}"
   fi
+
+  # Belt and braces: whatever route a movie took to get here, it does not stay.
+  rm -rf "${out}/movies"
+  find "${out}" -name '*.mp4' -delete 2>/dev/null || true
 
   # Stills, where the pictures carry a result.
   for spec in ${STILLS}; do
