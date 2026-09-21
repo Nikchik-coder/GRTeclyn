@@ -309,6 +309,29 @@ NFS per the user's storage rule):**
 - Hunt in flight over all seven slices (lmax 6, two-sided seeds; freeze
   slices seeded at 2.0/3.2 to stay outside the frozen skin), ETA ~09:15.
 
+**SLICE-HUNT VERDICT (2026-09-21 06:59 — done in 25 min, not 2 h): the full
+life of the spiral's horizon.**
+- **t = 55.0: being born.** No closed surface; the outer flow stalls just
+  above tolerance (rms 2.77e-3) with θ_in ≈ −0.04 — marginal in BOTH null
+  directions at once. (Inner seed falls onto pit noise, θ_in > 0, rejected.)
+- **t = 56.0: born.** Two-sided MOTS, R 4.795/4.805, M_MS 2.3999/2.3995.
+- **t = 57.0**: R 4.766/4.783, M 2.3877/2.3870, θ_in −0.12.
+- **t = 59.0** (from R0): R 4.709/4.732, M 2.3601/2.3611, θ_in −0.18.
+- **t = 98/99/100** (freeze arm's live exterior): R ≈ 4.15,
+  M 2.083 → 2.079 → 2.075, still draining 0.2 %/unit, θ_in −0.34, and BOTH
+  Andersson–Metzger witnesses closed on every slice (pointwise-trapped
+  surface inside pointwise-untrapped — existence by construction).
+  Plt09700 is corrupt (yt cannot identify it); 98–100 suffice.
+- **Consequences**: formation bracketed [55, 56] — FIVE units before the
+  59.94/60.45 walls, the same lead the head-on's horizon has on its level-3
+  wall, so the margin explanation for "censored yet unrescued" is DEAD; the
+  mass history 2.40 → 2.08 is phantom infall, same signature as the head-on
+  (3.0 → 2.2) and the lone collapse (1.62 → 1.23); the burst (merger
+  transient t = 41.2) is emitted 14 units before the horizon exists, so
+  "not a birth cry" survives in halves — wormhole wave, black-hole remnant.
+  Article pass 2 applied (abstract, §V, §VII.C, §VIII, §VIII.F, items 1/8,
+  seeds); registry prof + freeze rows carry the hunt outcomes.
+
 ## 4. Results ledger — one line each, runs, where it is written
 
 - **A lone throat is unstable** at the GGS rate; the binary wall is its clock. `single_hold_t100`. README (exact data section), INSTABILITY.md.
