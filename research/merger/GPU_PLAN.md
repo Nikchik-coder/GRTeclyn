@@ -258,9 +258,18 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   the SECOND node's (ilya-test-3-gpu-1-0) free card**, `--keep-last 8` so the
   death window survives for the flow-finder hunt (see the R0 verdict below).
 - **R3a** `merge_headon_flip_d8_eta4_t030` — GPU 0, in flight.
-- **R3b** `merge_headon_flip_d8_lp2_t030` — GPU 1, in flight beside the
-  scalar arm (52.9 GB of 80 together; the scalar arm's ETA slips with the
-  shared card).
+- **R3b** `merge_headon_flip_d8_lp2_t030` — GPU 1, beside the scalar arm.
+  **LANDED 11:04 — the success read FAILED.** NaN in h11 at **t = 25.226**
+  (level 3, merger core, mouths 0.5 apart): 1.7 units *before* the scout's
+  26.91, and the star scan that reports the scout's common MOTS from t = 22
+  reports **none** through its last slice t = 25.2 — scattered trapped cells
+  from 24.9 (max 6), no closed surface. The out-of-family lapse (`lapse_power
+  2`, −2α²K, harmonic-class) kills the control earlier and
+  horizonless-as-scanned. Two caveats keep this from being a censorship
+  retraction: the spiral proved star scans can miss a horizon, and no
+  death-window slices survive for the flow finder (consumed through Plt02520,
+  deleted per the no-pollution rule — this arm had no `--keep-last`). Folded
+  into §VII.C as the second gauge arm.
 - **R0** — in progress offline (no card): shape-free MOTS hunt on the
   archived t = 59.0 slice, validated first against the head-on t = 100
   plotfile's known horizon.
