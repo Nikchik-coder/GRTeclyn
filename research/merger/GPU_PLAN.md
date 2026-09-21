@@ -265,11 +265,20 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   reports **none** through its last slice t = 25.2 — scattered trapped cells
   from 24.9 (max 6), no closed surface. The out-of-family lapse (`lapse_power
   2`, −2α²K, harmonic-class) kills the control earlier and
-  horizonless-as-scanned. Two caveats keep this from being a censorship
-  retraction: the spiral proved star scans can miss a horizon, and no
-  death-window slices survive for the flow finder (consumed through Plt02520,
-  deleted per the no-pollution rule — this arm had no `--keep-last`). Folded
-  into §VII.C as the second gauge arm.
+  horizonless-as-scanned. **Flow-finder cross-check (11:18): confirmed
+  horizonless.** The consumer's `--keep-last 3` kept Plt02500–02520
+  (t = 25.0–25.2) in node-local scratch — an earlier note here claimed no
+  slices survived, wrong — and the shape-free hunt on t = 25.2 (lmax 6,
+  15 seed-variants incl. dented) found **0 surfaces**: interior seeds
+  (r0 ≤ 1.0) stall on a mixed-sign surface (rms θ_out 2.2e-1, frac_neg 0.50,
+  mean θ ≈ 0 at R_areal 5.12), every seed r0 ≥ 1.5 expands out of the box.
+  So the death precedes any measurable horizon by BOTH instruments — unlike
+  the standard-gauge scout, whose horizon leads its death by 5 units. Not a
+  censorship retraction (the horizon never formed before the earlier death;
+  nothing measured was uncensored), but the five-unit lead is not
+  gauge-robust. The cited slice and the hunt log are archived (the t = 59
+  precedent): `04_binary_headon/_keep_r3b_lp2_plt02520/`. Folded into §VII.C
+  as the second gauge arm.
 - **R0** — in progress offline (no card): shape-free MOTS hunt on the
   archived t = 59.0 slice, validated first against the head-on t = 100
   plotfile's known horizon.
