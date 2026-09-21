@@ -257,7 +257,41 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   was overtaken by events: **the second attempt launched 2026-09-21 ~06:55 on
   the SECOND node's (ilya-test-3-gpu-1-0) free card**, `--keep-last 8` so the
   death window survives for the flow-finder hunt (see the R0 verdict below).
-- **R3a** `merge_headon_flip_d8_eta4_t030` — GPU 0, in flight.
+  **LANDED (log's last write 10:48) — the wall SURVIVES the exit from the
+  1+log family.** NaN in h11 at **t = 49.03**, level 3, the standard anatomy.
+  Three gauges, three death times, one wall: 52.07 (standard), 43.6
+  (halved coefficient), 49.03 (harmonic-class −2α²K). Failure time
+  gauge-dependent; the failure itself gauge-robust — the referee's named
+  experiment now run, and the wall is NOT a 1+log artifact in the naive
+  sense. Censored-or-naked in this gauge awaits the flow hunt on the
+  keep-last-8 window, which sits on gpu-1-0's local scratch
+  (`/tmp/grteclyn_scratch/merge_twin_p012_lp2_t060/`): **no route from the
+  first node** (no ssh key, no Claude session there) — needs the user's
+  hands or a session on that node. Folded into §VII.C.
+- **R3a** `merge_headon_flip_d8_eta4_t030` — GPU 0. **LANDED 11:59 —
+  SURVIVED to stop_time 30, zero NaN.** But the success read ("MOTS still at
+  t ≈ 22") did not happen either: under η = 4 the coordinate infall is
+  slower — mouths still 1.06 apart at t = 30 (standard gauge: contact at
+  ~20, MOTS at 22) — and the scan reports **no persistent MOTS**. Flickering
+  single-slice detections at t = 28.2/28.3/28.6/29.3/29.4 carry unphysical
+  areal numbers (R_areal 22–24, M_MS 61–65 against the system's ~4.8 —
+  chi-pit-dominated area integrals) and vanish again by t = 30 (n_trapped
+  also 0 there); they are artifacts, not a horizon. Reading: the η swap
+  does not kill the run (failure gauge-dependent on the survival side too),
+  but it postpones the merger past this arm's stop time, so "MOTS at 22 is
+  η-robust" is UNANSWERED — a continuation past t = 30 would answer it and
+  was not launched (user-gated). **Flow hunt on the kept t = 30 slice
+  (12:09): 0 surfaces converged**, but not R3b's picture: the r0 = 1.0
+  flows stall FULLY TRAPPED (extreme θ_out = −1.6e-3, h ∈ [1.02, 1.27],
+  frac_neg 0.93–0.99) with chi-pit-inflated areas (R_areal ~21, M_MS ~36–44
+  — the same region as the scan's flicker rows), the r0 = 0.6 flows stall
+  untrapped INSIDE that (witness +2.0e-2 at h ∈ [0.49, 0.94]), and every
+  seed r0 ≥ 1.5 stalls mixed-sign at frac_neg 0.50. Read: a marginally
+  trapped structure may be emerging at the pits at t = 30 — the slowed
+  merger in progress — but −1.6e-3 is within level-3 noise, the areas are
+  unresolved, and no outer untrapped witness exists, so no
+  Andersson–Metzger pair closes and no MOTS is claimable. Log: scratchpad
+  `r3a_flow_t300.log`.
 - **R3b** `merge_headon_flip_d8_lp2_t030` — GPU 1, beside the scalar arm.
   **LANDED 11:04 — the success read FAILED.** NaN in h11 at **t = 25.226**
   (level 3, merger core, mouths 0.5 apart): 1.7 units *before* the scout's
