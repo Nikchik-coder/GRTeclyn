@@ -259,8 +259,9 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   Reading: the failure time is SHIFT-dependent too — no wall at 52 under
   η = 4 — but removed-vs-postponed is UNDECIDED. Discriminator: re-run to
   t ≈ 70 (~5–6 h on a free card; no checkpoints exist, the user's word at
-  launch) — user-gated. Keeps Plt05950–06001 on local scratch; hunt log
-  scratchpad `r1_flow_t6001.log`. Folded into §VII.C.
+  launch) — user-gated. The cited final slice is archived (closeout, this
+  date): `05_binary_spiral/p012/_keep_r1_eta4_plt06001/` with the hunt log;
+  the rest of the local-scratch keeps are pruned. Folded into §VII.C.
 - **R2** `merge_twin_p012_lp2_t060` — **first attempt OOMed at launch**:
   `cudaMalloc out of memory` as the third arm on GPU 0. The lesson, measured:
   each L = 64 level-3 arm's AMReX arena grows to ~32 GB, so **two arms per
@@ -303,8 +304,10 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   trapped structure may be emerging at the pits at t = 30 — the slowed
   merger in progress — but −1.6e-3 is within level-3 noise, the areas are
   unresolved, and no outer untrapped witness exists, so no
-  Andersson–Metzger pair closes and no MOTS is claimable. Log: scratchpad
-  `r3a_flow_t300.log`.
+  Andersson–Metzger pair closes and no MOTS is claimable. The cited t = 30
+  slice is archived (closeout, this date):
+  `04_binary_headon/_keep_r3a_eta4_plt03000/` with the hunt log; the rest of
+  the local-scratch keeps are pruned.
 - **R3b** `merge_headon_flip_d8_lp2_t030` — GPU 1, beside the scalar arm.
   **LANDED 11:04 — the success read FAILED.** NaN in h11 at **t = 25.226**
   (level 3, merger core, mouths 0.5 apart): 1.7 units *before* the scout's
@@ -329,6 +332,75 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
 - **R0** — in progress offline (no card): shape-free MOTS hunt on the
   archived t = 59.0 slice, validated first against the head-on t = 100
   plotfile's known horizon.
+
+### REFEREE-QUEUE CLOSEOUT (2026-09-21, evening) — packed, filed, systematics, scratch pruned
+
+All five arms plus R2's OOMFAIL record closed out mechanically
+(`closeout.sh`, movies SKIPPED on the user's word via the new `WHM_MOVIES=0`
+guard — gauge/diagnostic arms nobody will cite movies from; nothing filed
+into `results/merger/movies/` or git), filed into their physics groups
+(`file_run.sh`: the scalar twin → `01_single_throat/seed/`, R3a/R3b →
+`04_binary_headon/`, R1/R2/OOMFAIL → `05_binary_spiral/p012/`), and the pack
+rebuilt (944 MB, identity grep clean; the six stale top-level `campaign/`
+copies from the pre-filing pack were deleted on the user's word).
+
+**GAUGE SYSTEMATICS ROLL-UP (the referee's question, quantified).** One
+wall, many clocks:
+
+| arm | knob (one each) | outcome | horizon at death/stop |
+|---|---|---|---|
+| spiral standard | — | wall t = 52.07 (floor 44.96) | common MOTS t = 55–59 (level-5 twin; R0) |
+| spiral lc1 | 1+log coeff halved | wall 43.64 | not hunted |
+| spiral R2 | lapse_power 2 (exit 1+log) | wall 49.03 | death window on gpu-1-0, hunt BLOCKED |
+| spiral R1 | eta 1→4 | NO wall by t = 60.01 (floor 55.59; record ends inside its own floor-to-wall gap) | none on final slice (flow hunt 0/15) |
+| head-on scout | — | NaN 26.91 | MOTS from 22 |
+| head-on R3b | lapse_power 2 | NaN 25.23 | NONE by both instruments |
+| head-on R3a | eta 1→4 | clean to stop 30, un-merged | none claimable (pit flickers within noise) |
+
+Spread on the spiral wall across slicings tried: 43.6 / 49.0 / 52.1 (−16 % /
+−6 % / ref), unbounded above under the quadrupled shift damping (> 60,
+undecided removed-vs-postponed). Head-on death: 25.2 / 26.9 (−6 %). The
+horizon lead (5 units, standard) is NOT gauge-robust (R3b: dead horizonless).
+Fate-reproducibility systematic (NEW, from the scalar twin): at the
+pure-quadrupole point ε₂ = 1e-2, kick 0, the collapse/no-collapse branch
+flips under GPU nondeterminism alone — machine noise is a fate-level
+systematic at marginal seeds, not just a wave-level one. All in §VII.C +
+open item 1 (gauge) and §V + item 12 (marginality); registry rows carry the
+run-level numbers.
+
+**SCRATCH PRUNE (the user's word, this date).** Cited slices archived first
+(the t = 59 precedent): R1's final slice →
+`05_binary_spiral/p012/_keep_r1_eta4_plt06001/`, R3a's t = 30 slice →
+`04_binary_headon/_keep_r3a_eta4_plt03000/`, the scalar twin's t = 100
+slice → `01_single_throat/seed/_keep_pureq_twin_noMOTS_plt10000/`, each with
+its flow-hunt log (R3b's was already archived). Then the node-local
+`/tmp/grteclyn_scratch/` keeps of every landed run on this node pruned —
+logged in `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-21.md` (evening section).
+R2's death-window keeps live on ilya-test-3-gpu-1-0's local scratch and are
+NOT touchable from this node (no ssh route) — the hunt there stays blocked
+on the user.
+
+**NEXT RUNS (planned, all user-gated — nothing launches without the word):**
+1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
+   from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed
+   for the wall under the shift clock: if it dies at ~63–64 (floor 55.6 +
+   the standard 7.9 gap) the wall rides the delayed clock; if it sails past,
+   the wall is removed by η. ~6.1 h at R1's measured 9.9 u/h — from a word
+   at 09:00 it lands ~15:10.
+2. **Lone-throat discriminator** `single_pureq_q1e2_L128_ml5_scalar_t100` —
+   the scalar twin's question at L = 128 (sponge at 48–64, spheres clear of
+   it): ghost instability vs boundary artifact, AND whether the collapse
+   branch is reachable there (the fate is machine-marginal at L = 64). ~10 h
+   at the twin's 9.9 u/h (level-4-equivalent work at L = 128 needs max_level
+   5 for the same dx — budget accordingly); from a word at 09:00 it lands
+   ~19:00.
+3. **R3a-continuation** `merge_headon_flip_d8_eta4_t050` — from t = 0, stop
+   50: does the η = 4 head-on EVER form its common MOTS (is "MOTS at 22"
+   η-robust)? ~3.2 h at R3a's 15.6 u/h; from a word at 09:00 it lands
+   ~12:15.
+4. **R2 death-window flow hunt** — no card needed, but needs hands on
+   ilya-test-3-gpu-1-0 (keeps in `/tmp/grteclyn_scratch/merge_twin_p012_lp2_t060/`,
+   finder command in the registry row). Blocked on the user.
 
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
@@ -456,7 +528,7 @@ life of the spiral's horizon.**
 
 - **THE SPIRAL'S WALL IS NOT THE TRUNCATION SEED (2026-09-20, `v2_spiral_d12_p012_L128_lvl5from0_t100`, GPU 1, no checkpoints).** The paper's p = 0.12 merger run WHOLE at max_level 5 -- initial data to the wall, one grid, no restart seam anywhere -- **NaN in h11 on level 5 at t = 59.943** (rank 0, MPI_ABORT). The stage-2 arm, level 5 restarted from the t = 36 checkpoint, died at **t = 60.445**: **the same wall to 0.8 %, and marginally EARLIER from zero.** So the refinement-time ladder does NOT extend. Starting two levels finer at t = 0 gives the merger a seed two refinement levels smaller than the stage-2 arm inherited, with no seam to blame, and buys **nothing** -- which is the cleanest statement this campaign has that the wall belongs to the merger's own dynamics and not to the grid's noise. With no horizon anywhere on the record (the mouths arm found 0 MOTS, 0 trapped, 0 anti-trapped over three centres to t = 50) there is nothing to censor it, exactly as §VII.C's synthesis says: *resolution rescues a curvature wall only when a horizon censors it.* **CORRECTION this run forced, and it was mine:** the figure "the t = 36 seam reached ~57" that I put in this run's launch line is wrong. **57 is the last kept CHECKPOINT (Chk05700), which is where the freeze arms restart FROM, not a death time.** Every wall comparison must use 60.445. Streams: in-code Weyl4 (21 modes) and all diagnostics to t = 59.94, python consumer psi4 + `scalar_modes` to t = 59.0 at the 1-unit plotfile cadence; 0 NaN rows in the data itself. 12.1 GB of scratch pruned on the user's word, t = 59 plotfile kept, logged in `MANIFEST_CLEANUP_2026-09-20.md`.
 
-- **THE HORIZON CENSORS THE SCALAR CHANNEL, AND THE SEAM WAS NEVER CARRYING THE HEAD-ON (2026-09-20/21, `merge_headon_flip_d8_v1_lvl5from0_scalar_t100`, GPU 0, max_level 5 from t = 0, no checkpoints, t = 100, 0 aborts).** The head-on run WHOLE at level 5 with the `headon-modes` consumer profile -- the `headon` body plus `--scalar-modes --scalar-mode-ells 0 1 2`. Two results, and the second is the one that was worth the card. **(1) The arm supersedes the lvl3 -> lvl5 chain and reproduces it.** No restart, no mesh seam, no interior device anywhere on the record; the user was right that level 5 needs no freeze here, and the bare level-3 scout's t = 26.91 NaN is 25+ units behind it. Common MOTS at t = 21.5 live, R = 4.456 / M = 2.736 at t = 36 -- on the seamed arm's track to 0.1 %. Against the seamed `_r02200` arm the (2,0) agrees to **2.9-5.4 % of peak** over the burst window t = 23-70 on all three spheres and E_GW to **3-8 %** (6.63 / 6.31 / 5.89e-3 at R = 10/14/18, the paper's `_compute_radiated_energy`, m = 0); only the t > 70 tail differs, up to 62 % at R = 18, where both arms are noisy under 4e-4. **(2) The scalar dipole dies with the horizon.** Post-horizon E_phi = **-0.056 / -0.071 / -0.075** at R = 10/14/18 (29 % spread, the sign of §VI.E kept), l = 1 carrying the sector to 1 part in 1e7, and the envelope decays exponentially with **tau = 19 / 23 / 28**. **That is the horizon's own clock:** the remnant's M_MS settles onto its asymptote with **M_inf = 2.160 +- 0.006, tau = 19.4 +- 0.8** (rms 0.0113, 4.8x better than a straight line), while R_MOTS stays linear (-0.00658/unit, rms 0.0324) with no asymptote resolvable. Hair shed, source quiet, mass stopped -- one timescale. The fly-by and the spiral, neither of which makes a horizon, are still GROWING at the end of their records: horizon or no horizon is the only variable that separates them. **CAVEAT THAT MUST TRAVEL WITH THE NUMBER:** the pre-horizon stretch at R = 10 integrates canonically **INGOING (+0.069)** -- the two mouths' static hair superposing, near zone, not radiation. **No full-record head-on integral may be quoted, only the post-horizon window.** **AND THE STREAM CANNOT BE RECOVERED OFFLINE:** `scalar_modes` is built on the fly from each plotfile, so a channel missing from a profile is a re-run, never a re-read -- which is why the single throat is still open (`single_pureq_q1e2_ml4_scalar_t100` launched on GPU 1, 2026-09-21, ~10 h at the measured 9.89 u/h). **THE SINGLE-THROAT ARM LANDED (13:46): t = 100, zero NaN — and the lone throat does NOT go quiet.** After its horizon the flux turns outgoing and grows quasi-exponentially from t ≈ 45 (e-fold ~5 units), MONOPOLE-dominated — exactly the channel the flip pair cancels by symmetry, so this does not contradict the head-on's shed hair, but it does mean "horizon ⇒ quiet" is NOT what the lone throat shows on this record. NOT quotable as physics yet: |ψ4(2,0)| swells late with amplitude INCREASING outward (t = 80: R22 0.63 > R18 0.46 > R14 0.12 > R10 0.07 — boundary/sponge-sourced, not centre-outgoing), L2_Ham grew ×6, and a sponge damping a PHANTOM monopole can pump rather than damp (hypothesis, untested). Discriminator: the same arm with the boundary pushed out (L = 128) or a sponge test — user-gated. scalar/GW for one throat: unconverged at cutoff, not quotable. Details in the registry row; keeps Plt09800–10000 on local scratch. §VI.F rests on head-on vs fly-by and does not cite this scenario — the article is untouched by this verdict. Figures `04_binary_headon/headon_collapse_diagnostics` (rewired to this arm, fits added to panels f/g) and `08_waves/scalar_censorship` (new); article Fig. 5, Fig. 12, §VII.B and the new §VI.F; movies in `results/merger/movies/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/`.
+- **THE HORIZON CENSORS THE SCALAR CHANNEL, AND THE SEAM WAS NEVER CARRYING THE HEAD-ON (2026-09-20/21, `merge_headon_flip_d8_v1_lvl5from0_scalar_t100`, GPU 0, max_level 5 from t = 0, no checkpoints, t = 100, 0 aborts).** The head-on run WHOLE at level 5 with the `headon-modes` consumer profile -- the `headon` body plus `--scalar-modes --scalar-mode-ells 0 1 2`. Two results, and the second is the one that was worth the card. **(1) The arm supersedes the lvl3 -> lvl5 chain and reproduces it.** No restart, no mesh seam, no interior device anywhere on the record; the user was right that level 5 needs no freeze here, and the bare level-3 scout's t = 26.91 NaN is 25+ units behind it. Common MOTS at t = 21.5 live, R = 4.456 / M = 2.736 at t = 36 -- on the seamed arm's track to 0.1 %. Against the seamed `_r02200` arm the (2,0) agrees to **2.9-5.4 % of peak** over the burst window t = 23-70 on all three spheres and E_GW to **3-8 %** (6.63 / 6.31 / 5.89e-3 at R = 10/14/18, the paper's `_compute_radiated_energy`, m = 0); only the t > 70 tail differs, up to 62 % at R = 18, where both arms are noisy under 4e-4. **(2) The scalar dipole dies with the horizon.** Post-horizon E_phi = **-0.056 / -0.071 / -0.075** at R = 10/14/18 (29 % spread, the sign of §VI.E kept), l = 1 carrying the sector to 1 part in 1e7, and the envelope decays exponentially with **tau = 19 / 23 / 28**. **That is the horizon's own clock:** the remnant's M_MS settles onto its asymptote with **M_inf = 2.160 +- 0.006, tau = 19.4 +- 0.8** (rms 0.0113, 4.8x better than a straight line), while R_MOTS stays linear (-0.00658/unit, rms 0.0324) with no asymptote resolvable. Hair shed, source quiet, mass stopped -- one timescale. The fly-by and the spiral, neither of which makes a horizon, are still GROWING at the end of their records: horizon or no horizon is the only variable that separates them. **CAVEAT THAT MUST TRAVEL WITH THE NUMBER:** the pre-horizon stretch at R = 10 integrates canonically **INGOING (+0.069)** -- the two mouths' static hair superposing, near zone, not radiation. **No full-record head-on integral may be quoted, only the post-horizon window.** **AND THE STREAM CANNOT BE RECOVERED OFFLINE:** `scalar_modes` is built on the fly from each plotfile, so a channel missing from a profile is a re-run, never a re-read -- which is why the single throat is still open (`single_pureq_q1e2_ml4_scalar_t100` launched on GPU 1, 2026-09-21, ~10 h at the measured 9.89 u/h). **THE SINGLE-THROAT ARM LANDED (13:46; VERDICT REWRITTEN the same evening — the first reading's "after its horizon" was WRONG, this arm has NO horizon): t = 100, zero NaN — and the arm DID NOT REPRODUCE THE ORIGINAL'S FATE.** Full params diff: only output paths differ (same AMReX 26.02-12); yet the original collapses (min lapse 9.3e-3 at t = 70, MOTS from 33) while the re-run never does (0.122 at t = 70, 0.072 and still falling at 100; minimal surface holds R ≈ 3.9 through t = 50, scan rows pit-corrupted after: dev 0.26 at 70, 3.7 at 100), and its (2,0) burst is ×1.8 off the original's. HORIZONLESS BY BOTH INSTRUMENTS: 0 MOTS rows on the star scan over the whole record, 0 surfaces from the shape-free flow finder on the kept t = 100 slice (lmax 6, 15 seed-variants; log in the keep-dir). So ε₂ = 1e-2 with zero kick sits within MACHINE NOISE of the fate boundary — the GPU-nondeterminism analogue of the level-3/4 truncation sign flip — and the growth verdict re-anchors to a horizonless record: the monopole flux grows quasi-exponentially (e-fold 5.8 at R = 18 over t = 50–95), which FITS the censorship pattern (no horizon ⇒ grows) rather than breaking it. Still NOT quotable as physics: L2_Ham leaves its floor at t = 82 (×4.9 by 100; the collapsed original's own late Ham is ×50, pit-dominated), |ψ4(2,0)| swells late with amplitude INCREASING outward (t = 80: R22 0.63 > R18 0.46 > R14 0.12 > R10 0.07 — boundary/sponge-sourced, not centre-outgoing), and a sponge damping a PHANTOM monopole can pump rather than damp (hypothesis, untested). Discriminator: the same arm at L = 128 (or a sponge test), which must also show the collapse branch is reachable there — user-gated. scalar/GW for one throat: not quotable. Details in the registry row; keeps Plt09800–10000 on local scratch and the cited t = 100 slice archived to `01_single_throat/seed/_keep_pureq_twin_noMOTS_plt10000`. Paper edits 2026-09-21: the curve IS drawn in Fig. `scalar_censorship`(b) as the fourth fate (solid to t = 82, dashed after, drawn-and-not-counted), the §V collapse subsection carries the machine-marginality caution, and open item 12 is downgraded to "no USABLE scalar measurement". Figures `04_binary_headon/headon_collapse_diagnostics` (rewired to this arm, fits added to panels f/g) and `08_waves/scalar_censorship` (new); article Fig. 5, Fig. 12, §VII.B and the new §VI.F; movies in `results/merger/movies/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/`.
 
 ## 5. Open questions
 

@@ -1,0 +1,200 @@
+# QUEUE 2E (iv), THE PURE QUADRUPOLE (launched 2026-09-17 on the user's word): single_pureq_q1e2_ml4_t100 -- wormhole_seed_amplitude_A = 0.0 (NO spherical kick), wormhole_seed_l2_amplitude_A = 0.01, max_level 4 from t = 0, no checkpoints.  Does an l = 2 deformation alone pick a fate and radiate, as it did for the massless throat?  The horizon scan and the throat track answer the fate; the in-code Weyl4 at 10/14/18/22 answers the wave; the radial core profile records how the interior goes.  Binary main3d_coreprof_2026-09-16.ex.
+verbosity = 1
+
+output_path = "runs/wormhole_merger/single_pureq_q1e2_ml4_scalar_t100"
+amr.plot_file = "/tmp/grteclyn_scratch/single_pureq_q1e2_ml4_scalar_t100/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/single_pureq_q1e2_ml4_scalar_t100/BinaryWormholeChk"
+
+# Checkpoints ON -- the one deliberate departure from probe policy.  The audit's
+# own branch point is t >~ 500: if the throat holds to t = 100 the next question
+# is whether it holds five times longer, and without a checkpoint that costs a
+# full re-run.  Every 2000 coarse steps = every 20 time units, keep 2.
+checkpoint_interval = 50            # every 0.5 code units (dt = 0.01 on level 0): leg 2 restarts from the last one before the wall
+amr.checkpoint_files_output = 0    # no checkpoints on the user's word (2026-09-17): level 4 passes the wall, nothing to restart from
+checkpoint_keep = 2                # ROLLING: the newest two, so one from >= 0.5 units before the NaN survives
+
+# dt_coarse = dt_multiplier * L/N1 = 0.01, so 100 steps = 1.0 time units.
+# 100 samples of R(t) over the run: the e-folding under test is 2.6-3.0 units,
+# so this resolves it ~3x over and keeps the plotfile I/O sane over t = 100.
+plot_interval = 100
+
+amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: ONE regular massive drainhole throat, at rest, at the grid
+# centre.  Throat B is disabled by b0_B = 0: every B contribution in
+# BinaryWormholeInitialData (conformal factor, lapse exponent, scalar profile,
+# Bowen-York A_ij) and every B branch in BinaryWormholeLevel is gated on
+# b0_B > 0, so this is a clean one-body problem, not a two-body problem with a
+# degenerate second body.
+
+wormhole_id_type = 1
+
+# The drainhole's own exact static lapse, alpha = e^u.  1+log takes over from
+# there and should have nothing to do, since K = 0 makes e^u stationary.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a
+wormhole_throat_radius_B = 0.0       # throat B OFF -- this is the control
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_drainhole_mass_B = 0.0
+
+# V0 seed (Phase-1 dial): Gaussian shell on psi at the throat radius, width a/4.
+wormhole_seed_amplitude_A = 0.0
+wormhole_seed_l2_amplitude_A = 0.01
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`.  A sits exactly at the grid centre (32,32,32), so the
+# nested tagging boxes and the spherical sponge are both concentric with it.
+wormhole_centerA = 0.0 0.0 0.0
+wormhole_centerB = 0.0 0.0 0.0
+
+# At rest.  No Bowen-York momentum, so A_ij = 0 identically and the momentum
+# constraint is satisfied exactly, not approximately.
+wormhole_momentumA = 0.0 0.0 0.0
+wormhole_momentumB = 0.0 0.0 0.0
+
+# Irrelevant with one throat (it multiplies B's profile only), set for clarity.
+wormhole_phi_sign_B = 1.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+# No Helfer/Ning correction: with one body there is no companion to subtract,
+# and a single exact drainhole satisfies BOTH constraints identically at t = 0.
+# This run therefore has NO superposition defect at all -- which is itself part
+# of the test, since it removes the audit's Finding 4 as a confounder.
+wormhole_helfer_correction = 0
+
+#################################################
+# Grid.  Identical to the ctrl_rest_d* ladder and the production binaries:
+# L = 64, N = 128, max_level = 3 -> dx = 0.0625 on the finest level.  Level 3
+# half-width is tagging_L * 2^-5 = 2.0 about the throat centre, and the minimal
+# surface sits at rbar = (m + sqrt(m^2 + a^2))/2 = 1.618, so the throat is
+# inside the finest level with ~6 cells of margin -- the same margin each throat
+# has in the binary arms.
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+
+max_level = 4
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Production values, unchanged.
+
+dt_multiplier = 0.02
+stop_time = 100.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+# Audit Tier (i) item 4: core_matter_damping zeroes phi and Pi wherever the
+# lapse falls into a window, which manufactures and destroys energy and
+# violates the constraints in the region that dominates the dynamics.  It is
+# OFF here, stated explicitly rather than left to the default.  A static throat
+# holds alpha ~ 0.456 at the minimal surface and ~0.2 at its deepest, so the
+# damping window would never open in a healthy run anyway -- if it would have
+# opened, that fact is itself the result.
+core_matter_damping = 0
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+# sigma = 0.1, the production value.  Stage 1 settled this: sigma = 2.0 shrinks
+# the throat 34% over 40 units while every constraint norm reads flat, because
+# a smoothed solution violates the constraints LESS.  Do not raise it to buy
+# survival here -- that would destroy the measurement this run exists to make.
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: nested boxes on the tracked throat.  Same arithmetic as every
+# binary arm; with one throat the tagger simply unions nothing.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  binary_throat_diagnostics still writes the A columns (the B
+# columns are inert with b0_B = 0).  chiA_min is the ORIGIN monitor, not the
+# throat: for a wormhole the global chi minimum is the other universe's
+# infinity, compactified to rbar -> 0, where chi vanishes like rbar^4.  At
+# max_level = 3 it starts near 3.6e-7, well above the 1e-8 floor.  The throat
+# itself is R_areal_min from the consumer's areal_radius.dat.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+# In-code Weyl4 extraction ON (the fly-by run proved the block on this binary):
+# dt = 0.01 sampling, 100x the consumer's, on the family's standard spheres
+# 10/14/18/22 -- all inside the sponge at 24.
+activate_extraction = 1
+write_extraction = 0
+extraction_subpath = "data"
+extraction_center = 32.0 32.0 32.0
+num_extraction_radii = 4
+extraction_radii = 10.0 14.0 18.0 22.0
+extraction_levels = 0 0 0 0
+
+# The in-code radial core profile (CoreRadialProfile.hpp): 128 shells to r = 4,
+# every coarse step -- the instrument that measured the spiral wall and the
+# fly-by expansion, recorded here so the single-throat wave arms carry it too.
+core_radial_profile   = 1
+core_profile_r_max    = 4.0
+core_profile_dr       = 0.03125   # 1 dx at level 4; a PARAMETER, not dx
+core_profile_interval = 1         # every coarse step (dt = 0.01)
+
+amrex.the_arena_init_size = 1048576

@@ -94,8 +94,11 @@ for run in "$@"; do
     problems=$((problems+1))
   fi
 
-  # 5. movies
-  if [[ -d "${dir}/frames" ]]; then
+  # 5. movies -- WHM_MOVIES=0 skips the render (2026-09-21: gauge/diagnostic
+  # arms whose movies nobody will cite; the data checks and the pack still run)
+  if [[ "${WHM_MOVIES:-1}" == "0" ]]; then
+    echo "  movies: SKIPPED (WHM_MOVIES=0)"
+  elif [[ -d "${dir}/frames" ]]; then
     nser=$(find "${dir}/frames" -mindepth 1 -maxdepth 1 -type d ! -name '_*' | wc -l)
     echo "  frames: ${nser} field series"
     if [[ -d "${dir}/frames/_slice_cache" ]]; then

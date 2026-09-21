@@ -29,11 +29,25 @@ superposing -- canonically ingoing, near zone, not radiation -- which is why
 no full-record integral is quoted anywhere.)
 
 (b) THE CONTROL EXPERIMENT NATURE RAN FOR US: the same envelope, one outer
-sphere per encounter, across the three fates.  The head-on, the only one
+sphere per encounter, across the four fates.  The head-on, the only one
 with a horizon, decays.  The fly-by (no horizon, no merger) GROWS to the end
 of its record.  The p = 0.12 spiral -- which merges and still makes no
 horizon, 0 MOTS on every scan to t = 50 -- is climbing when its grid dies at
-the t = 59.9 wall.
+the t = 59.9 wall.  And the LONE THROAT's scalar re-run
+(`single_pureq_q1e2_ml4_scalar_t100`, 2026-09-21) is the fourth curve, with
+the heaviest flags on the page: launched byte-identical to the paper's
+collapsing pure-quadrupole arm, it landed on the OTHER side of the fate
+boundary -- no trapped surface on any scan of its record, none by the
+shape-free flow finder on its final slice (t = 100, lmax 6, 15
+seed-variants, 0 surfaces) -- and its monopole channel grows
+quasi-exponentially (e-fold ~ 5.7 at R = 18 over t = 50-95).  Horizonless
+and growing is the censorship pattern; but past t = 82 the Hamiltonian norm
+leaves its floor (x4.9 by t = 100) and the late psi4 amplitude increases
+OUTWARD -- a boundary/sponge-sourced signature -- and a sponge tuned to damp
+an ordinary scalar can pump a phantom one (hypothesis, untested).  So the
+curve is drawn solid only to t = 82, dashed and half-weight after, and no
+number is quoted from it anywhere; the L = 128 (or altered-sponge) re-run is
+the discriminator.
 
 THE SPIRAL'S LATE STRETCH IS DRAWN, BUT MUST NOT BE READ AS PHYSICS.  Past
 its wall the curve is the freeze arm (`..._lvl5_t100_freeze_r05700`), whose
@@ -50,18 +64,17 @@ collapse afterwards.
 Reads ``scalar_modes.dat`` from, all under ``campaign/``:
 ``04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/``,
 ``05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5from0_t100/`` and
-its ``..._lvl5_t100_freeze_r05700/``, and
-``06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/``.  Writes
-``figures/08_waves/scalar_censorship``.  The single-throat collapse is NOT
-here yet: no single-throat arm had ever run with the scalar-mode stream (the
-headon/chi profiles predate it), so it is a re-run and not a re-read -- one
-is on the cards as of 2026-09-21.
+its ``..._lvl5_t100_freeze_r05700/``,
+``06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/``, and
+``01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100/``.  Writes
+``figures/08_waves/scalar_censorship``.
 
-STYLE: full-width pair (7.05 x 2.8), style.prd, no titles, no boxed key,
+STYLE: full-width pair (7.05 x 3.35), style.prd, no titles, no boxed key,
 curves named in place.  Scenario colours are the scalar-channel page's --
-DEEP_BLUE fly-by, GOLD spiral, INK head-on -- and (a)'s three spheres are an
-ink ramp, dark = inner.  The frozen-core stretch is the same gold at half
-weight and dashed: same arm's physics, not the same standing.  The two rules
+DEEP_BLUE fly-by, GOLD spiral, INK head-on, DEEP_GREEN lone throat -- and
+(a)'s three spheres are an ink ramp, dark = inner.  The frozen-core and
+suspect stretches are their arm's own colour at half weight and dashed: same
+arm's physics, not the same standing.  The two rules
 are greys (CONTEXT for the MOTS, FAINT for the wall), not the accent: this
 page spends its one colour on the ARMS, because which arm a curve belongs to
 is the whole question here and the rules are only the clock.  (Until
@@ -90,9 +103,11 @@ HEADON = "04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100"
 SPIRAL = "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5from0_t100"
 SPIRAL_FRZ = "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700"
 FLYBY = "06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100"
+SINGLE = "01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100"
 
 T_MOTS = 21.5      # head-on: first live corrected-orientation common MOTS
 T_WALL = 59.94     # spiral: NaN in h11 on level 5, the uncensored wall
+T_HEALTH = 82.0    # lone throat: L2_Ham leaves its floor (measured, 1.5x)
 WINDOW = 25.0      # running-max window: one full period of the dipole
 SMOOTH = 5.0       # Gaussian on log amplitude, to round the staircase
 RAMP = {10: "#1a1a18", 14: "#54524c", 18: "#8f8b81"}   # dark = inner
@@ -132,11 +147,13 @@ def main(argv: list[str] | None = None) -> int:
     camp = pathlib.Path(args.pack_root).expanduser() / "campaign"
 
     style.prd(base=10.0)
-    fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.05, 3.05))
+    fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.05, 3.35))
     # Fixed margins, no layout engine: the key needs a band of its own, and
     # constrained_layout does not reserve one for a FIGURE legend -- both
     # "bbox_to_anchor" and "outside upper center" drew it over the frames.
-    fig.subplots_adjust(left=0.088, right=0.988, top=0.745, bottom=0.145,
+    # Ten entries at ncols 4 are three rows, so the band is taller than the
+    # two-row original (top 0.745 at height 3.05).
+    fig.subplots_adjust(left=0.088, right=0.988, top=0.78, bottom=0.135,
                         wspace=0.17)
 
     # ---- (a) one horizon, three spheres ------------------------------------
@@ -188,6 +205,26 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[censorship] spiral R=30: {np.interp(T_WALL, t_all, e_all):.2e} at its "
           f"wall, still rising; frozen continuation flat to {e_all[-1]:.2e}")
 
+    # The lone throat: horizonless on its OWN record (its launch twin
+    # collapsed; this one landed on the other side of the fate boundary --
+    # see the docstring), monopole growing.  Solid only while the record is
+    # healthy; past T_HEALTH the constraint norm leaves its floor and the
+    # late psi4 orders outward, so that stretch is drawn like the frozen
+    # core's: same arm, not the same standing.
+    tl, kl = _flux(camp / SINGLE / "scalar_modes.dat", 18)
+    el = _envelope(tl, kl)
+    ok = tl <= T_HEALTH
+    axB.semilogy(tl[ok], el[ok], color=style.DEEP_GREEN, lw=1.2, zorder=3,
+                 label=r"lone throat, $R=18$")
+    axB.semilogy(tl[~ok], el[~ok], color=style.DEEP_GREEN, lw=0.9,
+                 ls=(0, (3, 2)), alpha=0.55, zorder=2,
+                 label="lone throat, suspect")
+    g = (tl >= 50.0) & (tl <= 95.0)
+    c = np.polyfit(tl[g], np.log(el[g]), 1)
+    print(f"[censorship] lone throat R=18: horizonless record, envelope "
+          f"{np.interp(T_HEALTH, tl, el):.2e} at t={T_HEALTH:.0f}, e-fold "
+          f"{1 / c[0]:.1f} over 50-95, max {el.max():.2e}")
+
     # The head-on enters (b) on its OUTER sphere, so it must wear the OUTER
     # sphere's colour: the top legend serves both panels, and drawing this in
     # INK made the black swatch mean R = 10 in (a) and R = 18 here (2026-09-21).
@@ -196,7 +233,7 @@ def main(argv: list[str] | None = None) -> int:
     axB.axvline(T_WALL, color=style.FAINT, lw=0.8, ls=(0, (4, 3)), zorder=1)
 
     axB.set_xlim(0, 100)
-    axB.set_ylim(1.0e-4, 1.3e-1)
+    axB.set_ylim(1.0e-4, 4.5e-1)
     axB.set_xlabel(r"$t$")
     axB.text(0.0, 1.03, "(b)", transform=axB.transAxes, ha="left",
              va="bottom", fontsize=9, color=style.INK)

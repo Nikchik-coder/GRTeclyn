@@ -79,7 +79,7 @@ import matplotlib
 import numpy as np
 
 __all__ = [
-    "CONTEXT", "DEEP_BLUE", "DIVERGING", "FAINT", "GRID", "GOLD", "GROUND", "INK",
+    "CONTEXT", "DEEP_BLUE", "DEEP_GREEN", "DIVERGING", "FAINT", "GRID", "GOLD", "GROUND", "INK",
     "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
     "callout", "edge_label", "family", "legend", "note", "ordinal",
     "ordinal_series", "paper", "prd", "save", "series", "typography",
@@ -97,6 +97,13 @@ GROUND = "#ffffff"
 # the curve that is context rather than a result.
 DEEP_BLUE = "#1f4e79"
 GOLD = "#c69214"
+# A fourth accent for the page that genuinely has four entities (the censorship
+# page's four fates).  Referenced by signed() since its birth but never defined
+# -- a latent NameError until 2026-09-21.  Deep and warm-leaning: at L* ~ 46 it
+# sits between DEEP_BLUE (33) and GOLD (64) in tone, so the greyscale channel
+# keeps all three apart, and the hue is far from both under the red-weak
+# confusions that matter here (green vs the warm gold separates on lightness).
+DEEP_GREEN = "#3e7a49"
 # CONTEXT is NEUTRAL and a shade darker than MUTED's warm grey, and both
 # departures are deliberate: it is the only grey that carries DATA, so it is
 # the only one that can be mistaken for the accent.  A gold accent is LIGHT
