@@ -483,8 +483,19 @@ and the framing was wrong — see below.)*
   the three scan centres: at this resolution the pair coalesces as wormholes.
   `figures/05_binary_spiral/p012_paper/mouth_growth`.
 
-### The merged object is a black hole that dissolves
-- **Claim (measured).** The common trapped surface shrinks — 1.07 at t = 51.5
+### ~~The merged object is a black hole that dissolves~~ — RETRACTED: no black hole ever formed
+**RETRACTED 2026-09-08 (scan orientation), kept as the record of the artefact.** The
+"common trapped surface" below was the naive `+r`-orientation scan reading the throat's
+compactified far side, where the areal radius falls and the computed θ₊ is really the
+ingoing expansion. The oriented rescan of the same death stacks
+(`campaign/05_binary_spiral/horizon/ORIENTED_RESCAN_2026-09-08.md`) finds **no MOTS on
+any arm at any time**, and the paper's verdict is the opposite of this heading: the
+spiral remnant dies as a still-open wormhole with no horizon anywhere on its record.
+The #13 *field* measurements below (ρ < 0 at r ≈ 0.9–1.2, outward Eulerian flux) are
+readings of the fields and stand as such — but there is no horizon for them to act on,
+and nothing in this section may be quoted as a surface, a mass, or a dissolution.
+
+- **Claim (measured).** ~~The common trapped surface shrinks~~ — 1.07 at t = 51.5
   down to 0.59 at t = 55, accelerating — on two independent damping schemes
   giving one dissolution curve. The run dies at t = 55 with the surface still
   shrinking: this is the **onset** of dissolution, not its endpoint, and the
@@ -858,7 +869,9 @@ and the framing was wrong — see below.)*
   either mouth, each mouth squeezed 4 % relative to placement. Two units later a
   single marginally trapped surface encloses both mouths — no mouth ever had its
   own, so the surface count goes 0 → 1 about the midpoint. It grows until t = 24
-  and then shrinks fast, the phantom dissolution seen before; the lapse at the
+  and then shrinks fast — phantom-driven shrinkage of a *real* MOTS, this one from
+  the oriented scan (the spiral's earlier "dissolution" curve was the orientation
+  artefact and is retracted; this is the first genuine sighting); the lapse at the
   midpoint collapses (0.09 at contact, 0.02 at death); chi at the midpoint
   reaches the 1e-20 floor from t ≈ 24.5; K there doubles every 0.3 units from
   t ≈ 25.3; and at t = 26.91 a cell 0.9 from the midpoint overflows in one step.
@@ -1054,7 +1067,9 @@ campaign/
     p012_freeze/<arm>/             the interior-freeze programme, the headline waveform
                                     programme (fill80 / fillwide80 / fill100 / fillwide100,
                                     the Weyl-extraction tests) with its LAUNCHES.md
-    horizon/                        the offline Theta = 0 scans behind the dissolution result
+    horizon/                        the offline Theta = 0 scans: the naive-orientation
+                                    "dissolution" record (retracted) and the oriented
+                                    rescan that overturned it (ORIENTED_RESCAN_2026-09-08.md)
     psi4_merger_stitched_0_97.dat   the stitched p = 0.12 waveform, t = 0 -> 97
   06_binary_flyby/<run>/          p = 0.35 and 0.45: the fly-bys (and p045's Helfer twin)
   07_bbh_control/<run>/           the vacuum binary-black-hole control, t = 100 and t = 150
@@ -1293,12 +1308,21 @@ PACK_HORIZON=1 bash research/merger/pack_results.sh   # and re-run the horizon s
 Live frames are scaled per frame, so the colourbar moves; `rerender_frames.py` is what
 makes a colour mean the same value in every frame of a movie.
 
-## `campaign/05_binary_spiral/horizon/` — the dissolution measurement
+## `campaign/05_binary_spiral/horizon/` — the "dissolution" record (NOT a horizon)
 
-`horizon_dissolution.dat` is the radius of the outermost **fully trapped** coordinate
-sphere around the merged core, from an offline scan of the plotfiles:
+**Superseded 2026-09-08: this curve is the orientation artefact, not a surface.** The
+scan below is the naive `+r`-orientation test (`ah_radial_scan.py`: outermost fully
+trapped coordinate sphere by the shell-max of θ₊), and the oriented rescan of the same
+death stacks — `ORIENTED_RESCAN_2026-09-08.md` in this directory — finds **no MOTS in
+any of them**. Every "trapped" shell here is the throat's far side, where the areal
+radius falls and +d/dr points inward, so the computed θ₊ is really the ingoing
+expansion. The table is kept as the record of what the naive convention reports (and of
+what a lapse/χ movie suggests to the eye); nothing in it may be quoted as a horizon.
 
-| t | r_AH | from |
+`horizon_dissolution.dat` is the radius of the outermost fully trapped coordinate
+sphere around the merged core **on that naive orientation**:
+
+| t | r_AH (naive) | from |
 | --- | --- | --- |
 | 51.50 | 1.070 | `r04000` |
 | 52.00 | 1.050 | `r04000` |
@@ -1307,17 +1331,17 @@ sphere around the merged core, from an offline scan of the plotfiles:
 | 54.50 | 0.830 | `rw` |
 | 55.00 | 0.590 | `rw` |
 
-Two independent damping schemes, one curve, accelerating toward zero at t ≈ 56. It is a
-measurement, not a fit, and it was checked three ways: no NaN or inf cell appears in any
-scan box, doubling both the angular and the radial sampling moves every crossing by
-≤ 0.01, and the t = 51.5 value matches the in-code diagnostic's ≈ 1.0 at the same step.
-Damping cannot be blamed for it — deleting negative-energy matter pushes the energy
-budget toward horizon *growth*, not shrinkage.
+Two independent damping schemes gave one curve, and the scan passed three consistency
+checks (no NaN/inf cell in any scan box, sampling-doubling moves every crossing by
+≤ 0.01, the t = 51.5 value matches the in-code diagnostic's ≈ 1.0). Those checks
+established that the scan read the *fields* correctly — not that the verdict was right:
+the orientation was wrong in the offline and the in-code test alike, which is exactly
+why they agreed with each other while both were wrong.
 
-`ah_radial_scan_output.txt` is the raw scanner output, including the per-ray statistics.
-Those show the trapped region is strongly deformed — reaching past r = 2 along the poles
-while pinching to ~0.6 at the equator — which is also why a purely radial in-code proxy
-loses sight of it.
+`ah_radial_scan_output.txt` is the raw scanner output, including the per-ray
+statistics. Those show the naive-orientation "trapped" region is strongly deformed —
+reaching past r = 2 along the poles while pinching to ~0.6 at the equator — i.e. it
+traces the throat interior's shape, not a marginal surface.
 
 Regenerate with `PACK_HORIZON=1 bash research/merger/pack_results.sh`, which needs
 plotfiles that the consumer sidecar deletes as a run proceeds; only the last few of each
