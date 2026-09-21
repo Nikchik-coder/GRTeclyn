@@ -15,12 +15,35 @@ own) get an estimate from the same run's main-leg speed and are reported
 separately.  Re-run after filing new runs; the total is what the article's
 "Computational cost" section quotes.
 
+WHAT IS *NOT* COUNTED, and why the number used to be too high.  This walks
+directories, and the pack holds directories that are not evolutions:
+
+* ``<run>.__keep`` -- a byte-identical second copy of a run, left by the
+  prune when a plotfile was held back.  Counting it charged the campaign
+  twice for the same GPU time: ten of them, **187 h**, a fifth of the old
+  total, and ten evolutions that never ran.
+* ``*_HOOKFAIL*``, ``*_OLD``, ``*_BAD``, ``*.bak`` -- a launch that failed in
+  the harness and was relaunched under the real name.
+
+Both are *dropped and named* in the report, never silently.  The shakedown
+stage (``01_single_throat/gauge`` and ``grid``) is counted but reported on its
+own line: the article declares it archived and not used for physics, so the
+cost of the cited physics is the total minus that line.
+
 Usage:  python analysis/gpu_hours.py [--root campaign] [--per-run]
 """
 
 import argparse
 import re
 from pathlib import Path
+
+# Directory names that are a COPY or a dead launch, not an evolution of their
+# own.  A run matching any of these is dropped from the accounting and listed.
+NOT_A_RUN = re.compile(r"(\.__keep$|HOOKFAIL|_OLD$|_BAD$|\.bak$)")
+
+# The archived shakedown: counted, but reported apart -- the article declares
+# it fixed the gauge/dissipation/tagging choices and is not used for physics.
+SHAKEDOWN = ("01_single_throat/gauge/", "01_single_throat/grid/")
 
 SPEED_RE = re.compile(r"average evolution speed\s*=\s*([0-9.eE+-]+)\s*code units/h")
 ADVANCE_RE = re.compile(r"ADVANCE at time\s*([0-9.eE+-]+)")
@@ -81,11 +104,20 @@ def main():
     args = ap.parse_args()
 
     groups, warnings, estimated = {}, [], []
+    shakedown = [0, 0.0]
+    dropped = []
     n_runs = 0
 
     for run_dir in sorted({p.parent for p in args.root.rglob("run_tail*.log")}):
-        group = run_dir.relative_to(args.root).parts[0]
+        rel = run_dir.relative_to(args.root)
+        if NOT_A_RUN.search(run_dir.name):
+            dropped.append(str(rel))
+            continue
+        group = rel.parts[0]
+        is_shakedown = str(rel).startswith(SHAKEDOWN)
         n_runs += 1
+        if is_shakedown:
+            shakedown[0] += 1
         main_speed = None
 
         for tail in sorted(run_dir.glob("run_tail*.log")):
@@ -101,6 +133,8 @@ def main():
             groups.setdefault(group, [0, 0.0])
             groups[group][0] += 0 if suffix else 1
             groups[group][1] += hours
+            if is_shakedown:
+                shakedown[1] += hours
             if args.per_run:
                 print(f"{hours:8.2f} h  {speed:7.2f} u/h  t={t_start:g}->{t_end:g}"
                       f"  {run_dir.relative_to(args.root)}{suffix}")
@@ -126,7 +160,15 @@ def main():
         n, h = groups[g]
         print(f"{g:<24}{n:>6}{h:>12.1f}")
     print(f"{'TOTAL':<24}{n_runs:>6}{total:>12.1f}")
+    print(f"{'  of which shakedown':<24}{shakedown[0]:>6}{shakedown[1]:>12.1f}"
+          "   (archived, not used for physics)")
+    print(f"{'  CITED PHYSICS':<24}{n_runs - shakedown[0]:>6}"
+          f"{total - shakedown[1]:>12.1f}   <- the article's number")
 
+    if dropped:
+        print(f"\nnot evolutions, dropped ({len(dropped)}) -- copies and dead "
+              f"launches, see NOT_A_RUN:")
+        print("\n".join("  " + d for d in sorted(dropped)))
     if estimated:
         print(f"\nestimated legs (no tail of their own, {len(estimated)}):")
         print("\n".join("  " + e for e in estimated))

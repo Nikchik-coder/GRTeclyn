@@ -78,13 +78,14 @@ in either arm.
 
 ## The paper's `08_waves` figures (2026-09-16)
 
-The article's three wave figures live in `08_waves/`, cross-cutting because they
+The article's four wave figures live in `08_waves/`, cross-cutting because they
 belong to no single group. All are drawn with no arguments:
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_gallery
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_ligo
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_scalar_channel
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_scalar_censorship
 ```
 
 `08_waves/scalar_channel` (2026-09-19) — the SECOND radiation channel, the one
@@ -101,8 +102,46 @@ areal radius passes each sphere's own radius, and the blue rule where the
 quoted numbers are taken. Reads `scalar_modes.dat` and `psi4_mode_l2_all.dat`
 from the same run so the two channels share their extraction spheres; no run
 was launched for it, the `orbit-modes` consumer profile has been writing the
-scalar stream since 2026-09-15. NOT available for the head-on or the single
-throat: those arms predate the stream and their plotfiles are gone.
+scalar stream since 2026-09-15. The head-on gap it used to declare is closed --
+see `scalar_censorship` below; the single throat's is not.
+
+`08_waves/scalar_censorship` (2026-09-21) -- the horizon shuts the ghost dipole
+off, and nothing else does. Two panels, drawn as ENVELOPES: a running MAXIMUM
+of |F_phi| over 25 units (one period of the dipole's own oscillation), then a
+Gaussian in LOG amplitude. The raw flux changes sign every ~20 units and dives
+to the log floor at each zero, which on a log axis hides the one thing the
+figure is about. A running r.m.s. was tried and is NOT enough: shorter than a
+period it still carries the oscillation, longer and it smears the decay.
+(a) the head-on arm `merge_headon_flip_d8_v1_lvl5from0_scalar_t100` (level 5
+from t = 0, scalar stream on -- the re-run that closed the gap) at R = 10/14/18.
+Common MOTS at t = 21.5 (green rule); the remaining hair leaves as one l = 1,
+m = 0 pulse cresting later at each sphere, then decays: log-linear fits over
+t = 30-95 give tau = 19/23/28 (dashed). That is the horizon's OWN clock -- the
+remnant's M_MS settles with tau = 19.4 +- 0.8, Fig. headon_collapse (g).
+Post-horizon E_phi = -0.056/-0.071/-0.075. THE PRE-HORIZON RISE AT R = 10 IS
+NOT RADIATION: it is the two open mouths' static hair superposing, canonically
+INGOING and inside the near zone, which is why no full-record head-on integral
+is quoted anywhere.
+(b) the control, one outer sphere per fate: the fly-by (no horizon, no merger)
+GROWS to the end of its record; the p = 0.12 spiral (merges, 0 MOTS on every
+scan) is still CLIMBING at its t = 59.9 wall. Horizon or no horizon is the only
+variable that separates them from the head-on.
+PAST THE WALL THE SPIRAL IS THE FROZEN-CORE ARM (`..._freeze_r05700`, dashed at
+half weight) AND MUST NOT BE READ AS PHYSICS. Its exterior is certified -- it
+agrees with the free arm to 0.1 % on this very flux over their t = 58-59
+overlap, and the two freeze twins to 0.01 % -- but a frozen source region cannot
+be asked how its radiation decays. The claim stops at the wall.
+The single-throat collapse is absent for the same reason the head-on used to be:
+no single-throat arm ever carried the scalar stream, so it is a re-run and not a
+re-read -- one was launched 2026-09-21.
+
+LEGEND IDIOM, learned the hard way on this figure: `constrained_layout` does NOT
+reserve space for a FIGURE legend -- both `bbox_to_anchor` and
+`loc="outside upper center"` drew the key over the frames. Use fixed margins and
+no layout engine: `fig.subplots_adjust(left=0.088, right=0.988, top=0.745,
+bottom=0.145, wspace=0.17)` with `fig.legend(..., loc="upper center",
+bbox_to_anchor=(0.5, 1.0), ncols=4, frameon=False)`. Every note lives in that
+legend or in the caption; there is no in-frame prose at all.
 
 The scenario table (stream, mode, innermost sphere, gate) is `ARMS` in
 `plot_psi4_gallery.py` and the LIGO figure imports it, so the two figures
@@ -281,16 +320,30 @@ MAKES a black hole, and every horizon point is the corrected orientation
 scout launched — the whole campaign ran it live; it is the SPIRAL p012 legs
 that lack the live flag, not the head-on). Reads the scout
 (`merge_headon_flip_d8_v1_t100`, level 3, dies at the wall t = 26.91), the
-paper's arm (`..._v1_lvl5_t100_r02200`, level 5, no fill, t = 100 clean) and
-the down-step (`..._v1_lvl3down_t100_r03500`). Horizon record: offline
+paper's arm (`..._v1_lvl5from0_scalar_t100`, LEVEL 5 FROM t = 0 -- no restart,
+no mesh seam, no interior device, t = 0-100 clean, 0 aborts) and the down-step
+(`..._v1_lvl3down_t100_r03500`). The seamless arm SUPERSEDES the lvl3 -> lvl5
+chain `..._v1_lvl5_t100_r02200`, which stays in the script as `SEAMED` for the
+late offline anchors only. It reproduces that chain: the (2,0) waveforms agree
+to 2.9-5.4 % of peak over the burst window t = 23-70 at R = 10/14/18 and the
+radiated energies to 3-8 %; only the post-burst tail diverges (up to 62 % at
+R = 18, both amplitudes < 4e-4, both arms noisy there). The seam was never
+carrying the result. Horizon record: offline
 corrected scans (dx 0.0625) find formation at t = 22 (r = 3.171, R = 5.564,
 M_MS = 2.991), growth to R = 5.713 (t = 24), then 4.722 (26) and 4.915/4.874
 (42.5/43); the live scans' gaps are APERTURE (shells reach 0.5 sep + 2.3;
 once the pits merge the MOTS at r ~ 2.7-3.3 is outside while every shell
 inside reports trapped — 125 of 155 level-5 scans); where two arms see the
 surface at once they agree (t = 36: R 4.461/4.441, M_MS 2.736/2.737). Mass
-DRIFTS DOWN, -0.0066/unit on the down-step track (2.99 formation -> 2.17 at
-t = 99): phantom infall removes mass. theta_+ at the common areal minimum
+FALLS AND SETTLES, 2.99 at formation -> 2.17 at t = 99: phantom infall removes
+mass, but not without end. FITS (panels f/g, added 2026-09-21): R_MOTS is
+LINEAR, slope -0.00658/unit, rms 0.0324 -- an exponential does NOT converge on
+this record, so no asymptotic radius is resolvable and none is drawn. M_MS
+settles, a + b*exp(-(t-36)/tau) -> M_inf = 2.160 +- 0.006, tau = 19.4 +- 0.8,
+rms 0.0113, a factor 4.8 better than the straight line (dotted asymptote). That
+tau is the SAME CLOCK as the scalar channel's shut-off, tau = 19-28 in
+`08_waves/scalar_censorship` -- hair shed, source quiet, mass stopped, one
+timescale. theta_+ at the common areal minimum
 crosses zero between t = 20 and 21; no mouth ever has its own MOTS.
 
 **Trap, do not draw:** V1c's (`..._v1c_latefreeze_t100`) common-scan rows
@@ -298,12 +351,17 @@ from t ~ 29 sit at r = 1.15 — INSIDE its own frozen fill (r_full = 1.2) —
 and its A/B rows claim "own MOTS" from t = 40 for the same reason. Fill
 artefacts, excluded by design here, like theta_common on the spiral page.
 
-Other validated numbers: level 5 walks the wall (scout max|K| 18.1 and
-H = 13.6 at death vs level-5 max|K| <= 1.34, H falling 4.6e-3 -> 1.4e-3);
-down-step lands on level 5 to median 0.08 % (H) / 1.48 % (M) over t = 35-100;
-lapse rides the 1e-10 clamp t = 38.5-41.0, ends 1.1e-3; chi clamps at 1e-20
-(scout from 24.4, level 5 over 26-38), ends 2.0e-5; field swallowed, max|phi|
-0.86 -> 0.008 with |Pi| <= 0.069; (2,0) ringdown swings at t = 28.2/43.6/
+Other validated numbers (all re-measured on the SEAMLESS arm 2026-09-21): level
+5 walks the wall (scout max|K| 18.1 and H = 13.6 at death vs level-5 max|K|
+peak 1.36 at t = 31.55, end 0.13, H falling 4.82e-3 -> 2.70e-3); lapse rides
+the 1e-10 clamp t = 38.15-41.50, ends 1.36e-3; chi hits 1e-20 at t = 30.60
+(scout: 24.40), ends 2.0e-5; field swallowed, max|phi| 0.90 -> 0.008 with |Pi|
+peak 0.069 at t = 42.35;
+CAREFUL -- the down-step's old "0.08 % (H) / 1.48 % (M)" was measured against
+the SEAMED chain it restarts from and is true of that pair only. Against the
+seamless arm drawn here its H sits a constant ~0.2 dex BELOW (its own coarser
+truncation history; median |dH|/H = 66 %) while M agrees to 1.30 %. The panel
+(e) label says "from the seamed chain" for exactly this reason; (2,0) ringdown swings at t = 28.2/43.6/
 63.0/81.7, amplitude x0.6-0.8 per half-swing. Redraw only if a head-on arm
 is re-run with the scan aperture widened or new offline scans land.
 

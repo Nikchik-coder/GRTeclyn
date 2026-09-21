@@ -1,0 +1,226 @@
+#!/usr/bin/env python3
+r"""The horizon shuts the scalar channel off -- and nothing else does.
+
+Two panels, three fates, one instrument: the ghost dipole's flux at the
+extraction spheres, drawn as its ENVELOPE -- a running MAXIMUM of
+$|F_\phi|$ over a 25-unit window, one full period of the dipole's own
+oscillation on these records.  The raw flux changes sign every ~20 units and
+dives to the log floor at each zero, which on a log axis is a thicket of
+spikes hiding the one thing the figure is about: how the amplitude behaves.
+(A running r.m.s. was tried first and is not enough -- over any window
+shorter than a period it still carries the oscillation, and over a longer
+one it smears the decay it is meant to show.  The running maximum rides the
+successive peaks, which is exactly the envelope.)
+
+(a) THE CENSORSHIP, on the seamless head-on arm
+(`merge_headon_flip_d8_v1_lvl5from0_scalar_t100`, 2026-09-21, level 5 from
+t = 0, no fill, no seam).  The mouths are swallowed by the common MOTS at
+t = 21.5; what scalar hair remains leaves as one $\ell=1$, $m=0$ burst
+sweeping outward -- the envelope crests later at each sphere, the causal
+ordering of a pulse crossing them -- and then the source is gone.  The decay
+is exponential and fitted: log-linear fits over t = 30-95 give e-fold times
+tau = 19/23/28 at R = 10/14/18 (dashed).  THAT IS THE HORIZON'S OWN CLOCK:
+the remnant's Misner-Sharp mass settles onto its asymptote with
+tau = 19.4 +- 0.8 (Fig. headon_collapse_diagnostics (g)).  The hair is shed,
+the source goes quiet, and the mass stops changing, all on one timescale.  The integrated post-horizon energies are negative on all
+three spheres, $E_\phi = -0.056/-0.071/-0.075$: the hair leaves as negative
+energy.  (The pre-horizon rise at $R=10$ is the two mouths' static hair
+superposing -- canonically ingoing, near zone, not radiation -- which is why
+no full-record integral is quoted anywhere.)
+
+(b) THE CONTROL EXPERIMENT NATURE RAN FOR US: the same envelope, one outer
+sphere per encounter, across the three fates.  The head-on, the only one
+with a horizon, decays.  The fly-by (no horizon, no merger) GROWS to the end
+of its record.  The p = 0.12 spiral -- which merges and still makes no
+horizon, 0 MOTS on every scan to t = 50 -- is climbing when its grid dies at
+the t = 59.9 wall.
+
+THE SPIRAL'S LATE STRETCH IS DRAWN, BUT MUST NOT BE READ AS PHYSICS.  Past
+its wall the curve is the freeze arm (`..._lvl5_t100_freeze_r05700`), whose
+exterior is certified against the no-fill arm -- the two agree to 0.1 % on
+this very flux over their t = 58-59 overlap, and the two freeze twins to
+0.01 % -- but whose SOURCE REGION is frozen by construction.  A frozen core
+cannot be asked how its radiation decays.  So the claim stops at the wall:
+through the end of its uncensored record the spiral's dipole is still
+rising, and what the freeze arm adds is only that the exterior does not
+collapse afterwards.
+
+    python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_scalar_censorship
+
+Reads ``scalar_modes.dat`` from, all under ``campaign/``:
+``04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/``,
+``05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5from0_t100/`` and
+its ``..._lvl5_t100_freeze_r05700/``, and
+``06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/``.  Writes
+``figures/08_waves/scalar_censorship``.  The single-throat collapse is NOT
+here yet: no single-throat arm had ever run with the scalar-mode stream (the
+headon/chi profiles predate it), so it is a re-run and not a re-read -- one
+is on the cards as of 2026-09-21.
+
+STYLE: full-width pair (7.05 x 2.8), style.prd, no titles, no boxed key,
+curves named in place.  DEEP_GREEN is the horizon instrument (the t = 21.5
+rule) and nothing else; scenario colours are the scalar-channel page's --
+DEEP_BLUE fly-by, BURGUNDY spiral, INK head-on -- and (a)'s three spheres
+are an ink ramp, dark = inner.  The frozen-core stretch is the same burgundy
+at half weight and dashed: same arm's physics, not the same standing.
+"""
+
+from __future__ import annotations
+
+import argparse
+import pathlib
+
+import matplotlib
+
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt  # noqa: E402
+from matplotlib.lines import Line2D  # noqa: E402
+from scipy.ndimage import gaussian_filter1d  # noqa: E402
+import numpy as np  # noqa: E402
+
+from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
+from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, figure_dir  # noqa: E402
+
+GROUP = "08_waves"
+HEADON = "04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100"
+SPIRAL = "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5from0_t100"
+SPIRAL_FRZ = "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700"
+FLYBY = "06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100"
+
+T_MOTS = 21.5      # head-on: first live corrected-orientation common MOTS
+T_WALL = 59.94     # spiral: NaN in h11 on level 5, the uncensored wall
+WINDOW = 25.0      # running-max window: one full period of the dipole
+SMOOTH = 5.0       # Gaussian on log amplitude, to round the staircase
+BURGUNDY = "#9b2226"
+RAMP = {10: "#1a1a18", 14: "#54524c", 18: "#8f8b81"}   # dark = inner
+
+
+def _flux(path: pathlib.Path, radius: int) -> tuple[np.ndarray, np.ndarray]:
+    head = open(path).readline().lstrip("#").split()
+    d = np.loadtxt(path)
+    return d[:, 0], d[:, head.index(f"R{radius}_scalar_flux_kin")]
+
+
+def _envelope(t: np.ndarray, k: np.ndarray) -> np.ndarray:
+    """Peak envelope of |F|: running maximum over one period, then smoothed.
+
+    The running maximum rides the successive peaks, which is the envelope; on
+    a 0.5-unit cadence it comes out as a staircase, so it is rounded by a
+    Gaussian in LOG amplitude -- log, because the quantity decays
+    exponentially and the smoothing must not bias the decay rate that is
+    fitted from it.  A running integral was tried instead and rejected: a
+    cumulative curve rises for every source, so the eye cannot separate one
+    that has switched off from one that has not.
+    """
+    dt = float(t[1] - t[0])
+    a = np.abs(k)
+    m = np.array([a[(t >= ti - WINDOW / 2) & (t <= ti + WINDOW / 2)].max()
+                  for ti in t])
+    return np.exp(gaussian_filter1d(np.log(np.maximum(m, 1e-30)),
+                                    SMOOTH / dt, mode="nearest"))
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--pack-root", default=str(PACK_ROOT))
+    ap.add_argument("--out", default=None)
+    args = ap.parse_args(argv)
+    camp = pathlib.Path(args.pack_root).expanduser() / "campaign"
+
+    style.prd(base=10.0)
+    fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.05, 3.05))
+    # Fixed margins, no layout engine: the key needs a band of its own, and
+    # constrained_layout does not reserve one for a FIGURE legend -- both
+    # "bbox_to_anchor" and "outside upper center" drew it over the frames.
+    fig.subplots_adjust(left=0.088, right=0.988, top=0.745, bottom=0.145,
+                        wspace=0.17)
+
+    # ---- (a) one horizon, three spheres ------------------------------------
+    for R in (10, 14, 18):
+        t, k = _flux(camp / HEADON / "scalar_modes.dat", R)
+        e = _envelope(t, k)
+        axA.semilogy(t, e, color=RAMP[R], lw=1.2, zorder=3,
+                     label=f"head-on, $R={R}$")
+        fit = (t >= 30.0) & (t <= 95.0)
+        c = np.polyfit(t[fit], np.log(e[fit]), 1)
+        axA.semilogy(t[fit], np.exp(np.polyval(c, t[fit])), color=RAMP[R],
+                     lw=0.8, ls=(0, (3, 2.2)), zorder=4)
+        print(f"[censorship] head-on R={R}: envelope {e.max():.2e} -> "
+              f"{np.interp(95.0, t, e):.2e} at t=95 "
+              f"(x{e.max() / np.interp(95.0, t, e):.0f} down), tau = {-1 / c[0]:.1f}")
+    axA.axvline(T_MOTS, color=style.DEEP_GREEN, lw=0.8, ls=(0, (1, 2)), zorder=1)
+
+    # NOTHING is written inside either frame.  Three notes were tried and all
+    # three ended up against a spine or a tick label; the key above carries the
+    # identities and the caption carries the numbers.
+    axA.set_xlim(0, 100)
+    axA.set_ylim(1.0e-4, 2.2e-2)
+    axA.set_xlabel(r"$t$")
+    axA.set_ylabel(r"$|F_\phi|$ envelope")
+    axA.text(0.0, 1.03, "(a)", transform=axA.transAxes, ha="left",
+             va="bottom", fontsize=9, color=style.INK)
+
+    # ---- (b) three fates, one outer sphere each ----------------------------
+    t, k = _flux(camp / FLYBY / "scalar_modes.dat", 30)
+    axB.semilogy(t, _envelope(t, k), color=style.DEEP_BLUE, lw=1.2, zorder=3,
+                 label=r"fly-by, $R=30$")
+
+    # The spiral, spliced: its own record to the wall, then the freeze arm.
+    # They overlap over t = 58-59 and agree to 0.1 % on this very flux, so the
+    # join is certified rather than assumed -- but the frozen stretch is drawn
+    # dashed and half-weight, because a frozen core cannot be asked about its
+    # own emission.
+    ts, ks = _flux(camp / SPIRAL / "scalar_modes.dat", 30)
+    tf, kf = _flux(camp / SPIRAL_FRZ / "scalar_modes.dat", 30)
+    join = ts < tf[0]
+    t_all = np.concatenate([ts[join], tf])
+    e_all = _envelope(t_all, np.concatenate([ks[join], kf]))
+    live = t_all <= T_WALL
+    axB.semilogy(t_all[live], e_all[live], color=BURGUNDY, lw=1.2, zorder=3,
+                 label=r"spiral, $R=30$")
+    axB.semilogy(t_all[~live], e_all[~live], color=BURGUNDY, lw=0.9,
+                 ls=(0, (3, 2)), alpha=0.55, zorder=2,
+                 label="spiral, core frozen")
+    print(f"[censorship] spiral R=30: {np.interp(T_WALL, t_all, e_all):.2e} at its "
+          f"wall, still rising; frozen continuation flat to {e_all[-1]:.2e}")
+
+    # The head-on enters (b) on its OUTER sphere, so it must wear the OUTER
+    # sphere's colour: the top legend serves both panels, and drawing this in
+    # INK made the black swatch mean R = 10 in (a) and R = 18 here (2026-09-21).
+    t, k = _flux(camp / HEADON / "scalar_modes.dat", 18)
+    axB.semilogy(t, _envelope(t, k), color=RAMP[18], lw=1.6, zorder=4)
+    axB.axvline(T_WALL, color=style.FAINT, lw=0.8, ls=(0, (4, 3)), zorder=1)
+
+    axB.set_xlim(0, 100)
+    axB.set_ylim(1.0e-4, 1.3e-1)
+    axB.set_xlabel(r"$t$")
+    axB.text(0.0, 1.03, "(b)", transform=axB.transAxes, ha="left",
+             va="bottom", fontsize=9, color=style.INK)
+
+    # ONE key for the page, above both frames (plot_psi4_ligo's idiom): the
+    # curves of (a) interleave twice and (b)'s three fates cross, so no
+    # in-frame naming is unambiguous anywhere on this page.
+    hA, lA = axA.get_legend_handles_labels()
+    hB, lB = axB.get_legend_handles_labels()
+    rules = [Line2D([], [], color=style.DEEP_GREEN, lw=0.8, ls=(0, (1, 2)),
+                    label=r"common MOTS, $t=21.5$"),
+             Line2D([], [], color=style.FAINT, lw=0.8, ls=(0, (4, 3)),
+                    label=r"spiral's wall, $t=59.9$")]
+    # "outside upper center" so constrained_layout RESERVES the strip: with a
+    # plain bbox_to_anchor the key is drawn over the frames and over the
+    # letter tags, which is what happened first.
+    fig.legend(hA + hB + rules, lA + lB + [h.get_label() for h in rules],
+               loc="upper center", bbox_to_anchor=(0.5, 1.0), ncols=4,
+               fontsize=6.5, frameon=False, handlelength=2.4,
+               columnspacing=1.6, labelspacing=0.45, borderaxespad=0.35)
+
+    out = pathlib.Path(args.out) if args.out else (
+        figure_dir(GROUP, args.pack_root) / "scalar_censorship.png")
+    png = style.save(fig, out)
+    print(f"[censorship] wrote {png} (+pdf)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -18,11 +18,18 @@ Reads, all under ``campaign/04_binary_headon/``:
   ``binary_throat_diagnostics.dat``, the live oriented ``horizon_scan.dat``
   and the offline formation scan ``horizon_offline_scan.dat`` (level 3,
   dx 0.0625, t = 22-26 -- the record of the horizon's birth).
-* ``merge_headon_flip_d8_v1_lvl5_t100_r02200/`` -- the paper's arm: max_level 5
-  from V1c's t = 22 checkpoint, NO interior fill, t = 100 with no NaN.  Same
-  streams, plus ``horizon_offline_scan_lvl5_t42.5_43.dat`` (level-3-sampled
-  corrected scan over its kept plotfiles) and ``Weyl4_mode_20.dat`` (the
-  (2,0) ringdown at R = 10/14/18).
+* ``merge_headon_flip_d8_v1_lvl5from0_scalar_t100/`` -- THE PAPER'S ARM since
+  2026-09-21: max_level 5 FROM t = 0, no interior fill, no restart, no seam,
+  t = 100 with no NaN, carrying the scalar-mode stream besides.  Same streams
+  as the old arm plus ``scalar_modes.dat``; its live scan finds the common
+  MOTS at t = 21.5 and reads R = 4.456, M = 2.736 at t = 36 -- on the seamed
+  arm's own track to 0.1 %.
+* ``merge_headon_flip_d8_v1_lvl5_t100_r02200/`` -- the SUPERSEDED seamed arm
+  (level 5 from V1c's t = 22 checkpoint), kept on this page for two things:
+  ``horizon_offline_scan_lvl5_t42.5_43.dat`` (its level-3-sampled corrected
+  scan, the filled late anchors on (f)-(g)) and the seam-independence check
+  itself -- its (2,0) agrees with the seamless arm's to 2.9-5.4 % of peak on
+  all three spheres over the burst window t = 23-70, and its E_GW to 3-8 %.
 * ``merge_headon_flip_d8_v1_lvl3down_t100_r03500/`` -- back to max_level 3 from
   the level-5 t = 35 checkpoint, no fill: the cross-resolution check on (e)
   and the late-time horizon track on (f)-(g).
@@ -77,7 +84,8 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E
 
 GROUP = "04_binary_headon"
 SCOUT = "merge_headon_flip_d8_v1_t100"
-ARM = "merge_headon_flip_d8_v1_lvl5_t100_r02200"
+ARM = "merge_headon_flip_d8_v1_lvl5from0_scalar_t100"
+SEAMED = "merge_headon_flip_d8_v1_lvl5_t100_r02200"   # late offline anchors only
 DOWN = "merge_headon_flip_d8_v1_lvl3down_t100_r03500"
 
 # BinaryWormholeLevel's writer, in order -- no header on a restart.
@@ -143,12 +151,13 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     pack = pathlib.Path(args.pack_root).expanduser()
-    scout, arm, down = (pack / "campaign" / GROUP / p for p in (SCOUT, ARM, DOWN))
+    scout, arm, down, seamed = (pack / "campaign" / GROUP / p
+                            for p in (SCOUT, ARM, DOWN, SEAMED))
 
     ds = _sorted(scout / "collapse_diagnostics.dat")
-    d5 = _clipped(arm / "collapse_diagnostics.dat")
+    d5 = _sorted(arm / "collapse_diagnostics.dat")   # seamless: nothing to settle
     cs = _sorted(scout / "constraint_norms.dat")
-    c5 = _clipped(arm / "constraint_norms.dat")
+    c5 = _sorted(arm / "constraint_norms.dat")
     c3 = _clipped(down / "constraint_norms.dat")
     col_s = {n: ds[:, i + 1] for i, n in enumerate(COLS)}
     col_5 = {n: d5[:, i + 1] for i, n in enumerate(COLS)}
@@ -156,20 +165,20 @@ def main(argv: list[str] | None = None) -> int:
     t_end = float(t_5[-1])
 
     bs = _sorted(scout / "binary_throat_diagnostics.dat")
-    b5 = _clipped(arm / "binary_throat_diagnostics.dat")
+    b5 = _sorted(arm / "binary_throat_diagnostics.dat")
 
     scC = _live_scan(scout / "horizon_scan.dat")
     a5C = _live_scan(arm / "horizon_scan.dat")
     d3C = _live_scan(down / "horizon_scan.dat")
     form = _offline_formation(scout / "horizon_offline_scan.dat")
-    late = _offline_anchors(arm / "horizon_offline_scan_lvl5_t42.5_43.dat")
+    late = _offline_anchors(seamed / "horizon_offline_scan_lvl5_t42.5_43.dat")
 
     wave = _sorted(arm / "Weyl4_mode_20.dat")     # t, (Re, Im) at R = 10/14/18
 
     # ---- derived numbers, printed for the caption --------------------------
     fl = (col_5["min_lapse"] <= LAPSE_FLOOR * 2.0)
     print(f"[headon collapse] scout t = 0-{t_s[-1]:.2f} (level 3, dies at the wall); "
-          f"paper arm t = {t_5[0]:.2f}-{t_end:.2f} (level 5, no fill, no NaN)")
+          f"paper arm t = {t_5[0]:.2f}-{t_end:.2f} (level 5 FROM ZERO, no fill, no seam, no NaN)")
     print(f"  wall: scout max|K| {col_s['max_abs_K'][-1]:.1f}, H {cs[-1, 1]:.1f} at death; "
           f"level 5 max|K| peak {col_5['max_abs_K'].max():.2f} "
           f"(t = {t_5[np.argmax(col_5['max_abs_K'])]:.2f}), end {col_5['max_abs_K'][-1]:.2f}; "
@@ -205,7 +214,7 @@ def main(argv: list[str] | None = None) -> int:
               f"({Mm3[0]:.3f} at t = {tm3[0]:.0f} -> {Mm3[-1]:.3f} at t = {tm3[-1]:.0f})")
     H5 = np.interp(c3[:, 0], c5[:, 0], c5[:, 1])
     M5 = np.interp(c3[:, 0], c5[:, 0], c5[:, 2])
-    print(f"  down-step vs level 5 (t = {c3[0, 0]:.1f}-{c3[-1, 0]:.1f}): median "
+    print(f"  down-step vs the SEAMLESS arm (its parent is the seamed chain; t = {c3[0, 0]:.1f}-{c3[-1, 0]:.1f}): median "
           f"|dH|/H = {np.median(abs(c3[:, 1] - H5) / H5) * 100:.2f}%, "
           f"|dM|/M = {np.median(abs(c3[:, 2] - M5) / M5) * 100:.2f}%")
 
@@ -226,8 +235,11 @@ def main(argv: list[str] | None = None) -> int:
         ax.axvline(T_WALL, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
 
     # (a) the approach, and where each grid's story ends ----------------------
-    axA.plot(bs[:, 0], bs[:, 1], color=style.INK, lw=1.2)
-    axA.plot(b5[:, 0], b5[:, 1], color=style.CONTEXT, lw=1.0)
+    # The seamless arm's own separation covers the WHOLE approach at level 5
+    # now, so it carries the ink; the scout stays as the grey witness of the
+    # level-3 wall.  Pre-merger the two curves lie on each other.
+    axA.plot(bs[:, 0], bs[:, 1], color=style.CONTEXT, lw=1.0)
+    axA.plot(b5[:, 0], b5[:, 1], color=style.INK, lw=1.2)
     rules(axA)
     axA.set_xlim(-1.5, t_end + 1.5)
     axA.set_ylim(-0.5, 9.4)
@@ -240,14 +252,14 @@ def main(argv: list[str] | None = None) -> int:
     # of the frame (2026-09-18).  Broken in two it fits under the descent, with
     # the curve 3.5 pt clear of the block's top right corner.  7.5 pt, like the
     # panel's other three names.
-    axA.text(0.0, 3.9, "separation of the $\\chi$ pits\n(level 3)", fontsize=7.5,
+    axA.text(0.0, 3.9, "separation of the $\\chi$ pits\n(level 5, from $t=0$)", fontsize=7.5,
              ha="left", va="top", color=style.INK, linespacing=1.25)
     axA.text(29.5, 5.6, "common MOTS, $t=22$", fontsize=7.5, ha="left",
              va="bottom", color=style.DEEP_GREEN)
     axA.text(29.5, 3.4, "level-3 wall, $t=26.9$", fontsize=7.5, ha="left",
              va="bottom", color=style.MUTED)
-    axA.text(44.0, 1.15, "one merged pit (level 5, to $t=100$)", fontsize=7.5,
-             ha="left", va="bottom", color=style.CONTEXT)
+    axA.text(44.0, 1.15, "one merged pit, to $t=100$ -- one grid, no seam",
+             fontsize=7.5, ha="left", va="bottom", color=style.INK)
     tag(axA, "a")
 
     # (b)-(d) the clocks: level 5 walks through the level-3 wall --------------
@@ -258,13 +270,14 @@ def main(argv: list[str] | None = None) -> int:
     axB.set_ylim(1e-11, 3)
     axB.text(97.0, 2.2e-10, "clamp", fontsize=7.5, ha="right", va="bottom",
              color=style.MUTED)
-    # Under the scout's flat stretch and anchored LEFT: centred on t = 13.5 the
-    # name is 18 t-units wide and its tail ran into the t = 22 MOTS rule.
-    axB.text(1.5, 1.1e-2, "level 3", fontsize=7.5, ha="left", va="top",
-             color=style.CONTEXT)
+    # No grey label in this panel: the scout dies of a one-step overflow with
+    # its lapse still at 1e-2, UNDER the ink -- there is no visible grey
+    # stretch for a name to point at.  (c)-(e) carry the scout's names.
 
     axC.semilogy(t_s, col_s["min_chi"], color=style.CONTEXT, lw=0.9)
     axC.semilogy(t_5, col_5["min_chi"], color=style.INK, lw=1.1)
+    axC.text(9.0, 1.35e-5, "level 3", fontsize=7.5, ha="center", va="bottom",
+             color=style.CONTEXT)
     axC.set_ylabel(r"$\min\chi$")
     axC.set_ylim(1e-9, 4e-3)   # the clamp excursions leave the frame, honestly
     # Right-aligned: left-anchored the name ran to within half a point of the
@@ -299,12 +312,19 @@ def main(argv: list[str] | None = None) -> int:
     # Each norm named off its OWN curve, at the t where the two are furthest
     # apart, with the clearance in points rather than in decades.
     axE.annotate(r"$\|\mathcal{M}\|$", (52.0, np.interp(52.0, c5[:, 0], c5[:, 2])),
-                 xytext=(0, 3), textcoords="offset points", fontsize=7.5,
+                 xytext=(0, 5), textcoords="offset points", fontsize=7.5,
                  ha="center", va="bottom", color=style.INK)
-    axE.annotate(r"$\|\mathcal{H}\|$", (62.0, np.interp(62.0, c5[:, 0], c5[:, 1])),
-                 xytext=(0, -3), textcoords="offset points", fontsize=7.5,
+    # |H| hangs off the LOWEST of the H curves (the down-step's, 0.2 dex under
+    # the seamless arm's): pinned to the upper one it printed straight through
+    # the lower (2026-09-21).
+    axE.annotate(r"$\|\mathcal{H}\|$", (62.0, np.interp(62.0, c3[:, 0], c3[:, 1])),
+                 xytext=(0, -5), textcoords="offset points", fontsize=7.5,
                  ha="center", va="top", color=style.INK)
-    axE.text(66.0, 3.2e-2, "the down-step (level 3)\ncoincides with level 5",
+    # "Coincides with level 5" was TRUE of the seamed chain this down-step
+    # restarts from (median 0.08 %/1.5 %) and stays in the section text about
+    # that pair; against the SEAMLESS arm drawn here its H sits a constant
+    # ~0.2 dex below (different truncation history), M within 1.3 %.
+    axE.text(66.0, 3.2e-2, "the down-step (level 3),\nfrom the seamed chain",
              fontsize=7.5, ha="center", va="bottom", color=style.MUTED,
              linespacing=1.25)
 
@@ -329,6 +349,34 @@ def main(argv: list[str] | None = None) -> int:
         ax.axvline(T_WALL, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
         ax.set_xlim(18.5, t_end + 1.5)
         ax.set_xlabel(r"$t$")
+    # FITS through the long track (the down-step's 24 points, t = 36-99), so
+    # the scatter reads as a trend and not as noise.  The two quantities do
+    # NOT obey the same law, and that is the result: the radius is still
+    # shrinking linearly at t = 100, while the mass has all but stopped.
+    from scipy.optimize import curve_fit
+
+    def _settle(x, a, b, tau):
+        return a + b * np.exp(-(x - tm3[0]) / tau)
+
+    t_fine = np.linspace(tm3[0], t_end, 200)
+    slope = np.polyfit(tm3, Rm3, 1)
+    axF.plot(t_fine, np.polyval(slope, t_fine), color=style.MUTED, lw=0.9,
+             ls=(0, (4, 2.5)), zorder=2)
+    pm, cm = curve_fit(_settle, tm3, Mm3, p0=(Mm3[-1], Mm3[0] - Mm3[-1], 25.0),
+                       maxfev=40000)
+    em = np.sqrt(np.diag(cm))
+    axG.plot(t_fine, _settle(t_fine, *pm), color=style.MUTED, lw=0.9,
+             ls=(0, (4, 2.5)), zorder=2)
+    axG.axhline(pm[0], color=style.FAINT, lw=0.7, ls=(0, (1, 2)), zorder=1)
+    rms_lin = np.sqrt(np.mean((Mm3 - np.polyval(np.polyfit(tm3, Mm3, 1), tm3)) ** 2))
+    rms_exp = np.sqrt(np.mean((Mm3 - _settle(tm3, *pm)) ** 2))
+    print(f"  FIT R_MOTS: linear, slope {slope[0]:+.5f} per unit "
+          f"(rms {np.sqrt(np.mean((Rm3 - np.polyval(slope, tm3)) ** 2)):.4f}); "
+          f"an exponential does not converge -- no asymptote is resolvable")
+    print(f"  FIT M_MS: settles to {pm[0]:.3f} +- {em[0]:.3f} with "
+          f"tau = {pm[2]:.1f} +- {em[2]:.1f} (rms {rms_exp:.4f}, "
+          f"{rms_lin / rms_exp:.1f}x better than linear)")
+
     axF.set_ylabel(r"$R_{\mathrm{MOTS}}$")
     axF.set_ylim(3.9, 6.05)
     axF.text(28.5, 5.98, "offline scan,\n$\\mathrm{d}x=0.0625$", fontsize=7.5,
@@ -337,7 +385,9 @@ def main(argv: list[str] | None = None) -> int:
              va="bottom", color=style.DEEP_GREEN, linespacing=1.25)
     axG.set_ylabel(r"$M_{\mathrm{MS}}$")
     axG.set_ylim(2.05, 3.42)
-    axG.text(96.0, 2.62, "phantom infall:\nthe mass drifts down", fontsize=7.5,
+    # The asymptote is the news, so it is labelled on its own rule rather than
+    # left for the caption.
+    axG.text(96.0, 2.80, "settles to $M_\\infty=2.16$,\n$\\tau=19.4$", fontsize=7.5,
              ha="right", va="bottom", color=style.INK, linespacing=1.25)
 
     # (h) the surface that becomes the horizon --------------------------------
@@ -345,7 +395,10 @@ def main(argv: list[str] | None = None) -> int:
     axH.plot(scC["t"][w], scC["th_out"][w], color=style.INK, lw=1.1)
     axH.plot(scC["t"][w], scC["th_in"][w], color=style.MUTED, lw=0.9,
              ls=(0, (4, 2.5)))
-    w5 = a5C["t"] <= T_WALL   # past the merger the min-shell identity jumps
+    # Two clips: below t = 19.5 the areal-minimum shell hops between the two
+    # mouths (a sawtooth of identity, not of geometry), and past the wall the
+    # merged record belongs to (f)-(g).
+    w5 = (a5C["t"] >= 19.5) & (a5C["t"] <= T_WALL)
     axH.plot(a5C["t"][w5], a5C["th_out"][w5], color=style.CONTEXT, lw=0.9)
     axH.axhline(0.0, color=style.FAINT, lw=0.7)
     axH.axvline(T_MOTS, color=style.DEEP_GREEN, lw=0.7, ls=(0, (1, 2)), zorder=1)

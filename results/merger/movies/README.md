@@ -19,6 +19,7 @@ these cannot be re-rendered larger.
 | `01_single_throat/hold_branch_collapse_lvl3` | the same throat at level 3: it **collapses**, R −51 %. Two resolutions, two fates — `campaign/01_single_throat/BRANCHES.md` |
 | `01_single_throat/single_eps_p1e2_t100` | the seeded throat, ε = +0.01: χ, K, lapse, φ, Π |
 | `04_binary_headon/merge_headon_flip_d8_v1_lvl5_t100_r02200_stitched_from_t0` | the head-on merger **with no freeze and no fill** (`core_freeze_fill = 0`): level 5 alone carries it through the wall. Stitched across the t = 22 restart, so it runs t = 0–100 (179 frames) |
+| `04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100` | **the head-on arm the paper now quotes** — maximum level 5 from t = 0, so there is no restart to stitch across and no seam anywhere in the record: one grid, t = 0–100, 0 aborts. Six fields (χ, K, lapse, φ, Π, Weyl4_Re). It supersedes the stitched entry above, which it reproduces to 2.9–5.4 % of peak on the (2,0) wave; keep that one only as the seam's own record |
 | `05_binary_spiral/v2_spiral_d12_p012_L128_SERIES` | the paper's d = 12, p = 0.12 spiral as ONE history: level 3 for t < 36, level 5 for t ≥ 36, to t = 57 |
 | `05_binary_spiral/v2_spiral_d12_p012_L128_lvl3_t050` | the same series' first leg alone (level 3, t = 0–50) |
 | `05_binary_spiral/v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600` | its second leg alone (level 5, t = 36–60.44, to the NaN) |
