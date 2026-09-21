@@ -236,8 +236,32 @@ correction on the negative-flux channels; the full fly-by at L = 128 level 5
 in §XI.A — the defect's net kick is the back-extrapolated 7×10⁻⁴, inside the
 measured linear window. The compressive-background arm: item 10's experiment,
 post-submission. The three items of "Left to run" above stand unchanged.
-Rules of §6 apply: one launch at a time, through `launch.sh`, on the user's
-word; GPU 1 is the scalar arm until ~11:10, GPU 0 is free.
+**R5 is dropped on the user's word (2026-09-21, "this is too much")** — it
+returns to the table only if a referee formally demands the closed balance.
+
+**Launch record (2026-09-21, ~06:00, on the user's word: "launch only the
+critical ones"; R4 not launched).** Templates
+`templates_scan/params_ref_{eta4,lp2}_p012_t060.txt` and
+`params_ref_{eta4,lp2}_headon_t030.txt`, all from t = 0, all
+`amr.checkpoint_files_output = 0` (no checkpoints, user's word), each ONE
+knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
+
+- **R1** `merge_twin_p012_eta4_t060` — GPU 0, in flight (8.4 u/h while
+  three-way shared).
+- **R2** `merge_twin_p012_lp2_t060` — **first attempt OOMed at launch**:
+  `cudaMalloc out of memory` as the third arm on GPU 0. The lesson, measured:
+  each L = 64 level-3 arm's AMReX arena grows to ~32 GB, so **two arms per
+  80 GB card is the ceiling** — memory at rest says nothing about the arena's
+  appetite. Failed attempt archived as `..._OOMFAIL_2026-09-21` (registry row
+  annotated); an auto-requeue watcher relaunches it on GPU 0 the moment R3a's
+  binary exits (~3 h).
+- **R3a** `merge_headon_flip_d8_eta4_t030` — GPU 0, in flight.
+- **R3b** `merge_headon_flip_d8_lp2_t030` — GPU 1, in flight beside the
+  scalar arm (52.9 GB of 80 together; the scalar arm's ETA slips with the
+  shared card).
+- **R0** — in progress offline (no card): shape-free MOTS hunt on the
+  archived t = 59.0 slice, validated first against the head-on t = 100
+  plotfile's known horizon.
 
 ## 4. Results ledger — one line each, runs, where it is written
 
