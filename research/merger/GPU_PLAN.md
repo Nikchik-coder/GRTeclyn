@@ -164,6 +164,81 @@ against the −ε twin inflating to t = 100), so only an uncited tail is missing
 The single throat's scalar channel: in flight on GPU 1 as of 2026-09-21, which
 closes the last declared gap in §IX's open-questions list.
 
+### The referee queue (2026-09-21) — every checkpoint is pruned; every arm starts from t = 0
+
+A PRD-style referee pass (2026-09-21, applied to the article as commit
+`74aa7f7e`) leaves exactly one place where a headline rests on an untested
+alternative: **the spiral wall's reading as the spacetime's is conditional on
+the moving-puncture slicing family** (article §VII.C now says so, with the lc1
+arm reported and Alcubierre's gauge-shock paper cited). Everything below is
+ordered by how much referee-resistance a card-hour buys. It supersedes "none of
+it is necessary" above **only** for R1–R3: those decide whether §VII.C's
+conditionality paragraph stays a caveat or becomes a retraction, and either
+answer is worth having before submission.
+
+**Checkpoint audit (2026-09-21, 05:40).** `/tmp/grteclyn_scratch` holds **no
+`Chk` directory anywhere** — the p012 t = 50 ladder seed, every `_keep_*`, the
+fly-by rolling keeps and the head-on V1c seeds are all pruned (per the
+MANIFEST_CLEANUP notes, on the user's word) — so nothing restarts; every arm
+below is from initial data. What survives, all plotfiles: the v2 spiral
+lvl5-from-0 slice at **t = 59.0** (level 5, one unit before that arm's death —
+now archived off /tmp to
+`runs/wormhole_merger/05_binary_spiral/_keep_v2_lvl5from0_plt05900/`, 6.2 GB,
+file list verified), the pure-quadrupole scalar arm's t = 51–53 (in flight),
+and two t = 100 finals (head-on lvl5 scalar, single −ε ml4).
+
+**R0 — free, no card: a shape-free MOTS hunt on the archived t = 59.0 slice.**
+Run a deformable/flow surface finder (or a dense scan not star-shaped about the
+pit) over the archived level-5 plotfile. Success reads: "no MOTS at t = 59 by a
+shape-free instrument" — item 8's caveat measured at the most incriminating
+time on the record. The other outcome — a deformed common MOTS — retracts the
+naked-wall reading, which is exactly why this must run before R1 spends a card.
+
+**R1 — η at the wall. ~4.5 h.** p = 0.12, L = 64, N = 128, level 3, from t = 0,
+`eta` 1 → 4, stop_time 60. η is the one gauge knob never tested anywhere on the
+record (the v1g eta4 template's rationale transfers: a shift-only freeze was
+the fastest death on record, so the shift is the prime suspect). Success reads:
+wall at t ≈ 52 again → the wall survives the shift clock. Wall gone or pushed
+past the merger → the rival reading wins and §VII.C is rewritten, before a
+referee makes us.
+
+**R2 — the out-of-family lapse at the wall. ~4.5 h.** Same arm,
+`lapse_power` 1 → 2 (∂ₜα ∝ −α²K, the harmonic end of the Bona–Massó family;
+a runtime parameter, no code change — verified in
+`Source/CCZ4/MovingPunctureGauge.hpp`). This is the referee's named experiment.
+A true shock-avoiding lapse (f = 1 + κ/α², Alcubierre 2003) is a small
+`MovingPunctureGauge` edit if the power swap proves interesting.
+
+**R3 — the same gauge on the head-on, the control. ~2.2 h per arm.** Head-on
+d = 8, level 3, from t = 0, with R1's η (and, if run, R2's lapse), stop_time 30.
+Success reads: common MOTS still at t ≈ 22 → the censored side is gauge-robust,
+which is what makes R1/R2 readable as statements about the wall rather than
+about the gauge globally. The v1g templates exist
+(`templates_scan/params_v1g_{eta4,lapse4,ko1}_d8_t100.txt`); drop their
+`amr.restart` inheritance and they are these arms.
+
+**R4 — the half-mass head-on at level 5. ~8.5 h.** The censored/naked rule's
+one untested arm (§VII.C's own last line): d = 6, m = 0.5, level 5 from t = 0,
+stop_time 30, at the seamless arm's measured ~3.5 u/h. Carried past t = 14
+behind its t = 12 MOTS → the rule keeps its datapoint; dies anyway → the rule
+loses an arm and the article says so.
+
+**R5 — the geometric flux and the mass integral (item 7, the campaign's
+largest gap). Code first, then cards.** A sphere stream carrying α, βⁱ and the
+induced metric (or an in-code geometric flux) plus a quasi-local mass surface
+integral. Then: head-on level 3 to t = 100 (~7 h) closes the balance on the one
+channel with a horizon; a spiral L = 64 level-3 twin (~4.5 h) prices the gauge
+correction on the negative-flux channels; the full fly-by at L = 128 level 5
+(46.7 h measured) is the complete answer and can wait for a revision request.
+
+**Not on this queue, and why.** GRTresna: the bridge is dead (dropped
+2026-09-15) and referee Major C is answered by the measured-junk argument now
+in §XI.A — the defect's net kick is the back-extrapolated 7×10⁻⁴, inside the
+measured linear window. The compressive-background arm: item 10's experiment,
+post-submission. The three items of "Left to run" above stand unchanged.
+Rules of §6 apply: one launch at a time, through `launch.sh`, on the user's
+word; GPU 1 is the scalar arm until ~11:10, GPU 0 is free.
+
 ## 4. Results ledger — one line each, runs, where it is written
 
 - **A lone throat is unstable** at the GGS rate; the binary wall is its clock. `single_hold_t100`. README (exact data section), INSTABILITY.md.
