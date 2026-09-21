@@ -42,6 +42,51 @@ mouth-instrumented spiral arm (t = 0–50, a shorter and coarser record of an
 encounter the kept arm shows whole), and the two `hold_branch_*` pairs, which
 carried two fields each rather than a run.
 
+## The late speckle is noise, not a rendering artefact
+
+From t ~ 70 the Weyl4, K and Psi4 movies grow salt-and-pepper speckle inside a
+sharp-edged square around the remnant. **It is real, it is in the data, and it
+is already accounted for in the article** -- it is not a bug in the movies and
+it is not the stitch.
+
+* **The square outlines are AMR refinement-box edges** (measured half-widths
+  20.5 and ~8 about the centre on the spiral). The noise is confined to the
+  refined levels, which is why it stops dead at a straight edge instead of
+  fading out.
+* **The speckle is genuine grid-scale oscillation, not aliasing.** That was
+  checked rather than assumed: the head-on's surviving t = 100 plotfile was
+  re-sliced at 2048 x 2048 and area-averaged back down to the cached 512 x 512.
+  The result is statistically identical to the direct 512 render -- 18.5 % of
+  cells more than half off their local median, p95 roughness 2.598, r.m.s.
+  2.225e-4, all three matching to every digit. Supersampling changes nothing,
+  so the field really does oscillate cell to cell there. (The first diagnosis
+  in this file's history blamed the 512-pixel raster. It was wrong.)
+* **It only becomes visible late because the signal has gone.** By t = 100 the
+  physical Psi4 is ~1.5e-4 against a colour scale whose maximum is 1.3e-2 --
+  two decades down. The scale is fixed over the whole series on purpose, and
+  symlog then renders that floor at full contrast. Early on the burst dominates
+  and the same noise is invisible.
+
+Measured as the fraction of cells more than 50 % off their local median, in the
+refined annulus:
+
+| arm | t = 60 | t = 80 | t = 100 |
+|---|---|---|---|
+| head-on `lvl5from0_scalar_t100` (free, NO freeze) | 0.9 % | 5.6 % | 9.4 % |
+| spiral, freeze half of the stitch | 0.3 % | 6.5 % | 11.0 % |
+| spiral, free half | 0.3 % | -- | -- (ends at 59.94) |
+
+**So it is not the interior freeze and not the stitch**: the head-on arm has no
+freeze anywhere on its record and does the same thing on the same clock. The
+spiral's free arm simply dies before the onset. The seam check at t = 59/60
+was made before this starts and is unaffected.
+
+This is the late Psi4 floor growth of the article's Sec. VIII A, which is why
+**every wave window in the paper is gated per sphere, ahead of its own onset**.
+Nothing in the figures is read from this stretch. A viewer should read the late
+frames of any Weyl4 or K movie as "below the campaign's own noise floor", not as
+structure.
+
 ## Reading the folder names
 
 Folder names are the run names, so a movie can always be traced to its line in
