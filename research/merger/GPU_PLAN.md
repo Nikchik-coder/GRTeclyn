@@ -253,8 +253,10 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   each L = 64 level-3 arm's AMReX arena grows to ~32 GB, so **two arms per
   80 GB card is the ceiling** — memory at rest says nothing about the arena's
   appetite. Failed attempt archived as `..._OOMFAIL_2026-09-21` (registry row
-  annotated); an auto-requeue watcher relaunches it on GPU 0 the moment R3a's
-  binary exits (~3 h).
+  annotated); an auto-requeue watcher was armed, died with its session, and
+  was overtaken by events: **the second attempt launched 2026-09-21 ~06:55 on
+  the SECOND node's (ilya-test-3-gpu-1-0) free card**, `--keep-last 8` so the
+  death window survives for the flow-finder hunt (see the R0 verdict below).
 - **R3a** `merge_headon_flip_d8_eta4_t030` — GPU 0, in flight.
 - **R3b** `merge_headon_flip_d8_lp2_t030` — GPU 1, in flight beside the
   scalar arm (52.9 GB of 80 together; the scalar arm's ETA slips with the
@@ -262,6 +264,50 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
 - **R0** — in progress offline (no card): shape-free MOTS hunt on the
   archived t = 59.0 slice, validated first against the head-on t = 100
   plotfile's known horizon.
+
+### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
+
+The flow finder (`grteclyn-wrapper/scripts/validation/ah_flow_finder.py`,
+commits 7383d260 + 7656f24d) run on the archived t = 59.0 level-5 slice:
+
+- **lmax 4, 12 seed variants**: nine flows land on ONE surface to 4 digits
+  (R_areal 4.720–4.723, M_MS 2.3607, θ_in = −0.18, h ∈ [2.35, 2.95] about the
+  pit, 23 % peak-to-peak) and stall at rms θ_out = 3.05e-3 — pure l > 4
+  residual (mean −8e-6, 48 % of the area negative).
+- **lmax 6, inner + outer seeds**: BOTH CONVERGE below tolerance (rms 1.99e-3).
+  Inner lands at R = 4.709 fully trapped (frac_neg 1.00, mean −2.0e-3), outer
+  at R = 4.732 from the untrapped side (frac_neg 0.09, mean +1.6e-3) — the
+  same surface squeezed from both sides: **R_areal = 4.72 ± 0.01,
+  M_MS = 2.361 ± 0.001**, θ_in ≤ −0.18. The open throat (R = 3.87) is INSIDE.
+- **Why every star scan missed it, measured**: about the pit, every coordinate
+  sphere r = 1.8–3.4 carries BOTH signs of θ_out (−0.2 to +0.15), at level 3
+  and level 4 — no sphere is trapped or untrapped, the star-shaped bracket
+  never closes. Referee Major D was a direct hit. The prof arm's in-run
+  "no MOTS at t = 55/56/57" rows are statements about spheres, not slices.
+- **Level-4 cross-check**: same surface (R 4.725, M 2.346) from a different
+  snapped centre 0.26 away; residual 6× larger because the fine patches end
+  at r ≈ 2.3 (stitching noise, visible independently in the star scan's
+  level-4 rows). Level-3 sampling is the clean instrument here.
+- **Timing**: the slice sits 0.94 before the seam-free arm's NaN (t = 59.943).
+  So the wall is censored — and refinement still never rescues the spiral,
+  which reopens §VII.C's "why" (margin? slicing shock at a young horizon?).
+  Article rewritten accordingly (abstract, §II, §V, §VII.C, §VIII, §VIII.F,
+  items 1 + 8, seeds section), this date.
+
+**The second node's slice treasure (found 2026-09-21 ~06:50 on
+ilya-test-3-gpu-1-0's local scratch, hunted read-only, nothing copied to
+NFS per the user's storage rule):**
+- `_keep_spiral_lvl5_wall_scan`: Plt05500/05600/05700 (t = 55, 56, 57 — the
+  slices the blind star scan cleared) → formation-time bound.
+- `v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700` scratch: Plt09700–10000
+  (t = 97–100) + Chk10000 — the fill (r ≤ 1.9) is INSIDE the t = 59 MOTS
+  (h ≥ 2.33), so the freeze arm's horizon is quotable → settled remnant
+  R(t), M(t). The freeze arms' old caveat "no horizon to hide it behind"
+  is retroactively cured at t ≥ 59 (unknown before).
+- `_keep_spiral_lvl5_t57_seed`: Chk05700 (restart-zero-step can mint more
+  slices if the hunt needs them).
+- Hunt in flight over all seven slices (lmax 6, two-sided seeds; freeze
+  slices seeded at 2.0/3.2 to stay outside the frozen skin), ETA ~09:15.
 
 ## 4. Results ledger — one line each, runs, where it is written
 
