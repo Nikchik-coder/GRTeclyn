@@ -22,7 +22,7 @@ Reads, all under ``campaign/01_single_throat/seed/single_pureq_q1e2_ml4_t100``:
 STYLE (the PRD review grammar of the spiral page): a wide context strip over
 a 2 x 3 grid, style.prd frame, no titles, letter tags above the frames, no
 boxed key, every series named in place.  Monochrome ink plus the one accent:
-DEEP_GREEN is the horizon instrument -- the oriented scan's MOTS -- and nothing
+GOLD is the horizon instrument -- the oriented scan's MOTS -- and nothing
 else.  Ordered time families (the radial snapshots) are a grey ramp, light =
 early.  min chi is labelled as what it is, the ORIGIN monitor (the far
 universe's compactified infinity), not the throat.
@@ -89,15 +89,15 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- context strip: the throat itself, and the horizon instrument -----
     axT.plot(ar[:, 0], ar[:, 1], color=style.INK, linewidth=1.4, zorder=3)
-    axT.plot(hA["time"], hA["R_mots"], color=style.DEEP_GREEN, linewidth=0.0,
+    axT.plot(hA["time"], hA["R_mots"], color=style.GOLD, linewidth=0.0,
              marker="o", markersize=2.4, zorder=4)
     axT.axvline(T_MOTS, color=style.FAINT, linewidth=0.7, zorder=1)
     axT.text(T_MOTS + 0.8, 5.35, r"MOTS from $t=33$", fontsize=7,
-             color=style.DEEP_GREEN, ha="left")
+             color=style.GOLD, ha="left")
     axT.text(2, 3.55, "minimal-surface areal radius", fontsize=7.5,
              color=style.INK)
     axT.text(72, 2.85, "oriented scan's MOTS", fontsize=7,
-             color=style.DEEP_GREEN)
+             color=style.GOLD)
     axT.set_xlim(0, 100)
     axT.set_ylim(1.5, 6.0)
     axT.set_ylabel(r"$R_{\rm areal}$")

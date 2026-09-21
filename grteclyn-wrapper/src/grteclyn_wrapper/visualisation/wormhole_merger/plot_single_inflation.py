@@ -34,7 +34,7 @@ crosses the scan window.  Panel (e) shows exactly that march, in chi.
 STYLE (the PRD review grammar of the collapse page): a wide context strip
 over a 2 x 3 grid, style.prd frame, no titles, letter tags above the frames,
 no boxed key, every series named in place.  Monochrome ink plus the one
-accent: DEEP_GREEN is the horizon instrument -- here the anti-trapped
+accent: GOLD is the horizon instrument -- here the anti-trapped
 certificate -- and nothing else.  Ordered time families (the radial
 snapshots) are a grey ramp, light = early.  min chi is labelled as what it
 is, the ORIGIN monitor (the far universe's compactified infinity), not the
@@ -108,7 +108,7 @@ def main(argv: list[str] | None = None) -> int:
     axT.plot(ar[:, 0], ar[:, 1], color=style.INK, linewidth=1.4, zorder=3)
     axT.plot(tw[:, 0], tw[:, 1], color=style.CONTEXT, linewidth=1.1, zorder=2)
     m = ar[:, 0] <= t_anti[1]
-    axT.plot(ar[m, 0], ar[m, 1], color=style.DEEP_GREEN, linewidth=0.0,
+    axT.plot(ar[m, 0], ar[m, 1], color=style.GOLD, linewidth=0.0,
              marker="o", markersize=2.0, zorder=4)
     axT.axvline(T_DEPART, color=style.FAINT, linewidth=0.7, zorder=1)
     # Every label here sits in a gap MEASURED off the two curves, not guessed:
@@ -118,7 +118,7 @@ def main(argv: list[str] | None = None) -> int:
     # the twin names itself from BELOW its own flat line, and the kicked
     # arm's label tucks under its plateau.
     axT.text(2.0, 6.4, "anti-trapped shell present, $t=1$--$35$", fontsize=7,
-             color=style.DEEP_GREEN)
+             color=style.GOLD)
     axT.text(97.5, 10.7, r"$\varepsilon=-0.01$", fontsize=7.5,
              color=style.INK, ha="right", va="top")
     # ONE line, not two: the band between the twin's flat 3.89 and the frame

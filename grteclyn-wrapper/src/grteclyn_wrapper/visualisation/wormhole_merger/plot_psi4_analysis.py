@@ -251,7 +251,7 @@ def main(argv: list[str] | None = None) -> int:
         t_pk = min((p[0] for p in peaks[r]), key=lambda tp: abs(tp - r - ref))
         j = int(np.argmin(np.abs(t - t_pk)))
         ax.plot(t_pk - r, np.abs(series[r])[j], marker="o", ms=5, zorder=6,
-                color=style.DEEP_GREEN, mec=style.GROUND, mew=0.8)
+                color=style.GOLD, mec=style.GROUND, mew=0.8)
     if speeds:
         style.note(ax, "\n".join(rf"$R={a:g}\rightarrow{b:g}$:  $v={v:.3f}\,c$"
                                  for a, b, v in speeds), fontsize=8.5)

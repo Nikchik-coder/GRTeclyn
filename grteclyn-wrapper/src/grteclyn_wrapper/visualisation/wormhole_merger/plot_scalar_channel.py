@@ -56,7 +56,7 @@ Reads ``scalar_modes.dat``, ``psi4_mode_l2_all.dat`` and ``horizon_scan.dat``
 under ``campaign/`` and writes ``figures/08_waves/scalar_channel``.
 
 STYLE: single-column PRD frame, three stacked panels on one clock, no boxed
-key, every curve named in place.  DEEP_GREEN is spent on the scalar channel --
+key, every curve named in place.  GOLD is spent on the scalar channel --
 the quantity the page exists to introduce -- and the gravitational channel,
 already the subject of two figures, is drawn in INK.
 """
@@ -195,7 +195,7 @@ def main(argv: list[str] | None = None) -> int:
         k = tg <= a["t_cut"]
         axA.plot(tg[k], Eg[k] / norm, color=style.INK, **kw)
         k = ts <= a["t_cut"]
-        axA.plot(ts[k], Ep[k] / norm, color=style.DEEP_GREEN, **kw)
+        axA.plot(ts[k], Ep[k] / norm, color=style.GOLD, **kw)
     axA.axhline(0.0, color=style.FAINT, linewidth=0.7, zorder=1)
     axA.set_ylabel(r"$E(<t)\,/\,E_{\rm GW}$")
     axA.set_ylim(-3.2, 1.7)
@@ -206,7 +206,7 @@ def main(argv: list[str] | None = None) -> int:
     axA.text(64.0, 1.0, "gravitational", fontsize=7, color=style.INK,
              va="center")
     axA.text(64.0, -2.37, "scalar,\nghost sign", fontsize=7,
-             color=style.DEEP_GREEN, va="center")
+             color=style.GOLD, va="center")
     axA.text(97.0, -0.55, "solid fly-by\ndashed spiral", fontsize=6.5,
              color=style.MUTED, va="center", ha="right")
     # The two arms land within 3 % of each other, so they take one label
@@ -214,7 +214,7 @@ def main(argv: list[str] | None = None) -> int:
     axA.text(97.0, 1.45,
              rf"ends at $-{ratio[('flyby', 30)][2]:.1f}$ and "
              rf"$-{ratio[('spiral', 30)][2]:.1f}$",
-             fontsize=6.5, color=style.DEEP_GREEN, va="center", ha="right")
+             fontsize=6.5, color=style.GOLD, va="center", ha="right")
 
     # ---- (b) which multipole carries it ------------------------------------
     # Two opposite scalar charges have a dipole moment and a black-hole binary
@@ -222,7 +222,7 @@ def main(argv: list[str] | None = None) -> int:
     # and it is six orders of magnitude above everything else here.
     a = arms["flyby"]
     tl, per_l = a["per_l"][30]
-    for l, col, lw in ((1, style.DEEP_GREEN, 1.4), (0, style.MUTED, 1.0),
+    for l, col, lw in ((1, style.GOLD, 1.4), (0, style.MUTED, 1.0),
                        (2, style.CONTEXT, 1.0)):
         k = (tl <= a["t_cut"]) & (per_l[l] > 0)
         axB.plot(tl[k], per_l[l][k], color=col, linewidth=lw, zorder=3)
@@ -231,7 +231,7 @@ def main(argv: list[str] | None = None) -> int:
     axB.set_ylabel(r"$\sum_m|\dot A_{\ell m}|^2$")
     axB.set_xlabel(r"$t$")
     axB.text(64.0, 3e-3, r"$\ell=1$, dipole", fontsize=7,
-             color=style.DEEP_GREEN, va="center")
+             color=style.GOLD, va="center")
     # l = 0 and l = 2 are on top of each other at this scale, so they take one
     # label: the panel's statement is the gap, not which of the two is which.
     axB.text(64.0, 1.5e-9, "$\\ell=0$ and $\\ell=2$,\n$10^{-7}$ of it",
@@ -240,7 +240,7 @@ def main(argv: list[str] | None = None) -> int:
              va="center", ha="right")
 
     # ---- (c) where a coordinate sphere stops being outside the source -------
-    for R, col, lw in ((14, style.CONTEXT, 1.0), (30, style.DEEP_GREEN, 1.4)):
+    for R, col, lw in ((14, style.CONTEXT, 1.0), (30, style.GOLD, 1.4)):
         ts, _, kin = arms["flyby"]["kin"][R]
         k = ts <= T_MAX
         axC.plot(ts[k], np.abs(kin[k]), color=col, linewidth=lw, zorder=3)
@@ -274,9 +274,9 @@ def main(argv: list[str] | None = None) -> int:
     # ends well short of the R = 14 curve's late climb into the same band.
     axC.text(2.5, 1.6e3, "left of the blue rule\nboth spheres lie outside the mouths",
              fontsize=6, color=style.MUTED, va="top")
-    # Under its own curve, not on it: at y = 1.5e-4 the deep green line ran
+    # Under its own curve, not on it: at y = 1.5e-4 the gold line ran
     # straight through the label.
-    axC.text(44.0, 2.0e-5, r"$R=30$", fontsize=7, color=style.DEEP_GREEN,
+    axC.text(44.0, 2.0e-5, r"$R=30$", fontsize=7, color=style.GOLD,
              ha="center", va="top")
     axC.text(30.0, 2.0e-2, r"$R=14$", fontsize=7, color=style.CONTEXT,
              ha="right", va="center")

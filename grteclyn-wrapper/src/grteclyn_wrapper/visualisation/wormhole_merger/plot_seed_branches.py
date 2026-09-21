@@ -69,7 +69,7 @@ import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import RUNS_ROOT, find_run  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.style import (  # noqa: E402
-    DEEP_GREEN, FAINT, INK, MUTED, edge_label, prd, save,
+    GOLD, FAINT, INK, MUTED, edge_label, prd, save,
 )
 
 R_EXACT = 3.8895      # closed form for the drainhole a = 2, m = 1
@@ -389,17 +389,17 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
         sgn = np.sign(RR[sel][-1] - exact)
         tg = np.linspace(f0, f1, 50)
         axA.plot(tg, exact + sgn * np.exp(lnA + lam * tg),
-                 color=DEEP_GREEN, linewidth=1.9, zorder=5)
+                 color=GOLD, linewidth=1.9, zorder=5)
         if sgn > 0:
             fit_top = (f1, exact + np.exp(lnA + lam * f1))
         print(f"  exp fit {lab:>6s} over t = {f0:.0f}-{f1:.0f}:"
               f" rate {lam:.3f}, tau {1 / lam:.2f}")
-    # One deep green name serves both deep green lines, in equation form -- the
+    # One gold name serves both gold lines, in equation form -- the
     # user's call (2026-09-16): "exp. fit" out, the law itself in.  Up-left of
     # the inflation fit's end, where the heavy arm has not yet risen.
     if fit_top is not None:
         axA.text(fit_top[0] - 1.0, fit_top[1] + 0.15, r"$\propto e^{t/\tau}$",
-                 color=DEEP_GREEN, fontsize=8, ha="right", va="bottom")
+                 color=GOLD, fontsize=8, ha="right", va="bottom")
     axA.set_xlim(0, xhi)
     axA.set_xlabel(r"$t$")
     axA.set_ylabel(r"$R_{\mathrm{min}}$")

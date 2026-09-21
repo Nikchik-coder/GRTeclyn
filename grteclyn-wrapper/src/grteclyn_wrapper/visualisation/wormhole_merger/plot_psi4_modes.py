@@ -144,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
             ax.plot(d[:, 0], R * d[:, col], zorder=3 if j == 0 else 2, **kws[j])
         if args.restart is not None:
             ax.axvline(args.restart, color=style.MUTED, ls=(0, (1, 2)), lw=0.9)
-            ax.axvline(args.restart + R / args.speed, color=style.DEEP_GREEN, ls=(0, (1, 2)), lw=0.9)
+            ax.axvline(args.restart + R / args.speed, color=style.GOLD, ls=(0, (1, 2)), lw=0.9)
         # the subject's extrema after the junk band (or the restart)
         after = args.annotate_after if args.annotate_after is not None else (
             args.restart if args.restart is not None else R + JUNK_BAND[1])

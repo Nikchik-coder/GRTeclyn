@@ -61,7 +61,7 @@ are clipped SETTLE past their first row.
 STYLE (2026-09-18, "PRD review style", the seed-branches grammar): full page
 (7.05 x 6.4), a wide context strip over a 3 x 3 grid; style.prd frame, no
 titles, letter tags above the frames, semantics in the caption; no boxed key,
-every series named in place.  Monochrome ink plus the one accent: DEEP_GREEN is
+every series named in place.  Monochrome ink plus the one accent: GOLD is
 the oriented horizon instrument -- filled diamonds for the offline fine scans,
 open circles for the live scans -- and nothing else.
 """
@@ -231,7 +231,7 @@ def main(argv: list[str] | None = None) -> int:
                 ha="left", va="bottom", fontsize=9, color=style.INK)
 
     def rules(ax):
-        ax.axvline(T_MOTS, color=style.DEEP_GREEN, lw=0.7, ls=(0, (1, 2)), zorder=1)
+        ax.axvline(T_MOTS, color=style.GOLD, lw=0.7, ls=(0, (1, 2)), zorder=1)
         ax.axvline(T_WALL, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
 
     # (a) the approach, and where each grid's story ends ----------------------
@@ -255,7 +255,7 @@ def main(argv: list[str] | None = None) -> int:
     axA.text(0.0, 3.9, "separation of the $\\chi$ pits\n(level 5, from $t=0$)", fontsize=7.5,
              ha="left", va="top", color=style.INK, linespacing=1.25)
     axA.text(29.5, 5.6, "common MOTS, $t=22$", fontsize=7.5, ha="left",
-             va="bottom", color=style.DEEP_GREEN)
+             va="bottom", color=style.GOLD)
     axA.text(29.5, 3.4, "level-3 wall, $t=26.9$", fontsize=7.5, ha="left",
              va="bottom", color=style.MUTED)
     axA.text(44.0, 1.15, "one merged pit, to $t=100$ -- one grid, no seam",
@@ -337,8 +337,8 @@ def main(argv: list[str] | None = None) -> int:
     def scan_points(ax, ts_, ys, filled=False, small=False):
         ax.plot(ts_, ys, ls="none", marker="D" if filled else "o",
                 ms=3.4 if filled else (2.6 if small else 3.2),
-                mfc=style.DEEP_GREEN if filled else style.GROUND,
-                mec=style.DEEP_GREEN, mew=1.0, zorder=5 if filled else 4)
+                mfc=style.GOLD if filled else style.GROUND,
+                mec=style.GOLD, mew=1.0, zorder=5 if filled else 4)
 
     for ax, k in ((axF, 2), (axG, 3)):
         scan_points(ax, tms, [Rms, Mms][k - 2], small=True)
@@ -380,9 +380,9 @@ def main(argv: list[str] | None = None) -> int:
     axF.set_ylabel(r"$R_{\mathrm{MOTS}}$")
     axF.set_ylim(3.9, 6.05)
     axF.text(28.5, 5.98, "offline scan,\n$\\mathrm{d}x=0.0625$", fontsize=7.5,
-             ha="left", va="top", color=style.DEEP_GREEN, linespacing=1.25)
+             ha="left", va="top", color=style.GOLD, linespacing=1.25)
     axF.text(61.0, 4.62, "live scan\n(aperture gaps)", fontsize=7.5, ha="left",
-             va="bottom", color=style.DEEP_GREEN, linespacing=1.25)
+             va="bottom", color=style.GOLD, linespacing=1.25)
     axG.set_ylabel(r"$M_{\mathrm{MS}}$")
     axG.set_ylim(2.05, 3.42)
     # The asymptote is the news, so it is labelled on its own rule rather than
@@ -401,7 +401,7 @@ def main(argv: list[str] | None = None) -> int:
     w5 = (a5C["t"] >= 19.5) & (a5C["t"] <= T_WALL)
     axH.plot(a5C["t"][w5], a5C["th_out"][w5], color=style.CONTEXT, lw=0.9)
     axH.axhline(0.0, color=style.FAINT, lw=0.7)
-    axH.axvline(T_MOTS, color=style.DEEP_GREEN, lw=0.7, ls=(0, (1, 2)), zorder=1)
+    axH.axvline(T_MOTS, color=style.GOLD, lw=0.7, ls=(0, (1, 2)), zorder=1)
     axH.set_xlim(13.4, 28.6)
     axH.set_ylim(-0.62, 0.86)   # headroom for theta_+'s name over its flat start
     axH.set_xlabel(r"$t$")

@@ -26,7 +26,7 @@ cover.  Peak-to-peak timing is what the dashboards print, and it fails here
 twice over -- the BBH control's merger envelope is a ~15-unit plateau at
 both spheres, so its peak times alone read v = 0.57 where the waveform lag
 reads 0.82, and the spiral's outer spheres have no peak yet at all.  The
-deep green dots sit where the CORRELATED front lands on each envelope (the
+gold dots sit where the CORRELATED front lands on each envelope (the
 innermost envelope maximum, advanced by the measured lags), so the dots and
 the quoted v/c are one measurement; a sphere the front has not yet reached
 inside the record gets no dot.
@@ -43,7 +43,7 @@ keys, and after 2026-09-16 review NO TEXT INSIDE THE PANELS AT ALL -- the
 scenario, its knob, the mode/spheres and the speeds all sit on the strip
 above each row's frames, where no waveform can collide with them --
 monochrome ink with the grey ramp inner->outer on the envelopes, the
-deep green accent reserved for the wavefront, (a)-(e) tags, semantics in the
+gold accent reserved for the wavefront, (a)-(e) tags, semantics in the
 caption.
 """
 
@@ -236,7 +236,7 @@ def main(argv: list[str] | None = None) -> int:
         # ---- right: every sphere's envelope, and the wavefront ----------
         # Envelopes on retarded time fold onto one curve when the burst
         # travels at c and falls as 1/r -- both checks in one panel.  Grey
-        # ramp inner (ink) to outer (faint); deep green dots where the
+        # ramp inner (ink) to outer (faint); gold dots where the
         # correlated front lands on each envelope.
         for k, R in enumerate(r["radii"]):
             tt_k, yy_k = trim_zeros_tail(t, r["series"][R])
@@ -262,7 +262,7 @@ def main(argv: list[str] | None = None) -> int:
                 a_dot = np.interp(t_dot, tt_k, np.abs(yy_k))
                 # ms 4.2, not 2.6: at a two-column strip's scale the smaller
                 # marker with its white rim read as a speck on the envelope.
-                axR.plot(u_front, a_dot, "o", ms=4.2, color=style.DEEP_GREEN,
+                axR.plot(u_front, a_dot, "o", ms=4.2, color=style.GOLD,
                          markeredgecolor="white", markeredgewidth=0.6, zorder=5)
         axR.set_ylim(0, 1.18 * pk)
         axR.set_yticks(axL.get_yticks()[1:])   # 0 and the round tick

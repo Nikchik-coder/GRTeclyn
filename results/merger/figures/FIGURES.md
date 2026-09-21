@@ -51,7 +51,7 @@ constraints. MOTS from t = 33, R 3.80 → 2.41, M_MS 1.90 → 1.24.
 `plot_single_inflation` (no arguments): the ε = −0.01 level-4 arm to t = 100
 on the same 1 + 2×3 grammar, with the unkicked level-4 twin drawn beside it
 in (a) and the anti-trapped rows (θ₊ > 0 and θ₋ > 0, the MOTS's mirror)
-marked in green over t = 1–35. R 3.81 → 11.39 (×3.0) against the twin's ×2.2,
+marked in gold over t = 1–35. R 3.81 → 11.39 (×3.0) against the twin's ×2.2,
 parting by 10 % at t = 25. Panels (e)/(f) lead with χ, not |K|: the signature
 of this branch is the compactified inner sheet's χ-trough marching outward
 (r = 0.016 → 2.9), and |K| never leaves 0.06. That march is also why the
@@ -114,7 +114,7 @@ figure is about. A running r.m.s. was tried and is NOT enough: shorter than a
 period it still carries the oscillation, longer and it smears the decay.
 (a) the head-on arm `merge_headon_flip_d8_v1_lvl5from0_scalar_t100` (level 5
 from t = 0, scalar stream on -- the re-run that closed the gap) at R = 10/14/18.
-Common MOTS at t = 21.5 (green rule); the remaining hair leaves as one l = 1,
+Common MOTS at t = 21.5 (dotted grey rule); the remaining hair leaves as one l = 1,
 m = 0 pulse cresting later at each sphere, then decays: log-linear fits over
 t = 30-95 give tau = 19/23/28 (dashed). That is the horizon's OWN clock -- the
 remnant's M_MS settles with tau = 19.4 +- 0.8, Fig. headon_collapse (g).
@@ -214,7 +214,7 @@ fly-by's spread falls from 316 % to 40 %.
 Measured E_rad/M (dominant multipole, +-m doubled, sphere spread in brackets):
 fly-by 9.3e-2 [5.6-9.3e-2], spiral 2.2e-2 [1.7-2.2e-2], head-on 3.3e-3
 [2.9-3.3e-3], BBH twin 2.6e-3 [2.4-2.6e-3], throat 3.2e-5 [2.6-3.2e-5]. The
-two open burgundy bars in (d) are NOT runs of this campaign and NOT closed
+two open gold bars in (d) are NOT runs of this campaign and NOT closed
 forms: they are the published equal-mass non-spinning vacuum results from rest
 at infinity, head-on 5.5e-4 and quasi-circular 1 - M_f/M = 4.84e-2. The twin
 sits just above the head-on end because its momentum is 59 % of circular
@@ -408,7 +408,7 @@ per that file's own warning — an earlier "turns over at level 7" quote that
 averaged them is withdrawn). Plain deaths 52.07 / 53.10 / 55.60 / 56.13 /
 56.20 (+1.03/+2.51/+0.53/+0.06 per doubling), halfstep control +0.36 on its
 level-5 twin, FAINT reference rule at 60.445 = the L = 128 production arm
-restarted at t = 36. No horizon at any rung; no burgundy on this figure.
+restarted at t = 36. No horizon at any rung; no gold on this figure.
 Redraw only if the ladder gains rungs.
 
 Same day, the article's gallery/ligo captions were synced to the current

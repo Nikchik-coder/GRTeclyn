@@ -24,18 +24,22 @@ its colour second, so the figure survives a greyscale printer and a
 colour-blind reader; colour is the redundant channel, never the only one.
 
 ``series(i)``   unordered families (this run against that one).  Four slots, in
-                a FIXED order -- ink, deep blue, deep green, warm grey -- each
+                a FIXED order -- ink, deep blue, gold, neutral grey -- each
                 with its own dash.  There is no fifth: a fifth series means the
                 family is ordered (use ``ordinal``) or the figure is doing two
-                jobs.  The four were checked, not eyeballed: worst pair 18.1
-                OKLab dE under normal vision and 13.9 under simulated
+                jobs.  The four were checked, not eyeballed: worst pair 17.2
+                OKLab dE under normal vision and 12.7 under simulated
                 protanopia (Vienot-Brettel-Mollon), against thresholds of 15
                 and 8.  The accent was a burgundy #9b2226 until 2026-09-19:
                 21.7 on the first number and only 10.6 on the second, and in
                 greyscale it landed at L* 34 -- on top of MUTED (39) and
                 DEEP_BLUE (32), an accent with the tone of the context it was
-                meant to stand out from.  Deep green sits at L* 44, clear of
-                DEEP_BLUE in tone and of every common deficiency in hue.
+                meant to stand out from.  Gold inverts that: at L* 64 it is
+                the LIGHTEST line on the page, and CONTEXT was darkened to
+                keep it so.  Gold is also where the yellow stops: it holds
+                2.8:1 against white at 1.9 pt, and #e6b800 -- the yellow that
+                actually looks like yellow -- holds 1.9:1 and comes out
+                lighter in greyscale than the context line it outranks.
 
 ``ordinal(n)``  ORDERED families -- refinement levels, extraction radii, kick
                 amplitudes.  ``cividis`` reversed and cut off before its pale
@@ -75,8 +79,8 @@ import matplotlib
 import numpy as np
 
 __all__ = [
-    "CONTEXT", "DEEP_BLUE", "DEEP_GREEN", "DIVERGING", "FAINT", "GRID",
-    "GROUND", "INK", "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
+    "CONTEXT", "DEEP_BLUE", "DIVERGING", "FAINT", "GRID", "GOLD", "GROUND", "INK",
+    "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
     "callout", "edge_label", "family", "legend", "note", "ordinal",
     "ordinal_series", "paper", "prd", "save", "series", "typography",
 ]
@@ -92,8 +96,18 @@ GROUND = "#ffffff"
 # The three dark hues the recommendation asks for, plus one recessive slot for
 # the curve that is context rather than a result.
 DEEP_BLUE = "#1f4e79"
-DEEP_GREEN = "#1b7837"
-CONTEXT = "#8f8b81"
+GOLD = "#c69214"
+# CONTEXT is NEUTRAL and a shade darker than MUTED's warm grey, and both
+# departures are deliberate: it is the only grey that carries DATA, so it is
+# the only one that can be mistaken for the accent.  A gold accent is LIGHT
+# (L* 64), so the context line has to be the dark one -- at the old warm
+# #8f8b81 (L* 58) the two were six points apart in tone and the greyscale
+# channel was gone.  #7e838a is L* 55, nine points clear, and the darkening
+# stops there: #6f737a would open the gap to sixteen but collapses against
+# DEEP_BLUE for a red-weak reader (7.6 OKLab dE, and 4.3 under deuteranopia).
+# MUTED and FAINT label and recede, never plot, so they keep the warm cast the
+# body text is set in.
+CONTEXT = "#7e838a"
 
 # Fixed order, never cycled.  (colour, dash, linewidth) -- the dash is the
 # primary channel, so the order is chosen to keep adjacent series apart in
@@ -101,21 +115,23 @@ CONTEXT = "#8f8b81"
 _SERIES = (
     (INK, (0, ()), 1.4),
     (DEEP_BLUE, (0, (6.5, 2.2)), 1.5),
-    (DEEP_GREEN, (0, (1.3, 1.7)), 1.7),
+    (GOLD, (0, (1.3, 1.7)), 1.7),
     (CONTEXT, (0, (7.0, 2.0, 1.3, 2.0)), 1.5),
 )
 
 # The SIGN of a declared kick is the thing the eye must read first on the seed
 # scan, so it takes the two poles of the campaign's own palette -- deep blue for
-# a negative kick, deep green for a positive one -- and the shade tracks the
+# a negative kick, gold for a positive one -- and the shade tracks the
 # amplitude.  Same-magnitude pairs, which are the comparison the figure exists
-# to make, separate by 17 / 19 / 20 OKLab dE from the 0.1 rung to the 0.001 one
-# under normal vision and 19 / 19 / 27 under simulated protanopia -- better on
-# every rung than the burgundy family this replaced (17 / 23 / 17 and
-# 17 / 19 / 17), and the pale rung, the weakest of the three, gains the most.
+# to make, separate by 27 / 36 / 21 OKLab dE from the 0.1 rung to the 0.001 one
+# under normal vision and 25 / 35 / 13 under simulated protanopia -- gold
+# against blue is the widest pairing any accent tried has given.  The pale rung
+# is the weak one, here as in every family: a pale gold against a pale blue is
+# two light tints, which is why the seed panel carries the amplitude in
+# LINEWIDTH as well and never in shade alone.
 SIGNED = {
     "-0.1": "#0f3355", "-0.01": DEEP_BLUE, "-0.001": "#6a93bd",
-    "+0.001": "#6da130", "+0.01": DEEP_GREEN, "+0.1": "#0f4e00",
+    "+0.001": "#d5b374", "+0.01": GOLD, "+0.1": "#8b5c00",
 }
 
 

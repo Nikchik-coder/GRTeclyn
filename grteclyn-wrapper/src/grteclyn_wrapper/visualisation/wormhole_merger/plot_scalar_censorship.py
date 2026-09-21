@@ -58,11 +58,15 @@ headon/chi profiles predate it), so it is a re-run and not a re-read -- one
 is on the cards as of 2026-09-21.
 
 STYLE: full-width pair (7.05 x 2.8), style.prd, no titles, no boxed key,
-curves named in place.  DEEP_GREEN is the horizon instrument (the t = 21.5
-rule) and nothing else; scenario colours are the scalar-channel page's --
-DEEP_BLUE fly-by, BURGUNDY spiral, INK head-on -- and (a)'s three spheres
-are an ink ramp, dark = inner.  The frozen-core stretch is the same burgundy
-at half weight and dashed: same arm's physics, not the same standing.
+curves named in place.  Scenario colours are the scalar-channel page's --
+DEEP_BLUE fly-by, GOLD spiral, INK head-on -- and (a)'s three spheres are an
+ink ramp, dark = inner.  The frozen-core stretch is the same gold at half
+weight and dashed: same arm's physics, not the same standing.  The two rules
+are greys (CONTEXT for the MOTS, FAINT for the wall), not the accent: this
+page spends its one colour on the ARMS, because which arm a curve belongs to
+is the whole question here and the rules are only the clock.  (Until
+2026-09-21 the spiral was a hardcoded burgundy #9b2226, the palette's old
+accent, left behind when the accent moved.)
 """
 
 from __future__ import annotations
@@ -91,7 +95,6 @@ T_MOTS = 21.5      # head-on: first live corrected-orientation common MOTS
 T_WALL = 59.94     # spiral: NaN in h11 on level 5, the uncensored wall
 WINDOW = 25.0      # running-max window: one full period of the dipole
 SMOOTH = 5.0       # Gaussian on log amplitude, to round the staircase
-BURGUNDY = "#9b2226"
 RAMP = {10: "#1a1a18", 14: "#54524c", 18: "#8f8b81"}   # dark = inner
 
 
@@ -149,7 +152,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[censorship] head-on R={R}: envelope {e.max():.2e} -> "
               f"{np.interp(95.0, t, e):.2e} at t=95 "
               f"(x{e.max() / np.interp(95.0, t, e):.0f} down), tau = {-1 / c[0]:.1f}")
-    axA.axvline(T_MOTS, color=style.DEEP_GREEN, lw=0.8, ls=(0, (1, 2)), zorder=1)
+    axA.axvline(T_MOTS, color=style.CONTEXT, lw=0.8, ls=(0, (1, 2)), zorder=1)
 
     # NOTHING is written inside either frame.  Three notes were tried and all
     # three ended up against a spine or a tick label; the key above carries the
@@ -177,9 +180,9 @@ def main(argv: list[str] | None = None) -> int:
     t_all = np.concatenate([ts[join], tf])
     e_all = _envelope(t_all, np.concatenate([ks[join], kf]))
     live = t_all <= T_WALL
-    axB.semilogy(t_all[live], e_all[live], color=BURGUNDY, lw=1.2, zorder=3,
+    axB.semilogy(t_all[live], e_all[live], color=style.GOLD, lw=1.2, zorder=3,
                  label=r"spiral, $R=30$")
-    axB.semilogy(t_all[~live], e_all[~live], color=BURGUNDY, lw=0.9,
+    axB.semilogy(t_all[~live], e_all[~live], color=style.GOLD, lw=0.9,
                  ls=(0, (3, 2)), alpha=0.55, zorder=2,
                  label="spiral, core frozen")
     print(f"[censorship] spiral R=30: {np.interp(T_WALL, t_all, e_all):.2e} at its "
@@ -203,7 +206,7 @@ def main(argv: list[str] | None = None) -> int:
     # in-frame naming is unambiguous anywhere on this page.
     hA, lA = axA.get_legend_handles_labels()
     hB, lB = axB.get_legend_handles_labels()
-    rules = [Line2D([], [], color=style.DEEP_GREEN, lw=0.8, ls=(0, (1, 2)),
+    rules = [Line2D([], [], color=style.CONTEXT, lw=0.8, ls=(0, (1, 2)),
                     label=r"common MOTS, $t=21.5$"),
              Line2D([], [], color=style.FAINT, lw=0.8, ls=(0, (4, 3)),
                     label=r"spiral's wall, $t=59.9$")]
