@@ -21,9 +21,12 @@ directories, and the pack holds directories that are not evolutions:
 * ``<run>.__keep`` -- a byte-identical second copy of a run, left by the
   prune when a plotfile was held back.  Counting it charged the campaign
   twice for the same GPU time: ten of them, **187 h**, a fifth of the old
-  total, and ten evolutions that never ran.
+  total, and ten evolutions that never ran.  A copy is dropped only when the
+  run it copies is still beside it; a lone ``X.__keep`` is the last record of
+  a real evolution and is COUNTED, with a warning.
 * ``*_HOOKFAIL*``, ``*_OLD``, ``*_BAD``, ``*.bak`` -- a launch that failed in
-  the harness and was relaunched under the real name.
+  the harness and was relaunched under the real name.  Always dropped: there
+  is no original to point back to, and it evolved nothing.
 
 Both are *dropped and named* in the report, never silently.  The shakedown
 stage (``01_single_throat/gauge`` and ``grid``) is counted but reported on its
@@ -39,7 +42,12 @@ from pathlib import Path
 
 # Directory names that are a COPY or a dead launch, not an evolution of their
 # own.  A run matching any of these is dropped from the accounting and listed.
-NOT_A_RUN = re.compile(r"(\.__keep$|HOOKFAIL|_OLD$|_BAD$|\.bak$)")
+# A COPY: the prune's held-back duplicate.  Its name is the run's name plus a
+# suffix, so the original is findable and the guard below can insist it exists.
+A_COPY = re.compile(r"\.__keep$")
+# A DEAD LAUNCH: relaunched under the real name, never a record of anything.
+# Its name carries a marker anywhere, so there is no original to point back to.
+A_DEAD_LAUNCH = re.compile(r"(HOOKFAIL|_OLD$|_BAD$|\.bak$)")
 
 # The archived shakedown: counted, but reported apart -- the article declares
 # it fixed the gauge/dissipation/tagging choices and is not used for physics.
@@ -110,9 +118,20 @@ def main():
 
     for run_dir in sorted({p.parent for p in args.root.rglob("run_tail*.log")}):
         rel = run_dir.relative_to(args.root)
-        if NOT_A_RUN.search(run_dir.name):
-            dropped.append(str(rel))
+        if A_DEAD_LAUNCH.search(run_dir.name):
+            dropped.append(f"{rel}  (dead launch)")
             continue
+        if A_COPY.search(run_dir.name):
+            # Drop the copy -- but only if the run it copies is still here.  A
+            # lone ``X.__keep`` with no ``X`` beside it is the only surviving
+            # record of a real evolution, and dropping it would lose the hours
+            # silently, which is the failure this whole block exists to stop.
+            twin = run_dir.parent / A_COPY.sub("", run_dir.name)
+            if twin.is_dir():
+                dropped.append(f"{rel}  (copy of {twin.name})")
+                continue
+            warnings.append(f"KEPT {rel}: named like a copy, but no "
+                            f"{twin.name} is beside it -- counted as a run")
         group = rel.parts[0]
         is_shakedown = str(rel).startswith(SHAKEDOWN)
         n_runs += 1
@@ -167,7 +186,7 @@ def main():
 
     if dropped:
         print(f"\nnot evolutions, dropped ({len(dropped)}) -- copies and dead "
-              f"launches, see NOT_A_RUN:")
+              f"launches, see A_COPY / A_DEAD_LAUNCH:")
         print("\n".join("  " + d for d in sorted(dropped)))
     if estimated:
         print(f"\nestimated legs (no tail of their own, {len(estimated)}):")
