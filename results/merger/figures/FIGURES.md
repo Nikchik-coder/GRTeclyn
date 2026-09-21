@@ -78,7 +78,7 @@ in either arm.
 
 ## The paper's `08_waves` figures (2026-09-16)
 
-The article's four wave figures live in `08_waves/`, cross-cutting because they
+The article's five wave figures live in `08_waves/`, cross-cutting because they
 belong to no single group. All are drawn with no arguments:
 
 ```
@@ -86,7 +86,21 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_ligo
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_scalar_channel
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_scalar_censorship
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_heavy_seeds
 ```
+
+`08_waves/heavy_seeds` (2026-09-21) — article Sec. XI B, the heavy-seed channel
+drawn as arithmetic on measured numbers; NOTHING here reads a run. (a) the seed
+race: the drainhole reachable region (seeds 10^4-10^6 M_sun at z ~ 20,
+converted at full mass in minutes — Table II — then bounded by the 45-Myr
+Eddington ceiling) against UHZ1, GN-z11, J1342+0928 and the little-red-dot
+box, with the 10^2 M_sun light-seed ceiling missing UHZ1 by two decades.
+(b) the conversion background Omega_GW = n E_rad / (rho_c (1+z_e)) per mass
+decade (E/M = 2.2e-2 spiral to 7.4e-2 fly-by; n = 1e-4 to 1e-2 Mpc^-3;
+(fM)_peak = 0.03-0.06) against the 4-yr power-law-integrated LISA curve
+(Robson-Cornish-Liu 2019 noise, SNR 10, Thrane-Romano construction): the
+10^5-10^6 boxes straddle it. Astrophysical points carry their references in
+the article's bibliography; cosmology flat LCDM H0 = 67.7, Om = 0.31.
 
 `08_waves/scalar_channel` (2026-09-19) — the SECOND radiation channel, the one
 Psi4 cannot see. Full-page row of three panels. (a) energy through R = 30
