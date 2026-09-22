@@ -35,9 +35,10 @@ of its record.  The p = 0.12 spiral -- which merges and still makes no
 horizon, 0 MOTS on every scan to t = 50 -- is climbing when its grid dies at
 the t = 59.9 wall.  And the LONE THROAT's scalar re-run
 (`single_pureq_q1e2_ml4_scalar_t100`, 2026-09-21) is the fourth curve, with
-the heaviest flags on the page: launched byte-identical to the paper's
-collapsing pure-quadrupole arm, it landed on the OTHER side of the fate
-boundary -- no trapped surface on any scan of its record, none by the
+the heaviest flags on the page: launched with the paper's collapsing
+pure-quadrupole arm's exact parameters (on the campaign pin, a sibling
+build of that arm's coreprof binary -- t = 0 constraints agree to 11
+digits), it landed on the OTHER side of the fate boundary -- no trapped surface on any scan of its record, none by the
 shape-free flow finder on its final slice (t = 100, lmax 6, 15
 seed-variants, 0 surfaces) -- and its monopole channel grows
 quasi-exponentially (e-fold ~ 5.7 at R = 18 over t = 50-95).  Horizonless
