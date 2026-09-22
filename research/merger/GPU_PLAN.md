@@ -431,6 +431,20 @@ continuations restart instead of re-running from zero:**
   moving to gpu-1-0): 0 surfaces at lmax 6 and 8 on the t = 49.0 slice.**
   Verdict, caveat and keep location in the R2 entry above and the registry
   row.
+- **5 (added 2026-09-22 ~07:00, launched on the user's word "run it
+  here") — THE RESOLUTION TEST: `merge_headon_flip_d8_lp2_lvl5_t030`**,
+  the harmonic-class head-on at max_level 5 from t = 0, stop 30, rolling
+  checkpoints keep-2 (template `params_ref_lp2_headon_lvl5_t030.txt`,
+  profile headon, keep-last 8). The user's hypothesis after R2's null:
+  the level-3 horizonless deaths are under-resolution. Level 5 with a
+  MOTS before death (or passing the wall as the standard level 5 does) ⇒
+  the nulls were resolution and §VII.C simplifies; still horizonless ⇒
+  the harmonic gauge genuinely kills before trapping. SHARES gpu-1-0's
+  GPU 0 with the L=128 arm (65.6 of 81.6 GB together at start, ~16 GB
+  headroom; the lvl5 precedent peaked 47.7 GB over a full t = 100 run, so
+  a mid-run OOM of this arm alone is possible and accepted — the R2
+  precedent says the resident arm survives). Contention will slow both;
+  ETAs re-measured once speeds settle.
 
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
