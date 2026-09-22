@@ -380,7 +380,33 @@ R2's death-window keeps live on ilya-test-3-gpu-1-0's local scratch and are
 NOT touchable from this node (no ssh route) — the hunt there stays blocked
 on the user.
 
-**NEXT RUNS (planned, all user-gated — nothing launches without the word):**
+**NEXT RUNS — LAUNCHED 2026-09-22 ~06:20 on the user's word ("yes to
+t = 100 … launch all"), with rolling checkpoints ON this time so
+continuations restart instead of re-running from zero:**
+- **1 → IN FLIGHT** as `merge_twin_p012_eta4_t100` (GPU 0, template
+  `params_ref_eta4_p012_t100.txt`, profile orbit, keep-last 8, checkpoints
+  keep-3): stop raised from 70 to 100 on the user's word — if the wall is
+  real it dies ~63.5 at no extra cost; if it is removed, the tape runs to
+  the settled remnant instead of truncating at 70. 9.5 u/h measured at
+  step 258 → death ~63.5 would land ~13:00, clean-to-100 ~16:50.
+- **3 → IN FLIGHT** as `merge_headon_flip_d8_eta4_t050` (GPU 1, template
+  `params_ref_eta4_headon_t050.txt`, profile headon, keep-last 8,
+  checkpoints keep-3). 10.7 u/h early → lands ~09:40–11:10.
+- **2 → FOR THE SECOND NODE** as `single_pureq_q1e2_L128_ml4_scalar_t100`
+  (template `params_single_pureq_q1e2_L128_ml4_scalar_t100.txt`, on shared
+  NFS: box doubled at the SAME dx — L 128 / N 256 / ml4, tagging_L kept 64
+  per the flyby-L128 precedent, sponge 48–64, same seed and spheres;
+  profile headon-modes, coord 64, frames un-zoomed, keep-last 4). The user:
+  launch it on ilya-test-3-gpu-1-0's free card instead of queueing behind
+  R3a here — the queue watcher armed at 06:20 was DISARMED at 06:30 on that
+  word (no double launch). It must not share a card (the flyby L128 read
+  58.8 GB alone). Speed unknown at ml4 — flyby L128 lvl5 ran 2.09 u/h;
+  budget 15–25 h. Launch command is in the plan's closing note and reads
+  identically on either node (same NFS checkout).
+- **4 (R2 death-window hunt) — still blocked on the user's hands on
+  ilya-test-3-gpu-1-0.**
+
+**The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
    from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed
    for the wall under the shift clock: if it dies at ~63–64 (floor 55.6 +
