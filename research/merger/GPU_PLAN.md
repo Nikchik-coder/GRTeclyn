@@ -280,8 +280,19 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   sense. Censored-or-naked in this gauge awaits the flow hunt on the
   keep-last-8 window, which sits on gpu-1-0's local scratch
   (`/tmp/grteclyn_scratch/merge_twin_p012_lp2_t060/`): **no route from the
-  first node** (no ssh key, no Claude session there) — needs the user's
-  hands or a session on that node. Folded into §VII.C.
+  first node** — UNBLOCKED 2026-09-22 when the session moved to gpu-1-0.
+  **HUNT DONE: 0 surfaces at lmax 6 AND lmax 8** on the t = 49.0 slice
+  (0.03 before the NaN; 15 seed-variants each). No horizon resolvable in
+  the level-3 death window — the harmonic-class lapse dies
+  horizonless-as-measured on BOTH encounters (R3b the head-on, this the
+  spiral). Bounding caveat: the standard spiral's horizon is a LEVEL-5
+  measurement (R0), and no level-3 spiral slice in any gauge has ever
+  yielded a flow-finder horizon (R1 t = 60: 0; here: 0) — so this reads
+  "no horizon at level-3 resolution", not "naked"; censored-or-naked in
+  this gauge stays formally open (decisive test: a level-5 harmonic arm,
+  not planned). Cited slice + both hunt logs:
+  `05_binary_spiral/p012/_keep_r2_lp2_plt04900/`; the other 7 keeps pruned
+  (manifest). Folded into §VII.C.
 - **R3a** `merge_headon_flip_d8_eta4_t030` — GPU 0. **LANDED 11:59 —
   SURVIVED to stop_time 30, zero NaN.** But the success read ("MOTS still at
   t ≈ 22") did not happen either: under η = 4 the coordinate infall is
@@ -416,8 +427,10 @@ continuations restart instead of re-running from zero:**
   date). The L128 arm on the pin is ONE knob (the box) off the twin —
   question 1 is clean; against the coreprof ORIGINAL it is two knobs
   (box + build) — question 2 carries that caveat.
-- **4 (R2 death-window hunt) — still blocked on the user's hands on
-  ilya-test-3-gpu-1-0.**
+- **4 (R2 death-window hunt) — DONE 2026-09-22 (unblocked by the session
+  moving to gpu-1-0): 0 surfaces at lmax 6 and 8 on the t = 49.0 slice.**
+  Verdict, caveat and keep location in the R2 entry above and the registry
+  row.
 
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
