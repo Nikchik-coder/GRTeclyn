@@ -444,7 +444,30 @@ continuations restart instead of re-running from zero:**
   headroom; the lvl5 precedent peaked 47.7 GB over a full t = 100 run, so
   a mid-run OOM of this arm alone is possible and accepted — the R2
   precedent says the resident arm survives). Contention will slow both;
-  ETAs re-measured once speeds settle.
+  ETAs re-measured once speeds settle. **OOMed AT INIT (~06:45):
+  cudaMalloc out of memory as the second arena — level 5's init regrid
+  needs more than the 35 GB that was free. Died alone (L=128 unharmed);
+  dir renamed `_OOMFAIL_2026-09-22`, scratch pruned, registry row carries
+  it. REQUEUED by a session-independent (setsid) watcher that launches it
+  on this card once nvidia-smi reads < 30 GB used — i.e. when the L=128
+  arm exits (~21:00+); beside the kicked arm's ~21 GB the lvl5's 47.7-GB
+  peak fits.**
+- **6 (launched 2026-09-22 ~07:15 on the user's word "we need this for
+  the paper") — THE GUARANTEED COLLAPSE WITH THE SCALAR RECORDER:
+  `single_eps_p1e2_q1e2_ml4_scalar_t100`** (template
+  `params_single_eps_p1e2_q1e2_ml4_scalar_t100.txt`, profile
+  headon-modes, keep-last 4, rolling checkpoints keep-3), sharing GPU 0
+  with the L=128 arm (69.4 of 81.6 GB together; the ml4 single-throat
+  arena peaks at ~21 GB in BOTH the collapsing and non-collapsing
+  precedents). Why it exists: the pure quadrupole pushes the fate mode
+  only at second order (~ε₂²), so its fate is machine-marginal — the
+  ε = +0.01 radial kick pushes ALONG the unstable spherical mode and
+  this exact configuration collapsed with a horizon from t ≈ 11 as the
+  GW arm `single_eps_p1e2_q1e2`. Delivers the missing measurement for
+  the censorship figure: the lone collapse's scalar channel behind its
+  own horizon — the counted single-throat curve, replacing the flagged
+  one. Early speed 3.5 u/h under contention; ETA firms up as the card
+  load changes through the evening.
 
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
