@@ -98,21 +98,40 @@ def main(argv: list[str] | None = None) -> int:
     twi = np.interp(ar[:, 0], tw[:, 0], tw[:, 1])
     dep = np.abs(ar[:, 1] / twi - 1.0) >= 0.10
     t_dep = float(ar[dep, 0][0]) if dep.any() else None
+    # Each name hangs on the thing it names (the user, 2026-09-23: "to what
+    # exactly is it connected?" -- the departure note sat in the bottom-left
+    # corner, 40 units from its rule, and the twin's name floated a unit
+    # above the flat line and seven units short of the rise).  Both rules
+    # carry their note as a flag at the top of the strip, the inflation
+    # page's grammar: the MOTS clock on the left of its rule, the departure
+    # clock on the right of its own.  Offsets in POINTS.
+    top = matplotlib.transforms.blended_transform_factory(axT.transData,
+                                                          axT.transAxes)
     if t_dep is not None:
         axT.axvline(t_dep, color=style.FAINT, linewidth=0.7, zorder=1)
-        axT.text(3.0, 2.05, f"leaves the twin by 10% at $t={t_dep:.0f}$",
-                 fontsize=7, color=style.CONTEXT, ha="left")
+        axT.annotate(f"leaves the twin by 10 % at $t={t_dep:.0f}$", (t_dep, 1.0),
+                     xycoords=top, xytext=(3, -4), textcoords="offset points",
+                     fontsize=7, color=style.MUTED, ha="left", va="top")
         print(f"[single-collapse] leaves the unkicked twin by 10% at t = {t_dep:.1f}")
-    axT.text(66.0, 5.55, "unkicked twin (truncation seed)", fontsize=7,
-             color=style.CONTEXT, ha="right", va="bottom")
+    # The twin is named where it is alone and visibly itself: beside its
+    # rise, to the right of it, clear of every other curve (the kicked arm
+    # and the MOTS sit two units below).  The anchor is read off the data.
+    rise = tw[:, 0] > 50.0
+    t_c = float(np.interp(4.6, tw[rise, 1], tw[rise, 0]))
+    axT.annotate("unkicked twin (truncation seed)", (t_c, 4.6),
+                 xytext=(5, -2), textcoords="offset points", fontsize=7,
+                 color=style.CONTEXT, ha="left", va="top")
     axT.plot(ar[:, 0], ar[:, 1], color=style.INK, linewidth=1.4, zorder=3)
     axT.plot(hA["time"], hA["R_mots"], color=style.GOLD, linewidth=0.0,
              marker="o", markersize=2.4, zorder=4)
     axT.axvline(T_MOTS, color=style.FAINT, linewidth=0.7, zorder=1)
-    axT.text(T_MOTS - 1.0, 5.35, r"MOTS from $t=33$", fontsize=7,
-             color=style.GOLD, ha="right")
-    axT.text(2, 3.55, "minimal-surface areal radius", fontsize=7.5,
-             color=style.INK)
+    axT.annotate(r"MOTS from $t=33$", (T_MOTS, 1.0), xycoords=top,
+                 xytext=(-3, -4), textcoords="offset points", fontsize=7,
+                 color=style.GOLD, ha="right", va="top")
+    # Under its own flat line with 3 pt to spare (on the baseline it touched it).
+    axT.annotate("minimal-surface areal radius", (2.0, ar[0, 1]),
+                 xytext=(0, -3), textcoords="offset points", fontsize=7.5,
+                 color=style.INK, ha="left", va="top")
     axT.text(72, 2.85, "oriented scan's MOTS", fontsize=7,
              color=style.GOLD)
     axT.set_xlim(0, 100)
@@ -159,10 +178,15 @@ def main(argv: list[str] | None = None) -> int:
     axs[5].set_yscale("log")
     axs[5].set_xlim(0, 100)
     axs[5].set_ylabel(r"$L_2$ norms")
-    axs[5].text(0.5, 0.88, r"$\mathcal{H}$", transform=axs[5].transAxes,
-                fontsize=7.5, color=style.INK)
-    axs[5].text(0.5, 0.72, r"$\mathcal{M}$", transform=axs[5].transAxes,
-                fontsize=7.5, color=style.MUTED)
+    # In DATA coordinates, each just above its own curve on the quiet stretch
+    # (the inflation page's fix): in axes fractions both floated in the empty
+    # upper middle of the frame, naming nothing.
+    # M sits over its flat bottom (t ~ 10-18): at t = 20 it already climbs.
+    for col, t_l, sym, c in ((1, 20.0, r"$\mathcal{H}$", style.INK),
+                             (2, 12.0, r"$\mathcal{M}$", style.MUTED)):
+        axs[5].annotate(sym, (t_l, float(np.interp(t_l, cn[:, 0], cn[:, col]))),
+                        xytext=(0, 3.5), textcoords="offset points", fontsize=7.5,
+                        color=c, ha="center", va="bottom")
 
     # Letter tags ABOVE the frames (the spiral page's rule): several of these
     # panels run flat along their own top edge, and an inside tag sits on the

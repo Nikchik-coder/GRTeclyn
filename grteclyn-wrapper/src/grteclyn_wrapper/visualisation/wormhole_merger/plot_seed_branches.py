@@ -347,8 +347,7 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
         return rf"$\varepsilon={m['label']}$" + (r" (NaN)" if m["dead"] else "")
 
     # ---- the throat ------------------------------------------------------
-    if t_cross is not None:
-        axA.axvline(t_cross, color=FAINT, linewidth=0.7, linestyle=(0, (2, 3)), zorder=1)
+    # (the t_x crossing rule is drawn last, once the limits are final)
     axA.axhline(exact, color=MUTED, linewidth=0.8, linestyle=(0, (1, 2.5)), zorder=2)
     for m in arms:
         st, e = style_of(m["label"]), valid_end(m)
@@ -458,6 +457,16 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
     edge_label(axA, exact, r"$R_\star$")
     if t_cross is not None:
         ylo, yhi_ = axA.get_ylim()
+        # The crossing rule runs only as high as the crossing: it marks WHEN
+        # the twins cross, and they cross on R_star.  Full height it ran
+        # through the heavy arm's name and the gold fit's (the user,
+        # 2026-09-23: "overlaps with dotted line"); stopped 6 pt above
+        # R_star -- an offset in POINTS, so on any panel width -- it meets
+        # neither.  Drawn after the limits are fixed, so it cannot move them.
+        axA.plot([t_cross, t_cross], [ylo - (yhi_ - ylo), exact],
+                 color=FAINT, linewidth=0.7, linestyle=(0, (2, 3)), zorder=1,
+                 transform=matplotlib.transforms.offset_copy(
+                     axA.transData, fig=axA.figure, y=6.0, units="points"))
         axA.text(t_cross + 0.012 * xhi, ylo + 0.035 * (yhi_ - ylo),
                  r"$t_\times$", color=MUTED, fontsize=8, ha="left", va="bottom")
 
@@ -488,6 +497,30 @@ def _norms(run_dir: pathlib.Path) -> np.ndarray | None:
             a = np.loadtxt(f, ndmin=2)
             return a[np.argsort(a[:, 0])] if a.size else None
     return None
+
+
+def _cut_overflow(a: np.ndarray, jump: float = 10.0) -> np.ndarray:
+    """A dying arm's norms up to its last FINITE, pre-overflow step.
+
+    The death window is kept whole at the every-step cadence, and on every
+    NaN'd arm here both norms sit flat to within 0.01-0.02 units of the
+    abort and then jump two to four decades in ONE step (+0.1: 3.1e-3 ->
+    0.38 -> 56 over t = 14.04-14.06; +0.001: 1.3e-3 -> 28 at 40.07).  That
+    step is the overflow itself, not a measurement, and on a log axis it
+    drew a vertical line the height of the panel (the user, 2026-09-23:
+    "these vertical lines are garbage").  The curve now ends where the run
+    was last healthy and the cross -- the death -- sits there.  Only the
+    last time unit is searched: the momentum norm rises from ~0 at t = 0,
+    which is physics of the kick, not an overflow.
+    """
+    tail = np.where(a[:, 0] >= a[-1, 0] - 1.0)[0]
+    for k in tail:
+        if k < 5:
+            continue
+        ref = np.median(a[max(0, k - 20):k, 1:3], axis=0)
+        if np.any(a[k, 1:3] > jump * ref):
+            return a[:k]
+    return a
 
 
 def figure_panels_constraints(axH, axM, pack_root) -> None:
@@ -525,12 +558,14 @@ def figure_panels_constraints(axH, axM, pack_root) -> None:
                    linestyle=(0, (4, 2.5)) if label.startswith("+") else (0, ())))
         dead = a[-1, 0] < 90.0          # the ceiling pair dies at t = 15.2/14.1
         a = a[np.isfinite(a[:, 1]) & np.isfinite(a[:, 2])]
+        # a dying arm is drawn to its last healthy step, the cross there
+        ac = _cut_overflow(a) if dead else a
         for ax, col in ((axH, 1), (axM, 2)):
-            ax.semilogy(a[:, 0], a[:, col], zorder=2 if hold else 3, **st)
+            ax.semilogy(ac[:, 0], ac[:, col], zorder=2 if hold else 3, **st)
             if dead:
-                ax.plot(a[-1, 0], a[-1, col], "X", color=st["color"], markersize=5,
+                ax.plot(ac[-1, 0], ac[-1, col], "X", color=st["color"], markersize=5,
                         markeredgecolor="white", markeredgewidth=0.8, zorder=4)
-        drawn.append((label, a))
+        drawn.append((label, ac))
         # the console carries the numbers the caption quotes
         g = a[a[:, 0] >= 55.0]
         base = np.median(a[(a[:, 0] > 35) & (a[:, 0] < 55), 1]) if not dead else np.nan
@@ -546,10 +581,14 @@ def figure_panels_constraints(axH, axM, pack_root) -> None:
         ax.set_ylabel(ylab)
     # two names in place, sparing the caption a hunt: the ceiling pair at its
     # cross, the control at its late rise (axH only; (e) reads by grammar)
-    ceil = next((a for lab, a in drawn if lab == "+0.1"), None)
-    if ceil is not None:
-        axH.text(ceil[-1, 0] + 2.5, 2.0, r"$\varepsilon=\pm0.1$",
-                 fontsize=7, color=INK, ha="left", va="center")
+    # The ceiling pair is named up-right of its later cross (t = 15.2), in
+    # the empty band above the flat norms; offsets in points.
+    ceil = [a for lab, a in drawn if lab in ("+0.1", "-0.1")]
+    if ceil:
+        last = max(ceil, key=lambda a: a[-1, 0])
+        axH.annotate(r"$\varepsilon=\pm0.1$", (last[-1, 0], last[-1, 1]),
+                     xytext=(5, 6), textcoords="offset points",
+                     fontsize=7, color=INK, ha="left", va="bottom")
     # the control is named in (e), where its curve sits alone at the bottom;
     # in (d) it is indistinguishable from the flat band and a name misleads
     hold = next((a for lab, a in drawn if lab == "no kick"), None)

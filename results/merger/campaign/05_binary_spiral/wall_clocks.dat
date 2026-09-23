@@ -1,0 +1,39 @@
+# The p = 0.12 spiral's wall under other gauges and other start times: the arms that
+# are NOT restarts of merge_orbit_flip_d12_r03000's t = 50 checkpoint (those are
+# refinement_ladder.dat).  Panel (b) of figures/05_binary_spiral/spiral_refinement_ladder.
+# Death = the last "ADVANCE at time" in the evolution log before the NaN; field = the
+# NaN diagnostic's component.  Built 2026-09-23 from the logs: run_tail.log in the pack,
+# and run.log in runs/wormhole_merger/ for the two eta-4 level-5 arms (not yet closed
+# out; the pack's partial copy of the t = 50 arm stops at 55.0).
+#
+# gauge: std  = the campaign's gauge, 1+log (d_t alpha = -2 alpha K), Gamma-driver eta 1
+#        lc1  = 1+log coefficient halved (-alpha K)
+#        lp2  = lapse_power 2 (-2 alpha^2 K, harmonic class, out of the 1+log family)
+#        eta4 = Gamma-driver damping eta 1 -> 4
+# L  = box width (64: N = 128; 128: N = 256 -- the same cell 0.5 / 2^level either way).
+# t0 = the time at which the run reached this max_level: 0 = from the initial data, else
+#      the restart that raised it (the eta-4 level-5 arms restart the eta-4 level-3 arm).
+# Matter device: the lc1/lp2/eta4 twins inherit their base's core damping (lapse window
+# 3e-2 -> 1e-3 from t = 0, merge_twin_p012_plain_t100); the std arms carry none.  The
+# campaign's own damping pair puts that device's effect on the level-3 wall under a unit
+# (damping-off twin 51.53, wide window restarted at t = 40: 52.87, none: 52.07), against
+# the 18-unit spread of the gauge column.
+#
+# level  gauge  L    t0   t_death   field  run
+  3      lc1    64   0    43.6488   K      merge_twin_p012_lc1_t060
+  3      lp2    64   0    49.0288   h11    merge_twin_p012_lp2_t060
+  3      std    64   0    52.0675   h11    merge_orbit_flip_d12_r03000
+  3      eta4   64   0    61.9163   h11    merge_twin_p012_eta4_t100
+  5      std    128  0    59.9431   h11    v2_spiral_d12_p012_L128_lvl5from0_t100
+  5      std    128  36   60.4450   h11    v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600
+  5      std    64   50   55.6038   h11    ladder_L5_r05000
+  5      eta4   64   50   60.0413   h11    merge_twin_p012_eta4_lvl5_t066_r05000
+  5      eta4   64   60   60.0547   h11    merge_twin_p012_eta4_lvl5_t066_r06000
+#
+# READING IT.  At level 3 the wall's clock is the gauge's: 43.6 / 49.0 / 52.1 / 61.9.
+# Planting level 5 earlier buys nothing within one configuration (std L = 128: t0 = 0 ->
+# 59.94, t0 = 36 -> 60.45; eta 4: t0 = 50 -> 60.04, t0 = 60 -> 60.05).  Under eta 4 level 5
+# dies 1.9 units BEFORE level 3.  Like for like -- same box, level 5 from t0 = 50 -- the
+# two gauges die at 55.60 (std) and 60.04 (eta 4): the half-unit cluster of the level-5
+# deaths near 60 holds for the L = 128 standard arms and the L = 64 eta-4 arms, not for
+# the L = 64 standard ladder.

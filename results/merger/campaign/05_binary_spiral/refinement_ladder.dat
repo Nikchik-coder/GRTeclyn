@@ -1,30 +1,55 @@
 # The p = 0.12 orbital merger: how far a finer grid carries the run past the fusion.
-# Every arm restarts from the SAME state -- merge_orbit_flip_d12_r03000's checkpoint
-# at t = 50 -- and changes one thing.  Death = last time in the evolution log before
-# the NaN (h11 in every case).  Base grid L = 64, N = 128, so cell = 0.5 / 2^level.
-# Built 2026-09-10 from the run logs of runs/wormhole_merger/05_binary_spiral/p012_ladder.
+# Every arm starts from ONE t = 50 state and changes one thing.  Death = last time in
+# the evolution log before the NaN (h11 in every case).  Base grid L = 64, N = 128, so
+# cell = 0.5 / 2^level.  Built 2026-09-10 from the run logs of
+# runs/wormhole_merger/05_binary_spiral/p012_ladder; re-read 2026-09-23 against every
+# run_tail.log and evolution_params.txt -- all times agree with the logs' last
+# "ADVANCE at time" to the digits given.
 #
-# family: plain = core_matter_damping 0; damped = core_matter_damping 1 with the
-# lapse-keyed core damping engaged from t = 50.  The two are DIFFERENT physical
-# treatments and must not be averaged together.  dt_mult 0.02 unless stated.
+# WHICH t = 50 STATE (re-read 2026-09-23).  The level 4-7 rungs restart
+# merger_fix/m4_sealed_r04000's Chk05000 (their amr.restart) -- the sweep's kept parent
+# (archive/Plan_2026-09-02.md).  That arm evolved UNDAMPED from t = 40 to 50 (its
+# radius window engaged only at t = 51.2), on the path of merge_orbit_flip_d12_r03000,
+# the level-3 rung, which ran through t = 50 itself; merge_orbit_flip_d12_r05000
+# restarts r03000's own Chk05000.
 #
-# level   cell        family   dt_mult   t_death   run
-  3       0.06250     plain    0.02      52.0675   merge_orbit_flip_d12_r03000
-  4       0.03125     plain    0.02      53.0956   ladder_L4_r05000
-  5       0.01562     plain    0.02      55.6038   ladder_L5_r05000
-  6       0.00781     plain    0.02      56.1348   ladder_L6_r05000
-  7       0.00391     plain    0.02      56.1988   ladder_L7_r05000
-  3       0.06250     damped   0.02      52.0913   merge_orbit_flip_d12_r05000
-  4       0.03125     damped   0.02      53.7538   ladder_L4_damped_r05000
-  5       0.01562     damped   0.02      54.7631   ladder_L5_damped_r05000
-  6       0.00781     damped   0.02      56.7066   ladder_L6_damped_r05000
-  5       0.01562     plain    0.01      55.9614   ladder_L5_halfstep_r05000
+# family: plain = core_matter_damping 0.
+#   damped = core_matter_damping 1 in ONE configuration at levels 4-6: radius window
+#     1.30 -> 1.00 from t = 50, tau 0.05, lapse window 0 -> 1e-3 (evolution_params).
+#   damped_default = the LEVEL-3 arm with core damping on at the BUILT-IN window
+#     (lapse 1e-6 -> 1e-8, no radius window; its LOST.md), which never engaged (+0.02
+#     on plain): a different configuration, so it is not joined to the damped line
+#     (corrected 2026-09-23 -- the 2026-09-10 build filed it as "damped").  The
+#     matching level-3 arm, merger_fix/m4b_fast_r05000 (radius 1.00/1.30, tau 0.05),
+#     died at 52.42 by the archived fix table; its run is pruned, so it is not a row.
+# The families are DIFFERENT physical treatments and must not be averaged together.
+# dt_mult 0.02 unless stated.
+#
+# NOT HERE, and why.  The 2026-09-02 matter-device sweep from the same parent (archive
+# table, runs pruned): m4b_wide 51.94, m4b_combo 51.94, m4b_fast 52.42, m4b_sledge 51.91,
+# m4b2_vfast 51.88 (K), m4b2_fastsledge 52.55 -- every damping variant at level 3 inside
+# 51.9-52.6.  merge_orbit_flip_d12_sg10_r05000 (sigma 1.0; K NaN 51.685) and _rw_r05000
+# (radius window 0.70/0.50; K NaN 55.001) restart r04000's Chk05000, a state damped
+# since t = 40 -- a different parent.  Other gauges, other start times and the doubled
+# box are in wall_clocks.dat.
+#
+# level   cell        family          dt_mult   t_death   run
+  3       0.06250     plain           0.02      52.0675   merge_orbit_flip_d12_r03000
+  4       0.03125     plain           0.02      53.0956   ladder_L4_r05000
+  5       0.01562     plain           0.02      55.6038   ladder_L5_r05000
+  6       0.00781     plain           0.02      56.1348   ladder_L6_r05000
+  7       0.00391     plain           0.02      56.1988   ladder_L7_r05000
+  3       0.06250     damped_default  0.02      52.0913   merge_orbit_flip_d12_r05000
+  4       0.03125     damped          0.02      53.7538   ladder_L4_damped_r05000
+  5       0.01562     damped          0.02      54.7631   ladder_L5_damped_r05000
+  6       0.00781     damped          0.02      56.7066   ladder_L6_damped_r05000
+  5       0.01562     plain           0.01      55.9614   ladder_L5_halfstep_r05000
 #
 # READING IT.  Within the plain family the ladder is monotone and saturating:
 # +1.03, +2.51, +0.53, +0.06 per doubling.  Sixteen times the resolution buys
 # 4.13 units and never reaches the wall; the last doubling buys 0.06.
-# The time-step control (last row) gains +0.36 over its own level-5 twin -- most of
-# the size of the level 5 -> 6 spatial gain -- so the top of the spatial ladder is
+# The time-step control (dt_mult 0.01 row) gains +0.36 over its own level-5 twin -- most
+# of the size of the level 5 -> 6 spatial gain -- so the top of the spatial ladder is
 # evidence of saturation, not a converged limit.
 # An earlier quote of this ladder ("turns over at level 7", 56.42 -> 56.20) averaged
 # each level's plain and damped arms and is withdrawn.

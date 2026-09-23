@@ -78,7 +78,7 @@ N_RANGE = (1.0e-4, 1.0e-2)    # one seed per massive galaxy, comoving Mpc^-3
 # --- the observed population (refs in the article's bibliography) ----------
 UHZ1 = (10.07, 4.0e7, 1.0e7, 1.0e8)       # z, M, lo, hi  [Bogdan/Natarajan 2024]
 GNZ11 = (10.60, 1.6e6, 8.0e5, 3.2e6)      # [Maiolino et al. 2024]
-J1342 = (7.54, 7.8e8, 4.5e8, 1.1e9)       # ULAS J1342+0928
+J1342 = (7.54, 7.8e8, 5.9e8, 1.1e9)       # ULAS J1342+0928: 7.8 (+3.3, -1.9) e8 [Banados 2018]
 LRD_BOX = ((4.5, 8.0), (1.0e6, 1.0e8))    # z-range, M-range [Greene/Matthee 2024]
 
 
@@ -111,8 +111,12 @@ def panel_seed_race(ax) -> None:
             **style.series(3))
 
     # Observations.
+    # UHZ1 is named to the RIGHT of its point, in the clear gap between the
+    # 1e5 ceiling (0.3 dex above) and the light seed's line: on the left its
+    # name sat under the Eddington label's patch and never printed
+    # (2026-09-23).
     for (z, m, mlo, mhi), name, dx, dy in (
-        (UHZ1, "UHZ1", -30.0, 3.2), (GNZ11, "GN-z11", 25.0, 0.28),
+        (UHZ1, "UHZ1", 26.0, 0.9), (GNZ11, "GN-z11", 25.0, 0.28),
         (J1342, "J1342+0928", 28.0, 0.28),
     ):
         tz = float(t_of_z(z))
@@ -135,12 +139,18 @@ def panel_seed_race(ax) -> None:
             r"converted in minutes (Table II)", color="#8b5c00", fontsize=8.0,
             ha="right", va="top", zorder=5,
             bbox=dict(facecolor=style.GROUND, edgecolor="none", pad=1.2))
-    ax.text(135.0, 3.0e8, "Eddington\nceilings\n" r"($t_e=45$ Myr)",
-            color=style.GOLD, fontsize=8.0, ha="left", va="center", zorder=5,
-            bbox=dict(facecolor=style.GROUND, edgecolor="none", pad=1.0))
-    ax.text(1230.0, 3.0e4, r"$10^2\,M_\odot$ light seed, $z=25$",
-            color=style.CONTEXT, fontsize=8.0, ha="center", va="center",
-            bbox=dict(facecolor=style.GROUND, edgecolor="none", pad=1.0))
+    # Up-left of the heavy ceiling, clear of it by ~70 Myr and with no patch:
+    # at M ~ 3e8 its opaque patch cut the ceiling line and hid UHZ1's name.
+    # The corner is the label's alone since the panel tags moved above the
+    # frames (2026-09-23: inside, "(a)" sat on "Eddington").
+    ax.text(112.0, 1.4e9, "Eddington\nceilings\n" r"($t_e=45$ Myr)",
+            color=style.GOLD, fontsize=7.5, ha="left", va="center", zorder=5)
+    # The light seed named ON its line, down-right of it below the gold floor
+    # (it floated 700 Myr from the curve at the bottom right).
+    t_a = t_light + SALPETER_MYR * math.log(15.0)       # where it passes 1.5e3
+    ax.annotate(r"$10^2\,M_\odot$ light seed, $z=25$", (t_a, 1.5e3),
+                xytext=(7, -2), textcoords="offset points", color=style.CONTEXT,
+                fontsize=8.0, ha="left", va="top", zorder=5)
 
     ax.set_yscale("log")
     ax.set_xlim(100.0, 1600.0)
@@ -201,9 +211,11 @@ def panel_lisa(ax) -> None:
                 fontsize=8.0, ha="center", va="bottom", zorder=5,
                 bbox=dict(facecolor=style.GROUND, edgecolor="none", pad=1.0))
 
+    # Three lines, so the widest ends short of the 1e4 box (on two, the
+    # first line's patch cut that box's corner).
     ax.text(1.3e-5, 1.8e-15,
-            r"$n=10^{-4}$--$10^{-2}\,{\rm Mpc}^{-3}$, "
-            r"$E/M=2.2$--$7.4\times10^{-2}$, $z_e\simeq20$" "\n"
+            r"$n=10^{-4}$--$10^{-2}\,{\rm Mpc}^{-3}$, $z_e\simeq20$" "\n"
+            r"$E/M=2.2$--$7.4\times10^{-2}$" "\n"
             r"burst population: no $f^{2/3}$ inspiral ramp (Sec. XI A)",
             color=style.MUTED, fontsize=7.4, ha="left", va="bottom",
             bbox=dict(facecolor=style.GROUND, edgecolor="none", pad=1.0))
@@ -221,10 +233,13 @@ def main() -> None:
     fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(7.2, 3.15))
     panel_seed_race(ax_a)
     panel_lisa(ax_b)
-    for ax, tag in ((ax_a, "(a)"), (ax_b, "(b)")):
-        ax.text(0.02, 0.975, tag, transform=ax.transAxes, ha="left", va="top",
-                fontsize=10.0, color=style.INK)
     fig.tight_layout(w_pad=1.6)
+    # Letter tags ABOVE the frames, the paper's rule, at one height for both
+    # panels: over (a)'s redshift tick labels, level with its axis title.
+    top = ax_a.get_position().y1 + 0.075
+    for ax, tag in ((ax_a, "(a)"), (ax_b, "(b)")):
+        fig.text(ax.get_position().x0, top, tag, ha="left", va="bottom",
+                 fontsize=10.0, color=style.INK)
     out = style.save(fig, figure_dir("08_waves") / "heavy_seeds")
     print(out)
 

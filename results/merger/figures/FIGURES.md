@@ -46,6 +46,12 @@ the spiral collapse page, drawn from the pure-quadrupole arm by
 `plot_single_collapse` (no arguments): areal radius + MOTS strip over a 2×3
 grid of min α / min χ / max |K| / the radial shells (t = 33–55) / the
 constraints. MOTS from t = 33, R 3.80 → 2.41, M_MS 1.90 → 1.24.
+Names hang on what they name (2026-09-23, the user: "to what exactly is it
+connected?"): the MOTS clock and the 10 % departure clock are flags at the
+top of their own rules (left / right of the rule, the inflation page's
+grammar); the twin is named beside its RISE, anchored on the data; (g)'s H
+and M sit just above their own curves on the quiet stretch, in data
+coordinates, not floating in axes fractions.
 
 `01_single_throat/single_horizon_regrowth` — the remnant horizon that
 shrinks and grows back, by `plot_horizon_regrowth` (no arguments): MOTS areal
@@ -99,7 +105,13 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_heavy_seeds
 ```
 
-`08_waves/heavy_seeds` (2026-09-21) — article Sec. XI B, the heavy-seed channel
+`08_waves/heavy_seeds` (2026-09-21; labels and one error bar fixed 2026-09-23 --
+UHZ1's name had printed UNDER the Eddington label's opaque patch and never
+showed, that patch also cut the heavy ceiling, the light-seed name floated
+700 Myr from its line, (b)'s note clipped the 1e4 box, the tags sat inside
+the frames on the Eddington label; J1342+0928's lower bound 4.5e8 -> 5.9e8,
+Banados et al. 2018's 7.8 (+3.3, -1.9) e8. GN-z11 (Maiolino 2024) and J1342
+(Banados 2018) are plotted but NOT in the bibliography) — article Sec. XI B, the heavy-seed channel
 drawn as arithmetic on measured numbers; NOTHING here reads a run. (a) the seed
 race: the drainhole reachable region (seeds 10^4-10^6 M_sun at z ~ 20,
 converted at full mass in minutes — Table II — then bounded by the 45-Myr
@@ -419,23 +431,45 @@ this page is clean at 1.5 pt of demanded clearance. Careful: the probe pads
 in display pixels at the FIGURE's dpi (100), not at savefig's 300, so a pad
 of 5 "px" is 3.6 pt and lights up every deliberate 3 pt gap on the page.
 
-## The paper's refinement-ladder figure (2026-09-18)
+## The paper's refinement-ladder figure (2026-09-18; two panels since 2026-09-23)
 
 `05_binary_spiral/spiral_refinement_ladder` is the article's sec:spiral:wall
-figure, drawn with no arguments:
+figure, a two-column `figure*` since 2026-09-23 (the user: the gauge arms
+have a different start time, so a second panel, two columns like the other
+figures), drawn with no arguments:
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_ladder
 ```
 
-One data source: `campaign/05_binary_spiral/refinement_ladder.dat` (levels
-3-7 from the same t = 50 checkpoint; plain and damped families kept separate
-per that file's own warning — an earlier "turns over at level 7" quote that
-averaged them is withdrawn). Plain deaths 52.07 / 53.10 / 55.60 / 56.13 /
-56.20 (+1.03/+2.51/+0.53/+0.06 per doubling), halfstep control +0.36 on its
-level-5 twin, FAINT reference rule at 60.445 = the L = 128 production arm
-restarted at t = 36. No horizon at any rung; no gold on this figure.
-Redraw only if the ladder gains rungs.
+(a) reads `campaign/05_binary_spiral/refinement_ladder.dat` (levels 3-7 from
+one t = 50 state; plain and damped families kept separate per that file's
+own warning — an earlier "turns over at level 7" quote that averaged them is
+withdrawn). Plain deaths 52.07 / 53.10 / 55.60 / 56.13 / 56.20
+(+1.03/+2.51/+0.53/+0.06 per doubling), halfstep control +0.36 on its level-5
+twin; a key names the three kinds of death point. (b) reads
+`campaign/05_binary_spiral/wall_clocks.dat`: one row per gauge condition on a
+common death clock -- level 3 from t = 0 (d_t alpha = -alpha K 43.65, K NaN;
+-2 alpha^2 K 49.03; standard 52.07; eta = 4 61.92) and level 5 tagged by the
+time t0 it was switched on (standard L = 128: 59.94 / 60.45 from t0 = 0 / 36;
+standard L = 64: 55.60 from 50; eta 4: 60.04 / 60.05 from 50 / 60). The
+L = 128 t = 36 arm was (a)'s faint rule until 2026-09-23 and is a point of
+(b) now. No gold on this figure.
+
+**Re-read 2026-09-23 against every run log and evolution_params.txt** (all
+death times agree to the digits given). Two corrections to the data file,
+neither moving a plain number: (1) the damped line used to start at level 3
+on `merge_orbit_flip_d12_r05000`, which ran the BUILT-IN window (1e-6 ->
+1e-8, never engaged) -- a different configuration from levels 4-6 (radius
+1.30/1.00 from t = 50, tau 0.05). It is now `damped_default` and not joined;
+the matching level-3 arm (`merger_fix/m4b_fast_r05000`, 52.42 in the archived
+fix table) is pruned. (2) The level 4-7 rungs restart
+`merger_fix/m4_sealed_r04000`'s Chk05000 (their amr.restart), not r03000's;
+that arm evolved undamped to t = 51.2, so the state is r03000's path and the
+level-3 reference 52.07 stands. The two 08-31 level-3 probes
+`_sg10_r05000` / `_rw_r05000` restart r04000's t = 50 state (damped from
+t = 40) -- a different parent, listed in the file's notes, not drawn.
+Redraw if the ladder gains rungs or a gauge arm lands.
 
 Same day, the article's gallery/ligo captions were synced to the current
 draws (fly-by close-out): gate t = 76, strain peak 1.7e-20 at 89 Hz, spiral
@@ -453,7 +487,13 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_pair_row
 ```
 
-`01_single_throat/single_throat_instability` (7.05 x 2.5) is the undeclared
+`01_single_throat/single_throat_instability` (7.05 x 4.35; (c)/(d)/(e) cleaned
+2026-09-23 on the user's marks: the t_x crossing rule is drawn only up to 6 pt
+above R_star, where the crossing is -- full height it ran through the
+"epsilon = -0.01" and gold-fit names; and a dying arm's norms end on their
+last FINITE step, the cross there -- the one-step overflow before each NaN
+(+0.1: 3.1e-3 -> 56 over 0.02 units) drew a vertical line the height of the
+panel) is the undeclared
 seed's two panels plus the declared-seed panel; `03_two_throats/
 pair_interaction` (7.05 x 2.4) is the sign rule's two panels plus the
 placement curve's two. **Neither composer draws anything itself.** Each
