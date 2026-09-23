@@ -738,6 +738,31 @@ whole card: the lvl5 family peaks ~48 GB).
   pace from a ~15:45 start -> lands ~21:00-23:00. Same question as the
   dead first attempt; the t = 50 planting is the ladder's proven margin.
 
+- **PROBE 2 LANDED 2026-09-23 15:45 -- IT WALKED THROUGH THE ETA-4 WALL.**
+  `merge_headon_flip_d8_eta4_lvl5_t040_r03200` ran complete to
+  t = 39.9997 (stop 40) with ZERO NaN lines -- 5.85 units past the
+  level-3 death at 34.15. That makes the eta-4 head-on the third
+  slicing in which resolution rescues the wall (after the standard-gauge
+  lvl5 head-on and the ladder), directly feeding VII.C's "the wall's
+  clock belongs to the gauge, its existence to no grid" reading. 30
+  plotfiles at 0.2 cadence (Plt03420-04000, t = 34.2-40.0) sit in node
+  scratch; the OFFLINE LOCATION PASS is running on them (oriented star
+  scan at level 4 on all 30 + flow finder lmax 6/8 at level 4 on the
+  bracket slices, seeds 1.0-3.5 with dents) -- the level-3 hunts stalled
+  on a noise-floor attractor at R ~ 5.0 / M_MS ~ 2.48, and the level-5
+  solution is exactly what should let the flow converge. Target: upgrade
+  "lead >= 3.4, bracketed not located" to an exact surface beside the
+  standard 5.40/3.10 and harmonic 5.47/3.06. Verdict lands in this
+  section and the registry row when the hunt reports.
+
+- **THE CHAIN FIRED 15:47: the spiral retry is IN FLIGHT.**
+  `merge_twin_p012_eta4_lvl5_t066_r05000` restarted from Chk05000
+  (t = 50.0) on the freed card, per the record above. Death watch armed
+  (NaN / completion); the risk read: the t = 50 planting gives the
+  regrid 11.9 units of margin before the eta-4 spiral wall at 61.9 --
+  the ladder's proven recipe, against the 2-unit planting that
+  detonated probe 1 at first regrid.
+
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
    from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed
