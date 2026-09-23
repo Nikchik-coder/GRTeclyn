@@ -195,6 +195,24 @@ that produced it does not.
    (collapse). Those pruned launches
    rendered no other field, and the plotfiles are gone, so no lapse, K or scalar movie of
    either branch exists (launch policy fixed 2026-09-09: several fields by default).
+   **The scalar channel follows the horizon, and the growth is not the box (2026-09-22/23).**
+   Three scalar-stream arms close the single-throat channel:
+   `single_eps_p1e2_q1e2_ml4_scalar_t100` *(pack, `campaign/01_single_throat/seed/`)* — the kicked
+   quadrupole collapses on its published schedule (permanent MOTS from t = 11) and its monopole
+   envelope decays ×103 by t = 95 (late e-folds 5–7): the counted, horizoned curve of
+   `figures/08_waves/scalar_censorship`. `single_pureq_q1e2_ml4_scalar_t100` *(pack, `seed/`)* —
+   the same-parameter pure quadrupole lands on the inflation branch (no horizon) and its monopole
+   envelope grows, e-fold ~5.8 at R = 18 (legend: "lone throat, inflated"). And
+   `single_pureq_q1e2_L128_ml4_scalar_t100` *(pack, `seed/`)* — the box-doubled discriminator
+   reproduces that growth to a few % through t ≈ 80 with identical e-folds (4.27/4.37/4.51 over
+   45–75) and inflates the same way (ray-min R 3.89 → 8.56 by t = 98, ×2.2; d ln R/dt peaks
+   ≈ 0.032 near t ≈ 75, then falls to ≈ 0.011 by 95): ghost-driven, NOT a box artifact. Quotable
+   window t ≲ 75–80 (both boxes' constraints grow past ~80; the late outward-increasing Ψ4
+   pattern survives the doubling, so it was never the boundary). One throat, two fates, opposite
+   scalar behaviour: horizon ⇒ the radiation dies; no horizon ⇒ it grows. What ends the
+   inflation (saturate / coast / turn over to collapse — the rate is decelerating, halving per
+   ~20 units) is OPEN and in flight: `single_pureq_q1e2_L128_ml4_scalar_t500` (launched
+   2026-09-23, rolling checkpoints keep-3, stop 500, article placeholder sec:single:fate).
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
    (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and
@@ -752,11 +770,18 @@ and nothing in this section may be quoted as a surface, a mass, or a dissolution
   (η = 4) delays the whole sequence ~10 units and then dies anyway — the
   re-run to t = 100 hits the same wall at t = 61.9, 6.3 after its own
   delayed floor — **four gauges, four clocks (43.6 / 49.0 / 52.1 / 61.9),
-  one wall**. On the head-on control the harmonic driver dies horizonless at
-  25.23 and the η = 4 re-run dies horizonless-as-scanned at 34.2 (delayed
-  wall), so the standard gauge's five-unit horizon lead is not gauge-robust
-  either (level-3 caveat: a later-forming under-resolved horizon is not
-  excluded). The crash is the moving-puncture slicing losing its
+  one wall**. On the head-on control the horizon's lead over the wall IS
+  gauge-robust — the 2026-09-21 "horizonless" readings of both gauge re-runs
+  were WRONG (corrected 2026-09-23; the scans themselves say otherwise):
+  the harmonic arm's own scan shows the common MOTS from t = 20.8
+  (R 5.47 / M_MS 3.06 vs the standard gauge's 5.40 / 3.10), leading its
+  25.23 death by 4.4 units; the η = 4 arm merges (tracker coalescence 26.7
+  vs standard 21.0 — the earlier "un-merged, mouths 1.06 apart" read the
+  split-plane diagnostic, which never reaches 0) and holds whole trapped
+  spheres from t = 30.8 to its 34.2 death, ≥ 3.4 units of lead (the MOTS
+  itself is bracketed, not located: the flow finder stalls on a noise-floor
+  attractor at R ≈ 5.0). Leads 4.9 / 4.4 / ≥ 3.4 across the three slicings:
+  trapping precedes the death in every gauge tried. The crash is the moving-puncture slicing losing its
   singularity-avoidance race behind a censoring horizon (see the
   spiral-horizon claim), not the singularity arriving; a shock-avoiding or
   maximal slicing is the untried experiment.

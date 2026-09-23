@@ -284,8 +284,9 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   **HUNT DONE: 0 surfaces at lmax 6 AND lmax 8** on the t = 49.0 slice
   (0.03 before the NaN; 15 seed-variants each). No horizon resolvable in
   the level-3 death window — the harmonic-class lapse dies
-  horizonless-as-measured on BOTH encounters (R3b the head-on, this the
-  spiral). Bounding caveat: the standard spiral's horizon is a LEVEL-5
+  horizonless-as-measured on the SPIRAL. [The "BOTH encounters" claim that
+  stood here 09-22 was WRONG about the head-on, corrected 2026-09-23:
+  R3b's own scan carries the common MOTS from t = 20.8 — see its entry.] Bounding caveat: the standard spiral's horizon is a LEVEL-5
   measurement (R0), and no level-3 spiral slice in any gauge has ever
   yielded a flow-finder horizon (R1 t = 60: 0; here: 0) — so this reads
   "no horizon at level-3 resolution", not "naked"; censored-or-naked in
@@ -319,6 +320,13 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   slice is archived (closeout, this date):
   `04_binary_headon/_keep_r3a_eta4_plt03000/` with the hunt log; the rest of
   the local-scratch keeps are pruned.
+  **CORRECTION 2026-09-23: the "un-merged / mouths still 1.06 apart"
+  reading above was WRONG.** 1.06 is the split-plane half-domain
+  diagnostic, which never reaches 0 in ANY gauge; the throat tracker's
+  coalescence is t = 26.70 against the standard 21.04 — this arm MERGED,
+  ~5.7 late on the η = 4 clock, before its stop. The horizon question was
+  answered by the continuation (trapped spheres from t = 30.8; see the
+  t050 landing correction below).
 - **R3b** `merge_headon_flip_d8_lp2_t030` — GPU 1, beside the scalar arm.
   **LANDED 11:04 — the success read FAILED.** NaN in h11 at **t = 25.226**
   (level 3, merger core, mouths 0.5 apart): 1.7 units *before* the scout's
@@ -340,6 +348,17 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   gauge-robust. The cited slice and the hunt log are archived (the t = 59
   precedent): `04_binary_headon/_keep_r3b_lp2_plt02520/`. Folded into §VII.C
   as the second gauge arm.
+  **CORRECTION 2026-09-23: the "horizonless-as-scanned / none through
+  t = 25.2 / scattered trapped cells" verdict above was WRONG.** A re-read
+  of this arm's own horizon_scan.dat shows the common MOTS with sane areas
+  on EVERY scan from t = 20.8 — R_areal 5.47 / M_MS 3.06 against the
+  standard gauge's 5.40 / 3.10 — leading the 25.226 death by 4.4 units
+  (standard lead 4.9). The 09-21 read collapsed the record into the
+  pit-flicker family; it was not. The t = 25.2 flow-hunt null stands as a
+  finder miss on one late slice, not as a second instrument overturning
+  the scan's five-slice positive. The horizon lead IS gauge-robust; paper
+  VII.C + item 1, registry row, systematics table and results README all
+  corrected this date.
 - **R0** — in progress offline (no card): shape-free MOTS hunt on the
   archived t = 59.0 slice, validated first against the head-on t = 100
   plotfile's known horizon.
@@ -362,16 +381,21 @@ wall, many clocks:
 |---|---|---|---|
 | spiral standard | — | wall t = 52.07 (floor 44.96) | common MOTS t = 55–59 (level-5 twin; R0) |
 | spiral lc1 | 1+log coeff halved | wall 43.64 | not hunted |
-| spiral R2 | lapse_power 2 (exit 1+log) | wall 49.03 | death window on gpu-1-0, hunt BLOCKED |
+| spiral R2 | lapse_power 2 (exit 1+log) | wall 49.03 | hunt DONE 09-22: 0 surfaces (lmax 6/8) — bounds level-3 resolution, not censored-or-naked |
 | spiral R1 | eta 1→4 | NO wall by t = 60.01 (floor 55.59; record ends inside its own floor-to-wall gap) | none on final slice (flow hunt 0/15) |
 | head-on scout | — | NaN 26.91 | MOTS from 22 |
-| head-on R3b | lapse_power 2 | NaN 25.23 | NONE by both instruments |
-| head-on R3a | eta 1→4 | clean to stop 30, un-merged | none claimable (pit flickers within noise) |
+| head-on R3b | lapse_power 2 | NaN 25.23 | common MOTS from 20.8 (R 5.47 / M_MS 3.06), lead 4.4 [09-21 "NONE by both instruments" was WRONG — corr. 2026-09-23] |
+| head-on R3a | eta 1→4 | merged late (tracker 26.70 vs 21.04; "un-merged" was WRONG — corr. 09-23), clean to stop 30; continuation NaN 34.15 | trapped spheres from 30.8, lead ≥ 3.35 (MOTS bracketed, not located) |
 
 Spread on the spiral wall across slicings tried: 43.6 / 49.0 / 52.1 (−16 % /
 −6 % / ref), unbounded above under the quadrupled shift damping (> 60,
-undecided removed-vs-postponed). Head-on death: 25.2 / 26.9 (−6 %). The
-horizon lead (5 units, standard) is NOT gauge-robust (R3b: dead horizonless).
+undecided removed-vs-postponed). Head-on death: 25.2 / 26.9 / 34.2. The
+horizon lead IS gauge-robust — 4.9 / 4.4 / ≥ 3.4 across the three slicings
+[the "NOT gauge-robust (R3b: dead horizonless)" verdict that stood here
+09-21/22 was WRONG, corrected 2026-09-23: R3b's scan carries the MOTS from
+20.8 and R3a's continuation holds whole trapped spheres from 30.8].
+Trapping precedes the death in every gauge tried; only the clock is
+gauge-dependent.
 Fate-reproducibility systematic (NEW, from the scalar twin): at the
 pure-quadrupole point ε₂ = 1e-2, kick 0, the collapse/no-collapse branch
 flips under GPU nondeterminism alone — machine noise is a fate-level
@@ -398,8 +422,14 @@ continuations restart instead of re-running from zero:**
   `merge_twin_p012_eta4_t100` (GPU 0 of the first GPU node, profile orbit,
   keep-last 8, checkpoints keep-3) died of NaN in h11 at **t = 61.92**,
   level 3 — 6.3 units after its own delayed floor (55.59), inside the
-  standard 7.9-unit floor-to-wall gap, right on the ~63.5 delayed-clock
-  estimate. Failure-time list closes: **43.6 / 49.0 / 52.1 / 61.9 — four
+  standard 7.9-unit floor-to-wall gap, so 1.6 units AHEAD of the ~63.5
+  delayed-clock estimate [an earlier line here said "right on" the
+  estimate — overstated, corrected 2026-09-23]: the floor moved +10.6, the
+  wall +9.1 (vs the 52.86 arm whose gap defines the 7.9). The re-run is
+  BIT-IDENTICAL to the t = 60 arm over the whole shared window (0.0
+  relative difference in min lapse, min χ and max|K| to t = 60.01, same
+  node and card), so its tail is a clean continuation, not a new sample.
+  Failure-time list closes: **43.6 / 49.0 / 52.1 / 61.9 — four
   gauges, four clocks, ONE WALL.** §VII.C's removed-vs-postponed clause is
   retired; item 1 carries the four clocks. Death-window keeps (last 8)
   live on the FIRST node's local scratch — the censored-or-naked flow hunt
@@ -408,11 +438,20 @@ continuations restart instead of re-running from zero:**
   as scanned.** `merge_headon_flip_d8_eta4_t050` (GPU 1 of the first GPU
   node) NaN in h11 at **t = 34.15** — the level-3 wall on the η = 4 clock
   (scout 26.91, ~+7). The scan's n_mots = 1 rows at t = 28.2–29.4 are the
-  chi-pit-area artifact (R ≈ 24, M ≈ 64 against the system's ~4.8), so
-  "MOTS at 22 is shift-robust" is answered NO-AS-SCANNED at level 3, with
-  the same later-forming-horizon caveat as the harmonic control. §VII.C's
-  control list becomes 25.2 / 26.9 / 34.2. Death-window keeps on the first
-  node; flow hunt pending there.
+  chi-pit-area artifact (R ≈ 24, M ≈ 64 against the system's ~4.8), so the
+  09-23-morning verdict here read "NO-AS-SCANNED at level 3". **That was
+  WRONG, corrected 2026-09-23 (same day):** beside those artifact rows the
+  scan holds WHOLE trapped coordinate spheres (n_trapped > 0, closed
+  surfaces, sane radii) on every slice from t = 30.8 to the 34.15 death —
+  a closed trapped surface guarantees a MOTS outside it, so trapping leads
+  this death by ≥ 3.35 units and "MOTS is shift-robust" is answered YES
+  at the trapping level. The flow hunt (first node) brackets without
+  locating: attractor R ≈ 5.0 / M_MS ≈ 2.46 at rms 4.4e-2–9e-2 (the
+  noise-floor-MOTS signature), trapped Andersson–Metzger witnesses from
+  t = 33.7; the untrapped-witness bracket logs (batches C/D) sit on the
+  first node's local /tmp. §VII.C's control list stays 25.2 / 26.9 / 34.2
+  and its horizon column flips to leads 4.9 / 4.4 / ≥ 3.4. Death-window
+  keeps on the first node.
 - **2 → IN FLIGHT (launched 2026-09-22 ~06:45 from a session ON
   the second GPU node, GPU 0 — the whole card — on the user's word)** as
   `single_pureq_q1e2_L128_ml4_scalar_t100` (template
@@ -461,7 +500,14 @@ continuations restart instead of re-running from zero:**
   it. REQUEUED by a session-independent (setsid) watcher that launches it
   on this card once nvidia-smi reads < 30 GB used — i.e. when the L=128
   arm exits (~21:00+); beside the kicked arm's ~21 GB the lvl5's 47.7-GB
-  peak fits.**
+  peak fits.** **CANCELLED 2026-09-23 ~11:15 on the user's word ("its on
+  this node so cancel it"): the setsid watcher and its sleep were killed on
+  the second node, no requeue process left — the level-5 harmonic head-on
+  will NOT launch. The L=128 arm was untouched. The resolution question it
+  was built for has meanwhile narrowed: the level-3 gauge nulls it was to
+  arbitrate were themselves corrected this date (see the R3b/R3a
+  corrections — the scans DO carry the horizon), so the remaining level-5
+  question is only the MOTS location under η = 4, not its existence.**
 - **6 (launched 2026-09-22 ~07:15 on the user's word "we need this for
   the paper") — THE GUARANTEED COLLAPSE WITH THE SCALAR RECORDER:
   `single_eps_p1e2_q1e2_ml4_scalar_t100`** (template
@@ -493,6 +539,48 @@ continuations restart instead of re-running from zero:**
   fates, opposite scalar behaviour on one instrument. §VI.F rewritten
   around that contrast; item 12 updated. Keeps: 4 plotfiles + 3
   checkpoints (50 G) on this node's scratch, prune on the user's word.
+
+### 2026-09-23 (midday) — the L=128 discriminator LANDS; the inflation-fate long arm LAUNCHES
+
+- **2 → LANDED 11:58 (t = 100.0 clean, zero NaN, avg 3.41 u/h, 29.5 h)**:
+  `single_pureq_q1e2_L128_ml4_scalar_t100`. Question 1 ANSWERED — the
+  monopole growth SURVIVES the doubled box: few-% match to the L = 64 twin
+  on all spheres through t ≈ 80, identical e-folds 4.27/4.37/4.51 over
+  45–75 — ghost-driven growth, NOT a box artifact. Question 2: the collapse
+  branch was NOT reached here either — this arm inflates too (consumer
+  ray-min R 3.89 → 8.56 by t = 98, ×2.2; scan R_min sphere to 18.2; no
+  horizon, the lone n_mots row is the R 47.6 / M 24 scan-edge artifact).
+  NEW: the growth-rate history — d ln R/dt peaks ≈ 0.032 near t ≈ 75 and
+  falls to ≈ 0.011 by 95 (rate roughly halving per 20 units), same shape as
+  the L = 64 arms — the inflation accelerates, peaks, decelerates. Late
+  caveats travel: L2_Ham leaves its floor at 76.8 (×12 by 96.8) and the
+  late outward-increasing ψ4 pattern persists at L = 128 (so it was never
+  the boundary; likely extraction in the non-asymptotic inflating
+  geometry). Quotable window t ≲ 75–80. Paper: §IV gains the placeholder
+  subsection "The fate of the inflating wormhole" (sec:single:fate,
+  three endings, discriminator spelled out); censorship legend renamed
+  "lone throat, inflated" on the user's word. 4 plotfiles remain on the
+  second node's scratch (final-slice keep candidates). Pack/file pending
+  (WHM_MOVIES=0; frames stay in the run dir).
+- **THE INFLATION-FATE LONG ARM (launched 2026-09-23 11:44 on the user's
+  word "make this as long run as possible", second-node GPU 0):**
+  `single_pureq_q1e2_L128_ml4_scalar_t500` (template
+  `params_single_pureq_q1e2_L128_ml4_scalar_t500.txt`): the L=128 arm's
+  exact configuration with stop_time 500, ROLLING checkpoints every 0.5
+  units keep-3 (stop/resume/extend at will), frames on (profile
+  headon-modes, zoom 128, coord 64, keep-last 4). A first t = 150 no-checkpoint
+  version launched 11:38 was stopped at t = 0.28 and PRUNED on the user's
+  next word (run dir, scratch, log, registry line, template — superseded,
+  not landed). Sponge VERIFIED live on the user's word (reflections over a
+  long run would poison the flux): enabled, r 48–64, strength 4, centred
+  64³ in the loaded parameter echo; spheres 10/14/18/22 deep inside; the
+  t100 arm crossed the first would-be echo window (~t = 84–90) with
+  nothing visible. Question: which of the three endings — saturation /
+  coast / turnover-to-collapse (the cycle) — the deceleration is the
+  beginning of; discriminator is R_min turning over while the monopole
+  flux still flows, then first genuine trapping. Milestones at 3.4 u/h:
+  t = 150 in ~44 h (Thu ~08:00), t = 300 in ~89 h (Sat ~04:30), t = 500 in
+  ~148 h (Tue 09-29 ~15:30); stop it the moment the fate settles.
 
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run

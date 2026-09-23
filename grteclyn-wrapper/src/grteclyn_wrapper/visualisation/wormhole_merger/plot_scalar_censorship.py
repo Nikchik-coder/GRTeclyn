@@ -228,12 +228,12 @@ def main(argv: list[str] | None = None) -> int:
     el = _envelope(tl, kl)
     axB.semilogy(tl, el, color=style.DEEP_GREEN, lw=0.9,
                  ls=(0, (3, 2)), alpha=0.55, zorder=2,
-                 label="lone throat, uncollapsed")
+                 label="lone throat, inflated")
     g = (tl >= 50.0) & (tl <= 95.0)
     c = np.polyfit(tl[g], np.log(el[g]), 1)
     print(f"[censorship] lone throat: collapsed arm peak {ek.max():.2e} -> "
           f"{np.interp(95.0, tk, ek):.2e} at t=95 (x{ek.max()/np.interp(95.0, tk, ek):.0f} down); "
-          f"uncollapsed grows e-fold {1 / c[0]:.1f}, max {el.max():.2e}")
+          f"inflated grows e-fold {1 / c[0]:.1f}, max {el.max():.2e}")
 
     # The head-on enters (b) on its OUTER sphere, so it must wear the OUTER
     # sphere's colour: the top legend serves both panels, and drawing this in
