@@ -682,6 +682,36 @@ continuations restart instead of re-running from zero:**
   windows) plus both level-5 restart seeds now survives pod reclamation.
   Manifest: `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-23.md`.
 
+### 2026-09-23 (afternoon) — the two wall-question probes on the second node's card (user: "ok go on")
+
+The archives made this morning put the restart seeds on NFS, which is what
+makes these launchable from this node at all. Sequential (each needs the
+whole card: the lvl5 family peaks ~48 GB).
+
+- **PROBE 1 — IN FLIGHT (launched ~13:50): `merge_twin_p012_eta4_lvl5_t066_r06000`**
+  (template `params_ref_eta4_p012_lvl5_t066.txt`): the η = 4 spiral
+  restarted from archived Chk06000 (t = 60.0) at max_level 3 → 5,
+  plotfiles every 0.2 units, no checkpoints, profile none (the raw
+  death-window slices ARE the product; no frames, no deletion), stop 66.
+  THE QUESTION: censored-or-naked for the η = 4 spiral wall (t = 61.9 at
+  level 3) — open item 1's sharpest hedge. Level 3 has never resolved a
+  spiral horizon in ANY gauge (the standard one included, where level 5
+  finds it from t = 55), so the level-3 nulls bound the instrument, not
+  the spacetime. The shape-free finder on these lvl5 slices decides:
+  found ⇒ "the spiral's wall is censored in every gauge tried", the
+  hedge retires from §VII.C and item 1; genuinely none ⇒ a naked wall in
+  one gauge, a finding of its own. Side-watch: does level 5 postpone this
+  wall (ladder precedent +0.5–2.5 per doubling)? ~1–2 h to the wall
+  (~15:30 landing); offline hunts (CPU, this node) after.
+- **PROBE 2 — QUEUED behind probe 1: the η = 4 head-on at level 5 from
+  archived Chk03200** (t = 32.0, keep `04_binary_headon/_keep_r3a_eta4_
+  t050_deathwin/`), stop ~36. THE QUESTION: locate the MOTS that level 3
+  only brackets on this arm (trapped spheres from 30.8 prove existence;
+  the flow finder stalls on a noise-floor attractor R ≈ 5.0) — upgrade
+  "lead ≥ 3.4, bracketed" to an exact surface (R, M_MS, lead) matching
+  the standard (5.40/3.10, lead 4.9) and harmonic (5.47/3.06, lead 4.4)
+  numbers. ~3 h; lands ~19:00 if probe 1 releases the card ~15:45.
+
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
    from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed
