@@ -582,6 +582,29 @@ continuations restart instead of re-running from zero:**
   t = 150 in ~44 h (Thu ~08:00), t = 300 in ~89 h (Sat ~04:30), t = 500 in
   ~148 h (Tue 09-29 ~15:30); stop it the moment the fate settles.
 
+- **FIRST-NODE SCRATCH ARCHIVED + PRUNED (2026-09-23 ~12:30, on the user's
+  word "yes archive and prune"; the user then moves to the second node for
+  the same).** Archived to NFS keep-dirs, byte-verified, THEN pruned (97 G
+  freed on the node, 47 G to NFS):
+  `04_binary_headon/_keep_r3a_eta4_t050_deathwin/` — Plt03370 (t = 33.7,
+  the cited trapped-witness slice), Plt03410 (last before the 34.15 NaN),
+  Chk03200 (the lvl5-restart seed), all 16 death-window flow-hunt logs,
+  the t = 30 witness log, the batch A–D protocols + summaries and the
+  witness protocol's positive control (spiral lvl5 t = 59: 20 surfaces) —
+  the "batch C/D logs stranded on the first node" item is CLOSED.
+  `05_binary_spiral/p012/_keep_r1_eta4_t100_deathwin/` — Plt06150
+  (t = 61.5, the cited flow-null slice), Chk04000/05000/06000 (the lvl5
+  death-window seeds; 06000 is the cheap 1.9-before-the-wall probe),
+  the t = 58/60/61.5 hunt + witness logs.
+  `_keep_v2_lvl5from0_plt05900/` gains the R0 hunt logs that lived only in
+  a session scratchpad. R3a's Chk03300/03400 and the 13 uncited window
+  plotfiles were dropped. Manifest:
+  `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-23.md`, which also carries
+  the suggested second-node procedure (kicked arm: keep the t = 100 MOTS
+  slice as the horizoned positive-control twin of the pureq noMOTS keep;
+  L128 t100: keep the final t = 100 slice, prune its rolling checkpoints —
+  the t500 arm re-runs that trajectory with its own).
+
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
    from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed
