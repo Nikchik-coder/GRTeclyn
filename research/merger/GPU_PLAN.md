@@ -605,6 +605,24 @@ continuations restart instead of re-running from zero:**
   L128 t100: keep the final t = 100 slice, prune its rolling checkpoints —
   the t500 arm re-runs that trajectory with its own).
 
+- **SECOND-NODE SCRATCH ARCHIVED + PRUNED (2026-09-23 ~13:00, the session
+  moved here, on the user's word "proceed with this on this single gpu
+  node").** Byte-verified, then pruned — 117 G freed, 8.4 G to NFS:
+  `01_single_throat/seed/_keep_eps_p1e2_scalar_MOTS_plt10000/` (the kicked
+  arm's t = 100 collapsed endpoint — the horizoned positive-control twin of
+  the pureq noMOTS keep) and
+  `01_single_throat/seed/_keep_pureq_L128_noMOTS_plt10000/` (the L=128
+  discriminator's t = 100 inflation endpoint; a finder run on it closes the
+  scan-edge-artifact point). Both runs' remaining plotfiles and rolling
+  checkpoints pruned on the manifest's grounds. **FLAGGED, not covered by
+  today's word: ~112 G of level-5 spiral horizon material lives ONLY on
+  this node's local /tmp** — the t = 55–57 MOTS-birth slices (19 G), the
+  freeze arm's t = 97–100 settled-horizon slices (47 G), the Chk05700
+  slice-minting seed (26 G), the pre-merger-decay keep (20 G) — i.e. the
+  slices behind the paper's spiral-horizon claim (open item 1's "one
+  instrument and seven slices"). If this pod is ever reclaimed they are
+  gone; archiving them to NFS (2.1 T free) awaits the user's word.
+
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
    from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed
