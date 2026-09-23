@@ -548,7 +548,15 @@ continuations restart instead of re-running from zero:**
   on all spheres through t ≈ 80, identical e-folds 4.27/4.37/4.51 over
   45–75 — ghost-driven growth, NOT a box artifact. Question 2: the collapse
   branch was NOT reached here either — this arm inflates too (consumer
-  ray-min R 3.89 → 8.56 by t = 98, ×2.2; scan R_min sphere to 18.2; no
+  ray-min R 3.89 → 8.56 by t = 98, ×2.2 [CORRECTED 2026-09-23 evening:
+  the star scan's "R_min sphere to 18.2" quoted here this morning is NOT
+  the throat -- measured: the two instruments agree to t ≈ 72, then the
+  star scan's shell window (r ≤ ~3.0) is outrun by the inflating throat,
+  its r_at pins at 2.97 from t = 85 (window edge) and jumps to r = 0.30 at
+  t = 95 (the inner-sheet R(r) dip); the ray scan tracks the throat
+  outward, r_at gliding 1.61 → 8.06, and is the ONLY throat tracker past
+  t ≈ 72; the pre-compaction "R_min 3.9 → 18.5" was the same misreading];
+  no
   horizon, the lone n_mots row is the R 47.6 / M 24 scan-edge artifact).
   NEW: the growth-rate history — d ln R/dt peaks ≈ 0.032 near t ≈ 75 and
   falls to ≈ 0.011 by 95 (rate roughly halving per 20 units), same shape as
@@ -581,6 +589,28 @@ continuations restart instead of re-running from zero:**
   flux still flows, then first genuine trapping. Milestones at 3.4 u/h:
   t = 150 in ~44 h (Thu ~08:00), t = 300 in ~89 h (Sat ~04:30), t = 500 in
   ~148 h (Tue 09-29 ~15:30); stop it the moment the fate settles.
+  **MEASUREMENT PROTOCOL (2026-09-23 evening, from the t100 instrument
+  autopsy above -- the star scan cannot follow an inflated throat):**
+  (1) THE THROAT CURVE is the consumer ray scan's R_min, trusted while its
+  r_at_min glides OUTWARD with the throat; the moment r_at jumps inward
+  (the inner-sheet R(r) dip capturing the argmin -- the L64 arms' clip
+  dots at t = 62/74), stop quoting and switch to (4). The star scan's
+  R_min is window-limited to r <~ 3 and is NOT a throat tracker here.
+  (2) THE TURNOVER DISCRIMINATOR does not rest on radius calibration:
+  min lapse crashing + min chi falling (collapse signature, each opposite
+  to inflation's) + the ray R_min turning down, then trapping. NB a
+  horizon formed by a turned-over LARGE throat can sit outside the star
+  scan's r <~ 3 window too -- absence of scan trapping is then weak; the
+  flow finder with --half ~ 12 on a kept slice is the horizon instrument.
+  (3) THE SUPPORT DRAIN is the scalar monopole flux (scalar_modes.dat),
+  calibration-free; watch whether it keeps growing, saturates, or
+  reverses with the deceleration.
+  (4) AT EACH VISIT to the first node: run the throat measure offline on
+  a kept plotfile (R(r) along the ray with the inner sheet excluded,
+  min over r above the trough), and consider restarting the CONSUMER
+  (sidecar only, evolution untouched) with --areal-min-radius raised to
+  ~ r_throat/2 and --horizon-half widened to ~ 12 for the late era.
+  Article: sec:single:fate carries the instrument note as of this date.
 
 - **FIRST-NODE SCRATCH ARCHIVED + PRUNED (2026-09-23 ~12:30, on the user's
   word "yes archive and prune"; the user then moves to the second node for
