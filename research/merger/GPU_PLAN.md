@@ -623,6 +623,22 @@ continuations restart instead of re-running from zero:**
   instrument and seven slices"). If this pod is ever reclaimed they are
   gone; archiving them to NFS (2.1 T free) awaits the user's word.
 
+- **THE LEVEL-5 SPIRAL TREASURE ARCHIVED + PRUNED (2026-09-23, flagged at
+  the node closeout, archived on the user's "go on", pruned on the user's
+  "prune").** All five dirs copied to NFS keep-dirs, byte-verified with a
+  README each, then removed from the second node's /tmp (~113 G freed; that
+  node's scratch is now EMPTY): the t = 55--57 common-MOTS birth slices ->
+  `05_binary_spiral/p012/_keep_spiral_lvl5_wall_scan/`, the Chk05700
+  slice-minting seed -> `_keep_spiral_lvl5_t57_seed/`, the production
+  chain's t = 36 restart point Chk03600 -> `_keep_spiral_premerger_decay/`,
+  the freeze arm's t = 97--100 settled-horizon window (+ Chk10000) ->
+  `05_binary_spiral/p012_freeze/_keep_freeze_settled_horizon_plt09700_10000/`,
+  and the GRTresna bridge slice -> `90_probes/_keep_bridge_grtresna_L64_
+  t025_plt00520/`. Every slice behind the paper's spiral-horizon claim
+  (open item 1's "one instrument and seven slices" -- birth AND settled
+  windows) plus both level-5 restart seeds now survives pod reclamation.
+  Manifest: `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-23.md`.
+
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
    from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed
