@@ -47,6 +47,15 @@ the spiral collapse page, drawn from the pure-quadrupole arm by
 grid of min α / min χ / max |K| / the radial shells (t = 33–55) / the
 constraints. MOTS from t = 33, R 3.80 → 2.41, M_MS 1.90 → 1.24.
 
+`01_single_throat/single_horizon_regrowth` — the remnant horizon that
+shrinks and grows back, by `plot_horizon_regrowth` (no arguments): MOTS areal
+radius and Misner–Sharp mass for the three kicked collapse arms (undamped
++0.01, the two scalar-damped level-4 twins), floors marked, the pure-quadrupole
+arm in context grey (its floor arrives only at t = 92). Floors 2.00/2.27/2.11
+at t = 48/47/43, regains +17.0/+9.4/+15.1 % in R and +11.7/+10.6/+12.5 % in
+M_MS by each record's end — the area-law's NEC hypothesis failing both ways in
+one record (article Sec. IV C, fig:single_regrowth).
+
 `01_single_throat/single_throat_inflation` — its mirror, by
 `plot_single_inflation` (no arguments): the ε = −0.01 level-4 arm to t = 100
 on the same 1 + 2×3 grammar, with the unkicked level-4 twin drawn beside it

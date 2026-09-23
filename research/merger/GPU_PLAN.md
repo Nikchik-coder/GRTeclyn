@@ -763,6 +763,34 @@ whole card: the lvl5 family peaks ~48 GB).
   the ladder's proven recipe, against the 2-unit planting that
   detonated probe 1 at first regrid.
 
+- **THE REGROWTH-SATURATION ARM -- DESIGNED 2026-09-23 (the user, from
+  the new `single_horizon_regrowth` figure: "we need to evolve single
+  throat to t = 200 at least to check where it converges for the
+  collapsed case"); THE USER KICKS IT on the second cluster's card
+  (busy with the spiral retry to ~21:00-23:00).** `single_eps_p1e2_t250`
+  -- template `templates_scan/params_single_eps_p1e2_t250.txt`, READY:
+  the undamped +1 % kicked collapse arm byte-for-byte with stop_time
+  250 and rolling checkpoints keep-3 every 5 units (the 2026-09-22
+  protocol); profile `headon-modes` (horizon scan + areal radius + the
+  scalar stream -- the shedding IS the mechanism, so watch it beside
+  the horizon), level 3, one card, ~15 h at the family's ~17 u/h.
+  THE QUESTION: where does the regrown horizon converge? At t = 100 the
+  MOTS is still creeping (+17.0 % in R, +11.7 % in M_MS off the t = 48
+  floor) -- a saturating asymptote (fit M_inf as the head-on's
+  2.160 +- 0.006 was fitted), a continued creep, or a second turnover
+  are all open. Success reads: the fit over t = 100-250; either
+  outcome extends fig:single_regrowth and the IV.C "where the regain
+  converges" sentence, and the article's t250 hook is already in
+  place. Caveats that travel: this family's sphere-local Psi4 floor
+  growth and the late constraint onset (t ~ 57-84, shared with the
+  unkicked control) -- quote the tail with H(t) stated; the horizon
+  quantities are pit-local and stayed clean to t = 100 in all three
+  arms. Launch (launch.sh-class -- redirect to a file and poll):
+  `bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh
+  --template runs/wormhole_merger/templates_scan/params_single_eps_p1e2_t250.txt
+  --gpu 0 --profile headon-modes --keep-last 4 > /tmp/launch_t250.log 2>&1 &`
+  (registry --what comes from the template's first comment line).
+
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
    from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed
