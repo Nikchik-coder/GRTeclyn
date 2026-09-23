@@ -763,6 +763,30 @@ whole card: the lvl5 family peaks ~48 GB).
   the ladder's proven recipe, against the 2-unit planting that
   detonated probe 1 at first regrid.
 
+- **THE SPIRAL RETRY DIED AT THE WALL, 18:13 -- AND MOVED IT.**
+  h11 NaN on level 5 at t = 60.041 after TEN CLEAN UNITS of level-5
+  evolution from the t = 50 restart (4.13 u/h steady). Two questions
+  resolve, one sharpens:
+  - *Method*: the t = 50 planting survives, so probe 1's instant death
+    at t = 60.055 was NOT the plant shock -- it was the wall itself.
+    The two attempts agree on the death time to 0.015 units.
+  - *The wall*: level 5 meets the eta-4 spiral wall at 60.04, **1.9
+    units BEFORE level 3's 61.9** -- refinement does not postpone this
+    wall, unlike every rung of the standard-gauge ladder. And the three
+    level-5 spiral deaths on the record now sit within half a unit of
+    one another -- 59.94 (standard, seam-free), 60.04 (eta-4), 60.45
+    (standard, restarted) -- while the same two gauges' level-3 clocks
+    sit ten units apart (52.1 vs 61.9). Two gauges only, but the hint
+    is that the fine-grid wall keeps a time of its own. Folded into
+    VII.C beside the level-3 clock.
+  - *Censored-or-naked*: UNDECIDED FROM HERE. The death-window slices
+    Plt05520-06000 (t = 55.2-60.0, 0.2 cadence, rolling keep-25) live
+    in the second node's local scratch with the consumer's chi
+    profiles; the shape-free hunt NEEDS A SESSION THERE. The second
+    node's card is FREE as of 18:13 -- what is queued there is
+    analysis, not evolution: this hunt and probe 2's MOTS location
+    redo (hunt script at scratchpad/hunt_probe2.sh).
+
 - **THE REGROWTH-SATURATION ARM -- DESIGNED 2026-09-23 (the user, from
   the new `single_horizon_regrowth` figure: "we need to evolve single
   throat to t = 200 at least to check where it converges for the
