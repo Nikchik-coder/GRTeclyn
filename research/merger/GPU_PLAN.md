@@ -812,6 +812,23 @@ whole card: the lvl5 family peaks ~48 GB).
   throat measure on a kept plotfile; point 5: stage a rolling Chk to
   NFS) are now actionable from here.
 
+- **RUN-TREE FRAMES PRUNE + PROBE-2 CLOSEOUT (2026-09-23 evening, the
+  user: "those not running should be packed and their leftovers
+  pruned").** Audit: every sizeable run dir was already packed EXCEPT
+  probe 2 -- now closed out (WHM_MOVIES=0, 0 problems) and filed into
+  04_binary_headon, frames kept pending its horizon-location verdict.
+  115 `frames/` dirs (renders + slice caches) deleted from finished
+  runs, **18.6 G freed**; exclusions: the three running arms, probe 2,
+  and the p045_t200 `_slice_cache` (ledger-cited, plotfiles long gone).
+  The stitched head-on movies were filed to `results/merger/movies/`
+  FIRST (the 09-16 "already filed" note was stale). Manifest:
+  `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-23.md` (evening
+  section). Same date, on the user's marks: fig:single_regrowth loses
+  the pure-quadrupole context curve (floor only at t = 92 -- decides
+  nothing, adds an unknown), and the scalar_censorship page is restyled
+  MONOCHROME (grey level + line style carry identity; the scenario
+  rainbow is gone).
+
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
    from t = 0 to stop 70 (no checkpoint exists). Decides removed-vs-postponed

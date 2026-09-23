@@ -76,17 +76,15 @@ its ``..._lvl5_t100_freeze_r05700/``,
 ``01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100/``.  Writes
 ``figures/08_waves/scalar_censorship``.
 
-STYLE: full-width pair (7.05 x 3.35), style.prd, no titles, no boxed key,
-curves named in place.  Scenario colours are the scalar-channel page's --
-DEEP_BLUE fly-by, GOLD spiral, INK head-on, DEEP_GREEN lone throat -- and
-(a)'s three spheres are an ink ramp, dark = inner.  The frozen-core and
-suspect stretches are their arm's own colour at half weight and dashed: same
-arm's physics, not the same standing.  The two rules
-are greys (CONTEXT for the MOTS, FAINT for the wall), not the accent: this
-page spends its one colour on the ARMS, because which arm a curve belongs to
-is the whole question here and the rules are only the clock.  (Until
-2026-09-21 the spiral was a hardcoded burgundy #9b2226, the palette's old
-accent, left behind when the accent moved.)
+STYLE: full-width pair (7.05 x 3.35), style.prd, no titles, no boxed key.
+MONOCHROME THROUGHOUT (2026-09-23, on the user's word -- the scenario
+colours of the first revision read as a rainbow): (a)'s three spheres are an
+ink ramp, dark = inner, and (b) carries identity in GREY LEVEL + LINE STYLE
+-- fly-by ink solid, spiral ink dashed, lone throat muted (collapsed solid,
+inflated dotted), the head-on its (a) outer-sphere grey -- with the top key
+naming every curve.  The frozen-core and suspect stretches are half weight
+and broken: same arm's physics, not the same standing.  The two rules are
+lighter greys (CONTEXT for the MOTS, FAINT for the wall).
 """
 
 from __future__ import annotations
@@ -190,7 +188,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- (b) three fates, one outer sphere each ----------------------------
     t, k = _flux(camp / FLYBY / "scalar_modes.dat", 30)
-    axB.semilogy(t, _envelope(t, k), color=style.DEEP_BLUE, lw=1.2, zorder=3,
+    axB.semilogy(t, _envelope(t, k), color=style.INK, lw=1.35, zorder=3,
                  label=r"fly-by, $R=30$")
 
     # The spiral, spliced: its own record to the wall, then the freeze arm.
@@ -204,11 +202,10 @@ def main(argv: list[str] | None = None) -> int:
     t_all = np.concatenate([ts[join], tf])
     e_all = _envelope(t_all, np.concatenate([ks[join], kf]))
     live = t_all <= T_WALL
-    axB.semilogy(t_all[live], e_all[live], color=style.GOLD, lw=1.2, zorder=3,
-                 label=r"spiral, $R=30$")
-    axB.semilogy(t_all[~live], e_all[~live], color=style.GOLD, lw=0.9,
-                 ls=(0, (3, 2)), alpha=0.55, zorder=2,
-                 label="spiral, core frozen")
+    axB.semilogy(t_all[live], e_all[live], color=style.INK, lw=1.1,
+                 ls=(0, (4, 2.2)), zorder=3, label=r"spiral, $R=30$")
+    axB.semilogy(t_all[~live], e_all[~live], color=style.FAINT, lw=0.9,
+                 ls=(0, (4, 2.2)), zorder=2, label="spiral, core frozen")
     print(f"[censorship] spiral R=30: {np.interp(T_WALL, t_all, e_all):.2e} at its "
           f"wall, still rising; frozen continuation flat to {e_all[-1]:.2e}")
 
@@ -222,12 +219,12 @@ def main(argv: list[str] | None = None) -> int:
     # is dashed at half weight: drawn and not counted.
     tk, kk = _flux(camp / KICKED / "scalar_modes.dat", 18)
     ek = _envelope(tk, kk)
-    axB.semilogy(tk, ek, color=style.DEEP_GREEN, lw=1.2, zorder=3,
+    axB.semilogy(tk, ek, color=style.MUTED, lw=1.2, zorder=3,
                  label="lone throat, collapsed")
     tl, kl = _flux(camp / SINGLE / "scalar_modes.dat", 18)
     el = _envelope(tl, kl)
-    axB.semilogy(tl, el, color=style.DEEP_GREEN, lw=0.9,
-                 ls=(0, (3, 2)), alpha=0.55, zorder=2,
+    axB.semilogy(tl, el, color=style.MUTED, lw=0.9,
+                 ls=(0, (1.2, 1.6)), alpha=0.75, zorder=2,
                  label="lone throat, inflated")
     g = (tl >= 50.0) & (tl <= 95.0)
     c = np.polyfit(tl[g], np.log(el[g]), 1)

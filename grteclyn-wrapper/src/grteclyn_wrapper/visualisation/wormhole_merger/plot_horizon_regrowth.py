@@ -8,9 +8,9 @@ arms `single_eps_p1e2_q5e3_ml4_t100` / `..._q5e2_ml4_t100`.  Each swallows its
 own phantom support (areal radius and Misner-Sharp mass falling), bottoms out
 near t = 43-48, and then regrows +9-17 % in radius and +11-13 % in mass as
 the negative-energy exchange reverses -- the area-law's null-energy-condition
-hypothesis failing in real time, both ways in one record.  The pure-quadrupole
-arm of the collapse page reaches its own floor only at t = 92 and is drawn as
-context.
+hypothesis failing in real time, both ways in one record.  (The pure-quadrupole
+arm was drawn as context in an earlier revision and removed on the user's
+word 2026-09-23: its floor arrives only at t = 92, so it decides nothing here.)
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_horizon_regrowth
 
@@ -18,10 +18,9 @@ Reads each arm's ``horizon_scan.dat`` (oriented scan, centre C rows with a
 MOTS) under ``campaign/01_single_throat/seed/``.  Writes
 ``figures/01_single_throat/single_horizon_regrowth``.
 
-STYLE: style.prd, no titles, letter tags above the frames, no boxed key,
-every series named in place.  INK is the undamped arm (the headline numbers
-of Sec. IV C), MUTED the two damped twins, CONTEXT grey the floorless
-pure-quadrupole arm; the floor of each curve carries a small marker.
+STYLE: style.prd, no titles, letter tags above the frames, one shared top
+figure legend.  INK is the undamped arm (the headline numbers of Sec. IV C),
+MUTED the two damped twins; the floor of each curve carries a small marker.
 """
 
 from __future__ import annotations
@@ -44,8 +43,6 @@ ARMS = (
     ("seed/single_eps_p1e2_q5e3_ml4_t100", "damped, $\\varepsilon_2=0.005$", style.MUTED, (0, (4, 2.5)), 1.1),
     ("seed/single_eps_p1e2_q5e2_ml4_t100", "damped, $\\varepsilon_2=0.05$", style.MUTED, (0, (1.2, 1.6)), 1.1),
 )
-CONTEXT_ARM = ("seed/single_pureq_q1e2_ml4_t100", "pure quadrupole (floor only at $t=92$)")
-
 
 def _mots_history(pack: pathlib.Path, arm: str):
     rows = []
@@ -72,11 +69,8 @@ def main(argv=None) -> int:
     fig, axs = plt.subplots(1, 2, figsize=(7.05, 2.75), constrained_layout=True)
 
     hist = [_mots_history(pack, arm) for arm, *_ in ARMS]
-    ctx = _mots_history(pack, CONTEXT_ARM[0])
 
     for ax, col in ((axs[0], 1), (axs[1], 2)):
-        ax.plot(ctx[:, 0], ctx[:, col], color=style.CONTEXT, linewidth=0.9,
-                alpha=0.75, zorder=1)
         for a, (arm, name, colr, ls, lw) in zip(hist, ARMS):
             ax.plot(a[:, 0], a[:, col], color=colr, linestyle=ls,
                     linewidth=lw, zorder=3)
@@ -107,8 +101,6 @@ def main(argv=None) -> int:
                linestyle=(0, (4, 2.5)), label="damped, $\\varepsilon_2=0.005$"),
         Line2D([], [], color=style.MUTED, linewidth=1.1,
                linestyle=(0, (1.2, 1.6)), label="damped, $\\varepsilon_2=0.05$"),
-        Line2D([], [], color=style.CONTEXT, linewidth=0.9, alpha=0.75,
-               label="pure quadrupole (floor $t=92$)"),
         Line2D([], [], color=style.INK, marker="v", markersize=3.6,
                linestyle="none", label="radius floor"),
     ]

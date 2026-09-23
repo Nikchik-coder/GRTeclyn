@@ -50,8 +50,9 @@ constraints. MOTS from t = 33, R 3.80 → 2.41, M_MS 1.90 → 1.24.
 `01_single_throat/single_horizon_regrowth` — the remnant horizon that
 shrinks and grows back, by `plot_horizon_regrowth` (no arguments): MOTS areal
 radius and Misner–Sharp mass for the three kicked collapse arms (undamped
-+0.01, the two scalar-damped level-4 twins), floors marked, the pure-quadrupole
-arm in context grey (its floor arrives only at t = 92). Floors 2.00/2.27/2.11
++0.01, the two scalar-damped level-4 twins), floors marked; the
+pure-quadrupole context curve of the first revision was removed on the
+user's word (floor only at t = 92 -- decides nothing here)). Floors 2.00/2.27/2.11
 at t = 48/47/43, regains +17.0/+9.4/+15.1 % in R and +11.7/+10.6/+12.5 % in
 M_MS by each record's end — the area-law's NEC hypothesis failing both ways in
 one record (article Sec. IV C, fig:single_regrowth).
@@ -128,8 +129,10 @@ was launched for it, the `orbit-modes` consumer profile has been writing the
 scalar stream since 2026-09-15. The head-on gap it used to declare is closed --
 see `scalar_censorship` below; the single throat's is not.
 
-`08_waves/scalar_censorship` (2026-09-21) -- the horizon shuts the ghost dipole
-off, and nothing else does. Two panels, drawn as ENVELOPES: a running MAXIMUM
+`08_waves/scalar_censorship` (2026-09-21; restyled MONOCHROME 2026-09-23 on
+the user's word -- the scenario colours read as a rainbow; identity now rides
+grey level + line style with the top key naming every curve) -- the horizon
+shuts the ghost dipole off, and nothing else does. Two panels, drawn as ENVELOPES: a running MAXIMUM
 of |F_phi| over 25 units (one period of the dipole's own oscillation), then a
 Gaussian in LOG amplitude. The raw flux changes sign every ~20 units and dives
 to the log floor at each zero, which on a log axis hides the one thing the
