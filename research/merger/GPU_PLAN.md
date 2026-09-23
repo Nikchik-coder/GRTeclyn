@@ -610,6 +610,19 @@ continuations restart instead of re-running from zero:**
   min over r above the trough), and consider restarting the CONSUMER
   (sidecar only, evolution untouched) with --areal-min-radius raised to
   ~ r_throat/2 and --horizon-half widened to ~ 12 for the late era.
+  (5) THE CONSTRAINT QUESTION (the user's flag, measured 2026-09-23
+  ~13:00): the late H growth is DECELERATING, not runaway -- local e-fold
+  time stretches 7 -> 14 -> ~50 units over t = 80..95, identically in both
+  boxes (L128 7.3/8.6/13.8/44.7; L64 7.1/7.0/13.3/57.0), H(100) ~ 1e-2 =
+  x5-12 over floor and flattening. Decision rule: read H(t) over 100-130
+  when the t500 arm gets there (Thu evening) -- still flattening => run
+  on, quote with the H band stated; re-accelerating => mitigate. At the
+  next first-node visit: localize the violation on a kept slice (inner
+  sheet => exterior defensible; throat => real problem) and copy one
+  rolling checkpoint (t >= 100) to NFS so the second node's idle card can
+  host a mitigation twin (kappa-raised CCZ4 damping, or level 5) from the
+  same checkpoint, overlap-compared -- the cure's effect measured, not
+  assumed (user-gated).
   Article: sec:single:fate carries the instrument note as of this date.
 
 - **FIRST-NODE SCRATCH ARCHIVED + PRUNED (2026-09-23 ~12:30, on the user's
