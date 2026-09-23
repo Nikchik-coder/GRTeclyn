@@ -269,7 +269,7 @@ knob off its filed base (the plain p012 twin; the v1g_eta4 head-on file):
   appetite. Failed attempt archived as `..._OOMFAIL_2026-09-21` (registry row
   annotated); an auto-requeue watcher was armed, died with its session, and
   was overtaken by events: **the second attempt launched 2026-09-21 ~06:55 on
-  the SECOND node's (ilya-test-3-gpu-1-0) free card**, `--keep-last 8` so the
+  the SECOND node's (the second GPU node) free card**, `--keep-last 8` so the
   death window survives for the flow-finder hunt (see the R0 verdict below).
   **LANDED (log's last write 10:48) — the wall SURVIVES the exit from the
   1+log family.** NaN in h11 at **t = 49.03**, level 3, the standard anatomy.
@@ -387,24 +387,34 @@ slice → `01_single_throat/seed/_keep_pureq_twin_noMOTS_plt10000/`, each with
 its flow-hunt log (R3b's was already archived). Then the node-local
 `/tmp/grteclyn_scratch/` keeps of every landed run on this node pruned —
 logged in `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-21.md` (evening section).
-R2's death-window keeps live on ilya-test-3-gpu-1-0's local scratch and are
+R2's death-window keeps live on the second GPU node's local scratch and are
 NOT touchable from this node (no ssh route) — the hunt there stays blocked
 on the user.
 
 **NEXT RUNS — LAUNCHED 2026-09-22 ~06:20 on the user's word ("yes to
 t = 100 … launch all"), with rolling checkpoints ON this time so
 continuations restart instead of re-running from zero:**
-- **1 → IN FLIGHT** as `merge_twin_p012_eta4_t100` (GPU 0, template
-  `params_ref_eta4_p012_t100.txt`, profile orbit, keep-last 8, checkpoints
-  keep-3): stop raised from 70 to 100 on the user's word — if the wall is
-  real it dies ~63.5 at no extra cost; if it is removed, the tape runs to
-  the settled remnant instead of truncating at 70. 9.5 u/h measured at
-  step 258 → death ~63.5 would land ~13:00, clean-to-100 ~16:50.
-- **3 → IN FLIGHT** as `merge_headon_flip_d8_eta4_t050` (GPU 1, template
-  `params_ref_eta4_headon_t050.txt`, profile headon, keep-last 8,
-  checkpoints keep-3). 10.7 u/h early → lands ~09:40–11:10.
+- **1 → LANDED (read 2026-09-23): THE WALL IS POSTPONED, NOT REMOVED.**
+  `merge_twin_p012_eta4_t100` (GPU 0 of the first GPU node, profile orbit,
+  keep-last 8, checkpoints keep-3) died of NaN in h11 at **t = 61.92**,
+  level 3 — 6.3 units after its own delayed floor (55.59), inside the
+  standard 7.9-unit floor-to-wall gap, right on the ~63.5 delayed-clock
+  estimate. Failure-time list closes: **43.6 / 49.0 / 52.1 / 61.9 — four
+  gauges, four clocks, ONE WALL.** §VII.C's removed-vs-postponed clause is
+  retired; item 1 carries the four clocks. Death-window keeps (last 8)
+  live on the FIRST node's local scratch — the censored-or-naked flow hunt
+  under η = 4 needs hands or a session there (pending).
+- **3 → LANDED (read 2026-09-23): died at its delayed wall, horizonless
+  as scanned.** `merge_headon_flip_d8_eta4_t050` (GPU 1 of the first GPU
+  node) NaN in h11 at **t = 34.15** — the level-3 wall on the η = 4 clock
+  (scout 26.91, ~+7). The scan's n_mots = 1 rows at t = 28.2–29.4 are the
+  chi-pit-area artifact (R ≈ 24, M ≈ 64 against the system's ~4.8), so
+  "MOTS at 22 is shift-robust" is answered NO-AS-SCANNED at level 3, with
+  the same later-forming-horizon caveat as the harmonic control. §VII.C's
+  control list becomes 25.2 / 26.9 / 34.2. Death-window keeps on the first
+  node; flow hunt pending there.
 - **2 → IN FLIGHT (launched 2026-09-22 ~06:45 from a session ON
-  ilya-test-3-gpu-1-0, GPU 0 — the whole card — on the user's word)** as
+  the second GPU node, GPU 0 — the whole card — on the user's word)** as
   `single_pureq_q1e2_L128_ml4_scalar_t100` (template
   `params_single_pureq_q1e2_L128_ml4_scalar_t100.txt`: box doubled at the
   SAME dx — L 128 / N 256 / ml4, tagging_L kept 64 per the flyby-L128
@@ -467,7 +477,22 @@ continuations restart instead of re-running from zero:**
   the censorship figure: the lone collapse's scalar channel behind its
   own horizon — the counted single-throat curve, replacing the flagged
   one. Early speed 3.5 u/h under contention; ETA firms up as the card
-  load changes through the evening.
+  load changes through the evening. **LANDED (t = 100 clean, zero NaN;
+  read 2026-09-23): THE COUNTED CURVE IS IN HAND — the horizoned lone
+  throat SHEDS.** Permanent MOTS from t = 11.0 (R 3.88/M 1.94 →
+  2.45/1.29 at 100: the published kicked schedule reproduced, so the
+  kicked point is NOT machine-marginal — first-order mode drive against
+  the pure quadrupole's second order, and that contrast is now a §V
+  sentence). The scalar envelope peaks ~1.3e-2 at R = 18 in the burst
+  and DECAYS ×103 by t = 95, late e-folds 7.4/6.0/5.4 at R = 10/14/18.
+  Caveat that travels: post-horizon E_φ = +0.022/+0.090/+0.130 — a ×6
+  sphere spread (near sphere in the collapsing hair's near zone) — so
+  the DECAY is quoted, no single-throat E_φ number is.
+  Fig. `scalar_censorship`(b): this is now the solid green curve and the
+  uncollapsed twin is dashed-not-counted throughout — one throat, two
+  fates, opposite scalar behaviour on one instrument. §VI.F rewritten
+  around that contrast; item 12 updated. Keeps: 4 plotfiles + 3
+  checkpoints (50 G) on this node's scratch, prune on the user's word.
 
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
@@ -488,7 +513,7 @@ continuations restart instead of re-running from zero:**
    η-robust)? ~3.2 h at R3a's 15.6 u/h; from a word at 09:00 it lands
    ~12:15.
 4. **R2 death-window flow hunt** — no card needed, but needs hands on
-   ilya-test-3-gpu-1-0 (keeps in `/tmp/grteclyn_scratch/merge_twin_p012_lp2_t060/`,
+   the second GPU node (keeps in `/tmp/grteclyn_scratch/merge_twin_p012_lp2_t060/`,
    finder command in the registry row). Blocked on the user.
 
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
@@ -521,7 +546,7 @@ commits 7383d260 + 7656f24d) run on the archived t = 59.0 level-5 slice:
   items 1 + 8, seeds section), this date.
 
 **The second node's slice treasure (found 2026-09-21 ~06:50 on
-ilya-test-3-gpu-1-0's local scratch, hunted read-only, nothing copied to
+the second GPU node's local scratch, hunted read-only, nothing copied to
 NFS per the user's storage rule):**
 - `_keep_spiral_lvl5_wall_scan`: Plt05500/05600/05700 (t = 55, 56, 57 — the
   slices the blind star scan cleared) → formation-time bound.

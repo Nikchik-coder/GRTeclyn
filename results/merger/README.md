@@ -746,20 +746,26 @@ and nothing in this section may be quoted as a surface, a mass, or a dissolution
   t = 43.64 — while the blob still nucleates on schedule, capture and plunge
   proceed, and the pits close to 0.442; and at fixed gauge + resolution it is
   *deterministic*: the p015 rerun died at the same step (5335, t = 53.35) as
-  its original. The 2026-09-21 referee arms sharpen this: leaving the 1+log
-  family outright (`lapse_power` 2, the harmonic-class driver) still dies,
-  3 units *early* (t = 49.03), while quadrupling the shift damping (η = 4)
-  pushes the whole collapse past the record's end (> 60, removed-vs-postponed
-  open) — three slicings, three clocks, one wall — and on the head-on control
-  the harmonic driver dies horizonless at 25.23, so the standard gauge's
-  five-unit horizon lead is not gauge-robust either. The crash is the
-  moving-puncture slicing losing its singularity-avoidance race behind a
-  censoring horizon (see the spiral-horizon claim), not the singularity
-  arriving; a shock-avoiding or maximal slicing is the untried experiment.
+  its original. The 2026-09-21/22 referee arms sharpen this: leaving the
+  1+log family outright (`lapse_power` 2, the harmonic-class driver) still
+  dies, 3 units *early* (t = 49.03), and quadrupling the shift damping
+  (η = 4) delays the whole sequence ~10 units and then dies anyway — the
+  re-run to t = 100 hits the same wall at t = 61.9, 6.3 after its own
+  delayed floor — **four gauges, four clocks (43.6 / 49.0 / 52.1 / 61.9),
+  one wall**. On the head-on control the harmonic driver dies horizonless at
+  25.23 and the η = 4 re-run dies horizonless-as-scanned at 34.2 (delayed
+  wall), so the standard gauge's five-unit horizon lead is not gauge-robust
+  either (level-3 caveat: a later-forming under-resolved horizon is not
+  excluded). The crash is the moving-puncture slicing losing its
+  singularity-avoidance race behind a censoring horizon (see the
+  spiral-horizon claim), not the singularity arriving; a shock-avoiding or
+  maximal slicing is the untried experiment.
 - **Runs.** `merge_twin_p012_lc1_t060` *(pack)* — the one-knob gauge arm;
-  `merge_twin_p012_lp2_t060` + `merge_twin_p012_eta4_t060` *(pack)* — the
-  2026-09-21 slicing-exit and shift-damping arms;
-  `merge_headon_flip_d8_lp2_t030` + `..._eta4_t030` *(pack)* — their head-on
+  `merge_twin_p012_lp2_t060` + `merge_twin_p012_eta4_t060` +
+  `merge_twin_p012_eta4_t100` *(pack)* — the slicing-exit and shift-damping
+  arms and the t = 100 continuation that closed removed-vs-postponed;
+  `merge_headon_flip_d8_lp2_t030` + `..._eta4_t030` + `..._eta4_t050`
+  *(pack)* — their head-on
   controls; `merge_orbit_flip_d12_p015_nofill_t060` + `..._p015_rr_t060`
   *(pack)* — the determinism pair; the m4e ladder *(run tree)* — the
   resolution axis.

@@ -45,10 +45,16 @@ quasi-exponentially (e-fold ~ 5.7 at R = 18 over t = 50-95).  Horizonless
 and growing is the censorship pattern; but past t = 82 the Hamiltonian norm
 leaves its floor (x4.9 by t = 100) and the late psi4 amplitude increases
 OUTWARD -- a boundary/sponge-sourced signature -- and a sponge tuned to damp
-an ordinary scalar can pump a phantom one (hypothesis, untested).  So the
-curve is drawn solid only to t = 82, dashed and half-weight after, and no
-number is quoted from it anywhere; the L = 128 (or altered-sponge) re-run is
-the discriminator.
+an ordinary scalar can pump a phantom one (hypothesis, untested).  So that
+curve is dashed at half weight throughout -- drawn and not counted -- and
+the L = 128 (or altered-sponge) re-run is the discriminator.  The COUNTED
+lone-throat curve (2026-09-23, solid) is the KICKED quadrupole re-run
+(`single_eps_p1e2_q1e2_ml4_scalar_t100`): its radial kick drives the
+unstable spherical mode at first order, so its fate is not marginal -- it
+collapses on its published schedule (permanent MOTS from t = 11, R 3.88 ->
+2.45) and its envelope decays ~90x after the burst (late e-folds 5-7).  One
+throat, two fates, opposite scalar behaviour: the channel follows the
+horizon, not the object.
 
 THE SPIRAL'S LATE STRETCH IS DRAWN, BUT MUST NOT BE READ AS PHYSICS.  Past
 its wall the curve is the freeze arm (`..._lvl5_t100_freeze_r05700`), whose
@@ -105,10 +111,10 @@ SPIRAL = "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5from0_t100"
 SPIRAL_FRZ = "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700"
 FLYBY = "06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100"
 SINGLE = "01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100"
+KICKED = "01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100"
 
 T_MOTS = 21.5      # head-on: first live corrected-orientation common MOTS
 T_WALL = 59.94     # spiral: NaN in h11 on level 5, the uncensored wall
-T_HEALTH = 82.0    # lone throat: L2_Ham leaves its floor (measured, 1.5x)
 WINDOW = 25.0      # running-max window: one full period of the dipole
 SMOOTH = 5.0       # Gaussian on log amplitude, to round the staircase
 RAMP = {10: "#1a1a18", 14: "#54524c", 18: "#8f8b81"}   # dark = inner
@@ -206,25 +212,28 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[censorship] spiral R=30: {np.interp(T_WALL, t_all, e_all):.2e} at its "
           f"wall, still rising; frozen continuation flat to {e_all[-1]:.2e}")
 
-    # The lone throat: horizonless on its OWN record (its launch twin
-    # collapsed; this one landed on the other side of the fate boundary --
-    # see the docstring), monopole growing.  Solid only while the record is
-    # healthy; past T_HEALTH the constraint norm leaves its floor and the
-    # late psi4 orders outward, so that stretch is drawn like the frozen
-    # core's: same arm, not the same standing.
+    # The lone throat enters twice -- one throat, two fates on one instrument
+    # (2026-09-23).  The KICKED quadrupole (radial kick +1e-2 driving the
+    # unstable mode at first order) collapses on schedule -- permanent MOTS
+    # from t = 11 -- and its envelope decays ~90x after the burst: the
+    # counted curve, solid.  The pure-quadrupole twin landed horizonless on
+    # the far side of the marginal fate boundary and GROWS; its record
+    # carries the boundary/sponge flags of the docstring, so the whole curve
+    # is dashed at half weight: drawn and not counted.
+    tk, kk = _flux(camp / KICKED / "scalar_modes.dat", 18)
+    ek = _envelope(tk, kk)
+    axB.semilogy(tk, ek, color=style.DEEP_GREEN, lw=1.2, zorder=3,
+                 label="lone throat, collapsed")
     tl, kl = _flux(camp / SINGLE / "scalar_modes.dat", 18)
     el = _envelope(tl, kl)
-    ok = tl <= T_HEALTH
-    axB.semilogy(tl[ok], el[ok], color=style.DEEP_GREEN, lw=1.2, zorder=3,
-                 label=r"lone throat, $R=18$")
-    axB.semilogy(tl[~ok], el[~ok], color=style.DEEP_GREEN, lw=0.9,
+    axB.semilogy(tl, el, color=style.DEEP_GREEN, lw=0.9,
                  ls=(0, (3, 2)), alpha=0.55, zorder=2,
-                 label="lone throat, suspect")
+                 label="lone throat, uncollapsed")
     g = (tl >= 50.0) & (tl <= 95.0)
     c = np.polyfit(tl[g], np.log(el[g]), 1)
-    print(f"[censorship] lone throat R=18: horizonless record, envelope "
-          f"{np.interp(T_HEALTH, tl, el):.2e} at t={T_HEALTH:.0f}, e-fold "
-          f"{1 / c[0]:.1f} over 50-95, max {el.max():.2e}")
+    print(f"[censorship] lone throat: collapsed arm peak {ek.max():.2e} -> "
+          f"{np.interp(95.0, tk, ek):.2e} at t=95 (x{ek.max()/np.interp(95.0, tk, ek):.0f} down); "
+          f"uncollapsed grows e-fold {1 / c[0]:.1f}, max {el.max():.2e}")
 
     # The head-on enters (b) on its OUTER sphere, so it must wear the OUTER
     # sphere's colour: the top legend serves both panels, and drawing this in
