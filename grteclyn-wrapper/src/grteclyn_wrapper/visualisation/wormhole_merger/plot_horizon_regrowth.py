@@ -2,25 +2,26 @@
 r"""The remnant horizon that shrinks, bottoms out, and grows back.
 
 The single-throat collapse remnants' horizon history across the three arms
-with a record past the floor (2026-09-19 finding; article Sec. IV C): the
-undamped radial kick `single_eps_p1e2_t100` and the two scalar-damped level-4
-arms `single_eps_p1e2_q5e3_ml4_t100` / `..._q5e2_ml4_t100`.  Each swallows its
-own phantom support (areal radius and Misner-Sharp mass falling), bottoms out
-near t = 43-48, and then regrows +9-17 % in radius and +11-13 % in mass as
-the negative-energy exchange reverses -- the area-law's null-energy-condition
-hypothesis failing in real time, both ways in one record.  (The pure-quadrupole
+with a record past the floor (article Sec. IV D): the eps = +0.01 radial kick
+at level 3, `single_eps_p1e2_t100`, and the same kick dressed with a quadrupole
+at level 4, `single_eps_p1e2_q5e3_ml4_t100` / `..._q5e2_ml4_t100` (no arm
+carries matter damping: core_matter_damping = 0 in all three).  Each swallows
+its own phantom support (areal radius and Misner-Sharp mass falling), bottoms
+out near t = 41-50, and then regrows +9-11 % in radius and +10-12 % in mass as
+the negative-energy exchange reverses.  (The pure-quadrupole
 arm was drawn as context in an earlier revision and removed on the user's
 word 2026-09-23: its floor arrives only at t = 92, so it decides nothing here.)
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_horizon_regrowth
 
-Reads each arm's ``horizon_scan.dat`` (oriented scan, centre C rows with a
-MOTS) under ``campaign/01_single_throat/seed/``.  Writes
+Reads each arm's ``horizon_scan.dat`` (oriented scan, centre A rows with a
+MOTS: the throat-centred fine scan; the coarse common centre C reads
+M_MS/(R/2) up to 1.15 at the floor and is not used, 2026-09-23) under ``campaign/01_single_throat/seed/``.  Writes
 ``figures/01_single_throat/single_horizon_regrowth``.
 
 STYLE: style.prd, no titles, letter tags above the frames, one shared top
-figure legend.  INK is the undamped arm (the headline numbers of Sec. IV C),
-MUTED the two damped twins; the floor of each curve carries a small marker.
+figure legend.  INK is the level-3 kick (the headline numbers of Sec. IV D),
+MUTED the two quadrupole-dressed level-4 twins; the floor of each curve carries a small marker.
 """
 
 from __future__ import annotations
@@ -39,9 +40,9 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, f
 
 GROUP = "01_single_throat"
 ARMS = (
-    ("seed/single_eps_p1e2_t100", "undamped", style.INK, "-", 1.3),
-    ("seed/single_eps_p1e2_q5e3_ml4_t100", "damped, $\\varepsilon_2=0.005$", style.MUTED, (0, (4, 2.5)), 1.1),
-    ("seed/single_eps_p1e2_q5e2_ml4_t100", "damped, $\\varepsilon_2=0.05$", style.MUTED, (0, (1.2, 1.6)), 1.1),
+    ("seed/single_eps_p1e2_t100", "level 3", style.INK, "-", 1.3),
+    ("seed/single_eps_p1e2_q5e3_ml4_t100", "level 4, $\\varepsilon_2=0.005$", style.MUTED, (0, (4, 2.5)), 1.1),
+    ("seed/single_eps_p1e2_q5e2_ml4_t100", "level 4, $\\varepsilon_2=0.05$", style.MUTED, (0, (1.2, 1.6)), 1.1),
 )
 
 def _mots_history(pack: pathlib.Path, arm: str):
@@ -50,7 +51,7 @@ def _mots_history(pack: pathlib.Path, arm: str):
         if ln.startswith("#"):
             continue
         f = ln.split()
-        if f[1] != "C" or int(f[9]) < 1:
+        if f[1] != "A" or int(f[9]) < 1:
             continue
         rows.append((float(f[0]), float(f[11]), float(f[12])))
     a = np.array(rows)
@@ -77,30 +78,38 @@ def main(argv=None) -> int:
             i = int(np.nanargmin(a[:, 1]))          # the RADIUS floor times both panels
             ax.plot(a[i, 0], a[i, col], marker="v", markersize=3.6,
                     color=colr, zorder=4, linestyle="none")
-        ax.set_xlim(15, 102)
+        ax.set_xlim(8, 102)
         ax.set_xlabel(r"$t$")
 
     # ---- (a) areal radius ---------------------------------------------------
+    def _gain(col):
+        g = [a[-1, col] / a[int(np.nanargmin(a[:, 1])), col] - 1 for a in hist]
+        return 100 * min(g), 100 * max(g)
+
     axs[0].set_ylabel(r"$R_{\rm MOTS}$")
-    axs[0].text(100.5, 2.17, "+17.0%", ha="right", va="top", fontsize=7,
-                color=style.INK)
-    axs[0].set_ylim(1.86, 3.72)
-    axs[0].text(66, 1.965, "past the floor, every arm sheds the phantom and regrows",
-                ha="center", va="top", fontsize=6.8, color=style.MUTED)
+    lo, hi = _gain(1)
+    top = max(a[-1, 1] for a in hist)
+    axs[0].text(100.5, top + 0.06, f"regrowth +{lo:.0f}–{hi:.0f}%", ha="right",
+                va="bottom", fontsize=7, color=style.INK)
+    axs[0].set_ylim(2.15, 4.0)
 
     # ---- (b) Misner-Sharp mass ---------------------------------------------
     axs[1].set_ylabel(r"$M_{\rm MS}$")
-    axs[1].text(100.5, 1.315, "+11–13%", ha="right", va="bottom",
-                fontsize=7, color=style.INK)
+    lo, hi = _gain(2)
+    topm = max(a[-1, 2] for a in hist)
+    axs[1].text(100.5, topm + 0.03, f"regrowth +{lo:.0f}–{hi:.0f}%", ha="right",
+                va="bottom", fontsize=7, color=style.INK)
+    axs[1].set_ylim(1.08, 2.0)
 
     # One shared legend on top (the censorship figure's rule).
     from matplotlib.lines import Line2D
     handles = [
-        Line2D([], [], color=style.INK, linewidth=1.3, label="undamped kick"),
+        Line2D([], [], color=style.INK, linewidth=1.3,
+               label="$\\varepsilon=+10^{-2}$, level 3"),
         Line2D([], [], color=style.MUTED, linewidth=1.1,
-               linestyle=(0, (4, 2.5)), label="damped, $\\varepsilon_2=0.005$"),
+               linestyle=(0, (4, 2.5)), label="$+\\,\\varepsilon_2=0.005$, level 4"),
         Line2D([], [], color=style.MUTED, linewidth=1.1,
-               linestyle=(0, (1.2, 1.6)), label="damped, $\\varepsilon_2=0.05$"),
+               linestyle=(0, (1.2, 1.6)), label="$+\\,\\varepsilon_2=0.05$, level 4"),
         Line2D([], [], color=style.INK, marker="v", markersize=3.6,
                linestyle="none", label="radius floor"),
     ]

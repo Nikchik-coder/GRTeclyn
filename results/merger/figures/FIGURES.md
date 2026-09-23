@@ -55,13 +55,13 @@ coordinates, not floating in axes fractions.
 
 `01_single_throat/single_horizon_regrowth` — the remnant horizon that
 shrinks and grows back, by `plot_horizon_regrowth` (no arguments): MOTS areal
-radius and Misner–Sharp mass for the three kicked collapse arms (undamped
-+0.01, the two scalar-damped level-4 twins), floors marked; the
-pure-quadrupole context curve of the first revision was removed on the
-user's word (floor only at t = 92 -- decides nothing here)). Floors 2.00/2.27/2.11
-at t = 48/47/43, regains +17.0/+9.4/+15.1 % in R and +11.7/+10.6/+12.5 % in
-M_MS by each record's end — the area-law's NEC hypothesis failing both ways in
-one record (article Sec. IV C, fig:single_regrowth).
+radius and Misner–Sharp mass for the three eps = +0.01 collapse arms (level 3;
+level 4 + eps2 = 0.005; level 4 + eps2 = 0.05 -- none carries matter damping,
+core_matter_damping = 0), floors marked. REDRAWN 2026-09-23 (article audit)
+from the throat-centred centre-A scan: the coarse common centre C used before
+reads M_MS/(R/2) up to 1.15 at the floor, i.e. not a MOTS. Floors 2.337/2.334/2.321
+at t = 47/47/43, regrowth +9.7/+8.8/+10.6 % in R and +10.2/+10.5/+12.0 % in
+M_MS by t = 100 (article Sec. IV D, fig:single_regrowth).
 
 `01_single_throat/single_throat_inflation` — its mirror, by
 `plot_single_inflation` (no arguments): the ε = −0.01 level-4 arm to t = 100
@@ -125,9 +125,13 @@ decade (E/M = 2.2e-2 spiral to 7.4e-2 fly-by; n = 1e-4 to 1e-2 Mpc^-3;
 the article's bibliography; cosmology flat LCDM H0 = 67.7, Om = 0.31.
 
 `08_waves/scalar_channel` (2026-09-19) — the SECOND radiation channel, the one
-Psi4 cannot see. Full-page row of three panels. (a) energy through R = 30
-against time, each arm normalised by its own E_GW at the rule: gravitational
-rises to +1, scalar falls to -2.3 (fly-by, solid) and -2.4 (spiral, dashed).
+Psi4 cannot see. Full-page row of three panels. (a) REDRAWN 2026-09-23
+(article audit): the fly-by alone, energy through R = 30 to t = 80 in units
+of E_GW(t = 80), with |E_phi|/E_GW printed at each cut -- 3.2 / 2.3 / 1.1 / 0.8
+at t = 50 / 60 / 70 / 80: the ratio is cut-dependent (the gravitational burst
+peaks at R = 30 near t = 65) and past t ~ 80 the mouths reach the sphere. The
+spiral is no longer drawn: its level-3 scalar record ends at t = 50, before
+its burst reaches R = 30, so its "-2.4" divided by a pre-burst E_GW.
 The scalar curve is NEGATIVE because gravity couples to minus this field's
 stress tensor, so the stream's canonical-signed `flux_kin` has to be negated
 before it is energy. (b) the multipole decomposition of the scalar sector:
@@ -154,8 +158,12 @@ period it still carries the oscillation, longer and it smears the decay.
 from t = 0, scalar stream on -- the re-run that closed the gap) at R = 10/14/18.
 Common MOTS at t = 21.5 (dotted grey rule); the remaining hair leaves as one l = 1,
 m = 0 pulse cresting later at each sphere, then decays: log-linear fits over
-t = 30-95 give tau = 19/23/28 (dashed). That is the horizon's OWN clock -- the
-remnant's M_MS settles with tau = 19.4 +- 0.8, Fig. headon_collapse (g).
+t = 30-95 give tau = 19/23/29 (dashed), comparable to the tau = 19.4 +- 0.8 on
+which the scan's M_MS levels off (Fig. headon_collapse (g); part of that
+levelling is the star-scan shape systematic -- the area keeps shrinking).
+CORRECTED 2026-09-23: the two lone-throat curves of (b) are the eps = +0.01
+level-4 collapse and the UNKICKED level-4 throat -- neither scalar re-run
+carried its quadrupole seed (GPU_PLAN, 2026-09-23 evening).
 Post-horizon E_phi = -0.056/-0.071/-0.075. THE PRE-HORIZON RISE AT R = 10 IS
 NOT RADIATION: it is the two open mouths' static hair superposing, canonically
 INGOING and inside the near zone, which is why no full-record head-on integral
@@ -326,6 +334,12 @@ full-page Fig. 5 (`figure*[p]`, sec:spiral:inspiral), drawn with no arguments:
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_collapse
 ```
+
+Panel (g) REDRAWN 2026-09-23 (article audit): besides the star-scan throat
+radii (no MOTS -- a blindness about the merged pit, not an absence) it now
+carries the shape-free flow finder's common MOTS, R = 4.83/4.80/4.77 at
+t = 55/56/57 on this chain (filled diamonds) and 4.72 at t = 59 on the
+level-5-from-t = 0 arm (open), with its labels kept left of the chi-floor rule.
 
 It REPLACED the generic dashboard render of the same name (2026-09-16, Computer
 Modern, 9 boxed panels) with the seed-branches-grammar page: the inspiral strip

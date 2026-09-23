@@ -875,6 +875,52 @@ whole card: the lvl5 family peaks ~48 GB).
    the second GPU node (keeps in `/tmp/grteclyn_scratch/merge_twin_p012_lp2_t060/`,
    finder command in the registry row). Blocked on the user.
 
+### 2026-09-23 (evening) — the article audit: what the data did not support, and the runs that would
+
+The PRD-level audit of `article/research.tex` against the pack (four
+verification passes, every number re-read from the streams) rewrote the
+article (−37 % text) and corrected these claims in it. Each run below is
+what would turn a withdrawn or hedged claim back into a measurement.
+Nothing launches without the user's word.
+
+**TRAP FOUND — the campaign pin ignores the quadrupole seed.** `launch.sh`
+defaults to `runs/wormhole_merger/bin/main3d_boost_2026-09-08.ex`, built
+BEFORE the l2 seed (commit 10792507, 2026-09-10). ParmParse silently drops the
+unknown `wormhole_seed_l2_amplitude_A`, so every arm launched on the pin with
+ε₂ ≠ 0 ran WITHOUT its quadrupole. Verified by t = 0 constraint norms,
+bit-identical to the controls: `single_pureq_q1e2_ml4_scalar_t100` ==
+unkicked `single_hold_ml4_t100` (H 2.0955094722e-3); `single_eps_p1e2_q1e2_ml4_scalar_t100`
+== spherical `single_eps_p1e2_ml4_t060` (H 2.3458350524e-3);
+`single_pureq_q1e2_L128_ml4_scalar_t100` and the LIVE
+`single_pureq_q1e2_L128_ml4_scalar_t500` == the unkicked L = 128 throat
+(H 6.5838765760e-4). The seeded original `single_pureq_q1e2_ml4_t100` (coreprof
+binary) reads H 2.1426513012e-3. Consequences: the "pure quadrupole's fate is
+round-off-marginal" story is withdrawn (the re-run was an unkicked throat,
+which inflates at level 4 as it always does); the article now names these arms
+for what they are. **The t500 arm is an unkicked L = 128 level-4 throat** —
+still the right arm for the inflation-fate question, but relabel its registry
+row. **Rule before the next ε₂ ≠ 0 launch:** bump the pin or pass `--binary`
+explicitly, and check H(t = 0) against the unkicked control before walking away.
+
+**Runs that would strengthen the article, in order of claim-per-GPU-hour**
+(speeds from the logged arms; ETAs assume one free card):
+
+| # | run | claim it settles | cost |
+|---|---|---|---|
+| A1 | `single_pureq_q1e2_ml4_scalar_t100` re-launched on a seeded binary (coreprof or newer), level 4, `--scalar-modes`, t = 100 | the pure-quadrupole scalar record (Fig. scalar_censorship) and whether its collapse reproduces at all | ~10 h |
+| A2 | `single_eps_p1e2_q1e2_ml4_scalar_t100` re-launched seeded, same recipe | the kicked-quadrupole lone collapse's scalar decay (currently a spherical-kick stand-in) | ~10 h |
+| A3 | `single_hold_t100` re-run at level 3 with plotfiles every 1 unit over t = 40–61 | the unkicked throat's horizon time: 61 is the first scanned slice, only an upper bound (Table II "noise" column, ε ≳ 2e-6 → probably ~2e-5) | ~6 h |
+| A4 | `merge_orbit_flip_d12_p035_t200` continued / re-run at level 3 to t = 150 | p = 0.35 escapes or turns back (stopped at t = 73.9, separation 4.0 and receding); pins the merger boundary 0.25 < p < 0.35 | ~8 h |
+| B1 | production spiral chain (`v2_spiral_d12_p012_L128_*`) re-run with `--scalar-modes` on its level-5 legs (restart t = 36, freeze from t = 57) | a real spiral scalar/GW ratio through the burst at R = 30 (the level-3 record ends at t = 50, before the burst; the article quotes none) | ~24 h |
+| B2 | the same chain with the level-5 legs at level 4 (same restart and freeze) | the spiral burst's first resolution test (none exists: the level-3 leg ends before the burst reaches the spheres) | ~15–20 h |
+| B3 | half-mass head-on `merge_headon_flip_d6_m05` at level 5 from t = 0, stop 40 | the censorship-rescue rule's untested case: MOTS at t = 12, level-3 death at 14.0 — does level 5 pass it? | ~12–18 h |
+| B4 | fly-by (`merge_orbit_flip_d12_p045_L128_lvl5_t100`) with the areal scan window widened past r = 2.79 — offline if any late slices survive, else a re-run | the mouths' inflation after t ≈ 43 (the ×7.8 / R = 33 reading is the window edge, an upper bound) and the scalar validity window | 0 h offline / ~47 h re-run |
+| C1 | shock-avoiding slicing (∂ₜα = −(α² + κ)K) — spiral and head-on, level 3 | the wall's mechanism: a slicing shock at a young horizon vs a physical obstruction (the one untested gauge class) | code + 2 × ~6 h |
+| C2 | surface-integral ADM mass + the shift terms of the geometric scalar flux, on the seamless head-on | closes Ṁ_ADM = −F_GW − F_φ; turns "anti-damped radiation reaction" from conditional to measured | code + ~28 h |
+
+Also queued, no card: the η = 4 level-5 death-window flow hunt (second node,
+Plt05520–06000) and the lp2 level-5 head-on (needs a full card; OOM'd twice).
+
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
 The flow finder (`grteclyn-wrapper/scripts/validation/ah_flow_finder.py`,

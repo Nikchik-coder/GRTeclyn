@@ -180,41 +180,48 @@ def main(argv: list[str] | None = None) -> int:
     fig, (axA, axB, axC) = plt.subplots(
         1, 3, figsize=(7.05, 2.55), sharex=True, constrained_layout=True)
 
-    # ---- (a) the two channels' energies, each arm in units of its own E_GW --
-    # Normalising by E_GW at the rule puts two arms of very different loudness
-    # on one axis and makes the number the figure exists to report -- how many
-    # times the gravitational energy the scalar channel carries, and with which
-    # sign -- readable straight off the y axis.
-    for key, dash in (("flyby", None), ("spiral", (0, (5.0, 2.0)))):
-        a = arms[key]
-        tg, Eg = a["gw"][30]
-        ts, Ep, _ = a["kin"][30]
-        norm = _at(tg, Eg, a["t_cut"])
-        kw = dict(linewidth=1.4, zorder=3) if dash is None else dict(
-            linewidth=1.1, linestyle=dash, zorder=3)
-        k = tg <= a["t_cut"]
-        axA.plot(tg[k], Eg[k] / norm, color=style.INK, **kw)
-        k = ts <= a["t_cut"]
-        axA.plot(ts[k], Ep[k] / norm, color=style.GOLD, **kw)
+    # ---- (a) the fly-by's two channels through R = 30 ------------------------
+    # One arm only.  The spiral's scalar record (level 3) ends at t = 50,
+    # before its burst reaches R = 30, so its "ratio" divides by a pre-burst
+    # E_GW and is not a measurement (dropped 2026-09-23).  The ratio is
+    # cut-dependent -- the gravitational burst peaks at R = 30 near t = 65, so
+    # a t = 60 cut still misses most of it -- and the panel shows that: both
+    # curves run to t = 80 (past it the mouths' expansion reaches the sphere
+    # and both integrals grow without bound), with the ratio printed at each
+    # cut the article quotes.
+    a = arms["flyby"]
+    tg, Eg = a["gw"][30]
+    ts, Ep, _ = a["kin"][30]
+    T_A = 80.0
+    norm = _at(tg, Eg, T_A)
+    k = tg <= T_A
+    axA.plot(tg[k], Eg[k] / norm, color=style.INK, linewidth=1.4, zorder=3)
+    k = ts <= T_A
+    axA.plot(ts[k], Ep[k] / norm, color=style.GOLD, linewidth=1.4, zorder=3)
     axA.axhline(0.0, color=style.FAINT, linewidth=0.7, zorder=1)
-    axA.set_ylabel(r"$E(<t)\,/\,E_{\rm GW}$")
-    axA.set_ylim(-3.2, 1.7)
+    pE = _at(ts, Ep, T_A) / norm
+    lo = min(-1.2, pE - 0.35)
+    axA.set_ylim(lo, 1.62)
+    for tc in (50.0, 60.0, 70.0, 80.0):
+        g, pp = _at(tg, Eg, tc), _at(ts, Ep, tc)
+        r = abs(pp) / g
+        print(f"[scalar-channel] flyby R=30 cut t={tc:.0f}: |E_phi|/E_GW = {r:.2f}")
+        # a short tick at the cut, the ratio hung on top of it
+        axA.vlines(tc, 1.24, 1.34, color=style.MUTED, linewidth=0.7, zorder=1)
+        axA.text(tc, 1.38, f"{r:.1f}", fontsize=6.5, color=style.GOLD,
+                 ha="center", va="bottom")
+    axA.text(45.5, 1.45, r"$|E_\phi|/E_{\rm GW}$ at $t=$", fontsize=6.3,
+             color=style.MUTED, ha="right", va="center")
+    axA.set_ylabel(r"$E(<t)\,/\,E_{\rm GW}(t{=}80)$")
     axA.set_xlabel(r"$t$")
-    # Every label sits to the right of t = 60, where no curve goes, and at the
-    # height of the curve it names -- so nothing needs a leader line and
-    # nothing is struck through.
-    axA.text(64.0, 1.0, "gravitational", fontsize=7, color=style.INK,
-             va="center")
-    axA.text(64.0, -2.37, "scalar,\nghost sign", fontsize=7,
-             color=style.GOLD, va="center")
-    axA.text(97.0, -0.55, "solid fly-by\ndashed spiral", fontsize=6.5,
-             color=style.MUTED, va="center", ha="right")
-    # The two arms land within 3 % of each other, so they take one label
-    # between them rather than two that would overprint.
-    axA.text(97.0, 1.45,
-             rf"ends at $-{ratio[('flyby', 30)][2]:.1f}$ and "
-             rf"$-{ratio[('spiral', 30)][2]:.1f}$",
-             fontsize=6.5, color=style.GOLD, va="center", ha="right")
+    # Each name sits just left of its own curve's end: above the rising ink,
+    # below the falling gold, clear of the frame.
+    axA.text(T_A - 1.0, 1.04, "gravitational", fontsize=7, color=style.INK,
+             ha="right", va="bottom")
+    axA.text(T_A - 1.0, pE - 0.10, "scalar, ghost sign", fontsize=7,
+             color=style.GOLD, ha="right", va="top")
+    axA.text(3.0, 0.55, "fly-by, $R=30$", fontsize=6.5, color=style.MUTED,
+             ha="left", va="center")
 
     # ---- (b) which multipole carries it ------------------------------------
     # Two opposite scalar charges have a dipole moment and a black-hole binary

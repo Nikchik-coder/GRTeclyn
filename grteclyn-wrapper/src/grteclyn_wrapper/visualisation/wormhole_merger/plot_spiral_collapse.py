@@ -29,7 +29,12 @@ goes negative at t = 30.77 with the naive +r orientation -- near a wormhole
 throat +r is not the outgoing direction -- and that very signal was once quoted
 as a common horizon and withdrawn (GPU_PLAN, 2026-09-15).  The only horizon
 instrument in this figure is the ORIENTATION-CORRECTED offline scan, and its
-verdict is a gold set of throat measurements and the words "no MOTS".
+verdict is a gold set of throat measurements and no MOTS -- a blindness, not
+an absence: every coordinate sphere about the merged pit carries both signs
+of theta_+.  Panel (g) therefore also carries the common MOTS that the
+shape-free flow finder recovers (FLOW_MOTS below; GPU_PLAN R0 verdict,
+2026-09-21, and the death-window hunt): filled diamonds on this production
+chain, an open diamond on the arm evolved at level 5 from t = 0.
 
 *The restart-settle rows are masked, not smoothed.*  For its first steps a
 restart reduces over an incomplete hierarchy and reports coarse-grid extrema:
@@ -80,6 +85,14 @@ CHI_FLOOR = 1e-8       # the evolution's clamp on chi
 EDGE_K = 0.2           # |K| defining the disturbance's outer edge
 SETTLE = 0.1           # time clipped after a restart (incomplete hierarchy)
 
+
+# The common MOTS of the shape-free flow finder (grteclyn-wrapper/scripts/
+# validation/ah_flow_finder.py) on the surviving death-window slices:
+# (t, areal R, on THIS production chain?).  t = 55-57 from the production
+# chain's level-5 slices (t = 55: outer seed, lmax 8); t = 59 from the arm
+# evolved at level 5 from t = 0 (inner + outer seeds, R = 4.72 +- 0.01).
+FLOW_MOTS = ((55.0, 4.83, True), (56.0, 4.80, True), (57.0, 4.77, True),
+             (59.0, 4.72, False))
 
 def _sorted(path: pathlib.Path) -> np.ndarray:
     d = np.loadtxt(path)
@@ -320,24 +333,32 @@ def main(argv: list[str] | None = None) -> int:
     axF.text(53.9, 0.86, "throat (scan)", fontsize=7.5, ha="right",
              va="center", color=style.GOLD)
 
-    # (g) the throat's areal radius; no horizon ever --------------------------
+    # (g) the throat's areal radius, and the common MOTS around it -----------
+    # The star-shaped scans (circles) find no MOTS; the flow finder does.
     for lv, mfc in ((3, style.GROUND), (5, style.GOLD)):
         pts = [(tv, R0) for tv, l, r0, R0 in scans if l == lv]
         if pts:
             xs, ys = zip(*pts)
             axG.plot(xs, ys, ls="none", marker="o", ms=3.6, mfc=mfc,
                      mec=style.GOLD, mew=1.1, zorder=5)
-    axG.text(56.25, 4.077, "level 3", fontsize=7.5, ha="left", va="bottom",
+    for tv, Rv, own in FLOW_MOTS:
+        axG.plot(tv, Rv, ls="none", marker="D", ms=3.8,
+                 mfc=style.INK if own else "white", mec=style.INK, mew=1.0,
+                 zorder=6)
+    # Both names stay left of the chi-floor rule at t = 58.4.
+    axG.text(54.75, 4.70, "common MOTS\n(flow finder)", fontsize=7.0,
+             ha="left", va="top", color=style.INK, linespacing=1.15)
+    axG.text(54.75, 4.19, "throat (star scans:\nno MOTS)", fontsize=7.0,
+             ha="left", va="bottom", color=style.GOLD, linespacing=1.15)
+    axG.text(56.25, 4.077, "level 3", fontsize=7.0, ha="left", va="bottom",
              color=style.GOLD)
-    axG.text(58.6, 3.99, "level 5", fontsize=7.5, ha="left", va="bottom",
+    axG.text(58.6, 3.99, "level 5", fontsize=7.0, ha="left", va="bottom",
              color=style.GOLD)
     axG.axvline(t_floor, color=style.FAINT, lw=0.7, ls=(0, (1, 2)), zorder=1)
     axG.set_xlim(54.4, 61.0)
-    axG.set_ylim(3.82, 4.17)
+    axG.set_ylim(3.80, 5.02)
     axG.set_xlabel(r"$t$")
-    axG.set_ylabel(r"$R_{\mathrm{throat}}$")
-    axG.text(55.0, 3.845, "no MOTS\nat any scan", fontsize=7.5, ha="left",
-             va="bottom", color=style.INK, linespacing=1.25)
+    axG.set_ylabel(r"areal radius")
 
     # (h)-(j) the radial anatomy, six snapshots -------------------------------
     times = np.linspace(pt[0], pt[-1], 6)

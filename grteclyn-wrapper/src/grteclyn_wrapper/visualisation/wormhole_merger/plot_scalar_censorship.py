@@ -31,30 +31,21 @@ no full-record integral is quoted anywhere.)
 (b) THE CONTROL EXPERIMENT NATURE RAN FOR US: the same envelope, one outer
 sphere per encounter, across the four fates.  The head-on, the only one
 with a horizon, decays.  The fly-by (no horizon, no merger) GROWS to the end
-of its record.  The p = 0.12 spiral -- which merges and still makes no
-horizon, 0 MOTS on every scan to t = 50 -- is climbing when its grid dies at
-the t = 59.9 wall.  And the LONE THROAT's scalar re-run
-(`single_pureq_q1e2_ml4_scalar_t100`, 2026-09-21) is the fourth curve, with
-the heaviest flags on the page: launched with the paper's collapsing
-pure-quadrupole arm's exact parameters (on the campaign pin, a sibling
-build of that arm's coreprof binary -- t = 0 constraints agree to 11
-digits), it landed on the OTHER side of the fate boundary -- no trapped surface on any scan of its record, none by the
-shape-free flow finder on its final slice (t = 100, lmax 6, 15
-seed-variants, 0 surfaces) -- and its monopole channel grows
-quasi-exponentially (e-fold ~ 5.7 at R = 18 over t = 50-95).  Horizonless
-and growing is the censorship pattern; but past t = 82 the Hamiltonian norm
-leaves its floor (x4.9 by t = 100) and the late psi4 amplitude increases
-OUTWARD -- a boundary/sponge-sourced signature -- and a sponge tuned to damp
-an ordinary scalar can pump a phantom one (hypothesis, untested).  So that
-curve is dashed at half weight throughout -- drawn and not counted -- and
-the L = 128 (or altered-sponge) re-run is the discriminator.  The COUNTED
-lone-throat curve (2026-09-23, solid) is the KICKED quadrupole re-run
-(`single_eps_p1e2_q1e2_ml4_scalar_t100`): its radial kick drives the
-unstable spherical mode at first order, so its fate is not marginal -- it
-collapses on its published schedule (permanent MOTS from t = 11, R 3.88 ->
-2.45) and its envelope decays ~90x after the burst (late e-folds 5-7).  One
-throat, two fates, opposite scalar behaviour: the channel follows the
-horizon, not the object.
+of its record.  The p = 0.12 spiral -- whose common MOTS the shape-free
+finder recovers from t = 55 -- is still climbing when its grid dies at the
+t = 59.9 wall, its horizon too young to shed on a ~20 clock.  The LONE
+THROAT enters twice.  CORRECTED 2026-09-23: both scalar re-runs lack their
+quadrupole seed (t = 0 constraint norms bit-identical to the controls; the
+binary they ran on ignores wormhole_seed_l2_amplitude).  SINGLE
+(`single_pureq_q1e2_ml4_scalar_t100`) is therefore the UNKICKED level-4
+throat, which inflates on its own truncation seed -- horizonless by scan and
+flow finder -- and whose monopole grows quasi-exponentially (reproduced by
+the L = 128 twin through t ~ 80, so not the boundary); counted to t ~ 80
+only.  KICKED (`single_eps_p1e2_q1e2_ml4_scalar_t100`) is the spherical
+eps = +1e-2 kick at level 4: it collapses on schedule (permanent MOTS from
+t = 11, R 3.88 -> 2.45) and its envelope decays 30-100x across the spheres
+by t = 80.  The contrast is also a collapse-versus-inflation contrast, and
+the article says so.
 
 THE SPIRAL'S LATE STRETCH IS DRAWN, BUT MUST NOT BE READ AS PHYSICS.  Past
 its wall the curve is the freeze arm (`..._lvl5_t100_freeze_r05700`), whose
@@ -112,7 +103,7 @@ SINGLE = "01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100"
 KICKED = "01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100"
 
 T_MOTS = 21.5      # head-on: first live corrected-orientation common MOTS
-T_WALL = 59.94     # spiral: NaN in h11 on level 5, the uncensored wall
+T_WALL = 59.94     # spiral (level 5 from t = 0): NaN in h11, 0.94 after its t = 59 MOTS
 WINDOW = 25.0      # running-max window: one full period of the dipole
 SMOOTH = 5.0       # Gaussian on log amplitude, to round the staircase
 RAMP = {10: "#1a1a18", 14: "#54524c", 18: "#8f8b81"}   # dark = inner
@@ -209,14 +200,11 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[censorship] spiral R=30: {np.interp(T_WALL, t_all, e_all):.2e} at its "
           f"wall, still rising; frozen continuation flat to {e_all[-1]:.2e}")
 
-    # The lone throat enters twice -- one throat, two fates on one instrument
-    # (2026-09-23).  The KICKED quadrupole (radial kick +1e-2 driving the
-    # unstable mode at first order) collapses on schedule -- permanent MOTS
-    # from t = 11 -- and its envelope decays ~90x after the burst: the
-    # counted curve, solid.  The pure-quadrupole twin landed horizonless on
-    # the far side of the marginal fate boundary and GROWS; its record
-    # carries the boundary/sponge flags of the docstring, so the whole curve
-    # is dashed at half weight: drawn and not counted.
+    # The lone throat enters twice (see the docstring: neither re-run carries
+    # its quadrupole seed).  KICKED = eps = +1e-2 at level 4, collapses behind
+    # a MOTS from t = 11 and its envelope decays: solid.  SINGLE = the
+    # unkicked level-4 throat, which inflates and GROWS; dashed at half
+    # weight, counted to t ~ 80 only.
     tk, kk = _flux(camp / KICKED / "scalar_modes.dat", 18)
     ek = _envelope(tk, kk)
     axB.semilogy(tk, ek, color=style.MUTED, lw=1.2, zorder=3,
