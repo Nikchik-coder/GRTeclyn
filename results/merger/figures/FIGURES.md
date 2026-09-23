@@ -110,8 +110,8 @@ UHZ1's name had printed UNDER the Eddington label's opaque patch and never
 showed, that patch also cut the heavy ceiling, the light-seed name floated
 700 Myr from its line, (b)'s note clipped the 1e4 box, the tags sat inside
 the frames on the Eddington label; J1342+0928's lower bound 4.5e8 -> 5.9e8,
-Banados et al. 2018's 7.8 (+3.3, -1.9) e8. GN-z11 (Maiolino 2024) and J1342
-(Banados 2018) are plotted but NOT in the bibliography) — article Sec. XI B, the heavy-seed channel
+Banados et al. 2018's 7.8 (+3.3, -1.9) e8; GN-z11 and J1342 now cited in the
+caption, maiolino2024 / banados2018) — article Sec. XI B, the heavy-seed channel
 drawn as arithmetic on measured numbers; NOTHING here reads a run. (a) the seed
 race: the drainhole reachable region (seeds 10^4-10^6 M_sun at z ~ 20,
 converted at full mass in minutes — Table II — then bounded by the 45-Myr
