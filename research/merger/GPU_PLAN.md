@@ -703,6 +703,15 @@ whole card: the lvl5 family peaks ~48 GB).
   one gauge, a finding of its own. Side-watch: does level 5 postpone this
   wall (ladder precedent +0.5–2.5 per doubling)? ~1–2 h to the wall
   (~15:30 landing); offline hunts (CPU, this node) after.
+  **DIED AT LAUNCH +6 min (13:46): h11 NaN on level 5 at t = 60.055,
+  0.05 after the restart, at the FIRST regrid that planted level 5. Not
+  the wall (61.9) -- the near-wall η = 4 state detonates a fresh level 5;
+  the ladder's successful recipe planted its fine levels ~12 units before
+  the wall (t = 50), not 2. Question UNDECIDED, zero slices. Retry from
+  archived Chk05000 (t = 50, same keep), ~5–7 h at lvl5 pace -- lands
+  ~20:00–22:00 from a ~14:00 word; USER-GATED (the cost changed from the
+  1–2 h that was authorized). Probe 2 took the card meanwhile, with the
+  same 2-unit margin declared as its own first test.**
 - **PROBE 2 — QUEUED behind probe 1: the η = 4 head-on at level 5 from
   archived Chk03200** (t = 32.0, keep `04_binary_headon/_keep_r3a_eta4_
   t050_deathwin/`), stop ~36. THE QUESTION: locate the MOTS that level 3
@@ -711,6 +720,23 @@ whole card: the lvl5 family peaks ~48 GB).
   "lead ≥ 3.4, bracketed" to an exact surface (R, M_MS, lead) matching
   the standard (5.40/3.10, lead 4.9) and harmonic (5.47/3.06, lead 4.4)
   numbers. ~3 h; lands ~19:00 if probe 1 releases the card ~15:45.
+  **LAUNCHED 13:47 as `merge_headon_flip_d8_eta4_lvl5_t040_r03200`
+  (template `params_ref_eta4_headon_lvl5_t040.txt`, stop 40, plotfiles
+  every 0.2 units, profile headon-scout keep-last 30) after probe 1's
+  instant death freed the card -- and it SURVIVED the same 2-unit-margin
+  risk window that killed the spiral probe (past t = 32.1 with level 5
+  built, 49.6 GB): the detonation was the spiral state's, not the
+  recipe's. Wall ~34.2 expected ~14:15; if it walks through (the standard
+  head-on lvl5 precedent), tape to 40, landing ~15:30-16:00.**
+- **PROBE 1 RETRY -- AUTHORIZED AND CHAINED (user 13:50: "yep launch it
+  from t 50 when the current run lands"):** `merge_twin_p012_eta4_lvl5_
+  t066` from archived Chk05000 (t = 50.0), template
+  `params_ref_eta4_p012_lvl5_t066_from50.txt` (plotfiles every 0.2 units,
+  consumer chi profile with rolling keep-last 25 = the newest 5 units, so
+  scratch stays bounded), max_level 5, stop 66. The chain watcher launches
+  it the moment probe 2 finishes and the card reads free; ~5-7 h at lvl5
+  pace from a ~15:45 start -> lands ~21:00-23:00. Same question as the
+  dead first attempt; the t = 50 planting is the ladder's proven margin.
 
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
