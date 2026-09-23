@@ -790,6 +790,27 @@ whole card: the lvl5 family peaks ~48 GB).
   --template runs/wormhole_merger/templates_scan/params_single_eps_p1e2_t250.txt
   --gpu 0 --profile headon-modes --keep-last 4 > /tmp/launch_t250.log 2>&1 &`
   (registry --what comes from the template's first comment line).
+  **LAUNCHED 2026-09-23 on the user's word ("launch required run"), from
+  a session on the FIRST node -- GPU 1 (the free card; GPU 0 carries the
+  t500 inflation arm at 46.6 GB).** First attempt (16:47) DIED AT INIT:
+  `checkpoint_interval = 5.0` -- the knob counts COARSE STEPS and must be
+  an integer (IParser "5.0 is not an integer"; the working templates use
+  50 = 0.5 units at dt 0.01). Template fixed to `checkpoint_interval =
+  500` (every 5 units) with `checkpoint_keep = 3` (the user's
+  extend-if-needed requirement); dead run dir/scratch/log and its
+  auto-registry row pruned; relaunched 16:55, registry row rewritten at
+  the new launch. Level 3 confirmed correct (max_level = 3, the family's
+  own grid, so the extension overlaps the three published curves with no
+  resolution knob turned; the identical configuration ran t = 0-100 with
+  ZERO NaN behind its horizon, and the level-3 walls on the record all
+  belong to binary cores or horizonless states -- if the unexplored
+  t > 100 tail does hit one, the rolling keep-3 ladder restarts it at
+  level 4 from <= 5 units back). ETA ~15 h at the family's ~17 u/h ->
+  lands ~08:00 Thu 09-24; pace to be re-read once the ADVANCE lines
+  settle. NOTE the node move: this session is now ON the first node, so
+  the first-node visit tasks of the t500 protocol (point 4: offline
+  throat measure on a kept plotfile; point 5: stage a rolling Chk to
+  NFS) are now actionable from here.
 
 **The original plan, for the record (written before the word):**
 1. **R1-continuation** `merge_twin_p012_eta4_t070` — the η = 4 spiral re-run
