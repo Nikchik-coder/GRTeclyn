@@ -100,8 +100,8 @@ def main(argv: list[str] | None = None) -> int:
     t_dep = float(ar[dep, 0][0]) if dep.any() else None
     if t_dep is not None:
         axT.axvline(t_dep, color=style.FAINT, linewidth=0.7, zorder=1)
-        axT.text(t_dep - 0.8, 1.75, f"leaves the twin by 10% at $t={t_dep:.0f}$",
-                 fontsize=7, color=style.CONTEXT, ha="right")
+        axT.text(3.0, 2.05, f"leaves the twin by 10% at $t={t_dep:.0f}$",
+                 fontsize=7, color=style.CONTEXT, ha="left")
         print(f"[single-collapse] leaves the unkicked twin by 10% at t = {t_dep:.1f}")
     axT.text(66.0, 5.55, "unkicked twin (truncation seed)", fontsize=7,
              color=style.CONTEXT, ha="right", va="bottom")
@@ -109,8 +109,8 @@ def main(argv: list[str] | None = None) -> int:
     axT.plot(hA["time"], hA["R_mots"], color=style.GOLD, linewidth=0.0,
              marker="o", markersize=2.4, zorder=4)
     axT.axvline(T_MOTS, color=style.FAINT, linewidth=0.7, zorder=1)
-    axT.text(T_MOTS + 0.8, 5.35, r"MOTS from $t=33$", fontsize=7,
-             color=style.GOLD, ha="left")
+    axT.text(T_MOTS - 1.0, 5.35, r"MOTS from $t=33$", fontsize=7,
+             color=style.GOLD, ha="right")
     axT.text(2, 3.55, "minimal-surface areal radius", fontsize=7.5,
              color=style.INK)
     axT.text(72, 2.85, "oriented scan's MOTS", fontsize=7,
