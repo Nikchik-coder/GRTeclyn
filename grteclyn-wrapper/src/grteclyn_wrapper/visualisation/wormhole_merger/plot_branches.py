@@ -307,7 +307,7 @@ def plateau_rate(a: np.ndarray, lo: float = 49.0, hi: float = 61.0) -> tuple[flo
     return float(v.mean()), float(v.std())
 
 
-def figure_panels(axA, axB, root: pathlib.Path) -> None:
+def figure_panels(axA, axB, root: pathlib.Path, legends: bool = True) -> None:
     """The two resolution-ladder panels drawn onto SUPPLIED axes.
 
     NO colour (dashed = collapse, solid = inflation, muted grey = the arm
@@ -351,10 +351,18 @@ def figure_panels(axA, axB, root: pathlib.Path) -> None:
     axA.set_xlim(0, 104)
     axA.set_xlabel(r"$t$")
     axA.set_ylabel(r"$R_{\mathrm{min}}$")
-    legA = style.legend(axA, hA, lA, loc="lower left", pad=0.03, fontsize=8,
-                        handlelength=2.5, labelspacing=0.3, borderaxespad=0.4,
-                        frameon=True, framealpha=1.0)
-    legA.get_frame().set(facecolor=style.GROUND, edgecolor="none")
+    # legends=False on the row canvas (2026-09-23): the two boxed keys said
+    # the same thing twice and lay on the curves at a third of a page wide,
+    # so the shared identity moved to ONE figure legend on top and the level-2
+    # arm is named at its own cross
+    if legends:
+        legA = style.legend(axA, hA, lA, loc="lower left", pad=0.03, fontsize=7,
+                            handlelength=1.6, labelspacing=0.25, borderaxespad=0.4,
+                            frameon=True, framealpha=1.0)
+        legA.get_frame().set(facecolor=style.GROUND, edgecolor="none")
+    else:
+        axA.text(23.5, 3.55, "level 2", fontsize=7, color=style.CONTEXT,
+                 ha="left", va="top")
     style.edge_label(axA, R_EXACT, r"$R_\star$")
 
     # The rate goes in the key, not on the curve.
@@ -379,10 +387,17 @@ def figure_panels(axA, axB, root: pathlib.Path) -> None:
     axB.set_ylim(-4.5, 0.5)
     axB.set_xlabel(r"$t$")
     axB.set_ylabel(r"$\log_{10}\,|R-R_0|/R_0$")
-    legB = style.legend(axB, loc="lower right", pad=0.03, fontsize=8,
-                        handlelength=2.5, labelspacing=0.3, borderaxespad=0.4,
-                        frameon=True, framealpha=1.0)
-    legB.get_frame().set(facecolor=style.GROUND, edgecolor="none")
+    if legends:
+        legB = style.legend(axB, loc="upper left", pad=0.03, fontsize=7,
+                            handlelength=1.6, labelspacing=0.25, borderaxespad=0.4,
+                            frameon=True, framealpha=1.0)
+        legB.get_frame().set(facecolor=style.GROUND, edgecolor="none")
+    else:
+        # the rates in place of the retired key; the caption carries them too
+        axB.text(46.0, -1.15, r"$\tau=5.88$", fontsize=7, color=style.INK,
+                 ha="right", va="bottom")
+        axB.text(66.0, -2.35, r"$\tau=5.26$", fontsize=7, color=style.INK,
+                 ha="left", va="top")
 
 
 if __name__ == "__main__":

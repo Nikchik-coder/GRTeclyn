@@ -44,6 +44,7 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, f
 
 GROUP = "01_single_throat"
 ARM = "seed/single_pureq_q1e2_ml4_t100"
+TWIN = "hold/single_hold_ml4_t100"   # the unkicked level-4 twin, as on the inflation page
 SNAPS = (33.0, 40.0, 45.0, 48.0, 50.0, 55.0)   # grey ramp, light = early; the collapse is 45-55
 T_MOTS = 33.0
 
@@ -88,6 +89,22 @@ def main(argv: list[str] | None = None) -> int:
     tags = "abcdefg"
 
     # ---- context strip: the throat itself, and the horizon instrument -----
+    # The unkicked twin rides along, as on the inflation page (the user,
+    # 2026-09-23: the two branch figures carry the same reference), and the
+    # same 10 % departure clock is marked for THIS arm.
+    tw = np.loadtxt(pathlib.Path(args.pack_root).expanduser()
+                    / "campaign" / GROUP / TWIN / "areal_radius.dat")
+    axT.plot(tw[:, 0], tw[:, 1], color=style.CONTEXT, linewidth=1.1, zorder=2)
+    twi = np.interp(ar[:, 0], tw[:, 0], tw[:, 1])
+    dep = np.abs(ar[:, 1] / twi - 1.0) >= 0.10
+    t_dep = float(ar[dep, 0][0]) if dep.any() else None
+    if t_dep is not None:
+        axT.axvline(t_dep, color=style.FAINT, linewidth=0.7, zorder=1)
+        axT.text(t_dep - 0.8, 1.75, f"leaves the twin by 10% at $t={t_dep:.0f}$",
+                 fontsize=7, color=style.CONTEXT, ha="right")
+        print(f"[single-collapse] leaves the unkicked twin by 10% at t = {t_dep:.1f}")
+    axT.text(66.0, 5.55, "unkicked twin (truncation seed)", fontsize=7,
+             color=style.CONTEXT, ha="right", va="bottom")
     axT.plot(ar[:, 0], ar[:, 1], color=style.INK, linewidth=1.4, zorder=3)
     axT.plot(hA["time"], hA["R_mots"], color=style.GOLD, linewidth=0.0,
              marker="o", markersize=2.4, zorder=4)

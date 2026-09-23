@@ -69,7 +69,7 @@ import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import RUNS_ROOT, find_run  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.style import (  # noqa: E402
-    GOLD, FAINT, INK, MUTED, edge_label, prd, save,
+    CONTEXT, GOLD, FAINT, INK, MUTED, edge_label, prd, save,
 )
 
 R_EXACT = 3.8895      # closed form for the drainhole a = 2, m = 1
@@ -464,3 +464,95 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+# ---------------------------------------------------------------------------
+# The constraint record of the same scan -- panels (d)/(e) of the combined
+# strip (the user, 2026-09-23: "add to fig 1 the hamiltonian and momentum
+# constraints data for these runs to show how it behaves").  Same identity
+# grammar as panel (c): dash is the SIGN of the kick, weight is its SIZE;
+# the unkicked control is the one grey curve; the eps = +-0.1 pair, the
+# amplitude ceiling, is the heaviest and dies with a cross.
+CONSTRAINT_ARMS = [
+    ("single_eps_m1e1_t100", "-0.1"), ("single_eps_p1e1_t100", "+0.1"),
+    ("single_eps_m1e2_t100", "-0.01"), ("single_eps_p1e2_t100", "+0.01"),
+    ("single_eps_m1e3_t100", "-0.001"), ("single_eps_p1e3_t100", "+0.001"),
+]
+HOLD_ARM = ("single_hold_t100", "no kick")
+
+
+def _norms(run_dir: pathlib.Path) -> np.ndarray | None:
+    for rel in ("constraint_norms.dat", "small_data/constraint_norms.dat"):
+        f = run_dir / rel
+        if f.is_file():
+            a = np.loadtxt(f, ndmin=2)
+            return a[np.argsort(a[:, 0])] if a.size else None
+    return None
+
+
+def figure_panels_constraints(axH, axM, pack_root) -> None:
+    """L2 Hamiltonian (axH) and momentum (axM) norms of the seed-scan arms.
+
+    Reads the PACK (campaign/01_single_throat/...), where every arm's
+    constraint_norms.dat lives; ``prd`` must already be active and the
+    caller owns the lettering, as for the other panels of the strip.
+    """
+    pack = pathlib.Path(pack_root).expanduser()
+
+    def locate(name: str) -> pathlib.Path | None:
+        for base in (pack / "campaign" / "01_single_throat",
+                     pack / "01_single_throat"):
+            if base.is_dir():
+                hit = next(iter(base.rglob(name)), None)
+                if hit is not None:
+                    return hit
+        return None
+
+    def weight(label: str) -> float:
+        m = abs(float(label))
+        return 2.1 if m >= 5e-2 else (1.5 if m >= 5e-3 else 0.9)
+
+    drawn = []
+    for name, label in CONSTRAINT_ARMS + [HOLD_ARM]:
+        d = locate(name)
+        a = _norms(d) if d is not None else None
+        if a is None:
+            print(f"  {name}: no constraint_norms, skipped"); continue
+        hold = label == "no kick"
+        st = (dict(color=CONTEXT, linewidth=0.9, linestyle=(0, ()))
+              if hold else
+              dict(color=INK, linewidth=weight(label),
+                   linestyle=(0, (4, 2.5)) if label.startswith("+") else (0, ())))
+        dead = a[-1, 0] < 90.0          # the ceiling pair dies at t = 15.2/14.1
+        a = a[np.isfinite(a[:, 1]) & np.isfinite(a[:, 2])]
+        for ax, col in ((axH, 1), (axM, 2)):
+            ax.semilogy(a[:, 0], a[:, col], zorder=2 if hold else 3, **st)
+            if dead:
+                ax.plot(a[-1, 0], a[-1, col], "X", color=st["color"], markersize=5,
+                        markeredgecolor="white", markeredgewidth=0.8, zorder=4)
+        drawn.append((label, a))
+        # the console carries the numbers the caption quotes
+        g = a[a[:, 0] >= 55.0]
+        base = np.median(a[(a[:, 0] > 35) & (a[:, 0] < 55), 1]) if not dead else np.nan
+        t_grow = next((t for t, h in zip(g[:, 0], g[:, 1]) if h > 2 * base), np.nan)             if np.isfinite(base) else np.nan
+        print(f"  {label:>7s}  H(0) = {a[0, 1]:.2e}   M(0.5) = "
+              f"{np.interp(0.5, a[:, 0], a[:, 2]):.2e}   H_end = {a[-1, 1]:.2e}"
+              + (f"   growth from t = {t_grow:.0f}" if np.isfinite(t_grow) else
+                 ("   DEAD" if dead else "")))
+
+    for ax, ylab in ((axH, r"$L^2\,\mathcal{H}$"), (axM, r"$L^2\,\mathcal{M}$")):
+        ax.set_xlim(0, 100)
+        ax.set_xlabel(r"$t$")
+        ax.set_ylabel(ylab)
+    # two names in place, sparing the caption a hunt: the ceiling pair at its
+    # cross, the control at its late rise (axH only; (e) reads by grammar)
+    ceil = next((a for lab, a in drawn if lab == "+0.1"), None)
+    if ceil is not None:
+        axH.text(ceil[-1, 0] + 2.5, 2.0, r"$\varepsilon=\pm0.1$",
+                 fontsize=7, color=INK, ha="left", va="center")
+    # the control is named in (e), where its curve sits alone at the bottom;
+    # in (d) it is indistinguishable from the flat band and a name misleads
+    hold = next((a for lab, a in drawn if lab == "no kick"), None)
+    if hold is not None:
+        axM.text(45.0, np.interp(45.0, hold[:, 0], hold[:, 2]) * 0.30,
+                 "no kick", fontsize=7, color=CONTEXT, ha="center", va="top")
