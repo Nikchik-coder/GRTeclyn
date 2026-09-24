@@ -21,7 +21,7 @@ ordering of a pulse crossing them -- and then the source is gone.  The decay
 is exponential and fitted: log-linear fits over t = 30-95 give e-fold times
 tau = 19/23/28 at R = 10/14/18 (dashed).  THAT IS THE HORIZON'S OWN CLOCK:
 the remnant's Misner-Sharp mass settles onto its asymptote with
-tau = 19.4 +- 0.8 (Fig. headon_collapse_diagnostics (g)).  The hair is shed,
+tau = 19.4 +- 0.8 (Fig. headon_collapse_diagnostics (b)).  The hair is shed,
 the source goes quiet, and the mass stops changing, all on one timescale.  The integrated post-horizon energies are negative on all
 three spheres, $E_\phi = -0.056/-0.071/-0.075$: the hair leaves as negative
 energy.  (The pre-horizon rise at $R=10$ is the two mouths' static hair

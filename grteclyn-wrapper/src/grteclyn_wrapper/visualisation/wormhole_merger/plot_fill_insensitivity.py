@@ -47,6 +47,7 @@ ARM_A = "p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700"
 ARM_B = "p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700"
 RADII = (20.0, 28.0, 36.0, 44.0)
 T_ENGAGE = 57.0
+SKIN = 1.90          # core_fill_radius_start of ARM_A: the fill's outer edge
 GATE = 1e-2          # "a few %" -- the module's own acceptance wording
 RAMP = (style.INK, style.MUTED, style.CONTEXT, style.FAINT)
 
@@ -80,9 +81,12 @@ def main(argv: list[str] | None = None) -> int:
         gridspec_kw=dict(height_ratios=[1.35, 1.0]))
 
     # ---- (a) the two arms at the nearest sphere, one on top of the other --
+    # The in-code Weyl4 stream already holds r*Psi4 (its peaks are 0.0293 /
+    # 0.0288 / 0.0283 / 0.0281 at R = 20 / 28 / 36 / 44); until 2026-09-24
+    # this panel multiplied by R again and drew 20 r*Psi4 under an r*Psi4 label.
     R0 = RADII[0]
-    wa = R0 * np.real(ya[R0][:n][keep])
-    wb = R0 * np.real(yb[R0][:n][keep])
+    wa = np.real(ya[R0][:n][keep])
+    wb = np.real(yb[R0][:n][keep])
     axA.axhline(0.0, color=style.FAINT, linewidth=0.7, zorder=1)
     axA.plot(t, wa, color=style.INK, linewidth=1.4, linestyle=(0, ()), zorder=3)
     axA.plot(t, wb, color=style.GOLD, linewidth=1.7,
@@ -104,20 +108,33 @@ def main(argv: list[str] | None = None) -> int:
     # the quantity the gate is about, and it draws as one clean front per
     # sphere arriving on the causal clock t = 57 + (R - 1.9).
     w = max(1, int(round(2.0 / np.median(np.diff(t)))))
+    fronts = {}
     for k, R in enumerate(RADII):
         da = np.abs(ya[R][:n][keep] - yb[R][:n][keep])
         ref = np.abs(ya[R][:n][keep]).max()
         frac = np.maximum(da / ref, 1e-12)
         env = np.array([frac[max(0, i - w):i + 1].max() for i in range(len(frac))])
         axB.plot(t, env, color=RAMP[k], linewidth=1.1, zorder=3)
+        fronts[R] = t[np.argmax(env > 1e-7)]
+        # The fill's causal clock at this sphere, t = 57 + (R - skin), as a
+        # short tick under the top frame (2026-09-24: the caption claims the
+        # fronts arrive on it; the ticks let the reader check that they do at
+        # R = 20 and run ahead of it, below 2e-5 of peak, farther out).
+        clock = T_ENGAGE + (R - SKIN)
+        axB.plot([clock, clock], [0.09, 0.3], color=RAMP[k], linewidth=1.1, zorder=3)
         print(f"[fill-insensitivity] R = {R:g}: max |dPsi4|/peak = "
-              f"{frac.max() * 100:.3f} %")
+              f"{frac.max() * 100:.3f} %;  1e-7 front at t = {fronts[R]:.2f}, "
+              f"clock {clock:.1f} ({fronts[R] - clock:+.2f})")
     axB.axhline(GATE, color=style.FAINT, linewidth=0.8,
                 linestyle=(0, (4, 2.5)), zorder=2)
-    axB.text(t[-1], GATE * 1.25, "the few-% gate", ha="right", va="bottom",
+    axB.text(t[0] + 0.5, GATE * 1.25, "the few-% gate", ha="left", va="bottom",
              fontsize=7, color=style.MUTED)
-    axB.text(t[2], 2.0e-3, r"$R=20$", fontsize=7, color=RAMP[0], va="bottom")
-    axB.text(t[2], 1.1e-5, r"$R=44$", fontsize=7, color=RAMP[3], va="bottom")
+    # Each end of the ramp named at the foot of its own front (to its left:
+    # rightward the front itself runs low through the text).
+    axB.text(fronts[20.0] - 0.4, 1.6e-7, r"$R=20$", fontsize=7, color=RAMP[0],
+             ha="right", va="bottom")
+    axB.text(fronts[44.0] - 0.4, 1.6e-7, r"$R=44$", fontsize=7, color=RAMP[3],
+             ha="right", va="bottom")
     axB.set_yscale("log")
     axB.set_ylim(1e-7, 3e-1)
     axB.set_ylabel(r"$|\Delta\Psi_4^{2,2}|\,/\,\mathrm{peak}$")
@@ -128,8 +145,10 @@ def main(argv: list[str] | None = None) -> int:
     out = pathlib.Path(args.out) if args.out else (
         figure_dir(GROUP, args.pack_root) / "p012_paper" / "fill_insensitivity.png")
     out.parent.mkdir(parents=True, exist_ok=True)
+    hits = style.label_audit(fig)
     png = style.save(fig, out)
-    print(f"[fill-insensitivity] wrote {png} (+pdf)")
+    print(f"[fill-insensitivity] wrote {png} (+pdf); label audit: "
+          + ("clean" if not hits else f"{len(hits)} hit(s)"))
     return 0
 
 

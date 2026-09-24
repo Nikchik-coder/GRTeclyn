@@ -231,6 +231,35 @@
 \newcommand{\clmDetEphiSphereRatio}{12}% auto: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/scalar_mo
 \newcommand{\clmDetThroatEphiSpread}{6}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100/scalar_modes
 \newcommand{\clmDetHeadonWobble}{80}% manual: the outermost (R=18) Psi4 sphere of the head-on arms (psi4_mode_l2m0.dat); onset
+\newcommand{\clmDetKnobFlybyLevelLo}{3}% def: Table I fly-by group: merge_orbit_flip_d12_p045 (L=64) max_level
+\newcommand{\clmDetDetectMassLo}{3\times10^{4}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S2: every 
+\newcommand{\clmDetDetectMassHi}{4\times10^{6}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S2 (same)
+\newcommand{\clmDetBurstSnrLo}{61}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S1: optima
+\newcommand{\clmDetBurstSnrHi}{500}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S1 (same)
+\newcommand{\clmDetCollapseSnr}{7}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S1: lone c
+\newcommand{\clmDetBurstsPerN}{1.9\times10^{3}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S4: 4 pi D
+\newcommand{\clmDetPlsNLo}{0.6}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S4: n abov
+\newcommand{\clmDetPlsNHi}{3}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S4: same a
+\newcommand{\clmDetOneBurstN}{5\times10^{-4}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S4: n for 
+\newcommand{\clmDetDilution}{2\times10^{5}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S8: (1+z_e
+\newcommand{\clmOmegaLambda}{0.69}% lit: Planck 2018 VI (A&A 641, A6), Table 2: Omega_Lambda = 0.6889
+\newcommand{\clmDetOmegaWHLo}{60}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: Omega_
+\newcommand{\clmDetOmegaWHHi}{800}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5 (same)
+\newcommand{\clmDetOmegaWHDMLo}{230}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: the sa
+\newcommand{\clmDetOmegaWHDMHi}{3100}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5 (same)
+\newcommand{\clmDetDepositOverMatter}{47}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: |rho_p
+\newcommand{\clmDetHubbleCap}{0.015}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: H^2 > 
+\newcommand{\clmDetDepositCeiling}{3\times10^{-3}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: |Omega
+\newcommand{\clmDetBackreactLo}{5\times10^{-13}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: |rho_p
+\newcommand{\clmDetBackreactHi}{6\times10^{-8}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5 (same):
+\newcommand{\clmDetLrdNLo}{3}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6: little
+\newcommand{\clmDetLrdNHi}{6}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6 (same)
+\newcommand{\clmDetLrdRhoLo}{0.3}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6: nM at 
+\newcommand{\clmDetLrdRhoHi}{60}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6 (same)
+\newcommand{\clmDetLrdFracLo}{10^{-11}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6: f_DM =
+\newcommand{\clmDetLrdFracHi}{2\times10^{-9}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6 (same)
+\newcommand{\clmDetLrdBurstsLo}{0.06}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6: bursts
+\newcommand{\clmDetLrdBurstsHi}{0.1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6 (same):
 
 % ---- mergers
 \newcommand{\clmHeadonSeparation}{8}% def: campaign/04_binary_headon/merge_headon_flip_d8_v1_t100/evolution_params.txt (wor
@@ -353,7 +382,7 @@
 \newcommand{\clmSpiralRemnantRadius}{4.15}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmSpiralRemnantMass}{2.08}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmSpiralRemnantDrain}{0.2}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
-\newcommand{\clmSpiralOpenThroat}{3.87}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
+\newcommand{\clmSpiralOpenThroat}{3.87}% manual: campaign/05_binary_spiral/horizon/horizon_oriented_scan_t58-60.txt: common neck 
 \newcommand{\clmFlowSlicesLate}{98}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmFlowSlicesEnd}{100}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmFlowSliceCount}{seven}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
@@ -447,6 +476,40 @@
 \newcommand{\clmGrtresnaErrorAfter}{0.7}% manual: same GPU_PLAN lines as clmGrtresnaErrorBefore (0.68 %)
 \newcommand{\clmRemnantRadiusMean}{4.16}% auto: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl3down_t100_r03500/horizon_s
 \newcommand{\clmSpiralFlowLeadWord}{five}% auto: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t150_prof_r036
+\newcommand{\clmHeadonBornArea}{1.01}% auto: common MOTS at formation over sqrt(2) R_min: born with both throats' area
+\newcommand{\clmHeadonRemnantAreaShare}{57}% auto: (R(t=97)/R_min)^2/2: the remnant's area over the two throats'
+\newcommand{\clmHeadonRemnantThroatRatio}{1.07}% auto: R(t=97)/R_min
+\newcommand{\clmHeadonRemnantOverSchw}{4}% auto: R(t=97) over 2 M_ADM, minus one, percent
+\newcommand{\clmHeadonRadiusWobble}{1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: line+sine a
+\newcommand{\clmHeadonMassAsymptoteLo}{2.01}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: M_inf of th
+\newcommand{\clmHeadonMassAsymptoteHi}{2.15}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: M_inf, fill
+\newcommand{\clmHeadonGwShare}{1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: E_GW = 6.7e
+\newcommand{\clmHeadonEndRadius}{4.1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: 2 M_Bondi =
+\newcommand{\clmHeadonFluxDropLo}{15}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: l=1 phi^2 a
+\newcommand{\clmHeadonFluxDropHi}{180}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: grid max ph
+\newcommand{\clmHeadonRateDropLo}{3}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: |dM_MS/dt| 
+\newcommand{\clmHeadonRateDropHi}{4}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/headon_remnant.py: |dR/dt| fal
+\newcommand{\clmSpiralPitSepLate}{0.31}% auto: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t150_prof_r036
+\newcommand{\clmSpiralPitSepEarly}{0.34}% auto: same stream at t = 55
+\newcommand{\clmSpiralPitChiRatioLo}{300}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/pit_throats.py on the kept lev
+\newcommand{\clmSpiralPitChiRatioHi}{600}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/pit_throats.py (same)
+\newcommand{\clmSpiralMouthUpperLo}{5.7}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/pit_throats.py: smallest areal
+\newcommand{\clmSpiralMouthUpperHi}{5.9}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/pit_throats.py (same)
+\newcommand{\clmSpiralNeckEarly}{4.10}% manual: campaign/05_binary_spiral/horizon/horizon_oriented_scan_t55-57.txt: common neck 
+\newcommand{\clmSpiralNeckTime}{60}% manual: campaign/05_binary_spiral/horizon/horizon_oriented_scan_t58-60.txt: the neck R =
+\newcommand{\clmTwoThroatRadius}{5.50}% def: closed form: sqrt(2) R_min, the radius of a sphere with both throats' area
+\newcommand{\clmSpiralMotsThroatRatio}{1.24}% manual: clmSpiralFlowRadiusBirth / clmRstar = 4.83/3.8895
+\newcommand{\clmSpiralMotsAreaShare}{0.77}% manual: (clmSpiralFlowRadiusBirth/clmRstar)^2/2
+\newcommand{\clmSpiralMotsBelowHeadon}{13}% manual: 1 - clmSpiralFlowRadiusBirth/clmHeadonMotsRadius = 1 - 4.83/5.564, percent
+\newcommand{\clmSpiralRemnantThroatRatio}{1.07}% manual: clmSpiralRemnantRadius / clmRstar = 4.15/3.8895
+\newcommand{\clmGaugeEtaWallLag}{6.3}% auto: clmGaugeEtaDeath - clmGaugeEtaChiFloor
+\newcommand{\clmGaugeStandardWallLag}{7.2}% auto: clmGaugeStandardDeath - clmGaugeStandardChiFloor
+\newcommand{\clmWallLevelThreeLo}{52.1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/wall_vs_momentum.py: level-3 d
+\newcommand{\clmWallLevelThreeHi}{53.4}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/wall_vs_momentum.py (same)
+\newcommand{\clmWallKLo}{0.71}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/wall_vs_momentum.py: max|K| on
+\newcommand{\clmWallKHi}{1.05}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/wall_vs_momentum.py (same)
+\newcommand{\clmHeadonKPeak}{1.36}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/wall_vs_momentum.py: the level
+\newcommand{\clmWallGainProd}{3.5}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/wall_vs_momentum.py: level 3 -
 
 % ---- single
 \newcommand{\clmThroatA}{2}% def: campaign/01_single_throat/hold/single_hold_t100/evolution_params.txt: wormhole_t
@@ -523,7 +586,7 @@
 \newcommand{\clmThroatLapse}{0.575}% def: closed form e^{u(r_t)} at the production a, m
 \newcommand{\clmGgsMassless}{0.846}% lit: Gonzalez, Guzman & Sarbach, Class. Quantum Grav. 26, 015010 (2009) [arXiv:0806.0
 \newcommand{\clmGgsMassive}{0.590}% lit: as clmGgsMassless, the gamma_1 -> infinity end
-\newcommand{\clmGgsAgreement}{15}% auto: clmProperEfold* against T_PREDICTED = 0.68-0.76 (GGS Table I interpolated to m/a
+\newcommand{\clmGgsAgreement}{15}% auto: largest excess of the measured T (level 3) over the parameter-matched linear T =
 \newcommand{\clmCrossingMean}{13.0}% auto: campaign/01_single_throat/seed/single_eps_{m,p}1e{2,3}_t100/areal_radius.dat; pl
 \newcommand{\clmKickThreeDeath}{40.1}% auto: campaign/01_single_throat/seed/single_eps_p1e3_t100/constraint_norms.dat (last r
 \newcommand{\clmKickThreeLead}{15}% auto: campaign/01_single_throat/seed/single_eps_p1e3_t100/{constraint_norms.dat,horizo
@@ -678,6 +741,14 @@
 \newcommand{\clmScoutSqueeze}{-4.0}% auto: as clmScoutPlateau
 \newcommand{\clmScoutLastInRange}{13}% auto: as clmScoutPlateau
 \newcommand{\clmScoutSeven}{-0.6}% auto: as clmScoutPlateau
+\newcommand{\clmSpongeInnerBig}{48}% def: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/evolution
+\newcommand{\clmSpongeOuterBig}{64}% def: same params, sponge_outer_radius
+\newcommand{\clmThroatGammaOne}{0.5}% def: production params: gamma_1 = m/a of GGS I
+\newcommand{\clmGgsMatched}{0.758}% lit: Gonzalez, Guzman & Sarbach, CQG 26, 015010 (2009), Table I at gamma_1 = 0.5 (arX
+\newcommand{\clmLinT}{0.7584}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/linear_mode.py: three solvers 
+\newcommand{\clmLinTau}{5.13}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/linear_mode.py: tau_lin = 1/la
+\newcommand{\clmGgsAgreementFour}{2.5}% auto: level-4 plateau T over the parameter-matched linear T (grteclyn-wrapper/scripts/
+\newcommand{\clmThroatOwnMass}{1.94}% def: closed form: M_MS on the time-symmetric throat = R_min/2 (theta_pm = 0 there)
 
 % ---- waves
 \newcommand{\clmGwPeakFlyby}{4.1\times10^{-2}}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): campaign/06
@@ -713,12 +784,12 @@
 \newcommand{\clmGwGateFlyby}{70}% def: plot_psi4_gallery.ARMS fly-by t_max (FIGURES.md 'The fly-by row is gated at t = 
 \newcommand{\clmGwSpeedTwinPeak}{0.57}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): vacuum twin
 \newcommand{\clmGwSpeedTwin}{0.82}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + psi4_math.
-\newcommand{\clmGwSpeedThroatA}{0.91}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedThroatB}{0.95}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedThroatC}{0.98}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
+\newcommand{\clmGwSpeedThroatA}{0.94}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
+\newcommand{\clmGwSpeedThroatB}{0.97}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
+\newcommand{\clmGwSpeedThroatC}{0.95}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedHeadonA}{0.96}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedHeadonB}{0.90}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedSpiralA}{0.95}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
+\newcommand{\clmGwSpeedSpiralA}{1.00}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedSpiralB}{1.00}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedSpiralC}{1.00}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedFlybyA}{1.00}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
@@ -861,3 +932,21 @@
 \newcommand{\clmGwSingleCountTime}{80}% manual: GPU_PLAN.md '2026-09-23 (midday)': 'Quotable window t <~ 75-80'
 \newcommand{\clmGwEnvWindow}{25}% def: plot_scalar_censorship.WINDOW
 \newcommand{\clmGwFluxSignStretch}{20}% auto: plot_scalar_censorship: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5fr
+\newcommand{\clmGwDrawFloorFrac}{10}% manual: plot_psi4_gallery.DRAW_GATES: each throat sphere drawn to where the level-4 sphe
+\newcommand{\clmGwDrawFlybyRetarded}{50}% manual: plot_psi4_gallery.DRAW_GATES: fly-by drawn to t - R = 50 on every sphere (t = 70
+\newcommand{\clmGwTwinLagExcess}{3.4}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_gallery_audit.py: the va
+\newcommand{\clmGwPureLeadLo}{1.1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py: the kick
+\newcommand{\clmGwPureLeadHi}{1.5}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py (same)
+\newcommand{\clmGwSeedOldFloorRatio}{2}% manual: campaign single_eps_p1e2_q5e2_ml4_t100 evolution_params.txt header: the 0.01 wav
+\newcommand{\clmGwSeedTenthDeform}{20}% manual: closed form: the seed's areal factor x eps2 at eps2 = 0.1 (2 eps2 P2 at the pole
+\newcommand{\clmGwThroatPeriodFit}{20.61}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py: scip
+\newcommand{\clmGwThroatPeriodFitErr}{0.15}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py (same
+\newcommand{\clmGwThroatHalfPeriodA}{9.4}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py: inte
+\newcommand{\clmGwThroatHalfPeriodB}{10.3}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py (same
+\newcommand{\clmGwThroatHalfPeriodC}{9.0}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py (same
+\newcommand{\clmGwThroatPeriodStartMass}{24.7}% manual: closed form: Schwarzschild l=2 fundamental period 2 pi M/0.3737 at M_MS = 1.4678
+\newcommand{\clmGwSeedFloorCross}{2\times10^{-3}}% manual: plot_seed_linearity.py: the slope-one line through the 0.01 arm crosses the leve
+\newcommand{\clmGwFillFrontSpeedLo}{1.2}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_fill_twin.py: the fill t
+\newcommand{\clmGwFillFrontSpeedHi}{1.3}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_fill_twin.py (same)
+\newcommand{\clmGwFillFrontMax}{1.5\times10^{-5}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_fill_twin.py: the differ
+\newcommand{\clmGwFillPeakLead}{13}% manual: clmGwLightCone - clmGwSpiralPeakTime = 75 - 62: the burst peaks at R = 20 before

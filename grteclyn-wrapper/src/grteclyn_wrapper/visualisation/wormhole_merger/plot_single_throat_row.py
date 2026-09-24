@@ -27,13 +27,71 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import (  # noqa: E402
     plot_branches, plot_seed_branches, style,
 )
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E402
-    PACK_ROOT, RUNS_ROOT, figure_dir,
+    PACK_ROOT, RUNS_ROOT, figure_dir, find_run,
 )
+
+# The amplitude ceiling on panel (c) (reviewer, 2026-09-24: "why is this not
+# shown on Fig. 1?").  plot_seed_branches leaves the +-0.1 pair out of its
+# branching panel on purpose -- they never branch -- so the canvas draws them
+# on top, read from the PACK, in (d)/(e)'s grammar: heaviest weight, dash =
+# sign, a cross where the run NaN'd.  What they show: both collapse (the
+# oriented scans hold a MOTS from t = 1 and t = 6), the inward push after a
+# re-expansion (3.15 -> 3.36 by t = 4) -- the rule "fate opposite to the push"
+# fails at -0.1 -- and both die at the compactified origin (NaN in h11 on level
+# 3, t = 14.06 / 15.17), as the +0.001 arm does at t = 40.07.  Evidence:
+# grteclyn-wrapper/scripts/analysis/merger_feedback/c_eps01_fates.py.
+CEILING_ARMS = (("single_eps_p1e1_t100", "+0.1"), ("single_eps_m1e1_t100", "-0.1"))
+
+
+def ceiling_pair(ax, pack_root) -> None:
+    """Draw the eps = +-0.1 arms onto panel (c) after its home module is done.
+
+    The curves end at their last areal reading (t = 13 and 15, the plotfile
+    cadence is one unit); the cross sits there, as for the +0.001 arm.  The
+    t_x tag is moved to the LEFT of its rule: on the right the -0.1 arm's last
+    segment runs through it.  Offsets are in points, so the clearances hold
+    on the one-third-page panel.
+    """
+    campaign = pathlib.Path(pack_root).expanduser() / "campaign"
+    ends = {}
+    for name, label in CEILING_ARMS:
+        try:
+            d = find_run(campaign, name)
+        except FileNotFoundError:
+            print(f"  {name}: not in the pack, skipped"); continue
+        a = plot_seed_branches.areal(d)
+        if a is None or a.shape[0] < 3:
+            continue
+        ls = (0, (4, 2.5)) if label.startswith("+") else (0, ())
+        ax.plot(a[:, 0], a[:, 1], color=style.INK, linewidth=2.1, linestyle=ls, zorder=3)
+        if plot_seed_branches.died(d):
+            ax.plot(a[-1, 0], a[-1, 1], "X", color=style.INK, markersize=5,
+                    markeredgecolor="white", markeredgewidth=0.8, zorder=4)
+        ends[label] = a
+        print(f"  {label:>7s}  {name:<24s} t = 0 .. {a[-1, 0]:6.2f}   R {a[0, 1]:.2f} -> "
+              f"{a[:, 1].max():.2f} -> {a[-1, 1]:.2f}" + ("   (NaN)" if plot_seed_branches.died(d) else ""))
+    # ONE name for the pair, as in (d): right of the lower cross, under the
+    # stalled +0.01 line, where the two crosses sit 0.8 apart.  Which is which
+    # reads as for the other pairs: the kick offsets R(0) by ~2 eps (+0.1 starts
+    # above R_star, -0.1 below) and the dash is the sign.  A second name above
+    # +0.1's early hump was tried (2026-09-24): at a third of a page it ran into
+    # the gold fit, and floated off the hump when moved clear.
+    if ends:
+        a = ends.get("-0.1", next(iter(ends.values())))
+        ax.annotate(r"$\varepsilon=\pm0.1$", (a[-1, 0], a[-1, 1]), xytext=(5, -1),
+                    textcoords="offset points", fontsize=8, ha="left", va="center")
+    xlo, xhi = ax.get_xlim()
+    for txt in ax.texts:
+        if txt.get_text() == r"$t_\times$":
+            x, y = txt.get_position()
+            txt.set_position((x - 0.024 * (xhi - xlo), y))
+            txt.set_horizontalalignment("right")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -55,7 +113,16 @@ def main(argv: list[str] | None = None) -> int:
     plot_branches.figure_panels(axA, axB, pathlib.Path(args.pack_root).expanduser(),
                                 legends=False)
     plot_seed_branches.figure_panel(axC, runs_root=args.runs_root)
+    ceiling_pair(axC, args.pack_root)
     plot_seed_branches.figure_panels_constraints(axD, axE, args.pack_root)
+    # (e)'s "no kick" name sat on its own curve's rise out of the t = 34 dip
+    # (label audit, 2026-09-24: 4 samples); moved right along the curve to
+    # t = 48, kept at the home module's 0.30 x the curve's value there.
+    grey = [ln for ln in axE.lines if ln.get_color() == style.CONTEXT]
+    for txt in axE.texts:
+        if txt.get_text() == "no kick" and grey:
+            gx, gy = (np.asarray(v, dtype=float) for v in grey[0].get_data())
+            txt.set_position((48.0, 0.30 * float(np.interp(48.0, gx, gy))))
     for ax, letter in zip((axA, axB, axC, axD, axE), "abcde"):
         ax.text(0.0, 1.05, f"({letter})", transform=ax.transAxes,
                 ha="left", va="bottom", fontsize=9, color=style.INK)
@@ -83,6 +150,7 @@ def main(argv: list[str] | None = None) -> int:
 
     out = (pathlib.Path(args.out) if args.out else
            figure_dir("01_single_throat", args.pack_root) / "single_throat_instability.png")
+    style.label_audit(fig)      # prints every text box a drawn line crosses
     png = style.save(fig, out)
     print(f"[single-throat row] wrote {png} (+pdf)")
     return 0

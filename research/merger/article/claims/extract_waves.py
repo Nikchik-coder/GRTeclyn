@@ -99,7 +99,12 @@ def _series(scenario: str, gated: bool = True):
     else:
         t, d = streams.load_l2_all(path)
         ser = {r: d[(mm, r)] for (mm, r) in d if mm == a["m"]}
-    if gated and a["t_max"] is not None:
+    gallery = _mod("plot_psi4_gallery")
+    if gated and scenario in getattr(gallery, "DRAW_GATES", {}):
+        # the gallery's per-sphere drawing gates (2026-09-24) replace the ARMS
+        # coordinate cut, which clipped the outer fly-by spheres before their peaks
+        ser = gallery.drawn(scenario, t, ser)
+    elif gated and a["t_max"] is not None:
         keep = t <= a["t_max"] + 1e-9
         t, ser = t[keep], {r: y[keep] for r, y in ser.items()}
     radii = sorted(ser)

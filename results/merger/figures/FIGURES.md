@@ -227,6 +227,32 @@ all (peak matching returned v = −0.90; the windowed lag reads 1.00). Measured:
 throat 0.91/0.95/0.98, head-on 0.96/0.90, spiral 0.95/1.00/1.00, fly-by
 1.00/1.00/1.00, BBH twin 0.82. Both figures are re-drawn at the spiral and fly-by close-outs.
 
+**Gallery redrawn 2026-09-24 (first-author review: "why do the right-column
+hills grow in (c)-(e) when (a)-(b) touch the x axis?").** The paragraph above is
+the old state. (1) The right column is now an ENVELOPE in every row: the (2,0)
+modes are real, so |rΨ4| was the rectified wave; they get the analytic-signal
+envelope (drawn to each record's last crest), the (2,2) rows keep |rΨ4|. The
+rising hills are the bursts themselves. (2) The gallery draws with
+`DRAW_GATES`/`drawn()` (per sphere, retarded where it matters), not with
+`ARMS.t_max` (still the LIGO figure's and the ledger's): throat to where the
+exact level-4 spherical control's floor passes 10 % of the burst peak
+(t = 54/52/52 at R = 14/18/22; R = 10 to the ringdown fit's end t = 58); spiral
+to the fill's light cone t = 57 + (R − 1.9) (past it: frozen-core transport and
+grid noise at f ≈ 2/M reaching 9–15 % of peak by t = 95 at R = 20/28); fly-by
+to t − R = 50 on every sphere (the coordinate t ≤ 70 cut R = 36 at its peak
+and R = 44 before it). (3) Row (a) carries queue-2e gate 4's damped sinusoid
+(t = 26–58, period 20.6). (4) 7.05 × 5.6 in. Speeds on the drawn records:
+throat 0.95/0.97/0.95, spiral 1.00/1.00/1.00 (the 0.95 came from the spiral's
+post-light-cone stretch alone), the rest unchanged. The numbers behind all of
+this: `grteclyn-wrapper/scripts/analysis/merger_feedback/waves_gallery_audit.py`.
+Same day: `seed_linearity` reads its floor from the level-4 control
+(`single_eps_p1e2_q1e2_ml4_scalar_t100`, seed not applied; 6.75e-5 at R = 14
+against the level-3 6.79e-5), spans the decade 1e-3–1e-1 in (b) and names the
+arms at their ends in (a); `fill_insensitivity` (a) no longer multiplies the
+r·Ψ4 stream by R again (it drew 20 r·Ψ4), and (b) ticks the causal clock per
+sphere: R = 20 on it, R = 28/36/44 ahead of it by 1.0/2.9/4.7 units below
+1.5e-5 of peak (a gauge-speed front).
+
 ### psi4_ligo rebuilt: four panels, and two bugs it had carried (2026-09-18)
 
 `psi4_ligo` is now a two-column strip (`figure*`, 7.05 x 2.75): (a) the
@@ -344,11 +370,13 @@ time all four spheres peak together at t - R ~ 34.5, as radiation must.
 ## The paper's spiral collapse page (2026-09-18)
 
 `05_binary_spiral/p012_paper/p012_collapse_diagnostics` is the article's
-full-page Fig. 5 (`figure*[p]`, sec:spiral:inspiral), drawn with no arguments:
+spiral collapse figure (sec:spiral:inspiral), drawn with no arguments:
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_collapse
 ```
+
+**REDRAWN 2026-09-24** (the user's read of the paper: "it shouldn't span the whole page"; "we extended the run after death with freeze, why is this not shown on (a)"): a `figure*[t]` strip, 7.05 x 4.3 in, five panels. (a) pit separation over the whole history t = 0-100, the frozen era from t = 57 shaded and labelled (no core quantity drawn inside the fill), gold rug on the slices carrying a common MOTS (55-57, 59, 98-100); (b) areal radius of the common MOTS (incl. the remnant R = 4.15 at t = 98-100) and of the common NECK (the smallest sphere about the pits' midpoint, enclosing BOTH pits), against R_star and sqrt(2) R_star; (c) core extrema; (d) constraint norms against max|K|; (e) the |K| spike and edge against the neck. Old (a)->(a), (g)->(b), (b)+(c)+(d)->(c), (e)->(d), (f)->(e); (h)-(j) dropped. The two chi pits stay distinct until chi floors at t = 58.43 (0.31 apart at t = 57): both wormholes are inside the MOTS (`scripts/analysis/merger_feedback/pit_throats.py`). The older notes below describe the ten-panel page.
 
 Panel (g) REDRAWN 2026-09-23 (article audit): besides the star-scan throat
 radii (no MOTS -- a blindness about the merged pit, not an absence) it now
@@ -374,12 +402,14 @@ the p012 series gains legs or the scan table gains rows.
 
 ## The paper's head-on collapse page (2026-09-18)
 
-`04_binary_headon/headon_collapse_diagnostics` is the article's full-page
-head-on figure (`figure*[p]`, sec:headon:contact), drawn with no arguments:
+`04_binary_headon/headon_collapse_diagnostics` is the article's
+head-on figure (sec:headon:contact), drawn with no arguments:
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_headon_collapse
 ```
+
+**REDRAWN 2026-09-24** (the user: "what happens to the formed black hole ... the plot is junk, why is there no solid line ... how the radius compares to the initial 2 wormholes"): a `figure*[t]` strip, 7.05 x 4.3 in, six panels. (a) horizon areal radius and (b) M_MS fill the left half, rows joined by solid lines within contiguous runs, rules at R_star, sqrt(2) R_star (both throats' area) and 2 M_ADM = 4 (M_ADM = 2 in b); (c) pit separation, (d) max|K|, (e) Hamiltonian norm, (f) grid max|phi|, max|Pi|. The (2,0) wave panel is gone (waves have their own section). Old (f)->(a), (g)->(b), (a)->(c), (d)->(d), (e)->(e), (i)->(f). Numbers: `scripts/analysis/merger_feedback/headon_remnant.py` (born with both throats' area, R = 1.01 sqrt(2) R_star; M_MS never rises after t = 36). The older notes below describe the ten-panel page.
 
 The spiral collapse page's counterpart with the opposite verdict: the pair
 MAKES a black hole, and every horizon point is the corrected orientation

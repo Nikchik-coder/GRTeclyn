@@ -1,64 +1,85 @@
 #!/usr/bin/env python3
-r"""The spiral merger's collapse, on one page: gauge, matter, wall and throat.
+r"""The spiral merger's collapse, as a top-of-page strip: history, horizon, core.
 
-The paper's p = 0.12 collapse figure.  It draws the level-5 window of the
-production spiral -- restart at t = 36 from the level-3 leg, death by NaN at
-t = 60.445 -- from the profiled arm's own streams, with the inspiral that led
-there as a context strip on top.  Every curve is UNFROZEN physics: the freeze
-arm exists to carry the burst to the spheres and contributes nothing here.
+The paper's p = 0.12 collapse figure.  The production spiral is one history in
+three legs -- level 3 from t = 0, level 5 restarted at t = 36 (death at the
+wall, t = 60.445), and the frozen-core leg restarted at t = 57 that carries the
+exterior to t = 100 -- and the figure draws that history, not the schedule.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_collapse
 
 Reads, all under ``campaign/05_binary_spiral/p012_paper/``:
 
+* ``v2_spiral_d12_p012_L128_SERIES/binary_throat_diagnostics.dat`` -- the glued
+  three-leg record; the pit separation is drawn from its UNFROZEN legs only
+  (t <= 60.44), because the third leg's pits sit inside the frozen core.
 * ``v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600/`` -- ``collapse_diagnostics.dat``
   (columns min_lapse, min_chi, max_abs_K, ..., NO header on a restart),
   ``constraint_norms.dat``, ``core_radial_profile.dat.gz`` (time + 128 shells x
   {chi_min, absK_max, lapse_min, n, dx}, dr = 0.03125), and the two oriented
   marginal-surface scans ``horizon_oriented_scan_t55-57.txt`` / ``_t58-60.txt``.
-* ``v2_spiral_d12_p012_L128_SERIES/binary_throat_diagnostics.dat`` -- the glued
-  three-leg record, for the separation strip only (t = 0 to the death).
 * ``v2_spiral_d12_p012_L128_lvl3_t050/constraint_norms.dat`` -- the level-3
-  leg's constraints, overlaid on (e) over the shared window t = 36-50 (its 22
+  leg's constraints, overlaid on (d) over the shared window t = 36-50 (its 22
   regrid spikes all sit before t = 36, so the overlap needs no filtering).
+* ``v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700/evolution_params.txt`` --
+  when the freeze was armed and how far the fill reaches (the shaded era).
+
+PANELS
+
+(a) The pits' coordinate separation over the whole history, t = 0-100, on a
+    log axis so the late approach is legible: the two chi pits -- each
+    wormhole's compactified far side -- are 0.31 apart at t = 57, 20 finest
+    cells, and are drawn pale once chi sits on its floor (t = 58.4), where the
+    half-space minima are floored cells rather than resolved pits.  Shaded:
+    the frozen-core era.  Nothing is drawn there from inside the fill: a
+    global minimum inside a frozen region is not physics.
+(b) Areal radii on a broken time axis, t = 54.5-61 | 97.5-100.5: the common
+    MOTS of the shape-free flow finder (FLOW_MOTS, REMNANT_MOTS; gold), and
+    the common neck -- the areal minimum of coordinate spheres about the pits'
+    midpoint, which enclose both far sides -- from the two oriented scans
+    (ink; open level 3, filled level 5, which agree to 0.2 %).  Nothing from
+    inside the fill: the remnant's neck sits in the frozen core.
+    Rules: one initial throat, R_star, and the radius of the two throats'
+    summed area, sqrt(2) R_star.
+(c) Core extrema on one log axis: min chi, min lapse, max|phi|, max|Pi|.
+(d) Constraint norms against max|K|, each log10-scaled onto [0, 1] through the
+    level-5 arm's own range; the level-3 leg through the SAME transforms.
+(e) The |K| spike (radius of the radial maximum, from the first time it stands
+    2x above the background) and its |K| > 0.2 edge, against the neck's
+    coordinate radius from the scans.
 
 WHAT THE FIGURE HAS TO GET RIGHT
 
 *The horizon columns of the in-code stream are not drawn.*  Its theta_common
-goes negative at t = 30.77 with the naive +r orientation -- near a wormhole
-throat +r is not the outgoing direction -- and that very signal was once quoted
-as a common horizon and withdrawn (GPU_PLAN, 2026-09-15).  The only horizon
-instrument in this figure is the ORIENTATION-CORRECTED offline scan, and its
-verdict is a gold set of throat measurements and no MOTS -- a blindness, not
-an absence: every coordinate sphere about the merged pit carries both signs
-of theta_+.  Panel (g) therefore also carries the common MOTS that the
-shape-free flow finder recovers (FLOW_MOTS below; GPU_PLAN R0 verdict,
-2026-09-21, and the death-window hunt): filled diamonds on this production
-chain, an open diamond on the arm evolved at level 5 from t = 0.
+goes negative at t = 30.77 with the naive +r orientation, a signal once quoted
+as a common horizon and withdrawn (GPU_PLAN, 2026-09-15).  The horizon
+instruments here are the orientation-corrected offline scan (the neck) and the
+shape-free flow finder (the MOTS).
 
 *The restart-settle rows are masked, not smoothed.*  For its first steps a
 restart reduces over an incomplete hierarchy and reports coarse-grid extrema:
 five rows of the glued separation stream spike to 7.5 just after t = 36, and
-the first collapse-diagnostics rows do the same.  Both streams are clipped a
-tenth of a unit past their restart.
+the first collapse-diagnostics rows do the same.  Both are clipped a tenth of a
+unit past their restart.
 
 *The peak-radius track starts where the peak is real.*  Before t = 49.09 the
 radial |K| profile is flat (at t = 45 the "peak" is 0.078 against a 0.066
-background) and an argmax there is noise, not a feature.  The track is drawn
-from the first time the peak stands 2x above the background.
+background), so an argmax there is noise.
 
-STYLE (2026-09-18, "PRD review style", the seed-branches grammar): full page
-(7.05 x 6.4), a wide context strip over a 3 x 3 grid; style.prd frame, no
-titles, letter tags above the frames, semantics in the caption; no boxed key,
-every series named in place.  Monochrome ink plus the one accent: GOLD is
-the oriented scan -- the horizon instrument -- and nothing else.  Ordered time
-families (the radial snapshots) are a grey ramp, light = early.
+STYLE (2026-09-24, the reviewer: "why does this picture span the whole page?"):
+a 7.05 x 4.3 strip for the top of a page, included at 0.80 textwidth like every
+two-column figure -- five panels where the float page had ten; the radial
+snapshots and the separate lapse / chi / scalar panels went.  style.prd frame,
+letter tags above the frames, every series named in place, no key.  Monochrome
+ink plus the one accent: GOLD is the horizon -- the flow finder's common MOTS --
+and nothing else; the neck (a minimal sphere, not a horizon) is ink.
 """
 
 from __future__ import annotations
 
 import argparse
 import gzip
+import math
 import pathlib
 import re
 
@@ -76,6 +97,8 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E
 GROUP = "05_binary_spiral"
 ARM = "p012_paper/v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600"
 SERIES = "p012_paper/v2_spiral_d12_p012_L128_SERIES"
+FREEZE = "p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700"
+LEVEL3 = "p012_paper/v2_spiral_d12_p012_L128_lvl3_t050"
 
 # BinaryWormholeLevel's writer, in order -- no header on a restart.
 COLS = ("min_lapse", "min_chi", "max_abs_K", "min_lapse_x", "min_lapse_y",
@@ -84,19 +107,45 @@ COLS = ("min_lapse", "min_chi", "max_abs_K", "min_lapse_x", "min_lapse_y",
 CHI_FLOOR = 1e-8       # the evolution's clamp on chi
 EDGE_K = 0.2           # |K| defining the disturbance's outer edge
 SETTLE = 0.1           # time clipped after a restart (incomplete hierarchy)
-
+HANDOVER = 36.0        # level 3 -> 5 in the glued series (its README)
 
 # The common MOTS of the shape-free flow finder (grteclyn-wrapper/scripts/
 # validation/ah_flow_finder.py) on the surviving death-window slices:
-# (t, areal R, on THIS production chain?).  t = 55-57 from the production
+# (t, areal R, on the production chain?).  t = 55-57 from the production
 # chain's level-5 slices (t = 55: outer seed, lmax 8); t = 59 from the arm
 # evolved at level 5 from t = 0 (inner + outer seeds, R = 4.72 +- 0.01).
+# Source: GPU_PLAN, "R0 VERDICT (2026-09-21)" and its slice-hunt bullets;
+# ledger rows clmSpiralFlowRadius*.
 FLOW_MOTS = ((55.0, 4.83, True), (56.0, 4.80, True), (57.0, 4.77, True),
              (59.0, 4.72, False))
+# The remnant on the frozen-core leg's live exterior (fill r <= 1.9, inside the
+# surface, whose h >= 2.33): R ~ 4.15 on each of t = 98/99/100, M_MS 2.083 ->
+# 2.079 -> 2.075.  Same source; ledger clmSpiralRemnantRadius (t = 97 corrupt).
+REMNANT_MOTS = ((98.0, 4.15), (99.0, 4.15), (100.0, 4.15))
+
 
 def _sorted(path: pathlib.Path) -> np.ndarray:
     d = np.loadtxt(path)
     return d[np.argsort(d[:, 0])]
+
+
+def _params(path: pathlib.Path) -> dict[str, str]:
+    out = {}
+    for ln in path.read_text().splitlines():
+        ln = ln.split("#", 1)[0].strip()
+        if "=" in ln:
+            k, v = ln.split("=", 1)
+            out[k.strip()] = v.strip()
+    return out
+
+
+def _r_star(a: float, m: float) -> float:
+    """Areal radius of the static drainhole's minimal surface (Sec. II):
+    r_t = (m + sqrt(m^2 + a^2)) / 2, R = e^{-u(r_t)} sqrt(a^2 + m^2)."""
+    rt = 0.5 * (m + math.hypot(m, a))
+    x = (rt - a * a / (4 * rt)) / a
+    u = (m / a) * (math.atan(x) - math.pi / 2)
+    return math.exp(-u) * math.hypot(a, m)
 
 
 def _read_profile(path: pathlib.Path):
@@ -115,11 +164,11 @@ def _read_profile(path: pathlib.Path):
 
 
 def _read_scans(paths) -> list[tuple[float, int, float, float]]:
-    """(t, level, throat coordinate r, throat areal R) per scan block.
+    """(t, level, neck coordinate r, neck areal R) per scan block.
 
     A block can report several 'areal-radius minimum (throat)' lines -- grid
-    noise at small r fakes minima with R in the hundreds -- so the genuine
-    throat is the minimum with the SMALLEST areal radius.
+    noise at small r fakes minima with R in the hundreds -- so the neck is the
+    minimum with the SMALLEST areal radius.
     """
     head = re.compile(r"BinaryWormholePlt\d+\s+t=([\d.]+)\s+.*level=(\d)")
     line = re.compile(r"areal-radius minimum \(throat\) at r = ([\d.]+): R = ([\d.]+)")
@@ -151,7 +200,8 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     pack = pathlib.Path(args.pack_root).expanduser()
-    arm = pack / "campaign" / GROUP / ARM
+    camp = pack / "campaign" / GROUP
+    arm = camp / ARM
 
     d = _sorted(arm / "collapse_diagnostics.dat")
     d = d[d[:, 0] >= d[0, 0] + SETTLE]
@@ -159,10 +209,19 @@ def main(argv: list[str] | None = None) -> int:
     col = {n: d[:, i + 1] for i, n in enumerate(COLS)}
     cn = _sorted(arm / "constraint_norms.dat")
     cn = cn[cn[:, 0] >= t[0]]
+    t_end = float(t[-1])
 
-    b = _sorted(pack / "campaign" / GROUP / SERIES / "binary_throat_diagnostics.dat")
-    b = b[(b[:, 0] <= t[-1]) & ~((b[:, 0] > 36.0) & (b[:, 0] < 36.0 + 4 * SETTLE))]
+    # The unfrozen legs of the glued series only: leg 3 (t > t_end) is frozen.
+    b = _sorted(camp / SERIES / "binary_throat_diagnostics.dat")
+    b = b[(b[:, 0] <= t_end) & ~((b[:, 0] > HANDOVER) & (b[:, 0] < HANDOVER + 4 * SETTLE))]
     ts, sep = b[:, 0], b[:, 1]
+
+    fz = _params(camp / FREEZE / "evolution_params.txt")
+    t_freeze = float(fz["core_fill_from_time"])
+    r_fill = float(fz["core_fill_radius_start"])
+    t_last = float(_sorted(camp / FREEZE / "collapse_diagnostics.dat")[-1, 0])
+    r_star = _r_star(float(fz["wormhole_throat_radius_A"]),
+                     float(fz["wormhole_drainhole_mass_A"]))
 
     pt, rr, blk = _read_profile(arm / "core_radial_profile.dat.gz")
     dr = float(rr[1] - rr[0])
@@ -174,7 +233,6 @@ def main(argv: list[str] | None = None) -> int:
     t_floor = float(pt[i_fl])
     i_tr = int(np.argmax(cn[:, 2]))
     t_trans = float(cn[i_tr, 0])
-    t_end = float(t[-1])
 
     K = blk["K"]
     pk = np.nanargmax(np.where(np.isnan(K), -np.inf, K), axis=1)
@@ -194,207 +252,235 @@ def main(argv: list[str] | None = None) -> int:
     hh = np.interp(t, cn[:, 0], cn[:, 1])
     mm = np.interp(t, cn[:, 0], cn[:, 2])
     corr_h, corr_m = logc(col["max_abs_K"][m40], hh[m40]), logc(col["max_abs_K"][m40], mm[m40])
+    abs_phi = np.maximum(np.abs(col["min_phi"]), np.abs(col["max_phi"]))
+    abs_pi = np.maximum(np.abs(col["min_Pi"]), np.abs(col["max_Pi"]))
+    sep_at = {tv: float(np.interp(tv, ts, sep)) for tv in (50.0, 55.0, 57.0, t_floor)}
 
     print(f"[spiral collapse] window t = {t[0]:.2f}-{t_end:.2f}; "
           f"transient peak t = {t_trans:.2f} (H {cn[:,1].max():.2e}, M {cn[:,2].max():.2e}); "
           f"chi on {CHI_FLOOR:g} floor from t = {t_floor:.2f}; "
-          f"min lapse {col['min_lapse'].min():.2e}; max|K| peak {col['max_abs_K'].max():.2f}")
+          f"min lapse {col['min_lapse'].min():.2e}; max|K| peak {col['max_abs_K'].max():.2f}; "
+          f"max|phi| {abs_phi.max():.2f}, max|Pi| {abs_pi.max():.2f}")
     print(f"  spike real from t = {t_spike:.2f}; edge widest {np.nanmax(edge):.3f} "
           f"at t = {pt[i_wide]:.2f}; corr after t=40: K-H {corr_h:+.2f}, K-M {corr_m:+.2f}")
+    print("  pit separation " + ", ".join(f"{v:.3f} at t = {k:.2f}" for k, v in sep_at.items())
+          + f"; {sep[-1]:.3f} at t = {ts[-1]:.2f}")
+    print(f"  freeze armed t = {t_freeze:g}, fill r <= {r_fill:g}, frozen leg to t = {t_last:.2f}; "
+          f"R_star = {r_star:.4f}, sqrt(2) R_star = {math.sqrt(2) * r_star:.3f}")
     for tv, lv, r0, R0 in scans:
-        print(f"  scan t = {tv:.0f} level {lv}: throat r = {r0:.3f}, R = {R0:.3f}, no MOTS")
+        print(f"  scan t = {tv:.0f} level {lv}: neck r = {r0:.3f}, R = {R0:.3f}")
 
-    # ---- the page ----------------------------------------------------------
+    # ---- the strip -----------------------------------------------------------
     style.prd(base=10.0)
-    fig = plt.figure(figsize=(7.05, 6.4), constrained_layout=True)
-    gs = fig.add_gridspec(4, 3, height_ratios=[0.72, 1, 1, 1])
-    axA = fig.add_subplot(gs[0, :])
-    axes = [fig.add_subplot(gs[1 + i // 3, i % 3]) for i in range(9)]
-    (axB, axC, axD, axE, axF, axG, axH, axI, axJ) = axes
+    W, H = 7.05, 4.3
+    fig = plt.figure(figsize=(W, H))
+
+    def box(x0, y0, w, h, **kw):
+        return fig.add_axes([x0 / W, y0 / H, w / W, h / H], **kw)
+
+    top_y, top_h = 2.52, 1.50
+    bot_y, bot_h = 0.44, 1.46
+    axA = box(0.56, top_y, 3.92, top_h)
+    axB1 = box(5.18, top_y, 1.28, top_h)
+    axB2 = box(6.52, top_y, 0.42, top_h, sharey=axB1)
+    xw, gap = 1.74, 0.59
+    axC = box(0.56, bot_y, xw, bot_h)
+    axD = box(0.56 + xw + gap, bot_y, xw, bot_h)
+    axE = box(0.56 + 2 * (xw + gap), bot_y, xw, bot_h)
 
     def tag(ax, letter):
-        ax.text(0.0, 1.05, f"({letter})", transform=ax.transAxes,
+        ax.text(0.0, 1.045, f"({letter})", transform=ax.transAxes,
                 ha="left", va="bottom", fontsize=9, color=style.INK)
 
-    def rules(ax):
-        ax.axvline(t_trans, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
-        ax.axvline(t_floor, color=style.FAINT, lw=0.7, ls=(0, (1, 2)), zorder=1)
+    def rules(ax, trans=True, floor=True):
+        if trans:
+            ax.axvline(t_trans, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
+        if floor:
+            ax.axvline(t_floor, color=style.FAINT, lw=0.7, ls=(0, (1, 2)), zorder=1)
 
-    # (a) the inspiral that leads to everything below ------------------------
-    merged = ts >= t_trans
-    axA.plot(ts[~merged], sep[~merged], color=style.INK, lw=1.2)
-    axA.plot(ts[merged], sep[merged], color=style.CONTEXT, lw=1.0)
-    axA.axvline(36.0, color=style.FAINT, lw=0.7, zorder=1)
-    rules(axA)
-    axA.set_xlim(-1, t_end + 0.8)
-    axA.set_ylim(-0.6, 13.4)
-    axA.set_ylabel(r"$d$")
+    shade = dict(color=style.GRID, lw=0, zorder=0)
+
+    # (a) the whole history ----------------------------------------------------
+    live = ts <= t_floor
+    axA.axvspan(t_freeze, t_last + 1.0, **shade)
+    axA.semilogy(ts[live], sep[live], color=style.INK, lw=1.2, zorder=3)
+    axA.semilogy(ts[~live], sep[~live], color=style.CONTEXT, lw=1.0, zorder=3)
+    axA.plot([ts[-1]], [sep[-1]], ls="none", marker="x", ms=5, mew=1.3,
+             color=style.INK, zorder=4)
+    axA.axvline(HANDOVER, color=style.FAINT, lw=0.7, zorder=1)
+    axA.axvline(t_trans, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
+    axA.set_xlim(-1.5, t_last + 1.0)
+    axA.set_ylim(0.075, 22)
+    axA.set_ylabel(r"pit separation $d$")
     axA.set_xlabel(r"$t$")
-    axA.text(3.0, 9.3, "separation of the $\\chi$ pits", fontsize=8,
+    axA.text(1.5, 0.62, r"separation of the two $\chi$ pits", fontsize=8,
              ha="left", va="top", color=style.INK)
-    axA.text(35.4, 12.6, "level $3\\to 5$", fontsize=7.5, ha="right", va="top",
-             color=style.MUTED)
-    axA.text(t_trans + 0.5, 6.2, "constraint\ntransient", fontsize=7.5,
-             ha="left", va="center", color=style.MUTED, linespacing=1.2)
-    axA.text(t_floor - 0.5, 6.2, "$\\chi$ on floor", fontsize=7.5, ha="right",
-             va="center", color=style.MUTED)
-    axA.text(48.0, 2.1, "one merged pit", fontsize=7.5, ha="center",
-             va="bottom", color=style.CONTEXT)
-    axA.text(59.55, 1.05, "NaN", fontsize=7.5, ha="center", va="bottom",
-             color=style.MUTED)
+    # Where the flow finder has a common MOTS on the record: the same slices
+    # as (b), open for the arm evolved at level 5 from t = 0.
+    rug = 15.0
+    for tv, _, own in FLOW_MOTS:
+        axA.plot(tv, rug, ls="none", marker="D", ms=3.0, mec=style.GOLD, mew=0.9,
+                 mfc=style.GOLD if own else style.GROUND, zorder=5)
+    for tv, _ in REMNANT_MOTS:
+        axA.plot(tv, rug, ls="none", marker="D", ms=3.0, mec=style.GOLD, mew=0.9,
+                 mfc=style.GOLD, zorder=5)
+    axA.text(61.8, rug, "common MOTS", fontsize=7.5, ha="left", va="center",
+             color=style.GOLD)
+    axA.text(HANDOVER - 0.8, 0.10, "level\n3 $\\to$ 5", fontsize=7.5, ha="right",
+             va="bottom", color=style.MUTED, linespacing=1.15)
+    axA.text(t_trans + 0.8, 5.0, "merger\ntransient", fontsize=7.5, ha="left",
+             va="center", color=style.MUTED, linespacing=1.15)
+    axA.text(ts[-1] + 1.2, sep[-1] * 0.95, "wall", fontsize=7.5, ha="left",
+             va="center", color=style.INK)
+    axA.text(0.5 * (t_freeze + t_last) + 3.0, 5.0,
+             f"core frozen ($r\\leq{r_fill:g}$)\nfrom $t={t_freeze:g}$;\n"
+             f"live exterior to $t={t_last:.0f}$",
+             fontsize=7.5, ha="center", va="center", color=style.MUTED,
+             linespacing=1.25)
     tag(axA, "a")
 
-    # (b)-(d) the core's clocks ----------------------------------------------
-    axB.semilogy(t, col["min_lapse"], color=style.INK, lw=1.1)
-    axB.set_ylabel(r"$\min\alpha$")
+    # (b) areal radii: birth window | remnant ----------------------------------
+    axB2.axvspan(96.0, 102.0, **shade)
+    for ax in (axB1, axB2):
+        ax.axhline(r_star, color=style.MUTED, lw=0.8, ls=(0, (1, 2)), zorder=1)
+        ax.axhline(math.sqrt(2) * r_star, color=style.MUTED, lw=0.8,
+                   ls=(0, (1, 2)), zorder=1)
+    for lv, mfc in ((3, style.GROUND), (5, style.INK)):
+        pts = [(tv, R0) for tv, l, r0, R0 in scans if l == lv]
+        if pts:
+            xs, ys = zip(*pts)
+            axB1.plot(xs, ys, ls="none", marker="o", ms=3.6, mfc=mfc,
+                      mec=style.INK, mew=1.0, zorder=5)
+    for tv, Rv, own in FLOW_MOTS:
+        axB1.plot(tv, Rv, ls="none", marker="D", ms=3.8,
+                  mfc=style.GOLD if own else style.GROUND, mec=style.GOLD,
+                  mew=1.1, zorder=6)
+    for tv, Rv in REMNANT_MOTS:
+        axB2.plot(tv, Rv, ls="none", marker="D", ms=3.8, mfc=style.GOLD,
+                  mec=style.GOLD, mew=1.1, zorder=6)
+    axB1.set_xlim(54.4, 60.9)
+    axB2.set_xlim(97.4, 100.6)
+    axB1.set_ylim(3.72, 5.86)
+    axB1.set_xticks([55, 57, 59])
+    axB2.set_xticks([98, 100])
+    axB1.spines["right"].set_visible(False)
+    axB2.spines["left"].set_visible(False)
+    axB1.tick_params(axis="y", which="both", right=False)
+    axB2.tick_params(axis="y", which="both", left=False, right=True, labelleft=False)
+    brk = dict(marker=[(-1, -2.2), (1, 2.2)], markersize=6, linestyle="none",
+               color=style.INK, mec=style.INK, mew=0.8, clip_on=False)
+    axB1.plot([1, 1], [0, 1], transform=axB1.transAxes, **brk)
+    axB2.plot([0, 0], [0, 1], transform=axB2.transAxes, **brk)
+    axB1.set_ylabel(r"areal radius $R$")
+    fig.text((5.18 + 6.94) / 2 / W, (top_y - 0.27) / H, r"$t$", ha="center",
+             va="center", fontsize=10, color=style.INK)
+    axB1.text(54.7, 5.07, "common MOTS", fontsize=7.0, ha="left", va="bottom",
+              color=style.GOLD)
+    # Open circles level 3, filled level 5 (the caption says so): the two
+    # agree to 0.2 %, so the level-3 ring hides under the level-5 disc.
+    axB1.text(56.85, 4.085, "common neck", fontsize=7.0, ha="left", va="bottom",
+              color=style.INK)
+    axB2.text(99.0, 4.33, "remnant", fontsize=7.0, ha="center", va="bottom",
+              color=style.INK)
+    style.edge_label(axB2, r_star, r"$R_\star$", fontsize=7.5)
+    style.edge_label(axB2, math.sqrt(2) * r_star, r"$\sqrt{2}R_\star$", fontsize=7.5)
+    tag(axB1, "b")
 
+    # (c) core extrema ---------------------------------------------------------
     axC.semilogy(t, col["min_chi"], color=style.INK, lw=1.1)
-    axC.axhline(CHI_FLOOR, color=style.MUTED, lw=0.7, ls=(0, (1, 2)))
-    axC.set_ylabel(r"$\min\chi$")
-    axC.set_ylim(3e-9, 3e-5)
-    axC.text(37.0, CHI_FLOOR * 1.35, "floor", fontsize=7.5, ha="left",
+    axC.semilogy(t, col["min_lapse"], color=style.INK, lw=1.1, ls=(0, (5, 2)))
+    axC.semilogy(t, abs_phi, color=style.MUTED, lw=1.0, ls=(0, (1.2, 1.6)))
+    axC.semilogy(t, abs_pi, color=style.MUTED, lw=1.0)
+    axC.axhline(CHI_FLOOR, color=style.FAINT, lw=0.7, ls=(0, (1, 2)))
+    axC.set_ylim(3e-9, 150)
+    axC.set_yticks([1e-8, 1e-6, 1e-4, 1e-2, 1])
+    axC.set_ylabel("core extrema")
+    axC.text(37.0, 2.2e-5, r"$\min\chi$", fontsize=7.5, ha="left", va="bottom",
+             color=style.INK)
+    axC.text(46.0, 5.5e-3, r"$\min\alpha$", fontsize=7.5, ha="left", va="bottom",
+             color=style.INK)
+    axC.text(43.5, 1.35, r"$\max|\phi|$", fontsize=7.5, ha="left", va="bottom",
+             color=style.MUTED)
+    axC.text(55.2, 7.0, r"$\max|\Pi|$", fontsize=7.5, ha="right", va="bottom",
+             color=style.MUTED)
+    axC.text(44.0, CHI_FLOOR * 1.6, "floor", fontsize=7.0, ha="left",
              va="bottom", color=style.MUTED)
 
-    axD.plot(t, col["max_Pi"], color=style.INK, lw=1.1)
-    axD.plot(t, col["min_Pi"], color=style.INK, lw=1.1)
-    axD.plot(t, col["max_phi"], color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)))
-    axD.plot(t, col["min_phi"], color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)))
-    axD.set_ylabel(r"$\phi,\ \Pi$")
-    axD.set_ylim(-4.9, 4.9)
-    axD.text(52.5, 2.6, r"$\pm\Pi$", fontsize=8, ha="right", va="bottom",
-             color=style.INK)
-    axD.text(44.0, 1.15, r"$\pm\phi$", fontsize=8, ha="center", va="bottom",
-             color=style.MUTED)
-
-    # (e) do core and constraints grow together?  No. ------------------------
+    # (d) do core and constraints grow together?  No. -------------------------
     def unit_tf(ref):
         v = np.log10(np.maximum(np.asarray(ref, float), 1e-300))
         lo, sp = v.min(), max(float(np.ptp(v)), 1e-30)
         return lambda y: (np.log10(np.maximum(np.asarray(y, float), 1e-300)) - lo) / sp
 
     uK, uH, uM = unit_tf(col["max_abs_K"]), unit_tf(hh), unit_tf(mm)
-    # The level-3 leg through the SAME transforms, so where the grids agree
-    # the curves coincide rather than being re-normalised into fake agreement.
-    c3 = _sorted(pack / "campaign" / GROUP /
-                 "p012_paper/v2_spiral_d12_p012_L128_lvl3_t050/constraint_norms.dat")
+    c3 = _sorted(camp / LEVEL3 / "constraint_norms.dat")
     c3 = c3[(c3[:, 0] >= t[0]) & (c3[:, 0] <= t[-1])]
     H5i, M5i = np.interp(c3[:, 0], t, hh), np.interp(c3[:, 0], t, mm)
     print(f"  level-3 overlap t = {c3[0, 0]:.1f}-{c3[-1, 0]:.1f}: median "
           f"|dH|/H = {np.median(abs(c3[:, 1] - H5i) / H5i) * 100:.1f}%, "
           f"|dM|/M = {np.median(abs(c3[:, 2] - M5i) / M5i) * 100:.1f}%")
-    axE.plot(c3[:, 0], uH(c3[:, 1]), color=style.CONTEXT, lw=0.9,
+    axD.plot(c3[:, 0], uH(c3[:, 1]), color=style.CONTEXT, lw=0.9,
              ls=(0, (4, 2.5)), zorder=2)
-    axE.plot(c3[:, 0], uM(c3[:, 2]), color=style.CONTEXT, lw=0.9,
+    axD.plot(c3[:, 0], uM(c3[:, 2]), color=style.CONTEXT, lw=0.9,
              ls=(0, (1, 1.8)), zorder=2)
-    axE.plot(t, uK(col["max_abs_K"]), color=style.INK, lw=1.3, zorder=4)
-    axE.plot(t, uH(hh), color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)), zorder=3)
-    axE.plot(t, uM(mm), color=style.MUTED, lw=0.9, ls=(0, (1, 1.8)), zorder=3)
-    axE.set_ylabel(r"normalised $\log_{10}$")
-    axE.set_ylim(-0.06, 1.42)
-    axE.text(50.2, 0.02, "level 3", fontsize=7.5, ha="left", va="bottom",
+    axD.plot(t, uK(col["max_abs_K"]), color=style.INK, lw=1.3, zorder=4)
+    axD.plot(t, uH(hh), color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)), zorder=3)
+    axD.plot(t, uM(mm), color=style.MUTED, lw=0.9, ls=(0, (1, 1.8)), zorder=3)
+    axD.set_ylabel(r"normalised $\log_{10}$")
+    axD.set_ylim(-0.06, 1.46)
+    axD.text(50.2, 0.02, "level 3", fontsize=7.0, ha="left", va="bottom",
              color=style.CONTEXT)
-    axE.text(55.2, 0.86, r"$\max|K|$", fontsize=7.5, ha="right", va="center",
+    axD.text(55.4, 0.88, r"$\max|K|$", fontsize=7.5, ha="right", va="center",
              color=style.INK)
+
     def sci(v):
         e = int(np.floor(np.log10(v)))
         return rf"{v / 10**e:.1f}\times10^{{{e}}}"
 
-    axE.text(42.6, 1.02,
+    axD.text(42.6, 1.03,
              rf"$\|\mathcal{{H}}\|$ peak ${sci(cn[:, 1].max())}$" + "\n" +
              rf"$\|\mathcal{{M}}\|$ peak ${sci(cn[:, 2].max())}$",
              fontsize=6.5, ha="left", va="bottom", color=style.MUTED,
              linespacing=1.45)
 
-    for ax in (axB, axC, axD, axE):
+    for ax in (axC, axD):
         rules(ax)
         ax.set_xlim(t[0] - 0.6, t_end + 0.6)
-    axE.set_xlabel(r"$t$")   # (b)-(d) share the range; the title once is enough
+        ax.set_xlabel(r"$t$")
 
-    # (f) the wall rides the throat ------------------------------------------
+    # (e) the wall rides the neck ---------------------------------------------
     ok = real & (pt >= t_spike)
-    axF.plot(pt[ok], rr[pk[ok]], color=style.INK, lw=1.1)
-    axF.plot(pt, edge, color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)))
+    axE.plot(pt[ok], rr[pk[ok]], color=style.INK, lw=1.1)
+    axE.plot(pt, edge, color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)))
     r_scan = {}
     for tv, lv, r0, R0 in scans:          # level 5 wins where both scanned
         if tv not in r_scan or lv > r_scan[tv][0]:
             r_scan[tv] = (lv, r0, R0)
     t_sc = sorted(r_scan)
-    axF.plot(t_sc, [r_scan[tv][1] for tv in t_sc], ls="none", marker="o",
-             ms=3.6, mfc=style.GROUND, mec=style.GOLD, mew=1.1, zorder=5)
-    axF.axvline(t_floor, color=style.FAINT, lw=0.7, ls=(0, (1, 2)), zorder=1)
-    axF.set_xlim(48.4, t_end + 0.7)
-    axF.set_ylim(0.55, 1.52)
-    axF.set_xlabel(r"$t$")
-    axF.set_ylabel(r"$r$")
-    axF.text(49.0, 1.40, "edge, $|K|>0.2$", fontsize=7.5, ha="left",
+    axE.plot(t_sc, [r_scan[tv][1] for tv in t_sc], ls="none", marker="o",
+             ms=3.6, mfc=style.INK, mec=style.INK, mew=1.0, zorder=5)
+    rules(axE, trans=False)
+    axE.set_xlim(48.4, t_end + 0.7)
+    axE.set_ylim(0.55, 1.55)
+    axE.set_xlabel(r"$t$")
+    axE.set_ylabel(r"coordinate radius $r$")
+    axE.text(49.0, 1.42, "edge, $|K|>0.2$", fontsize=7.5, ha="left",
              va="bottom", color=style.MUTED)
-    axF.text(50.0, 1.05, r"peak of $|K|$", fontsize=7.5, ha="left",
+    axE.text(50.0, 1.05, r"peak of $|K|$", fontsize=7.5, ha="left",
              va="top", color=style.INK)
-    axF.text(53.9, 0.86, "throat (scan)", fontsize=7.5, ha="right",
-             va="center", color=style.GOLD)
-
-    # (g) the throat's areal radius, and the common MOTS around it -----------
-    # The star-shaped scans (circles) find no MOTS; the flow finder does.
-    for lv, mfc in ((3, style.GROUND), (5, style.GOLD)):
-        pts = [(tv, R0) for tv, l, r0, R0 in scans if l == lv]
-        if pts:
-            xs, ys = zip(*pts)
-            axG.plot(xs, ys, ls="none", marker="o", ms=3.6, mfc=mfc,
-                     mec=style.GOLD, mew=1.1, zorder=5)
-    for tv, Rv, own in FLOW_MOTS:
-        axG.plot(tv, Rv, ls="none", marker="D", ms=3.8,
-                 mfc=style.INK if own else "white", mec=style.INK, mew=1.0,
-                 zorder=6)
-    # Both names stay left of the chi-floor rule at t = 58.4.
-    axG.text(54.75, 4.70, "common MOTS\n(flow finder)", fontsize=7.0,
-             ha="left", va="top", color=style.INK, linespacing=1.15)
-    axG.text(54.75, 4.19, "throat (star scans:\nno MOTS)", fontsize=7.0,
-             ha="left", va="bottom", color=style.GOLD, linespacing=1.15)
-    axG.text(56.25, 4.077, "level 3", fontsize=7.0, ha="left", va="bottom",
-             color=style.GOLD)
-    axG.text(58.6, 3.99, "level 5", fontsize=7.0, ha="left", va="bottom",
-             color=style.GOLD)
-    axG.axvline(t_floor, color=style.FAINT, lw=0.7, ls=(0, (1, 2)), zorder=1)
-    axG.set_xlim(54.4, 61.0)
-    axG.set_ylim(3.80, 5.02)
-    axG.set_xlabel(r"$t$")
-    axG.set_ylabel(r"areal radius")
-
-    # (h)-(j) the radial anatomy, six snapshots -------------------------------
-    times = np.linspace(pt[0], pt[-1], 6)
-    greys = [plt.cm.Greys(0.35 + 0.6 * i / 5) for i in range(6)]
-    for ax, which in ((axH, "K"), (axI, "chi"), (axJ, "lapse")):
-        y = blk[which]
-        for i, tv in enumerate(times):
-            k = int(np.argmin(abs(pt - tv)))
-            ax.semilogy(rr, y[k], lw=1.2, color=greys[i], zorder=2 + i)
-        ax.set_xlim(0, 2.0)
-        ax.set_xlabel(r"$r$")
-    axH.axhline(EDGE_K, color=style.MUTED, lw=0.7, ls=(0, (1, 2)))
-    axH.set_ylabel(r"$\max|K|$")
-    axH.set_ylim(6e-3, 12)
-    axH.text(1.97, EDGE_K * 1.25, "edge", fontsize=7.5, ha="right", va="bottom",
-             color=style.MUTED)
-    axH.text(0.58, 8.5, f"$t={times[-1]:.1f}$", fontsize=7.5, ha="right",
+    axE.text(56.3, 0.855, "neck", fontsize=7.5, ha="center",
              va="top", color=style.INK)
-    axH.text(1.30, 0.026, f"$t={times[0]:.1f}$", fontsize=7.5, ha="center",
-             va="top", color=style.CONTEXT)
-    axI.axhline(CHI_FLOOR, color=style.MUTED, lw=0.7, ls=(0, (1, 2)))
-    axI.set_ylabel(r"$\min\chi$")
-    axI.set_ylim(2e-9, 1.5)
-    axI.text(1.97, CHI_FLOOR * 2.6, "floor", fontsize=7.5, ha="right",
-             va="bottom", color=style.MUTED)
-    axJ.set_ylabel(r"$\min\alpha$")
-    axJ.set_ylim(1.2e-3, 0.9)
 
-    for ax, letter in zip(axes, "bcdefghij"):
+    for ax, letter in ((axC, "c"), (axD, "d"), (axE, "e")):
         tag(ax, letter)
 
+    hits = style.label_audit(fig)
     out = (pathlib.Path(args.out) if args.out else
            figure_dir(GROUP, args.pack_root) / "p012_paper" / "p012_collapse_diagnostics.png")
     out.parent.mkdir(parents=True, exist_ok=True)
     png = style.save(fig, out)
-    print(f"[spiral collapse] wrote {png} (+pdf); 10 panels, {len(scans)} scan rows")
+    print(f"[spiral collapse] wrote {png} (+pdf); 5 panels, {len(scans)} scan rows; "
+          f"label audit: {len(hits)} hit(s)")
     return 0
 
 

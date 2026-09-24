@@ -24,6 +24,22 @@ R = 14 waveform by its own seed: linearity is the collapse of four curves
 onto one.  Panel (b) is amplitude against seed on log-log with the slope-1
 line through the headline arm; the pure quadrupole sits as an open marker
 on top of the kicked one, and the control floor is the grey rule below.
+
+THE FLOOR AND THE DECADE (2026-09-24, first-author review: "why not 0.001?
+where does 5 come from?").  The floor rule was the LEVEL-3 spherical control
+`single_eps_p1e2_t100`, read against level-4 arms.  A level-4 control exists:
+`single_eps_p1e2_q1e2_ml4_scalar_t100` ran on a binary that ignores the
+quadrupole key (runs_index.tsv: seed NOT APPLIED), so it is the +0.01 kick at
+level 4 with no quadrupole -- and runs are deterministic (identical input
+gives bit-identical r Psi4, checked on the pairs that exist), so it is the
+exact floor of these arms.  Its rms over the window is 6.75e-5 at R = 14,
+against 6.79e-5 for the level-3 control: the rule does not move, but it now
+belongs to the arms' own level.  Panel (b)'s axis spans the decade the
+reviewer asked about, 1e-3 to 1e-1, with the slope-one line carried across it
+as a reference (no arm exists at either end): it meets the floor at
+eps2 ~ 2e-3, which is where 1e-3 would sit, raw, at half the floor.  The
+numbers behind this, and the floor-subtracted linearity, are in
+``grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py``.
 """
 
 from __future__ import annotations
@@ -51,8 +67,12 @@ ARMS = {
     0.050: "single_eps_p1e2_q5e2_ml4_t100",
 }
 PURE = "single_pureq_q1e2_ml4_t100"      # eps2 = 0.01, radial kick 0
-CONTROL = "single_eps_p1e2_t100"         # kick without quadrupole: the floor
+# Kick without quadrupole, LEVEL 4 like the arms: the floor.  (The seed key
+# is in its params but its binary did not read it -- see the docstring.)
+# Until 2026-09-24 this was the level-3 `single_eps_p1e2_t100`.
+CONTROL = "single_eps_p1e2_q1e2_ml4_scalar_t100"
 WINDOW = (30.0, 50.0)
+DECADE = (1e-3, 1e-1)                    # the span panel (b) draws
 RADII = (10.0, 14.0, 18.0)               # the consumer's columns, every arm
 R_SHOW = 14.0
 
@@ -88,6 +108,7 @@ def main(argv: list[str] | None = None) -> int:
     }
     axA.axhline(0.0, color=style.FAINT, linewidth=0.7, zorder=1)
     amps: dict[float, dict[float, float]] = {}
+    ends = []                                # (y at t = 50, name, colour)
     # Clipped at the rms window's top: past t = 50 the small arm's record is
     # the numerical floor amplified by 1/eps2, and its swings bury the labels.
     for eps, folder in ARMS.items():
@@ -95,31 +116,39 @@ def main(argv: list[str] | None = None) -> int:
         keep = (t >= 20) & (t <= 50.0)
         axA.plot(t[keep], ys[R_SHOW][keep] / eps, zorder=3, **looks[eps])
         amps[eps] = {R: _rms(t, ys[R]) for R in RADII}
+        ends.append((ys[R_SHOW][keep][-1] / eps, rf"${eps:g}$", looks[eps]["color"]))
     tp, yp = _l2m0(seed / PURE / "small_data/psi4_mode_l2m0.dat"
                    if (seed / PURE / "small_data").exists()
                    else seed / PURE / "psi4_mode_l2m0.dat")
     keep = (tp >= 20) & (tp <= 50.0)
     axA.plot(tp[keep], yp[R_SHOW][keep] / 0.01, color=style.GOLD,
              linewidth=1.7, linestyle=(0, (1.3, 1.7)), zorder=4)
+    ends.append((yp[R_SHOW][keep][-1] / 0.01, "no kick", style.GOLD))
     amp_pure = {R: _rms(tp, yp[R]) for R in RADII}
-    # The control's file has its own columns (R = 14 and 30, five in all),
-    # so it is read directly rather than through _l2m0.
-    dc = np.loadtxt(seed / CONTROL / "psi4_mode_l2m0.dat")
-    floor = _rms(dc[:, 0], dc[:, 1])     # control's R = 14 column is col 1
-    axA.set_xlim(20, 51)
+    # The level-4 control carries the arms' own columns (R = 10 / 14 / 18).
+    tc, yc = _l2m0(seed / CONTROL / "psi4_mode_l2m0.dat")
+    floors = {R: _rms(tc, yc[R]) for R in RADII}
+    floor = floors[R_SHOW]
+    axA.set_xlim(20, 57.5)
     axA.set_ylim(-0.075, 0.098)
+    # Each arm named at its own end (t = 50), nudged apart where two ends
+    # crowd and off the zero rule -- a corner key named nothing it touched,
+    # and the 0.005 arm's late swing ran through it (label audit 2026-09-24).
+    gap, zero_band, placed = 0.0115, 0.0095, []
+    for y, name, col in sorted(ends, reverse=True):        # top down
+        if abs(y) < zero_band:
+            y = np.copysign(zero_band, y)
+        if placed and y > placed[-1][0] - gap:
+            y = placed[-1][0] - gap
+            if abs(y) < zero_band:
+                y = -zero_band
+        placed.append((y, name, col))
+    for y, name, col in placed:
+        axA.text(50.7, y, name, fontsize=7, color=col, ha="left", va="center")
     axA.set_ylabel(rf"$\mathrm{{Re}}\,\Psi_4^{{2,0}}(R{{=}}{R_SHOW:g})\,/\,\varepsilon_2$")
     axA.set_xlabel(r"$t$")
     axA.text(0.03, 0.955, "(a)", transform=axA.transAxes, ha="left", va="top",
              fontsize=9, color=style.INK)
-    axA.text(0.98, 0.955, r"$\varepsilon_2 = 0.05$", transform=axA.transAxes,
-             ha="right", va="top", fontsize=7, color=style.CONTEXT)
-    axA.text(0.98, 0.875, r"$0.01$", transform=axA.transAxes,
-             ha="right", va="top", fontsize=7, color=style.INK)
-    axA.text(0.98, 0.795, r"$0.005$", transform=axA.transAxes,
-             ha="right", va="top", fontsize=7, color=style.DEEP_BLUE)
-    axA.text(0.98, 0.715, r"$0.01$, no kick", transform=axA.transAxes,
-             ha="right", va="top", fontsize=7, color=style.GOLD)
 
     # ---- (b) amplitude against seed, and the slope-1 line -----------------
     marks = {10.0: "o", 14.0: "s", 18.0: "^"}
@@ -130,7 +159,9 @@ def main(argv: list[str] | None = None) -> int:
                  linestyle="none", zorder=4)
     e0 = 0.010
     ref = amps[e0][R_SHOW]
-    xs = np.array([3.2e-3, 7.5e-2])
+    # The slope-one reference across the whole decade: measured between
+    # 0.005 and 0.05 only, a reference line beyond them.
+    xs = np.array(DECADE)
     axB.plot(xs, ref * xs / e0, color=style.GOLD, linewidth=0.9, zorder=2)
     axB.text(2.6e-2, ref * 2.6e-2 / e0 * 0.60, "slope 1", fontsize=7,
              color=style.GOLD, ha="left", va="top")
@@ -140,10 +171,13 @@ def main(argv: list[str] | None = None) -> int:
              color=style.GOLD, ha="left", va="top")
     axB.axhline(floor, color=style.FAINT, linewidth=0.8,
                 linestyle=(0, (4, 2.5)), zorder=1)
-    axB.text(3.4e-3, floor * 1.25, "spherical control", fontsize=7,
+    # Named on its right half, where the slope-one line is far above it.
+    axB.text(1.05e-2, floor * 1.25, "spherical control", fontsize=7,
              color=style.MUTED, va="bottom")
+    e_cross = e0 * floor / ref              # where the line meets the floor
     axB.set_xscale("log"); axB.set_yscale("log")
-    axB.set_xlim(3e-3, 9e-2)
+    axB.set_xlim(0.8 * DECADE[0], 1.25 * DECADE[1])
+    axB.set_ylim(0.45 * ref * DECADE[0] / e0, 2.2 * ref * DECADE[1] / e0)
     axB.set_xlabel(r"$\varepsilon_2$")
     axB.set_ylabel(rf"rms $\mathrm{{Re}}\,\Psi_4^{{2,0}}$, $t={WINDOW[0]:g}$--${WINDOW[1]:g}$")
     axB.text(0.03, 0.94, "(b)", transform=axB.transAxes, ha="left", va="top",
@@ -158,12 +192,15 @@ def main(argv: list[str] | None = None) -> int:
               + "  ".join(f"{r[R]:.2f}" for R in RADII))
     print(f"[seed-linearity] pure/kicked at 0.01: "
           + "  ".join(f"{amp_pure[R]/amps[e0][R]:.3f}" for R in RADII)
-          + f"   control floor (R=14) {floor:.2e}")
+          + "   level-4 control floor " + "  ".join(f"R{R:g} {floors[R]:.2e}" for R in RADII)
+          + f";  slope-one line meets the R = {R_SHOW:g} floor at eps2 = {e_cross:.2e}")
 
+    hits = style.label_audit(fig)
     out = pathlib.Path(args.out) if args.out else (
         figure_dir(GROUP, args.pack_root) / "seed_linearity.png")
     png = style.save(fig, out)
-    print(f"[seed-linearity] wrote {png} (+pdf)")
+    print(f"[seed-linearity] wrote {png} (+pdf); label audit: "
+          + ("clean" if not hits else f"{len(hits)} hit(s)"))
     return 0
 
 
