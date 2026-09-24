@@ -998,16 +998,58 @@ the same contradiction). What now runs at every launch and after every pack:
   = coreprof_2026-09-16's source + the stamp: reads the l2 seed and the core
   profile. **The launch.sh default is still the pin** — switching the
   campaign's binary is the user's call; until then every A1/A2-type launch
-  passes `--binary`.
+  passes `--binary`. *(Moved later the same morning: see the next entry.)*
 - **The article's numbers** come from `article/claims/` (827 rows, 714 of 741
   recomputed agree); `claims/FINDINGS.md` lists the 27 that do not and ~20
   statements the data contradict — e.g. three collapsed single throats die
-  behind their horizons, and the cost is 650 GPU-h, not 810. None changed yet.
+  behind their horizons, and the cost is 650 GPU-h, not 810. None changed yet. *(All applied the same morning: next entry.)*
 - Near miss: an in-place edit of `run_single.sh` would have hit the live t500
   supervisor when its evolution ends (bash reads scripts by offset); its inode
   was restored byte for byte, and `run_single.sh` / `build_binary.sh` are now
   single parsed blocks. §6's "never edit a running campaign script" is now
   enforced by structure.
+
+### 2026-09-24 (morning) — FINDINGS applied to the article; the pin moves; the stray pack copies go
+
+The user's word ("go on") on the four open calls: apply `claims/FINDINGS.md`,
+move the campaign pin, delete the ten `.__keep` copies, push.
+
+- **The article** now passes `claims.py check` whole: 852 rows, 773 recomputed,
+  0 problems. What changed in substance, beyond 27 re-rounded prints:
+  lone collapses DO die behind their horizons at level 3 (ε = +10⁻³ at 40.1,
+  15 units after its horizon; ε = +10⁻² dressed with ε₂ = 10⁻² at 27.6) and
+  none dies at level 4, the head-on's pattern, so §VII.C's "censorship is
+  necessary, not sufficient" gains a witness instead of losing one; the cost is
+  650 GPU-h; the collapsing throat rings at the Schwarzschild period of its
+  LATE mass (19.5–20.3 M against the measured 20.6 M; "21 % short" used the
+  fixed M_MS = 1.56 of t ≈ 24, and `queue2e_gates.py` now reports both); the
+  fly-by's scalar/GW ratio depends on how E_GW is integrated (running 1.1/0.8
+  at t = 70/80, band-limited 2.7/1.5/1.4 at 60/70/80); F_geo = α²χ^(−1/2) F_kin,
+  a 6 % correction at R = 30 in the initial data, not "within 1 % of unity"; the
+  shape systematic is ≤ 3 % about a lone throat, 34–44 % while a remnant forms,
+  4 % once rounded; constraint-solved data would buy τ ln 350 ≈ 26 units, 0.14
+  of an orbit. The flow finder's self-test was re-run and packed
+  (`05_binary_spiral/flow_finder_selftest.log`: R = 2M to 0.24 %, M_MS to 0.12 %);
+  the Ψ₄ pipelines agree to 0.2 % at the head-on's peak, while on single throats
+  the in-code stream is floor-dominated (the paper uses the consumer's there).
+  Stale notes fixed: registry dx, the 0.243/0.246 prediction, the sign ratio,
+  the p = 0.15 plateau; `summary.md` regenerated.
+- **The pin**: `launch.sh` DEFAULT_BINARY = `main3d_guard_7166787a_2026-09-24.ex`.
+  A `--restart` without `--binary` continues on its parent's binary, read from
+  the parent's `run_manifest.json`, and is refused when none is recorded (a kept
+  `_keep_lvl5` copy). Dry-run on all four paths: new run → pin; t500 checkpoint →
+  the old pin; kept copy → refused; explicit `--binary` → honoured.
+- **Two preflight false positives**, found by testing the new pin: static mode
+  ignored `preflight_allow.txt` (every dry run said REFUSED over three dead keys),
+  and `write_extraction` is read only with in-code extraction on (66 templates
+  carry it with extraction off), now a conditional entry
+  (`key when other = value`). The t250 TAKE 2 template passes the full preflight
+  on the new pin (first node, GPU 1, 06:12: seed takes, checkpoints on). Not
+  launched.
+- The ten `.__keep` directories (strict, byte-identical subsets of their
+  siblings) are deleted.
+- Still open: the spiral's flow-finder slices and the η = 4 arm's full log are on
+  the second node; two registered runs are not packed; t250 is packed as a stub.
 
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
