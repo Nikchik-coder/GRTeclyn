@@ -337,6 +337,62 @@ def save(fig, path, dpi: int = 300, exts=("png", "pdf")) -> pathlib.Path:
 _CORNERS = ("upper right", "upper left", "lower right", "lower left")
 
 
+def label_audit(fig, pad: float = 0.004, px_step: float = 3.0) -> list[str]:
+    """Every text box a drawn line passes through, named (2026-09-24, on the
+    user's mark: 'there should be some instruments in the repo to check
+    whether text crosses the lines').
+
+    Unlike ``_drawn`` this walks each line in ITS OWN transform -- an axvline
+    is blended (data x, axes y) and would land in the wrong place through
+    ``transData`` -- and densifies every segment to ``px_step`` pixels, so a
+    text sitting mid-height on a vline is caught even though the vline has
+    only two vertices.  Call it after layout, before ``save``; a clean figure
+    returns [].  Letter tags above the frames sit outside the axes box and are
+    never crossed by clipped curves, so hits on them are real.
+    """
+    fig.canvas.draw()
+    reports: list[str] = []
+    for k, ax in enumerate(fig.axes):
+        inv = ax.transAxes.inverted()
+        chunks = []
+        for line in ax.lines:
+            xy = line.get_xydata()
+            if xy is None or len(xy) < 2 or not line.get_visible():
+                continue
+            disp = line.get_transform().transform(np.asarray(xy, dtype=float))
+            disp = disp[np.isfinite(disp).all(axis=1)]
+            for a, b in zip(disp[:-1], disp[1:]):
+                n = max(2, int(np.hypot(*(b - a)) / px_step))
+                chunks.append(np.linspace(a, b, n))
+        for coll in ax.collections:
+            try:
+                off = np.asarray(coll.get_offsets(), dtype=float)
+            except Exception:
+                continue
+            if off.ndim == 2 and len(off):
+                chunks.append(coll.get_offset_transform().transform(off))
+        if not chunks:
+            continue
+        pts = inv.transform(np.vstack(chunks))
+        pts = pts[np.isfinite(pts).all(axis=1)]
+        for txt in ax.texts:
+            if not txt.get_visible() or not txt.get_text():
+                continue
+            try:
+                box = txt.get_window_extent().transformed(inv)
+            except Exception:
+                continue
+            n = _covered(pts, box, pad)
+            if n:
+                head = txt.get_text().splitlines()[0][:48]
+                reports.append(
+                    f"[label-audit] axes {k} ({ax.get_ylabel() or 'unnamed'}): "
+                    f"{n} samples cross '{head}'")
+    for r in reports:
+        print(r)
+    return reports
+
+
 def _drawn(ax) -> np.ndarray:
     """Every plotted vertex of ``ax``, in axes-fraction coordinates.
 

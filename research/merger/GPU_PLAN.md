@@ -836,6 +836,52 @@ whole card: the lvl5 family peaks ~48 GB).
   throat measure on a kept plotfile; point 5: stage a rolling Chk to
   NFS) are now actionable from here.
 
+- **THE t250 REGROWTH ARM DIED 2026-09-24 00:54 -- THE BOX, NOT THE
+  THROAT.** K NaN on level 3 at t = 145.81, 45.8 clean units past the
+  t100 record. Anatomy (frames + norms, the user's suspicion confirmed):
+  the lone-throat level-3 constraint growth leaves its 1.4e-3 floor at
+  t = 76 doubling every 3.8 units; seam-born speckle from t = 82 (the
+  refinement-boundary square and sponge corners first), domain-filling
+  by 96, a +-0.2 standing-wave bath by 120; the lapse collapses
+  domain-wide (1.5e-2 at 100 -> the 1e-10 floor from 144); the terminal
+  rebound swings past alpha = 1.3 while max|K| runs 18 -> 3170 over the
+  last 0.8 units. THE USER'S CUT: nothing past t = 100 is quotable
+  (wave zone ~84); horizon-local M_MS flattens onto ~1.31 -- EVIDENCE
+  for saturation, not a measurement; the paper's "open at t = 100"
+  stands. THE CHECKPOINT TRAP: the template inherited probe-policy
+  `amr.checkpoint_files_output = 0`, which silently overrode
+  `checkpoint_interval`/`checkpoint_keep` -- ZERO Chk writes, no extend
+  possible. Rule adopted: VERIFY THE FIRST Chk BY EFFECT within one
+  interval of any launch where checkpoints matter (the frame-0
+  discipline, applied to knobs). TAKE 2 STAGED, user-gated:
+  `templates_scan/params_single_eps_p1e2_L128_ml4_t250.txt` -- the same
+  +1 % kicked throat in the live t500 arm's box (L = 128, ml4, sponge
+  48/64), which at the same age carries H = 4e-3 and CONTAINS the seam
+  mode; checkpoints genuinely on; ~37 h at the measured 6.8 u/h; the
+  launcher default binary is safe (spherical seed only, verified by the
+  t = 0 norm). Movies of all 6 fields stitched into the run dir
+  (make_movies.sh, 18M). GPU 1 on the first node is FREE.
+
+- **THE t500 DECISION WINDOW READ (t = 100-112, 2026-09-24 morning):
+  RUN ON.** H FALLS through the window -- 9.1e-3 (t = 100) -> 4.3e-3
+  (105) -> 7e-4 (109), back on its floor: the seam bump (corner moire
+  on the refinement square, the same mode that killed the L = 64 box)
+  peaked at t = 100 and was CONTAINED. Expansion decelerating: rate
+  peak 0.032 at t = 74, doubling 23 u -> 117 u, x2.40 by t = 112 -- a
+  coasting inflation; if the halving law holds the growth integrates to
+  R ~ 11, which is what t = 500 tests. No mitigation twin needed. The
+  arm is RELABELED in the registry (the audit's trap, confirmed on the
+  live process): the UNKICKED L = 128 level-4 throat. NEW figure page
+  `01_single_throat/single_throat_inflation_L128`
+  (`plot_single_inflation_L128.py`, reads the LIVE stream -- regenerate
+  at landing), the existing inflation page untouched on the user's
+  word. Born beside it, on the user's mark ("there should be some
+  instruments to check whether text crosses the lines"):
+  `style.label_audit(fig)` -- walks every line in its own transform
+  (vlines included), densifies to 3 px, names every text box crossed;
+  wired into the new script before save, one line to adopt anywhere.
+  t = 500 ETA unchanged: ~Fri 13:00.
+
 - **RUN-TREE FRAMES PRUNE + PROBE-2 CLOSEOUT (2026-09-23 evening, the
   user: "those not running should be packed and their leftovers
   pruned").** Audit: every sizeable run dir was already packed EXCEPT

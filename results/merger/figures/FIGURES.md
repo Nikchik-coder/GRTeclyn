@@ -73,6 +73,21 @@ of this branch is the compactified inner sheet's χ-trough marching outward
 (r = 0.016 → 2.9), and |K| never leaves 0.06. That march is also why the
 θ₊ = 0 rows at R ≈ 60.7 after t = 85 are not a horizon and are not drawn.
 
+`01_single_throat/single_throat_inflation_L128` — NEW 2026-09-24 (the user:
+"make completely another figure, do not touch existing one"): the LIVE t500
+arm's own page by `plot_single_inflation_L128` (reads the RUN TREE, not the
+pack — regenerate at landing and re-point `--run` at the pack). The arm is
+THE UNKICKED L = 128 level-4 throat (the audit's launcher-pin trap, confirmed
+on the live process: the boost binary never read the l2 seed). (a) R_areal
+with the L = 64 twin as a CONTEXT halo BENEATH the ink (they agree to 0.2 %,
+so side-by-side styles would lie), the twin's record-end marked at t = 100;
+×2.39 by t = 111. (b) d ln R/dt: peak 0.032 at t = 74, doubling 23 u → 117 u
+— the decelerating coast. (c) min α, twin beneath, equal to 4 digits.
+(d) the arm's OWN L2 norms (not spliceable with the twin's: domain norms,
+the 8× box dilutes ×1.4–3.2): the seam-mode bump peaks 9e-3 at t = 100 and
+falls back to its floor by t = 109 — this box contains what killed the
+L = 64 t250 arm at t = 145.8.
+
 `05_binary_spiral/p012_paper/fill_insensitivity` — queue 5 (f): the freeze
 twin (fill 1.25/1.75) against the freeze arm (1.40/1.90), same t = 57 seed,
 same binary. Max |dPsi4|/peak 0.385/0.370/0.024/0.013 % at R = 20/28/36/44
