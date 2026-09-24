@@ -29,9 +29,11 @@ Every rule below exists because breaking it cost a run, a result or a day.
   contradictory settings (checkpoints asked for with `amr.checkpoint_files_output = 0`),
   and seeds that do not change the t = 0 data. Ask first with `--preflight-only`.
   `WHM_PREFLIGHT=off` exists; it is recorded in the run's manifest.
-- The campaign pin (`launch.sh` DEFAULT_BINARY, `main3d_boost_2026-09-08.ex`) predates
-  the quadrupole seed and the core profile: pass `--binary` for any template using
-  them (the preflight will say). Which binary knows what: `results/merger/binaries.tsv`.
+- The campaign pin (`launch.sh` DEFAULT_BINARY) is `main3d_guard_7166787a_2026-09-24.ex`
+  since 2026-09-24: it reads the quadrupole seed and the core profile, which the old pin
+  `main3d_boost_2026-09-08.ex` ignored. A `--restart` continues on its parent run's binary
+  (read from its `run_manifest.json`; refused if unknown) unless `--binary` says otherwise.
+  Which binary knows what: `results/merger/binaries.tsv`.
 - **Verify by effect** within the first minutes: eyeball frame 0 against a reference
   run (renderers fail silently), and see the first checkpoint appear if you asked for one.
 - **Never edit a script a live run is executing** in place: bash reads scripts by

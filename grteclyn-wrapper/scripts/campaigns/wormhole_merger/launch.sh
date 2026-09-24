@@ -50,7 +50,9 @@
 #                     Either way: eyeball frame 0 (README rule 13)
 #   --keep-last N     plotfiles to keep on scratch (default 3)
 #   --restart DIR     checkpoint directory to continue from
-#   --binary PATH     evolution binary; default is the campaign pin below
+#   --binary PATH     evolution binary.  Default: the campaign pin below; with
+#                     --restart, the parent run's own binary (its run_manifest.json),
+#                     and a refusal if that cannot be found
 #   --max-level N     override max_level (run_single.sh rewrites
 #                     regrid_interval to match; AMReX aborts otherwise)
 #   --what TEXT       the registry line.  Default: the template's first
@@ -82,8 +84,7 @@
 #         --restart /tmp/grteclyn_scratch/_keep_lvl5/BinaryWormholeChk03500
 #   will this template run as written on this binary? (seconds, launches nothing):
 #     ... launch.sh --template params_single_pureq_q1e2_L128_ml4_scalar_t500.txt \
-#         --name check_t500 --gpu 1 --profile none --preflight-only \
-#         --binary runs/wormhole_merger/bin/main3d_guard_7166787a_2026-09-24.ex
+#         --name check_t500 --gpu 1 --profile none --preflight-only
 #   a one-step placement probe, attached, no consumer:
 #     ... launch.sh --template params_place_d8_step1.txt --name place_d8_step1 \
 #         --gpu 1 --profile none --keep-last 1 --foreground
@@ -93,7 +94,10 @@ set -euo pipefail
 # SAME binary; the live build product changes under other work.  Frozen copies
 # live in runs/wormhole_merger/bin/.  Change this only when the whole campaign
 # moves to a new build, and say so in research/merger/GPU_PLAN.md.
-DEFAULT_BINARY='runs/wormhole_merger/bin/main3d_boost_2026-09-08.ex'
+# 2026-09-24: moved from main3d_boost_2026-09-08.ex (b69c5940, blind to the
+# quadrupole seed and the core profile) to the stamped build of 7166787a, which
+# reads both (results/merger/binaries.tsv).  A restart keeps its parent's binary.
+DEFAULT_BINARY='runs/wormhole_merger/bin/main3d_guard_7166787a_2026-09-24.ex'
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"
@@ -123,7 +127,7 @@ while [[ $# -gt 0 ]]; do
     --preflight-only) PREFLIGHT_ONLY=1; shift ;;
     --foreground) FOREGROUND=1; shift ;;
     --dry-run)    DRYRUN=1; shift ;;
-    -h|--help)    sed -n '2,76p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help)    sed -n '2,78p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *)            echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
   esac
 done
@@ -148,7 +152,29 @@ else
 fi
 
 # --- resolve the binary ---------------------------------------------------
-BINARY="${BINARY:-${DEFAULT_BINARY}}"
+# A restart continues a run, so by default it continues on that run's binary:
+# a leg on another build would splice two codes into one record, and the pin
+# has moved once already.  The parent is the checkpoint's scratch directory
+# (/tmp/grteclyn_scratch/<run>/...Chk<step>); its run_manifest.json names the
+# binary.  A kept copy (_keep_lvl5/...) has no manifest: then say --binary.
+if [[ -n "${BINARY}" ]]; then
+  BINARY_FROM="--binary"
+elif [[ -n "${RESTART}" ]]; then
+  parent="$(basename "$(dirname "${RESTART%/}")")"
+  manifest="$(find "${CAMPAIGN}" -maxdepth 4 -path "*/${parent}/run_manifest.json" -print -quit 2>/dev/null || true)"
+  if [[ -n "${manifest}" ]]; then
+    BINARY="$(python3 -c 'import json, sys; print((json.load(open(sys.argv[1])).get("binary") or {}).get("path") or "")' "${manifest}" 2>/dev/null || true)"
+  fi
+  if [[ -z "${BINARY}" ]]; then
+    echo "--restart without --binary: no run_manifest.json names the binary ${parent} ran on." >&2
+    echo "  Pass --binary explicitly (results/merger/binaries.tsv lists the frozen builds)." >&2
+    exit 2
+  fi
+  BINARY_FROM="the parent run's binary (${manifest#"${REPO}"/})"
+else
+  BINARY="${DEFAULT_BINARY}"
+  BINARY_FROM="campaign pin"
+fi
 [[ "${BINARY}" == /* ]] || BINARY="${REPO}/${BINARY}"
 [[ -x "${BINARY}" ]] || { echo "binary missing or not executable: ${BINARY}" >&2; exit 1; }
 
@@ -206,7 +232,7 @@ fi
 
 echo "[launch] run      : ${FULL_NAME}"
 echo "[launch] template : ${TEMPLATE_PATH#"${REPO}"/}"
-echo "[launch] binary   : ${BINARY#"${REPO}"/}"
+echo "[launch] binary   : ${BINARY#"${REPO}"/}   (${BINARY_FROM})"
 echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" ]] && echo " (OVERRIDDEN by --consume-args)") (zoom ${ZOOM}, coord ${COORD}, centre ${CENTER:-domain midpoint})   keep-last: ${KEEP_LAST}"
 [[ -n "${RESTART}" ]] && echo "[launch] restart  : ${RESTART}"
 echo "[launch] what     : ${WHAT}"

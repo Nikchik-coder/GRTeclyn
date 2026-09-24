@@ -29,7 +29,8 @@ WHAT IT CHECKS
   1. static (no GPU, seconds).  Every key of the params file must appear as a
      string inside the binary: a binary that does not contain a key's name
      cannot read it.  Advisory in full mode (a key can be present but unread
-     on this code path); decisive in static mode.
+     on this code path); decisive in static mode, less the dead keys that
+     preflight_allow.txt names (no code reads them, so no binary contains them).
   2. unread keys (GPU, one start-up).  The binary starts on a copy of the params
      with max_steps = 0, all output off, amrex.abort_on_unused_inputs = 1 and
      amrex.verbose = 1.  It builds the whole initial hierarchy, writes its t = 0
@@ -173,15 +174,39 @@ def static_check(exe: pathlib.Path, keys: list[str]) -> list[str]:
 
 
 # ---------------------------------------------------------------- 2./3. probes
-def load_allow() -> dict[str, str]:
-    allow: dict[str, str] = {}
+def load_allow() -> dict[str, tuple[tuple[str, str] | None, str]]:
+    """key -> (condition, why) from preflight_allow.txt.  A line is `key  # why`, or
+    `key when other = value  # why` for a key read only inside a feature the params
+    can switch off: it is then allowed only while the params hold other = value.  An
+    absent `other` counts as that value, so a condition must name the code default."""
+    allow: dict[str, tuple[tuple[str, str] | None, str]] = {}
     if ALLOW_FILE.exists():
         for line in ALLOW_FILE.read_text(encoding="utf-8").splitlines():
             body = line.split("#", 1)
-            key = body[0].strip()
-            if key:
-                allow[key] = body[1].strip() if len(body) > 1 else ""
+            head, _, cond = body[0].partition(" when ")
+            key = head.strip()
+            if not key:
+                continue
+            other, _, value = cond.partition("=")
+            allow[key] = (((other.strip(), value.strip()) if cond.strip() else None),
+                          body[1].strip() if len(body) > 1 else "")
     return allow
+
+
+def _flag(v: str) -> str:
+    v = v.strip().strip('"').lower()
+    return {"false": "0", "true": "1"}.get(v, v)
+
+
+def is_allowed(key: str, allow: dict, params: dict[str, str]) -> bool:
+    """Whether an unread (or absent) key is covered by preflight_allow.txt here."""
+    if key not in allow:
+        return False
+    cond = allow[key][0]
+    if cond is None:
+        return True
+    other, value = cond
+    return _flag(params.get(other, value)) == _flag(value)
 
 
 def t0_rows(data_dir: pathlib.Path) -> dict[str, dict[str, float]]:
@@ -320,16 +345,20 @@ def main(argv: list[str]) -> int:
         return finish("refused", 1)
 
     missing = static_check(exe, list(params))
-    report["static"] = {"keys": len(params), "absent_from_binary": missing}
+    allow = load_allow()
+    blocking = [k for k in missing if not is_allowed(k, allow, params)]
+    report["static"] = {"keys": len(params), "absent_from_binary": missing,
+                        "allowed_absent": [k for k in missing if is_allowed(k, allow, params)]}
     print(f"[preflight] static : {len(params)} keys, {len(missing)} absent from {a.exe_name or exe.name}"
-          + (f": {', '.join(missing)}" if missing else ""))
+          + (f": {', '.join(missing)}" if missing else "")
+          + (f" ({len(missing) - len(blocking)} of them dead keys preflight_allow.txt names)"
+             if len(blocking) < len(missing) else ""))
     if a.mode == "static":
-        if missing:
-            report["reasons"].append(f"keys the binary cannot read: {', '.join(missing)}")
+        if blocking:
+            report["reasons"].append(f"keys the binary cannot read: {', '.join(blocking)}")
             return finish("refused", 1)
         return finish("pass", 0)
 
-    allow = load_allow()
     probe_ov = {
         "max_steps": "0", "plot_interval": "-1", "checkpoint_interval": "-1",
         "amr.plot_files_output": "0", "amr.checkpoint_files_output": "0",
@@ -340,8 +369,8 @@ def main(argv: list[str]) -> int:
     report["probe"] = {k: run[k] for k in ("status", "exit_code", "unused", "version", "seconds", "log_tail")}
     report["t0"] = run["t0"]
     report["grteclyn_version"] = run["version"]
-    unread = [k for k in run["unused"] if k not in allow]
-    report["probe"]["allowed_unused"] = [k for k in run["unused"] if k in allow]
+    unread = [k for k in run["unused"] if not is_allowed(k, allow, params)]
+    report["probe"]["allowed_unused"] = [k for k in run["unused"] if is_allowed(k, allow, params)]
     print(f"[preflight] probe  : {run['status']} in {run['seconds']} s; binary version "
           f"({run['version'] or 'not reported'}); {len(run['unused'])} unread key(s)")
     if unread:
