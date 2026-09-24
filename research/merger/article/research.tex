@@ -462,8 +462,10 @@ The vacuum control---same $d$, $p$ and masses, no scalar---behaves as a binary b
 
 $\Psi_4$ is blind to a spin-$0$ wave. Two opposite scalar charges---every merging pair here (Sec.~\ref{sec:pair})---carry a dipole, where a vacuum binary's leading moment is the quadrupole. The scalar stream rides the same spheres as $\Psi_4$ on the spiral and fly-by, so the two channels compare sphere by sphere (Fig.~\ref{fig:scalar_channel}). The recorded kinematic flux $F_{\rm kin}$ (Sec.~\ref{sec:setup:diagnostics}) approximates the scalar energy crossing $S_R$ per coordinate time. That energy is the flux, through the world tube that $S_R$ sweeps out, of the matter energy current $J^\mu\equiv-T^{(\phi)\mu}{}_{\nu}\,t^\nu$ of the time vector $t^\mu=\alpha n^\mu+\beta^\mu$, with $T^{(\phi)}_{\mu\nu}$ the canonical stress tensor (the negative of Eq.~\eqref{eq:phantom}). Since $\nabla_\mu J^\mu=-\tfrac12T^{(\phi)\mu\nu}\mathcal{L}_t g_{\mu\nu}$, the current is conserved where $t^\mu$ is a Killing vector and nearly so in the quasi-stationary exterior that the spheres sample, and Gauss's theorem on the world tube gives its flux in 3+1 form~\cite{clough2021,gourgoulhon2012},
 \begin{equation}
-F^{\rm geo}_\phi=\oint_{S_R}\alpha\,s_iJ^i\sqrt{\sigma}\;\mathrm{d}^2x
-=-\oint_{S_R}\partial_t\phi\,\bigl(\alpha\,s^j\partial_j\phi+\beta_js^j\,\Pi\bigr)\sqrt{\sigma}\;\mathrm{d}^2x,
+\begin{split}
+F^{\rm geo}_\phi&=\oint_{S_R}\alpha\,s_iJ^i\sqrt{\sigma}\;\mathrm{d}^2x\\
+&=-\oint_{S_R}\partial_t\phi\,\bigl(\alpha\,s^j\partial_j\phi+\beta_js^j\,\Pi\bigr)\sqrt{\sigma}\;\mathrm{d}^2x,
+\end{split}
 \label{eq:scalarflux}
 \end{equation}
 positive for an outgoing canonical wave, with $s^i$ the sphere's outward unit normal, $\sqrt{\sigma}$ its area element, $J^i$ the spatial components of the four-vector (not $\gamma^{ij}J_j$) and $\partial_t\phi=\alpha\Pi+\beta^i\partial_i\phi$. On a conformally flat sphere with uniform $\alpha$ and $\chi$ and no shift, $F^{\rm geo}_\phi=\alpha^2\chi^{-1/2}F_{\rm kin}$; the shift adds an advective term ${\propto}(\beta^i\partial_i\phi)(s^j\partial_j\phi)$ and a term ${\propto}\beta_js^j\,\Pi\,\partial_t\phi$ from its normal component. In the initial data the sphere at $R=\clmGwScalarRadiusOuter$ has $\alpha\approx\clmGwScalarLapseInit$ and $\chi\approx\clmGwScalarChiInit$, and the area mean of $\alpha^2\chi^{-1/2}$ is $\approx\clmGwScalarFluxFactor$, so energies built from $F_{\rm kin}$ overstate $|F^{\rm geo}_\phi|$ by about $\clmGwScalarFluxCorr\%$; the shift terms are neglected.
