@@ -61,8 +61,8 @@ SCRATCH="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}"
 source "${ROOT}/grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.sh"
 
 export ROOT SIM_ROOT
-# The campaign's interpreter is the wrapper's venv (`cd grteclyn-wrapper && uv sync
-# --extra plots`), as for run_single.sh and closeout.sh; the root .venv is the
+# The campaign's interpreter is the wrapper's venv (`cd grteclyn-wrapper && uv sync --extra plots --extra visualization
+# --extra gw-search`), as for run_single.sh and closeout.sh; the root .venv is the
 # fallback it used to be the first choice for.
 PY_BIN="${ROOT}/grteclyn-wrapper/.venv/bin/python"
 [[ -x "${PY_BIN}" ]] || PY_BIN="${ROOT}/.venv/bin/python"
