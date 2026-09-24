@@ -1,0 +1,96 @@
+token_regex	param	expected	compare	note	holds	fails
+d(?!(?:65|75)$)(\d+)	derived:separation	float(g1)	approx	d<N>: throat separation d = |wormhole_centerA - wormhole_centerB| (offsets from `center`; centerB defaults to -centerA, centerA to (0,0,5)); BinaryBH-format params (bbh_control_*): |bh1.offset - bh2.offset|. Integer spelling; the two half-integer probes use the next rule -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	66	0
+d([67])5	derived:separation	float(g1)+0.5	approx	d65 / d75 = 6.5 / 7.5: decimal point dropped (placement probes only). The spelling is ambiguous in general (d15 could be 1.5 or 15); no other half-integer d exists in the pack	2	0
+p(\d+)	derived:p_A	float(g1[0] + '.' + g1[1:])	approx	p<NNN>: Bowen-York momentum per throat, p_A = |wormhole_momentumA| (B defaults to -A, so net P = 0); first digit = integer part: p012 = 0.12, p045 = 0.45, p02 = 0.2. Binaries push tangentially (y, orbit in the x-y plane); s20_boost_p02 pushes one throat along z. BinaryBH: |bh1.momentum|	41	0
+L(\d{2,})	L	float(g1)	approx	L<NN>: box side L (code units; the cube is [0,L]^3 with the physics at center = L/2). L64 / L128. BinaryBH alias: geometry.prob_extent[0]	11	0
+L(\d)	max_level	int(g1)	eq	ladder_L<N> ONLY: L<one digit> is the refinement level of the p012 refinement ladder (restarted from Chk05000), NOT the box (the box token has >= 2 digits)	8	0
+(?:s\d+)?ml(\d+)	max_level	int(g1)	eq	ml<N>: max_level N (dx_finest = (L/N1)/2^N). Also inside the stage label s16ml3	17	0
+lvl(\d+)(?:from0|chk|down)?	max_level	int(g1)	eq	lvl<N>[from0|chk|down]: max_level N (same meaning as ml<N>; lvl is the merger arms' spelling)	20	0
+lvl\d+from0	derived:restart_step	None	eq	lvl<N>from0: run at max_level N from t = 0, no amr.restart (restart_step None)	2	0
+lvl\d+chk	derived:writes_checkpoints	True	eq	lvl<N>chk: the checkpointed twin; writes_checkpoints = checkpoint_interval > 0 AND amr.checkpoint_files_output != 0 (AMReX default 1)	1	0
+lvl\d+down	derived:is_restart	True	eq	lvl<N>down: down-step -- restarted from a FINER-level checkpoint with max_level lowered to N (merge_headon_flip_d8_v1_lvl3down_t100_r03500: level-5 Chk03500 -> level 3)	1	0
+n(\d+)	N1	int(g1)	eq	n<N>: base-grid cells per side N1 (= N2 = N3). BinaryBH alias: amr.n_cell[0]	1	0
+s1uni(\d+)	N1	int(g1)	eq	s1uni<N>: Stage-1.4 unigrid control with N1 = N	2	0
+s1uni\d+	max_level	0	eq	s1uni<N>: unigrid, max_level 0	2	0
+stage1|s15	max_level	2	eq	stage1 / s15: Stage-1 (gauge+dissipation) and Stage-1.5 (fixed-grid tagger) shakedown, max_level 2 (runs_registry.tsv, 01_single_throat block)	8	0
+t(\d{3})	stop_time	float(g1)	approx	t<NNN>: stop_time (code units = M). For a restart leg it is the leg's stop_time. BinaryBH alias: evolution.stop_time. Names without a t token do not encode stop_time	88	0
+(?:^|_)eps_([pm])(\d)e(\d)(?:_|$)	wormhole_seed_amplitude_A	(1 if g1 == 'p' else -1) * int(g2) * 10.0 ** -int(g3)	approx	spans tokens (eps + sign-mantissa-exponent): eps_p1e2 = +1e-2, eps_m1e3 = -1e-3. Declared spherical Gaussian seed psi -> psi(1 + eps g(r)) on the throat (paper Sec. II.D); B defaults to A, so a two-throat eps run seeds both	18	0
+(?:^|_)eps_([pm])(\d)e(\d)(?:_|$)	derived:seed_eps_effective	(1 if g1 == 'p' else -1) * int(g2) * 10.0 ** -int(g3)	approx	spans tokens. EFFECTIVE seed: the params value, set to 0 if the run's t = 0 L2_Ham is identical (all printed digits) to a packed run with the same initial-data keys and no eps (the binary ignored the key). Restart legs: taken from the parent run named in amr.restart -- 3 of the holds keep the declared value UNVERIFIED: single_eps_p1e2_q1e2_ml4_t100_r02500 (restart leg); single_eps_p1e2_q5e2_ml4_t100 (no seed-free twin in the pack -> declared value, unverified); single_eps_p1e2_q5e3_ml4_t100 (no seed-free twin in the pack -> declared value, unverified)	18	0
+q(\d)e(\d)	wormhole_seed_l2_amplitude_A	int(g1) * 10.0 ** -int(g2)	approx	q<m>e<k>: quadrupolar seed eps2 = m*10^-k (psi -> psi(1 + eps2 g(r) P2(cos theta)) about z; paper Sec. II.D). q1e2 = 0.01, q5e2 = 0.05, q5e3 = 0.005	10	0
+q(\d)e(\d)	derived:seed_l2_effective	int(g1) * 10.0 ** -int(g2)	approx	EFFECTIVE quadrupole (same test as seed_eps_effective, against runs with no l2 seed). Catches the 2026-09-23 trap: the campaign pin main3d_boost_2026-09-08.ex does not read wormhole_seed_l2_amplitude_* (binaries.tsv), so an eps2 arm launched on it ran with NO quadrupole although its params say otherwise -- FAILS in 4: single_eps_p1e2_q1e2_ml4_scalar_t100 (got 0.0); single_pureq_q1e2_L128_ml4_scalar_t100 (got 0.0); single_pureq_q1e2_ml4_scalar_t100 (got 0.0); single_pureq_q1e2_L128_ml4_scalar_t500 (got 0.0) -- 1 of the holds keep the declared value UNVERIFIED: single_eps_p1e2_q1e2_ml4_t100_r02500 (restart leg)	6	4
+pureq	wormhole_seed_amplitude_A	0.0	abs_approx	pureq: pure quadrupole -- spherical seed explicitly 0, q<..> token carries eps2	4	0
+hold	derived:any_seed	False	eq	hold: one throat held at its exact static data -- no declared seed (wormhole_seed_amplitude_A = wormhole_seed_l2_amplitude_A = 0)	9	0
+eta(\d+)	eta	float(g1)	approx	eta<N>: Gamma-driver shift damping eta = N (production 1.0)	7	0
+lp(\d+)	lapse_power	float(g1)	approx	lp<N>: Bona-Masso lapse_power N (1 = 1+log; 2 = harmonic-class d_t alpha = -2 alpha^2 K)	4	0
+lc(\d+)	lapse_coeff	float(g1)	approx	lc<N>: Bona-Masso lapse_coeff N (production 2.0). lc4 exists only as a template	1	0
+sg(\d)(\d+)	sigma	float(g1 + '.' + g2)	approx	sg<NN>: Kreiss-Oliger sigma with the '.' deleted by run_single.sh (WHM_SIGMA): sg00 = 0.0, sg01 = 0.1, sg10 = 1.0	10	0
+lapse(\d)	wormhole_initial_lapse_type	int(g1)	eq	lapse<N>: initial lapse type (run_single.sh WHM_LAPSE_TYPE): 5 = the drainhole's exact static lapse e^u, 6 = 5 x the origin-isolating collar	11	0
+fg	tagging_type	1	eq	fg: fixed nested grids (FixedGridsTagger) -- run_single.sh appends _fg when WHM_TAGGING_TYPE != 0	4	0
+tl(\d+)	tagging_L	float(g1)	approx	tl<N>: tagging_L with '.' deleted (run_single.sh WHM_TAGGING_L). No packed run uses it	0	0
+dt0(\d+)	dt_multiplier	float('0.' + g1)	approx	dt0<NN>: Courant factor dt_multiplier = 0.<NN> (dt005 = 0.05, dt01 = 0.1; production 0.02)	2	0
+halfstep	dt_multiplier	0.01	approx	halfstep: dt_multiplier halved, 0.02 -> 0.01	1	0
+cf(\d\d)	min_chi	10.0 ** -int(g1)	approx	cf<NN>: chi floor min_chi = 1e-NN (floor ladder: cf08 / cf10 / cf12)	4	0
+chireg	chi_rhs_floor	1e-8	approx	chireg: chi regularisation on -- chi_rhs_floor 1e-8 (floor applied only where 1/chi is used)	2	0
+chireg	min_chi	1e-20	approx	chireg: ... with the evolved-chi floor lowered to 1e-20	2	0
+lowfloor	min_chi	5e-10	approx	lowfloor: min_chi 5e-10 instead of 1e-8	1	0
+autopsy	nan_autopsy	1	eq	autopsy: per-cell NaN autopsy report armed	2	0
+step1	max_steps	1	eq	step1: one coarse step only (stop_time is left at the template's value)	18	0
+chk	derived:writes_checkpoints	True	eq	chk: rolling checkpoints on (checkpoint_interval > 0 and amr.checkpoint_files_output != 0)	1	0
+r(\d{5})	derived:restart_step	int(g1)	eq	r<NNNNN>: continuation leg restarted from BinaryWormholeChk<NNNNN> (run_single.sh appends _r<step> from WHM_RESTART). restart_step = digits after 'Chk' in amr.restart; a log-only arm without params falls back to launch_banner.txt's '[whm] restart' line	37	0
+r(\d{5})	derived:t_restart_from_stream	int(g1) * 0.01	abs_approx	r<NNNNN>: the step is the PARENT's coarse-step count, so t_restart = NNNNN x 0.01 (every parent ran dt = 0.02 x L/N1 = 0.01); checked as first stream row minus one coarse step of the leg (streams restart at t_restart + dt, with no header line) -- untestable in 10: merge_orbit_flip_d12_r05000 (no params); merge_twin_p012_cf12_t060_r05000 (no evolution stream packed); freeze_narrow_late_t080_r05000 (no evolution stream packed); ladder_L4_damped_r05000 (no evolution stream packed); ladder_L4_r05000 (no evolution stream packed); ladder_L5_damped_r05000 (no evolution stream packed); ladder_L5_halfstep_r05000 (no evolution stream packed); ladder_L5_r05000 (no evolution stream packed); ladder_L6_damped_r05000 (no evolution stream packed); ladder_L7_r05000 (no evolution stream packed)	27	0
+a(\d)(\d?)	wormhole_throat_radius_A	float(g1 + '.' + (g2 or '0'))	approx	a<N>[N]: throat scale a with '.' dropped (a1 = 1, a15 = 1.5, a3 = 3; production 2). Set equal on B in every packed a-arm	3	0
+m(\d)(\d+)	wormhole_drainhole_mass_A	float(g1 + '.' + g2)	approx	m<NN>: drainhole (ADM) mass m with '.' dropped: m05 = 0.5 (production 1.0); B defaults to A. COLLISION: run_single.sh's own _m<mass> suffix (WHM_BARE_MASS) means wormhole_bare_mass_A/B; no packed run used it and bare mass is 0 in all of them	2	0
+mu(\d+)	derived:mu	float(g1)	approx	mu<N>: mass-to-scale ratio mu = m/a = wormhole_drainhole_mass_A / wormhole_throat_radius_A (template params_single_mu2_eps_p1e2_t100: a = 1, m = 2). No packed run; that template's t100 is a-scaled (stop_time 50, 'stop_time 50 here = t 100 at a = 2')	0	0
+helfer	wormhole_helfer_correction	1	eq	helfer: Helfer/Ning one-body superposition correction on (window auto = d/3 unless w<N>)	5	0
+plain	wormhole_helfer_correction	0	eq	plain: plain superposition (the Helfer twins' reference)	1	0
+w(\d+)	wormhole_helfer_width	float(g1)	approx	w<N>: Helfer window width N (auto = d/3 = 4 at d = 12)	1	0
+single|stage1|s15|s16ml\d+|s1uni\d+|s20	derived:throat_B_present	False	eq	single / stage labels: ONE throat -- throat B removed by wormhole_throat_radius_B = 0 (B defaults to A, so it must be set; SimulationParameters.hpp)	42	0
+merge|ctrl|place	derived:throat_B_present	True	eq	merge / ctrl / place: two throats (wormhole_throat_radius_B > 0) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	78	0
+flip	wormhole_phi_sign_B	-1.0	eq	flip: throat B's scalar profile reversed, phi = phi_A + sigma phi_B with sigma = -1 (opposite scalar charges attract; the merger channel). Default +1 (like charges repel) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	36	0
+twin	wormhole_phi_sign_B	-1.0	eq	twin: the p = 0.12 'twin' series (one-knob twins of the plain flipped merger); the flip is implied, not spelled	17	0
+headon	derived:p_A	0.0	abs_approx	headon: no Bowen-York momentum (p_A = |wormhole_momentumA| = 0); pair falls from rest	16	0
+rest	derived:p_A	0.0	abs_approx	rest: released from rest (p_A = 0)	7	0
+place	derived:p_A	0.0	abs_approx	place: placement probe -- the head-on scout's pair at rest at separation d, one step (with step1)	18	0
+orbit|spiral|boost	derived:p_A_nonzero	True	eq	orbit / spiral: tangential push p_A > 0 (value in the p<NNN> token); boost: the single boosted throat of Stage 2.0 (P along z) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	27	0
+bbh	derived:is_binarybh_params	True	eq	bbh: vacuum binary-black-hole control -- params in the stock BinaryBH format (bh1.* / bh2.*, amr.*, evolution.*), no scalar; bh1.mass = bh2.mass = 0.9615 (bare puncture mass)	3	0
+grtresna|bridge	derived:has_recipe_initial_data	True	eq	bridge_grtresna: constraint-solved GRTresna data read through ExternalGridInitialData (recipe_initial_data_file set)	1	0
+nodamp	core_matter_damping	0	eq	nodamp: core matter damping off	4	0
+damped	core_matter_damping	1	eq	damped: core matter damping on (ladder twins)	3	0
+rw	derived:damping_radius_window	True	eq	rw: damping radius window on (core_damping_radius_start > 0 and core_damping_radius_full > 0; rw_r05000: full inside 0.5, off by 0.7, from t = 33)	1	0
+nofill	core_freeze_fill	0	eq	nofill: interior fill (CoreFreezeFill) off -- the 'unmasked' wall probes	2	0
+(?:late)?freeze2?|fill	core_freeze_fill	1	eq	freeze / freeze2 / latefreeze (/ fill, templates only): smooth interior fill on (every RHS x (1 - W(r)) between core_fill_radius_full and _start from core_fill_from_time). freeze2 = the fill-window twin	10	0
+fillnarrow	core_freeze_fill	1	eq	fillnarrow: head-on fill-radius twin, fill on ...	1	0
+fillnarrow	core_fill_radius_full	1.0	approx	fillnarrow: ... with radii 1.0 / 1.5 instead of V1c's 1.2 / 1.8	1	0
+narrow	core_fill_radius_full	1.3	approx	narrow: orbital freeze skin r_full 1.3 / r_start 1.8	3	0
+wide	core_fill_radius_full	1.5	approx	wide: orbital freeze skin one cell wider, r_full 1.5 / r_start 2.0	2	0
+late	core_fill_from_time	55.5	approx	late: fill armed late, t = 55.5 instead of the programme's 53.0 (freeze_narrow_late)	1	0
+v1	core_freeze_fill	0	eq	v1: Phase-3 head-on scout family (d = 8 from rest, chi regularisation, autopsy armed) with the fill OFF (the V1 template)	5	0
+v1c	core_freeze_fill	1	eq	v1c: the V1c late-freeze template (fill armed, t = 26.5 or 25.0) and its twins	4	0
+v1c?	chi_rhs_floor	1e-8	approx	v1 / v1c: inherit the scout's chi regularisation (chi_rhs_floor 1e-8, min_chi 1e-20)	9	0
+v2	L	128.0	approx	v2: the V2 production spiral (L = 128, N = 256; L128 is also spelled out)	6	0
+prof|mouths	core_radial_profile	1	eq	prof / mouths: in-code radial core profile on (core_radial_profile.dat)	2	0
+prof|mouths	(stream)	'core_radial_profile.dat'	file_exists	prof / mouths: the in-code profile was actually written (a binary older than 2026-09-15, e.g. the campaign pin main3d_boost_2026-09-08.ex, ignores core_radial_profile silently)	2	0
+mouths	(consumer)	'horizon_scan.dat'	file_exists	mouths: consumer run with per-mouth areal radius + horizon scan (profile headon); proxy: the packed horizon_scan.dat exists	1	0
+scalar	(consumer)	'scalar_modes.dat'	file_exists	scalar: consumer flag --scalar-modes (profiles headon-modes / orbit-modes); not in params; proxy: packed scalar_modes.dat exists (the stream also exists on some runs without the token)	5	0
+diag	write_extraction	1	eq	diag: Weyl-extraction diagnostic pass -- raw sphere dumps on (Weyl4_extraction_NNNNNN.dat), no consumer	1	0
+crosscheck|wave	activate_extraction	1	eq	crosscheck / wave: in-code Weyl4 extraction on (validation against the consumer psi4)	2	0
+place	wormhole_phi_sign_B	-1.0	eq	place: the placement probes are the head-on scout's FLIPPED pair; the flip is not spelled	18	0
+^(?!bbh_)(?!.*(?:^|_)(?:(?:s\d+)?ml\d+|lvl\d+[a-z0-9]*|L\d|s1uni\d+|stage1|s15)(?:_|$))	max_level	3	eq	spans tokens (ABSENCE rule): no level token (ml/lvl/L<d>/stage label) -> production max_level 3 (run-tree README: 'Everything not named in the suffix is identical across the binary runs', max_level = 3). Not applied to bbh_*. Its FAILS are restart legs whose raised max_level (5-6) sits in the template or the launch (launch.sh --max-level / WHM_MAX_LEVEL add no suffix) and is NOT in the name -- FAILS in 10: merge_twin_p012_cf08_t060_r05000 (got 5.0); merge_twin_p012_cf10_t060_r05000 (got 5.0); merge_twin_p012_cf12_t060_r05000 (got 5.0); freeze_narrow_late_t080_r05000 (got 6.0); freeze_narrow_t080_r05000 (got 5.0); freeze_narrow_t100_r08000 (got 5.0); freeze_wave_crosscheck_diag_r09000 (got 5.0); freeze_wave_crosscheck_r09000 (got 5.0); freeze_wide_t080_r05000 (got 5.0); freeze_wide_t100_r08000 (got 5.0) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	80	10
+^(?!bbh_)(?!.*(?:^|_)(?:L\d{2,}|v2)(?:_|$))	L	64.0	approx	spans tokens (ABSENCE rule): no L<NN>/v2 token -> box L = 64 -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	134	0
+^(?!bbh_)(?!.*(?:^|_)(?:n\d+|L\d{2,}|v2|s1uni\d+)(?:_|$))	N1	128	eq	spans tokens (ABSENCE rule): no n<N>/L<NN>/v2/s1uni token -> N1 = 128 (dx0 = L/N1 = 0.5; the L128 runs keep dx0 = 0.5 with N1 = 256) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	131	0
+^(?!bbh_)(?!stage1_)(?!.*(?:^|_)sg\d+(?:_|$))	sigma	0.1	approx	spans tokens (ABSENCE rule): no sg<NN> token -> Kreiss-Oliger sigma 0.1. stage1_* excluded: their template default was sigma 2.0 (runs_registry.tsv Stage-1 lines) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	133	0
+^(?!bbh_)(?!.*(?:^|_)(?:dt0\d+|halfstep)(?:_|$))	dt_multiplier	0.02	approx	spans tokens (ABSENCE rule): no dt0<NN>/halfstep token -> dt_multiplier 0.02 (dt = 0.02 dx) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	142	0
+^(?!bbh_)(?!.*(?:^|_)a\d\d?(?:_|$))	wormhole_throat_radius_A	2.0	approx	spans tokens (ABSENCE rule): no a<N> token -> throat scale a = 2 -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	142	0
+^(?!bbh_)(?!.*(?:^|_)m\d\d+(?:_|$))	wormhole_drainhole_mass_A	1.0	approx	spans tokens (ABSENCE rule): no m<NN> token -> drainhole ADM mass m = 1 (the code unit M) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	143	0
+^(?!bbh_)(?!bridge_)(?!.*(?:^|_)lapse\d(?:_|$))	wormhole_initial_lapse_type	5	eq	spans tokens (ABSENCE rule): no lapse<N> token -> initial lapse type 5 (exact static e^u). bridge_* excluded: the GRTresna data carry lapse type 1 (sqrt(chi)) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	133	0
+^(?!bbh_)(?!.*(?:^|_)eta\d+(?:_|$))	eta	1.0	approx	spans tokens (ABSENCE rule): no eta<N> token -> eta 1.0 -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	138	0
+^(?!bbh_)(?!.*(?:^|_)(?:lp\d+|lc\d+)(?:_|$))	lapse_power	1.0	approx	spans tokens (ABSENCE rule): no lp/lc token -> 1+log slicing, lapse_power 1.0 ... -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	140	0
+^(?!bbh_)(?!.*(?:^|_)(?:lp\d+|lc\d+)(?:_|$))	lapse_coeff	2.0	approx	spans tokens (ABSENCE rule): ... and lapse_coeff 2.0 -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	140	0
+^(?!.*(?:^|_)p\d+(?:_|$)).*(?:^|_)orbit(?:_|$)	derived:p_A	0.12	approx	spans tokens (ABSENCE rule): an orbit name without a p<NNN> token carries the production push 0.12 (run-tree README: '_orbit: momentum +-0.12 in y', '_pNNN: momentum NNN instead of 0.12') -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	6	0
+^(?!.*(?:^|_)(?:flip|twin|place)(?:_|$))(?=.*(?:^|_)(?:ctrl|orbit|merge)(?:_|$))	wormhole_phi_sign_B	1.0	eq	spans tokens (ABSENCE rule): a two-throat name with no flip/twin/place token is a LIKE-charge pair (sigma = +1, the default)	8	0
+rr	(none)	-	-	rr: rerun of the same params with checkpoints copied out by hand ('insured'); params identical to the original apart from paths -- carried by 1 packed run(s)	-	-
+ladder	(none)	-	-	ladder: the p012 refinement ladder, every rung restarted from Chk05000 (see L<N>, r05000) -- carried by 8 packed run(s)	-	-
+control	(none)	-	-	control: part of bbh_control (see bbh) -- carried by 3 packed run(s)	-	-
+HOOKFAIL|OOMFAIL	(none)	-	-	close-out label appended by hand to a failed launch (HOOKFAIL: a params key read without its evolution. prefix, report silently disarmed; OOMFAIL: out of GPU memory); gpu_hours.py drops HOOKFAIL -- carried by 3 packed run(s)	-	-
+20\d\d-\d\d-\d\d	(none)	-	-	date of the failed launch, always after HOOKFAIL/OOMFAIL -- carried by 3 packed run(s)	-	-
+(?:^|_)[^_]*\.__keep$	(none)	-	-	spans tokens (suffix): X.__keep = byte-identical pack copy of X left by pack_results.sh; skipped when X is beside it, so 0 here (10 directories with --include-copies) -- carried by 0 packed run(s)	-	-

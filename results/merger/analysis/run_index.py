@@ -14,7 +14,9 @@ Four checks, each of which would have caught a real error:
             (how the 2026-09-23 audit found four quadrupole arms without their
             quadrupole);
   name      each token of the run name that name_grammar.tsv knows (q1e2, ml4,
-            p012, eta4, ...) against the params the run used;
+            p012, eta4, ...) against the params the run used (name_check.py):
+            MISMATCH when a token contradicts what ran, "silent" when a knob is
+            off its production value and the name does not say so;
   binary    keys in the params that the binary does not contain (frozen binaries
             only -- the live build product has been rebuilt since);
   intent    settings that contradict each other: checkpoints asked for with
@@ -38,6 +40,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 from pack_paths import iter_runs  # noqa: E402
+import name_check  # noqa: E402
 
 SEED_KEYS = ("wormhole_seed_amplitude_A", "wormhole_seed_l2_amplitude_A")
 FIELDS = ["run", "group", "provenance", "binary", "binary_version", "preflight",
@@ -70,21 +73,6 @@ def vec(params: dict[str, str], key: str) -> list[float] | None:
         return None
 
 
-def derived(params: dict[str, str], what: str) -> float | None:
-    """Quantities a name token encodes that are not one key."""
-    if what == "separation":
-        a, b = vec(params, "wormhole_centerA"), vec(params, "wormhole_centerB")
-        return math.dist(a, b) if a and b else None
-    if what == "momentum":
-        p = vec(params, "wormhole_momentumA")
-        return math.hypot(*p) if p else None
-    if what == "restart_step":
-        r = params.get("amr.restart", "").strip('"')
-        m = re.search(r"Chk0*(\d+)$", r)
-        return float(m.group(1)) if m else None
-    return None
-
-
 # The initial-data setup a seed perturbs; two runs with the same values here
 # start from the same t = 0 data unless a seed differs (constraint norms are
 # level-0 reductions, so max_level does not enter).
@@ -99,51 +87,6 @@ SETUP_KEYS = ("L", "N1", "wormhole_id_type", "wormhole_initial_lapse_type",
 
 def signature(params: dict[str, str]) -> tuple:
     return tuple(" ".join(params.get(k, "").split()) for k in SETUP_KEYS)
-
-
-def load_grammar(path: pathlib.Path) -> list[dict]:
-    """name_grammar.tsv: token_regex, param, expected, compare, note (+ counts)."""
-    rules = []
-    if not path.exists():
-        return rules
-    with path.open(encoding="utf-8", newline="") as fh:
-        reader = csv.DictReader((l for l in fh if l.strip() and not l.startswith("#")),
-                                delimiter="\t", quoting=csv.QUOTE_NONE)
-        for row in reader:
-            try:
-                row["rx"] = re.compile(row["token_regex"])
-            except re.error as e:
-                print(f"[run-index] bad regex {row.get('token_regex')!r}: {e}")
-                continue
-            rules.append(row)
-    return rules
-
-
-def check_name(name: str, params: dict[str, str], rules: list[dict]) -> list[str]:
-    problems = []
-    for rule in rules:
-        m = rule["rx"].search(name)
-        if not m:
-            continue
-        param = rule["param"].strip()
-        if param.startswith("(") or not param:
-            continue                                   # consumer-side or informational
-        groups = {f"g{i}": g for i, g in enumerate(m.groups(), start=1)}
-        try:
-            want = eval(rule["expected"], {"__builtins__": {}, "float": float, "int": int,
-                                           "abs": abs}, groups)
-        except Exception as e:  # noqa: BLE001
-            problems.append(f"{m.group(0)}: bad rule ({e})")
-            continue
-        have = derived(params, param.split(":", 1)[1]) if param.startswith("derived:") \
-            else num(params, param)
-        if have is None:
-            problems.append(f"{m.group(0)} says {param} = {want:g}, params have no {param}")
-            continue
-        tol = 1e-9 * max(1.0, abs(want))
-        if abs(have - want) > tol:
-            problems.append(f"{m.group(0)} says {param} = {want:g}, params say {have:g}")
-    return problems
 
 
 def intent_problems(params: dict[str, str]) -> list[str]:
@@ -179,7 +122,7 @@ def first_row(path: pathlib.Path) -> tuple[list[str], list[str]] | None:
 
 def main(argv: list[str]) -> int:
     root = pathlib.Path(argv[0]) if argv else pathlib.Path(__file__).resolve().parents[1]
-    rules = load_grammar(root / "name_grammar.tsv")
+    names = name_check.findings(root)
     rows, h0_by_value = [], {}
     for group, d in iter_runs(root):
         man_path = d / "run_manifest.json"
@@ -249,9 +192,12 @@ def main(argv: list[str]) -> int:
         row["seed_check"] = "; ".join(notes) if notes else ("n/a" if not asked else "restart")
         n_seed += row["seed_check"].startswith("NOT APPLIED")
 
-        problems = check_name(row["run"], row["_params"], rules)
-        row["name_check"] = "MISMATCH: " + "; ".join(problems) if problems else "ok"
-        n_name += bool(problems)
+        found = names.get(row["run"], [])
+        bad = [m for k, m in found if k == "mismatch"]
+        quiet = [m for k, m in found if k == "silent"]
+        row["name_check"] = ("MISMATCH: " + "; ".join(bad) if bad else
+                             "silent: " + "; ".join(quiet) if quiet else "ok")
+        n_name += bool(bad)
 
         real_absent = [k for k in (absent or []) if k not in ALLOW_DEAD]
         row["binary_check"] = ("unknown" if absent is None else

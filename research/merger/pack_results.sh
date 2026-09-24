@@ -141,6 +141,13 @@ while IFS= read -r rundir; do
       cp "${src}" "${out}/${base}"
       continue
     fi
+    # Nor the raw sphere dumps (write_extraction = 1): one file per step, rows
+    # are (theta, phi, Re, Im), and the thinner read theta as time -- it had
+    # kept 605 of 1780 rows of every dump (found and repaired 2026-09-24).
+    if [[ "${base}" == Weyl4_extraction_*.dat ]]; then
+      cp "${src}" "${out}/${base}"
+      continue
+    fi
     "${PY_BIN}" - "${src}" "${out}/${base}" <<'PY'
 import sys
 
@@ -372,6 +379,7 @@ fi
 # These write markdown and .dat only, and import nothing outside the pack, so a
 # copy of results/merger stays runnable with a stock Python.  Figures are step 5.
 "${PY_BIN}" "${DEST}/analysis/make_summary.py" "${DEST}"
+"${PY_BIN}" "${DEST}/analysis/name_check.py" "${DEST}" || echo "[pack-merger] name check failed -- continuing"
 "${PY_BIN}" "${DEST}/analysis/run_index.py" "${DEST}" || echo "[pack-merger] run index failed -- continuing"
 "${PY_BIN}" "${DEST}/analysis/single_throat_instability.py" "${DEST}"
 "${PY_BIN}" "${DEST}/analysis/throat_clock_comparison.py" "${DEST}" || echo "[pack-merger] clock comparison failed -- continuing"
