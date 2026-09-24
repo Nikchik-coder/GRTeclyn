@@ -88,6 +88,8 @@
 #   WHM_PROC_ALIAS=0  run the binary from its real path instead of the neutral
 #                 copy (the GPU process list then shows the campaign path)
 #   WHM_PROC_BIN_DIR  where the neutral copies live (default /tmp/ml_jobs/bin)
+#   WHM_PREFLIGHT  full (default) | static | off -- see "Preflight" below
+#   WHM_PREFLIGHT_ONLY=1  run the preflight, report, remove the run dir, stop
 #
 # Process table.  The cards are shared, and `ps aux` / `nvidia-smi` are
 # readable by anyone who can see this machine's processes, so what a run calls
@@ -113,6 +115,12 @@
 # Deciding WHAT to extract is a launch-time decision and cannot be revisited:
 # deletion is ledger-gated, so anything not extracted during the run is gone
 # with the plotfile.  Pass extra extractions through WHM_CONSUME_ARGS.
+# The whole body is one { ... } block ending in `exit`: bash parses it
+# entirely before running it, so editing this file can never reach a live
+# run.  (bash otherwise reads a script by byte offset as it goes; an edit
+# made under a live run on 2026-09-24 would have had that run read the new
+# file at the old offset when its evolution ended.)  Keep it that way.
+{
 set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 SELF_DIR="${SCRIPT_DIR}"   # this directory, resolved BEFORE anything moves us
@@ -199,6 +207,12 @@ echo "[whm] run dir  : ${RUN_DIR}          (NFS: params, log, .dat streams)"
 echo "[whm] scratch  : ${SCRATCH_DIR}      (node-local: plotfiles, checkpoints)"
 
 if [[ "${WHM_DRYRUN:-0}" != "0" ]]; then
+  # The no-GPU half of the preflight, on the template as it stands (before the
+  # overrides below): contradictory settings, and keys the binary cannot read.
+  pf_py="${WRAPPER_DIR}/.venv/bin/python"; [[ -x "${pf_py}" ]] || pf_py="$(command -v python3)"
+  "${pf_py}" "${SELF_DIR}/preflight.py" --mode static --exe "${EXE}" --params "${TEMPLATE}" \
+      --workdir "${SCRATCH_ROOT}/_preflight_dryrun" \
+    || echo "[whm] the preflight would REFUSE this launch (above)" >&2
   echo "[whm] dry run -- nothing launched."
   exit 0
 fi
@@ -206,19 +220,6 @@ fi
 if [[ -d "${RUN_DIR}" ]]; then
   echo "[whm] ${RUN_DIR} already exists -- delete it or set WHM_NAME/WHM_RUNS_DIR" >&2
   exit 1
-fi
-
-# Register the run (2026-09-09): one tab-separated line in the pack's registry,
-# so the summary table needs no code edit per run.  Only when the launch says
-# what the run is for; research/merger/closeout.sh warns about the rest.
-REGISTRY="${WHM_REGISTRY:-${REPO_ROOT}/results/merger/runs_registry.tsv}"
-if [[ -n "${WHM_WHAT:-}" && -f "${REGISTRY}" ]]; then
-  if grep -qP "^${NAME}\t" "${REGISTRY}"; then
-    echo "[whm] registry : ${NAME} already registered (WHM_WHAT ignored)"
-  else
-    printf '%s\t%s\t\t\n' "${NAME}" "${WHM_WHAT}" >> "${REGISTRY}"
-    echo "[whm] registry : ${NAME} -> ${REGISTRY#"${REPO_ROOT}"/}"
-  fi
 fi
 
 mkdir -p "${RUN_DIR}" "${SCRATCH_DIR}"
@@ -399,6 +400,103 @@ if [[ -n "${WHM_RESTART:-}" ]]; then
     "${WHM_RESTART}" >> "${RUN_PARAMS}"
   echo "[whm] restart  : ${WHM_RESTART}"
 fi
+
+# ---------------------------------------------------------------------------
+# Preflight (2026-09-24): refuse a launch the binary would not honour.
+# ---------------------------------------------------------------------------
+# AMReX ignores a key nothing reads, so a binary older than a feature runs the
+# params without it and says nothing: four "quadrupole" arms ran without their
+# quadrupole that way (GPU_PLAN, 2026-09-23 evening), and single_eps_p1e2_t250
+# asked for rolling checkpoints with checkpoint output switched off and died at
+# t = 145.8 with nothing to restart from.  preflight.py checks the FINAL params
+# (every override above applied): contradictory settings, keys absent from the
+# binary, keys a 0-step start-up of the binary did not read, and -- when a seed
+# is set -- that the seed changes the t = 0 data.  A few seconds on the card.
+# A refusal removes the run dir and scratch cell (nothing is registered or
+# started) and keeps the params and the report under logs/preflight_refused/.
+# WHM_PREFLIGHT=static skips the start-ups (a card too full for a second
+# process); =off skips everything.  Both are recorded in run_manifest.json.
+TOOLS_PY="${WRAPPER_DIR}/.venv/bin/python"
+[[ -x "${TOOLS_PY}" ]] || TOOLS_PY="$(command -v python3)"
+TOOLS_BIN="${TOOLS_PY}"
+if [[ "${WHM_PROC_ALIAS:-1}" != "0" && "${TOOLS_PY}" == "${WRAPPER_DIR}/.venv/bin/python" ]]; then
+  ln -sfn "$(basename "${TOOLS_PY}")" "$(dirname "${TOOLS_PY}")/${PROC_LABEL}_pre"
+  PATH="$(dirname "${TOOLS_PY}"):${PATH}"
+  export PATH
+  TOOLS_BIN="${PROC_LABEL}_pre"
+fi
+# Entered through a file in the run dir, like post.py, so the public command
+# line shows "<label>_pre pre.py ..." with relative paths only.
+cat > "${RUN_DIR}/pre.py" <<PYTOOLS
+# written by run_single.sh: entry point for the launch-time checks
+import runpy, sys
+tool = sys.argv.pop(1)
+runpy.run_path({"preflight": "${SELF_DIR}/preflight.py",
+                "manifest": "${SELF_DIR}/run_manifest.py"}[tool], run_name="__main__")
+PYTOOLS
+whm_tool() { ( cd "${RUN_DIR:?}" && exec -a "${PROC_LABEL}_pre" "${TOOLS_BIN}" pre.py "$@" ); }
+
+PF_MODE="${WHM_PREFLIGHT:-full}"
+case "${PF_MODE}" in
+  full|static|off) ;;
+  *) echo "[whm] WHM_PREFLIGHT must be full, static or off (got '${PF_MODE}')" >&2; exit 2 ;;
+esac
+if [[ "${PF_MODE}" == "off" ]]; then
+  echo "[whm] preflight: OFF (WHM_PREFLIGHT=off) -- nothing checked; the manifest says so" >&2
+  printf '{"schema": 1, "verdict": "skipped (WHM_PREFLIGHT=off)"}\n' > "${RUN_DIR}/preflight.json"
+else
+  pf_status=0
+  WHM_EXE_NAME="$(basename "${EXE}")" whm_tool preflight \
+      --exe "${EXE_RUN}" --argv0 "${PROC_LABEL}" --params params.txt \
+      --gpu "${GPU%%,*}" --workdir scratch/_preflight --mode "${PF_MODE}" \
+      --json preflight.json ${WHM_RESTART:+--restart} || pf_status=$?
+  if [[ "${pf_status}" -ne 0 ]]; then
+    kept="${RUNS_DIR:?}/logs/preflight_refused/${NAME:?}_$(date -u +%Y%m%dT%H%M%SZ)"
+    mkdir -p "${kept}"
+    cp "${RUN_DIR:?}/params.txt" "${RUN_DIR:?}/preflight.json" "${kept}/" 2>/dev/null || true
+    for probe in run control; do
+      if [[ -f "${SCRATCH_DIR:?}/_preflight/${probe}/probe.log" ]]; then
+        cp "${SCRATCH_DIR:?}/_preflight/${probe}/probe.log" "${kept}/probe_${probe}.log"
+      fi
+    done
+    rm -rf "${SCRATCH_DIR:?}/_preflight" "${RUN_DIR:?}"
+    rmdir "${SCRATCH_DIR:?}" 2>/dev/null || true
+    if [[ "${pf_status}" -eq 1 ]]; then
+      echo "[whm] !! PREFLIGHT REFUSED THE LAUNCH -- nothing started, nothing registered." >&2
+    else
+      echo "[whm] !! PREFLIGHT COULD NOT RUN -- nothing started.  WHM_PREFLIGHT=static skips the start-ups." >&2
+    fi
+    echo "[whm]    params + report kept in runs/wormhole_merger/${kept#"${RUNS_DIR}"/}" >&2
+    exit "${pf_status}"
+  fi
+fi
+if [[ "${WHM_PREFLIGHT_ONLY:-0}" != "0" ]]; then
+  rm -rf "${SCRATCH_DIR:?}/_preflight" "${RUN_DIR:?}"
+  rmdir "${SCRATCH_DIR:?}" 2>/dev/null || true
+  echo "[whm] preflight only: PASSED -- nothing launched, run dir removed."
+  exit 0
+fi
+
+# Register the run (2026-09-09): one tab-separated line in the pack's registry,
+# so the summary table needs no code edit per run.  Only when the launch says
+# what the run is for; research/merger/closeout.sh warns about the rest.
+REGISTRY="${WHM_REGISTRY:-${REPO_ROOT}/results/merger/runs_registry.tsv}"
+if [[ -n "${WHM_WHAT:-}" && -f "${REGISTRY}" ]]; then
+  if grep -qP "^${NAME}\t" "${REGISTRY}"; then
+    echo "[whm] registry : ${NAME} already registered (WHM_WHAT ignored)"
+  else
+    printf '%s\t%s\t\t\n' "${NAME}" "${WHM_WHAT}" >> "${REGISTRY}"
+    echo "[whm] registry : ${NAME} -> ${REGISTRY#"${REPO_ROOT}"/}"
+  fi
+fi
+
+# What this run IS -- params, binary and the commit it carries, launcher commit,
+# node, card, preflight verdict, t = 0 diagnostics -- written before the first
+# step and completed at exit (run_manifest.py; packed beside the streams).
+# Revealing values go through the environment, not the public command line.
+WHM_MANIFEST_NAME="${NAME}" WHM_MANIFEST_TEMPLATE="${TEMPLATE}" WHM_MANIFEST_EXE="${EXE}" \
+  whm_tool manifest start --run-dir . --preflight preflight.json \
+  || echo "[whm] WARNING: run_manifest.json not written" >&2
 
 # ---------------------------------------------------------------------------
 # Plotfile consumer sidecar.
@@ -594,6 +692,9 @@ if [[ -n "${CONSUMER_PID}" ]]; then
     echo "[whm] final consumer pass reported an error -- see ${RUN_DIR}/consumer.log" >&2
 fi
 
+whm_tool manifest finish --run-dir . --status "${status}" \
+  || echo "[whm] WARNING: run_manifest.json not finished" >&2
+
 if [[ "${status}" -ne 0 ]]; then
   echo "[whm] run FAILED (exit ${status}) -- see ${RUN_DIR}/run.log" >&2
   exit "${status}"
@@ -605,3 +706,5 @@ if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
 fi
 left="$(find "${SCRATCH_DIR}" -maxdepth 1 -name '*Plt*' -type d 2>/dev/null | wc -l)"
 echo "[whm] plotfiles left on scratch: ${left} (${SCRATCH_DIR})"
+exit
+}

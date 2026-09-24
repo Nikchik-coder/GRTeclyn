@@ -62,8 +62,17 @@
 #                     params.txt", "test_post post.py …", "tee run.log".  It
 #                     hides the subject, not the usage: the username and the
 #                     busy cards stay visible.  run_single.sh, "Process table"
+#   --preflight MODE  full (default) | static | off.  run_single.sh checks the
+#                     final params against the binary before anything starts:
+#                     contradictory settings (checkpoints asked for with output
+#                     off), keys the binary does not read, and whether a seed
+#                     changes the t = 0 data.  static skips the two GPU start-ups;
+#                     off skips it all.  Either is recorded in run_manifest.json
+#   --preflight-only  run the preflight attached, print the verdict, launch
+#                     nothing (the run dir is removed again)
 #   --foreground      run attached (dies with the shell; for probes only)
-#   --dry-run         resolve and print everything, touch nothing
+#   --dry-run         resolve and print everything, touch nothing (includes the
+#                     no-GPU half of the preflight, on the template)
 #
 # EXAMPLES
 #   the level-3 down-step from a kept level-5 checkpoint (queue 1i, 2026-09-09):
@@ -71,6 +80,10 @@
 #         --name merge_headon_flip_d8_v1_lvl3down_t100 --gpu 0 --profile headon \
 #         --zoom 40 --keep-last 3 \
 #         --restart /tmp/grteclyn_scratch/_keep_lvl5/BinaryWormholeChk03500
+#   will this template run as written on this binary? (seconds, launches nothing):
+#     ... launch.sh --template params_single_pureq_q1e2_L128_ml4_scalar_t500.txt \
+#         --name check_t500 --gpu 1 --profile none --preflight-only \
+#         --binary runs/wormhole_merger/bin/main3d_guard_7166787a_2026-09-24.ex
 #   a one-step placement probe, attached, no consumer:
 #     ... launch.sh --template params_place_d8_step1.txt --name place_d8_step1 \
 #         --gpu 1 --profile none --keep-last 1 --foreground
@@ -89,6 +102,7 @@ TEMPLATES="${CAMPAIGN}/templates_scan"
 
 TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 CENTER="" KEEP_LAST=3
 RESTART="" BINARY="" MAX_LEVEL="" WHAT="" FOREGROUND=0 DRYRUN=0 LABEL="test"
+PREFLIGHT="full" PREFLIGHT_ONLY=0
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --template)   TEMPLATE="$2"; shift 2 ;;
@@ -105,15 +119,21 @@ while [[ $# -gt 0 ]]; do
     --max-level)  MAX_LEVEL="$2"; shift 2 ;;
     --what)       WHAT="$2"; shift 2 ;;
     --label)      LABEL="$2"; shift 2 ;;
+    --preflight)  PREFLIGHT="$2"; shift 2 ;;
+    --preflight-only) PREFLIGHT_ONLY=1; shift ;;
     --foreground) FOREGROUND=1; shift ;;
     --dry-run)    DRYRUN=1; shift ;;
-    -h|--help)    sed -n '2,60p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help)    sed -n '2,76p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *)            echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
   esac
 done
 for req in TEMPLATE NAME GPU PROFILE; do
   [[ -n "${!req}" ]] || { echo "missing --${req,,} (try --help)" >&2; exit 2; }
 done
+case "${PREFLIGHT}" in
+  full|static|off) ;;
+  *) echo "--preflight must be full, static or off (got '${PREFLIGHT}')" >&2; exit 2 ;;
+esac
 
 # --- resolve the template -------------------------------------------------
 if [[ -f "${TEMPLATE}" ]]; then
@@ -173,7 +193,9 @@ env_args=(
   "WHM_EXE=${BINARY}"
   "WHM_WHAT=${WHAT}"
   "WHM_PROC_LABEL=${LABEL}"
+  "WHM_PREFLIGHT=${PREFLIGHT}"
 )
+(( PREFLIGHT_ONLY )) && env_args+=("WHM_PREFLIGHT_ONLY=1")
 [[ -n "${RESTART}" ]]   && env_args+=("WHM_RESTART=${RESTART}")
 [[ -n "${MAX_LEVEL}" ]] && env_args+=("WHM_MAX_LEVEL=${MAX_LEVEL}")
 if [[ "${PROFILE}" == "none" ]]; then
@@ -189,6 +211,7 @@ echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" 
 [[ -n "${RESTART}" ]] && echo "[launch] restart  : ${RESTART}"
 echo "[launch] what     : ${WHAT}"
 echo "[launch] label    : ${LABEL}   (process table: '${LABEL} params.txt', '${LABEL}_post post.py …')"
+echo "[launch] preflight: ${PREFLIGHT}$( (( PREFLIGHT_ONLY )) && echo " -- ONLY: nothing will be launched")"
 
 if (( DRYRUN )); then
   /usr/bin/env "${env_args[@]}" WHM_DRYRUN=1 bash "${HERE}/run_single.sh"
@@ -204,11 +227,17 @@ fi
 # (run_single.sh, "Process table"); the same reason the log is opened by
 # redirection or written by a tee standing in the log directory.
 mkdir -p "${LOG_DIR}"
+# A preflight-only call is a question with an answer in seconds: run attached,
+# under its own log name so it never overwrites a real run's log.
+if (( PREFLIGHT_ONLY )); then
+  FOREGROUND=1
+  LOG="${LOG_DIR}/${FULL_NAME}.preflight.log"
+fi
 if (( FOREGROUND )); then
   echo "[launch] attached -- dies with this shell; log also at ${LOG#"${REPO}"/}"
   ( cd "${LOG_DIR}" \
     && /usr/bin/env "${env_args[@]}" bash -c 'cd "$3" && exec -a "$1" bash "$2"' \
-         _ "${LABEL}_job" run_single.sh "${HERE}" 2>&1 | tee "${FULL_NAME}.log" )
+         _ "${LABEL}_job" run_single.sh "${HERE}" 2>&1 | tee "$(basename "${LOG}")" )
 else
   ( cd "${HERE}" \
     && /usr/bin/env "${env_args[@]}" setsid nohup \

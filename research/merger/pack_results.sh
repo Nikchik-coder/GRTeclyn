@@ -61,7 +61,11 @@ SCRATCH="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}"
 source "${ROOT}/grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.sh"
 
 export ROOT SIM_ROOT
-PY_BIN="${ROOT}/.venv/bin/python"
+# The campaign's interpreter is the wrapper's venv (`cd grteclyn-wrapper && uv sync
+# --extra plots`), as for run_single.sh and closeout.sh; the root .venv is the
+# fallback it used to be the first choice for.
+PY_BIN="${ROOT}/grteclyn-wrapper/.venv/bin/python"
+[[ -x "${PY_BIN}" ]] || PY_BIN="${ROOT}/.venv/bin/python"
 [[ -x "${PY_BIN}" ]] || PY_BIN="$(command -v python3)"
 scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py" "$@"; }
 
@@ -108,7 +112,7 @@ while IFS= read -r rundir; do
   # extraction step) keeps its note, its provenance and the log with the
   # abort in it -- that is the whole evidence such an arm contributes.
   if [[ ! -d "${rundir}/data" && ! -d "${rundir}/extraction_data" ]]; then
-    for f in LOST.md launch_banner.txt; do
+    for f in LOST.md launch_banner.txt run_manifest.json; do
       [[ -f "${rundir}/${f}" ]] && cp "${rundir}/${f}" "${out}/"
     done
     [[ -f "${rundir}/params.txt" ]] && cp "${rundir}/params.txt" "${out}/evolution_params.txt"
@@ -118,7 +122,7 @@ while IFS= read -r rundir; do
     elif [[ -f "${rundir}/run.log" ]]; then
       tail -n 200 "${rundir}/run.log" > "${out}/run_tail.log"
     fi
-    found=$(find "${out}" -maxdepth 1 -type f \( -name '*.txt' -o -name '*.md' -o -name '*.log' \))
+    found=$(find "${out}" -maxdepth 1 -type f \( -name '*.txt' -o -name '*.json' -o -name '*.md' -o -name '*.log' \))
     [[ -n "${found}" ]] && scrub ${found}
     echo "[pack-merger] ${run}: log-only arm ($(find "${out}" -type f | wc -l) files)"
     continue
@@ -182,6 +186,10 @@ PY
   [[ -f "${rundir}params.txt" ]] && cp "${rundir}params.txt" "${out}/evolution_params.txt"
   [[ -f "${rundir}params__part1.txt" ]] && cp "${rundir}params__part1.txt" "${out}/evolution_params__part1.txt"
   [[ -f "${rundir}launch_banner.txt" ]] && cp "${rundir}launch_banner.txt" "${out}/"
+  # What the run IS (run_manifest.py): the launcher writes it since 2026-09-24,
+  # `run_manifest.py backfill-all` reconstructs it for older runs.  It feeds
+  # analysis/run_index.py, which checks every name and seed against it.
+  [[ -f "${rundir}run_manifest.json" ]] && cp "${rundir}run_manifest.json" "${out}/"
   [[ -f "${rundir}Backtrace.0" ]] && cp "${rundir}Backtrace.0" "${out}/backtrace.txt"
   if [[ -f "${rundir}run.log.gz" ]]; then
     zcat "${rundir}run.log.gz" | tail -n 200 > "${out}/run_tail.log"
@@ -364,6 +372,7 @@ fi
 # These write markdown and .dat only, and import nothing outside the pack, so a
 # copy of results/merger stays runnable with a stock Python.  Figures are step 5.
 "${PY_BIN}" "${DEST}/analysis/make_summary.py" "${DEST}"
+"${PY_BIN}" "${DEST}/analysis/run_index.py" "${DEST}" || echo "[pack-merger] run index failed -- continuing"
 "${PY_BIN}" "${DEST}/analysis/single_throat_instability.py" "${DEST}"
 "${PY_BIN}" "${DEST}/analysis/throat_clock_comparison.py" "${DEST}" || echo "[pack-merger] clock comparison failed -- continuing"
 "${PY_BIN}" "${DEST}/analysis/placement_curve.py" "${DEST}" || echo "[pack-merger] placement curve failed -- continuing"

@@ -19,6 +19,9 @@ template, a name, a card and a profile. It is not a new script.**
 | `launch.sh` | The launcher. Resolves the template, the binary, the restart suffix, the consumer flags and the registry line, then hands off. |
 | `lib/consumer_profiles.sh` | What the consumer extracts, under a name. Data, not code. |
 | `run_single.sh` | The engine: clones the params, rewrites output paths onto node-local scratch, starts the binary and the consumer sidecar, registers `launcher.pid`. Called by `launch.sh`; do not call the binary yourself. |
+| `preflight.py` | Run by `run_single.sh` on the final params before anything is registered or started: refuses contradictory settings (checkpoints asked for with output off), keys the binary does not read (static + a 0-step start-up with `amr.abort_on_unused_inputs`), and seeds that do not change the t = 0 data. Seconds. Allowed exceptions, each with its reason: `preflight_allow.txt`. |
+| `run_manifest.py` | Writes `run_manifest.json` at launch (params, binary + its commit, launcher commit, node label, card, preflight verdict, t = 0 norms) and completes it at exit; `backfill-all` reconstructs one for older runs. The pack carries it; `results/merger/analysis/run_index.py` checks names and seeds against it. |
+| `build_binary.sh` | Builds `main3d_<tag>_<commit>_<date>.ex` into `runs/wormhole_merger/bin/` from a clean tree, stamped with its commit, and appends its row to `results/merger/binaries.tsv`. Its own object dir: the example's live build product is never touched. |
 | `run_spiral.sh` | Thin front-end that sets the orbit defaults and delegates to `run_single.sh`. |
 | `phase1_initial_data.sh` | The t = 0 GO/NO-GO gate. Every run in it sets `max_steps = 0`; the measurement is the initial data. |
 | `keep_checkpoints.sh` | Copies named checkpoints out of a rolling run before it deletes them. |
@@ -39,7 +42,12 @@ bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh \
 
 That is the whole interface. `--dry-run` resolves everything and touches
 nothing — use it every time before a real launch, because it prints the run
-directory, the binary and the registry line it is about to commit to.
+directory, the binary and the registry line it is about to commit to, and
+runs the no-GPU half of the preflight on the template. `--preflight-only`
+runs the whole preflight on the card (seconds) and launches nothing: the
+question "will this template run as written on this binary?" has an answer
+before any GPU-hour is spent. A refused launch leaves no run directory and no
+registry line; its params and report go to `runs/wormhole_merger/logs/preflight_refused/`.
 
 Templates resolve against `runs/wormhole_merger/templates_scan/` by bare name,
 or you can pass a path (the vacuum BBH control's params live under
