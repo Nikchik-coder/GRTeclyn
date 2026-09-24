@@ -1,4 +1,4 @@
-# Status — 2026-09-24 06:50 UTC
+# Status — 2026-09-24 15:45 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -8,8 +8,8 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 | run | where | progress | ETA (at 6.84 units/h) | answers |
 |---|---|---|---|---|
-| `single_pureq_q1e2_L128_ml4_scalar_t500` | first GPU node, GPU 0 | t = 130.3 / 500 (06:46) | t = 150 in 2.9 h (09:40 today); t = 300 Fri 07:40; t = 500 Sat 09-26 ~12:50 | where the inflating throat ends: saturation, coast or turnover. Read at t = 100–112: "RUN ON" |
-| `single_eps_p1e2_L128_ml4_t250` (t250 TAKE 2) | first GPU node, GPU 1, since 06:26 | t = 2.5 / 250 (06:46); 7.7 u/h so far | t = 100 at ~21:00 today; t = 250 Fri 09-25 ~19:00 (36 h) | where the regrown horizon of the +1 % kicked collapse converges, in the box that survives the era (L = 128, level 4). Chk00000 and frame 0 verified 06:27; rolling Chk every 5 units, keep 3 |
+| `single_pureq_q1e2_L128_ml4_scalar_t500` | first GPU node, GPU 0 | t = 191.9 / 500 (15:44) | t = 300 in 15.8 h (Fri 07:30); t = 500 in 45 h (Sat 09-26 ~12:45) | where the inflating throat ends: saturation, coast or turnover. Read at t = 100–112: "RUN ON" |
+| `single_eps_p1e2_L128_ml4_t250` (t250 TAKE 2) | first GPU node, GPU 1, since 06:26 | t = 70.6 / 250 (15:44), 7.6 u/h | t = 250 in 23.6 h (Fri 09-25 ~15:20) | **its question is gone**: the regrowth it was to follow is numerical (below). Useful to t ≈ 70 for the constraint history at the horizon (rolling Chk, plotfiles) and as a box check (= the L = 64 level-4 arm to 1e-4 in R through t = 41). **Stop now or run on: the user's call** — the remaining ~24 GPU-h would buy G14/G15 instead |
 
 - The t500 arm is **an unkicked L = 128 level-4 throat**, not a pure quadrupole: it was
   launched on the old campaign pin (`main3d_boost_2026-09-08.ex`), which does not read `wormhole_seed_l2_amplitude_A`
@@ -36,7 +36,8 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 - **η = 4 level-5 death-window hunt** (Plt05520–06000): censored or naked. Needs a session on the second node.
 - **Probe 2 MOTS location** (η = 4 head-on, level 5): verdict still pending, second node.
-- Audit runs A1–C2 below. They run on the campaign pin, `main3d_guard_7166787a_2026-09-24.ex` since 06:10 today (stamped; reads the seed and the core profile). A restart of an old-pin run keeps the old pin unless `--binary` says otherwise.
+- **The runs the paper now asks for: G1–G16** ["2026-09-24 (afternoon) — the user's read of the whole paper"], ~300 GPU-h in all; the cheap discriminators first: G14/G15 (what makes the numerical regrowth, ~12 GPU-h each), G13 (the ε₂ decades, ~22), G1 (η = 4 chain on L = 128, ~12), G4 (curvature invariants at the wall, ~1 + code).
+- Audit runs A1–A4 below; B1–B4 and C1–C2 are now G8–G11 and G6–G7. They run on the campaign pin, `main3d_guard_7166787a_2026-09-24.ex` since 06:10 today (stamped; reads the seed and the core profile). A restart of an old-pin run keeps the old pin unless `--binary` says otherwise.
 - Ambiguous: the lp2 level-5 head-on is "CANCELLED" [REFEREE-QUEUE CLOSEOUT] but listed as queued [evening audit]; treat as cancelled.
 
 ## Open questions → the runs that settle them  ["2026-09-23 (evening) — the article audit…"]
@@ -56,21 +57,17 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Verdicts (the paper's wording; paper section in parentheses)
 
-- **Single throat**: unstable fixed point, one exponential mode; truncation noise picks the branch; the collapse horizon regrows 9–11 %, saturation open at t = 100; inflation end state open (t500). (§IV)
-- **Seeded throat**: a kick picks the fate opposite to its sign; the "round-off-marginal pure quadrupole" is withdrawn (the seed never applied). (§IV.C)
+- **Single throat**: unstable fixed point, one exponential mode; the e-fold is within 2.5 % (level 4) and 15 % (level 3) of the PARAMETER-MATCHED González–Guzmán–Sarbach linear rate (our throat is their γ₁ = 0.5 member: T = 0.758; τ_lin = 5.13 M); truncation noise picks the branch. The collapse horizon SHRINKS 40 % as it swallows the phantom; the 9–11 % REGROWTH in the scans is NUMERICAL (spherical first law forbids it; it tracks a constraint-violation double layer reaching the MOTS; same in purely spherical data; the pure quadrupole never regrows). Inflation end state open (t500). (§IV)
+- **Seeded throat**: a kick picks the fate opposite to its sign; the seed is not constraint-solved (H defect ∝ ε, 0.93×16π|ρ| on the shell at 1 %); ε = ±0.1 both collapse (+0.1 makes the throat a maximum, trapped at t = 1; −0.1 re-expands, then collapses) and die at the origin, not "from a Hamiltonian violation". (§II.D, §IV.C)
 - **Two throats at rest**: like signs repel, opposite attract; force ∝ (d + δ)⁻², δ ≈ 3–4. (§V)
-- **Head-on**: common MOTS from t = 22 around both throats; the level-3 death is the grid's, level 5 runs clean to t = 100. (§VI)
-- **Spiral**: every "spiral" is a plunge; a shape-free finder finds a common MOTS 5.4 units before the NaN; the wall is censored, mechanism open. (§VII)
-- **Fly-by / capture**: p = 0.45 scatters with no trapped surface; merge/escape boundary between p = 0.25 and 0.35. (§VII.A)
-- **Waves**: every channel radiates; the fly-by is loudest; the scalar channel is comparable to the gravitational one (ratio 3.2 → 0.8 with the cut on the running E_GW, 2.7 → 1.4 band-limited) and negative-energy; the horizon switches it off; the collapsing throat rings at the Schwarzschild period of its late mass. (§VIII)
-- **LIGO**: no candidate in 2.26 h of O3b; fitting factors track record length, not source. (§X)
-- **Astrophysics**: no wormhole inspiral; collapse as a heavy-seed channel is possible, not computed. (§XI)
+- **Head-on**: common MOTS from t = 22, born with both throats' area (R = 1.01 √2 R⋆), around both throats behind a trapped neck; it never bounces (first law) and shrinks toward the pair's Bondi mass, 2M_B ≈ 4.1 (at t = 97: 1.07 R⋆, 4 % above 2M_ADM); the late decline is not accretion. The level-3 death is the grid's; level 5 runs clean to t = 100. (§VI)
+- **Spiral**: every "spiral" is a plunge; a shape-free finder finds a common MOTS 5.4 units before the NaN, with BOTH wormholes inside (pits distinct to the χ floor) behind a common neck (R = 3.87 at t = 60); the wall is censored; not "more momentum → stronger curvature" (max|K| says no); what falls with p is the grid's leverage. (§VII)
+- **Fly-by / capture**: p = 0.45 scatters with no trapped surface; every p ≤ 0.25 merges, every p ≥ 0.35 does not. (§VII.A)
+- **Waves**: every channel radiates; the fly-by is loudest; the collapsing throat's wave is linear in ε₂ and the radial kick moves only its phase; it rings at the Schwarzschild period of its late mass (fit drawn); the scalar channel is comparable and negative-energy; the horizon switches it off. (§VIII)
+- **LIGO**: no candidate in 2.26 h of O3b, and none expected (no throat survives; conversions are at z ≳ 20). (§IX)
+- **Astrophysics**: no ghost-scalar wormhole inspiral (rotation is the open exception); collapse is a heavy-seed channel whose conversion bursts LISA would detect ONE BY ONE (SNR 61–500 at 10⁵–10⁶ M⊙, z = 20; > 8 from 3×10⁴ to 4×10⁶ M⊙), limited by abundance; the negative-energy deposit cannot be Λ (w, sign, size: Ω_WH ≈ 60–800 needed). (§X)
 
-**Plan vs paper**: the plan still carries superseded readings (spiral "no horizon
-ever forms", regrowth "+17 %", spiral scalar ratio 2.41, ×7.8 fly-by growth as a
-measurement, a spiral burst resolution check, the ringdown "21 % short"). The paper is the
-current word: every number in it passes `claims.py check` (852 rows, 0 problems) since the
-[`FINDINGS.md`](article/claims/FINDINGS.md) fixes of 2026-09-24 (27 numbers, ~20 statements).
+**Plan vs paper**: the paper is the current word — 956 ledger rows, 0 problems (`claims.py check`, 2026-09-24 15:40). The plan's older entries still carry superseded readings (the regrowth as physics, "no horizon ever forms" for the spiral, "+17 %" regrowth, the ×7.8 fly-by growth as a measurement, the "21 % short" ringdown).
 
 ## Traps (each has cost a run)
 
