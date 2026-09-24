@@ -497,16 +497,69 @@ def _scalar_channel(run: str, R: int):
     return S, tg, S._cum(tg, fg), ts, S._cum(ts, kin), per_l
 
 
+@functools.lru_cache(maxsize=None)
+def _band_egw(run: str, R: int, t_cut: float, M: float = 2.0) -> float:
+    """E_GW through sphere R by t_cut in Fig. psi4_ligo(d)'s convention, code units:
+    the band integral of |int r Psi4_22 dt'|^2 about the record's resolved Psi_4 peak
+    (plot_psi4_ligo.prepare's band_energy), doubled for +-m.  Unlike the running
+    integral of plot_scalar_channel it does not accumulate the low-frequency drift of
+    the time-integrated Psi_4."""
+    pm, streams = _mod("psi4_math"), _mod("streams")
+    t, d = streams.load_l2_all(_run_path(run) / "psi4_mode_l2_all.dat")
+    keep = t <= t_cut + 1e-9
+    u, w = (t[keep] - float(R)) / M, d[(2, float(R))][keep] * M
+    dt = (u[-1] - u[0]) / (u.size - 1)
+    return float(pm._compute_radiated_energy(u, w, m=2, f_peak=_band_peak(w, dt))) * M
+
+
 @extractor
 def waves_scalar_ratio(run: str, R: int, t_cut: float, estimator: str = "kin") -> float:
     """|E_phi| / E_GW through sphere R by t_cut (plot_scalar_channel): the
-    kinematic-flux integral, or estimator = 'wavezone' for sum_lm |dA_lm/dt|^2."""
+    kinematic-flux integral over the figure's running E_GW; estimator = 'wavezone'
+    for sum_lm |dA_lm/dt|^2 over the same E_GW; 'band' for the kinematic integral
+    over the band-limited E_GW of Fig. psi4_ligo(d) (_band_egw)."""
     S, tg, Eg, ts, Ep, per_l = _scalar_channel(run, R)
+    if estimator == "band":
+        return abs(S._at(ts, Ep, t_cut)) / _band_egw(run, int(R), float(t_cut))
     g = S._at(tg, Eg, t_cut)
     if estimator == "kin":
         return abs(S._at(ts, Ep, t_cut)) / g
     k = ts <= t_cut
     return float(sum(np.trapezoid(per_l[l][k], ts[k]) for l in S.ELLS) / g)
+
+
+@extractor
+def waves_id_sphere(run: str, R: float, field: str, stat: str = "min", n: int = 181) -> float:
+    """The initial data on the coordinate sphere of radius R about the box centre,
+    from the run's own params and research.tex Sec. II (alpha = e^u, chi = e^(2u)
+    psi^-4, u = u_A + u_B, psi = 1 + sum_i (sqrt(Omega_i) - 1)): field 'alpha', 'chi',
+    or 'flux_factor' = alpha^2 chi^-1/2, the factor between the kinematic scalar flux
+    and Eq. scalarflux at zero shift on a conformally flat sphere; stat min / max /
+    mean (area-weighted) over the sphere.  No stream records alpha or chi on the
+    sphere, so this is the only reading there is -- the t = 0 value."""
+    p = params(run)
+
+    def vec(key):
+        return np.array([float(x) for x in p[key].split()[:3]])
+
+    th = np.linspace(0.0, math.pi, n)
+    ph = np.linspace(0.0, 2.0 * math.pi, 2 * n, endpoint=False)
+    T, P = np.meshgrid(th, ph, indexing="ij")
+    x = R * np.stack([np.sin(T) * np.cos(P), np.sin(T) * np.sin(P), np.cos(T)], axis=-1)
+    u = np.zeros(T.shape)
+    psi = np.ones(T.shape)
+    for b in ("A", "B"):
+        a, m = float(p[f"wormhole_throat_radius_{b}"]), float(p[f"wormhole_drainhole_mass_{b}"])
+        r = np.linalg.norm(x - vec(f"wormhole_center{b}"), axis=-1)
+        X = (r - a * a / (4.0 * r)) / a
+        u += (m / a) * (np.arctan(X) - 0.5 * math.pi)
+        psi += np.sqrt(1.0 + a * a / (4.0 * r * r)) - 1.0
+    alpha, chi = np.exp(u), np.exp(2.0 * u) * psi ** -4
+    vals = {"alpha": alpha, "chi": chi, "flux_factor": alpha ** 2 / np.sqrt(chi)}[field]
+    if stat == "mean":
+        wgt = np.sin(T)
+        return float((vals * wgt).sum() / wgt.sum())
+    return float({"min": vals.min, "max": vals.max}[stat]())
 
 
 @extractor

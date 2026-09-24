@@ -57,6 +57,8 @@ A sphere is fitted only where its junk-free stretch after the burst carries at l
 
 Period **20.6 M** — -21 % against the target; e-fold 40 M (+130 %).
 
+**Against the hole's own mass** (2026-09-24). The fixed target takes M_MS = 1.56, the scan's reading near t = 24. Over the fitted window (t = 26–58) the throat-centred scan's M_MS falls 1.47 → 1.16 and recovers to 1.21, where the Schwarzschild period 2π M/0.374 is 19.5–20.3 M: the measured period sits within a few per cent of the hole's late mass. The deficit against the fixed target is the mass the hole has lost, not an anomalous frequency.
+
 Window dependence at R = 10 — the period is stable, the e-fold is not:
 
 | fitted to t ≤ | period (M) | e-fold (M) |
@@ -89,5 +91,5 @@ And the result that settles the junk: the control's own R = 14 crosses 1e-3 at t
 
 ### What the five gates say together
 
-One throat, kicked out of spherical symmetry, radiates. The burst leaves in radius order at the speed of light, carries the same r·Ψ₄ to every sphere, scales with the kick, and stands an order of magnitude above a control that received the same spherical push without the quadrupole. What is left rings at one frequency — but at a period 21 % short of the Schwarzschild value, and its damping time cannot be measured on this record at all. Gates 1, 2, 3 and 5 pass; gate 4 passes on the period and fails on the e-fold.
+One throat, kicked out of spherical symmetry, radiates. The burst leaves in radius order at the speed of light, carries the same r·Ψ₄ to every sphere, scales with the kick, and stands an order of magnitude above a control that received the same spherical push without the quadrupole. What is left rings at one frequency, within a few per cent of the Schwarzschild period of the hole's late mass (21 % short of the fixed target at the mass it had near t = 24), and its damping time cannot be measured on this record at all. Gates 1, 2, 3 and 5 pass; gate 4 passes on the period and fails on the e-fold.
 

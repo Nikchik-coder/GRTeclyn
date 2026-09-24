@@ -609,6 +609,22 @@ def mergers_psi4_diff(a: str, b: str, radii: list, lo: float, hi: float,
 
 
 @extractor
+def mergers_pipeline_peak(run: str, radii: list, lo: float, hi: float) -> float:
+    """Worst 100 |peak_offline / peak_in-code - 1| over the spheres: the largest
+    |r Psi4^20| in [lo, hi] of the consumer's psi4_mode_l2m0.dat (offline, from
+    plotfiles) against the in-code Weyl4_mode_20.dat of the same run.  Meaningful
+    only where the burst stands above the in-code floor (the head-on; on the single
+    throats the in-code stream is floor-dominated inside the burst window)."""
+    rr = tuple(_RADII_L64)
+    ta, sa = _mode(run, "Weyl4_mode_20.dat", rr)
+    tb, sb = _mode(run, "psi4_mode_l2m0.dat", rr)
+    wa = (ta >= lo - 1e-9) & (ta <= hi + 1e-9)
+    wb = (tb >= lo - 1e-9) & (tb <= hi + 1e-9)
+    return float(max(100.0 * abs(np.abs(sb[r][wb]).max() / np.abs(sa[r][wa]).max() - 1.0)
+                     for r in radii))
+
+
+@extractor
 def mergers_psi4_m6(a: str, b: str, radius: float, modes: list, fraction: bool = False) -> float:
     """The M6 test (SERIES README): worst over the modes of max|a - b| (complex r psi4)
     on the shared window, over the unfrozen arm a's own peak |r psi4| -- in percent, or

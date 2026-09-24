@@ -45,7 +45,7 @@ import statistics
 
 import numpy as np
 
-from lib import PACK, extractor, run_dir
+from lib import EXTRACTORS, PACK, extractor, run_dir
 from pack_paths import iter_runs
 
 HERE = pathlib.Path(__file__).resolve().parent
@@ -666,6 +666,21 @@ def detector_lifetime_orbits(log10_eps: float, tau=None, d_over_M: float = 6.0, 
 def detector_seed_budget(ratio: float, tau=None) -> float:
     """tau ln(ratio): the time a seed lowered by ratio buys, code units."""
     return _tau(tau) * math.log(ratio)
+
+
+@extractor
+def detector_seed_budget_measured(what: str = "units", tau=None, d_over_M: float = 6.0,
+                                  M: float = 2.0) -> float:
+    """What constraint-solved data could buy, from the paper's own seeds: the seed
+    lowered from the superposition defect's effective seed (the fly-by's mouth fit,
+    detector_mouth_seed) to the level-3 truncation seed (single_noise_seed, itself a
+    lower bound, so the ratio is an upper bound).  what = 'ratio', 'units'
+    (tau ln ratio) or 'orbits' (units over the ISCO orbital period)."""
+    ratio = detector_mouth_seed(arm="flyby") / EXTRACTORS["single_noise_seed"]()
+    if what == "ratio":
+        return ratio
+    units = _tau(tau) * math.log(ratio)
+    return units if what == "units" else units / _t_orb(d_over_M, M)
 
 
 # =============================================================== the heavy-seed channel

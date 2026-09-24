@@ -370,7 +370,10 @@ and the framing was wrong — see below.)*
   (`single_eps_p1e2_q1e2_chk_t100` + `..._ml4_t100_r02500`, stitched, t ≤ 51)
   the ratio is **4.85 for the 5 the kick was multiplied by**, per-sphere 4.41 to
   5.52. Noise does not do this. (4) *Ringdown against Schwarzschild* — the
-  period is **20.6 M against the 26 M target, 21 % short**; the e-fold **cannot
+  period is **20.6 M**: 21 % short of the gate's fixed 26 M target (set at M_MS = 1.56, the
+  mass near t = 24), but within a few per cent of the Schwarzschild period of the hole's own
+  late mass, 19.5–20.3 M at M_MS = 1.16–1.21 (corrected 2026-09-24,
+  `research/merger/article/claims/FINDINGS.md`); the e-fold **cannot
   be measured on this record** (it moves from 60 M to 29 M as the window is
   opened, because the decaying tail is where the junk grows into it), so no
   damping time is quoted. (5) *Control floor* — 8.1e-5 at R = 14 over the burst
@@ -428,8 +431,9 @@ and the framing was wrong — see below.)*
   with throat *width*, not mass. Reversing one throat's scalar field turns the
   push into a pull — the only gravity-driven route to a merger. At a = 2 the
   magnitude is pinned by the orientation flip, where the coordinate under-read
-  cancels between two arms of the same width: pull/push 1.511 ± 0.033 measured
-  against 1.500 predicted.
+  cancels between two arms of the same width: pull/push 1.518 ± 0.021 measured
+  (`campaign/03_two_throats/sign_rule_displacement.dat`, the article's value; the first
+  reduction read 1.511 ± 0.033) against 1.500 predicted.
 - **The magnitude law is NOT yet confirmed across widths** (#8, 2026-09-04).
   Four rest-release arms at a = 1 / 1.5 / 2 / 3, byte-identical but for the
   radius, give displacements by t = 11 of 0.147 / 0.283 / 0.416 / 0.615 —
@@ -460,9 +464,10 @@ and the framing was wrong — see below.)*
     inverse-square.
   - F ∝ 1/(d + δ)² with **δ ≈ 3.5** fits; all six rung pairs give δ =
     3.77 / 3.67 / 3.47 / 3.54 / 3.27 / 2.95.
-  - This was a **blind prediction**. δ = 3.4 was fitted on d = 12/14/16 alone,
-    before d = 18 reached t = 11.5. It predicts 0.243 there; pure 1/d² predicts
-    0.209; the measurement is **0.2438** — 0.3% from the offset model, 17% from
+  - This was a **blind prediction**. δ was fitted on d = 12/14/16 alone,
+    before d = 18 reached t = 11.5 (δ = 3.4 then; 3.69 in the least-squares re-fit the
+    article uses). It predicts 0.243 there (0.246 re-fit); pure 1/d² predicts
+    0.209; the measurement is **0.2438** — 0.3% (0.8% re-fit) from the offset model, 17% from
     inverse-square.
   - δ ≈ 3.5 is comparable to the independently measured physical throat radius
     at a = 2, which is **4.29**. The reading is that the coordinate centre
@@ -694,7 +699,8 @@ and nothing in this section may be quoted as a surface, a mass, or a dissolution
   the same answer at depth.  And the boundary is finer than "0.12 fuses,
   0.20 hovers": `..._p015_nofill_t060` and its insured rerun
   `..._p015_rr_t060` *(pack)* put **p = 0.15 on the fusing branch** —
-  plateau at pit sep 0.816 (p012's was 0.815), dive to 0.70 with the core
+  plateau at pit sep 0.87 (p012's was 0.81; the modal tracker separation before the
+  dive, as the article reads it -- this line said 0.816/0.815 until 2026-09-24), dive to 0.70 with the core
   lapse *rising* (p012's endgame signature) — but the wall (53.35, the
   same step in both runs) cut it before the pits coincided.  So the fusing/
   hovering divide sits between 0.15 and 0.20.  The restart-refinement

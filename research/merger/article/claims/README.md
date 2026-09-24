@@ -23,9 +23,9 @@ run `check`, then `tex`.  Never edit `numbers.tex` by hand.  A `manual` row is a
 number the pack cannot reproduce; its `source` says where it comes from, and it
 is a candidate for packing whatever it was computed from.
 
-State on 2026-09-24: 827 rows, 741 recomputed, 714 agree. The rest, and the
-statements the data contradict, are listed in [`FINDINGS.md`](FINDINGS.md):
-`check` keeps failing on those 27 rows until the article or the analysis is
-corrected.  `table1_groups.tsv` maps every packed run to its Table I group, so
+State on 2026-09-24: 852 rows, 773 recomputed, all agree (`check` exits 0).
+The first build found 27 numbers and about twenty statements the data
+contradicted; [`FINDINGS.md`](FINDINGS.md) lists them with the fix each got,
+and what is still open.  `table1_groups.tsv` maps every packed run to its Table I group, so
 the table's counts are recomputed too.  Rows needing the wrapper's figure code
 (and pycbc for the detector rows) run under `grteclyn-wrapper/.venv`.

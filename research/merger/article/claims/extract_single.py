@@ -560,6 +560,34 @@ def single_peak_window_rate(run: str, width: float = 10.0, what: str = "rate",
 
 
 @extractor
+def single_local_rate(run: str, t: float, hw: float = 3.0, ref: str | float = "Rstar") -> float:
+    """The +-hw log-slope of |R - ref| at time t -- plot_branches' sliding rate, taken
+    about the static R_star rather than R(0), since a kicked arm starts displaced:
+    the local growth rate of the deviation, for an arm that shows no plateau."""
+    a = _areal(run)
+    return _log_slope(a[:, 0], a[:, 1] - _ref_radius(run, ref), t, hw)
+
+
+@extractor
+def single_flow_selftest(what: str) -> float:
+    """The shape-free flow finder's analytic self-test, read from its packed log
+    (campaign/05_binary_spiral/flow_finder_selftest.log, ah_flow_finder.py --analytic
+    all): 'schw_R' / 'schw_M' = the worst percent error of R against 2M = 1 and of
+    M_MS against M = 0.5 over every Schwarzschild seed and lmax; 'n_pass' = how many
+    of the log's cases passed (Ellis cases pass by finding no surface)."""
+    text = _campaign_file("flow_finder_selftest.log").read_text()
+    cases = [l for l in text.splitlines() if l.startswith(("schw ", "ellis "))]
+    if what == "n_pass":
+        return float(sum("PASS" in l for l in cases))
+    key, ref = {"schw_R": ("R", 1.0), "schw_M": ("M_MS", 0.5)}[what]
+    vals = [float(m.group(1)) for l in cases if l.startswith("schw ")
+            for m in [re.search(rf"\b{key}=([0-9.]+) vs", l)] if m]
+    if not vals:
+        raise ValueError("no Schwarzschild case in the self-test log")
+    return float(max(100.0 * abs(v / ref - 1.0) for v in vals))
+
+
+@extractor
 def single_max_rel_diff(run_a: str, run_b: str, file: str = "areal_radius.dat", col: int = 1,
                         t0: float | None = None, t1: float | None = None) -> float:
     """max |b/a - 1| in percent over the two runs' common output times."""

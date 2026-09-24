@@ -31,6 +31,8 @@ Each kills a competing explanation for the baseline's separation.
 
       |infall_C| / |escape_A| = (1 + 5)/(5 - 1) = 1.500   predicted
                               = 1.511 +/- 0.033           measured, 15 times, t = 3.5 .. 10.5
+                              = 1.518 +/- 0.021           re-reduced from sign_rule_displacement.dat
+                                                          (the article's value, 2026-09-24)
 
 | t | A: like charges | C: opposite | ratio |
 | --- | --- | --- | --- |

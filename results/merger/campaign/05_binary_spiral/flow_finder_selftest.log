@@ -1,0 +1,13 @@
+# ah_flow_finder.py analytic self-test (no plotfile): Kerr-Schild Schwarzschild M = 0.5 (R = 2M = 1, M_MS = 0.5)
+# from spherical and dented seeds at lmax 0 and 4, and the time-symmetric Ellis throat (no MOTS may be found).
+# command: PYTHONPATH=grteclyn-wrapper/src grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/validation/ah_flow_finder.py --analytic all
+# run 2026-09-24 at commit 209a7308 (script last changed in 7656f24d); read by claims/extract_single.single_flow_selftest
+schw lmax=0 seed r0=1.3 dent=0.0: PASS (theta_out -> 0, steps=27, R=0.9997 vs 1.0, M_MS=0.4996 vs 0.5, deform=0.00e+00, theta_in_max=-2.821)
+schw lmax=0 seed r0=0.8 dent=0.0: PASS (theta_out -> 0, steps=27, R=0.9985 vs 1.0, M_MS=0.4996 vs 0.5, deform=0.00e+00, theta_in_max=-2.825)
+schw lmax=0 seed r0=1.2 dent=0.12: PASS (theta_out -> 0, steps=24, R=0.9997 vs 1.0, M_MS=0.4996 vs 0.5, deform=0.00e+00, theta_in_max=-2.820)
+schw lmax=4 seed r0=1.3 dent=0.0: PASS (theta_out -> 0, steps=26, R=0.9999 vs 1.0, M_MS=0.4994 vs 0.5, deform=3.83e-05, theta_in_max=-2.822)
+schw lmax=4 seed r0=0.8 dent=0.0: PASS (theta_out -> 0, steps=20, R=0.9976 vs 1.0, M_MS=0.4994 vs 0.5, deform=3.79e-05, theta_in_max=-2.830)
+schw lmax=4 seed r0=1.2 dent=0.12: PASS (theta_out -> 0, steps=24, R=1.0001 vs 1.0, M_MS=0.4994 vs 0.5, deform=3.85e-05, theta_in_max=-2.821)
+ellis lmax=4 seed r0=0.4: PASS (no MOTS) (theta_out -> 0 but theta_in >= 0, steps=6, rms=1.51e-03, h=[0.500,0.502])
+ellis lmax=4 seed r0=0.7: PASS (no MOTS) (theta_out -> 0 but theta_in >= 0, steps=8, rms=1.35e-03, h=[0.501,0.503])
+ellis lmax=4 seed r0=1.1: PASS (no MOTS) (theta_out -> 0 but theta_in >= 0, steps=13, rms=1.60e-03, h=[0.501,0.503])
