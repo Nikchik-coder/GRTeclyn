@@ -161,19 +161,19 @@ about the $z$ axis through the throat. $K_{ij}$ and $\Pi$ are untouched, so the 
 \label{tab:matrix}
 \scriptsize
 \begin{ruledtabular}
-\begin{tabular}{llcc|llcc}
+\begin{tabular}{lp{0.215\textwidth}cc|lp{0.195\textwidth}cc}
 group & knob(s) & runs & Sec. & group & knob(s) & runs & Sec. \\
 \hline
 lone throat & levels \clmDetKnobLoneLevelsLo--\clmDetKnobLoneLevelsHi; $\chi$ floor; $\Delta t$; $L{=}\clmDetKnobLoneL$ & \clmDetRunsLoneThroat{} & \ref{sec:single} & momentum scan & $p=\clmDetKnobMomentumLo$--$\clmDetKnobMomentumHi$ & \clmDetRunsMomentumScan{} & \ref{sec:spiral:capture} \\
 spherical kicks & $\varepsilon=\pm\clmDetKnobKickEpsLo\ldots\pm\clmDetKnobKickEpsHi$; level \clmDetKnobKickLevel{} & \clmDetRunsSphericalKicks{} & \ref{sec:single:branching} & fly-by, $p=\clmDetKnobFlybyP$ & level \clmDetKnobFlybyLevel{} on the doubled box & \clmDetRunsFlyby{} & \ref{sec:gw:flyby} \\
 quadrupolar kicks & $\varepsilon_2=\clmDetKnobQuadLo$--$\clmDetKnobQuadHi$; kick-free arm & \clmDetRunsQuadKicks{} & \ref{sec:single:gw} & orbital chain, $p=\clmDetKnobChainP$ & $N$; levels; damping; $\chi$ floor & \clmDetRunsOrbitalChain{} & \ref{sec:spiral} \\
-scalar-stream re-runs & unkicked level \clmDetKnobScalarLevel, $L{=}\clmDetKnobScalarLLo$/$\clmDetKnobScalarLHi$; $\varepsilon{=}{+}\clmDetKnobScalarEps$ & \clmDetRunsScalarReruns{} & \ref{sec:gw:censorship} & refinement ladder & levels \clmDetKnobLadderLevelLo--\clmDetKnobLadderLevelHi; $\Delta t$; damping & \clmDetRunsLadder{} & \ref{sec:spiral:wall} \\
-two throats at rest & $\sigma$; $a=\clmDetKnobPairALo$--$\clmDetKnobPairAHi$; $d=\clmDetKnobPairDLo$--$\clmDetKnobPairDHi$; $p=\clmDetKnobPairPush$ push & \clmDetRunsPairAtRest{} & \ref{sec:pair} & interior freeze, $L{=}\clmDetKnobFreezeL$ & skin radii; arming time; extraction & \clmDetRunsFreeze{} & \ref{sec:spiral:burst} \\
-placement probes & $d=\clmDetKnobPlaceDLo$--$\clmDetKnobPlaceDHi$, one step each & \clmDetRunsPlacement{} & \ref{sec:pair:placement} & wall probes & $p=\clmDetKnobWallPLo$--$\clmDetKnobWallPHi$; levels; fill off & \clmDetRunsWallProbes{} & \ref{sec:spiral:wall} \\
-head-on, $d=\clmDetKnobHeadonDLo$/$\clmDetKnobHeadonDHi$ & fill; levels \clmDetKnobHeadonLevelLo/\clmDetKnobHeadonLevelHi; down-step; $\pm\varepsilon$ & \clmDetRunsHeadon{} & \ref{sec:headon} & production spiral, $L{=}\clmDetKnobProdSpiralL$ & three-stage chain; fill-window twin & \clmDetRunsProdSpiral{} & \ref{sec:spiral:inspiral} \\
+scalar-stream re-runs & unkicked level \clmDetKnobScalarLevel, $L{=}\clmDetKnobScalarLLo$/$\clmDetKnobScalarLHi$;\newline $\varepsilon{=}{+}\clmDetKnobScalarEps$ & \clmDetRunsScalarReruns{} & \ref{sec:gw:censorship} & refinement ladder & levels \clmDetKnobLadderLevelLo--\clmDetKnobLadderLevelHi; $\Delta t$; damping & \clmDetRunsLadder{} & \ref{sec:spiral:wall} \\
+two throats at rest & $\sigma$; $a=\clmDetKnobPairALo$--$\clmDetKnobPairAHi$; $d=\clmDetKnobPairDLo$--$\clmDetKnobPairDHi$;\newline $p=\clmDetKnobPairPush$ push & \clmDetRunsPairAtRest{} & \ref{sec:pair} & interior freeze, $L{=}\clmDetKnobFreezeL$ & skin radii; arming time;\newline extraction & \clmDetRunsFreeze{} & \ref{sec:spiral:burst} \\
+placement probes & $d=\clmDetKnobPlaceDLo$--$\clmDetKnobPlaceDHi$, one step each & \clmDetRunsPlacement{} & \ref{sec:pair:placement} & wall probes & $p=\clmDetKnobWallPLo$--$\clmDetKnobWallPHi$; levels;\newline fill off & \clmDetRunsWallProbes{} & \ref{sec:spiral:wall} \\
+head-on, $d=\clmDetKnobHeadonDLo$/$\clmDetKnobHeadonDHi$ & fill; levels \clmDetKnobHeadonLevelLo/\clmDetKnobHeadonLevelHi; down-step; $\pm\varepsilon$ & \clmDetRunsHeadon{} & \ref{sec:headon} & production spiral, $L{=}\clmDetKnobProdSpiralL$ & three-stage chain;\newline fill-window twin & \clmDetRunsProdSpiral{} & \ref{sec:spiral:inspiral} \\
 half-mass, $m=\clmHalfMassM$ & pair at $d=\clmDetKnobHalfMassD$; lone control & \clmDetRunsHalfMass{} & \ref{sec:headon:halfmass} & Helfer twins & correction; window; levels & \clmDetRunsHelfer{} & \ref{sec:controls:systematics} \\
-vacuum BBH & same $d$, $p$, masses; no scalar & \clmDetRunsVacuumBBH{} & \ref{sec:controls:bbh} & gauge arms & $1{+}\log$ halved; harmonic; $\eta{=}\clmDetKnobGaugeEta$; spiral, head-on & \clmDetRunsGauge{} & \ref{sec:spiral:wall} \\
-constraint-solved data & \texttt{GRTresna} bridge & \clmDetRunsConstraintSolved{} & \ref{sec:controls:systematics} & shakedown (archived) & gauge, dissipation, tagging; boosted throat & \clmDetRunsShakedown{} & \ref{sec:setup:scheme} \\
+vacuum BBH & same $d$, $p$, masses; no scalar & \clmDetRunsVacuumBBH{} & \ref{sec:controls:bbh} & gauge arms & $1{+}\log$ halved; harmonic;\newline $\eta{=}\clmDetKnobGaugeEta$; spiral, head-on & \clmDetRunsGauge{} & \ref{sec:spiral:wall} \\
+constraint-solved data & \texttt{GRTresna} bridge & \clmDetRunsConstraintSolved{} & \ref{sec:controls:systematics} & shakedown (archived) & gauge, dissipation,\newline tagging; boosted throat & \clmDetRunsShakedown{} & \ref{sec:setup:scheme} \\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
@@ -269,16 +269,16 @@ Its end state is open, and the throat is shedding its own support: the monopole 
 \subsection{Lifetime and physical scale}
 \label{sec:single:lifetime}
 
-At fixed $m/a$ the solution is scale-free, and the measured e-fold is $\tau\alpha_{\rm th}=\clmProperEfoldFour$--$\clmProperEfoldThree\,R_\star$ in proper time---one light-crossing of the throat. The lifetime is a logarithm of the seed: a horizon at $\clmHorizonTimeEpsTwo\,M$ for $\varepsilon=10^{-2}$ and $\clmHorizonTimeEpsThree\,M$ for $10^{-3}$, a decade costing $\clmDecadeCost\,M\simeq\tau\ln10$; the unkicked throat's horizon by $\clmHorizonTimeNoise\,M$ places the level-3 truncation seed at $\varepsilon\gtrsim\clmNoiseSeed$. Table~\ref{tab:scales} converts these to physical units. No static throat of astrophysical mass survives: a stellar-mass drainhole is gone in milliseconds, a supermassive one in minutes, and only at $10^9\,M_\odot$ does the lifetime reach days. The logarithm makes this robust: ten further decades of quiet initial data extend a $30\,M_\odot$ throat from $\clmPhysEpsTwoThirty$ to $\clmQuietLifetime$ ms. A foam-born pair must collide as it is born or not at all (Sec.~\ref{sec:discussion:noinspiral}).
+At fixed $m/a$ the solution is scale-free, and the measured e-fold is $\tau\alpha_{\rm th}=\clmProperEfoldFour$--$\clmProperEfoldThree\,R_\star$ in proper time---one light-crossing of the throat. The lifetime is a logarithm of the seed: a horizon at $\clmHorizonTimeEpsTwo\,M$ for $\varepsilon=+10^{-2}$ and $\clmHorizonTimeEpsThree\,M$ for $+10^{-3}$, a decade costing $\clmDecadeCost\,M\simeq\tau\ln10$; the unkicked throat's horizon by $\clmHorizonTimeNoise\,M$ places the level-3 truncation seed at $\varepsilon\gtrsim\clmNoiseSeed$. Table~\ref{tab:scales} converts these to physical units. No static throat of astrophysical mass survives: a stellar-mass drainhole is gone in milliseconds, a supermassive one in minutes, and only at $10^9\,M_\odot$ does the lifetime reach days. The logarithm makes this robust: ten further decades of quiet initial data extend a $30\,M_\odot$ throat from $\clmPhysEpsTwoThirty$ to $\clmQuietLifetime$ ms. A foam-born pair must collide as it is born or not at all (Sec.~\ref{sec:discussion:noinspiral}).
 
 \begin{table}[t]
-\caption{The drainhole clock in physical units: the production throat ($R_\star=\clmRstarShort\,M$) scaled by its ADM mass $M$. $\tau=\clmTauRounded\,M$ is the e-fold time (Sec.~\ref{sec:single:instability}); the last three columns are the measured times to a horizon for the two declared kicks and an upper bound for truncation noise (Sec.~\ref{sec:single:branching}). Intermediate seeds follow $t_{\rm BH}\simeq\clmHorizonTimeEpsTwo\,M+\tau\ln(10^{-2}/\varepsilon)$.}
+\caption{The drainhole clock in physical units: the production throat ($R_\star=\clmRstarShort\,M$) scaled by its ADM mass $M$. $\tau=\clmTauRounded\,M$ is the e-fold time (Sec.~\ref{sec:single:instability}); the last three columns are the measured times to a horizon for the two declared kicks, both outward ($\varepsilon>0$, the collapsing sign; Fig.~\ref{fig:single_throat}(c)), and an upper bound for truncation noise (Sec.~\ref{sec:single:branching}). Intermediate seeds follow $t_{\rm BH}\simeq\clmHorizonTimeEpsTwo\,M+\tau\ln(10^{-2}/\varepsilon)$.}
 \label{tab:scales}
 \scriptsize
 \begin{ruledtabular}
 \begin{tabular}{lccccc}
  & & & \multicolumn{3}{c}{time to a horizon} \\
-$M$ & $R_\star$ & $\tau$ & $\varepsilon=10^{-2}$ & $10^{-3}$ & noise ($\le$) \\
+$M$ & $R_\star$ & $\tau$ & $\varepsilon=+10^{-2}$ & $+10^{-3}$ & noise ($\le$) \\
 \hline
 $30\,M_\odot$ & $\clmPhysRstarThirty$ km & $\clmPhysTauThirty$ ms & $\clmPhysEpsTwoThirty$ ms & $\clmPhysEpsThreeThirty$ ms & $\clmPhysNoiseThirty$ ms \\
 $10^{3}\,M_\odot$ & $\clmPhysRstarThousand$ km & $\clmPhysTauThousand$ ms & $\clmPhysEpsTwoThousand$ ms & $\clmPhysEpsThreeThousand$ s & $\clmPhysNoiseThousand$ s \\
