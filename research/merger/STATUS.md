@@ -1,4 +1,4 @@
-# Status — 2026-09-24 06:20 UTC
+# Status — 2026-09-24 06:50 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -8,15 +8,19 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 | run | where | progress | ETA (at 6.84 units/h) | answers |
 |---|---|---|---|---|
-| `single_pureq_q1e2_L128_ml4_scalar_t500` | first GPU node, GPU 0 | t = 126.8 / 500 (06:15) | t = 150 in 3.4 h (09:40 today); t = 300 Fri 07:40; t = 500 Sat 09-26 ~12:50 | where the inflating throat ends: saturation, coast or turnover. Read at t = 100–112: "RUN ON" |
+| `single_pureq_q1e2_L128_ml4_scalar_t500` | first GPU node, GPU 0 | t = 130.3 / 500 (06:46) | t = 150 in 2.9 h (09:40 today); t = 300 Fri 07:40; t = 500 Sat 09-26 ~12:50 | where the inflating throat ends: saturation, coast or turnover. Read at t = 100–112: "RUN ON" |
+| `single_eps_p1e2_L128_ml4_t250` (t250 TAKE 2) | first GPU node, GPU 1, since 06:26 | t = 2.5 / 250 (06:46); 7.7 u/h so far | t = 100 at ~21:00 today; t = 250 Fri 09-25 ~19:00 (36 h) | where the regrown horizon of the +1 % kicked collapse converges, in the box that survives the era (L = 128, level 4). Chk00000 and frame 0 verified 06:27; rolling Chk every 5 units, keep 3 |
 
-- That arm is **an unkicked L = 128 level-4 throat**, not a pure quadrupole: it was
+- The t500 arm is **an unkicked L = 128 level-4 throat**, not a pure quadrupole: it was
   launched on the old campaign pin (`main3d_boost_2026-09-08.ex`), which does not read `wormhole_seed_l2_amplitude_A`
   (t = 0 data bit-identical to `single_hold_L128_t100`), nor the four
   `core_profile_*` keys — it writes **no core radial profile**. Still the right arm
   for the inflation question. ["2026-09-23 (evening) — the article audit…"]
-- First GPU node, GPU 1: free. Second GPU node: not visible from here; the plan
-  says its card is free since 09-23 18:13.
+- TAKE 2 launched on the user's word ("lets launch this on gpu 1"), new pin, preflight PASS
+  (seed takes); consumer `headon-modes`, whole-box frames (zoom 128, coord 64), keep-last 4.
+  Watch signal from t ≈ 80: the corners of the refinement square (the mode that killed the
+  L = 64 take at 145.8). Second GPU node: not visible from here; the plan says its card is
+  free since 09-23 18:13.
 
 ## Dead, not yet filed
 
@@ -30,7 +34,6 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Queued — nothing launches without the user's word
 
-- **t250 TAKE 2** `single_eps_p1e2_L128_ml4_t250`: L = 128, level 4, ε = +10⁻², checkpoints on; ~37 h. Card: first-node GPU 1. Its template passes the full preflight on the new pin (06:12 today: seed takes, checkpoints on).
 - **η = 4 level-5 death-window hunt** (Plt05520–06000): censored or naked. Needs a session on the second node.
 - **Probe 2 MOTS location** (η = 4 head-on, level 5): verdict still pending, second node.
 - Audit runs A1–C2 below. They run on the campaign pin, `main3d_guard_7166787a_2026-09-24.ex` since 06:10 today (stamped; reads the seed and the core profile). A restart of an old-pin run keeps the old pin unless `--binary` says otherwise.

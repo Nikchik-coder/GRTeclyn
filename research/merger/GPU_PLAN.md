@@ -1051,6 +1051,33 @@ move the campaign pin, delete the ten `.__keep` copies, push.
 - Still open: the spiral's flow-finder slices and the η = 4 arm's full log are on
   the second node; two registered runs are not packed; t250 is packed as a stub.
 
+### 2026-09-24 (06:26) — t250 TAKE 2 LAUNCHED; Tables I and II fixed on the user's read of the PDF
+
+- **TAKE 2 is live** on the user's word ("lets launch this on gpu 1"):
+  `launch.sh --template params_single_eps_p1e2_L128_ml4_t250.txt --name
+  single_eps_p1e2_L128_ml4_t250 --gpu 1 --profile headon-modes --zoom 128 --coord 64
+  --keep-last 4` -- the consumer flags of its t500 twin. New pin, preflight PASS (seed
+  takes, t = 0 norms as at 06:12). BY EFFECT: Chk00000 and Plt00000 on scratch at 06:27
+  (the checkpoint switch that killed the first take is on); frame 0 of χ identical to
+  the t500 twin's, φ renders. 7.7 u/h over the first 10 min, t500 unslowed at 6.9;
+  t = 250 ~Fri 09-25 19:00 at the family's 6.84. Still to see: Chk00500 at t = 5, and
+  from t ≈ 80 the corners of the refinement square.
+- **Table I did not fit** (the user's compiled PDF): measured off their screenshot, the
+  rules stop at the text width but the text ran ~100 px (~11 %) past it, so the right
+  Sec. column sat in the margin. Not this morning's edits (d = 8/12 and levels 4–7 are
+  not the widest cells): the knob columns were simply too long for a 7-pt two-half
+  table. The knob columns are now fixed width (0.215 / 0.195 of the text width) with
+  the seven longest knobs broken by hand; estimated total ~95 % of the text width.
+  Nothing removed.
+- **Table II's sign**: the kick columns read "ε = 10⁻²", "10⁻³" while Fig. 1(c) labels
+  the collapsing arms +0.01 / +0.001; the sign is now explicit (+10⁻², +10⁻³) in the
+  table, its caption (outward kicks, the collapsing sign) and §IV.F. Every number in
+  the table re-derived by hand from 11 / 25 / 61 M and τ = 5.9 M: all agree.
+- **The abstract** was re-read against this morning's changes: none of its 20 macros
+  changed and no sentence conflicts ("comparable" scalar energy holds in both ratio
+  conventions; the 16× ladder is levels 3–7, Table I's 4–7 the added rungs). No edit.
+  `claims.py check`: 852 rows, 0 problems (three anchors follow the new line breaks).
+
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
 The flow finder (`grteclyn-wrapper/scripts/validation/ah_flow_finder.py`,
