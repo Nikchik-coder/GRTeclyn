@@ -9,7 +9,7 @@
  "params_sha256": "7fcdcf7adf3163204db9cedc4db8e87aa3ff2dcf8eb94d05f365d5d148bcb5a5",
  "params": {
   "verbosity": "1",
-  "output_path": "\"$SITE/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/merge_twin_p012_plain_t100\"",
+  "output_path": "\"runs/wormhole_merger/merge_twin_p012_plain_t100\"",
   "amr.plot_file": "\"/tmp/grteclyn_scratch/merge_twin_p012_plain_t100/BinaryWormholePlt\"",
   "amr.check_file": "\"/tmp/grteclyn_scratch/merge_twin_p012_plain_t100/BinaryWormholeChk\"",
   "checkpoint_interval": "1000",

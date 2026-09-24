@@ -46,7 +46,7 @@
   "weyl_extraction.num_points_phi": "72",
   "weyl_extraction.num_points_theta": "37",
   "puncture_tracking.enabled": "true",
-  "output_path": "\"$SITE/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/bbh_control_d12_p012\"",
+  "output_path": "\"runs/wormhole_merger/bbh_control_d12_p012\"",
   "amr.plot_file": "\"/tmp/grteclyn_scratch/bbh_control_d12_p012/BinaryWormholePlt\"",
   "amr.check_file": "\"/tmp/grteclyn_scratch/bbh_control_d12_p012/BinaryWormholeChk\""
  },

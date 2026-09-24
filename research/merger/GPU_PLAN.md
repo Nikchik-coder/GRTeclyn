@@ -39,6 +39,7 @@ refuses to merge, that is the result and we measure it.
   - [x] level 2: dies at the origin at t = 24.2 with the throat exact — the grid, not the clamp (its χ twin dies the same)
   - [x] level 3: **collapses** — marginally trapped surface at t ≈ 61, R 3.23 → 2.37 by t = 100, Misner–Sharp mass inside 1.62 → 1.23, no bounce by t = 100
   - [x] level 4: **inflates** — R 3.89 → 10.0, no horizon, growing anti-trapped shell, compactified inner sheet deforming by t = 100
+  - [x] the long arm (`single_pureq_q1e2_L128_ml4_scalar_t500`, L = 128, stopped by hand at t = 195.14 on 2026-09-24): coasts ×2.62 by t = 144, equal to its L = 64 twin to 0.2 % through t = 100; **no end state measured** — its late record is the box's and the grid's ["2026-09-24 (16:15) — the long single-throat arms closed out"]
   - [x] same rate to 9 % (τ 5.88 vs 5.26); onset +5.6 to +8.7 units per halving (seed of order 1.5–2.3); the seed's sign flips with resolution
   - [x] χ floor not load-bearing at levels 2, 3, 4 (twins equal to 4 digits; the level-4 pair byte-identical)
   - [x] dt_multiplier 0.02 necessary (0.05 is a different solution from t ≈ 33; 0.1 dies at t = 16)
@@ -1117,6 +1118,99 @@ The user's ~40 comments on the compiled paper ("update the paper and the plan ba
 Bookkeeping, no GPU: re-pack `merge_twin_p012_eta4_lvl5_t066_r05000` to its death (the 60.04 is only in runs/); add TAKE 2 to `claims/table1_groups.tsv` BEFORE its first pack (else `check` fails); decide Table I's counting rule for duplicates and no-knob re-runs (fix the HOOKFAIL "dead launch" note); the collapsing throat's E_GW integrates its floor to t = 70 (gated at 58 it is 2.6e-5, not 3.2e-5 — Fig. 11 and the detector rows follow); clmGwThroatOverControl uses the level-3 control (44× against the matched level-4 one); clmDetKerrRise uses the shape-inflated formation M_MS (R/2 gives 1.34, not 1.38; conclusion unchanged); the byte-identity sentence rests on an unpacked run (the packed `lvl3_t050` / `_mouths` pair is byte-identical and could replace it).
 
 Future, code first: rotating throats (the user: "maybe other supporting models survive longer, e.g. rotating ones?" — rotating Ellis initial data; in 5D and, perturbatively, in 4D rotation removes the unstable mode); a throat in a compressive, radiation-dominated background; finest-level, excised constraint norms.
+
+### 2026-09-24 (16:15) — the long single-throat arms closed out: t500 and TAKE 2 stopped by hand
+
+On the user's word: "lets kill it pack it do systematics prune leftovers i think its over
+for this run the constraines to high and its not quotable anyway" (t500), then "the collapse
+long run is also corrupted lets stop it" (TAKE 2).
+
+- **Stopped**: `single_pureq_q1e2_L128_ml4_scalar_t500` at **t = 195.14** (16:12:44, H 0.132)
+  and `single_eps_p1e2_L128_ml4_t250` (TAKE 2) at **t = 74.34** (16:13:47, H 9.0e-4), each by
+  TERM to its evolution binary alone (found by `/proc/<pid>/cwd`). NOT `stop_campaign.sh`:
+  its dry run showed it SIGKILLs `launch.sh` and `run_single.sh` first, which skips the
+  consumer's final drain and the manifest finish. With only the binary gone, each
+  `run_single.sh` drained its consumer and exited; TAKE 2's manifest recorded exit 143. The
+  t500 launcher predates manifests (its backfilled one still said t_end 114.83, status
+  unknown): finished by hand, `run_manifest.py finish --status 143` → t_end 195.14. Cards 0
+  and 1 free from 16:13.
+- **Closed out** (`closeout.sh`): t500, TAKE 2, and the dead L = 64 take
+  `single_eps_p1e2_t250` (NaN 145.81; its pack was a t = 3.5 stub). All three filed to
+  `01_single_throat/seed/` (`file_run.sh`, before the pack so it is built once, in place);
+  registry caveats and stop notes; `claims/table1_groups.tsv` rows (group '-', not cited;
+  TAKE 2 added before its first pack); pack rebuilt (960 MB); the two stale top-level stubs
+  (`campaign/single_eps_p1e2_t250`, `campaign/single_pureq_q1e2_L128_ml4_scalar_t500` — the
+  only files the identity grep flagged) removed and the step-4 reductions re-run without
+  them. The step also re-rendered all three runs' movies from the slice caches; the user:
+  "we dont need movies for this runs long ones they are corrupted anyway" — next time
+  `WHM_MOVIES=0` for arms nobody will cite (none were filed into `results/merger/movies/`).
+- **What a full repack drags in, and what was done with it.** It mirrors ALL of `runs/`:
+  (a) every packed `run_manifest.json` now carries a repo-relative `output_path` instead of
+  `$SITE/…` — kept; (b) the η = 4 level-5 twin `merge_twin_p012_eta4_lvl5_t066_r05000` got
+  re-packed to its death at t = 60.04 (the bookkeeping item below) — kept, and since it is a
+  counted "gauge arms" run the recomputed GPU total moved 649.6 → 650.79 h: ledger
+  `clmDetGpuHours` 650 → **651** (value, tex, anchor), `claims.py check` 956 rows, 0 problems,
+  `claims.py tex` (one macro changed); (c) the ten `.__keep` copies dropped by 38afdfa8
+  came back — removed again (the pack script still copies them; fix it there or they return
+  at every full repack); (d) `03_two_throats/NOTES.md` was overwritten by its `runs/` source,
+  losing the hand-added "1.518 ± 0.021 … the article's value" line — restored, and the
+  source now carries it; (e) three unrelated figures were re-drawn pixel-identical — restored.
+- **t500 — NO INFLATION END STATE IS MEASURED.** Quotable to t ≈ 100: ×2.62 by t = 144 on the
+  stream, the L = 64 twin equal to 0.2 % in R and to 4 digits in min α through t = 100, the
+  growth rate peaking at 0.032/u (t = 74) and coasting after. Past that, the record is the
+  box's and the grid's:
+  1. the consumer's areal stream leaves the neck at t = 145 for its r = 0.5 cut (the
+     extractor artifact); the true neck (min R = r/√χ over r > 2) was logged off the rolling
+     plotfiles by a sidecar, `small_data/areal_neck.dat` (t = 154–195, one point per plotfile;
+     packed);
+  2. that neck peaks ×2.67 (R = 10.37, t = 161) and falls to 9.68 by t = 195 — but only as
+     measured along the grid axis. At t = 190–195 the face- and body-diagonal necks
+     (`areal_neck_dirs.dat`) differ from it by up to 6 %, and the face one RISES (9.94 → 10.07).
+     The level-1 box is a cube of half-width 20: the axis neck left it for dx = 0.5 at
+     t ≈ 155, six units before its peak; along the diagonals the neck is still on level 1.
+     The t = 194 K frame draws the wall as a rounded square aligned with that box, with
+     grid-scale checkerboard at its corners. A spherically symmetric throat cannot do this;
+  3. the domain H norm doubles every ~10 u from t = 112 (1.1e-3 at 120, 1.85e-2 at 160, 0.1 at
+     t = 190.24, 0.13 at the stop). At the wall the shell-averaged H is only 1–3 % of 16π|ρ|
+     (Chk19300, level 0, r = 27–31; averages cancel the lobes, so the local violation is
+     larger);
+  4. the movies show reflections off the box walls reaching the throat, which the user reads
+     as what drives the neck back toward collapse. They switch on in the same window as the
+     level-1 crossing: this run cannot separate the two, and either way the turn is not the
+     throat's.
+  The spherical literature has this branch inflate without turning (Shinkai–Hayward 2002;
+  González–Guzmán–Sarbach 2009); a real turn would make the neck a future-trapped sphere
+  (at a minimal sphere, sign dR/dt = sign θ±), i.e. a black hole. The paper's "end state
+  open, three endings" stands.
+- **TAKE 2** — clean to the stop, but its question is gone (the regrowth it was to follow is
+  numerical, ["2026-09-24 (afternoon) — the user's read of the whole paper"]). G16's input is
+  the paper session's copies of its plotfiles across the floor (t = 33–66, 77 GB, that
+  session's scratchpad `plt_take2/`) — KEPT; its own late scratch (Chk t = 60/65/70,
+  Plt t = 71–74, 89 GB) pruned.
+- **SYSTEMATICS ROLL-UP — what ends a long single-throat run.** One throat, three boxes:
+
+  | arm | box, finest level | clean window | what ends it |
+  |---|---|---|---|
+  | `single_pureq_q1e2_L128_ml4_scalar_t100` (discriminator) | L = 128, level 4 | box-independent against L = 64 through t ≈ 80 (monopole e-folds 4.27/4.37/4.51) | stop at 100; both boxes' H grows past ~80 |
+  | t500 (unkicked, inflating) | L = 128, level 4 | t ≲ 100: twin to 0.2 % in R, 4 digits in min α | the areal cut (t = 145); the neck off level 1 (≈ 155, direction spread 6 % by 195); H 0.1 at 190.24; wall reflections; stopped 195.14 |
+  | t250 take 1 (+1 %, collapsing) | L = 64, level 3 | t ≤ 100 (the user's cut) | seam speckle from the refinement square's corners (t = 82), H 0.1 at 100, NaN 145.81: the box, not the throat |
+  | t250 TAKE 2 (+1 %, collapsing) | L = 128, level 4 | to the stop (H 9.0e-4 at 74.34); = the L = 64 level-4 arm to 1e-4 in R through t = 41 | stopped: question gone |
+
+  The long runs fail at the fixed refinement boxes and the box walls, not at the throat: the
+  L = 64 → 128 doubling moves neither the inflation (0.2 % in R to t = 100) nor the collapse
+  (1e-4 in R to t = 41), and past t ≈ 100 the inflating wall outgrows level 1 and the
+  outgoing flux comes back off the walls. **What would settle the end state** (not queued): a from-t = 0 arm whose
+  wall stays on one refinement level (level 1 wider than the neck's r ≈ 30; the fixed tagger
+  scales every level with `tagging_L`, so widening level 1 alone needs a tagging change) at
+  two resolutions, with the walls moved out.
+- **Pruned on the user's word** ("prune leftovers", then "lets prune other scratch" → late
+  scratch only), logged in `runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-24.md`: t500 89 GB
+  (Plt19200–19500, Chk19400/19450/19500), the dead take's 9.5 GB (Plt14200–14500) and
+  TAKE 2's late 89 GB (Chk06000–07000, Plt07100–07400). First-node scratch is empty; the
+  node's `/tmp` filesystem 622 → 435 GB used, most of it other containers'.
+- Figure `single_throat_inflation_L128` now reads the pack; stage lines at t = 66 (10 % off
+  the flat) and t = 154 (the circles start: the axis neck leaves level 1); the note under
+  the circles carries the 6 % diagonal spread and the H rise.
 
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 

@@ -7,7 +7,7 @@
  "params_sha256": "8c97dd1eda2b87f3c066fec99c651eb484cc779a5380e6dc9838aaf5493acf42",
  "params": {
   "verbosity": "1",
-  "output_path": "\"/workspace-SR008.nfs1/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/merge_twin_p012_eta4_lvl5_t066_r06000\"",
+  "output_path": "\"runs/wormhole_merger/merge_twin_p012_eta4_lvl5_t066_r06000\"",
   "amr.plot_file": "\"/tmp/grteclyn_scratch/merge_twin_p012_eta4_lvl5_t066_r06000/BinaryWormholePlt\"",
   "amr.check_file": "\"/tmp/grteclyn_scratch/merge_twin_p012_eta4_lvl5_t066_r06000/BinaryWormholeChk\"",
   "checkpoint_interval": "-1",
@@ -99,7 +99,7 @@
   "num_points_theta": "37",
   "num_modes": "21",
   "modes": "2 -2  2 -1  2 0  2 1  2 2 \\",
-  "amr.restart": "\"/workspace-SR008.nfs1/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/05_binary_spiral/p012/_keep_r1_eta4_t100_deathwin/BinaryWormholeChk06000\""
+  "amr.restart": "\"runs/wormhole_merger/05_binary_spiral/p012/_keep_r1_eta4_t100_deathwin/BinaryWormholeChk06000\""
  },
  "restart_from": "BinaryWormholeChk06000",
  "binary": {

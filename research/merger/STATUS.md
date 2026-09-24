@@ -1,4 +1,4 @@
-# Status — 2026-09-24 15:45 UTC
+# Status — 2026-09-24 16:30 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -6,30 +6,24 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Live
 
-| run | where | progress | ETA (at 6.84 units/h) | answers |
-|---|---|---|---|---|
-| `single_pureq_q1e2_L128_ml4_scalar_t500` | first GPU node, GPU 0 | t = 191.9 / 500 (15:44) | t = 300 in 15.8 h (Fri 07:30); t = 500 in 45 h (Sat 09-26 ~12:45) | where the inflating throat ends: saturation, coast or turnover. Read at t = 100–112: "RUN ON" |
-| `single_eps_p1e2_L128_ml4_t250` (t250 TAKE 2) | first GPU node, GPU 1, since 06:26 | t = 70.6 / 250 (15:44), 7.6 u/h | t = 250 in 23.6 h (Fri 09-25 ~15:20) | **its question is gone**: the regrowth it was to follow is numerical (below). Useful to t ≈ 70 for the constraint history at the horizon (rolling Chk, plotfiles) and as a box check (= the L = 64 level-4 arm to 1e-4 in R through t = 41). **Stop now or run on: the user's call** — the remaining ~24 GPU-h would buy G14/G15 instead |
+Nothing. Both first-node cards free since 16:13: the two long single-throat arms were
+stopped by hand on the user's word, closed out and filed under `01_single_throat/seed/`
+["2026-09-24 (16:15) — the long single-throat arms closed out"]:
 
-- The t500 arm is **an unkicked L = 128 level-4 throat**, not a pure quadrupole: it was
-  launched on the old campaign pin (`main3d_boost_2026-09-08.ex`), which does not read `wormhole_seed_l2_amplitude_A`
-  (t = 0 data bit-identical to `single_hold_L128_t100`), nor the four
-  `core_profile_*` keys — it writes **no core radial profile**. Still the right arm
-  for the inflation question. ["2026-09-23 (evening) — the article audit…"]
-- TAKE 2 launched on the user's word ("lets launch this on gpu 1"), new pin, preflight PASS
-  (seed takes); consumer `headon-modes`, whole-box frames (zoom 128, coord 64), keep-last 4.
-  Watch signal from t ≈ 80: the corners of the refinement square (the mode that killed the
-  L = 64 take at 145.8). Second GPU node: not visible from here; the plan says its card is
-  free since 09-23 18:13.
+- `single_pureq_q1e2_L128_ml4_scalar_t500` (the unkicked L = 128 level-4 throat) — stopped at
+  t = 195.14, H 0.13. No inflation end state measured: its late record is the box's and the grid's.
+- `single_eps_p1e2_L128_ml4_t250` (t250 TAKE 2) — stopped at t = 74.34, H 9.0e-4: clean, but its
+  question is gone (the regrowth is numerical). Its late scratch is pruned; G16's input — the
+  paper session's copies of its plotfiles across the floor, t = 33–66, 77 GB (`plt_take2/` in
+  that session's scratchpad) — is KEPT until G16 is read or dropped.
+- `single_eps_p1e2_t250` (the dead L = 64 take, NaN at 145.81) — closed out and filed with them.
+
+First-node scratch (`/tmp/grteclyn_scratch/`) is empty (MANIFEST_CLEANUP_2026-09-24).
+
+Second GPU node: not visible from here; the plan says its card is free since 09-23 18:13.
 
 ## Dead, not yet filed
 
-- `single_eps_p1e2_t250` — K NaN on level 3 at t = 145.81 (00:54 today). No
-  checkpoint was ever written: its params asked for a rolling three
-  (`checkpoint_interval = 500`, `checkpoint_keep = 3`) with
-  `amr.checkpoint_files_output = 0`, which switches checkpoints off. Plotfiles
-  t = 142–145 remain on first-node scratch (9.5 GB). Nothing past t = 100 is
-  quotable; "the box, not the throat". [2026-09-24 bullets under "2026-09-23 (afternoon)"]
 - `merge_twin_p012_eta4_lvl5_t066_r05000` / `_r06000` (second node) — died at the wall, t = 60.04 / 60.05.
 
 ## Queued — nothing launches without the user's word
@@ -57,7 +51,7 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Verdicts (the paper's wording; paper section in parentheses)
 
-- **Single throat**: unstable fixed point, one exponential mode; the e-fold is within 2.5 % (level 4) and 15 % (level 3) of the PARAMETER-MATCHED González–Guzmán–Sarbach linear rate (our throat is their γ₁ = 0.5 member: T = 0.758; τ_lin = 5.13 M); truncation noise picks the branch. The collapse horizon SHRINKS 40 % as it swallows the phantom; the 9–11 % REGROWTH in the scans is NUMERICAL (spherical first law forbids it; it tracks a constraint-violation double layer reaching the MOTS; same in purely spherical data; the pure quadrupole never regrows). Inflation end state open (t500). (§IV)
+- **Single throat**: unstable fixed point, one exponential mode; the e-fold is within 2.5 % (level 4) and 15 % (level 3) of the PARAMETER-MATCHED González–Guzmán–Sarbach linear rate (our throat is their γ₁ = 0.5 member: T = 0.758; τ_lin = 5.13 M); truncation noise picks the branch. The collapse horizon SHRINKS 40 % as it swallows the phantom; the 9–11 % REGROWTH in the scans is NUMERICAL (spherical first law forbids it; it tracks a constraint-violation double layer reaching the MOTS; same in purely spherical data; the pure quadrupole never regrows). Inflation end state open: the t500 long arm (stopped at t = 195.14) did not close it — its late record is the box's and the grid's. (§IV)
 - **Seeded throat**: a kick picks the fate opposite to its sign; the seed is not constraint-solved (H defect ∝ ε, 0.93×16π|ρ| on the shell at 1 %); ε = ±0.1 both collapse (+0.1 makes the throat a maximum, trapped at t = 1; −0.1 re-expands, then collapses) and die at the origin, not "from a Hamiltonian violation". (§II.D, §IV.C)
 - **Two throats at rest**: like signs repel, opposite attract; force ∝ (d + δ)⁻², δ ≈ 3–4. (§V)
 - **Head-on**: common MOTS from t = 22, born with both throats' area (R = 1.01 √2 R⋆), around both throats behind a trapped neck; it never bounces (first law) and shrinks toward the pair's Bondi mass, 2M_B ≈ 4.1 (at t = 97: 1.07 R⋆, 4 % above 2M_ADM); the late decline is not accretion. The level-3 death is the grid's; level 5 runs clean to t = 100. (§VI)

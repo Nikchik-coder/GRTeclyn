@@ -164,5 +164,6 @@ ladder_L5_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L5_r05000.__keep	c
 ladder_L6_damped_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L6_damped_r05000.__keep	copy: byte-identical duplicate of ladder_L6_damped_r05000 (prune hold-back)
 ladder_L7_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L7_r05000.__keep	copy: byte-identical duplicate of ladder_L7_r05000 (prune hold-back)
 merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22	-	merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22	dead launch (OOM at t=0), top-level duplicate of the 04_binary_headon copy
-single_eps_p1e2_t250	-	single_eps_p1e2_t250	not cited; packed as an in-flight stub (log to t = 3.5) -- the run has since died at t = 145.81 (registry, 2026-09-24), so its GPU time is outside the totals
-single_pureq_q1e2_L128_ml4_scalar_t500	-	single_pureq_q1e2_L128_ml4_scalar_t500	not cited; in flight (stop_time 500), packed as a stub
+single_eps_p1e2_t250	-	01_single_throat/seed/single_eps_p1e2_t250	not cited; died at t = 145.81 (the box, not the throat -- registry); repacked whole and filed at its close-out, 2026-09-24, so its GPU time is outside the totals
+single_pureq_q1e2_L128_ml4_scalar_t500	-	01_single_throat/seed/single_pureq_q1e2_L128_ml4_scalar_t500	not cited as a run (its own figure page, single_throat_inflation_L128); stopped by hand at t = 195.14 on the user's word 2026-09-24, not quotable past t ~ 100 (registry)
+single_eps_p1e2_L128_ml4_t250	-	01_single_throat/seed/single_eps_p1e2_L128_ml4_t250	not cited; t250 TAKE 2, stopped by hand at t = 74.34 on the user's word 2026-09-24 -- its question is gone, the regrowth being numerical (registry)

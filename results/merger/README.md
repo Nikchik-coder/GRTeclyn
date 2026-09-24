@@ -215,8 +215,14 @@ that produced it does not.
    pattern survives the doubling, so it was never the boundary). One throat, two fates, opposite
    scalar behaviour: horizon ⇒ the radiation dies; no horizon ⇒ it grows. What ends the
    inflation (saturate / coast / turn over to collapse — the rate is decelerating, halving per
-   ~20 units) is OPEN and in flight: `single_pureq_q1e2_L128_ml4_scalar_t500` (launched
-   2026-09-23, rolling checkpoints keep-3, stop 500, article placeholder sec:single:fate).
+   ~20 units) is OPEN, and the long arm did not close it: `single_pureq_q1e2_L128_ml4_scalar_t500`
+   *(pack, `seed/`)*, stopped by hand at t = 195.14 on 2026-09-24, matches its L = 64 twin to
+   0.2 % through t = 100 and coasts (×2.62 by t = 144), but its late record is the box's and the
+   grid's: the neck peaks ×2.67 at t = 161 and then falls only as measured along the grid axis
+   (the face- and body-diagonal necks differ by 6 % at t = 195 and the face one still rises;
+   the axis neck left the level-1 box at t ≈ 155), H doubles every ~10 units from t = 112
+   (0.1 at t = 190), and the movies show wall reflections reaching the throat. No end state is
+   measured (`figures/01_single_throat/single_throat_inflation_L128`; registry row).
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
    (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and

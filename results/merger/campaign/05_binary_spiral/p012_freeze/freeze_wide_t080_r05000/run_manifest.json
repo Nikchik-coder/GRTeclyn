@@ -9,7 +9,7 @@
  "params_sha256": "74f40e3606257289376841acda70a9b8678d3ab8db75d67dc199eca1c6ad88f0",
  "params": {
   "verbosity": "1",
-  "output_path": "\"$SITE/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/05_binary_spiral/p012_freeze/freeze_wide_t080_r05000\"",
+  "output_path": "\"runs/wormhole_merger/05_binary_spiral/p012_freeze/freeze_wide_t080_r05000\"",
   "amr.plot_file": "\"/tmp/grteclyn_scratch/m9b_fillwide80_r05000/BinaryWormholePlt\"",
   "amr.check_file": "\"/tmp/grteclyn_scratch/m9b_fillwide80_r05000/BinaryWormholeChk\"",
   "checkpoint_interval": "1000",

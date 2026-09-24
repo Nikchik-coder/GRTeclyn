@@ -7,7 +7,7 @@
  "params_sha256": "20ae6aeb6b15b02d3a70a03e474d63d5d2886c58f0aec2c208ad04defeee39c8",
  "params": {
   "verbosity": "1",
-  "output_path": "\"/workspace-SR008.nfs1/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700\"",
+  "output_path": "\"runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700\"",
   "amr.plot_file": "\"/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700/BinaryWormholePlt\"",
   "amr.check_file": "\"/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700/BinaryWormholeChk\"",
   "checkpoint_interval": "100",

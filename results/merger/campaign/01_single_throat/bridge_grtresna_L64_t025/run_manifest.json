@@ -7,7 +7,7 @@
  "params_sha256": "8b26a64d23cf2b378133d36edddffba0700323e608331134d162a2d3f00c30b4",
  "params": {
   "verbosity": "1",
-  "output_path": "\"/workspace-SR008.nfs1/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/bridge_grtresna_L64_t025\"",
+  "output_path": "\"runs/wormhole_merger/bridge_grtresna_L64_t025\"",
   "amr.plot_file": "\"/tmp/grteclyn_scratch/bridge_grtresna_L64_t025/BinaryWormholePlt\"",
   "amr.check_file": "\"/tmp/grteclyn_scratch/bridge_grtresna_L64_t025/BinaryWormholeChk\"",
   "checkpoint_interval": "1000",
@@ -21,7 +21,7 @@
   "print_progress_only_to_rank_0": "1",
   "particle_interpolator.verbosity": "0",
   "wormhole_id_type": "1",
-  "recipe_initial_data_file": "/workspace-SR008.nfs1/nachevsky/test/simulation/GRTeclyn/runs/wormhole_merger/bridge/initial_data_L64_N128.gridinit",
+  "recipe_initial_data_file": "runs/wormhole_merger/bridge/initial_data_L64_N128.gridinit",
   "wormhole_initial_lapse_type": "1",
   "wormhole_throat_radius_A": "2.0",
   "wormhole_throat_radius_B": "0.0",
