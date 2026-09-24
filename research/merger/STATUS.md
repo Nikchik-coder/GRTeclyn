@@ -65,7 +65,8 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 **Plan vs paper**: the plan still carries superseded readings (spiral "no horizon
 ever forms", regrowth "+17 %", spiral scalar ratio 2.41, ×7.8 fly-by growth as a
-measurement, a spiral burst resolution check). The paper is the current word.
+measurement, a spiral burst resolution check). The paper is the current word — except where the claims ledger found the data disagree:
+[`article/claims/FINDINGS.md`](article/claims/FINDINGS.md) (27 numbers, ~20 statements, none changed yet).
 
 ## Traps (each has cost a run)
 

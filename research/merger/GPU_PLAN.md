@@ -971,6 +971,44 @@ explicitly, and check H(t = 0) against the unkicked control before walking away.
 Also queued, no card: the η = 4 level-5 death-window flow hunt (second node,
 Plt05520–06000) and the lp2 level-5 head-on (needs a full card; OOM'd twice).
 
+### 2026-09-24 (early) — launch guardrails, run manifests, stamped binaries, the claims ledger
+
+Two silent failures in two days had one shape — params the binary did not
+honour: the seed trap (four "quadrupole" arms without their quadrupole; the
+live t500 arm is one, and it writes no core profile either, the pin ignores
+those keys too) and the t250 loss (`checkpoint_interval = 500`,
+`checkpoint_keep = 3` with `amr.checkpoint_files_output = 0`: zero checkpoints,
+NaN at 145.81, nothing to restart from; 61 packed runs and 19 templates carry
+the same contradiction). What now runs at every launch and after every pack:
+
+- **Preflight** (`run_single.sh` → `preflight.py`, seconds, before anything is
+  registered): refuses contradictory settings, keys absent from the binary or
+  unread by a 0-step start-up (`amr.abort_on_unused_inputs`), and seeds that
+  leave the t = 0 data unchanged. `launch.sh --preflight-only` asks. E2E on the
+  first node's GPU 1: pin + t500 template REFUSED (seed and four core-profile
+  keys unread); stamped binary PASS, H0 2.1426513012e-3 = the seeded original;
+  t250's params REFUSED; two t = 1 launches ran through to a finished manifest
+  with rolling checkpoints held at two.
+- **Run manifests** (`run_manifest.json`, packed) and the generated
+  `results/merger/runs_index.tsv`: binary + commit, seeds and whether they took,
+  name check (`name_check.py`, 95 rules), output contradictions. It flags the
+  four seedless arms twice over and verifies 17 seeded runs.
+- **Binaries**: `build_binary.sh` → `main3d_<tag>_<commit>_<date>.ex`, stamped;
+  record in `results/merger/binaries.tsv`. `main3d_guard_7166787a_2026-09-24.ex`
+  = coreprof_2026-09-16's source + the stamp: reads the l2 seed and the core
+  profile. **The launch.sh default is still the pin** — switching the
+  campaign's binary is the user's call; until then every A1/A2-type launch
+  passes `--binary`.
+- **The article's numbers** come from `article/claims/` (827 rows, 714 of 741
+  recomputed agree); `claims/FINDINGS.md` lists the 27 that do not and ~20
+  statements the data contradict — e.g. three collapsed single throats die
+  behind their horizons, and the cost is 650 GPU-h, not 810. None changed yet.
+- Near miss: an in-place edit of `run_single.sh` would have hit the live t500
+  supervisor when its evolution ends (bash reads scripts by offset); its inode
+  was restored byte for byte, and `run_single.sh` / `build_binary.sh` are now
+  single parsed blocks. §6's "never edit a running campaign script" is now
+  enforced by structure.
+
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
 The flow finder (`grteclyn-wrapper/scripts/validation/ah_flow_finder.py`,
