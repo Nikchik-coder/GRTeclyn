@@ -1,5 +1,9 @@
 # Drainhole merger — packed campaign results
 
+> Current state: [`research/merger/STATUS.md`](../../research/merger/STATUS.md). What each run
+> actually ran (binary, seeds, name check): [`runs_index.tsv`](runs_index.tsv), generated;
+> which binary is which: [`binaries.tsv`](binaries.tsv). Map: [`MAP.md`](../../MAP.md).
+
 Two exotic-matter (phantom scalar) drainhole throats, given a gentle orbital push,
 spiralling together in full 3+1 numerical relativity. This directory is the light
 extract of that campaign: every number the analysis rests on, the movies, a thinned set

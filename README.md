@@ -7,6 +7,7 @@
 >
 > | Added here | What it is |
 > |---|---|
+> | [`MAP.md`](MAP.md) | What is where in the research layer, and how to run, check and launch things. **Start here**, then [`CLAUDE.md`](CLAUDE.md) for the working rules. |
 > | [`grteclyn-wrapper/`](grteclyn-wrapper/README.md) | Python orchestration layer — GRTresna initial data → GPU evolution → scoring, plus MAP-Elites / CMA-ES search campaigns. **Start here.** |
 > | [`results/`](results/) | Packed, scrubbed campaign extracts. Reproducible without a GPU. |
 >

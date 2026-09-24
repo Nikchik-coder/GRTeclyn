@@ -4,6 +4,9 @@
 # analysis/make_summary.py; the launcher appends a line when WHM_WHAT is set at
 # launch (research/merger/closeout.sh warns about any run missing here).
 # Lines starting with # are comments.
+# Since 2026-09-24 this file is the PROSE half of the registry.  The facts -- binary
+# and its commit, seeds and whether they took, name-vs-params check -- are generated
+# into runs_index.tsv from each run's run_manifest.json (analysis/run_index.py).
 #run	what_is_different	caveat	stopped_note
 
 # The 2026-08-31 arms: the restart chain of the main run, then its one-knob probes.

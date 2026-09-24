@@ -1,5 +1,9 @@
 # Merger campaign — the plan
 
+> **This is the diary.** Current state (live runs, queue, verdicts) is one page in
+> [`STATUS.md`](STATUS.md); run names, streams and conventions are in
+> [`GLOSSARY.md`](GLOSSARY.md); where everything lives is [`../../MAP.md`](../../MAP.md).
+
 One file, kept short, and the only plan that is updated. A finished run adds one
 tick in §2 (and a row in §3's queue), and, if it settles something, one line in §4; the numbers themselves are
 written once, in the pack (`results/merger/README.md` at the claim, the generated
