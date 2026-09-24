@@ -78,8 +78,44 @@ def first_and_last_time(path):
     return first, last
 
 
+def restart_time(run_dir):
+    """Code time of the checkpoint the run restarted from, or None.
+
+    ChkNNNNN is the parent's coarse step, so t = NNNNN * dt0 with the run's
+    own dt0 = dt_multiplier * L / N1 (every restart keeps its parent's box).
+    Read from the params' amr.restart, else the launch banner."""
+    params = {}
+    pf = run_dir / "evolution_params.txt"
+    if pf.exists():
+        for line in pf.read_text(errors="replace").splitlines():
+            m = re.match(r"\s*([A-Za-z_][\w.]*)\s*=(.*)$", line.split("#", 1)[0])
+            if m:
+                params[m.group(1)] = m.group(2).strip()
+    texts = [params.get("amr.restart", "")]
+    banner = run_dir / "launch_banner.txt"
+    if banner.exists():
+        texts += [l for l in banner.read_text(errors="replace").splitlines() if "restart" in l]
+    try:
+        dt0 = (float(params["dt_multiplier"]) * float(params["L"])
+               / float(params["N1"].split()[0]))
+    except (KeyError, ValueError, IndexError):
+        dt0 = 0.01                        # every merger run's coarse step
+    for t in texts:
+        m = re.search(r"Chk0*(\d+)", t)
+        if m:
+            return int(m.group(1)) * dt0
+    return None
+
+
 def leg_start(run_dir, suffix):
-    """First recorded time of the leg run_tail{suffix}.log belongs to."""
+    """First recorded time of the leg run_tail{suffix}.log belongs to.
+
+    A leg with no packed stream starts at its restart time, not at 0: GRTeclyn
+    logs speed = (t - t_restart) / wall time (GRAMRLevel.cpp), so the t = 0
+    fallback charged a restarted leg for its parent's whole history too --
+    ten restart legs from the t = 50 checkpoint whose streams are not packed,
+    160.7 h in all (ladder_L7: 49.6 h charged for 5.5 h run).  Found by the
+    claims ledger, 2026-09-24."""
     for stem in START_STREAMS:
         if suffix:
             hits = sorted(run_dir.glob(f"{stem}{suffix}*.dat"))
@@ -90,6 +126,10 @@ def leg_start(run_dir, suffix):
             t0, _ = first_and_last_time(p)
             if t0 is not None:
                 return t0
+    if not suffix:
+        t_restart = restart_time(run_dir)
+        if t_restart is not None:
+            return t_restart
     return 0.0
 
 
@@ -142,6 +182,10 @@ def main():
         for tail in sorted(run_dir.glob("run_tail*.log")):
             suffix = tail.name[len("run_tail"):-len(".log")]
             speed, t_end = parse_tail(tail)
+            if speed is not None and speed <= 0.0:
+                # died in start-up (the OOMFAIL stubs): no time evolved, nothing to divide
+                warnings.append(f"speed 0 (no step completed), counted 0 h: {tail.relative_to(args.root)}")
+                continue
             if speed is None or t_end is None:
                 warnings.append(f"no speed/ADVANCE line: {tail.relative_to(args.root)}")
                 continue

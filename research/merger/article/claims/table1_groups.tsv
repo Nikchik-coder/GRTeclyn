@@ -1,0 +1,168 @@
+# Table I of research.tex (tab:matrix), run by run: which group each packed run is counted in.
+# Built from the 2026-09-23 recount (every packed run directory, i.e. every directory with a run_tail*.log
+# under results/merger/campaign, classified once).  Read by extract_detector.py, which recounts the table
+# from this file plus the pack and FAILS if a packed run is missing here, if a counted run is not packed, or
+# if a counted name is ambiguous.  group '-' = not an evolution of its own (copy, dead launch) or not cited;
+# the reason is in note.  'shakedown (archived)' is counted in the 144 but not in the 132.  Matching is by
+# run NAME (the directory name), so re-filing the pack does not break it; path is informational.
+run	group	path	note
+single_hold_L128_t100	lone throat	01_single_throat/hold/single_hold_L128_t100	
+single_hold_chireg_t100	lone throat	01_single_throat/hold/single_hold_chireg_t100	
+single_hold_dt005_t070	lone throat	01_single_throat/hold/single_hold_dt005_t070	
+single_hold_dt01_t070	lone throat	01_single_throat/hold/single_hold_dt01_t070	
+single_hold_ml2_chireg_t100	lone throat	01_single_throat/hold/single_hold_ml2_chireg_t100	
+single_hold_ml2_t100	lone throat	01_single_throat/hold/single_hold_ml2_t100	
+single_hold_ml4_lowfloor_t100	lone throat	01_single_throat/hold/single_hold_ml4_lowfloor_t100	
+single_hold_ml4_t100	lone throat	01_single_throat/hold/single_hold_ml4_t100	
+single_hold_t100	lone throat	01_single_throat/hold/single_hold_t100	
+single_eps_m1e1_t100	spherical kicks	01_single_throat/seed/single_eps_m1e1_t100	
+single_eps_m1e2_ml4_t060	spherical kicks	01_single_throat/seed/single_eps_m1e2_ml4_t060	
+single_eps_m1e2_ml4_t100	spherical kicks	01_single_throat/seed/single_eps_m1e2_ml4_t100	
+single_eps_m1e2_t100	spherical kicks	01_single_throat/seed/single_eps_m1e2_t100	
+single_eps_m1e3_t100	spherical kicks	01_single_throat/seed/single_eps_m1e3_t100	
+single_eps_p1e1_t100	spherical kicks	01_single_throat/seed/single_eps_p1e1_t100	
+single_eps_p1e2_ml4_t060	spherical kicks	01_single_throat/seed/single_eps_p1e2_ml4_t060	
+single_eps_p1e2_t100	spherical kicks	01_single_throat/seed/single_eps_p1e2_t100	
+single_eps_p1e3_t100	spherical kicks	01_single_throat/seed/single_eps_p1e3_t100	
+single_eps_p1e2_q1e2_chk_t100	quadrupolar kicks	01_single_throat/seed/single_eps_p1e2_q1e2_chk_t100	
+single_eps_p1e2_q1e2_ml4_t100_r02500	quadrupolar kicks	01_single_throat/seed/single_eps_p1e2_q1e2_ml4_t100_r02500	
+single_eps_p1e2_q1e2_t100	quadrupolar kicks	01_single_throat/seed/single_eps_p1e2_q1e2_t100	
+single_eps_p1e2_q5e2_ml4_t100	quadrupolar kicks	01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100	
+single_eps_p1e2_q5e3_ml4_t100	quadrupolar kicks	01_single_throat/seed/single_eps_p1e2_q5e3_ml4_t100	
+single_pureq_q1e2_ml4_t100	quadrupolar kicks	01_single_throat/seed/single_pureq_q1e2_ml4_t100	
+single_eps_p1e2_q1e2_ml4_scalar_t100	scalar-stream re-runs	01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100	
+single_pureq_q1e2_L128_ml4_scalar_t100	scalar-stream re-runs	01_single_throat/seed/single_pureq_q1e2_L128_ml4_scalar_t100	
+single_pureq_q1e2_ml4_scalar_t100	scalar-stream re-runs	01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100	
+ctrl_flip_d12	two throats at rest	03_two_throats/ctrl_flip_d12	
+ctrl_rest_a1	two throats at rest	03_two_throats/ctrl_rest_a1	
+ctrl_rest_a15	two throats at rest	03_two_throats/ctrl_rest_a15	
+ctrl_rest_a3	two throats at rest	03_two_throats/ctrl_rest_a3	
+ctrl_rest_d12	two throats at rest	03_two_throats/ctrl_rest_d12	
+ctrl_rest_d14	two throats at rest	03_two_throats/ctrl_rest_d14	
+ctrl_rest_d16	two throats at rest	03_two_throats/ctrl_rest_d16	
+ctrl_rest_d18	two throats at rest	03_two_throats/ctrl_rest_d18	
+orbit_d12_p012	two throats at rest	03_two_throats/orbit_d12_p012	
+place_d10_step1	placement probes	04_binary_headon/placement/place_d10_step1	
+place_d12_step1	placement probes	04_binary_headon/placement/place_d12_step1	
+place_d14_step1	placement probes	04_binary_headon/placement/place_d14_step1	
+place_d16_step1	placement probes	04_binary_headon/placement/place_d16_step1	
+place_d18_step1	placement probes	04_binary_headon/placement/place_d18_step1	
+place_d20_step1	placement probes	04_binary_headon/placement/place_d20_step1	
+place_d24_step1	placement probes	04_binary_headon/placement/place_d24_step1	
+place_d28_step1	placement probes	04_binary_headon/placement/place_d28_step1	
+place_d32_step1	placement probes	04_binary_headon/placement/place_d32_step1	
+place_d36_step1	placement probes	04_binary_headon/placement/place_d36_step1	
+place_d40_step1	placement probes	04_binary_headon/placement/place_d40_step1	
+place_d44_step1	placement probes	04_binary_headon/placement/place_d44_step1	
+place_d48_step1	placement probes	04_binary_headon/placement/place_d48_step1	
+place_d65_step1	placement probes	04_binary_headon/placement/place_d65_step1	
+place_d6_step1	placement probes	04_binary_headon/placement/place_d6_step1	
+place_d75_step1	placement probes	04_binary_headon/placement/place_d75_step1	
+place_d7_step1	placement probes	04_binary_headon/placement/place_d7_step1	
+place_d8_step1	placement probes	04_binary_headon/placement/place_d8_step1	
+single_m05_t040	half-mass, m=0.5	01_single_throat/hold/single_m05_t040	
+merge_headon_flip_d6_m05_t100	half-mass, m=0.5	04_binary_headon/merge_headon_flip_d6_m05_t100	
+merge_headon_flip_d12	head-on, d=8	04_binary_headon/merge_headon_flip_d12	a d = 12 head-on, kept in the head-on group as in the pre-recount table (the label says d = 8)
+merge_headon_flip_d8_v1_lvl3down_t100_r03500	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1_lvl3down_t100_r03500	
+merge_headon_flip_d8_v1_lvl5_t100_r02200	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1_lvl5_t100_r02200	
+merge_headon_flip_d8_v1_lvl5chk_t100_r02200	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1_lvl5chk_t100_r02200	
+merge_headon_flip_d8_v1_lvl5from0_scalar_t100	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100	
+merge_headon_flip_d8_v1_t100	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1_t100	
+merge_headon_flip_d8_v1c_eps_m1e2_t100	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1c_eps_m1e2_t100	
+merge_headon_flip_d8_v1c_eps_p1e2_t100	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1c_eps_p1e2_t100	
+merge_headon_flip_d8_v1c_fillnarrow_t100_r02200	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1c_fillnarrow_t100_r02200	
+merge_headon_flip_d8_v1c_latefreeze_t100	head-on, d=8	04_binary_headon/merge_headon_flip_d8_v1c_latefreeze_t100	
+bbh_control_d12_p012	vacuum BBH	07_bbh_control/bbh_control_d12_p012	
+bbh_control_d12_p012_t150	vacuum BBH	07_bbh_control/bbh_control_d12_p012_t150	
+bbh_control_d12_p045_t100	vacuum BBH	07_bbh_control/bbh_control_d12_p045_t100	the fly-by's momentum-matched vacuum control (hidden in the old table's orbital-chain 16)
+bridge_grtresna_L64_t025	constraint-solved data	01_single_throat/bridge_grtresna_L64_t025	
+merge_orbit_flip_d12_p020_t200	momentum scan	05_binary_spiral/p020/merge_orbit_flip_d12_p020_t200	
+merge_orbit_flip_d12_p025_t200	momentum scan	05_binary_spiral/p025/merge_orbit_flip_d12_p025_t200	
+merge_orbit_flip_d12_p035_t200	momentum scan	06_binary_flyby/p035/merge_orbit_flip_d12_p035_t200	
+merge_orbit_flip_d12_p045_t200	momentum scan	06_binary_flyby/p045/merge_orbit_flip_d12_p045_t200	
+merge_orbit_flip_d12_p045	fly-by, p=0.45	06_binary_flyby/p045/merge_orbit_flip_d12_p045	
+merge_orbit_flip_d12_p045_L128_lvl5_t100	fly-by, p=0.45	06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100	
+autopsy_nodamp_r05000	orbital chain, p=0.12	05_binary_spiral/p012/autopsy_nodamp_r05000	
+merge_orbit_flip_d12_ml2	orbital chain, p=0.12	05_binary_spiral/p012/merge_orbit_flip_d12_ml2	
+merge_orbit_flip_d12_n160	orbital chain, p=0.12	05_binary_spiral/p012/merge_orbit_flip_d12_n160	
+merge_orbit_flip_d12_r03000	orbital chain, p=0.12	05_binary_spiral/p012/merge_orbit_flip_d12_r03000	
+merge_orbit_flip_d12_r04000	orbital chain, p=0.12	05_binary_spiral/p012/merge_orbit_flip_d12_r04000	
+merge_orbit_flip_d12_r05000	orbital chain, p=0.12	05_binary_spiral/p012/merge_orbit_flip_d12_r05000	data lost in the 2026-08-31 sweep (LOST.md); log and banner survive
+merge_orbit_flip_d12_rw_r05000	orbital chain, p=0.12	05_binary_spiral/p012/merge_orbit_flip_d12_rw_r05000	
+merge_orbit_flip_d12_sg10_r05000	orbital chain, p=0.12	05_binary_spiral/p012/merge_orbit_flip_d12_sg10_r05000	
+merge_twin_p012_cf08_t060_r05000	orbital chain, p=0.12	05_binary_spiral/p012/merge_twin_p012_cf08_t060_r05000	
+merge_twin_p012_cf10_t060_r05000	orbital chain, p=0.12	05_binary_spiral/p012/merge_twin_p012_cf10_t060_r05000	
+merge_twin_p012_cf12_t060_r05000	orbital chain, p=0.12	05_binary_spiral/p012/merge_twin_p012_cf12_t060_r05000	
+merge_twin_p012_nodamp_cf10_t060	orbital chain, p=0.12	05_binary_spiral/p012/merge_twin_p012_nodamp_cf10_t060	
+merge_twin_p012_nodamp_t060	orbital chain, p=0.12	05_binary_spiral/p012/merge_twin_p012_nodamp_t060	
+ladder_L4_damped_r05000	refinement ladder	05_binary_spiral/p012_ladder/ladder_L4_damped_r05000	
+ladder_L4_r05000	refinement ladder	05_binary_spiral/p012_ladder/ladder_L4_r05000	
+ladder_L5_damped_r05000	refinement ladder	05_binary_spiral/p012_ladder/ladder_L5_damped_r05000	
+ladder_L5_halfstep_r05000	refinement ladder	05_binary_spiral/p012_ladder/ladder_L5_halfstep_r05000	
+ladder_L5_r05000	refinement ladder	05_binary_spiral/p012_ladder/ladder_L5_r05000	
+ladder_L6_damped_r05000	refinement ladder	05_binary_spiral/p012_ladder/ladder_L6_damped_r05000	
+ladder_L6_r05000	refinement ladder	05_binary_spiral/p012_ladder/ladder_L6_r05000	
+ladder_L7_r05000	refinement ladder	05_binary_spiral/p012_ladder/ladder_L7_r05000	
+freeze_narrow_late_t080_r05000	interior freeze, L=64	05_binary_spiral/p012_freeze/freeze_narrow_late_t080_r05000	
+freeze_narrow_t080_r05000	interior freeze, L=64	05_binary_spiral/p012_freeze/freeze_narrow_t080_r05000	
+freeze_narrow_t100_r08000	interior freeze, L=64	05_binary_spiral/p012_freeze/freeze_narrow_t100_r08000	
+freeze_wave_crosscheck_diag_r09000	interior freeze, L=64	05_binary_spiral/p012_freeze/freeze_wave_crosscheck_diag_r09000	
+freeze_wave_crosscheck_r09000	interior freeze, L=64	05_binary_spiral/p012_freeze/freeze_wave_crosscheck_r09000	
+freeze_wide_t080_r05000	interior freeze, L=64	05_binary_spiral/p012_freeze/freeze_wide_t080_r05000	
+freeze_wide_t100_r08000	interior freeze, L=64	05_binary_spiral/p012_freeze/freeze_wide_t100_r08000	
+merge_orbit_flip_d12_p015_lvl5_t060_r05000	wall probes	05_binary_spiral/p015/merge_orbit_flip_d12_p015_lvl5_t060_r05000	
+merge_orbit_flip_d12_p015_nofill_t060	wall probes	05_binary_spiral/p015/merge_orbit_flip_d12_p015_nofill_t060	
+merge_orbit_flip_d12_p015_rr_t060	wall probes	05_binary_spiral/p015/merge_orbit_flip_d12_p015_rr_t060	
+merge_orbit_flip_d12_p020_lvl5_t200	wall probes	05_binary_spiral/p020/merge_orbit_flip_d12_p020_lvl5_t200	
+merge_orbit_flip_d12_p020_nofill_t060	wall probes	05_binary_spiral/p020/merge_orbit_flip_d12_p020_nofill_t060	
+merge_orbit_flip_d12_p025_lvl5_t200	wall probes	05_binary_spiral/p025/merge_orbit_flip_d12_p025_lvl5_t200	
+v2_spiral_d12_p012_L128_lvl3_t050	production spiral, L=128	05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl3_t050	
+v2_spiral_d12_p012_L128_lvl3_t050_mouths	production spiral, L=128	05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl3_t050_mouths	
+v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700	production spiral, L=128	05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700	
+v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700	production spiral, L=128	05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700	
+v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600	production spiral, L=128	05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600	
+v2_spiral_d12_p012_L128_lvl5from0_t100	production spiral, L=128	05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5from0_t100	
+merge_twin_p012_helfer_lvl4_t100	Helfer twins	05_binary_spiral/p012/merge_twin_p012_helfer_lvl4_t100	
+merge_twin_p012_helfer_lvl5_t100	Helfer twins	05_binary_spiral/p012/merge_twin_p012_helfer_lvl5_t100	
+merge_twin_p012_helfer_t100	Helfer twins	05_binary_spiral/p012/merge_twin_p012_helfer_t100	
+merge_twin_p012_helfer_w2_t060	Helfer twins	05_binary_spiral/p012/merge_twin_p012_helfer_w2_t060	
+merge_twin_p012_plain_t100	Helfer twins	05_binary_spiral/p012/merge_twin_p012_plain_t100	the Helfer twins' uncorrected reference
+merge_orbit_flip_d12_p045_helfer_t090	Helfer twins	06_binary_flyby/p045/merge_orbit_flip_d12_p045_helfer_t090	
+merge_headon_flip_d8_eta4_lvl5_t040_r03200	gauge arms	04_binary_headon/merge_headon_flip_d8_eta4_lvl5_t040_r03200	
+merge_headon_flip_d8_eta4_t030	gauge arms	04_binary_headon/merge_headon_flip_d8_eta4_t030	
+merge_headon_flip_d8_eta4_t050	gauge arms	04_binary_headon/merge_headon_flip_d8_eta4_t050	
+merge_headon_flip_d8_lp2_t030	gauge arms	04_binary_headon/merge_headon_flip_d8_lp2_t030	
+merge_twin_p012_eta4_t060	gauge arms	05_binary_spiral/p012/merge_twin_p012_eta4_t060	
+merge_twin_p012_eta4_t100	gauge arms	05_binary_spiral/p012/merge_twin_p012_eta4_t100	
+merge_twin_p012_lc1_t060	gauge arms	05_binary_spiral/p012/merge_twin_p012_lc1_t060	1+log with the lapse coefficient halved: moved from the orbital chain to the gauge arms
+merge_twin_p012_lp2_t060	gauge arms	05_binary_spiral/p012/merge_twin_p012_lp2_t060	
+merge_twin_p012_eta4_lvl5_t066_r05000	gauge arms	merge_twin_p012_eta4_lvl5_t066_r05000	
+merge_twin_p012_eta4_lvl5_t066_r06000	gauge arms	merge_twin_p012_eta4_lvl5_t066_r06000	
+stage1_lapse5	shakedown (archived)	01_single_throat/gauge/stage1_lapse5	
+stage1_lapse5_sg00	shakedown (archived)	01_single_throat/gauge/stage1_lapse5_sg00	
+stage1_lapse5_sg01	shakedown (archived)	01_single_throat/gauge/stage1_lapse5_sg01	
+stage1_lapse6	shakedown (archived)	01_single_throat/gauge/stage1_lapse6	
+stage1_lapse6_sg01	shakedown (archived)	01_single_throat/gauge/stage1_lapse6_sg01	
+s15_lapse5_sg00_fg	shakedown (archived)	01_single_throat/grid/s15_lapse5_sg00_fg	
+s15_lapse5_sg01_fg	shakedown (archived)	01_single_throat/grid/s15_lapse5_sg01_fg	
+s15_lapse6_sg00_fg	shakedown (archived)	01_single_throat/grid/s15_lapse6_sg00_fg	
+s16ml3_lapse5_sg01_fg	shakedown (archived)	01_single_throat/grid/s16ml3_lapse5_sg01_fg	
+s1uni128_lapse5_sg01	shakedown (archived)	01_single_throat/grid/s1uni128_lapse5_sg01	
+s1uni256_lapse5_sg01	shakedown (archived)	01_single_throat/grid/s1uni256_lapse5_sg01	
+s20_boost_p02	shakedown (archived)	02_moving_throat/s20_boost_p02	registry: 'Stage 2.0 shakedown' (moving-box tagger test, boosted throat); not cited -> shakedown
+merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22	-	04_binary_headon/merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22	dead launch: OOM at t=0, never evolved (speed 0)
+autopsy_nodamp_r05000_HOOKFAIL_2026-09-08	-	05_binary_spiral/p012/autopsy_nodamp_r05000_HOOKFAIL_2026-09-08	dead launch: harness hook failed, relaunched under the real name
+merge_orbit_flip_d12_r05000.__keep	-	05_binary_spiral/p012/merge_orbit_flip_d12_r05000.__keep	copy: byte-identical duplicate of merge_orbit_flip_d12_r05000 (prune hold-back)
+merge_twin_p012_cf12_t060_r05000.__keep	-	05_binary_spiral/p012/merge_twin_p012_cf12_t060_r05000.__keep	copy: byte-identical duplicate of merge_twin_p012_cf12_t060_r05000 (prune hold-back)
+merge_twin_p012_lp2_t060_OOMFAIL_2026-09-21	-	05_binary_spiral/p012/merge_twin_p012_lp2_t060_OOMFAIL_2026-09-21	dead launch: OOM at t=0, never evolved (speed 0)
+freeze_narrow_late_t080_r05000.__keep	-	05_binary_spiral/p012_freeze/freeze_narrow_late_t080_r05000.__keep	copy: byte-identical duplicate of freeze_narrow_late_t080_r05000 (prune hold-back)
+ladder_L4_damped_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L4_damped_r05000.__keep	copy: byte-identical duplicate of ladder_L4_damped_r05000 (prune hold-back)
+ladder_L4_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L4_r05000.__keep	copy: byte-identical duplicate of ladder_L4_r05000 (prune hold-back)
+ladder_L5_damped_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L5_damped_r05000.__keep	copy: byte-identical duplicate of ladder_L5_damped_r05000 (prune hold-back)
+ladder_L5_halfstep_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L5_halfstep_r05000.__keep	copy: byte-identical duplicate of ladder_L5_halfstep_r05000 (prune hold-back)
+ladder_L5_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L5_r05000.__keep	copy: byte-identical duplicate of ladder_L5_r05000 (prune hold-back)
+ladder_L6_damped_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L6_damped_r05000.__keep	copy: byte-identical duplicate of ladder_L6_damped_r05000 (prune hold-back)
+ladder_L7_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L7_r05000.__keep	copy: byte-identical duplicate of ladder_L7_r05000 (prune hold-back)
+merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22	-	merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22	dead launch (OOM at t=0), top-level duplicate of the 04_binary_headon copy
+single_eps_p1e2_t250	-	single_eps_p1e2_t250	not cited; packed as an in-flight stub (log to t = 3.5) -- the run has since died at t = 145.81 (registry, 2026-09-24), so its GPU time is outside the totals
+single_pureq_q1e2_L128_ml4_scalar_t500	-	single_pureq_q1e2_L128_ml4_scalar_t500	not cited; in flight (stop_time 500), packed as a stub
