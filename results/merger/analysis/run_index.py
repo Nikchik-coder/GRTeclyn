@@ -7,7 +7,7 @@ at launch since 2026-09-24, or reconstructed afterwards by `run_manifest.py
 backfill-all`) and its packed streams.  Nothing here is typed by hand: the
 prose stays in runs_registry.tsv, the facts come from here.
 
-Three checks, each of which would have caught a real error:
+Four checks, each of which would have caught a real error:
   seed      a seed requested in the params that did not take -- the binary
             lacks the key, the launch-time preflight said "no effect", or the
             run's t = 0 constraint norms are bit-identical to an unseeded run's
@@ -16,7 +16,11 @@ Three checks, each of which would have caught a real error:
   name      each token of the run name that name_grammar.tsv knows (q1e2, ml4,
             p012, eta4, ...) against the params the run used;
   binary    keys in the params that the binary does not contain (frozen binaries
-            only -- the live build product has been rebuilt since).
+            only -- the live build product has been rebuilt since);
+  intent    settings that contradict each other: checkpoints asked for with
+            amr.checkpoint_files_output = 0 wrote none (single_eps_p1e2_t250 died
+            at t = 145.8 with nothing to restart from).  Same rule as the launch
+            preflight (grteclyn-wrapper/.../preflight.py, intent_check).
 
 Usage: run_index.py [<pack-root>]      (default: this file's parent's parent)
 Exit status 0 always (a report, not a gate); the problem count is printed.
@@ -38,7 +42,7 @@ from pack_paths import iter_runs  # noqa: E402
 SEED_KEYS = ("wormhole_seed_amplitude_A", "wormhole_seed_l2_amplitude_A")
 FIELDS = ["run", "group", "provenance", "binary", "binary_version", "preflight",
           "eps", "eps2", "max_level", "L", "N1", "stop_time", "restart", "H0",
-          "seed_check", "name_check", "binary_check"]
+          "seed_check", "name_check", "binary_check", "intent_check"]
 
 
 def parse_params(path: pathlib.Path) -> dict[str, str]:
@@ -142,6 +146,19 @@ def check_name(name: str, params: dict[str, str], rules: list[dict]) -> list[str
     return problems
 
 
+def intent_problems(params: dict[str, str]) -> list[str]:
+    """Contradictory output settings (defaults: checkpoint_interval 1, output 1)."""
+    ci = num(params, "checkpoint_interval")
+    keep = num(params, "checkpoint_keep")
+    cout = num(params, "amr.checkpoint_files_output")
+    out = []
+    if cout == 0 and ((ci or 0) > 0 or (keep or 0) > 0):
+        out.append("checkpoints asked for (interval/keep) with checkpoint output off: none written")
+    if num(params, "amr.plot_files_output") == 0 and (num(params, "plot_interval") or 0) > 0:
+        out.append("plot_interval set with plotfile output off: none written")
+    return out
+
+
 def first_row(path: pathlib.Path) -> tuple[list[str], list[str]] | None:
     """(header names, first data row as printed strings) of a stream."""
     if not path.exists():
@@ -193,7 +210,7 @@ def main(argv: list[str]) -> int:
             h0_by_value.setdefault(h0, []).append(row)
         rows.append(row)
 
-    n_seed = n_name = n_bin = 0
+    n_seed = n_name = n_bin = n_intent = 0
     for row in rows:
         seeds, absent, man = row["_seeds"], row["_absent"], row["_man"]
         asked = {k: v for k, v in seeds.items() if v}
@@ -240,6 +257,9 @@ def main(argv: list[str]) -> int:
         row["binary_check"] = ("unknown" if absent is None else
                                "lacks: " + ", ".join(real_absent) if real_absent else "ok")
         n_bin += bool(real_absent)
+        intent = intent_problems(row["_params"])
+        row["intent_check"] = "; ".join(intent) if intent else "ok"
+        n_intent += bool(intent)
 
     out = root / "runs_index.tsv"
     with out.open("w", encoding="utf-8", newline="") as fh:
@@ -252,8 +272,8 @@ def main(argv: list[str]) -> int:
             w.writerow(row)
     n_man = sum(r["provenance"] != "none" for r in rows)
     print(f"[run-index] {len(rows)} runs ({n_man} with a manifest): {n_seed} seed(s) not applied, "
-          f"{n_name} name mismatch(es), {n_bin} run(s) whose binary lacks a params key "
-          f"-> {out.name}")
+          f"{n_name} name mismatch(es), {n_bin} run(s) whose binary lacks a params key, "
+          f"{n_intent} with contradictory output settings -> {out.name}")
     for row in rows:
         if row["seed_check"].startswith("NOT APPLIED") or row["name_check"] != "ok":
             print(f"  {row['run']}: seed {row['seed_check']}; name {row['name_check']}")

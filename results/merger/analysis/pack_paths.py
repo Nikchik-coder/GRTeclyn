@@ -46,6 +46,11 @@ def iter_runs(root: pathlib.Path):
 
 
 def _is_run(d: pathlib.Path) -> bool:
+    # <run>.__keep is pack_results.sh's temporary copy; ten were committed by an
+    # interrupted pack on 2026-09-16 (byte-identical to their runs' files) and
+    # were being counted as runs, e.g. ten phantom rows in summary.csv.
+    if d.name.endswith(".__keep"):
+        return False
     return any((d / f).exists() for f in ("evolution_params.txt", "run_tail.log", "LOST.md", "launch_banner.txt"))
 
 
