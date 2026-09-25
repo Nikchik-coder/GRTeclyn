@@ -1,4 +1,4 @@
-# Status — 2026-09-25 16:30 UTC
+# Status — 2026-09-25 17:55 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -8,17 +8,20 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 **`single_eps_m1e2_L512_ml5_oct_t400`** (F4, the inflation arm on the OCTANT in 1+log: F1b's gauge on F3's grid, mirror planes
 x = y = z = 0, rolling checkpoints keep-3, profile `inflation-octant`) — first node, card 1, launched 2026-09-25 16:27 UTC on the
-user's word ("switch back now and run full t"), preflight PASS, Chk00000 on scratch, frame 0 identical to F3's (mirrored, t = 0
-bars). 82.6 u/h, 7.5 GB. ETA: t = 100 ≈ 17:40 UTC (~1.2 h), causal limit t = 340 ≈ 20:35 UTC (~4.1 h), end t = 400 ≈ 21:20 UTC
-(~4.8 h). Growth read off the invariant record (horizon R, M_MS, proper-time rate): the 1+log lapse freezes at the throat.
+user's word ("switch back now and run full t"). t = 105 at 17:54, 73.5 u/h: causal limit t = 340 ≈ 21:05 UTC (~3.2 h), end
+t = 400 ≈ 21:55 UTC (~4 h). No NaN, max|K| flat at 0.03, but L2_Ham doubles every ~15 u (6.4e-3 at t = 105): 0.1 by t ≈ 165
+on that rate, so the record is quotable to t ≈ 150, not 400 ["2026-09-25 (17:55 UTC)"]. Agrees with Shinkai–Hayward only at
+the onset (t ≤ 38, within 2–8 %); the neck runs 15–33 % slow once 1+log freezes its lapse.
 
-**The harmonic arm is over and wiped** ["2026-09-25 (16:30 UTC) — F3 died"]: F3 `single_eps_m1e2_L512_ml5_harm_oct_t400` NaN at
-t = 46.55, a refinement-boundary instability on the level-5 box edge (|x| = 5) the inflating neck crossed; F2
-`single_eps_m1e2_L512_ml5_harm_t400`, its bit-identical full-box twin, killed at t = 41.7. Both wiped whole at 16:33 on the user's
-word, frames included (asked once), registry rows dropped; only their templates remain. A harmonic retry starts from t = 0.
-F1b wiped (14:15).
+**F5, harmonic slicing with stronger damping** (the user: "model it proper and without nans"):
+`single_eps_m1e2_L512_ml5_harm_oct_t400_sg03` and `_sg10` (F3's template, Kreiss–Oliger σ 0.3 / 1.0 instead of 0.1) — card 0,
+launched 17:44 UTC, preflight PASS, frame 0 checked. 23.6 u/h each (sharing the card): verdict at t = 46.55, F3's death,
+≈ 19:40 UTC (~1.8 h). **F6 queued:** `params_single_eps_m1e2_L512_ml5_harm_oct_zs_t400.txt`, harmonic with zero shift (the
+Gamma-driver drags the neck through the box faces), launched when card 0 frees.
 
-Card 0 free, card 1 F4. First node: the long
+F3 and F2 (harmonic, NaN at t = 46.55 on the level-5 box edge) wiped whole at 16:33 on the user's word; F1b wiped (14:15).
+
+Card 0 F5 (two runs), card 1 F4. First node: the long
 single-throat arms closed out under `01_single_throat/seed/` ["2026-09-24 (16:15)"]; its
 scratch is empty; the paper session's `plt_take2/` plotfile copies (77 GB, G16's input) sit in
 that session's scratchpad there.

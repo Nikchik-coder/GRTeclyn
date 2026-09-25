@@ -1318,6 +1318,39 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-25 (17:55 UTC) — F4 agrees with Shinkai–Hayward only at the onset; a NaN-free harmonic model: F5 (damping) running, F6 (zero shift) queued
+
+- **The L512 page remade on F4 with the full-metric R** (`plot_single_inflation_L512.py`, commit 64aa0d78, then panel (b)
+  refit): the neck, both horizons from t = 0, r/√χ dashed as the lower bound; level crossings on the real box faces
+  (|x| = 5 at t = 44, 10 at t = 65); `areal_radius.dat` dropped (its global minimum falls onto the compactified end from
+  t = 60).
+- **Shinkai–Hayward, windowed** (the user: "so we now agree with shinkai?"). The neck's d ln R/dτ (τ = ∫α dt at the neck)
+  against their form H(1 − R₀/R), H = 1.1/R₀, in 8-u windows: t = 18–38 0.028/0.026, 0.068/0.063, 0.112/0.110 (within
+  2–8 %); from t ≈ 40 the neck holds 0.13–0.14 while the form climbs 0.16 → 0.19 (15–33 % slow, widening); the outer
+  horizon over the last 10 u 0.149 against 0.247 (40 % slow, F1b's gap). The single fit over everything (H R₀ 1.10)
+  averaged the two regimes; panel (b) now fits the onset only (the neck's lapse above α₀/2: H R₀ 1.24, e-fold 3.1 τ)
+  and quotes the late local rate (0.63 at t = 98). The departure starts as 1+log freezes the lapse at the neck
+  (0.23 at t = 40, 0.02 by t = 98), so the clock is the first suspect; the massive throat and the resolution drop
+  (neck off level 5 at t = 44) are not excluded.
+- **Will F4 NaN?** Not imminently (max|K| flat at 0.03 through t = 105, no NaN), but L2_Ham doubles every ~15 u
+  (6.8e-4 at t = 60, 3.3e-3 at 90, 6.4e-3 at 105): on that rate 0.1 by t ≈ 165 and ~1 by t ≈ 215. The L = 128
+  1+log arm was stopped by hand at t = 195 with H 0.13, its late record the box's and the grid's. Expect F4's record
+  to be quotable to t ≈ 150, not 400.
+- **F5: harmonic slicing with stronger Kreiss–Oliger damping at the refinement faces** (the user: "we need a way to model
+  it proper and without nans"). F3's template with `WHM_SIGMA` 0.3 and 1.0 (sigma 0.1 before):
+  `single_eps_m1e2_L512_ml5_harm_oct_t400_sg03` and `_sg10`, both on card 0 of the first node, launched 17:44 UTC,
+  preflight PASS, Chk00000 on scratch, frame 0 identical to F3's. Two on one card run 23.6 u/h each (one alone: 81), so
+  t = 46.55 (F3's death) ≈ 19:40 UTC. Both launches write the same launcher log (launch.sh names it before
+  run_single.sh appends `_sgNN`); each run's own `run.log` is clean.
+- **F6 queued: harmonic slicing with zero shift** (`params_single_eps_m1e2_L512_ml5_harm_oct_zs_t400.txt`,
+  `shift_Gamma_coeff 0`; β starts at 0 and d_t β = F B + β·∂β keeps it there). The Gamma-driver is what drags the neck
+  through the fixed boxes (x_neck 1.6 → 17 by t = 98 in F4); in normal coordinates the neck should stay in the finest
+  box. New name token `zs` in `name_check.py`. Launched when card 0 frees (two runs on one card lose 40 % of the
+  throughput, so sequential answers sooner).
+- **The proper tool, not started:** a 1D spherically symmetric evolution across both universes in the proper-distance
+  coordinate (as Shinkai–Hayward and González–Guzmán–Sarbach): no refinement faces, no compactified-end fiction, any
+  slicing, horizons and their proper time exact, minutes per run; new code, cross-checked against the 3D onset.
+
 ### 2026-09-25 (16:30 UTC) — F3 died at t = 46.55 on the level-5 box edge; harmonic slicing is the difference; F2 killed and pruned; F4 = the octant in 1+log
 
 - **F3 NaN at t = 46.55** (16:12 UTC, `NaN in K`, level 5). Not the symmetry: F2 matched F3 to every printed digit through
