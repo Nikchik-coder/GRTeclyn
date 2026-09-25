@@ -148,6 +148,31 @@ def waves_peak(scenario: str, sphere: float | None = None) -> float:
 
 
 @extractor
+def waves_overlay_peak(scenario: str) -> float:
+    """Peak |r Psi4| of the vacuum control the gallery draws OVER a row
+    (plot_psi4_gallery.VACUUM_OVERLAY), over that row's drawn window, read
+    through the gallery's own overlay_record."""
+    got = _mod("plot_psi4_gallery").overlay_record(PACK, scenario)
+    if got is None:
+        raise LookupError(f"no packed vacuum overlay on the {scenario!r} row")
+    return float(np.abs(got[1]).max())
+
+
+@extractor
+def waves_overlay_delay(scenario: str) -> float:
+    """Retarded time by which the vacuum control's peak |r Psi4| (drawn under
+    the row) follows the row's own drawn peak, both at the row's sphere."""
+    G = _mod("plot_psi4_gallery")
+    got = G.overlay_record(PACK, scenario)
+    if got is None:
+        raise LookupError(f"no packed vacuum overlay on the {scenario!r} row")
+    to, yo, Ro = got
+    t, ser, radii, R_in = _series(scenario)
+    tt, yy = G.trim_zeros_tail(t, ser[R_in])
+    return float((to[np.argmax(np.abs(yo))] - Ro) - (tt[np.argmax(np.abs(yy))] - R_in))
+
+
+@extractor
 def waves_peak_fall(scenario: str) -> float:
     """100 (1 - peak_outer/peak_inner), %, each sphere read over the SAME retarded
     window (the gallery gate applied in retarded time, as plot_psi4_ligo does for

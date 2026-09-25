@@ -1412,6 +1412,31 @@ kick named and the post-floor stretch shaded "numerical: not a measurement" (FIG
 `claims.py check`: 956 rows, 0 problems; numbers.tex unchanged. Not done: the two queued inserts
 (η = 4 horizon results into §VII.C; the spherical literature's inflation ending into §IV.E).
 
+### 2026-09-25 (afternoon) — Fig. 11: the vacuum controls drawn under the spiral and the fly-by
+
+The user: "we also did a BBH fly-by with the same params -- add its extracted signal for comparison". The
+p = 0.45 vacuum control (`bbh_control_d12_p045_t100`) was kept out of the gallery on 09-19 because its
+consumer stream has only R = 14 (swept by the receding punctures) and R = 30. Its in-code extraction
+(`weyl_extraction_mode_22.dat`) also has R = 20 and 26, and agrees with the consumer at R = 30 to 1.5 % of
+peak, so it is now drawn in grey under the fly-by's own R = 20 record, on the same scale and window
+(t − R ≤ 50). What it shows: one cycle as the holes swing off periapsis, peak |rΨ4| = 9.0e-3 at u ≈ 3.5,
+4.5× below the fly-by's 4.1e-2, and nothing at the pass (u ≈ 34.5), where the drainhole pair radiates its
+arch; its two lobes fold across R = 20/26/30 at v/c = 0.99/0.96. Past u ≈ 30 its record is the receding
+holes' near field, a flat +3e-3 at R = 20 that falls across the spheres (drawn, a rule at this scale).
+The row titles now print p, the article's symbol (they printed P). Checked, not changed: the fly-by's
+level-5 record carries a grid-frequency ripple (period ≈ 0.6, 0.6 % of peak at R = 20, 1.4 % at R = 28),
+visible as a thicker trace in (d) and a ragged R = 28 envelope.
+Paper: §VIII quotes the vacuum peak and the ratio (clmGwPeakVacPass, clmGwVacPassPeakRatio, through the
+gallery's own `overlay_record`); the caption names the grey curve. `claims.py check`: 958 rows, 0 problems.
+Then, on the user's word, the spiral's twin (`bbh_control_d12_p012_t150`, row (e) until now) moved under
+row (c) the same way: its in-code extraction has R = 20 as well (0.3 % of peak against the consumer at
+R = 14 and 30), drawn whole. At the same sphere the drainhole burst peaks 2.9x higher (2.93e-2 against
+1.02e-2) and 43 units earlier (t - R = 42.1 against 84.8) than the twin's merger. The twin stays in ARMS for
+the LIGO figure and the ledger. §VIII.E now states that same-sphere comparison; its old "the fly-by's peak is
+3.8x the twin's and the spiral's 2.7x" (both against the twin's R = 14) is gone -- the fly-by has its own
+control -- and the twin's 0.57c/0.82c estimator note moved from the caption into §VIII.E. Row (a)'s dashed
+curve is named "ringdown fit" (the user). `claims.py check`: 959 rows, 0 problems.
+
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
 The flow finder (`grteclyn-wrapper/scripts/validation/ah_flow_finder.py`,

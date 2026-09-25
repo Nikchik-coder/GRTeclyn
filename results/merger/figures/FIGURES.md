@@ -630,6 +630,23 @@ radial kick ("eps = +1e-2 with eps_2 = 0.005, level 4") -- written
 shrinks -- and the stretch past the first floor (t = 43) is shaded,
 "numerical: not a measurement", each curve faint after its own floor.
 
+## The vacuum controls under rows (c) and (d) (2026-09-25, afternoon)
+
+**`08_waves/psi4_gallery`** is four rows now. Rows (c) and (d) carry, in grey
+under the ink, each drainhole binary's black-hole twin -- same d and p, bare
+punctures, no scalar -- from the control's in-code extraction
+`weyl_extraction_mode_22.dat` at the row's own sphere R = 20, on the row's
+scale (`VACUUM_OVERLAY` / `overlay_record`, which the ledger reads too):
+(c) `bbh_control_d12_p012_t150`, drawn whole -- its merger peaks at 1.02e-2,
+t - R = 84.8, 2.9x below and 43 units after the spiral's burst; it was row (e)
+and stays in `ARMS` for the LIGO figure and the ledger (`OVERLAID`);
+(d) `bbh_control_d12_p045_t100`, cut to the fly-by's window (t - R <= 50):
+one cycle at periapsis, peak 9.0e-3, 4.5x below the fly-by, nothing at the
+pass. Each is named on its own curve; the spiral's cap note rises to the top
+of its cap over the twin's swing. Row (a)'s dashed curve is named "ringdown
+fit". Left panels only (CONTEXT is also a sphere of the envelope ramp). Row
+titles print p (was P). Drawn with no arguments.
+
 ## How the commands were recovered, and why it can be trusted
 
 Each candidate was redrawn and compared with the published PNG **panel by
