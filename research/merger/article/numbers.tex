@@ -196,8 +196,6 @@
 \newcommand{\clmDetNMax}{10^{-2}}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py N_RANGE
 \newcommand{\clmDetFMPeakLo}{0.03}% auto: plot_psi4_ligo: resolved Psi4 band peak f_pk of the four drainhole channels (fly
 \newcommand{\clmDetFMPeakHi}{0.06}% auto: plot_psi4_ligo: resolved Psi4 band peak f_pk of the four drainhole channels (fly
-\newcommand{\clmDetStraddleLo}{10^{5}}% auto: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py panel_lisa bo
-\newcommand{\clmDetStraddleHi}{10^{6}}% auto: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py panel_lisa bo
 \newcommand{\clmDetConvMassLo}{10^{7}}% manual: input: the heavier mass decades the text considers
 \newcommand{\clmDetConvMassHi}{10^{8}}% manual: input
 \newcommand{\clmDetGrowthTarget}{10^{9}}% lit: z >~ 7 quasar mass scale, e.g. J1342+0928 7.8e8 Msun [banados2018]
@@ -214,15 +212,15 @@
 \newcommand{\clmDetBandLo}{0.3}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
 \newcommand{\clmDetBandHi}{60}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
 \newcommand{\clmDetOmegaHi}{10^{-11}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
-\newcommand{\clmDetOmegaLo}{10^{-13}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
-\newcommand{\clmDetOmegaFreq}{3}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
+\newcommand{\clmDetOmegaLo}{10^{-14}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
+\newcommand{\clmDetOmegaFreq}{6}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
 \newcommand{\clmDetLisaLo}{10^{-13}}% auto: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py lisa_pls: 4-y
 \newcommand{\clmDetLisaHi}{10^{-12}}% auto: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py lisa_pls: 4-y
 \newcommand{\clmDetCollapseOmegaLo}{10^{-16}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
 \newcommand{\clmDetCollapseOmegaHi}{10^{-14}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
 \newcommand{\clmDetRateLo}{0.05}% auto: arithmetic: each seed converts once, so the observed rate is n 4 pi D_c(z_e)^2 c
 \newcommand{\clmDetRateHi}{5}% auto: arithmetic: each seed converts once, so the observed rate is n 4 pi D_c(z_e)^2 c
-\newcommand{\clmDetBurstDuration}{10^{3}}% auto: arithmetic: record length (search templates' T/M: spiral 50 M, fly-by 35 M) x M 
+\newcommand{\clmDetBurstDuration}{400}% auto: arithmetic: record length (search templates' T/M: spiral 50 M, fly-by 35 M) x M 
 \newcommand{\clmDetLowBandLo}{3}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
 \newcommand{\clmDetLowBandHi}{60}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
 \newcommand{\clmDetIntroSeedLo}{10^4}% lit: heavy-seed mass range [inayoshi2020] (JWST context: bogdan2024, natarajan2024)
@@ -232,14 +230,20 @@
 \newcommand{\clmDetThroatEphiSpread}{6}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100/scalar_modes
 \newcommand{\clmDetHeadonWobble}{80}% manual: the outermost (R=18) Psi4 sphere of the head-on arms (psi4_mode_l2m0.dat); onset
 \newcommand{\clmDetKnobFlybyLevelLo}{3}% def: Table I fly-by group: merge_orbit_flip_d12_p045 (L=64) max_level
-\newcommand{\clmDetDetectMassLo}{3\times10^{4}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S2: every 
-\newcommand{\clmDetDetectMassHi}{4\times10^{6}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S2 (same)
-\newcommand{\clmDetBurstSnrLo}{61}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S1: optima
-\newcommand{\clmDetBurstSnrHi}{500}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S1 (same)
-\newcommand{\clmDetCollapseSnr}{7}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S1: lone c
-\newcommand{\clmDetBurstsPerN}{1.9\times10^{3}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S4: 4 pi D
-\newcommand{\clmDetPlsNLo}{0.6}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S4: n abov
-\newcommand{\clmDetPlsNHi}{3}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S4: same a
+\newcommand{\clmDetDetectMassLo}{3\times10^{4}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetDetectMassHi}{4\times10^{6}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetBurstSnrLo}{61}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetBurstSnrHi}{500}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetCollapseSnr}{6}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetLoudSnrLo}{175}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetHeadonSnrHi}{76}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetFlybyDetectMassHi}{2\times10^{7}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetCollapseSnrOpt}{10}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetBandFloor}{0.1}% def: grteclyn_wrapper/gw_search/lisa.py F_MIN: LISA measures from below 1e-4 Hz (Amar
+\newcommand{\clmDetTrackShare}{90}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py _track share
+\newcommand{\clmDetBurstsPerN}{1.9\times10^{3}}% auto: arithmetic 4 pi D_c(20)^2 c T, T = 4 yr (flat LCDM of plot_heavy_seeds)
+\newcommand{\clmDetPlsNLo}{2}% auto: plot_heavy_seeds: spiral-like conversions at 1e6 Msun, time-averaged Omega_GW ov
+\newcommand{\clmDetPlsNHi}{7}% auto: plot_heavy_seeds: spiral-like conversions at 1e5 Msun, over the PLS at 5.8 mHz (
 \newcommand{\clmDetOneBurstN}{5\times10^{-4}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S4: n for 
 \newcommand{\clmDetDilution}{2\times10^{5}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S8: (1+z_e
 \newcommand{\clmOmegaLambda}{0.69}% lit: Planck 2018 VI (A&A 641, A6), Table 2: Omega_Lambda = 0.6889
@@ -258,8 +262,8 @@
 \newcommand{\clmDetLrdRhoHi}{60}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6 (same)
 \newcommand{\clmDetLrdFracLo}{10^{-11}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6: f_DM =
 \newcommand{\clmDetLrdFracHi}{2\times10^{-9}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6 (same)
-\newcommand{\clmDetLrdBurstsLo}{0.06}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6: bursts
-\newcommand{\clmDetLrdBurstsHi}{0.1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6 (same):
+\newcommand{\clmDetLrdBurstsLo}{0.06}% auto: arithmetic: the summed LRD densities (plot_heavy_seeds.LRD_DENSITY) x 4 pi D_c(2
+\newcommand{\clmDetLrdBurstsHi}{0.1}% auto: arithmetic: the summed LRD densities (plot_heavy_seeds.LRD_DENSITY) x 4 pi D_c(2
 
 % ---- mergers
 \newcommand{\clmHeadonSeparation}{8}% def: campaign/04_binary_headon/merge_headon_flip_d8_v1_t100/evolution_params.txt (wor

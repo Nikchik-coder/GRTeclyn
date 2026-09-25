@@ -394,27 +394,9 @@ def label_audit(fig, pad: float = 0.004, px_step: float = 3.0) -> list[str]:
     reports: list[str] = []
     for k, ax in enumerate(fig.axes):
         inv = ax.transAxes.inverted()
-        chunks = []
-        for line in ax.lines:
-            xy = line.get_xydata()
-            if xy is None or len(xy) < 2 or not line.get_visible():
-                continue
-            disp = line.get_transform().transform(np.asarray(xy, dtype=float))
-            disp = disp[np.isfinite(disp).all(axis=1)]
-            for a, b in zip(disp[:-1], disp[1:]):
-                n = max(2, int(np.hypot(*(b - a)) / px_step))
-                chunks.append(np.linspace(a, b, n))
-        for coll in ax.collections:
-            try:
-                off = np.asarray(coll.get_offsets(), dtype=float)
-            except Exception:
-                continue
-            if off.ndim == 2 and len(off):
-                chunks.append(coll.get_offset_transform().transform(off))
-        if not chunks:
+        pts = _line_points(ax, px_step)
+        if not len(pts):
             continue
-        pts = inv.transform(np.vstack(chunks))
-        pts = pts[np.isfinite(pts).all(axis=1)]
         for txt in ax.texts:
             if not txt.get_visible() or not txt.get_text():
                 continue
@@ -428,9 +410,114 @@ def label_audit(fig, pad: float = 0.004, px_step: float = 3.0) -> list[str]:
                 reports.append(
                     f"[label-audit] axes {k} ({ax.get_ylabel() or 'unnamed'}): "
                     f"{n} samples cross '{head}'")
+        # Text on text, and text on the key (2026-09-25: a corner note printed
+        # over a legend entry, which the line walk above cannot see).
+        named = [(t.get_text().splitlines()[0][:32], t.get_window_extent().transformed(inv))
+                 for t in ax.texts if t.get_visible() and t.get_text()]
+        if ax.get_legend() is not None:
+            named.append(("the key", ax.get_legend().get_window_extent().transformed(inv)))
+        for i, (a, ba) in enumerate(named):
+            for b, bb in named[i + 1:]:
+                if ba.overlaps(bb):
+                    reports.append(f"[label-audit] axes {k} ({ax.get_ylabel() or 'unnamed'}): "
+                                   f"'{a}' overlaps '{b}'")
     for r in reports:
         print(r)
     return reports
+
+
+def _line_points(ax, px_step: float = 3.0) -> np.ndarray:
+    """Every drawn line of ``ax``, densified to ``px_step`` pixels, and every
+    marker offset, in axes fraction -- each walked in ITS OWN transform (the
+    geometry ``label_audit`` judges by)."""
+    chunks = []
+    for line in ax.lines:
+        xy = line.get_xydata()
+        if xy is None or len(xy) < 2 or not line.get_visible():
+            continue
+        disp = line.get_transform().transform(np.asarray(xy, dtype=float))
+        disp = disp[np.isfinite(disp).all(axis=1)]
+        for a, b in zip(disp[:-1], disp[1:]):
+            n = max(2, int(np.hypot(*(b - a)) / px_step))
+            chunks.append(np.linspace(a, b, n))
+    for coll in ax.collections:
+        try:
+            off = np.asarray(coll.get_offsets(), dtype=float)
+        except Exception:
+            continue
+        if off.ndim == 2 and len(off):
+            chunks.append(coll.get_offset_transform().transform(off))
+    if not chunks:
+        return np.empty((0, 2))
+    pts = ax.transAxes.inverted().transform(np.vstack(chunks))
+    return pts[np.isfinite(pts).all(axis=1)]
+
+
+def declutter(fig, pad: float = 0.004, max_shift: float = 12.0, step: float = 1.5,
+              px_step: float = 3.0) -> list[str]:
+    """Move each label ``label_audit`` would report the shortest way off its
+    line, or off another label or the key (2026-09-25, on the user's word: the vis package has the tools, use
+    them instead of hand-nudging).
+
+    Candidates are shifts of up to ``max_shift`` points, nearest first; the
+    first one that leaves the label crossed by no line, clear of every other
+    label and of the key, and inside its frame is kept.  A label nothing within
+    reach clears stays where it was, for the audit that follows to name.  Call
+    after layout and before ``label_audit``; returns what it moved.
+    """
+    import matplotlib.text as mtext
+    from matplotlib.transforms import ScaledTranslation
+
+    fig.canvas.draw()
+    renderer = fig.canvas.get_renderer()
+    r = np.arange(step, max_shift + 1e-9, step)
+    ang = np.deg2rad(np.arange(0.0, 360.0, 22.5))
+    cand = sorted({(round(float(a * np.cos(t)), 2), round(float(a * np.sin(t)), 2))
+                   for a in r for t in ang}, key=lambda d: (np.hypot(*d), -d[1]))
+    moved: list[str] = []
+    for ax in fig.axes:
+        pts = _line_points(ax, px_step)
+        if not len(pts):
+            continue
+        inv = ax.transAxes.inverted()
+
+        def box_of(artist):
+            return artist.get_window_extent(renderer).transformed(inv)
+
+        for txt in list(ax.texts):
+            if not txt.get_visible() or not txt.get_text():
+                continue
+            others = [box_of(t) for t in ax.texts
+                      if t is not txt and t.get_visible() and t.get_text()]
+            if ax.get_legend() is not None:
+                others.append(box_of(ax.get_legend()))
+            here = box_of(txt)
+            if not _covered(pts, here, pad) and not any(here.overlaps(o) for o in others):
+                continue
+            if isinstance(txt, mtext.Annotation) and txt.anncoords == "offset points":
+                x0, y0 = txt.xyann
+
+                def shift(dx, dy, txt=txt, x0=x0, y0=y0):
+                    txt.xyann = (x0 + dx, y0 + dy)
+            else:
+                base = txt.get_transform()
+
+                def shift(dx, dy, txt=txt, base=base):
+                    txt.set_transform(base + ScaledTranslation(dx / 72.0, dy / 72.0,
+                                                               fig.dpi_scale_trans))
+            for dx, dy in cand:
+                shift(dx, dy)
+                b = box_of(txt)
+                if (not _covered(pts, b, pad) and not any(b.overlaps(o) for o in others)
+                        and b.x0 >= 0.0 and b.x1 <= 1.0 and b.y0 >= 0.0 and b.y1 <= 1.0):
+                    moved.append(f"[declutter] '{txt.get_text().splitlines()[0][:32]}' "
+                                 f"moved ({dx:+.1f}, {dy:+.1f}) pt")
+                    break
+            else:
+                shift(0.0, 0.0)
+    for m in moved:
+        print(m)
+    return moved
 
 
 def _drawn(ax) -> np.ndarray:

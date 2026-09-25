@@ -699,8 +699,6 @@ def detector_seed_input(name: str) -> float:
     table = {"z_emit": H.Z_EMIT, "salpeter_myr": H.SALPETER_MYR,
              "seed_min": H.SEED_RANGE[0], "seed_max": H.SEED_RANGE[1],
              "n_min": H.N_RANGE[0], "n_max": H.N_RANGE[1],
-             "E_min": H.E_OVER_M[0], "E_max": H.E_OVER_M[1],
-             "fM_min": H.FM_PEAK[0], "fM_max": H.FM_PEAK[1],
              "J1342_z": H.J1342[0], "UHZ1_z": H.UHZ1[0]}
     return float(table[name])
 
@@ -786,31 +784,82 @@ def detector_lisa_log10(f_lo: float, f_hi: float | None = None, stat: str = "min
     return math.log10(float(p[sel].min() if stat == "min" else p[sel].max()))
 
 
+def _lisa():
+    """gw_search.lisa and its arms {name: (waveform, spectrum, F99)} on the pack."""
+    import warnings
+    warnings.filterwarnings("ignore")
+    from grteclyn_wrapper.gw_search import lisa as L
+    return L, L.arms(str(PACK))
+
+
 @extractor
-def detector_lisa_straddle_log10(stat: str, masses: list[float] | None = None, z: float = 20.0) -> float:
-    """Among the conversion boxes of Fig. heavy_seeds(b) (one per mass decade,
-    E_rad/M and n over plot_heavy_seeds' ranges, f over its (fM)_peak range),
-    log10 of the lightest ('min') or heaviest ('max') mass whose box straddles
-    the LISA curve.  masses defaults to the boxes the figure draws (1e4-1e6);
-    the curve is the analytic model, extrapolated below LISA's 0.1 mHz band edge
-    (a 1e7 box, 29-58 uHz, would touch it at its top corner)."""
+def detector_lisa_snr(arms, masses, variant: str = "nominal", stat: str = "min",
+                      z: float = 20.0) -> float:
+    """min/max LISA burst SNR over arms x source-frame masses (gw_search.lisa:
+    'nominal' = optimal orientation, instrument noise, whole record;
+    'conservative' = inclination-averaged, confusion noise, resolved band)."""
+    L, A = _lisa()
+    arms = [arms] if isinstance(arms, str) else arms
+    masses = [masses] if isinstance(masses, (int, float)) else masses
+    v = [L.snr(*A[ARM_ALIAS[a]][:2], m, z, variant, A[ARM_ALIAS[a]][2])
+         for a in arms for m in masses]
+    return min(v) if stat == "min" else max(v)
+
+
+@extractor
+def detector_lisa_snr_peak(arm: str, variant: str = "conservative", z: float = 20.0) -> float:
+    """The largest burst SNR over source-frame mass (1e2-1e9 Msun grid)."""
+    L, A = _lisa()
+    wf, spec, f99 = A[ARM_ALIAS[arm]]
+    return L.mass_range(wf, spec, z, variant, f99)[3]
+
+
+@extractor
+def detector_lisa_mass_edge(arms, end: str, variant: str = "conservative",
+                            z: float = 20.0) -> float:
+    """Lightest ('lo') or heaviest ('hi') source-frame mass at which EVERY arm
+    listed is at SNR >= 8 (the intersection of their mass ranges)."""
+    L, A = _lisa()
+    arms = [arms] if isinstance(arms, str) else arms
+    r = [L.mass_range(A[ARM_ALIAS[a]][0], A[ARM_ALIAS[a]][1], z, variant,
+                      A[ARM_ALIAS[a]][2]) for a in arms]
+    if any(x[0] is None for x in r):
+        raise ValueError("an arm never reaches SNR 8")
+    return max(x[0] for x in r) if end == "lo" else min(x[1] for x in r)
+
+
+@extractor
+def detector_lisa_input(name: str) -> float:
+    """A setting of gw_search.lisa / plot_heavy_seeds: 'f_min_mHz' (the SNR
+    integral's lower edge, LISA's band floor), 'track_share_pct' (the share of
+    int h_c^2 dln f each track of Fig. heavy_seeds(b) is drawn over)."""
+    from grteclyn_wrapper.gw_search import lisa as L
     H = _hs()
-    masses = masses or [1e4, 1e5, 1e6]
-    fgrid = np.logspace(-5.0, -0.5, 400)
-    pls = H.lisa_pls(fgrid)
-    hit = []
-    for m in masses:
-        f_lo = H.FM_PEAK[0] / (m * H.MSUN_S * (1.0 + z))
-        f_hi = H.FM_PEAK[1] / (m * H.MSUN_S * (1.0 + z))
-        o_lo = H.N_RANGE[0] * H.E_OVER_M[0] * m / (H.RHO_C_MSUN_MPC3 * (1.0 + z))
-        o_hi = H.N_RANGE[1] * H.E_OVER_M[1] * m / (H.RHO_C_MSUN_MPC3 * (1.0 + z))
-        ff = np.logspace(math.log10(f_lo), math.log10(f_hi), 50)
-        curve = np.exp(np.interp(np.log(ff), np.log(fgrid), np.log(pls), left=np.inf, right=np.inf))
-        if np.any((curve > o_lo) & (curve < o_hi)):
-            hit.append(m)
-    if not hit:
-        raise ValueError("no box straddles the curve")
-    return math.log10(min(hit) if stat == "min" else max(hit))
+    if name == "f_min_mHz":
+        return 1e3 * L.F_MIN
+    if name == "track_share_pct":
+        import inspect
+        return 100.0 * inspect.signature(H._track).parameters["share"].default
+    raise KeyError(name)
+
+
+@extractor
+def detector_pls_n_threshold(m: float, arm: str = "spiral", z: float = 20.0) -> float:
+    """n [Mpc^-3] above which conversions radiating like ``arm`` make a
+    time-averaged Omega_GW above the 4-yr power-law-integrated sensitivity at
+    their observed frequency (fM)_peak/[M(1+z)] (the ticks of Fig. heavy_seeds(c))."""
+    H = _hs()
+    f = H.f_obs(H.conversion_fM(), m, z)
+    fg = np.logspace(-5.0, -0.5, 400)
+    pls = float(np.exp(np.interp(math.log(f), np.log(fg), np.log(H.lisa_pls(fg)))))
+    return pls / (detector_gw_energy(arm=arm) * m / (H.RHO_C_MSUN_MPC3 * (1.0 + z)))
+
+
+@extractor
+def detector_bursts(n: float, years: float = 4.0, z: float = 20.0) -> float:
+    """Bursts LISA records in ``years`` from one-off conversions of comoving
+    density n (Mpc^-3) at z: n 4 pi D_c(z)^2 c T."""
+    return detector_burst_rate(n=n, z=z) * years
 
 
 def _comoving_distance_mpc(z: float) -> float:
@@ -827,6 +876,13 @@ def detector_burst_rate(n: float, z: float = 20.0) -> float:
     conversions are spread in time."""
     c_mpc_per_yr = 299792.458 * 3.15576e7 / 3.0857e19
     return n * 4.0 * math.pi * _comoving_distance_mpc(z) ** 2 * c_mpc_per_yr
+
+
+@extractor
+def detector_burst_duration_s(m: float, arms=("spiral", "fly-by"), z: float = 20.0) -> float:
+    """Burst duration in s at mass m (Msun) and redshift z: the geometric mean
+    of the arms' record lengths (the search templates' T/M)."""
+    return 10.0 ** detector_burst_duration_log10(m=m, arms=arms, z=z)
 
 
 @extractor

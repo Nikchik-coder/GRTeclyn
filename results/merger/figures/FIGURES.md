@@ -126,17 +126,29 @@ showed, that patch also cut the heavy ceiling, the light-seed name floated
 700 Myr from its line, (b)'s note clipped the 1e4 box, the tags sat inside
 the frames on the Eddington label; J1342+0928's lower bound 4.5e8 -> 5.9e8,
 Banados et al. 2018's 7.8 (+3.3, -1.9) e8; GN-z11 and J1342 now cited in the
-caption, maiolino2024 / banados2018) — article Sec. XI B, the heavy-seed channel
-drawn as arithmetic on measured numbers; NOTHING here reads a run. (a) the seed
+caption, maiolino2024 / banados2018; panel (b) REPLACED 2026-09-25, see below) —
+article Sec. X B, the heavy-seed channel and its LISA bursts. (a) the seed
 race: the drainhole reachable region (seeds 10^4-10^6 M_sun at z ~ 20,
 converted at full mass in minutes — Table II — then bounded by the 45-Myr
 Eddington ceiling) against UHZ1, GN-z11, J1342+0928 and the little-red-dot
 box, with the 10^2 M_sun light-seed ceiling missing UHZ1 by two decades.
-(b) the conversion background Omega_GW = n E_rad / (rho_c (1+z_e)) per mass
-decade (E/M = 2.2e-2 spiral to 7.4e-2 fly-by; n = 1e-4 to 1e-2 Mpc^-3;
-(fM)_peak = 0.03-0.06) against the 4-yr power-law-integrated LISA curve
-(Robson-Cornish-Liu 2019 noise, SNR 10, Thrane-Romano construction): the
-10^5-10^6 boxes straddle it. Astrophysical points carry their references in
+(b) since 2026-09-25 ONE BURST AGAINST LISA (it was the conversion-background
+boxes, a time average the text says never forms at these rates, and the
+per-burst SNR of the abstract appeared in no figure): characteristic strain
+h_c = 2 f |h~| of the fly-by at 10^4-10^8 M_sun and of the spiral and lone
+collapse at 10^5, z_e = 20, conservative (inclination-averaged), against
+sqrt(f S_n) of the Robson-Cornish-Liu noise with the 4-yr confusion; READS
+THE PACK through gw_search.lisa (the search templates' strain), and the area
+between track and noise in ln f is the quoted SNR^2 (tests/gw_search/
+test_lisa.py). Tracks drawn over the band holding 90 % of int h_c^2 dln f
+(whole tracks one decade apart fuse into one line); hatched below 0.1 mHz.
+Labels placed by style.legend / note / callout and style.declutter, checked by
+style.label_audit (which since 2026-09-25 also reports text on text and on the
+key). (c) the population curve: Omega_GW of the CONVERSIONS (E/M head-on to
+spiral, read from the pack; it ran to the fly-by's, which converts nothing)
+and the scalar deposit (E_GW spiral to fly-by, every encounter, the case
+most favourable to Lambda); ticks = the PLS at each mass's conversion
+frequency. Astrophysical points carry their references in
 the article's bibliography; cosmology flat LCDM H0 = 67.7, Om = 0.31.
 
 `08_waves/scalar_channel` (2026-09-19) — the SECOND radiation channel, the one

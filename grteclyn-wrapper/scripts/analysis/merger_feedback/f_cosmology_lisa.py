@@ -13,8 +13,8 @@ through the code the article already uses:
   the O3b search (fixed-frequency integration clamped at f0, optimal
   orientation: (2,2) face-on, (2,0) edge-on) -- tapered exactly as
   ``template_timeseries`` tapers a template;
-* LISA noise: ``plot_heavy_seeds.lisa_sn`` (Robson, Cornish & Liu 2019,
-  CQG 36, 105011, Eq. 13, the curve Fig. heavy_seeds(b) is built from), and as
+* LISA noise and burst SNR: ``gw_search.lisa`` (Robson, Cornish & Liu 2019,
+  CQG 36, 105011, Eq. 13, the curve PLS of Fig. heavy_seeds(c) is built from), and as
   a conservative variant RCL Eq. 13 with its full transfer term plus the
   4-yr galactic confusion noise of RCL Eq. 14 / Table 1;
 * energies: the ledger's extractors (claims/extract_detector, extract_waves).
@@ -45,7 +45,6 @@ import sys
 import warnings
 
 import numpy as np
-from scipy.signal.windows import tukey
 
 warnings.filterwarnings("ignore")
 
@@ -54,115 +53,35 @@ CLAIMS = REPO / "research" / "merger" / "article" / "claims"
 
 from astropy.cosmology import Planck18  # noqa: E402
 
-from grteclyn_wrapper.gw_search.templates.nr import TAPER, load_all_arms  # noqa: E402
+from grteclyn_wrapper.gw_search import lisa as LISA  # noqa: E402
+from grteclyn_wrapper.gw_search.templates.nr import load_all_arms  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger import plot_heavy_seeds as HS  # noqa: E402
-from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (  # noqa: E402
-    M_SUN_METER, M_SUN_SEC,
-)
 
-INC_POWER = {"(2,2)": 2.0 / 5.0, "(2,0)": 8.0 / 15.0}
-SNR_THRESHOLD = 8.0
-# LISA measures "in a band from below 1e-4 Hz to above 1e-1 Hz" (Amaro-Seoane
-# et al. 2017, abstract); the RCL model is written down to 1e-5 Hz, which Fig.
-# heavy_seeds(b) draws.  The burst SNR starts at 1e-4 Hz unless --fmin says
-# otherwise (no mass up to 1e6 M_sun at z <= 20 has signal below it).
-F_MIN, F_MAX = 1.0e-4, 1.0
-YEAR_S = 3.15576e7
+# The noise, the record's spectrum and the burst SNR are gw_search.lisa's
+# (2026-09-25: one implementation for this script, Fig. heavy_seeds and the
+# claims extractors).  "fig16" is the instrument noise the PLS is built from.
+INC_POWER = LISA.INC_POWER
+SNR_THRESHOLD = LISA.SNR_THRESHOLD
+F_MIN, F_MAX = LISA.F_MIN, LISA.F_MAX
+YEAR_S = LISA.YEAR_S
 C_MPC_PER_YR = 299792.458 * YEAR_S / 3.0857e19
+NOISES = {"fig16": LISA.sn_instrument, "conservative": LISA.sn_confusion}
+VARIANTS = LISA.VARIANTS
+spectrum = LISA.spectrum
+energy_quantile = LISA.energy_quantile
 
 
-# ------------------------------------------------------------------ LISA noise
-def sn_fig16(f):
-    """Fig. heavy_seeds' S_n: RCL Eq. 13, low-frequency transfer (4 P_acc), no
-    confusion noise -- the curve the PLS of panel (b) is built from."""
-    return HS.lisa_sn(np.asarray(f, dtype=float))
-
-
-def sn_rcl_conservative(f, years: float = 4.0):
-    """RCL Eq. 13 with the full 2(1+cos^2(f/f*)) transfer, plus the galactic
-    confusion noise S_c of RCL Eq. 14 (Table 1, 4-yr parameters)."""
-    f = np.asarray(f, dtype=float)
-    L, fstar = 2.5e9, 1.909e-2
-    p_oms = (1.5e-11) ** 2 * (1.0 + (2.0e-3 / f) ** 4)
-    p_acc = (3.0e-15) ** 2 * (1.0 + (0.4e-3 / f) ** 2) * (1.0 + (f / 8.0e-3) ** 4)
-    sn = (10.0 / (3.0 * L**2)) * (p_oms + 2.0 * (1.0 + np.cos(f / fstar) ** 2) * p_acc
-                                  / (2.0 * math.pi * f) ** 4) * (1.0 + 0.6 * (f / fstar) ** 2)
-    params = {0.5: (0.133, 243.0, 482.0, 917.0, 2.58e-3),
-              1.0: (0.171, 292.0, 1020.0, 1680.0, 2.15e-3),
-              2.0: (0.165, 299.0, 611.0, 1340.0, 1.73e-3),
-              4.0: (0.138, -221.0, 521.0, 1680.0, 1.13e-3)}
-    alpha, beta, kappa, gamma, fk = params[years]
-    sc = 9.0e-45 * f ** (-7.0 / 3.0) * np.exp(-f ** alpha + beta * f * np.sin(kappa * f)) \
-        * (1.0 + np.tanh(gamma * (fk - f)))
-    return sn + sc
-
-
-NOISES = {"fig16": sn_fig16, "conservative": sn_rcl_conservative}
-
-
-# ------------------------------------------------------------------ burst SNR
-def spectrum(wf, pad: int = 32):
-    """(F, |H~(F)|^2) of the tapered template, F in 1/M, H~ in M (two-sided)."""
-    H = wf.H * tukey(wf.H.size, alpha=2.0 * TAPER)
-    n = 1 << int(math.ceil(math.log2(H.size * pad)))
-    Ht = np.fft.fft(H, n=n) * wf.dt_M
-    F = np.fft.fftfreq(n, d=wf.dt_M)
-    return F, np.abs(Ht) ** 2
-
-
-def energy_quantile(spec, q: float) -> float:
-    """F below which a fraction q of the record's energy lies (dE/dF ~ F^2 |H~|^2)."""
-    F, P = spec
-    pos = F > 0
-    Fp = F[pos]
-    neg = np.interp(Fp, -F[F < 0][::-1], P[F < 0][::-1])
-    c = np.cumsum(Fp ** 2 * (P[pos] + neg))
-    return float(Fp[np.searchsorted(c / c[-1], q)])
-
-
-def snr_parts(wf, spec, m_src: float, z: float, noise: str, corners: dict[str, float],
-              window: tuple[float, float] | None = None):
-    """Optimal-orientation rho over |F| in ``window`` (all F if None), and the
-    share of that rho^2 from |F| below each corner."""
-    F, P = spec
-    mz_s = m_src * (1.0 + z) * M_SUN_SEC                    # seconds per unit u
-    dl = Planck18.luminosity_distance(z).to("m").value
-    amp = m_src * (1.0 + z) * M_SUN_METER / dl
-    f = np.abs(F) / mz_s
-    band = (f >= F_MIN) & (f <= F_MAX)
-    if window is not None:
-        band &= (np.abs(F) >= window[0]) & (np.abs(F) <= window[1])
-    dF = F[1] - F[0]
-    integ = np.zeros_like(P)
-    integ[band] = 2.0 * (amp * mz_s) ** 2 * P[band] / NOISES[noise](f[band])
-    rho2 = float(integ.sum() * dF / mz_s)
-    share = {k: float(integ[np.abs(F) < c].sum() * dF / mz_s / rho2) if rho2 > 0 else float("nan")
-             for k, c in corners.items()}
-    return math.sqrt(rho2), share
-
-
-VARIANTS = {
-    # name: (noise, inclination-averaged?, window from the record?)
-    "nominal": ("fig16", False, False),
-    "conservative": ("conservative", True, True),
-}
+def snr_parts(wf, spec, m_src, z, noise, corners, window=None):
+    name = {"fig16": "instrument", "conservative": "confusion"}[noise]
+    return LISA.snr_parts(wf, spec, m_src, z, name, corners, window, fmin=F_MIN, fmax=F_MAX)
 
 
 def rho_variant(wf, spec, m, z, variant, f99):
-    noise, avg, win = VARIANTS[variant]
-    rho, _ = snr_parts(wf, spec, m, z, noise, {}, (wf.f0, f99) if win else None)
-    return rho * (math.sqrt(INC_POWER[wf.mode]) if avg else 1.0)
+    return LISA.snr(wf, spec, m, z, variant, f99, fmin=F_MIN, fmax=F_MAX)
 
 
-def mass_range(wf, spec, z: float, variant: str, f99: float,
-               grid=np.logspace(2.0, 9.0, 281)):
-    """Source-frame masses with rho >= 8 (lo, hi, peak mass, peak rho)."""
-    rhos = np.array([rho_variant(wf, spec, m, z, variant, f99) for m in grid])
-    ok = rhos >= SNR_THRESHOLD
-    k = int(np.argmax(rhos))
-    if not ok.any():
-        return None, None, float(grid[k]), float(rhos[k])
-    return float(grid[ok][0]), float(grid[ok][-1]), float(grid[k]), float(rhos[k])
+def mass_range(wf, spec, z, variant, f99):
+    return LISA.mass_range(wf, spec, z, variant, f99, fmin=F_MIN)
 
 
 # ------------------------------------------------------------------ background
@@ -175,8 +94,11 @@ def pls_in_band(m, z=HS.Z_EMIT):
     """min and max of Fig. heavy_seeds' PLS over the mass's observed band."""
     fgrid = np.logspace(-5.0, -0.5, 400)
     pls = HS.lisa_pls(fgrid)
-    f_lo = HS.FM_PEAK[0] / (m * HS.MSUN_S * (1.0 + z))
-    f_hi = HS.FM_PEAK[1] / (m * HS.MSUN_S * (1.0 + z))
+    # The resolved Psi_4 peaks of every burst channel (fly-by 0.029 .. head-on
+    # and spiral 0.060), read from the pack as the figure reads them.
+    fpk = [LISA.arms()[a][0].f_psi4_peak for a in ("fly-by", "spiral", "head-on")]
+    f_lo = min(fpk) / (m * HS.MSUN_S * (1.0 + z))
+    f_hi = max(fpk) / (m * HS.MSUN_S * (1.0 + z))
     ff = np.logspace(math.log10(f_lo), math.log10(f_hi), 60)
     curve = np.exp(np.interp(np.log(ff), np.log(fgrid), np.log(pls)))
     return float(curve.min()), float(curve.max()), f_lo, f_hi
@@ -284,7 +206,9 @@ def main(argv=None) -> int:
     bg = []
     for m in (1e4, 1e5, 1e6):
         pmin, pmax, f_lo, f_hi = pls_in_band(m)
-        for eps, lab in ((HS.E_OVER_M[1], "fly-by"), (HS.E_OVER_M[0], "spiral")):
+        E_arm = HS.energies()
+        for eps, lab in ((E_arm["fly-by"], "fly-by"), (E_arm["spiral"], "spiral"),
+                         (E_arm["head-on"], "head-on")):
             n_thr = pmin / omega_gw(1.0, m, eps)
             bg.append(dict(M=m, arm=lab, f_lo_mHz=1e3 * f_lo, f_hi_mHz=1e3 * f_hi,
                            pls_min=pmin, pls_max=pmax, n_thr=n_thr,
@@ -333,7 +257,7 @@ def main(argv=None) -> int:
             for R in (14, 30) for t in (50.0, 60.0, 70.0, 80.0)}
     out["scalar_ratios"], out["ephi_over_M_flyby"] = ratios, ephi
     r_lo, r_hi = min(ratios.values()), max(ratios.values())
-    e_lo, e_hi = HS.E_OVER_M
+    e_lo, e_hi = HS.e_range(HS.DEPOSIT)       # the Lambda envelope: spiral .. fly-by
     dep_lo, dep_hi = r_lo * e_lo, r_hi * e_hi               # |E_phi|/M envelope
     print("  |E_phi|/E_GW estimators: " + ", ".join(f"{k}={v:.3f}" for k, v in ratios.items()))
     print("  fly-by |E_phi|/M direct: " + ", ".join(f"{k}={v:.4f}" for k, v in ephi.items()))
