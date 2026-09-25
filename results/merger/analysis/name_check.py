@@ -71,6 +71,9 @@ RULES: list[tuple[str, str, str, str, str]] = [
     (r"oct", "lo_boundary[0]", "2", "eq",
      "oct: an octant box, mirror planes x = y = z = 0 (lo_boundary = 2 2 2; the launch preflight "
      "checks all three and the consumer's --reflect x y z)"),
+    (r"zs", "shift_Gamma_coeff", "0.0", "approx",
+     "zs: zero shift, shift_Gamma_coeff 0 with no initial shift, so beta = 0 throughout (normal "
+     "coordinates: the grid is not dragged through the fixed refinement boxes)"),
     (r"L(\d)", "max_level", "int(g1)", "eq",
      "ladder_L<N> ONLY: L<one digit> is the refinement level of the p012 refinement ladder "
      "(restarted from Chk05000), NOT the box (the box token has >= 2 digits)"),

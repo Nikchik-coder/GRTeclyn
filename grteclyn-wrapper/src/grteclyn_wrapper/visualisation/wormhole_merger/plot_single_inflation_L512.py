@@ -28,9 +28,11 @@ WHAT THE PANELS SAY
     chi pit, rounded up by the error buffer and the blocking factor).
 (b) Shinkai-Hayward's test: R/R0 - 1 against the neck's proper time on a
     log axis, where their fit r/a = 1 + b4 exp(H (tau - b5)) is a straight
-    line; that form fitted (H free) beside their massless value H a = 1.1 and
-    the paper's linear mode converted to throat proper time (e-fold 5.13 t
-    times the static throat lapse).
+    line; that form fitted (H free) over the onset only (the neck's lapse
+    above half its t = 0 value) and drawn on, beside their massless value
+    H a = 1.1 and the paper's linear mode converted to throat proper time
+    (e-fold 5.13 t times the static throat lapse); the late local rate is
+    quoted separately, since 1+log freezes the clock at the neck.
 (c) the invariant record: the areal radii of the two trapping horizons
     bounding the anti-trapped throat region (theta_k = 0 on our side, solid;
     theta_l = 0 on the other side, dotted), the neck (squares) and its
@@ -331,13 +333,20 @@ def main(argv: list[str] | None = None) -> int:
     # ---- (b) Shinkai-Hayward in proper time --------------------------------
     # R/R0 - 1 against tau on a log axis: their fit r/a = 1 + b4 exp(H (tau - b5))
     # is a straight line there.  INK: the neck; MUTED dashed: that form fitted
-    # (H free) over R/R0 - 1 > 0.1; CONTEXT: their massless value H a = 1.1
-    # and the paper's linear mode (e-fold 5.13 t at the static throat lapse)
-    # as slopes through the fit window's first point.
+    # (H free) over the ONSET only -- R/R0 - 1 > 0.1 while the neck's lapse is
+    # above half its t = 0 value -- and drawn on to the end, so the late
+    # departure shows as the neck falling under it; the faint line marks where
+    # the clock goes (1+log freezes the lapse at the neck, and tau = int alpha
+    # dt at a slicing-dependent neck stops being a clock the comparison can
+    # trust).  A single fit over everything averaged the two regimes (local
+    # H R0 1.2 early, 0.7 by t = 80) into SH's 1.1.  CONTEXT: their massless
+    # value H a = 1.1 and the paper's linear mode (e-fold 5.13 t at the static
+    # throat lapse) as slopes through the fit window's first point.
     y = R_nk / R0 - 1.0
-    ms = y > 0.1
-    H_fit = None
-    if ms.sum() >= 5:
+    clock = a_nk >= 0.5 * a_nk[0]
+    ms = (y > 0.1) & clock
+    H_fit = H_late = tau_clock = None
+    if ms.sum() >= 4:
         from scipy.optimize import curve_fit  # noqa: PLC0415
         (lnA, H_fit), _ = curve_fit(lambda x, la, hh: la + hh * x, tau[ms], np.log(y[ms]))
         i1 = int(np.flatnonzero(ms)[0])
@@ -347,6 +356,12 @@ def main(argv: list[str] | None = None) -> int:
         for hh, ls in ((1.1 / R0, "solid"), (1.0 / (5.13 * a_nk[0]), (0, (1.2, 1.8)))):
             axs[0].plot(tt, y[i1] * np.exp(hh * (tt - tau[i1])), color=style.CONTEXT,
                         linewidth=1.0, linestyle=ls, zorder=1)
+        if not clock.all():
+            tau_clock = float(tau[np.flatnonzero(~clock)[0]])
+            axs[0].axvline(tau_clock, ymin=0.3, color=style.FAINT, linewidth=0.7, zorder=1)  # clear of the bottom notes
+        late = ~clock & (y > 0.1)
+        if late.sum() >= 5:
+            H_late = float(np.polyfit(tau[late][-5:], np.log(y[late][-5:]), 1)[0])
     mv = y > 0.01
     axs[0].plot(tau[mv], y[mv], color=style.INK, linewidth=1.3, zorder=3)
     axs[0].set_yscale("log")
@@ -354,8 +369,12 @@ def main(argv: list[str] | None = None) -> int:
     axs[0].set_ylim(0.01, 30.0 * y[-1])
     fig.canvas.draw()
     if H_fit is not None:
-        _place(axs[0], f"Shinkai--Hayward $1+A\\,e^{{H\\tau}}$ fitted (dashed):\n"
-               f"$H R_0={H_fit * R0:.2f}$, e-fold ${1.0 / H_fit:.1f}\\,\\tau$",
+        note = (f"Shinkai--Hayward $1+A\\,e^{{H\\tau}}$ fitted over the onset\n"
+                f"($\\alpha_{{\\rm neck}}>\\alpha_0/2$, dashed): $H R_0={H_fit * R0:.2f}$, "
+                f"e-fold ${1.0 / H_fit:.1f}\\,\\tau$")
+        if H_late is not None:
+            note += f"\nlater, lapse freezing: local $H R_0={H_late * R0:.2f}$"
+        _place(axs[0], note,
                [(0.04, 0.95, "left", "top"), (0.04, 0.5, "left", "center"), (0.96, 0.05, "right", "bottom")],
                fontsize=6.5, color=style.MUTED, multialignment="left")
         _place(axs[0], f"grey solid: SH massless, $Ha=1.1$\n"
@@ -382,7 +401,8 @@ def main(argv: list[str] | None = None) -> int:
     late = t >= t_end - RATE_WINDOW
     a_hk_late = float(np.nanmean(a_hk[late & fk])) if (late & fk).any() else float("nan")
     axs[1].set_xlim(0, xmax)
-    axs[1].set_ylim(0.85 * np.nanmin(R_fl), 1.45 * np.nanmax(np.r_[R_hk[fk], R_nk]))
+    # the curves stay under ~0.55: the two notes need the top band
+    axs[1].set_ylim(0.85 * np.nanmin(R_fl), 1.9 * np.nanmax(np.r_[R_hk[fk], R_nk]))
     fig.canvas.draw()
     hk_note = f"solid: horizon $\\theta_k=0$ (our side)\n$R$ {R_hk[fk][0]:.1f}$\\to${R_hk[fk][-1]:.1f}"
     if g_hk is not None:
@@ -433,8 +453,10 @@ def main(argv: list[str] | None = None) -> int:
           f"{[(lev, round(tc, 1)) for lev, _, tc in crossings]}; rate peak {rate_t[i_pk]:.4f} "
           f"at t = {t[i_pk]:.1f}; d ln R/dtau now {rate_tau[-1]:.4f}; "
           f"alpha_neck {a_nk[-1]:.4f}, tau {tau[-1]:.2f}; outer horizon R {R_hk[fk][-1]:.2f}, "
-          f"late dlnR/dt {g_hk}; SH fit H*R0 = "
-          f"{(H_fit * R0) if H_fit is not None else float('nan'):.3f}; Ham end {cn[-1, 1]:.2e}")
+          f"late dlnR/dt {g_hk}; SH fit (onset) H*R0 = "
+          f"{(H_fit * R0) if H_fit is not None else float('nan'):.3f}, late local "
+          f"{(H_late * R0) if H_late is not None else float('nan'):.3f}, clock gone at tau "
+          f"{tau_clock}; Ham end {cn[-1, 1]:.2e}")
 
     hits = style.label_audit(fig)
     if hits:
