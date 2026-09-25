@@ -30,7 +30,7 @@ from .frames.cleanup import (
     _cleanup_existing_frames,
     _cleanup_projection_frames,
 )
-from .frames.zlim import _lock_frame_zlims_from_plotfile
+from .frames.zlim import _T0_KEY, _lock_frame_zlims_from_plotfile
 from .frames.zlim_scan import scan_series_zlims
 from .plotfiles import (
     _is_plotfile_ready,
@@ -187,6 +187,16 @@ def main() -> None:
         help="Scan every Nth plotfile instead of all of them (default 1). The last "
              "plotfile is always scanned.",
     )
+    parser.add_argument(
+        "--frames-zlim-t0",
+        nargs="+",
+        default=[],
+        metavar="FIELD",
+        help="Lock these fields' colorbars to the full min..max of their slice in the "
+             "run's first plotfile (t = 0), linear, for the whole run; beats "
+             "--frames-auto-zlim and the presets. A field flat at t = 0 (K, Pi) keeps "
+             "its other scale. Stored in consume_state.json, so a restart keeps it.",
+    )
     parser.add_argument("--frames-out", default=_default_frames_out_dir(), help="Frames output base dir (default: ./frames in the working directory).")
     parser.add_argument(
         "--projection-fields",
@@ -210,7 +220,18 @@ def main() -> None:
     parser.add_argument(
         "--areal-radius",
         action="store_true",
-        help="Extract minimum areal radius R_areal = r/sqrt(chi) along x-axis to areal_radius.dat.",
+        help="Extract minimum areal radius R_areal = r/sqrt(chi) along x-axis to areal_radius.dat "
+             "(with --areal-full-metric: r (h22 h33)^(1/4)/sqrt(chi)).",
+    )
+    parser.add_argument(
+        "--areal-full-metric",
+        action="store_true",
+        help="Areal radius from the full induced metric of the coordinate sphere, "
+             "R = r (h22 h33)^(1/4)/sqrt(chi), instead of r/sqrt(chi), which assumes a "
+             "flat conformal metric: exact at t = 0, a lower bound once the Gamma-driver "
+             "shift has moved the grid (h22 = 1.45 at the F1b neck at t = 90). Needs h22 "
+             "and h33 in the plotfile; a plotfile without them gets no row and a warning, "
+             "never the flat estimate. Opt-in; the launch preflight checks it.",
     )
     parser.add_argument(
         "--areal-min-radius",
@@ -682,6 +703,20 @@ def main() -> None:
             if frame_zlims:
                 state["frame_zlims"] = frame_zlims
                 _save_state(state_path, state)
+        t0_fields = [_canonical_field_name(f) for f in args.frames_zlim_t0]
+        if t0_fields and to_process and _T0_KEY not in (frame_zlims or {}):
+            # Once per run, from the lowest-numbered plotfile (Plt00000 at
+            # launch); the empty list marks "tried" so a later batch never
+            # re-locks from a later time.
+            first = min(
+                to_process,
+                key=lambda p: _parse_plot_index(os.path.basename(p)) if _parse_plot_index(os.path.basename(p)) is not None else 10**12,
+            )
+            locked = _lock_frame_zlims_from_plotfile(first, args_dict, t0_minmax_fields=t0_fields)
+            locked.setdefault(_T0_KEY, [])
+            frame_zlims = {**(frame_zlims or {}), **locked}
+            state["frame_zlims"] = frame_zlims
+            _save_state(state_path, state)
         args_dict["frame_zlims"] = frame_zlims
         args_dict["frames_global_zlim"] = use_global_zlim
 

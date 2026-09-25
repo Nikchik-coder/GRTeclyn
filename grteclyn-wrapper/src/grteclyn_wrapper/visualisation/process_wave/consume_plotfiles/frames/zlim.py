@@ -13,6 +13,18 @@ from .center import _resolve_frame_physics_center
 #: locked from one plotfile.  Not a field name, so it can never collide.
 _SCANNED_KEY = "__scanned_series__"
 
+#: Lists the fields whose limits are the full min..max of their t = 0 slice
+#: (``--frames-zlim-t0``).  Those limits beat everything, --frames-auto-zlim and
+#: the presets included: the frame at t = 0 spans the whole colourbar and every
+#: later frame is read against it (the user, 2026-09-25: "proper means rescaled
+#: from t 0").  The 1-99 % percentile lock clipped the throat core out of the
+#: scale (lapse 0.965-0.995 on the L = 512 box, for a true 0.397-0.997).
+_T0_KEY = "__t0_minmax__"
+
+#: A field whose t = 0 slice spans less than this has no t = 0 scale (K and Pi
+#: vanish identically at t = 0, Weyl4 is 1e-6 noise): it keeps its other scale.
+_T0_MIN_SPAN = 1.0e-3
+
 
 def _auto_zlim_from_array(values: np.ndarray, field_name: str) -> tuple[float, float] | None:
     finite = np.asarray(values, dtype=float)
@@ -83,6 +95,11 @@ def _resolve_plot_zlim(
     frame_zlims: dict[str, list[float]] | None,
     use_global_zlim: bool,
 ) -> tuple[float, float]:
+    if frame_zlims and field in (frame_zlims.get(_T0_KEY) or ()):
+        stored = frame_zlims.get(field)
+        if stored is not None:
+            return (float(stored[0]), float(stored[1]))
+
     if _frames_auto_zlim_enabled(auto_zlim) or cfg.get("auto_zlim"):
         auto = _auto_zlim_from_array(win, field)
         if auto is not None:
@@ -166,7 +183,11 @@ def _extract_native_slice_window(
 
 
 def _lock_frame_zlims_from_plotfile(
-    plot_path: str, args_dict: dict, *, include_per_frame_fields: bool = False
+    plot_path: str,
+    args_dict: dict,
+    *,
+    include_per_frame_fields: bool = False,
+    t0_minmax_fields: Sequence[str] | None = None,
 ) -> dict[str, list[float]]:
     """Colour limits this one plotfile would choose, per field.
 
@@ -175,9 +196,19 @@ def _lock_frame_zlims_from_plotfile(
     skipped by default -- but the series scanner needs exactly this per-plotfile
     answer so it can take the envelope over the whole run.  See
     ``zlim_scan.scan_series_zlims``.
+
+    ``t0_minmax_fields`` (``--frames-zlim-t0``; ``plot_path`` is then the run's
+    t = 0 plotfile) measures only those fields, as the full min..max of the
+    slice window, and lists the ones it locked under ``_T0_KEY``; a field
+    spanning less than ``_T0_MIN_SPAN`` there is left out.
     """
     ds = yt.load(plot_path)
-    frame_fields = [_canonical_field_name(f) for f in args_dict.get("frames_fields", [])]
+    minmax = t0_minmax_fields is not None
+    if minmax:
+        frame_fields = [_canonical_field_name(f) for f in t0_minmax_fields]
+        include_per_frame_fields = True
+    else:
+        frame_fields = [_canonical_field_name(f) for f in args_dict.get("frames_fields", [])]
     axis = args_dict.get("frames_axis", "z")
     zoom = args_dict.get("frames_zoom")
     center_xyz = args_dict.get("frames_center")
@@ -228,13 +259,25 @@ def _lock_frame_zlims_from_plotfile(
                     center_xyz,
                     corner,
                 )
+            if minmax:
+                finite = np.asarray(win, dtype=float)
+                finite = finite[np.isfinite(finite)]
+                if finite.size == 0 or float(finite.max() - finite.min()) < _T0_MIN_SPAN:
+                    print(f"[zlim-t0] {fld}: no t = {float(ds.current_time):g} scale "
+                          f"(span < {_T0_MIN_SPAN:g}); keeps its other scale", flush=True)
+                    continue
+                zlims[fld] = [float(finite.min()), float(finite.max())]
+                zlims.setdefault(_T0_KEY, []).append(fld)  # type: ignore[union-attr]
+                print(f"[zlim-t0] {fld}: {zlims[fld][0]:.6g} .. {zlims[fld][1]:.6g} "
+                      f"from {plot_path} (t = {float(ds.current_time):g})", flush=True)
+                continue
             auto = _auto_zlim_from_array(win, fld)
             if auto is not None:
                 zlims[fld] = [auto[0], auto[1]]
                 if args_dict.get("verbose", False):
                     print(f"[zlim-lock] {fld}: {auto[0]:.6g} .. {auto[1]:.6g}")
         except Exception as exc:
-            if args_dict.get("verbose", False):
+            if args_dict.get("verbose", False) or minmax:
                 print(f"WARNING: zlim-lock skipped {fld!r}: {exc}")
             continue
     return zlims

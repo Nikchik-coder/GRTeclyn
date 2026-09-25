@@ -26,6 +26,14 @@ WHAT IT CHECKS
        - plot_interval > 0 with amr.plot_files_output = 0 (no plotfiles: no
          frames, no consumer extractions).
      Warned: a run that writes no checkpoints at all cannot be restarted.
+     Also the plotfile consumer's flags ($WHM_CONSUME_ARGS, as run_single.sh
+     gets them; --consume-args standalone) against what the plotfiles carry:
+       - refused: --areal-full-metric (the areal radius from the full metric,
+         r (h22 h33)^(1/4)/sqrt(chi); opt-in since 2026-09-25) with h22, h33
+         or chi missing from amr.plot_vars, or without --areal-radius.
+       - warned: --areal-radius alone -- r/sqrt(chi), exact at t = 0 and a
+         lower bound once the Gamma-driver shift has moved the grid (h22 =
+         1.45 at the F1b neck at t = 90: 10.08 read for a true 12.17).
   1. static (no GPU, seconds).  Every key of the params file must appear as a
      string inside the binary: a binary that does not contain a key's name
      cannot read it.  Advisory in full mode (a key can be present but unread
@@ -59,6 +67,7 @@ import math
 import os
 import pathlib
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -151,6 +160,41 @@ def intent_check(params: dict[str, str]) -> tuple[list[str], list[str]]:
     if cout == 0 or ci <= 0:
         warnings.append("this run writes no checkpoints: if it dies, it cannot be restarted")
     return errors, warnings
+
+
+def consumer_check(params: dict[str, str], consume_args: str, consume_on: bool
+                   ) -> tuple[list[str], list[str], dict]:
+    """(errors, warnings, summary) for what the plotfile consumer is asked to
+    extract against what the plotfiles will carry.  The areal radius is the one
+    extraction checked: its full-metric form is opt-in and needs h22 and h33."""
+    try:
+        toks = shlex.split(consume_args or "")
+    except ValueError:
+        toks = (consume_args or "").split()
+    summary = {"consume": consume_on, "areal_radius": "off"}
+    errors, warnings = [], []
+    if not consume_on:
+        return errors, warnings, summary
+    areal, full = "--areal-radius" in toks, "--areal-full-metric" in toks
+    if full and not areal:
+        errors.append("--areal-full-metric without --areal-radius: the consumer extracts no areal radius at all")
+    if not areal:
+        return errors, warnings, summary
+    summary["areal_radius"] = ("full metric, r (h22 h33)^(1/4)/sqrt(chi)" if full
+                               else "flat conformal metric, r/sqrt(chi)")
+    need = ["chi", "h22", "h33"] if full else ["chi"]
+    if "amr.plot_vars" in params:
+        have = set(params["amr.plot_vars"].split())
+        lacking = [v for v in need if v not in have]
+        if lacking:
+            errors.append(f"the consumer's areal radius ({'--areal-full-metric' if full else '--areal-radius'}) "
+                          f"needs {', '.join(lacking)} in amr.plot_vars, which the plotfiles will not carry")
+    else:
+        warnings.append(f"amr.plot_vars not set: the areal radius's fields ({', '.join(need)}) are not checked")
+    if not full:
+        warnings.append("areal radius is r/sqrt(chi) (flat conformal metric): exact at t = 0, a lower bound once "
+                        "the Gamma-driver shift has moved the grid; --areal-full-metric uses h22, h33")
+    return errors, warnings, summary
 
 
 # ---------------------------------------------------------------- 1. static
@@ -313,6 +357,8 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--timeout", type=float, default=1800.0, help="seconds per start-up")
     ap.add_argument("--json", help="write the report here")
     ap.add_argument("--keep", action="store_true", help="keep the workdir even on success")
+    ap.add_argument("--consume-args", default=os.environ.get("WHM_CONSUME_ARGS", ""),
+                    help="the plotfile consumer's flags (default: $WHM_CONSUME_ARGS, as run_single.sh has them)")
     a = ap.parse_args(argv)
 
     exe = pathlib.Path(a.exe).resolve()
@@ -338,6 +384,12 @@ def main(argv: list[str]) -> int:
 
     errors, warnings = intent_check(params)
     report["intent"] = {"errors": errors, "warnings": warnings}
+    c_err, c_warn, c_sum = consumer_check(params, a.consume_args,
+                                          os.environ.get("WHM_CONSUME", "1") != "0")
+    report["consumer"] = dict(c_sum, errors=c_err, warnings=c_warn)
+    print(f"[preflight] consumer: areal radius {c_sum['areal_radius']}"
+          + ("" if c_sum["consume"] else " (no consumer: WHM_CONSUME=0)"))
+    errors, warnings = errors + c_err, warnings + c_warn
     for w in warnings:
         print(f"[preflight] WARNING: {w}")
     if errors:

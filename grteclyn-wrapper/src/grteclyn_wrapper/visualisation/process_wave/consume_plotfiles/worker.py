@@ -283,11 +283,14 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                         ds,
                         center=args_dict["center"],
                         min_radius=args_dict.get("areal_min_radius", 0.0),
+                        full_metric=bool(args_dict.get("areal_full_metric")),
                     )
                     result["areal_line"] = f"{t:.16e}  {R_min:.16e}  {r_min:.16e}"
                 except Exception as exc:
-                    if args_dict.get("verbose", False):
-                        print(f"WARNING: areal extraction failed for {key}: {exc}")
+                    # Loud when the full metric was asked for: a silent skip
+                    # would leave a gap nobody notices until the figure.
+                    if args_dict.get("verbose", False) or args_dict.get("areal_full_metric"):
+                        print(f"WARNING: areal extraction failed for {key}: {exc}", flush=True)
             elif args_dict.get("verbose", False):
                 print(f"WARNING: plotfile {key} missing chi field; skipping areal radius.")
 

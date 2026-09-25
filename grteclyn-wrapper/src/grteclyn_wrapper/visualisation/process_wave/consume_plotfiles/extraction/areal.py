@@ -10,8 +10,26 @@ def _extract_areal_radius_min(
     center: Sequence[float] = (0.0, 0.0, 0.0),
     chi_floor: float = 1.0e-8,
     min_radius: float = 0.0,
+    full_metric: bool = False,
 ) -> Tuple[float, float]:
-    """Extract the minimum areal radius R_areal = r / sqrt(chi) along the x-axis.
+    """Extract the minimum areal radius along the x-axis.
+
+    Default: R_areal = r / sqrt(chi), the flat-conformal-metric estimate every
+    areal_radius.dat of the campaign carries.  It is exact at t = 0 (h_ij =
+    delta_ij) and wrong once the Gamma-driver shift has moved the grid: h_ij
+    goes anisotropic (det h = 1, so h22 = h33 > 1 where h11 < 1) and
+    r / sqrt(chi) under-reads the sphere.  At the F1b arm's neck at t = 90 it
+    read 10.08 for a true 12.17 (h22 = 1.45) and hid 40 % of the growth rate;
+    the t500 arm's record (single_pureq_q1e2_L128_ml4_scalar_t500) carries the
+    same bias at late times.
+
+    ``full_metric`` (the consumer's ``--areal-full-metric``, opt-in since
+    2026-09-25): R_areal = r (h22 h33)^(1/4) / sqrt(chi).  The coordinate
+    sphere through (r, 0, 0) has the transverse metric gamma_yy = h22/chi,
+    gamma_zz = h33/chi, so its area is 4 pi r^2 sqrt(gamma_yy gamma_zz).  Needs
+    h22 and h33 in the plotfile and raises if either is missing -- never a
+    silent fall-back to the flat estimate (the launch preflight refuses that
+    combination before anything starts).
 
     Returns (R_areal_min, r_at_min).
 
@@ -44,13 +62,23 @@ def _extract_areal_radius_min(
     dz_arr = np.asarray(ray[("index", "z")], dtype=float) - c[2]
     r_arr = np.sqrt(dx_arr**2 + dy_arr**2 + dz_arr**2)
     chi_arr = np.asarray(ray[("boxlib", "chi")], dtype=float)
+    if full_metric:
+        lacking = [f for f in ("h22", "h33") if ("boxlib", f) not in ds.field_list]
+        if lacking:
+            raise KeyError(f"--areal-full-metric needs {', '.join(lacking)} in the plotfile "
+                           "(amr.plot_vars); no flat-metric fall-back")
+        hT = np.sqrt(np.asarray(ray[("boxlib", "h22")], dtype=float)
+                     * np.asarray(ray[("boxlib", "h33")], dtype=float))
+    else:
+        hT = np.ones_like(chi_arr)
 
     order = np.argsort(r_arr)
     r_arr = r_arr[order]
     chi_arr = chi_arr[order]
+    hT = np.maximum(hT[order], 1.0e-12)
 
     chi_arr = np.maximum(chi_arr, chi_floor)
-    R_areal = r_arr / np.sqrt(chi_arr)
+    R_areal = r_arr * np.sqrt(hT / chi_arr)
 
     skip = r_arr > max(1.0e-12, float(min_radius))
     if not np.any(skip):
