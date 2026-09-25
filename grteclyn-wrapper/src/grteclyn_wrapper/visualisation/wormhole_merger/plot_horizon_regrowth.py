@@ -32,6 +32,15 @@ MOTS: the throat-centred fine scan; the coarse common centre C reads
 M_MS/(R/2) up to 1.15 at the floor and is not used, 2026-09-23) under ``campaign/01_single_throat/seed/``.  Writes
 ``figures/01_single_throat/single_horizon_regrowth``.
 
+THE NUMERICAL STRETCH IS SHADED (2026-09-25, the user: "the transition to
+numerical should be shown -- the part where numerical errors dominate and we
+can't cite it").  From the first floor on (t = 43) the panels carry a grey
+band named as numerical, and each curve is drawn faint after its own floor:
+what is left at full weight is the shrink, the one thing the figure claims.
+The legend names the radial kick on EVERY arm ("eps = +1e-2 with eps_2 =
+0.005"): written "+ eps_2 = 0.005" it was read as a pure-quadrupole arm, which
+the text says does not regrow (the user's read of the PDF, same date).
+
 STYLE: style.prd, no titles, letter tags above the frames, one shared top
 figure legend.  INK is the level-3 kick (the headline numbers of Sec. IV D),
 MUTED the two quadrupole-dressed level-4 twins; the floor of each curve carries a small marker.
@@ -84,11 +93,16 @@ def main(argv=None) -> int:
 
     hist = [_mots_history(pack, arm) for arm, *_ in ARMS]
 
+    t_num = min(float(a[int(np.nanargmin(a[:, 1])), 0]) for a in hist)
     for ax, col in ((axs[0], 1), (axs[1], 2)):
+        # The numerical stretch: from the first floor to the end of the record.
+        ax.axvspan(t_num, 102, color=style.GRID, lw=0, zorder=0)
         for a, (arm, name, colr, ls, lw) in zip(hist, ARMS):
-            ax.plot(a[:, 0], a[:, col], color=colr, linestyle=ls,
-                    linewidth=lw, zorder=3)
             i = int(np.nanargmin(a[:, 1]))          # the RADIUS floor times both panels
+            ax.plot(a[:i + 1, 0], a[:i + 1, col], color=colr, linestyle=ls,
+                    linewidth=lw, zorder=3)
+            ax.plot(a[i:, 0], a[i:, col], color=colr, linestyle=ls,
+                    linewidth=lw, alpha=0.4, zorder=3)
             ax.plot(a[i, 0], a[i, col], marker="v", markersize=3.6,
                     color=colr, zorder=4, linestyle="none")
         ax.set_xlim(8, 102)
@@ -103,7 +117,7 @@ def main(argv=None) -> int:
     lo, hi = _gain(1)
     top = max(a[-1, 1] for a in hist)
     axs[0].text(100.5, top + 0.06, f"regrowth +{lo:.0f}–{hi:.0f}%", ha="right",
-                va="bottom", fontsize=7, color=style.INK)
+                va="bottom", fontsize=7, color=style.MUTED)
     axs[0].set_ylim(2.15, 4.0)
 
     # ---- (b) Misner-Sharp mass ---------------------------------------------
@@ -111,18 +125,25 @@ def main(argv=None) -> int:
     lo, hi = _gain(2)
     topm = max(a[-1, 2] for a in hist)
     axs[1].text(100.5, topm + 0.03, f"regrowth +{lo:.0f}–{hi:.0f}%", ha="right",
-                va="bottom", fontsize=7, color=style.INK)
+                va="bottom", fontsize=7, color=style.MUTED)
     axs[1].set_ylim(1.08, 2.0)
+    # Name the band where nothing is drawn: its upper half, left of the labels.
+    for ax in axs:
+        ax.text(0.5 * (t_num + 102), 0.93, "numerical:\nnot a measurement",
+                transform=ax.get_xaxis_transform(), ha="center", va="top",
+                fontsize=7, color=style.MUTED, linespacing=1.15)
 
     # One shared legend on top (the censorship figure's rule).
     from matplotlib.lines import Line2D
     handles = [
         Line2D([], [], color=style.INK, linewidth=1.3,
-               label="$\\varepsilon=+10^{-2}$, level 3"),
+               label="$\\varepsilon=+10^{-2}$ alone, level 3"),
         Line2D([], [], color=style.MUTED, linewidth=1.1,
-               linestyle=(0, (4, 2.5)), label="$+\\,\\varepsilon_2=0.005$, level 4"),
+               linestyle=(0, (4, 2.5)),
+               label="$\\varepsilon=+10^{-2}$ with $\\varepsilon_2=0.005$, level 4"),
         Line2D([], [], color=style.MUTED, linewidth=1.1,
-               linestyle=(0, (1.2, 1.6)), label="$+\\,\\varepsilon_2=0.05$, level 4"),
+               linestyle=(0, (1.2, 1.6)),
+               label="$\\varepsilon=+10^{-2}$ with $\\varepsilon_2=0.05$, level 4"),
         Line2D([], [], color=style.INK, marker="v", markersize=3.6,
                linestyle="none", label="radius floor"),
     ]

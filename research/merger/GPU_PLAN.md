@@ -1373,6 +1373,45 @@ The user: "there is wave going back reflection from boundaries that ruins expans
   reflects unless it ramps over many wavelengths (≥ 60–100 units, i.e. a bigger box anyway), it violates
   the constraints where it acts, and it is new code. A per-variable Sommerfeld speed fixes normal incidence
   only. GGS did what F1 does: a causally disconnected wall.
+### 2026-09-25 (09:30) — the paper pass on the user's marks: the late constraint rise is not the wall; the fly-bys are bound passes; three figures
+
+The user's marks on the PDF (no GPU). What the checks found, beyond the wording:
+
+- **Fig. 2(g)'s rise from t ≈ 75 is NOT the t500 wall reflection.** A reflection comes later in a
+  bigger box; this rise does not: the collapse leaves its H floor (1.5 × the t = 35–55 median) at
+  t = 71 in L = 128 (TAKE 2, `single_eps_p1e2_L128_ml4_t250`, uncited) against 78–80 in the L = 64
+  arms, and the inflating throat at 76.8 (L = 128) against 82.2 (L = 64, the ledger's
+  clmConstraintFloor rows). The pure quadrupole's K movie shows what it is: grid-scale
+  checkerboard from t ≈ 66 on the refinement square (x, y ≈ 22–42 of the 16–48 window), filling
+  the window by t ≈ 90 — the seam mode of the t250 autopsy. The t500 turn (gauge wave off the cube,
+  back at the neck at t ≈ 161) is a separate, later failure. Caption and §IV.E say "grid mode,
+  not the wall; the doubled box does not delay it".
+- **"Escape" was the wrong word.** p = 0.35 and 0.45 start below the Newtonian circular momentum
+  under the combined pull (0.5): they are bound passes, not escapes. A central pull, however strong,
+  cannot capture without dissipation or contact; the pair swings past unless the closest approach
+  is inside contact (Newtonian pericentre from d = 12: 1.7 at p = 0.25, 3.9 at 0.35, 8.2 at 0.45;
+  measured 2.75 and 4.8 — deeper than Newtonian, same ordering). §VII.A is "Merger or fly-by".
+- **The level-3 p = 0.45 closest approach (3.95) is a pit hop**: its chi pit jumps six cells toward
+  the companion at t = 34.75 (1.5c); the level-5 arm is smooth there and passes at 4.8. The new
+  orbit figure draws p = 0.45 from level 5 only.
+- **The fly-by's recession is not two throats flying apart after t = 43**: at closest approach
+  (t = 40.5) each mouth already has R = 6.6 (4.24 at t = 0); from t = 43 the areal minimum sits on the
+  scan window's edge, and the separation is between the pits of two inflating mouths (both, by
+  symmetry — not one). Drawn faint from there.
+- **The head-on horizon never regrows** in any arm that tracks it (M_MS monotone on the horizon
+  rows; `latefreeze`'s apparent rises are rows whose outermost trapped sphere is an r ≈ 1.1 sphere
+  inside the frozen core). §VI.B now says so and why (the first law), against §IV.D's artefact.
+- The m = 0.5 lone throat is level 3 (as is the m = 1 hold it is compared with: 17 against 35).
+
+Paper: Eq. (force) F = (m²/d²)(1 − σQ) in §II.C, cited by §V.A; the quadrupole is there for the
+waves (§II.D); §IV.D's regrowth paragraph cut to the law, the shrink and one sentence of artefact
+(six ledger rows unanchored, kept for provenance); Table I's counting parenthesis removed; the
+Bondi-dipole reference is arXiv:2608.24577. Figures: `momentum_scan_orbits` (new, `fig:orbits`),
+`pair_interaction` five panels with the force law as (c), `single_horizon_regrowth` with every arm's
+kick named and the post-floor stretch shaded "numerical: not a measurement" (FIGURES.md, 09-25).
+`claims.py check`: 956 rows, 0 problems; numbers.tex unchanged. Not done: the two queued inserts
+(η = 4 horizon results into §VII.C; the spherical literature's inflation ending into §IV.E).
+
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
 The flow finder (`grteclyn-wrapper/scripts/validation/ah_flow_finder.py`,

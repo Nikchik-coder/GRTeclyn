@@ -592,6 +592,44 @@ references) — plus raised `\dbltopfraction` / `\dblfloatpagefraction` in an
 `\AtBeginDocument` hook, because REVTeX resets float parameters as the
 document opens. 13 pages, both engines, every figure inside the body.
 
+## The momentum-scan orbits, the force-law panel, the regrowth band (2026-09-25)
+
+Three changes from the user's read of the paper, each drawn with no arguments.
+
+**`05_binary_spiral/momentum_scan_orbits`** (new, `plot_momentum_orbits`; the
+article's `fig:orbits`, top of sec:spiral:capture). Every sigma = -1 pair
+from d = 12, p = 0 (the d = 12 head-on) to 0.45: (a) both throats in the
+orbital plane, (b) their separation. The tracks are the chi-pit barycentres
+of `binary_throat_diagnostics.dat`, equal to the tracker's centres until the
+tracker fuses them (separation ~ 2, t = 31-38) and the only record after;
+the pits come from two half-spaces of a FIXED plane, so each track is
+followed by continuity. Plunges end (dot) where chi first touches its 1e-8
+floor (p = 0: 39.8, 0.12: 44.85, 0.15: 47.0) or the run ends (0.20: 47.85,
+0.25: 53.0); p = 0.12 is the production chain's level-3 leg (its pits equal
+the L = 64 arm's to every digit through t = 44). All level 3 except p = 0.45,
+which is the level-5 L = 128 fly-by the text quotes: its level-3 twin's pit
+hops six cells toward the companion at t = 34.75 (1.5c), which alone makes
+its closest approach 3.95 instead of ~4.8 -- not drawn. Tracks are averaged
+over two time units (level-3 pits sit on 1/16 cells). The fly-by is faint
+from t = 43, where its per-mouth scan's areal minimum reaches the window
+edge: past it the separation is between the pits of two inflating mouths.
+Minima as drawn: p = 0.35 2.80 (raw tracker 2.746), p = 0.45 4.815 (4.797).
+
+**`03_two_throats/pair_interaction`** is five panels now: (c) is the force
+law (`plot_force_law`, which reads the RESULT table of
+`campaign/03_two_throats/separation_ladder_2026-09-04.txt`, the rows the
+ledger quotes): delta d at t = 11.5 for d = 12/14/16/18 against d^-2 through
+d = 12 (grey dashed) and A/(d + delta)^2 fitted on d = 12-16 (A = 115.6,
+delta = 3.69; gold, dotted past d = 16, where it predicts 0.246 against the
+measured 0.2438). The placement panels became (d, e); on the narrower panel
+the "scout" name moved left of the probe curve (label audit).
+
+**`01_single_throat/single_horizon_regrowth`**: every legend entry names the
+radial kick ("eps = +1e-2 with eps_2 = 0.005, level 4") -- written
+"+ eps_2 = 0.005" it read as a pure-quadrupole arm, which the text says only
+shrinks -- and the stretch past the first floor (t = 43) is shaded,
+"numerical: not a measurement", each curve faint after its own floor.
+
 ## How the commands were recovered, and why it can be trusted
 
 Each candidate was redrawn and compared with the published PNG **panel by

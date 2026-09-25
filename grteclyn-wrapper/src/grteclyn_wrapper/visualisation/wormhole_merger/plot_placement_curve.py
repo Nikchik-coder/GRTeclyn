@@ -169,7 +169,10 @@ def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
         # ("below probed d") goes to the caption with the open-marker rule.
         ax1.text(15, 4.34, "probes", fontsize=8, ha="left", va="bottom")
         if len(scout):
-            ax1.text(6.9, 4.33, "scout", fontsize=8, color=style.GOLD,
+            # Left of the probes' first point (d = 6), where no curve runs:
+            # on the fifth-page panel of the five-panel strip (2026-09-25)
+            # the old place under the cluster sat on the probe curve.
+            ax1.text(4.4, 4.40, "scout", fontsize=8, color=style.GOLD,
                      ha="center", va="top")
 
     # ---- (b) what is left once the ruler is subtracted --------------------
