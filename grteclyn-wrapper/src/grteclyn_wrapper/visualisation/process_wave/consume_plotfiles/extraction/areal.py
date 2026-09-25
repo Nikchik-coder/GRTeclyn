@@ -4,6 +4,8 @@ from typing import Sequence, Tuple
 
 import numpy as np
 
+from ..fields import _field_type_for
+
 
 def _extract_areal_radius_min(
     ds,
@@ -61,14 +63,15 @@ def _extract_areal_radius_min(
     dy_arr = np.asarray(ray[("index", "y")], dtype=float) - c[1]
     dz_arr = np.asarray(ray[("index", "z")], dtype=float) - c[2]
     r_arr = np.sqrt(dx_arr**2 + dy_arr**2 + dz_arr**2)
-    chi_arr = np.asarray(ray[("boxlib", "chi")], dtype=float)
+    ftype = _field_type_for(ds, "chi")
+    chi_arr = np.asarray(ray[(ftype, "chi")], dtype=float)
     if full_metric:
-        lacking = [f for f in ("h22", "h33") if ("boxlib", f) not in ds.field_list]
+        lacking = [f for f in ("h22", "h33") if (ftype, f) not in ds.field_list]
         if lacking:
             raise KeyError(f"--areal-full-metric needs {', '.join(lacking)} in the plotfile "
                            "(amr.plot_vars); no flat-metric fall-back")
-        hT = np.sqrt(np.asarray(ray[("boxlib", "h22")], dtype=float)
-                     * np.asarray(ray[("boxlib", "h33")], dtype=float))
+        hT = np.sqrt(np.asarray(ray[(ftype, "h22")], dtype=float)
+                     * np.asarray(ray[(ftype, "h33")], dtype=float))
     else:
         hT = np.ones_like(chi_arr)
 

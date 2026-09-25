@@ -24,6 +24,8 @@ from .extraction.scalar_modes import (
 )
 from .extraction.ftl import FTL_TIMESERIES_HEADER
 from .extraction.shell import _shell_stats_header
+from .extraction.neck_horizons import NECK_HORIZONS_HEADER
+from .extraction.symmetry import ODD_PARITY_FIELDS
 from .fields import _canonical_field_name
 from .frames.cleanup import (
     _cleanup_embedding_frames,
@@ -234,6 +236,26 @@ def main() -> None:
              "never the flat estimate. Opt-in; the launch preflight checks it.",
     )
     parser.add_argument(
+        "--neck-horizons",
+        action="store_true",
+        help="Per plotfile to neck_horizons.dat: the neck (min of the full-metric areal radius "
+             "along +x from --center, tracked from the previous plotfile) and the theta = 0 "
+             "trapping horizons either side of it, with lapse, Misner-Sharp mass and phi "
+             "(extraction/neck_horizons.py). Needs chi K lapse h11 h22 h33 A11 phi in the plotfile.",
+    )
+    parser.add_argument(
+        "--reflect",
+        nargs="+",
+        default=[],
+        choices=["x", "y", "z"],
+        help="Axes whose LOWER domain face is a reflective symmetry plane through --center "
+             "(the params' lo_boundary = 2). Sphere samplers fold their points into the domain "
+             "(even-parity fields), frames mirror the simulated part into the full plane "
+             "(--frames-zoom is the full width), and what cannot use the symmetry is switched "
+             "off with a notice: psi4 spheres, the boundary flux, the horizon star scan, "
+             "odd-parity frame fields. The launch preflight checks it against the params.",
+    )
+    parser.add_argument(
         "--areal-min-radius",
         type=float,
         default=0.0,
@@ -434,6 +456,25 @@ def main() -> None:
         help="Do not delete existing frames at startup.",
     )
     args = parser.parse_args()
+    # A symmetry-reduced run (--reflect): what cannot use the symmetry is
+    # switched off here, once and out loud, instead of producing sphere
+    # integrals over 1/8 of each sphere or a sign-flipped mirror.
+    args.boundary_flux = not args.reflect
+    if args.reflect:
+        off = []
+        if args.psi4:
+            args.psi4 = False
+            off.append("psi4 spheres (Psi4 is not even across the planes; the C++ extraction handles it)")
+        off.append("the boundary flux (the reflective faces are not outer boundary)")
+        if args.horizon_scan:
+            args.horizon_scan = False
+            off.append("the horizon star scan (samples the full sphere round the centre)")
+        odd = [f for f in args.frames_fields if f in ODD_PARITY_FIELDS]
+        if odd:
+            args.frames_fields = [f for f in args.frames_fields if f not in ODD_PARITY_FIELDS]
+            off.append(f"odd-parity frame fields {odd}")
+        print(f"[reflect] symmetry planes {' '.join(args.reflect)} through --center "
+              f"{' '.join(f'{v:g}' for v in args.center)}; off: {'; '.join(off)}", flush=True)
     if args.evolving_geodesic:
         os.environ["GRTECLYN_EVOLVING_GEODESIC"] = "1"
     args.metric_stack_cache = bool(args.evolving_geodesic)
@@ -490,6 +531,7 @@ def main() -> None:
     scalar_modes_ells = _parse_scalar_ells(args.scalar_mode_ells)
     scalar_modes_header_str = _scalar_modes_header(scalar_modes_ells, args.radii)
     areal_header = "# time  R_areal_min  r_at_R_areal_min"
+    neck_out_path = out_dir / "neck_horizons.dat"
     shell_header = _shell_stats_header(args.radii, args.shell_fields)
 
     state = _load_state(state_path)
@@ -507,6 +549,8 @@ def main() -> None:
         if args.scalar_modes:
             _truncate_if_exists(scalar_modes_out_path)
         _truncate_if_exists(areal_out_path)
+        if args.neck_horizons:
+            _truncate_if_exists(neck_out_path)
         if args.shell_fields:
             _truncate_if_exists(shell_out_path)
         if args.ftl_timeseries:
@@ -719,6 +763,7 @@ def main() -> None:
             _save_state(state_path, state)
         args_dict["frame_zlims"] = frame_zlims
         args_dict["frames_global_zlim"] = use_global_zlim
+        args_dict["neck_x_prev"] = state.get("neck_x_prev")
 
         if args.jobs > 1:
             import multiprocessing as mp
@@ -784,6 +829,11 @@ def main() -> None:
                                 )
                             if res["areal_line"]:
                                 _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
+                            if res.get("neck_line"):
+                                _append_line(neck_out_path, header=NECK_HORIZONS_HEADER, line=res["neck_line"])
+                            if res.get("neck_x") is not None:
+                                state["neck_x_prev"] = res["neck_x"]
+                                args_dict["neck_x_prev"] = res["neck_x"]
                             if res["shell_line"]:
                                 _append_line(shell_out_path, header=shell_header, line=res["shell_line"])
                             if res.get("boundary_flux_line"):
@@ -864,6 +914,11 @@ def main() -> None:
                         )
                     if res["areal_line"]:
                         _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
+                    if res.get("neck_line"):
+                        _append_line(neck_out_path, header=NECK_HORIZONS_HEADER, line=res["neck_line"])
+                    if res.get("neck_x") is not None:
+                        state["neck_x_prev"] = res["neck_x"]
+                        args_dict["neck_x_prev"] = res["neck_x"]
                     if res["shell_line"]:
                         _append_line(shell_out_path, header=shell_header, line=res["shell_line"])
                     if res.get("boundary_flux_line"):

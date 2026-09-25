@@ -26,6 +26,7 @@ from .extraction.scalar_modes import (
     scalar_modes_line as _scalar_modes_line,
 )
 from .extraction.shell import _extract_shell_field_stats, _format_shell_stats_line
+from .extraction.neck_horizons import neck_horizons_line, neck_horizons_row
 from .fields import _canonical_field_name
 from .frames.embedding import _render_embedding_frame
 from .frames.projection import _render_projection_frame
@@ -73,6 +74,8 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
         "psi4_line": None,
         "psi4_directional_line": None,
         "areal_line": None,
+        "neck_line": None,
+        "neck_x": None,
         "shell_line": None,
         "boundary_flux_line": None,
         "ftl_line": None,
@@ -192,6 +195,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                     center=args_dict["center"],
                     ells=s_ells,
                     flux_delta=float(args_dict.get("scalar_flux_delta", 0.5)),
+                    reflect=args_dict.get("reflect") or None,
                 )
                 result["scalar_modes_line"] = _scalar_modes_line(
                     t, phi_modes, pi_modes, s_fluxes, s_ells, len(s_radii)
@@ -209,6 +213,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                     n_points=int(args_dict["n_points"]),
                     center=args_dict["center"],
                     fields=shell_fields,
+                    reflect=args_dict.get("reflect") or None,
                 )
                 result["shell_line"] = _format_shell_stats_line(
                     t,
@@ -245,10 +250,11 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                         frame_zlims=args_dict.get("frame_zlims"),
                         use_global_zlim=args_dict.get("frames_global_zlim", True),
                         cache_slices=bool(args_dict.get("frames_cache_slices", False)),
+                        reflect=args_dict.get("reflect") or None,
                     )
                 except Exception as exc:
-                    if args_dict.get("verbose", False):
-                        print(f"WARNING: frame field {fld!r} skipped for {key}: {exc}")
+                    if args_dict.get("verbose", False) or args_dict.get("reflect"):
+                        print(f"WARNING: frame field {fld!r} skipped for {key}: {exc}", flush=True)
 
         projection_fields = [_canonical_field_name(f) for f in args_dict.get("projection_fields", [])]
         projection_axes = list(args_dict.get("projection_axes", []) or [])
@@ -293,6 +299,17 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                         print(f"WARNING: areal extraction failed for {key}: {exc}", flush=True)
             elif args_dict.get("verbose", False):
                 print(f"WARNING: plotfile {key} missing chi field; skipping areal radius.")
+
+        if args_dict.get("neck_horizons"):
+            # The neck (tracked from the previous plotfile) and the trapping
+            # horizons around it; extraction/neck_horizons.py.  Loud on failure.
+            try:
+                row, x_neck = neck_horizons_row(ds, center=args_dict["center"],
+                                                x_prev=args_dict.get("neck_x_prev"))
+                result["neck_line"] = neck_horizons_line(row)
+                result["neck_x"] = x_neck
+            except Exception as exc:
+                print(f"WARNING: neck/horizon extraction failed for {key}: {exc}", flush=True)
 
         if args_dict.get("horizon_scan"):
             try:

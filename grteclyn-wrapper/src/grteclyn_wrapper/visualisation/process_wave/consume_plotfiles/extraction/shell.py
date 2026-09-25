@@ -4,6 +4,8 @@ from typing import Dict, Sequence, Tuple
 
 import numpy as np
 
+from .symmetry import ODD_PARITY_FIELDS, fold_points
+
 
 def _shell_stats_header(radii: Sequence[float], fields: Sequence[str]) -> str:
     cols = ["time"]
@@ -26,8 +28,15 @@ def _extract_shell_field_stats(
     n_points: int,
     center: Sequence[float],
     fields: Sequence[str],
+    reflect: Sequence[str] | None = None,
 ) -> Dict[str, Tuple[float, float, float]]:
-    """Sample mean/min/max of fields on spherical shells at given radii."""
+    """Sample mean/min/max of fields on spherical shells at given radii.
+
+    ``reflect``: fold the shell into a symmetry-reduced domain (even-parity
+    fields only; extraction/symmetry.py)."""
+    bad = [f for f in fields if reflect and f in ODD_PARITY_FIELDS]
+    if bad:
+        raise ValueError(f"odd-parity field(s) {bad} cannot be folded across a reflective plane")
     if not radii or not fields:
         return {}
 
@@ -56,6 +65,8 @@ def _extract_shell_field_stats(
             sx = (float(radius) * X1).ravel() + center[0]
             sy = (float(radius) * Y1).ravel() + center[1]
             sz = (float(radius) * Z1).ravel() + center[2]
+            if reflect:
+                sx, sy, sz = fold_points(sx, sy, sz, center, reflect)
             in_domain = (
                 (sx >= left[0])
                 & (sx <= right[0])

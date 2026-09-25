@@ -41,6 +41,8 @@ from typing import Dict, List, Sequence, Tuple
 
 import numpy as np
 
+from .symmetry import fold_points
+
 from ..sphere import spin_weighted_sph_harm
 
 SUPPORTED_ELLS = (0, 1, 2, 3, 4)
@@ -88,6 +90,7 @@ def extract_scalar_modes(
     center: Sequence[float],
     ells: Sequence[int] = DEFAULT_ELLS,
     flux_delta: float = 0.5,
+    reflect: Sequence[str] | None = None,
 ) -> Tuple[Dict[int, List[Dict[int, complex]]], Dict[int, List[Dict[int, complex]]], List[float]]:
     """Project phi and Pi onto s = 0 harmonics and integrate the kinematic flux.
 
@@ -133,6 +136,10 @@ def extract_scalar_modes(
     sx = np.concatenate([(rs * X1).ravel() + center[0] for rs in shell_radii])
     sy = np.concatenate([(rs * Y1).ravel() + center[1] for rs in shell_radii])
     sz = np.concatenate([(rs * Z1).ravel() + center[2] for rs in shell_radii])
+    if reflect:
+        # symmetry-reduced run: fold the sphere into the simulated domain
+        # (phi and Pi are even across every reflection plane)
+        sx, sy, sz = fold_points(sx, sy, sz, center, reflect)
 
     in_domain = (
         (sx >= left[0]) & (sx <= right[0])

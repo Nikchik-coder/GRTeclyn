@@ -8,6 +8,7 @@ import yt
 from ..config import _field_frame_config, _frames_auto_zlim_enabled
 from ..fields import _canonical_field_name, _field_key, _register_derived_fields
 from .center import _resolve_frame_physics_center
+from .mirror import mirrored_window
 
 #: Marks a ``frame_zlims`` dict as measured over the whole series rather than
 #: locked from one plotfile.  Not a field name, so it can never collide.
@@ -228,11 +229,16 @@ def _lock_frame_zlims_from_plotfile(
         plot_center = ds.arr(physics_center, "code_length")
         buff = _frame_buff_size(ds, zoom)
 
+    reflect = args_dict.get("reflect") or None
     for fld in frame_fields:
         try:
             if not include_per_frame_fields and _field_frame_config(fld).get("per_frame_zlim"):
                 continue
-            if use_frb:
+            mirrored = (mirrored_window(ds, fld, axis, args_dict.get("frames_coord"), zoom,
+                                        center_xyz, reflect) if reflect else None)
+            if mirrored is not None:
+                win = mirrored[0]
+            elif use_frb:
                 _register_derived_fields(ds, fld)
                 plot_field = _field_key(ds, fld)
                 available = list(getattr(ds, "field_list", [])) + list(

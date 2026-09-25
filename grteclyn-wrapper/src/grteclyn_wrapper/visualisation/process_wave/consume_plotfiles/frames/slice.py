@@ -12,6 +12,7 @@ from matplotlib.ticker import FuncFormatter
 from ..config import _FRAME_DPI, _field_frame_config
 from ..fields import _field_key, _register_derived_fields
 from .center import _frame_buff_size, _resolve_frame_physics_center
+from .mirror import mirrored_window
 from .slice_cache import cache_slice
 from .zlim import _resolve_plot_zlim
 
@@ -256,11 +257,16 @@ def _render_slice_frame(
     frame_zlims: dict[str, list[float]] | None = None,
     use_global_zlim: bool = True,
     cache_slices: bool = False,
+    reflect: Sequence[str] | None = None,
 ) -> str:
     """
     Render a SlicePlot frame and save it under:
       <frames_out_dir>/<field>_<axis>/frames/frame_<axis>_<idx>.png
     Returns the saved path.
+
+    ``reflect`` (the consumer's ``--reflect``): a symmetry-reduced run's frame
+    is drawn from the simulated part of the window and mirrored into the full
+    plane (frames/mirror.py), so it looks like the full-box run's.
     """
     def _clean_zero(value: float, tol: float = 1.0e-10) -> float:
         value = float(value)
@@ -269,6 +275,21 @@ def _render_slice_frame(
     def _format_tick(value: float, _pos=None) -> str:
         value = _clean_zero(value)
         return f"{value:g}"
+
+    mirrored = (mirrored_window(ds, field, axis, coord, zoom, center_xyz, reflect)
+                if reflect else None)
+    if mirrored is not None:
+        arr, extent, plane = mirrored
+        cfg = _field_frame_config(field)
+        zlim = _resolve_plot_zlim(field, arr, cfg, auto_zlim=auto_zlim,
+                                  frame_zlims=frame_zlims, use_global_zlim=use_global_zlim)
+        coord_val = _clean_zero(plane)
+        if cache_slices:
+            cache_slice(frames_out_dir, field, axis, frame_idx, arr, extent,
+                        time=float(ds.current_time), coord_val=coord_val)
+        return draw_slice_png(arr, extent, field=field, cfg=cfg, axis=axis, coord_val=coord_val,
+                              time=float(ds.current_time), zlim=zlim, frames_out_dir=frames_out_dir,
+                              frame_idx=frame_idx, verbose=verbose, note=" (mirrored)")
 
     if int(ds.index.max_level) == 0:
         return _render_native_slice_frame(
