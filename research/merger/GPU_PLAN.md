@@ -1318,6 +1318,37 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-25 (15:55 UTC) — F3: the inflation arm on an octant, bit-identical to F2 and 5.3× faster; the pipeline is symmetry-aware
+
+- **The user: "we need x y z symmetry cause this is spherical expansion"; "make sure the runner can support the symmetry launch plus preflight can handle this"; "do e2e on the second card, measure speed up"; "add tests".** GRTeclyn already evolves reflective planes (lo_boundary = 2, parities per variable, φ and Π even; the interpolator folds), and every diagnostic of the example measures from the params' `center` (sponge, core profile, throat tracker, two-centre split). What assumed a full box was the consumer and nothing checked the layout.
+- **Consumer**:
+  - `--reflect x y z`: the sphere samplers (shell stats, scalar modes) fold their points across the planes; frames mirror the simulated quadrant into the full plane (`frames/mirror.py`, the same pixel centres as a full-box frame of the same `--frames-zoom`); the t = 0 colour lock reads the same mirrored window. Switched off with a notice: the ψ₄ spheres, the boundary flux, the horizon star scan, and odd-parity frame fields (Weyl4).
+  - `--neck-horizons`: the 14:00 horizon watcher is now a consumer extraction (`extraction/neck_horizons.py`), so it runs with the run and sees every plotfile before deletion. The neck is tracked from t = 0; the full-metric R is used. Each horizon search now reaches one sample past the neck, so a horizon within a cell of it is found, and a static throat reports both horizons AT its neck (its degenerate double trapping horizon).
+- **Preflight** (`symmetry_check` + the consumer check). Refused:
+  - a reflective upper face;
+  - the centre, a throat or the extraction centre off a plane, or a throat moving across one;
+  - the consumer's `--reflect` not naming exactly the params' planes;
+  - `--horizon-scan` or an off-plane `--frames-center` on a reduced box;
+  - `--neck-horizons` without its eight plot variables.
+
+  It prints the full box a reduced run stands for.
+- **Launch**: profiles `inflation` and `inflation-octant` (`--zoom` = the full frame width, `--coord 0`, `--center "0 0 0"`). The name grammar learns `oct`, `harm` and the full-box side (`L_full`).
+- **Validation, no GPU**: on F2's t = 26 plotfile the reflected consumer (centre 256 256 256, `--reflect x y z`) reproduces the full one.
+  - Mirrored frames equal the full-box frames (lapse, χ, φ: 0 difference; K: 2e-12).
+  - Areal radius and neck rows are identical.
+  - Scalar-mode l = 0 agrees to 1.4e-4 (the full sphere grid's own asymmetry); l ≥ 1 is 2.5e-3 noise in both.
+  - Tests: `tests/visualisation/test_consume_symmetry.py` (18) and `tests/scripts/test_preflight_symmetry.py` (19, including the static command line) pass; nothing else regressed (three `test_run_full_campaign` failures predate this: they call the system Python, which lacks the package).
+- **F3 `single_eps_m1e2_L512_ml5_harm_oct_t400`**:
+  - Template: F2's with `L_full = 512`, `N_full = 256`, `center = 0 0 0`, `lo_boundary = 2 2 2`, `extraction_center = 0 0 0`.
+  - Preflight PASS: 1/8 of the 512³ box; t = 0 H 1.6202707474e-4, F2's own. Launched 15:36 UTC, card 1 of the first node, profile `inflation-octant`.
+  - **81–83 u/h against F2's 15.6 (×5.3), 7.5 GB against 48.7 GB.**
+  - Its constraint norms equal F2's to all eleven printed digits at t = 2.9–3.0.
+  - Its full-metric areal radius equals F2's at t = 0, 8 and 10 (3.8127347297, 3.8545061576, 3.8650711935).
+  - Frame 0 is mirrored into the full plane with F2's t = 0 bars (the user: "good").
+  - Both arms keep running (the user: "let it go along the full box run").
+- **Watch**: F2's momentum constraint rises as the throat inflates (2.5e-6 at t = 11, 1.5e-5 at 22.6, 7.9e-5 at 32.2, while H falls 1.6e-4 → 5.4e-5). F3 sees the same if it is physics or the grid; it is F2's clock ×5. F2 at t = 32: neck R = 5.57 (×1.46), both trapping horizons resolved (R 5.67 and 6.43), α_neck 0.47. F3's consumer and F2's watcher started before the one-cell horizon fix, so their horizon columns begin once the region clears the neck's neighbours.
+- **For later (the user)**: a bigger box on the octant, now that 7/8 of the compute is free.
+
 ### 2026-09-25 (14:45 UTC) — the full-metric areal radius is an opt-in consumer flag, checked by the preflight
 
 - **The user: "not default but optional parameter … make sure the preflight test checks it".** Since 13:00 the consumer's `extraction/areal.py` had computed R = r (h₂₂h₃₃)^¼/√χ by default and fell back to r/√χ without a word whenever a plotfile lacked h₂₂/h₃₃. Now: default r/√χ as before (every old `areal_radius.dat` stays comparable), and `--areal-full-metric` for the full metric. With the flag, a plotfile without h₂₂/h₃₃ gets no row and a warning, never the flat estimate.

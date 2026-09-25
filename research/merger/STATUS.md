@@ -1,4 +1,4 @@
-# Status — 2026-09-25 14:00 UTC
+# Status — 2026-09-25 15:55 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -6,18 +6,19 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Live
 
-**`single_eps_m1e2_L512_ml5_harm_t400`** (F2, the inflation arm in HARMONIC slicing: ε = −10⁻², L = 512, N = 256,
-max_level 5, lapse_power 2 / lapse_coeff 1 / κ 0, rolling checkpoints keep-3 every 10 u, consumer areal radius with h₂₂) —
-first node, card 0, RELAUNCHED 2026-09-25 13:45 UTC (take 1 of 13:25 stopped at t = 1.76 for its frames), preflight PASS,
-Chk00000 on scratch. Frames: lapse, chi, phi on fixed linear bars locked to their t = 0 min–max (`--frames-zlim-t0`: 0.397–0.997,
-0.032–0.994, −0.594–−0.002), frame 0 checked against the user's reference; K, Pi, Weyl4_Re per frame (zero at t = 0). Horizon
-watcher `watch.py` in the run dir (process `test_watch`), neck tracked from t = 0, `small_data/neck_horizons.dat`;
-areal radius on the full metric from t = 0 (a restart must add `--areal-full-metric`, now opt-in and preflight-checked)
-["2026-09-25 (14:00 UTC) — F2 relaunched"; "(14:45 UTC) — the full-metric areal radius"]. ETA: t = 100 ≈ 20:05 UTC, causal limit t = 340 ≈ 11:10 UTC 09-26, end t = 400
-≈ 15:00 UTC 09-26. F1b (`single_eps_m1e2_L512_ml5_t400`, 1+log) wiped on the user's word ("corrupted"): run dir, frames, packs
-and log deleted by the user by hand, 14:15 UTC [MANIFEST_CLEANUP_2026-09-25].
+**`single_eps_m1e2_L512_ml5_harm_oct_t400`** (F3, the inflation arm on an OCTANT: F2's throat, kick, harmonic slicing, grid and
+output on [0,256]³ with mirror planes x = y = z = 0, `lo_boundary 2 2 2`, profile `inflation-octant`) — first node, card 1,
+launched 2026-09-25 15:36 UTC, preflight PASS. 81 u/h (×5.3 F2), 7.5 GB; bit-identical to F2 where they overlap (constraints to
+11 digits, areal radius) ["2026-09-25 (15:55 UTC) — F3"]. ETA: t = 100 ≈ 16:50 UTC, causal limit t = 340 ≈ 19:45 UTC, end
+t = 400 ≈ 20:30 UTC.
 
-Card 1 free. First node: the long
+**`single_eps_m1e2_L512_ml5_harm_t400`** (F2, the same arm on the full 512³ box, harmonic slicing) — first node, card 0,
+relaunched 13:45 UTC; kept running beside F3 (the user). Frames on t = 0 bars; areal radius on the full metric from t = 0 (a
+restart must add `--areal-full-metric`); horizon watcher `watch.py` (`test_watch`); rolling checkpoints verified (Chk00000 rotated
+out at t = 30). t = 32 at 15:49: neck R 5.57 (×1.46), horizons R 5.67 / 6.43, α_neck 0.47; momentum constraint rising (7.9e-5).
+ETA: t = 100 ≈ 20:10 UTC, t = 340 ≈ 11:30 UTC 09-26, end ≈ 15:20 UTC 09-26. F1b wiped (14:15).
+
+Both cards busy (F2 on 0, F3 on 1). First node: the long
 single-throat arms closed out under `01_single_throat/seed/` ["2026-09-24 (16:15)"]; its
 scratch is empty; the paper session's `plt_take2/` plotfile copies (77 GB, G16's input) sit in
 that session's scratchpad there.
