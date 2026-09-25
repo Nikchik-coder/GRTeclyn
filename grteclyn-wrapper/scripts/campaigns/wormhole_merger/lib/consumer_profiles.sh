@@ -110,6 +110,25 @@ consumer_profile() {
       echo "--areal-radius --areal-min-radius 0.5" \
            "--frames-fields chi --frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
+    inflation)
+      # The inflation arms (GPU_PLAN 2026-09-25): the areal radius on the full
+      # metric, the neck and its two trapping horizons per plotfile, frames
+      # whose lapse/chi/phi bars are fixed at their t = 0 range, scalar modes.
+      echo "--areal-radius --areal-full-metric --areal-min-radius 0.5 --neck-horizons --radii 40 60 80 120" \
+           "--frames-fields chi K lapse phi Pi Weyl4_Re" \
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --frames-zlim-t0 lapse chi phi" \
+           "--scalar-modes --scalar-mode-ells 0 1 2"
+      ;;
+    inflation-octant)
+      # The same on an octant box (lo_boundary = 2 2 2, centre 0 0 0): pass
+      # --zoom = the FULL frame width, --coord 0, --center "0 0 0".  Frames are
+      # mirrored into the full plane; Weyl4 is not mirrorable (odd parity).
+      echo "--reflect x y z" \
+           "--areal-radius --areal-full-metric --areal-min-radius 0.5 --neck-horizons --radii 40 60 80 120" \
+           "--frames-fields chi K lapse phi Pi" \
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --frames-zlim-t0 lapse chi phi" \
+           "--scalar-modes --scalar-mode-ells 0 1 2"
+      ;;
     none)
       echo ""
       ;;
@@ -122,5 +141,5 @@ consumer_profile() {
 }
 
 consumer_profile_names() {
-  echo "headon headon-modes headon-scout orbit orbit-modes bbh chi none"
+  echo "headon headon-modes headon-scout orbit orbit-modes bbh chi inflation inflation-octant none"
 }

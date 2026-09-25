@@ -63,9 +63,14 @@ RULES: list[tuple[str, str, str, str, str]] = [
      "p<NNN>: Bowen-York momentum per throat, p_A = |wormhole_momentumA| (B defaults to -A, so net P = 0); "
      "first digit = integer part: p012 = 0.12, p045 = 0.45, p02 = 0.2. Binaries push tangentially (y, "
      "orbit in the x-y plane); s20_boost_p02 pushes one throat along z. BinaryBH: |bh1.momentum|"),
-    (r"L(\d{2,})", "L", "float(g1)", "approx",
-     "L<NN>: box side L (code units; the cube is [0,L]^3 with the physics at center = L/2). "
-     "L64 / L128. BinaryBH alias: geometry.prob_extent[0]"),
+    (r"L(\d{2,})", "derived:box_side", "float(g1)", "approx",
+     "L<NN>: the FULL box side (code units; the cube is [0,L]^3 with the physics at center = L/2). "
+     "L64 / L128 / L512. A symmetry-reduced box names its full side as L_full (lo_boundary = 2 halves "
+     "it: the octant run holds [0, L_full/2]^3 with the physics at centre 0), so box_side = L_full "
+     "when set, else L. BinaryBH alias: geometry.prob_extent[0]"),
+    (r"oct", "lo_boundary[0]", "2", "eq",
+     "oct: an octant box, mirror planes x = y = z = 0 (lo_boundary = 2 2 2; the launch preflight "
+     "checks all three and the consumer's --reflect x y z)"),
     (r"L(\d)", "max_level", "int(g1)", "eq",
      "ladder_L<N> ONLY: L<one digit> is the refinement level of the p012 refinement ladder "
      "(restarted from Chk05000), NOT the box (the box token has >= 2 digits)"),
@@ -124,6 +129,11 @@ RULES: list[tuple[str, str, str, str, str]] = [
      "lp<N>: Bona-Masso lapse_power N (1 = 1+log; 2 = harmonic-class d_t alpha = -2 alpha^2 K)"),
     (r"lc(\d+)", "lapse_coeff", "float(g1)", "approx",
      "lc<N>: Bona-Masso lapse_coeff N (production 2.0). lc4 exists only as a template"),
+    (r"harm", "lapse_power", "2.0", "approx",
+     "harm: harmonic slicing, d_t alpha = -alpha^2 (K - 2 Theta): lapse_power 2 ... (the inflation "
+     "arms F2/F3, GPU_PLAN 2026-09-25)"),
+    (r"harm", "lapse_coeff", "1.0", "approx",
+     "harm: ... and lapse_coeff 1 (no shock-avoiding term: lapse_shock_kappa 0)"),
     (r"sg(\d)(\d+)", "sigma", "float(g1 + '.' + g2)", "approx",
      "sg<NN>: Kreiss-Oliger sigma with the '.' deleted by run_single.sh (WHM_SIGMA): "
      "sg00 = 0.0, sg01 = 0.1, sg10 = 1.0"),
@@ -285,9 +295,9 @@ RULES: list[tuple[str, str, str, str, str]] = [
      "bridge_* excluded: the GRTresna data carry lapse type 1 (sqrt(chi))"),
     (r"^(?!bbh_)(?!.*(?:^|_)eta\d+(?:_|$))", "eta", "1.0", "approx",
      "spans tokens (ABSENCE rule): no eta<N> token -> eta 1.0"),
-    (r"^(?!bbh_)(?!.*(?:^|_)(?:lp\d+|lc\d+)(?:_|$))", "lapse_power", "1.0", "approx",
-     "spans tokens (ABSENCE rule): no lp/lc token -> 1+log slicing, lapse_power 1.0 ..."),
-    (r"^(?!bbh_)(?!.*(?:^|_)(?:lp\d+|lc\d+)(?:_|$))", "lapse_coeff", "2.0", "approx",
+    (r"^(?!bbh_)(?!.*(?:^|_)(?:lp\d+|lc\d+|harm)(?:_|$))", "lapse_power", "1.0", "approx",
+     "spans tokens (ABSENCE rule): no lp/lc/harm token -> 1+log slicing, lapse_power 1.0 ..."),
+    (r"^(?!bbh_)(?!.*(?:^|_)(?:lp\d+|lc\d+|harm)(?:_|$))", "lapse_coeff", "2.0", "approx",
      "spans tokens (ABSENCE rule): ... and lapse_coeff 2.0"),
     (r"^(?!.*(?:^|_)p\d+(?:_|$)).*(?:^|_)orbit(?:_|$)", "derived:p_A", "0.12", "approx",
      "spans tokens (ABSENCE rule): an orbit name without a p<NNN> token carries the production push "
@@ -669,6 +679,11 @@ class Deriver:
             if name == "damping_radius_window":
                 s, f = run.get("core_damping_radius_start"), run.get("core_damping_radius_full")
                 return (s > 0.0 and f > 0.0), f"radius_start {s}, radius_full {f}"
+            if name == "box_side":
+                v = run.get("L_full")
+                if v is None:
+                    v = run.get("L")
+                return (UNTESTABLE if v is None else v), ("L_full" if run.get("L_full") is not None else "L")
             if run.is_template and name in ("t_restart_from_stream", "seed_l2_effective",
                                             "seed_eps_effective"):
                 return UNTESTABLE, "template: no streams"

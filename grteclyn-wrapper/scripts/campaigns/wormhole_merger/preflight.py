@@ -34,6 +34,16 @@ WHAT IT CHECKS
        - warned: --areal-radius alone -- r/sqrt(chi), exact at t = 0 and a
          lower bound once the Gamma-driver shift has moved the grid (h22 =
          1.45 at the F1b neck at t = 90: 10.08 read for a true 12.17).
+       - refused: --neck-horizons without chi K lapse h11 h22 h33 A11 phi in
+         amr.plot_vars.
+     And a symmetry-reduced box (lo_boundary = 2 on some axes: the run holds
+     the positive side of mirror planes x_i = 0).  Refused: a reflective upper
+     face; the physics centre, a throat or the extraction centre off a plane;
+     a throat moving across one (the data would not be mirror-symmetric); the
+     consumer's --reflect not naming exactly the params' planes (its sphere
+     samplers and frames would use the wrong domain); --horizon-scan there (the
+     star scan samples the full sphere round the centre); --frames-center off
+     a plane.
   1. static (no GPU, seconds).  Every key of the params file must appear as a
      string inside the binary: a binary that does not contain a key's name
      cannot read it.  Advisory in full mode (a key can be present but unread
@@ -162,38 +172,145 @@ def intent_check(params: dict[str, str]) -> tuple[list[str], list[str]]:
     return errors, warnings
 
 
-def consumer_check(params: dict[str, str], consume_args: str, consume_on: bool
-                   ) -> tuple[list[str], list[str], dict]:
+AXES = "xyz"
+REFLECTIVE_BC = 2  # GRTeclyn's legacy boundary code, AMReXParameters.hpp
+
+
+def _numbers(params: dict[str, str], key: str) -> list[float] | None:
+    """The whitespace-separated numbers of a key, or None if absent/unparsable."""
+    if key not in params:
+        return None
+    try:
+        return [float(v) for v in params[key].split()]
+    except ValueError:
+        return None
+
+
+def _flag_values(toks: list[str], flag: str) -> list[str]:
+    """The tokens after ``flag`` up to the next option ([] if absent)."""
+    if flag not in toks:
+        return []
+    out = []
+    for t in toks[toks.index(flag) + 1:]:
+        if t.startswith("--"):
+            break
+        out.append(t)
+    return out
+
+
+def symmetry_check(params: dict[str, str]) -> tuple[list[str], list[str], dict]:
+    """(errors, warnings, summary) for a symmetry-reduced box: lo_boundary = 2
+    makes the lower face x_i = 0 a mirror plane and the run holds its positive
+    side.  Everything that defines the data must sit on (or move along) the
+    planes, or the mirror image is not the configuration the params describe."""
+    errors, warnings = [], []
+    lo = _numbers(params, "lo_boundary") or [0, 0, 0]
+    hi = _numbers(params, "hi_boundary") or [0, 0, 0]
+    per = _numbers(params, "isPeriodic") or [0, 0, 0]
+    idx = [i for i in range(3) if i < len(lo) and int(lo[i]) == REFLECTIVE_BC
+           and not (i < len(per) and per[i])]
+    summary: dict = {"reflect": [AXES[i] for i in idx]}
+    if any(int(h) == REFLECTIVE_BC for h in hi):
+        errors.append("a reflective UPPER face (hi_boundary = 2): the campaign mirrors across lower faces "
+                      "only (the consumer's --reflect folds onto x_i >= centre)")
+    if not idx:
+        return errors, warnings, summary
+
+    def off_plane(vec: list[float] | None) -> list[str]:
+        return [AXES[i] for i in idx if vec is not None and i < len(vec) and abs(vec[i]) > 1e-12]
+
+    c = _numbers(params, "center")
+    if c is None or len(c) != 3:
+        errors.append("reflective planes but no 3-component 'center': the physics centre must sit on "
+                      "them (center = 0 on each reflected axis)")
+    elif off_plane(c):
+        errors.append(f"center = {c} is off the reflective plane(s) {off_plane(c)}: the planes are the "
+                      "lower faces, so the centre must be 0 on each reflected axis")
+    for obj in ("A", "B"):
+        present = obj == "A" or any((as_float(params.get(k, "0")) or 0.0) != 0.0 for k in (
+            f"wormhole_throat_radius_{obj}", f"wormhole_drainhole_mass_{obj}", f"wormhole_bare_mass_{obj}"))
+        if not present:
+            continue
+        pos, mom = _numbers(params, f"wormhole_center{obj}"), _numbers(params, f"wormhole_momentum{obj}")
+        if off_plane(pos):
+            errors.append(f"throat {obj} sits off the reflective plane(s) {off_plane(pos)} "
+                          f"(wormhole_center{obj} = {pos}): its mirror image would be a second throat")
+        if off_plane(mom):
+            errors.append(f"throat {obj} moves across the reflective plane(s) {off_plane(mom)} "
+                          f"(wormhole_momentum{obj} = {mom}): the data is not mirror-symmetric")
+    if (as_float(params.get("activate_extraction", "0")) or 0.0) != 0.0:
+        ec = _numbers(params, "extraction_center")
+        if off_plane(ec):
+            errors.append(f"extraction_center = {ec} is off the reflective plane(s) {off_plane(ec)}")
+    summary["cells_fraction"] = 1.0 / 2 ** len(idx)
+    if "L_full" in params:
+        # L_full / N_full name the full box; GRTeclyn halves them across the planes
+        summary["full_box"] = [as_float(params["L_full"])] * 3
+    else:
+        L = as_float(params.get("L", "")) if "L" in params else None
+        n = [as_float(params.get(f"N{i + 1}", params.get("N", ""))) for i in range(3)]
+        if L and all(n):
+            dx0 = L / max(n)
+            summary["full_box"] = [2 * n[i] * dx0 if i in idx else n[i] * dx0 for i in range(3)]
+    return errors, warnings, summary
+
+
+def consumer_check(params: dict[str, str], consume_args: str, consume_on: bool,
+                   reflect: list[str] | None = None) -> tuple[list[str], list[str], dict]:
     """(errors, warnings, summary) for what the plotfile consumer is asked to
-    extract against what the plotfiles will carry.  The areal radius is the one
-    extraction checked: its full-metric form is opt-in and needs h22 and h33."""
+    extract against what the plotfiles will carry, and against the box's
+    symmetry planes (``reflect``, from symmetry_check).  The full-metric areal
+    radius is opt-in and needs h22 and h33; --neck-horizons needs its eight
+    fields."""
+    reflect = list(reflect or [])
     try:
         toks = shlex.split(consume_args or "")
     except ValueError:
         toks = (consume_args or "").split()
-    summary = {"consume": consume_on, "areal_radius": "off"}
+    summary = {"consume": consume_on, "areal_radius": "off",
+               "neck_horizons": "--neck-horizons" in toks, "reflect": _flag_values(toks, "--reflect")}
     errors, warnings = [], []
     if not consume_on:
         return errors, warnings, summary
+    have = set(params["amr.plot_vars"].split()) if "amr.plot_vars" in params else None
+    need: dict[str, list[str]] = {}
     areal, full = "--areal-radius" in toks, "--areal-full-metric" in toks
     if full and not areal:
         errors.append("--areal-full-metric without --areal-radius: the consumer extracts no areal radius at all")
-    if not areal:
-        return errors, warnings, summary
-    summary["areal_radius"] = ("full metric, r (h22 h33)^(1/4)/sqrt(chi)" if full
-                               else "flat conformal metric, r/sqrt(chi)")
-    need = ["chi", "h22", "h33"] if full else ["chi"]
-    if "amr.plot_vars" in params:
-        have = set(params["amr.plot_vars"].split())
-        lacking = [v for v in need if v not in have]
+    if areal:
+        summary["areal_radius"] = ("full metric, r (h22 h33)^(1/4)/sqrt(chi)" if full
+                                   else "flat conformal metric, r/sqrt(chi)")
+        need["--areal-full-metric" if full else "--areal-radius"] = ["chi", "h22", "h33"] if full else ["chi"]
+        if not full:
+            warnings.append("areal radius is r/sqrt(chi) (flat conformal metric): exact at t = 0, a lower "
+                            "bound once the Gamma-driver shift has moved the grid; --areal-full-metric uses h22, h33")
+    if summary["neck_horizons"]:
+        need["--neck-horizons"] = ["chi", "K", "lapse", "h11", "h22", "h33", "A11", "phi"]
+    for flag, fields in need.items():
+        if have is None:
+            warnings.append(f"amr.plot_vars not set: the fields {flag} needs ({', '.join(fields)}) are not checked")
+            continue
+        lacking = [v for v in fields if v not in have]
         if lacking:
-            errors.append(f"the consumer's areal radius ({'--areal-full-metric' if full else '--areal-radius'}) "
-                          f"needs {', '.join(lacking)} in amr.plot_vars, which the plotfiles will not carry")
-    else:
-        warnings.append(f"amr.plot_vars not set: the areal radius's fields ({', '.join(need)}) are not checked")
-    if not full:
-        warnings.append("areal radius is r/sqrt(chi) (flat conformal metric): exact at t = 0, a lower bound once "
-                        "the Gamma-driver shift has moved the grid; --areal-full-metric uses h22, h33")
+            errors.append(f"the consumer's {flag} needs {', '.join(lacking)} in amr.plot_vars, "
+                          "which the plotfiles will not carry")
+    if sorted(summary["reflect"]) != sorted(reflect):
+        errors.append(f"the params make {' '.join(reflect) or 'no'} plane(s) reflective but the consumer's "
+                      f"--reflect names {' '.join(summary['reflect']) or 'none'}: its sphere samplers and "
+                      "frames would work on the wrong domain")
+    if reflect:
+        if "--horizon-scan" in toks:
+            errors.append("--horizon-scan in a symmetry-reduced box: the star scan samples the full sphere "
+                          "round the centre (use --neck-horizons for the trapping horizons)")
+        fc = _flag_values(toks, "--frames-center")
+        try:
+            fcv = [float(v) for v in fc]
+        except ValueError:
+            fcv = []
+        bad = [a for a in reflect if len(fcv) == 3 and abs(fcv[AXES.index(a)]) > 1e-12]
+        if bad:
+            errors.append(f"--frames-center {' '.join(fc)} is off the reflective plane(s) {bad}: the frames "
+                          "mirror about the centre")
     return errors, warnings, summary
 
 
@@ -384,12 +501,22 @@ def main(argv: list[str]) -> int:
 
     errors, warnings = intent_check(params)
     report["intent"] = {"errors": errors, "warnings": warnings}
+    s_err, s_warn, s_sum = symmetry_check(params)
+    report["symmetry"] = dict(s_sum, errors=s_err, warnings=s_warn)
+    if s_sum["reflect"]:
+        box = s_sum.get("full_box")
+        print(f"[preflight] symmetry: mirror planes {' '.join(s_sum['reflect'])} = 0; the run holds "
+              f"{s_sum.get('cells_fraction', 0):g} of the box"
+              + (f" {' x '.join(f'{v:g}' for v in box)}" if box else ""))
     c_err, c_warn, c_sum = consumer_check(params, a.consume_args,
-                                          os.environ.get("WHM_CONSUME", "1") != "0")
+                                          os.environ.get("WHM_CONSUME", "1") != "0",
+                                          reflect=s_sum["reflect"])
     report["consumer"] = dict(c_sum, errors=c_err, warnings=c_warn)
     print(f"[preflight] consumer: areal radius {c_sum['areal_radius']}"
+          + ("; neck + horizons" if c_sum["neck_horizons"] else "")
+          + (f"; --reflect {' '.join(c_sum['reflect'])}" if c_sum["reflect"] else "")
           + ("" if c_sum["consume"] else " (no consumer: WHM_CONSUME=0)"))
-    errors, warnings = errors + c_err, warnings + c_warn
+    errors, warnings = errors + s_err + c_err, warnings + s_warn + c_warn
     for w in warnings:
         print(f"[preflight] WARNING: {w}")
     if errors:
