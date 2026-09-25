@@ -73,7 +73,9 @@ of the data is exactly that.  Nothing in this package calls ``ax.legend`` or
 
 from __future__ import annotations
 
+import io
 import pathlib
+import re
 
 import matplotlib
 import numpy as np
@@ -319,12 +321,50 @@ def save(fig, path, dpi: int = 300, exts=("png", "pdf")) -> pathlib.Path:
 
     Every figure in this package ships a PDF beside its PNG: the PNG is what a
     note or a chat window shows, the PDF is what goes into the paper.
+
+    A figure that has not changed is not rewritten (2026-09-25).  Every repack
+    used to redraw pixel-identical figures whose bytes differ only in the PDF's
+    creation date and the matplotlib version both formats stamp in, and each
+    one showed up in git as a change.  The PNG decides: if it renders to the
+    pixels already on disk, none of the files is touched.
     """
     path = pathlib.Path(path).expanduser()
     path.parent.mkdir(parents=True, exist_ok=True)
+    rendered = {}
     for ext in exts:
-        fig.savefig(path.with_suffix(f".{ext}"), dpi=dpi)
+        buf = io.BytesIO()
+        fig.savefig(buf, format=ext, dpi=dpi)
+        rendered[ext] = buf.getvalue()
+    if not _unchanged(path, rendered):
+        for ext, data in rendered.items():
+            path.with_suffix(f".{ext}").write_bytes(data)
     return path.with_suffix(f".{exts[0]}")
+
+
+# The PDF's creation date and producer (which carries the matplotlib version).
+_PDF_STAMPS = re.compile(rb"/(?:CreationDate|ModDate|Producer) \([^)]*\)")
+
+
+def _unchanged(path: pathlib.Path, rendered: dict[str, bytes]) -> bool:
+    """True if every file already exists and shows what ``rendered`` shows:
+    same PNG pixels when a PNG is among them, else the same bytes once the
+    PDF's date and version stamps are set aside."""
+    targets = {ext: path.with_suffix(f".{ext}") for ext in rendered}
+    if not all(t.is_file() for t in targets.values()):
+        return False
+    if "png" in rendered:
+        from PIL import Image
+
+        try:
+            old = np.asarray(Image.open(targets["png"]))
+        except OSError:
+            return False
+        new = np.asarray(Image.open(io.BytesIO(rendered["png"])))
+        return old.shape == new.shape and np.array_equal(old, new)
+    return all(
+        _PDF_STAMPS.sub(b"", targets[ext].read_bytes()) == _PDF_STAMPS.sub(b"", data)
+        for ext, data in rendered.items()
+    )
 
 
 # ---------------------------------------------------------------------------

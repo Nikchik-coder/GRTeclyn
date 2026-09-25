@@ -47,6 +47,13 @@ Every rule below exists because breaking it cost a run, a result or a day.
   `results/` by `research/merger/pack_results.sh`. Never add `runs/` to git.
 - Scratch (`/tmp/grteclyn_scratch/` on each node) holds plotfiles and checkpoints;
   prune only on the user's word and log it in `runs/wormhole_merger/MANIFEST_CLEANUP_<date>.md`.
+- **Never delete frames.** A run's `frames/` (the rendered PNGs, the `_slice_cache`) and
+  `movies/` are never removed: not at close-out, not in a prune, not as "leftovers", not
+  to save space, not for runs called corrupted or uncited. The slice cache is the only
+  source of a run's pictures once its plotfiles are gone, so a deleted frame set cannot
+  be rebuilt. "Prune plotfiles/leftovers/scratch" never covers frames; only an explicit
+  instruction naming frames and the runs does, and then ask once before deleting.
+  (2026-09-25: five runs' frames were deleted as "leftovers", unrecoverable.)
 - Heavy analysis (yt, covering grids) runs in the background with a log; trim the matrix first.
 - GWOSC downloads are the slow part of any search: bypass the local proxy, use `--block-s 4096`.
 

@@ -91,6 +91,25 @@ STILL_FIELDS="chi_z lapse_z phi_z Weyl4_Re_z"
 # 00_archive, 90_probes, bin, logs and templates_scan.  The packed path mirrors
 # the run's path under runs/wormhole_merger.  Log-only stubs (a lost arm) and
 # NaN-autopsy restarts are packed like any run: their run_tail.log IS the result.
+
+# Carry across every file the previous pack held ($1, the .__keep copy) that the
+# rebuild ($2) did not write, then drop the copy.  EXCEPT movies: the
+# carry-across is what would quietly undo the curation described below.
+# Both branches of the loop call it: until 2026-09-25 only the full branch did,
+# so every log-only arm (data/ pruned, e.g. the p012_ladder legs) left its
+# .__keep behind at every full repack.
+carry_across() {
+  local keep="$1" out="$2"
+  [[ -d "${keep}" ]] || return 0
+  (cd "${keep}" && find . -type f -print0) | while IFS= read -r -d "" f; do
+    case "${f#./}" in
+      movies/*|*/movies/*|*.mp4) continue ;;
+    esac
+    [[ -e "${out}/${f}" ]] || { mkdir -p "$(dirname "${out}/${f}")"; cp "${keep}/${f}" "${out}/${f}"; }
+  done
+  rm -rf "${keep}"
+}
+
 while IFS= read -r rundir; do
   [[ -d "${rundir}" ]] || continue
   rundir="${rundir%/}/"
@@ -122,6 +141,7 @@ while IFS= read -r rundir; do
     elif [[ -f "${rundir}/run.log" ]]; then
       tail -n 200 "${rundir}/run.log" > "${out}/run_tail.log"
     fi
+    carry_across "${keep}" "${out}"
     found=$(find "${out}" -maxdepth 1 -type f \( -name '*.txt' -o -name '*.json' -o -name '*.md' -o -name '*.log' \))
     [[ -n "${found}" ]] && scrub ${found}
     echo "[pack-merger] ${run}: log-only arm ($(find "${out}" -type f | wc -l) files)"
@@ -221,15 +241,7 @@ PY
   # NOT frames: ${out}/frames holds the STILLS written above, 153 files across
   # five runs whose scratch frames are long pruned, so the carry-across is the
   # only thing keeping them.  Excluding them here would delete a result.
-  if [[ -d "${keep}" ]]; then
-    (cd "${keep}" && find . -type f -print0) | while IFS= read -r -d "" f; do
-      case "${f#./}" in
-        movies/*|*/movies/*|*.mp4) continue ;;
-      esac
-      [[ -e "${out}/${f}" ]] || { mkdir -p "$(dirname "${out}/${f}")"; cp "${keep}/${f}" "${out}/${f}"; }
-    done
-    rm -rf "${keep}"
-  fi
+  carry_across "${keep}" "${out}"
 
   # Belt and braces: whatever route a movie took to get here, it does not stay.
   rm -rf "${out}/movies"

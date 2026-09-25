@@ -100,6 +100,8 @@ merge_orbit_flip_d12_sg10_r05000	05_binary_spiral/p012	reconstructed	main3d.gnu.
 merge_twin_p012_cf08_t060_r05000	05_binary_spiral/p012	reconstructed			none (launched before 2026-09-24)	0	0	5	64.0	128	60.0	yes		n/a	silent: (no token): max_level = 5.0, production value 3	unknown	ok
 merge_twin_p012_cf10_t060_r05000	05_binary_spiral/p012	reconstructed			none (launched before 2026-09-24)	0	0	5	64.0	128	60.0	yes		n/a	silent: (no token): max_level = 5.0, production value 3	unknown	ok
 merge_twin_p012_cf12_t060_r05000	05_binary_spiral/p012	reconstructed			none (launched before 2026-09-24)	0	0	5	64.0	128	60.0	yes		n/a	silent: (no token): max_level = 5.0, production value 3	unknown	ok
+merge_twin_p012_eta4_lvl5_t066_r05000	05_binary_spiral/p012	reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	5	64.0	128	66.0	yes		n/a	ok	ok	checkpoints asked for (interval/keep) with checkpoint output off: none written
+merge_twin_p012_eta4_lvl5_t066_r06000	05_binary_spiral/p012	reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	5	64.0	128	66.0	yes		n/a	ok	ok	checkpoints asked for (interval/keep) with checkpoint output off: none written
 merge_twin_p012_eta4_t060	05_binary_spiral/p012	reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	3	64.0	128	60.0		2.9899715573e-03	n/a	ok	ok	checkpoints asked for (interval/keep) with checkpoint output off: none written
 merge_twin_p012_eta4_t100	05_binary_spiral/p012	reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	3	64.0	128	100.0		2.9899715573e-03	n/a	ok	ok	ok
 merge_twin_p012_helfer_lvl4_t100	05_binary_spiral/p012	reconstructed			none (launched before 2026-09-24)	0	0	4	64.0	128	100.0		3.3769703096e-03	n/a	ok	unknown	ok
@@ -149,6 +151,3 @@ merge_orbit_flip_d12_p045_t200	06_binary_flyby/p045	reconstructed			none (launch
 bbh_control_d12_p012	07_bbh_control	reconstructed			none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_control_d12_p012_t150	07_bbh_control	reconstructed			none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_control_d12_p045_t100	07_bbh_control	reconstructed	BinaryBH3d.gnu.MPI.CUDA.ex	1cc27217-dirty	none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
-merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22		none				0	0	5	64.0	128	30.0		2.8827157680e-03	n/a	ok	unknown	ok
-merge_twin_p012_eta4_lvl5_t066_r05000		reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	5	64.0	128	66.0	yes		n/a	ok	ok	checkpoints asked for (interval/keep) with checkpoint output off: none written
-merge_twin_p012_eta4_lvl5_t066_r06000		reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	5	64.0	128	66.0	yes		n/a	ok	ok	checkpoints asked for (interval/keep) with checkpoint output off: none written

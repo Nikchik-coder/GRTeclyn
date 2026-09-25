@@ -970,7 +970,7 @@ explicitly, and check H(t = 0) against the unkicked control before walking away.
 | C2 | surface-integral ADM mass + the shift terms of the geometric scalar flux, on the seamless head-on | closes Ṁ_ADM = −F_GW − F_φ; turns "anti-damped radiation reaction" from conditional to measured | code + ~28 h |
 
 Also queued, no card: the η = 4 level-5 death-window flow hunt (second node,
-Plt05520–06000) and the lp2 level-5 head-on (needs a full card; OOM'd twice).
+Plt05520–06000) [DONE 2026-09-25: censored] and the lp2 level-5 head-on (needs a full card; OOM'd twice) [cancelled 09-23].
 
 ### 2026-09-24 (early) — launch guardrails, run manifests, stamped binaries, the claims ledger
 
@@ -1113,9 +1113,9 @@ The user's ~40 comments on the compiled paper ("update the paper and the plan ba
 | G14 | ε = +10⁻² at level 3 with the CCZ4 damping κ₁ doubled and halved (two arms, L = 64, t = 100) | whether the numerical regrowth follows the constraint damping (the double layer's lever) | ~12 |
 | G15 | ε = +10⁻² at level 3 with the seed shell twice as wide and half as wide (w = a/2, a/8) | whether the layer is the processed seed defect (∝ ε/w² on the shell) or made by the collapse | ~12 |
 | G16 | TAKE 2's checkpoints and plotfiles to t ≈ 70, read offline (H, Θ, Z at the horizon) | the double layer's history through the floor | 0 (CPU) |
-| — | η = 4 level-5 death-window flow hunt, Plt05520–06000 (second node) | censored or naked at level 5 | 0 (CPU) |
+| — | ~~η = 4 level-5 death-window flow hunt, Plt05520–06000 (second node)~~ **DONE 2026-09-25: CENSORED** (MOTS from ≤ 55.2; "2026-09-25 (morning)") | censored or naked at level 5 | 0 (CPU) |
 
-Bookkeeping, no GPU: re-pack `merge_twin_p012_eta4_lvl5_t066_r05000` to its death (the 60.04 is only in runs/); add TAKE 2 to `claims/table1_groups.tsv` BEFORE its first pack (else `check` fails); decide Table I's counting rule for duplicates and no-knob re-runs (fix the HOOKFAIL "dead launch" note); the collapsing throat's E_GW integrates its floor to t = 70 (gated at 58 it is 2.6e-5, not 3.2e-5 — Fig. 11 and the detector rows follow); clmGwThroatOverControl uses the level-3 control (44× against the matched level-4 one); clmDetKerrRise uses the shape-inflated formation M_MS (R/2 gives 1.34, not 1.38; conclusion unchanged); the byte-identity sentence rests on an unpacked run (the packed `lvl3_t050` / `_mouths` pair is byte-identical and could replace it).
+Bookkeeping, no GPU: ~~re-pack `merge_twin_p012_eta4_lvl5_t066_r05000` to its death~~ (done 09-24, filed and read from the pack 09-25); add TAKE 2 to `claims/table1_groups.tsv` BEFORE its first pack (else `check` fails); decide Table I's counting rule for duplicates and no-knob re-runs (fix the HOOKFAIL "dead launch" note); the collapsing throat's E_GW integrates its floor to t = 70 (gated at 58 it is 2.6e-5, not 3.2e-5 — Fig. 11 and the detector rows follow); clmGwThroatOverControl uses the level-3 control (44× against the matched level-4 one); clmDetKerrRise uses the shape-inflated formation M_MS (R/2 gives 1.34, not 1.38; conclusion unchanged); the byte-identity sentence rests on an unpacked run (the packed `lvl3_t050` / `_mouths` pair is byte-identical and could replace it).
 
 Future, code first: rotating throats (the user: "maybe other supporting models survive longer, e.g. rotating ones?" — rotating Ellis initial data; in 5D and, perturbatively, in 4D rotation removes the unstable mode); a throat in a compressive, radiation-dominated background; finest-level, excised constraint norms.
 
@@ -1211,6 +1211,112 @@ long run is also corrupted lets stop it" (TAKE 2).
 - Figure `single_throat_inflation_L128` now reads the pack; stage lines at t = 66 (10 % off
   the flat) and t = 154 (the circles start: the axis neck leaves level 1); the note under
   the circles carries the 6 % diagonal spread and the H rise.
+
+### 2026-09-25 (morning) — the η = 4 level-5 probes closed out: the spiral wall is censored under η = 4 too; every η = 4 "no horizon" was the finder's box
+
+On the user's word, from a session on the second GPU node ("there should be unprocessed runs
+… do systematics document analyse pack prune leftovers"; "these runs are on this machine and
+need to be analysed and packed").
+
+- **Closed out and filed** (`closeout.sh`, `WHM_MOVIES=0`, 0 problems, identity grep clean):
+  `merge_twin_p012_eta4_lvl5_t066_r05000` (the t = 50 retry, NaN on level 5 at t = 60.041) and
+  `…_r06000` (the t = 60 attempt, NaN at the first level-5 regrid, 60.055, zero slices), both
+  to `05_binary_spiral/p012/`. The stale top-level pack copies of both, and of
+  `merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22` (filed copy in `04_binary_headon/`), removed
+  on the user's word; Table I paths follow. Ledger: `clmGaugeEtaLevelFiveDeath`, `…Gap` and
+  `clmGaugeLevelFiveSpread` now read the death from the packed `run_tail.log`
+  (`mergers_death_time`), no longer from the transcribed `wall_clocks.dat` row; values
+  unchanged; `claims.py check` 956 rows, 788 recomputed, 0 problems.
+- **THE HUNT** (`ah_flow_finder.py`, this node, CPU only). Pass 1 — the R0 recipe (level-3
+  sampling, half-width 4–5 about the snapped pit, lmax 6) — found NOTHING on either run, and
+  the way it failed was the clue: the outer seeds ended in "left the box or hit the inner
+  floor" within 30–80 steps. A wide radial θ_out profile (`ah_oriented_scan.py --half 7`)
+  showed why. Probe 2's head-on at t = 40 has WHOLE trapped coordinate spheres out to
+  r = 4.43 and mixed ones to r ≈ 6.7, so the horizon lies there, outside every box used. Pass 2
+  (level-2 sampling, half 9, lmax 8, centre (32,32,32), inner / middle / outer seeds, one process
+  per seed, ~10 min) finds it everywhere:
+
+  | run (η = 4) | slice t | R (areal) | M_MS | θ_in max | coordinate h | note |
+  |---|---|---|---|---|---|---|
+  | spiral, level 5 (`_r05000`) | 55.2 | 4.827 ± 0.004 | 2.413 | −0.05 | 3.86–4.84 | newborn; converges at lmax 10 (lmax 8 stalls at rms 3.4e-3 on the same surface) |
+  | | 57.0 | 4.782 ± 0.005 | 2.391 | −0.12 | 3.93–4.91 | |
+  | | 58.0 | 4.757 ± 0.010 | 2.378 | −0.15 | 3.96–4.95 | three seeds, one surface |
+  | | 60.0 | 4.710 ± 0.013 | 2.355 | −0.20 | 4.05–5.01 | 0.04 before the NaN; trapped AND untrapped witnesses |
+  | spiral, level 3 (R1, `merge_twin_p012_eta4_t100`, NFS keeps) | 60.01 | 4.710 ± 0.013 | 2.355 | −0.21 | 4.05–5.01 | = level 5 at 60.0 to 4 digits |
+  | | 61.5 | 4.676 ± 0.014 | 2.338 | −0.23 | 4.12–5.05 | 0.42 before its NaN (61.92) |
+  | head-on, level 3 (R3a, `…_eta4_t050`, NFS keeps) | 30.0 | 5.41 ± 0.02 | 2.70 | −0.19 | 4.66–5.14 | MOTS located; lead ≥ 4.15 (was ≥ 3.35) |
+  | | 34.1 | 5.29 ± 0.02 | 2.645 | −0.21 | 4.94–5.33 | 0.05 before the NaN |
+  | head-on, level 5 (probe 2, `…_lvl5_t040_r03200`) | 34.2 | 5.29 ± 0.02 | 2.644 | −0.21 | 4.95–5.33 | = level 3 at 34.1 |
+  | | 37.0 | 5.23 ± 0.02 | 2.616 | −0.24 | 5.11–5.51 | |
+  | | 40.0 | 5.17 ± 0.02 | 2.584 | −0.27 | 5.25–5.69 | walked through its level-3 wall |
+
+  (± = half the inner/outer-seed spread; M_MS = R/2 on a converged MOTS.)
+- **Verdicts.** (1) The η = 4 spiral wall is **CENSORED** at level 5: a common MOTS from
+  t = 55.2 at the latest, lead ≥ 4.84, present 0.04 before the NaN. (2) It is **the standard
+  gauge's horizon**: M_MS within 0.3 % of the standard level-5 hunt at equal t (R0: 2.412 /
+  2.400 / 2.387 / 2.361 at 55 / 56 / 57 / 59). η moves only its coordinate size,
+  h 3.9–5.0 against 2.1–3.1. (3) **Level 3 resolves it too under η = 4** (R1 at 60.01 and
+  61.5), so the η = 4 level-3 wall is censored as well. The standing sentence "level 3 has
+  never resolved a spiral horizon in any gauge" was the box, not the grid. (4) Probe 2's
+  MOTS is located (R 5.29 at 34.2 → 5.17 at 40), and its level-3 parent carries the same
+  surface from t = 30.0. The R ≈ 5.0 / M_MS ≈ 2.46 "noise-floor attractor" of the 09-23
+  hunts was the neck (h ≈ 0.3–1).
+- **Why every earlier η = 4 hunt was null.** R1: half 3.0 (t = 58/60/61.5), witness run half 5.0
+  about a snapped pit; R3a: half 5.0, seeds ≤ 3.5; probe 2's 09-23 pass: half 5.0 at level 4
+  (never finished). The η = 4 surfaces reach h = 5.0 (spiral) and 5.7 (head-on). The finder
+  reported a seed that left the box and one that fell to the floor with ONE message; it now
+  reports them apart ("LEFT THE BOX … widen --half"). New rule in §6.
+- **The harmonic-class spiral (R2, level 3) re-hunted the same way** (its 09-22 null: half 3.0,
+  "r0 ≥ 1.5 leaves the box"). On the kept t = 49.0 slice (0.03 before its NaN), half 9 and half 5
+  at level-3 sampling agree: ONE θ_out = 0 surface, R 4.90 / M_MS 2.448, h 2.84–3.58 — the
+  horizon's size — but θ_in > 0 on part of it (max +0.06 to +0.09). So it is not a MOTS in the
+  trapped-from-inside sense. Censored-or-naked for the harmonic class stays open. The level-3
+  null is gone, though: the marginal surface is there but not trapped.
+- **SYSTEMATICS ROLL-UP — the p = 0.12 spiral wall, horizon by gauge and resolution** (every entry
+  a shape-free finder with a box that holds the surface):
+
+  | gauge | level | death | common MOTS before the death |
+  |---|---|---|---|
+  | standard (η = 1) | 5 from t = 0, L = 128 | 59.94 | yes, from ≤ 55.0 (R0, level-3 sampling) |
+  | standard | 5 from t = 36, L = 128 | 60.45 | yes (the paper's lead 5.4) |
+  | standard | 5 from t = 50, L = 64 (ladder) | 55.60 | not hunted (no slice kept) |
+  | standard | 3 | 52.07 | none known; it dies before the level-5 birth time (≤ 55) |
+  | η = 4 | 5 from t = 50, L = 64 | 60.04 | **yes, from ≤ 55.2, lead ≥ 4.84** |
+  | η = 4 | 3 | 61.92 | **yes, at 60.01 and 61.5** |
+  | harmonic (−2α²K) | 3 | 49.03 | **θ_out = 0 surface, not trapped (θ_in > 0 on a patch)** |
+  | halved 1+log | 3 | 43.65 | not hunted (no slice kept) |
+
+  Head-on, same instrument: standard level 3 MOTS from 22 (lead 4.9), harmonic level 3 from
+  20.8 (lead 4.4), η = 4 level 3 from ≤ 30.0 (lead ≥ 4.15), η = 4 level 5 walks through
+  (MOTS to t = 40). Wherever the finder had a box that holds the surface and the slice was
+  resolved, the wall is censored in every gauge tried except the harmonic class, which stays open.
+  Of the level-3 η = 4 clock (61.9 against level 5's 60.04), what the table shows is that at
+  t = 60 both grids carry the same horizon to 4 digits: the extra 1.9 units at level 3 happen
+  behind it.
+- **The paper does not carry any of this yet.** §VII.C still says the η = 4 head-on "holds whole
+  trapped spheres from t = 30.8, which bounds a MOTS", and it quotes the η = 4 level-5 death
+  without its horizon. The edit needs ledger rows for the table above (manual, sourced here, as
+  the R0 rows are). Not done: the user asked for the registry, plan and status.
+- **Repack side effects fixed at the source** (the user: "tired of figures being redrawn").
+  (a) `pack_results.sh`: the log-only branch (runs whose `data/` is pruned, e.g. the ten p012
+  ladder / r05000 legs) `continue`d before the carry-across and never removed its `.__keep`
+  copy, so they came back at every full repack. Both branches now call one `carry_across`.
+  (b) `style.save` (every figure in the package goes through it) renders to memory and writes
+  nothing when the PNG's pixels equal the file on disk. The three redraws were pixel-identical
+  and differed only in the matplotlib version stamp (3.10.8 → 3.10.9) and the PDF creation
+  date. Verified by a full repack: zero `.__keep`, zero figure changes.
+- **Pruned on the user's word** (`runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-25.md`): the
+  second node's scratch (205 G: r05000's Plt05520–06000, probe 2's Plt03420–04000, r06000's
+  empty dir); then, on "we dont need any plt files or other leftovers" → "go on with
+  deldetion", EVERY plotfile in the run tree (22), the five checkpoints whose runs are done
+  (η = 4 Chk03200 / 04000 / 05000 / 06000, freeze Chk10000) and the frames of the three
+  corrupted long single-throat arms: run tree 192 G → 52 G. **The frames deletion was a mistake**
+  (the user named plotfiles, not frames): the frames of t500, t250 and TAKE 2 (693 M) and of
+  r05000 and probe 2 (63 M) are gone for good, their plotfiles being gone too; the three long
+  arms' stitched movies survive in their `movies/`. New law in CLAUDE.md and §6: never
+  delete frames. **Kept, the user's call:**
+  Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
+  kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
@@ -1340,6 +1446,8 @@ life of the spiral's horizon.**
 
 - **THE HORIZON CENSORS THE SCALAR CHANNEL, AND THE SEAM WAS NEVER CARRYING THE HEAD-ON (2026-09-20/21, `merge_headon_flip_d8_v1_lvl5from0_scalar_t100`, GPU 0, max_level 5 from t = 0, no checkpoints, t = 100, 0 aborts).** The head-on run WHOLE at level 5 with the `headon-modes` consumer profile -- the `headon` body plus `--scalar-modes --scalar-mode-ells 0 1 2`. Two results, and the second is the one that was worth the card. **(1) The arm supersedes the lvl3 -> lvl5 chain and reproduces it.** No restart, no mesh seam, no interior device anywhere on the record; the user was right that level 5 needs no freeze here, and the bare level-3 scout's t = 26.91 NaN is 25+ units behind it. Common MOTS at t = 21.5 live, R = 4.456 / M = 2.736 at t = 36 -- on the seamed arm's track to 0.1 %. Against the seamed `_r02200` arm the (2,0) agrees to **2.9-5.4 % of peak** over the burst window t = 23-70 on all three spheres and E_GW to **3-8 %** (6.63 / 6.31 / 5.89e-3 at R = 10/14/18, the paper's `_compute_radiated_energy`, m = 0); only the t > 70 tail differs, up to 62 % at R = 18, where both arms are noisy under 4e-4. **(2) The scalar dipole dies with the horizon.** Post-horizon E_phi = **-0.056 / -0.071 / -0.075** at R = 10/14/18 (29 % spread, the sign of §VI.E kept), l = 1 carrying the sector to 1 part in 1e7, and the envelope decays exponentially with **tau = 19 / 23 / 28**. **That is the horizon's own clock:** the remnant's M_MS settles onto its asymptote with **M_inf = 2.160 +- 0.006, tau = 19.4 +- 0.8** (rms 0.0113, 4.8x better than a straight line), while R_MOTS stays linear (-0.00658/unit, rms 0.0324) with no asymptote resolvable. Hair shed, source quiet, mass stopped -- one timescale. The fly-by and the spiral, neither of which makes a horizon, are still GROWING at the end of their records: horizon or no horizon is the only variable that separates them. **CAVEAT THAT MUST TRAVEL WITH THE NUMBER:** the pre-horizon stretch at R = 10 integrates canonically **INGOING (+0.069)** -- the two mouths' static hair superposing, near zone, not radiation. **No full-record head-on integral may be quoted, only the post-horizon window.** **AND THE STREAM CANNOT BE RECOVERED OFFLINE:** `scalar_modes` is built on the fly from each plotfile, so a channel missing from a profile is a re-run, never a re-read -- which is why the single throat is still open (`single_pureq_q1e2_ml4_scalar_t100` launched on GPU 1, 2026-09-21, ~10 h at the measured 9.89 u/h). **THE SINGLE-THROAT ARM LANDED (13:46; VERDICT REWRITTEN the same evening — the first reading's "after its horizon" was WRONG, this arm has NO horizon): t = 100, zero NaN — and the arm DID NOT REPRODUCE THE ORIGINAL'S FATE.** Full params diff: only output paths differ (same AMReX 26.02-12 — but a SIBLING BUILD, found 2026-09-22 at the L128 launch: the twin ran the campaign pin `main3d_boost_2026-09-08.ex`, the original `main3d_coreprof_2026-09-16.ex`; t = 0 constraints agree to 11 digits — see the binary note in the launch queue); yet the original collapses (min lapse 9.3e-3 at t = 70, MOTS from 33) while the re-run never does (0.122 at t = 70, 0.072 and still falling at 100; minimal surface holds R ≈ 3.9 through t = 50, scan rows pit-corrupted after: dev 0.26 at 70, 3.7 at 100), and its (2,0) burst is ×1.8 off the original's. HORIZONLESS BY BOTH INSTRUMENTS: 0 MOTS rows on the star scan over the whole record, 0 surfaces from the shape-free flow finder on the kept t = 100 slice (lmax 6, 15 seed-variants; log in the keep-dir). So ε₂ = 1e-2 with zero kick sits within ROUND-OFF of the fate boundary — flipped by a round-off-level perturbation (sibling build, same parameters), the machine-level analogue of the level-3/4 truncation sign flip — and the growth verdict re-anchors to a horizonless record: the monopole flux grows quasi-exponentially (e-fold 5.8 at R = 18 over t = 50–95), which FITS the censorship pattern (no horizon ⇒ grows) rather than breaking it. Still NOT quotable as physics: L2_Ham leaves its floor at t = 82 (×4.9 by 100; the collapsed original's own late Ham is ×50, pit-dominated), |ψ4(2,0)| swells late with amplitude INCREASING outward (t = 80: R22 0.63 > R18 0.46 > R14 0.12 > R10 0.07 — boundary/sponge-sourced, not centre-outgoing), and a sponge damping a PHANTOM monopole can pump rather than damp (hypothesis, untested). Discriminator: the same arm at L = 128 (or a sponge test), which must also show the collapse branch is reachable there — user-gated. scalar/GW for one throat: not quotable. Details in the registry row; keeps Plt09800–10000 on local scratch and the cited t = 100 slice archived to `01_single_throat/seed/_keep_pureq_twin_noMOTS_plt10000`. Paper edits 2026-09-21: the curve IS drawn in Fig. `scalar_censorship`(b) as the fourth fate (solid to t = 82, dashed after, drawn-and-not-counted), the §V collapse subsection carries the machine-marginality caution, and open item 12 is downgraded to "no USABLE scalar measurement". Figures `04_binary_headon/headon_collapse_diagnostics` (rewired to this arm, fits added to panels f/g) and `08_waves/scalar_censorship` (new); article Fig. 5, Fig. 12, §VII.B and the new §VI.F; movies in `results/merger/movies/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/`.
 
+- **The spiral wall is censored under η = 4 too, at levels 5 AND 3, and it is the same horizon as the standard gauge's** (2026-09-25, `merge_twin_p012_eta4_lvl5_t066_r05000` + the R1 keeps; probe 2 locates the η = 4 head-on's MOTS). M_MS within 0.3 % of the standard level-5 hunt at equal t; η moves only the coordinate size (h 3.9–5.0 vs 2.1–3.1), which put it outside every earlier hunt's box. Harmonic class: a θ_out = 0 surface 0.03 before its NaN, not trapped — open. Registry rows; §3 "2026-09-25 (morning)". Not yet in the paper.
+
 ## 5. Open questions
 
 
@@ -1383,6 +1491,15 @@ slice cache every time, the slice plane chosen for the motion; checkpoints only
 for production runs; plotfiles kept-last only for a named offline scan, then
 pruned on the user's word and logged; never edit a running campaign script;
 stop a campaign by its orchestrator first; other people's runs share the cards.
+
+Horizon hunts: size the finder's box from a wide radial θ_out profile first
+(`ah_oriented_scan.py --half 7`); a seed that LEAVES THE BOX was trapped and grew — widen
+`--half`, never read it as "no surface". Every η = 4 null to 2026-09-24 was that box.
+
+Frames are never deleted (CLAUDE.md, "Data"): `frames/`, `_slice_cache`, `movies/` survive
+every close-out and every prune; only an explicit instruction naming frames and runs
+removes them. The 2026-09-23 run-tree frames prune and the 2026-09-25 deletion below are
+the two times this was broken.
 
 ## 7. Close-out, every run
 

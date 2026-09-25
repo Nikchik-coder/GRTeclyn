@@ -136,8 +136,8 @@ merge_twin_p012_eta4_t060	gauge arms	05_binary_spiral/p012/merge_twin_p012_eta4_
 merge_twin_p012_eta4_t100	gauge arms	05_binary_spiral/p012/merge_twin_p012_eta4_t100	
 merge_twin_p012_lc1_t060	gauge arms	05_binary_spiral/p012/merge_twin_p012_lc1_t060	1+log with the lapse coefficient halved: moved from the orbital chain to the gauge arms
 merge_twin_p012_lp2_t060	gauge arms	05_binary_spiral/p012/merge_twin_p012_lp2_t060	
-merge_twin_p012_eta4_lvl5_t066_r05000	gauge arms	merge_twin_p012_eta4_lvl5_t066_r05000	
-merge_twin_p012_eta4_lvl5_t066_r06000	gauge arms	merge_twin_p012_eta4_lvl5_t066_r06000	
+merge_twin_p012_eta4_lvl5_t066_r05000	gauge arms	05_binary_spiral/p012/merge_twin_p012_eta4_lvl5_t066_r05000	
+merge_twin_p012_eta4_lvl5_t066_r06000	gauge arms	05_binary_spiral/p012/merge_twin_p012_eta4_lvl5_t066_r06000	
 stage1_lapse5	shakedown (archived)	01_single_throat/gauge/stage1_lapse5	
 stage1_lapse5_sg00	shakedown (archived)	01_single_throat/gauge/stage1_lapse5_sg00	
 stage1_lapse5_sg01	shakedown (archived)	01_single_throat/gauge/stage1_lapse5_sg01	
@@ -163,7 +163,6 @@ ladder_L5_halfstep_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L5_halfst
 ladder_L5_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L5_r05000.__keep	copy: byte-identical duplicate of ladder_L5_r05000 (prune hold-back)
 ladder_L6_damped_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L6_damped_r05000.__keep	copy: byte-identical duplicate of ladder_L6_damped_r05000 (prune hold-back)
 ladder_L7_r05000.__keep	-	05_binary_spiral/p012_ladder/ladder_L7_r05000.__keep	copy: byte-identical duplicate of ladder_L7_r05000 (prune hold-back)
-merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22	-	merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22	dead launch (OOM at t=0), top-level duplicate of the 04_binary_headon copy
 single_eps_p1e2_t250	-	01_single_throat/seed/single_eps_p1e2_t250	not cited; died at t = 145.81 (the box, not the throat -- registry); repacked whole and filed at its close-out, 2026-09-24, so its GPU time is outside the totals
 single_pureq_q1e2_L128_ml4_scalar_t500	-	01_single_throat/seed/single_pureq_q1e2_L128_ml4_scalar_t500	not cited as a run (its own figure page, single_throat_inflation_L128); stopped by hand at t = 195.14 on the user's word 2026-09-24, not quotable past t ~ 100 (registry)
 single_eps_p1e2_L128_ml4_t250	-	01_single_throat/seed/single_eps_p1e2_L128_ml4_t250	not cited; t250 TAKE 2, stopped by hand at t = 74.34 on the user's word 2026-09-24 -- its question is gone, the regrowth being numerical (registry)

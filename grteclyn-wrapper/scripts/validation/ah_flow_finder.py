@@ -197,8 +197,16 @@ def surface_expansion(
     th, ph, TH, PH, nvec = _quadrature(nth, nph)
     ylm_q = np.stack([_real_ylm(l, m, TH, PH) for l, m in box.pairs])
     hgrid = np.einsum("k,ktp->tp", a_lm, ylm_q)
-    if hgrid.min() <= 3.0 * box.dx or hgrid.max() >= box.half - 2.0 * box.dx:
-        raise FloatingPointError("surface left the box or hit the inner floor")
+    # Two different verdicts, kept apart (2026-09-25): a seed that LEAVES THE BOX
+    # was trapped and grew toward a surface outside it -- widen --half; one that
+    # hits the floor was untrapped all the way in.  One shared message hid the
+    # eta-4 horizons (h up to 5.7) from every half-3..5 hunt for three days.
+    if hgrid.max() >= box.half - 2.0 * box.dx:
+        raise FloatingPointError(
+            f"surface LEFT THE BOX (h_max {hgrid.max():.2f} >= half - 2 dx): widen --half"
+        )
+    if hgrid.min() <= 3.0 * box.dx:
+        raise FloatingPointError("surface hit the inner floor")
 
     # F = r - h(theta, phi) as a 3D field; its level set F = 0 is the surface
     hfield = np.einsum("k,kxyz->xyz", a_lm, box.ylm_grid)

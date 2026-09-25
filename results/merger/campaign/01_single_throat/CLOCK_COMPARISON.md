@@ -193,6 +193,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_sg10_r05000` | B | 51.7 | x541.4 / 51.6 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
 | `merge_twin_p012_cf08_t060_r05000` | A | 55.5 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
 | `merge_twin_p012_cf08_t060_r05000` | B | 55.5 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
+| `merge_twin_p012_eta4_lvl5_t066_r05000` | A | 60.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -5.47 | - | restart -- own clock only |
+| `merge_twin_p012_eta4_lvl5_t066_r05000` | B | 60.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -5.47 | - | restart -- own clock only |
 | `merge_twin_p012_eta4_t060` | A | 60.0 | x66.9 / 35.1 | +1.01 | +1.32 | +1.57 | +1.74 | +1.72 | +1.31 | -1.54 | 55.6 | late (+0.43 dex) |
 | `merge_twin_p012_eta4_t060` | B | 60.0 | x66.9 / 35.1 | +1.01 | +1.32 | +1.57 | +1.74 | +1.72 | +1.31 | -1.54 | 55.6 | late (+0.43 dex) |
 | `merge_twin_p012_eta4_t100` | A | 61.9 | x66.9 / 35.1 | +1.01 | +1.32 | +1.57 | +1.74 | +1.72 | +1.31 | -1.54 | 55.6 | late (+0.43 dex) |
@@ -267,8 +269,6 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_p045_helfer_t090` | B | 37.3 | x874.0 / 37.3 | +1.16 | +1.79 | +2.29 | +2.57 | - | - | - | - | late (+1.26 dex) |
 | `merge_orbit_flip_d12_p045_t200` | A | 91.0 | x2708.9 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
 | `merge_orbit_flip_d12_p045_t200` | B | 91.0 | x2709.0 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
-| `merge_twin_p012_eta4_lvl5_t066_r05000` | A | 60.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -5.47 | - | restart -- own clock only |
-| `merge_twin_p012_eta4_lvl5_t066_r05000` | B | 60.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -5.47 | - | restart -- own clock only |
 
 ## Reading
 

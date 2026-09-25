@@ -3,8 +3,9 @@
 # refinement_ladder.dat).  Panel (b) of figures/05_binary_spiral/spiral_refinement_ladder.
 # Death = the last "ADVANCE at time" in the evolution log before the NaN; field = the
 # NaN diagnostic's component.  Built 2026-09-23 from the logs: run_tail.log in the pack,
-# and run.log in runs/wormhole_merger/ for the two eta-4 level-5 arms (not yet closed
-# out; the pack's partial copy of the t = 50 arm stops at 55.0).
+# and run.log in runs/wormhole_merger/ for the eta-4 level-5 arm, which was then still
+# unfiled.  Since its close-out (2026-09-25) its packed run_tail.log reaches the death
+# too: p012/merge_twin_p012_eta4_lvl5_t066_r05000.
 #
 # gauge: std  = the campaign's gauge, 1+log (d_t alpha = -2 alpha K), Gamma-driver eta 1
 #        lc1  = 1+log coefficient halved (-alpha K)
