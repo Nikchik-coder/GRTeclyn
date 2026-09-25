@@ -1,4 +1,4 @@
-# Status — 2026-09-25 06:30 (second-node time)
+# Status — 2026-09-25 08:10 (second-node time)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -6,7 +6,16 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Live
 
-Nothing, on either node. First node: both cards free since 2026-09-24 16:13, the long
+**`single_eps_m1e2_L512_ml5_t400`** (F1b, the inflation fate arm in a causally disconnected box: ε = −10⁻², L = 512,
+N = 256, max_level 5 = finest dx 1/16, no checkpoints, plotfiles keep-last 3, full-box frames at zoom 512 with the slice
+cache) — first node, card 0, take 3 launched 2026-09-25 ≈07:00 UTC on the pin, preflight PASS (two frameless/half-window
+takes killed and pruned, MANIFEST_CLEANUP_2026-09-25); 15.7 u/h, 49 GB of 80, H flat 1.6e-4; at t = 17 (08:05 UTC)
+R_neck 4.42 → 4.53 with α_neck 0.62 (from core_radial_profile: R = r/√χ), still linear (e-fold ≈ 6); nonlinear
+doubling expected t ≈ 45 (≈10:00 UTC), past the t500 turn (t = 161) ≈17:15 UTC, causal limit t ≈ 340 ≈04:40 UTC 09-26
+["2026-09-25 (06:30) — the t500 turn is the wall"].
+Spherical data + radial kick: no GW expected, the spheres (40/60/80/120) carry the scalar monopole flux.
+
+Card 1 free. First node: the long
 single-throat arms closed out under `01_single_throat/seed/` ["2026-09-24 (16:15)"]; its
 scratch is empty; the paper session's `plt_take2/` plotfile copies (77 GB, G16's input) sit in
 that session's scratchpad there.
@@ -20,6 +29,7 @@ the user's call: Chk05700 (26 GB, G4's input) and Chk03600 (20 GB, the t = 36 se
 ## Queued — nothing launches without the user's word
 
 - **Paper edit (no GPU):** carry the 09-25 η = 4 horizon results into §VII.C (ledger rows, manual, sourced from the plan table).
+- **Paper edit (no GPU), PENDING INSERT — the spherical literature's inflation ending** ["2026-09-25 (06:30) — the t500 turn is the wall"]: Shinkai–Hayward 2002 fit the expanding throat as r/a = 1 + b₄ exp(H(τ − b₅)) with H ≈ 1.1/a in PROPER time, the two trapping horizons become cosmological horizons, "the wormhole has exploded to an inflationary universe", no reversal in their range; GGS II (arXiv 0806.1370) find the areal radius "grows exponentially as a function of proper time" at the linear rate, "at least during the run time of our simulations", no horizon, the scalar amplitude still growing, and place the boundary so the extraction region is causally disconnected. §IV.D's "unbounded coasting, as in the spherical literature" (research.tex ≈ l. 267) misstates this: the literature's ending is exponential inflation in proper time. Our "coasts" is a coordinate-time rate under a collapsing lapse; no stream of ours holds α at the neck, so the proper-time rate is not yet measurable — the fate run must log it.
 - **The runs the paper now asks for: G1–G16** ["2026-09-24 (afternoon) — the user's read of the whole paper"], ~300 GPU-h in all; the cheap discriminators first: G14/G15 (what makes the numerical regrowth, ~12 GPU-h each), G13 (the ε₂ decades, ~22), G1 (η = 4 chain on L = 128, ~12), G4 (curvature invariants at the wall, ~1 + code).
 - Audit runs A1–A4 below; B1–B4 and C1–C2 are now G8–G11 and G6–G7. They run on the campaign pin, `main3d_guard_7166787a_2026-09-24.ex` since 2026-09-24 06:10 (stamped; reads the seed and the core profile). A restart of an old-pin run keeps the old pin unless `--binary` says otherwise.
 - Ambiguous: the lp2 level-5 head-on is "CANCELLED" [REFEREE-QUEUE CLOSEOUT] but listed as queued [evening audit]; treat as cancelled.
@@ -41,7 +51,7 @@ the user's call: Chk05700 (26 GB, G4's input) and Chk03600 (20 GB, the t = 36 se
 
 ## Verdicts (the paper's wording; paper section in parentheses)
 
-- **Single throat**: unstable fixed point, one exponential mode; the e-fold is within 2.5 % (level 4) and 15 % (level 3) of the PARAMETER-MATCHED González–Guzmán–Sarbach linear rate (our throat is their γ₁ = 0.5 member: T = 0.758; τ_lin = 5.13 M); truncation noise picks the branch. The collapse horizon SHRINKS 40 % as it swallows the phantom; the 9–11 % REGROWTH in the scans is NUMERICAL (spherical first law forbids it; it tracks a constraint-violation double layer reaching the MOTS; same in purely spherical data; the pure quadrupole never regrows). Inflation end state open: the t500 long arm (stopped at t = 195.14) did not close it — its late record is the box's and the grid's. (§IV)
+- **Single throat**: unstable fixed point, one exponential mode; the e-fold is within 2.5 % (level 4) and 15 % (level 3) of the PARAMETER-MATCHED González–Guzmán–Sarbach linear rate (our throat is their γ₁ = 0.5 member: T = 0.758; τ_lin = 5.13 M); truncation noise picks the branch. The collapse horizon SHRINKS 40 % as it swallows the phantom; the 9–11 % REGROWTH in the scans is NUMERICAL (spherical first law forbids it; it tracks a constraint-violation double layer reaching the MOTS; same in purely spherical data; the pure quadrupole never regrows). Inflation end state open: the t500 long arm (stopped at t = 195.14) did not close it — its turn at t = 161 is the cube wall's reflection of the 1+log gauge wave reaching the neck (six lobes on the axes from t ≈ 150; the KO-only sponge is transparent to it; the level-1 crossing is ruled out by the diagonal necks) ["2026-09-25 (06:30) — the t500 turn is the wall"]. (§IV)
 - **Seeded throat**: a kick picks the fate opposite to its sign; the seed is not constraint-solved (H defect ∝ ε, 0.93×16π|ρ| on the shell at 1 %); ε = ±0.1 both collapse (+0.1 makes the throat a maximum, trapped at t = 1; −0.1 re-expands, then collapses) and die at the origin, not "from a Hamiltonian violation". (§II.D, §IV.C)
 - **Two throats at rest**: like signs repel, opposite attract; force ∝ (d + δ)⁻², δ ≈ 3–4. (§V)
 - **Head-on**: η = 4 MOTS located (level 3: R 5.41 at t = 30.0, lead ≥ 4.15; level 5 walks through its wall, R 5.29 → 5.17 over t = 34.2–40) [09-25, not yet in the paper]; common MOTS from t = 22, born with both throats' area (R = 1.01 √2 R⋆), around both throats behind a trapped neck; it never bounces (first law) and shrinks toward the pair's Bondi mass, 2M_B ≈ 4.1 (at t = 97: 1.07 R⋆, 4 % above 2M_ADM); the late decline is not accretion. The level-3 death is the grid's; level 5 runs clean to t = 100. (§VI)
@@ -51,7 +61,7 @@ the user's call: Chk05700 (26 GB, G4's input) and Chk03600 (20 GB, the t = 36 se
 - **LIGO**: no candidate in 2.26 h of O3b, and none expected (no throat survives; conversions are at z ≳ 20). (§IX)
 - **Astrophysics**: no ghost-scalar wormhole inspiral (rotation is the open exception); collapse is a heavy-seed channel whose conversion bursts LISA would detect ONE BY ONE (SNR 61–500 at 10⁵–10⁶ M⊙, z = 20; > 8 from 3×10⁴ to 4×10⁶ M⊙), limited by abundance; the negative-energy deposit cannot be Λ (w, sign, size: Ω_WH ≈ 60–800 needed). (§X)
 
-**Plan vs paper**: the paper is the current word — 956 ledger rows, 0 problems (`claims.py check`, re-run 2026-09-25 after the filing) — EXCEPT the 09-25 η = 4 horizon results, which are in the plan and registry only. The plan's older entries still carry superseded readings (the regrowth as physics, "no horizon ever forms" for the spiral, "+17 %" regrowth, the ×7.8 fly-by growth as a measurement, the "21 % short" ringdown).
+**Plan vs paper**: the paper is the current word — 956 ledger rows, 0 problems (`claims.py check`, re-run 2026-09-25 after the filing) — EXCEPT the 09-25 η = 4 horizon results and the spherical-literature inflation ending (Shinkai–Hayward / GGS II: exponential in proper time), which are in the plan and registry only. The plan's older entries still carry superseded readings (the regrowth as physics, "no horizon ever forms" for the spiral, "+17 %" regrowth, the ×7.8 fly-by growth as a measurement, the "21 % short" ringdown).
 
 ## Traps (each has cost a run)
 

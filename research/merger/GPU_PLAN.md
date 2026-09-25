@@ -1318,6 +1318,61 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-25 (06:30) — the t500 turn is the wall: the gauge wave reflects off the cube, the sponge is KO-only; the literature's ending is exponential inflation in proper time
+
+The user: "there is wave going back reflection from boundaries that ruins expansion" — checked on
+`single_pureq_q1e2_L128_ml4_scalar_t500` (movies in its run dir, the packed streams, the sidecar necks).
+
+- **What comes back.** The 1+log gauge wave (the K > 0 disk): edge at r ≈ 18 (t = 80), 45 (100), 58 (110),
+  on the faces by ≈ 115–120 (speed ≈ 1.3 = √(2α)). From t ≈ 130 the K slice is a cubic "cushion", from
+  t = 150 six red lobes sit on the axes at r ≈ 30 and converge 30 → 22 by t ≈ 180, slowing as the lapse
+  falls. Face-led, not spherical: the cube wall, not the r = 48 sponge. The coordinate neck runs out
+  19.5 (150) → 25 (179) and meets them at r ≈ 23 near t ≈ 165; the areal neck peaks at t = 161 (10.37)
+  and falls to 9.68 by 195. In-code Weyl4 (2,0): R = 22 jumps first (7e-4 → 39 over t = 182–186), then
+  R = 18 (→ 0.27 at 194), R = 14 and 10 quiet — inward at ≈ 0.5/unit.
+- **Not the level-1 crossing** (t = 155): the body-diagonal neck, still inside the level-1 cube
+  (half-width 20, to 34.6 along (1,1,1)), falls fastest (10.01 → 9.47 over t = 190–195); the face-diagonal
+  one, on the cube's edge, rises.
+- **Why the sponge did nothing.** `Source/Grids/SpongeZone.hpp` is extra Kreiss–Oliger dissipation only
+  (rate ∝ σ (k dx)⁶: for λ ≈ 15 at dx = 0.5 that is ~1e-4 of σ) — it kills grid noise and is transparent
+  to the gauge wave. The Sommerfeld condition (`Source/Grids/BoundaryConditions.cpp`) is speed 1 for every
+  variable on flat faces; the gauge wave runs at √(2/α) and hits the faces obliquely, so it reflects.
+- **Also exposed.** The coordinate neck drifts 1.6 → 29 while R grows ×2.6 (χ 0.17 → 9): the extraction
+  spheres (r ≤ 22) sit inside the throat after t ≈ 100–140, and the neck leaves level 4 (|x| < 2) at
+  t ≈ 72 — the growth-rate peak (0.032 at t = 74) coincides with that crossing; the L = 64 twin shares
+  the boxes, so "box-independent" does not exclude it. "The inflation coasts" is a coordinate-time rate
+  under a lapse that collapses domain-wide (min α 0.2 → 7e-3); no stream holds α at the neck.
+- **The spherical literature, read today.** Shinkai–Hayward 2002 (gr-qc/0205041): the expanding throat
+  fits r/a = 1 + b₄ exp(H(τ − b₅)), H ≈ 1.1/a in proper time; the two trapping horizons become
+  cosmological horizons; "the wormhole has exploded to an inflationary universe"; no reversal in their
+  range. GGS II (arXiv 0806.1370): the areal radius "grows exponentially as a function of proper time"
+  at the linear rate for small kicks, "at least during the run time of our simulations"; no apparent
+  horizon in either gauge; the scalar amplitude keeps growing; boundaries placed so the extraction region
+  is causally disconnected. → §IV.D's "unbounded coasting, as in the spherical literature" misstates it
+  (PENDING INSERT, STATUS). A fate run must log α_neck so R(τ) can be compared.
+- **Run options** (same cell count and finest dx as the t500 → ≈ 3.5 u/h assumed; verify in hour one;
+  ETAs from a 07:00 UTC launch; nothing launched):
+
+  | # | run | clean window | GPU-h | ETA |
+  |---|---|---|---|---|
+  | F1 | L = 512, N = 256, max_level 6, tagging_L = 256 (same physical boxes, dx₀ = 2), KO sponge 384–512, spheres 40/60/80/120, core profile out to the drifting neck, chk keep-3, stop 400 | wall hit ≈ 260, return past r ≈ 100 ≳ 380: clean to t ≈ 350 | ~115 | Sep 30 ≈ 01:00 UTC |
+  | F1b | **LAUNCHED 2026-09-25 ≈07:00 UTC (take 3; the 06:41 frameless take and a ±128-window take were killed and pruned), card 0, `single_eps_m1e2_L512_ml5_t400`, no checkpoints (the user), full-box frames at zoom 512 with the slice cache, preflight PASS, 49 GB, 15.7 u/h. At t = 17: R_neck 4.42 → 4.53, α_neck 0.62, linear e-fold ≈ 6 (R = r/√χ from core_radial_profile; the proper-time rate is now measurable).** F1 one level coarser at the throat: max_level 5 (finest dx 1/16, the level-3 class), the branch DECLARED with ε = −10⁻² (at level 3 truncation picks collapse; the −10⁻² kick inflates at every level) — drops the finest level's 42 % of the cost | as F1 | ~67 | Sep 28 ≈ 02:30 UTC |
+  | F2 | L = 256, N = 256, max_level 5, tagging_L = 128, sponge 192–256, spheres 30/45/60/90, stop 250 | wall hit ≈ 160, return meets the neck ≈ 230–250 | ~70 | Sep 28 ≈ 06:00 UTC |
+  | F3 | the L = 64 level-4 unkicked twin to t = 200 (proof: the turn should move to t ≈ 115–125) | — | ~22 | Sep 26 ≈ 05:00 UTC |
+  | F4 | gauge probe: L = 64 level-4 unkicked to t = 100 with η = 4 (does the coordinate drift shrink?) | — | ~11 | Sep 25 ≈ 18:00 UTC |
+  | F5 | L = 1024, N = 256, max_level 7, tagging_L = 512, stop 500 (dx₀ = 4: the gauge wave is under-resolved on level 0) | causal to t ≈ 460 | ~145 | Oct 1 ≈ 06:00 UTC |
+
+  Where the time goes (t500 layout, cell-updates per unit): level 0 1.7 G (21 %), levels 1–3 2.9 G, level 4 3.4 G (42 %).
+  max_level is not a resolution knob here: L = 512 at N = 256 has dx₀ = 2, so levels 1–2 only rebuild the dx 1 and 0.5 rings that
+  are the base grid today, and max_level 4 there would put dx = 1/8 at the throat — the level-2 class, which dies at the origin
+  (Fig. 1). The same finest dx at max_level 4 needs N = 1024: 1 G base cells, 215 GB a state copy, does not fit. The time step is
+  bracketed (dt_multiplier 0.02 necessary: 0.05 diverges from t ≈ 33, 0.1 dies at t = 16). The one lever is the finest level (F1b).
+
+  A damping sponge (relax toward a background) is not the fix: the background is unknown (2M/r = 4 % at
+  r = 48, and the domain-wide K/α drift is part of the solution), its inner edge is an impedance step that
+  reflects unless it ramps over many wavelengths (≥ 60–100 units, i.e. a bigger box anyway), it violates
+  the constraints where it acts, and it is new code. A per-variable Sommerfeld speed fixes normal incidence
+  only. GGS did what F1 does: a causally disconnected wall.
 ### R0 VERDICT (2026-09-21, ~07:20) — THE SPIRAL HAS A COMMON HORIZON; THE WALL IS CENSORED, NOT NAKED
 
 The flow finder (`grteclyn-wrapper/scripts/validation/ah_flow_finder.py`,
