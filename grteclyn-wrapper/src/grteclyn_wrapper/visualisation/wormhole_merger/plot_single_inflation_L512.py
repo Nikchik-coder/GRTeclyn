@@ -1,50 +1,56 @@
-"""The kicked throat's inflation record in the causally disconnected box -- the F1b arm.
+"""The kicked throat's inflation record in the causally disconnected box -- the F4 arm.
 
 The sibling of ``plot_single_inflation_L128`` (the unkicked L = 128 t500 arm,
 whose turn at t = 161 is the cube wall's reflection of the 1+log gauge wave,
-GPU_PLAN 2026-09-25 06:30) for ``single_eps_m1e2_L512_ml5_t400``: the
-eps = -1e-2 kicked throat in an L = 512 box, max_level 5 (finest dx 1/16, the
-same physical refinement boxes as the L = 128 arm), the wall causally
-disconnected from the neck to t ~ 340.  Reads the RUN TREE while the arm is
-live (regenerate at will; ``--run`` takes the pack folder after landing).
+GPU_PLAN 2026-09-25 06:30) for ``single_eps_m1e2_L512_ml5_oct_t400``: the
+eps = -1e-2 kicked throat in an L = 512 box, max_level 5 (finest dx 1/16), 1+log
+slicing, the wall causally disconnected from the neck to t ~ 340, evolved on
+the octant [0, 256]^3 with mirror planes x = y = z = 0 (F1b's physics; F1b
+itself was wiped 2026-09-25).  Reads the RUN TREE while the arm is live
+(regenerate at will; ``--run`` takes the pack folder after landing).
+
+EVERY RADIUS IS THE PROPER AREAL RADIUS, R = r (h22 h33)^(1/4) / sqrt(chi): the
+area of the coordinate sphere through the neck with the full conformal
+metric.  The flat estimate r / sqrt(chi), which every earlier page of the
+campaign drew, is a lower bound once the Gamma-driver shift has moved the
+grid (h22 = 1.35 at the neck by t = 64) and is kept only as the dashed
+reference line.
 
 WHAT THE PANELS SAY
-(a) R_areal at the neck, two records that must agree: the dense INK line is
-    the neck read off ``core_radial_profile.dat`` every step (chi_min per
-    0.5-wide shell to r = 200; chi rises monotonically with r, so the shell's
-    chi_min sits on its INNER edge and R = r_lo / sqrt(chi_min) is the areal
-    radius there; the neck is the parabola-refined minimum over r_lo >= 0.5),
-    the open circles are the consumer's x-ray stream (``areal_radius.dat``,
-    one per plotfile, every 2 u).  The unkicked L = 128 arm rides beneath as
-    a CONTEXT line (its record is flat to t = 66; it is a different seed,
-    truncation noise, so it inflates 40 u later).  Stage lines: 10 % off the
-    flat, and the coordinate neck leaving each refinement box (level 5 at
-    |x| = 4, level 4 at |x| = 8, level 3 at |x| = 16, level 2 at |x| = 32).
+(a) R at the neck against t: the consumer's ``--neck-horizons`` record (the
+    minimum of R on the +x ray, tracked from the previous plotfile, one per
+    plotfile, every 2 u), with r / sqrt(chi) at the same neck dashed and the
+    unkicked L = 128 arm beneath as a CONTEXT line (its t500 record has only
+    r / sqrt(chi); a different seed, truncation noise, so it inflates 40 u
+    later).  Stage lines: R = 1.1 R0, and the coordinate neck leaving
+    each refinement box (the faces read off the plotfile headers, not the
+    nominal tag half-widths: the boxes are the tagged cube around the tracked
+    chi pit, rounded up by the error buffer and the blocking factor).
 (b) Shinkai-Hayward's test: R/R0 - 1 against the neck's proper time on a
     log axis, where their fit r/a = 1 + b4 exp(H (tau - b5)) is a straight
     line; that form fitted (H free) beside their massless value H a = 1.1 and
     the paper's linear mode converted to throat proper time (e-fold 5.13 t
     times the static throat lapse).
-(c) the invariant record from the sidecar small_data/neck_horizons.dat
-    (one x-ray per plotfile, from t = 88): the areal radii of the two
-    trapping horizons bounding the anti-trapped throat region (theta_k = 0 on
-    our side, solid; theta_l = 0 on the other side, dotted) and the neck with
-    the conformal metric (squares), against the r/sqrt(chi) estimate (grey).
-    Inside an inflating throat R is a time function and the neck is where the
-    slice happens to be tangent to an R = const sphere -- slicing-dependent;
-    the horizons are not.  THE r/sqrt(chi) RECORD IS A LOWER BOUND once the
-    Gamma-driver shift has moved the grid (h22 = 1.45 at the neck at t = 90:
-    10.08 for a true 12.17), the bias every areal_radius.dat of the campaign
-    carries at late times (fixed in the consumer 2026-09-25 13:00).
+(c) the invariant record: the areal radii of the two trapping horizons
+    bounding the anti-trapped throat region (theta_k = 0 on our side, solid;
+    theta_l = 0 on the other side, dotted), the neck (squares) and its
+    r / sqrt(chi) estimate (dashed).  Inside an inflating throat R is a time
+    function and the neck is where the slice happens to be tangent to an
+    R = const sphere -- slicing-dependent; the horizons are not.  A static
+    throat is its own degenerate double horizon, so both start ON the neck.
+    Rates over the last 10 u, per unit t and per unit local proper time.
 (d) alpha at the neck (INK) and the global min alpha (MUTED), log scale.
 (e) the arm's own L2 norms, H solid and M dashed, log scale.
 
 SOURCES (the run tree; ``--run`` either layout):
-``data/core_radial_profile.dat`` (time | chi_min x400 | absK_max x400 |
-lapse_min x400 | n x400 | dx x400, shells centred 0.25 + 0.5 i),
-``small_data/areal_radius.dat``, ``data/collapse_diagnostics.dat``,
+``small_data/neck_horizons.dat`` (time | x_neck | R_neck | R_neck_flat |
+h22_neck | alpha_neck | rate_neck | M_MS_neck | phi_neck | x_hl | R_hl |
+alpha_hl | M_hl | x_hk | R_hk | alpha_hk | M_hk), ``data/collapse_diagnostics.dat``,
 ``data/constraint_norms.dat``; the context arm from the pack,
 ``campaign/01_single_throat/seed/single_pureq_q1e2_L128_ml4_scalar_t500/``.
+Not ``areal_radius.dat``: it is the GLOBAL minimum along the ray beyond
+r = 0.5, which falls onto the compactified other end's chi plateau from t = 60
+(R 8.98 at r = 0.53 at t = 64, while the neck is at x = 9.8, R 10.90).
 
 STYLE: house (style.prd); INK = the live arm, CONTEXT = the L = 128 arm,
 letter tags above the frames; labels placed off the drawn curves and checked
@@ -72,13 +78,16 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E
 )
 
 GROUP = "01_single_throat"
-RUN = "runs/wormhole_merger/single_eps_m1e2_L512_ml5_t400"
+RUN = "runs/wormhole_merger/single_eps_m1e2_L512_ml5_oct_t400"
 CONTEXT_RUN = "seed/single_pureq_q1e2_L128_ml4_scalar_t500"
-# The fixed refinement boxes' half-widths (tagging_L 256 at dx0 = 2: level l
-# inside |x| < 256 * 2^-(l+1)), finest first.
-BOXES = ((5, 4.0), (4, 8.0), (3, 16.0), (2, 32.0), (1, 64.0))
-N_SHELLS = 400
-SHELL_DR = 0.5
+# The refinement boxes' outer faces along each axis, finest first, from the
+# plotfile headers (F3 at t = 46, F4 at t = 66): tagging_L 256 tags
+# |x - c| < 256 * 2^-(l+1) about the tracked chi pit c, and the error buffer
+# and the blocking factor round each box up.  Level 5 reaches x = 5 until the
+# pit has drifted to c = 0.88 (t ~ 66, long after the neck left it), then 6.
+BOXES = ((5, 5.0), (4, 10.0), (3, 20.0), (2, 40.0), (1, 80.0))
+# the window of the late rates quoted in (c)
+RATE_WINDOW = 10.0
 
 
 def _dedup(a: np.ndarray) -> np.ndarray:
@@ -95,71 +104,24 @@ def _src(run: pathlib.Path, name: str) -> pathlib.Path:
     return run / name
 
 
-def neck_from_profile(path: pathlib.Path):
-    """t, r_neck, R_neck, alpha_neck, |K|_neck from the radial profile.
-
-    The shell's chi_min sits on its inner edge r_lo = 0.5 i (chi rises with
-    r everywhere in the drainhole slice), so R(r_lo) = r_lo / sqrt(chi_min)
-    is the areal radius there.  The neck is the minimum of R over r_lo >= 0.5,
-    refined per step by a cubic spline of ln chi through the seven shells
-    around the discrete minimum, evaluated on a 0.01-fine grid (the raw
-    minimum jumps in 0.5-wide steps; a three-point parabola still leaves
-    slope steps in d ln R/dt whenever the argmin shell moves).  The lapse
-    and |K| are the same spline-interpolated shell profiles at the neck.
-    """
-    from scipy.interpolate import CubicSpline  # noqa: PLC0415
-
-    d = _dedup(np.loadtxt(path))
-    n = N_SHELLS
-    t = d[:, 0]
-    chi = d[:, 1:1 + n]
-    absk = d[:, 1 + n:1 + 2 * n]
-    lap = d[:, 1 + 2 * n:1 + 3 * n]
-    r_lo = SHELL_DR * np.arange(n)
-    valid = r_lo >= 0.5
-    R = np.full_like(chi, np.inf)
-    R[:, valid] = r_lo[None, valid] / np.sqrt(np.maximum(chi[:, valid], 1e-300))
-    # Track the neck: the global minimum at t = 0, then the minimum within a
-    # window around the previous step's neck.  A global argmin jumps to the
-    # centre shells once the compactified far universe's chi plateau rises
-    # (under-resolved there, R = r/sqrt(chi) is fiction and falls) -- the
-    # artifact that took the t500 stream off its neck at t = 145 and this
-    # finder at t = 62.2 (2026-09-25).
-    j = np.empty(len(t), dtype=int)
-    j[0] = int(np.argmin(R[0]))
-    for i in range(1, len(t)):
-        lo = max(1, int(0.6 * j[i - 1]))
-        hi = min(n - 1, int(1.6 * j[i - 1]) + 3)
-        j[i] = lo + int(np.argmin(R[i, lo:hi]))
-    j = np.clip(j, 3, n - 4)
-    r_neck = np.empty(len(t))
-    R_neck = np.empty(len(t))
-    a_neck = np.empty(len(t))
-    k_neck = np.empty(len(t))
-    for i in range(len(t)):
-        sl = slice(max(1, j[i] - 3), j[i] + 4)   # never the r_lo = 0 shell (R = 0 there)
-        rr = r_lo[sl]
-        fine = np.arange(max(rr[0], 0.75), rr[-1] + 1e-9, 0.01)
-        lnchi = CubicSpline(rr, np.log(np.maximum(chi[i, sl], 1e-300)))(fine)
-        Rf = fine / np.exp(0.5 * lnchi)
-        m = int(np.argmin(Rf))
-        r_neck[i] = fine[m]
-        R_neck[i] = Rf[m]
-        a_neck[i] = CubicSpline(rr, lap[i, sl])(fine[m])
-        k_neck[i] = CubicSpline(rr, absk[i, sl])(fine[m])
-    return t, r_neck, R_neck, a_neck, k_neck
+def _first_crossing(t: np.ndarray, y: np.ndarray, level: float) -> float | None:
+    """The time y first reaches ``level``, linear between the samples."""
+    k = np.flatnonzero(y >= level)
+    if not k.size:
+        return None
+    k = int(k[0])
+    if k == 0:
+        return float(t[0])
+    w = (level - y[k - 1]) / (y[k] - y[k - 1])
+    return float(t[k - 1] + w * (t[k] - t[k - 1]))
 
 
-def _smooth(y: np.ndarray, w: int) -> np.ndarray:
-    if w <= 1 or len(y) < w:
-        return y
-    k = np.ones(w) / w
-    ys = np.convolve(y, k, mode="same")
-    # the boxcar's edges: fall back to the raw value where the window is short
-    h = w // 2
-    ys[:h] = y[:h]
-    ys[-h:] = y[-h:]
-    return ys
+def _late_rate(t: np.ndarray, R: np.ndarray) -> float | None:
+    """d ln R / dt fitted over the last RATE_WINDOW time units."""
+    m = (t >= t[-1] - RATE_WINDOW) & np.isfinite(R) & (R > 0)
+    if m.sum() < 3:
+        return None
+    return float(np.polyfit(t[m], np.log(R[m]), 1)[0])
 
 
 def _dense(ax, px_step: float = 3.0) -> np.ndarray:
@@ -255,31 +217,14 @@ def main(argv: list[str] | None = None) -> int:
         run = REPO / run
     ctx_dir = pack / "campaign" / GROUP / CONTEXT_RUN
 
-    t, r_nk, R_nk, a_nk, k_nk = neck_from_profile(_src(run, "core_radial_profile.dat"))
-    ar = _dedup(np.loadtxt(_src(run, "areal_radius.dat")))
-    # the stream's argmin off the neck (onto the r = 0.5 cut, or the centre's
-    # rising chi plateau) is the t500 artifact: keep the rows whose minimum
-    # sits within a factor 1.6 of the previous row's radius
-    keep = np.ones(len(ar), dtype=bool)
-    for i in range(1, len(ar)):
-        prev = ar[np.flatnonzero(keep[:i])[-1], 2]
-        keep[i] = (ar[i, 2] > 0.6 * prev) and (ar[i, 2] < 1.6 * prev + 0.5)
-    ar = ar[keep]
+    # the neck and the horizons, one x-ray per plotfile (NECK_HORIZONS_HEADER)
+    nh = _dedup(np.atleast_2d(np.loadtxt(_src(run, "neck_horizons.dat"))))
+    if len(nh) < 2:
+        raise SystemExit(f"[single-inflation-L512] {run}: fewer than two neck_horizons rows")
+    t = nh[:, 0]
+    x_nk, R_nk, R_fl, a_nk = nh[:, 1], nh[:, 2], nh[:, 3], nh[:, 5]
+    R_hl, R_hk, a_hk = nh[:, 10], nh[:, 14], nh[:, 15]
     cd = _dedup(np.loadtxt(_src(run, "collapse_diagnostics.dat")))
-    # the invariant sidecar (neck_horizons_watch: the neck with the conformal
-    # metric, R = r sqrt(h22/chi), and the two trapping horizons, one row per
-    # plotfile from t = 88): columns time, x_neck, R_neck, R_neck_flat, h22,
-    # alpha_neck, rate_neck, M_neck, phi_neck, x_hl, R_hl, alpha_hl, M_hl,
-    # x_hk, R_hk, alpha_hk, M_hk
-    nh = None
-    nh_path = _src(run, "neck_horizons.dat")
-    if nh_path.exists():
-        try:
-            nh = _dedup(np.atleast_2d(np.loadtxt(nh_path)))
-            if len(nh) < 2:
-                nh = None
-        except Exception:
-            nh = None
     cn = _dedup(np.loadtxt(_src(run, "constraint_norms.dat")))
     ctx = None
     if (ctx_dir / "areal_radius.dat").exists():
@@ -288,27 +233,21 @@ def main(argv: list[str] | None = None) -> int:
 
     t_end = float(t[-1])
     R0 = float(R_nk[0])
-    dt = float(np.median(np.diff(t)))
-    w = max(3, int(round(3.0 / dt)) | 1)  # three time units, odd
-    lnR = np.log(R_nk)
-    rate_t = _smooth(np.gradient(lnR, t), w)
-    h = w // 2  # the boxcar's half-window: the rate is not drawn there
+    rate_t = np.gradient(np.log(R_nk), t)
     tau = np.concatenate([[0.0], np.cumsum(0.5 * (a_nk[1:] + a_nk[:-1]) * np.diff(t))])
     rate_tau = rate_t / np.maximum(a_nk, 1e-12)
 
     # stage times
-    dep = np.flatnonzero(R_nk > 1.1 * R0)
-    t_dep = float(t[dep[0]]) if dep.size else None
+    t_dep = _first_crossing(t, R_nk, 1.1 * R0)
     crossings = []
-    for lev, half in BOXES:
-        k = np.flatnonzero(r_nk >= half)
-        if k.size:
-            crossings.append((lev, half, float(t[k[0]])))
-    i_pk = int(np.argmax(rate_t[:-h])) if len(t) > 2 * h else int(np.argmax(rate_t))
-    rate_tau_end = float(rate_tau[-h - 1]) if len(t) > 2 * h else float(rate_tau[-1])
+    for lev, face in BOXES:
+        tc = _first_crossing(t, x_nk, face)
+        if tc is not None:
+            crossings.append((lev, face, tc))
+    i_pk = int(np.argmax(rate_t))
     gain = float(R_nk[-1] / R0)
-    dbl = np.flatnonzero(R_nk >= 2.0 * R0)
-    t_dbl = float(t[dbl[0]]) if dbl.size else None
+    gain_fl = float(R_fl[-1] / R0)
+    t_dbl = _first_crossing(t, R_nk, 2.0 * R0)
 
     style.prd(base=10.0)
     fig = plt.figure(figsize=(7.05, 6.0), constrained_layout=True)
@@ -330,69 +269,64 @@ def main(argv: list[str] | None = None) -> int:
                 ha="left", va="bottom", fontsize=9, color=style.INK)
 
     xmax = 5.0 * np.ceil((1.15 * t_end + 2.0) / 5.0)   # a right margin for the live note
-    ymax = max(R_nk.max(), ar[:, 1].max())
-    if nh is not None:
-        ymax = max(ymax, nh[:, 2].max())
+    ymax = float(R_nk.max())
     if ctx is not None and (ctx[:, 0] <= xmax).any():
         ymax = max(ymax, ctx[ctx[:, 0] <= xmax, 1].max())
-    ylo, yhi = 0.45 * R0, 1.4 * ymax   # every curve stays under 0.7: a caption band on top
+    ylo = 0.45 * R0
 
     def fx(x):
         return x / xmax
-
-    def fy(y):
-        return (y - ylo) / (yhi - ylo)
 
     # ---- (a) the neck ------------------------------------------------------
     if ctx is not None:
         mc = ctx[:, 0] <= xmax
         axT.plot(ctx[mc, 0], ctx[mc, 1], color=style.CONTEXT, linewidth=1.0,
                  zorder=2, solid_capstyle="butt")
-    axT.plot(t, R_nk, color=style.INK, linewidth=1.2, zorder=3)
-    axT.plot(ar[:, 0], ar[:, 1], linestyle="none", marker="o", markersize=3.2,
-             markerfacecolor="white", markeredgecolor=style.INK,
-             markeredgewidth=0.9, zorder=4)
-    if nh is not None:
-        axT.plot(nh[:, 0], nh[:, 2], linestyle="none", marker="s", markersize=2.8,
-                 color=style.INK, zorder=5)
+    axT.plot(t, R_fl, color=style.MUTED, linewidth=1.0, linestyle=(0, (4, 2.5)), zorder=3)
+    axT.plot(t, R_nk, color=style.INK, linewidth=1.2, marker="s", markersize=2.4, zorder=4)
+    axT.set_xlim(0, xmax)
+    fig.canvas.draw()
+    # the captions first, stacked from the top, each under the previous one's
+    # measured box (the roots and superscripts make the lines tall); the
+    # band's lowest edge then sets the y-limits (every curve stays under it)
+    # and where the stage lines stop
+    inv = axT.transAxes.inverted()
+    captions = [("kicked $\\epsilon=-10^{-2}$, $L=512$ on an octant, level 5, 1+log; "
+                 "wall causally disconnected to $t\\simeq340$", dict(fontsize=7, color=style.INK))]
+    if ctx is not None:
+        captions.append(("grey: the unkicked $L=128$ arm (the t500 record, $r/\\sqrt{\\chi}$ only; "
+                         "flat to $t=66$)", dict(fontsize=6.5, color=style.CONTEXT)))
+    captions.append(("line, squares: the neck, $R=r\\,(h_{22}h_{33})^{1/4}/\\sqrt{\\chi}$; "
+                     "dashed: $r/\\sqrt{\\chi}$, a lower bound once the grid has moved",
+                     dict(fontsize=6.5, color=style.MUTED)))
+    band = 0.975
+    for text, kw in captions:
+        txt = axT.text(0.06, band, text, transform=axT.transAxes, ha="left", va="top", **kw)
+        fig.canvas.draw()
+        band = txt.get_window_extent().transformed(inv).y0 - 0.012
+    grow = (f"$t={t_end:.0f}$: $\\times{gain:.2f}$ (full metric)\n"
+            f"$\\times{gain_fl:.2f}$ ($r/\\sqrt{{\\chi}}$)")
+    axT.text(0.985, 0.975, grow, transform=axT.transAxes, fontsize=6.5, color=style.INK,
+             ha="right", va="top", multialignment="right")
+    axT.set_ylim(ylo, ylo + (ymax - ylo) / (band - 0.06))
     stage = []
     if t_dep is not None:
-        stage.append((t_dep, f"$10\\,\\%$ off the flat, $t={t_dep:.0f}$"))
-    for lev, half, tc in crossings:
-        stage.append((tc, f"neck off level {lev} ($|x|={half:.0f}$), $t={tc:.0f}$"))
+        stage.append((t_dep, f"$10\\,\\%$ above $R_0$, $t={t_dep:.0f}$"))
+    for lev, face, tc in crossings:
+        stage.append((tc, f"neck off level {lev} ($|x|={face:.0f}$), $t={tc:.0f}$"))
     for tc, _ in stage:
         # the stage lines stop under the caption band
-        axT.axvline(tc, ymax=0.76, color=style.FAINT, linewidth=0.7, zorder=1)
-    axT.set_xlim(0, xmax)
-    axT.set_ylim(ylo, yhi)
+        axT.axvline(tc, ymax=band - 0.015, color=style.FAINT, linewidth=0.7, zorder=1)
     fig.canvas.draw()
-    # the stage notes first (they belong to their lines), then the free
-    # notes, each into the first slot that covers no curve, line or label:
-    # a corner, or the middle of the widest gap between stage lines
-    vx = [fx(tc) for tc, _ in stage]
+    # the stage notes (they belong to their lines), each into the first slot
+    # beside its line that covers no curve, line or label
     for tc, lab in stage:
         _place(axT, lab,
-               _rows(fx(tc) - 0.006, "right", start=0.74, step=0.08)
-               + _rows(fx(tc) + 0.008, "left", start=0.74, step=0.08)
+               _rows(fx(tc) - 0.006, "right", start=band - 0.03, step=0.08)
+               + _rows(fx(tc) + 0.008, "left", start=band - 0.03, step=0.08)
                + _rows(fx(tc) - 0.006, "right", top=False, step=0.08)
                + _rows(fx(tc) + 0.008, "left", top=False, step=0.08),
                fontsize=6.5, color=style.MUTED)
-    # the captions live in the band above the curves (which stay under 0.7
-    # by the y-limits) and above the stage lines (which stop at 0.80)
-    axT.text(0.06, 0.975, "kicked $\\epsilon=-10^{-2}$, $L=512$, level 5; wall causally "
-             "disconnected to $t\\simeq340$",
-             transform=axT.transAxes, fontsize=7, color=style.INK, ha="left", va="top")
-    if ctx is not None:
-        axT.text(0.06, 0.905, "grey: the unkicked $L=128$ arm (the t500 record; flat to $t=66$)",
-                 transform=axT.transAxes, fontsize=6.5, color=style.CONTEXT, ha="left", va="top")
-    axT.text(0.06, 0.845, "line, circles: $r/\\sqrt{\\chi}$, a lower bound once the grid has moved; "
-             "squares: the neck with $h_{22}$",
-             transform=axT.transAxes, fontsize=6.5, color=style.MUTED, ha="left", va="top")
-    grow = f"$t={t_end:.0f}$: $\\times{gain:.2f}$ ($r/\\sqrt{{\\chi}}$)"
-    if nh is not None:
-        grow += f"\n$\\times{nh[-1, 2] / R0:.2f}$ ($h_{{22}}$, $t={nh[-1, 0]:.0f}$)"
-    axT.text(0.985, 0.975, grow, transform=axT.transAxes, fontsize=6.5, color=style.INK,
-             ha="right", va="top", multialignment="right")
 
     # ---- (b) Shinkai-Hayward in proper time --------------------------------
     # R/R0 - 1 against tau on a log axis: their fit r/a = 1 + b4 exp(H (tau - b5))
@@ -403,7 +337,7 @@ def main(argv: list[str] | None = None) -> int:
     y = R_nk / R0 - 1.0
     ms = y > 0.1
     H_fit = None
-    if ms.sum() > 20:
+    if ms.sum() >= 5:
         from scipy.optimize import curve_fit  # noqa: PLC0415
         (lnA, H_fit), _ = curve_fit(lambda x, la, hh: la + hh * x, tau[ms], np.log(y[ms]))
         i1 = int(np.flatnonzero(ms)[0])
@@ -415,16 +349,13 @@ def main(argv: list[str] | None = None) -> int:
                         linewidth=1.0, linestyle=ls, zorder=1)
     mv = y > 0.01
     axs[0].plot(tau[mv], y[mv], color=style.INK, linewidth=1.3, zorder=3)
-    if nh is not None:
-        axs[0].plot(np.interp(nh[:, 0], t, tau), nh[:, 2] / R0 - 1.0, linestyle="none",
-                    marker="s", markersize=2.8, color=style.INK, zorder=5)
     axs[0].set_yscale("log")
     axs[0].set_xlim(tau[mv][0] - 0.5, tau[-1] + 0.5)
     axs[0].set_ylim(0.01, 30.0 * y[-1])
     fig.canvas.draw()
     if H_fit is not None:
         _place(axs[0], f"Shinkai--Hayward $1+A\\,e^{{H\\tau}}$ fitted (dashed):\n"
-               f"$H R_0={H_fit * R0:.2f}$, e-fold ${1.0 / H_fit:.1f}\\,\\tau$\nsquares: the neck with $h_{{22}}$",
+               f"$H R_0={H_fit * R0:.2f}$, e-fold ${1.0 / H_fit:.1f}\\,\\tau$",
                [(0.04, 0.95, "left", "top"), (0.04, 0.5, "left", "center"), (0.96, 0.05, "right", "bottom")],
                fontsize=6.5, color=style.MUTED, multialignment="left")
         _place(axs[0], f"grey solid: SH massless, $Ha=1.1$\n"
@@ -432,7 +363,7 @@ def main(argv: list[str] | None = None) -> int:
                [(0.96, 0.05, "right", "bottom"), (0.04, 0.78, "left", "top"), (0.04, 0.05, "left", "bottom")],
                fontsize=6.5, color=style.CONTEXT, multialignment="right")
 
-    # ---- (c) the invariant record: the trapping horizons and the true neck ----
+    # ---- (c) the invariant record: the trapping horizons and the neck ------
     # Inside an inflating throat both null expansions are positive, R is a
     # time function and the neck (min R on the slice) is slicing-dependent;
     # the theta_l = 0 and theta_k = 0 spheres bounding that region are not.
@@ -441,28 +372,28 @@ def main(argv: list[str] | None = None) -> int:
     for yy in np.arange(0.86, 0.29, -0.06):
         SLOTS += [(0.04, yy, "left", "top"), (0.96, yy, "right", "top")] + _gaps(vd, yy, "top")
     SLOTS += [(0.96, 0.05, "right", "bottom"), (0.04, 0.05, "left", "bottom")] + _gaps(vd, 0.05, "bottom")
-    g_hk = g_nk = None
-    if nh is not None:
-        tn = nh[:, 0]
-        axs[1].plot(tn, nh[:, 14], color=style.INK, linewidth=1.2, zorder=3)
-        axs[1].plot(tn, nh[:, 10], color=style.INK, linewidth=1.0, linestyle=(0, (1.2, 1.8)), zorder=3)
-        axs[1].plot(tn, nh[:, 2], linestyle="none", marker="s", markersize=2.8, color=style.INK, zorder=4)
-        axs[1].plot(tn, nh[:, 3], color=style.MUTED, linewidth=1.0, linestyle=(0, (4, 2.5)), zorder=2)
-        g_hk = np.polyfit(tn, np.log(nh[:, 14]), 1)[0]
-        g_nk = np.polyfit(tn, np.log(nh[:, 2]), 1)[0]
-        axs[1].set_xlim(tn[0] - 1.0, max(tn[-1] + 1.0, tn[0] + 10.0))
-        axs[1].set_ylim(0.85 * nh[:, 3].min(), 1.45 * nh[:, 14].max())
-        fig.canvas.draw()
-        _place(axs[1], f"solid: horizon $\\theta_k=0$ (our side)\n$R$ {nh[0, 14]:.1f}$\\to${nh[-1, 14]:.1f}, "
-               f"$d\\ln R/dt={g_hk:.4f}$\n$={g_hk / nh[:, 15].mean():.2f}$ per unit local $\\tau$",
-               SLOTS, fontsize=6.5, color=style.INK, multialignment="left")
-        _place(axs[1], f"dotted: horizon $\\theta_l=0$ (other side)\nsquares: neck with $h_{{22}}$, "
-               f"$d\\ln R/dt={g_nk:.4f}$\ngrey: $r/\\sqrt{{\\chi}}$",
-               SLOTS, fontsize=6.5, color=style.MUTED, multialignment="left")
-    else:
-        axs[1].text(0.5, 0.5, "no neck_horizons.dat yet", transform=axs[1].transAxes,
-                    ha="center", va="center", fontsize=7, color=style.MUTED)
-        axs[1].set_xlim(0, xmax)
+    fk, fl = np.isfinite(R_hk), np.isfinite(R_hl)
+    axs[1].plot(t[fk], R_hk[fk], color=style.INK, linewidth=1.2, zorder=3)
+    axs[1].plot(t[fl], R_hl[fl], color=style.INK, linewidth=1.0, linestyle=(0, (1.2, 1.8)), zorder=3)
+    axs[1].plot(t, R_nk, linestyle="none", marker="s", markersize=2.4, color=style.INK, zorder=4)
+    axs[1].plot(t, R_fl, color=style.MUTED, linewidth=1.0, linestyle=(0, (4, 2.5)), zorder=2)
+    g_hk = _late_rate(t[fk], R_hk[fk])
+    g_nk = _late_rate(t, R_nk)
+    late = t >= t_end - RATE_WINDOW
+    a_hk_late = float(np.nanmean(a_hk[late & fk])) if (late & fk).any() else float("nan")
+    axs[1].set_xlim(0, xmax)
+    axs[1].set_ylim(0.85 * np.nanmin(R_fl), 1.45 * np.nanmax(np.r_[R_hk[fk], R_nk]))
+    fig.canvas.draw()
+    hk_note = f"solid: horizon $\\theta_k=0$ (our side)\n$R$ {R_hk[fk][0]:.1f}$\\to${R_hk[fk][-1]:.1f}"
+    if g_hk is not None:
+        hk_note += (f", $d\\ln R/dt={g_hk:.4f}$\n$={g_hk / a_hk_late:.2f}$ per unit local $\\tau$ "
+                    f"(last {RATE_WINDOW:.0f} u)")
+    _place(axs[1], hk_note, SLOTS, fontsize=6.5, color=style.INK, multialignment="left")
+    nk_note = "dotted: horizon $\\theta_l=0$ (other side)\nsquares: the neck"
+    if g_nk is not None:
+        nk_note += f", $d\\ln R/dt={g_nk:.4f}$"
+    nk_note += "\ndashed: $r/\\sqrt{\\chi}$"
+    _place(axs[1], nk_note, SLOTS, fontsize=6.5, color=style.MUTED, multialignment="left")
 
     # ---- (d) the lapse at the neck and the global minimum -----------------
     axs[2].plot(t, a_nk, color=style.INK, linewidth=1.1, zorder=3)
@@ -477,7 +408,7 @@ def main(argv: list[str] | None = None) -> int:
     _place(axs[2], "$\\min\\alpha$ over the box (dashed)",
            SLOTS, fontsize=6.5, color=style.MUTED)
     _place(axs[2], f"$\\tau_{{\\rm neck}}={tau[-1]:.1f}$ at $t={t_end:.0f}$",
-           SLOTS[4:] + SLOTS[:4], fontsize=6.5, color=style.INK)
+           [s for s in SLOTS if s[2] == "right"] + SLOTS, fontsize=6.5, color=style.INK)
 
     # ---- (e) the arm's own constraints ------------------------------------
     if t_dep is not None:
@@ -497,13 +428,12 @@ def main(argv: list[str] | None = None) -> int:
            SLOTS, fontsize=6.5, color=style.MUTED)
 
     print(f"[single-inflation-L512] live to t = {t_end:.2f}: neck R {R0:.3f} -> "
-          f"{R_nk[-1]:.3f} (x{gain:.2f}), r_neck {r_nk[0]:.2f} -> {r_nk[-1]:.2f}, "
-          f"stream {ar[0, 1]:.3f} -> {ar[-1, 1]:.3f} at t = {ar[-1, 0]:.0f}; "
-          f"10 % off at t = {t_dep}, doubled at t = {t_dbl}, box crossings "
-          f"{[(lev, tc) for lev, _, tc in crossings]}; rate peak {rate_t[i_pk]:.4f} "
-          f"at t = {t[i_pk]:.1f}; d ln R/dtau now {rate_tau_end:.4f}; "
-          f"alpha_neck {a_nk[-1]:.4f}, tau {tau[-1]:.2f}; sidecar rows {0 if nh is None else len(nh)}, "
-          f"outer horizon dlnR/dt {g_hk}; SH fit H*R0 = "
+          f"{R_nk[-1]:.3f} (x{gain:.2f}; r/sqrt(chi) x{gain_fl:.2f}), x_neck {x_nk[0]:.2f} -> "
+          f"{x_nk[-1]:.2f}; 10 % off at t = {t_dep}, doubled at t = {t_dbl}, box crossings "
+          f"{[(lev, round(tc, 1)) for lev, _, tc in crossings]}; rate peak {rate_t[i_pk]:.4f} "
+          f"at t = {t[i_pk]:.1f}; d ln R/dtau now {rate_tau[-1]:.4f}; "
+          f"alpha_neck {a_nk[-1]:.4f}, tau {tau[-1]:.2f}; outer horizon R {R_hk[fk][-1]:.2f}, "
+          f"late dlnR/dt {g_hk}; SH fit H*R0 = "
           f"{(H_fit * R0) if H_fit is not None else float('nan'):.3f}; Ham end {cn[-1, 1]:.2e}")
 
     hits = style.label_audit(fig)
