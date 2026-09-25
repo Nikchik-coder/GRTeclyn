@@ -1318,6 +1318,46 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-25 (16:30 UTC) — F3 died at t = 46.55 on the level-5 box edge; harmonic slicing is the difference; F2 killed and pruned; F4 = the octant in 1+log
+
+- **F3 NaN at t = 46.55** (16:12 UTC, `NaN in K`, level 5). Not the symmetry: F2 matched F3 to every printed digit through
+  t = 39.7 (constraint norms, min lapse, max|K|). It is the grid meeting the inflating throat. Level 5 is the cube [0, 5]³
+  (|x| < 5 in the full box, `tagging_L 256`; plotfile header), and the throat's steep zone reached its faces: the outer
+  (θ_k = 0) horizon crossed x = 5 at t ≈ 34, the neck at t ≈ 42 (x 4.97, R 8.59). L2_Ham, falling since t = 12, turns at
+  t = 32 (5.1e-5) and climbs ×15 by t = 36 (7.5e-4), 3.4e-3 at t = 46. max|K|: 0.078 (t = 32), 0.47 (40), 5.7 (46),
+  25.6 (46.52). Where: at t = 42 the |K| peak sits on the y = 5 face (level 5 (0.03, 4.91, 2.91), level 4 just outside
+  (0.44, 5.69, 0.44)); at t = 46 on the x = z = 5 edge (level 5 (4.97, 1.91, 4.97) |K| 5.72, level 4 (5.06, 1.56, 5.06)
+  |K| 5.80, lapse 0.60 against 0.54 across the interface); the minimum lapse leaves the centre for the level-5 corner cell
+  (4.97, 4.97, 4.97) from t = 45. A refinement-boundary instability, not a physical singularity: it picks the box edges
+  out of a spherical problem.
+- **The slicing decides it** (the user: "is this the slicing issue? prev runs never naned"). F1b differed from F2 only in the
+  two lapse keys (template diff) and carried the same grid in 1+log to t = 99.6 without a NaN, its neck crossing the same
+  faces. The 1+log lapse freezes at the throat (α_neck 0.02 by t = 97), so the steep zone meets the faces with the slice
+  nearly stopped; harmonic slicing keeps α_neck at 0.44–0.49, the throat really evolves (R_neck 3.81 → 9.89 by t = 46,
+  where F1b reached 12.2 only by t = 90) and the interface does not survive it. The campaign's earlier harmonic-class arms
+  also died early (spiral R2 wall 49.03, head-on R3b NaN 25.23).
+- **What stays usable from F2/F3:** the record to t ≈ 32, before the constraint turn: neck, horizons (hk from t = 16, hl
+  from t = 20), areal radius with h₂₂, scalar modes. After t ≈ 33 it carries the interface error.
+- **F2 killed and pruned on the user's word** ("also kill and prune run on gpu 0", 16:25): `stop_campaign.sh` at t = 41.7,
+  scratch 94 GB deleted (MANIFEST_CLEANUP_2026-09-25, 16:26), frames, slice cache and records kept. F3's scratch
+  (Chk00500/00750/01000, Plt01050–01150) is kept pending the user's word: Chk00750 (t = 30) is the clean restart point
+  for any harmonic retry.
+- **F4 `single_eps_m1e2_L512_ml5_oct_t400` LAUNCHED** (the user: "we can switch back now and run full t"): F3's template with
+  F1b's gauge (`lapse_coeff 2`, `lapse_power 1`, no shock κ), i.e. F1b on the octant, with rolling checkpoints keep-3.
+  Profile `inflation-octant` (`--reflect x y z`, full-metric R, `--neck-horizons`, t = 0-locked frames at zoom 512 on
+  0 0 0). Preflight PASS (t = 0 L2_Ham 1.6202707474e-4 as F1b/F2/F3; the seed took). First node, card 1, 16:27 UTC.
+  Verified by effect: Chk00000 and Plt00000 on scratch, frame 0 identical to F3's (mirrored full picture, lapse bar
+  0.397–0.997 locked from t = 0), 82.6 u/h, 7.5 GB. ETA: t = 100 ≈ 17:40 UTC, causal limit t = 340 ≈ 20:35 UTC, end
+  t = 400 ≈ 21:20 UTC. The price, stated in the template: the lapse freezes at the throat, so the growth is read off the
+  invariant record (horizon R, M_MS, the proper-time rate), not off R_neck(t).
+- **F2 and F3 wiped whole at 16:33 on the user's word** ("why dead runs still there? wipe out"; the frames asked once:
+  "Delete frames, wipe both"): run dirs with frames and slice caches, F3's 13 GB scratch, the launcher logs, both registry
+  rows (MANIFEST_CLEANUP_2026-09-25, 16:33). The numbers in this entry are no longer reproducible from disk; the templates
+  stay in `templates_scan/`.
+- **Open, not done:** a harmonic retry needs the interface fixed: boxes that follow the neck (item 3 of the 13:30 proposal)
+  or stronger Kreiss–Oliger damping (σ 0.1 → 0.3). With F3's checkpoints gone it starts from t = 0 (~35 min on the
+  octant to pass t = 46.55).
+
 ### 2026-09-25 (15:55 UTC) — F3: the inflation arm on an octant, bit-identical to F2 and 5.3× faster; the pipeline is symmetry-aware
 
 - **The user: "we need x y z symmetry cause this is spherical expansion"; "make sure the runner can support the symmetry launch plus preflight can handle this"; "do e2e on the second card, measure speed up"; "add tests".** GRTeclyn already evolves reflective planes (lo_boundary = 2, parities per variable, φ and Π even; the interpolator folds), and every diagnostic of the example measures from the params' `center` (sponge, core profile, throat tracker, two-centre split). What assumed a full box was the consumer and nothing checked the layout.
