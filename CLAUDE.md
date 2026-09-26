@@ -6,7 +6,9 @@ Every rule below exists because breaking it cost a run, a result or a day.
 
 ## Environment
 
-- **No LaTeX engine here.** Never search for or run TeX; the article compiles off-machine.
+- **LaTeX: the workstation only.** It has TeX Live (`latexmk`, `lualatex`, `pdflatex`);
+  the GPU nodes have none. The editor rebuilds the article with `latexmk -lualatex` on
+  save, so build test copies with `-outdir` elsewhere, and check that both engines build.
 - **Python** is the wrapper's venv: `grteclyn-wrapper/.venv/bin/python` (setup:
   `cd grteclyn-wrapper && uv sync --extra plots --extra visualization --extra gw-search`). System `python3` and the root
   `.venv` do not have `grteclyn_wrapper` installed.
