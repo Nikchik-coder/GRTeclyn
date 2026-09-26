@@ -1318,6 +1318,48 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-26 (paper session) — renamed for the inflating half: baby universes, the percolation bound, referee edits; ledger 963 rows, 0 problems
+
+- **The user's direction**: trim the abstract ~30 %, answer a referee-style critique (junk radiation, near-zone
+  extraction, plot density — the last already done by the 09-26 layout pass), cut duplication, then "execute the
+  proposed plan": rename the article (**"FROM SPACETIME FOAM TO BLACK-HOLE SEEDS AND BABY UNIVERSES: MERGER,
+  SCATTERING, AND INFLATION OF TRAVERSABLE WORMHOLES"**) and make the inflating branch a result rather than a loose
+  end. The user's read of the physics behind it: the expanded throats should not collapse, and a primordial
+  inflating population ties to cosmic expansion.
+- **New §X "The inflating half of the population"**: the census (the branch is picked by the seed's sign, so
+  sign-symmetric seeds send ~half of a foam population inflating; ±0.1 both collapse, so large seeds skew toward
+  collapse — the built-in exit); the baby-universe framing (Farhi–Guth 1987, Blau–Guendelman–Guth 1987; Roman 1993
+  realised nonlinearly: anti-trapped interior, exterior at fixed ADM mass, the parent universe does not expand);
+  the e-fold gap (1.3 neck / 3.0 boundary in F4's record vs the ~60 of inflation, Liddle–Leach 2003); and the
+  **percolation bound**: light has crossed D_c = 11 Gpc comoving since z = 20, so mouths at the seed abundances
+  n = 10⁻⁴–10⁻² Mpc⁻³ first overlap at mean speeds (2.6×10⁻⁴–1.2×10⁻³)c, while the recorded θ_k = 0 boundary
+  advances at 0.33c with no slowing over the last 50 units — 270× the loosest bound. The seed channel is
+  consistent only if the boundary stalls after the window or the inflating half is far rarer than the collapsing.
+- **§IV.D, the turnover premise quantified**: the store is R⋆/2 − m = 0.94; the quiet-window arms (level 4, R = 18,
+  t ≤ 80) shed 0.03 of it; F4's own spheres only bracket the spending — 4.1 kinematic vs 0.04 geometric through the
+  coordinate-60 sphere by t = 218 — because the 1+log front collapses the lapse at every sphere before the monopole
+  grows (α ≈ 0.04 at the wall; Π carries 1/α, inflating the kinematic side; the shell-minimum α²χ^(−1/2) suppresses
+  the geometric side). A first naive reading (kinematic 4.4× the store while the throat still grows) did **not**
+  survive the geometric factor: undecided, the ending stays open. The R = 40 sphere is swallowed outright (the neck
+  reaches x = 36.75 by t = 212); M on the θ_k surface is tautologically R/2 and proves nothing.
+- **Referee edits**: the abstract 457 → 368 words (one new baby-universe sentence included); the near-zone statement
+  moved up into the introduction (spheres R = 10–44, nothing extrapolated to null infinity, sphere spread as the
+  error bar); a junk-radiation paragraph in §VIII (a t = 0 defect crosses a sphere by t ≈ R, every burst arrives
+  with its physical trigger tens of units later, the spherical kick radiates nothing above the ℓ = 2 floor, the
+  binaries' momentum constraint is exact); one reading-aid sentence on the force-law caption.
+- **Duplication trims** across §§I–X: the intro's Ω_GW-bound sentence (kept in §IX.B), the intro's second Geroch
+  clause, §VI.B's first-law re-derivation and remnant numbers (kept in §VII.B), §VIII.C's freeze argument (kept in
+  §VII.B), §VIII.F's third "regrowth is numerical", §IX's third "gone in milliseconds", §IV.C/E's doubled horizon
+  times, §X's third "loudest for the fly-by and spiral". The trims orphaned 29 ledger anchors (anchors fingerprint
+  the text); all re-anchored.
+- **Mechanics**: 12 new ledger rows (`clmInf*`), extractors `single_f4_pop` (extract_single.py) and `detector_stall`
+  (extract_detector.py), the standalone computation in `results/merger/analysis/inflating_population.py`; three new
+  references. `claims.py check`: 963 rows, 802 recomputed, 0 problems, stamped. numbers.tex regenerated — the
+  editor's auto-build ran between the text landing and the regeneration and showed every reference as "??"; one
+  in-place `latexmk -lualatex` after `claims.py tex` fixed it, and both engines build clean. The wrapper venv had
+  lost pycbc/astropy (15 detector rows erroring on import); re-synced with
+  `uv sync --extra plots --extra visualization --extra gw-search`.
+
 ### 2026-09-26 (05:00 UTC) — F4 closed out: quotable to t = 218, where the 1+log wave meets the wall; it died at t = 392.36 when the reflection reached the neck; no Weyl4/shift frames
 
 - **The wall, measured** (x–t diagrams of α and K along the +x axis from F4's slice cache; the user: "i think there

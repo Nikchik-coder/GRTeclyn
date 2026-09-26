@@ -23,6 +23,23 @@ harmonic retries F5 `…harm_oct_t400_sg03` / `_sg10` (NaN at t = 46.71 / 47.01 
 solution-following refinement, or a 1D spherical code): the user's no-go, 2026-09-26. The question is only whether the
 throat keeps growing, and F4 answers it.
 
+Done 2026-09-26 (not committed): the paper renamed ("… BLACK-HOLE SEEDS AND BABY UNIVERSES: MERGER, SCATTERING, AND
+INFLATION …") and the inflating branch made a result instead of a loose end, on the user's direction. New §X
+"The inflating half of the population": sign-symmetric seeds send about half of a foam population inflating (large seeds
+skew toward collapse); an inflating throat is a Farhi–Guth baby universe — anti-trapped interior, exterior at fixed ADM
+mass — with 1.3 (neck) / 3.0 (θ_k boundary) areal e-folds in F4's record against inflation's ~60; the boundary advances
+at a steady 0.33c (no slowing over the last 50 units), so non-overlap of mouths today caps the mean comoving speed at
+(2.6×10⁻⁴–1.2×10⁻³)c for n = 10⁻⁴–10⁻² Mpc⁻³ — the seed channel is consistent only if the boundary stalls (recorded
+speed is 270× the loosest bound) or the inflating half is rare. §IV.D now quantifies the turnover premise: store
+R⋆/2 − m = 0.94; shed 0.03 over the quiet window; F4's own spheres only bracket it, 4.1 kinematic vs 0.04 geometric
+(the 1+log front collapses the lapse at the spheres first) — ending stays open. Backing: `results/merger/analysis/
+inflating_population.py`, extractors `single_f4_pop` / `detector_stall`, 12 ledger rows, three new references
+(Farhi–Guth 1987; Blau–Guendelman–Guth 1987; Liddle–Leach 2003). Same session, referee-critique edits: abstract
+trimmed 457 → 368 words (incl. one new baby-universe sentence), near-zone extraction now stated in the intro,
+a junk-radiation paragraph in §VIII (t=0 defect crosses spheres by t≈R, bursts arrive with their triggers), duplication
+trims across §§I–X; 29 rows re-anchored after the trims. Ledger: 963 rows, 802 recomputed, 0 problems, stamped.
+The wrapper venv was re-synced (pycbc/astropy had gone missing; full `claims.py check` needs them).
+
 Done 2026-09-26 (not committed): the paper's layout, on a referee-style read. The constraint panels of Figs. 1/2/3/5/7
 (old numbers 1/2/4/6/9) became one appendix figure, `fig:constraints` (App. A, "Code Health and Constraint Evolution",
 each run at its highest level); regrowth, refinement ladder and fill insensitivity moved to App. A, mouth growth, seed

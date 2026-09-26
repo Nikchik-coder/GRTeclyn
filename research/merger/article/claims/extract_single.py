@@ -893,3 +893,46 @@ def single_f4(what: str, run: str = F4) -> float:
     at its last sample before the first jump)."""
     d = _f4(run)
     return d["R_wall"] / d["R0"] if what == "ratio" else float(d[what])
+
+
+@extractor
+def single_f4_pop(what: str, run: str = F4) -> float:
+    """The inflating branch as a population member (Secs. IV.D and X): areal
+    e-folds accumulated in the record, ln(R_wall/R0) for the neck ('efold_neck')
+    and ln(R_hk/R0) for the theta_k = 0 boundary at its last clean sample
+    ('efold_boundary'); the boundary's mean areal speed d(R_hk)/dt over the
+    record ('speed') and over its last 50 units ('speed_late'); and the
+    negative energy shed through the coordinate-60 sphere by T_WALL,
+    |int -flux_kin dt| raw ('shed_kin') and with the alpha^2 chi^-1/2 factor of
+    Sec. VIII.F taken from the packed shell profiles at r = 60 ('shed_geo').
+    The kin/geo pair brackets the true outflow: the 1+log front has collapsed
+    the lapse at the sphere before the monopole grows."""
+    d = _f4(run)
+    if what == "efold_neck":
+        return math.log(d["R_wall"] / d["R0"])
+    if what == "efold_boundary":
+        return math.log(d["horizon_R"] / d["R0"])
+    names, rows = stream(run, "neck_horizons.dat")
+    c = {n: i for i, n in enumerate(names)}
+    t, r_hk = rows[:, c["time"]], rows[:, c["R_hk"]]
+    i = int(np.argmin(np.abs(t - d["horizon_t"])))
+    if what == "speed":
+        return (r_hk[i] - r_hk[0]) / t[i]
+    if what == "speed_late":
+        sel = (t >= t[i] - 50.0) & (t <= t[i])
+        return float(np.polyfit(t[sel], r_hk[sel], 1)[0])
+    if what in ("shed_kin", "shed_geo"):
+        sn, sm = stream(run, "scalar_modes.dat")
+        sc = {n: i for i, n in enumerate(sn)}
+        ts, flux = sm[:, sc["time"]], sm[:, sc["R60_scalar_flux_kin"]]
+        if what == "shed_geo":
+            pn, prof = stream(run, "core_radial_profile.dat")
+            pc = {n: i for i, n in enumerate(pn)}
+            tp = prof[:, pc["time"]]
+            alpha = np.interp(ts, tp, prof[:, pc["lapse_min_r60.25"]])
+            chi = np.interp(ts, tp, prof[:, pc["chi_min_r60.25"]])
+            flux = flux * alpha ** 2 / np.sqrt(chi)
+        from grteclyn_wrapper.visualisation.wormhole_merger import plot_single_inflation_L512 as m
+        k = ts <= m.T_WALL + 1e-9
+        return float(abs(np.trapezoid(-flux[k], ts[k])))
+    raise ValueError(f"single_f4_pop: unknown what={what!r}")

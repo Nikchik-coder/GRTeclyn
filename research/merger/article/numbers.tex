@@ -268,6 +268,11 @@
 \newcommand{\clmDetLrdFracHi}{2\times10^{-9}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6 (same)
 \newcommand{\clmDetLrdBurstsLo}{0.06}% auto: arithmetic: the summed LRD densities (plot_heavy_seeds.LRD_DENSITY) x 4 pi D_c(2
 \newcommand{\clmDetLrdBurstsHi}{0.1}% auto: arithmetic: the summed LRD densities (plot_heavy_seeds.LRD_DENSITY) x 4 pi D_c(2
+\newcommand{\clmInfDcGpc}{11}% auto: arithmetic: comoving distance to z_emit = 20 in the flat LCDM of plot_heavy_seed
+\newcommand{\clmInfStallLo}{2.6\times10^{-4}}% auto: arithmetic: (3/(4 pi n))^(1/3) / D_c(20) at n = 10^-2 Mpc^-3 (clmDetNMax); analy
+\newcommand{\clmInfStallHi}{1.2\times10^{-3}}% auto: as clmInfStallLo at n = 10^-4 Mpc^-3 (clmDetNMin)
+\newcommand{\clmInfStallFactor}{270}% auto: arithmetic: the recorded boundary speed over the loosest percolation bound; anal
+\newcommand{\clmInfEfoldsNeeded}{60}% lit: Liddle & Leach 2003, PRD 68, 103503: observable scales leave the horizon 50-60 e
 
 % ---- mergers
 \newcommand{\clmHeadonSeparation}{8}% def: campaign/04_binary_headon/merge_headon_flip_d8_v1_t100/evolution_params.txt (wor
@@ -756,6 +761,13 @@
 \newcommand{\clmRegrowthLevelAgreement}{0.08}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/c_regrowth_fits.py: median |dR
 \newcommand{\clmFirstLawDeficitLo}{19}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/c_horizon_first_law.py on the 
 \newcommand{\clmFirstLawDeficitHi}{46}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/c_horizon_first_law.py: same a
+\newcommand{\clmInfStoreDeficit}{0.94}% auto: closed form: R_min/2 - m, the Misner-Sharp deficit of the field outside the stat
+\newcommand{\clmInfShedQuiet}{0.03}% auto: campaign/01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100/scalar_modes.da
+\newcommand{\clmInfShedKin}{4.1}% auto: campaign/01_single_throat/seed/single_eps_m1e2_L512_ml5_oct_t400/scalar_modes.da
+\newcommand{\clmInfShedGeo}{0.04}% auto: as clmInfShedKin, x alpha^2 chi^-1/2 (Sec. VIII.F) from core_radial_profile.dat 
+\newcommand{\clmInfEfoldNeck}{1.3}% auto: campaign/01_single_throat/seed/single_eps_m1e2_L512_ml5_oct_t400/neck_horizons.d
+\newcommand{\clmInfEfoldBoundary}{3.0}% auto: as clmInfEfoldNeck: ln(R_hk/R0) at the theta_k = 0 track's last clean sample (t 
+\newcommand{\clmInfBoundarySpeed}{0.33}% auto: as clmInfEfoldNeck: mean d(R_hk)/dt over the record to t = 212; analysis/inflati
 
 % ---- waves
 \newcommand{\clmGwPeakFlyby}{4.1\times10^{-2}}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): campaign/06

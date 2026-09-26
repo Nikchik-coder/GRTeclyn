@@ -925,3 +925,21 @@ def detector_ephi_sphere_ratio(run: str, t0: float, radii: list[int] = (10, 14, 
             m &= t <= t1
         vals.append(abs(float(np.trapezoid(-k[m], t[m]))))
     return max(vals) / min(vals)
+
+
+@extractor
+def detector_stall(what: str, n_exp: float | None = None, z: float | None = None) -> float:
+    """The percolation bound on the inflating half of the population (Sec. X):
+    'dc_gpc' -- the comoving distance to z (default plot_heavy_seeds' Z_EMIT) in
+    Gpc, the comoving path light has crossed since the conversion epoch;
+    'vmax' -- the mean comoving expansion speed, in units of c, at which mouths
+    of comoving density 10^n_exp Mpc^-3 born at z first overlap today:
+    (3 / 4 pi n)^(1/3) / D_c(z)."""
+    if z is None:
+        z = float(_hs().Z_EMIT)
+    dc = _comoving_distance_mpc(z)
+    if what == "dc_gpc":
+        return dc / 1e3
+    if what == "vmax":
+        return (3.0 / (4.0 * math.pi * 10.0 ** n_exp)) ** (1.0 / 3.0) / dc
+    raise ValueError(f"detector_stall: unknown what={what!r}")
