@@ -30,7 +30,9 @@ fit, Shinkai-Hayward's window and fit, the theta_k track -- is imported from
 (g), (h) chi and alpha per shell of core_radial_profile.dat, r <= 60 (the neck
     migrates from x = 1.6 to 38), t = 0-200 every 40 u, a grey ramp, light =
     early.  Not t = 218: there the r = 20 shell's lapse sits on the code's floor
-    (1e-10), a one-shell spike.  (i) the L2 constraint norms.
+    (1e-10), a one-shell spike.  F4's L2 constraint norms, once panel (i) here,
+    are panel (d) of the appendix's code-health figure
+    (``plot_constraint_evolution``, 2026-09-26).
 
 Writes ``figures/01_single_throat/single_throat_inflation``.
 
@@ -118,6 +120,7 @@ def main(argv: list[str] | None = None) -> int:
     rec = f4.record(run)
     T = f4.T_WALL
     nh, cd, cn = (a[a[:, 0] <= T + 1e-9] for a in (rec["nh"], rec["cd"], rec["cn"]))
+    # cn stays read: the console line below quotes H at both ends
     t, R, a_nk, R_hl, R_hk = nh[:, 0], nh[:, 2], nh[:, 5], nh[:, 10], nh[:, 14]
     on = f4.onset_fit(t, R)
     sh = f4.sh_fit(t, R, a_nk)
@@ -127,12 +130,17 @@ def main(argv: list[str] | None = None) -> int:
 
     style.prd(base=10.0)
     fig = plt.figure(figsize=(7.05, 5.6), constrained_layout=True)
-    # the strip over two rows of four panels
-    gs = fig.add_gridspec(3, 4, height_ratios=[1.15, 1.0, 1.0])
-    axT = fig.add_subplot(gs[0, :])
-    axs = [fig.add_subplot(gs[1 + i // 4, i % 4]) for i in range(8)]
-    aSH, aHZ, aLap, aK, aChi, aChiR, aLapR, aNorm = axs
-    for ax in (axT, aHZ, aLap, aK, aChi, aNorm):
+    # the strip over a row of four panels and a row of three
+    # One sub-grid per row: on a shared 12-column grid the rows' column edges
+    # (3/6/9 against 4/8) do not line up, and constrained layout, which keeps
+    # one margin per column, collapsed the axes to zero.
+    gs = fig.add_gridspec(3, 1, height_ratios=[1.15, 1.0, 1.0])
+    axT = fig.add_subplot(gs[0])
+    row2, row3 = gs[1].subgridspec(1, 4), gs[2].subgridspec(1, 3)
+    axs = ([fig.add_subplot(row2[0, i]) for i in range(4)]
+           + [fig.add_subplot(row3[0, i]) for i in range(3)])
+    aSH, aHZ, aLap, aK, aChi, aChiR, aLapR = axs
+    for ax in (axT, aHZ, aLap, aK, aChi):
         ax.set_xlim(0, T)          # the frame ends where the quoted record ends
         ax.set_xlabel(r"$t$")
 
@@ -228,18 +236,8 @@ def main(argv: list[str] | None = None) -> int:
         style.legend_top(ax, snaps, ncol=3, title=r"$t=$", title_fontsize=6.5,
                          alignment="left", handlelength=1.2)
 
-    # ---- (i) the constraints -------------------------------------------------
-    mm = cn[:, 2] > 0
-    keyI = [(aNorm.plot(cn[:, 0], cn[:, 1], color=style.INK, linewidth=1.1, zorder=3)[0],
-             r"$\mathcal{H}$"),
-            (aNorm.plot(cn[mm, 0], cn[mm, 2], color=style.MUTED, linewidth=1.1, linestyle=DASH,
-                        zorder=3)[0], r"$\mathcal{M}$")]
-    aNorm.set_yscale("log")
-    aNorm.set_ylabel(r"$L_2$ norms")
-    style.legend_top(aNorm, keyI, ncol=1)
-
     fig.align_ylabels([axT, aSH, aChiR])
-    style.tag_keys(fig, [axT] + axs, [f"({c})" for c in "abcdefghi"], row="last")
+    style.tag_keys(fig, [axT] + axs, [f"({c})" for c in "abcdefgh"], row="last")
 
     grow = np.diff(R)
     print(f"[single-inflation] F4 to t = {t[-1]:.0f}: neck R {R0:.3f} -> {R[-1]:.3f} "

@@ -22,7 +22,7 @@ together?".  They do not, and that panel is the evidence.
       --out /tmp/p012_collapse_dashboard.png
 
 NB the article's spiral collapse page at
-``figures/05_binary_spiral/p012_paper/p012_collapse_diagnostics`` is drawn by
+``figures/05_binary_spiral/p012_collapse_diagnostics`` is drawn by
 ``plot_spiral_collapse.py`` (PRD grammar, horizon scans included) since
 2026-09-18 -- do not point ``--out`` there, this module would overwrite it.
 """

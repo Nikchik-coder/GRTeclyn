@@ -1,28 +1,80 @@
-# How each `psi4_analysis_*` figure is drawn
+# The paper's figures, and how each is drawn
 
-Every six-panel wave figure in this tree, with the command that draws it.
-**Add the command here when you draw a figure** — the whole reason this file
-exists is that none of them were recorded, and recovering eight command lines
-from the pixels of the figures they produced cost a day.
+**This folder holds the article's figures and nothing else** (2026-09-26, the
+user: "wipe out figures that are not present in the paper ... check the packing
+scripts so they do not regenerate them"). Every file here is included by
+`research/merger/article/research.tex`; nothing else is kept, and
+`research/merger/pack_results.sh` draws no figure (it runs `plot_branches
+--no-figure` for `campaign/01_single_throat/BRANCHES.md` only). When a figure
+leaves the paper, delete its PNG/PDF here and its row below; its script stays in
+`grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/`.
+**Add the row when you add a figure to the paper.**
 
-Run each from the repository root, after
+Run each command from the repository root with the wrapper's venv; every one
+takes no arguments (`--pack-root` defaults to `results/merger`) and writes the
+PNG + PDF pair named in the table. Numbers are the article's as of 2026-09-26.
 
 ```
-export PYTHONPATH=$PWD/grteclyn-wrapper/src
-alias psi4="grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_analysis"
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.<module>
 ```
 
-| figure | command |
-|---|---|
-| `01_single_throat/psi4_analysis_q1e2_ml4_t50` | `--run single_eps_p1e2_q1e2_ml4_t100_r02500 --group 01_single_throat --t-max 49` |
-| `01_single_throat/psi4_analysis_q5e2_gated` | `--run single_eps_p1e2_q5e2_ml4_t100 --group 01_single_throat --stream psi4_mode_l2m0_gated.dat` |
-| `04_binary_headon/psi4_analysis_merge_headon_flip_d8_v1c_latefreeze_t100` | `--run merge_headon_flip_d8_v1c_latefreeze_t100 --group 04_binary_headon` |
-| `05_binary_spiral/psi4_analysis_freeze_narrow_t100` | `--run campaign/05_binary_spiral/p012/merge_orbit_flip_d12_r03000/part1/psi4_mode_l2m0.dat+merge_orbit_flip_d12_r03000+freeze_narrow_t080_r05000+freeze_narrow_t100_r08000 --group 05_binary_spiral` (first segment as an ABSOLUTE path) |
-| `05_binary_spiral/psi4_analysis_freeze_wide_t080_m2` | `--run campaign/05_binary_spiral/psi4_merger_stitched_0_97.dat --group 05_binary_spiral --m 2 --t-max 80` (absolute path) |
-| `05_binary_spiral/p012_paper/psi4_analysis_p012_series` | `--run v2_spiral_d12_p012_L128_SERIES --group 05_binary_spiral --name p012_paper/psi4_analysis_p012_series --stream Weyl4_mode_22.dat --m 2 --radii 20 28 36 44 --strain-radius 20` |
-| `06_binary_flyby/psi4_analysis_merge_orbit_flip_d12_p045_L128_lvl5_t100` | `--run merge_orbit_flip_d12_p045_L128_lvl5_t100 --group 06_binary_flyby --stream Weyl4_mode_22.dat --m 2 --radii 20 28 36 44 --strain-radius 20` (redrawn at close-out on the full t = 0–100 record) |
-| `07_bbh_control/psi4_analysis_bbh_control` | `--run bbh_control_d12_p012_t150 --group 07_bbh_control` |
-| `07_bbh_control/psi4_analysis_bbh_control_m2` | `--run bbh_control_d12_p012_t150 --group 07_bbh_control --stream psi4_mode_l2_all.dat --m 2` |
+| Fig. | label | file | module |
+|---|---|---|---|
+| 1 | `fig:single_throat` | `01_single_throat/single_throat_instability` | `plot_single_throat_row` |
+| 2 | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
+| 3 | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
+| 4 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
+| 5 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
+| 6 | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
+| 7 | `fig:spiral_collapse` | `05_binary_spiral/p012_collapse_diagnostics` | `plot_spiral_collapse` |
+| 8 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
+| 9 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
+| 10 | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
+| 11 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
+| 12 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
+| 13 (App. A) | `fig:single_regrowth` | `01_single_throat/single_horizon_regrowth` | `plot_horizon_regrowth` |
+| 14 (App. A) | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
+| 15 (App. A) | `fig:fill_insensitivity` | `05_binary_spiral/fill_insensitivity` | `plot_fill_insensitivity` |
+| 16 (App. B) | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
+| 17 (App. B) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
+| 18 (App. B) | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+
+## Main text shows physics; code health is Appendix A (2026-09-26)
+
+The user, on a referee-style read ("move the figures that focus strictly on
+numerical validation, code health and error systematics to the appendices"):
+
+* **The constraint panels left the physics figures** and became one appendix
+  figure, `00_code_health/constraint_evolution` (`fig:constraints`, six
+  panels, a key on top of each naming the run and its refinement level):
+  (a)/(b) the lone throat's H and M, every seed amplitude at the HIGHEST level
+  it was run at (level 4 for no kick and +-0.01 -- +0.01 was stopped by hand at
+  t = 13.5 -- level 3 for +-0.001 and +-0.1, never run at level 4); (c) the
+  pure quadrupole (was Fig. 2(g)); (d) F4, level 5, to t = 218 (was Fig. 3(i));
+  (e) the head-on's H on its three arms (was Fig. 5(e)); (f) the spiral's
+  level-5 and level-3 norms (was Fig. 7(d), there normalised against max|K|).
+  Fig. 1 is one row now (its (d)/(e) were the level-3 seed scan's norms);
+  Fig. 2's bottom row is (e)/(f) at half width each; Fig. 3's last row is
+  (f)-(h); Fig. 5's (f) became (e) and spans the right half; Fig. 7's (e)
+  became (d), and max|K| joined the core extrema in (c).
+* **Six figures moved to the appendices**: Appendix A (code health) takes
+  `single_horizon_regrowth`, `spiral_refinement_ladder` and
+  `fill_insensitivity` after `constraint_evolution`; Appendix B
+  (supplementary measurements) takes `mouth_growth`, `seed_linearity` and
+  `scalar_censorship`.
+* **`05_binary_spiral/p012_paper/` is gone**: its three paper figures sit in
+  `05_binary_spiral/` (the run group `campaign/05_binary_spiral/p012_paper/`
+  is unchanged).
+* **17 figures not in the paper were deleted** (PNG + PDF, 34 files): every
+  `psi4_analysis_*` six-panel wave page (single throat, head-on, spiral
+  series, fly-by, BBH control), `single_throat_branches`,
+  `single_throat_seed_branches`, `single_throat_inflation_L128`,
+  `single_throat_inflation_L512`, `sign_rule`, `placement_curve`, the two
+  head-on `*_psi4_20_R10_14_18_t100` pages and `bbh_t150_ringdown`; the
+  `06_binary_flyby/` and `07_bbh_control/` folders went with them. Their
+  commands and redraw notes (the `psi4_analysis` table, "How the commands were
+  recovered", "What changed in the redraw") are in this file's git history
+  before 2026-09-26; the scripts remain and still draw them on demand.
 
 ## The validation figures (2026-09-19)
 
@@ -45,7 +97,8 @@ the spherical control rules the floor.
 the spiral collapse page, drawn from the pure-quadrupole arm by
 `plot_single_collapse` (no arguments): areal radius + MOTS strip over a 2×3
 grid of min α / min χ / max |K| / the radial shells (t = 33–55) / the
-constraints. MOTS from t = 33, R 3.80 → 2.41, M_MS 1.90 → 1.24.
+constraints (since 2026-09-26 the constraints are `constraint_evolution` (c) and
+the shells are the bottom row's two panels). MOTS from t = 33, R 3.80 → 2.41, M_MS 1.90 → 1.24.
 Names hang on what they name (2026-09-23, the user: "to what exactly is it
 connected?"): the MOTS clock and the 10 % departure clock are flags at the
 top of their own rules (left / right of the rule, the inflation page's
@@ -64,7 +117,10 @@ at t = 47/47/43, regrowth +9.7/+8.8/+10.6 % in R and +10.2/+10.5/+12.0 % in
 M_MS by t = 100 (article Sec. IV D, fig:single_regrowth).
 
 `01_single_throat/single_throat_inflation` — its mirror, by
-`plot_single_inflation` (no arguments): the ε = −0.01 level-4 arm to t = 100
+`plot_single_inflation` (no arguments). SINCE 2026-09-26 IT IS F4 ALONE
+(`single_eps_m1e2_L512_ml5_oct_t400`, level 5, L = 512, quoted to t = 218; see
+its module's docstring) in eight panels, the norms moved to `constraint_evolution`
+(d). The note below is the retired level-4 page: the ε = −0.01 level-4 arm to t = 100
 on the same 1 + 2×3 grammar, with the unkicked level-4 twin drawn beside it
 in (a) and the anti-trapped rows (θ₊ > 0 and θ₋ > 0, the MOTS's mirror)
 marked in gold over t = 1–35. R 3.81 → 11.39 (×3.0) against the twin's ×2.2,
@@ -73,29 +129,14 @@ of this branch is the compactified inner sheet's χ-trough marching outward
 (r = 0.016 → 2.9), and |K| never leaves 0.06. That march is also why the
 θ₊ = 0 rows at R ≈ 60.7 after t = 85 are not a horizon and are not drawn.
 
-`01_single_throat/single_throat_inflation_L128` — NEW 2026-09-24 (the user:
-"make completely another figure, do not touch existing one"): the LIVE t500
-arm's own page by `plot_single_inflation_L128` (reads the RUN TREE, not the
-pack — regenerate at landing and re-point `--run` at the pack). The arm is
-THE UNKICKED L = 128 level-4 throat (the audit's launcher-pin trap, confirmed
-on the live process: the boost binary never read the l2 seed). (a) R_areal
-with the L = 64 twin as a CONTEXT halo BENEATH the ink (they agree to 0.2 %,
-so side-by-side styles would lie), the twin's record-end marked at t = 100;
-×2.39 by t = 111. (b) d ln R/dt: peak 0.032 at t = 74, doubling 23 u → 117 u
-— the decelerating coast. (c) min α, twin beneath, equal to 4 digits.
-(d) the arm's OWN L2 norms (not spliceable with the twin's: domain norms,
-the 8× box dilutes ×1.4–3.2): the seam-mode bump peaks 9e-3 at t = 100 and
-falls back to its floor by t = 109 — this box contains what killed the
-L = 64 t250 arm at t = 145.8.
-
-`05_binary_spiral/p012_paper/fill_insensitivity` — queue 5 (f): the freeze
+`05_binary_spiral/fill_insensitivity` — queue 5 (f): the freeze
 twin (fill 1.25/1.75) against the freeze arm (1.40/1.90), same t = 57 seed,
 same binary. Max |dPsi4|/peak 0.385/0.370/0.024/0.013 % at R = 20/28/36/44
 over t = 57-100; panel (b)'s onsets sit on the causal clock t = 57 + (R - 1.9)
 = 75/83/91/99. The fill is not in the physics; it certifies inertness, not a
 remnant ringdown.
 
-`05_binary_spiral/p012_paper/mouth_growth` — the queue-8 gap closed: the
+`05_binary_spiral/mouth_growth` — the queue-8 gap closed: the
 mouths of the arm that MERGES, measured for the first time, against the
 fly-by's. Three stacked panels on one clock — per-mouth areal radius, the
 separation, and the growth excess on a log axis with both exponential fits.
@@ -186,7 +227,7 @@ from t = 0, scalar stream on -- the re-run that closed the gap) at R = 10/14/18.
 Common MOTS at t = 21.5 (dotted grey rule); the remaining hair leaves as one l = 1,
 m = 0 pulse cresting later at each sphere, then decays: log-linear fits over
 t = 30-95 give tau = 19/23/29 (dashed), comparable to the tau = 19.4 +- 0.8 on
-which the scan's M_MS levels off (Fig. headon_collapse (g); part of that
+which the scan's M_MS levels off (Fig. headon_collapse (b); part of that
 levelling is the star-scan shape systematic -- the area keeps shrinking).
 CORRECTED 2026-09-23: the two lone-throat curves of (b) are the eps = +0.01
 level-4 collapse and the UNKICKED level-4 throat -- neither scalar re-run
@@ -381,14 +422,14 @@ time all four spheres peak together at t - R ~ 34.5, as radiation must.
 
 ## The paper's spiral collapse page (2026-09-18)
 
-`05_binary_spiral/p012_paper/p012_collapse_diagnostics` is the article's
+`05_binary_spiral/p012_collapse_diagnostics` is the article's
 spiral collapse figure (sec:spiral:inspiral), drawn with no arguments:
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_collapse
 ```
 
-**REDRAWN 2026-09-24** (the user's read of the paper: "it shouldn't span the whole page"; "we extended the run after death with freeze, why is this not shown on (a)"): a `figure*[t]` strip, 7.05 x 4.3 in, five panels. (a) pit separation over the whole history t = 0-100, the frozen era from t = 57 shaded and labelled (no core quantity drawn inside the fill), gold rug on the slices carrying a common MOTS (55-57, 59, 98-100); (b) areal radius of the common MOTS (incl. the remnant R = 4.15 at t = 98-100) and of the common NECK (the smallest sphere about the pits' midpoint, enclosing BOTH pits), against R_star and sqrt(2) R_star; (c) core extrema; (d) constraint norms against max|K|; (e) the |K| spike and edge against the neck. Old (a)->(a), (g)->(b), (b)+(c)+(d)->(c), (e)->(d), (f)->(e); (h)-(j) dropped. The two chi pits stay distinct until chi floors at t = 58.43 (0.31 apart at t = 57): both wormholes are inside the MOTS (`scripts/analysis/merger_feedback/pit_throats.py`). The older notes below describe the ten-panel page.
+**REDRAWN 2026-09-24** (the user's read of the paper: "it shouldn't span the whole page"; "we extended the run after death with freeze, why is this not shown on (a)"): a `figure*[t]` strip, 7.05 x 4.3 in, five panels. (a) pit separation over the whole history t = 0-100, the frozen era from t = 57 shaded and labelled (no core quantity drawn inside the fill), gold rug on the slices carrying a common MOTS (55-57, 59, 98-100); (b) areal radius of the common MOTS (incl. the remnant R = 4.15 at t = 98-100) and of the common NECK (the smallest sphere about the pits' midpoint, enclosing BOTH pits), against R_star and sqrt(2) R_star; (c) core extrema; (d) constraint norms against max|K|; (e) the |K| spike and edge against the neck. SINCE 2026-09-26 four panels: (d) went to `constraint_evolution` (f) as plain norms, max|K| joined (c), and (e) is (d). Old (a)->(a), (g)->(b), (b)+(c)+(d)->(c), (e)->(d), (f)->(e); (h)-(j) dropped. The two chi pits stay distinct until chi floors at t = 58.43 (0.31 apart at t = 57): both wormholes are inside the MOTS (`scripts/analysis/merger_feedback/pit_throats.py`). The older notes below describe the ten-panel page.
 
 Panel (g) REDRAWN 2026-09-23 (article audit): besides the star-scan throat
 radii (no MOTS -- a blindness about the merged pit, not an absence) it now
@@ -421,7 +462,7 @@ head-on figure (sec:headon:contact), drawn with no arguments:
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_headon_collapse
 ```
 
-**REDRAWN 2026-09-24** (the user: "what happens to the formed black hole ... the plot is junk, why is there no solid line ... how the radius compares to the initial 2 wormholes"): a `figure*[t]` strip, 7.05 x 4.3 in, six panels. (a) horizon areal radius and (b) M_MS fill the left half, rows joined by solid lines within contiguous runs, rules at R_star, sqrt(2) R_star (both throats' area) and 2 M_ADM = 4 (M_ADM = 2 in b); (c) pit separation, (d) max|K|, (e) Hamiltonian norm, (f) grid max|phi|, max|Pi|. The (2,0) wave panel is gone (waves have their own section). Old (f)->(a), (g)->(b), (a)->(c), (d)->(d), (e)->(e), (i)->(f). Numbers: `scripts/analysis/merger_feedback/headon_remnant.py` (born with both throats' area, R = 1.01 sqrt(2) R_star; M_MS never rises after t = 36). The older notes below describe the ten-panel page.
+**REDRAWN 2026-09-24** (the user: "what happens to the formed black hole ... the plot is junk, why is there no solid line ... how the radius compares to the initial 2 wormholes"): a `figure*[t]` strip, 7.05 x 4.3 in, six panels. (a) horizon areal radius and (b) M_MS fill the left half, rows joined by solid lines within contiguous runs, rules at R_star, sqrt(2) R_star (both throats' area) and 2 M_ADM = 4 (M_ADM = 2 in b); (c) pit separation, (d) max|K|, (e) Hamiltonian norm, (f) grid max|phi|, max|Pi|. SINCE 2026-09-26 five panels: (e) went to `constraint_evolution` (e), and (f) is (e), spanning the right half's bottom row. The (2,0) wave panel is gone (waves have their own section). Old (f)->(a), (g)->(b), (a)->(c), (d)->(d), (e)->(e), (i)->(f). Numbers: `scripts/analysis/merger_feedback/headon_remnant.py` (born with both throats' area, R = 1.01 sqrt(2) R_star; M_MS never rises after t = 36). The older notes below describe the ten-panel page.
 
 The spiral collapse page's counterpart with the opposite verdict: the pair
 MAKES a black hole, and every horizon point is the corrected orientation
@@ -558,7 +599,8 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_pair_row
 ```
 
-`01_single_throat/single_throat_instability` (7.05 x 4.35; (c)/(d)/(e) cleaned
+`01_single_throat/single_throat_instability` (7.05 x 2.75 since 2026-09-26, one
+row: its (d)/(e) norms are `constraint_evolution` (a)/(b); before, 7.05 x 4.35; (c)/(d)/(e) cleaned
 2026-09-23 on the user's marks: the t_x crossing rule is drawn only up to 6 pt
 above R_star, where the crossing is -- full height it ran through the
 "epsilon = -0.01" and gold-fit names; and a dying arm's norms end on their
@@ -574,8 +616,8 @@ panel is still drawn by its home module — `plot_branches.figure_panels`,
 figures also call, so the two renderings of a panel can never drift apart.
 A change to what a panel says goes in its home module, where its provenance
 notes are; the composer owns only the canvas, the (a)...(d) lettering and
-the file. The four standalone figures are still produced and still correct;
-the paper just no longer includes them.
+the file. The four standalone figures were deleted on 2026-09-26 (not in the
+paper); their modules still draw them on demand.
 
 **What a quarter-page panel needed that a single column did not.** Every
 label placed as a fraction of the axis is a different gap at strip width,
@@ -658,46 +700,3 @@ pass. Each is named on its own curve; the spiral's cap note rises to the top
 of its cap over the twin's swing. Row (a)'s dashed curve is named "ringdown
 fit". Left panels only (CONTEXT is also a sphere of the envelope ramp). Row
 titles print p (was P). Drawn with no arguments.
-
-## How the commands were recovered, and why it can be trusted
-
-Each candidate was redrawn and compared with the published PNG **panel by
-panel**. A command is accepted only when every panel that the intervening code
-fixes did not touch comes back pixel-identical — that identity, not plausibility,
-is the proof. It caught real mistakes: `--m 2` is inert on a single-mode file and
-needs `--stream psi4_mode_l2_all.dat`; the freeze figures need the pre-restart
-segment, which was split out of its run's pack as `part1/` after the figures were
-drawn; `q1e2_ml4_t50` was drawn while its arm was still running and its stream
-ended at t = 49.
-
-## What changed in the redraw, and what it means for reading them
-
-Three fixes landed after most of these figures were first drawn. Panels not
-listed here are unchanged.
-
-**Panel (f), the strain against Advanced LIGO — every figure.** The corner of
-the 8th-order high-pass in `_psd_psi4_to_strain` was `0.05 × freqs.max()`, i.e.
-5 % of the **Nyquist** — a property of how often the waveform was written out,
-not of the physics (`b4cc397d`). On the finely-sampled in-code streams that put
-the corner at f = 2.5 while the burst sits at f = 0.033, suppressing it by
-~1e15. The corner is now `1/T`, set by the record. **Panel (f) of every figure
-published before 2026-09-16 understates the strain** — mildly where the stream
-was coarse, catastrophically where it was fine.
-
-**Panel (b), the ringdown fit — `bbh_control_m2`, `freeze_wide_t080_m2`,
-`q1e2_ml4_t50`.** The fit was reaching its own bounds and being drawn anyway:
-`q1e2_ml4_t50` published f = 1.959 1/M and `freeze_wide_t080_m2` f = 2.029 1/M,
-both far **above their stream's Nyquist of 0.5 and 1.0** — aliases, not
-frequencies. `f303b2a9` capped the fit at Nyquist, which then let it walk to the
-LOWER bound instead (`bbh_control_m2`, f = 0.001, tau = 0.0: a flat line drawn
-as a fit). It now tries three independent seeds, rejects any solution resting on
-a bound, and rejects an e-fold more than 5x the segment it was fitted on —
-returning no fit rather than a wrong one. Two figures consequently draw **no
-ringdown curve**: `freeze_wide_t080_m2` and `q1e2_ml4_t50`, whose records do not
-contain a measurable decay (`GPU_PLAN.md` already says so for the latter).
-
-**Panels (c)-(f) of `freeze_wide_t080_m2`.** `--t-min/--t-max` used to clip the
-x-axis of panel (a) only, so a figure captioned "to t = 80" analysed everything
-the stream held — one figure describing two different records. They now clip the
-record, so panels (c)-(f) of this figure are the t = 0-80 wide arm, as its name
-has always claimed.

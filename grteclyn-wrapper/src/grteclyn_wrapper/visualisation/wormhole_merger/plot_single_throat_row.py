@@ -27,7 +27,6 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
-import numpy as np  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import (  # noqa: E402
     plot_branches, plot_seed_branches, style,
@@ -103,33 +102,26 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     style.prd(base=10.0)
-    # Two rows since 2026-09-23 (the user: "add the hamiltonian and momentum
-    # constraints data"): the story strip on top, its constraint record below.
-    fig = plt.figure(figsize=(7.05, 4.35), constrained_layout=True)
-    gs = fig.add_gridspec(2, 6, height_ratios=[1.55, 1.0])
-    axA = fig.add_subplot(gs[0, 0:2]); axB = fig.add_subplot(gs[0, 2:4])
-    axC = fig.add_subplot(gs[0, 4:6])
-    axD = fig.add_subplot(gs[1, 0:3]); axE = fig.add_subplot(gs[1, 3:6])
+    # One row again since 2026-09-26 (the user: "extract the measurement
+    # plots ... to the single plot in appendix"): the constraint record of
+    # these arms, once row two here, is panels (a)/(b) of the appendix's
+    # code-health figure (plot_constraint_evolution), drawn by the same
+    # plot_seed_branches.figure_panels_constraints.
+    fig = plt.figure(figsize=(7.05, 2.75), constrained_layout=True)
+    gs = fig.add_gridspec(1, 3)
+    axA = fig.add_subplot(gs[0, 0]); axB = fig.add_subplot(gs[0, 1])
+    axC = fig.add_subplot(gs[0, 2])
     plot_branches.figure_panels(axA, axB, pathlib.Path(args.pack_root).expanduser(),
                                 legends=False)
     plot_seed_branches.figure_panel(axC, runs_root=args.runs_root)
     ceiling_pair(axC, args.pack_root)
-    plot_seed_branches.figure_panels_constraints(axD, axE, args.pack_root)
-    # (e)'s "no kick" name sat on its own curve's rise out of the t = 34 dip
-    # (label audit, 2026-09-24: 4 samples); moved right along the curve to
-    # t = 48, kept at the home module's 0.30 x the curve's value there.
-    grey = [ln for ln in axE.lines if ln.get_color() == style.CONTEXT]
-    for txt in axE.texts:
-        if txt.get_text() == "no kick" and grey:
-            gx, gy = (np.asarray(v, dtype=float) for v in grey[0].get_data())
-            txt.set_position((48.0, 0.30 * float(np.interp(48.0, gx, gy))))
-    for ax, letter in zip((axA, axB, axC, axD, axE), "abcde"):
+    for ax, letter in zip((axA, axB, axC), "abc"):
         ax.text(0.0, 1.05, f"({letter})", transform=ax.transAxes,
                 ha="left", va="bottom", fontsize=9, color=style.INK)
     # ONE legend for the whole strip, on top (the user, 2026-09-23: the boxed
     # keys in (a)/(b) said the same thing twice and sat on the curves).  It
     # carries what is shared; panel-local identity stays written in place
-    # ((c)'s kick names, (d)/(e)'s ceiling pair and control).
+    # ((c)'s kick names).
     from matplotlib.lines import Line2D  # local: only this canvas needs it
     handles = [
         Line2D([], [], color=style.INK, linewidth=1.4, linestyle=(0, (4, 2.5)),

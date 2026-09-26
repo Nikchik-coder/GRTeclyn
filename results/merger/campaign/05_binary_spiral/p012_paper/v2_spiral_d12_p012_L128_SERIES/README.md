@@ -57,9 +57,11 @@ an ordered outgoing wave — see below.
 
 ## Figures
 
-Under `results/merger/figures/05_binary_spiral/p012_paper/`, each PNG + PDF,
-each from a registered module of `grteclyn_wrapper.visualisation.wormhole_merger`:
-`p012_collapse_diagnostics`, `p012_series_constraints`, `psi4_analysis_p012_series`.
+`results/merger/figures/05_binary_spiral/p012_collapse_diagnostics` (PNG + PDF,
+the paper's `fig:spiral_collapse`, by `plot_spiral_collapse`); its constraint
+norms are panel (f) of `figures/00_code_health/constraint_evolution`. The
+series' `psi4_analysis` and constraint pages were retired from `figures/` on
+2026-09-26 (not in the paper); `plot_psi4_analysis` still draws them on demand.
 
 ## Frames and movies
 

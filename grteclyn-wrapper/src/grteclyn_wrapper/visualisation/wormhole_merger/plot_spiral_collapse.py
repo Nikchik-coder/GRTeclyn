@@ -18,9 +18,6 @@ Reads, all under ``campaign/05_binary_spiral/p012_paper/``:
   ``constraint_norms.dat``, ``core_radial_profile.dat.gz`` (time + 128 shells x
   {chi_min, absK_max, lapse_min, n, dx}, dr = 0.03125), and the two oriented
   marginal-surface scans ``horizon_oriented_scan_t55-57.txt`` / ``_t58-60.txt``.
-* ``v2_spiral_d12_p012_L128_lvl3_t050/constraint_norms.dat`` -- the level-3
-  leg's constraints, overlaid on (d) over the shared window t = 36-50 (its 22
-  regrid spikes all sit before t = 36, so the overlap needs no filtering).
 * ``v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700/evolution_params.txt`` --
   when the freeze was armed and how far the fill reaches (the shaded era).
 
@@ -41,10 +38,12 @@ PANELS
     inside the fill: the remnant's neck sits in the frozen core.
     Rules: one initial throat, R_star, and the radius of the two throats'
     summed area, sqrt(2) R_star.
-(c) Core extrema on one log axis: min chi, min lapse, max|phi|, max|Pi|.
-(d) Constraint norms against max|K|, each log10-scaled onto [0, 1] through the
-    level-5 arm's own range; the level-3 leg through the SAME transforms.
-(e) The |K| spike (radius of the radial maximum, from the first time it stands
+(c) Core extrema on one log axis: min chi, min lapse, max|K|, max|phi|, max|Pi|.
+    (Until 2026-09-26 a panel (d) set the constraint norms against max|K| on a
+    normalised log scale; the norms, with the level-3 leg, are now panel (f) of
+    the appendix's code-health figure, ``plot_constraint_evolution``, and
+    max|K| joined the other extrema here.)
+(d) The |K| spike (radius of the radial maximum, from the first time it stands
     2x above the background) and its |K| > 0.2 edge, against the neck's
     coordinate radius from the scans.
 
@@ -68,7 +67,7 @@ background), so an argmax there is noise.
 
 STYLE (2026-09-24, the reviewer: "why does this picture span the whole page?"):
 a 7.05 x 4.3 strip for the top of a page, included at 0.80 textwidth like every
-two-column figure -- five panels where the float page had ten; the radial
+two-column figure -- four panels where the float page had ten; the radial
 snapshots and the separate lapse / chi / scalar panels went.  style.prd frame,
 letter tags above the frames, every series named in place, no key.  Monochrome
 ink plus the one accent: GOLD is the horizon -- the flow finder's common MOTS --
@@ -283,10 +282,11 @@ def main(argv: list[str] | None = None) -> int:
     axA = box(0.56, top_y, 3.92, top_h)
     axB1 = box(5.18, top_y, 1.28, top_h)
     axB2 = box(6.52, top_y, 0.42, top_h, sharey=axB1)
-    xw, gap = 1.74, 0.59
+    # the two bottom panels share the width three used to (4.62 = 3 x 1.74 + 0.59
+    # less the gap), so the core's five extrema get the room they need
+    xw, gap = 2.905, 0.59
     axC = box(0.56, bot_y, xw, bot_h)
-    axD = box(0.56 + xw + gap, bot_y, xw, bot_h)
-    axE = box(0.56 + 2 * (xw + gap), bot_y, xw, bot_h)
+    axE = box(0.56 + xw + gap, bot_y, xw, bot_h)
 
     def tag(ax, letter):
         ax.text(0.0, 1.045, f"({letter})", transform=ax.transAxes,
@@ -391,6 +391,7 @@ def main(argv: list[str] | None = None) -> int:
     axC.semilogy(t, col["min_lapse"], color=style.INK, lw=1.1, ls=(0, (5, 2)))
     axC.semilogy(t, abs_phi, color=style.MUTED, lw=1.0, ls=(0, (1.2, 1.6)))
     axC.semilogy(t, abs_pi, color=style.MUTED, lw=1.0)
+    axC.semilogy(t, col["max_abs_K"], color=style.INK, lw=1.3, ls=(0, (5, 1.6, 1, 1.6)))
     axC.axhline(CHI_FLOOR, color=style.FAINT, lw=0.7, ls=(0, (1, 2)))
     axC.set_ylim(3e-9, 150)
     axC.set_yticks([1e-8, 1e-6, 1e-4, 1e-2, 1])
@@ -405,45 +406,12 @@ def main(argv: list[str] | None = None) -> int:
              color=style.MUTED)
     axC.text(44.0, CHI_FLOOR * 1.6, "floor", fontsize=7.0, ha="left",
              va="bottom", color=style.MUTED)
+    # Under its own climb, in the empty two decades above min alpha.
+    axC.annotate(r"$\max|K|$", (51.0, float(np.interp(51.0, t, col["max_abs_K"]))),
+                 xytext=(0, -4), textcoords="offset points", fontsize=7.5,
+                 ha="center", va="top", color=style.INK)
 
-    # (d) do core and constraints grow together?  No. -------------------------
-    def unit_tf(ref):
-        v = np.log10(np.maximum(np.asarray(ref, float), 1e-300))
-        lo, sp = v.min(), max(float(np.ptp(v)), 1e-30)
-        return lambda y: (np.log10(np.maximum(np.asarray(y, float), 1e-300)) - lo) / sp
-
-    uK, uH, uM = unit_tf(col["max_abs_K"]), unit_tf(hh), unit_tf(mm)
-    c3 = _sorted(camp / LEVEL3 / "constraint_norms.dat")
-    c3 = c3[(c3[:, 0] >= t[0]) & (c3[:, 0] <= t[-1])]
-    H5i, M5i = np.interp(c3[:, 0], t, hh), np.interp(c3[:, 0], t, mm)
-    print(f"  level-3 overlap t = {c3[0, 0]:.1f}-{c3[-1, 0]:.1f}: median "
-          f"|dH|/H = {np.median(abs(c3[:, 1] - H5i) / H5i) * 100:.1f}%, "
-          f"|dM|/M = {np.median(abs(c3[:, 2] - M5i) / M5i) * 100:.1f}%")
-    axD.plot(c3[:, 0], uH(c3[:, 1]), color=style.CONTEXT, lw=0.9,
-             ls=(0, (4, 2.5)), zorder=2)
-    axD.plot(c3[:, 0], uM(c3[:, 2]), color=style.CONTEXT, lw=0.9,
-             ls=(0, (1, 1.8)), zorder=2)
-    axD.plot(t, uK(col["max_abs_K"]), color=style.INK, lw=1.3, zorder=4)
-    axD.plot(t, uH(hh), color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)), zorder=3)
-    axD.plot(t, uM(mm), color=style.MUTED, lw=0.9, ls=(0, (1, 1.8)), zorder=3)
-    axD.set_ylabel(r"normalised $\log_{10}$")
-    axD.set_ylim(-0.06, 1.46)
-    axD.text(50.2, 0.02, "level 3", fontsize=7.0, ha="left", va="bottom",
-             color=style.CONTEXT)
-    axD.text(55.4, 0.88, r"$\max|K|$", fontsize=7.5, ha="right", va="center",
-             color=style.INK)
-
-    def sci(v):
-        e = int(np.floor(np.log10(v)))
-        return rf"{v / 10**e:.1f}\times10^{{{e}}}"
-
-    axD.text(42.6, 1.03,
-             rf"$\|\mathcal{{H}}\|$ peak ${sci(cn[:, 1].max())}$" + "\n" +
-             rf"$\|\mathcal{{M}}\|$ peak ${sci(cn[:, 2].max())}$",
-             fontsize=6.5, ha="left", va="bottom", color=style.MUTED,
-             linespacing=1.45)
-
-    for ax in (axC, axD):
+    for ax in (axC,):
         rules(ax)
         ax.set_xlim(t[0] - 0.6, t_end + 0.6)
         ax.set_xlabel(r"$t$")
@@ -471,15 +439,15 @@ def main(argv: list[str] | None = None) -> int:
     axE.text(56.3, 0.855, "neck", fontsize=7.5, ha="center",
              va="top", color=style.INK)
 
-    for ax, letter in ((axC, "c"), (axD, "d"), (axE, "e")):
+    for ax, letter in ((axC, "c"), (axE, "d")):
         tag(ax, letter)
 
     hits = style.label_audit(fig)
     out = (pathlib.Path(args.out) if args.out else
-           figure_dir(GROUP, args.pack_root) / "p012_paper" / "p012_collapse_diagnostics.png")
+           figure_dir(GROUP, args.pack_root) / "p012_collapse_diagnostics.png")
     out.parent.mkdir(parents=True, exist_ok=True)
     png = style.save(fig, out)
-    print(f"[spiral collapse] wrote {png} (+pdf); 5 panels, {len(scans)} scan rows; "
+    print(f"[spiral collapse] wrote {png} (+pdf); 4 panels, {len(scans)} scan rows; "
           f"label audit: {len(hits)} hit(s)")
     return 0
 

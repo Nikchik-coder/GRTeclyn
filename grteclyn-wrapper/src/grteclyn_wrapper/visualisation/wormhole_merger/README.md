@@ -27,7 +27,8 @@ them.
 | `plot_merger_constraints` | how well the equations are actually satisfied, stitched across a restart chain | the pack | wherever `--out` says |
 | `plot_separation` | one binary arm's separation and throat monitors: does it merge, or fly by | the pack | `figures/06_binary_flyby/` |
 | `plot_placement_curve` | what two throats read simply by being placed near each other, and the throats' own response once that is subtracted | the two tables `analysis/placement_curve.py` writes | `figures/04_binary_headon/` |
-| `plot_branches` | **the lone throat's two fates across resolution** — level 3 collapses, level 4 inflates, at the same rate. Also writes the note `BRANCHES.md` | the pack | `BRANCHES.md` + `figures/01_single_throat/` |
+| `plot_branches` | **the lone throat's two fates across resolution** — level 3 collapses, level 4 inflates, at the same rate. Also writes the note `BRANCHES.md`; `--no-figure` writes the note only (what the pack runs) | the pack | `BRANCHES.md` + `figures/01_single_throat/` |
+| `plot_constraint_evolution` | **the paper's code-health figure** (Appendix A, `fig:constraints`): the constraint norms of every run the main-text figures draw, each at its highest refinement level | the pack | `figures/00_code_health/` |
 | `plot_seed_branches` | **the same two fates chosen on purpose** — one resolution, one knob: the sign and size of a declared kick laid on the throat at t = 0 | the run tree, live runs included | `figures/01_single_throat/` |
 | `plot_collapse_diagnostics` | **one filled grid of everything a run's core diagnostics say**: lapse, conformal factor, the scalar pair, the three collapse indicators rescaled onto a common range, and — when the run wrote `core_radial_profile.dat` — the same quantities against RADIUS, plus where the disturbance sits and how wide it is | the pack or the run tree | wherever `--out` says |
 | `stitch_movies` | several runs played as one movie per field on a single colour scale | each run's cached slices | the run tree (never `results/`) |
@@ -35,6 +36,11 @@ them.
 | `streams` | not a figure — one loader per data-file shape | — | — |
 | `run_tree` | not a figure — find a run **by name**, in either tree | — | — |
 | `psi4_math` | not a figure — the waveform mathematics (burst PSD, QNM fit, radiated energy, propagation speed, aLIGO strain and SNR) | — | — |
+
+`results/merger/figures/` keeps **only the article's figures** (2026-09-26); a
+module whose figure is not in the paper still draws it on demand, but the pack
+draws nothing, so it does not come back by itself. The paper's figures, their
+numbers and their modules: `results/merger/figures/FIGURES.md`.
 
 ## It draws from this folder alone
 

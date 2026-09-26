@@ -16,7 +16,7 @@ peak at the nearest sphere and 0.013 % at the farthest, overlap 0.999999+.
 
 Reads both arms' in-code ``Weyl4_mode_22.dat`` (dt = 0.01, spheres
 20/28/36/44) from ``campaign/05_binary_spiral/p012_paper/`` and writes
-``figures/05_binary_spiral/p012_paper/fill_insensitivity``.
+``figures/05_binary_spiral/fill_insensitivity``.
 
 STYLE (the seed-branches grammar): single-column PRD frame, two stacked
 panels on one clock, no boxed key, every curve named in place.  Panel (a)
@@ -143,7 +143,7 @@ def main(argv: list[str] | None = None) -> int:
              fontsize=9, color=style.INK)
 
     out = pathlib.Path(args.out) if args.out else (
-        figure_dir(GROUP, args.pack_root) / "p012_paper" / "fill_insensitivity.png")
+        figure_dir(GROUP, args.pack_root) / "fill_insensitivity.png")
     out.parent.mkdir(parents=True, exist_ok=True)
     hits = style.label_audit(fig)
     png = style.save(fig, out)

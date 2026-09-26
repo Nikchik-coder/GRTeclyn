@@ -383,29 +383,15 @@ else
 fi
 
 # ---------------------------------------------------------------------------
-# 3. Campaign figures (waveform, constraints, validation checks)
+# 3. Campaign figures: none are copied (2026-09-26)
 # ---------------------------------------------------------------------------
-# PNG and PDF only: the dpi-600 EPS twins are ~39 MB each and add nothing the
-# PDF does not carry.
-# The hand-made figures now live ONLY here, committed under git: their old
-# staging folder (05_binary_spiral/merger_fix/plots) was deleted on 2026-09-10
-# after every PNG/PDF in it was verified byte-identical to the packed copy.
-# This block still runs if a staging folder reappears; otherwise it skips.
-FIGS="${RUNS}/05_binary_spiral/p012_freeze/plots"
-if [[ -d "${FIGS}" ]]; then
-  # The freeze programme's figures are the spiral's; the two BBH-control panels
-  # among them belong with the vacuum control.  Figures made by the analysis
-  # scripts land in their own group (single throat, head-on); hand-made ones
-  # are placed by hand, once, and stay where git tracks them.
-  mkdir -p "${DEST}/figures/05_binary_spiral" "${DEST}/figures/07_bbh_control"
-  find "${FIGS}" -maxdepth 1 \( -name "*.png" -o -name "*.pdf" \) ! -name "*bbh_control*" \
-    -exec cp -p {} "${DEST}/figures/05_binary_spiral/" \;
-  find "${FIGS}" -maxdepth 1 \( -name "*.png" -o -name "*.pdf" \) -name "*bbh_control*" \
-    -exec cp -p {} "${DEST}/figures/07_bbh_control/" \;
-  echo "[pack-merger] figures: $(find "${DEST}/figures" -type f | wc -l) files in $(find "${DEST}/figures" -mindepth 1 -type d | wc -l) groups"
-else
-  echo "[pack-merger] figures: no ${FIGS#"${ROOT}"/} -- skipped"
-fi
+# results/merger/figures holds the PAPER'S figures and nothing else (the user,
+# 2026-09-26: "wipe out figures that are not present in the paper ... check
+# the packing scripts so they do not regenerate them").  Every one of them is
+# drawn by its own script in the wrapper's figure package, listed with its
+# command in figures/FIGURES.md.  This step used to copy the hand-made figures
+# of runs/.../p012_freeze/plots into the pack whenever that staging folder
+# existed; none of them is in the paper, so the copy is gone.
 
 # ---------------------------------------------------------------------------
 # 4. Reductions: the generated notes and the small tables beside them
@@ -421,23 +407,23 @@ fi
 "${PY_BIN}" "${DEST}/analysis/queue2e_gates.py" "${DEST}" || echo "[pack-merger] queue 2e gates failed -- continuing"
 
 # ---------------------------------------------------------------------------
-# 5. Generated figures, from the campaign's figure package
+# 5. The figure package's one pack note (no figures)
 # ---------------------------------------------------------------------------
 # Every merger figure script lives in
 # grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/ so that
 # all of them share one house style; they resolve runs by NAME and write into
-# results/merger/figures/<group>/.  Each is allowed to fail without taking the
-# pack down: a figure whose arm has not been packed yet is not an error.
+# results/merger/figures/<group>/.
 VIS="grteclyn_wrapper.visualisation.wormhole_merger"
 export PYTHONPATH="${ROOT}/grteclyn-wrapper/src${PYTHONPATH:+:${PYTHONPATH}}"
-# plot_bbh_vs_wormhole_psi4 is NOT in this list: its figure was retired by hand
-# (33bc4627, "remove outdated figures") and superseded by the 08_waves gallery.
-# A pack that regenerates it puts a retired figure back on every run.
-for mod in plot_branches plot_placement_curve plot_bbh_ringdown; do
-  "${PY_BIN}" -m "${VIS}.${mod}" --pack-root "${DEST}" \
-    || "${PY_BIN}" -m "${VIS}.${mod}" "${DEST}" \
-    || echo "[pack-merger] ${mod} failed -- continuing"
-done
+# No figure is drawn here any more (2026-09-26): figures/ is the paper's, and
+# the three modules this loop ran (plot_branches, plot_placement_curve,
+# plot_bbh_ringdown) drew figures the paper does not use -- a pack that
+# regenerates them puts retired figures back on every run, as
+# plot_bbh_vs_wormhole_psi4 once did (33bc4627).  The paper's figures are drawn
+# on demand by the commands in figures/FIGURES.md.  plot_branches still runs,
+# for its note campaign/01_single_throat/BRANCHES.md only (--no-figure).
+"${PY_BIN}" -m "${VIS}.plot_branches" --pack-root "${DEST}" --no-figure \
+  || echo "[pack-merger] plot_branches (BRANCHES.md) failed -- continuing"
 
 echo "[pack-merger] total size: $(du -sh "${DEST}" | cut -f1)"
 echo "[pack-merger] done"

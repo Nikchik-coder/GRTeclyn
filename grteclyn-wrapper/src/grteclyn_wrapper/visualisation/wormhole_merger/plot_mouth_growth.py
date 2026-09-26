@@ -37,7 +37,7 @@ the honest instrument is the common-centre scan -- one sphere on the box
 centre enclosing both -- which is panel (a)'s grey curve.
 
 Reads ``horizon_scan.dat`` from both arms under ``campaign/`` and writes
-``figures/05_binary_spiral/p012_paper/mouth_growth``.
+``figures/05_binary_spiral/mouth_growth``.
 
 STYLE (the seed-branches grammar): single-column PRD frame, three stacked
 panels on one clock, no boxed key, every curve named in place, letter tags
@@ -218,7 +218,7 @@ def main(argv: list[str] | None = None) -> int:
           f"fly-by {np.abs(f['RA'] - f['RB']).max():.2e}")
 
     out = pathlib.Path(args.out) if args.out else (
-        figure_dir("05_binary_spiral", args.pack_root) / "p012_paper" / "mouth_growth.png")
+        figure_dir("05_binary_spiral", args.pack_root) / "mouth_growth.png")
     out.parent.mkdir(parents=True, exist_ok=True)
     png = style.save(fig, out)
     print(f"[mouth-growth] wrote {png} (+pdf)")

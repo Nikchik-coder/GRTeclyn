@@ -16,11 +16,13 @@ Reads, all under ``campaign/01_single_throat/seed/single_pureq_q1e2_ml4_t100``:
 ``areal_radius.dat`` (the consumer's per-throat minimal-surface scan),
 ``horizon_scan.dat`` (the oriented scan; MOTS radius and Misner-Sharp mass),
 ``collapse_diagnostics.dat`` (min lapse / min chi / max |K| at dt = 0.01),
-``core_radial_profile.dat`` (128 shells to r = 4, thinned to dt = 0.05) and
-``constraint_norms.dat``.  Writes ``figures/01_single_throat/single_throat_collapse``.
+and ``core_radial_profile.dat`` (128 shells to r = 4, thinned to dt = 0.05).
+Writes ``figures/01_single_throat/single_throat_collapse``.  The arm's
+constraint norms, once panel (g) here, are panel (c) of the appendix's
+code-health figure (``plot_constraint_evolution``, 2026-09-26).
 
 STYLE (the PRD review grammar of the spiral page): a wide context strip over
-a 2 x 3 grid, style.prd frame, no titles, letter tags above the frames, no
+a row of three and a row of two, style.prd frame, no titles, letter tags above the frames, no
 boxed key, every series named in place.  Monochrome ink plus the one accent:
 GOLD is the horizon instrument -- the oriented scan's MOTS -- and nothing
 else.  Ordered time families (the radial snapshots) are a grey ramp, light =
@@ -76,17 +78,17 @@ def main(argv: list[str] | None = None) -> int:
 
     ar = np.loadtxt(arm / "areal_radius.dat")
     cd = np.loadtxt(arm / "collapse_diagnostics.dat")
-    cn = np.loadtxt(arm / "constraint_norms.dat")
     tp, blocks = _profile(arm / "core_radial_profile.dat")
     h = np.genfromtxt(arm / "horizon_scan.dat", dtype=None, encoding=None, names=True)
     hA = h[(h["centre"] == "A") & (h["n_mots"] > 0)]
 
     style.prd(base=10.0)
     fig = plt.figure(figsize=(7.05, 5.0), constrained_layout=True)
-    gs = fig.add_gridspec(3, 3, height_ratios=[1.15, 1.0, 1.0])
+    gs = fig.add_gridspec(3, 6, height_ratios=[1.15, 1.0, 1.0])
     axT = fig.add_subplot(gs[0, :])
-    axs = [fig.add_subplot(gs[1 + i // 3, i % 3]) for i in range(6)]
-    tags = "abcdefg"
+    axs = ([fig.add_subplot(gs[1, 2 * i:2 * i + 2]) for i in range(3)]
+           + [fig.add_subplot(gs[2, 3 * i:3 * i + 3]) for i in range(2)])
+    tags = "abcdef"
 
     # ---- context strip: the throat itself, and the horizon instrument -----
     # The unkicked twin rides along, as on the inflation page (the user,
@@ -164,29 +166,9 @@ def main(argv: list[str] | None = None) -> int:
         ax.set_xlim(0, 4.0)
         ax.set_ylabel(lab)
         ax.set_xlabel(r"$r$")
-    axs[3].text(0.96, 0.93, rf"$t={SNAPS[0]:g}$--${SNAPS[-1]:g}$",
+    axs[3].text(0.96, 0.93, rf"$t={SNAPS[0]:g}$–${SNAPS[-1]:g}$, light = early",
                 transform=axs[3].transAxes, ha="right", va="top", fontsize=7,
                 color=style.MUTED)
-    axs[3].text(0.96, 0.82, "light = early", transform=axs[3].transAxes,
-                ha="right", va="top", fontsize=7, color=style.MUTED)
-
-    # ---- (g) the constraints ----------------------------------------------
-    axs[5].plot(cn[:, 0], cn[:, 1], color=style.INK, linewidth=1.1, zorder=3)
-    axs[5].plot(cn[:, 0], cn[:, 2], color=style.MUTED, linewidth=1.1,
-                linestyle=(0, (4, 2.5)), zorder=3)
-    axs[5].axvline(T_MOTS, color=style.FAINT, linewidth=0.7, zorder=1)
-    axs[5].set_yscale("log")
-    axs[5].set_xlim(0, 100)
-    axs[5].set_ylabel(r"$L_2$ norms")
-    # In DATA coordinates, each just above its own curve on the quiet stretch
-    # (the inflation page's fix): in axes fractions both floated in the empty
-    # upper middle of the frame, naming nothing.
-    # M sits over its flat bottom (t ~ 10-18): at t = 20 it already climbs.
-    for col, t_l, sym, c in ((1, 20.0, r"$\mathcal{H}$", style.INK),
-                             (2, 12.0, r"$\mathcal{M}$", style.MUTED)):
-        axs[5].annotate(sym, (t_l, float(np.interp(t_l, cn[:, 0], cn[:, col]))),
-                        xytext=(0, 3.5), textcoords="offset points", fontsize=7.5,
-                        color=c, ha="center", va="bottom")
 
     # Letter tags ABOVE the frames (the spiral page's rule): several of these
     # panels run flat along their own top edge, and an inside tag sits on the
@@ -196,7 +178,6 @@ def main(argv: list[str] | None = None) -> int:
                 ha="left", va="bottom", fontsize=9, color=style.INK)
         if k < 3:
             ax.set_xlabel(r"$t$")
-    axs[5].set_xlabel(r"$t$")
 
     print(f"[single-collapse] MOTS from t = {hA['time'][0]:.1f}, "
           f"R_mots {hA['R_mots'][0]:.3f} -> {hA['R_mots'][-1]:.3f}, "
@@ -205,7 +186,9 @@ def main(argv: list[str] | None = None) -> int:
 
     out = pathlib.Path(args.out) if args.out else (
         figure_dir(GROUP, args.pack_root) / "single_throat_collapse.png")
+    hits = style.label_audit(fig)
     png = style.save(fig, out)
+    print(f"[single-collapse] label audit: {len(hits)} overlaps")
     print(f"[single-collapse] wrote {png} (+pdf)")
     return 0
 

@@ -273,6 +273,12 @@ def main(argv: list[str]) -> int:
     w("  physics of the branch or the origin failing is open (a −ε arm at level 3 answers it).")
     w("- The late constraint growth on both branches is unexplained.")
     (group_dir(root, "01_single_throat") / "BRANCHES.md").write_text("\n".join(out) + "\n")
+    # --no-figure: the note only.  The pack runs it so (2026-09-26): figures/ holds
+    # the paper's figures and nothing else, and this stand-alone strip is not one
+    # of them -- its two panels are Fig. 1(a,b), drawn by plot_single_throat_row.
+    if "--no-figure" in argv[1:]:
+        print("[branches] wrote campaign/01_single_throat/BRANCHES.md (no figure)")
+        return 0
 
     # --- figure ---------------------------------------------------------------------------
     import matplotlib

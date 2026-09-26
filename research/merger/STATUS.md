@@ -15,14 +15,19 @@ t = 218, and its reflection runs back in, reaching the neck as the run dies. The
 passes 0.1 at t = 220. Result: R 3.813 → 14.48 (×3.80) by t = 218 with no trapped surface. The onset is exponential,
 T = 5.69 over t = 16–28. In proper time it grows at the Shinkai–Hayward rate over t = 16–40: H R0 = 1.22 (their 1.1). The θ_k = 0 horizon
 grows to R = 73.4 by t = 212. The launch passed a trimmed frame list, so it has **no Weyl4 or shift frames** (lost). Its
-scratch (24 GB) was pruned at 05:53 on the user's word. Figures: `single_throat_inflation_L512` (campaign page,
-final). The paper's Fig. single_inflation and §IV.D are rebuilt on F4 alone; Table I counts it (145 runs, 663 GPU-hours).
+scratch (24 GB) was pruned at 05:53 on the user's word. Figures: the paper's `fig:single_inflation` (the `single_throat_inflation_L512` campaign page was retired from `figures/` on 2026-09-26). The paper's Fig. single_inflation and §IV.D are rebuilt on F4 alone; Table I counts it (145 runs, 663 GPU-hours).
 
 **Wiped on the user's word** (2026-09-26 04:16–04:18, frames included, `manifests/MANIFEST_CLEANUP_2026-09-26.md`): the failed
 harmonic retries F5 `…harm_oct_t400_sg03` / `_sg10` (NaN at t = 46.71 / 47.01 on F3's wall) and F6 `…harm_oct_zs_t400`
 (zero shift, runaway from t ≈ 29). Earlier: F3 and F2 (16:33), F1b (14:15). No NaN-free re-run (3D harmonic with
 solution-following refinement, or a 1D spherical code): the user's no-go, 2026-09-26. The question is only whether the
 throat keeps growing, and F4 answers it.
+
+Done 2026-09-26 (not committed): the paper's layout, on a referee-style read. The constraint panels of Figs. 1/2/3/5/7
+(old numbers 1/2/4/6/9) became one appendix figure, `fig:constraints` (App. A, "Code Health and Constraint Evolution",
+each run at its highest level); regrowth, refinement ladder and fill insensitivity moved to App. A, mouth growth, seed
+linearity and scalar censorship to App. B. `results/merger/figures/` now holds the paper's 18 figures only (17 others
+deleted, `p012_paper/` flattened) and `pack_results.sh` draws none. Ledger: 951 rows, 0 problems.
 
 Done 2026-09-26 (pushed): the full default frame set (`frames_default.txt`), with a preflight that renders every field
 at t = 0 and refuses a subset without `WHM_FRAMES_SUBSET`; movies cut at each run's trust window

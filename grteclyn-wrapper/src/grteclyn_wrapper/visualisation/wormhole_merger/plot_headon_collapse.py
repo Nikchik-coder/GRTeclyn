@@ -29,7 +29,7 @@ Reads, all under ``campaign/04_binary_headon/``:
 * ``merge_headon_flip_d8_v1_lvl3down_t100_r03500/`` -- back to max_level 3 from
   the level-5 t = 35 checkpoint, no fill: THE LATE HORIZON TRACK the text and
   the ledger quote (clmHeadonRemnantRadius, clmHeadonRadiusSlope, the M_MS
-  fit), and the down-step constraint curve on (e).
+  fit).
 * ``merge_headon_flip_d8_v1c_fillnarrow_t100_r02200/`` -- the fill twin (level
   3, fill 1.0/1.5 from t = 26.5, same t = 22 restart state as the down-step's
   parent).  Its live scan's aperture was never closed, so it tracks the
@@ -73,8 +73,10 @@ line; how the radius compares to the initial data"): a top-of-page strip,
 7.05 x 4.3 in, set at 0.80\textwidth under [t].  The remnant's horizon is the
 figure -- areal radius (a) and Misner-Sharp mass (b) on the left half, data
 joined, the ledger's fits dashed, the initial data ruled -- and the right half
-keeps the four panels the text leans on: the approach (c), max|K| through the
-wall (d), the constraints (e) and the field that is swallowed (f).  The (2,0)
+keeps the three panels the text leans on: the approach (c), max|K| through the
+wall (d) and the field that is swallowed (e).  The Hamiltonian norms (scout,
+level 5, down-step), once a panel here, are panel (e) of the appendix's
+code-health figure (``plot_constraint_evolution``, 2026-09-26).  The (2,0)
 wave left (Sec. VIII draws it), and so did min alpha, min chi and the null
 expansions at the areal minimum (their numbers stay in the text).  style.prd
 frame, letter tags above the frames, every series named in place, no boxed
@@ -199,9 +201,7 @@ def main(argv: list[str] | None = None) -> int:
 
     ds = _sorted(scout / "collapse_diagnostics.dat")
     d5 = _sorted(arm / "collapse_diagnostics.dat")   # seamless: nothing to settle
-    cs = _sorted(scout / "constraint_norms.dat")
-    c5 = _sorted(arm / "constraint_norms.dat")
-    c3 = _clipped(down / "constraint_norms.dat")
+    c5 = _sorted(arm / "constraint_norms.dat")    # the console's H line only
     col_s = {n: ds[:, i + 1] for i, n in enumerate(COLS)}
     col_5 = {n: d5[:, i + 1] for i, n in enumerate(COLS)}
     t_s, t_5 = ds[:, 0], d5[:, 0]
@@ -273,8 +273,7 @@ def main(argv: list[str] | None = None) -> int:
     axB = fig.add_subplot(gs[1, 0:2], sharex=axA)
     axC = fig.add_subplot(gs[0, 2])
     axD = fig.add_subplot(gs[0, 3])
-    axE = fig.add_subplot(gs[1, 2])
-    axF = fig.add_subplot(gs[1, 3])
+    axE = fig.add_subplot(gs[1, 2:4])
 
     def tag(ax, letter):
         ax.text(0.0, 1.03, f"({letter})", transform=ax.transAxes,
@@ -382,48 +381,28 @@ def main(argv: list[str] | None = None) -> int:
     axD.text(62.0, 0.30, "level 5", fontsize=fs, ha="center", va="bottom",
              color=style.INK)
 
-    # (e) the Hamiltonian norm: the scout climbs out of the frame at its wall;
-    # the no-fill arms fall after it, bottom out (t ~ 48 / 59) and creep back
-    # up, the level-5 arm ending at 2.7e-3 -- under its 4.6e-3 at formation.
-    # The momentum norm does the same and is left to the text: at this width
-    # a fourth curve 0.2 dex from the ink could not carry its own name.
-    axE.semilogy(cs[:, 0], cs[:, 1], color=style.CONTEXT, lw=0.9)
-    axE.semilogy(c5[:, 0], c5[:, 1], color=style.INK, lw=1.1)
-    axE.semilogy(c3[:, 0], c3[:, 1], color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)))
-    axE.set_ylim(2.5e-4, 3e-2)
-    axE.set_ylabel(r"$\|\mathcal{H}\|_{L^2}$")
-    axE.set_xlabel(r"$t$")
-    axE.text(29.5, 1.6e-2, "level 3", fontsize=fs, ha="left", va="center",
-             color=style.CONTEXT)
-    axE.annotate("level 5", (64.0, np.interp(64.0, c5[:, 0], c5[:, 1])),
-                 xytext=(0, 3), textcoords="offset points", fontsize=fs,
-                 ha="center", va="bottom", color=style.INK)
-    axE.annotate("down-step", (64.0, np.interp(64.0, c3[:, 0], c3[:, 1])),
-                 xytext=(0, -3), textcoords="offset points", fontsize=fs,
-                 ha="center", va="top", color=style.MUTED)
-
-    # (f) the field that held the throats open, swallowed ----------------------
+    # (e) the field that held the throats open, swallowed ----------------------
     phi5 = np.maximum(abs(col_5["min_phi"]), abs(col_5["max_phi"]))
     pi5 = np.maximum(abs(col_5["min_Pi"]), abs(col_5["max_Pi"]))
     phis = np.maximum(abs(col_s["min_phi"]), abs(col_s["max_phi"]))
-    axF.semilogy(t_s, phis, color=style.CONTEXT, lw=0.9)
-    axF.semilogy(t_5, phi5, color=style.INK, lw=1.1)
-    axF.semilogy(t_5[t_5 > 0.2], pi5[t_5 > 0.2], color=style.MUTED, lw=0.9,
+    axE.semilogy(t_s, phis, color=style.CONTEXT, lw=0.9)
+    axE.semilogy(t_5, phi5, color=style.INK, lw=1.1)
+    axE.semilogy(t_5[t_5 > 0.2], pi5[t_5 > 0.2], color=style.MUTED, lw=0.9,
                  ls=(0, (4, 2.5)))
-    axF.set_ylim(1.5e-3, 2.5)
-    axF.set_ylabel(r"$\max|\phi|,\ \max|\Pi|$")
-    axF.set_xlabel(r"$t$")
-    axF.text(6.0, 1.15, r"$|\phi|$", fontsize=8, ha="left", va="bottom", color=style.INK)
+    axE.set_ylim(1.5e-3, 2.5)
+    axE.set_ylabel(r"$\max|\phi|,\ \max|\Pi|$")
+    axE.set_xlabel(r"$t$")
+    axE.text(6.0, 1.15, r"$|\phi|$", fontsize=8, ha="left", va="bottom", color=style.INK)
     # Under the dashed hump, right of both rules, where the ink is a decade up.
-    axF.text(31.0, 0.036, r"$|\Pi|$", fontsize=8, ha="left", va="top", color=style.MUTED)
+    axE.text(31.0, 0.036, r"$|\Pi|$", fontsize=8, ha="left", va="top", color=style.MUTED)
 
-    for ax in (axC, axD, axE, axF):
+    for ax in (axC, axD, axE):
         rules(ax)
         ax.set_xlim(-1.5, t_end + 1.5)
     axC.tick_params(labelbottom=False)
     axD.tick_params(labelbottom=False)
 
-    for ax, letter in zip((axA, axB, axC, axD, axE, axF), "abcdef"):
+    for ax, letter in zip((axA, axB, axC, axD, axE), "abcde"):
         tag(ax, letter)
 
     out = (pathlib.Path(args.out) if args.out else
@@ -431,7 +410,7 @@ def main(argv: list[str] | None = None) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     hits = style.label_audit(fig)
     png = style.save(fig, out)
-    print(f"[headon collapse] wrote {png} (+pdf); 6 panels, 7.05 x 4.3 in, "
+    print(f"[headon collapse] wrote {png} (+pdf); 5 panels, 7.05 x 4.3 in, "
           f"{len(form) + len(late)} offline + {len(tm5) + len(tm3)} live MOTS points "
           f"+ {len(tmf)} fill-twin rows; label audit: {len(hits)} crossing(s)")
     return 0
