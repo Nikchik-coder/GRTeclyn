@@ -78,6 +78,9 @@ __pycache__/
 # LaTeX build junk
 *.fdb_latexmk
 *.fls
+# SyncTeX (editor <-> PDF jumps): holds this machine's absolute paths
+*.synctex.gz
+*.synctex(busy)
 
 # Submission bundle (regenerable)
 /research/neuralspacetime/article/research_submission.zip
