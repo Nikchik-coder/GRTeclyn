@@ -32,7 +32,7 @@
 #   --gpu ID          CUDA device.  Check who else is on the card first:
 #                     other people's runs share these GPUs
 #   --profile NAME    consumer profile (see lib/consumer_profiles.sh):
-#                     headon | headon-scout | orbit | orbit-modes | bbh | chi | none
+#                     headon | headon-scout | orbit | orbit-modes | orbit-modes-scan | bbh | chi | none
 #                     Every profile renders the campaign's full frame set,
 #                     frames_default.txt (bbh less the scalar fields, chi only
 #                     chi).  The preflight REFUSES a launch whose frames miss a

@@ -1115,6 +1115,8 @@ The user's ~40 comments on the compiled paper ("update the paper and the plan ba
 | G16 | TAKE 2's checkpoints and plotfiles to t ≈ 70, read offline (H, Θ, Z at the horizon) | the double layer's history through the floor | 0 (CPU) |
 | G17 | Δt halved (dt_multiplier 0.02 → 0.01) on the level-3 unkicked single throat and the level-3 head-on scout (L = 64, to t = 60) | the time-discretisation error, which the paper now declares untested (referee, 2026-09-26) | ~12 |
 | G18 | the vacuum BBH controls re-run on the drainhole runs' numerical settings (Δt factor, dissipation, sponge, levels) | the numerical systematic in the 8.5× and 40–70× ratios, now declared unquantified (referee, 2026-09-26) | ~15 |
+
+**Superseded 2026-09-26 (evening), the user's word:** the queue is the convergence list alone (G9 → CONV-3, G12 → CONV-6, G17 → CONV-2); every other row here is dropped ["2026-09-26 (evening) — the convergence queue"].
 | — | ~~η = 4 level-5 death-window flow hunt, Plt05520–06000 (second node)~~ **DONE 2026-09-25: CENSORED** (MOTS from ≤ 55.2; "2026-09-25 (morning)") | censored or naked at level 5 | 0 (CPU) |
 
 Bookkeeping, no GPU: ~~re-pack `merge_twin_p012_eta4_lvl5_t066_r05000` to its death~~ (done 09-24, filed and read from the pack 09-25); add TAKE 2 to `claims/table1_groups.tsv` BEFORE its first pack (else `check` fails); decide Table I's counting rule for duplicates and no-knob re-runs (fix the HOOKFAIL "dead launch" note); the collapsing throat's E_GW integrates its floor to t = 70 (gated at 58 it is 2.6e-5, not 3.2e-5 — Fig. 11 and the detector rows follow); clmGwThroatOverControl uses the level-3 control (44× against the matched level-4 one); clmDetKerrRise uses the shape-inflated formation M_MS (R/2 gives 1.34, not 1.38; conclusion unchanged); the byte-identity sentence rests on an unpacked run (the packed `lvl3_t050` / `_mouths` pair is byte-identical and could replace it).
@@ -1319,6 +1321,86 @@ need to be analysed and packed").
   delete frames. **Kept, the user's call:**
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
+
+### 2026-09-26 (evening) — the convergence queue: nine runs, templates preflighted, memory measured; every other option dropped
+
+**The user's word (17:00 UTC):** the queue holds the paper's convergence runs only; every other option leaves it. G1–G8,
+G10, G11, G13–G16 and G18, the audit runs A1–A4 and the inflation campaign are dropped. G9 is CONV-3, G12 is CONV-6, and
+G17 becomes CONV-2 (the single throat only; the head-on scout arm is dropped). The list is the referee's convergence
+table plus two abstract numbers that stood on one resolution: the p = 0.35 pass and the sign ratio. Adjustments to the
+referee's specs:
+- **Level-5 single throat.** The "free" check fails: Table I's only level-5 kicked arm is the L = 512 octant, whose
+  finest cell (1/16) is level 3 at L = 64. The arm is ε = −10⁻², whose levels 3 and 4 exist. An unkicked level-5 throat
+  would pass 1 % only at t ≈ 56–62 (level 3 at 44, +5.6–8.7 per level), too late for a t = 60 stop.
+- **G9.** One leg from Chk03600 with `core_fill_from_time = 57`, not the referee's fill at t = 50. Arming at 50 comes
+  before the common MOTS (first found at 55.0) and moves the freeze's light cone at R = 20 from t ≈ 75 to 68.
+- **Fly-by twins.** t = 95, not 90: the t − R ≤ 50 gate on the R = 44 sphere needs t = 94.
+
+Runs dropped as not required: the merging mouths at level 5, the octant one level finer, the lone-throat wave at level
+5, the force-law ladder and the placement curve at level 4.
+
+| id | run | template (`templates_scan/params_…`) | binary | converges |
+|---|---|---|---|---|
+| CONV-1 | `single_eps_m1e2_ml5_t060` | `single_eps_m1e2_ml5_t060` ← `…_ml4_t100` | pin | τ at levels 3/4/5 (the kicked arm; fit all three) |
+| CONV-2 | `single_eps_m1e2_halfstep_t060` | `single_eps_m1e2_halfstep_t060` ← `…_t100` | boost (the partner's) | Δt/2; plot and regrid intervals doubled so the output and regrid times match |
+| CONV-3 | `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` | `prod_L128_p012_lvl4_t100_freeze` ← `…_lvl5_t100_freeze` | coreprof-15 (the legs') | spiral burst and energy, level 4 vs 5 |
+| CONV-4 | `merge_orbit_flip_d12_p045_L128_lvl4_t095` | `flyby_p045_L128_lvl4_t095` ← `…_lvl5_t100` | pin | fly-by energy, scalar, mouths |
+| CONV-5 | `merge_orbit_flip_d12_p045_L128_lvl3_t095` | `flyby_p045_L128_lvl3_t095` ← same | pin | the third fly-by level |
+| CONV-6 | `merge_headon_flip_d8_lvl5from0_ball4_t100` | `headon_d8_lvl5from0_ball4_t100` ← the `…v1_lvl5from0_scalar_t100` params | boost (the partners') | remnant horizon on level 4 |
+| CONV-7 | `merge_orbit_flip_d12_p035_lvl5_t080` | `scan_p035_lvl5_t080` ← `scan_p035_t200` | pin | p = 0.35 at level 5 |
+| CONV-8a/b | `ctrl_rest_d12_ml4_t015`, `ctrl_flip_d12_ml4_t015` | `ctrl_{rest,flip}_d12_ml4_t015` ← `ctrl_rest_d12`'s params (+ φ sign −1) | pin | sign ratio at level 4 |
+
+- **Why these binaries.** Each run takes its partner's build: boost_2026-09-08 for the boost-built partners,
+  coreprof-15 for the spiral legs. The pin is coreprof-16's source plus a version stamp, and it matches the other
+  partners. Every feature added since b69c5940 defaults off and is bit-identical off (e75e1aaa, 10792507, 67699981).
+- **Consumer profile.** `orbit-modes-scan` is new in `lib/consumer_profiles.sh`: orbit-modes plus the per-mouth
+  horizon scan (`--horizon-r-exact 3.8895`, default half-width). It is what the level-5 fly-by ran as orbit-modes +
+  `--horizon-scan`, and the level-4 and level-3 twins are its second and third users.
+- **Where each run is set up.**
+  - CONV-6's level-4 ball is the stock ExtractionTagger: a 4th radius R = 3.0 at required level 4 tags r < 1.2 R = 3.6
+    on every coarser level. It is appended last, so the 10/14/18 wave spheres keep their columns. A level-5 ball
+    (~65M cells) would not fit a card.
+  - CONV-8's parents wrote only chi K lapse phi Pi; the full plot list is added (output only) because the frame set
+    needs shift and h_ij.
+  - The level-4 and ball templates had `checkpoint_files_output = 0` beside a checkpoint interval, which the preflight
+    refuses; rolling checkpoints are on instead.
+- **Preflight** (`--preflight-only`, 2026-09-26 16:45–16:55 UTC, both cards of the first node, nothing launched):
+  - All nine PASS. Frame 0 was eyeballed for CONV-4 (the full L = 128 box, throats at ±6) and CONV-6 (±4).
+  - Two first-pass refusals were set-up errors, both fixed: CONV-3's `--restart` was relative (AMReX could not open the
+    Header from the run dir; it must be absolute), and CONV-8 lacked the plot variables.
+  - CONV-3's restart start-up writes no plotfile, so its frames are checked at launch.
+- **Memory.** Peak = AMReX arena high-water + ~1.3 GB (see the table below).
+  - Measured, by the memory audit of every run log: L = 64 single level 3: 18.4; L = 64 single level 4: 21.4–22.1;
+    L = 64 binary level 4 (FAB): 37.6; L = 64 binary level 5: 47.7 (the head-on) and FAB 42.8 (p = 0.25);
+    L = 128 binary level 3: 50.3–50.5; level 5: 57.8–58.9; the Chk03600 → level-5 leg: FAB 55.2 (live 58.4);
+    the freeze leg: 54.2.
+  - The preflight start-up footprint × 1.8 reproduces every measured case, and fills in the rest (start-up → estimated
+    peak): CONV-1 13.2 → 27; CONV-2 10.1 → 20; CONV-4 31.1 → 56; CONV-5 28.1 → 52; CONV-6 32.9 → 60; CONV-7 23.5 → 47;
+    CONV-8 20.6 → 41. CONV-3 is taken as CONV-4's 56, since its restart start-up holds only the checkpoint's three levels.
+  - Fly-bys add 1–5 GB when the throats pass. Level-5 restarts add 9–14 GB within 4 steps. Most runs peak in step 1, and
+    nothing checks free memory before a launch (`--gpu` only sets CUDA_VISIBLE_DEVICES). The OOMs so far are
+    `merge_twin_p012_lp2_t060` (a third L = 64 level-3 arm on a card) and the lp2 level-5 head-on beside the L = 128 arm.
+- **Throughput.** Sharing a card buys nothing: two L = 64 level-4 arms ran 3.9 u/h each against 8.7 alone (Phase 2b
+  row). The plan is one arm per card, back to back:
+  - card 0: CONV-8a → 8b → 3 → 4 → 6 (70 GPU-h)
+  - card 1: CONV-2 → 1 → 5 → 7 (67 GPU-h)
+  - That is ~3 days, and ~140 GPU-h in all. Speeds are the measured class rates: L = 64 single level 5 at 4.2,
+    L = 128 level 4 at 4.5 (estimated), and the L = 64 level-5 binaries at 2.1–2.3 before merger, 4.2–4.6 after.
+  - Memory-safe pairs if two must share: CONV-1 + 2, CONV-2 + 8, CONV-1 + 8, CONV-2 + 7.
+- **LAUNCHED 17:17–17:19 UTC (the user's word: "start it … no checkpoints, frames on, 1 2 gpu 0, then 3 on gpu 1").**
+  - The three templates had their checkpoints switched off first: `checkpoint_interval = -1`,
+    `amr.checkpoint_files_output = 0`, `checkpoint_keep` dropped, the preflight's own recipe.
+  - Each template was diffed against its partner's actual `evolution_params.txt`: only levels/regrid, the stop time,
+    CONV-2's dt with its doubled plot/regrid intervals, and the checkpoint keys differ.
+  - Each launch ran the full preflight first, and all three PASS. The seed takes on both single-throat arms. The only
+    extra unread keys are `write_extraction` (CONV-2, extraction off as in its partner) and the plot lists (CONV-3's
+    restart start-up writes no plotfile).
+  - Card 0 holds CONV-1 + CONV-2 (45.6 GB together); card 1 holds CONV-3 (45 GB at the restart).
+  - Frame 0 was eyeballed for CONV-1 and CONV-2 (one centred throat, identical data). CONV-3's first frame comes at t = 37.
+  - With no checkpoints, CONV-3's fallback (if level 4 dies before t = 57) is a re-run from Chk03600 with the fill
+    armed earlier.
+- **The paper, same session.** §III's "We have not tested a smaller step" was wrong: the spiral ladder has a level-5
+  half-step arm. It now reads "A halved step was run only on the spiral's interior failure…" (not committed).
 
 ### 2026-09-26 (afternoon, paper session) — the referee's fixes: retitled, cosmology conditional, "interior failure", no vacuum ISCO, the mouths' clock re-read; fly-by trusted to t = 70; ledger 1000 rows, 0 problems
 

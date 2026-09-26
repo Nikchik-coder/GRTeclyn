@@ -138,6 +138,14 @@ consumer_profile() {
       echo "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2"
       ;;
+    orbit-modes-scan)
+      # orbit-modes plus the per-mouth horizon scan (fixed scan window, default
+      # --horizon-half): what the level-5 fly-by merge_orbit_flip_d12_p045_L128_lvl5_t100
+      # ran with, so its level-4/3 twins (2026-09-26 convergence queue) extract the same.
+      echo "--frames-fields ${WHM_FRAMES_FULL}" \
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2" \
+           "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895"
+      ;;
     bbh)
       echo "--frames-fields $(whm_frames_without phi Pi scalar_activity local_speed)" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
@@ -181,7 +189,7 @@ consumer_profile() {
 }
 
 consumer_profile_names() {
-  echo "headon headon-modes headon-scout orbit orbit-modes bbh chi inflation inflation-octant none"
+  echo "headon headon-modes headon-scout orbit orbit-modes orbit-modes-scan bbh chi inflation inflation-octant none"
 }
 
 # The reason a profile renders less than the full frame set, when the subset is

@@ -1,4 +1,4 @@
-# Status — 2026-09-26 16:05 UTC
+# Status — 2026-09-26 17:25 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -6,7 +6,14 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Live
 
-Nothing. Both cards on the first node are free.
+**LIVE on the first node since 17:17–17:19 UTC, 2026-09-26: CONV-1, CONV-2 and CONV-3** (the user's word, with the
+user's placement). Each passed the full preflight before it started. Each runs with no checkpoints (the user's word)
+and the full frame set.
+- **GPU 0: CONV-1 `single_eps_m1e2_ml5_t060` and CONV-2 `single_eps_m1e2_halfstep_t060`**, sharing the card (45.6 GB
+  together). Frame 0 checked for both.
+- **GPU 1: CONV-3 `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600`**, restarted from Chk03600 on coreprof-15 (45 GB at
+  the restart). Its first frame comes at t = 37. With no checkpoints, if level 4 dies before t = 57 the frozen-core leg
+  re-runs from Chk03600 with the fill armed earlier.
 
 **Done 2026-09-26 (afternoon, not committed): the referee's fixes** ["2026-09-26 (afternoon, paper session)"]. Retitled "The Four Fates of Ghost-Supported Wormholes: Collapse, Inflation, Merger and Scattering in Numerical Relativity"; the abstract is the user's own text (16:00 UTC). Cosmology conditional on z_e; no "baby universe", no percolation bound; "wall" → "interior failure"; no vacuum ISCO (the pull's period P = 75–100; ε = 1e-15 buys 1.8–2.7 periods); η = 4 horizons in §VII C; fly-by trust window t = 70 (new Fig. 10(g); Figs. 14/15/17/18 cut). Re-read on CPU: throat energy 2.6e-5 (to t = 58), 44× the matched control; Kerr rise 1.34; orbit fractions 0.27–0.30; **the mouths' τ with the companion's field removed: the merging arm has no growth of its own, the fly-by τ = 3.9** (the referee's "lower bound" had the wrong sign); the mouth fit had dropped its end rows (τ 3.64/4.33 now). 17 references. Ledger: 1000 rows, 0 problems. Caveats the referee asked for are in the text (Δt, ADM balance, curvature at the failure): G17/G18 queued. The head-on t ≤ 70 sentence was narrowed on the user's word (16:10 UTC): its numbers past t = 70 carry the late spread; no re-gate. No DOI yet (the user will add it).
 
@@ -60,34 +67,62 @@ that session's scratchpad there.
 Second node (one H100): free; the η = 4 level-5 probes are closed out, hunted and filed
 ["2026-09-25 (morning)"]. Its scratch is empty (205 GB pruned, MANIFEST_CLEANUP_2026-09-25).
 
-Run tree: every plotfile deleted on the user's word; 192 → 52 GB. Two checkpoints remain for
-the user's call: Chk05700 (26 GB, G4's input) and Chk03600 (20 GB, the t = 36 seed of G8/G9).
+Run tree: every plotfile deleted on the user's word; 192 → 52 GB. Two checkpoints remain: Chk03600 (20 GB, the t = 36 seed of CONV-3) and Chk05700 (26 GB, no queued
+use since G4 was dropped; the user's call).
 
-## Queued — nothing launches without the user's word
+## Queued — the convergence runs, and nothing else (the user's word, 2026-09-26 17:30 UTC)
 
-- **Paper edit, DONE 2026-09-26:** the 09-25 η = 4 horizon results are in §VII.C (10 ledger rows).
-- **Paper decision, DONE 2026-09-26 — narrowed, not re-gated (the user's word):** the referee's "we quote no head-on waveform property after t = 70" is in the text but holds only after re-gating the head-on at t = 70 (~25 rows move: E 3.3e-3 → 3.0e-3, LISA head-on SNR 61–76 → 63–64, detectable masses 3.3e4–4.5e6, FF 0.82 → 0.87, censorship fits 30–70; the head-on horizon/injection rows need `gws` on O3b; Figs. 7/8/18) ["2026-09-26 (afternoon, paper session)"]. Re-gate, or scope the sentence.
-- **Paper edit, DONE 2026-09-26 — the inflation radii** ["2026-09-25 (13:30)", "2026-09-26 (05:00 UTC)"]: the level-4 / L = 64 / L = 128 inflation radii are r/√χ lower bounds. The user's decision (2026-09-26): "they are no go for the paper — only L512 lvl5 is proper". Fig. `single_throat_inflation` and §IV's inflation text are being rebuilt on F4 alone (full-metric R, quoted to t = 218), and the level-4 radius claims are removed.
-- **Inflation campaign, PROPOSED (the user's call)** [same entry]: corrected R + horizon tracker in the consumer; a slicing that does not freeze at the throat (harmonic / shock-avoiding, C1); refinement following the horizons instead of fixed cubes; the compactified other universe resolved or excised.
-- **Paper edit, DONE 2026-09-26 — the inflation ending** ["2026-09-25 (06:30)", "2026-09-26 (05:00 UTC)"]: §IV.D's "unbounded coasting, as in the spherical literature" (research.tex ≈ l. 267) misstates Shinkai–Hayward and GGS II, whose ending is exponential inflation in PROPER time. Replace it with F4's measurement: exponential in the neck's proper time at H R0 = 1.22 over t = 16–40 (SH 1.1, linear 1.30), with the coordinate-time slowdown being 1+log freezing the neck's clock. It goes in with the paper figure's rework (caption and a concise text edit).
-- **The runs the paper now asks for: G1–G16** ["2026-09-24 (afternoon) — the user's read of the whole paper"], ~300 GPU-h in all; the cheap discriminators first: G14/G15 (what makes the numerical regrowth, ~12 GPU-h each), G13 (the ε₂ decades, ~22), G1 (η = 4 chain on L = 128, ~12), G4 (curvature invariants at the wall, ~1 + code).
-- Audit runs A1–A4 below; B1–B4 and C1–C2 are now G8–G11 and G6–G7. They run on the campaign pin, `main3d_guard_7166787a_2026-09-24.ex` since 2026-09-24 06:10 (stamped; reads the seed and the core profile). A restart of an old-pin run keeps the old pin unless `--binary` says otherwise.
-- Ambiguous: the lp2 level-5 head-on is "CANCELLED" [REFEREE-QUEUE CLOSEOUT] but listed as queued [evening audit]; treat as cancelled.
+Nothing launches without the user's word. Every other option (G1–G18, A1–A4, B/C, the inflation campaign) was dropped
+from the queue on the user's word ["2026-09-26 (evening) — the convergence queue"]. Each template is its partner's params
+with only the named keys changed, and all nine PASS the full preflight (2026-09-26 16:50 UTC; nothing launched).
 
-## Open questions → the runs that settle them  ["2026-09-23 (evening) — the article audit…"]
+| id | run (template in `templates_scan/params_*`) | converges | partner | GPU-h | peak GB |
+|---|---|---|---|---|---|
+| CONV-1 **LIVE** | `single_eps_m1e2_ml5_t060` (`single_eps_m1e2_ml5_t060`) | τ: third level, a convergence order (abstract) | `single_eps_m1e2_t100` / `_ml4_t100` | 14 | 27 |
+| CONV-2 **LIVE** | `single_eps_m1e2_halfstep_t060` (`single_eps_m1e2_halfstep_t060`) | Δt: dt_multiplier 0.01, intervals doubled (§III) | `single_eps_m1e2_t100` | 7 | 20 |
+| CONV-3 = G9 **LIVE** | `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` (`prod_L128_p012_lvl4_t100_freeze`) | spiral burst and energy, level 4 vs 5; fill at t = 57 in the same leg | the production chain | 9 | 56 |
+| CONV-4 | `merge_orbit_flip_d12_p045_L128_lvl4_t095` (`flyby_p045_L128_lvl4_t095`) | fly-by energy, scalar, mouths; t = 95 reaches the R = 44 gate | `…p045_L128_lvl5_t100` | 21 | 56 (+1–5 at the pass) |
+| CONV-5 | `merge_orbit_flip_d12_p045_L128_lvl3_t095` (`flyby_p045_L128_lvl3_t095`) | the fly-by's third level (order) | same | 11 | 52 (+1–5) |
+| CONV-6 = G12 | `merge_headon_flip_d8_lvl5from0_ball4_t100` (`headon_d8_lvl5from0_ball4_t100`) | remnant horizon on level 4, not 3 ("loses a quarter", abstract) | `…v1_lvl5from0_scalar_t100`, `…v1_lvl3down_t100_r03500` | 34 | 60 |
+| CONV-7 | `merge_orbit_flip_d12_p035_lvl5_t080` (`scan_p035_lvl5_t080`) | p = 0.35 passes at level 5 (the abstract's 50–70 %) | `…p035_t200` (closest 2.75 at t = 42) | 35 | 47 |
+| CONV-8a/b | `ctrl_rest_d12_ml4_t015`, `ctrl_flip_d12_ml4_t015` | the sign ratio 1.52 at level 4 (abstract) | `ctrl_rest_d12`, `ctrl_flip_d12` | 3 + 3 | 41 each |
 
-| id | question | cost |
-|---|---|---|
-| A1 | pure-quadrupole collapse on a seeded binary: does it reproduce? its scalar record | ~10 h |
-| A2 | kicked-quadrupole lone collapse, scalar decay (now a spherical-kick stand-in) | ~10 h |
-| A3 | unkicked throat's horizon time (t = 61 is only an upper bound) | ~6 h |
-| A4 | p = 0.35: escape or turn back? (pins 0.25 < p < 0.35) | ~8 h |
-| B1 | spiral scalar/GW ratio through the burst | ~24 h |
-| B2 | first resolution test of the spiral burst | ~15–20 h |
-| B3 | half-mass head-on at level 5 past its censored wall? | ~12–18 h |
-| B4 | fly-by mouths after t ≈ 43 (R = 33 is a window edge); needs a re-run, no plotfile survives | ~47 h |
-| C1 | the wall: slicing shock or physical? (shock-avoiding slicing) | code + ~12 h |
-| C2 | close Ṁ_ADM = −F_GW − F_φ (surface ADM mass, flux shift terms) | code + ~28 h |
+~140 GPU-h in all. GPU-h are solo speeds (measured for the parent class, level-4 L = 128 estimated at 4.5 u/h). Peak GB =
+AMReX arena high-water + ~1.3 GB context, measured on the parent class where one exists; the preflight start-up
+footprint × 1.8 reproduces every measured one (level-5 fly-by 34.0 → 58.8; L = 64 level-3 arm 17.8 → ~32). A card has
+79.6 GB; most runs peak in step 1.
+
+**Sharing a card buys nothing**: two L = 64 level-4 arms on one card ran 3.9 u/h each against 8.7 alone (GPU_PLAN
+Phase 2b). Live placement (the user's): card 0 runs CONV-1 and CONV-2 together, card 1 runs CONV-3. The rest go next, one arm
+per card, balanced at ~69 h a card:
+- card 1 after CONV-3: CONV-7 → CONV-4 → CONV-8a
+- card 0 after CONV-1/2: CONV-6 → CONV-5 → CONV-8b
+
+The queued templates still write rolling checkpoints. The user's no-checkpoint word was given for the three live runs.
+
+Pairs that fit if two must share: CONV-1 + CONV-2 (47 GB), CONV-2 + CONV-8 (61), CONV-1 + CONV-8 (68), CONV-2 +
+CONV-7 (67). Never CONV-8a + CONV-8b (82), and nothing beside CONV-3/4/5/6.
+
+Launch from the repo root with `L=grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh`,
+`B=runs/wormhole_merger/bin`. Check `nvidia-smi` first, and redirect each launch (`< /dev/null > <log> 2>&1`):
+```
+bash $L --gpu G --template params_single_eps_m1e2_ml5_t060.txt --name single_eps_m1e2_ml5_t060 --profile headon-scout
+bash $L --gpu G --template params_single_eps_m1e2_halfstep_t060.txt --name single_eps_m1e2_halfstep_t060 --profile headon-scout --binary $B/main3d_boost_2026-09-08.ex
+bash $L --gpu G --template params_prod_L128_p012_lvl4_t100_freeze.txt --name v2_spiral_d12_p012_L128_lvl4_t100_freeze --profile orbit-modes --zoom 64 --coord 64 --binary $B/main3d_coreprof_2026-09-15.ex --restart "$PWD/runs/wormhole_merger/05_binary_spiral/p012/_keep_spiral_premerger_decay/BinaryWormholeChk03600"
+bash $L --gpu G --template params_flyby_p045_L128_lvl4_t095.txt --name merge_orbit_flip_d12_p045_L128_lvl4_t095 --profile orbit-modes-scan --zoom 128 --coord 64
+bash $L --gpu G --template params_flyby_p045_L128_lvl3_t095.txt --name merge_orbit_flip_d12_p045_L128_lvl3_t095 --profile orbit-modes-scan --zoom 128 --coord 64
+bash $L --gpu G --template params_headon_d8_lvl5from0_ball4_t100.txt --name merge_headon_flip_d8_lvl5from0_ball4_t100 --profile headon-modes --zoom 40 --binary $B/main3d_boost_2026-09-08.ex
+bash $L --gpu G --template params_scan_p035_lvl5_t080.txt --name merge_orbit_flip_d12_p035_lvl5_t080 --profile orbit-modes
+bash $L --gpu G --template params_ctrl_rest_d12_ml4_t015.txt --name ctrl_rest_d12_ml4_t015 --profile orbit
+bash $L --gpu G --template params_ctrl_flip_d12_ml4_t015.txt --name ctrl_flip_d12_ml4_t015 --profile orbit
+```
+Each `--binary` is the partner's build: CONV-2 and CONV-6 compare against boost-built runs; CONV-3 splices onto the
+coreprof-15 legs. The rest run on the pin, which has the same source as the level-4/5 partners.
+- CONV-3's `--restart` must be an absolute path: the binary runs from the run dir, and a relative one aborted the first
+  preflight. If level 4 dies before t = 57, restart from its last checkpoint ≥ 55 with `core_fill_from_time` there.
+- CONV-6's ball is the stock ExtractionTagger: a 4th extraction radius R = 3.0 at level 4 refines r < 3.6. Its R = 3
+  Ψ4 is not a wave product.
+- CONV-8's parents wrote no shift or h_ij. The full plot list is added (output only), because the frame set needs it.
 
 ## Verdicts (the paper's wording; paper section in parentheses)
 
