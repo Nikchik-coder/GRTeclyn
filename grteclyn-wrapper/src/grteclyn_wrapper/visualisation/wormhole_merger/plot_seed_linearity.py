@@ -18,8 +18,10 @@ every arm; the in-code Weyl4 streams exist only on the 2026-09-18 arms)
 from ``campaign/01_single_throat/seed/`` and writes
 ``figures/01_single_throat/seed_linearity``.
 
-STYLE (the seed-branches grammar): single-column PRD frame, two stacked
-panels, no boxed key, curves named in place.  Panel (a) divides each arm's
+STYLE (the seed-branches grammar): a two-column PRD strip, two panels side
+by side (stacked in one column until 2026-09-26, when the article moved the
+figure to its appendix and the user asked for the horizontal layout, "so they
+take less space"), no boxed key, curves named in place.  Panel (a) divides each arm's
 R = 14 waveform by its own seed: linearity is the collapse of four curves
 onto one.  Panel (b) is amplitude against seed on log-log with the slope-1
 line through the headline arm; the pure quadrupole sits as an open marker
@@ -96,9 +98,7 @@ def main(argv: list[str] | None = None) -> int:
     seed = pathlib.Path(args.pack_root).expanduser() / "campaign" / GROUP / SEED_DIR
 
     style.prd(base=10.0)
-    fig, (axA, axB) = plt.subplots(
-        2, 1, figsize=(3.4, 3.8), constrained_layout=True,
-        gridspec_kw=dict(height_ratios=[1.2, 1.0]))
+    fig, (axA, axB) = plt.subplots(1, 2, figsize=(7.05, 2.45), constrained_layout=True)
 
     # ---- (a) each arm divided by its own seed: the collapse ---------------
     looks = {

@@ -18,8 +18,11 @@ Reads both arms' in-code ``Weyl4_mode_22.dat`` (dt = 0.01, spheres
 20/28/36/44) from ``campaign/05_binary_spiral/p012_paper/`` and writes
 ``figures/05_binary_spiral/fill_insensitivity``.
 
-STYLE (the seed-branches grammar): single-column PRD frame, two stacked
-panels on one clock, no boxed key, every curve named in place.  Panel (a)
+STYLE (the seed-branches grammar): a two-column PRD strip, two panels side
+by side on one clock (stacked in one column until 2026-09-26, when the
+article moved the figure to its appendix and the user asked for the
+horizontal layout, "so they take less space"), no boxed key, every curve
+named in place.  Panel (a)
 overlays the two arms at R = 20 -- ink solid under gold dots, so
 agreement reads as one bicolour curve.  Panel (b) is the per-sphere
 difference against the few-percent gate, on a log axis, grey ramp inner to
@@ -77,8 +80,7 @@ def main(argv: list[str] | None = None) -> int:
 
     style.prd(base=10.0)
     fig, (axA, axB) = plt.subplots(
-        2, 1, figsize=(3.4, 3.6), sharex=True, constrained_layout=True,
-        gridspec_kw=dict(height_ratios=[1.35, 1.0]))
+        1, 2, figsize=(7.05, 2.45), sharex=True, constrained_layout=True)
 
     # ---- (a) the two arms at the nearest sphere, one on top of the other --
     # The in-code Weyl4 stream already holds r*Psi4 (its peaks are 0.0293 /
@@ -94,6 +96,7 @@ def main(argv: list[str] | None = None) -> int:
     pk = np.abs(wa).max()
     axA.set_ylim(-1.25 * pk, 1.45 * pk)
     axA.set_ylabel(rf"$r\,\mathrm{{Re}}\,\Psi_4^{{2,2}}$  ($R={R0:g}$)")
+    axA.set_xlabel(r"$t$")
     # Named in place: the ink arm above its first crest, the dotted twin below.
     axA.text(0.03, 0.955, "(a)", transform=axA.transAxes, ha="left", va="top",
              fontsize=9, color=style.INK)

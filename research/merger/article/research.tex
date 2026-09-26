@@ -47,6 +47,17 @@
   \setcounter{dbltopnumber}{2}%
 }
 
+% The appendices are figures and little text, so every appendix page is a float
+% page.  Stock float pages centre their floats and spread the slack between
+% them; \packfloatpages stacks them from the top at a fixed gap instead.
+\makeatletter
+\newcommand{\packfloatpages}{%
+  \setlength{\@fptop}{0pt}%
+  \setlength{\@fpsep}{12pt}%
+  \setlength{\@fpbot}{0pt plus 1fil}%
+}
+\makeatother
+
 \graphicspath{{figures/}{../../../results/merger/figures/}}
 
 \hypersetup{
@@ -347,14 +358,7 @@ Halving the throat mass moves everything earlier without avoiding the horizon. A
 \subsection{Merger or fly-by}
 \label{sec:spiral:capture}
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.80\textwidth]{05_binary_spiral/momentum_scan_orbits.pdf}
-\caption{Merger or fly-by: the momentum scan from $d=\clmPairSeparation$ with opposite signs, from the head-on release ($p=0$) to the fly-by ($p=\clmSpiralMomentumFlyby$). (a)~Both throats in the orbital plane; (b)~their separation. The tracks are the coordinate positions of the $\chi$ pits, followed through each run. Grey, light to dark: the plunges $p=0$, $\clmSpiralMomentumProd$, $\clmSpiralMomentumFifteen$, $\clmSpiralMomentumTwenty$ and $\clmSpiralMomentumTwentyFive$, each drawn until $\chi$ first reaches its floor or the run ends (dots); gold: the fly-bys $p=\clmSpiralMomentumThirtyFive$ (dashed) and $\clmSpiralMomentumFlyby$. Every arm is level 3 except the $p=\clmSpiralMomentumFlyby$ fly-by, the level-5 arm of the text; since a level-3 pit sits on a cell of side $\clmFinestDx$, the tracks are averaged over two time units. The fly-by turns at closest approach, $\clmFlybyClosestApproach$ at $t\approx\clmFlybyClosestTime$; from $t\approx\clmFlybyScanEdgeTime$ its mouths have inflated past the scan window, and the faint stretch is the separation of the $\chi$ pits of two inflating mouths, not of two compact throats.}
-\label{fig:orbits}
-\end{figure*}
-
-Varying the tangential momentum $p$ of Sec.~\ref{sec:model:binary} at $d=12$ separates plunge from fly-by (Fig.~\ref{fig:orbits}). Released from rest, the pair falls straight in, and every pair from $p=\clmSpiralMomentumProd$ up to $\clmSpiralMomentumTwentyFive$ plunges to a merged core: $p=\clmSpiralMomentumFifteen$ repeats $p=\clmSpiralMomentumProd$'s endgame (a plateau at pit separation $\clmSpiralPlateauFifteen$ against $\clmSpiralPlateauTwelve$, then the dive), and the pits of $p=\clmSpiralMomentumTwenty$ and $\clmSpiralMomentumTwentyFive$ close to $\clmSpiralStallLow$--$\clmSpiralStallHigh$ at level 3 before its wall. At $p=\clmSpiralMomentumThirtyFive$ the pair passes at $\clmSpiralPassSeparation$ and recedes to $\clmSpiralRecedeSeparation$ by $t=\clmSpiralRecedeTime$ (level 3, stopped there); $p=\clmSpiralMomentumFlyby$ scatters. So every $p\le\clmSpiralMomentumTwentyFive$ merges and every $p\ge\clmSpiralMomentumThirtyFive$ does not: the boundary between merger and fly-by lies between these two values, at $\clmSpiralBoundaryLow$--$\clmSpiralBoundaryHigh\%$ of the circular value under the combined pull. That pull, $1+Q$ times gravity's (Eq.~\eqref{eq:force}), does not capture a pair by itself: it is central, so the pair keeps its angular momentum and swings past unless its closest approach falls inside contact. Nor do the fly-bys escape: both start below the circular momentum and so, in Newtonian terms, remain bound. What follows the pass is set by the throats, which inflate.
+Varying the tangential momentum $p$ of Sec.~\ref{sec:model:binary} at $d=12$ separates plunge from fly-by (Fig.~\ref{fig:orbits} in Appendix~\ref{app:supp}). Released from rest, the pair falls straight in, and every pair from $p=\clmSpiralMomentumProd$ up to $\clmSpiralMomentumTwentyFive$ plunges to a merged core: $p=\clmSpiralMomentumFifteen$ repeats $p=\clmSpiralMomentumProd$'s endgame (a plateau at pit separation $\clmSpiralPlateauFifteen$ against $\clmSpiralPlateauTwelve$, then the dive), and the pits of $p=\clmSpiralMomentumTwenty$ and $\clmSpiralMomentumTwentyFive$ close to $\clmSpiralStallLow$--$\clmSpiralStallHigh$ at level 3 before its wall. At $p=\clmSpiralMomentumThirtyFive$ the pair passes at $\clmSpiralPassSeparation$ and recedes to $\clmSpiralRecedeSeparation$ by $t=\clmSpiralRecedeTime$ (level 3, stopped there); $p=\clmSpiralMomentumFlyby$ scatters. So every $p\le\clmSpiralMomentumTwentyFive$ merges and every $p\ge\clmSpiralMomentumThirtyFive$ does not: the boundary between merger and fly-by lies between these two values, at $\clmSpiralBoundaryLow$--$\clmSpiralBoundaryHigh\%$ of the circular value under the combined pull. That pull, $1+Q$ times gravity's (Eq.~\eqref{eq:force}), does not capture a pair by itself: it is central, so the pair keeps its angular momentum and swings past unless its closest approach falls inside contact. Nor do the fly-bys escape: both start below the circular momentum and so, in Newtonian terms, remain bound. What follows the pass is set by the throats, which inflate.
 
 The $p=\clmSpiralMomentumFlyby$ fly-by ($L=128$, level 5 to $t=\clmFlybyEnd$) is a scattering pass: closest approach $\clmFlybyClosestApproach$ at $t\approx\clmFlybyClosestTime$, back out to $\clmFlybyFinalSeparation$ by $t=\clmFlybyEnd$ and still separating. The turn is orbital---it comes before the mouths outgrow the scan window---but the recession after it is not that of two compact throats. No trapped surface appears on the corrected scans at any time, and the run ends without a NaN. Instead both mouths inflate: from $t\approx\clmFlybyScanEdgeTime$ the throat lies beyond the scan window ($r\le\clmFlybyScanEdge$), whose edge reading---an upper bound on the throat's areal radius---reaches $\clmFlybyEdgeRadius$ by $t=97$, so from then on ``separation'' is that of the $\chi$ pits, which no scan ties to the throats (the faint stretch of Fig.~\ref{fig:orbits}). On the equatorial slices the pair's scalar dipole is wound into a two-armed trailing spiral, and each mouth drives a crescent of $\chi>1$ ahead of it ($\chi\sim\clmFlybyCrescentChi$ by $t=92$): the encounter ends not as two receding wormholes but as an expanding, orbit-wound cloud of the field that supported them.
 
@@ -438,7 +442,7 @@ The vacuum control---same $d$, $p$ and masses, no scalar---behaves as a binary b
 \subsection{Scalar channel and its sign}
 \label{sec:gw:scalar}
 
-$\Psi_4$ is blind to a spin-$0$ wave. Two opposite scalar charges---every merging pair here (Sec.~\ref{sec:pair})---carry a dipole, where a vacuum binary's leading moment is the quadrupole. The scalar stream rides the same spheres as $\Psi_4$ on the spiral and fly-by, so the two channels compare sphere by sphere (Fig.~\ref{fig:scalar_channel}). The recorded kinematic flux $F_{\rm kin}$ (Sec.~\ref{sec:setup:diagnostics}) approximates the scalar energy crossing $S_R$ per coordinate time. That energy is the flux, through the world tube that $S_R$ sweeps out, of the matter energy current $J^\mu\equiv-T^{(\phi)\mu}{}_{\nu}\,t^\nu$ of the time vector $t^\mu=\alpha n^\mu+\beta^\mu$, with $T^{(\phi)}_{\mu\nu}$ the canonical stress tensor (the negative of Eq.~\eqref{eq:phantom}). Since $\nabla_\mu J^\mu=-\tfrac12T^{(\phi)\mu\nu}\mathcal{L}_t g_{\mu\nu}$, the current is conserved where $t^\mu$ is a Killing vector and nearly so in the quasi-stationary exterior that the spheres sample, and Gauss's theorem on the world tube gives its flux in 3+1 form~\cite{clough2021,gourgoulhon2012},
+$\Psi_4$ is blind to a spin-$0$ wave. Two opposite scalar charges---every merging pair here (Sec.~\ref{sec:pair})---carry a dipole, where a vacuum binary's leading moment is the quadrupole. The scalar stream rides the same spheres as $\Psi_4$ on the spiral and fly-by, so the two channels compare sphere by sphere (Fig.~\ref{fig:scalar_channel} in Appendix~\ref{app:supp}). The recorded kinematic flux $F_{\rm kin}$ (Sec.~\ref{sec:setup:diagnostics}) approximates the scalar energy crossing $S_R$ per coordinate time. That energy is the flux, through the world tube that $S_R$ sweeps out, of the matter energy current $J^\mu\equiv-T^{(\phi)\mu}{}_{\nu}\,t^\nu$ of the time vector $t^\mu=\alpha n^\mu+\beta^\mu$, with $T^{(\phi)}_{\mu\nu}$ the canonical stress tensor (the negative of Eq.~\eqref{eq:phantom}). Since $\nabla_\mu J^\mu=-\tfrac12T^{(\phi)\mu\nu}\mathcal{L}_t g_{\mu\nu}$, the current is conserved where $t^\mu$ is a Killing vector and nearly so in the quasi-stationary exterior that the spheres sample, and Gauss's theorem on the world tube gives its flux in 3+1 form~\cite{clough2021,gourgoulhon2012},
 \begin{equation}
 \begin{split}
 F^{\rm geo}_\phi&=\oint_{S_R}\alpha\,s_iJ^i\sqrt{\sigma}\;\mathrm{d}^2x\\
@@ -451,16 +455,6 @@ positive for an outgoing canonical wave, with $s^i$ the sphere's outward unit no
 The channel is dipole-dominated and comparable to the gravitational one. On the fly-by at $R=\clmGwScalarRadiusOuter$, $\ell=1$ carries the scalar power $\sum_{\ell m}|\dot A_{\ell m}|^2$ to one part in $10^{\clmGwScalarDipoleShare}$, the $\ell=1$ signal travels outward at $c$ from $R=\clmGwScalarRadiusInner$, and the time-integrated flux to $t=\clmGwScalarCut$ is $|E_\phi|=\clmGwScalarEnergyFlyby\,M$---$\clmGwScalarRatioSixty$ times the gravitational energy that has crossed the sphere by then (Fig.~\ref{fig:scalar_channel}(a)). The ratio depends on the cut and on how $E_{\rm GW}$ is integrated. With the running integral of Fig.~\ref{fig:scalar_channel}(a) it falls to $\clmGwScalarRatioSeventy$ by $t=\clmGwScalarCutSeventy$ and $\clmGwScalarRatioEighty$ by $t=\clmGwScalarCutEighty$, but that integral keeps growing after the burst has passed, accumulating the drift of the time-integrated $\Psi_4$; the band-limited energy of Fig.~\ref{fig:gw_ligo}(d) levels off instead ($\clmGwScalarBandSixty$, $\clmGwScalarBandSeventy$ and $\clmGwScalarBandEighty$ at $t=60$, $70$ and $80$). The wave-zone mode sum gives $\clmGwScalarRatioWaveZone$, and the inner sphere returns $\clmGwScalarRatioInner$ for the same window. We therefore use only the channel's multipole, direction, sign and order of magnitude downstream.
 
 Gravity couples to minus the canonical stress tensor, Eq.~\eqref{eq:phantom}, so the physical energy flux is $-F_{\rm kin}$ and an outgoing scalar wave carries negative energy; what the data establish is that the $\ell=1$ wave is outgoing (on the fly-by, and on the head-on after its horizon forms) and of the size above. If the ADM balance holds with this term, a bound pair emitting it gains energy: the scalar channel pumps the orbit where gravitational radiation damps it, and radiation reaction is \emph{anti-damped}. The same bookkeeping appears at horizons, where swallowing the phantom shrinks the head-on remnant (Sec.~\ref{sec:headon:wall}) and the single-throat remnant (Sec.~\ref{sec:single:collapse}); in spherical symmetry nothing else changes a horizon's mass---an outgoing phantom flux does not reach it---so the regrowth in the single-throat scans is numerical.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.80\textwidth]{08_waves/scalar_channel.pdf}
-\caption{The scalar channel on the $\Psi_4$ spheres.
-(a)~Fly-by energy through $R=\clmGwScalarRadiusOuter$ in units of the gravitational energy crossed by $t=\clmGwScalarNormCut$: gravitational (ink) and scalar with its physical sign (gold, Sec.~\ref{sec:gw:scalar}). The ratio $|E_\phi|/E_{\rm GW}$ printed at each cut falls from $\clmGwScalarRatioFifty$ to $\clmGwScalarRatioEighty$ as the gravitational burst arrives and this running integral drifts (Sec.~\ref{sec:gw:scalar}); past $t\approx\clmGwScalarMouthReach$ the mouths' areal-radius reading, an upper bound, passes the sphere.
-(b)~Multipole content, fly-by: $\ell=1$ exceeds $\ell=0$ and $\ell=2$ by $10^{\clmGwScalarDipoleGap}$.
-(c)~Validity window: $|F_\phi|$ at both spheres, with the times at which the mouths' areal-radius reading (an upper bound) passes each sphere (grey rules); left of the blue rule both spheres lie outside the mouths. The $t=\clmGwScalarCut$ window at $R=\clmGwScalarRadiusInner$ gives $\clmGwScalarRatioInner$ in place of $\clmGwScalarRatioSixty$.}
-\label{fig:scalar_channel}
-\end{figure*}
 
 \subsection{Horizon censorship of the scalar channel}
 \label{sec:gw:censorship}
@@ -551,6 +545,7 @@ and \texttt{GRTeclyn}.
 
 \section{Code Health and Constraint Evolution}
 \label{app:health}
+\packfloatpages
 
 This appendix collects the checks that the evolutions are numerically sound, so that the main-text figures show physics only. Figure~\ref{fig:constraints} gives the constraint record of every run drawn in Figs.~\ref{fig:single_throat}, \ref{fig:single_collapse}, \ref{fig:single_inflation}, \ref{fig:headon_collapse} and~\ref{fig:spiral_collapse}, each at the highest refinement level it was run at. Figure~\ref{fig:single_regrowth} shows the horizon regrowth in the single-throat scans that Sec.~\ref{sec:single:collapse} identifies as numerical; Fig.~\ref{fig:spiral_ladder}, the spiral's curvature wall under refinement, gauge and start time (Sec.~\ref{sec:spiral:wall}); and Fig.~\ref{fig:fill_insensitivity}, the spiral burst's independence of the interior fill (Secs.~\ref{sec:spiral:inspiral} and~\ref{sec:spiral:burst}).
 
@@ -575,31 +570,48 @@ This appendix collects the checks that the evolutions are numerically sound, so 
 \label{fig:spiral_ladder}
 \end{figure*}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.70\columnwidth]{05_binary_spiral/fill_insensitivity.pdf}
+\includegraphics[width=0.80\textwidth]{05_binary_spiral/fill_insensitivity.pdf}
 \caption{Insensitivity of the spiral's burst to the fill window. (a)~$r\,\mathrm{Re}\,\Psi_4^{2,2}$ at $R=\clmGwSpiralRadiusIn$ for the freeze arm (fill $\clmGwFillFullA/\clmGwFillStartA$, ink) and its twin ($\clmGwFillFullB/\clmGwFillStartB$, gold dots) from the same $t=\clmGwFreezeStart$ checkpoint. (b)~Per-sphere envelope of the difference: at most $\clmGwFillTwinInner\%$ of peak at $R=\clmGwSpiralRadiusIn$ and $\clmGwFillTwinOuter\%$ at $R=\clmGwSpiralRadiusOut$, with ticks at the fill's causal clock $t=\clmGwFreezeStart+(R-\clmGwFillSkin)$ on each sphere. The difference reaches $R=\clmGwSpiralRadiusIn$ on that clock and runs ahead of it farther out at $\clmGwFillFrontSpeedLo$--$\clmGwFillFrontSpeedHi\,c$ (a gauge-speed front), below $\clmGwFillFrontMax$ of peak. The outcome: moving the frozen region's edge moves the waveform by under half a percent, and the burst, which peaks at $R=\clmGwSpiralRadiusIn$ $\clmGwFillPeakLead$ units before the core's light cone arrives, cannot depend on the freeze at all.}
 \label{fig:fill_insensitivity}
-\end{figure}
+\end{figure*}
 
 \section{Supplementary Measurements}
 \label{app:supp}
 
-Three measurements support the main text without being needed to follow it: the growth of the merging and scattering binaries' mouths before contact (Fig.~\ref{fig:mouth_growth}; Sec.~\ref{sec:spiral:inspiral}), the linearity of the collapsing throat's wave in its quadrupole seed (Fig.~\ref{fig:seed_linearity}; Sec.~\ref{sec:single:gw}), and the horizon's shut-off of the scalar channel (Fig.~\ref{fig:scalar_censorship}; Sec.~\ref{sec:gw:censorship}).
+Five measurements support the main text without being needed to follow it: the momentum scan that separates merger from fly-by (Fig.~\ref{fig:orbits}; Sec.~\ref{sec:spiral:capture}), the growth of the merging and scattering binaries' mouths before contact (Fig.~\ref{fig:mouth_growth}; Sec.~\ref{sec:spiral:inspiral}), the linearity of the collapsing throat's wave in its quadrupole seed (Fig.~\ref{fig:seed_linearity}; Sec.~\ref{sec:single:gw}), the scalar channel's energy, multipoles and validity window on the $\Psi_4$ spheres (Fig.~\ref{fig:scalar_channel}; Sec.~\ref{sec:gw:scalar}), and the horizon's shut-off of that channel (Fig.~\ref{fig:scalar_censorship}; Sec.~\ref{sec:gw:censorship}).
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.70\columnwidth]{05_binary_spiral/mouth_growth.pdf}
+\includegraphics[width=0.80\textwidth]{05_binary_spiral/momentum_scan_orbits.pdf}
+\caption{Merger or fly-by: the momentum scan from $d=\clmPairSeparation$ with opposite signs, from the head-on release ($p=0$) to the fly-by ($p=\clmSpiralMomentumFlyby$). (a)~Both throats in the orbital plane; (b)~their separation. The tracks are the coordinate positions of the $\chi$ pits, followed through each run. Grey, light to dark: the plunges $p=0$, $\clmSpiralMomentumProd$, $\clmSpiralMomentumFifteen$, $\clmSpiralMomentumTwenty$ and $\clmSpiralMomentumTwentyFive$, each drawn until $\chi$ first reaches its floor or the run ends (dots); gold: the fly-bys $p=\clmSpiralMomentumThirtyFive$ (dashed) and $\clmSpiralMomentumFlyby$. Every arm is level 3 except the $p=\clmSpiralMomentumFlyby$ fly-by, the level-5 arm of the text; since a level-3 pit sits on a cell of side $\clmFinestDx$, the tracks are averaged over two time units. The fly-by turns at closest approach, $\clmFlybyClosestApproach$ at $t\approx\clmFlybyClosestTime$; from $t\approx\clmFlybyScanEdgeTime$ its mouths have inflated past the scan window, and the faint stretch is the separation of the $\chi$ pits of two inflating mouths, not of two compact throats.}
+\label{fig:orbits}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.80\textwidth]{05_binary_spiral/mouth_growth.pdf}
 \caption{Mouth growth in the merging ($p=\clmSpiralMomentumProd$) and scattering ($p=\clmSpiralMomentumFlyby$) arms, both from $d=12$ with the same throats; the merger's instrumented re-run carries three refinement levels and the fly-by five, so the shared $\tau$ is a result across two resolutions rather than a one-knob comparison. (a)~Areal radius of one mouth (its twin agrees to $\clmMouthTwinAgreement$): solid while the two scan spheres are disjoint, dotted once they overlap; long dash, the common-centre scan. No trapped surface appears on these star-shaped scans, which end at $t=\clmMouthScanEnd$ (merger) and $t=\clmFlybyEnd$ (fly-by). (b)~Separation: $p=\clmSpiralMomentumProd$ reaches contact, $p=\clmSpiralMomentumFlyby$ misses at $\clmFlybyClosestApproach$. (c)~Growth excess $R/R_0-1$ with exponential fits over $t=\clmMouthFitStart$--$\clmMouthFitEnd$ (gold): $\tau=\clmMouthTauMerger$ (merger) and $\clmMouthTauFlyby$ (fly-by).}
 \label{fig:mouth_growth}
-\end{figure}
+\end{figure*}
 
-\begin{figure}[t]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.70\columnwidth]{01_single_throat/seed_linearity.pdf}
+\includegraphics[width=0.80\textwidth]{01_single_throat/seed_linearity.pdf}
 \caption{Linearity of the collapsing throat's wave in its quadrupole seed. (a)~$\mathrm{Re}\,\Psi_4^{2,0}$ at $R=\clmGwSeedFigRadius$, each arm divided by its seed and named at its end: $\varepsilon_2=\clmGwSeedWeak$, $\clmGwSeedKicked$, $\clmGwSeedStrong$ and the kick-free $\clmGwSeedPure$ arm collapse onto one curve through the burst; later the smallest arm carries its floor amplified by $1/\varepsilon_2$ and the kick-free arm runs ahead. (b)~rms amplitude over $t=\clmGwSeedWindowLo$--$\clmGwSeedWindowHi$ against $\varepsilon_2$ at three spheres, with the slope-one line through the $\clmGwSeedKicked$ arm drawn across the decade $10^{-3}$--$10^{-1}$ as a reference. Open circle: the pure quadrupole, within $\clmGwPureVsKicked\%$ of the kicked arm. Dashed rule: the floor of the level-4 spherical control (the same kick, no quadrupole) at $R=\clmGwSeedFigRadius$, which the line crosses at $\varepsilon_2\approx\clmGwSeedFloorCross$. The outcome: the wave is the quadrupole's---linear in $\varepsilon_2$ and unchanged, to $\clmGwPureVsKicked\%$ in amplitude, when the radial kick is removed. The kick alone radiates only the floor; it moves the wave's phase, not its size.}
 \label{fig:seed_linearity}
-\end{figure}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.80\textwidth]{08_waves/scalar_channel.pdf}
+\caption{The scalar channel on the $\Psi_4$ spheres.
+(a)~Fly-by energy through $R=\clmGwScalarRadiusOuter$ in units of the gravitational energy crossed by $t=\clmGwScalarNormCut$: gravitational (ink) and scalar with its physical sign (gold, Sec.~\ref{sec:gw:scalar}). The ratio $|E_\phi|/E_{\rm GW}$ printed at each cut falls from $\clmGwScalarRatioFifty$ to $\clmGwScalarRatioEighty$ as the gravitational burst arrives and this running integral drifts (Sec.~\ref{sec:gw:scalar}); past $t\approx\clmGwScalarMouthReach$ the mouths' areal-radius reading, an upper bound, passes the sphere.
+(b)~Multipole content, fly-by: $\ell=1$ exceeds $\ell=0$ and $\ell=2$ by $10^{\clmGwScalarDipoleGap}$.
+(c)~Validity window: $|F_\phi|$ at both spheres, with the times at which the mouths' areal-radius reading (an upper bound) passes each sphere (grey rules); left of the blue rule both spheres lie outside the mouths. The $t=\clmGwScalarCut$ window at $R=\clmGwScalarRadiusInner$ gives $\clmGwScalarRatioInner$ in place of $\clmGwScalarRatioSixty$.}
+\label{fig:scalar_channel}
+\end{figure*}
 
 \begin{figure*}[t]
 \centering

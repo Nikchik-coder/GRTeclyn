@@ -24,8 +24,9 @@ Warning--I didn't find a database entry for "ellis1973"
 Warning--I didn't find a database entry for "bronnikov1973"
 Warning--I didn't find a database entry for "morris_thorne1988"
 Warning--I didn't find a database entry for "visser1995"
-Warning--I didn't find a database entry for "shinkai2002"
 Warning--I didn't find a database entry for "gonzalez2009"
+Warning--I didn't find a database entry for "bronnikov2011"
+Warning--I didn't find a database entry for "shinkai2002"
 Warning--I didn't find a database entry for "shirokov2026"
 Warning--I didn't find a database entry for "geroch1967"
 Warning--I didn't find a database entry for "tipler1977"
@@ -38,6 +39,11 @@ Warning--I didn't find a database entry for "nanograv2023"
 Warning--I didn't find a database entry for "lisa2017"
 Warning--I didn't find a database entry for "lvk2021"
 Warning--I didn't find a database entry for "pagano2016"
+Warning--I didn't find a database entry for "bogdan2024"
+Warning--I didn't find a database entry for "natarajan2024"
+Warning--I didn't find a database entry for "greene2024"
+Warning--I didn't find a database entry for "matthee2024"
+Warning--I didn't find a database entry for "inayoshi2020"
 Warning--I didn't find a database entry for "grteclyn"
 Warning--I didn't find a database entry for "amrex"
 Warning--I didn't find a database entry for "grchombo"
@@ -50,11 +56,32 @@ Warning--I didn't find a database entry for "campanelli2006"
 Warning--I didn't find a database entry for "baker2006"
 Warning--I didn't find a database entry for "hochberg_visser1998"
 Warning--I didn't find a database entry for "misner_sharp1964"
-Warning--I didn't find a database entry for "gwtc3"
-Warning--I didn't find a database entry for "allen2012"
-Warning--I didn't find a database entry for "reisswig2011"
+Warning--I didn't find a database entry for "gonzalez2009lin"
+Warning--I didn't find a database entry for "hayward1996"
+Warning--I didn't find a database entry for "babichev2004"
+Warning--I didn't find a database entry for "hawking1971"
+Warning--I didn't find a database entry for "ashtekar_krishnan2004"
+Warning--I didn't find a database entry for "alcubierre2003"
+Warning--I didn't find a database entry for "clough2021"
+Warning--I didn't find a database entry for "gourgoulhon2012"
 Warning--I didn't find a database entry for "gwosc"
+Warning--I didn't find a database entry for "allen2012"
 Warning--I didn't find a database entry for "pycbc"
+Warning--I didn't find a database entry for "reisswig2011"
+Warning--I didn't find a database entry for "gwtc3"
+Warning--I didn't find a database entry for "maiolino2024"
+Warning--I didn't find a database entry for "banados2018"
+Warning--I didn't find a database entry for "robson2019"
+Warning--I didn't find a database entry for "thrane2013"
+Warning--I didn't find a database entry for "kleihaus_kunz2014"
+Warning--I didn't find a database entry for "dzhunushaliev2013"
+Warning--I didn't find a database entry for "azad2024plb"
+Warning--I didn't find a database entry for "azad2024prd"
+Warning--I didn't find a database entry for "khoo2024"
+Warning--I didn't find a database entry for "poisson_visser1995"
+Warning--I didn't find a database entry for "kanti2011"
+Warning--I didn't find a database entry for "nakama2018"
+Warning--I didn't find a database entry for "planck2018"
 control{REVTEX42Control}, control.key{N/A}, control.author{N/A}, control.editor{N/A}, control.title{N/A}, control.pages{N/A}, control.year{N/A}, control.eprint{N/A}, 
 control{apsrev42Control}, control.key{N/A}, control.author{08}, control.editor{1}, control.title{0}, control.pages{0}, control.year{1}, control.eprint{N/A}, 
 Warning--jnrlst (dependency: not reversed) set 1
@@ -70,7 +97,7 @@ Control: year (1) truncated
 Control: production of eprint (0) enabled
 You've used 2 entries,
             6079 wiz_defined-function locations,
-            1678 strings with 15488 characters,
+            1705 strings with 15820 characters,
 and the built_in function-call counts, 991 in all, are:
 = -- 12
 > -- 16
@@ -109,4 +136,4 @@ warning$ -- 1
 while$ -- 11
 width$ -- 0
 write$ -- 52
-(There were 44 warnings)
+(There were 71 warnings)

@@ -25,19 +25,60 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 3 | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
 | 4 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
 | 5 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
-| 6 | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
-| 7 | `fig:spiral_collapse` | `05_binary_spiral/p012_collapse_diagnostics` | `plot_spiral_collapse` |
-| 8 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
-| 9 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
-| 10 | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
-| 11 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
-| 12 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 13 (App. A) | `fig:single_regrowth` | `01_single_throat/single_horizon_regrowth` | `plot_horizon_regrowth` |
-| 14 (App. A) | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
-| 15 (App. A) | `fig:fill_insensitivity` | `05_binary_spiral/fill_insensitivity` | `plot_fill_insensitivity` |
-| 16 (App. B) | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
-| 17 (App. B) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
+| 6 | `fig:spiral_collapse` | `05_binary_spiral/p012_collapse_diagnostics` | `plot_spiral_collapse` |
+| 7 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
+| 8 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
+| 9 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
+| 10 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
+| 11 (App. A) | `fig:single_regrowth` | `01_single_throat/single_horizon_regrowth` | `plot_horizon_regrowth` |
+| 12 (App. A) | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
+| 13 (App. A) | `fig:fill_insensitivity` | `05_binary_spiral/fill_insensitivity` | `plot_fill_insensitivity` |
+| 14 (App. B) | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
+| 15 (App. B) | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
+| 16 (App. B) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
+| 17 (App. B) | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 18 (App. B) | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+
+## Figs. 6 and 10 to Appendix B; the appendix packed (2026-09-26, afternoon)
+
+The user: "move fig 10 also to appendix ... fig 6 also ... fix the appendix
+layout so there is less dead space and it's more packed".
+
+* **Two more figures left the main text** for Appendix B: the momentum-scan
+  orbits (`fig:orbits`, was Fig. 6) and the scalar channel
+  (`fig:scalar_channel`, was Fig. 10). The main text cites each once "in
+  Appendix B" (Secs. VII A and VIII F), as it already did for
+  `seed_linearity`, and Appendix B's opening paragraph lists five
+  measurements in figure order. The main text is 0.75 page shorter; the
+  paper is 26 pages.
+* **The three single-column validation plots are strips now**:
+  `fill_insensitivity` (1 x 2), `mouth_growth` (1 x 3) and `seed_linearity`
+  (1 x 2), each 7.05 x 2.45 in, set at 0.80 `\textwidth` like every other
+  two-column figure (the user, on the stacked versions: "just make this
+  horizontal layout so they take less space"). In the paper each is now
+  219-240 pt tall with its caption, against 322-414 pt stacked in one
+  column, and no column stands empty beside it. A side-caption layout
+  (stacked plot, caption beside it) was tried first and dropped: the plot
+  set the height and left white under the caption. Only `mouth_growth`'s
+  names had to move at strip width: in (a) the common-centre and no-MOTS
+  notes break in two under the dash's plateau and the merger is named below
+  the pair (panel floor 3.6 -> 3.2); in (b) both names are right-aligned in
+  two lines (one line ran past the spine); in (c) the tau names start at
+  t = 26. All three pass `style.label_audit` (`mouth_growth` now runs it).
+* **Appendix float pages stack from the top.** Every appendix page is a
+  float page (the appendix text is two short paragraphs), and stock float
+  pages centre their floats and spread the slack between them.
+  `\packfloatpages` (preamble; called at the head of Appendix A) sets
+  `\@fptop` = 0, `\@fpsep` = 12 pt, `\@fpbot` = 0 plus 1fil, so the
+  slack sits once, at the foot of the page.
+* **Five float pages is the floor** at these sizes: the constraint figure
+  (497 pt of a 672 pt page) takes no partner (the smallest float is 219
+  pt), and no three of the others fit on one page with their gaps, so the
+  remaining eight go two to a page: 10 | 11 + 12 | 13 + 14 | 15 + 16 |
+  17 + 18, each page 70-82 % full. The only layout with less white is to
+  drop the `\FloatBarrier` before the bibliography and let the references
+  run under the appendix figures (one page shorter); that mixes figures into
+  the reference list and was not done.
 
 ## Main text shows physics; code health is Appendix A (2026-09-26)
 
@@ -138,7 +179,8 @@ remnant ringdown.
 
 `05_binary_spiral/mouth_growth` — the queue-8 gap closed: the
 mouths of the arm that MERGES, measured for the first time, against the
-fly-by's. Three stacked panels on one clock — per-mouth areal radius, the
+fly-by's. Three panels side by side on one clock (stacked in one column
+until 2026-09-26) — per-mouth areal radius, the
 separation, and the growth excess on a log axis with both exponential fits.
 Merger +12.2 % by t = 28 with e-fold tau = 3.70; fly-by tau = 4.39 over the
 identical fitted window t = 8-25. Read the dash language: SOLID is a

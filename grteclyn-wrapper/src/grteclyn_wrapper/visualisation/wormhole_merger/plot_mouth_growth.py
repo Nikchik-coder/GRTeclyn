@@ -39,9 +39,11 @@ centre enclosing both -- which is panel (a)'s grey curve.
 Reads ``horizon_scan.dat`` from both arms under ``campaign/`` and writes
 ``figures/05_binary_spiral/mouth_growth``.
 
-STYLE (the seed-branches grammar): single-column PRD frame, three stacked
-panels on one clock, no boxed key, every curve named in place, letter tags
-above the frames.  GOLD is this package's horizon instrument and there is
+STYLE (the seed-branches grammar): a two-column PRD strip, three panels side
+by side on one clock (stacked in one column until 2026-09-26, when the
+article moved the figure to its appendix and the user asked for the
+horizontal layout, "so they take less space"), no boxed key, every curve
+named in place, letter tags above the frames.  GOLD is this package's horizon instrument and there is
 no horizon in either arm -- that is itself a result -- so the accent is spent
 on the fitted exponential instead, the one quantity the figure exists to
 compare, and the absence of a MOTS is written on panel (a) in words.
@@ -68,6 +70,7 @@ FLYBY = ("06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100",
 FIT = (8.0, 25.0)        # shared window: both arms' scans are still disjoint
 T_MAX = 50.0             # the merger's record; the fly-by's own page runs to 100
 RULE_TOP = 9.0           # the rules stop below panel (a)'s label band
+R_FLOOR = 3.2            # panel (a)'s floor: room under the curves for a name
 
 
 def _scan(path: pathlib.Path):
@@ -112,8 +115,7 @@ def main(argv: list[str] | None = None) -> int:
 
     style.prd(base=10.0)
     fig, (axA, axB, axC) = plt.subplots(
-        3, 1, figsize=(3.4, 5.2), sharex=True, constrained_layout=True,
-        gridspec_kw=dict(height_ratios=[1.15, 0.85, 1.0]))
+        1, 3, figsize=(7.05, 2.45), sharex=True, constrained_layout=True)
 
     # ---- (a) each mouth's areal radius, solid while it is a measurement ----
     # Three dash languages, because three different things are drawn: solid is
@@ -128,7 +130,7 @@ def main(argv: list[str] | None = None) -> int:
                  linestyle=(0, (1.2, 1.8)), zorder=3)
         # The rules stop below the label band: a full-height axvline runs
         # through the two notes that explain what the rules are for.
-        axA.vlines(s["t"][i] if i < len(s["t"]) else T_MAX, 3.6, RULE_TOP,
+        axA.vlines(s["t"][i] if i < len(s["t"]) else T_MAX, R_FLOOR, RULE_TOP,
                    color=style.FAINT, linewidth=0.7, zorder=1)
     kC = m["tC"] <= T_MAX
     axA.plot(m["tC"][kC], m["RC"][kC], color=style.MUTED, linewidth=1.0,
@@ -138,11 +140,17 @@ def main(argv: list[str] | None = None) -> int:
     # 10.23) so that the two labels the data has no room for -- the rules' note
     # and the fly-by's name -- get a band of their own instead of being wedged
     # between curves.
-    axA.set_ylim(3.6, 12.0)
-    axA.text(2.0, 7.0, "common-centre scan", fontsize=7, color=style.MUTED)
-    axA.text(2.0, 6.1, "no MOTS, no trapped surface", fontsize=6.5,
-             color=style.MUTED)
-    axA.text(3.0, 4.55, MERGER[1], fontsize=7.5, color=style.INK)
+    axA.set_ylim(R_FLOOR, 12.0)
+    # On a strip-width panel (2026-09-26) a one-line note runs from the left
+    # edge into the falling long dash, so the two notes break in two and sit
+    # in the empty band under the dash's plateau; the merger, whose curve
+    # the fly-by's rises through, is named under the pair of them.
+    axA.text(1.5, 8.2, "common-centre\nscan", fontsize=7, color=style.MUTED,
+             va="top")
+    axA.text(1.5, 6.9, "no MOTS,\nno trapped surface", fontsize=6.5,
+             color=style.MUTED, va="top")
+    axA.text(1.5, R_FLOOR + 0.2, MERGER[1], fontsize=7.5, color=style.INK,
+             va="bottom")
     axA.text(48.6, 9.9, FLYBY[1], fontsize=7.5, color=style.CONTEXT,
              ha="right", va="top")
     # Clear of the top spine AND of its inward ticks, which at 11.85 struck
@@ -163,9 +171,11 @@ def main(argv: list[str] | None = None) -> int:
     # "near pair against far pair".
     axB.text(1.5, 0.9, r"both from $d=12$; only $p$ differs", fontsize=6.5,
              color=style.MUTED)
-    axB.text(33.5, 2.45, "merger: to contact", fontsize=7, color=style.INK)
-    axB.text(33.5, 6.3, f"fly-by: misses at {f['sep'].min():.1f}", fontsize=7,
-             color=style.CONTEXT)
+    # Right-aligned in two lines each: one line ran past the right spine.
+    axB.text(47.8, 1.6, "merger:\nto contact", fontsize=7, color=style.INK,
+             ha="right", va="bottom")
+    axB.text(47.8, 6.2, f"fly-by:\nmisses at {f['sep'].min():.1f}", fontsize=7,
+             color=style.CONTEXT, ha="right", va="bottom")
 
     # ---- (c) the clock itself ---------------------------------------------
     for s, ex, col, tau in ((m, ex_m, style.INK, tau_m),
@@ -182,25 +192,21 @@ def main(argv: list[str] | None = None) -> int:
     axC.set_ylim(3e-5, 2.0)
     axC.set_xlim(0, T_MAX)
     axC.set_ylabel(r"$R_{\rm areal}/R_0 - 1$")
-    axC.set_xlabel(r"$t$")
+    for ax in (axA, axB, axC):
+        ax.set_xlabel(r"$t$")
     # The two fits are within a factor 1.2 of each other, so their labels
     # cannot sit on the lines; they go together in the empty lower right.
     # Each label wears ITS ARM'S colour, not the accent: both fitted lines are
     # gold (that is what gold means here, "this is the fit"), so a gold
     # label would say which quantity it is and not which arm.  The legend
     # below names the accent, so that one IS drawn in it.
-    axC.text(30.0, 4.5e-3, rf"$\tau={tau_f:.1f}$   fly-by", fontsize=7.5,
+    axC.text(26.0, 4.5e-3, rf"$\tau={tau_f:.1f}$   fly-by", fontsize=7.5,
              color=style.CONTEXT, ha="left", va="top")
-    axC.text(30.0, 1.3e-3, rf"$\tau={tau_m:.1f}$   merger", fontsize=7.5,
+    axC.text(26.0, 1.3e-3, rf"$\tau={tau_m:.1f}$   merger", fontsize=7.5,
              color=style.INK, ha="left", va="top")
     axC.text(0.03, 0.95, rf"gold: fitted $t={FIT[0]:g}$--${FIT[1]:g}$",
              transform=axC.transAxes, fontsize=6.5, color=style.GOLD,
              va="top")
-
-    # Panel (c)'s decade ticks are far wider than (a)'s and (b)'s integers, so
-    # each y label would otherwise sit at its own indent and the stack would
-    # read as three figures rather than one page.
-    fig.align_ylabels((axA, axB, axC))
 
     for k, ax in enumerate((axA, axB, axC)):
         ax.text(0.0, 1.03, f"({'abc'[k]})", transform=ax.transAxes,
@@ -220,8 +226,10 @@ def main(argv: list[str] | None = None) -> int:
     out = pathlib.Path(args.out) if args.out else (
         figure_dir("05_binary_spiral", args.pack_root) / "mouth_growth.png")
     out.parent.mkdir(parents=True, exist_ok=True)
+    hits = style.label_audit(fig)
     png = style.save(fig, out)
-    print(f"[mouth-growth] wrote {png} (+pdf)")
+    print(f"[mouth-growth] wrote {png} (+pdf); label audit: "
+          + ("clean" if not hits else f"{len(hits)} hit(s): " + "; ".join(hits)))
     return 0
 
 
