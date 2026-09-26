@@ -78,13 +78,15 @@ import pathlib
 import re
 
 import matplotlib
+import matplotlib.transforms
 import numpy as np
+from matplotlib.legend import Legend
 
 __all__ = [
     "CONTEXT", "DEEP_BLUE", "DEEP_GREEN", "DIVERGING", "FAINT", "GRID", "GOLD", "GROUND", "INK",
-    "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
-    "callout", "edge_label", "family", "legend", "note", "ordinal",
-    "ordinal_series", "paper", "prd", "save", "series", "typography",
+    "KEY_TOP", "MUTED", "SEQUENTIAL", "SEQUENTIAL_HOT", "SIGNED", "signed",
+    "callout", "edge_label", "family", "legend", "legend_top", "note", "ordinal",
+    "ordinal_series", "paper", "prd", "save", "series", "tag_keys", "typography",
 ]
 
 # Ink, not black: pure black on white is harsher than print and reads as heavier
@@ -421,9 +423,42 @@ def label_audit(fig, pad: float = 0.004, px_step: float = 3.0) -> list[str]:
                 if ba.overlaps(bb):
                     reports.append(f"[label-audit] axes {k} ({ax.get_ylabel() or 'unnamed'}): "
                                    f"'{a}' overlaps '{b}'")
+    # Entries INSIDE a key (2026-09-26).  An expand-mode key too narrow for its
+    # entries packs them with negative spacing -- one entry's text printed over
+    # the next column's handle -- or lets a long entry run past the frame it
+    # spans, while the key's outer box, all the checks above can see, stays clean.
+    for k, ax in enumerate(fig.axes):
+        if ax.get_legend() is not None:
+            for p in _key_problems(ax.get_legend()):
+                reports.append(f"[label-audit] axes {k} ({ax.get_ylabel() or 'unnamed'}): key {p}")
+    for leg in fig.legends:
+        for p in _key_problems(leg):
+            reports.append(f"[label-audit] figure key: {p}")
     for r in reports:
         print(r)
     return reports
+
+
+def _key_problems(leg) -> list[str]:
+    """A key's entries (handle + text) that touch each other, or run past the
+    key's own box (an expand-mode key's box is the frame it spans)."""
+    renderer = leg.get_figure(root=True).canvas.get_renderer()
+    edge = leg.get_window_extent(renderer)
+    boxes = []
+    for handle, text in zip(leg.legend_handles, leg.get_texts()):
+        if not text.get_visible() or not text.get_text():
+            continue
+        box = text.get_window_extent(renderer)
+        try:
+            box = matplotlib.transforms.Bbox.union([box, handle.get_window_extent(renderer)])
+        except Exception:      # a handle without an extent: the text alone
+            pass
+        boxes.append((text.get_text()[:32], box))
+    out = [f"entries '{a}' and '{b}' touch" for i, (a, ba) in enumerate(boxes)
+           for b, bb in boxes[i + 1:] if ba.overlaps(bb)]
+    out += [f"entry '{a}' runs past the key's edge" for a, b in boxes
+            if b.x0 < edge.x0 - 0.5 or b.x1 > edge.x1 + 0.5]
+    return out
 
 
 def _line_points(ax, px_step: float = 3.0) -> np.ndarray:
@@ -636,6 +671,89 @@ def legend(ax, *args, loc: str | None = None, pad: float = 0.015,
         _make_room(ax, corner, box, pad, max_grow)
         fig.canvas.draw()
     return leg
+
+
+# ---------------------------------------------------------------------------
+# Keys on top (the user's standing rule, 2026-09-26: a key ABOVE every panel
+# names each of its lines, and nothing but tiny tags sits inside a frame).
+# ---------------------------------------------------------------------------
+
+KEY_TOP = dict(loc="lower left", bbox_to_anchor=(0.0, 1.02, 1.0, 0.1), mode="expand",
+               frameon=False, fontsize=6.5, labelcolor=INK, borderaxespad=0.0,
+               borderpad=0.2, handlelength=2.0, handletextpad=0.5, columnspacing=1.0,
+               labelspacing=0.3)
+
+
+class _TopKey(Legend):
+    """A mode="expand" key that takes its width from its axes whenever it is
+    MEASURED, not only when drawn.  Matplotlib sets an expanding key's width in
+    ``draw``, and constrained layout measures between draws: after a 300-dpi
+    PNG, the PDF's 72-dpi layout saw a full-width key four times too wide and
+    gave up ("axes sizes collapsed to zero"), so the PDF silently kept the
+    PNG's layout (2026-09-26, the L512 inflation page)."""
+
+    def get_window_extent(self, renderer=None):
+        if renderer is None:
+            renderer = self.get_figure(root=True)._get_renderer()
+        if self._mode == "expand":
+            pad = 2 * (self.borderaxespad + self.borderpad) * renderer.points_to_pixels(
+                self.prop.get_size_in_points())
+            self._legend_box.set_width(self.get_bbox_to_anchor().width - pad)
+        return super().get_window_extent(renderer)
+
+    get_tightbbox = get_window_extent
+
+
+def legend_top(ax, entries, ncol: int = 1, **kw):
+    """The panel's key ABOVE its frame, spanning its width, naming every line.
+
+    ``entries`` is [(handle, label)], read ROW BY ROW (matplotlib fills a key
+    column by column; the order is rearranged for it).  ``ncol`` sets the
+    columns: choose it so every entry fits -- ``label_audit`` names entries
+    that touch.  ``kw`` overrides ``KEY_TOP``.  Constrained layout makes room
+    for the key; put the letter tags on afterwards with ``tag_keys``.
+    """
+    n = len(entries)
+    nrow = -(-n // ncol)
+    order = [entries[r * ncol + c] for c in range(ncol) for r in range(nrow)
+             if r * ncol + c < n]
+    opts = dict(KEY_TOP)
+    opts.update(kw)
+    ax.legend_ = _TopKey(ax, [h for h, _ in order], [s for _, s in order], ncol=ncol, **opts)
+    return ax.legend_
+
+
+def tag_keys(fig, axes, tags, *, row: str = "first", fontsize: float = 9.0,
+             gap: float = 4.0) -> list:
+    """Letter tags at the left end of each panel's key, just left of the frame
+    and centred on the key's first row (its title, if it has one) -- or on its
+    last row, ``row="last"``, which keeps the tags of a row of panels level
+    when their keys differ in height; above the frame's corner for a panel
+    without a key.  Call after every key is placed: it draws the figure once
+    to measure them, and the offsets are in points from the key's own anchor,
+    so the tags hold whatever size the layout later gives the axes."""
+    fig.canvas.draw()
+    out = []
+    for ax, tag in zip(axes, tags):
+        leg = ax.get_legend()
+        if leg is None or not leg.get_texts():
+            out.append(ax.text(0.0, 1.03, tag, transform=ax.transAxes, ha="left",
+                               va="bottom", fontsize=fontsize, color=INK))
+            continue
+        y_anchor = ax.transAxes.inverted().transform(
+            (0.0, leg.get_bbox_to_anchor().y0))[1]
+        if row == "first":
+            box = (leg.get_title() if leg.get_title().get_text()
+                   else leg.get_texts()[0]).get_window_extent()
+            yc = 0.5 * (box.y0 + box.y1)
+        else:
+            yc = min(0.5 * (b.y0 + b.y1) for b in
+                     (t.get_window_extent() for t in leg.get_texts()))
+        dy = (yc - ax.transAxes.transform((0.0, y_anchor))[1]) * 72.0 / fig.dpi
+        out.append(ax.annotate(tag, (0.0, y_anchor), xycoords="axes fraction",
+                               xytext=(-gap, dy), textcoords="offset points", ha="right",
+                               va="center", fontsize=fontsize, color=INK))
+    return out
 
 
 def _y_fraction(ax, y: float) -> float:

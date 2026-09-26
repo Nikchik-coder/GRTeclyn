@@ -222,7 +222,15 @@ that produced it does not.
    (the face- and body-diagonal necks differ by 6 % at t = 195 and the face one still rises;
    the axis neck left the level-1 box at t ≈ 155), H doubles every ~10 units from t = 112
    (0.1 at t = 190), and the movies show wall reflections reaching the throat. No end state is
-   measured (`figures/01_single_throat/single_throat_inflation_L128`; registry row).
+   measured (`figures/01_single_throat/single_throat_inflation_L128`; registry row). The kicked
+   arm in the box four times larger, `single_eps_m1e2_L512_ml5_oct_t400` *(pack, `seed/`; F4:
+   L = 512 on an octant, level 5, 1+log)*, is quotable to t = 218, when the 1+log wave reaches
+   the wall. Measured with the full-metric areal radius, it inflates ×3.80 (3.813 → 14.48) with no
+   trapped surface. The throat stays anti-trapped between the θ_l = 0 horizon on the neck and the
+   θ_k = 0 horizon on our side, which grows to R = 73.4 by t = 212. The onset is exponential,
+   T = 5.69 over t = 16–28, and in the neck's proper time it grows at Shinkai–Hayward's rate over
+   t = 16–40, H R0 = 1.22 (their 1.1), until 1+log freezes the neck's clock. It keeps growing at every sample. Still no end state
+   (`figures/01_single_throat/single_throat_inflation_L512`; registry row).
 5. Give the pair enough angular momentum that it never merges and the evolution is
    **healthy with no NaN at all**. The fly-by runs say so: `merge_orbit_flip_d12_p045`
    (clean to t = 60), its long rerun `..._p045_t200` (held to t ≈ 91), and

@@ -85,6 +85,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_m05_t040` | B | 26.3 | x12.4 / 26.3 | -0.67 | -1.00 | -0.83 | - | - | - | - | 17.2 | too short |
 | `single_eps_m1e1_t100` | A | 15.2 | x5316.8 / 15.2 | +0.93 | - | - | - | - | - | - | 14.8 | too short |
 | `single_eps_m1e1_t100` | B | 15.2 | x5316.8 / 15.2 | +0.93 | - | - | - | - | - | - | 14.8 | too short |
+| `single_eps_m1e2_L512_ml5_oct_t400` | A | 392.4 | x420641.6 / 392.4 | +0.97 | +1.27 | +1.54 | +1.86 | +2.81 | +3.41 | +3.77 | - | late (+0.55 dex) |
 | `single_eps_m1e2_ml4_t060` | A | 13.5 | x15.7 / 13.5 | +1.08 | - | - | - | - | - | - | - | too short |
 | `single_eps_m1e2_ml4_t060` | B | 13.5 | x15.7 / 13.5 | +1.08 | - | - | - | - | - | - | - | too short |
 | `single_eps_m1e2_ml4_t100` | A | 100.0 | x56593.2 / 100.0 | +1.08 | +1.40 | +1.69 | +2.00 | +2.94 | +3.56 | +3.95 | - | late (+0.69 dex) |
@@ -272,7 +273,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 22 early, 12 same, 80 late, 64 too short, 50 restart arms (own clock only).
+Throats read at t = 30: 22 early, 12 same, 81 late, 64 too short, 50 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the
