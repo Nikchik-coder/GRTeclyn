@@ -187,9 +187,10 @@ these cards, and a loose pattern also matches your own shell.
 4. Write the claim line in `results/merger/README.md` and the status row in
    `research/merger/GPU_PLAN.md`.
 5. Prune scratch only on the user's word, and log every deletion in
-   `runs/wormhole_merger/MANIFEST_CLEANUP_*.md` (append with `cat >>`).
-   Frames and the slice cache are kept only on the runs whose pictures carry a
-   result (the user's rule, 2026-09-10); the run tree's README says which.
+   `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md` (append with `cat >>`).
+   Frames, the slice cache and movies are never deleted, in a prune or at
+   close-out, for any run (CLAUDE.md "Data"; this replaced the 2026-09-10 rule
+   that kept them only where the pictures carry a result).
 
 ## Where the old scripts went
 

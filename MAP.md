@@ -30,7 +30,7 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | build a binary | [`…/wormhole_merger/build_binary.sh`](grteclyn-wrapper/scripts/campaigns/wormhole_merger/build_binary.sh) (source: `Examples/BinaryWormholeMerger/`) |
 | find a template | `runs/wormhole_merger/templates_scan/params_*.txt` (untracked; each packed run keeps its own copy as `evolution_params.txt`) |
 | find raw output | `runs/wormhole_merger/<NN_group>/[<sub>/]<run>/` — `params.txt`, `run.log`, `run_manifest.json`, `data/*.dat`, `small_data/`, `frames/` |
-| find plotfiles / checkpoints | `/tmp/grteclyn_scratch/<run>/` on the GPU node that ran it — node-local, pruned by hand (`runs/wormhole_merger/MANIFEST_CLEANUP_*.md`) |
+| find plotfiles / checkpoints | `/tmp/grteclyn_scratch/<run>/` on the GPU node that ran it — node-local, pruned by hand (`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md`) |
 | find packed results | `results/merger/campaign/<group>/[<sub>/]<run>/` — thinned streams, `evolution_params.txt`, `run_manifest.json`; resolve runs by name with `results/merger/analysis/pack_paths.py` |
 | run an analysis | `results/merger/analysis/*.py` (numpy only; read the pack) |
 | find a figure / its script | [`results/merger/figures/FIGURES.md`](results/merger/figures/FIGURES.md); scripts in `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/plot_*.py` |

@@ -3,7 +3,7 @@
 Every movie the merger campaign keeps, in one place. They used to sit in each
 run's `campaign/<group>/<run>/movies/` — 200 files across 32 runs, most of them
 scouts and restarts that no result rests on. This folder holds the arms that
-answer a question; the rest were pruned (`runs/wormhole_merger/MANIFEST_CLEANUP_2026-09-16.md`
+answer a question; the rest were pruned (`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-09-16.md`
 and `_2026-09-21.md`, and every file is recoverable from git history).
 
 Layout mirrors `campaign/` and `figures/`: `<group>/<run>/movie_<field>_z.mp4`.

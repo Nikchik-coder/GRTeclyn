@@ -81,7 +81,7 @@ was written against — every queue estimate below that says "1 card" now means
 the only card, and anything reading "2 cards" is serial. Scratch
 `/tmp/grteclyn_scratch` holds the finished queue-2e arm (34 GB) and whatever is
 live; 442 GB free. Nothing is pruned without the user's word, logged in
-`runs/wormhole_merger/MANIFEST_CLEANUP_*.md`.
+`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md`.
 
 ## 3. Next — the queue
 
@@ -1318,6 +1318,81 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-26 (05:00 UTC) — F4 closed out: quotable to t = 218, where the 1+log wave meets the wall; it died at t = 392.36 when the reflection reached the neck; no Weyl4/shift frames
+
+- **The wall, measured** (x–t diagrams of α and K along the +x axis from F4's slice cache; the user: "i think there
+  is the reflection and we cant really quote t+250 times"):
+  - The 1+log collapse front leaves the neck at t ≈ 30 and runs out at ≈ 1.36/u (≈ √2). It reaches the outer face
+    x = 256 at t = 218: the wall cell's α drops 0.02 below its t = 0 value.
+  - The reflection is visible in ∂tα and K as a front running back inward, decelerating as it enters the collapsed
+    lapse: x ≈ 130 at t = 300, 90 at 340, 67 at 390.
+  - The lapse frames the user quoted (t = 336, 390) show the collapsed region touching the faces.
+  - Independently, the far θ_k = 0 track is lost at t = 212. There, R_hk falls 73.39 → 54.55 and the finder then
+    flickers between a far root and one just outside the neck. L2 𝓗 passes 0.1 at t = 220.1.
+  - **So nothing after t = 218 is quoted.** The earlier "wall causally disconnected to t ≃ 340" assumed the wrong
+    speeds.
+- **F4 died at t = 392.36** (04:22 UTC). AMReX aborted on a NaN in h11 on level 2; L2 𝓗 went 0.80 (t = 391.6) → 1.06
+  (392.2) → 1.9e102 (392.36).
+  - The t = 392.0 plotfile is already corrupt: at the neck r/√χ goes 10.76 → 9.28, α_neck 0.012 → 0.064, R_hk
+    16.5 → 21.0.
+  - Between the t = 390 and t = 392 slices, the largest changes in χ (11), K (15) and α (0.38) all sit on the neck
+    sphere r ≈ 60–65, just as the reflected front arrives there. The reflection most likely killed it.
+  - Level 2 had grown 40 → 48 at t = 378.2 (regrid history: the level faces grew as the χ pit drifted to
+    (5.5, 5.5, 5.5)). The neck left each box before that box grew, so the crossing times t = 43.8 / 64.7 / 113.2 /
+    234.7 are right.
+- **The record, t ≤ 218** (the figure `single_throat_inflation_L512`, final, and the registry row):
+  - R 3.813 → 14.48 (×3.80), no trapped surface. The throat stays anti-trapped between θ_l = 0 on the neck and
+    θ_k = 0, which grows to R = 73.4 by t = 212.
+  - The onset is exponential: R = R0 (1 + A e^{t/T}), T = 5.69 over t = 16–28, rms 0.009 in ln(R/R0 − 1). Local
+    e-folds are 7.7–8.7 before t = 12 and 6.6 → 8.8 over t = 30–34 as the lapse at the neck drops.
+  - In the neck's proper time, the local SH exponent R0 d ln(R/R0 − 1)/dτ stays in 1.0–1.3 over t = 16–40
+    (τ 9.2–20.3, R 1.03 → 2.01 R0, peak 1.26 at t = 26). A fit over that window gives H R0 = 1.22 (SH's massless
+    1.1, the linear mode 1.30). After t ≈ 40, 1+log freezes the clock (α_neck 0.57 → 0.02 by t = 100; ~5 units of
+    proper time pass over t = 40–218), and the neck leaves level 5 at t = 44. The rate falls (0.92 at t = 50, 0.33
+    at 200) while R keeps growing at every sample (109/109 to t = 218, 195/195 to 390).
+  - Decided by the user: no NaN-free re-run (3D harmonic with solution-following refinement, or a 1D spherical code);
+    "we just need to verify the wormhole continues growing". F4 does.
+- **Closed out, filed, packed:**
+  - `research/merger/closeout.sh`: 0 problems, identity clean, movies of the 5 series.
+  - `file_run.sh --group 01_single_throat/seed`, then two re-packs. The second dropped the duplicate index rows that
+    the closeout's top-level pack left; the stale top-level pack copy was deleted, identical and never committed.
+  - Scratch (24 GB: Plt09700–09800, Chk09250–09750) pruned at 05:53 on the user's word (`manifests/MANIFEST_CLEANUP_2026-09-26.md`).
+- **The frames failure** (the user: "why we didnt plotted other frames weyl shift etc etc … preflight check should have
+  flagged this … fix it for the future"):
+  - F4 (like F3) was launched with `--frames-fields chi K lapse phi Pi` in `WHM_CONSUME_ARGS`. The launcher's own
+    default was the same short list, and nothing checked it.
+  - The plotfiles carry Weyl4_Re/Im and shift1–3, but they are consumed as they go, so F4's Weyl4 and shift movies
+    are lost for good.
+  - Fix in progress: one full default frame set; a preflight that renders every default field from the t = 0 data
+    and refuses a missing or blank one; and a refusal of any subset without `WHM_FRAMES_SUBSET=<reason>`.
+- **Housekeeping:**
+  - The dead harmonic runs (F5 × 2, F6) were wiped whole, frames included, on the user's word:
+    `manifests/MANIFEST_CLEANUP_2026-09-26.md`.
+  - The cleanup manifests moved to `runs/wormhole_merger/manifests/`.
+  - The paper figure `single_throat_inflation` is being reworked with F4's panels (the user: "modify it instead,
+    adding additional frames from the L512 page"): legends on top, gold for the fits and the horizons.
+
+### 2026-09-25 (19:45 UTC) — no 3D fix for the harmonic arm: damping moves the NaN by < 0.5 u, zero shift blows up on the other side
+
+- **F5 (Kreiss–Oliger σ 0.3 and 1.0 instead of 0.1) died on F3's wall.** `_sg03`: NaN in h11 on level 5 at t = 46.71
+  (F3: 46.55), minimum lapse in the level-5 corner cell (4.97, 4.97, 4.97) as in F3; `_sg10`: NaN in h11 on level 5 at
+  t = 47.01, minimum lapse at (5.55, 5.55, 5.55), just past that corner; max|K| 181 at t = 47.00. Both tracked F3 to a
+  few % all the way (max|K| at t = 40: 0.48 / 0.51 against 0.47; t = 44: 1.77 / 1.68 against 1.73). Ten times the
+  damping buys 0.46 u: the growth is not grid-scale noise at the faces; it is the neck region meeting the fixed box.
+- **F6 (harmonic, zero shift) fails on the other side of the throat.** The neck stays inside the finest box as hoped,
+  but moves INWARD (x 1.59 → 0.84 by t = 32) and the other universe's horizon faster (1.62 → 0.73): without the shift
+  the other side is pushed into the compactified end at r → 0, which the grid cannot resolve. L2_Ham turns at t ≈ 25 and
+  doubles every unit from t = 29 (5.0e-4 → 1.2e-2 at t = 34 → 5.3e-2 at t = 35.4); stopped at t = 35.5 by
+  `stop_campaign.sh` to give card 1 back to F4 (15.6 u/h shared, 74 alone). The invariant agrees across gauges while it
+  lasts: R_neck 4.760 / 5.123 / 5.575 at t = 28 / 30 / 32, F3's to three digits.
+- **Verdict:** on the fixed-box octant, harmonic slicing cannot carry the inflating throat. With the Gamma-driver the
+  neck is dragged through the refinement faces (NaN at t ≈ 46.6–47.0 whatever σ); without it the other side collapses
+  into the unresolved compactified end (runaway from t ≈ 29). 1+log survives only by freezing the throat's clock.
+- **What would work:** (i) a 1D spherically symmetric evolution across both universes in the proper-distance coordinate
+  (no refinement faces, no compactification, any slicing, exact horizons) — the recommendation; (ii) in 3D, refinement
+  that follows the neck with a fixed number of cells per neck radius (a new C++ tagger; cost grows with the throat).
+  Neither started. The three failed runs' directories (frames, streams) and scratch remain, pending the user's word.
+
 ### 2026-09-25 (17:55 UTC) — F4 agrees with Shinkai–Hayward only at the onset; a NaN-free harmonic model: F5 (damping) running, F6 (zero shift) queued
 
 - **The L512 page remade on F4 with the full-metric R** (`plot_single_inflation_L512.py`, commit 64aa0d78, then panel (b)
@@ -1345,8 +1420,10 @@ need to be analysed and packed").
 - **F6 queued: harmonic slicing with zero shift** (`params_single_eps_m1e2_L512_ml5_harm_oct_zs_t400.txt`,
   `shift_Gamma_coeff 0`; β starts at 0 and d_t β = F B + β·∂β keeps it there). The Gamma-driver is what drags the neck
   through the fixed boxes (x_neck 1.6 → 17 by t = 98 in F4); in normal coordinates the neck should stay in the finest
-  box. New name token `zs` in `name_check.py`. Launched when card 0 frees (two runs on one card lose 40 % of the
-  throughput, so sequential answers sooner).
+  box. New name token `zs` in `name_check.py`. **LAUNCHED 17:59 UTC on the user's word** ("run it, there is plenty of
+  space on gpus"): `single_eps_m1e2_L512_ml5_harm_oct_zs_t400`, card 1 beside F4, preflight PASS, `shift_Gamma_coeff 0.0`
+  in the run's params, Chk00000 on scratch, frame 0 identical to F3's; the t ≤ 0.5 transient (max|K| 0.0202, min α
+  0.2199) matches F4 and F5 to the printed digits.
 - **The proper tool, not started:** a 1D spherically symmetric evolution across both universes in the proper-distance
   coordinate (as Shinkai–Hayward and González–Guzmán–Sarbach): no refinement faces, no compactified-end fiction, any
   slicing, horizons and their proper time exact, minutes per run; new code, cross-checked against the 3D onset.
@@ -1763,7 +1840,7 @@ bash research/merger/closeout.sh <run> [<run> ...]   # live check, scratch repor
 
 Then by hand: the README Claim/Runs line of the section the run answers; the
 §2 row and §3 queue here; the prune on the user's word, logged in
-`runs/wormhole_merger/MANIFEST_CLEANUP_*.md`; commit without a Co-Authored-By
+`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md`; commit without a Co-Authored-By
 trailer; push to myfork. A run is registered by one tab-separated line in
 `results/merger/runs_registry.tsv` — written by the launcher when `WHM_WHAT` is
 set at launch — never by a code edit.

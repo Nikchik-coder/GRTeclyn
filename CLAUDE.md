@@ -29,6 +29,8 @@ Every rule below exists because breaking it cost a run, a result or a day.
   contradictory settings (checkpoints asked for with `amr.checkpoint_files_output = 0`),
   and seeds that do not change the t = 0 data. Ask first with `--preflight-only`.
   `WHM_PREFLIGHT=off` exists; it is recorded in the run's manifest.
+- **Frames: the full default set is mandatory** (`frames_default.txt`, every profile):
+  preflight refuses a subset without `WHM_FRAMES_SUBSET="<reason>"` and renders each field from t = 0.
 - The campaign pin (`launch.sh` DEFAULT_BINARY) is `main3d_guard_7166787a_2026-09-24.ex`
   since 2026-09-24: it reads the quadrupole seed and the core profile, which the old pin
   `main3d_boost_2026-09-08.ex` ignored. A `--restart` continues on its parent run's binary
@@ -46,7 +48,7 @@ Every rule below exists because breaking it cost a run, a result or a day.
 - `runs/` is untracked and stays so (sizes); what must survive is packed into
   `results/` by `research/merger/pack_results.sh`. Never add `runs/` to git.
 - Scratch (`/tmp/grteclyn_scratch/` on each node) holds plotfiles and checkpoints;
-  prune only on the user's word and log it in `runs/wormhole_merger/MANIFEST_CLEANUP_<date>.md`.
+  prune only on the user's word and log it in `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_<date>.md`.
 - **Never delete frames.** A run's `frames/` (the rendered PNGs, the `_slice_cache`) and
   `movies/` are never removed: not at close-out, not in a prune, not as "leftovers", not
   to save space, not for runs called corrupted or uncited. The slice cache is the only
@@ -54,6 +56,10 @@ Every rule below exists because breaking it cost a run, a result or a day.
   be rebuilt. "Prune plotfiles/leftovers/scratch" never covers frames; only an explicit
   instruction naming frames and the runs does, and then ask once before deleting.
   (2026-09-25: five runs' frames were deleted as "leftovers", unrecoverable.)
+- **Movies stop at the run's trust window.** Put the last trustworthy time in
+  `results/merger/trust_windows.tsv` (wall reflection, blow-up, lost resolution) and
+  close out: the movies and their colour scales use only frames up to it, and later
+  frames stay on disk. Figures and the paper quote nothing after it either.
 - Heavy analysis (yt, covering grids) runs in the background with a log; trim the matrix first.
 - GWOSC downloads are the slow part of any search: bypass the local proxy, use `--block-s 4096`.
 
