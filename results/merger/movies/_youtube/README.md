@@ -13,11 +13,13 @@ side, in sync, for one encounter.
 **Playback is real time, 1x.** The frames are one per code-time unit and the
 `t =` label drawn on each panel is the true simulation time, so nothing here
 needs the "2x speed" disclaimer the Bondi set carries. Pass `--speed 2` if a
-particular upload wants it; the on-frame note follows automatically.
+particular upload wants it; the on-frame note follows automatically. The one
+exception is `01`: its run's frames are 2 units apart, so it plays t = 0–218 at
+2x and its frame says so.
 
 | file | length | shows | run |
 |---|---|---|---|
-| `01_wormhole_throat_inflates.mp4` | 10.2 s | one throat, kicked inward: it opens | `01_single_throat/single_eps_m1e2_ml4_t100` |
+| `01_wormhole_throat_inflates.mp4` | 11.1 s | one throat, kicked inward: it keeps opening (to its trust window, t = 218) | `01_single_throat/single_eps_m1e2_L512_ml5_oct_t400` |
 | `02_wormhole_throat_collapses.mp4` | 10.2 s | the same throat, seeded the other way: it closes | `01_single_throat/single_pureq_q1e2_ml4_t100` |
 | `03_headon_collision_makes_black_hole.mp4` | 20.2 s | two wormholes collide head-on and make a black hole | `04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100` |
 | `04_spiral_merger_without_a_horizon.mp4` | 10.2 s | a spiral merger that never forms a horizon | `05_binary_spiral/v2_spiral_d12_p012_L128_lvl5from0_then_freeze_t0-100` |
@@ -48,8 +50,8 @@ Method: Einstein equations coupled to a phantom (ghost) scalar field, the matter
 that holds a drainhole wormhole open, evolved in full 3+1 numerical relativity
 with the CCZ4 formulation on GPUs (GRTeclyn / AMReX). Adaptive mesh refinement
 to five levels. Initial data by superposition of exact drainhole throats, with
-the constraint defect declared rather than removed. Playback is real time: the
-t = value on each panel is the simulation time in code units.
+the constraint defect declared rather than removed. The t = value on each panel
+is the simulation time in code units; the corner note gives the playback speed.
 ```
 
 ---
@@ -60,25 +62,30 @@ t = value on each panel is the simulation time in code units.
 
 ```
 A single wormhole throat, held open by exotic matter, is given a tiny nudge
-inward. It does not collapse. It inflates, growing three times wider by the end
-of the run, and no horizon ever forms around it.
+inward. It does not collapse. It keeps opening, 3.8 times wider by t = 218, and
+no horizon forms around it.
 
-LEFT: the conformal factor, which shows where the throat is as a dark pit.
+LEFT: the phantom scalar field, the exotic matter that holds the throat open.
+Its dark core is the throat, and it widens as the throat inflates.
 RIGHT: the lapse, the rate at which time runs at each point.
 
 A wormhole of this kind is an unstable fixed point, like a pencil balanced on
-its tip. It has exactly two ways to fall, and the sign of the first
-perturbation decides which: inflate, as here, or collapse to a black hole, as
-in the companion video. Nothing else about the setup differs between them.
+its tip. It has exactly two ways to fall, and the first perturbation decides
+which: inflate, as here, or collapse to a black hole, as in the companion video.
 
-What makes this run the positive case rather than an absence: it does not
-merely fail to find a trapped surface, it carries that surface's mirror image,
-an anti-trapped shell, present at every measurement from t = 1 to t = 35. The
-growth follows the throat's own unstable mode, with an e-fold time of about 5
-code units, and then saturates rather than running away.
+Until t = 40 the throat grows exponentially in its own proper time, at close to
+the rate Shinkai and Hayward found for such throats in spherical symmetry. Then
+the lapse falls almost to zero at the throat, so the throat's own clock nearly
+stops against the simulation's: from t = 40 to 218 only about 5 units of its
+time pass, and its growth per unit of simulation time slows. That is the time
+slicing, not the throat. No horizon forms: the throat stays anti-trapped, the
+mirror image of a black hole's trapped surface.
 
-Watch it beside "A Wormhole Throat Collapses" - same throat, same grid,
-opposite fate.
+The video stops at t = 218. After that a gauge wave reflected off the edge of
+the simulation box comes back to the throat, and nothing later is trusted.
+Played at 2x speed.
+
+Watch it beside "A Wormhole Throat Collapses" - same throat, opposite fate.
 ```
 
 ## 2. `02_wormhole_throat_collapses.mp4`
@@ -86,14 +93,14 @@ opposite fate.
 **Title:** A Wormhole Throat Collapses Into a Black Hole | Full Numerical Relativity
 
 ```
-The same wormhole throat as the companion video, on the same grid at the same
-resolution, given a different perturbation. This time it closes, and a horizon
-forms at t = 33.
+The same wormhole throat as the companion video, given a different
+perturbation. This time it closes, and a horizon forms at t = 33.
 
 LEFT: the conformal factor, the throat as a dark pit that deepens.
-RIGHT: the lapse. Watch it fall toward zero at the centre. That collapse of the
-lapse is the horizon forming, and it is how a numerical relativity code shows
-you a black hole being born.
+RIGHT: the lapse, the rate at which time runs at each point. It dips at the
+centre as the throat closes. It falls in the inflating video too; what tells the
+two apart is the search for trapped surfaces, which finds a horizon here and
+none there.
 
 The pair of videos is the actual result. A drainhole wormhole is an unstable
 fixed point with two branches, and the perturbation it is given selects which:

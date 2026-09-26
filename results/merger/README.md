@@ -193,8 +193,9 @@ that produced it does not.
    (`hold_branch_expansion_ml4`, `hold_branch_collapse_lvl3`) carried χ alone and was pruned
    2026-09-21 under the movies folder's one-folder-one-whole-run rule; the same two fates are
    now shown in full instrument on
-   [`movies/01_single_throat/single_eps_m1e2_ml4_t100/`](movies/01_single_throat/single_eps_m1e2_ml4_t100)
-   (inflation) and
+   [`movies/01_single_throat/single_eps_m1e2_L512_ml5_oct_t400/`](movies/01_single_throat/single_eps_m1e2_L512_ml5_oct_t400)
+   (inflation, L = 512 at level 5, to its trust window t = 218; it replaced the level-4 arm's set
+   on 2026-09-26) and
    [`single_pureq_q1e2_ml4_t100/`](movies/01_single_throat/single_pureq_q1e2_ml4_t100)
    (collapse). Those pruned launches
    rendered no other field, and the plotfiles are gone, so no lapse, K or scalar movie of

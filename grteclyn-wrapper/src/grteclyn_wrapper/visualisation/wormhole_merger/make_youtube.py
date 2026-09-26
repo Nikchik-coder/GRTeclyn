@@ -22,7 +22,10 @@ their frames are one per plotfile over a long quiet record.  These records are
 100 units in 101 frames and the interesting part -- contact, merger, ringdown --
 takes ten of them, so at 2x the merger is over in a second.  ``--speed`` is
 there if a particular upload wants it, and the on-frame note follows it
-automatically, but the default is real time.
+automatically, but the default is real time.  "Real time" means one code unit
+per frame at 10 fps; an entry whose frames are further apart says so with
+``dt_frame`` and its note follows (F4's inflation record: frames 2 units apart,
+t = 0-218 in 11 s, "2x speed").
 
 WHICH FIELDS, AND WHY THOSE.  Chosen for what reads on screen at a glance,
 which is not the same as what the paper measures from:
@@ -32,7 +35,10 @@ which is not the same as what the paper measures from:
   field a viewer can follow without being told what to look at.
 * lapse -- where the geometry is collapsing.  It goes to zero over a forming
   horizon, so on the head-on it does the thing the paper's whole Sec. VII is
-  about, visibly.
+  about, visibly.  It also falls on the inflating throat, where 1+log freezes
+  the clock at the neck with no horizon, and that video's caption says so.
+* phi, the phantom scalar -- the inflating throat's field.  Its dark core
+  widens from t = 0, where chi on its fixed scale stays black until t ~ 80.
 * K, the trace of the extrinsic curvature -- the fly-by's field, because its
   mouths EXPAND and K shows the expansion where chi's pits only get shallower.
 * |Psi_4| and Re(Psi_4) -- the radiation.  Only on the arms whose burst is the
@@ -105,6 +111,7 @@ CREDIT = ("GRTeclyn  ·  3+1 numerical relativity on GPUs  ·  "
 # a viewer who watches two of them learns the code once.
 ROLE = {
     "chi":        ("GEOMETRY  ·  conformal factor χ", "0x8FB8E8"),
+    "phi":        ("MATTER  ·  phantom scalar φ", "0xE58C8C"),
     "lapse":      ("GAUGE  ·  lapse α", "0x7FD4A8"),
     "K":          ("CURVATURE  ·  trace K", "0xE0A3D6"),
     "Weyl4_Mag":  ("RADIATION  ·  |Ψ₄|", "0xE8B44A"),
@@ -119,22 +126,23 @@ ROLE = {
 # the paper's own numbers: nothing is rounded further than the article rounds
 # it, and nothing is claimed that the article does not.
 PANELS: dict[str, dict] = {
-    "01_single_throat/single_eps_m1e2_ml4_t100": dict(
+    "01_single_throat/single_eps_m1e2_L512_ml5_oct_t400": dict(
         out="01_wormhole_throat_inflates.mp4",
-        fields=["chi", "lapse"],
+        fields=["phi", "lapse"],
+        dt_frame=2.0,
         title="A lone wormhole throat inflates  \u2014  declared kick \u03b5 = \u22120.01",
-        cap1="One drainhole throat, given a small inward kick. It does not collapse: the "
-             "throat opens, growing 3.0\u00d7 in areal radius by t = 100.",
-        cap2="No trapped surface ever forms. What it carries instead is that surface's "
-             "mirror \u2014 an anti-trapped shell, present at every scan from t = 1 to 35.",
+        cap1="One drainhole throat, given a small inward kick. It does not collapse: it "
+             "keeps opening, 3.8\u00d7 in areal radius by t = 218, and no trapped surface forms.",
+        cap2="Until t \u2248 40 it grows at the Shinkai\u2013Hayward rate. Then the lapse (right) "
+             "freezes the clock at the throat, and its growth per unit t slows: the slicing, "
+             "not the throat.",
     ),
     "01_single_throat/single_pureq_q1e2_ml4_t100": dict(
         out="02_wormhole_throat_collapses.mp4",
         fields=["chi", "lapse"],
-        title="The same throat collapses  \u2014  a quadrupole seed, same grid",
-        cap1="The mirror of the inflating run: the same throat at the same resolution, "
-             "given a quadrupole instead of an inward kick. It closes, and a horizon "
-             "forms at t = 33.",
+        title="The same throat collapses  \u2014  a quadrupole seed",
+        cap1="The mirror of the inflating run: the same throat, given a quadrupole instead "
+             "of an inward kick. It closes, and a horizon forms at t = 33.",
         cap2="A wormhole throat is an unstable fixed point. Which way it falls is set by "
              "the perturbation it is given \u2014 and a quadrupole, unlike a spherical kick, "
              "also leaves it something to radiate.",
@@ -283,7 +291,8 @@ def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
         return files[name]
 
     put("title", spec["title"])
-    put("speed", "real time" if abs(speed - 1.0) < 1e-9 else f"{speed:g}× speed")
+    rate = speed * spec.get("dt_frame", 1.0)
+    put("speed", "real time" if abs(rate - 1.0) < 1e-9 else f"{rate:g}× speed")
     put("credit", CREDIT)
     put("mark", MARK)
 

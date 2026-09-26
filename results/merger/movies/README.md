@@ -14,7 +14,9 @@ readable as physics rather than as a light show.
 ## The rule: one folder, one whole run
 
 **A set is kept only if it shows a run's WHOLE history** — from its initial data
-to wherever that run's own history ends. Legs of a restart chain and arms cut
+to wherever that run's own history ends, or to its trust window where
+[`../trust_windows.tsv`](../trust_windows.tsv) sets one: nothing after that time is
+trusted, so the movie stops there. Legs of a restart chain and arms cut
 short for reasons outside the physics are not kept, however pretty: a viewer
 cannot tell a leg from a run once the file is on its own, and a partial record
 invites exactly the misreading the article spends paragraphs undoing.
@@ -100,14 +102,15 @@ Folder names are the run names, so a movie can always be traced to its line in
 | `lvl5from0` | level 5 from t = 0 — no restart, no mesh seam anywhere in the record |
 | `d8`, `d12` | initial separation |
 | `p012`, `p045` | initial momentum per hole, 0.12 / 0.45 |
-| `L128` | box half-width 128 (the doubled box) |
+| `L128`, `L512` | box side 128 (the doubled box), 512 |
+| `oct` | one octant evolved (mirror planes x = y = z = 0), mirrored to the full plane in the movies |
 | `then_freeze_t0-100` | a STITCH: the free arm to its wall, then the frozen-core arm to t = 100. Used only where no single arm reaches the end — see the rule above |
-| **`t100`, `t150`, `t200`** | **the stop_time REQUESTED, not necessarily the one reached.** A run that hit a curvature wall stops where it stopped; the "ends at" column below is the truth |
+| **`t100`, `t150`, `t200`, `t400`** | **the stop_time REQUESTED, not necessarily the one reached.** A run that hit a curvature wall stops where it stopped; the "ends at" column below is the truth |
 
 | set | what it shows | ends at |
 |---|---|---|
-| `01_single_throat/single_eps_m1e2_ml4_t100` | **The throat that INFLATES.** The ε = −0.01 kick at level 4 — article Fig. 3. Areal radius grows ×3.0 and no trapped surface ever forms; what it carries instead is that surface's mirror, an anti-trapped shell. Six fields | t = 100 |
-| `01_single_throat/single_pureq_q1e2_ml4_t100` | **The throat that COLLAPSES.** Pure quadrupole, no radial kick — and it still collapses and radiates. Watch it beside the inflating arm above: same throat, same level, opposite fates | t = 100 |
+| `01_single_throat/single_eps_m1e2_L512_ml5_oct_t400` | **The throat that INFLATES.** The ε = −0.01 kick in the L = 512 box at level 5 — article Fig. 3. Areal radius grows ×3.8 by t = 218 and no trapped surface forms: the throat stays anti-trapped. Until t ≈ 40 it grows at the Shinkai–Hayward rate; after that the lapse freezes the clock at the neck. Five fields (χ, K, lapse, φ, Π): this run rendered no Weyl4 or shift. Replaced the level-4 arm `single_eps_m1e2_ml4_t100` on 2026-09-26; that arm's movies stay in its run folder | **t = 218**, the trust window (the run reached 392) |
+| `01_single_throat/single_pureq_q1e2_ml4_t100` | **The throat that COLLAPSES.** Pure quadrupole, no radial kick — and it still collapses and radiates. Watch it beside the inflating arm above: same throat, opposite fates | t = 100 |
 | `01_single_throat/single_eps_p1e2_t100` | the seeded throat, ε = +0.01, at level 3: χ, K, lapse, φ, Π | t = 100 |
 | `01_single_throat/single_eps_p1e2_q5e3_ml4_t100` | the halved quadrupole seed (gate 3's lower point), level 4 | t = 100 |
 | `04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100` | **The head-on merger the paper quotes.** Two throats fall together from rest and make a black hole. Level 5 from t = 0, so no restart, no seam and no interior device anywhere in the record — one grid, 0 aborts. Six fields | t = 100 |
