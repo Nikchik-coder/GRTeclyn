@@ -31,7 +31,19 @@ no full-record integral is quoted anywhere.)
 (b) THE CONTROL EXPERIMENT NATURE RAN FOR US: the same envelope, one outer
 sphere per encounter, across the four fates.  The head-on, the only one
 with a horizon, decays.  The fly-by (no horizon, no merger) GROWS to the end
-of its record.  The p = 0.12 spiral -- whose common MOTS the shape-free
+of its trusted record.  SINCE 2026-09-26 (referee) that record stops at its
+trust window: the fly-by's constraint norms grow by orders of magnitude as its
+mouths inflate, so nothing past t = 70 at the source is used, nor anything a
+sphere records past the matching retarded time t - R = 50 (the wave gallery's
+fly-by gate) -- t = 80 on R = 30, where it had been drawn to t = 100.  Its
+envelope is built from the GATED flux: the running maximum centred on t reads
+the flux up to t + WINDOW/2, so enveloping the whole record and clipping the
+drawing would still show t = 92.5 at the cut (2.7e-2 there against |F| =
+9.4e-3 at t = 80).  At the cut the flux is still growing -- one sign since
+t ~ 40, rising at every sample from its t ~ 64 minimum (x3.2 by t = 80) --
+but the drawn envelope levels off over its last half-window, as every rising
+record's does at its end (the window loses its leading half).  The p = 0.12
+spiral -- whose common MOTS the shape-free
 finder recovers from t = 55 -- is still climbing when its grid dies at the
 t = 59.9 wall, its horizon too young to shed on a ~20 clock.  The LONE
 THROAT enters twice.  CORRECTED 2026-09-23: both scalar re-runs lack their
@@ -106,6 +118,7 @@ T_MOTS = 21.5      # head-on: first live corrected-orientation common MOTS
 T_WALL = 59.94     # spiral (level 5 from t = 0): NaN in h11, 0.94 after its t = 59 MOTS
 WINDOW = 25.0      # running-max window: one full period of the dipole
 SMOOTH = 5.0       # Gaussian on log amplitude, to round the staircase
+FLYBY_U_GATE = 50.0  # fly-by drawn to t - R <= 50 (its t = 70 trust window at R = 20)
 RAMP = {10: "#1a1a18", 14: "#54524c", 18: "#8f8b81"}   # dark = inner
 
 
@@ -178,9 +191,23 @@ def main(argv: list[str] | None = None) -> int:
              va="bottom", fontsize=9, color=style.INK)
 
     # ---- (b) three fates, one outer sphere each ----------------------------
+    # The fly-by only to its trust window's retarded gate, t - R <= 50 (t = 80
+    # on R = 30), its envelope built from the gated flux (docstring).
     t, k = _flux(camp / FLYBY / "scalar_modes.dat", 30)
-    axB.semilogy(t, _envelope(t, k), color=style.INK, lw=1.35, zorder=3,
+    gate = t <= FLYBY_U_GATE + 30 + 1e-9
+    t, k = t[gate], k[gate]
+    ef = _envelope(t, k)
+    axB.semilogy(t, ef, color=style.INK, lw=1.35, zorder=3,
                  label=r"fly-by, $R=30$")
+    late = t >= 50.0
+    t0 = float(t[late][np.argmin(np.abs(k[late]))])
+    rise = np.abs(k[t >= t0])
+    whole = t <= t[-1] - WINDOW / 2 + 1e-9
+    print(f"[censorship] fly-by R=30 to t={t[-1]:.0f} (t-R <= {FLYBY_U_GATE:g}): envelope "
+          f"{np.interp(50.0, t, ef):.2e} at t=50 -> {ef[whole][-1]:.2e} at t={t[whole][-1]:.1f} "
+          f"(last whole window) -> {ef[-1]:.2e} at the cut; raw |F| {rise[0]:.2e} at t={t0:.0f} "
+          f"-> {rise[-1]:.2e} at the cut (x{rise[-1] / rise[0]:.1f}), rising at every sample: "
+          f"{bool(np.all(np.diff(rise) > 0))}")
 
     # The spiral, spliced: its own record to the wall, then the freeze arm.
     # They overlap over t = 58-59 and agree to 0.1 % on this very flux, so the

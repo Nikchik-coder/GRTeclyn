@@ -586,15 +586,18 @@ def detector_fpk_range(stat: str, arms="channels") -> float:
 
 
 @extractor
-def detector_headon_mms_ratio() -> float:
+def detector_headon_mms_ratio(quantity: str = "M_MS") -> float:
     """Head-on remnant: M_MS at common-MOTS formation (offline scan, t = 22) over
     M_MS at the end of the level-3 down-step arm's live track (t = 99) -- the
-    factor by which a Kerr frequency ~ 1/M would rise as the remnant shrinks."""
+    factor by which a Kerr frequency ~ 1/M would rise as the remnant shrinks.
+    quantity = 'R' takes the area-based mass R/2 instead (the ratio of areal radii)."""
     from grteclyn_wrapper.visualisation.wormhole_merger import plot_headon_collapse as H
     g = PACK / "campaign" / H.GROUP
     form = H._offline_formation(g / H.SCOUT / "horizon_offline_scan.dat")
     c = H._live_scan(g / H.DOWN / "horizon_scan.dat")
     m = c["n_mots"] > 0
+    if quantity == "R":
+        return float(form[0, 2] / c["R_mots"][m][-1])
     return float(form[0, 3] / c["M_MS"][m][-1])
 
 
@@ -681,6 +684,81 @@ def detector_seed_budget_measured(what: str = "units", tau=None, d_over_M: float
         return ratio
     units = _tau(tau) * math.log(ratio)
     return units if what == "units" else units / _t_orb(d_over_M, M)
+
+
+# The budget against the orbit the drainhole pull actually drives (2026-09-26, referee
+# fixes): the vacuum period and inspiral time do not apply to a pair pulled 1 + Q = 6
+# times harder than by gravity, and the binaries' mouth fits are lower bounds on tau
+# (the coordinate-sphere reading includes the companion's field), so the lifetimes are
+# counted with the isolated clocks: 'iso_lo' = the level-4 plateau, 'iso_hi' = level 3.
+ISO_TAU_RUNS = {"iso_lo": "single_hold_ml4_t100", "iso_hi": "single_hold_t100"}
+
+
+def _clock(tau) -> float:
+    if tau in ISO_TAU_RUNS:
+        return float(EXTRACTORS["single_plateau"](run=ISO_TAU_RUNS[tau]))
+    return _tau(tau)
+
+
+@extractor
+def detector_pull_period(delta="max", d: float = 12.0, m: float = 1.0) -> float:
+    """Newtonian circular period of two throats of mass m at separation d under the
+    combined pull of Eq. (force), F = (1 + Q) m^2 / (d + delta)^2 (Q = single_drainhole Q):
+    omega^2 = 2 (1 + Q) m / [d (d + delta)^2].  delta: 0 (the pure inverse square, six
+    times gravity), 'min'/'max' (the offset fitted on the force-law ladder,
+    single_offset_delta), or a number."""
+    if isinstance(delta, str):
+        delta = EXTRACTORS["single_offset_delta"](kind=delta)
+    q = float(EXTRACTORS["single_drainhole"](quantity="Q"))
+    omega2 = 2.0 * (1.0 + q) * m / (d * (d + float(delta)) ** 2)
+    return 2.0 * math.pi / math.sqrt(omega2)
+
+
+@extractor
+def detector_life_periods(log10_eps: float, tau="iso_hi", delta="max") -> float:
+    """tau ln(1/eps) in periods of the pull orbit (detector_pull_period(delta))."""
+    return _clock(tau) * math.log(10.0) * (-log10_eps) / detector_pull_period(delta=delta)
+
+
+@extractor
+def detector_clock_units(tau="iso_hi", factor=10.0, what: str = "ln") -> float:
+    """tau ln(factor), code units: what a factor-`factor` quieter seed buys.  factor =
+    'measured' uses detector_seed_budget_measured's ratio (effective seed over the
+    level-3 truncation seed); 'measured_placed' takes the effective seed of the fly-by's
+    fit with the companion's field removed (mergers_mouth what='seed_placed')."""
+    if factor == "measured":
+        factor = detector_seed_budget_measured(what="ratio")
+    elif factor == "measured_placed":
+        factor = (EXTRACTORS["mergers_mouth"](run="merge_orbit_flip_d12_p045_L128_lvl5_t100", what="seed_placed")
+                  / EXTRACTORS["single_noise_seed"]())
+    return _clock(tau) * math.log(float(factor))
+
+
+@extractor
+def detector_log10(of: dict) -> float:
+    """log10 of another extractor's value (order-of-magnitude rows: tol abs:0.5)."""
+    from lib import evaluate
+    return math.log10(evaluate(of))
+
+
+@extractor
+def trust_window(run: str) -> float:
+    """t_max of a run in results/merger/trust_windows.tsv: the last time its solution
+    is trusted (movies, figures and the paper quote nothing after it)."""
+    path = PACK / "trust_windows.tsv"
+    for line in path.read_text(encoding="utf-8").splitlines():
+        cells = line.split("\t")
+        if cells and cells[0] == run:
+            return float(cells[1])
+    raise KeyError(f"{run} has no row in {path}")
+
+
+@extractor
+def detector_lum_dist_gpc() -> float:
+    """Luminosity distance to z_emit in the cosmology of plot_heavy_seeds, Gpc:
+    (1 + z) times the comoving distance of detector_stall(dc_gpc)."""
+    z = float(detector_seed_input(name="z_emit"))
+    return (1.0 + z) * float(EXTRACTORS["detector_stall"](what="dc_gpc"))
 
 
 # =============================================================== the heavy-seed channel

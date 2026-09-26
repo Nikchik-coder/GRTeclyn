@@ -39,6 +39,38 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 17 (App. B) | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 18 (App. B) | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
 
+## Fig. 10 gains the fly-by; Fig. 3's keys follow its caption (2026-09-26, referee pass)
+
+* **`00_code_health/constraint_evolution` is seven panels**, still 7.05 x 4.9
+  in: the lone throat on top, (a)-(d), four across; the binaries below,
+  (e)-(g), three across (one sub-grid per row). (a)-(f) keep their letters.
+  **New (g): the fly-by** (p = 0.45, d = 12, L = 128, level 5,
+  `06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100`), H ink and
+  M grey dashed to the end of its record, t = 100, PAST its t = 70 gate so the
+  growth behind the gate shows. Two faint rules, named in the key: the mouths
+  outgrow the per-mouth scan, t = 43 (`plot_momentum_orbits.scan_edge_time`,
+  the ledger's `clmFlybyScanEdgeTime`), and "quoted to t = 70" (the fly-by row
+  of `plot_psi4_gallery.ARMS`, `clmGwGateFlyby`). Both norms sit on a floor
+  over t = 30-40 (median H 4.6e-4, M 2.8e-4; M already rising) and leave it at
+  closest approach: H 5.8e-4 (t = 40) -> 2.5e-2 (70) -> 0.51 (100), M 4.9e-4
+  -> 2.0e-2 -> 0.13; first above 10x the floor at t = 54.5 (H) and 48.3 (M).
+  The needles at t = 9-24 are one-sample pulses during the approach (H to 0.16
+  in the pack's dt = 0.05 stream, 1.6 in the run's every-step stream), gone
+  within ~0.1 units; their cause is not pinned down (see the module docstring).
+* **(d)'s key names the finest cell, not the level**: "L = 512 octant, finest
+  dx = 1/16", read from the run's `evolution_params.txt` (L_full / N_full /
+  2^max_level). Level 5 there is the level-3 class of the L = 64/128 boxes.
+* At quarter width the top row's key titles ran past their frames (the audit
+  does not measure titles): (a) reads "lone throat; dash = kick sign", and the
+  (b), (c), (d) titles break over two or three lines.
+* **`01_single_throat/single_throat_inflation`**, with the caption: (a) the
+  onset fit is R0(1 + A e^(t/tau)), tau = 5.7 (was T), and the shaded window
+  is "exponential in the neck's proper time" (was "Shinkai-Hayward rate");
+  (b) "massless throat, Ha = 1.1" (was "SH"), "fit window" (was "SH
+  window"), and the x axis is "neck's proper time" (was "tau (neck)", which
+  would now clash with (a)'s tau). No text in the figure named the level or
+  the box, so nothing there changed.
+
 ## Figs. 6 and 10 to Appendix B; the appendix packed (2026-09-26, afternoon)
 
 The user: "move fig 10 also to appendix ... fig 6 also ... fix the appendix
@@ -239,7 +271,8 @@ Psi4 cannot see. Full-page row of three panels. (a) REDRAWN 2026-09-23
 (article audit): the fly-by alone, energy through R = 30 to t = 80 in units
 of E_GW(t = 80), with |E_phi|/E_GW printed at each cut -- 3.2 / 2.3 / 1.1 / 0.8
 at t = 50 / 60 / 70 / 80: the ratio is cut-dependent (the gravitational burst
-peaks at R = 30 near t = 65) and past t ~ 80 the mouths reach the sphere. The
+peaks at R = 30 near t = 65), and t = 80 is where the fly-by's trust window
+closes on this sphere (t - R = 50; see the 2026-09-26 note under (c)). The
 spiral is no longer drawn: its level-3 scalar record ends at t = 50, before
 its burst reaches R = 30, so its "-2.4" divided by a pre-burst E_GW.
 The scalar curve is NEGATIVE because gravity couples to minus this field's
@@ -249,7 +282,16 @@ l = 1 sits 10^7 above l = 0 and l = 2 -- two opposite scalar charges radiate
 at DIPOLE order, which a vacuum binary has no analogue for. (c) the
 systematic: |F_phi| at both spheres, with rules where the inflating mouths'
 areal radius passes each sphere's own radius, and the blue rule where the
-quoted numbers are taken. Reads `scalar_modes.dat` and `psi4_mode_l2_all.dat`
+quoted numbers are taken. CUT AT THE FLY-BY'S TRUST WINDOW (2026-09-26,
+referee: the constraint norms grow by orders of magnitude as the mouths
+inflate): a sphere reading is drawn only to t - R = 50 (the wave gallery's
+fly-by gate, t = 70 at R = 20), so (c) draws R = 14 to t = 64 and R = 30 to
+t = 80 (both ran to 100), and a mouth-crossing rule (a source-side reading)
+only if it falls by t = 70. R = 14's does (t = 63.8) and stays; R = 30's
+(t = 92.5, the caption's old "t ~ 92") does not and is gone: within the
+window the reading never reaches R = 30 (it is 17.1 at t = 70). (a) and (b)
+were already inside the gate and are unchanged, as is every printed ratio.
+Reads `scalar_modes.dat` and `psi4_mode_l2_all.dat`
 from the same run so the two channels share their extraction spheres; no run
 was launched for it, the `orbit-modes` consumer profile has been writing the
 scalar stream since 2026-09-15. The head-on gap it used to declare is closed --
@@ -279,7 +321,16 @@ NOT RADIATION: it is the two open mouths' static hair superposing, canonically
 INGOING and inside the near zone, which is why no full-record head-on integral
 is quoted anywhere.
 (b) the control, one outer sphere per fate: the fly-by (no horizon, no merger)
-GROWS to the end of its record; the p = 0.12 spiral (merges, 0 MOTS on every
+GROWS to the end of its trusted record. Since 2026-09-26 (referee) that record
+is cut at its trust window's retarded gate, t - R = 50, i.e. t = 80 on R = 30
+(it was drawn to t = 100), and the envelope is built from the GATED flux: a
+running max centred on t reads |F| up to t + 12.5, so enveloping the whole
+record and clipping the drawing would still show t = 92.5 (2.7e-2 at the cut,
+against |F| = 9.4e-3 at t = 80). At the cut the flux is still growing -- one
+sign since t ~ 40, rising at every sample from its t = 64 minimum (x3.2 by
+t = 80) -- and the envelope rises 4.5e-3 (t = 50) -> 7.6e-3 (t = 67, its last
+whole window) -> 9.35e-3, levelling over its last half-window as every
+rising record's envelope does at its end. The p = 0.12 spiral (merges, 0 MOTS on every
 scan) is still CLIMBING at its t = 59.9 wall. Horizon or no horizon is the only
 variable that separates them from the head-on.
 PAST THE WALL THE SPIRAL IS THE FROZEN-CORE ARM (`..._freeze_r05700`, dashed at
@@ -398,7 +449,7 @@ fly-by 9.3e-2 [5.6-9.3e-2], spiral 2.2e-2 [1.7-2.2e-2], head-on 3.3e-3
 [2.9-3.3e-3], BBH twin 2.6e-3 [2.4-2.6e-3], throat 3.2e-5 [2.6-3.2e-5]. The
 two open gold bars in (d) are NOT runs of this campaign and NOT closed
 forms: they are the published equal-mass non-spinning vacuum results from rest
-at infinity, head-on 5.5e-4 and quasi-circular 1 - M_f/M = 4.84e-2. The twin
+at infinity, head-on 5.5e-4 and quasi-circular 1 - M_f/M = 4.84e-2. [2026-09-26, referee fixes: the throat's energy now closes at the gallery's t = 58 at R = 10, before its floor -- 2.6e-5 [2.2-2.6e-5], spread 14 % over R = 10-22 (`plot_psi4_ligo.ENERGY_ON_DRAWN`); the head-on value is Witek et al., PRD 82, 104014 (2010), and 4.84e-2 is the quasi-circular budget from infinite separation (Scheel et al. 2009), not from rest.] The twin
 sits just above the head-on end because its momentum is 59 % of circular
 (p = 0.12 against 0.204 at d = 12) — it is an eccentric plunge, not an
 inspiral, which is why its 0.26 % is nowhere near the textbook 4.8 %.
@@ -710,6 +761,14 @@ over two time units (level-3 pits sit on 1/16 cells). The fly-by is faint
 from t = 43, where its per-mouth scan's areal minimum reaches the window
 edge: past it the separation is between the pits of two inflating mouths.
 Minima as drawn: p = 0.35 2.80 (raw tracker 2.746), p = 0.45 4.815 (4.797).
+CUT AT THE FLY-BY'S TRUST WINDOW (2026-09-26, referee): p = 0.45 is drawn to
+t = 70, not the run's t = 100 (its constraint norms grow by orders of
+magnitude as the mouths inflate; the paper quotes nothing of it past t = 70).
+The pit record is cut before the two-unit smoothing, so no later sample
+reaches the last point: full weight to t = 43, faint over 43-70, separation
+6.89 at t = 70 (it was 9.6 at t = 100). Panel (b)'s clock now runs to 80
+(p = 0.35 ends at 73.95), and the "mouths inflating" note sits under the
+faint stretch near its start. Other arms unchanged; `style.label_audit` clean.
 
 **`03_two_throats/pair_interaction`** is five panels now: (c) is the force
 law (`plot_force_law`, which reads the RESULT table of

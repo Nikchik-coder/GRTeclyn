@@ -54,6 +54,14 @@ pits inside two inflating mouths, not of two compact throats.  So p = 0.45 is
 drawn at full weight to that time and faint after it, with a note.  p = 0.35
 carries no mouth scan and is drawn as recorded.
 
+THE FLY-BY STOPS AT ITS TRUST WINDOW, t = 70 (2026-09-26, referee).  Its
+constraint norms grow by orders of magnitude as the mouths inflate, so the
+paper quotes nothing from it after t = 70 (the wave gallery's retarded gate,
+t - R <= 50, is the same window read at R = 20).  The pit record is cut there
+BEFORE the two-unit smoothing, so no later sample leaks into the last drawn
+point: full weight to t = 43, faint over 43-70, nothing after.  It had been
+drawn to the run's end, t = 100.  Every other arm is unchanged.
+
 STYLE: style.prd, letter tags above the frames.  The plunges are one grey
 ramp, light (p = 0) to ink (p = 0.25), keyed in (a)'s empty corner (five
 curves converging on one point cannot each carry a name); the fly-bys take
@@ -94,6 +102,8 @@ ARMS = (
 )
 SMOOTH = 2.0           # time units, centred running mean of the resampled track
 DT = 0.05
+# Last trusted time per run (see the docstring); absent run = its whole record.
+TRUST_END = {"merge_orbit_flip_d12_p045_L128_lvl5_t100": 70.0}
 
 
 def pit_tracks(run: str, pack_root=None, merges: bool = True):
@@ -177,6 +187,11 @@ def main(argv: list[str] | None = None) -> int:
     ends = {}
     for p, run, colr, ls, lw, merges in ARMS:
         t, one, two, why = pit_tracks(run, args.pack_root, merges)
+        if run in TRUST_END and t[-1] > TRUST_END[run]:
+            # Cut before smoothing: the last drawn point sees no later sample.
+            keep = t <= TRUST_END[run] + 1e-6
+            t, one, two = t[keep], one[keep], two[keep]
+            why = f"trust window, t <= {TRUST_END[run]:g}"
         raw = np.hypot(*(one - two).T)
         t, one, two = smoothed(t, one, two)
         sep = np.hypot(*(one - two).T)
@@ -230,7 +245,9 @@ def main(argv: list[str] | None = None) -> int:
                  va="center")
 
     # ---- (b) separation -------------------------------------------------------
-    axS.set_xlim(0, 101)
+    # The longest record drawn is p = 0.35's (t = 74) since the fly-by stops at
+    # its trust window (t = 70), so the clock runs to 80, not the fly-by's 100.
+    axS.set_xlim(0, 80)
     axS.set_ylim(0, 12.6)
     axS.set_xlabel(r"$t$")
     axS.set_ylabel(r"separation")
@@ -241,12 +258,14 @@ def main(argv: list[str] | None = None) -> int:
                  va="bottom")
     axS.text(26.0, 1.0, r"plunge, $p\leq0.25$", fontsize=7.5, color=style.INK,
              ha="right", va="center")
-    axS.text(75.0, 1.6, r"fly-by, $p\geq0.35$", fontsize=7.5, color=style.GOLD,
+    axS.text(68.0, 1.6, r"fly-by, $p\geq0.35$", fontsize=7.5, color=style.GOLD,
              ha="center", va="center")
-    # The fly-by's faint stretch: two inflating mouths, named under the curve.
+    # The fly-by's faint stretch: two inflating mouths, named under the curve
+    # near where it begins -- between it and p = 0.35, left of p = 0.35's name
+    # (above it, the note read as one phrase with the p = 0.45 tag).
     p_inf, t_inf, tt, ss = inflating
-    k = int(np.argmin(np.abs(tt - 72.0)))
-    axS.text(tt[k] + 1.5, ss[k] - 0.6, f"mouths inflating\n(from $t={t_inf:.0f}$)",
+    k = int(np.argmin(np.abs(tt - (t_inf + 4.0))))
+    axS.text(tt[k], ss[k] - 0.3, f"mouths inflating\n(from $t={t_inf:.0f}$)",
              fontsize=7, color=style.MUTED, ha="left", va="top", linespacing=1.15)
     print(f"[orbits] p = {p_inf:.2f}: faint from t = {t_inf:.1f} (scan window edge)")
 

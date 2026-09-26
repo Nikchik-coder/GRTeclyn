@@ -1,4 +1,4 @@
-# Status — 2026-09-26 05:00 UTC
+# Status — 2026-09-26 16:05 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -7,6 +7,8 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 ## Live
 
 Nothing. Both cards on the first node are free.
+
+**Done 2026-09-26 (afternoon, not committed): the referee's fixes** ["2026-09-26 (afternoon, paper session)"]. Retitled "The Four Fates of Ghost-Supported Wormholes: Collapse, Inflation, Merger and Scattering in Numerical Relativity"; the abstract is the user's own text (16:00 UTC). Cosmology conditional on z_e; no "baby universe", no percolation bound; "wall" → "interior failure"; no vacuum ISCO (the pull's period P = 75–100; ε = 1e-15 buys 1.8–2.7 periods); η = 4 horizons in §VII C; fly-by trust window t = 70 (new Fig. 10(g); Figs. 14/15/17/18 cut). Re-read on CPU: throat energy 2.6e-5 (to t = 58), 44× the matched control; Kerr rise 1.34; orbit fractions 0.27–0.30; **the mouths' τ with the companion's field removed: the merging arm has no growth of its own, the fly-by τ = 3.9** (the referee's "lower bound" had the wrong sign); the mouth fit had dropped its end rows (τ 3.64/4.33 now). 17 references. Ledger: 1000 rows, 0 problems. Caveats the referee asked for are in the text (Δt, ADM balance, curvature at the failure): G17/G18 queued. The head-on t ≤ 70 sentence was narrowed on the user's word (16:10 UTC): its numbers past t = 70 carry the late spread; no re-gate. No DOI yet (the user will add it).
 
 **F4 `single_eps_m1e2_L512_ml5_oct_t400` is closed out** ["2026-09-26 (05:00 UTC)"]: it died at t = 392.36 (04:22 UTC, NaN in
 h11 on level 2, blowing up on the neck sphere r ≈ 60–65). It was closed out with movies (chi K lapse phi Pi), filed under
@@ -63,7 +65,8 @@ the user's call: Chk05700 (26 GB, G4's input) and Chk03600 (20 GB, the t = 36 se
 
 ## Queued — nothing launches without the user's word
 
-- **Paper edit (no GPU):** carry the 09-25 η = 4 horizon results into §VII.C (ledger rows, manual, sourced from the plan table).
+- **Paper edit, DONE 2026-09-26:** the 09-25 η = 4 horizon results are in §VII.C (10 ledger rows).
+- **Paper decision, DONE 2026-09-26 — narrowed, not re-gated (the user's word):** the referee's "we quote no head-on waveform property after t = 70" is in the text but holds only after re-gating the head-on at t = 70 (~25 rows move: E 3.3e-3 → 3.0e-3, LISA head-on SNR 61–76 → 63–64, detectable masses 3.3e4–4.5e6, FF 0.82 → 0.87, censorship fits 30–70; the head-on horizon/injection rows need `gws` on O3b; Figs. 7/8/18) ["2026-09-26 (afternoon, paper session)"]. Re-gate, or scope the sentence.
 - **Paper edit, DONE 2026-09-26 — the inflation radii** ["2026-09-25 (13:30)", "2026-09-26 (05:00 UTC)"]: the level-4 / L = 64 / L = 128 inflation radii are r/√χ lower bounds. The user's decision (2026-09-26): "they are no go for the paper — only L512 lvl5 is proper". Fig. `single_throat_inflation` and §IV's inflation text are being rebuilt on F4 alone (full-metric R, quoted to t = 218), and the level-4 radius claims are removed.
 - **Inflation campaign, PROPOSED (the user's call)** [same entry]: corrected R + horizon tracker in the consumer; a slicing that does not freeze at the throat (harmonic / shock-avoiding, C1); refinement following the horizons instead of fixed cubes; the compactified other universe resolved or excised.
 - **Paper edit, DONE 2026-09-26 — the inflation ending** ["2026-09-25 (06:30)", "2026-09-26 (05:00 UTC)"]: §IV.D's "unbounded coasting, as in the spherical literature" (research.tex ≈ l. 267) misstates Shinkai–Hayward and GGS II, whose ending is exponential inflation in PROPER time. Replace it with F4's measurement: exponential in the neck's proper time at H R0 = 1.22 over t = 16–40 (SH 1.1, linear 1.30), with the coordinate-time slowdown being 1+log freezing the neck's clock. It goes in with the paper figure's rework (caption and a concise text edit).
@@ -98,7 +101,7 @@ the user's call: Chk05700 (26 GB, G4's input) and Chk03600 (20 GB, the t = 36 se
 - **LIGO**: no candidate in 2.26 h of O3b, and none expected (no throat survives; conversions are at z ≳ 20). (§IX)
 - **Astrophysics** (abstract + §X.B re-framed 2026-09-25: LISA is the headline, LIGO the null channel; the fly-by and spiral are the loudest LISA sources, optimal SNR 175–500 at 10⁵–10⁶ M⊙; conservative SNR ≥ 8 for every encounter 3×10⁴–4×10⁶, the fly-by to 2×10⁷; the fly-by marks no seed (its mouths inflate); lone collapse ≤ 6 conservative, ≈10 optimal — was "≈7"; Fig. 17(b) is now one burst's strain against the LISA noise, (c)'s Ω_GW the conversions only (head-on to spiral); the LISA SNRs are ledger rows recomputed by gw_search.lisa): no ghost-scalar wormhole inspiral (rotation is the open exception); collapse is a heavy-seed channel whose conversion bursts LISA would detect ONE BY ONE (SNR 61–500 at 10⁵–10⁶ M⊙, z = 20; > 8 from 3×10⁴ to 4×10⁶ M⊙), limited by abundance; the negative-energy deposit cannot be Λ (w, sign, size: Ω_WH ≈ 60–800 needed). (§X)
 
-**Plan vs paper**: the paper is the current word — 963 ledger rows, 0 problems, 805 recomputed (`claims.py check`, re-run 2026-09-25 17:00 UTC after Fig. 17's new panel (b)) — EXCEPT the 09-25 η = 4 horizon results and the spherical-literature inflation ending (Shinkai–Hayward / GGS II: exponential in proper time), which are in the plan and registry only. The plan's older entries still carry superseded readings (the regrowth as physics, "no horizon ever forms" for the spiral, "+17 %" regrowth, the ×7.8 fly-by growth as a measurement, the "21 % short" ringdown).
+**Plan vs paper**: the paper is the current word — 1000 ledger rows, 0 problems, 828 recomputed (`claims.py check`, 2026-09-26 16:00 UTC, after the referee's fixes). Where the verdicts below disagree with the paper (the regrowth "NUMERICAL" → "not a measurement"; "wall" → "interior failure"; the mouths' shared clock; the baby-universe framing; the unconditional LISA headline), the paper wins. The plan's older entries still carry superseded readings (the regrowth as physics, "no horizon ever forms" for the spiral, "+17 %" regrowth, the ×7.8 fly-by growth as a measurement, the "21 % short" ringdown).
 
 ## Traps (each has cost a run)
 

@@ -87,6 +87,8 @@ Window dependence at R = 10 — the period is stable, the e-fold is not:
 
 Over the burst window (t ≤ 45) the control floor is **8.1e-05** and the seeded arm reads 2.9e-03 at the same sphere — **35× the floor**.
 
+2026-09-26 (referee fixes): the paper quotes this gate against the MATCHED level-4 control, `single_eps_p1e2_q1e2_ml4_scalar_t100` (the +0.01 kick at level 4, no quadrupole read by its binary; Fig. 16's floor): floor 6.5e-05 at R = 14, **44×** (75× at R = 10, 25× at R = 18; `extract_waves.waves_q2e(gate="floor_ratio", control=...)`). The table above is the level-3 control.
+
 And the result that settles the junk: the control's own R = 14 crosses 1e-3 at t = 67 and reaches 1.8e-01 by t = 100, while its R = 30 sphere never leaves 1.1e-03. A run with no quadrupole cannot radiate a quadrupole, so the late-time excursions are sphere-local numerical growth — which is why every window above is closed before they start.
 
 ### What the five gates say together

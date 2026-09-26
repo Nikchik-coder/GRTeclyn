@@ -79,7 +79,7 @@ from scipy.signal import hilbert  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_gallery import (  # noqa: E402
-    ARMS, load, trim_zeros_tail,
+    ARMS, DRAW_GATES, load, trim_zeros_tail,
 )
 from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (  # noqa: E402
     C_SI, G_SI, M_SUN_KG, M_SUN_SEC, MPC_METER, _aLIGO_noise_psd, _burst_psd,
@@ -116,6 +116,16 @@ A_FINAL, M_FINAL = 0.6864, 0.9516    # equal-mass non-spinning remnant
 # and NOT runs of this campaign.
 E_BBH_CIRCULAR = 1.0 - M_FINAL       # 4.84e-2: quasi-circular inspiral-merger
 E_BBH_HEADON = 5.5e-4                # head-on infall, the other extreme
+
+# Scenarios whose ENERGY (panel d) closes where the gallery stops drawing them
+# (plot_psi4_gallery.DRAW_GATES at the innermost sphere) instead of at the ARMS
+# gate; panels (a)-(c) keep the ARMS record.  The lone throat's ARMS gate t = 70
+# is queue 2e's junk cut, and by then its numerical floor -- the level-4
+# spherical control's own r Psi4^(2,0) -- has passed 10 % of the burst peak at
+# R = 10 (t = 55) and is closing on it (equal by t = 72): the band integral took
+# that floor for radiation, 3.2e-5 M to t = 70 against 2.6e-5 M to the
+# gallery's t = 58, the end of the ringdown fit (referee, 2026-09-26).
+ENERGY_ON_DRAWN = ("collapsing throat",)
 
 SHORT = {"collapsing throat": "throat", "head-on": "head-on",
          "spiral": "spiral", "fly-by": "fly-by", "vacuum BBH twin": "BBH twin"}
@@ -258,19 +268,26 @@ def prepare(pack: pathlib.Path):
                 uu, ww, m=mm,
                 f_peak=float(f[1:][np.argmax(_smooth_psd(S, _smooth_window(S.size), 5)[1:])]))
 
-        E = band_energy(u, yy * M)
-        spread = []
+        # ENERGY_ON_DRAWN: the energy stops at the gallery's drawn end instead.
+        kE = (tt <= DRAW_GATES[name][0](R_in) + 1e-9 if name in ENERGY_ON_DRAWN
+              else np.ones(tt.size, bool))
+        E = band_energy(u[kE], yy[kE] * M)
+        # No sphere is asked for more samples than the innermost record the
+        # energy is quoted from (the throat's t <= 58 at R = 10 has 59).
+        n_min = min(64, int(kE.sum()))
+        spread = {}
         for R in sorted(series_raw):
-            keep = (t_raw - R) / M <= u[-1]
-            if keep.sum() < 64:
+            keep = (t_raw - R) / M <= u[kE][-1]
+            if keep.sum() < n_min:
                 continue
             t2, y2 = trim_zeros_tail(t_raw[keep], series_raw[R][keep])
-            if t2.size >= 64:
-                spread.append(band_energy((t2 - R) / M, y2 * M))
+            if t2.size >= n_min:
+                spread[R] = band_energy((t2 - R) / M, y2 * M)
         arms.append(dict(name=name, knob=knob, mode=mode, R_in=R_in, M=M,
                          u=u, y=yy * M, dt=dt, E=E,
-                         E_lo=min(spread) if spread else E,
-                         E_hi=max(spread) if spread else E))
+                         E_lo=min(spread.values()) if spread else E,
+                         E_hi=max(spread.values()) if spread else E,
+                         E_R=spread, t_E=float(tt[kE][-1])))
     return arms
 
 
@@ -319,7 +336,8 @@ def main(argv: list[str] | None = None) -> int:
               f"u = {a['u'][int(np.argmax(env))]:.1f} M, "
               f"band peak f M = {f_pk:.4f} ({f_pk * to_hz:.0f} Hz); "
               f"E/M = {a['E']:.3e} (spheres {a['E_lo']:.2e}-{a['E_hi']:.2e}, "
-              f"{(a['E_hi'] - a['E_lo']) / a['E'] * 100:.0f}%), "
+              f"{(a['E_hi'] - a['E_lo']) / a['E'] * 100:.0f}%; to t = {a['t_E']:.0f} "
+              f"at R = {a['R_in']:g}), "
               f"{a['E'] * MASS_MSUN:.4f} Msun c^2")
     axA.set_xlim(-45, 30)
     axA.set_ylim(2e-4, 2e-1)

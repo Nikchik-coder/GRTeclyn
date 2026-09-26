@@ -44,13 +44,25 @@ is the honest precision of the statement.
 
 WHERE IT STOPS BEING A MEASUREMENT
 
-Both mouths inflate, and a coordinate sphere is only outside the source while
-the mouths are smaller than it.  The rule in panel (c) is where the fly-by's
-per-mouth areal radius passes the sphere's own radius; past it the inner sphere
-is reading the throat, not the wave.  The numbers quoted in the article are
-taken at the rule in panel (a) (t = 60 for the fly-by, the end of the record
-for the spiral), and their spread over the two spheres is their error bar --
-the same convention the Psi4 energies of Sec. VIII use.
+Two limits.  (1) THE FLY-BY'S TRUST WINDOW (2026-09-26, referee): its
+constraint norms grow by orders of magnitude as its mouths inflate, so the
+paper uses nothing of it after t = 70 at the source (T_TRUST), and nothing a
+sphere records after the matching retarded time u = t - R = 50 (U_GATE; t = 70
+at R = 20, the wave gallery's DRAW_GATES["fly-by"]).  Every fly-by curve is
+drawn to its sphere's gate: R = 14 to t = 64, R = 30 to t = 80.  Panel (a)'s
+normalising cut (t = 80) and its four ratio cuts (t = 50-80, u = 20-50) and
+panel (b)'s t = 60 already lie inside it; only (c) drew past it (to t = 100).
+(2) Both mouths inflate, and a coordinate sphere is only outside the source
+while the mouths are smaller than it.  The grey rule in panel (c) is where the
+fly-by's per-mouth areal radius (an upper bound) passes R = 14, t = 63.8; past
+it the inner sphere is reading the throat, not the wave.  The same reading
+passes R = 30 only at t = 92.5, a source-side time outside the trust window,
+so that rule is no longer drawn (the reading is 17 at t = 70): within the
+window the outer sphere is never reached.  _mouth_crossing still returns both
+times.  The numbers quoted in the article are taken at the blue rule in panel
+(c) (t = 60 for the fly-by, the end of the record for the spiral), and their
+spread over the two spheres is their error bar -- the same convention the Psi4
+energies of Sec. VIII use.
 
 Reads ``scalar_modes.dat``, ``psi4_mode_l2_all.dat`` and ``horizon_scan.dat``
 under ``campaign/`` and writes ``figures/08_waves/scalar_channel``.
@@ -82,6 +94,10 @@ SPIRAL = ("05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl3_t050",
 RADII = (14, 30)
 T_MAX = 100.0
 ELLS = (0, 1, 2)
+# The fly-by's trust window (docstring, WHERE IT STOPS): source-side readings
+# to t = T_TRUST, sphere readings to t - R = U_GATE.
+T_TRUST = 70.0
+U_GATE = 50.0
 
 
 def _cols(path: pathlib.Path):
@@ -186,13 +202,16 @@ def main(argv: list[str] | None = None) -> int:
     # E_GW and is not a measurement (dropped 2026-09-23).  The ratio is
     # cut-dependent -- the gravitational burst peaks at R = 30 near t = 65, so
     # a t = 60 cut still misses most of it -- and the panel shows that: both
-    # curves run to t = 80 (past it the mouths' expansion reaches the sphere
-    # and both integrals grow without bound), with the ratio printed at each
-    # cut the article quotes.
+    # curves run to t = 80, where the fly-by's trust window closes on this
+    # sphere (u = t - R = 50; past it both integrals grow without bound as
+    # the mouths inflate), with the ratio printed at each cut the article
+    # quotes.
     a = arms["flyby"]
     tg, Eg = a["gw"][30]
     ts, Ep, _ = a["kin"][30]
     T_A = 80.0
+    if T_A > U_GATE + 30 + 1e-9:
+        raise ValueError(f"panel (a) would draw the fly-by past t - R = {U_GATE:g}")
     norm = _at(tg, Eg, T_A)
     k = tg <= T_A
     axA.plot(tg[k], Eg[k] / norm, color=style.INK, linewidth=1.4, zorder=3)
@@ -247,18 +266,28 @@ def main(argv: list[str] | None = None) -> int:
              va="center", ha="right")
 
     # ---- (c) where a coordinate sphere stops being outside the source -------
+    # Each sphere only to the fly-by's retarded gate, t - R <= U_GATE (t = 64
+    # at R = 14, 80 at R = 30; it ran to t = 100 until 2026-09-26), and a
+    # mouth-crossing rule only where the crossing -- a source-side reading --
+    # falls inside the trust window, t <= T_TRUST: R = 14's (t = 63.8) does,
+    # R = 30's (t = 92.5) does not and is not drawn.
     for R, col, lw in ((14, style.CONTEXT, 1.0), (30, style.GOLD, 1.4)):
         ts, _, kin = arms["flyby"]["kin"][R]
-        k = ts <= T_MAX
+        k = ts <= min(T_MAX, U_GATE + R) + 1e-9
         axC.plot(ts[k], np.abs(kin[k]), color=col, linewidth=lw, zorder=3)
         t_x = _mouth_crossing(arms["flyby"]["run"] / "horizon_scan.dat", R)
-        if t_x is not None and t_x <= T_MAX:
+        inside = t_x is not None and t_x <= T_TRUST
+        print(f"[scalar-channel] flyby (c) R={R}: drawn to t = {ts[k][-1]:.1f} "
+              f"(u = {ts[k][-1] - R:.1f}); mouth reading passes R at "
+              + ("never" if t_x is None else f"t = {t_x:.1f}")
+              + ("" if inside else f" -- past t = {T_TRUST:g}, no rule"))
+        if inside:
             # The rule stops below the note's band; rotated text runs UPWARD
             # from its anchor, so it is hung off the bottom of the frame where
             # both curves are already far above it.
             axC.vlines(t_x, 1e-8, 4e0, color=style.FAINT, linewidth=0.7,
                        zorder=1)
-            # R = 14's rule stands two units from the blue one, so its label
+            # R = 14's rule stands four units from the blue one, so its label
             # goes on the far side of it rather than into that gap.
             side = 1.8 if R == 14 else -1.8
             axC.text(t_x + side, 1.6e-8, rf"$R={R}$ engulfed", fontsize=6,

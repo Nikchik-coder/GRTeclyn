@@ -12,13 +12,17 @@ bound once the grid has moved.  The arm's method -- the record's cut, the onset
 fit, Shinkai-Hayward's window and fit, the theta_k track -- is imported from
 ``plot_single_inflation_L512``, as the claims ledger imports it.
 
-(a) the neck's areal radius; gold, the onset fit R0 (1 + A e^(t/T)), solid over
-    its window and dashed on (extrapolated); shaded, the Shinkai-Hayward window
-    (faint gold) and, after it, the slower growth in t once 1+log freezes the
-    neck's clock (grey).
-(b) Shinkai-Hayward's test: R/R0 - 1 against the neck's proper time, their
-    1 + A e^(H tau) fitted over the window (shaded), their massless H a = 1.1 and
-    the linear mode drawn from the window's start.
+(a) the neck's areal radius; gold, the onset fit R0 (1 + A e^(t/tau)), solid over
+    its window and dashed on (extrapolated); shaded, the window of exponential
+    growth in the neck's proper time (Shinkai-Hayward's window, faint gold) and,
+    after it, the slower growth in t once 1+log freezes the neck's clock (grey).
+(b) the proper-time test: R/R0 - 1 against the neck's proper time, Shinkai and
+    Hayward's 1 + A e^(H tau) fitted over the window (shaded), their massless
+    throat's H a = 1.1 and the linear mode drawn from the window's start.
+    SINCE 2026-09-26 (referee pass) the figure prints tau for the onset e-fold
+    (T names a dimensionless proper-time e-fold in the paper), so (b)'s axis is
+    named in words, and no key says "Shinkai-Hayward" or "SH": the caption
+    names the window by what it is and cites them for the massless rate.
 (c) the trapping horizons bounding the anti-trapped throat: theta_k = 0 (gold,
     to its first jump at t = 212) and theta_l = 0 on the neck (gold dotted).
 (d) the lapse at the neck and, dashed, min alpha on the finest box; (e) max |K|
@@ -157,11 +161,15 @@ def main(argv: list[str] | None = None) -> int:
     ext = axT.plot(te, R0 * (1.0 + on["A"] * np.exp(te / on["T"])), color=style.GOLD,
                    linewidth=1.3, linestyle=DASH, zorder=5)[0]
     axT.set_ylabel(r"$R_{\rm areal}$")
+    # The onset e-fold is tau, as every e-fold in the paper (T names the
+    # dimensionless proper-time e-fold there), and the window is named for what
+    # it is, not for whose result it matches (2026-09-26, referee pass).
     style.legend_top(axT, [
         (neck, rf"neck, full metric (quoted to $t={t[-1]:.0f}$)"),
-        (fit, rf"fit $R_0(1+Ae^{{t/T}})$, $T={on['T']:.1f}$, $t={on['t0']:.0f}$–${on['t1']:.0f}$"),
+        (fit, rf"fit $R_0(1+Ae^{{t/\tau}})$, $\tau={on['T']:.1f}$, $t={on['t0']:.0f}$–${on['t1']:.0f}$"),
         (ext, "fit, extrapolated"),
-        (_patch(f4.SH_SHADE), rf"Shinkai–Hayward rate ($t={sh['t0']:.0f}$–${sh['t1']:.0f}$)"),
+        (_patch(f4.SH_SHADE),
+         rf"exponential in the neck's proper time ($t={sh['t0']:.0f}$–${sh['t1']:.0f}$)"),
         (_patch(f4.SLOW_SHADE), r"slower in $t$: $1{+}\log$ freezes the neck's clock")], ncol=3)
 
     # ---- (b) Shinkai-Hayward in the neck's proper time ---------------------
@@ -175,17 +183,19 @@ def main(argv: list[str] | None = None) -> int:
     keyB.append((aSH.plot(tt, yf, color=style.GOLD, linewidth=1.3, linestyle=DASH,
                           zorder=4)[0], rf"fit, $HR_0={sh['H'] * R0:.2f}$"))
     ytop = max(float(y[mv].max()), float(yf.max()))
-    for hh, ls, lab in ((1.1 / R0, "solid", r"SH, $Ha=1.1$"),
+    # Shinkai & Hayward's massless throat (the caption cites them)
+    for hh, ls, lab in ((1.1 / R0, "solid", r"massless throat, $Ha=1.1$"),
                         (sh["H_linear"], DOT, rf"linear, $HR_0={sh['H_linear'] * R0:.2f}$")):
         yy = y[i0] * np.exp(hh * (tt - tau[i0]))
         ytop = max(ytop, float(yy.max()))
         keyB.append((aSH.plot(tt, yy, color=style.CONTEXT, linewidth=1.0, linestyle=ls,
                               zorder=2)[0], lab))
-    keyB.append((_patch(f4.SH_SHADE), "SH window"))
+    keyB.append((_patch(f4.SH_SHADE), "fit window"))
     aSH.set_yscale("log")
     aSH.set_xlim(tau[mv][0] - 0.5, tau[-1])
     aSH.set_ylim(0.01, 1.8 * ytop)
-    aSH.set_xlabel(r"$\tau$ (neck)")
+    # in words: tau is (a)'s onset e-fold, as every e-fold in the paper
+    aSH.set_xlabel("neck's proper time")
     aSH.set_ylabel(r"$R/R_0-1$")
     style.legend_top(aSH, keyB, ncol=1, handlelength=1.6)
 

@@ -488,6 +488,37 @@ def mergers_revolutions(run: str, merged: float = 0.3) -> float:
 
 
 @extractor
+def mergers_pit_revolutions(run: str, what: str = "rev", raw: bool = False) -> float:
+    """Fig. 14's reading of a momentum-scan arm (plot_momentum_orbits, its own helpers):
+    the fraction of a revolution the chi pits' separation vector sweeps from t = 0 to
+    closest approach, taken as the minimum pit separation over the arm's drawn record.
+    The pits are binary_throat_diagnostics' barycentres FOLLOWED BY CONTINUITY
+    (pit_tracks): that stream labels them by a fixed half-space (x > 0 / x < 0), so its
+    labels swap once the separation vector turns past 90 degrees, and an angle read from
+    the labels folds back to 180 - theta (every such reading <= 0.25).  The record is cut
+    where the figure cuts it (chi floor or a pit hop for a plunge, the trust window) and
+    averaged over its two time units (smoothed); raw = True reads the cell-snapped pits.
+    Unlike mergers_revolutions (throat_track), the plunges are not stopped where the
+    tracker fuses the two centres (separation ~2).  what = 'rev', 't' (time of closest
+    approach), 'sep' (the separation there)."""
+    from grteclyn_wrapper.visualisation.wormhole_merger import plot_momentum_orbits as pmo
+
+    merges = next((a[5] for a in pmo.ARMS if a[1] == run), True)
+    t, one, two, _ = pmo.pit_tracks(run, None, merges)
+    end = getattr(pmo, "TRUST_END", {}).get(run)
+    if end is not None and t[-1] > end:
+        keep = t <= end + 1e-6
+        t, one, two = t[keep], one[keep], two[keep]
+    if not raw:
+        t, one, two = pmo.smoothed(t, one, two)
+    d = one - two
+    s = np.hypot(d[:, 0], d[:, 1])
+    ang = np.unwrap(np.arctan2(d[:, 1], d[:, 0]))
+    i = int(np.argmin(s))
+    return float({"rev": abs(ang[i] - ang[0]) / (2.0 * np.pi), "t": t[i], "sep": s[i]}[what])
+
+
+@extractor
 def mergers_lone_throat_deviation(run: str, t1: float) -> float:
     """Worst 100 |R_min / R_exact - 1| of a lone throat's areal minimum up to t1, R_exact
     = e^{-u(r_t)} sqrt(a^2 + m^2) at r_t = (m + sqrt(m^2 + a^2)) / 2 (Sec. model)."""
@@ -501,23 +532,101 @@ def mergers_lone_throat_deviation(run: str, t1: float) -> float:
 
 
 # ---------------------------------------------------------------- mouths (plot_mouth_growth)
+@functools.lru_cache(maxsize=32)
+def _mouth_placed(run: str, model: str, interp: str):
+    """plot_mouth_growth's scan of a run and its reading against the placement curve
+    (results/merger/analysis/mouth_placement.correct).  Read-only: do not mutate."""
+    import mouth_placement as mp  # the pack's analysis module (lib puts it on the path)
+    from grteclyn_wrapper.visualisation.wormhole_merger import plot_mouth_growth as pmg
+
+    d = run_dir(run)
+    s = pmg._scan(d / "horizon_scan.dat")
+    c = mp.correct(s["t"], s["RA"], s["sep"], mp.load_curve(PACK),
+                   mp.declared_separation(d / "evolution_params.txt"), model, interp)
+    return s, c
+
+
+def _mouth_rms(t, ex, tau: float, seed: float, lo: float, hi: float) -> float:
+    """rms of ln(ex) about plot_mouth_growth._tau's line, over the rows it fits."""
+    m = (t >= lo - 1e-6) & (t <= hi + 1e-6) & (ex > 0)
+    return float(np.sqrt(np.mean((np.log(ex[m]) - (math.log(seed) + t[m] / tau)) ** 2)))
+
+
 @extractor
-def mergers_mouth(run: str, what: str) -> float:
+def mergers_mouth(run: str, what: str, model: str = "div", interp: str = "loglog",
+                  t: float | None = None) -> float:
     """plot_mouth_growth's per-mouth reading of a run's oriented scan: 'R0', 'R_split'
     (the last time the two scan spheres are disjoint), 'growth' (percent), 'fraction',
     't_split', 'sep0', 'sep_split', 'tau' (e-fold of R/R0 - 1 fitted over t = 8-25),
-    'seed', 'asym' (max |R_A - R_B|), 'min_sep', 't_end' (the scan's last time)."""
+    'seed', 'asym' (max |R_A - R_B|), 'min_sep', 't_end' (the scan's last time),
+    'rms' (of ln(R/R0 - 1) about the tau fit).
+
+    The same reading with the companion's field taken off the ruler (2026-09-26,
+    referee): each row against the placement curve of Sec. V C at the separation
+    the arm has reached (results/merger/analysis/mouth_placement.py: the scan-centre
+    separation, shifted by the tracker's t = 0 snap; a power law between the probes,
+    interp = 'loglog', or placement_curve.py's 'linear'; held at d = 6 below them).
+    model 'div' = R/R_p(d) - 1, 'sub' = (R - R_p(d))/R_iso.  'tau_placed',
+    'seed_placed', 'rms_placed': _tau's fit of that excess over the same rows (raises
+    if none is positive); 'placed' (percent, at t, default the last disjoint row),
+    'placed_max' / 'placed_min' (percent, over the fit rows); 'field' (R_p/R_p(0) - 1,
+    percent, at t or the last disjoint row) and 'field_share' (percent of R/R0 - 1
+    there); 'range_end' (last scan time inside the probed separations) and
+    'range_exit' (where d crosses the closest probe, interpolated between rows)."""
     from grteclyn_wrapper.visualisation.wormhole_merger import plot_mouth_growth as pmg
 
     s = pmg._scan(run_dir(run) / "horizon_scan.dat")
     i = pmg._split(s)
-    tau, seed, _ = pmg._tau(s)
+    tau, seed, ex = pmg._tau(s)
     ra = s["RA"]
-    return float({"R0": ra[0], "R_split": ra[i - 1], "growth": 100.0 * (ra[i - 1] / ra[0] - 1.0),
-                  "fraction": ra[i - 1] / ra[0] - 1.0, "t_split": s["t"][i - 1],
-                  "sep0": s["sep"][0], "sep_split": s["sep"][i - 1], "tau": tau,
-                  "seed": seed, "asym": np.abs(ra - s["RB"]).max(),
-                  "min_sep": s["sep"].min(), "t_end": s["t"].max()}[what])
+    base = {"R0": ra[0], "R_split": ra[i - 1], "growth": 100.0 * (ra[i - 1] / ra[0] - 1.0),
+            "fraction": ra[i - 1] / ra[0] - 1.0, "t_split": s["t"][i - 1],
+            "sep0": s["sep"][0], "sep_split": s["sep"][i - 1], "tau": tau,
+            "seed": seed, "asym": np.abs(ra - s["RB"]).max(),
+            "min_sep": s["sep"].min(), "t_end": s["t"].max()}
+    lo, hi = pmg.FIT
+    if what in base:
+        return float(base[what])
+    if what == "rms":
+        return _mouth_rms(s["t"], ex, tau, seed, lo, hi)
+
+    _, c = _mouth_placed(run, model, interp)
+    tt = s["t"]
+    rows = (tt >= lo - 1e-6) & (tt <= hi + 1e-6)                     # the rows _tau selects from
+    if t is None:
+        k = i - 1
+    else:
+        k = int(np.argmin(np.abs(tt - t)))
+        if abs(tt[k] - t) > 1e-3:
+            raise ValueError(f"{run}: no scan row at t = {t}")
+    if what in ("tau_placed", "seed_placed", "rms_placed"):
+        if not (rows & (c["ex"] > 0)).any():
+            raise ValueError(f"{run}: the {model} placement-corrected excess is <= 0 on every "
+                             f"fit row (the mouths read below the placement curve): no e-fold")
+        tau_p, seed_p, ex_p = pmg._tau({"t": tt, "RA": ra[0] * (1.0 + c["ex"])})
+        return float({"tau_placed": tau_p, "seed_placed": seed_p,
+                      "rms_placed": _mouth_rms(tt, ex_p, tau_p, seed_p, lo, hi)}[what])
+    if what == "placed":
+        return float(100.0 * c["ex"][k])
+    if what in ("placed_max", "placed_min"):
+        return float(100.0 * (c["ex"][rows].max() if what == "placed_max" else c["ex"][rows].min()))
+    if what == "field":
+        return float(100.0 * c["companion"][k])
+    if what == "field_share":
+        return float(100.0 * c["companion"][k] / c["raw"][k])
+    if what in ("range_end", "range_exit"):
+        out = ~c["in_range"]
+        if not out.any():
+            return float(tt[-1])
+        j = int(np.argmax(out))
+        if what == "range_end":
+            return float(tt[j - 1])
+        import mouth_placement as mp
+
+        d_near = float(mp.load_curve(PACK)[0][0])          # the closest probe, d = 6
+        d1, d2 = c["d"][j - 1], c["d"][j]
+        return float(tt[j - 1] + (tt[j] - tt[j - 1]) * (d1 - d_near) / (d1 - d2))
+    raise ValueError(f"mergers_mouth: unknown what {what!r}")
 
 
 # ---------------------------------------------------------------- the spiral core (plot_spiral_collapse)

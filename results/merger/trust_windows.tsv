@@ -4,3 +4,4 @@
 # paper quote nothing after t_max either.  Add the row when the window is measured, then re-run the close-out.
 run	t_max	why
 single_eps_m1e2_L512_ml5_oct_t400	218	the 1+log collapse front reaches the outer face (x = 256) at t = 218 and its reflection runs back to the neck (x-t diagram of the lapse slice cache); the far horizon track is lost at t = 212, L2 H > 0.1 from t = 220, and grid noise grows on the neck sphere until the NaN at t = 392.36 (GPU_PLAN 2026-09-26 05:00)
+merge_orbit_flip_d12_p045_L128_lvl5_t100	70	the mouths inflate past the scan window from t = 43 and the constraint norms grow by orders of magnitude (L2 H 5.8e-4 at t = 40, 2.5e-2 at t = 70, 0.51 at t = 100; L2 M 4.9e-4, 2.0e-2, 0.13); the waves are quoted to the matching retarded time t - R <= 50 (the gallery gate); set 2026-09-26 on the referee fixes

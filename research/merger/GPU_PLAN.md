@@ -1113,6 +1113,8 @@ The user's ~40 comments on the compiled paper ("update the paper and the plan ba
 | G14 | ε = +10⁻² at level 3 with the CCZ4 damping κ₁ doubled and halved (two arms, L = 64, t = 100) | whether the numerical regrowth follows the constraint damping (the double layer's lever) | ~12 |
 | G15 | ε = +10⁻² at level 3 with the seed shell twice as wide and half as wide (w = a/2, a/8) | whether the layer is the processed seed defect (∝ ε/w² on the shell) or made by the collapse | ~12 |
 | G16 | TAKE 2's checkpoints and plotfiles to t ≈ 70, read offline (H, Θ, Z at the horizon) | the double layer's history through the floor | 0 (CPU) |
+| G17 | Δt halved (dt_multiplier 0.02 → 0.01) on the level-3 unkicked single throat and the level-3 head-on scout (L = 64, to t = 60) | the time-discretisation error, which the paper now declares untested (referee, 2026-09-26) | ~12 |
+| G18 | the vacuum BBH controls re-run on the drainhole runs' numerical settings (Δt factor, dissipation, sponge, levels) | the numerical systematic in the 8.5× and 40–70× ratios, now declared unquantified (referee, 2026-09-26) | ~15 |
 | — | ~~η = 4 level-5 death-window flow hunt, Plt05520–06000 (second node)~~ **DONE 2026-09-25: CENSORED** (MOTS from ≤ 55.2; "2026-09-25 (morning)") | censored or naked at level 5 | 0 (CPU) |
 
 Bookkeeping, no GPU: ~~re-pack `merge_twin_p012_eta4_lvl5_t066_r05000` to its death~~ (done 09-24, filed and read from the pack 09-25); add TAKE 2 to `claims/table1_groups.tsv` BEFORE its first pack (else `check` fails); decide Table I's counting rule for duplicates and no-knob re-runs (fix the HOOKFAIL "dead launch" note); the collapsing throat's E_GW integrates its floor to t = 70 (gated at 58 it is 2.6e-5, not 3.2e-5 — Fig. 11 and the detector rows follow); clmGwThroatOverControl uses the level-3 control (44× against the matched level-4 one); clmDetKerrRise uses the shape-inflated formation M_MS (R/2 gives 1.34, not 1.38; conclusion unchanged); the byte-identity sentence rests on an unpacked run (the packed `lvl3_t050` / `_mouths` pair is byte-identical and could replace it).
@@ -1317,6 +1319,83 @@ need to be analysed and packed").
   delete frames. **Kept, the user's call:**
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
+
+### 2026-09-26 (afternoon, paper session) — the referee's fixes: retitled, cosmology conditional, "interior failure", no vacuum ISCO, the mouths' clock re-read; fly-by trusted to t = 70; ledger 1000 rows, 0 problems
+
+- **The user's word**: "add this fixes to the paper" — a referee-style report (text and CPU re-reads only), applied
+  item by item. Title: **"The Four Fates of Ghost-Supported Wormholes: Collapse, Inflation, Merger and Scattering in
+  Numerical Relativity"**; abstract rewritten (~330 words).
+- **Withdrawn or made conditional**: "primordial"/"baby universes" (the inflating region grows on our side of the
+  throat; Farhi–Guth's NEC obstacle is what the phantom evades); the heavy-seed/LISA part is conditional on z_e
+  (bubble/domain-wall wormholes form at re-entry, t ~ 1 s for 1e5 Msun, z ~ 1e9–1e10); the μ-distortion "evasion" is
+  only an unspecified formation mechanism; the percolation bound and the "0.33c boundary speed" are gone (the θ_k = 0
+  rate is slicing-dependent); the negative-energy paragraph is one sentence; Kirillov–Savelova are no longer cited for
+  a pre-inflationary phase; every "(curvature) wall" is the "interior failure"; "censorship necessary but not
+  sufficient" deleted; "the regrowth is numerical" → "not a measurement, most plausibly the evolved seed defect"
+  (levels 3/4 agree on R to a median 0.08 % — a median, worst row 0.72 %); "every p ≥ 0.35 does not merge" →
+  "passes without merging on its first approach".
+- **No vacuum ISCO in the budget**: the pull is 1 + Q = 6 times gravity, so P = 75–100 at d = 12 (δ = 0–4,
+  `detector_pull_period`), not 185. Lifetimes on the isolated clock τ = 5.3–5.9: ε_eff = (2–6)e-4 lasts about half a
+  period, ε = 1e-15 buys 1.8–2.7 periods, a decade 12–14 units, constraint-solved data 25–34. The Peters-time rows
+  (t_insp, 46/146 e-folds, 1e-20/1e-63, the 12–23 e-fold "positive energy" case) are unquoted, kept for provenance.
+- **The mouths' clock re-read — the referee's "lower bound" had the wrong sign.** With the placement curve taken off
+  at the pit separation reached (`results/merger/analysis/mouth_placement.py`; `mergers_mouth` what =
+  tau_placed/seed_placed/placed_min/field_share/...), the merging arm's mouths read BELOW a freshly placed pair at every
+  fitted time (−0.13 to −2.4 %, like the head-on scout): ≥ 87 % of their +12.2 % is the companion's field, own growth
+  ≤ 1.5 % by t = 28, no e-fold time. The fly-by keeps an exponential and a faster one, τ = 3.9 (4.33 as read; local
+  e-fold 3.1 → 5.5 across the window). "The clock belongs to the throat" and "the arms agree to 19 %" are gone. Also
+  a bug: the fit had silently dropped its end rows (t = 8 and 25 are stored as 7.99999999999987 and 25.0000000000011);
+  fixed in `plot_mouth_growth._tau`, τ 3.70/4.39 → 3.64/4.33, seed 7.06e-4 → 6.44e-4, Fig. 15 redrawn.
+- **Orbit fractions**, one definition (the χ pits followed by continuity, 2-unit mean, to their minimum separation):
+  0.27/0.30/0.30 at p = 0.20/0.25/0.35 (`mergers_pit_revolutions`). The old 0.17 stopped at the tracker's fusion
+  (t = 34.25, 11 units early); the queue-8 note's 0.23/0.21/0.16 read half-space-labelled pits that swap past 90°
+  (0.5 − rev).
+- **CPU re-reads**: the collapsing throat's energy now closes at the gallery's t = 58, before its floor:
+  3.2e-5 → 2.6e-5 M, sphere spread 18 → 14 %, and 35× → 44× against the MATCHED level-4 control at R = 14 (75×/25× at
+  R = 10/18); Fig. 8 redrawn (`plot_psi4_ligo.ENERGY_ON_DRAWN`). The lone collapse's LISA SNR still integrates to
+  t = 70 (moving it changes five prints and needs a search re-run; "at most ≈ 6" stays an upper bound). Fly-by
+  energies per sphere 7.41/5.69/4.94/4.23e-2 at R = 20/28/36/44 — 4.2e-2 is the outermost; a 1/R extrapolation is not
+  quotable (E_∞ 1.7e-2 for 1/R, −2.3e-2 to 3.6e-2 for other powers). Kerr rise with the area mass R/2: 1.34. Ringdown
+  periods with Berti–Cardoso–Starinets' Mω = 0.3737: 19.6–20.4 M. The 16–29× fly-by against the vacuum MERGER control
+  is gone (different events); scale instead: Damour et al. 2014's closest vacuum scattering radiates 1.95e-2.
+- **Fly-by trust window t = 70** (`results/merger/trust_windows.tsv`): its L2 H grows ×43 from t = 40 to 70 and
+  ~3 decades by 100 (new Fig. 10(g)); its waves are quoted to t − R = 50; Figs. 14/15/17/18 are cut there; the text
+  reads the separation (6.9, still rising) and the scan edge (17) at t = 70; the χ crescents read 3.9 at t = 70 (the
+  old "χ ∼ 6 by t = 92" was the movie's colour ceiling).
+- **η = 4 horizons now in §VII C** (the 09-25 hunts; 10 rows, radii and slice times manual): head-on MOTS from
+  t ≤ 30.0 (R 5.41), carried by the level-5 restart to t = 40; spiral at level 5 from t ≤ 55.2 (R 4.83, M_MS within
+  0.3 % of the standard gauge's — a cross-box comparison), at level 3 at 60.01 and 61.5 before 61.92; the harmonic
+  spiral shows only an untrapped θ_out = 0 surface 0.03 before its NaN — open.
+- **Head-on after t = 70 — narrowed on the user's word ("narrow the sentence").** The referee's "we quote no head-on
+  waveform property after t = 70" held only after re-gating the head-on; §VI B now says instead that the head-on numbers
+  running past t = 70 (energy, frequency track, scalar fits) carry the late spread. Every head-on arm is L = 64:
+  light from the merger returns to R = 18/14/10 at t ≈ 66/70/74, a 1+log front from the merger at ≈ 52–58 (from
+  t = 0 at ≈ 32–38); the level-5-from-0 arm and the seamed family agree to ≤ 5.4 % of peak through t = 70 and part by
+  62 % by 100. Quoted numbers that integrate past 70, with their t ≤ 70 values: down-step wave agreement 0.05–0.33 →
+  0.01–0.03 % (45–70); seam energies 3–8 → 1–3 % (common 22–70); the fourth swing (−0.006 at 82.2) drops; E_headon
+  3.3e-3 → 3.0e-3, spread 13 → 14 %; gallery speeds 0.96/0.90 → 0.98/0.93; frequency track 486→342 → 466→332 Hz (the
+  ×0.70 is lo/first with an edge "first"; from the envelope peak 0.77); Kerr rise over 22–70 1.25; pedestal low end
+  0.31 → 0.12; FF-window low end 0.82 → 0.87 (the fly-by's; fitting_factors.json to regenerate); LISA head-on SNR
+  61–76 → 63–64; detectable masses 3.3e4–4.5e6 Msun; censorship fits 30–95 → 30–70 with τ 24/39/58 (no longer decay
+  clocks at R = 14/18) and E_φ −0.026/−0.033/−0.034; `clmDetHorizonHeadon` and the injection rows need `gws scan/inject`
+  on the O3b strain. Figures to re-gate: the gallery's head-on row, Fig. 8, Fig. 18.
+- **Caveats now in the paper** (the referee's; against the 09-24 "verified results only" rule, kept on the user's
+  "add this fixes"): Δt untested → **G17**; two resolutions, no convergence order; the ADM balance with the scalar
+  channel not closed → G7 (= C2); curvature at the interior failure undetermined → G4; the vacuum controls on their
+  own settings → **G18**.
+- **References**: 17 added (Cline–Jeon–Moore; Hayward 1994/1999/2009; Gundlach 1998; Alcubierre et al. 2003;
+  Huisken–Ilmanen; Mars; Damour et al. 2014; Berti–Cardoso–Will; Berti–Cardoso–Starinets; Scheel et al. 2009; LVK O3
+  burst search; Gao et al. 2008; Doroshkevich et al.; Cremona et al.; Witek et al. 2010), details checked on
+  INSPIRE/Crossref; Azad/Khoo [59–61] correct. The head-on 5.5e-4 is Witek et al. 2010 (Sperhake 2008 does not state
+  it); Scheel's 4.84e-2 is the budget from infinite separation; [44]'s collapse ran with the phantom's Einstein source
+  halved (S_support = 0.5), now said in §IV D.
+- **Data availability**: the fork URL, branch feature/merger, the binary table, the stamped pin 7166787a. **No DOI**:
+  needs a Zenodo deposit (the user's). Not done: §VII C to an appendix (the referee's "consider").
+- **Mechanics**: extractors `detector_pull_period`, `detector_life_periods`, `detector_clock_units`,
+  `detector_log10`, `detector_lum_dist_gpc`, `trust_window`, `detector_headon_mms_ratio(quantity="R")`
+  (extract_detector.py); `mergers_pit_revolutions` and new `mergers_mouth` options (extract_mergers.py);
+  `waves_energy(which=inner/outer/sphere/t_end)`, `waves_q2e(control=)` (extract_waves.py). `claims.py check`:
+  1000 rows, 828 recomputed, 0 problems; numbers.tex regenerated. No LaTeX on this node: the build is the user's.
 
 ### 2026-09-26 (paper session) — renamed for the inflating half: baby universes, the percolation bound, referee edits; ledger 963 rows, 0 problems
 

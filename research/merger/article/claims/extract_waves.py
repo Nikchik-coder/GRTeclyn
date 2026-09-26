@@ -304,13 +304,27 @@ def waves_stream_radius(run: str, file: str, index: int) -> float:
 
 # ---------------------------------------------------------------- Psi4: energy, detector track
 @extractor
-def waves_energy(scenario: str, which: str = "E") -> float:
+def waves_energy(scenario: str, which: str = "E", sphere: float | None = None) -> float:
     """E_rad/M in the dominant multipole (plot_psi4_ligo.prepare): 'E' at the
     innermost sphere, 'lo'/'hi' over the spheres (common retarded window),
-    'spread' = 100 (hi - lo)/E in %."""
+    'spread' = 100 (hi - lo)/E in %.  One sphere on that same window: 'inner' /
+    'outer' (the innermost / outermost sphere the figure compares) or 'sphere'
+    with sphere = R.  't_end': the coordinate time at the innermost sphere where
+    the energy integral closes (the ARMS gate, or the gallery's drawn end for
+    plot_psi4_ligo.ENERGY_ON_DRAWN)."""
     a = _ligo_arm(scenario)
     if which == "spread":
         return 100.0 * (a["E_hi"] - a["E_lo"]) / a["E"]
+    if which == "t_end":
+        return float(a["t_E"])
+    if which in ("inner", "outer", "sphere"):
+        per = a["E_R"]
+        R = {"inner": min(per, default=None), "outer": max(per, default=None)}.get(
+            which, None if sphere is None else float(sphere))
+        if R not in per:
+            raise KeyError(f"{scenario}: sphere {R} is not in the figure's spread; "
+                           f"it compares R = {sorted(per)}")
+        return float(per[R])
     return float({"E": a["E"], "lo": a["E_lo"], "hi": a["E_hi"]}[which])
 
 
@@ -404,13 +418,17 @@ def _q2e_period() -> float:
 
 
 @extractor
-def waves_q2e(gate: str, stat: str = "mean") -> float:
+def waves_q2e(gate: str, stat: str = "mean", control: str | None = None) -> float:
     """The lone throat's wave gates (analysis/queue2e_gates.py, on its own arms):
     'arrival_speed' (gate 1, stat min/max over sphere pairs), 'peak_spread'
     (gate 2, % on the peak), 'eps_ratio' (gate 3, mean amplitude ratio for the
     five-fold seed), 'period' / 'period_short' (gate 4: period in M, and % short of
     the Schwarzschild target at the script's M_MS), 'floor_ratio' (gate 5, burst
-    over the spherical control's floor)."""
+    over the spherical control's floor).  control = a packed run NAME whose
+    psi4_mode_l2m0.dat gate 5 reads the floor from instead of the script's
+    CONTROL (the level-3 single_eps_p1e2_t100): the level-4 control of the
+    eps2 arms is single_eps_p1e2_q1e2_ml4_scalar_t100, whose binary ignored its
+    l2 key (plot_seed_linearity.CONTROL, the gallery's DRAW_GATES floor)."""
     Q = _q2e()
     t_s, cols_s, t_w, cols_w, ctrl = _q2e_records()
     junk: list[str] = []
@@ -433,7 +451,8 @@ def waves_q2e(gate: str, stat: str = "mean") -> float:
         per = _q2e_period()
         return per if gate == "period" else 100.0 * (Q.TARGET_PERIOD - per) / Q.TARGET_PERIOD
     if gate == "floor_ratio":
-        floor, sig = Q.gate5(t_s, cols_s, ctrl, junk)
+        path = ctrl if control is None else _run_path(control) / "psi4_mode_l2m0.dat"
+        floor, sig = Q.gate5(t_s, cols_s, path, junk)
         return float(sig / floor)
     raise ValueError(f"unknown gate {gate!r}")
 
