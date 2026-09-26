@@ -848,3 +848,48 @@ def single_scout(what: str, t: float | None = None) -> float:
     if what == "last_in_range":
         return float(a[a[:, 3] > 0, 0][-1])
     raise ValueError(what)
+
+
+# ========================================================= the L = 512 arm (F4)
+F4 = "single_eps_m1e2_L512_ml5_oct_t400"
+
+
+@functools.lru_cache(maxsize=None)
+def _f4(run: str = F4) -> dict[str, float]:
+    """The L = 512, level-5 kicked arm to T_WALL, by plot_single_inflation_L512's
+    own method -- imported, so the page, the paper's figure (plot_single_inflation)
+    and the ledger cannot drift apart: the record cut where the crash reaches it,
+    the onset fit R0 (1 + A e^(t/T)), Shinkai-Hayward's fit in the neck's proper
+    time, and the theta_k = 0 track to its first jump."""
+    from grteclyn_wrapper.visualisation.wormhole_merger import plot_single_inflation_L512 as m
+
+    nh = m.record(run_dir(run))["nh"]
+    nh = nh[nh[:, 0] <= m.T_WALL + 1e-9]
+    t, R, alpha, R_hk = nh[:, 0], nh[:, 2], nh[:, 5], nh[:, 14]
+    on = m.onset_fit(t, R)
+    sh = m.sh_fit(t, R, alpha)
+    kk, _ = m.theta_k_track(R_hk)
+    return {"R0": on["R0"], "R_wall": float(np.interp(m.T_WALL, t, R)),
+            "alpha0": float(alpha[0]), "alpha_wall": float(np.interp(m.T_WALL, t, alpha)),
+            "efold": on["T"], "fit_t0": on["t0"], "fit_t1": on["t1"],
+            "sh_rate": sh["H"] * on["R0"], "linear_rate": sh["H_linear"] * on["R0"],
+            "sh_t0": sh["t0"], "sh_t1": sh["t1"],
+            "sh_local_lo": float(np.nanmin(sh["local"][sh["mask"]])),
+            "sh_local_hi": float(np.nanmax(sh["local"][sh["mask"]])),
+            "tau_late": float(sh["tau"][-1] - sh["tau1"]),
+            "horizon_R": float(R_hk[kk[-1]]), "horizon_t": float(t[kk[-1]])}
+
+
+@extractor
+def single_f4(what: str, run: str = F4) -> float:
+    """The L = 512 arm (plot_single_inflation_L512, plot_single_inflation (a)-(c)):
+    R0 and R_wall (the neck's full-metric areal radius at t = 0 and at T_WALL),
+    alpha0 and alpha_wall (the lapse at the neck, likewise),
+    ratio (R_wall / R0), efold (T of the onset fit), fit_t0 / fit_t1 (its window),
+    sh_rate (H R0 of Shinkai-Hayward's fit over their window), sh_t0 / sh_t1 (the
+    window), sh_local_lo / sh_local_hi (the local H R0 inside it), tau_late (the
+    neck's proper time from the window's end to T_WALL), linear_rate (H R0 of the linear mode,
+    e-fold 5.13 t at the static throat's lapse), horizon_R / horizon_t (theta_k = 0
+    at its last sample before the first jump)."""
+    d = _f4(run)
+    return d["R_wall"] / d["R0"] if what == "ratio" else float(d[what])

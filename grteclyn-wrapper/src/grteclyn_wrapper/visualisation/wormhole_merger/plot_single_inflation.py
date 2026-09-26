@@ -1,44 +1,44 @@
 #!/usr/bin/env python3
-r"""One kicked throat's inflation, on one page: gauge, origin, shells, shells' fate.
-
-The mirror of ``plot_single_collapse.py``, drawn from the expansion-branch
-instrumented arm (`single_eps_m1e2_ml4_t100`, 2026-09-19): the same throat,
-the same level 4, the same instruments, and the OPPOSITE sign of the radial
-kick, eps = -0.01.  Where +0.01 collapses to a MOTS, this arm inflates: the
-mouth's areal radius grows 3.82 -> 11.39 (x3.0) by t = 100 with no horizon of
-any kind around the throat, and the certificate is the anti-trapped shell
-(theta_+ > 0 AND theta_- > 0, the white-hole-like signature of inflation, the
-MOTS's mirror), present at every scan centre over t = 1--36 (t = 1--35 on the mouth probes).
+r"""The inflating throat, on one page (the paper's Fig. single_inflation): F4 only.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_single_inflation
 
-Reads, all under ``campaign/01_single_throat/``:
-``seed/single_eps_m1e2_ml4_t100/`` -- ``areal_radius.dat``,
-``horizon_scan.dat`` (the oriented scan; the anti-trapped counter),
-``collapse_diagnostics.dat``, ``core_radial_profile.dat``,
-``constraint_norms.dat`` -- and ``hold/single_hold_ml4_t100/areal_radius.dat``,
-the UNKICKED level-4 twin whose own truncation seed inflates: the kicked arm
-leaves it by 10 % at t = 25.0, the same clock on which the +0.01 twin at this
-level forms its horizon.  Symmetric departure, opposite fates.
+F4 is ``campaign/01_single_throat/seed/single_eps_m1e2_L512_ml5_oct_t400`` in the
+pack: eps = -1e-2, L = 512, max_level 5, on an octant, the neck's areal radius in
+the FULL metric.  Every panel stops at T_WALL = 218, F4's trust limit (also in
+results/merger/trust_windows.tsv): the paper shows the quotable record only.  No
+level-4 data (2026-09-26, the user): those arms' radii are r / sqrt(chi), a lower
+bound once the grid has moved.  The arm's method -- the record's cut, the onset
+fit, Shinkai-Hayward's window and fit, the theta_k track -- is imported from
+``plot_single_inflation_L512``, as the claims ledger imports it.
+
+(a) the neck's areal radius; gold, the onset fit R0 (1 + A e^(t/T)), solid over
+    its window and dashed on (extrapolated); shaded, the Shinkai-Hayward window
+    (faint gold) and, after it, the slower growth in t once 1+log freezes the
+    neck's clock (grey).
+(b) Shinkai-Hayward's test: R/R0 - 1 against the neck's proper time, their
+    1 + A e^(H tau) fitted over the window (shaded), their massless H a = 1.1 and
+    the linear mode drawn from the window's start.
+(c) the trapping horizons bounding the anti-trapped throat: theta_k = 0 (gold,
+    to its first jump at t = 212) and theta_l = 0 on the neck (gold dotted).
+(d) the lapse at the neck and, dashed, min alpha on the finest box; (e) max |K|
+    and (f) min chi on the finest box.  collapse_diagnostics.dat reduces over the
+    FINEST LEVEL only (BinaryWormholeLevel.cpp, state_fine): the level-5 box about
+    the origin, the far side's compactified infinity, which the neck leaves at
+    t = 44.  So these are the core's values, labelled so: max |K| there is not the
+    global maximum (the shell profiles reach |K| 0.14 at r ~ 39 by t = 200).
+(g), (h) chi and alpha per shell of core_radial_profile.dat, r <= 60 (the neck
+    migrates from x = 1.6 to 38), t = 0-200 every 40 u, a grey ramp, light =
+    early.  Not t = 218: there the r = 20 shell's lapse sits on the code's floor
+    (1e-10), a one-shell spike.  (i) the L2 constraint norms.
 
 Writes ``figures/01_single_throat/single_throat_inflation``.
 
-WHAT THE LATE MARGINAL-SURFACE ROWS ARE NOT.  From t = 85 the centre scan
-reports flickering theta_+ = 0 rows at R ~ 60.6.  That surface is NOT a
-horizon and NOT drawn here: the radial profile shows the R ~ 60--100 areal
-peak exists from t = 0 at the innermost shell -- it is the grid's rendering
-of the far universe's compactified infinity -- and the inflation pushes its
-image outward in coordinate radius (r = 0.016 -> 2.9 over the run) until it
-crosses the scan window.  Panel (e) shows exactly that march, in chi.
-
-STYLE (the PRD review grammar of the collapse page): a wide context strip
-over a 2 x 3 grid, style.prd frame, no titles, letter tags above the frames,
-no boxed key, every series named in place.  Monochrome ink plus the one
-accent: GOLD is the horizon instrument -- here the anti-trapped
-certificate -- and nothing else.  Ordered time families (the radial
-snapshots) are a grey ramp, light = early.  min chi is labelled as what it
-is, the ORIGIN monitor (the far universe's compactified infinity), not the
-throat.
+STYLE: the PRD frame; a key ABOVE every panel names each line
+(``style.legend_top``), letter tags at the keys' left (``style.tag_keys``), no
+text inside a frame, an end dot on a record that stops inside its frame.  GOLD
+only for the fits, the Shinkai-Hayward window and the horizons; the rest ink and
+grey.  ``style.label_audit`` is printed.
 """
 
 from __future__ import annotations
@@ -51,32 +51,57 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
+from matplotlib.patches import Patch  # noqa: E402
+from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter  # noqa: E402
 
+from grteclyn_wrapper.visualisation.wormhole_merger import plot_single_inflation_L512 as f4  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, figure_dir  # noqa: E402
 
 GROUP = "01_single_throat"
-ARM = "seed/single_eps_m1e2_ml4_t100"
-TWIN = "hold/single_hold_ml4_t100"
-SNAPS = (0.0, 20.0, 40.0, 60.0, 80.0, 100.0)   # grey ramp, light = early
-T_DEPART = 25.0   # leaves the unkicked twin by 10 % -- the +0.01 twin's horizon clock
+SNAPS = (0.0, 40.0, 80.0, 120.0, 160.0, 200.0)   # shell profiles, light = early
+RAMP = (style.FAINT, "#8f8b81", "#6f6c64", "#54524c", "#37352f", style.INK)
+R_SHELL = 60.0                                    # the neck reaches x = 38 by t = 218
+DASH = (0, (4, 2.5))
+DOT = (0, (1.2, 1.8))
 
 
-def _profile(path: pathlib.Path):
-    """time, radii, and the three per-shell blocks of the radial profile."""
+def _patch(shade: dict) -> Patch:
+    """A key handle for an axvspan drawn with ``shade``."""
+    return Patch(**{k: v for k, v in shade.items() if k != "zorder"})
+
+
+def _plain_log(ax, ticks) -> None:
+    """Plain-number major ticks on a log axis that spans under two decades."""
+    lo, hi = ax.get_ylim()
+    ax.yaxis.set_major_locator(FixedLocator([v for v in ticks if lo <= v <= hi]))
+    ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
+    ax.yaxis.set_minor_formatter(NullFormatter())
+
+
+def _shells(path: pathlib.Path, times, fields=("chi_min", "lapse_min")):
+    """Radii and, per field, one profile row per requested time from
+    core_radial_profile.dat (~200 MB: only the wanted rows are parsed)."""
     with open(path) as fh:
-        fh.readline()
-        names = fh.readline().lstrip("#").split()
-    data = np.loadtxt(path)
-    t = data[:, 0]
-    blocks: dict[str, tuple[np.ndarray, np.ndarray]] = {}
-    for key in ("chi_min", "absK_max", "lapse_min"):
-        idx = [i for i, nm in enumerate(names) if nm.startswith(key + "_r")]
-        if not idx:
-            continue
-        r = np.array([float(names[i].split("_r")[-1]) for i in idx])
-        blocks[key] = (r, data[:, idx])
-    return t, blocks
+        names: list[str] = []
+        for line in fh:
+            if not line.startswith("#"):
+                break
+            names = line.lstrip("#").split()
+    idx = {f: [i for i, nm in enumerate(names) if nm.startswith(f + "_r")] for f in fields}
+    r = np.array([float(names[i].split("_r")[-1]) for i in idx[fields[0]]])
+    rows: dict[float, np.ndarray] = {}
+    with open(path) as fh:
+        for line in fh:
+            if line.startswith("#"):
+                continue
+            tt = float(line.split(maxsplit=1)[0])
+            for w in times:
+                if w not in rows and abs(tt - w) < 0.03:
+                    rows[w] = np.array(line.split(), dtype=float)
+            if len(rows) == len(times):
+                break
+    return r, {f: {w: v[idx[f]] for w, v in rows.items()} for f in fields}
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -85,122 +110,153 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--pack-root", default=str(PACK_ROOT))
     ap.add_argument("--out", default=None)
     args = ap.parse_args(argv)
-    root = pathlib.Path(args.pack_root).expanduser() / "campaign" / GROUP
-    arm = root / ARM
+    run = f4.f4_dir(args.pack_root)
 
-    ar = np.loadtxt(arm / "areal_radius.dat")
-    tw = np.loadtxt(root / TWIN / "areal_radius.dat")
-    cd = np.loadtxt(arm / "collapse_diagnostics.dat")
-    cn = np.loadtxt(arm / "constraint_norms.dat")
-    tp, blocks = _profile(arm / "core_radial_profile.dat")
-    h = np.genfromtxt(arm / "horizon_scan.dat", dtype=None, encoding=None, names=True)
-    hA = h[(h["centre"] == "A") & (h["n_anti_trapped"] > 0)]
-    t_anti = (hA["time"][0], hA["time"][-1])
+    # ---- F4, to its trust limit --------------------------------------------
+    # T_WALL (218) is F4's trust limit, also held per run in
+    # results/merger/trust_windows.tsv (closeout.sh cuts the movies there)
+    rec = f4.record(run)
+    T = f4.T_WALL
+    nh, cd, cn = (a[a[:, 0] <= T + 1e-9] for a in (rec["nh"], rec["cd"], rec["cn"]))
+    t, R, a_nk, R_hl, R_hk = nh[:, 0], nh[:, 2], nh[:, 5], nh[:, 10], nh[:, 14]
+    on = f4.onset_fit(t, R)
+    sh = f4.sh_fit(t, R, a_nk)
+    kk, jumped = f4.theta_k_track(R_hk)
+    r_sh, prof = _shells(run / "core_radial_profile.dat", SNAPS)
+    R0 = on["R0"]
 
     style.prd(base=10.0)
-    fig = plt.figure(figsize=(7.05, 5.0), constrained_layout=True)
-    gs = fig.add_gridspec(3, 3, height_ratios=[1.15, 1.0, 1.0])
+    fig = plt.figure(figsize=(7.05, 5.6), constrained_layout=True)
+    # the strip over two rows of four panels
+    gs = fig.add_gridspec(3, 4, height_ratios=[1.15, 1.0, 1.0])
     axT = fig.add_subplot(gs[0, :])
-    axs = [fig.add_subplot(gs[1 + i // 3, i % 3]) for i in range(6)]
-    tags = "abcdefg"
+    axs = [fig.add_subplot(gs[1 + i // 4, i % 4]) for i in range(8)]
+    aSH, aHZ, aLap, aK, aChi, aChiR, aLapR, aNorm = axs
+    for ax in (axT, aHZ, aLap, aK, aChi, aNorm):
+        ax.set_xlim(0, T)          # the frame ends where the quoted record ends
+        ax.set_xlabel(r"$t$")
 
-    # ---- context strip: the mouth, its unkicked twin, and the certificate --
-    axT.plot(ar[:, 0], ar[:, 1], color=style.INK, linewidth=1.4, zorder=3)
-    axT.plot(tw[:, 0], tw[:, 1], color=style.CONTEXT, linewidth=1.1, zorder=2)
-    m = ar[:, 0] <= t_anti[1]
-    axT.plot(ar[m, 0], ar[m, 1], color=style.GOLD, linewidth=0.0,
-             marker="o", markersize=2.0, zorder=4)
-    axT.axvline(T_DEPART, color=style.FAINT, linewidth=0.7, zorder=1)
-    # Every label here sits in a gap MEASURED off the two curves, not guessed:
-    # the kicked mouth runs 3.81 (t = 0) -> 4.95 (30) -> 9.24 (55) -> 11.39
-    # (100) and the twin is flat at 3.89 until t = 60.  So the certificate
-    # goes above the early flat stretch (curve <= 4.9 under its whole width),
-    # the twin names itself from BELOW its own flat line, and the kicked
-    # arm's label tucks under its plateau.
-    axT.text(2.0, 6.4, "anti-trapped shell present, $t=1$--$35$", fontsize=7,
-             color=style.GOLD)
-    axT.text(97.5, 10.7, r"$\varepsilon=-0.01$", fontsize=7.5,
-             color=style.INK, ha="right", va="top")
-    # ONE line, not two: the band between the twin's flat 3.89 and the frame
-    # floor is 1.2 units and a two-line note at 7 pt is 0.9 of them, so the
-    # second line came out sitting on the bottom spine.
-    axT.text(55.0, 3.60, "unkicked twin (truncation seed)", fontsize=7,
-             color=style.CONTEXT, ha="right", va="top")
-    axT.text(T_DEPART + 1.2, 10.9,
-             "leaves the twin by 10 % at $t=25$,\nthe $+0.01$ twin's horizon clock",
-             fontsize=7, color=style.MUTED, va="top")
-    axT.set_xlim(0, 100)
-    axT.set_ylim(2.7, 12.0)
+    # ---- (a) the neck, its onset, and where Shinkai-Hayward holds -----------
+    axT.axvspan(sh["t0"], sh["t1"], **f4.SH_SHADE)
+    axT.axvspan(sh["t1"], T, **f4.SLOW_SHADE)
+    neck = axT.plot(t, R, color=style.INK, linewidth=1.4, zorder=4)[0]
+    axT.set_ylim(3.0, R.max() + 0.08 * (R.max() - 3.0))
+    tf = np.linspace(on["t0"], on["t1"], 60)
+    fit = axT.plot(tf, R0 * (1.0 + on["A"] * np.exp(tf / on["T"])), color=style.GOLD,
+                   linewidth=1.9, zorder=5, solid_capstyle="butt")[0]
+    t_top = on["T"] * np.log((axT.get_ylim()[1] / R0 - 1.0) / on["A"])
+    te = np.linspace(on["t1"], t_top, 80)
+    ext = axT.plot(te, R0 * (1.0 + on["A"] * np.exp(te / on["T"])), color=style.GOLD,
+                   linewidth=1.3, linestyle=DASH, zorder=5)[0]
     axT.set_ylabel(r"$R_{\rm areal}$")
-    axT.set_xlabel(r"$t$")
-    axT.text(0.012, 0.93, "(a)", transform=axT.transAxes, ha="left", va="top",
-             fontsize=9, color=style.INK)
+    style.legend_top(axT, [
+        (neck, rf"neck, full metric (quoted to $t={t[-1]:.0f}$)"),
+        (fit, rf"fit $R_0(1+Ae^{{t/T}})$, $T={on['T']:.1f}$, $t={on['t0']:.0f}$–${on['t1']:.0f}$"),
+        (ext, "fit, extrapolated"),
+        (_patch(f4.SH_SHADE), rf"Shinkai–Hayward rate ($t={sh['t0']:.0f}$–${sh['t1']:.0f}$)"),
+        (_patch(f4.SLOW_SHADE), r"slower in $t$: $1{+}\log$ freezes the neck's clock")], ncol=3)
 
-    # ---- (b) min lapse, (c) min chi (origin), (d) max |K| -----------------
-    t, mlap, mchi, mK = cd[:, 0], cd[:, 1], cd[:, 2], cd[:, 3]
-    for ax, y, lab, logy in ((axs[0], mlap, r"$\min\alpha$", True),
-                             (axs[1], mchi, r"$\min\chi$ (origin)", True),
-                             (axs[2], mK, r"$\max|K|$", False)):
-        ax.plot(t, y, color=style.INK, linewidth=1.1, zorder=3)
-        ax.axvline(T_DEPART, color=style.FAINT, linewidth=0.7, zorder=1)
-        if logy:
-            ax.set_yscale("log")
-        ax.set_xlim(0, 100)
-        ax.set_ylabel(lab)
+    # ---- (b) Shinkai-Hayward in the neck's proper time ---------------------
+    y, tau = sh["y"], sh["tau"]
+    mv = y > 0.01
+    aSH.axvspan(sh["tau0"], sh["tau1"], **f4.SH_SHADE)
+    keyB = [(aSH.plot(tau[mv], y[mv], color=style.INK, linewidth=1.3, zorder=3)[0], "neck")]
+    i0 = int(np.flatnonzero(sh["mask"])[0])
+    tt = tau[i0:]
+    yf = np.exp(sh["lnA"] + sh["H"] * tt)
+    keyB.append((aSH.plot(tt, yf, color=style.GOLD, linewidth=1.3, linestyle=DASH,
+                          zorder=4)[0], rf"fit, $HR_0={sh['H'] * R0:.2f}$"))
+    ytop = max(float(y[mv].max()), float(yf.max()))
+    for hh, ls, lab in ((1.1 / R0, "solid", r"SH, $Ha=1.1$"),
+                        (sh["H_linear"], DOT, rf"linear, $HR_0={sh['H_linear'] * R0:.2f}$")):
+        yy = y[i0] * np.exp(hh * (tt - tau[i0]))
+        ytop = max(ytop, float(yy.max()))
+        keyB.append((aSH.plot(tt, yy, color=style.CONTEXT, linewidth=1.0, linestyle=ls,
+                              zorder=2)[0], lab))
+    keyB.append((_patch(f4.SH_SHADE), "SH window"))
+    aSH.set_yscale("log")
+    aSH.set_xlim(tau[mv][0] - 0.5, tau[-1])
+    aSH.set_ylim(0.01, 1.8 * ytop)
+    aSH.set_xlabel(r"$\tau$ (neck)")
+    aSH.set_ylabel(r"$R/R_0-1$")
+    style.legend_top(aSH, keyB, ncol=1, handlelength=1.6)
 
-    # ---- (e)/(f) the shells: chi and lapse profiles, light = early --------
-    # chi, not |K|, leads here: the inflation's signature is the compactified
-    # inner sheet's chi-trough marching outward through the shells while the
-    # throat's own chi rises -- |K| stays below 0.05 the whole run and shows
-    # nothing.
-    ramp = [style.FAINT, "#8f8b81", "#6f6c64", "#54524c", "#37352f", style.INK]
-    for ax, key, lab, logy in ((axs[3], "chi_min", r"$\chi$ per shell", True),
-                               (axs[4], "lapse_min", r"$\alpha$ per shell", False)):
-        r, block = blocks[key]
-        for c, ts in zip(ramp, SNAPS):
-            i = int(np.argmin(np.abs(tp - ts)))
-            ax.plot(r, block[i], color=c, linewidth=1.0, zorder=3)
-        if logy:
-            ax.set_yscale("log")
-        ax.set_xlim(0, 4.0)
-        ax.set_ylabel(lab)
+    # ---- (c) the horizons bounding the anti-trapped throat -----------------
+    fl = np.isfinite(R_hl)
+    t_hk = float(t[kk[-1]])
+    keyC = [(aHZ.plot(t[kk], R_hk[kk], color=style.GOLD, linewidth=1.4, zorder=3)[0],
+             rf"$\theta_k=0$, to $t={t_hk:.0f}$")]
+    if jumped:
+        aHZ.plot(t[kk[-1]], R_hk[kk[-1]], linestyle="none", marker="o", markersize=2.8,
+                 color=style.GOLD, zorder=3)
+    keyC.append((aHZ.plot(t[fl], R_hl[fl], color=style.GOLD, linewidth=1.3, linestyle=DOT,
+                          zorder=4)[0], r"$\theta_l=0$"))
+    keyC.append((aHZ.plot(t, R, color=style.INK, linewidth=1.2, zorder=2)[0], "neck"))
+    aHZ.set_yscale("log")
+    aHZ.set_ylim(0.85 * np.nanmin(np.r_[R, R_hl[fl], R_hk[kk]]),
+                 1.35 * np.nanmax(np.r_[R, R_hl[fl], R_hk[kk]]))
+    _plain_log(aHZ, (2, 5, 10, 20, 50, 100, 200))
+    aHZ.set_ylabel(r"$R_{\rm areal}$")
+    style.legend_top(aHZ, keyC, ncol=1, handlelength=1.6)
+
+    # ---- (d) the lapse; (e) max|K| and (f) min chi on the finest box --------
+    keyD = [(aLap.plot(t, a_nk, color=style.INK, linewidth=1.2, zorder=3)[0],
+             r"$\alpha$ at the neck"),
+            (aLap.plot(cd[:, 0], cd[:, 1], color=style.MUTED, linewidth=1.0, linestyle=DASH,
+                       zorder=2)[0], r"$\min\alpha$, finest box")]
+    aLap.set_yscale("log")
+    aLap.set_ylabel(r"$\alpha$")
+    style.legend_top(aLap, keyD, ncol=1)
+    style.legend_top(aK, [(aK.plot(cd[:, 0], cd[:, 3], color=style.INK, linewidth=1.1,
+                                   zorder=3)[0], r"$\max|K|$, finest box")], ncol=1)
+    aK.set_ylabel(r"$|K|$")
+    style.legend_top(aChi, [(aChi.plot(cd[:, 0], cd[:, 2], color=style.INK, linewidth=1.1,
+                                       zorder=3)[0], r"$\min\chi$, the origin")], ncol=1)
+    aChi.set_yscale("log")
+    aChi.set_ylabel(r"$\chi$")
+
+    # ---- (g)/(h) chi and the lapse per shell, light = early ------------------
+    m = r_sh <= R_SHELL
+    for ax, field, lab in ((aChiR, "chi_min", r"$\chi$ per shell"),
+                           (aLapR, "lapse_min", r"$\alpha$ per shell")):
+        snaps = [(ax.plot(r_sh[m], prof[field][ts][m], color=c, linewidth=1.0, zorder=3)[0],
+                  f"{ts:g}") for c, ts in zip(RAMP, SNAPS) if ts in prof[field]]
+        ax.set_yscale("log")
+        ax.set_xlim(0, R_SHELL)
         ax.set_xlabel(r"$r$")
-    axs[3].text(0.96, 0.28, rf"$t={SNAPS[0]:g}$--${SNAPS[-1]:g}$",
-                transform=axs[3].transAxes, ha="right", va="top", fontsize=7,
-                color=style.MUTED)
-    axs[3].text(0.96, 0.15, "light = early", transform=axs[3].transAxes,
-                ha="right", va="top", fontsize=7, color=style.MUTED)
+        ax.set_ylabel(lab)
+        style.legend_top(ax, snaps, ncol=3, title=r"$t=$", title_fontsize=6.5,
+                         alignment="left", handlelength=1.2)
 
-    # ---- (g) the constraints ----------------------------------------------
-    axs[5].plot(cn[:, 0], cn[:, 1], color=style.INK, linewidth=1.1, zorder=3)
-    axs[5].plot(cn[:, 0], cn[:, 2], color=style.MUTED, linewidth=1.1,
-                linestyle=(0, (4, 2.5)), zorder=3)
-    axs[5].axvline(T_DEPART, color=style.FAINT, linewidth=0.7, zorder=1)
-    axs[5].set_yscale("log")
-    axs[5].set_xlim(0, 100)
-    axs[5].set_ylabel(r"$L_2$ norms")
-    # In DATA coordinates, each beside its own curve: in axes fractions both
-    # labels floated in the empty upper middle of the frame, naming nothing.
-    # H passes 2.4e-2 at t = 75 and M 2.0e-3, two decades apart, so each sits
-    # just above its own line at that t.
-    axs[5].text(75.0, 3.7e-2, r"$\mathcal{H}$", fontsize=7.5,
-                color=style.INK, ha="center", va="bottom")
-    axs[5].text(75.0, 3.1e-3, r"$\mathcal{M}$", fontsize=7.5,
-                color=style.MUTED, ha="center", va="bottom")
+    # ---- (i) the constraints -------------------------------------------------
+    mm = cn[:, 2] > 0
+    keyI = [(aNorm.plot(cn[:, 0], cn[:, 1], color=style.INK, linewidth=1.1, zorder=3)[0],
+             r"$\mathcal{H}$"),
+            (aNorm.plot(cn[mm, 0], cn[mm, 2], color=style.MUTED, linewidth=1.1, linestyle=DASH,
+                        zorder=3)[0], r"$\mathcal{M}$")]
+    aNorm.set_yscale("log")
+    aNorm.set_ylabel(r"$L_2$ norms")
+    style.legend_top(aNorm, keyI, ncol=1)
 
-    # Letter tags ABOVE the frames (the spiral page's rule).
-    for k, ax in enumerate(axs):
-        ax.text(0.0, 1.03, f"({tags[k + 1]})", transform=ax.transAxes,
-                ha="left", va="bottom", fontsize=9, color=style.INK)
-        if k < 3:
-            ax.set_xlabel(r"$t$")
-    axs[5].set_xlabel(r"$t$")
+    fig.align_ylabels([axT, aSH, aChiR])
+    style.tag_keys(fig, [axT] + axs, [f"({c})" for c in "abcdefghi"], row="last")
 
-    print(f"[single-inflation] anti-trapped over t = {t_anti[0]:.1f}--{t_anti[1]:.1f}; "
-          f"areal {ar[0, 1]:.3f} -> {ar[-1, 1]:.3f} (x{ar[-1, 1] / ar[0, 1]:.2f}); "
-          f"twin {tw[0, 1]:.3f} -> {tw[-1, 1]:.3f} (x{tw[-1, 1] / tw[0, 1]:.2f}); "
-          f"end state min alpha {cd[-1, 1]:.3f}, min chi {cd[-1, 2]:.2e}, "
-          f"max |K| {cd[-1, 3]:.2e}")
+    grow = np.diff(R)
+    print(f"[single-inflation] F4 to t = {t[-1]:.0f}: neck R {R0:.3f} -> {R[-1]:.3f} "
+          f"(x{R[-1] / R0:.3f}), rising at {int((grow > 0).sum())} of {grow.size} steps; "
+          f"onset fit t = {on['t0']:.0f}-{on['t1']:.0f}: T = {on['T']:.3f}; extrapolated to "
+          f"t = {t_top:.1f}")
+    print(f"[single-inflation] SH window t = {sh['t0']:.0f}-{sh['t1']:.0f} (tau "
+          f"{sh['tau0']:.2f}-{sh['tau1']:.2f}), local H R0 "
+          f"{np.nanmin(sh['local'][sh['mask']]):.3f}-{np.nanmax(sh['local'][sh['mask']]):.3f}; "
+          f"fit H R0 = {sh['H'] * R0:.4f}; linear mode {sh['H_linear'] * R0:.3f}; proper time "
+          f"from t = {sh['t1']:.0f} to {t[-1]:.0f}: {tau[-1] - sh['tau1']:.2f}")
+    print(f"[single-inflation] theta_k to t = {t_hk:.0f} at R = {R_hk[kk[-1]]:.2f}; theta_l "
+          f"- neck at t = {t[-1]:.0f}: {R_hl[-1] - R[-1]:+.3f}; alpha_neck {a_nk[0]:.3f} -> "
+          f"{a_nk[-1]:.4f}; global min alpha {cd[-1, 1]:.2e}; min chi {cd[0, 2]:.2e} -> {cd[-1, 2]:.2e}; "
+          f"L2 H {cn[0, 1]:.2e} -> {cn[-1, 1]:.2e}")
+    hits = style.label_audit(fig)
+    print(f"[single-inflation] label audit: {len(hits)} overlaps")
 
     out = pathlib.Path(args.out) if args.out else (
         figure_dir(GROUP, args.pack_root) / "single_throat_inflation.png")
