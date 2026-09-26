@@ -11,11 +11,15 @@ a first-frame lock gets wrong once the field grows.
 
 ``--movies`` runs make_movies.sh over the episode afterwards.  ``--symlog``
 names fields whose linear scale is dominated by one loud feature, so the quiet
-structure elsewhere in the frame is visible too.
+structure elsewhere in the frame is visible too.  ``--t-max`` is the run's
+trust window: only frames at or before it set the scale, are redrawn and go
+into the movies (closeout.sh reads it from results/merger/trust_windows.tsv);
+later frames are kept untouched.
 
 The cached slices are kept, so this can be re-run (with a hand-set scale, for
-instance) without re-simulating.  Delete ``frames/_slice_cache/`` when the
-movies are final.
+instance) without re-simulating.  Never delete ``frames/_slice_cache/``: once
+the plotfiles are gone it is the only source of the run's pictures (CLAUDE.md,
+"Data").
 """
 
 from __future__ import annotations
@@ -56,6 +60,14 @@ def main(argv: list[str] | None = None) -> int:
         metavar="FIELDS",
         help="redraw only these comma-separated fields (default: every cached one)",
     )
+    ap.add_argument(
+        "--t-max",
+        type=float,
+        metavar="T",
+        help="the run's trust window: only frames at or before t = T set the "
+        "scale, are redrawn and go into the movies; later frames are left as "
+        "they are (a gauge wave back from the wall, a blow-up on the way)",
+    )
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args(argv)
 
@@ -94,18 +106,28 @@ def main(argv: list[str] | None = None) -> int:
         frames_dir, corner=args.corner, verbose=args.verbose, norms=norms,
         decades=args.symlog_decades, field_decades=field_decades,
         only=[f.strip() for f in args.only.split(",")] if args.only else None,
+        t_max=args.t_max,
     )
     if not used:
         print("nothing was redrawn", file=sys.stderr)
         return 1
-    print(f"[rerender] {len(used)} series redrawn at a fixed scale")
+    window = f", trust window t <= {args.t_max:g}" if args.t_max is not None else ""
+    print(f"[rerender] {len(used)} series redrawn at a fixed scale{window}")
 
     if args.movies:
         episode = os.path.dirname(frames_dir)
         script = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "make_movies.sh"
         )
-        subprocess.run(["bash", script, episode], check=True)
+        cmd = ["bash", script, episode]
+        if args.t_max is not None:
+            last = slice_cache.last_index_within(frames_dir, args.t_max)
+            if last is None:
+                print(f"no cached frame at or before t = {args.t_max:g}", file=sys.stderr)
+                return 1
+            cmd += ["--max-frame", str(last)]
+            print(f"[rerender] movies stop at frame {last} (t <= {args.t_max:g})")
+        subprocess.run(cmd, check=True)
     return 0
 
 

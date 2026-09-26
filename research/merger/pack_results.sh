@@ -169,10 +169,17 @@ while IFS= read -r rundir; do
       continue
     fi
     "${PY_BIN}" - "${src}" "${out}/${base}" <<'PY'
+import math
 import sys
 
 src, dst = sys.argv[1], sys.argv[2]
 STEP, TAIL = 0.05, 1.0            # dt of the thinned stream; window kept whole
+# A WIDE stream is thinned harder, to stay under BUDGET bytes: the L = 512
+# inflation arm's core_radial_profile.dat (400 shells x 5 columns, t = 392)
+# came out 197 MB at dt = 0.05, over GitHub's 100 MB file limit (2026-09-26).
+# The budget sits above every stream packed before that (the largest, 26.7 MB),
+# so none of them, and no figure drawn from them, changes.
+BUDGET, LADDER = 35e6, (0.05, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0)
 
 rows, head = [], []
 with open(src, encoding="utf-8") as fh:
@@ -186,17 +193,32 @@ if not rows:
     raise SystemExit
 
 t_end = float(rows[-1].split()[0])
+span = t_end - float(rows[0].split()[0])
+width = sum(len(r) for r in rows[:200]) / min(len(rows), 200)
+for STEP in LADDER:
+    if span / STEP * width <= BUDGET:
+        break
 with open(dst, "w", encoding="utf-8") as out:
     out.write(f"# thinned to dt={STEP:g} from the every-step stream; "
               f"the last {TAIL:g} time units are kept whole (the death window)\n")
     out.writelines(head)
-    last = None
+    # A hard-thinned stream keeps the first row at or after each multiple of
+    # STEP, so round times (the figures' snapshots, t = 40, 80, ...) survive;
+    # the default dt = 0.05 path is unchanged, and so is every older pack.
+    grid = STEP > 0.05 + 1e-12
+    last = mark = None
     for line in rows:
         t = float(line.split()[0])
-        if t >= t_end - TAIL or last is None or t - last >= STEP - 1e-9:
-            out.write(line)
-            if t < t_end - TAIL:
+        if grid:
+            keep = t >= t_end - TAIL or mark is None or t >= mark - 1e-9
+            if keep and t < t_end - TAIL:
+                mark = (math.floor(t / STEP + 1e-9) + 1) * STEP
+        else:
+            keep = t >= t_end - TAIL or last is None or t - last >= STEP - 1e-9
+            if keep and t < t_end - TAIL:
                 last = t
+        if keep:
+            out.write(line)
 PY
   done
 

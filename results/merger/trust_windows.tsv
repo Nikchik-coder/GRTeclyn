@@ -1,0 +1,6 @@
+# Trust windows: the last time each run's solution can be trusted -- one line per run, tab-separated.
+# research/merger/closeout.sh cuts the run's movies there (rerender_frames.py --t-max): only frames at or
+# before t_max set the colour scale and are stitched; later frames stay on disk, untouched.  Figures and the
+# paper quote nothing after t_max either.  Add the row when the window is measured, then re-run the close-out.
+run	t_max	why
+single_eps_m1e2_L512_ml5_oct_t400	218	the 1+log collapse front reaches the outer face (x = 256) at t = 218 and its reflection runs back to the neck (x-t diagram of the lapse slice cache); the far horizon track is lost at t = 212, L2 H > 0.1 from t = 220, and grid noise grows on the neck sphere until the NaN at t = 392.36 (GPU_PLAN 2026-09-26 05:00)

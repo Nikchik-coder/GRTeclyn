@@ -104,6 +104,48 @@ def load_slice(path: str) -> tuple[np.ndarray, list[float], float, float]:
         )
 
 
+def slice_time(path: str) -> float | None:
+    """The simulation time stored in one cached slice (reads that scalar only)."""
+    try:
+        with np.load(path) as data:
+            return float(data["time"])
+    except (OSError, ValueError, KeyError):
+        return None
+
+
+def within_window(paths: Iterable[str], t_max: float | None) -> list[str]:
+    """The cached slices at or before ``t_max`` -- all of them when it is None.
+
+    ``t_max`` is a run's TRUST WINDOW: the last time its solution can be
+    trusted (a gauge wave back from the outer wall, a blow-up on the way).
+    Slices after it are left out of the colour scale and the movie, never
+    deleted.  Measured 2026-09-26 on F4 (trust window t <= 218, run to 392): over
+    the whole run the late grid noise on the neck set K's scale to +-0.70, 18x
+    the +-0.038 of the trusted frames (chi 0.05..33.8 against 0.5..11.3, Pi
+    +-1.0 against +-0.25), and the movies ran on through the wall's reflection.
+    """
+    paths = list(paths)
+    if t_max is None:
+        return paths
+    keep = []
+    for path in paths:
+        t = slice_time(path)
+        if t is not None and t <= t_max + 1e-9:
+            keep.append(path)
+    return keep
+
+
+def last_index_within(frames_out_dir: str, t_max: float) -> int | None:
+    """The largest frame index, over every cached series, whose slice is at or
+    before ``t_max``: where the movies stop (make_movies.sh --max-frame)."""
+    best = None
+    for field, axis in cached_fields(frames_out_dir):
+        for path in within_window(cached_series(frames_out_dir, field, axis), t_max):
+            idx = int(_SLICE_RE.search(path).group(1))
+            best = idx if best is None else max(best, idx)
+    return best
+
+
 def series_zlim(paths: Iterable[str], field: str) -> tuple[float, float] | None:
     """The scale that clips nothing across a whole cached series.
 
@@ -168,16 +210,19 @@ def rerender_series(
     norm: str | None = None,
     linthresh: float | None = None,
     decades: float = DEFAULT_SYMLOG_DECADES,
+    t_max: float | None = None,
 ) -> tuple[int, tuple[float, float] | None]:
     """Redraw every frame of one series against a single fixed scale.
 
     Returns ``(frames_written, zlim_used)``.  With ``zlim`` given, that scale is
-    used; otherwise it is measured from the cache.
+    used; otherwise it is measured from the cache.  With ``t_max`` (the run's
+    trust window) only the frames at or before it are measured and redrawn;
+    later frames are left exactly as they are.
     """
     from ..config import _field_frame_config
     from .slice import draw_slice_png
 
-    paths = cached_series(frames_out_dir, field, axis)
+    paths = within_window(cached_series(frames_out_dir, field, axis), t_max)
     if not paths:
         return (0, None)
 
@@ -217,8 +262,12 @@ def rerender_all(
     decades: float = DEFAULT_SYMLOG_DECADES,
     field_decades: dict[str, float] | None = None,
     only: Iterable[str] | None = None,
+    t_max: float | None = None,
 ) -> dict[str, list[float]]:
     """Redraw every cached series, each against its own fixed scale.
+
+    ``t_max`` restricts every series to the run's trust window (see
+    ``within_window``).
 
     ``norms`` maps a field name to a colour normalisation ("symlog", "log") for
     that field only; every field left out keeps the linear default.  A key of
@@ -238,7 +287,7 @@ def rerender_all(
         norm = norms.get(field, norms.get("*"))
         written, limits = rerender_series(
             frames_out_dir, field, axis, corner=corner, verbose=verbose,
-            norm=norm, decades=field_decades.get(field, decades),
+            norm=norm, decades=field_decades.get(field, decades), t_max=t_max,
         )
         if not written or limits is None:
             print(f"[rerender] {field}_{axis}: nothing cached, skipped")
@@ -254,7 +303,8 @@ def rerender_all(
         record = os.path.join(frames_out_dir, CACHE_DIR_NAME, "rerender_zlims.json")
         try:
             with open(record, "w", encoding="utf-8") as fh:
-                json.dump(used, fh, indent=2, sort_keys=True)
+                json.dump({**used, **({"_t_max": t_max} if t_max is not None else {})},
+                          fh, indent=2, sort_keys=True)
         except OSError as exc:
             print(f"WARNING: could not write {record}: {exc}")
     return used

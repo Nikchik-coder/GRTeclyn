@@ -7,13 +7,16 @@
 #   1. refuses if its launcher is still alive;
 #   2. reports what is left on scratch (plotfiles, checkpoints, size) -- it never
 #      deletes anything: pruning is done by hand, on the user's word, and logged
-#      in runs/wormhole_merger/MANIFEST_CLEANUP_*.md;
+#      in runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md;
 #   3. checks the death window of the data streams for NaN rows and prints the
 #      last time, so no number is quoted from a polluted row;
 #   4. warns if the run has no line in results/merger/runs_registry.tsv (the
 #      launcher writes one when WHM_WHAT is set; otherwise append it by hand);
 #   5. stitches the movies: from the slice cache on one fixed colour scale when
-#      the run has one, else from the live frames.
+#      the run has one, else from the live frames -- cut at the run's trust
+#      window when results/merger/trust_windows.tsv has a row for it (only the
+#      frames up to that time set the scale and go into the movie; later ones
+#      stay on disk).
 # Then, once:
 #   6. rebuilds the pack (research/merger/pack_results.sh), which regenerates
 #      summary.csv/md, INSTABILITY.md, BRANCHES.md and the clock comparison;
@@ -41,6 +44,7 @@ source "${ROOT}/grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.
 # or set it empty for the old all-linear behaviour.
 WHM_SYMLOG="${WHM_SYMLOG:-K,phi,Pi,chi_minus_1,shift1,Weyl4_Re:1.5,Weyl4_Im:1.5}"
 DEST="${ROOT}/results/merger"
+TRUST="${DEST}/trust_windows.tsv"
 SCRATCH="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}"
 PY="${ROOT}/grteclyn-wrapper/.venv/bin/python"
 [[ -x "${PY}" ]] || PY="$(command -v python3)"
@@ -101,13 +105,21 @@ for run in "$@"; do
   elif [[ -d "${dir}/frames" ]]; then
     nser=$(find "${dir}/frames" -mindepth 1 -maxdepth 1 -type d ! -name '_*' | wc -l)
     echo "  frames: ${nser} field series"
+    tmax=""
+    [[ -f "${TRUST}" ]] && tmax="$(awk -F'\t' -v r="${run}" '$1 == r {print $2; exit}' "${TRUST}")"
     if [[ -d "${dir}/frames/_slice_cache" ]]; then
+      window=()
+      if [[ -n "${tmax}" ]]; then
+        window=(--t-max "${tmax}")
+        echo "  movies: cut at the trust window t <= ${tmax} (results/merger/trust_windows.tsv)"
+      fi
       "${PY}" "${ROOT}/grteclyn-wrapper/scripts/plot/rerender_frames.py" "${dir}/frames" \
-        --symlog "${WHM_SYMLOG}" --movies 2>&1 | tail -n 3 | sed 's/^/  /'
+        --symlog "${WHM_SYMLOG}" "${window[@]}" --movies 2>&1 | tail -n 4 | sed 's/^/  /'
     else
+      [[ -n "${tmax}" ]] && echo "  WARNING: trust window t <= ${tmax} set but no slice cache -- these movies run to the end"
       bash "${ROOT}/grteclyn-wrapper/scripts/plot/make_movies.sh" "${dir}" 2>&1 | tail -n 2 | sed 's/^/  /'
     fi
-    [[ "${nser}" -le 1 ]] && echo "  WARNING: only ${nser} field rendered -- launch with several (WHM_FRAMES_FIELDS)"
+    [[ "${nser}" -le 1 ]] && echo "  WARNING: only ${nser} field rendered -- the launcher default is the full set (frames_default.txt); a subset needs WHM_FRAMES_SUBSET"
   else
     echo "  frames: NONE (no movies possible)"
   fi
@@ -142,7 +154,7 @@ cat <<TXT
     (01_single_throat | 03_two_throats | 04_binary_headon | 05_binary_spiral | 06_binary_flyby | 07_bbh_control), then repack
   - results/merger/README.md: the Claim/Runs line of the section the run answers
   - research/merger/GPU_PLAN.md: the status row and the queue
-  - scratch prune on the user's word, logged in runs/wormhole_merger/MANIFEST_CLEANUP_*.md
+  - scratch prune on the user's word, logged in runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md
   - git add results/merger research/merger; commit (no Co-Authored-By); push to myfork
 [closeout] problems flagged: ${problems}
 TXT
