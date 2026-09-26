@@ -1,0 +1,34 @@
+# The campaign's frame fields: ONE list, read by every consumer profile
+# (lib/consumer_profiles.sh), by run_single.sh (a launch that names no
+# --frames-fields renders exactly this) and by preflight.py, which REFUSES a
+# launch whose frame list misses any of these unless WHM_FRAMES_SUBSET="<reason>"
+# says why (the reason goes into run_manifest.json), and renders each one from
+# the t = 0 plotfile of its start-up before anything is launched.
+#
+# Why it is mandatory: the consumer deletes every plotfile once it has been
+# extracted, so a field left out here has no movie, ever.  F4
+# (single_eps_m1e2_L512_ml5_oct_t400, 2026-09-25) ran 392 code units with
+# chi K lapse phi Pi only -- the old launcher default -- and its shift and Weyl4
+# pictures cannot be made now.
+#
+# One field per line, then "# why".  A name is a plotfile component or a field
+# the renderer derives (consume_plotfiles/fields.py); preflight.py knows which
+# plot variables each one needs and refuses params that do not write them.
+# Not listed: the h_ij and A_ij components (tensor components in a moving gauge,
+# twelve more frames per plotfile) -- name them in WHM_CONSUME_ARGS when a run
+# needs them.  On a symmetry-reduced box (--reflect) the odd fields are mirrored
+# with the sign the code itself uses for its ghost cells.
+chi          # conformal factor: the throat, the collapse, the inflating neck
+chi_minus_1  # derived, chi - 1 on a diverging scale: the far field's departure from flat
+K            # trace of the extrinsic curvature: collapse (K > 0) or expansion (K < 0)
+lapse        # the slicing: the collapsing lapse, the frozen 1+log throat
+shift1       # the Gamma-driver shift: how the grid is dragged (odd across x = 0)
+shift2       # (odd across y = 0)
+shift3       # (odd across z = 0)
+phi          # the phantom scalar
+Pi           # its momentum
+Weyl4_Re     # the gravitational wave, Re Psi4 (needs amr.derive_plot_vars = Weyl4)
+Weyl4_Im     # Im Psi4 (odd across every mirror plane)
+Weyl4_Mag    # derived, |Psi4|: the wave's envelope, whatever its phase
+scalar_activity  # derived, sqrt(phi^2 + Pi^2): where the matter is, dissolved or collapsed
+local_speed  # derived, max_i |beta^i| + alpha sqrt(chi/h_ii): the fastest coordinate speed (gauge shocks, the wall); needs h11 h22 h33

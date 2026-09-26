@@ -49,7 +49,8 @@ from preflight import parse_params, static_check, t0_rows  # noqa: E402
 # Launcher knobs that rewrite the cloned params (run_single.sh, "Overrides").
 OVERRIDE_KNOBS = ("WHM_BARE_MASS", "WHM_SIGMA", "WHM_LAPSE_TYPE", "WHM_TAGGING_TYPE",
                   "WHM_TAGGING_L", "WHM_MAX_LEVEL", "WHM_RESTART", "WHM_KEEP_LAST",
-                  "WHM_CONSUME", "WHM_CONSUME_ARGS", "WHM_PREFLIGHT", "WHM_RANKS")
+                  "WHM_CONSUME", "WHM_CONSUME_ARGS", "WHM_PREFLIGHT", "WHM_RANKS",
+                  "WHM_FRAMES_FIELDS", "WHM_FRAMES_SUBSET")
 
 
 def now() -> str:
@@ -142,6 +143,19 @@ def write(run_dir: pathlib.Path, manifest: dict) -> None:
     tmp.replace(out)
 
 
+def frames_block(pf_frames: dict | None) -> dict | None:
+    """What the run renders: the final frame list, a subset and its reason
+    (WHM_FRAMES_SUBSET), and each field's verdict at the t = 0 render
+    (preflight.py, "frames"; 2026-09-26)."""
+    if not pf_frames:
+        return None
+    render = pf_frames.get("render") or {}
+    return {"fields": pf_frames.get("fields"), "missing_from_default": pf_frames.get("missing") or [],
+            "subset": pf_frames.get("subset"), "source": pf_frames.get("source"),
+            "t0_render": ({f: r.get("verdict") for f, r in (render.get("fields") or {}).items()}
+                          or render.get("verdict"))}
+
+
 # ---------------------------------------------------------------- commands
 def cmd_start(a) -> int:
     run_dir = pathlib.Path(a.run_dir).resolve()
@@ -171,6 +185,7 @@ def cmd_start(a) -> int:
         "preflight": pf or {"verdict": "none"},
         "t0": (pf.get("t0") or {}).get("constraint_norms.dat"),
         "seed": (pf.get("seed") or {}).get("verdict"),
+        "frames": frames_block(pf.get("frames")),
         "status": "running",
     }
     write(run_dir, manifest)

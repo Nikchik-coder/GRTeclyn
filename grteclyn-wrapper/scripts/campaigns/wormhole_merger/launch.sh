@@ -33,6 +33,13 @@
 #                     other people's runs share these GPUs
 #   --profile NAME    consumer profile (see lib/consumer_profiles.sh):
 #                     headon | headon-scout | orbit | orbit-modes | bbh | chi | none
+#                     Every profile renders the campaign's full frame set,
+#                     frames_default.txt (bbh less the scalar fields, chi only
+#                     chi).  The preflight REFUSES a launch whose frames miss a
+#                     field of that set unless WHM_FRAMES_SUBSET="<reason>" is in
+#                     the environment (the reason goes into run_manifest.json;
+#                     bbh brings its own), and renders every frame field from
+#                     the t = 0 plotfile before anything starts
 #   --consume-args S  raw consumer flags, replacing the profile entirely.  The
 #                     escape hatch for a one-off that no profile covers; if you
 #                     reach for it twice, add a profile instead
@@ -69,9 +76,11 @@
 #                     contradictory settings (checkpoints asked for with output
 #                     off), keys the binary does not read, and whether a seed
 #                     changes the t = 0 data.  static skips the two GPU start-ups;
-#                     off skips it all.  Either is recorded in run_manifest.json
+#                     off skips every check of the binary (the frame list is
+#                     still checked).  Either is recorded in run_manifest.json
 #   --preflight-only  run the preflight attached, print the verdict, launch
-#                     nothing (the run dir is removed again)
+#                     nothing (the run dir is removed again; its t = 0 frames
+#                     are kept in runs/wormhole_merger/logs/preflight_frames/)
 #   --foreground      run attached (dies with the shell; for probes only)
 #   --dry-run         resolve and print everything, touch nothing (includes the
 #                     no-GPU half of the preflight, on the template)
@@ -127,7 +136,7 @@ while [[ $# -gt 0 ]]; do
     --preflight-only) PREFLIGHT_ONLY=1; shift ;;
     --foreground) FOREGROUND=1; shift ;;
     --dry-run)    DRYRUN=1; shift ;;
-    -h|--help)    sed -n '2,78p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help)    sed -n '2,87p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *)            echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
   esac
 done
@@ -195,8 +204,12 @@ source "${HERE}/lib/consumer_profiles.sh"
 if [[ -n "${CONSUME_RAW}" ]]; then
   CONSUME="${CONSUME_RAW}"
   consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}" "${CENTER}" >/dev/null   # still validate the name
+  FRAMES_SUBSET=""
 else
   CONSUME="$(consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}" "${CENTER}")"
+  # A profile that exists to be a frame subset (bbh: no scalar field in a vacuum
+  # run) says why; the caller's own WHM_FRAMES_SUBSET wins.
+  FRAMES_SUBSET="$(consumer_profile_frames_subset "${PROFILE}")"
 fi
 
 # --- the registry line ----------------------------------------------------
@@ -223,6 +236,7 @@ env_args=(
 )
 (( PREFLIGHT_ONLY )) && env_args+=("WHM_PREFLIGHT_ONLY=1")
 [[ -n "${RESTART}" ]]   && env_args+=("WHM_RESTART=${RESTART}")
+[[ -n "${FRAMES_SUBSET}" && -z "${WHM_FRAMES_SUBSET:-}" ]] && env_args+=("WHM_FRAMES_SUBSET=${FRAMES_SUBSET}")
 [[ -n "${MAX_LEVEL}" ]] && env_args+=("WHM_MAX_LEVEL=${MAX_LEVEL}")
 if [[ "${PROFILE}" == "none" ]]; then
   env_args+=("WHM_CONSUME=0")
@@ -238,6 +252,9 @@ echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" 
 echo "[launch] what     : ${WHAT}"
 echo "[launch] label    : ${LABEL}   (process table: '${LABEL} params.txt', '${LABEL}_post post.py …')"
 echo "[launch] preflight: ${PREFLIGHT}$( (( PREFLIGHT_ONLY )) && echo " -- ONLY: nothing will be launched")"
+if [[ -n "${WHM_FRAMES_SUBSET:-}" || -n "${FRAMES_SUBSET}" ]]; then
+  echo "[launch] frames   : SUBSET allowed -- ${WHM_FRAMES_SUBSET:-${FRAMES_SUBSET}}"
+fi
 
 if (( DRYRUN )); then
   /usr/bin/env "${env_args[@]}" WHM_DRYRUN=1 bash "${HERE}/run_single.sh"

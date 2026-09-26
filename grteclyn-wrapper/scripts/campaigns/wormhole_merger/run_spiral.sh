@@ -26,8 +26,9 @@ export WHM_NAME="${WHM_NAME:-orbit_d12_p012}"
 # width: 32 shows +/-16 around centre, holding the whole d = 12 orbit with
 # margin.  Cache the slices so the colours can be re-fixed over the finished
 # series (the live watcher locks them from the first plotfile, which
-# under-ranges any growing field).
-export WHM_CONSUME_ARGS="${WHM_CONSUME_ARGS:---frames-fields chi chi_minus_1 K lapse shift1 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed --frames-coord 32.0 --frames-zoom 32 --frames-cache-slices --frames-auto-zlim}"
+# under-ranges any growing field).  No --frames-fields: run_single.sh adds the
+# campaign's full set (frames_default.txt), which the preflight enforces.
+export WHM_CONSUME_ARGS="${WHM_CONSUME_ARGS:---frames-coord 32.0 --frames-zoom 32 --frames-cache-slices --frames-auto-zlim}"
 
 # K grows ~30x over an inspiral (2.5e-3 at t=2.5 vs ~0.08 at collapse), so any
 # fixed colour scale hides one end of the run: locked at merger amplitude the

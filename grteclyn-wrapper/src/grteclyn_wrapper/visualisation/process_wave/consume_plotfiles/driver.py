@@ -25,7 +25,7 @@ from .extraction.scalar_modes import (
 from .extraction.ftl import FTL_TIMESERIES_HEADER
 from .extraction.shell import _shell_stats_header
 from .extraction.neck_horizons import NECK_HORIZONS_HEADER
-from .extraction.symmetry import ODD_PARITY_FIELDS
+from .extraction.symmetry import field_parity
 from .fields import _canonical_field_name
 from .frames.cleanup import (
     _cleanup_embedding_frames,
@@ -469,12 +469,16 @@ def main() -> None:
         if args.horizon_scan:
             args.horizon_scan = False
             off.append("the horizon star scan (samples the full sphere round the centre)")
-        odd = [f for f in args.frames_fields if f in ODD_PARITY_FIELDS]
-        if odd:
-            args.frames_fields = [f for f in args.frames_fields if f not in ODD_PARITY_FIELDS]
-            off.append(f"odd-parity frame fields {odd}")
+        # Odd frame fields are NOT dropped (they were until 2026-09-26, which is
+        # how the octant arm F4 got no shift and no Weyl4 movie): the mirrored
+        # frame carries the sign the code gives them in its own ghost cells
+        # (frames/mirror.py, extraction/symmetry.py field_parity).
+        odd = [f for f in (_canonical_field_name(n) for n in args.frames_fields)
+               if field_parity(f) != (1, 1, 1)]
         print(f"[reflect] symmetry planes {' '.join(args.reflect)} through --center "
-              f"{' '.join(f'{v:g}' for v in args.center)}; off: {'; '.join(off)}", flush=True)
+              f"{' '.join(f'{v:g}' for v in args.center)}; off: {'; '.join(off)}"
+              + (f"; odd frame fields mirrored with their sign: {' '.join(odd)}" if odd else ""),
+              flush=True)
     if args.evolving_geodesic:
         os.environ["GRTECLYN_EVOLVING_GEODESIC"] = "1"
     args.metric_stack_cache = bool(args.evolving_geodesic)

@@ -4,9 +4,12 @@ With ``--reflect`` the simulated domain holds only the part of the frame
 window on the positive side of each reflective plane.  The frame is drawn from
 that part and mirrored across the reflective in-plane axes, so an octant run's
 frame looks exactly like the full-box run's with the same ``--frames-zoom``
-(the FULL window width) -- throat in the middle, same colour scale.  Every
-frame field is a scalar or a diagonal component (even parity); an odd-parity
-field is refused rather than mirrored with the wrong sign.
+(the FULL window width) -- throat in the middle, same colour scale.  An odd
+field (a shift component, Im Psi4, an off-diagonal component) is mirrored with
+its sign flipped, by the parity the code uses for its own ghost cells
+(extraction/symmetry.py, ``field_parity``); until 2026-09-26 such fields were
+refused here and dropped by the driver, which is how the octant arm F4 got no
+shift and no Weyl4 movie.
 """
 from __future__ import annotations
 
@@ -15,7 +18,7 @@ from typing import Sequence
 import numpy as np
 import yt
 
-from ..extraction.symmetry import ODD_PARITY_FIELDS, reflect_axes
+from ..extraction.symmetry import field_parity, reflect_axes
 from ..fields import _field_key, _register_derived_fields
 from .center import _frame_buff_size
 
@@ -29,6 +32,14 @@ def mirror_plan(axis: str, reflect: Sequence[str] | None) -> tuple[bool, bool]:
     h_ax, v_ax = _IMAGE_AXES[_AXIS[axis]]
     r = set(reflect_axes(reflect))
     return (h_ax in r, v_ax in r)
+
+
+def mirror_signs(field: str, axis: str) -> tuple[int, int]:
+    """(sign across the horizontal mirror, sign across the vertical mirror) of
+    ``field`` in a slice normal to ``axis``."""
+    h_ax, v_ax = _IMAGE_AXES[_AXIS[axis]]
+    parity = field_parity(field)
+    return parity[h_ax], parity[v_ax]
 
 
 def mirrored_window(
@@ -49,10 +60,9 @@ def mirrored_window(
     mh, mv = mirror_plan(axis, reflect)
     if not (mh or mv):
         return None
-    if field in ODD_PARITY_FIELDS:
-        raise ValueError(f"{field} has odd parity across a reflective plane; not mirrored")
     ai = _AXIS[axis]
     h_ax, v_ax = _IMAGE_AXES[ai]
+    s_h, s_v = mirror_signs(field, axis)
     le = np.asarray(ds.domain_left_edge.d, dtype=float)
     c = np.asarray(center_xyz, dtype=float) if center_xyz is not None else le.copy()
     width = float(zoom) if zoom is not None else 2.0 * float(ds.domain_width.d[h_ax])
@@ -79,9 +89,11 @@ def mirrored_window(
     q = np.asarray(slc.frb[plot_field], dtype=float)
     if q.shape == (n_h, n_v) and n_h != n_v:
         q = q.T
+    # The image at the mirror point is the field there times its parity: an
+    # odd field (s = -1) changes sign across the plane.
     if mh:
-        q = np.hstack([q[:, ::-1], q])
+        q = np.hstack([s_h * q[:, ::-1], q])
     if mv:
-        q = np.vstack([q[::-1, :], q])
+        q = np.vstack([s_v * q[::-1, :], q])
     extent = [c[h_ax] - half, c[h_ax] + half, c[v_ax] - half, c[v_ax] + half]
     return q, extent, plane

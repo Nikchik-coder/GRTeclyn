@@ -25,13 +25,21 @@
 # slice that misses the physics renders featureless frames without erroring
 # (measured 2026-08-31).  Both default to the box centre convention (32/32).
 #
+# FRAMES (2026-09-26).  Every profile renders the campaign's full frame set,
+# ../frames_default.txt -- the ONE list, which run_single.sh also uses when a
+# launch names no --frames-fields and which preflight.py enforces: a launch
+# whose frames miss any of it is refused unless WHM_FRAMES_SUBSET="<reason>"
+# says why.  A profile adds fields to it, never takes them away, except the
+# two below that exist to be subsets and say so (consumer_profile_frames_subset).
+# The frames are rendered from the t = 0 plotfile at preflight, before launch.
+#
 # WHY EACH PROFILE EXISTS.  A profile is a claim about what the run has to
 # prove, not a taste in pictures:
 #   headon        the Phase-3 head-on arms: psi4 at the three extraction
 #                 spheres the in-code integrals use (10/14/18), the common
 #                 horizon scanned on level 3 (level 1, the default, is too
-#                 coarse to resolve the merged surface), and six fields so the
-#                 collapse and the wave both have movies.
+#                 coarse to resolve the merged surface), and the full frame
+#                 set so the collapse and the wave both have movies.
 #   headon-modes  headon plus the scalar-mode decomposition on the same
 #                 spheres (10/14/18) -- the head-on's scalar channel was never
 #                 recorded (the stream postdates those arms and their
@@ -41,9 +49,9 @@
 #   headon-scout  the first look at a new head-on configuration: horizon
 #                 tracking but no wave extraction (nothing has rung yet) and a
 #                 tight zoom on the throats.
-#   orbit         the inspiral twins and the capture scan: the full field set,
-#                 including the matter diagnostics that separate a dissolved
-#                 throat from a collapsed one.
+#   orbit         the inspiral twins and the capture scan: the full field set
+#                 (it carries the matter diagnostics that separate a dissolved
+#                 throat from a collapsed one, scalar_activity and local_speed).
 #   orbit-modes   orbit plus the scalar-mode decomposition, for production
 #                 arms that will be analysed spectrally.  NB the consumer takes
 #                 --scalar-modes as a BARE SWITCH and the multipoles separately
@@ -52,18 +60,46 @@
 #                 it, so the consumer died at startup and the run went on without
 #                 one -- no frames, no python psi4, and no plotfile deletion.
 #                 Caught 2026-09-15 on the first arm that ever used this profile.
-#   bbh           the vacuum BBH control: no matter fields exist in it.
-#   chi           cheap probes and ladders -- one field, one question.
+#   bbh           the vacuum BBH control: the full set less what needs the
+#                 scalar or h_ij, which its plotfiles do not carry (a declared
+#                 subset, below).
+#   chi           cheap probes and ladders -- one field, one question.  A
+#                 subset with no built-in reason: the launch must say why in
+#                 WHM_FRAMES_SUBSET, or the preflight refuses it (the ladder
+#                 runs of 2026-09-08 were chi-only and lost every other movie).
 #   none          one-step probes: no consumer at all (sets WHM_CONSUME=0).
 #
 # Related: research/merger/Reference.md, and the frame rules the hard way --
 # a chi-only launch loses the collapse movies; omitting Weyl4 from the plot
-# vars silently produces no wave files at all.
+# vars silently produces no wave files at all (the preflight now refuses a
+# frame field whose plot variable the params do not write).
 
 # Every profile keeps the slice cache and auto colour limits: the live watcher
 # locks the colour scale from the FIRST plotfile, which under-ranges any field
 # that grows, and only a cached slice can be re-scaled over the finished run.
 _WHM_FRAME_TAIL='--frames-cache-slices --frames-auto-zlim'
+
+# The campaign's frame fields, from ../frames_default.txt (field per line,
+# "# why" comments).  Read once, at source time, so a missing or empty file
+# stops the launcher here instead of producing a launch with no frames.
+_WHM_FRAMES_FILE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)/frames_default.txt"
+whm_frames_default() {
+  [[ -r "${_WHM_FRAMES_FILE}" ]] || { echo "missing ${_WHM_FRAMES_FILE}" >&2; return 2; }
+  local list
+  list="$(sed -e 's/#.*//' "${_WHM_FRAMES_FILE}" | tr -s ' \t\n' ' ')"
+  list="${list# }"; list="${list% }"
+  [[ -n "${list}" ]] || { echo "no fields in ${_WHM_FRAMES_FILE}" >&2; return 2; }
+  echo "${list}"
+}
+# The default set less the named fields (a declared subset, e.g. the vacuum control).
+whm_frames_without() {
+  local f out=""
+  for f in ${WHM_FRAMES_FULL}; do
+    [[ " $* " == *" ${f} "* ]] || out+="${f} "
+  done
+  echo "${out% }"
+}
+WHM_FRAMES_FULL="$(whm_frames_default)"
 
 consumer_profile() {
   local name="${1:?consumer_profile <name> [zoom] [coord]}"
@@ -77,33 +113,33 @@ consumer_profile() {
       echo "--areal-radius --areal-min-radius 0.5 --radii 10 14 18" \
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
            "--horizon-common-level 3 --horizon-half 3.0" \
-           "--frames-fields chi K lapse phi Pi Weyl4_Re" \
+           "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     headon-modes)
       echo "--areal-radius --areal-min-radius 0.5 --radii 10 14 18" \
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
            "--horizon-common-level 3 --horizon-half 3.0" \
-           "--frames-fields chi K lapse phi Pi Weyl4_Re" \
+           "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}" \
            "--scalar-modes --scalar-mode-ells 0 1 2"
       ;;
     headon-scout)
       echo "--areal-radius --areal-min-radius 0.5" \
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
-           "--frames-fields chi K lapse phi Pi" \
+           "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     orbit)
-      echo "--frames-fields chi chi_minus_1 K lapse shift1 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed" \
+      echo "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     orbit-modes)
-      echo "--frames-fields chi chi_minus_1 K lapse shift1 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed" \
+      echo "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2"
       ;;
     bbh)
-      echo "--frames-fields chi K lapse shift1 Weyl4_Re Weyl4_Im Weyl4_Mag" \
+      echo "--frames-fields $(whm_frames_without phi Pi scalar_activity local_speed)" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     chi)
@@ -115,17 +151,21 @@ consumer_profile() {
       # metric, the neck and its two trapping horizons per plotfile, frames
       # whose lapse/chi/phi bars are fixed at their t = 0 range, scalar modes.
       echo "--areal-radius --areal-full-metric --areal-min-radius 0.5 --neck-horizons --radii 40 60 80 120" \
-           "--frames-fields chi K lapse phi Pi Weyl4_Re" \
+           "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --frames-zlim-t0 lapse chi phi" \
            "--scalar-modes --scalar-mode-ells 0 1 2"
       ;;
     inflation-octant)
       # The same on an octant box (lo_boundary = 2 2 2, centre 0 0 0): pass
       # --zoom = the FULL frame width, --coord 0, --center "0 0 0".  Frames are
-      # mirrored into the full plane; Weyl4 is not mirrorable (odd parity).
+      # mirrored into the full plane, odd fields (shift, Im Psi4) with their
+      # sign (consume_plotfiles/frames/mirror.py; until 2026-09-26 they were
+      # dropped, and F4 has no shift or Weyl4 movie).  On the z = 0 slice the
+      # fields odd in z (shift3, Im Psi4) vanish; the frame shows the first
+      # cell layer.
       echo "--reflect x y z" \
            "--areal-radius --areal-full-metric --areal-min-radius 0.5 --neck-horizons --radii 40 60 80 120" \
-           "--frames-fields chi K lapse phi Pi" \
+           "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --frames-zlim-t0 lapse chi phi" \
            "--scalar-modes --scalar-mode-ells 0 1 2"
       ;;
@@ -142,4 +182,15 @@ consumer_profile() {
 
 consumer_profile_names() {
   echo "headon headon-modes headon-scout orbit orbit-modes bbh chi inflation inflation-octant none"
+}
+
+# The reason a profile renders less than the full frame set, when the subset is
+# the profile's whole point; launch.sh passes it as WHM_FRAMES_SUBSET unless the
+# caller set one.  Empty for every other profile -- chi included: a chi-only
+# launch has to say why, each time.
+consumer_profile_frames_subset() {
+  case "${1:?consumer_profile_frames_subset <name>}" in
+    bbh) echo "vacuum BBH control (profile bbh): its plotfiles carry no scalar field and no h_ij, so no phi, Pi, scalar_activity or local_speed frames" ;;
+    *)   echo "" ;;
+  esac
 }

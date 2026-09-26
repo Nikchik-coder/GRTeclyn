@@ -82,7 +82,10 @@
 #   WHM_KEEP_LAST  plotfiles the consumer leaves behind (default 3)
 #   WHM_WHAT      one line on what the run is for -> results/merger/runs_registry.tsv
 #   WHM_FRAMES_FIELDS  frame fields when WHM_CONSUME_ARGS names none
-#                 (default: chi K lapse phi Pi -- never launch with one field)
+#                 (default: the campaign's full set, frames_default.txt)
+#   WHM_FRAMES_SUBSET="<reason>"  the ONLY way to launch with fewer frame
+#                 fields than frames_default.txt: the preflight refuses a
+#                 subset without it, and records the reason (run_manifest.json)
 #   WHM_PROC_LABEL  what this run calls itself in the machine's process table
 #                 (default "test").  See "Process table" below
 #   WHM_PROC_ALIAS=0  run the binary from its real path instead of the neutral
@@ -90,6 +93,7 @@
 #   WHM_PROC_BIN_DIR  where the neutral copies live (default /tmp/ml_jobs/bin)
 #   WHM_PREFLIGHT  full (default) | static | off -- see "Preflight" below
 #   WHM_PREFLIGHT_ONLY=1  run the preflight, report, remove the run dir, stop
+#                 (its t = 0 frames are kept in logs/preflight_frames/)
 #
 # Process table.  The cards are shared, and `ps aux` / `nvidia-smi` are
 # readable by anyone who can see this machine's processes, so what a run calls
@@ -143,6 +147,11 @@ source "${WRAPPER_DIR}/scripts/lib/env.sh"
 SCRIPT_DIR="${SELF_DIR}"
 REPO_ROOT="${GRTECLYN_ROOT:-$(cd -- "${WRAPPER_DIR}/.." && pwd)}"
 EXAMPLE_DIR="${REPO_ROOT}/Examples/BinaryWormholeMerger"
+# The campaign's frame fields (WHM_FRAMES_FULL, from frames_default.txt): the
+# default below and what the preflight holds every launch to.  Stops here if
+# the list is missing.
+# shellcheck source=lib/consumer_profiles.sh
+source "${SELF_DIR}/lib/consumer_profiles.sh"
 
 PARAMS="${WHM_PARAMS:-params_test.txt}"
 GPU="${WHM_GPU:-0}"
@@ -206,9 +215,100 @@ echo "[whm] gpu      : ${GPU}"
 echo "[whm] run dir  : ${RUN_DIR}          (NFS: params, log, .dat streams)"
 echo "[whm] scratch  : ${SCRATCH_DIR}      (node-local: plotfiles, checkpoints)"
 
+# ---------------------------------------------------------------------------
+# The plotfile consumer's flags.  Built BEFORE the preflight (2026-09-26), which
+# checks the frame list they carry and renders it from the t = 0 plotfile.
+# Fills consumer_args and FRAMES_SOURCE from the params file given: the run's
+# clone, or the template on a dry run.
+# ---------------------------------------------------------------------------
+whm_consumer_args() {
+  local params_file="$1"
+  local -a center_vals
+  # --frames-out defaults to a directory inside the wrapper SOURCE tree, which is
+  # not gitignored, so frames from every run pile up there and are invisible from
+  # the run directory.  Anchor them next to the run they came from.
+  # Relative, because the consumer is started from RUN_DIR and its command line
+  # is public (see "Process table"): "scratch" is the link made below.
+  consumer_args=(--data scratch --out small_data --frames-out frames)
+
+  # The consumer's --center defaults to (0,0,0), but every merger template puts
+  # the physics at center = L/2.  Nothing errors when they disagree: the
+  # extractions still run, they just run in the far field, and --areal-radius
+  # happily reports r/sqrt(chi) ~ r off in the asymptotically flat region as if it
+  # were the throat.  Measured 2026-08-28 on a stage-1 drainhole: 0.845 at
+  # r = 0.829, against a throat of areal radius 3.890 at r = 1.618.  Read the
+  # centre off the params the run is actually using so the two cannot disagree.
+  # It goes in BEFORE WHM_CONSUME_ARGS, so an explicit --center there still wins.
+  if grep -qE "^center[[:space:]]*=" "${params_file}"; then
+    # shellcheck disable=SC2207
+    center_vals=($(grep -E "^center[[:space:]]*=" "${params_file}" \
+                   | head -n 1 | sed -e 's/#.*//' -e 's/.*=//'))
+    if [[ "${#center_vals[@]}" -eq 3 ]]; then
+      consumer_args+=(--center "${center_vals[@]}")
+      echo "[whm] consumer centre: ${center_vals[*]} (from the run's params)"
+    else
+      echo "[whm] WARNING: could not parse 'center' from params (got ${#center_vals[@]} values);" >&2
+      echo "[whm]          consumer will use its (0,0,0) default -- pass --center yourself." >&2
+    fi
+  fi
+  if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
+    consumer_args+=(--delete --keep-last "${WHM_KEEP_LAST:-3}")
+  fi
+  # shellcheck disable=SC2206
+  consumer_args+=(${WHM_CONSUME_ARGS:-})
+
+  # A profile hands over absolute paths into the run (the horizon track), and so
+  # does a hand-written WHM_CONSUME_ARGS.  Fold both back to RUN_DIR-relative:
+  # the consumer runs there, and the command line is public.
+  local i
+  for i in "${!consumer_args[@]}"; do
+    case "${consumer_args[i]}" in
+      "${RUN_DIR}")    consumer_args[i]="." ;;
+      "${RUN_DIR}"/*)  consumer_args[i]="${consumer_args[i]#"${RUN_DIR}"/}" ;;
+      "${SCRATCH_DIR}")   consumer_args[i]="scratch" ;;
+      "${SCRATCH_DIR}"/*) consumer_args[i]="scratch/${consumer_args[i]#"${SCRATCH_DIR}"/}" ;;
+    esac
+  done
+
+  # Frames for EVERY field worth a movie, every launch.  The ladder runs of
+  # 2026-09-08 were launched with chi frames only, and F4 (2026-09-25) with the
+  # old default here, chi K lapse phi Pi: the consumer deleted the plotfiles
+  # behind them, so their other movies can never be made.  A launch that does
+  # not name --frames-fields in WHM_CONSUME_ARGS gets the campaign's full set
+  # (frames_default.txt), with the slice cache (one fixed colour scale per run
+  # through rerender_frames.py) and per-frame auto limits (wormhole values are
+  # not the black-hole presets).  WHM_FRAMES_FIELDS changes the list; an explicit
+  # --frames-fields in WHM_CONSUME_ARGS wins over both -- and either way the
+  # preflight refuses a list that misses a default field unless
+  # WHM_FRAMES_SUBSET says why.
+  local frames_default="${WHM_FRAMES_FIELDS:-${WHM_FRAMES_FULL}}"
+  if [[ " ${WHM_CONSUME_ARGS:-} " != *" --frames-fields "* ]]; then
+    # shellcheck disable=SC2206
+    consumer_args+=(--frames-fields ${frames_default})
+    [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-cache-slices"* ]] || consumer_args+=(--frames-cache-slices)
+    [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-auto-zlim"* ]] || consumer_args+=(--frames-auto-zlim)
+    if [[ -n "${WHM_FRAMES_FIELDS:-}" ]]; then
+      FRAMES_SOURCE="WHM_FRAMES_FIELDS"
+    else
+      FRAMES_SOURCE="campaign default (frames_default.txt)"
+    fi
+    echo "[whm] frames   : ${frames_default} (${FRAMES_SOURCE})"
+  else
+    FRAMES_SOURCE="--frames-fields in WHM_CONSUME_ARGS"
+    echo "[whm] frames   : as given in WHM_CONSUME_ARGS"
+  fi
+  if [[ " ${WHM_CONSUME_ARGS:-} " != *"--frames-zoom"* ]]; then
+    echo "[whm] WARNING: no --frames-zoom in WHM_CONSUME_ARGS -- frames will show the whole box" >&2
+  fi
+}
+
 if [[ "${WHM_DRYRUN:-0}" != "0" ]]; then
   # The no-GPU half of the preflight, on the template as it stands (before the
-  # overrides below): contradictory settings, and keys the binary cannot read.
+  # overrides below): contradictory settings, keys the binary cannot read, and
+  # the frame list the consumer would get.
+  whm_consumer_args "${TEMPLATE}"
+  WHM_CONSUMER_ARGV="$(printf '%q ' "${consumer_args[@]}")"
+  export WHM_CONSUMER_ARGV WHM_FRAMES_SOURCE="${FRAMES_SOURCE}"
   pf_py="${WRAPPER_DIR}/.venv/bin/python"; [[ -x "${pf_py}" ]] || pf_py="$(command -v python3)"
   "${pf_py}" "${SELF_DIR}/preflight.py" --mode static --exe "${EXE}" --params "${TEMPLATE}" \
       --workdir "${SCRATCH_ROOT}/_preflight_dryrun" \
@@ -401,6 +501,49 @@ if [[ -n "${WHM_RESTART:-}" ]]; then
   echo "[whm] restart  : ${WHM_RESTART}"
 fi
 
+# The consumer's final flags (every params override above applied), and its
+# entry point -- here, before the preflight, which renders the t = 0 frames with
+# exactly this consumer and these flags.
+whm_consumer_args "${RUN_PARAMS}"
+CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
+CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
+CONSUMER_PID=""
+
+# The consumer's public name (see "Process table").  Python locates its virtual
+# environment through argv[0], so simply renaming the process loses every
+# installed package ("No module named 'numpy'", measured 2026-09-10).  The
+# neutral name is therefore a real symlink inside the venv's own bin directory,
+# with that directory first on PATH: python looks the bare name up on PATH,
+# resolves the link and finds the environment, and the command line still shows
+# no path at all.
+CONSUMER_BIN="${CONSUMER_PY}"
+if [[ "${WHM_PROC_ALIAS:-1}" != "0" && -x "${CONSUMER_PY}" ]]; then
+  ln -sfn "$(basename "${CONSUMER_PY}")" "$(dirname "${CONSUMER_PY}")/${PROC_LABEL}_post"
+  PATH="$(dirname "${CONSUMER_PY}"):${PATH}"
+  export PATH
+  CONSUMER_BIN="${PROC_LABEL}_post"
+fi
+if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
+  if [[ ! -x "${CONSUMER_PY}" ]]; then
+    echo "[whm] consumer requested but ${CONSUMER_PY} is missing -- run 'uv sync'" >&2
+    exit 1
+  fi
+  # `python -m <module>` would put the package's dotted name on a public
+  # command line, so the module is entered through a one-line file in the run
+  # directory instead and the process is named after the run's label.
+  cat > "${RUN_DIR}/post.py" <<PY
+# written by run_single.sh: entry point for the plotfile consumer
+import runpy
+runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
+PY
+fi
+# What the preflight checks and renders the frames with (through the
+# environment: the process table is public).
+WHM_CONSUMER_ARGV="$(printf '%q ' "${consumer_args[@]}")"
+WHM_FRAMES_SOURCE="${FRAMES_SOURCE}"
+WHM_FRAMES_CMD="${CONSUMER_BIN} post.py"
+export WHM_CONSUMER_ARGV WHM_FRAMES_SOURCE WHM_FRAMES_CMD
+
 # ---------------------------------------------------------------------------
 # Preflight (2026-09-24): refuse a launch the binary would not honour.
 # ---------------------------------------------------------------------------
@@ -415,7 +558,15 @@ fi
 # A refusal removes the run dir and scratch cell (nothing is registered or
 # started) and keeps the params and the report under logs/preflight_refused/.
 # WHM_PREFLIGHT=static skips the start-ups (a card too full for a second
-# process); =off skips everything.  Both are recorded in run_manifest.json.
+# process); =off skips every check of the binary.  Both are recorded in
+# run_manifest.json.
+# The FRAMES (2026-09-26), in every mode, off included: the frame list must hold
+# every field of frames_default.txt (or WHM_FRAMES_SUBSET says why), and each
+# field's plot variable must be written; in full mode the start-up also writes
+# its t = 0 plotfile and the consumer renders every frame field from it, with
+# this run's flags, into preflight_frames/ -- a field that fails or comes out
+# blank refuses the launch.  Those frames are frame 0, before the run exists:
+# eyeball them (logs/preflight_frames/ after --preflight-only).
 TOOLS_PY="${WRAPPER_DIR}/.venv/bin/python"
 [[ -x "${TOOLS_PY}" ]] || TOOLS_PY="$(command -v python3)"
 TOOLS_BIN="${TOOLS_PY}"
@@ -442,39 +593,53 @@ case "${PF_MODE}" in
   *) echo "[whm] WHM_PREFLIGHT must be full, static or off (got '${PF_MODE}')" >&2; exit 2 ;;
 esac
 if [[ "${PF_MODE}" == "off" ]]; then
-  echo "[whm] preflight: OFF (WHM_PREFLIGHT=off) -- nothing checked; the manifest says so" >&2
-  printf '{"schema": 1, "verdict": "skipped (WHM_PREFLIGHT=off)"}\n' > "${RUN_DIR}/preflight.json"
-else
-  pf_status=0
-  WHM_EXE_NAME="$(basename "${EXE}")" whm_tool preflight \
-      --exe "${EXE_RUN}" --argv0 "${PROC_LABEL}" --params params.txt \
-      --gpu "${GPU%%,*}" --workdir scratch/_preflight --mode "${PF_MODE}" \
-      --json preflight.json ${WHM_RESTART:+--restart} || pf_status=$?
-  if [[ "${pf_status}" -ne 0 ]]; then
-    kept="${RUNS_DIR:?}/logs/preflight_refused/${NAME:?}_$(date -u +%Y%m%dT%H%M%SZ)"
-    mkdir -p "${kept}"
-    cp "${RUN_DIR:?}/params.txt" "${RUN_DIR:?}/preflight.json" "${kept}/" 2>/dev/null || true
-    for probe in run control; do
-      if [[ -f "${SCRATCH_DIR:?}/_preflight/${probe}/probe.log" ]]; then
-        cp "${SCRATCH_DIR:?}/_preflight/${probe}/probe.log" "${kept}/probe_${probe}.log"
-      fi
-    done
-    rm -rf "${SCRATCH_DIR:?}/_preflight" "${RUN_DIR:?}"
-    rmdir "${SCRATCH_DIR:?}" 2>/dev/null || true
-    if [[ "${pf_status}" -eq 1 ]]; then
-      echo "[whm] !! PREFLIGHT REFUSED THE LAUNCH -- nothing started, nothing registered." >&2
-    else
-      echo "[whm] !! PREFLIGHT COULD NOT RUN -- nothing started.  WHM_PREFLIGHT=static skips the start-ups." >&2
+  echo "[whm] preflight: OFF (WHM_PREFLIGHT=off) -- the binary is not checked (the manifest says so);" >&2
+  echo "[whm]            the frame list still is (its only override is WHM_FRAMES_SUBSET)" >&2
+fi
+pf_status=0
+WHM_EXE_NAME="$(basename "${EXE}")" whm_tool preflight \
+    --exe "${EXE_RUN}" --argv0 "${PROC_LABEL}" --params params.txt \
+    --gpu "${GPU%%,*}" --workdir scratch/_preflight --mode "${PF_MODE}" \
+    --frames-out preflight_frames --json preflight.json ${WHM_RESTART:+--restart} || pf_status=$?
+if [[ "${pf_status}" -ne 0 ]]; then
+  kept="${RUNS_DIR:?}/logs/preflight_refused/${NAME:?}_$(date -u +%Y%m%dT%H%M%SZ)"
+  mkdir -p "${kept}"
+  cp "${RUN_DIR:?}/params.txt" "${RUN_DIR:?}/preflight.json" "${kept}/" 2>/dev/null || true
+  for probe in run control; do
+    if [[ -f "${SCRATCH_DIR:?}/_preflight/${probe}/probe.log" ]]; then
+      cp "${SCRATCH_DIR:?}/_preflight/${probe}/probe.log" "${kept}/probe_${probe}.log"
     fi
-    echo "[whm]    params + report kept in runs/wormhole_merger/${kept#"${RUNS_DIR}"/}" >&2
-    exit "${pf_status}"
+  done
+  # The t = 0 frames show what failed: kept, never deleted.
+  if [[ -d "${RUN_DIR:?}/preflight_frames" ]]; then
+    cp -r "${RUN_DIR:?}/preflight_frames" "${kept}/"
   fi
+  rm -rf "${SCRATCH_DIR:?}/_preflight" "${RUN_DIR:?}"
+  rmdir "${SCRATCH_DIR:?}" 2>/dev/null || true
+  if [[ "${pf_status}" -eq 1 ]]; then
+    echo "[whm] !! PREFLIGHT REFUSED THE LAUNCH -- nothing started, nothing registered." >&2
+  else
+    echo "[whm] !! PREFLIGHT COULD NOT RUN -- nothing started.  WHM_PREFLIGHT=static skips the start-ups." >&2
+  fi
+  echo "[whm]    params + report kept in runs/wormhole_merger/${kept#"${RUNS_DIR}"/}" >&2
+  exit "${pf_status}"
 fi
 if [[ "${WHM_PREFLIGHT_ONLY:-0}" != "0" ]]; then
+  # The t = 0 frames are the point of asking: kept for the eye, with the report.
+  if [[ -d "${RUN_DIR:?}/preflight_frames" ]]; then
+    shown="${RUNS_DIR:?}/logs/preflight_frames/${NAME:?}_$(date -u +%Y%m%dT%H%M%SZ)"
+    mkdir -p "${shown}"
+    cp -r "${RUN_DIR:?}/preflight_frames/." "${shown}/"
+    cp "${RUN_DIR:?}/preflight.json" "${shown}/" 2>/dev/null || true
+    echo "[whm] t = 0 frames (one per field) kept in runs/wormhole_merger/${shown#"${RUNS_DIR}"/} -- eyeball them"
+  fi
   rm -rf "${SCRATCH_DIR:?}/_preflight" "${RUN_DIR:?}"
   rmdir "${SCRATCH_DIR:?}" 2>/dev/null || true
   echo "[whm] preflight only: PASSED -- nothing launched, run dir removed."
   exit 0
+fi
+if [[ -d "${RUN_DIR}/preflight_frames" ]]; then
+  echo "[whm] t = 0 frames: ${RUN_DIR}/preflight_frames (rendered at preflight; the run's own go to frames/)"
 fi
 
 # Register the run (2026-09-09): one tab-separated line in the pack's registry,
@@ -499,107 +664,10 @@ WHM_MANIFEST_NAME="${NAME}" WHM_MANIFEST_TEMPLATE="${TEMPLATE}" WHM_MANIFEST_EXE
   || echo "[whm] WARNING: run_manifest.json not written" >&2
 
 # ---------------------------------------------------------------------------
-# Plotfile consumer sidecar.
+# Plotfile consumer sidecar (its flags and post.py were made before the preflight).
 # ---------------------------------------------------------------------------
-CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
-CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
-CONSUMER_PID=""
-
-# The consumer's public name (see "Process table").  Python locates its virtual
-# environment through argv[0], so simply renaming the process loses every
-# installed package ("No module named 'numpy'", measured 2026-09-10).  The
-# neutral name is therefore a real symlink inside the venv's own bin directory,
-# with that directory first on PATH: python looks the bare name up on PATH,
-# resolves the link and finds the environment, and the command line still shows
-# no path at all.
-CONSUMER_BIN="${CONSUMER_PY}"
-if [[ "${WHM_PROC_ALIAS:-1}" != "0" && -x "${CONSUMER_PY}" ]]; then
-  ln -sfn "$(basename "${CONSUMER_PY}")" "$(dirname "${CONSUMER_PY}")/${PROC_LABEL}_post"
-  PATH="$(dirname "${CONSUMER_PY}"):${PATH}"
-  export PATH
-  CONSUMER_BIN="${PROC_LABEL}_post"
-fi
-# --frames-out defaults to a directory inside the wrapper SOURCE tree, which is
-# not gitignored, so frames from every run pile up there and are invisible from
-# the run directory.  Anchor them next to the run they came from.
-# Relative, because the consumer is started from RUN_DIR and its command line
-# is public (see "Process table"): "scratch" is the link made above.
-consumer_args=(--data scratch --out small_data --frames-out frames)
-
-# The consumer's --center defaults to (0,0,0), but every merger template puts
-# the physics at center = L/2.  Nothing errors when they disagree: the
-# extractions still run, they just run in the far field, and --areal-radius
-# happily reports r/sqrt(chi) ~ r off in the asymptotically flat region as if it
-# were the throat.  Measured 2026-08-28 on a stage-1 drainhole: 0.845 at
-# r = 0.829, against a throat of areal radius 3.890 at r = 1.618.  Read the
-# centre off the params the run is actually using so the two cannot disagree.
-# It goes in BEFORE WHM_CONSUME_ARGS, so an explicit --center there still wins.
-if grep -qE "^center[[:space:]]*=" "${RUN_PARAMS}"; then
-  # shellcheck disable=SC2207
-  center_vals=($(grep -E "^center[[:space:]]*=" "${RUN_PARAMS}" \
-                 | head -n 1 | sed -e 's/#.*//' -e 's/.*=//'))
-  if [[ "${#center_vals[@]}" -eq 3 ]]; then
-    consumer_args+=(--center "${center_vals[@]}")
-    echo "[whm] consumer centre: ${center_vals[*]} (from the run's params)"
-  else
-    echo "[whm] WARNING: could not parse 'center' from params (got ${#center_vals[@]} values);" >&2
-    echo "[whm]          consumer will use its (0,0,0) default -- pass --center yourself." >&2
-  fi
-fi
-if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
-  consumer_args+=(--delete --keep-last "${WHM_KEEP_LAST:-3}")
-fi
-# shellcheck disable=SC2206
-consumer_args+=(${WHM_CONSUME_ARGS:-})
-
-# A profile hands over absolute paths into the run (the horizon track), and so
-# does a hand-written WHM_CONSUME_ARGS.  Fold both back to RUN_DIR-relative:
-# the consumer runs there, and the command line is public.
-for i in "${!consumer_args[@]}"; do
-  case "${consumer_args[i]}" in
-    "${RUN_DIR}")    consumer_args[i]="." ;;
-    "${RUN_DIR}"/*)  consumer_args[i]="${consumer_args[i]#"${RUN_DIR}"/}" ;;
-    "${SCRATCH_DIR}")   consumer_args[i]="scratch" ;;
-    "${SCRATCH_DIR}"/*) consumer_args[i]="scratch/${consumer_args[i]#"${SCRATCH_DIR}"/}" ;;
-  esac
-done
-
-# Frames for SEVERAL fields, every launch (2026-09-09).  The ladder runs of
-# 2026-09-08 were launched with chi frames only; the consumer deleted the
-# plotfiles behind them, so no lapse / K / scalar movie of the collapse or the
-# inflation can ever be made.  A launch that does not name --frames-fields in
-# WHM_CONSUME_ARGS gets this set, with the slice cache (one fixed colour scale
-# per run through rerender_frames.py) and per-frame auto limits (wormhole
-# values are not the black-hole presets).  WHM_FRAMES_FIELDS changes the list;
-# an explicit --frames-fields in WHM_CONSUME_ARGS wins over both.
-FRAMES_DEFAULT="${WHM_FRAMES_FIELDS:-chi K lapse phi Pi}"
-if [[ " ${WHM_CONSUME_ARGS:-} " != *" --frames-fields "* ]]; then
-  # shellcheck disable=SC2206
-  consumer_args+=(--frames-fields ${FRAMES_DEFAULT})
-  [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-cache-slices"* ]] || consumer_args+=(--frames-cache-slices)
-  [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-auto-zlim"* ]] || consumer_args+=(--frames-auto-zlim)
-  echo "[whm] frames   : ${FRAMES_DEFAULT} (launcher default -- name --frames-fields in WHM_CONSUME_ARGS to choose)"
-else
-  echo "[whm] frames   : as given in WHM_CONSUME_ARGS"
-fi
-if [[ " ${WHM_CONSUME_ARGS:-} " != *"--frames-zoom"* ]]; then
-  echo "[whm] WARNING: no --frames-zoom in WHM_CONSUME_ARGS -- frames will show the whole box" >&2
-fi
-
 if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
-  if [[ ! -x "${CONSUMER_PY}" ]]; then
-    echo "[whm] consumer requested but ${CONSUMER_PY} is missing -- run 'uv sync'" >&2
-    exit 1
-  fi
   mkdir -p "${RUN_DIR}/small_data"
-  # `python -m <module>` would put the package's dotted name on a public
-  # command line, so the module is entered through a one-line file in the run
-  # directory instead and the process is named after the run's label.
-  cat > "${RUN_DIR}/post.py" <<PY
-# written by run_single.sh: entry point for the plotfile consumer
-import runpy
-runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
-PY
   (
     cd "${RUN_DIR}"
     exec -a "${PROC_LABEL}_post" "${CONSUMER_BIN}" post.py "${consumer_args[@]}" \

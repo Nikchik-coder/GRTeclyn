@@ -5,7 +5,8 @@ Run by run_single.sh once the params are cloned and every override applied,
 before the run is registered or started.  Standalone:
 
     preflight.py --exe BIN --params params.txt --gpu 1 --workdir DIR \
-                 [--mode full|static] [--restart] [--json OUT] [--argv0 NAME]
+                 [--mode full|static|off] [--restart] [--json OUT] [--argv0 NAME] \
+                 [--consumer-argv "FLAGS"] [--frames-cmd "CMD"] [--frames-out DIR]
 
 WHY.  AMReX's ParmParse ignores a key that nothing reads.  On 2026-09-23 the
 campaign pin turned out to predate the quadrupole seed, so four arms launched
@@ -44,6 +45,18 @@ WHAT IT CHECKS
      samplers and frames would use the wrong domain); --horizon-scan there (the
      star scan samples the full sphere round the centre); --frames-center off
      a plane.
+     And the FRAMES (2026-09-26).  The consumer deletes each plotfile once it
+     has been extracted, so a field not rendered live has no movie, ever; F4
+     ran 392 units with chi K lapse phi Pi only (the old launcher default).
+     The frame list the consumer will get ($WHM_CONSUMER_ARGV, as run_single.sh
+     builds it) must hold every field of frames_default.txt; refused otherwise,
+     unless $WHM_FRAMES_SUBSET gives the reason (recorded in the report and the
+     manifest).  Refused too: a frame field whose plot variable the params do
+     not write (Weyl4 fields without Weyl4 in amr.derive_plot_vars, shift
+     fields without the shift in amr.plot_vars -- the frame would silently
+     not exist), and frames asked of a run with plot_interval <= 0.  This part
+     runs in every mode, WHM_PREFLIGHT=off included: its only override is
+     WHM_FRAMES_SUBSET.
   1. static (no GPU, seconds).  Every key of the params file must appear as a
      string inside the binary: a binary that does not contain a key's name
      cannot read it.  Advisory in full mode (a key can be present but unread
@@ -61,6 +74,17 @@ WHAT IT CHECKS
      set to 0.  If no t = 0 diagnostic differs by more than 1e-10 (relative),
      the seed did nothing and the launch is refused.  This is the H(t = 0)
      comparison that exposed the 2026-09-23 trap, made automatic.
+  4. frames (full mode, when the consumer runs).  The start-up of step 2 also
+     writes its t = 0 plotfile, and the consumer itself (--frames-cmd, the
+     run's own post.py) renders every frame field from it into --frames-out
+     with the run's own frame flags: frame 0, as the run will draw it, before
+     anything is launched.  Each field is judged from the slice it drew (the
+     slice cache), not by eye: no PNG, no slice, all pixels NaN, or every pixel
+     the same value is a FAILED field and refuses the launch -- except a field
+     that is constant everywhere in the plotfile (a zero initial shift, K = 0
+     on time-symmetric data), which is "flat": nothing to show yet, not a
+     rendering failure.  Per field ok / flat / FAILED in the report.  Static
+     mode renders nothing (no start-up) and says so.
 
 Exit status: 0 pass, 1 refused, 2 could not run (a failed start-up, a timeout).
 A report goes to --json; run_single.sh folds it into run_manifest.json.
@@ -71,6 +95,8 @@ Python 3.9+, standard library only.
 from __future__ import annotations
 
 import argparse
+import array
+import ast
 import hashlib
 import json
 import math
@@ -79,12 +105,15 @@ import pathlib
 import re
 import shlex
 import shutil
+import struct
 import subprocess
 import sys
 import time
+import zipfile
 
 HERE = pathlib.Path(__file__).resolve().parent
 ALLOW_FILE = HERE / "preflight_allow.txt"
+FRAMES_FILE = HERE / "frames_default.txt"
 SEED_KEY_RE = re.compile(r"^wormhole_seed(?:_l2)?_amplitude_[AB]$")
 KEY_RE = re.compile(r"^\s*([A-Za-z_][A-Za-z0-9_.]*)\s*=(.*)$")
 UNUSED_RE = re.compile(r"\[TOP\]::([A-Za-z_][A-Za-z0-9_.]*)\(nvals")
@@ -314,6 +343,141 @@ def consumer_check(params: dict[str, str], consume_args: str, consume_on: bool,
     return errors, warnings, summary
 
 
+# ---------------------------------------------------------------- 0. frames
+#: Names the consumer accepts for a field (consume_plotfiles/fields.py).
+FRAME_ALIASES = {"Weyl": "Weyl4_Re", "Weyl4": "Weyl4_Re", "Weyl_Re": "Weyl4_Re",
+                 "Weyl_Im": "Weyl4_Im", "Weyl_Mag": "Weyl4_Mag"}
+#: Frame fields the renderer derives (consume_plotfiles/fields.py) -> the
+#: plotfile components each one reads.  Any other name must be a component.
+DERIVED_FRAME_FIELDS = {
+    "chi_minus_1": ("chi",),
+    "Weyl4_Mag": ("Weyl4_Re", "Weyl4_Im"),
+    "scalar_activity": ("phi", "Pi"),
+    "local_speed": ("chi", "lapse", "shift1", "shift2", "shift3", "h11", "h22", "h33"),
+    "GW_Plus": ("A11", "A22"), "GW_Cross": ("A12",), "weyl4": ("A11", "A12", "A22"),
+}
+#: amr.derive_plot_vars names -> the plotfile components they write.
+DERIVE_COMPONENTS = {"Weyl4": ("Weyl4_Re", "Weyl4_Im")}
+
+
+def load_frames_default(path: pathlib.Path = FRAMES_FILE) -> list[str]:
+    """The campaign's frame fields: frames_default.txt, one per line, # comments."""
+    out: list[str] = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        out.extend(line.split("#", 1)[0].split())
+    return out
+
+
+def _last_flag_values(toks: list[str], flag: str) -> list[str] | None:
+    """The tokens after the LAST ``flag`` up to the next option (argparse: the
+    last occurrence wins), or None if the flag is absent."""
+    if flag not in toks:
+        return None
+    i = len(toks) - 1 - toks[::-1].index(flag)
+    out = []
+    for t in toks[i + 1:]:
+        if t.startswith("--"):
+            break
+        out.append(t)
+    return out
+
+
+def plotfile_components(params: dict[str, str]) -> set[str] | None:
+    """The components the run's plotfiles will carry: amr.plot_vars plus what
+    amr.derive_plot_vars writes.  None when amr.plot_vars is absent or ALL
+    (AMReX then writes every state variable, which this cannot list)."""
+    if "amr.plot_vars" not in params:
+        return None
+    pv = params["amr.plot_vars"].split()
+    if any(v.upper() == "ALL" for v in pv):
+        return None
+    have = {v for v in pv if v.upper() != "NONE"}
+    dv = params.get("amr.derive_plot_vars", "").split()
+    if any(v.upper() == "ALL" for v in dv):
+        dv = list(DERIVE_COMPONENTS)
+    for d in dv:
+        if d.upper() != "NONE":
+            have.update(DERIVE_COMPONENTS.get(d, (d,)))
+    return have
+
+
+def frames_check(params: dict[str, str], toks: list[str], consume_on: bool, required: list[str],
+                 subset_reason: str = "", source: str = "") -> tuple[list[str], list[str], dict]:
+    """(errors, warnings, summary) for the frames the consumer will render
+    (``toks``: its final flags) against the campaign default (``required``,
+    frames_default.txt) and against what the plotfiles will carry."""
+    subset_reason = (subset_reason or "").strip()
+    fields = [FRAME_ALIASES.get(f, f) for f in (_last_flag_values(toks, "--frames-fields") or [])]
+    fields = list(dict.fromkeys(fields))
+    summary: dict = {"fields": fields, "required": list(required), "missing": [],
+                     "subset": subset_reason or None, "source": source or None,
+                     "axis": (_last_flag_values(toks, "--frames-axis") or ["z"])[0]}
+    errors: list[str] = []
+    warnings: list[str] = []
+    if not consume_on:
+        summary.update(fields=[], note="no consumer (WHM_CONSUME=0): no frames, and no plotfile is deleted")
+        return errors, warnings, summary
+    missing = [f for f in required if f not in fields]
+    summary["missing"] = missing
+    if missing and not subset_reason:
+        errors.append(
+            f"frames: the launch would render {len(required) - len(missing)} of the campaign's {len(required)} "
+            f"frame fields -- MISSING {' '.join(missing)} (frame list: {' '.join(fields) or 'none'}; "
+            f"from {source or 'the consumer flags'}).  The consumer deletes each plotfile once it is extracted, "
+            "so those movies could never be made afterwards.  Render the full set (frames_default.txt: leave "
+            "--frames-fields out of WHM_CONSUME_ARGS and WHM_FRAMES_FIELDS unset, or name every field), or "
+            "launch the subset on purpose with WHM_FRAMES_SUBSET=\"<reason>\" (recorded in run_manifest.json)")
+    elif missing:
+        warnings.append(f"frames: a SUBSET on purpose (WHM_FRAMES_SUBSET={subset_reason!r}): no movie of "
+                        f"{' '.join(missing)} -- recorded in run_manifest.json")
+    elif subset_reason:
+        warnings.append(f"WHM_FRAMES_SUBSET={subset_reason!r} is set but the frame list is the full set: "
+                        "nothing to excuse")
+    # Plotfiles come from GRTeclyn's plot_interval or AMReX's own amr.plot_int /
+    # amr.plot_per (the BBH control's params use amr.plot_int): none positive,
+    # no plotfile, no frame.
+    cadence = {k: as_float(params[k]) for k in ("plot_interval", "amr.plot_int", "amr.plot_per") if k in params}
+    if fields and not any((v or 0.0) > 0 for v in cadence.values()):
+        errors.append("frames: " + (", ".join(f"{k} = {params[k].split()[0]}" for k in cadence) or
+                                    "no plot_interval")
+                      + ": the run writes no plotfile, so the consumer renders no frame at all")
+    have = plotfile_components(params)
+    if have is None:
+        warnings.append("amr.plot_vars not set (or ALL): the frame fields' plot variables are not checked "
+                        "by name; the t = 0 render still checks them")
+        return errors, warnings, summary
+    lacking = {}
+    for f in fields:
+        miss = [c for c in DERIVED_FRAME_FIELDS.get(f, (f,)) if c not in have]
+        if miss:
+            lacking[f] = miss
+    if lacking:
+        summary["lacking"] = lacking
+        by_need: dict[str, list[str]] = {}
+        state_missing: list[str] = []
+        state_fields: list[str] = []
+        for f, miss in lacking.items():
+            for c in miss:
+                d = next((d for d, comps in DERIVE_COMPONENTS.items() if c in comps), None)
+                if d:
+                    by_need.setdefault(d, [])
+                    if f not in by_need[d]:
+                        by_need[d].append(f)
+                else:
+                    if c not in state_missing:
+                        state_missing.append(c)
+                    if f not in state_fields:
+                        state_fields.append(f)
+        parts = []
+        if state_fields:
+            parts.append(f"{' '.join(state_fields)} need {' '.join(state_missing)} in amr.plot_vars")
+        parts += [f"{' '.join(fs)} need {d} in amr.derive_plot_vars" for d, fs in by_need.items()]
+        errors.append("frames: " + "; ".join(parts) + ", which the params do not write -- those frames would "
+                      "silently not exist.  Add them to the params, or leave the fields out and say why: "
+                      "WHM_FRAMES_SUBSET=\"<reason>\"")
+    return errors, warnings, summary
+
+
 # ---------------------------------------------------------------- 1. static
 _BLOBS: dict[pathlib.Path, bytes] = {}
 
@@ -450,6 +614,152 @@ def max_rel_diff(a: dict[str, dict[str, float]], b: dict[str, dict[str, float]])
     return worst, where
 
 
+# ---------------------------------------------------------------- 4. frames
+PLOTFILE_RE = re.compile(r".*[Pp]lt(\d+)$")      # consume_plotfiles/plotfiles.py
+SKIPPED_RE = re.compile(r"WARNING: frame field '([^']+)' skipped for \S+: (.*)")
+#: The consumer flags that decide what a frame shows (the rest are extractions).
+FRAME_FLAGS = ("--frames-axis", "--frames-coord", "--frames-zoom", "--frames-center", "--center",
+               "--reflect", "--frames-zlim-t0")
+FRAME_SWITCHES = ("--frames-corner", "--frames-auto-zlim", "--frames-global-zlim", "--no-frames-global-zlim")
+
+
+def plotfiles_in(d: pathlib.Path) -> list[pathlib.Path]:
+    return sorted(p for p in d.iterdir() if PLOTFILE_RE.match(p.name) and (p / "Header").is_file()) \
+        if d.is_dir() else []
+
+
+def plotfile_extrema(plt: pathlib.Path) -> dict[str, tuple[float, float]]:
+    """component -> (min, max) over every level, from the per-box min/max AMReX
+    writes into each Level_*/Cell_H.  {} if the plotfile does not carry them."""
+    try:
+        head = (plt / "Header").read_text(encoding="utf-8", errors="replace").splitlines()
+        ncomp = int(head[1])
+        names = [s.strip() for s in head[2:2 + ncomp]]
+    except (OSError, ValueError, IndexError):
+        return {}
+    ext: dict[str, list[float]] = {}
+    for cell_h in sorted(plt.glob("Level_*/Cell_H")):
+        lines = cell_h.read_text(encoding="utf-8", errors="replace").splitlines()
+        marks = [i for i, line in enumerate(lines) if re.fullmatch(r"\s*\d+\s*,\s*\d+\s*", line)]
+        if len(marks) < 2:
+            return {}
+        for k, start in ((0, marks[-2]), (1, marks[-1])):        # the mins, then the maxes
+            nbox, nc = (int(v) for v in lines[start].split(","))
+            if nc != ncomp:
+                return {}
+            for b in range(nbox):
+                vals = [float(v) for v in lines[start + 1 + b].strip().rstrip(",").split(",")]
+                for c, name in enumerate(names):
+                    cur = ext.setdefault(name, [math.inf, -math.inf])
+                    cur[k] = min(cur[k], vals[c]) if k == 0 else max(cur[k], vals[c])
+    return {k: (v[0], v[1]) for k, v in ext.items()}
+
+
+def read_slice(npz: pathlib.Path) -> array.array:
+    """The ``arr`` of a slice-cache .npz (frames/slice_cache.py), standard library only."""
+    with zipfile.ZipFile(npz) as z:
+        raw = z.read("arr.npy")
+    if raw[:6] != b"\x93NUMPY":
+        raise ValueError("not a .npy array")
+    if raw[6] == 1:
+        hlen, off = struct.unpack("<H", raw[8:10])[0], 10
+    else:
+        hlen, off = struct.unpack("<I", raw[8:12])[0], 12
+    header = ast.literal_eval(raw[off:off + hlen].decode("latin1"))
+    code = {"<f4": "f", "<f8": "d", ">f4": "f", ">f8": "d"}.get(header.get("descr"))
+    if code is None:
+        raise ValueError(f"dtype {header.get('descr')!r}")
+    arr = array.array(code)
+    arr.frombytes(raw[off + hlen:])
+    if (header["descr"][0] == ">") != (sys.byteorder == "big"):
+        arr.byteswap()
+    return arr
+
+
+def judge_frame(field: str, png: pathlib.Path, npz: pathlib.Path, extrema: dict, skipped: str | None) -> dict:
+    """ok / flat / FAILED for one rendered field, from the slice it drew."""
+    if not png.is_file() and not npz.is_file():
+        return {"verdict": "FAILED", "why": f"no frame drawn ({skipped or 'the consumer wrote nothing for it'})"}
+    if not png.is_file() or png.stat().st_size == 0:
+        return {"verdict": "FAILED", "why": "no PNG (the slice was taken but not drawn)"}
+    if not npz.is_file():
+        return {"verdict": "FAILED", "why": "PNG drawn but no slice cached, so it cannot be checked"}
+    try:
+        vals = read_slice(npz)
+    except (OSError, ValueError, KeyError, SyntaxError, zipfile.BadZipFile) as exc:
+        return {"verdict": "FAILED", "why": f"unreadable slice ({exc})"}
+    finite = [v for v in vals if math.isfinite(v)]
+    rec = {"pixels": len(vals), "nan": len(vals) - len(finite)}
+    if not finite:
+        return dict(rec, verdict="FAILED", why="every pixel is NaN or inf")
+    lo, hi = min(finite), max(finite)
+    rec.update(min=lo, max=hi)
+    if hi - lo > 1e-12 * max(abs(lo), abs(hi)):
+        return dict(rec, verdict="ok")
+    comps = DERIVED_FRAME_FIELDS.get(field, (field,))
+    ext = [extrema.get(c) for c in comps]
+    if ext and all(e is not None and e[0] == e[1] for e in ext):
+        return dict(rec, verdict="flat",
+                    why=f"every pixel {lo:g}: {' '.join(comps)} "
+                        f"{'is' if len(comps) == 1 else 'are'} constant everywhere in this plotfile (nothing to show yet)")
+    where = ", ".join(f"{c} {e[0]:.3g}..{e[1]:.3g}" for c, e in zip(comps, ext) if e is not None)
+    return dict(rec, verdict="FAILED",
+                why=f"blank: every pixel is {lo:g}, but the plotfile varies ({where or 'extrema unknown'}) -- the "
+                    "slice or the window misses it")
+
+
+def render_frames(plt: pathlib.Path, data_arg: pathlib.Path, out_arg: pathlib.Path, toks: list[str],
+                  fields: list[str], axis: str, frames_out: pathlib.Path, cmd: list[str], timeout: float) -> dict:
+    """Render ``fields`` from the plotfile ``plt`` with the consumer itself and
+    the run's own frame flags, then judge each field from its cached slice.
+    ``data_arg``/``out_arg``/``frames_out`` go on the consumer's command line,
+    which is public: run_single.sh passes them relative to the run directory."""
+    idx = int(PLOTFILE_RE.match(plt.name).group(1))
+    frames_out.mkdir(parents=True, exist_ok=True)
+    args = ["--data", str(data_arg), "--out", str(out_arg), "--frames-out", str(frames_out),
+            "--stable-seconds", "0", "--no-psi4", "--verbose", "--frames-cache-slices",
+            "--frames-fields", *fields]
+    for flag in FRAME_FLAGS:
+        vals = _last_flag_values(toks, flag)
+        if vals is not None:
+            args += [flag, *vals]
+    args += [s for s in FRAME_SWITCHES if s in toks]
+    log = frames_out / "render.log"
+    t0 = time.time()
+    status = "ok"
+    with log.open("w", encoding="utf-8") as fh:
+        try:
+            proc = subprocess.run(cmd + args, cwd=os.getcwd(), stdout=fh, stderr=subprocess.STDOUT,
+                                  stdin=subprocess.DEVNULL, timeout=timeout, check=False)
+            if proc.returncode != 0:
+                status = f"consumer exit {proc.returncode}"
+        except subprocess.TimeoutExpired:
+            status = f"timeout after {timeout:g} s"
+        except OSError as exc:
+            status = f"could not start the consumer ({exc})"
+    seconds = round(time.time() - t0, 1)
+    text = log.read_text(encoding="utf-8", errors="replace")
+    skipped = dict(SKIPPED_RE.findall(text))
+    extrema = plotfile_extrema(plt)
+    per_field = {}
+    for f in fields:
+        png = frames_out / f"{f}_{axis}" / "frames" / f"frame_{axis}_{idx:04d}.png"
+        npz = frames_out / "_slice_cache" / f"{f}_{axis}" / f"slice_{idx:04d}.npz"
+        per_field[f] = judge_frame(f, png, npz, extrema, skipped.get(f))
+    return {"plotfile": plt.name, "frame": idx, "status": status, "seconds": seconds,
+            "frames_out": _shown(frames_out), "log": _shown(log), "fields": per_field,
+            "log_tail": text.splitlines()[-12:] if status != "ok" else []}
+
+
+def _shown(p: pathlib.Path) -> str:
+    """A path for the report, which is packed with the run: relative to the
+    working directory (the run directory) when under it, else its last parts."""
+    try:
+        return str(pathlib.Path(p).resolve().relative_to(pathlib.Path.cwd().resolve()))
+    except ValueError:
+        return str(pathlib.Path(*pathlib.Path(p).parts[-2:]))
+
+
 # ---------------------------------------------------------------- driver
 def sha256(path: pathlib.Path) -> str:
     h = hashlib.sha256()
@@ -469,19 +779,36 @@ def main(argv: list[str]) -> int:
     ap.add_argument("--params", required=True, help="the run's final params file")
     ap.add_argument("--gpu", default="0", help="CUDA device for the start-ups")
     ap.add_argument("--workdir", required=True, help="scratch directory for the start-ups")
-    ap.add_argument("--mode", choices=("full", "static"), default="full")
+    ap.add_argument("--mode", choices=("full", "static", "off"), default="full",
+                    help="off (WHM_PREFLIGHT=off): the frame-list check only")
     ap.add_argument("--restart", action="store_true", help="the run restarts from a checkpoint")
     ap.add_argument("--timeout", type=float, default=1800.0, help="seconds per start-up")
     ap.add_argument("--json", help="write the report here")
     ap.add_argument("--keep", action="store_true", help="keep the workdir even on success")
     ap.add_argument("--consume-args", default=os.environ.get("WHM_CONSUME_ARGS", ""),
                     help="the plotfile consumer's flags (default: $WHM_CONSUME_ARGS, as run_single.sh has them)")
+    ap.add_argument("--consumer-argv", default=os.environ.get("WHM_CONSUMER_ARGV"),
+                    help="the consumer's FINAL flags, launcher defaults included (default: $WHM_CONSUMER_ARGV; "
+                         "without it, --consume-args plus the default frames, as run_single.sh would add them)")
+    ap.add_argument("--frames-required", default=None,
+                    help="the fields every launch must render (default: frames_default.txt)")
+    ap.add_argument("--frames-subset", default=os.environ.get("WHM_FRAMES_SUBSET", ""),
+                    help="why this launch renders fewer (default: $WHM_FRAMES_SUBSET)")
+    ap.add_argument("--frames-source", default=os.environ.get("WHM_FRAMES_SOURCE", ""),
+                    help="where the frame list came from, for the report (default: $WHM_FRAMES_SOURCE)")
+    ap.add_argument("--frames-cmd", default=os.environ.get("WHM_FRAMES_CMD", ""),
+                    help="the consumer command that renders the t = 0 frames, e.g. 'test_post post.py' "
+                         "(default: $WHM_FRAMES_CMD, else this python -m the consumer module)")
+    ap.add_argument("--frames-out", default=None,
+                    help="where the t = 0 frames go (default: <workdir>/frames); never the run's frames/")
+    ap.add_argument("--render-timeout", type=float, default=1800.0, help="seconds for the t = 0 render")
     a = ap.parse_args(argv)
 
     exe = pathlib.Path(a.exe).resolve()
     exe_run = pathlib.Path(a.exe_run or a.exe).resolve()
     params_path = pathlib.Path(a.params).resolve()
-    workdir = pathlib.Path(a.workdir).resolve()
+    workdir_arg = pathlib.Path(a.workdir)          # as given (relative): for public command lines
+    workdir = workdir_arg.resolve()
     text = params_path.read_text(encoding="utf-8")
     params = parse_params(text)
     report: dict = {
@@ -498,6 +825,38 @@ def main(argv: list[str]) -> int:
             print(f"[preflight]   - {r}")
         print(f"[preflight] verdict: {verdict.upper()}")
         return code
+
+    # The frames: every mode, WHM_PREFLIGHT=off included (the only override is
+    # WHM_FRAMES_SUBSET).  The list is the consumer's FINAL flags.
+    consume_on = os.environ.get("WHM_CONSUME", "1") != "0"
+    required = a.frames_required.split() if a.frames_required is not None else load_frames_default()
+    if a.consumer_argv is not None:
+        ftoks = shlex.split(a.consumer_argv)
+        source = a.frames_source
+    else:
+        ftoks = shlex.split(a.consume_args or "")
+        source = a.frames_source or "--consume-args"
+        if "--frames-fields" not in ftoks:
+            ftoks += ["--frames-fields", *(os.environ.get("WHM_FRAMES_FIELDS", "").split() or required)]
+            source = a.frames_source or ("WHM_FRAMES_FIELDS" if os.environ.get("WHM_FRAMES_FIELDS")
+                                         else "campaign default (frames_default.txt)")
+    f_err, f_warn, f_sum = frames_check(params, ftoks, consume_on, required, a.frames_subset, source)
+    report["frames"] = dict(f_sum, errors=f_err, warnings=f_warn)
+    if consume_on:
+        print(f"[preflight] frames : {len(f_sum['fields'])} field(s), "
+              + ("the full set" if not f_sum["missing"] else f"MISSING {' '.join(f_sum['missing'])}")
+              + (f" [SUBSET: {f_sum['subset']}]" if f_sum["subset"] and f_sum["missing"] else "")
+              + f": {' '.join(f_sum['fields'])}")
+    else:
+        print("[preflight] frames : none (no consumer: WHM_CONSUME=0)")
+    if a.mode == "off":
+        report["frames"]["render"] = {"verdict": "not rendered (WHM_PREFLIGHT=off)"}
+        for w in f_warn:
+            print(f"[preflight] WARNING: {w}")
+        if f_err:
+            report["reasons"].extend(f_err)
+            return finish("refused", 1)
+        return finish("skipped (WHM_PREFLIGHT=off)", 0)
 
     errors, warnings = intent_check(params)
     report["intent"] = {"errors": errors, "warnings": warnings}
@@ -516,7 +875,7 @@ def main(argv: list[str]) -> int:
           + ("; neck + horizons" if c_sum["neck_horizons"] else "")
           + (f"; --reflect {' '.join(c_sum['reflect'])}" if c_sum["reflect"] else "")
           + ("" if c_sum["consume"] else " (no consumer: WHM_CONSUME=0)"))
-    errors, warnings = errors + s_err + c_err, warnings + s_warn + c_warn
+    errors, warnings = errors + s_err + c_err + f_err, warnings + s_warn + c_warn + f_warn
     for w in warnings:
         print(f"[preflight] WARNING: {w}")
     if errors:
@@ -532,7 +891,12 @@ def main(argv: list[str]) -> int:
           + (f": {', '.join(missing)}" if missing else "")
           + (f" ({len(missing) - len(blocking)} of them dead keys preflight_allow.txt names)"
              if len(blocking) < len(missing) else ""))
+    render_fields = f_sum["fields"] if consume_on else []
     if a.mode == "static":
+        if render_fields:
+            report["frames"]["render"] = {"verdict": "not rendered (static preflight: no start-up, no t = 0 plotfile)"}
+            print("[preflight] WARNING: frames NOT rendered -- the static preflight starts nothing, so there is "
+                  "no t = 0 plotfile; eyeball frame 0 once the run is up")
         if blocking:
             report["reasons"].append(f"keys the binary cannot read: {', '.join(blocking)}")
             return finish("refused", 1)
@@ -543,8 +907,13 @@ def main(argv: list[str]) -> int:
         "amr.plot_files_output": "0", "amr.checkpoint_files_output": "0",
         "amrex.abort_on_unused_inputs": "1", "amrex.verbose": "1",
     }
-    print(f"[preflight] start-up with every key checked (gpu {a.gpu}, 0 steps) ...")
-    run = probe(exe_run, a.argv0, text, probe_ov, workdir / "run", a.gpu, a.timeout)
+    # The frames are rendered from this start-up's own plotfile: t = 0 for a
+    # fresh start (written at init), the checkpoint's time for a restart
+    # (written at exit).  Only the "run" start-up writes one.
+    run_ov = dict(probe_ov, **({"plot_interval": "1", "amr.plot_files_output": "1"} if render_fields else {}))
+    print(f"[preflight] start-up with every key checked (gpu {a.gpu}, 0 steps"
+          + ("; writes its plotfile for the frames" if render_fields else "") + ") ...")
+    run = probe(exe_run, a.argv0, text, run_ov, workdir / "run", a.gpu, a.timeout)
     report["probe"] = {k: run[k] for k in ("status", "exit_code", "unused", "version", "seconds", "log_tail")}
     report["t0"] = run["t0"]
     report["grteclyn_version"] = run["version"]
@@ -567,6 +936,45 @@ def main(argv: list[str]) -> int:
         print("[preflight] t = 0  : " + "  ".join(f"{k} {v:.10e}" for k, v in ham.items() if k != "time"))
     elif not a.restart:
         print("[preflight] WARNING: the start-up wrote no t = 0 diagnostics (calculate_constraint_norms off?)")
+
+    if render_fields:
+        plts = plotfiles_in(workdir / "run")
+        if not plts:
+            report["frames"]["render"] = {"verdict": "no plotfile"}
+            if a.restart:
+                print("[preflight] WARNING: frames NOT rendered -- the restart start-up wrote no plotfile")
+            else:
+                report["reasons"].append("frames: the start-up wrote no t = 0 plotfile, so no frame can be "
+                                         f"checked (log: {_shown(workdir / 'run' / 'probe.log')})")
+                return finish("refused", 1)
+        else:
+            cmd = shlex.split(a.frames_cmd) if a.frames_cmd else [
+                sys.executable, "-m", "grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"]
+            frames_out = pathlib.Path(a.frames_out) if a.frames_out else workdir_arg / "frames"
+            print(f"[preflight] frames : rendering {len(render_fields)} field(s) from {plts[-1].name} "
+                  f"with the consumer -> {_shown(frames_out)} ...")
+            rend = render_frames(plts[-1], workdir_arg / "run", workdir_arg / "render_out", ftoks,
+                                 render_fields, f_sum["axis"], frames_out, cmd, a.render_timeout)
+            report["frames"]["render"] = rend
+            bad = {f: r for f, r in rend["fields"].items() if r["verdict"] == "FAILED"}
+            flat = [f for f, r in rend["fields"].items() if r["verdict"] == "flat"]
+            for f, r in rend["fields"].items():
+                span = (f"{r['min']:.3g} .. {r['max']:.3g}" if "min" in r else "")
+                print(f"[preflight]   {f:16s} {r['verdict']:6s} {span}"
+                      + (f"  ({r['why']})" if r.get("why") else "")
+                      + (f"  [{r['nan']} NaN pixel(s)]" if r.get("nan") else ""))
+            print(f"[preflight] frames : {len(render_fields) - len(bad)} of {len(render_fields)} rendered "
+                  f"in {rend['seconds']} s ({rend['status']})"
+                  + (f"; flat at this time: {' '.join(flat)}" if flat else ""))
+            if bad:
+                for line in rend["log_tail"][-6:]:
+                    print(f"[preflight]   | {line}")
+                report["reasons"].append(
+                    f"frames: {', '.join(bad)} FAILED to render from the t = 0 plotfile ("
+                    + "; ".join(f"{f}: {r['why']}" for f, r in bad.items())
+                    + f") -- see {rend['log']}.  Fix the params or the consumer flags, or leave those fields "
+                    "out and say why: WHM_FRAMES_SUBSET=\"<reason>\"")
+                return finish("refused", 1)
 
     seeds = {k: v for k, v in params.items() if SEED_KEY_RE.match(k) and (as_float(v) or 0.0) != 0.0}
     report["seed"] = {"requested": seeds}
