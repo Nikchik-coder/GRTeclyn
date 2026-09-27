@@ -1323,6 +1323,23 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-27 (08:33 UTC) — CONV-1, CONV-2 and CONV-3w stopped and removed on the user's word; queued again
+
+The user: "stop all the runs, prune them completely, mark as queued in the status not live", then "just remove them as
+i asked".
+- Stopped at 08:33 UTC with `stop_campaign.sh` on each run dir; the first node's cards emptied at once. None had
+  finished: CONV-1 `single_eps_m1e2_ml5_t060` reached t = 30.25 / 60, CONV-2 `single_eps_m1e2_halfstep_t060`
+  57.88 / 60, CONV-3w `v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600` 58.18 / 100.
+- Removed at 08:40 UTC: their scratch (38 GB: the consumer's last three plotfiles each; no checkpoints existed), run
+  dirs (logs, streams, `small_data/`, manifests), launcher logs and registry rows. Their partial packs went at 08:38
+  (MANIFEST_CLEANUP_2026-09-27), and the 08:40 repack dropped their rows from the index and summaries. The paper quotes
+  none of them.
+- Kept, because frames go only on the user's explicit word: each run's `frames/` (with its slice cache) and
+  `preflight_frames/`, 0.43 GB, moved to `runs/wormhole_merger/00_archive/stopped_2026-09-27/`, where the packer does not
+  look and a relaunch under the same name is not refused. Chk03600 stays: the queued CONV-3w restarts from it.
+- STATUS: nothing is live. The three are queued again with frameless relaunch commands (the convergence study's rule),
+  and nothing launches without the user's word.
+
 ### 2026-09-27 (08:30 UTC) — CS-1 closed out: on constraint-solved data the head-on merges the same way, about 2 units later, with a horizon 4–5 % larger
 
 - **CS-1 finished** at 08:14 UTC, at its stop time t = 30.0 (2.2 h, 13.6 u/h at the end, 29 GB flat, no NaN in any

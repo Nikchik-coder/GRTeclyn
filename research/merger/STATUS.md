@@ -1,4 +1,4 @@
-# Status — 2026-09-27 08:45 UTC
+# Status — 2026-09-27 08:50 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -6,25 +6,17 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Live
 
-Three convergence runs are live on the first node. Each passed the full preflight, and none writes checkpoints (the
-user's word). The convergence study keeps no frames and no movies (the user's word, 2026-09-27); the three live runs
-still render the frames they were launched with.
-- **GPU 0: CONV-1 `single_eps_m1e2_ml5_t060` and CONV-2 `single_eps_m1e2_halfstep_t060`**, sharing the card (46 GB),
-  since 17:17 UTC on 2026-09-26. As of 05:35 UTC they were at t = 24.3 and 46.5, both healthy (no NaN).
-  - CONV-2 (Δt/2) reproduces its dt = 0.02 partner's areal radius to 1.1e-4 through t = 46, at 3.8 u/h. ETA ~09:10 UTC.
-  - CONV-1 (level 5) follows its level-4 partner to 2.2e-4 (R 4.2348 vs 4.2350 at t = 24), at 2.0 u/h on the shared
-    card. ETA ~23:40 UTC if the card stays shared (CONV-8a/8b beside it, as queued); ~16:00 UTC if it runs alone after
-    CONV-2 (4.2 u/h).
-- **GPU 1: CONV-3w `v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600`**, since 05:04 UTC: CONV-3 with the R = 20
-  sphere and its path on level 1, the wave-zone test. It is at 62 GB and its level-1 ball exists (9.09M cells against
-  CONV-3's 4.10M). It runs at 0.885 × CONV-3's flat 7.2 u/h (t = 39.1 at 05:33), and its (2,2) matches CONV-3's to
-  within 0.6 % of peak so far. ETA ~15:10 UTC.
+**Nothing is live; both nodes are free.** On the user's word, CONV-1, CONV-2 and CONV-3w were stopped at 08:33 UTC on
+2026-09-27 and removed at 08:40 UTC ["2026-09-27 (08:33 UTC)"]. They had reached t = 30.25 / 60, 57.88 / 60 and 58.18 / 100.
+Their scratch (38 GB of plotfiles, no checkpoints), run dirs, launcher logs, registry rows and untracked partial packs
+are gone. Only their rendered frames are kept, in `runs/wormhole_merger/00_archive/stopped_2026-09-27/`, because frames
+are never deleted without the user's explicit word. All three are back in the queue below, to run again from the start.
 - **CONV-3 is closed out** (finished t = 100 at 02:12 UTC; filed under `08_convergence/`, packed, scratch pruned).
   - Its (2,2) burst matches the level-5 chain on every sphere: peak ratio 1.000, waveform within 0.1 % of peak.
   - Both runs extract on the base grid, so this tests the core's resolution, not the wave zone's. CONV-3w tests the
     wave zone ["2026-09-27 (05:00–05:45 UTC)"].
-- **Kept on the user's word (2026-09-27, "skip"):** the frames CONV-1/2/3/3w have already rendered (~0.5 GB, untracked),
-  and Chk05700.
+- **Kept on the user's word (2026-09-27, "skip"):** CONV-3's frames (in its run dir) and Chk05700. Chk03600 stays too:
+  the queued CONV-3w restarts from it.
 
 - **Second node: free. CS-1 `merge_headon_flip_d8_cs_lvl3_t030` is closed out** (the head-on scout on
   constraint-solved data; finished t = 30 at 08:14 UTC, no NaN; filed under `04_binary_headon/`, packed)
@@ -108,10 +100,10 @@ with only the named keys changed, and all nine PASS the full preflight (2026-09-
 
 | id | run (template in `templates_scan/params_*`) | converges | partner | GPU-h | peak GB |
 |---|---|---|---|---|---|
-| CONV-1 **LIVE** | `single_eps_m1e2_ml5_t060` (`single_eps_m1e2_ml5_t060`) | τ: third level, a convergence order (abstract) | `single_eps_m1e2_t100` / `_ml4_t100` | 14 | 27 |
-| CONV-2 **LIVE** | `single_eps_m1e2_halfstep_t060` (`single_eps_m1e2_halfstep_t060`) | Δt: dt_multiplier 0.01, intervals doubled (§III) | `single_eps_m1e2_t100` | 7 | 20 |
+| CONV-1 | `single_eps_m1e2_ml5_t060` (`single_eps_m1e2_ml5_t060`) | τ: third level, a convergence order (abstract) | `single_eps_m1e2_t100` / `_ml4_t100` | 14 | 27 |
+| CONV-2 | `single_eps_m1e2_halfstep_t060` (`single_eps_m1e2_halfstep_t060`) | Δt: dt_multiplier 0.01, intervals doubled (§III) | `single_eps_m1e2_t100` | 7 | 20 |
 | CONV-3 = G9 **DONE, closed out** | `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` (`prod_L128_p012_lvl4_t100_freeze`) | spiral burst and energy, level 4 vs 5; fill at t = 57 in the same leg | the production chain | 9 | 56 |
-| CONV-3w **LIVE** | `v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600` (`prod_L128_p012_lvl4_wz1_t100_freeze`) | the WAVE ZONE: R = 20 and its path (r < 24) on level 1, vs CONV-3 on level 0 | CONV-3 | 10 | 62 |
+| CONV-3w | `v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600` (`prod_L128_p012_lvl4_wz1_t100_freeze`) | the WAVE ZONE: R = 20 and its path (r < 24) on level 1, vs CONV-3 on level 0 | CONV-3 | 10 | 62 |
 | CONV-4 | `merge_orbit_flip_d12_p045_L128_lvl4_t095` (`flyby_p045_L128_lvl4_t095`) | fly-by energy, scalar, mouths; t = 95 reaches the R = 44 gate | `…p045_L128_lvl5_t100` | 21 | 56 (+1–5 at the pass) |
 | CONV-5 | `merge_orbit_flip_d12_p045_L128_lvl3_t095` (`flyby_p045_L128_lvl3_t095`) | the fly-by's third level (order) | same | 11 | 52 (+1–5) |
 | CONV-6 = G12 | `merge_headon_flip_d8_lvl5from0_ball4_t100` (`headon_d8_lvl5from0_ball4_t100`) | remnant horizon on level 4, not 3 ("loses a quarter", abstract); since 2026-09-27 also the head-on's wave zone: R = 10 and its path (r < 12) on level 2 | `…v1_lvl5from0_scalar_t100`, `…v1_lvl3down_t100_r03500` | 34 | 60 |
@@ -124,15 +116,12 @@ footprint × 1.8 reproduces every measured one (level-5 fly-by 34.0 → 58.8; L 
 79.6 GB; most runs peak in step 1.
 
 **Sharing a card buys nothing**: two L = 64 level-4 arms on one card ran 3.9 u/h each against 8.7 alone (GPU_PLAN
-Phase 2b). Placement now: card 0 runs CONV-1 and CONV-2 together; card 1 runs CONV-3w. Next, in this order:
-- card 0: when CONV-2 ends (~09:10 UTC), CONV-8a beside CONV-1 (41 + 27 GB), then CONV-8b; when card 0 empties, CONV-6
-  (66 GB, alone).
-- card 1 after CONV-3w (~15:30 UTC): CONV-7, then CONV-4, then CONV-5.
+Phase 2b). Placement: none. All three cards are free, and nothing launches until the user says go.
 
 Every remaining launch goes without frames: `--frames-fields none` with
 `WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)"`. CONV-8a/b use `--frames-fields chi`
 instead, because the sign rule reads the chi slice cache. Close-outs use `WHM_MOVIES=0`.
-The queued templates still write rolling checkpoints. The user's no-checkpoint word was given for the three live runs.
+The queued templates still write rolling checkpoints. The user's no-checkpoint word was given for CONV-1, CONV-2 and CONV-3w.
 
 Pairs that fit if two must share: CONV-1 + CONV-2 (47 GB), CONV-2 + CONV-8 (61), CONV-1 + CONV-8 (68), CONV-2 +
 CONV-7 (67). Never CONV-8a + CONV-8b (82), and nothing beside CONV-3/4/5/6.
@@ -140,9 +129,10 @@ CONV-7 (67). Never CONV-8a + CONV-8b (82), and nothing beside CONV-3/4/5/6.
 Launch from the repo root with `L=grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh`,
 `B=runs/wormhole_merger/bin`. Check `nvidia-smi` first, and redirect each launch (`< /dev/null > <log> 2>&1`):
 ```
-bash $L --gpu G --template params_single_eps_m1e2_ml5_t060.txt --name single_eps_m1e2_ml5_t060 --profile headon-scout
-bash $L --gpu G --template params_single_eps_m1e2_halfstep_t060.txt --name single_eps_m1e2_halfstep_t060 --profile headon-scout --binary $B/main3d_boost_2026-09-08.ex
+WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_single_eps_m1e2_ml5_t060.txt --name single_eps_m1e2_ml5_t060 --profile headon-scout --frames-fields none
+WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_single_eps_m1e2_halfstep_t060.txt --name single_eps_m1e2_halfstep_t060 --profile headon-scout --frames-fields none --binary $B/main3d_boost_2026-09-08.ex
 bash $L --gpu G --template params_prod_L128_p012_lvl4_t100_freeze.txt --name v2_spiral_d12_p012_L128_lvl4_t100_freeze --profile orbit-modes --zoom 64 --coord 64 --binary $B/main3d_coreprof_2026-09-15.ex --restart "$PWD/runs/wormhole_merger/05_binary_spiral/p012/_keep_spiral_premerger_decay/BinaryWormholeChk03600"
+WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_prod_L128_p012_lvl4_wz1_t100_freeze.txt --name v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze --profile orbit-modes --zoom 64 --coord 64 --frames-fields none --binary $B/main3d_coreprof_2026-09-15.ex --restart "$PWD/runs/wormhole_merger/05_binary_spiral/p012/_keep_spiral_premerger_decay/BinaryWormholeChk03600"
 WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_flyby_p045_L128_lvl4_t095.txt --name merge_orbit_flip_d12_p045_L128_lvl4_t095 --profile orbit-modes-scan --frames-fields none
 WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_flyby_p045_L128_lvl3_t095.txt --name merge_orbit_flip_d12_p045_L128_lvl3_t095 --profile orbit-modes-scan --frames-fields none
 WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_headon_d8_lvl5from0_ball4_t100.txt --name merge_headon_flip_d8_lvl5from0_ball4_t100 --profile headon-modes --frames-fields none --binary $B/main3d_boost_2026-09-08.ex
