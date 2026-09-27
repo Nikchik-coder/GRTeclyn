@@ -1372,6 +1372,85 @@ need to be analysed and packed").
   - P5 (idea 15), the next papers: handle topology (both mouths of one wormhole in one universe: new initial data),
     and throats spinning above the rotation threshold (new rotating data).
 
+### 2026-09-27 (05:45 UTC) — constraint-solved initial data: the Hamiltonian solve is in the example, validated at t = 0 on CPU; the d = 8 head-on's t = 0 defect drops ×1900; nothing launched
+
+**Why (the referee's second point, the user's brief).** The binaries' Hamiltonian defect is the one thing the paper declares
+rather than removes. It seeds the throats' unstable mode at ~10⁻³ (a factor 100 in seed moves the clocks by ~τ ln 100 ≈
+20 units) and it is where the 50–70 % merger/fly-by boundary's uncertainty lives (the Helfer twins stalled the orbit).
+GRTresna is not needed: with Π = 0 and conformally flat data the constraint is `∇²Ψ − VΨ + ⅛Â·Â Ψ⁻⁷ = 0`, `V = π|∇φ|²`
+— linear for the head-on, a Newton iteration of the same linear solve with momentum — and the operator `∇² − V`, `V ≥ 0`,
+is what AMReX's MLABecLaplacian solves. The single drainhole solves it exactly (analytic residual 3e-12), and near each
+centre Ψ ≈ c/r with c = (a/2)e^{πm/2a} = 2.193: the far side is puncture-like, so the split Ψ = Ψ_bg + w with a Robin
+outer boundary is regular.
+
+**Built (`Examples/BinaryWormholeMerger`).** `DrainholeConstraintSolve.{hpp,cpp}`: the composite MLMG solve
+over the initial hierarchy, Robin `a w + dw/dn = 0`, `a = |n·x|/r²` on every face, `w` averaged down afterwards; Newton on
+the Bowen–York term (A_k = V + ⅞Â²Ψ_k⁻⁸). `BinaryWormholeInitialData::constraint_background()` gives Ψ_bg, its closed-form
+Laplacian, V and Â·Â at a cell, and `compute(…, solved, w)` rebuilds χ = (Ψ_bg + w)⁻⁴ and A_ij = χ^{3/2}Â_ij from the same
+function — φ, Â, Π, the lapse untouched, so the momentum constraint stays exact. Runs in `specific_post_init` on level 0
+(the hierarchy exists there; post_init precedes the t = 0 row and plotfile), never on a restart. Keys `constraint_solve`,
+`_background` (0 superposition, 1 bare punctures = validation), `_puncture_mode` (0 the superposition's c = c_iso ·
+e^{−u_B(x_A)/2} = 2.334 at d = 8; 1 isolated; 2 explicit), tolerances. Refused with a ψ seed (the solve would erase it:
+at fixed φ and c the solution is unique), the Helfer correction, a boost, id_type 0, phantom_mass ≠ 0, an external grid.
+Default off, bit for bit. The MLMG package joins the example's GNUmakefile (nodal/EM families off). CPU MPI build
+`cssolve3d.gnu.MPI.ex` (own object dir `tmp_build_dir/cssolve_cpu`, the live build untouched).
+
+**Validated (CPU, L = 64, N = 128, the V1 scout's grid, `max_steps = 0`; finest-level Ham from the `constraints` derived
+field, which needs `G_Newton = 1.0` — the campaign templates never set it because they never plot constraints).
+Grader: `grteclyn-wrapper/scripts/validation/constraint_solve_t0_check.py`.**
+- **Single throat from bare punctures** (background 1, c = 2.193): the solve rebuilds the drainhole. |ΔΨ| against the exact
+  data on the finest level, r_A ∈ [1, 1.9]: 2.0e-3 / 6.4e-4 / 3.1e-4 at levels 2/3/4; R_min 3.8922 vs 3.8901 exact (5e-4).
+  Throat-shell Ham rms 1.5e-4 at level 3, against 2.1e-6 for the exact data on the same grid (w is large here, 2.0,
+  and carries the 7-point operator's truncation) and 9.7e-3 for the superposed pair. The far field is the weak spot: the monopole Robin
+  condition at the box face cannot impose the drainhole's 1/r² tail (r²(Ψ − 1 − m/2r) = 0.63 = (a²+m²)/8, read off the
+  data), so ΔΨ grows from 6e-4 at the throat to 2e-3 at r = 31 along a ray, and the r = 12–27 monopole fit misreads that
+  boundary-heavy excess as M = 1.050 for 1.002 (+5 %). In background 0 the tail is in Ψ_bg and w (0.03, not 1.7) has
+  only its own, ~50× smaller, so the same mechanism costs ≲ 2 % there (prototype: 48- vs 32-half-box, 2.67 vs 2.63).
+  Background 1 stays validation-only. A tail-aware outer condition (fit w's 1/r² on the face, re-solve with
+  inhomogeneous Robin f) would remove it; not done.
+- **d = 8 head-on from rest** (the paper's system): throat-shell Ham rms at level 3 **9.7e-3 → 5.1e-6** (max 3.0e-2 →
+  3.1e-5), at level 4 1.0e-2 → 1.5e-5; r ≥ 3 the same ×400. Picture: the superposition's |H| ~ 10⁻² fills the finest level
+  with a sign-change ring between the throats; solved, 10⁻⁵–10⁻⁶ with the 7-point operator's truncation pattern
+  (`scratchpad/headon_t0_slices.png`, this session). Box-average L2_Ham does NOT move (2.88e-3 → 3.19e-3): dx = 0.5 cannot
+  resolve a throat, so the logged norm is a discretisation floor either way; only the finest level shows the solve.
+- **What the solve changes physically.** max |w| = 0.032 (2.3 % of Ψ). Each throat's R_min 4.466 → 4.522 (+1.3 %; isolated
+  3.890 — the superposition's +15 % is the companion's constant, kept by construction of c). **M_ADM 2.00 → 2.63** (fit
+  r = 12–27; the axisymmetric prototype in a 48-half-box gives 2.67, so ±2 % from the boundary): the constraint adds the
+  opposite-charge scalar interaction energy ≈ (a²+m²)/d = 0.63 that the superposition omits. With the isolated c (mode 1)
+  instead: R_min 4.20, M 2.32 — a 6 % smaller c than a static throat in the companion's potential wants, i.e. a −7 %
+  spherical seed. Mass-matched c (M = 2, prototype) needs c = 0.85 c_sup and R_min = 3.75 < isolated: a −4 % seed.
+  **Consequence for the paper, once evolved:** §VI's Penrose statement compares R/2 = 2.78 to the superposed data's
+  M_ADM = 2.0; a constraint-satisfying slice of the same pair has M ≈ 2.63, so the margin is ~6 %, not 39 %, and
+  2M_ADM = 5.26 — the remnant's "settles near 2M_ADM" reading moves with it. Both need the solved run, not this note.
+- **Orbital d = 12** (Newton): p = 0.12 and 0.45 converge quadratically, 3 passes (update 1.5e-2 → 5e-7 → 0). Shell Ham
+  4.6e-3 → 3.0e-6 at level 3; M_ADM +0.34 / +0.40. The Â²Ψ⁻⁷ ~ r³ regularity at the centres holds as expected.
+- 2D axisymmetric prototype (scipy, `proto_axisym.py`) agrees with the 3D solve to 1e-4 in Ψ (r_A > 1) at dx = 1/16.
+
+**Traps met.** (1) AMReX's Robin terms are folded into the A coefficients in place: a reused MLABecLaplacian must have
+`setScalars` and `setACoeffs` re-called before every solve (it asserts otherwise; B is only read). (2) `constraints` as
+a derived plot field aborts without `G_Newton`. (3) mpirun on these nodes needs `--oversubscribe` outside run_single.sh.
+
+**On the GPU (the second node, 06:00 UTC; the user: "i have checked out to the another node with free single gpu, run your
+tests here").** `build_binary.sh --tag cssolve --allow-dirty` → `main3d_cssolve_c5e80085-dirty_2026-09-27.ex` (the
+source is uncommitted; the diff is the `.patch` beside it; row in `binaries.tsv`). The t = 0 start-ups repeat on the card
+digit for digit: head-on max |w| 0.0322812677, L2_Ham 3.1921818555e-03; orbital Newton 1.5e-2 → 5.2e-7 → 0; graded
+plotfiles identical (shell rms 5.131e-06, M_ADM 2.6288, R_min 4.5225). 3–4 s per start-up. **Level 5** (the production
+depth, 39M cells): one pass, +2.5 s, max |w| 0.03228, 24.6 GB at start-up. L2_Mom at p = 0.12 is 2.87e-6 solved against
+2.89e-6 superposed: the momentum constraint is untouched, as designed.
+**CS-1 launched 06:01 UTC:** `merge_headon_flip_d8_cs_lvl3_t030` = the V1 scout + `constraint_solve = 1`, stop 30,
+`--profile headon --zoom 40`, rolling checkpoints every 2 units keep 8 (the first preflight refused the scout
+template's `checkpoint_keep` with output off; checkpoints were turned on, not off, because the scout died at 25.8 and a
+level-5 continuation needs a state near t = 22). Preflight PASS, 14 of 14 frames. Early record: L2_Mom 6.5e-7 at
+t = 0.05 against the scout's 4.5e-6 (the H defect feeds M less), 4.6e-6 against 1.4e-5 at t = 0.2.
+
+**Next.** Read CS-1 at formation: the scout's common MOTS is at t = 22.0, R = 5.56, M_MS = 2.99; the solved pair
+predicts √2 × 4.52 = 6.39 at birth if "born with both throats' area" holds, against 2M_ADM = 5.26. Its plotfiles from
+t = 18 on are hard-linked into `_keep_cs1_formation/` on the second node's scratch (the scout's formation record needed
+an offline scan), to be pruned on the user's word. Then: a clean pin from the commit (`build_binary.sh --tag cssolve`);
+a level-5 continuation from CS-1's checkpoint near t = 22 if level 3 dies as the scout did at 25.8. The same code is
+the constraint-solved single-throat seed of the run sheet: perturb c (mode 2) or φ, never ψ. Paper text (§II C, §VII A
+systematics) waits for the run.
+
 ### 2026-09-27 (05:00–05:45 UTC) — CONV-3 closed out: the spiral burst is core-independent; the wave zone was untested, so CONV-3w runs; the lifecycle goes into CLAUDE.md
 
 - **CONV-3 finished** at 02:12 UTC, clean to t = 100 (7.2 u/h, arena 55.6 GB, no NaN in any stream).
