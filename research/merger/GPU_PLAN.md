@@ -1322,6 +1322,60 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-27 (08:30 UTC) — CS-1 closed out: on constraint-solved data the head-on merges the same way, about 2 units later, with a horizon 4–5 % larger
+
+- **CS-1 finished** at 08:14 UTC, at its stop time t = 30.0 (2.2 h, 13.6 u/h at the end, 29 GB flat, no NaN in any
+  stream). The scout, on the superposition, died at t = 26.91.
+- **The horizon**, offline fine scan with the scout's settings (`ah_oriented_scan.py`, level 3, half 4.0, dr 0.02) on
+  the kept plotfiles t = 20–30; record in the run's `small_data/horizon_offline_scan.dat`, raw logs beside it:
+
+  | t | scout R | M_MS | trapped band | CS-1 R | M_MS | trapped band |
+  |---|---|---|---|---|---|---|
+  | 22 | 5.564 | 2.991 | 2.39–3.17 | none | | |
+  | 23 | 5.636 | 2.935 | 1.91–3.43 | 5.835 | 3.097 | 2.83–2.87 |
+  | 24 | 5.713 | 2.886 | 1.49–3.65 | 5.867 | 3.054 | 2.41–3.13 |
+  | 25 | 5.157 | 3.030 | 1.15–2.85 | 5.938 | 3.004 | 2.05–3.33 |
+  | 26 | 4.722 | 3.159 | 0.95–1.97 | 5.580 | 3.134 | 1.71–2.83 |
+  | 27 | dead | | | 5.258 | 3.293 | 1.47–2.21 |
+
+  - CS-1 has no MOTS at t = 20, 21, 22. Its horizon is born at t = 23 (band 0.04 wide). The scout was never scanned
+    before t = 22, where its band is already 0.78 wide, so its birth is near t = 21.
+  - From t = 28 the shell criterion finds no outermost MOTS in CS-1: the trapped band (1.33–1.73, then thinner) lies
+    inside the minimal sphere.
+  - The live scan (level 1, dr 0.08) first sees the common MOTS at t = 24 (scout: 22). No mouth has its own, as in
+    the scout.
+- **The delay, on four clocks.** Trapped band of equal width: 2.0–2.3 units. Zero crossing of the l = 2, m = 0 wave
+  at R = 14: t = 26.0 against 24.2 (trough −1.12e-2 at t = 20 against −1.08e-2 at t = 18). Peak of the horizon's
+  areal radius: t = 25 against 24. Chi on the floor: t = 27.97 against 24.37.
+- **The infall.** Separation behind the scout by one tracker step (0.125) at t = 10–14, three at t = 16–18, four at
+  t = 20 (2.94 against 2.44). Mouths wider than the scout's by 1.3 % at t = 0, 1.7 % at t = 8, 3.3 % at t = 14, 4.6 %
+  at t = 18. L2_Mom 0.4–0.7 × the scout's until the merger; base-grid L2_Ham the same to 10 %.
+- **The end.** Max |K| is 0.09 until t = 29.7, 0.29 at 29.8, 2.6 at 29.9 and 1.8 at 30.0: the core's runaway has
+  begun, as in the scout from t = 25.3. Trust window t ≤ 29.7 (`trust_windows.tsv`); the movies are cut there.
+- **For the paper (nothing edited).**
+  - Penrose: R/2 = 2.93–2.97 against M_ADM = 2.63 ± 2 %, 11–13 % above. The text's 2.78 against 2.00 (39 %) used
+    the superposition's ADM mass. My t = 0 estimate of ~6 % used the scout's horizon and was too low.
+  - √2 R⋆ = 5.50 (two isolated throats' area) against 5.564 for the scout and 5.835 for CS-1 at birth: 1 % and 6 %.
+  - The picture is unchanged: contact as wormholes, one common horizon, growth then shrinkage, the level-3 core
+    runaway some units later. The head-on's quoted times and radii are the superposition's; on solved data they move
+    by 2 units and 4–5 %.
+  - One resolution and one separation. The level-5 head-on and the spirals have no solved twin.
+- **Packed and filed** under `04_binary_headon/` (692 KB of streams; no movies or frames go to git, the user's
+  word). Listed in `table1_groups.tsv` as `-`.
+- **Trap met: the pack cannot see another node's processes.** `pack_results.sh` skipped live runs by `kill -0` on
+  `launcher.pid`, which fails for a run on the other node, so this close-out packed the first node's three live
+  convergence runs (partial copies at the top of `campaign/`, rows in the summaries). Fixed: a run whose manifest
+  says `"status": "running"` and whose `run.log` was written in the last 30 minutes is live too. The three partial
+  copies (26 MB, untracked, streams only) are still on disk: their removal needs the user's word. Nothing of them is
+  committed.
+- **On the second node's scratch, kept until the user decides:** CS-1's eight checkpoints (t = 16–30, 14 GB each)
+  and three plotfiles (90 GB), and the twelve formation plotfiles in `_keep_cs1_formation/` (25 GB). A level-5
+  continuation would restart from Chk02200. 691 GB free.
+- **Clean pin.** `main3d_cssolve_3bb9a702_2026-09-27.ex`, built from the committed source (row in `binaries.tsv`).
+  CS-1 ran on the dirty test build of the same source.
+- **Not run: CS-2**, the p = 0.12 spiral on solved data (the user: "do not run it"). Its preflight debris was
+  removed at 06:49 UTC (`MANIFEST_CLEANUP_2026-09-27.md`).
+
 ### 2026-09-27 (05:55 UTC, paper session) — wormhole-seed precedents cited; the reviewer's fifteen ideas: ten in the text, five need runs (proposed, not queued)
 
 - **Precedents**, each checked on INSPIRE/Crossref against its abstract or text.

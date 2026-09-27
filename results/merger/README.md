@@ -1053,6 +1053,40 @@ what two throats do when they touch *without* a horizon.
 Frames (χ, K, lapse, φ, Π, Weyl4), the slice cache and all Weyl4 modes at
 R = 10/14/18 were written before the abort, so the run is fully analysable.
 
+### Constraint-solved data: the same head-on merger, two units later
+*(CS-1, 2026-09-27; the scout re-run on data that satisfies the Hamiltonian constraint at t = 0)*
+
+- **Claim.** The head-on scout (d = 8 from rest, level 3) started from constraint-solved data (`constraint_solve = 1`:
+  finest-level Hamiltonian on the throat shell 9.7e-3 → 5.1e-6 rms, M_ADM 2.00 → 2.63, mouths 1.3 % wider) merges
+  the same way as from the superposition: no mouth ever has its own trapped surface, and one common marginally
+  trapped surface forms about the midpoint, grows for two units and then shrinks. It forms about two units later
+  and is 4–5 % larger. The run reaches t = 30 with no NaN (the scout died at t = 26.91); its core's K runaway starts
+  at t = 29.8, so the trust window is t ≤ 29.7.
+- **Horizon history**, the scout's scan settings, row for row (`horizon_offline_scan.dat` of each run):
+
+  | t | scout: areal radius | M_MS | trapped shells | CS-1: areal radius | M_MS | trapped shells |
+  |---|---|---|---|---|---|---|
+  | 22 | 5.56 | 2.99 | 2.39–3.17 | none | | |
+  | 23 | 5.64 | 2.94 | 1.91–3.43 | 5.84 | 3.10 | 2.83–2.87 |
+  | 24 | 5.71 | 2.89 | 1.49–3.65 | 5.87 | 3.05 | 2.41–3.13 |
+  | 25 | 5.16 | 3.03 | 1.15–2.85 | 5.94 | 3.00 | 2.05–3.33 |
+  | 26 | 4.72 | 3.16 | 0.95–1.97 | 5.58 | 3.13 | 1.71–2.83 |
+  | 27 | (dead at 26.91) | | | 5.26 | 3.29 | 1.47–2.21 |
+
+  CS-1 has no MOTS at t = 20, 21, 22 and none by the shell criterion from t = 28 (the trapped band lies inside the
+  minimal sphere). The scout was not scanned before t = 22, where its band is already 0.78 wide.
+- **The delay, on four clocks.** Trapped band of equal width: 2.0–2.3 units. Zero crossing of the l = 2, m = 0 wave
+  at R = 14: t = 26.0 against 24.2. Peak of the horizon's areal radius: t = 25 against 24. Chi reaching the floor:
+  t = 27.97 against 24.37. The separation is one tracker step (0.125) behind the scout at t = 10–14 and four at
+  t = 20.
+- **Penrose.** R/2 = 2.93–2.97 against M_ADM = 2.63 ± 2 %: 11–13 % above. The superposition's 2.78 against 2.00
+  (39 %) used an ADM mass that leaves out the scalar interaction energy.
+- **Runs.** `merge_headon_flip_d8_cs_lvl3_t030` *(pack)* against `merge_headon_flip_d8_v1_t100` *(pack)*; the
+  solver and its t = 0 validation are in `Examples/BinaryWormholeMerger/README.md`.
+- **Caveats.** One resolution (level 3) and one separation. The horizon is read on coordinate spheres, as for the
+  scout (Misner-Sharp ±20 %). M_ADM comes from a monopole fit with a Robin outer boundary (±2 %). The paper's
+  head-on numbers are the superposition's; nothing of CS-1 is cited yet.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,

@@ -124,6 +124,16 @@ while IFS= read -r rundir; do
     echo "[pack-merger] campaign/${rel}: LIVE -- not packed (packed at its close-out)"
     continue
   fi
+  # A run on ANOTHER node: its pid means nothing here, so the check above
+  # passes it (2026-09-27: a close-out on the second node packed the first
+  # node's three live runs).  Its manifest says "running" until run_single.sh
+  # finishes, and its log is still being written; the 30 minutes let a run
+  # whose launcher died without closing the manifest be packed after all.
+  if grep -q '"status": *"running"' "${rundir}run_manifest.json" 2>/dev/null \
+     && [[ -n "$(find "${rundir}run.log" -mmin -30 2>/dev/null)" ]]; then
+    echo "[pack-merger] campaign/${rel}: LIVE on another node -- not packed (packed at its close-out)"
+    continue
+  fi
   # Rebuild the pack, but KEEP anything the pack does not itself produce.
   # Until 2026-09-16 this was a bare `rm -rf`, so every hand-added artefact --
   # a run's README, an offline horizon scan, a gzipped radial profile, a

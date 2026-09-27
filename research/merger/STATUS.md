@@ -1,4 +1,4 @@
-# Status — 2026-09-27 06:10 UTC
+# Status — 2026-09-27 08:30 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -24,14 +24,21 @@ still render the frames they were launched with.
 - **Awaiting the user's yes:** delete the frames CONV-1/2/3/3w have already rendered (~0.5 GB, untracked; the CLAUDE.md
   frames rule asks once).
 
-- **Second node, GPU 0: CS-1 `merge_headon_flip_d8_cs_lvl3_t030`**, since 06:01 UTC on 2026-09-27 (the user's word: "run
-  your tests here"): the V1 head-on scout with constraint-solved initial data, level 3 to t = 30, full frame set,
-  rolling checkpoints every 2 units (keep 8). Binary `main3d_cssolve_c5e80085-dirty_2026-09-27.ex` (uncommitted test
-  build). Full preflight passed; frame 0 checked against CONV-6's preflight frame (same pair, chi slightly lower, as the
-  larger mass requires); the log carries the solve (max |w| 0.0323, M_ADM ~ 2.58 by the boundary estimate). 29 GB,
-  11.6 u/h: ETA ~08:45 UTC. Plotfiles from t = 18 on are hard-linked into `_keep_cs1_formation/` on that node's
-  scratch (3.3 GB each), for an offline scan of the formation. Read: the common MOTS against the scout's t = 22.0,
-  R = 5.56.
+- **Second node: free. CS-1 `merge_headon_flip_d8_cs_lvl3_t030` is closed out** (the head-on scout on
+  constraint-solved data; finished t = 30 at 08:14 UTC, no NaN; filed under `04_binary_headon/`, packed)
+  ["2026-09-27 (08:30 UTC)"].
+  - The same merger as the scout, about 2 units later, with a horizon 4–5 % larger: common MOTS born at t = 23
+    (scout: present at t = 22), R = 5.84 at birth and 5.94 at its peak (scout 5.56 and 5.71).
+  - The pair's M_ADM is 2.63, not 2.00, so R/2 is 11–13 % above it (the paper's 39 % used 2.00).
+  - Trust window t ≤ 29.7: the core's K runaway starts at t = 29.8.
+  - One resolution (level 3), one separation. The level-5 head-on, the spiral and the fly-by have no solved twin;
+    CS-2 (the p = 0.12 spiral on solved data) was not run (the user: "do not run it").
+  - **Awaiting the user's word:** (1) the prune of its scratch on the second node: eight checkpoints and three
+    plotfiles (90 GB) and the twelve formation plotfiles in `_keep_cs1_formation/` (25 GB); a level-5 continuation
+    would restart from Chk02200. (2) The removal of three partial pack copies of the first node's live runs at the
+    top of `results/merger/campaign/` (26 MB, untracked), made by this close-out before `pack_results.sh` learnt to
+    see another node's live runs. Until they go, `claims.py check` fails on the run counts and the generated
+    summaries carry their rows; none of it is committed.
 
 **Done 2026-09-27 (05:45–06:00 UTC): constraint-solved initial data** ["2026-09-27 (05:45 UTC) — constraint-solved initial data"]. `constraint_solve = 1` in the merger example solves the Hamiltonian constraint on the initial hierarchy with AMReX MLMG (φ, Â, Π, lapse fixed; momentum constraint stays exact; Newton for p ≠ 0). Validated on CPU at t = 0: rebuilds the exact drainhole from bare punctures (R_min to 5e-4); the d = 8 head-on's finest-level Hamiltonian drops 9.7e-3 → 5.1e-6 (×1900, the exact throat's floor); orbital p = 0.12/0.45 converge in 3 Newton passes. The solve adds the scalar interaction energy: M_ADM 2.00 → 2.63 at d = 8, throats +1.3 %. Base-grid L2_Ham cannot see it (unresolved throat). The test binary is a `-dirty` build; a clean pin from the commit is still to be built. Grader: `scripts/validation/constraint_solve_t0_check.py`. **On the GPU (second node, 06:00 UTC):** the dirty build reproduces the CPU solve digit for digit (max |w|, L2_Ham, the Newton sequence), 3–4 s per start-up; level 5 solves in +2.5 s, 24.6 GB at start-up.
 
@@ -84,8 +91,9 @@ single-throat arms closed out under `01_single_throat/seed/` ["2026-09-24 (16:15
 scratch is empty; the paper session's `plt_take2/` plotfile copies (77 GB, G16's input) sit in
 that session's scratchpad there.
 
-Second node (one H100): CS-1 live (above); the η = 4 level-5 probes are closed out, hunted and filed
-["2026-09-25 (morning)"]. Its scratch is empty (205 GB pruned, MANIFEST_CLEANUP_2026-09-25).
+Second node (one H100): free since 08:14 UTC on 2026-09-27; CS-1 and the η = 4 level-5 probes are closed out and
+filed ["2026-09-27 (08:30 UTC)", "2026-09-25 (morning)"]. Its scratch holds CS-1's checkpoints and plotfiles (115 GB),
+kept until the user decides.
 
 Run tree: every plotfile deleted on the user's word; 192 → 52 GB. Two checkpoints remain: Chk03600 (20 GB, the t = 36 seed of CONV-3) and Chk05700 (26 GB, no queued
 use since G4 was dropped; the user's call).
