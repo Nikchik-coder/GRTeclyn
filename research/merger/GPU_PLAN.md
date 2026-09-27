@@ -1369,9 +1369,12 @@ need to be analysed and packed").
   says `"status": "running"` and whose `run.log` was written in the last 30 minutes is live too. The three partial
   copies (26 MB, untracked, streams only) are still on disk: their removal needs the user's word. Nothing of them is
   committed.
-- **On the second node's scratch, kept until the user decides:** CS-1's eight checkpoints (t = 16–30, 14 GB each)
-  and three plotfiles (90 GB), and the twelve formation plotfiles in `_keep_cs1_formation/` (25 GB). A level-5
-  continuation would restart from Chk02200. 691 GB free.
+- **Scratch pruned at 08:36 UTC on the user's word ("prune"):** CS-1's eight checkpoints (t = 16–30, 14 GB each)
+  and three plotfiles (90 GB), and the twelve formation plotfiles in `_keep_cs1_formation/` (25 GB); 691 → 806 GB
+  free, logged in `MANIFEST_CLEANUP_2026-09-27.md`. CS-1 has no restart state left: a level-5 continuation from
+  t = 22 would need the level-3 leg again (2.2 GPU-h). Frames and movies untouched.
+- **Pushed on the user's word ("push all", 74885a00):** the regenerated summaries, which list the three live
+  convergence runs as "still running", and the other session's uncommitted plan and STATUS entries.
 - **Clean pin.** `main3d_cssolve_3bb9a702_2026-09-27.ex`, built from the committed source (row in `binaries.tsv`).
   CS-1 ran on the dirty test build of the same source.
 - **Not run: CS-2**, the p = 0.12 spiral on solved data (the user: "do not run it"). Its preflight debris was

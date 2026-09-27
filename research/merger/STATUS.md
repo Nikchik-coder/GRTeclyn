@@ -1,4 +1,4 @@
-# Status — 2026-09-27 08:30 UTC
+# Status — 2026-09-27 08:40 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -35,12 +35,13 @@ still render the frames they were launched with.
   - Trust window t ≤ 29.7: the core's K runaway starts at t = 29.8.
   - One resolution (level 3), one separation. The level-5 head-on, the spiral and the fly-by have no solved twin;
     CS-2 (the p = 0.12 spiral on solved data) was not run (the user: "do not run it").
-  - **Awaiting the user's word:** (1) the prune of its scratch on the second node: eight checkpoints and three
-    plotfiles (90 GB) and the twelve formation plotfiles in `_keep_cs1_formation/` (25 GB); a level-5 continuation
-    would restart from Chk02200. (2) The removal of three partial pack copies of the first node's live runs at the
-    top of `results/merger/campaign/` (26 MB, untracked), made by this close-out before `pack_results.sh` learnt to
-    see another node's live runs. Until they go, `claims.py check` fails on the run counts and the generated
-    summaries carry their rows; none of it is committed.
+  - **Scratch pruned at 08:36 UTC on the user's word** (115 GB: its checkpoints, its plotfiles and
+    `_keep_cs1_formation/`; MANIFEST_CLEANUP_2026-09-27). CS-1 has no restart state left; its frames and movies
+    are in the run tree.
+  - **Awaiting the user's word:** three partial pack copies of the first node's live runs at the top of
+    `results/merger/campaign/` (26 MB, untracked), made by this close-out before `pack_results.sh` learnt to see
+    another node's live runs. While they are on disk, `claims.py check` fails on the run counts. The generated
+    summaries carry their rows as "still running" (committed in 74885a00).
 
 **Done 2026-09-27 (05:45–06:00 UTC): constraint-solved initial data** ["2026-09-27 (05:45 UTC) — constraint-solved initial data"]. `constraint_solve = 1` in the merger example solves the Hamiltonian constraint on the initial hierarchy with AMReX MLMG (φ, Â, Π, lapse fixed; momentum constraint stays exact; Newton for p ≠ 0). Validated on CPU at t = 0: rebuilds the exact drainhole from bare punctures (R_min to 5e-4); the d = 8 head-on's finest-level Hamiltonian drops 9.7e-3 → 5.1e-6 (×1900, the exact throat's floor); orbital p = 0.12/0.45 converge in 3 Newton passes. The solve adds the scalar interaction energy: M_ADM 2.00 → 2.63 at d = 8, throats +1.3 %. Base-grid L2_Ham cannot see it (unresolved throat). The test binary is a `-dirty` build; a clean pin from the commit is still to be built. Grader: `scripts/validation/constraint_solve_t0_check.py`. **On the GPU (second node, 06:00 UTC):** the dirty build reproduces the CPU solve digit for digit (max |w|, L2_Ham, the Newton sequence), 3–4 s per start-up; level 5 solves in +2.5 s, 24.6 GB at start-up.
 
@@ -94,8 +95,8 @@ scratch holds only the live runs. The paper session's `plt_take2/` plotfile copi
 on the user's word on 2026-09-27, because G16 was dropped.
 
 Second node (one H100): free since 08:14 UTC on 2026-09-27; CS-1 and the η = 4 level-5 probes are closed out and
-filed ["2026-09-27 (08:30 UTC)", "2026-09-25 (morning)"]. Its scratch holds CS-1's checkpoints and plotfiles (115 GB),
-kept until the user decides.
+filed ["2026-09-27 (08:30 UTC)", "2026-09-25 (morning)"]. Its scratch is empty (115 GB pruned at 08:36 UTC,
+MANIFEST_CLEANUP_2026-09-27).
 
 Run tree: every plotfile deleted on the user's word; 192 → 52 GB. Two checkpoints remain: Chk03600 (20 GB, the t = 36 seed of CONV-3) and Chk05700 (26 GB, no queued
 use since G4 was dropped; kept on the user's word, 2026-09-27).
