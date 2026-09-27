@@ -14,14 +14,6 @@ corroborated by the offline scan in `horizon/` (the headline arms,
 t = 51.4+) are evidence of a common horizon.
 
 
-## `(unfiled, still on a card)`
-
-| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
-|---|---|---|---|---|---|---|---|---|
-| single_eps_m1e2_ml5_t060 | CONV-1 (2026-09-26 convergence queue): the eps = -1e-2 lone throat at LEVEL 5, L = 64, to t = 60. | 0.00 | 29.78 | still running | 0.02 | - | 2.081e-01 | 1.329e-03 |
-| single_eps_m1e2_halfstep_t060 | CONV-2 (2026-09-26 convergence queue): the eps = -1e-2 lone throat at level 3 with the time step HALVED (dt_multiplier 0.02 -> 0.01), to t = 60. | 0.00 | 56.97 | still running | 0.06 | 32.25 | 6.277e-02 | 2.729e-03 |
-| v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600 | CONV-3w (2026-09-27): CONV-3 again with the R = 20 sphere and its whole propagation ball (r < 24) on LEVEL 1 (dx 0.25): the wave-zone resolution test. -- restarted from BinaryWormholeChk03600 (kept in _keep_spiral_premerger_decay) | 36.01 | 56.64 | still running | 0.05 | - | 2.786e-03 | 1.233e-03 |
-
 ## `01_single_throat`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |

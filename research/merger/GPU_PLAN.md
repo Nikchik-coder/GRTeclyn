@@ -1367,14 +1367,16 @@ need to be analysed and packed").
   `launcher.pid`, which fails for a run on the other node, so this close-out packed the first node's three live
   convergence runs (partial copies at the top of `campaign/`, rows in the summaries). Fixed: a run whose manifest
   says `"status": "running"` and whose `run.log` was written in the last 30 minutes is live too. The three partial
-  copies (26 MB, untracked, streams only) are still on disk: their removal needs the user's word. Nothing of them is
-  committed.
+  copies (26 MB, untracked, streams only) were removed at 08:38 UTC on the user's word and never committed. The
+  repack then skipped all three runs as "LIVE on another node", the summaries lost their rows, and
+  `claims.py check` passes (833 recomputed, 0 problems).
 - **Scratch pruned at 08:36 UTC on the user's word ("prune"):** CS-1's eight checkpoints (t = 16–30, 14 GB each)
   and three plotfiles (90 GB), and the twelve formation plotfiles in `_keep_cs1_formation/` (25 GB); 691 → 806 GB
   free, logged in `MANIFEST_CLEANUP_2026-09-27.md`. CS-1 has no restart state left: a level-5 continuation from
   t = 22 would need the level-3 leg again (2.2 GPU-h). Frames and movies untouched.
-- **Pushed on the user's word ("push all", 74885a00):** the regenerated summaries, which list the three live
-  convergence runs as "still running", and the other session's uncommitted plan and STATUS entries.
+- **Pushed on the user's word ("push all", 74885a00):** the other session's uncommitted plan and STATUS entries,
+  and the summaries as regenerated then, with the three live runs as "still running"; the clean summaries
+  replace them in the next commit.
 - **Clean pin.** `main3d_cssolve_3bb9a702_2026-09-27.ex`, built from the committed source (row in `binaries.tsv`).
   CS-1 ran on the dirty test build of the same source.
 - **Not run: CS-2**, the p = 0.12 spiral on solved data (the user: "do not run it"). Its preflight debris was
