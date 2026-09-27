@@ -7,6 +7,7 @@
 #include "CoreMatterDamping.hpp"
 #include "CoreRadialProfile.hpp"
 #include "BinaryWormholeInitialData.hpp"
+#include "DrainholeConstraintSolve.hpp"
 #include "ExternalGridInitialData.hpp"
 #include "GRParmParse.hpp"
 #include "SimulationParametersBase.hpp"
@@ -195,6 +196,8 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_helfer_width", wormhole_params.helfer_width, 0.0);
         pp.load("wormhole_helfer_power", wormhole_params.helfer_power, 2.0);
 
+        read_constraint_solve_params(pp);
+
         // Optional GRTresna-solved initial data (Route B).  Empty => use the
         // analytic superposition above.
         pp.load("recipe_initial_data_file", recipe_initial_data_file,
@@ -203,6 +206,60 @@ class SimulationParameters : public SimulationParametersBase
         {
             external_grid_params.gridinit_file = recipe_initial_data_file;
             external_grid_params.grid_center   = center;
+        }
+    }
+
+    //! Hamiltonian-constraint solve of the t = 0 slice (see
+    //! DrainholeConstraintSolve.hpp and BinaryWormholeInitialData's class
+    //! comment).  Every key is read whether or not the solve is on, so a
+    //! template can carry them switched off.  Default off: bit for bit.
+    void read_constraint_solve_params(GRParmParse &pp)
+    {
+        auto &cs = constraint_solve_params;
+        int enabled = 0;
+        pp.load("constraint_solve", enabled, 0);
+        cs.enabled = (enabled != 0);
+        pp.load("constraint_solve_background", cs.background, 0);
+        pp.load("constraint_solve_puncture_mode", cs.puncture_mode, 0);
+        pp.load("constraint_solve_puncture_coefficient_A", cs.puncture_A,
+                0.0);
+        pp.load("constraint_solve_puncture_coefficient_B", cs.puncture_B,
+                cs.puncture_A);
+        pp.load("constraint_solve_tolerance", cs.tolerance_rel, 1.0e-10);
+        pp.load("constraint_solve_tolerance_abs", cs.tolerance_abs, 0.0);
+        pp.load("constraint_solve_max_iter", cs.max_iter, 200);
+        pp.load("constraint_solve_max_newton", cs.max_newton, 30);
+        pp.load("constraint_solve_newton_tolerance", cs.newton_tolerance,
+                1.0e-10);
+        pp.load("constraint_solve_verbose", cs.verbose, 1);
+
+        // Resolve the puncture coefficients the solved data will carry.
+        auto &wp = wormhole_params;
+        wp.solve_background = cs.background;
+        for (int which = 0; which < 2; ++which)
+        {
+            const double a = (which == 0) ? wp.b0_A : wp.b0_B;
+            const double m =
+                (which == 0) ? wp.drainhole_mass_A : wp.drainhole_mass_B;
+            double c = 0.0;
+            if (a > 0.0)
+            {
+                if (cs.puncture_mode == 1)
+                {
+                    c = BinaryWormholeInitialData::
+                        isolated_puncture_coefficient(a, m);
+                }
+                else if (cs.puncture_mode == 2)
+                {
+                    c = (which == 0) ? cs.puncture_A : cs.puncture_B;
+                }
+                else
+                {
+                    c = BinaryWormholeInitialData::
+                        superposed_puncture_coefficient(wp, which);
+                }
+            }
+            ((which == 0) ? wp.solve_puncture_A : wp.solve_puncture_B) = c;
         }
     }
 
@@ -389,8 +446,71 @@ class SimulationParameters : public SimulationParametersBase
         throat_tracker_params.grid_center = wormhole_params.grid_center;
     }
 
+    void check_constraint_solve_params()
+    {
+        const auto &cs = constraint_solve_params;
+        const auto &wp = wormhole_params;
+        check_parameter("constraint_solve_background", cs.background,
+                        cs.background == 0 || cs.background == 1,
+                        "must be 0 (the superposition) or 1 (bare punctures, "
+                        "validation only)");
+        check_parameter("constraint_solve_puncture_mode", cs.puncture_mode,
+                        cs.puncture_mode >= 0 && cs.puncture_mode <= 2,
+                        "must be 0 (the superposition's own c), 1 (the "
+                        "isolated throat's c) or 2 (explicit values)");
+        if (!cs.enabled)
+        {
+            return;
+        }
+        check_parameter("constraint_solve_puncture_coefficient_A/B",
+                        std::min(wp.solve_puncture_A,
+                                 wp.b0_B > 0.0 ? wp.solve_puncture_B : 1.0),
+                        wp.solve_puncture_A > 0.0 &&
+                            (wp.b0_B <= 0.0 || wp.solve_puncture_B > 0.0),
+                        "must be > 0 for every present throat (mode 2 needs "
+                        "them set)");
+        check_parameter("wormhole_id_type", wp.id_type, wp.id_type == 1,
+                        "the constraint solve is written for the regular "
+                        "massive drainhole (id_type = 1) only");
+        check_parameter("wormhole_helfer_correction", wp.helfer_correction,
+                        wp.helfer_correction == 0,
+                        "is not the background the constraint solve starts "
+                        "from; the solve replaces it");
+        const bool seeded = (wp.seed_amplitude_A != 0.0) ||
+                            (wp.seed_amplitude_B != 0.0) ||
+                            (wp.seed_l2_amplitude_A != 0.0) ||
+                            (wp.seed_l2_amplitude_B != 0.0);
+        check_parameter("wormhole_seed_(l2_)amplitude_A/B", seeded ? 1 : 0,
+                        !seeded,
+                        "a conformal-factor seed does not survive the "
+                        "constraint solve: at fixed phi and puncture "
+                        "coefficient the solution is unique and the solve "
+                        "would erase the seed.  A constraint-solved seed must "
+                        "perturb phi or the puncture coefficient instead");
+        bool boosted = false;
+        for (int d = 0; d < AMREX_SPACEDIM; ++d)
+        {
+            boosted = boosted || (wp.boost_velocity_A[d] != 0.0) ||
+                      (wp.boost_velocity_B[d] != 0.0);
+        }
+        check_parameter("wormhole_boost_velocity_A/B", boosted ? 1 : 0,
+                        !boosted,
+                        "a boosted scalar has Pi != 0, which breaks the "
+                        "momentum constraint the solve holds exact");
+        check_parameter("phantom_mass", wp.phantom_mass,
+                        wp.phantom_mass == 0.0,
+                        "the constraint solve assumes a massless phantom "
+                        "(V(phi) = 0)");
+        check_parameter("recipe_initial_data_file", recipe_initial_data_file,
+                        recipe_initial_data_file.empty(),
+                        "an external grid and the constraint solve are two "
+                        "different initial data; pick one");
+    }
+
     void check_params()
     {
+        check_constraint_solve_params();
+
         check_parameter("tagging_type", tagging_type,
                         (tagging_type >= 0) && (tagging_type <= 2),
                         "must be 0 (refine on chi gradients, the default), "
@@ -736,6 +856,8 @@ class SimulationParameters : public SimulationParametersBase
 
     std::string recipe_initial_data_file;
     ExternalGridInitialData::params_t external_grid_params{};
+
+    ConstraintSolveParams constraint_solve_params{};
 
     BinaryWormholeInitialData::params_t wormhole_params{};
     BinaryThroatDiagnostics::params_t binary_diag_params{};

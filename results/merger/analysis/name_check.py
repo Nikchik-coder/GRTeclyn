@@ -189,6 +189,10 @@ RULES: list[tuple[str, str, str, str, str]] = [
      "helfer: Helfer/Ning one-body superposition correction on (window auto = d/3 unless w<N>)"),
     (r"plain", "wormhole_helfer_correction", "0", "eq",
      "plain: plain superposition (the Helfer twins' reference)"),
+    (r"cs", "constraint_solve", "1", "eq",
+     "cs: constraint-solved initial data -- the t = 0 Hamiltonian constraint solved on the initial "
+     "hierarchy (constraint_solve = 1, DrainholeConstraintSolve.hpp); phi, Ahat_ij, Pi and the lapse "
+     "stay the superposition's"),
     (r"w(\d+)", "wormhole_helfer_width", "float(g1)", "approx",
      "w<N>: Helfer window width N (auto = d/3 = 4 at d = 12)"),
     (r"single|stage1|s15|s16ml\d+|s1uni\d+|s20", "derived:throat_B_present", "False", "eq",
@@ -335,6 +339,7 @@ RULES: list[tuple[str, str, str, str, str]] = [
 DEFAULTS = {
     "wormhole_phi_sign_B": 1.0,
     "wormhole_helfer_correction": 0,
+    "constraint_solve": 0,
     "wormhole_helfer_width": 0.0,
     "wormhole_helfer_power": 2.0,
     "core_matter_damping": 0,
@@ -551,7 +556,8 @@ ID_KEYS = [
     "wormhole_drainhole_mass_A", "wormhole_drainhole_mass_B",
     "wormhole_bare_mass_A", "wormhole_phi_sign_B", "wormhole_subtract_phi_asymptote",
     "wormhole_support_strength", "phantom_mass", "wormhole_helfer_correction",
-    "wormhole_helfer_width", "recipe_initial_data_file", "min_chi", "wormhole_seed_width_A",
+    "wormhole_helfer_width", "constraint_solve", "recipe_initial_data_file", "min_chi",
+    "wormhole_seed_width_A",
     "wormhole_seed_amplitude_A", "wormhole_seed_l2_amplitude_A",
 ]
 

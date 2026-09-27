@@ -40,6 +40,43 @@ the analytic φ profile supports the *massless* throat. GRTresna-solved data
 Setting `wormhole_throat_radius_B = 0` (with `wormhole_bare_mass_B = 0`) removes
 object B entirely — the single-throat regression mode.
 
+## Constraint-solved data (`constraint_solve = 1`)
+
+With Π = 0, K = 0 and conformally flat data the Hamiltonian constraint for this
+matter is `lap Psi − V Psi + (1/8) Ahat·Ahat Psi⁻⁷ = 0`, `V = π s |grad φ|²`
+(`Psi⁴ = 1/chi`, `s = wormhole_support_strength`). The single drainhole solves
+it exactly; the superposition does not. `DrainholeConstraintSolve.cpp` adds a
+correction `w` to the superposed `Psi` so that it does, on the whole initial
+hierarchy at once with AMReX's `MLABecLaplacian` (a Newton iteration when a
+Bowen–York term is present; three passes at `p = 0.12`–`0.45`), holding φ,
+`Ahat_ij`, the lapse and Π fixed: the momentum constraint stays exact. Each
+throat keeps a puncture coefficient `c` (`Psi → c/r` at its centre); the
+default is the superposition's own, so the throats keep their superposed size
+and the solve adds the scalar interaction energy the superposition leaves out
+(M_ADM 2.00 → 2.63 at d = 8). Refused with a conformal-factor seed (the solve
+would erase it), the Helfer correction, a boosted scalar, `id_type = 0`,
+`phantom_mass ≠ 0` or an external grid. Full account: the class comment of
+`BinaryWormholeInitialData.hpp`.
+
+| Key | Meaning |
+| --- | --- |
+| `constraint_solve` | 0 (default, bit for bit) / 1 |
+| `constraint_solve_background` | 0 = the superposition (default); 1 = bare punctures `1 + Σ c/r` (validation: must rebuild the drainhole) |
+| `constraint_solve_puncture_mode` | 0 = the superposition's `c` (default); 1 = the isolated throat's `(a/2)e^{πm/2a}`; 2 = explicit |
+| `constraint_solve_puncture_coefficient_A/B` | the explicit `c` for mode 2 (B defaults to A) |
+| `constraint_solve_tolerance`, `_tolerance_abs`, `_max_iter` | MLMG (1e-10, 0, 200) |
+| `constraint_solve_max_newton`, `_newton_tolerance` | Newton on the Bowen–York term (30, 1e-10) |
+| `constraint_solve_verbose` | 1 = one line per Newton pass; 2 = MLMG's own output |
+
+The log reports the puncture coefficients, `max |w|` per level and an ADM-mass
+estimate. Grade the result with
+`grteclyn-wrapper/scripts/validation/constraint_solve_t0_check.py <plt00000>
+--params <run>/params.txt --mass` on the t = 0 plotfile (plot `constraints`;
+set `G_Newton = 1.0`): the finest-level
+Hamiltonian on the throat shell drops from ~1e-2 to the exact throat's
+discretisation floor (~5e-6 at level 3). The base-grid `L2_Ham` does not see
+the difference — it cannot resolve a throat.
+
 ## Key parameters
 
 | Key | Meaning |

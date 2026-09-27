@@ -19,6 +19,12 @@ include $(AMREX_HOME)/Src/Boundary/Make.package
 include $(AMREX_HOME)/Src/AmrCore/Make.package
 include $(AMREX_HOME)/Src/Amr/Make.package
 include $(AMREX_HOME)/Src/Particle/Make.package
+# The t = 0 Hamiltonian-constraint solve (DrainholeConstraintSolve.cpp) uses
+# the cell-centred MLABecLaplacian only; the nodal and curl-curl families
+# are left out of the build.
+USE_LINEAR_SOLVERS_INCFLO = FALSE
+USE_LINEAR_SOLVERS_EM = FALSE
+include $(AMREX_HOME)/Src/LinearSolvers/MLMG/Make.package
 
 GRTECLYN_HOME = $(realpath ../..)
 GRTECLYN_SOURCE = $(GRTECLYN_HOME)/Source

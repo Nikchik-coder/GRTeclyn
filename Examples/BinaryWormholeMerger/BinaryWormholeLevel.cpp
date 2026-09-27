@@ -4,6 +4,7 @@
 #include "CoreLapseFreeze.hpp"
 #include "CoreMatterDamping.hpp"
 #include "BinaryWormholeInitialData.hpp"
+#include "DrainholeConstraintSolve.hpp"
 #include "CCZ4RHSWithMatter.hpp"
 #include "ChiPhiKTagger.hpp"
 #include "ChiTagger.hpp"
@@ -439,7 +440,70 @@ void BinaryWormholeLevel::specific_post_init()
     // before post_init, so dtLevel(0) and the fine levels are both valid here.
     // Emitting the t = 0 row from this hook is what makes Phase 1 of
     // research/merger/Reference.md measurable at all - see the header comment.
+    //
+    // The constraint solve needs the whole hierarchy, which exists from
+    // here on; level 0's post_init runs first, so the solved data are in
+    // place on every level before any t = 0 row or plotfile is written.
+    if (Level() == 0 && simParams().constraint_solve_params.enabled)
+    {
+        solve_initial_constraints();
+    }
     write_scalar_diagnostics();
+}
+
+void BinaryWormholeLevel::solve_initial_constraints()
+{
+    BL_PROFILE("BinaryWormholeLevel::solve_initial_constraints");
+    const auto &wp = simParams().wormhole_params;
+
+    amrex::Vector<amrex::MultiFab> w;
+    const ConstraintSolveReport report = solve_drainhole_constraint(
+        *parent, wp, simParams().constraint_solve_params, w);
+
+    // Rebuild every level's valid cells from the same background plus w.
+    // Ghost cells keep the analytic values until the next FillPatch, which
+    // every reader of them (the RHS, the t = 0 norms, derived plot fields)
+    // performs first.
+    for (int lev = 0; lev <= parent->finestLevel(); ++lev)
+    {
+        amrex::AmrLevel &amr_level = parent->getLevel(lev);
+        amrex::MultiFab &state     = amr_level.get_new_data(state_index);
+        const BinaryWormholeInitialData binary(wp,
+                                               parent->Geom(lev).CellSize(0));
+        const auto &arrs  = state.arrays();
+        const auto &w_arr = w[lev].const_arrays();
+        amrex::ParallelFor(state,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           {
+                               binary.compute(i, j, k, arrs[box_no], true,
+                                              w_arr[box_no](i, j, k));
+                           });
+    }
+    amrex::Gpu::streamSynchronize();
+
+    amrex::Print() << "Constraint solve (Hamiltonian, t = 0): "
+                   << report.newton_iterations << " Newton pass(es), last "
+                   << "update " << report.last_update << "\n"
+                   << "  puncture coefficient A " << report.c_A
+                   << " (superposed " << report.c_superposed_A << ")";
+    if (wp.b0_B > 0.0)
+    {
+        amrex::Print() << ", B " << report.c_B << " (superposed "
+                       << report.c_superposed_B << ")";
+    }
+    amrex::Print() << "\n  max |w| per level:";
+    for (const double mw : report.max_w)
+    {
+        amrex::Print() << " " << mw;
+    }
+    amrex::Print() << "\n  M_ADM ~ " << report.background_mass << " + 2 x "
+                   << report.boundary_monopole << " = "
+                   << report.background_mass + 2.0 * report.boundary_monopole
+                   << "  (background mass + twice <r w> on the level-0 "
+                      "boundary; the superposition claims "
+                   << (wp.b0_A > 0.0 ? wp.drainhole_mass_A : 0.0) +
+                          (wp.b0_B > 0.0 ? wp.drainhole_mass_B : 0.0)
+                   << ")\n";
 }
 
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)

@@ -246,6 +246,54 @@
     constraint_norms.dat (L2_Mom, exactly 0 without the boost), repeated in
     the log with a "boost" label.  Pi is finite at the compactified origins
     (grad phi -> 4 C / b there) unless the lapse itself is floored.
+
+    ---- THE HAMILTONIAN-CONSTRAINT SOLVE (constraint_solve = 1) -----------
+    With Pi = 0, K = 0 and conformally flat data, gamma_ij = Psi^4 delta_ij
+    (Psi^4 = 1/chi), the Hamiltonian constraint for this matter is
+
+        lap Psi - V Psi + (1/8) Ahat_ij Ahat^ij Psi^{-7} = 0,
+        V = pi s |grad phi|^2   (s = support_strength, flat operators).
+
+    The single drainhole solves it exactly with Ahat = 0: its Psi =
+    e^{-u/2} sqrt(Omega) satisfies lap Psi = V Psi identically.  The superposed
+    Psi_0 = e^{-u_sum/2} psi does not, and DrainholeConstraintSolve.cpp adds a
+    correction w so that Psi = Psi_bg + w does, holding phi and Ahat_ij fixed:
+    the momentum constraint stays exact, and Pi, K, h_ij and the lapse are
+    untouched.  constraint_background() below supplies Psi_bg, its Laplacian
+    in closed form, V and Ahat.Ahat; compute(..., solved = true, w) then
+    rebuilds chi = (Psi_bg + w)^{-4} and A_ij = chi^{3/2} Ahat_ij from them.
+
+    Near each centre Psi ~ c/r: the throat's far side, a compactified
+    infinity.  c is the one free number per throat, the puncture coefficient.
+    The isolated drainhole has c = (a/2) e^{pi m / 2a}; the superposition hands
+    throat A the factor e^{-u_B(x_A)/2} on top (1.064 at d = 8), exactly the
+    uniform rescaling that keeps a static throat static in the companion's
+    potential.  The background therefore carries c through
+    solve_puncture_shift_X / r_X:
+
+      mode 0 (superposed, default): c = the superposition's own, shift 0.
+             w is bounded at the centres and each throat keeps its superposed
+             size (R_min 4.466 -> 4.522 at d = 8, axisymmetric prototype).
+      mode 1 (isolated): c = (a/2) e^{pi m/2a}.  In the companion's potential
+             this is a 6 % smaller c than a static throat wants -- a spherical
+             seed of that size.
+      mode 2 (explicit): c = constraint_solve_puncture_coefficient_A/B, e.g.
+             the value that holds M_ADM at the superposition's sum of masses.
+
+    What the solve adds is mostly the scalar interaction energy that the
+    superposition leaves out: for opposite charges M_ADM rises by
+    ~ (a^2 + m^2)/d at fixed c (+0.73 at d = 8, +0.43 at d = 12).
+
+    Background 1 (constraint_solve_background = 1) replaces Psi_0 by the bare
+    punctures 1 + sum c_X / r_X.  It is a validation mode: on one throat the
+    solve must rebuild the whole drainhole from it, and on two it must agree
+    with background 0 at the same c.
+
+    The solve is refused (SimulationParameters) with a conformal-factor seed,
+    the Helfer correction, a boosted scalar, id_type 0, phantom_mass != 0 or
+    an external grid: the first is erased by it (at fixed phi and c the
+    single throat's solution is unique, and it is the static throat), and the
+    others are not the background written here.
 */
 class BinaryWormholeInitialData
 {
@@ -353,6 +401,16 @@ class BinaryWormholeInitialData
         //! throat's centre.  0 = off, bit for bit.
         double seed_l2_amplitude_A{0.0};
         double seed_l2_amplitude_B{0.0};
+
+        //! Hamiltonian-constraint solve (see the class comment).  These only
+        //! shape the background the solve starts from; with the solve off
+        //! (the default) none of them is read in compute().
+        //! Background: 0 = the superposition, 1 = bare punctures (validation).
+        int solve_background{0};
+        //! Puncture coefficients c_A, c_B the solved data carry.  Filled on
+        //! the host by SimulationParameters from the puncture mode.
+        double solve_puncture_A{0.0};
+        double solve_puncture_B{0.0};
     };
 
     BinaryWormholeInitialData(params_t a_params, double a_dx)
@@ -370,6 +428,25 @@ class BinaryWormholeInitialData
         }
         m_boost_A = m_boost_A && (bA > 0.0);
         m_boost_B = m_boost_B && (bB > 0.0);
+
+        // Constraint-solve background: how far the chosen puncture
+        // coefficients sit from the superposition's own (background 0 adds
+        // shift / r per throat; background 1 uses the coefficients as they
+        // are).  Zero unless a solve asked for a different c.
+        if (m_params.solve_background == 0)
+        {
+            if (bA > 0.0)
+            {
+                m_solve_shift_A = m_params.solve_puncture_A -
+                                  superposed_puncture_coefficient(m_params, 0);
+            }
+            if (bB > 0.0)
+            {
+                m_solve_shift_B = m_params.solve_puncture_B -
+                                  superposed_puncture_coefficient(m_params, 1);
+            }
+        }
+
         if (m_params.helfer_correction == 0 || bA <= 0.0 || bB <= 0.0)
         {
             return; // off, or only one body present - nothing to correct
@@ -418,9 +495,153 @@ class BinaryWormholeInitialData
         }
     }
 
+    //! Puncture coefficient of the isolated drainhole: Psi -> c / r at its
+    //! centre, c = (a/2) e^{pi m / 2a} (id_type 1; m = 0 gives a/2).
+    static double isolated_puncture_coefficient(const double a,
+                                                const double m)
+    {
+        return 0.5 * a * std::exp(0.5 * M_PI * m / a);
+    }
+
+    //! Puncture coefficient the superposition hands throat X (0 = A, 1 = B):
+    //! the isolated value times e^{-u_Y(x_X)/2}, the companion's lapse
+    //! exponent at this centre.  Every other term of Psi_0 is bounded there.
+    static double superposed_puncture_coefficient(const params_t &p,
+                                                  const int which)
+    {
+        const double a     = (which == 0) ? p.b0_A : p.b0_B;
+        const double m     = (which == 0) ? p.drainhole_mass_A
+                                          : p.drainhole_mass_B;
+        const double a_Y   = (which == 0) ? p.b0_B : p.b0_A;
+        const double m_Y   = (which == 0) ? p.drainhole_mass_B
+                                          : p.drainhole_mass_A;
+        double c           = isolated_puncture_coefficient(a, m);
+        if (a_Y > 0.0 && m_Y != 0.0)
+        {
+            double d2 = 0.0;
+            for (int idir = 0; idir < AMREX_SPACEDIM; ++idir)
+            {
+                const double dd = p.centerA[idir] - p.centerB[idir];
+                d2 += dd * dd;
+            }
+            c *= std::exp(-0.5 * drainhole_u<double>(std::sqrt(d2), a_Y, m_Y));
+        }
+        return c;
+    }
+
+    //! Everything the Hamiltonian-constraint solve needs at one cell (see the
+    //! class comment): the background conformal factor Psi_bg, its flat
+    //! Laplacian in closed form, V = pi s |grad phi|^2 and Ahat_ij Ahat^ij.
+    //! Off the centres lap(1/r) = 0, so the puncture shift terms add to
+    //! Psi_bg but not to its Laplacian.
     template <class data_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
-    compute(int i, int j, int k, amrex::Array4<data_t> cell) const
+    constraint_background(int i, int j, int k, data_t &Psi_bg,
+                          data_t &lap_Psi_bg, data_t &V, data_t &AA) const
+    {
+        Coordinates coords(amrex::IntVect(i, j, k), m_dx, m_params.grid_center);
+
+        data_t U = 0.0, lap_U = 0.0, psi = 1.0, lap_psi = 0.0;
+        data_t gU[3]   = {0.0, 0.0, 0.0};
+        data_t gpsi[3] = {0.0, 0.0, 0.0};
+        data_t gphi[3] = {0.0, 0.0, 0.0};
+        data_t A11 = 0.0, A12 = 0.0, A13 = 0.0;
+        data_t A22 = 0.0, A23 = 0.0, A33 = 0.0;
+        data_t shift = 0.0;
+
+        for (int body = 0; body < 2; ++body)
+        {
+            const double a = (body == 0) ? m_params.b0_A : m_params.b0_B;
+            if (a <= 0.0)
+            {
+                continue;
+            }
+            const double m     = (body == 0) ? m_params.drainhole_mass_A
+                                             : m_params.drainhole_mass_B;
+            const auto &centre = (body == 0) ? m_params.centerA
+                                             : m_params.centerB;
+            const auto &P      = (body == 0) ? m_params.momentumA
+                                             : m_params.momentumB;
+            const double sign  = (body == 0) ? 1.0 : m_params.phi_sign_B;
+
+            const data_t dx = coords.x - (data_t)centre[0];
+            const data_t dy = coords.y - (data_t)centre[1];
+            const data_t dz = coords.z - (data_t)centre[2];
+            const data_t r2 =
+                simd_max(dx * dx + dy * dy + dz * dz, (data_t)1.0e-24);
+            const data_t r  = sqrt(r2);
+            const data_t n[3] = {dx / r, dy / r, dz / r};
+
+            // 1 + X^2 = (r Omega / a)^2 turns every derivative of atan X
+            // into a rational function of q = r^2 + a^2/4 = r^2 Omega.
+            const data_t q     = r2 + (data_t)(0.25 * a * a);
+            const data_t u     = drainhole_u(r, a, m);
+            const data_t du    = (data_t)m / q;
+            const data_t ddu   = -2.0 * (data_t)m * r / (q * q);
+            const data_t Om    = 1.0 + (data_t)(0.25 * a * a) / r2;
+            const data_t s     = sqrt(Om);
+            const data_t dOm   = -(data_t)(0.5 * a * a) / (r2 * r);
+            const data_t ddOm  = (data_t)(1.5 * a * a) / (r2 * r2);
+            const data_t ds    = dOm / (2.0 * s);
+            const data_t dds   = ddOm / (2.0 * s) - dOm * dOm / (4.0 * s * s * s);
+            const data_t dphi  = (data_t)(sign * phi_norm(a, m) * a) / q;
+
+            U += u;
+            lap_U += ddu + 2.0 * du / r;
+            psi += s - 1.0;
+            lap_psi += dds + 2.0 * ds / r;
+            for (int d = 0; d < 3; ++d)
+            {
+                gU[d] += du * n[d];
+                gpsi[d] += ds * n[d];
+                gphi[d] += dphi * n[d];
+            }
+
+            if (P[0] != 0.0 || P[1] != 0.0 || P[2] != 0.0)
+            {
+                add_bowen_york(n[0], n[1], n[2], r2, P[0], P[1], P[2], A11,
+                               A12, A13, A22, A23, A33);
+            }
+
+            const double c = (body == 0) ? m_params.solve_puncture_A
+                                         : m_params.solve_puncture_B;
+            shift += (m_params.solve_background == 0)
+                         ? (data_t)((body == 0) ? m_solve_shift_A
+                                                : m_solve_shift_B) / r
+                         : (data_t)c / r;
+        }
+
+        if (m_params.solve_background == 0)
+        {
+            // Psi_0 = E psi, E = e^{-U/2}:
+            // lap Psi_0 = E [psi (|grad U|^2/4 - lap U/2) - grad U.grad psi
+            //                + lap psi].
+            const data_t E    = exp(-0.5 * U);
+            const data_t gU2  = gU[0] * gU[0] + gU[1] * gU[1] + gU[2] * gU[2];
+            const data_t gUgp =
+                gU[0] * gpsi[0] + gU[1] * gpsi[1] + gU[2] * gpsi[2];
+            Psi_bg     = E * psi + shift;
+            lap_Psi_bg = E * (psi * (0.25 * gU2 - 0.5 * lap_U) - gUgp + lap_psi);
+        }
+        else
+        {
+            Psi_bg     = 1.0 + shift;
+            lap_Psi_bg = 0.0;
+        }
+
+        V = (data_t)(M_PI * m_params.support_strength) *
+            (gphi[0] * gphi[0] + gphi[1] * gphi[1] + gphi[2] * gphi[2]);
+        AA = A11 * A11 + A22 * A22 + A33 * A33 +
+             2.0 * (A12 * A12 + A13 * A13 + A23 * A23);
+    }
+
+    //! The analytic data, or with solved = true the constraint-solved data:
+    //! chi = (Psi_bg + w)^{-4} with w the solve's correction at this cell.
+    //! solved = false is the archived code path, bit for bit.
+    template <class data_t>
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+    compute(int i, int j, int k, amrex::Array4<data_t> cell,
+            const bool solved = false, const data_t w = 0.0) const
     {
         amrex::IntVect grid_index(i, j, k);
         Coordinates coords(grid_index, m_dx, m_params.grid_center);
@@ -550,8 +771,23 @@ class BinaryWormholeInitialData
                                         m_params.seed_width_B);
         }
 
-        const data_t psi2 = psi * psi;
-        data_t chi        = exp(2.0 * u_sum) / (psi2 * psi2);
+        data_t chi;
+        if (solved)
+        {
+            // The same Psi_bg the solve used (seeds and the Helfer
+            // correction are refused with the solve, so it is Psi_0 plus
+            // the puncture shifts), plus the solve's correction.
+            data_t Psi_bg, lap_Psi_bg, V, AA;
+            constraint_background(i, j, k, Psi_bg, lap_Psi_bg, V, AA);
+            const data_t Psi  = Psi_bg + w;
+            const data_t Psi2 = Psi * Psi;
+            chi               = 1.0 / (Psi2 * Psi2);
+        }
+        else
+        {
+            const data_t psi2 = psi * psi;
+            chi               = exp(2.0 * u_sum) / (psi2 * psi2);
+        }
         if (chi < (data_t)1.0e-10)
             chi = (data_t)1.0e-10;
 
@@ -936,6 +1172,11 @@ class BinaryWormholeInitialData
     double m_helfer_dpsi_B{0.0};
     double m_helfer_du_A{0.0};
     double m_helfer_du_B{0.0};
+
+    //! Constraint-solve background: chosen minus superposed puncture
+    //! coefficient per throat (background 0 only; zero otherwise).
+    double m_solve_shift_A{0.0};
+    double m_solve_shift_B{0.0};
 };
 
 #endif /* BINARYWORMHOLEINITIALDATA_HPP_ */

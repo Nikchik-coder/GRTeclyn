@@ -52,6 +52,12 @@ class BinaryWormholeLevel : public GRAMRLevel
     */
     void specific_post_init() override;
 
+    //! Hamiltonian-constraint solve of the t = 0 slice over the whole
+    //! hierarchy (constraint_solve = 1; DrainholeConstraintSolve.hpp), then
+    //! every level rebuilt from the solved conformal factor.  Level 0 only.
+    //! Public for the same nvcc reason as write_scalar_diagnostics.
+    void solve_initial_constraints();
+
     //! Constraint norms + collapse + two-throat diagnostics.  Shared by
     //! specific_post_init (t = 0) and specificPostTimeStep (t > 0) so that both
     //! write identical columns to the same files.  Public only because nvcc
