@@ -39,6 +39,7 @@ from lib import column, extractor, params, run_dir, stream, window  # noqa: F401
 GM_SUN_SECONDS = 1.3271244e20 / 299792458.0 ** 3     # 4.92549e-6 s
 GM_SUN_KM = 1.3271244e20 / 299792458.0 ** 2 / 1e3    # 1.476625 km
 AU_KM = 1.495978707e8                                # IAU 2012
+M_SUN_KG = 1.3271244e20 / 6.67430e-11                # G M_sun / G (CODATA 2018): 1.98841e30 kg
 UNIT_SECONDS = {"ms": 1e-3, "s": 1.0, "min": 60.0, "h": 3600.0, "d": 86400.0}
 
 # The production arms the section quotes, by role.
@@ -635,6 +636,18 @@ def single_quiet_lifetime(mass_msun: float, eps: float, unit: str = "ms") -> flo
     """t_BH = t_eps2 + tau ln(1e-2/eps) (Table II caption), in physical units."""
     t_bh = _clock("t_eps2") + _clock("tau") * math.log(1e-2 / eps)
     return t_bh * mass_msun * GM_SUN_SECONDS / UNIT_SECONDS[unit]
+
+
+@extractor
+def single_traveller(mass_kg: float, mass_msun: float, unit: str = "M") -> float:
+    """The traversal budget of Sec. IV F: a traveller of mass_kg seeding the
+    mode at eps = m/M, put through the Table II law t_BH = t_eps2 + tau
+    ln(1e-2/eps); unit "M" gives it in units of the throat's mass, otherwise
+    in physical units (single_quiet_lifetime)."""
+    eps = mass_kg / (mass_msun * M_SUN_KG)
+    if unit == "M":
+        return _clock("t_eps2") + _clock("tau") * math.log(1e-2 / eps)
+    return single_quiet_lifetime(mass_msun=mass_msun, eps=eps, unit=unit)
 
 
 @extractor

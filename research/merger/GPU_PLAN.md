@@ -1322,6 +1322,56 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-27 (05:55 UTC, paper session) — wormhole-seed precedents cited; the reviewer's fifteen ideas: eight in the text, two computing, five need runs (proposed, not queued)
+
+- **Precedents**, each checked on INSPIRE/Crossref against its abstract or text.
+  - Black holes descended from wormholes, and as supermassive seeds, are not new. Deng–Vilenkin 2017 (JCAP 12, 044)
+    say it directly for supercritical vacuum bubbles; so do Garriga–Vilenkin–Zhang 2016. Deng–Garriga–Vilenkin 2017
+    and Gouttenoire–Vitagliano 2024 (PRD 109, 123507) give the domain-wall pinch-off.
+  - Kardashev–Novikov–Shatskiy 2007 propose galactic nuclei as current or former wormhole entrances; Novikov &
+    Novikov 2019 (JETP 129, 495) and Hayward 1999 give the wormhole → black-hole conversion. Bambi 2013 computes
+    wormhole shadows at Sgr A*/M87 with a static Morris–Thorne metric, so it is cited for "not a surviving wormhole
+    mouth", not as an Ellis–Bronnikov fit.
+  - §X B now credits them. The intro no longer says "none of this work evolves the aftermath": DV and DGV evolve
+    their wormholes' pinch-off.
+  - INSPIRE ("wormhole" × seed / supermassive / primordial black hole) finds no other wormhole → heavy-seed channel.
+    Not cited yet (the user's call): Milligan–Padilla–Mulryne arXiv:2608.23367 (a transient wormhole from a
+    Higgs-like patch leaves a PBH) and Takahashi–Nakashi arXiv:2606.01699 (Ellis–Bronnikov images against M87*).
+- **In the text** (the reviewer's numbering). Twelve new references (107); ledger +5 rows and the extractor
+  `single_traveller`; `claims.py check`: 1005 rows, 833 recomputed, 0 problems.
+  - 1, §IV G (new): the static throat as a type-I critical solution. Time scaling is the lifetime law; the mass gap is
+    horizons forming at R = 3.88 / 3.81 for ε = 1e-2 / 1e-3. Shinkai–Hayward's "critical solutions with a certain
+    black-hole mass" is credited.
+  - 2, §X D (new): topological censorship. Collapse hides the throats inside a MOTS as the phantom goes; the inflating
+    branch forms none.
+  - 3, §VII C: weak cosmic censorship under NEC violation; the harmonic-class spiral stays open; "not a proof".
+  - 4, §VIII F: anti-damping as the classical face of the ghost's vacuum decay. The "same physics in a single
+    object" clause was left out: nothing shows it.
+  - 5, §X A: no long-lived mimicker. 6, §IV F: the traversal budget, 100 kg → 450 M ≈ 37 min at 1e6 M⊙, 57 ms
+    at 30 M⊙.
+  - 10, §X C: the per-throat census, f_</2 by merger, 1/4 by lone collapse, 3/4 − f_</2 inflating.
+    11, §VIII: the boson-star comparison.
+- **Computing** (CPU, the pack's scalar and Ψ4 modes; `results/merger/analysis/scalar_memory_angmom.py`): 7, the
+  memory sourced by both channels, and 8, the sign of the scalar angular-momentum flux. By a back-of-envelope count a
+  negative-energy dipole adds to the ℓ = 2 memory rather than reversing it; the data will say.
+- **Need runs: proposed, not queued.** The queue is the convergence study (the user's word, 2026-09-26 17:30).
+  Nothing launches without the user's word.
+  - P1 (idea 12), zoom-whirl cut by the throat's clock: p = 0.27–0.33 at level 3, L = 128, d = 12, to t = 100 (four
+    arms, ~11 GPU-h each, CONV-5 class), and the arm nearest the threshold at level 5 (~35, CONV-7 class). Count the
+    revolutions before contact against ln|p − p*|. The prediction is a finite maximum where a black-hole binary's
+    diverges. ~80 GPU-h.
+  - P2 (idea 13), anti-recoil: an opposite-signed head-on at d = 8 with unequal charges (a = 2 and 1.5, m = 1), level 5
+    from t = 0 with the ℓ ≤ 2 scalar stream (~28 GPU-h, the head-on's measured level-5 cost). The ghost sign predicts
+    a kick toward the emitted scalar momentum. An unequal-mass twin adds ~28.
+  - P3 (idea 14), area additivity at formation: head-ons at d = 6, 10, 12 at level 3 to t ≈ 40 (~3 GPU-h each) and
+    one at level 5 (~28). Is the common MOTS born with the two throats' area (R = 1.01 √2 R⋆ at d = 8) at every d?
+  - P4 (idea 9), a dynamical-horizon flux balance on the spiral remnant. The kept slices are gone (plotfiles pruned,
+    `plt_take2/` deleted 05:39 UTC); Chk05700 (t = 57, level 5) remains. A level-5 restart to its NaN at t ≈ 60
+    writing plotfiles every 0.1 (~5 GPU-h), then Ashtekar–Krishnan fluxes through the flow finder's surfaces (new
+    code, days).
+  - P5 (idea 15), the next papers: handle topology (both mouths of one wormhole in one universe: new initial data),
+    and throats spinning above the rotation threshold (new rotating data).
+
 ### 2026-09-27 (05:00–05:45 UTC) — CONV-3 closed out: the spiral burst is core-independent; the wave zone was untested, so CONV-3w runs; the lifecycle goes into CLAUDE.md
 
 - **CONV-3 finished** at 02:12 UTC, clean to t = 100 (7.2 u/h, arena 55.6 GB, no NaN in any stream).
