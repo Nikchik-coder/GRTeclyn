@@ -1323,6 +1323,107 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-27 (12:15 UTC) — parameter matching and the energy check: the solve did not change the throats, the superposition did; mode 3 builds the pair from two isolated throats; M_ADM − 2m follows ±σ²(a²+m²)/d − σ²m²/d; CS-1's M_ADM is 2.74, not 2.63; nothing launched
+
+**Why (the user, 2026-09-27).** CS-1's M_ADM jumped 2.00 → 2.63; an attracting pair should weigh less than its parts,
+so the solve may have changed the throats (c held while the neighbour's field changed them): CS-1 would then have
+turned two knobs, and p (defined per one-body mass) would no longer mean the same orbit. Checks at t = 0: the solved
+single throat (R⋆ = 3.8895, M = 1); each mouth of the solved d = 8 pair (minimal areal radius, far-side mass); the same
+for the superposed pair. Then (the user's plan, step 1): the pair's total mass in mode 3 at d = 8, 12, 16, 24, 48, both
+signs, to fix what "M" means and to test the interaction energy against the attraction.
+
+**How.** CPU only, in a cloud container (no GPU, no LaTeX): AMReX 26.02-12-gd7da5045, OpenMP build of the example
+(`make USE_MPI=FALSE USE_OMP=TRUE`, own object dir), 4 cores, 16 GB. It reproduced CS-1's start-up digit for digit
+(max |w| 0.0322812677, shell rms 5.131e-6, R_min 4.5225). Every number below is at t = 0 (`max_steps = 0`).
+- **A mouth's far side** (the clean asymptotic quantity): near its centre Psi = c/r + d, and the inversion r' = c²/r
+  makes it a flat end with ADM mass **M_far = 2cd** and scalar charge **Q_far = 4Cc²/a** (φ = φ₀ + (4C/a)r + l = 1 there).
+  d = the background's closed-form regular part (checked against the analytic Psi_bg on spheres r → 0 to 1e-8) + w0, the
+  monopole of w at the centre (quadratic fit in r on the finest level; stable to 1e-4 as the radius varies, a linear
+  fit drifts 3e-3). Isolated a = 2, m = 1: M_far = −m e^{πm/a} = −4.8105, Q_far = √(a²+m²) e^{πm/a}/√4π = 3.0344.
+  (M_far, Q_far) name one isolated drainhole (a′, m′); **m′ is the mouth's one-body mass**.
+- **M_ADM, the volume identity** M = 2Σc − (1/2π)∫[V Psi − ⅛Â·Â Psi⁻⁷] dV (Gauss on the constraint; composite box
+  integral + analytic tail). Exact throat 1.0014, the throat rebuilt from bare punctures 1.0007 (the monopole fit read
+  1.050 there). **Trap met:** the Robin face leaves the solve's w a constant ≈ −1e-3 inside the box (fit of w's monopole:
+  A0 = −0.9…−1.2e-3 on every solved case; a doubled box moved the face estimate 2.578 → 2.655), and every estimator that
+  forces that constant to zero reads mass from it: the grader's fit gave 2.63 for CS-1's data, the log's face estimate
+  2.58; the volume identity gives **2.738**, a fit with a constant term 2.72–2.76.
+- R_min: the grader's minimum over coordinate spheres about each centre (dr 0.01) on the finest level.
+
+**The three checks (d = 8 head-on, L = 64, level 3):**
+
+| | R_min | M_far | Q_far | m′ | M_ADM |
+|---|---|---|---|---|---|
+| isolated throat (solved, background 0: w ≡ 0 to 2e-14) | 3.8901 | −4.8105 | 3.0344 | 1 | 1.0014 |
+| same, rebuilt from bare punctures (background 1) | 3.8922 | −4.805…−4.820 | 3.0344 | 1.00 | 1.0007 |
+| superposed pair (the scout) | 4.466 | −5.363 | 3.436 | 1.149 | 2.00 (not a solution) |
+| solved, mode 0 (CS-1) | 4.523 | −5.368 | 3.436 | 1.148 | **2.738** |
+| solved, mode 1 (c = c_iso) | 4.197 | −4.60 | 3.034 | 1.041 | 2.434 |
+| solved, mode 3 with c alone | 4.289 | −4.810 | 3.146 | 1.071 | 2.521 |
+| **solved, mode 3** | **3.892** | **−4.810** | **3.034** | **1.000** | **2.362** |
+
+- **The solve did not change the throats**: M_far moves 0.09 % (about what the Robin offset of w explains), Q_far not at
+  all, R_min +1.3 %. CS-1 against the scout turned one knob, the data. The 1.3 % larger throat moves the instability
+  clock by a few tenths of a unit at most, against CS-1's 2-unit delay.
+- **The superposition did change them, in every superposed run**: the companion's constants (e^{−u_B(x_A)/2} = 1.064 on
+  Psi) make each mouth ~13 % larger in every length (the placement effect). d = 12 (the spirals): superposed R_min 4.253,
+  M_far −5.191 (1.079×), **m′ = 1.094**; solved mode 0: 4.278, −5.193, 1.094 (M_ADM 2.501 at p = 0.12). So p = 0.12 /
+  0.25 / 0.35 / 0.45 in code units are 0.110 / 0.229 / 0.320 / 0.411 per one-body mass in every d = 12 run, superposed
+  or solved in mode 0; the user's feared shift to 0.34 / 0.09 does not happen (the solve keeps m′).
+- **c alone cannot undo a rescaling**: φ fixes the static throat's coordinate size. Mode 1 is a seeded throat (M_far
+  0.956×); matching M_far with c alone leaves R_min 10 % high and Q_far 3.7 % high.
+
+**The fix: `constraint_solve_puncture_mode = 3`** (DrainholeConstraintSolve.cpp): each throat at coordinate scale σ
+(a → σa, m → σm in φ, u, Ω; C is scale-free), σ = (c/c_iso)² so Q_far is the isolated value, and c iterated (finite-
+difference Jacobian, then Broyden) until M_far is too; 2 passes, 5 solves, ~15 s on CPU. R_min comes out 0.06 % from R⋆
+without being asked for: the mouth is locally the isolated static drainhole. With momentum (d = 12, p = 0.12: Newton
+inside each solve) it converges the same way: σ = 0.906, R_min 3.8905, M_ADM 2.279. Default stays mode 0, bit for bit.
+
+**The energy check (the user's step 1).** Mode 3, both signs, d = 8–48, one grid for all (L = 128, N = 128, level 4,
+tagging_L = 64: dx = 0.0625 on |x − x_X| < 2; 7.7 M cells, ~95 s each). E_b = M_ADM − 2 M₁ with M₁ = 1.00156 the single
+throat on the same grid (volume identity; at d = 8 this grid gives 2.3604 against 2.3618 on the L = 64 one):
+
+| d | σ (flipped) | M_ADM | E_b | E_b·d | predicted | σ (like) | M_ADM | E_b | E_b·d | predicted |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 8 | 0.857 | 2.3604 | +0.357 | +2.86 | +0.367 | 0.906 | 1.3839 | −0.619 | −4.95 | −0.616 |
+| 12 | 0.906 | 2.2723 | +0.269 | +3.23 | +0.274 | 0.931 | 1.5666 | −0.437 | −5.24 | −0.433 |
+| 16 | 0.931 | 2.2173 | +0.214 | +3.43 | +0.217 | 0.946 | 1.6654 | −0.338 | −5.40 | −0.335 |
+| 24 | 0.955 | 2.1543 | +0.151 | +3.63 | +0.152 | 0.962 | 1.7704 | −0.233 | −5.59 | −0.231 |
+| 48 | 0.979 | 2.0830 | +0.080 | +3.84 | +0.080 | 0.980 | 1.8825 | −0.121 | −5.79 | −0.120 |
+
+  (predicted = σ²[±(a² + m²) − m²]/d, + for the flipped pair, − for the like pair.)
+- **Not a bug.** Both signs follow E_b = σ²[±(a²+m²) − m²]/d to 3 % at d = 8 and 0.3 % at d = 48; E_b·d runs to +4 and
+  −6, the point-charge values. The sign-independent part (the mean of the two) is the Newtonian binding −σ²m²/d; the
+  sign-dependent part is the ghost scalar's field cross energy −∫∇φ_A·∇φ_B = ±σ²(a²+m²)/d. σ² is the companion's
+  rescaling of each throat as seen from infinity (σ → 1 as d → ∞). Everything the solve adds is this analytic
+  interaction of the superposed φ; the Hamiltonian constraint leaves no freedom beyond it.
+- **What "M" means.** Each mouth's one-body mass m′ (its far side; 1 in mode 3, 1.149 at d = 8 and 1.094 at d = 12 in the
+  superposed and mode-0 data) is the unit that does not move between superposed and solved data. The pair's M_ADM is
+  2m′ + E_b(d), and E_b is +18 % of 2m at d = 8 for the flipped pair, so "M_ADM" and "2m" are different units.
+- **Against the attraction.** The flipped pair's M_ADM FALLS as it separates, the like pair's rises. Read as a
+  potential at fixed conserved charges, that is repulsion for the flipped pair and attraction for the like pair — the
+  reverse of every evolution (the flipped pair merges; CS-1 too). Read as conductors held at fixed potential (force
+  +∂U/∂d), it gives exactly the measured behaviour: the scalar pull on the flipped pair and push on the like pair, each
+  (a²+m²)/m² = 5 × gravity's — the ratio measured on orbit_d12_p012 (2026-08-31). The sequence above holds each mouth's
+  far-side mass and charge but not the scalar's value at its far infinity (it shifts with the companion's φ_B(x_A)),
+  and all three are frozen in an evolution, so t = 0 energetics cannot pick the ensemble. Energy then has to cross the
+  throats during an infall (our M_ADM is conserved while E_b and the kinetic energy both grow for the flipped pair).
+  **Open:** the decisive test is dynamical, e.g. the separation's initial acceleration in mode-3 data at d = 16–24,
+  both signs (GPU, minutes), and whether the mouths' near side changes while their far-side mass cannot.
+
+**For the paper (nothing edited; no rerun needed for these):** p per one-body mass (0.110 / 0.229 / 0.320 / 0.411 at
+d = 12); state which M energies are in (the superposed slice's 2.00 is not the mass of a constraint-satisfying slice
+with the same throats: 2.74 at d = 8, 2.50 at d = 12, p = 0.12); "common MOTS born with both throats' area, 1.01√2 R⋆"
+compares with the isolated R⋆, not the mouths in the run (R_min 4.47 at t = 0, d = 8); CS-1's Penrose margin is
+R/2 = 2.93–2.97 against 2.74, 7–8 % (not 11–13 %).
+
+**Code (5955760 and this commit).** DrainholeConstraintSolve.{hpp,cpp}: far-side report per mouth, volume-identity
+M_ADM, mode 3; BinaryWormholeLevel: the report in the log and one t = 0 row of `constraint_solve.dat`; superposed runs
+log each mouth's far side in closed form; SimulationParameters: `constraint_solve_match_charge`, `_match_tolerance`,
+`_match_max_iter`. Grader `constraint_solve_t0_check.py --mass [--solve-data]`: the same from a plotfile, M_ADM three
+ways. name_check: token `csm` (mode 3). **Not built for the GPU** (no nvcc here): the next `build_binary.sh --tag` on a
+GPU node is the first CUDA compile of this code. Memory trap here: the `constraints` derived field and d = 12 hierarchies
+exceed 16 GB; chi-only plotfiles fit.
+
 ### 2026-09-27 (08:33 UTC) — CONV-1, CONV-2 and CONV-3w stopped and removed on the user's word; queued again
 
 The user: "stop all the runs, prune them completely, mark as queued in the status not live", then "just remove them as

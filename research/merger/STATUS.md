@@ -1,4 +1,4 @@
-# Status — 2026-09-27 08:50 UTC
+# Status — 2026-09-27 12:15 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -23,7 +23,8 @@ are never deleted without the user's explicit word. All three are back in the qu
   ["2026-09-27 (08:30 UTC)"].
   - The same merger as the scout, about 2 units later, with a horizon 4–5 % larger: common MOTS born at t = 23
     (scout: present at t = 22), R = 5.84 at birth and 5.94 at its peak (scout 5.56 and 5.71).
-  - The pair's M_ADM is 2.63, not 2.00, so R/2 is 11–13 % above it (the paper's 39 % used 2.00).
+  - The pair's M_ADM is 2.74 (corrected 12:15 UTC; the 2.63 read the Robin face's offset of w as mass), not 2.00,
+    so R/2 is 7–8 % above it (the paper's 39 % used 2.00). Its mouths are the scout's, to 0.1 % in far-side mass.
   - Trust window t ≤ 29.7: the core's K runaway starts at t = 29.8.
   - One resolution (level 3), one separation. The level-5 head-on, the spiral and the fly-by have no solved twin;
     CS-2 (the p = 0.12 spiral on solved data) was not run (the user: "do not run it").
@@ -33,6 +34,13 @@ are never deleted without the user's explicit word. All three are back in the qu
   - The three partial pack copies of the first node's live runs, made by this close-out, were removed at 08:38 UTC
     on the user's word. The pack now skips a run that is live on the other node, the summaries carry no live
     rows, and `claims.py check` passes (833 recomputed, 0 problems).
+
+**Done 2026-09-27 (12:15 UTC, CPU only): parameter matching and the energy check** ["2026-09-27 (12:15 UTC) — parameter matching and the energy check"]. Each mouth's far side (ADM mass 2cd and scalar charge at its own compactified infinity) is now measured after every solve. Verdicts:
+- The solve did **not** change the throats: CS-1's mouths have the scout's far-side mass to 0.1 % (R_min +1.3 %). CS-1 turned one knob, the data.
+- The **superposition** did: every superposed pair's mouths are ~13 % larger in every length than the isolated throat (one-body mass 1.149 at d = 8, 1.094 at d = 12, same for solved mode-0 twins). So p = 0.12 / 0.45 at d = 12 are 0.110 / 0.411 per one-body mass in every run; no rerun is needed for this, only the paper's normalisation.
+- CS-1's M_ADM is **2.74**, not 2.63 (the Robin face leaves w a constant −1e-3; the volume identity, 1.0014 on the exact throat, does not see it).
+- **Mode 3** (`constraint_solve_puncture_mode = 3`) builds the pair from two isolated throats: c and each throat's coordinate size iterated until its far-side mass and charge are the isolated ones; R_min lands 0.06 % from R⋆. Also with momentum (d = 12, p = 0.12).
+- **Energy check** (mode 3, d = 8–48, both signs): M_ADM − 2m = σ²[±(a² + m²) − m²]/d to 3 % (d = 8) and 0.3 % (d = 48): gravity's −m²/d plus the ghost scalar's cross energy, **positive for the attracting pair**. Not a bug. It matches the measured attraction (and its ratio 5 to gravity) only if the throats behave as conductors at fixed scalar potential; at fixed charge it would be repulsion. Open: a dynamical test (initial acceleration in mode-3 data, both signs, GPU minutes). Nothing launched; the code is not yet compiled for CUDA.
 
 **Done 2026-09-27 (05:45–06:00 UTC): constraint-solved initial data** ["2026-09-27 (05:45 UTC) — constraint-solved initial data"]. `constraint_solve = 1` in the merger example solves the Hamiltonian constraint on the initial hierarchy with AMReX MLMG (φ, Â, Π, lapse fixed; momentum constraint stays exact; Newton for p ≠ 0). Validated on CPU at t = 0: rebuilds the exact drainhole from bare punctures (R_min to 5e-4); the d = 8 head-on's finest-level Hamiltonian drops 9.7e-3 → 5.1e-6 (×1900, the exact throat's floor); orbital p = 0.12/0.45 converge in 3 Newton passes. The solve adds the scalar interaction energy: M_ADM 2.00 → 2.63 at d = 8, throats +1.3 %. Base-grid L2_Ham cannot see it (unresolved throat). The test binary is a `-dirty` build; a clean pin from the commit is still to be built. Grader: `scripts/validation/constraint_solve_t0_check.py`. **On the GPU (second node, 06:00 UTC):** the dirty build reproduces the CPU solve digit for digit (max |w|, L2_Ham, the Newton sequence), 3–4 s per start-up; level 5 solves in +2.5 s, 24.6 GB at start-up.
 

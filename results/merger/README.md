@@ -1057,7 +1057,7 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
 *(CS-1, 2026-09-27; the scout re-run on data that satisfies the Hamiltonian constraint at t = 0)*
 
 - **Claim.** The head-on scout (d = 8 from rest, level 3) started from constraint-solved data (`constraint_solve = 1`:
-  finest-level Hamiltonian on the throat shell 9.7e-3 → 5.1e-6 rms, M_ADM 2.00 → 2.63, mouths 1.3 % wider) merges
+  finest-level Hamiltonian on the throat shell 9.7e-3 → 5.1e-6 rms, M_ADM 2.00 → 2.74, mouths 1.3 % wider) merges
   the same way as from the superposition: no mouth ever has its own trapped surface, and one common marginally
   trapped surface forms about the midpoint, grows for two units and then shrinks. It forms about two units later
   and is 4–5 % larger. The run reaches t = 30 with no NaN (the scout died at t = 26.91); its core's K runaway starts
@@ -1079,12 +1079,17 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   at R = 14: t = 26.0 against 24.2. Peak of the horizon's areal radius: t = 25 against 24. Chi reaching the floor:
   t = 27.97 against 24.37. The separation is one tracker step (0.125) behind the scout at t = 10–14 and four at
   t = 20.
-- **Penrose.** R/2 = 2.93–2.97 against M_ADM = 2.63 ± 2 %: 11–13 % above. The superposition's 2.78 against 2.00
-  (39 %) used an ADM mass that leaves out the scalar interaction energy.
+- **Penrose.** R/2 = 2.93–2.97 against M_ADM = 2.74: 7–8 % above. The superposition's 2.78 against 2.00
+  (39 %) used an ADM mass that leaves out the scalar interaction energy. (2.63 until 2026-09-27 12:15 UTC: that fit
+  forced to zero the constant the Robin face leaves in w; the volume identity gives 2.738, a fit with a constant
+  2.72–2.76.)
+- **Same mouths as the scout.** Each mouth's far-side mass (the ADM mass of its own compactified infinity) is −5.368
+  against the scout's −5.363 (0.1 %), so CS-1 changes the data, not the throats. Both are ~13 % larger in every length
+  than the isolated throat (one-body mass 1.149): the superposition's placement effect.
 - **Runs.** `merge_headon_flip_d8_cs_lvl3_t030` *(pack)* against `merge_headon_flip_d8_v1_t100` *(pack)*; the
   solver and its t = 0 validation are in `Examples/BinaryWormholeMerger/README.md`.
 - **Caveats.** One resolution (level 3) and one separation. The horizon is read on coordinate spheres, as for the
-  scout (Misner-Sharp ±20 %). M_ADM comes from a monopole fit with a Robin outer boundary (±2 %). The paper's
+  scout (Misner-Sharp ±20 %). M_ADM is the volume identity (±0.2 % on the exact throat). The paper's
   head-on numbers are the superposition's; nothing of CS-1 is cited yet.
 
 ### Convergence: the spiral burst does not depend on the core's resolution
