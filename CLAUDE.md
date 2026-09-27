@@ -33,6 +33,16 @@ Every rule below exists because breaking it cost a run, a result or a day.
   `WHM_PREFLIGHT=off` exists; it is recorded in the run's manifest.
 - **Frames: the full default set is mandatory** (`frames_default.txt`, every profile):
   preflight refuses a subset without `WHM_FRAMES_SUBSET="<reason>"` and renders each field from t = 0.
+  The one exception, on the user's word: the convergence study (`08_convergence`) keeps no
+  frames and no movies. Launch it with `--frames-fields none`, or `--frames-fields chi` for
+  the sign-rule arms (the sign rule reads the chi slice cache), plus the reason in
+  `WHM_FRAMES_SUBSET`. Close it out with `WHM_MOVIES=0`.
+- **A resolution test must refine what it claims to test.** `max_level` refines only the
+  boxes on the tracked throats. An extraction sphere is read from the finest level that
+  covers it, which is the base grid (Δx = 0.5) for R ≥ 20 on L = 128, whatever `max_level`
+  is. To test the wave zone, raise that sphere's `extraction_levels`: the ExtractionTagger
+  then refines the whole ball r < 1.2 R. On 2026-09-26 the convergence runs varied
+  `max_level` alone, and the wave zone went untested until CONV-3w.
 - The campaign pin (`launch.sh` DEFAULT_BINARY) is `main3d_guard_7166787a_2026-09-24.ex`
   since 2026-09-24: it reads the quadrupole seed and the core profile, which the old pin
   `main3d_boost_2026-09-08.ex` ignored. A `--restart` continues on its parent run's binary
@@ -64,6 +74,34 @@ Every rule below exists because breaking it cost a run, a result or a day.
   frames stay on disk. Figures and the paper quote nothing after it either.
 - Heavy analysis (yt, covering grids) runs in the background with a log; trim the matrix first.
 - GWOSC downloads are the slow part of any search: bypass the local proxy, use `--block-s 4096`.
+
+## When a run finishes
+
+Do these steps, in this order and in the same session, without being asked:
+1. **Check it.**
+   - It reached its `stop_time`, or record where and why it died.
+   - No NaN in the death window (`closeout.sh` prints this).
+   - Its headline number agrees with its partner run.
+   - Its trust window: add a row to `trust_windows.tsv` if the solution stops being trustworthy before the end.
+2. **Pack it.**
+   - List it in `research/merger/article/claims/table1_groups.tsv`, as `-` until the paper cites it. The claims check
+     fails for a packed run that isn't listed.
+   - File it: `file_run.sh --group NN_name <run>`. A new study gets its own group folder, so it never mixes into the
+     physics groups (the convergence runs: `08_convergence`).
+   - Run `research/merger/closeout.sh <run>`: it makes the movies up to the trust window and rebuilds the pack.
+   - Live runs are never packed (`pack_results.sh` skips them), because a partial pack is git pollution.
+3. **Document it.** Update:
+   - its row in `results/merger/runs_registry.tsv` (outcome);
+   - its claim line in `results/merger/README.md`;
+   - a dated entry in `research/merger/GPU_PLAN.md`;
+   - `research/merger/STATUS.md` (live runs, queue).
+4. **Prune.**
+   - Delete its scratch plotfiles, and any checkpoints no queued run needs.
+   - Log the prune in `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_<date>.md`.
+   - Frames are never part of a prune (see Data, above).
+5. **Launch the next queued run** on the freed card. Check `nvidia-smi` first; the preflight runs before anything
+   starts. Record the launch in STATUS.
+6. **Commit and push** the tracked changes, staging explicit paths.
 
 ## The paper
 

@@ -116,6 +116,14 @@ while IFS= read -r rundir; do
   run="$(basename "${rundir%/}")"
   rel="${rundir%/}"; rel="${rel#"${RUNS}"/}"
   out="${DEST}/campaign/${rel}"
+  # A run still on a card is not packed: it is packed once, at its close-out
+  # (2026-09-27, the user's word -- a partial pack of a live run is git
+  # pollution, and the 08_convergence close-out repack had copied the three
+  # live convergence arms to the top of campaign/).
+  if [[ -f "${rundir}launcher.pid" ]] && kill -0 "$(cat "${rundir}launcher.pid" 2>/dev/null)" 2>/dev/null; then
+    echo "[pack-merger] campaign/${rel}: LIVE -- not packed (packed at its close-out)"
+    continue
+  fi
   # Rebuild the pack, but KEEP anything the pack does not itself produce.
   # Until 2026-09-16 this was a bare `rm -rf`, so every hand-added artefact --
   # a run's README, an offline horizon scan, a gzipped radial profile, a

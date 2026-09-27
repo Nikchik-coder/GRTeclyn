@@ -270,10 +270,12 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_p045_helfer_t090` | B | 37.3 | x874.0 / 37.3 | +1.16 | +1.79 | +2.29 | +2.57 | - | - | - | - | late (+1.26 dex) |
 | `merge_orbit_flip_d12_p045_t200` | A | 91.0 | x2708.9 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
 | `merge_orbit_flip_d12_p045_t200` | B | 91.0 | x2709.0 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
+| `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` | A | 100.0 | x1.0 / 36.0 | +0.00 | +0.00 | +0.00 | +0.00 | -4.88 | -5.37 | -7.60 | 52.4 | restart -- own clock only |
+| `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` | B | 100.0 | x1.0 / 36.0 | +0.00 | +0.00 | +0.00 | +0.00 | -4.88 | -5.37 | -7.60 | 52.4 | restart -- own clock only |
 
 ## Reading
 
-Throats read at t = 30: 22 early, 12 same, 81 late, 64 too short, 50 restart arms (own clock only).
+Throats read at t = 30: 22 early, 12 same, 81 late, 64 too short, 52 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

@@ -356,6 +356,9 @@ def gate5(t_s, cols_s, control, out):
     out.append("")
     out.append(f"Over the burst window (t ≤ {T_BURST_END:.0f}) the control floor is **{floor:.1e}** and the "
                f"seeded arm reads {sig:.1e} at the same sphere — **{sig / floor:.0f}× the floor**.\n")
+    # The paper's gate (referee fixes, 2026-09-26): kept here, not by hand in the
+    # generated file, which every repack rewrites (the 2026-09-27 repack dropped it).
+    out.append('2026-09-26 (referee fixes): the paper quotes this gate against the MATCHED level-4 control, `single_eps_p1e2_q1e2_ml4_scalar_t100` (the +0.01 kick at level 4, no quadrupole read by its binary; Fig. 16\'s floor): floor 6.5e-05 at R = 14, **44×** (75× at R = 10, 25× at R = 18; `extract_waves.waves_q2e(gate="floor_ratio", control=...)`). The table above is the level-3 control.\n')
     if other:
         R2 = other[0]
         e2 = np.abs(cc[R2])

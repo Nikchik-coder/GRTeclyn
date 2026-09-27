@@ -83,6 +83,7 @@
 #   WHM_WHAT      one line on what the run is for -> results/merger/runs_registry.tsv
 #   WHM_FRAMES_FIELDS  frame fields when WHM_CONSUME_ARGS names none
 #                 (default: the campaign's full set, frames_default.txt)
+#                 ("none": no frames at all -- needs WHM_FRAMES_SUBSET)
 #   WHM_FRAMES_SUBSET="<reason>"  the ONLY way to launch with fewer frame
 #                 fields than frames_default.txt: the preflight refuses a
 #                 subset without it, and records the reason (run_manifest.json)
@@ -282,7 +283,14 @@ whm_consumer_args() {
   # preflight refuses a list that misses a default field unless
   # WHM_FRAMES_SUBSET says why.
   local frames_default="${WHM_FRAMES_FIELDS:-${WHM_FRAMES_FULL}}"
-  if [[ " ${WHM_CONSUME_ARGS:-} " != *" --frames-fields "* ]]; then
+  if [[ "${WHM_FRAMES_FIELDS:-}" == "none" ]]; then
+    # No frames at all (launch.sh --frames-fields none): a study that keeps
+    # none, e.g. the 08_convergence runs (2026-09-27).  The preflight still
+    # refuses it unless WHM_FRAMES_SUBSET says why.
+    FRAMES_SOURCE="none (WHM_FRAMES_FIELDS=none)"
+    echo "[whm] frames   : none (WHM_FRAMES_FIELDS=none)"
+    return 0
+  elif [[ " ${WHM_CONSUME_ARGS:-} " != *" --frames-fields "* ]]; then
     # shellcheck disable=SC2206
     consumer_args+=(--frames-fields ${frames_default})
     [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-cache-slices"* ]] || consumer_args+=(--frames-cache-slices)

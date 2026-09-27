@@ -40,6 +40,12 @@
 #                     the environment (the reason goes into run_manifest.json;
 #                     bbh brings its own), and renders every frame field from
 #                     the t = 0 plotfile before anything starts
+#   --frames-fields L the profile's frames, cut to the fields L ("chi", "chi K")
+#                     or to none at all ("none": every --frames-* flag dropped).
+#                     Needs WHM_FRAMES_SUBSET="<reason>" in the environment, which
+#                     the preflight records; for a study that keeps no frames
+#                     (the 08_convergence runs, 2026-09-27) or reads one field
+#                     only (the sign rule reads the chi slice cache)
 #   --consume-args S  raw consumer flags, replacing the profile entirely.  The
 #                     escape hatch for a one-off that no profile covers; if you
 #                     reach for it twice, add a profile instead
@@ -115,7 +121,7 @@ TEMPLATES="${CAMPAIGN}/templates_scan"
 
 TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 CENTER="" KEEP_LAST=3
 RESTART="" BINARY="" MAX_LEVEL="" WHAT="" FOREGROUND=0 DRYRUN=0 LABEL="test"
-PREFLIGHT="full" PREFLIGHT_ONLY=0
+PREFLIGHT="full" PREFLIGHT_ONLY=0 FRAMES_FIELDS=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --template)   TEMPLATE="$2"; shift 2 ;;
@@ -123,6 +129,7 @@ while [[ $# -gt 0 ]]; do
     --gpu)        GPU="$2"; shift 2 ;;
     --profile)    PROFILE="$2"; shift 2 ;;
     --consume-args) CONSUME_RAW="$2"; shift 2 ;;
+    --frames-fields) FRAMES_FIELDS="$2"; shift 2 ;;
     --zoom)       ZOOM="$2"; shift 2 ;;
     --coord)      COORD="$2"; shift 2 ;;
     --center)     CENTER="$2 $3 $4"; shift 4 ;;
@@ -136,7 +143,7 @@ while [[ $# -gt 0 ]]; do
     --preflight-only) PREFLIGHT_ONLY=1; shift ;;
     --foreground) FOREGROUND=1; shift ;;
     --dry-run)    DRYRUN=1; shift ;;
-    -h|--help)    sed -n '2,87p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    -h|--help)    sed -n '2,105p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *)            echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
   esac
 done
@@ -212,6 +219,28 @@ else
   FRAMES_SUBSET="$(consumer_profile_frames_subset "${PROFILE}")"
 fi
 
+# --frames-fields: cut the profile's frames to a subset, or to none.  The reason
+# must come with it (WHM_FRAMES_SUBSET), so the preflight and the manifest say
+# why this run has no movie of the fields it dropped.
+if [[ -n "${FRAMES_FIELDS}" ]]; then
+  [[ -n "${CONSUME_RAW}" ]] && { echo "--frames-fields cuts a profile's frames; with --consume-args write the frame flags yourself" >&2; exit 2; }
+  [[ -n "${WHM_FRAMES_SUBSET:-}" ]] || { echo "--frames-fields needs WHM_FRAMES_SUBSET=\"<reason>\" in the environment" >&2; exit 2; }
+  read -r -a _toks <<< "${CONSUME}"
+  _out=() _i=0
+  while (( _i < ${#_toks[@]} )); do
+    _t="${_toks[_i]}"
+    if [[ "${_t}" == --frames-* ]]; then
+      _vals=(); _i=$((_i + 1))
+      while (( _i < ${#_toks[@]} )) && [[ "${_toks[_i]}" != --* ]]; do _vals+=("${_toks[_i]}"); _i=$((_i + 1)); done
+      [[ "${FRAMES_FIELDS}" == "none" ]] && continue
+      if [[ "${_t}" == "--frames-fields" ]]; then _out+=("--frames-fields" ${FRAMES_FIELDS}); else _out+=("${_t}" "${_vals[@]}"); fi
+      continue
+    fi
+    _out+=("${_t}"); _i=$((_i + 1))
+  done
+  CONSUME="${_out[*]}"
+fi
+
 # --- the registry line ----------------------------------------------------
 # Every template's first line is a comment saying what the run is for; that is
 # the sentence the pack's summary table shows, so it is read, not retyped.
@@ -238,6 +267,7 @@ env_args=(
 [[ -n "${RESTART}" ]]   && env_args+=("WHM_RESTART=${RESTART}")
 [[ -n "${FRAMES_SUBSET}" && -z "${WHM_FRAMES_SUBSET:-}" ]] && env_args+=("WHM_FRAMES_SUBSET=${FRAMES_SUBSET}")
 [[ -n "${MAX_LEVEL}" ]] && env_args+=("WHM_MAX_LEVEL=${MAX_LEVEL}")
+[[ "${FRAMES_FIELDS}" == "none" ]] && env_args+=("WHM_FRAMES_FIELDS=none")
 if [[ "${PROFILE}" == "none" ]]; then
   env_args+=("WHM_CONSUME=0")
 else
@@ -255,6 +285,7 @@ echo "[launch] preflight: ${PREFLIGHT}$( (( PREFLIGHT_ONLY )) && echo " -- ONLY:
 if [[ -n "${WHM_FRAMES_SUBSET:-}" || -n "${FRAMES_SUBSET}" ]]; then
   echo "[launch] frames   : SUBSET allowed -- ${WHM_FRAMES_SUBSET:-${FRAMES_SUBSET}}"
 fi
+[[ -n "${FRAMES_FIELDS}" ]] && echo "[launch] frames   : cut to ${FRAMES_FIELDS} (--frames-fields)"
 
 if (( DRYRUN )); then
   /usr/bin/env "${env_args[@]}" WHM_DRYRUN=1 bash "${HERE}/run_single.sh"

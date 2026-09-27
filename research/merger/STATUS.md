@@ -1,4 +1,4 @@
-# Status — 2026-09-26 17:25 UTC
+# Status — 2026-09-27 05:45 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -6,14 +6,23 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 
 ## Live
 
-**LIVE on the first node since 17:17–17:19 UTC, 2026-09-26: CONV-1, CONV-2 and CONV-3** (the user's word, with the
-user's placement). Each passed the full preflight before it started. Each runs with no checkpoints (the user's word)
-and the full frame set.
-- **GPU 0: CONV-1 `single_eps_m1e2_ml5_t060` and CONV-2 `single_eps_m1e2_halfstep_t060`**, sharing the card (45.6 GB
-  together). Frame 0 checked for both.
-- **GPU 1: CONV-3 `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600`**, restarted from Chk03600 on coreprof-15 (45 GB at
-  the restart). Its first frame comes at t = 37. With no checkpoints, if level 4 dies before t = 57 the frozen-core leg
-  re-runs from Chk03600 with the fill armed earlier.
+Three convergence runs are live on the first node. Each passed the full preflight, and none writes checkpoints (the
+user's word). The convergence study keeps no frames and no movies (the user's word, 2026-09-27); the three live runs
+still render the frames they were launched with.
+- **GPU 0: CONV-1 `single_eps_m1e2_ml5_t060` and CONV-2 `single_eps_m1e2_halfstep_t060`**, sharing the card (46 GB),
+  since 17:17 UTC on 2026-09-26. As of 04:50 UTC they were at t = 22.9 and 43.8, both healthy.
+  - CONV-2 (Δt/2) reproduces its dt = 0.02 partner's areal radius to 4 decimals through t = 40. ETA ~09:10 UTC.
+  - CONV-1 (level 5) follows its level-4 partner (R 4.0204 vs 4.0205 at t = 20). ETA ~16:00 UTC, once CONV-2 frees the
+    card.
+- **GPU 1: CONV-3w `v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600`**, since 05:04 UTC: CONV-3 with the R = 20
+  sphere and its path on level 1, the wave-zone test. It is at 62 GB and its level-1 ball exists (9.09M cells against
+  CONV-3's 4.10M). ETA ~15:30 UTC.
+- **CONV-3 is closed out** (finished t = 100 at 02:12 UTC; filed under `08_convergence/`, packed, scratch pruned).
+  - Its (2,2) burst matches the level-5 chain on every sphere: peak ratio 1.000, waveform within 0.1 % of peak.
+  - Both runs extract on the base grid, so this tests the core's resolution, not the wave zone's. CONV-3w tests the
+    wave zone ["2026-09-27 (05:00–05:45 UTC)"].
+- **Awaiting the user's yes:** delete the frames CONV-1/2/3/3w have already rendered (~0.5 GB, untracked; the CLAUDE.md
+  frames rule asks once).
 
 **Done 2026-09-26 (afternoon, not committed): the referee's fixes** ["2026-09-26 (afternoon, paper session)"]. Retitled "The Four Fates of Ghost-Supported Wormholes: Collapse, Inflation, Merger and Scattering in Numerical Relativity"; the abstract is the user's own text (16:00 UTC). Cosmology conditional on z_e; no "baby universe", no percolation bound; "wall" → "interior failure"; no vacuum ISCO (the pull's period P = 75–100; ε = 1e-15 buys 1.8–2.7 periods); η = 4 horizons in §VII C; fly-by trust window t = 70 (new Fig. 10(g); Figs. 14/15/17/18 cut). Re-read on CPU: throat energy 2.6e-5 (to t = 58), 44× the matched control; Kerr rise 1.34; orbit fractions 0.27–0.30; **the mouths' τ with the companion's field removed: the merging arm has no growth of its own, the fly-by τ = 3.9** (the referee's "lower bound" had the wrong sign); the mouth fit had dropped its end rows (τ 3.64/4.33 now). 17 references. Ledger: 1000 rows, 0 problems. Caveats the referee asked for are in the text (Δt, ADM balance, curvature at the failure): G17/G18 queued. The head-on t ≤ 70 sentence was narrowed on the user's word (16:10 UTC): its numbers past t = 70 carry the late spread; no re-gate. No DOI yet (the user will add it).
 
@@ -80,10 +89,11 @@ with only the named keys changed, and all nine PASS the full preflight (2026-09-
 |---|---|---|---|---|---|
 | CONV-1 **LIVE** | `single_eps_m1e2_ml5_t060` (`single_eps_m1e2_ml5_t060`) | τ: third level, a convergence order (abstract) | `single_eps_m1e2_t100` / `_ml4_t100` | 14 | 27 |
 | CONV-2 **LIVE** | `single_eps_m1e2_halfstep_t060` (`single_eps_m1e2_halfstep_t060`) | Δt: dt_multiplier 0.01, intervals doubled (§III) | `single_eps_m1e2_t100` | 7 | 20 |
-| CONV-3 = G9 **LIVE** | `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` (`prod_L128_p012_lvl4_t100_freeze`) | spiral burst and energy, level 4 vs 5; fill at t = 57 in the same leg | the production chain | 9 | 56 |
+| CONV-3 = G9 **DONE, closed out** | `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` (`prod_L128_p012_lvl4_t100_freeze`) | spiral burst and energy, level 4 vs 5; fill at t = 57 in the same leg | the production chain | 9 | 56 |
+| CONV-3w **LIVE** | `v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600` (`prod_L128_p012_lvl4_wz1_t100_freeze`) | the WAVE ZONE: R = 20 and its path (r < 24) on level 1, vs CONV-3 on level 0 | CONV-3 | 10 | 62 |
 | CONV-4 | `merge_orbit_flip_d12_p045_L128_lvl4_t095` (`flyby_p045_L128_lvl4_t095`) | fly-by energy, scalar, mouths; t = 95 reaches the R = 44 gate | `…p045_L128_lvl5_t100` | 21 | 56 (+1–5 at the pass) |
 | CONV-5 | `merge_orbit_flip_d12_p045_L128_lvl3_t095` (`flyby_p045_L128_lvl3_t095`) | the fly-by's third level (order) | same | 11 | 52 (+1–5) |
-| CONV-6 = G12 | `merge_headon_flip_d8_lvl5from0_ball4_t100` (`headon_d8_lvl5from0_ball4_t100`) | remnant horizon on level 4, not 3 ("loses a quarter", abstract) | `…v1_lvl5from0_scalar_t100`, `…v1_lvl3down_t100_r03500` | 34 | 60 |
+| CONV-6 = G12 | `merge_headon_flip_d8_lvl5from0_ball4_t100` (`headon_d8_lvl5from0_ball4_t100`) | remnant horizon on level 4, not 3 ("loses a quarter", abstract); since 2026-09-27 also the head-on's wave zone: R = 10 and its path (r < 12) on level 2 | `…v1_lvl5from0_scalar_t100`, `…v1_lvl3down_t100_r03500` | 34 | 60 |
 | CONV-7 | `merge_orbit_flip_d12_p035_lvl5_t080` (`scan_p035_lvl5_t080`) | p = 0.35 passes at level 5 (the abstract's 50–70 %) | `…p035_t200` (closest 2.75 at t = 42) | 35 | 47 |
 | CONV-8a/b | `ctrl_rest_d12_ml4_t015`, `ctrl_flip_d12_ml4_t015` | the sign ratio 1.52 at level 4 (abstract) | `ctrl_rest_d12`, `ctrl_flip_d12` | 3 + 3 | 41 each |
 
@@ -93,11 +103,14 @@ footprint × 1.8 reproduces every measured one (level-5 fly-by 34.0 → 58.8; L 
 79.6 GB; most runs peak in step 1.
 
 **Sharing a card buys nothing**: two L = 64 level-4 arms on one card ran 3.9 u/h each against 8.7 alone (GPU_PLAN
-Phase 2b). Live placement (the user's): card 0 runs CONV-1 and CONV-2 together, card 1 runs CONV-3. The rest go next, one arm
-per card, balanced at ~69 h a card:
-- card 1 after CONV-3: CONV-7 → CONV-4 → CONV-8a
-- card 0 after CONV-1/2: CONV-6 → CONV-5 → CONV-8b
+Phase 2b). Placement now: card 0 runs CONV-1 and CONV-2 together; card 1 runs CONV-3w. Next, in this order:
+- card 0: when CONV-2 ends (~09:10 UTC), CONV-8a beside CONV-1 (41 + 27 GB), then CONV-8b; when card 0 empties, CONV-6
+  (66 GB, alone).
+- card 1 after CONV-3w (~15:30 UTC): CONV-7, then CONV-4, then CONV-5.
 
+Every remaining launch goes without frames: `--frames-fields none` with
+`WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)"`. CONV-8a/b use `--frames-fields chi`
+instead, because the sign rule reads the chi slice cache. Close-outs use `WHM_MOVIES=0`.
 The queued templates still write rolling checkpoints. The user's no-checkpoint word was given for the three live runs.
 
 Pairs that fit if two must share: CONV-1 + CONV-2 (47 GB), CONV-2 + CONV-8 (61), CONV-1 + CONV-8 (68), CONV-2 +
@@ -109,12 +122,12 @@ Launch from the repo root with `L=grteclyn-wrapper/scripts/campaigns/wormhole_me
 bash $L --gpu G --template params_single_eps_m1e2_ml5_t060.txt --name single_eps_m1e2_ml5_t060 --profile headon-scout
 bash $L --gpu G --template params_single_eps_m1e2_halfstep_t060.txt --name single_eps_m1e2_halfstep_t060 --profile headon-scout --binary $B/main3d_boost_2026-09-08.ex
 bash $L --gpu G --template params_prod_L128_p012_lvl4_t100_freeze.txt --name v2_spiral_d12_p012_L128_lvl4_t100_freeze --profile orbit-modes --zoom 64 --coord 64 --binary $B/main3d_coreprof_2026-09-15.ex --restart "$PWD/runs/wormhole_merger/05_binary_spiral/p012/_keep_spiral_premerger_decay/BinaryWormholeChk03600"
-bash $L --gpu G --template params_flyby_p045_L128_lvl4_t095.txt --name merge_orbit_flip_d12_p045_L128_lvl4_t095 --profile orbit-modes-scan --zoom 128 --coord 64
-bash $L --gpu G --template params_flyby_p045_L128_lvl3_t095.txt --name merge_orbit_flip_d12_p045_L128_lvl3_t095 --profile orbit-modes-scan --zoom 128 --coord 64
-bash $L --gpu G --template params_headon_d8_lvl5from0_ball4_t100.txt --name merge_headon_flip_d8_lvl5from0_ball4_t100 --profile headon-modes --zoom 40 --binary $B/main3d_boost_2026-09-08.ex
-bash $L --gpu G --template params_scan_p035_lvl5_t080.txt --name merge_orbit_flip_d12_p035_lvl5_t080 --profile orbit-modes
-bash $L --gpu G --template params_ctrl_rest_d12_ml4_t015.txt --name ctrl_rest_d12_ml4_t015 --profile orbit
-bash $L --gpu G --template params_ctrl_flip_d12_ml4_t015.txt --name ctrl_flip_d12_ml4_t015 --profile orbit
+WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_flyby_p045_L128_lvl4_t095.txt --name merge_orbit_flip_d12_p045_L128_lvl4_t095 --profile orbit-modes-scan --frames-fields none
+WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_flyby_p045_L128_lvl3_t095.txt --name merge_orbit_flip_d12_p045_L128_lvl3_t095 --profile orbit-modes-scan --frames-fields none
+WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_headon_d8_lvl5from0_ball4_t100.txt --name merge_headon_flip_d8_lvl5from0_ball4_t100 --profile headon-modes --frames-fields none --binary $B/main3d_boost_2026-09-08.ex
+WHM_FRAMES_SUBSET="convergence study: no frames (the user's word, 2026-09-27)" bash $L --gpu G --template params_scan_p035_lvl5_t080.txt --name merge_orbit_flip_d12_p035_lvl5_t080 --profile orbit-modes --frames-fields none
+WHM_FRAMES_SUBSET="convergence study: chi only, for the sign rule (the user's word, 2026-09-27)" bash $L --gpu G --template params_ctrl_rest_d12_ml4_t015.txt --name ctrl_rest_d12_ml4_t015 --profile orbit --frames-fields chi
+WHM_FRAMES_SUBSET="convergence study: chi only, for the sign rule (the user's word, 2026-09-27)" bash $L --gpu G --template params_ctrl_flip_d12_ml4_t015.txt --name ctrl_flip_d12_ml4_t015 --profile orbit --frames-fields chi
 ```
 Each `--binary` is the partner's build: CONV-2 and CONV-6 compare against boost-built runs; CONV-3 splices onto the
 coreprof-15 legs. The rest run on the pin, which has the same source as the level-4/5 partners.

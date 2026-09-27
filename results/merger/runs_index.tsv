@@ -152,3 +152,4 @@ merge_orbit_flip_d12_p045_t200	06_binary_flyby/p045	reconstructed			none (launch
 bbh_control_d12_p012	07_bbh_control	reconstructed			none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_control_d12_p012_t150	07_bbh_control	reconstructed			none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_control_d12_p045_t100	07_bbh_control	reconstructed	BinaryBH3d.gnu.MPI.CUDA.ex	1cc27217-dirty	none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
+v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600	08_convergence	launch manifest	main3d_coreprof_2026-09-15.ex	unknown	pass	0	0	4	128.0	256	100.0	yes		n/a	ok	unknown	ok

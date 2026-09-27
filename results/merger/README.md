@@ -1053,6 +1053,16 @@ what two throats do when they touch *without* a horizon.
 Frames (χ, K, lapse, φ, Π, Weyl4), the slice cache and all Weyl4 modes at
 R = 10/14/18 were written before the abort, so the run is fully analysable.
 
+### Convergence: the spiral burst does not depend on the core's resolution
+- **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
+  with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,
+  waveform within 0.1 % of peak (1e-5 to 1.5e-4 relative at R = 20) up to each sphere's freeze light cone. The
+  core differs as it should, reaching the chi floor by t = 55 at level 4 against 5.8e-7 at level 5. The extraction
+  spheres sit on the base grid (dx = 0.5) in both runs, so this tests the core's resolution, not the wave zone's;
+  the wave-zone twin (R = 20 and its path on level 1) is CONV-3w.
+- **Runs.** `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` *(pack, 08_convergence/)* against the production
+  legs `v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600` and `…_lvl5_t100_freeze_r05700` (05_binary_spiral/p012_paper/).
+
 ## `figures/` — the campaign figures, by group
 
 One folder per group, the same names as `campaign/`.
@@ -1141,6 +1151,9 @@ campaign/
     psi4_merger_stitched_0_97.dat   the stitched p = 0.12 waveform, t = 0 -> 97
   06_binary_flyby/<run>/          p = 0.35 and 0.45: the fly-bys (and p045's Helfer twin)
   07_bbh_control/<run>/           the vacuum binary-black-hole control, t = 100 and t = 150
+  08_convergence/<run>/           the convergence study for the referee (2026-09-26/27): each arm is its
+                                  partner's params with one knob changed (max_level, dt, or the wave
+                                  zone's level); no movies, no frames kept (the user's word)
   <group>/NOTES.md                the group's working notes, copied from the run tree
 
 campaign/<group>/<run>/           what every run directory holds

@@ -1322,6 +1322,57 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-27 (05:00–05:45 UTC) — CONV-3 closed out: the spiral burst is core-independent; the wave zone was untested, so CONV-3w runs; the lifecycle goes into CLAUDE.md
+
+- **CONV-3 finished** at 02:12 UTC, clean to t = 100 (7.2 u/h, arena 55.6 GB, no NaN in any stream).
+  - The fill engaged at t = 57: χ_min inside r ≤ 1.4 is frozen from then on. The level-4 core was already on the χ floor by
+    t = 55, against 5.8e-7 at level 5, and max|K| was 1.66 against 0.98.
+  - The (2,2) burst matches the level-5 chain on every sphere: peak ratio 1.000; waveform within 0.1 % of peak
+    (1e-5 to 1.5e-4 relative at R = 20) up to each sphere's freeze light cone (57 + R − 1.9).
+  - The tracker agrees too: separation 1.170 against 1.166 at t = 37.
+- **What that does not test.** Every run in this campaign extracts on the base grid: `extraction_levels = 0`, and an
+  extraction point is read from the finest level covering it, which beyond the tracked boxes (half-width 16 at level
+  1) is level 0. So `max_level` refines only the core, and CONV-3 says the burst does not depend on the core's
+  resolution — not that the wave zone is resolved. The miss was the queue's design: it copied the partners' params and
+  changed `max_level` only (the user, 2026-09-27: "why this wasnt thought in advance").
+  - The bursts are long: periods 30 M (head-on), 60 M (spiral), 73 M (fly-by). That is 60–145 points per wavelength at
+    Δx = 0.5 with fourth-order stencils, so the propagation error is estimated at ~1e-5.
+  - The built-in and consumer extractions agree, but both read the same level-0 data at R ≥ 20, so that agreement
+    tests the extraction, not the propagation.
+- **CONV-3w launched** at 05:04 UTC on card 1: `v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600`, which is CONV-3
+  with `extraction_levels = 1 0 0 0`. The ExtractionTagger refines r < 24 to level 1, so the R = 20 wave travels and is
+  extracted at Δx = 0.25 the whole way. Preflight PASS; level 1 advances 9.09M cells against CONV-3's 4.10M; 62 GB;
+  no checkpoints. ETA ~15:30 UTC.
+- **CONV-6 changed:** `extraction_levels = 2 0 0 4`. After the merger the partner's R = 10 sphere already sits in the
+  tracked level-1 box, so a level-1 ball would be a no-op; a level-2 ball (r < 12, Δx 0.125, ~+4 GB) doubles it. This
+  makes CONV-6 the head-on's wave-zone test as well. The fly-by, with the longest period, is covered by the spiral's
+  result.
+- **Close-out, done as the systematics say:**
+  - `table1_groups.tsv` row `-` (packed, not counted in Table I until the paper cites it).
+  - Filed into the new group `08_convergence/` (the user: a convergence subfolder "so we dont mess up with other runs").
+  - `closeout.sh` with `WHM_MOVIES=0`: 0 problems; pack 41 MB; claims check 1000 rows, 0 problems.
+  - Registry row and README claim updated.
+  - Scratch pruned: 17 GB of plotfiles, logged in `MANIFEST_CLEANUP_2026-09-27.md`.
+- **No frames or movies for the convergence study** (the user: "we dont need to save the movies … frames … it will
+  pollute git"). Movies live in the tracked `results/merger/movies/`; frames are only in the untracked run tree.
+  - Close-outs use `WHM_MOVIES=0`.
+  - New launches use `launch.sh --frames-fields none` (new option; `run_single.sh` learns `WHM_FRAMES_FIELDS=none`) with
+    the reason in `WHM_FRAMES_SUBSET`.
+  - CONV-8a/b keep `--frames-fields chi`, because the sign rule reads the chi slice cache.
+  - The frames already rendered by CONV-1/2/3/3w (~0.5 GB, untracked) stay until the user's explicit yes (CLAUDE.md
+    frames rule).
+- **The pack no longer takes live runs.** The first repack had copied the three live arms, with partial data, to the
+  top of `campaign/`: git pollution. `pack_results.sh` now skips a run whose launcher is alive, and the three copies
+  (untracked) were removed.
+  - The repack also dropped a hand-added referee note from the generated `QUEUE2E_GATES.md`. The note now lives in
+    `analysis/queue2e_gates.py`, and the file regenerates identical to the committed one.
+- **CLAUDE.md:** a new "When a run finishes" section (check → pack → document → prune → next → commit), the
+  resolution-test rule, and the convergence study's frames/movies exception. AGENTS.md is a symlink to it.
+- **Next:**
+  - When CONV-2 finishes (~09:10 UTC), run its lifecycle, then launch CONV-8a beside CONV-1 on card 0 (41 + 27 GB),
+    then CONV-8b. When card 0 empties: CONV-6.
+  - Card 1 after CONV-3w: CONV-7, then CONV-4, then CONV-5.
+
 ### 2026-09-26 (evening) — the convergence queue: nine runs, templates preflighted, memory measured; every other option dropped
 
 **The user's word (17:00 UTC):** the queue holds the paper's convergence runs only; every other option leaves it. G1–G8,
