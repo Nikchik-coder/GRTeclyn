@@ -225,6 +225,13 @@ class SimulationParameters : public SimulationParametersBase
                 0.0);
         pp.load("constraint_solve_puncture_coefficient_B", cs.puncture_B,
                 cs.puncture_A);
+        // Puncture mode 3 (far-side matching): also hold each mouth's
+        // far-side scalar charge (1, through its coordinate scale) or only
+        // its far-side mass (0, through c); tolerance on |M_far/M_iso - 1|.
+        pp.load("constraint_solve_match_charge", cs.match_charge, 1);
+        pp.load("constraint_solve_match_tolerance", cs.match_tolerance,
+                1.0e-6);
+        pp.load("constraint_solve_match_max_iter", cs.match_max_iter, 10);
         pp.load("constraint_solve_tolerance", cs.tolerance_rel, 1.0e-10);
         pp.load("constraint_solve_tolerance_abs", cs.tolerance_abs, 0.0);
         pp.load("constraint_solve_max_iter", cs.max_iter, 200);
@@ -255,6 +262,7 @@ class SimulationParameters : public SimulationParametersBase
                 }
                 else
                 {
+                    // Mode 0; mode 3 starts here too and iterates at t = 0.
                     c = BinaryWormholeInitialData::
                         superposed_puncture_coefficient(wp, which);
                 }
@@ -455,13 +463,29 @@ class SimulationParameters : public SimulationParametersBase
                         "must be 0 (the superposition) or 1 (bare punctures, "
                         "validation only)");
         check_parameter("constraint_solve_puncture_mode", cs.puncture_mode,
-                        cs.puncture_mode >= 0 && cs.puncture_mode <= 2,
+                        cs.puncture_mode >= 0 && cs.puncture_mode <= 3,
                         "must be 0 (the superposition's own c), 1 (the "
-                        "isolated throat's c) or 2 (explicit values)");
+                        "isolated throat's c), 2 (explicit values) or 3 "
+                        "(far-side matched: each mouth's far-side mass and "
+                        "charge are the isolated throat's)");
+        check_parameter("constraint_solve_match_charge", cs.match_charge,
+                        cs.match_charge == 0 || cs.match_charge == 1,
+                        "must be 1 (match the far-side mass and charge, "
+                        "through c and the coordinate scale) or 0 (the mass "
+                        "alone, through c)");
+        check_parameter("constraint_solve_match_tolerance",
+                        cs.match_tolerance, cs.match_tolerance > 0.0,
+                        "must be > 0");
+        check_parameter("constraint_solve_match_max_iter", cs.match_max_iter,
+                        cs.match_max_iter >= 0, "must be >= 0");
         if (!cs.enabled)
         {
             return;
         }
+        check_parameter("constraint_solve_background", cs.background,
+                        cs.puncture_mode != 3 || cs.background == 0,
+                        "puncture mode 3 matches the physical background (0) "
+                        "only; bare punctures are a validation mode");
         check_parameter("constraint_solve_puncture_coefficient_A/B",
                         std::min(wp.solve_puncture_A,
                                  wp.b0_B > 0.0 ? wp.solve_puncture_B : 1.0),

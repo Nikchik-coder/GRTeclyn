@@ -269,20 +269,59 @@
     throat A the factor e^{-u_B(x_A)/2} on top (1.064 at d = 8), exactly the
     uniform rescaling that keeps a static throat static in the companion's
     potential.  The background therefore carries c through
-    solve_puncture_shift_X / r_X:
+    solve_puncture_shift_X / r_X.
+
+    WHICH THROAT IS IT?  Its far side says so: Psi = c/r + d near the centre,
+    and the inversion r' = c^2/r makes that an asymptotically flat end with
+    ADM mass M_far = 2 c d and scalar charge Q_far = 4 C c^2 / a, both frozen
+    in time.  The isolated (a, m) throat has M_far = -m e^{pi m/a} and
+    Q_far = sqrt(a^2 + m^2) e^{pi m/a} / sqrt(4 pi): -4.8105 and 3.0344 for
+    a = 2, m = 1.  (M_far, Q_far) name one isolated drainhole (a', m'), and m'
+    is the mouth's one-body mass.  DrainholeConstraintSolve measures all of it
+    after every solve.  The d = 8 head-on, L = 64, level 3, t = 0 (CPU,
+    2026-09-27; R_min over coordinate spheres, M_ADM from the volume
+    identity in DrainholeConstraintSolve.hpp):
+
+                          R_min   M_far    Q_far   m'      M_ADM   M_ADM - sum m'
+      isolated throat     3.890   -4.810   3.034   1       1
+      superposed pair     4.466   -5.363   3.436   1.149   2.00 (not a solution)
+      mode 0 (solved)     4.523   -5.368   3.436   1.148   2.738   +0.44
+      mode 1              4.197   -4.60    3.034   1.041   2.434
+      mode 3, c alone     4.289   -4.810   3.146   1.071   2.521   +0.38
+      mode 3              3.892   -4.810   3.034   1.000   2.362   +0.36
+
+    So the superposition's mouths are not the isolated throat: the
+    companion's constants make each one ~1.13 x larger in every length, and
+    the solve at the superposition's c keeps them so (M_far moves 0.09 %, what
+    the Robin face's constant offset of w accounts for).  phi fixes the static
+    throat's coordinate size, so c alone cannot undo that; mode 3 changes the
+    coordinate size too.
 
       mode 0 (superposed, default): c = the superposition's own, shift 0.
              w is bounded at the centres and each throat keeps its superposed
-             size (R_min 4.466 -> 4.522 at d = 8, axisymmetric prototype).
+             far side and size.
       mode 1 (isolated): c = (a/2) e^{pi m/2a}.  In the companion's potential
              this is a 6 % smaller c than a static throat wants -- a spherical
              seed of that size.
-      mode 2 (explicit): c = constraint_solve_puncture_coefficient_A/B, e.g.
-             the value that holds M_ADM at the superposition's sum of masses.
+      mode 2 (explicit): c = constraint_solve_puncture_coefficient_A/B.
+      mode 3 (far-side matched): throat X at coordinate scale sigma_X (a ->
+             sigma a and m -> sigma m in phi, u and Omega; C is scale-free),
+             sigma_X = (c_X / c_iso)^2 so that Q_far is the isolated value,
+             and c_X iterated until M_far is too (finite-difference Jacobian,
+             then Broyden; 2 passes, 5 solves).  Matching both far-side
+             numbers is the local static drainhole at its isolated size: R_min
+             comes out 0.06 % from R* = 3.8895 without being asked for.  At
+             d = 8, c = 2.0309, sigma = 0.8574.  constraint_solve_match_charge
+             = 0 keeps sigma = 1 and matches M_far with c alone: R_min stays
+             10 % above R*, Q_far 3.7 %.
 
-    What the solve adds is mostly the scalar interaction energy that the
-    superposition leaves out: for opposite charges M_ADM rises by
-    ~ (a^2 + m^2)/d at fixed c (+0.73 at d = 8, +0.43 at d = 12).
+    What the pair adds to its mouths' one-body masses: for the flipped pair
+    (which attracts) +0.36 at mode 3, for the like pair (which repels) -0.62.
+    Their mean, -0.13, is the Newtonian binding -m^2/d = -0.125, as for
+    black-hole punctures; half their difference, +-0.49, is the ghost scalar's
+    cross energy, -int grad phi_A . grad phi_B = +-(a^2 + m^2)/d = +-0.63 for
+    point charges.  It is positive where the throats attract: the pair's mass
+    goes the way of its scalar field energy, not of its force.
 
     Background 1 (constraint_solve_background = 1) replaces Psi_0 by the bare
     punctures 1 + sum c_X / r_X.  It is a validation mode: on one throat the
@@ -527,6 +566,140 @@ class BinaryWormholeInitialData
             c *= std::exp(-0.5 * drainhole_u<double>(std::sqrt(d2), a_Y, m_Y));
         }
         return c;
+    }
+
+    //! Amplitude C of the drainhole scalar phi = C atan X (id_type 1): the
+    //! field equations fix 4 pi C^2 a^2 = a^2 + m^2.  Scale-free in (a, m).
+    static double scalar_amplitude(const double a, const double m)
+    {
+        return std::sqrt(a * a + m * m) / (a * std::sqrt(4.0 * M_PI));
+    }
+
+    //! The isolated drainhole's far side (Psi -> c/r + d at its centre):
+    //! ADM mass 2 c d = -m e^{pi m/a} and scalar charge 4 C c^2 / a =
+    //! sqrt(a^2 + m^2) e^{pi m/a} / sqrt(4 pi).
+    static double isolated_far_side_mass(const double a, const double m)
+    {
+        return -m * std::exp(M_PI * m / a);
+    }
+    static double isolated_far_side_charge(const double a, const double m)
+    {
+        return std::sqrt(a * a + m * m) * std::exp(M_PI * m / a) /
+               std::sqrt(4.0 * M_PI);
+    }
+
+    //! Far-side scalar charge of throat X for a puncture coefficient c:
+    //! near the centre phi = phi_0 + (4 C / a) r + (l = 1 terms), and the
+    //! inversion r' = c^2 / r turns the r term into 4 C c^2 / (a r').
+    static double far_side_charge(const params_t &p, const int which,
+                                  const double c)
+    {
+        const double a = (which == 0) ? p.b0_A : p.b0_B;
+        const double m = (which == 0) ? p.drainhole_mass_A : p.drainhole_mass_B;
+        return 4.0 * scalar_amplitude(a, m) * c * c / a;
+    }
+
+    //! Regular part d of the solve's background at throat X's centre,
+    //! Psi_bg -> c_X / r + d + O(r) (monopole; the companion's gradient adds
+    //! only l = 1).  Background 0 with shift_Y = c_Y - c_superposed,Y:
+    //!     d = e^{-u_Y(d_XY)/2} e^{pi m/2a} [ (sqrt(Omega_Y(d_XY)) - 1) - m/a ]
+    //!         + shift_Y / d_XY,
+    //! background 1: d = 1 + c_Y / d_XY.  A single throat has
+    //! -(m/a) e^{pi m/2a}.  Checked against the closed form Psi_bg on spheres
+    //! r -> 0 to 1e-8.
+    static double background_regular_part(const params_t &p, const int which)
+    {
+        const double a   = (which == 0) ? p.b0_A : p.b0_B;
+        const double m   = (which == 0) ? p.drainhole_mass_A
+                                        : p.drainhole_mass_B;
+        const double a_Y = (which == 0) ? p.b0_B : p.b0_A;
+        const double m_Y = (which == 0) ? p.drainhole_mass_B
+                                        : p.drainhole_mass_A;
+        const double c_Y = (which == 0) ? p.solve_puncture_B
+                                        : p.solve_puncture_A;
+        double d2 = 0.0;
+        for (int idir = 0; idir < AMREX_SPACEDIM; ++idir)
+        {
+            const double dd = p.centerA[idir] - p.centerB[idir];
+            d2 += dd * dd;
+        }
+        const double dist = std::sqrt(d2);
+        const bool has_Y  = (a_Y > 0.0) && (dist > 0.0);
+        if (p.solve_background == 1)
+        {
+            return 1.0 + (has_Y ? c_Y / dist : 0.0);
+        }
+        double E_Y = 1.0, delta_Y = 0.0, shift_term = 0.0;
+        if (has_Y)
+        {
+            if (m_Y != 0.0)
+            {
+                E_Y = std::exp(-0.5 * drainhole_u<double>(dist, a_Y, m_Y));
+            }
+            delta_Y = std::sqrt(1.0 + a_Y * a_Y / (4.0 * d2)) - 1.0;
+            shift_term =
+                (c_Y - superposed_puncture_coefficient(p, 1 - which)) / dist;
+        }
+        return E_Y * std::exp(0.5 * M_PI * m / a) * (delta_Y - m / a) +
+               shift_term;
+    }
+
+    //! grad phi of the superposed scalar at a point given as an offset from
+    //! grid_center (host; the same profiles compute() lays down, id_type 1).
+    static void scalar_gradient(const params_t &p, const double x,
+                                const double y, const double z, double g[3])
+    {
+        g[0] = g[1] = g[2] = 0.0;
+        for (int body = 0; body < 2; ++body)
+        {
+            const double a = (body == 0) ? p.b0_A : p.b0_B;
+            if (a <= 0.0)
+            {
+                continue;
+            }
+            const double m     = (body == 0) ? p.drainhole_mass_A
+                                             : p.drainhole_mass_B;
+            const auto &centre = (body == 0) ? p.centerA : p.centerB;
+            const double sign  = (body == 0) ? 1.0 : p.phi_sign_B;
+            const double dx    = x - centre[0];
+            const double dy    = y - centre[1];
+            const double dz    = z - centre[2];
+            const double r2    = std::max(dx * dx + dy * dy + dz * dz, 1.0e-24);
+            const double r     = std::sqrt(r2);
+            const double q     = r2 + 0.25 * a * a;
+            const double f     = sign * scalar_amplitude(a, m) * a / (q * r);
+            g[0] += f * dx;
+            g[1] += f * dy;
+            g[2] += f * dz;
+        }
+    }
+
+    //! Ahat_ij Ahat^ij of the summed Bowen-York terms at a point given as an
+    //! offset from grid_center (host; flat indices, as the solve uses it).
+    static double bowen_york_square(const params_t &p, const double x,
+                                    const double y, const double z)
+    {
+        double A11 = 0.0, A12 = 0.0, A13 = 0.0;
+        double A22 = 0.0, A23 = 0.0, A33 = 0.0;
+        for (int body = 0; body < 2; ++body)
+        {
+            const double a = (body == 0) ? p.b0_A : p.b0_B;
+            const auto &P  = (body == 0) ? p.momentumA : p.momentumB;
+            if (a <= 0.0 || (P[0] == 0.0 && P[1] == 0.0 && P[2] == 0.0))
+            {
+                continue;
+            }
+            const auto &centre = (body == 0) ? p.centerA : p.centerB;
+            const double dx    = x - centre[0];
+            const double dy    = y - centre[1];
+            const double dz    = z - centre[2];
+            const double r2    = std::max(dx * dx + dy * dy + dz * dz, 1.0e-24);
+            const double r     = std::sqrt(r2);
+            add_bowen_york<double>(dx / r, dy / r, dz / r, r2, P[0], P[1],
+                                   P[2], A11, A12, A13, A22, A23, A33);
+        }
+        return A11 * A11 + A22 * A22 + A33 * A33 +
+               2.0 * (A12 * A12 + A13 * A13 + A23 * A23);
     }
 
     //! Everything the Hamiltonian-constraint solve needs at one cell (see the
@@ -1118,7 +1291,7 @@ class BinaryWormholeInitialData
     //! Ahat_ij.  (nx,ny,nz) is the unit radial vector from the throat and r2
     //! the (regularised) squared distance to it.
     template <class data_t>
-    AMREX_GPU_DEVICE AMREX_FORCE_INLINE static void
+    AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE static void
     // NOLINTNEXTLINE(bugprone-easily-swappable-parameters)
     add_bowen_york(const data_t nx, const data_t ny, const data_t nz,
                    const data_t r2, const double Px, const double Py,

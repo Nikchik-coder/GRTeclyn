@@ -193,6 +193,13 @@ RULES: list[tuple[str, str, str, str, str]] = [
      "cs: constraint-solved initial data -- the t = 0 Hamiltonian constraint solved on the initial "
      "hierarchy (constraint_solve = 1, DrainholeConstraintSolve.hpp); phi, Ahat_ij, Pi and the lapse "
      "stay the superposition's"),
+    (r"csm", "constraint_solve", "1", "eq",
+     "csm: constraint-solved initial data with FAR-SIDE-MATCHED throats (implies cs; see the next rule)"),
+    (r"csm", "constraint_solve_puncture_mode", "3", "eq",
+     "csm: puncture mode 3 -- each mouth's far-side ADM mass and scalar charge are the isolated "
+     "drainhole's (-m e^{pi m/a}, sqrt(a^2+m^2) e^{pi m/a}/sqrt(4 pi)), through its puncture "
+     "coefficient and coordinate scale; without it (cs) each mouth keeps the superposition's, 1.115 x "
+     "the isolated far-side mass at d = 8 (DrainholeConstraintSolve.hpp)"),
     (r"w(\d+)", "wormhole_helfer_width", "float(g1)", "approx",
      "w<N>: Helfer window width N (auto = d/3 = 4 at d = 12)"),
     (r"single|stage1|s15|s16ml\d+|s1uni\d+|s20", "derived:throat_B_present", "False", "eq",
@@ -340,6 +347,7 @@ DEFAULTS = {
     "wormhole_phi_sign_B": 1.0,
     "wormhole_helfer_correction": 0,
     "constraint_solve": 0,
+    "constraint_solve_puncture_mode": 0,
     "wormhole_helfer_width": 0.0,
     "wormhole_helfer_power": 2.0,
     "core_matter_damping": 0,

@@ -48,6 +48,8 @@ mu(\d+)	derived:mu	float(g1)	approx	mu<N>: mass-to-scale ratio mu = m/a = wormho
 helfer	wormhole_helfer_correction	1	eq	helfer: Helfer/Ning one-body superposition correction on (window auto = d/3 unless w<N>)	5	0
 plain	wormhole_helfer_correction	0	eq	plain: plain superposition (the Helfer twins' reference)	1	0
 cs	constraint_solve	1	eq	cs: constraint-solved initial data -- the t = 0 Hamiltonian constraint solved on the initial hierarchy (constraint_solve = 1, DrainholeConstraintSolve.hpp); phi, Ahat_ij, Pi and the lapse stay the superposition's	1	0
+csm	constraint_solve	1	eq	csm: constraint-solved initial data with FAR-SIDE-MATCHED throats (implies cs; see the next rule)	0	0
+csm	constraint_solve_puncture_mode	3	eq	csm: puncture mode 3 -- each mouth's far-side ADM mass and scalar charge are the isolated drainhole's (-m e^{pi m/a}, sqrt(a^2+m^2) e^{pi m/a}/sqrt(4 pi)), through its puncture coefficient and coordinate scale; without it (cs) each mouth keeps the superposition's, 1.115 x the isolated far-side mass at d = 8 (DrainholeConstraintSolve.hpp)	0	0
 w(\d+)	wormhole_helfer_width	float(g1)	approx	w<N>: Helfer window width N (auto = d/3 = 4 at d = 12)	1	0
 single|stage1|s15|s16ml\d+|s1uni\d+|s20	derived:throat_B_present	False	eq	single / stage labels: ONE throat -- throat B removed by wormhole_throat_radius_B = 0 (B defaults to A, so it must be set; SimulationParameters.hpp)	44	0
 merge|ctrl|place	derived:throat_B_present	True	eq	merge / ctrl / place: two throats (wormhole_throat_radius_B > 0) -- untestable in 1: merge_orbit_flip_d12_r05000 (no params)	79	0

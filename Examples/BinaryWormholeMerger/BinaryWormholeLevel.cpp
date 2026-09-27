@@ -448,17 +448,43 @@ void BinaryWormholeLevel::specific_post_init()
     {
         solve_initial_constraints();
     }
+    else if (Level() == 0 && simParams().wormhole_params.id_type == 1 &&
+             simParams().recipe_initial_data_file.empty())
+    {
+        // The analytic superposition: each mouth's far side in closed form
+        // (DrainholeConstraintSolve.hpp), for comparison with a solved twin.
+        // Log only; the data are untouched.
+        const auto mouths = superposed_mouths(simParams().wormhole_params);
+        for (int X = 0; X < 2; ++X)
+        {
+            const MouthReport &mo = mouths[X];
+            if (!mo.present)
+            {
+                continue;
+            }
+            amrex::Print() << "Superposed data, mouth " << (X == 0 ? 'A' : 'B')
+                           << ": c " << mo.c << ", far-side mass " << mo.M_far
+                           << " (" << mo.M_far / mo.M_far_iso
+                           << " x the isolated " << mo.M_far_iso
+                           << "), far-side charge " << mo.Q_far << " ("
+                           << mo.Q_far / mo.Q_far_iso
+                           << " x), one-body mass " << mo.m_equiv << "\n";
+        }
+    }
     write_scalar_diagnostics();
 }
 
 void BinaryWormholeLevel::solve_initial_constraints()
 {
     BL_PROFILE("BinaryWormholeLevel::solve_initial_constraints");
-    const auto &wp = simParams().wormhole_params;
+    // A copy: puncture mode 3 rescales the throats and sets c, and the data
+    // are rebuilt from what the solve used.
+    BinaryWormholeInitialData::params_t wp = simParams().wormhole_params;
+    const auto &cs = simParams().constraint_solve_params;
 
     amrex::Vector<amrex::MultiFab> w;
-    const ConstraintSolveReport report = solve_drainhole_constraint(
-        *parent, wp, simParams().constraint_solve_params, w);
+    const ConstraintSolveReport report =
+        solve_drainhole_constraint(*parent, wp, cs, w);
 
     // Rebuild every level's valid cells from the same background plus w.
     // Ghost cells keep the analytic values until the next FillPatch, which
@@ -483,7 +509,17 @@ void BinaryWormholeLevel::solve_initial_constraints()
 
     amrex::Print() << "Constraint solve (Hamiltonian, t = 0): "
                    << report.newton_iterations << " Newton pass(es), last "
-                   << "update " << report.last_update << "\n"
+                   << "update " << report.last_update;
+    if (cs.puncture_mode == 3)
+    {
+        amrex::Print() << "; far-side matching ("
+                       << (cs.match_charge != 0 ? "mass and charge"
+                                                : "mass only, c alone")
+                       << "): " << report.match_iterations << " pass(es), "
+                       << report.solves << " solves, max |M_far/M_iso - 1| = "
+                       << report.match_residual;
+    }
+    amrex::Print() << "\n"
                    << "  puncture coefficient A " << report.c_A
                    << " (superposed " << report.c_superposed_A << ")";
     if (wp.b0_B > 0.0)
@@ -500,10 +536,57 @@ void BinaryWormholeLevel::solve_initial_constraints()
                    << report.boundary_monopole << " = "
                    << report.background_mass + 2.0 * report.boundary_monopole
                    << "  (background mass + twice <r w> on the level-0 "
-                      "boundary; the superposition claims "
-                   << (wp.b0_A > 0.0 ? wp.drainhole_mass_A : 0.0) +
-                          (wp.b0_B > 0.0 ? wp.drainhole_mass_B : 0.0)
-                   << ")\n";
+                      "boundary; biased low by the Robin face)\n";
+
+    // Each mouth's far side, and the pair's mass from the volume identity.
+    double one_body = 0.0;
+    for (int X = 0; X < 2; ++X)
+    {
+        const MouthReport &mo = report.mouth[X];
+        if (!mo.present)
+        {
+            continue;
+        }
+        one_body += mo.m_equiv;
+        amrex::Print() << "  mouth " << (X == 0 ? 'A' : 'B') << ": c " << mo.c
+                       << ", coordinate scale " << mo.sigma << " (a "
+                       << mo.sigma * mo.a << ", m " << mo.sigma * mo.m
+                       << "); d = " << mo.d_bg << " + w0 " << mo.w0
+                       << " (level " << mo.level << ", r < " << mo.fit_radius
+                       << ", " << mo.ncells << " cells)\n"
+                       << "    far-side mass " << mo.M_far << " ("
+                       << mo.M_far / mo.M_far_iso << " x the isolated "
+                       << mo.M_far_iso << "), far-side charge " << mo.Q_far
+                       << " (" << mo.Q_far / mo.Q_far_iso << " x "
+                       << mo.Q_far_iso << "); one-body drainhole a "
+                       << mo.a_equiv << ", m " << mo.m_equiv << "\n";
+    }
+    if (report.adm_mass_volume_valid)
+    {
+        amrex::Print() << "  M_ADM = " << report.adm_mass_volume
+                       << " (volume identity; tail " << report.tail_integral
+                       << "); one-body masses " << one_body
+                       << ", M_ADM - their sum = "
+                       << report.adm_mass_volume - one_body << "\n";
+    }
+
+    // The same, as one t = 0 row (packed with the run's streams).
+    const amrex::Real dt           = parent->dtLevel(0);
+    const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+    SmallDataIO cs_file(resolve_out_dir() + "constraint_solve", dt, 0.0,
+                        restart_time, SmallDataIO::APPEND, true);
+    cs_file.remove_duplicate_time_data();
+    cs_file.write_header_line(
+        {"mode", "M_ADM", "M_ADM_face", "c_A", "sigma_A", "w0_A", "Mfar_A",
+         "Qfar_A", "m1_A", "c_B", "sigma_B", "w0_B", "Mfar_B", "Qfar_B",
+         "m1_B", "match_res"});
+    const MouthReport &mA = report.mouth[0];
+    const MouthReport &mB = report.mouth[1];
+    cs_file.write_time_data_line(std::vector<double>{
+        static_cast<double>(cs.puncture_mode), report.adm_mass_volume,
+        report.background_mass + 2.0 * report.boundary_monopole, mA.c,
+        mA.sigma, mA.w0, mA.M_far, mA.Q_far, mA.m_equiv, mB.c, mB.sigma,
+        mB.w0, mB.M_far, mB.Q_far, mB.m_equiv, report.match_residual});
 }
 
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)

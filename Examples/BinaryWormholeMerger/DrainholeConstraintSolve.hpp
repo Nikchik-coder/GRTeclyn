@@ -12,6 +12,8 @@
 #include <AMReX_MultiFab.H>
 #include <AMReX_Vector.H>
 
+#include <array>
+
 //! Hamiltonian-constraint solve for the drainhole binary's t = 0 slice.
 /*!
     Solves, on the whole initial AMR hierarchy at once,
@@ -38,16 +40,58 @@
     the second-order error of the 7-point operator acting on w alone.  After
     the solve w is averaged down, so a covered coarse cell carries its fine
     cells' mean correction.
+
+    ---- Each mouth's far side (measured after every solve) ----------------
+    Near throat X, Psi = c_X / r + d_X + O(r): the inversion r' = c_X^2 / r
+    turns that into Psi' = 1 + c_X d_X / r' + ..., so the ADM mass of the
+    throat's own compactified infinity is
+
+        M_far = 2 c_X d_X,      d_X = d_bg (closed form) + w0,
+
+    with w0 the monopole of w at the centre (a linear fit in r on the finest
+    level that covers a small ball there).  The scalar has phi = phi_0 +
+    (4 C / a) r + (l = 1) near the centre, so the far side also carries a
+    scalar charge Q_far = 4 C c_X^2 / a.  The isolated drainhole (a, m) has
+    M_far = -m e^{pi m/a} and Q_far = sqrt(a^2 + m^2) e^{pi m/a} / sqrt(4 pi)
+    (-4.8105 and 3.0344 for a = 2, m = 1); both are frozen asymptotic
+    quantities, the drainhole analogue of a puncture's individual mass.
+    (M_far, Q_far) pick one isolated drainhole (a', m'), whose near-side mass
+    m' is the mouth's one-body mass: E_b = M_ADM - m'_A - m'_B.
+
+    ---- Far-side matching (puncture mode 3) -------------------------------
+    The superposition hands each throat the companion's constants, which
+    rescale it: at d = 8 each mouth of the superposed pair has 1.115 x the
+    isolated far-side mass, 1.132 x its far-side charge and 1.148 x its
+    minimal areal radius.  The solve at the superposition's c keeps the
+    charge exactly and the mass to 0.1 % (its R_min grows another 1.3 %).
+    With phi held fixed, c alone cannot undo a rescaling: the
+    static throat's coordinate size is set by phi.  Mode 3 therefore gives
+    each throat a coordinate scale sigma_X (a -> sigma a, m -> sigma m in phi,
+    the lapse exponent and Omega; C is scale-free) and iterates c_X, with
+    sigma_X = (c_X / c_iso)^2 holding Q_far at the isolated value, until
+    M_far is the isolated value too.  Near the throat that is the static
+    drainhole's own shape at its isolated size (see the class comment of
+    BinaryWormholeInitialData).  match_charge = 0 keeps sigma = 1 and matches
+    M_far with c alone, for comparison.  Each iteration is one full solve;
+    the Jacobian is a finite difference at the start, then Broyden.
 */
 struct ConstraintSolveParams
 {
     bool enabled{false};
     //! 0 = the superposition, 1 = bare punctures (validation).
     int background{0};
-    //! 0 = superposed c (default), 1 = isolated c, 2 = explicit c_A, c_B.
+    //! 0 = superposed c (default), 1 = isolated c, 2 = explicit c_A, c_B,
+    //! 3 = far-side matched (iterated; see match_charge).
     int puncture_mode{0};
     double puncture_A{0.0};
     double puncture_B{0.0};
+    //! Mode 3: 1 = also hold each mouth's far-side scalar charge at the
+    //! isolated throat's, through its coordinate scale (default);
+    //! 0 = the far-side mass alone, through c.
+    int match_charge{1};
+    //! Mode 3: stop once every |M_far / M_far(isolated) - 1| is below this.
+    double match_tolerance{1.0e-6};
+    int match_max_iter{10};
     //! MLMG relative / absolute tolerance of each linear solve.
     double tolerance_rel{1.0e-10};
     double tolerance_abs{0.0};
@@ -58,6 +102,25 @@ struct ConstraintSolveParams
     int verbose{1};
 };
 
+//! One mouth's far side (see the class comment above).
+struct MouthReport
+{
+    bool present{false};
+    //! The throat asked for (the params) and the coordinate scale used.
+    double a{0.0}, m{0.0}, sigma{1.0};
+    double c{0.0};
+    //! Psi -> c / r + d at the centre: d = d_bg + w0.
+    double d_bg{0.0}, w0{0.0}, w_slope{0.0};
+    int level{-1};
+    double fit_radius{0.0};
+    long ncells{0};
+    double M_far{0.0}, Q_far{0.0};
+    //! The isolated (a, m) drainhole's values, and the (a', m') one that
+    //! has this mouth's (M_far, Q_far).
+    double M_far_iso{0.0}, Q_far_iso{0.0};
+    double a_equiv{0.0}, m_equiv{0.0};
+};
+
 struct ConstraintSolveReport
 {
     int newton_iterations{0};
@@ -65,18 +128,40 @@ struct ConstraintSolveReport
     double c_A{0.0}, c_B{0.0};
     double c_superposed_A{0.0}, c_superposed_B{0.0};
     //! max |w| per level (valid cells) and the monopole of w read off the
-    //! level-0 boundary cells, W = <r w>: M_ADM ~ M_bg + 2 W.
+    //! level-0 boundary cells, W = <r w>: M_ADM ~ M_bg + 2 W.  The outer Robin
+    //! condition leaves w a small constant at the face, which biases this
+    //! estimate low (2.58 against 2.74 for the d = 8 head-on).
     amrex::Vector<double> max_w;
     double boundary_monopole{0.0};
     double background_mass{0.0};
+    //! M_ADM = 2 sum c - (1/2 pi) int [V Psi - (1/8) Ahat.Ahat Psi^-7] dV,
+    //! exact for a solution (the box integral is composite, the tail outside
+    //! the box analytic with Psi = 1 + M/2r).  Insensitive to the Robin
+    //! face: 1.0014 on the exact single throat at L = 64.
+    double adm_mass_volume{0.0};
+    double tail_integral{0.0};
+    bool adm_mass_volume_valid{false};
+    std::array<MouthReport, 2> mouth;
+    //! Mode 3: outer iterations and full solves spent, final max residual.
+    int match_iterations{0};
+    int solves{0};
+    double match_residual{0.0};
 };
 
 //! Solve on levels 0..finest of a_amr and return the correction per level
-//! (one component, one ghost cell, averaged down).
+//! (one component, one ghost cell, averaged down).  a_id is the throat pair
+//! the params ask for on entry and the background the returned w belongs to
+//! on exit: puncture mode 3 rescales each throat and sets its c, so the
+//! caller must rebuild the data from the returned a_id.
 ConstraintSolveReport
 solve_drainhole_constraint(amrex::Amr &a_amr,
-                           const BinaryWormholeInitialData::params_t &a_id,
+                           BinaryWormholeInitialData::params_t &a_id,
                            const ConstraintSolveParams &a_params,
                            amrex::Vector<amrex::MultiFab> &a_w);
+
+//! Each mouth's far side for data with w = 0 everywhere, i.e. the analytic
+//! superposition (constraint_solve = 0): the closed-form d, no measurement.
+std::array<MouthReport, 2>
+superposed_mouths(const BinaryWormholeInitialData::params_t &a_id);
 
 #endif /* DRAINHOLECONSTRAINTSOLVE_HPP_ */
