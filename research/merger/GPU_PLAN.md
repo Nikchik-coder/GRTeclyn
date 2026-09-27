@@ -1322,7 +1322,7 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
-### 2026-09-27 (05:55 UTC, paper session) — wormhole-seed precedents cited; the reviewer's fifteen ideas: eight in the text, two computing, five need runs (proposed, not queued)
+### 2026-09-27 (05:55 UTC, paper session) — wormhole-seed precedents cited; the reviewer's fifteen ideas: ten in the text, five need runs (proposed, not queued)
 
 - **Precedents**, each checked on INSPIRE/Crossref against its abstract or text.
   - Black holes descended from wormholes, and as supermassive seeds, are not new. Deng–Vilenkin 2017 (JCAP 12, 044)
@@ -1337,7 +1337,7 @@ need to be analysed and packed").
   - INSPIRE ("wormhole" × seed / supermassive / primordial black hole) finds no other wormhole → heavy-seed channel.
     Not cited yet (the user's call): Milligan–Padilla–Mulryne arXiv:2608.23367 (a transient wormhole from a
     Higgs-like patch leaves a PBH) and Takahashi–Nakashi arXiv:2606.01699 (Ellis–Bronnikov images against M87*).
-- **In the text** (the reviewer's numbering). Twelve new references (107); ledger +5 rows and the extractor
+- **In the text** (the reviewer's numbering). Fifteen new references (110); ledger +5 rows and the extractor
   `single_traveller`; `claims.py check`: 1005 rows, 833 recomputed, 0 problems.
   - 1, §IV G (new): the static throat as a type-I critical solution. Time scaling is the lifetime law; the mass gap is
     horizons forming at R = 3.88 / 3.81 for ε = 1e-2 / 1e-3. Shinkai–Hayward's "critical solutions with a certain
@@ -1351,9 +1351,31 @@ need to be analysed and packed").
     at 30 M⊙.
   - 10, §X C: the per-throat census, f_</2 by merger, 1/4 by lone collapse, 3/4 − f_</2 inflating.
     11, §VIII: the boson-star comparison.
-- **Computing** (CPU, the pack's scalar and Ψ4 modes; `results/merger/analysis/scalar_memory_angmom.py`): 7, the
-  memory sourced by both channels, and 8, the sign of the scalar angular-momentum flux. By a back-of-envelope count a
-  negative-energy dipole adds to the ℓ = 2 memory rather than reversing it; the data will say.
+- **Computed, in the text as signs (§VIII F).** CPU, 3 s: `results/merger/analysis/scalar_memory_angmom.py` reads
+  the pack's ℓ ≤ 2 scalar and Ψ4 modes and reproduces the paper's |E_φ|/E_GW (2.3325 / 1.743 / 3.02) and the
+  head-on E_φ exactly.
+  - 7, memory: the ghost scalar adds to the gravitational (2,0) memory and never reverses it. The sign agrees on 28/28
+    wave-zone windows and on 19/19 where the radiative dipole is validated. The cause is geometry: per unit energy
+    an equatorial dipole projects −(2/5)√(5/16π) onto Y20 and an m = ±2 GW flux +(4/7)√(5/16π); the negative
+    energy turns the dipole's to +1.294 |E_φ| against +1.849 E_GW. About the head-on's axis it is −2.589 |E_φ|
+    against −1.849 E_GW. The size is fragile: the scalar/GW memory runs from 0.3–1.0 (fly-by, radiative dipole) to
+    2.6–6 (head-on).
+  - 8, angular momentum: J_GW has the orbit's sign (−z) on 13/13 orbital windows (dJ/dE ≈ 2/ω₂₂ to ~10 % on the
+    fly-by burst). The physical scalar J flux is opposite to the orbit's on 11/11 outflow windows, so the ghost
+    channel pumps the orbit's angular momentum as well as its energy. The sign is robust; J_φ/J_GW = −0.05 to −1.9
+    (J_GW drifts).
+- **Open, the user's call: the scalar energies the paper quotes are partly near-field.** The spheres sit at
+  ωR ≈ 1–3.
+  - Method: fit the exact flat-space outgoing ℓ = 1 solution A = F′(u) + F(u)/R on each sphere separately. The
+    static dipole then agrees between R = 14 and 30 to 0.5 %, and the radiated E and J at u = 30 to 3 % and 0 %,
+    where the raw estimators disagree 1.5–2.6×.
+  - Fly-by: only ~35 % of |E_φ| = 0.087 (code units, R = 30, t = 60) is radiated (0.030), so |E_φ|/E_GW ≈
+    0.8–0.95, not 2.3.
+  - Head-on: the post-horizon E_φ becomes sphere-independent, ≈ −0.044, against −0.056 to −0.075 now.
+  - "Comparable and negative" survives. The quoted numbers would change: clmGwScalarEnergyFlyby, the
+    clmGwScalarRatio* rows, and the head-on E_φ.
+  - Not yet verified: the O(M/R) metric terms (the model reproduces the kinematic integral as radiated + stored
+    energy only to a factor 1.4). No text changed.
 - **Need runs: proposed, not queued.** The queue is the convergence study (the user's word, 2026-09-26 17:30).
   Nothing launches without the user's word.
   - P1 (idea 12), zoom-whirl cut by the throat's clock: p = 0.27–0.33 at level 3, L = 128, d = 12, to t = 100 (four
