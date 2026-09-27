@@ -1189,7 +1189,8 @@ long run is also corrupted lets stop it" (TAKE 2).
 - **TAKE 2** — clean to the stop, but its question is gone (the regrowth it was to follow is
   numerical, ["2026-09-24 (afternoon) — the user's read of the whole paper"]). G16's input is
   the paper session's copies of its plotfiles across the floor (t = 33–66, 77 GB, that
-  session's scratchpad `plt_take2/`) — KEPT; its own late scratch (Chk t = 60/65/70,
+  session's scratchpad `plt_take2/`) — KEPT, then deleted on the user's word on 2026-09-27 (G16 was dropped on
+  2026-09-26); its own late scratch (Chk t = 60/65/70,
   Plt t = 71–74, 89 GB) pruned.
 - **SYSTEMATICS ROLL-UP — what ends a long single-throat run.** One throat, three boxes:
 
@@ -1526,6 +1527,22 @@ an offline scan), to be pruned on the user's word. Then: a clean pin from the co
 a level-5 continuation from CS-1's checkpoint near t = 22 if level 3 dies as the scout did at 25.8. The same code is
 the constraint-solved single-throat seed of the run sheet: perturb c (mode 2) or φ, never ψ. Paper text (§II C, §VII A
 systematics) waits for the run.
+
+### 2026-09-27 (05:35 UTC) — check: three runs healthy; the first node's storage audited, `plt_take2/` deleted
+
+- **Runs.**
+  - CONV-2 at t = 46.5, 3.8 u/h; its areal radius stays within 1.1e-4 of the dt = 0.02 partner's. ETA ~09:10 UTC.
+  - CONV-1 at t = 24.3, 2.0 u/h on the shared card; it stays within 2.2e-4 of the level-4 partner. ETA ~23:40 UTC
+    if the card stays shared (CONV-8a/8b beside it, as queued); ~16:00 UTC alone.
+  - CONV-3w at t = 39.1, running at 0.885 × CONV-3's flat 7.2 u/h; its (2,2) is within 0.6 % of CONV-3's so far.
+    ETA ~15:10 UTC.
+- **Storage.**
+  - Scratch holds only the three live runs: 32 GB, at most three plotfiles each, no checkpoints.
+  - The live run folders total 373 MB, untracked; nothing of them reaches git.
+- **Deleted on the user's word (05:39 UTC):** `plt_take2/`, 77 GB. It held TAKE 2's plotfile copies (t = 33–66) in the
+  paper session's scratchpad: G16's input, and G16 was dropped on 2026-09-26. The deletion is logged in
+  `MANIFEST_CLEANUP_2026-09-27.md`.
+- **Kept on the user's word ("skip"):** the frames CONV-1/2/3/3w already rendered (~0.5 GB, untracked) and Chk05700.
 
 ### 2026-09-27 (05:00–05:45 UTC) — CONV-3 closed out: the spiral burst is core-independent; the wave zone was untested, so CONV-3w runs; the lifecycle goes into CLAUDE.md
 

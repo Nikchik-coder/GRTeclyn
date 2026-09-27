@@ -10,19 +10,21 @@ Three convergence runs are live on the first node. Each passed the full prefligh
 user's word). The convergence study keeps no frames and no movies (the user's word, 2026-09-27); the three live runs
 still render the frames they were launched with.
 - **GPU 0: CONV-1 `single_eps_m1e2_ml5_t060` and CONV-2 `single_eps_m1e2_halfstep_t060`**, sharing the card (46 GB),
-  since 17:17 UTC on 2026-09-26. As of 04:50 UTC they were at t = 22.9 and 43.8, both healthy.
-  - CONV-2 (Δt/2) reproduces its dt = 0.02 partner's areal radius to 4 decimals through t = 40. ETA ~09:10 UTC.
-  - CONV-1 (level 5) follows its level-4 partner (R 4.0204 vs 4.0205 at t = 20). ETA ~16:00 UTC, once CONV-2 frees the
-    card.
+  since 17:17 UTC on 2026-09-26. As of 05:35 UTC they were at t = 24.3 and 46.5, both healthy (no NaN).
+  - CONV-2 (Δt/2) reproduces its dt = 0.02 partner's areal radius to 1.1e-4 through t = 46, at 3.8 u/h. ETA ~09:10 UTC.
+  - CONV-1 (level 5) follows its level-4 partner to 2.2e-4 (R 4.2348 vs 4.2350 at t = 24), at 2.0 u/h on the shared
+    card. ETA ~23:40 UTC if the card stays shared (CONV-8a/8b beside it, as queued); ~16:00 UTC if it runs alone after
+    CONV-2 (4.2 u/h).
 - **GPU 1: CONV-3w `v2_spiral_d12_p012_L128_lvl4_wz1_t100_freeze_r03600`**, since 05:04 UTC: CONV-3 with the R = 20
   sphere and its path on level 1, the wave-zone test. It is at 62 GB and its level-1 ball exists (9.09M cells against
-  CONV-3's 4.10M). ETA ~15:30 UTC.
+  CONV-3's 4.10M). It runs at 0.885 × CONV-3's flat 7.2 u/h (t = 39.1 at 05:33), and its (2,2) matches CONV-3's to
+  within 0.6 % of peak so far. ETA ~15:10 UTC.
 - **CONV-3 is closed out** (finished t = 100 at 02:12 UTC; filed under `08_convergence/`, packed, scratch pruned).
   - Its (2,2) burst matches the level-5 chain on every sphere: peak ratio 1.000, waveform within 0.1 % of peak.
   - Both runs extract on the base grid, so this tests the core's resolution, not the wave zone's. CONV-3w tests the
     wave zone ["2026-09-27 (05:00–05:45 UTC)"].
-- **Awaiting the user's yes:** delete the frames CONV-1/2/3/3w have already rendered (~0.5 GB, untracked; the CLAUDE.md
-  frames rule asks once).
+- **Kept on the user's word (2026-09-27, "skip"):** the frames CONV-1/2/3/3w have already rendered (~0.5 GB, untracked),
+  and Chk05700.
 
 - **Second node: free. CS-1 `merge_headon_flip_d8_cs_lvl3_t030` is closed out** (the head-on scout on
   constraint-solved data; finished t = 30 at 08:14 UTC, no NaN; filed under `04_binary_headon/`, packed)
@@ -88,15 +90,15 @@ at t = 0 and refuses a subset without `WHM_FRAMES_SUBSET`; movies cut at each ru
 
 First node: the long
 single-throat arms closed out under `01_single_throat/seed/` ["2026-09-24 (16:15)"]; its
-scratch is empty; the paper session's `plt_take2/` plotfile copies (77 GB, G16's input) sit in
-that session's scratchpad there.
+scratch holds only the live runs. The paper session's `plt_take2/` plotfile copies (77 GB, G16's input) were deleted
+on the user's word on 2026-09-27, because G16 was dropped.
 
 Second node (one H100): free since 08:14 UTC on 2026-09-27; CS-1 and the η = 4 level-5 probes are closed out and
 filed ["2026-09-27 (08:30 UTC)", "2026-09-25 (morning)"]. Its scratch holds CS-1's checkpoints and plotfiles (115 GB),
 kept until the user decides.
 
 Run tree: every plotfile deleted on the user's word; 192 → 52 GB. Two checkpoints remain: Chk03600 (20 GB, the t = 36 seed of CONV-3) and Chk05700 (26 GB, no queued
-use since G4 was dropped; the user's call).
+use since G4 was dropped; kept on the user's word, 2026-09-27).
 
 ## Queued — the convergence runs, and nothing else (the user's word, 2026-09-26 17:30 UTC)
 
