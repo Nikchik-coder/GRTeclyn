@@ -829,3 +829,37 @@ def mergers_departure_time(ref: str, twin: str, file: str = "constraint_norms.da
     if not hit.any():
         raise ValueError(f"{twin} never departs from {ref} by x{factor}")
     return float(common[int(np.argmax(hit))])
+
+
+# ---------------------------------------------------------------- t = 0 matching
+# results/merger/t0_matching/*.tsv: the 2026-09-27 initial-data measurements (no
+# evolution; CPU; plan entry "2026-09-27 (12:15 UTC)").  Not a packed run, so read
+# directly.  `match` selects one row by column value (as printed in the file);
+# `expr` is a Python expression in that row's columns (and RSTAR, the isolated
+# throat's closed-form R_min), e.g. "100*(R_min/RSTAR-1)".
+_T0 = PACK / "t0_matching"
+_RSTAR = math.sqrt(5.0) * math.exp(0.5 * math.atan(2.0))
+
+
+@functools.lru_cache(maxsize=8)
+def _t0_rows(file: str) -> tuple[dict, ...]:
+    rows, names = [], None
+    for line in (_T0 / file).read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#"):
+            continue
+        if names is None:
+            names = line.split("\t")
+            continue
+        rows.append(dict(zip(names, line.split("\t"))))
+    return tuple(rows)
+
+
+@extractor
+def t0_matching(file: str, match: dict, expr: str) -> float:
+    """One row of a t0_matching table (unique under `match`), through `expr`."""
+    hits = [r for r in _t0_rows(file) if all(r.get(k) == str(v) for k, v in match.items())]
+    if len(hits) != 1:
+        raise LookupError(f"{file}: {len(hits)} rows match {match}")
+    env = {k: float(v) for k, v in hits[0].items() if re.fullmatch(r"-?[\d.]+", v or "")}
+    env["RSTAR"] = _RSTAR
+    return float(eval(expr, {"__builtins__": {}, "abs": abs, "min": min, "max": max}, env))  # noqa: S307

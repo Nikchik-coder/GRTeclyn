@@ -1323,6 +1323,29 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-27 (12:35 UTC, paper session) — the paper starts its rewrite for the matched placement: new Sec. II D, Tables placement and energy, Eq. (ebind); ledger 1070 rows, 0 problems
+
+On the user's word ("add this table and prediction equations to the paper; start rewriting the paper for the new
+correct binary placement"). No LaTeX here: not built; brace and math balance checked on every added line.
+- **New Sec. II D "Constraint-solved data and matched placement"** (`sec:model:solve`): Eq. (hamsolve) and the in-code
+  solve; each mouth's far side, Eq. (farside) M_far = 2 c d_c, Q_far = 4 C c^2/a, and the one-body mass m′; the
+  superposition's rescaling (m′ = 1.149 at d = 8, 1.094 at d = 12; R_min +14.8 %) and the matched placement
+  (λ = (c/c_iso)², c iterated; R_min within 0.06 %); the volume identity Eq. (madmvol); the binding law
+  **Eq. (ebind) E_b = −λ² (m²/d)(1 + σQ)** with the fixed-charge / fixed-potential reading and the open dynamical test;
+  "Units of this paper": the evolutions predate the matching, p/m′ = 0.110 / 0.229 / 0.320 / 0.411 at d = 12; CS-1.
+- **Table placement** (the d = 8 mouths: isolated / superposed / solved at the superposition's c / matched) and
+  **Table energy** (the user's table: λ, E_b and Eq. (ebind) for both signs at d = 8–48).
+- Sec. II C now says the evolutions start from the superposition and points to II D (the GRTresna clause moved to
+  Table I). Table I: the constraint-solved group counts CS-1 (2 runs; totals 146 / 134, 665 GPU-h). Sec. V C: the
+  placement excess is the superposition's rescaling. Head-on: "born with the two ISOLATED throats' area" (the placed
+  mouths are 14.8 % wider), Penrose also against the solved 2.738 (7–8 %), the end-state M_ADM named as the superposed
+  slice's. Limitations: the rescaled mouths; only the d = 8 head-on has a solved twin.
+- **Ledger**: +65 rows (area mergers; extractor `t0_matching` reads `results/merger/t0_matching/*.tsv`, the t = 0 data
+  with a README); Table I rows updated; three anchors re-cut. `claims.py check`: 1070 rows, 889 recomputed ok,
+  0 problems (the wrapper venv now has the gw-search extras). `numbers.tex` regenerated.
+- **Still to rewrite once matched runs exist**: every evolution section quotes superposed runs; their numbers stay as
+  measured, in the units the new paragraph states.
+
 ### 2026-09-27 (12:15 UTC) — parameter matching and the energy check: the solve did not change the throats, the superposition did; mode 3 builds the pair from two isolated throats; M_ADM − 2m follows ±σ²(a²+m²)/d − σ²m²/d; CS-1's M_ADM is 2.74, not 2.63; nothing launched
 
 **Why (the user, 2026-09-27).** CS-1's M_ADM jumped 2.00 → 2.63; an attracting pair should weigh less than its parts,

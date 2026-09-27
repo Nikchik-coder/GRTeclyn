@@ -35,6 +35,8 @@ are never deleted without the user's explicit word. All three are back in the qu
     on the user's word. The pack now skips a run that is live on the other node, the summaries carry no live
     rows, and `claims.py check` passes (833 recomputed, 0 problems).
 
+**Done 2026-09-27 (12:35 UTC, paper session): the paper's rewrite for the matched placement has started** ["2026-09-27 (12:35 UTC, paper session)"]: new Sec. II D (constraint-solved data, far-side identity, matched placement, Eq. (ebind) E_b = −λ²(m²/d)(1 + σQ)), Tables placement and energy, Table I counts CS-1, head-on Penrose and area statements qualified. Ledger 1070 rows, 0 problems. Not built (no LaTeX here). The evolution sections still quote the superposed runs, in the units II D states.
+
 **Done 2026-09-27 (12:15 UTC, CPU only): parameter matching and the energy check** ["2026-09-27 (12:15 UTC) — parameter matching and the energy check"]. Each mouth's far side (ADM mass 2cd and scalar charge at its own compactified infinity) is now measured after every solve. Verdicts:
 - The solve did **not** change the throats: CS-1's mouths have the scout's far-side mass to 0.1 % (R_min +1.3 %). CS-1 turned one knob, the data.
 - The **superposition** did: every superposed pair's mouths are ~13 % larger in every length than the isolated throat (one-body mass 1.149 at d = 8, 1.094 at d = 12, same for solved mode-0 twins). So p = 0.12 / 0.45 at d = 12 are 0.110 / 0.411 per one-body mass in every run; no rerun is needed for this, only the paper's normalisation.
