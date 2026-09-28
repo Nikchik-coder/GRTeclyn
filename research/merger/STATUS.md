@@ -149,6 +149,15 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
   - Each new watcher runs under a supervisor that stops it when the evolution exits, so `run_single.sh`'s final
     drain (launch flags) does not race it; that drain extracts the last plotfile with the launch flags.
   - Why: the audit of what the paper needs from these runs, `CSM_SWITCHOVER.md`.
+- **Spiral plotfiles from t = 54 are kept** (the user's go, 19:28 UTC): `keep_plotfiles.sh` (new) hard-links each
+  complete plotfile from step 5400 into `/tmp/grteclyn_scratch/_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_plt/`
+  and the last ones when the evolution exits, then stops (~9 GB each, ~60–70 GB to the crash). For the oriented
+  scans, the flow finder and an offline core profile at t = 55–60. Status: `keep_plotfiles.sh --status <run dir>`.
+- **Core profile: the user's call, open.** Turning it on needs a restart, and a restart re-seeds the outer zone
+  (r > 6) at ~1.5 % (`run_single.sh`, GLOSSARY): a step in the wave zone and the domain norms from the restart on.
+  Options: no restart (keep plotfiles from t = 45 instead, profiles offline at unit cadence, the χ-floor time from
+  `collapse_diagnostics.dat`); a restart at t ≈ 45 (~04:00 UTC, someone must do it; a timer may not); or a
+  restart now (the step at t ≈ 21, before the burst).
 
 **The four mode-3 rest-pair reruns are closed out** (09:11–09:30 UTC): `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`,
 `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm`, each its old run's packed params with only the data changed (L = 64, N = 128,

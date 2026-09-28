@@ -25,11 +25,14 @@ readers select spheres by name or header value (one exception below).
 3. Spiral diagnostics (horizon scan and areal radius on since 18:09 UTC, rows from t = 18; the rest open). Its
    old run had neither, but the paper's spiral numbers came from other superposed arms:
    - no `core_radial_profile` (Fig 6d, clmSpiralChiFloorTime/SpikeStart/Anatomy*, and the freeze continuation's
-     fill arming): needs a restart from a checkpoint with `core_radial_profile = 1` (diagnostic only);
+     fill arming): needs a restart from a checkpoint with `core_radial_profile = 1` (diagnostic only), and a
+     restart re-seeds the outer zone at ~1.5 % (the wave zone steps there); or offline profiles from kept
+     plotfiles. Open, the user's call (STATUS);
    - no `--horizon-scan` / `--areal-radius` (Fig 15 merger arm, 16 clmMouth* rows, fit window t = 8–25): rows
      before the restart are lost; refit a later window or keep `_lvl3_t050_mouths`;
    - plotfiles at t ≈ 54–60 and the three left at the crash: the oriented scans (clmSpiralStarScanFirst/Last),
-     the flow finder (Fig 6b), an offline core profile. Keep them before the consumer deletes them.
+     the flow finder (Fig 6b), an offline core profile. Kept: `keep_plotfiles.sh` from step 5400, armed
+     2026-09-28 19:28 UTC.
    - the burst reaches R = 20–44 at t = 62–88, after the expected crash near t = 60: Figs 7c, 8, 9 (spiral)
      need the freeze continuation or stay on the SERIES.
 
