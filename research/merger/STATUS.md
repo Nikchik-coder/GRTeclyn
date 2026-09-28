@@ -1,4 +1,4 @@
-# Status — 2026-09-28 06:20 UTC
+# Status — 2026-09-28 06:17 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -64,14 +64,15 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 **Four mode-3 reruns of the rest pairs, two per card (step 2; the user's word, 2026-09-28).**
 Each is its old run's packed params with only the data changed, plus rolling checkpoints every 2.0 and the full plot
 list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, plots every 0.5, binary
-`main3d_csmatch_5f988dbc_2026-09-28.ex` (the first CUDA build of mode 3), profile headon-scout, zoom 32. At 06:03 UTC:
+`main3d_csmatch_5f988dbc_2026-09-28.ex` (the first CUDA build of mode 3), profile headon-scout, zoom 32. At 06:16 UTC,
+all alive:
 
 | card | run (rerun of) | t / stop | speed (shared) | ETA (UTC) |
 |---|---|---|---|---|
-| 0 | `ctrl_flip_d12_csm` (`ctrl_flip_d12`) | 1.79 / 30 | 4.8 u/h | ~10:25 (alone from ~09:05) |
-| 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 1.48 / 15 | 4.5 u/h | ~09:05 |
-| 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 1.79 / 15 | 4.8 u/h | ~08:45 |
-| 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 1.38 / 15 | 4.2 u/h | ~09:05 |
+| 0 | `ctrl_flip_d12_csm` (`ctrl_flip_d12`) | 2.74 / 30 | 4.7 u/h | t = 15 ~08:55; t = 30 ~10:30 (alone from ~09:05) |
+| 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 2.45 / 15 | 4.5 u/h | ~09:05 |
+| 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 2.75 / 15 | 4.7 u/h | ~08:55 |
+| 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 2.27 / 15 | 4.1 u/h | ~09:05 (alone from ~08:55) |
 
 - Cards at 70 / 73 GB of 80. t = 0 checked: every mouth's far-side mass and charge are the isolated throat's (one-body
   mass 1.0000); M_ADM 2.27376 (flipped d = 12), 1.56579 (d = 12), 1.62149 (d = 14), 1.66449 (d = 16); the pits' start
@@ -86,7 +87,7 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
 ## Live — second node (one H100): the rest of step 2 (the user's word, 2026-09-28: "run the queued here")
 
 - **Live since 06:11 UTC: `ctrl_rest_d18_csm`** (rerun of `ctrl_rest_d18`, the last ladder rung; L = 64, level 3,
-  t = 15; 41 GB), ~9 u/h alone, ETA ~07:55 UTC. At t = 0 each mouth's far side is the isolated throat's.
+  t = 15; 41 GB): t = 0.5 at 06:16 UTC, 8.3 u/h alone, ETA ~08:00 UTC. At t = 0 each mouth's far side is the isolated throat's.
 - **Next on this card when it ends: `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm`**, the mode-3 rerun of the
   level-5 head-on (L = 64, level 5 from t = 0, t = 100; template written, it differs from the old params only in the
   solve block and checkpoints every 2.0). The old run went 3.5 u/h and peaked at 46 GB, so ~28 h (not ~12), and it
