@@ -1,4 +1,4 @@
-# Status — 2026-09-28 10:06 UTC (queue updated ~11 UTC)
+# Status — 2026-09-28 14:25 UTC (queue updated ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -101,10 +101,10 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by and the spiral (the user's go, 09:48 UTC)
 
-| card | run | p | t now (10:05) | t end | speed | ETA |
+| card | run | p | t now (14:23) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 0.49 | 100 | 2.1 u/h (old run 2.17) | ~47 h, ~09:30 UTC 09-30 |
-| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 0.49 | its NaN, ~60 | 2.1 u/h (old run 2.81) | ~21–28 h, ~07:00–14:30 UTC 09-29 |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 9.75 | 100 | 2.2 u/h | ~41 h, ~07:30 UTC 09-30 |
+| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 9.74 | its NaN, ~60 | 2.2 u/h (old run 2.81 average) | ~18–22 h, ~08:30–12:30 UTC 09-29 |
 
 - Launched 09:49 UTC, both exact reruns of their old runs (only the solve block and checkpoints every 5 units, newest
   3), binary `main3d_csmatch_5f988dbc_2026-09-28.ex`, profiles `orbit-modes-scan-prod` / `orbit-modes-prod` (the
@@ -114,7 +114,9 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
   8e-10 fly-by, 4e-10 spiral; mode 3 at p = 0.45 converged in 2 matching passes). M_ADM 2.34448 (fly-by), 2.27476
   (spiral; the CPU mode-3 check at p = 0.12 gives 2.27920 on L = 64). Frame 0 (χ) matches the old runs' (pits at ±6).
   Cards at 60 GB of 80 each.
-- First checkpoint due at t = 5, ~12:20 UTC: confirm it on scratch then.
+- Checkpoints confirmed: `Chk00500` (t = 5) written 12:12 / 12:14 UTC, Header complete, 36–37 GB each; with the t = 0
+  one on scratch, rolling to the newest 3. Plotfiles keep the last 3 (00700–00900 at 14:23). Each run holds 80 GB of
+  scratch now, ~135 GB at most; 1.0 TB free. No NaN; consumer errors 0; 10 frames each (t = 0–9).
 - **All three production runs verified at 10:15 UTC** (fly-by, spiral, and the second node's head-on):
   - each run's `params.txt` differs from its old run only in the named changes;
   - mode 3 in every `constraint_solve.dat`, converged: every MLMG solve ≤ 4e-9, each mouth's far side matched to
@@ -142,9 +144,9 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 ## Live — second node (one H100): the production head-on (the user's go, 09:57 UTC)
 
-| card | run | t now (10:05) | t end | speed | ETA |
+| card | run | t now (14:23) | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 0.06 | 100 | 2.0 u/h at start-up (2–2.8 expected) | ~36–50 h, ~22:00 UTC 09-29 to ~12:00 UTC 09-30 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 8.83 | 100 | 2.1 u/h | ~44 h, ~10:00 UTC 09-30 |
 
 - Launched 10:02 UTC (template `params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt`, profile
   `headon-modes-prod`, zoom 40, coord 64, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`). The blessed exception to the
