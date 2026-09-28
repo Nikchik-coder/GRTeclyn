@@ -1323,6 +1323,19 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-28 (paper session) — the figure count drops 18 -> 13: two wiped, three pairs merged; ledger 1075 rows, 0 problems
+
+- **Wiped** (message survives as text): `fig:fill_insensitivity` (a null result; Secs. spiral:inspiral/burst
+  carry the bounds) and `fig:single_regrowth` (its caption itself called the regrowth "not a measurement";
+  the numbers stay in the collapse-branch paragraph and the ledger). Their PDFs stay on disk; the affected
+  ledger rows keep their values, caption-only anchors dropped with a dated note, the rest re-cut.
+- **Merged**, three pairs into one float each, both labels kept so every \ref resolves: collapse + inflation
+  (the two branches of one saddle, main text), orbits + mouth growth, scalar channel + censorship. Each
+  merged float stacks the two existing PDFs at width 0.70; captions concatenated verbatim under Top:/Bottom:,
+  so their anchors survived. A proper single-PDF regeneration can come with the mode-3 figure remake.
+- `claims.py check`: 1075 rows, 894 recomputed, 0 problems. Not built here (no LaTeX); the user rebuilds
+  locally — the two stacked-strip floats may need a width nudge against the half-page rule.
+
 ### 2026-09-28 (10:10 UTC, paper session) — the csm results enter the paper: fixed potential measured, ladder within 2 %, δ = 2.65; Table I counts the five reruns; ledger 1075 rows, 0 problems
 
 - **Sec. II D** no longer leaves fixed potential vs fixed charge open: "The evolution has now
