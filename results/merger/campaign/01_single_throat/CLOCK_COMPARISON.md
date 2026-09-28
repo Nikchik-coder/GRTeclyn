@@ -128,6 +128,14 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_pureq_q1e2_ml4_t100` | B | 100.0 | x11474.4 / 72.7 | +1.08 | +1.32 | +1.41 | +1.45 | +1.43 | +2.28 | +3.98 | 47.8 | late (+0.14 dex) |
 | `s20_boost_p02` | A | 40.0 | x400.6 / 40.0 | +1.06 | +1.30 | +1.58 | +1.79 | +2.60 | - | - | - | late (+0.48 dex) |
 | `s20_boost_p02` | B | 40.0 | x942124.5 / 35.0 | +4.00 | +5.57 | +5.85 | +5.94 | +5.92 | - | - | - | late (+4.63 dex) |
+| `ctrl_flip_d12_csm` | A | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
+| `ctrl_flip_d12_csm` | B | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_d12_csm` | A | 15.0 | x14.7 / 14.6 | +0.99 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_d12_csm` | B | 15.0 | x14.7 / 14.6 | +0.99 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_d14_csm` | A | 15.0 | x14.0 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_d14_csm` | B | 15.0 | x14.0 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_d16_csm` | A | 15.0 | x13.5 / 14.3 | +0.99 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_d16_csm` | B | 15.0 | x13.5 / 14.3 | +0.99 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d18_csm` | A | 15.0 | x13.1 / 14.1 | +0.98 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d18_csm` | B | 15.0 | x13.1 / 14.1 | +0.98 | - | - | - | - | - | - | - | too short |
 | `ctrl_flip_d12` | A | 10.8 | x11.1 / 10.5 | +0.99 | - | - | - | - | - | - | - | too short |
@@ -279,7 +287,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 24 early, 12 same, 81 late, 66 too short, 52 restart arms (own clock only).
+Throats read at t = 30: 24 early, 12 same, 81 late, 74 too short, 52 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

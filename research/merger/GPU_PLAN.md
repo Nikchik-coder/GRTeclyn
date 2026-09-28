@@ -1323,6 +1323,48 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-28 (09:30 UTC) — the mode-3 rest pairs closed out (pull/push 1.463, δ = 2.65); the GPU plan: head-on, spiral and fly-by as one production set in the L = 128 box, waiting for the go
+
+**Closed out (first node).** `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`, `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm` all ran
+clean to t = 15 (the flipped pair stopped there by `dump_and_stop`, the user's word), no NaN in any stream or log.
+Filed under `03_two_throats/csm/` with d = 18, packed without movies (frames kept), scratch pruned (237 GB,
+MANIFEST_CLEANUP_2026-09-28). `analysis/matched_rest.py` wrote `campaign/03_two_throats/matched_rest_displacement.dat`:
+- Pull/push at d = 12 over t = 3.5–10.5: **1.463 ± 0.023** (15 slices), superposed 1.518 ± 0.021; fixed potential 1.500,
+  fixed charge −0.667 (excluded). Below the superposed value at every slice by 0.04–0.06, with the same shape in t.
+- Like-pair ladder at t = 11.5: +0.4791 / +0.3716 / +0.2963 / +0.2406 at d = 12 / 14 / 16 / 18, ×1.020 / 1.004 /
+  0.994 / 0.987 the superposed runs'. Relative to d = 12: 0.775 / 0.618 / 0.502 (superposed 0.788 / 0.635 / 0.519).
+  A/(d + δ)²: **δ = 2.65** (superposed, same fit, 3.56). δ drifts with the reading time (1.8 at t = 6, 2.4 at 9.5).
+- Early on the mode-3 pairs move 10–14 % more than the superposed ones (t = 3.5); the excess fades by t ≈ 8–11.
+- Constraint norms (base grid): 𝓗 sits 9–13 % (like) and 21 % (flipped) above the superposed runs', a flat offset from
+  t = 0 that does not grow: 3.35e-3 in all four like pairs whatever d, i.e. the unresolved throat cores, not the
+  superposition error. 𝓜 is 2–5.5× lower in the first steps (most at d = 12) and 27–59 % lower at t ≈ 5.
+
+**The L = 64 head-on rerun** (second node, live 08:07) was stopped at t = 0.60 at 08:26 on the user's word ("kill it":
+`stop_run` in its run dir, from the first node) and wiped at 08:33 on the user's word (the second node's session).
+
+**The GPU plan (the user's final proposal, 09:00 UTC; nothing launched, waiting for the go).** The head-on, the spiral
+and the fly-by are the paper's production runs and share one geometry: L = 128, N = 256 (Δx = 0.5, finest 1/64), level 5
+from t = 0, tagging_L 64, sponge 48/64, Ψ4 at 20/28/36/44, the scalar at 14/20/30/44 (consumer profiles `*-prod`),
+plots every 1.0, mode-3 data, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`. Order and cards:
+1. Fly-by p = 0.45, `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (first node, card 0): the exact rerun; checkpoints
+   every 5, newest 3; t = 100. 2.17 u/h (old) → ~46 h, 58.8 GB. Mode 3 at p = 0.45 is new: read the Newton passes.
+2. Spiral p = 0.12, `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (first node, card 1): the exact rerun; checkpoints
+   every 5, newest 3; to its NaN (old t = 59.94). 2.81 u/h (old) → ~21 h. Then the freeze continuation, launched later:
+   from the last checkpoint ≥ ~55 with the interior fill armed from this run's own core profile (the spike time moves
+   with the smaller mode-3 throats), ratios r_full/r_start = 1.40/1.90.
+3. Head-on d = 8, `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` (second node): a blessed exception to the
+   rerun rule, the old L = 64 physics in the shared geometry (one geometry, and a reflection-free window to t ≈ 84 at
+   R = 44 for the shared energy table). It keeps the old 10/14/18 spheres beside the shared ones (output only), so old
+   vs new is one knob (the data) at 10/14/18 before any reflection. No checkpoints (the user: "it will run smooth").
+   Est. 2–2.8 u/h → ~36–50 h. The paper's head-on chain: superposed scout → CS-1 → mode-3 big box.
+
+**Skipped on the user's word (09:20 UTC): per-level and core-excised 𝓗/𝓜 diagnostics.** Neither the binary nor the
+consumer writes them; adding them meant ~100 lines, a new CUDA build and a first real test inside the 46-h fly-by. No
+claim needs them: every constraint statement in the paper is relative and the constraint figure already calls the norms
+base-grid box averages. The paper's one per-level number (Sec. II D, the finest level's throat-shell 𝓗 at t = 0) is a
+t = 0 measurement, redone for mode 3 on CPU with `constraint_solve_t0_check.py`. If a referee asks, the spiral's and
+fly-by's kept checkpoints can be graded per level offline (a 0-step restart writing the `constraints` field).
+
 ### 2026-09-28 (08:15 UTC) — the deciding test: mode-3 pairs at rest move as the superposed ones (fixed potential, not fixed charge); d = 18 closed out; the level-5 head-on rerun launched
 
 - **The sign rule on clean data.** `ctrl_flip_d12_csm` falls in and `ctrl_rest_d12_csm` opens (−0.55 and +0.37 by

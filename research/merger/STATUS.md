@@ -1,4 +1,4 @@
-# Status — 2026-09-28 09:00 UTC
+# Status — 2026-09-28 09:30 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -33,7 +33,9 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
    if the throats act at fixed scalar potential. The GPU build reproduces it (2026-09-28, below).
 2. **First two runs** (about 18 GPU-hours, side by side).
    - Pairs released from rest (~6 h): remeasure the attraction/repulsion ratio (1.518) and the force law for the true
-     wormholes. **Started 2026-09-28**: the five old rest pairs (d = 12 both signs, 14, 16, 18) rerun in mode 3 (Live, below).
+     wormholes. **Done 2026-09-28 09:11 UTC**: the five old rest pairs rerun in mode 3, all clean to t = 15. Pull/push
+     1.463 ± 0.023 (superposed 1.518; fixed potential 1.500, fixed charge −0.667 excluded); force-law offset δ = 2.65
+     (superposed 3.56). Closed out, below.
    - Head-on to t = 100: does "the horizon shrinks by a quarter" survive, or was it a symptom of the missing
      energy? Moved to the L = 128 production box with the spiral and the fly-by (the user, 08:20 UTC; queued below);
      the L = 64 rerun was stopped at t = 0.6.
@@ -97,44 +99,25 @@ Along the way:
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
-## Live — first node (two H100s)
+## First node (two H100s): free since 09:11 UTC; the fly-by and the spiral go here on the user's word
 
-**Four mode-3 reruns of the rest pairs, two per card (step 2; the user's word, 2026-09-28).**
-Each is its old run's packed params with only the data changed, plus rolling checkpoints every 2.0 and the full plot
-list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, plots every 0.5, binary
-`main3d_csmatch_5f988dbc_2026-09-28.ex` (the first CUDA build of mode 3), profile headon-scout, zoom 32.
-
-**Every live run at 08:10 UTC** (ETA from the measured speeds; a shared card speeds up when its partner ends):
-
-| node / card | run (rerun of) | t now | t end | speed | ETA |
-|---|---|---|---|---|---|
-| first / 0 | `ctrl_flip_d12_csm` (`ctrl_flip_d12`) | 11.19 | 15 (the user: stop at 15, not the old 30) | 4.5 u/h shared | 0.85 h, ~09:00 UTC |
-| first / 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 10.89 | 15 | 4.4 u/h shared | 0.9 h, ~09:05 UTC |
-| first / 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 11.14 | 15 | 4.5 u/h shared | 0.85 h, ~09:00 UTC |
-| first / 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 10.10 | 15 | 4.1 u/h shared, ~9 alone | 1.0 h, ~09:10 UTC |
-| second / 0 | `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm` | **stopped at 0.60, 08:26 UTC, wiped 08:33** (the user) | — | — | card free |
-
-- **The deciding test is answered (read from the live d = 12 pair, window complete):** the mode-3 flipped pair falls in
-  and the like pair opens, pull/push 1.463 ± 0.023 over t = 3.5–10.5 (superposed 1.518 ± 0.021). Fixed potential
-  predicts 1.500; fixed charge predicts −0.667 (the flipped pair flying apart) and is excluded.
-- **`ctrl_rest_d18_csm` is closed out** (second node, finished t = 15.01 at 08:04 UTC, no NaN; filed under
-  `03_two_throats/csm/`, packed, scratch pruned): +0.2406 by t = 11.5 against the superposed +0.2438 (×0.987).
-- First node's cards at 70 / 73 GB of 80. t = 0 checked: every mouth's far-side mass and charge are the isolated throat's (one-body
-  mass 1.0000); M_ADM 2.27376 (flipped d = 12), 1.56579 (d = 12), 1.62149 (d = 14), 1.66449 (d = 16); the pits' start
-  separations equal the old runs' (12.0230, 16.0310). Frame 0 eyeballed against the old d = 12 frame.
-- `ctrl_flip_d12_csm` stops at t = 15 like the others (the user's word, 06:25 UTC): its old params say stop_time 30,
-  but the old run was stopped by hand at t = 10.8 and the ratio uses only t = 3.5–10.5. A detached watcher on the
-  first node (PID 3647334, log `runs/wormhole_merger/logs/ctrl_flip_d12_csm.stop_at_t15.log`) drops `dump_and_stop`
-  into the run dir once the log passes t = 14.95; AMReX checks for it every 10 coarse steps, so the run writes a
-  checkpoint and exits normally at t = 15.00. Do not add a second stop file.
-- Nothing launches here when they finish: each needs its close-out ON THIS NODE (scratch is node-local), then
-  `results/merger/analysis/matched_rest.py` compares them with the old runs (sign ratio 1.518, ladder δ).
+**The four mode-3 rest-pair reruns are closed out** (09:11–09:30 UTC): `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`,
+`ctrl_rest_d14_csm`, `ctrl_rest_d16_csm`, each its old run's packed params with only the data changed (L = 64, N = 128,
+level 3, t = 15), clean to t = 15, no NaN. Filed under `03_two_throats/csm/` with d = 18, packed without movies (frames
+kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 UTC)"].
+- Pull/push at d = 12 over t = 3.5–10.5: 1.463 ± 0.023 (superposed 1.518 ± 0.021; fixed potential 1.500; fixed charge
+  −0.667, excluded).
+- Like-pair ladder at t = 11.5: +0.4791 / +0.3716 / +0.2963 / +0.2406 at d = 12 / 14 / 16 / 18 (×1.020 / 1.004 / 0.994 /
+  0.987 the superposed runs'); A/(d + δ)² gives δ = 2.65 (superposed 3.56). Table:
+  `results/merger/campaign/03_two_throats/matched_rest_displacement.dat`.
+- t = 0 read at launch: every mouth's far-side mass and charge are the isolated throat's (one-body mass 1.0000); M_ADM
+  2.27376 (flipped d = 12), 1.56579 / 1.62149 / 1.66449 / 1.69871 (d = 12 / 14 / 16 / 18).
 - The GPU build reproduces the CPU energy scan at d = 8 (preflight-only on the scan's grid): M_ADM 2.3604109 (CPU
   2.36041), λ 0.856614, c 2.029956.
 - The L = 128 pair launched first (05:12, `ctrl_{flip,rest}_d16_csm_L128_ml4_t015`) broke the rerun rule; stopped at
   t = 3 and wiped on the user's word, frames included (MANIFEST_CLEANUP_2026-09-28).
 
-## Live — second node (one H100): the rest of step 2 (the user's word, 2026-09-28: "run the queued here")
+## Second node (one H100): free since 08:26 UTC; the head-on goes here on the user's word
 
 - **Stopped at t = 0.60, 08:26 UTC, on the user's word ("kill it"): `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm`**,
   the L = 64 mode-3 rerun of the level-5 head-on (live since 08:07). The head-on moves to the L = 128 production box
@@ -171,9 +154,9 @@ diffed against its old run's packed params (only the named changes):
   paper's head-on chain: superposed scout → CS-1 (same grid, one knob) → mode-3 big box (data + box, compared at common
   spheres). **No checkpoints** (the user, 09:00: "it will run smooth"). t = 100, zoom 40, coord 64. Est. 2–2.8 u/h,
   ~36–50 h; ~59 GB (the preflight measures it).
-- **Not ready: per-level + core-excised Ham/Mom diagnostics (output only)** are in the proposal, but neither the
-  binary nor the consumer writes them yet (the log's norms are level 0 only, uncut; `constraint_solve_t0_check.py`
-  grades one t = 0 plotfile). The user's call: add them before the launch, or launch without.
+- **Skipped on the user's word (09:20 UTC): per-level + core-excised 𝓗/𝓜 diagnostics.** No claim needs them (every
+  constraint statement is relative, the figure calls the norms base-grid box averages); Sec. II D's t = 0 throat-shell
+  number is redone on CPU with `constraint_solve_t0_check.py` ["2026-09-28 (09:30 UTC)"].
 - Launch checklist: t = 0 far-side mass and charge at the isolated values (~2e-7), R_min ≈ 3.889; each run's M_ADM
   into the registry (head-on 2.360; spiral and fly-by above 2.274 by their kinetic term); frame 0 against an old
   reference; the first checkpoint on scratch (spiral, fly-by). The registry marks the head-on as the blessed exception,

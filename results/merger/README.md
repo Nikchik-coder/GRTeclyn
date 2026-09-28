@@ -1092,18 +1092,22 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   scout (Misner-Sharp ±20 %). M_ADM is the volume identity (±0.2 % on the exact throat). The paper's
   head-on numbers are the superposition's; nothing of CS-1 is cited yet.
 
-### Mode-3 reruns of the rest pairs: the sign rule survives clean data (2026-09-28, in progress)
+### Mode-3 reruns of the rest pairs: the sign rule survives clean data (2026-09-28)
 - **Claim.** Pairs of far-side-matched throats (mode 3: each mouth's far-side mass and charge are the isolated
   throat's) released from rest move as the superposed pairs did: the like pair opens, the flipped pair falls in.
   At d = 12 the pull-to-push ratio over t = 3.5–10.5 is 1.463 ± 0.023 (15 slices), against the superposed 1.518 ±
   0.021 and the fixed-potential prediction (Q+1)/(Q−1) = 1.500; fixed charge, which the t = 0 energies would imply for
-  conserved charges, predicts −0.667 (the flipped pair flying apart) and is excluded. At d = 18 the like pair opens
-  +0.2406 by t = 11.5 against the superposed +0.2438 (×0.987).
-- **Runs.** `ctrl_rest_d18_csm` *(pack, `campaign/03_two_throats/csm/`)*; `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`,
-  `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm` live (first node). Each is its old run's params with only the constraint
-  solve (mode 3), checkpoints and the full plot list added; reduction `analysis/matched_rest.py`.
-- **Caveats.** The d = 12 ratio is read from the live runs (its window is complete). The binary differs from the old
-  runs' (a 2026-09-04 build against 5f988dbc, which mode 3 needs).
+  conserved charges, predicts −0.667 (the flipped pair flying apart) and is excluded. The ladder at t = 11.5 opens
+  +0.4791 / +0.3716 / +0.2963 / +0.2406 at d = 12 / 14 / 16 / 18, ×1.020 / 1.004 / 0.994 / 0.987 the superposed
+  runs'; relative to d = 12, 0.775 / 0.618 / 0.502 (superposed 0.788 / 0.635 / 0.519). The fit A/(d + δ)² gives
+  δ = 2.65 (superposed, same fit: 3.56): the push falls off a little closer to 1/d².
+- **Runs.** `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`, `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm`, `ctrl_rest_d18_csm`
+  *(pack, `campaign/03_two_throats/csm/`)*, all clean to t = 15, no NaN. Each is its old run's params with only the
+  constraint solve (mode 3), checkpoints and the full plot list added; reduction `analysis/matched_rest.py` →
+  `campaign/03_two_throats/matched_rest_displacement.dat`.
+- **Caveats.** One resolution (level 3), as the superposed runs. The binary differs from the old runs' (a 2026-09-04
+  build against 5f988dbc, which mode 3 needs). The fitted δ drifts with the reading time (1.8 at t = 6, 2.4 at 9.5,
+  2.65 at 11.5), so δ is quoted at the superposed ladder's t = 11.5.
 
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),

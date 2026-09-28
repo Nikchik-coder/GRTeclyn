@@ -1,0 +1,467 @@
+{
+ "schema": 1,
+ "run": "ctrl_rest_d14_csm",
+ "reconstructed": false,
+ "launched_utc": "2026-09-28T05:42:11Z",
+ "what": "MODE-3 RERUN of ctrl_rest_d14 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3).",
+ "template": "runs/wormhole_merger/templates_scan/params_ctrl_rest_d14_csm.txt",
+ "template_sha256": "84e45d7b720fb8a55cb54ab4f377d7562e1317860854f8a14c1660dad31cc500",
+ "params_sha256": "65783a3f38787344bcfb7ddd70ded43ee4f40ef62763b411aea84e8accc75567",
+ "params": {
+  "verbosity": "1",
+  "output_path": "\"runs/wormhole_merger/ctrl_rest_d14_csm\"",
+  "amr.plot_file": "\"/tmp/grteclyn_scratch/ctrl_rest_d14_csm/BinaryWormholePlt\"",
+  "amr.check_file": "\"/tmp/grteclyn_scratch/ctrl_rest_d14_csm/BinaryWormholeChk\"",
+  "checkpoint_interval": "200",
+  "amr.checkpoint_files_output": "1",
+  "checkpoint_keep": "3",
+  "plot_interval": "50",
+  "amr.plot_vars": "chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2 shift3 phi Pi",
+  "amr.derive_plot_vars": "Weyl4",
+  "hdf5_subpath": "\"hdf5\"",
+  "pout_subpath": "\"pout\"",
+  "data_subpath": "\"data\"",
+  "print_progress_only_to_rank_0": "1",
+  "particle_interpolator.verbosity": "0",
+  "wormhole_id_type": "1",
+  "wormhole_initial_lapse_type": "5",
+  "wormhole_throat_radius_A": "2.0",
+  "wormhole_throat_radius_B": "2.0",
+  "wormhole_drainhole_mass_A": "1.0",
+  "wormhole_drainhole_mass_B": "1.0",
+  "wormhole_bare_mass_A": "0.0",
+  "wormhole_bare_mass_B": "0.0",
+  "wormhole_centerA": "-7.0 0.0 0.0",
+  "wormhole_centerB": "7.0 0.0 0.0",
+  "wormhole_momentumA": "0.0 0.0 0.0",
+  "wormhole_momentumB": "0.0 0.0 0.0",
+  "wormhole_subtract_phi_asymptote": "1",
+  "wormhole_support_strength": "1.0",
+  "phantom_mass": "0.0",
+  "L": "64.0",
+  "N1": "128",
+  "N2": "128",
+  "N3": "128",
+  "center": "32.0 32.0 32.0",
+  "max_level": "3",
+  "regrid_interval": "16 16 16 16",
+  "regrid_threshold": "0.05",
+  "max_box_size": "32",
+  "min_box_size": "16",
+  "isPeriodic": "0 0 0",
+  "hi_boundary": "1 1 1",
+  "lo_boundary": "1 1 1",
+  "nonzero_asymptotic_vars": "chi h11 h22 h33 lapse",
+  "nonzero_asymptotic_values": "1.0 1.0 1.0 1.0 1.0",
+  "dt_multiplier": "0.02",
+  "stop_time": "15.0",
+  "max_spatial_derivative_order": "4",
+  "nan_check": "1",
+  "min_chi": "1.0e-8",
+  "min_lapse": "1.0e-10",
+  "lapse_advec_coeff": "1.0",
+  "lapse_coeff": "2.0",
+  "lapse_power": "1.0",
+  "shift_advec_coeff": "1.0",
+  "shift_Gamma_coeff": "0.75",
+  "eta": "1.0",
+  "formulation": "0",
+  "kappa1": "3.0",
+  "kappa2": "0.",
+  "kappa3": "1.",
+  "covariantZ4": "0",
+  "sigma": "0.1",
+  "puncture_tracking.enabled": "0",
+  "calculate_constraint_norms": "1",
+  "tagging_type": "2",
+  "tagging_L": "64.0",
+  "throat_tracking": "1",
+  "throat_track_search_radius": "2.0",
+  "binary_throat_diagnostics": "1",
+  "binary_diag_axis": "0",
+  "binary_diag_split_coord": "0.0",
+  "sponge_enabled": "1",
+  "sponge_inner_radius": "24.0",
+  "sponge_outer_radius": "32.0",
+  "sponge_strength": "4.0",
+  "sponge_ramp_power": "4",
+  "activate_extraction": "0",
+  "write_extraction": "0",
+  "amrex.the_arena_init_size": "1048576",
+  "constraint_solve": "1",
+  "constraint_solve_background": "0",
+  "constraint_solve_puncture_mode": "3",
+  "constraint_solve_verbose": "1"
+ },
+ "overrides": {
+  "WHM_KEEP_LAST": "3",
+  "WHM_CONSUME_ARGS": "--areal-radius --areal-min-radius 0.5 --horizon-scan --horizon-track runs/wormhole_merger/ctrl_rest_d14_csm/data/binary_throat_diagnostics.dat --horizon-r-exact 3.8895 --frames-fields chi chi_minus_1 K lapse shift1 shift2 shift3 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed --frames-coord 32 --frames-zoom 32 --frames-center 32 32 32 --frames-cache-slices --frames-auto-zlim",
+  "WHM_PREFLIGHT": "full"
+ },
+ "restart_from": null,
+ "binary": {
+  "file": "main3d_csmatch_5f988dbc_2026-09-28.ex",
+  "path": "runs/wormhole_merger/bin/main3d_csmatch_5f988dbc_2026-09-28.ex",
+  "sha256": "5765fee9a29fadff69b3cd28590909da3280ba501834633ac0d3ba568fe1e37f",
+  "grteclyn_version": "5f988dbc",
+  "binaries_tsv": {
+   "file": "main3d_csmatch_5f988dbc_2026-09-28.ex",
+   "sha256_16": "5765fee9a29fadff",
+   "grteclyn_version": "5f988dbc",
+   "amrex": "26.02-12-gd7da5045",
+   "built_utc": "2026-09-28T05:03:33Z",
+   "flags": "USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90",
+   "nvcc": "Build cuda_12.1.r12.1/compiler.32688072_0",
+   "made_by": "build_binary.sh",
+   "note": "constraint_solve mode 3 (far-side matched), far-side report, volume-identity M_ADM (59557600); first CUDA build of that code"
+  }
+ },
+ "launcher": {
+  "commit": "5f988dbc",
+  "dirty": false
+ },
+ "node": "the first GPU node",
+ "gpu": "0",
+ "paths": {
+  "run_dir": "runs/wormhole_merger/ctrl_rest_d14_csm",
+  "scratch": "$GRTECLYN_SCRATCH/ctrl_rest_d14_csm"
+ },
+ "preflight": {
+  "schema": 1,
+  "mode": "full",
+  "restart": false,
+  "exe": "main3d_csmatch_5f988dbc_2026-09-28.ex",
+  "exe_sha256": "5765fee9a29fadff69b3cd28590909da3280ba501834633ac0d3ba568fe1e37f",
+  "params_sha256": "65783a3f38787344bcfb7ddd70ded43ee4f40ef62763b411aea84e8accc75567",
+  "verdict": "pass",
+  "reasons": [],
+  "frames": {
+   "fields": [
+    "chi",
+    "chi_minus_1",
+    "K",
+    "lapse",
+    "shift1",
+    "shift2",
+    "shift3",
+    "phi",
+    "Pi",
+    "Weyl4_Re",
+    "Weyl4_Im",
+    "Weyl4_Mag",
+    "scalar_activity",
+    "local_speed"
+   ],
+   "required": [
+    "chi",
+    "chi_minus_1",
+    "K",
+    "lapse",
+    "shift1",
+    "shift2",
+    "shift3",
+    "phi",
+    "Pi",
+    "Weyl4_Re",
+    "Weyl4_Im",
+    "Weyl4_Mag",
+    "scalar_activity",
+    "local_speed"
+   ],
+   "missing": [],
+   "subset": null,
+   "source": "--frames-fields in WHM_CONSUME_ARGS",
+   "axis": "z",
+   "errors": [],
+   "warnings": [],
+   "render": {
+    "plotfile": "plt00000",
+    "frame": 0,
+    "status": "ok",
+    "seconds": 13.0,
+    "frames_out": "preflight_frames",
+    "log": "preflight_frames/render.log",
+    "fields": {
+     "chi": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 4.693166886227118e-07,
+      "max": 0.8483662009239197,
+      "verdict": "ok"
+     },
+     "chi_minus_1": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": -0.9999995231628418,
+      "max": -0.15163379907608032,
+      "verdict": "ok"
+     },
+     "K": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: K is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "lapse": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.20591777563095093,
+      "max": 0.9182805418968201,
+      "verdict": "ok"
+     },
+     "shift1": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: shift1 is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "shift2": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: shift2 is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "shift3": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "phi": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": -0.9968129396438599,
+      "max": -0.05377575382590294,
+      "verdict": "ok"
+     },
+     "Pi": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: Pi is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "Weyl4_Re": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": -0.0004211186897009611,
+      "max": 0.06631692498922348,
+      "verdict": "ok"
+     },
+     "Weyl4_Im": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": -0.0034926149528473616,
+      "max": 0.0034926149528473616,
+      "verdict": "ok"
+     },
+     "Weyl4_Mag": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 3.273969539918653e-08,
+      "max": 0.06637970358133316,
+      "verdict": "ok"
+     },
+     "scalar_activity": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.05377575382590294,
+      "max": 0.9968129396438599,
+      "verdict": "ok"
+     },
+     "local_speed": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.000141067459480837,
+      "max": 0.8457987904548645,
+      "verdict": "ok"
+     }
+    },
+    "log_tail": []
+   }
+  },
+  "intent": {
+   "errors": [],
+   "warnings": []
+  },
+  "symmetry": {
+   "reflect": [],
+   "errors": [],
+   "warnings": []
+  },
+  "consumer": {
+   "consume": true,
+   "areal_radius": "flat conformal metric, r/sqrt(chi)",
+   "neck_horizons": false,
+   "reflect": [],
+   "errors": [],
+   "warnings": [
+    "areal radius is r/sqrt(chi) (flat conformal metric): exact at t = 0, a lower bound once the Gamma-driver shift has moved the grid; --areal-full-metric uses h22, h33"
+   ]
+  },
+  "static": {
+   "keys": 84,
+   "absent_from_binary": [
+    "hdf5_subpath",
+    "nonzero_asymptotic_vars",
+    "nonzero_asymptotic_values"
+   ],
+   "allowed_absent": [
+    "hdf5_subpath",
+    "nonzero_asymptotic_vars",
+    "nonzero_asymptotic_values"
+   ]
+  },
+  "probe": {
+   "status": "ok",
+   "exit_code": 6,
+   "unused": [
+    "hdf5_subpath",
+    "nonzero_asymptotic_values",
+    "nonzero_asymptotic_vars",
+    "write_extraction"
+   ],
+   "version": "5f988dbc",
+   "seconds": 36.3,
+   "log_tail": [],
+   "allowed_unused": [
+    "hdf5_subpath",
+    "nonzero_asymptotic_values",
+    "nonzero_asymptotic_vars",
+    "write_extraction"
+   ]
+  },
+  "t0": {
+   "binary_throat_diagnostics.dat": {
+    "time": 0.0,
+    "separation": 13.9375,
+    "xA": 6.96875,
+    "yA": 0.0,
+    "zA": 0.0,
+    "chiA_min": 4.6931668643e-07,
+    "lapseA_min": 0.20591777083,
+    "xB": -6.96875,
+    "yB": 0.0,
+    "zB": 0.0,
+    "chiB_min": 4.6931668643e-07,
+    "lapseB_min": 0.20591777083,
+    "theta_A": 0.15489572388,
+    "ah_r_A": 0.0,
+    "theta_B": 0.15489572388,
+    "ah_r_B": 0.0,
+    "theta_common": 1e+30,
+    "ah_r_common": 0.0
+   },
+   "collapse_diagnostics.dat": {
+    "time": 0.0,
+    "min_lapse": 0.20591777083,
+    "min_chi": 4.6931668643e-07,
+    "max_abs_K": 0.0,
+    "min_lapse_x": 0.0,
+    "min_lapse_y": 0.0,
+    "min_lapse_z": 0.0,
+    "min_phi": -0.99681293137,
+    "max_phi": -0.097766149884,
+    "min_Pi": 0.0,
+    "max_Pi": 0.0
+   },
+   "constraint_norms.dat": {
+    "time": 0.0,
+    "L2_Ham": 0.0033493770579,
+    "L2_Mom": 0.0
+   },
+   "constraint_solve.dat": {
+    "time": 0.0,
+    "mode": 3.0,
+    "M_ADM": 1.6214939316,
+    "M_ADM_face": 1.7071558257,
+    "c_A": 2.1248280365,
+    "sigma_A": 0.93855429036,
+    "w0_A": -0.0028262637497,
+    "Mfar_A": -4.8104777409,
+    "Qfar_A": 3.0343679816,
+    "m1_A": 0.9999999279,
+    "c_B": 2.1248280365,
+    "sigma_B": 0.93855429036,
+    "w0_B": -0.0028262637486,
+    "Mfar_B": -4.8104777409,
+    "Qfar_B": 3.0343679816,
+    "m1_B": 0.9999999279,
+    "match_res": 7.4831510988e-08
+   },
+   "throat_track.dat": {
+    "time": 0.0,
+    "xA": -6.96875,
+    "yA": 0.0,
+    "zA": 0.0,
+    "chiA_pit": 4.6931668643e-07,
+    "nA": 4.0,
+    "xB": 6.96875,
+    "yB": 0.0,
+    "zB": 0.0,
+    "chiB_pit": 4.6931668643e-07,
+    "nB": 4.0
+   }
+  },
+  "grteclyn_version": "5f988dbc",
+  "seed": {
+   "requested": {}
+  }
+ },
+ "t0": {
+  "time": 0.0,
+  "L2_Ham": 0.0033493770579,
+  "L2_Mom": 0.0
+ },
+ "seed": null,
+ "frames": {
+  "fields": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "missing_from_default": [],
+  "subset": null,
+  "source": "--frames-fields in WHM_CONSUME_ARGS",
+  "t0_render": {
+   "chi": "ok",
+   "chi_minus_1": "ok",
+   "K": "flat",
+   "lapse": "ok",
+   "shift1": "flat",
+   "shift2": "flat",
+   "shift3": "flat",
+   "phi": "ok",
+   "Pi": "flat",
+   "Weyl4_Re": "ok",
+   "Weyl4_Im": "ok",
+   "Weyl4_Mag": "ok",
+   "scalar_activity": "ok",
+   "local_speed": "ok"
+  }
+ },
+ "status": "finished",
+ "exit_status": 0,
+ "finished_utc": "2026-09-28T09:03:26Z",
+ "t_end": 15.01
+}

@@ -107,6 +107,10 @@ t = 51.4+) are evidence of a common horizon.
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
+| ctrl_rest_d12_csm | MODE-3 RERUN of ctrl_rest_d12 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3). | 0.00 | 15.01 | finished clean at t = 15.01 | 11.94 | - | 1.961e-01 | 3.978e-03 |
+| ctrl_flip_d12_csm | MODE-3 RERUN of ctrl_flip_d12 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3). | 0.00 | 15.00 | finished clean at t = 15.00 | 10.31 | - | 1.969e-01 | 4.912e-03 |
+| ctrl_rest_d16_csm | MODE-3 RERUN of ctrl_rest_d16 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3). | 0.00 | 15.01 | finished clean at t = 15.01 | 15.94 | - | 1.991e-01 | 5.072e-03 |
+| ctrl_rest_d14_csm | MODE-3 RERUN of ctrl_rest_d14 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3). | 0.00 | 15.01 | finished clean at t = 15.01 | 13.94 | - | 1.976e-01 | 4.642e-03 |
 | ctrl_rest_d18_csm | MODE-3 RERUN of ctrl_rest_d18 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3), every other key the old run's -- clean to t = 15.01, separated +0.2406 by t = 11.5 against the superposed run's +0.2438 (x0.987); M_ADM(0) = 1.69871, each mouth the isolated throat's far side (one-body mass 1.0000) | 0.00 | 15.01 | finished clean at t = 15.01 | 17.94 | - | 2.004e-01 | 5.060e-03 |
 
 ## `04_binary_headon`
