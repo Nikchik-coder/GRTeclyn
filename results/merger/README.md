@@ -10,6 +10,12 @@ extract of that campaign: every number the analysis rests on, the movies, a thin
 of stills, and enough provenance to rebuild any run. It is what survives if the machine
 that produced it does not.
 
+> **Data note (2026-09-28).** Every binary run below dated before 2026-09-28 started from
+> superposed initial data, which does not satisfy the Hamiltonian constraint; those results
+> are systematics/history, each superseded by its `csm` (constraint-solve mode 3) rerun as it
+> lands. The single-throat results stand as is: the isolated drainhole is an exact solution.
+> The registry classifies every run (`runs_registry.tsv`, DATA CLASSIFICATION).
+
 - The reasoning and the full argument: [`research/merger/Plan.md`](../../research/merger/Plan.md)
 - The article in preparation: [`research/merger/article/research.tex`](../../research/merger/article/research.tex)
 - The working run tree, **not in git** (~14 GB, on the machine that produced it):

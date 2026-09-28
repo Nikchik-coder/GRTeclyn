@@ -1,4 +1,7 @@
 # Table I of research.tex (tab:matrix), run by run: which group each packed run is counted in.
+# PLANNED (the rewrite, after the production set): binary physics groups repoint to the csm runs;
+# the superposed binaries move to a systematics group. Until the text is rewritten the old groups
+# stay, because ~900 ledger rows recompute from them.
 # Built from the 2026-09-23 recount (every packed run directory, i.e. every directory with a run_tail*.log
 # under results/merger/campaign, classified once).  Read by extract_detector.py, which recounts the table
 # from this file plus the pack and FAILS if a packed run is missing here, if a counted run is not packed, or
