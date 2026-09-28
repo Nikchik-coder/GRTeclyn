@@ -3,6 +3,15 @@
 Read [`MAP.md`](MAP.md) (what is where) and, for the merger campaign,
 [`research/merger/STATUS.md`](research/merger/STATUS.md) (what is live) first.
 Every rule below exists because breaking it cost a run, a result or a day.
+Several sessions edit this file every day, so re-read it from disk at the start of every task; the copy loaded at
+session start goes stale within hours.
+
+## Replies
+
+- Keep every reply to a few lines, even for results and "explain in plain English". Lead with the answer. No tables,
+  caveats, recaps or offers unless asked.
+- A status question wants run, t, speed, ETA, and whether it is alive. Nothing else.
+- Every ETA is in hours and clock time (UTC).
 
 ## Environment
 
@@ -92,14 +101,20 @@ after session because it lived only in one machine's agent memory.
   `results/merger/trust_windows.tsv` (wall reflection, blow-up, lost resolution) and
   close out: the movies and their colour scales use only frames up to it, and later
   frames stay on disk. Figures and the paper quote nothing after it either.
+- Plotfiles: the consumer keeps the last 3 on scratch (`--keep-last 3`); that is the intended retention.
 - Heavy analysis (yt, covering grids) runs in the background with a log; trim the matrix first.
 - GWOSC downloads are the slow part of any search: bypass the local proxy, use `--block-s 4096`.
 
 ## When a run finishes
 
-Do these steps, in this order and in the same session, without being asked:
+Do these steps, in this order and in the same session, without being asked, in one fast pass: batch them, fix only
+what the claims check or the identity grep flags, and report in a few lines.
 1. **Check it.**
-   - It reached its `stop_time`, or record where and why it died.
+   - It reached its `stop_time`, or record where and why it died. A `stop_time` is a choice, not a survival: before
+     calling a run clean or "no wall", compare where it stopped with where the closest earlier arm of its family
+     failed, and read the last units of `collapse_diagnostics.dat` and `constraint_norms.dat`.
+   - Read the run's own `run.log` for NaN; never infer a death from a sibling. The t ≈ 52 wall belongs to the
+     plunging mergers; the p = 0.45 fly-by never NaN'd.
    - No NaN in the death window (`closeout.sh` prints this).
    - Its headline number agrees with its partner run.
    - Its trust window: add a row to `trust_windows.tsv` if the solution stops being trustworthy before the end.
@@ -109,6 +124,8 @@ Do these steps, in this order and in the same session, without being asked:
    - File it: `file_run.sh --group NN_name <run>`. A new study gets its own group folder, so it never mixes into the
      physics groups (the convergence runs: `08_convergence`).
    - Run `research/merger/closeout.sh <run>`: it makes the movies up to the trust window and rebuilds the pack.
+     For a run nobody will cite (corrupted, diagnostic, stopped early) use `WHM_MOVIES=0`: the user does not want
+     its movies. Its existing frames still stay.
    - Live runs are never packed (`pack_results.sh` skips them), because a partial pack is git pollution.
 3. **Document it.** Update:
    - its row in `results/merger/runs_registry.tsv` (outcome);
@@ -119,8 +136,8 @@ Do these steps, in this order and in the same session, without being asked:
    - Delete its scratch plotfiles, and any checkpoints no queued run needs.
    - Log the prune in `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_<date>.md`.
    - Frames are never part of a prune (see Data, above).
-5. **Launch the next queued run** on the freed card. Check `nvidia-smi` first; the preflight runs before anything
-   starts. Record the launch in STATUS.
+5. **Launch the next queued run** on the freed card, if the user has said go for it (otherwise ask: see "Before
+   every launch"). Check `nvidia-smi` first; the preflight runs before anything starts. Record the launch in STATUS.
 6. **Commit and push** the tracked changes, staging explicit paths.
 
 ## The paper
@@ -128,8 +145,16 @@ Do these steps, in this order and in the same session, without being asked:
 - Every quoted number is a row in `research/merger/article/claims/ledger_*.tsv` and
   reaches the text as a `\clm...` macro from the generated `numbers.tex`. Change the
   ledger, run `claims.py check`, then `claims.py tex` — never edit `numbers.tex`.
+- The paper states verified results only. It has no failure narratives, no "not computed / not measured here" and
+  no mention of data that was not saved. Anything a simulation or analysis could settle goes into `GPU_PLAN.md`
+  with a cost, not into the text. The Scope paragraph keeps only model assumptions.
+- Figures are `figure*[t]` strips of at most about half a page, never full-page floats. Every caption ends with its
+  outcome.
 - Figures: every label hangs on what it names and no line crosses text
-  (`style.label_audit` in the wrapper's figure package checks this).
+  (`style.label_audit` in the wrapper's figure package checks this). Each panel gets a legend above its frame
+  naming every line; inside the frame there are at most tiny tags on vertical rules. `style.GOLD` is the one accent
+  (the horizon, or the fitted exponential); everything else is ink or grey.
+- A figure fix: make the minimal fix, render, run the label audit and show the image first; audits come after.
 
 ## Git
 
@@ -141,5 +166,6 @@ Do these steps, in this order and in the same session, without being asked:
   hook (`grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook`) blocks
   it. Say "the first/second GPU node", never the hostname.
 - Several sessions may share this working tree: **stage explicit paths**, never `git add -A`.
+- "Commit and push" from the user means now, in one step: stage, commit, push, one `ls-remote` check.
 - Push in the background with a timeout (`< /dev/null`), then verify with
   `git ls-remote`; a foreground push can hang the shell.
