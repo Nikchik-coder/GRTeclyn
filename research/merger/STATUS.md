@@ -1,4 +1,4 @@
-# Status — 2026-09-28 06:05 UTC
+# Status — 2026-09-28 06:20 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -59,9 +59,9 @@ Along the way:
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
-## Live
+## Live — first node (two H100s)
 
-**First node (two H100s): four mode-3 reruns of the rest pairs, two per card (step 2; the user's word, 2026-09-28).**
+**Four mode-3 reruns of the rest pairs, two per card (step 2; the user's word, 2026-09-28).**
 Each is its old run's packed params with only the data changed, plus rolling checkpoints every 2.0 and the full plot
 list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, plots every 0.5, binary
 `main3d_csmatch_5f988dbc_2026-09-28.ex` (the first CUDA build of mode 3), profile headon-scout, zoom 32. At 06:03 UTC:
@@ -83,23 +83,20 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
 - The L = 128 pair launched first (05:12, `ctrl_{flip,rest}_d16_csm_L128_ml4_t015`) broke the rerun rule; stopped at
   t = 3 and wiped on the user's word, frames included (MANIFEST_CLEANUP_2026-09-28).
 
-## Queued — to launch on the other cluster (one GPU), the user's word 2026-09-28
+## Live — second node (one H100): the rest of step 2 (the user's word, 2026-09-28: "run the queued here")
 
-Templates and binaries are untracked (`runs/`), so rebuild both there. Binary: `build_binary.sh --tag csmatch` at
-5f988dbc or later (the first build of mode 3 needs nvcc; check its t = 0 against `energy_scan.tsv`). A template is the
-old run's packed `results/merger/campaign/<group>/<run>/evolution_params.txt` with exactly three changes (the rule
-above): (a) append `constraint_solve = 1`, `constraint_solve_background = 0`, `constraint_solve_puncture_mode = 3`,
-`constraint_solve_verbose = 1`; (b) `checkpoint_interval` → every 2.0 code units, `amr.checkpoint_files_output = 1`,
-`checkpoint_keep = 3`; (c) `amr.plot_vars = chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2
-shift3 phi Pi`. Name: the old name + `_csm`. Diff against the old params before launching.
-1. `ctrl_rest_d18_csm`, the last rung of the rest-pair ladder (old `ctrl_rest_d18`, L = 64, level 3, t = 15; ~1.5 h
-   alone). `launch.sh --template params_ctrl_rest_d18_csm.txt --name ctrl_rest_d18_csm --gpu 0 --profile headon-scout
-   --zoom 32 --coord 32 --center 32 32 32 --binary <the csmatch build>`.
-2. The head-on to t = 100: the mode-3 rerun of `merge_headon_flip_d8_v1_lvl5from0_scalar_t100` (L = 64, level 5 from
-   t = 0; ~12 h). Template not yet written. With step 2's rest pairs it is the plan's decision point.
-3. Then the plan's steps 3 (orbits) and 4 (single throats on clean data), each a rerun of its old run by the same rule.
+- **Live since 06:11 UTC: `ctrl_rest_d18_csm`** (rerun of `ctrl_rest_d18`, the last ladder rung; L = 64, level 3,
+  t = 15; 41 GB), ~9 u/h alone, ETA ~07:55 UTC. At t = 0 each mouth's far side is the isolated throat's.
+- **Next on this card when it ends: `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm`**, the mode-3 rerun of the
+  level-5 head-on (L = 64, level 5 from t = 0, t = 100; template written, it differs from the old params only in the
+  solve block and checkpoints every 2.0). The old run went 3.5 u/h and peaked at 46 GB, so ~28 h (not ~12), and it
+  cannot share the card with d = 18. Profile headon (areal radii 10/14/18, horizon scan, scalar modes), zoom 40.
+  The binary must differ from the old run's (`main3d_boost_2026-09-08`): mode 3 exists only from 5f988dbc.
+- Then the plan's steps 3 (orbits) and 4 (single throats on clean data), each a rerun of its old run by the rule.
 
-**The second node is not used** (the user's word). CONV-1, CONV-2 and CONV-3w were stopped at 08:33 UTC on
+## Earlier (2026-09-27)
+
+CONV-1, CONV-2 and CONV-3w were stopped at 08:33 UTC on
 2026-09-27 and removed at 08:40 UTC ["2026-09-27 (08:33 UTC)"]. They had reached t = 30.25 / 60, 57.88 / 60 and 58.18 / 100.
 Their scratch (38 GB of plotfiles, no checkpoints), run dirs, launcher logs, registry rows and untracked partial packs
 are gone. Only their rendered frames are kept, in `runs/wormhole_merger/00_archive/stopped_2026-09-27/`, because frames
