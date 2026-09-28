@@ -41,8 +41,8 @@
 % REVTeX sets its own float parameters as the document opens, so these have
 % to be applied after that, not in the preamble proper.
 \AtBeginDocument{%
-  \renewcommand{\dbltopfraction}{0.85}%
-  \renewcommand{\dblfloatpagefraction}{0.75}%
+  \renewcommand{\dbltopfraction}{0.92}%
+  \renewcommand{\dblfloatpagefraction}{0.55}%
   \renewcommand{\textfraction}{0.1}%
   \setcounter{dbltopnumber}{2}%
 }
@@ -325,7 +325,7 @@ The shrinking is physical; the regrowth that follows it in the scans is not. In 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=0.70\textwidth]{01_single_throat/single_throat_collapse.pdf}\\[4pt]
-\includegraphics[width=0.62\textwidth]{01_single_throat/single_throat_inflation.pdf}
+\includegraphics[width=0.70\textwidth]{01_single_throat/single_throat_inflation.pdf}
 \caption{\emph{Top (collapse branch):} Collapse of the pure-quadrupole arm ($\varepsilon_2=\clmPureQuadAmpCaption$, no radial kick). (a)~Minimal-surface areal radius (ink) and the scan's MOTS (gold) from $t=\clmPureQuadMotsTime$: $R$ $\clmPureQuadMotsRStart\to\clmPureQuadMotsREnd$, $M_{\rm MS}$ $\clmPureQuadMotsMStart\to\clmPureQuadMotsMEnd$. Grey: the unkicked level-4 twin, which inflates on its own seed; this arm leaves it by $10\%$ only at $t=\clmPureQuadDeparture$---the second-order drive of the pure quadrupole. (b)--(d)~Global $\min\alpha$, $\min\chi$ (the origin, the far side's compactified infinity) and $\max|K|$; the violent phase spans $t=\clmCollapseViolentLo$--$\clmCollapseViolentHi$. (e),(f)~Radial profiles over \clmCollapseShells{} shells, $t=33$--$55$ (light = early): $|K|$ grows inward while $\alpha$ pinches to zero at the centre. Constraint norms: Fig.~\ref{fig:constraints}(c). The collapse ends in a black hole that consumes its supporting field. \emph{Bottom (inflation branch):} The inflating throat ($\varepsilon=-10^{-2}$; $L=\clmFourBoxL$ octant, finest $\Delta x=\clmFourFinestDx$) to $t=\clmFourWall$. (a)~Neck areal radius in the full metric, $\clmFourRStart\to\clmFourRWall$; gold, the exponential onset, $\tau=\clmFourOnsetEfold$ over $t=\clmFourOnsetLo$--$\clmFourOnsetHi$; shaded, exponential growth in the neck's proper time ($t=\clmFourSHWinLo$--$\clmFourSHWinHi$, gold) and the slower growth in $t$ once $1{+}\log$ freezes the neck's clock (grey). (b)~Over that window the neck's proper-time rate is $HR_0=\clmFourSHRate$ (local $\clmFourSHLocalLo$--$\clmFourSHLocalHi$), against the massless throat's $Ha=\clmSHMassless$~\cite{shinkai2002} and the linear mode's $\clmFourLinearRate$. (c)~The $\theta_l=0$ horizon stays on the neck; $\theta_k=0$ runs out to $R\approx\clmFourHorizonR$ by $t=\clmFourHorizonTime$. (d)~The lapse at the neck falls $\clmFourLapseStart\to\clmFourLapseEnd$; dashed, its minimum on the finest box. (e),(f)~$\max|K|$ and $\min\chi$ on the finest box, around the origin. (g),(h)~$\chi$ and $\alpha$ per shell (light = early): the $\chi$ peak moves out with the neck. Constraint norms: Fig.~\ref{fig:constraints}(d). The throat keeps growing, anti-trapped; its onset is at the linear rate.}
 \label{fig:single_collapse}\label{fig:single_inflation}
 \end{figure*}
@@ -656,8 +656,8 @@ Five measurements support the main text without being needed to follow it: the m
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.70\textwidth]{05_binary_spiral/momentum_scan_orbits.pdf}\\[4pt]
-\includegraphics[width=0.70\textwidth]{05_binary_spiral/mouth_growth.pdf}
+\includegraphics[width=0.62\textwidth]{05_binary_spiral/momentum_scan_orbits.pdf}\\[4pt]
+\includegraphics[width=0.62\textwidth]{05_binary_spiral/mouth_growth.pdf}
 \caption{\emph{Top (orbits):} Merger or fly-by: the momentum scan from $d=\clmPairSeparation$ with opposite signs, from the head-on release ($p=0$) to the fly-by ($p=\clmSpiralMomentumFlyby$). (a)~Both throats in the orbital plane; (b)~their separation. The tracks are the coordinate positions of the $\chi$ pits, followed through each run. Grey, light to dark: the plunges $p=0$, $\clmSpiralMomentumProd$, $\clmSpiralMomentumFifteen$, $\clmSpiralMomentumTwenty$ and $\clmSpiralMomentumTwentyFive$, each drawn until $\chi$ first reaches its floor or the run ends (dots); gold: the fly-bys $p=\clmSpiralMomentumThirtyFive$ (dashed) and $\clmSpiralMomentumFlyby$. Every arm is level 3 except the $p=\clmSpiralMomentumFlyby$ fly-by, the level-5 arm of the text; since a level-3 pit sits on a cell of side $\clmFinestDx$, the tracks are averaged over two time units. The fly-by turns at closest approach, $\clmFlybyClosestApproach$ at $t\approx\clmFlybyClosestTime$; from $t\approx\clmFlybyScanEdgeTime$ its mouths have inflated past the scan window, and the faint stretch is the separation of the $\chi$ pits of two inflating mouths, not of two compact throats, and ends at $t=\clmFlybyTrust$, where the fly-by's trust window closes. \emph{Bottom (mouth growth):} Mouth growth in the merging ($p=\clmSpiralMomentumProd$) and scattering ($p=\clmSpiralMomentumFlyby$) arms, both from $d=12$ with the same throats; the merger's instrumented re-run carries three refinement levels and the fly-by five. (a)~Areal radius of one mouth (its twin agrees to $\clmMouthTwinAgreement$): solid while the two scan spheres are disjoint, dotted once they overlap; long dash, the common-centre scan. No trapped surface appears on these star-shaped scans, which end at $t=\clmMouthScanEnd$ (merger) and $t=\clmFlybyTrust$ (fly-by, its trust window). (b)~Separation: $p=\clmSpiralMomentumProd$ reaches contact, $p=\clmSpiralMomentumFlyby$ misses at $\clmFlybyClosestApproach$. (c)~Growth excess $R/R_0-1$ with exponential fits over $t=\clmMouthFitStart$--$\clmMouthFitEnd$ (gold): $\tau=\clmMouthTauMerger$ (merger) and $\clmMouthTauFlyby$ (fly-by), as read. The reading includes the companion's field; with it removed (Sec.~\ref{sec:spiral:inspiral}) the merger shows no growth of its own and the fly-by has $\tau=\clmMouthTauFlybyPlaced$.}
 \label{fig:orbits}\label{fig:mouth_growth}
 \end{figure*}
@@ -671,8 +671,8 @@ Five measurements support the main text without being needed to follow it: the m
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.70\textwidth]{08_waves/scalar_channel.pdf}\\[4pt]
-\includegraphics[width=0.70\textwidth]{08_waves/scalar_censorship.pdf}
+\includegraphics[width=0.62\textwidth]{08_waves/scalar_channel.pdf}\\[4pt]
+\includegraphics[width=0.62\textwidth]{08_waves/scalar_censorship.pdf}
 \caption{\emph{Top (channel):} The scalar channel on the $\Psi_4$ spheres.
 (a)~Fly-by energy through $R=\clmGwScalarRadiusOuter$ in units of the gravitational energy crossed by $t=\clmGwScalarNormCut$: gravitational (ink) and scalar with its physical sign (gold, Sec.~\ref{sec:gw:scalar}). The ratio $|E_\phi|/E_{\rm GW}$ printed at each cut falls from $\clmGwScalarRatioFifty$ to $\clmGwScalarRatioEighty$ as the gravitational burst arrives and this running integral drifts (Sec.~\ref{sec:gw:scalar}); $t=\clmGwScalarNormCut$ is where the fly-by's trust window closes on this sphere ($t-R=\clmFlybyTrustRetarded$).
 (b)~Multipole content, fly-by: $\ell=1$ exceeds $\ell=0$ and $\ell=2$ by $10^{\clmGwScalarDipoleGap}$.

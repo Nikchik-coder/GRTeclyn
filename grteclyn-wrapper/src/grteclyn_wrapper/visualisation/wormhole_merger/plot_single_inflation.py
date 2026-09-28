@@ -133,12 +133,12 @@ def main(argv: list[str] | None = None) -> int:
     R0 = on["R0"]
 
     style.prd(base=10.0)
-    fig = plt.figure(figsize=(7.05, 5.6), constrained_layout=True)
+    fig = plt.figure(figsize=(7.05, 5.0), constrained_layout=True)
     # the strip over a row of four panels and a row of three
     # One sub-grid per row: on a shared 12-column grid the rows' column edges
     # (3/6/9 against 4/8) do not line up, and constrained layout, which keeps
     # one margin per column, collapsed the axes to zero.
-    gs = fig.add_gridspec(3, 1, height_ratios=[1.15, 1.0, 1.0])
+    gs = fig.add_gridspec(3, 1, height_ratios=[0.9, 1.0, 1.0])
     axT = fig.add_subplot(gs[0])
     row2, row3 = gs[1].subgridspec(1, 4), gs[2].subgridspec(1, 3)
     axs = ([fig.add_subplot(row2[0, i]) for i in range(4)]
