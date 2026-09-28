@@ -1,4 +1,4 @@
-# Status — 2026-09-28 09:55 UTC
+# Status — 2026-09-28 10:06 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -101,10 +101,10 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by and the spiral (the user's go, 09:48 UTC)
 
-| card | run | p | t now (09:52) | t end | speed | ETA |
+| card | run | p | t now (10:05) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 0.06 | 100 | 2.1 u/h (old run 2.17) | ~46 h, ~08:00 UTC 09-30 |
-| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 0.06 | its NaN, ~60 | 2.1 u/h (old run 2.81) | ~21–29 h, ~07:00–15:00 UTC 09-29 |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 0.49 | 100 | 2.1 u/h (old run 2.17) | ~47 h, ~09:30 UTC 09-30 |
+| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 0.49 | its NaN, ~60 | 2.1 u/h (old run 2.81) | ~21–28 h, ~07:00–14:30 UTC 09-29 |
 
 - Launched 09:49 UTC, both exact reruns of their old runs (only the solve block and checkpoints every 5 units, newest
   3), binary `main3d_csmatch_5f988dbc_2026-09-28.ex`, profiles `orbit-modes-scan-prod` / `orbit-modes-prod` (the
@@ -132,24 +132,30 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 - The L = 128 pair launched first (05:12, `ctrl_{flip,rest}_d16_csm_L128_ml4_t015`) broke the rerun rule; stopped at
   t = 3 and wiped on the user's word, frames included (MANIFEST_CLEANUP_2026-09-28).
 
-## Second node (one H100): free since 08:26 UTC; the head-on goes here on the user's word
+## Live — second node (one H100): the production head-on (the user's go, 09:57 UTC)
 
-- **Stopped at t = 0.60, 08:26 UTC, on the user's word ("kill it"): `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm`**,
-  the L = 64 mode-3 rerun of the level-5 head-on (live since 08:07). The head-on moves to the L = 128 production box
-  with the spiral and the fly-by (queued below). Stopped from the first node with AMReX's `stop_run` in its run dir
-  (the run dir is shared, the processes are not; AMReX exited cleanly at step 60). No checkpoint was written (the
-  first was due at t = 2). **Wiped at 08:33 UTC on the user's word ("wipe it out")**: run dir, scratch (26 GB),
-  launcher log, registry row, its L = 64 template and, on the user's yes, its frames (MANIFEST_CLEANUP_2026-09-28).
-  Its t = 0 read stands for the L = 128 run's check: M_ADM 2.35892, each mouth R_min 3.8786 (R⋆ 3.8895), one-body mass
-  1.0000, frame 0 as CS-1's.
-- The card is free. Next: the production head-on (queued below), on the user's go.
+| card | run | t now (10:05) | t end | speed | ETA |
+|---|---|---|---|---|---|
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 0.06 | 100 | 2.0 u/h at start-up (2–2.8 expected) | ~36–50 h, ~22:00 UTC 09-29 to ~12:00 UTC 09-30 |
 
-## Queued — the production set: head-on, spiral, fly-by in one box (the user's final proposal, 2026-09-28 09:00 UTC; waiting for the go)
+- Launched 10:02 UTC (template `params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt`, profile
+  `headon-modes-prod`, zoom 40, coord 64, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`). The blessed exception to the
+  rerun rule: the old L = 64 physics in the shared L = 128 box (details in the production set below).
+- The 09:58 attempt was refused by the preflight: the template still carried the old run's `checkpoint_interval = 100`
+  and `checkpoint_keep = 1` with checkpoint output off. Now `checkpoint_interval = -1`: **no checkpoints** (the user's
+  word); if it dies it cannot be restarted.
+- t = 0 checked: preflight pass; M_ADM 2.35731 (CPU scan 2.3604 on L = 128 level 4; the L = 64 attempt 2.35892),
+  m1_A = m1_B = 1.0000000; frame 0 (χ) two pits at ±4; 59 GB on the card, stepping (t = 0.06 at 10:05).
+- The L = 64 head-on rerun before it (08:07–08:26 UTC, stopped at t = 0.60) was wiped on the user's word, frames
+  included (MANIFEST_CLEANUP_2026-09-28).
+
+## The production set: head-on, spiral, fly-by in one box (the user's final proposal, 2026-09-28 09:00 UTC) — all three live
 
 Shared by all three (the user): L = 128, N = 256 (Δx = 0.5, finest 1/64), max_level 5 from t = 0, tagging_L 64 (the same
 refined grids), sponge 48/64, Ψ4 at 20/28/36/44, the scalar at 14/20/30/44 (consumer profiles `*-prod`, output only),
-plots every 1.0, mode-3 data, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`. **Nothing launches until the user says
-go.** Order: fly-by → spiral → head-on. **The fly-by and the spiral are live (first node, above, 09:49 UTC); the head-on the user launches on another node.** Templates in `runs/wormhole_merger/templates_scan/params_<run>.txt`, each
+plots every 1.0, mode-3 data, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`. Launched on the user's go.
+Order: fly-by → spiral → head-on. **The fly-by and the spiral are live on the first node (09:49 UTC), the head-on on the
+second node (10:02 UTC); see Live, above.** Templates in `runs/wormhole_merger/templates_scan/params_<run>.txt`, each
 diffed against its old run's packed params (only the named changes):
 - **`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`** (first node, card 0, first): the exact rerun, plus checkpoints
   every 5 units (500 steps), the newest 3 (the old kept 8 at every 1.0). t = 100 (never NaN'd; trusted to t = 70).
