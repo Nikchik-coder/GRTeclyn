@@ -1,4 +1,4 @@
-# Status — 2026-09-28 10:06 UTC
+# Status — 2026-09-28 10:06 UTC (queue updated ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -199,6 +199,24 @@ bash $L --gpu 1 --template params_v2_spiral_d12_p012_L128_lvl5from0_t100_csm.txt
 bash $L --gpu G --template params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt --name merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm --profile headon-modes-prod --zoom 40 --coord 64 --binary $B
 ```
 Then the plan's step 4 (single throats on clean data), each a rerun of its old run by the rule.
+
+## Queued — mode-3 follow-ups: the ladder (Fig. 12a) and a convergence twin (the user, 2026-09-28 ~11 UTC; nothing launches without the go)
+
+Fig. 12 is `fig:spiral_ladder`. Panel (b), the slicing/gauge study, **is done** (the gauge arms on superposed
+data); it is a systematics statement and is not rerun. Panel (a), the refinement ladder to the wall, is rerun on
+mode-3 data; the paper's framing (the user): the old constraint state is barely mentioned — the headline is that
+mode 3 improves the constraints, and the old campaign is the systematics study.
+
+| id | run | what | how | GPU-h |
+|---|---|---|---|---|
+| LAD-csm | ladder arms `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement on mode-3 data (Fig. 12a) | restart from the production spiral's own checkpoint at t ≈ 50 (its every-5 checkpoints exist for this), max_level 4 / 6 / 7; the production run itself is the level-5 rung; ~10–15 units per arm | ~15–25 total |
+| CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | spiral burst and energy, level 4 vs 5 on mode-3 data (replaces CONV-3's role) | the production spiral's template, max_level 4, from t = 0 | ~8–10 |
+
+- LAD-csm launches only after the spiral passes t ≈ 55 and a checkpoint ≥ 50 is on scratch; convergence-study rules
+  apply (no frames: `--frames-fields none` + `WHM_FRAMES_SUBSET`, `WHM_MOVIES=0`, group `08_convergence`).
+- max_level alone still leaves the wave zone on the base grid; a wave-zone twin (CONV-3w's role) is contingent on
+  the mode-3 waveforms shifting beyond a few % and is not queued.
+- Checkpoints: to be asked per run at launch (the standing rule); the ladder arms need none.
 
 ## Earlier (2026-09-27)
 
