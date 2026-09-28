@@ -1323,6 +1323,42 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-28 (05:40 UTC) — the FTL campaign's 4D null-ray tracer validated and pointed at the horizon question: `wormhole_escape_trace.py`; nothing launched
+
+- **What was asked.** Whether the neuralspacetime campaign's spacetime analyzers (the 4D ray
+  tracing in `grteclyn-wrapper/src/grteclyn_wrapper/metrics/probes/ftl/`) are sound, and whether
+  they can help decide if the merger forms a horizon.
+- **Validation.** All 89 unit tests of the FTL family pass (`tests/metrics/ftl/` + the collector
+  test); the analytic Alcubierre positive control passes (frozen slice 0.000 against evolving
+  f_geo 0.281 at v_s = 2 — exactly the moving-bubble distinction the 4D probe exists for). On our
+  own data — a matched (mode 3) d = 8 pair's full-state t = 0 plotfile from the CPU binary,
+  129³ covering grid, half-width 16, dx = 0.25 — the integrator holds the null constraint to
+  1e-5..1e-3 on clean rays, shows the Shapiro *delay* through the pair (f_geo = −0.55 at impact
+  parameter 12), lenses impact-parameter ≤ 6 rays down a throat, and every outgoing ray from
+  r ≥ 1 outside a mouth escapes: no trapped photon region at t = 0, as a horizonless slice must give.
+- **What it adds over the AH scans.** `ah_radial_scan` / `ah_oriented_scan` / `ah_flow_finder`
+  are quasi-local, one slice, one slicing. The evolving tracer answers the causal question:
+  outgoing null bundles launched just outside the common MOTS at a sweep of emission times,
+  through the time-interpolated 4D metric of a plotfile stack — rays that escape before merger
+  and stop escaping after it are the event-horizon-style signature a MOTS cannot certify.
+  With a finite stack the claim is "no escape within the trusted evolution", never a strict
+  event horizon.
+- **New script** `grteclyn-wrapper/scripts/validation/wormhole_escape_trace.py` (standalone,
+  like the ah_* scans): per centre (from `--params` wormhole_centerA/B, offsets from the domain
+  centre, or absolute `--centers`), per radius, six axis-direction outgoing rays to a detector
+  sphere; frozen mode on 1 plotfile, 4D mode on ≥ 3 with `--t-emit` sweep; outcomes escaped /
+  captured / outlived / stuck, each ray gated by the relative null-constraint drift (1e-2), and
+  the stack-end guard refuses arrivals through frozen-tail geometry. Tested on the t = 0 slice:
+  mirror-symmetric between the mouths to all printed digits, r = 0.5 launches correctly flagged
+  unreliable, the one ray fired straight at the companion is captured (down the companion's
+  throat — at t ≈ 0 "captured" means the throat funnel, an escape route, not a horizon; the
+  discriminators on a merger stack are the lapse-collapse channel and escape-vs-not of outgoing
+  rays).
+- **What it needs to run on the merger.** Full-state plotfiles (chi h11..h33 lapse shift1-3) at
+  cadence well under the merger's dynamical time, bracketing contact — the packed runs' plotfiles
+  are pruned, so this rides the first matched-placement run (queue), whose plotfile cadence
+  should be set with this probe in mind. Nothing launched, no GPU touched, no tracked data changed.
+
 ### 2026-09-27 (12:35 UTC, paper session) — the paper starts its rewrite for the matched placement: new Sec. II D, Tables placement and energy, Eq. (ebind); ledger 1070 rows, 0 problems
 
 On the user's word ("add this table and prediction equations to the paper; start rewriting the paper for the new
