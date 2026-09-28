@@ -1,4 +1,4 @@
-# Status — 2026-09-28 06:23 UTC
+# Status — 2026-09-28 08:12 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -103,18 +103,22 @@ Each is its old run's packed params with only the data changed, plus rolling che
 list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, plots every 0.5, binary
 `main3d_csmatch_5f988dbc_2026-09-28.ex` (the first CUDA build of mode 3), profile headon-scout, zoom 32.
 
-**Every live and next run at 06:23 UTC** (ETA from the measured speeds; a shared card speeds up when its partner ends):
+**Every live run at 08:10 UTC** (ETA from the measured speeds; a shared card speeds up when its partner ends):
 
 | node / card | run (rerun of) | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| first / 0 | `ctrl_flip_d12_csm` (`ctrl_flip_d12`) | 3.24 | 15 (stopped there, see below) | 4.6 u/h shared | 2.5 h, ~08:55 UTC |
-| first / 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 2.96 | 15 | 4.5 u/h shared | 2.7 h, ~09:05 UTC |
-| first / 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 3.24 | 15 | 4.6 u/h shared | 2.5 h, ~08:55 UTC |
-| first / 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 2.74 | 15 | 4.1 u/h shared, ~9 alone | 2.7 h, ~09:05 UTC |
-| second / 0 | `ctrl_rest_d18_csm` (`ctrl_rest_d18`) | 1.43 | 15 | 8.3 u/h alone | 1.6 h, ~08:00 UTC |
-| second / 0, next | `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm` | — | 100 | ~3.5 u/h (the old run) | starts ~08:00; ~28 h run, ~29.5 h from now, ~12:00 UTC 09-29 |
+| first / 0 | `ctrl_flip_d12_csm` (`ctrl_flip_d12`) | 11.19 | 15 (the user: stop at 15, not the old 30) | 4.5 u/h shared | 0.85 h, ~09:00 UTC |
+| first / 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 10.89 | 15 | 4.4 u/h shared | 0.9 h, ~09:05 UTC |
+| first / 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 11.14 | 15 | 4.5 u/h shared | 0.85 h, ~09:00 UTC |
+| first / 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 10.10 | 15 | 4.1 u/h shared, ~9 alone | 1.0 h, ~09:10 UTC |
+| second / 0 | `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm` | 0.05 | 100 | ~3.5 u/h (the old run) | ~28 h, ~12:30 UTC 09-29 |
 
-- Cards at 70 / 73 GB of 80. t = 0 checked: every mouth's far-side mass and charge are the isolated throat's (one-body
+- **The deciding test is answered (read from the live d = 12 pair, window complete):** the mode-3 flipped pair falls in
+  and the like pair opens, pull/push 1.463 ± 0.023 over t = 3.5–10.5 (superposed 1.518 ± 0.021). Fixed potential
+  predicts 1.500; fixed charge predicts −0.667 (the flipped pair flying apart) and is excluded.
+- **`ctrl_rest_d18_csm` is closed out** (second node, finished t = 15.01 at 08:04 UTC, no NaN; filed under
+  `03_two_throats/csm/`, packed, scratch pruned): +0.2406 by t = 11.5 against the superposed +0.2438 (×0.987).
+- First node's cards at 70 / 73 GB of 80. t = 0 checked: every mouth's far-side mass and charge are the isolated throat's (one-body
   mass 1.0000); M_ADM 2.27376 (flipped d = 12), 1.56579 (d = 12), 1.62149 (d = 14), 1.66449 (d = 16); the pits' start
   separations equal the old runs' (12.0230, 16.0310). Frame 0 eyeballed against the old d = 12 frame.
 - `ctrl_flip_d12_csm` stops at t = 15 like the others (the user's word, 06:25 UTC): its old params say stop_time 30,
@@ -131,13 +135,13 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
 
 ## Live — second node (one H100): the rest of step 2 (the user's word, 2026-09-28: "run the queued here")
 
-- **Live since 06:11 UTC: `ctrl_rest_d18_csm`** (rerun of `ctrl_rest_d18`, the last ladder rung; L = 64, level 3,
-  t = 15; 41 GB): see the table above. At t = 0 each mouth's far side is the isolated throat's.
-- **Next on this card when it ends: `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm`**, the mode-3 rerun of the
-  level-5 head-on (L = 64, level 5 from t = 0, t = 100; template written, it differs from the old params only in the
-  solve block and checkpoints every 2.0). The old run went 3.5 u/h and peaked at 46 GB, so ~28 h (not ~12), and it
-  cannot share the card with d = 18. Profile headon (areal radii 10/14/18, horizon scan, scalar modes), zoom 40.
-  The binary must differ from the old run's (`main3d_boost_2026-09-08`): mode 3 exists only from 5f988dbc.
+- **Live since 08:07 UTC: `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm`**, the mode-3 rerun of the level-5
+  head-on (L = 64, level 5 from t = 0, t = 100; differs from the old params only in the solve block and checkpoints
+  every 2.0; profile headon, zoom 40): 48 GB (FAB 45.4 GB, the old run's exactly). At t = 0: M_ADM 2.35892, each
+  mouth R_min 3.8786 (R⋆ 3.8895) and one-body mass 1.0000. Frame 0 matches CS-1's. The step-2 question: does "the
+  horizon shrinks by a quarter" survive clean data? The binary differs from the old run's (`main3d_boost_2026-09-08`):
+  mode 3 exists only from 5f988dbc. **Checkpoints: on (every 2.0, keep 3), launched before the per-run checkpoint
+  rule reached this session; the user's call whether to keep them** (turning them off means a relaunch).
 - Then the plan's steps 3 (orbits) and 4 (single throats on clean data), each a rerun of its old run by the rule.
 
 ## Earlier (2026-09-27)

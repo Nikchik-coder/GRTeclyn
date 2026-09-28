@@ -103,6 +103,12 @@ t = 51.4+) are evidence of a common horizon.
 | ctrl_rest_a1 | rest release at d = 12 with the throat width halved (a = 1) -- separates 3.0x weaker (+0.0042): the repulsion tracks the throat width, not the mass (4.0x predicted; the gap is the coordinate under-read) | 0.00 | 11.95 | still running | 11.94 | - | 5.084e-02 | 6.956e-03 |
 | ctrl_flip_d12 | rest release at d = 12 with throat B's scalar field reversed (wormhole_phi_sign_B = -1) -- falls together, -0.0196 inward, -0.56 by t = 10.5; infall/escape = 1.518 +- 0.021 (sign_rule_displacement.dat, the article's value; first reduction 1.511 +- 0.033) against the predicted 1.500 (15 samples, t = 3.5-10.5): the field orientation sets the sign of the force, and this is the only gravity-driven route to a merger | 0.00 | 10.79 | still running | 11.31 | - | 2.015e-01 | 4.226e-03 |
 
+## `03_two_throats/csm`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| ctrl_rest_d18_csm | MODE-3 RERUN of ctrl_rest_d18 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3), every other key the old run's -- clean to t = 15.01, separated +0.2406 by t = 11.5 against the superposed run's +0.2438 (x0.987); M_ADM(0) = 1.69871, each mouth the isolated throat's far side (one-body mass 1.0000) | 0.00 | 15.01 | finished clean at t = 15.01 | 17.94 | - | 2.004e-01 | 5.060e-03 |
+
 ## `04_binary_headon`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |

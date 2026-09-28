@@ -1323,6 +1323,23 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-28 (08:15 UTC) — the deciding test: mode-3 pairs at rest move as the superposed ones (fixed potential, not fixed charge); d = 18 closed out; the level-5 head-on rerun launched
+
+- **The sign rule on clean data.** `ctrl_flip_d12_csm` falls in and `ctrl_rest_d12_csm` opens (−0.55 and +0.37 by
+  t = 10.5): pull/push 1.463 ± 0.023 over t = 3.5–10.5 (15 slices; `analysis/matched_rest.py`, sign_rule's centroids),
+  against the superposed 1.518 ± 0.021 and the fixed-potential (Q+1)/(Q−1) = 1.500. Read at fixed charges, the t = 0
+  energies (M_ADM − 2m = σ²[±(a²+m²) − m²]/d) would push the flipped pair apart, pull/push −0.667: excluded. So the
+  throats act as conductors held at fixed scalar potential; the energy crosses the throats during the infall. Read from
+  the live runs (the window is complete); final at their close-out (~09:00 UTC).
+- **`ctrl_rest_d18_csm` closed out** (second node, t = 15.01 at 08:04 UTC, no NaN in any stream; filed under
+  `03_two_throats/csm/`, packed with `WHM_MOVIES=0`, scratch pruned 70 GB): +0.2406 by t = 11.5 against the superposed
+  +0.2438 (×0.987). M_ADM(0) = 1.69871, each mouth's far side the isolated throat's.
+- **The head-on rerun** `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm` launched at 08:07 UTC on the second node's
+  card (old params + solve block + checkpoints every 2.0): FAB 45.4 GB, the old run's exactly; t = 0 M_ADM 2.35892,
+  each mouth R_min 3.8786 (R⋆ 3.8895), one-body mass 1.0000; frame 0 matches CS-1's. ~28 h at the old run's 3.5 u/h.
+- The first node's flipped run stops at t = 15 through the other session's `dump_and_stop` watcher there; a second
+  (`stop_run`) watcher I had set on the second node was stopped before it dropped anything.
+
 ### 2026-09-28 (06:05 UTC) — every binary run needs a mode-3 rerun; the first CUDA build of mode 3; the rest pairs rerun on their own grid
 
 **The user's word (2026-09-28):** every binary simulation so far is corrupted by its initial data (the superposition:
