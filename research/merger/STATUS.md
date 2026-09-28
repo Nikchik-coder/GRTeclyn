@@ -20,8 +20,8 @@ No binary number is final until it is remeasured on mode-3 data (`constraint_sol
 **RULE for every rerun (the user, 2026-09-28): the new run's properties must match the corrupted run it replaces,**
 so the two differ in the initial data alone and the old result can be tested. Same L, N, max_level, tagging_L,
 sponge, separation, gauge, dt_multiplier, stop_time and plot cadence as the old run's `evolution_params.txt`
-(`results/merger/campaign/...`); the only changes allowed are the constraint-solve block (mode 3), checkpoints on and
-the plot variables the full frame set needs (output only). Diff the new template against the old params before
+(`results/merger/campaign/...`); the only changes allowed are the constraint-solve block (mode 3), checkpoints only if the user
+says so, and the plot variables the full frame set needs (output only). Diff the new template against the old params before
 launching. E.g. the rest pairs are L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, t = 15, plots every 0.5. CS-1 (mode 0: the superposition's mouths, solved) is the
 old-versus-clean comparison, not a rerun. The binary verdicts below stand only as results on superposed data.
 
@@ -54,7 +54,8 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
 Along the way:
 - Cancel the planned convergence runs on the old data; the finer-grid twins in step 3 replace them (the convergence queue
   below is cancelled).
-- For every run: keep checkpoints on, check the starting mass and throat size before walking away, and put "mode 3"
+- For every run: ask the user directly whether it needs checkpoints (the user, 2026-09-28: never on by default;
+  the rest-pair reruns keep the last 3), check the starting mass and throat size before walking away, and put "mode 3"
   in the run's name (`csm`) and registry entry.
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
