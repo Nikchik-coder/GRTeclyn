@@ -191,3 +191,4 @@ ctrl_rest_d12_csm	MODE-3 RERUN of ctrl_rest_d12 (2026-09-28): the same run on fa
 ctrl_flip_d12_csm	MODE-3 RERUN of ctrl_flip_d12 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3).		
 ctrl_rest_d16_csm	MODE-3 RERUN of ctrl_rest_d16 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3).		
 ctrl_rest_d14_csm	MODE-3 RERUN of ctrl_rest_d14 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3).		
+ctrl_rest_d18_csm	MODE-3 RERUN of ctrl_rest_d18 (2026-09-28): the same run on far-side-matched initial data (constraint_solve_puncture_mode = 3).		
