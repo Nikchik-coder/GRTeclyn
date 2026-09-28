@@ -109,10 +109,10 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by and the spiral (the user's go, 09:48 UTC)
 
-| card | run | p | t now (19:15) | t end | speed | ETA |
+| card | run | p | t now (20:25) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 20.1 | 100 | 2.14 u/h, steady (no merger) | ~37 h, ~08:30 UTC 09-30 |
-| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 20.5 | its NaN, ~60 | 2.2 u/h, ~4 after the merger | ~12–13 h, ~07:30–08:30 UTC 09-29 |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 22.7 | 100 | 2.17 u/h, steady (no merger) | ~36 h, ~08:15 UTC 09-30 |
+| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 23.1 | its NaN, ~60 | 2.2 u/h, ~4 after the merger | ~11–12 h, ~07:30–08:30 UTC 09-29 |
 
 - ETAs corrected 19:15 UTC: a run speeds up ~2× once its pair merges (one refined region instead of two). The old
   spiral went 2.2 → 2.9 → 4.0–4.2 u/h over t = 30–40, so the new one reaches t = 45 at ~04:00 UTC and t = 54 at
@@ -177,13 +177,14 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 ## Live — second node (one H100): the production head-on (the user's go, 09:57 UTC)
 
-| card | run | t now (19:15) | t end | speed | ETA |
+| card | run | t now (20:25) | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 19.4 | 100 | 2.2 u/h, ~4 after the merger | ~20 h, ~15:30 UTC 09-29 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 23.0 | 100 | 3.85 u/h and rising (2.2 before the merger) | ~19 h, ~15:30 UTC 09-29 |
 
-- ETA corrected 19:15 UTC: the old level-5 head-on went 2.2 → 3.7 → 4.2 u/h over t = 20–25 once its pair merged; this
-  one leads it by ~0.2 units (separation 2.80 vs 2.92 at t = 19.2), so its common horizon is due at t ≈ 21.3, ~20:05
-  UTC.
+- **Common horizon at t = 22.0** (the live scan, half 4.0): r = 2.53, areal radius R = 5.02 (the superposed runs:
+  5.53 live at t = 21.5 in the old level-5 arm, 5.56 offline in the scout), ~10 % smaller, as the mode-3 mouths are.
+  The evolution sped up with the merger as the old run did: 2.4 → 2.6 → 3.7 → 3.85 u/h over t = 19–23. No NaN;
+  streams and frames clean to t = 22 (checked 20:25 UTC).
 
 - **Consumer restarted 18:19 UTC with `--horizon-half 4.0`** (the user's go; `restart_consumer.sh`, evolution
   untouched; frames 504 → 504, every stream intact to t = 17, parsed flags checked). The old level-5 head-on scanned
