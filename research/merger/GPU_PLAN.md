@@ -1323,6 +1323,27 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-28 (10:10 UTC, paper session) — the csm results enter the paper: fixed potential measured, ladder within 2 %, δ = 2.65; Table I counts the five reruns; ledger 1075 rows, 0 problems
+
+- **Sec. II D** no longer leaves fixed potential vs fixed charge open: "The evolution has now
+  answered" — the matched rest pairs' pull/push $1.462\pm0.022$ (the ledger's 4-decimal-table
+  recompute of the closeout's 1.463 ± 0.023, the same situation as clmSignRatio) is the
+  fixed-potential prediction, and fixed charges would reverse the sign rule itself.
+- **Sign rule** quotes the matched rerun beside the superposed 1.518: the rule and its ratio
+  belong to the throats, not the placement. **Force law**: no rung moves by more than 2.0 % at
+  t = 11.5, and the full-ladder fit tightens to δ = 2.65 against the superposed 3.56 (same fit,
+  full ladder — NOT clmOffsetPrediction's d = 12–16 fit, δ = 3.69). **Units paragraph**: one
+  sentence that the trajectories are robust to the placement.
+- **Ledger**: five new rows (clmMatchedSignRatio/Err, clmMatchedLadderDev, clmMatchedOffsetDelta,
+  clmSuperposedOffsetDelta) recomputed by new extractors in `extract_single.py` from
+  `matched_rest_displacement.dat` (the offset by the same least-squares A/(d+δ)² as the old
+  ladder). **Table I**: the five csm runs move from `-` to the constraint-solved group (row now
+  "in-code solve: head-on, rest pairs", count 7); totals 151 runs, 139 physics, 680 GPU-hours
+  (recount 680.18). `claims.py check`: 1075 rows, 894 recomputed, 0 problems; `apply` made 7
+  macro replacements; numbers.tex regenerated. Not LaTeX-built here (no engine in the container).
+- **Left for the production set**: the evolution sections (head-on, spiral, fly-by numbers)
+  rewrite once the L = 128 mode-3 runs exist; nothing there touched.
+
 ### 2026-09-28 (09:30 UTC) — the mode-3 rest pairs closed out (pull/push 1.463, δ = 2.65); the GPU plan: head-on, spiral and fly-by as one production set in the L = 128 box, waiting for the go
 
 **Closed out (first node).** `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`, `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm` all ran

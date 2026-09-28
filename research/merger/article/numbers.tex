@@ -12,7 +12,7 @@
 \newcommand{\clmDetRunsHeadon}{10}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsHalfMass}{2}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsVacuumBBH}{3}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
-\newcommand{\clmDetRunsConstraintSolved}{2}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsConstraintSolved}{7}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsMomentumScan}{4}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsFlyby}{2}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsOrbitalChain}{13}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
@@ -23,8 +23,8 @@
 \newcommand{\clmDetRunsHelfer}{6}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsGauge}{10}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsShakedown}{12}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
-\newcommand{\clmDetRunsTotal}{146}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
-\newcommand{\clmDetRunsPhysics}{134}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsTotal}{151}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsPhysics}{139}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetKnobLoneLevelsLo}{2}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobLoneLevelsHi}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobLoneL}{128}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
@@ -62,7 +62,7 @@
 \newcommand{\clmDetKnobProdSpiralL}{128}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobGaugeEta}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobLadderLevelLo}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv)
-\newcommand{\clmDetGpuHours}{665}% auto: run_tail*.log of each run (gpu_hours.py arithmetic: per leg (t_end - t_start)/sp
+\newcommand{\clmDetGpuHours}{680}% auto: run_tail*.log of each run (gpu_hours.py arithmetic: per leg (t_end - t_start)/sp
 \newcommand{\clmDetGpuHoursShakedown}{9}% auto: run_tail*.log of each run (gpu_hours.py arithmetic: per leg (t_end - t_start)/sp
 \newcommand{\clmDetCostHeadonLevelFive}{28.2}% auto: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/run_tail
 \newcommand{\clmDetCostFlybyLevelFive}{46.7}% auto: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/run_tail.
@@ -813,6 +813,11 @@
 \newcommand{\clmSignRatioErr}{0.021}% auto: as clmSignRatio (sample sd, ddof 1)
 \newcommand{\clmSignSlices}{15}% auto: as clmSignRatio (rows with a ratio)
 \newcommand{\clmSignSettleWindow}{3.5}% auto: as clmSignRatio (first slice with a ratio; sign_rule.py WINDOW)
+\newcommand{\clmMatchedSignRatio}{1.462}% auto: campaign/03_two_throats/matched_rest_displacement.dat: -dsep_flip_d12/dsep_like_
+\newcommand{\clmMatchedSignRatioErr}{0.022}% auto: as clmMatchedSignRatio (sample sd, ddof 1)
+\newcommand{\clmMatchedLadderDev}{2.0}% auto: as clmMatchedSignRatio (each rung at t = 11.5 against the superposed ladder of c
+\newcommand{\clmMatchedOffsetDelta}{2.65}% auto: as clmMatchedSignRatio (least-squares A/(d+delta)^2 on the full d = 12..18 ladde
+\newcommand{\clmSuperposedOffsetDelta}{3.56}% auto: as clmDLadderTwelve, the same fit over the full d = 12..18 ladder (NOT clmOffset
 \newcommand{\clmCountLikeSignedPairs}{Four}% auto: campaign/03_two_throats/ctrl_rest_d{12,14,16,18}
 \newcommand{\clmDLadderTwelve}{0.4696}% auto: campaign/03_two_throats/separation_ladder_2026-09-04.txt (RESULT, displacement a
 \newcommand{\clmDLadderFourteen}{0.3699}% auto: as clmDLadderTwelve

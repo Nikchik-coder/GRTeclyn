@@ -681,6 +681,76 @@ def _sign_table() -> tuple[tuple[str, ...], np.ndarray]:
     return tuple(names), np.array(rows)
 
 
+@functools.lru_cache(maxsize=None)
+def _matched_table() -> tuple[tuple[str, ...], "np.ndarray"]:
+    """matched_rest_displacement.dat: the mode-3 (csm) rest pairs' separation changes."""
+    path = _campaign_file("matched_rest_displacement.dat")
+    names: list[str] = []
+    rows = []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#"):
+            toks = line.lstrip("#").split()
+            if toks[:1] == ["time"]:
+                names = toks
+            continue
+        if line.strip():
+            rows.append([float(v) for v in line.split()])
+    return tuple(names), np.array(rows)
+
+
+@extractor
+def single_matched_sign_rule(what: str) -> float:
+    """The mode-3 rest pairs' pull-to-push ratio -dsep_flip_d12/dsep_like_d12
+    over the sign-rule window t = 3.5..10.5 -- mean, sd (ddof 1), n --
+    recomputed from the table's 4-decimal dsep columns (matched_rest.py's
+    header states 1.463 +/- 0.023 from its unrounded stream)."""
+    names, a = _matched_table()
+    t = a[:, names.index("time")]
+    like = a[:, names.index("dsep_like_d12")]
+    flip = a[:, names.index("dsep_flip_d12")]
+    win = (t >= 3.5) & (t <= 10.5)
+    r = -flip[win] / like[win]
+    return {"mean": float(r.mean()), "sd": float(r.std(ddof=1)), "n": float(r.size)}[what]
+
+
+@extractor
+def single_matched_dsep(d: int, t: float) -> float:
+    """A mode-3 like pair's separation change at time t."""
+    names, a = _matched_table()
+    return float(np.interp(t, a[:, names.index("time")], a[:, names.index(f"dsep_like_d{d}")]))
+
+
+@extractor
+def single_matched_ladder_dev(t: float) -> float:
+    """Largest deviation (%) of the mode-3 like-pair ladder from the superposed
+    one at time t, over d = 12/14/16/18 (the superposed values from _dladder)."""
+    old = _dladder()
+    devs = [abs(single_matched_dsep(d=int(d), t=t) / old[d] - 1.0) for d in (12.0, 14.0, 16.0, 18.0)]
+    return 100.0 * max(devs)
+
+
+def _offset_fit_delta(vals: dict) -> float:
+    """delta of the least-squares A/(d + delta)^2 through {d: dsep}."""
+    from scipy.optimize import curve_fit
+
+    ds = np.array(sorted(vals), dtype=float)
+    y = np.array([vals[d] for d in ds])
+    popt, _ = curve_fit(lambda d, A, dl: A / (d + dl) ** 2, ds, y, p0=(100.0, 3.0))
+    return float(popt[1])
+
+
+@extractor
+def single_matched_offset_delta(which: str) -> float:
+    """delta of A/(d + delta)^2 over the full d = 12..18 ladder at t = 11.5:
+    'matched' (the mode-3 pairs) or 'superposed' (the old ladder, same fit --
+    NOT the d = 12..16 fit of clmOffsetPrediction, whose delta is 3.69)."""
+    if which == "matched":
+        vals = {d: single_matched_dsep(d=d, t=11.5) for d in (12, 14, 16, 18)}
+    else:
+        vals = _dladder()
+    return _offset_fit_delta(vals)
+
+
 @extractor
 def single_sign_rule(what: str) -> float:
     """The sign-rule table (sign_rule.py, from the chi_z slice-cache pit
