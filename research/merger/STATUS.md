@@ -50,6 +50,18 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
      versus clean starting data.
    - Add the new definitions: each wormhole's mass, the pair's total mass, and p in true units.
    - Update the abstract once step 2's answers are in.
+   - Constraint norms are not a paper problem (checked 2026-09-28 06:55 UTC, the rest-pair reruns to t ≈ 5 against
+     their old runs). The logged 𝓗 norm reads 9–13 % higher for the like pairs and 21 % for the flipped one, a flat
+     offset from t = 0 that does not grow; 𝓜 is 27–59 % lower. That 𝓗 is the base grid's box average (Δx = 0.5),
+     which does not resolve the throat cores (3.35e-3 in all four like pairs whatever d): the discretisation floor,
+     not the superposition error. Every constraint claim in the paper is relative (growth, onsets, level agreement,
+     "below its value at formation"), and the `fig:constraints` caption already says the norms compare only within
+     one box. The binary norm values the text quotes (the Helfer fly-by's 3.2e-3 → 1.6e-2, the spiral's 3.5 % level
+     agreement) are re-read from their reruns.
+   - Re-measure Sec. II D's solve paragraph on mode-3 data. Its numbers are the mode-0 solve's, which keeps the
+     superposed mouths: throat-shell 𝓗 9.7e-3 → 5.1e-6, M_far moving 0.1 %, R_min 1.3 % (`clmSolveShellHamSup`,
+     `clmSolveShellHamSolved`, `clmSolveKeepsMfar`, `clmSolveKeepsRmin`). M_ADM = 2.738 (`clmSolvedHeadonMadm`) is
+     CS-1's, the mode-0 pair's; the mode-3 pair at d = 8 has 2.360.
 
 Along the way:
 - Cancel the planned convergence runs on the old data; the finer-grid twins in step 3 replace them (the convergence queue
