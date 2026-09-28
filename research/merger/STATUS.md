@@ -1,4 +1,4 @@
-# Status — 2026-09-28 09:30 UTC
+# Status — 2026-09-28 09:55 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -99,7 +99,22 @@ Along the way:
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
-## First node (two H100s): free since 09:11 UTC; the fly-by and the spiral go here on the user's word
+## Live — first node (two H100s): the fly-by and the spiral (the user's go, 09:48 UTC)
+
+| card | run | p | t now (09:52) | t end | speed | ETA |
+|---|---|---|---|---|---|---|
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 0.06 | 100 | 2.1 u/h (old run 2.17) | ~46 h, ~08:00 UTC 09-30 |
+| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 0.06 | its NaN, ~60 | 2.1 u/h (old run 2.81) | ~21–29 h, ~07:00–15:00 UTC 09-29 |
+
+- Launched 09:49 UTC, both exact reruns of their old runs (only the solve block and checkpoints every 5 units, newest
+  3), binary `main3d_csmatch_5f988dbc_2026-09-28.ex`, profiles `orbit-modes-scan-prod` / `orbit-modes-prod` (the
+  scalar at 14/20/30/44), zoom 64. The fly-by's name keeps its old run's `merge_orbit_` prefix: it is the p = 0.45
+  fly-by; the merger is the p = 0.12 spiral.
+- t = 0 checked: preflight pass; each mouth's far-side mass −4.81048 and charge 3.03437, one-body mass 1.0000 (match
+  8e-10 fly-by, 4e-10 spiral; mode 3 at p = 0.45 converged in 2 matching passes). M_ADM 2.34448 (fly-by), 2.27476
+  (spiral; the CPU mode-3 check at p = 0.12 gives 2.27920 on L = 64). Frame 0 (χ) matches the old runs' (pits at ±6).
+  Cards at 60 GB of 80 each.
+- First checkpoint due at t = 5, ~12:20 UTC: confirm it on scratch then.
 
 **The four mode-3 rest-pair reruns are closed out** (09:11–09:30 UTC): `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`,
 `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm`, each its old run's packed params with only the data changed (L = 64, N = 128,
@@ -134,7 +149,7 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 Shared by all three (the user): L = 128, N = 256 (Δx = 0.5, finest 1/64), max_level 5 from t = 0, tagging_L 64 (the same
 refined grids), sponge 48/64, Ψ4 at 20/28/36/44, the scalar at 14/20/30/44 (consumer profiles `*-prod`, output only),
 plots every 1.0, mode-3 data, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`. **Nothing launches until the user says
-go.** Order: fly-by → spiral → head-on. Templates in `runs/wormhole_merger/templates_scan/params_<run>.txt`, each
+go.** Order: fly-by → spiral → head-on. **The fly-by and the spiral are live (first node, above, 09:49 UTC); the head-on the user launches on another node.** Templates in `runs/wormhole_merger/templates_scan/params_<run>.txt`, each
 diffed against its old run's packed params (only the named changes):
 - **`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`** (first node, card 0, first): the exact rerun, plus checkpoints
   every 5 units (500 steps), the newest 3 (the old kept 8 at every 1.0). t = 100 (never NaN'd; trusted to t = 70).
