@@ -141,8 +141,8 @@ def main(argv: list[str] | None = None) -> int:
     tau_f, seed_f, ex_f = _tau(f)
 
     style.prd(base=10.0)
-    fig, (axA, axB, axC) = plt.subplots(
-        1, 3, figsize=(7.05, 2.8), sharex=True, constrained_layout=True)
+    fig, (axA, axC) = plt.subplots(
+        1, 2, figsize=(7.05, 2.8), sharex=True, constrained_layout=True)
     # each arm to the frame's end -- and the fly-by to its trust window
     arms = ((m, im, ex_m, style.INK, T_MAX), (f, jf, ex_f, style.CONTEXT, min(T_MAX, FLYBY_TRUST)))
 
@@ -172,17 +172,6 @@ def main(argv: list[str] | None = None) -> int:
     axA.set_ylim(R_FLOOR, 10.9)
     style.legend_top(axA, keyA, ncol=2, handlelength=1.8)
 
-    # ---- (b) and meanwhile, what the orbit did ----------------------------
-    keyB = []
-    for (s, _, _, col, t_end), name in zip(arms, ("merger: to contact",
-                                               f"fly-by: misses at {f['sep'].min():.1f}")):
-        k = s["t"] <= t_end + 1e-9
-        keyB.append((axB.plot(s["t"][k], s["sep"][k], color=col, linewidth=1.4,
-                              zorder=3)[0], name))
-    axB.set_ylabel(r"separation $d$")
-    axB.set_ylim(0.0, 12.9)
-    style.legend_top(axB, keyB, ncol=1)
-
     # ---- (c) the clock itself ---------------------------------------------
     # Each arm's key entry carries its fitted rate; both fits are gold (that is
     # what gold means here, "this is the fit"), keyed once.
@@ -203,10 +192,10 @@ def main(argv: list[str] | None = None) -> int:
     axC.set_xlim(0, T_MAX)
     axC.set_ylabel(r"$R_{\rm areal}/R_0 - 1$")
     style.legend_top(axC, keyC, ncol=1)
-    for ax in (axA, axB, axC):
+    for ax in (axA, axC):
         ax.set_xlabel(r"$t$")
 
-    style.tag_keys(fig, (axA, axB, axC), ("(a)", "(b)", "(c)"), row="last")
+    style.tag_keys(fig, (axA, axC), ("(c)", "(d)"), row="last")
 
     print(f"[mouth-growth] merger: R {m['RA'][0]:.4f} -> {m['RA'][im - 1]:.4f} "
           f"(+{100 * (m['RA'][im - 1] / m['RA'][0] - 1):.1f} %) by t = {m['t'][im - 1]:.0f}, "
