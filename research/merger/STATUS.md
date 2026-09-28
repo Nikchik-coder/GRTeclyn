@@ -112,7 +112,7 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
 | first / 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 10.89 | 15 | 4.4 u/h shared | 0.9 h, ~09:05 UTC |
 | first / 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 11.14 | 15 | 4.5 u/h shared | 0.85 h, ~09:00 UTC |
 | first / 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 10.10 | 15 | 4.1 u/h shared, ~9 alone | 1.0 h, ~09:10 UTC |
-| second / 0 | `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm` | **stopped at 0.60, 08:26 UTC** (the user: "kill it") | — | — | card free |
+| second / 0 | `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm` | **stopped at 0.60, 08:26 UTC, wiped 08:33** (the user) | — | — | card free |
 
 - **The deciding test is answered (read from the live d = 12 pair, window complete):** the mode-3 flipped pair falls in
   and the like pair opens, pull/push 1.463 ± 0.023 over t = 3.5–10.5 (superposed 1.518 ± 0.021). Fixed potential
@@ -140,7 +140,9 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
   the L = 64 mode-3 rerun of the level-5 head-on (live since 08:07). The head-on moves to the L = 128 production box
   with the spiral and the fly-by (queued below). Stopped from the first node with AMReX's `stop_run` in its run dir
   (the run dir is shared, the processes are not; AMReX exited cleanly at step 60). No checkpoint was written (the
-  first was due at t = 2). Its run dir and frames stay; its scratch is on the second node, to prune on the user's word.
+  first was due at t = 2). **Wiped at 08:33 UTC on the user's word ("wipe it out")**: run dir, scratch (26 GB),
+  launcher log, registry row and its L = 64 template; its frames wait in `00_archive/stopped_2026-09-28/` for the
+  user's yes (MANIFEST_CLEANUP_2026-09-28).
   Its t = 0 read stands for the L = 128 run's check: M_ADM 2.35892, each mouth R_min 3.8786 (R⋆ 3.8895), one-body mass
   1.0000, frame 0 as CS-1's.
 - The card is free. Next: the production head-on (queued below), on the user's go.
