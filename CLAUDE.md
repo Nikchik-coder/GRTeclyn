@@ -22,6 +22,26 @@ Every rule below exists because breaking it cost a run, a result or a day.
 
 ## Launching runs
 
+**Before every launch, in this order.** These are the user's standing rules; each one had to be repeated in session
+after session because it lived only in one machine's agent memory.
+1. **Wait for the go.** A proposed run gets no GPU start-up of any kind, not even `--preflight-only`, until the user
+   says go for that run.
+2. **A rerun is its old run.** Start from the old run's packed `results/merger/campaign/.../evolution_params.txt` and
+   change only the knob under test (for the mode-3 reruns: the constraint-solve block, and the name + `_csm`). The
+   plot variables the frame set needs are the only other change. Keep the same L, N, max_level, tagging_L, sponge,
+   separation, gauge, dt, stop_time and plot cadence. Diff the template against the old params before launching. If
+   the old box cannot hold a new setup, ask the user; never move the whole set to a bigger box.
+3. **Ask about checkpoints.** Whether a run writes checkpoints is the user's call, asked directly for each run. They
+   are never on by default.
+4. **Check the start within minutes.** Read the log's M_ADM and each mouth's far side (mode 3), compare frame 0 with
+   the old run's, check the card's memory in `nvidia-smi`, and look for the first checkpoint only if one was asked for.
+5. **Update STATUS at once.** Every launch, stop or wipe goes into STATUS.md's Live/Queued tables (run, node/card, t,
+   stop time, speed, ETA in hours and clock time). Commit and push it immediately and verify with `git ls-remote`. If
+   the push is rejected, fetch, rebase and push again.
+
+- To stop a run now: `grteclyn-wrapper/scripts/campaigns/stop_campaign.sh <run dir>`. To stop it at a given time,
+  create `dump_and_stop` in its run dir once its log passes that time. AMReX checks every 10 coarse steps, then
+  writes a checkpoint and exits normally.
 - Only through `launch.sh`, never the binary directly (AMReX writes
   `parameters_and_version.txt`, with absolute paths, into the working directory).
 - `launch.sh` detaches and **hangs the agent's shell tool**: redirect its output to a
