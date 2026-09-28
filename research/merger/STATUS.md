@@ -62,6 +62,30 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
      superposed mouths: throat-shell 𝓗 9.7e-3 → 5.1e-6, M_far moving 0.1 %, R_min 1.3 % (`clmSolveShellHamSup`,
      `clmSolveShellHamSolved`, `clmSolveKeepsMfar`, `clmSolveKeepsRmin`). M_ADM = 2.738 (`clmSolvedHeadonMadm`) is
      CS-1's, the mode-0 pair's; the mode-3 pair at d = 8 has 2.360.
+   - The scalar energies the paper quotes are partly near-field and change: `clmGwScalarEnergyFlyby`, the
+     `clmGwScalarRatio*` rows, the head-on E_φ (step 6).
+6. **Longer GW runs, with the sponge and the extraction spheres farther out** (the user, 2026-09-28; proposed, not
+   queued).
+   - Why ["Open, the user's call: the scalar energies the paper quotes are partly near-field"]: the scalar spheres sit
+     at ωR ≈ 1–3. Fitting the exact outgoing ℓ = 1 solution on each sphere, only ~35 % of the fly-by's |E_φ| = 0.087
+     (R = 30, t = 60) is radiated, so |E_φ|/E_GW ≈ 0.8–0.95, not 2.3. The head-on's E_φ becomes the same on every
+     sphere, ≈ −0.044, not −0.056 to −0.075. "Comparable and negative" survives. Not yet checked: the fit is
+     flat-space, without the O(M/R) terms. No text changed.
+   - Now: the fly-by and the spiral run in L = 128 (sponge from r = 48; Ψ4 spheres 20–44, the scalar only at 14 and 30,
+     the consumer's default radii) to t = 100 / 150; the head-on in L = 64 (sponge from 24, spheres 10/14/18) to t = 100.
+   - Check (2026-09-28 07:29 UTC): ωR ≈ 1–3 at R = 14–30 means ω ≈ 0.07–0.1, so the wave zone (ωR ≳ 10) starts at
+     R ≈ 100–150. Spheres there need the box edge near r = 200 (L = 512: a coarser base and two more levels keep the
+     interior's grid) and runs longer by R: the fly-by to t ≈ 220 (it is trusted to t = 70), the head-on to t ≈ 200.
+     Roughly 2–3× each old run's GPU time; the memory must be measured first (the old level-5 fly-by peaks at 59 GB of
+     80).
+   - Farther spheres alone do not clean the raw number: between R = 14 and 30 the stored part falls only about as 1/R
+     (the pair is still moving when the window closes), so at R = 150 it would still be ~15–40 % of it (65 % at
+     R = 30). They validate the fit and cut the O(M/R) terms from ~7 % to ~1.5 %; the fit stays the estimator.
+   - Free, inside the old boxes (output only, so the reruns stay exact): scalar spheres at 14/20/30/44 on the fly-by and
+     the spiral, 10/14/18/22 on the head-on (the consumer's `--radii`), for the fit and a 1/R extrapolation over four
+     spheres.
+   - The user's call: the free step, wave-zone twins, or both. The head-on rerun next on the second node is templated
+     with spheres 10/14/18.
 
 Along the way:
 - Cancel the planned convergence runs on the old data; the finer-grid twins in step 3 replace them (the convergence queue
