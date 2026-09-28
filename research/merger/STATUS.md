@@ -1,4 +1,4 @@
-# Status — 2026-09-28 08:32 UTC
+# Status — 2026-09-28 09:00 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -146,32 +146,45 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
   1.0000, frame 0 as CS-1's.
 - The card is free. Next: the production head-on (queued below), on the user's go.
 
-## Queued — the production set: head-on, spiral, fly-by in one box (the user, 2026-09-28 08:20 UTC; waiting for the go)
+## Queued — the production set: head-on, spiral, fly-by in one box (the user's final proposal, 2026-09-28 09:00 UTC; waiting for the go)
 
-The user: the head-on, the spiral and the fly-by are the paper's production runs and must match: L = 128, N = 256
-(Δx = 0.5), max_level 5 from t = 0, tagging_L 64 (the same refined grids), sponge 48/64, Ψ4 spheres 20/28/36/44, the
-scalar at 14/20/30/44 (consumer profiles `*-r4`, output only), mode-3 data, binary
-`main3d_csmatch_5f988dbc_2026-09-28.ex`. **Nothing launches until the user says go** ("i will tell"). Templates in
-`runs/wormhole_merger/templates_scan/params_<run>.txt`, each diffed against its old run's packed params:
-- **`merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm`**: the old L = 64 head-on with only the box keys changed
-  (L, N, centre, extraction centre and radii, sponge; identical to the fly-by's) and the solve block. **Not a
-  like-for-like rerun: the user's choice of the production box.** No checkpoints (the user's word). t = 100, plots every
-  0.5 as before. Profile `headon-modes-r4`, zoom 40, coord 64. Est. 2–2.8 u/h (the L = 128 level-5 runs went
-  2.2–2.8), ~36–50 h; ~59 GB (the fly-by's; the preflight measures it). Card: the second node's (free).
-- **`v2_spiral_d12_p012_L128_lvl5from0_t100_csm`**: the exact rerun, plus checkpoints every 5 units (500 steps), the
-  newest 3 (19–26 GB each; the user's word). To its NaN (old wall t = 59.94; stop_time 100). Profile `orbit-modes-r4`,
-  zoom 64, coord 64. 2.81 u/h (old) → ~21 h; ~59 GB. Card: first node, after the rest pairs' close-out (~09:30 UTC).
-- **`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`**: the exact rerun, plus checkpoints every 5 units, the newest 3
-  (the old kept 8 at every 1.0). t = 100 (never NaN'd; trusted to t = 70). Profile `orbit-modes-scan-r4`, zoom 64,
-  coord 64. 2.17 u/h (old) → ~46 h; 58.8 GB (old). Card: first node. Mode 3 at p = 0.45 is new (tested at 0.12):
-  read the Newton passes and each mouth's far side at start-up.
+Shared by all three (the user): L = 128, N = 256 (Δx = 0.5, finest 1/64), max_level 5 from t = 0, tagging_L 64 (the same
+refined grids), sponge 48/64, Ψ4 at 20/28/36/44, the scalar at 14/20/30/44 (consumer profiles `*-prod`, output only),
+plots every 1.0, mode-3 data, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`. **Nothing launches until the user says
+go.** Order: fly-by → spiral → head-on. Templates in `runs/wormhole_merger/templates_scan/params_<run>.txt`, each
+diffed against its old run's packed params (only the named changes):
+- **`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`** (first node, card 0, first): the exact rerun, plus checkpoints
+  every 5 units (500 steps), the newest 3 (the old kept 8 at every 1.0). t = 100 (never NaN'd; trusted to t = 70).
+  Profile `orbit-modes-scan-prod`, zoom 64, coord 64. 2.17 u/h (old) → ~46 h; 58.8 GB (old). Mode 3 at p = 0.45 is
+  new (tested at 0.12): read the Newton passes and each mouth's far side at start-up.
+- **`v2_spiral_d12_p012_L128_lvl5from0_t100_csm`** (first node, card 1): the exact rerun, plus checkpoints every 5
+  units, the newest 3 (19–26 GB each). To its NaN (old wall t = 59.94; stop_time 100). Profile `orbit-modes-prod`,
+  zoom 64, coord 64. 2.81 u/h (old) → ~21 h; ~59 GB. Then the freeze continuation (plan now, launch later): relaunch
+  from the last checkpoint ≥ ~55 with the interior fill, armed from THIS run's core profile (the spike time moves with
+  the smaller mode-3 throats), not the old t = 57; the validated ratios r_full/r_start = 1.40/1.90.
+- **`merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm`** (second node): **a blessed exception to the rerun rule**
+  (the user's word): the old L = 64 physics in the shared geometry, for one geometry and a reflection-free window to
+  t ≈ 84 at R = 44 in the shared energy table. Changed: the box keys (identical to the fly-by's), plots every 1.0
+  (was 0.5), the solve block, and the old spheres kept (output only): Ψ4 at 10/14/18 + 20/28/36/44, the scalar at
+  10/14/18/20/30/44 (profile `headon-modes-prod`). Δx and the finest level are the old run's, so at 10/14/18, before
+  any reflection, old vs new is one knob (the data); the box enters only through reflections, which it delays. The
+  paper's head-on chain: superposed scout → CS-1 (same grid, one knob) → mode-3 big box (data + box, compared at common
+  spheres). **No checkpoints** (the user, 09:00: "it will run smooth"). t = 100, zoom 40, coord 64. Est. 2–2.8 u/h,
+  ~36–50 h; ~59 GB (the preflight measures it).
+- **Not ready: per-level + core-excised Ham/Mom diagnostics (output only)** are in the proposal, but neither the
+  binary nor the consumer writes them yet (the log's norms are level 0 only, uncut; `constraint_solve_t0_check.py`
+  grades one t = 0 plotfile). The user's call: add them before the launch, or launch without.
+- Launch checklist: t = 0 far-side mass and charge at the isolated values (~2e-7), R_min ≈ 3.889; each run's M_ADM
+  into the registry (head-on 2.360; spiral and fly-by above 2.274 by their kinetic term); frame 0 against an old
+  reference; the first checkpoint on scratch (spiral, fly-by). The registry marks the head-on as the blessed exception,
+  the spiral and fly-by as exact reruns. No test launches.
 
 From the repo root, `nvidia-smi` first, each redirected (`< /dev/null > <log> 2>&1`):
 ```
 L=grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh; B=runs/wormhole_merger/bin/main3d_csmatch_5f988dbc_2026-09-28.ex
-bash $L --gpu G --template params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt --name merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm --profile headon-modes-r4 --zoom 40 --coord 64 --binary $B
-bash $L --gpu G --template params_v2_spiral_d12_p012_L128_lvl5from0_t100_csm.txt --name v2_spiral_d12_p012_L128_lvl5from0_t100_csm --profile orbit-modes-r4 --zoom 64 --coord 64 --binary $B
-bash $L --gpu G --template params_merge_orbit_flip_d12_p045_L128_lvl5_t100_csm.txt --name merge_orbit_flip_d12_p045_L128_lvl5_t100_csm --profile orbit-modes-scan-r4 --zoom 64 --coord 64 --binary $B
+bash $L --gpu 0 --template params_merge_orbit_flip_d12_p045_L128_lvl5_t100_csm.txt --name merge_orbit_flip_d12_p045_L128_lvl5_t100_csm --profile orbit-modes-scan-prod --zoom 64 --coord 64 --binary $B
+bash $L --gpu 1 --template params_v2_spiral_d12_p012_L128_lvl5from0_t100_csm.txt --name v2_spiral_d12_p012_L128_lvl5from0_t100_csm --profile orbit-modes-prod --zoom 64 --coord 64 --binary $B
+bash $L --gpu G --template params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt --name merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm --profile headon-modes-prod --zoom 40 --coord 64 --binary $B
 ```
 Then the plan's step 4 (single throats on clean data), each a rerun of its old run by the rule.
 

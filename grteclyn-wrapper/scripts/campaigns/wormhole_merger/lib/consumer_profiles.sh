@@ -177,11 +177,16 @@ consumer_profile() {
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --frames-zlim-t0 lapse chi phi" \
            "--scalar-modes --scalar-mode-ells 0 1 2"
       ;;
-    headon-modes-r4|orbit-modes-r4|orbit-modes-scan-r4)
+    orbit-modes-prod|orbit-modes-scan-prod)
       # The production set (the user, 2026-09-28): the mode-3 head-on, spiral and fly-by share
-      # the L = 128 box and extract at the same four radii, inside its sponge (r >= 48).  The
-      # base profile's own --radii (headon-modes: 10 14 18) comes first; the last one wins.
-      echo "$(consumer_profile "${name%-r4}" "${zoom}" "${coord}" "${center}") --radii 14 20 30 44"
+      # the L = 128 box and extract at the same four radii, 14/20/30/44, inside its sponge (r >= 48).
+      echo "$(consumer_profile "${name%-prod}" "${zoom}" "${coord}" "${center}") --radii 14 20 30 44"
+      ;;
+    headon-modes-prod)
+      # The head-on of the production set: the shared four plus the old L = 64 run's 10/18, so the
+      # old-vs-new comparison has common spheres.  headon-modes' own --radii 10 14 18 comes first;
+      # the last one wins.
+      echo "$(consumer_profile headon-modes "${zoom}" "${coord}" "${center}") --radii 10 14 18 20 30 44"
       ;;
     none)
       echo ""
@@ -195,7 +200,7 @@ consumer_profile() {
 }
 
 consumer_profile_names() {
-  echo "headon headon-modes headon-modes-r4 headon-scout orbit orbit-modes orbit-modes-r4 orbit-modes-scan orbit-modes-scan-r4 bbh chi inflation inflation-octant none"
+  echo "headon headon-modes headon-modes-prod headon-scout orbit orbit-modes orbit-modes-prod orbit-modes-scan orbit-modes-scan-prod bbh chi inflation inflation-octant none"
 }
 
 # The reason a profile renders less than the full frame set, when the subset is
