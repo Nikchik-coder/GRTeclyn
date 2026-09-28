@@ -70,7 +70,7 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
 
 | node / card | run (rerun of) | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| first / 0 | `ctrl_flip_d12_csm` (`ctrl_flip_d12`) | 3.24 | 30 | 4.6 u/h shared, ~10 alone | 4.1 h, ~10:30 UTC |
+| first / 0 | `ctrl_flip_d12_csm` (`ctrl_flip_d12`) | 3.24 | 15 (stopped there, see below) | 4.6 u/h shared | 2.5 h, ~08:55 UTC |
 | first / 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 2.96 | 15 | 4.5 u/h shared | 2.7 h, ~09:05 UTC |
 | first / 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 3.24 | 15 | 4.6 u/h shared | 2.5 h, ~08:55 UTC |
 | first / 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 2.74 | 15 | 4.1 u/h shared, ~9 alone | 2.7 h, ~09:05 UTC |
@@ -80,8 +80,13 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
 - Cards at 70 / 73 GB of 80. t = 0 checked: every mouth's far-side mass and charge are the isolated throat's (one-body
   mass 1.0000); M_ADM 2.27376 (flipped d = 12), 1.56579 (d = 12), 1.62149 (d = 14), 1.66449 (d = 16); the pits' start
   separations equal the old runs' (12.0230, 16.0310). Frame 0 eyeballed against the old d = 12 frame.
-- Nothing launches here when they finish (no watcher): each needs its close-out ON THIS NODE (scratch is node-local),
-  then `results/merger/analysis/matched_rest.py` compares them with the old runs (sign ratio 1.518, ladder δ).
+- `ctrl_flip_d12_csm` stops at t = 15 like the others (the user's word, 06:25 UTC): its old params say stop_time 30,
+  but the old run was stopped by hand at t = 10.8 and the ratio uses only t = 3.5–10.5. A detached watcher on the
+  first node (PID 3647334, log `runs/wormhole_merger/logs/ctrl_flip_d12_csm.stop_at_t15.log`) drops `dump_and_stop`
+  into the run dir once the log passes t = 14.95; AMReX checks for it every 10 coarse steps, so the run writes a
+  checkpoint and exits normally at t = 15.00. Do not add a second stop file.
+- Nothing launches here when they finish: each needs its close-out ON THIS NODE (scratch is node-local), then
+  `results/merger/analysis/matched_rest.py` compares them with the old runs (sign ratio 1.518, ladder δ).
 - The GPU build reproduces the CPU energy scan at d = 8 (preflight-only on the scan's grid): M_ADM 2.3604109 (CPU
   2.36041), λ 0.856614, c 2.029956.
 - The L = 128 pair launched first (05:12, `ctrl_{flip,rest}_d16_csm_L128_ml4_t015`) broke the rerun rule; stopped at
