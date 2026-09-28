@@ -115,6 +115,14 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
   (spiral; the CPU mode-3 check at p = 0.12 gives 2.27920 on L = 64). Frame 0 (χ) matches the old runs' (pits at ±6).
   Cards at 60 GB of 80 each.
 - First checkpoint due at t = 5, ~12:20 UTC: confirm it on scratch then.
+- **All three production runs verified at 10:15 UTC** (fly-by, spiral, and the second node's head-on):
+  - each run's `params.txt` differs from its old run only in the named changes;
+  - mode 3 in every `constraint_solve.dat`, converged: every MLMG solve ≤ 4e-9, each mouth's far side matched to
+    8e-10 / 4e-10 / 4e-8, one-body mass 1.000000;
+  - in-code Ψ4 written every step at 20/28/36/44 (head-on 10/14/18/20/28/36/44);
+  - the consumer's scalar and Ψ4 at 14/20/30/44 (head-on 10/14/18/20/30/44), the same small-data files as the old
+    runs, horizon scans (fly-by, head-on) with R_min 3.8763 / 3.8786 at t = 0, 15 frame fields, no consumer errors;
+  - no NaN.
 
 **The four mode-3 rest-pair reruns are closed out** (09:11–09:30 UTC): `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`,
 `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm`, each its old run's packed params with only the data changed (L = 64, N = 128,
