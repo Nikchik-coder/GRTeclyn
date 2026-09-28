@@ -139,12 +139,16 @@ consumer_profile() {
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2"
       ;;
     orbit-modes-scan)
-      # orbit-modes plus the per-mouth horizon scan (fixed scan window, default
-      # --horizon-half): what the level-5 fly-by merge_orbit_flip_d12_p045_L128_lvl5_t100
-      # ran with, so its level-4/3 twins (2026-09-26 convergence queue) extract the same.
+      # orbit-modes plus the per-mouth horizon scan in the window the level-5 fly-by
+      # merge_orbit_flip_d12_p045_L128_lvl5_t100 ran with (its registry row: half 3.0,
+      # common scan on level 3), so its reruns and twins extract the same.  Until
+      # 2026-09-28 this profile left the default window (half 2.5, level 1), which
+      # moves the scan edge from 2.79 to 2.29 -- inside what the fly-by's mouths reach
+      # by t = 30 -- and its mode-3 rerun launched so (consumer restarted at t = 18).
       echo "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2" \
-           "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895"
+           "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
+           "--horizon-common-level 3 --horizon-half 3.0"
       ;;
     bbh)
       echo "--frames-fields $(whm_frames_without phi Pi scalar_activity local_speed)" \

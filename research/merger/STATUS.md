@@ -136,7 +136,8 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 - **Consumers restarted 18:08 / 18:09 UTC** (the user's go; `restart_consumer.sh`, evolution untouched; frames 504 →
   504 and every stream intact to t = 17, checked with `restart_consumer.sh --check`):
   - fly-by: `--horizon-half 3.0 --horizon-common-level 3`, its old run's scan window. It had launched on the defaults
-    (2.5, level 1; the `orbit-modes-scan` profile comment is wrong), which move the scan edge 2.79 → 2.29; rows to
+    (2.5, level 1, from the `orbit-modes-scan` profile; the profile passes 3.0 / level 3 since 19:01 UTC), which move
+    the scan edge 2.79 → 2.29; rows to
     t = 17 are unaffected (r ≤ 1.53), rows from t = 18 use the old window.
   - spiral: `--horizon-scan` (same window) and `--areal-radius`, which the paper's mouth arm (`_lvl3_t050_mouths`)
     had; rows from t = 18.

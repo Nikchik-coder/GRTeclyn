@@ -13,16 +13,17 @@ readers select spheres by name or header value (one exception below).
 
 ## While the runs are live (the user's call; restarts via `restart_consumer.sh`)
 
-1. Fly-by horizon window (checked). Its consumer runs the defaults (`--horizon-half 2.5`, common level 1); the
-   old run used `--horizon-half 3.0 --horizon-common-level 3` (registry). The edge moves 2.79 → 2.29, which the
-   old mouths passed at t = 30. Affects clmFlybyScanEdgeTime/ScanEdge/EdgeRadius, clmGwScalarMouthReach, the
-   trust-window reason, Figs 10g, 14, 15a, 17c. Restart before t ≈ 25. The comment on `orbit-modes-scan` in
-   `consumer_profiles.sh` is wrong (the default is 2.5 since 09-09).
-2. Head-on common scan (checked on the old `lvl5from0_scalar` arm: 11 of 201 C rows with a MOTS, t = 21.5–37,
-   r ≤ 3.29). Half 3.0 loses the remnant MOTS behind the edge, so the late track, the fits, clmDetKerrRise and
-   clmShapeSystRounded have no source (they came from `lvl3down` / fill twins). Restart with `--horizon-half 4.0`
-   before the MOTS forms (t ≈ 21), at the latest t ≈ 35.
-3. Spiral diagnostics. Its old run had neither, but the paper's spiral numbers came from other superposed arms:
+1. DONE (consumer restarted 18:08 UTC, rows from t = 18). Fly-by horizon window (checked): its consumer ran the
+   defaults (`--horizon-half 2.5`, common level 1); the old run used `--horizon-half 3.0 --horizon-common-level 3`
+   (registry). The edge moves 2.79 → 2.29, which the old mouths passed at t = 30. Affects
+   clmFlybyScanEdgeTime/ScanEdge/EdgeRadius, clmGwScalarMouthReach, the trust-window reason, Figs 10g, 14, 15a,
+   17c. The `orbit-modes-scan` profile passes 3.0 / level 3 since 19:01 UTC (it had left the defaults).
+2. DONE (consumer restarted 18:19 UTC, second node, rows from t = 18). Head-on common scan (checked on the old
+   `lvl5from0_scalar` arm: 11 of 201 C rows with a MOTS, t = 21.5–37, r ≤ 3.29). Half 3.0 loses the remnant MOTS
+   behind the edge, so the late track, the fits, clmDetKerrRise and clmShapeSystRounded had no source (they came
+   from `lvl3down` / fill twins); now `--horizon-half 4.0`.
+3. Spiral diagnostics (horizon scan and areal radius on since 18:09 UTC, rows from t = 18; the rest open). Its
+   old run had neither, but the paper's spiral numbers came from other superposed arms:
    - no `core_radial_profile` (Fig 6d, clmSpiralChiFloorTime/SpikeStart/Anatomy*, and the freeze continuation's
      fill arming): needs a restart from a checkpoint with `core_radial_profile = 1` (diagnostic only);
    - no `--horizon-scan` / `--areal-radius` (Fig 15 merger arm, 16 clmMouth* rows, fit window t = 8–25): rows
