@@ -1323,6 +1323,28 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-28 (06:05 UTC) — every binary run needs a mode-3 rerun; the first CUDA build of mode 3; the rest pairs rerun on their own grid
+
+**The user's word (2026-09-28):** every binary simulation so far is corrupted by its initial data (the superposition:
+mouths 9–15 % too large, the interaction energy missing) and must be rerun; the plan (STATUS, "The plan, in order")
+replaces the convergence queue; and a rerun must match the corrupted run it replaces in every property but the data,
+so the old result can be tested (STATUS, "RULE for every rerun").
+- **Build.** `main3d_csmatch_5f988dbc_2026-09-28.ex` (`build_binary.sh --tag csmatch`, incremental, 2 min): the first
+  CUDA build of mode 3. A preflight-only start-up on the energy scan's grid (L = 128, N = 128, level 4, tagging_L 64;
+  d = 8 flipped) gives M_ADM 2.3604109, λ 0.856614, c 2.029956, far-side mass −4.8104771 and charge 3.0343680 per
+  mouth, against the CPU scan's 2.36041 / 0.85661 / 2.02996: the GPU reproduces it to every printed digit (4.6 s).
+- **A wrong first launch.** The matched-rest test was first launched at 05:12 UTC as d = 16 flipped + like on
+  L = 128 / level 4 / tagging_L 128 (to fit a d = 24 pair on one grid). That broke the one-knob comparison with the
+  L = 64 ladder; both were stopped at t = 3 and wiped on the user's word, frames included (MANIFEST_CLEANUP_2026-09-28).
+  Their t = 0 on that grid: M_ADM 2.21704 / 1.66509 against the scan's 2.21731 / 1.66539.
+- **The reruns (05:40 UTC, first node, two per card).** `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`, `ctrl_rest_d14_csm`,
+  `ctrl_rest_d16_csm`: each old run's packed params with only the constraint-solve block (mode 3), rolling
+  checkpoints every 2.0 and the full plot list added. ~4.3–4.8 u/h each shared, 70 / 73 GB per card. At t = 0 every
+  mouth has the isolated far side (one-body mass 1.0000) and the pits start exactly where the old runs' did (12.0230,
+  16.0310). `ctrl_rest_d18_csm` and the head-on to t = 100 are queued for the other cluster (STATUS, "Queued").
+  Reduction: `results/merger/analysis/matched_rest.py` (sign_rule's centroids; the old ladder refits to δ = 3.56).
+- **Pack.** Rebuilt at 05:14 UTC: `summary.md` now carries CS-1's M_ADM 2.74 (was 2.63).
+
 ### 2026-09-28 (05:40 UTC) — the FTL campaign's 4D null-ray tracer validated and pointed at the horizon question: `wormhole_escape_trace.py`; nothing launched
 
 - **What was asked.** Whether the neuralspacetime campaign's spacetime analyzers (the 4D ray

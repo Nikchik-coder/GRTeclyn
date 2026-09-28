@@ -1,16 +1,109 @@
-# Status — 2026-09-27 12:15 UTC
+# Status — 2026-09-28 06:05 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes.**
 
+## CRITICAL: every binary simulation is corrupted by its initial data and must be rerun (the user, 2026-09-28)
+
+Every binary run so far (the pairs at rest, the head-on, the spirals, the fly-by, the scans, the placement probes)
+started from the superposition of two throats, which is not a solution of the Hamiltonian constraint
+["2026-09-27 (12:15 UTC) — parameter matching and the energy check"]:
+- each mouth comes out 9–15 % larger in every length than the isolated throat it is named for (one-body mass 1.149 at
+  d = 8, 1.094 at d = 12), so every p is in the wrong unit (p = 0.12 / 0.45 are 0.110 / 0.411 per one-body mass);
+- the pair's mass leaves out the interaction energy: M_ADM is 2.00 in the superposition, 2.36 (flipped) and 1.38
+  (like) at d = 8 for the same two isolated throats constraint-solved (mode 3).
+
+No binary number is final until it is remeasured on mode-3 data (`constraint_solve = 1`,
+`constraint_solve_puncture_mode = 3`, name token `csm`).
+
+**RULE for every rerun (the user, 2026-09-28): the new run's properties must match the corrupted run it replaces,**
+so the two differ in the initial data alone and the old result can be tested. Same L, N, max_level, tagging_L,
+sponge, separation, gauge, dt_multiplier, stop_time and plot cadence as the old run's `evolution_params.txt`
+(`results/merger/campaign/...`); the only changes allowed are the constraint-solve block (mode 3), checkpoints on and
+the plot variables the full frame set needs (output only). Diff the new template against the old params before
+launching. E.g. the rest pairs are L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, t = 15, plots every 0.5. CS-1 (mode 0: the superposition's mouths, solved) is the
+old-versus-clean comparison, not a rerun. The binary verdicts below stand only as results on superposed data.
+
+## The plan, in order (the user's, 2026-09-28)
+
+1. **Energy check** (CPU only, about a day). The pair's total mass in mode 3 at d = 8, 12, 16, 24 and 48, attracting
+   and repelling: what "M" means in the paper, and whether the extra interaction energy agrees with the attraction or
+   is a bug. **Done** 2026-09-27 12:15 UTC (`results/merger/t0_matching/energy_scan.tsv`): not a bug, it agrees only
+   if the throats act at fixed scalar potential. The GPU build reproduces it (2026-09-28, below).
+2. **First two runs** (about 18 GPU-hours, side by side).
+   - Pairs released from rest (~6 h): remeasure the attraction/repulsion ratio (1.518) and the force law for the true
+     wormholes. **Started 2026-09-28**: the five old rest pairs (d = 12 both signs, 14, 16, 18) rerun in mode 3 (Live, below).
+   - Head-on to t = 100 (~12 h): does "the horizon shrinks by a quarter" survive, or was it a symptom of the missing
+     energy? Not started.
+   - Decision point: these two show how much of the abstract changes.
+3. **The orbits** (about 3 days of GPU).
+   - Spiral p = 0.12 (~22 h), plus a finer-grid twin for convergence (~8–10 h).
+   - Fly-by p = 0.45 at two resolutions (30–67 h).
+   - p = 0.25 and 0.35 (~12 h) to relocate the merger/fly-by boundary.
+   - Decision point: if any outcome flips (merger ↔ fly-by), map the boundary more finely.
+4. **Single wormhole on clean data** (12–25 h, any time in parallel). The kicked single throats with properly solved
+   starting data. This settles the "regrowth" question.
+5. **Rewrite.**
+   - Every binary number comes from mode-3 runs.
+   - The old campaign becomes the systematics study (gauge, grid, freeze tests), with CS-1 as the table showing old
+     versus clean starting data.
+   - Add the new definitions: each wormhole's mass, the pair's total mass, and p in true units.
+   - Update the abstract once step 2's answers are in.
+
+Along the way:
+- Cancel the planned convergence runs on the old data; the finer-grid twins in step 3 replace them (the convergence queue
+  below is cancelled).
+- For every run: keep checkpoints on, check the starting mass and throat size before walking away, and put "mode 3"
+  in the run's name (`csm`) and registry entry.
+
+Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
+
 ## Live
 
-**Nothing is live; both nodes are free.** On the user's word, CONV-1, CONV-2 and CONV-3w were stopped at 08:33 UTC on
+**First node (two H100s): four mode-3 reruns of the rest pairs, two per card (step 2; the user's word, 2026-09-28).**
+Each is its old run's packed params with only the data changed, plus rolling checkpoints every 2.0 and the full plot
+list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, plots every 0.5, binary
+`main3d_csmatch_5f988dbc_2026-09-28.ex` (the first CUDA build of mode 3), profile headon-scout, zoom 32. At 06:03 UTC:
+
+| card | run (rerun of) | t / stop | speed (shared) | ETA (UTC) |
+|---|---|---|---|---|
+| 0 | `ctrl_flip_d12_csm` (`ctrl_flip_d12`) | 1.79 / 30 | 4.8 u/h | ~10:25 (alone from ~09:05) |
+| 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 1.48 / 15 | 4.5 u/h | ~09:05 |
+| 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 1.79 / 15 | 4.8 u/h | ~08:45 |
+| 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 1.38 / 15 | 4.2 u/h | ~09:05 |
+
+- Cards at 70 / 73 GB of 80. t = 0 checked: every mouth's far-side mass and charge are the isolated throat's (one-body
+  mass 1.0000); M_ADM 2.27376 (flipped d = 12), 1.56579 (d = 12), 1.62149 (d = 14), 1.66449 (d = 16); the pits' start
+  separations equal the old runs' (12.0230, 16.0310). Frame 0 eyeballed against the old d = 12 frame.
+- Nothing launches here when they finish (no watcher): each needs its close-out ON THIS NODE (scratch is node-local),
+  then `results/merger/analysis/matched_rest.py` compares them with the old runs (sign ratio 1.518, ladder δ).
+- The GPU build reproduces the CPU energy scan at d = 8 (preflight-only on the scan's grid): M_ADM 2.3604109 (CPU
+  2.36041), λ 0.856614, c 2.029956.
+- The L = 128 pair launched first (05:12, `ctrl_{flip,rest}_d16_csm_L128_ml4_t015`) broke the rerun rule; stopped at
+  t = 3 and wiped on the user's word, frames included (MANIFEST_CLEANUP_2026-09-28).
+
+## Queued — to launch on the other cluster (one GPU), the user's word 2026-09-28
+
+Templates and binaries are untracked (`runs/`), so rebuild both there. Binary: `build_binary.sh --tag csmatch` at
+5f988dbc or later (the first build of mode 3 needs nvcc; check its t = 0 against `energy_scan.tsv`). A template is the
+old run's packed `results/merger/campaign/<group>/<run>/evolution_params.txt` with exactly three changes (the rule
+above): (a) append `constraint_solve = 1`, `constraint_solve_background = 0`, `constraint_solve_puncture_mode = 3`,
+`constraint_solve_verbose = 1`; (b) `checkpoint_interval` → every 2.0 code units, `amr.checkpoint_files_output = 1`,
+`checkpoint_keep = 3`; (c) `amr.plot_vars = chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2
+shift3 phi Pi`. Name: the old name + `_csm`. Diff against the old params before launching.
+1. `ctrl_rest_d18_csm`, the last rung of the rest-pair ladder (old `ctrl_rest_d18`, L = 64, level 3, t = 15; ~1.5 h
+   alone). `launch.sh --template params_ctrl_rest_d18_csm.txt --name ctrl_rest_d18_csm --gpu 0 --profile headon-scout
+   --zoom 32 --coord 32 --center 32 32 32 --binary <the csmatch build>`.
+2. The head-on to t = 100: the mode-3 rerun of `merge_headon_flip_d8_v1_lvl5from0_scalar_t100` (L = 64, level 5 from
+   t = 0; ~12 h). Template not yet written. With step 2's rest pairs it is the plan's decision point.
+3. Then the plan's steps 3 (orbits) and 4 (single throats on clean data), each a rerun of its old run by the same rule.
+
+**The second node is not used** (the user's word). CONV-1, CONV-2 and CONV-3w were stopped at 08:33 UTC on
 2026-09-27 and removed at 08:40 UTC ["2026-09-27 (08:33 UTC)"]. They had reached t = 30.25 / 60, 57.88 / 60 and 58.18 / 100.
 Their scratch (38 GB of plotfiles, no checkpoints), run dirs, launcher logs, registry rows and untracked partial packs
 are gone. Only their rendered frames are kept, in `runs/wormhole_merger/00_archive/stopped_2026-09-27/`, because frames
-are never deleted without the user's explicit word. All three are back in the queue below, to run again from the start.
+are never deleted without the user's explicit word. All three were queued again, and the plan (2026-09-28) cancels them.
 - **CONV-3 is closed out** (finished t = 100 at 02:12 UTC; filed under `08_convergence/`, packed, scratch pruned).
   - Its (2,2) burst matches the level-5 chain on every sphere: peak ratio 1.000, waveform within 0.1 % of peak.
   - Both runs extract on the base grid, so this tests the core's resolution, not the wave zone's. CONV-3w tests the
@@ -102,7 +195,10 @@ MANIFEST_CLEANUP_2026-09-27).
 Run tree: every plotfile deleted on the user's word; 192 → 52 GB. Two checkpoints remain: Chk03600 (20 GB, the t = 36 seed of CONV-3) and Chk05700 (26 GB, no queued
 use since G4 was dropped; kept on the user's word, 2026-09-27).
 
-## Queued — the convergence runs, and nothing else (the user's word, 2026-09-26 17:30 UTC)
+## Cancelled — the convergence runs on the old data (the plan, the user's word 2026-09-28)
+
+**Cancelled by the plan above:** they converge superposed-data runs; the finer-grid twins of step 3 replace them.
+Kept below as the record of their templates (queued on the user's word, 2026-09-26 17:30 UTC).
 
 Nothing launches without the user's word. Every other option (G1–G18, A1–A4, B/C, the inflation campaign) was dropped
 from the queue on the user's word ["2026-09-26 (evening) — the convergence queue"]. Each template is its partner's params
@@ -159,6 +255,9 @@ coreprof-15 legs. The rest run on the pin, which has the same source as the leve
 - CONV-8's parents wrote no shift or h_ij. The full plot list is added (output only), because the frame set needs it.
 
 ## Verdicts (the paper's wording; paper section in parentheses)
+
+Every binary verdict below (two throats at rest, head-on, spiral, fly-by, waves and astrophysics from them) is on
+superposed initial data: see CRITICAL at the top. Each stands only until its mode-3 rerun.
 
 - **Single throat**: unstable fixed point, one exponential mode; the e-fold is within 2.5 % (level 4) and 15 % (level 3) of the PARAMETER-MATCHED González–Guzmán–Sarbach linear rate (our throat is their γ₁ = 0.5 member: T = 0.758; τ_lin = 5.13 M); truncation noise picks the branch. The collapse horizon SHRINKS 40 % as it swallows the phantom; the 9–11 % REGROWTH in the scans is NUMERICAL (spherical first law forbids it; it tracks a constraint-violation double layer reaching the MOTS; same in purely spherical data; the pure quadrupole never regrows; the head-on horizon never regrows either). The late (t ≳ 75) constraint rise of every single-throat arm is a refinement-boundary grid mode whose onset the L = 128 box does not delay — NOT the t500 wall reflection ["2026-09-25 (09:30)"]. **Inflation, the verdict (F4: L = 512, level 5, 1+log, quotable to t = 218)** ["2026-09-26 (05:00 UTC)"]: the kicked throat keeps growing, at every sample to t = 218 (3.81 → 14.5) and on to t = 390, with no trapped surface. It stays anti-trapped. θ_l = 0 sits on the neck and θ_k = 0 runs outward (R = 73 by t = 212): Shinkai–Hayward's trapping horizons turning cosmological. Over t = 16–40 it grows at the Shinkai–Hayward rate in its own proper time: local H R0 = 1.0–1.3, and a fit gives 1.22 (SH's massless 1.1, our linear mode 1.30). It leaves that rate at t ≈ 40 because 1+log freezes the lapse at the neck (α 0.57 → 0.02 by t = 100), so the neck's proper time nearly stops: only ~5 units pass between t = 40 and 218. The growth per unit t then falls (dR/dt 0.08 → 0.015). That is the slicing, not the throat. The neck also leaves the finest box at t = 44. No end state is measured: the record ends when the gauge wave reaches the wall. Only the onset is clean, because grid noise grows on the neck from t ≈ 120, after it leaves level 3. The t500 arm's turn at t = 161 was the same wall ["2026-09-25 (06:30)"]. (§IV)
 - **Seeded throat**: a kick picks the fate opposite to its sign; the seed is not constraint-solved (H defect ∝ ε, 0.93×16π|ρ| on the shell at 1 %); ε = ±0.1 both collapse (+0.1 makes the throat a maximum, trapped at t = 1; −0.1 re-expands, then collapses) and die at the origin, not "from a Hamiltonian violation". (§II.D, §IV.C)
