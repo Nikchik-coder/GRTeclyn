@@ -141,8 +141,7 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
   with the spiral and the fly-by (queued below). Stopped from the first node with AMReX's `stop_run` in its run dir
   (the run dir is shared, the processes are not; AMReX exited cleanly at step 60). No checkpoint was written (the
   first was due at t = 2). **Wiped at 08:33 UTC on the user's word ("wipe it out")**: run dir, scratch (26 GB),
-  launcher log, registry row and its L = 64 template; its frames wait in `00_archive/stopped_2026-09-28/` for the
-  user's yes (MANIFEST_CLEANUP_2026-09-28).
+  launcher log, registry row, its L = 64 template and, on the user's yes, its frames (MANIFEST_CLEANUP_2026-09-28).
   Its t = 0 read stands for the L = 128 run's check: M_ADM 2.35892, each mouth R_min 3.8786 (R⋆ 3.8895), one-body mass
   1.0000, frame 0 as CS-1's.
 - The card is free. Next: the production head-on (queued below), on the user's go.
