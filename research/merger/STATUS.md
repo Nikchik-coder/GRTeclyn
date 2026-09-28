@@ -72,6 +72,9 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
      CS-1's, the mode-0 pair's; the mode-3 pair at d = 8 has 2.360.
    - The scalar energies the paper quotes are partly near-field and change: `clmGwScalarEnergyFlyby`, the
      `clmGwScalarRatio*` rows, the head-on E_φ (step 6).
+   - Switching the ledger and the figures to the mode-3 runs: every extractor and figure module that breaks or reads
+     differently (M = 2.0 hard-coded, the R = 30 sphere by position, old run names and times, the hand-made offline
+     scans, trust windows) is listed in `CSM_SWITCHOVER.md` (audit 2026-09-28, 18:00 UTC).
 6. **Longer GW runs, with the sponge and the extraction spheres farther out** (the user, 2026-09-28; proposed, not
    queued).
    - Why ["Open, the user's call: the scalar energies the paper quotes are partly near-field"]: the scalar spheres sit
@@ -106,10 +109,10 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by and the spiral (the user's go, 09:48 UTC)
 
-| card | run | p | t now (14:23) | t end | speed | ETA |
+| card | run | p | t now (18:11) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 9.75 | 100 | 2.2 u/h | ~41 h, ~07:30 UTC 09-30 |
-| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 9.74 | its NaN, ~60 | 2.2 u/h (old run 2.81 average) | ~18–22 h, ~08:30–12:30 UTC 09-29 |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 17.9 | 100 | 2.14 u/h | ~38 h, ~08:30 UTC 09-30 |
+| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 18.1 | its NaN, ~60 | 2.20 u/h (old run 2.81 average) | ~19 h, ~13:00 UTC 09-29 |
 
 - Launched 09:49 UTC, both exact reruns of their old runs (only the solve block and checkpoints every 5 units, newest
   3), binary `main3d_csmatch_5f988dbc_2026-09-28.ex`, profiles `orbit-modes-scan-prod` / `orbit-modes-prod` (the
@@ -130,6 +133,16 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
   - the consumer's scalar and Ψ4 at 14/20/30/44 (head-on 10/14/18/20/30/44), the same small-data files as the old
     runs, horizon scans (fly-by, head-on) with R_min 3.8763 / 3.8786 at t = 0, 15 frame fields, no consumer errors;
   - no NaN.
+- **Consumers restarted 18:08 / 18:09 UTC** (the user's go; `restart_consumer.sh`, evolution untouched; frames 504 →
+  504 and every stream intact to t = 17, checked with `restart_consumer.sh --check`):
+  - fly-by: `--horizon-half 3.0 --horizon-common-level 3`, its old run's scan window. It had launched on the defaults
+    (2.5, level 1; the `orbit-modes-scan` profile comment is wrong), which move the scan edge 2.79 → 2.29; rows to
+    t = 17 are unaffected (r ≤ 1.53), rows from t = 18 use the old window.
+  - spiral: `--horizon-scan` (same window) and `--areal-radius`, which the paper's mouth arm (`_lvl3_t050_mouths`)
+    had; rows from t = 18.
+  - Each new watcher runs under a supervisor that stops it when the evolution exits, so `run_single.sh`'s final
+    drain (launch flags) does not race it; that drain extracts the last plotfile with the launch flags.
+  - Why: the audit of what the paper needs from these runs, `CSM_SWITCHOVER.md`.
 
 **The four mode-3 rest-pair reruns are closed out** (09:11–09:30 UTC): `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`,
 `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm`, each its old run's packed params with only the data changed (L = 64, N = 128,
@@ -149,9 +162,13 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 ## Live — second node (one H100): the production head-on (the user's go, 09:57 UTC)
 
-| card | run | t now (14:23) | t end | speed | ETA |
+| card | run | t now (18:11) | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 8.83 | 100 | 2.1 u/h | ~44 h, ~10:00 UTC 09-30 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 17.0 | 100 | 2.15 u/h | ~39 h, ~09:00 UTC 09-30 |
+
+- **To do on the second node before t ≈ 21 (~20:15 UTC; at the latest t ≈ 35):** restart its consumer with
+  `--horizon-half 4.0` (`restart_consumer.sh`). The old level-5 head-on scanned with half 3.0 and lost the common MOTS
+  past the scan edge after t = 37 (11 of 201 C rows), and the late track, its fits and clmDetKerrRise need it.
 
 - Launched 10:02 UTC (template `params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt`, profile
   `headon-modes-prod`, zoom 40, coord 64, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`). The blessed exception to the
