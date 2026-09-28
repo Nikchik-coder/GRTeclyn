@@ -21,23 +21,30 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | Fig. | label | file | module |
 |---|---|---|---|
 | 1 | `fig:single_throat` | `01_single_throat/single_throat_instability` | `plot_single_throat_row` |
-| 2 | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
-| 3 | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
-| 4 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
-| 5 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
-| 6 | `fig:spiral_collapse` | `05_binary_spiral/p012_collapse_diagnostics` | `plot_spiral_collapse` |
-| 7 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
-| 8 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
-| 9 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
-| 10 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 11 (App. A) | `fig:single_regrowth` | `01_single_throat/single_horizon_regrowth` | `plot_horizon_regrowth` |
-| 12 (App. A) | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
-| 13 (App. A) | `fig:fill_insensitivity` | `05_binary_spiral/fill_insensitivity` | `plot_fill_insensitivity` |
-| 14 (App. B) | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
-| 15 (App. B) | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
-| 16 (App. B) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
-| 17 (App. B) | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
-| 18 (App. B) | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+| 2 top | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
+| 2 bottom | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
+| 3 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
+| 4 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
+| 5 | `fig:spiral_collapse` | `05_binary_spiral/p012_collapse_diagnostics` | `plot_spiral_collapse` |
+| 6 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
+| 7 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
+| 8 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
+| 9 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
+| 10 (App. A) | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
+| 11 (App. B) top | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
+| 11 (App. B) bottom | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
+| 12 (App. B) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
+| 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
+| 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+
+Since 2026-09-28 the paper has 13 floats from these 16 PDFs: three floats stack
+two PDFs each (top/bottom, both labels on one float), and two figures left the
+paper -- `single_horizon_regrowth` (the regrowth is the evolved seed defect;
+the numbers stay in Sec. IV's collapse paragraph) and `fill_insensitivity`
+(the bounds stay in the spiral sections). Their PDFs are deleted here per the
+rule above; `plot_horizon_regrowth` and `plot_fill_insensitivity` stay in the
+wrapper. Float numbers above are the article's as of 2026-09-28.
+
 
 ## Fig. 10 gains the fly-by; Fig. 3's keys follow its caption (2026-09-26, referee pass)
 
