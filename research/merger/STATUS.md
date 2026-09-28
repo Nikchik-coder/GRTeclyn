@@ -219,11 +219,17 @@ mode 3 improves the constraints, and the old campaign is the systematics study.
 | LAD-csm | ladder arms `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement on mode-3 data (Fig. 12a) | restart from the production spiral's own checkpoint at t ≈ 50 (its every-5 checkpoints exist for this), max_level 4 / 6 / 7; the production run itself is the level-5 rung; ~10–15 units per arm | ~15–25 total |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | spiral burst and energy, level 4 vs 5 on mode-3 data (replaces CONV-3's role) | the production spiral's template, max_level 4, from t = 0 | ~8–10 |
 
+| EGW-p06 | `merge_orbit_flip_d12_p060_lvl5_t040_csm` | E_GW(p) above the fly-by: where the curve turns over | the fly-by template, p = 0.60, stop_time ~40 (the encounter is over) | ~8-12 |
+| EGW-p09 | `merge_orbit_flip_d12_p090_lvl5_t040_csm` | E_GW(p) far side of the peak | same, p = 0.90 | ~8-12 |
 - LAD-csm launches only after the spiral passes t ≈ 55 and a checkpoint ≥ 50 is on scratch; convergence-study rules
   apply (no frames: `--frames-fields none` + `WHM_FRAMES_SUBSET`, `WHM_MOVIES=0`, group `08_convergence`).
 - max_level alone still leaves the wave zone on the base grid; a wave-zone twin (CONV-3w's role) is contingent on
   the mode-3 waveforms shifting beyond a few % and is not queued.
 - Checkpoints: to be asked per run at launch (the standing rule); the ladder arms need none.
+- EGW-p06/p09 (proposed 2026-09-28, the E_GW(p) curve for Fig. 9b): with p = 0/0.12/0.25/0.35/0.45 from the
+  campaign these bracket the curve's turnover, so "loudest possible burst" becomes measured. Watch: junk
+  radiation grows ~p^2 (separable at 0.45, check at 0.9), and mode 3 above p = 0.45 is new -- read the Newton
+  passes at start-up. The fit itself is CPU analysis over the packed psi4 streams.
 
 ## Earlier (2026-09-27)
 
