@@ -1,4 +1,4 @@
-# Status — 2026-09-28 08:12 UTC
+# Status — 2026-09-28 08:32 UTC
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -34,8 +34,9 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
 2. **First two runs** (about 18 GPU-hours, side by side).
    - Pairs released from rest (~6 h): remeasure the attraction/repulsion ratio (1.518) and the force law for the true
      wormholes. **Started 2026-09-28**: the five old rest pairs (d = 12 both signs, 14, 16, 18) rerun in mode 3 (Live, below).
-   - Head-on to t = 100 (~12 h): does "the horizon shrinks by a quarter" survive, or was it a symptom of the missing
-     energy? Not started.
+   - Head-on to t = 100: does "the horizon shrinks by a quarter" survive, or was it a symptom of the missing
+     energy? Moved to the L = 128 production box with the spiral and the fly-by (the user, 08:20 UTC; queued below);
+     the L = 64 rerun was stopped at t = 0.6.
    - Decision point: these two show how much of the abstract changes.
 3. **The orbits** (about 3 days of GPU).
    - Spiral p = 0.12 (~22 h), plus a finer-grid twin for convergence (~8–10 h).
@@ -84,8 +85,8 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
    - Free, inside the old boxes (output only, so the reruns stay exact): scalar spheres at 14/20/30/44 on the fly-by and
      the spiral, 10/14/18/22 on the head-on (the consumer's `--radii`), for the fit and a 1/R extrapolation over four
      spheres.
-   - The user's call: the free step, wave-zone twins, or both. The head-on rerun next on the second node is templated
-     with spheres 10/14/18.
+   - Decided (the user, 08:20 UTC): the head-on, the spiral and the fly-by all run in the L = 128 box with Ψ4 at
+     20/28/36/44 and the scalar at 14/20/30/44 (queued below). Wave-zone twins: not decided.
 
 Along the way:
 - Cancel the planned convergence runs on the old data; the finer-grid twins in step 3 replace them (the convergence queue
@@ -111,7 +112,7 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
 | first / 0 | `ctrl_rest_d14_csm` (`ctrl_rest_d14`) | 10.89 | 15 | 4.4 u/h shared | 0.9 h, ~09:05 UTC |
 | first / 1 | `ctrl_rest_d12_csm` (`ctrl_rest_d12`) | 11.14 | 15 | 4.5 u/h shared | 0.85 h, ~09:00 UTC |
 | first / 1 | `ctrl_rest_d16_csm` (`ctrl_rest_d16`) | 10.10 | 15 | 4.1 u/h shared, ~9 alone | 1.0 h, ~09:10 UTC |
-| second / 0 | `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm` | 0.05 | 100 | ~3.5 u/h (the old run) | ~28 h, ~12:30 UTC 09-29 |
+| second / 0 | `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm` | **stopped at 0.60, 08:26 UTC** (the user: "kill it") | — | — | card free |
 
 - **The deciding test is answered (read from the live d = 12 pair, window complete):** the mode-3 flipped pair falls in
   and the like pair opens, pull/push 1.463 ± 0.023 over t = 3.5–10.5 (superposed 1.518 ± 0.021). Fixed potential
@@ -135,14 +136,43 @@ list (output only): L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, pl
 
 ## Live — second node (one H100): the rest of step 2 (the user's word, 2026-09-28: "run the queued here")
 
-- **Live since 08:07 UTC: `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm`**, the mode-3 rerun of the level-5
-  head-on (L = 64, level 5 from t = 0, t = 100; differs from the old params only in the solve block and checkpoints
-  every 2.0; profile headon, zoom 40): 48 GB (FAB 45.4 GB, the old run's exactly). At t = 0: M_ADM 2.35892, each
-  mouth R_min 3.8786 (R⋆ 3.8895) and one-body mass 1.0000. Frame 0 matches CS-1's. The step-2 question: does "the
-  horizon shrinks by a quarter" survive clean data? The binary differs from the old run's (`main3d_boost_2026-09-08`):
-  mode 3 exists only from 5f988dbc. **Checkpoints: on (every 2.0, keep 3), launched before the per-run checkpoint
-  rule reached this session; the user's call whether to keep them** (turning them off means a relaunch).
-- Then the plan's steps 3 (orbits) and 4 (single throats on clean data), each a rerun of its old run by the rule.
+- **Stopped at t = 0.60, 08:26 UTC, on the user's word ("kill it"): `merge_headon_flip_d8_v1_lvl5from0_scalar_t100_csm`**,
+  the L = 64 mode-3 rerun of the level-5 head-on (live since 08:07). The head-on moves to the L = 128 production box
+  with the spiral and the fly-by (queued below). Stopped from the first node with AMReX's `stop_run` in its run dir
+  (the run dir is shared, the processes are not; AMReX exited cleanly at step 60). No checkpoint was written (the
+  first was due at t = 2). Its run dir and frames stay; its scratch is on the second node, to prune on the user's word.
+  Its t = 0 read stands for the L = 128 run's check: M_ADM 2.35892, each mouth R_min 3.8786 (R⋆ 3.8895), one-body mass
+  1.0000, frame 0 as CS-1's.
+- The card is free. Next: the production head-on (queued below), on the user's go.
+
+## Queued — the production set: head-on, spiral, fly-by in one box (the user, 2026-09-28 08:20 UTC; waiting for the go)
+
+The user: the head-on, the spiral and the fly-by are the paper's production runs and must match: L = 128, N = 256
+(Δx = 0.5), max_level 5 from t = 0, tagging_L 64 (the same refined grids), sponge 48/64, Ψ4 spheres 20/28/36/44, the
+scalar at 14/20/30/44 (consumer profiles `*-r4`, output only), mode-3 data, binary
+`main3d_csmatch_5f988dbc_2026-09-28.ex`. **Nothing launches until the user says go** ("i will tell"). Templates in
+`runs/wormhole_merger/templates_scan/params_<run>.txt`, each diffed against its old run's packed params:
+- **`merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm`**: the old L = 64 head-on with only the box keys changed
+  (L, N, centre, extraction centre and radii, sponge; identical to the fly-by's) and the solve block. **Not a
+  like-for-like rerun: the user's choice of the production box.** No checkpoints (the user's word). t = 100, plots every
+  0.5 as before. Profile `headon-modes-r4`, zoom 40, coord 64. Est. 2–2.8 u/h (the L = 128 level-5 runs went
+  2.2–2.8), ~36–50 h; ~59 GB (the fly-by's; the preflight measures it). Card: the second node's (free).
+- **`v2_spiral_d12_p012_L128_lvl5from0_t100_csm`**: the exact rerun, plus checkpoints every 5 units (500 steps), the
+  newest 3 (19–26 GB each; the user's word). To its NaN (old wall t = 59.94; stop_time 100). Profile `orbit-modes-r4`,
+  zoom 64, coord 64. 2.81 u/h (old) → ~21 h; ~59 GB. Card: first node, after the rest pairs' close-out (~09:30 UTC).
+- **`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`**: the exact rerun, plus checkpoints every 5 units, the newest 3
+  (the old kept 8 at every 1.0). t = 100 (never NaN'd; trusted to t = 70). Profile `orbit-modes-scan-r4`, zoom 64,
+  coord 64. 2.17 u/h (old) → ~46 h; 58.8 GB (old). Card: first node. Mode 3 at p = 0.45 is new (tested at 0.12):
+  read the Newton passes and each mouth's far side at start-up.
+
+From the repo root, `nvidia-smi` first, each redirected (`< /dev/null > <log> 2>&1`):
+```
+L=grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh; B=runs/wormhole_merger/bin/main3d_csmatch_5f988dbc_2026-09-28.ex
+bash $L --gpu G --template params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt --name merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm --profile headon-modes-r4 --zoom 40 --coord 64 --binary $B
+bash $L --gpu G --template params_v2_spiral_d12_p012_L128_lvl5from0_t100_csm.txt --name v2_spiral_d12_p012_L128_lvl5from0_t100_csm --profile orbit-modes-r4 --zoom 64 --coord 64 --binary $B
+bash $L --gpu G --template params_merge_orbit_flip_d12_p045_L128_lvl5_t100_csm.txt --name merge_orbit_flip_d12_p045_L128_lvl5_t100_csm --profile orbit-modes-scan-r4 --zoom 64 --coord 64 --binary $B
+```
+Then the plan's step 4 (single throats on clean data), each a rerun of its old run by the rule.
 
 ## Earlier (2026-09-27)
 
