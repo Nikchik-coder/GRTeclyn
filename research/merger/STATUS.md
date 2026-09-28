@@ -166,9 +166,11 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 |---|---|---|---|---|---|
 | 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 17.0 | 100 | 2.15 u/h | ~39 h, ~09:00 UTC 09-30 |
 
-- **To do on the second node before t ≈ 21 (~20:15 UTC; at the latest t ≈ 35):** restart its consumer with
-  `--horizon-half 4.0` (`restart_consumer.sh`). The old level-5 head-on scanned with half 3.0 and lost the common MOTS
-  past the scan edge after t = 37 (11 of 201 C rows), and the late track, its fits and clmDetKerrRise need it.
+- **Consumer restarted 18:19 UTC with `--horizon-half 4.0`** (the user's go; `restart_consumer.sh`, evolution
+  untouched; frames 504 → 504, every stream intact to t = 17, parsed flags checked). The old level-5 head-on scanned
+  with half 3.0 and lost the common MOTS past the scan edge after t = 37 (11 of 201 C rows); the late track, its fits
+  and clmDetKerrRise need it. Rows to t = 17 use half 3.0 (no MOTS yet), rows from t = 18 half 4.0. The fly-by's
+  and the spiral's first rows after their restarts (t = 18) checked clean.
 
 - Launched 10:02 UTC (template `params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt`, profile
   `headon-modes-prod`, zoom 40, coord 64, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`). The blessed exception to the
