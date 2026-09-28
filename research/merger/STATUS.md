@@ -48,6 +48,11 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
 4. **Single wormhole on clean data** (12–25 h, any time in parallel). The kicked single throats with properly solved
    starting data. This settles the "regrowth" question.
 5. **Rewrite.**
+   - The initial-data story is told once, in this order (the user, 2026-09-28): the superposition (not a solution;
+     one line only, per the framing rule below), then the Helfer-type windowed one-body correction (tested, all four
+     twins stalled, not adopted, \cite{helfer2022} kept), then mode 3 (the exact solve) as the resolution and the
+     headline. No Helfer reruns: on clean data there is nothing left for the correction to correct; the twins stay
+     in Table I's systematics row.
    - Every binary number comes from mode-3 runs.
    - The old campaign becomes the systematics study (gauge, grid, freeze tests), with CS-1 as the table showing old
      versus clean starting data.
