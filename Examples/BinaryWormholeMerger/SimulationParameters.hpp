@@ -119,6 +119,16 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_boost_velocity_B", wormhole_params.boost_velocity_B,
                 default_boost_B);
 
+        // How the momenta enter (BinaryWormholeInitialData, "EXACT BOOST"):
+        // 0 = Bowen-York on the static throat, the scalar left at rest (the
+        // archived data, bit for bit); 1 = each throat is the exact
+        // Lorentz-boosted drainhole, and momentumA/B are its ADM momentum
+        // gamma m v.  With 1, the initial shift is the boosted solution's
+        // own (1, default) or zero (0).
+        pp.load("wormhole_momentum_model", wormhole_params.momentum_model, 0);
+        pp.load("wormhole_boost_initial_shift",
+                wormhole_params.boost_initial_shift, 1);
+
         // The perturbation dial (research/merger/GPU_PLAN_UPDATED.md, Forward
         // Plan, Phase 1).  A unit Gaussian shell on each throat's minimal
         // surface, multiplied into the conformal factor,
@@ -521,6 +531,12 @@ class SimulationParameters : public SimulationParametersBase
                         !boosted,
                         "a boosted scalar has Pi != 0, which breaks the "
                         "momentum constraint the solve holds exact");
+        check_parameter("wormhole_momentum_model", wp.momentum_model,
+                        wp.momentum_model == 0,
+                        "the solve is written for conformally flat data "
+                        "with K = 0 and the scalar at rest; the exact boost "
+                        "(momentum_model = 1) is neither, and is exact for "
+                        "one throat without a solve");
         check_parameter("phantom_mass", wp.phantom_mass,
                         wp.phantom_mass == 0.0,
                         "the constraint solve assumes a massless phantom "
@@ -531,9 +547,99 @@ class SimulationParameters : public SimulationParametersBase
                         "different initial data; pick one");
     }
 
+    //! momentum_model = 1 (the exact boost) is written for moving massive
+    //! drainholes and replaces the Bowen-York term, the V2 scalar boost and
+    //! the static lapse; everything that assumes the static throat is refused.
+    void check_momentum_model_params()
+    {
+        const auto &wp = wormhole_params;
+        check_parameter("wormhole_momentum_model", wp.momentum_model,
+                        wp.momentum_model == 0 || wp.momentum_model == 1,
+                        "must be 0 (Bowen-York on the static throat, the "
+                        "scalar at rest) or 1 (the exact Lorentz-boosted "
+                        "drainhole)");
+        check_parameter("wormhole_boost_initial_shift",
+                        wp.boost_initial_shift,
+                        wp.boost_initial_shift == 0 ||
+                            wp.boost_initial_shift == 1,
+                        "must be 1 (the boosted solution's own shift) or 0 "
+                        "(zero shift)");
+        bool moving = false;
+        for (int d = 0; d < AMREX_SPACEDIM; ++d)
+        {
+            moving = moving || (wp.b0_A > 0.0 && wp.momentumA[d] != 0.0) ||
+                     (wp.b0_B > 0.0 && wp.momentumB[d] != 0.0);
+        }
+        warn_parameter("wormhole_momentumA/B", moving ? 1 : 0,
+                       wp.momentum_model != 0 || !moving,
+                       "is Bowen-York momentum on a throat whose scalar starts "
+                       "at rest (wormhole_momentum_model = 0): that throat "
+                       "is not a moving drainhole, and the mismatch kicks it "
+                       "toward inflation as p^2 (single-throat probes, "
+                       "2026-09-29).  wormhole_momentum_model = 1 is the "
+                       "exact moving throat");
+        if (wp.momentum_model != 1)
+        {
+            return;
+        }
+        check_parameter("wormhole_id_type", wp.id_type, wp.id_type == 1,
+                        "the exact boost is written for the regular massive "
+                        "drainhole (id_type = 1) only");
+        for (int X = 0; X < 2; ++X)
+        {
+            const double a = (X == 0) ? wp.b0_A : wp.b0_B;
+            const double m = (X == 0) ? wp.drainhole_mass_A : wp.drainhole_mass_B;
+            const auto &P  = (X == 0) ? wp.momentumA : wp.momentumB;
+            const bool has_P = (P[0] != 0.0) || (P[1] != 0.0) || (P[2] != 0.0);
+            check_parameter((X == 0) ? "wormhole_drainhole_mass_A"
+                                     : "wormhole_drainhole_mass_B",
+                            m, a <= 0.0 || !has_P || m > 0.0,
+                            "must be > 0 for a throat with momentum under "
+                            "wormhole_momentum_model = 1: its momentum is "
+                            "gamma m v, and a massless throat cannot carry "
+                            "one");
+        }
+        bool v2 = false;
+        for (int d = 0; d < AMREX_SPACEDIM; ++d)
+        {
+            v2 = v2 || (wp.boost_velocity_A[d] != 0.0) ||
+                 (wp.boost_velocity_B[d] != 0.0);
+        }
+        check_parameter("wormhole_boost_velocity_A/B", v2 ? 1 : 0, !v2,
+                        "is the V2 scalar boost of the Bowen-York data; the "
+                        "exact boost (wormhole_momentum_model = 1) moves the "
+                        "scalar itself.  Remove it");
+        const bool seeded = (wp.seed_amplitude_A != 0.0) ||
+                            (wp.seed_amplitude_B != 0.0) ||
+                            (wp.seed_l2_amplitude_A != 0.0) ||
+                            (wp.seed_l2_amplitude_B != 0.0);
+        check_parameter("wormhole_seed_(l2_)amplitude_A/B", seeded ? 1 : 0,
+                        !seeded,
+                        "is not implemented for the exact boost "
+                        "(wormhole_momentum_model = 1)");
+        check_parameter("wormhole_helfer_correction", wp.helfer_correction,
+                        wp.helfer_correction == 0,
+                        "is not implemented for the exact boost "
+                        "(wormhole_momentum_model = 1)");
+        check_parameter("phantom_mass", wp.phantom_mass,
+                        wp.phantom_mass == 0.0,
+                        "the boosted drainhole is the massless phantom's exact "
+                        "solution (V(phi) = 0)");
+        check_parameter("wormhole_initial_lapse_type", wp.initial_lapse_type,
+                        wp.initial_lapse_type == 5 ||
+                            wp.initial_lapse_type == 6,
+                        "must be 5 (the boosted drainhole's own lapse) or 6 "
+                        "(5 x the collar) under wormhole_momentum_model = 1");
+        check_parameter("recipe_initial_data_file", recipe_initial_data_file,
+                        recipe_initial_data_file.empty(),
+                        "an external grid and the exact boost are two "
+                        "different initial data; pick one");
+    }
+
     void check_params()
     {
         check_constraint_solve_params();
+        check_momentum_model_params();
 
         check_parameter("tagging_type", tagging_type,
                         (tagging_type >= 0) && (tagging_type <= 2),

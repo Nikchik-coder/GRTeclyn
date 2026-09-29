@@ -448,6 +448,35 @@ void BinaryWormholeLevel::specific_post_init()
     {
         solve_initial_constraints();
     }
+    else if (Level() == 0 && simParams().wormhole_params.momentum_model == 1)
+    {
+        // The exact boost: each throat's kinematics.  For one throat these
+        // are the data's ADM energy and momentum exactly.
+        const auto &wp = simParams().wormhole_params;
+        double energy  = 0.0;
+        for (int X = 0; X < 2; ++X)
+        {
+            const double a = (X == 0) ? wp.b0_A : wp.b0_B;
+            if (a <= 0.0)
+            {
+                continue;
+            }
+            const double m = (X == 0) ? wp.drainhole_mass_A : wp.drainhole_mass_B;
+            const auto &P  = (X == 0) ? wp.momentumA : wp.momentumB;
+            double v = 0.0, gamma = 1.0, e[3];
+            BinaryWormholeInitialData::boost_kinematics(m, P, v, gamma, e);
+            energy += gamma * m;
+            amrex::Print() << "Exact boost, throat " << (X == 0 ? 'A' : 'B')
+                           << ": v = " << v << " along (" << e[0] << ", "
+                           << e[1] << ", " << e[2] << "), gamma = " << gamma
+                           << ", energy gamma m = " << gamma * m
+                           << ", momentum gamma m v = " << gamma * m * v
+                           << "\n";
+        }
+        amrex::Print() << "Exact boost: sum of the throats' energies "
+                       << energy << " (the ADM mass for one throat; two "
+                       << "throats add their superposition's interaction)\n";
+    }
     else if (Level() == 0 && simParams().wormhole_params.id_type == 1 &&
              simParams().recipe_initial_data_file.empty())
     {

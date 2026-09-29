@@ -115,7 +115,9 @@ not see the difference — it cannot resolve a throat. `--mass` needs only
 | `wormhole_throat_radius_A/B` | throat radii b (B defaults to A; 0 removes B) |
 | `wormhole_bare_mass_A/B` | puncture masses m — the gravity (B defaults to A) |
 | `wormhole_centerA/B` | offsets from `center` (B defaults to −A) |
-| `wormhole_momentumA/B` | Bowen–York momenta (B defaults to −A) |
+| `wormhole_momentumA/B` | Bowen–York momenta (B defaults to −A); under momentum model 1, each throat's ADM momentum γmv |
+| `wormhole_momentum_model` | 0 = Bowen–York on the static throat with the scalar at rest (default, bit for bit; the mismatch kicks a moving throat toward inflation as p²); 1 = the exact Lorentz-boosted drainhole: metric, K_ij, φ and Π together, lapse type 5 or 6, no solve yet (see "EXACT BOOST" in `BinaryWormholeInitialData.hpp`) |
+| `wormhole_boost_initial_shift` | momentum model 1: 1 = the boosted solution's own shift (default), 0 = zero shift |
 | `wormhole_subtract_phi_asymptote` | shift φ → 0 at infinity (default 1; free only for `phantom_mass = 0`) |
 | `binary_throat_diagnostics` | own module, own file, **default off** |
 | `recipe_initial_data_file` | `.gridinit` from GRTresna (Route B) — overrides the analytic ID |
