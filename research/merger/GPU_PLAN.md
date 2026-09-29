@@ -1344,16 +1344,19 @@ need to be analysed and packed").
   not packed (superseded). Registry row written.
 - **The plan (the user, 05:30 UTC): through the core failure by resolution, no fill.** The fill was
   proposed and rejected ("we need to go through the NaN"). Three legs: (1) the rerun at level 5 with
-  rolling checkpoints every unit, newest 8; (2) from the last checkpoint before the wall (t = 35 first)
-  a restart with `max_level = 6` through it (~2× the cost per unit, t = 35 → 45 in ~7 h; adding a level
-  on restart is how the old level-5 arm was born); (3) past the wall, a down-step to level 3 to t = 100
-  (~6 h). The consumer profiles carry what the 2026-09-28 restarts had to add (`headon-modes-prod`
-  half 4.0; `orbit-modes-scan` half 3.0 / level 3; `orbit-modes-prod` the scan and the areal radius).
-- **Leg 1 launched 05:40 UTC** on the second node's card:
+  rolling checkpoints every 5 units, newest 3, as the fly-by and the spiral; (2) from the last checkpoint
+  before the wall (Chk03500) a restart with `max_level = 6` through it (~2× the cost per unit, t = 35 → 45
+  in ~7 h; adding a level on restart is how the old level-5 arm was born); (3) past the wall, a down-step
+  to level 3 to t = 100 (~6 h). The consumer profiles carry what the 2026-09-28 restarts had to add
+  (`headon-modes-prod` half 4.0; `orbit-modes-scan` half 3.0 / level 3; `orbit-modes-prod` the scan and
+  the areal radius).
+- **Leg 1 launched 05:46 UTC** on the second node's card:
   `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm`, template
   `..._scalar_chk_t100_csm.txt` (the dead run's params; only the three checkpoint keys differ),
   profile `headon-modes-prod`, zoom 40, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`. ~14.5 h to
-  its death at t ≈ 38.85 (~20:00 UTC), leaving Chk at t = 31–38 (~290 GB). Legs 2–3 on the go.
+  its death at t ≈ 38.85 (~20:10 UTC), leaving Chk at t = 25 / 30 / 35. Legs 2–3 on the go. A first
+  launch at 05:40 UTC carried checkpoints every unit, newest 8 — not what the user asked — and was
+  stopped at t = 0.09 and wiped whole on the user's word (`MANIFEST_CLEANUP_2026-09-29`).
 
 ### 2026-09-28 (paper session) — the figure count drops 18 -> 13: two wiped, three pairs merged; ledger 1075 rows, 0 problems
 

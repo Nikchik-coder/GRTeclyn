@@ -179,7 +179,7 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed) | 0 (launched 05:40 UTC 09-29) | its death ~38.85, then leg 2 | ~2.7 u/h | ~14.5 h, ~20:00 UTC 09-29 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed) | 0 (launched 05:46 UTC 09-29) | its death ~38.85, then leg 2 | ~2.7 u/h | ~14.5 h, ~20:10 UTC 09-29 |
 | — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | **DIED at t = 38.85** (00:32 UTC 09-29) | 100 | — | superseded by leg 1 |
 
 - **The head-on died at t = 38.845** (read from its own log at 04:58 UTC 09-29): NaN in h11 (A_ij non-finite) on
@@ -203,16 +203,17 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
   19 GB) and CS-1's empty scratch dir; the second node's scratch is empty, 671 GB free. The run dir stays on NFS
   (data to t = 38.84, the autopsy, frames 1092 files). `MANIFEST_CLEANUP_2026-09-29.md`.
 - **The plan (the user, 05:30 UTC 09-29): through the core failure by resolution, no fill.** Three legs:
-  1. **Leg 1, live since 05:40 UTC:** `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm`, the dead run's
-     params (level 5 from t = 0) with rolling checkpoints every 1 unit, newest 8 (36 GB each, ~290 GB of the
-     670 GB free; template `..._scalar_chk_t100_csm.txt`, which differs from the dead run's params only in the
+  1. **Leg 1, live since 05:46 UTC:** `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm`, the dead run's
+     params (level 5 from t = 0) with rolling checkpoints every 5 units, newest 3, as the fly-by and the spiral
+     (36 GB each; template `..._scalar_chk_t100_csm.txt`, which differs from the dead run's params only in the
      three checkpoint keys). Profile `headon-modes-prod`, which now scans with half 4.0 from t = 0 (the profiles
      carry what the 2026-09-28 restarts had to add: `orbit-modes-scan` half 3.0 / level 3, `orbit-modes-prod` the
-     scan and the areal radius). It dies at t ≈ 38.85 as the dead run did, ~14.5 h (~20:00 UTC), leaving Chk at
-     t = 31–38.
-  2. **Leg 2:** restart from one of those (t = 35 first) with `max_level = 6` through the wall. Adding a level on
-     restart is how the old level-5 arm was born (from the scout's level-3 Chk02200). Level 6 costs ~2× per unit:
-     t = 35 → 45 in ~7 h. If it dies too, the next try starts from an earlier checkpoint.
+     scan and the areal radius). It dies at t ≈ 38.85 as the dead run did, ~14.5 h (~20:10 UTC), leaving Chk at
+     t = 25 / 30 / 35. (A first launch at 05:40 UTC went up with checkpoints every unit, newest 8, against the
+     user's instruction; stopped at t = 0.09 and wiped whole on the user's word, `MANIFEST_CLEANUP_2026-09-29`.)
+  2. **Leg 2:** restart from Chk03500 (t = 35) with `max_level = 6` through the wall. Adding a level on restart is
+     how the old level-5 arm was born (from the scout's level-3 Chk02200). Level 6 costs ~2× per unit: t = 35 → 45
+     in ~7 h. If it dies too, the next try starts from Chk03000.
   3. **Leg 3:** once past the wall, down-step to level 3 from a checkpoint after it, to t = 100 (~10 u/h, ~6 h).
   The dead run's data to t = 38.84 is the no-fill level-5 reference. Nothing of legs 2–3 starts without the go.
   The live common-horizon scan found the MOTS in 7 of 39 C rows (t = 22–38; R 5.02 at birth, 4.52 at t = 38). Not
