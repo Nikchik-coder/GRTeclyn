@@ -66,7 +66,10 @@ WHAT IT CHECKS
      with max_steps = 0, all output off, amrex.abort_on_unused_inputs = 1 and
      amrex.verbose = 1.  It builds the whole initial hierarchy, writes its t = 0
      diagnostics (BinaryWormholeLevel::specific_post_init) and at exit AMReX
-     lists every key nothing read.  Any such key refuses the launch, unless it
+     lists every key nothing read.  A constraint solve in the start-up is
+     capped (two Newton passes, no far-side matching): the checks need the
+     hierarchy, not a converged solve, and a full boosted-pair solve outlasts
+     the 1800 s budget.  Any unread key refuses the launch, unless it
      is in preflight_allow.txt (keys read only when a plotfile is written, which
      the probe skips, and dead keys no code reads -- each entry says why).
   3. seed effect (GPU, a second start-up; only when a seed amplitude is non-zero
@@ -907,6 +910,24 @@ def main(argv: list[str]) -> int:
         "amr.plot_files_output": "0", "amr.checkpoint_files_output": "0",
         "amrex.abort_on_unused_inputs": "1", "amrex.verbose": "1",
     }
+    # A constraint solve runs inside the start-up and can take longer than the
+    # whole start-up budget: the boosted fly-by pair's mode-3 solve needs ~40 min
+    # at level 3, and both of its full preflights (3b, 3c on 2026-09-29) timed out
+    # at 1800 s mid-solve, so nothing launched.  The checks here need the t = 0
+    # hierarchy (every key read, the frames, the seed's effect), not a converged
+    # solve, so the start-ups cap it: two Newton passes, no far-side matching.
+    # The run's own start-up solves in full.  Only keys the binary contains are
+    # capped (an older build without one would report it unread).
+    if (params.get("constraint_solve", "0").strip().lower() in ("1", "true")
+            and not a.restart):
+        caps = {"constraint_solve_max_newton": "2", "constraint_solve_match_max_iter": "0"}
+        absent = set(static_check(exe, list(caps)))
+        caps = {k: v for k, v in caps.items() if k not in absent}
+        probe_ov.update(caps)
+        report["probe_solve_caps"] = caps
+        print("[preflight] solve  : the start-ups cap the constraint solve ("
+              + ", ".join(f"{k} = {v}" for k, v in caps.items())
+              + "); the run itself solves in full")
     # The frames are rendered from this start-up's own plotfile: t = 0 for a
     # fresh start (written at init), the checkpoint's time for a restart
     # (written at exit).  Only the "run" start-up writes one.

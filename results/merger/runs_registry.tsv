@@ -218,3 +218,4 @@ t0_single_boost_p045_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): on
 t0_single_boost_p025_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.25 (v = 0.2425,		
 t0_single_boost_p035_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.35 (v = 0.3304,		
 single_boost_p045_lbf_t050	RERUN of single_boost_p045_lb_t050 with the slicing source frozen at the moving puncture (2026-09-29, the user's go		
+t0_flip_d12_p045_lbcs_cut	T0 TEST 3c of the boosted pair solve (2026-09-29, the user's go ~18:15 UTC): test 3b (t0_flip_d12_p045_lbcs) line for		

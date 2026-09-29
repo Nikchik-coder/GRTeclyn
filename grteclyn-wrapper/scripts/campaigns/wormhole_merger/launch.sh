@@ -77,7 +77,7 @@
 #                     params.txt", "test_post post.py …", "tee run.log".  It
 #                     hides the subject, not the usage: the username and the
 #                     busy cards stay visible.  run_single.sh, "Process table"
-#   --preflight MODE  full (default) | static | off.  run_single.sh checks the
+#   --preflight MODE  full (default; or $WHM_PREFLIGHT) | static | off.  run_single.sh checks the
 #                     final params against the binary before anything starts:
 #                     contradictory settings (checkpoints asked for with output
 #                     off), keys the binary does not read, and whether a seed
@@ -121,7 +121,7 @@ TEMPLATES="${CAMPAIGN}/templates_scan"
 
 TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 CENTER="" KEEP_LAST=3
 RESTART="" BINARY="" MAX_LEVEL="" WHAT="" FOREGROUND=0 DRYRUN=0 LABEL="test"
-PREFLIGHT="full" PREFLIGHT_ONLY=0 FRAMES_FIELDS=""
+PREFLIGHT="${WHM_PREFLIGHT:-full}" PREFLIGHT_ONLY=0 FRAMES_FIELDS=""
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --template)   TEMPLATE="$2"; shift 2 ;;
