@@ -1,4 +1,4 @@
-# Status — 2026-09-29 20:25 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 20:23 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -455,7 +455,7 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; `Chk00500` written; from rest, so clean of the momentum junk) | 20.6 (15:33 UTC 09-29; launched 05:46) | its death ~38.85, then leg 2 | 2.2 u/h, the dead run's pace to the minute (19 h 45 min behind it at t = 0, 5, 7, 10, 12, 14, 15, 16 and 20; it went 2.3 → 3.85 u/h after its merger at t ≈ 25) | Chk03500 ~3.7 h, ~19:20 UTC; t ≈ 38.85 ~4.7 h, ~20:15 UTC 09-29 |
+| — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; from rest, mode-3 data: clean of the momentum junk; `main3d_csmatch_5f988dbc`) | **DIED at t = 38.845** (20:20:49 UTC 09-29, NaN in h11 on level 5), the dead run's step to the digit, as planned | 100 | — | **leg 2 ready**: `Chk03500` (t = 35, written in 18.9 s) with `Chk03000` / `Chk02500` kept on the second node's scratch; restart from `Chk03500` with `--max-level 6` (the user: good to go after its death, 20:20 UTC), launched on the second node |
 | — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | **DIED at t = 38.85** (00:32 UTC 09-29) | 100 | — | superseded by leg 1 |
 
 - **The head-on died at t = 38.845** (read from its own log at 04:58 UTC 09-29): NaN in h11 (A_ij non-finite) on
