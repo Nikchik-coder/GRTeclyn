@@ -1,4 +1,4 @@
-# Status — 2026-09-29 19:35 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 19:50 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -562,7 +562,7 @@ bash $L --gpu G --template params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_
 ```
 Then the plan's step 4 (single throats on clean data), each a rerun of its old run by the rule.
 
-## Done — the boosted-setup shape set (t = 0; the user's go 16:58 UTC)
+## Done — the boosted-setup shape set (t = 0; the user's go 16:58 UTC; packed 19:45 UTC, `campaign/02_moving_throat/contraction_t0/`, no movies)
 
 One exact-boost throat per p (`t0_single_boost_pXXX_lbc`, the collar rerun's template with only p, the name and
 stop_time 0.1 changed; level 3; no checkpoints), started 16:53 UTC, all done in minutes. The t = 0 plotfiles are on

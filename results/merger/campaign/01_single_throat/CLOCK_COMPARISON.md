@@ -126,6 +126,16 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_pureq_q1e2_ml4_scalar_t100` | B | 100.0 | x15891.0 / 100.0 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | +1.82 | - | late (+0.16 dex) |
 | `single_pureq_q1e2_ml4_t100` | A | 100.0 | x11474.4 / 72.7 | +1.08 | +1.32 | +1.41 | +1.45 | +1.43 | +2.28 | +3.98 | 47.8 | late (+0.14 dex) |
 | `single_pureq_q1e2_ml4_t100` | B | 100.0 | x11474.4 / 72.7 | +1.08 | +1.32 | +1.41 | +1.45 | +1.43 | +2.28 | +3.98 | 47.8 | late (+0.14 dex) |
+| `t0_single_boost_p000_lbc` | A | 0.1 | x1.1 / 0.1 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p000_lbc` | B | 0.1 | x1.1 / 0.1 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p012_lbc` | A | 0.1 | x1.0 / 0.0 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p012_lbc` | B | 0.1 | x1.0 / 0.0 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p025_lbc` | A | 0.1 | x1.0 / 0.0 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p025_lbc` | B | 0.1 | x1.0 / 0.0 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p035_lbc` | A | 0.1 | x1.1 / 0.1 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p035_lbc` | B | 0.1 | x1.1 / 0.1 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p045_lbc` | A | 0.1 | x1.4 / 0.1 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p045_lbc` | B | 0.1 | x1.4 / 0.1 | - | - | - | - | - | - | - | - | too short |
 | `single_boost_p012_csm_t050` | A | 33.0 | x42.2 / 32.8 | +1.04 | +1.24 | +1.36 | +1.53 | - | - | - | - | late (+0.22 dex) |
 | `single_boost_p012_csm_t050` | B | 33.0 | x42.2 / 32.8 | +1.04 | +1.24 | +1.36 | +1.53 | - | - | - | - | late (+0.22 dex) |
 | `single_boost_p045_csm_t050` | A | 32.6 | x248.2 / 32.6 | +1.18 | +1.56 | +1.85 | +2.18 | - | - | - | - | late (+0.87 dex) |
@@ -295,7 +305,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 26 early, 14 same, 85 late, 74 too short, 52 restart arms (own clock only).
+Throats read at t = 30: 26 early, 14 same, 85 late, 84 too short, 52 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

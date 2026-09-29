@@ -89,6 +89,16 @@ t = 51.4+) are evidence of a common horizon.
 |---|---|---|---|---|---|---|---|---|
 | s20_boost_p02 | Stage 2.0 shakedown: one throat with a Bowen-York boost P = 0.2 along z and the moving-box tagger driven by the throat tracker -- crossed 3.3 grid units, completed t = 40 with zero lost rows and no NaN; the shakedown the whole two-throat programme is built on (frames in the x-z plane, frames_xz/) | 0.00 | 40.00 | finished clean at t = 40.00 | 0.06 | - | 1.316e-01 | 1.198e-03 |
 
+## `02_moving_throat/contraction_t0`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| t0_single_boost_p000_lbc | T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.0 (v = 0.0000, | 0.00 | 0.11 | finished clean at t = 0.11 | 0.06 | 0.00 | 9.624e-10 | 2.117e-03 |
+| t0_single_boost_p012_lbc | T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.12 (v = 0.1191, | 0.00 | 0.11 | finished clean at t = 0.11 | 0.06 | 0.00 | 9.742e-10 | 2.127e-03 |
+| t0_single_boost_p045_lbc | T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.45 (v = 0.4104, | 0.00 | 0.11 | finished clean at t = 0.11 | 0.06 | 0.00 | 1.142e-09 | 2.270e-03 |
+| t0_single_boost_p025_lbc | T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.25 (v = 0.2425, | 0.00 | 0.11 | finished clean at t = 0.11 | 0.06 | 0.00 | 1.015e-09 | 2.160e-03 |
+| t0_single_boost_p035_lbc | T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.35 (v = 0.3304, | 0.00 | 0.11 | finished clean at t = 0.11 | 0.06 | 0.00 | 1.067e-09 | 2.206e-03 |
+
 ## `02_moving_throat/csm`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |

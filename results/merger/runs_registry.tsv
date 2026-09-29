@@ -212,10 +212,12 @@ t0_flip_d12_p045_lb	T0 TEST 3a of the boosted pair solve (2026-09-29, proposed):
 t0_ctrl_rest_d12_lbcs	T0 TEST 2 of the boosted pair solve (2026-09-29, proposed): the d = 12 rest pair of ctrl_rest_d12_csm with		
 single_boost_p045_lbc_t050	RERUN of single_boost_p045_lb_t050 with the collar lapse (2026-09-29, the user's go 16:24 UTC): the same exact-boost	unhealthy from t <= 4: the zero-lapse collar core, swept by the boosted shift, breaks the exact boost (K 0.125 inside the throat at t = 4 against 0.007, momentum constraint x50; throat lapse 0.52 -> 0.26); died at t = 37.60 (NaN in h11, level 3); diagnostic, not packed	
 t0_flip_d12_p045_lbcs	T0 TEST 3b of the boosted pair solve (2026-09-29, proposed): the fly-by's pair (flipped, d = 12,		
-t0_single_boost_p000_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.0 (v = 0.0000,		
-t0_single_boost_p012_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.12 (v = 0.1191,		
-t0_single_boost_p045_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.45 (v = 0.4104,		
-t0_single_boost_p025_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.25 (v = 0.2425,		
-t0_single_boost_p035_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.35 (v = 0.3304,		
+t0_single_boost_p000_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.0 (v = 0.0000,	t = 0 shape start-up, stopped at t = 0.5 by design (no NaN); throat axis ratio 1.00000 (1/gamma 1.00000) -- the contraction figure; packed 2026-09-29 without movies	
+t0_single_boost_p012_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.12 (v = 0.1191,	t = 0 shape start-up, stopped at t = 0.5 by design (no NaN); throat axis ratio 0.99288 (0.99288) -- the contraction figure; packed 2026-09-29 without movies	
+t0_single_boost_p045_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.45 (v = 0.4104,	t = 0 shape start-up, stopped at t = 0.5 by design (no NaN); throat axis ratio 0.91195 (0.91192) -- the contraction figure; packed 2026-09-29 without movies	
+t0_single_boost_p025_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.25 (v = 0.2425,	t = 0 shape start-up, stopped at t = 0.5 by design (no NaN); throat axis ratio 0.97015 (0.97014) -- the contraction figure; packed 2026-09-29 without movies	
+t0_single_boost_p035_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.35 (v = 0.3304,	t = 0 shape start-up, stopped at t = 0.5 by design (no NaN); throat axis ratio 0.94387 (0.94386) -- the contraction figure; packed 2026-09-29 without movies	
 single_boost_p045_lbf_t050	RERUN of single_boost_p045_lb_t050 with the slicing source frozen at the moving puncture (2026-09-29, the user's go		
 t0_flip_d12_p045_lbcs_cut	T0 TEST 3c of the boosted pair solve (2026-09-29, the user's go ~18:15 UTC): test 3b (t0_flip_d12_p045_lbcs) line for		
+t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm	VERIFICATION A of the p = 0.25 fly-by rerun (2026-09-29, the user's go ~19:25 UTC: "we need to be sure this time the		
+check_flyby_d12_p025_lbf_csm_t020	VERIFICATION B of the p = 0.25 fly-by rerun (2026-09-29, the user's go ~19:25 UTC): the same pair (flipped, d = 12,		

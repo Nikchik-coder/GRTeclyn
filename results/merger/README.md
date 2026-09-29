@@ -1165,6 +1165,20 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   ε_eff ≈ −10⁻² × 10^(−(t₁₀ − 23)/11); p = 0.12 reaches +10 % just past its last plotfile, so its t₁₀ is a short
   extrapolation. One resolution; nothing of these runs is cited yet.
 
+### The exact-boost throat is Lorentz-contracted by 1/γ (2026-09-29)
+
+- **Claim.** A throat with momentum p, built as the exact Lorentz-boosted drainhole (`wormhole_momentum_model = 1`),
+  is squashed along its motion by 1/γ = m/√(m² + p²) on the t = 0 slice, as a boosted black hole's horizon is: the
+  χ-contour axis ratio (along / across) is 1.00000 / 0.99288 / 0.97015 / 0.94387 / 0.91195 at p = 0 / 0.12 / 0.25 /
+  0.35 / 0.45, against 1/γ = 1.00000 / 0.99288 / 0.97014 / 0.94386 / 0.91192 (agreement to 3e-5, at three contour
+  levels). The Bowen–York throats above are round (0.998–0.999), their data conformally flat with the scalar at rest.
+  Figure `figures/02_moving_throat/boost_contraction` (`plot_boost_contraction`), table
+  `campaign/02_moving_throat/boost_contraction_t0.tsv`.
+- **Runs.** `t0_single_boost_p000_lbc`, `_p012_`, `_p025_`, `_p035_`, `_p045_lbc` *(pack,
+  `campaign/02_moving_throat/contraction_t0/`)*: one exact-boost throat each, L = 64, N = 128, level 3, the collar
+  lapse (type 6; the lapse does not enter the t = 0 shape), stopped at t = 0.5 by design; no NaN, no checkpoints,
+  closed out without movies.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,

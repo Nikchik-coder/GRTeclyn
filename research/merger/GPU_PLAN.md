@@ -1323,6 +1323,22 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-29 (19:50 UTC) — test 3c passes; the fly-by waits for its own verification; the shape set packed
+
+- **Test 3c passes** (the fly-by pair at p = ±0.45 with the companion cut): mouths 3.894 against the isolated 3.877
+  (the uncut 3b: 4.425), σ 0.918, max |W| 0.18 (3b: 128), far sides to 3e-6, throat-shell Hamiltonian 1.05e-5 rms.
+  Committed 91ed17cd with the per-throat freeze; clean build `main3d_boostpair_91ed17cd`.
+- **The preflight no longer times out on a long solve** (ff9097e4): its start-ups cap the solve at 2 Newton passes and
+  no matching; both full preflights of 3b/3c had hit the 1800 s budget mid-solve and launched nothing.
+- **The p = 0.25 fly-by is ready but waits for its own verification** (the user): A = its t = 0 on the production
+  grid (card 1), B = the same pair on the L = 64 level-3 grid to t = 20 (card 0), and the e2e to t = 50. Launched
+  19:34 UTC.
+- **The e2e with the per-throat freeze holds the pit's lapse**: 0.226 / 0.221 / 0.225 / 0.215 at t = 12 / 14 / 16 / 17,
+  where the old run's ran away (0.236 → 0.557 by t = 18). The pit's K error is the old run's (−0.07 at t = 12, −0.46
+  at t = 14), now uncoupled from the lapse; the throat's lapse and size follow the old run's.
+- **Packed**: the five t = 0 contraction runs (`02_moving_throat/contraction_t0/`, no movies; closeout 0 problems,
+  identity clean). Everything else finished is in `00_archive/` or `90_probes/`, which are not packed by design.
+
 ### 2026-09-29 (18:35 UTC) — the collar rerun dies; both fixes built and under test
 
 - **The collar rerun was unhealthy from the start and died at t = 37.60** (`single_boost_p045_lbc_t050`, 18:29 UTC,
