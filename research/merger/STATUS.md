@@ -1,4 +1,4 @@
-# Status — 2026-09-29 15:05 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 15:40 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -36,9 +36,11 @@ stopped at t ≈ 32–33 on the user's word):
 
 The push grows as p², like the ADM-mass excess the momentum adds. A uniformly moving exact wormhole is the static one
 in another frame, so none of it is physics. At p = 0.45 it is about the fly-by mouths' whole kick (−1.2 %).
-- **The live fly-by (`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`) is wrong, and so is the claim that the fly-by
+- **The fly-by (`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`) is wrong, and so is the claim that the fly-by
   cannot spiral** (§VII.A: every p ≥ 0.35 "passes without merging"): the junk drives its throats to expand. Every
   run with p > 0 carries it; at the spiral's p = 0.12 it is ~0.15 %, small next to the companion's −0.8 %.
+  **Stopped at t = 64.98 (15:39 UTC) and wiped on the user's word** (close-out with no movies; frames kept).
+- **The head-on is clean** (the user, 15:38 UTC): it starts from rest (p = 0), so it carries none of this.
 - **The fix, implemented (dc34eb51, 14:50 UTC):** `wormhole_momentum_model = 1` builds each throat as the exact
   Lorentz-boosted drainhole: metric, K_ij, φ and Π together, with the boosted lapse and shift; `wormhole_momentumA/B`
   become each throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit for bit and now warns.
@@ -51,6 +53,12 @@ in another frame, so none of it is physics. At p = 0.45 it is about the fly-by m
   - **End-to-end test live on card 1** (`single_boost_p045_lb_t050`, the p = 0.45 probe's template with only the
     momentum model changed and the solve off). PASS: R stays flat through t ≈ 35, where its Bowen–York twin reached
     +10 % at t = 20.2 and +24 % at t = 25.
+    - **Flat so far (t = 10, 15:36 UTC).** Fitted to a shifted ellipsoid, R is 3.87815 at t = 0 and 3.87913 at t = 9
+      and 10 (+0.03 %). The twin's raw rows read +0.85 % at t = 10. The throat is squashed along its motion, 9 % at
+      t = 0 (1/γ) and 12 % by t = 8–10 as the gauge relaxes, and the scan centre lags it by up to 0.15. The round
+      A rows therefore read +0.2 to +0.4 %, a bias of the scan and not growth.
+    - K_z at t = 0–7: the throat's own dipole moves with it and the far lobes relax. The twin instead grows a new
+      K > 0 region around its throat.
   - Not yet: the constraint solve for boosted pairs (it refuses model 1). The binary reruns need it.
 
 ## The plan, in order (the user's, 2026-09-28)
@@ -173,15 +181,15 @@ Along the way:
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
-## Live — first node (two H100s): the fly-by (card 0) and the exact-boost end-to-end test (card 1)
+## Live — first node (two H100s): card 0 free (the fly-by stopped 15:39 UTC); the exact-boost end-to-end test (card 1)
 
-| card | run | p | t now (13:45, 09-29) | t end | speed | ETA |
+| card | run | p | t now (09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 60.9 | 100 | 2.2 u/h (t = 54.5 → 60.9 over 10:53–13:45) | ~17.5 h, ~07:15 UTC 09-30 |
+| — | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | **stopped at t = 64.98** (15:39 UTC, `stop_campaign.sh`, the user's word: Bowen–York momentum junk in its initial data) | 100 | — | close-out: packed with no movies, scratch wiped (frames kept) |
 | — | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | **stopped at t = 32.27** (14:26:50 UTC, `stop_campaign.sh`, the user's word) | 50 | — | close-out: packed, no movies |
 | — | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | **stopped at t = 32.97** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | **stopped at t = 32.64** (14:26:50 UTC, same) | 50 | — | same |
-| 1 | `single_boost_p045_lb_t050` (end-to-end test of `wormhole_momentum_model = 1`, launched 14:58 UTC, `main3d_boost_dc34eb51_2026-09-29.ex`, no checkpoints) | 0.45 | 1.0 (15:01) | 50 | 18.5 u/h (alone, 19.9 GB) | ~2.7 h, ~17:40 UTC |
+| 1 | `single_boost_p045_lb_t050` (end-to-end test of `wormhole_momentum_model = 1`, launched 14:58 UTC, `main3d_boost_dc34eb51_2026-09-29.ex`, no checkpoints) | 0.45 | 11.6 (15:36) | 50 | 18.6 u/h (19.9 GB) | ~2.1 h, ~17:40 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
 - **The probes stopped at 14:26:50 UTC (the user's word; no NaN in any log).** Last readings (t = 32): rest −0.05 %;
@@ -342,7 +350,7 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; `Chk00500` written) | 16.6 (13:45 UTC 09-29; launched 05:46) | its death ~38.85, then leg 2 | 2.2 u/h, the dead run's pace to the minute (19 h 45 min behind it at t = 0, 5, 7, 10, 12, 14, 15 and 16; it went 2.3 → 3.85 u/h after its merger at t ≈ 25) | Chk03500 ~5.6 h, ~19:20 UTC; t ≈ 38.85 ~6.5 h, ~20:15 UTC 09-29 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; `Chk00500` written; from rest, so clean of the momentum junk) | 20.6 (15:33 UTC 09-29; launched 05:46) | its death ~38.85, then leg 2 | 2.2 u/h, the dead run's pace to the minute (19 h 45 min behind it at t = 0, 5, 7, 10, 12, 14, 15, 16 and 20; it went 2.3 → 3.85 u/h after its merger at t ≈ 25) | Chk03500 ~3.7 h, ~19:20 UTC; t ≈ 38.85 ~4.7 h, ~20:15 UTC 09-29 |
 | — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | **DIED at t = 38.85** (00:32 UTC 09-29) | 100 | — | superseded by leg 1 |
 
 - **The head-on died at t = 38.845** (read from its own log at 04:58 UTC 09-29): NaN in h11 (A_ij non-finite) on
