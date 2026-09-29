@@ -1342,14 +1342,18 @@ need to be analysed and packed").
 - **Scratch wiped 05:13 UTC** on the user's word (its three plotfiles, t = 36–38, 19 GB; CS-1's empty
   dir; `MANIFEST_CLEANUP_2026-09-29`). No checkpoints existed. Run dir, data and frames kept on NFS;
   not packed (superseded). Registry row written.
-- **Proposed (the user: rerun with checkpoints and the proper scans from t = 0):**
-  `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm`, the dead run's params with rolling
-  checkpoints every 5 units, newest 3 (template `..._scalar_chk_t100_csm.txt`). The consumer profiles
-  now carry what the 2026-09-28 restarts had to add: `headon-modes-prod` scans with half 4.0,
-  `orbit-modes-scan` with half 3.0 / level 3, `orbit-modes-prod` with the scan and the areal radius.
-  Cost: ~14.5 h to the same death (~2.7 u/h), leaving Chk at t = 25 / 30 / 35. The continuation past
-  the core failure is a second leg from t = 35 (lapse freeze / core fill, where the old campaign's
-  continuation arms branched), ~65 units at ~3.5 u/h ≈ 19 h, on the user's word. Nothing launched.
+- **The plan (the user, 05:30 UTC): through the core failure by resolution, no fill.** The fill was
+  proposed and rejected ("we need to go through the NaN"). Three legs: (1) the rerun at level 5 with
+  rolling checkpoints every unit, newest 8; (2) from the last checkpoint before the wall (t = 35 first)
+  a restart with `max_level = 6` through it (~2× the cost per unit, t = 35 → 45 in ~7 h; adding a level
+  on restart is how the old level-5 arm was born); (3) past the wall, a down-step to level 3 to t = 100
+  (~6 h). The consumer profiles carry what the 2026-09-28 restarts had to add (`headon-modes-prod`
+  half 4.0; `orbit-modes-scan` half 3.0 / level 3; `orbit-modes-prod` the scan and the areal radius).
+- **Leg 1 launched 05:40 UTC** on the second node's card:
+  `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm`, template
+  `..._scalar_chk_t100_csm.txt` (the dead run's params; only the three checkpoint keys differ),
+  profile `headon-modes-prod`, zoom 40, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`. ~14.5 h to
+  its death at t ≈ 38.85 (~20:00 UTC), leaving Chk at t = 31–38 (~290 GB). Legs 2–3 on the go.
 
 ### 2026-09-28 (paper session) — the figure count drops 18 -> 13: two wiped, three pairs merged; ledger 1075 rows, 0 problems
 
