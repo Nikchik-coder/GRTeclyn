@@ -1,4 +1,4 @@
-# Status — 2026-09-29 11:35 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 13:45 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -59,12 +59,12 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
    - Add the new definitions: each wormhole's mass, the pair's total mass, and p in true units.
    - **Add a section on the boosted single throats (the user, 2026-09-29 09:45 UTC):** what one throat does after a
      momentum kick, inflation or collapse, and how fast. Sources: the three mode-3 probes
-     (`single_rest_csm_t050`, `single_boost_p012_csm_t050`, `single_boost_p045_csm_t050`; live, done ~17:40 UTC)
+     (`single_rest_csm_t050`, `single_boost_p012_csm_t050`, `single_boost_p045_csm_t050`; live, done ~17:45 UTC)
      and the unsolved pair (`single_boost_p045_t050`, `..._vscal_t050`: the scalar at rest against moving; not yet
      launched), each read as ε_eff on the seed ladder. It ties the binaries' mouth kicks (ε_eff −0.4 to −1.2 %) to
      momentum and the companion. Written only once the probes are closed out.
    - **Add the branch-selection finding: why the interaction inflates the mouths, and the race (the user,
-     2026-09-29 ~11:05 UTC).** Verified and quotable now: the seed ladder fixes the signs (+ε at the throat
+     2026-09-29 ~10:45 UTC).** Verified and quotable now: the seed ladder fixes the signs (+ε at the throat
      collapses and traps, −ε inflates); every companion reads as a −ε kick that strengthens with closeness
      (−0.4 % at d = 12, −1.2 % at d = 8), the same in superposed and mode-3 data, so it is the physical
      interaction, not the solve; the collapse sign arrives only at contact, so a merger is a race — the head-on's
@@ -75,7 +75,7 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
      shift. Cheap test on existing t = 0 data: superpose the tails, integrate the scalar's ρ over the throat
      region, compare with the seed ε that reproduces the measured ε_eff; a like-pair (no flip) rest run would
      separate the tail term from the tide.
-     - **The head-on is not an exception (the user, 2026-09-29 ~11:30 UTC):** its mouths inflate too — the dead run
+     - **The head-on is not an exception (the user, 2026-09-29 ~10:47 UTC):** its mouths inflate too — the dead run
        had them at +6–10 % when the common MOTS formed at t = 22, and the live mode-3 rerun sits on the same
        ε ≈ −1.2 % track (+0.45 % at t = 10). The horizon forms anyway because contact (t = 22) beats the runaway
        (+10 % at t ≈ 23 on that track), and it swallows the mouths mid-inflation. State it this way in the paper:
@@ -144,12 +144,12 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by (card 0) and the single-throat momentum probes (card 1)
 
-| card | run | p | t now (10:34, 09-29) | t end | speed | ETA |
+| card | run | p | t now (13:45, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 53.8 | 100 | 2.2 u/h (26.5 min per unit over t = 51–53) | ~20.5 h, ~07:00 UTC 09-30 |
-| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 11.5 | 50 | 5.4 u/h (11 min per unit; three share the card, 59 GB) | ~7 h, ~17:40 UTC |
-| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 11.7 | 50 | 5.4 u/h | ~7 h, ~17:40 UTC |
-| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 11.6 | 50 | 5.4 u/h | ~7 h, ~17:40 UTC |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 60.9 | 100 | 2.2 u/h (t = 54.5 → 60.9 over 10:53–13:45) | ~17.5 h, ~07:15 UTC 09-30 |
+| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 28.6 | 50 | 5.35 u/h (three share the card, 59 GB) | ~4 h, ~17:45 UTC |
+| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 29.2 | 50 | 5.5 u/h | ~3.8 h, ~17:35 UTC |
+| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 28.9 | 50 | 5.4 u/h | ~3.9 h, ~17:40 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
 - **The probes at t ≈ 11.5 (10:35 UTC):** alive, no NaN. Read R from the A rows of `horizon_scan.dat` (level 3,
@@ -163,9 +163,14 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
     - On the seed ladder (the ε = −1e-3 seed is +0.15 % at t = 10) it reads ε ≈ −2.6e-3 at t = 6 and −5.8e-3 at
       t = 10. The reading is still climbing, so it is not yet one fixed kick.
     - The scalar, at rest at t = 0, picks up motion: max |Π| ≈ 1e-2 at t = 10, ∝ p, still growing.
-    - Open: is it the inflation mode, or the slicing still settling around the moving throat? A throat's area
-      depends on the slice, unlike a horizon's, and the grid speed (0.19) is still below v ≈ 0.41. Inflation runs
-      away with the seeds' e-fold time of ~5 units (3–6 % by t = 20, ~12:05 UTC); a slicing effect levels off.
+    - **Settled at t ≈ 28 (13:45 UTC): the inflation mode, not the slicing.** It runs away, as inflation does:
+      +9.5 % at t = 20, +14.8 % at 22, +20.6 % at 24, +28.9 % at 26, +40.1 % at 28 (R = 5.43), still speeding
+      up; no MOTS, nothing trapped.
+      - p = 0.12 inflates too: +0.88 % at t = 20, +4.4 % at t = 28, ×5.0 over t = 20–28 (the seeds' e-fold, ~5).
+        Rest: flat to 4e-5 at t = 28.
+      - On the seed ladder at t = 20: ε ≈ −1.2e-3 (p = 0.12) and ≈ −1.5e-2 (p = 0.45), a ratio ~12, close to p²
+        (14) and to the ADM-mass excess over rest (0.0057 against 0.078, ×14). For p = 0.45 the reading climbed
+        through t ≈ 20 (−2.6e-3 at t = 6, −6e-3 at 10), so the push lasts at least that long.
   - Their grid speed is the shift (β^y = −0.095 / −0.026 at t = 4) and grows as the shift builds; the physical
     speed (v ≈ 0.41 / 0.12) is fixed by the t = 0 momentum. Nothing feeds momentum or energy after t = 0: the
     momentum is read only by the initial data and the solve; support 1 with no ramp, phantom mass 0, core
@@ -234,7 +239,7 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
        the solve; scalar at rest against scalar moving at v = 0.4104).
      - Launch each with `--profile headon-scout --zoom 40 --coord 32 --binary $B` (the mode-3 binary). ~18.5 GB and
        ~3 h each alone (18 u/h); the three solved arms share card 1 at 5.2 u/h each (59 GB). The unsolved pair waits
-       for a card: card 1 frees at ~17:40 UTC, card 0 at ~07:00 UTC 09-30.
+       for a card: card 1 frees at ~17:45 UTC, card 0 at ~07:15 UTC 09-30.
      - Existing data point: `02_moving_throat/s20_boost_p02` (p = 0.2 along z, level 3, unsolved, 2026-08-31)
        inflates on the ε = −1e-2 track ~2 units behind (ε_eff ≈ −0.6 %; χ at the pit 1.6e-4 and max |K| 0.061 at
        t = 40, against 2.6e-4 / 0.060 for the seed), while the same throat at rest (`single_hold_t100`) drifts to
@@ -297,7 +302,7 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; `Chk00500` written) | 7.1 (09:17 UTC 09-29; launched 05:46) | its death ~38.85, then leg 2 | 2.1 u/h, the dead run's pace to the minute (19 h 45 min behind it at t = 0, 5 and 7; it went 2.3 → 3.85 u/h after its merger at t ≈ 25) | Chk03500 ~10 h, ~19:20 UTC; t ≈ 38.85 ~11 h, ~20:15 UTC 09-29 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; `Chk00500` written) | 16.6 (13:45 UTC 09-29; launched 05:46) | its death ~38.85, then leg 2 | 2.2 u/h, the dead run's pace to the minute (19 h 45 min behind it at t = 0, 5, 7, 10, 12, 14, 15 and 16; it went 2.3 → 3.85 u/h after its merger at t ≈ 25) | Chk03500 ~5.6 h, ~19:20 UTC; t ≈ 38.85 ~6.5 h, ~20:15 UTC 09-29 |
 | — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | **DIED at t = 38.85** (00:32 UTC 09-29) | 100 | — | superseded by leg 1 |
 
 - **The head-on died at t = 38.845** (read from its own log at 04:58 UTC 09-29): NaN in h11 (A_ij non-finite) on
