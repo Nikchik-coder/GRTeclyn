@@ -30,20 +30,23 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 7 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
 | 8 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
 | 9 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 10 (App. A) | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
+| 10 (App. A) top | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
+| 10 (App. A) bottom | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
 | 11 (App. B) top | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
 | 11 (App. B) bottom | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
-| 12 (App. B) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
-| 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
-| 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+| 12 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
+| 12 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
 
-Since 2026-09-28 the paper has 13 floats from these 16 PDFs: three floats stack
+Since 2026-09-29 the paper has 12 floats from these 16 PDFs: four floats stack
 two PDFs each (top/bottom, both labels on one float), and two figures left the
 paper -- `single_horizon_regrowth` (the regrowth is the evolved seed defect;
 the numbers stay in Sec. IV's collapse paragraph) and `fill_insensitivity`
 (the bounds stay in the spiral sections). Their PDFs are deleted here per the
 rule above; `plot_horizon_regrowth` and `plot_fill_insensitivity` stay in the
-wrapper. Float numbers above are the article's as of 2026-09-28.
+wrapper. Float numbers above are the article's as of 2026-09-29, when the
+refinement ladder and seed linearity joined as one App. A float (both short
+strips, both robustness checks): `fig:seed_linearity` moved out of App. B's
+opening list into App. A's, and both labels resolve to Fig. 10.
 
 
 ## Fig. 10 gains the fly-by; Fig. 3's keys follow its caption (2026-09-26, referee pass)
