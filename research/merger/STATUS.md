@@ -1,4 +1,4 @@
-# Status — 2026-09-29 18:45 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 19:02 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -113,7 +113,7 @@ throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit fo
     source, and the far-side reading follows. The fix: cut the companion's K_ij, Π and anisotropy E inside each
     throat, with the collar's profile about each puncture (1 − exp[−(r/0.3a)⁸]), so each far side holds its own
     throat only. **Test 3c** (`t0_flip_d12_p045_lbcs_cut`: 3b line for line on the build with the cut; card 0,
-    launched 18:29 UTC, the user's go ~18:15 UTC). PASS: R_min 3.88 per mouth, σ and w0 near the rest pair's.
+    relaunched 19:01 UTC on card 1 after the first launch's preflight timed out mid-solve; the user's go ~18:15 UTC). PASS: R_min 3.88 per mouth, σ and w0 near the rest pair's.
   - The builds on the way: the first aborted on AMReX's Robin-reuse assertion; the second crawled ~2 % per pass on
     the pair (linear extrapolation outside the box); the third fills those ghosts with the Robin condition.
 
@@ -290,8 +290,8 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 | — | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | **stopped at t = 32.64** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_lb_t050` (end-to-end test of `wormhole_momentum_model = 1`, launched 14:58 UTC, `main3d_boost_dc34eb51_2026-09-29.ex`, no checkpoints) | 0.45 | **DIED at t = 26.1** (16:22 UTC, NaN in h11, level 3: lapse runaway at the moving puncture) | 50 | — | superseded by the collar rerun |
 | — | `single_boost_p045_lbc_t050` (its rerun with the collar lapse, type 6; the user's go 16:24 UTC; same binary; no checkpoints) | 0.45 | **DIED at t = 37.60** (18:29 UTC, NaN in h11, level 3) | 50 | — | unhealthy from t ≤ 4 (the collar breaks the boost; see the CRITICAL finding); not packed, frames kept |
-| 0 | `single_boost_p045_lbf_t050` (the old run with the per-throat slicing freeze instead; the user's go ~18:15 UTC; `main3d_boostfix_5384c104-dirty`; no checkpoints) | 0.45 | 2.5 (18:43; healthy: puncture lapse 0.203, max \|K\| 5e-3, Mom 5e-5 as the old run) | 50 | 12.7 u/h sharing card 0 (~18.7 alone) | ~3 h, ~21:40 UTC |
-| 0 | `t0_flip_d12_p045_lbcs_cut` (test 3c: 3b with the companion cut; same build; full preflight) | 0.45 | solving (18:43): far sides start 1.3e-3 off the isolated throat's (3b: 37 %) | 0.5 | — | ~1.1 h, ~19:50 UTC |
+| 0 | `single_boost_p045_lbf_t050` (the old run with the per-throat slicing freeze instead; the user's go ~18:15 UTC; `main3d_boostfix_5384c104-dirty`; no checkpoints) | 0.45 | 2.5 (18:43; healthy: puncture lapse 0.203, max \|K\| 5e-3, Mom 5e-5 as the old run) | 50 | ~18.7 u/h, alone on card 0 since 18:59 (12.7 shared before) | t = 6.6 at 19:00; t = 26 (the old run's death) ~20:05, t = 50 ~2.3 h, ~21:20 UTC |
+| 1 | `t0_flip_d12_p045_lbcs_cut` (test 3c: 3b with the companion cut; same build; **relaunched 19:01 UTC on card 1 with `--preflight static`**: the first launch, 18:29 on card 0, never ran, its preflight start-up timed out at 30 min mid-solve, far sides then 6.5e-5 off the isolated throat after 2 matching rounds) | 0.45 | 0 (19:01) | 0.5 | — | ~0.75 h, ~19:45 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
 - **The probes stopped at 14:26:50 UTC (the user's word; no NaN in any log).** Last readings (t = 32): rest −0.05 %;
