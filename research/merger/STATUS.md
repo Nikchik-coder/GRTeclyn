@@ -57,6 +57,12 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
    - The old campaign becomes the systematics study (gauge, grid, freeze tests), with CS-1 as the table showing old
      versus clean starting data.
    - Add the new definitions: each wormhole's mass, the pair's total mass, and p in true units.
+   - **Add a section on the boosted single throats (the user, 2026-09-29 09:45 UTC):** what one throat does after a
+     momentum kick, inflation or collapse, and how fast. Sources: the three mode-3 probes
+     (`single_rest_csm_t050`, `single_boost_p012_csm_t050`, `single_boost_p045_csm_t050`; live, done ~18:00 UTC)
+     and the unsolved pair (`single_boost_p045_t050`, `..._vscal_t050`: the scalar at rest against moving; not yet
+     launched), each read as ε_eff on the seed ladder. It ties the binaries' mouth kicks (ε_eff −0.4 to −1.2 %) to
+     momentum and the companion. Written only once the probes are closed out.
    - Update the abstract once step 2's answers are in.
    - Constraint norms are not a paper problem (checked 2026-09-28 06:55 UTC, the rest-pair reruns to t ≈ 5 against
      their old runs). The logged 𝓗 norm reads 9–13 % higher for the like pairs and 21 % for the flipped one, a flat
