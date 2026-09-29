@@ -163,14 +163,19 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
     - On the seed ladder (the ε = −1e-3 seed is +0.15 % at t = 10) it reads ε ≈ −2.6e-3 at t = 6 and −5.8e-3 at
       t = 10. The reading is still climbing, so it is not yet one fixed kick.
     - The scalar, at rest at t = 0, picks up motion: max |Π| ≈ 1e-2 at t = 10, ∝ p, still growing.
-    - **Settled at t ≈ 28 (13:45 UTC): the inflation mode, not the slicing.** It runs away, as inflation does:
-      +9.5 % at t = 20, +14.8 % at 22, +20.6 % at 24, +28.9 % at 26, +40.1 % at 28 (R = 5.43), still speeding
-      up; no MOTS, nothing trapped.
+    - **Settled by t = 25 (13:45 UTC): the inflation mode, not the slicing.** It runs away, as inflation does:
+      +9.5 % at t = 20, +14.8 % at 22, +20.6 % at 24, +24.2 % at 25, still speeding up; no MOTS, nothing trapped.
+      From t = 26 the throat is past both scans' outer radius (r = 2.29 on level 3, 2.33 on the common scan: the
+      consumer's `horizon_half` 2.5), so those rows read the edge and are only upper bounds (+47 % at t = 29).
       - p = 0.12 inflates too: +0.88 % at t = 20, +4.4 % at t = 28, ×5.0 over t = 20–28 (the seeds' e-fold, ~5).
         Rest: flat to 4e-5 at t = 28.
       - On the seed ladder at t = 20: ε ≈ −1.2e-3 (p = 0.12) and ≈ −1.5e-2 (p = 0.45), a ratio ~12, close to p²
         (14) and to the ADM-mass excess over rest (0.0057 against 0.078, ×14). For p = 0.45 the reading climbed
         through t ≈ 20 (−2.6e-3 at t = 6, −6e-3 at 10), so the push lasts at least that long.
+      - By the t₁₀ rule the binaries are read with: p = 0.45 reaches +10 % at t ≈ 20.2, ε_eff ≈ −1.8 %; p = 0.12
+        is on track for t₁₀ ≈ 32 (extrapolated), ≈ −0.15 %. So the momentum setup alone is about the fly-by mouths'
+        whole kick (−1.2 %), and small next to the spiral's (−0.8 %). The probes share the ladder's grid (L = 64,
+        level 3); the binaries' mouths are on level 5, so the comparison is rough.
   - Their grid speed is the shift (β^y = −0.095 / −0.026 at t = 4) and grows as the shift builds; the physical
     speed (v ≈ 0.41 / 0.12) is fixed by the t = 0 momentum. Nothing feeds momentum or energy after t = 0: the
     momentum is read only by the initial data and the solve; support 1 with no ramp, phantom mass 0, core
