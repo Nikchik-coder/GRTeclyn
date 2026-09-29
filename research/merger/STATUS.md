@@ -1,4 +1,4 @@
-# Status — 2026-09-29 16:17 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 16:30 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -55,9 +55,17 @@ throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit fo
 - The old V2 option (`wormhole_boost_velocity`) does not give the moving throat's Π either. Near the throat it is
   ~Q/α² ≈ 17× too large, because the boosted slice's shift carries most of the motion. The unsolved `_vscal` probe
   would have tested the wrong thing.
-- **End-to-end test live on card 1** (`single_boost_p045_lb_t050`: the p = 0.45 probe's template with only the
-  momentum model changed and the solve off). PASS means R stays flat through t ≈ 35. Its Bowen–York twin reached
-  +10 % at t = 20.2 and +24 % at t = 25.
+- **End-to-end test** (`single_boost_p045_lb_t050`: the p = 0.45 probe's template with only the momentum model changed
+  and the solve off). Its Bowen–York twin reached +10 % at t = 20.2 and +24 % at t = 25.
+  - **The throat holds its size through t = 16** (shape-fitted R within 0.05 % of t = 0).
+  - **It DIED at t = 26.1** (16:22 UTC, NaN in h11 on level 3). The cause was a lapse runaway at the moving puncture,
+    the far side's compactified infinity: 0.20 until t ≈ 10, then 0.28 at t = 15, 0.89 at t = 20 and 2.6 at t = 24,
+    with a ring of 0.06 around it. The rest and Bowen–York throats keep 0.19–0.22 there.
+  - The boost carries the puncture across the grid at v = 0.41 from t = 0, with lapse 0.2 there. A black-hole puncture
+    survives this only because its lapse collapses to 0. **Every moving run needs the collar lapse (type 6)**, which
+    freezes the puncture at lapse ~0 and leaves the throat untouched.
+  - **Rerun on card 1** with only the lapse type changed (`single_boost_p045_lbc_t050`, the user's go 16:24 UTC). Its
+    t = 0 data equal the old run's in every field except the lapse at r < 1 about the puncture.
 - **The constraint solve for boosted pairs: in test** (the user's go 16:00 UTC; four t = 0 runs on card 0, level 3,
   test binary `main3d_pairsolve3_a1257bcd-dirty_2026-09-29.ex`, source not yet committed). It solves both
   constraints, for w and a vector potential W (Â → Â + L_G W). Test 1 (one boosted throat) passes. The first build
@@ -212,13 +220,14 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 |---|---|---|---|---|---|---|
 | — | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | **stopped at t = 64.98** (15:39 UTC, `stop_campaign.sh`, the user's word: Bowen–York momentum junk in its initial data) | 100 | — | wrong: not packed (the user's word); scratch wiped 15:45 UTC, frames kept |
 | 0 | `t0_single_boost_p045_lbcs` (test 1: one exact-boost throat, p = 0.45, solve on, mode 3; level 3, L = 64; the user's go 16:00 UTC; no checkpoints) | 0.45 | **done**, t = 0.5 (16:14 UTC) | 0.5 | — | **PASS**: max \|w\| ≤ 5e-7, max \|W\| ≤ 5e-6, c = c_iso, far-side mass and charge the isolated throat's to 4e-7 |
-| 0 | `t0_flip_d12_p045_lbcs` (test 3b: the fly-by pair, flipped, d = 12, p = ±0.45, as exact-boost throats, solve on, mode 3; level 3, L = 64) | 0.45 | launched 16:15 UTC | 0.5 | — | minutes to ~0.5 h (the mode-3 matching repeats the solve) |
-| 0 | `t0_flip_d12_p045_lb` (test 3a: the same pair, solve off) | 0.45 | launched 16:15 UTC | 0.5 | — | minutes |
-| 0 | `t0_ctrl_rest_d12_lbcs` (test 2: ctrl_rest_d12_csm's rest pair under model 1, solve on; must reproduce its model-0 mode-3 solve) | 0 | launched 16:15 UTC | 0.5 | — | minutes |
+| 0 | `t0_flip_d12_p045_lbcs` (test 3b: the fly-by pair, flipped, d = 12, p = ±0.45, as exact-boost throats, solve on, mode 3; level 3, L = 64) | 0.45 | relaunched 16:27 UTC (static preflight: the full one repeats the whole solve; match tolerance 1e-5, the model-1 floor) | 0.5 | — | ~0.5–1 h (each matching solve is 30 passes, ~15 s each) |
+| — | `t0_flip_d12_p045_lb` (test 3a: the same pair, solve off) | 0.45 | **done** (t = 0.5) | 0.5 | — | the unsolved reference for 3b |
+| — | `t0_ctrl_rest_d12_lbcs` (test 2: ctrl_rest_d12_csm's rest pair under model 1, solve on; must reproduce its model-0 mode-3 solve) | 0 | **done** (t = 0.5) | 0.5 | — | **PASS**: c 2.115528 / 2.115542 against 2.115536, σ 0.930357 / 0.930369 against 0.930364, w0 −3.430e-3 / −3.423e-3 against −3.426e-3, W = 0; far sides the isolated throat's to 1e-6 (10 matching rounds: the finite-difference floor is 3–5e-6) |
 | — | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | **stopped at t = 32.27** (14:26:50 UTC, `stop_campaign.sh`, the user's word) | 50 | — | close-out: packed, no movies |
 | — | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | **stopped at t = 32.97** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | **stopped at t = 32.64** (14:26:50 UTC, same) | 50 | — | same |
-| 1 | `single_boost_p045_lb_t050` (end-to-end test of `wormhole_momentum_model = 1`, launched 14:58 UTC, `main3d_boost_dc34eb51_2026-09-29.ex`, no checkpoints) | 0.45 | 11.6 (15:36) | 50 | 18.6 u/h (19.9 GB) | ~2.1 h, ~17:40 UTC |
+| — | `single_boost_p045_lb_t050` (end-to-end test of `wormhole_momentum_model = 1`, launched 14:58 UTC, `main3d_boost_dc34eb51_2026-09-29.ex`, no checkpoints) | 0.45 | **DIED at t = 26.1** (16:22 UTC, NaN in h11, level 3: lapse runaway at the moving puncture) | 50 | — | superseded by the collar rerun |
+| 1 | `single_boost_p045_lbc_t050` (its rerun with the collar lapse, type 6; the user's go 16:24 UTC; same binary; no checkpoints) | 0.45 | 0.26 (16:27) | 50 | 18.2 u/h (19.9 GB) | ~2.7 h, ~19:10 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
 - **The probes stopped at 14:26:50 UTC (the user's word; no NaN in any log).** Last readings (t = 32): rest −0.05 %;
