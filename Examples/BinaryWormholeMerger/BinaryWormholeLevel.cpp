@@ -274,15 +274,20 @@ void BinaryWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     }
 
     // Gauge half of the post-collapse cure (CoreLapseFreeze.hpp): taper the
-    // Bona-Masso source of the lapse to zero inside a central window so
-    // wrong-sign-K pockets cannot re-inflate it, leaving the advection term
-    // intact.  Applied to the assembled RHS on every RK substep, reading the
-    // same solution array the gauge RHS just read.
+    // Bona-Masso source of the lapse to zero inside a central window (or one
+    // on each tracked throat) so wrong-sign-K pockets cannot re-inflate it,
+    // leaving the advection term intact.  Applied to the assembled RHS on
+    // every RK substep, reading the same solution array the gauge RHS just
+    // read.
     if (simParams().lapse_freeze_params.enabled)
     {
+        const std::array<bool, 2> present = {
+            simParams().wormhole_params.b0_A > 0.0,
+            simParams().wormhole_params.b0_B > 0.0};
         const CoreLapseFreeze freeze(simParams().lapse_freeze_params,
                                      Geom().CellSizeArray(),
-                                     Geom().ProbLoArray(), a_time);
+                                     Geom().ProbLoArray(), a_time,
+                                     s_throat_centers, present);
         amrex::ParallelFor(a_rhs,
                            [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                            {

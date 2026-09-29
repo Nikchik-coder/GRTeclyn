@@ -372,6 +372,10 @@ class SimulationParameters : public SimulationParametersBase
                 0.0);
         pp.load("core_freeze_from_time", lapse_freeze_params.from_time, 0.0);
         pp.load("core_freeze_shift", lapse_freeze_params.freeze_shift, false);
+        // 1: one window on each tracked throat (moving punctures) instead of
+        // the grid centre.
+        pp.load("core_freeze_track_throats", lapse_freeze_params.track_throats,
+                false);
         lapse_freeze_params.grid_center = wormhole_params.grid_center;
         // The add-back must cancel the exact Bona-Masso source the gauge
         // wrote, so mirror the gauge block's own coefficients.
@@ -684,6 +688,15 @@ class SimulationParameters : public SimulationParametersBase
                         !throat_tracker_params.enabled ||
                             (throat_tracker_params.search_radius > 0.0),
                         "must be positive when throat_tracking = 1");
+
+        // Same reason: without the tracker the windows would stay at the t =
+        // 0 positions while the throats move out of them.
+        check_parameter("core_freeze_track_throats",
+                        lapse_freeze_params.track_throats,
+                        !lapse_freeze_params.track_throats ||
+                            throat_tracker_params.enabled,
+                        "needs throat_tracking = 1: the windows follow the "
+                        "tracked throat positions");
 
         check_parameter("tagging_L", tagging_L, tagging_L > 0.0,
                         "must be positive: it is the length whose inner "

@@ -292,7 +292,9 @@
     F smooth: X's lengths rescaled by F^2, under which its exact data take
     K_ij -> F^2 K_ij and Pi -> Pi / F^2.  So each throat's K_ij and Pi enter
     with that weight, windowed by exp[-(r_X / (d/2))^4] to stay bounded at
-    the companion's puncture (BoostBackground).  Exact for one throat; for
+    the companion's puncture, and each throat's anisotropy, K_ij and Pi are
+    cut inside the companion (collar profile, 0.3 a), so each far side holds
+    its own throat only (BoostBackground).  Exact for one throat; for
     two, constraint_solve = 1 removes the rest of the superposition's error
     from BOTH constraints, through w and a vector potential W (Ahat ->
     Ahat + L_G W; DrainholeConstraintSolve.cpp).  The CCZ4 variables
@@ -1390,7 +1392,14 @@ class BinaryWormholeInitialData
     //! and Pi -> Pi / F^2 (both constraints then scale uniformly).  The weight
     //! is 1 + W_X [(Psi / Psi_X)^2 - 1], with the window W_X = exp[-(r_X /
     //! (d/2))^4] keeping it bounded at the companion's puncture; one throat
-    //! has weight 1.  Positions are offsets from grid_center.
+    //! has weight 1.  In a pair each throat's E, K_ij and Pi are also cut
+    //! inside the companion Y by 1 - exp[-(r_Y / (0.3 a_Y))^8] (the collar's
+    //! profile; d E carries the cut's gradient), so Y's far side holds Y
+    //! alone.  Uncut, the companion's Pi and K reach Y's compactified
+    //! infinity, where the constraints weight them by Psi^5 and Psi^6
+    //! (pi s Pi^2 Psi^5 ~ r_Y^-5, Psi^6 Pi d phi ~ r_Y^-6).  The cut is 1 to
+    //! 5e-5 beyond 0.4 a_Y, far inside the throat (r ~ 0.8 a).  Positions
+    //! are offsets from grid_center.
     template <class data_t> struct BoostBackground
     {
         data_t Psi{1.0};
@@ -1414,6 +1423,9 @@ class BinaryWormholeInitialData
         data_t PsiX[2]      = {1.0, 1.0};
         data_t KX[2][3][3]  = {};
         data_t PiX[2]       = {0.0, 0.0};
+        data_t epsX[2]      = {0.0, 0.0}; //!< anisotropy eps and d eps / dr
+        data_t epsrX[2]     = {0.0, 0.0};
+        data_t ntX[2][3]    = {};         //!< gradient of the rest-frame radius
         bool present[2]     = {false, false};
 
         for (int body = 0; body < 2; ++body)
@@ -1463,12 +1475,9 @@ class BinaryWormholeInitialData
             phi_asymptote += C * (M_PI / 2.0);
             punct += (data_t)((body == 0) ? m_solve_shift_A : m_solve_shift_B) /
                      r;
-            if (v <= 0.0)
-            {
-                b.lapse *= exp(u); // at rest: its own static lapse, K = Pi = 0
-                continue;
-            }
 
+            // n = xr / r, and nt = d r / d x (lab), which the companion cut
+            // below needs for a throat at rest too (g = 1: nt = n).
             data_t n[3], nt[3];
             for (int c = 0; c < 3; ++c)
             {
@@ -1478,7 +1487,13 @@ class BinaryWormholeInitialData
                               (data_t)e[2] * n[2];
             for (int c = 0; c < 3; ++c)
             {
-                nt[c] = n[c] + (data_t)(g - 1.0) * en * (data_t)e[c];
+                nt[c]        = n[c] + (data_t)(g - 1.0) * en * (data_t)e[c];
+                ntX[body][c] = nt[c];
+            }
+            if (v <= 0.0)
+            {
+                b.lapse *= exp(u); // at rest: its own static lapse, K = Pi = 0
+                continue;
             }
 
             // u' = m/q, Q = e^{-2u} Omega^2 = Psi_X^4.
@@ -1498,16 +1513,13 @@ class BinaryWormholeInitialData
             const data_t c1 = (data_t)g * (ur - 0.5 * QrQ);
             const data_t c2 = 0.5 * QrQ * en;
             const data_t c3 = en * g2v2 * (0.5 * QrQ - alQ * ur);
+            epsX[body]      = eps;
+            epsrX[body]     = epsr;
             for (int p = 0; p < 3; ++p)
             {
                 for (int s = 0; s < 3; ++s)
                 {
                     const data_t ee = (data_t)(e[p] * e[s]);
-                    b.E[p][s] += eps * ee;
-                    for (int c = 0; c < 3; ++c)
-                    {
-                        b.dE[c][p][s] += epsr * nt[c] * ee;
-                    }
                     KX[body][p][s] = N * (data_t)v *
                                      (c1 * ((data_t)e[p] * nt[s] +
                                             (data_t)e[s] * nt[p]) +
@@ -1528,6 +1540,9 @@ class BinaryWormholeInitialData
         }
         b.Psi = exp(-0.5 * U) * psi + punct;
 
+        // Each throat's anisotropy, K_ij and Pi enter cut inside its
+        // companion Y by the collar profile 1 - exp[-(r_Y / (0.3 a_Y))^8], so
+        // Y's far side holds Y alone (see BoostBackground).
         const bool pair = present[0] && present[1];
         for (int body = 0; body < 2; ++body)
         {
@@ -1535,22 +1550,45 @@ class BinaryWormholeInitialData
             {
                 continue;
             }
-            data_t weight = 1.0;
+            const int other = 1 - body;
+            data_t weight = 1.0, cut = 1.0, dcut = 0.0;
             if (pair)
             {
                 const data_t ratio = b.Psi / PsiX[body];
                 const data_t s     = b.r_rest[body] / (data_t)m_boost_window;
                 const data_t s2    = s * s;
                 weight = 1.0 + exp(-s2 * s2) * (ratio * ratio - 1.0);
+
+                const data_t rc =
+                    (data_t)(m_boost_cut_fraction *
+                             ((other == 0) ? m_params.b0_A : m_params.b0_B));
+                const data_t q  = b.r_rest[other] / rc;
+                const data_t q2 = q * q;
+                const data_t q4 = q2 * q2;
+                const data_t ex = exp(-q4 * q4);
+                cut             = 1.0 - ex;
+                dcut            = 8.0 * q4 * q2 * q * ex / rc; // d cut / d r_Y
             }
+            const double *e = m_boost_dir[body];
             for (int p = 0; p < 3; ++p)
             {
                 for (int s = 0; s < 3; ++s)
                 {
-                    b.K[p][s] += weight * KX[body][p][s];
+                    const data_t ee = (data_t)(e[p] * e[s]);
+                    b.E[p][s] += cut * epsX[body] * ee;
+                    for (int c = 0; c < 3; ++c)
+                    {
+                        b.dE[c][p][s] += cut * epsrX[body] * ntX[body][c] * ee;
+                        if (pair)
+                        {
+                            b.dE[c][p][s] +=
+                                dcut * epsX[body] * ee * ntX[other][c];
+                        }
+                    }
+                    b.K[p][s] += cut * weight * KX[body][p][s];
                 }
             }
-            b.Pi += PiX[body] / weight;
+            b.Pi += cut * PiX[body] / weight;
         }
     }
 
@@ -1900,6 +1938,9 @@ class BinaryWormholeInitialData
     double m_boost_dir[2][3]{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
     //! Half the throat separation: the width of the companion-weight window.
     double m_boost_window{1.0};
+    //! The companion cut's radius in units of the throat's a (the collar's
+    //! 0.3; boost_background).
+    static constexpr double m_boost_cut_fraction = 0.3;
 
     //! Helfer/Ning correction, precomputed in the constructor.  All zero and
     //! m_helfer_on false unless the correction is on and both throats exist.

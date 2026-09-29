@@ -57,6 +57,21 @@
    publishable only through the M6 overlap test: its Psi4 at the
    extraction radii must match the undamped arms over the shared window.
 
+   Moving throats (track_throats = 1): one window on each throat's tracked
+   centre (ThroatTracker, updated every coarse step) instead of the grid
+   centre, W the larger of the two.  The puncture of an exact-boost throat
+   (momentum_model = 1) is its far side's compactified infinity, carried
+   across the grid at v with the boosted lapse (~0.2) on it.  There the
+   slicing source re-inflates the lapse from K errors at the pit (the p =
+   0.45 end-to-end test: 0.20 until t ~ 10, 2.6 at t = 24, then NaN), and
+   the runaway stays within the pit's few cells (r < 0.25) until t ~ 20.
+   Inside the window the
+   lapse is only advected, and the shift there is -v e to 1e-3 at r = 0.3 a,
+   so it rides with the throat as the exact boost does.  A collapsed lapse
+   (the collar, type 6) cannot be used instead: a zero-lapse core swept by
+   the boosted shift pulls the lapse at the throat from 0.52 to 0.27 and
+   feeds K and Pi into it.
+
    Own module, default off: no archived run changes behaviour. */
 struct CoreLapseFreeze
 {
@@ -74,6 +89,8 @@ struct CoreLapseFreeze
         bool freeze_shift{false};
         //! Centre of the window (wired to the grid centre).
         std::array<double, AMREX_SPACEDIM> grid_center{};
+        //! One window on each tracked throat instead (needs throat_tracking).
+        bool track_throats{false};
         //! Copies of gauge.lapse_coeff / gauge.lapse_power, so the add-back
         //! cancels the exact source term the gauge wrote.
         double lapse_coeff{2.0};
@@ -84,20 +101,46 @@ struct CoreLapseFreeze
     bool m_active{false};
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> m_dx{};
     amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> m_prob_lo{};
-    amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> m_center{};
+    //! Window centres, absolute: the grid centre, or the present throats.
+    amrex::GpuArray<amrex::Real, 2 * AMREX_SPACEDIM> m_center{};
+    int m_num_centers{1};
 
-    CoreLapseFreeze(const params_t &a_params,
-                    const amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> &a_dx,
-                    const amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> &a_prob_lo,
-                    amrex::Real a_time)
+    //! a_throats: the tracked throat centres (absolute, A then B) and
+    //! a_present which exist; read only when track_throats is on.
+    CoreLapseFreeze(
+        const params_t &a_params,
+        const amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> &a_dx,
+        const amrex::GpuArray<amrex::Real, AMREX_SPACEDIM> &a_prob_lo,
+        amrex::Real a_time,
+        const std::array<amrex::Real, 2 * AMREX_SPACEDIM> &a_throats = {},
+        const std::array<bool, 2> &a_present = {false, false})
         : m_params(a_params), m_dx(a_dx), m_prob_lo(a_prob_lo)
     {
         m_active = a_params.enabled && (a_params.radius_start > 0.0) &&
                    (a_time >= a_params.from_time);
-        for (int d = 0; d < AMREX_SPACEDIM; ++d)
+        if (!a_params.track_throats)
         {
-            m_center[d] = amrex::Real(a_params.grid_center[d]);
+            for (int d = 0; d < AMREX_SPACEDIM; ++d)
+            {
+                m_center[d] = amrex::Real(a_params.grid_center[d]);
+            }
+            return;
         }
+        m_num_centers = 0;
+        for (int obj = 0; obj < 2; ++obj)
+        {
+            if (!a_present[obj])
+            {
+                continue;
+            }
+            for (int d = 0; d < AMREX_SPACEDIM; ++d)
+            {
+                m_center[m_num_centers * AMREX_SPACEDIM + d] =
+                    a_throats[obj * AMREX_SPACEDIM + d];
+            }
+            ++m_num_centers;
+        }
+        m_active = m_active && (m_num_centers > 0);
     }
 
     //! C^2 quintic smootherstep: 6w^5 - 15w^4 + 10w^3.
@@ -118,21 +161,26 @@ struct CoreLapseFreeze
         {
             return;
         }
-        amrex::Real r2 = 0.0;
         const int idx[AMREX_SPACEDIM] = {AMREX_D_DECL(i, j, k)};
-        for (int d = 0; d < AMREX_SPACEDIM; ++d)
-        {
-            const amrex::Real xd =
-                m_prob_lo[d] +
-                (amrex::Real(idx[d]) + amrex::Real(0.5)) * m_dx[d] -
-                m_center[d];
-            r2 += xd * xd;
-        }
-        const amrex::Real r     = std::sqrt(r2);
         const amrex::Real start = amrex::Real(m_params.radius_start);
         const amrex::Real full  = amrex::Real(m_params.radius_full);
-        const amrex::Real w     = smooth_ramp(
-            (start - r) / amrex::max(start - full, amrex::Real(1.0e-30)));
+        amrex::Real w           = 0.0;
+        for (int n = 0; n < m_num_centers; ++n)
+        {
+            amrex::Real r2 = 0.0;
+            for (int d = 0; d < AMREX_SPACEDIM; ++d)
+            {
+                const amrex::Real xd =
+                    m_prob_lo[d] +
+                    (amrex::Real(idx[d]) + amrex::Real(0.5)) * m_dx[d] -
+                    m_center[n * AMREX_SPACEDIM + d];
+                r2 += xd * xd;
+            }
+            const amrex::Real r = std::sqrt(r2);
+            w                   = amrex::max(
+                w, smooth_ramp((start - r) /
+                               amrex::max(start - full, amrex::Real(1.0e-30))));
+        }
         if (w <= amrex::Real(0.0))
         {
             return;
