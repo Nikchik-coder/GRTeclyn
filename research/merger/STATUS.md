@@ -121,10 +121,48 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by and the spiral (the user's go, 09:48 UTC)
 
-| card | run | p | t now (05:00, 09-29) | t end | speed | ETA |
+| card | run | p | t now (07:57, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 41.5 | 100 | 2.17 u/h, steady (no merger) | ~27 h, ~08:00 UTC 09-30 |
-| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 46.7 | its NaN, ~60 | 4.1 u/h since the merger (2.15 → 3.4 → 4.1 over t = 30–45) | ~3–3.5 h, ~08:00–08:30 UTC |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 48.0 | 100 | 2.15 u/h (28 min per unit since t = 44) | ~24 h, ~08:10 UTC 09-30 |
+| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 58.9 | 100 (no NaN in sight: the core's max \|K\| turned over at t = 55) | 3.95 u/h | ~10.4 h, ~18:20 UTC |
+
+- **The spiral's merger inflates instead of collapsing** (07:00–07:55 UTC 09-29). The superposed run had a common MOTS
+  by t = 55 and died at t = 59.94; this one has neither at t = 58.9:
+  - the flow finder (`ah_flow_finder.py`, level 2, half 9, lmax 8, seeds 2.0 / 3.5 / 5.0 about the snapped pit, run on
+    every plotfile from t = 53 by a loop that stops with the run; logs in the run's `flow_finder/wide/`) finds no MOTS
+    at t = 53–56: the inner surfaces are anti-trapped (θ_out ≈ +0.3, θ_in up to +1.8); the outer one averages
+    θ_out ≈ 0 with half its area negative and never converges;
+  - the common-centre sphere scan (full metric): the common throat grew 5.46 → 5.60 over t = 45–52, anti-trapped
+    (θ± ≈ +0.5 at R_min), and has been past the scan edge since t = 53 (edge reading 6.8 → 8.9 by t = 57);
+  - the core's max |K| peaked at 0.42 at t ≈ 55 and fell to 0.28 by t = 57 (the old run's: 2.5 at t = 57, 53 at its NaN);
+  - on one log scale against the superposed level-4 arm (`08_convergence/..._lvl4_t100_freeze_r03600`, fill off
+    before t = 57), the lapse well is ~2× wider (α < 0.6 over ~195 against ~88 units² inside r < 8) and its two
+    lobes grow.
+  - Retracted as evidence of collapse: `areal_radius.dat` (4.72 → 3.80 over t = 40–57) is r/√χ along one ray, the
+    flat-metric estimate that under-reads once the shift distorts the grid (no `--areal-full-metric` on this consumer).
+- **The mouths' effective kick** (07:15 UTC 09-29). Each mouth's early R/R0 − 1 follows the single-throat seed ladder
+  (ε = −1e-2 reaches +10 % at t = 23, −1e-3 at t = 34: ~11 units per decade), so ε_eff ≈ −1e-2 × 10^(−(t₁₀ − 23)/11),
+  with t₁₀ the time to +10 %. Mode 3: fly-by (p = 0.45, d = 12) −1.2 %, head-on (p = 0, d = 8) −1.2 %, spiral
+  (p = 0.12) −0.8 %, the p = 0 rest pairs at d = 12 about −0.4 % (+0.9 % by t = 15 against the fly-by's +2.7 %);
+  superposed fly-by −1.0 %, head-on −0.9 %. Every mouth starts as a throat pushed toward inflation: the companion
+  pushes (harder at d = 8), and momentum adds at fixed d. A merger collapses only if it finishes first: the head-on's
+  common MOTS formed at t = 22 with the mouths at +6–10 %; the spiral merges at t ≈ 40–45 with them past +50 %. At
+  d = 12 even p = 0 contacts only at t ≈ 28–30 (the old d = 12 head-on: separation 2.4 at t = 30).
+- **Momentum against kick, and its constraints.** A boost cannot change a throat's fate: a uniformly moving exact
+  wormhole is the static one in another frame, and time dilation (γ ≈ 1.1) only slows it. If momentum speeds
+  inflation, the setup does it: the metric carries the Bowen–York momentum, but the scalar that holds the throat open
+  starts at rest (Π = 0; `wormhole_boost_velocity` unset in all three runs), so the support lags the geometry. Both
+  constraints hold at t = 0: with Π = 0 the scalar carries no current, so the Bowen–York Â_ij solves the momentum
+  constraint exactly (the t = 0 base-grid L2_Mom, 5.8e-6 fly-by / 1.5e-6 spiral / 0 head-on, is its finite-difference
+  error), and the Hamiltonian solve includes its kinetic term (the Newton passes). Boosting the scalar would leave a
+  t = 0 momentum-constraint residual: the solve holds Â_ij fixed and omits the scalar's current.
+- **Proposed, not queued (the user, 07:55 UTC 09-29; nothing starts without the go):**
+  1. Single throat with momentum: at rest; with p = 0.12 and 0.45 (Bowen–York, scalar at rest); with p and the
+     boosted scalar; one level (3 or 4). ε_eff from the time to +10 % against the seed ladder. If the throat with the
+     resting scalar inflates sooner as p grows, the kick is the setup's, not physics.
+  2. A spiral that collapses: d = 8 with a small p (0.05, 0.10), so the plunge ends by t ≈ 25 as the head-on's did;
+     level-3 scouts first (the −1e-2 seed runs identically at levels 3 and 4), then level 5 for the winner. Lowering p
+     at d = 12 is not enough.
 
 - ETAs corrected 19:15 UTC: a run speeds up ~2× once its pair merges (one refined region instead of two). The old
   spiral went 2.2 → 2.9 → 4.0–4.2 u/h over t = 30–40, so the new one reaches t = 45 at ~04:00 UTC and t = 54 at
@@ -191,7 +229,7 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed) | 0 (launched 05:46 UTC 09-29) | its death ~38.85, then leg 2 | ~2.7 u/h | ~14.5 h, ~20:10 UTC 09-29 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed) | 4.4 (07:57 UTC 09-29; launched 05:46) | its death ~38.85, then leg 2 | 2.0 u/h, the dead run's pace to the minute (it went 2.3 → 3.85 u/h after its merger at t ≈ 25) | Chk03500 ~11.3 h, ~19:20 UTC; t ≈ 38.85 ~12.3 h, ~20:15 UTC 09-29 |
 | — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | **DIED at t = 38.85** (00:32 UTC 09-29) | 100 | — | superseded by leg 1 |
 
 - **The head-on died at t = 38.845** (read from its own log at 04:58 UTC 09-29): NaN in h11 (A_ij non-finite) on
