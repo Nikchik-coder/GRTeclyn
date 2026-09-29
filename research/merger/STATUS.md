@@ -119,12 +119,26 @@ Along the way:
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
-## Live — first node (two H100s): the fly-by and the spiral (the user's go, 09:48 UTC)
+## Live — first node (two H100s): the fly-by (card 0) and the single-throat momentum probes (card 1)
 
-| card | run | p | t now (07:57, 09-29) | t end | speed | ETA |
+| card | run | p | t now (08:27, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 48.0 | 100 | 2.15 u/h (28 min per unit since t = 44) | ~24 h, ~08:10 UTC 09-30 |
-| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 58.9 | 100 (no NaN in sight: the core's max \|K\| turned over at t = 55) | 3.95 u/h | ~10.4 h, ~18:20 UTC |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 48.9 | 100 | 2.15 u/h (28 min per unit since t = 44) | ~24 h, ~08:10 UTC 09-30 |
+| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 0.4 | 50 | ~6 u/h (three share the card) | ~8.3 h, ~16:45 UTC |
+| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 0.3 | 50 | ~6 u/h | ~8.3 h, ~16:45 UTC |
+| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 0.2 | 50 | ~6 u/h | ~8.3 h, ~16:45 UTC |
+| — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | closing out |
+
+- **The spiral stopped and the probes launched** (the user, 08:20 UTC 09-29). The spiral wrote `Chk06040` (t = 60.40)
+  and exited normally (AMReX finalized, no NaN); the checkpoint is hard-linked into
+  `/tmp/grteclyn_scratch/_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_chk/` (25 GB) for a later wave extraction,
+  the plotfiles t = 45–60.40 stay in its `_keep_..._plt`. Its scratch still holds `Chk05500`, `Chk06000` and the last
+  three plotfiles (links of the kept ones): prune on the user's word. The three mode-3 single-throat probes went
+  on card 1 at 08:23 UTC (templates and launch line below; no checkpoints, the user's word). t = 0 read at 08:25:
+  M_ADM 1.00137 / 1.00703 / 1.07969 (rest / 0.12 / 0.45; the exact throat's volume identity is 1.0014), every far
+  side at the isolated −4.81048 / 3.03437, one-body mass 1.0000, the rest arm's solve w ~ 1e-14; L2_Ham(0) 2.12e-3
+  (the seed ladder's floor), L2_Mom(0) 0 / 2.8e-6 / 1.1e-5; frame 0 renders (throat at y = −8); 59 GB on the card.
+  The unsolved pair (`single_boost_p045_t050`, `..._vscal_t050`) waits for a card.
 
 - **The spiral's merger inflates instead of collapsing** (07:00–07:55 UTC 09-29). The superposed run had a common MOTS
   by t = 55 and died at t = 59.94; this one has neither at t = 58.9:
@@ -159,8 +173,9 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 - **Proposed, not queued (the user, 07:55 UTC 09-29; nothing starts without the go):**
   1. Single throat with momentum: at rest; with p = 0.12 and 0.45 (Bowen–York, scalar at rest); with p and the
      boosted scalar; one level (3 or 4). ε_eff from the time to +10 % against the seed ladder. If the throat with the
-     resting scalar inflates sooner as p grows, the kick is the setup's, not physics. **Prepared 08:30 UTC 09-29 (the
-     user: L = 64, N = 128, level 3), waiting for the go and the checkpoint answer (off in all five):** templates in
+     resting scalar inflates sooner as p grows, the kick is the setup's, not physics. **Prepared 08:10 UTC 09-29 (the
+     user: L = 64, N = 128, level 3); the three solved arms LIVE on card 1 since 08:23 UTC (the user's go, no
+     checkpoints); the unsolved pair waits for a card:** templates in
      `runs/wormhole_merger/templates_scan/`, each the seed ladder's `params_single_eps_m1e2_t100.txt` without its seed,
      the throat starting at y = −8 and moving +y, t = 50; `launch.sh --dry-run` PASS on all five.
      - `single_rest_csm_t050` (mode-3 solve, p = 0: the solve's own seed), `single_boost_p012_csm_t050`,
