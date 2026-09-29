@@ -1323,6 +1323,25 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-29 (17:20 UTC) — the contraction figure; the pair solve's mouths; the collar's trumpet
+
+- **The contraction figure is made from t = 0 alone** (the user: the shape needs no evolution). There are five
+  exact-boost throats, p = 0–0.45, one start-up each. The χ contour's axis ratio matches 1/γ = 1/√(1 + p²) to
+  3e-5 at every p and at three contour levels. `plot_boost_contraction` puts it in
+  `figures/02_moving_throat/boost_contraction`.
+  - This holds exactly because every field of the boosted slice depends on the rest-frame radius alone.
+  - The Bowen–York probes' slices read 0.998–0.999, round, where the slice method's own p = 0 reading is 0.998.
+- **The pair solve (d9ca1bc1):**
+  - one throat and the rest pair pass (the rest pair reproduces the model-0 mode-3 solve, M_ADM 1.5658 both);
+  - the boosted fly-by pair converges, with the Hamiltonian 300× down, but its matched mouths read R_min 4.43, 14 %
+    too large.
+  - Suspect: the companion's Π and K_ij inside each throat's far side, weighted there by Ψ⁵ and Ψ⁶, which diverge.
+  - Fix to try: cut the companion's K_ij, Π and E inside each throat, then rerun test 3 (minutes of GPU).
+- **The collar (type 6) is not a clean cure for the moving puncture.** It freezes the puncture (lapse 0.003), but the
+  lapse collapses outward like a trumpet: 0.52 → 0.27 at the throat by t = 10. The cleaner cure keeps the boosted
+  lapse and switches off only the slicing source in a window riding each tracked puncture, as `CoreLapseFreeze`
+  does about a fixed centre. Cost: code plus one rerun of the p = 0.45 single throat (~2.7 h on one card).
+
 ### 2026-09-29 (16:50 UTC) — the boosted setup: validation set for the article, and the moving puncture's lapse
 
 - **The setup is right, and the article gets a section on it** (the user). A throat with momentum is the exact

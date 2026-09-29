@@ -212,3 +212,8 @@ t0_flip_d12_p045_lb	T0 TEST 3a of the boosted pair solve (2026-09-29, proposed):
 t0_ctrl_rest_d12_lbcs	T0 TEST 2 of the boosted pair solve (2026-09-29, proposed): the d = 12 rest pair of ctrl_rest_d12_csm with		
 single_boost_p045_lbc_t050	RERUN of single_boost_p045_lb_t050 with the collar lapse (2026-09-29, the user's go 16:24 UTC): the same exact-boost		
 t0_flip_d12_p045_lbcs	T0 TEST 3b of the boosted pair solve (2026-09-29, proposed): the fly-by's pair (flipped, d = 12,		
+t0_single_boost_p000_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.0 (v = 0.0000,		
+t0_single_boost_p012_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.12 (v = 0.1191,		
+t0_single_boost_p045_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.45 (v = 0.4104,		
+t0_single_boost_p025_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.25 (v = 0.2425,		
+t0_single_boost_p035_lbc	T0 SHAPE SET (2026-09-29, the user's go ~16:58 UTC): one exact-boost throat at p = 0.35 (v = 0.3304,		

@@ -44,6 +44,9 @@ The spacetime
                             does it merge, or fly by?
   ``plot_placement_curve``  what two throats read simply by being near each
                             other, and what is left once that is subtracted.
+  ``plot_boost_contraction``  the moving throat's Lorentz contraction at t = 0:
+                            its axis ratio against p on 1/gamma, the setup's
+                            check (--measure reads the t = 0 plotfiles).
   ``plot_branches``         the lone throat's two fates ACROSS RESOLUTION —
                             level 3 collapses, level 4 inflates — and writes
                             campaign/01_single_throat/BRANCHES.md with them.
@@ -63,6 +66,7 @@ Shared
 
 __all__ = [
     "plot_bbh_ringdown",
+    "plot_boost_contraction",
     "plot_bbh_vs_wormhole_psi4",
     "plot_branches",
     "plot_collapse_diagnostics",

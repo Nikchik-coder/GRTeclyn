@@ -1,0 +1,29 @@
+# The moving throat's t = 0 axis ratio (along/across the motion) of the chi
+# contour through r_c across the motion; m = 1, a = 2, level 3.  Written by
+# plot_boost_contraction --measure.  exact_boost: the 3D t = 0 plotfile;
+# bowen_york_slice: the z = 32 chi slice cache (momentum_model = 0).
+setup	p	r_c	along	across	ratio	inv_gamma	run
+exact_boost	0.00	1.00	1.000415	1.000415	1.000000	1.000000	t0_single_boost_p000_lbc
+exact_boost	0.00	1.55	1.550022	1.550022	1.000000	1.000000	t0_single_boost_p000_lbc
+exact_boost	0.00	2.50	2.499884	2.499884	1.000000	1.000000	t0_single_boost_p000_lbc
+exact_boost	0.12	1.00	0.993294	1.000415	0.992882	0.992877	t0_single_boost_p012_lbc
+exact_boost	0.12	1.55	1.538985	1.550023	0.992879	0.992877	t0_single_boost_p012_lbc
+exact_boost	0.12	2.50	2.482080	2.499885	0.992878	0.992877	t0_single_boost_p012_lbc
+exact_boost	0.25	1.00	0.970565	1.000416	0.970162	0.970143	t0_single_boost_p025_lbc
+exact_boost	0.25	1.55	1.503756	1.550024	0.970150	0.970143	t0_single_boost_p025_lbc
+exact_boost	0.25	2.50	2.425254	2.499886	0.970145	0.970143	t0_single_boost_p025_lbc
+exact_boost	0.35	1.00	0.944287	1.000416	0.943894	0.943858	t0_single_boost_p035_lbc
+exact_boost	0.35	1.55	1.463028	1.550025	0.943873	0.943858	t0_single_boost_p035_lbc
+exact_boost	0.35	2.50	2.359555	2.499888	0.943864	0.943858	t0_single_boost_p035_lbc
+exact_boost	0.45	1.00	0.912359	1.000417	0.911979	0.911922	t0_single_boost_p045_lbc
+exact_boost	0.45	1.55	1.413540	1.550027	0.911946	0.911922	t0_single_boost_p045_lbc
+exact_boost	0.45	2.50	2.279727	2.499890	0.911931	0.911922	t0_single_boost_p045_lbc
+bowen_york_slice	0.00	1.00	1.008113	1.000000	1.008113	1.000000	single_rest_csm_t050
+bowen_york_slice	0.00	1.55	1.547406	1.550000	0.998326	1.000000	single_rest_csm_t050
+bowen_york_slice	0.00	2.50	2.500030	2.500000	1.000012	1.000000	single_rest_csm_t050
+bowen_york_slice	0.12	1.00	1.008130	1.000000	1.008130	1.000000	single_boost_p012_csm_t050
+bowen_york_slice	0.12	1.55	1.547490	1.550000	0.998381	1.000000	single_boost_p012_csm_t050
+bowen_york_slice	0.12	2.50	2.500376	2.500000	1.000150	1.000000	single_boost_p012_csm_t050
+bowen_york_slice	0.45	1.00	1.008359	1.000000	1.008359	1.000000	single_boost_p045_csm_t050
+bowen_york_slice	0.45	1.55	1.548597	1.550000	0.999095	1.000000	single_boost_p045_csm_t050
+bowen_york_slice	0.45	2.50	2.504853	2.500000	1.001941	1.000000	single_boost_p045_csm_t050

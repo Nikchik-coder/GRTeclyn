@@ -1,4 +1,4 @@
-# Status — 2026-09-29 16:52 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 17:20 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -84,12 +84,32 @@ throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit fo
     freezes the puncture at lapse ~0 and leaves the throat untouched.
   - **Rerun on card 1** with only the lapse type changed (`single_boost_p045_lbc_t050`, the user's go 16:24 UTC). Its
     t = 0 data equal the old run's in every field except the lapse at r < 1 about the puncture.
-- **The constraint solve for boosted pairs: in test** (the user's go 16:00 UTC; four t = 0 runs on card 0, level 3,
-  test binary `main3d_pairsolve3_a1257bcd-dirty_2026-09-29.ex`, source not yet committed). It solves both
-  constraints, for w and a vector potential W (Â → Â + L_G W). Test 1 (one boosted throat) passes. The first build
-  aborted on AMReX's Robin-reuse assertion; the second crawled ~2 % per pass on the pair, because the ghost cells
-  outside the box were linearly extrapolated; the third fills them with the Robin condition. The binary reruns need
-  it.
+  - **The collar stops the runaway, but its zero-lapse core drags the lapse down around it**, the way a black-hole
+    trumpet forms (17:16 UTC, z = 32 slices):
+    - the puncture's lapse stays at 0.002–0.003;
+    - the lapse at the throat (r = 1.55 across) falls from 0.52 to 0.26 by t = 10, then holds (0.27 at t = 14);
+    - at r = 3 it falls from 0.67 to 0.48;
+    - the old run held 0.52 at the throat, the rest throat 0.56.
+    So the throat evolves at about half speed: "flat through t = 35" is weaker here, and should be read in the
+    throat's proper time. The cleaner cure keeps the boosted lapse and switches off only the slicing source,
+    −2α(K − 2Θ), in a window riding each tracked puncture. `CoreLapseFreeze` does exactly that, but about a fixed
+    centre; it needs a per-throat window from the tracker.
+- **The constraint solve for boosted pairs** (d9ca1bc1; tested 16:00–17:10 UTC, four t = 0 runs, level 3, L = 64). It
+  solves both constraints, for w and a vector potential W (Â → Â + L_G W).
+  - Test 1, one boosted throat: **passes**, the solve leaves it alone (max |w| ≤ 5e-7, max |W| ≤ 5e-6, far side the
+    isolated throat's to 4e-7).
+  - Test 2, the d = 12 rest pair under model 1: **passes**. It reproduces the model-0 mode-3 solve: c, σ and w0 to
+    ~1e-5, M_ADM 1.5658 against 1.5658, R_min 3.891, and the throat-shell Hamiltonian at 1.9e-6.
+  - Test 3, the fly-by pair (flipped, d = 12, p = ±0.45): **the solve converges but the mouths are wrong**. The
+    level-3 throat-shell Hamiltonian falls 300× (rms 7.1e-3 unsolved to 2.2e-5), and the far sides match the
+    isolated throat to 3e-6 (4 matching rounds). But R_min comes out 4.43, 14 % above the isolated 3.88 (the
+    unsolved pair: 4.27), with w0 = −0.21, σ = 0.70 and max |W| = 128 by the punctures. The likely cause: the
+    companion's K_ij and Π reach into each throat's far side, where the constraints weight them by Ψ⁵ and Ψ⁶. Those
+    diverge at the puncture: π s Π_Y² Ψ⁵ ~ r⁻⁵ and Ψ⁶ Π_Y ∂φ ~ r⁻⁶, with Π_Y ≈ 2e-3 there. The solve chases that
+    source, and the far-side reading follows. The proposed fix: cut the companion's K_ij, Π and anisotropy E inside
+    each throat, with the collar's profile about each puncture, so each far side holds its own throat only.
+  - The builds on the way: the first aborted on AMReX's Robin-reuse assertion; the second crawled ~2 % per pass on
+    the pair (linear extrapolation outside the box); the third fills those ghosts with the Robin condition.
 
 ## CRITICAL: every binary simulation is corrupted by its initial data and must be rerun (the user, 2026-09-28)
 
@@ -160,13 +180,17 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
      - the pair is superposed, each throat's K_ij and Π scaled by the companion's conformal factor, and the solve
        then corrects both constraints (w and W);
      - the tests that it is right.
-     **The figure** (a half-page strip; the analytic curves in gold):
-     - (a) the throat's t = 0 axis ratio against p, on 1/γ = 1/√(1 + p²);
-     - (b) its coordinate speed against p, on v = p/√(1 + p²);
-     - (c) R_min(t)/R(0), flat for every p.
-     The runs are queued below ("Queued — the boosted-setup validation set"). The text states the setup and its
-     checks only, with no failure narrative (the paper's rule): the Bowen–York comparison enters as the reason for
-     the choice, in one sentence with its numbers.
+     **The figure is made** (17:15 UTC, `plot_boost_contraction`; `results/merger/figures/02_moving_throat/
+     boost_contraction`; label audit clean). It is a t = 0 strip, the user's choice: t = 0 shows the shape, and no
+     evolution is needed for it.
+     - (a) the p = 0 and p = 0.45 throat contours, the latter on its analytic ellipse x² + γ²y² = r_t²;
+     - (b) the axis ratio against p, on 1/γ = 1/√(1 + p²);
+     - (c) the residual, below 6e-5 at every p and at three contour levels.
+     Measured: 1.00000 / 0.99288 / 0.97015 / 0.94387 / 0.91195 at p = 0 / 0.12 / 0.25 / 0.35 / 0.45, against
+     1/γ = 1.00000 / 0.99288 / 0.97014 / 0.94386 / 0.91192 (`campaign/02_moving_throat/boost_contraction_t0.tsv`).
+     That the size holds in evolution comes from the p = 0.45 collar rerun, quoted in the text. The text states
+     the setup and its checks only, with no failure narrative (the paper's rule). The Bowen–York comparison enters
+     as the reason for the choice, in one sentence with its numbers.
    - **Add the branch-selection finding: why the interaction inflates the mouths, and the race (the user,
      2026-09-29 ~10:45 UTC).** Verified and quotable now: the seed ladder fixes the signs (+ε at the throat
      collapses and traps, −ε inflates); every companion reads as a −ε kick that strengthens with closeness
@@ -252,14 +276,14 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 |---|---|---|---|---|---|---|
 | — | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | **stopped at t = 64.98** (15:39 UTC, `stop_campaign.sh`, the user's word: Bowen–York momentum junk in its initial data) | 100 | — | wrong: not packed (the user's word); scratch wiped 15:45 UTC, frames kept |
 | 0 | `t0_single_boost_p045_lbcs` (test 1: one exact-boost throat, p = 0.45, solve on, mode 3; level 3, L = 64; the user's go 16:00 UTC; no checkpoints) | 0.45 | **done**, t = 0.5 (16:14 UTC) | 0.5 | — | **PASS**: max \|w\| ≤ 5e-7, max \|W\| ≤ 5e-6, c = c_iso, far-side mass and charge the isolated throat's to 4e-7 |
-| 0 | `t0_flip_d12_p045_lbcs` (test 3b: the fly-by pair, flipped, d = 12, p = ±0.45, as exact-boost throats, solve on, mode 3; level 3, L = 64) | 0.45 | relaunched 16:27 UTC (static preflight: the full one repeats the whole solve; match tolerance 1e-5, the model-1 floor) | 0.5 | — | ~0.5–1 h (each matching solve is 30 passes, ~15 s each) |
+| — | `t0_flip_d12_p045_lbcs` (test 3b: the fly-by pair, flipped, d = 12, p = ±0.45, as exact-boost throats, solve on, mode 3; level 3, L = 64; static preflight, match tolerance 1e-5) | 0.45 | **done** (t = 0.5, ~16:50 UTC) | 0.5 | — | **the solve converges, the mouths are wrong**: throat-shell Hamiltonian 300× down, far sides matched, but R_min 4.43 (+14 %); see the CRITICAL finding |
 | — | `t0_flip_d12_p045_lb` (test 3a: the same pair, solve off) | 0.45 | **done** (t = 0.5) | 0.5 | — | the unsolved reference for 3b |
 | — | `t0_ctrl_rest_d12_lbcs` (test 2: ctrl_rest_d12_csm's rest pair under model 1, solve on; must reproduce its model-0 mode-3 solve) | 0 | **done** (t = 0.5) | 0.5 | — | **PASS**: c 2.115528 / 2.115542 against 2.115536, σ 0.930357 / 0.930369 against 0.930364, w0 −3.430e-3 / −3.423e-3 against −3.426e-3, W = 0; far sides the isolated throat's to 1e-6 (10 matching rounds: the finite-difference floor is 3–5e-6) |
 | — | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | **stopped at t = 32.27** (14:26:50 UTC, `stop_campaign.sh`, the user's word) | 50 | — | close-out: packed, no movies |
 | — | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | **stopped at t = 32.97** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | **stopped at t = 32.64** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_lb_t050` (end-to-end test of `wormhole_momentum_model = 1`, launched 14:58 UTC, `main3d_boost_dc34eb51_2026-09-29.ex`, no checkpoints) | 0.45 | **DIED at t = 26.1** (16:22 UTC, NaN in h11, level 3: lapse runaway at the moving puncture) | 50 | — | superseded by the collar rerun |
-| 1 | `single_boost_p045_lbc_t050` (its rerun with the collar lapse, type 6; the user's go 16:24 UTC; same binary; no checkpoints) | 0.45 | 0.26 (16:27) | 50 | 18.2 u/h (19.9 GB) | ~2.7 h, ~19:10 UTC |
+| 1 | `single_boost_p045_lbc_t050` (its rerun with the collar lapse, type 6; the user's go 16:24 UTC; same binary; no checkpoints) | 0.45 | 14.9 (17:16) | 50 | 18.7 u/h (19.9 GB) | ~1.9 h, ~19:10 UTC; puncture lapse 0.003, but the throat's lapse fell 0.52 → 0.27 (the collar's trumpet) |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
 - **The probes stopped at 14:26:50 UTC (the user's word; no NaN in any log).** Last readings (t = 32): rest −0.05 %;
@@ -527,28 +551,23 @@ bash $L --gpu G --template params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_
 ```
 Then the plan's step 4 (single throats on clean data), each a rerun of its old run by the rule.
 
-## Queued — the boosted-setup validation set (proposed 2026-09-29 16:50 UTC; nothing launches without the go)
+## Done — the boosted-setup shape set (t = 0; the user's go 16:58 UTC)
 
-For the article's boosted-setup figure (paper plan above). Each run is one exact-boost throat
-(`wormhole_momentum_model = 1`, no solve), on the template of `single_boost_p045_lbc_t050`: the collar lapse
-(type 6), L = 64, N = 128, level 3, starting at y = −8 and moving along +y, stop_time 35 (that run's PASS
-window), checkpoints to be asked. Only p and the name change.
+One exact-boost throat per p (`t0_single_boost_pXXX_lbc`, the collar rerun's template with only p, the name and
+stop_time 0.1 changed; level 3; no checkpoints), started 16:53 UTC, all done in minutes. The t = 0 plotfiles are on
+the first node's scratch; the measured table and slices are in the pack
+(`campaign/02_moving_throat/boost_contraction_t0.*`).
 
-| run | p | v = p/√(1 + p²) | 1/γ | note |
-|---|---|---|---|---|
-| `single_boost_p000_lbc_t035` | 0 | 0 | 1 | the same gauge at rest |
-| `single_boost_p012_lbc_t035` | 0.12 | 0.119 | 0.993 | the spiral's p; the Bowen–York probe's twin |
-| `single_boost_p025_lbc_t035` | 0.25 | 0.243 | 0.970 | |
-| `single_boost_p035_lbc_t035` | 0.35 | 0.330 | 0.944 | the old capture boundary |
-| `single_boost_p045_lbc_t050` | 0.45 | 0.410 | 0.912 | **live** on card 1 (the collar rerun), reused |
+| p | v | 1/γ | measured axis ratio (throat contour) |
+|---|---|---|---|
+| 0 | 0 | 1.00000 | 1.00000 |
+| 0.12 | 0.119 | 0.99288 | 0.99288 |
+| 0.25 | 0.243 | 0.97014 | 0.97015 |
+| 0.35 | 0.330 | 0.94386 | 0.94387 |
+| 0.45 | 0.410 | 0.91192 | 0.91195 |
 
-- **Reads.** (a) The t = 0 axis ratio: the shifted-ellipsoid fit, and the χ contour on the slice caches. (b) The
-  coordinate speed: the tracked pit over t = 0–35. (c) R_min(t)/R(0) from the fit, next to the Bowen–York probes'
-  inflation (p = 0.12 and 0.45, raw rows).
-- **Cost.** ~20 GB and ~18.5 u/h each alone: t = 35 in ~1.9 h. Four runs, two per card after the current tests,
-  take ~4 h, ~8 GPU-hours.
-- **p = 0.45 is extreme** (v = 0.41 per mouth, 0.70 relative). Use it here only as the top point, where the
-  contraction is clearest. Binary production should stay at p ≤ 0.35 unless a rerun puts the capture boundary higher.
+**p = 0.45 is extreme** (v = 0.41 per mouth, 0.70 relative). It stays only as the curve's top point. Binary
+production stays at p ≤ 0.35 unless a clean rerun places the capture boundary above that.
 
 ## Queued — mode-3 follow-ups: the ladder (Fig. 12a) and a convergence twin (the user, 2026-09-28 ~11 UTC; nothing launches without the go)
 
