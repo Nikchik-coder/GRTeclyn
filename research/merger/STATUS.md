@@ -1,4 +1,4 @@
-# Status — 2026-09-29 16:30 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 16:40 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -29,6 +29,24 @@ flat: +0.03 % at t = 10, where the Bowen–York twin was already at +0.85 %.
   growth that is not there. Fitted to a shifted ellipsoid, R is 3.87815 at t = 0 and 3.87913 at t = 9 and 10. The
   throat is squashed 9 % at t = 0 (1/γ) and 12 % by t = 8–10 as the gauge relaxes, and the round scan's centre lags it
   by up to 0.15. The horizon scan needs this fit for every moving throat.
+- **The squash is Lorentz contraction, as for a boosted black hole's horizon:** a coordinate effect along the
+  motion, by 1/γ = m/√(m² + p²), with the area unchanged.
+  - At p = 0.12 / 0.25 / 0.45 (m = 1) that is 0.7 / 3 / 9 % (v = 0.12 / 0.24 / 0.41, γ = 1.007 / 1.03 / 1.097).
+  - Axis ratio (along/across the motion) of the throat's χ contour, from the z = 32 slice caches:
+
+    | run | t = 0 | t = 10 | t = 20 | t = 24 |
+    |---|---|---|---|---|
+    | exact boost (`single_boost_p045_lb_t050`) | 0.910 (= 1/γ) | 0.868 | 0.775 | 0.740 |
+    | Bowen–York p = 0.45 (`single_boost_p045_csm_t050`) | 1.000 | 0.987 | 0.984 | 0.998 |
+    | at rest (`single_rest_csm_t050`) | 0.998 | 0.998 | 0.998 | 0.998 |
+
+  - The old Bowen–York throats never showed it because it was never there: their data are round by construction
+    (conformally flat, the scalar at rest). It was not missed for being small.
+  - In evolution the exact-boost throat squashes past 1/γ. That is the gauge (1+log and Gamma-driver coordinates),
+    not physics: its fitted size stays flat through t = 16. After t ≈ 15 the puncture's lapse runaway may drive part of
+    it; the collar rerun will tell.
+  - The frames do not fake it: the panel is 722 × 749 px for a 40 × 40 box, a 3.7 % horizontal stretch. The dark lapse
+    well around the throat is gauge too.
 - K_z at t = 0–7: the throat's own dipole moves with it and the far lobes relax. The Bowen–York twin instead grows a
   new K > 0 region around its throat.
 
