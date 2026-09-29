@@ -1,8 +1,65 @@
-# Status — 2026-09-29 15:40 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 15:50 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes.**
+
+## CRITICAL FINDING: a moving throat is Lorentz-contracted; every moving setup so far was a round throat at rest (the user, 2026-09-29)
+
+**A throat with momentum is the static throat seen from a moving frame** (the exact Lorentz boost of the drainhole).
+On the t = 0 slice:
+- it is squashed along its motion by 1/γ: 9 % at p = 0.45 (v = 0.41, γ = 1.097), visible in frame 0;
+- its scalar moves with it (Π ≠ 0);
+- it carries its own K_ij and shift. The K_z, Π_z and shift frames show a moving dipole at t = 0 where they used to be
+  blank.
+
+**Every run with p > 0 until now started from a round throat whose scalar was at rest** (Π = 0). The momentum was put
+in through the Bowen–York K_ij alone: the black-hole recipe, on conformally flat, spherical data. That is not a
+moving wormhole. A black hole gets away with it because the junk radiates away or falls behind the horizon. A throat
+has no horizon and sits at an unstable equilibrium, so the mismatch drives it to inflate. The push grows as p², like
+the ADM-mass excess the momentum adds. The single-throat probes (level 3, L = 64, stopped at t ≈ 32–33 on the user's
+word):
+- at rest the throat stays put (R −0.05 % at t = 32);
+- p = 0.12 inflates: +10 % at t = 32 (ε_eff ≈ −0.15 %);
+- p = 0.45 inflates: +10 % at t = 20.2, +24 % at t = 25 (ε_eff ≈ −1.8 %), past the scan from t = 26.
+
+**The correct setup holds its size.** On the same template with `wormhole_momentum_model = 1`, the p = 0.45 throat is
+flat: +0.03 % at t = 10, where the Bowen–York twin was already at +0.85 %.
+- **Measuring a moving throat needs the squash.** The round scan (the consumer's A rows) reads +0.2 to +0.4 % of
+  growth that is not there. Fitted to a shifted ellipsoid, R is 3.87815 at t = 0 and 3.87913 at t = 9 and 10. The
+  throat is squashed 9 % at t = 0 (1/γ) and 12 % by t = 8–10 as the gauge relaxes, and the round scan's centre lags it
+  by up to 0.15. The horizon scan needs this fit for every moving throat.
+- K_z at t = 0–7: the throat's own dipole moves with it and the far lobes relax. The Bowen–York twin instead grows a
+  new K > 0 region around its throat.
+
+What it overturns:
+- **The fly-by was wrong** (`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`), and so is the claim that the fly-by
+  cannot spiral (§VII.A: every p ≥ 0.35 "passes without merging"). The junk drove its throats to expand; at
+  p = 0.45 it is about the mouths' whole kick (−1.2 %).
+  - Stopped at t = 64.98 (15:39 UTC) on the user's word, no NaN.
+  - Not packed (the user's word). Its frames stay. Its scratch (Chk05000–06000 and Plt06200–06400, 127 GiB) was
+    wiped at 15:45 UTC on the user's word (`MANIFEST_CLEANUP_2026-09-29`).
+- **Every p > 0 result waits for a rerun on boosted data.** At the spiral's p = 0.12 the junk is ~0.15 %, small next
+  to the companion's −0.8 %.
+- **Clean of it: the head-on and the rest pairs** (p = 0; the user, 15:38 UTC).
+
+**The fix (dc34eb51, 14:50 UTC).** `wormhole_momentum_model = 1` builds each throat as the exact Lorentz-boosted
+drainhole: the metric, K_ij, φ and Π together, with the boosted lapse and shift. `wormhole_momentumA/B` become each
+throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit for bit and now warns.
+- Checked:
+  - both constraints vanish to 1e-9 of their terms (finite differences of the closed forms, the exact static throat's
+    own level);
+  - the lapse and shift carry the slice rigidly to 1e-12;
+  - the run's t = 0 plotfile matches the closed forms to 2e-14 in every field;
+  - the closed-form Γ̃^i matches finite differences to 1e-11.
+- The old V2 option (`wormhole_boost_velocity`) does not give the moving throat's Π either. Near the throat it is
+  ~Q/α² ≈ 17× too large, because the boosted slice's shift carries most of the motion. The unsolved `_vscal` probe
+  would have tested the wrong thing.
+- **End-to-end test live on card 1** (`single_boost_p045_lb_t050`: the p = 0.45 probe's template with only the
+  momentum model changed and the solve off). PASS means R stays flat through t ≈ 35. Its Bowen–York twin reached
+  +10 % at t = 20.2 and +24 % at t = 25.
+- **Not yet: the constraint solve for boosted pairs** (it refuses model 1). The code is in progress and not yet
+  committed. The binary reruns need it.
 
 ## CRITICAL: every binary simulation is corrupted by its initial data and must be rerun (the user, 2026-09-28)
 
@@ -24,42 +81,6 @@ sponge, separation, gauge, dt_multiplier, stop_time and plot cadence as the old 
 says so, and the plot variables the full frame set needs (output only). Diff the new template against the old params before
 launching. E.g. the rest pairs are L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, t = 15, plots every 0.5. CS-1 (mode 0: the superposition's mouths, solved) is the
 old-versus-clean comparison, not a rerun. The binary verdicts below stand only as results on superposed data.
-
-## CRITICAL: the momentum setup inflates every moving throat; the fly-by is wrong (the user, 2026-09-29 14:25 UTC)
-
-Mode 3 gives a throat momentum through the Bowen–York extrinsic curvature alone: the scalar that holds it open starts
-at rest (Π = 0; the solve refuses a boosted scalar). The single-throat probes show what that does (level 3, L = 64,
-stopped at t ≈ 32–33 on the user's word):
-- at rest the throat stays put (R −0.05 % at t = 32);
-- p = 0.12 inflates: +10 % at t = 32 (ε_eff ≈ −0.15 %);
-- p = 0.45 inflates: +10 % at t = 20.2, +24 % at t = 25 (ε_eff ≈ −1.8 %), past the scan from t = 26.
-
-The push grows as p², like the ADM-mass excess the momentum adds. A uniformly moving exact wormhole is the static one
-in another frame, so none of it is physics. At p = 0.45 it is about the fly-by mouths' whole kick (−1.2 %).
-- **The fly-by (`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`) is wrong, and so is the claim that the fly-by
-  cannot spiral** (§VII.A: every p ≥ 0.35 "passes without merging"): the junk drives its throats to expand. Every
-  run with p > 0 carries it; at the spiral's p = 0.12 it is ~0.15 %, small next to the companion's −0.8 %.
-  **Stopped at t = 64.98 (15:39 UTC) and wiped on the user's word** (close-out with no movies; frames kept).
-- **The head-on is clean** (the user, 15:38 UTC): it starts from rest (p = 0), so it carries none of this.
-- **The fix, implemented (dc34eb51, 14:50 UTC):** `wormhole_momentum_model = 1` builds each throat as the exact
-  Lorentz-boosted drainhole: metric, K_ij, φ and Π together, with the boosted lapse and shift; `wormhole_momentumA/B`
-  become each throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit for bit and now warns.
-  - Checked: both constraints vanish to 1e-9 of their terms (finite differences of the closed forms, the exact static
-    throat's own level); the lapse and shift carry the slice rigidly to 1e-12; the run's t = 0 plotfile matches the
-    closed forms to 2e-14 in every field; the closed-form Γ̃^i matches finite differences to 1e-11.
-  - The old V2 option (`wormhole_boost_velocity`) is not the moving throat's Π either: near the throat it is ~Q/α²
-    ≈ 17× too large, because the boosted slice's shift carries most of the motion. The unsolved `_vscal` probe would
-    have tested the wrong thing.
-  - **End-to-end test live on card 1** (`single_boost_p045_lb_t050`, the p = 0.45 probe's template with only the
-    momentum model changed and the solve off). PASS: R stays flat through t ≈ 35, where its Bowen–York twin reached
-    +10 % at t = 20.2 and +24 % at t = 25.
-    - **Flat so far (t = 10, 15:36 UTC).** Fitted to a shifted ellipsoid, R is 3.87815 at t = 0 and 3.87913 at t = 9
-      and 10 (+0.03 %). The twin's raw rows read +0.85 % at t = 10. The throat is squashed along its motion, 9 % at
-      t = 0 (1/γ) and 12 % by t = 8–10 as the gauge relaxes, and the scan centre lags it by up to 0.15. The round
-      A rows therefore read +0.2 to +0.4 %, a bias of the scan and not growth.
-    - K_z at t = 0–7: the throat's own dipole moves with it and the far lobes relax. The twin instead grows a new
-      K > 0 region around its throat.
-  - Not yet: the constraint solve for boosted pairs (it refuses model 1). The binary reruns need it.
 
 ## The plan, in order (the user's, 2026-09-28)
 
@@ -185,7 +206,7 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 | card | run | p | t now (09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| — | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | **stopped at t = 64.98** (15:39 UTC, `stop_campaign.sh`, the user's word: Bowen–York momentum junk in its initial data) | 100 | — | close-out: packed with no movies, scratch wiped (frames kept) |
+| — | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | **stopped at t = 64.98** (15:39 UTC, `stop_campaign.sh`, the user's word: Bowen–York momentum junk in its initial data) | 100 | — | wrong: not packed (the user's word); scratch wiped 15:45 UTC, frames kept |
 | — | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | **stopped at t = 32.27** (14:26:50 UTC, `stop_campaign.sh`, the user's word) | 50 | — | close-out: packed, no movies |
 | — | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | **stopped at t = 32.97** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | **stopped at t = 32.64** (14:26:50 UTC, same) | 50 | — | same |
