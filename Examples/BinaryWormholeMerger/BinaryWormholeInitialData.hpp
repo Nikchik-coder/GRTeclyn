@@ -287,10 +287,15 @@
     Two throats: U = sum u_X and psi = 1 + sum (sqrt(Omega_X) - 1) at each
     throat's rest-frame radius, Psi = e^{-U/2} psi (the superposition above
     with r_X -> the boosted radius), gamma_ij = Psi^4 [delta_ij + sum eps_X
-    e_X e_X], K_ij, phi and Pi summed, the lapse the product of the throats'
-    and the shift their sum.  Exact for one throat; for two it carries the
-    superposition's error, which the solve does not yet remove for boosted
-    throats (the solve refuses momentum_model = 1).  The CCZ4 variables
+    e_X e_X], phi summed, the lapse the product of the throats' and the
+    shift their sum.  Near throat X the superposition is Psi = F Psi_X with
+    F smooth: X's lengths rescaled by F^2, under which its exact data take
+    K_ij -> F^2 K_ij and Pi -> Pi / F^2.  So each throat's K_ij and Pi enter
+    with that weight, windowed by exp[-(r_X / (d/2))^4] to stay bounded at
+    the companion's puncture (BoostBackground).  Exact for one throat; for
+    two, constraint_solve = 1 removes the rest of the superposition's error
+    from BOTH constraints, through w and a vector potential W (Ahat ->
+    Ahat + L_G W; DrainholeConstraintSolve.cpp).  The CCZ4 variables
     follow from gamma_ij and K_ij: chi = det(gamma)^{-1/3}, h_ij = chi
     gamma_ij, A_ij = chi (K_ij - gamma_ij K / 3), and Gamma^i from the closed
     form d_k h_ij (h is not flat, so Gamma^i is not zero).  Refused with a
@@ -453,6 +458,12 @@ class BinaryWormholeInitialData
         //! momentum_model = 1: 1 = start from the boosted solution's own
         //! shift (the coordinates move with the throat), 0 = zero shift.
         int boost_initial_shift{1};
+        //! momentum_model = 1: each throat's velocity v e, from its ADM
+        //! momentum gamma m v and its drainhole mass (boost_kinematics, set
+        //! once by SimulationParameters).  The solve's coordinate rescaling
+        //! of a and m does not touch it: the speed is physical.
+        std::array<double, AMREX_SPACEDIM> boost_v_A{{0.0, 0.0, 0.0}};
+        std::array<double, AMREX_SPACEDIM> boost_v_B{{0.0, 0.0, 0.0}};
 
         //! 1 = shift phi so that it tends to 0 at spatial infinity
         int subtract_phi_asymptote;
@@ -529,26 +540,33 @@ class BinaryWormholeInitialData
         m_boost_B = m_boost_B && (bB > 0.0);
 
         // Exact boost (momentum_model = 1): each throat's speed, Lorentz
-        // factor and direction from its ADM momentum P = gamma m v.
-        for (int body = 0; body < 2; ++body)
+        // factor and direction from its velocity, and the half separation
+        // that windows the companion's conformal weight.
+        if (m_params.momentum_model == 1)
         {
-            const auto &P  = (body == 0) ? m_params.momentumA
-                                         : m_params.momentumB;
-            const double m = (body == 0) ? m_params.drainhole_mass_A
-                                         : m_params.drainhole_mass_B;
-            double e[3];
-            boost_kinematics(m, P, m_boost_speed[body], m_boost_gamma[body],
-                             e);
-            if (m_params.momentum_model != 1)
+            for (int body = 0; body < 2; ++body)
             {
-                m_boost_speed[body] = 0.0;
-                m_boost_gamma[body] = 1.0;
-                e[0] = e[1] = e[2] = 0.0;
+                const auto &v = (body == 0) ? m_params.boost_v_A
+                                            : m_params.boost_v_B;
+                const double speed =
+                    std::sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+                if (speed > 0.0)
+                {
+                    m_boost_speed[body] = speed;
+                    m_boost_gamma[body] = 1.0 / std::sqrt(1.0 - speed * speed);
+                    for (int d = 0; d < 3; ++d)
+                    {
+                        m_boost_dir[body][d] = v[d] / speed;
+                    }
+                }
             }
+            double d2 = 0.0;
             for (int d = 0; d < 3; ++d)
             {
-                m_boost_dir[body][d] = e[d];
+                const double dd = m_params.centerA[d] - m_params.centerB[d];
+                d2 += dd * dd;
             }
+            m_boost_window = (d2 > 0.0) ? 0.5 * std::sqrt(d2) : 1.0;
         }
 
         // Constraint-solve background: how far the chosen puncture
@@ -640,6 +658,38 @@ class BinaryWormholeInitialData
         }
     }
 
+    //! The distance from throat Y's centre to throat X's, as Y's closed forms
+    //! see it: in Y's rest frame under momentum_model = 1 (the boosted radius
+    //! |d + (gamma - 1)(e.d) e|), the plain distance otherwise.
+    static double companion_distance(const params_t &p, const int X)
+    {
+        const int Y       = 1 - X;
+        const auto &cX    = (X == 0) ? p.centerA : p.centerB;
+        const auto &cY    = (Y == 0) ? p.centerA : p.centerB;
+        double d[3], d2   = 0.0;
+        for (int idir = 0; idir < 3; ++idir)
+        {
+            d[idir] = cX[idir] - cY[idir];
+            d2 += d[idir] * d[idir];
+        }
+        const auto &v = (Y == 0) ? p.boost_v_A : p.boost_v_B;
+        const double speed2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+        if (p.momentum_model != 1 || speed2 <= 0.0)
+        {
+            return std::sqrt(d2);
+        }
+        const double speed = std::sqrt(speed2);
+        const double g     = 1.0 / std::sqrt(1.0 - speed2);
+        const double ed    = (v[0] * d[0] + v[1] * d[1] + v[2] * d[2]) / speed;
+        double r2          = 0.0;
+        for (int idir = 0; idir < 3; ++idir)
+        {
+            const double x = d[idir] + (g - 1.0) * ed * v[idir] / speed;
+            r2 += x * x;
+        }
+        return std::sqrt(r2);
+    }
+
     //! Puncture coefficient of the isolated drainhole: Psi -> c / r at its
     //! centre, c = (a/2) e^{pi m / 2a} (id_type 1; m = 0 gives a/2).
     static double isolated_puncture_coefficient(const double a,
@@ -669,7 +719,10 @@ class BinaryWormholeInitialData
                 const double dd = p.centerA[idir] - p.centerB[idir];
                 d2 += dd * dd;
             }
-            c *= std::exp(-0.5 * drainhole_u<double>(std::sqrt(d2), a_Y, m_Y));
+            const double dist = (p.momentum_model == 1)
+                                    ? companion_distance(p, which)
+                                    : std::sqrt(d2);
+            c *= std::exp(-0.5 * drainhole_u<double>(dist, a_Y, m_Y));
         }
         return c;
     }
@@ -728,6 +781,12 @@ class BinaryWormholeInitialData
         {
             const double dd = p.centerA[idir] - p.centerB[idir];
             d2 += dd * dd;
+        }
+        if (p.momentum_model == 1)
+        {
+            // The companion's closed forms at its own rest-frame radius.
+            const double rest = companion_distance(p, which);
+            d2                = rest * rest;
         }
         const double dist = std::sqrt(d2);
         const bool has_Y  = (a_Y > 0.0) && (dist > 0.0);
@@ -920,12 +979,12 @@ class BinaryWormholeInitialData
     template <class data_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
     compute(int i, int j, int k, amrex::Array4<data_t> cell,
-            const bool solved = false, const data_t w = 0.0) const
+            const bool solved = false, const data_t w = 0.0,
+            const data_t *LW = nullptr) const
     {
         if (m_params.momentum_model == 1)
         {
-            // The exact boost (the solve refuses it, so solved is false).
-            compute_boosted(i, j, k, cell);
+            compute_boosted(i, j, k, cell, solved, w, LW);
             return;
         }
 
@@ -1321,26 +1380,41 @@ class BinaryWormholeInitialData
         cell(i, j, k, c_Pi)  = Pi;
     }
 
-    //! momentum_model = 1: the exact Lorentz-boosted drainholes, superposed
-    //! as described under "EXACT BOOST" in the class comment, in the CCZ4
-    //! variables (Gamma^i included: h_ij is not flat).  A throat at rest
-    //! gets the static drainhole, exactly as in compute().
+    //! One point's exact-boost background (momentum_model = 1; see "EXACT
+    //! BOOST" in the class comment).  Psi is the superposed conformal factor
+    //! with the solve's puncture shifts (rest-frame radii), G = delta + E
+    //! carries both throats' anisotropies, and each throat's K_ij and Pi
+    //! enter with the companion's conformal weight: near throat X the
+    //! superposition is Psi = F Psi_X with F smooth, a uniform rescaling of
+    //! X's lengths by F^2, under which the exact data take K_ij -> F^2 K_ij
+    //! and Pi -> Pi / F^2 (both constraints then scale uniformly).  The weight
+    //! is 1 + W_X [(Psi / Psi_X)^2 - 1], with the window W_X = exp[-(r_X /
+    //! (d/2))^4] keeping it bounded at the companion's puncture; one throat
+    //! has weight 1.  Positions are offsets from grid_center.
+    template <class data_t> struct BoostBackground
+    {
+        data_t Psi{1.0};
+        data_t E[3][3]{};
+        data_t dE[3][3][3]{}; //!< dE[c][p][s] = d_c E_ps, closed form
+        data_t K[3][3]{};     //!< physical K_ij
+        data_t phi{0.0};
+        data_t Pi{0.0};
+        data_t lapse{1.0};    //!< the throats' boosted lapses, multiplied
+        data_t shift[3]{};    //!< the throats' boosted shifts, summed
+        data_t r_rest[2]{1.0e30, 1.0e30};
+    };
+
     template <class data_t>
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
     // NOLINTNEXTLINE(readability-function-cognitive-complexity)
-    compute_boosted(int i, int j, int k, amrex::Array4<data_t> cell) const
+    boost_background(const data_t pos[3], BoostBackground<data_t> &b) const
     {
-        Coordinates coords(amrex::IntVect(i, j, k), m_dx,
-                           m_params.grid_center);
-        const data_t pos[3] = {coords.x, coords.y, coords.z};
-
-        data_t U = 0.0, psi = 1.0, phi = 0.0, Pi = 0.0, lapse = 1.0;
+        data_t U = 0.0, psi = 1.0, punct = 0.0;
         double phi_asymptote = 0.0;
-        data_t E[3][3]       = {};  // sum_X eps_X e_X e_X
-        data_t dE[3][3][3]   = {};  // dE[c][p][s] = d_c E_ps
-        data_t Kij[3][3]     = {};
-        data_t shift[3]      = {0.0, 0.0, 0.0};
-        data_t r_rest[2]     = {1.0e30, 1.0e30};
+        data_t PsiX[2]      = {1.0, 1.0};
+        data_t KX[2][3][3]  = {};
+        data_t PiX[2]       = {0.0, 0.0};
+        bool present[2]     = {false, false};
 
         for (int body = 0; body < 2; ++body)
         {
@@ -1349,6 +1423,7 @@ class BinaryWormholeInitialData
             {
                 continue;
             }
+            present[body]      = true;
             const double m     = (body == 0) ? m_params.drainhole_mass_A
                                              : m_params.drainhole_mass_B;
             const auto &centre = (body == 0) ? m_params.centerA
@@ -1374,21 +1449,23 @@ class BinaryWormholeInitialData
             }
             const data_t r2 = simd_max(
                 xr[0] * xr[0] + xr[1] * xr[1] + xr[2] * xr[2], (data_t)1.0e-24);
-            const data_t r = sqrt(r2);
-            r_rest[body]   = r;
+            const data_t r  = sqrt(r2);
+            b.r_rest[body]  = r;
 
             // The static throat there (the same closed forms as compute()).
-            const data_t q  = r2 + (data_t)(0.25 * a * a);
             const data_t X  = (r - (data_t)(0.25 * a * a) / r) / (data_t)a;
             const data_t u  = drainhole_u(r, a, m);
             const data_t Om = 1.0 + (data_t)(0.25 * a * a) / r2;
             U += u;
             psi += sqrt(Om) - 1.0;
-            phi += (data_t)C * atan(X);
+            PsiX[body] = exp(-0.5 * u) * sqrt(Om);
+            b.phi += (data_t)C * atan(X);
             phi_asymptote += C * (M_PI / 2.0);
+            punct += (data_t)((body == 0) ? m_solve_shift_A : m_solve_shift_B) /
+                     r;
             if (v <= 0.0)
             {
-                lapse *= exp(u); // at rest: its own static lapse, K = Pi = 0
+                b.lapse *= exp(u); // at rest: its own static lapse, K = Pi = 0
                 continue;
             }
 
@@ -1404,7 +1481,8 @@ class BinaryWormholeInitialData
                 nt[c] = n[c] + (data_t)(g - 1.0) * en * (data_t)e[c];
             }
 
-            // u' = m/q, Q = e^{-2u} Omega^2 = Psi^4 of this throat alone.
+            // u' = m/q, Q = e^{-2u} Omega^2 = Psi_X^4.
+            const data_t q    = r2 + (data_t)(0.25 * a * a);
             const data_t ur   = (data_t)m / q;
             const data_t Omr  = -(data_t)(0.5 * a * a) / (r2 * r);
             const data_t QrQ  = -2.0 * ur + 2.0 * Omr / Om; // Q'/Q
@@ -1425,47 +1503,77 @@ class BinaryWormholeInitialData
                 for (int s = 0; s < 3; ++s)
                 {
                     const data_t ee = (data_t)(e[p] * e[s]);
-                    E[p][s] += eps * ee;
+                    b.E[p][s] += eps * ee;
                     for (int c = 0; c < 3; ++c)
                     {
-                        dE[c][p][s] += epsr * nt[c] * ee;
+                        b.dE[c][p][s] += epsr * nt[c] * ee;
                     }
-                    Kij[p][s] += N * (data_t)v *
-                                 (c1 * ((data_t)e[p] * nt[s] +
-                                        (data_t)e[s] * nt[p]) +
-                                  ((p == s) ? c2 : (data_t)0.0) + c3 * ee);
+                    KX[body][p][s] = N * (data_t)v *
+                                     (c1 * ((data_t)e[p] * nt[s] +
+                                            (data_t)e[s] * nt[p]) +
+                                      ((p == s) ? c2 : (data_t)0.0) + c3 * ee);
                 }
             }
-            Pi += -N * (data_t)v * iQ * phir * en;
-            lapse *= N / (data_t)g;
+            PiX[body] = -N * (data_t)v * iQ * phir * en;
+            b.lapse *= N / (data_t)g;
             for (int c = 0; c < 3; ++c)
             {
-                shift[c] += (data_t)v * (alQ - 1.0) / den * (data_t)e[c];
+                b.shift[c] += (data_t)v * (alQ - 1.0) / den * (data_t)e[c];
             }
         }
 
         if (m_params.subtract_phi_asymptote != 0)
         {
-            phi -= (data_t)phi_asymptote;
+            b.phi -= (data_t)phi_asymptote;
         }
+        b.Psi = exp(-0.5 * U) * psi + punct;
 
-        // gamma_ij = Psi^4 G_ij, G = delta + E.
-        const data_t Psi  = exp(-0.5 * U) * psi;
-        const data_t Psi2 = Psi * Psi;
-        const data_t Psi4 = Psi2 * Psi2;
-        data_t G[3][3];
+        const bool pair = present[0] && present[1];
+        for (int body = 0; body < 2; ++body)
+        {
+            if (!present[body])
+            {
+                continue;
+            }
+            data_t weight = 1.0;
+            if (pair)
+            {
+                const data_t ratio = b.Psi / PsiX[body];
+                const data_t s     = b.r_rest[body] / (data_t)m_boost_window;
+                const data_t s2    = s * s;
+                weight = 1.0 + exp(-s2 * s2) * (ratio * ratio - 1.0);
+            }
+            for (int p = 0; p < 3; ++p)
+            {
+                for (int s = 0; s < 3; ++s)
+                {
+                    b.K[p][s] += weight * KX[body][p][s];
+                }
+            }
+            b.Pi += PiX[body] / weight;
+        }
+    }
+
+    //! The conformal side of a boost background: G = delta + E, its
+    //! inverse and determinant, the trace K = Psi^-4 G^ij K_ij and
+    //! Ahat^ij = Psi^2 [G^ik G^jl K_kl - G^ij (G^kl K_kl) / 3] (Psi^10 A^ij,
+    //! traceless with G).
+    template <class data_t>
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE static void
+    boost_conformal(const BoostBackground<data_t> &b, data_t G[3][3],
+                    data_t Gi[3][3], data_t &det, data_t &trK,
+                    data_t Ahat[3][3])
+    {
         for (int p = 0; p < 3; ++p)
         {
             for (int s = 0; s < 3; ++s)
             {
-                G[p][s] = E[p][s] + ((p == s) ? (data_t)1.0 : (data_t)0.0);
+                G[p][s] = b.E[p][s] + ((p == s) ? (data_t)1.0 : (data_t)0.0);
             }
         }
-        const data_t det =
-            G[0][0] * (G[1][1] * G[2][2] - G[1][2] * G[1][2]) -
-            G[0][1] * (G[0][1] * G[2][2] - G[1][2] * G[0][2]) +
-            G[0][2] * (G[0][1] * G[1][2] - G[1][1] * G[0][2]);
-        data_t Gi[3][3];
+        det = G[0][0] * (G[1][1] * G[2][2] - G[1][2] * G[1][2]) -
+              G[0][1] * (G[0][1] * G[2][2] - G[1][2] * G[0][2]) +
+              G[0][2] * (G[0][1] * G[1][2] - G[1][1] * G[0][2]);
         Gi[0][0] = (G[1][1] * G[2][2] - G[1][2] * G[1][2]) / det;
         Gi[0][1] = (G[0][2] * G[1][2] - G[0][1] * G[2][2]) / det;
         Gi[0][2] = (G[0][1] * G[1][2] - G[0][2] * G[1][1]) / det;
@@ -1475,21 +1583,79 @@ class BinaryWormholeInitialData
         Gi[1][0] = Gi[0][1];
         Gi[2][0] = Gi[0][2];
         Gi[2][1] = Gi[1][2];
-        const data_t D13 = cbrt(det);
-
-        // CCZ4: chi = det(gamma)^{-1/3}, h = chi gamma, A = chi (K - gamma K/3).
-        data_t chi = 1.0 / (Psi4 * D13);
-        if (chi < (data_t)1.0e-10)
-            chi = (data_t)1.0e-10;
-        data_t trK = 0.0;
+        data_t GK = 0.0; // G^kl K_kl = Psi^4 K
         for (int p = 0; p < 3; ++p)
         {
             for (int s = 0; s < 3; ++s)
             {
-                trK += Gi[p][s] * Kij[p][s];
+                GK += Gi[p][s] * b.K[p][s];
             }
         }
-        trK /= Psi4;
+        const data_t Psi2 = b.Psi * b.Psi;
+        trK               = GK / (Psi2 * Psi2);
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 3; ++j)
+            {
+                data_t GKG = 0.0;
+                for (int k = 0; k < 3; ++k)
+                {
+                    for (int l = 0; l < 3; ++l)
+                    {
+                        GKG += Gi[i][k] * Gi[j][l] * b.K[k][l];
+                    }
+                }
+                Ahat[i][j] = Psi2 * (GKG - Gi[i][j] * GK / 3.0);
+            }
+        }
+    }
+
+    //! momentum_model = 1: the exact-boost data in the CCZ4 variables
+    //! (Gamma^i included: h_ij is not flat).  With solved = true the solve's
+    //! corrections enter as Psi = Psi_bg + w and Ahat^ij = Ahat_bg^ij +
+    //! (L W)^ij (LW: its six components 11 12 13 22 23 33), with K, G, phi,
+    //! Pi and the gauge held at the background's.  A throat at rest gets the
+    //! static drainhole, exactly as in compute().
+    template <class data_t>
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+    // NOLINTNEXTLINE(readability-function-cognitive-complexity)
+    compute_boosted(int i, int j, int k, amrex::Array4<data_t> cell,
+                    const bool solved = false, const data_t w = 0.0,
+                    const data_t *LW = nullptr) const
+    {
+        Coordinates coords(amrex::IntVect(i, j, k), m_dx,
+                           m_params.grid_center);
+        const data_t pos[3] = {coords.x, coords.y, coords.z};
+        BoostBackground<data_t> b;
+        boost_background(pos, b);
+
+        data_t G[3][3], Gi[3][3], Ahat[3][3], det, trK;
+        boost_conformal(b, G, Gi, det, trK, Ahat);
+        data_t Psi = b.Psi;
+        if (solved)
+        {
+            Psi += w;
+            if (LW != nullptr)
+            {
+                const int map[3][3] = {{0, 1, 2}, {1, 3, 4}, {2, 4, 5}};
+                for (int p = 0; p < 3; ++p)
+                {
+                    for (int s = 0; s < 3; ++s)
+                    {
+                        Ahat[p][s] += LW[map[p][s]];
+                    }
+                }
+            }
+        }
+        const data_t Psi2 = Psi * Psi;
+        const data_t Psi4 = Psi2 * Psi2;
+        const data_t D13  = cbrt(det);
+
+        // CCZ4: chi = det(gamma)^{-1/3} = Psi^-4 det(G)^{-1/3}, h = G / det^{1/3},
+        // A_ij = chi (K_ij - gamma_ij K / 3) = Psi^-6 det^{-1/3} G_ik G_jl Ahat^kl.
+        data_t chi = 1.0 / (Psi4 * D13);
+        if (chi < (data_t)1.0e-10)
+            chi = (data_t)1.0e-10;
         data_t h[3][3], hU[3][3], A[3][3];
         for (int p = 0; p < 3; ++p)
         {
@@ -1497,7 +1663,15 @@ class BinaryWormholeInitialData
             {
                 h[p][s]  = G[p][s] / D13;
                 hU[p][s] = Gi[p][s] * D13;
-                A[p][s]  = chi * Kij[p][s] - h[p][s] * trK / 3.0;
+                data_t GGA = 0.0;
+                for (int kk = 0; kk < 3; ++kk)
+                {
+                    for (int l = 0; l < 3; ++l)
+                    {
+                        GGA += G[p][kk] * G[s][l] * Ahat[kk][l];
+                    }
+                }
+                A[p][s] = GGA / (Psi4 * Psi2 * D13);
             }
         }
 
@@ -1511,14 +1685,14 @@ class BinaryWormholeInitialData
             {
                 for (int s = 0; s < 3; ++s)
                 {
-                    dlnD += Gi[p][s] * dE[c][p][s];
+                    dlnD += Gi[p][s] * b.dE[c][p][s];
                 }
             }
             for (int p = 0; p < 3; ++p)
             {
                 for (int s = 0; s < 3; ++s)
                 {
-                    dh[c][p][s] = (dE[c][p][s] - G[p][s] * dlnD / 3.0) / D13;
+                    dh[c][p][s] = (b.dE[c][p][s] - G[p][s] * dlnD / 3.0) / D13;
                 }
             }
         }
@@ -1526,12 +1700,13 @@ class BinaryWormholeInitialData
         for (int l = 0; l < 3; ++l)
         {
             data_t contracted = 0.0; // h^jk Gamma_ljk
-            for (int j = 0; j < 3; ++j)
+            for (int jj = 0; jj < 3; ++jj)
             {
                 for (int kk = 0; kk < 3; ++kk)
                 {
-                    contracted += hU[j][kk] * 0.5 *
-                                  (dh[j][l][kk] + dh[kk][l][j] - dh[l][j][kk]);
+                    contracted +=
+                        hU[jj][kk] * 0.5 *
+                        (dh[jj][l][kk] + dh[kk][l][jj] - dh[l][jj][kk]);
                 }
             }
             for (int ii = 0; ii < 3; ++ii)
@@ -1543,12 +1718,14 @@ class BinaryWormholeInitialData
         // Gauge: the product of the throats' boosted lapses (types 5 and 6;
         // 6 adds the collar on each rest-frame radius) and the sum of their
         // shifts, or no shift.
+        data_t lapse = b.lapse;
         if (m_params.initial_lapse_type == 6)
         {
-            lapse *= collar_factor(r_rest[0], r_rest[1]);
+            lapse *= collar_factor(b.r_rest[0], b.r_rest[1]);
         }
         if (lapse < (data_t)1.0e-10)
             lapse = (data_t)1.0e-10;
+        data_t shift[3] = {b.shift[0], b.shift[1], b.shift[2]};
         if (m_params.boost_initial_shift == 0)
         {
             shift[0] = shift[1] = shift[2] = 0.0;
@@ -1583,8 +1760,8 @@ class BinaryWormholeInitialData
         cell(i, j, k, c_B2)     = 0.0;
         cell(i, j, k, c_B3)     = 0.0;
 
-        cell(i, j, k, c_phi) = phi;
-        cell(i, j, k, c_Pi)  = Pi;
+        cell(i, j, k, c_phi) = b.phi;
+        cell(i, j, k, c_Pi)  = b.Pi;
     }
 
   protected:
@@ -1721,6 +1898,8 @@ class BinaryWormholeInitialData
     double m_boost_speed[2]{0.0, 0.0};
     double m_boost_gamma[2]{1.0, 1.0};
     double m_boost_dir[2][3]{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}};
+    //! Half the throat separation: the width of the companion-weight window.
+    double m_boost_window{1.0};
 
     //! Helfer/Ning correction, precomputed in the constructor.  All zero and
     //! m_helfer_on false unless the correction is on and both throats exist.

@@ -511,14 +511,14 @@ void BinaryWormholeLevel::solve_initial_constraints()
     BinaryWormholeInitialData::params_t wp = simParams().wormhole_params;
     const auto &cs = simParams().constraint_solve_params;
 
-    amrex::Vector<amrex::MultiFab> w;
+    amrex::Vector<amrex::MultiFab> w, lw;
     const ConstraintSolveReport report =
-        solve_drainhole_constraint(*parent, wp, cs, w);
+        solve_drainhole_constraint(*parent, wp, cs, w, lw);
 
-    // Rebuild every level's valid cells from the same background plus w.
-    // Ghost cells keep the analytic values until the next FillPatch, which
-    // every reader of them (the RHS, the t = 0 norms, derived plot fields)
-    // performs first.
+    // Rebuild every level's valid cells from the same background plus w
+    // (and, for the exact boost, the Ahat correction L W).  Ghost cells keep
+    // the analytic values until the next FillPatch, which every reader of
+    // them (the RHS, the t = 0 norms, derived plot fields) performs first.
     for (int lev = 0; lev <= parent->finestLevel(); ++lev)
     {
         amrex::AmrLevel &amr_level = parent->getLevel(lev);
@@ -527,18 +527,41 @@ void BinaryWormholeLevel::solve_initial_constraints()
                                                parent->Geom(lev).CellSize(0));
         const auto &arrs  = state.arrays();
         const auto &w_arr = w[lev].const_arrays();
-        amrex::ParallelFor(state,
-                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
-                           {
-                               binary.compute(i, j, k, arrs[box_no], true,
-                                              w_arr[box_no](i, j, k));
-                           });
+        if (report.boosted)
+        {
+            const auto &lw_arr = lw[lev].const_arrays();
+            amrex::ParallelFor(
+                state,
+                [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                {
+                    amrex::Real LW[6];
+                    for (int n = 0; n < 6; ++n)
+                    {
+                        LW[n] = lw_arr[box_no](i, j, k, n);
+                    }
+                    binary.compute(i, j, k, arrs[box_no], true,
+                                   w_arr[box_no](i, j, k),
+                                   static_cast<const amrex::Real *>(LW));
+                });
+        }
+        else
+        {
+            amrex::ParallelFor(state,
+                               [=] AMREX_GPU_DEVICE(int box_no, int i, int j,
+                                                    int k)
+                               {
+                                   binary.compute(i, j, k, arrs[box_no], true,
+                                                  w_arr[box_no](i, j, k));
+                               });
+        }
     }
     amrex::Gpu::streamSynchronize();
 
-    amrex::Print() << "Constraint solve (Hamiltonian, t = 0): "
-                   << report.newton_iterations << " Newton pass(es), last "
-                   << "update " << report.last_update;
+    amrex::Print() << "Constraint solve ("
+                   << (report.boosted ? "Hamiltonian and momentum, exact boost"
+                                      : "Hamiltonian")
+                   << ", t = 0): " << report.newton_iterations
+                   << " Newton pass(es), last update " << report.last_update;
     if (cs.puncture_mode == 3)
     {
         amrex::Print() << "; far-side matching ("
@@ -560,6 +583,16 @@ void BinaryWormholeLevel::solve_initial_constraints()
     for (const double mw : report.max_w)
     {
         amrex::Print() << " " << mw;
+    }
+    if (report.boosted)
+    {
+        amrex::Print() << "\n  max |W| per level:";
+        for (const double mW : report.max_W)
+        {
+            amrex::Print() << " " << mW;
+        }
+        amrex::Print() << " (last pass max |dW| " << report.last_W_update
+                       << ")";
     }
     amrex::Print() << "\n  M_ADM ~ " << report.background_mass << " + 2 x "
                    << report.boundary_monopole << " = "

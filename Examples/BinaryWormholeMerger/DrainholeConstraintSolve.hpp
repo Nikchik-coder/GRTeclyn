@@ -146,6 +146,11 @@ struct ConstraintSolveReport
     int match_iterations{0};
     int solves{0};
     double match_residual{0.0};
+    //! momentum_model = 1: both constraints solved (w and W), the last
+    //! pass's max |dW| and max |W| per level (valid cells).
+    bool boosted{false};
+    double last_W_update{0.0};
+    amrex::Vector<double> max_W;
 };
 
 //! Solve on levels 0..finest of a_amr and return the correction per level
@@ -153,11 +158,24 @@ struct ConstraintSolveReport
 //! the params ask for on entry and the background the returned w belongs to
 //! on exit: puncture mode 3 rescales each throat and sets its c, so the
 //! caller must rebuild the data from the returned a_id.
+//!
+//! momentum_model = 1 (the exact boost): the background is the superposed
+//! Lorentz-boosted throats, not conformally flat and with K, Pi != 0, and
+//! BOTH constraints are solved, for w and a vector potential W with
+//! Ahat^ij = Ahat_bg^ij + (L_G W)^ij (see solve_once_boosted).  a_lw returns
+//! (L_G W)^ij on every level's valid cells (six components, 11 12 13 22 23
+//! 33) for the rebuild; it is left empty for momentum_model = 0.  The
+//! far-side matching reads each mouth in its own rest frame: Psi = c / r +
+//! d with r the rest-frame radius, since at the puncture G -> delta +
+//! gamma^2 v^2 e e, which is flat in rest-frame coordinates.  The volume
+//! identity for M_ADM needs K = 0 and a flat conformal metric, so it is
+//! skipped (adm_mass_volume_valid stays false).
 ConstraintSolveReport
 solve_drainhole_constraint(amrex::Amr &a_amr,
                            BinaryWormholeInitialData::params_t &a_id,
                            const ConstraintSolveParams &a_params,
-                           amrex::Vector<amrex::MultiFab> &a_w);
+                           amrex::Vector<amrex::MultiFab> &a_w,
+                           amrex::Vector<amrex::MultiFab> &a_lw);
 
 //! Each mouth's far side for data with w = 0 everywhere, i.e. the analytic
 //! superposition (constraint_solve = 0): the closed-form d, no measurement.

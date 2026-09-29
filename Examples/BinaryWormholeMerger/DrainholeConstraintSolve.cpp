@@ -5,9 +5,12 @@
 
 #include "DrainholeConstraintSolve.hpp"
 
+#include <AMReX_FillPatchUtil.H>
+#include <AMReX_Interpolater.H>
 #include <AMReX_MLABecLaplacian.H>
 #include <AMReX_MLMG.H>
 #include <AMReX_MultiFabUtil.H>
+#include <AMReX_PhysBCFunct.H>
 #include <AMReX_Reduce.H>
 
 #include <algorithm>
@@ -277,6 +280,860 @@ SolveResult solve_once(Hierarchy &h, const params_t &a_id,
         }
     }
     return result;
+}
+
+// ---- momentum_model = 1: both constraints on the exact-boost background ----
+
+//! Symmetric index pairs (11 12 13 22 23 33).
+AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE int sym_index(const int i, const int j)
+{
+    constexpr int map[3][3] = {{0, 1, 2}, {1, 3, 4}, {2, 4, 5}};
+    return map[i][j];
+}
+
+//! Everything the boosted solve needs from the closed-form background at one
+//! point: the conformal metric G, its inverse and Christoffels with their
+//! first derivatives, the Ricci scalar, and the background terms of both
+//! constraints.  Derivatives by second-order differences of the closed forms
+//! with a step 1e-4 of the nearest rest-frame radius (relative error ~1e-8).
+struct BoostLocal
+{
+    amrex::Real Psi, K, Pi, R, V, lapPsi;
+    amrex::Real G[3][3], Gi[3][3], Ahat[3][3];
+    amrex::Real Gam[3][3][3];      //!< Gam[k][i][j] = Gamma^k_ij of G
+    amrex::Real dGi[3][3][3];      //!< dGi[m][i][j] = d_m G^ij
+    amrex::Real dGam[3][3][3][3];  //!< dGam[m][k][i][j] = d_m Gamma^k_ij
+    amrex::Real divAhat[3];        //!< D_j Ahat_bg^ij
+    amrex::Real J[3];              //!< G^ij [(2/3) d_j K + 8 pi s Pi d_j phi]
+};
+
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
+AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+boost_local(const BinaryWormholeInitialData &bg, const amrex::Real pos[3],
+            const double s_sup, BoostLocal &L)
+{
+    using BB = BinaryWormholeInitialData::BoostBackground<amrex::Real>;
+    amrex::Real det, G[3][3], Gi[3][3], Ah[3][3];
+
+    BB b0;
+    bg.boost_background(pos, b0);
+    BinaryWormholeInitialData::boost_conformal(b0, L.G, L.Gi, det, L.K,
+                                               L.Ahat);
+    L.Psi = b0.Psi;
+    L.Pi  = b0.Pi;
+    const amrex::Real rmin =
+        amrex::min(amrex::min(b0.r_rest[0], b0.r_rest[1]), amrex::Real(1.0));
+    const amrex::Real hs = 1.0e-4 * rmin;
+
+    // Values on the axis points: Psi, G, K, Ahat, phi.
+    amrex::Real Pp[3], Pm[3], Kp[3], Km[3], php[3], phm[3];
+    amrex::Real Gp[3][6], Gm[3][6], Ap[3][6], Am[3][6];
+    for (int kk = 0; kk < 3; ++kk)
+    {
+        for (int sgn = 0; sgn < 2; ++sgn)
+        {
+            amrex::Real x[3] = {pos[0], pos[1], pos[2]};
+            x[kk] += (sgn == 0) ? hs : -hs;
+            BB b;
+            bg.boost_background(x, b);
+            amrex::Real Kx;
+            BinaryWormholeInitialData::boost_conformal(b, G, Gi, det, Kx, Ah);
+            amrex::Real *Gs = (sgn == 0) ? Gp[kk] : Gm[kk];
+            amrex::Real *As = (sgn == 0) ? Ap[kk] : Am[kk];
+            for (int i = 0; i < 3; ++i)
+            {
+                for (int j = i; j < 3; ++j)
+                {
+                    Gs[sym_index(i, j)] = G[i][j];
+                    As[sym_index(i, j)] = Ah[i][j];
+                }
+            }
+            ((sgn == 0) ? Pp : Pm)[kk]   = b.Psi;
+            ((sgn == 0) ? Kp : Km)[kk]   = Kx;
+            ((sgn == 0) ? php : phm)[kk] = b.phi;
+        }
+    }
+    amrex::Real dP[3], ddP[3][3], dG[3][6], ddG[3][3][6], dK[3], dA[3][6],
+        dphi[3];
+    const amrex::Real i2h = 0.5 / hs, ih2 = 1.0 / (hs * hs);
+    for (int kk = 0; kk < 3; ++kk)
+    {
+        dP[kk]      = (Pp[kk] - Pm[kk]) * i2h;
+        ddP[kk][kk] = (Pp[kk] - 2.0 * L.Psi + Pm[kk]) * ih2;
+        dK[kk]      = (Kp[kk] - Km[kk]) * i2h;
+        dphi[kk]    = (php[kk] - phm[kk]) * i2h;
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = i; j < 3; ++j)
+            {
+                const int c    = sym_index(i, j);
+                dG[kk][c]      = (Gp[kk][c] - Gm[kk][c]) * i2h;
+                ddG[kk][kk][c] = (Gp[kk][c] - 2.0 * L.G[i][j] + Gm[kk][c]) * ih2;
+                dA[kk][c]      = (Ap[kk][c] - Am[kk][c]) * i2h;
+            }
+        }
+    }
+    // Mixed second derivatives of Psi and G.
+    for (int kk = 0; kk < 3; ++kk)
+    {
+        for (int ll = kk + 1; ll < 3; ++ll)
+        {
+            amrex::Real Pc[4], Gc[4][6];
+            for (int q = 0; q < 4; ++q)
+            {
+                amrex::Real x[3] = {pos[0], pos[1], pos[2]};
+                x[kk] += (q < 2) ? hs : -hs;
+                x[ll] += (q % 2 == 0) ? hs : -hs;
+                BB b;
+                bg.boost_background(x, b);
+                amrex::Real Kx;
+                BinaryWormholeInitialData::boost_conformal(b, G, Gi, det, Kx,
+                                                           Ah);
+                Pc[q] = b.Psi;
+                for (int i = 0; i < 3; ++i)
+                {
+                    for (int j = i; j < 3; ++j)
+                    {
+                        Gc[q][sym_index(i, j)] = G[i][j];
+                    }
+                }
+            }
+            const amrex::Real i4h2 = 0.25 * ih2;
+            ddP[kk][ll] = ddP[ll][kk] = (Pc[0] - Pc[1] - Pc[2] + Pc[3]) * i4h2;
+            for (int c = 0; c < 6; ++c)
+            {
+                ddG[kk][ll][c] = ddG[ll][kk][c] =
+                    (Gc[0][c] - Gc[1][c] - Gc[2][c] + Gc[3][c]) * i4h2;
+            }
+        }
+    }
+
+    // Christoffels of G (first kind Gam1[l][i][j]), their derivatives, Ricci.
+    amrex::Real Gam1[3][3][3];
+    for (int l = 0; l < 3; ++l)
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 3; ++j)
+            {
+                Gam1[l][i][j] = 0.5 * (dG[i][sym_index(l, j)] +
+                                       dG[j][sym_index(l, i)] -
+                                       dG[l][sym_index(i, j)]);
+            }
+        }
+    }
+    for (int k = 0; k < 3; ++k)
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 3; ++j)
+            {
+                amrex::Real s = 0.0;
+                for (int l = 0; l < 3; ++l)
+                {
+                    s += L.Gi[k][l] * Gam1[l][i][j];
+                }
+                L.Gam[k][i][j] = s;
+            }
+        }
+    }
+    for (int m = 0; m < 3; ++m)
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            for (int j = 0; j < 3; ++j)
+            {
+                amrex::Real s = 0.0;
+                for (int a = 0; a < 3; ++a)
+                {
+                    for (int b = 0; b < 3; ++b)
+                    {
+                        s -= L.Gi[i][a] * dG[m][sym_index(a, b)] * L.Gi[b][j];
+                    }
+                }
+                L.dGi[m][i][j] = s;
+            }
+        }
+    }
+    for (int m = 0; m < 3; ++m)
+    {
+        for (int k = 0; k < 3; ++k)
+        {
+            for (int i = 0; i < 3; ++i)
+            {
+                for (int j = 0; j < 3; ++j)
+                {
+                    amrex::Real s = 0.0;
+                    for (int l = 0; l < 3; ++l)
+                    {
+                        const amrex::Real dGam1 =
+                            0.5 * (ddG[m][i][sym_index(l, j)] +
+                                   ddG[m][j][sym_index(l, i)] -
+                                   ddG[m][l][sym_index(i, j)]);
+                        s += L.dGi[m][k][l] * Gam1[l][i][j] +
+                             L.Gi[k][l] * dGam1;
+                    }
+                    L.dGam[m][k][i][j] = s;
+                }
+            }
+        }
+    }
+    L.R = 0.0;
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            amrex::Real Rij = 0.0;
+            for (int k = 0; k < 3; ++k)
+            {
+                Rij += L.dGam[k][k][i][j] - L.dGam[j][k][i][k];
+                for (int l = 0; l < 3; ++l)
+                {
+                    Rij += L.Gam[k][k][l] * L.Gam[l][i][j] -
+                           L.Gam[k][j][l] * L.Gam[l][i][k];
+                }
+            }
+            L.R += L.Gi[i][j] * Rij;
+        }
+    }
+
+    // The background terms of both constraints.
+    L.lapPsi = 0.0;
+    L.V      = 0.0;
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            amrex::Real d2 = ddP[i][j];
+            for (int k = 0; k < 3; ++k)
+            {
+                d2 -= L.Gam[k][i][j] * dP[k];
+            }
+            L.lapPsi += L.Gi[i][j] * d2;
+            L.V += L.Gi[i][j] * dphi[i] * dphi[j];
+        }
+    }
+    L.V *= M_PI * s_sup;
+    for (int i = 0; i < 3; ++i)
+    {
+        amrex::Real div = 0.0, src = 0.0;
+        for (int j = 0; j < 3; ++j)
+        {
+            div += dA[j][sym_index(i, j)];
+            for (int k = 0; k < 3; ++k)
+            {
+                div += L.Gam[i][j][k] * L.Ahat[k][j] +
+                       L.Gam[j][j][k] * L.Ahat[i][k];
+            }
+            src += L.Gi[i][j] *
+                   (2.0 / 3.0 * dK[j] + 8.0 * M_PI * s_sup * L.Pi * dphi[j]);
+        }
+        L.divAhat[i] = div;
+        L.J[i]       = src;
+    }
+}
+
+//! Grid derivatives of one cell (second order, the level's dx): first and
+//! second derivatives of component n of an array with filled ghost cells.
+struct GridDerivs
+{
+    amrex::Real d[3];
+    amrex::Real dd[3][3];
+};
+AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+grid_derivs(const amrex::Array4<const amrex::Real> &f, const int i, const int j,
+            const int k, const int n, const amrex::Real dx, GridDerivs &g)
+{
+    const amrex::Real f0 = f(i, j, k, n);
+    const int e[3][3]    = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+    for (int a = 0; a < 3; ++a)
+    {
+        const amrex::Real fp = f(i + e[a][0], j + e[a][1], k + e[a][2], n);
+        const amrex::Real fm = f(i - e[a][0], j - e[a][1], k - e[a][2], n);
+        g.d[a]               = 0.5 * (fp - fm) / dx;
+        g.dd[a][a]           = (fp - 2.0 * f0 + fm) / (dx * dx);
+        for (int b = a + 1; b < 3; ++b)
+        {
+            const int di = e[a][0], dj = e[a][1], dk = e[a][2];
+            const int ei = e[b][0], ej = e[b][1], ek = e[b][2];
+            const amrex::Real fpp = f(i + di + ei, j + dj + ej, k + dk + ek, n);
+            const amrex::Real fpm = f(i + di - ei, j + dj - ej, k + dk - ek, n);
+            const amrex::Real fmp = f(i - di + ei, j - dj + ej, k - dk + ek, n);
+            const amrex::Real fmm = f(i - di - ei, j - dj - ej, k - dk - ek, n);
+            g.dd[a][b] = g.dd[b][a] = 0.25 * (fpp - fpm - fmp + fmm) / (dx * dx);
+        }
+    }
+}
+
+//! (L W)^ij = G^jk D_k W^i + G^ik D_k W^j - (2/3) G^ij D_k W^k at a cell, and
+//! D_k W^i itself (DW[k][i]).
+AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
+conformal_killing(const BoostLocal &L, const amrex::Real W[3],
+                  const amrex::Real dW[3][3], amrex::Real DW[3][3],
+                  amrex::Real LW[3][3], amrex::Real &divW)
+{
+    divW = 0.0;
+    for (int kk = 0; kk < 3; ++kk)
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            amrex::Real s = dW[kk][i];
+            for (int l = 0; l < 3; ++l)
+            {
+                s += L.Gam[i][kk][l] * W[l];
+            }
+            DW[kk][i] = s;
+        }
+        divW += DW[kk][kk];
+    }
+    for (int i = 0; i < 3; ++i)
+    {
+        for (int j = 0; j < 3; ++j)
+        {
+            amrex::Real s = -2.0 / 3.0 * L.Gi[i][j] * divW;
+            for (int kk = 0; kk < 3; ++kk)
+            {
+                s += L.Gi[j][kk] * DW[kk][i] + L.Gi[i][kk] * DW[kk][j];
+            }
+            LW[i][j] = s;
+        }
+    }
+}
+
+//! The outer Robin condition a u + du/dn = 0 in the ghost cells outside the
+//! domain, as MLMG discretises it: u_g = B u_i, B = (1/h - a/2) / (1/h +
+//! a/2), with a = |n.x| / r^2 from the hierarchy's Robin data (one direction
+//! at a time, so edges and corners chain).  Linear extrapolation instead
+//! leaves every flat conformal Killing vector (constants, x, rotations) with
+//! zero residual, and the boosted solve then crawls (~2 % per pass) along
+//! those modes.
+void robin_outside(const amrex::Geometry &a_geom, const amrex::MultiFab &a_ra,
+                   amrex::MultiFab &a_mf)
+{
+    const amrex::Box domain = a_geom.Domain();
+    const auto dlo          = amrex::lbound(domain);
+    const auto dhi          = amrex::ubound(domain);
+    const int ncomp         = a_mf.nComp();
+    const amrex::Real ih    = 1.0 / a_geom.CellSize(0);
+    for (amrex::MFIter mfi(a_mf); mfi.isValid(); ++mfi)
+    {
+        const amrex::Box gbx = mfi.growntilebox();
+        if (domain.contains(gbx))
+        {
+            continue;
+        }
+        const auto arr = a_mf.array(mfi);
+        const auto ra  = a_ra.const_array(mfi);
+        for (int dir = 0; dir < 3; ++dir)
+        {
+            amrex::ParallelFor(
+                gbx, ncomp,
+                [=] AMREX_GPU_DEVICE(int i, int j, int k, int n) noexcept
+                {
+                    const int iv[3] = {i, j, k};
+                    const int lo[3] = {dlo.x, dlo.y, dlo.z};
+                    const int hi[3] = {dhi.x, dhi.y, dhi.z};
+                    int s           = 0;
+                    if (iv[dir] < lo[dir])
+                    {
+                        s = +1;
+                    }
+                    else if (iv[dir] > hi[dir])
+                    {
+                        s = -1;
+                    }
+                    if (s == 0)
+                    {
+                        return;
+                    }
+                    int a[3]            = {i, j, k};
+                    a[dir]              = iv[dir] + s;
+                    const amrex::Real c = ra(i, j, k);
+                    const amrex::Real B = (ih - 0.5 * c) / (ih + 0.5 * c);
+                    arr(i, j, k, n)     = B * arr(a[0], a[1], a[2], n);
+                });
+            amrex::Gpu::streamSynchronize();
+        }
+    }
+}
+
+//! Every level's ghost cells of f (one ghost): fine data averaged down,
+//! same-level copies, coarse interpolation at the coarse-fine faces, and
+//! the outer Robin condition outside the domain (robin_outside).
+void fill_ghosts(const Hierarchy &h, amrex::Vector<amrex::MultiFab> &f)
+{
+    const int ncomp = f[0].nComp();
+    for (int lev = h.nlev - 1; lev > 0; --lev)
+    {
+        amrex::average_down(f[lev], f[lev - 1], h.geom[lev], h.geom[lev - 1],
+                            0, ncomp, h.ref_ratio[lev - 1]);
+    }
+    amrex::Vector<amrex::BCRec> bcs(ncomp);
+    for (auto &bc : bcs)
+    {
+        for (int d = 0; d < AMREX_SPACEDIM; ++d)
+        {
+            bc.setLo(d, amrex::BCType::foextrap);
+            bc.setHi(d, amrex::BCType::foextrap);
+        }
+    }
+    amrex::PhysBCFunctNoOp phys;
+    for (int lev = 0; lev < h.nlev; ++lev)
+    {
+        if (lev == 0)
+        {
+            f[0].FillBoundary(h.geom[0].periodicity());
+        }
+        else
+        {
+            amrex::MultiFab tmp(h.grids[lev], h.dmap[lev], ncomp, 1);
+            amrex::Vector<amrex::MultiFab *> cmf{&f[lev - 1]};
+            amrex::Vector<amrex::MultiFab *> fmf{&f[lev]};
+            amrex::Vector<amrex::Real> tt{0.0};
+            amrex::FillPatchTwoLevels(tmp, amrex::IntVect(1), 0.0, cmf, tt, fmf,
+                                      tt, 0, 0, ncomp, h.geom[lev - 1],
+                                      h.geom[lev], phys, 0, phys, 0,
+                                      h.ref_ratio[lev - 1],
+                                      &amrex::cell_cons_interp, bcs, 0);
+            amrex::MultiFab::Copy(f[lev], tmp, 0, 0, ncomp, 1);
+        }
+        robin_outside(h.geom[lev], h.robin_a[lev], f[lev]);
+    }
+    amrex::Gpu::streamSynchronize();
+}
+
+//! Robin-faced MLABecLaplacian on the hierarchy: (alpha A - beta lap) u.
+void setup_operator(amrex::MLABecLaplacian &op, Hierarchy &h,
+                    amrex::Vector<amrex::MultiFab> &a_bcdata)
+{
+    op.setDomainBC(
+        {AMREX_D_DECL(amrex::LinOpBCType::Robin, amrex::LinOpBCType::Robin,
+                      amrex::LinOpBCType::Robin)},
+        {AMREX_D_DECL(amrex::LinOpBCType::Robin, amrex::LinOpBCType::Robin,
+                      amrex::LinOpBCType::Robin)});
+    for (int lev = 0; lev < h.nlev; ++lev)
+    {
+        op.setLevelBC(lev, &a_bcdata[lev], &h.robin_a[lev], &h.robin_b[lev],
+                      &h.robin_f[lev]);
+    }
+    for (int lev = 0; lev < h.nlev; ++lev)
+    {
+        op.setBCoeffs(lev, amrex::GetArrOfConstPtrs(h.bcoef[lev]));
+    }
+}
+
+//! momentum_model = 1: one solve of BOTH constraints on the exact-boost
+//! background a_id (BinaryWormholeInitialData, "EXACT BOOST"), for the
+//! conformal-factor correction w and the vector potential W,
+//!
+//!   H = D_G^2 Psi - R_G Psi / 8 - (K^2/12 + pi s Pi^2) Psi^5
+//!       - V Psi + (1/8) Ahat.Ahat Psi^-7 = 0,          Psi = Psi_bg + w,
+//!   M^i = D_j Ahat^ij - Psi^6 G^ij [(2/3) d_j K + 8 pi s Pi d_j phi] = 0,
+//!                                          Ahat = Ahat_bg + L_G W,
+//!
+//! with G, K, phi and Pi the background's (both constraints hold with
+//! w = W = 0 for one throat).  Defect correction around flat operators: the
+//! scalar step is the Newton step of the existing solve, (A - lap) dw = H,
+//! with the curved part of D_G^2 w in the residual; the vector step inverts
+//! the flat vector Laplacian through four Poisson solves (V^i with
+//! lap V^i = -M^i, chi with lap chi = x.M; dW = (7/8) V - (1/8) (grad chi +
+//! x_k grad V^k)).  Both residuals are exact in the curved operators, so the
+//! fixed point solves the constraints; the anisotropy |G - delta| <= gamma^2
+//! v^2 sets the contraction.  a_w and a_W carry the initial guess in and
+//! the solution out (one ghost each, filled).
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
+SolveResult solve_once_boosted(Hierarchy &h, const params_t &a_id,
+                               const ConstraintSolveParams &a_params,
+                               amrex::Vector<amrex::MultiFab> &a_w,
+                               amrex::Vector<amrex::MultiFab> &a_W,
+                               double &a_W_update)
+{
+    using amrex::MultiFab;
+    SolveResult result;
+    const int nlev     = h.nlev;
+    const double s_sup = a_id.support_strength;
+
+    amrex::Vector<MultiFab> H(nlev), Mres(nlev), Acoef(nlev), lapw(nlev),
+        dw(nlev), Vv(nlev), chiv(nlev), rhs1(nlev), sol1(nlev), dWv(nlev);
+    for (int lev = 0; lev < nlev; ++lev)
+    {
+        H[lev].define(h.grids[lev], h.dmap[lev], 1, 0);
+        Mres[lev].define(h.grids[lev], h.dmap[lev], 3, 0);
+        Acoef[lev].define(h.grids[lev], h.dmap[lev], 1, 0);
+        lapw[lev].define(h.grids[lev], h.dmap[lev], 1, 0);
+        dw[lev].define(h.grids[lev], h.dmap[lev], 1, 1);
+        Vv[lev].define(h.grids[lev], h.dmap[lev], 3, 1);
+        chiv[lev].define(h.grids[lev], h.dmap[lev], 1, 1);
+        rhs1[lev].define(h.grids[lev], h.dmap[lev], 1, 0);
+        sol1[lev].define(h.grids[lev], h.dmap[lev], 1, 1);
+        dWv[lev].define(h.grids[lev], h.dmap[lev], 3, 0);
+        dw[lev].setVal(0.0);
+        sol1[lev].setVal(0.0);
+    }
+
+    // The Newton operator (A - lap) and the Poisson operator (-lap), both
+    // with the Robin face of the existing solve.
+    amrex::MLABecLaplacian newton(h.geom, h.grids, h.dmap, amrex::LPInfo());
+    setup_operator(newton, h, dw);
+    amrex::MLABecLaplacian poisson(h.geom, h.grids, h.dmap, amrex::LPInfo());
+    setup_operator(poisson, h, sol1);
+
+    const double tol = a_params.newton_tolerance;
+    for (int it = 0; it < a_params.max_newton; ++it)
+    {
+        fill_ghosts(h, a_w);
+        fill_ghosts(h, a_W);
+
+        // The flat composite Laplacian of w, exactly as the MLMG operator
+        // discretises it (apply gives -lap w with alpha = 0).
+        poisson.setScalars(0.0, 1.0);
+        {
+            amrex::MLMG mlmg(poisson);
+            mlmg.apply(amrex::GetVecOfPtrs(lapw), amrex::GetVecOfPtrs(a_w));
+        }
+
+        // Residuals of both constraints and the Newton coefficient.
+        for (int lev = 0; lev < nlev; ++lev)
+        {
+            const BinaryWormholeInitialData background(a_id,
+                                                       h.geom[lev].CellSize(0));
+            const auto dxa   = h.geom[lev].CellSizeArray();
+            const auto plo   = h.geom[lev].ProbLoArray();
+            const double cx  = a_id.grid_center[0];
+            const double cy  = a_id.grid_center[1];
+            const double cz  = a_id.grid_center[2];
+            const auto w_arr = a_w[lev].const_arrays();
+            const auto W_arr = a_W[lev].const_arrays();
+            const auto l_arr = lapw[lev].const_arrays();
+            const auto H_arr = H[lev].arrays();
+            const auto M_arr = Mres[lev].arrays();
+            const auto A_arr = Acoef[lev].arrays();
+            amrex::ParallelFor(
+                H[lev],
+                [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k) noexcept
+                {
+                    const amrex::Real dx  = dxa[0];
+                    const amrex::Real pos[3] = {plo[0] + (i + 0.5) * dx - cx,
+                                                plo[1] + (j + 0.5) * dx - cy,
+                                                plo[2] + (k + 0.5) * dx - cz};
+                    BoostLocal L;
+                    boost_local(background, pos, s_sup, L);
+
+                    GridDerivs gw;
+                    grid_derivs(w_arr[box_no], i, j, k, 0, dx, gw);
+                    GridDerivs gW[3];
+                    amrex::Real W[3], dW[3][3];
+                    for (int n = 0; n < 3; ++n)
+                    {
+                        grid_derivs(W_arr[box_no], i, j, k, n, dx, gW[n]);
+                        W[n] = W_arr[box_no](i, j, k, n);
+                        for (int kk = 0; kk < 3; ++kk)
+                        {
+                            dW[kk][n] = gW[n].d[kk];
+                        }
+                    }
+                    const amrex::Real Psi = L.Psi + w_arr[box_no](i, j, k);
+
+                    amrex::Real DW[3][3], LW[3][3], divW;
+                    conformal_killing(L, W, dW, DW, LW, divW);
+
+                    // Hamiltonian: the curved part of D^2 w, the rest.
+                    amrex::Real curved = 0.0;
+                    for (int a = 0; a < 3; ++a)
+                    {
+                        for (int b = 0; b < 3; ++b)
+                        {
+                            amrex::Real d2 = gw.dd[a][b];
+                            amrex::Real G1 = 0.0;
+                            for (int c = 0; c < 3; ++c)
+                            {
+                                G1 += L.Gam[c][a][b] * gw.d[c];
+                            }
+                            curved += (L.Gi[a][b] - ((a == b) ? 1.0 : 0.0)) * d2 -
+                                      L.Gi[a][b] * G1;
+                        }
+                    }
+                    amrex::Real AA = 0.0;
+                    for (int a = 0; a < 3; ++a)
+                    {
+                        for (int b = 0; b < 3; ++b)
+                        {
+                            const amrex::Real Aab = L.Ahat[a][b] + LW[a][b];
+                            for (int c = 0; c < 3; ++c)
+                            {
+                                for (int d = 0; d < 3; ++d)
+                                {
+                                    AA += L.G[a][c] * L.G[b][d] * Aab *
+                                          (L.Ahat[c][d] + LW[c][d]);
+                                }
+                            }
+                        }
+                    }
+                    const amrex::Real P2  = Psi * Psi;
+                    const amrex::Real P4  = P2 * P2;
+                    const amrex::Real ip  = 1.0 / Psi;
+                    const amrex::Real ip2 = ip * ip;
+                    const amrex::Real ip4 = ip2 * ip2;
+                    const amrex::Real B5 =
+                        L.K * L.K / 12.0 + M_PI * s_sup * L.Pi * L.Pi;
+                    const amrex::Real lin = L.R / 8.0 + L.V;
+                    H_arr[box_no](i, j, k) =
+                        L.lapPsi + curved - l_arr[box_no](i, j, k) -
+                        lin * Psi - B5 * P4 * Psi + 0.125 * AA * ip4 * ip2 * ip;
+                    A_arr[box_no](i, j, k) = amrex::max(
+                        amrex::Real(0.0),
+                        lin + 5.0 * B5 * P4 + 0.875 * AA * ip4 * ip4);
+
+                    // Momentum: D_j (L W)^ij, expanded (see the comment above).
+                    amrex::Real DDW[3][3][3]; // d_j D_k W^i as DDW[j][k][i]
+                    for (int jj = 0; jj < 3; ++jj)
+                    {
+                        for (int kk = 0; kk < 3; ++kk)
+                        {
+                            for (int i2 = 0; i2 < 3; ++i2)
+                            {
+                                amrex::Real s = gW[i2].dd[jj][kk];
+                                for (int l = 0; l < 3; ++l)
+                                {
+                                    s += L.dGam[jj][i2][kk][l] * W[l] +
+                                         L.Gam[i2][kk][l] * dW[jj][l];
+                                }
+                                DDW[jj][kk][i2] = s;
+                            }
+                        }
+                    }
+                    amrex::Real ddivW[3];
+                    for (int jj = 0; jj < 3; ++jj)
+                    {
+                        ddivW[jj] = DDW[jj][0][0] + DDW[jj][1][1] + DDW[jj][2][2];
+                    }
+                    const amrex::Real P6 = P4 * P2;
+                    for (int i2 = 0; i2 < 3; ++i2)
+                    {
+                        amrex::Real div = 0.0;
+                        for (int jj = 0; jj < 3; ++jj)
+                        {
+                            for (int kk = 0; kk < 3; ++kk)
+                            {
+                                div += L.dGi[jj][jj][kk] * DW[kk][i2] +
+                                       L.Gi[jj][kk] * DDW[jj][kk][i2] +
+                                       L.dGi[jj][i2][kk] * DW[kk][jj] +
+                                       L.Gi[i2][kk] * DDW[jj][kk][jj] +
+                                       L.Gam[i2][jj][kk] * LW[kk][jj] +
+                                       L.Gam[jj][jj][kk] * LW[i2][kk];
+                            }
+                            div -= 2.0 / 3.0 *
+                                   (L.dGi[jj][i2][jj] * divW +
+                                    L.Gi[i2][jj] * ddivW[jj]);
+                        }
+                        M_arr[box_no](i, j, k, i2) =
+                            L.divAhat[i2] + div - P6 * L.J[i2];
+                    }
+                });
+        }
+        amrex::Gpu::streamSynchronize();
+
+        // Scalar step: (A - lap) dw = H.
+        newton.setScalars(1.0, 1.0);
+        for (int lev = 0; lev < nlev; ++lev)
+        {
+            newton.setACoeffs(lev, Acoef[lev]);
+            dw[lev].setVal(0.0);
+        }
+        amrex::Real resid_w = 0.0;
+        {
+            amrex::MLMG mlmg(newton);
+            mlmg.setMaxIter(a_params.max_iter);
+            mlmg.setVerbose(a_params.verbose >= 2 ? 2 : 0);
+            mlmg.setBottomVerbose(0);
+            resid_w = mlmg.solve(amrex::GetVecOfPtrs(dw),
+                                 amrex::GetVecOfConstPtrs(H),
+                                 a_params.tolerance_rel, a_params.tolerance_abs);
+        }
+
+        // Vector step: four Poisson solves, (-lap) V^i = M^i and
+        // (-lap) chi = -x.M, then dW from their gradients.  A Robin-faced
+        // operator folds the Robin terms in place at each use, so its
+        // scalars are set again before every solve (AMReX asserts on this).
+        for (int n = 0; n < 4; ++n)
+        {
+            poisson.setScalars(0.0, 1.0);
+            for (int lev = 0; lev < nlev; ++lev)
+            {
+                const auto dxa  = h.geom[lev].CellSizeArray();
+                const auto plo  = h.geom[lev].ProbLoArray();
+                const double cx = a_id.grid_center[0];
+                const double cy = a_id.grid_center[1];
+                const double cz = a_id.grid_center[2];
+                const auto M_arr = Mres[lev].const_arrays();
+                const auto r_arr = rhs1[lev].arrays();
+                amrex::ParallelFor(
+                    rhs1[lev],
+                    [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k) noexcept
+                    {
+                        if (n < 3)
+                        {
+                            r_arr[box_no](i, j, k) = M_arr[box_no](i, j, k, n);
+                            return;
+                        }
+                        const amrex::Real x = plo[0] + (i + 0.5) * dxa[0] - cx;
+                        const amrex::Real y = plo[1] + (j + 0.5) * dxa[1] - cy;
+                        const amrex::Real z = plo[2] + (k + 0.5) * dxa[2] - cz;
+                        r_arr[box_no](i, j, k) =
+                            -(x * M_arr[box_no](i, j, k, 0) +
+                              y * M_arr[box_no](i, j, k, 1) +
+                              z * M_arr[box_no](i, j, k, 2));
+                    });
+                sol1[lev].setVal(0.0);
+            }
+            amrex::MLMG mlmg(poisson);
+            mlmg.setMaxIter(a_params.max_iter);
+            mlmg.setVerbose(a_params.verbose >= 2 ? 2 : 0);
+            mlmg.setBottomVerbose(0);
+            mlmg.solve(amrex::GetVecOfPtrs(sol1), amrex::GetVecOfConstPtrs(rhs1),
+                       a_params.tolerance_rel, a_params.tolerance_abs);
+            for (int lev = 0; lev < nlev; ++lev)
+            {
+                if (n < 3)
+                {
+                    MultiFab::Copy(Vv[lev], sol1[lev], 0, n, 1, 0);
+                }
+                else
+                {
+                    MultiFab::Copy(chiv[lev], sol1[lev], 0, 0, 1, 0);
+                }
+            }
+        }
+        fill_ghosts(h, Vv);
+        fill_ghosts(h, chiv);
+
+        // Updates, and their size.
+        double update_w = 0.0, update_W = 0.0;
+        for (int lev = 0; lev < nlev; ++lev)
+        {
+            const auto dxa  = h.geom[lev].CellSizeArray();
+            const auto plo  = h.geom[lev].ProbLoArray();
+            const double cx = a_id.grid_center[0];
+            const double cy = a_id.grid_center[1];
+            const double cz = a_id.grid_center[2];
+            const auto V_arr = Vv[lev].const_arrays();
+            const auto c_arr = chiv[lev].const_arrays();
+            const auto d_arr = dw[lev].const_arrays();
+            const auto w_arr = a_w[lev].arrays();
+            const auto u_arr = dWv[lev].arrays();
+            amrex::ParallelFor(
+                H[lev],
+                [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k) noexcept
+                {
+                    const amrex::Real dx = dxa[0];
+                    const amrex::Real x[3] = {plo[0] + (i + 0.5) * dx - cx,
+                                              plo[1] + (j + 0.5) * dx - cy,
+                                              plo[2] + (k + 0.5) * dx - cz};
+                    const int e[3][3] = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
+                    for (int a = 0; a < 3; ++a)
+                    {
+                        const int di = e[a][0], dj = e[a][1], dk = e[a][2];
+                        const amrex::Real dchi =
+                            0.5 * (c_arr[box_no](i + di, j + dj, k + dk) -
+                                   c_arr[box_no](i - di, j - dj, k - dk)) /
+                            dx;
+                        amrex::Real xdV = 0.0;
+                        for (int b = 0; b < 3; ++b)
+                        {
+                            xdV += x[b] * 0.5 *
+                                   (V_arr[box_no](i + di, j + dj, k + dk, b) -
+                                    V_arr[box_no](i - di, j - dj, k - dk, b)) /
+                                   dx;
+                        }
+                        u_arr[box_no](i, j, k, a) =
+                            0.875 * V_arr[box_no](i, j, k, a) -
+                            0.125 * (dchi + xdV);
+                    }
+                    w_arr[box_no](i, j, k) += d_arr[box_no](i, j, k);
+                });
+            MultiFab::Add(a_W[lev], dWv[lev], 0, 0, 3, 0);
+            update_w = std::max(update_w, dw[lev].norm0(0, 0));
+            for (int n = 0; n < 3; ++n)
+            {
+                update_W = std::max(update_W, dWv[lev].norm0(n, 0));
+            }
+        }
+        amrex::Gpu::streamSynchronize();
+
+        result.newton_iterations = it + 1;
+        result.last_update       = std::max(update_w, update_W);
+        a_W_update               = update_W;
+        if (a_params.verbose >= 1)
+        {
+            amrex::Print() << "Constraint solve (boosted): pass " << it + 1
+                           << ", MLMG residual " << resid_w
+                           << ", max |dw| = " << update_w
+                           << ", max |dW| ~ " << update_W << "\n";
+        }
+        if (update_w < tol && update_W < tol)
+        {
+            break;
+        }
+    }
+    fill_ghosts(h, a_w);
+    fill_ghosts(h, a_W);
+    return result;
+}
+
+//! The solved (L W)^ij on every level's valid cells (six components), for
+//! the rebuild of the data (a_W with filled ghosts).
+void conformal_killing_field(const Hierarchy &h, const params_t &a_id,
+                             const amrex::Vector<amrex::MultiFab> &a_W,
+                             amrex::Vector<amrex::MultiFab> &a_lw)
+{
+    a_lw.clear();
+    a_lw.resize(h.nlev);
+    for (int lev = 0; lev < h.nlev; ++lev)
+    {
+        a_lw[lev].define(h.grids[lev], h.dmap[lev], 6, 0);
+        const BinaryWormholeInitialData background(a_id,
+                                                   h.geom[lev].CellSize(0));
+        const auto dxa   = h.geom[lev].CellSizeArray();
+        const auto plo   = h.geom[lev].ProbLoArray();
+        const double cx  = a_id.grid_center[0];
+        const double cy  = a_id.grid_center[1];
+        const double cz  = a_id.grid_center[2];
+        const double s   = a_id.support_strength;
+        const auto W_arr = a_W[lev].const_arrays();
+        const auto o_arr = a_lw[lev].arrays();
+        amrex::ParallelFor(
+            a_lw[lev],
+            [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k) noexcept
+            {
+                const amrex::Real dx     = dxa[0];
+                const amrex::Real pos[3] = {plo[0] + (i + 0.5) * dx - cx,
+                                            plo[1] + (j + 0.5) * dx - cy,
+                                            plo[2] + (k + 0.5) * dx - cz};
+                BoostLocal L;
+                boost_local(background, pos, s, L);
+                amrex::Real W[3], dW[3][3];
+                for (int n = 0; n < 3; ++n)
+                {
+                    GridDerivs g;
+                    grid_derivs(W_arr[box_no], i, j, k, n, dx, g);
+                    W[n] = W_arr[box_no](i, j, k, n);
+                    for (int kk = 0; kk < 3; ++kk)
+                    {
+                        dW[kk][n] = g.d[kk];
+                    }
+                }
+                amrex::Real DW[3][3], LW[3][3], divW;
+                conformal_killing(L, W, dW, DW, LW, divW);
+                for (int a = 0; a < 3; ++a)
+                {
+                    for (int b = a; b < 3; ++b)
+                    {
+                        o_arr[box_no](i, j, k, sym_index(a, b)) = LW[a][b];
+                    }
+                }
+            });
+    }
+    amrex::Gpu::streamSynchronize();
 }
 
 //! Throat X's far side from a solved w (see the header): w0 is the
@@ -673,7 +1530,8 @@ ConstraintSolveReport
 solve_drainhole_constraint(amrex::Amr &a_amr,
                            BinaryWormholeInitialData::params_t &a_id,
                            const ConstraintSolveParams &a_params,
-                           amrex::Vector<amrex::MultiFab> &a_w)
+                           amrex::Vector<amrex::MultiFab> &a_w,
+                           amrex::Vector<amrex::MultiFab> &a_lw)
 {
     BL_PROFILE("solve_drainhole_constraint");
     using amrex::MultiFab;
@@ -688,6 +1546,17 @@ solve_drainhole_constraint(amrex::Amr &a_amr,
     {
         a_w[lev].define(h.grids[lev], h.dmap[lev], 1, 1);
         a_w[lev].setVal(0.0);
+    }
+
+    // The exact boost solves both constraints: W is the vector potential
+    // of the Ahat correction (L W)^ij.
+    const bool boosted = (a_id.momentum_model == 1);
+    report.boosted     = boosted;
+    amrex::Vector<MultiFab> W_vec(boosted ? nlev : 0);
+    for (int lev = 0; lev < static_cast<int>(W_vec.size()); ++lev)
+    {
+        W_vec[lev].define(h.grids[lev], h.dmap[lev], 3, 1);
+        W_vec[lev].setVal(0.0);
     }
 
     // The throats the params ask for: mode 3 rescales copies of them.
@@ -736,7 +1605,15 @@ solve_drainhole_constraint(amrex::Amr &a_amr,
     auto solve_at = [&](const double c[2]) -> params_t
     {
         params_t p = background_for(c);
-        last       = solve_once(h, p, a_params, a_w);
+        if (boosted)
+        {
+            last = solve_once_boosted(h, p, a_params, a_w, W_vec,
+                                      report.last_W_update);
+        }
+        else
+        {
+            last = solve_once(h, p, a_params, a_w);
+        }
         ++report.solves;
         for (int X = 0; X < 2; ++X)
         {
@@ -927,6 +1804,24 @@ solve_drainhole_constraint(amrex::Amr &a_amr,
         report.max_w[lev] = a_w[lev].norm0(0, 0);
     }
 
+    // The Ahat correction (L W)^ij for the rebuild (W is averaged down and
+    // its ghosts filled by the last solve), and max |W| per level.
+    a_lw.clear();
+    if (boosted)
+    {
+        report.max_W.resize(nlev);
+        for (int lev = 0; lev < nlev; ++lev)
+        {
+            double mx = 0.0;
+            for (int n = 0; n < 3; ++n)
+            {
+                mx = std::max(mx, W_vec[lev].norm0(n, 0));
+            }
+            report.max_W[lev] = mx;
+        }
+        conformal_killing_field(h, used, W_vec, a_lw);
+    }
+
     report.c_A = used.solve_puncture_A;
     report.c_B = used.solve_puncture_B;
     if (used.b0_A > 0.0)
@@ -1006,7 +1901,12 @@ solve_drainhole_constraint(amrex::Amr &a_amr,
     }
     report.background_mass = mass_bg;
 
-    adm_mass_volume(h, used, a_w, report);
+    // The volume identity is the conformally flat, K = 0 Hamiltonian's; the
+    // boosted data have neither.
+    if (!boosted)
+    {
+        adm_mass_volume(h, used, a_w, report);
+    }
 
     a_id = used;
     return report;

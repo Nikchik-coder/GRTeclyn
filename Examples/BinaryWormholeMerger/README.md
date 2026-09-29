@@ -52,8 +52,12 @@ Bowen–York term is present; three passes at `p = 0.12`–`0.45`), holding φ,
 `Ahat_ij`, the lapse and Π fixed: the momentum constraint stays exact. Each
 throat keeps a puncture coefficient `c` (`Psi → c/r` at its centre). Refused
 with a conformal-factor seed (the solve would erase it), the Helfer
-correction, a boosted scalar, `id_type = 0`, `phantom_mass ≠ 0` or an
-external grid. Full account: the class comment of
+correction, the V2 scalar boost, `id_type = 0`, `phantom_mass ≠ 0` or an
+external grid. Under `wormhole_momentum_model = 1` the background is the
+superposed boosted throats (not conformally flat, K and Π ≠ 0) and the solve
+corrects both constraints, through `w` and a vector potential `W` (Â → Â +
+L_G W); each mouth's far side is read in its rest frame, and the volume
+identity for M_ADM is skipped. Full account: the class comment of
 `BinaryWormholeInitialData.hpp`.
 
 **Which throats the pair is made of.** A mouth's identity is its far side:
@@ -116,7 +120,7 @@ not see the difference — it cannot resolve a throat. `--mass` needs only
 | `wormhole_bare_mass_A/B` | puncture masses m — the gravity (B defaults to A) |
 | `wormhole_centerA/B` | offsets from `center` (B defaults to −A) |
 | `wormhole_momentumA/B` | Bowen–York momenta (B defaults to −A); under momentum model 1, each throat's ADM momentum γmv |
-| `wormhole_momentum_model` | 0 = Bowen–York on the static throat with the scalar at rest (default, bit for bit; the mismatch kicks a moving throat toward inflation as p²); 1 = the exact Lorentz-boosted drainhole: metric, K_ij, φ and Π together, lapse type 5 or 6, no solve yet (see "EXACT BOOST" in `BinaryWormholeInitialData.hpp`) |
+| `wormhole_momentum_model` | 0 = Bowen–York on the static throat with the scalar at rest (default, bit for bit; the mismatch kicks a moving throat toward inflation as p²); 1 = the exact Lorentz-boosted drainhole: metric, K_ij, φ and Π together, lapse type 5 or 6; with `constraint_solve = 1` a pair is solved in both constraints (w and a vector potential W, Â → Â + L_G W) (see "EXACT BOOST" in `BinaryWormholeInitialData.hpp`) |
 | `wormhole_boost_initial_shift` | momentum model 1: 1 = the boosted solution's own shift (default), 0 = zero shift |
 | `wormhole_subtract_phi_asymptote` | shift φ → 0 at infinity (default 1; free only for `phantom_mass = 0`) |
 | `binary_throat_diagnostics` | own module, own file, **default off** |

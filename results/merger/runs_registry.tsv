@@ -211,3 +211,4 @@ t0_single_boost_p045_lbcs	T0 TEST 1 of the boosted pair solve (2026-09-29, propo
 t0_flip_d12_p045_lb	T0 TEST 3a of the boosted pair solve (2026-09-29, proposed): the fly-by's pair (flipped, d = 12,		
 t0_ctrl_rest_d12_lbcs	T0 TEST 2 of the boosted pair solve (2026-09-29, proposed): the d = 12 rest pair of ctrl_rest_d12_csm with		
 single_boost_p045_lbc_t050	RERUN of single_boost_p045_lb_t050 with the collar lapse (2026-09-29, the user's go 16:24 UTC): the same exact-boost		
+t0_flip_d12_p045_lbcs	T0 TEST 3b of the boosted pair solve (2026-09-29, proposed): the fly-by's pair (flipped, d = 12,		

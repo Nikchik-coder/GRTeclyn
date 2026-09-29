@@ -128,6 +128,29 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("wormhole_momentum_model", wormhole_params.momentum_model, 0);
         pp.load("wormhole_boost_initial_shift",
                 wormhole_params.boost_initial_shift, 1);
+        // Each present throat's velocity v e, from its ADM momentum gamma m v
+        // and its drainhole mass.  Set once here: the constraint solve
+        // rescales a and m in place, and the speed must not follow.
+        if (wormhole_params.momentum_model == 1)
+        {
+            for (int X = 0; X < 2; ++X)
+            {
+                const double b = (X == 0) ? wormhole_params.b0_A
+                                          : wormhole_params.b0_B;
+                const double m = (X == 0) ? wormhole_params.drainhole_mass_A
+                                          : wormhole_params.drainhole_mass_B;
+                const auto &P  = (X == 0) ? wormhole_params.momentumA
+                                          : wormhole_params.momentumB;
+                auto &vX       = (X == 0) ? wormhole_params.boost_v_A
+                                          : wormhole_params.boost_v_B;
+                double v = 0.0, gamma = 1.0, e[3];
+                BinaryWormholeInitialData::boost_kinematics(m, P, v, gamma, e);
+                for (int d = 0; d < AMREX_SPACEDIM; ++d)
+                {
+                    vX[d] = (b > 0.0) ? v * e[d] : 0.0;
+                }
+            }
+        }
 
         // The perturbation dial (research/merger/GPU_PLAN_UPDATED.md, Forward
         // Plan, Phase 1).  A unit Gaussian shell on each throat's minimal
@@ -531,12 +554,10 @@ class SimulationParameters : public SimulationParametersBase
                         !boosted,
                         "a boosted scalar has Pi != 0, which breaks the "
                         "momentum constraint the solve holds exact");
-        check_parameter("wormhole_momentum_model", wp.momentum_model,
-                        wp.momentum_model == 0,
-                        "the solve is written for conformally flat data "
-                        "with K = 0 and the scalar at rest; the exact boost "
-                        "(momentum_model = 1) is neither, and is exact for "
-                        "one throat without a solve");
+        check_parameter("constraint_solve_background", cs.background,
+                        wp.momentum_model != 1 || cs.background == 0,
+                        "the exact boost (wormhole_momentum_model = 1) is "
+                        "solved on the superposed boosted throats (0) only");
         check_parameter("phantom_mass", wp.phantom_mass,
                         wp.phantom_mass == 0.0,
                         "the constraint solve assumes a massless phantom "
