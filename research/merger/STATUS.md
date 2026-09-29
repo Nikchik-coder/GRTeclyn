@@ -451,11 +451,12 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 - The L = 128 pair launched first (05:12, `ctrl_{flip,rest}_d16_csm_L128_ml4_t015`) broke the rerun rule; stopped at
   t = 3 and wiped on the user's word, frames included (MANIFEST_CLEANUP_2026-09-28).
 
-## Live — second node (one H100): the production head-on (the user's go, 09:57 UTC)
+## Live — second node (one H100): the production head-on, leg 2 (the user's go, 20:30 UTC)
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; from rest, mode-3 data: clean of the momentum junk; `main3d_csmatch_5f988dbc`) | **DIED at t = 38.845** (20:20:49 UTC 09-29, NaN in h11 on level 5), the dead run's step to the digit, as planned | 100 | — | **leg 2 ready**: `Chk03500` (t = 35, written in 18.9 s) with `Chk03000` / `Chk02500` kept on the second node's scratch; restart from `Chk03500` with `--max-level 6` (the user: good to go after its death, 20:20 UTC), launched on the second node |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl6from35_scalar_chk_t100_csm_r03500` (leg 2: leg 1's Chk03500 with `max_level = 6`, no fill; tracker seeded at the merged core, the only template change; checkpoints every 5 units, newest 3; same binary; the user's go 20:30 UTC. A first launch at 20:33 seeded the tracker at the t = 0 positions ±4: the restart regrid dropped the core to level 3 (lapse and χ on their floors by t = 35.05); stopped 20:37 at t = 35.07, archived `_badseed_2037`) | 35.03 (20:42 UTC; alive: levels 3–5 125 grids each as leg 1, level 6 125 grids; 50 GB; Ham/Mom as leg 1's to 1–3 %; the core lapse sits on the 1e-10 floor from t = 35.01, at the centre, where level 6 was interpolated from level 5 (leg 1: 9.5e-4), inside the common MOTS) | 100 | ~2.0 u/h | the wall (t = 38.85) ~1.9 h, ~22:35 UTC; first Chk (t = 40) ~2.4 h, ~23:05 UTC; t = 45 ~4.9 h, ~01:35 UTC 09-30 |
+| — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; from rest, mode-3 data: clean of the momentum junk; `main3d_csmatch_5f988dbc`) | **DIED at t = 38.845** (20:20:49 UTC 09-29, NaN in h11 on level 5), the dead run's step to the digit, as planned | 100 | — | **leg 2 live** (below); `Chk03500` kept, `Chk02500` / `Chk03000` deleted 20:33 UTC (the user's word) |
 | — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | **DIED at t = 38.85** (00:32 UTC 09-29) | 100 | — | superseded by leg 1 |
 
 - **The head-on died at t = 38.845** (read from its own log at 04:58 UTC 09-29): NaN in h11 (A_ij non-finite) on
