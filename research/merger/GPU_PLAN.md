@@ -1323,6 +1323,26 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-29 (18:35 UTC) — the collar rerun dies; both fixes built and under test
+
+- **The collar rerun was unhealthy from the start and died at t = 37.60** (`single_boost_p045_lbc_t050`, 18:29 UTC,
+  NaN in h11 on level 3). The user flagged its K frame at t = 32. Against the no-collar run, whose t = 0 data differ
+  only in the core lapse:
+  - at t = 4, K inside the throat was 0.125 (0.007) and the momentum-constraint norm 50× larger;
+  - the throat's lapse halved by t = 10;
+  - by t = 32, K ≈ −0.5 inside the throat, a Π ring of 0.22 at it, and the round-scan R swinging +1.3 % → −1.7 %.
+  A zero-lapse core swept across the grid by the boosted shift breaks the rigid boost, which needs the throat's own
+  lapse and shift together. Its size readings are void.
+- **Where the no-collar run's runaway lived** (z = 32 slices): at the pit alone, r < 0.25, until t ≈ 20. K at the pit
+  went negative first (−0.07 at t = 12), then −2αK re-inflated the lapse there. The throat's lapse held 0.51–0.53.
+- **Both fixes built** (`main3d_boostfix_5384c104-dirty`, the user's go ~18:15 UTC):
+  - `CoreLapseFreeze` gets `core_freeze_track_throats`: one window on each tracked throat. The e2e rerun
+    `single_boost_p045_lbf_t050` keeps the boosted lapse and removes the slicing source at r < 0.3 of the pit
+    (tapered to 0.8). There the shift is −v e to 1e-3, so the advected lapse rides with the throat. Card 0, 18:29 UTC,
+    t = 0 identical to the old run's.
+  - The pair background cuts each throat's E, K_ij and Π inside its companion (1 − exp[−(r/0.3a)⁸]); single throats
+    are unchanged bit for bit. Test 3c (`t0_flip_d12_p045_lbcs_cut`) is 3b on this build, card 0, 18:29 UTC.
+
 ### 2026-09-29 (17:20 UTC) — the contraction figure; the pair solve's mouths; the collar's trumpet
 
 - **The contraction figure is made from t = 0 alone** (the user: the shape needs no evolution). There are five

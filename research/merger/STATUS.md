@@ -1,4 +1,4 @@
-# Status — 2026-09-29 17:20 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 18:35 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -44,7 +44,7 @@ flat: +0.03 % at t = 10, where the Bowen–York twin was already at +0.85 %.
     (conformally flat, the scalar at rest). It was not missed for being small.
   - In evolution the exact-boost throat squashes past 1/γ. That is the gauge (1+log and Gamma-driver coordinates),
     not physics: its fitted size stays flat through t = 16. After t ≈ 15 the puncture's lapse runaway may drive part of
-    it; the collar rerun will tell.
+    it; the freeze rerun will tell (the collar rerun could not: it broke the boost).
   - The frames do not fake it: the panel is 722 × 749 px for a 40 × 40 box, a 3.7 % horizontal stretch. The dark lapse
     well around the throat is gauge too.
 - K_z at t = 0–7: the throat's own dipole moves with it and the far lobes relax. The Bowen–York twin instead grows a
@@ -79,21 +79,25 @@ throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit fo
   - **It DIED at t = 26.1** (16:22 UTC, NaN in h11 on level 3). The cause was a lapse runaway at the moving puncture,
     the far side's compactified infinity: 0.20 until t ≈ 10, then 0.28 at t = 15, 0.89 at t = 20 and 2.6 at t = 24,
     with a ring of 0.06 around it. The rest and Bowen–York throats keep 0.19–0.22 there.
-  - The boost carries the puncture across the grid at v = 0.41 from t = 0, with lapse 0.2 there. A black-hole puncture
-    survives this only because its lapse collapses to 0. **Every moving run needs the collar lapse (type 6)**, which
-    freezes the puncture at lapse ~0 and leaves the throat untouched.
-  - **Rerun on card 1** with only the lapse type changed (`single_boost_p045_lbc_t050`, the user's go 16:24 UTC). Its
-    t = 0 data equal the old run's in every field except the lapse at r < 1 about the puncture.
-  - **The collar stops the runaway, but its zero-lapse core drags the lapse down around it**, the way a black-hole
-    trumpet forms (17:16 UTC, z = 32 slices):
-    - the puncture's lapse stays at 0.002–0.003;
-    - the lapse at the throat (r = 1.55 across) falls from 0.52 to 0.26 by t = 10, then holds (0.27 at t = 14);
-    - at r = 3 it falls from 0.67 to 0.48;
-    - the old run held 0.52 at the throat, the rest throat 0.56.
-    So the throat evolves at about half speed: "flat through t = 35" is weaker here, and should be read in the
-    throat's proper time. The cleaner cure keeps the boosted lapse and switches off only the slicing source,
-    −2α(K − 2Θ), in a window riding each tracked puncture. `CoreLapseFreeze` does exactly that, but about a fixed
-    centre; it needs a per-throat window from the tracker.
+  - The boost carries the puncture across the grid at v = 0.41 from t = 0, with lapse 0.2 there. The runaway came from
+    −2α(K − 2Θ) acting on K errors at the pit, and stayed within r < 0.25 of it until t ≈ 20 (z = 32 slices): the
+    lapse at the throat held 0.51–0.53 across the motion through t = 20.
+  - **The collar lapse (type 6) is not the cure: its rerun was unhealthy from the start and DIED at t = 37.60** (18:29
+    UTC, NaN in h11 on level 3; `single_boost_p045_lbc_t050`, card 1, the user's go 16:24 UTC, t = 0 data the old
+    run's except the lapse at r < 1 about the puncture). Its zero-lapse core, swept across the grid by the boosted
+    shift, broke the rigid boost:
+    - at t = 4, K inside the throat was already up to 0.125 (the old run: 0.007), and the momentum-constraint norm
+      50× the old run's (2.7e-3 against 5e-5);
+    - the lapse at the throat fell from 0.52 to 0.26 by t = 10 (a trumpet), and 0.67 → 0.48 at r = 3;
+    - by t = 32, K ≈ −0.5 inside the throat and a Π ring of 0.22 around it (0.009 at t = 0), both still growing; the
+      round-scan R +1.3 % at t = 20, then −1.7 % at t = 32; max |K| 1.7 at the death.
+    Its "size holds" reading is void. Not packed; frames kept.
+  - **The cure being tested: the per-throat slicing freeze** (`single_boost_p045_lbf_t050`, card 0, launched 18:29 UTC,
+    the user's go ~18:15 UTC, no checkpoints). The old run's template with only the freeze added: the boosted lapse
+    (type 5) is kept; inside r < 0.3 of the tracked pit (tapered to 0.8; the throat is at r ≈ 1.4–1.6) the slicing
+    source is removed and the lapse only rides the shift, which is −v e there to 1e-3. `CoreLapseFreeze` with
+    `core_freeze_track_throats = 1` (build `main3d_boostfix_5384c104-dirty`). Its t = 0 data equal the old run's in
+    every field. PASS: no runaway past t = 26, the throat as the old run's through t = 20, R_min flat to t = 50.
 - **The constraint solve for boosted pairs** (d9ca1bc1; tested 16:00–17:10 UTC, four t = 0 runs, level 3, L = 64). It
   solves both constraints, for w and a vector potential W (Â → Â + L_G W).
   - Test 1, one boosted throat: **passes**, the solve leaves it alone (max |w| ≤ 5e-7, max |W| ≤ 5e-6, far side the
@@ -106,8 +110,10 @@ throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit fo
     unsolved pair: 4.27), with w0 = −0.21, σ = 0.70 and max |W| = 128 by the punctures. The likely cause: the
     companion's K_ij and Π reach into each throat's far side, where the constraints weight them by Ψ⁵ and Ψ⁶. Those
     diverge at the puncture: π s Π_Y² Ψ⁵ ~ r⁻⁵ and Ψ⁶ Π_Y ∂φ ~ r⁻⁶, with Π_Y ≈ 2e-3 there. The solve chases that
-    source, and the far-side reading follows. The proposed fix: cut the companion's K_ij, Π and anisotropy E inside
-    each throat, with the collar's profile about each puncture, so each far side holds its own throat only.
+    source, and the far-side reading follows. The fix: cut the companion's K_ij, Π and anisotropy E inside each
+    throat, with the collar's profile about each puncture (1 − exp[−(r/0.3a)⁸]), so each far side holds its own
+    throat only. **Test 3c** (`t0_flip_d12_p045_lbcs_cut`: 3b line for line on the build with the cut; card 0,
+    launched 18:29 UTC, the user's go ~18:15 UTC). PASS: R_min 3.88 per mouth, σ and w0 near the rest pair's.
   - The builds on the way: the first aborted on AMReX's Robin-reuse assertion; the second crawled ~2 % per pass on
     the pair (linear extrapolation outside the box); the third fills those ghosts with the Robin condition.
 
@@ -270,7 +276,7 @@ Along the way:
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
-## Live — first node (two H100s): the boosted pair solve's t = 0 tests (card 0) and the exact-boost end-to-end test (card 1)
+## Live — first node (two H100s): the boosted-pair t = 0 test 3c and the per-throat-freeze end-to-end test (card 0); card 1 free
 
 | card | run | p | t now (09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
@@ -283,7 +289,9 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 | — | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | **stopped at t = 32.97** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | **stopped at t = 32.64** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_lb_t050` (end-to-end test of `wormhole_momentum_model = 1`, launched 14:58 UTC, `main3d_boost_dc34eb51_2026-09-29.ex`, no checkpoints) | 0.45 | **DIED at t = 26.1** (16:22 UTC, NaN in h11, level 3: lapse runaway at the moving puncture) | 50 | — | superseded by the collar rerun |
-| 1 | `single_boost_p045_lbc_t050` (its rerun with the collar lapse, type 6; the user's go 16:24 UTC; same binary; no checkpoints) | 0.45 | 14.9 (17:16) | 50 | 18.7 u/h (19.9 GB) | ~1.9 h, ~19:10 UTC; puncture lapse 0.003, but the throat's lapse fell 0.52 → 0.27 (the collar's trumpet) |
+| — | `single_boost_p045_lbc_t050` (its rerun with the collar lapse, type 6; the user's go 16:24 UTC; same binary; no checkpoints) | 0.45 | **DIED at t = 37.60** (18:29 UTC, NaN in h11, level 3) | 50 | — | unhealthy from t ≤ 4 (the collar breaks the boost; see the CRITICAL finding); not packed, frames kept |
+| 0 | `single_boost_p045_lbf_t050` (the old run with the per-throat slicing freeze instead; the user's go ~18:15 UTC; `main3d_boostfix_5384c104-dirty`; no checkpoints) | 0.45 | 0 (18:29) | 50 | ~18 u/h | ~2.8 h, ~21:20 UTC |
+| 0 | `t0_flip_d12_p045_lbcs_cut` (test 3c: 3b with the companion cut; same build; full preflight) | 0.45 | 0 (18:29) | 0.5 | — | ~1 h, ~19:30 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
 - **The probes stopped at 14:26:50 UTC (the user's word; no NaN in any log).** Last readings (t = 32): rest −0.05 %;
