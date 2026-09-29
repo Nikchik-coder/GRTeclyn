@@ -109,10 +109,10 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by and the spiral (the user's go, 09:48 UTC)
 
-| card | run | p | t now (20:25) | t end | speed | ETA |
+| card | run | p | t now (05:00, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 22.7 | 100 | 2.17 u/h, steady (no merger) | ~36 h, ~08:15 UTC 09-30 |
-| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 23.1 | its NaN, ~60 | 2.2 u/h, ~4 after the merger | ~11–12 h, ~07:30–08:30 UTC 09-29 |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 41.5 | 100 | 2.17 u/h, steady (no merger) | ~27 h, ~08:00 UTC 09-30 |
+| 1 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | 46.7 | its NaN, ~60 | 4.1 u/h since the merger (2.15 → 3.4 → 4.1 over t = 30–45) | ~3–3.5 h, ~08:00–08:30 UTC |
 
 - ETAs corrected 19:15 UTC: a run speeds up ~2× once its pair merges (one refined region instead of two). The old
   spiral went 2.2 → 2.9 → 4.0–4.2 u/h over t = 30–40, so the new one reaches t = 45 at ~04:00 UTC and t = 54 at
@@ -149,15 +149,15 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
   - Each new watcher runs under a supervisor that stops it when the evolution exits, so `run_single.sh`'s final
     drain (launch flags) does not race it; that drain extracts the last plotfile with the launch flags.
   - Why: the audit of what the paper needs from these runs, `CSM_SWITCHOVER.md`.
-- **Spiral plotfiles from t = 54 are kept** (the user's go, 19:28 UTC): `keep_plotfiles.sh` (new) hard-links each
-  complete plotfile from step 5400 into `/tmp/grteclyn_scratch/_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_plt/`
-  and the last ones when the evolution exits, then stops (~9 GB each, ~60–70 GB to the crash). For the oriented
-  scans, the flow finder and an offline core profile at t = 55–60. Status: `keep_plotfiles.sh --status <run dir>`.
-- **Core profile: the user's call, open.** Turning it on needs a restart, and a restart re-seeds the outer zone
-  (r > 6) at ~1.5 % (`run_single.sh`, GLOSSARY): a step in the wave zone and the domain norms from the restart on.
-  Options: no restart (keep plotfiles from t = 45 instead, profiles offline at unit cadence, the χ-floor time from
-  `collapse_diagnostics.dat`); a restart at t ≈ 45 (~04:00 UTC, someone must do it; a timer may not); or a
-  restart now (the step at t ≈ 21, before the burst).
+- **Spiral plotfiles kept from t = 45** (the user's go for t ≥ 54, 19:28 UTC; moved to t ≥ 45 at 05:00 UTC 09-29 so
+  the offline core profile stays possible, while `Plt04500` was still on scratch): `keep_plotfiles.sh` (new)
+  hard-links each complete plotfile into `/tmp/grteclyn_scratch/_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_plt/`
+  and the last ones when the evolution exits, then stops (5.9 GB each, ~100 GB to the crash). For the oriented scans,
+  the flow finder and offline core profiles. The t = 45–53 links go on the user's word if the profile is not wanted.
+  Status: `keep_plotfiles.sh --status <run dir>`.
+- **Core profile: the user's call, open.** No restart was made; t = 45 passed at ~04:30 UTC. Turning it on needs a
+  restart, and a restart re-seeds the outer zone (r > 6) at ~1.5 % (`run_single.sh`, GLOSSARY). What remains: profiles
+  offline from the kept plotfiles (unit cadence; the χ-floor time from `collapse_diagnostics.dat`).
 
 **The four mode-3 rest-pair reruns are closed out** (09:11–09:30 UTC): `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`,
 `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm`, each its old run's packed params with only the data changed (L = 64, N = 128,
@@ -177,9 +177,18 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 ## Live — second node (one H100): the production head-on (the user's go, 09:57 UTC)
 
-| card | run | t now (20:25) | t end | speed | ETA |
+| card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | 23.0 | 100 | 3.85 u/h and rising (2.2 before the merger) | ~19 h, ~15:30 UTC 09-29 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | **DIED at t = 38.85** (00:32 UTC 09-29) | 100 | — | card free |
+
+- **The head-on died at t = 38.845** (read from its own log at 04:58 UTC 09-29): NaN in h11 (A_ij non-finite) on
+  level 5, 17 steps after a regrid, then MPI_ABORT; the manifest says failed, t_end 38.84. The core had reached the
+  χ floor (min χ 1e-20 by t = 38; max |K| 0.6–1.1 over t = 34–39, min lapse 5e-4 → 6e-3). No checkpoints (the
+  user's word), so it cannot be continued. Its old level-5 twin (L = 64, superposed data, plot interval 0.5) ran to
+  t = 100 without a NaN; the params differ only in the box, the mode-3 solve, the checkpoints and the plot interval.
+  The live common-horizon scan found the MOTS in 7 of 39 C rows (t = 22–38; R 5.02 at birth, 4.52 at t = 38). Not
+  closed out: the pack, its trust window and whether the paper cites it are the user's call, and its last three
+  plotfiles on the second node's scratch are the only 3D state left.
 
 - **Common horizon at t = 22.0** (the live scan, half 4.0): r = 2.53, areal radius R = 5.02 (the superposed runs:
   5.53 live at t = 21.5 in the old level-5 arm, 5.56 offline in the scout), ~10 % smaller, as the mode-3 mouths are.
