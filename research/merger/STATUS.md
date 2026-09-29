@@ -129,13 +129,18 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 | 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 4.7 | 50 | 5.2 u/h | ~8.7 h, ~18:00 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
-- **The probes at t ≈ 4.7 (09:17 UTC):** alive, no NaN. The throat's areal radius (scan C, full metric, centred) is
-  flat to 1e-4 in all three (R = 3.864); the A rows sit 1/32 off-centre and drift by up to 5e-4, so read C. The
-  boosted throats move: +0.22 in y by t = 4.3 at p = 0.45, +0.09 at p = 0.12, the rest arm not at all. Their grid
-  speed is the shift (β^y = −0.095 / −0.026 at t = 4) and grows as the shift builds; the physical speed (v ≈ 0.41 /
-  0.12) is fixed by the t = 0 momentum. Nothing feeds momentum or energy after t = 0: the momentum is read only by the
-  initial data and the solve; support 1 with no ramp, phantom mass 0, core damping/freeze/fill off; the sponge only
-  absorbs. The kick shows in R from t ≈ 15 (~2 h, ~11:15 UTC).
+- **The probes at t ≈ 6.5 (09:37 UTC):** alive, no NaN. Read R from the A rows of `horizon_scan.dat` (level 3,
+  dr 0.02; the C rows are the level-1 common scan, dr 0.08, too coarse for a single throat).
+  - Rest: R = 3.8772 flat to 1e-5, not moving.
+  - p = 0.12: R within ±0.05 % (the scan re-centring on the moving throat), moved +0.16 in y.
+  - p = 0.45: R +0.23 % by t = 6 (3.8757 → 3.8847), most of it after t = 3, ~0.08 % per unit; moved +0.47 in y.
+    The ε = −1e-3 / −1e-2 seeds rise 0.09 % / 0.88 % by t = 6, so this reads ε ≈ −2.6e-3 if physical; but it came
+    as the throat started moving on the grid, so part may be the moving throat's coordinate shape. Decisive past
+    ~1 % (t ≈ 15–20, ~11:15–12:15 UTC).
+  - Their grid speed is the shift (β^y = −0.095 / −0.026 at t = 4) and grows as the shift builds; the physical
+    speed (v ≈ 0.41 / 0.12) is fixed by the t = 0 momentum. Nothing feeds momentum or energy after t = 0: the
+    momentum is read only by the initial data and the solve; support 1 with no ramp, phantom mass 0, core
+    damping/freeze/fill off; the sponge only absorbs.
 - **Close-out of the spiral (08:25–08:45 UTC):** no NaN in any stream or in `run.log`; trust window t = 57 (the
   constraint norms grow ×1.3 per unit from t ≈ 50, cut at the fly-by's L2 H ≈ 2.5e-2); registry, README and GPU_PLAN
   entries written; claims check 1075 rows, 0 problems; identity grep clean.
