@@ -127,7 +127,14 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 | 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 0.4 | 50 | ~6 u/h (three share the card) | ~8.3 h, ~16:45 UTC |
 | 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 0.3 | 50 | ~6 u/h | ~8.3 h, ~16:45 UTC |
 | 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 0.2 | 50 | ~6 u/h | ~8.3 h, ~16:45 UTC |
-| — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | closing out |
+| — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
+
+- **Close-out of the spiral (08:25–08:45 UTC):** no NaN in any stream or in `run.log`; trust window t = 57 (the
+  constraint norms grow ×1.3 per unit from t ≈ 50, cut at the fly-by's L2 H ≈ 2.5e-2); registry, README and GPU_PLAN
+  entries written; claims check 1075 rows, 0 problems; identity grep clean. Not pruned (the user's word pending):
+  its scratch keeps `Chk05500`, `Chk06000` and the last plotfiles. The pack rebuild also packed the dead production
+  head-on `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` (finished, not live; not filed): the claims check
+  needs every packed run in Table I, so it is listed `-`; its filing, trust window and citation stay the user's call.
 
 - **The spiral stopped and the probes launched** (the user, 08:20 UTC 09-29). The spiral wrote `Chk06040` (t = 60.40)
   and exited normally (AMReX finalized, no NaN); the checkpoint is hard-linked into

@@ -14,6 +14,12 @@ corroborated by the offline scan in `horizon/` (the headline arms,
 t = 51.4+) are evidence of a common horizon.
 
 
+## `(unfiled, still on a card)`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm | MODE-3 PRODUCTION HEAD-ON, L = 128 (2026-09-28): the level-5 d = 8 head-on on far-side-matched data; a blessed exception to the rerun rule (the user's word): old L = 64 physics in the shared production geometry, for one geometry and a reflection-free window to t ~ 84 at R = 44 in the shared energy table. -- t = 0: M_ADM(0) = 2.35731, one-body masses 1.0000 (launched 10:02 UTC, second node, no checkpoints) | 0.00 | 38.84 | NaN at t = 38.84 DIED at t = 38.845 (00:32 UTC 09-29, 14.5 h, 2.68 u/h average): NaN in h11 on level 5, a one-step overflow at the merged core 0.15 from the centre, inside the common MOTS (r = 2.5 at t = 38), 16 cells from any grid edge -- the L = 64 scout's interior failure (t = 26.9) twelve units later; the superposed level-5 twin walked through it (core lapse on the 1e-10 floor from t = 38.15) where this run's core lapse re-inflated (8e-4 -> 9e-3 over t = 37-38.25) and chi hit the floor at t = 38.84. Outside the horizon clean to the end: common MOTS at t = 22 (R 5.02, peak 5.09 at t = 23; old twin 5.53 / 5.58), lost t = 26-35, back 3.87 -> 4.52 over t = 36-38; (2,0) burst peaks R = 10 / 14 / 18 at t = 28.8 / 33.0 / 37.5 (old 28.1 / 32.3 / 36.7), R = 20 at its peak at the death, R = 28-44 never reached. No checkpoints; scratch wiped 05:13 UTC 09-29 (MANIFEST_CLEANUP_2026-09-29); not packed: superseded by the checkpointed rerun. Frames kept. | 0.08 | - | 8.868e-03 | 4.146e-04 |
+
 ## `01_single_throat`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
@@ -157,6 +163,12 @@ t = 51.4+) are evidence of a common horizon.
 | place_d40_step1 | placement probe for the V1 scout: the scout's two throats at rest at d = 40, one step; per-mouth radius at t = 0 only (placement curve, subtracted from the scout's pre-contact readings) | 0.00 | 0.01 | finished clean at t = 0.01 | 39.94 | - | 2.140e-01 | 3.440e-03 |
 | place_d44_step1 | placement probe for the V1 scout: the scout's two throats at rest at d = 44, one step; per-mouth radius at t = 0 only (placement curve, subtracted from the scout's pre-contact readings) | 0.00 | 0.01 | finished clean at t = 0.01 | 43.94 | - | 2.145e-01 | 3.618e-03 |
 | place_d48_step1 | placement probe for the V1 scout: the scout's two throats at rest at d = 48, one step; per-mouth radius at t = 0 only (placement curve, subtracted from the scout's pre-contact readings) | 0.00 | 0.01 | finished clean at t = 0.01 | 47.94 | - | 2.149e-01 | 3.915e-03 |
+
+## `05_binary_spiral/csm`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| v2_spiral_d12_p012_L128_lvl5from0_t100_csm | MODE-3 RERUN of v2_spiral_d12_p012_L128_lvl5from0_t100 (2026-09-28): the p = 0.12 spiral at level 5 from t = 0 on far-side-matched data. Exact rerun (only the solve block and checkpoints every 5, newest 3). t = 0: M_ADM 2.27476 (CPU mode-3 check at p = 0.12: 2.27920 on L = 64); each mouth's far-side mass -4.81048 and charge 3.03437, one-body mass 1.0000 (match 4e-10). | 0.00 | 60.40 | stopped by dump_and_stop at t = 60.40 on the user's word (it does not end in a merger), no NaN; its last checkpoint Chk06040 is kept (_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_chk) for a later wave extraction | 0.44 | - | 1.788e-03 | 4.311e-02 |
 
 ## `05_binary_spiral/p012`
 

@@ -1115,6 +1115,26 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   build against 5f988dbc, which mode 3 needs). The fitted δ drifts with the reading time (1.8 at t = 6, 2.4 at 9.5,
   2.65 at 11.5), so δ is quoted at the superposed ladder's t = 11.5.
 
+### Mode-3 rerun of the p = 0.12 spiral: the merged pair inflates instead of collapsing (2026-09-29)
+- **Claim.** On far-side-matched data the level-5 p = 0.12 spiral does not end behind a common horizon. The
+  superposed run had a common MOTS from t ≤ 55 and died at t = 59.94; this one ran past t = 59.94 without a NaN
+  and without a common MOTS: the flow finder (level 2, half 9, lmax 8, three seeds about the snapped pit) finds
+  none on any plotfile t = 53–60 (inner surfaces anti-trapped, θ_out ≈ +0.3 and θ_in up to +2.5; the outer one at
+  θ_out ≈ 0 on average with half its area negative, never converging). The common throat, the minimal sphere about
+  the midpoint on the full metric, grows 5.46 → 5.60 over t = 45–52 with θ± ≈ +0.5 at its minimum and leaves the scan
+  window at t = 53; the core's max |K| peaks at 0.42 at t = 55 and falls to 0.29 (the superposed run's: 53 at its
+  NaN). Each mouth starts inflating like a single throat kicked by ε_eff ≈ −0.8 % (the seed ladder's timing), and
+  the pair merges at t ≈ 40–45, after the mouths have grown past +50 %.
+- **Runs.** `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` *(pack, `campaign/05_binary_spiral/csm/`)*: its old run's
+  params with only the constraint solve (mode 3) and rolling checkpoints added; stopped at t = 60.40 by
+  `dump_and_stop` on the user's word; trust window t = 57 (`trust_windows.tsv`). Its last checkpoint (`Chk06040`)
+  and plotfiles t = 45–60.40 are kept on the first node's scratch (`_keep_*`); the finder's logs are in the run's
+  `flow_finder/wide/`.
+- **Caveats.** The areal-radius stream (r/√χ along one ray) reads a shrinking neck (4.72 → 3.80 over t = 40–57); it
+  is the flat-metric estimate, which under-reads once the shift distorts the grid, and says nothing about collapse.
+  The finder's null is local (three seeds, lmax 8) in a box that held every surface it tried. One resolution; the
+  outgoing burst has not reached R = 30–44 by the stop.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,

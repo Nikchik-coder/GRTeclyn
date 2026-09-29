@@ -1323,6 +1323,35 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-29 (08:20 UTC) — the mode-3 spiral inflates instead of merging: stopped at t = 60.40 and closed out; three single-throat momentum probes launched
+
+- **The spiral ends in no merger.** On far-side-matched data the level-5 p = 0.12 spiral has no common MOTS through
+  t = 60 (flow finder `ah_flow_finder.py`, level 2, half 9, lmax 8, seeds 2.0 / 3.5 / 5.0 about the snapped pit, every
+  plotfile t = 53–60: inner surfaces anti-trapped, the outer one at θ_out ≈ 0 on average with half its area negative,
+  never converging), where the superposed run had one from t ≤ 55 and died at t = 59.94. The common throat (the
+  minimal sphere about the midpoint, full metric) grew 5.46 → 5.60 over t = 45–52, anti-trapped, and left the scan
+  window at t = 53; the core's max |K| peaked at 0.42 at t = 55 and fell to 0.29. Against the superposed level-4 arm
+  on one log scale the lapse well is ~2× wider with two growing lobes. The `areal_radius.dat` "shrinking neck" is the
+  flat r/√χ along one ray and is not evidence of collapse.
+- **Why (the race).** Each mouth's early R/R0 − 1 follows the single-throat seed ladder: ε_eff ≈ −0.8 % for the
+  spiral's mouths, −1.2 % for the fly-by's and the head-on's, −0.4 % for the p = 0 rest pairs at d = 12. The d = 8
+  head-on merged at t = 22 with its mouths at +6–10 % and collapsed; the spiral merges at t ≈ 40–45, after its mouths
+  grew past +50 %, and inflates. At d = 12 even p = 0 contacts only at t ≈ 28–30. Proposed (not queued): d = 8 spirals
+  with p = 0.05 and 0.10, level-3 scouts first.
+- **Stopped at t = 60.40** by `dump_and_stop` (08:21:51 UTC, the user: "it's not ending in merger anyway"), no NaN,
+  AMReX finalized. Its last checkpoint `Chk06040` is hard-linked into
+  `/tmp/grteclyn_scratch/_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_chk/` (25 GB) for a later wave extraction
+  (the burst has not reached R = 30–44); the plotfiles t = 45–60.40 stay in `_keep_..._plt`. Trust window t = 57: the
+  constraint norms grow ×1.3 per unit from t ≈ 50 (L2 H 1.7e-3 → 2.4e-2 at t = 57), cut where the p = 0.45 fly-by's
+  was (L2 H ≈ 2.5e-2). Filed `05_binary_spiral/csm/`, packed with movies to t = 57; Table I row `-`.
+- **Momentum probes launched 08:23 UTC** on the freed card (the user's go, no checkpoints, the user's word):
+  `single_rest_csm_t050`, `single_boost_p012_csm_t050`, `single_boost_p045_csm_t050` (L = 64, N = 128, level 3,
+  t = 50, mode-3 solve, the throat from y = −8 moving +y). t = 0: M_ADM 1.00137 / 1.00703 / 1.07969, far sides at
+  the isolated −4.81048 / 3.03437. ~6 u/h each sharing the card, t = 50 at ~16:45 UTC. The unsolved pair
+  (`single_boost_p045_t050`, `..._vscal_t050`; the code refuses a boosted scalar under the solve) waits for a card.
+  The August probe `02_moving_throat/s20_boost_p02` (unsolved, p = 0.2) already inflates on the ε = −1e-2 track
+  ~2 units behind (ε_eff ≈ −0.6 %) while the same throat at rest collapses at t ≈ 60–65.
+
 ### 2026-09-29 (05:15 UTC) — the production head-on died at t = 38.85 at the merged core; scratch wiped; the checkpointed rerun proposed, waiting for the go
 
 - **Died 00:32 UTC at t = 38.845**, 14.5 h in, 2.68 u/h average: NaN in h11 on level 5, a one-step
