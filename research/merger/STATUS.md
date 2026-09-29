@@ -186,6 +186,19 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
   χ floor (min χ 1e-20 by t = 38; max |K| 0.6–1.1 over t = 34–39, min lapse 5e-4 → 6e-3). No checkpoints (the
   user's word), so it cannot be continued. Its old level-5 twin (L = 64, superposed data, plot interval 0.5) ran to
   t = 100 without a NaN; the params differ only in the box, the mode-3 solve, the checkpoints and the plot interval.
+- **Anatomy of the death** (05:10 UTC 09-29, the autopsy and `collapse_diagnostics.dat` against the old twin's): a
+  one-step overflow at the merged core, 0.15 from the box centre, inside the common MOTS (r = 2.5 at t = 38) and 16
+  cells from any level-5 grid edge: χ 1e-3 → 1e+129, h11 0.95 → 1e+155, K 0.08 → 1e+178 in one dt = 3e-4. The
+  interior failure of the L = 64 scout (t = 26.9: χ floor at the midpoint, K doubling), 12 units later. The old
+  level-5 twin walked through it because its core lapse froze on the 1e-10 floor from t = 38.15; this run's core
+  lapse re-inflated instead (8e-4 at t = 37 → 9e-3 at t = 38.25) with |K| ≈ 1, χ hit the floor at t = 38.84 and the
+  next step overflowed. Outside the horizon the run is clean to the end: the (2,0) burst peaks at R = 10 / 14 / 18
+  at t = 28.8 / 33.0 / 37.5 (old twin 28.1 / 32.3 / 36.7, 3–5 % weaker); at R = 20 it is at its peak when the run
+  dies, and R = 28–44 never receive it. Common MOTS: R 5.02 at t = 22, peak 5.09 at t = 23 (old 5.53 / 5.58), lost
+  t = 26–35 as in the old twin, back at 3.87 → 4.52 over t = 36–38 (old 4.27 → 4.63). Dynamics: same infall to
+  t = 10, then 2–3 % ahead (sep 5.11 vs 5.23 at t = 15); throat lapse collapses earlier (0.064 vs 0.090 at t = 20).
+  Speed 2.68 u/h average (old L = 64 twin 3.54). The three plotfiles left on scratch are t = 36–38, the MOTS-return
+  window, for an offline oriented scan before any prune.
   The live common-horizon scan found the MOTS in 7 of 39 C rows (t = 22–38; R 5.02 at birth, 4.52 at t = 38). Not
   closed out: the pack, its trust window and whether the paper cites it are the user's call, and its last three
   plotfiles on the second node's scratch are the only 3D state left.
