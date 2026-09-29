@@ -66,10 +66,22 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
      "below its value at formation"), and the `fig:constraints` caption already says the norms compare only within
      one box. The binary norm values the text quotes (the Helfer fly-by's 3.2e-3 → 1.6e-2, the spiral's 3.5 % level
      agreement) are re-read from their reruns.
+     Rechecked 2026-09-29 (06:10 UTC) on the production runs against their superposed twins (the head-on through
+     CS-1 against its scout, one grid; the level-5 head-on's twin is in the L = 64 box): 𝓗 1.1–1.4× through t ≈ 20,
+     the base-grid floor of the smaller matched throats (R_min 3.89 against 4.25–4.47); 𝓜 about half over
+     t = 0.5–10 (head-on 0.4–0.56×, spiral 0.45–0.66× to t = 15), no gain in the fly-by (1.0–1.3×). The brief 𝓗 peaks
+     (up to ~1.5) are in the old orbiting runs too. Late: the spiral sits below its old run over t = 35–50 (𝓗 0.77×,
+     𝓜 0.5×; the old run's 𝓜 bump of 1–3e-2 at t = 39–43 is absent); the fly-by's 𝓗 is 1.7–2× at t = 40–43, while
+     its mouths inflate faster. Per-level 𝓗/𝓜 during the evolution stay unlogged (skipped on the user's word,
+     2026-09-28 09:20 UTC: no claim needs them); if a referee asks, any kept checkpoint is graded per level by a 0-step
+     restart that writes the `constraints` field.
    - Re-measure Sec. II D's solve paragraph on mode-3 data. Its numbers are the mode-0 solve's, which keeps the
      superposed mouths: throat-shell 𝓗 9.7e-3 → 5.1e-6, M_far moving 0.1 %, R_min 1.3 % (`clmSolveShellHamSup`,
      `clmSolveShellHamSolved`, `clmSolveKeepsMfar`, `clmSolveKeepsRmin`). M_ADM = 2.738 (`clmSolvedHeadonMadm`) is
-     CS-1's, the mode-0 pair's; the mode-3 pair at d = 8 has 2.360.
+     CS-1's, the mode-0 pair's; the mode-3 pair at d = 8 has 2.360. How: a t = 0-only start (`max_steps = 0`) of the
+     mode-3 d = 8 pair on CS-1's grid with the `constraints` plot field (`amr.derive_plot_vars = constraints`,
+     `G_Newton = 1.0`), graded by `constraint_solve_t0_check.py`, as the mode-0 number was. This is the paper's only
+     per-level constraint number.
    - The scalar energies the paper quotes are partly near-field and change: `clmGwScalarEnergyFlyby`, the
      `clmGwScalarRatio*` rows, the head-on E_φ (step 6).
    - Switching the ledger and the figures to the mode-3 runs: every extractor and figure module that breaks or reads
