@@ -131,10 +131,13 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 - **Close-out of the spiral (08:25–08:45 UTC):** no NaN in any stream or in `run.log`; trust window t = 57 (the
   constraint norms grow ×1.3 per unit from t ≈ 50, cut at the fly-by's L2 H ≈ 2.5e-2); registry, README and GPU_PLAN
-  entries written; claims check 1075 rows, 0 problems; identity grep clean. Not pruned (the user's word pending):
-  its scratch keeps `Chk05500`, `Chk06000` and the last plotfiles. The pack rebuild also packed the dead production
-  head-on `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` (finished, not live; not filed): the claims check
-  needs every packed run in Table I, so it is listed `-`; its filing, trust window and citation stay the user's call.
+  entries written; claims check 1075 rows, 0 problems; identity grep clean.
+- **Wiped 08:52 UTC, the user's word** (`MANIFEST_CLEANUP_2026-09-29`): the spiral's scratch (`Chk05500`, `Chk06000`,
+  the last plotfiles) and its plotfile keep (t = 45–60.40), 146 GB freed, 983 GB free. Kept: `Chk06040` in
+  `_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_chk/` (25 GB) for a later wave extraction.
+- **The dead production head-on is out of the pack** (08:55 UTC, the user's word): the close-out's rebuild had packed
+  it (finished, not filed). Its run dir moved to `runs/wormhole_merger/00_archive/superseded/` (the packer skips
+  `00_*`; data, the autopsy and frames kept), its packed copy and Table I row removed, the pack rebuilt.
 
 - **The spiral stopped and the probes launched** (the user, 08:20 UTC 09-29). The spiral wrote `Chk06040` (t = 60.40)
   and exited normally (AMReX finalized, no NaN); the checkpoint is hard-linked into
@@ -287,7 +290,8 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
   Speed 2.68 u/h average (old L = 64 twin 3.54).
 - **Scratch wiped 05:13 UTC 09-29** (the user's word: "left overs should be wipe out"): its three plotfiles (t = 36–38,
   19 GB) and CS-1's empty scratch dir; the second node's scratch is empty, 671 GB free. The run dir stays on NFS
-  (data to t = 38.84, the autopsy, frames 1092 files). `MANIFEST_CLEANUP_2026-09-29.md`.
+  (data to t = 38.84, the autopsy, frames 1092 files), since 08:55 UTC in `00_archive/superseded/` (out of the pack,
+  the user's word). `MANIFEST_CLEANUP_2026-09-29.md`.
 - **The plan (the user, 05:30 UTC 09-29): through the core failure by resolution, no fill.** Three legs:
   1. **Leg 1, live since 05:46 UTC:** `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm`, the dead run's
      params (level 5 from t = 0) with rolling checkpoints every 5 units, newest 3, as the fly-by and the spiral
