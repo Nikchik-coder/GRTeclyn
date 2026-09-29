@@ -1,4 +1,4 @@
-# Status — 2026-09-28 14:25 UTC (queue updated ~11 UTC)
+# Status — 2026-09-29 09:20 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -121,14 +121,21 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by (card 0) and the single-throat momentum probes (card 1)
 
-| card | run | p | t now (08:59, 09-29) | t end | speed | ETA |
+| card | run | p | t now (09:17, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 50.2 | 100 | 2.1 u/h (28.5 min per unit since t = 48) | ~23.7 h, ~08:40 UTC 09-30 |
-| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 3.2 | 50 | 5.2 u/h (11.5 min per unit; three share the card) | ~9 h, ~18:00 UTC |
-| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 3.2 | 50 | 5.2 u/h | ~9 h, ~18:00 UTC |
-| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 3.1 | 50 | 5.2 u/h | ~9 h, ~18:00 UTC |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 50.9 | 100 | 2.1 u/h (28 min per unit over t = 46–50) | ~23 h, ~08:30 UTC 09-30 |
+| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 4.8 | 50 | 5.2 u/h (11.5 min per unit; three share the card, 59 GB) | ~8.7 h, ~18:00 UTC |
+| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 4.7 | 50 | 5.2 u/h | ~8.7 h, ~18:00 UTC |
+| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 4.7 | 50 | 5.2 u/h | ~8.7 h, ~18:00 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
+- **The probes at t ≈ 4.7 (09:17 UTC):** alive, no NaN. The throat's areal radius (scan C, full metric, centred) is
+  flat to 1e-4 in all three (R = 3.864); the A rows sit 1/32 off-centre and drift by up to 5e-4, so read C. The
+  boosted throats move: +0.22 in y by t = 4.3 at p = 0.45, +0.09 at p = 0.12, the rest arm not at all. Their grid
+  speed is the shift (β^y = −0.095 / −0.026 at t = 4) and grows as the shift builds; the physical speed (v ≈ 0.41 /
+  0.12) is fixed by the t = 0 momentum. Nothing feeds momentum or energy after t = 0: the momentum is read only by the
+  initial data and the solve; support 1 with no ramp, phantom mass 0, core damping/freeze/fill off; the sponge only
+  absorbs. The kick shows in R from t ≈ 15 (~2 h, ~11:15 UTC).
 - **Close-out of the spiral (08:25–08:45 UTC):** no NaN in any stream or in `run.log`; trust window t = 57 (the
   constraint norms grow ×1.3 per unit from t ≈ 50, cut at the fly-by's L2 H ≈ 2.5e-2); registry, README and GPU_PLAN
   entries written; claims check 1075 rows, 0 problems; identity grep clean.
@@ -142,8 +149,7 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 - **The spiral stopped and the probes launched** (the user, 08:20 UTC 09-29). The spiral wrote `Chk06040` (t = 60.40)
   and exited normally (AMReX finalized, no NaN); the checkpoint is hard-linked into
   `/tmp/grteclyn_scratch/_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_chk/` (25 GB) for a later wave extraction,
-  the plotfiles t = 45–60.40 stay in its `_keep_..._plt`. Its scratch still holds `Chk05500`, `Chk06000` and the last
-  three plotfiles (links of the kept ones): prune on the user's word. The three mode-3 single-throat probes went
+  its plotfile keep (t = 45–60.40) and the rest of its scratch were wiped at 08:52 (above). The three mode-3 single-throat probes went
   on card 1 at 08:23 UTC (templates and launch line below; no checkpoints, the user's word). t = 0 read at 08:25:
   M_ADM 1.00137 / 1.00703 / 1.07969 (rest / 0.12 / 0.45; the exact throat's volume identity is 1.0014), every far
   side at the isolated −4.81048 / 3.03437, one-body mass 1.0000, the rest arm's solve w ~ 1e-14; L2_Ham(0) 2.12e-3
@@ -193,8 +199,8 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
      - `single_boost_p045_t050` and `single_boost_p045_vscal_t050` (no solve: the code refuses a boosted scalar under
        the solve; scalar at rest against scalar moving at v = 0.4104).
      - Launch each with `--profile headon-scout --zoom 40 --coord 32 --binary $B` (the mode-3 binary). ~18.5 GB and
-       ~3 h each alone (18 u/h); none fits beside the production runs (20–22 GB free, cards at 94–98 %), so four go
-       on the spiral's card when it ends (~18:20 UTC), the fifth on the next free card.
+       ~3 h each alone (18 u/h); the three solved arms share card 1 at 5.2 u/h each (59 GB). The unsolved pair waits
+       for a card: card 1 frees at ~18:00 UTC, card 0 at ~08:30 UTC 09-30.
      - Existing data point: `02_moving_throat/s20_boost_p02` (p = 0.2 along z, level 3, unsolved, 2026-08-31)
        inflates on the ε = −1e-2 track ~2 units behind (ε_eff ≈ −0.6 %; χ at the pit 1.6e-4 and max |K| 0.061 at
        t = 40, against 2.6e-4 / 0.060 for the seed), while the same throat at rest (`single_hold_t100`) drifts to
@@ -203,12 +209,7 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
      level-3 scouts first (the −1e-2 seed runs identically at levels 3 and 4), then level 5 for the winner. Lowering p
      at d = 12 is not enough.
 
-- ETAs corrected 19:15 UTC: a run speeds up ~2× once its pair merges (one refined region instead of two). The old
-  spiral went 2.2 → 2.9 → 4.0–4.2 u/h over t = 30–40, so the new one reaches t = 45 at ~04:00 UTC and t = 54 at
-  ~06:00 UTC (the 18:11 row assumed 2.2 throughout). It trails the old spiral by ~0.4 units at t = 20 (separation
-  8.41 vs 8.22).
-
-- Launched 09:49 UTC, both exact reruns of their old runs (only the solve block and checkpoints every 5 units, newest
+- The fly-by and the spiral: launched 09:49 UTC 09-28, both exact reruns of their old runs (only the solve block and checkpoints every 5 units, newest
   3), binary `main3d_csmatch_5f988dbc_2026-09-28.ex`, profiles `orbit-modes-scan-prod` / `orbit-modes-prod` (the
   scalar at 14/20/30/44), zoom 64. The fly-by's name keeps its old run's `merge_orbit_` prefix: it is the p = 0.45
   fly-by; the merger is the p = 0.12 spiral.
@@ -219,7 +220,7 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 - Checkpoints confirmed: `Chk00500` (t = 5) written 12:12 / 12:14 UTC, Header complete, 36–37 GB each; with the t = 0
   one on scratch, rolling to the newest 3. Plotfiles keep the last 3 (00700–00900 at 14:23). Each run holds 80 GB of
   scratch now, ~135 GB at most; 1.0 TB free. No NaN; consumer errors 0; 10 frames each (t = 0–9).
-- **All three production runs verified at 10:15 UTC** (fly-by, spiral, and the second node's head-on):
+- **All three production runs verified at 10:15 UTC 09-28** (fly-by, spiral, and the second node's head-on):
   - each run's `params.txt` differs from its old run only in the named changes;
   - mode 3 in every `constraint_solve.dat`, converged: every MLMG solve ≤ 4e-9, each mouth's far side matched to
     8e-10 / 4e-10 / 4e-8, one-body mass 1.000000;
@@ -227,7 +228,7 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
   - the consumer's scalar and Ψ4 at 14/20/30/44 (head-on 10/14/18/20/30/44), the same small-data files as the old
     runs, horizon scans (fly-by, head-on) with R_min 3.8763 / 3.8786 at t = 0, 15 frame fields, no consumer errors;
   - no NaN.
-- **Consumers restarted 18:08 / 18:09 UTC** (the user's go; `restart_consumer.sh`, evolution untouched; frames 504 →
+- **Consumers restarted 18:08 / 18:09 UTC 09-28** (the user's go; `restart_consumer.sh`, evolution untouched; frames 504 →
   504 and every stream intact to t = 17, checked with `restart_consumer.sh --check`):
   - fly-by: `--horizon-half 3.0 --horizon-common-level 3`, its old run's scan window. It had launched on the defaults
     (2.5, level 1, from the `orbit-modes-scan` profile; the profile passes 3.0 / level 3 since 19:01 UTC), which move
@@ -238,15 +239,9 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
   - Each new watcher runs under a supervisor that stops it when the evolution exits, so `run_single.sh`'s final
     drain (launch flags) does not race it; that drain extracts the last plotfile with the launch flags.
   - Why: the audit of what the paper needs from these runs, `CSM_SWITCHOVER.md`.
-- **Spiral plotfiles kept from t = 45** (the user's go for t ≥ 54, 19:28 UTC; moved to t ≥ 45 at 05:00 UTC 09-29 so
-  the offline core profile stays possible, while `Plt04500` was still on scratch): `keep_plotfiles.sh` (new)
-  hard-links each complete plotfile into `/tmp/grteclyn_scratch/_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_plt/`
-  and the last ones when the evolution exits, then stops (5.9 GB each, ~100 GB to the crash). For the oriented scans,
-  the flow finder and offline core profiles. The t = 45–53 links go on the user's word if the profile is not wanted.
-  Status: `keep_plotfiles.sh --status <run dir>`.
-- **Core profile: the user's call, open.** No restart was made; t = 45 passed at ~04:30 UTC. Turning it on needs a
-  restart, and a restart re-seeds the outer zone (r > 6) at ~1.5 % (`run_single.sh`, GLOSSARY). What remains: profiles
-  offline from the kept plotfiles (unit cadence; the χ-floor time from `collapse_diagnostics.dat`).
+- **The spiral's plotfile keep (t = 45–60.40) was wiped at 08:52 UTC 09-29** (the user's word, above), so its offline
+  core profile is gone with it; only `Chk06040` remains. `keep_plotfiles.sh` (hard-links each complete plotfile into
+  `/tmp/grteclyn_scratch/_keep_<run>_plt/`, status with `--status <run dir>`) stays for later runs.
 
 **The four mode-3 rest-pair reruns are closed out** (09:11–09:30 UTC): `ctrl_rest_d12_csm`, `ctrl_flip_d12_csm`,
 `ctrl_rest_d14_csm`, `ctrl_rest_d16_csm`, each its old run's packed params with only the data changed (L = 64, N = 128,
@@ -268,7 +263,7 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed) | 4.4 (07:57 UTC 09-29; launched 05:46) | its death ~38.85, then leg 2 | 2.0 u/h, the dead run's pace to the minute (it went 2.3 → 3.85 u/h after its merger at t ≈ 25) | Chk03500 ~11.3 h, ~19:20 UTC; t ≈ 38.85 ~12.3 h, ~20:15 UTC 09-29 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (leg 1, checkpointed; `Chk00500` written) | 7.1 (09:17 UTC 09-29; launched 05:46) | its death ~38.85, then leg 2 | 2.1 u/h, the dead run's pace to the minute (19 h 45 min behind it at t = 0, 5 and 7; it went 2.3 → 3.85 u/h after its merger at t ≈ 25) | Chk03500 ~10 h, ~19:20 UTC; t ≈ 38.85 ~11 h, ~20:15 UTC 09-29 |
 | — | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm` | **DIED at t = 38.85** (00:32 UTC 09-29) | 100 | — | superseded by leg 1 |
 
 - **The head-on died at t = 38.845** (read from its own log at 04:58 UTC 09-29): NaN in h11 (A_ij non-finite) on
@@ -298,7 +293,7 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
      (36 GB each; template `..._scalar_chk_t100_csm.txt`, which differs from the dead run's params only in the
      three checkpoint keys). Profile `headon-modes-prod`, which now scans with half 4.0 from t = 0 (the profiles
      carry what the 2026-09-28 restarts had to add: `orbit-modes-scan` half 3.0 / level 3, `orbit-modes-prod` the
-     scan and the areal radius). It dies at t ≈ 38.85 as the dead run did, ~14.5 h (~20:10 UTC), leaving Chk at
+     scan and the areal radius). It dies at t ≈ 38.85 as the dead run did, ~14.5 h (~20:15 UTC), leaving Chk at
      t = 25 / 30 / 35. (A first launch at 05:40 UTC went up with checkpoints every unit, newest 8, against the
      user's instruction; stopped at t = 0.09 and wiped whole on the user's word, `MANIFEST_CLEANUP_2026-09-29`.)
   2. **Leg 2:** restart from Chk03500 (t = 35) with `max_level = 6` through the wall. Adding a level on restart is
@@ -306,22 +301,22 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
      in ~7 h. If it dies too, the next try starts from Chk03000.
   3. **Leg 3:** once past the wall, down-step to level 3 from a checkpoint after it, to t = 100 (~10 u/h, ~6 h).
   The dead run's data to t = 38.84 is the no-fill level-5 reference. Nothing of legs 2–3 starts without the go.
-  The live common-horizon scan found the MOTS in 7 of 39 C rows (t = 22–38; R 5.02 at birth, 4.52 at t = 38). Not
-  closed out: the pack, its trust window and whether the paper cites it are the user's call, and its last three
-  plotfiles on the second node's scratch are the only 3D state left.
+  The dead run's live common-horizon scan found the MOTS in 7 of 39 C rows (t = 22–38; R 5.02 at birth, 4.52 at
+  t = 38). It is archived out of the pack (08:55 UTC 09-29, the user's word); none of its 3D state is left (scratch
+  wiped 05:13).
 
-- **Common horizon at t = 22.0** (the live scan, half 4.0): r = 2.53, areal radius R = 5.02 (the superposed runs:
+- **The dead run's common horizon at t = 22.0** (09-28; the live scan, half 4.0): r = 2.53, areal radius R = 5.02 (the superposed runs:
   5.53 live at t = 21.5 in the old level-5 arm, 5.56 offline in the scout), ~10 % smaller, as the mode-3 mouths are.
   The evolution sped up with the merger as the old run did: 2.4 → 2.6 → 3.7 → 3.85 u/h over t = 19–23. No NaN;
   streams and frames clean to t = 22 (checked 20:25 UTC).
 
-- **Consumer restarted 18:19 UTC with `--horizon-half 4.0`** (the user's go; `restart_consumer.sh`, evolution
+- **The dead run's consumer restarted 18:19 UTC 09-28 with `--horizon-half 4.0`** (the user's go; `restart_consumer.sh`, evolution
   untouched; frames 504 → 504, every stream intact to t = 17, parsed flags checked). The old level-5 head-on scanned
   with half 3.0 and lost the common MOTS past the scan edge after t = 37 (11 of 201 C rows); the late track, its fits
   and clmDetKerrRise need it. Rows to t = 17 use half 3.0 (no MOTS yet), rows from t = 18 half 4.0. The fly-by's
   and the spiral's first rows after their restarts (t = 18) checked clean.
 
-- Launched 10:02 UTC (template `params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt`, profile
+- The dead run: launched 10:02 UTC 09-28 (template `params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt`, profile
   `headon-modes-prod`, zoom 40, coord 64, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`). The blessed exception to the
   rerun rule: the old L = 64 physics in the shared L = 128 box (details in the production set below).
 - The 09:58 attempt was refused by the preflight: the template still carried the old run's `checkpoint_interval = 100`
@@ -332,13 +327,13 @@ kept), scratch pruned (237 GB; MANIFEST_CLEANUP_2026-09-28) ["2026-09-28 (09:30 
 - The L = 64 head-on rerun before it (08:07–08:26 UTC, stopped at t = 0.60) was wiped on the user's word, frames
   included (MANIFEST_CLEANUP_2026-09-28).
 
-## The production set: head-on, spiral, fly-by in one box (the user's final proposal, 2026-09-28 09:00 UTC) — all three live
+## The production set: head-on, spiral, fly-by in one box (the user's final proposal, 2026-09-28 09:00 UTC) — the fly-by live, the spiral stopped, the head-on rerun as leg 1
 
 Shared by all three (the user): L = 128, N = 256 (Δx = 0.5, finest 1/64), max_level 5 from t = 0, tagging_L 64 (the same
 refined grids), sponge 48/64, Ψ4 at 20/28/36/44, the scalar at 14/20/30/44 (consumer profiles `*-prod`, output only),
 plots every 1.0, mode-3 data, binary `main3d_csmatch_5f988dbc_2026-09-28.ex`. Launched on the user's go.
-Order: fly-by → spiral → head-on. **The fly-by and the spiral are live on the first node (09:49 UTC), the head-on on the
-second node (10:02 UTC); see Live, above.** Templates in `runs/wormhole_merger/templates_scan/params_<run>.txt`, each
+Order: fly-by → spiral → head-on. **Now (09-29): the fly-by is live on the first node (card 0); the spiral stopped at
+t = 60.40 and is closed out; the head-on died at t = 38.85 and runs again as leg 1 on the second node; see Live, above.** Templates in `runs/wormhole_merger/templates_scan/params_<run>.txt`, each
 diffed against its old run's packed params (only the named changes):
 - **`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`** (first node, card 0, first): the exact rerun, plus checkpoints
   every 5 units (500 steps), the newest 3 (the old kept 8 at every 1.0). t = 100 (never NaN'd; trusted to t = 70).
