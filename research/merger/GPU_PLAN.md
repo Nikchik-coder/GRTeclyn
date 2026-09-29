@@ -1323,6 +1323,23 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-29 (16:50 UTC) — the boosted setup: validation set for the article, and the moving puncture's lapse
+
+- **The setup is right, and the article gets a section on it** (the user). A throat with momentum is the exact
+  Lorentz-boosted drainhole, squashed by 1/γ along its motion. Measured at t = 0: the throat's χ-contour axis ratio
+  is 0.910 at p = 0.45 (1/γ = 0.912). The Bowen–York setup's throat is round (1.000), because its data are round by
+  construction. The throat's coordinate speed is 0.40 against v = 0.41.
+- **The moving puncture needs the collar lapse.** `single_boost_p045_lb_t050` (lapse type 5) died at t = 26.1: the
+  lapse at its puncture ran away (0.20 → 2.6) as the boost carried it across the grid. Its throat held its size
+  through t = 16. `single_boost_p045_lbc_t050` reruns it with type 6.
+- **Validation set, proposed (cost ~8 GPU-hours, ~4 h on two cards):** four single exact-boost throats, at
+  p = 0, 0.12, 0.25 and 0.35, on the collar rerun's template to t = 35, plus that rerun as the p = 0.45 point
+  (STATUS, "Queued — the boosted-setup validation set").
+  - The figure: (a) the t = 0 axis ratio against 1/γ = 1/√(1 + p²); (b) the coordinate speed against
+    v = p/√(1 + p²); (c) R_min(t) flat for every p.
+- **p = 0.45 is extreme** (v = 0.41 per mouth, 0.70 relative). It stays as the validation curve's top point only.
+  Binary production stays at p ≤ 0.35 unless a clean rerun places the capture boundary above that.
+
 ### 2026-09-29 (14:27 UTC) — the single-throat momentum probes stopped: the momentum setup inflates the throat
 
 - **The finding.** Mode 3 gives a throat momentum through the Bowen–York extrinsic curvature alone; the scalar that

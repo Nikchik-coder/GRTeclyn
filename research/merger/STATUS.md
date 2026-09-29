@@ -1,4 +1,4 @@
-# Status — 2026-09-29 16:40 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 16:52 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -153,6 +153,20 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
    - **Withdraw the fly-by/capture boundary (the user, 2026-09-29 14:25 UTC).** §VII.A's "every p ≥ 0.35 passes
      without merging" and the fly-by's outcome rest on data whose momentum setup inflates the throats (CRITICAL,
      top). Rerun p = 0.35 / 0.45 on the fixed data before the text states any boundary.
+   - **Add a section on the boosted wormhole setup, with its validation figure (the user, 2026-09-29 ~16:50 UTC).**
+     It goes in the binary setup, before any moving result. Contents:
+     - a throat with momentum is the exact drainhole Lorentz-boosted and cut at t = 0: squashed along its motion
+       by 1/γ = m/√(m² + p²), its scalar moving with it (Π ≠ 0), its own K_ij, lapse and shift;
+     - the pair is superposed, each throat's K_ij and Π scaled by the companion's conformal factor, and the solve
+       then corrects both constraints (w and W);
+     - the tests that it is right.
+     **The figure** (a half-page strip; the analytic curves in gold):
+     - (a) the throat's t = 0 axis ratio against p, on 1/γ = 1/√(1 + p²);
+     - (b) its coordinate speed against p, on v = p/√(1 + p²);
+     - (c) R_min(t)/R(0), flat for every p.
+     The runs are queued below ("Queued — the boosted-setup validation set"). The text states the setup and its
+     checks only, with no failure narrative (the paper's rule): the Bowen–York comparison enters as the reason for
+     the choice, in one sentence with its numbers.
    - **Add the branch-selection finding: why the interaction inflates the mouths, and the race (the user,
      2026-09-29 ~10:45 UTC).** Verified and quotable now: the seed ladder fixes the signs (+ε at the throat
      collapses and traps, −ε inflates); every companion reads as a −ε kick that strengthens with closeness
@@ -512,6 +526,29 @@ bash $L --gpu 1 --template params_v2_spiral_d12_p012_L128_lvl5from0_t100_csm.txt
 bash $L --gpu G --template params_merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm.txt --name merge_headon_flip_d8_v1_L128_lvl5from0_scalar_t100_csm --profile headon-modes-prod --zoom 40 --coord 64 --binary $B
 ```
 Then the plan's step 4 (single throats on clean data), each a rerun of its old run by the rule.
+
+## Queued — the boosted-setup validation set (proposed 2026-09-29 16:50 UTC; nothing launches without the go)
+
+For the article's boosted-setup figure (paper plan above). Each run is one exact-boost throat
+(`wormhole_momentum_model = 1`, no solve), on the template of `single_boost_p045_lbc_t050`: the collar lapse
+(type 6), L = 64, N = 128, level 3, starting at y = −8 and moving along +y, stop_time 35 (that run's PASS
+window), checkpoints to be asked. Only p and the name change.
+
+| run | p | v = p/√(1 + p²) | 1/γ | note |
+|---|---|---|---|---|
+| `single_boost_p000_lbc_t035` | 0 | 0 | 1 | the same gauge at rest |
+| `single_boost_p012_lbc_t035` | 0.12 | 0.119 | 0.993 | the spiral's p; the Bowen–York probe's twin |
+| `single_boost_p025_lbc_t035` | 0.25 | 0.243 | 0.970 | |
+| `single_boost_p035_lbc_t035` | 0.35 | 0.330 | 0.944 | the old capture boundary |
+| `single_boost_p045_lbc_t050` | 0.45 | 0.410 | 0.912 | **live** on card 1 (the collar rerun), reused |
+
+- **Reads.** (a) The t = 0 axis ratio: the shifted-ellipsoid fit, and the χ contour on the slice caches. (b) The
+  coordinate speed: the tracked pit over t = 0–35. (c) R_min(t)/R(0) from the fit, next to the Bowen–York probes'
+  inflation (p = 0.12 and 0.45, raw rows).
+- **Cost.** ~20 GB and ~18.5 u/h each alone: t = 35 in ~1.9 h. Four runs, two per card after the current tests,
+  take ~4 h, ~8 GPU-hours.
+- **p = 0.45 is extreme** (v = 0.41 per mouth, 0.70 relative). Use it here only as the top point, where the
+  contraction is clearest. Binary production should stay at p ≤ 0.35 unless a rerun puts the capture boundary higher.
 
 ## Queued — mode-3 follow-ups: the ladder (Fig. 12a) and a convergence twin (the user, 2026-09-28 ~11 UTC; nothing launches without the go)
 
