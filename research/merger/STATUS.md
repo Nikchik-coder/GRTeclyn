@@ -1,4 +1,4 @@
-# Status — 2026-09-29 10:35 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 11:10 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -63,6 +63,18 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
      and the unsolved pair (`single_boost_p045_t050`, `..._vscal_t050`: the scalar at rest against moving; not yet
      launched), each read as ε_eff on the seed ladder. It ties the binaries' mouth kicks (ε_eff −0.4 to −1.2 %) to
      momentum and the companion. Written only once the probes are closed out.
+   - **Add the branch-selection finding: why the interaction inflates the mouths, and the race (the user,
+     2026-09-29 ~11:05 UTC).** Verified and quotable now: the seed ladder fixes the signs (+ε at the throat
+     collapses and traps, −ε inflates); every companion reads as a −ε kick that strengthens with closeness
+     (−0.4 % at d = 12, −1.2 % at d = 8), the same in superposed and mode-3 data, so it is the physical
+     interaction, not the solve; the collapse sign arrives only at contact, so a merger is a race — the head-on's
+     common MOTS at t = 22 with the mouths at +6–10 % against the spiral's contact at t ≈ 40–45 past +50 %; and
+     this is the design rule for a collapsing spiral (d = 8, small p). Interpretation, needs a check before the
+     text states it: *which* piece of the companion carries the −ε sign — the flip pairing's phantom-tail
+     gradient between the mouths (negative gradient energy) and the tide, against the near-uniform ~m/d potential
+     shift. Cheap test on existing t = 0 data: superpose the tails, integrate the scalar's ρ over the throat
+     region, compare with the seed ε that reproduces the measured ε_eff; a like-pair (no flip) rest run would
+     separate the tail term from the tide.
    - Update the abstract once step 2's answers are in.
    - Constraint norms are not a paper problem (checked 2026-09-28 06:55 UTC, the rest-pair reruns to t ≈ 5 against
      their old runs). The logged 𝓗 norm reads 9–13 % higher for the like pairs and 21 % for the flipped one, a flat
