@@ -1,4 +1,4 @@
-# Status — 2026-09-29 14:30 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 15:05 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -39,8 +39,19 @@ in another frame, so none of it is physics. At p = 0.45 it is about the fly-by m
 - **The live fly-by (`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`) is wrong, and so is the claim that the fly-by
   cannot spiral** (§VII.A: every p ≥ 0.35 "passes without merging"): the junk drives its throats to expand. Every
   run with p > 0 carries it; at the spiral's p = 0.12 it is ~0.15 %, small next to the companion's −0.8 %.
-- **The fix (in progress):** the scalar moves with the throat (`wormhole_boost_velocity`) and the solve counts its
-  momentum. Tested end to end on a single p = 0.45 throat on card 1 before any binary rerun.
+- **The fix, implemented (dc34eb51, 14:50 UTC):** `wormhole_momentum_model = 1` builds each throat as the exact
+  Lorentz-boosted drainhole: metric, K_ij, φ and Π together, with the boosted lapse and shift; `wormhole_momentumA/B`
+  become each throat's ADM momentum γmv (p = 0.45 is v = 0.4104). Model 0 is unchanged bit for bit and now warns.
+  - Checked: both constraints vanish to 1e-9 of their terms (finite differences of the closed forms, the exact static
+    throat's own level); the lapse and shift carry the slice rigidly to 1e-12; the run's t = 0 plotfile matches the
+    closed forms to 2e-14 in every field; the closed-form Γ̃^i matches finite differences to 1e-11.
+  - The old V2 option (`wormhole_boost_velocity`) is not the moving throat's Π either: near the throat it is ~Q/α²
+    ≈ 17× too large, because the boosted slice's shift carries most of the motion. The unsolved `_vscal` probe would
+    have tested the wrong thing.
+  - **End-to-end test live on card 1** (`single_boost_p045_lb_t050`, the p = 0.45 probe's template with only the
+    momentum model changed and the solve off). PASS: R stays flat through t ≈ 35, where its Bowen–York twin reached
+    +10 % at t = 20.2 and +24 % at t = 25.
+  - Not yet: the constraint solve for boosted pairs (it refuses model 1). The binary reruns need it.
 
 ## The plan, in order (the user's, 2026-09-28)
 
@@ -162,7 +173,7 @@ Along the way:
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
-## Live — first node (two H100s): the fly-by (card 0); card 1 free since 14:27 UTC
+## Live — first node (two H100s): the fly-by (card 0) and the exact-boost end-to-end test (card 1)
 
 | card | run | p | t now (13:45, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
@@ -170,6 +181,7 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 | — | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | **stopped at t = 32.27** (14:26:50 UTC, `stop_campaign.sh`, the user's word) | 50 | — | close-out: packed, no movies |
 | — | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | **stopped at t = 32.97** (14:26:50 UTC, same) | 50 | — | same |
 | — | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | **stopped at t = 32.64** (14:26:50 UTC, same) | 50 | — | same |
+| 1 | `single_boost_p045_lb_t050` (end-to-end test of `wormhole_momentum_model = 1`, launched 14:58 UTC, `main3d_boost_dc34eb51_2026-09-29.ex`, no checkpoints) | 0.45 | 1.0 (15:01) | 50 | 18.5 u/h (alone, 19.9 GB) | ~2.7 h, ~17:40 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
 - **The probes stopped at 14:26:50 UTC (the user's word; no NaN in any log).** Last readings (t = 32): rest −0.05 %;

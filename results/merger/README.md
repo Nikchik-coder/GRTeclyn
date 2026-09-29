@@ -708,6 +708,11 @@ and nothing in this section may be quoted as a surface, a mass, or a dissolution
   `figures/05_binary_spiral/psi4_analysis_freeze_wide_t080*` and `figures/05_binary_spiral/wave_speed_check.png`.
 
 ### Where the capture boundary sits in orbital momentum
+- **WITHDRAWN (the user, 2026-09-29 14:25 UTC).** Every run below starts from
+  Bowen–York momentum with the scalar at rest, which pushes each throat toward
+  inflation as p² (single-throat probes, `02_moving_throat/csm/`); at p = 0.45
+  that push is about the fly-by mouths' whole kick. Not a result until rerun
+  on exact-boost data (`wormhole_momentum_model = 1`).
 - **Claim.** p = 0.20 and 0.25 are captured, p = 0.35 and 0.45 fly by — the
   boundary sits between 0.25 and 0.35 (50–70 % of circular). Whether a
   captured scout *completes* its merger is open: every one hits the t ≈ 53
