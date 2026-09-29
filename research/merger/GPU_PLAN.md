@@ -1323,6 +1323,34 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-29 (05:15 UTC) — the production head-on died at t = 38.85 at the merged core; scratch wiped; the checkpointed rerun proposed, waiting for the go
+
+- **Died 00:32 UTC at t = 38.845**, 14.5 h in, 2.68 u/h average: NaN in h11 on level 5, a one-step
+  overflow (χ 1e-3 → 1e+129, K 0.08 → 1e+178 in dt = 3e-4) at the merged core, 0.15 from the centre,
+  inside the common MOTS (r = 2.5), 16 cells from any grid edge. The L = 64 scout's interior failure
+  (t = 26.9: χ floor at the midpoint, K doubling) twelve units later. The superposed level-5 twin
+  walked through it because its core lapse froze on the 1e-10 floor from t = 38.15; this run's core
+  lapse re-inflated (8e-4 at t = 37 → 9e-3 at t = 38.25) with |K| ≈ 1, χ hit the floor at t = 38.84.
+  A gauge race at the core lost by about a unit, not a resolution or data defect.
+- **Clean outside the horizon to the end.** Common MOTS at t = 22 (R 5.02, peak 5.09 at t = 23; the
+  superposed twin 5.53 / 5.58, i.e. 9 % smaller as the mode-3 mouths are; R / 2 M_ADM = 1.07 against
+  1.38), lost t = 26–35 as in the twin, back 3.87 → 4.52 over t = 36–38. The (2,0) burst peaks at
+  R = 10 / 14 / 18 at t = 28.8 / 33.0 / 37.5 (twin 28.1 / 32.3 / 36.7), 3–5 % weaker; R = 20 at its
+  peak at the death; R = 28–44 never reached. Same infall to t = 10, then 2–3 % ahead; the throat
+  lapse collapses earlier (0.064 vs 0.090 at t = 20). Masses: each mouth 1.000 (twin 1.149),
+  M_ADM 2.357 (twin 2.0 by the parameters).
+- **Scratch wiped 05:13 UTC** on the user's word (its three plotfiles, t = 36–38, 19 GB; CS-1's empty
+  dir; `MANIFEST_CLEANUP_2026-09-29`). No checkpoints existed. Run dir, data and frames kept on NFS;
+  not packed (superseded). Registry row written.
+- **Proposed (the user: rerun with checkpoints and the proper scans from t = 0):**
+  `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm`, the dead run's params with rolling
+  checkpoints every 5 units, newest 3 (template `..._scalar_chk_t100_csm.txt`). The consumer profiles
+  now carry what the 2026-09-28 restarts had to add: `headon-modes-prod` scans with half 4.0,
+  `orbit-modes-scan` with half 3.0 / level 3, `orbit-modes-prod` with the scan and the areal radius.
+  Cost: ~14.5 h to the same death (~2.7 u/h), leaving Chk at t = 25 / 30 / 35. The continuation past
+  the core failure is a second leg from t = 35 (lapse freeze / core fill, where the old campaign's
+  continuation arms branched), ~65 units at ~3.5 u/h ≈ 19 h, on the user's word. Nothing launched.
+
 ### 2026-09-28 (paper session) — the figure count drops 18 -> 13: two wiped, three pairs merged; ledger 1075 rows, 0 problems
 
 - **Wiped** (message survives as text): `fig:fill_insensitivity` (a null result; Secs. spiral:inspiral/burst

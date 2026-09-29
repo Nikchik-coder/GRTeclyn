@@ -181,16 +181,27 @@ consumer_profile() {
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --frames-zlim-t0 lapse chi phi" \
            "--scalar-modes --scalar-mode-ells 0 1 2"
       ;;
-    orbit-modes-prod|orbit-modes-scan-prod)
+    orbit-modes-scan-prod)
       # The production set (the user, 2026-09-28): the mode-3 head-on, spiral and fly-by share
       # the L = 128 box and extract at the same four radii, 14/20/30/44, inside its sponge (r >= 48).
-      echo "$(consumer_profile "${name%-prod}" "${zoom}" "${coord}" "${center}") --radii 14 20 30 44"
+      echo "$(consumer_profile orbit-modes-scan "${zoom}" "${coord}" "${center}") --radii 14 20 30 44"
+      ;;
+    orbit-modes-prod)
+      # The spiral of the production set: orbit-modes-scan-prod plus the areal radius, which the
+      # paper's mouth arm v2_spiral_d12_p012_L128_lvl3_t050_mouths recorded (Fig. 15, the clmMouth
+      # rows).  The mode-3 spiral launched without the scan or the areal radius and its consumer
+      # was restarted with both at t = 18 (2026-09-28).
+      echo "$(consumer_profile orbit-modes-scan "${zoom}" "${coord}" "${center}") --radii 14 20 30 44" \
+           "--areal-radius --areal-min-radius 0.5"
       ;;
     headon-modes-prod)
       # The head-on of the production set: the shared four plus the old L = 64 run's 10/18, so the
       # old-vs-new comparison has common spheres.  headon-modes' own --radii 10 14 18 comes first;
-      # the last one wins.
-      echo "$(consumer_profile headon-modes "${zoom}" "${coord}" "${center}") --radii 10 14 18 20 30 44"
+      # the last one wins.  The common scan's window is 4.0, not headon-modes' 3.0: with 3.0 the old
+      # level-5 arm lost the remnant MOTS past the scan edge (r = 2.79) after t = 37, and the mode-3
+      # head-on's consumer had to be restarted with 4.0 at t = 18 (2026-09-28).
+      echo "$(consumer_profile headon-modes "${zoom}" "${coord}" "${center}") --radii 10 14 18 20 30 44" \
+           "--horizon-half 4.0"
       ;;
     none)
       echo ""
