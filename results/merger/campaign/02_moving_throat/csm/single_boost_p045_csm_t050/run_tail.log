@@ -1,0 +1,200 @@
+[Level 3 step 26086] average evolution speed = 5.406630384 code units/h
+[Level 3 step 26086] Advanced 3686400 cells
+[Level 2 step 13044] ADVANCE at time 32.6075 with dt = 0.0025
+[Level 2 step 13044] average evolution speed = 5.406742811 code units/h
+[Level 2 step 13044] Advanced 4096000 cells
+[Level 3 step 26087] ADVANCE at time 32.6075 with dt = 0.00125
+[Level 3 step 26087] average evolution speed = 5.406662865 code units/h
+[Level 3 step 26087] Advanced 3686400 cells
+[Level 3 step 26088] ADVANCE at time 32.60875 with dt = 0.00125
+[Level 3 step 26088] average evolution speed = 5.406784362 code units/h
+[Level 3 step 26088] Advanced 3686400 cells
+
+[STEP 3261] Coarse TimeStep time: 6.629924213
+[STEP 3261] FAB kilobyte spread across MPI nodes: [17299254 ... 17299254]
+
+STEP = 3261 TIME = 32.61 DT = 0.01
+
+[Level 0 step 3262] ADVANCE at time 32.61 with dt = 0.01
+[Level 0 step 3262] average evolution speed = 5.406762477 code units/h
+[Level 0 step 3262] Advanced 2097152 cells
+[Level 1 step 6523] ADVANCE at time 32.61 with dt = 0.005
+[Level 1 step 6523] average evolution speed = 5.406618897 code units/h
+[Level 1 step 6523] Advanced 3686400 cells
+[Level 2 step 13045] ADVANCE at time 32.61 with dt = 0.0025
+[Level 2 step 13045] average evolution speed = 5.406534691 code units/h
+[Level 2 step 13045] Advanced 4096000 cells
+[Level 3 step 26089] ADVANCE at time 32.61 with dt = 0.00125
+[Level 3 step 26089] average evolution speed = 5.406470621 code units/h
+[Level 3 step 26089] Advanced 3686400 cells
+[Level 3 step 26090] ADVANCE at time 32.61125 with dt = 0.00125
+[Level 3 step 26090] average evolution speed = 5.406591819 code units/h
+[Level 3 step 26090] Advanced 3686400 cells
+[Level 2 step 13046] ADVANCE at time 32.6125 with dt = 0.0025
+[Level 2 step 13046] average evolution speed = 5.406673471 code units/h
+[Level 2 step 13046] Advanced 4096000 cells
+[Level 3 step 26091] ADVANCE at time 32.6125 with dt = 0.00125
+[Level 3 step 26091] average evolution speed = 5.406569287 code units/h
+[Level 3 step 26091] Advanced 3686400 cells
+[Level 3 step 26092] ADVANCE at time 32.61375 with dt = 0.00125
+[Level 3 step 26092] average evolution speed = 5.406684198 code units/h
+[Level 3 step 26092] Advanced 3686400 cells
+[Level 1 step 6524] ADVANCE at time 32.615 with dt = 0.005
+[Level 1 step 6524] average evolution speed = 5.406741756 code units/h
+[Level 1 step 6524] Advanced 3686400 cells
+[Level 2 step 13047] ADVANCE at time 32.615 with dt = 0.0025
+[Level 2 step 13047] average evolution speed = 5.406641199 code units/h
+[Level 2 step 13047] Advanced 4096000 cells
+[Level 3 step 26093] ADVANCE at time 32.615 with dt = 0.00125
+[Level 3 step 26093] average evolution speed = 5.406551346 code units/h
+[Level 3 step 26093] Advanced 3686400 cells
+[Level 3 step 26094] ADVANCE at time 32.61625 with dt = 0.00125
+[Level 3 step 26094] average evolution speed = 5.406701267 code units/h
+[Level 3 step 26094] Advanced 3686400 cells
+[Level 2 step 13048] ADVANCE at time 32.6175 with dt = 0.0025
+[Level 2 step 13048] average evolution speed = 5.40681345 code units/h
+[Level 2 step 13048] Advanced 4096000 cells
+[Level 3 step 26095] ADVANCE at time 32.6175 with dt = 0.00125
+[Level 3 step 26095] average evolution speed = 5.40673742 code units/h
+[Level 3 step 26095] Advanced 3686400 cells
+[Level 3 step 26096] ADVANCE at time 32.61875 with dt = 0.00125
+[Level 3 step 26096] average evolution speed = 5.406857689 code units/h
+[Level 3 step 26096] Advanced 3686400 cells
+
+[STEP 3262] Coarse TimeStep time: 6.337315501
+[STEP 3262] FAB kilobyte spread across MPI nodes: [17299254 ... 17299254]
+
+STEP = 3262 TIME = 32.62 DT = 0.01
+
+[Level 0 step 3263] ADVANCE at time 32.62 with dt = 0.01
+[Level 0 step 3263] average evolution speed = 5.406842384 code units/h
+[Level 0 step 3263] Advanced 2097152 cells
+[Level 1 step 6525] ADVANCE at time 32.62 with dt = 0.005
+[Level 1 step 6525] average evolution speed = 5.406660659 code units/h
+[Level 1 step 6525] Advanced 3686400 cells
+[Level 2 step 13049] ADVANCE at time 32.62 with dt = 0.0025
+[Level 2 step 13049] average evolution speed = 5.406579822 code units/h
+[Level 2 step 13049] Advanced 4096000 cells
+[Level 3 step 26097] ADVANCE at time 32.62 with dt = 0.00125
+[Level 3 step 26097] average evolution speed = 5.406509232 code units/h
+[Level 3 step 26097] Advanced 3686400 cells
+[Level 3 step 26098] ADVANCE at time 32.62125 with dt = 0.00125
+[Level 3 step 26098] average evolution speed = 5.406644578 code units/h
+[Level 3 step 26098] Advanced 3686400 cells
+[Level 2 step 13050] ADVANCE at time 32.6225 with dt = 0.0025
+[Level 2 step 13050] average evolution speed = 5.406729055 code units/h
+[Level 2 step 13050] Advanced 4096000 cells
+[Level 3 step 26099] ADVANCE at time 32.6225 with dt = 0.00125
+[Level 3 step 26099] average evolution speed = 5.406627648 code units/h
+[Level 3 step 26099] Advanced 3686400 cells
+[Level 3 step 26100] ADVANCE at time 32.62375 with dt = 0.00125
+[Level 3 step 26100] average evolution speed = 5.406729143 code units/h
+[Level 3 step 26100] Advanced 3686400 cells
+[Level 1 step 6526] ADVANCE at time 32.625 with dt = 0.005
+[Level 1 step 6526] average evolution speed = 5.406799833 code units/h
+[Level 1 step 6526] Advanced 3686400 cells
+[Level 2 step 13051] ADVANCE at time 32.625 with dt = 0.0025
+[Level 2 step 13051] average evolution speed = 5.406700355 code units/h
+[Level 2 step 13051] Advanced 4096000 cells
+[Level 3 step 26101] ADVANCE at time 32.625 with dt = 0.00125
+[Level 3 step 26101] average evolution speed = 5.40659433 code units/h
+[Level 3 step 26101] Advanced 3686400 cells
+[Level 3 step 26102] ADVANCE at time 32.62625 with dt = 0.00125
+[Level 3 step 26102] average evolution speed = 5.406738778 code units/h
+[Level 3 step 26102] Advanced 3686400 cells
+[Level 2 step 13052] ADVANCE at time 32.6275 with dt = 0.0025
+[Level 2 step 13052] average evolution speed = 5.406863033 code units/h
+[Level 2 step 13052] Advanced 4096000 cells
+[Level 3 step 26103] ADVANCE at time 32.6275 with dt = 0.00125
+[Level 3 step 26103] average evolution speed = 5.406784429 code units/h
+[Level 3 step 26103] Advanced 3686400 cells
+[Level 3 step 26104] ADVANCE at time 32.62875 with dt = 0.00125
+[Level 3 step 26104] average evolution speed = 5.406918612 code units/h
+[Level 3 step 26104] Advanced 3686400 cells
+
+[STEP 3263] Coarse TimeStep time: 6.286377551
+[STEP 3263] FAB kilobyte spread across MPI nodes: [17299254 ... 17299254]
+
+STEP = 3263 TIME = 32.63 DT = 0.01
+
+[Level 0 step 3264] ADVANCE at time 32.63 with dt = 0.01
+[Level 0 step 3264] average evolution speed = 5.406934922 code units/h
+[Level 0 step 3264] Advanced 2097152 cells
+[Level 1 step 6527] ADVANCE at time 32.63 with dt = 0.005
+[Level 1 step 6527] average evolution speed = 5.406729325 code units/h
+[Level 1 step 6527] Advanced 3686400 cells
+[Level 2 step 13053] ADVANCE at time 32.63 with dt = 0.0025
+[Level 2 step 13053] average evolution speed = 5.406651477 code units/h
+[Level 2 step 13053] Advanced 4096000 cells
+[Level 3 step 26105] ADVANCE at time 32.63 with dt = 0.00125
+[Level 3 step 26105] average evolution speed = 5.406565575 code units/h
+[Level 3 step 26105] Advanced 3686400 cells
+[Level 3 step 26106] ADVANCE at time 32.63125 with dt = 0.00125
+[Level 3 step 26106] average evolution speed = 5.406694352 code units/h
+[Level 3 step 26106] Advanced 3686400 cells
+[Level 2 step 13054] ADVANCE at time 32.6325 with dt = 0.0025
+[Level 2 step 13054] average evolution speed = 5.406802775 code units/h
+[Level 2 step 13054] Advanced 4096000 cells
+[Level 3 step 26107] ADVANCE at time 32.6325 with dt = 0.00125
+[Level 3 step 26107] average evolution speed = 5.406703733 code units/h
+[Level 3 step 26107] Advanced 3686400 cells
+[Level 3 step 26108] ADVANCE at time 32.63375 with dt = 0.00125
+[Level 3 step 26108] average evolution speed = 5.406811517 code units/h
+[Level 3 step 26108] Advanced 3686400 cells
+[Level 1 step 6528] ADVANCE at time 32.635 with dt = 0.005
+[Level 1 step 6528] average evolution speed = 5.406875077 code units/h
+[Level 1 step 6528] Advanced 3686400 cells
+[Level 2 step 13055] ADVANCE at time 32.635 with dt = 0.0025
+[Level 2 step 13055] average evolution speed = 5.406776029 code units/h
+[Level 2 step 13055] Advanced 4096000 cells
+[Level 3 step 26109] ADVANCE at time 32.635 with dt = 0.00125
+[Level 3 step 26109] average evolution speed = 5.406670961 code units/h
+[Level 3 step 26109] Advanced 3686400 cells
+[Level 3 step 26110] ADVANCE at time 32.63625 with dt = 0.00125
+[Level 3 step 26110] average evolution speed = 5.406774537 code units/h
+[Level 3 step 26110] Advanced 3686400 cells
+[Level 2 step 13056] ADVANCE at time 32.6375 with dt = 0.0025
+[Level 2 step 13056] average evolution speed = 5.406905346 code units/h
+[Level 2 step 13056] Advanced 4096000 cells
+[Level 3 step 26111] ADVANCE at time 32.6375 with dt = 0.00125
+[Level 3 step 26111] average evolution speed = 5.406827142 code units/h
+[Level 3 step 26111] Advanced 3686400 cells
+[Level 3 step 26112] ADVANCE at time 32.63875 with dt = 0.00125
+[Level 3 step 26112] average evolution speed = 5.406957112 code units/h
+[Level 3 step 26112] Advanced 3686400 cells
+
+[STEP 3264] Coarse TimeStep time: 6.491966096
+[STEP 3264] FAB kilobyte spread across MPI nodes: [17299254 ... 17299254]
+
+STEP = 3264 TIME = 32.64 DT = 0.01
+
+Now regridding at level lbase = 0
+grid_places() time: 0.334892937 new finest: 3
+STEP = 3264 TIME = 32.64 : REGRID  with lbase = 0
+  Level 1   125 grids  3686400 cells  21.97265625 % of domain
+            smallest grid: 32 x 16 x 32  biggest grid: 32 x 32 x 32
+  Level 2   125 grids  4096000 cells  3.051757812 % of domain
+            smallest grid: 32 x 32 x 32  biggest grid: 32 x 32 x 32
+  Level 3   125 grids  3686400 cells  0.3433227539 % of domain
+            smallest grid: 32 x 16 x 32  biggest grid: 32 x 32 x 32
+
+[Level 0 step 3265] ADVANCE at time 32.64 with dt = 0.01
+[Level 0 step 3265] average evolution speed = 5.406885005 code units/h
+[Level 0 step 3265] Advanced 2097152 cells
+[Level 1 step 6529] ADVANCE at time 32.64 with dt = 0.005
+[Level 1 step 6529] average evolution speed = 5.406699397 code units/h
+[Level 1 step 6529] Advanced 3686400 cells
+[Level 2 step 13057] ADVANCE at time 32.64 with dt = 0.0025
+[Level 2 step 13057] average evolution speed = 5.406620624 code units/h
+[Level 2 step 13057] Advanced 4096000 cells
+[Level 3 step 26113] ADVANCE at time 32.64 with dt = 0.00125
+[Level 3 step 26113] average evolution speed = 5.406535133 code units/h
+[Level 3 step 26113] Advanced 3686400 cells
+[Level 3 step 26114] ADVANCE at time 32.64125 with dt = 0.00125
+[Level 3 step 26114] average evolution speed = 5.406672952 code units/h
+[Level 3 step 26114] Advanced 3686400 cells
+[Level 2 step 13058] ADVANCE at time 32.6425 with dt = 0.0025
+[Level 2 step 13058] average evolution speed = 5.406819091 code units/h
+[Level 2 step 13058] Advanced 4096000 cells
+[Level 3 step 26115] ADVANCE at time 32.6425 with dt = 0.00125
+[Level 3 step 26115] average evolution speed = 5.406785723 code units/h

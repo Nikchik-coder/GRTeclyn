@@ -126,6 +126,12 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_pureq_q1e2_ml4_scalar_t100` | B | 100.0 | x15891.0 / 100.0 | +1.08 | +1.33 | +1.42 | +1.47 | +1.58 | +1.68 | +1.82 | - | late (+0.16 dex) |
 | `single_pureq_q1e2_ml4_t100` | A | 100.0 | x11474.4 / 72.7 | +1.08 | +1.32 | +1.41 | +1.45 | +1.43 | +2.28 | +3.98 | 47.8 | late (+0.14 dex) |
 | `single_pureq_q1e2_ml4_t100` | B | 100.0 | x11474.4 / 72.7 | +1.08 | +1.32 | +1.41 | +1.45 | +1.43 | +2.28 | +3.98 | 47.8 | late (+0.14 dex) |
+| `single_boost_p012_csm_t050` | A | 33.0 | x42.2 / 32.8 | +1.04 | +1.24 | +1.36 | +1.53 | - | - | - | - | late (+0.22 dex) |
+| `single_boost_p012_csm_t050` | B | 33.0 | x42.2 / 32.8 | +1.04 | +1.24 | +1.36 | +1.53 | - | - | - | - | late (+0.22 dex) |
+| `single_boost_p045_csm_t050` | A | 32.6 | x248.2 / 32.6 | +1.18 | +1.56 | +1.85 | +2.18 | - | - | - | - | late (+0.87 dex) |
+| `single_boost_p045_csm_t050` | B | 32.6 | x248.2 / 32.6 | +1.18 | +1.56 | +1.85 | +2.18 | - | - | - | - | late (+0.87 dex) |
+| `single_rest_csm_t050` | A | 32.3 | x21.3 / 32.3 | +0.96 | +1.18 | +1.26 | +1.31 | - | - | - | - | same (-0.00 dex) |
+| `single_rest_csm_t050` | B | 32.3 | x21.3 / 32.3 | +0.96 | +1.18 | +1.26 | +1.31 | - | - | - | - | same (-0.00 dex) |
 | `s20_boost_p02` | A | 40.0 | x400.6 / 40.0 | +1.06 | +1.30 | +1.58 | +1.79 | +2.60 | - | - | - | late (+0.48 dex) |
 | `s20_boost_p02` | B | 40.0 | x942124.5 / 35.0 | +4.00 | +5.57 | +5.85 | +5.94 | +5.92 | - | - | - | late (+4.63 dex) |
 | `ctrl_flip_d12_csm` | A | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
@@ -289,7 +295,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 26 early, 12 same, 81 late, 74 too short, 52 restart arms (own clock only).
+Throats read at t = 30: 26 early, 14 same, 85 late, 74 too short, 52 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

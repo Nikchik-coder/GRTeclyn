@@ -1323,6 +1323,35 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-29 (14:27 UTC) — the single-throat momentum probes stopped: the momentum setup inflates the throat
+
+- **The finding.** Mode 3 gives a throat momentum through the Bowen–York extrinsic curvature alone; the scalar that
+  holds it open starts at rest (Π = 0; the solve refuses a boosted scalar). One throat, L = 64, level 3, R_min from
+  the level-3 horizon scan's A rows: at rest it stays put (R 3.8772 at t = 0, −0.05 % at t = 32); p = 0.12 inflates,
+  +0.88 % at t = 20, +4.4 % at t = 28, +9.9 % at t = 32 (t₁₀ ≈ 32.1, ε_eff ≈ −0.15 %); p = 0.45 inflates, +9.5 % at
+  t = 20, +24.2 % at t = 25 (t₁₀ ≈ 20.2, ε_eff ≈ −1.8 %), ε_eff on the seed-ladder rule
+  ε_eff ≈ −1e-2 × 10^(−(t₁₀ − 23)/11). From t = 26 the p = 0.45 throat is past both scans' outer radius (r = 2.29 on
+  level 3, 2.33 on the common scan; the consumer's horizon_half 2.5), so its later rows are scan-edge upper bounds
+  (+82 % at t = 32): a limit of the scan, not of the solution.
+- **What it means.** The push grows as p², like the ADM-mass excess the momentum adds (M_ADM 1.00137 / 1.00703 /
+  1.07969). A uniformly moving exact wormhole is the static one in another frame, so none of it is physics: it is
+  junk in the initial data. At p = 0.45 it is about the fly-by mouths' whole kick (−1.2 %); at the spiral's p = 0.12
+  ~0.15 %, small next to the companion's −0.8 %. The user (14:25 UTC): the live fly-by
+  (`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`) is wrong and the claim that the fly-by cannot spiral is withdrawn
+  (STATUS, CRITICAL). The fix, the scalar moving with the throat (`wormhole_boost_velocity`) and the solve counting
+  its momentum, is being implemented in another session and is to be tested end to end on a single p = 0.45 throat
+  on card 1 before any binary rerun.
+- **Stopped** at 14:26:50 UTC with `stop_campaign.sh` on the user's word ("kill the 3 probes, record, wipe out left
+  overs"): t = 32.27 / 32.97 / 32.64 of 50, no NaN in any `run.log`, no checkpoints. The stopper took the launchers
+  with it, so the three manifests were still `running` (the packer skips those); they were finished with
+  `run_manifest.py finish --status 143` (a TERM's exit, as the runs stopped by hand on 2026-09-24), stamped with the
+  stop time. The last units are smooth: L2 H flat at 2.5e-3 at rest, 1.8–3.2e-3 without growth at p = 0.12,
+  2.3e-3 → 1.2e-3 at p = 0.45; min lapse 0.219 → 0.15–0.16 in all three. No trust-window row.
+- **Closed out** (14:40 UTC): filed `02_moving_throat/csm/`, packed with `WHM_MOVIES=0` (frames and slice caches
+  kept), Table I rows `-`, registry rows and the README claim. Scratch pruned on the user's word: the three runs'
+  `Plt03000`–`Plt03200` (t = 30–32, all consumed), 20.7 G, logged in `MANIFEST_CLEANUP_2026-09-29.md`. Card 1 is
+  free.
+
 ### 2026-09-29 (08:20 UTC) — the mode-3 spiral inflates instead of merging: stopped at t = 60.40 and closed out; three single-throat momentum probes launched
 
 - **The spiral ends in no merger.** On far-side-matched data the level-5 p = 0.12 spiral has no common MOTS through

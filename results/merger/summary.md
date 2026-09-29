@@ -89,6 +89,14 @@ t = 51.4+) are evidence of a common horizon.
 |---|---|---|---|---|---|---|---|---|
 | s20_boost_p02 | Stage 2.0 shakedown: one throat with a Bowen-York boost P = 0.2 along z and the moving-box tagger driven by the throat tracker -- crossed 3.3 grid units, completed t = 40 with zero lost rows and no NaN; the shakedown the whole two-throat programme is built on (frames in the x-z plane, frames_xz/) | 0.00 | 40.00 | finished clean at t = 40.00 | 0.06 | - | 1.316e-01 | 1.198e-03 |
 
+## `02_moving_throat/csm`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| single_rest_csm_t050 | MOMENTUM PROBE, CONTROL (2026-09-29): one mode-3 solved throat AT REST, L = 64 level 3, t = 50 -- the solve's own seed, the baseline every boosted arm reads its kick against. t = 0: M_ADM 1.00137, one-body mass 1.0000. | 0.00 | 32.27 | stopped by hand at t = 32.27 on the user's word (stop_campaign.sh, 2026-09-29 14:26:50 UTC, the three probes together: the finding was in), no NaN, no checkpoints; closed out with WHM_MOVIES=0 (frames and slice cache kept), filed 02_moving_throat/csm/; scratch (7.1 G, Plt03000-03200) pruned (MANIFEST_CLEANUP_2026-09-29) | 0.06 | - | 1.616e-01 | 2.510e-03 |
+| single_boost_p012_csm_t050 | MOMENTUM PROBE p = 0.12 (2026-09-29): one mode-3 solved throat with Bowen-York momentum 0.12 along +y, scalar at rest -- does momentum alone kick a throat toward inflation (the spiral's mouths read -0.8 %)? t = 0: M_ADM 1.00703, one-body mass 1.0000. | 0.00 | 32.97 | stopped by hand at t = 32.97 on the user's word (stop_campaign.sh, 2026-09-29 14:26:50 UTC, the three probes together: the finding was in), no NaN, no checkpoints; closed out with WHM_MOVIES=0 (frames and slice cache kept), filed 02_moving_throat/csm/; scratch (6.9 G, Plt03000-03200) pruned (MANIFEST_CLEANUP_2026-09-29) | 0.06 | - | 1.536e-01 | 1.885e-03 |
+| single_boost_p045_csm_t050 | MOMENTUM PROBE p = 0.45 (2026-09-29): one mode-3 solved throat with Bowen-York momentum 0.45 along +y, scalar at rest -- does momentum alone kick a throat toward inflation (the fly-by's mouths read -1.2 %)? t = 0: M_ADM 1.07969, one-body mass 1.0000. | 0.00 | 32.64 | stopped by hand at t = 32.64 on the user's word (stop_campaign.sh, 2026-09-29 14:26:50 UTC, the three probes together: the finding was in), no NaN, no checkpoints; closed out with WHM_MOVIES=0 (frames and slice cache kept), filed 02_moving_throat/csm/; scratch (6.7 G, Plt03000-03200) pruned (MANIFEST_CLEANUP_2026-09-29) | 0.06 | - | 1.527e-01 | 1.242e-03 |
+
 ## `03_two_throats`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |

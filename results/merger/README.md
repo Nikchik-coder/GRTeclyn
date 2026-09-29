@@ -1135,6 +1135,31 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   The finder's null is local (three seeds, lmax 8) in a box that held every surface it tried. One resolution; the
   outgoing burst has not reached R = 30–44 by the stop.
 
+### Mode-3 single throats with momentum: the Bowen–York setup inflates the throat (2026-09-29)
+- **Claim.** A lone far-side-matched throat given Bowen–York momentum with its scalar at rest (Π = 0) inflates; the
+  same throat at rest stays put. R_min from the level-3 horizon scan's A rows, relative to each run's t = 0:
+  - `single_rest_csm_t050` (p = 0): R = 3.8772 at t = 0, −0.05 % at t = 32.
+  - `single_boost_p012_csm_t050` (p = 0.12): +0.88 % at t = 20, +4.4 % at t = 28, +9.9 % at t = 32; t₁₀ ≈ 32.1,
+    ε_eff ≈ −0.15 %.
+  - `single_boost_p045_csm_t050` (p = 0.45): +9.5 % at t = 20, +24.2 % at t = 25; t₁₀ ≈ 20.2, ε_eff ≈ −1.8 %.
+
+  The push grows as p², like the ADM-mass excess the momentum adds (M_ADM 1.00137 / 1.00703 / 1.07969). A uniformly
+  moving exact wormhole is the static one in another frame, so the push is a setup artefact (junk in the initial
+  data), not physics. Every run with p > 0 carries it: ~0.15 % at the spiral's p = 0.12, small next to the
+  companion's −0.8 %; at p = 0.45 about the fly-by mouths' whole kick (−1.2 %). On the user's word (2026-09-29
+  14:25 UTC) the live fly-by `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` is wrong and the claim that the fly-by
+  cannot spiral is withdrawn; the fix (the scalar moving with the throat, the solve counting its momentum) is in
+  progress.
+- **Runs.** The three above *(pack, `campaign/02_moving_throat/csm/`)*: L = 64, N = 128, level 3, stop_time 50, the
+  throat from y = −8 moving +y. Stopped together at 14:26:50 UTC with `stop_campaign.sh` on the user's word once the
+  finding was in, at t = 32.27 / 32.97 / 32.64; no NaN, no checkpoints; closed out without movies (their frames stay
+  in the run tree); scratch pruned.
+- **Caveats.** From t = 26 the p = 0.45 throat is past both scans' outer radius (r = 2.29 on level 3, 2.33 on the
+  common scan; the consumer's horizon_half 2.5), so its rows after t = 25 read the scan edge and are upper bounds
+  only (+82 % at t = 32): a limit of the scan, not of the solution. ε_eff is read on the seed-ladder rule
+  ε_eff ≈ −10⁻² × 10^(−(t₁₀ − 23)/11); p = 0.12 reaches +10 % just past its last plotfile, so its t₁₀ is a short
+  extrapolation. One resolution; nothing of these runs is cited yet.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,
@@ -1211,6 +1236,7 @@ campaign/
     CLOCK_COMPARISON.md             the throat clocks across arms, generated
     NOTES.md                        the Stage-1 working notes, copied from the run tree
   02_moving_throat/s20_boost_p02/ the boosted throat that crosses the grid (Stage 2.0)
+    csm/<run>/                      the mode-3 momentum probes (2026-09-29): one throat at p = 0, 0.12, 0.45
   03_two_throats/<run>/           two throats released from rest: the four Stage-2.5/2.6
                                   controls (push, rest, width, flip) and the five a-point /
                                   separation rungs of 2026-09-04; the two ladder tables
