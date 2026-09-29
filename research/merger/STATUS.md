@@ -1,4 +1,4 @@
-# Status — 2026-09-29 09:20 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 10:35 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -59,7 +59,7 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
    - Add the new definitions: each wormhole's mass, the pair's total mass, and p in true units.
    - **Add a section on the boosted single throats (the user, 2026-09-29 09:45 UTC):** what one throat does after a
      momentum kick, inflation or collapse, and how fast. Sources: the three mode-3 probes
-     (`single_rest_csm_t050`, `single_boost_p012_csm_t050`, `single_boost_p045_csm_t050`; live, done ~18:00 UTC)
+     (`single_rest_csm_t050`, `single_boost_p012_csm_t050`, `single_boost_p045_csm_t050`; live, done ~17:40 UTC)
      and the unsolved pair (`single_boost_p045_t050`, `..._vscal_t050`: the scalar at rest against moving; not yet
      launched), each read as ε_eff on the seed ladder. It ties the binaries' mouth kicks (ε_eff −0.4 to −1.2 %) to
      momentum and the companion. Written only once the probes are closed out.
@@ -127,22 +127,28 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by (card 0) and the single-throat momentum probes (card 1)
 
-| card | run | p | t now (09:17, 09-29) | t end | speed | ETA |
+| card | run | p | t now (10:34, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 50.9 | 100 | 2.1 u/h (28 min per unit over t = 46–50) | ~23 h, ~08:30 UTC 09-30 |
-| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 4.8 | 50 | 5.2 u/h (11.5 min per unit; three share the card, 59 GB) | ~8.7 h, ~18:00 UTC |
-| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 4.7 | 50 | 5.2 u/h | ~8.7 h, ~18:00 UTC |
-| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 4.7 | 50 | 5.2 u/h | ~8.7 h, ~18:00 UTC |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 53.8 | 100 | 2.2 u/h (26.5 min per unit over t = 51–53) | ~20.5 h, ~07:00 UTC 09-30 |
+| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 11.5 | 50 | 5.4 u/h (11 min per unit; three share the card, 59 GB) | ~7 h, ~17:40 UTC |
+| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 11.7 | 50 | 5.4 u/h | ~7 h, ~17:40 UTC |
+| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 11.6 | 50 | 5.4 u/h | ~7 h, ~17:40 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
-- **The probes at t ≈ 6.5 (09:37 UTC):** alive, no NaN. Read R from the A rows of `horizon_scan.dat` (level 3,
+- **The probes at t ≈ 11.5 (10:35 UTC):** alive, no NaN. Read R from the A rows of `horizon_scan.dat` (level 3,
   dr 0.02; the C rows are the level-1 common scan, dr 0.08, too coarse for a single throat).
-  - Rest: R = 3.8772 flat to 1e-5, not moving.
-  - p = 0.12: R within ±0.05 % (the scan re-centring on the moving throat), moved +0.16 in y.
-  - p = 0.45: R +0.23 % by t = 6 (3.8757 → 3.8847), most of it after t = 3, ~0.08 % per unit; moved +0.47 in y.
-    The ε = −1e-3 / −1e-2 seeds rise 0.09 % / 0.88 % by t = 6, so this reads ε ≈ −2.6e-3 if physical; but it came
-    as the throat started moving on the grid, so part may be the moving throat's coordinate shape. Decisive past
-    ~1 % (t ≈ 15–20, ~11:15–12:15 UTC).
+  - Rest: R = 3.8772 flat to 5e-6 by t = 10, not moving.
+  - p = 0.12: R +0.14 % by t = 10 (±0.05 % jitter as the scan re-centres on the moving throat); moved +0.34 in y.
+  - p = 0.45: R +0.85 % by t = 10 (3.8757 → 3.9088) and speeding up (+0.12, +0.20, +0.25 % per unit over
+    t = 7–10); moved +1.09 in y.
+    - It is not the scan: the throat stays centred on the chi pit and round. Surfaces shifted and stretched along y
+      find at most 0.02 % less area (t = 9 and 10).
+    - On the seed ladder (the ε = −1e-3 seed is +0.15 % at t = 10) it reads ε ≈ −2.6e-3 at t = 6 and −5.8e-3 at
+      t = 10. The reading is still climbing, so it is not yet one fixed kick.
+    - The scalar, at rest at t = 0, picks up motion: max |Π| ≈ 1e-2 at t = 10, ∝ p, still growing.
+    - Open: is it the inflation mode, or the slicing still settling around the moving throat? A throat's area
+      depends on the slice, unlike a horizon's, and the grid speed (0.19) is still below v ≈ 0.41. Inflation runs
+      away with the seeds' e-fold time of ~5 units (3–6 % by t = 20, ~12:05 UTC); a slicing effect levels off.
   - Their grid speed is the shift (β^y = −0.095 / −0.026 at t = 4) and grows as the shift builds; the physical
     speed (v ≈ 0.41 / 0.12) is fixed by the t = 0 momentum. Nothing feeds momentum or energy after t = 0: the
     momentum is read only by the initial data and the solve; support 1 with no ramp, phantom mass 0, core
@@ -211,7 +217,7 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
        the solve; scalar at rest against scalar moving at v = 0.4104).
      - Launch each with `--profile headon-scout --zoom 40 --coord 32 --binary $B` (the mode-3 binary). ~18.5 GB and
        ~3 h each alone (18 u/h); the three solved arms share card 1 at 5.2 u/h each (59 GB). The unsolved pair waits
-       for a card: card 1 frees at ~18:00 UTC, card 0 at ~08:30 UTC 09-30.
+       for a card: card 1 frees at ~17:40 UTC, card 0 at ~07:00 UTC 09-30.
      - Existing data point: `02_moving_throat/s20_boost_p02` (p = 0.2 along z, level 3, unsolved, 2026-08-31)
        inflates on the ε = −1e-2 track ~2 units behind (ε_eff ≈ −0.6 %; χ at the pit 1.6e-4 and max |K| 0.061 at
        t = 40, against 2.6e-4 / 0.060 for the seed), while the same throat at rest (`single_hold_t100`) drifts to
