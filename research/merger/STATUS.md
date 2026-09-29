@@ -159,7 +159,21 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 - **Proposed, not queued (the user, 07:55 UTC 09-29; nothing starts without the go):**
   1. Single throat with momentum: at rest; with p = 0.12 and 0.45 (Bowen–York, scalar at rest); with p and the
      boosted scalar; one level (3 or 4). ε_eff from the time to +10 % against the seed ladder. If the throat with the
-     resting scalar inflates sooner as p grows, the kick is the setup's, not physics.
+     resting scalar inflates sooner as p grows, the kick is the setup's, not physics. **Prepared 08:30 UTC 09-29 (the
+     user: L = 64, N = 128, level 3), waiting for the go and the checkpoint answer (off in all five):** templates in
+     `runs/wormhole_merger/templates_scan/`, each the seed ladder's `params_single_eps_m1e2_t100.txt` without its seed,
+     the throat starting at y = −8 and moving +y, t = 50; `launch.sh --dry-run` PASS on all five.
+     - `single_rest_csm_t050` (mode-3 solve, p = 0: the solve's own seed), `single_boost_p012_csm_t050`,
+       `single_boost_p045_csm_t050` (solve, scalar at rest);
+     - `single_boost_p045_t050` and `single_boost_p045_vscal_t050` (no solve: the code refuses a boosted scalar under
+       the solve; scalar at rest against scalar moving at v = 0.4104).
+     - Launch each with `--profile headon-scout --zoom 40 --coord 32 --binary $B` (the mode-3 binary). ~18.5 GB and
+       ~3 h each alone (18 u/h); none fits beside the production runs (20–22 GB free, cards at 94–98 %), so four go
+       on the spiral's card when it ends (~18:20 UTC), the fifth on the next free card.
+     - Existing data point: `02_moving_throat/s20_boost_p02` (p = 0.2 along z, level 3, unsolved, 2026-08-31)
+       inflates on the ε = −1e-2 track ~2 units behind (ε_eff ≈ −0.6 %; χ at the pit 1.6e-4 and max |K| 0.061 at
+       t = 40, against 2.6e-4 / 0.060 for the seed), while the same throat at rest (`single_hold_t100`) drifts to
+       collapse at t ≈ 60–65.
   2. A spiral that collapses: d = 8 with a small p (0.05, 0.10), so the plunge ends by t ≈ 25 as the head-on's did;
      level-3 scouts first (the −1e-2 seed runs identically at levels 3 and 4), then level 5 for the winner. Lowering p
      at d = 12 is not enough.
