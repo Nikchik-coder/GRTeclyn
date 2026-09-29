@@ -121,12 +121,12 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
 ## Live — first node (two H100s): the fly-by (card 0) and the single-throat momentum probes (card 1)
 
-| card | run | p | t now (08:27, 09-29) | t end | speed | ETA |
+| card | run | p | t now (08:59, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
-| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 48.9 | 100 | 2.15 u/h (28 min per unit since t = 44) | ~24 h, ~08:10 UTC 09-30 |
-| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 0.4 | 50 | ~6 u/h (three share the card) | ~8.3 h, ~16:45 UTC |
-| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 0.3 | 50 | ~6 u/h | ~8.3 h, ~16:45 UTC |
-| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 0.2 | 50 | ~6 u/h | ~8.3 h, ~16:45 UTC |
+| 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 50.2 | 100 | 2.1 u/h (28.5 min per unit since t = 48) | ~23.7 h, ~08:40 UTC 09-30 |
+| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 3.2 | 50 | 5.2 u/h (11.5 min per unit; three share the card) | ~9 h, ~18:00 UTC |
+| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 3.2 | 50 | 5.2 u/h | ~9 h, ~18:00 UTC |
+| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 3.1 | 50 | 5.2 u/h | ~9 h, ~18:00 UTC |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
 - **Close-out of the spiral (08:25–08:45 UTC):** no NaN in any stream or in `run.log`; trust window t = 57 (the
