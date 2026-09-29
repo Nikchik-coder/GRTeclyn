@@ -1,4 +1,4 @@
-# Status — 2026-09-29 13:45 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
+# Status — 2026-09-29 14:30 UTC (Live sections; queue updated 2026-09-28 ~11 UTC)
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -24,6 +24,23 @@ sponge, separation, gauge, dt_multiplier, stop_time and plot cadence as the old 
 says so, and the plot variables the full frame set needs (output only). Diff the new template against the old params before
 launching. E.g. the rest pairs are L = 64, N = 128, max_level 3, tagging_L 64, sponge 24/32, t = 15, plots every 0.5. CS-1 (mode 0: the superposition's mouths, solved) is the
 old-versus-clean comparison, not a rerun. The binary verdicts below stand only as results on superposed data.
+
+## CRITICAL: the momentum setup inflates every moving throat; the fly-by is wrong (the user, 2026-09-29 14:25 UTC)
+
+Mode 3 gives a throat momentum through the Bowen–York extrinsic curvature alone: the scalar that holds it open starts
+at rest (Π = 0; the solve refuses a boosted scalar). The single-throat probes show what that does (level 3, L = 64,
+stopped at t ≈ 32–33 on the user's word):
+- at rest the throat stays put (R −0.05 % at t = 32);
+- p = 0.12 inflates: +10 % at t = 32 (ε_eff ≈ −0.15 %);
+- p = 0.45 inflates: +10 % at t = 20.2, +24 % at t = 25 (ε_eff ≈ −1.8 %), past the scan from t = 26.
+
+The push grows as p², like the ADM-mass excess the momentum adds. A uniformly moving exact wormhole is the static one
+in another frame, so none of it is physics. At p = 0.45 it is about the fly-by mouths' whole kick (−1.2 %).
+- **The live fly-by (`merge_orbit_flip_d12_p045_L128_lvl5_t100_csm`) is wrong, and so is the claim that the fly-by
+  cannot spiral** (§VII.A: every p ≥ 0.35 "passes without merging"): the junk drives its throats to expand. Every
+  run with p > 0 carries it; at the spiral's p = 0.12 it is ~0.15 %, small next to the companion's −0.8 %.
+- **The fix (in progress):** the scalar moves with the throat (`wormhole_boost_velocity`) and the solve counts its
+  momentum. Tested end to end on a single p = 0.45 throat on card 1 before any binary rerun.
 
 ## The plan, in order (the user's, 2026-09-28)
 
@@ -59,10 +76,13 @@ old-versus-clean comparison, not a rerun. The binary verdicts below stand only a
    - Add the new definitions: each wormhole's mass, the pair's total mass, and p in true units.
    - **Add a section on the boosted single throats (the user, 2026-09-29 09:45 UTC):** what one throat does after a
      momentum kick, inflation or collapse, and how fast. Sources: the three mode-3 probes
-     (`single_rest_csm_t050`, `single_boost_p012_csm_t050`, `single_boost_p045_csm_t050`; live, done ~17:45 UTC)
-     and the unsolved pair (`single_boost_p045_t050`, `..._vscal_t050`: the scalar at rest against moving; not yet
-     launched), each read as ε_eff on the seed ladder. It ties the binaries' mouth kicks (ε_eff −0.4 to −1.2 %) to
+     (`single_rest_csm_t050`, `single_boost_p012_csm_t050`, `single_boost_p045_csm_t050`; stopped 14:27 UTC at t ≈ 32–33, the user's word)
+     and the unsolved pair (`single_boost_p045_t050`, `..._vscal_t050`: the scalar at rest against moving; not
+     launched: the fix's end-to-end test replaces it), each read as ε_eff on the seed ladder. It ties the binaries' mouth kicks (ε_eff −0.4 to −1.2 %) to
      momentum and the companion. Written only once the probes are closed out.
+   - **Withdraw the fly-by/capture boundary (the user, 2026-09-29 14:25 UTC).** §VII.A's "every p ≥ 0.35 passes
+     without merging" and the fly-by's outcome rest on data whose momentum setup inflates the throats (CRITICAL,
+     top). Rerun p = 0.35 / 0.45 on the fixed data before the text states any boundary.
    - **Add the branch-selection finding: why the interaction inflates the mouths, and the race (the user,
      2026-09-29 ~10:45 UTC).** Verified and quotable now: the seed ladder fixes the signs (+ε at the throat
      collapses and traps, −ε inflates); every companion reads as a −ε kick that strengthens with closeness
@@ -142,16 +162,19 @@ Along the way:
 
 Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
 
-## Live — first node (two H100s): the fly-by (card 0) and the single-throat momentum probes (card 1)
+## Live — first node (two H100s): the fly-by (card 0); card 1 free since 14:27 UTC
 
 | card | run | p | t now (13:45, 09-29) | t end | speed | ETA |
 |---|---|---|---|---|---|---|
 | 0 | `merge_orbit_flip_d12_p045_L128_lvl5_t100_csm` (the fly-by) | 0.45 | 60.9 | 100 | 2.2 u/h (t = 54.5 → 60.9 over 10:53–13:45) | ~17.5 h, ~07:15 UTC 09-30 |
-| 1 | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | 28.6 | 50 | 5.35 u/h (three share the card, 59 GB) | ~4 h, ~17:45 UTC |
-| 1 | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | 29.2 | 50 | 5.5 u/h | ~3.8 h, ~17:35 UTC |
-| 1 | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | 28.9 | 50 | 5.4 u/h | ~3.9 h, ~17:40 UTC |
+| — | `single_rest_csm_t050` (probe control, launched 08:23 UTC) | 0 | **stopped at t = 32.27** (14:26:50 UTC, `stop_campaign.sh`, the user's word) | 50 | — | close-out: packed, no movies |
+| — | `single_boost_p012_csm_t050` (probe, 08:23 UTC) | 0.12 | **stopped at t = 32.97** (14:26:50 UTC, same) | 50 | — | same |
+| — | `single_boost_p045_csm_t050` (probe, 08:23 UTC) | 0.45 | **stopped at t = 32.64** (14:26:50 UTC, same) | 50 | — | same |
 | — | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` (the merger) | 0.12 | **stopped at t = 60.40** (08:21:51 UTC, `dump_and_stop`, the user's word: it does not end in a merger) | — | — | **closed out 08:45 UTC**: filed `05_binary_spiral/csm/`, packed, movies to its trust window t = 57, Table I `-` |
 
+- **The probes stopped at 14:26:50 UTC (the user's word; no NaN in any log).** Last readings (t = 32): rest −0.05 %;
+  p = 0.12 +9.9 % (t₁₀ ≈ 32.1, ε_eff ≈ −0.15 %, as extrapolated); p = 0.45 past the scan (edge reading +82 %, an
+  upper bound). The verdict is in the CRITICAL section at the top.
 - **The probes at t ≈ 11.5 (10:35 UTC):** alive, no NaN. Read R from the A rows of `horizon_scan.dat` (level 3,
   dr 0.02; the C rows are the level-1 common scan, dr 0.08, too coarse for a single throat).
   - Rest: R = 3.8772 flat to 5e-6 by t = 10, not moving.
@@ -243,8 +266,8 @@ Total: about 100–170 GPU-hours, roughly 4–5 days on the three free cards.
      - `single_boost_p045_t050` and `single_boost_p045_vscal_t050` (no solve: the code refuses a boosted scalar under
        the solve; scalar at rest against scalar moving at v = 0.4104).
      - Launch each with `--profile headon-scout --zoom 40 --coord 32 --binary $B` (the mode-3 binary). ~18.5 GB and
-       ~3 h each alone (18 u/h); the three solved arms share card 1 at 5.2 u/h each (59 GB). The unsolved pair waits
-       for a card: card 1 frees at ~17:45 UTC, card 0 at ~07:15 UTC 09-30.
+       ~3 h each alone (18 u/h); the three solved arms share card 1 at 5.2 u/h each (59 GB). The unsolved pair was
+       not launched: the user chose the fix instead (14:25 UTC).
      - Existing data point: `02_moving_throat/s20_boost_p02` (p = 0.2 along z, level 3, unsolved, 2026-08-31)
        inflates on the ε = −1e-2 track ~2 units behind (ε_eff ≈ −0.6 %; χ at the pit 1.6e-4 and max |K| 0.061 at
        t = 40, against 2.6e-4 / 0.060 for the seed), while the same throat at rest (`single_hold_t100`) drifts to
