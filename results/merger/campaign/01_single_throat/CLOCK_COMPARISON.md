@@ -292,6 +292,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_p025_lvl5_t200` | B | 52.8 | x2816.5 / 50.2 | +0.32 | +0.62 | +0.77 | +0.82 | +0.82 | +3.45 | - | 0.0 | early (-0.49 dex) |
 | `merge_orbit_flip_d12_p025_t200` | A | 53.0 | x61.4 / 53.0 | +1.07 | +1.44 | +1.67 | +1.74 | +1.72 | +1.76 | - | - | late (+0.43 dex) |
 | `merge_orbit_flip_d12_p025_t200` | B | 53.0 | x61.4 / 53.0 | +1.07 | +1.44 | +1.67 | +1.74 | +1.72 | +1.76 | - | - | late (+0.43 dex) |
+| `t0_v2_spiral_d12_p012_L128_lvl5_lb_csm` | A | 0.5 | x1.0 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
+| `t0_v2_spiral_d12_p012_L128_lvl5_lb_csm` | B | 0.5 | x1.0 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
 | `merge_orbit_flip_d12_p035_t200` | A | 73.9 | x777.7 / 73.9 | +1.06 | +1.47 | +1.74 | +1.90 | +2.14 | +2.36 | +2.62 | - | late (+0.59 dex) |
 | `merge_orbit_flip_d12_p035_t200` | B | 73.9 | x777.7 / 73.9 | +1.06 | +1.47 | +1.74 | +1.90 | +2.14 | +2.36 | +2.62 | - | late (+0.59 dex) |
 | `merge_orbit_flip_d12_p045` | A | 60.0 | x936.9 / 60.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
@@ -311,7 +313,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 26 early, 14 same, 87 late, 88 too short, 52 restart arms (own clock only).
+Throats read at t = 30: 26 early, 14 same, 87 late, 90 too short, 52 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

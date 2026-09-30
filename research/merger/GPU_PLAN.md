@@ -1323,6 +1323,38 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-30 (12:10 UTC) — the boosted spiral's verification A passes and the rerun is live; the head-on chain reached t = 100
+
+- **SPIRAL-lbf, the plan (the user, 06:38 UTC):** the spiral exactly as it was (d = 12, p = 0.12) on the exact-boost
+  setup, the clean test of "inflates, no merger"; if it again fails to merge, d = 8 small-p level-3 scouts design
+  the collapsing spiral. Templates `params_v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm.txt` and its t = 0.5 copy
+  `params_t0_v2_spiral_d12_p012_L128_lvl5_lb_csm.txt`: against the csm spiral's packed params only
+  `wormhole_momentum_model = 1`, `wormhole_boost_initial_shift = 1` and `constraint_solve_match_tolerance = 1e-5`
+  change (diffed); no freeze (the user's word), max_level 5, checkpoints every 5 units keeping 3.
+- **Verification A** (`t0_v2_spiral_d12_p012_L128_lvl5_lb_csm`, first node card 0, 06:43–07:17 UTC,
+  `main3d_boostpair_91ed17cd`, profile `orbit-modes-prod`): **PASS.** Solve: 22 Newton passes, 2 matching rounds,
+  max |M_far/M_iso − 1| = 4.2e-6; one-body a 2.00002 / 1.99999, m 1.000004 / 0.999998. Mouths R_min 3.87804 /
+  3.87806 at t = 0 (isolated 3.8772, +0.02 %; the p = 0.25 pair: +0.09 %, ratio 0.23 = (0.12/0.25)²) and 3.87827 /
+  3.87830 at t = 0.5. Throat-shell Hamiltonian rms 7.8e-5 / 2.9e-5 / 5.1e-5 on levels 3 / 4 / 5 (the fly-by pair:
+  7.8e-5 / 3.2e-5 / 5.6e-5). Axis ratio 0.99189 / 0.99138 / 0.98904 at r_c = 1 / 1.55 / 2.5 against 1/γ = 0.99288:
+  −1.0e-3 / −1.5e-3 at the throat is the p = 0.25 pair's −4.4e-3 / −6.4e-3 times p²; the outer contour's −3.8e-3
+  is more than that scaling gives (−2.2e-3), a p-independent −2.0e-3 by the two-point difference (open: a rest
+  pair's r_c = 2.5 contour would confirm it as the companion's static distortion; cost: one t = 0 solve, minutes).
+  Level-0 norms L2 H 1.12e-3 → 1.32e-3, L2 M 4.9e-6 → 7.8e-6 over t = 0–0.5 (the csm spiral: 1.12e-3 → 1.30e-3,
+  1.5e-6 → 2.1e-6). Pit lapse 0.194. Packed 12:06 UTC without movies (`05_binary_spiral/verify_p012/`); its two
+  plotfiles (21 GB) stay on the first node's scratch until the user's word.
+- **The rerun** `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm`: launched 11:55 UTC on the first node's card 0
+  (A finished at 07:17 UTC; the agent session had dropped, so the card sat idle for 4.6 h). Expected pace the csm
+  spiral's 2.7 u/h: t = 60 at ~10:30 UTC 10-01, t = 100 at ~01 UTC 10-02.
+- **Head-on leg 3** (`merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000`, second node): reached
+  t = 100 at 11:25 UTC, exit 0, no NaN. The common MOTS is found every unit to the end: R 4.27 / M_MS 2.296 at
+  t = 50 (leg 2), 4.25 / 2.300 at t = 51 (leg 3, the seam), rising to 4.66 by t = 62 and 4.58–4.70 from there
+  (4.65 / 2.373 at t = 100; M_ADM 2.357 by the volume identity). **Open before the chain is called clean:** the
+  level-0 L2 H rises from t ≈ 80 (1.1e-4 at t = 70, 1.4e-4 at 80, 3.3e-4 at 90, 1.2e-3 at 100; L2 M 3.9e-4 →
+  5.9e-4), with the same onset as the old head-on arms' late rise (`..._lvl3down_t100_r03500`: 7.0e-4 at 80,
+  1.4e-3 at 100); the cause is not identified (candidates: the level-0 copy of the remnant's interior, or the
+  outer boundary). Legs 1–3 are not closed out yet.
+
 ### 2026-09-30 (05:55 UTC) — the head-on walks through its wall at level 6; a moving throat collapses on its own mode; the fly-by's verification packed
 
 - **The head-on went through the t = 38.85 wall** (second node). Leg 1 died there at 20:21 UTC as planned. Leg 2

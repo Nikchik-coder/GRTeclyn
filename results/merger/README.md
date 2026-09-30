@@ -1216,6 +1216,21 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
 - **Runs.** `t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm`, `check_flyby_d12_p025_lbf_csm_t020` *(pack,
   `campaign/06_binary_flyby/verify_p025/`)*: `main3d_boostpair_91ed17cd`; no checkpoints; closed out without movies.
 
+### The p = 0.12 exact-boost spiral setup: verification A (2026-09-30)
+
+- **Claim (a setup check, not a paper claim).** The boosted spiral rerun's own template (the mode-3 spiral's params
+  with momentum model 1, the boosted shift and match tolerance 1e-5; no freeze) stopped at t = 0.5 on the production
+  grid (L = 128, level 5): the solve converged (22 Newton passes, 2 matching rounds), the far sides are the isolated
+  throat's to 4e-6, the mouths read R_min 3.8780 each (+0.02 % on the isolated 3.8772), and the throat-shell
+  Hamiltonian rms is 7.8e-5 / 2.9e-5 / 5.1e-5 on levels 3 / 4 / 5, the p = 0.25 pair's floor. The throats' axis ratio
+  is 0.9919 / 0.9914 at r_c = 1 / 1.55 against 1/γ = 0.9929: 0.10–0.15 % flatter, the p = 0.25 pair's 0.44–0.64 %
+  scaled by p². No NaN; frame 0 shows the mode-3 spiral's pair.
+- **Caveat.** The outer contour (r_c = 2.5) is 0.38 % flatter than 1/γ, more than p² scaling from the p = 0.25 pair
+  gives (0.22 %); the two-point difference is a p-independent −0.2 % there, which a rest pair's contour would have to
+  confirm as the companion's static distortion.
+- **Runs.** `t0_v2_spiral_d12_p012_L128_lvl5_lb_csm` *(pack, `campaign/05_binary_spiral/verify_p012/`)*:
+  `main3d_boostpair_91ed17cd`; no checkpoints; closed out without movies.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,

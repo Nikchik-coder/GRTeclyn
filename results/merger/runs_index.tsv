@@ -160,6 +160,7 @@ merge_orbit_flip_d12_p020_nofill_t060	05_binary_spiral/p020	reconstructed			none
 merge_orbit_flip_d12_p020_t200	05_binary_spiral/p020	reconstructed			none (launched before 2026-09-24)	0	0	3	64.0	128	200.0		2.9900228945e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p025_lvl5_t200	05_binary_spiral/p025	reconstructed			none (launched before 2026-09-24)	0	0	5	64.0	128	200.0		2.9900782341e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p025_t200	05_binary_spiral/p025	reconstructed			none (launched before 2026-09-24)	0	0	3	64.0	128	200.0		2.9900782341e-03	n/a	ok	unknown	ok
+t0_v2_spiral_d12_p012_L128_lvl5_lb_csm	05_binary_spiral/verify_p012	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	0.5		1.1211961179e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p035_t200	06_binary_flyby/p035	reconstructed			none (launched before 2026-09-24)	0	0	3	64.0	128	200.0		2.9902725419e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p045	06_binary_flyby/p045	reconstructed	main3d.gnu.MPI.CUDA.ex	unstamped	none (launched before 2026-09-24)	0	0	3	64.0	128	60.0		2.9906373439e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p045_L128_lvl5_t100	06_binary_flyby/p045	reconstructed	main3d_coreprof_2026-09-16.ex	unstamped	none (launched before 2026-09-24)	0	0	5	128.0	256	100.0		8.4312467298e-04	n/a	ok	unknown	ok

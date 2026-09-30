@@ -1,4 +1,4 @@
-# Status — 2026-09-30 11:57 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 12:10 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -91,8 +91,8 @@ superposed twins (checked 09-28/09-29; details in the archive).
   isolated throat's to 4e-6 (one-body a 2.0000, m 1.0000), mouths R_min 3.8780 each (isolated 3.8772, +0.02 %;
   the p = 0.25 pair's +0.09 % × p²), throat-shell Ham rms 7.8e-5 / 2.9e-5 / 5.1e-5 on levels 3 / 4 / 5 (the
   fly-by pair's floor), axis ratio 0.9919 / 0.9914 at r_c = 1 / 1.55 against 1/γ = 0.9929 (0.10–0.15 % flatter,
-  the p = 0.25 pair's × p²), no NaN, frame 0 as the csm spiral's. Not packed yet; its two plotfiles are on
-  scratch.
+  the p = 0.25 pair's × p²), no NaN, frame 0 as the csm spiral's. **Packed 12:06 UTC** without movies
+  (`05_binary_spiral/verify_p012/`); its two plotfiles (21 GB) are still on this node's scratch.
 
 Queued on card 1: **`merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm`** — the fly-by rerun
 (old fly-by's params, p = 0.45 → 0.25, momentum model 1, per-throat freeze, match tol 1e-5, checkpoints every

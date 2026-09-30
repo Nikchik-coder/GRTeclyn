@@ -111,7 +111,7 @@ t = 51.4+) are evidence of a common horizon.
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
-| single_boost_p045_lbf_t050 | RERUN of single_boost_p045_lb_t050 with the slicing source frozen at the moving puncture (2026-09-29, the user's go | 0.00 | 44.67 | NaN at t = 44.67 | 0.06 | - | 2.336e-01 | 2.948e-03 |
+| single_boost_p045_lbf_t050 | RERUN of single_boost_p045_lb_t050 with the slicing source frozen at the moving puncture (2026-09-29, the user's go | 0.00 | 44.67 | NaN at t = 44.67 COLLAPSES ON ITS OWN MODE WHILE MOVING: R_min +2.0 % at t = 29, 1 % below its start at t = 36.8, -9.2 % at t = 44 (level-3 scan A rows); ln(R_peak - R) e-folds in 5.5-5.7 against the resting level-3 throat's 5.88 (single_hold_t100), the same collapse branch. The pit lapse held (0.215-0.233 from t = 24); no boundary reflection reaches it. Died at t = 44.67 (NaN in h11, level 3) when chi at the pit reached its floor (t = 44.60); trust window 44.5. One resolution. To be cited (the user, 2026-09-30). | 0.06 | - | 2.336e-01 | 2.948e-03 |
 
 ## `03_two_throats`
 
@@ -278,6 +278,12 @@ t = 51.4+) are evidence of a common horizon.
 | merge_orbit_flip_d12_p025_t200 | scout p = 0.25: captured to sep 1.5, h11 NaN | 0.00 | 52.98 | NaN at t = 52.98 | 1.50 | 52.97 | 3.088e-03 | 7.604e-02 |
 | merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79 | 0.00 | 52.79 | NaN at t = 52.79 | 0.06 | - | 3.569e-03 | 6.891e-02 |
 
+## `05_binary_spiral/verify_p012`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| t0_v2_spiral_d12_p012_L128_lvl5_lb_csm | VERIFICATION A of the boosted spiral rerun (2026-09-30, the user's go 06:38 UTC): the rerun's own template (the csm spiral's params with momentum model 1, the boosted shift and match tol 1e-5; no freeze) stopped at t = 0.5 on the production grid, checkpoints off, + constraints in the plot | 0.00 | 0.50 | finished clean at t = 0.50 PASS: the solve converged (22 Newton passes, 2 matching rounds); far sides the isolated throat's to 4e-6; mouths R_min 3.8780 each (+0.02 % on the isolated 3.8772; the p = 0.25 pair's +0.09 % x p^2); throat-shell Hamiltonian rms 7.8e-5 / 2.9e-5 / 5.1e-5 on levels 3 / 4 / 5; axis ratio 0.9919 / 0.9914 / 0.9890 at r_c = 1 / 1.55 / 2.5 against 1/gamma = 0.9929 (0.10-0.15 % flatter at the throat, the p = 0.25 pair's x p^2). Setup check, not cited. | 11.98 | - | 1.939e-01 | 1.121e-03 |
+
 ## `06_binary_flyby/p035`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
@@ -297,8 +303,8 @@ t = 51.4+) are evidence of a common horizon.
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
-| t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm | VERIFICATION A of the p = 0.25 fly-by rerun (2026-09-29, the user's go ~19:25 UTC: "we need to be sure this time the | 0.00 | 0.50 | finished clean at t = 0.50 | 11.98 | - | 1.883e-01 | 1.130e-03 |
-| check_flyby_d12_p025_lbf_csm_t020 | VERIFICATION B of the p = 0.25 fly-by rerun (2026-09-29, the user's go ~19:25 UTC): the same pair (flipped, d = 12, | 0.00 | 20.00 | finished clean at t = 20.00 | 9.95 | - | 2.031e-01 | 5.271e-03 |
+| t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm | VERIFICATION A of the p = 0.25 fly-by rerun (2026-09-29, the user's go ~19:25 UTC: "we need to be sure this time the | 0.00 | 0.50 | finished clean at t = 0.50 PASS: the solve converged (22 Newton passes, 2 matching rounds); far sides the isolated throat's to 1e-5; mouths R_min 3.8807 each (+0.09 % on the isolated 3.8772); throat-shell Hamiltonian rms 7.8e-5 / 3.2e-5 / 5.6e-5 on levels 3 / 4 / 5; axis ratio 0.4-1 % flatter than 1/gamma, prop. to p^2 (the pair's interaction in the solve). Setup check, not cited. | 11.98 | - | 1.883e-01 | 1.130e-03 |
+| check_flyby_d12_p025_lbf_csm_t020 | VERIFICATION B of the p = 0.25 fly-by rerun (2026-09-29, the user's go ~19:25 UTC): the same pair (flipped, d = 12, | 0.00 | 20.00 | finished clean at t = 20.00 SETUP CLEAN TO t = 20: no NaN, pit lapse 0.20 steady; the mouths inflate +0.27 / +1.05 / +3.6 % at t = 10 / 15 / 20 (the rest pair ctrl_rest_d12_csm: +0.61 % at t = 15); separation 12.06 -> 9.95 at t = 20, as the old p = 0.45 fly-by's. CAVEAT: its L2 Ham spikes (8.6 at t = 7.74, 0.92 at t = 20) are four level-0 cells next to the moving pits (the norm is level 0 only); the level-3 solution under them is clean and the norm without the cells within 0.5 of a pit is 2.4-2.7e-3. Setup check, not cited. | 9.95 | - | 2.031e-01 | 5.271e-03 |
 
 ## `07_bbh_control`
 
