@@ -207,7 +207,9 @@ archive. Checkpoints: asked per run at launch, never on by default.
   resting throat's mode (the RESULT above; in the paper).** (§III–IV)
 - **Seeded throat**: fate opposite to the kick; ε = ±0.1 both collapse and die at the origin. (§II.D, §IV.C)
 - **Two throats at rest**: like signs repel, opposite attract; force ∝ (d + δ)⁻²; **mode-3 rerun done: ratio
-  1.463 ± 0.023 = fixed potential, δ = 2.65 — in the paper.** (§V)
+  1.463 ± 0.023 = fixed potential, δ = 2.65 — in the paper. Fig. 4(a–c) draws the matched pairs since 09-30**
+  (abstract and caption quote the ledger's 1.462 ± 0.022; the a = 1 arm left panel (a) — no matched twin;
+  (d)/(e) stay on the superposed placement probes, the superposition systematic itself). (§V)
 - **Head-on**: common MOTS from t = 22 around both throats; never bounces; shrinks toward the pair's Bondi
   mass. **Mode-3 chain done (t = 100, closed out 09-30): MOTS at t = 22 with R 5.02 (superposed 5.56), there to
   the end (R 4.69, M_MS 2.373 against M_ADM 2.357); the same ringdown swings. **The FIGURES read the mode-3

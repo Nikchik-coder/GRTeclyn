@@ -7,8 +7,8 @@ how far the pair has pushed itself apart by the common time t = 11.5 -- the
 growth of the separation, delta d, the same quantity the sign-rule panel
 draws against time.  Against it: inverse-square in the coordinate separation,
 scaled through the d = 12 rung (grey, dashed), and the offset law
-A/(d + delta)^2 fitted on d = 12-16 alone (gold), whose value at d = 18 was a
-blind prediction (drawn dotted past d = 16).
+A/(d + delta)^2 fitted on d = 12-16 alone (gold), whose value at d = 18 is a
+prediction (drawn dotted past d = 16).
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_force_law
 
@@ -17,12 +17,14 @@ numbers, I don't get it -- there should be a figure").  The text quoted the
 four displacements and the two predictions with nothing to look at; the
 sign-rule panel shows only the d = 12 pairs.  This is the ladder itself.
 
-Reads ``campaign/03_two_throats/separation_ladder_2026-09-04.txt`` (RESULT
-table: inverse-chi-weighted pit centroids from the chi_z slice caches, which
-are gone -- the table is the record, and the claims ledger reads the same
-rows, extract_single._dladder).  Standalone it writes
-``figures/03_two_throats/force_law``; the article draws it as panel (c) of the
-pair strip (plot_pair_row).
+SWITCHED TO THE MATCHED PAIRS 2026-09-30 (the user; with plot_sign_rule).
+Reads ``campaign/03_two_throats/matched_rest_displacement.dat`` (the mode-3
+csm like pairs) at t = 11.5: 0.4791 / 0.3716 / 0.2963 / 0.2406, each within
+2 % of the superposed ladder (``separation_ladder_2026-09-04.txt``, kept --
+the ledger's clmDLadder* still quote it).  The 12-16 fit gives A = 104.0,
+delta = 2.74, predicting 0.242 at d = 18 (inverse square: 0.213).
+Standalone it writes ``figures/03_two_throats/force_law``; the article draws
+it as panel (c) of the pair strip (plot_pair_row).
 
 STYLE: the sign-rule grammar -- ink points, the one gold accent for the model
 the data pick, the rejected law in context grey, names on the curves.
@@ -32,7 +34,6 @@ from __future__ import annotations
 
 import argparse
 import pathlib
-import re
 
 import matplotlib
 
@@ -44,22 +45,20 @@ from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, figure_dir  # noqa: E402
 
 GROUP = "03_two_throats"
-LADDER = "separation_ladder_2026-09-04.txt"
+LADDER = "matched_rest_displacement.dat"
+RUNGS = (12.0, 14.0, 16.0, 18.0)
+T_LADDER = 11.5
 FIT_RUNGS = (12.0, 14.0, 16.0)
 
 
 def ladder(pack_root=PACK_ROOT) -> tuple[np.ndarray, np.ndarray]:
-    """(d, delta d at t = 11.5) from the RESULT table."""
+    """(d, delta d at t = 11.5): the matched like pairs' columns interpolated
+    at T_LADDER -- the same arithmetic as the ledger's single_matched_dsep."""
     path = pathlib.Path(pack_root).expanduser() / "campaign" / GROUP / LADDER
-    block = path.read_text(encoding="utf-8").split("RESULT", 1)[1]
-    rows = []
-    for line in block.splitlines():
-        p = line.split()
-        if len(p) >= 3 and re.fullmatch(r"\d+", p[0]) and re.fullmatch(r"\d+\.\d+", p[2]):
-            rows.append((float(p[0]), float(p[2])))
-        elif rows and not p:
-            break
-    d, dd = np.array(rows).T
+    tab = np.loadtxt(path)   # time, like d12/14/16/18, flip d12
+    d = np.array(RUNGS)
+    dd = np.array([np.interp(T_LADDER, tab[:, 0], tab[:, 1 + i])
+                   for i in range(len(RUNGS))])
     return d, dd
 
 

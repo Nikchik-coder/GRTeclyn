@@ -38,6 +38,29 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
 
+2026-09-30 (evening): the pair strip switched to the matched pairs, and
+Fig. 1 was restyled. `pair_interaction` (a)-(c) now read
+`campaign/03_two_throats/matched_rest_displacement.dat` (the five mode-3 csm
+rest runs, closed out 09-28): (a) the two matched d = 12 arms — the a = 1
+superposed arm left the panel (no matched twin; the width ladder stays in
+Sec. V B's text) and the 1.35 right margin that held its name went with it;
+(b) the matched ratio, 1.462 ± 0.022 over the same t = 3.5–10.5 window
+(was the superposed 1.518), with the t > 10.5 samples drawn open-faced —
+the records run to t = 15, where the closing pair has eaten a tenth of its
+gap and the ratio climbs to 1.56 off the fixed-potential regime; (c) the
+matched ladder at t = 11.5 (0.4791/0.3716/0.2963/0.2406), 12–16 fit
+A = 104.0, delta = 2.74, predicting 0.242 at d = 18 (measured 0.2406).
+Panels (d)/(e) stay on the superposed placement probes: the placement curve
+IS the superposition systematic (no mode-3 counterpart; the matched pairs
+sit on R_star at t = 0), and the caption now says so. The abstract's and the
+caption's ratio moved to clmMatchedSignRatio; clmNarrowPairA/Ratio dropped
+(caption-only), clmSignWindowEnd added; 1112 rows, 0 problems.
+`boost_contraction` (Fig. 1) restyled on the user's "looks childish": house
+base size 10, hairline contours in (a) with the frame cut to the contours'
+span, markers 3.4–3.6 → 2.8, panel (b) trimmed to p ≤ 0.47, and (c)'s
+symmetric ±0.1 band (three quarters empty) replaced by an axis hugging the
+residuals (all within 6e-5, positive side). Both audits clean.
+
 2026-09-30 (late afternoon): Fig. 5 polish on the user's read — the round
 scan's open circles became a plain gold line (the diamonds stay on the three
 oriented anchors), and the composition's levels are named per era in (a), (d)

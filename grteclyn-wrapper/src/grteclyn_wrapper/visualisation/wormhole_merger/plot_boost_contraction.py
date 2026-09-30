@@ -223,61 +223,71 @@ def figure(pack_root=PACK_ROOT):
     rows = _table(pack_root)
     sl = np.load(pathlib.Path(pack_root) / "campaign" / GROUP / SLICES)
     g = sl["grid"]
-    fig, axes = plt.subplots(1, 3, figsize=(7.0, 2.55), constrained_layout=True,
+    fig, axes = plt.subplots(1, 3, figsize=(7.05, 2.35), constrained_layout=True,
                              gridspec_kw=dict(width_ratios=[1.0, 1.25, 1.25]))
     ax_a, ax_b, ax_c = axes
 
-    # (a) the throat's chi contour in the plane through its centre, three speeds,
-    # on the analytic ellipse x^2 + (gamma y)^2 = r_t^2.
-    shown = ((0.0, style.FAINT, r"$p=0$"), (0.45, style.INK, r"$p=0.45$ ($v=0.41$)"))
+    # (a) the throat's chi contour in the plane through its centre, at rest and
+    # at the fastest p, on the analytic ellipse x^2 + (gamma y)^2 = r_t^2.
+    # Line weights and limits tightened 2026-09-30 (the user: "looks childish,
+    # update it for the PRD level style"): hairline contours, the frame cut to
+    # the contours' own span, the house base size (10, as the other strips).
+    shown = ((0.0, style.FAINT, 0.9, r"$p=0$"),
+             (0.45, style.INK, 1.1, r"$p=0.45$ ($v=0.41$)"))
     th = np.linspace(0, 2 * np.pi, 400)
     handles = []
     i0 = int(np.argmin(np.abs(g - THROAT)))
     j0 = int(np.argmin(np.abs(g - 0.0)))
-    for p, col, lab in shown:
+    for p, col, lw, lab in shown:
         z = sl[f"p{p:.2f}"]
         level = float(z[j0, i0])                       # chi at (x = r_t, y = 0)
-        ax_a.contour(g, g, z, levels=[level], colors=[col], linewidths=1.2, zorder=3)
-        handles.append((Line2D([], [], color=col, lw=1.2), lab))
+        ax_a.contour(g, g, z, levels=[level], colors=[col], linewidths=lw, zorder=3)
+        handles.append((Line2D([], [], color=col, lw=lw), lab))
     # The analytic throat of the moving one: the rest-frame sphere r = r_t.
     ax_a.plot(THROAT * np.cos(th), THROAT * float(inverse_gamma(0.45)) * np.sin(th),
-              color=style.GOLD, lw=0.9, linestyle=(0, (3, 2)), zorder=4)
-    handles.append((Line2D([], [], color=style.GOLD, lw=0.9, linestyle=(0, (3, 2))),
+              color=style.GOLD, lw=1.0, linestyle=(0, (3, 2)), zorder=4)
+    handles.append((Line2D([], [], color=style.GOLD, lw=1.0, linestyle=(0, (3, 2))),
                     r"$x^2+\gamma^2y^2=r_t^2$"))
     ax_a.set_aspect("equal")
-    ax_a.set_xlim(-1.9, 1.9)
-    ax_a.set_ylim(-1.9, 1.9)
+    ax_a.set_xlim(-1.75, 1.75)
+    ax_a.set_ylim(-1.75, 1.75)
+    ax_a.set_xticks([-1, 0, 1])
+    ax_a.set_yticks([-1, 0, 1])
     ax_a.set_xlabel(r"$x$ (across)")
     ax_a.set_ylabel(r"$y$ (along the motion)")
     style.legend_top(ax_a, handles, ncol=2)
 
-    # (b) the axis ratio against p, on 1/gamma.
-    ps = np.linspace(0, 0.5, 200)
-    ax_b.plot(ps, inverse_gamma(ps), color=style.GOLD, lw=1.2, zorder=2)
+    # (b) the axis ratio against p, on 1/gamma -- no free parameter.
+    ps = np.linspace(0, 0.47, 200)
+    ax_b.plot(ps, inverse_gamma(ps), color=style.GOLD, lw=1.1, zorder=2)
     eb = [(p, q) for s, p, rc, q, _ in rows if s == "exact_boost" and rc == THROAT]
-    ax_b.plot(*zip(*eb), linestyle="none", marker="o", ms=3.6, color=style.INK, zorder=4)
-    ax_b.set_xlim(-0.02, 0.5)
-    ax_b.set_ylim(0.895, 1.008)
+    ax_b.plot(*zip(*eb), linestyle="none", marker="o", ms=2.8, color=style.INK, zorder=4)
+    ax_b.set_xlim(-0.015, 0.47)
+    ax_b.set_ylim(0.905, 1.005)
+    ax_b.set_yticks([0.92, 0.94, 0.96, 0.98, 1.00])
     ax_b.set_xlabel(r"$p$ (ADM momentum, $m=1$)")
-    ax_b.set_ylabel("axis ratio along / across")
-    keys_b = [(Line2D([], [], color=style.GOLD, lw=1.2), r"$1/\gamma=1/\sqrt{1+p^2}$"),
-              (Line2D([], [], linestyle="none", marker="o", ms=3.6, color=style.INK),
+    ax_b.set_ylabel("axis ratio along/across")
+    keys_b = [(Line2D([], [], color=style.GOLD, lw=1.1), r"$1/\gamma=1/\sqrt{1+p^2}$"),
+              (Line2D([], [], linestyle="none", marker="o", ms=2.8, color=style.INK),
                "measured (throat contour)")]
     style.legend_top(ax_b, keys_b, ncol=1, borderpad=0.6)
 
-    # (c) the residual against 1/gamma at the three contour levels.
-    marks = {1.0: ("v", style.MUTED), THROAT: ("o", style.INK), 2.5: ("^", style.FAINT)}
+    # (c) the residual at the three contour levels.  The axis hugs the data
+    # (all of it within 6e-5, on the positive side): the old symmetric +-0.1
+    # band was three quarters empty and read the residuals as scatter.
+    marks = {1.0: ("v", style.MUTED), THROAT: ("o", style.INK), 2.5: ("^", style.CONTEXT)}
     keys_c = []
+    res = [(rc, p, 1e3 * (q - ig)) for s, p, rc, q, ig in rows if s == "exact_boost"]
     for rc, (mk, col) in marks.items():
-        pts = [(p, 1e3 * (q - ig)) for s, p, r, q, ig in rows if s == "exact_boost" and r == rc]
-        ax_c.plot(*zip(*pts), linestyle="none", marker=mk, ms=3.4, color=col, zorder=3)
-        keys_c.append((Line2D([], [], linestyle="none", marker=mk, ms=3.4, color=col),
+        pts = [(p, r) for c, p, r in res if c == rc]
+        ax_c.plot(*zip(*pts), linestyle="none", marker=mk, ms=2.8, color=col, zorder=3)
+        keys_c.append((Line2D([], [], linestyle="none", marker=mk, ms=2.8, color=col),
                        rf"$r_c={rc:g}$"))
     ax_c.axhline(0.0, color=style.GOLD, lw=1.0, zorder=2)
-    ax_c.set_xlim(-0.02, 0.5)
-    lim = max(0.1, 1.5 * max(abs(1e3 * (q - ig)) for s, p, r, q, ig in rows
-                             if s == "exact_boost"))
-    ax_c.set_ylim(-lim, lim)
+    ax_c.set_xlim(-0.015, 0.47)
+    hi = max(r for _, _, r in res)
+    lo = min(0.0, min(r for _, _, r in res))
+    ax_c.set_ylim(lo - 0.12 * (hi - lo) - 0.006, hi + 0.25 * (hi - lo))
     ax_c.set_xlabel(r"$p$")
     ax_c.set_ylabel(r"$10^3\,(\mathrm{ratio}-1/\gamma)$")
     style.legend_top(ax_c, keys_c, ncol=3, borderpad=0.6)
@@ -295,7 +305,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
     if args.measure:
         measure(args.pack_root, args.runs_root)
-    style.prd(base=9.0)
+    style.prd(base=10.0)
     fig = figure(args.pack_root)
     out = pathlib.Path(args.out) if args.out else (
         figure_dir(GROUP, args.pack_root) / "boost_contraction.png")

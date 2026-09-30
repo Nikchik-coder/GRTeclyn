@@ -3786,3 +3786,24 @@ flux integrals give −0.06 to −0.08 on the superposed run); radius 0.6 % unde
 between the mass and radius readings is the scan's shape systematic. Queued (no go): HFL-ho — leg 3 restarted
 from Chk05000 to t = 60 with plotfiles kept (one output-only knob), ~1.5–2 GPU-h, for the quantitative
 first-law check dM_MS/dt vs the horizon scalar flux.
+
+## 2026-09-30 (~16:50 UTC) — Fig. 4 (pair strip) on the matched pairs; Fig. 1 restyled
+
+The user: Fig. 4 must read the csm data ("the attraction changes"), and Fig. 1 "looks childish — update it for
+the PRD level style". Fig. 4 (a)–(c) now draw `matched_rest_displacement.dat` (the five mode-3 rest runs):
+(a) the two matched d = 12 arms (the superposed a = 1 arm left — no matched twin; Sec V B's width ladder keeps
+the claim), (b) the matched ratio 1.462 ± 0.022 over t = 3.5–10.5 with the t > 10.5 samples open-faced (records
+to t = 15, ratio climbs to 1.56 as the closing pair leaves the small-displacement regime), (c) the matched
+ladder 0.4791/0.3716/0.2963/0.2406 at t = 11.5 (12–16 fit A = 104.0, δ = 2.74, predicts 0.242 at 18). Panels
+(d)/(e) stay on the superposed placement probes — the placement curve is the superposition systematic itself,
+with no mode-3 counterpart (the matched pairs sit on R_star at t = 0); the caption now frames them that way.
+The abstract's and the caption's ratio moved to clmMatchedSignRatio; clmNarrowPairA/Ratio dropped,
+clmSignWindowEnd (10.5) added; 1112 rows, 0 problems; numbers.tex rebuilt. Fig. 1 (`boost_contraction`):
+base 10, hairline contours, frame cut to the contours' span, markers to 2.8, (b) trimmed to p ≤ 0.47, (c)'s
+empty ±0.1 band replaced by an axis hugging the sub-6e-5 residuals. Label audits clean on both.
+
+Addendum (~17:05 UTC): the abstract now states the gravitational-wave sequence explicitly (the user) — the lone
+collapse's burst ringing at 0.55 of the equal-mass Kerr frequency, "following the first gravitational-wave
+signal reported from a wormhole collapse, the massless throat's [shirokov2026]" (arXiv:2604.00071, the user's
+prior paper, already in the bibliography), and then every encounter's own burst. clmDetThroatOverKerr gained the
+abstract anchor; 1112 rows, 0 problems.
