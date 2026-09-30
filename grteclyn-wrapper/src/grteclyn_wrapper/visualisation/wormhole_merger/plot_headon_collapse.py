@@ -1,93 +1,84 @@
 #!/usr/bin/env python3
-r"""The head-on merger's collapse: the pair makes a black hole, and the hole shrinks.
+r"""The head-on merger's collapse: the pair makes a black hole, and the hole settles.
 
 The paper's head-on figure (sec:headon), and the spiral collapse page's
-counterpart with the opposite verdict: here the orientation-corrected scans
-FIND the horizon.  A common MOTS encloses both mouths from t = 22 -- neither
-mouth ever has its own -- the level-3 wall five units later is resolution
-(level 5 walks through it with the constraints falling), and the remnant's
-horizon then loses mass at every step as it swallows the phantom scalar that
-held the throats open, settling toward the Schwarzschild size of the pair's
-mass from above.
+counterpart with the opposite verdict: here the scans FIND the horizon.  A
+common MOTS encloses both mouths from t = 22 -- neither mouth ever has its
+own -- and the remnant's horizon sheds the phantom scalar that held the
+throats open and settles onto the Schwarzschild size of the pair's ADM mass.
+
+SINCE 2026-09-30 THE FIGURE DRAWS THE MODE-3 PRODUCTION CHAIN (the user:
+"the head-on now is the composition of the legs, like the spiral page"), the
+far-side-matched (mode-3) data replacing the superposed runs.  One evolution
+in three legs (d = 8, p = 0, flipped, L = 128, N = 256, M_ADM = 2.3573),
+composed the way the spiral collapse page composes its history:
+
+* leg 1 ``merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm`` --
+  max_level 5 from t = 0.  Used to t = 35; it ran on to a NaN in h11 at
+  t = 38.845, AT THE MERGED CORE, INSIDE THE MOTS (the same censored wall the
+  spiral chain hits), drawn faint with the death cross so the composition's
+  reason is on the page.
+* leg 2 ``..._lvl6from35_scalar_chk_t100_csm_r03500`` -- max_level 6 from
+  leg 1's t = 35 checkpoint, THROUGH the wall, stopped by hand at t = 50.80.
+* leg 3 ``..._lvl4from50_scalar_t100_csm_r05000`` -- max_level 4 from leg 2's
+  t = 50 checkpoint, to t = 100, exit 0, no NaN (the merged core no longer
+  needs the fine levels once the wall is crossed).
+
+The seams carry nothing: in-code Psi4 identical on both overlaps, level-0
+norms continuous to 1.4 % / 0.1 %, the common MOTS continuous across t = 50
+(R 4.266 -> 4.247; leg 3's VALIDATION.md).
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_headon_collapse
 
-Reads, all under ``campaign/04_binary_headon/``:
-
-* ``merge_headon_flip_d8_v1_t100/`` -- the level-3 scout (t = 0-26.91, dies at
-  the wall): ``collapse_diagnostics.dat``, ``constraint_norms.dat``,
-  ``binary_throat_diagnostics.dat`` and the offline formation scan
-  ``horizon_offline_scan.dat`` (level 3, dx 0.0625, t = 22-26 -- the record of
-  the horizon's birth).
-* ``merge_headon_flip_d8_v1_lvl5from0_scalar_t100/`` -- THE PAPER'S ARM since
-  2026-09-21: max_level 5 FROM t = 0, no interior fill, no restart, no seam,
-  t = 100 with no NaN.  Its live scan finds the common MOTS at t = 21.5 and
-  loses it behind the aperture after t = 37 (below).
-* ``merge_headon_flip_d8_v1_lvl5_t100_r02200/`` -- the SUPERSEDED seamed arm,
-  kept for ``horizon_offline_scan_lvl5_t42.5_43.dat``: its corrected offline
-  scan at t = 42.5 / 43, the late filled anchors.
-* ``merge_headon_flip_d8_v1_lvl3down_t100_r03500/`` -- back to max_level 3 from
-  the level-5 t = 35 checkpoint, no fill: THE LATE HORIZON TRACK the text and
-  the ledger quote (clmHeadonRemnantRadius, clmHeadonRadiusSlope, the M_MS
-  fit).
-* ``merge_headon_flip_d8_v1c_fillnarrow_t100_r02200/`` -- the fill twin (level
-  3, fill 1.0/1.5 from t = 26.5, same t = 22 restart state as the down-step's
-  parent).  Its live scan's aperture was never closed, so it tracks the
-  horizon through the down-step's gaps; it agrees with the down-step to
-  0.24 % in M_MS (clmHeadonDownStepMass) and ~0.2 % in R where both see the
-  surface.  Drawn as the grey line under the gold, t >= 36 only; rows whose
-  surface sits inside the fill's taper (r_mots <= 1.5) are the device's and
-  are never drawn.
-
 WHAT THE FIGURE HAS TO GET RIGHT
 
-*Every horizon point is the corrected orientation*, live or offline.
+*The horizon record is the round common scan, one row per unit* (centre C of
+each leg's ``horizon_scan.dat``): first MOTS at t = 22 (R = 5.02,
+M_MS = 2.69), found t = 22-25, LOST t = 26-35 -- the round scan cannot hold
+the deformed merging surface, an aperture gap, not a horizon loss -- then
+found every unit t = 36-100.  Data are joined by solid lines only within a
+contiguous run of scan rows; the gap is left open, never bridged.
 
-*The live scan's gaps are aperture, not horizon loss.*  The common scan's
-shells reach 0.5 sep + 2.3, with sep read off the chi-pit tracker; once the
-pits merge the shells stop at r = 2.3 while the MOTS sits at r = 2.7-3.3, and
-those scans report every shell trapped and no surface inside range.  Data
-are therefore joined by solid lines only WITHIN a contiguous run of scan
-rows; a gap is left open, never bridged -- a line drawn across t = 57-87
-would print a constant slope the scan never measured.
+*The last word is the oriented scan* (``ah_oriented_scan_t098/099/100.dat``,
+level 3, half 4.0, corrected orientation): at t = 100 the outermost MOTS is
+R = 4.688, M_MS = 2.373 -- 0.99 of the Schwarzschild radius of the pair's
+ADM mass (2 M_ADM = 4.715) and 1.007 of it in mass (M_ADM = 2.357, the
+volume identity of leg 1's constraint solve).  Filled gold diamonds.
 
-*The scan's R is a lower bound and it wobbles; M_MS does not.*  The scan's
-sphere is the outermost fully trapped COORDINATE sphere, so it sits inside
-the MOTS; as the ringing surface changes shape the inscribed sphere moves in
-and out, and R oscillates by ~1 % about its decline in anti-phase with the
-shape excess 2 M_MS / R (detrended correlation -0.90 on the fill twin), while
-M_MS falls at every one of the 24 / 51 down-step / fill-twin rows after t = 36
-(scripts/analysis/merger_feedback/headon_remnant.py).
+*The scan's R is a lower bound and it wobbles; the wobble is shape.*  The
+round scan reports the outermost fully trapped COORDINATE sphere, inscribed
+in the ringing MOTS, so R (and the M_MS read on it) oscillates by ~1 % about
+its settle; the t = 45-51 dip (R 4.25, M_MS 2.29) is that systematic, not
+mass loss and regain.  Where the round scan and the oriented one see the
+surface at once (t = 100) they agree to 0.5 %.
 
 *The reference lines are the initial data, not fits*: one isolated throat
 R_star = 3.8895 (closed form, clmRstar), the two throats' summed area as one
 sphere sqrt2 R_star = 5.50, and the Schwarzschild radius of the pair's ADM
-mass 2 M_ADM = 4 (clmHeadonADMMass); on (b), M_ADM = 2 itself.
+mass 2 M_ADM = 4.715; on (b), M_ADM = 2.357 itself.  The superposed page's
+exponential-settle and linear fits are not redrawn here: this chain's late
+track is the round scan's shape wobble about a level line, and a fit through
+it would state a precision the instrument does not have.
 
-*V1c's late-time scan rows are not drawn* (its common scan sits inside its
-own frozen interior from t ~ 29), and the restart-settle rows of restarted
-streams are masked, not smoothed.
-
-STYLE (2026-09-24, feedback D1 -- "the plot is junk, why is there no solid
-line; how the radius compares to the initial data"): a top-of-page strip,
-7.05 x 4.3 in, set at 0.80\textwidth under [t].  The remnant's horizon is the
-figure -- areal radius (a) and Misner-Sharp mass (b) on the left half, data
-joined, the ledger's fits dashed, the initial data ruled -- and the right half
-keeps the three panels the text leans on: the approach (c), max|K| through the
-wall (d) and the field that is swallowed (e).  The Hamiltonian norms (scout,
-level 5, down-step), once a panel here, are panel (e) of the appendix's
-code-health figure (``plot_constraint_evolution``, 2026-09-26).  The (2,0)
-wave left (Sec. VIII draws it), and so did min alpha, min chi and the null
-expansions at the areal minimum (their numbers stay in the text).  style.prd
-frame, letter tags above the frames, every series named in place, no boxed
-key.  GOLD is the oriented horizon instrument -- filled diamonds offline,
-open circles live -- and nothing else.
+STYLE (grammar of 2026-09-24, "the plot is junk, why is there no solid
+line"): a top-of-page strip, 7.05 x 4.3 in, set at 0.80\textwidth under [t].
+The remnant's horizon is the figure -- areal radius (a) and Misner-Sharp
+mass (b) on the left half, data joined, the initial data ruled -- and the
+right half keeps the three panels the text leans on: the approach (c), the
+composition's own record max|K| (d), and the field that is swallowed (e).
+The era rules at t = 35 and 50.8 mark the seams in every panel, with the
+levels named in (c), the composition panel -- the spiral collapse page's
+grammar for a history drawn across legs.  style.prd frame, letter tags
+above the frames, every series named in place, no boxed key.  GOLD is the
+horizon instrument -- open circles the live round scan, filled diamonds the
+oriented scan -- and nothing else.
 """
 
 from __future__ import annotations
 
 import argparse
 import pathlib
+import re
 
 import matplotlib
 import numpy as np
@@ -101,26 +92,24 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E
 )
 
 GROUP = "04_binary_headon"
-SCOUT = "merge_headon_flip_d8_v1_t100"
-ARM = "merge_headon_flip_d8_v1_lvl5from0_scalar_t100"
-SEAMED = "merge_headon_flip_d8_v1_lvl5_t100_r02200"   # late offline anchors only
-DOWN = "merge_headon_flip_d8_v1_lvl3down_t100_r03500"
-FILL = "merge_headon_flip_d8_v1c_fillnarrow_t100_r02200"   # dense late track, grey
+CHAIN = "csm"
+LEG1 = "merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm"      # level 5
+LEG2 = "merge_headon_flip_d8_v1_L128_lvl6from35_scalar_chk_t100_csm_r03500"  # level 6
+LEG3 = "merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000"      # level 4
 
 # BinaryWormholeLevel's writer, in order -- no header on a restart.
 COLS = ("min_lapse", "min_chi", "max_abs_K", "min_lapse_x", "min_lapse_y",
         "min_lapse_z", "min_phi", "max_phi", "min_Pi", "max_Pi")
 
-LAPSE_FLOOR = 1e-10    # the evolution's clamp on the lapse
-CHI_FLOOR = 1e-20      # min_chi clamp of the head-on family (chi_rhs_floor 1e-8)
-SETTLE = 0.1           # time clipped after a restart (incomplete hierarchy)
+SETTLE = 0.15          # time clipped after a restart (incomplete hierarchy)
 
-T_MOTS = 22.0          # first corrected-orientation common MOTS (offline scan)
-T_WALL = 26.91         # the scout's death: the level-3 wall
+T_MOTS = 22.0          # first common MOTS (round scan, one row per unit)
+T_SEAM1 = 35.0         # leg 1 -> leg 2 (level 5 -> 6)
+T_SEAM2 = 50.8         # leg 2 -> leg 3 (level 6 -> 4)
+T_NAN = 38.845         # leg 1's death: NaN in h11 at the merged core
 
 R_STAR = 3.8895        # one isolated throat, closed form for a = 2, m = 1 (clmRstar)
-M_ADM = 2.0            # the pair's ADM mass, 1 + 1 (clmHeadonADMMass)
-T_LATE = 36.0          # the late track starts: the down-step's first MOTS row
+M_ADM = 2.3573         # the pair's ADM mass, mode-3 volume identity (leg 1's solve)
 
 
 def _sorted(path: pathlib.Path) -> np.ndarray:
@@ -128,56 +117,38 @@ def _sorted(path: pathlib.Path) -> np.ndarray:
     return d[np.argsort(d[:, 0])]
 
 
-def _clipped(path: pathlib.Path) -> np.ndarray:
-    d = _sorted(path)
-    return d[d[:, 0] >= d[0, 0] + SETTLE]
-
-
 def _live_scan(path: pathlib.Path, centre: str = "C") -> dict[str, np.ndarray]:
-    """The oriented live scan's rows for one centre, as named arrays."""
+    """The round common scan's rows for one centre, as named arrays."""
     rows = [ln.split() for ln in path.read_text().splitlines()
             if ln and not ln.startswith("#")]
     rows = [p for p in rows if len(p) >= 19 and p[1] == centre]
     take = {"t": 0, "R_min": 5, "n_mots": 9, "r_mots": 10, "R_mots": 11,
-            "M_MS": 12, "th_out": 14, "th_in": 15, "n_trapped": 16}
+            "M_MS": 12, "n_trapped": 16}
     return {k: np.array([float(p[i]) for p in rows]) for k, i in take.items()}
 
 
-def _offline_formation(path: pathlib.Path) -> np.ndarray:
-    """The scout's offline scan: t, r_mots, R_mots, M_MS (columns 0-3)."""
-    return np.loadtxt(path)[:, :4]
-
-
-def _offline_anchors(path: pathlib.Path) -> list[tuple[float, float, float, float]]:
-    """(t, r_mots, R_mots, M_MS) from the t = 42.5/43 block-format scan."""
-    import re
+def _oriented_anchors(run: pathlib.Path) -> list[tuple[float, float, float, float]]:
+    """(t, r_mots, R_mots, M_MS) from the block-format oriented scans."""
     head = re.compile(r"BinaryWormholePlt\d+\s+t=([\d.]+)")
     mots = re.compile(r"MOTS \(outermost, corrected orientation\): "
                       r"r = ([\d.]+), R = ([\d.]+), M_MS = ([\d.]+)")
-    out, t = [], None
-    for ln in path.read_text().splitlines():
-        m = head.search(ln)
-        if m:
-            t = float(m.group(1))
-        m = mots.search(ln)
-        if m and t is not None:
-            out.append((t, *(float(g) for g in m.groups())))
-            t = None
+    out = []
+    for path in sorted(run.glob("ah_oriented_scan_t*.dat")):
+        t = None
+        for ln in path.read_text().splitlines():
+            m = head.search(ln)
+            if m:
+                t = float(m.group(1))
+            m = mots.search(ln)
+            if m and t is not None:
+                out.append((t, *(float(g) for g in m.groups())))
+                t = None
     return out
 
 
-def _param(run_dir: pathlib.Path, key: str) -> float:
-    """One numeric key of a packed run's evolution_params.txt."""
-    for ln in (run_dir / "evolution_params.txt").read_text().splitlines():
-        p = ln.split("#")[0].split("=")
-        if len(p) == 2 and p[0].strip() == key:
-            return float(p[1].split()[0])
-    raise KeyError(f"{key} not in {run_dir.name}/evolution_params.txt")
-
-
-def _mots(c: dict[str, np.ndarray], t0: float = -np.inf, r_cut: float = 0.0):
-    """t, R, M of a scan's MOTS rows from t0 on, surfaces inside r_cut dropped."""
-    m = (c["n_mots"] > 0) & (c["t"] >= t0 - 1e-9) & (c["r_mots"] > r_cut)
+def _mots(c: dict[str, np.ndarray], lo: float = -np.inf, hi: float = np.inf):
+    """t, R, M of a scan's MOTS rows within (lo, hi]."""
+    m = (c["n_mots"] > 0) & (c["t"] > lo + 1e-9) & (c["t"] <= hi + 1e-9)
     return c["t"][m], c["R_mots"][m], c["M_MS"][m]
 
 
@@ -188,6 +159,12 @@ def _runs(t: np.ndarray, gap: float) -> list[np.ndarray]:
     return np.split(np.arange(len(t)), np.where(np.diff(t) > gap)[0] + 1)
 
 
+def _era(d: np.ndarray, lo: float, hi: float, settle: float = 0.0) -> np.ndarray:
+    """The composition rule: rows of one stream within (lo, hi], the first
+    ``settle`` units after a restart dropped (incomplete hierarchy)."""
+    return d[(d[:, 0] > lo + settle + 1e-9) & (d[:, 0] <= hi + 1e-9)]
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -196,74 +173,57 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     pack = pathlib.Path(args.pack_root).expanduser()
-    scout, arm, down, seamed, fill = (pack / "campaign" / GROUP / p
-                                      for p in (SCOUT, ARM, DOWN, SEAMED, FILL))
+    leg1, leg2, leg3 = (pack / "campaign" / GROUP / CHAIN / p
+                        for p in (LEG1, LEG2, LEG3))
 
-    ds = _sorted(scout / "collapse_diagnostics.dat")
-    d5 = _sorted(arm / "collapse_diagnostics.dat")   # seamless: nothing to settle
-    c5 = _sorted(arm / "constraint_norms.dat")    # the console's H line only
-    col_s = {n: ds[:, i + 1] for i, n in enumerate(COLS)}
-    col_5 = {n: d5[:, i + 1] for i, n in enumerate(COLS)}
-    t_s, t_5 = ds[:, 0], d5[:, 0]
-    t_end = float(t_5[-1])
+    # ---- the composition: diagnostics era by era ----------------------------
+    d1, d2, d3 = (_sorted(p / "collapse_diagnostics.dat") for p in (leg1, leg2, leg3))
+    d1_used = _era(d1, -1.0, T_SEAM1)
+    d1_over = d1[d1[:, 0] > T_SEAM1 - 1e-9]              # runs on to the NaN
+    d2_used = _era(d2, T_SEAM1, T_SEAM2, SETTLE)
+    d3_used = _era(d3, T_SEAM2, 1e9, SETTLE)
+    b1, b2, b3 = (_sorted(p / "binary_throat_diagnostics.dat")
+                  for p in (leg1, leg2, leg3))
+    b1_used, b1_over = _era(b1, -1.0, T_SEAM1), b1[b1[:, 0] > T_SEAM1 - 1e-9]
+    b2_used = _era(b2, T_SEAM1, T_SEAM2, SETTLE)
+    b3_used = _era(b3, T_SEAM2, 1e9, SETTLE)
 
-    bs = _sorted(scout / "binary_throat_diagnostics.dat")
-    b5 = _sorted(arm / "binary_throat_diagnostics.dat")
+    def col(d, name):
+        return d[:, COLS.index(name) + 1]
 
-    a5C = _live_scan(arm / "horizon_scan.dat")
-    d3C = _live_scan(down / "horizon_scan.dat")
-    fiC = _live_scan(fill / "horizon_scan.dat")
-    form = _offline_formation(scout / "horizon_offline_scan.dat")
-    late = np.array(_offline_anchors(seamed / "horizon_offline_scan_lvl5_t42.5_43.dat"))
+    # ---- the horizon record: round scan per era, oriented anchors -----------
+    c1, c2, c3 = (_live_scan(p / "horizon_scan.dat") for p in (leg1, leg2, leg3))
+    tm1, Rm1, Mm1 = _mots(c1, -1.0, T_SEAM1)             # t = 22-25
+    tm2, Rm2, Mm2 = _mots(c2, T_SEAM1, T_SEAM2)          # t = 36-50
+    tm3, Rm3, Mm3 = _mots(c3, T_SEAM2, np.inf)           # t = 51-100
+    anchors = np.array(_oriented_anchors(leg3))
+    t_end = float(d3_used[-1, 0])
 
-    tm5, Rm5, Mm5 = _mots(a5C)
-    tm3, Rm3, Mm3 = _mots(d3C)
-    tmf, Rmf, Mmf = _mots(fiC, T_LATE, r_cut=_param(fill, "core_fill_radius_start"))
+    tm = np.concatenate([tm1, tm2, tm3])
+    Rm = np.concatenate([Rm1, Rm2, Rm3])
+    Mm = np.concatenate([Mm1, Mm2, Mm3])
 
     # ---- derived numbers, printed for the caption and the ledger ------------
-    print(f"[headon collapse] scout t = 0-{t_s[-1]:.2f} (level 3, dies at the wall); "
-          f"paper arm t = {t_5[0]:.2f}-{t_end:.2f} (level 5 FROM ZERO, no fill, no seam, no NaN)")
-    print(f"  wall: scout max|K| {col_s['max_abs_K'][-1]:.1f} at its last row; level 5 max|K| "
-          f"peak {col_5['max_abs_K'].max():.2f} (t = {t_5[np.argmax(col_5['max_abs_K'])]:.2f}), "
-          f"end {col_5['max_abs_K'][-1]:.2f}; level-5 H {c5[:, 1].max():.2e} -> {c5[-1, 1]:.2e}")
-    for tv, r0, R0, M0 in form:
-        print(f"  formation scan t = {tv:.0f}: MOTS r = {r0:.3f}, R = {R0:.3f}, M_MS = {M0:.3f}")
-    for tv, r0, R0, M0 in late:
-        print(f"  late scan t = {tv:.1f}: MOTS r = {r0:.3f}, R = {R0:.3f}, M_MS = {M0:.3f}")
-    blind = int(((a5C["n_mots"] == 0) & (a5C["n_trapped"] >= 30)).sum())
-    print(f"  live MOTS rows: level-5 arm {len(tm5)} (to t = {tm5[-1]:.1f}; {blind} scans blind "
-          f"behind the aperture), down-step {len(tm3)}, fill twin {len(tmf)} from t = {T_LATE:g}")
-    print(f"  M_MS rises after t = {T_LATE:g}: down-step {int((np.diff(Mm3[tm3 >= T_LATE]) > 0).sum())}, "
-          f"fill twin {int((np.diff(Mmf) > 0).sum())}; R rises: down-step "
-          f"{int((np.diff(Rm3[tm3 >= T_LATE]) > 0).sum())}, fill twin {int((np.diff(Rmf) > 0).sum())}")
-    k = np.argmin(abs(tm3 - 97.0))
-    print(f"  end of the track, t = {tm3[k]:.0f}: R = {Rm3[k]:.4f} = {Rm3[k] / R_STAR:.3f} R_star "
-          f"= {Rm3[k] / (np.sqrt(2) * R_STAR):.3f} sqrt2 R_star = {Rm3[k] / (2 * M_ADM):.3f} (2 M_ADM); "
-          f"M_MS = {Mm3[k]:.4f} = {Mm3[k] / M_ADM:.3f} M_ADM")
-    print(f"  at formation: R = {form[0, 2]:.3f} = {form[0, 2] / (np.sqrt(2) * R_STAR):.3f} sqrt2 R_star, "
-          f"M_MS = {form[0, 3]:.3f} = {form[0, 3] / M_ADM:.3f} M_ADM")
-
-    # FITS through the down-step's 24 rows (t = 36-99), exactly the ledger's
-    # (extract_mergers.mergers_headon_fit): a line through R, an exponential
-    # settle through M_MS.  They describe the paper's track; they are not laws
-    # -- the window moves M_inf by more than its statistical error.
-    from scipy.optimize import curve_fit
-
-    def _settle(x, a, b, tau):
-        return a + b * np.exp(-(x - tm3[0]) / tau)
-
-    slope = np.polyfit(tm3, Rm3, 1)
-    pm, cm = curve_fit(_settle, tm3, Mm3, p0=(Mm3[-1], Mm3[0] - Mm3[-1], 25.0),
-                       maxfev=40000)
-    em = np.sqrt(np.diag(cm))
-    rms_lin = np.sqrt(np.mean((Mm3 - np.polyval(np.polyfit(tm3, Mm3, 1), tm3)) ** 2))
-    rms_exp = np.sqrt(np.mean((Mm3 - _settle(tm3, *pm)) ** 2))
-    print(f"  FIT R_MOTS: linear, slope {slope[0]:+.5f} per unit "
-          f"(rms {np.sqrt(np.mean((Rm3 - np.polyval(slope, tm3)) ** 2)):.4f}); "
-          f"an exponential does not converge -- no asymptote is resolvable")
-    print(f"  FIT M_MS: settles to {pm[0]:.3f} +- {em[0]:.3f} with "
-          f"tau = {pm[2]:.1f} +- {em[2]:.1f} (rms {rms_exp:.4f}, "
-          f"{rms_lin / rms_exp:.1f}x better than linear)")
+    print(f"[headon collapse] mode-3 chain: leg 1 level 5 t = 0-{T_SEAM1:g} "
+          f"(ran to NaN in h11 at t = {d1[-1, 0]:.3f}), leg 2 level 6 to {T_SEAM2:g}, "
+          f"leg 3 level 4 to {t_end:.0f} (no NaN); M_ADM = {M_ADM:g}")
+    print(f"  first common MOTS t = {tm[0]:.0f}: R = {Rm[0]:.3f} "
+          f"= {Rm[0] / (np.sqrt(2) * R_STAR):.3f} sqrt2 R_star, M_MS = {Mm[0]:.3f} "
+          f"= {Mm[0] / M_ADM:.3f} M_ADM; found t = 22-25, blind 26-35 "
+          f"(round scan vs the deformed surface), found every unit 36-{tm[-1]:.0f}")
+    print(f"  late track t = 36-{tm[-1]:.0f}: R {Rm[tm >= 36].min():.2f}-"
+          f"{Rm[tm >= 36].max():.2f}, M_MS {Mm[tm >= 36].min():.2f}-"
+          f"{Mm[tm >= 36].max():.2f} (round-scan shape wobble ~1 %)")
+    for tv, r0, R0, M0 in anchors:
+        print(f"  oriented scan t = {tv:.0f}: MOTS r = {r0:.3f}, R = {R0:.3f} "
+              f"= {R0 / (2 * M_ADM):.3f} (2 M_ADM), M_MS = {M0:.3f} "
+              f"= {M0 / M_ADM:.3f} M_ADM")
+    print(f"  wall: leg-1 (level 5) max|K| peak {col(d1, 'max_abs_K').max():.2f}, "
+          f"NaN at t = {d1[-1, 0]:.3f}; leg-2 (level 6) end {col(d2_used, 'max_abs_K')[-1]:.2f}; "
+          f"leg-3 (level 4) end {col(d3_used, 'max_abs_K')[-1]:.3f}")
+    print(f"  fields: max|phi| {max(col(d, 'max_phi').max() for d in (d1_used,)):.2f} "
+          f"-> {max(abs(col(d3_used, 'min_phi')[-1]), col(d3_used, 'max_phi')[-1]):.3f}; "
+          f"max|Pi| peak {np.maximum(abs(col(d2_used, 'min_Pi')), col(d2_used, 'max_Pi')).max():.3f}")
 
     # ---- the strip ----------------------------------------------------------
     style.prd(base=10.0)
@@ -281,7 +241,8 @@ def main(argv: list[str] | None = None) -> int:
 
     def rules(ax):
         ax.axvline(T_MOTS, color=style.GOLD, lw=0.7, ls=(0, (1, 2)), zorder=1)
-        ax.axvline(T_WALL, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
+        for seam in (T_SEAM1, T_SEAM2):
+            ax.axvline(seam, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
 
     def scan(ax, ts_, ys, *, filled, gap, ms=None):
         """One scan's rows: markers joined by a solid line within each run."""
@@ -292,25 +253,12 @@ def main(argv: list[str] | None = None) -> int:
                     mfc=style.GOLD if filled else style.GROUND, mec=style.GOLD,
                     mew=0.9, zorder=5 if filled else 4)
 
-    def twin(ax, ts_, ys):
-        """The fill twin's dense track: grey, solid, gaps left open."""
-        for idx in _runs(ts_, 1.5):
-            ax.plot(ts_[idx], ys[idx], color=style.CONTEXT, lw=1.0, zorder=2)
-
     # (a) the remnant's areal radius against the initial data ------------------
     # (b) its Misner-Sharp mass against the pair's ADM mass --------------------
-    for ax, j, yf, yd, yl in ((axA, 2, Rmf, Rm3, Rm5), (axB, 3, Mmf, Mm3, Mm5)):
-        twin(ax, tmf, yf)
-        scan(ax, tm5, yl, filled=False, gap=0.75)
-        scan(ax, tm3, yd, filled=False, gap=1.5)
-        scan(ax, form[:, 0], form[:, j], filled=True, gap=1.5)
-        scan(ax, late[:, 0], late[:, j], filled=True, gap=1.5)
+    for ax, ys, anc in ((axA, Rm, anchors[:, 2]), (axB, Mm, anchors[:, 3])):
+        scan(ax, tm, ys, filled=False, gap=1.5)
+        scan(ax, anchors[:, 0], anc, filled=True, gap=1.5)
         rules(ax)
-    t_fit = np.linspace(tm3[0], tm3[-1], 200)
-    axA.plot(t_fit, np.polyval(slope, t_fit), color=style.MUTED, lw=0.9,
-             ls=(0, (4, 2.5)), zorder=3)
-    axB.plot(t_fit, _settle(t_fit, *pm), color=style.MUTED, lw=0.9,
-             ls=(0, (4, 2.5)), zorder=3)
 
     ref = dict(color=style.MUTED, lw=0.8, zorder=1)
     axA.axhline(R_STAR, ls=(0, (1, 1.6)), **ref)
@@ -322,79 +270,83 @@ def main(argv: list[str] | None = None) -> int:
     axA.set_ylim(3.66, 5.98)
     axA.set_ylabel(r"horizon areal radius $R$")
     axA.tick_params(labelbottom=False)
-    axB.set_ylim(1.88, 3.30)
+    axB.set_ylim(2.10, 3.05)
     axB.set_ylabel(r"horizon mass $M_{\rm MS}$")
     axB.set_xlabel(r"$t$")
 
     fs = 7.5
-    # The initial data, named where the strip is empty: t = 27.5-34.5 carries
-    # no scan row at any height (the level-5 arm is behind its aperture, the
-    # fill twin's rows there are the device's).
-    axA.annotate(r"one throat, $R_\star$", (28.0, R_STAR), xytext=(0, -2),
-                 textcoords="offset points", ha="left", va="top", fontsize=fs,
-                 color=style.MUTED)
-    axA.annotate(r"$2M_{\rm ADM}$ (pair)", (28.0, 2 * M_ADM), xytext=(0, 2),
-                 textcoords="offset points", ha="left", va="bottom", fontsize=fs,
-                 color=style.MUTED)
-    axA.annotate(r"$\sqrt{2}\,R_\star$: both throats' area", (t_end, np.sqrt(2) * R_STAR),
-                 xytext=(0, 2), textcoords="offset points", ha="right", va="bottom",
-                 fontsize=fs, color=style.MUTED)
-    axA.text(29.0, 5.62, "offline scans", fontsize=fs, ha="left", va="center",
-             color=style.GOLD)
-    # Over the t = 47-56 run, above the grey line that shares it (the grey
-    # sits at R <= 4.56 across the name's width).
-    axA.text(53.5, 4.62, "live scans", fontsize=fs, ha="center", va="bottom",
-             color=style.GOLD)
-    # Over the grey's own t = 67-74 run (max 4.51), clear of the gold.
-    axA.text(69.5, 4.555, "fill twin", fontsize=fs, ha="center", va="bottom",
-             color=style.CONTEXT)
-    # The fits are named, not quoted: their numbers reach the reader through
-    # the caption's ledger macros (clmHeadonRadiusSlope, clmHeadonMass*).
-    axA.annotate("linear fit", (72.0, np.polyval(slope, 72.0)), xytext=(0, -6),
+    # Every name sits between the era rules (t = 35 and 50.8 are full-height
+    # verticals, so a label that spans one is struck through): the reference
+    # names in the blind window t = 26-35 or under their own rule past t = 52,
+    # the instrument names over stretches their own rows leave clear.
+    axA.annotate(r"one throat, $R_\star$", (68.0, R_STAR), xytext=(0, -2),
                  textcoords="offset points", ha="center", va="top", fontsize=fs,
                  color=style.MUTED)
-
-    axB.annotate(r"$M_{\rm ADM}$", (28.0, M_ADM), xytext=(0, 2),
+    axA.annotate(r"$2M_{\rm ADM}$", (30.0, 2 * M_ADM), xytext=(0, 2),
+                 textcoords="offset points", ha="center", va="bottom", fontsize=fs,
+                 color=style.MUTED)
+    axA.annotate(r"$\sqrt{2}\,R_\star$: both throats' area",
+                 (t_end, np.sqrt(2) * R_STAR),
+                 xytext=(0, 2), textcoords="offset points", ha="right", va="bottom",
+                 fontsize=fs, color=style.MUTED)
+    axA.text(43.0, 5.30, "round scan", fontsize=fs, ha="center", va="bottom",
+             color=style.GOLD)
+    # Left of the t = 98-100 diamonds, above the round scan's level stretch.
+    axA.annotate("oriented scan", (96.5, float(anchors[0, 2])), xytext=(-4, 7),
+                 textcoords="offset points", ha="right", va="bottom", fontsize=fs,
+                 color=style.GOLD)
+    axB.annotate(r"$M_{\rm ADM}$", (27.0, M_ADM), xytext=(0, 2),
                  textcoords="offset points", ha="left", va="bottom", fontsize=fs,
                  color=style.MUTED)
-    axB.annotate("exponential fit", (70.0, _settle(70.0, *pm)),
-                 xytext=(0, -6), textcoords="offset points", ha="center", va="top",
-                 fontsize=fs, color=style.MUTED)
 
-    # (c) the approach ----------------------------------------------------------
-    axC.plot(bs[:, 0], bs[:, 1], color=style.CONTEXT, lw=1.0)
-    axC.plot(b5[:, 0], b5[:, 1], color=style.INK, lw=1.2)
-    axC.set_ylim(-0.5, 9.4)
+    # (c) the approach, drawn across the legs ----------------------------------
+    axC.plot(b1_used[:, 0], b1_used[:, 1], color=style.INK, lw=1.2)
+    axC.plot(b1_over[:, 0], b1_over[:, 1], color=style.CONTEXT, lw=0.9)
+    for b in (b2_used, b3_used):
+        axC.plot(b[:, 0], b[:, 1], color=style.INK, lw=1.2)
+    axC.set_ylim(-0.6, 10.5)
     axC.set_ylabel(r"$\chi$-pit separation")
-    # Over the merged pit's flat run, the ink's own stretch (the grey scout
-    # lies under the ink until its wall and has no stretch of its own to name).
-    axC.text(70.0, 0.55, "one pit, level 5", fontsize=fs, ha="center", va="bottom",
+    # The composition named in ITS panel: one level per era, above the
+    # curve's start (the separation opens at 8.0).
+    # "level" and the digit stack in the first era (one line is wider than
+    # the 22 units left of the t = 22 rule at this panel's width).
+    for x, name in ((11.0, "level\n5"), (43.0, "6"), (76.0, "4")):
+        axC.text(x, 10.35, name, fontsize=fs, ha="center", va="top",
+                 color=style.INK, linespacing=1.1)
+    axC.text(76.0, 0.55, "merged pit", fontsize=fs, ha="center", va="bottom",
              color=style.INK)
 
-    # (d) the wall: level 3 runs away, level 5 walks through --------------------
-    axD.semilogy(t_s, col_s["max_abs_K"], color=style.CONTEXT, lw=0.9)
-    axD.semilogy(t_5, col_5["max_abs_K"], color=style.INK, lw=1.1)
+    # (d) the wall: level 5 dies at the core, level 6 walks through ------------
+    axD.semilogy(d1_used[:, 0], col(d1_used, "max_abs_K"), color=style.INK, lw=1.1)
+    axD.semilogy(d1_over[:, 0], col(d1_over, "max_abs_K"), color=style.CONTEXT, lw=0.9)
+    axD.plot(d1_over[-1, 0], col(d1_over, "max_abs_K")[-1], "X", color=style.CONTEXT,
+             markersize=5, markeredgecolor="white", markeredgewidth=0.8, zorder=4)
+    axD.semilogy(d2_used[:, 0], col(d2_used, "max_abs_K"), color=style.INK, lw=1.1)
+    axD.semilogy(d3_used[:, 0], col(d3_used, "max_abs_K"), color=style.INK, lw=1.1)
     axD.set_ylim(2e-2, 90)
     axD.set_ylabel(r"$\max|K|$")
-    axD.text(31.0, 25.0, "level 3", fontsize=fs, ha="left", va="center",
-             color=style.CONTEXT)
-    axD.text(62.0, 0.30, "level 5", fontsize=fs, ha="center", va="bottom",
-             color=style.INK)
+    # Leg 1's overrun ends on the death cross; at this panel's width no name
+    # fits between the era rules, so the NaN in h11 is the caption's to state.
 
     # (e) the field that held the throats open, swallowed ----------------------
-    phi5 = np.maximum(abs(col_5["min_phi"]), abs(col_5["max_phi"]))
-    pi5 = np.maximum(abs(col_5["min_Pi"]), abs(col_5["max_Pi"]))
-    phis = np.maximum(abs(col_s["min_phi"]), abs(col_s["max_phi"]))
-    axE.semilogy(t_s, phis, color=style.CONTEXT, lw=0.9)
-    axE.semilogy(t_5, phi5, color=style.INK, lw=1.1)
-    axE.semilogy(t_5[t_5 > 0.2], pi5[t_5 > 0.2], color=style.MUTED, lw=0.9,
-                 ls=(0, (4, 2.5)))
+    for d, faint in ((d1_used, False), (d1_over, True), (d2_used, False),
+                     (d3_used, False)):
+        phi = np.maximum(abs(col(d, "min_phi")), abs(col(d, "max_phi")))
+        pi = np.maximum(abs(col(d, "min_Pi")), abs(col(d, "max_Pi")))
+        axE.semilogy(d[:, 0], phi, color=style.CONTEXT if faint else style.INK,
+                     lw=0.9 if faint else 1.1)
+        tt = d[:, 0]
+        axE.semilogy(tt[tt > 0.2], pi[tt > 0.2],
+                     color=style.CONTEXT if faint else style.MUTED,
+                     lw=0.9, ls=(0, (4, 2.5)))
     axE.set_ylim(1.5e-3, 2.5)
     axE.set_ylabel(r"$\max|\phi|,\ \max|\Pi|$")
     axE.set_xlabel(r"$t$")
     axE.text(6.0, 1.15, r"$|\phi|$", fontsize=8, ha="left", va="bottom", color=style.INK)
-    # Under the dashed hump, right of both rules, where the ink is a decade up.
-    axE.text(31.0, 0.036, r"$|\Pi|$", fontsize=8, ha="left", va="top", color=style.MUTED)
+    # Under the two tails' close pass (t ~ 60-66, both >= 0.016), where the
+    # panel is empty below 0.009.
+    axE.text(63.0, 0.0085, r"$|\Pi|$", fontsize=8, ha="center", va="top",
+             color=style.MUTED)
 
     for ax in (axC, axD, axE):
         rules(ax)
@@ -411,8 +363,8 @@ def main(argv: list[str] | None = None) -> int:
     hits = style.label_audit(fig)
     png = style.save(fig, out)
     print(f"[headon collapse] wrote {png} (+pdf); 5 panels, 7.05 x 4.3 in, "
-          f"{len(form) + len(late)} offline + {len(tm5) + len(tm3)} live MOTS points "
-          f"+ {len(tmf)} fill-twin rows; label audit: {len(hits)} crossing(s)")
+          f"{len(tm)} round-scan + {len(anchors)} oriented MOTS points; "
+          f"label audit: {len(hits)} crossing(s)")
     return 0
 
 

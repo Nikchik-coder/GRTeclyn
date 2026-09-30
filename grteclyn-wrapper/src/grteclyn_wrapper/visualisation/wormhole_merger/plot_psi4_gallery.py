@@ -186,9 +186,17 @@ ARMS = [
     ("collapsing throat", r"$\varepsilon_2=5\times10^{-2}$", "(2,0)",
      "01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/psi4_mode_l2m0_gated.dat",
      None, 10.0, 70.0, r"gated $t{=}70$"),
+    # Since 2026-09-30 the head-on is the mode-3 production chain glued into
+    # one record (its SERIES README documents the joins and the seam checks);
+    # the level-1 refinement-cube noise sets its gates (DRAW_GATES/its ARMS
+    # cap): R <= 20 clean to t ~ 80, R = 28 to ~ 90, R = 36/44 to 100.
+    # The ARMS cap t = 76 sits just inside the innermost sphere's level-1
+    # noise clock (t ~ 80): by 76 the envelope has decayed below the
+    # frequency track's body gate, so the record is not cut while loud
+    # (plot_psi4_ligo.track_keep on why that matters).
     ("head-on", r"$\sigma=-1$, $d=8$", "(2,0)",
-     "04_binary_headon/merge_headon_flip_d8_v1c_latefreeze_t100/psi4_mode_l2m0.dat",
-     None, 10.0, None, ""),
+     "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20.dat",
+     None, 10.0, 76.0, r"level-1 noise"),
     ("spiral", r"$p=0.12$, $d=12$", "(2,2)",
      "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_SERIES/Weyl4_mode_22.dat",
      None, 20.0, None, r"core frozen $t{>}57$"),
@@ -246,11 +254,26 @@ OVERLAID = {"vacuum BBH twin"}
 _THROAT_END = {10.0: 58.0, 14.0: 54.0, 18.0: 52.0, 22.0: 52.0}
 DRAW_GATES = {
     "collapsing throat": (lambda R: _THROAT_END[R], r"numerical floor"),
+    # The head-on's gates are the level-1 refinement-cube noise clocks of its
+    # chain's VALIDATION.md (the (3,2) monitor): spheres inside the cube
+    # (R <= 20) are clean to t ~ 80, R = 28 to ~ 90, level 0 to the end.
+    "head-on": (lambda R: 80.0 if R <= 20.0 else (90.0 if R <= 28.0 else 100.0),
+                r"level-1 noise"),
     "spiral": (lambda R: 57.0 + (R - 1.9), r"fill's light cone"),
     "fly-by": (lambda R: 50.0 + R, r"mouths expand"),
 }
 
 RAMP = [None, "MUTED", "CONTEXT", "FAINT"]   # inner -> outer; None = INK
+
+# Spheres kept per stream (keyed by the ARMS ``rel``), where the file carries
+# more than the four the ramp has grey levels for.  The head-on's in-code
+# extraction writes seven; the four kept span the range, and R = 28 -- which
+# cuts the level-1 cube's corners and is contaminated between R = 20 and the
+# level-0 spheres -- is the one dropped with information lost.
+RADII = {
+    "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20.dat":
+        (10.0, 20.0, 36.0, 44.0),
+}
 
 
 def load(pack: pathlib.Path, rel: str, m: int | None):
@@ -260,9 +283,13 @@ def load(pack: pathlib.Path, rel: str, m: int | None):
         return None
     if m is None:
         t, series = streams.load_mode(p)
-        return t, dict(series)
-    t, d = streams.load_l2_all(p)
-    return t, {r: d[(mm, r)] for (mm, r) in d if mm == m}
+        series = dict(series)
+    else:
+        t, d = streams.load_l2_all(p)
+        series = {r: d[(mm, r)] for (mm, r) in d if mm == m}
+    if rel in RADII:
+        series = {r: y for r, y in series.items() if r in RADII[rel]}
+    return t, series
 
 
 def trim_zeros_tail(t: np.ndarray, y: np.ndarray):
@@ -308,7 +335,12 @@ def envelope(y: np.ndarray) -> tuple[np.ndarray, int]:
     toward |y(cut)| -- a drop that is the cut's, not the wave's.  So a real
     record's envelope is drawn only to its last crest."""
     y = np.asarray(y)
-    if np.abs(y.imag).max() > 1e-6 * np.abs(y.real).max():
+    # "Real" means physically real, not bit-for-bit: the in-code (2,0)
+    # streams carry a numerical Im of 1e-5..1e-3 of Re (the head-on chain's
+    # VALIDATION.md), and at the old 1e-6 threshold such a record was taken
+    # for a complex mode -- |y| then drew the rectified wave and the phase
+    # derivative read zero.  A mode that is genuinely complex has Im ~ Re.
+    if np.abs(y.imag).max() > 1e-2 * np.abs(y.real).max():
         return np.abs(y), y.size
     x = np.real(y)
     n = x.size

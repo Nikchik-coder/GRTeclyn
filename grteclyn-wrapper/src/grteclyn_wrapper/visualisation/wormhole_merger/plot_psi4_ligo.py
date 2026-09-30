@@ -99,7 +99,10 @@ DIST_MPC = 10.0      # scaling so the five sources are comparable, not tuned
 # binary's frequency and a factor of 2.8 in its strain (2026-09-18).
 M_CODE = {
     "collapsing throat": 1.0,   # one drainhole, wormhole_drainhole_mass_A = 1
-    "head-on": 2.0,             # two drainholes, M_ADM = 1 each
+    "head-on": 2.3573,          # the mode-3 pair's ADM mass (volume identity,
+                                # leg 1's constraint_solve.dat) -- the far-side
+                                # matched data carry the interaction energy the
+                                # superposition missed
     "spiral": 2.0,              # ditto, d = 12
     "fly-by": 2.0,              # ditto, d = 12
     "vacuum BBH twin": 2.0,     # bare 0.9615 -> per-hole ADM ~ 1.00 at d = 12
@@ -192,7 +195,11 @@ def envelope_and_frequency(y: np.ndarray, dt: float, f_guess: float):
     it belongs -- the phase races exactly where the amplitude is near a null,
     and a null carries no energy and so no frequency.
     """
-    z = y if np.abs(y.imag).max() > 1e-6 * np.abs(y.real).max() else hilbert(np.real(y))
+    # 1e-2, not 1e-6: the in-code (2,0) streams carry a numerical Im of
+    # 1e-5..1e-3 of Re, and a "complex" record that is really a real wave
+    # plus noise has no phase to differentiate (the head-on's track read
+    # 0 Hz).  A genuinely complex mode has Im ~ Re.
+    z = y if np.abs(y.imag).max() > 1e-2 * np.abs(y.real).max() else hilbert(np.real(y))
     env = np.abs(z)
     fi = np.gradient(np.unwrap(np.angle(z)), dt) / (2.0 * np.pi)
     win = int(round(1.0 / max(f_guess, 1e-12) / dt)) | 1
@@ -204,6 +211,19 @@ def envelope_and_frequency(y: np.ndarray, dt: float, f_guess: float):
     den = np.convolve(w, ker, mode="same")
     return env, np.abs(np.divide(num, den, out=np.zeros_like(num),
                                  where=den > 0))
+
+
+def track_keep(env: np.ndarray, fM: np.ndarray, dt: float,
+               f_guess: float) -> np.ndarray:
+    """Panel (c)'s gate, shared with the ledger's ``waves_ligo_track``: the
+    record's loud body, with at least MIN_SPP samples per cycle.  The gate
+    protects nothing at a record that is CUT while still loud -- there the
+    analytic signal's reflection at the cut races the phase and the last
+    half-window of the track is the edge's, not the wave's (the head-on cut
+    at t = 80 read fM 0.06 -> 0.165 over its last four masses, 2026-09-30) --
+    so a gated arm's ARMS cap must land after its envelope has left the body,
+    as the head-on's t = 76 and the fly-by's t = 70 do."""
+    return body(env, GATE) & (fM * dt <= 1.0 / MIN_SPP)
 
 
 def body(amp: np.ndarray, gate: float) -> np.ndarray:
@@ -420,7 +440,7 @@ def main(argv: list[str] | None = None) -> int:
     # kind of statement -- and the clock the analytic curve is written in.
     for a in arms:
         _, fM = envelope_and_frequency(a["y"], a["dt"], a["f_pk"])
-        keep = body(a["env"], GATE) & (fM * a["dt"] <= 1.0 / MIN_SPP)
+        keep = track_keep(a["env"], fM, a["dt"], a["f_pk"])
         k = int(np.argmax(a["env"]))
         hz = np.where(keep, fM * to_hz, np.nan)
         axC.plot(a["tau"], hz, zorder=3, **LOOKS[a["name"]])

@@ -3730,3 +3730,32 @@ zoomed to t <= 47; a first overlay on panel (a) was unreadable and was redone as
 (3) 19 new `clmBoost*` ledger rows (manual, sources in the tsv); claims check 1094 rows / 894 recomputed /
 0 problems; numbers.tex regenerated. (4) STATUS.md compacted 813 → ~200 lines; the old page is archived verbatim
 below ["2026-09-30 (~07 UTC) — STATUS.md compacted"].
+
+## 2026-09-30 (~14:30 UTC) — paper figures on the mode-3 head-on chain; the h11 NaN in the caption
+
+The user: the head-on figure becomes the composition of the three csm legs (like the spiral collapse page),
+with a caption stating the NaN in h11; the wave figures update to the new head-on data; heavy_seeds (b) names
+the head-on. Done, no GPU work:
+
+- Glued the chain's in-code Ψ4 into `campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/`
+  ((2,0) and (2,2); leg 1 t ≤ 35, leg 2 to 50.8, leg 3 to 100; seams identical, README documents the joins).
+- `plot_headon_collapse` REDRAWN on the chain: round common scan + oriented t = 98–100 anchors against R⋆,
+  √2 R⋆ and 2 M_ADM = 4.71 (M_ADM = 2.3573, the volume identity); the level-5 overrun to its h11 NaN at
+  t = 38.845 drawn faint with the death cross; levels named per era; no fits (the late track is the round
+  scan's ~1 % shape wobble about its settle). New caption; §VI.A gains one sentence saying the figure draws
+  the far-side-matched chain; two stale panel refs in §VI dropped. §VI's numbers otherwise still superposed
+  (the rewrite is plan step 5, CSM_SWITCHOVER.md).
+- ARMS head-on row → the SERIES stream: spheres 10/20/36/44 kept, M_CODE 2.3573, ARMS gate t = 76 (the
+  envelope leaves the frequency track's body before the cut; the level-1 noise clock is t ≈ 80), gallery
+  DRAW_GATES 80/80/100/100. Found and fixed on the way: the envelope/frequency real-record test (1e-6 of Re)
+  took the in-code stream's numerical Im (1e-5–1e-3, VALIDATION.md) for a complex mode — the head-on's
+  envelope was the rectified wave and its frequency track read 0 Hz; the test is 1e-2 now. Also
+  `detector_headon_mms_ratio` repointed to the chain's C rows, and the track extractors share the figure's
+  gate (`track_keep`).
+- Numbers that moved (ledger re-measured): E/M 3.3e-3 → 3.1e-3 (spread 13 → 31 % over R = 10–44), peak
+  r Ψ4 2.3e-2 → 2.4e-2, speeds 0.96/0.90 → 0.94/0.88/0.95 (three pairs now), track 486–342 → 707–410 Hz,
+  Kerr-rise contrast ×1.34/×0.70 → ×1.08/×0.58, LISA mass window 3e4–4e6 → 4e4–6e6 M⊙, head-on burst SNR
+  61–76 → 60–79, fM peak ceiling 0.06 (unchanged print), template pedestal floor 0.31 → 0.10. 12 clmHeadonCsm*
+  caption rows + clmGwSpeedHeadonC + clmGwHeadonNoiseGate added. 1108 rows, 0 problems; numbers.tex rebuilt.
+- heavy_seeds (b): head-on track (ink dashed) at 1e5 M⊙, above the noise between the spiral and the lone
+  collapse; (c)'s conversion band follows the new E automatically.

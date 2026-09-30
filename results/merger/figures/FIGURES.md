@@ -38,6 +38,29 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
 
+2026-09-30 (afternoon): the head-on switched to the mode-3 production chain.
+`headon_collapse_diagnostics` is REDRAWN as the composition of the three csm
+legs (level 5 to t = 35, dying of the h11 NaN at t = 38.845 at the merged
+core; level 6 through the wall to t = 50.8; level 4 to t = 100), the spiral
+collapse page's grammar for a history drawn across legs: (a)/(b) the round
+common scan (aperture gap t = 26-35 left open) plus the oriented t = 98-100
+anchors against R_star, sqrt2 R_star and 2 M_ADM = 4.71 (M_ADM = 2.3573, the
+mode-3 volume identity); no fits (the round scan's late track is shape wobble
+about its settle); (c) the approach with the levels named per era; (d) the
+level-5 overrun ends on the death cross; (e) the fields. The wave figures
+follow through `plot_psi4_gallery.ARMS`: the head-on row reads the glued
+`04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20.dat`
+(in-code, seven spheres; the gallery keeps R = 10/20/36/44), ARMS gate t = 76
+(inside the level-1 noise clock t ~ 80, and after the envelope leaves the
+frequency track's body), DRAW_GATES 80/80/100/100, M_CODE = 2.3573. Fixed on
+the way: the real-record test in the envelope/frequency code was 1e-6 of Re,
+which took the in-code (2,0) stream's numerical Im (1e-5..1e-3) for a complex
+mode (rectified envelope, zero frequency); it is 1e-2 now. `psi4_gallery`,
+`psi4_ligo` and `heavy_seeds` re-rendered; `heavy_seeds` (b) gains the
+head-on burst at 1e5 Msun (the user: the panel never named it). Ledger:
+16 head-on rows re-measured, clmGwSpeedHeadonC + clmGwHeadonNoiseGate +
+12 clmHeadonCsm* caption rows added; 1108 rows, 0 problems.
+
 2026-09-30: the boosted-setup figure `boost_contraction` entered Sec. II D
 (new subsection "Throats with momentum"), becoming Fig. 1 and shifting every
 number by one, and `single_throat_instability` gained panel (d), the exact

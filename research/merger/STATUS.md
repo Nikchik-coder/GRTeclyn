@@ -208,8 +208,13 @@ archive. Checkpoints: asked per run at launch, never on by default.
   1.463 ± 0.023 = fixed potential, δ = 2.65 — in the paper.** (§V)
 - **Head-on**: common MOTS from t = 22 around both throats; never bounces; shrinks toward the pair's Bondi
   mass. **Mode-3 chain done (t = 100, closed out 09-30): MOTS at t = 22 with R 5.02 (superposed 5.56), there to
-  the end (R 4.69, M_MS 2.373 against M_ADM 2.357); the same ringdown swings. The paper's head-on numbers still
-  read the superposed runs (`CSM_SWITCHOVER.md`).** (§VI)
+  the end (R 4.69, M_MS 2.373 against M_ADM 2.357); the same ringdown swings. **The FIGURES read the mode-3
+  chain since ~14:30 UTC 09-30** (the user): Fig. 5 is the three-leg composition (new caption: the h11 NaN at
+  t = 38.845, the seams, the settle onto 2 M_ADM = 4.71), the wave figures (gallery / ligo / heavy_seeds, one
+  ARMS row) read the glued `04_binary_headon/csm/.../SERIES` stream (M_ADM 2.3573, ARMS gate t = 76, level-1
+  noise draw gates 80/90/100), and heavy_seeds (b) gains the head-on burst at 1e5 Msun; 16 ledger rows
+  re-measured, 14 added, 1108 rows, 0 problems. §VI's TEXT still reads the superposed runs
+  (`CSM_SWITCHOVER.md`; the rewrite is plan step 5).** (§VI)
 - **Spiral**: every "spiral" is a plunge; common MOTS 5.4 units before the NaN; the wall is censored.
   **Mode-3 caveat: the csm rerun (Bowen–York momentum) does not end in a merger — the verdict waits for the
   boosted-setup rerun.** (§VII)

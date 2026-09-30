@@ -283,6 +283,12 @@ def panel_bursts(ax) -> None:
     ff, hc = _track(*arms["spiral"], 1.0e5)
     h_sp, = ax.plot(ff, hc, color=style.DEEP_BLUE, lw=1.6, solid_capstyle="round", zorder=3,
                     label=r"spiral, $10^5$")
+    # The head-on (2026-09-30, the user: the panel never named it): the
+    # conversion channel's own burst, from the mode-3 chain, at the same
+    # reference mass as the spiral and the lone collapse.
+    ff, hc = _track(*arms["head-on"], 1.0e5)
+    h_ho, = ax.plot(ff, hc, color=style.INK, lw=1.2, ls=(0, (4.0, 2.0)), zorder=3,
+                    label=r"head-on, $10^5$")
     ff, hc = _track(*arms["collapsing throat"], 1.0e5)
     h_lc, = ax.plot(ff, hc, color=style.CONTEXT, lw=1.4, ls=(0, (3.0, 1.6)), zorder=3,
                     label=r"lone collapse, $10^5$")
@@ -299,7 +305,7 @@ def panel_bursts(ax) -> None:
     style.note(ax, r"$M$ [$M_\odot$], $z_e=20$", loc="lower right", color=style.INK,
                fontsize=6.8)
     style.note(ax, "below\nthe band", loc="lower left", fontsize=6.5)
-    style.legend(ax, handles=[h_fly, h_sp, h_lc, noise], loc="upper right", fontsize=6.5,
+    style.legend(ax, handles=[h_fly, h_sp, h_ho, h_lc, noise], loc="upper right", fontsize=6.5,
                  frameon=False, handlelength=1.8, borderaxespad=0.3, labelspacing=0.25)
 
 

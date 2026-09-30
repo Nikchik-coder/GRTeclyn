@@ -385,7 +385,7 @@ def waves_ligo_track(scenario: str, which: str) -> float:
     env, fM = L.envelope_and_frequency(a["y"], a["dt"], f_pk)
     if which == "fM_peak":
         return float(fM[int(np.argmax(env))])
-    keep = L.body(env, L.GATE) & (fM * a["dt"] <= 1.0 / L.MIN_SPP)
+    keep = L.track_keep(env, fM, a["dt"], f_pk)
     hz = fM[keep] * to_hz
     return float({"min": hz.min, "max": hz.max}[which]())
 

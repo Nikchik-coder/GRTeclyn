@@ -540,7 +540,7 @@ def _ligo() -> dict:
         f, S = _burst_psd(a["y"], 1.0 / a["dt"])
         f_pk = float(f[1:][np.argmax(_smooth_psd(S, L._smooth_window(S.size), 5)[1:])])
         env, fM = L.envelope_and_frequency(a["y"], a["dt"], f_pk)
-        keep = L.body(env, L.GATE) & (fM * a["dt"] <= 1.0 / L.MIN_SPP)
+        keep = L.track_keep(env, fM, a["dt"], f_pk)
         k = int(np.argmax(env))
         hz = fM[keep] * to_hz
         out[a["name"]] = dict(E=a["E"], spread=(a["E_hi"] - a["E_lo"]) / a["E"], f_pk=f_pk,
@@ -587,18 +587,20 @@ def detector_fpk_range(stat: str, arms="channels") -> float:
 
 @extractor
 def detector_headon_mms_ratio(quantity: str = "M_MS") -> float:
-    """Head-on remnant: M_MS at common-MOTS formation (offline scan, t = 22) over
-    M_MS at the end of the level-3 down-step arm's live track (t = 99) -- the
-    factor by which a Kerr frequency ~ 1/M would rise as the remnant shrinks.
-    quantity = 'R' takes the area-based mass R/2 instead (the ratio of areal radii)."""
+    """Head-on remnant: M_MS at common-MOTS formation (t = 22) over M_MS at the
+    end of the live track (t = 100) -- the factor by which a Kerr frequency
+    ~ 1/M would rise as the remnant shrinks.  Since 2026-09-30 both ends are
+    the mode-3 chain's round common scan (plot_headon_collapse: leg 1's first
+    C MOTS row, leg 3's last).  quantity = 'R' takes the area-based mass R/2
+    instead (the ratio of areal radii)."""
     from grteclyn_wrapper.visualisation.wormhole_merger import plot_headon_collapse as H
-    g = PACK / "campaign" / H.GROUP
-    form = H._offline_formation(g / H.SCOUT / "horizon_offline_scan.dat")
-    c = H._live_scan(g / H.DOWN / "horizon_scan.dat")
-    m = c["n_mots"] > 0
+    g = PACK / "campaign" / H.GROUP / H.CHAIN
+    c1 = H._live_scan(g / H.LEG1 / "horizon_scan.dat")
+    c3 = H._live_scan(g / H.LEG3 / "horizon_scan.dat")
+    m1, m3 = c1["n_mots"] > 0, c3["n_mots"] > 0
     if quantity == "R":
-        return float(form[0, 2] / c["R_mots"][m][-1])
-    return float(form[0, 3] / c["M_MS"][m][-1])
+        return float(c1["R_mots"][m1][0] / c3["R_mots"][m3][-1])
+    return float(c1["M_MS"][m1][0] / c3["M_MS"][m3][-1])
 
 
 # =============================================================== mouth growth and the no-inspiral budget
