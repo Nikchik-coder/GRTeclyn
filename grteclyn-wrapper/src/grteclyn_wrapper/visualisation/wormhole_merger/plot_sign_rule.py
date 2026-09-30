@@ -147,10 +147,15 @@ def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     lo, hi = 1.40, 1.63
     axB.set_ylim(lo, hi)
     axB.set_yticks([1.4, 1.5, 1.6])
-    # Centre of the band, under the prediction line, clear of the (b) tag.
-    axB.text(0.5 * WINDOW[0], lo + 0.30 * (hi - lo), "gauge\nsettling",
-             fontsize=7, color=style.MUTED, ha="center", va="top",
-             linespacing=1.2)
+    # Rotated up the band: at the pair strip's quarter-page width the
+    # two-line horizontal version spilled over the band's edge onto the
+    # points (the user, 2026-09-30: "text doesnt fit here").  In the band's
+    # upper stretch: below the gold line only 0.10 of the 0.23 y-span is
+    # free, less than the rotated text's length, so it sits above, clear of
+    # the prediction line and (in the strip) right of the 3/2 name.
+    axB.text(0.5 * WINDOW[0], lo + 0.72 * (hi - lo), "gauge settling",
+             fontsize=7, color=style.MUTED, ha="center", va="center",
+             rotation=90)
     if stacked:
         axB.text(0.985 * xhi, PRED - 0.02 * (hi - lo), r"$(Q{+}1)/(Q{-}1)$",
                  fontsize=7.5, color=style.GOLD, ha="right", va="top")

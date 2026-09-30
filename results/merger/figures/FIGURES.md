@@ -38,6 +38,13 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
 
+2026-09-30 (night): `pair_interaction` (b)'s "gauge settling" tag
+rotated up the grey band ("text doesnt fit here" -- the two-line
+horizontal version spilled onto the points at quarter-page width); it
+sits in the band's upper stretch, since below the gold line only 0.10
+of the 0.23 y-span is free, less than the text's length. Audit clean
+(the composer printed no crossings).
+
 2026-09-30 (late evening): `boost_contraction` (b) moved from the momentum
 axis to the boost speed and the law is drawn to the disc limit (the user:
 "lets also plot predictions till v = c"): gold 1/gamma = sqrt(1 - v^2) over
