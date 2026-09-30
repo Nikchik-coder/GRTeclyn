@@ -1,4 +1,4 @@
-# Status — 2026-09-30 12:28 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 12:35 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -84,7 +84,7 @@ superposed twins (checked 09-28/09-29; details in the archive).
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` (SPIRAL-lbf, the user's go 06:38 UTC 09-30: the csm spiral's params with only momentum model 1, the boosted shift and match tol 1e-5 changed; **no freeze**; max_level 5; checkpoints every 5 units keeping 3; `main3d_boostpair_91ed17cd`, profile `orbit-modes-prod`) | 0 (launched 11:55 UTC 09-30; the solve as A's, evolving since 12:13 UTC, card at 56 GB) | 100 | ~2.7 u/h expected (the csm spiral's average) | t = 60 in ~22.5 h, ~10:30 UTC 10-01; t = 100 in ~37 h, ~01 UTC 10-02 |
+| 0 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` (SPIRAL-lbf, the user's go 06:38 UTC 09-30: the csm spiral's params with only momentum model 1, the boosted shift and match tol 1e-5 changed; **no freeze**; max_level 5; checkpoints every 5 units keeping 3; `main3d_boostpair_91ed17cd`, profile `orbit-modes-prod`) | 0.69 (12:34 UTC 09-30; alive, no NaN, card at 60 GB; level-0 L2 H 1.35e-3, L2 M 7.9e-6) | 100 | 2.08 u/h (17.3 s per coarse step, the csm spiral's start exactly) | t = 60 in ~22 h, ~10:30 UTC 10-01; t = 100 in ~32 h (~20:30 UTC 10-01) if it speeds up after t ≈ 35 as the csm spiral did (to 4 u/h), ~48 h (~12:15 UTC 10-02) at the present pace; first rolling checkpoint (t = 5) ~14:40 UTC |
 
 - Its verification A (`t0_v2_spiral_d12_p012_L128_lvl5_lb_csm`, the rerun's template stopped at t = 0.5;
   finished 07:17 UTC 09-30): **PASS** — solve converged (22 Newton passes, 2 matching rounds), far sides the
