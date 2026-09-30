@@ -3812,3 +3812,13 @@ Addendum (~17:20 UTC): queued in STATUS on the user's "if some data is required"
 ~1 GPU-h, restores Fig. 4(a)'s width arm and clmNarrowPairRatio on matched data; optional a = 1.5/3 twins for
 the §V.B ladder) and PLACE-csm (the 18 one-step placement probes in mode 3, < 1 GPU-h total, the matched
 placement curve for Fig. 4(d,e) and CSM_SWITCHOVER's clmMouthTauFlybyPlaced/SeedFlybyPlaced). No go yet.
+
+Addendum (~18:10 UTC): Fig. 1 (boost_contraction) panel (b) moved to the
+speed axis and the gold law 1/gamma = sqrt(1 - v^2) is drawn to the disc
+limit v = 1 (the user: "lets also plot predictions till v = c"); (c) on the
+same v axis; (a) grew the law's ellipses at v = 0.7 and 0.95 (two, after
+"less ellipses pls"), prediction alone. Fig. 2 (single_throat_instability)
+panel (d)'s "at rest" tag, which floated mid-frame, now hangs just under the
+resting curve's hold stretch at t = 20. Both audits clean; caption follows
+(p -> v, the extra ellipses named); ledger untouched, check 1112 rows, 0
+problems. No GPU touched.

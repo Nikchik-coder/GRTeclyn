@@ -38,6 +38,25 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
 
+2026-09-30 (late evening): `boost_contraction` (b) moved from the momentum
+axis to the boost speed and the law is drawn to the disc limit (the user:
+"lets also plot predictions till v = c"): gold 1/gamma = sqrt(1 - v^2) over
+v = 0..1, the measured points at v = p/sqrt(1+p^2) (max 0.41), limits
+(0, 1.06); (c) put on the same v axis (xlim to 0.43, hugging the data);
+(a) grew the law's extra ellipses at v = 0.7 and 0.95 (hairline gold,
+each speed named inside its own arc — above the arc the v = 0.7 tag ran
+into the v = 0.41 pair, audit-flagged; three were busy, "less ellipses
+pls"), prediction alone, no data.
+The caption follows; the fine agreement lives in (c), whose 10^3 residual
+scale is unchanged. And `single_throat_instability` (d)'s "at rest" tag,
+which floated mid-frame ("completely unclear what is actually at rest"),
+now hangs just under the resting curve's flat hold stretch at t = 20 —
+the moving arm is on its hump above the grey line there; at the curve's
+end the tag crossed the descending tail (audit-flagged, moved). Both
+audits clean; ledger untouched (1112 rows, 0 problems — the
+clmBoostAxisResidual anchors end at "at every", so the caption's p -> v
+was free).
+
 2026-09-30 (evening): the pair strip switched to the matched pairs, and
 Fig. 1 was restyled. `pair_interaction` (a)-(c) now read
 `campaign/03_two_throats/matched_rest_displacement.dat` (the five mode-3 csm

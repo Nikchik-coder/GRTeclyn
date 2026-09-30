@@ -90,10 +90,15 @@ def moving_panel(axD, pack_root) -> None:
     axD.annotate(r"moving, $p=0.45$", (a[int(np.argmax(a[:, 1])), 0],
                  a[:, 1].max()), xytext=(-2, 4), textcoords="offset points",
                  fontsize=7, ha="center", va="bottom")
-    # Under the hold stretch (t ~ 24), where the moving arm is on its hump
-    # ABOVE R_star: the end of the curve carried the tag into its own fall.
-    axD.text(24.0, 3.80, "at rest", fontsize=7, color=style.CONTEXT,
-             ha="center", va="top")
+    # Hung just under the resting curve's flat hold stretch (the user,
+    # 2026-09-30: floating mid-frame, "completely unclear what is actually at
+    # rest"); the moving arm rides its hump ABOVE the grey line there and the
+    # space below is empty until its fall at t ~ 37.  At the curve's end the
+    # tag crossed the descending tail (the first placement, audit-flagged).
+    k = int(np.argmin(np.abs(rest[:, 0] - 20.0)))
+    axD.annotate("at rest", (rest[k, 0], rest[k, 1]), xytext=(0, -4),
+                 textcoords="offset points", fontsize=7, color=style.CONTEXT,
+                 ha="center", va="top")
     axD.set_xlim(0, 47)
     axD.set_ylim(3.45, 4.05)
     axD.set_xlabel(r"$t$")

@@ -248,6 +248,17 @@ def figure(pack_root=PACK_ROOT):
               color=style.GOLD, lw=1.0, linestyle=(0, (3, 2)), zorder=4)
     handles.append((Line2D([], [], color=style.GOLD, lw=1.0, linestyle=(0, (3, 2))),
                     r"$x^2+\gamma^2y^2=r_t^2$"))
+    # The same law continued toward the disc limit (the user, 2026-09-30:
+    # "update panel (a) with a few extra ellipses", then "less ellipses pls"
+    # -- three read busy, two stay): prediction alone, no data behind these
+    # -- panel (b)'s curve past the measured range, drawn as shapes.
+    for v in (0.7, 0.95):
+        gy = math.sqrt(1.0 - v * v)
+        ax_a.plot(THROAT * np.cos(th), THROAT * gy * np.sin(th),
+                  color=style.GOLD, lw=0.7, linestyle=(0, (3, 2)), zorder=2)
+        # Inside its own arc: above it the tag ran into the v = 0.41 pair.
+        ax_a.text(0.0, THROAT * gy - 0.08, rf"$v={v:g}$", fontsize=6,
+                  color=style.GOLD, ha="center", va="top")
     ax_a.set_aspect("equal")
     ax_a.set_xlim(-1.75, 1.75)
     ax_a.set_ylim(-1.75, 1.75)
@@ -257,17 +268,22 @@ def figure(pack_root=PACK_ROOT):
     ax_a.set_ylabel(r"$y$ (along the motion)")
     style.legend_top(ax_a, handles, ncol=2)
 
-    # (b) the axis ratio against p, on 1/gamma -- no free parameter.
-    ps = np.linspace(0, 0.47, 200)
-    ax_b.plot(ps, inverse_gamma(ps), color=style.GOLD, lw=1.1, zorder=2)
-    eb = [(p, q) for s, p, rc, q, _ in rows if s == "exact_boost" and rc == THROAT]
+    # (b) the axis ratio against the boost speed, on 1/gamma -- no free
+    # parameter -- drawn to v = c, where the throat flattens to a disc (the
+    # user, 2026-09-30: "lets also plot predictions till v = c").  The speed
+    # axis is the one on which the law reaches its limit: v = 1 is p = inf.
+    vs = np.linspace(0.0, 1.0, 400)
+    ax_b.plot(vs, np.sqrt(1.0 - vs * vs), color=style.GOLD, lw=1.1, zorder=2)
+    eb = [(p / math.sqrt(1.0 + p * p), q)
+          for s, p, rc, q, _ in rows if s == "exact_boost" and rc == THROAT]
     ax_b.plot(*zip(*eb), linestyle="none", marker="o", ms=2.8, color=style.INK, zorder=4)
-    ax_b.set_xlim(-0.015, 0.47)
-    ax_b.set_ylim(0.905, 1.005)
-    ax_b.set_yticks([0.92, 0.94, 0.96, 0.98, 1.00])
-    ax_b.set_xlabel(r"$p$ (ADM momentum, $m=1$)")
+    ax_b.set_xlim(-0.02, 1.02)
+    ax_b.set_ylim(0.0, 1.06)
+    ax_b.set_xticks([0.0, 0.25, 0.5, 0.75, 1.0])
+    ax_b.set_yticks([0.0, 0.25, 0.5, 0.75, 1.0])
+    ax_b.set_xlabel(r"$v$ (boost speed, $c=1$)")
     ax_b.set_ylabel("axis ratio along/across")
-    keys_b = [(Line2D([], [], color=style.GOLD, lw=1.1), r"$1/\gamma=1/\sqrt{1+p^2}$"),
+    keys_b = [(Line2D([], [], color=style.GOLD, lw=1.1), r"$1/\gamma=\sqrt{1-v^2}$"),
               (Line2D([], [], linestyle="none", marker="o", ms=2.8, color=style.INK),
                "measured (throat contour)")]
     style.legend_top(ax_b, keys_b, ncol=1, borderpad=0.6)
@@ -277,18 +293,19 @@ def figure(pack_root=PACK_ROOT):
     # band was three quarters empty and read the residuals as scatter.
     marks = {1.0: ("v", style.MUTED), THROAT: ("o", style.INK), 2.5: ("^", style.CONTEXT)}
     keys_c = []
-    res = [(rc, p, 1e3 * (q - ig)) for s, p, rc, q, ig in rows if s == "exact_boost"]
+    res = [(rc, p / math.sqrt(1.0 + p * p), 1e3 * (q - ig))
+           for s, p, rc, q, ig in rows if s == "exact_boost"]
     for rc, (mk, col) in marks.items():
-        pts = [(p, r) for c, p, r in res if c == rc]
+        pts = [(v, r) for c, v, r in res if c == rc]
         ax_c.plot(*zip(*pts), linestyle="none", marker=mk, ms=2.8, color=col, zorder=3)
         keys_c.append((Line2D([], [], linestyle="none", marker=mk, ms=2.8, color=col),
                        rf"$r_c={rc:g}$"))
     ax_c.axhline(0.0, color=style.GOLD, lw=1.0, zorder=2)
-    ax_c.set_xlim(-0.015, 0.47)
+    ax_c.set_xlim(-0.015, 0.43)
     hi = max(r for _, _, r in res)
     lo = min(0.0, min(r for _, _, r in res))
     ax_c.set_ylim(lo - 0.12 * (hi - lo) - 0.006, hi + 0.25 * (hi - lo))
-    ax_c.set_xlabel(r"$p$")
+    ax_c.set_xlabel(r"$v$")
     ax_c.set_ylabel(r"$10^3\,(\mathrm{ratio}-1/\gamma)$")
     style.legend_top(ax_c, keys_c, ncol=3, borderpad=0.6)
     style.tag_keys(fig, axes, ["(a)", "(b)", "(c)"])
