@@ -38,6 +38,14 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
 
+2026-09-30 (late afternoon): Fig. 5 polish on the user's read — the round
+scan's open circles became a plain gold line (the diamonds stay on the three
+oriented anchors), and the composition's levels are named per era in (a), (d)
+and (e), as (c) already did. The gallery's sub-c head-on speeds were
+rechecked and are near-zone dispersion, not junk: dropping the static start
+moves the lags by < 0.005 and per-swing crest timing repeats them
+(GPU_PLAN, 2026-09-30 ~14:50 UTC).
+
 2026-09-30 (afternoon): the head-on switched to the mode-3 production chain.
 `headon_collapse_diagnostics` is REDRAWN as the composition of the three csm
 legs (level 5 to t = 35, dying of the h11 NaN at t = 38.845 at the merged

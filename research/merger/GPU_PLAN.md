@@ -3759,3 +3759,17 @@ the head-on. Done, no GPU work:
   caption rows + clmGwSpeedHeadonC + clmGwHeadonNoiseGate added. 1108 rows, 0 problems; numbers.tex rebuilt.
 - heavy_seeds (b): head-on track (ink dashed) at 1e5 M⊙, above the noise between the spiral and the lone
   collapse; (c)'s conversion band follows the new E automatically.
+
+## 2026-09-30 (~14:50 UTC) — head-on wave speeds rechecked (not junk); figure polish; BBH head-on queued
+
+- The user, on the gallery's head-on v/c 0.90/0.88/0.95: is the sub-c speed junk radiation? **No.** Excluding
+  the static start from the correlation moves the lags by < 0.005 (0.903/0.876/0.953 → 0.899/0.875/0.957),
+  and independent per-swing crest timing gives the same numbers (swing A 0.92/0.88/0.92, B 0.86/0.87/0.91 —
+  the chain's VALIDATION.md quotes B at 0.86/0.87/0.91). It is the near zone: the (2,0) period (~31 units) is
+  comparable to the radii 10–44, no sphere is asymptotic (the paper says so in §VIII), and the front converges
+  toward c outward. p = 0 — there is no Bowen–York momentum junk in this run at all. Numbers unchanged.
+- Fig. 5 polish (the user): the round scan's 69 open circles are a plain gold line now (diamonds stay on the
+  three oriented anchors), and the composition's levels are named per era in (a), (d) and (e) as in (c).
+  Caption wording follows ("gold line ... the level of each stretch named above it"). Label audit clean.
+- Queued (no go yet): **BBH-HEADON** — the vacuum control for the head-on, bare punctures at d = 8 from rest
+  to t = 100 on the csm head-on's setup, for the ringdown/energy comparison. ~30–50 GPU-h.

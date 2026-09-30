@@ -245,13 +245,18 @@ def main(argv: list[str] | None = None) -> int:
             ax.axvline(seam, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
 
     def scan(ax, ts_, ys, *, filled, gap, ms=None):
-        """One scan's rows: markers joined by a solid line within each run."""
+        """One scan's rows, joined within each contiguous run.  The live round
+        scan is a plain gold line since 2026-09-30 (the user: "I don't like
+        the orange circles" -- 69 open circles read as beads, not a track);
+        only the three oriented anchors keep a marker, the filled diamond."""
         for idx in _runs(np.asarray(ts_), gap):
-            ax.plot(np.asarray(ts_)[idx], np.asarray(ys)[idx], color=style.GOLD,
-                    lw=1.0, ls="-", marker="D" if filled else "o",
-                    ms=ms or (3.3 if filled else 2.9),
-                    mfc=style.GOLD if filled else style.GROUND, mec=style.GOLD,
-                    mew=0.9, zorder=5 if filled else 4)
+            if filled:
+                ax.plot(np.asarray(ts_)[idx], np.asarray(ys)[idx], color=style.GOLD,
+                        lw=1.0, ls="-", marker="D", ms=ms or 3.3, mfc=style.GOLD,
+                        mec=style.GOLD, mew=0.9, zorder=5)
+            else:
+                ax.plot(np.asarray(ts_)[idx], np.asarray(ys)[idx], color=style.GOLD,
+                        lw=1.3, ls="-", zorder=4)
 
     # (a) the remnant's areal radius against the initial data ------------------
     # (b) its Misner-Sharp mass against the pair's ADM mass --------------------
@@ -291,6 +296,13 @@ def main(argv: list[str] | None = None) -> int:
                  fontsize=fs, color=style.MUTED)
     axA.text(43.0, 5.30, "round scan", fontsize=fs, ha="center", va="bottom",
              color=style.GOLD)
+    # The composition's levels, named per era in every panel that draws
+    # across the legs (the user, 2026-09-30: "what is the level at least").
+    def era_levels(ax, y, first="level 5", x1=27.5):
+        for x, name in ((x1, first), (43.0, "6"), (76.0, "4")):
+            ax.text(x, y, name, fontsize=7, ha="center", va="top",
+                    color=style.MUTED)
+    era_levels(axA, 5.93)
     # Left of the t = 98-100 diamonds, above the round scan's level stretch.
     axA.annotate("oriented scan", (96.5, float(anchors[0, 2])), xytext=(-4, 7),
                  textcoords="offset points", ha="right", va="bottom", fontsize=fs,
@@ -325,6 +337,7 @@ def main(argv: list[str] | None = None) -> int:
     axD.semilogy(d3_used[:, 0], col(d3_used, "max_abs_K"), color=style.INK, lw=1.1)
     axD.set_ylim(2e-2, 90)
     axD.set_ylabel(r"$\max|K|$")
+    era_levels(axD, 60.0, first="5", x1=16.0)
     # Leg 1's overrun ends on the death cross; at this panel's width no name
     # fits between the era rules, so the NaN in h11 is the caption's to state.
 
@@ -343,6 +356,9 @@ def main(argv: list[str] | None = None) -> int:
     axE.set_ylabel(r"$\max|\phi|,\ \max|\Pi|$")
     axE.set_xlabel(r"$t$")
     axE.text(6.0, 1.15, r"$|\phi|$", fontsize=8, ha="left", va="bottom", color=style.INK)
+    # Between the gold t = 22 rule and the t = 35 seam, the one 13-unit
+    # corridor of this panel's first era that a "level 5" fits.
+    era_levels(axE, 1.95, first="level 5", x1=28.5)
     # Under the two tails' close pass (t ~ 60-66, both >= 0.016), where the
     # panel is empty below 0.009.
     axE.text(63.0, 0.0085, r"$|\Pi|$", fontsize=8, ha="center", va="top",
