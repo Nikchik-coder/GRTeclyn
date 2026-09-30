@@ -1,4 +1,4 @@
-# Status — 2026-09-30 12:40 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 13:20 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -113,21 +113,23 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Live — second node (one H100): free since 11:27 UTC 09-30 — the head-on chain is complete, close-out due
+## Live — second node (one H100): free since 11:27 UTC 09-30 — the head-on chain is closed out
 
-Leg 3 (`merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000`: leg 2's Chk05000 down-stepped to
-max_level 4, no checkpoints, profile `headon-modes-prod`) **reached t = 100 at 11:25 UTC 09-30**, exit 0, no
-NaN; common MOTS to the end (R 4.65, M_MS 2.37 at t = 100). Its plotfiles and leg 2's `Chk05000` (28 GB) are
-still on the second node's scratch.
-
-- Leg 2 (`..._lvl6from35_..._r03500`, level 6 through the wall): **stopped at t = 50.80** (04:25 UTC 09-30, the
-  user's word) — 12 units past leg 1's death, NaN-free; `Chk05000` (t = 50, 28 GB) kept, the rest wiped.
-- Leg 1 (level 5 from t = 0, checkpointed): **died at t = 38.845** as the uncheckpointed run did (one-step
-  overflow at the merged core inside the common MOTS; clean outside to the end); `Chk03500` was leg 2's start.
-- **Legs 1–3 are closed out together now that leg 3 has ended** (checklist in CLAUDE.md; the dead first run is archived
-  out of the pack in `00_archive/superseded/`).
-- The head-on chain for the paper: superposed scout → CS-1 (same grid, one knob) → mode-3 big box; its common
-  MOTS forms at t = 22 with R ≈ 5.0, ~10 % smaller than superposed, as the mode-3 mouths are.
+**The mode-3 production head-on (legs 1–3) is done, validated and packed** (13:06 UTC 09-30,
+`campaign/04_binary_headon/csm/`; tables in leg 3's `VALIDATION.md`; movies per leg and the three legs as one film
+t = 0–100 in `runs/.../04_binary_headon/csm/headon_csm_L128_stitched_t0_t100/movies/`).
+- Chain: leg 1 (level 5, t = 0–35; died at t = 38.845 at the merged core, as the uncheckpointed run) → leg 2
+  (level 6 from Chk03500, through the wall, stopped by hand at t = 50.80) → leg 3 (level 4 from Chk05000, t = 100
+  at 11:25 UTC, no NaN). Seams continuous (norms to 1.4 % / 0.1 %, in-code Ψ4 identical on the overlaps).
+- Result: common MOTS first at t = 22 (R 5.02, M_MS 2.69), found every unit t = 36–100; R 4.25–4.70, M_MS
+  2.29–2.39; at t = 100 R 4.69, M_MS 2.373 by the oriented scan (M_ADM 2.357). The ringdown swings repeat the
+  superposed run's (r Ψ4 (2,0) at R = 10: +0.0240, −0.0207, +0.0126, −0.0066 at t = 28.8, 44.2, 63.0, 81.7).
+- **Caveat (new, see Traps): numerical noise on the level-1 cube from t ≈ 65**, the late rise of L2 H. In-code Ψ4:
+  R ≤ 20 good to t ≈ 80, R = 28 to t ≈ 90, R = 36 / 44 to t = 100. Remnant and MOTS untouched. No trust-window
+  row (the limits are per sphere); the films run to t = 100 on the user's word and show the speckle from t ≈ 85.
+- Scratch on this node, **not pruned** (the user's word needed): leg 1 44 GB (`Chk03500` + plotfiles t = 36–38),
+  leg 2 28 GB (`Chk05000`, kept on the user's word), leg 3 17 GB (plotfiles t = 98–100). 610 GB free.
+- Proposed, not queued: NOISE-1 (Queued, below) would use `Chk05000` and this card.
 
 ## The production set (shared box; the user, 2026-09-28 09:00 UTC)
 
@@ -143,6 +145,8 @@ one stopped at t = 64.98, overturned). Templates in `runs/wormhole_merger/templa
 - consumer (every plotfile, 1.0): scalar modes l = 0–2 and the python Ψ4 l = 2 modes on spheres 14/20/30/44.
 - Head-on, all three legs: these plus its old spheres (in-code Ψ4 also at 10/14/18, consumer also at 10/18), the
   same in each leg, t = 0–100 covered (legs 2–3's restart files carry no header; columns as leg 1's).
+- The spheres against the grid (head-on, merged): R ≤ 20 lies inside the level-1 cube, R = 28 (and the consumer's
+  R = 30) cuts its corners, R = 36 / 44 are on level 0 — the last two are the clean ones late (Traps).
 - Spiral (live): exactly the shared set.
 - Fly-by (live, launched with the fix): radii the shared set. **Fixed 12:27 UTC:** its template had no angular-grid or mode lines, so
   the in-code Ψ4 would have run on the code defaults (2 × 5 points, three l = 2 modes), as the overturned p = 0.45
@@ -173,6 +177,7 @@ node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or r
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | IF the clean spiral again fails to merge: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
 | FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **LIVE on the first node's card 1 since 12:37 UTC 09-30** (Live, above) | ~46 to t = 100 |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement, mode-3 (Fig. 12a's rerun) | restart from a checkpointed spiral leg at t ≈ 50, max_level 4/6/7, ~10–15 units per arm; convergence rules (no frames, `WHM_MOVIES=0`, `08_convergence`) | ~15–25 |
+| NOISE-1 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | PROPOSED (needs the go): what feeds the level-1 noise — leg 3 again from `Chk05000` with one knob, Kreiss–Oliger `sigma` 0.1 → 0.3 | second node (the checkpoint is there), max_level 4, to t = 80; read the (3,2) monitor at R = 20 and the fine-scale K ring against leg 3's | ~4 |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | spiral burst/energy, level 4 vs 5 | the spiral template, max_level 4, from t = 0 | ~8–10 |
 | EGW-p06 | `merge_orbit_flip_d12_p060_lvl5_t040_csm` | E_GW(p) above the fly-by (turnover) | fly-by template, p = 0.60, stop ~40; junk ∝ p², read the Newton passes at start | ~8–12 |
 | EGW-p09 | `merge_orbit_flip_d12_p090_lvl5_t040_csm` | E_GW(p) far side of the peak | same, p = 0.90 | ~8–12 |
@@ -193,7 +198,9 @@ archive. Checkpoints: asked per run at launch, never on by default.
 - **Two throats at rest**: like signs repel, opposite attract; force ∝ (d + δ)⁻²; **mode-3 rerun done: ratio
   1.463 ± 0.023 = fixed potential, δ = 2.65 — in the paper.** (§V)
 - **Head-on**: common MOTS from t = 22 around both throats; never bounces; shrinks toward the pair's Bondi
-  mass. The mode-3 legs reproduce it ~10 % smaller. (§VI)
+  mass. **Mode-3 chain done (t = 100, closed out 09-30): MOTS at t = 22 with R 5.02 (superposed 5.56), there to
+  the end (R 4.69, M_MS 2.373 against M_ADM 2.357); the same ringdown swings. The paper's head-on numbers still
+  read the superposed runs (`CSM_SWITCHOVER.md`).** (§VI)
 - **Spiral**: every "spiral" is a plunge; common MOTS 5.4 units before the NaN; the wall is censored.
   **Mode-3 caveat: the csm rerun (Bowen–York momentum) does not end in a merger — the verdict waits for the
   boosted-setup rerun.** (§VII)
@@ -210,6 +217,14 @@ GPU_PLAN entries disagree (regrowth as physics, "no horizon ever forms" for the 
 growth), the paper wins.
 
 ## Traps (each has cost a run)
+
+- **Level-1 noise (found 2026-09-30 on the head-on chain):** fine-scale noise grows on the level-1 refinement
+  cube (±20 about the tracked throats), doubling every ~6 units, equal to the smooth field in the outer ring by
+  t ≈ 80; cause not identified. It is what a late rise of the logged L2 H can be (check where the constraint sits
+  before blaming the core or the boundary: `ham_level_map.py` in the head-on's `validation/` rebuilds Ham from a
+  plotfile's metric on any level). A wave sphere inside level 1 (R ≤ 20) or across its corners (R = 28, and the
+  consumer's R = 30) is contaminated late; read the symmetry-forbidden modes ((3,2), (2,1)) as the monitor. The
+  live spiral and fly-by run the same grid and dissipation: expect it there from t ≈ 65–80.
 
 - **The constraint norm is level 0 only** (Δx = 0.5, nothing masked): a moving pit spikes it while the fine
   solution is clean (verification B: 99.99 % of the norm from four pit cells). Mask the pit cells or read the

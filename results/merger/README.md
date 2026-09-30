@@ -1231,6 +1231,37 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
 - **Runs.** `t0_v2_spiral_d12_p012_L128_lvl5_lb_csm` *(pack, `campaign/05_binary_spiral/verify_p012/`)*:
   `main3d_boostpair_91ed17cd`; no checkpoints; closed out without movies.
 
+### Mode-3 production head-on: the merger on clean data, carried to t = 100 on three legs (2026-09-30)
+
+- **Claim.** On far-side-matched data in the production box (L = 128) the d = 8 head-on merges behind a common
+  horizon, as the superposed run did, and the horizon is there to t = 100. The round scan about the centre first
+  finds the common MOTS at t = 22 (R 5.02, M_MS 2.69; superposed: 5.56 / 2.99), loses the deformed surface at
+  t = 26–35 and finds it every unit from t = 36 to 100: R 4.25 at its minimum (t = 48), 4.66 by t = 62, 4.58–4.70
+  after, M_MS 2.29–2.39. At t = 100 the oriented scan has every shell inside trapped and the MOTS at r = 3.38,
+  R = 4.69, M_MS = 2.373; the pair's ADM mass is 2.357. The ringdown repeats the superposed run's: r Ψ4 (2,0)
+  at R = 10 swings +0.0240, −0.0207, +0.0126, −0.0066 at t = 28.8, 44.2, 63.0, 81.7 (superposed: +0.023, −0.018,
+  +0.011, −0.006 at 28.2, 43.8, 63.4, 82.2), falls 10 % in r Ψ4 out to R = 44 and travels at 0.86–0.91.
+- **How it got through.** Level 5 from t = 0 dies at t = 38.845, a one-step overflow at the merged core inside the
+  horizon (the uncheckpointed run and its checkpointed twin, to the step). From the t = 35 checkpoint at max level 6
+  the core's lapse sits on its floor and the run passes the wall; from the t = 50 checkpoint it continues at max
+  level 4 (levels 5–6 lie inside the horizon) to t = 100 with no NaN. Both seams are continuous: level-0 norms to
+  1.4 % and 0.1 %, the in-code Ψ4 identical on the overlaps, the MOTS's R −0.4 % and M_MS +0.2 % across t = 50.
+- **Caveat: numerical noise on the level-1 refinement cube.** Fine-scale structure grows on level 1
+  (|x|, |y|, |z| < 20), doubling every ~6 units; it passes the smooth field in the outer ring at t ≈ 80 and is the
+  late rise of the logged Hamiltonian norm (1.1e-4 at t = 70, 1.2e-3 at t = 100: 93–94 % of it at r = 16–32,
+  nothing at the core or the outer boundary; the level-1 constraint itself is rms 1e-2 at t = 100). The in-code Ψ4
+  inside level 1 is good to t ≈ 80 (R ≤ 20: the symmetry-forbidden (3,2) mode is 3 % of (2,0) at t = 65–80, 8 % at
+  80–85, 60 % at 95–100); R = 28 cuts the cube's corners and is good to t ≈ 90; R = 36 and 44 sit on level 0 and
+  stay within 3 % to t = 100. The remnant and its MOTS (levels 3–4) are not touched. The cause is not identified;
+  the forbidden modes grow steadily from the merger on, with no step at either restart.
+- **Caveat: the round scan.** R from the round scan moves by 10 % while the surface is deformed (3.85 → 4.66 over
+  t = 36–39); the turn at t = 48 and the rise to t = 62 are not separated from that effect. M_MS moves by 4 %.
+- **Runs.** `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (t = 0–35), `merge_headon_flip_d8_v1_L128_lvl6from35_scalar_chk_t100_csm_r03500` (t = 35–50), `merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000` (t = 50–100) *(pack,
+  `campaign/04_binary_headon/csm/`)*: `main3d_csmatch_5f988dbc`; the validation tables are in the last leg's
+  `VALIDATION.md`, the oriented scans in its `ah_oriented_scan_t098/099/100.dat`. Movies per leg, and the three
+  legs as one film t = 0–100 in the run tree (`04_binary_headon/csm/headon_csm_L128_stitched_t0_t100/movies/`).
+  The dead uncheckpointed run is archived out of the pack.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,

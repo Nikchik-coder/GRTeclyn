@@ -1323,6 +1323,62 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-30 (13:20 UTC) — the mode-3 head-on chain closed out: validated, packed, filmed; numerical noise on level 1 from t ≈ 65; the boosted fly-by is live
+
+- **The chain.** `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (level 5, t = 0–35 of the chain; died at t = 38.845), `merge_headon_flip_d8_v1_L128_lvl6from35_scalar_chk_t100_csm_r03500` (level 6 from Chk03500,
+  t = 35–50; stopped by hand at 50.80), `merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000` (level 4 from Chk05000, t = 50–100; exit 0, no NaN). Filed and
+  packed 13:06 UTC in `04_binary_headon/csm/` (65 MB), claims check 0 problems, identity grep clean. The numbers
+  are tabulated in leg 3's `VALIDATION.md`.
+- **Seams.** t = 35: level-0 L2 H ratio 0.986 at the first step, then the level-6 leg falls to 0.45 of the
+  level-5 leg by t = 38.8 (the norm is the core's there: the constraint rebuilt from the metric on level 0 at
+  t = 38 is 1.0e-5 outside r = 6 and 7.5e-5 in all, against the logged 4.2e-4); the in-code Ψ4 is identical on
+  R = 18–36 for the whole overlap. t = 50: norms to 0.1 %, Ψ4 identical on every sphere over t = 50–50.8, MOTS
+  R 4.266 → 4.247, M_MS 2.296 → 2.300.
+- **Horizon.** Round scan: MOTS at t = 22–25 (R 5.02 → 4.57, M_MS 2.69 → 2.84), lost at t = 26–35 (deformed),
+  every unit t = 36–100 (R 3.85 → 4.66 over t = 36–39 as it rounds; minimum 4.25 at t = 48; 4.66 at t = 62;
+  4.58–4.70 to the end; M_MS 2.29–2.39). Oriented scan at t = 98 / 99 / 100 (CSM_SWITCHOVER's close-out item,
+  `ah_oriented_scan_t*.dat` in leg 3's pack): every shell r = 0.25–3.37 trapped, MOTS r 3.377, R 4.688,
+  M_MS 2.373. M_ADM 2.357.
+- **Waves.** r Ψ4 (2,0) at R = 10: −0.0154 (14.9), +0.0240 (28.8), −0.0207 (44.2), +0.0126 (63.0), −0.0066
+  (81.7); the superposed run: +0.023 (28.2), −0.018 (43.8), +0.011 (63.4), −0.006 (82.2). Swing B is −0.0207,
+  −0.0202, −0.0196, −0.0187, −0.0185 at R = 10, 14, 20, 36, 44 (t = 44.2, 48.9, 56.0, 74.2, 83.3): 1/r to 10 %,
+  speed 0.86–0.91. Python against in-code (2,0): amplitude 0.96–1.00, phase 0, residual 1.3 % at R = 44 and 17 %
+  at R = 20. Scalar channel: l = 1, m = ±1, 0.62 → 0.047 at R = 10 by t = 30, then ringing down. The in-code
+  modes are stored as r Ψ4.
+- **The late rise of L2 H is numerical noise on level 1.** The logged norm is 1.1e-4 at t = 65–75, then e-folds
+  in 5–6 units to 1.2e-3 at t = 100. Rebuilt from the metric of the last plotfiles on level 0 (1.01e-3 / 1.35e-3
+  at t = 98 / 100; logged 0.91e-3 / 1.21e-3): 93–94 % of the sum of squares at r = 16–32, 0.1–0.2 % inside r = 6,
+  < 0.5 % beyond r = 32 (sponge 0.03–0.05 %). Levels at t = 98–100: cubes ±20 / ±10 / ±5 / ±2.5. On level 1
+  itself the rebuilt constraint is rms 5.0e-3 (Chebyshev 10–12) to 1.18e-2 (18–19) at t = 100, ×1.33 on t = 98;
+  on level 2 5–9e-4. In the z-slices the fine-scale part of K (field minus its 1-unit smooth) in the ring
+  r = 16–19.5 is 1e-5 for t = 25–60, then 1.8, 3.5, 6.6, 10, 19, 33, 59, 96 (×1e-5) at t = 65 … 100, the whole
+  field from t ≈ 80; Weyl4 the same. The forbidden (3,2) mode at R = 20 grows steadily from 2e-6 (t = 20–25) to
+  4e-3 (t = 95–100), e-fold ~10 units, with no step at t = 35 or t = 50: not a restart artefact. Per sphere,
+  (3,2)/(2,0): R = 20 3 % (t = 65–80), 8 % (80–85), 31 %, 20 %, 59 % (95–100); R = 28 ≤ 1 % to t = 85, 8 % at
+  90–95, with l = 4, m = 0, ±4 (the cube's harmonics) as large as (2,0) from t = 90; R = 36 ≤ 1 %; R = 44 ≤ 3 %.
+- **What it means.** The remnant and its MOTS sit on levels 3–4 and are not touched (K's fine-scale part at
+  r = 4–8 moves 7.0e-4 → 7.9e-4 over t = 60–100 on K ~ 1e-2). Wave quantities: R ≤ 20 to t ≈ 80, R = 28 to
+  t ≈ 90, R = 36 / 44 to t = 100. The old head-on arms' late L2 H rise (`lvl3down`, `lvl5from0`, L = 64, onset
+  t ≈ 80–90) has the same look and was never located. The live spiral and fly-by have the same level-1 cubes and
+  `sigma = 0.1`: check them with the forbidden modes and the rebuild before quoting anything inside R ≈ 30 late.
+- **Open, with a cost: what feeds it.** Not identified (candidates: the dissipation, `sigma = 0.1`; the
+  coarse–fine boundary's interpolation; the Γ-driver). NOISE-1 (STATUS queue, proposed): leg 3 again from
+  `Chk05000` with `sigma` 0.1 → 0.3, to t = 80, ~4 GPU-h on the second node; the monitor is (3,2) at R = 20 and
+  the K ring at t = 65–80.
+- **Trust window.** No row for leg 3: one number would either cut the remnant's track (good to 100) or pass the
+  inner spheres (good to 80); the per-sphere limits are in the registry and the README. The films run to t = 100
+  (the user's word: the full process), with the speckle visible from t ≈ 85.
+- **Films.** Per leg (`movies/`, 14 fields each) and the chain as one series
+  (`04_binary_headon/csm/headon_csm_L128_stitched_t0_t100`: the legs' slice caches linked, leg 1 to t = 35,
+  leg 2 to t = 50, leg 3 after; one colour scale per field; 101 frames). Fields rendered one process per field
+  (`validation/render_episode.sh`): a minute per episode instead of closeout's serial pass.
+- **Second node's scratch, not pruned:** 89 GB (leg 1's `Chk03500` and plotfiles t = 36–38, 44 GB; leg 2's
+  `Chk05000`, 28 GB; leg 3's plotfiles t = 98–100, 17 GB).
+- **The boosted fly-by** `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` went up on the first node's card 1 at
+  12:37 UTC (the user's go 12:35 UTC), with the production set's Ψ4 angular grid and mode list added to its
+  template (it had neither: the code defaults are 2 × 5 points and three modes). The production set's wave
+  settings were checked against every run's params, manifest and output headers (STATUS).
+
 ### 2026-09-30 (12:10 UTC) — the boosted spiral's verification A passes and the rerun is live; the head-on chain reached t = 100
 
 - **SPIRAL-lbf, the plan (the user, 06:38 UTC):** the spiral exactly as it was (d = 12, p = 0.12) on the exact-boost
