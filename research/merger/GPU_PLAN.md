@@ -1323,6 +1323,35 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-30 (17:55 UTC) — NOISE-1 closed out: the level-1 noise is under-dissipation; the moving throat's level-4 twin is live
+
+- **NOISE-1** (`merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000`, second node, 13:27–17:40 UTC, 7.15 u/h;
+  leg 3 again from leg 2's `Chk05000` with one knob, Kreiss–Oliger σ 0.1 → 0.3) reached t = 80, exit 0, no NaN.
+  **At σ = 0.3 the level-1 noise does not grow.** Against leg 3 at the same times: the forbidden (3,2) mode at R = 20
+  0.7–1.4e-5 for t = 50–80 (leg 3: 1.7e-4 at 65–70, 2.9e-4 at 75–80; as a share of (2,0) 0.09 % against 2.5 % at
+  75–80), (2,1) 1.3e-7 against 1.2e-5; the fine-scale K in the ring r = 16–19.5 4–10e-6 from t = 60 (leg 3: 1.0e-5 at
+  60 → 1.0e-4 at 80, e-fold ~8 units), i.e. leg 3's pre-noise floor, and what is left there is the smooth field's
+  leak through the filter (half of it survives a 0.5-unit filter, 97–99 % of leg 3's does); the logged L2 H falls to
+  1.01e-4 at t = 80 (leg 3: back up to 1.37e-4). Rebuilt from NOISE-1's plotfiles (leg 3's `ham_level_map.py`): the
+  level-1 constraint is rms 2.1–6.9e-5, flat over t = 74–80 and lowest near the cube's faces (leg 3 at t = 100:
+  5e-3 → 1.2e-2 toward the faces); level 2 0.9–1.6e-4; on level 0 at t = 80 only 1 % of the sum of squares at
+  r = 16–32 (leg 3 at t = 100: 94 %). The physics does not move: (2,0) and (2,2) at R = 36/44 within 1 % of leg 3's,
+  up to 7 % inside R ≤ 28 where leg 3 is contaminated; the MOTS R 4.646, M_MS 2.3745 at t = 80 in both. Tables in the
+  pack's `VALIDATION.md`, scripts and logs in the run's `validation/`.
+- **Closed out** 17:43–17:50 UTC: `table1_groups.tsv` (`-`), filed to `08_convergence/` (a numerics study, one knob
+  against its partner, like CONV-3), `closeout.sh` with `WHM_MOVIES=0` (no NaN in the death window, identity grep
+  clean, 0 problems), claims check 1112 rows, 0 problems. Its three plotfiles (17 GB) wiped 17:48 UTC on the user's
+  word, after the rebuilds (`MANIFEST_CLEANUP_2026-09-30`). Kept on the second node: `Chk03500` and `Chk05000` (HFL-ho).
+- **What it means for the live runs:** the spiral and the fly-by run σ = 0.1 on the same level-1 cubes, so their wave
+  spheres inside R ≈ 30 are expected to take the noise from t ≈ 65–80 (STATUS, Traps). Whether to restart them with
+  σ = 0.3 from a rolling checkpoint before then is the user's call; not queued.
+- **The level-4 twin of the moving throat** (`single_boost_p045_lbf_ml4_t060`, the user's go 16:52 UTC; no
+  checkpoints and stop 60 on the user's word 17:07 UTC) is live on the second node since 17:48 UTC: the level-3 run's
+  packed params with max_level 3 → 4, one more regrid entry, stop_time 50 → 60 (the resting level-4 throat is
+  +0.6 % at t = 50, +3.9 % at 60) and the name; same binary (`main3d_boostfix_5384c104-dirty`), profile
+  `headon-scout`, zoom 40. Start: preflight PASS, the t = 0 norms and R_min (3.8762) identical to the level-3 run's,
+  frame 0 identical, 23.7 GB on the card, ~8 u/h (the level-3 run: 12.7 at the start).
+
 ### 2026-09-30 (13:20 UTC) — the mode-3 head-on chain closed out: validated, packed, filmed; numerical noise on level 1 from t ≈ 65; the boosted fly-by is live
 
 - **The chain.** `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (level 5, t = 0–35 of the chain; died at t = 38.845), `merge_headon_flip_d8_v1_L128_lvl6from35_scalar_chk_t100_csm_r03500` (level 6 from Chk03500,

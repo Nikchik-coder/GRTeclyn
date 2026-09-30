@@ -1252,8 +1252,9 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   nothing at the core or the outer boundary; the level-1 constraint itself is rms 1e-2 at t = 100). The in-code Ψ4
   inside level 1 is good to t ≈ 80 (R ≤ 20: the symmetry-forbidden (3,2) mode is 3 % of (2,0) at t = 65–80, 8 % at
   80–85, 60 % at 95–100); R = 28 cuts the cube's corners and is good to t ≈ 90; R = 36 and 44 sit on level 0 and
-  stay within 3 % to t = 100. The remnant and its MOTS (levels 3–4) are not touched. The cause is not identified;
-  the forbidden modes grow steadily from the merger on, with no step at either restart.
+  stay within 3 % to t = 100. The remnant and its MOTS (levels 3–4) are not touched. The forbidden modes grow
+  steadily from the merger on, with no step at either restart. The cause is the dissipation: at three times the
+  Kreiss–Oliger σ the noise does not grow (NOISE-1, the next section).
 - **Caveat: the round scan.** R from the round scan moves by 10 % while the surface is deformed (3.85 → 4.66 over
   t = 36–39); the turn at t = 48 and the rise to t = 62 are not separated from that effect. M_MS moves by 4 %.
 - **Runs.** `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (t = 0–35), `merge_headon_flip_d8_v1_L128_lvl6from35_scalar_chk_t100_csm_r03500` (t = 35–50), `merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000` (t = 50–100) *(pack,
@@ -1261,6 +1262,20 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   `VALIDATION.md`, the oriented scans in its `ah_oriented_scan_t098/099/100.dat`. Movies per leg, and the three
   legs as one film t = 0–100 in the run tree (`04_binary_headon/csm/headon_csm_L128_stitched_t0_t100/movies/`).
   The dead uncheckpointed run is archived out of the pack.
+
+### The level-1 noise is under-dissipation: at three times σ it does not grow (2026-09-30)
+- **Claim.** Leg 3 of the mode-3 head-on rerun from the same t = 50 checkpoint with one knob, Kreiss–Oliger σ
+  0.1 → 0.3, to t = 80, has no level-1 noise. The forbidden (3,2) mode at R = 20 stays at 0.7–1.4e-5 (leg 3:
+  2.9e-4 over t = 75–80, i.e. 0.09 % of (2,0) against 2.5 %); the fine-scale part of K in the ring r = 16–19.5 is
+  7.5e-6 at t = 80 against 1.0e-4, at leg 3's pre-noise floor; the logged L2 H keeps falling (1.01e-4 at t = 80
+  against leg 3's 1.37e-4 and rising). Rebuilt from the plotfiles, the level-1 constraint is rms 2–7e-5 and flat over
+  t = 74–80 (leg 3 at t = 100: 5e-3 to 1.2e-2), and only 1 % of the level-0 sum of squares lies at r = 16–32 (leg 3
+  at t = 100: 94 %). The physics does not move: (2,0) and (2,2) at R = 36/44 within 1 % of leg 3's, and the
+  remnant's MOTS is the same (R 4.646, M_MS 2.3745 at t = 80).
+- **Caveat.** One head-on, to t = 80 only; the live spiral and fly-by run σ = 0.1 on the same level-1 cubes.
+- **Runs.** `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` *(pack, `campaign/08_convergence/`)*
+  against leg 3 (`04_binary_headon/csm/`): `main3d_csmatch_5f988dbc`; the tables are in its `VALIDATION.md`. Frames
+  kept, no movies.
 
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
@@ -1362,8 +1377,9 @@ campaign/
   06_binary_flyby/<run>/          p = 0.35 and 0.45: the fly-bys (and p045's Helfer twin)
   07_bbh_control/<run>/           the vacuum binary-black-hole control, t = 100 and t = 150
   08_convergence/<run>/           the convergence study for the referee (2026-09-26/27): each arm is its
-                                  partner's params with one knob changed (max_level, dt, or the wave
-                                  zone's level); no movies, no frames kept (the user's word)
+                                  partner's params with one knob changed (max_level, dt, the wave
+                                  zone's level, or the dissipation); no movies, no frames kept (the
+                                  user's word) -- except NOISE-1 (σ), which kept its frames
   <group>/NOTES.md                the group's working notes, copied from the run tree
 
 campaign/<group>/<run>/           what every run directory holds

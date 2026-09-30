@@ -1,4 +1,4 @@
-# Status — 2026-09-30 13:40 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 17:55 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -13,7 +13,8 @@ collapses on the resting throat's own mode (τ = 5.5–5.7 against 5.88; same br
 t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collapse). Gauge and boundary ruled out.
 - **In the paper (2026-09-30):** Sec. III "The throat in motion" + Fig. 2(d); the boosted setup is
   Sec. II "Throats with momentum" + Fig. 1 (`boost_contraction`). Every number is a ledger row (`clmBoost*`).
-- Caveat that stands: one resolution (level 3). A level-4 twin (~8 GPU-h) is in GPU_PLAN with its cost.
+- Caveat that stands: one resolution (level 3). Its level-4 twin is live on the second node since 17:48 UTC 09-30
+  (Live, below).
 
 ## CRITICAL: the momentum setup (2026-09-29) — every p > 0 run so far was a round throat at rest
 
@@ -113,14 +114,21 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Live — second node (one H100): NOISE-1, the dissipation test on the head-on's leg 3
+## Live — second node (one H100): the moving throat's level-4 twin
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` (NOISE-1, the user's go ~13:25 UTC 09-30: leg 3 again from leg 2's `Chk05000`, max_level 4, with one knob, Kreiss–Oliger `sigma` 0.1 → 0.3; **no checkpoints**, as leg 3; `main3d_csmatch_5f988dbc`, profile `headon-modes-prod`) | 50 (launched 13:27 UTC 09-30; preflight PASS, restart read) | 80 | ~7.1 u/h expected (leg 3's) | ~4.2 h, ~17:40 UTC 09-30 |
+| 0 | `single_boost_p045_lbf_ml4_t060` (the RESULT's level-4 twin, the user's go 16:52 UTC 09-30: `single_boost_p045_lbf_t050`'s packed params with only max_level 3 → 4 (+ one regrid entry), stop_time 50 → 60 and the name; **no checkpoints** and stop 60 on the user's word; `main3d_boostfix_5384c104-dirty` as the level-3 run, profile `headon-scout`, zoom 40) | 0.55 (17:53 UTC 09-30; launched 17:48 UTC; preflight PASS; t = 0 norms, R_min 3.8762 and frame 0 identical to the level-3 run's; 23.7 GB on the card; no NaN) | 60 | ~8 u/h (the level-3 run: 12.7 at the start, 7.6 after t ≈ 25) | t = 60 in ~8–11 h, ~02:00–05:00 UTC 10-01 |
 
-Read at the end (and on the way, from t ≈ 65): the forbidden (3,2) mode at R = 20 and the fine-scale K in the ring
-r = 16–19.5, against leg 3's (its numbers are in the template's header and in leg 3's `VALIDATION.md`).
+Read: R_min(t) by the shifted-ellipsoid fit against the resting level-4 throat `single_hold_ml4_t100` (inflates:
++0.6 % at t = 50, +1 % at 53, +3.9 % at 60; τ 5.26) and against the level-3 run (−1 % at t = 36.8, τ 5.5–5.7).
+
+**NOISE-1 closed out (17:50 UTC): the level-1 noise is under-dissipation.** `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000`
+(leg 3 again from `Chk05000` with σ 0.1 → 0.3) reached t = 80, no NaN, and has no level-1 noise: (3,2) at R = 20
+1.0e-5 against leg 3's 2.9e-4 over t = 75–80; the K ring 7.5e-6 against 1.0e-4 at t = 80; L2 H 1.01e-4 and falling
+against 1.37e-4 and rising; the rebuilt level-1 constraint 2–7e-5, flat (leg 3 at t = 100: 1e-2). Waves on R = 36/44
+and the remnant's MOTS unchanged. Packed in `campaign/08_convergence/` (`VALIDATION.md`), no movies; its plotfiles
+wiped 17:48 UTC on the user's word.
 
 
 **The mode-3 production head-on (legs 1–3) is done, validated and packed** (13:06 UTC 09-30,
@@ -135,10 +143,9 @@ t = 0–100 in `runs/.../04_binary_headon/csm/headon_csm_L128_stitched_t0_t100/m
 - **Caveat (new, see Traps): numerical noise on the level-1 cube from t ≈ 65**, the late rise of L2 H. In-code Ψ4:
   R ≤ 20 good to t ≈ 80, R = 28 to t ≈ 90, R = 36 / 44 to t = 100. Remnant and MOTS untouched. No trust-window
   row (the limits are per sphere); the films run to t = 100 on the user's word and show the speckle from t ≈ 85.
-- Scratch on this node: the chain's plotfiles wiped 13:38 UTC 09-30 on the user's word (leg 3's t = 98–100 and
-  leg 1's t = 36–38, 35 GB; `MANIFEST_CLEANUP_2026-09-30`). Left: leg 1's `Chk03500` (26 GB), leg 2's `Chk05000`
-  (28 GB), NOISE-1's plotfiles. 638 GB free.
-- NOISE-1 (above) runs from `Chk05000` on this card: keep that checkpoint until the test is read.
+- Scratch on this node: the chain's plotfiles wiped 13:38 UTC 09-30 and NOISE-1's 17:48 UTC, both on the user's
+  word (`MANIFEST_CLEANUP_2026-09-30`). Left: leg 1's `Chk03500` (26 GB), leg 2's `Chk05000` (28 GB; HFL-ho restarts
+  from it), the live twin's plotfiles. 616 GB free.
 
 ## The production set (shared box; the user, 2026-09-28 09:00 UTC)
 
@@ -186,7 +193,7 @@ node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or r
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | IF the clean spiral again fails to merge: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
 | FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **LIVE on the first node's card 1 since 12:37 UTC 09-30** (Live, above) | ~46 to t = 100 |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement, mode-3 (Fig. 12a's rerun) | restart from a checkpointed spiral leg at t ≈ 50, max_level 4/6/7, ~10–15 units per arm; convergence rules (no frames, `WHM_MOVIES=0`, `08_convergence`) | ~15–25 |
-| NOISE-1 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | **LIVE on the second node since 13:27 UTC 09-30** (the user's go): what feeds the level-1 noise — leg 3 again from `Chk05000` with one knob, Kreiss–Oliger `sigma` 0.1 → 0.3 | second node (the checkpoint is there), max_level 4, to t = 80; read the (3,2) monitor at R = 20 and the fine-scale K ring against leg 3's | ~4 |
+| BOOST-ml4 | `single_boost_p045_lbf_ml4_t060` | the moving-throat RESULT at a second resolution: does the boosted throat follow the resting level-4 throat? | **LIVE on the second node since 17:48 UTC 09-30** (Live, above) | ~8–11 |
 | BBH-HEADON | `bbh_headon_d8_L128_lvl5_t100` | the vacuum control for the head-on (the user, 2026-09-30): bare punctures at d = 8 from rest, t = 100, for Fig. 5 and the gallery/energy comparison | the csm head-on's setup (same box, grid, spheres, plot cadence) with the drainhole/scalar blocks swapped for bare punctures, as the d = 12 BBH controls; template from `bbh_control_d12_p012_t150`'s params with d and p changed; checkpoints asked at launch | ~30–50 (the head-on chain's class; vacuum punctures ride through a merger, so likely one leg) |
 | HFL-ho | `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` | close the first-law loop of the new SEC VI budget paragraph (the user, 2026-09-30): dM_MS/dt against the scalar flux through the horizon needs a plotfile sequence, and the chain's are pruned | leg 3's params restarted again from leg 2's `Chk05000` (second node, kept), stop 60, ONLY the plotfile retention changed (keep all, output-only); offline first-law analysis on the ~10 units | ~1.5–2 |
 | A1-csm | `ctrl_rest_a1_csm` (then, optional, `ctrl_rest_a15_csm` / `ctrl_rest_a3_csm`) | restore Fig. 4(a)'s width arm on matched data (the a = 1 arm left the panel 09-30: no matched twin) and put clmNarrowPairRatio — and with the optional twins the §V.B width ladder clmALadder* — on mode 3 | the old run's packed `evolution_params.txt` with ONLY the constraint-solve block and the name changed (the rest-pair rule), t = 15, L = 64 level 3; checkpoints asked at launch; re-measure into `matched_rest_displacement.dat` and redraw Fig. 4(a) | ~1 each (the csm rest pairs' class: 18 u/h alone) |
@@ -240,7 +247,9 @@ growth), the paper wins.
 
 - **Level-1 noise (found 2026-09-30 on the head-on chain):** fine-scale noise grows on the level-1 refinement
   cube (±20 about the tracked throats), doubling every ~6 units, equal to the smooth field in the outer ring by
-  t ≈ 80; cause not identified. It is what a late rise of the logged L2 H can be (check where the constraint sits
+  t ≈ 80. **Cause: the dissipation** — at σ = 0.3 it does not grow (NOISE-1, 09-30; the physics unchanged); σ = 0.1
+  lets it. Whether the live runs restart at σ = 0.3 before t ≈ 60 is the user's call (not queued). It is what a late
+  rise of the logged L2 H can be (check where the constraint sits
   before blaming the core or the boundary: `ham_level_map.py` in the head-on's `validation/` rebuilds Ham from a
   plotfile's metric on any level). A wave sphere inside level 1 (R ≤ 20) or across its corners (R = 28, and the
   consumer's R = 30) is contaminated late; read the symmetry-forbidden modes ((3,2), (2,1)) as the monitor. The
