@@ -20,24 +20,32 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 
 | Fig. | label | file | module |
 |---|---|---|---|
-| 1 | `fig:single_throat` | `01_single_throat/single_throat_instability` | `plot_single_throat_row` |
-| 2 top | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
-| 2 bottom | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
-| 3 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
-| 4 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
-| 5 | `fig:spiral_collapse` | `05_binary_spiral/p012_collapse_diagnostics` | `plot_spiral_collapse` |
-| 6 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
-| 7 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
-| 8 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
-| 9 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 10 (App. A) top | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
-| 10 (App. A) bottom | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
-| 11 (App. B) top | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
-| 11 (App. B) bottom | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
-| 12 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
-| 12 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+| 1 | `fig:boost_contraction` | `02_moving_throat/boost_contraction` | `plot_boost_contraction` |
+| 2 | `fig:single_throat` | `01_single_throat/single_throat_instability` | `plot_single_throat_row` |
+| 3 top | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
+| 3 bottom | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
+| 4 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
+| 5 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
+| 6 | `fig:spiral_collapse` | `05_binary_spiral/p012_collapse_diagnostics` | `plot_spiral_collapse` |
+| 7 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
+| 8 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
+| 9 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
+| 10 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
+| 11 (App. A) top | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
+| 11 (App. A) bottom | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
+| 12 (App. B) top | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
+| 12 (App. B) bottom | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
+| 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
+| 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
 
-Since 2026-09-29 the paper has 12 floats from these 16 PDFs: four floats stack
+2026-09-30: the boosted-setup figure `boost_contraction` entered Sec. II D
+(new subsection "Throats with momentum"), becoming Fig. 1 and shifting every
+number by one, and `single_throat_instability` gained panel (d), the exact
+Lorentz-boosted throat's collapse against the resting level-3 arm
+(`02_moving_throat/exact_boost/single_boost_p045_lbf_t050`); its canvas is
+four panels at 7.05 x 2.55 in.
+
+Since 2026-09-29 the paper has 13 floats from these 17 PDFs: four floats stack
 two PDFs each (top/bottom, both labels on one float), and two figures left the
 paper -- `single_horizon_regrowth` (the regrowth is the evolved seed defect;
 the numbers stay in Sec. IV's collapse paragraph) and `fill_insensitivity`

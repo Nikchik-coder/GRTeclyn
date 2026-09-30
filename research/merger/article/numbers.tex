@@ -877,6 +877,25 @@
 \newcommand{\clmFourFinestDx}{1/16}% def: campaign/01_single_throat/seed/single_eps_m1e2_L512_ml5_oct_t400/evolution_param
 \newcommand{\clmFourDxBase}{2}% def: campaign/01_single_throat/seed/single_eps_m1e2_L512_ml5_oct_t400/evolution_param
 \newcommand{\clmFourLinearGap}{6}% auto: clmFourSHRate against clmFourLinearRate
+\newcommand{\clmBoostAxisResidual}{6\times10^{-5}}% manual: campaign/02_moving_throat/boost_contraction_t0.tsv: max |ratio - 1/gamma| = 5.7e
+\newcommand{\clmBoostByTenPct}{20.2}% manual: campaign/02_moving_throat/probes: single_boost_p045_csm_t050 horizon_scan A rows
+\newcommand{\clmBoostHoldsTol}{0.05}% manual: single_boost_p045_lb_t050 shape-fitted (ellipsoid) R, t = 0-16; STATUS 2026-09-2
+\newcommand{\clmBoostHoldsTime}{16}% manual: single_boost_p045_lb_t050, as clmBoostHoldsTol
+\newcommand{\clmBoostSolveW}{5\times10^{-7}}% manual: t0_single_boost_p045_lbcs (test 1, level 3, L = 64): max |w|
+\newcommand{\clmBoostSolveWvec}{5\times10^{-6}}% manual: t0_single_boost_p045_lbcs: max |W|
+\newcommand{\clmBoostSolveFar}{4\times10^{-7}}% manual: t0_single_boost_p045_lbcs: far-side mass and charge against the isolated throat
+\newcommand{\clmBoostRestRepro}{10^{-5}}% manual: t0_ctrl_rest_d12_lbcs (test 2) against ctrl_rest_d12_csm: c 2.115528/2.115542 vs
+\newcommand{\clmBoostPairFar}{10^{-5}}% manual: campaign/06_binary_flyby/verify_p025/t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_
+\newcommand{\clmBoostPairRmin}{0.09}% manual: verify_p025 A: R_min 3.8807 per mouth against the isolated 3.8772
+\newcommand{\clmBoostPairShellHamUnsolved}{7.1\times10^{-3}}% manual: t0_flip_d12_p045_lb (test 3a, unsolved): level-3 throat-shell Hamiltonian rms
+\newcommand{\clmBoostPairShellHam}{7.8\times10^{-5}}% manual: verify_p025 A: shell Hamiltonian rms 7.8e-5 / 3.2e-5 / 5.6e-5 on levels 3 / 4 / 
+\newcommand{\clmBoostSpeed}{0.41}% manual: closed form v = p/sqrt(m^2+p^2) = 0.4104 at p = 0.45, m = 1
+\newcommand{\clmBoostMovingHoldMax}{2.0}% manual: campaign/02_moving_throat/exact_boost/single_boost_p045_lbf_t050/horizon_scan.da
+\newcommand{\clmBoostMovingPeakTime}{29}% manual: single_boost_p045_lbf_t050 horizon_scan A rows: R max at t = 29
+\newcommand{\clmBoostMovingOnePct}{36.8}% manual: single_boost_p045_lbf_t050 horizon_scan A rows: R 1 % below R(0)
+\newcommand{\clmBoostMovingTauLo}{5.5}% manual: single_boost_p045_lbf_t050: ln(R_peak - R) e-fold, fits from t = 32-38 to 44
+\newcommand{\clmBoostMovingTauHi}{5.7}% manual: as clmBoostMovingTauLo
+\newcommand{\clmBoostMovingDeath}{44.67}% manual: single_boost_p045_lbf_t050 run.log: NaN in h11, level 3, chi at the pit on its f
 
 % ---- waves
 \newcommand{\clmGwPeakFlyby}{4.1\times10^{-2}}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): campaign/06

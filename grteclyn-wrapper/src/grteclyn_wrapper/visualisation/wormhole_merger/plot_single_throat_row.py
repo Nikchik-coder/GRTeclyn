@@ -47,6 +47,60 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E
 # grteclyn-wrapper/scripts/analysis/merger_feedback/c_eps01_fates.py.
 CEILING_ARMS = (("single_eps_p1e1_t100", "+0.1"), ("single_eps_m1e1_t100", "-0.1"))
 
+# The moving throat on panel (a) (the user, 2026-09-30: "update figure 1 with
+# the boosted wormhole collapse").  One exact Lorentz-boosted drainhole
+# (momentum model 1, p = 0.45, v = 0.41, level 3, the per-throat slicing
+# freeze), read from the pack's round-scan A rows (horizon_scan.dat; the scan
+# re-centres on the moving pit).  It rides R_star to t ~ 29 (+2.0 % at most),
+# then collapses on the resting throat's mode (tau 5.5-5.7 against 5.88) and
+# dies at t = 44.67 (NaN in h11): the level-3 branch, carried with the motion.
+MOVING_ARM = "single_boost_p045_lbf_t050"
+
+
+def moving_panel(axD, pack_root) -> None:
+    """Panel (d): the boosted throat against the resting level-3 arm, zoomed.
+
+    Overlaying the moving arm on (a) was unreadable (the user, 2026-09-30:
+    "it's unclear what is what here"): at the full x-range its hold stretch
+    lies on the resting curves and the tag floated over the cluster.  Here
+    the two arms get their own window (t <= 47), each named in place; both
+    are level 3, so the strip legend's dash grammar does not apply and the
+    moving arm is dash-dot.
+    """
+    import numpy as np
+    root = pathlib.Path(pack_root).expanduser()
+    campaign = root / "campaign"
+    try:
+        d = find_run(campaign, MOVING_ARM)
+    except FileNotFoundError:
+        print(f"  {MOVING_ARM}: not in the pack, skipped"); return
+    rows = np.loadtxt(d / "horizon_scan.dat", dtype=str)
+    a = rows[rows[:, 1] == "A"][:, [0, 5]].astype(float)
+    a = a[np.unique(a[:, 0], return_index=True)[1]]
+    rest = plot_branches.load(root, plot_branches.ARMS["ml3"], "areal_radius.dat")
+    rest = rest[rest[:, 0] <= 47.0]
+    axD.axhline(plot_branches.R_EXACT, color=style.MUTED, linewidth=0.8,
+                linestyle=(0, (1, 2.5)), zorder=2)
+    axD.plot(rest[:, 0], rest[:, 1], color=style.CONTEXT, linewidth=1.4,
+             linestyle=(0, ()), zorder=3)
+    axD.plot(a[:, 0], a[:, 1], color=style.INK, linewidth=1.6,
+             linestyle=(0, (4, 1.2, 1, 1.2)), zorder=3.5)
+    axD.plot(a[-1, 0], a[-1, 1], "X", color=style.INK, markersize=5,
+             markeredgecolor="white", markeredgewidth=0.8, zorder=4)
+    axD.annotate(r"moving, $p=0.45$", (a[int(np.argmax(a[:, 1])), 0],
+                 a[:, 1].max()), xytext=(-2, 4), textcoords="offset points",
+                 fontsize=7, ha="center", va="bottom")
+    # Under the hold stretch (t ~ 24), where the moving arm is on its hump
+    # ABOVE R_star: the end of the curve carried the tag into its own fall.
+    axD.text(24.0, 3.80, "at rest", fontsize=7, color=style.CONTEXT,
+             ha="center", va="top")
+    axD.set_xlim(0, 47)
+    axD.set_ylim(3.45, 4.05)
+    axD.set_xlabel(r"$t$")
+    style.edge_label(axD, plot_branches.R_EXACT, r"$R_\star$")
+    print(f"  moving   {MOVING_ARM:<28s} t = 0 .. {a[-1, 0]:6.2f}   "
+          f"R {a[0, 1]:.4f} -> {a[:, 1].max():.4f} -> {a[-1, 1]:.4f}   (NaN)")
+
 
 def ceiling_pair(ax, pack_root) -> None:
     """Draw the eps = +-0.1 arms onto panel (c) after its home module is done.
@@ -107,15 +161,16 @@ def main(argv: list[str] | None = None) -> int:
     # these arms, once row two here, is panels (a)/(b) of the appendix's
     # code-health figure (plot_constraint_evolution), drawn by the same
     # plot_seed_branches.figure_panels_constraints.
-    fig = plt.figure(figsize=(7.05, 2.75), constrained_layout=True)
-    gs = fig.add_gridspec(1, 3)
+    fig = plt.figure(figsize=(7.05, 2.55), constrained_layout=True)
+    gs = fig.add_gridspec(1, 4)
     axA = fig.add_subplot(gs[0, 0]); axB = fig.add_subplot(gs[0, 1])
-    axC = fig.add_subplot(gs[0, 2])
+    axC = fig.add_subplot(gs[0, 2]); axD = fig.add_subplot(gs[0, 3])
     plot_branches.figure_panels(axA, axB, pathlib.Path(args.pack_root).expanduser(),
                                 legends=False)
     plot_seed_branches.figure_panel(axC, runs_root=args.runs_root)
     ceiling_pair(axC, args.pack_root)
-    for ax, letter in zip((axA, axB, axC), "abc"):
+    moving_panel(axD, args.pack_root)
+    for ax, letter in zip((axA, axB, axC, axD), "abcd"):
         ax.text(0.0, 1.05, f"({letter})", transform=ax.transAxes,
                 ha="left", va="bottom", fontsize=9, color=style.INK)
     # ONE legend for the whole strip, on top (the user, 2026-09-23: the boxed
