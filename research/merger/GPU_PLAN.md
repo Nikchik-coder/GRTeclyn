@@ -3807,3 +3807,8 @@ collapse's burst ringing at 0.55 of the equal-mass Kerr frequency, "following th
 signal reported from a wormhole collapse, the massless throat's [shirokov2026]" (arXiv:2604.00071, the user's
 prior paper, already in the bibliography), and then every encounter's own burst. clmDetThroatOverKerr gained the
 abstract anchor; 1112 rows, 0 problems.
+
+Addendum (~17:20 UTC): queued in STATUS on the user's "if some data is required": A1-csm (`ctrl_rest_a1_csm`,
+~1 GPU-h, restores Fig. 4(a)'s width arm and clmNarrowPairRatio on matched data; optional a = 1.5/3 twins for
+the §V.B ladder) and PLACE-csm (the 18 one-step placement probes in mode 3, < 1 GPU-h total, the matched
+placement curve for Fig. 4(d,e) and CSM_SWITCHOVER's clmMouthTauFlybyPlaced/SeedFlybyPlaced). No go yet.
