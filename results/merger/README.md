@@ -1179,6 +1179,43 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   lapse (type 6; the lapse does not enter the t = 0 shape), stopped at t = 0.5 by design; no NaN, no checkpoints,
   closed out without movies.
 
+### A moving exact-boost throat collapses on its own unstable mode (2026-09-29)
+
+- **Claim.** One exact-boost throat moving at v = 0.41 (p = 0.45), with the slicing frozen at its puncture, holds its
+  size while it moves and then departs on the isolated throat's unstable mode. R_min (level-3 scan, A rows) rises at
+  most +2.0 % (3.8762 → 3.9532 at t = 29), falls 1 % below its start at t = 36.8 and −9.2 % by t = 44. ln(R_peak − R)
+  e-folds in τ = 5.5–5.7 (fits from t = 32–38 to 44), against τ = 5.88 for the resting level-3 throat
+  (`single_hold_t100`), on the same branch: level 3 collapses. The resting throat holds to 1 % until t = 44.
+  - The gauge holds: the pit lapse stays 0.215–0.233 from t = 24 to the end, where the run without the freeze
+    (`single_boost_p045_lb_t050`) ran away and died at t = 26.1.
+  - No boundary reflection reaches it: at t = 42–44 the fields ahead of the throat (towards the near +y face) fall off
+    as those behind it (\|K\|, \|Π\| ~5e-3 three units out, ~1e-3 at the sponge edge), and the collapse begins at
+    t ≈ 29, before a reflection of the t = 0 data off the +y sponge edge could return (t ≈ 40).
+- **Runs.** `single_boost_p045_lbf_t050` *(pack, `campaign/02_moving_throat/exact_boost/`)*: L = 64, N = 128, level 3,
+  the throat from y = −8 moving +y, `core_lapse_freeze` with its window on the tracked throat (full inside r = 0.3,
+  off from 0.8), `main3d_boostfix_5384c104-dirty`. Died at t = 44.67 (NaN in h11, level 3) when χ at the pit reached
+  its floor (t = 44.60); trust window t ≤ 44.5; no checkpoints; closed out without movies (the user's word).
+- **Caveats.** One resolution. The resting level-4 throat inflates instead, so the branch a moving throat takes at the
+  production levels is untested. The death is numerical: the resting level-3 arm formed a horizon at this stage and
+  ran on. To be cited later (the user, 2026-09-30); not in the ledger yet.
+
+### The p = 0.25 exact-boost fly-by setup: verifications A and B (2026-09-29)
+
+- **Claim (a setup check, not a paper claim).** A, the fly-by's own template (p = ±0.25, exact boost, mode-3 solve,
+  the per-throat freeze) stopped at t = 0.5 on the production grid (L = 128, level 5): the solve converged, the far
+  sides are the isolated throat's to 1e-5, the mouths read R_min 3.8807 each (+0.09 % on the isolated 3.8772), and the
+  throat-shell Hamiltonian rms is 7.8e-5 / 3.2e-5 / 5.6e-5 on levels 3 / 4 / 5. The solved pair is 0.4–1 % flatter
+  than 1/γ, ∝ p² (the pair's interaction in the solve). B, the same pair on L = 64, level 3, to t = 20: no NaN, the pit
+  lapse steady at 0.20; the mouths inflate +0.27 / +1.05 / +3.6 % at t = 10 / 15 / 20 (the rest pair
+  `ctrl_rest_d12_csm`: +0.61 % at t = 15); the separation falls 12.06 → 9.95 by t = 20, as the old p = 0.45 fly-by's
+  did (9.95) before it scattered.
+- **Caveat: the constraint norm.** B's L2 Hamiltonian spikes (8.6 at t = 7.74, 0.92 at t = 20) are four level-0 cells
+  next to the moving pits: the run's norm is taken on level 0 alone (Δx = 0.5), whose copy of a pit is unresolved
+  (χ −1.9e-6 there against the level-3 mean 2.2e-3 under it). The level-3 solution is clean (\|Ham\| ≤ 0.024), and
+  without the cells within 0.5 of a pit the norm is 2.4e-3 / 2.7e-3 at t = 19.5 / 20, flat, as the rest pair's.
+- **Runs.** `t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm`, `check_flyby_d12_p025_lbf_csm_t020` *(pack,
+  `campaign/06_binary_flyby/verify_p025/`)*: `main3d_boostpair_91ed17cd`; no checkpoints; closed out without movies.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,

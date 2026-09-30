@@ -142,6 +142,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_boost_p045_csm_t050` | B | 32.6 | x248.2 / 32.6 | +1.18 | +1.56 | +1.85 | +2.18 | - | - | - | - | late (+0.87 dex) |
 | `single_rest_csm_t050` | A | 32.3 | x21.3 / 32.3 | +0.96 | +1.18 | +1.26 | +1.31 | - | - | - | - | same (-0.00 dex) |
 | `single_rest_csm_t050` | B | 32.3 | x21.3 / 32.3 | +0.96 | +1.18 | +1.26 | +1.31 | - | - | - | - | same (-0.00 dex) |
+| `single_boost_p045_lbf_t050` | A | 44.7 | x81.2 / 40.5 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
+| `single_boost_p045_lbf_t050` | B | 44.7 | x51.3 / 34.2 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
 | `s20_boost_p02` | A | 40.0 | x400.6 / 40.0 | +1.06 | +1.30 | +1.58 | +1.79 | +2.60 | - | - | - | late (+0.48 dex) |
 | `s20_boost_p02` | B | 40.0 | x942124.5 / 35.0 | +4.00 | +5.57 | +5.85 | +5.94 | +5.92 | - | - | - | late (+4.63 dex) |
 | `ctrl_flip_d12_csm` | A | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
@@ -300,12 +302,16 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_p045_helfer_t090` | B | 37.3 | x874.0 / 37.3 | +1.16 | +1.79 | +2.29 | +2.57 | - | - | - | - | late (+1.26 dex) |
 | `merge_orbit_flip_d12_p045_t200` | A | 91.0 | x2708.9 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
 | `merge_orbit_flip_d12_p045_t200` | B | 91.0 | x2709.0 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
+| `check_flyby_d12_p025_lbf_csm_t020` | A | 20.0 | x17.2 / 15.4 | +1.07 | +1.23 | - | - | - | - | - | - | too short |
+| `check_flyby_d12_p025_lbf_csm_t020` | B | 20.0 | x17.2 / 15.4 | +1.07 | +1.23 | - | - | - | - | - | - | too short |
+| `t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | A | 0.5 | x1.1 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
+| `t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | B | 0.5 | x1.1 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
 | `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` | A | 100.0 | x1.0 / 36.0 | +0.00 | +0.00 | +0.00 | +0.00 | -4.88 | -5.37 | -7.60 | 52.4 | restart -- own clock only |
 | `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` | B | 100.0 | x1.0 / 36.0 | +0.00 | +0.00 | +0.00 | +0.00 | -4.88 | -5.37 | -7.60 | 52.4 | restart -- own clock only |
 
 ## Reading
 
-Throats read at t = 30: 26 early, 14 same, 85 late, 84 too short, 52 restart arms (own clock only).
+Throats read at t = 30: 26 early, 14 same, 87 late, 88 too short, 52 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

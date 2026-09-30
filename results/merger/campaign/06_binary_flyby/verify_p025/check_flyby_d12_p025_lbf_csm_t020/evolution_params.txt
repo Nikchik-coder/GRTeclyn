@@ -1,0 +1,166 @@
+# VERIFICATION B of the p = 0.25 fly-by rerun (2026-09-29, the user's go ~19:25 UTC): the same pair (flipped, d = 12,
+# exact-boost throats, mode-3 solve with the companion cut) on test 3c's grid (L = 64, N = 128, level 3), evolved to
+# t = 20 with the per-throat lapse freeze. Base: params_t0_flip_d12_p045_lbcs_cut.txt, line for line. Changed:
+# momentum +-0.45 -> +-0.25 (the fly-by's p; v = 0.2425), the per-throat freeze (the fly-by's four keys), stop_time
+# 0.5 -> 20, the name. No checkpoints (a test).
+# PASS: each mouth's size flat through t = 20 (the old Bowen-York junk inflated a p = 0.45 throat +0.85 % by t = 10;
+# p^2 scaling gives ~+0.3 % at p = 0.25), no runaway at either puncture, constraint norms flat, each throat's
+# coordinate speed ~0.24.
+# LAUNCH: launch.sh --template params_check_flyby_d12_p025_lbf_csm_t020.txt --name check_flyby_d12_p025_lbf_csm_t020
+#   --gpu 1 --profile headon-scout --zoom 40 --coord 32 --binary runs/wormhole_merger/bin/main3d_boostpair_91ed17cd_2026-09-29.ex
+#
+verbosity = 1
+
+output_path = "runs/wormhole_merger/check_flyby_d12_p025_lbf_csm_t020"
+amr.plot_file = "/tmp/grteclyn_scratch/check_flyby_d12_p025_lbf_csm_t020/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/check_flyby_d12_p025_lbf_csm_t020/BinaryWormholeChk"
+
+checkpoint_interval = -1    # T0 TEST: no checkpoints
+amr.checkpoint_files_output = 0
+
+plot_interval = 50
+
+amr.plot_vars = chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2 shift3 phi Pi    # RERUN: was chi K lapse phi Pi (the full frame set; output only)
+amr.derive_plot_vars = Weyl4 constraints    # T0 TEST: Ham and Mom on every level
+G_Newton = 1.0                             # the constraints field needs it
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: TWO regular massive drainhole throats, tangentially boosted.
+
+wormhole_id_type = 1
+
+# Each body's exact static lapse (superposed); 1+log takes over from there.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a, throat A
+wormhole_throat_radius_B = 2.0       # throat B on: the binary
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1 each, carried by the lapse
+wormhole_drainhole_mass_B = 1.0
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`: d = 12 along x.  B defaults to -A; set both anyway.
+wormhole_centerA = -6.0 0.0 0.0
+wormhole_centerB =  6.0 0.0 0.0
+
+# From rest: the whole relative motion is the A-B force, nothing else.
+wormhole_momentumA = 0.0  0.25 0.0    # VERIFICATION: the fly-by's p (v = 0.2425), was 0.45
+wormhole_momentumB = 0.0 -0.25 0.0    # VERIFICATION: was -0.45
+wormhole_momentum_model = 1        # the exact Lorentz-boosted drainholes
+core_lapse_freeze = 1                  # VERIFICATION: the fly-by's per-throat freeze
+core_freeze_track_throats = 1
+core_freeze_radius_full = 0.3
+core_freeze_radius_start = 0.8
+wormhole_boost_initial_shift = 1
+
+wormhole_subtract_phi_asymptote = 1
+
+# Opposite scalar orientation: the phantom force flips from push to pull.
+wormhole_phi_sign_B = -1.0
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid.  Identical to the Stage 1/2.0 base: L = 64, N = 128, max_level = 3,
+# dx = 0.0625 on the finest level.  Both throats and the whole d = 12 orbit
+# sit inside the sponge at r = 24.
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Identical to the Stage 1/2.0 base.
+
+dt_multiplier = 0.02
+stop_time = 20.0    # VERIFICATION: the mouths before the pair interacts strongly
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: MOVING nested boxes on BOTH tracked throats (the tagger unions
+# boxes on A and B whenever throat B is on).  Same box arithmetic as the
+# Stage 2.0 arm: level-l half-width tagging_L * 2^-(l+2), so level 3 has
+# half-width 4 around each throat.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  Same battery as Stage 2.0.  The split plane separates A and
+# B along x at t = 0; once the orbit winds past a quarter turn the A/B
+# attribution in binary_diag degrades -- throat_track.dat (which follows
+# both centres) is the moving-frame truth.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576
+
+# ---- the constraint solve, far-side matched (Examples/BinaryWormholeMerger/README.md) ----
+constraint_solve = 1
+constraint_solve_background = 0        # the superposed boosted throats
+constraint_solve_puncture_mode = 3     # each mouth's far-side mass and charge = the isolated throat's
+constraint_solve_verbose = 1
+constraint_solve_match_tolerance = 1.0e-5   # the model-1 background's finite-difference floor is 3-5e-6 (test 2)

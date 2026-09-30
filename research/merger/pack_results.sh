@@ -116,6 +116,13 @@ while IFS= read -r rundir; do
   run="$(basename "${rundir%/}")"
   rel="${rundir%/}"; rel="${rel#"${RUNS}"/}"
   out="${DEST}/campaign/${rel}"
+  # PACK_SKIP="<run> <run> ...": finished runs left out of this pack because
+  # their chain is closed out together later (2026-09-30, the user's word: the
+  # head-on's legs 1-2 wait for leg 3).  Their pack folder is left as it is.
+  if [[ " ${PACK_SKIP:-} " == *" ${run} "* ]]; then
+    echo "[pack-merger] campaign/${rel}: in PACK_SKIP -- not packed"
+    continue
+  fi
   # A run still on a card is not packed: it is packed once, at its close-out
   # (2026-09-27, the user's word -- a partial pack of a live run is git
   # pollution, and the 08_convergence close-out repack had copied the three

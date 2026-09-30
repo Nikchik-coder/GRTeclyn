@@ -1323,6 +1323,33 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-09-30 (05:55 UTC) — the head-on walks through its wall at level 6; a moving throat collapses on its own mode; the fly-by's verification packed
+
+- **The head-on went through the t = 38.85 wall** (second node). Leg 1 died there at 20:21 UTC as planned. Leg 2
+  restarted its Chk03500 (t = 35) with `max_level = 6`; its first launch (20:33) seeded the throat tracker at the
+  t = 0 positions (±4, the tracker's restart caveat), so the restart regrid dropped the merged core to level 3 —
+  stopped at t = 35.07 and archived (`00_archive/aborted/…_badseed_2037`). Relaunched 20:40 with the seed at the
+  core (`wormhole_centerA/B = ∓0.01`, which on a restart only seed the tracker). It walked through with the core
+  lapse frozen on its 1e-10 floor from t = 35.01, as the old level-5 twin did; common MOTS every unit (R 4.66 at
+  t = 39, 4.25–4.27 over t = 46–50); stopped at t = 50.80 on the user's word. Leg 3 continues from its Chk05000 at
+  `max_level = 4` to t = 100 without checkpoints (levels 5–6 lie inside the remnant horizon); t = 100 ~11:20 UTC.
+  The three legs are closed out together when leg 3 ends.
+- **A moving throat collapses on its own unstable mode** (`single_boost_p045_lbf_t050`, died at t = 44.67): R_min
+  +2.0 % at t = 29, then the collapse, e-folding in 5.5–5.7 against the resting level-3 throat's 5.88. The per-throat
+  freeze held the pit's lapse to the end; no reflection from the box reached the throat (the user asked). A result
+  for the paper later (the user); what it still needs: a level-4 twin (the resting level-4 throat inflates), ~8 GPU-h
+  (L = 64, level 4, to t ≈ 60, at ~7 u/h).
+- **Verification B's constraint spikes were the norm, not the solution.** The L2 norms in `constraint_norms.dat`
+  are taken on level 0 alone, whose copy of a moving pit is unresolved; four cells next to the pits carry 99.99 % of
+  B's 0.92 at t = 20 while the level-3 solution is clean. Masked, the norm is 2.4–2.7e-3. Every moving-pit run's norm
+  needs that mask (or the finest level) before it is read — the paper's constraint figure included. B's mouths
+  inflate (+3.6 % at t = 20) and its pair falls in as the old p = 0.45 fly-by's did; the fly-by launch is the user's
+  call.
+- **Packed (the user: "everything but the head-on")**: `single_boost_p045_lbf_t050` → `02_moving_throat/exact_boost/`,
+  verifications A and B → `06_binary_flyby/verify_p025/`, all without movies; `pack_results.sh` gained `PACK_SKIP` so
+  the head-on legs wait for leg 3. (An interrupted movie pass redrew the e2e's K, Π and Weyl4_Im frames on one fixed
+  scale; no movies were made.)
+
 ### 2026-09-29 (19:50 UTC) — test 3c passes; the fly-by waits for its own verification; the shape set packed
 
 - **Test 3c passes** (the fly-by pair at p = ±0.45 with the companion cut): mouths 3.894 against the isolated 3.877

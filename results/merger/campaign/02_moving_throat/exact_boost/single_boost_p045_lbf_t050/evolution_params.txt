@@ -1,0 +1,105 @@
+# RERUN of single_boost_p045_lb_t050 with the slicing source frozen at the moving puncture (2026-09-29, the user's go
+# ~18:15 UTC): the same exact-boost throat (p = 0.45, v = 0.4104), the same boosted lapse (type 5), with only the
+# per-throat lapse freeze added (core_lapse_freeze on a window riding the tracked throat) and the name changed.
+# WHY. single_boost_p045_lb_t050 died at t = 26.1: the lapse at its puncture (the far side's compactified infinity)
+# ran away from 0.20 at t = 10 to 2.6 at t = 24, driven by -2 alpha K from K errors at the pit, within r < 0.25 of it
+# until t ~ 20. The collar rerun (type 6, single_boost_p045_lbc_t050) stopped that but broke the throat: its zero-lapse
+# core, swept by the boosted shift, pulled the throat's lapse from 0.52 to 0.27 and fed K (0.5) and Pi (0.22) into it.
+# Here the lapse keeps its boosted value; inside r < 0.3 of the tracked pit (tapered to r = 0.8, the throat is at
+# r ~ 1.4-1.6) the 1+log source -2 alpha (K - 2 Theta) is removed and the lapse is only advected by the shift, which
+# is -v e there to 1e-3: it rides with the throat as the exact boost does.
+# PASS: no puncture runaway past t = 26, the throat's lapse and shape-fitted R_min as the old run's through t = 20,
+# and R_min flat to t = 50.
+# Checkpoints off, as its twin.
+# LAUNCH: launch.sh --template params_single_boost_p045_lbf_t050.txt --name single_boost_p045_lbf_t050 --gpu 0
+#   --profile headon-scout --zoom 40 --coord 32 --binary <the boostfix build>
+#
+verbosity = 1
+output_path = "runs/wormhole_merger/single_boost_p045_lbf_t050"
+amr.plot_file = "/tmp/grteclyn_scratch/single_boost_p045_lbf_t050/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/single_boost_p045_lbf_t050/BinaryWormholeChk"
+checkpoint_interval = -1
+amr.checkpoint_files_output = 0
+plot_interval = 100
+amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
+amr.derive_plot_vars = Weyl4
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+wormhole_id_type = 1
+wormhole_initial_lapse_type = 5
+wormhole_throat_radius_A = 2.0       # drainhole scale a
+wormhole_throat_radius_B = 0.0       # throat B OFF -- this is the control
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_drainhole_mass_B = 0.0
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+wormhole_centerA = 0.0 -8.0 0.0    # PROBE: starts 8 below the box centre, moves +y
+wormhole_centerB = 0.0 0.0 0.0
+wormhole_momentumA = 0.0 0.45 0.0    # ADM momentum gamma m v (v = 0.4104 for m = 1)
+wormhole_momentumB = 0.0 0.0 0.0    # pinned: the default is minus momentumA
+wormhole_momentum_model = 1        # E2E: the exact Lorentz-boosted drainhole (momentumA = ADM momentum gamma m v)
+wormhole_boost_initial_shift = 1   # start from the boosted solution's own shift
+wormhole_phi_sign_B = 1.0
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+wormhole_helfer_correction = 0
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+max_box_size = 32
+min_box_size = 16
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+dt_multiplier = 0.02
+stop_time = 50.0    # PROBE: the kick is read by t ~ 35
+max_spatial_derivative_order = 4
+nan_check = 1
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+core_matter_damping = 0
+core_lapse_freeze = 1                  # RERUN: the slicing source off near the moving puncture (was off)
+core_freeze_track_throats = 1          # RERUN: the window rides the tracked throat
+core_freeze_radius_full = 0.3          # RERUN: source fully off inside 0.3 (the runaway lived at r < 0.25)
+core_freeze_radius_start = 0.8         # RERUN: full source from 0.8 out (the throat is at r ~ 1.4-1.6)
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+sigma = 0.1
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+tagging_type = 2
+tagging_L = 64.0
+throat_tracking = 1
+throat_track_search_radius = 2.0
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+activate_extraction = 0
+write_extraction = 0
+amrex.the_arena_init_size = 1048576
+constraint_solve = 0                   # E2E: refused with momentum model 1; one boosted throat is exact

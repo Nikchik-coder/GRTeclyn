@@ -53,6 +53,7 @@ t0_single_boost_p045_lbc	02_moving_throat/contraction_t0	launch manifest	main3d_
 single_boost_p012_csm_t050	02_moving_throat/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	50.0		2.1232549306e-03	n/a	ok	unknown	ok
 single_boost_p045_csm_t050	02_moving_throat/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	50.0		2.1977342375e-03	n/a	ok	unknown	ok
 single_rest_csm_t050	02_moving_throat/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	50.0		2.1174179769e-03	n/a	ok	unknown	ok
+single_boost_p045_lbf_t050	02_moving_throat/exact_boost	launch manifest	main3d_boostfix_5384c104-dirty_2026-09-29.ex	5384c104-dirty	pass	0	0	3	64.0	128	50.0		2.2701466330e-03	n/a	ok	unknown	ok
 s20_boost_p02	02_moving_throat	reconstructed			none (launched before 2026-09-24)	0	0	3	64.0	128	40.0		2.0954624849e-03	n/a	ok	unknown	ok
 ctrl_flip_d12_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	30.0		3.6629450216e-03	n/a	ok	unknown	ok
 ctrl_rest_d12_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	15.0		3.3507914974e-03	n/a	ok	unknown	ok
@@ -164,6 +165,8 @@ merge_orbit_flip_d12_p045	06_binary_flyby/p045	reconstructed	main3d.gnu.MPI.CUDA
 merge_orbit_flip_d12_p045_L128_lvl5_t100	06_binary_flyby/p045	reconstructed	main3d_coreprof_2026-09-16.ex	unstamped	none (launched before 2026-09-24)	0	0	5	128.0	256	100.0		8.4312467298e-04	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p045_helfer_t090	06_binary_flyby/p045	reconstructed	main3d.gnu.MPI.CUDA.ex	unstamped	none (launched before 2026-09-24)	0	0	3	64.0	128	90.0		3.3819964477e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p045_t200	06_binary_flyby/p045	reconstructed			none (launched before 2026-09-24)	0	0	3	64.0	128	200.0		2.9906373439e-03	n/a	ok	unknown	ok
+check_flyby_d12_p025_lbf_csm_t020	06_binary_flyby/verify_p025	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	3	64.0	128	20.0		3.6979248357e-03	n/a	ok	unknown	ok
+t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm	06_binary_flyby/verify_p025	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	0.5		1.1296028696e-03	n/a	ok	unknown	ok
 bbh_control_d12_p012	07_bbh_control	reconstructed			none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_control_d12_p012_t150	07_bbh_control	reconstructed			none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_control_d12_p045_t100	07_bbh_control	reconstructed	BinaryBH3d.gnu.MPI.CUDA.ex	1cc27217-dirty	none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
