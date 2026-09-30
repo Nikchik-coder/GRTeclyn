@@ -1,4 +1,4 @@
-# Status — 2026-09-30 06:45 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 11:57 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -54,8 +54,8 @@ M_ADM misses the interaction energy. No binary number is final until remeasured 
 1. **Energy check** — done: the pair acts at fixed scalar potential (Sec. II D; `t0_matching/energy_scan.tsv`).
 2. **Rest pairs + head-on** — rest pairs done (above); the head-on runs as legs 1–3 (second node, below).
 3. **The orbits on mode-3 boosted data**: spiral p = 0.12 (+ level-4 twin), fly-by p = 0.25 (queued, gated) and
-   p = 0.45, boundary p = 0.35. The lvl5 spiral rerun's own t = 0 verification A runs on card 0 (06:43 UTC
-   09-30); the rerun follows on the same card if it passes.
+   p = 0.45, boundary p = 0.35. The lvl5 spiral rerun runs on the first node's card 0 since
+   11:55 UTC 09-30 (its verification A passed).
 4. **Single throats on clean data** (12–25 h, settles the regrowth question).
 5. **Rewrite** (once the production runs are in):
    - initial-data story once, in order: superposition (one line) → Helfer correction (tested, stalled, not
@@ -80,13 +80,19 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 the boosted spiral's verification A; card 1 free
+## Live — first node (two H100s): card 0 the boosted spiral (the paper run); card 1 free
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `t0_v2_spiral_d12_p012_L128_lvl5_lb_csm` (verification A of SPIRAL-lbf, the user's go 06:38 UTC 09-30: the boosted spiral's own template stopped at t = 0.5; checkpoints off, + constraints; `main3d_boostpair_91ed17cd`, profile `orbit-modes-prod`) | 0 (06:45 UTC; preflight PASS, solving) | 0.5 | — | ~1 h, ~07:45 UTC 09-30 |
+| 0 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` (SPIRAL-lbf, the user's go 06:38 UTC 09-30: the csm spiral's params with only momentum model 1, the boosted shift and match tol 1e-5 changed; **no freeze**; max_level 5; checkpoints every 5 units keeping 3; `main3d_boostpair_91ed17cd`, profile `orbit-modes-prod`) | 0 (launched 11:55 UTC 09-30) | 100 | ~2.7 u/h expected (the csm spiral's average) | t = 60 in ~22.5 h, ~10:30 UTC 10-01; t = 100 in ~37 h, ~01 UTC 10-02 |
 
-If A passes, SPIRAL-lbf (Queued, below) launches on card 0 at once (the same go: A first, then the rerun).
+- Its verification A (`t0_v2_spiral_d12_p012_L128_lvl5_lb_csm`, the rerun's template stopped at t = 0.5;
+  finished 07:17 UTC 09-30): **PASS** — solve converged (22 Newton passes, 2 matching rounds), far sides the
+  isolated throat's to 4e-6 (one-body a 2.0000, m 1.0000), mouths R_min 3.8780 each (isolated 3.8772, +0.02 %;
+  the p = 0.25 pair's +0.09 % × p²), throat-shell Ham rms 7.8e-5 / 2.9e-5 / 5.1e-5 on levels 3 / 4 / 5 (the
+  fly-by pair's floor), axis ratio 0.9919 / 0.9914 at r_c = 1 / 1.55 against 1/γ = 0.9929 (0.10–0.15 % flatter,
+  the p = 0.25 pair's × p²), no NaN, frame 0 as the csm spiral's. Not packed yet; its two plotfiles are on
+  scratch.
 
 Queued on card 1: **`merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm`** — the fly-by rerun
 (old fly-by's params, p = 0.45 → 0.25, momentum model 1, per-throat freeze, match tol 1e-5, checkpoints every
@@ -108,17 +114,18 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Live — second node (one H100): the head-on, leg 3 (the user's go 04:23 UTC 09-30)
+## Live — second node (one H100): free since 11:27 UTC 09-30 — the head-on chain is complete, close-out due
 
-| card | run | t now | t end | speed | ETA |
-|---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000` (leg 3: leg 2's Chk05000 down-stepped to max_level 4 — levels 5–6 lay inside the remnant horizon; **no checkpoints**, the user's word; profile `headon-modes-prod`) | 54.05 (05:00 UTC; alive, no NaN; MOTS every unit, R 4.25 → 4.30, M_MS 2.30 → 2.31 rising as in leg 2) | 100 | ~7.2 u/h | ~6.4 h, ~11:25 UTC 09-30 |
+Leg 3 (`merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000`: leg 2's Chk05000 down-stepped to
+max_level 4, no checkpoints, profile `headon-modes-prod`) **reached t = 100 at 11:25 UTC 09-30**, exit 0, no
+NaN; common MOTS to the end (R 4.65, M_MS 2.37 at t = 100). Its plotfiles and leg 2's `Chk05000` (28 GB) are
+still on the second node's scratch.
 
 - Leg 2 (`..._lvl6from35_..._r03500`, level 6 through the wall): **stopped at t = 50.80** (04:25 UTC 09-30, the
   user's word) — 12 units past leg 1's death, NaN-free; `Chk05000` (t = 50, 28 GB) kept, the rest wiped.
 - Leg 1 (level 5 from t = 0, checkpointed): **died at t = 38.845** as the uncheckpointed run did (one-step
   overflow at the merged core inside the common MOTS; clean outside to the end); `Chk03500` was leg 2's start.
-- **Legs 1–3 are closed out together when leg 3 ends** (checklist in CLAUDE.md; the dead first run is archived
+- **Legs 1–3 are closed out together now that leg 3 has ended** (checklist in CLAUDE.md; the dead first run is archived
   out of the pack in `00_archive/superseded/`).
 - The head-on chain for the paper: superposed scout → CS-1 (same grid, one knob) → mode-3 big box; its common
   MOTS forms at t = 22 with R ≈ 5.0, ~10 % smaller than superposed, as the mode-3 mouths are.
@@ -152,7 +159,7 @@ node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or r
 
 | id | run | what | how | GPU-h |
 |---|---|---|---|---|
-| SPIRAL-lbf | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | THE PAPER RUN, FIRST (the user, 2026-09-30): the spiral on the boosted setup — the clean test of "inflates, no merger" | the csm spiral's template + momentum model 1, **no freeze** (the user's word; the pits move at v = 0.12, the runaway was a v = 0.41 problem), max_level 5, checkpoints every 5 keeping the newest 3 (the user's word; LAD-csm needs the t ≈ 50 one); its own verification A first (t = 0.5 on the production grid, ~1 h): **running on card 0 since 06:43 UTC 09-30** | ~21 |
+| SPIRAL-lbf | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | THE PAPER RUN, FIRST (the user, 2026-09-30): the spiral on the boosted setup — the clean test of "inflates, no merger" | the csm spiral's template + momentum model 1, **no freeze** (the user's word; the pits move at v = 0.12, the runaway was a v = 0.41 problem), max_level 5, checkpoints every 5 keeping the newest 3 (the user's word; LAD-csm needs the t ≈ 50 one); its own verification A **PASSED**; **LIVE on the first node's card 0 since 11:55 UTC 09-30** (Live, above) | ~22 to t = 60, ~37 to t = 100 |
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | IF the clean spiral again fails to merge: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
 | FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | queued on card 1, gated (Live, above) | ~30–46 |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement, mode-3 (Fig. 12a's rerun) | restart from a checkpointed spiral leg at t ≈ 50, max_level 4/6/7, ~10–15 units per arm; convergence rules (no frames, `WHM_MOVIES=0`, `08_convergence`) | ~15–25 |
