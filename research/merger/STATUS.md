@@ -1,4 +1,4 @@
-# Status — 2026-09-30 12:15 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 12:28 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -132,12 +132,23 @@ still on the second node's scratch.
 
 ## The production set (shared box; the user, 2026-09-28 09:00 UTC)
 
-L = 128, N = 256, max_level 5, tagging_L 64, sponge 48/64, Ψ4 at 20/28/36/44, scalar at 14/20/30/44 (+ the
-head-on's old spheres), plots every 1.0, mode-3 data, binary `main3d_csmatch_5f988dbc`. Status: **spiral** ran
-and stopped at t = 60.40 (closed out; its p = 0.12 is Bowen–York momentum, so it reruns under the boosted setup
-once verified); **fly-by** stopped at t = 64.98 (overturned, above; reruns as p = 0.25 lbf, queued); **head-on**
-(p = 0, clean of the momentum issue) runs as legs 1–3. Templates in `runs/wormhole_merger/templates_scan/`;
-launch lines in the GPU_PLAN archive.
+L = 128, N = 256, max_level 5, tagging_L 64, sponge 48/64, plots every 1.0, mode-3 data. Status: **head-on**
+(p = 0, clean of the momentum issue) done to t = 100 as legs 1–3 (`main3d_csmatch_5f988dbc`); **spiral** live as the
+boosted rerun (the Bowen–York one stopped at t = 60.40, closed out); **fly-by** queued as p = 0.25 lbf (the Bowen–York
+one stopped at t = 64.98, overturned). Templates in `runs/wormhole_merger/templates_scan/`.
+
+**Wave settings, the same in every run of the set (the user, 2026-09-30; checked 12:25 UTC against each run's
+`params.txt`, manifest and output headers):**
+- in-code Ψ4 (`Weyl4_mode_*.dat`, every coarse step): spheres 20/28/36/44, 24 × 37 points, 21 modes (l = 2–4,
+  every m);
+- consumer (every plotfile, 1.0): scalar modes l = 0–2 and the python Ψ4 l = 2 modes on spheres 14/20/30/44.
+- Head-on, all three legs: these plus its old spheres (in-code Ψ4 also at 10/14/18, consumer also at 10/18), the
+  same in each leg, t = 0–100 covered (legs 2–3's restart files carry no header; columns as leg 1's).
+- Spiral (live): exactly the shared set.
+- Fly-by (queued): radii the shared set. **Fixed 12:27 UTC:** its template had no angular-grid or mode lines, so
+  the in-code Ψ4 would have run on the code defaults (2 × 5 points, three l = 2 modes), as the overturned p = 0.45
+  fly-by did; the head-on's and the spiral's lines are added (output only). Its verification A predates the fix
+  (initial data only, unaffected).
 
 ## Done — the boosted shape set (t = 0; packed `campaign/02_moving_throat/contraction_t0/` + `boost_contraction_t0.tsv`)
 
