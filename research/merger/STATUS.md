@@ -1,4 +1,4 @@
-# Status — 2026-09-30 13:20 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 13:30 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -113,7 +113,15 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Live — second node (one H100): free since 11:27 UTC 09-30 — the head-on chain is closed out
+## Live — second node (one H100): NOISE-1, the dissipation test on the head-on's leg 3
+
+| card | run | t now | t end | speed | ETA |
+|---|---|---|---|---|---|
+| 0 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` (NOISE-1, the user's go ~13:25 UTC 09-30: leg 3 again from leg 2's `Chk05000`, max_level 4, with one knob, Kreiss–Oliger `sigma` 0.1 → 0.3; **no checkpoints**, as leg 3; `main3d_csmatch_5f988dbc`, profile `headon-modes-prod`) | 50 (launched 13:27 UTC 09-30; preflight PASS, restart read) | 80 | ~7.1 u/h expected (leg 3's) | ~4.2 h, ~17:40 UTC 09-30 |
+
+Read at the end (and on the way, from t ≈ 65): the forbidden (3,2) mode at R = 20 and the fine-scale K in the ring
+r = 16–19.5, against leg 3's (its numbers are in the template's header and in leg 3's `VALIDATION.md`).
+
 
 **The mode-3 production head-on (legs 1–3) is done, validated and packed** (13:06 UTC 09-30,
 `campaign/04_binary_headon/csm/`; tables in leg 3's `VALIDATION.md`; movies per leg and the three legs as one film
@@ -129,7 +137,7 @@ t = 0–100 in `runs/.../04_binary_headon/csm/headon_csm_L128_stitched_t0_t100/m
   row (the limits are per sphere); the films run to t = 100 on the user's word and show the speckle from t ≈ 85.
 - Scratch on this node, **not pruned** (the user's word needed): leg 1 44 GB (`Chk03500` + plotfiles t = 36–38),
   leg 2 28 GB (`Chk05000`, kept on the user's word), leg 3 17 GB (plotfiles t = 98–100). 610 GB free.
-- Proposed, not queued: NOISE-1 (Queued, below) would use `Chk05000` and this card.
+- NOISE-1 (above) runs from `Chk05000` on this card: keep that checkpoint until the test is read.
 
 ## The production set (shared box; the user, 2026-09-28 09:00 UTC)
 
@@ -177,7 +185,7 @@ node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or r
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | IF the clean spiral again fails to merge: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
 | FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **LIVE on the first node's card 1 since 12:37 UTC 09-30** (Live, above) | ~46 to t = 100 |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement, mode-3 (Fig. 12a's rerun) | restart from a checkpointed spiral leg at t ≈ 50, max_level 4/6/7, ~10–15 units per arm; convergence rules (no frames, `WHM_MOVIES=0`, `08_convergence`) | ~15–25 |
-| NOISE-1 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | PROPOSED (needs the go): what feeds the level-1 noise — leg 3 again from `Chk05000` with one knob, Kreiss–Oliger `sigma` 0.1 → 0.3 | second node (the checkpoint is there), max_level 4, to t = 80; read the (3,2) monitor at R = 20 and the fine-scale K ring against leg 3's | ~4 |
+| NOISE-1 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | **LIVE on the second node since 13:27 UTC 09-30** (the user's go): what feeds the level-1 noise — leg 3 again from `Chk05000` with one knob, Kreiss–Oliger `sigma` 0.1 → 0.3 | second node (the checkpoint is there), max_level 4, to t = 80; read the (3,2) monitor at R = 20 and the fine-scale K ring against leg 3's | ~4 |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | spiral burst/energy, level 4 vs 5 | the spiral template, max_level 4, from t = 0 | ~8–10 |
 | EGW-p06 | `merge_orbit_flip_d12_p060_lvl5_t040_csm` | E_GW(p) above the fly-by (turnover) | fly-by template, p = 0.60, stop ~40; junk ∝ p², read the Newton passes at start | ~8–12 |
 | EGW-p09 | `merge_orbit_flip_d12_p090_lvl5_t040_csm` | E_GW(p) far side of the peak | same, p = 0.90 | ~8–12 |
