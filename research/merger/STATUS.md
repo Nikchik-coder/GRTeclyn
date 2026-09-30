@@ -1,4 +1,4 @@
-# Status — 2026-09-30 13:30 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 13:40 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -135,8 +135,9 @@ t = 0–100 in `runs/.../04_binary_headon/csm/headon_csm_L128_stitched_t0_t100/m
 - **Caveat (new, see Traps): numerical noise on the level-1 cube from t ≈ 65**, the late rise of L2 H. In-code Ψ4:
   R ≤ 20 good to t ≈ 80, R = 28 to t ≈ 90, R = 36 / 44 to t = 100. Remnant and MOTS untouched. No trust-window
   row (the limits are per sphere); the films run to t = 100 on the user's word and show the speckle from t ≈ 85.
-- Scratch on this node, **not pruned** (the user's word needed): leg 1 44 GB (`Chk03500` + plotfiles t = 36–38),
-  leg 2 28 GB (`Chk05000`, kept on the user's word), leg 3 17 GB (plotfiles t = 98–100). 610 GB free.
+- Scratch on this node: the chain's plotfiles wiped 13:38 UTC 09-30 on the user's word (leg 3's t = 98–100 and
+  leg 1's t = 36–38, 35 GB; `MANIFEST_CLEANUP_2026-09-30`). Left: leg 1's `Chk03500` (26 GB), leg 2's `Chk05000`
+  (28 GB), NOISE-1's plotfiles. 638 GB free.
 - NOISE-1 (above) runs from `Chk05000` on this card: keep that checkpoint until the test is read.
 
 ## The production set (shared box; the user, 2026-09-28 09:00 UTC)
