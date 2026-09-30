@@ -4,6 +4,24 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes.**
 
+## RESULT FOR THE PAPER (to add later; the user, 2026-09-30): a moving wormhole collapses under its own unstable mode
+
+`single_boost_p045_lbf_t050`: one exact Lorentz-boosted drainhole (momentum model 1, p = 0.45, v = 0.41), L = 64, level 3,
+the per-throat slicing freeze. It is the isolated throat's instability, carried along with the motion:
+- The throat holds while moving: R_min rises at most +2.0 % (3.8762 → 3.9532 at t = 29), then collapses: 1 % below its
+  start at t = 36.8, −9.2 % at t = 44 (horizon_scan A rows).
+- The fall is the resting throat's mode: ln(R_peak − R) e-folds in τ = 5.5–5.7 (fits from t = 32–38 to 44) against
+  τ = 5.88 for the resting level-3 throat (`single_hold_t100`, clmTauLevelThree), and on the same branch: level 3
+  collapses, as in the paper's single-throat figure. The resting throat holds to 1 % until t = 44 (clmHoldTimeOnePct);
+  the moving one until t = 36.8.
+- Not the gauge: the pit lapse held at 0.215–0.233 from t = 24 to the end (the unfrozen run's ran away at t = 26).
+  Not the boundary: at t = 42–44 the fields ahead of the throat (towards the near +y face) fall off as those behind it,
+  and the collapse began at t ≈ 29, before a reflection of the t = 0 data off the +y sponge edge could return (t ≈ 40).
+- It dies at t = 44.67 (NaN in h11, level 3) when χ at the pit reaches its floor: numerical, inside the collapse; the
+  resting level-3 arm formed a horizon there and ran on.
+- Before the paper cites it: one resolution only (level 3); the fits and the branch against a level-4 twin (the
+  resting level-4 throat inflates) belong in GPU_PLAN with a cost. Not packed yet (close-out pending).
+
 ## CRITICAL FINDING: a moving throat is Lorentz-contracted; every moving setup so far was a round throat at rest (the user, 2026-09-29)
 
 **A throat with momentum is the static throat seen from a moving frame** (the exact Lorentz boost of the drainhole).
