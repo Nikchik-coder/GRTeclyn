@@ -1,4 +1,4 @@
-# Status — 2026-09-30 12:10 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-09-30 12:15 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -84,7 +84,7 @@ superposed twins (checked 09-28/09-29; details in the archive).
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` (SPIRAL-lbf, the user's go 06:38 UTC 09-30: the csm spiral's params with only momentum model 1, the boosted shift and match tol 1e-5 changed; **no freeze**; max_level 5; checkpoints every 5 units keeping 3; `main3d_boostpair_91ed17cd`, profile `orbit-modes-prod`) | 0 (launched 11:55 UTC 09-30) | 100 | ~2.7 u/h expected (the csm spiral's average) | t = 60 in ~22.5 h, ~10:30 UTC 10-01; t = 100 in ~37 h, ~01 UTC 10-02 |
+| 0 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` (SPIRAL-lbf, the user's go 06:38 UTC 09-30: the csm spiral's params with only momentum model 1, the boosted shift and match tol 1e-5 changed; **no freeze**; max_level 5; checkpoints every 5 units keeping 3; `main3d_boostpair_91ed17cd`, profile `orbit-modes-prod`) | 0 (launched 11:55 UTC 09-30; the solve as A's, evolving since 12:13 UTC, card at 56 GB) | 100 | ~2.7 u/h expected (the csm spiral's average) | t = 60 in ~22.5 h, ~10:30 UTC 10-01; t = 100 in ~37 h, ~01 UTC 10-02 |
 
 - Its verification A (`t0_v2_spiral_d12_p012_L128_lvl5_lb_csm`, the rerun's template stopped at t = 0.5;
   finished 07:17 UTC 09-30): **PASS** — solve converged (22 Newton passes, 2 matching rounds), far sides the
@@ -92,7 +92,7 @@ superposed twins (checked 09-28/09-29; details in the archive).
   the p = 0.25 pair's +0.09 % × p²), throat-shell Ham rms 7.8e-5 / 2.9e-5 / 5.1e-5 on levels 3 / 4 / 5 (the
   fly-by pair's floor), axis ratio 0.9919 / 0.9914 at r_c = 1 / 1.55 against 1/γ = 0.9929 (0.10–0.15 % flatter,
   the p = 0.25 pair's × p²), no NaN, frame 0 as the csm spiral's. **Packed 12:06 UTC** without movies
-  (`05_binary_spiral/verify_p012/`); its two plotfiles (21 GB) are still on this node's scratch.
+  (`05_binary_spiral/verify_p012/`); its scratch (two plotfiles, 21 GB) wiped 12:14 UTC on the user's word.
 
 Queued on card 1: **`merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm`** — the fly-by rerun
 (old fly-by's params, p = 0.45 → 0.25, momentum model 1, per-throat freeze, match tol 1e-5, checkpoints every
