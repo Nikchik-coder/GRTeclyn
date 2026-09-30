@@ -3773,3 +3773,16 @@ the head-on. Done, no GPU work:
   Caption wording follows ("gold line ... the level of each stretch named above it"). Label audit clean.
 - Queued (no go yet): **BBH-HEADON** — the vacuum control for the head-on, bare punctures at d = 8 from rest
   to t = 100 on the csm head-on's setup, for the ringdown/energy comparison. ~30–50 GPU-h.
+
+## 2026-09-30 (~15:10 UTC) — the head-on's analytic budget written into SEC VI; first-law leg queued
+
+The user: add the analytics proving the numerics. SEC VI.A gains one paragraph on the mode-3 chain, every
+number a ledger row (5 new clmHeadonCsm* rows + two second-use anchors): (1) Penrose violated outright at
+formation on constraint-satisfying data, R/2 = 2.51 over M_ADM = 2.3573 by 6.6 %; (2) the horizon born with
+0.91 of the two throats' summed area and shrinking — the area theorem run backwards, as the first law demands
+of T_kk < 0 influx; (3) the settle on the Bondi sphere R = 2(M_ADM − E_GW − E_phi): the measured
+E_GW = 3.1e-3 M and M_MS(100) = 2.373 imply E_phi = −0.023, the ghost channel's sign and order (the Sec VIII
+flux integrals give −0.06 to −0.08 on the superposed run); radius 0.6 % under 2 M_ADM, and the 1.2 % spread
+between the mass and radius readings is the scan's shape systematic. Queued (no go): HFL-ho — leg 3 restarted
+from Chk05000 to t = 60 with plotfiles kept (one output-only knob), ~1.5–2 GPU-h, for the quantitative
+first-law check dM_MS/dt vs the horizon scalar flux.
