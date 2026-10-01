@@ -1195,8 +1195,10 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   (`single_hold_ml4_t100`: +1.0 % at t = 53). Its R_min (A rows) peaks at +1.4 % (t = 30), falls below its start at
   t = 38.6 and 1 % below it at t = 40.4 (level 3: 34.1 and 36.8), then −11.4 % at t = 48 and −30.1 % at t = 53.
   ln(R_peak − R) e-folds in τ = 5.0–5.7 (fits from t = 44–48 to 53; 4.3–4.6 over t = 40–48, as it leaves the peak).
-  The pit lapse holds at 0.20–0.21 to t = 51. The moving throat collapses at both resolutions, while the resting
-  throat's branch flips between them.
+  The pit lapse holds at 0.20–0.21 to t = 51. The level-0 constraint norms (the only ones logged) hold to t = 45.
+  L2 H matches the level-3 run's (median 4–5e-3); its spikes come from the moving pit crossing level-0 cells, every
+  ~1.3 units. L2 M sits 2.5–5× below the level-3 run's. The moving throat collapses at both resolutions, while the
+  resting throat's branch flips between them.
 - **Runs.** `single_boost_p045_lbf_t050` *(pack, `campaign/02_moving_throat/exact_boost/`)*: L = 64, N = 128, level 3,
   the throat from y = −8 moving +y, `core_lapse_freeze` with its window on the tracked throat (full inside r = 0.3,
   off from 0.8), `main3d_boostfix_5384c104-dirty`. Died at t = 44.67 (NaN in h11, level 3) when χ at the pit reached

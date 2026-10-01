@@ -1335,8 +1335,15 @@ need to be analysed and packed").
     the peak. For comparison: level 3 5.5–5.7, the resting throats 5.26 (level 4) and 5.88 (level 3).
   - The pit lapse holds at 0.20–0.21 to t = 51, then rises to 0.25–0.30. χ at the pit touches its floor now and then
     from t ≈ 6, as at level 3, and sits on or near it from t = 52.2. Max |K| is 0.74 at t = 53 and 5.4 at the NaN.
-  - The logged L2 H is the unmasked level-0 norm: 1.8–4.7e-3, with spikes up to 4.7e-2 at t = 37.9 (Traps: every
-    moving-pit norm needs the mask).
+  - Constraints. The run logs the level-0 L2 norms only.
+    - L2 H's median is 3.1e-3 at the start and 4–5e-3 over t = 25–45, the same as the level-3 run's at the same
+      times (the resting throats: 2.5e-3). It falls to 1.8e-3 by the end.
+    - Its spikes reach 4.7e-2 at t = 37.9 (level 3: 1.8e-2) and recur every ~1.3 units, each time the pit sits near a
+      level-0 cell centre (phase 0.5–0.7 of the Δx = 0.5 cell). They are the level-0 copy of the moving pit, as in
+      verification B; the resting throats have none.
+    - L2 M rises from 5.7e-5 to 2.3e-4 by t = 40–45, 2.5–5× below the level-3 run's at the same times (1.1e-3 at
+      t = 40–45). It reaches 1.4e-3 only over the last units.
+    - No finer check is possible: Ham is not in the frame set, and the plotfiles are gone.
   - The round-scan numbers carry the moving throat's +0.2–0.4 % bias. The shifted-ellipsoid fit was not run: the
     earlier plotfiles were gone, but the slice caches remain.
 - **So the RESULT holds at a second resolution.** The moving throat collapses at levels 3 and 4, while at rest the
