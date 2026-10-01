@@ -262,6 +262,7 @@ def rerender_all(
     decades: float = DEFAULT_SYMLOG_DECADES,
     field_decades: dict[str, float] | None = None,
     only: Iterable[str] | None = None,
+    skip: Iterable[str] | None = None,
     t_max: float | None = None,
 ) -> dict[str, list[float]]:
     """Redraw every cached series, each against its own fixed scale.
@@ -275,14 +276,20 @@ def rerender_all(
     ``field_decades`` overrides the symlog range for named fields -- fields do
     not all want the same one: on the head-on stitch K and the scalar want two
     decades, while Weyl4 at two decades is mostly the coarse grid's own noise
-    and reads better at 1.5.  ``only`` restricts the redraw to named fields.
+    and reads better at 1.5.  ``only`` restricts the redraw to named fields; ``skip`` leaves named
+    fields' frames exactly as the consumer rendered them (a field whose live
+    per-frame scale reads better than any one fixed scale, e.g. K).
     """
     used: dict[str, list[float]] = {}
     norms = norms or {}
     field_decades = field_decades or {}
     only = set(only) if only else None
+    skip = set(skip) if skip else set()
     for field, axis in cached_fields(frames_out_dir):
         if only is not None and field not in only:
+            continue
+        if field in skip:
+            print(f"[rerender] {field}_{axis}: skipped, keeping the consumer's frames")
             continue
         norm = norms.get(field, norms.get("*"))
         written, limits = rerender_series(

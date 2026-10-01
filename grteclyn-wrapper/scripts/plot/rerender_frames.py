@@ -61,6 +61,14 @@ def main(argv: list[str] | None = None) -> int:
         help="redraw only these comma-separated fields (default: every cached one)",
     )
     ap.add_argument(
+        "--skip",
+        metavar="FIELDS",
+        help="comma-separated fields NOT to redraw: their frames stay exactly "
+        "as the consumer rendered them and the movies stitch those originals. "
+        "For a field whose live per-frame scale reads better than any one "
+        "fixed scale (K: the global rescale washes out the lobes, 2026-10-01).",
+    )
+    ap.add_argument(
         "--t-max",
         type=float,
         metavar="T",
@@ -106,6 +114,7 @@ def main(argv: list[str] | None = None) -> int:
         frames_dir, corner=args.corner, verbose=args.verbose, norms=norms,
         decades=args.symlog_decades, field_decades=field_decades,
         only=[f.strip() for f in args.only.split(",")] if args.only else None,
+        skip=[f.strip() for f in args.skip.split(",")] if args.skip else None,
         t_max=args.t_max,
     )
     if not used:

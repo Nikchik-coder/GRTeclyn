@@ -114,7 +114,7 @@ for run in "$@"; do
         echo "  movies: cut at the trust window t <= ${tmax} (results/merger/trust_windows.tsv)"
       fi
       "${PY}" "${ROOT}/grteclyn-wrapper/scripts/plot/rerender_frames.py" "${dir}/frames" \
-        --symlog "${WHM_SYMLOG}" "${window[@]}" --movies 2>&1 | tail -n 4 | sed 's/^/  /'
+        --symlog "${WHM_SYMLOG}" --skip "${WHM_RERENDER_SKIP:-K}" "${window[@]}" --movies 2>&1 | tail -n 4 | sed 's/^/  /'
     else
       [[ -n "${tmax}" ]] && echo "  WARNING: trust window t <= ${tmax} set but no slice cache -- these movies run to the end"
       bash "${ROOT}/grteclyn-wrapper/scripts/plot/make_movies.sh" "${dir}" 2>&1 | tail -n 2 | sed 's/^/  /'
