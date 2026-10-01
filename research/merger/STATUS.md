@@ -132,7 +132,14 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 1 the boosted fly-by; card 0 FREE since 13:58 UTC 10-01 (the spiral died)
+## Live — first node (two H100s): card 0 MOTS-ho1 (since ~20:20 UTC 10-01), card 1 the boosted fly-by
+
+**MOTS-ho1 `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` (the user's go 20:10 UTC 10-01):** leg 1 again
+from t = 0 to 35 with the 3D finder on every plotfile (`headon-modes-prod`), for the head-on's true birth
+(Fig. 5's R 5.02 / M_MS 2.69 are round-scan values, 3-11 % low). Leg 1's packed params with only stop 100 -> 35,
+checkpoints OFF (nothing restarts from it; MOTS-ho2 uses the existing Chk03500) and the name;
+`main3d_csmatch_5f988dbc`. ~13 h (2.7 u/h) -> done ~09:30 UTC 10-02. SPIRAL-lbf's scratch (91 GB) wiped 20:15 UTC
+(`MANIFEST_CLEANUP_2026-10-01`).
 
 Both consumers find the common MOTS with the 3D finder from t = 50 (spiral) and t = 43 (fly-by) on (restarted 08:24 / 08:25 UTC 10-01, and again 08:42 / 08:43 so that a plotfile with no MOTS gets a row of nan; CRITICAL above).
 
@@ -174,15 +181,16 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): SPIRAL-d6-prod live on card 0 since ~19:50 UTC 10-01
+## Second node (one H100): SPIRAL-d6-prod live on card 0 (solve done, evolving since ~20:10 UTC 10-01)
 
 **SPIRAL-d6-prod `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` (the user's go 19:43 UTC): THE MERGER RUN.** The
 scouted design point (d = 6, tangential p = 0.10 — the scout is misnamed d8) on the production box: the fly-by
 template line for line with only centers +-3, momentum +-0.10 and stop 60 changed; checkpoints every 5 keeping 3;
 `orbit-modes-scan-prod`, `main3d_boostpair_91ed17cd`. Expect the head-on's leg structure: the merged core will
 need a lvl6 leg through the wall (the level-5 head-on died t = 38.8; restart from the rolling checkpoint).
-At the head-on's lvl5 pace (~2.7 u/h) t = 60 is ~22 h -> ~18:00 UTC 10-02; the merger itself (MOTS ~ t 12.5)
-lands ~00:30 UTC.
+Start verified 20:12 UTC: solve 22 Newton passes, far sides to 2e-6, M_ADM 2.3634 (the head-on chain: 2.3573),
+Chk00000 + Plt00000 written, no NaN. At the head-on's lvl5 pace (~2.7 u/h) t = 60 is ~22 h -> ~18:30 UTC 10-02;
+the merger itself (MOTS ~ t 12.5) lands ~01:00 UTC.
 
 **SCOUT-d8p closed out (19:30 UTC 10-01; `05_binary_spiral/scout_merger/`, frames kept; movies added ~20:05 UTC on the user's word, cut at t <= 19 — K at a fixed linear ±0.05, the other fields on the close-out symlog scales): THE FIRST
 ORBITAL MERGER ON CLEAN DATA.** `spiral_d8_p010_lvl3_t040_lbf_csm` (MISNAMED d8: centers +-3 = d = 6; tangential p = 0.10, L = 64 level 3):
@@ -253,7 +261,7 @@ node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or r
 |---|---|---|---|---|
 | MOTS-ho3 | `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` | PAPER, REQUIRED (CRITICAL above): the head-on's true MOTS over t = 50–100 for Fig. 5(a,b) and its end values (t = 100) | leg 3 again from leg 2's `Chk05000` (max_level 4) to t = 100, leg 3's packed params with only the name changed; `headon-modes-prod` (`--mots-spectral`), keep-last 3; checkpoints asked at launch; its input checkpoint lives on the SECOND node's scratch — run it there (after SPIRAL-d6-prod) | ~7 (7.2 u/h) |
 | MOTS-ho2 | `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` | PAPER, REQUIRED: the true MOTS over t = 35–50 (through the wall) | leg 2 again from leg 1's `Chk03500` (max_level 6) to t = 50, leg 2's packed params with only the stop (50) and the name changed; as MOTS-ho3 | ~7.5 (2.0 u/h) |
-| MOTS-ho1 | `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` | **NEXT for the first node's free card 0** (needs a session there; no checkpoint input). PAPER, REQUIRED: the birth (t ≈ 22, the caption's R 5.02 / M_MS 2.69, the formation time) and t = 0–35 | leg 1 again from t = 0 (max_level 5) to t = 35, leg 1's packed params with only the stop (35) and the name changed; as MOTS-ho3 | ~13 (2.7 u/h) |
+| MOTS-ho1 | `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` | **LIVE on the first node's card 0 since ~20:20 UTC 10-01** (Live, above). PAPER, REQUIRED: the birth (t ≈ 22, the caption's R 5.02 / M_MS 2.69, the formation time) and t = 0–35 | leg 1 again from t = 0 (max_level 5) to t = 35, leg 1's packed params with only the stop (35) and the name changed; as MOTS-ho3 | ~13 (2.7 u/h) |
 | SPIRAL-lbf | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | THE PAPER RUN, FIRST (the user, 2026-09-30): the spiral on the boosted setup — the clean test of "inflates, no merger" | the csm spiral's template + momentum model 1, **no freeze** (the user's word; the pits move at v = 0.12, the runaway was a v = 0.41 problem), max_level 5, checkpoints every 5 keeping the newest 3 (the user's word; LAD-csm needs the t ≈ 50 one); its own verification A **PASSED**; **DONE — died t = 71.78, 10-01, no merger; closed out, trust t <= 56.5** (Live, above) | ~22 to t = 60, ~37 to t = 100 |
 | SPIRAL-d6-prod | `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` | **LIVE on the second node's card 0 since ~19:50 UTC 10-01** (Second node, above). THE MERGER RUN (the merger scout, 10-01: common MOTS t = 12.5–20.5): the d = 6, p = 0.10 design point at production resolution, for the paper's orbital-merger section | the production box (L = 128, N = 256, max_level 5, the shared wave set) with the scout's initial-data block (d = 6: centers +-3, tangential p = 0.10, boosted-pair mode-3 solve); expect the head-on's leg structure through the wall (lvl6 restart) — plan the legs at launch; checkpoints every 5 keeping 3 | ~25–35 |
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | **DONE 10-01: the d = 6 scout (misnamed d8) MERGED — common MOTS t = 12.5–20.5; packed `05_binary_spiral/scout_merger/`.** Was: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
