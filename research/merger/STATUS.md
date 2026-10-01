@@ -179,7 +179,9 @@ only a few % inflated — the window where the d = 8 head-on's merger won (+10 %
   newest 3 (the user's word), the name. Template `params_spiral_d12_pin025_lvl3_t040_lbf_csm.txt`.
 - `main3d_boostpair_91ed17cd`, profile `orbit-modes-scan` (per-mouth + common round scan at level 3, half 3.0, and
   the 3D MOTS finder with the orbit window — "the updated consumer", the user's word) with zoom 40, coord 32.
-- ~2-3 h to t = 40 (verification B's grid): done ~12:30-13:30 UTC 10-01. If contact beats the runaway, the level-5
+- Start verified 10:20 UTC: solve 19 Newton passes, far sides the isolated throat's to 5.5e-6, one-body a 2.0000 /
+  m 1.0000 each, M_ADM 2.135 (verification B: 2.117), no NaN, frame 0 the reference's two pits at +-6, Chk00000
+  written, 33.6 GB on card 0. Measured pace 9.3 u/h -> t = 40 in ~4.3 h, done ~14:30 UTC 10-01. If contact beats the runaway, the level-5
   production rerun follows from the fly-by's packed params with only the momentum angle and the name changed
   (~20-25 h, needs the user's go).
 - MOTS-ho1/2/3 stay queued behind it on this card.
