@@ -3,7 +3,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import shutil
+import sys
 import time
 from pathlib import Path
 
@@ -480,7 +482,16 @@ def main() -> None:
         action="store_true",
         help="Do not delete existing frames at startup.",
     )
-    args = parser.parse_args()
+    # Flags added to this run's consumer after launch (restart_consumer.sh appends them to the
+    # run dir's consumer_args.extra).  Every consumer started in the run dir reads them -- the
+    # restarted watcher and run_single.sh's end-of-run drain, which otherwise runs with the
+    # launch flags -- so no plotfile is extracted with less than the live watcher does
+    # (2026-10-01: the drain would have skipped the spectral MOTS on the last plotfiles).
+    extra_path = Path("consumer_args.extra")
+    extra = shlex.split(extra_path.read_text()) if extra_path.is_file() else []
+    if extra:
+        print(f"[consumer] + {extra_path.resolve()}: {' '.join(extra)}", flush=True)
+    args = parser.parse_args(sys.argv[1:] + extra)
     # A symmetry-reduced run (--reflect): what cannot use the symmetry is
     # switched off here, once and out loud, instead of producing sphere
     # integrals over 1/8 of each sphere or a sign-flipped mirror.
@@ -686,6 +697,8 @@ def main() -> None:
         if not res.get("mots_line"):
             return
         _append_line(mots_out_path, header=MOTS_SPECTRAL_HEADER, line=res["mots_line"])
+        if res.get("mots_alm") is None:   # a row of nan: no MOTS here; keep the last surface as the start
+            return
         with mots_alm_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps({"t": float(res["t"]), "key": res["key"], "a_lm": res["mots_alm"]}) + "\n")
         state["mots_alm_prev"] = res["mots_alm"]

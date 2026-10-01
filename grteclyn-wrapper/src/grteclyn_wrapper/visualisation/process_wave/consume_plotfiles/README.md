@@ -32,6 +32,16 @@ from grteclyn_wrapper.visualisation.process_wave.consume_plotfiles import (
 )
 ```
 
+## Flags added after launch (`consumer_args.extra` in the run dir)
+
+A consumer started in a run dir appends the shell words of `./consumer_args.extra` to its
+command line, and says so in its log. `restart_consumer.sh` appends its flags there.
+- **Why.** `run_single.sh`'s end-of-run drain is a fresh consumer with the *launch* flags. Without
+  this file it extracted the run's last plotfiles with less than the restarted watcher did
+  (2026-10-01: no spectral MOTS on them).
+- **Effect.** Every plotfile of a run is extracted with the same flags, and nothing is left for an
+  offline pass. The drain keeps the last `--keep-last` plotfiles as before.
+
 ## Spectral MOTS (`--mots-spectral`, own files `mots_spectral.dat`, `mots_spectral_alm.jsonl`)
 
 Off by default; on in the production head-on profile (`headon-modes-prod`) since

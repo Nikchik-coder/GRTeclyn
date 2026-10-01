@@ -27,6 +27,10 @@
 #   5. The new watcher stopped when the evolution exits.  run_single.sh kills only the
 #      consumer it started and then drains the last plotfiles with the launch flags;
 #      a hand-started watcher left running would race that drain and never exit.
+#   6. The drain must extract what the watcher did (2026-10-01: it would have skipped the
+#      spectral MOTS on the last plotfiles).  The appended flags go into the run dir's
+#      consumer_args.extra, which every consumer started there reads at startup
+#      (consume_plotfiles/driver.py) -- the drain too, a fresh process at the run's end.
 # Processes are found by /proc/<pid>/cwd, as in stop_campaign.sh: the run dir is in
 # no argv.
 set -uo pipefail
@@ -212,6 +216,7 @@ if kill -0 "${OLD}" 2>/dev/null; then
 fi
 echo "[restart_consumer] $(date -u +%FT%TZ) watcher ${OLD} stopped idle (frames ${FRAMES_BEFORE}); appended: ${APPENDED}" \
   >> "${LOG}"
+{ printf '%q ' "${EXTRA[@]}"; echo; } >> "${RUN}/consumer_args.extra"   # point 6
 
 # The old watcher's environment (PYTHONPATH to the wrapper source, PATH with the venv
 # first): python finds its venv through the alias looked up on PATH, as in run_single.sh.
