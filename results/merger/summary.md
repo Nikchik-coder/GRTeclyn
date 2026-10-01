@@ -204,6 +204,12 @@ t = 51.4+) are evidence of a common horizon.
 |---|---|---|---|---|---|---|---|---|
 | v2_spiral_d12_p012_L128_lvl5from0_t100_csm | MODE-3 RERUN of v2_spiral_d12_p012_L128_lvl5from0_t100 (2026-09-28): the p = 0.12 spiral at level 5 from t = 0 on far-side-matched data. Exact rerun (only the solve block and checkpoints every 5, newest 3). t = 0: M_ADM 2.27476 (CPU mode-3 check at p = 0.12: 2.27920 on L = 64); each mouth's far-side mass -4.81048 and charge 3.03437, one-body mass 1.0000 (match 4e-10). | 0.00 | 60.40 | stopped by dump_and_stop at t = 60.40 on the user's word (it does not end in a merger), no NaN; its last checkpoint Chk06040 is kept (_keep_v2_spiral_d12_p012_L128_lvl5from0_t100_csm_chk) for a later wave extraction | 0.44 | - | 1.788e-03 | 4.311e-02 |
 
+## `05_binary_spiral/lbf`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm | BOOSTED RERUN of v2_spiral_d12_p012_L128_lvl5from0_t100_csm (2026-09-30, the user's go): the p = 0.12 spiral on the exact-boost setup (momentum model 1, boosted shift, match tol 1e-5), no freeze, level 5 from t = 0, checkpoints every 5 (newest 3) | 0.00 | 71.78 | NaN at t = 71.78 DIED t = 71.78 (13:58 UTC 10-01, NaN in h11, level 2), after 71.8 of 100: NO MERGER -- the mouths inflate (the d = 12 runaway), the trackers collapse onto the central pit at t = 38.06 (sep 2.0 -> 0.47, the csm spiral's jump), and the 3D finder sees no common MOTS anywhere (window ±6 valid to t ~ 61, too small after; nan rows through t = 71). L2 H grows x1.3 per unit from t ~ 50 and crosses the fly-by criterion 2.5e-2 at t = 56.3 -> trust window t <= 56.5 (the csm spiral's own cut was 57). With the csm arm and SCOUT-d12pin this is the third d = 12 arm that inflates instead of merging; the boost did not change the verdict. Consumer drained (frames and mots rows to the end); scratch on the first node awaits its prune | 0.38 | - | 2.778e-04 | 7.332e-01 |
+
 ## `05_binary_spiral/p012`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
@@ -293,6 +299,13 @@ t = 51.4+) are evidence of a common horizon.
 |---|---|---|---|---|---|---|---|---|
 | merge_orbit_flip_d12_p025_t200 | scout p = 0.25: captured to sep 1.5, h11 NaN | 0.00 | 52.98 | NaN at t = 52.98 | 1.50 | 52.97 | 3.088e-03 | 7.604e-02 |
 | merge_orbit_flip_d12_p025_lvl5_t200 | scout p = 0.25 at max_level = 5: same wall as level 3, NaN (h11) at t = 52.79 | 0.00 | 52.79 | NaN at t = 52.79 | 0.06 | - | 3.569e-03 | 6.891e-02 |
+
+## `05_binary_spiral/scout_merger`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| spiral_d12_pin025_lvl3_t040_lbf_csm | SCOUT-d12pin (2026-10-01, the user's go ~10:00 UTC): can an inward momentum merge the d = 12 pair? The fly-by pair (verification B's packed params, L = 64, N = 128, level 3, boosted-pair mode-3 solve) with the momentum turned mostly inward: |p| = 0.247 per mouth (p_radial 0.24, p_tangential 0.06, the fly-by's clockwise sense), stop 40, checkpoints every 5 keeping 3, profile orbit-modes-scan (per-mouth + common scan, 3D MOTS finder, orbit window) | 0.00 | 33.86 | still running STOPPED BY HAND at t = 33.86 (12:47 UTC 10-01, the second node), no NaN: THE VERDICT WAS IN -- NO MERGER AT d = 12 AT ANY MOMENTUM. The mouths inflate much faster than the p = 0.12 spiral's (R_min +4.7 % by t = 8, +22 % by t = 16, +72 % by t = 24; the closer approach deepens the companion kick seeding the tau ~ 5.5 unstable mode), the infall stalls against the swelling throats at separation ~ 2.2 and whirls, and the 3D finder sees no common MOTS through t = 33 (per-mouth radii past sep < 5.6 overlap and are indicative only). Together with the tangential p = 0.12 and 0.25 arms this rules out a d = 12 merger; the design moves to d = 8, small p (SCOUT-d8p). Diagnostic scout, not cited; packed without movies. Consumer drained to the last plotfile's frames; its mots row (t = 33.5, nan) was cut by the stop | 2.24 | 32.55 | 8.224e-04 | 4.041e-03 |
+| spiral_d8_p010_lvl3_t040_lbf_csm | SCOUT-d8p (2026-10-01, the user's go ~12:45 UTC): the collapsing-spiral design point -- d = 8, small tangential p. | 0.00 | 20.60 | NaN at t = 20.60 MERGER -- THE FIRST ORBITAL MERGER ON CLEAN DATA. The 3D finder holds a common MOTS around both mouths from t = 12.5 (R 5.624, M_MS 2.812) to the last plotfile t = 20.5 (R 5.120, M_MS 2.560), shrinking smoothly (warm Newton 6-11 iters); separation 1.35 at t = 18.6, 0.92 at 20.6. DIED t = 20.61 (NaN in K, level 3, the merged core's K runaway from t ~ 19.3: 0.15 -> 0.39 -> 0.88) -- the under-resolution death inside the censored region, as the head-on's leg 1; constraints flat to the end (L2 H <= 1e-2). Trust window t <= 19.0 (the runaway's start); the MOTS rows to 20.5 are listed for reference. The design point stands: d = 8 with p = 0.10 tangential merges; the level-5 production run is the next step | 0.87 | - | 4.418e-02 | 2.626e-03 |
 
 ## `05_binary_spiral/verify_p012`
 
