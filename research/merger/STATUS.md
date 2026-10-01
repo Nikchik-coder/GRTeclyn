@@ -1,4 +1,4 @@
-# Status — 2026-10-01 08:10 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-01 08:27 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -31,8 +31,16 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
     `headon-modes-prod`.
   - Offline test on HFL-ho's 11 plotfiles: R matches to 8e-8. End to end: MOTS-e2e (live, below); its first frame
     and first MOTS row equal HFL-ho's.
-  - The two live orbit runs get it by `restart_consumer.sh <run dir> --mots-spectral`, run on the first node (the
-    user, 10-01).
+  - The two live orbit runs have it since 08:24 / 08:25 UTC 10-01: their consumers were restarted on the first node
+    with `--mots-spectral --mots-spectral-level 2 --mots-spectral-half 6 --mots-spectral-lmax 8 --mots-spectral-seeds
+    5.0 3.5` (the user's word).
+    - The window is level 2 at ±6, since level 2 covers −10..+8 about the centre at t = 49 and ±9 fell back to level 1.
+    - SIGTERM stopped each consumer while idle. `restart_consumer.sh --check` was OK: frames 1400 / 1204 kept, every
+      stream continuous.
+    - Tested first on t = 49 (spiral) and t = 41 (fly-by): no common MOTS yet, as the round scan; a cold search takes
+      ~1 min at level 1.
+    - The launch drain at each run's end uses the launch flags, so the last plotfiles need the finder by hand at
+      close-out.
 - **Paper numbers to re-measure, all the head-on's:**
   - **Fig. 5(a,b).** The gold line is the round scan. The caption's birth (t = 22, R 5.02, M_MS 2.69,
     `clmHeadonCsmMots*`) is round-scan; its end (t = 100, R 4.69, M_MS 2.373, `clmHeadonCsmEnd*`) is oriented-scan; its
@@ -120,6 +128,8 @@ smaller matched throats), every paper claim is relative, and the mode-3 reruns' 
 superposed twins (checked 09-28/09-29; details in the archive).
 
 ## Live — first node (two H100s): card 0 the boosted spiral, card 1 the boosted fly-by (both production)
+
+Both consumers find the common MOTS with the 3D finder from t = 50 (spiral) and t = 43 (fly-by) on (restarted 08:24 / 08:25 UTC 10-01; CRITICAL above).
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
