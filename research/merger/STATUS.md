@@ -1,4 +1,4 @@
-# Status — 2026-10-01 07:25 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-01 07:55 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -117,7 +117,14 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): free since 06:50 UTC 10-01 — its next launch waits for the user's go
+## Live — second node (one H100): MOTS-e2e, the consumer's spectral MOTS end to end
+
+| card | run | t now | t end | speed | ETA |
+|---|---|---|---|---|---|
+| 0 | `merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` (MOTS-e2e, the user's go ~07:45 UTC 10-01: leg 3's params via HFL-ho's template with only stop_time → 55 and the name, from leg 2's `Chk05000`; profile `headon-modes-prod`, now with `--mots-spectral`; keep-last 3; no checkpoints, as leg 3; `main3d_csmatch_5f988dbc`) | 50.0 (launched 07:54 UTC; preflight PASS) | 55 | ~7 u/h (leg 3, HFL-ho: 7.2) | t = 55 in ~0.75 h, ~08:40 UTC 10-01 |
+
+Read: `small_data/mots_spectral.dat` at t = 51–55 must match HFL-ho's offline level-3 rows (`first_law_L3.json`) to the
+Newton tolerance; the consumer must keep pace and leave only the last 3 plotfiles.
 
 **HFL-ho closed out (07:25 UTC 10-01; `04_binary_headon/first_law/`, no movies, frames kept).**
 `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` reached t = 60 (06:50 UTC) with no NaN, and every
