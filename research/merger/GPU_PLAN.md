@@ -1361,7 +1361,8 @@ need to be analysed and packed").
     keep-last 3 applies and no plotfile is kept:
     - leg 3 again from `Chk05000` to t = 100: ~7 h;
     - leg 2 again from `Chk03500` (t = 35–50, level 6): ~7.5 h;
-    - leg 1 from t = 0 (~13 h), only if the birth at t = 22 (R 5.02) is to be re-read too.
+    - leg 1 again from t = 0 to 35 (~13 h): the birth at t = 22 (R 5.02), which the caption and the abstract quote.
+    - All three are required for the paper (STATUS's CRITICAL section, 08:10 UTC): MOTS-ho1/2/3.
     - Both checkpoints exist only on the second node's scratch.
 - **The finder is in the consumer** (the user, ~07:30 UTC: why keep plotfiles instead of extracting on the fly?).
   - `--mots-spectral`: `consume_plotfiles/extraction/mots_spectral.py` runs `headon_first_law.py` on each plotfile

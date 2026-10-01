@@ -1,4 +1,4 @@
-# Status — 2026-10-01 07:55 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-01 08:10 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -18,6 +18,41 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
   start at t = 40.4 (level 3: 36.8), and reaches −11.4 % at t = 48 and −30.1 % at 53. τ = 5.0–5.7 over t = 44–53.
   It dies at t = 53.43 (NaN in h11, level 4). The onset comes ~4 units later. Not cited yet; citing it is the
   user's call.
+
+## CRITICAL: the round scans under-read a deformed horizon (2026-10-01) — the head-on's horizon numbers need re-measuring
+
+- **The flaw.** The consumer's round scan (`horizon.py`) and `ah_oriented_scan.py` report the outermost fully trapped
+  ROUND sphere, which sits inside a deformed MOTS.
+  - On the mode-3 head-on's t = 51–60 slices (HFL-ho), the round scan reads R 4–11 % low and the oriented scan 3–7 % low.
+  - The 3D spectral finder there gives a steady R 4.7776 → 4.7735.
+  - That finder has existed since 09-21 (it found the old spiral's MOTS that the scans missed) but stayed offline.
+- **Fixed in the consumer (10-01).**
+  - `--mots-spectral` runs the 3D finder on every plotfile before deleting it (~20 s warm); it is on in
+    `headon-modes-prod`.
+  - Offline test on HFL-ho's 11 plotfiles: R matches to 8e-8. End to end: MOTS-e2e (live, below); its first frame
+    and first MOTS row equal HFL-ho's.
+  - The two live orbit runs get it by `restart_consumer.sh <run dir> --mots-spectral`, run on the first node (the
+    user, 10-01).
+- **Paper numbers to re-measure, all the head-on's:**
+  - **Fig. 5(a,b).** The gold line is the round scan. The caption's birth (t = 22, R 5.02, M_MS 2.69,
+    `clmHeadonCsmMots*`) is round-scan; its end (t = 100, R 4.69, M_MS 2.373, `clmHeadonCsmEnd*`) is oriented-scan; its
+    "~1 % wobble" (`clmHeadonCsmWobble`) is 3–11 % at t = 51–60.
+  - **§VI and the abstract.** "Shrinks by a quarter" (`clmHeadonShrink`), R 4.17 (`clmHeadonRemnantRadius`,
+    `clmRemnantRadiusMean`), M∞ 2.160 ± 0.006, the R slope, formation t ≈ 21.5–22 (`clmGwCensMotsTime`), the horizon's
+    loss against E_GW (`clmHeadonGwShare`) and the rate drops (`clmHeadonRateDrop*`). These still read the superposed
+    runs; the rewrite moves them to the mode-3 chain, measured with the 3D finder.
+  - **Limitations.** The shape systematic (`clmShapeSyst*`: 34–44 % forming, 4 % rounded) becomes the measured
+    scan-vs-MOTS offset.
+- **Not affected:**
+  - the single throats: their collapse horizons are round (0.1–0.5 %, at most 3 % on the quadrupole arms);
+  - the moving-throat RESULT: it uses the throat radius;
+  - the spiral's horizons: already from the 3D finder (the R0 verdict, the csm spiral's no-MOTS verdict).
+- **The runs (MOTS-ho1/2/3, queued below; each needs the user's go).** The head-on chain replayed on the second node,
+  27.5 GPU-h in all, with no plotfile kept.
+  - Each uses the leg's packed params with only the stop and the name changed, and `headon-modes-prod` (with
+    `--mots-spectral`, keep-last 3). Checkpoints are asked at launch.
+  - Leg 1's `Chk03500` and leg 2's `Chk05000` exist only on the second node's scratch: keep them until MOTS-ho2/3 are
+    done.
 
 ## CRITICAL: the momentum setup (2026-09-29) — every p > 0 run so far was a round throat at rest
 
@@ -121,7 +156,7 @@ died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` (MOTS-e2e, the user's go ~07:45 UTC 10-01: leg 3's params via HFL-ho's template with only stop_time → 55 and the name, from leg 2's `Chk05000`; profile `headon-modes-prod`, now with `--mots-spectral`; keep-last 3; no checkpoints, as leg 3; `main3d_csmatch_5f988dbc`) | 50.0 (launched 07:54 UTC; preflight PASS) | 55 | ~7 u/h (leg 3, HFL-ho: 7.2) | t = 55 in ~0.75 h, ~08:40 UTC 10-01 |
+| 0 | `merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` (MOTS-e2e, the user's go ~07:45 UTC 10-01: leg 3's params via HFL-ho's template with only stop_time → 55 and the name, from leg 2's `Chk05000`; profile `headon-modes-prod`, now with `--mots-spectral`; keep-last 3; no checkpoints, as leg 3; `main3d_csmatch_5f988dbc`) | 51.4 (08:07 UTC; alive, no NaN; preflight PASS; starts bit-identical to leg 3) | 55 | 7.2 u/h | t = 55 in ~0.5 h, ~08:37 UTC 10-01 |
 
 Read: `small_data/mots_spectral.dat` at t = 51–55 must match HFL-ho's offline level-3 rows (`first_law_L3.json`) to the
 Newton tolerance; the consumer must keep pace and leave only the last 3 plotfiles.
@@ -208,12 +243,14 @@ node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or r
 
 | id | run | what | how | GPU-h |
 |---|---|---|---|---|
+| MOTS-ho3 | `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` | PAPER, REQUIRED (CRITICAL above): the head-on's true MOTS over t = 50–100 for Fig. 5(a,b) and its end values (t = 100) | leg 3 again from leg 2's `Chk05000` (max_level 4) to t = 100, leg 3's packed params with only the name changed; `headon-modes-prod` (`--mots-spectral`), keep-last 3; checkpoints asked at launch | ~7 (7.2 u/h) |
+| MOTS-ho2 | `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` | PAPER, REQUIRED: the true MOTS over t = 35–50 (through the wall) | leg 2 again from leg 1's `Chk03500` (max_level 6) to t = 50, leg 2's packed params with only the stop (50) and the name changed; as MOTS-ho3 | ~7.5 (2.0 u/h) |
+| MOTS-ho1 | `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` | PAPER, REQUIRED: the birth (t ≈ 22, the caption's R 5.02 / M_MS 2.69, the formation time) and t = 0–35 | leg 1 again from t = 0 (max_level 5) to t = 35, leg 1's packed params with only the stop (35) and the name changed; as MOTS-ho3 | ~13 (2.7 u/h) |
 | SPIRAL-lbf | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | THE PAPER RUN, FIRST (the user, 2026-09-30): the spiral on the boosted setup — the clean test of "inflates, no merger" | the csm spiral's template + momentum model 1, **no freeze** (the user's word; the pits move at v = 0.12, the runaway was a v = 0.41 problem), max_level 5, checkpoints every 5 keeping the newest 3 (the user's word; LAD-csm needs the t ≈ 50 one); its own verification A **PASSED**; **LIVE on the first node's card 0 since 11:55 UTC 09-30** (Live, above) | ~22 to t = 60, ~37 to t = 100 |
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | IF the clean spiral again fails to merge: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
 | FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **LIVE on the first node's card 1 since 12:37 UTC 09-30** (Live, above) | ~46 to t = 100 |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement, mode-3 (Fig. 12a's rerun) | restart from a checkpointed spiral leg at t ≈ 50, max_level 4/6/7, ~10–15 units per arm; convergence rules (no frames, `WHM_MOVIES=0`, `08_convergence`) | ~15–25 |
 | BBH-HEADON | `bbh_headon_d8_L128_lvl5_t100` | the vacuum control for the head-on (the user, 2026-09-30): bare punctures at d = 8 from rest, t = 100, for Fig. 5 and the gallery/energy comparison | the csm head-on's setup (same box, grid, spheres, plot cadence) with the drainhole/scalar blocks swapped for bare punctures, as the d = 12 BBH controls; template from `bbh_control_d12_p012_t150`'s params with d and p changed; checkpoints asked at launch | ~30–50 (the head-on chain's class; vacuum punctures ride through a merger, so likely one leg) |
-| MOTS-ho | `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` (+ `..._lvl6from35_mots_t050_csm_r03500`) | the head-on's true horizon for Fig. 5(a,b) and its end values: on HFL-ho's slices both scans under-read the MOTS by 3–11 % (GPU_PLAN 10-01 07:25 UTC) | leg 3 again from `Chk05000` to t = 100 (and leg 2 again from `Chk03500`, t = 35–50, level 6), each the packed params with only the stop and the name changed; the consumer finds the MOTS on every plotfile (`--mots-spectral`, in `headon-modes-prod` since 10-01), so keep-last 3 as usual, no plotfile kept; no checkpoints; leg 1 from t = 0 (~13 h) only to re-read the birth at t = 22 | ~7 (+ ~7.5) |
 | A1-csm | `ctrl_rest_a1_csm` (then, optional, `ctrl_rest_a15_csm` / `ctrl_rest_a3_csm`) | restore Fig. 4(a)'s width arm on matched data (the a = 1 arm left the panel 09-30: no matched twin) and put clmNarrowPairRatio — and with the optional twins the §V.B width ladder clmALadder* — on mode 3 | the old run's packed `evolution_params.txt` with ONLY the constraint-solve block and the name changed (the rest-pair rule), t = 15, L = 64 level 3; checkpoints asked at launch; re-measure into `matched_rest_displacement.dat` and redraw Fig. 4(a) | ~1 each (the csm rest pairs' class: 18 u/h alone) |
 | PLACE-csm | `place_d{6..48}_step1_csm` (the 18 one-step probes) | the matched placement curve for Fig. 4(d,e), now captioned as superposed-only: expected flat at R⋆ = 3.8895 (the matched pairs read 3.876–3.878 at t = 0), which would draw the clean-data contrast under the superposed excess; re-measures or retires clmMouthTauFlybyPlaced/SeedFlybyPlaced (CSM_SWITCHOVER) | the superposed probes' params (`04_binary_headon/placement/place_d*_step1`) with only mode 3 + names; initial data plus one step, scanned at t = 0; no frames beyond the default t = 0 set | < 1 total (minutes per probe) |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | spiral burst/energy, level 4 vs 5 | the spiral template, max_level 4, from t = 0 | ~8–10 |
