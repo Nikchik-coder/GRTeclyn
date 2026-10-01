@@ -1191,13 +1191,23 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   - No boundary reflection reaches it: at t = 42–44 the fields ahead of the throat (towards the near +y face) fall off
     as those behind it (\|K\|, \|Π\| ~5e-3 three units out, ~1e-3 at the sponge edge), and the collapse begins at
     t ≈ 29, before a reflection of the t = 0 data off the +y sponge edge could return (t ≈ 40).
+- **Level 4 agrees (2026-10-01).** The level-4 twin collapses too, although the resting level-4 throat inflates
+  (`single_hold_ml4_t100`: +1.0 % at t = 53). Its R_min (A rows) peaks at +1.4 % (t = 30), falls below its start at
+  t = 38.6 and 1 % below it at t = 40.4 (level 3: 34.1 and 36.8), then −11.4 % at t = 48 and −30.1 % at t = 53.
+  ln(R_peak − R) e-folds in τ = 5.0–5.7 (fits from t = 44–48 to 53; 4.3–4.6 over t = 40–48, as it leaves the peak).
+  The pit lapse holds at 0.20–0.21 to t = 51. The moving throat collapses at both resolutions, while the resting
+  throat's branch flips between them.
 - **Runs.** `single_boost_p045_lbf_t050` *(pack, `campaign/02_moving_throat/exact_boost/`)*: L = 64, N = 128, level 3,
   the throat from y = −8 moving +y, `core_lapse_freeze` with its window on the tracked throat (full inside r = 0.3,
   off from 0.8), `main3d_boostfix_5384c104-dirty`. Died at t = 44.67 (NaN in h11, level 3) when χ at the pit reached
   its floor (t = 44.60); trust window t ≤ 44.5; no checkpoints; closed out without movies (the user's word).
-- **Caveats.** One resolution. The resting level-4 throat inflates instead, so the branch a moving throat takes at the
-  production levels is untested. The death is numerical: the resting level-3 arm formed a horizon at this stage and
-  ran on. To be cited later (the user, 2026-09-30); not in the ledger yet.
+  `single_boost_p045_lbf_ml4_t060` *(pack, the same folder)*: the same params with max_level 4 (Δx 0.03125 at the
+  throat, one more regrid entry) and stop_time 60, the same binary, the second GPU node, 17:48–23:51 UTC 09-30 at
+  8.9 u/h. Died at t = 53.43 (NaN in h11, level 4); χ at the pit sat on or near its floor from t = 52.2; trust window
+  t ≤ 53; no checkpoints; closed out without movies, as the level-3 run.
+- **Caveats.** Two resolutions, both collapsing; the onset moves about 4 units later at level 4, so the collapse time
+  has no convergence order yet. The deaths are numerical: the resting level-3 arm formed a horizon at this stage and
+  ran on. The level-3 run is in the paper since 2026-09-30 (`clmBoost*` rows); the level-4 twin is not cited yet.
 
 ### The p = 0.25 exact-boost fly-by setup: verifications A and B (2026-09-29)
 

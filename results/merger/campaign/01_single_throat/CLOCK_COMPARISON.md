@@ -142,6 +142,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_boost_p045_csm_t050` | B | 32.6 | x248.2 / 32.6 | +1.18 | +1.56 | +1.85 | +2.18 | - | - | - | - | late (+0.87 dex) |
 | `single_rest_csm_t050` | A | 32.3 | x21.3 / 32.3 | +0.96 | +1.18 | +1.26 | +1.31 | - | - | - | - | same (-0.00 dex) |
 | `single_rest_csm_t050` | B | 32.3 | x21.3 / 32.3 | +0.96 | +1.18 | +1.26 | +1.31 | - | - | - | - | same (-0.00 dex) |
+| `single_boost_p045_lbf_ml4_t060` | A | 53.4 | x1660.7 / 52.9 | +0.44 | -0.42 | +1.26 | +1.42 | +1.52 | -0.42 | - | 6.5 | late (+0.11 dex) |
+| `single_boost_p045_lbf_ml4_t060` | B | 53.4 | x1660.7 / 52.9 | +0.44 | -0.42 | +1.26 | +1.42 | +1.52 | -0.42 | - | 6.5 | late (+0.11 dex) |
 | `single_boost_p045_lbf_t050` | A | 44.7 | x81.2 / 40.5 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
 | `single_boost_p045_lbf_t050` | B | 44.7 | x51.3 / 34.2 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
 | `s20_boost_p02` | A | 40.0 | x400.6 / 40.0 | +1.06 | +1.30 | +1.58 | +1.79 | +2.60 | - | - | - | late (+0.48 dex) |
@@ -321,7 +323,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 28 early, 14 same, 87 late, 90 too short, 58 restart arms (own clock only).
+Throats read at t = 30: 28 early, 14 same, 89 late, 90 too short, 58 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

@@ -1323,6 +1323,34 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-10-01 (05:10 UTC) — the moving throat's level-4 twin collapses too; the second node is free
+
+- **The level-4 twin** (`single_boost_p045_lbf_ml4_t060`, second node, 17:48–23:51 UTC 09-30, 8.9 u/h) died at
+  t = 53.43 (NaN in h11, level 4; stop 60). **It collapses like the level-3 run, although the resting level-4 throat
+  inflates.**
+  - R_min (A rows) is +1.4 % at t = 30 (level 3: +2.0 % at 29). It falls below its start at t = 38.6 and 1 % below
+    at 40.4 (level 3: 34.1 and 36.8), then reaches −4.2 % at t = 44, −11.4 % at 48 and −30.1 % at 53. The resting
+    level-4 throat (`single_hold_ml4_t100`) is +1.0 % at t = 53.
+  - ln(R_peak − R) e-folds in τ = 5.0–5.7 over fits from t = 44–48 to 53, and 4.3–4.6 over t = 40–48 as it leaves
+    the peak. For comparison: level 3 5.5–5.7, the resting throats 5.26 (level 4) and 5.88 (level 3).
+  - The pit lapse holds at 0.20–0.21 to t = 51, then rises to 0.25–0.30. χ at the pit touches its floor now and then
+    from t ≈ 6, as at level 3, and sits on or near it from t = 52.2. Max |K| is 0.74 at t = 53 and 5.4 at the NaN.
+  - The logged L2 H is the unmasked level-0 norm: 1.8–4.7e-3, with spikes up to 4.7e-2 at t = 37.9 (Traps: every
+    moving-pit norm needs the mask).
+  - The round-scan numbers carry the moving throat's +0.2–0.4 % bias. The shifted-ellipsoid fit was not run: the
+    earlier plotfiles were gone, but the slice caches remain.
+- **So the RESULT holds at a second resolution.** The moving throat collapses at levels 3 and 4, while at rest the
+  branch flips (level 3 collapses, level 4 inflates). The onset comes about 4 units later at level 4. The caveat "one
+  resolution" can go. Whether to cite the twin (a `clmBoost*` row, a sentence in Sec. III) is the user's call.
+- **Closed out** 05:00–05:10 UTC 10-01:
+  - trust window t ≤ 53;
+  - `table1_groups.tsv` (`-`);
+  - filed to `02_moving_throat/exact_boost/` beside the level-3 run;
+  - `closeout.sh` with `WHM_MOVIES=0`, as the level-3 run: no NaN in the death window, identity grep clean,
+    0 problems.
+  - Its three plotfiles (8.8 GB, t = 51–53) were wiped at 05:04 UTC (`MANIFEST_CLEANUP_2026-10-01`).
+  - The second node's card has been free since 23:51 UTC 09-30. Its next launch waits for the user's go.
+
 ### 2026-09-30 (17:55 UTC) — NOISE-1 closed out: the level-1 noise is under-dissipation; the moving throat's level-4 twin is live
 
 - **NOISE-1** (`merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000`, second node, 13:27–17:40 UTC, 7.15 u/h;

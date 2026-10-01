@@ -53,6 +53,7 @@ t0_single_boost_p045_lbc	02_moving_throat/contraction_t0	launch manifest	main3d_
 single_boost_p012_csm_t050	02_moving_throat/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	50.0		2.1232549306e-03	n/a	ok	unknown	ok
 single_boost_p045_csm_t050	02_moving_throat/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	50.0		2.1977342375e-03	n/a	ok	unknown	ok
 single_rest_csm_t050	02_moving_throat/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	50.0		2.1174179769e-03	n/a	ok	unknown	ok
+single_boost_p045_lbf_ml4_t060	02_moving_throat/exact_boost	launch manifest	main3d_boostfix_5384c104-dirty_2026-09-29.ex	5384c104-dirty	pass	0	0	4	64.0	128	60.0		2.2701466330e-03	n/a	ok	unknown	ok
 single_boost_p045_lbf_t050	02_moving_throat/exact_boost	launch manifest	main3d_boostfix_5384c104-dirty_2026-09-29.ex	5384c104-dirty	pass	0	0	3	64.0	128	50.0		2.2701466330e-03	n/a	ok	unknown	ok
 s20_boost_p02	02_moving_throat	reconstructed			none (launched before 2026-09-24)	0	0	3	64.0	128	40.0		2.0954624849e-03	n/a	ok	unknown	ok
 ctrl_flip_d12_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	30.0		3.6629450216e-03	n/a	ok	unknown	ok

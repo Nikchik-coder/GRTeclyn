@@ -112,6 +112,7 @@ t = 51.4+) are evidence of a common horizon.
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
 | single_boost_p045_lbf_t050 | RERUN of single_boost_p045_lb_t050 with the slicing source frozen at the moving puncture (2026-09-29, the user's go | 0.00 | 44.67 | NaN at t = 44.67 COLLAPSES ON ITS OWN MODE WHILE MOVING: R_min +2.0 % at t = 29, 1 % below its start at t = 36.8, -9.2 % at t = 44 (level-3 scan A rows); ln(R_peak - R) e-folds in 5.5-5.7 against the resting level-3 throat's 5.88 (single_hold_t100), the same collapse branch. The pit lapse held (0.215-0.233 from t = 24); no boundary reflection reaches it. Died at t = 44.67 (NaN in h11, level 3) when chi at the pit reached its floor (t = 44.60); trust window 44.5. One resolution. To be cited (the user, 2026-09-30). | 0.06 | - | 2.336e-01 | 2.948e-03 |
+| single_boost_p045_lbf_ml4_t060 | LEVEL-4 TWIN of single_boost_p045_lbf_t050 (2026-09-30, the user's go 16:52 UTC): the same exact-boost throat (p = 0.45, v = 0.4104, momentum model 1, the per-throat lapse freeze) with one knob, max_level 3 -> 4 (dx 0.03125 at the throat), to t = 60 -- does the moving throat follow the resting level-4 throat (single_hold_ml4_t100, which inflates) as the level-3 one followed the resting level-3 throat into collapse? | 0.00 | 53.43 | NaN at t = 53.43 | 0.03 | - | 2.936e-01 | 1.783e-03 |
 
 ## `03_two_throats`
 
