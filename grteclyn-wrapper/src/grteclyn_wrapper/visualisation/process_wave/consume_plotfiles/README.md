@@ -44,8 +44,10 @@ command line, and says so in its log. `restart_consumer.sh` appends its flags th
 
 ## Spectral MOTS (`--mots-spectral`, own files `mots_spectral.dat`, `mots_spectral_alm.jsonl`)
 
-Off by default; on in the production head-on profile (`headon-modes-prod`) since
-2026-10-01.
+Off by default. Since 2026-10-01 it is on in every binary launch profile (`lib/consumer_profiles.sh`):
+- head-on: the defaults;
+- orbits: level 2, ±6, ℓ ≤ 8, seeds 5.0 / 3.5.
+`bbh`, `chi` and `inflation` do not have it: their plotfiles lack the scalar or h_ij, or the horizon is round.
 - **Why.** The horizon scan (below) and the oriented scan report the outermost fully trapped
   *round* sphere, which sits inside a deformed MOTS. On the mode-3 head-on's t = 51–60 slices
   they read R 4–11 % and 3–7 % low (HFL-ho). The true surface was found offline, which meant

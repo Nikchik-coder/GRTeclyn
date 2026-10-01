@@ -101,6 +101,19 @@ whm_frames_without() {
 }
 WHM_FRAMES_FULL="$(whm_frames_default)"
 
+# The common MOTS itself on every plotfile, before the consumer deletes it (2026-10-01): the
+# round scan reads a deformed remnant 4-11 % low, and an offline finder needed every plotfile
+# kept.  Every binary profile carries it; the run's last plotfiles get it in the end-of-run
+# drain too (consumer_args.extra, consume_plotfiles/README.md).
+# Head-on: the defaults (level 3, +-4.5, l <= 6, seeds 3.2 / 2.6), checked end to end on leg 3
+# replayed (MOTS-e2e: rows equal the offline finder to 8e-8).
+_WHM_MOTS_HEADON='--mots-spectral'
+# Orbits: the remnant forms larger and less round and the level boxes follow the pair, so
+# level 2 at +-6, l <= 8 (+-9 fell off level 2 on the spiral at t = 49); the live spiral and
+# fly-by run this window since 2026-10-01.  A plotfile with no common MOTS costs a cold
+# search from the seeds (~2 min at level 2), inside a production plot interval (15-26 min).
+_WHM_MOTS_ORBIT='--mots-spectral --mots-spectral-level 2 --mots-spectral-half 6 --mots-spectral-lmax 8 --mots-spectral-seeds 5.0 3.5'
+
 consumer_profile() {
   local name="${1:?consumer_profile <name> [zoom] [coord]}"
   local zoom="${2:-32}" coord="${3:-32}" center="${4:-}"
@@ -112,31 +125,32 @@ consumer_profile() {
     headon)
       echo "--areal-radius --areal-min-radius 0.5 --radii 10 14 18" \
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
-           "--horizon-common-level 3 --horizon-half 3.0" \
+           "--horizon-common-level 3 --horizon-half 3.0 ${_WHM_MOTS_HEADON}" \
            "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     headon-modes)
       echo "--areal-radius --areal-min-radius 0.5 --radii 10 14 18" \
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
-           "--horizon-common-level 3 --horizon-half 3.0" \
+           "--horizon-common-level 3 --horizon-half 3.0 ${_WHM_MOTS_HEADON}" \
            "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}" \
            "--scalar-modes --scalar-mode-ells 0 1 2"
       ;;
     headon-scout)
       echo "--areal-radius --areal-min-radius 0.5" \
-           "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
+           "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895 ${_WHM_MOTS_HEADON}" \
            "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     orbit)
       echo "--frames-fields ${WHM_FRAMES_FULL}" \
-           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} ${_WHM_MOTS_ORBIT}"
       ;;
     orbit-modes)
       echo "--frames-fields ${WHM_FRAMES_FULL}" \
-           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2"
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2" \
+           "${_WHM_MOTS_ORBIT}"
       ;;
     orbit-modes-scan)
       # orbit-modes plus the per-mouth horizon scan in the window the level-5 fly-by
@@ -148,7 +162,7 @@ consumer_profile() {
       echo "--frames-fields ${WHM_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL} --scalar-modes --scalar-mode-ells 0 1 2" \
            "--horizon-scan --horizon-track ${horizon_track} --horizon-r-exact 3.8895" \
-           "--horizon-common-level 3 --horizon-half 3.0"
+           "--horizon-common-level 3 --horizon-half 3.0 ${_WHM_MOTS_ORBIT}"
       ;;
     bbh)
       echo "--frames-fields $(whm_frames_without phi Pi scalar_activity local_speed)" \
@@ -200,11 +214,9 @@ consumer_profile() {
       # the last one wins.  The common scan's window is 4.0, not headon-modes' 3.0: with 3.0 the old
       # level-5 arm lost the remnant MOTS past the scan edge (r = 2.79) after t = 37, and the mode-3
       # head-on's consumer had to be restarted with 4.0 at t = 18 (2026-09-28).
-      # --mots-spectral (2026-10-01): the common MOTS itself on every plotfile before it is
-      # deleted -- the round scan reads the deformed remnant 4-11 % low (HFL-ho), and the
-      # offline finder needed every plotfile kept (5.5 GB a unit).
+      # The 3D MOTS comes with headon-modes (_WHM_MOTS_HEADON, above).
       echo "$(consumer_profile headon-modes "${zoom}" "${coord}" "${center}") --radii 10 14 18 20 30 44" \
-           "--horizon-half 4.0 --mots-spectral"
+           "--horizon-half 4.0"
       ;;
     none)
       echo ""

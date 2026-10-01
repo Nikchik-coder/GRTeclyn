@@ -1353,6 +1353,11 @@ need to be analysed and packed").
     writes its flags there. The two live runs' files were written by hand.
   - A replayed drain (the spiral's launch flags only, on t = 49 and 50) ran the finder from the file and wrote a row
     of nan. Keep-last 3 is unchanged.
+- **Every binary launch profile carries the finder** (the user's go, ~09:00 UTC).
+  - The head-on profiles use the defaults (level 3, ±4.5, ℓ ≤ 6). The orbit profiles use the live runs' window
+    (level 2, ±6, ℓ ≤ 8, seeds 5.0 / 3.5).
+  - `bbh`, `chi` and `inflation` do not have it.
+  - Each production profile's arguments parse in the consumer.
 
 ### 2026-10-01 (07:25 UTC) — HFL-ho: the head-on horizon is steady over t = 51–60; both scans under-read it
 

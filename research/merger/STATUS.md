@@ -27,8 +27,9 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
   - The 3D spectral finder there gives a steady R 4.7776 → 4.7735.
   - That finder has existed since 09-21 (it found the old spiral's MOTS that the scans missed) but stayed offline.
 - **Fixed in the consumer (10-01).**
-  - `--mots-spectral` runs the 3D finder on every plotfile before deleting it (~20 s warm); it is on in
-    `headon-modes-prod`.
+  - `--mots-spectral` runs the 3D finder on every plotfile before deleting it (~20 s warm). It is in every binary
+    launch profile since 10-01 (the user's go): head-on (level 3, ±4.5) and orbit (level 2, ±6, ℓ ≤ 8); not bbh,
+    chi or inflation.
   - Offline test on HFL-ho's 11 plotfiles: R matches to 8e-8.
   - End to end, MOTS-e2e passed (closed out 08:45, below): its rows at t = 51–55 equal the offline ones to 8e-8,
     the end-of-run drain's included.

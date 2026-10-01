@@ -153,6 +153,9 @@ what the claims check or the identity grep flags, and report in a few lines.
 - Every quoted number is a row in `research/merger/article/claims/ledger_*.tsv` and
   reaches the text as a `\clm...` macro from the generated `numbers.tex`. Change the
   ledger, run `claims.py check`, then `claims.py tex` — never edit `numbers.tex`.
+- Horizon numbers (R, M_MS, formation times) come from the 3D MOTS finder: `small_data/mots_spectral.dat`, which
+  every binary profile writes on every plotfile, or `headon_first_law.py` offline. Never take them from the round or
+  oriented scans, which read a deformed horizon 3–11 % low (2026-10-01). A row of nan means no MOTS on that plotfile.
 - The paper states verified results only. It has no failure narratives, no "not computed / not measured here" and
   no mention of data that was not saved. Anything a simulation or analysis could settle goes into `GPU_PLAN.md`
   with a cost, not into the text. The Scope paragraph keeps only model assumptions.
