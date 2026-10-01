@@ -2990,6 +2990,8 @@ life of the spiral's horizon.**
 
 - **The spiral wall is censored under η = 4 too, at levels 5 AND 3, and it is the same horizon as the standard gauge's** (2026-09-25, `merge_twin_p012_eta4_lvl5_t066_r05000` + the R1 keeps; probe 2 locates the η = 4 head-on's MOTS). M_MS within 0.3 % of the standard level-5 hunt at equal t; η moves only the coordinate size (h 3.9–5.0 vs 2.1–3.1), which put it outside every earlier hunt's box. Harmonic class: a θ_out = 0 surface 0.03 before its NaN, not trapped — open. Registry rows; §3 "2026-09-25 (morning)". Not yet in the paper.
 
+- **No d = 12 merger at any momentum — the approach is longer than the runaway's clock** (2026-10-01). `spiral_d12_pin025_lvl3_t040_lbf_csm` (SCOUT-d12pin, L = 64 level 3, the fly-by pair's boosted-pair mode-3 solve with |p| = 0.247 per mouth turned mostly inward: p_rad 0.24, p_tan 0.06; stopped by hand at t = 33.86, no NaN). The mouths inflate far faster than the p = 0.12 spiral's — R_min +4.7 % by t = 8, +22 % by t = 16, +72 % by t = 24 (overlapping scan spheres past sep < 5.6: indicative) — because the closing pair deepens the companion kick seeding the throat's tau ~ 5.5 unstable mode; the infall stalls against the swelling throats at separation ~ 2.2 and whirls; the 3D finder sees no common MOTS through t = 33. With the tangential p = 0.12 (live, inflating at t = 64) and p = 0.25 (live, inflating at t = 50) arms this closes the d = 12 family: the ~20-unit approach always loses to the exponential. The merger design point moves to d = 8, small tangential p (SCOUT-d8p, launched 12:52 UTC 10-01). Packed `05_binary_spiral/scout_merger/`, no movies; registry row.
+
 ## 5. Open questions
 
 

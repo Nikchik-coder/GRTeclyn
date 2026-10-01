@@ -167,73 +167,25 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): SCOUT-d12pin live on card 0 since ~10:05 UTC 10-01
+## Second node (one H100): SCOUT-d8p live on card 0 since 12:52 UTC 10-01
 
-**SCOUT-d12pin `spiral_d12_pin025_lvl3_t040_lbf_csm` (the user's go ~10:00 UTC 10-01): the d = 12 plunging spiral's
-scout.** Both live d = 12 runs inflate without merging, and no tangential p at d = 12 can beat the runaway (contact is
-pinned at free-fall t ~ 38-40, where the csm spiral already lost), so the momentum turns mostly inward: |p| = 0.247
-per mouth, p_radial 0.24 + p_tangential 0.06 (the fly-by's clockwise sense), contact expected t ~ 20 with the mouths
-only a few % inflated — the window where the d = 8 head-on's merger won (+10 % at t ~ 23, MOTS at 22).
-- Base: verification B's packed params (`06_binary_flyby/verify_p025/`, the same |p| = 0.25 boosted-pair solve, L = 64,
-  N = 128, level 3) line for line; changed only momentum direction, stop 20 → 40, checkpoints every 5 keeping the
-  newest 3 (the user's word), the name. Template `params_spiral_d12_pin025_lvl3_t040_lbf_csm.txt`.
-- `main3d_boostpair_91ed17cd`, profile `orbit-modes-scan` (per-mouth + common round scan at level 3, half 3.0, and
-  the 3D MOTS finder with the orbit window — "the updated consumer", the user's word) with zoom 40, coord 32.
-- Start verified 10:20 UTC: solve 19 Newton passes, far sides the isolated throat's to 5.5e-6, one-body a 2.0000 /
-  m 1.0000 each, M_ADM 2.135 (verification B: 2.117), no NaN, frame 0 the reference's two pits at +-6, Chk00000
-  written, 33.6 GB on card 0. Measured pace 9.3 u/h -> t = 40 in ~4.3 h, done ~14:30 UTC 10-01. If contact beats the runaway, the level-5
-  production rerun follows from the fly-by's packed params with only the momentum angle and the name changed
-  (~20-25 h, needs the user's go).
-- MOTS-ho1/2/3 stay queued behind it on this card.
+**SCOUT-d12pin closed out (12:55 UTC 10-01; `05_binary_spiral/scout_merger/`, no movies, frames kept): NO d = 12
+MERGER AT ANY MOMENTUM.** `spiral_d12_pin025_lvl3_t040_lbf_csm` (the inward-momentum scout) was stopped by hand at
+t = 33.86 with the verdict in, no NaN: the mouths inflate much faster than the gentle spiral's (R_min +4.7 % by
+t = 8, +22 % by 16, +72 % by 24 — the closing pair deepens the companion kick seeding the tau ~ 5.5 mode), the
+infall stalls at separation ~ 2.2 against the swelling throats, no common MOTS through t = 33. With the tangential
+p = 0.12 and 0.25 arms this closes the d = 12 family: the ~20-unit approach always loses to the exponential.
+Its scratch (41 GB) wiped 12:49 UTC (`MANIFEST_CLEANUP_2026-10-01`); its stop cut the drain's last mots row
+(t = 33.5 would be nan anyway); manifest closed by hand (`run_manifest.py finish`, stop_campaign leaves "running",
+which also blocks the pack for 30 min).
 
-
-**MOTS-e2e closed out (08:45 UTC 10-01; `04_binary_headon/first_law/`, no movies, frames kept).**
-`merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` (leg 3 again, t = 50–55, `headon-modes-prod` with
-`--mots-spectral`) reached t = 55.01 with no NaN.
-- Its consumer wrote a 3D-MOTS row on every plotfile, the drain's included. The rows at t = 51–55 equal HFL-ho's
-  offline analysis (R to 8e-8).
-- Its 3 plotfiles (17 GB) were pruned 09:33 UTC 10-01 from a session on this node (`MANIFEST_CLEANUP_2026-10-01`); 557 GB free.
-
-**HFL-ho closed out (07:25 UTC 10-01; `04_binary_headon/first_law/`, no movies, frames kept).**
-`merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` reached t = 60 (06:50 UTC) with no NaN, and every
-stream is bit-identical to leg 3's.
-- **The first law:** the common MOTS (spectral finder, level 3) is steady over t = 51–60: R 4.7776 → 4.7734
-  (t = 58) → 4.7735, while it rounds. The measured ΔR −0.00411 lies between the phantom-only prediction (−0.00704)
-  and flux plus shear (−0.00252); the late regrowth comes from the shear.
-- **Both scans under-read it there:** the round scan by 11 → 4 %, the oriented scan by 7.4 % (t = 55) and 3.2 %
-  (t = 60). Fig. 5(a,b)'s gold line and its end values rest on them. MOTS-ho (queued, below) would settle it; the
-  user's call.
-- Its 11 plotfiles (60 GB) stay on scratch on the user's word. Details in GPU_PLAN ["2026-10-01 (07:25 UTC)"].
-
-**The level-4 twin closed out (05:10 UTC 10-01):** `single_boost_p045_lbf_ml4_t060` died at t = 53.43 (23:51 UTC 09-30, NaN in h11, level 4; stop 60).
-It collapsed like the level-3 run (RESULT, above). Closed out 05:10 UTC 10-01: filed to `02_moving_throat/exact_boost/`,
-no movies (as the level-3 run), trust window t ≤ 53; its three plotfiles (8.8 GB) wiped 05:04 UTC.
-
-**NOISE-1 closed out (17:50 UTC): the level-1 noise is under-dissipation.** `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000`
-(leg 3 again from `Chk05000` with σ 0.1 → 0.3) reached t = 80, no NaN, and has no level-1 noise: (3,2) at R = 20
-1.0e-5 against leg 3's 2.9e-4 over t = 75–80; the K ring 7.5e-6 against 1.0e-4 at t = 80; L2 H 1.01e-4 and falling
-against 1.37e-4 and rising; the rebuilt level-1 constraint 2–7e-5, flat (leg 3 at t = 100: 1e-2). Waves on R = 36/44
-and the remnant's MOTS unchanged. Packed in `campaign/08_convergence/` (`VALIDATION.md`), no movies; its plotfiles
-wiped 17:48 UTC on the user's word.
-
-
-**The mode-3 production head-on (legs 1–3) is done, validated and packed** (13:06 UTC 09-30,
-`campaign/04_binary_headon/csm/`; tables in leg 3's `VALIDATION.md`; movies per leg and the three legs as one film
-t = 0–100 in `runs/.../04_binary_headon/csm/headon_csm_L128_stitched_t0_t100/movies/`).
-- Chain: leg 1 (level 5, t = 0–35; died at t = 38.845 at the merged core, as the uncheckpointed run) → leg 2
-  (level 6 from Chk03500, through the wall, stopped by hand at t = 50.80) → leg 3 (level 4 from Chk05000, t = 100
-  at 11:25 UTC, no NaN). Seams continuous (norms to 1.4 % / 0.1 %, in-code Ψ4 identical on the overlaps).
-- Result: common MOTS first at t = 22 (R 5.02, M_MS 2.69), found every unit t = 36–100; R 4.25–4.70, M_MS
-  2.29–2.39; at t = 100 R 4.69, M_MS 2.373 by the oriented scan (M_ADM 2.357). The ringdown swings repeat the
-  superposed run's (r Ψ4 (2,0) at R = 10: +0.0240, −0.0207, +0.0126, −0.0066 at t = 28.8, 44.2, 63.0, 81.7).
-- **Caveat (new, see Traps): numerical noise on the level-1 cube from t ≈ 65**, the late rise of L2 H. In-code Ψ4:
-  R ≤ 20 good to t ≈ 80, R = 28 to t ≈ 90, R = 36 / 44 to t = 100. Remnant and MOTS untouched. No trust-window
-  row (the limits are per sphere); the films run to t = 100 on the user's word and show the speckle from t ≈ 85.
-- Scratch on this node: the chain's plotfiles wiped 13:38 UTC 09-30 and NOISE-1's 17:48 UTC, both on the user's
-  word (`MANIFEST_CLEANUP_2026-09-30`); the twin's 05:04 UTC 10-01 at its close-out (`MANIFEST_CLEANUP_2026-10-01`).
-  Left: leg 1's `Chk03500` (26 GB) and leg 2's `Chk05000` (28 GB), MOTS-ho's inputs, plus HFL-ho's 11 plotfiles
-  (60 GB, kept on the user's word 10-01). 557 GB free at 07:25 UTC 10-01.
-
+**SCOUT-d8p `spiral_d8_p010_lvl3_t040_lbf_csm` (the user's go 12:48 UTC): the collapsing-spiral design point.**
+d = 8 (the head-on's separation, whose common MOTS at t = 22 beat +10 % inflation) with a small tangential twist,
+p = 0.10 per mouth, the fly-by's clockwise sense. The d12 scout's params with only centers +-6 -> +-3, momentum ->
+tangential 0.10, the name; same L = 64 level-3 grid, stop 40, checkpoints every 5 keeping 3, `orbit-modes-scan`
+(3D finder, orbit window), `main3d_boostpair_91ed17cd`. ~3 h at the d12 scout's pace -> done ~16:00 UTC 10-01.
+If it merges (common MOTS), the level-5 production follows (the user's go needed); if it inflates past contact,
+p = 0.05 is the fallback scout. MOTS-ho1/2/3 stay queued behind it.
 ## The production set (shared box; the user, 2026-09-28 09:00 UTC)
 
 L = 128, N = 256, max_level 5, tagging_L 64, sponge 48/64, plots every 1.0, mode-3 data. Status: **head-on**
