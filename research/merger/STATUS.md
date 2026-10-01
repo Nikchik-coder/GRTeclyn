@@ -167,7 +167,23 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): free since 08:37 UTC 10-01 — its next launch waits for the user's go
+## Second node (one H100): SCOUT-d12pin live on card 0 since ~10:05 UTC 10-01
+
+**SCOUT-d12pin `spiral_d12_pin025_lvl3_t040_lbf_csm` (the user's go ~10:00 UTC 10-01): the d = 12 plunging spiral's
+scout.** Both live d = 12 runs inflate without merging, and no tangential p at d = 12 can beat the runaway (contact is
+pinned at free-fall t ~ 38-40, where the csm spiral already lost), so the momentum turns mostly inward: |p| = 0.247
+per mouth, p_radial 0.24 + p_tangential 0.06 (the fly-by's clockwise sense), contact expected t ~ 20 with the mouths
+only a few % inflated — the window where the d = 8 head-on's merger won (+10 % at t ~ 23, MOTS at 22).
+- Base: verification B's packed params (`06_binary_flyby/verify_p025/`, the same |p| = 0.25 boosted-pair solve, L = 64,
+  N = 128, level 3) line for line; changed only momentum direction, stop 20 → 40, checkpoints every 5 keeping the
+  newest 3 (the user's word), the name. Template `params_spiral_d12_pin025_lvl3_t040_lbf_csm.txt`.
+- `main3d_boostpair_91ed17cd`, profile `orbit-modes-scan` (per-mouth + common round scan at level 3, half 3.0, and
+  the 3D MOTS finder with the orbit window — "the updated consumer", the user's word) with zoom 40, coord 32.
+- ~2-3 h to t = 40 (verification B's grid): done ~12:30-13:30 UTC 10-01. If contact beats the runaway, the level-5
+  production rerun follows from the fly-by's packed params with only the momentum angle and the name changed
+  (~20-25 h, needs the user's go).
+- MOTS-ho1/2/3 stay queued behind it on this card.
+
 
 **MOTS-e2e closed out (08:45 UTC 10-01; `04_binary_headon/first_law/`, no movies, frames kept).**
 `merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` (leg 3 again, t = 50–55, `headon-modes-prod` with
