@@ -73,6 +73,7 @@ orbit_d12_p012	03_two_throats	reconstructed			none (launched before 2026-09-24)	
 merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000	04_binary_headon/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	4	128.0	256	100.0	yes		n/a	MISMATCH: d8: separation = 0.02, name says 8.0	unknown	ok
 merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm	04_binary_headon/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	5	128.0	256	100.0		1.1867546769e-03	n/a	ok	unknown	ok
 merge_headon_flip_d8_v1_L128_lvl6from35_scalar_chk_t100_csm_r03500	04_binary_headon/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	6	128.0	256	100.0	yes		n/a	MISMATCH: d8: separation = 0.02, name says 8.0	unknown	ok
+merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000	04_binary_headon/first_law	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	4	128.0	256	60.0	yes		n/a	MISMATCH: d8: separation = 0.02, name says 8.0	unknown	ok
 merge_headon_flip_d12	04_binary_headon	reconstructed	main3d.gnu.MPI.CUDA.ex	unstamped	none (launched before 2026-09-24)	0	0	3	64.0	128	60.0		2.9899481192e-03	n/a	ok	unknown	ok
 merge_headon_flip_d6_m05_t100	04_binary_headon	reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	3	64.0	128	100.0		4.4340408703e-03	n/a	ok	unknown	ok
 merge_headon_flip_d8_cs_lvl3_t030	04_binary_headon	launch manifest	main3d_cssolve_c5e80085-dirty_2026-09-27.ex	c5e80085-dirty	pass	0	0	3	64.0	128	30.0		3.1921818555e-03	n/a	ok	unknown	ok

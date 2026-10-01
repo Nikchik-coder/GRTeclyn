@@ -1269,6 +1269,8 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   Kreiss–Oliger σ the noise does not grow (NOISE-1, the next section).
 - **Caveat: the round scan.** R from the round scan moves by 10 % while the surface is deformed (3.85 → 4.66 over
   t = 36–39); the turn at t = 48 and the rise to t = 62 are not separated from that effect. M_MS moves by 4 %.
+  Over t = 51–60 they are: the MOTS itself is steady (R 4.778 → 4.773) while the scan's R rises 4.25 → 4.58
+  (HFL-ho, below).
 - **Runs.** `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` (t = 0–35), `merge_headon_flip_d8_v1_L128_lvl6from35_scalar_chk_t100_csm_r03500` (t = 35–50), `merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000` (t = 50–100) *(pack,
   `campaign/04_binary_headon/csm/`)*: `main3d_csmatch_5f988dbc`; the validation tables are in the last leg's
   `VALIDATION.md`, the oriented scans in its `ah_oriented_scan_t098/099/100.dat`. Movies per leg, and the three
@@ -1288,6 +1290,25 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
 - **Runs.** `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` *(pack, `campaign/08_convergence/`)*
   against leg 3 (`04_binary_headon/csm/`): `main3d_csmatch_5f988dbc`; the tables are in its `VALIDATION.md`. Frames
   kept, no movies.
+
+### The head-on's horizon over t = 51–60: steady, its change between the first law's two bounds (2026-10-01)
+- **Claim.** The data are leg 3's plotfiles, replayed by HFL-ho (bit-identical to leg 3 over t = 50–60). The common
+  MOTS is found without a shape assumption (spectral finder plus Newton, ℓ ≤ 6).
+  - It shrinks by 0.09 % over t = 51–58 (R 4.7776 → 4.7734, M_MS 2.3888 → 2.3867) and regrows by 0.003 % to
+    t = 60.
+  - Meanwhile it rounds: axes 3.341 / 3.025 → 3.252 / 3.168, prolate along the collision axis.
+  - Over t = 51–60 the measured ΔR = −0.00411 (level 2: −0.00405). It lies between the spherical first law's two
+    predictions: −0.00704 from the phantom's influx alone, −0.00252 with the shear added.
+  - The turn to growth at t = 58 comes from the shear: the flux-plus-shear rate turns at t = 57 and matches the
+    measured rate at t = 59–60.
+  - The round scan's rise over the same units (R 4.25 → 4.58) is the scan's, not the horizon's.
+- **Caveat.** The prediction is the spherical law averaged over a surface 3–10 % out of round, and closing the
+  budget takes about 65 % of the shear term. The check covers ten units only.
+- **Runs.** `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` *(pack, `campaign/04_binary_headon/first_law/`)*:
+  - binary `main3d_csmatch_5f988dbc`;
+  - the tables are in its `VALIDATION.md`, the per-plotfile surfaces in `first_law_L{2,3}.json`;
+  - the script is `headon_first_law.py`;
+  - frames kept, no movies; its plotfiles stay on the second node's scratch on the user's word.
 
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),

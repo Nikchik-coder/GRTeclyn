@@ -1323,6 +1323,54 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-10-01 (07:25 UTC) — HFL-ho: the head-on horizon is steady over t = 51–60; both scans under-read it
+
+- **HFL-ho** (`merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000`, second node, 05:25–06:50 UTC, 7.2 u/h) is
+  leg 3 again from leg 2's `Chk05000`, stop 60, with every plotfile kept. It reached t = 60.01, exit 0, no NaN.
+  - **Every stream is bit-identical to leg 3's** over t = 50–60: the 21 in-code Ψ4 modes, the norms, the diagnostics,
+    and the consumer's t = 51–59. So its plotfiles are leg 3's.
+- **The first law** (`headon_first_law.py`: the MOTS by the spectral finder plus Newton to |θ_out,lm| < 1e-6, ℓ ≤ 6,
+  level 3; tables in the pack's `VALIDATION.md`):
+  - **The MOTS is steady.** R goes 4.7776 (t = 51) → 4.7734 (t = 58, −0.09 %) → 4.7735 (t = 60). M_MS goes
+    2.3888 → 2.3868, 1.25 % above M_ADM.
+  - It rounds meanwhile: axes 3.341 / 3.025 → 3.252 / 3.168, prolate along the collision axis.
+  - ΔR over t = 51–60:
+    - measured −0.00411;
+    - the phantom's influx alone predicts −0.00704;
+    - with the shear added, −0.00252.
+  - The measured value lies between, and closing the budget takes about 65 % of the shear term. The law is the
+    spherical one, averaged over a surface 3–10 % out of round.
+  - **The regrowth from t = 58 comes from the shear.** Flux plus shear turns positive at t = 57 and matches at
+    t = 59–60 (+1.13 / +0.96e-4 against +0.82 / +1.12e-4 per unit). Sec. VI's reading holds here: the phantom can
+    only shrink the horizon, and the only positive influx is gravitational.
+  - Level 2 gives ΔR −0.00405 (R 3e-4 lower, rates within a few %); ℓ ≤ 8 at t = 51–52 gives the same rates.
+  - Level 4 cannot read the horizon: its ±2.5 cube lies inside it (r = 3.0–3.4). Since 3ebfad99 the script refuses
+    such a box.
+- **Both scans under-read the horizon on these slices.**
+  - The round scan (`horizon_scan.dat`, centre C) reads R 4.247 → 4.580 over t = 51–60, i.e. −11 % → −4 %. Its "rise"
+    is the surface rounding.
+  - The oriented scan (`ah_oriented_scan.py`, run as for leg 3 at t = 98–100) reads 4.421 at t = 55 (−7.4 %) and
+    4.622 at t = 60 (−3.2 %).
+  - **So Fig. 5(a,b)'s gold line and its caption numbers rest on scans that under-read a deformed horizon.**
+    - The caption's "~1 % wobble about the settle" is 3–11 % at t = 51–60.
+    - Its end values (oriented scan at t = 100: R 4.69, within 0.6 % of 2 M_ADM; M_MS 0.7 % above M_ADM) carry an
+      unmeasured under-read. The bias shrinks as the surface rounds.
+    - The text is not edited: that is the user's call.
+  - **MOTS-ho would settle it** (proposed, not launched). Each replay uses the packed params with only the stop and
+    the name changed, keeps every plotfile, and feeds `headon_first_law.py`:
+    - leg 3 again from `Chk05000` to t = 100: ~7 h, ~275 GB;
+    - leg 2 again from `Chk03500` (t = 35–50, level 6): ~7.5 h, ~100 GB;
+    - leg 1 from t = 0 (~13 h), only if the birth at t = 22 (R 5.02) is to be re-read too.
+    - Both checkpoints exist only on the second node's scratch.
+- **Kept on the user's word:** HFL-ho's 11 plotfiles (60 GB, t = 51–60 and 60.01). Leg 1's `Chk03500` (26 GB) and
+  leg 2's `Chk05000` (28 GB) also stay; they are MOTS-ho's inputs.
+- **Closed out** 07:00–07:25 UTC:
+  - `table1_groups.tsv` (`-`);
+  - filed to `04_binary_headon/first_law/`;
+  - `closeout.sh` with `WHM_MOVIES=0`, frames kept: no NaN in the death window, identity grep clean, 0 problems;
+  - the first-law tables and caches added to the pack.
+  - The second node's card has been free since 06:50 UTC. Its next launch waits for the user's go.
+
 ### 2026-10-01 (05:10 UTC) — the moving throat's level-4 twin collapses too; the second node is free
 
 - **The level-4 twin** (`single_boost_p045_lbf_ml4_t060`, second node, 17:48–23:51 UTC 09-30, 8.9 u/h) died at
