@@ -1323,6 +1323,37 @@ need to be analysed and packed").
   Chk05700 (26 G, G4's input) and Chk03600 (20 G, the t = 36 seed G8/G9 restart from). Also
   kept: the cited p045_t200 slice cache. Every hunt log is in the `_keep_*` folders.
 
+### 2026-10-01 (08:50 UTC) — the 3D MOTS on every plotfile: MOTS-e2e passes, the orbit consumers have it, no plotfile skipped
+
+- **MOTS-e2e** (`merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000`, second node, 07:54–08:37 UTC,
+  7.2 u/h) is leg 3 again from `Chk05000` to t = 55, with `headon-modes-prod` (now with `--mots-spectral`) and
+  keep-last 3. It reached t = 55.01, exit 0, no NaN.
+  - **The consumer's 3D finder works end to end.** It wrote a row on every plotfile, including the end-of-run
+    drain's (t = 55, 55.01).
+  - Its rows at t = 51–55 equal HFL-ho's offline level-3 analysis of the same bit-identical slices: R to 8e-8,
+    M_MS to 1e-8, σ² to 5e-6.
+  - Newton from the previous surface takes 6 iterations (~20 s); the cold start at t = 51 took ~3 min.
+  - Its first chi frame is byte-identical to HFL-ho's. The consumer kept pace and left the last 3 plotfiles.
+  - Closed out: `table1_groups.tsv` (`-`), filed to `04_binary_headon/first_law/`, `closeout.sh` with
+    `WHM_MOVIES=0`. Its 3 plotfiles (~16.5 GB) are still on the second node's scratch; prune them from a session
+    there.
+- **The orbit consumers** (first node) run the finder.
+  - Restarted at 08:24 / 08:25 UTC with level 2, ±6, ℓ ≤ 8, seeds 5.0 / 3.5; again at 08:42 / 08:43 onto the code
+    that writes a row of nan where no MOTS is found.
+  - SIGTERM stopped each idle watcher; `restart_consumer.sh --check` was OK every time (frames kept, streams
+    continuous).
+  - Spiral t = 50: no common MOTS (both seeds stall at R 5.40, θ_out rms 6e-2); the round scan agrees. Fly-by
+    t = 41 (offline test): none.
+  - Tested on the live slices first. With ±9 the spiral fell back to level 1 (its level 2 spans −10..+8 in y). A
+    cold search costs ~1 min at level 1, ~2.5 min at level 2 with ±6, and 7 min at level 2 with ±9.
+- **No plotfile skipped** (the user, ~08:30: "processing should be done on all plt files").
+  - `run_single.sh`'s end-of-run drain ran with the launch flags, so a restarted consumer's extra extraction never
+    reached a run's last plotfiles.
+  - Now every consumer started in a run dir appends `./consumer_args.extra` (`driver.py`), and `restart_consumer.sh`
+    writes its flags there. The two live runs' files were written by hand.
+  - A replayed drain (the spiral's launch flags only, on t = 49 and 50) ran the finder from the file and wrote a row
+    of nan. Keep-last 3 is unchanged.
+
 ### 2026-10-01 (07:25 UTC) — HFL-ho: the head-on horizon is steady over t = 51–60; both scans under-read it
 
 - **HFL-ho** (`merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000`, second node, 05:25–06:50 UTC, 7.2 u/h) is

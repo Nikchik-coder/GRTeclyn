@@ -1310,6 +1310,15 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   - the script is `headon_first_law.py`;
   - frames kept, no movies; its plotfiles stay on the second node's scratch on the user's word.
 
+### The consumer's 3D horizon finder, validated end to end (MOTS-e2e, 2026-10-01)
+- **Claim.** With `--mots-spectral` the plotfile consumer finds the common MOTS on every plotfile before deleting it.
+  - On leg 3 replayed over t = 50–55, its rows equal the offline 3D analysis of the same bit-identical slices (R to
+    8e-8, σ² to 5e-6), the end-of-run drain's plotfiles included.
+  - A plotfile with no MOTS gets a row of nan.
+- **Runs.** `merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` *(pack, `campaign/04_binary_headon/first_law/`)*:
+  - binary `main3d_csmatch_5f988dbc`; a validation run, not cited;
+  - frames kept, no movies.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,

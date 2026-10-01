@@ -1,4 +1,4 @@
-# Status — 2026-10-01 08:27 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-01 08:50 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -29,8 +29,11 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
 - **Fixed in the consumer (10-01).**
   - `--mots-spectral` runs the 3D finder on every plotfile before deleting it (~20 s warm); it is on in
     `headon-modes-prod`.
-  - Offline test on HFL-ho's 11 plotfiles: R matches to 8e-8. End to end: MOTS-e2e (live, below); its first frame
-    and first MOTS row equal HFL-ho's.
+  - Offline test on HFL-ho's 11 plotfiles: R matches to 8e-8.
+  - End to end, MOTS-e2e passed (closed out 08:45, below): its rows at t = 51–55 equal the offline ones to 8e-8,
+    the end-of-run drain's included.
+  - A plotfile with no MOTS gets a row of nan.
+  - Every consumer in a run dir also reads `./consumer_args.extra`, so the drain extracts what the watcher does.
   - The two live orbit runs have it since 08:24 / 08:25 UTC 10-01: their consumers were restarted on the first node
     with `--mots-spectral --mots-spectral-level 2 --mots-spectral-half 6 --mots-spectral-lmax 8 --mots-spectral-seeds
     5.0 3.5` (the user's word).
@@ -39,8 +42,9 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
       stream continuous.
     - Tested first on t = 49 (spiral) and t = 41 (fly-by): no common MOTS yet, as the round scan; a cold search takes
       ~1 min at level 1.
-    - The launch drain at each run's end uses the launch flags, so the last plotfiles need the finder by hand at
-      close-out.
+    - Each run dir's `consumer_args.extra` holds these flags. Every consumer started there reads it, including the
+      end-of-run drain, so every plotfile gets the finder and none is left for an offline pass (the user, 10-01).
+      The last 3 plotfiles stay on scratch as before.
 - **Paper numbers to re-measure, all the head-on's:**
   - **Fig. 5(a,b).** The gold line is the round scan. The caption's birth (t = 22, R 5.02, M_MS 2.69,
     `clmHeadonCsmMots*`) is round-scan; its end (t = 100, R 4.69, M_MS 2.373, `clmHeadonCsmEnd*`) is oriented-scan; its
@@ -129,7 +133,7 @@ superposed twins (checked 09-28/09-29; details in the archive).
 
 ## Live — first node (two H100s): card 0 the boosted spiral, card 1 the boosted fly-by (both production)
 
-Both consumers find the common MOTS with the 3D finder from t = 50 (spiral) and t = 43 (fly-by) on (restarted 08:24 / 08:25 UTC 10-01; CRITICAL above).
+Both consumers find the common MOTS with the 3D finder from t = 50 (spiral) and t = 43 (fly-by) on (restarted 08:24 / 08:25 UTC 10-01, and again 08:42 / 08:43 so that a plotfile with no MOTS gets a row of nan; CRITICAL above).
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
@@ -162,14 +166,14 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Live — second node (one H100): MOTS-e2e, the consumer's spectral MOTS end to end
+## Second node (one H100): free since 08:37 UTC 10-01 — its next launch waits for the user's go
 
-| card | run | t now | t end | speed | ETA |
-|---|---|---|---|---|---|
-| 0 | `merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` (MOTS-e2e, the user's go ~07:45 UTC 10-01: leg 3's params via HFL-ho's template with only stop_time → 55 and the name, from leg 2's `Chk05000`; profile `headon-modes-prod`, now with `--mots-spectral`; keep-last 3; no checkpoints, as leg 3; `main3d_csmatch_5f988dbc`) | 51.4 (08:07 UTC; alive, no NaN; preflight PASS; starts bit-identical to leg 3) | 55 | 7.2 u/h | t = 55 in ~0.5 h, ~08:37 UTC 10-01 |
-
-Read: `small_data/mots_spectral.dat` at t = 51–55 must match HFL-ho's offline level-3 rows (`first_law_L3.json`) to the
-Newton tolerance; the consumer must keep pace and leave only the last 3 plotfiles.
+**MOTS-e2e closed out (08:45 UTC 10-01; `04_binary_headon/first_law/`, no movies, frames kept).**
+`merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` (leg 3 again, t = 50–55, `headon-modes-prod` with
+`--mots-spectral`) reached t = 55.01 with no NaN.
+- Its consumer wrote a 3D-MOTS row on every plotfile, the drain's included. The rows at t = 51–55 equal HFL-ho's
+  offline analysis (R to 8e-8).
+- **Its 3 plotfiles (~16.5 GB) are still on this node's scratch**; prune them from a session here.
 
 **HFL-ho closed out (07:25 UTC 10-01; `04_binary_headon/first_law/`, no movies, frames kept).**
 `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` reached t = 60 (06:50 UTC) with no NaN, and every
