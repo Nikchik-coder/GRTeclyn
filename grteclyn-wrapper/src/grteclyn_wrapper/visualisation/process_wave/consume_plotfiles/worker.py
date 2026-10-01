@@ -27,6 +27,7 @@ from .extraction.scalar_modes import (
 )
 from .extraction.shell import _extract_shell_field_stats, _format_shell_stats_line
 from .extraction.neck_horizons import neck_horizons_line, neck_horizons_row
+from .extraction.mots_spectral import mots_spectral_row
 from .fields import _canonical_field_name
 from .frames.embedding import _render_embedding_frame
 from .frames.projection import _render_projection_frame
@@ -76,6 +77,8 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
         "areal_line": None,
         "neck_line": None,
         "neck_x": None,
+        "mots_line": None,
+        "mots_alm": None,
         "shell_line": None,
         "boundary_flux_line": None,
         "ftl_line": None,
@@ -318,6 +321,23 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                 if args_dict.get("verbose", False):
                     print(f"WARNING: horizon scan failed for {key}: {exc}")
 
+        if args_dict.get("mots_spectral") and t >= float(args_dict.get("mots_spectral_from") or 0.0):
+            # The common MOTS itself, followed from the previous plotfile's surface
+            # (extraction/mots_spectral.py).  Loud on failure.
+            try:
+                result["mots_line"], result["mots_alm"] = mots_spectral_row(
+                    ds, t,
+                    center=args_dict.get("mots_spectral_center") or args_dict["center"],
+                    half=float(args_dict["mots_spectral_half"]),
+                    level=int(args_dict["mots_spectral_level"]),
+                    lmax=int(args_dict["mots_spectral_lmax"]),
+                    tol=float(args_dict["mots_spectral_tol"]),
+                    seeds=args_dict["mots_spectral_seeds"],
+                    a_prev=args_dict.get("mots_alm_prev"),
+                )
+            except Exception as exc:
+                print(f"WARNING: spectral MOTS failed for {key}: {exc}", flush=True)
+
         if args_dict.get("embedding"):
             if ("boxlib", "chi") in ds.field_list:
                 e_idx = _parse_plot_index(key)
@@ -420,6 +440,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
             or result.get("central_line")
             or result.get("central_radial_block")
             or result.get("horizon_block")
+            or result.get("mots_line")
             or frame_fields
             or projection_fields
         )

@@ -1357,11 +1357,21 @@ need to be analysed and packed").
       unmeasured under-read. The bias shrinks as the surface rounds.
     - The text is not edited: that is the user's call.
   - **MOTS-ho would settle it** (proposed, not launched). Each replay uses the packed params with only the stop and
-    the name changed, keeps every plotfile, and feeds `headon_first_law.py`:
-    - leg 3 again from `Chk05000` to t = 100: ~7 h, ~275 GB;
-    - leg 2 again from `Chk03500` (t = 35–50, level 6): ~7.5 h, ~100 GB;
+    the name changed. The consumer finds the MOTS on every plotfile before deleting it (below), so the usual
+    keep-last 3 applies and no plotfile is kept:
+    - leg 3 again from `Chk05000` to t = 100: ~7 h;
+    - leg 2 again from `Chk03500` (t = 35–50, level 6): ~7.5 h;
     - leg 1 from t = 0 (~13 h), only if the birth at t = 22 (R 5.02) is to be re-read too.
     - Both checkpoints exist only on the second node's scratch.
+- **The finder is in the consumer** (the user, ~07:30 UTC: why keep plotfiles instead of extracting on the fly?).
+  - `--mots-spectral`: `consume_plotfiles/extraction/mots_spectral.py` runs `headon_first_law.py` on each plotfile
+    the consumer has loaded. It writes `small_data/mots_spectral.dat` (R, M_MS, axes, residual, the first law's
+    rates) and the surface's coefficients to `mots_spectral_alm.jsonl`.
+  - Each plotfile starts from the previous surface, kept in `consume_state.json`. A cold start (the flow from round
+    seeds) takes ~3 min, a warm one ~20 s at level 3.
+  - On in `headon-modes-prod`; the orbit profiles do not have it (a plotfile with no common MOTS costs a full cold
+    flow, ~5 min).
+  - The pack copies the coefficients file with `small_data/*.dat`.
 - **Kept on the user's word:** HFL-ho's 11 plotfiles (60 GB, t = 51–60 and 60.01). Leg 1's `Chk03500` (26 GB) and
   leg 2's `Chk05000` (28 GB) also stay; they are MOTS-ho's inputs.
 - **Closed out** 07:00–07:25 UTC:

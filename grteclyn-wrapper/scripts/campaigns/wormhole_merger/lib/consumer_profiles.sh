@@ -200,8 +200,11 @@ consumer_profile() {
       # the last one wins.  The common scan's window is 4.0, not headon-modes' 3.0: with 3.0 the old
       # level-5 arm lost the remnant MOTS past the scan edge (r = 2.79) after t = 37, and the mode-3
       # head-on's consumer had to be restarted with 4.0 at t = 18 (2026-09-28).
+      # --mots-spectral (2026-10-01): the common MOTS itself on every plotfile before it is
+      # deleted -- the round scan reads the deformed remnant 4-11 % low (HFL-ho), and the
+      # offline finder needed every plotfile kept (5.5 GB a unit).
       echo "$(consumer_profile headon-modes "${zoom}" "${coord}" "${center}") --radii 10 14 18 20 30 44" \
-           "--horizon-half 4.0"
+           "--horizon-half 4.0 --mots-spectral"
       ;;
     none)
       echo ""

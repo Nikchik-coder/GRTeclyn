@@ -248,7 +248,8 @@ PY
   done
 
   # psi4 streams are already small (one row per plotfile) -- copied whole.
-  for f in "${rundir}"small_data/*.dat "${rundir}"small_data/consume_state.json; do
+  for f in "${rundir}"small_data/*.dat "${rundir}"small_data/consume_state.json \
+           "${rundir}"small_data/mots_spectral_alm.jsonl; do
     [[ -f "${f}" ]] && cp "${f}" "${out}/"
   done
   if [[ -d "${rundir}small_data__part1" ]]; then

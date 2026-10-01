@@ -19,7 +19,7 @@ python -m grteclyn_wrapper.visualisation.process_wave.consume_plotfiles --help
 | `fields.py` | Field aliases and yt derived-field registration |
 | `sphere.py` | Sphere sampling grid and spin-weighted Y₂₀ |
 | `state.py` | `consume_state.json` and `.dat` append helpers |
-| `extraction/` | Psi4 mode, shell stats, areal radius, FTL timeseries, orientation-corrected horizon scan |
+| `extraction/` | Psi4 mode, shell stats, areal radius, FTL timeseries, orientation-corrected horizon scan, spectral MOTS |
 | `frames/` | Slice/projection/embedding PNG rendering and cleanup |
 
 ## Public API
@@ -31,6 +31,31 @@ from grteclyn_wrapper.visualisation.process_wave.consume_plotfiles import (
     spin_weighted_sph_harm_s2_l2_m0,
 )
 ```
+
+## Spectral MOTS (`--mots-spectral`, own files `mots_spectral.dat`, `mots_spectral_alm.jsonl`)
+
+Off by default; on in the production head-on profile (`headon-modes-prod`) since
+2026-10-01.
+- **Why.** The horizon scan (below) and the oriented scan report the outermost fully trapped
+  *round* sphere, which sits inside a deformed MOTS. On the mode-3 head-on's t = 51–60 slices
+  they read R 4–11 % and 3–7 % low (HFL-ho). The true surface was found offline, which meant
+  keeping every plotfile.
+- **What.** Per plotfile, the common MOTS r = h(θ, φ) about the centre (`--mots-spectral-center`,
+  default `--center`), in real Y_lm to `--mots-spectral-lmax`:
+  - found once by the flow of `scripts/validation/ah_flow_finder.py` from the seed radii, then
+    followed from plotfile to plotfile by Newton from the previous surface;
+  - Newton runs until every projected θ_out harmonic is below `--mots-spectral-tol`;
+  - the box is ±`--mots-spectral-half` on the finest level ≤ `--mots-spectral-level` that covers
+    it, since a covering grid fills uncovered cells with injected coarse data.
+- **Output.** One row per plotfile:
+  - R, its Hawking mass, the area, the extent along each axis, the deformation, the residual;
+  - the spherical first law's rates from the phantom flux and the shear on the surface;
+  - the coefficients go to the JSONL file and the state, the next plotfile's start.
+- **Implementation.** The finder is `scripts/analysis/merger_feedback/headon_first_law.py`, loaded
+  from the wrapper (one implementation; its `--selftest` checks Kerr–Schild Schwarzschild and a
+  flat spheroid).
+- **Cost and needs.** About 20 s per plotfile at level 3 once it is following a surface. It needs
+  full-state plotfiles plus lapse, phi and Pi. Plotfiles before `--mots-spectral-from` are skipped.
 
 ## Horizon scan (`--horizon-scan`, own file `horizon_scan.dat`)
 

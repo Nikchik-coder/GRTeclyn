@@ -59,12 +59,9 @@ SYM = ((0, 0), (0, 1), (0, 2), (1, 1), (1, 2), (2, 2))
 EXTRA = ("lapse", "phi", "Pi")
 
 
-def load(plt: str, centre: np.ndarray, half: float, level: int) -> tuple[dict, float, float, int]:
-    """The flow finder's full state plus lapse, phi and Pi, all on one covering grid."""
-    import yt
-
-    yt.set_log_level(40)
-    ds = yt.load(plt)
+def fields_on_box(ds, centre: np.ndarray, half: float, level: int) -> tuple[dict, float, int]:
+    """The flow finder's full state plus lapse, phi and Pi, all on one covering grid of a loaded
+    plotfile (the consumer passes its own; extraction/mots_spectral.py)."""
     lev = int(min(level, ds.index.max_level))
     # A covering grid fills what its level does not cover by injecting coarser cells, whose
     # finite differences are staircases: the head-on's level 4 is the cube +-2.5 about the
@@ -73,13 +70,26 @@ def load(plt: str, centre: np.ndarray, half: float, level: int) -> tuple[dict, f
     lo = np.min([g.LeftEdge.d for g in grids], axis=0)
     hi = np.max([g.RightEdge.d for g in grids], axis=0)
     if np.any(centre - half < lo - 1.0e-9) or np.any(centre + half > hi + 1.0e-9):
-        raise SystemExit(f"level {lev} covers {np.round(lo - centre, 3)} .. {np.round(hi - centre, 3)} about the "
+        raise ValueError(f"level {lev} covers {np.round(lo - centre, 3)} .. {np.round(hi - centre, 3)} about the "
                          f"centre, not the box +-{half}: take a coarser --level or a smaller --half")
-    fields, dx = aff.covering_fields(ds, centre, half, level)
+    fields, dx = aff.covering_fields(ds, centre, half, lev)
     N = fields["chi"].shape[0]
     cg = ds.covering_grid(lev, left_edge=centre - half, dims=[N] * 3)
     for name in EXTRA:
         fields[name] = np.asarray(cg[("boxlib", name)], dtype=np.float64)
+    return fields, dx, lev
+
+
+def load(plt: str, centre: np.ndarray, half: float, level: int) -> tuple[dict, float, float, int]:
+    """fields_on_box of a plotfile on disk."""
+    import yt
+
+    yt.set_log_level(40)
+    ds = yt.load(plt)
+    try:
+        fields, dx, lev = fields_on_box(ds, centre, half, level)
+    except ValueError as err:
+        raise SystemExit(str(err)) from None
     return fields, dx, float(ds.current_time), lev
 
 
@@ -230,10 +240,14 @@ def analyse(plt: str, args, warm: list[float] | None) -> dict | None:
     """warm: a_lm of a nearby MOTS (the previous plotfile's, or this one's at another level).
     Newton from it is ~20 residual evaluations where the flow from round seeds is ~400;
     the flow is the fallback, and the first plotfile's only start."""
-    centre = np.asarray(args.centre, dtype=float)
-    fields, dx, t, lev = load(plt, centre, args.half, args.level)
-    print(f"  {pathlib.Path(plt).name}: t = {t:.3f}, level {lev} (dx {dx:.5f}), half {args.half}, lmax {args.lmax}",
-          flush=True)
+    fields, dx, t, lev = load(plt, np.asarray(args.centre, dtype=float), args.half, args.level)
+    return analyse_fields(fields, dx, t, lev, args, warm, pathlib.Path(plt).name)
+
+
+def analyse_fields(fields: dict, dx: float, t: float, lev: int, args, warm: list[float] | None,
+                   name: str) -> dict | None:
+    """analyse() on fields already on the box (fields_on_box): the consumer's entry."""
+    print(f"  {name}: t = {t:.3f}, level {lev} (dx {dx:.5f}), half {args.half}, lmax {args.lmax}", flush=True)
     box = aff.build_box({k: fields[k] for k in aff.STATE_FIELDS}, dx, args.half, args.lmax)
     a_lm = None
     steps, rms_flow, R_flow = 0, math.nan, math.nan

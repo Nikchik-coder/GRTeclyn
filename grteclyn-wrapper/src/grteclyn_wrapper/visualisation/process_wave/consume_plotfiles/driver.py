@@ -12,6 +12,7 @@ import yt
 from grteclyn_wrapper.objective_modes import QD_OBJECTIVE_MODES
 
 from .extraction.horizon import HORIZON_HEADER
+from .extraction.mots_spectral import MOTS_SPECTRAL_HEADER
 from .config import _default_data_dir, _default_frames_out_dir, _frames_auto_zlim_enabled
 from .extraction.central import CENTRAL_TIMESERIES_HEADER
 from .extraction.confinement import CONFINEMENT_TIMESERIES_HEADER
@@ -299,6 +300,30 @@ def main() -> None:
     parser.add_argument("--horizon-rmin", type=float, default=0.25, help="Innermost shell radius; keep it inside the throat (r < b/2).")
     parser.add_argument("--horizon-dr", type=float, default=0.02, help="Shell spacing.")
     parser.add_argument(
+        "--mots-spectral",
+        action="store_true",
+        help=(
+            "The common MOTS itself per plotfile to mots_spectral.dat, its Y_lm coefficients to "
+            "mots_spectral_alm.jsonl: the spectral finder of headon_first_law.py, followed from the "
+            "previous plotfile's surface by Newton, with the first law's flux and shear on it "
+            "(extraction/mots_spectral.py). The round scan reads a deformed horizon 4-11 %% low "
+            "(2026-10-01). Needs full-state plotfiles plus lapse, phi and Pi."
+        ),
+    )
+    parser.add_argument("--mots-spectral-center", type=float, nargs=3, default=None,
+                        help="Centre of the surface (absolute). Default: --center.")
+    parser.add_argument("--mots-spectral-half", type=float, default=4.5,
+                        help="Half-width of the covering box about the centre.")
+    parser.add_argument("--mots-spectral-level", type=int, default=3,
+                        help="Finest covering-grid level; a coarser one is taken if it does not cover the box.")
+    parser.add_argument("--mots-spectral-lmax", type=int, default=6, help="Highest harmonic of the surface.")
+    parser.add_argument("--mots-spectral-tol", type=float, default=1.0e-6,
+                        help="Newton stops when every projected theta_out harmonic is below this.")
+    parser.add_argument("--mots-spectral-seeds", type=float, nargs="+", default=[3.2, 2.6],
+                        help="Seed radii of the flow when there is no previous surface.")
+    parser.add_argument("--mots-spectral-from", type=float, default=0.0,
+                        help="Search plotfiles from this time on (before the common horizon there is none).")
+    parser.add_argument(
         "--horizon-r-exact",
         type=float,
         default=None,
@@ -469,6 +494,9 @@ def main() -> None:
         if args.horizon_scan:
             args.horizon_scan = False
             off.append("the horizon star scan (samples the full sphere round the centre)")
+        if args.mots_spectral:
+            args.mots_spectral = False
+            off.append("the spectral MOTS (its surface spans the full sphere round the centre)")
         # Odd frame fields are NOT dropped (they were until 2026-09-26, which is
         # how the octant arm F4 got no shift and no Weyl4 movie): the mirrored
         # frame carries the sign the code gives them in its own ghost cells
@@ -516,6 +544,8 @@ def main() -> None:
     central_out_path = out_dir / "central_timeseries.dat"
     central_radial_out_path = out_dir / "central_radial_profile.dat"
     horizon_out_path = out_dir / "horizon_scan.dat"
+    mots_out_path = out_dir / "mots_spectral.dat"
+    mots_alm_path = out_dir / "mots_spectral_alm.jsonl"
     score_ts_path = out_dir / "score_timeseries.jsonl"
     stop_sim_path = Path(args.stop_sim_path) if args.stop_sim_path else Path(data_dir) / ".stop_sim"
     header = "# time  " + "  ".join([f"Re(R={R:g})  Im(R={R:g})" for R in args.radii])
@@ -571,6 +601,9 @@ def main() -> None:
             _truncate_if_exists(central_radial_out_path)
         if args.horizon_scan:
             _truncate_if_exists(horizon_out_path)
+        if args.mots_spectral:
+            _truncate_if_exists(mots_out_path)
+            _truncate_if_exists(mots_alm_path)
         if args.incremental_score:
             _truncate_if_exists(score_ts_path)
         _save_state(state_path, {})
@@ -646,6 +679,17 @@ def main() -> None:
             _append_radial_block(central_radial_out_path, res["central_radial_block"])
         if res.get("horizon_block"):
             _append_block_with_header(horizon_out_path, HORIZON_HEADER, res["horizon_block"])
+
+    def _handle_mots_outputs(res: dict) -> None:
+        # The surface's coefficients are the next plotfile's start, and survive a restart
+        # of the consumer in its state file.
+        if not res.get("mots_line"):
+            return
+        _append_line(mots_out_path, header=MOTS_SPECTRAL_HEADER, line=res["mots_line"])
+        with mots_alm_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps({"t": float(res["t"]), "key": res["key"], "a_lm": res["mots_alm"]}) + "\n")
+        state["mots_alm_prev"] = res["mots_alm"]
+        vars(args)["mots_alm_prev"] = res["mots_alm"]   # process_once's args_dict is vars(args)
 
     # If rendering frames, clear existing frames for the requested fields/axis at startup.
     frame_fields_startup = [_canonical_field_name(f) for f in args.frames_fields]
@@ -768,6 +812,7 @@ def main() -> None:
         args_dict["frame_zlims"] = frame_zlims
         args_dict["frames_global_zlim"] = use_global_zlim
         args_dict["neck_x_prev"] = state.get("neck_x_prev")
+        args_dict["mots_alm_prev"] = state.get("mots_alm_prev")
 
         if args.jobs > 1:
             import multiprocessing as mp
@@ -873,6 +918,7 @@ def main() -> None:
                                     line=res["sector_dynamics_line"],
                                 )
                             _handle_central_outputs(res)
+                            _handle_mots_outputs(res)
 
                             state[res["key"]] = True
                             _save_state(state_path, state)
@@ -964,6 +1010,7 @@ def main() -> None:
                             line=res["sector_dynamics_line"],
                         )
                     _handle_central_outputs(res)
+                    _handle_mots_outputs(res)
 
                     state[res["key"]] = True
                     _save_state(state_path, state)
