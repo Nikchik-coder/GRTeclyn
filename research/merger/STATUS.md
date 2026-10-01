@@ -184,7 +184,7 @@ need a lvl6 leg through the wall (the level-5 head-on died t = 38.8; restart fro
 At the head-on's lvl5 pace (~2.7 u/h) t = 60 is ~22 h -> ~18:00 UTC 10-02; the merger itself (MOTS ~ t 12.5)
 lands ~00:30 UTC.
 
-**SCOUT-d8p closed out (19:30 UTC 10-01; `05_binary_spiral/scout_merger/`, no movies, frames kept): THE FIRST
+**SCOUT-d8p closed out (19:30 UTC 10-01; `05_binary_spiral/scout_merger/`, frames kept; movies added ~20:05 UTC on the user's word, cut at t <= 19 — K at a fixed linear ±0.05, the other fields on the close-out symlog scales): THE FIRST
 ORBITAL MERGER ON CLEAN DATA.** `spiral_d8_p010_lvl3_t040_lbf_csm` (MISNAMED d8: centers +-3 = d = 6; tangential p = 0.10, L = 64 level 3):
 the 3D finder holds a common MOTS around both mouths from t = 12.5 (R 5.624, M_MS 2.812) to the last plotfile
 t = 20.5 (R 5.120, M_MS 2.560), shrinking smoothly; separation 1.35 at t = 18.6. The run died at t = 20.61 (NaN in
