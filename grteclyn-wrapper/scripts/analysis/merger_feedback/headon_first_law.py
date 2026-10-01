@@ -65,8 +65,17 @@ def load(plt: str, centre: np.ndarray, half: float, level: int) -> tuple[dict, f
 
     yt.set_log_level(40)
     ds = yt.load(plt)
-    fields, dx = aff.covering_fields(ds, centre, half, level)
     lev = int(min(level, ds.index.max_level))
+    # A covering grid fills what its level does not cover by injecting coarser cells, whose
+    # finite differences are staircases: the head-on's level 4 is the cube +-2.5 about the
+    # centre, its horizon at r = 3.0-3.4 (2026-10-01).  Refuse a box the level does not cover.
+    grids = [g for g in ds.index.grids if g.Level == lev]
+    lo = np.min([g.LeftEdge.d for g in grids], axis=0)
+    hi = np.max([g.RightEdge.d for g in grids], axis=0)
+    if np.any(centre - half < lo - 1.0e-9) or np.any(centre + half > hi + 1.0e-9):
+        raise SystemExit(f"level {lev} covers {np.round(lo - centre, 3)} .. {np.round(hi - centre, 3)} about the "
+                         f"centre, not the box +-{half}: take a coarser --level or a smaller --half")
+    fields, dx = aff.covering_fields(ds, centre, half, level)
     N = fields["chi"].shape[0]
     cg = ds.covering_grid(lev, left_edge=centre - half, dims=[N] * 3)
     for name in EXTRA:
