@@ -174,7 +174,7 @@ died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_
 `--mots-spectral`) reached t = 55.01 with no NaN.
 - Its consumer wrote a 3D-MOTS row on every plotfile, the drain's included. The rows at t = 51–55 equal HFL-ho's
   offline analysis (R to 8e-8).
-- **Its 3 plotfiles (~16.5 GB) are still on this node's scratch**; prune them from a session here.
+- Its 3 plotfiles (17 GB) were pruned 09:33 UTC 10-01 from a session on this node (`MANIFEST_CLEANUP_2026-10-01`); 557 GB free.
 
 **HFL-ho closed out (07:25 UTC 10-01; `04_binary_headon/first_law/`, no movies, frames kept).**
 `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` reached t = 60 (06:50 UTC) with no NaN, and every
