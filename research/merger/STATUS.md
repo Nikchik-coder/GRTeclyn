@@ -132,14 +132,21 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 the boosted spiral, card 1 the boosted fly-by (both production)
+## Live — first node (two H100s): card 1 the boosted fly-by; card 0 FREE since 13:58 UTC 10-01 (the spiral died)
 
 Both consumers find the common MOTS with the 3D finder from t = 50 (spiral) and t = 43 (fly-by) on (restarted 08:24 / 08:25 UTC 10-01, and again 08:42 / 08:43 so that a plotfile with no MOTS gets a row of nan; CRITICAL above).
 
 | card | run | t now | t end | speed | ETA |
 |---|---|---|---|---|---|
-| 0 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` (SPIRAL-lbf, the user's go 06:38 UTC 09-30: the csm spiral's params with only momentum model 1, the boosted shift and match tol 1e-5 changed; **no freeze**; max_level 5; checkpoints every 5 units keeping 3; `main3d_boostpair_91ed17cd`, profile `orbit-modes-prod`) | 2.22 (13:17 UTC 09-30; alive, no NaN; mouths R_min 3.8784 / 3.8783 at t = 1 / 2; level-0 L2 H 1.66e-3 (the csm spiral: 1.30e-3 at t = 2), L2 M 8.3e-6) | 100 | 2.1–2.2 u/h (16.7 s per coarse step, the csm spiral's start) | t = 60 in ~22 h, ~10:30 UTC 10-01; t = 100 in ~32 h (~20:30 UTC 10-01) if it speeds up after t ≈ 35 as the csm spiral did (to 4 u/h), ~48 h (~12:15 UTC 10-02) at the present pace; first rolling checkpoint (t = 5) ~14:40 UTC |
 | 1 | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` (FLYBY-lbf, the user's go 12:35 UTC 09-30: the old fly-by's params with p = 0.45 → 0.25, momentum model 1, the boosted shift, the per-throat lapse freeze and match tol 1e-5; max_level 5; checkpoints every 5 units keeping 3; in-code Ψ4 on the set's 24 × 37 grid, 21 modes; `main3d_boostpair_91ed17cd`, profile `orbit-modes-scan-prod`) | 0.74 (13:17 UTC 09-30; alive, no NaN; the solve as its verification A: far sides to 9.4e-6, mouths R_min 3.8807; frame 0 as A's; 21 in-code Ψ4 modes written; level-0 L2 H 1.5e-3, L2 M 1.7e-5) | 100 | 2.17 u/h (16.6 s per coarse step) | t = 100 in ~46 h, ~11 UTC 10-02, if the throats stay apart (sooner if they merge) |
+
+**SPIRAL-lbf DIED at t = 71.78 (13:58 UTC 10-01, NaN in h11, level 2) — NO MERGER, the third d = 12 arm to
+inflate instead.** Closed out 10-01 evening (`05_binary_spiral/lbf/`, movies to the trust window t <= 56.5 — the
+L2 H criterion 2.5e-2 crossed at t = 56.3, the csm spiral's own cut): the trackers collapse onto the central pit
+at t = 38.06, the 3D finder sees no common MOTS anywhere (±6 window valid to t ~ 61, nan rows to the end), and
+the boost did not change the Bowen–York arm's verdict. Consumer drained to the end. **Its scratch (3 plotfiles +
+3 checkpoints) awaits a prune from a session on the first node.** Card 0 there is free; MOTS-ho3 or the d8
+production could take it (the user's go).
 
 - Its verification A (`t0_v2_spiral_d12_p012_L128_lvl5_lb_csm`, the rerun's template stopped at t = 0.5;
   finished 07:17 UTC 09-30): **PASS** — solve converged (22 Newton passes, 2 matching rounds), far sides the
@@ -167,8 +174,16 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): SCOUT-d8p live on card 0 since 12:52 UTC 10-01
+## Second node (one H100): free since 19:21 UTC 10-01 — the next launch waits for the user's go
 
+**SCOUT-d8p closed out (19:30 UTC 10-01; `05_binary_spiral/scout_merger/`, no movies, frames kept): THE FIRST
+ORBITAL MERGER ON CLEAN DATA.** `spiral_d8_p010_lvl3_t040_lbf_csm` (d = 8, tangential p = 0.10, L = 64 level 3):
+the 3D finder holds a common MOTS around both mouths from t = 12.5 (R 5.624, M_MS 2.812) to the last plotfile
+t = 20.5 (R 5.120, M_MS 2.560), shrinking smoothly; separation 1.35 at t = 18.6. The run died at t = 20.61 (NaN in
+K, level 3 — the merged core's K runaway from t ~ 19.3, the head-on-leg-1 class of death; constraints flat, L2 H
+<= 1e-2). Trust window t <= 19.0. **The design point stands: d = 8, small tangential p merges.** Scratch (40 GB)
+wiped 19:25 UTC. The natural next run: the level-5 production spiral on this design point (the user's go needed —
+proposal below); MOTS-ho1/2/3 also still queued.
 **SCOUT-d12pin closed out (12:55 UTC 10-01; `05_binary_spiral/scout_merger/`, no movies, frames kept): NO d = 12
 MERGER AT ANY MOMENTUM.** `spiral_d12_pin025_lvl3_t040_lbf_csm` (the inward-momentum scout) was stopped by hand at
 t = 33.86 with the verdict in, no NaN: the mouths inflate much faster than the gentle spiral's (R_min +4.7 % by
@@ -232,6 +247,7 @@ node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or r
 | MOTS-ho2 | `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` | PAPER, REQUIRED: the true MOTS over t = 35–50 (through the wall) | leg 2 again from leg 1's `Chk03500` (max_level 6) to t = 50, leg 2's packed params with only the stop (50) and the name changed; as MOTS-ho3 | ~7.5 (2.0 u/h) |
 | MOTS-ho1 | `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` | PAPER, REQUIRED: the birth (t ≈ 22, the caption's R 5.02 / M_MS 2.69, the formation time) and t = 0–35 | leg 1 again from t = 0 (max_level 5) to t = 35, leg 1's packed params with only the stop (35) and the name changed; as MOTS-ho3 | ~13 (2.7 u/h) |
 | SPIRAL-lbf | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | THE PAPER RUN, FIRST (the user, 2026-09-30): the spiral on the boosted setup — the clean test of "inflates, no merger" | the csm spiral's template + momentum model 1, **no freeze** (the user's word; the pits move at v = 0.12, the runaway was a v = 0.41 problem), max_level 5, checkpoints every 5 keeping the newest 3 (the user's word; LAD-csm needs the t ≈ 50 one); its own verification A **PASSED**; **LIVE on the first node's card 0 since 11:55 UTC 09-30** (Live, above) | ~22 to t = 60, ~37 to t = 100 |
+| SPIRAL-d8-prod | `spiral_d8_p010_L128_lvl5from0_t060_lbf_csm` | THE MERGER RUN (SCOUT-d8p merged 10-01: common MOTS t = 12.5–20.5): the d = 8, p = 0.10 design point at production resolution, for the paper's orbital-merger section | the production box (L = 128, N = 256, max_level 5, the shared wave set) with the scout's initial-data block (d = 8, tangential p = 0.10, boosted-pair mode-3 solve); expect the head-on's leg structure through the wall (lvl6 restart) — plan the legs at launch; checkpoints asked at launch | ~25–35 |
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | IF the clean spiral again fails to merge: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
 | FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **LIVE on the first node's card 1 since 12:37 UTC 09-30** (Live, above) | ~46 to t = 100 |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement, mode-3 (Fig. 12a's rerun) | restart from a checkpointed spiral leg at t ≈ 50, max_level 4/6/7, ~10–15 units per arm; convergence rules (no frames, `WHM_MOVIES=0`, `08_convergence`) | ~15–25 |
