@@ -1,4 +1,4 @@
-# Status — 2026-10-01 05:10 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-01 05:30 UTC (compacted; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
@@ -117,9 +117,15 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Free — second node (one H100): idle since 23:51 UTC 09-30; the next launch waits for the user's go
+## Live — second node (one H100): HFL-ho, the head-on's first-law window
 
-The level-4 twin `single_boost_p045_lbf_ml4_t060` died at t = 53.43 (23:51 UTC 09-30, NaN in h11, level 4; stop 60).
+| card | run | t now | t end | speed | ETA |
+|---|---|---|---|---|---|
+| 0 | `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` (HFL-ho, the user's go 05:25 UTC 10-01: leg 3's packed params with only stop_time 100 → 60 and the name, from leg 2's `Chk05000` (t = 50, max_level 4); **every plotfile kept** (`WHM_KEEP_PLOTFILES=1`: ~11 × 5.5 GB ≈ 60 GB on scratch until the first-law analysis is done); no checkpoints, as leg 3; `main3d_csmatch_5f988dbc`, profile `headon-modes-prod`, zoom 40, coord 64) | 50.0 (launched 05:25 UTC; dry-run preflight PASS) | 60 | ~7 u/h (leg 3, NOISE-1: 7.15) | t = 60 in ~1.5 h, ~07:00 UTC 10-01 |
+
+Read: its streams must repeat leg 3's over t = 50–60 (same binary, checkpoint, params) before the first law is read off its plotfiles (M_MS(t) of the common MOTS against the scalar flux through it).
+
+**The level-4 twin closed out (05:10 UTC 10-01):** `single_boost_p045_lbf_ml4_t060` died at t = 53.43 (23:51 UTC 09-30, NaN in h11, level 4; stop 60).
 It collapsed like the level-3 run (RESULT, above). Closed out 05:10 UTC 10-01: filed to `02_moving_throat/exact_boost/`,
 no movies (as the level-3 run), trust window t ≤ 53; its three plotfiles (8.8 GB) wiped 05:04 UTC.
 
@@ -145,7 +151,8 @@ t = 0–100 in `runs/.../04_binary_headon/csm/headon_csm_L128_stitched_t0_t100/m
   row (the limits are per sphere); the films run to t = 100 on the user's word and show the speckle from t ≈ 85.
 - Scratch on this node: the chain's plotfiles wiped 13:38 UTC 09-30 and NOISE-1's 17:48 UTC, both on the user's
   word (`MANIFEST_CLEANUP_2026-09-30`); the twin's 05:04 UTC 10-01 at its close-out (`MANIFEST_CLEANUP_2026-10-01`).
-  Left: leg 1's `Chk03500` (26 GB), leg 2's `Chk05000` (28 GB; HFL-ho restarts from it). 616 GB free.
+  Left: leg 1's `Chk03500` (26 GB), leg 2's `Chk05000` (28 GB; HFL-ho's restart point). 616 GB free at 05:25 UTC
+  10-01, before HFL-ho's plotfiles (all kept: ~60 GB by t = 60).
 
 ## The production set (shared box; the user, 2026-09-28 09:00 UTC)
 
@@ -194,7 +201,7 @@ node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or r
 | FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **LIVE on the first node's card 1 since 12:37 UTC 09-30** (Live, above) | ~46 to t = 100 |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | the wall under refinement, mode-3 (Fig. 12a's rerun) | restart from a checkpointed spiral leg at t ≈ 50, max_level 4/6/7, ~10–15 units per arm; convergence rules (no frames, `WHM_MOVIES=0`, `08_convergence`) | ~15–25 |
 | BBH-HEADON | `bbh_headon_d8_L128_lvl5_t100` | the vacuum control for the head-on (the user, 2026-09-30): bare punctures at d = 8 from rest, t = 100, for Fig. 5 and the gallery/energy comparison | the csm head-on's setup (same box, grid, spheres, plot cadence) with the drainhole/scalar blocks swapped for bare punctures, as the d = 12 BBH controls; template from `bbh_control_d12_p012_t150`'s params with d and p changed; checkpoints asked at launch | ~30–50 (the head-on chain's class; vacuum punctures ride through a merger, so likely one leg) |
-| HFL-ho | `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` | close the first-law loop of the new SEC VI budget paragraph (the user, 2026-09-30): dM_MS/dt against the scalar flux through the horizon needs a plotfile sequence, and the chain's are pruned | leg 3's params restarted again from leg 2's `Chk05000` (second node, kept), stop 60, ONLY the plotfile retention changed (keep all, output-only); offline first-law analysis on the ~10 units | ~1.5–2 |
+| HFL-ho | `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` | close the first-law loop of the new SEC VI budget paragraph (the user, 2026-09-30): dM_MS/dt against the scalar flux through the horizon needs a plotfile sequence, and the chain's are pruned | **LIVE on the second node since 05:25 UTC 10-01** (Live, above); every plotfile kept, no checkpoints | ~1.5–2 |
 | A1-csm | `ctrl_rest_a1_csm` (then, optional, `ctrl_rest_a15_csm` / `ctrl_rest_a3_csm`) | restore Fig. 4(a)'s width arm on matched data (the a = 1 arm left the panel 09-30: no matched twin) and put clmNarrowPairRatio — and with the optional twins the §V.B width ladder clmALadder* — on mode 3 | the old run's packed `evolution_params.txt` with ONLY the constraint-solve block and the name changed (the rest-pair rule), t = 15, L = 64 level 3; checkpoints asked at launch; re-measure into `matched_rest_displacement.dat` and redraw Fig. 4(a) | ~1 each (the csm rest pairs' class: 18 u/h alone) |
 | PLACE-csm | `place_d{6..48}_step1_csm` (the 18 one-step probes) | the matched placement curve for Fig. 4(d,e), now captioned as superposed-only: expected flat at R⋆ = 3.8895 (the matched pairs read 3.876–3.878 at t = 0), which would draw the clean-data contrast under the superposed excess; re-measures or retires clmMouthTauFlybyPlaced/SeedFlybyPlaced (CSM_SWITCHOVER) | the superposed probes' params (`04_binary_headon/placement/place_d*_step1`) with only mode 3 + names; initial data plus one step, scanned at t = 0; no frames beyond the default t = 0 set | < 1 total (minutes per probe) |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | spiral burst/energy, level 4 vs 5 | the spiral template, max_level 4, from t = 0 | ~8–10 |
