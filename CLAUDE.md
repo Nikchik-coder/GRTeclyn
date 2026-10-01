@@ -10,7 +10,15 @@ session start goes stale within hours.
 
 - Keep every reply to a few lines, even for results and "explain in plain English". Lead with the answer. No tables,
   caveats, recaps or offers unless asked.
-- A status question wants run, t, speed, ETA, and whether it is alive. Nothing else.
+- A status question wants run, t, speed, ETA, whether it is alive, and storage. Nothing else.
+- **Every run check includes storage, unasked** (the user, 2026-10-01: "one of the number one questions", so that
+  there is no pollution).
+  - On each node: the scratch disk's free space (`df -h /tmp/grteclyn_scratch`) and every folder in it.
+  - Per run: at most 3 plotfiles (the consumer's `--keep-last 3`). Checkpoints only if the user asked for them, and
+    no more than the run's `checkpoint_keep` (its log prints a `[checkpoint_keep] removed` line at every write).
+  - No leftovers of finished runs, except the checkpoints a queued run needs.
+  - Report it in one line: clean (GB used and free), or what pollutes and how many GB.
+  - A node this session cannot list: read its runs' logs for the checkpoint lines, and say its disk was not listed.
 - Every ETA is in hours and clock time (UTC).
 
 ## Environment
