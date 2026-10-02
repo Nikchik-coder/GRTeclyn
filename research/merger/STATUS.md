@@ -251,8 +251,7 @@ awaits a prune from a second-node session. THE KNOB UNDER TEST NOW (the user's g
 sigma wall test ... level 5 from chk 25"): D6-sig10 `spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500`
 — KO `sigma` 0.1 -> 1.0 at LEVEL 5 from the same Chk02500, live since ~12:03 UTC. One run tests both walls: if
 sigma holds the K runaway at lvl5 (which killed leg 1 there at 26.26) AND the core cell (which killed lvl6/7),
-the whole chain finishes at lvl5 speed (~2.9 u/h, t = 60 ~12 h). Verdicts: the K wall at t ~ 26 (~1 h in,
-~13:10 UTC), the core-NaN window 27.5–29.4 (~13:40–14:20 UTC). Template = the lvl7 leg's with only the names,
+the whole chain finishes at lvl5 speed (~2.9 u/h, t = 60 ~12 h). VERDICT 13:15 UTC: CLEARED BOTH WALLS -- max|K| 1.1-1.8 flat through t = 26-29 (sigma-0.1 arms: 4.1/5.6 and dead), zero NaN, Ham 1.9e-4, MOTS = lvl6's to 4 digits (R 4.907 at 29). t = 60 ~21:00 UTC at ~3.9 u/h. Template = the lvl7 leg's with only the names,
 max_level 5 and sigma; checkpoints keep the chain's rule (every 5, ONLY the newest). If it dies at the K wall:
 sigma at lvl6 is the fallback; `min_chi` 1e-4 after; interior fill last. MOTS-ho2 queued behind it. lvl7's
 scratch (15G plotfiles) wiped 12:00 UTC (manifest); Chk02500 + the ho2/ho3 checkpoints + HFL kept.
