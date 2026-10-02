@@ -257,6 +257,11 @@ Fig. `fig:spiral_ladder` panel (b) (slicing/gauge) is done on superposed data an
 ladder, reruns on mode-3 data. Note 2026-09-29: the spiral's every-5 checkpoints were wiped with the first
 node's scratch (06:01 UTC 09-30), so LAD-csm needs a fresh checkpointed leg or restarts from a rerun's.
 
+Node assignment (the user, 2026-10-02): MOTS-ho2 and ho3 restart from `Chk03500`/`Chk05000`, which live on the
+SECOND node's scratch — they run there, back to back, once SPIRAL-d6-prod frees that card (~21:00 UTC 10-02).
+Only MOTS-ho1 starts from t = 0, which is why it runs on the first node. The first node's card 1, after the
+fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEADON, A1-csm or PLACE-csm, on the go.
+
 | id | run | what | how | GPU-h |
 |---|---|---|---|---|
 | MOTS-ho3 | `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` | PAPER, REQUIRED (CRITICAL above): the head-on's true MOTS over t = 50–100 for Fig. 5(a,b) and its end values (t = 100) | leg 3 again from leg 2's `Chk05000` (max_level 4) to t = 100, leg 3's packed params with only the name changed; `headon-modes-prod` (`--mots-spectral`), keep-last 3; checkpoints asked at launch; its input checkpoint lives on the SECOND node's scratch — run it there (after SPIRAL-d6-prod) | ~7 (7.2 u/h) |
