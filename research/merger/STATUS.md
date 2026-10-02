@@ -202,7 +202,7 @@ HAPPENED ON IT.** Common MOTS from t = 13 (R 5.600, M_MS 2.800, deform 0.115) sh
 (R 4.946, deform 0.030); constraints flat (L2 Ham 4.4e-4 at the stop). The merged core's K runaway began t ≈ 25.8
 (max|K| 0.87 at 25.0 -> 4.1 at 26.1, the head-on leg-1 death, 5 units later than the level-3 scout's 20.6);
 stopped before the NaN so leg 2 restarts from the pre-spike Chk02500. Closed out and packed 10-02 07:00 UTC (`05_binary_spiral/merger_d6/`, trust t <= 25.5, movies to 25.5, K frames
-kept as rendered); scratch keeps Chk 1500/2000/2500 + Plt 2400/2500/2600 until the chain completes (no prune yet).
+kept as rendered); scratch pruned 07:05 UTC 10-02 on the user's word (~76G: Chk 1500/2000 + the 3 plotfiles; manifest logged); only Chk02500 kept (leg 2's restart source, NFS copy too).
 
 **SCOUT-d8p closed out (19:30 UTC 10-01; `05_binary_spiral/scout_merger/`, frames kept; movies added ~20:05 UTC on the user's word, cut at t <= 19 — K at a fixed linear ±0.05, the other fields on the close-out symlog scales): THE FIRST
 ORBITAL MERGER ON CLEAN DATA.** `spiral_d8_p010_lvl3_t040_lbf_csm` (MISNAMED d8: centers +-3 = d = 6; tangential p = 0.10, L = 64 level 3):
