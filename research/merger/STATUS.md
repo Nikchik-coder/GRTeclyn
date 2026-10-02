@@ -54,6 +54,14 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
   The Fig. 5/SVI rewrite plugs into this section when MOTS-ho1/2/3 land. First ho1 reading, 10-02 07:20 UTC:
   the finder holds the common MOTS from t = 18 (R 5.634, M 2.817, deform 0.104) -- 4 units before the round
   scan's t ~ 22 birth and 12 % larger than the caption's R 5.02.
+- **Article to-do (the user, 10-02): the merger-race explanation.** Add the explanatory notes to the spiral
+  section: (i) the two-wormhole setup ITSELF creates the inflationary kick -- solving the constraints with the
+  companion present compresses each mouth (-0.4 % at d = 12, -1.2 % at d = 8), and by the seeded-single rule
+  (fate opposite to the kick) a compression lands both mouths on the INFLATION branch, deterministically, at any
+  momentum (the three d = 12 arms); (ii) the merging setup wins ONLY because the shorter separation makes
+  contact (~2.3 e-folds of tau ~ 5.5 at d = 6) faster than the kick-seeded inflation -- the race, not a data
+  fix. Ledger rows for the kick sizes and fold counts when written; SEED-csm (queued) pins the rule on solved
+  data.
 - **Paper numbers to re-measure, all the head-on's:**
   - **Fig. 5(a,b).** The gold line is the round scan. The caption's birth (t = 22, R 5.02, M_MS 2.69,
     `clmHeadonCsmMots*`) is round-scan; its end (t = 100, R 4.69, M_MS 2.373, `clmHeadonCsmEnd*`) is oriented-scan; its
