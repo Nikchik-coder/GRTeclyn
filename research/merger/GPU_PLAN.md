@@ -3009,6 +3009,8 @@ life of the spiral's horizon.**
 
 - **D6-sig10: KO dissipation is the knob -- sigma 1.0 at LEVEL 5 clears both walls** (2026-10-02). `spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500` (sigma 0.1 -> 1.0, nothing else, from the same Chk02500): max |K| stays 1.1-1.8 flat through t = 26-29 where sigma-0.1 arms died (lvl5 exponential 4.1 at 26.1; lvl6 peak 5.6, dead 29.407; lvl7 dead 27.53), zero NaN past both death points, constraints 1.9e-4, and the MOTS matches lvl6 to 4 digits (R 4.907 at t = 29) -- the dissipation changed the core's numerics, not the exterior (censored anyway). The paper's Fig. 11 ladder (refinement, gauge, start time, matter damping, dt) never tried sigma; this is the missing rung and the chain's way through. Core max |K| oscillates 1.8-3.0, bounded. At ~3.9 u/h t = 60 lands ~21:00 UTC 10-02. If it finishes, the d6 merger chain is: leg 1 (lvl5 sigma 0.1) to 25.5, leg 2 (lvl6) to 29.4, sigma leg through the settle.
 
+- **A1-csm and BBH-HEADON done; the first node's systematics pass** (2026-10-02). `ctrl_rest_a1_csm` reached t = 15 clean (Ham 8.7e-3 probe class, no MOTS as expected): Fig. 4(a)'s width arm restored on matched data; the matched_rest_displacement re-measure and the panel redraw are the next analysis step. `bbh_headon_d8_L128_lvl5_t100` reached t = 100 clean: the vacuum head-on control at per-hole ADM 1.00; the energy/waveform comparison against the wormhole head-on is the next analysis step. Both packed (03_two_throats/csm/, 07_bbh_control/). SEED-csm's first-node leftovers cleared: the idle watch-mode consumer killed, scratch (7.1G) wiped, manifest logged.
+
 ## 5. Open questions
 
 
