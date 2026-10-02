@@ -37,32 +37,7 @@ interaction: negative = squeezed, positive = widened.
 The excess over the isolated value falls as d^-1.16 across the probed range,
 close to the 1/d of a mass-like field. Mouth A and mouth B agree to 1e-5 in every probe.
 
-## 2. The scout `merge_headon_flip_d8_v1_t100` against the curve, before contact
-
-| t | separation | scout mouth | placement at that separation | own response |
-|---|---|---|---|---|
-| 0 | 7.938 | 4.4509 | 4.4566 | -0.13 % |
-| 1 | 7.938 | 4.4509 | 4.4566 | -0.13 % |
-| 2 | 7.938 | 4.4508 | 4.4566 | -0.13 % |
-| 3 | 7.938 | 4.4507 | 4.4566 | -0.13 % |
-| 4 | 7.938 | 4.4509 | 4.4566 | -0.13 % |
-| 5 | 7.938 | 4.4524 | 4.4566 | -0.09 % |
-| 6 | 7.812 | 4.4524 | 4.4679 | -0.35 % |
-| 7 | 7.688 | 4.4537 | 4.4793 | -0.57 % |
-| 8 | 7.562 | 4.4553 | 4.4906 | -0.79 % |
-| 9 | 7.312 | 4.4594 | 4.5162 | -1.26 % |
-| 10 | 7.062 | 4.4645 | 4.5428 | -1.72 % |
-| 11 | 6.812 | 4.4706 | 4.5731 | -2.24 % |
-| 12 | 6.438 | 4.4797 | 4.6220 | -3.08 % |
-| 13 | 6.062 | 4.4932 | 4.6790 | -3.97 % |
-| 14 | 5.688 | 4.5078 | 4.6885 | -3.85 % (below the probed range: curve held at its last point) |
-| 15 | 5.188 | 4.5234 | 4.6885 | -3.52 % (below the probed range: curve held at its last point) |
-| 16 | 4.562 | 4.5474 | 4.6885 | -3.01 % (below the probed range: curve held at its last point) |
-| 17 | 4.062 | 4.5621 | 4.6885 | -2.70 % (below the probed range: curve held at its last point) |
-| 18 | 3.562 | 4.5748 | 4.6885 | -2.42 % (below the probed range: curve held at its last point) |
-| 19 | 2.938 | 4.5901 | 4.6885 | -2.10 % (below the probed range: curve held at its last point) |
-
-Last point inside the probed range: t = 13, separation 6.062, own response -3.97 %. The lone throat at level 3 is exact to 0.1 % until t = 35.
+## 2. Scout `merge_headon_flip_d8_v1_t100`: no horizon scan packed yet
 
 ## 3. How to read it
 

@@ -146,8 +146,6 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_boost_p045_lbf_ml4_t060` | B | 53.4 | x1660.7 / 52.9 | +0.44 | -0.42 | +1.26 | +1.42 | +1.52 | -0.42 | - | 6.5 | late (+0.11 dex) |
 | `single_boost_p045_lbf_t050` | A | 44.7 | x81.2 / 40.5 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
 | `single_boost_p045_lbf_t050` | B | 44.7 | x51.3 / 34.2 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
-| `s20_boost_p02` | A | 40.0 | x400.6 / 40.0 | +1.06 | +1.30 | +1.58 | +1.79 | +2.60 | - | - | - | late (+0.48 dex) |
-| `s20_boost_p02` | B | 40.0 | x942124.5 / 35.0 | +4.00 | +5.57 | +5.85 | +5.94 | +5.92 | - | - | - | late (+4.63 dex) |
 | `ctrl_flip_d12_csm` | A | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
 | `ctrl_flip_d12_csm` | B | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d12_csm` | A | 15.0 | x14.7 / 14.6 | +0.99 | - | - | - | - | - | - | - | too short |
@@ -158,24 +156,6 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `ctrl_rest_d16_csm` | B | 15.0 | x13.5 / 14.3 | +0.99 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d18_csm` | A | 15.0 | x13.1 / 14.1 | +0.98 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d18_csm` | B | 15.0 | x13.1 / 14.1 | +0.98 | - | - | - | - | - | - | - | too short |
-| `ctrl_flip_d12` | A | 10.8 | x11.1 / 10.5 | +0.99 | - | - | - | - | - | - | - | too short |
-| `ctrl_flip_d12` | B | 10.8 | x11.1 / 10.5 | +0.99 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_a1` | A | 11.9 | x57.9 / 11.7 | +1.69 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_a1` | B | 11.9 | x57.9 / 11.7 | +1.69 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_a15` | A | 15.0 | x26.8 / 14.7 | +1.25 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_a15` | B | 15.0 | x26.8 / 14.7 | +1.25 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_a3` | A | 15.0 | x7.6 / 15.0 | +0.65 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_a3` | B | 15.0 | x7.6 / 15.0 | +0.65 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_d12` | A | 11.8 | x11.4 / 11.2 | +1.01 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_d12` | B | 11.8 | x11.4 / 11.2 | +1.01 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_d14` | A | 15.0 | x14.3 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_d14` | B | 15.0 | x14.3 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_d16` | A | 15.0 | x13.7 / 14.3 | +1.00 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_d16` | B | 15.0 | x13.7 / 14.3 | +1.00 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_d18` | A | 15.0 | x13.4 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_d18` | B | 15.0 | x13.4 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
-| `orbit_d12_p012` | A | 20.5 | x23.6 / 19.9 | +1.03 | +1.32 | - | - | - | - | - | - | too short |
-| `orbit_d12_p012` | B | 20.5 | x23.6 / 19.9 | +1.03 | +1.32 | - | - | - | - | - | - | too short |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000` | A | 100.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t100_csm_r05000` | B | 100.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
 | `merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm` | A | 38.8 | x1280.0 / 38.1 | +1.23 | +1.38 | +1.22 | -11.31 | - | - | - | 0.0 | early (-12.62 dex) |
@@ -186,10 +166,6 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_r05000` | B | 60.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` | A | 55.0 | x1.1 / 55.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | - | restart -- own clock only |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_motse2e_t055_csm_r05000` | B | 55.0 | x1.1 / 55.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | - | restart -- own clock only |
-| `merge_headon_flip_d12` | A | 44.0 | x38.5 / 43.8 | +0.99 | +1.30 | +1.50 | +1.53 | +0.17 | - | - | 39.9 | late (+0.22 dex) |
-| `merge_headon_flip_d12` | B | 44.0 | x38.5 / 43.8 | +0.99 | +1.30 | +1.50 | +1.53 | +0.17 | - | - | 39.9 | late (+0.22 dex) |
-| `merge_headon_flip_d6_m05_t100` | A | 14.0 | x88.3 / 14.0 | +0.02 | - | - | - | - | - | - | 6.8 | too short |
-| `merge_headon_flip_d6_m05_t100` | B | 14.0 | x88.3 / 14.0 | +0.02 | - | - | - | - | - | - | 6.8 | too short |
 | `merge_headon_flip_d8_cs_lvl3_t030` | A | 30.0 | x20.4 / 21.1 | +1.03 | +1.26 | +1.13 | -13.50 | - | - | - | 28.0 | early (-14.81 dex) |
 | `merge_headon_flip_d8_cs_lvl3_t030` | B | 30.0 | x20.4 / 21.1 | +1.03 | +1.26 | +1.13 | -13.50 | - | - | - | 28.0 | early (-14.81 dex) |
 | `merge_headon_flip_d8_eta4_lvl5_t040_r03200` | A | 40.0 | x1.0 / 32.0 | +0.00 | +0.00 | +0.00 | +0.00 | -14.47 | - | - | 37.8 | restart -- own clock only |
@@ -200,46 +176,12 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_headon_flip_d8_eta4_t050` | B | 34.1 | x37.3 / 34.1 | +1.00 | +1.35 | +1.39 | +1.21 | - | - | - | 33.0 | early (-0.10 dex) |
 | `merge_headon_flip_d8_lp2_t030` | A | 25.2 | x21.4 / 20.0 | +1.00 | +1.33 | - | - | - | - | - | 24.1 | too short |
 | `merge_headon_flip_d8_lp2_t030` | B | 25.2 | x21.4 / 20.0 | +1.00 | +1.33 | - | - | - | - | - | 24.1 | too short |
-| `merge_headon_flip_d8_v1_lvl3down_t100_r03500` | A | 100.0 | x6.4 / 100.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.48 | +0.66 | +0.69 | - | restart -- own clock only |
-| `merge_headon_flip_d8_v1_lvl3down_t100_r03500` | B | 100.0 | x6.4 / 100.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.48 | +0.66 | +0.69 | - | restart -- own clock only |
-| `merge_headon_flip_d8_v1_lvl5_t100_r02200` | A | 100.0 | x4.2 / 100.0 | +0.00 | +0.00 | -0.42 | -1.21 | -1.25 | +0.38 | +0.51 | 30.6 | restart -- own clock only |
-| `merge_headon_flip_d8_v1_lvl5_t100_r02200` | B | 100.0 | x4.2 / 100.0 | +0.00 | +0.00 | -0.42 | -1.21 | -1.25 | +0.38 | +0.51 | 30.6 | restart -- own clock only |
-| `merge_headon_flip_d8_v1_lvl5chk_t100_r02200` | A | 40.0 | x1.2 / 36.9 | +0.00 | +0.00 | -0.42 | -1.21 | -1.25 | - | - | 30.6 | restart -- own clock only |
-| `merge_headon_flip_d8_v1_lvl5chk_t100_r02200` | B | 40.0 | x1.2 / 36.9 | +0.00 | +0.00 | -0.42 | -1.21 | -1.25 | - | - | 30.6 | restart -- own clock only |
-| `merge_headon_flip_d8_v1_lvl5from0_scalar_t100` | A | 100.0 | x17370.4 / 100.0 | +1.15 | +1.28 | +1.40 | +1.40 | +2.39 | +4.00 | +4.13 | 0.0 | same (+0.09 dex) |
-| `merge_headon_flip_d8_v1_lvl5from0_scalar_t100` | B | 100.0 | x17370.4 / 100.0 | +1.15 | +1.28 | +1.40 | +1.40 | +2.39 | +4.00 | +4.13 | 0.0 | same (+0.09 dex) |
-| `merge_headon_flip_d8_v1_t100` | A | 26.9 | x57.4 / 26.9 | +1.00 | +1.24 | -13.50 | - | - | - | - | 24.4 | too short |
-| `merge_headon_flip_d8_v1_t100` | B | 26.9 | x57.4 / 26.9 | +1.00 | +1.24 | -13.50 | - | - | - | - | 24.4 | too short |
-| `merge_headon_flip_d8_v1c_eps_m1e2_t100` | A | 100.0 | x21.4 / 21.1 | +1.01 | +1.28 | +0.59 | +0.59 | +0.59 | +0.59 | +0.59 | 24.8 | early (-0.72 dex) |
-| `merge_headon_flip_d8_v1c_eps_m1e2_t100` | B | 100.0 | x21.4 / 21.1 | +1.01 | +1.28 | +0.59 | +0.59 | +0.59 | +0.59 | +0.59 | 24.8 | early (-0.72 dex) |
-| `merge_headon_flip_d8_v1c_eps_p1e2_t100` | A | 25.8 | x20.7 / 20.6 | +1.00 | +1.25 | -0.77 | - | - | - | - | 23.4 | too short |
-| `merge_headon_flip_d8_v1c_eps_p1e2_t100` | B | 25.8 | x20.7 / 20.6 | +1.00 | +1.25 | -0.77 | - | - | - | - | 23.4 | too short |
-| `merge_headon_flip_d8_v1c_fillnarrow_t100_r02200` | A | 100.0 | x1.0 / 22.3 | +0.00 | +0.00 | -14.77 | -0.19 | -0.19 | -0.19 | -0.19 | 24.4 | restart -- own clock only |
-| `merge_headon_flip_d8_v1c_fillnarrow_t100_r02200` | B | 100.0 | x1.0 / 22.3 | +0.00 | +0.00 | -14.77 | -0.19 | -0.19 | -0.19 | -0.19 | 24.4 | restart -- own clock only |
-| `merge_headon_flip_d8_v1c_latefreeze_t100` | A | 100.0 | x20.9 / 20.4 | +1.00 | +1.24 | -13.50 | +1.08 | +1.08 | +1.08 | +1.08 | 24.4 | early (-0.23 dex) |
-| `merge_headon_flip_d8_v1c_latefreeze_t100` | B | 100.0 | x20.9 / 20.4 | +1.00 | +1.24 | -13.50 | +1.08 | +1.08 | +1.08 | +1.08 | 24.4 | early (-0.23 dex) |
 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` | A | 60.4 | x44.7 / 60.4 | +0.49 | +0.81 | +0.99 | +1.06 | +1.12 | +1.31 | +1.64 | 0.0 | early (-0.24 dex) |
 | `v2_spiral_d12_p012_L128_lvl5from0_t100_csm` | B | 60.4 | x84164.9 / 60.4 | +0.49 | +0.81 | +0.99 | +1.06 | +3.57 | +3.93 | +4.92 | 0.0 | early (-0.24 dex) |
 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | A | 71.8 | x69.2 / 71.8 | +0.54 | +0.77 | +0.97 | +1.05 | +1.01 | +1.14 | +1.47 | 0.0 | early (-0.26 dex) |
 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | B | 71.8 | x353567.4 / 37.4 | +0.54 | +0.77 | +0.97 | +1.05 | +4.27 | +4.10 | +4.84 | 0.0 | early (-0.26 dex) |
-| `autopsy_nodamp_r05000` | A | 51.5 | x409.3 / 51.4 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
-| `autopsy_nodamp_r05000` | B | 51.5 | x567.8 / 50.9 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
-| `autopsy_nodamp_r05000_HOOKFAIL_2026-09-08` | A | 51.5 | x409.3 / 51.4 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
-| `autopsy_nodamp_r05000_HOOKFAIL_2026-09-08` | B | 51.5 | x567.8 / 50.9 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
-| `merge_orbit_flip_d12_ml2` | A | 9.4 | x1.1 / 1.3 | - | - | - | - | - | - | - | 7.3 | too short |
-| `merge_orbit_flip_d12_ml2` | B | 9.4 | x1.1 / 1.3 | - | - | - | - | - | - | - | 7.3 | too short |
-| `merge_orbit_flip_d12_n160` | A | 53.6 | x63.9 / 52.6 | +1.08 | +1.39 | +1.60 | +1.60 | +1.30 | -1.14 | - | 47.0 | late (+0.29 dex) |
-| `merge_orbit_flip_d12_n160` | B | 53.6 | x59.0 / 53.0 | +1.08 | +1.39 | +1.60 | +1.60 | +1.30 | -1.14 | - | 47.0 | late (+0.29 dex) |
-| `merge_orbit_flip_d12_r03000` | A | 52.1 | x1.1 / 30.6 | +0.00 | +0.00 | +0.00 | +0.00 | -0.23 | -1.87 | - | 44.9 | restart -- own clock only |
-| `merge_orbit_flip_d12_r03000` | B | 52.1 | x1.1 / 30.6 | +0.00 | +0.00 | +0.00 | +0.00 | -0.23 | -2.12 | - | 44.9 | restart -- own clock only |
-| `merge_orbit_flip_d12_r04000` | A | 52.9 | x1.5 / 52.9 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -2.88 | - | 45.0 | restart -- own clock only |
-| `merge_orbit_flip_d12_r04000` | B | 52.9 | x1.1 / 52.8 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -2.88 | - | 45.0 | restart -- own clock only |
-| `merge_orbit_flip_d12_rw_r05000` | A | 55.0 | x3017.9 / 54.6 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
-| `merge_orbit_flip_d12_rw_r05000` | B | 55.0 | x2921.5 / 53.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
-| `merge_orbit_flip_d12_sg10_r05000` | A | 51.7 | x612.4 / 51.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
-| `merge_orbit_flip_d12_sg10_r05000` | B | 51.7 | x541.4 / 51.6 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.0 | restart -- own clock only |
-| `merge_twin_p012_cf08_t060_r05000` | A | 55.5 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
-| `merge_twin_p012_cf08_t060_r05000` | B | 55.5 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
+| `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` | A | 26.3 | x22.7 / 23.6 | +0.68 | +0.79 | +0.00 | - | - | - | - | 0.0 | too short |
+| `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` | B | 26.3 | x2030716.4 / 16.5 | +0.68 | +1.36 | +0.00 | - | - | - | - | 0.0 | too short |
 | `merge_twin_p012_eta4_lvl5_t066_r05000` | A | 60.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -5.47 | - | restart -- own clock only |
 | `merge_twin_p012_eta4_lvl5_t066_r05000` | B | 60.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -5.47 | - | restart -- own clock only |
 | `merge_twin_p012_eta4_t060` | A | 60.0 | x66.9 / 35.1 | +1.01 | +1.32 | +1.57 | +1.74 | +1.72 | +1.31 | -1.54 | 55.6 | late (+0.43 dex) |
@@ -258,82 +200,28 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_twin_p012_lc1_t060` | B | 43.6 | x45.8 / 28.6 | +1.01 | +1.36 | +1.61 | +1.63 | +1.21 | - | - | 41.9 | late (+0.32 dex) |
 | `merge_twin_p012_lp2_t060` | A | 49.0 | x48.7 / 29.6 | +1.01 | +1.35 | +1.60 | +1.64 | +1.27 | - | - | 47.1 | late (+0.33 dex) |
 | `merge_twin_p012_lp2_t060` | B | 49.0 | x48.7 / 29.6 | +1.01 | +1.35 | +1.60 | +1.64 | +1.27 | - | - | 47.1 | late (+0.33 dex) |
-| `merge_twin_p012_nodamp_cf10_t060` | A | 44.9 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | - | - | 44.9 | late (+0.26 dex) |
-| `merge_twin_p012_nodamp_cf10_t060` | B | 44.9 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | - | - | 44.9 | late (+0.26 dex) |
-| `merge_twin_p012_nodamp_t060` | A | 51.5 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
-| `merge_twin_p012_nodamp_t060` | B | 51.5 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
 | `merge_twin_p012_plain_t100` | A | 44.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.33 | - | - | - | late (+0.26 dex) |
 | `merge_twin_p012_plain_t100` | B | 44.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.33 | - | - | - | late (+0.26 dex) |
-| `freeze_narrow_t080_r05000` | A | 80.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 50.1 | restart -- own clock only |
-| `freeze_narrow_t080_r05000` | B | 80.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 50.1 | restart -- own clock only |
-| `freeze_narrow_t100_r08000` | A | 97.2 | x1.0 / 80.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 80.1 | restart -- own clock only |
-| `freeze_narrow_t100_r08000` | B | 97.2 | x1.0 / 80.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 80.1 | restart -- own clock only |
-| `freeze_wave_crosscheck_diag_r09000` | A | 90.2 | x1.1 / 90.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 90.1 | restart -- own clock only |
-| `freeze_wave_crosscheck_diag_r09000` | B | 90.2 | x1.1 / 90.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 90.1 | restart -- own clock only |
-| `freeze_wave_crosscheck_r09000` | A | 90.5 | x1.1 / 90.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 90.1 | restart -- own clock only |
-| `freeze_wave_crosscheck_r09000` | B | 90.5 | x1.1 / 90.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 90.1 | restart -- own clock only |
-| `freeze_wide_t080_r05000` | A | 80.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 50.1 | restart -- own clock only |
-| `freeze_wide_t080_r05000` | B | 80.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 50.1 | restart -- own clock only |
-| `freeze_wide_t100_r08000` | A | 97.2 | x1.0 / 80.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 80.1 | restart -- own clock only |
-| `freeze_wide_t100_r08000` | B | 97.2 | x1.0 / 80.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | 80.1 | restart -- own clock only |
 | `ladder_L6_r05000` | A | 56.1 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
 | `ladder_L6_r05000` | B | 56.1 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl3_t050` | A | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
-| `v2_spiral_d12_p012_L128_lvl3_t050` | B | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -0.37 | - | 44.9 | late (+0.26 dex) |
-| `v2_spiral_d12_p012_L128_lvl3_t050_mouths` | A | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -1.54 | - | 44.9 | late (+0.26 dex) |
-| `v2_spiral_d12_p012_L128_lvl3_t050_mouths` | B | 50.0 | x41.2 / 29.1 | +1.01 | +1.36 | +1.55 | +1.57 | +1.34 | -0.37 | - | 44.9 | late (+0.26 dex) |
-| `v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700` | A | 100.0 | x1.0 / 57.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 57.1 | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r05700` | B | 100.0 | x1.0 / 57.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 57.1 | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700` | A | 100.0 | x1.0 / 57.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 57.1 | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl5_t100_freeze_r05700` | B | 100.0 | x1.0 / 57.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -7.55 | 57.1 | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600` | A | 60.4 | x1.0 / 36.0 | +0.00 | +0.00 | +0.00 | +0.00 | -4.90 | -5.48 | -7.60 | 58.5 | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600` | B | 60.4 | x1.0 / 36.0 | +0.00 | +0.00 | +0.00 | +0.00 | -4.90 | -5.48 | -7.60 | 58.5 | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl5from0_t100` | A | 59.9 | x54.6 / 58.0 | +0.31 | +0.58 | +0.69 | +0.66 | +0.41 | +0.70 | +0.00 | 0.0 | early (-0.65 dex) |
-| `v2_spiral_d12_p012_L128_lvl5from0_t100` | B | 59.9 | x89125.3 / 32.7 | +0.31 | +0.58 | +0.69 | +0.66 | +0.64 | +0.75 | +0.00 | 0.0 | early (-0.65 dex) |
-| `merge_orbit_flip_d12_p015_lvl5_t060_r05000` | A | 54.2 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
-| `merge_orbit_flip_d12_p015_lvl5_t060_r05000` | B | 54.2 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | 50.1 | restart -- own clock only |
-| `merge_orbit_flip_d12_p015_nofill_t060` | A | 53.4 | x43.4 / 31.2 | +1.02 | +1.37 | +1.56 | +1.59 | +1.37 | -1.54 | - | 47.0 | late (+0.28 dex) |
-| `merge_orbit_flip_d12_p015_nofill_t060` | B | 53.4 | x43.4 / 31.2 | +1.02 | +1.37 | +1.56 | +1.59 | +1.37 | -1.54 | - | 47.0 | late (+0.28 dex) |
-| `merge_orbit_flip_d12_p015_rr_t060` | A | 53.4 | x43.4 / 31.2 | +1.02 | +1.37 | +1.56 | +1.59 | +1.37 | -1.54 | - | 47.0 | late (+0.28 dex) |
-| `merge_orbit_flip_d12_p015_rr_t060` | B | 53.4 | x43.4 / 31.2 | +1.02 | +1.37 | +1.56 | +1.59 | +1.37 | -1.54 | - | 47.0 | late (+0.28 dex) |
-| `merge_orbit_flip_d12_p020_lvl5_t200` | A | 52.1 | x41.2 / 48.1 | +0.32 | +0.61 | +0.75 | +0.78 | +0.65 | +1.25 | - | 0.0 | early (-0.52 dex) |
-| `merge_orbit_flip_d12_p020_lvl5_t200` | B | 52.1 | x162270.9 / 35.6 | +0.32 | +0.61 | +0.75 | +0.78 | +3.02 | +0.58 | - | 0.0 | early (-0.52 dex) |
-| `merge_orbit_flip_d12_p020_nofill_t060` | A | 52.1 | x50.6 / 29.9 | +1.03 | +1.41 | +1.62 | +1.66 | +1.51 | +1.44 | - | - | late (+0.35 dex) |
-| `merge_orbit_flip_d12_p020_nofill_t060` | B | 52.1 | x50.6 / 29.9 | +1.03 | +1.41 | +1.62 | +1.66 | +1.51 | +1.44 | - | - | late (+0.35 dex) |
-| `merge_orbit_flip_d12_p020_t200` | A | 47.9 | x50.6 / 29.9 | +1.03 | +1.41 | +1.62 | +1.66 | +1.51 | - | - | - | late (+0.35 dex) |
-| `merge_orbit_flip_d12_p020_t200` | B | 47.9 | x50.6 / 29.9 | +1.03 | +1.41 | +1.62 | +1.66 | +1.51 | - | - | - | late (+0.35 dex) |
-| `merge_orbit_flip_d12_p025_lvl5_t200` | A | 52.8 | x9.5 / 52.8 | +0.32 | +0.62 | +0.77 | +0.82 | +0.82 | +0.92 | - | 0.0 | early (-0.49 dex) |
-| `merge_orbit_flip_d12_p025_lvl5_t200` | B | 52.8 | x2816.5 / 50.2 | +0.32 | +0.62 | +0.77 | +0.82 | +0.82 | +3.45 | - | 0.0 | early (-0.49 dex) |
-| `merge_orbit_flip_d12_p025_t200` | A | 53.0 | x61.4 / 53.0 | +1.07 | +1.44 | +1.67 | +1.74 | +1.72 | +1.76 | - | - | late (+0.43 dex) |
-| `merge_orbit_flip_d12_p025_t200` | B | 53.0 | x61.4 / 53.0 | +1.07 | +1.44 | +1.67 | +1.74 | +1.72 | +1.76 | - | - | late (+0.43 dex) |
 | `spiral_d12_pin025_lvl3_t040_lbf_csm` | A | 33.9 | x161.1 / 33.9 | +1.17 | +1.72 | +1.99 | +2.08 | - | - | - | - | late (+0.77 dex) |
 | `spiral_d12_pin025_lvl3_t040_lbf_csm` | B | 33.9 | x161.2 / 33.9 | +1.17 | +1.72 | +1.99 | +2.08 | - | - | - | - | late (+0.77 dex) |
 | `spiral_d8_p010_lvl3_t040_lbf_csm` | A | 20.6 | x13.4 / 13.5 | +1.02 | -1.81 | - | - | - | - | - | 17.6 | too short |
 | `spiral_d8_p010_lvl3_t040_lbf_csm` | B | 20.6 | x13.4 / 13.5 | +1.02 | -1.81 | - | - | - | - | - | 17.6 | too short |
 | `t0_v2_spiral_d12_p012_L128_lvl5_lb_csm` | A | 0.5 | x1.0 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
 | `t0_v2_spiral_d12_p012_L128_lvl5_lb_csm` | B | 0.5 | x1.0 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
-| `merge_orbit_flip_d12_p035_t200` | A | 73.9 | x777.7 / 73.9 | +1.06 | +1.47 | +1.74 | +1.90 | +2.14 | +2.36 | +2.62 | - | late (+0.59 dex) |
-| `merge_orbit_flip_d12_p035_t200` | B | 73.9 | x777.7 / 73.9 | +1.06 | +1.47 | +1.74 | +1.90 | +2.14 | +2.36 | +2.62 | - | late (+0.59 dex) |
-| `merge_orbit_flip_d12_p045` | A | 60.0 | x936.9 / 60.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
-| `merge_orbit_flip_d12_p045` | B | 60.0 | x936.9 / 60.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
-| `merge_orbit_flip_d12_p045_L128_lvl5_t100` | A | 100.0 | x846.7 / 100.0 | +0.35 | +0.67 | +0.85 | +1.03 | +1.46 | +1.85 | +2.17 | 0.0 | early (-0.28 dex) |
-| `merge_orbit_flip_d12_p045_L128_lvl5_t100` | B | 100.0 | x846.6 / 100.0 | +0.35 | +0.67 | +0.85 | +1.03 | +1.46 | +1.85 | +2.17 | 0.0 | early (-0.28 dex) |
 | `merge_orbit_flip_d12_p045_helfer_t090` | A | 37.3 | x874.0 / 37.3 | +1.16 | +1.79 | +2.29 | +2.57 | - | - | - | - | late (+1.26 dex) |
 | `merge_orbit_flip_d12_p045_helfer_t090` | B | 37.3 | x874.0 / 37.3 | +1.16 | +1.79 | +2.29 | +2.57 | - | - | - | - | late (+1.26 dex) |
-| `merge_orbit_flip_d12_p045_t200` | A | 91.0 | x2708.9 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
-| `merge_orbit_flip_d12_p045_t200` | B | 91.0 | x2709.0 / 91.0 | +1.12 | +1.51 | +1.82 | +2.03 | +2.45 | +2.73 | +2.97 | - | late (+0.72 dex) |
 | `check_flyby_d12_p025_lbf_csm_t020` | A | 20.0 | x17.2 / 15.4 | +1.07 | +1.23 | - | - | - | - | - | - | too short |
 | `check_flyby_d12_p025_lbf_csm_t020` | B | 20.0 | x17.2 / 15.4 | +1.07 | +1.23 | - | - | - | - | - | - | too short |
 | `t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | A | 0.5 | x1.1 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
 | `t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | B | 0.5 | x1.1 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | A | 80.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | B | 80.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` | A | 100.0 | x1.0 / 36.0 | +0.00 | +0.00 | +0.00 | +0.00 | -4.88 | -5.37 | -7.60 | 52.4 | restart -- own clock only |
-| `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` | B | 100.0 | x1.0 / 36.0 | +0.00 | +0.00 | +0.00 | +0.00 | -4.88 | -5.37 | -7.60 | 52.4 | restart -- own clock only |
 
 ## Reading
 
-Throats read at t = 30: 30 early, 14 same, 91 late, 92 too short, 62 restart arms (own clock only).
+Throats read at t = 30: 18 early, 12 same, 61 late, 68 too short, 18 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the
