@@ -1339,6 +1339,18 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   - the level-3 scout `spiral_d8_p010_lvl3_t040_lbf_csm` *(pack, `campaign/05_binary_spiral/scout_merger/`;
     misnamed d8, actually d = 6)* found the same MOTS at t = 12.5 with R 5.624 — the design point reproduces.
 
+### The head-on's true horizon history (MOTS-ho1, 2026-10-02)
+- **Claim.** Re-running the head-on's leg 1 with the 3D spectral finder on every plotfile gives the true common
+  MOTS history over t = 0–35: birth at t = 18 (R 5.634, M_MS 2.817, deform 0.104), settling to R 4.789,
+  M_MS 2.394, deform 0.026 at t = 35 (M_MS = R/2 throughout; warm Newton ~5 iterations, residual 6.5e-7).
+  - The round scan on the same evolution is 4 units late and 12 % small at birth (first find t = 22,
+    R 5.024 vs the 3D finder's 5.330 there), loses the surface entirely over t = 26–35, and its reacquired
+    radii jump non-monotonically (3.87–4.40) — the deformed-horizon bias the horizon-numbers rule exists for.
+  - Constraints clean to the end (L2 Ham 4.3e-4, Mom 6.9e-4); reached stop_time, no NaN.
+  - Fig. 5 and §VI re-measure proceeds when MOTS-ho2 (t = 35–50) and MOTS-ho3 (t = 50–100) land.
+- **Runs.** `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` *(pack, `campaign/04_binary_headon/mots/`)*:
+  leg 1's packed params with only stop 100 → 35 and the name; no checkpoints; `main3d_csmatch_5f988dbc`.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,
