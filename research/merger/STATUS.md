@@ -154,7 +154,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 SEED-csm (since 10:06 UTC 10-02), card 1 BBH-HEADON (since 11:40 UTC 10-02)
+## Live — first node (two H100s): card 0 A1-csm (since 11:56 UTC 10-02), card 1 BBH-HEADON (since 11:40 UTC 10-02)
 
 **SEED-csm `single_eps_p1e1_t100_csm` (the user's go ~09:30 UTC 10-02, "ok agreed"; started 10:06 UTC):** the
 kicked single on SOLVED data, to prove the declared kick is not the junk source. THE KICK CHANGED FORM at
@@ -167,7 +167,11 @@ NO checkpoints (the user's word); `main3d_csmatch_5f988dbc`; the probe's consume
 L = 64 level 3, t = 100, ~5 GPU-h -> done ~15:00-20:00 UTC depending on pace. Start verified 10:06 UTC: solve
 printed c_A 2.4126 (superposed 2.1933), far side 1.268 x isolated mass / 1.21 x charge (the kick is in the
 solved data), M_ADM 1.2539 (volume identity), STEP 0 regrid, card 0 at 19.9 GB. The mirror m1e1 (c = 0.9 x
-c_iso) stays the optional twin. CONSUMER INCIDENT: `--profile none` sets WHM_CONSUME=0 and silently drops
+c_iso) stays the optional twin. STOPPED AT t = 31.5 (12:35 UTC 10-02, dump_and_stop on the user's word): the
+question is settled — THE KICKED SOLVED DATA IS BORN TRAPPED (3D-finder MOTS on the t = 0 slice, R 4.306,
+M 2.15; min lapse 0.008 by t = 30), the same prompt collapse as the superposed twin (round-scan horizon by
+t = 1): the constraint solve does not erase or soften the declared kick. NO further single-wormhole runs (the
+user's word; the m1e1 mirror cancelled). Close-out when the consumer drains the backlog. CONSUMER INCIDENT: `--profile none` sets WHM_CONSUME=0 and silently drops
 `--consume-args`, so the run went 1.5 h with no consumer (no frames, no MOTS, plotfiles piling to 29); the
 sidecar was started by hand 11:50 UTC with the intended args (venv `test_post` symlink; backlog from Plt00000
 reprocessing, keep-last 3 pruning as it goes). CLAUDE.md launch step 4 now says the consumer is part of the
@@ -180,6 +184,13 @@ start. ~18 u/h -> t = 100 ~15:45 UTC.
 Fig. 5 / §VI re-measure proceeds when MOTS-ho2/ho3 land (both pinned to the SECOND node's checkpoints).
 
 Both consumers find the common MOTS with the 3D finder from t = 50 (spiral) and t = 43 (fly-by) on (restarted 08:24 / 08:25 UTC 10-01, and again 08:42 / 08:43 so that a plotfile with no MOTS gets a row of nan; CRITICAL above).
+
+**A1-csm `ctrl_rest_a1_csm` (the user's go ~12:45 UTC 10-02; live since 11:56 UTC):** the a = 1 (half-width)
+resting pair at d = 12 on matched data, t = 15 — restores Fig. 4(a)'s width arm. The archived a1 params +
+only the d12_csm solve block + the family checkpoint rule (every 2.0 keep 3) + the full-frame plot_vars line
+(the preflight refused the old 5-var set: shift/local_speed frames need them — output only). Solve converged
+pass 1: c = 2.3154 both, far sides matched to 1.8e-8. ~10 u/h -> t = 15 ~13:30 UTC. PLACE-csm is next on this
+card, on the user's go.
 
 **BBH-HEADON `bbh_headon_d8_L128_lvl5_t100` (the user's go ~10:25 UTC 10-02; live since 11:40 UTC):** the
 vacuum control for the head-on — bare punctures, d = 8 from rest, t = 100, per-hole ADM 1.00 (bare mass
@@ -337,9 +348,9 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | **DONE 10-01: the d = 6 scout (misnamed d8) MERGED — common MOTS t = 12.5–20.5; packed `05_binary_spiral/scout_merger/`.** Was: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
 | FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **DONE 10-02: t = 100, no NaN, a scatter (closest 2.33 at t ~ 47, no common MOTS); trust 63.3; packed `06_binary_flyby/`** | ran ~46 h |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | **CANCELLED (the user, 10-02).** Was: the wall under refinement, mode-3 (Fig. 12a's rerun) | its restart point (the lb spiral's t ≈ 50 checkpoint) did not survive: `checkpoint_keep 3` pruned it during the run (only t ≈ 60–70 were left at death, past trust 56.5) and the 10-01 wipe removed those; a fresh checkpointed leg (~17 h) is not worth it — Fig. 12a stays on the superposed ladder. Lesson: copy any checkpoint a queued run needs off the keep-N rotation to NFS while the producer is live | — |
-| SEED-csm | `single_eps_p1e1_t100_csm` | **LIVE on the first node's card 0 since 10:06 UTC 10-02** (Live, above; the kick carried by solve mode 2, c = 1.1 x c_iso — a conformal seed cannot survive the solve, the binary aborts). PAPER (the user, 10-02): the kicked single on SOLVED data — prove the ε kick is not the junk source (the seeded-throat verdicts §II.D/§IV.C are superposed-only) | `single_eps_p1e1_t100`'s packed params + the mode-3 constraint-solve block with the seed kept (`wormhole_seed_amplitude_A = 0.1`; preflight verifies the seed changes t = 0), only the name + `_csm` changed; L = 64, level 3, t = 100; checkpoints asked at launch; the mirror `m1e1` twin optional after | ~5 |
+| SEED-csm | `single_eps_p1e1_t100_csm` | **DONE 10-02, stopped t = 31.5 on the user's word — BORN TRAPPED on solved data (MOTS at t = 0, R 4.306), the superposed twin's fate: the solve keeps the kick; no more single-wormhole runs, the m1e1 mirror cancelled** (Live, above; the kick carried by solve mode 2, c = 1.1 x c_iso — a conformal seed cannot survive the solve, the binary aborts). PAPER (the user, 10-02): the kicked single on SOLVED data — prove the ε kick is not the junk source (the seeded-throat verdicts §II.D/§IV.C are superposed-only) | `single_eps_p1e1_t100`'s packed params + the mode-3 constraint-solve block with the seed kept (`wormhole_seed_amplitude_A = 0.1`; preflight verifies the seed changes t = 0), only the name + `_csm` changed; L = 64, level 3, t = 100; checkpoints asked at launch; the mirror `m1e1` twin optional after | ~5 |
 | BBH-HEADON | `bbh_headon_d8_L128_lvl5_t100` | **LIVE on the first node's card 1 since 11:40 UTC 10-02** (Live, above; WHM_PREFLIGHT=static — the full probe runs the BinaryBH evolution for real). The vacuum control for the head-on: bare punctures at d = 8 from rest, t = 100, for Fig. 5 and the gallery/energy comparison | the csm head-on's setup (same box, grid, spheres, plot cadence) with the drainhole/scalar blocks swapped for bare punctures, as the d = 12 BBH controls; template from `bbh_control_d12_p012_t150`'s params with d and p changed; checkpoints asked at launch | ~30–50 (the head-on chain's class; vacuum punctures ride through a merger, so likely one leg) |
-| A1-csm | `ctrl_rest_a1_csm` (then, optional, `ctrl_rest_a15_csm` / `ctrl_rest_a3_csm`) | restore Fig. 4(a)'s width arm on matched data (the a = 1 arm left the panel 09-30: no matched twin) and put clmNarrowPairRatio — and with the optional twins the §V.B width ladder clmALadder* — on mode 3 | the old run's packed `evolution_params.txt` with ONLY the constraint-solve block and the name changed (the rest-pair rule), t = 15, L = 64 level 3; checkpoints asked at launch; re-measure into `matched_rest_displacement.dat` and redraw Fig. 4(a) | ~1 each (the csm rest pairs' class: 18 u/h alone) |
+| A1-csm | `ctrl_rest_a1_csm` (then, optional, `ctrl_rest_a15_csm` / `ctrl_rest_a3_csm`) | **LIVE on the first node's card 0 since 11:56 UTC 10-02** (Live, above). Restore Fig. 4(a)'s width arm on matched data (the a = 1 arm left the panel 09-30: no matched twin) and put clmNarrowPairRatio — and with the optional twins the §V.B width ladder clmALadder* — on mode 3 | the old run's packed `evolution_params.txt` with ONLY the constraint-solve block and the name changed (the rest-pair rule), t = 15, L = 64 level 3; checkpoints asked at launch; re-measure into `matched_rest_displacement.dat` and redraw Fig. 4(a) | ~1 each (the csm rest pairs' class: 18 u/h alone) |
 | PLACE-csm | `place_d{6..48}_step1_csm` (the 18 one-step probes) | the matched placement curve for Fig. 4(d,e), now captioned as superposed-only: expected flat at R⋆ = 3.8895 (the matched pairs read 3.876–3.878 at t = 0), which would draw the clean-data contrast under the superposed excess; re-measures or retires clmMouthTauFlybyPlaced/SeedFlybyPlaced (CSM_SWITCHOVER) | the superposed probes' params (`04_binary_headon/placement/place_d*_step1`) with only mode 3 + names; initial data plus one step, scanned at t = 0; no frames beyond the default t = 0 set | < 1 total (minutes per probe) |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | spiral burst/energy, level 4 vs 5 | the spiral template, max_level 4, from t = 0 | ~8–10 |
 | EGW-p06 | `merge_orbit_flip_d12_p060_lvl5_t040_csm` | E_GW(p) above the fly-by (turnover) | fly-by template, p = 0.60, stop ~40; junk ∝ p², read the Newton passes at start | ~8–12 |
