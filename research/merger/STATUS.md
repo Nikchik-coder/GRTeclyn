@@ -187,16 +187,22 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): SPIRAL-d6-prod live on card 0 (solve done, evolving since ~20:10 UTC 10-01)
+## Second node (one H100): D6-lvl6 live on card 0 (the merger's leg 2, evolving since ~06:21 UTC 10-02)
 
-**SPIRAL-d6-prod `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` (the user's go 19:43 UTC): THE MERGER RUN.** The
-scouted design point (d = 6, tangential p = 0.10 — the scout is misnamed d8) on the production box: the fly-by
-template line for line with only centers +-3, momentum +-0.10 and stop 60 changed; checkpoints every 5 keeping 3;
-`orbit-modes-scan-prod`, `main3d_boostpair_91ed17cd`. Expect the head-on's leg structure: the merged core will
-need a lvl6 leg through the wall (the level-5 head-on died t = 38.8; restart from the rolling checkpoint).
-Start verified 20:12 UTC: solve 22 Newton passes, far sides to 2e-6, M_ADM 2.3634 (the head-on chain: 2.3573),
-Chk00000 + Plt00000 written, no NaN. At the head-on's lvl5 pace (~2.7 u/h) t = 60 is ~22 h -> ~18:30 UTC 10-02;
-the merger itself (MOTS ~ t 12.5) lands ~01:00 UTC.
+**D6-lvl6 `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` (the user's go 06:10 UTC 10-02): the merger's leg
+through the wall.** Restart from leg 1's `Chk02500` (t = 25) with max_level 6, nothing else changed (template
+diffed: names + max_level only); `orbit-modes-scan-prod`, the parent binary `main3d_boostpair_91ed17cd`;
+checkpoints every 5 keeping 3 (the user's word). `Chk02500` also copied to leg 1's NFS run dir (the new
+CLAUDE.md rule). Start verified 06:22 UTC: "restarting calculation from" Chk02500, every level advancing from
+t = 25, card at 50.6 GB / 93 %, no NaN; level 6 appears at the first regrid. At the head-on lvl6 pace (~2.0 u/h)
+t = 60 is ~17.5 h -> ~23:50 UTC 10-02. First new checkpoint (Chk03000, t = 30) expected ~08:50 UTC.
+
+**Leg 1 `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` (RETIRED by hand at t = 26.26, 06:14 UTC 10-02): THE MERGER
+HAPPENED ON IT.** Common MOTS from t = 13 (R 5.600, M_MS 2.800, deform 0.115) shrinking and rounding to t = 25
+(R 4.946, deform 0.030); constraints flat (L2 Ham 4.4e-4 at the stop). The merged core's K runaway began t ≈ 25.8
+(max|K| 0.87 at 25.0 -> 4.1 at 26.1, the head-on leg-1 death, 5 units later than the level-3 scout's 20.6);
+stopped before the NaN so leg 2 restarts from the pre-spike Chk02500. Scratch keeps Chk 1500/2000/2500 +
+Plt 2400/2500/2600 until the leg structure completes; packed at the chain's close-out, not before.
 
 **SCOUT-d8p closed out (19:30 UTC 10-01; `05_binary_spiral/scout_merger/`, frames kept; movies added ~20:05 UTC on the user's word, cut at t <= 19 — K at a fixed linear ±0.05, the other fields on the close-out symlog scales): THE FIRST
 ORBITAL MERGER ON CLEAN DATA.** `spiral_d8_p010_lvl3_t040_lbf_csm` (MISNAMED d8: centers +-3 = d = 6; tangential p = 0.10, L = 64 level 3):
@@ -270,7 +276,7 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 
 | id | run | what | how | GPU-h |
 |---|---|---|---|---|
-| D6-lvl6 | `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm` | SPIRAL-d6-prod's leg 2 THROUGH THE WALL: the lvl5 parent hit the merged core's K runaway at t ≈ 25.8 (max\|K\| 0.87 → 2.7 over 25.0 → 25.8; constraints still 4e-4, MOTS smooth — the head-on leg-1 death) | the head-on leg-2 pattern: restart from the parent's `Chk02500` (t = 25, before the spike), max_level 6. Template ready: `templates_scan/params_spiral_d6_p010_L128_lvl6from25_t060_lbf_csm.txt` (only the name, max_level 5→6, `amr.restart`; diffed). **First copy `Chk02500` into the parent's NFS run dir** (keep-3 is not an archive). Launch on the SECOND node, parent binary; checkpoints asked at launch (every-5 keep-3 proposed, the next leg needs them); needs the go | ~2.0 u/h at lvl6 (head-on leg 2): ~17 h for t = 25–60; a later lvl4 drop (template `lvl4fromCHK`, kept) once max\|K\| flattens |
+| D6-lvl6 | `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` | **LIVE on the second node's card 0 since ~06:21 UTC 10-02** (Second node, above). The merger's leg 2 through the wall: leg 1 hit the merged core's K runaway at t ≈ 25.8 | the head-on leg-2 pattern: restart from the parent's `Chk02500` (t = 25, before the spike), max_level 6. Template ready: `templates_scan/params_spiral_d6_p010_L128_lvl6from25_t060_lbf_csm.txt` (only the name, max_level 5→6, `amr.restart`; diffed). **First copy `Chk02500` into the parent's NFS run dir** (keep-3 is not an archive). Launch on the SECOND node, parent binary; checkpoints asked at launch (every-5 keep-3 proposed, the next leg needs them); needs the go | ~2.0 u/h at lvl6 (head-on leg 2): ~17 h for t = 25–60; a later lvl4 drop (template `lvl4fromCHK`, kept) once max\|K\| flattens |
 | MOTS-ho3 | `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` | PAPER, REQUIRED (CRITICAL above): the head-on's true MOTS over t = 50–100 for Fig. 5(a,b) and its end values (t = 100) | leg 3 again from leg 2's `Chk05000` (max_level 4) to t = 100, leg 3's packed params with only the name changed; `headon-modes-prod` (`--mots-spectral`), keep-last 3; checkpoints asked at launch; its input checkpoint lives on the SECOND node's scratch — run it there (after SPIRAL-d6-prod) | ~7 (7.2 u/h) |
 | MOTS-ho2 | `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` | PAPER, REQUIRED: the true MOTS over t = 35–50 (through the wall) | leg 2 again from leg 1's `Chk03500` (max_level 6) to t = 50, leg 2's packed params with only the stop (50) and the name changed; as MOTS-ho3 | ~7.5 (2.0 u/h) |
 | MOTS-ho1 | `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` | **LIVE on the first node's card 0 since ~20:20 UTC 10-01** (Live, above). PAPER, REQUIRED: the birth (t ≈ 22, the caption's R 5.02 / M_MS 2.69, the formation time) and t = 0–35 | leg 1 again from t = 0 (max_level 5) to t = 35, leg 1's packed params with only the stop (35) and the name changed; as MOTS-ho3 | ~13 (2.7 u/h) |
