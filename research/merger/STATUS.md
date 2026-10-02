@@ -238,7 +238,7 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): card 0 IDLE since ~11:16 UTC 10-02 (D6-lvl7 died; the next d6 knob needs the go)
+## Second node (one H100): D6-sig10 live on card 0 (the sigma wall test, since ~12:03 UTC 10-02)
 
 **D6-lvl7 `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` DIED t = 27.53 (11:16 UTC 10-02) — TWO UNITS
 BEFORE lvl6's death, same single-cell h11 NaN at the core centre, max|K| still climbing (7.8 at death; lvl6's
@@ -247,9 +247,15 @@ sooner: the core instability is continuum physics, NOT under-resolution — more
 inside the MOTS (steady at R 4.92), censored. Constraints clean to the last step (2.2e-4). Wrote no
 checkpoints; `Chk02500` (t = 25, scratch + NFS) stays the chain's only restart point. Filed
 `05_binary_spiral/merger_d6/` as a diagnostic arm (no movies; frames kept). Its scratch (plotfiles only)
-awaits a prune from a second-node session. THE NEXT KNOBS (the user's go needed; A/B at lvl6 from Chk02500
-against the known t = 29.4 death, ~2.2 h to verdict each): (1) KO `sigma` 0.1 -> 1.0, (2) `min_chi` 1e-8 ->
-1e-4, (3) both; then dt; interior fill last (code work). MOTS-ho2 is the other candidate for this card.
+awaits a prune from a second-node session. THE KNOB UNDER TEST NOW (the user's go 12:00 UTC: "higher
+sigma wall test ... level 5 from chk 25"): D6-sig10 `spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500`
+— KO `sigma` 0.1 -> 1.0 at LEVEL 5 from the same Chk02500, live since ~12:03 UTC. One run tests both walls: if
+sigma holds the K runaway at lvl5 (which killed leg 1 there at 26.26) AND the core cell (which killed lvl6/7),
+the whole chain finishes at lvl5 speed (~2.9 u/h, t = 60 ~12 h). Verdicts: the K wall at t ~ 26 (~1 h in,
+~13:10 UTC), the core-NaN window 27.5–29.4 (~13:40–14:20 UTC). Template = the lvl7 leg's with only the names,
+max_level 5 and sigma; checkpoints keep the chain's rule (every 5, ONLY the newest). If it dies at the K wall:
+sigma at lvl6 is the fallback; `min_chi` 1e-4 after; interior fill last. MOTS-ho2 queued behind it. lvl7's
+scratch (15G plotfiles) wiped 12:00 UTC (manifest); Chk02500 + the ho2/ho3 checkpoints + HFL kept.
 
 **D6-lvl6 `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` (RETIRED: died t = 29.407, 08:1x UTC 10-02):
 through the K wall, killed by a grid-scale core instability.** It cleared leg 1's wall — max|K| peaked 5.6 at

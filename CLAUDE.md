@@ -127,6 +127,10 @@ after session because it lived only in one machine's agent memory.
 
 ## When a run finishes
 
+**"Systematics" (the user's word, 2026-10-02) means exactly this section**: the full finish pass below — check,
+pack, document, prune, launch the next run on the go, commit and push. When the user says "do systematics", run
+this list; nothing more is meant by it.
+
 Do these steps, in this order and in the same session, without being asked, in one fast pass: batch them, fix only
 what the claims check or the identity grep flags, and report in a few lines.
 1. **Check it.**
