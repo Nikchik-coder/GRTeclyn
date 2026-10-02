@@ -46,6 +46,14 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
     - Each run dir's `consumer_args.extra` holds these flags. Every consumer started there reads it, including the
       end-of-run drain, so every plotfile gets the finder and none is left for an offline pass (the user, 10-01).
       The last 3 plotfiles stay on scratch as before.
+- **The article defines the instrument since 10-02 (the user's ask: "grteclyn currently lacks true horizon
+  finder and we need to justify our setup"):** new `sec:setup:mots` (after Diagnostics) -- the MOTS definition
+  (theta_+ = 0, theta_- < 0, quasi-local vs the event horizon, the NEC caveat), the post-processing spectral
+  Newton finder as the source of EVERY horizon number, star scans demoted to inner bounds/live monitor.
+  Macros reused (clmFlowFinder*); not compiled on the nodes (no TeX) -- check both engines on the workstation.
+  The Fig. 5/SVI rewrite plugs into this section when MOTS-ho1/2/3 land. First ho1 reading, 10-02 07:20 UTC:
+  the finder holds the common MOTS from t = 18 (R 5.634, M 2.817, deform 0.104) -- 4 units before the round
+  scan's t ~ 22 birth and 12 % larger than the caption's R 5.02.
 - **Paper numbers to re-measure, all the head-on's:**
   - **Fig. 5(a,b).** The gold line is the round scan. The caption's birth (t = 22, R 5.02, M_MS 2.69,
     `clmHeadonCsmMots*`) is round-scan; its end (t = 100, R 4.69, M_MS 2.373, `clmHeadonCsmEnd*`) is oriented-scan; its

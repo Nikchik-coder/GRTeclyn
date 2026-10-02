@@ -304,6 +304,35 @@ with the product averaged over the sphere and $\theta_\pm$ computed for the null
 
 Radiation is read from $\Psi_4$ on spheres at $R=\clmExtractRadiusTen$, $\clmExtractRadiusFourteen$, $\clmExtractRadiusEighteen$ (and $\clmExtractRadiusTwentyTwo$ on the single-throat wave arms) on the head-on and the single throats, whose $L=\clmBigBoxL$ arms keep these spheres, and at $R=\clmExtractRadiusTwenty$, $\clmExtractRadiusTwentyEight$, $\clmExtractRadiusThirtySix$, $\clmExtractRadiusFortyFour$ on the $L=\clmBigBoxL$ spiral and fly-by, decomposed in spin-weight $-2$ harmonics. Every amplitude quoted is $r\Psi_4$; on the head-on the in-code and offline pipelines agree at the burst peak to $\clmPsiPipelines\%$, while on the single throats the in-code stream is dominated by its grid-scale floor and only the offline one is used. A scalar stream is read on the same spheres, and at $R=\clmGwScalarRadiusInner$ and $\clmGwScalarRadiusOuter$ on the $L=\clmBigBoxL$ spiral and fly-by: $\phi$ and $\Pi$ in spin-weight-$0$ harmonics, $A_{\ell m}=R\,\phi_{\ell m}$, and the kinematic flux $F_{\rm kin}=-R^2\oint\Pi\,\partial_r\phi\,\mathrm{d}\Omega$, positive for an outgoing \emph{canonical} wave (Sec.~\ref{sec:gw:scalar}). A per-cell autopsy records the location and one-step history of any floating-point failure.
 
+\subsection{Marginally outer trapped surfaces}
+\label{sec:setup:mots}
+
+A marginally outer trapped surface (MOTS) is a closed two-surface of the slice on which the outgoing null
+expansion vanishes, $\theta_+=0$, while the ingoing one is negative, $\theta_-<0$; the outermost MOTS is the
+apparent horizon. Unlike the event horizon, which is defined only once the entire future of the spacetime is
+known, a MOTS is quasi-local---it is read off a single slice---which makes it the operational horizon of
+numerical relativity. Because the phantom violates the null energy condition, a MOTS here need not lie inside
+an event horizon (Sec.~\ref{sec:setup:diagnostics}); every ``horizon'', ``censored'' and ``black hole'' in this
+paper is a statement about MOTSs on the evolved slices.
+
+The evolution code does not locate horizons; finding a MOTS is an elliptic problem on a single slice and is
+solved in post-processing, on every archived slice, so horizon coverage matches the plot cadence. The finder
+expands the surface about the tracked centre as $r=h(\theta,\phi)$ in real spherical harmonics up to degree
+$\ell_{\max}=\clmFlowFinderLmax$ on the head-on slices and $\ell_{\max}=\clmFlowFinderLmaxAlt$ on the orbital
+ones, and solves $\theta_+[h]=0$ by Newton iteration on metric and extrinsic-curvature data interpolated from
+the finest refinement level covering the surface, with the areal orientation of
+Sec.~\ref{sec:setup:diagnostics}. The first surface of a run is found by the damped fast
+flow~\cite{gundlach1998}; each later slice warm-starts from the previous surface and converges in a few
+iterations to a root-mean-square residual below the solver tolerance of $10^{-6}$. From the converged surface
+we quote the areal radius $R=\sqrt{A/4\pi}$, the Misner--Sharp mass of Eq.~\eqref{eq:misner_sharp}, and the
+harmonic content beyond $\ell=0$ as the deformation. The instrument recovers Kerr--Schild Schwarzschild
+($R=2M$ to $\clmFlowFinderSchw\%$, $M_{\rm MS}=M$ to $\clmFlowFinderSchwMass\%$) and finds no trapped surface
+outside the time-symmetric Ellis throat. Every horizon number in this paper---formation times, $R$,
+$M_{\rm MS}$---is read from these surfaces. The star-shaped scan of
+Sec.~\ref{sec:setup:diagnostics} is retained only as an inner bound and a live monitor: a fully trapped round
+sphere lies strictly inside a deformed MOTS, so while the surface is forming the scan under-reads it by the
+shape systematic quoted there, and can miss it altogether.
+
 \section{The single wormhole}
 \label{sec:single}
 
