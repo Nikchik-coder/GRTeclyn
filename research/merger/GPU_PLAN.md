@@ -3986,3 +3986,41 @@ panel (d)'s "at rest" tag, which floated mid-frame, now hangs just under the
 resting curve's hold stretch at t = 20. Both audits clean; caption follows
 (p -> v, the extra ellipses named); ledger untouched, check 1112 rows, 0
 problems. No GPU touched.
+
+## 2026-10-02 (~06:00 UTC) — the superseded superposed/Bowen–York runs leave the pack; ledger frozen, Table I kept
+
+The user: the pack mixed the old superposed/Bowen–York runs with the csm/lbf reruns under
+`results/merger/campaign/` — confusing for referees; move the old bad runs out of the campaign folder and out
+of git tracking; nothing deleted, only moved; adapt the code; some figures will not replot until their reruns
+exist. No GPU touched; the three live runs (MOTS-ho1, FLYBY-lbf, SPIRAL-d6-prod) untouched at the top of the
+run tree.
+
+- **Moved (mv, nothing deleted), 44 paths + 3 dead launches:** each run's raw dir AND its pack extract (as
+  `pack/`) to the untracked `runs/wormhole_merger/00_archive/superseded_2026-10-02/<same group path>` (dead
+  launches to `00_archive/aborted/`). The set: 03_two_throats' nine superposed pairs (ctrl_*, orbit_d12_p012);
+  04's superposed head-on arms (the v1 chain of five, the four v1c twins, d12, d6_m05); 05's orbital chain
+  p012 (13 runs), p012_freeze, p012_paper, p015, p020, p025; 06's p035 and the three p045 fly-bys;
+  02's s20_boost_p02; 08's superposed lvl4 freeze leg. 1564 tracked files leave git on this commit; every
+  byte survives in the archive and in git history.
+- **Kept in the pack** (the paper's deliberate superposed systematics + clean data): all of 01_single_throat
+  (p = 0, clean); the placement probes (Fig. 4(d,e) is the superposition systematic); the refinement ladder
+  (Fig. 11a stays superposed — LAD-csm cancelled); the gauge arms; the Helfer twins + plain_t100; the CS-1
+  scout; 07_bbh_control (vacuum, correct data); 05/horizon and every group-level aggregate (.dat/.tsv) —
+  these are the frozen old-vs-clean inputs.
+- **Adapted:** `table1_groups.tsv` rows carry `ARCHIVED 2026-10-02 ...` notes; `extract_detector.py` counts
+  archived runs (`_archived()`, exempt from the packed check) so Table I's 19 group counts and the
+  144/12/132 totals are unchanged — the runs were performed; the note names the archive. The 348 ledger rows
+  that read archived files flipped auto/def → manual with a dated freeze note (flip back on the csm/lbf
+  reruns). `claims.py check`: 1112 rows, 545 recomputed, 0 problems. `numbers.tex` regenerated: every macro
+  value byte-identical (only status comments changed). `runs_index.tsv` regenerated (118 packed runs). No
+  untracked files under results/merger; every csm/lbf group fully tracked.
+- **Figures (all 17 FIGURES.md modules audited; committed files all byte-preserved):** replot clean —
+  Figs. 1, 2, 3 top/bottom, 4, 5, 11 bottom. Replot but with the archived arms silently dropped (redraws
+  restored from a pre-audit snapshot; do NOT redraw until their reruns land) — Fig. 7 gallery (lost the
+  spiral/fly-by rows), Fig. 8 ligo, Fig. 11 top ladder. Replot fails on archived sources (expected; awaits
+  the lbf/csm reruns) — Figs. 6, 9, 12 top/bottom, 13 top/bottom. Fig. 10 (constraint evolution): fixed the
+  pre-existing 09-30 drift (plot_headon_collapse lost `_param` in its csm rewrite; now a local reader), but
+  its (e)–(g) panels still read the old head-on arms / spiral / fly-by — its replot awaits its own csm
+  redesign in the rewrite.
+- **Flip-back path at the rewrite:** repoint a frozen row's extractor at the csm run (or unfreeze if its run
+  returns to the pack), redraw the wave/spiral/fly-by figures from the reruns, and re-group Table I.

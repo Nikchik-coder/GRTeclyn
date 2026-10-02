@@ -113,6 +113,23 @@ def _table1() -> dict[str, str]:
 
 
 @functools.lru_cache(maxsize=1)
+def _archived() -> set[str]:
+    """Runs whose note starts with ARCHIVED: performed (so still counted in
+    Table I) but moved out of the tracked pack, raw + pack extract, to the
+    untracked runs/wormhole_merger/00_archive/ (superseded superposed /
+    Bowen-York data, 2026-10-02).  Rows that read their files are frozen in
+    the ledger as `manual` until the csm/lbf reruns replace them."""
+    out: set[str] = set()
+    for line in TABLE1.read_text(encoding="utf-8").splitlines():
+        if not line.strip() or line.startswith("#") or line.startswith("run\t"):
+            continue
+        cells = line.split("\t")
+        if len(cells) >= 4 and cells[3].strip().startswith("ARCHIVED"):
+            out.add(cells[0].strip())
+    return out
+
+
+@functools.lru_cache(maxsize=1)
 def _packed() -> dict[str, list[pathlib.Path]]:
     """run name -> packed directories (a name can be packed twice)."""
     out: dict[str, list[pathlib.Path]] = collections.defaultdict(list)
@@ -126,7 +143,7 @@ def _group_runs(group: str) -> list[str]:
         raise KeyError(f"no Table I group {group!r}; groups are {TABLE1_GROUPS}")
     names = sorted(n for n, g in _table1().items() if g == group)
     packed = _packed()
-    gone = [n for n in names if n not in packed]
+    gone = [n for n in names if n not in packed and n not in _archived()]
     twice = [n for n in names if len(packed.get(n, ())) > 1]
     if gone:
         raise LookupError(f"{group}: counted in table1_groups.tsv but not packed: {gone}")

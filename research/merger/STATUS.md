@@ -100,6 +100,12 @@ M_ADM misses the interaction energy. No binary number is final until remeasured 
   force-law δ = 2.65 (superposed 3.56). In the paper.
 - Framing rule (the user): the old constraint state is barely mentioned; mode 3 improving the constraints is the
   headline, and the old campaign becomes the systematics study.
+- Pack hygiene (the user, 10-02): the superseded superposed/Bowen–York runs LEFT the tracked pack — raw dir +
+  pack extract moved (nothing deleted) to the untracked `runs/wormhole_merger/00_archive/superseded_2026-10-02/`.
+  348 ledger rows frozen `manual` (values unchanged; unfreeze onto the reruns), Table I's counts kept (ARCHIVED
+  notes in table1_groups.tsv). Still packed: singles, placement, ladder, gauge arms, Helfer twins, CS-1, BBH
+  controls, the group aggregates. Figures 6/9/10/12/13 and the gallery's spiral+fly-by rows redraw only after
+  their reruns. Details: GPU_PLAN "2026-10-02 (~06:00 UTC)".
 
 ## The plan, in order (the user, 2026-09-28)
 

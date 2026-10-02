@@ -184,15 +184,27 @@ def pure_quadrupole(ax, pack) -> None:
           f"x{late[-1, 1] / late[0, 1]:.0f} over t = 60-{late[-1, 0]:.0f}")
 
 
+def _param(run: pathlib.Path, key: str) -> float:
+    """One numeric key of a packed run's evolution_params.txt (the reader the
+    pre-csm plot_headon_collapse carried; local since its 09-30 rewrite)."""
+    for ln in (run / "evolution_params.txt").read_text().splitlines():
+        ln = ln.split("#", 1)[0].strip()
+        if "=" in ln:
+            k, v = ln.split("=", 1)
+            if k.strip() == key:
+                return float(v.strip().strip('"').split()[0])
+    raise KeyError(key)
+
+
 def _finest_dx(run: pathlib.Path) -> Fraction:
     """The finest cell of a packed run, from its evolution_params.txt: the full
     box's L / N over 2^max_level (the octant runs name the full box L_full /
     N_full; the refinement ratio is AMReX's default 2)."""
     try:
-        L, N = headon._param(run, "L_full"), headon._param(run, "N_full")
+        L, N = _param(run, "L_full"), _param(run, "N_full")
     except KeyError:
-        L, N = headon._param(run, "L"), headon._param(run, "N1")
-    return Fraction(L / N / 2 ** int(headon._param(run, "max_level"))).limit_denominator(4096)
+        L, N = _param(run, "L"), _param(run, "N1")
+    return Fraction(L / N / 2 ** int(_param(run, "max_level"))).limit_denominator(4096)
 
 
 def inflation(ax, pack_root) -> None:
@@ -203,7 +215,7 @@ def inflation(ax, pack_root) -> None:
     cn = cn[cn[:, 0] <= f4.T_WALL + 1e-9]
     mm = cn[:, 2] > 0
     dx = _finest_dx(run)
-    L = headon._param(run, "L_full")
+    L = _param(run, "L_full")
     hH = _h(ax, cn[:, 0], cn[:, 1], color=style.INK, lw=1.1, zorder=3)
     hM = _h(ax, cn[mm, 0], cn[mm, 2], color=style.MUTED, lw=1.1, ls=DASH, zorder=3)
     ax.set_xlim(0, f4.T_WALL)
