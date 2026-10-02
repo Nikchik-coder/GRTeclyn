@@ -171,7 +171,7 @@ c_iso) stays the optional twin. STOPPED AT t = 31.5 (12:35 UTC 10-02, dump_and_s
 question is settled — THE KICKED SOLVED DATA IS BORN TRAPPED (3D-finder MOTS on the t = 0 slice, R 4.306,
 M 2.15; min lapse 0.008 by t = 30), the same prompt collapse as the superposed twin (round-scan horizon by
 t = 1): the constraint solve does not erase or soften the declared kick. NO further single-wormhole runs (the
-user's word; the m1e1 mirror cancelled). Close-out when the consumer drains the backlog. CONSUMER INCIDENT: `--profile none` sets WHM_CONSUME=0 and silently drops
+user's word; the m1e1 mirror cancelled). Consumer drained 12:05 UTC (MOTS to t = 31.5: R 4.306 -> 3.039, frames complete); registry/GPU_PLAN/table1 written; file_run + closeout + scratch prune + the idle watch-mode consumer PENDING A FIRST-NODE SESSION. CONSUMER INCIDENT: `--profile none` sets WHM_CONSUME=0 and silently drops
 `--consume-args`, so the run went 1.5 h with no consumer (no frames, no MOTS, plotfiles piling to 29); the
 sidecar was started by hand 11:50 UTC with the intended args (venv `test_post` symlink; backlog from Plt00000
 reprocessing, keep-last 3 pruning as it goes). CLAUDE.md launch step 4 now says the consumer is part of the
