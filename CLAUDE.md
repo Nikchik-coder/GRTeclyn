@@ -98,6 +98,12 @@ after session because it lived only in one machine's agent memory.
   `results/` by `research/merger/pack_results.sh`. Never add `runs/` to git.
 - Scratch (`/tmp/grteclyn_scratch/` on each node) holds plotfiles and checkpoints;
   prune only on the user's word and log it in `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_<date>.md`.
+- **A checkpoint a queued run needs must be copied off scratch while the producer is live.**
+  `checkpoint_keep N` is a disk policy, not an archive: a specific-time checkpoint is pruned within
+  ~N×interval time units of being written. At every launch and queue edit, list which queued runs restart
+  from which checkpoint times; `cp -r` each needed Chk from scratch to the producer's NFS run dir as soon as
+  its log prints the write; before any prune, grep STATUS's queue for the run's checkpoints. (2026-10-02:
+  LAD-csm was cancelled because the lb spiral's t ≈ 50 checkpoint was pruned mid-run and never copied.)
 - **Never delete frames.** A run's `frames/` (the rendered PNGs, the `_slice_cache`) and
   `movies/` are never removed: not at close-out, not in a prune, not as "leftovers", not
   to save space, not for runs called corrupted or uncited. The slice cache is the only
