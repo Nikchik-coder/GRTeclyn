@@ -96,6 +96,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_eps_m1e3_t100` | B | 100.0 | x23016.6 / 100.0 | +0.96 | +1.19 | +1.31 | +1.41 | +1.90 | +2.80 | +3.42 | - | same (+0.10 dex) |
 | `single_eps_p1e1_t100` | A | 14.1 | x1542.5 / 14.1 | +0.87 | - | - | - | - | - | - | 13.0 | too short |
 | `single_eps_p1e1_t100` | B | 14.1 | x1542.5 / 14.1 | +0.87 | - | - | - | - | - | - | 13.0 | too short |
+| `single_eps_p1e1_t100_csm` | A | 31.5 | x2326.7 / 31.5 | +0.98 | +0.96 | +3.33 | +3.37 | - | - | - | 17.8 | late (+2.06 dex) |
+| `single_eps_p1e1_t100_csm` | B | 31.5 | x2326.7 / 31.5 | +0.98 | +0.96 | +3.33 | +3.37 | - | - | - | 17.8 | late (+2.06 dex) |
 | `single_eps_p1e2_L128_ml4_t250` | A | 74.3 | x12765.8 / 53.0 | +1.07 | +1.25 | +1.41 | +1.96 | +3.99 | +4.10 | +4.09 | 27.9 | late (+0.65 dex) |
 | `single_eps_p1e2_L128_ml4_t250` | B | 74.3 | x12765.8 / 53.0 | +1.07 | +1.25 | +1.41 | +1.96 | +3.99 | +4.10 | +4.09 | 27.9 | late (+0.65 dex) |
 | `single_eps_p1e2_ml4_t060` | A | 13.5 | x14.8 / 13.5 | +1.07 | - | - | - | - | - | - | - | too short |
@@ -231,7 +233,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 24 early, 12 same, 61 late, 68 too short, 22 restart arms (own clock only).
+Throats read at t = 30: 24 early, 12 same, 63 late, 68 too short, 22 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the
