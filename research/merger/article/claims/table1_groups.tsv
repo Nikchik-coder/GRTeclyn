@@ -233,3 +233,5 @@ place_d36_step1_csm	-	04_binary_headon/placement_csm/place_d36_step1_csm	PLACE-c
 place_d40_step1_csm	-	04_binary_headon/placement_csm/place_d40_step1_csm	PLACE-csm probe (2026-10-02): the matched placement curve, one step, solve verified
 place_d44_step1_csm	-	04_binary_headon/placement_csm/place_d44_step1_csm	PLACE-csm probe (2026-10-02): the matched placement curve, one step, solve verified
 place_d48_step1_csm	-	04_binary_headon/placement_csm/place_d48_step1_csm	PLACE-csm probe (2026-10-02): the matched placement curve, one step, solve verified
+ctrl_rest_a15_csm	-	03_two_throats/csm/ctrl_rest_a15_csm	A15-csm (2026-10-02): the a = 1.5 matched rest pair at d = 12, t = 15, the width-ladder arm for Fig. 4(a)
+ctrl_rest_a3_csm	-	03_two_throats/csm/ctrl_rest_a3_csm	A3-csm (2026-10-02): the a = 3 matched rest pair at d = 12, t = 15, the width-ladder arm for Fig. 4(a)

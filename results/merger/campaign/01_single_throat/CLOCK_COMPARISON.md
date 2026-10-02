@@ -41,6 +41,10 @@ difference from the isolated throat in dex, `same` within 0.10.
 | arm | throat | ran to | peak x / at t | t=10 | t=20 | t=26 | t=30 | t=40 | t=50 | t=60 | floor | verdict |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 | **single_hold_t100** | A | 100.0 | x2667.4 / 84.6 | +0.96 | +1.18 | +1.26 | +1.31 | +1.38 | +1.37 | +0.86 | 61.3 | reference |
+| `ctrl_rest_a1_csm` | A | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_a1_csm` | B | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
+| `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | A | 100.0 | x345.1 / 100.0 | +0.37 | +0.59 | +0.67 | +0.85 | +0.97 | +1.20 | +1.57 | 0.0 | early (-0.46 dex) |
+| `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | B | 100.0 | x344.7 / 100.0 | +0.37 | +0.58 | +0.67 | +0.84 | +0.98 | +1.20 | +1.57 | 0.0 | early (-0.47 dex) |
 | `bridge_grtresna_L64_t025` | A | 5.3 | x5.1 / 5.3 | - | - | - | - | - | - | - | - | too short |
 | `bridge_grtresna_L64_t025` | B | 5.3 | x5.1 / 5.3 | - | - | - | - | - | - | - | - | too short |
 | `stage1_lapse5` | A | 40.0 | x1008.3 / 10.7 | +2.88 | +2.92 | +1.48 | +1.77 | +2.39 | - | - | 0.5 | late (+0.46 dex) |
@@ -150,8 +154,12 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_boost_p045_lbf_t050` | B | 44.7 | x51.3 / 34.2 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
 | `ctrl_flip_d12_csm` | A | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
 | `ctrl_flip_d12_csm` | B | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_a15_csm` | A | 15.0 | x25.3 / 14.8 | +1.24 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_a15_csm` | B | 15.0 | x25.3 / 14.8 | +1.24 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_a1_csm` | A | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_a1_csm` | B | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_a3_csm` | A | 15.0 | x8.0 / 15.0 | +0.66 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_a3_csm` | B | 15.0 | x8.0 / 15.0 | +0.66 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d12_csm` | A | 15.0 | x14.7 / 14.6 | +0.99 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d12_csm` | B | 15.0 | x14.7 / 14.6 | +0.99 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d14_csm` | A | 15.0 | x14.0 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
@@ -232,14 +240,12 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | B | 0.5 | x1.1 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | A | 80.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | B | 80.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
-| `ctrl_rest_a1_csm` | A | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
-| `ctrl_rest_a1_csm` | B | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
-| `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | A | 100.0 | x345.1 / 100.0 | +0.37 | +0.59 | +0.67 | +0.85 | +0.97 | +1.20 | +1.57 | 0.0 | early (-0.46 dex) |
-| `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | B | 100.0 | x344.7 / 100.0 | +0.37 | +0.58 | +0.67 | +0.84 | +0.98 | +1.20 | +1.57 | 0.0 | early (-0.47 dex) |
+| `spiral_d6_p010_L128_lvl5from30_sig10_chi1e4_t060_lbf_csm_r03000` | A | 36.7 | x1.0 / 30.0 | +0.00 | +0.00 | +0.00 | +0.00 | - | - | - | - | restart -- own clock only |
+| `spiral_d6_p010_L128_lvl5from30_sig10_chi1e4_t060_lbf_csm_r03000` | B | 36.7 | x1.0 / 30.0 | +0.00 | +0.00 | +0.00 | +0.00 | - | - | - | - | restart -- own clock only |
 
 ## Reading
 
-Throats read at t = 30: 24 early, 12 same, 63 late, 72 too short, 24 restart arms (own clock only).
+Throats read at t = 30: 24 early, 12 same, 63 late, 76 too short, 26 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

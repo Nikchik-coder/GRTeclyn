@@ -4042,3 +4042,19 @@ run tree.
   redesign in the rewrite.
 - **Flip-back path at the rewrite:** repoint a frozen row's extractor at the csm run (or unfreeze if its run
   returns to the pack), redraw the wave/spiral/fly-by figures from the reruns, and re-group Table I.
+
+## 2026-10-02 (~19:30 UTC) — the width twins land clean; EGW-p06 takes the freed card
+
+- **ctrl_rest_a15_csm / ctrl_rest_a3_csm reached t = 15 together on one card** (the user's word: both at
+  once), no NaN; Ham 7.2e-3 / 2.4e-3, Mom ~3e-5 (the rest-probe class, A1's 8.7e-3 beside them), no MOTS
+  anywhere (correct for resting pairs). Solves: a15 pass 1 c = 2.0592 (far sides 1.4e-8), a3 pass 2
+  c = 2.4506 (5.8e-9) — with A1's 1.9735 a clean a-ladder of matching constants. Filed
+  `03_two_throats/csm/`; the matched_rest_displacement re-measure across a = 1/1.5/3 and the Fig. 4(a)
+  redraw are the pending analysis step. Launch note for the record: both twins were first REFUSED by
+  preflight over a duplicate `amr.checkpoint_files_output = 0` buried later in the archived params —
+  the preflight catching exactly the class of stale-key contradiction it exists for.
+- **EGW-p06 `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` launched on the freed card 0 (~19:25 UTC)**:
+  the fly-by's packed params with only p 0.25 -> 0.60, stop 100 -> 40, max_level 5 -> 4 (the user:
+  exploratory; the extraction spheres read the base grid whatever max_level is) and the name; checkpoints
+  every 5 keep 3; binary main3d_boostpair_91ed17cd; the fly-by's consumer args + --mots-spectral.
+  Preflight PASS (14/14 frames). E_GW(p) above the fly-by point — the turnover hunt. EGW-p09 follows.

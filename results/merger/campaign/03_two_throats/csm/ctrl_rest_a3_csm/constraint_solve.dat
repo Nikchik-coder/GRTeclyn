@@ -1,0 +1,3 @@
+# thinned to dt=0.05 from the every-step stream; the last 1 time units are kept whole (the death window)
+#       time                mode               M_ADM          M_ADM_face                 c_A             sigma_A                w0_A              Mfar_A              Qfar_A                m1_A                 c_B             sigma_B                w0_B              Mfar_B              Qfar_B                m1_B           match_res
+   0.0000000    3.0000000000e+00    1.1978023624e+00    1.3955609680e+00    2.4506291114e+00    9.3665690795e-01   -7.1559842217e-03   -2.8496539248e+00    2.5420681302e+00    9.9999999905e-01    2.4506291113e+00    9.3665690795e-01   -7.1559842220e-03   -2.8496539248e+00    2.5420681302e+00    9.9999999905e-01    5.8298326167e-09

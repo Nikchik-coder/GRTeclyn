@@ -468,7 +468,11 @@ and the framing was wrong — see below.)*
   formula at a/d = 0.25; like-charge arms alone cannot separate them. The
   decisive test is two flip arms at a = 1.5 and a = 3, where the under-read
   cancels within each width and the predictions are far apart (1.889 and
-  1.222 against a = 2's confirmed 1.500). **The separation ladder below now
+  1.222 against a = 2's confirmed 1.500). (2026-10-02: the width ladder now
+  exists on far-side-matched data — `ctrl_rest_a1_csm` / `a15` / `a3`, pack
+  `campaign/03_two_throats/csm/`, all clean to t = 15; the matched re-measure
+  and the Fig. 4(a) redraw are the pending analysis step, so the numbers in
+  this bullet remain superposed-era until then.) **The separation ladder below now
   favours the finite-size branch**: it finds an effective separation exceeding
   the coordinate one by about a throat radius, which is exactly the correction
   a point-charge formula is missing, and it does so in a geometry where the

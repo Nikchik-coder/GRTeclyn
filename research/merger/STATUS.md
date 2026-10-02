@@ -154,14 +154,23 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 the width twins, card 1 CONV-csm
+## Live — first node (two H100s): card 0 EGW-p06, card 1 CONV-csm
 
-Queue order (the user's go 10-02 ~18:20 UTC): card 0 frees ~19:00 UTC -> EGW-p06, then EGW-p09 (lvl4, every-5
-keep-3 checkpoints, templates ready). Second node frees ~00:30 UTC 10-03 -> MOTS-ho2, then MOTS-ho3 (same
-checkpoint call). Proposed, NO go: EGW-p045 (+ optional p012), CONV-csm-w, SIGN-dyn (queue table below).
+Queue order (the user's go 10-02 ~18:20 UTC): EGW-p09 next on card 0 after p06 (~00:00 UTC 10-03). Second
+node frees ~00:30 UTC 10-03 -> MOTS-ho2, then MOTS-ho3 (checkpoints every 5 keep 3). Proposed, NO go: EGW-p045 (+ optional p012), CONV-csm-w, SIGN-dyn (queue table below).
 
-**WIDTH TWINS `ctrl_rest_a15_csm` + `ctrl_rest_a3_csm` LIVE together on card 0 since ~15:40 UTC 10-02 (the
-user's go: both at once on one card):** the §V.B width-ladder arms on matched data — A1-csm's recipe (the
+**EGW-p06 `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` LIVE on card 0 since ~19:25 UTC 10-02 (the
+user's go ~18:20 UTC):** E_GW(p) above the fly-by — the turnover hunt. The fly-by's packed params with only
+p 0.25 -> 0.60, stop 40, max_level 4 (the user: exploratory; extraction reads the base grid either way) and
+the name; checkpoints every 5 keep 3; binary main3d_boostpair_91ed17cd; the fly-by's consumer args +
+--mots-spectral. Preflight PASS (14/14 frames); boosted solve passes 1-3 residual -> 3.5e-12; start
+verification watcher armed. ~4-6 h -> t = 40 ~23:30-01:30 UTC. EGW-p09 follows on this card.
+
+**WIDTH TWINS `ctrl_rest_a15_csm` + `ctrl_rest_a3_csm` DONE 19:21 UTC 10-02 — both reached t = 15 clean on
+one card** (no NaN; Ham 7.2e-3 / 2.4e-3, Mom ~3e-5, the rest-probe class; no MOTS anywhere, correct). The
+a-ladder of matching constants: c = 1.9735 (a1) / 2.0592 (a15) / 2.4506 (a3). Filed `03_two_throats/csm/`,
+closeouts running; the matched re-measure + Fig. 4(a) redraw are the pending analysis step. Was LIVE since
+~15:40 UTC: the §V.B width-ladder arms on matched data — A1-csm's recipe (the
 archived superposed params + the d12_csm solve block + the 20-var plot_vars line), t = 15, L = 64 level 3,
 checkpoints every 2.0 keep 3. TWO PREFLIGHT REFUSALS FIRST (nothing started): the archived a15/a3 params carry
 a SECOND `amr.checkpoint_files_output = 0` line later in the file that overrode the block's `= 1` (A1's params
