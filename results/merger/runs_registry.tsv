@@ -260,3 +260,6 @@ place_d36_step1_csm	PLACE-csm probe (the user's go 10-02): place_d36_step1_csm -
 place_d40_step1_csm	PLACE-csm probe (the user's go 10-02): place_d40_step1_csm -- the superposed probe's params + mode 3 + the name.		
 place_d44_step1_csm	PLACE-csm probe (the user's go 10-02): place_d44_step1_csm -- the superposed probe's params + mode 3 + the name.		
 place_d48_step1_csm	PLACE-csm probe (the user's go 10-02): place_d48_step1_csm -- the superposed probe's params + mode 3 + the name.		
+spiral_d6_p010_L128_lvl4from35_t100_lbf_csm_r03500	D6 settle leg (the user's go 10-02 ~15:15 UTC): the chain past the wall from the chi leg's Chk03500 (t = 35) with pre-wall numerics (min_chi 1e-8, sigma 0.1 reverted), max_level 4, stop_time 100.		
+ctrl_rest_a15_csm	A15-csm twin (the user's go 10-02, both twins together on one card): the archived a15 params + the d12_csm solve block, t = 15 -- the width-ladder arm on matched data.		
+ctrl_rest_a3_csm	A3-csm twin (the user's go 10-02, both twins together on one card): the archived a3 params + the d12_csm solve block, t = 15 -- the width-ladder arm on matched data.		
