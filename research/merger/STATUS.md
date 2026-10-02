@@ -164,8 +164,8 @@ a SECOND `amr.checkpoint_files_output = 0` line later in the file that overrode 
 had no duplicate) — the later line flipped to 1 in both templates, relaunched. Start verified 15:45 UTC by
 effect: solves pass (a15: pass 1, c = 2.0592, far sides matched 1.4e-8; a3: pass 2, c = 2.4506, 5.8e-9 — the
 a-ladder around a1's 1.9735), both stepping, consumers rendering (frame 0 eyeballed: a3's throats visibly
-wider), MOTS scan runs (no MOTS at t = 0, as a resting pair should), Chk00000 each. Sharing the card: ~2 h ->
-t = 15 ~17:45 UTC. Then the matched_rest_displacement re-measure + Fig. 4(a) redraw on all three arms.
+wider), MOTS scan runs (no MOTS at t = 0, as a resting pair should), Chk00000 each. Measured pace sharing the
+card: ~4.6 u/h each -> t = 15 ~19:00 UTC 10-02. Then the matched_rest_displacement re-measure + Fig. 4(a) redraw on all three arms.
 
 **PLACE-csm (the user's go ~14:35 UTC) DONE 14:52 UTC:** the 18 one-step placement probes `place_d{6..48}_step1_csm` on
 mode-3 data, sequential on card 0 via a driver (each: the superposed probe's params + the solve block + the
@@ -177,7 +177,8 @@ superposed group).
 **CONV-csm `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` (the user's go ~14:35 UTC):** the solved spiral at
 max_level 4 from t = 0 — the convergence/referee run against the paper's lvl5 csm spiral. Only the level and
 names changed; checkpoints every 5 keep 3 (the base's block); NO frames/movies (the 08_convergence exception,
-reason in the manifest); extractions kept (radii 14/20/30/44, scalar modes). ~8-10 h -> done ~23:00-01:00 UTC.
+reason in the manifest); extractions kept (radii 14/20/30/44, scalar modes). Measured ~4.4 u/h (slower than
+the 8-10 h estimate) -> t = 100 ~13:00 UTC 10-03.
 
 **SEED-csm `single_eps_p1e1_t100_csm` (the user's go ~09:30 UTC 10-02, "ok agreed"; started 10:06 UTC):** the
 kicked single on SOLVED data, to prove the declared kick is not the junk source. THE KICK CHANGED FORM at
