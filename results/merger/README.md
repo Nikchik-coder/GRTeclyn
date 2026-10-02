@@ -1319,6 +1319,21 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   - binary `main3d_csmatch_5f988dbc`; a validation run, not cited;
   - frames kept, no movies.
 
+### The orbital merger on clean data at production resolution, leg 1 (2026-10-02)
+- **Claim.** The scouted d = 6, p = 0.10 tangential pair merges on boosted mode-3 data in the production box:
+  the 3D finder holds a common MOTS around both mouths from t = 13 (R 5.600, M_MS 2.800, deform 0.115) and tracks
+  it, shrinking smoothly and rounding (deform 0.030), to the leg's last plotfile t = 26 (R ≈ 4.94).
+  - Constraints are flat throughout (L2 Ham 9e-4–2e-3, two orders under the fly-by criterion 2.5e-2).
+  - The merged core's K runaway (the head-on leg-1 class) turns exponential at t ≈ 25.8; the leg was stopped by
+    hand at t = 26.26 before the NaN, 5 units past the level-3 scout's death. Trust window t ≤ 25.5.
+  - Leg 2 (`lvl6from25_r02500`, max_level 6 from Chk02500) carries the chain on; the chain's joined numbers are
+    quoted only when it completes.
+- **Runs.** `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` *(pack, `campaign/05_binary_spiral/merger_d6/`)*:
+  - binary `main3d_boostpair_91ed17cd`; checkpoints every 5 keep 3, Chk02500 (t = 25) kept on scratch and in the
+    NFS run dir for leg 2;
+  - the level-3 scout `spiral_d8_p010_lvl3_t040_lbf_csm` *(pack, `campaign/05_binary_spiral/scout_merger/`;
+    misnamed d8, actually d = 6)* found the same MOTS at t = 12.5 with R 5.624 — the design point reproduces.
+
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
   with the core frozen at t = 57 as in production, give the same (2,2) burst on all four spheres: peak ratio 1.000,
