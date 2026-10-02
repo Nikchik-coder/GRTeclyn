@@ -52,6 +52,12 @@ after session because it lived only in one machine's agent memory.
    are never on by default.
 4. **Check the start within minutes.** Read the log's M_ADM and each mouth's far side (mode 3), compare frame 0 with
    the old run's, check the card's memory in `nvidia-smi`, and look for the first checkpoint only if one was asked for.
+   **The consumer is part of the start**: `consumer.log` exists and advances, frame 0 actually renders, the first
+   extraction/MOTS rows land in `small_data/`, and the keep-last pruning runs. A consumer that died (or was never
+   started) is silent: the evolution runs happily while scratch fills and no frames, movies or horizon data exist.
+   (2026-10-02: SEED-csm ran 1.5 h consumer-less — `--profile none` sets `WHM_CONSUME=0` and silently drops
+   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`, or start the sidecar by hand
+   with the venv's `test_post` symlink.)
 5. **Update STATUS at once.** Every launch, stop or wipe goes into STATUS.md's Live/Queued tables (run, node/card, t,
    stop time, speed, ETA in hours and clock time). Commit and push it immediately and verify with `git ls-remote`. If
    the push is rejected, fetch, rebase and push again.

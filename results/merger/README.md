@@ -1339,6 +1339,16 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   - the level-3 scout `spiral_d8_p010_lvl3_t040_lbf_csm` *(pack, `campaign/05_binary_spiral/scout_merger/`;
     misnamed d8, actually d = 6)* found the same MOTS at t = 12.5 with R 5.624 — the design point reproduces.
 
+### The boosted fly-by is a clean scatter to t = 100 (2026-10-02)
+- **Claim.** The p = 0.25 fly-by on boosted mode-3 data reaches stop_time t = 100 with no NaN: closest approach
+  2.33 at t ≈ 47, separation rising after, and the 3D finder sees no common MOTS on any plotfile — a scatter,
+  not a plunge. The fly-by family keeps its record of never hitting the plunging arms' wall.
+  - Trust window t ≤ 63.3 (L2 Ham crosses 2.5e-2 for good there; an early t = 7.6 blip settled). Waves are
+    quotable to retarded time t − R ≤ 63.3, which covers the periapsis burst on all four spheres.
+- **Runs.** `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` *(pack, `campaign/06_binary_flyby/`)*: the old
+  fly-by's params with p 0.45 → 0.25, momentum model 1, the boosted shift and per-throat lapse freeze;
+  `main3d_boostpair_91ed17cd`; movies cut at 63.3.
+
 ### The head-on's true horizon history (MOTS-ho1, 2026-10-02)
 - **Claim.** Re-running the head-on's leg 1 with the 3D spectral finder on every plotfile gives the true common
   MOTS history over t = 0–35: birth at t = 18 (R 5.634, M_MS 2.817, deform 0.104), settling to R 4.789,

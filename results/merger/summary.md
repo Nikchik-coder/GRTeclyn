@@ -14,6 +14,12 @@ corroborated by the offline scan in `horizon/` (the headline arms,
 t = 51.4+) are evidence of a common horizon.
 
 
+## `(unfiled, still on a card)`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm | BOOSTED RERUN of the fly-by (2026-09-30, the user's go 12:35 UTC): merge_orbit_flip_d12_p045_L128_lvl5_t100_csm at p = 0.25 on the exact-boost setup (momentum model 1, boosted shift, per-throat lapse freeze, match tol 1e-5), level 5 from t = 0, checkpoints every 5 (newest 3); in-code Psi4 on the head-on's and spiral's 24 x 37 grid, 21 modes | 0.00 | 100.00 | finished clean at t = 100.00 DONE 10-02, reached stop_time t = 100 with no NaN -- THE FLY-BY IS A SCATTER, NOT A PLUNGE: closest approach 2.33 at t ~ 47, separation rising after, no common MOTS on any plotfile (3D finder, nan rows throughout). Trust t <= 63.3: L2 Ham crosses 2.5e-2 for good there (2.69 by t = 100); waves quotable to retarded time t - R <= 63.3, which covers the periapsis burst on every sphere. Packed 06_binary_flyby/, movies cut at 63.3 | 2.32 | - | 2.490e-04 | 2.457e+00 |
+
 ## `01_single_throat`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
@@ -190,6 +196,7 @@ t = 51.4+) are evidence of a common horizon.
 |---|---|---|---|---|---|---|---|---|
 | spiral_d6_p010_L128_lvl5from0_t060_lbf_csm | SPIRAL-d6-prod leg 1 (2026-10-01, the user's go 19:43 UTC): THE MERGER RUN -- the scouted d = 6, p = 0.10 tangential design point at production (L = 128, N = 256, max_level 5, boosted-pair mode-3 solve, orbit-modes-scan-prod with the 3D finder, checkpoints every 5 keep 3) | 0.00 | 26.26 | still running THE ORBITAL MERGER AT PRODUCTION RESOLUTION. Common MOTS from t = 13 (R 5.600, M_MS 2.800, deform 0.115) shrinking smoothly to t = 26 (R ~ 4.94, deform 0.030, warm Newton 10-17 iters); constraints flat (L2 Ham 9e-4 -- 2e-3, two orders under the 2.5e-2 criterion). The merged core's K runaway: ~0.13/unit from t ~ 19, exponential from t ~ 25.8 (max |K| 0.87 at 25.0, 4.1 at 26.1) -- STOPPED BY HAND at t = 26.26 (06:14 UTC 10-02) before the NaN, 5 units past the level-3 scout's death. Trust t <= 25.5. Leg 2 lvl6from25_r02500 continues from Chk02500 (t = 25, also copied to the NFS run dir); packed 05_binary_spiral/merger_d6/ | 0.05 | - | 2.831e-02 | 4.435e-04 |
 | spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500 | SPIRAL-d6-prod (2026-10-01, the user's go ~19:45 UTC): THE MERGER RUN -- the scouted design point at production -- restarted from BinaryWormholeChk02500 (kept in spiral_d6_p010_L128_lvl5from0_t060_lbf_csm) | 25.01 | 29.40 | NaN at t = 29.40 Leg 2 through the K wall: max |K| peaked 5.6 at t ~ 26.5 and rang down to 1.95 (constraints at the arm's best, L2 Ham 1.9e-4), common MOTS tracked t = 26-29 (R 4.946 -> 4.907, deform 0.024, settling) -- then DIED t = 29.407: a single cell at the merged core's centre went NaN in h11 on level 6 (post_timestep check; globals clean to the last step). A grid-scale core instability, not the K wall. Trust t <= 29.4. Wrote no checkpoints (died 60 steps before Chk03000); superseded by the lvl7from25 rerun from the same Chk02500. Packed 05_binary_spiral/merger_d6/ (the ladder figure will use it) | 0.02 | - | 3.197e-02 | 1.997e-04 |
+| spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500 | SPIRAL-d6-prod (2026-10-01, the user's go ~19:45 UTC): THE MERGER RUN -- the scouted design point at production -- restarted from BinaryWormholeChk02500 (kept in spiral_d6_p010_L128_lvl5from0_t060_lbf_csm) | 25.01 | 27.53 | NaN at t = 27.53 DIED t = 27.53: the same single-cell h11 NaN at the merged core centre, now on level 7 -- TWO UNITS EARLIER than the lvl6 leg (29.407) and with max |K| still CLIMBING (5.1 at t = 27.34, 7.8 at death; lvl6 saw a 5.6 peak then decline -- not converged). Finer grid tracks the core blow-up further and dies sooner: the core instability is physical/continuum, not under-resolution; more levels are ruled out. Constraints clean to the last step (L2 Ham 2.2e-4), MOTS steady (R 4.916, deform 0.029 at t = 27). Wrote no checkpoints; Chk02500 (t = 25) stays the chain's only restart point. Next knobs (the user's go pending): KO sigma 0.1 -> 1.0 and/or min_chi 1e-8 -> 1e-4, A/B at lvl6 against the known 29.4 death. Diagnostic arm, no movies; filed 05_binary_spiral/merger_d6/ | 0.08 | - | 2.663e-02 | 2.293e-04 |
 
 ## `05_binary_spiral/p012`
 
@@ -232,6 +239,12 @@ t = 51.4+) are evidence of a common horizon.
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
 | t0_v2_spiral_d12_p012_L128_lvl5_lb_csm | VERIFICATION A of the boosted spiral rerun (2026-09-30, the user's go 06:38 UTC): the rerun's own template (the csm spiral's params with momentum model 1, the boosted shift and match tol 1e-5; no freeze) stopped at t = 0.5 on the production grid, checkpoints off, + constraints in the plot | 0.00 | 0.50 | finished clean at t = 0.50 PASS: the solve converged (22 Newton passes, 2 matching rounds); far sides the isolated throat's to 4e-6; mouths R_min 3.8780 each (+0.02 % on the isolated 3.8772; the p = 0.25 pair's +0.09 % x p^2); throat-shell Hamiltonian rms 7.8e-5 / 2.9e-5 / 5.1e-5 on levels 3 / 4 / 5; axis ratio 0.9919 / 0.9914 / 0.9890 at r_c = 1 / 1.55 / 2.5 against 1/gamma = 0.9929 (0.10-0.15 % flatter at the throat, the p = 0.25 pair's x p^2). Setup check, not cited. | 11.98 | - | 1.939e-01 | 1.121e-03 |
+
+## `06_binary_flyby`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm | BOOSTED RERUN of the fly-by (2026-09-30, the user's go 12:35 UTC): merge_orbit_flip_d12_p045_L128_lvl5_t100_csm at p = 0.25 on the exact-boost setup (momentum model 1, boosted shift, per-throat lapse freeze, match tol 1e-5), level 5 from t = 0, checkpoints every 5 (newest 3); in-code Psi4 on the head-on's and spiral's 24 x 37 grid, 21 modes | 0.00 | 100.00 | finished clean at t = 100.00 DONE 10-02, reached stop_time t = 100 with no NaN -- THE FLY-BY IS A SCATTER, NOT A PLUNGE: closest approach 2.33 at t ~ 47, separation rising after, no common MOTS on any plotfile (3D finder, nan rows throughout). Trust t <= 63.3: L2 Ham crosses 2.5e-2 for good there (2.69 by t = 100); waves quotable to retarded time t - R <= 63.3, which covers the periapsis burst on every sphere. Packed 06_binary_flyby/, movies cut at 63.3 | 2.32 | - | 2.490e-04 | 2.457e+00 |
 
 ## `06_binary_flyby/p045`
 

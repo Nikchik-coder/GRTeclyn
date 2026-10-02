@@ -1,0 +1,45 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: test(+0x2c8ee5) [0x64b977bb7ee5]
+
+ 1: test(+0x2cc4e5) [0x64b977bbb4e5]
+
+ 2: test(+0x659092) [0x64b977f48092]
+
+ 3: test(+0x40d060) [0x64b977cfc060]
+
+ 4: test(+0x40d03d) [0x64b977cfc03d]
+
+ 5: test(+0x40d03d) [0x64b977cfc03d]
+
+ 6: test(+0x40d03d) [0x64b977cfc03d]
+
+ 7: test(+0x40d03d) [0x64b977cfc03d]
+
+ 8: test(+0x40d03d) [0x64b977cfc03d]
+
+ 9: test(+0x40d03d) [0x64b977cfc03d]
+
+10: test(+0x40d03d) [0x64b977cfc03d]
+
+11: test(+0x40b7d1) [0x64b977cfa7d1]
+
+12: test(+0x6082c2) [0x64b977ef72c2]
+
+13: test(+0x450bf) [0x64b9779340bf]
+
+14: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x77bf12154d90]
+
+15: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x77bf12154e40]
+
+16: test(+0x467f5) [0x64b9779357f5]
+

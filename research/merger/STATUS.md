@@ -154,7 +154,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 SEED-csm (since 10:06 UTC 10-02), card 1 the boosted fly-by
+## Live — first node (two H100s): card 0 SEED-csm (since 10:06 UTC 10-02), card 1 BBH-HEADON (since 11:40 UTC 10-02)
 
 **SEED-csm `single_eps_p1e1_t100_csm` (the user's go ~09:30 UTC 10-02, "ok agreed"; started 10:06 UTC):** the
 kicked single on SOLVED data, to prove the declared kick is not the junk source. THE KICK CHANGED FORM at
@@ -167,7 +167,11 @@ NO checkpoints (the user's word); `main3d_csmatch_5f988dbc`; the probe's consume
 L = 64 level 3, t = 100, ~5 GPU-h -> done ~15:00-20:00 UTC depending on pace. Start verified 10:06 UTC: solve
 printed c_A 2.4126 (superposed 2.1933), far side 1.268 x isolated mass / 1.21 x charge (the kick is in the
 solved data), M_ADM 1.2539 (volume identity), STEP 0 regrid, card 0 at 19.9 GB. The mirror m1e1 (c = 0.9 x
-c_iso) stays the optional twin.
+c_iso) stays the optional twin. CONSUMER INCIDENT: `--profile none` sets WHM_CONSUME=0 and silently drops
+`--consume-args`, so the run went 1.5 h with no consumer (no frames, no MOTS, plotfiles piling to 29); the
+sidecar was started by hand 11:50 UTC with the intended args (venv `test_post` symlink; backlog from Plt00000
+reprocessing, keep-last 3 pruning as it goes). CLAUDE.md launch step 4 now says the consumer is part of the
+start. ~18 u/h -> t = 100 ~15:45 UTC.
 
 **MOTS-ho1 `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` DONE 09:43 UTC 10-02: reached t = 35 clean**
 (no NaN, L2 Ham 4.3e-4 / Mom 6.9e-4 at the end). THE HEAD-ON'S TRUE HORIZON HISTORY t = 0–35: birth at t = 18
@@ -177,9 +181,19 @@ Fig. 5 / §VI re-measure proceeds when MOTS-ho2/ho3 land (both pinned to the SEC
 
 Both consumers find the common MOTS with the 3D finder from t = 50 (spiral) and t = 43 (fly-by) on (restarted 08:24 / 08:25 UTC 10-01, and again 08:42 / 08:43 so that a plotfile with no MOTS gets a row of nan; CRITICAL above).
 
-| card | run | t now | t end | speed | ETA |
-|---|---|---|---|---|---|
-| 1 | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` (FLYBY-lbf, the user's go 12:35 UTC 09-30: the old fly-by's params with p = 0.45 → 0.25, momentum model 1, the boosted shift, the per-throat lapse freeze and match tol 1e-5; max_level 5; checkpoints every 5 units keeping 3; in-code Ψ4 on the set's 24 × 37 grid, 21 modes; `main3d_boostpair_91ed17cd`, profile `orbit-modes-scan-prod`) | 67.2 (19:57 UTC 10-01; alive, no NaN; past periapsis — closest 2.33 at t ~ 47, separation 3.79 and rising: a scatter, not a plunge; no common MOTS (3D finder); launch checks 09-30: far sides to 9.4e-6, frame 0 as A's, 21 Ψ4 modes) | 100 | 2.2 u/h | t = 100 in ~15 h, ~11:00 UTC 10-02 |
+**BBH-HEADON `bbh_headon_d8_L128_lvl5_t100` (the user's go ~10:25 UTC 10-02; live since 11:40 UTC):** the
+vacuum control for the head-on — bare punctures, d = 8 from rest, t = 100, per-hole ADM 1.00 (bare mass
+rescaled 0.9615 -> 0.9443 by the old file's own Brill-Lindquist rule), checkpoints every 5 units keeping 3
+(the user's word; Chk00000 seen at start). Binary = the built BinaryBH example (the d12 controls'); profile
+`bbh`. LAUNCH NOTE: the full preflight's start-up probe does not know the BinaryBH grammar's stop keys and ran
+the actual evolution into `_preflight/` (54G by t = 11.5, would have filled the disk) — killed, wiped,
+relaunched with `WHM_PREFLIGHT=static` (recorded in the manifest). The probe clocked ~32.6 u/h at lvl5, so
+t = 100 is roughly 3 h: ~14:45 UTC.
+
+**FLYBY-lbf `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` DONE 11:17 UTC 10-02: reached t = 100, no NaN —
+A SCATTER, NOT A PLUNGE** (closest 2.33 at t ~ 47, no common MOTS on any plotfile). Trust t <= 63.3 (the L2 Ham
+2.5e-2 crossing; 2.69 by t = 100 — late data past trust as expected). Packed `06_binary_flyby/`, movies cut at
+63.3, closeout 0 problems; scratch (128G: 3 Plt + rolling Chk) wiped 11:35 UTC on the user's word (manifest).
 
 **SPIRAL-lbf DIED at t = 71.78 (13:58 UTC 10-01, NaN in h11, level 2) — NO MERGER, the third d = 12 arm to
 inflate instead.** Closed out 10-01 evening (`05_binary_spiral/lbf/`, movies to the trust window t <= 56.5 — the
@@ -213,16 +227,18 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): D6-lvl7 live on card 0 (the merger's leg 3, evolving since ~08:52 UTC 10-02)
+## Second node (one H100): card 0 IDLE since ~11:16 UTC 10-02 (D6-lvl7 died; the next d6 knob needs the go)
 
-**D6-lvl7 `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` (the user's word 08:30 UTC 10-02: "we need a
-rerun then with max level 7"): the merger's leg through the core instability.** Restart from leg 1's `Chk02500`
-(t = 25) with max_level 7, nothing else changed (template diffed: names + max_level only); checkpoints every 5
-keeping ONLY the newest (the user: "lets just keep the last") — copy any Chk a later leg needs to NFS at once.
-Start verified 08:53 UTC: "restarting calculation from" Chk02500, levels 0–7 advancing, card at 62.5 GB,
-checkpoint_keep = 1 in the run's params. Early speed ~1.3 u/h: t = 60 is ~27 h -> ~12:00 UTC 10-03; the planned
-lvl4 drop once max|K| settles (order 1 and flat) would cut that to roughly this evening. The lvl6 death window
-(t = 29.407) is the first test, ~3.4 h in -> ~12:20 UTC.
+**D6-lvl7 `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` DIED t = 27.53 (11:16 UTC 10-02) — TWO UNITS
+BEFORE lvl6's death, same single-cell h11 NaN at the core centre, max|K| still climbing (7.8 at death; lvl6's
+5.6-peak-then-ringdown was therefore not converged).** Finer dx tracks the core blow-up further and dies
+sooner: the core instability is continuum physics, NOT under-resolution — more levels are ruled out. It is all
+inside the MOTS (steady at R 4.92), censored. Constraints clean to the last step (2.2e-4). Wrote no
+checkpoints; `Chk02500` (t = 25, scratch + NFS) stays the chain's only restart point. Filed
+`05_binary_spiral/merger_d6/` as a diagnostic arm (no movies; frames kept). Its scratch (plotfiles only)
+awaits a prune from a second-node session. THE NEXT KNOBS (the user's go needed; A/B at lvl6 from Chk02500
+against the known t = 29.4 death, ~2.2 h to verdict each): (1) KO `sigma` 0.1 -> 1.0, (2) `min_chi` 1e-8 ->
+1e-4, (3) both; then dt; interior fill last (code work). MOTS-ho2 is the other candidate for this card.
 
 **D6-lvl6 `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` (RETIRED: died t = 29.407, 08:1x UTC 10-02):
 through the K wall, killed by a grid-scale core instability.** It cleared leg 1's wall — max|K| peaked 5.6 at
@@ -311,7 +327,7 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 
 | id | run | what | how | GPU-h |
 |---|---|---|---|---|
-| D6-lvl7 | `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` | **LIVE on the second node's card 0 since ~08:52 UTC 10-02** (Second node, above). The merger's leg 3: lvl6 cleared the K wall (peak 5.6, rang down to 1.95) but died t = 29.407 to a single-cell h11 NaN at the core centre — one more level on the core | leg 2's template with only the name and max_level 6→7; same `Chk02500` restart (leg 2 wrote no checkpoint); checkpoints every 5 keeping ONLY the newest (the user's word 10-02) — copy any Chk a later leg needs to NFS at once | ~1.3 u/h at lvl7: ~27 h for t = 25–60 (~12:00 UTC 10-03); the lvl4 drop once max\|K\| settles cuts it to ~this evening |
+| D6-lvl7 | `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` | **DIED t = 27.53 (10-02): the same core h11 NaN TWO UNITS EARLIER than lvl6, max\|K\| still climbing — resolution ruled out as the cure; diagnostic arm, filed, no movies. Next: sigma/min_chi arms at lvl6 (the go pending) | leg 2's template with only the name and max_level 6→7; same `Chk02500` restart (leg 2 wrote no checkpoint); checkpoints every 5 keeping ONLY the newest (the user's word 10-02) — copy any Chk a later leg needs to NFS at once | ~1.3 u/h at lvl7: ~27 h for t = 25–60 (~12:00 UTC 10-03); the lvl4 drop once max\|K\| settles cuts it to ~this evening |
 | D6-lvl6 | `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` | **RETIRED 10-02: died t = 29.407, single-cell h11 NaN at the merged core's centre (level 6), globals clean to the end** — not the K wall (max\|K\| 5.6 -> 1.95 falling, Ham 1.9e-4). MOTS to t = 29 (R 4.907). Trust t <= 29.4; packed `05_binary_spiral/merger_d6/` (the ladder figure will use it) | was: the head-on leg-2 pattern, restart from `Chk02500`, max_level 6 | ran ~2.0 u/h for t = 25–29.4 |
 | MOTS-ho3 | `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` | PAPER, REQUIRED (CRITICAL above): the head-on's true MOTS over t = 50–100 for Fig. 5(a,b) and its end values (t = 100) | leg 3 again from leg 2's `Chk05000` (max_level 4) to t = 100, leg 3's packed params with only the name changed; `headon-modes-prod` (`--mots-spectral`), keep-last 3; checkpoints asked at launch; its input checkpoint lives on the SECOND node's scratch — run it there (after SPIRAL-d6-prod) | ~7 (7.2 u/h) |
 | MOTS-ho2 | `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` | PAPER, REQUIRED: the true MOTS over t = 35–50 (through the wall) | leg 2 again from leg 1's `Chk03500` (max_level 6) to t = 50, leg 2's packed params with only the stop (50) and the name changed; as MOTS-ho3 | ~7.5 (2.0 u/h) |
@@ -319,10 +335,10 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 | SPIRAL-lbf | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | THE PAPER RUN, FIRST (the user, 2026-09-30): the spiral on the boosted setup — the clean test of "inflates, no merger" | the csm spiral's template + momentum model 1, **no freeze** (the user's word; the pits move at v = 0.12, the runaway was a v = 0.41 problem), max_level 5, checkpoints every 5 keeping the newest 3 (the user's word; LAD-csm needs the t ≈ 50 one); its own verification A **PASSED**; **DONE — died t = 71.78, 10-01, no merger; closed out, trust t <= 56.5** (Live, above) | ~22 to t = 60, ~37 to t = 100 |
 | SPIRAL-d6-prod | `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` | **LIVE on the second node's card 0 since ~19:50 UTC 10-01** (Second node, above). THE MERGER RUN (the merger scout, 10-01: common MOTS t = 12.5–20.5): the d = 6, p = 0.10 design point at production resolution, for the paper's orbital-merger section | the production box (L = 128, N = 256, max_level 5, the shared wave set) with the scout's initial-data block (d = 6: centers +-3, tangential p = 0.10, boosted-pair mode-3 solve); expect the head-on's leg structure through the wall (lvl6 restart) — plan the legs at launch; checkpoints every 5 keeping 3 | ~25–35 |
 | SCOUT-d8p | `spiral_d8_p005/p010_lvl3_t040` | **DONE 10-01: the d = 6 scout (misnamed d8) MERGED — common MOTS t = 12.5–20.5; packed `05_binary_spiral/scout_merger/`.** Was: the collapsing-spiral design point (contact must beat the mouths' runaway; the head-on's d = 8 contact at t = 22 wins, d = 12's t ≈ 40 loses) | new setup, so level-3 scouts first (~2–3 h each, L = 64), then level 5 for the winner | ~5 + ~21 |
-| FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **LIVE on the first node's card 1 since 12:37 UTC 09-30** (Live, above) | ~46 to t = 100 |
+| FLYBY-lbf | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | the fly-by rerun | **DONE 10-02: t = 100, no NaN, a scatter (closest 2.33 at t ~ 47, no common MOTS); trust 63.3; packed `06_binary_flyby/`** | ran ~46 h |
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | **CANCELLED (the user, 10-02).** Was: the wall under refinement, mode-3 (Fig. 12a's rerun) | its restart point (the lb spiral's t ≈ 50 checkpoint) did not survive: `checkpoint_keep 3` pruned it during the run (only t ≈ 60–70 were left at death, past trust 56.5) and the 10-01 wipe removed those; a fresh checkpointed leg (~17 h) is not worth it — Fig. 12a stays on the superposed ladder. Lesson: copy any checkpoint a queued run needs off the keep-N rotation to NFS while the producer is live | — |
 | SEED-csm | `single_eps_p1e1_t100_csm` | **LIVE on the first node's card 0 since 10:06 UTC 10-02** (Live, above; the kick carried by solve mode 2, c = 1.1 x c_iso — a conformal seed cannot survive the solve, the binary aborts). PAPER (the user, 10-02): the kicked single on SOLVED data — prove the ε kick is not the junk source (the seeded-throat verdicts §II.D/§IV.C are superposed-only) | `single_eps_p1e1_t100`'s packed params + the mode-3 constraint-solve block with the seed kept (`wormhole_seed_amplitude_A = 0.1`; preflight verifies the seed changes t = 0), only the name + `_csm` changed; L = 64, level 3, t = 100; checkpoints asked at launch; the mirror `m1e1` twin optional after | ~5 |
-| BBH-HEADON | `bbh_headon_d8_L128_lvl5_t100` | the vacuum control for the head-on (the user, 2026-09-30): bare punctures at d = 8 from rest, t = 100, for Fig. 5 and the gallery/energy comparison | the csm head-on's setup (same box, grid, spheres, plot cadence) with the drainhole/scalar blocks swapped for bare punctures, as the d = 12 BBH controls; template from `bbh_control_d12_p012_t150`'s params with d and p changed; checkpoints asked at launch | ~30–50 (the head-on chain's class; vacuum punctures ride through a merger, so likely one leg) |
+| BBH-HEADON | `bbh_headon_d8_L128_lvl5_t100` | **LIVE on the first node's card 1 since 11:40 UTC 10-02** (Live, above; WHM_PREFLIGHT=static — the full probe runs the BinaryBH evolution for real). The vacuum control for the head-on: bare punctures at d = 8 from rest, t = 100, for Fig. 5 and the gallery/energy comparison | the csm head-on's setup (same box, grid, spheres, plot cadence) with the drainhole/scalar blocks swapped for bare punctures, as the d = 12 BBH controls; template from `bbh_control_d12_p012_t150`'s params with d and p changed; checkpoints asked at launch | ~30–50 (the head-on chain's class; vacuum punctures ride through a merger, so likely one leg) |
 | A1-csm | `ctrl_rest_a1_csm` (then, optional, `ctrl_rest_a15_csm` / `ctrl_rest_a3_csm`) | restore Fig. 4(a)'s width arm on matched data (the a = 1 arm left the panel 09-30: no matched twin) and put clmNarrowPairRatio — and with the optional twins the §V.B width ladder clmALadder* — on mode 3 | the old run's packed `evolution_params.txt` with ONLY the constraint-solve block and the name changed (the rest-pair rule), t = 15, L = 64 level 3; checkpoints asked at launch; re-measure into `matched_rest_displacement.dat` and redraw Fig. 4(a) | ~1 each (the csm rest pairs' class: 18 u/h alone) |
 | PLACE-csm | `place_d{6..48}_step1_csm` (the 18 one-step probes) | the matched placement curve for Fig. 4(d,e), now captioned as superposed-only: expected flat at R⋆ = 3.8895 (the matched pairs read 3.876–3.878 at t = 0), which would draw the clean-data contrast under the superposed excess; re-measures or retires clmMouthTauFlybyPlaced/SeedFlybyPlaced (CSM_SWITCHOVER) | the superposed probes' params (`04_binary_headon/placement/place_d*_step1`) with only mode 3 + names; initial data plus one step, scanned at t = 0; no frames beyond the default t = 0 set | < 1 total (minutes per probe) |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | spiral burst/energy, level 4 vs 5 | the spiral template, max_level 4, from t = 0 | ~8–10 |
