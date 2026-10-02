@@ -57,6 +57,7 @@ single_rest_csm_t050	02_moving_throat/csm	launch manifest	main3d_csmatch_5f988db
 single_boost_p045_lbf_ml4_t060	02_moving_throat/exact_boost	launch manifest	main3d_boostfix_5384c104-dirty_2026-09-29.ex	5384c104-dirty	pass	0	0	4	64.0	128	60.0		2.2701466330e-03	n/a	ok	unknown	ok
 single_boost_p045_lbf_t050	02_moving_throat/exact_boost	launch manifest	main3d_boostfix_5384c104-dirty_2026-09-29.ex	5384c104-dirty	pass	0	0	3	64.0	128	50.0		2.2701466330e-03	n/a	ok	unknown	ok
 ctrl_flip_d12_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	30.0		3.6629450216e-03	n/a	ok	unknown	ok
+ctrl_rest_a1_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	15.0		6.7258797361e-03	n/a	ok	unknown	ok
 ctrl_rest_d12_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	15.0		3.3507914974e-03	n/a	ok	unknown	ok
 ctrl_rest_d14_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	15.0		3.3493770579e-03	n/a	ok	unknown	ok
 ctrl_rest_d16_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	15.0		3.3490856458e-03	n/a	ok	unknown	ok
@@ -93,6 +94,7 @@ place_d8_step1	04_binary_headon/placement	reconstructed			none (launched before 
 v2_spiral_d12_p012_L128_lvl5from0_t100_csm	05_binary_spiral/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	5	128.0	256	100.0		1.1203777089e-03	n/a	ok	unknown	ok
 v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm	05_binary_spiral/lbf	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	100.0		1.1211961179e-03	n/a	ok	unknown	ok
 spiral_d6_p010_L128_lvl5from0_t060_lbf_csm	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	60.0		1.2359858137e-03	n/a	ok	unknown	ok
+spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	60.0	yes		n/a	silent: (no token): sigma = 1.0, production value 0.1	unknown	ok
 spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	6	128.0	256	60.0	yes		n/a	ok	unknown	ok
 spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	7	128.0	256	60.0	yes		n/a	ok	unknown	ok
 merge_twin_p012_eta4_lvl5_t066_r05000	05_binary_spiral/p012	reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	5	64.0	128	66.0	yes		n/a	ok	ok	checkpoints asked for (interval/keep) with checkpoint output off: none written
@@ -124,5 +126,7 @@ t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm	06_binary_flyby/verify_p025	launc
 bbh_control_d12_p012	07_bbh_control	reconstructed			none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_control_d12_p012_t150	07_bbh_control	reconstructed			none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_control_d12_p045_t100	07_bbh_control	reconstructed	BinaryBH3d.gnu.MPI.CUDA.ex	1cc27217-dirty	none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
+bbh_headon_d8_L128_lvl5_t100	07_bbh_control	launch manifest	BinaryBH3d.gnu.MPI.CUDA.ex	unstamped	pass	0	0							n/a	MISMATCH: L128: box_side = 64.0, name says 128.0	unknown	ok
 merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000	08_convergence	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	4	128.0	256	80.0	yes		n/a	MISMATCH: d8: separation = 0.02, name says 8.0	unknown	ok
+ctrl_rest_a1_csm		launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	15.0		6.7258797361e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm		launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	100.0		1.1296028696e-03	n/a	ok	unknown	ok

@@ -243,3 +243,4 @@ spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500	SPIRAL-d6-prod (2026-10
 spiral_d6_p010_L128_lvl5from30_sig10_chi1e4_t060_lbf_csm_r03000	SPIRAL-d6-prod (2026-10-01, the user's go ~19:45 UTC): THE MERGER RUN -- the scouted design point at production -- restarted from BinaryWormholeChk03000 (kept in spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500)		
 v2_spiral_d12_p012_L128_lvl4from0_t100_csm	CONV-csm (the user's go ~14:3x UTC 10-02): v2_spiral_d12_p012_L128_lvl4from0_t100_csm -- the solved spiral		
 place_d6_step1_csm	PLACE-csm probe (the user's go 10-02): place_d6_step1_csm -- the superposed probe's params + mode 3 + the name.		
+place_d65_step1_csm	PLACE-csm probe (the user's go 10-02): place_d65_step1_csm -- the superposed probe's params + mode 3 + the name.		

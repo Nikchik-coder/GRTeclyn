@@ -150,6 +150,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_boost_p045_lbf_t050` | B | 44.7 | x51.3 / 34.2 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
 | `ctrl_flip_d12_csm` | A | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
 | `ctrl_flip_d12_csm` | B | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_a1_csm` | A | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_a1_csm` | B | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d12_csm` | A | 15.0 | x14.7 / 14.6 | +0.99 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d12_csm` | B | 15.0 | x14.7 / 14.6 | +0.99 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_d14_csm` | A | 15.0 | x14.0 / 15.0 | +0.98 | - | - | - | - | - | - | - | too short |
@@ -186,6 +188,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` | B | 71.8 | x353567.4 / 37.4 | +0.54 | +0.77 | +0.97 | +1.05 | +4.27 | +4.10 | +4.84 | 0.0 | early (-0.26 dex) |
 | `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` | A | 26.3 | x22.7 / 23.6 | +0.68 | +0.79 | +0.00 | - | - | - | - | 0.0 | too short |
 | `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` | B | 26.3 | x2030716.4 / 16.5 | +0.68 | +1.36 | +0.00 | - | - | - | - | 0.0 | too short |
+| `spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500` | A | 30.5 | x1.0 / 25.0 | +0.00 | +0.00 | -7.31 | -3.97 | - | - | - | 25.1 | restart -- own clock only |
+| `spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500` | B | 30.5 | x1.0 / 25.0 | +0.00 | +0.00 | -7.31 | -7.31 | - | - | - | 25.1 | restart -- own clock only |
 | `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` | A | 29.4 | x1.0 / 25.0 | +0.00 | +0.00 | -7.45 | - | - | - | - | 25.1 | restart -- own clock only |
 | `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` | B | 29.4 | x1.0 / 25.0 | +0.00 | +0.00 | -7.45 | - | - | - | - | 25.1 | restart -- own clock only |
 | `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` | A | 27.5 | x1.0 / 25.0 | +0.00 | +0.00 | -7.45 | - | - | - | - | 25.1 | restart -- own clock only |
@@ -228,12 +232,14 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | B | 0.5 | x1.1 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | A | 80.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
 | `merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000` | B | 80.0 | x1.1 / 55.5 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.03 | - | restart -- own clock only |
+| `ctrl_rest_a1_csm` | A | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
+| `ctrl_rest_a1_csm` | B | 15.0 | x51.1 / 14.5 | +1.63 | - | - | - | - | - | - | - | too short |
 | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | A | 100.0 | x345.1 / 100.0 | +0.37 | +0.59 | +0.67 | +0.85 | +0.97 | +1.20 | +1.57 | 0.0 | early (-0.46 dex) |
 | `merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` | B | 100.0 | x344.7 / 100.0 | +0.37 | +0.58 | +0.67 | +0.84 | +0.98 | +1.20 | +1.57 | 0.0 | early (-0.47 dex) |
 
 ## Reading
 
-Throats read at t = 30: 24 early, 12 same, 63 late, 68 too short, 22 restart arms (own clock only).
+Throats read at t = 30: 24 early, 12 same, 63 late, 72 too short, 24 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the
