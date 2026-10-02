@@ -203,15 +203,24 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): D6-lvl6 live on card 0 (the merger's leg 2, evolving since ~06:21 UTC 10-02)
+## Second node (one H100): D6-lvl7 live on card 0 (the merger's leg 3, evolving since ~08:52 UTC 10-02)
 
-**D6-lvl6 `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` (the user's go 06:10 UTC 10-02): the merger's leg
-through the wall.** Restart from leg 1's `Chk02500` (t = 25) with max_level 6, nothing else changed (template
-diffed: names + max_level only); `orbit-modes-scan-prod`, the parent binary `main3d_boostpair_91ed17cd`;
-checkpoints every 5 keeping 3 (the user's word). `Chk02500` also copied to leg 1's NFS run dir (the new
-CLAUDE.md rule). Start verified 06:22 UTC: "restarting calculation from" Chk02500, every level advancing from
-t = 25, card at 50.6 GB / 93 %, no NaN; level 6 appears at the first regrid. At the head-on lvl6 pace (~2.0 u/h)
-t = 60 is ~17.5 h -> ~23:50 UTC 10-02. First new checkpoint (Chk03000, t = 30) expected ~08:50 UTC.
+**D6-lvl7 `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` (the user's word 08:30 UTC 10-02: "we need a
+rerun then with max level 7"): the merger's leg through the core instability.** Restart from leg 1's `Chk02500`
+(t = 25) with max_level 7, nothing else changed (template diffed: names + max_level only); checkpoints every 5
+keeping ONLY the newest (the user: "lets just keep the last") — copy any Chk a later leg needs to NFS at once.
+Start verified 08:53 UTC: "restarting calculation from" Chk02500, levels 0–7 advancing, card at 62.5 GB,
+checkpoint_keep = 1 in the run's params. Early speed ~1.3 u/h: t = 60 is ~27 h -> ~12:00 UTC 10-03; the planned
+lvl4 drop once max|K| settles (order 1 and flat) would cut that to roughly this evening. The lvl6 death window
+(t = 29.407) is the first test, ~3.4 h in -> ~12:20 UTC.
+
+**D6-lvl6 `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` (RETIRED: died t = 29.407, 08:1x UTC 10-02):
+through the K wall, killed by a grid-scale core instability.** It cleared leg 1's wall — max|K| peaked 5.6 at
+t ≈ 26.5 and rang down to 1.95, constraints at the arm's best (Ham 1.9e-4) — then a single cell at the merged
+core's centre went NaN in h11 on level 6 (`post_timestep` check; the single red spike in the K frame). Not the
+K wall: everything global was clean to the last step. MOTS tracked to t = 29 (R 4.907, M_MS 2.454, deform
+0.024). Trust t <= 29.4; packed `05_binary_spiral/merger_d6/` 10-02 (the user: needed for the ladder figure);
+it wrote NO checkpoints (died 60 steps before Chk03000), so the lvl7 rerun restarts from the same Chk02500.
 
 **Leg 1 `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` (RETIRED by hand at t = 26.26, 06:14 UTC 10-02): THE MERGER
 HAPPENED ON IT.** Common MOTS from t = 13 (R 5.600, M_MS 2.800, deform 0.115) shrinking and rounding to t = 25
@@ -292,7 +301,8 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 
 | id | run | what | how | GPU-h |
 |---|---|---|---|---|
-| D6-lvl6 | `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` | **LIVE on the second node's card 0 since ~06:21 UTC 10-02** (Second node, above). The merger's leg 2 through the wall: leg 1 hit the merged core's K runaway at t ≈ 25.8 | the head-on leg-2 pattern: restart from the parent's `Chk02500` (t = 25, before the spike), max_level 6. Template ready: `templates_scan/params_spiral_d6_p010_L128_lvl6from25_t060_lbf_csm.txt` (only the name, max_level 5→6, `amr.restart`; diffed). **First copy `Chk02500` into the parent's NFS run dir** (keep-3 is not an archive). Launch on the SECOND node, parent binary; checkpoints asked at launch (every-5 keep-3 proposed, the next leg needs them); needs the go | ~2.0 u/h at lvl6 (head-on leg 2): ~17 h for t = 25–60; a later lvl4 drop (template `lvl4fromCHK`, kept) once max\|K\| flattens |
+| D6-lvl7 | `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` | **LIVE on the second node's card 0 since ~08:52 UTC 10-02** (Second node, above). The merger's leg 3: lvl6 cleared the K wall (peak 5.6, rang down to 1.95) but died t = 29.407 to a single-cell h11 NaN at the core centre — one more level on the core | leg 2's template with only the name and max_level 6→7; same `Chk02500` restart (leg 2 wrote no checkpoint); checkpoints every 5 keeping ONLY the newest (the user's word 10-02) — copy any Chk a later leg needs to NFS at once | ~1.3 u/h at lvl7: ~27 h for t = 25–60 (~12:00 UTC 10-03); the lvl4 drop once max\|K\| settles cuts it to ~this evening |
+| D6-lvl6 | `spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500` | **RETIRED 10-02: died t = 29.407, single-cell h11 NaN at the merged core's centre (level 6), globals clean to the end** — not the K wall (max\|K\| 5.6 -> 1.95 falling, Ham 1.9e-4). MOTS to t = 29 (R 4.907). Trust t <= 29.4; packed `05_binary_spiral/merger_d6/` (the ladder figure will use it) | was: the head-on leg-2 pattern, restart from `Chk02500`, max_level 6 | ran ~2.0 u/h for t = 25–29.4 |
 | MOTS-ho3 | `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` | PAPER, REQUIRED (CRITICAL above): the head-on's true MOTS over t = 50–100 for Fig. 5(a,b) and its end values (t = 100) | leg 3 again from leg 2's `Chk05000` (max_level 4) to t = 100, leg 3's packed params with only the name changed; `headon-modes-prod` (`--mots-spectral`), keep-last 3; checkpoints asked at launch; its input checkpoint lives on the SECOND node's scratch — run it there (after SPIRAL-d6-prod) | ~7 (7.2 u/h) |
 | MOTS-ho2 | `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` | PAPER, REQUIRED: the true MOTS over t = 35–50 (through the wall) | leg 2 again from leg 1's `Chk03500` (max_level 6) to t = 50, leg 2's packed params with only the stop (50) and the name changed; as MOTS-ho3 | ~7.5 (2.0 u/h) |
 | MOTS-ho1 | `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` | **LIVE on the first node's card 0 since ~20:20 UTC 10-01** (Live, above). PAPER, REQUIRED: the birth (t ≈ 22, the caption's R 5.02 / M_MS 2.69, the formation time) and t = 0–35 | leg 1 again from t = 0 (max_level 5) to t = 35, leg 1's packed params with only the stop (35) and the name changed; as MOTS-ho3 | ~13 (2.7 u/h) |

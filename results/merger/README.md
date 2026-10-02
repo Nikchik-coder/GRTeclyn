@@ -1326,9 +1326,14 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   - Constraints are flat throughout (L2 Ham 9e-4–2e-3, two orders under the fly-by criterion 2.5e-2).
   - The merged core's K runaway (the head-on leg-1 class) turns exponential at t ≈ 25.8; the leg was stopped by
     hand at t = 26.26 before the NaN, 5 units past the level-3 scout's death. Trust window t ≤ 25.5.
-  - Leg 2 (`lvl6from25_r02500`, max_level 6 from Chk02500) carries the chain on; the chain's joined numbers are
-    quoted only when it completes.
-- **Runs.** `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` *(pack, `campaign/05_binary_spiral/merger_d6/`)*:
+  - Leg 2 (`lvl6from25_r02500`, max_level 6 from Chk02500) cleared the K wall — max|K| peaked 5.6 at t ≈ 26.5
+    and rang down to 1.95, Ham 1.9e-4 — and tracked the MOTS settling to t = 29 (R 4.907, deform 0.024), then
+    died at t = 29.407 to a single-cell h11 NaN at the merged core's centre on level 6 (globals clean to the
+    last step: a grid-scale core instability, not the K wall). Trust window t ≤ 29.4; packed beside leg 1 for
+    the ladder figure. Leg 3 (`lvl7from25_r02500`, max_level 7 from the same Chk02500) carries the chain on;
+    the chain's joined numbers are quoted only when it completes.
+- **Runs.** `spiral_d6_p010_L128_lvl5from0_t060_lbf_csm` and `…_lvl6from25_t060_lbf_csm_r02500`
+  *(pack, `campaign/05_binary_spiral/merger_d6/`)*:
   - binary `main3d_boostpair_91ed17cd`; checkpoints every 5 keep 3, Chk02500 (t = 25) kept on scratch and in the
     NFS run dir for leg 2;
   - the level-3 scout `spiral_d8_p010_lvl3_t040_lbf_csm` *(pack, `campaign/05_binary_spiral/scout_merger/`;
