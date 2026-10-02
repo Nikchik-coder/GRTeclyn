@@ -181,6 +181,29 @@ t = 51.4+) are evidence of a common horizon.
 | place_d44_step1 | placement probe for the V1 scout: the scout's two throats at rest at d = 44, one step; per-mouth radius at t = 0 only (placement curve, subtracted from the scout's pre-contact readings) | 0.00 | 0.01 | finished clean at t = 0.01 | 43.94 | - | 2.145e-01 | 3.618e-03 |
 | place_d48_step1 | placement probe for the V1 scout: the scout's two throats at rest at d = 48, one step; per-mouth radius at t = 0 only (placement curve, subtracted from the scout's pre-contact readings) | 0.00 | 0.01 | finished clean at t = 0.01 | 47.94 | - | 2.149e-01 | 3.915e-03 |
 
+## `04_binary_headon/placement_csm`
+
+| run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
+|---|---|---|---|---|---|---|---|---|
+| place_d6_step1_csm | PLACE-csm probe (the user's go 10-02): place_d6_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 6.06 | - | 1.942e-01 | 4.000e-03 |
+| place_d65_step1_csm | PLACE-csm probe (the user's go 10-02): place_d65_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 6.56 | - | 1.956e-01 | 4.038e-03 |
+| place_d7_step1_csm | PLACE-csm probe (the user's go 10-02): place_d7_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 7.06 | - | 1.968e-01 | 3.926e-03 |
+| place_d75_step1_csm | PLACE-csm probe (the user's go 10-02): place_d75_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 7.56 | - | 1.979e-01 | 3.951e-03 |
+| place_d8_step1_csm | PLACE-csm probe (the user's go 10-02): place_d8_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 8.06 | - | 1.989e-01 | 3.858e-03 |
+| place_d10_step1_csm | PLACE-csm probe (the user's go 10-02): place_d10_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 10.06 | - | 2.022e-01 | 3.746e-03 |
+| place_d12_step1_csm | PLACE-csm probe (the user's go 10-02): place_d12_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 12.06 | - | 2.046e-01 | 3.663e-03 |
+| place_d14_step1_csm | PLACE-csm probe (the user's go 10-02): place_d14_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 14.06 | - | 2.064e-01 | 3.601e-03 |
+| place_d16_step1_csm | PLACE-csm probe (the user's go 10-02): place_d16_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 16.06 | - | 2.078e-01 | 3.554e-03 |
+| place_d18_step1_csm | PLACE-csm probe (the user's go 10-02): place_d18_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 18.06 | - | 2.090e-01 | 3.519e-03 |
+| place_d20_step1_csm | PLACE-csm probe (the user's go 10-02): place_d20_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 20.06 | - | 2.099e-01 | 3.491e-03 |
+| place_d24_step1_csm | PLACE-csm probe (the user's go 10-02): place_d24_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 24.06 | - | 2.114e-01 | 3.457e-03 |
+| place_d28_step1_csm | PLACE-csm probe (the user's go 10-02): place_d28_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 28.06 | - | 2.124e-01 | 3.446e-03 |
+| place_d32_step1_csm | PLACE-csm probe (the user's go 10-02): place_d32_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 32.06 | - | 2.133e-01 | 3.458e-03 |
+| place_d36_step1_csm | PLACE-csm probe (the user's go 10-02): place_d36_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 36.06 | - | 2.139e-01 | 3.498e-03 |
+| place_d40_step1_csm | PLACE-csm probe (the user's go 10-02): place_d40_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 40.06 | - | 2.144e-01 | 3.580e-03 |
+| place_d44_step1_csm | PLACE-csm probe (the user's go 10-02): place_d44_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 44.06 | - | 2.149e-01 | 3.729e-03 |
+| place_d48_step1_csm | PLACE-csm probe (the user's go 10-02): place_d48_step1_csm -- the superposed probe's params + mode 3 + the name. | 0.00 | 0.01 | finished clean at t = 0.01 | 48.06 | - | 2.152e-01 | 3.996e-03 |
+
 ## `05_binary_spiral/csm`
 
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |

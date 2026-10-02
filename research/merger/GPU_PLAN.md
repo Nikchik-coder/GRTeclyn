@@ -3011,6 +3011,8 @@ life of the spiral's horizon.**
 
 - **A1-csm and BBH-HEADON done; the first node's systematics pass** (2026-10-02). `ctrl_rest_a1_csm` reached t = 15 clean (Ham 8.7e-3 probe class, no MOTS as expected): Fig. 4(a)'s width arm restored on matched data; the matched_rest_displacement re-measure and the panel redraw are the next analysis step. `bbh_headon_d8_L128_lvl5_t100` reached t = 100 clean: the vacuum head-on control at per-hole ADM 1.00; the energy/waveform comparison against the wormhole head-on is the next analysis step. Both packed (03_two_throats/csm/, 07_bbh_control/). SEED-csm's first-node leftovers cleared: the idle watch-mode consumer killed, scratch (7.1G) wiped, manifest logged.
 
+- **PLACE-csm: the matched placement curve's 18 probes, all solved and filed** (2026-10-02). `place_d{6..48}_step1_csm`, each the superposed probe's params + the mode-3 solve + the name, one step, ~90 s each (28 min total on one card). Every solve verified in-driver (far sides matched to ~1e-6-7; at d = 6 the coefficient iterates to 1.973 vs the superposition's 2.193 and the global areal minimum drops 1.291 -> 1.073, a 17% matched-vs-superposed difference at the closest rung). NOTE the first attempt ran five probes WITHOUT the solve (a driver bug the user caught through the readings being identical to superposed); those are archived in 00_archive/.../place_csm_nosolve and the driver now verifies the solve per probe. The per-mouth placement-curve regeneration (analysis/placement_curve.py, runs at every pack) and the Fig. 4(d,e) redraw are the next analysis step. Filed 04_binary_headon/placement_csm/.
+
 ## 5. Open questions
 
 

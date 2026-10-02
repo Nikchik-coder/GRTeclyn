@@ -1,0 +1,93 @@
+# PLACE-csm probe (the user's go 10-02): place_d8_step1_csm -- the superposed probe's params + mode 3 + the name.
+# One step (max_steps = 1): the t = 0 plotfile is the measurement. No checkpoints (the probe policy).
+#
+output_path = "runs/wormhole_merger/place_d8_step1_csm"
+amr.plot_file = "/tmp/grteclyn_scratch/place_d8_step1_csm/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/place_d8_step1_csm/BinaryWormholeChk"
+checkpoint_interval = -1
+amr.checkpoint_files_output = 0
+plot_interval = 100    # every 1.0 time unit; the consumer scans and deletes
+amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
+amr.derive_plot_vars = Weyl4
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+wormhole_id_type = 1
+wormhole_initial_lapse_type = 5
+wormhole_throat_radius_A = 2.0       # drainhole scale a
+wormhole_throat_radius_B = 2.0    # throat B on: the binary, a = 2 as A
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_drainhole_mass_B = 1.0    # M_ADM = 1 each, carried by the lapse
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+wormhole_centerA = -4.000 0.0 0.0    # d = 8: throat A at x = -4.000 from the box centre
+wormhole_centerB =  4.000 0.0 0.0    # throat B at x = +4.000
+wormhole_momentumA = 0.0 0.0 0.0    # from rest: K = 0, Pi = 0, momentum constraint exact
+wormhole_momentumB = 0.0 0.0 0.0
+wormhole_phi_sign_B = -1.0    # flipped: like-oriented throats repel, the flipped pair attracts
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+wormhole_helfer_correction = 0
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+max_box_size = 32
+min_box_size = 16
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+dt_multiplier = 0.02
+stop_time = 100.0
+max_steps = 1          # placement probe: initial data + one step, the t = 0 plotfile is all we want
+max_spatial_derivative_order = 4
+nan_check = 1
+nan_autopsy = 1
+min_chi = 1.0e-20   # CHI-REG TWIN: state clamp lowered to a pure safety net (was 1.0e-8)
+chi_rhs_floor = 1.0e-8
+min_lapse = 1.0e-10
+core_matter_damping = 0
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+sigma = 0.1
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+tagging_type = 2
+tagging_L = 64.0
+throat_tracking = 1
+throat_track_search_radius = 2.0
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+activate_extraction = 0
+write_extraction = 0
+amrex.the_arena_init_size = 1048576
+
+# THE KNOB UNDER TEST: the mode-3 constraint solve (the pair probes' block, verbatim)
+constraint_solve = 1
+constraint_solve_background = 0        # start from the superposition
+constraint_solve_puncture_mode = 3     # each mouth's far-side mass and charge = the isolated throat's (c and sigma iterated)
+constraint_solve_verbose = 1
