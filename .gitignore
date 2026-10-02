@@ -116,3 +116,6 @@ grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/*/
 # line retires the one that was briefly written into the package itself.
 runs/gw_search/strain_cache/
 grteclyn-wrapper/src/grteclyn_wrapper/gw_search/data_cache/
+
+# Superseded pack copies (policy: archived, never tracked)
+results/merger/campaign/00_archive/
