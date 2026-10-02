@@ -238,7 +238,7 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): D6-sig10 live on card 0 (the sigma wall test, since ~12:03 UTC 10-02)
+## Second node (one H100): card 0 FREE since 13:2x UTC 10-02 (D6-sig10 died 30.53; next knob from Chk03000 on the go)
 
 **D6-lvl7 `spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500` DIED t = 27.53 (11:16 UTC 10-02) — TWO UNITS
 BEFORE lvl6's death, same single-cell h11 NaN at the core centre, max|K| still climbing (7.8 at death; lvl6's
@@ -251,7 +251,7 @@ awaits a prune from a second-node session. THE KNOB UNDER TEST NOW (the user's g
 sigma wall test ... level 5 from chk 25"): D6-sig10 `spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500`
 — KO `sigma` 0.1 -> 1.0 at LEVEL 5 from the same Chk02500, live since ~12:03 UTC. One run tests both walls: if
 sigma holds the K runaway at lvl5 (which killed leg 1 there at 26.26) AND the core cell (which killed lvl6/7),
-the whole chain finishes at lvl5 speed (~2.9 u/h, t = 60 ~12 h). VERDICT 13:15 UTC: CLEARED BOTH WALLS -- max|K| 1.1-1.8 flat through t = 26-29 (sigma-0.1 arms: 4.1/5.6 and dead), zero NaN, Ham 1.9e-4, MOTS = lvl6's to 4 digits (R 4.907 at 29). t = 60 ~21:00 UTC at ~3.9 u/h. Template = the lvl7 leg's with only the names,
+the whole chain finishes at lvl5 speed (~2.9 u/h, t = 60 ~12 h). VERDICT: cleared both earlier walls (max|K| 1.1-1.8 flat through 26-29) then DIED t = 30.53, the same single-cell h11 NaN (2.45 -> 57 in one step) -- sigma delays the cell, does not cure it. Chk03000 (t = 30, past both walls) written and COPIED TO NFS: every next knob restarts from it, ~8 min to the death point. Options on the go: min_chi 1e-4 / sigma 2.0 / both / dt half. Trust 30.5; filed; scratch plotfiles to prune after closeout. Template = the lvl7 leg's with only the names,
 max_level 5 and sigma; checkpoints keep the chain's rule (every 5, ONLY the newest). If it dies at the K wall:
 sigma at lvl6 is the fallback; `min_chi` 1e-4 after; interior fill last. MOTS-ho2 queued behind it. lvl7's
 scratch (15G plotfiles) wiped 12:00 UTC (manifest); Chk02500 + the ho2/ho3 checkpoints + HFL kept.
