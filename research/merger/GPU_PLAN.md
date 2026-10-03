@@ -4077,3 +4077,13 @@ run tree.
 - Note for launches: file_run.sh MOVES the raw run dir into its group folder under runs/wormhole_merger/ —
   the t040 leg and the settle leg now live under 06_binary_flyby/ and 05_binary_spiral/merger_d6/
   respectively, frames intact.
+
+## 2026-10-03 (~07:15 UTC) — CONV-csm done; EGW-p09 takes card 1
+
+- **CONV-csm reached t = 100, no NaN** (the lvl5 arm died 71.78 — the coarser grid rides out the core).
+  Trust t <= 57.2 by the sustained Ham crossing; the lvl5 arm's own cut was 56.5 — the two resolutions agree
+  on where the solution stops being trustworthy, which is itself the first convergence statement. Filed
+  `08_convergence/`, closed out without movies (the exception). Pending analysis: the level-4-vs-5
+  burst/energy comparison over the shared trusted window.
+- **EGW-p09 (p = 0.90, lvl4, stop 40) launched on the freed card 1** with the full MOTS-tuned consumer set;
+  the hardened preflight's paths check passed ("one spelling"). ETA ~4-6 h.

@@ -154,7 +154,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 the p06 plunge extension, card 1 CONV-csm
+## Live — first node (two H100s): card 0 the p06 plunge extension, card 1 EGW-p09
 
 Queue order (10-03 ~05:30 UTC): card 1 after CONV (~07:20 UTC) -> EGW-p09 relaunch. Second node (free since
 ~00:45 UTC, settle leg done) -> MOTS-ho2 then MOTS-ho3 on a second-node session (the go and the every-5-keep-3
@@ -210,7 +210,13 @@ name; no checkpoints, max_steps 1, the t = 0 plotfile is the measurement). All 1
 placement-curve re-measure for Fig. 4(d,e) is the pending analysis step (placement_curve.py reads only the
 superposed group).
 
-**CONV-csm `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` (the user's go ~14:35 UTC):** the solved spiral at
+**EGW-p09 `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` LIVE on card 1 since ~07:12 UTC 10-03:** the
+E_GW(p) far-side point, p = 0.90, lvl4, stop 40, checkpoints every 5 keep 3; the extension's full MOTS-tuned
+consumer set; preflight paths check PASS. ~4-6 h -> t = 40 ~11:30-13:15 UTC.
+
+**CONV-csm DONE 07:10 UTC 10-03 — t = 100, no NaN; trust t <= 57.2 (the lvl5 arm's own cut was 56.5: the two
+levels AGREE on where trust ends — the first convergence statement). Filed `08_convergence/`, closeout without
+movies; the level-4-vs-5 comparison is the pending analysis step. Was:** the solved spiral at
 max_level 4 from t = 0 — the convergence/referee run against the paper's lvl5 csm spiral. Only the level and
 names changed; checkpoints every 5 keep 3 (the base's block); NO frames/movies (the 08_convergence exception,
 reason in the manifest); extractions kept (radii 14/20/30/44, scalar modes). Measured ~4.4 u/h (slower than
