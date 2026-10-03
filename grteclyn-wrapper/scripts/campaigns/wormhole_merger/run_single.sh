@@ -191,8 +191,16 @@ if [[ -n "${WHM_RESTART:-}" ]]; then
     echo "[whm] WHM_RESTART is not a checkpoint directory: ${WHM_RESTART}" >&2
     exit 1
   fi
-  # Suffix from the checkpoint's step number: .../BinaryWormholeChk02000 -> _r02000
-  NAME="${NAME}_r${WHM_RESTART##*Chk}"
+  # Suffix from the checkpoint's step number: .../BinaryWormholeChk02000 -> _r02000.
+  # Never doubled: a --name that already carries this restart's suffix is kept
+  # as is (2026-10-03: p06's extension launched as ..._r04000_r04000, and every
+  # path the launch derived -- the consumer's horizon track among them -- split
+  # between the two spellings).
+  if [[ "${NAME}" == *"_r${WHM_RESTART##*Chk}" ]]; then
+    echo "[whm] name already ends _r${WHM_RESTART##*Chk} -- keeping it (no double suffix)"
+  else
+    NAME="${NAME}_r${WHM_RESTART##*Chk}"
+  fi
 fi
 RUN_DIR="${RUNS_DIR}/${NAME}"
 SCRATCH_DIR="${SCRATCH_ROOT}/${NAME}"
@@ -261,13 +269,32 @@ whm_consumer_args() {
   # A profile hands over absolute paths into the run (the horizon track), and so
   # does a hand-written WHM_CONSUME_ARGS.  Fold both back to RUN_DIR-relative:
   # the consumer runs there, and the command line is public.
-  local i
+  local i other rest
   for i in "${!consumer_args[@]}"; do
     case "${consumer_args[i]}" in
       "${RUN_DIR}")    consumer_args[i]="." ;;
       "${RUN_DIR}"/*)  consumer_args[i]="${consumer_args[i]#"${RUN_DIR}"/}" ;;
       "${SCRATCH_DIR}")   consumer_args[i]="scratch" ;;
       "${SCRATCH_DIR}"/*) consumer_args[i]="scratch/${consumer_args[i]#"${SCRATCH_DIR}"/}" ;;
+      *wormhole_merger/*/*)
+        # A path into a run that is NOT this run.  When the other name is this
+        # run's own name with a missing or extra _r<step> suffix, it is the
+        # restart-suffix trap (2026-10-03: the extension's --horizon-track named
+        # the un-suffixed run and the consumer tracked a stream that never
+        # existed): repoint it to this run.  A genuinely different run is kept,
+        # loudly -- a cross-run reference must be deliberate.
+        rest="${consumer_args[i]#*wormhole_merger/}"
+        other="${rest%%/*}"
+        if [[ "${other}" != "${NAME}" ]]; then
+          if [[ "${NAME}" == "${other}"_r* || "${other}" == "${NAME}"_r* ]]; then
+            consumer_args[i]="${consumer_args[i]//wormhole_merger\/${other}\//wormhole_merger/${NAME}/}"
+            echo "[whm] consumer arg repointed: '${other}' -> '${NAME}' (restart-suffix trap)"
+          else
+            echo "[whm] WARNING: consumer arg points at another run ('${other}', this run is '${NAME}')" >&2
+            echo "[whm]          kept as given -- make sure that is deliberate: ${consumer_args[i]}" >&2
+          fi
+        fi
+        ;;
     esac
   done
 
@@ -496,17 +523,35 @@ if [[ -n "${WHM_MAX_LEVEL:-}" ]]; then
   fi
 fi
 
-# Restart injection.  Appended, never rewritten: no shipped template carries
-# amr.restart (a fresh run must not), so the key is new to every clone.
+# Restart injection.  --restart is the ONE source of amr.restart.  A template
+# cloned from a restart leg's packed params carries the parent's own line
+# (2026-10-03: MOTS-ho2 was refused twice over it -- once for doubling, once,
+# without the flag, by the preflight probe): a line that names the SAME
+# checkpoint as --restart is stripped and re-injected; a different one is a
+# real ambiguity and is refused.  A template with amr.restart and NO --restart
+# is refused up front with the fix, instead of limping into the preflight.
 if [[ -n "${WHM_RESTART:-}" ]]; then
-  n="$(grep -c "^amr.restart[[:space:]]*=" "${RUN_PARAMS}" || true)"
-  if [[ "${n}" != "0" ]]; then
-    echo "[whm] template already sets amr.restart -- refusing to double it" >&2
+  tmpl_restart="$(grep -E "^amr.restart[[:space:]]*=" "${RUN_PARAMS}" | head -n1 \
+                  | sed -e 's/.*=[[:space:]]*//' -e 's/^"//' -e 's/"[[:space:]]*$//')"
+  if [[ -n "${tmpl_restart}" && "${tmpl_restart}" != "${WHM_RESTART}" ]]; then
+    echo "[whm] template sets amr.restart = ${tmpl_restart}" >&2
+    echo "[whm] but --restart gave        ${WHM_RESTART}" >&2
+    echo "[whm] refusing the ambiguity -- remove the template's line or drop --restart" >&2
     exit 1
+  fi
+  if [[ -n "${tmpl_restart}" ]]; then
+    sed -i "/^amr.restart[[:space:]]*=/d" "${RUN_PARAMS}"
+    echo "[whm] template's own amr.restart (same checkpoint) stripped -- --restart is the one source"
   fi
   printf '\n# restart (set by run_single.sh)\namr.restart = "%s"\n' \
     "${WHM_RESTART}" >> "${RUN_PARAMS}"
   echo "[whm] restart  : ${WHM_RESTART}"
+elif grep -qE "^amr.restart[[:space:]]*=" "${RUN_PARAMS}"; then
+  echo "[whm] the template carries amr.restart but the launch has no --restart:" >&2
+  grep -E "^amr.restart[[:space:]]*=" "${RUN_PARAMS}" | head -n1 | sed 's/^/[whm]   /' >&2
+  echo "[whm] relaunch with --restart <that checkpoint> (the name then gets its _r<step>" >&2
+  echo "[whm] suffix and the preflight knows it is a restart) -- refusing" >&2
+  exit 1
 fi
 
 # The consumer's final flags (every params override above applied), and its
