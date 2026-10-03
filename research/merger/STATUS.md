@@ -167,8 +167,15 @@ the name; checkpoints every 5 keep 3; binary main3d_boostpair_91ed17cd; the fly-
 --mots-spectral. Preflight PASS (14/14 frames); boosted solve passes 1-3 residual -> 3.5e-12; start
 verification watcher armed. ~4-6 h -> t = 40 ~23:30-01:30 UTC. EGW-p09 follows on this card.
 
-**EGW-p06-EXT `merge_orbit_flip_d12_p060_L128_lvl4_t100_lbf_csm_r04000_r04000` LIVE on card 0 since 05:24 UTC
-10-03 (the user: "run it till t 100 or nan"):** the p = 0.60 PLUNGE continued from Chk04000 (t = 40; secured on
+**EGW-p06-EXT `merge_orbit_flip_d12_p060_L128_lvl4_t100_lbf_csm_r04000` LIVE on card 0 since ~06:00 UTC 10-03
+(the clean relaunch; the user: "run it till t 100 or nan"):** restarted from Chk04000 with the FULL consumer
+set — the fly-by fields + the d6 chain's finder tuning (level 2, half 6, lmax 8, seeds 5.0/3.5, centre 64^3)
+and the corrected horizon-track. First verdict t = 41: both seeds stall on ONE surface, R 5.057, deform 0.109,
+rms theta_out 5.8e-3 AND FALLING (9.1e-3 at t = 40) — near-marginal, tightening; the converged row is the
+merger verdict. ~7 u/h -> t = 100 ~14:30 UTC if no NaN. The FIRST attempt (suffix doubled, consumer up without
+the finder flags, 3 points scanned untuned) was stopped at t ~ 43.5 and archived 00_archive/aborted on the
+user's word (scratch wiped, manifest 10-03); p09's false start wiped/archived the same pass, relaunches on
+card 1 after CONV with this full consumer set. Was:** the p = 0.60 PLUNGE continued from Chk04000 (t = 40; secured on
 NFS first). The t040 leg ended mid-plunge: separation 3.47 -> 2.19 over t = 36-39, trackers onto the centre at
 40, the 3D finder stalling NEAR a surface (R ~ 5.13, deform 0.104 — the d6 common-MOTS class) without
 converging — the extension is the MOTS verdict. Same params, only stop_time 100; the launcher doubled the
