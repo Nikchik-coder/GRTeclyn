@@ -4087,3 +4087,14 @@ run tree.
   burst/energy comparison over the shared trusted window.
 - **EGW-p09 (p = 0.90, lvl4, stop 40) launched on the freed card 1** with the full MOTS-tuned consumer set;
   the hardened preflight's paths check passed ("one spelling"). ETA ~4-6 h.
+
+## 2026-10-03 (~08:10 UTC) — the p060 plunge hits the d6 wall at t = 55.52, no MOTS first
+
+- **The extension died at the merged-core single-cell h11 NaN** (level 4, chi on its 1e-8 floor, global
+  constraints clean) — the d6 chain's wall, now on the d12 p = 0.60 plunge, ~15 units after contact. The
+  t ~ 52 plunging-merger wall holds across separations.
+- **No converged common MOTS before the death**: nearest approach to marginal at t = 41 (rms theta_out
+  5.8e-3, R 5.06, deform 0.11), receding monotonically after (5.8e-2, R 4.51, deform 0.17 by t = 53) — at
+  lvl4, either no horizon forms on this plunge or the coarse core hides it from the level-2 finder window.
+  The chi-floor continuation (Chk05500, min_chi 1e-4 — the d6 chain's proven cure, ~8 min to the death
+  point) would settle which, and carry the plunge to t = 100. Proposed, awaiting the go.

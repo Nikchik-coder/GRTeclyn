@@ -154,7 +154,15 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 the p06 plunge extension, card 1 EGW-p09
+## Live — first node (two H100s): card 0 FREE since ~08:00 UTC 10-03 (the p06 extension DIED 55.52 — the d6 wall on the d12 plunge), card 1 EGW-p09
+
+**EGW-p06-EXT DIED t = 55.52 (~08:00 UTC 10-03) — the merged-core single-cell h11 NaN, THE d6 CHAIN'S WALL ON
+THE d12 PLUNGE** (level 4; chi pinned on its 1e-8 floor; global constraints clean, L2 Ham 3.5e-4 — the 1/chi
+steepness runaway, ~15 units after contact; the t ~ 52 plunging-merger wall holds across separations). NO
+converged common MOTS to the death: nearest approach to marginal t = 41 (rms theta_out 5.8e-3, R 5.06),
+receding after. Filed `06_binary_flyby/`, trust t <= 55.5, closeout running; Chk05500 (t = 55) NFS-secured.
+PROPOSED (no go yet): the chi-floor continuation from Chk05500 — min_chi 1e-4, the d6 chain's proven cure,
+~8 min to the death point, then to t = 100 — settles whether a horizon forms on this plunge.
 
 Queue order (10-03 ~05:30 UTC): card 1 after CONV (~07:20 UTC) -> EGW-p09 relaunch. Second node (free since
 ~00:45 UTC, settle leg done) -> MOTS-ho2 then MOTS-ho3 on a second-node session (the go and the every-5-keep-3
