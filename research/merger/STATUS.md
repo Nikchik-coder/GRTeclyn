@@ -307,7 +307,17 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): card 0 FREE since ~00:45 UTC 10-03 (the settle leg reached t = 100 — THE CHAIN IS DONE); MOTS-ho2 next on a second-node session
+## Second node (one H100): card 0 MOTS-ho2 since ~06:10 UTC 10-03
+
+**MOTS-ho2 `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` LIVE (the user's go; checkpoints
+every 5 keep 3):** leg 2 again from leg 1's Chk03500 (t = 35, max_level 6) to t = 50 with the 3D finder on
+every plotfile — the head-on's true MOTS through the wall, for Fig. 5. ho1's exact consumer recipe, only the
+stop and names changed. ~2.0 u/h -> t = 50 ~13:45 UTC 10-03. ho3 follows from leg 2's Chk05000 (28G NFS copy
+secured ~06:14 UTC). CHAIN SCRATCH PRUNED ~06:15 UTC: all four spiral cells (152G) wiped — every restart
+point was verified NFS-secured first (Chk02500/03000/03500); the head-on cells and HFL kept (manifest 10-03).
+STITCH RUNNING: the chain's full t = 0-100 movies (leg 1 to 25, sigma to 30, chi to 35, settle to 100 — every
+handoff inside its leg's trust window), stitched from the cached slices into the settle leg's
+stitched_from_t0/.
 
 **D6-lvl4from35 `spiral_d6_p010_L128_lvl4from35_t100_lbf_csm_r03500` DONE ~00:45 UTC 10-03 — reached t = 100
 clean: THE d6 CHAIN COMPLETES, t = 0-100 through the wall** (no NaN; L2 Ham 1.0e-4 at the end, never near
