@@ -235,3 +235,6 @@ place_d44_step1_csm	-	04_binary_headon/placement_csm/place_d44_step1_csm	PLACE-c
 place_d48_step1_csm	-	04_binary_headon/placement_csm/place_d48_step1_csm	PLACE-csm probe (2026-10-02): the matched placement curve, one step, solve verified
 ctrl_rest_a15_csm	-	03_two_throats/csm/ctrl_rest_a15_csm	A15-csm (2026-10-02): the a = 1.5 matched rest pair at d = 12, t = 15, the width-ladder arm for Fig. 4(a)
 ctrl_rest_a3_csm	-	03_two_throats/csm/ctrl_rest_a3_csm	A3-csm (2026-10-02): the a = 3 matched rest pair at d = 12, t = 15, the width-ladder arm for Fig. 4(a)
+merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm	-	06_binary_flyby/merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm	EGW-p06 (2026-10-03): the p = 0.60 arm of E_GW(p), d = 12 lvl4 to t = 40 -- a plunge; no converged common MOTS by 40, extension running
+spiral_d6_p010_L128_lvl4from35_t100_lbf_csm_r03500	-	05_binary_spiral/merger_d6/spiral_d6_p010_L128_lvl4from35_t100_lbf_csm_r03500	D6 settle leg (2026-10-03): the chain's lvl4 leg t = 35-100, pre-wall numerics, clean to the end
+spiral_d6_p010_L128_lvl5from30_sig10_chi1e4_t060_lbf_csm_r03000	-	05_binary_spiral/merger_d6/spiral_d6_p010_L128_lvl5from30_sig10_chi1e4_t060_lbf_csm_r03000	D6 chi leg (2026-10-02): min_chi 1e-4 crossing leg t = 30-36.62 -- the floor cures the single-cell h11 wall

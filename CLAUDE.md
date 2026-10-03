@@ -56,8 +56,12 @@ after session because it lived only in one machine's agent memory.
    extraction/MOTS rows land in `small_data/`, and the keep-last pruning runs. A consumer that died (or was never
    started) is silent: the evolution runs happily while scratch fills and no frames, movies or horizon data exist.
    (2026-10-02: SEED-csm ran 1.5 h consumer-less — `--profile none` sets `WHM_CONSUME=0` and silently drops
-   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`, or start the sidecar by hand
-   with the venv's `test_post` symlink.)
+   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`.) **Hand-(re)starting a
+   consumer: only via `grteclyn-wrapper/scripts/campaigns/wormhole_merger/restart_consumer.sh <run_dir>`**
+   (`--dry-run` to inspect). It rebuilds the launcher's full sidecar command from the run's own manifest —
+   the leading `--data/--out/--frames-out/--delete/--keep-last` args AND the `--horizon-track` repoint to the
+   run's final (suffixed) dir. (2026-10-03: a hand-start with only `WHM_CONSUME_ARGS` sat idle watching
+   nothing — those leading args are what point the consumer at the plotfiles.)
 5. **Update STATUS at once.** Every launch, stop or wipe goes into STATUS.md's Live/Queued tables (run, node/card, t,
    stop time, speed, ETA in hours and clock time). Commit and push it immediately and verify with `git ls-remote`. If
    the push is rejected, fetch, rebase and push again.

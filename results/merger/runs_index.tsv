@@ -115,8 +115,10 @@ place_d7_step1_csm	04_binary_headon/placement_csm	launch manifest	main3d_csmatch
 place_d8_step1_csm	04_binary_headon/placement_csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	100.0		3.8575868938e-03	n/a	ok	unknown	ok
 v2_spiral_d12_p012_L128_lvl5from0_t100_csm	05_binary_spiral/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	5	128.0	256	100.0		1.1203777089e-03	n/a	ok	unknown	ok
 v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm	05_binary_spiral/lbf	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	100.0		1.1211961179e-03	n/a	ok	unknown	ok
+spiral_d6_p010_L128_lvl4from35_t100_lbf_csm_r03500	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	100.0	yes		n/a	ok	unknown	ok
 spiral_d6_p010_L128_lvl5from0_t060_lbf_csm	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	60.0		1.2359858137e-03	n/a	ok	unknown	ok
 spiral_d6_p010_L128_lvl5from25_sig10_t060_lbf_csm_r02500	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	60.0	yes		n/a	silent: (no token): sigma = 1.0, production value 0.1	unknown	ok
+spiral_d6_p010_L128_lvl5from30_sig10_chi1e4_t060_lbf_csm_r03000	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	60.0	yes		n/a	silent: (no token): sigma = 1.0, production value 0.1	unknown	ok
 spiral_d6_p010_L128_lvl6from25_t060_lbf_csm_r02500	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	6	128.0	256	60.0	yes		n/a	ok	unknown	ok
 spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_r02500	05_binary_spiral/merger_d6	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	7	128.0	256	60.0	yes		n/a	ok	unknown	ok
 merge_twin_p012_eta4_lvl5_t066_r05000	05_binary_spiral/p012	reconstructed	main3d_boost_2026-09-08.ex	unstamped	none (launched before 2026-09-24)	0	0	5	64.0	128	66.0	yes		n/a	ok	ok	checkpoints asked for (interval/keep) with checkpoint output off: none written
@@ -142,6 +144,7 @@ spiral_d12_pin025_lvl3_t040_lbf_csm	05_binary_spiral/scout_merger	launch manifes
 spiral_d8_p010_lvl3_t040_lbf_csm	05_binary_spiral/scout_merger	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	3	64.0	128	40.0		3.9996121348e-03	n/a	MISMATCH: d8: separation = 6.0, name says 8.0	unknown	ok
 t0_v2_spiral_d12_p012_L128_lvl5_lb_csm	05_binary_spiral/verify_p012	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	0.5		1.1211961179e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm	06_binary_flyby	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	100.0		1.1296028696e-03	n/a	ok	unknown	ok
+merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm	06_binary_flyby	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	40.0		1.1778660124e-03	n/a	ok	unknown	ok
 merge_orbit_flip_d12_p045_helfer_t090	06_binary_flyby/p045	reconstructed	main3d.gnu.MPI.CUDA.ex	unstamped	none (launched before 2026-09-24)	0	0	3	64.0	128	90.0		3.3819964477e-03	n/a	ok	unknown	ok
 check_flyby_d12_p025_lbf_csm_t020	06_binary_flyby/verify_p025	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	3	64.0	128	20.0		3.6979248357e-03	n/a	ok	unknown	ok
 t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm	06_binary_flyby/verify_p025	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	0.5		1.1296028696e-03	n/a	ok	unknown	ok
@@ -150,4 +153,3 @@ bbh_control_d12_p012_t150	07_bbh_control	reconstructed			none (launched before 2
 bbh_control_d12_p045_t100	07_bbh_control	reconstructed	BinaryBH3d.gnu.MPI.CUDA.ex	1cc27217-dirty	none (launched before 2026-09-24)	0	0							n/a	ok	unknown	ok
 bbh_headon_d8_L128_lvl5_t100	07_bbh_control	launch manifest	BinaryBH3d.gnu.MPI.CUDA.ex	unstamped	pass	0	0							n/a	MISMATCH: L128: box_side = 64.0, name says 128.0	unknown	ok
 merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000	08_convergence	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	4	128.0	256	80.0	yes		n/a	MISMATCH: d8: separation = 0.02, name says 8.0	unknown	ok
-spiral_d6_p010_L128_lvl5from30_sig10_chi1e4_t060_lbf_csm_r03000		launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	60.0	yes		n/a	silent: (no token): sigma = 1.0, production value 0.1	unknown	ok

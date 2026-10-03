@@ -154,10 +154,11 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 EGW-p06, card 1 CONV-csm
+## Live — first node (two H100s): card 0 the p06 plunge extension, card 1 CONV-csm
 
-Queue order (the user's go 10-02 ~18:20 UTC): EGW-p09 next on card 0 after p06 (~00:00 UTC 10-03). Second
-node frees ~00:30 UTC 10-03 -> MOTS-ho2, then MOTS-ho3 (checkpoints every 5 keep 3). Proposed, NO go: EGW-p045 (+ optional p012), CONV-csm-w, SIGN-dyn (queue table below).
+Queue order (10-03 ~05:30 UTC): card 1 after CONV (~07:20 UTC) -> EGW-p09 relaunch. Second node (free since
+~00:45 UTC, settle leg done) -> MOTS-ho2 then MOTS-ho3 on a second-node session (the go and the every-5-keep-3
+checkpoint call stand). Proposed, NO go: EGW-p045 (+ optional p012), CONV-csm-w, SIGN-dyn (queue table below).
 
 **EGW-p06 `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` LIVE on card 0 since ~19:25 UTC 10-02 (the
 user's go ~18:20 UTC):** E_GW(p) above the fly-by — the turnover hunt. The fly-by's packed params with only
@@ -165,6 +166,21 @@ p 0.25 -> 0.60, stop 40, max_level 4 (the user: exploratory; extraction reads th
 the name; checkpoints every 5 keep 3; binary main3d_boostpair_91ed17cd; the fly-by's consumer args +
 --mots-spectral. Preflight PASS (14/14 frames); boosted solve passes 1-3 residual -> 3.5e-12; start
 verification watcher armed. ~4-6 h -> t = 40 ~23:30-01:30 UTC. EGW-p09 follows on this card.
+
+**EGW-p06-EXT `merge_orbit_flip_d12_p060_L128_lvl4_t100_lbf_csm_r04000_r04000` LIVE on card 0 since 05:24 UTC
+10-03 (the user: "run it till t 100 or nan"):** the p = 0.60 PLUNGE continued from Chk04000 (t = 40; secured on
+NFS first). The t040 leg ended mid-plunge: separation 3.47 -> 2.19 over t = 36-39, trackers onto the centre at
+40, the 3D finder stalling NEAR a surface (R ~ 5.13, deform 0.104 — the d6 common-MOTS class) without
+converging — the extension is the MOTS verdict. Same params, only stop_time 100; the launcher doubled the
+_r04000 suffix (cosmetic); the consumer was restarted by hand with the corrected horizon-track path before the
+first plotfile. EGW-p09 was stopped seconds into evolution for this card (the user's call; no data lost) and
+relaunches after CONV. ~7 u/h -> t = 100 ~13:45 UTC 10-03 if no NaN.
+
+**EGW-p06 t040 leg DONE 10-03 ~05:15 UTC — A PLUNGE, the turnover hunt finds a second merger candidate** (t = 40
+clean, no NaN; L2 Ham blips over 2.5e-2 from t = 7.65 — 20 transits of <= 0.4 u, the p²-junk at lvl4 — sustained
+level 1e-3 class). Filed `06_binary_flyby/` (file_run.sh moved the raw dir into the group folder; frames 196M +
+Chk04000 22G intact there). Closeout + the E_GW burst read are pending the extension's verdict for the trust
+window.
 
 **WIDTH TWINS `ctrl_rest_a15_csm` + `ctrl_rest_a3_csm` DONE 19:21 UTC 10-02 — both reached t = 15 clean on
 one card** (no NaN; Ham 7.2e-3 / 2.4e-3, Mom ~3e-5, the rest-probe class; no MOTS anywhere, correct). The
@@ -284,10 +300,14 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): card 0 D6-lvl4from35 — the chain's settle leg to t = 100
+## Second node (one H100): card 0 FREE since ~00:45 UTC 10-03 (the settle leg reached t = 100 — THE CHAIN IS DONE); MOTS-ho2 next on a second-node session
 
-**D6-lvl4from35 `spiral_d6_p010_L128_lvl4from35_t100_lbf_csm_r03500` LIVE since ~15:20 UTC 10-02 (the user's
-go: "lvl downgrade for t100 ... pre wall lvl4 run"):** the chain's settle leg from the chi leg's Chk03500
+**D6-lvl4from35 `spiral_d6_p010_L128_lvl4from35_t100_lbf_csm_r03500` DONE ~00:45 UTC 10-03 — reached t = 100
+clean: THE d6 CHAIN COMPLETES, t = 0-100 through the wall** (no NaN; L2 Ham 1.0e-4 at the end, never near
+2.5e-2; MOTS settling R 4.883, M_MS 2.441, deform ~0.01 at t = 100; min 1/chi ran ~6.7e-5 naturally — the
+pre-wall numerics hold post-wall). Filed `05_binary_spiral/merger_d6/` (the raw dir moved into the group
+folder); closeout running; the joined chain MOTS history + per-leg trust rows + the chain narrative are the
+next analysis step. Its scratch prune needs a second-node session. Was LIVE since ~15:20 UTC 10-02:** the chain's settle leg from the chi leg's Chk03500
 (t = 35, past the wall) with PRE-WALL NUMERICS — the wall knobs reverted per the user (min_chi back to 1e-8,
 sigma back to 0.1: they were crossing devices), max_level 4, stop_time 100. Start verified by effect: t = 37.15
 -> 38.05, maxK 0.45 and falling (min 1/chi runs ~6.7e-5 naturally, no cap needed post-wall), Ham 1.4e-4, MOTS

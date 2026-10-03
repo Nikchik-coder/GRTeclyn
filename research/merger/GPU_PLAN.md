@@ -4058,3 +4058,22 @@ run tree.
   exploratory; the extraction spheres read the base grid whatever max_level is) and the name; checkpoints
   every 5 keep 3; binary main3d_boostpair_91ed17cd; the fly-by's consumer args + --mots-spectral.
   Preflight PASS (14/14 frames). E_GW(p) above the fly-by point — the turnover hunt. EGW-p09 follows.
+
+## 2026-10-03 (~05:30 UTC) — the chain completes; the turnover hunt finds a plunge; p06 extended
+
+- **The d6 merger chain is DONE t = 0-100**: the lvl4from35 settle leg reached t = 100 clean (~00:45 UTC;
+  Ham 1.0e-4 at the end, MOTS R 4.883 / M_MS 2.441 / deform ~0.01 — a settled merged core). The chain:
+  lvl5 (0-26.26) -> lvl6 (died 29.4) -> lvl7 (died 27.5) -> sig10 (died 30.5) -> chi 1e-4 (crossed, stopped
+  36.62) -> lvl4 pre-wall numerics (35-100). Next analysis: the joined MOTS history, per-leg trust rows, the
+  chain narrative for the paper.
+- **EGW-p06 (p = 0.60, d = 12, lvl4) reached t = 40 clean AND PLUNGED**: separation 3.47 -> 2.19 over
+  t = 36-39, trackers onto the centre at 40; the 3D finder stalls near a surface (R ~ 5.13, deform 0.104)
+  on the last plotfiles without converging — no confirmed MOTS by 40. The "turnover hunt" burst run found a
+  second merger candidate instead: at p = 0.60 the d = 12 pair does not fly by, it merges. E_GW(p) now has
+  a qualitative boundary between 0.25 (scatter) and 0.60 (plunge).
+- **EGW-p06-EXT launched 05:24 UTC** (the user: "till t 100 or nan") from Chk04000 on card 0; EGW-p09 was
+  stopped seconds in to free the card (relaunches after CONV ~07:20 UTC). Chk04000 cp'd to the t040 leg's
+  NFS dir before the restart (22G).
+- Note for launches: file_run.sh MOVES the raw run dir into its group folder under runs/wormhole_merger/ —
+  the t040 leg and the settle leg now live under 06_binary_flyby/ and 05_binary_spiral/merger_d6/
+  respectively, frames intact.
