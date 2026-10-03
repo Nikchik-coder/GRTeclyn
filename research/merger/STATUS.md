@@ -309,8 +309,13 @@ died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_
 
 ## Second node (one H100): card 0 MOTS-ho2 since ~06:10 UTC 10-03
 
-**MOTS-ho2 `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` LIVE (the user's go; checkpoints
-every 5 keep 3):** leg 2 again from leg 1's Chk03500 (t = 35, max_level 6) to t = 50 with the 3D finder on
+**MOTS-ho2 `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` LIVE since ~06:40 UTC 10-03 (the
+user's go; checkpoints every 5 keep 3) — THREE refusals first, no GPU touched:** (1) leg 2's packed params
+carry their own `amr.restart` and the launcher refuses doubling it with `--restart`; (2) without the flag the
+final name loses its `_r03500` AND the full preflight refuses a restart template (the 0-step probe writes no
+t = 0 frame); (3) the working form: strip `amr.restart` from the template ("no shipped template carries it")
+and pass `--restart` — a restart-leg template must NEVER keep its parent's amr.restart line. Evolving at
+~1.96 u/h from t = 35.016.** leg 2 again from leg 1's Chk03500 (t = 35, max_level 6) to t = 50 with the 3D finder on
 every plotfile — the head-on's true MOTS through the wall, for Fig. 5. ho1's exact consumer recipe, only the
 stop and names changed. ~2.0 u/h -> t = 50 ~13:45 UTC 10-03. ho3 follows from leg 2's Chk05000 (28G NFS copy
 secured ~06:14 UTC). CHAIN SCRATCH PRUNED ~06:15 UTC: all four spiral cells (152G) wiped — every restart
