@@ -531,7 +531,7 @@ fi
 # real ambiguity and is refused.  A template with amr.restart and NO --restart
 # is refused up front with the fix, instead of limping into the preflight.
 if [[ -n "${WHM_RESTART:-}" ]]; then
-  tmpl_restart="$(grep -E "^amr.restart[[:space:]]*=" "${RUN_PARAMS}" | head -n1 \
+  tmpl_restart="$( (grep -E "^amr.restart[[:space:]]*=" "${RUN_PARAMS}" || true) | head -n1 \
                   | sed -e 's/.*=[[:space:]]*//' -e 's/^"//' -e 's/"[[:space:]]*$//')"
   if [[ -n "${tmpl_restart}" && "${tmpl_restart}" != "${WHM_RESTART}" ]]; then
     echo "[whm] template sets amr.restart = ${tmpl_restart}" >&2
