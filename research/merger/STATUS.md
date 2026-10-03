@@ -159,9 +159,12 @@ superposed twins (checked 09-28/09-29; details in the archive).
 **P060-CHI `merge_orbit_flip_d12_p060_L128_lvl4from50_chi1e4_t100_lbf_csm_r05000` LIVE on card 0 since ~08:4x
 UTC 10-03 (the user's go: "through the wall ... lowering min chi"):** the extension's params from its own
 Chk05000 (t = 50) with ONE knob — min_chi 1e-8 -> 1e-4, the d6 chain's proven wall cure — to t = 100.
-Checkpoints every 5 keep 3 inherited; the full MOTS-tuned consumer set. The death point (55.52) is ~45 min in
-at ~7.5 u/h; if it crosses, t = 100 ~15:30 UTC — and the finder finally gets to ask whether this plunge ever
-forms its horizon.
+Checkpoints every 5 keep 3 inherited; the full MOTS-tuned consumer set. **IT CROSSED THE WALL ~09:05 UTC:
+past 55.52 with no NaN (min chi riding the 1e-4 floor, constraints clean) — the chi-floor cure generalizes
+from the d6 merger to the d12 plunge, two systems now.** Through t = 88.75 at 13:45 UTC (~7 u/h): still NO
+converged common MOTS, but rms theta_out falls monotonically post-wall (5.7e-2 at 55 -> 2.6e-2 at 88, R ~ 4.50,
+deform 0.15 — a slowly settling remnant); max|K| 0.311 -> 0.287 over t = 83–88, a slow ringdown, not a freeze.
+t = 100 ~15:20 UTC delivers the horizon verdict.
 
 **EGW-p06-EXT DIED t = 55.52 (~08:00 UTC 10-03) — the merged-core single-cell h11 NaN, THE d6 CHAIN'S WALL ON
 THE d12 PLUNGE** (level 4; chi pinned on its 1e-8 floor; global constraints clean, L2 Ham 3.5e-4 — the 1/chi
@@ -171,9 +174,11 @@ receding after. Filed `06_binary_flyby/`, trust t <= 55.5, closeout running; Chk
 PROPOSED (no go yet): the chi-floor continuation from Chk05500 — min_chi 1e-4, the d6 chain's proven cure,
 ~8 min to the death point, then to t = 100 — settles whether a horizon forms on this plunge.
 
-Queue order (10-03 ~05:30 UTC): card 1 after CONV (~07:20 UTC) -> EGW-p09 relaunch. Second node (free since
-~00:45 UTC, settle leg done) -> MOTS-ho2 then MOTS-ho3 on a second-node session (the go and the every-5-keep-3
-checkpoint call stand). Proposed, NO go: EGW-p045 (+ optional p012), CONV-csm-w, SIGN-dyn (queue table below).
+Queue order (10-03 ~14:30 UTC): first node card 0 = the p060 chi leg (t = 100 ~15:20 UTC), card 1 = EGW-p09
+(t = 40 ~17:20 UTC); second node = MOTS-ho3 (t = 100 ~21:30 UTC). MOTS-ho2 DONE. CONV-csm-w has the go (the
+user, 14:05 UTC) but was preflight-refused on one card — the memory wall, see the second-node section; awaiting
+the user's pick (smaller ball here, or the first node's two cards). Proposed, NO go: EGW-p045 (+ optional
+p012), SIGN-dyn (queue table below).
 
 **EGW-p06 `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` LIVE on card 0 since ~19:25 UTC 10-02 (the
 user's go ~18:20 UTC):** E_GW(p) above the fly-by — the turnover hunt. The fly-by's packed params with only
@@ -328,10 +333,30 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): card 0 MOTS-ho2 since ~06:10 UTC 10-03
+## Second node (one H100): card 0 MOTS-ho3 since ~14:15 UTC 10-03
 
-**MOTS-ho2 `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` LIVE since ~06:40 UTC 10-03 (the
-user's go; checkpoints every 5 keep 3) — THREE refusals first, no GPU touched:** (1) leg 2's packed params
+**MOTS-ho3 `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` LIVE since ~14:15 UTC 10-03 (the
+standing go; checkpoints every 5 keep 3):** the head-on chain leg 3 (t = 50–100, max_level 4) with the 3D
+finder on every plotfile — the last window of the true horizon history for Fig. 5 / §VI. Leg 3's packed params
+with only the names + the checkpoint block changed, `amr.restart` stripped (the ho2 lesson, now launcher-
+enforced), `--restart` from leg 2's Chk05000 (the scratch copy, 28G cell kept). Preflight PASS, paths "one
+spelling". Start verified by effect: restart at t = 50.01, 7.03 u/h, card 46 GB; consumer pid live with the
+full leading args + the suffixed horizon-track. ~7 h -> t = 100 ~21:30 UTC 10-03.
+
+**CONV-csm-w (the user's go ~14:05 UTC, "the referee run") REFUSED by the preflight probe — nothing started:**
+`extraction_levels = 0 0 0 1` (the R = 44 sphere) tags the ball r < 52.8 to level 1: 65.8M level-1 cells (49 %
+of the domain), ~106M in all; the probe died "Arena out of memory" at 77.4 GB of this card's 80 (report kept in
+`logs/preflight_refused/`). Template `templates_scan/params_v2_spiral_d12_p012_L128_lvl4w_t040_csm.txt` is
+diffed and ready; as designed it needs the first node's TWO cards. One-card variants: the R = 36 ball
+(0 0 1 0, ~77M cells, est. 60–65 GB) or the R = 28 ball (0 1 0 0, ~58M, ~45 GB). Awaiting the user's pick.
+
+**MOTS-ho2 `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` DONE ~13:55 UTC 10-03 — reached
+t = 50 clean (no NaN; L2 Ham 1.4e-4 / Mom 4.2e-4 at the end; 2.04 u/h). THE TRUE HORIZON HISTORY t = 35–50:
+the common MOTS continues ho1's without a seam (R 4.7929 at t = 36 against ho1's 4.789 at 35) and settles to
+R 4.7794, M_MS 2.3897, deform 0.026 at t = 50 (warm Newton 3 iters, residual 5.1e-7). Filed
+`04_binary_headon/mots/`, closeout 0 problems (movies to t = 50, 14 fields); scratch cell (104G) pruned,
+manifest 10-03. Was LIVE since ~06:40 UTC (the user's go; checkpoints every 5 keep 3) — THREE refusals first,
+no GPU touched:** (1) leg 2's packed params
 carry their own `amr.restart` and the launcher refuses doubling it with `--restart`; (2) without the flag the
 final name loses its `_r03500` AND the full preflight refuses a restart template (the 0-step probe writes no
 t = 0 frame); (3) the working form: strip `amr.restart` from the template ("no shipped template carries it")
@@ -493,7 +518,7 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 | EGW-p06 | `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` | **GO GIVEN (the user, 10-02 ~18:20 UTC, first on the freed card 0): E_GW(p) above the fly-by (turnover).** max_level 4 on the user's word (exploratory; the extraction spheres read the base grid whatever max_level is — lvl4 only coarsens the throats, the "if it's not NaN" test); checkpoints every 5 keep 3 (the user's answer); template ready in templates_scan, diffed: only p 0.25 -> 0.6, stop 100 -> 40, the name | ~4–6 |
 | EGW-p09 | `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` | **GO GIVEN (same word): E_GW(p) far side of the peak.** Launches after p06 on the same card | same, p = 0.90; template ready, diffed | ~4–6 |
 | EGW-p045 | `merge_orbit_flip_d12_p045_L128_lvl4_t040_lbf_csm` | PROPOSED (10-02 figure audit, no go yet): the old p = 0.45 arms are archived as wrong (Bowen-York); a csm point redraws Fig. 12 top and densifies the E_GW(p) turnover for Fig. 9. p = 0.12 the optional second midpoint | the EGW recipe (fly-by template, lvl4, stop 40) at p = 0.45 | ~4–6 |
-| CONV-csm-w | `v2_spiral_d12_p012_L128_lvl4w_t040_csm` | PROPOSED (no go yet), REFEREE: wave-zone convergence on csm data — CONV-csm varies max_level only, which never refines the extraction spheres (the 09-26 lesson); raise the outer sphere's `extraction_levels` so the ExtractionTagger refines the wave zone, stop ~40 (the burst window) | CONV-csm's template + extraction_levels on the R = 44 sphere, stop 40 | ~6–10 |
+| CONV-csm-w | `v2_spiral_d12_p012_L128_lvl4w_t040_csm` | **GO GIVEN (the user, 10-03 ~14:05 UTC) — preflight-REFUSED on one H100 (the R = 44 level-1 ball is 49 % of the domain, ~106M cells, probe OOM at 77.4 GB; nothing started).** REFEREE: wave-zone convergence on csm data. Awaiting the user's pick: R = 36 ball (0 0 1 0, fits one card) / R = 28 ball / as designed on the first node's two cards | template `params_v2_spiral_d12_p012_L128_lvl4w_t040_csm.txt` built and diffed (names, stop 40, extraction_levels 0 0 0 1 only) | ~6–10 |
 | SIGN-dyn | `ctrl_sign_dyn_{pp,pm}_csm` | PROPOSED (no go yet), REFEREE: the energy-check claim (conductor vs fixed charge) tested dynamically — mode-3 rest pair at both scalar signs, read the initial acceleration from throat_track over a few units | the A1-csm recipe at both signs, stop ~2–5 | GPU minutes |
 
 Also waiting: p = 0.35/0.45 boundary reruns (step 3), clean-data single throats (step 4), the spiral freeze

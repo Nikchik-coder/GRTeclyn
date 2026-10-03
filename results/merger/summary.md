@@ -159,6 +159,7 @@ t = 51.4+) are evidence of a common horizon.
 | run | what is different | from | to | outcome | min throat sep | common horizon at | min lapse* | L2 Ham* |
 |---|---|---|---|---|---|---|---|---|
 | merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm | MOTS-ho1 (2026-10-01, the user's go ~20:10 UTC "launch next queued run with proper horizon finder"): the head-on's | 0.00 | 35.00 | finished clean at t = 35.00 DONE 10-02, reached stop_time t = 35 clean (no NaN, L2 Ham 4.3e-4 / Mom 6.9e-4 at the end). THE HEAD-ON'S TRUE HORIZON HISTORY t = 0-35: the 3D finder's common MOTS is born at t = 18 (R 5.634, M_MS 2.817, deform 0.104) -- 4 units earlier and 12% larger than the round scan's caption values (t ~ 22, R 5.02) -- and settles to R 4.789, M_MS 2.394, deform 0.026 at t = 35 (warm Newton ~5 iters, residual 6.5e-7). Feeds the Fig. 5 / par VI re-measure with MOTS-ho2/ho3. Packed 04_binary_headon/mots/ | 0.11 | - | 1.391e-03 | 4.276e-04 |
+| merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500 | MODE-3 PRODUCTION HEAD-ON, L = 128 (2026-09-28): the level-5 d = 8 head-on on far-side-matched data; a blessed exception to the rerun rule (the user's word): old L = 64 physics in the shared production geometry, for one geometry and a reflection-free window to t ~ 84 at R = 44 in the shared energy table. -- restarted from BinaryWormholeChk03500 (kept in merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm) | 35.01 | 50.01 | finished clean at t = 50.01 | 0.01 | 35.16 | 1.000e-10 | 1.386e-04 |
 
 ## `04_binary_headon/placement`
 

@@ -1361,9 +1361,14 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
     R 5.024 vs the 3D finder's 5.330 there), loses the surface entirely over t = 26–35, and its reacquired
     radii jump non-monotonically (3.87–4.40) — the deformed-horizon bias the horizon-numbers rule exists for.
   - Constraints clean to the end (L2 Ham 4.3e-4, Mom 6.9e-4); reached stop_time, no NaN.
-  - Fig. 5 and §VI re-measure proceeds when MOTS-ho2 (t = 35–50) and MOTS-ho3 (t = 50–100) land.
+  - MOTS-ho2 (t = 35–50, DONE 10-03) continues the history seamlessly: R 4.7929 at t = 36 against ho1's 4.789
+    at t = 35, settling to R 4.7794, M_MS 2.3897, deform 0.026 at t = 50 (warm Newton 3 iterations, residual
+    5.1e-7; L2 Ham 1.4e-4 / Mom 4.2e-4 at the end, no NaN).
+  - Fig. 5 and §VI re-measure proceeds when MOTS-ho3 (t = 50–100) lands.
 - **Runs.** `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` *(pack, `campaign/04_binary_headon/mots/`)*:
   leg 1's packed params with only stop 100 → 35 and the name; no checkpoints; `main3d_csmatch_5f988dbc`.
+  `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` *(pack, same folder)*: leg 2's packed params
+  with only stop 100 → 50 and the names, from leg 1's Chk03500; checkpoints every 5 keep 3; same binary.
 
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),

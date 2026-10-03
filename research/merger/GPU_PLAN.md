@@ -4098,3 +4098,20 @@ run tree.
   lvl4, either no horizon forms on this plunge or the coarse core hides it from the level-2 finder window.
   The chi-floor continuation (Chk05500, min_chi 1e-4 — the d6 chain's proven cure, ~8 min to the death
   point) would settle which, and carry the plunge to t = 100. Proposed, awaiting the go.
+
+## 2026-10-03 (~14:20 UTC) — MOTS-ho2 done; MOTS-ho3 launched; CONV-csm-w refused by the memory wall
+
+- **MOTS-ho2 reached t = 50 clean** (2.04 u/h; L2 Ham 1.4e-4 / Mom 4.2e-4 at the end, no NaN). The 3D finder's
+  common MOTS continues ho1's history without a seam (R 4.7929 at t = 36 against ho1's 4.789 at t = 35) and
+  settles to R 4.7794, M_MS 2.3897, deform 0.026 at t = 50 (warm Newton 3 iterations, residual 5.1e-7).
+  Filed `04_binary_headon/mots/`, closeout 0 problems, movies to t = 50; scratch cell pruned (manifest 10-03).
+- **MOTS-ho3 launched on the second node's card** (the standing go, every 5 keep 3): leg 3's packed params with
+  only the names and the checkpoint block changed, from leg 2's Chk05000 (t = 50, the scratch copy), stop 100,
+  max_level 4, `main3d_csmatch_5f988dbc`, the ho1/ho2 consumer set. ~7 h at leg 3's pace -> t = 100 late evening.
+- **CONV-csm-w (the user's go, "the referee run") was REFUSED by the preflight probe**: extraction_levels
+  0 0 0 1 on the R = 44 sphere tags the ball r < 52.8 to level 1 — 65.8M level-1 cells, 49 % of the domain,
+  ~106M cells in all, and the probe died "Arena out of memory" at 77.4 GB of the single H100's 80. Nothing
+  started (the loud-death trap + kept report: `logs/preflight_refused/v2_spiral_d12_p012_L128_lvl4w_t040_csm_*`).
+  The run as designed needs the first node's two cards; a one-card variant must shrink the refined ball
+  (R = 36 ball ~77M cells, est. 60–65 GB; R = 28 ball ~58M, ~45 GB). Awaiting the user's pick; MOTS-ho3 took
+  the card meanwhile.
