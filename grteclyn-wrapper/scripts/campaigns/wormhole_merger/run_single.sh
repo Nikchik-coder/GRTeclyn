@@ -127,6 +127,18 @@
 # file at the old offset when its evolution ended.)  Keep it that way.
 {
 set -euo pipefail
+
+# A launch that dies before the evolution starts must die LOUDLY (2026-10-03:
+# a set -e kill between two echo lines left a stub run dir and an idle card
+# for 25 minutes with nothing in any log).  Until the evolution is launched,
+# any exit -- an uncaught error above all -- names its line and command here,
+# in the same detached log every launch is polled on.
+WHM_EVOLUTION_STARTED=0
+trap 'rc=$?; if [[ "${WHM_EVOLUTION_STARTED}" != "1" && "${rc}" != "0" ]]; then
+  echo "[whm] !! LAUNCH FAILED before the evolution started (exit ${rc})" >&2
+  echo "[whm] !! at line ${LINENO}: ${BASH_COMMAND}" >&2
+  echo "[whm] !! nothing is running; the run dir (if made) is a stub" >&2
+fi' EXIT
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 SELF_DIR="${SCRIPT_DIR}"   # this directory, resolved BEFORE anything moves us
 WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
@@ -770,6 +782,7 @@ if [[ "${RANKS}" -gt 1 ]]; then
   echo "[whm] ranks    : ${RANKS} (MPI), one per card: ${GPU}"
 fi
 
+WHM_EVOLUTION_STARTED=1
 echo "[whm] === launching ${NAME} (attached; Ctrl-C or stop_campaign.sh to stop) ==="
 status=0
 # From here on the shell stands in the run directory, so the evolution, the
