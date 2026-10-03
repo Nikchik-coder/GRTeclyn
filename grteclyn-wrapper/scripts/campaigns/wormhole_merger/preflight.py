@@ -287,6 +287,56 @@ def symmetry_check(params: dict[str, str]) -> tuple[list[str], list[str], dict]:
     return errors, warnings, summary
 
 
+def paths_check(params: dict[str, str], argv: str | None, consume_args: str) -> tuple[list[str], list[str], dict]:
+    """(errors, warnings, summary): ONE RUN, ONE SPELLING.  Every path the
+    launch assembled -- output_path, the scratch plot/check files, amr.restart,
+    and the consumer's final flags -- must agree on the run's name.  The
+    restart-suffix trap (2026-10-03: a doubled _r04000 split the p06 extension
+    across two spellings and its consumer tracked a stream that never existed;
+    the same morning MOTS-ho2's template carried its parent's amr.restart) is
+    exactly a disagreement here, so it refuses before anything starts."""
+    errors: list[str] = []
+    warnings: list[str] = []
+
+    def unquote(v: str) -> str:
+        return v.strip().strip('"')
+
+    out = unquote(params.get("output_path", ""))
+    name = pathlib.PurePath(out).name if out else ""
+    summary: dict = {"name": name}
+    if not name:
+        warnings.append("no output_path in the params: the path-consistency check has no run name")
+        return errors, warnings, summary
+    for key in ("amr.plot_file", "amr.check_file"):
+        v = unquote(params.get(key, ""))
+        if v and pathlib.PurePath(v).parent.name != name:
+            errors.append(f"{key} lives under '{pathlib.PurePath(v).parent.name}' but output_path names "
+                          f"'{name}': one run, one spelling (the restart-suffix trap)")
+    rst = unquote(params.get("amr.restart", ""))
+    if rst:
+        step = re.sub(r".*Chk", "", rst.rstrip("/"))
+        if step.isdigit() and not name.endswith(f"_r{step}"):
+            errors.append(f"amr.restart is Chk{step} but the run's name does not end _r{step}: a restart "
+                          f"leg's name carries its checkpoint's step (launch with --restart, and never "
+                          f"keep a parent's amr.restart line in a template)")
+    try:
+        toks = shlex.split(argv) if argv else shlex.split(consume_args or "")
+    except ValueError:
+        toks = (argv or consume_args or "").split()
+    for t in toks:
+        m = re.search(r"wormhole_merger/([^/]+)/", t)
+        if not m or m.group(1) == name:
+            continue
+        other = m.group(1)
+        if other.startswith(name + "_r") or name.startswith(other + "_r"):
+            errors.append(f"a consumer flag points at '{other}' but this run is '{name}' "
+                          f"(the restart-suffix trap): {t}")
+        else:
+            warnings.append(f"a consumer flag points at another run ('{other}'); kept -- "
+                            f"a cross-run reference must be deliberate: {t}")
+    return errors, warnings, summary
+
+
 def consumer_check(params: dict[str, str], consume_args: str, consume_on: bool,
                    reflect: list[str] | None = None) -> tuple[list[str], list[str], dict]:
     """(errors, warnings, summary) for what the plotfile consumer is asked to
@@ -878,7 +928,13 @@ def main(argv: list[str]) -> int:
           + ("; neck + horizons" if c_sum["neck_horizons"] else "")
           + (f"; --reflect {' '.join(c_sum['reflect'])}" if c_sum["reflect"] else "")
           + ("" if c_sum["consume"] else " (no consumer: WHM_CONSUME=0)"))
-    errors, warnings = errors + s_err + c_err + f_err, warnings + s_warn + c_warn + f_warn
+    p_err, p_warn, p_sum = paths_check(params, a.consumer_argv, a.consume_args)
+    report["paths"] = dict(p_sum, errors=p_err, warnings=p_warn)
+    if p_sum.get("name"):
+        print(f"[preflight] paths  : " + ("one spelling, '" + p_sum["name"] + "'" if not p_err
+                                          else f"INCONSISTENT ({len(p_err)} disagreement(s), below)"))
+    errors, warnings = (errors + s_err + c_err + f_err + p_err,
+                        warnings + s_warn + c_warn + f_warn + p_warn)
     for w in warnings:
         print(f"[preflight] WARNING: {w}")
     if errors:
