@@ -154,7 +154,14 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 FREE since ~08:00 UTC 10-03 (the p06 extension DIED 55.52 — the d6 wall on the d12 plunge), card 1 EGW-p09
+## Live — first node (two H100s): card 0 the p060 chi leg, card 1 EGW-p09
+
+**P060-CHI `merge_orbit_flip_d12_p060_L128_lvl4from50_chi1e4_t100_lbf_csm_r05000` LIVE on card 0 since ~08:4x
+UTC 10-03 (the user's go: "through the wall ... lowering min chi"):** the extension's params from its own
+Chk05000 (t = 50) with ONE knob — min_chi 1e-8 -> 1e-4, the d6 chain's proven wall cure — to t = 100.
+Checkpoints every 5 keep 3 inherited; the full MOTS-tuned consumer set. The death point (55.52) is ~45 min in
+at ~7.5 u/h; if it crosses, t = 100 ~15:30 UTC — and the finder finally gets to ask whether this plunge ever
+forms its horizon.
 
 **EGW-p06-EXT DIED t = 55.52 (~08:00 UTC 10-03) — the merged-core single-cell h11 NaN, THE d6 CHAIN'S WALL ON
 THE d12 PLUNGE** (level 4; chi pinned on its 1e-8 floor; global constraints clean, L2 Ham 3.5e-4 — the 1/chi
