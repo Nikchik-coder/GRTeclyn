@@ -56,12 +56,15 @@ after session because it lived only in one machine's agent memory.
    extraction/MOTS rows land in `small_data/`, and the keep-last pruning runs. A consumer that died (or was never
    started) is silent: the evolution runs happily while scratch fills and no frames, movies or horizon data exist.
    (2026-10-02: SEED-csm ran 1.5 h consumer-less — `--profile none` sets `WHM_CONSUME=0` and silently drops
-   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`.) **Hand-(re)starting a
-   consumer: only via `grteclyn-wrapper/scripts/campaigns/wormhole_merger/restart_consumer.sh <run_dir>`**
-   (`--dry-run` to inspect). It rebuilds the launcher's full sidecar command from the run's own manifest —
-   the leading `--data/--out/--frames-out/--delete/--keep-last` args AND the `--horizon-track` repoint to the
-   run's final (suffixed) dir. (2026-10-03: a hand-start with only `WHM_CONSUME_ARGS` sat idle watching
-   nothing — those leading args are what point the consumer at the plotfiles.)
+   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`.) **Changing or fixing a live
+   run's consumer: only via `restart_consumer.sh <run_dir> <flag> ...`** (campaigns/wormhole_merger; `--check`
+   first). It reuses the live watcher's exact command line, appends the flags, keeps the frames, and persists
+   the flags in `consumer_args.extra` so the end-of-run drain gets them too. If the run has NO watcher at all,
+   rebuild the launcher's full command by hand — the leading `--data scratch --out small_data --frames-out
+   frames --delete --keep-last N` args BEFORE the profile args, `--keep-existing-frames`, argv[0] the venv's
+   `test_post` on PATH — then `--check`. (2026-10-03: a hand-start with only the profile args sat idle
+   watching nothing, and its `--horizon-track` named the wrong run dir — launch.sh appends `_r<step>` to
+   `--name`, so a restart leg's consumer paths must use the FINAL suffixed name.)
 5. **Update STATUS at once.** Every launch, stop or wipe goes into STATUS.md's Live/Queued tables (run, node/card, t,
    stop time, speed, ETA in hours and clock time). Commit and push it immediately and verify with `git ls-remote`. If
    the push is rejected, fetch, rebase and push again.
