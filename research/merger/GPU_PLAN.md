@@ -4140,3 +4140,16 @@ run tree.
     EGW recipe at p = 0.45; fills the E_GW(p) curve between scatter (0.25) and plunge (0.60). ~4.1 u/h →
     t = 40 ~15:30 UTC.
   - CONV-csm-w stays blocked on the one-card memory wall (the user's ball-size pick still open).
+
+## 2026-10-04 (~07:45 UTC) — the chi floor does NOT cure the p = 0.90 merger: a K-runaway death
+
+- **P09-CHI died t = 45.27**, ~3–5 units after contact, h11 NaN on level 4 — but χ_min was 5.4e-3, NEVER near
+  the 1e-4 floor, while max|K| ran away at the merging core (93 → 172 in one 0.01 step) and the constraints
+  blew with it (Ham 1.9e-2, sustained > 5e-3 from 42.4). **This is the K-wall class** — the one the d6 chain
+  cleared by RESOLUTION (its lvl6 leg rang max|K| 5.6 back down to 1.95) — not the single-cell χ-steepness
+  wall the floor cures. The p = 0.90 merger is simply too violent for lvl4. No MOTS before death. The burst
+  reached R = 14 only; E_GW(p = 0.90) at the outer spheres needs a finer continuation. **Chk04500 (t = 45,
+  0.27 before death) NFS-secured** for it; the design decision waits for the p060 lvl5 verdict (same
+  resolution question, running on card 0). Trust t ≤ 45.2; filed 06_binary_flyby when the drain ends.
+- **EGW-p045 relaunched on the freed card 1** (~07:45 UTC; the standing go): same template and consumer set,
+  from t = 0. ~4.1 u/h → t = 40 ~17:30 UTC.

@@ -154,7 +154,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 the p060 lvl5 horizon-check (~07:10 UTC 10-04), card 1 the p09 chi leg (~05:50)
+## Live — first node (two H100s): card 0 the p060 lvl5 horizon-check (~07:10 UTC 10-04), card 1 EGW-p045 (~07:45)
 
 **P060-LVL5 `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` LIVE on card 0 since
 ~07:10 UTC 10-04 (the user: "kill it and run p060 lvl5 minchi"):** THE HORIZON-BIRTH DISCRIMINATOR — the
@@ -173,7 +173,16 @@ p 0.6 → 0.45 and the names; stop 40, lvl4, checkpoints every 5 keep 3 (the tem
 the full MOTS-tuned consumer set, binary main3d_boostpair. Preflight PASS, paths one spelling. Fills the
 E_GW(p) turnover between scatter (0.25) and plunge (0.60) for Figs. 9/12. ~4.1 u/h → t = 40 ~15:30 UTC 10-04.
 
-**P09-CHI `merge_orbit_flip_d12_p090_L128_lvl4from40_chi1e4_t100_lbf_csm_r04000` LIVE on card 1 (the user
+**EGW-p045 `merge_orbit_flip_d12_p045_L128_lvl4_t040_lbf_csm` RELAUNCHED on card 1 ~07:45 UTC 10-04 (the
+standing go; the first start was stopped at t = 0.91 for the lvl5 check): the EGW recipe at p = 0.45, stop 40,
+checkpoints every 5 keep 3, the full MOTS-tuned consumer set. ~4.1 u/h → t = 40 ~17:30 UTC.**
+
+**P09-CHI DIED t = 45.27 (~07:3x UTC 10-04) — THE CHI FLOOR DOES NOT CURE THE p = 0.90 MERGER: χ_min 5.4e-3,
+never near the 1e-4 floor; max|K| ran away at the merging core (93 → 172 in one step), Ham 1.9e-2 at death —
+the K-WALL class, which the d6 chain cleared by resolution (lvl6), not the χ-steepness wall. No MOTS before
+death (mid-merger, rms 0.21–0.53). The burst reached R = 14 only: E_GW(p = 0.90) needs a finer continuation —
+Chk04500 (t = 45) NFS-SECURED for it, decision after the p060 lvl5 verdict. Trust t ≤ 45.2. Files into
+06_binary_flyby when the drain ends. Was LIVE on card 1 (the user
 10-04: "start it with wall fix"):** p09's params with ONLY min_chi 1e-8 → 1e-4 (preemptive — the d6/p060 cure),
 stop 40 → 100 and the names, restarted from p09's Chk04000 (NFS-secured first). Catches the p = 0.90 merger,
 the FULL burst (p09's was cut mid-flight at its stop) and the wall era without dying. Preflight PASS; restart
