@@ -154,9 +154,20 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 EGW-p045, card 1 the p09 chi leg (both since ~05:50 UTC 10-04)
+## Live — first node (two H100s): card 0 the p060 lvl5 horizon-check (~07:10 UTC 10-04), card 1 the p09 chi leg (~05:50)
 
-**EGW-p045 `merge_orbit_flip_d12_p045_L128_lvl4_t040_lbf_csm` LIVE on card 0 (the user 10-04: "start
+**P060-LVL5 `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` LIVE on card 0 since
+~07:10 UTC 10-04 (the user: "kill it and run p060 lvl5 minchi"):** THE HORIZON-BIRTH DISCRIMINATOR — the
+extension's params with ONLY max_level 4 → 5, min_chi 1e-4 (from the start) and stop 60; restarted from the
+t040 leg's Chk04000 (t = 40, pre-contact, re-staged to scratch from NFS). If a common MOTS converges in
+t ≈ 42–60 where lvl4 never trapped, the chi-leg stall is a resolution artefact and the horizon is real; if it
+stays marginally untrapped at lvl5 too, the stall is physical (the p012 csm spiral precedent). ~2.5 u/h →
+t = 60 ~15:00–17:00 UTC. Checkpoints every 5 keep 3 (inherited).
+
+**EGW-p045 STOPPED at t = 0.91 (~07:00 UTC 10-04, the user: the lvl5 check takes the card). Nothing physical
+lost (solve + 91 steps); scratch wiped, stub archived 00_archive/aborted (manifest 10-04). THE GO STANDS —
+relaunches on the next free card (card 1 frees ~14:00 UTC). The chi leg's Chk10000 wiped on the user's word
+(23G; the lvl5 arm answers the horizon question). Was LIVE on card 0 (the user 10-04: "start
 something else from queue" — the queue's next midpoint):** the EGW recipe (p06's t040 template) with ONLY
 p 0.6 → 0.45 and the names; stop 40, lvl4, checkpoints every 5 keep 3 (the template's block), orbit-modes +
 the full MOTS-tuned consumer set, binary main3d_boostpair. Preflight PASS, paths one spelling. Fills the
@@ -193,8 +204,9 @@ receding after. Filed `06_binary_flyby/`, trust t <= 55.5, closeout running; Chk
 PROPOSED (no go yet): the chi-floor continuation from Chk05500 — min_chi 1e-4, the d6 chain's proven cure,
 ~8 min to the death point, then to t = 100 — settles whether a horizon forms on this plunge.
 
-Queue order (10-04 ~06:00 UTC): first node card 0 = EGW-p045 (t = 40 ~15:30 UTC), card 1 = the p09 chi leg
-(t = 100 ~14:00 UTC); second node free (ho3 done; its prune needs a session there). DONE overnight: the p060
+Queue order (10-04 ~07:10 UTC): first node card 0 = the p060 lvl5 horizon-check (t = 60 ~15:00–17:00 UTC),
+card 1 = the p09 chi leg (t = 100 ~14:00 UTC); EGW-p045 stopped at t = 0.91, go stands, relaunches on the next
+free card; second node free (ho3 done; its prune needs a session there). DONE overnight: the p060
 chi leg (t = 100, no horizon at lvl4), EGW-p09 (t = 40, third plunge, burst cut at the stop), MOTS-ho3
 (t = 100, history complete). CONV-csm-w keeps its go but stays blocked on the one-card memory wall — the
 user's ball-size pick (R = 36 / R = 28 / two cards) is still open; the second node's free card fits the
