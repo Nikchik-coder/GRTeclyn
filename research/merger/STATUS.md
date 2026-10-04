@@ -173,9 +173,13 @@ p 0.6 → 0.45 and the names; stop 40, lvl4, checkpoints every 5 keep 3 (the tem
 the full MOTS-tuned consumer set, binary main3d_boostpair. Preflight PASS, paths one spelling. Fills the
 E_GW(p) turnover between scatter (0.25) and plunge (0.60) for Figs. 9/12. ~4.1 u/h → t = 40 ~15:30 UTC 10-04.
 
-**EGW-p045 `merge_orbit_flip_d12_p045_L128_lvl4_t040_lbf_csm` RELAUNCHED on card 1 ~07:45 UTC 10-04 (the
-standing go; the first start was stopped at t = 0.91 for the lvl5 check): the EGW recipe at p = 0.45, stop 40,
-checkpoints every 5 keep 3, the full MOTS-tuned consumer set. ~4.1 u/h → t = 40 ~17:30 UTC.**
+**P045-T100 `merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm` LIVE on card 1 since ~08:00 UTC 10-04 (the
+user: "till 100 ... the actual dead time without extra settings ... no checkpoints"): THE DEATH CLOCK — the
+EGW p = 0.45 point run at stock settings (min_chi 1e-8, no fixes), stop 100, NO checkpoints, to measure where
+(whether) the natural wall kills the p = 0.45 arm between the clean scatter (p025, never died) and the
+plunges (p060 wall 55.5, p09 K-wall 45.3). Same template otherwise; full MOTS-tuned consumer set.
+~4.1 u/h → t = 100 ~08:00 UTC 10-05 if it survives; the two earlier t040 starts were stopped at/near step 0
+(stubs archived).**
 
 **P09-CHI DIED t = 45.27 (~07:3x UTC 10-04) — THE CHI FLOOR DOES NOT CURE THE p = 0.90 MERGER: χ_min 5.4e-3,
 never near the 1e-4 floor; max|K| ran away at the merging core (93 → 172 in one step), Ham 1.9e-2 at death —
