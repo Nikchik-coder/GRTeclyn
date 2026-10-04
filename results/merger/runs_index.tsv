@@ -150,6 +150,7 @@ merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm	06_binary_flyby	launch manifest
 merge_orbit_flip_d12_p060_L128_lvl4_t100_lbf_csm_r04000	06_binary_flyby	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	100.0	yes		n/a	ok	unknown	ok
 merge_orbit_flip_d12_p060_L128_lvl4from50_chi1e4_t100_lbf_csm_r05000	06_binary_flyby	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	100.0	yes		n/a	ok	unknown	ok
 merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm	06_binary_flyby	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	40.0		1.2806199904e-03	n/a	ok	unknown	ok
+merge_orbit_flip_d12_p090_L128_lvl4from40_chi1e4_t100_lbf_csm_r04000	06_binary_flyby	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	100.0	yes		n/a	ok	unknown	ok
 merge_orbit_flip_d12_p045_helfer_t090	06_binary_flyby/p045	reconstructed	main3d.gnu.MPI.CUDA.ex	unstamped	none (launched before 2026-09-24)	0	0	3	64.0	128	90.0		3.3819964477e-03	n/a	ok	unknown	ok
 check_flyby_d12_p025_lbf_csm_t020	06_binary_flyby/verify_p025	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	3	64.0	128	20.0		3.6979248357e-03	n/a	ok	unknown	ok
 t0_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm	06_binary_flyby/verify_p025	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	0.5		1.1296028696e-03	n/a	ok	unknown	ok
