@@ -221,9 +221,7 @@ Queue order (10-04 ~07:10 UTC): first node card 0 = the p060 lvl5 horizon-check 
 card 1 = the p09 chi leg (t = 100 ~14:00 UTC); EGW-p045 stopped at t = 0.91, go stands, relaunches on the next
 free card; second node free (ho3 done; its prune needs a session there). DONE overnight: the p060
 chi leg (t = 100, no horizon at lvl4), EGW-p09 (t = 40, third plunge, burst cut at the stop), MOTS-ho3
-(t = 100, history complete). CONV-csm-w keeps its go but stays blocked on the one-card memory wall — the
-user's ball-size pick (R = 36 / R = 28 / two cards) is still open; the second node's free card fits the
-smaller-ball variants. Proposed, NO go: SIGN-dyn, EGW-p012 (the optional second midpoint).
+(t = 100, history complete). CONV-csm-w is LIVE on the second node (R = 28 ball, the user: whatever fits; R = 44 and R = 36 both OOM one card). Proposed, NO go: SIGN-dyn, EGW-p012 (the optional second midpoint).
 
 **EGW-p06 `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` LIVE on card 0 since ~19:25 UTC 10-02 (the
 user's go ~18:20 UTC):** E_GW(p) above the fly-by — the turnover hunt. The fly-by's packed params with only
@@ -382,15 +380,25 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): card free since ~21:20 UTC 10-03 (ho3 done; prune pending a session there)
+## Second node (one H100): card 0 CONV-csm-w since ~06:50 UTC 10-04
+
+**CONV-csm-w `v2_spiral_d12_p012_L128_lvl4w_t040_csm` LIVE on card 0 since ~06:50 UTC 10-04 (the user:
+"whatever fits the gpu"): the wave-zone referee run at the R = 28 BALL — extraction_levels 0 1 0 0, the
+ExtractionTagger refines r < 33.6 to level 1, so the R = 20 AND R = 28 waves travel and are extracted at
+dx 0.25 the whole way (R = 36/44 stay base-grid). The sizing is now measured, not estimated: the R = 44 ball
+(106M cells) OOM'd at the step-0 plotfile, the R = 36 ball (77M) OOM'd one step into the probe's evolution —
+the evolution workspace is the hidden cost (~1 GB per M cells live) — and the R = 28 ball (~58M) runs at
+77.6 of 80 GB: it fits, barely; a mid-run OOM would be loud in the log. Stop 40, checkpoints every 5 keep 3
+(the user's standing answer), no frames/movies (the 08_convergence exception), consumer radii 14/20/30/44 +
+scalar modes. ~3.5 u/h → t = 40 ~18:00 UTC 10-04. The two OOM probes' stub archived 00_archive/aborted.
 
 **MOTS-ho3 `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` DONE ~21:20 UTC 10-03 (reached
 t = 100, no NaN; Ham 1.2e-3 / Mom 5.9e-4 at the end) — THE TRUE HORIZON HISTORY IS COMPLETE t = 0–100
 (ho1+ho2+ho3): 50 converged rows t = 51–100, seam with ho2 fine (R 4.7776 at 51 vs 4.7794 at 50), endpoint
 R 4.7787, M_MS 2.3894, deform 0.0039 — the oriented scan's t = 100 endpoint (4.69 / 2.373) read 1.9 % / 0.7 %
 low. Fig. 5 / §VI re-measure unblocked. Filed `04_binary_headon/mots/`, closeout running from the first node.
-PENDING on a second-node session: prune ho3's scratch cell and the now-releasable leg-1 (26G) and leg-2 (28G)
-checkpoint cells (the HFL cell 60G stays). Was LIVE since ~14:15 UTC 10-03 (the
+Its scratch cell (84G) and the released leg-1/leg-2 checkpoint cells (26G/28G) were pruned ~06:40 UTC 10-04
+(manifest; the HFL cell 60G stays). Was LIVE since ~14:15 UTC 10-03 (the
 standing go; checkpoints every 5 keep 3):** the head-on chain leg 3 (t = 50–100, max_level 4) with the 3D
 finder on every plotfile — the last window of the true horizon history for Fig. 5 / §VI. Leg 3's packed params
 with only the names + the checkpoint block changed, `amr.restart` stripped (the ho2 lesson, now launcher-
@@ -573,7 +581,7 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 | EGW-p06 | `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` | **GO GIVEN (the user, 10-02 ~18:20 UTC, first on the freed card 0): E_GW(p) above the fly-by (turnover).** max_level 4 on the user's word (exploratory; the extraction spheres read the base grid whatever max_level is — lvl4 only coarsens the throats, the "if it's not NaN" test); checkpoints every 5 keep 3 (the user's answer); template ready in templates_scan, diffed: only p 0.25 -> 0.6, stop 100 -> 40, the name | ~4–6 |
 | EGW-p09 | `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` | **GO GIVEN (same word): E_GW(p) far side of the peak.** Launches after p06 on the same card | same, p = 0.90; template ready, diffed | ~4–6 |
 | EGW-p045 | `merge_orbit_flip_d12_p045_L128_lvl4_t040_lbf_csm` | **LIVE on the first node's card 0 since ~05:50 UTC 10-04** (the user: "start something else from queue"): redraws Fig. 12 top, densifies the E_GW(p) turnover for Fig. 9. p = 0.12 stays the optional second midpoint, no go | the EGW recipe (fly-by template, lvl4, stop 40) at p = 0.45; template diffed (p + names only) | ~4–6 |
-| CONV-csm-w | `v2_spiral_d12_p012_L128_lvl4w_t040_csm` | **GO GIVEN (the user, 10-03 ~14:05 UTC) — preflight-REFUSED on one H100 (the R = 44 level-1 ball is 49 % of the domain, ~106M cells, probe OOM at 77.4 GB; nothing started).** REFEREE: wave-zone convergence on csm data. Awaiting the user's pick: R = 36 ball (0 0 1 0, fits one card) / R = 28 ball / as designed on the first node's two cards | template `params_v2_spiral_d12_p012_L128_lvl4w_t040_csm.txt` built and diffed (names, stop 40, extraction_levels 0 0 0 1 only) | ~6–10 |
+| CONV-csm-w | `v2_spiral_d12_p012_L128_lvl4w_t040_csm` | **LIVE on the second node since ~06:50 UTC 10-04** (the user: whatever fits one card): the R = 28 ball (0 1 0 0) — R = 44 (106M cells) and R = 36 (77M) both OOM'd the probe; ~58M cells runs at 77.6/80 GB. R = 20 + 28 fully wave-zone-refined | the diffed template at extraction_levels 0 1 0 0 | ~11 |
 | SIGN-dyn | `ctrl_sign_dyn_{pp,pm}_csm` | PROPOSED (no go yet), REFEREE: the energy-check claim (conductor vs fixed charge) tested dynamically — mode-3 rest pair at both scalar signs, read the initial acceleration from throat_track over a few units | the A1-csm recipe at both signs, stop ~2–5 | GPU minutes |
 
 Also waiting: p = 0.35/0.45 boundary reruns (step 3), clean-data single throats (step 4), the spiral freeze
