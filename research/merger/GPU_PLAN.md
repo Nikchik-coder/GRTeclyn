@@ -4115,3 +4115,28 @@ run tree.
   The run as designed needs the first node's two cards; a one-card variant must shrink the refined ball
   (R = 36 ball ~77M cells, est. 60–65 GB; R = 28 ball ~58M, ~45 GB). Awaiting the user's pick; MOTS-ho3 took
   the card meanwhile.
+
+## 2026-10-04 (~06:00 UTC) — three finishes overnight; p09-chi + EGW-p045 take the first node
+
+- **The p060 chi leg reached t = 100** (no NaN; the wall crossed 10-03 ~09:05). NO horizon converges: the
+  finder's surface stays marginally untrapped to the end (rms θ_out 1.64e-2 at 100, falling monotonically from
+  5.7e-2; R 4.49–4.52; the peanut's waist 1.64 → 2.09, deform 0.17 → 0.136). Extrapolated convergence
+  t ≈ 110–115, past the stop. Trust t ≤ 84: Ham leaves its 2e-4 plateau ~80 and e-folds every ~11 u to 8.8e-3
+  (the χ-floored core radiating junk; late ψ4 maxima out of propagation order confirm). Chk10000 NFS-secured
+  for a horizon-birth extension if the user wants it. Filed `06_binary_flyby/`, trust row added, movies to 84;
+  the full t = 0–100 stitched movies are the user's explicit order (t040 leg + extension + chi leg).
+- **EGW-p09 reached its stop t = 40 clean** — a third plunge (separation 11.8 → 2.62, contact imminent), no
+  MOTS yet, and the burst CUT MID-FLIGHT (R = 14 still rising at the stop; the outer spheres never saw it).
+  E_GW(p = 0.90) therefore comes from the extension. Filed `06_binary_flyby/`.
+- **MOTS-ho3 reached t = 100** (~21:20 UTC 10-03; no NaN, Ham 1.2e-3). THE TRUE HORIZON HISTORY IS COMPLETE
+  t = 0–100: 50 converged rows, seam with ho2 fine, endpoint R 4.7787 / M_MS 2.3894 / deform 0.0039 — the
+  oriented scan's endpoint read 1.9 % low. Filed `04_binary_headon/mots/`; its scratch prune and the leg-1/2
+  checkpoint cells (now releasable) need a second-node session. Fig. 5 / §VI re-measure unblocked.
+- **Launched on the user's word ("start it with wall fix" / "something else from queue"):**
+  - `merge_orbit_flip_d12_p090_L128_lvl4from40_chi1e4_t100_lbf_csm_r04000` on card 1 — p09's params + min_chi
+    1e-4 (preemptive) + stop 100, from Chk04000 (NFS-secured first); catches the merger, the full burst and
+    the wall era. ~7 u/h → t = 100 ~14:00 UTC.
+  - `merge_orbit_flip_d12_p045_L128_lvl4_t040_lbf_csm` (EGW-p045, the queue's next midpoint) on card 0 — the
+    EGW recipe at p = 0.45; fills the E_GW(p) curve between scatter (0.25) and plunge (0.60). ~4.1 u/h →
+    t = 40 ~15:30 UTC.
+  - CONV-csm-w stays blocked on the one-card memory wall (the user's ball-size pick still open).

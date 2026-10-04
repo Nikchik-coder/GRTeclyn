@@ -1353,6 +1353,24 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   fly-by's params with p 0.45 → 0.25, momentum model 1, the boosted shift and per-throat lapse freeze;
   `main3d_boostpair_91ed17cd`; movies cut at 63.3.
 
+### The turnover hunt: p ≥ 0.6 plunges, and the plunge remnant resists its horizon (2026-10-04)
+- **Claim.** On boosted mode-3 data at d = 12, lvl4: p = 0.60 PLUNGES (separation 3.47 → 0 over t = 36–40),
+  dies at the d6 chain's merged-core h11 wall at t = 55.52 with χ on its 1e-8 floor, and — carried through the
+  wall by min_chi 1e-4 (the d6 cure, now proven on two systems) — runs clean to t = 100 with NO converged
+  common MOTS: the finder's surface stays marginally untrapped, rms θ_out falling monotonically 5.7e-2 (t = 55)
+  → 1.64e-2 (t = 100), R 4.49–4.52, a pinched peanut (waist 1.64 → 2.09, deform 0.17 → 0.136) rounding on a
+  ~75-unit timescale; extrapolated convergence t ≈ 110–115. At lvl4, either the horizon is late or the coarse
+  core holds it off — the lvl5 arm or an extension from Chk10000 decides.
+  - Chi-leg trust t ≤ 84 (Ham leaves its 2e-4 plateau and e-folds every ~11 u to 8.8e-3; late ψ4 maxima out of
+    propagation order). The E_GW(p = 0.60) burst reads use t ≤ 84, which covers the merger burst on all spheres.
+  - p = 0.90 plunges harder: separation 11.8 (t = 20) → 2.62 (t = 40), contact just past its stop; its burst was
+    cut mid-flight (R = 14 still rising at 40), so E_GW(p = 0.90) comes from the chi1e4 extension (running).
+- **Runs** *(pack, `campaign/06_binary_flyby/`)*: `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` (the t040
+  leg), `…_t100_lbf_csm_r04000` (the extension, died 55.52), `…_lvl4from50_chi1e4_t100_lbf_csm_r05000` (the
+  chi leg, t = 100; movies cut at 84, the full-chain stitch on the user's word), and
+  `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` (the p = 0.90 leg); binary `main3d_boostpair_91ed17cd`,
+  checkpoints every 5 keep 3.
+
 ### The head-on's true horizon history (MOTS-ho1, 2026-10-02)
 - **Claim.** Re-running the head-on's leg 1 with the 3D spectral finder on every plotfile gives the true common
   MOTS history over t = 0–35: birth at t = 18 (R 5.634, M_MS 2.817, deform 0.104), settling to R 4.789,
@@ -1364,11 +1382,17 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   - MOTS-ho2 (t = 35–50, DONE 10-03) continues the history seamlessly: R 4.7929 at t = 36 against ho1's 4.789
     at t = 35, settling to R 4.7794, M_MS 2.3897, deform 0.026 at t = 50 (warm Newton 3 iterations, residual
     5.1e-7; L2 Ham 1.4e-4 / Mom 4.2e-4 at the end, no NaN).
-  - Fig. 5 and §VI re-measure proceeds when MOTS-ho3 (t = 50–100) lands.
+  - MOTS-ho3 (t = 50–100, DONE 10-03) completes the history: 50 converged rows, seam at R 4.7776 (t = 51) vs
+    ho2's 4.7794 (t = 50), settling to R 4.7787, M_MS 2.3894, deform 0.0039 at t = 100 (L2 Ham 1.2e-3, no NaN).
+    Against the oriented-scan endpoint (R 4.69, M 2.373) the 3D finder reads +1.9 % / +0.7 % — the
+    deformed-horizon bias at t = 100, now quantified end to end.
+  - The Fig. 5 and §VI re-measure can now run on the complete t = 0–100 history (the pending analysis step).
 - **Runs.** `merge_headon_flip_d8_v1_L128_lvl5from0_mots_t035_csm` *(pack, `campaign/04_binary_headon/mots/`)*:
   leg 1's packed params with only stop 100 → 35 and the name; no checkpoints; `main3d_csmatch_5f988dbc`.
   `merge_headon_flip_d8_v1_L128_lvl6from35_mots_t050_csm_r03500` *(pack, same folder)*: leg 2's packed params
   with only stop 100 → 50 and the names, from leg 1's Chk03500; checkpoints every 5 keep 3; same binary.
+  `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` *(pack, same folder)*: leg 3's packed params
+  with only the names and the checkpoint block, from leg 2's Chk05000; checkpoints every 5 keep 3; same binary.
 
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),
