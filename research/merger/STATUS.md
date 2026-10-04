@@ -172,8 +172,8 @@ verified at t = 40.09. ~7 u/h → t = 100 ~14:00 UTC 10-04.
 no NaN) — NO HORIZON CONVERGES AT lvl4: the surface stays marginally untrapped to the end (rms θ_out
 5.7e-2 → 1.64e-2, monotone; R 4.49–4.52; waist 1.64 → 2.09, deform 0.17 → 0.136 — the pinched peanut rounds on
 a ~75-u timescale, extrapolated convergence t ≈ 110–115, past the stop). THE FRAMES LOOK STATIC t = 51–100
-BECAUSE THE SHAPE CHANGE IS ~0.1 %/u — real but slow (the user's eye was right). Trust t ≤ 84 (Ham e-folds
-every ~11 u from ~80 to 8.8e-3; late ψ4 maxima out of order). Chk10000 NFS-SECURED for a horizon-birth
+BECAUSE THE SHAPE CHANGE IS ~0.1 %/u — real but slow (the user's eye was right). Trust t ≤ 80 (tightened from 84 on the user's eye: Weyl4 junk/pixelation visible from ~78; Ham e-folds
+every ~11 u from ~80 to 8.8e-3; late ψ4 maxima out of order). Movies and the 0–80 stitch cut there. Chk10000 NFS-SECURED for a horizon-birth
 extension (the open question: late horizon vs lvl4 artefact — a lvl5-from-90 spot check would also answer).
 Filed `06_binary_flyby/`, closeout + the 0–100 stitch running. Was LIVE since ~08:4x UTC 10-03 (the user's go:
 "through the wall ... lowering min chi"):** the extension's params from its own

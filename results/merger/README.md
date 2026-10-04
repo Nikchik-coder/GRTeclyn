@@ -1361,13 +1361,14 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   → 1.64e-2 (t = 100), R 4.49–4.52, a pinched peanut (waist 1.64 → 2.09, deform 0.17 → 0.136) rounding on a
   ~75-unit timescale; extrapolated convergence t ≈ 110–115. At lvl4, either the horizon is late or the coarse
   core holds it off — the lvl5 arm or an extension from Chk10000 decides.
-  - Chi-leg trust t ≤ 84 (Ham leaves its 2e-4 plateau and e-folds every ~11 u to 8.8e-3; late ψ4 maxima out of
-    propagation order). The E_GW(p = 0.60) burst reads use t ≤ 84, which covers the merger burst on all spheres.
+  - Chi-leg trust t ≤ 80 (Ham leaves its 2e-4 plateau there and e-folds every ~11 u to 8.8e-3; the Weyl4 frames
+    pixelate with core junk from ~78; late ψ4 maxima out of propagation order). The E_GW(p = 0.60) burst reads
+    use t ≤ 80, which covers the merger burst on all spheres.
   - p = 0.90 plunges harder: separation 11.8 (t = 20) → 2.62 (t = 40), contact just past its stop; its burst was
     cut mid-flight (R = 14 still rising at 40), so E_GW(p = 0.90) comes from the chi1e4 extension (running).
 - **Runs** *(pack, `campaign/06_binary_flyby/`)*: `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` (the t040
   leg), `…_t100_lbf_csm_r04000` (the extension, died 55.52), `…_lvl4from50_chi1e4_t100_lbf_csm_r05000` (the
-  chi leg, t = 100; movies cut at 84, the full-chain stitch on the user's word), and
+  chi leg, t = 100; movies cut at 80, the full-chain 0-80 stitch on the user's word), and
   `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` (the p = 0.90 leg); binary `main3d_boostpair_91ed17cd`,
   checkpoints every 5 keep 3.
 
