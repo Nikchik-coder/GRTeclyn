@@ -564,12 +564,19 @@ def _band_egw(run: str, R: int, t_cut: float, M: float = 2.0) -> float:
 
 
 @extractor
-def waves_scalar_ratio(run: str, R: int, t_cut: float, estimator: str = "kin") -> float:
+def waves_scalar_ratio(run: str, R: int, t_cut: float, estimator: str = "kin",
+                       t_start: float = 0.0) -> float:
     """|E_phi| / E_GW through sphere R by t_cut (plot_scalar_channel): the
     kinematic-flux integral over the figure's running E_GW; estimator = 'wavezone'
     for sum_lm |dA_lm/dt|^2 over the same E_GW; 'band' for the kinematic integral
-    over the band-limited E_GW of Fig. psi4_ligo(d) (_band_egw)."""
+    over the band-limited E_GW of Fig. psi4_ligo(d) (_band_egw).  t_start > 0 (kin
+    only): both integrals from t_start, i.e. the arch without the pre-arch flux."""
     S, tg, Eg, ts, Ep, per_l = _scalar_channel(run, R)
+    if t_start:
+        if estimator != "kin":
+            raise ValueError("t_start is implemented for the kinematic estimator only")
+        ep = S._at(ts, Ep, t_cut) - S._at(ts, Ep, t_start)
+        return abs(ep) / (S._at(tg, Eg, t_cut) - S._at(tg, Eg, t_start))
     if estimator == "band":
         return abs(S._at(ts, Ep, t_cut)) / _band_egw(run, int(R), float(t_cut))
     g = S._at(tg, Eg, t_cut)
@@ -611,6 +618,55 @@ def waves_id_sphere(run: str, R: float, field: str, stat: str = "min", n: int = 
         wgt = np.sin(T)
         return float((vals * wgt).sum() / wgt.sum())
     return float({"min": vals.min, "max": vals.max}[stat]())
+
+
+@extractor
+def waves_scalar_prearch_share(run: str, R: int, t_cut: float, t_start: float) -> float:
+    """Percent of |E_phi| (int^t_cut of the physical flux through sphere R) that
+    arrives before t_start, the arch's onset: the flux that rises on every sphere
+    at once, ahead of any signal from the throats (referee check, 2026-10-05)."""
+    S, _, _, ts, Ep, _ = _scalar_channel(run, R)
+    whole = S._at(ts, Ep, t_cut)
+    return 100.0 * (1.0 - (whole - S._at(ts, Ep, t_start)) / whole)
+
+
+@extractor
+def waves_scalar_nearzone_slope(run: str, t: float) -> float:
+    """-d ln|F_kin| / d ln R over every sphere of scalar_modes.dat at the row nearest
+    t: how fast the early kinematic flux falls with radius (radiation: 0)."""
+    path = _run_path(run) / "scalar_modes.dat"
+    with open(path, encoding="utf-8") as fh:
+        head = fh.readline().lstrip("#").split()
+    d = np.loadtxt(path)
+    i = int(np.argmin(np.abs(d[:, 0] - float(t))))
+    cols = [(float(c[1:].split("_")[0]), k) for k, c in enumerate(head)
+            if c.endswith("_scalar_flux_kin")]
+    R = np.array([r for r, _ in cols])
+    F = np.abs(np.array([d[i, k] for _, k in cols]))
+    return float(-np.polyfit(np.log(R), np.log(F), 1)[0])
+
+
+@extractor
+def waves_early_share(cases: list, window: float = 10.0) -> float:
+    """Largest percent of a quoted band energy carried by the first light-crossing
+    window t - R <= window (junk radiation of the initial data, referee check
+    2026-10-05): per case {run, file, R, m, M, t_max}, waves_energy_run's band
+    energy of the record cut at t - R = window, against the full record's band
+    peak, over the full record's."""
+    streams, pm = _mod("streams"), _mod("psi4_math")
+    worst = 0.0
+    for c in cases:
+        t, ser = streams.load_mode(_run_path(c["run"]) / c["file"])
+        R, M = float(c["R"]), float(c["M"])
+        keep = t <= float(c["t_max"]) + 1e-9
+        t, y = t[keep], ser[R][keep]
+        u, w = (t - R) / M, y * M
+        f_pk = _band_peak(w, float((u[-1] - u[0]) / (u.size - 1)))
+        full = pm._compute_radiated_energy(u, w, m=int(c["m"]), f_peak=f_pk)
+        k = t <= R + float(window) + 1e-9
+        part = pm._compute_radiated_energy(u[k], w[k], m=int(c["m"]), f_peak=f_pk)
+        worst = max(worst, 100.0 * part / full)
+    return float(worst)
 
 
 @extractor

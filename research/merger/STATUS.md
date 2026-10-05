@@ -67,12 +67,30 @@ after the shortening pass.)
 | id | what | why the paper needs it | how | cost |
 |---|---|---|---|---|
 | O3B-NEW | the gw_search pipeline (validate, inject, fitting-factor, scan) on the current templates | Sec. IX's bank (127 templates), per-channel horizons, fitting factors and injections still come from the 09-26 templates (superposed spiral, Bowen–York fly-by); the text names them by the current channels | the commands of `results/merger/gw_search/README.md`, on the workstation (GWOSC strain cache `runs/gw_search`; a cloud container cannot reach GWOSC). The plunge now enters the bank (`M_CODE`, corner-protected) unless `TemplateBank(arms=...)` excludes it | CPU hours |
-| DAMP-off | the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); no checkpoints (the user, at launch) | ~15 GPU-h (P045-T100 averaged 4.8 u/h) |
+| DAMP-off | the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move. The 09-0x damping-off arms (merge_twin_p012_nodamp_t060: fields equal to 3 decimals at t = 32, wall 51.53 vs 52.06; the damped/undamped ladder rungs) tested the superposed p = 0.12 merger's wall, behind a horizon — never a scatterer, where the damping acts outside any horizon | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); no checkpoints (the user, at launch) | ~15 GPU-h (P045-T100 averaged 4.8 u/h) |
 | CONV-lbf-w | the wave-zone test on exact-boost data | CONV-csm-w resolved the wave zone (0.01–0.15 % of peak) on the Bowen–York `_csm` arm, which the paper no longer cites | the CONV-csm-w recipe (`extraction_levels 0 1 0 0`, the R = 28 ball, 77.6/80 GB) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |
 | SOLVE-t0 | the mode-3 d = 8 head-on at t = 0 | Sec. II quoted the d = 8 throat-shell Hamiltonian from the pre-matching (mode-0) check, now cut; the paper keeps only the boosted pair's mode-3 per-level number | t = 0 only on CS-1's grid, `constraint_solve_t0_check.py` | CPU minutes |
+| HARM-oct (referee 1, recommended) | the ε = −10⁻² inflating throat in harmonic slicing, octant, to t ≈ 45 | the referee asks whether 1+log shapes the inflation; F2/F3 (harmonic, 09-25) kept α_neck ≈ 0.45 and grew R_neck 3.81 → 9.89 by t = 46 (1+log: 12.2 only by t = 90), F6 (zero shift) matched R_neck to 3 digits — but all were wiped, so nothing is quotable; their grid died at t ≈ 46.6 on the level-5 box faces | F3's template from `templates_scan/` (`lapse_coeff`/`lapse_power` harmonic), the full consumer (`inflation-octant`), stop 45; quote the neck's proper-time onset rate against F4's H R₀ | ~1 GPU-h |
+| SIGN-d (referee minor 2, optional) | flipped rest pairs at d = 14/16/18 (and the d = 12 pair at level 4) | the pull/push ratio 1.462 ± 0.022 is one d, one resolution; whether it tends to 3/2 (point charges, d → ∞) or carries a near-zone offset needs the ladder | ctrl_flip_d12_csm's params with d changed (and max_level 4 for the twin); t = 15; sign_rule.py | ~1–2 GPU-h (L = 64, level 3) |
+| KRETSCH (referee 4, optional) | curvature invariants at a dying core | is the K wall / cell NaN a curvature singularity or a slicing effect? The paper says only "a coordinate blow-up read on the slice"; the plotfiles at every death are pruned | a restart of a dying leg from its last checkpoint with plotfiles every step over its last unit (fold into the P09 autopsy if that goes); offline: R = 8π(Π² − \|Dφ\|²) and the Weyl invariants I, J from E_ij, B_ij at the core | ~1 GPU-h + CPU |
+| PALETTE (referee minor 1, no GPU) | greyscale-safe accent | GOLD #c69214 and FAINT #a5a29a print as the same grey (luma 0.58 vs 0.64; gold on white 2.8:1) | darken GOLD (e.g. luma ≤ 0.45) or add a line-style cue wherever gold sits beside faint grey; re-render every figure, label audits, show the images | CPU |
 
 Analysis only (no GPU), optional: E_GW(p = 0.12) on SPIRAL-lbf's packed streams (a fourth point for Sec. VIII D's
-energy sequence). The (2,0)-memory sign is no longer needed: the memory aside left the paper in the shortening pass.
+energy sequence).
+
+Referee ideas checked on the packed data (2026-10-05, late; none in the paper yet, the user's call):
+- **Scalar ringdown (computed, preliminary):** after the head-on's common MOTS the ℓ = 1 scalar dipole rings at
+  ω = 0.122–0.124 on R = 10 (0.122 on R = 14 from t = 45): the Schwarzschild ℓ = 1 scalar QNM of the final MOTS mass
+  2.389 is 0.1226 (1 %); damping 0.037 against 0.041 (10 % slower). Fit: damped cosine on the x-dipole of the SERIES
+  scalar_modes.dat, t = 35/40/45–95. The d = 6 merger's dipole gives no stable fit (0.07–0.16).
+- **Memory (computed 09-27 on the superposed data; geometry, so it carries over):** the negative-energy dipole
+  ENHANCES the (2,0) memory, never reverses it — per unit energy an equatorial dipole projects −(2/5)√(5/16π), an
+  m = ±2 GW flux +(4/7)√(5/16π). On the current fly-by: +0.7 × |E_φ|/E_GW ≈ 0.34 (arch) to 0.39 (whole record) of
+  the GW memory. `results/merger/analysis/scalar_memory_angmom.py` still points at the superposed runs (rerun on
+  csm/lbf = a path edit). A direct DC offset in the near-zone (2,0) is not readable on these records (ωR ≈ 1–3).
+- **3D MOTS shapes:** feasible here — `mots_spectral_alm.jsonl` exists for the head-on legs and the d = 6 legs.
+- **Phantom flow (ρ, J on z = 0) and embedding diagrams:** need the χ/φ/Π/α/β slice caches in `runs/` on the
+  workstation; the packs carry no field slices or areal-radius profiles. The (2,0)-memory sign is no longer needed: the memory aside left the paper in the shortening pass.
 
 ## RESULT (in the paper since 2026-09-30): a moving wormhole collapses under its own unstable mode
 

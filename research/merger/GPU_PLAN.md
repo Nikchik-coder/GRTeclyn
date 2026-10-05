@@ -4435,3 +4435,37 @@ brief it"). Body (before the bibliography) 18 168 → 15 197 words; total 20 442
 - Bibliography: 7 uncited entries removed (the boson-star four, Christodoulou, Thorne, Favata); 100 left.
 - Ledger: 40 rows dropped with their sentences (907 → 867), 75 re-anchored; 0 problems. Not compiled here
   (no TeX).
+
+## 2026-10-05 (late) — referee report checked against the data; two text fixes, runs proposed
+
+The user pasted a referee report ("check this comments critically … add fixes if possible") and five ideas ("check
+whether any of this can be computed on the existing data"). Measured on the packs, no GPU:
+- **Junk radiation (major 2): small for the waves, not for the scalar energy.** The first light-crossing window
+  t − R ≤ 10 carries 0.3 % (fly-by), 0.6 % (p = 0.25), 0.4 % (plunge), 1.3 % (merger), 2.6 % (head-on, R = 10) of each
+  quoted band energy (`waves_early_share`). The scalar flux has no outgoing junk pulse, but before the arch F_kin
+  rises on every sphere at once (R = 44 at t = 2, ahead of any signal) and falls as R^-2.5 (t = 4; 2.3 by t = 8):
+  near field of the moving charges. It is 14 % of the quoted |E_φ| at R = 30; the arch alone (t ≥ 38) gives
+  |E_φ|/E_GW = 0.48 against 0.56. Text: Sec. VIII intro (junk ≤ 2.6 %) and VIII F (the near-field share); four auto
+  rows (clmJunkShareMax, clmScalarNearSlope, clmScalarPrearchShare, clmScalarArchRatio), three new extractors and a
+  `t_start` on `waves_scalar_ratio`. The 09-27 radiative-dipole fit (only ~35 % radiated, old data) says the arch
+  itself still holds near field: the scalar numbers stay "order of magnitude and sign".
+- **Gauge (major 1): answered on 09-25, but not quotable.** F2/F3 (harmonic) kept α_neck ≈ 0.45 and grew R_neck
+  3.81 → 9.89 by t = 46 where 1+log needs to t = 90; F6 (zero shift) matched R_neck to 3 digits; all died at the
+  level-5 box faces (t ≈ 46.6–47.0) and were wiped. The paper quotes only the proper-time onset rate, checked
+  against the linear (gauge-invariant) mode. HARM-oct (~1 GPU-h) in STATUS would make the comparison quotable.
+- **Formation (major 3): declined.** The text already makes z_e and n(M) inputs; a mechanism would be speculation.
+- **Curvature at the wall (major 4):** the text already says "a coordinate blow-up read on the slice, not a located
+  curvature singularity"; invariants need plotfiles at a death (pruned): KRETSCH in STATUS. The referee's "failures
+  only inside the MOTS" over-reads: the plunges' failures have no converged MOTS.
+- **Print contrast (minor 1): real.** GOLD and FAINT print as one grey (luma 0.58 / 0.64): PALETTE in STATUS.
+- **Sign ratio (minor 2):** 3/2 is the point-charge, d → ∞ value (now said so); 1.462 ± 0.022 is one d, one
+  resolution (the ± is slice scatter, not an error of the mean); SIGN-d in STATUS.
+- **Reproducibility (minor 4):** the referee credits "Docker/CUDA environments"; the pack ships none. No change.
+- **DAMP-off, the user's "we did this":** the 09-0x damping-off arms tested the superposed p = 0.12 merger's wall,
+  behind a horizon, never a scatterer: DAMP-off stays required.
+- **Ideas:** (1) memory — the 09-27 script found the negative-energy dipole ENHANCES the (2,0) memory (equatorial
+  dipole −(2/5)√(5/16π) per unit energy vs +(4/7)√(5/16π) for m = ±2 GW); ≈ 0.34–0.39 of the GW memory on the current
+  fly-by; no direct near-zone DC offset. (2) scalar ringdown — the head-on's post-horizon dipole rings at
+  ω = 0.122–0.124 (R = 10), the Schwarzschild ℓ = 1 scalar QNM of the final MOTS mass (0.1226) to 1 %, damping 10 %
+  slower; the merger's dipole gives no stable fit. (3) 3D MOTS — alm files exist for the head-on and d = 6 legs.
+  (4) phantom flow and (5) embeddings — workstation slice caches only.
