@@ -174,9 +174,10 @@ PANELS: dict[str, dict] = {
         cap1=r"One drainhole throat, given a small inward kick. It does not collapse: it "
              r"keeps opening, $3.8{\times}$ in areal radius by $t=218$, and no trapped "
              r"surface forms.",
-        cap2=r"Until $t\approx40$ it grows at the Shinkai--Hayward rate. Then the lapse "
-             r"(top right) freezes the clock at the throat, and its growth per unit $t$ "
-             r"slows: the slicing, not the throat.",
+        cap2=r"Until $t\approx40$ it grows exponentially in its own proper time, 6% below "
+             r"its unstable mode's linear rate. Then the lapse (top right) freezes the "
+             r"clock at the throat, and its growth per unit $t$ slows: the slicing, not "
+             r"the throat.",
     ),
     "01_single_throat/single_pureq_q1e2_ml4_t100": dict(
         out="02_wormhole_throat_collapses.mp4",
@@ -205,9 +206,9 @@ PANELS: dict[str, dict] = {
         out="04_spiral_merger_makes_black_hole.mp4",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         sub="youtube_zoom2",
-        title=r"Two wormholes spiral in and merge --- and a horizon forms",
+        title=r"Two wormholes with orbital momentum merge --- and a horizon forms",
         cap1=r"Separation 6, tangential momentum 0.10, constraint-solved data. The pair "
-             r"merges in half an orbit, and a common trapped surface closes over both "
+             r"turns only $15^{\circ}$ before a common trapped surface closes over both "
              r"mouths at $t=13$ ($R=5.60$): the orbital merger makes a black hole.",
         cap2=r"The remnant settles to $R=4.88$, losing mass to the phantom it swallows "
              r"($2.80\to2.44$ by $t=100$). One chain of certified restarts through two "
@@ -219,7 +220,7 @@ PANELS: dict[str, dict] = {
         sub="youtube_zoom2",
         title=r"A wormhole fly-by --- no merger, and both mouths inflate",
         cap1=r"Separation 12, momentum 0.25 per mouth, constraint-solved boosted data. The "
-             r"pair swings past (closest approach 2.33 at $t\approx47$) and separates --- "
+             r"pair swings past (closest approach 2.32 at $t\approx48$) and separates --- "
              r"nothing merges, no horizon ever --- and both mouths \emph{inflate} as it goes.",
         cap2=r"In vacuum, black holes with even more momentum just coast apart (video 09): "
              r"the phantom field's pull is what drags this pair in, and the pass radiates a "
@@ -227,6 +228,11 @@ PANELS: dict[str, dict] = {
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80": dict(
         out="06_plunge_merger_no_horizon_yet.mp4",
+        # Held back (the user, 2026-10-05): the record is too short to say what
+        # this plunge becomes -- its burst is cut at the t = 80 trust window and
+        # the horizon question waits on P060-EXT.  The captions below carry
+        # claims the data do not support; rewrite them before it is released.
+        hold="the p = 0.60 record is too short; rewrite the captions after P060-EXT",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         title=r"A deeper plunge --- the mouths merge, and the horizon stalls",
         cap1=r"The fly-by's momentum raised to 0.60: the pair now \emph{plunges} --- "
@@ -242,11 +248,12 @@ PANELS: dict[str, dict] = {
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         sub="youtube_zoom2",
         title=r"The hardest plunge --- the mouths inflate as they merge",
-        cap1=r"Momentum 0.90 per mouth: the pair falls from separation 11.8 to 2.6 in forty "
-             r"units. On the approach both mouths visibly \emph{inflate}, and the merging "
+        cap1=r"Momentum 0.90 per mouth: the pair falls from separation 12 to 2.4 by "
+             r"$t=40$. On the approach both mouths visibly \emph{inflate}, and the merging "
              r"core starts to inflate too.",
         cap2=r"No horizon is found at any time. The simulation stops at $t=45.3$, just "
-             r"after the last frame: the inflating core outruns the grid's resolution.",
+             r"after the last frame, as the curvature at the merging core runs away; a run "
+             r"at twice the resolution stops at the same instant.",
     ),
     # Separations and angles of the controls are from their punctures.dat.  The
     # d = 12 wormhole spiral this run is the twin of is not in this set, so the
@@ -269,9 +276,9 @@ PANELS: dict[str, dict] = {
         sub="youtube",
         dt_frame=0.5,
         title=r"Control --- the head-on collision in vacuum",
-        cap1=r"The wormhole head-on's vacuum twin: two bare black holes of the same mass "
-             r"released from rest at the same separation, on the same grid. They fall "
-             r"together, merge, and ring down.",
+        cap1=r"The wormhole head-on's vacuum twin: two bare black holes of the same mass, "
+             r"released from rest at the same separation and base resolution, in a box "
+             r"half the size. They fall together, merge, and ring down.",
         cap2=r"Watch it beside the wormhole head-on (video 03): there the horizon closes "
              r"over two still-open wormholes and the remnant then \emph{loses} mass to the "
              r"phantom field it swallows --- a vacuum remnant can only grow.",
@@ -286,7 +293,7 @@ PANELS: dict[str, dict] = {
              r"coast apart, to separation 27 by $t=100$.",
         cap2=r"Watch it beside the wormhole fly-by (video 05): with the phantom field the "
              r"pull is several times stronger, so even at momentum 0.25 the pair falls in "
-             r"to 2.33, and the mouths inflate as they pass.",
+             r"to 2.32, and the mouths inflate as they pass.",
     ),
 }
 
@@ -579,7 +586,9 @@ def build(run_key: str, spec: dict, movies: Path, dest: Path,
         print(f"[skip] {run_key}: missing {', '.join(missing)}", file=sys.stderr)
         return False
 
-    out = dest / spec["out"]
+    # A held entry builds into held_back/, out of the upload set.
+    out = dest / ("held_back" if spec.get("hold") else "") / spec["out"]
+    out.parent.mkdir(exist_ok=True)
     if out.exists() and not overwrite:
         print(f"[have] {out.name}")
         return True
@@ -645,6 +654,9 @@ def main(argv: list[str] | None = None) -> int:
     made = failed = 0
     for key, spec in PANELS.items():
         if args.only and args.only not in key:
+            continue
+        if spec.get("hold") and not args.only:
+            print(f"[hold] {spec['out']}: {spec['hold']}")
             continue
         if build(key, spec, args.movies, dest, args.speed, args.fps, args.force):
             made += 1
