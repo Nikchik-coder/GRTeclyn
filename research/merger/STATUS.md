@@ -4,34 +4,33 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-05 12:53 UTC) — the first node, both cards; the second node idle
+## LIVE NOW (2026-10-05 15:25 UTC) — NOTHING RUNNING: both first-node cards idle (P09-LVL5 died 14:07, BBH-d6 done 14:44 UTC); the second node idle
 
-| run | node / card | t at 12:53 UTC | stop | speed | ETA | checkpoints |
-|---|---|---|---|---|---|---|
-| P09-LVL5 `merge_orbit_flip_d12_p090_L128_lvl5from40_chi1e4_t100_lbf_csm_r04000` | first / 0 | 40.21 | 100 | ~2.5–3 u/h (lvl5) | ~20–24 h → ~09:00–13:00 UTC 10-06 | every 5, keep 3 (the user) |
-| BBH-d6 `bbh_control_d6_p010_t100` | first / 1 | 2.57 | 100 | ~34.5 u/h | ~2.8 h → ~15:45 UTC 10-05 | none (the user) |
+No run is live; nothing queued has a go (queue below).
 
-- **P09-LVL5** (the user's go ~12:40 UTC 10-05; launched 12:48): the p = 0.90 plunge at max_level 5 from p09's
-  `Chk04000` (t = 40, before the K runaway; the NFS copy re-staged to scratch), the chi leg's params (min_chi 1e-4,
-  stop 100) with ONLY max_level 4 → 5. The chi leg died of the K wall at t = 45.27 on lvl4 (its Chk04500 sits
-  mid-runaway — max|K| 1.77 and climbing, 172 at death — so it was not used), and resolution is the K wall's knob
-  (the d6 chain): does lvl5 carry the p = 0.90 merger past t ≈ 45, and its burst out to R = 20–44 for
-  E_GW(p = 0.90)? Preflight PASS (full; paths one spelling). Started by effect: restart at t = 40.00, level 5
-  built at the first regrid, card 0 at 60 GB, the consumer up (the full MOTS-tuned set, the suffixed
-  horizon-track) and idle until the first plotfile. Pending: frame t = 41, the first MOTS rows, this run's first
-  checkpoint (t = 45). Binary `main3d_boostpair_91ed17cd` (the parent's).
-- **BBH-d6** (the same go; launched 12:48): the d = 6 merger's vacuum twin for the gallery's merger row — bare
+- **P09-LVL5 `merge_orbit_flip_d12_p090_L128_lvl5from40_chi1e4_t100_lbf_csm_r04000` DIED t = 45.28 (~14:07 UTC
+  10-05): h11 NaN on level 4, the SAME instant as the lvl4 chi leg (45.27).** Level 5 changed the core, not the
+  death: max|K| stayed calm (1.23 → 1.44 over t = 44–45.27; lvl4 0.78 → 1.77 → 172), min lapse 8.3e-3 and χ_min
+  1.2e-4 at the centre, and the NaN shows first on level 4, not on the level-5 core — lvl4's K runaway was a
+  symptom. No common MOTS t = 41–45. Trust t ≤ 45.1. Filed `06_binary_flyby/`, closeout without movies. It ran
+  from p09's `Chk04000` (t = 40, re-staged to scratch; the user moved the restart off the mid-runaway Chk04500),
+  launched 12:48 UTC on the user's go with checkpoints every 5 keep 3; first checkpoint `Chk04500` (t = 45, lvl5)
+  written 14:03. NEXT (PROPOSED, no go): a `nan_autopsy = 1` restart from that Chk04500 (~10 GPU-min) names the
+  cell and field that go first. E_GW(p = 0.90) stays unmeasured.
+- **BBH-d6 `bbh_control_d6_p010_t100` DONE 14:44 UTC 10-05: reached t = 100, no NaN (~50 u/h after the merger);
+  close-out pending.** Was (the same go; launched 12:48): the d = 6 merger's vacuum twin for the gallery's merger row — bare
   punctures at ±3, tangential Bowen–York p = ±0.10 in the merger's clockwise sense, bare mass 0.9282 (per-hole ADM
-  1.00 by the d12 controls' Brill–Lindquist rule), on the BBH controls' box (L = 64, N = 128, level 5, spheres
-  14/20/26/30): BBH-HEADON's params with d, p, the mass and the checkpoint lines changed. NO checkpoints:
-  `amr.check_int = -1` + `amr.checkpoint_files_output = 0` (verified: no Chk00000). `WHM_PREFLIGHT=static`, as
-  BBH-HEADON (the full probe would run the BinaryBH evolution for real). Started by effect: frame 0 eyeballed
-  against BBH-HEADON's (punctures at ±3, the same χ range), Ψ4 rows landing in `small_data/`, keep-last 3 pruning,
-  card 1 at 62 GB.
-- **Storage (the first node, 12:53 UTC):** scratch 1012G free; BBH-d6 6.4G (3 plotfiles), P09-LVL5 empty so far,
-  and the staged p09 `Chk04000` (25G, `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm/`; the NFS copy stays) —
-  prune it once P09-LVL5 has its own checkpoints, on the user's word. The second node was not listed from here
-  (05:35 UTC 10-05: only the HFL cell, 60G).
+  1.00 by the d12 controls' Brill–Lindquist rule; the code's O(P²)-corrected boosted punctures, valid for
+  |P| < 0.3 m), on the BBH controls' box (L = 64, N = 128, level 5, spheres 14/20/26/30): BBH-HEADON's params with
+  d, p, the mass and the checkpoint lines changed. NO checkpoints: `amr.check_int = -1` +
+  `amr.checkpoint_files_output = 0` (verified: none written). `WHM_PREFLIGHT=static`, as BBH-HEADON. Started by
+  effect: frame 0 eyeballed against BBH-HEADON's, Ψ4 rows landing, keep-last 3 pruning, card 1 at 62 GB.
+- **Storage (the first node, 15:25 UTC):** scratch ~981G free. BBH-d6 3.5G (its 3 plotfiles, pruned at its
+  close-out); the dead P09-LVL5 cell 25G (its Chk04500, kept for the proposed autopsy; its 3 plotfiles, 18G,
+  pruned at close-out, manifest 10-05); the staged
+  p09 `Chk04000` copy 25G (`merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm/`; the NFS original stays) —
+  both checkpoints wait for the user's word. The second node was not listed from here (05:35 UTC 10-05: only
+  the HFL cell, 60G).
 
 ## RESULT (in the paper since 2026-09-30): a moving wormhole collapses under its own unstable mode
 
@@ -177,7 +176,7 @@ from the superseded waveforms. Re-run the search pipeline on the new records on 
   R = 20, so the turnover reads 3.85e-2 / 9.0e-2 / 4.9e-2 at p = 0.25 / 0.45 / 0.60. Sec. VIII gained the plunge,
   the turnover and the vacuum head-on control (its (2,0) bell 21x quieter, 28 units later); new Fig.
   `egw_momentum`; the gallery re-fed (d6 merger, p045 scatterer, p060 plunge row, the BBH head-on overlay).
-  E_GW(p = 0.90) waits for P09-LVL5; E_GW(p = 0.12) is pending analysis on the d12 p012 spiral's packed streams
+  E_GW(p = 0.90) stays unmeasured (P09-LVL5 died at the lvl4 instant, 10-05); E_GW(p = 0.12) is pending analysis on the d12 p012 spiral's packed streams
   (SPIRAL-lbf, `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` — mode-3 solve + exact boost, NOT the superposed or
   the Bowen–York `_csm` twin; EGW-p012 dropped, the user 10-05).
 - **What a session without `runs/` can do** (a cloud container has git only): read the pack. Anything that
@@ -191,7 +190,7 @@ from the superseded waveforms. Re-run the search pipeline on the new records on 
 3. **The orbits on mode-3 boosted data** — run, except the p = 0.90 merger and p = 0.35: spiral p = 0.12 (no
    merger, died t = 71.78; its level-4 twin CONV-csm agrees on where trust ends), fly-by p = 0.25 and p = 0.45
    (scatters, no wall), p = 0.60 and 0.90 (plunges; the boundary sits in (0.45, 0.60)); the d = 6, p = 0.10 design
-   point merges (the d6 chain, t = 0–100). LIVE: the p = 0.90 lvl5 continuation (P09-LVL5, top).
+   point merges (the d6 chain, t = 0–100). The p = 0.90 lvl5 continuation (P09-LVL5) died at t = 45.28, the lvl4 instant (top).
 4. **Single throats on clean data** (12–25 h, settles the regrowth question) — not queued: no further
    single-wormhole runs (the user, 10-02, at SEED-csm).
 5. **Rewrite** (once the production runs are in):
@@ -217,7 +216,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## First node (two H100s): P09-LVL5 on card 0, BBH-d6 on card 1 since 12:48 UTC 10-05 (LIVE NOW, top)
+## First node (two H100s): BOTH CARDS IDLE — P09-LVL5 died 14:07, BBH-d6 done 14:44 UTC 10-05 (LIVE NOW, top)
 
 **P060-LVL5 `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` DONE (t = 60, no NaN, Ham
 2.0e-4) — NO converged MOTS at lvl5 either: THE p060 STALL IS PHYSICAL, not resolution (rms θ_out ~1.8e-2
@@ -256,7 +255,7 @@ never near the 1e-4 floor; max|K| ran away at the merging core (93 → 172 in on
 the K-WALL class, which the d6 chain cleared by resolution (lvl6), not the χ-steepness wall. No MOTS before
 death (mid-merger, rms 0.21–0.53). The burst reached R = 14 only: E_GW(p = 0.90) needs a finer continuation —
 Chk04500 (t = 45) NFS-SECURED for it — but it sits mid-runaway (max|K| 1.77 and climbing), so the continuation
-runs from Chk04000: P09-LVL5, LIVE since 12:48 UTC 10-05 (top). Trust t ≤ 45.2. Filed `06_binary_flyby/`. Was LIVE on card 1 (the user
+ran from Chk04000: P09-LVL5 (12:48 UTC 10-05), which died at the same instant, t = 45.28 (top). Trust t ≤ 45.2. Filed `06_binary_flyby/`. Was LIVE on card 1 (the user
 10-04: "start it with wall fix"):** p09's params with ONLY min_chi 1e-8 → 1e-4 (preemptive — the d6/p060 cure),
 stop 40 → 100 and the names, restarted from p09's Chk04000 (NFS-secured first). Catches the p = 0.90 merger,
 the FULL burst (p09's was cut mid-flight at its stop) and the wall era without dying. Preflight PASS; restart
@@ -287,11 +286,14 @@ receding after. Filed `06_binary_flyby/`, trust t <= 55.5, closeout running; Chk
 PROPOSED (no go yet): the chi-floor continuation from Chk05500 — min_chi 1e-4, the d6 chain's proven cure,
 ~8 min to the death point, then to t = 100 — settles whether a horizon forms on this plunge.
 
-Queue (10-05 ~13:00 UTC): LIVE since 12:48 UTC — P09-LVL5 (card 0) and BBH-d6 (card 1), the user's go ~12:40
-(LIVE NOW, top). Left, all PROPOSED with NO go: SIGN-dyn (GPU minutes), the p060 lvl5
+Queue (10-05 ~15:25 UTC): NOTHING RUNNING — P09-LVL5 DIED t = 45.28 (the lvl4 instant), BBH-d6 DONE t = 100
+(LIVE NOW, top). SIGN-dyn will NOT run (the user, 10-05): the packed d12 like/flip csm pairs already hold both
+signs from t = 0, so its initial-acceleration read is an analysis step on them. Left, all PROPOSED with NO go:
+the P09 nan_autopsy restart from P09-LVL5's Chk04500 (~10 GPU-min), the p060 lvl5
 extension from its Chk06000 (late trapping; GPU_PLAN 10-05 ~05:40) and the a = 1.5 / 3 flip arms (~1 GPU-h each:
-they separate the coordinate under-read from finite size; GPU_PLAN 10-05 ~12:20). Restart pins: P09-LVL5 reads
-the staged Chk04000 (NFS copy kept); the p060 extension needs Chk06000 (NFS). EGW-p012 DROPPED (the user,
+they separate the coordinate under-read from finite size; GPU_PLAN 10-05 ~12:20). Restart pins: the P09 autopsy
+reads P09-LVL5's Chk04500 (first-node scratch only — copy it to NFS before any prune); the p060 extension needs
+Chk06000 (NFS). EGW-p012 DROPPED (the user,
 10-05): the d = 12, p = 0.12 boosted spiral (SPIRAL-lbf) already is the p = 0.12 point on the same box and
 spheres, so E_GW(p = 0.12) is an analysis step on its packed Weyl4 streams (no GPU). At 05:45 UTC 10-05 nothing was
 running — all three overnight runs had finished clean and are packed.
@@ -670,12 +672,12 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 | PLACE-csm | `place_d{6..48}_step1_csm` (the 18 one-step probes) | **DONE 14:52 UTC 10-02, all 18 solved and filed `04_binary_headon/placement_csm/`; the curve regeneration + Fig. 4(d,e) redraw are the next analysis step.** The matched placement curve for Fig. 4(d,e), now captioned as superposed-only: expected flat at R⋆ = 3.8895 (the matched pairs read 3.876–3.878 at t = 0), which would draw the clean-data contrast under the superposed excess; re-measures or retires clmMouthTauFlybyPlaced/SeedFlybyPlaced (CSM_SWITCHOVER) | the superposed probes' params (`04_binary_headon/placement/place_d*_step1`) with only mode 3 + names; initial data plus one step, scanned at t = 0; no frames beyond the default t = 0 set | < 1 total (minutes per probe) |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | **DONE 07:10 UTC 10-03: t = 100, no NaN; trust t <= 57.2 against the lvl5 arm's 56.5 — the two levels agree on where trust ends; packed `08_convergence/`.** Spiral burst/energy, level 4 vs 5 | the spiral template, max_level 4, from t = 0 | ~8–10 |
 | EGW-p06 | `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` | **DONE: A PLUNGE — the t040 leg (10-03), the extension (died t = 55.52, the d6 wall), the chi-floor leg (t = 100, no horizon at lvl4) and the lvl5 check (none either: the stall is physical); E/M 4.9e-2 at R = 20 (the glued 0–80 record); packed `06_binary_flyby/`.** Was: E_GW(p) above the fly-by (turnover). max_level 4 on the user's word (exploratory; the extraction spheres read the base grid whatever max_level is — lvl4 only coarsens the throats, the "if it's not NaN" test); checkpoints every 5 keep 3 (the user's answer); template ready in templates_scan, diffed: only p 0.25 -> 0.6, stop 100 -> 40, the name | ~4–6 |
-| EGW-p09 | `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` | **DONE t = 40 (10-03): a third plunge, its burst cut at the stop; the chi leg died t = 45.27 (the K wall); P09-LVL5 (lvl5 from Chk04000) LIVE since 12:48 UTC 10-05.** Was: E_GW(p) far side of the peak | same, p = 0.90; template ready, diffed | ~4–6 |
+| EGW-p09 | `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` | **DONE t = 40 (10-03): a third plunge, its burst cut at the stop; the chi leg died t = 45.27 (the K wall); P09-LVL5 (lvl5 from Chk04000, 10-05) died at the same instant, t = 45.28.** Was: E_GW(p) far side of the peak | same, p = 0.90; template ready, diffed | ~4–6 |
 | EGW-p045 | `merge_orbit_flip_d12_p045_L128_lvl4_t040_lbf_csm` | **SUPERSEDED by P045-T100 (t = 100, no wall; E/M 9.0e-2 at R = 20, in Sec. VIII); both t040 starts were stopped near step 0 (10-04).** Was (the user: "start something else from queue"): redraws Fig. 12 top, densifies the E_GW(p) turnover for Fig. 9. p = 0.12 stays the optional second midpoint, no go | the EGW recipe (fly-by template, lvl4, stop 40) at p = 0.45; template diffed (p + names only) | ~4–6 |
 | CONV-csm-w | `v2_spiral_d12_p012_L128_lvl4w_t040_csm` | **DONE ~18:00 UTC 10-04: t = 40, no NaN — THE WAVE ZONE IS RESOLVED (the base-grid waveforms reproduced to 0.01–0.15 % of peak); packed `08_convergence/`.** Was (the user: whatever fits one card): the R = 28 ball (0 1 0 0) — R = 44 (106M cells) and R = 36 (77M) both OOM'd the probe; ~58M cells runs at 77.6/80 GB. R = 20 + 28 fully wave-zone-refined | the diffed template at extraction_levels 0 1 0 0 | ~11 |
-| SIGN-dyn | `ctrl_sign_dyn_{pp,pm}_csm` | PROPOSED (no go yet), REFEREE: the energy-check claim (conductor vs fixed charge) tested dynamically — mode-3 rest pair at both scalar signs, read the initial acceleration from throat_track over a few units | the A1-csm recipe at both signs, stop ~2–5 | GPU minutes |
-| P09-LVL5 | `merge_orbit_flip_d12_p090_L128_lvl5from40_chi1e4_t100_lbf_csm_r04000` | **LIVE on the first node's card 0 since 12:48 UTC 10-05** (LIVE NOW, top): E_GW(p = 0.90) at the outer spheres — does lvl5 carry the merger past the lvl4 K wall (t = 45.27)? | the chi leg's params with only max_level 4 → 5, from p09's `Chk04000` (t = 40; Chk04500 sits mid-runaway); checkpoints every 5 keep 3 (the user) | ~20–24 (2.5–3 u/h) |
-| BBH-d6 | `bbh_control_d6_p010_t100` | **LIVE on the first node's card 1 since 12:48 UTC 10-05** (LIVE NOW, top): the d = 6 merger's vacuum twin for the gallery's merger row | BBH-HEADON's params with d 8 → 6, p 0 → 0.10 tangential, bare mass 0.9443 → 0.9282; NO checkpoints (the user) | ~3 (34.5 u/h) |
+| SIGN-dyn | `ctrl_sign_dyn_{pp,pm}_csm` | **NOT RUN (the user, 10-05): the packed `ctrl_rest_d12_csm` (like) and `ctrl_flip_d12_csm` (opposite) already ran both signs from t = 0 to 15; the initial acceleration is read from them (analysis).** Was PROPOSED, REFEREE: the energy-check claim (conductor vs fixed charge) tested dynamically — mode-3 rest pair at both scalar signs, read the initial acceleration from throat_track over a few units | the A1-csm recipe at both signs, stop ~2–5 | GPU minutes |
+| P09-LVL5 | `merge_orbit_flip_d12_p090_L128_lvl5from40_chi1e4_t100_lbf_csm_r04000` | **DIED t = 45.28 (14:07 UTC 10-05): h11 NaN on level 4 at the lvl4 instant, max\|K\| calm (1.44) — resolution does not move the death; filed `06_binary_flyby/`, no movies; trust t <= 45.1.** Was: E_GW(p = 0.90) at the outer spheres — does lvl5 carry the merger past the lvl4 K wall (t = 45.27)? | the chi leg's params with only max_level 4 → 5, from p09's `Chk04000` (t = 40; Chk04500 sits mid-runaway); checkpoints every 5 keep 3 (the user) | ~20–24 (2.5–3 u/h) |
+| BBH-d6 | `bbh_control_d6_p010_t100` | **DONE 14:44 UTC 10-05: t = 100, no NaN; close-out pending.** Was: the d = 6 merger's vacuum twin for the gallery's merger row | BBH-HEADON's params with d 8 → 6, p 0 → 0.10 tangential, bare mass 0.9443 → 0.9282; NO checkpoints (the user) | ~3 (34.5 u/h) |
 | EGW-p012 | (not run) | **DROPPED (the user, 10-05):** the d = 12, p = 0.12 boosted spiral `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` (SPIRAL-lbf, `05_binary_spiral/lbf/`) already is the p = 0.12 point on the same box and spheres (no freeze, lvl5); E_GW(p = 0.12) is an analysis step on its packed Weyl4 streams. THE `_lb_csm` RUN ONLY (checked 10-05: constraint_solve 1, puncture mode 3, momentum model 1, binary 91ed17cd, far-side mass matched to 4e-6) — not the archived superposed `v2_spiral_d12_p012_L128_lvl5from0_t100` nor the Bowen–York `_csm` twin (logged L2 Ham cannot tell them apart: the base-grid floor reads 8.4e-4 superposed vs 1.1e-3 solved). Was: the optional second midpoint of the E_GW(p) curve | was: the fly-by template, lvl4, stop 40, p 0.25 → 0.12 | — |
 | P060-ext | the p060 lvl5 check's extension from its `Chk06000` (name at launch) | PROPOSED (no go): late trapping — the lvl4 extrapolation puts a converged MOTS at t ≈ 110–115 | the lvl5 check's params with only the stop (past 115) and the name; restart from Chk06000 (NFS-secured) | ~22 to t = 115 (2.5 u/h) |
 | FLIP-a | the flip arms at a = 1.5 and 3 (names at launch) | PROPOSED (no go): separate the coordinate under-read from finite size (predictions 1.889 / 1.222; GPU_PLAN 10-05 ~12:20) | the A1-csm recipe, flipped | ~1 each |

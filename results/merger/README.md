@@ -1371,8 +1371,10 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
     use t ≤ 80, which covers the merger burst on all spheres.
   - p = 0.90 plunges harder: separation 11.8 (t = 20) → 2.62 (t = 40), contact just past its stop; its burst was
     cut mid-flight (R = 14 still rising at 40). Its chi1e4 extension died at t = 45.27 in a max|K| runaway with
-    χ never near the floor — the K-wall class, cured in the d6 chain by resolution, not by the floor; a finer
-    continuation from its Chk04500 is the open proposal.
+    χ never near the floor. Its lvl5 continuation (from Chk04000, 10-05) died at the same instant, t = 45.28, with
+    h11 NaN on level 4 and max|K| calm (1.44): resolution does not move the death, so the lvl4 K runaway was a
+    symptom. A `nan_autopsy` restart from the lvl5 leg's Chk04500 is the open proposal; E_GW(p = 0.90) stays
+    unmeasured.
   - p = 0.45 (stock settings, no checkpoints, stop 100) survives to t = 100 with NO wall: a close fly-by,
     nearest approach 2.45 at t ≈ 47, receding after, no MOTS ever. **The plunge/wall boundary sits in
     (0.45, 0.60)**: p = 0.25/0.45 scatter and survive; p = 0.60/0.90 merge and hit walls. Trust t ≤ 67.6 (the
@@ -1385,7 +1387,8 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   leg), `…_t100_lbf_csm_r04000` (the extension, died 55.52), `…_lvl4from50_chi1e4_t100_lbf_csm_r05000` (the
   chi leg, t = 100; movies cut at 80, the full-chain 0-80 stitch on the user's word),
   `…_lvl5from40_chi1e4_t060_lbf_csm_r04000` (the lvl5 discriminator), `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm`
-  + `…_lvl4from40_chi1e4_t100_lbf_csm_r04000` (the p = 0.90 legs) and `merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm`
+  + `…_lvl4from40_chi1e4_t100_lbf_csm_r04000` + `…_lvl5from40_chi1e4_t100_lbf_csm_r04000` (the p = 0.90 legs; the
+  lvl5 one a diagnostic arm, no movies) and `merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm`
   (the death clock); binary `main3d_boostpair_91ed17cd`.
 
 ### The head-on's true horizon history (MOTS-ho1, 2026-10-02)

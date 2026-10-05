@@ -4303,3 +4303,24 @@ t = 18 (replay), tau = 20/25/32 at R = 10/14/18 (fits 30-95), E_post = -0.0294/-
 R = 14) — the old "horizon too young" spiral story is gone. Both scalar figures redrawn,
 label audits clean; ledgers 927 rows, 0 problems. Still pending: heavy_seeds re-feed,
 ringdown trio, scalar figure caption's R=14 ratio on new cut conventions is in.
+
+## 2026-10-05 (~14:10 UTC) — P09-LVL5 dies at the lvl4 instant: resolution does not move the p = 0.90 death
+
+- **Launched 12:48 UTC on the user's go (the first node).** Card 0: `merge_orbit_flip_d12_p090_L128_lvl5from40_chi1e4_t100_lbf_csm_r04000`,
+  the chi leg's params with only max_level 4 → 5, restarted from p09's Chk04000 (t = 40). The go named Chk04500;
+  it sits mid-runaway (max|K| 1.77 and climbing, NaN 0.27 units later), and the user moved the restart to
+  Chk04000. Checkpoints every 5 keep 3. Card 1: BBH-d6 `bbh_control_d6_p010_t100`, the d = 6 merger's vacuum
+  twin — BBH-HEADON's params with d 8 → 6, tangential p = ±0.10 in the merger's sense, bare mass 0.9282 (per-hole
+  ADM 1.00 by the controls' Brill–Lindquist rule), no checkpoints, `WHM_PREFLIGHT=static`.
+- **P09-LVL5 DIED t = 45.28: h11 NaN on level 4, the same instant as the lvl4 chi leg (45.27).** Level 5 changed
+  the core, not the death: max|K| stayed calm (1.23 → 1.44 over t = 44–45.27, flattening; lvl4 0.78 → 1.77 → 172),
+  min lapse 8.3e-3 and χ_min 1.2e-4 at the centre, and the NaN shows first on level 4, not on the level-5 core.
+  The lvl4 K runaway was a symptom; whatever triggers the NaN acts at t ≈ 45.27 at both resolutions. L2 Ham
+  (level 0) sustained > 2.5e-2 from 45.15 (transits 43.03–43.29 and 44.72–44.88). No common MOTS over t = 41–45
+  (both seeds stall, rms θ_out ≈ 0.2). Trust t ≤ 45.1. Filed `06_binary_flyby/`, closeout without movies.
+- **E_GW(p = 0.90) stays unmeasured.** Cheapest next step (PROPOSED, no go): restart from this run's Chk04500
+  (t = 45, lvl5, 25G on the first node's scratch) with `nan_autopsy = 1` — ~10 GPU-min to name the cell and the
+  field that goes first, before choosing a knob.
+- **EGW-p012 dropped (the user):** the d = 12, p = 0.12 boosted spiral `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm`
+  (mode-3 solve + exact boost; far-side mass matched to 4e-6) is the p = 0.12 point; E_GW(p = 0.12) is an
+  analysis step on its packed Weyl4 streams.
