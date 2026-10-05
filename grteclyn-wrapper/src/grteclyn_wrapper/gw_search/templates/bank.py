@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-r"""The template bank: five campaign waveforms times a mass ladder.
+r"""The template bank: the campaign's waveforms times a mass ladder.
 
 WHY THE BANK IS SMALL
 ---------------------
@@ -8,7 +8,7 @@ precession, which is why its banks run to :math:`10^5`-:math:`10^6`
 templates.  Here the hypothesis is one numerically-evolved system per
 channel, and the records are scale-free -- with the source's total mass as
 the unit, strain scales as :math:`M/D` and frequency as :math:`1/M`.  So the
-only bank dimension is the total mass, and the bank is five ladders of a few
+only bank dimension is the total mass, and the bank is one ladder per arm of a few
 dozen rungs.  That is the whole reason this search is tractable outside a
 collaboration cluster.
 
@@ -93,7 +93,7 @@ class BankTemplate:
         20, and loses the band underneath -- and it is the honest cost: what
         is lost was never measured.  The arms with clean integrations
         (``drift`` ~ 0.02-0.07: the collapsing throat and the BBH control)
-        barely notice, and the three with pedestals (0.3-0.4) are the ones
+        barely notice, and the four with pedestals (0.10-0.48) are the ones
         this protects.
         """
         corner_M = 1.0 / self.waveform.duration_M

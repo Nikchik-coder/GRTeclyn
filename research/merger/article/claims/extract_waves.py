@@ -864,3 +864,19 @@ def waves_newtonian_momentum(run: str, kind: str, mass: float = 1.0) -> float:
     d = abs(float(p["bh2.offset"].split()[0]) - float(p["bh1.offset"].split()[0]))
     v_rel = math.sqrt({"circular": 1.0, "parabolic": 2.0}[kind] * 2.0 * mass / d)
     return 0.5 * mass * v_rel
+
+
+# ---------------------------------------------------------------- the head-on's axis
+@extractor
+def waves_axis_ratio_dev() -> float:
+    """Largest |(|h22/h20|) / sqrt(3/2) - 1|, in %, over both head-ons' spheres
+    (analysis/headon_axis_modes.py, burst-body rms): how closely the z-based
+    modes split as a quadrupole axisymmetric about the collision axis x must."""
+    H = importlib.import_module("headon_axis_modes")
+    devs = []
+    for run, f20, f22 in H.STREAMS:
+        d = PACK / "campaign" / run
+        _, d20, radii = H._read(d / f20)
+        _, d22, _ = H._read(d / f22)
+        devs += [100.0 * abs(x / H.RATIO - 1.0) for x in H.ratios(d20, d22, radii)]
+    return float(max(devs))

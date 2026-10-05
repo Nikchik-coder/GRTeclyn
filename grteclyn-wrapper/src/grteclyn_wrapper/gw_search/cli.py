@@ -3,7 +3,7 @@
 
     python -m grteclyn_wrapper.gw_search.cli <subcommand> [options]
 
-    templates        the five arms as detector templates, and their quality
+    templates        the ARMS rows as detector templates, and their quality
     validate         the Psi_4 -> h chain, against IMRPhenomD, on the BBH twin
     fitting-factor   would the modelled searches have recovered these signals?
     scan             matched-filter search of open data, with a background
@@ -82,8 +82,8 @@ def _cmd_templates(args) -> int:
     print("\n'drift' is |h| at the record's ends over |h| at its peak: how much "
           "of the\nreconstructed strain is integration pedestal rather than "
           "burst.  Below ~0.1\nthe record integrates cleanly; the head-on, "
-          "spiral and fly-by sit at 0.3-0.4,\nand their low-frequency strain "
-          "is an upper bound, not a measurement.")
+          "merger, fly-by and plunge sit at 0.10-0.48,\nand their "
+          "low-frequency strain is an upper bound, not a measurement.")
     return 0
 
 

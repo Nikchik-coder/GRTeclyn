@@ -1,7 +1,7 @@
 # `gw_search` — the campaign's waveforms against real LIGO data
 
 A matched-filter search of public Gravitational Wave Open Science Center
-(GWOSC) strain for the five radiating channels of the wormhole-merger
+(GWOSC) strain for the radiating channels of the wormhole-merger
 campaign, with a χ² veto, H1–L1 coincidence, and a time-slide background —
 so that what comes out is a **false-alarm rate**, not a signal-to-noise
 ratio.
@@ -14,15 +14,17 @@ written from what this package prints.
 ## 1. What is being searched for
 
 The campaign evolves drainhole-wormhole pairs in full numerical relativity
-and records `r Ψ₄` on extraction spheres. Five channels radiate, and the
-search treats each as a hypothesis:
+and records `r Ψ₄` on extraction spheres. Five wormhole channels radiate, and
+the search treats each as a hypothesis, beside the vacuum control
+(`gws templates`, 2026-10-05):
 
 | channel | mode | resolved `f Ψ₄` peak (`fM`) | record | integration quality (`drift`) |
 |---|---|---|---|---|
 | collapsing throat | (2,0) | 0.0563 | 70 M | **0.02** |
-| head-on merger | (2,0) | 0.0600 | 50 M | 0.31 |
-| spiral merger | (2,2) | 0.0600 | 50 M | 0.42 |
-| fly-by (no horizon) | (2,2) | 0.0286 | 35 M | 0.40 |
+| head-on merger (d = 8) | (2,0) about the collision axis x | 0.0620 | 32 M | 0.10 |
+| orbital merger (`spiral`: d = 6, p = 0.10) | (2,2) | 0.0709 | 42 M | 0.16 |
+| fly-by (d = 12, p = 0.45; no horizon) | (2,2) | 0.0442 | 45 M | 0.22 |
+| plunge (d = 12, p = 0.60; contact t = 45 to the trust window t = 80) | (2,2) | 0.0546 | 18 M | 0.48 |
 | vacuum BBH twin (control) | (2,2) | 0.0664 | 75 M | **0.07** |
 
 The rows are **not** restated here in code. They are `ARMS` in
@@ -79,8 +81,8 @@ on it — and the burst was reported at 100× the article's amplitude.
 
 `drift` (table above) is the residual of exactly this: `|h|` at the record's
 ends over `|h|` at its peak. Below ~0.1 the record integrates cleanly. **The
-head-on, spiral and fly-by sit at 0.3–0.4, and their low-frequency strain is
-an upper bound, not a measurement.** The search protects itself by filtering
+head-on, merger, fly-by and plunge sit at 0.10–0.48, and their low-frequency
+strain is an upper bound, not a measurement.** The search protects itself by filtering
 each template only from its own corner `1/T` in Hz and never below
 (`BankTemplate.f_lower_hz`): SNR harvested from a band the simulation never
 resolved is not SNR.
@@ -275,7 +277,7 @@ per-fetch deadline scales with the request for the same reason.
 export PYTHONPATH=$PWD/grteclyn-wrapper/src
 alias gws="grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.gw_search.cli"
 
-gws templates                 # the five arms as templates, and their quality
+gws templates                 # the arms as templates, and their quality
 gws validate                  # the Ψ₄ → h chain against IMRPhenomD  [must PASS]
 gws fitting-factor --out results/merger/gw_search/fitting_factors.json
 gws inject --duration 128 --target-snr 20 \

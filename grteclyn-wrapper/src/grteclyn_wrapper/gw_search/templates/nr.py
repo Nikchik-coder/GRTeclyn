@@ -109,19 +109,14 @@ SKY = {
 F0_SAFETY = 0.75   # clamp below 0.75 x the lowest frequency the record carries
 TAPER = 0.12       # Tukey fraction, both ends, before the transform
 
-# (2,0) arms whose source axis is x, not the extraction's polar axis z
-# (2026-10-05).  The head-on falls along x (mouths at x = +-4, the run's
-# binary_diag_axis = 0), and the in-code extraction decomposes about z, where
-# a quadrupole axisymmetric about x splits as h_20 = -h'_20 / 2 and
-# h_2,+-2 = sqrt(3/8) h'_20 (h' about the collision axis): the z-based (2,0)
-# record carries a QUARTER of the l = 2 power, and its edge-on strain is half
-# the whole quadrupole's.  Measured on the packed SERIES: |h_22| / |h_20| =
-# 1.21-1.26 on every sphere against sqrt(3/2) = 1.225 (the vacuum head-on
-# control: 1.22-1.23; times four, its (2,0) energy 1.4e-4 meets the published
-# 5.5e-4).  So the record is rescaled by 2 = |h'_20 / h_20|, after the
-# (2,2) partner on the same sphere confirms the split (load_arm).
-AXIS_X = {"head-on"}
-AXIS_RATIO_TOL = 0.10   # |h_22/h_20| must sit this close to sqrt(3/2)
+# The head-on's (2,0) is read about its COLLISION axis (2026-10-05).  It falls
+# along x, and the in-code extraction decomposes about z, where a quadrupole
+# axisymmetric about x splits as h_20 = -h'_20 / 2, h_2,+-2 = sqrt(3/8) h'_20:
+# the z-based (2,0) carried a quarter of the l = 2 power, and a template
+# built on it half the edge-on strain.  ARMS now names the _axis stream
+# (results/merger/analysis/headon_axis_modes.py: 2 x the z-based record,
+# written only after |h22/h20| = sqrt(3/2) is checked on every sphere), so
+# nothing here rescales it.
 
 ARM_NAMES = [row[0] for row in ARMS]
 
@@ -201,29 +196,6 @@ def _resample_uniform(t: np.ndarray, y: np.ndarray) -> tuple[np.ndarray, np.ndar
     return grid, out
 
 
-def _axis_x_factor(pack: pathlib.Path, rel: str, R: float,
-                   t: np.ndarray, y: np.ndarray) -> float:
-    """``|h'_20 / h_20|`` = 2 for an x-axis source, after checking the split.
-
-    The (2,2) partner on the same sphere and over the same window must stand
-    at sqrt(3/2) of the (2,0) record ``y`` (``AXIS_X``); anything else means
-    the source is not axisymmetric about x and the factor 2 would be a guess.
-    """
-    partner = rel.replace("_mode_20.", "_mode_22.")
-    got = None if partner == rel else load(pack, partner, None)
-    if got is None:
-        raise FileNotFoundError(f"{rel}: no (2,2) partner to check the "
-                                f"collision axis against")
-    t22, s22 = got
-    r22 = min(s22, key=lambda r: abs(r - R))
-    keep = (t22 >= t[0] - 1e-9) & (t22 <= t[-1] + 1e-9)
-    ratio = np.abs(np.asarray(s22[r22])[keep]).max() / np.abs(y).max()
-    if abs(ratio / np.sqrt(1.5) - 1.0) > AXIS_RATIO_TOL:
-        raise ValueError(f"{rel}: |h_22/h_20| = {ratio:.3f} at R = {R:g}, not "
-                         f"sqrt(3/2) -- the source is not axisymmetric about x")
-    return 2.0
-
-
 def load_arm(name: str, pack: pathlib.Path | str | None = None) -> NRWaveform:
     """Build one :class:`NRWaveform` from the ``ARMS`` row called ``name``."""
     pack = pathlib.Path(pack or PACK_ROOT)
@@ -251,9 +223,6 @@ def load_arm(name: str, pack: pathlib.Path | str | None = None) -> NRWaveform:
         t, series = t[keep], {r: v[keep] for r, v in series.items()}
     R = min(series, key=lambda r: abs(r - R0))
     t, y = trim_zeros_tail(t, np.asarray(series[R]))
-
-    if name in AXIS_X:
-        y = np.asarray(y) * _axis_x_factor(pack, rel, R, t, y)
 
     M = M_CODE[name]
     u = (t - R) / M                   # retarded time, in total masses

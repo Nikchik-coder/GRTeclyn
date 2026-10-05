@@ -22,7 +22,15 @@ more than one ordinary time step's change (leg 3's `VALIDATION.md`, Seams).
 
 `Weyl4_mode_20.dat` and `Weyl4_mode_22.dat`: in-code extraction, seven spheres
 R = 10/14/18/20/28/36/44, ℓ = 2, dt = 0.01, with a five-line provenance header.
-The (2,0) mode is the head-on's dominant channel.
+The modes are about the extraction's z axis, but the head-on falls along x, so
+its quadrupole splits over the z-based (2,0) (a quarter of the power) and
+(2,±2) (the rest): |h22/h20| = √(3/2) to 1.6 % on the burst at every sphere.
+
+`Weyl4_mode_20_axis.dat` (2026-10-05): the quadrupole about the collision axis,
+h'20 = 2 × the z-based (2,0) (sign kept), written by
+`results/merger/analysis/headon_axis_modes.py` after it checks that split. The
+figures, the search templates and every head-on number in the paper read this
+file.
 
 ## Reading it — the level-1 noise gates
 

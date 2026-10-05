@@ -194,8 +194,13 @@ ARMS = [
     # noise clock (t ~ 80): by 76 the envelope has decayed below the
     # frequency track's body gate, so the record is not cut while loud
     # (plot_psi4_ligo.track_keep on why that matters).
+    # Since 2026-10-05 the stream is the quadrupole about the COLLISION axis
+    # (x): the z-based (2,0) the extraction writes is -h'_20/2 of it and
+    # carries a quarter of the l = 2 power (|h22/h20| = sqrt(3/2) on every
+    # sphere); results/merger/analysis/headon_axis_modes.py writes the
+    # _axis file, h'_20 = 2 x the z-based record, sign kept.
     ("head-on", r"$\sigma=-1$, $d=8$", "(2,0)",
-     "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20.dat",
+     "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20_axis.dat",
      None, 10.0, 76.0, r"level-1 noise"),
     # Since 2026-10-05 rows (c)/(d) are the mode-3 boosted campaign: (c) the
     # d = 6 merger chain glued into one record (its SERIES README documents the
@@ -269,8 +274,9 @@ VACUUM_OVERLAY = {
     # The head-on's vacuum twin (2026-10-05): two equal punctures from rest at
     # d = 8, its (2,0) at its innermost sphere R = 14 (the row's own sphere is
     # R = 10; the streams carry r*Psi4, so the two are comparable at the few-%
-    # level of the 1/r fold).  Drawn whole: nothing contaminates it.
-    "head-on": ("07_bbh_control/bbh_headon_d8_L128_lvl5_t100/weyl_extraction_mode_20.dat",
+    # level of the 1/r fold).  Drawn whole: nothing contaminates it.  It falls
+    # along x too, so it is read about its collision axis like the row.
+    "head-on": ("07_bbh_control/bbh_headon_d8_L128_lvl5_t100/weyl_extraction_mode_20_axis.dat",
                 14.0, "vacuum BBH head-on", False, (38.0, 78.0), "below"),
     "fly-by": ("07_bbh_control/bbh_control_d12_p045_t100/weyl_extraction_mode_22.dat",
                20.0, "vacuum BBH fly-by", True, (5.0, 40.0), "above"),
@@ -320,7 +326,7 @@ RAMP = [None, "MUTED", "CONTEXT", "FAINT"]   # inner -> outer; None = INK
 # cuts the level-1 cube's corners and is contaminated between R = 20 and the
 # level-0 spheres -- is the one dropped with information lost.
 RADII = {
-    "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20.dat":
+    "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20_axis.dat":
         (10.0, 20.0, 36.0, 44.0),
     # The plunge's trust window (t = 80) cuts R = 36/44 before their bursts
     # arrive (~81/89), so only the two inner spheres carry a measurable burst;
