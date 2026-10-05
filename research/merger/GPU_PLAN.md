@@ -4414,9 +4414,10 @@ brief it"). Body (before the bibliography) 18 168 → 15 197 words; total 20 442
 - **Freeze out of the paper.** No run froze the merged core (`core_freeze_fill = 0` everywhere since the χ-floor
   crossing). The per-throat slicing switch-off near each moving puncture (`core_lapse_freeze = 1`,
   `core_freeze_track_throats = 1`, full inside 0.3, restored by 0.8) is still in the params of the boosted
-  single throat, the d = 6 chain, both level-3 scouts and the d = 12 arms at p ≥ 0.25 (not p = 0.12); on the user's
-  word the paper no longer describes it — the packed params carry it. The scalar damping sentence (α < 3e-2;
-  d = 6 chain and the tangential d = 12 arms at p ≥ 0.25) stays.
+  single throat, the d = 6 chain, both level-3 scouts and the d = 12 arms at p ≥ 0.25 (not p = 0.12). It is back
+  as one sentence in Sec. III B on the user's "yes ofc" (for referees; clmFreezeRadiusFull/Start restored), with
+  no "frozen core" wording. The scalar damping sentence (α < 3e-2; d = 6 chain and the tangential d = 12 arms at
+  p ≥ 0.25) stays.
 - **Condensed:** heavy seeds (548 words), the constraint caption (423), the scalar channel's flux, sign and
   angular-momentum paragraphs, the gallery caption, no-inspiral, the inflating half, topology, the collapse
   endpoint (one clause for the regrowth artefact), diagnostics and MOTS (definition, the scan systematic once),
@@ -4432,5 +4433,5 @@ brief it"). Body (before the bibliography) 18 168 → 15 197 words; total 20 442
   coordinate speed; the never-run 10^-3 / 10^-1 quadrupole arms; "decay time not measurable" and "horizon
   masses not reliable" in VIII A; the ISCO aside in VII A; Shinkai–Hayward's universal-exponent clause.
 - Bibliography: 7 uncited entries removed (the boson-star four, Christodoulou, Thorne, Favata); 100 left.
-- Ledger: 42 rows dropped with their sentences (907 → 865), 75 re-anchored; 0 problems. Not compiled here
+- Ledger: 40 rows dropped with their sentences (907 → 867), 75 re-anchored; 0 problems. Not compiled here
   (no TeX).

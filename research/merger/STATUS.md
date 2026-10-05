@@ -41,13 +41,16 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
   both checkpoints wait for the user's word. The second node was not listed from here (05:35 UTC 10-05: only
   the HFL cell, 60G).
 
-## REQUIRED FOR THE PAPER (the full read of 2026-10-05, late; nothing launches without the go)
+## RUNS FOR THE PAPER (the full read of 2026-10-05, late; nothing launches without the go)
 
 The paper was read end to end: the superposition / Bowen–York / workaround wording is out (Sec. II states the
 solved, matched, boosted data as the method), duplicates are cut, the d = 6 chain is "the merger" everywhere
 (text and figures), the run matrix (Table III) lost the Bowen–York probes, the GRTresna bridge, the unused CS-1 scout and the
 Bowen–York convergence arms (96 runs, 476 GPU-h; BBH-d6 joined the vacuum controls). Ledger 907 rows, 0 problems.
-Four items only runs settle:
+**Required:** O3B-NEW and DAMP-off — the text quotes numbers that rest on them. **Recommended:** CONV-lbf-w — no
+quoted number waits on it, but the paper has no wave-zone resolution test on current data and a referee will ask.
+**Optional:** SOLVE-t0 — the d = 8 shell number it would restore is no longer in the paper. (Classified 10-05 late,
+after the shortening pass.)
 
 | id | what | why the paper needs it | how | cost |
 |---|---|---|---|---|
@@ -56,8 +59,8 @@ Four items only runs settle:
 | CONV-lbf-w | the wave-zone test on exact-boost data | CONV-csm-w resolved the wave zone (0.01–0.15 % of peak) on the Bowen–York `_csm` arm, which the paper no longer cites | the CONV-csm-w recipe (`extraction_levels 0 1 0 0`, the R = 28 ball, 77.6/80 GB) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |
 | SOLVE-t0 | the mode-3 d = 8 head-on at t = 0 | Sec. II quoted the d = 8 throat-shell Hamiltonian from the pre-matching (mode-0) check, now cut; the paper keeps only the boosted pair's mode-3 per-level number | t = 0 only on CS-1's grid, `constraint_solve_t0_check.py` | CPU minutes |
 
-Analysis only (no GPU): the scalar's (2,0)-memory sign on the mode data (the text now gives the projection
-argument, no measured sign); E_GW(p = 0.12) on SPIRAL-lbf's packed streams.
+Analysis only (no GPU), optional: E_GW(p = 0.12) on SPIRAL-lbf's packed streams (a fourth point for Sec. VIII D's
+energy sequence). The (2,0)-memory sign is no longer needed: the memory aside left the paper in the shortening pass.
 
 ## RESULT (in the paper since 2026-09-30): a moving wormhole collapses under its own unstable mode
 
