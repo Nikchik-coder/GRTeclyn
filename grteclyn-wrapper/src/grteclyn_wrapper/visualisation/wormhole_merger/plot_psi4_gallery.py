@@ -278,6 +278,10 @@ VACUUM_OVERLAY = {
 # ARMS scenarios the gallery draws only as an overlay, never as a row.
 OVERLAID = {"vacuum BBH twin"}
 
+# Row titles in the article's words (2026-10-05): the d = 6 chain is "the
+# merger" in the text; "spiral" stays the scenario key the ledger reads.
+DISPLAY = {"spiral": "merger"}
+
 # What the gallery draws, per scenario: the last coordinate time kept at each
 # sphere R, and the note written at the innermost sphere's cap.  Absent
 # scenario = the whole record.  The reasons are in the module docstring.
@@ -574,7 +578,7 @@ def main(argv: list[str] | None = None) -> int:
                              fontsize=6.5, color=style.MUTED, ha="left", va="bottom")
         # Row identity on the strip above the frame: nothing inside the
         # panel, so no waveform can ever collide with it.
-        axL.text(0.0, 1.05, f"({string.ascii_lowercase[i]})  {r['name']},  {r['knob']}",
+        axL.text(0.0, 1.05, f"({string.ascii_lowercase[i]})  {DISPLAY.get(r['name'], r['name'])},  {r['knob']}",
                  transform=axL.transAxes, ha="left", va="bottom", fontsize=8,
                  color=style.INK)
         axL.text(1.0, 1.05,

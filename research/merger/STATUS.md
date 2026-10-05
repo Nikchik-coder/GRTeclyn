@@ -41,6 +41,24 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
   both checkpoints wait for the user's word. The second node was not listed from here (05:35 UTC 10-05: only
   the HFL cell, 60G).
 
+## REQUIRED FOR THE PAPER (the full read of 2026-10-05, late; nothing launches without the go)
+
+The paper was read end to end: the superposition / Bowen–York / workaround wording is out (Sec. II states the
+solved, matched, boosted data as the method), duplicates are cut, the d = 6 chain is "the merger" everywhere
+(text and figures), the run matrix (Table III) lost the Bowen–York probes, the GRTresna bridge, the unused CS-1 scout and the
+Bowen–York convergence arms (96 runs, 476 GPU-h; BBH-d6 joined the vacuum controls). Ledger 907 rows, 0 problems.
+Four items only runs settle:
+
+| id | what | why the paper needs it | how | cost |
+|---|---|---|---|---|
+| O3B-NEW | the gw_search pipeline (validate, inject, fitting-factor, scan) on the current templates | Sec. IX's bank (127 templates), per-channel horizons, fitting factors and injections still come from the 09-26 templates (superposed spiral, Bowen–York fly-by); the text names them by the current channels | the commands of `results/merger/gw_search/README.md`, on the workstation (GWOSC strain cache `runs/gw_search`; a cloud container cannot reach GWOSC). The plunge now enters the bank (`M_CODE`, corner-protected) unless `TemplateBank(arms=...)` excludes it | CPU hours |
+| DAMP-off | the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); checkpoints asked at launch | ~10 GPU-h (~7 u/h) |
+| CONV-lbf-w | the wave-zone test on exact-boost data | CONV-csm-w resolved the wave zone (0.01–0.15 % of peak) on the Bowen–York `_csm` arm, which the paper no longer cites | the CONV-csm-w recipe (`extraction_levels 0 1 0 0`, the R = 28 ball, 77.6/80 GB) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |
+| SOLVE-t0 | the mode-3 d = 8 head-on at t = 0 | Sec. II quoted the d = 8 throat-shell Hamiltonian from the pre-matching (mode-0) check, now cut; the paper keeps only the boosted pair's mode-3 per-level number | t = 0 only on CS-1's grid, `constraint_solve_t0_check.py` | CPU minutes |
+
+Analysis only (no GPU): the scalar's (2,0)-memory sign on the mode data (the text now gives the projection
+argument, no measured sign); E_GW(p = 0.12) on SPIRAL-lbf's packed streams.
+
 ## RESULT (in the paper since 2026-09-30): a moving wormhole collapses under its own unstable mode
 
 `single_boost_p045_lbf_t050` (one exact Lorentz-boosted drainhole, momentum model 1, p = 0.45, v = 0.41, L = 64,
@@ -91,7 +109,8 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
   The Fig. 5/SVI rewrite plugs into this section when MOTS-ho1/2/3 land. First ho1 reading, 10-02 07:20 UTC:
   the finder holds the common MOTS from t = 18 (R 5.634, M 2.817, deform 0.104) -- 4 units before the round
   scan's t ~ 22 birth and 12 % larger than the caption's R 5.02.
-- **Article to-do (the user, 10-02): the merger-race explanation.** Add the explanatory notes to the spiral
+- **DONE (in Sec. VII B; 10-05 wording: an EFFECTIVE inward kick read off the seed ladder — each mouth starts in
+  the isolated shape, Table I).** Article to-do (the user, 10-02): the merger-race explanation. Add the explanatory notes to the spiral
   section: (i) the two-wormhole setup ITSELF creates the inflationary kick -- solving the constraints with the
   companion present compresses each mouth (-0.4 % at d = 12, -1.2 % at d = 8), and by the seeded-single rule
   (fate opposite to the kick) a compression lands both mouths on the INFLATION branch, deterministically, at any
@@ -99,7 +118,8 @@ t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collaps
   contact (~2.3 e-folds of tau ~ 5.5 at d = 6) faster than the kick-seeded inflation -- the race, not a data
   fix. Ledger rows for the kick sizes and fold counts when written; SEED-csm (queued) pins the rule on solved
   data.
-- **Paper numbers to re-measure, all the head-on's:**
+- **DONE (10-05): Fig. 5 and §VI read the finder; the abstract's area loss is the finder's (clmHeadonCsmShrinkArea);
+  the shape systematic became the measured scan-vs-MOTS offset (Sec. III C).** Paper numbers to re-measure, all the head-on's:
   - **Fig. 5(a,b).** The gold line is the round scan. The caption's birth (t = 22, R 5.02, M_MS 2.69,
     `clmHeadonCsmMots*`) is round-scan; its end (t = 100, R 4.69, M_MS 2.373, `clmHeadonCsmEnd*`) is oriented-scan; its
     "~1 % wobble" (`clmHeadonCsmWobble`) is 3–11 % at t = 51–60.

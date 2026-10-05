@@ -4363,3 +4363,46 @@ ringdown trio, scalar figure caption's R=14 ratio on new cut conventions is in.
 - **FIG 9 (E_GW vs p) removed** (the user: "describe it in text, wipe the figure"); Sec. VIII A's text carries the
   three energies, the gating and the floor. `plot_egw_momentum.py` stays as a check of those numbers.
 - Ledgers: clmPSixtyTrust (80), clmGwVacMergerPeakRatio (3.0); 929 rows, 0 problems.
+
+## 2026-10-05 (late) — the paper read end to end: superposition/workaround wording out, duplicates cut
+
+The user: "do full read of the paper; no more words related to linear superposition or the fact that we have no
+exact initial data and some workarounds around it; duplicate information, wipe it; readability and overall
+consistency; if any runs are required add them to the status file".
+- **Sec. II states the data as the method.** The binary subsection is "Two throats in one slice": the combined
+  fields are the solve's starting point, nothing more; the superposition's defect, the superposed twin, the
+  rescaling numbers (m' 1.149/1.094, R_min +14.8 %) and the superposed/unmatched rows of the placement table are
+  gone (the table: isolated throat vs each mouth of the matched pair); the Bowen–York contrast sentence and its
+  bibitem are gone; the solve verifications quote the solved residual only. The d = 8 throat-shell number came
+  from the pre-matching (mode-0) check and is cut (SOLVE-t0 in STATUS restores a mode-3 one).
+- **Stale setup statements fixed.** No halved-Δt run exists on the current campaign; every binary is L = 128; the
+  regularisation paragraph now names what the runs use: the per-throat slicing freeze (1+log source off inside
+  r = 0.3, back by 0.8, on each throat's far side; every moving throat) and the scalar damping below α = 3e-2 (the
+  orbital lbf runs) — which on the scatterers acts at the grid centre between the mouths from t ≈ 34–36
+  (measured from collapse_diagnostics' min-lapse location), not only behind horizons: DAMP-off (STATUS) tests it.
+  The full interior freeze (freeze_fill) is used by no current run and left the text.
+- **Instruments.** The diagnostics' duplicate finder description and NEC caveat are cut (sec:setup:mots keeps
+  them); every BINARY horizon number is the finder's, the lone throats' come from the scan (≤ 3 %); the superposed
+  shape-systematic numbers (34–44 %, 4 %) became the measured scan-vs-MOTS offset (Sec. VI); the abstract's
+  "more than a quarter" (an old superposed run) is the finder's 28 % (clmHeadonCsmShrinkArea).
+- **The race.** The "compression" was never a t = 0 R_min change (the matched mouths sit within 0.06 % of R⋆): the
+  text now gives the effective inward kick read off the seed ladder (ε_eff ≈ −0.4 % at d = 12, −1.2 % at d = 8;
+  GPU_PLAN 2026-09-29). The Bowen–York d12 twin left the race paragraph; "no arm merges" became "no arm forms a
+  common horizon".
+- **Duplicates and stale claims cut:** the companion-seed sentence twice in Sec. X A; "pulled six times harder"
+  twice in Sec. VIII; "both pits stay distinct inside the spiral's remnant" (the d6 chain's pits merge); "the
+  spiral's late record is carried by a frozen core" (the merger's track rises after contact and wobbles below
+  Kerr in the LIGO figure's (c)); the p = 0.25 "production scattering pass" (both scatterers' trust windows stated once);
+  "we have not closed / not quantified / not tested" sentences (house rule; DAMP-off, CONV-lbf-w and O3B-NEW in
+  STATUS carry what runs can settle); the memory sentence keeps the projection argument, not an unrecorded
+  measured sign.
+- **Table III regrouped** (table1_groups.tsv): out — the three Bowen–York single-throat probes, the Bowen–York d12
+  arm, the GRTresna bridge, the CS-1 scout, the two Bowen–York convergence arms and the head-on σ = 0.3 arm (none
+  backs a quoted number); in — BBH-d6 (vacuum BBH, now cited) and the kicked single moved to "solve
+  verifications". 96 runs, 476 GPU-h.
+- **Naming.** The d = 6 chain is "the merger" in the text and in both wave figures (gallery row (c), LIGO legend
+  and bars; the scenario key "spiral" stays for the ledger).
+- **Constraint figure caption** gains verification B's 99.99 % (four level-0 cells next to the pits carry the
+  needle; the level-3 solution is clean).
+- Ledger: 25 rows dropped (the superposed/Bowen–York/stale-source rows), 4 added (clmFreezeRadiusFull/Start,
+  clmDampLapseStart, clmNormPitShare); 907 rows, 0 problems. Not compiled here (no TeX).

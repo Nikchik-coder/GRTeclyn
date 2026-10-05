@@ -136,7 +136,7 @@ E_BBH_HEADON = 5.5e-4                # head-on infall, the other extreme
 ENERGY_ON_DRAWN = ("collapsing throat",)
 
 SHORT = {"collapsing throat": "throat", "head-on": "head-on",
-         "spiral": "spiral", "fly-by": "fly-by", "vacuum BBH twin": "BBH twin"}
+         "spiral": "merger", "fly-by": "fly-by", "vacuum BBH twin": "BBH twin"}
 
 # One identity per scenario, shared by all three panels (and nothing else):
 # the wormhole sources are ink told apart by dash, the lone throat is the
@@ -362,7 +362,7 @@ def main(argv: list[str] | None = None) -> int:
         a["tau"] = a["u"] - a["u"][int(np.argmax(env))]
         # The key names, and only names: the energies are panel (d)'s subject
         # and repeating them here made the key a second table.
-        axA.semilogy(a["tau"], env, zorder=3, label=a["name"],
+        axA.semilogy(a["tau"], env, zorder=3, label={"spiral": "merger"}.get(a["name"], a["name"]),
                      **LOOKS[a["name"]])
         print(f"  {a['name']:<18s} peak |rPsi4| M = {env.max():.3e} at "
               f"u = {a['u'][int(np.argmax(env))]:.1f} M, "
