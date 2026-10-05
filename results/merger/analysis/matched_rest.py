@@ -23,6 +23,12 @@ the cached chi_z slices, box +/-3 around each chi minimum, throats split at the 
 The ratio uses t = 3.5 .. 10.5 only (the gauge settles by t ~ 3); the force law is the
 displacement at t = 11.5 (separation_ladder_2026-09-04.txt), fitted with A/(d + delta)^2.
 
+The width ladder (added 2026-10-05): the like pairs at d = 12 with throat width a = 1/1.5/3
+(ctrl_rest_a{1,15,3}_csm, the superposed a-points' params with only the solve block changed;
+a = 2 is ctrl_rest_d12_csm), the same displacement at t = 11.5, fitted with dsep ~ a^n by least
+squares in log-log over the four widths.  The point-charge prediction is n = 2: the net push is
+(Q - 1) m^2/d^2 = a^2/d^2 at m = 1 (scalar_charge_apoints_2026-09-04.txt, the superposed ladder).
+
 Reads the RUN TREE (the caches are not packed); writes the reduced table into the pack:
 
     python results/merger/analysis/matched_rest.py [--runs runs/wormhole_merger] [--pack results/merger]
@@ -43,12 +49,32 @@ from sign_rule import pit_centroid  # noqa: E402
 
 LIKE = {12: "ctrl_rest_d12_csm", 14: "ctrl_rest_d14_csm", 16: "ctrl_rest_d16_csm", 18: "ctrl_rest_d18_csm"}
 FLIP = {12: "ctrl_flip_d12_csm"}
+# The width ladder at d = 12; its a = 2 rung is LIKE[12].  Columns dsep_like_a1/a15/a3 come
+# AFTER dsep_flip_d12, so the readers that index columns by position keep working.
+WIDTH = {1.0: "ctrl_rest_a1_csm", 1.5: "ctrl_rest_a15_csm", 3.0: "ctrl_rest_a3_csm"}
+WIDTH_TIMES = (8.0, 10.0, 11.5)
 WINDOW = (3.5, 10.5)
 T_LADDER = 11.5
-# The superposed runs (separation_ladder_2026-09-04.txt; sign_rule_displacement.dat).
+# The superposed runs (separation_ladder_2026-09-04.txt; sign_rule_displacement.dat;
+# the width ladder at t = 11 from scalar_charge_apoints_2026-09-04.txt).
 OLD_LADDER = {12: 0.4696, 14: 0.3699, 16: 0.2980, 18: 0.2438}
 OLD_RATIO = (1.518, 0.021)
+OLD_WIDTH = {1.0: 0.1474, 1.5: 0.2832, 2.0: 0.4155, 3.0: 0.6154}
 Q = 5.0
+
+
+def column(key: tuple[str, float]) -> str:
+    """The table column of a run: dsep_like_d12 .. dsep_flip_d12, then dsep_like_a1/a15/a3."""
+    kind, x = key
+    if kind == "width":
+        return f"dsep_like_a{f'{x:g}'.replace('.', '')}"
+    return f"dsep_{kind}_d{x}"
+
+
+def width_exponent(vals: dict[float, float]) -> float:
+    """n of dsep ~ a^n, least squares in log-log over the widths present."""
+    a = np.array(sorted(vals))
+    return float(np.polyfit(np.log(a), np.log([vals[w] for w in a]), 1)[0])
 
 
 def find_run(runs: str, name: str) -> str | None:
@@ -117,7 +143,7 @@ def main() -> int:
     a = ap.parse_args()
 
     ser, solve, names = {}, {}, {}
-    for sign, arms in (("like", LIKE), ("flip", FLIP)):
+    for sign, arms in (("like", LIKE), ("flip", FLIP), ("width", WIDTH)):
         for d, name in arms.items():
             run_dir = find_run(a.runs, name)
             s = series(run_dir) if run_dir else np.empty((0, 2))
@@ -154,26 +180,36 @@ def main() -> int:
             dold, _ = offset_fit(OLD_LADDER)
             lines.append(f"force law A/(d + delta)^2 over d = {min(ladder)}..{max(ladder)}: delta = {delta:.2f}, "
                          f"A = {amp:.1f} (the superposed ladder, same fit: delta = {dold:.2f})")
+    if ("like", 12) in ser and all(("width", w) in ser for w in WIDTH):
+        wser = {**{w: ser[("width", w)] for w in WIDTH}, 2.0: ser[("like", 12)]}
+        at_t = {t0: {w: at(s, t0) for w, s in sorted(wser.items())} for t0 in (11.0,) + WIDTH_TIMES}
+        lines.append(f"width ladder at d = 12 (a = 2 is {LIKE[12]}), dsep at t = {T_LADDER}: " + ", ".join(
+            f"a = {w:g}: {v:+.4f}" for w, v in at_t[T_LADDER].items()) + "; at t = 11: " + ", ".join(
+            f"a = {w:g}: {v:+.4f} (old {OLD_WIDTH[w]:+.4f})" for w, v in at_t[11.0].items()))
+        lines.append("width law dsep ~ a^n, log-log least squares over a = 1..3: " + ", ".join(
+            f"n = {width_exponent(at_t[t0]):.3f} at t = {t0:g}" for t0 in WIDTH_TIMES)
+            + f" (the superposed ladder at t = 11: n = {width_exponent(OLD_WIDTH):.3f}; point charge: n = 2)")
     for line in lines:
         print("  " + line)
 
     if a.no_write or not ser:
         return 0
     out = group_dir(pathlib.Path(a.pack), "03_two_throats") / "matched_rest_displacement.dat"
-    keys = [("like", d) for d in LIKE if ("like", d) in ser] + [("flip", d) for d in FLIP if ("flip", d) in ser]
+    keys = [k for kind, arms in (("like", LIKE), ("flip", FLIP), ("width", WIDTH))
+            for k in ((kind, x) for x in arms) if k in ser]
     t_all = np.unique(np.concatenate([ser[k][:, 0] for k in keys]))
     with open(out, "w", encoding="utf-8") as f:
         f.write("# The rest pairs rerun on far-side-matched data (mode 3, 2026-09-28): separation change of each run.\n")
         f.write("# Inverse-chi-weighted pit centroids of the cached chi_z slices (box +/-3, split at the frame centre),\n")
         f.write("# sign_rule.py's measurement; NOT throat_track.dat.  The old superposed runs: sign_rule_displacement.dat,\n")
-        f.write("# separation_ladder_2026-09-04.txt.\n")
+        f.write("# separation_ladder_2026-09-04.txt; the width ladder, scalar_charge_apoints_2026-09-04.txt.\n")
         for k in keys:
             s, sv = ser[k], solve[k]
             f.write(f"# {names[k]}: M_ADM(0) = {sv.get('M_ADM', float('nan')):.5f}, sep(0) = {s[0, 1]:.4f},"
                     f" last slice t = {s[-1, 0]:g}\n")
         for line in lines:
             f.write(f"# {line}\n")
-        f.write("# time  " + "  ".join(f"dsep_{k[0]}_d{k[1]}" for k in keys) + "\n")
+        f.write("# time  " + "  ".join(column(k) for k in keys) + "\n")
         for ti in t_all:
             vals = []
             for k in keys:

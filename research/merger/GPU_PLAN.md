@@ -4264,3 +4264,22 @@ over R = 10-18, SERIES glued record, M = M_ADM 2.35731); the vacuum BBH head-on 
 E_GW(p = 0.90) stays unquoted: both legs end before the burst crosses R = 20 (the lvl5 continuation
 from Chk04500 remains the queued fix). waves_energy_run/waves_peak_time/waves_trough_time gained a
 radii passthrough for header-less restart streams.
+
+## 2026-10-05 (~12:20 UTC) — the matched width ladder: Fig. 4(d), Sec. V B's width sentence back
+
+The user ("create the required figure"), on the second node, which has the run tree the cloud session lacked.
+`results/merger/analysis/matched_rest.py` now reduces the three width arms (`ctrl_rest_a{1,15,3}_csm`, 10-02)
+with the same chi-pit centroids as the d-ladder; `matched_rest_displacement.dat` gained `dsep_like_a1/a15/a3`
+(appended after `dsep_flip_d12`; the first five columns re-derived byte-identical). The like pairs at d = 12:
+- δd at t = 11.5 = 0.1623 / 0.3250 / 0.4791 / 0.7583 for a = 1 / 1.5 / 2 / 3 (a = 2 is `ctrl_rest_d12_csm`); at
+  t = 11, 0.1456 / 0.2893 / 0.4249 / 0.6689 against the superposed 0.147 / 0.283 / 0.416 / 0.615.
+- δd ∝ a^n by least squares in log-log: n = 1.21 / 1.34 / 1.40 at t = 8 / 10 / 11.5 (1.46 at t = 15, past the
+  small-displacement window); the superposed ladder by the same fit, 1.30 at t = 11. The local slope falls
+  1.71 → 1.35 → 1.13 across the rungs, as on superposed data: the point-charge a² stays unconfirmed.
+- The a = 1 arm carries an early gauge transient (+0.013 by t = 2, while a = 2 sits at 0), which is why its
+  ratio to the others climbs through t ≈ 8; the t = 11.5 reading is past it.
+Fig. 4 is now (a)–(d): (d) = `plot_width_ladder` (log-log; grey a² through the shared a = 2 pair, gold the
+fit), strip 5.7 × 2.3 in at 0.66\textwidth; label audit clean. Ledger: clmALadderOne/OneHalf/Two/Three,
+clmWidthExponentLo/Hi/Fit (extractors `single_matched_aladder`, `single_matched_width_exponent`), all ok.
+Open, cheap if wanted: flip arms at a = 1.5 and 3 (the under-read cancels within a width; predictions
+1.889 / 1.222) would separate the coordinate under-read from finite size — ~1 GPU-h each on the A1-csm recipe.

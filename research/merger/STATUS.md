@@ -133,6 +133,16 @@ trough-gated), and the open work is: E_GW(p060) via a radii passthrough for the 
 restart stream, the Sec. VIII waves rewrite, the stale figures (constraint_evolution,
 momentum_scan_orbits, the five waves figures), and the matched width table from the csm
 a-arms' slice caches (restores the width-exponent sentence).
+- **DONE 10-05 ~12:20 UTC on the second node (it has the run tree): the matched width table and Fig. 4(d).**
+  `results/merger/analysis/matched_rest.py` now reduces `ctrl_rest_a{1,15,3}_csm` too: the packed
+  `campaign/03_two_throats/matched_rest_displacement.dat` gained `dsep_like_a1/a15/a3` (a = 2 is
+  `dsep_like_d12`; the first five columns are byte-identical). Fig. 4 is (a)–(d): (d) is the width ladder
+  (`plot_width_ladder`), δd at t = 11.5 = 0.1623/0.3250/0.4791/0.7583 for a = 1/1.5/2/3, log-log fit a^1.40
+  against the point-charge a². Sec. V B's width sentence is back (n = 1.2–1.4 over t = 8–11.5; 7 rows
+  clmALadder*/clmWidthExponent*, extractors `single_matched_aladder`/`_width_exponent`).
+- **What a session without `runs/` can do** (a cloud container has git only): read the pack. Anything that
+  reads raw run output — `frames/_slice_cache`, unthinned `data/*.dat`, scratch plotfiles or checkpoints — is a
+  lab-node task, and its product lands in the pack as a reduced table its figure and ledger read (as here).
 
 ## The plan, in order (the user, 2026-09-28)
 
@@ -276,8 +286,9 @@ window.
 
 **WIDTH TWINS `ctrl_rest_a15_csm` + `ctrl_rest_a3_csm` DONE 19:21 UTC 10-02 — both reached t = 15 clean on
 one card** (no NaN; Ham 7.2e-3 / 2.4e-3, Mom ~3e-5, the rest-probe class; no MOTS anywhere, correct). The
-a-ladder of matching constants: c = 1.9735 (a1) / 2.0592 (a15) / 2.4506 (a3). Filed `03_two_throats/csm/`,
-closeouts running; the matched re-measure + Fig. 4(a) redraw are the pending analysis step. Was LIVE since
+a-ladder of matching constants: c = 2.3154 (a1) / 2.0592 (a15) / 2.1155 (a2, the d12 rung) / 2.4506 (a3). Filed
+`03_two_throats/csm/`; REDUCED 10-05 into `matched_rest_displacement.dat` and drawn as Fig. 4(d), the width
+ladder (TO DO section above). Was LIVE since
 ~15:40 UTC: the §V.B width-ladder arms on matched data — A1-csm's recipe (the
 archived superposed params + the d12_csm solve block + the 20-var plot_vars line), t = 15, L = 64 level 3,
 checkpoints every 2.0 keep 3. TWO PREFLIGHT REFUSALS FIRST (nothing started): the archived a15/a3 params carry
@@ -599,7 +610,7 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 | LAD-csm | `ladder_csm_L{4,6,7}_r0XXXX` | **CANCELLED (the user, 10-02).** Was: the wall under refinement, mode-3 (Fig. 12a's rerun) | its restart point (the lb spiral's t ≈ 50 checkpoint) did not survive: `checkpoint_keep 3` pruned it during the run (only t ≈ 60–70 were left at death, past trust 56.5) and the 10-01 wipe removed those; a fresh checkpointed leg (~17 h) is not worth it — Fig. 12a stays on the superposed ladder. Lesson: copy any checkpoint a queued run needs off the keep-N rotation to NFS while the producer is live | — |
 | SEED-csm | `single_eps_p1e1_t100_csm` | **DONE 10-02, stopped t = 31.5 on the user's word — BORN TRAPPED on solved data (MOTS at t = 0, R 4.306), the superposed twin's fate: the solve keeps the kick; no more single-wormhole runs, the m1e1 mirror cancelled** (Live, above; the kick carried by solve mode 2, c = 1.1 x c_iso — a conformal seed cannot survive the solve, the binary aborts). PAPER (the user, 10-02): the kicked single on SOLVED data — prove the ε kick is not the junk source (the seeded-throat verdicts §II.D/§IV.C are superposed-only) | `single_eps_p1e1_t100`'s packed params + the mode-3 constraint-solve block with the seed kept (`wormhole_seed_amplitude_A = 0.1`; preflight verifies the seed changes t = 0), only the name + `_csm` changed; L = 64, level 3, t = 100; checkpoints asked at launch; the mirror `m1e1` twin optional after | ~5 |
 | BBH-HEADON | `bbh_headon_d8_L128_lvl5_t100` | **DONE 10-02, t = 100 clean; packed `07_bbh_control/`; the energy/waveform comparison is the next analysis step.** Was (WHM_PREFLIGHT=static — the full probe runs the BinaryBH evolution for real): The vacuum control for the head-on: bare punctures at d = 8 from rest, t = 100, for Fig. 5 and the gallery/energy comparison | the csm head-on's setup (same box, grid, spheres, plot cadence) with the drainhole/scalar blocks swapped for bare punctures, as the d = 12 BBH controls; template from `bbh_control_d12_p012_t150`'s params with d and p changed; checkpoints asked at launch | ~30–50 (the head-on chain's class; vacuum punctures ride through a merger, so likely one leg) |
-| A1-csm | `ctrl_rest_a1_csm` (then `ctrl_rest_a15_csm` / `ctrl_rest_a3_csm`) | **DONE 10-02, t = 15 clean; packed `03_two_throats/csm/`; the a15/a3 twins LIVE together on the first node's card 0 since ~15:40 UTC 10-02 (Live, above); the re-measure/redraw follows on all three arms.** Was: Restore Fig. 4(a)'s width arm on matched data (the a = 1 arm left the panel 09-30: no matched twin) and put clmNarrowPairRatio — and with the optional twins the §V.B width ladder clmALadder* — on mode 3 | the old run's packed `evolution_params.txt` with ONLY the constraint-solve block and the name changed (the rest-pair rule), t = 15, L = 64 level 3; checkpoints asked at launch; re-measure into `matched_rest_displacement.dat` and redraw Fig. 4(a) | ~1 each (the csm rest pairs' class: 18 u/h alone) |
+| A1-csm | `ctrl_rest_a1_csm` (then `ctrl_rest_a15_csm` / `ctrl_rest_a3_csm`) | **DONE 10-02, t = 15 clean; packed `03_two_throats/csm/`; the a15/a3 twins done 19:21 UTC 10-02; all three REDUCED 10-05 into `matched_rest_displacement.dat`: Fig. 4(d) + Sec. V B's width sentence (TO DO section above).** Was: Restore Fig. 4(a)'s width arm on matched data (the a = 1 arm left the panel 09-30: no matched twin) and put clmNarrowPairRatio — and with the optional twins the §V.B width ladder clmALadder* — on mode 3 | the old run's packed `evolution_params.txt` with ONLY the constraint-solve block and the name changed (the rest-pair rule), t = 15, L = 64 level 3; checkpoints asked at launch; re-measure into `matched_rest_displacement.dat` and redraw Fig. 4(a) | ~1 each (the csm rest pairs' class: 18 u/h alone) |
 | PLACE-csm | `place_d{6..48}_step1_csm` (the 18 one-step probes) | **DONE 14:52 UTC 10-02, all 18 solved and filed `04_binary_headon/placement_csm/`; the curve regeneration + Fig. 4(d,e) redraw are the next analysis step.** The matched placement curve for Fig. 4(d,e), now captioned as superposed-only: expected flat at R⋆ = 3.8895 (the matched pairs read 3.876–3.878 at t = 0), which would draw the clean-data contrast under the superposed excess; re-measures or retires clmMouthTauFlybyPlaced/SeedFlybyPlaced (CSM_SWITCHOVER) | the superposed probes' params (`04_binary_headon/placement/place_d*_step1`) with only mode 3 + names; initial data plus one step, scanned at t = 0; no frames beyond the default t = 0 set | < 1 total (minutes per probe) |
 | CONV-csm | `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` | **LIVE on the first node's card 1 since ~14:40 UTC 10-02** (Live, above). Spiral burst/energy, level 4 vs 5 | the spiral template, max_level 4, from t = 0 | ~8–10 |
 | EGW-p06 | `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` | **GO GIVEN (the user, 10-02 ~18:20 UTC, first on the freed card 0): E_GW(p) above the fly-by (turnover).** max_level 4 on the user's word (exploratory; the extraction spheres read the base grid whatever max_level is — lvl4 only coarsens the throats, the "if it's not NaN" test); checkpoints every 5 keep 3 (the user's answer); template ready in templates_scan, diffed: only p 0.25 -> 0.6, stop 100 -> 40, the name | ~4–6 |
@@ -623,8 +634,8 @@ archive. Checkpoints: asked per run at launch, never on by default.
 - **Seeded throat**: fate opposite to the kick; ε = ±0.1 both collapse and die at the origin. (§II.D, §IV.C)
 - **Two throats at rest**: like signs repel, opposite attract; force ∝ (d + δ)⁻²; **mode-3 rerun done: ratio
   1.463 ± 0.023 = fixed potential, δ = 2.65 — in the paper. Fig. 4(a–c) draws the matched pairs since 09-30**
-  (abstract and caption quote the ledger's 1.462 ± 0.022; the a = 1 arm left panel (a) — no matched twin;
-  (d)/(e) stay on the superposed placement probes, the superposition systematic itself). (§V)
+  (abstract and caption quote the ledger's 1.462 ± 0.022); **(d), since 10-05, the matched width ladder: the
+  push grows as a^1.2–1.4, not the point-charge a²** (the placement panels left with the superposed campaign). (§V)
 - **Head-on**: common MOTS from t = 22 around both throats; never bounces; shrinks toward the pair's Bondi
   mass. **Mode-3 chain done (t = 100, closed out 09-30): MOTS at t = 22 with R 5.02 (superposed 5.56), there to
   the end (R 4.69, M_MS 2.373 against M_ADM 2.357); the same ringdown swings. **The FIGURES read the mode-3

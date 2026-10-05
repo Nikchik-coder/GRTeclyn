@@ -874,6 +874,37 @@ def single_width_exponent(kind: str, times: tuple[float, ...] = (8.0, 10.0, 11.0
     return _pick(vals, kind)
 
 
+# The width ladder on matched data (2026-10-05): the mode-3 like pairs at d = 12, a = 2 being
+# the separation ladder's d = 12 rung (matched_rest.py; Fig. 4(d), plot_width_ladder).
+_MATCHED_WIDTHS = {1.0: "dsep_like_a1", 1.5: "dsep_like_a15", 2.0: "dsep_like_d12", 3.0: "dsep_like_a3"}
+
+
+def _matched_aladder(t: float) -> dict[float, float]:
+    """a -> the mode-3 like pair's displacement at time t (matched_rest_displacement.dat)."""
+    names, arr = _matched_table()
+    tt = arr[:, names.index("time")]
+    return {a: float(np.interp(t, tt, arr[:, names.index(c)])) for a, c in _MATCHED_WIDTHS.items()}
+
+
+@extractor
+def single_matched_aladder(a: float, t: float = 11.5) -> float:
+    """The matched width ladder: the d = 12 like pair of throat width a, its displacement at t."""
+    return _matched_aladder(t)[float(a)]
+
+
+@extractor
+def single_matched_width_exponent(kind: str, times: tuple[float, ...] = (8.0, 10.0, 11.5)) -> float:
+    """Effective exponent n of displacement ~ a^n on the matched width ladder: least squares in
+    log-log over a = 1/1.5/2/3 at each time (at t = 11.5 the gold line of Fig. 4(d)); min or
+    max over times."""
+    vals = []
+    for t in times:
+        row = _matched_aladder(float(t))
+        widths = sorted(row)
+        vals.append(float(np.polyfit(np.log(widths), np.log([row[a] for a in widths]), 1)[0]))
+    return _pick(vals, kind)
+
+
 @functools.lru_cache(maxsize=None)
 def _placement() -> tuple[np.ndarray, np.ndarray]:
     """(d, R_mouth) of the one-step placement probes: mean of the mouth-A/B

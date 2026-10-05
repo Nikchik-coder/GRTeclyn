@@ -901,3 +901,9 @@ fit". Left panels only (CONTEXT is also a sphere of the envelope ramp). Row
 titles print p (was P). Drawn with no arguments.
 
 2026-10-05: `pair_interaction` cut to (a)-(c) (sign rule + matched force ladder); the placement panels (d,e) left with the superposed campaign, which no longer appears in the paper.
+
+2026-10-05 (~12:20 UTC): `pair_interaction` gains (d), the matched width ladder (`plot_width_ladder`): like
+d = 12 pairs at a = 1/1.5/2/3, δd at t = 11.5 on log-log axes, grey dashed a² through the a = 2 rung (the
+same run as (c)'s d = 12 dot), gold the log-log fit a^1.40; names on the lines, as (a)–(c). Reads
+`matched_rest_displacement.dat` by header name. Strip 5.7 × 2.3 in, included at 0.66\textwidth (the
+three-panel strip's scale). Label audit clean.

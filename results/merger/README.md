@@ -468,11 +468,16 @@ and the framing was wrong — see below.)*
   formula at a/d = 0.25; like-charge arms alone cannot separate them. The
   decisive test is two flip arms at a = 1.5 and a = 3, where the under-read
   cancels within each width and the predictions are far apart (1.889 and
-  1.222 against a = 2's confirmed 1.500). (2026-10-02: the width ladder now
-  exists on far-side-matched data — `ctrl_rest_a1_csm` / `a15` / `a3`, pack
-  `campaign/03_two_throats/csm/`, all clean to t = 15; the matched re-measure
-  and the Fig. 4(a) redraw are the pending analysis step, so the numbers in
-  this bullet remain superposed-era until then.) **The separation ladder below now
+  1.222 against a = 2's confirmed 1.500). (2026-10-05: re-measured on
+  far-side-matched data — `ctrl_rest_a1_csm` / `a15` / `a3`, pack
+  `campaign/03_two_throats/csm/`, with `ctrl_rest_d12_csm` as a = 2, reduced by
+  `analysis/matched_rest.py` into `matched_rest_displacement.dat` — and the
+  verdict stands: 0.1456 / 0.2893 / 0.4249 / 0.6689 by t = 11 (0.1623 / 0.3250 /
+  0.4791 / 0.7583 by t = 11.5, the paper's), a log-log exponent of 1.21 / 1.34 /
+  1.40 at t = 8 / 10 / 11.5 against the superposed ladder's 1.30 at t = 11 by
+  the same fit, the local slope falling 1.71 → 1.35 → 1.13 across the rungs,
+  and a² overshooting a = 3 by 1.9×. Drawn as Fig. 4(d), quoted in Sec. V B.)
+  **The separation ladder below now
   favours the finite-size branch**: it finds an effective separation exceeding
   the coordinate one by about a throat radius, which is exactly the correction
   a point-charge formula is missing, and it does so in a geometry where the

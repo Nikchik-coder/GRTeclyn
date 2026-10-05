@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-r"""The pair interaction on one strip: sign rule and force law (matched pairs).
+r"""The pair interaction on one strip: sign rule, force law and width ladder (matched pairs).
 
 The article's two single-column pair figures merged into one two-column
 ``figure*`` at the top of the page (the user, 2026-09-18): panels (a)/(b)
@@ -7,7 +7,9 @@ are ``plot_sign_rule``'s three-pairs-one-knob-apart story with the 3/2
 ratio, panel (c) is ``plot_force_law``'s separation ladder (added
 2026-09-25, when the user asked where Sec. V B's four displacements are
 drawn).  The placement panels (d)/(e) left with the superposed campaign
-(the user, 2026-10-05).  Each panel is drawn by ITS OWN module
+(the user, 2026-10-05), and panel (d) became ``plot_width_ladder``'s width
+ladder the same day, once the matched a = 1/1.5/3 pairs were reduced into
+the pack.  Each panel is drawn by ITS OWN module
 (``figure_panels`` / ``figure_panel``), so this module owns nothing but the
 canvas, the lettering and the file; any change to what a panel says belongs
 in its home module, and lands here on the next run.
@@ -32,7 +34,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import (  # noqa: E402
-    plot_force_law, plot_sign_rule, style,
+    plot_force_law, plot_sign_rule, plot_width_ladder, style,
 )
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E402
     PACK_ROOT, figure_dir,
@@ -47,11 +49,13 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     style.prd(base=10.0)
-    fig, (axA, axB, axF) = plt.subplots(1, 3, figsize=(4.3, 2.3),
-                                        constrained_layout=True)
+    # 1.43 in per panel, as the three-panel strip had.
+    fig, (axA, axB, axF, axW) = plt.subplots(1, 4, figsize=(5.7, 2.3),
+                                             constrained_layout=True)
     plot_sign_rule.figure_panels(axA, axB, pack_root=args.pack_root, stacked=False)
     plot_force_law.figure_panel(axF, pack_root=args.pack_root)
-    for ax, letter in zip((axA, axB, axF), "abc"):
+    plot_width_ladder.figure_panel(axW, pack_root=args.pack_root)
+    for ax, letter in zip((axA, axB, axF, axW), "abcd"):
         ax.text(0.0, 1.05, f"({letter})", transform=ax.transAxes,
                 ha="left", va="bottom", fontsize=9, color=style.INK)
     style.label_audit(fig)
