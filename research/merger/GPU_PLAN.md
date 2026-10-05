@@ -4469,3 +4469,32 @@ whether any of this can be computed on the existing data"). Measured on the pack
   ω = 0.122–0.124 (R = 10), the Schwarzschild ℓ = 1 scalar QNM of the final MOTS mass (0.1226) to 1 %, damping 10 %
   slower; the merger's dipole gives no stable fit. (3) 3D MOTS — alm files exist for the head-on and d = 6 legs.
   (4) phantom flow and (5) embeddings — workstation slice caches only.
+
+## 2026-10-05 (late) — scalar ringdown and memory in the paper; Sec. IX A's ringdown claim corrected
+
+On the user's "yes" (add the scalar ringdown and the memory sentence) and "check this claims whether any of this
+can be used in the paper" (four "Nobel" predictions pasted from elsewhere):
+- **Scalar ringdown (Sec. VIII G).** The head-on's post-horizon x-dipole (Re A_11, R = 10, damped cosine from
+  t = 40 to 95) rings at ω = 0.123 and decays at 0.037; the ℓ = 1 scalar QNM of a Schwarzschild hole of the final
+  MOTS mass 2.3894 (Mω = 0.2929 − 0.0977i, Berti–Cardoso–Starinets 2009) gives 0.1226 − 0.0409i: frequency to
+  < 1 % for starts t = 35–45, damping 9 % slower. Rows clmScalarQnm* (extractor `waves_scalar_qnm`).
+- **Memory (Sec. VIII F).** `scalar_memory_angmom.budget` on the current fly-by (R = 30): the ghost's (2,0) memory
+  has the GW memory's sign, 0.30 (radiative dipole, arch) to 0.46 (wave-zone pattern, whole record) of it.
+  Rows clmMemoryRatioLo/Hi (extractor `waves_memory_ratio`); Christodoulou, Thorne and Favata back in the
+  bibliography.
+- **Sec. IX A corrected.** The head-on's falling frequency (707 → 410 Hz at 30 M⊙) settles from above onto the
+  ℓ = 2 mode of a Schwarzschild hole of its final MOTS mass, 397 Hz (3 % at the end of its loud record): the
+  remnant does not spin, so the equal-mass Kerr mode (599 Hz) was the wrong reference, and the old ×1.08
+  "shrinking rings faster" row (clmDetKerrRise) read the superposed head-on's scans: dropped. The text now says
+  every resolved ringdown (lone throat, head-on, the head-on's scalar dipole) is the remnant's ordinary
+  quasinormal spectrum and the wormhole is in the burst before it; the abstract's lone-collapse "0.55 of the
+  equal-mass Kerr frequency" became "the Schwarzschild frequency of the black hole it becomes", and "falls or
+  drifts where a Kerr ringdown would hold" became "no chirp before it" (abstract, Sec. X opening).
+- **The four claims.** (1) "Shrinking-horizon ringdown violating the QNM spectrum": contradicted — the measured
+  ringdowns sit on the remnants' standard modes, and shrinking would raise the frequency, not lower it; the area
+  loss itself (28 %) was already in. (2) "Anti-memory": contradicted — the dipole adds to the memory (now in);
+  the Big-Rip link fails too (the massless ghost's radiation dilutes as w = 1/3, Sec. X B). (3) "Orphan LISA
+  bursts": already in, hedged (0.05–5 per year; 0.06–0.1 in four years at one conversion per little red dot;
+  a vacuum black-hole fly-by also has no inspiral). (4) "Inflation voids / Hubble tension / ISW": no support —
+  1.3 areal e-folds in an asymptotically flat box, end state open.
+- Ledger 882 rows, 0 problems; numbers.tex regenerated. Not compiled here (no TeX).

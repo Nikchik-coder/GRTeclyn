@@ -43,7 +43,7 @@ import re
 
 import numpy as np
 
-from lib import PACK, extractor, params, run_dir
+from lib import PACK, evaluate, extractor, params, run_dir
 
 WM = "grteclyn_wrapper.visualisation.wormhole_merger"
 
@@ -667,6 +667,51 @@ def waves_early_share(cases: list, window: float = 10.0) -> float:
         part = pm._compute_radiated_energy(u[k], w[k], m=int(c["m"]), f_peak=f_pk)
         worst = max(worst, 100.0 * part / full)
     return float(worst)
+
+
+@extractor
+def waves_scalar_qnm(run: str, R: int, t0: float, t1: float, part: str) -> float:
+    """One damped oscillation A exp(-w_I s) cos(w_R s + ph) + c, s = t - t0, fitted
+    over [t0, t1] to the x-dipole of a packed scalar_modes.dat (Re A_11, A = R phi;
+    the head-on's collision axis is x): part 're' -> w_R, 'im' -> w_I.  Against the
+    l = 1 scalar quasinormal mode of the remnant (referee idea, 2026-10-05)."""
+    from scipy.optimize import curve_fit
+    path = _run_path(run) / "scalar_modes.dat"
+    with open(path, encoding="utf-8") as fh:
+        head = next(ln for ln in fh if ln.startswith("# time")).lstrip("#").split()
+    d = np.loadtxt(path)
+    t, y = d[:, 0], d[:, head.index(f"R{int(R)}_phi_l1_m1_re")] * float(R)
+    k = (t >= float(t0)) & (t <= float(t1))
+    s, y = t[k] - float(t0), y[k]
+
+    def model(s, A, w, ph, g, c):
+        return A * np.exp(-g * s) * np.cos(w * s + ph) + c
+
+    P, _ = curve_fit(model, s, y, p0=[y[0] or 1e-3, 0.12, 0.0, 0.04, 0.0], maxfev=20000)
+    return float(abs(P[1]) if part == "re" else P[3])
+
+
+@extractor
+def waves_memory_ratio(run: str, R: int, t0: float, t1: float, estimator: str = "W") -> float:
+    """(2,0) nonlinear memory of the ghost scalar over the gravitational one through
+    sphere R over [t0, t1], orbital frame, from the pack's analysis script
+    scalar_memory_angmom.budget: estimator 'W' (the wave-zone angular pattern),
+    'kin' (that pattern rescaled to the kinematic energy) or 'rad' (the radiative
+    l = 1 dipole).  Positive: the negative-energy flux ADDS to the GW memory."""
+    S = importlib.import_module("scalar_memory_angmom")
+    b = S.budget(run, int(R), float(t0), float(t1), "z")
+    h = {"W": b["h_W"][0].real, "kin": b["h_kin"], "rad": b["h_rad"]}[estimator]
+    return float(h / b["h_GW"][0].real)
+
+
+@extractor
+def waves_schw_qnm_hz(scenario: str, m_final: dict, m_omega: float = 0.37367) -> float:
+    """Hz at the LIGO figure's calibration of a Schwarzschild quasinormal mode,
+    M omega = m_omega (default l = 2, n = 0), for a remnant of code mass m_final
+    (an extractor spec), the scenario's record being in units of its M_CODE."""
+    L, pm = _mod("plot_psi4_ligo"), _mod("psi4_math")
+    fM = float(m_omega) / (2.0 * math.pi) * L.M_CODE[scenario] / evaluate(m_final)
+    return fM / (L.MASS_MSUN * pm.M_SUN_SEC)
 
 
 @extractor

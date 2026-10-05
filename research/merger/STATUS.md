@@ -78,7 +78,7 @@ after the shortening pass.)
 Analysis only (no GPU), optional: E_GW(p = 0.12) on SPIRAL-lbf's packed streams (a fourth point for Sec. VIII D's
 energy sequence).
 
-Referee ideas checked on the packed data (2026-10-05, late; none in the paper yet, the user's call):
+Referee ideas checked on the packed data (2026-10-05, late; the scalar ringdown and the memory sentence are IN the paper since, on the user's "yes"):
 - **Scalar ringdown (computed, preliminary):** after the head-on's common MOTS the ℓ = 1 scalar dipole rings at
   ω = 0.122–0.124 on R = 10 (0.122 on R = 14 from t = 45): the Schwarzschild ℓ = 1 scalar QNM of the final MOTS mass
   2.389 is 0.1226 (1 %); damping 0.037 against 0.041 (10 % slower). Fit: damped cosine on the x-dipole of the SERIES
