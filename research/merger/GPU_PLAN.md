@@ -4335,3 +4335,31 @@ ringdown trio, scalar figure caption's R=14 ratio on new cut conventions is in.
   opposite senses from the start (like apart, opposite together) — fixed charge (−0.667, same sense) is excluded
   already at t → 0; the magnitude ratio is 1.42–1.44 by quadratic fits over t = 2–5 … 3–8, and 1.44–1.49 by
   displacement over t = 4–11.5, against fixed potential 1.500 (the paper's 1.463 ± 0.023 over t = 3.5–10.5).
+
+## 2026-10-05 (late) — figure pass: constraint ladder, p060 panels, BBH-d6 overlay, FIG 9 cut
+
+- **Appendix constraint figure, now 4 + 4 panels.** (e) head-on and (f) d6 chain drawn with their main-text ladders
+  (era rules, levels per era, every failed arm grey with its death cross: the lvl6/lvl7 walls and the sigma
+  overrun); new (g) the p = 0.60 plunge chain (level 4; chi floor from t = 50; the floor-free extension dies 55.5
+  with its norm at its floor; the lvl5 check clean to its stop; trust 80); the fly-by moves to (h). Frames end on
+  the t = 0/100 ticks: the inward corner ticks had crossed into a "+" 1.5 units past t = 100 (the user's "cross").
+- **The needles on the moving d = 12 arms are a transient of the norm, not of the evolution** (the user: "is it okay
+  that we have these spikes?"). Measured on p025/p045/p060 (none on the head-on or d6 chains): each lasts a few
+  output samples (the biggest 1–3, at most 0.15 time units); at every needle max|K| stays within 0.92–1.07 of its
+  neighbours while min χ jumps (×0.08–×5); the R = 20 (2,2) records carry no counterpart at the needle or 8–22
+  units later (their only rough samples, t ≈ 14 and 24, sit at the same times on all three runs whatever the
+  needle pattern). The norm is the level-0 (Δx = 0.5) L2 over the whole box, unmasked
+  (`BinaryWormholeLevel::write_scalar_diagnostics`), so it reads the moving χ pits through coarse stencils.
+  OPEN, analysis only (no GPU): whether each needle sits on a regrid — needs the p045/p060 every-step
+  `constraint_norms` stream and the run.log regrid lines from the workstation (not packed).
+- **Gallery row (c) carries the merger's vacuum twin (BBH-d6).** At R = 20 the vacuum merger peaks at
+  |rΨ4| = 7.00e-3 at t − R = 19.1, the drainhole merger 2.12e-2 at 19.3: the same retarded clock, 3.0× louder
+  (clmGwVacMergerPeakRatio, caption and Sec. VIII text).
+- **Heavy-seeds (b) shows the p = 0.60 plunge** (a floor: its record ends at the trust window mid-decay) beside the
+  merger, head-on and lone collapse at 10^5 M_sun, in a zoom inset (all sit near fM ~ 0.05); the key is one row
+  across the top of the figure. `plot_psi4_ligo.M_CODE["plunge"] = 1.9120` (its M_ADM_face): the LIGO figure still
+  skips the plunge, but `load_all_arms` now serves it, so **the next O3b rerun's bank includes the plunge**
+  (corner-protected like the other pedestalled records); exclude it with `TemplateBank(arms=...)` if unwanted.
+- **FIG 9 (E_GW vs p) removed** (the user: "describe it in text, wipe the figure"); Sec. VIII A's text carries the
+  three energies, the gating and the floor. `plot_egw_momentum.py` stays as a check of those numbers.
+- Ledgers: clmPSixtyTrust (80), clmGwVacMergerPeakRatio (3.0); 929 rows, 0 problems.

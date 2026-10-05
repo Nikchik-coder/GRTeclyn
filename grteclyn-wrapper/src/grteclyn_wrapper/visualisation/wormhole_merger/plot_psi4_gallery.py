@@ -200,8 +200,8 @@ ARMS = [
     # Since 2026-10-05 rows (c)/(d) are the mode-3 boosted campaign: (c) the
     # d = 6 merger chain glued into one record (its SERIES README documents the
     # legs and the 4.6e-7 seam check) -- the one orbital merger, drawn whole,
-    # burst through remnant ringdown to t = 100; no vacuum twin exists at
-    # d = 6, so row (c) carries no overlay.  (d) the p = 0.45 boosted
+    # burst through remnant ringdown to t = 100, its vacuum twin (BBH-d6,
+    # 2026-10-05) under it (VACUUM_OVERLAY).  (d) the p = 0.45 boosted
     # scatterer, the deepest pass that still escapes (the capture boundary's
     # near side); its ARMS cap is the R = 20 trough t = 94, where the decaying
     # arch meets the mouths' growing contamination (clmEgwGateFortyFive), and
@@ -257,6 +257,15 @@ ARMS = [
 #           row's scale a rule), and the holes reach r = 13.7 by t = 100.  Its
 #           two lobes fold across R = 20/26/30 at v/c = 0.99/0.96.
 VACUUM_OVERLAY = {
+    # The merger's vacuum twin (2026-10-05, the user: "should now have the
+    # curve for bbh p010 d6 ... so we can compare the signal strength"):
+    # bare punctures at +-3, tangential p = 0.10 in the merger's sense, per-
+    # hole ADM mass 1.00, on the BBH controls' box (spheres 14/20/26/30), so
+    # its R = 20 is the row's own sphere.  Drawn whole to t = 100: its peak
+    # |r Psi4| = 7.0e-3 lands at the same retarded time as the drainhole
+    # burst's (t - R = 19.1 vs 19.3), 3.0x below it.
+    "spiral": ("07_bbh_control/bbh_control_d6_p010_t100/weyl_extraction_mode_22.dat",
+               20.0, "vacuum BBH merger", False, (52.0, 76.0), "below"),
     # The head-on's vacuum twin (2026-10-05): two equal punctures from rest at
     # d = 8, its (2,0) at its innermost sphere R = 14 (the row's own sphere is
     # R = 10; the streams carry r*Psi4, so the two are comparable at the few-%

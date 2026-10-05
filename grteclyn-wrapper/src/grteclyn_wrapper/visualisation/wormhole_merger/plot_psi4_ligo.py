@@ -106,6 +106,10 @@ M_CODE = {
     "spiral": 2.3634,           # the d = 6 pair's boosted-solve M_ADM_face
                                 # (its lvl5from0 leg's constraint_solve.dat)
     "fly-by": 2.0776,           # the p = 0.45 pair's M_ADM_face
+    "plunge": 1.9120,           # the p = 0.60 pair's M_ADM_face (its t040
+                                # leg's constraint_solve.dat); drawn by the
+                                # LISA panel as a floor, kept out of this
+                                # figure (prepare's skip)
     "vacuum BBH twin": 2.0,     # bare 0.9615 -> per-hole ADM ~ 1.00 at d = 12
 }
 
@@ -261,8 +265,8 @@ def prepare(pack: pathlib.Path):
     arms = []
     # The plunge row (gallery 2026-10-05) stays out of this figure: its record
     # is cut at its trust window mid-decay, so band spectra, tracks and the
-    # energy bar would all read a floor as a measurement; its energy is the
-    # E_GW(p) figure's open point (plot_egw_momentum).
+    # energy bar would all read a floor as a measurement; its energy is quoted
+    # as a floor in sec:gw:flyby.
     skip = {"plunge"}
     for name, knob, mode, rel, m, R0, t_max, _note in ARMS:
         if name in skip:

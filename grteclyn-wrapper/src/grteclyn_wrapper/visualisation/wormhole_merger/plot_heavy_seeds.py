@@ -32,6 +32,14 @@ carries the numbers of the text: heavier bursts are louder but redder; the
 tracks climb one decade per mass decade while the noise wall below ~0.1 mHz
 climbs faster, and past 10^7 M_sun they slide out of the band (hatched, not
 counted).  Grey dashed: the lone collapse at 10^5 M_sun, below the noise.
+Since 2026-10-05 (the user: "why this fig doesn't have the other signals such
+as p060?"): at 10^5 M_sun the d = 6 merger (blue), the p = 0.60 plunge (blue
+dotted, a FLOOR -- its record ends at its trust window mid-decay), the
+head-on (dashed ink) and the lone collapse, all near fM ~ 0.05 and so
+overlapping on the panel's seven decades: an inset magnifies the 10^5
+cluster with the noise under it, its window ruled on the panel.  The key is
+one row across the top of the figure, over (a)-(c) (the user: "the
+horizontal layout on top of all the a b c").
 
 PANEL (c) -- THE POPULATION CURVE (2026-09-24, the first author's request:
 "draw the statistical curve ... how much was needed to provide what Lambda
@@ -260,7 +268,7 @@ def _track(wf, spec, f99, mass: float, share: float = 0.90, dlog: float = 0.04):
     return np.array(fb), np.array(hb)
 
 
-def panel_bursts(ax) -> None:
+def panel_bursts(ax) -> list:
     """The fly-by at every mass decade, the spiral and the lone collapse at
     1e5 M_sun, against the LISA noise."""
     ax.axvspan(1.0e-7, LISA.F_MIN, facecolor="none", edgecolor=style.FAINT, lw=0.0,
@@ -280,18 +288,54 @@ def panel_bursts(ax) -> None:
         k = int(np.argmax(hc))
         style.callout(ax, ff[k], hc[k], rf"$10^{{{int(round(math.log10(m)))}}}$",
                       above=True, color=style.INK, fontsize=6.8, gap=3.0)
-    ff, hc = _track(*arms["spiral"], 1.0e5)
-    h_sp, = ax.plot(ff, hc, color=style.DEEP_BLUE, lw=1.6, solid_capstyle="round", zorder=3,
-                    label=r"spiral, $10^5$")
-    # The head-on (2026-09-30, the user: the panel never named it): the
-    # conversion channel's own burst, from the mode-3 chain, at the same
-    # reference mass as the spiral and the lone collapse.
-    ff, hc = _track(*arms["head-on"], 1.0e5)
-    h_ho, = ax.plot(ff, hc, color=style.INK, lw=1.2, ls=(0, (4.0, 2.0)), zorder=3,
-                    label=r"head-on, $10^5$")
-    ff, hc = _track(*arms["collapsing throat"], 1.0e5)
-    h_lc, = ax.plot(ff, hc, color=style.CONTEXT, lw=1.4, ls=(0, (3.0, 1.6)), zorder=3,
-                    label=r"lone collapse, $10^5$")
+    # The other sources at the reference mass 1e5 M_sun.  At one mass every
+    # burst sits near fM ~ 0.05, so the five tracks overlap on the panel's
+    # seven decades; the inset (upper right, empty since the key moved above
+    # the frame) magnifies them so their strengths can be compared.
+    #   merger   the d = 6 chain;
+    #   plunge   p = 0.60 (2026-10-05, the user: "why this fig doesn't have
+    #            the other signals such as p060?"): its record ends at the
+    #            trust window mid-decay, so its track is a FLOOR (the key);
+    #   head-on  the conversion channel's own burst (2026-09-30);
+    #   lone collapse.
+    ref = [("spiral", dict(color=style.DEEP_BLUE, lw=1.6, solid_capstyle="round")),
+           ("plunge", dict(color=style.DEEP_BLUE, lw=1.3, ls=(0, (1.0, 1.4)),
+                           dash_capstyle="round")),
+           ("head-on", dict(color=style.INK, lw=1.2, ls=(0, (4.0, 2.0)))),
+           ("collapsing throat", dict(color=style.CONTEXT, lw=1.4, ls=(0, (3.0, 1.6))))]
+    tracks = {name: _track(*arms[name], 1.0e5) for name, _ in ref}
+    tracks["fly-by"] = _track(*fly, 1.0e5)
+    hs = {}
+    for name, kw in ref:
+        hs[name], = ax.plot(*tracks[name], zorder=3, **kw)
+    h_sp, h_pl, h_ho, h_lc = (hs[n] for n in ("spiral", "plunge", "head-on",
+                                             "collapsing throat"))
+
+    # the zoom: every 1e5 track and the noise under them, on a window fitted
+    # to the tracks; its bounds are ruled on the panel
+    fx = np.concatenate([t[0] for t in tracks.values()])
+    hy = np.concatenate([t[1] for t in tracks.values()])
+    zx = (fx.min() / 1.25, fx.max() * 1.25)
+    fz0 = np.logspace(np.log10(zx[0]), np.log10(zx[1]), 120)
+    zy = (min(hy.min(), LISA.noise_strain(fz0, "conservative").min()) / 1.6, hy.max() * 2.0)
+    axin = ax.inset_axes([0.55, 0.55, 0.43, 0.42])
+    fz = np.logspace(np.log10(zx[0]), np.log10(zx[1]), 120)
+    axin.plot(fz, LISA.noise_strain(fz, "conservative"), color=style.INK, lw=1.1, zorder=4)
+    axin.plot(*tracks["fly-by"], color=style.GOLD, lw=1.8, solid_capstyle="round", zorder=3)
+    for name, kw in ref:
+        axin.plot(*tracks[name], zorder=3, **kw)
+    axin.set_xscale("log")
+    axin.set_yscale("log")
+    axin.set_xlim(*zx)
+    axin.set_ylim(*zy)
+    axin.tick_params(which="both", labelbottom=False, labelleft=False)
+    axin.set_facecolor("white")
+    axin.text(0.96, 0.40, r"$10^5\,M_\odot$", transform=axin.transAxes, ha="right",
+              va="center", fontsize=6.3, color=style.INK)
+    ax.indicate_inset((zx[0], zy[0], zx[1] - zx[0], zy[1] - zy[0]),
+                      edgecolor=style.MUTED, linewidth=0.6, alpha=1.0)
+    print(f"  (b) 1e5 zoom: f {zx[0]:.2e}-{zx[1]:.2e} Hz, h_c {zy[0]:.1e}-{zy[1]:.1e}; peaks: "
+          + ", ".join(f"{n} {tracks[n][1].max():.1e}" for n in tracks))
 
     ax.set_xscale("log")
     ax.set_yscale("log")
@@ -300,13 +344,16 @@ def panel_bursts(ax) -> None:
     ax.set_xticks([1e-6, 1e-4, 1e-2, 1e0])
     ax.set_xlabel(r"$f_{\rm obs}$ [Hz]")
     ax.set_ylabel(r"$h_c$,  $\sqrt{f S_n}$")
-    # The key takes the top; the unit of the mass names sits in the one empty
+    # The key is ONE ROW ACROSS THE TOP OF THE FIGURE, over (a)-(c) (the
+    # user, 2026-10-05: "moving the legend to the top so it's not polluting
+    # the figure content", then "the horizontal layout on top of all the a b
+    # c"), drawn by main(); the unit of the mass names sits in the one empty
     # corner, under the noise floor's right arm.
     style.note(ax, r"$M$ [$M_\odot$], $z_e=20$", loc="lower right", color=style.INK,
                fontsize=6.8)
     style.note(ax, "below\nthe band", loc="lower left", fontsize=6.5)
-    style.legend(ax, handles=[h_fly, h_sp, h_ho, h_lc, noise], loc="upper right", fontsize=6.5,
-                 frameon=False, handlelength=1.8, borderaxespad=0.3, labelspacing=0.25)
+    return [(h_fly, "fly-by, every $M$"), (h_sp, "merger"), (h_pl, "plunge (floor)"),
+            (h_ho, "head-on"), (h_lc, "lone collapse"), (noise, "LISA noise, 4 yr")]
 
 
 def panel_population(ax) -> None:
@@ -403,16 +450,25 @@ def panel_population(ax) -> None:
 
 def main() -> None:
     style.prd()
-    fig = plt.figure(figsize=(7.2, 3.0))
-    gs = fig.add_gridspec(1, 3, width_ratios=(2.0, 1.2, 1.0))
+    fig = plt.figure(figsize=(7.2, 3.35))   # 3.0 before the key row went on top
+    gs = fig.add_gridspec(1, 3, width_ratios=(1.95, 1.3, 1.0))
     ax_a, ax_b, ax_c = (fig.add_subplot(gs[0, i]) for i in range(3))
     panel_seed_race(ax_a)
-    panel_bursts(ax_b)
+    key = panel_bursts(ax_b)
     panel_population(ax_c)
-    fig.tight_layout(w_pad=0.9)
+    fig.tight_layout(w_pad=0.9, rect=(0.0, 0.0, 1.0, 0.90))
+    fig.legend([h for h, _ in key], [t for _, t in key], loc="upper center",
+               bbox_to_anchor=(0.5, 1.0), ncol=len(key), frameon=False, fontsize=6.8,
+               title=r"(b): one burst at $z_e=20$, $M=10^5\,M_\odot$ unless named",
+               title_fontsize=6.8, handlelength=1.8, columnspacing=1.4,
+               handletextpad=0.5, borderaxespad=0.2)
     # Letter tags ABOVE the frames, the paper's rule, at one height for all
-    # panels: over the top-axis tick labels of (a) and (c).
-    top = ax_a.get_position().y1 + 0.085
+    # panels: over the tallest top decoration -- the top-axis tick labels of
+    # (a) and (c), the key of (b).
+    fig.canvas.draw()
+    inv = fig.transFigure.inverted()
+    top = max(inv.transform((0.0, ax.get_tightbbox().y1))[1]
+              for ax in (ax_a, ax_b, ax_c)) + 0.012
     for ax, tag in ((ax_a, "(a)"), (ax_b, "(b)"), (ax_c, "(c)")):
         fig.text(ax.get_position().x0, top, tag, ha="left", va="bottom",
                  fontsize=10.0, color=style.INK)
