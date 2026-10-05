@@ -9,7 +9,7 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 | run | node / card | t at 17:43 UTC | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
 | P060-EXT `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | first / 0 | 68.17 | 115 | 3.8 u/h (lvl5) | ~12.3 h → ~06:00 UTC 10-06 | every 5, keep 3 (the user) |
-| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 0 (mode-3 solve, 3 of 6 solves) | 70 | — (P045-T100 averaged 4.8 u/h) | ~15 h → ~09:30 UTC 10-06 | none (the user) |
+| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 0.16 (18:13; evolving since 18:12) | 70 | 4.0 u/h (P045-T100 averaged 4.8 to t = 70) | ~14.7 h → ~09:00 UTC 10-06 | none (the user) |
 | O3B-NEW (`gw_search` validate → inject → fitting-factor → scan) | first / CPU | fitting-factor since 17:44 | — | — | the scan is GWOSC-bound; each step capped at 4 h | — |
 
 - **P060-EXT** (the user's go ~15:30 UTC 10-05; launched 15:34): the p = 0.60 plunge's lvl5 check continued from its
@@ -21,8 +21,9 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 - **DAMP-off** (the user's go ~17:25 UTC 10-05, "Required" below; launched 17:35): P045-T100's params with ONLY
   `core_matter_damping` 1 → 0, the stop (100 → 70; P045-T100's trust 67.6) and the names changed; binary
   `main3d_boostpair_91ed17cd`; NO checkpoints (the user: "None, as P045-T100"; the inherited lines are off).
-  Preflight PASS. Pending: M_ADM and the far sides against P045-T100's (2.0776; max |M_far/M_iso − 1| = 1.2e-6),
-  frame 0 against P045-T100's, the consumer's first MOTS rows and pruning, card memory.
+  Preflight PASS. Started by effect: the ~35-min mode-3 solve gave M_ADM 2.077626359 and far sides 1.249e-6, P045-T100's
+  to every digit; frame 0 matches P045-T100's (the mouths at ±6; the renderer's newer style); the consumer's t = 0
+  rows landed (no common MOTS, as expected); card 1 at 57 GB. Pending: the keep-last pruning (from t = 3).
 - **O3B-NEW** (the same go; the first node's CPU, GWOSC reached with the proxy bypassed): validate PASS 17:28 UTC;
   inject PASS 17:44 (18/18 found, recovered/optimal SNR 0.93–1.08, median 0.99, χ²_r 0.47–1.24); fitting-factor,
   then the scan. Then the claims check, Sec. IX's ledger rows and `claims.py tex`; the three json files are committed
