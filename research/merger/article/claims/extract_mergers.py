@@ -1039,3 +1039,31 @@ def mergers_spectral_maxrise(runs, col: str = "R") -> float:
     s = _spectral(runs)
     y = s[col]
     return float(100.0 * max(0.0, float(np.max(np.diff(y) / y[:-1]))))
+
+
+@extractor
+def mergers_pit_separation(runs, what: str = "sep", at="min") -> float:
+    """The chi pits' coordinate separation from binary_throat_diagnostics.dat
+    (legs concatenated in time order when runs is a list): the separation at
+    its minimum (at="min"), at the last row ("last") or at a time; what="time"
+    returns the row's time instead (the closest-approach epoch)."""
+    if isinstance(runs, str):
+        runs = [runs]
+    rows = {}
+    for r in runs:
+        for ln in (run_dir(r) / "binary_throat_diagnostics.dat").read_text().splitlines():
+            if ln.startswith("#"):
+                continue
+            p = ln.split()
+            rows[round(float(p[0]), 4)] = float(p[1])
+    t = np.array(sorted(rows))
+    s = np.array([rows[x] for x in t])
+    if at == "min":
+        i = int(np.argmin(s))
+    elif at == "last":
+        i = len(t) - 1
+    else:
+        i = int(np.argmin(np.abs(t - float(at))))
+        if abs(t[i] - float(at)) > 0.51:
+            raise ValueError(f"no row near t = {at}")
+    return float(t[i] if what == "time" else s[i])
