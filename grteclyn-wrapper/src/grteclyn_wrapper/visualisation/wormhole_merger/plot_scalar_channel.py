@@ -44,25 +44,21 @@ is the honest precision of the statement.
 
 WHERE IT STOPS BEING A MEASUREMENT
 
-Two limits.  (1) THE FLY-BY'S TRUST WINDOW (2026-09-26, referee): its
-constraint norms grow by orders of magnitude as its mouths inflate, so the
-paper uses nothing of it after t = 70 at the source (T_TRUST), and nothing a
-sphere records after the matching retarded time u = t - R = 50 (U_GATE; t = 70
-at R = 20, the wave gallery's DRAW_GATES["fly-by"]).  Every fly-by curve is
-drawn to its sphere's gate: R = 14 to t = 64, R = 30 to t = 80.  Panel (a)'s
-normalising cut (t = 80) and its four ratio cuts (t = 50-80, u = 20-50) and
-panel (b)'s t = 60 already lie inside it; only (c) drew past it (to t = 100).
-(2) Both mouths inflate, and a coordinate sphere is only outside the source
-while the mouths are smaller than it.  The grey rule in panel (c) is where the
-fly-by's per-mouth areal radius (an upper bound) passes R = 14, t = 63.8; past
-it the inner sphere is reading the throat, not the wave.  The same reading
-passes R = 30 only at t = 92.5, a source-side time outside the trust window,
-so that rule is no longer drawn (the reading is 17 at t = 70): within the
-window the outer sphere is never reached.  _mouth_crossing still returns both
-times.  The numbers quoted in the article are taken at the blue rule in panel
-(c) (t = 60 for the fly-by, the end of the record for the spiral), and their
-spread over the two spheres is their error bar -- the same convention the Psi4
-energies of Sec. VIII use.
+Two limits.  (1) THE FLY-BY'S TRUST WINDOW: the p = 0.45 boosted-solve arm's
+constraint norms cross the 2.5e-2 criterion at t = 67.6 as its mouths inflate
+(results/merger/trust_windows.tsv), and the pack's stated convention there is
+that waves are quotable to the matching retarded time u = t - R <= 67.6
+(U_GATE).  Every curve is drawn to its sphere's gate: R = 14 to t = 81.6,
+R = 30 to t = 97.6 -- which, on this longer-lived solved run, is past the
+whole dipole arch: the burst is complete inside the window, and the
+full-record ratio is the article's headline number.  (2) A coordinate sphere
+is only outside the source while the mouths are smaller than it, and the
+solved runs carry no live horizon scan to read the mouths' size from.  The
+fingerprint is in the record itself: the R = 14 flux climbs an order of
+magnitude from t ~ 73 with no counterpart at R = 30 one light-crossing later
+(1.4e-2 at t = 81 against 1.5e-4 at t = 95), so that climb is the inflating
+mouths' near field, not radiation, and the inner sphere is quoted only to the
+t = 60 mid-burst cut (the blue rule in panel (c)).
 
 Reads ``scalar_modes.dat``, ``psi4_mode_l2_all.dat`` and ``horizon_scan.dat``
 under ``campaign/`` and writes ``figures/08_waves/scalar_channel``.
@@ -87,17 +83,14 @@ import numpy as np  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, figure_dir  # noqa: E402
 
-FLYBY = ("06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100",
+FLYBY = ("06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm",
          r"fly-by, $p=0.45$", 60.0)
-SPIRAL = ("05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl3_t050",
-          r"spiral, $p=0.12$", 50.0)
 RADII = (14, 30)
 T_MAX = 100.0
 ELLS = (0, 1, 2)
-# The fly-by's trust window (docstring, WHERE IT STOPS): source-side readings
-# to t = T_TRUST, sphere readings to t - R = U_GATE.
-T_TRUST = 70.0
-U_GATE = 50.0
+# The fly-by's trust window (docstring, WHERE IT STOPS): the pack's stated
+# convention for this run is retarded, u = t - R <= U_GATE on every sphere.
+U_GATE = 67.6
 
 
 def _cols(path: pathlib.Path):
@@ -161,7 +154,7 @@ def main(argv: list[str] | None = None) -> int:
     pack = pathlib.Path(args.pack_root).expanduser() / "campaign"
 
     arms = {}
-    for key, (rel, label, t_cut) in (("flyby", FLYBY), ("spiral", SPIRAL)):
+    for key, (rel, label, t_cut) in (("flyby", FLYBY),):
         run = pack / rel
         a = dict(label=label, t_cut=t_cut, gw={}, kin={}, per_l={}, run=run)
         for R in RADII:
@@ -209,9 +202,7 @@ def main(argv: list[str] | None = None) -> int:
     a = arms["flyby"]
     tg, Eg = a["gw"][30]
     ts, Ep, _ = a["kin"][30]
-    T_A = 80.0
-    if T_A > U_GATE + 30 + 1e-9:
-        raise ValueError(f"panel (a) would draw the fly-by past t - R = {U_GATE:g}")
+    T_A = U_GATE + 30  # the R = 30 gate: the whole dipole arch is inside it
     norm = _at(tg, Eg, T_A)
     k = tg <= T_A
     axA.plot(tg[k], Eg[k] / norm, color=style.INK, linewidth=1.4, zorder=3)
@@ -221,17 +212,17 @@ def main(argv: list[str] | None = None) -> int:
     pE = _at(ts, Ep, T_A) / norm
     lo = min(-1.2, pE - 0.35)
     axA.set_ylim(lo, 1.62)
-    for tc in (50.0, 60.0, 70.0, 80.0):
+    for tc in (60.0, 70.0, 80.0, T_A):
         g, pp = _at(tg, Eg, tc), _at(ts, Ep, tc)
         r = abs(pp) / g
         print(f"[scalar-channel] flyby R=30 cut t={tc:.0f}: |E_phi|/E_GW = {r:.2f}")
         # a short tick at the cut, the ratio hung on top of it
         axA.vlines(tc, 1.24, 1.34, color=style.MUTED, linewidth=0.7, zorder=1)
-        axA.text(tc, 1.38, f"{r:.1f}", fontsize=6.5, color=style.GOLD,
-                 ha="center", va="bottom")
+        axA.text(min(tc, 95.0), 1.38, f"{r:.1f}", fontsize=6.5,
+                 color=style.GOLD, ha="center", va="bottom")
     axA.text(45.5, 1.45, r"$|E_\phi|/E_{\rm GW}$ at $t=$", fontsize=6.3,
              color=style.MUTED, ha="right", va="center")
-    axA.set_ylabel(r"$E(<t)\,/\,E_{\rm GW}(t{=}80)$")
+    axA.set_ylabel(r"$E(<t)\,/\,E_{\rm GW}(t{=}97.6)$")
     axA.set_xlabel(r"$t$")
     # Each name sits just left of its own curve's end: above the rising ink,
     # below the falling gold, clear of the frame.
@@ -239,7 +230,7 @@ def main(argv: list[str] | None = None) -> int:
              ha="right", va="bottom")
     axA.text(T_A - 1.0, pE - 0.10, "scalar, ghost sign", fontsize=7,
              color=style.GOLD, ha="right", va="top")
-    axA.text(3.0, 0.55, "fly-by, $R=30$", fontsize=6.5, color=style.MUTED,
+    axA.text(3.0, 0.72, "fly-by, $R=30$", fontsize=6.5, color=style.MUTED,
              ha="left", va="center")
 
     # ---- (b) which multipole carries it ------------------------------------
@@ -250,52 +241,41 @@ def main(argv: list[str] | None = None) -> int:
     tl, per_l = a["per_l"][30]
     for l, col, lw in ((1, style.GOLD, 1.4), (0, style.MUTED, 1.0),
                        (2, style.CONTEXT, 1.0)):
-        k = (tl <= a["t_cut"]) & (per_l[l] > 0)
+        k = (tl <= U_GATE + 30) & (per_l[l] > 0)
         axB.plot(tl[k], per_l[l][k], color=col, linewidth=lw, zorder=3)
     axB.set_yscale("log")
     axB.set_ylim(1e-13, 1e-1)
     axB.set_ylabel(r"$\sum_m|\dot A_{\ell m}|^2$")
     axB.set_xlabel(r"$t$")
-    axB.text(64.0, 3e-3, r"$\ell=1$, dipole", fontsize=7,
+    axB.text(30.0, 2.5e-2, r"$\ell=1$, dipole", fontsize=7,
              color=style.GOLD, va="center")
     # l = 0 and l = 2 are on top of each other at this scale, so they take one
     # label: the panel's statement is the gap, not which of the two is which.
-    axB.text(64.0, 1.5e-9, "$\\ell=0$ and $\\ell=2$,\n$10^{-7}$ of it",
-             fontsize=6.5, color=style.MUTED, va="center")
+    axB.text(50.0, 1.2e-7, "$\\ell=0$ and $\\ell=2$,\n$10^{6}\\times$ down",
+             fontsize=6.5, color=style.MUTED, ha="center", va="bottom")
     axB.text(97.0, 4e-13, "fly-by, $R=30$", fontsize=6.5, color=style.MUTED,
              va="center", ha="right")
 
     # ---- (c) where a coordinate sphere stops being outside the source -------
-    # Each sphere only to the fly-by's retarded gate, t - R <= U_GATE (t = 64
-    # at R = 14, 80 at R = 30; it ran to t = 100 until 2026-09-26), and a
-    # mouth-crossing rule only where the crossing -- a source-side reading --
-    # falls inside the trust window, t <= T_TRUST: R = 14's (t = 63.8) does,
-    # R = 30's (t = 92.5) does not and is not drawn.
-    for R, col, lw in ((14, style.CONTEXT, 1.0), (30, style.GOLD, 1.4)):
-        ts, _, kin = arms["flyby"]["kin"][R]
-        k = ts <= min(T_MAX, U_GATE + R) + 1e-9
-        axC.plot(ts[k], np.abs(kin[k]), color=col, linewidth=lw, zorder=3)
-        t_x = _mouth_crossing(arms["flyby"]["run"] / "horizon_scan.dat", R)
-        inside = t_x is not None and t_x <= T_TRUST
-        print(f"[scalar-channel] flyby (c) R={R}: drawn to t = {ts[k][-1]:.1f} "
-              f"(u = {ts[k][-1] - R:.1f}); mouth reading passes R at "
-              + ("never" if t_x is None else f"t = {t_x:.1f}")
-              + ("" if inside else f" -- past t = {T_TRUST:g}, no rule"))
-        if inside:
-            # The rule stops below the note's band; rotated text runs UPWARD
-            # from its anchor, so it is hung off the bottom of the frame where
-            # both curves are already far above it.
-            axC.vlines(t_x, 1e-8, 4e0, color=style.FAINT, linewidth=0.7,
-                       zorder=1)
-            # R = 14's rule stands four units from the blue one, so its label
-            # goes on the far side of it rather than into that gap.
-            side = 1.8 if R == 14 else -1.8
-            axC.text(t_x + side, 1.6e-8, rf"$R={R}$ engulfed", fontsize=6,
-                     color=style.MUTED, rotation=90,
-                     ha="left" if side > 0 else "right", va="bottom")
-    # Clipped below the note's band, like the grey rules: a full-height
-    # axvline ran straight through the second line of the note that explains
-    # what the rule is for.
+    # Each sphere to its retarded gate, t - R <= U_GATE (t = 81.6 at R = 14,
+    # 97.6 at R = 30).  The solved runs carry no live horizon scan, so the
+    # near-zone limit is read off the record itself (docstring, WHERE IT
+    # STOPS): the R = 14 flux climbs an order of magnitude from t ~ 73 with no
+    # counterpart at R = 30 one light-crossing later -- the inflating mouths'
+    # near field -- so R = 14 is solid only to the t = 60 mid-burst cut (the
+    # blue rule) and dashed, carrying no claim, from there to its gate.
+    ts, _, kin = arms["flyby"]["kin"][30]
+    k = ts <= U_GATE + 30 + 1e-9
+    axC.plot(ts[k], np.abs(kin[k]), color=style.GOLD, linewidth=1.4, zorder=3)
+    ts, _, kin = arms["flyby"]["kin"][14]
+    k = ts <= arms["flyby"]["t_cut"] + 1e-9
+    axC.plot(ts[k], np.abs(kin[k]), color=style.CONTEXT, linewidth=1.0, zorder=3)
+    k = (ts >= arms["flyby"]["t_cut"] - 1e-9) & (ts <= U_GATE + 14 + 1e-9)
+    axC.plot(ts[k], np.abs(kin[k]), color=style.CONTEXT, linewidth=0.9,
+             ls=(0, (2.0, 1.8)), alpha=0.75, zorder=2)
+    print(f"[scalar-channel] flyby (c): R=30 drawn to t = {U_GATE + 30:.1f}, "
+          f"R=14 solid to t = {arms['flyby']['t_cut']:.0f}, dashed to "
+          f"t = {U_GATE + 14:.1f} (near zone: mouths inflating)")
     axC.vlines(arms["flyby"]["t_cut"], 1e-8, 4e1, color=style.DEEP_BLUE,
                linewidth=0.7, linestyle=(0, (2.5, 2.0)), zorder=2)
     axC.set_yscale("log")
@@ -303,24 +283,20 @@ def main(argv: list[str] | None = None) -> int:
     axC.set_xlim(0.0, T_MAX)
     axC.set_ylabel(r"$|F_\phi|$")
     axC.set_xlabel(r"$t$")
-    # Not "the spheres agree to a factor 3" -- they do not, and an earlier
-    # draft said so wrongly.  What agrees is the ratio the figure reports, to
-    # 30 %; that belongs on (a) with the ratio itself, and this panel says only
-    # where the spheres are still outside the source.  Two lines, so the note
-    # ends well short of the R = 14 curve's late climb into the same band.
-    axC.text(2.5, 1.6e3, "left of the blue rule\nboth spheres lie outside the mouths",
+    axC.text(2.5, 1.6e3, "left of the blue rule the inner sphere\nis still clear of the inflating mouths",
              fontsize=6, color=style.MUTED, va="top")
-    # Under its own curve, not on it: at y = 1.5e-4 the gold line ran
-    # straight through the label.
-    axC.text(44.0, 2.0e-5, r"$R=30$", fontsize=7, color=style.GOLD,
+    axC.text(20.0, 1.0e-6, r"$R=30$", fontsize=7, color=style.GOLD,
              ha="center", va="top")
     axC.text(30.0, 2.0e-2, r"$R=14$", fontsize=7, color=style.CONTEXT,
              ha="right", va="center")
+    axC.text(98.0, 1.8e-2, "$R=14$, near zone:\nmouths inflating",
+             fontsize=6, color=style.MUTED, ha="right", va="bottom")
 
     for k, ax in enumerate((axA, axB, axC)):
         ax.text(0.0, 1.03, f"({'abc'[k]})", transform=ax.transAxes,
                 ha="left", va="bottom", fontsize=9, color=style.INK)
 
+    style.label_audit(fig)
     out = pathlib.Path(args.out) if args.out else (
         figure_dir("08_waves", args.pack_root) / "scalar_channel.png")
     out.parent.mkdir(parents=True, exist_ok=True)

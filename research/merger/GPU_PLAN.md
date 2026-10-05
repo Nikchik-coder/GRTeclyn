@@ -4291,3 +4291,15 @@ The glued p060 SERIES (0-80) gives E/M = 4.9e-2 at R = 20, replacing the chi-leg
 all three arms, so the convention is uniform. The turnover stands: 3.85e-2 / 9.0e-2 / 4.9e-2 at
 p = 0.25/0.45/0.60, the boundary arm 1.8x the plunge's floor. New Fig. (egw_momentum) draws it;
 the gallery gains the plunge row and the vacuum BBH head-on overlay.
+
+### 2026-10-05 (evening) — scalar batch onto the csm/lbf campaign
+Glued scalar records built: head-on csm SERIES (3 legs, seams identical) and d6 SERIES
+(sig10 leg fills the Weyl glue's bridge span; seams 1.9e-8). Fly-by repointed to the p045
+lbf run, whose trusted record (u <= 67.6) holds the COMPLETE dipole arch at R = 30:
+|E_phi| = 5.1e-2 M = 0.56 x E_GW with all three estimators agreeing at the record's end
+(band 0.61, wave zone 0.60); mid-burst cuts scatter 2.4-3.7. Censorship: head-on MOTS
+t = 18 (replay), tau = 20/25/32 at R = 10/14/18 (fits 30-95), E_post = -0.0294/-0.0525/
+-0.0600; the d6 merger now SHEDS on record (crest 39 at R = 20, tau = 22, x19 down at
+R = 14) — the old "horizon too young" spiral story is gone. Both scalar figures redrawn,
+label audits clean; ledgers 927 rows, 0 problems. Still pending: heavy_seeds re-feed,
+ringdown trio, scalar figure caption's R=14 ratio on new cut conventions is in.

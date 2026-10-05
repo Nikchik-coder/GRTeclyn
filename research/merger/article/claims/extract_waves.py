@@ -673,6 +673,29 @@ def waves_env_drop(run: str, R: int, t: float) -> float:
 
 
 @extractor
+def waves_flux_crest(run: str, R: int, t0: float, t1: float) -> float:
+    """Time of the largest |flux_kin| through sphere R over [t0, t1]: where the
+    dipole arch crests."""
+    t, k = _flux(run, R)
+    w = (t >= t0) & (t <= t1)
+    return float(t[w][np.argmax(np.abs(k[w]))])
+
+
+@extractor
+def waves_outgoing_from(run: str, R: int, hold: float = 15.0) -> float:
+    """First time from which flux_kin at sphere R stays canonically outgoing
+    (>= 0) for at least `hold` units: the end of the ingoing near-zone window."""
+    t, k = _flux(run, R)
+    dt = float(t[1] - t[0])
+    n = max(1, int(round(hold / dt)))
+    out = k >= 0.0
+    for i in range(len(out) - n + 1):
+        if out[i:i + n].all():
+            return float(t[i])
+    raise ValueError(f"{run}: no {hold}-unit outgoing stretch at R = {R}")
+
+
+@extractor
 def waves_post_energy(run: str, R: int, t0: float, M: float = 1.0) -> float:
     """Post-horizon E_phi = int_{t >= t0} (-flux_kin) dt at sphere R, physical sign,
     in units of M (the censorship figure's numbers are in code units, M = 1)."""

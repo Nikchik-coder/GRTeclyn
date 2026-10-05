@@ -32,3 +32,15 @@ sphere inside the cube (R ≤ 20) is clean to t ≈ 80, R = 28 (which cuts the
 cube's corners) to t ≈ 90, and R = 36/44 (level 0) to t = 100. Read the
 symmetry-forbidden (3,2) mode as the monitor. The figures'
 `plot_psi4_gallery.DRAW_GATES` carry exactly these cuts.
+
+## The scalar record (added 2026-10-05)
+
+`scalar_modes.dat`: the chain's scalar stream (phi and Pi modes to l = 2 plus
+`scalar_flux_kin`, six spheres R = 10/14/18/20/30/44, dt = 1) glued on the same
+leg table as the Ψ4 files: leg 1 to t = 35, leg 2 to t = 50, leg 3 to t = 100.
+Seam check: the flux is IDENTICAL (difference 0) on the three t = 36–38 rows the
+level-5 and level-6 legs share; legs 2→3 share no rows (the dt = 1 grid steps
+50 → 51). `horizon_scan.dat` is the same glue of the legs' live scans, kept for
+the scan-based extractors; horizon NUMBERS still come from the mots replay
+(`04_binary_headon/mots/`), which puts the common MOTS at t = 18.
+The article's censorship figure and its clmGwCens* rows read these two files.
