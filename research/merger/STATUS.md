@@ -161,7 +161,10 @@ sections removed), the E_GW(p) scatterer points are measured (p025 3.9e-2, p045 
 trough-gated), and the open work is: E_GW(p060) via a radii passthrough for the header-less
 restart stream, the Sec. VIII waves rewrite, the stale figures (constraint_evolution,
 momentum_scan_orbits, the five waves figures), and the matched width table from the csm
-a-arms' slice caches (restores the width-exponent sentence).
+a-arms' slice caches (restores the width-exponent sentence). PLUS (10-05, found in the Sec. VIII refeed): the O3b search of Sec. IX still runs on the OLD
+campaign's templates — the frozen gw_search JSONs (horizons, fitting factors, injections) were built
+from the superseded waveforms. Re-run the search pipeline on the new records on the workstation
+(GWOSC downloads; strain cache runs/gw_search); until then Sec. IX quotes the old-template search.
 - **DONE 10-05 ~12:20 UTC on the second node (it has the run tree): the matched width table and Fig. 4(d).**
   `results/merger/analysis/matched_rest.py` now reduces `ctrl_rest_a{1,15,3}_csm` too: the packed
   `campaign/03_two_throats/matched_rest_displacement.dat` gained `dsep_like_a1/a15/a3` (a = 2 is

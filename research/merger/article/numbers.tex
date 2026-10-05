@@ -273,13 +273,12 @@
 
 % ---- mergers
 \newcommand{\clmHeadonSeparation}{8}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_t100/evolution_params.txt (wor
-\newcommand{\clmHeadonADMMass}{2}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_t100/evolution_params.txt (wor
 \newcommand{\clmHeadonShrink}{a quarter}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl3down_t100_r03500/horizon_s
 \newcommand{\clmSpiralMomentumProd}{0.12}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl3_t050/evolution
 \newcommand{\clmSpiralMomentumTwentyFive}{0.25}% manual: campaign/05_binary_spiral/p025/merge_orbit_flip_d12_p025_t200/evolution_params.t
 \newcommand{\clmSpiralMomentumFlyby}{0.45}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/evolution
-\newcommand{\clmSpiralBoundaryLow}{50}% manual: campaign/05_binary_spiral/p025/merge_orbit_flip_d12_p025_t200/evolution_params.t
-\newcommand{\clmSpiralBoundaryHigh}{70}% manual: campaign/06_binary_flyby/p035/merge_orbit_flip_d12_p035_t200/evolution_params.tx
+\newcommand{\clmSpiralBoundaryLow}{90}% auto: campaign/05_binary_spiral/p025/merge_orbit_flip_d12_p025_t200/evolution_params.t
+\newcommand{\clmSpiralBoundaryHigh}{120}% auto: campaign/06_binary_flyby/p035/merge_orbit_flip_d12_p035_t200/evolution_params.tx
 \newcommand{\clmSpiralCoincideEarly}{41}% manual: campaign/05_binary_spiral/p025/merge_orbit_flip_d12_p025_lvl5_t200/binary_throat
 \newcommand{\clmSpiralCoincideLate}{42}% manual: campaign/05_binary_spiral/p020/merge_orbit_flip_d12_p020_lvl5_t200/binary_throat
 \newcommand{\clmFlybyEnd}{100}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/run_tail.
@@ -292,7 +291,6 @@
 \newcommand{\clmSpiralBlindThetaMin}{-0.2}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmSpiralBlindThetaMax}{+0.15}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmSpiralFlowBirthTime}{55.0}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
-\newcommand{\clmSpiralRemnantMass}{2.08}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmFlowSliceCount}{seven}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmFlowSlicesFirst}{55}% manual: research/merger/GPU_PLAN.md, heading '### R0 VERDICT (2026-09-21, ~07:20) — THE 
 \newcommand{\clmMouthTauAgreement}{19}% manual: plot_mouth_growth.py on both arms
@@ -321,7 +319,6 @@
 \newcommand{\clmHelferFlybyHamEnd}{1.6\times10^{-2}}% auto: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_helfer_t090/constraint_n
 \newcommand{\clmGrtresnaErrorBefore}{4.9}% manual: research/merger/GPU_PLAN.md §2 checklist ('GRTresna outer boundary condition on 
 \newcommand{\clmGrtresnaErrorAfter}{0.7}% manual: same GPU_PLAN lines as clmGrtresnaErrorBefore (0.68 %)
-\newcommand{\clmRemnantRadiusMean}{4.16}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl3down_t100_r03500/horizon_s
 \newcommand{\clmSpiralFlowLeadWord}{five}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t150_prof_r036
 \newcommand{\clmHeadonGwShare}{1.7}% manual: 100 x E_GW / (M_MS(18) - M_MS(100)) = 100 x 0.0073 / 0.4276
 \newcommand{\clmFlybyTrustRetarded}{50}% manual: the trust window (clmFlybyTrust) at the innermost extraction sphere R = 20: the 
@@ -472,6 +469,7 @@
 \newcommand{\clmEgwPSixty}{0.60}% manual: evolution_params.txt of merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm (tangen
 \newcommand{\clmEgwPNinety}{0.90}% manual: evolution_params.txt of merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm (tangen
 \newcommand{\clmHeadonCsmWallLead}{21}% manual: campaign/04_binary_headon/csm: level-5 cell NaN at t=38.845 (clmHeadonCsmNanTime
+\newcommand{\clmMergerAdmMass}{2.363}% auto: the d6 pair's boosted-solve M_ADM_face (constraint_solve.dat)
 
 % ---- single
 \newcommand{\clmThroatA}{2}% def: campaign/01_single_throat/hold/single_hold_t100/evolution_params.txt: wormhole_t
