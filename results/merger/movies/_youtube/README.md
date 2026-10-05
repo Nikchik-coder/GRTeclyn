@@ -7,9 +7,12 @@ Built by
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube
 ```
 
-**Layout (2026-10-05, the user's design): four panels, 2x2, in sync** -- curvature
-K (top left), lapse (top right), conformal factor chi (bottom left), the wave Re(Psi4)
-(bottom right), each named in the margin beside it. Exceptions, each because
+**Layout (2026-10-05, the user's design): four panels, 2x2, in sync, on the
+left** -- curvature K (top left), lapse (top right), conformal factor chi (bottom
+left), the wave Re(Psi4) (bottom right) -- as tall as the frame allows. Every
+word except the title sits in a column on the right: a small key of the four
+panels (laid out as they are, each outlined in its role's colour), the two
+captions, then the sponsor and the credit. Exceptions, each because
 that run has no usable alternative: 01 shows phi in place of the wave (the run
 rendered no Weyl scalar); 02 shows Pi in place of the wave (its Psi4 frames were
 drawn on a scale set by late junk and have no slice cache to redraw); 08 and 09
@@ -24,8 +27,8 @@ of symlog). Every wave panel is symmetric-log, K is linear. The sources are the
 **Branding.** The channel is First Interstellar Institute: its mark `FII` is
 printed inside every panel's plot area, so it cannot be cropped off without
 cropping the data. **Gravity Frontiers, the research sponsor,** is named in full
-beside the grid ("Research sponsored by GRAVITY FRONTIERS"); the credit line at
-the foot carries both names.
+at the foot of the right-hand column ("Research sponsored by GRAVITY
+FRONTIERS"); the credit line under it carries both names.
 
 **Playback is real time, 1x.** The frames are one per code-time unit and the
 `t =` label drawn on each panel is the true simulation time. Pass `--speed 2`

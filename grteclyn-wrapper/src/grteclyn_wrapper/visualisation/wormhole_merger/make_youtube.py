@@ -84,9 +84,18 @@ GROUND = "0x0E1216"
 PANEL_BG = "0xFFFFFF"
 W_OUT, H_OUT = 1920, 1080
 HEAD_H = 118          # header band of a one-row layout: title + speed note + panel labels
-HEAD_H_GRID = 84      # a 2x2 grid's header holds the title only; its labels sit beside the panels
+HEAD_H_GRID = 84      # a 2x2 grid's header holds the title only; everything else is in the side column
 MARGIN = 40           # left/right text margin, and the gutter the captions wrap in
-SIDE_GAP = 28         # gap between the 2x2 grid and the label / brand text beside it
+SIDE_GAP = 36         # gap between the 2x2 grid and the side column
+# A 2x2 grid sits at the LEFT edge, as tall as the canvas allows, and every word
+# of text except the title goes in a column to its right: the panel key, the
+# captions, the sponsor and the credit (the user's design, 2026-10-05).  Under
+# the grid, the captions ran as two full-width lines a viewer could not read in
+# one pass, and they cost the panels 130 px of height.
+GRID_X0 = 24          # left margin of a 2x2 grid
+GRID_PAD_B = 20       # space under a 2x2 grid
+SIDE_MIN_W = 600      # the side column is never narrower than this
+SIDE_PAD_R = 28       # right margin of the side column
 
 # Caption typography.  ffmpeg's drawtext does NOT wrap, so a caption longer than
 # the canvas is silently cut off at BOTH ends (it centres, then overflows) and
@@ -96,6 +105,12 @@ SIDE_GAP = 28         # gap between the 2x2 grid and the label / brand text besi
 # height is computed from how many lines they actually take.
 CAP1_SIZE, CAP2_SIZE, CREDIT_SIZE = 20, 18, 16
 CAP1_LEAD, CAP2_LEAD = 26, 24
+# The side column's sizes: captions larger than the footer's (the lines are
+# short now, so they can be), the panel key small -- it names the panels, it is
+# not the thing to read.
+SIDE_CAP1, SIDE_CAP2, SIDE_CREDIT = 23, 20, 15
+SIDE_LEAD1, SIDE_LEAD2, SIDE_LEAD_CREDIT = 31, 27, 20
+KEY_ROLE, KEY_NAME, KEY_CELL_H = 15, 17, 60
 # DejaVu Sans averages ~0.55 em per character over mixed-case prose; that is an
 # estimate, so the usable width is taken conservatively.
 _EM = 0.55
@@ -120,6 +135,7 @@ MARK = "FII"
 BRAND_RIGHT = ("Research sponsored by", "GRAVITY FRONTIERS")
 CREDIT = ("First Interstellar Institute  ·  research sponsored by Gravity Frontiers  ·  "
           "GRTeclyn  ·  3+1 numerical relativity on GPUs")
+CREDIT_SEP = "  ·  "
 
 # Per-panel label colours: one hue per physical role, kept across every video so
 # a viewer who watches two of them learns the code once.
@@ -135,7 +151,7 @@ ROLE = {
 
 # --------------------------------------------------------------------------
 # What to build.  The panel list per campaign is the user's choice of what reads
-# well; the layout code handles 2 or 4, and every entry currently takes 2.  The
+# well; the layout code handles 2 or 4, and every entry currently takes 4.  The
 # single throat gets exactly two videos, the two FATES -- the other seed arms
 # look almost identical on screen and add nothing for a viewer.  Captions are
 # the paper's own numbers: nothing is rounded further than the article rounds
@@ -267,13 +283,26 @@ def _probe_size(path: Path) -> tuple[int, int]:
     return int(w), int(h)
 
 
-def _wrap(text: str, fontsize: int) -> list[str]:
-    """Greedy word wrap to the canvas width, since drawtext will not do it."""
-    budget = max(int((W_OUT - 2 * MARGIN) / (_EM * fontsize)), 20)
-    words, lines, cur = text.split(), [], ""
+def _wrap(text: str, fontsize: int, width: int = W_OUT - 2 * MARGIN,
+          font: str = FONT, sep: str = " ") -> list[str]:
+    """Greedy wrap to ``width`` pixels, since drawtext will not do it.
+
+    Measured with the font itself when Pillow is there (it is, in the wrapper's
+    venv: matplotlib needs it); the per-character estimate is the fallback.
+    ``sep`` is what a line may break at -- the credit breaks only between its
+    segments, so no line starts with a dot.
+    """
+    try:
+        from PIL import ImageFont
+        face = ImageFont.truetype(font, fontsize)
+        fits = lambda line: face.getlength(line) <= width
+    except (ImportError, OSError):
+        budget = max(int(width / (_EM * fontsize)), 20)
+        fits = lambda line: len(line) <= budget
+    words, lines, cur = text.split() if sep == " " else text.split(sep), [], ""
     for w in words:
-        trial = f"{cur} {w}".strip()
-        if len(trial) <= budget or not cur:
+        trial = f"{cur}{sep}{w}" if cur else w
+        if fits(trial) or not cur:
             cur = trial
         else:
             lines.append(cur)
@@ -304,6 +333,9 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
     cols, rows = grid
     head_h = HEAD_H if rows == 1 else HEAD_H_GRID
     free_h = H_OUT - head_h - foot_h
+    # A one-row layout is centred; a 2x2 grid is pinned to the left edge and
+    # leaves the side column at least SIDE_MIN_W.
+    free_w = W_OUT - 40 if rows == 1 else W_OUT - GRID_X0 - SIDE_GAP - SIDE_MIN_W - SIDE_PAD_R
     # Height per panel before the grid-level fit, generous so the final scale
     # is a reduction (sharper) rather than an enlargement.
     panel_h = 900 if rows == 1 else 620
@@ -327,18 +359,26 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
         parts.append("".join(f"[row{r}]" for r in range(rows))
                      + f"vstack=inputs={rows}[grid]")
     # Fit the grid inside the free canvas, never upscaling past the canvas.
-    parts.append(f"[grid]scale=w=min(iw*{free_h}/ih\\,{W_OUT - 40}):h=-2:flags=lanczos[fit]")
-    parts.append(f"[fit]pad={W_OUT}:{H_OUT}:(ow-iw)/2:{head_h}:color={GROUND}[canvas]")
+    parts.append(f"[grid]scale=w=min(iw*{free_h}/ih\\,{free_w}):h=-2:flags=lanczos[fit]")
+    x_pad = "(ow-iw)/2" if rows == 1 else str(GRID_X0)
+    parts.append(f"[fit]pad={W_OUT}:{H_OUT}:{x_pad}:{head_h}:color={GROUND}[canvas]")
     # The fitted grid's true geometry, so labels and marks land ON the panels.
     # A 2x2 grid is much narrower than the canvas, and placing text by canvas
     # fractions put the ownership marks in the dark margins OUTSIDE the plots
     # -- trivially croppable, which defeats them (the user, 2026-10-05).
     grid_w, grid_h = box_w * cols, box_h * rows
-    s = min(free_h / grid_h, (W_OUT - 40) / grid_w)
+    s = min(free_h / grid_h, free_w / grid_w)
     fit_w = int(grid_w * s) & ~1
     fit_h = int(round(grid_h * (fit_w / grid_w)))
-    geom = {"x0": (W_OUT - fit_w) // 2, "y0": head_h, "w": fit_w, "h": fit_h}
+    x0 = (W_OUT - fit_w) // 2 if rows == 1 else GRID_X0
+    geom = {"x0": x0, "y0": head_h, "w": fit_w, "h": fit_h}
     return ";".join(parts), cols, rows, geom
+
+
+def _side_column(geom: dict) -> tuple[int, int]:
+    """(x, width) of the text column right of a 2x2 grid."""
+    x = geom["x0"] + geom["w"] + SIDE_GAP
+    return x, W_OUT - SIDE_PAD_R - x
 
 
 def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
@@ -368,16 +408,21 @@ def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
     put("credit", CREDIT)
     put("mark", MARK)
 
-    draw = [text("title", FONTB, "white", 34, "(w-tw)/2", 22),
-            text("speed", FONTB, "0xE8B44A", 21, "w-tw-28", 26)]
-
     gx0, gy0, gw, gh = geom["x0"], geom["y0"], geom["w"], geom["h"]
     pw, ph = gw / cols, gh / rows
-    left_edge, right_edge = gx0 - SIDE_GAP, gx0 + gw + SIDE_GAP
+    sx, sw = _side_column(geom)
 
-    # Panel labels hang on the panel they name.  One row: centred over each
-    # panel in the header.  2x2: in the side margins, level with the top of
-    # their panel -- right-aligned left of the grid, left-aligned right of it.
+    # A 2x2 grid's title is left-aligned with the grid it heads.
+    title_x = "(w-tw)/2" if rows == 1 else str(gx0)
+    draw = [text("title", FONTB, "white", 34, title_x, 22),
+            text("speed", FONTB, "0xE8B44A", 21, f"w-tw-{SIDE_PAD_R}", 26)]
+
+    # Panel labels.  One row: centred over each panel in the header.  2x2: a
+    # small key at the top of the side column, its four cells laid out as the
+    # panels are, each outlined in its role's colour -- so "top left" needs no
+    # words.  The grid's left edge has no margin left to hang a label in.
+    cell_gap = 12
+    cell_w = (sw - cell_gap * (cols - 1)) / cols
     for idx, field in enumerate(fields):
         r, c = divmod(idx, cols)
         role, colour = ROLE[field]
@@ -389,10 +434,12 @@ def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
             draw.append(text(f"lab{idx}", FONTB, colour, 19,
                              f"{gx0 + (c + 0.5) * pw:.0f}-tw/2", 78))
             continue
-        y = gy0 + r * ph + 0.10 * ph
-        x = f"{left_edge}-tw" if c == 0 else f"{right_edge}"
-        draw.append(text(f"role{idx}", FONTB, colour, 24, x, y))
-        draw.append(text(f"name{idx}", FONT, colour, 21, x, y + 34))
+        x = sx + c * (cell_w + cell_gap)
+        y = gy0 + r * (KEY_CELL_H + cell_gap)
+        draw.append(f"drawbox=x={x:.0f}:y={y:.0f}:w={cell_w:.0f}:h={KEY_CELL_H}:"
+                    f"color={colour}@0.55:t=2")
+        draw.append(text(f"role{idx}", FONTB, colour, KEY_ROLE, f"{x + 14:.0f}", y + 10))
+        draw.append(text(f"name{idx}", FONT, colour, KEY_NAME, f"{x + 14:.0f}", y + 31))
 
     # The ownership mark inside each panel's PLOT area: left of the panel's
     # centre (a panel is plot + colourbar, so its centre is on the colourbar)
@@ -406,14 +453,33 @@ def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
             f"fontcolor=white@0.45:bordercolor=black@0.40:borderw=1:fontsize={size}:"
             f"x={gx0 + (c + 0.40) * pw:.0f}-tw/2:y={gy0 + (r + 0.76) * ph:.0f}")
 
-    # The sponsor in full, in the margin beside a 2x2 grid, level with the
-    # bottom of its lower panels.
     if rows > 1:
+        # The side column, top down: captions under the key; sponsor and credit
+        # at the foot, level with the bottom of the grid.
+        y = gy0 + rows * (KEY_CELL_H + cell_gap) + 26
+        for tag, lines, size, lead, colour in (("c1", cap1, SIDE_CAP1, SIDE_LEAD1, "0xD5DEE7"),
+                                               ("c2", cap2, SIDE_CAP2, SIDE_LEAD2, "0x9FB0C0")):
+            for i, line in enumerate(lines):
+                put(f"{tag}_{i}", line)
+                draw.append(text(f"{tag}_{i}", FONT, colour, size, str(sx), y))
+                y += lead
+            y += 18
+        cap_bottom = y - 18
+
+        credit = _wrap(CREDIT, SIDE_CREDIT, sw, sep=CREDIT_SEP)
+        base = gy0 + gh - SIDE_CREDIT
+        for i, line in reversed(list(enumerate(credit))):
+            put(f"cr_{i}", line)
+            draw.append(text(f"cr_{i}", FONT, "0x9AA6B2", SIDE_CREDIT, str(sx), base))
+            base -= SIDE_LEAD_CREDIT
         put("br0", BRAND_RIGHT[0])
         put("br1", BRAND_RIGHT[1])
-        base = gy0 + gh
-        draw += [text("br0", FONT, "0xB8C2CC", 20, f"{right_edge}", base - 70),
-                 text("br1", FONTB, "white", 27, f"{right_edge}", base - 38)]
+        draw += [text("br0", FONT, "0xB8C2CC", 20, str(sx), base - 60),
+                 text("br1", FONTB, "white", 27, str(sx), base - 30)]
+        if cap_bottom > base - 60 - 24:
+            print(f"[warn] {spec['out']}: captions reach the sponsor block "
+                  f"({cap_bottom:.0f} > {base - 84:.0f} px)", file=sys.stderr)
+        return "[canvas]" + ",".join(draw) + "[v]"
 
     # Footer, laid out UPWARDS from the credit so a wrapped caption grows into
     # the space the panel fit already gave up for it.
@@ -449,12 +515,22 @@ def build(run_key: str, spec: dict, movies: Path, dest: Path,
         print(f"[have] {out.name}")
         return True
 
-    cap1 = _wrap(spec["cap1"], CAP1_SIZE)
-    cap2 = _wrap(spec["cap2"], CAP2_SIZE)
-    foot_h = _footer_height(cap1, cap2)
-
     grid = (len(fields), 1) if len(fields) <= 2 else (2, (len(fields) + 1) // 2)
-    chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid, foot_h)
+    if grid[1] == 1:
+        # One row: captions in a footer under the panels, its height set by
+        # how many lines they wrap to.
+        cap1 = _wrap(spec["cap1"], CAP1_SIZE)
+        cap2 = _wrap(spec["cap2"], CAP2_SIZE)
+        chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid,
+                                               _footer_height(cap1, cap2))
+    else:
+        # 2x2: the grid takes the full height, and the captions wrap to the
+        # side column it leaves.
+        chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid,
+                                               GRID_PAD_B)
+        _, sw = _side_column(geom)
+        cap1 = _wrap(spec["cap1"], SIDE_CAP1, sw)
+        cap2 = _wrap(spec["cap2"], SIDE_CAP2, sw)
 
     # ``t_end`` cuts a source with no slice cache at its trust window: keep the
     # frames t <= t_end (one frame per dt_frame code units at fps).
