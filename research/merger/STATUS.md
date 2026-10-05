@@ -4,9 +4,18 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-05 15:25 UTC) — NOTHING RUNNING: both first-node cards idle (P09-LVL5 died 14:07, BBH-d6 done 14:44 UTC); the second node idle
+## LIVE NOW (2026-10-05 15:36 UTC) — P060-EXT on the first node's card 0; card 1 idle; the second node idle
 
-No run is live; nothing queued has a go (queue below).
+| run | node / card | t at 15:36 UTC | stop | speed | ETA | checkpoints |
+|---|---|---|---|---|---|---|
+| P060-EXT `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | first / 0 | 60.02 | 115 | ~2.5 u/h (lvl5, the parent's pace) | ~22 h → ~13:30 UTC 10-06 | every 5, keep 3 (the user) |
+
+- **P060-EXT** (the user's go ~15:30 UTC 10-05; launched 15:34): the p = 0.60 plunge's lvl5 check continued from its
+  `Chk06000` (t = 60; the NFS copy re-staged to scratch) to t = 115 — does the remnant trap late (the lvl4
+  extrapolation puts a converged MOTS at t ≈ 110–115)? The parent's params with ONLY the stop (60 → 115) and the
+  names changed; binary `main3d_boostpair_91ed17cd`. Preflight PASS (full; paths one spelling). Started by effect:
+  restart at t = 60.00, level 5 stepping, card 0 at 55 GB, the consumer up with the suffixed horizon-track.
+  Pending: frame t = 61 + its MOTS row, the first checkpoint (t = 65).
 
 - **P09-LVL5 `merge_orbit_flip_d12_p090_L128_lvl5from40_chi1e4_t100_lbf_csm_r04000` DIED t = 45.28 (~14:07 UTC
   10-05): h11 NaN on level 4, the SAME instant as the lvl4 chi leg (45.27).** Level 5 changed the core, not the
@@ -216,7 +225,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## First node (two H100s): BOTH CARDS IDLE — P09-LVL5 died 14:07, BBH-d6 done 14:44 UTC 10-05 (LIVE NOW, top)
+## First node (two H100s): P060-EXT on card 0 since 15:34 UTC 10-05; card 1 idle (LIVE NOW, top)
 
 **P060-LVL5 `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` DONE (t = 60, no NaN, Ham
 2.0e-4) — NO converged MOTS at lvl5 either: THE p060 STALL IS PHYSICAL, not resolution (rms θ_out ~1.8e-2
@@ -286,11 +295,10 @@ receding after. Filed `06_binary_flyby/`, trust t <= 55.5, closeout running; Chk
 PROPOSED (no go yet): the chi-floor continuation from Chk05500 — min_chi 1e-4, the d6 chain's proven cure,
 ~8 min to the death point, then to t = 100 — settles whether a horizon forms on this plunge.
 
-Queue (10-05 ~15:25 UTC): NOTHING RUNNING — P09-LVL5 DIED t = 45.28 (the lvl4 instant), BBH-d6 DONE t = 100
-(LIVE NOW, top). SIGN-dyn will NOT run (the user, 10-05): the packed d12 like/flip csm pairs already hold both
+Queue (10-05 ~15:36 UTC): P060-EXT LIVE on card 0 since 15:34 UTC (LIVE NOW, top); P09-LVL5 DIED t = 45.28 (the
+lvl4 instant), BBH-d6 DONE t = 100. SIGN-dyn will NOT run (the user, 10-05): the packed d12 like/flip csm pairs already hold both
 signs from t = 0, so its initial-acceleration read is an analysis step on them. Left, all PROPOSED with NO go:
-the P09 nan_autopsy restart from P09-LVL5's Chk04500 (~10 GPU-min), the p060 lvl5
-extension from its Chk06000 (late trapping; GPU_PLAN 10-05 ~05:40) and the a = 1.5 / 3 flip arms (~1 GPU-h each:
+the P09 nan_autopsy restart from P09-LVL5's Chk04500 (~10 GPU-min) and the a = 1.5 / 3 flip arms (~1 GPU-h each:
 they separate the coordinate under-read from finite size; GPU_PLAN 10-05 ~12:20). Restart pins: the P09 autopsy
 reads P09-LVL5's Chk04500 (first-node scratch only — copy it to NFS before any prune); the p060 extension needs
 Chk06000 (NFS). EGW-p012 DROPPED (the user,
@@ -679,7 +687,7 @@ fly-by ends (~11:20 UTC 10-02), takes a checkpoint-free run instead — BBH-HEAD
 | P09-LVL5 | `merge_orbit_flip_d12_p090_L128_lvl5from40_chi1e4_t100_lbf_csm_r04000` | **DIED t = 45.28 (14:07 UTC 10-05): h11 NaN on level 4 at the lvl4 instant, max\|K\| calm (1.44) — resolution does not move the death; filed `06_binary_flyby/`, no movies; trust t <= 45.1.** Was: E_GW(p = 0.90) at the outer spheres — does lvl5 carry the merger past the lvl4 K wall (t = 45.27)? | the chi leg's params with only max_level 4 → 5, from p09's `Chk04000` (t = 40; Chk04500 sits mid-runaway); checkpoints every 5 keep 3 (the user) | ~20–24 (2.5–3 u/h) |
 | BBH-d6 | `bbh_control_d6_p010_t100` | **DONE 14:44 UTC 10-05: t = 100, no NaN; filed `07_bbh_control/`, closed out with movies.** Was: the d = 6 merger's vacuum twin for the gallery's merger row | BBH-HEADON's params with d 8 → 6, p 0 → 0.10 tangential, bare mass 0.9443 → 0.9282; NO checkpoints (the user) | ~3 (34.5 u/h) |
 | EGW-p012 | (not run) | **DROPPED (the user, 10-05):** the d = 12, p = 0.12 boosted spiral `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm` (SPIRAL-lbf, `05_binary_spiral/lbf/`) already is the p = 0.12 point on the same box and spheres (no freeze, lvl5); E_GW(p = 0.12) is an analysis step on its packed Weyl4 streams. THE `_lb_csm` RUN ONLY (checked 10-05: constraint_solve 1, puncture mode 3, momentum model 1, binary 91ed17cd, far-side mass matched to 4e-6) — not the archived superposed `v2_spiral_d12_p012_L128_lvl5from0_t100` nor the Bowen–York `_csm` twin (logged L2 Ham cannot tell them apart: the base-grid floor reads 8.4e-4 superposed vs 1.1e-3 solved). Was: the optional second midpoint of the E_GW(p) curve | was: the fly-by template, lvl4, stop 40, p 0.25 → 0.12 | — |
-| P060-ext | the p060 lvl5 check's extension from its `Chk06000` (name at launch) | PROPOSED (no go): late trapping — the lvl4 extrapolation puts a converged MOTS at t ≈ 110–115 | the lvl5 check's params with only the stop (past 115) and the name; restart from Chk06000 (NFS-secured) | ~22 to t = 115 (2.5 u/h) |
+| P060-ext | `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | **LIVE on the first node's card 0 since 15:34 UTC 10-05** (LIVE NOW, top), stop 115, checkpoints every 5 keep 3 (the user). Was PROPOSED: late trapping — the lvl4 extrapolation puts a converged MOTS at t ≈ 110–115 | the lvl5 check's params with only the stop (past 115) and the name; restart from Chk06000 (NFS-secured) | ~22 to t = 115 (2.5 u/h) |
 | FLIP-a | the flip arms at a = 1.5 and 3 (names at launch) | PROPOSED (no go): separate the coordinate under-read from finite size (predictions 1.889 / 1.222; GPU_PLAN 10-05 ~12:20) | the A1-csm recipe, flipped | ~1 each |
 
 Also waiting (10-05): nothing beyond the table. p = 0.45 ran (P045-T100: no wall, so the boundary sits in
