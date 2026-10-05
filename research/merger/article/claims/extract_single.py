@@ -795,17 +795,25 @@ def _dladder() -> dict[float, float]:
     return out
 
 
+def _ladder_vals(source: str) -> dict:
+    """d -> displacement at t = 11.5: 'superposed' (the old ladder file) or
+    'matched' (the mode-3 pairs, from matched_rest_displacement.dat)."""
+    if source == "matched":
+        return {float(d): single_matched_dsep(d=d, t=11.5) for d in (12, 14, 16, 18)}
+    return _dladder()
+
+
 @extractor
-def single_dladder(d: float, what: str = "displ") -> float:
+def single_dladder(d: float, what: str = "displ", source: str = "superposed") -> float:
     """The separation ladder at t = 11.5: displacement, or F d^2 (displacement x d^2)."""
-    x = _dladder()[float(d)]
+    x = _ladder_vals(source)[float(d)]
     return x if what == "displ" else x * float(d) ** 2
 
 
 @extractor
-def single_offset_delta(kind: str) -> float:
+def single_offset_delta(kind: str, source: str = "superposed") -> float:
     """delta of F ~ (d + delta)^-2 solved from each pair of rungs; min or max."""
-    lad = _dladder()
+    lad = _ladder_vals(source)
     vals = []
     for (d1, f1), (d2, f2) in itertools.combinations(sorted(lad.items()), 2):
         q = math.sqrt(f1 / f2)
@@ -814,10 +822,11 @@ def single_offset_delta(kind: str) -> float:
 
 
 @extractor
-def single_offset_prediction(d: float, model: str, fit: tuple[float, ...] = (12.0, 14.0, 16.0)) -> float:
+def single_offset_prediction(d: float, model: str, fit: tuple[float, ...] = (12.0, 14.0, 16.0),
+                             source: str = "superposed") -> float:
     """Displacement predicted at d: model 'offset' = A/(d+delta)^2 least-squares
     fitted on the fit rungs, 'inverse_square' = scaled from the first rung as d^-2."""
-    lad = _dladder()
+    lad = _ladder_vals(source)
     if model == "inverse_square":
         d0 = fit[0]
         return lad[d0] * (d0 / d) ** 2

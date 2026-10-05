@@ -899,3 +899,5 @@ pass. Each is named on its own curve; the spiral's cap note rises to the top
 of its cap over the twin's swing. Row (a)'s dashed curve is named "ringdown
 fit". Left panels only (CONTEXT is also a sphere of the envelope ramp). Row
 titles print p (was P). Drawn with no arguments.
+
+2026-10-05: `pair_interaction` cut to (a)-(c) (sign rule + matched force ladder); the placement panels (d,e) left with the superposed campaign, which no longer appears in the paper.

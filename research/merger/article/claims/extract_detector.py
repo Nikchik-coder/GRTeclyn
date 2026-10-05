@@ -52,19 +52,15 @@ HERE = pathlib.Path(__file__).resolve().parent
 TABLE1 = HERE / "table1_groups.tsv"
 GW = PACK / "gw_search"
 
-# Table I's groups, in the table's order (left column = the mode-3/boost
-# production campaign, then right = the superposed systematics campaign).
+# Table I's groups, in the table's order (the production campaign only:
+# mode-3 constraint-solved data, momentum by the exact boost; the superposed
+# campaign left the paper 2026-10-05 and its packed runs sit in group '-').
 TABLE1_GROUPS = (
     "lone throat", "spherical kicks", "quadrupolar kicks", "scalar-stream re-runs",
     "boosted throat", "constraint-solved data", "solve verifications", "matched rest pairs",
     "matched placement", "head-on, mode 3", "merger chain, d=6", "d=12 arms, mode 3",
     "fly-by and E_GW scan", "convergence, mode 3", "vacuum BBH",
-    "two throats at rest", "placement probes", "head-on, d=8", "half-mass, m=0.5",
-    "momentum scan", "fly-by, p=0.45", "orbital chain, p=0.12", "refinement ladder",
-    "interior freeze, L=64", "wall probes", "production spiral, L=128", "Helfer twins",
-    "gauge arms", "shakedown (archived)",
 )
-SHAKEDOWN = "shakedown (archived)"
 EXCLUDED = "-"
 
 # The five radiating channels, as named in the search and figure code (ARMS).
@@ -165,9 +161,9 @@ def _audit_table1() -> None:
 
 def _counted(which: str) -> list[str]:
     _audit_table1()
-    groups = {"all": [g for g in TABLE1_GROUPS],
-              "physics": [g for g in TABLE1_GROUPS if g != SHAKEDOWN],
-              "shakedown": [SHAKEDOWN]}[which]
+    # 'physics' is kept as an alias: with the superposed campaign and its
+    # shakedown out of the table, every counted run is a physics run.
+    groups = {"all": list(TABLE1_GROUPS), "physics": list(TABLE1_GROUPS)}[which]
     return [n for g in groups for n in _group_runs(g)]
 
 
@@ -179,8 +175,8 @@ def detector_table1_runs(group: str) -> float:
 
 @extractor
 def detector_table1_total(which: str = "all") -> float:
-    """Table I total: 'all' (the 144), 'physics' (the 132), 'shakedown' (the 12).
-    Fails if any packed run is missing from table1_groups.tsv."""
+    """Table I total: the production campaign's counted runs ('physics' is an
+    alias of 'all').  Fails if any packed run is missing from table1_groups.tsv."""
     return float(len(_counted(which)))
 
 

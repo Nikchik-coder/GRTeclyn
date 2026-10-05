@@ -4231,3 +4231,24 @@ gate is the causal (light-cone) reading of the same contamination.
   `waves_energy_run` needs a radii passthrough (spheres 20/28/36/44); trust 80 covers the
   burst at R = 20/28. p = 0.90 stays unmeasured (burst cut at R = 14; finer continuation).
 Ledger rows + the Sec. VIII E_GW(p) text follow once the p = 0.60 point is in.
+
+## 2026-10-05 (~10 UTC) — the superposed campaign leaves the paper (the user's call)
+
+No superposed evolution is mentioned or counted any more. Table III = the production campaign
+only: 104 packed runs in 15 groups (single_m05_t040 regrouped under 'lone throat' — Sec. IV
+quotes it); GPU cost 549 h, recomputed from the packed logs alone (clmDetGpuHours now auto).
+Cut from the text: the Bowen–York binary ansatz (kept only as the single-throat contrast and
+the d=12 mode-3 twin's knob), Helfer (bibitem too), the superposed-campaign sentences in II.C/D
+and the units paragraph, the placement-systematics subsection, the half-mass pair subsection,
+the head-on ensemble sentence, the superposed ladder + gauge paragraphs (censorship paragraph
+rebased on the mode-3 collapses), the junk-radiation paragraph (rewritten: solved data has no
+t=0 defect), the superposed effective-seed argument (replaced by the companion-compression
+seed, clmDetCompanionLife* = tau ln(1/0.004) = 29–32 units). §V now quotes the matched ladder
+as THE measurement (0.4791/0.3716/0.2963/0.2406 at t=11.5, Fd² 69→78, δ fit 2.74 on 12–16
+predicting 0.242 vs measured 0.2406, full ladder δ=2.65); the width-exponent sentence is OUT —
+no matched width table exists. PENDING (workstation): extend matched_rest_displacement.dat
+with the a=1/1.5/3 csm arms from their slice caches, then restore the width sentence.
+Fig. 4 redrawn as (a)–(c). Ledger: 141 superposed rows deleted (937 remain), claims check
+0 problems. The gauge/refinement wall-anatomy appendix went with the ladder figure;
+seed_linearity stands alone. table1_groups.tsv: 14 groups (113 runs) moved to '-' with
+SUPERSEDED notes — the pack keeps the files, the paper no longer reads them.
