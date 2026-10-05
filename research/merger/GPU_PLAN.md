@@ -4252,3 +4252,15 @@ Fig. 4 redrawn as (a)–(c). Ledger: 141 superposed rows deleted (937 remain), c
 0 problems. The gauge/refinement wall-anatomy appendix went with the ladder figure;
 seed_linearity stands alone. table1_groups.tsv: 14 groups (113 runs) moved to '-' with
 SUPERSEDED notes — the pack keeps the files, the paper no longer reads them.
+
+## 2026-10-05 (~11 UTC) — Sec. VIII gains the plunge, the E_GW(p) turnover and the vacuum head-on control
+
+Measured and in the paper (ledger rows, claims 0 problems): E_GW/M at R = 20 is 3.85e-2 (p = 0.25,
+trough gate 84), 9.0e-2 (p = 0.45, gate 94) and 2.1e-2 (p = 0.60, chi-floor leg, cut at trust 80 —
+a floor). The curve TURNS OVER at the capture boundary: the p = 0.45 arch carries 2.3x the shallow
+scatterer and over 4x the plunge. The head-on bell carries E/M = 3.0e-3 through R = 14 (3.2 -> 2.8e-3
+over R = 10-18, SERIES glued record, M = M_ADM 2.35731); the vacuum BBH head-on control rings the same
+(2,0) bell 21x quieter (1.4e-4) and 28 units later (crest 61 vs 33) — the scalar's pull is the loudness.
+E_GW(p = 0.90) stays unquoted: both legs end before the burst crosses R = 20 (the lvl5 continuation
+from Chk04500 remains the queued fix). waves_energy_run/waves_peak_time/waves_trough_time gained a
+radii passthrough for header-less restart streams.

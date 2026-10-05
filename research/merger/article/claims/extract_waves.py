@@ -229,10 +229,10 @@ def waves_front_u(scenario: str, sphere: int = -1) -> float:
 
 
 @extractor
-def waves_peak_time(run: str, file: str, R: float, t_min: float | None = None,
+def waves_peak_time(run: str, file: str, R: float, radii: list[float] | None = None, t_min: float | None = None,
                     t_max: float | None = None, retarded: bool = False) -> float:
     """Time (or retarded time t - R) of max |r Psi4| at sphere R over [t_min, t_max]."""
-    t, ser = _mod("streams").load_mode(_run_path(run) / file)
+    t, ser = _mod("streams").load_mode(_run_path(run) / file, radii=radii)
     y = np.abs(ser[float(R)])
     keep = np.ones(t.size, bool)
     if t_min is not None:
@@ -244,10 +244,11 @@ def waves_peak_time(run: str, file: str, R: float, t_min: float | None = None,
 
 
 @extractor
-def waves_trough_time(run: str, file: str, R: float, t_min: float, t_max: float) -> float:
+def waves_trough_time(run: str, file: str, R: float, t_min: float, t_max: float,
+                      radii: list[float] | None = None) -> float:
     """Time of MIN |r Psi4| at sphere R over (t_min, t_max) -- where a decaying
     burst meets a growing contaminant and |r Psi4| turns back up."""
-    t, ser = _mod("streams").load_mode(_run_path(run) / file)
+    t, ser = _mod("streams").load_mode(_run_path(run) / file, radii=radii)
     y = np.abs(ser[float(R)])
     keep = (t > t_min) & (t < t_max)
     return float(t[keep][int(np.argmin(y[keep]))])
@@ -330,17 +331,18 @@ def waves_energy(scenario: str, which: str = "E", sphere: float | None = None) -
 
 @extractor
 def waves_energy_run(run: str, file: str, R: float, m: int, M: float,
-                     t_max: float | None = None) -> float:
+                     t_max: float | None = None, radii: list[float] | None = None) -> float:
     """E_rad/M of one (l=2, m) mode on one sphere of any packed stream, with the
     LIGO figure's band integral (psi4_math._compute_radiated_energy cut against the
-    smoothed band peak; m != 0 doubled for +-m)."""
+    smoothed band peak; m != 0 doubled for +-m).  radii: the sphere columns of a
+    header-less restart stream, in column order."""
     streams, pm = _mod("streams"), _mod("psi4_math")
     path = _run_path(run) / file
     if file.startswith("psi4_mode_l2_all"):
         t, d = streams.load_l2_all(path)
         y = d[(int(m), float(R))]
     else:
-        t, ser = streams.load_mode(path)
+        t, ser = streams.load_mode(path, radii=radii)
         y = ser[float(R)]
     if t_max is not None:
         keep = t <= t_max + 1e-9
