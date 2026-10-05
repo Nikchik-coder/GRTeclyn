@@ -4283,3 +4283,11 @@ fit), strip 5.7 × 2.3 in at 0.66\textwidth; label audit clean. Ledger: clmALadd
 clmWidthExponentLo/Hi/Fit (extractors `single_matched_aladder`, `single_matched_width_exponent`), all ok.
 Open, cheap if wanted: flip arms at a = 1.5 and 3 (the under-read cancels within a width; predictions
 1.889 / 1.222) would separate the coordinate under-read from finite size — ~1 GPU-h each on the A1-csm recipe.
+
+## 2026-10-05 (~12 UTC) — E_GW(p = 0.60) corrected to the full-record convention
+
+The glued p060 SERIES (0-80) gives E/M = 4.9e-2 at R = 20, replacing the chi-leg-only 2.1e-2
+(which opened at t = 50 and missed the approach's radiation). Pre-contact content is ~3e-3 on
+all three arms, so the convention is uniform. The turnover stands: 3.85e-2 / 9.0e-2 / 4.9e-2 at
+p = 0.25/0.45/0.60, the boundary arm 1.8x the plunge's floor. New Fig. (egw_momentum) draws it;
+the gallery gains the plunge row and the vacuum BBH head-on overlay.

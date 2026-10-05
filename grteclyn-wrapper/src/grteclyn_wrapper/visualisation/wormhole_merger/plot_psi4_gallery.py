@@ -257,6 +257,12 @@ ARMS = [
 #           row's scale a rule), and the holes reach r = 13.7 by t = 100.  Its
 #           two lobes fold across R = 20/26/30 at v/c = 0.99/0.96.
 VACUUM_OVERLAY = {
+    # The head-on's vacuum twin (2026-10-05): two equal punctures from rest at
+    # d = 8, its (2,0) at its innermost sphere R = 14 (the row's own sphere is
+    # R = 10; the streams carry r*Psi4, so the two are comparable at the few-%
+    # level of the 1/r fold).  Drawn whole: nothing contaminates it.
+    "head-on": ("07_bbh_control/bbh_headon_d8_L128_lvl5_t100/weyl_extraction_mode_20.dat",
+                14.0, "vacuum BBH head-on", False, (60.0, 100.0), "below"),
     "fly-by": ("07_bbh_control/bbh_control_d12_p045_t100/weyl_extraction_mode_22.dat",
                20.0, "vacuum BBH fly-by", True, (5.0, 40.0), "above"),
 }
@@ -328,11 +334,15 @@ def load(pack: pathlib.Path, rel: str, m: int | None):
 
 
 def trim_zeros_tail(t: np.ndarray, y: np.ndarray):
-    """Drop the run of exact zeros a gated stream writes after its cut."""
+    """Drop the runs of exact zeros a gated stream writes outside its window
+    (leading zeros too, since DRAW_START: a drawn curve STARTS at its gate
+    instead of stepping up from a zero rule)."""
     nz = np.nonzero(np.abs(y))[0]
-    if nz.size and nz[-1] < y.size - 2:
-        return t[:nz[-1] + 1], y[:nz[-1] + 1]
-    return t, y
+    if not nz.size:
+        return t, y
+    lo = nz[0] if nz[0] > 1 else 0
+    hi = nz[-1] + 1 if nz[-1] < y.size - 2 else y.size
+    return t[lo:hi], y[lo:hi]
 
 
 def drawn(name: str, t: np.ndarray, series: dict) -> dict:
@@ -523,7 +533,7 @@ def main(argv: list[str] | None = None) -> int:
             if side == "above":
                 y0, va = both.max() + 0.06 * pk, "bottom"
             else:
-                y0, va = both.min() - 0.06 * pk, "top"
+                y0, va = both.min() - 0.14 * pk, "top"
             axL.text(0.5 * sum(span), y0, label, fontsize=6.5, color=style.CONTEXT,
                      ha="center", va=va)
             print(f"  {'':<18s} over it: {VACUUM_OVERLAY[r['name']][0].split('/')[1]} at "

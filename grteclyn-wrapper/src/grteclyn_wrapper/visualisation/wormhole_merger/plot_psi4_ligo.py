@@ -259,7 +259,14 @@ def prepare(pack: pathlib.Path):
     downstream.
     """
     arms = []
+    # The plunge row (gallery 2026-10-05) stays out of this figure: its record
+    # is cut at its trust window mid-decay, so band spectra, tracks and the
+    # energy bar would all read a floor as a measurement; its energy is the
+    # E_GW(p) figure's open point (plot_egw_momentum).
+    skip = {"plunge"}
     for name, knob, mode, rel, m, R0, t_max, _note in ARMS:
+        if name in skip:
+            continue
         got = load(pack, rel, m)
         if got is None:
             print(f"  {name:<18s} PENDING -- no {rel}")

@@ -907,3 +907,7 @@ d = 12 pairs at a = 1/1.5/2/3, δd at t = 11.5 on log-log axes, grey dashed a² 
 same run as (c)'s d = 12 dot), gold the log-log fit a^1.40; names on the lines, as (a)–(c). Reads
 `matched_rest_displacement.dat` by header name. Strip 5.7 × 2.3 in, included at 0.66\textwidth (the
 three-panel strip's scale). Label audit clean.
+
+2026-10-05: `psi4_gallery` gains row (e), the p = 0.60 plunge (glued SERIES; peak-lag speed, trust cut 80),
+the head-on row gains its vacuum BBH overlay, and `egw_momentum` is new (E_GW vs p, the boundary turnover;
+`plot_egw_momentum`). `psi4_ligo` skips the plunge (floor-cut record; its energy lives in egw_momentum).
