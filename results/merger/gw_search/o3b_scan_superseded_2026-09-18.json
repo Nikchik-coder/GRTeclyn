@@ -1,0 +1,54 @@
+{
+  "background": {
+    "floor_far_per_year": 0.7749901768172888,
+    "livetime_days": 471.2962962962963,
+    "livetime_s": 40720000.0,
+    "loudest_rank": 60.412818886416865,
+    "n_coincidences": 13920,
+    "n_slides": 5000
+  },
+  "bank_size": 127,
+  "blocks": 2,
+  "foreground": [],
+  "gps_end": 1264340000.0,
+  "gps_start": 1264317000.0,
+  "horizon_mpc_optimal_snr8_single_ifo": {
+    "collapsing throat": 151.92638304591878,
+    "fly-by": 2534.9847206614286,
+    "head-on": 1778.8795588296184,
+    "spiral": 4827.27868700393,
+    "vacuum BBH twin": 1327.071868592203
+  },
+  "horizon_mpc_sky_averaged_snr8_single_ifo": {
+    "collapsing throat": 67.22406329465433,
+    "fly-by": 1121.6746551599242,
+    "head-on": 787.1148490396542,
+    "spiral": 2135.9640207981993,
+    "vacuum BBH twin": 587.199941854957
+  },
+  "horizon_note": "median over the channel's mass ladder of sigma/8: single-detector SNR 8, optimal orientation and sky position",
+  "ifos": [
+    "H1",
+    "L1"
+  ],
+  "livetime_hours": 2.2622222222222224,
+  "livetime_s": 8144.0,
+  "loudest_single_detector": {
+    "H1": {
+      "chisq_r": 198.6840324484804,
+      "snr": 758.253249118656,
+      "stat": 60.38157732926284,
+      "template": "fly-by@131.3",
+      "time": 1264325614.496582
+    },
+    "L1": {
+      "chisq_r": 2.724587138671758,
+      "snr": 63.016985311290476,
+      "stat": 42.5094855982972,
+      "template": "fly-by@55.3",
+      "time": 1264323379.2819824
+    }
+  },
+  "n_foreground": 0,
+  "sample_rate": 4096
+}

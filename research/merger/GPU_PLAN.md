@@ -4498,3 +4498,69 @@ can be used in the paper" (four "Nobel" predictions pasted from elsewhere):
   a vacuum black-hole fly-by also has no inspiral). (4) "Inflation voids / Hubble tension / ISW": no support —
   1.3 areal e-folds in an asymptotically flat box, end state open.
 - Ledger 882 rows, 0 problems; numbers.tex regenerated. Not compiled here (no TeX).
+
+## 2026-10-05 (~21 UTC) — O3B-NEW: the LIGO search re-run on the current channels; the pipeline validated and fixed
+
+On the user's ask ("run new GW search for all the signals in the paper related to the wormholes", then "also
+validate the implementation"): `gw_search` (validate → inject → fitting-factor → scan) on every wormhole channel
+of the paper — the lone collapsing throat, the d = 8 head-on, the d = 6 merger, the p = 0.45 fly-by and, new, the
+p = 0.60 plunge (contact t = 45 to its trust window t = 80) — beside the vacuum BBH twin. The 17:2x start had died
+in its scan when its session's shell was interrupted (nothing written).
+
+**Validation: seven defects, fixed** (commit 7fcb7990, plus the head-on stream below):
+1. The plunge template carried its t040 leg's zero-lag p²-junk (0.21 of the burst on R = 20 at t = 28–31, absent
+   on R = 28): integrated, |h| stood at 0.60 of the template's peak before contact. `nr.load_arm` now opens each
+   record at the gallery's `DRAW_START` (t = 45).
+2. **The head-on's axis.** Both head-ons fall along x, but the in-code extraction decomposes about z, where the
+   x-axisymmetric quadrupole splits as h20 = −h'20/2, h2±2 = √(3/8) h'20: the z-based (2,0) that every head-on
+   number used carries a quarter of the ℓ = 2 power. Measured: burst-body |h22/h20| = 1.224–1.245 on every sphere of
+   both head-ons (√(3/2) = 1.2247). On the user's "fix everywhere": `results/merger/analysis/headon_axis_modes.py`
+   writes `Weyl4_mode_20_axis.dat` (SERIES) and `weyl_extraction_mode_20_axis.dat` (BBH control) = 2 × the z-based
+   record, ARMS / VACUUM_OVERLAY / 28 ledger references read them. Head-on peak and swings ×2 (4.8e-2), E_GW/M ×4
+   (1.2e-2 through R = 14; the vacuum head-on 5.6e-4, now beside the published 5.5e-4 for infall from rest —
+   it sat 4× below it), LISA head-on SNR 60–79 → 119–159, Ω_GW low end 1e-14 → 1e-13; the 21× ratio and every
+   time, lag, speed and frequency unchanged. Sec. II Diagnostics states the convention (clmHeadonAxisRatioDev,
+   1.6 %); psi4_gallery, psi4_ligo, heavy_seeds redrawn.
+3. `fitting_factor`: a new best full-model match overwrote ff_window with its own windowed match, discarding a
+   larger earlier one (e.g. the fly-by at 300 M⊙: 0.913 reported, 0.949 the bank's maximum).
+4. Injections sat ON bank rungs (the injected waveform was a bank template), so they tested noise, not the bank's
+   discreteness: now at the geometric midpoint of two neighbouring rungs.
+5. The horizon took σ only from templates that fired in a block: now from every template.
+6. The two 4096 s blocks overlap by 64 s and both counted it: livetime 8144 → 8104 s (2.26 → 2.25 h); triggers of
+   one template < 0.1 s apart across blocks are deduplicated.
+7. Time slides of up to ±2500 s did not wrap, yet each was credited the full livetime (~20 % too much background):
+   slides are now cyclic on the analysed time (`background._Clock`).
+
+**Results** (results/merger/gw_search/*.json; Sec. IX ledger rows updated):
+- validate PASS, same-window match 0.902–0.938 (unchanged: the twin is untouched).
+- inject: 18/18 found, 92–123 % of optimal (median 101 %), within 11 ms, χ²_r 0.47–1.63, none vetoed. The 123 % is
+  the 85 M⊙ plunge recovered by a heavier rung: its 18 M record puts its own corner at 130 Hz, and the strain below
+  that carries 1.30× its own-corner SNR, which a lower-cornered rung collects (≤ 0.5 % for the other channels).
+- fitting factors: same-window 0.893–0.996 over the five channels (plunge 0.99–1.00: one cycle a BBH segment
+  matches), vacuum control 0.935–0.951; full model 0.45–0.81.
+- scan (GPS 1264317000–1264340000, two 4096 s blocks, 154 templates: 28 throat, 31 head-on, 24 merger, 21 fly-by,
+  24 plunge, 26 twin rungs on the live H1 PSD; 4178 s per block on one pinned core): 2.25 h, NO zero-lag
+  coincidence; background 20 231 accidentals over 469 days of cyclic slides (5000), loudest rank 52.4, floor one
+  false alarm per 469 days; 54 duplicate triggers from the block overlap dropped. Horizons at single-detector SNR 8,
+  optimal orientation, median over each ladder: fly-by 5.1, head-on 3.0, merger 2.7, plunge 1.7, twin 1.3, throat
+  0.15 Gpc (twin and throat equal the 09-18 values: the unchanged arms reproduce). The raw triggers were pickled
+  for re-ranking without refiltering (scratch only).
+- Sec. IX: the horizon list gains the plunge ("to its trust window"), the pedestal caveat covers four channels
+  (0.10–0.48), the injection sentence says midway-between-rungs, none vetoed, and why the highest exceeds 100 %.
+  Ledger 884 rows, 10 problems (the 00_archive duplicates below); numbers.tex regenerated. Not compiled (no TeX).
+
+**Flagged, not changed** (each the user's call):
+- The boosted pairs' M_ADM_face FALLS with p: 2.178 / 2.078 / 1.912 at p = 0.25 / 0.45 / 0.60, where Σγm is
+  2.06 / 2.19 / 2.33. Every orbital E/M and the search's fly-by/plunge mass labels divide by it; a face integral
+  that misses the boosted metric's non-conformally-flat part would do this. A t = 0 face integral of one exact-boost
+  throat (γ = 1.097 at p = 0.45) settles it.
+- The frozen LISA rows (DetectMass, FlybyDetectMass, LoudSnr, BurstSnrHi, PlsN) are the superposed campaign's:
+  on the current channels the fly-by reaches SNR 8 only to 7.5e6 M⊙ (4.0 at 1e7), the plunge to 3.4e7, the head-on
+  (full quadrupole) to 7.9e6 — so "at 1e7–1e8 only the fly-by still reaches 8" no longer holds. A re-measure pass.
+- The scan JSON's sky-averaged horizons divide every channel by 2.26, the (2,2) factor; a linearly polarised (2,0)
+  source needs 2.60 (throat, head-on 15 % high). The paper quotes only optimal-orientation horizons.
+- The local pack's git-ignored `campaign/00_archive/superseded_2026-10-02/` holds `ctrl_rest_a1_csm` and the p025
+  fly-by beside their packed reruns, so ten Table I rows fail `claims.py check` on this machine only.
+- Incident: this container is capped at 24 CPUs; two pycbc jobs (~20 threads each) throttled it every period
+  19:48–20:16 UTC, slowing both live runs; since then the jobs are pinned with taskset (CLAUDE.md-class rule saved
+  to memory).

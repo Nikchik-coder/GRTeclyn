@@ -18,10 +18,30 @@ alias gws="grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.gw_search.cli"
 | `fitting_factors.json` | `gws fitting-factor --out results/merger/gw_search/fitting_factors.json` | would the modelled searches have recovered these signals? |
 | `o3b_scan.json` | `gws scan --gps-start 1264317000 --gps-end 1264340000 --block-s 4096 --max-blocks 6 --workers 3 --slides 5000 --out results/merger/gw_search/o3b_scan.json` | the search itself: triggers, χ² veto, H1–L1 coincidence, time-slide background, false-alarm rate, horizon per channel. |
 
-The current result is **2.26 h of livetime, no coincident candidate**, on a
-background of 13 920 accidentals over 471 days of slid time — a floor of one
-false alarm per 471 days. `o3b_scan_superseded_0.27h.json` is the earlier,
-shorter run it replaces, kept because the article's first draft quoted it.
+The current result (O3B-NEW, 2026-10-05: the paper's five wormhole channels —
+lone collapsing throat, d = 8 head-on read about its collision axis, d = 6
+merger, p = 0.45 fly-by, p = 0.60 plunge — and the vacuum BBH twin) is
+**2.25 h of livetime, 154 templates, no coincident candidate**, on a
+background of 20 231 accidentals over 469 days of cyclically slid time — a
+floor of one false alarm per 469 days. Horizons at single-detector SNR 8,
+optimal orientation, median over each ladder: fly-by 5.1 Gpc, head-on 3.0,
+merger 2.7, plunge 1.7, vacuum twin 1.3, collapsing throat 0.15.
+Injections: 18/18 found at 92–123 % of optimal, none vetoed. Fitting
+factors, same window: 0.893–0.996 (channels), 0.935–0.951 (the twin).
+
+Superseded and kept because the article quoted them:
+`o3b_scan_superseded_2026-09-18.json` (2.26 h on the old campaign's
+templates; its slides did not wrap and its block overlap counted twice) and
+`o3b_scan_superseded_0.27h.json` (the first draft's shorter run).
+
+**What changed on 2026-10-05** (GPU_PLAN, same date): injections sit midway
+between two rungs, so they test the bank's spacing; the same-window fitting
+factor is the bank's maximum; the horizon takes σ from every template; the
+two blocks' 64 s overlap is counted once and its duplicate triggers dropped;
+and time slides wrap on the analysed time, so every slide carries the whole
+livetime. A recovery above 100 % of optimal (the 85 M⊙ plunge, 123 %) is a
+heavier rung, filtered from a lower corner, collecting the injected strain
+below the plunge record's own 130 Hz corner.
 
 **Livetime is limited by the network and by segment geometry, not by the
 method.** Two blocks, not six: a 4096 s block needs 4096 s of *contiguous*
