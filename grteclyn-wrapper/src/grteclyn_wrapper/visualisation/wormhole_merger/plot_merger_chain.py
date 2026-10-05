@@ -211,7 +211,7 @@ def main(argv: list[str] | None = None) -> int:
     axA.axhline(R_HEADON, ls=(0, (5, 1.6, 1, 1.6)), **ref)
     axB.axhline(M_HEADON, ls=(0, (5, 1.6, 1, 1.6)), **ref)
 
-    axA.set_xlim(10.5, t_end + 1.5)
+    axA.set_xlim(10.0, 100.0)
     axA.set_ylim(3.66, 5.98)
     axA.set_ylabel(r"horizon areal radius $R$")
     axA.tick_params(labelbottom=False)
@@ -235,11 +235,16 @@ def main(argv: list[str] | None = None) -> int:
     axB.annotate("head-on remnant", (76.0, M_HEADON), xytext=(0, -3),
                  textcoords="offset points", ha="center", va="top", fontsize=fs,
                  color=style.MUTED)
-    # The composition's levels, named per era: the wall corridor is too
-    # narrow for names at this width, so (a) names the outer eras only.
-    for x, name in ((18.5, "level 5"), (70.0, "4")):
-        axA.text(x, 5.93, name, fontsize=7, ha="center", va="top",
-                 color=style.MUTED)
+    # The composition's levels, named per era in every panel that draws
+    # across the legs (the user, 2026-10-05: "why there is no level text
+    # still"): the full ladder -- level 5, the sigma leg, the chi-floor leg,
+    # level 4 -- where the panel is wide, (a) and (e); digits in (c), (d).
+    def ladder(ax, y, first="level 5", x1=19.0, last="level 4", x4=55.0):
+        for x, name in ((x1, first), (27.5, r"$\sigma$"), (32.5, r"$\chi$"),
+                        (x4, last)):
+            ax.text(x, y, name, fontsize=7, ha="center", va="top",
+                    color=style.MUTED)
+    ladder(axA, 5.90)   # tops below the 3.4 pt ticks
 
     # (c) the approach, drawn across the legs ----------------------------------
     for b in b_used:
@@ -247,8 +252,11 @@ def main(argv: list[str] | None = None) -> int:
     axC.plot(b1_over[:, 0], b1_over[:, 1], color=style.CONTEXT, lw=0.9)
     axC.set_ylim(-0.4, 7.0)
     axC.set_ylabel(r"$\chi$-pit separation")
-    axC.text(60.0, 6.55, "merged pit", fontsize=fs, ha="center", va="top",
+    axC.text(68.0, 0.45, "merged pit", fontsize=fs, ha="center", va="bottom",
              color=style.INK)
+    for x, name in ((6.0, "5"), (68.0, "4")):
+        axC.text(x, 6.9, name, fontsize=fs, ha="center", va="top",
+                 color=style.MUTED)
 
     # (d) the wall: every arm's max|K|; the cures carry the history ------------
     for d in d_used:
@@ -267,9 +275,9 @@ def main(argv: list[str] | None = None) -> int:
                  zorder=4)
     axD.set_ylim(2e-2, 90)
     axD.set_ylabel(r"$\max|K|$")
-    axD.text(10.0, 55.0, "5", fontsize=fs, ha="center", va="top", color=style.MUTED)
-    axD.text(63.0, 55.0, "4", fontsize=fs, ha="center", va="top", color=style.MUTED)
-    axD.text(70.0, 30.0, "walls: 6, 7 dashed;\n$\\sigma$ arm solid grey", fontsize=6.3,
+    axD.text(6.0, 55.0, "5", fontsize=fs, ha="center", va="top", color=style.MUTED)
+    axD.text(68.0, 55.0, "4", fontsize=fs, ha="center", va="top", color=style.MUTED)
+    axD.text(68.0, 6.0, "6, 7: dashed\n$\\sigma$: solid", fontsize=6.3,
              ha="center", va="top", color=style.CONTEXT, linespacing=1.2)
 
     # (e) the field that held the throats open, swallowed ----------------------
@@ -287,10 +295,11 @@ def main(argv: list[str] | None = None) -> int:
              color=style.INK)
     axE.text(63.0, 0.0075, r"$|\Pi|$", fontsize=8, ha="center", va="top",
              color=style.MUTED)
+    ladder(axE, 1.95, first="5", x4=67.0)   # 13-25 is too narrow for "level 5" here
 
     for ax in (axC, axD, axE):
         rules(ax)
-        ax.set_xlim(-1.5, t_end + 1.5)
+        ax.set_xlim(0.0, 100.0)
     axC.tick_params(labelbottom=False)
     axD.tick_params(labelbottom=False)
 

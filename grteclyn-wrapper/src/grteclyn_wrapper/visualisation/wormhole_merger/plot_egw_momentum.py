@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 r"""E_GW against the initial momentum: the turnover at the capture boundary.
 
+OFF THE PAPER since 2026-10-05 (the user: "not representative ... describe
+it in text, wipe the figure"): three points, one a floor, read better as the
+sentence sec:gw:flyby already carries.  Kept as a check of those numbers.
+
 One panel, three measured points (p = 0.25 / 0.45 / 0.60, the d = 12 boosted
 arms), each the band energy of the (2,2) burst through R = 20 in units of its
 own pair's solved mass -- the ledger rows clmEgwEnergyTwoFive / FortyFive /
