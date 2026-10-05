@@ -52,9 +52,10 @@ window (02 at t = 60, the user's call on 2026-10-05).
 control.** Alone, the inflating throat invites "so it is just unstable"; beside
 its collapsing twin it shows the branch being chosen. Publish 05–07 as the
 momentum ladder they are: the same pair at p = 0.25, 0.60 and 0.90 — scatter,
-stalled merger, wall — is one story told three times louder. The head-on pair
-is 03 with 10 (the same collision with and without the exotic matter), the
-spiral's vacuum reference is 08, the fly-by's is 09.
+stalled merger, inflating plunge — is one story told three times louder. The
+head-on pair is 03 with 10 (the same collision with and without the exotic
+matter); 08 is the textbook vacuum merger (the d = 12 spiral's parameters) and
+09 the vacuum fly-by at p = 0.45, the references for the wormhole channels.
 
 ---
 
@@ -221,13 +222,13 @@ expansion - the growing structure is the mouths opening. TOP RIGHT: the lapse.
 BOTTOM LEFT: the conformal factor, the two mouths. BOTTOM RIGHT: the
 gravitational wave, Re(Psi4).
 
-The encounter is loud. A close pass this deep radiates far more gravitational
-energy than a vacuum black-hole pair on the same trajectory (video 09 is that
-control: without the exotic field the same momentum just coasts apart, because
-the phantom field makes the mutual pull several times stronger). And there is a
-second channel a vacuum binary cannot have at all: the exotic scalar field
-itself radiates, in a dipole pattern, carrying its energy with the opposite
-sign.
+The pull is the surprise. Without the exotic field, black holes with even
+more momentum than this simply coast apart (video 09, the vacuum control at
+momentum 0.45): the phantom field makes the mutual attraction several times
+stronger, which is what drags this pair in so close. And the pass radiates
+through a second channel a vacuum binary cannot have at all: the exotic scalar
+field itself radiates, in a dipole pattern, carrying its energy with the
+opposite sign.
 
 The video stops at t = 63, where the quality of the solution (the constraint
 norms) stops meeting the campaign's cut; the close pass and the whole burst
@@ -311,23 +312,22 @@ reference it is measured against.
 ```
 A control run, and the point of it is what does NOT happen.
 
-Two black holes with the wormhole fly-by's separation and momentum, and no
-scalar field. In vacuum that momentum is unbound: the holes begin at their
+Two black holes at the fly-bys' separation, 12, each with momentum 0.45, and
+no scalar field. In vacuum that momentum is unbound: the holes begin at their
 closest approach and coast apart, the separation opening from 12 to 21.
 
 TOP LEFT: the magnitude of the Weyl scalar. TOP RIGHT: the lapse. BOTTOM LEFT:
 the conformal factor. BOTTOM RIGHT: the wave itself, Re(Psi4).
 
-Now compare it with the wormhole fly-by (video 05). There, the same class of
-encounter is not unbound: the exotic matter makes the attraction several times
-stronger, the pair falls deep, and the mouths inflate as they pass - and the
-pass radiates far harder than this vacuum swing-by does. The pair of videos is
-that difference made visible.
+Now compare it with the wormhole fly-by (video 05). There the exotic matter
+makes the attraction several times stronger: even at the lower momentum 0.25
+the pair falls in to a separation of 2.33 before it swings apart, and the
+mouths inflate as they pass. The difference between the two videos is the
+exotic matter's pull, made visible.
 
 A caveat stated plainly: the momentum here is high enough that the standard
 boosted-black-hole initial data is outside its strict validity range, which
-inflates the vacuum emission - so the wormhole-to-vacuum energy ratio read
-from this pair is a lower bound.
+inflates this run's emission.
 ```
 
 ## 10. `10_control_two_black_holes_collide_headon.mp4`

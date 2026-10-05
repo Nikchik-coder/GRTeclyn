@@ -196,9 +196,9 @@ PANELS: dict[str, dict] = {
         cap1="Separation 12, momentum 0.25 per mouth, constraint-solved boosted data. The "
              "pair swings past (closest approach 2.33 at t \u2248 47) and separates \u2014 nothing "
              "merges, no horizon ever \u2014 and both mouths INFLATE as it goes.",
-        cap2="A scatter this close is loud: far more gravitational radiation than a vacuum "
-             "black-hole pair on the same trajectory, plus a phantom-scalar burst a vacuum "
-             "binary has no analogue for.",
+        cap2="In vacuum, black holes with even more momentum just coast apart (video 09): "
+             "the phantom field's pull is what drags this pair in, and the pass radiates a "
+             "phantom-scalar burst a vacuum binary has no analogue for.",
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80": dict(
         out="06_plunge_merger_no_horizon_yet.mp4",
@@ -248,12 +248,12 @@ PANELS: dict[str, dict] = {
         out="09_control_two_black_holes_fly_apart.mp4",
         fields=["Weyl4_Mag", "lapse", "chi", "Weyl4_Re"],
         title="Control  \u2014  the fly-by's own momentum, in vacuum",
-        cap1="The wormhole fly-by's initial data, minus the scalar field. In vacuum that "
-             "momentum is unbound: the two black holes start at closest approach and "
-             "coast apart, 12 \u2192 21.",
-        cap2="Watch it beside the fly-by videos: with the phantom field the pull is about "
-             "six times stronger, the pair falls close, and the mouths inflate. The "
-             "difference between the channels is the measurement.",
+        cap1="Two black holes at the fly-bys' separation, 12, with momentum 0.45 each and "
+             "no scalar field. In vacuum that momentum is unbound: they start at closest "
+             "approach and coast apart, 12 \u2192 21.",
+        cap2="Watch it beside the wormhole fly-by (video 05): with the phantom field the "
+             "pull is several times stronger, so even at momentum 0.25 the pair falls in "
+             "to 2.33, and the mouths inflate as they pass.",
     ),
 }
 
