@@ -123,6 +123,17 @@ M_ADM misses the interaction energy. No binary number is final until remeasured 
   controls, the group aggregates. Figures 6/9/10/12/13 and the gallery's spiral+fly-by rows redraw only after
   their reruns. Details: GPU_PLAN "2026-10-02 (~06:00 UTC)".
 
+## TO DO: GPU_PLAN.md is OUTDATED (noted 2026-10-05, the user)
+
+The diary has not caught up with the 2026-10-05 state and needs a refresh pass: the superposed
+campaign left the paper entirely (Table III = 104 production runs, GPU cost 549 h from packed
+logs, 141 ledger rows retired, Fig. 4 cut to (a)-(c), half-mass/placement/ladder/gauge
+sections removed), the E_GW(p) scatterer points are measured (p025 3.9e-2, p045 9.0e-2,
+trough-gated), and the open work is: E_GW(p060) via a radii passthrough for the header-less
+restart stream, the Sec. VIII waves rewrite, the stale figures (constraint_evolution,
+momentum_scan_orbits, the five waves figures), and the matched width table from the csm
+a-arms' slice caches (restores the width-exponent sentence).
+
 ## The plan, in order (the user, 2026-09-28)
 
 1. **Energy check** — done: the pair acts at fixed scalar potential (Sec. II D; `t0_matching/energy_scan.tsv`).
