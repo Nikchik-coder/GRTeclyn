@@ -4217,3 +4217,17 @@ run tree.
   `single_pureq_q1e2_ml4_t100 60` added; the curated pureq films cut to 61 frames (no cache, so cut not redrawn).
 - Every panel of all ten videos eyeballed at 5 times: none blank (the near-white early K in 03/04/05/10 is the
   initial data's K ~ 0). Local commits only; the push waits for the user's word.
+
+## 2026-10-05 (~09 UTC) — E_GW(p): the two scatterer points measured
+
+Convention (the old fly-by's): per-sphere gate at the envelope trough after the arch
+(`waves_trough_time`), band-integral energy (`waves_energy_run`, m = 2 doubled), M = the
+boosted-pair solve's M_ADM_face (`mergers_solved_madm`). Pass at t ~ 48 for both scatterers,
+so the global Ham-trust cut (63.3 / 67.6) sits before the arch at every sphere; the trough
+gate is the causal (light-cone) reading of the same contamination.
+- p = 0.25 (M 2.17828): E/M = 3.85e-2 / 4.05e-2 / 3.55e-2 at R = 20/28/36 (gates 83.7/99/99).
+- p = 0.45 (M 2.07763): E/M = 9.02e-2 / 8.89e-2 / 7.45e-2 at R = 20/28/36 (gates 94.2/99/99).
+- p = 0.60 (chi1e4 leg, M 1.91204): pending — the restart stream is header-less, so
+  `waves_energy_run` needs a radii passthrough (spheres 20/28/36/44); trust 80 covers the
+  burst at R = 20/28. p = 0.90 stays unmeasured (burst cut at R = 14; finer continuation).
+Ledger rows + the Sec. VIII E_GW(p) text follow once the p = 0.60 point is in.
