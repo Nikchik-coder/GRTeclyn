@@ -224,7 +224,9 @@ peak). Left in the queue, all PROPOSED with NO go: SIGN-dyn (GPU minutes), EGW-p
 finer continuation (lvl5 from its Chk04500 — the K-wall's knob is resolution). Pending analysis: the E_GW(p)
 curve (0.25/0.45/0.60), the level-4-vs-5 comparison, Fig. 5/§VI on the complete MOTS history. DONE overnight: the p060
 chi leg (t = 100, no horizon at lvl4), EGW-p09 (t = 40, third plunge, burst cut at the stop), MOTS-ho3
-(t = 100, history complete). CONV-csm-w is LIVE on the second node (R = 28 ball, the user: whatever fits; R = 44 and R = 36 both OOM one card). Proposed, NO go: SIGN-dyn, EGW-p012 (the optional second midpoint).
+(t = 100, history complete), and CONV-csm-w on the second node (R = 28 ball; R = 44/36 both OOM one card). Both
+nodes' scratch is clean: the first node empty, the second holds only the HFL cell (60G, the deliberate keep;
+CONV-csm-w's 129G cell wiped ~05:35 UTC 10-05, manifest, 584G free).
 
 **EGW-p06 `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` LIVE on card 0 since ~19:25 UTC 10-02 (the
 user's go ~18:20 UTC):** E_GW(p) above the fly-by — the turnover hunt. The fly-by's packed params with only
@@ -383,9 +385,11 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): card idle — CONV-csm-w done ~18:00 UTC 10-04 (scratch prune pending a session there)
+## Second node (one H100): card idle, scratch clean — only the HFL cell (60G, the deliberate keep) remains, 584G free
 
-**CONV-csm-w `v2_spiral_d12_p012_L128_lvl4w_t040_csm` LIVE on card 0 since ~06:50 UTC 10-04 (the user:
+**CONV-csm-w `v2_spiral_d12_p012_L128_lvl4w_t040_csm` DONE ~18:00 UTC 10-04 (reached t = 40, no NaN; packed
+`08_convergence/`, verdict in the queue paragraph above). Its scratch cell (129G) wiped ~05:35 UTC 10-05 on
+the user's word ("wipe out leftovers"; manifest 10-05). Was LIVE on card 0 since ~06:50 UTC 10-04 (the user:
 "whatever fits the gpu"): the wave-zone referee run at the R = 28 BALL — extraction_levels 0 1 0 0, the
 ExtractionTagger refines r < 33.6 to level 1, so the R = 20 AND R = 28 waves travel and are extracted at
 dx 0.25 the whole way (R = 36/44 stay base-grid). The sizing is now measured, not estimated: the R = 44 ball
