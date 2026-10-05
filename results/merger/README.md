@@ -1365,12 +1365,23 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
     pixelate with core junk from ~78; late ψ4 maxima out of propagation order). The E_GW(p = 0.60) burst reads
     use t ≤ 80, which covers the merger burst on all spheres.
   - p = 0.90 plunges harder: separation 11.8 (t = 20) → 2.62 (t = 40), contact just past its stop; its burst was
-    cut mid-flight (R = 14 still rising at 40), so E_GW(p = 0.90) comes from the chi1e4 extension (running).
+    cut mid-flight (R = 14 still rising at 40). Its chi1e4 extension died at t = 45.27 in a max|K| runaway with
+    χ never near the floor — the K-wall class, cured in the d6 chain by resolution, not by the floor; a finer
+    continuation from its Chk04500 is the open proposal.
+  - p = 0.45 (stock settings, no checkpoints, stop 100) survives to t = 100 with NO wall: a close fly-by,
+    nearest approach 2.45 at t ≈ 47, receding after, no MOTS ever. **The plunge/wall boundary sits in
+    (0.45, 0.60)**: p = 0.25/0.45 scatter and survive; p = 0.60/0.90 merge and hit walls. Trust t ≤ 67.6 (the
+    fly-by midpoint-growth class); the periapsis burst is quotable at R = 14/20/30.
+  - The lvl5 discriminator (t = 40–60, min_chi 1e-4, from the pre-contact Chk04000) finds NO converged MOTS
+    either: rms θ_out 3.8e-2 / R 4.514 / deform 0.142 at t = 60, matching the lvl4 arms — **the chi-leg stall
+    is physical, not a resolution artefact**; whether the remnant traps late (lvl4 extrapolation t ≈ 110–115)
+    stays open (its Chk06000 is kept for a lvl5 extension).
 - **Runs** *(pack, `campaign/06_binary_flyby/`)*: `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` (the t040
   leg), `…_t100_lbf_csm_r04000` (the extension, died 55.52), `…_lvl4from50_chi1e4_t100_lbf_csm_r05000` (the
-  chi leg, t = 100; movies cut at 80, the full-chain 0-80 stitch on the user's word), and
-  `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` (the p = 0.90 leg); binary `main3d_boostpair_91ed17cd`,
-  checkpoints every 5 keep 3.
+  chi leg, t = 100; movies cut at 80, the full-chain 0-80 stitch on the user's word),
+  `…_lvl5from40_chi1e4_t060_lbf_csm_r04000` (the lvl5 discriminator), `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm`
+  + `…_lvl4from40_chi1e4_t100_lbf_csm_r04000` (the p = 0.90 legs) and `merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm`
+  (the death clock); binary `main3d_boostpair_91ed17cd`.
 
 ### The head-on's true horizon history (MOTS-ho1, 2026-10-02)
 - **Claim.** Re-running the head-on's leg 1 with the 3D spectral finder on every plotfile gives the true common
@@ -1394,6 +1405,16 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   with only stop 100 → 50 and the names, from leg 1's Chk03500; checkpoints every 5 keep 3; same binary.
   `merge_headon_flip_d8_v1_L128_lvl4from50_mots_t100_csm_r05000` *(pack, same folder)*: leg 3's packed params
   with only the names and the checkpoint block, from leg 2's Chk05000; checkpoints every 5 keep 3; same binary.
+
+### Convergence: the wave zone is resolved — refining it changes nothing (CONV-csm-w, 2026-10-05)
+- **Claim.** The solved spiral rerun with the ExtractionTagger refining r < 33.6 to level 1 (the R = 28 ball:
+  the R = 20 and 28 waves travel and are extracted at Δx = 0.25 the whole way) reproduces CONV-csm's base-grid
+  waveforms to **0.01–0.15 % of peak** — (2,2) and (2,0), R = 14 and 20, over the whole burst window t ≤ 40.
+  Base-grid extraction is vindicated on csm data; the 2026-09-26 wave-zone gap is closed.
+  - Sizing is measured, not assumed: the R = 44 ball (~106M cells) and R = 36 ball (~77M) both OOM one H100;
+    the R = 28 ball (~58M) runs at 77.6 of 80 GB.
+- **Runs.** `v2_spiral_d12_p012_L128_lvl4w_t040_csm` *(pack, 08_convergence/)* against
+  `v2_spiral_d12_p012_L128_lvl4from0_t100_csm` (CONV-csm); no frames or movies (the study's exception).
 
 ### Convergence: the spiral burst does not depend on the core's resolution
 - **Claim.** The production spiral's level-5 legs rerun at level 4 from the same t = 36 checkpoint (Chk03600),

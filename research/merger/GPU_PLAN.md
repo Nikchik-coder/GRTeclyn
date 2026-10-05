@@ -4153,3 +4153,23 @@ run tree.
   resolution question, running on card 0). Trust t ≤ 45.2; filed 06_binary_flyby when the drain ends.
 - **EGW-p045 relaunched on the freed card 1** (~07:45 UTC; the standing go): same template and consumer set,
   from t = 0. ~4.1 u/h → t = 40 ~17:30 UTC.
+
+## 2026-10-05 (~05:40 UTC) — all three finish clean overnight; both verdicts land; every card idle
+
+- **The lvl5 discriminator reached t = 60, no NaN, Ham 2.0e-4** — and found NO converged MOTS over the whole
+  birth window at level 5 either (rms θ_out dips ~1.8e-2 mid-window, ends 3.8e-2, R 4.514, deform 0.142 —
+  the lvl4 arms' numbers at matched times). **The p060 stall is physical, not a resolution artefact**: this
+  plunge does not trap promptly at two resolutions. Late trapping (lvl4 extrapolation t ≈ 110–115) stays
+  open; Chk06000 NFS-secured for a lvl5 extension on the user's word. Filed `06_binary_flyby/`.
+- **The p045 death clock reached t = 100 — NO WALL** (stock min_chi 1e-8, no checkpoints): a close fly-by,
+  nearest approach 2.45 at t ≈ 47, no MOTS ever, receding to 5.85. **The plunge/wall boundary sits in
+  (0.45, 0.60).** Trust t ≤ 67.6 (the midpoint-growth class; Ham ends 3.1, the known pattern). The periapsis
+  burst is quotable at R = 14/20/30; R = 44's arrival falls outside trust. Filed `06_binary_flyby/`.
+- **CONV-csm-w reached t = 40 — the wave zone is resolved**: refining r < 33.6 to level 1 (R = 20/28 extracted
+  at Δx 0.25 the whole way) reproduces CONV-csm's base-grid waveforms to 0.01–0.15 % of peak ((2,2)/(2,0),
+  R = 14/20, all t ≤ 40). The 09-26 wave-zone gap is closed on csm data. Ran at 77.6/80 GB (R = 44/36 balls
+  OOM'd the probes). Filed `08_convergence/`; its second-node scratch prune waits for a session there.
+- **Nothing is running anywhere.** Queue: SIGN-dyn and EGW-p012 (both PROPOSED, no go), and the p09 finer
+  continuation from Chk04500 (PROPOSED, no go) — the lvl5 verdict says resolution is the K-wall's knob, so
+  that continuation would be lvl5-from-45; E_GW(p = 0.90) still has no outer-sphere number without it.
+- E_GW(p) analysis can now run on p = 0.25/0.45/0.60 (trusted windows) — the turnover curve for Figs. 9/12.

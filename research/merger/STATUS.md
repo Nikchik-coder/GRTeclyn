@@ -154,7 +154,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## Live — first node (two H100s): card 0 the p060 lvl5 horizon-check (~07:10 UTC 10-04), card 1 EGW-p045 (~07:45)
+## First node (two H100s): BOTH CARDS IDLE since the overnight finishes (10-05)
 
 **P060-LVL5 `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` LIVE on card 0 since
 ~07:10 UTC 10-04 (the user: "kill it and run p060 lvl5 minchi"):** THE HORIZON-BIRTH DISCRIMINATOR — the
@@ -217,9 +217,12 @@ receding after. Filed `06_binary_flyby/`, trust t <= 55.5, closeout running; Chk
 PROPOSED (no go yet): the chi-floor continuation from Chk05500 — min_chi 1e-4, the d6 chain's proven cure,
 ~8 min to the death point, then to t = 100 — settles whether a horizon forms on this plunge.
 
-Queue order (10-04 ~07:10 UTC): first node card 0 = the p060 lvl5 horizon-check (t = 60 ~15:00–17:00 UTC),
-card 1 = the p09 chi leg (t = 100 ~14:00 UTC); EGW-p045 stopped at t = 0.91, go stands, relaunches on the next
-free card; second node free (ho3 done; its prune needs a session there). DONE overnight: the p060
+Queue order (10-05 ~05:45 UTC): NOTHING RUNNING — all three overnight runs finished clean and are packed.
+The verdicts: the p060 stall is PHYSICAL (no MOTS at lvl5 either); p = 0.45 has NO WALL (the plunge boundary
+sits in (0.45, 0.60)); the wave zone is RESOLVED (CONV-csm-w agrees with base-grid extraction to 0.15 % of
+peak). Left in the queue, all PROPOSED with NO go: SIGN-dyn (GPU minutes), EGW-p012 (~4–6 h), and the p09
+finer continuation (lvl5 from its Chk04500 — the K-wall's knob is resolution). Pending analysis: the E_GW(p)
+curve (0.25/0.45/0.60), the level-4-vs-5 comparison, Fig. 5/§VI on the complete MOTS history. DONE overnight: the p060
 chi leg (t = 100, no horizon at lvl4), EGW-p09 (t = 40, third plunge, burst cut at the stop), MOTS-ho3
 (t = 100, history complete). CONV-csm-w is LIVE on the second node (R = 28 ball, the user: whatever fits; R = 44 and R = 36 both OOM one card). Proposed, NO go: SIGN-dyn, EGW-p012 (the optional second midpoint).
 
@@ -380,7 +383,7 @@ trust window 57; `05_binary_spiral/csm/`); the three mode-3 momentum probes (`si
 stopped t ≈ 32–33); the exact-boost e2e chain (`02_moving_throat/exact_boost/`; the `lb` and collar `lbc` arms
 died at t = 26.1 / 37.6, not packed, frames kept); the t = 0 solve tests (`t0_*_lbcs*`); the shape set (below).
 
-## Second node (one H100): card 0 CONV-csm-w since ~06:50 UTC 10-04
+## Second node (one H100): card idle — CONV-csm-w done ~18:00 UTC 10-04 (scratch prune pending a session there)
 
 **CONV-csm-w `v2_spiral_d12_p012_L128_lvl4w_t040_csm` LIVE on card 0 since ~06:50 UTC 10-04 (the user:
 "whatever fits the gpu"): the wave-zone referee run at the R = 28 BALL — extraction_levels 0 1 0 0, the
