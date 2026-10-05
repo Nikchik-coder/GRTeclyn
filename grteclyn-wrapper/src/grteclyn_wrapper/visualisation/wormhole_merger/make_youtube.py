@@ -24,10 +24,13 @@ their frames are one per plotfile over a long quiet record.  These records are
 100 units in 101 frames and the interesting part -- contact, merger, ringdown --
 takes ten of them, so at 2x the merger is over in a second.  ``--speed`` is
 there if a particular upload wants it, and the on-frame note follows it
-automatically, but the default is real time.  "Real time" means one code unit
-per frame at 10 fps; an entry whose frames are further apart says so with
-``dt_frame`` and its note follows (F4's inflation record: frames 2 units apart,
-t = 0-218 in 11 s, "2x speed").
+automatically, but the default is real time.  "Real time" means ten code units
+per second of video; an entry whose frames are further apart than one unit says
+so with ``dt_frame`` and its note follows (F4's inflation record: frames 2 units
+apart, t = 0-218 in 11 s, "2x speed").  One whose frames are closer together
+plays them at a higher frame rate instead and stays real time: the vacuum
+controls save one every half unit and play at 20 fps (the user, 2026-10-05:
+"bbh should be real time").
 
 WHICH FIELDS, AND WHY THOSE.  Chosen for what reads on screen at a glance,
 which is not the same as what the paper measures from:
@@ -242,17 +245,23 @@ PANELS: dict[str, dict] = {
         cap1=r"Momentum 0.90 per mouth: the pair falls from separation 11.8 to 2.6 in forty "
              r"units. On the approach both mouths visibly \emph{inflate}, and the merging "
              r"core starts to inflate too.",
-        cap2=r"No horizon is found at any time. The record ends at $t=45.3$, where this "
-             r"simulation stops: the inflating core outruns the grid's resolution.",
+        cap2=r"No horizon is found at any time. The simulation stops at $t=45.3$, just "
+             r"after the last frame: the inflating core outruns the grid's resolution.",
     ),
+    # Separations and angles of the controls are from their punctures.dat.  The
+    # d = 12 wormhole spiral this run is the twin of is not in this set, so the
+    # captions do not lean on it.
     "07_bbh_control/bbh_control_d12_p012_t150": dict(
         out="08_control_two_black_holes_merge.mp4",
         fields=["Weyl4_Mag", "lapse", "chi", "Weyl4_Re"],
-        title=r"Control --- two black holes, same separation and momentum, no scalar",
-        cap1=r"The vacuum comparison: the $d=12$ spiral's separation and momentum, with "
-             r"the ghost scalar removed. Two black holes merge and ring down.",
-        cap2=r"This is what a textbook merger looks like on the same grid --- the chirp the "
-             r"wormhole channels never produce.",
+        dt_frame=0.5,
+        title=r"Control --- two black holes plunge and merge, no scalar",
+        cap1=r"The vacuum control: two black holes at separation 12, momentum 0.12 each, "
+             r"and no scalar field. They plunge rather than spiral --- by $t=60$, 2.3 "
+             r"apart, they have turned only $75^{\circ}$ --- then merge and ring down.",
+        cap2=r"Its wave still climbs the point-mass track in frequency, then turns toward "
+             r"the Kerr ringdown tone: a monotone rise, then a fixed frequency. No wormhole "
+             r"channel follows that track.",
     ),
     "07_bbh_control/bbh_headon_d8_L128_lvl5_t100": dict(
         out="10_control_two_black_holes_collide_headon.mp4",
@@ -270,10 +279,11 @@ PANELS: dict[str, dict] = {
     "07_bbh_control/bbh_control_d12_p045_t100": dict(
         out="09_control_two_black_holes_fly_apart.mp4",
         fields=["Weyl4_Mag", "lapse", "chi", "Weyl4_Re"],
-        title=r"Control --- the fly-by's own momentum, in vacuum",
-        cap1=r"Two black holes at the fly-bys' separation, 12, with momentum 0.45 each and "
-             r"no scalar field. In vacuum that momentum is unbound: they start at closest "
-             r"approach and coast apart, $12\to21$.",
+        dt_frame=0.5,
+        title=r"Control --- two black holes fly apart, no scalar",
+        cap1=r"Two black holes at separation 12, momentum 0.45 each, and no scalar field. "
+             r"In vacuum that momentum is unbound: they start at closest approach and "
+             r"coast apart, to separation 27 by $t=100$.",
         cap2=r"Watch it beside the wormhole fly-by (video 05): with the phantom field the "
              r"pull is several times stronger, so even at momentum 0.25 the pair falls in "
              r"to 2.33, and the mouths inflate as they pass.",
@@ -378,6 +388,9 @@ def _pieces(s: str) -> list[tuple[str, bool]]:
     "constraint-solved" does not have to fit a narrow line whole."""
     out = []
     for w in _words(s):
+        if w == "|" and out:                      # an em dash never starts a line
+            out[-1] = (out[-1][0] + " |", True)   # (TeX's ~---)
+            continue
         parts = [w] if "$" in w else re.split(r"(?<=[A-Za-z]-)(?=[A-Za-z])", w)
         out += [(part, False) for part in parts[:-1]] + [(parts[-1], True)]
     return out
@@ -570,6 +583,10 @@ def build(run_key: str, spec: dict, movies: Path, dest: Path,
     if out.exists() and not overwrite:
         print(f"[have] {out.name}")
         return True
+
+    # Frames closer than one code unit apart play at a higher frame rate, so the
+    # video stays real time; frames further apart play fast, and say so.
+    speed = speed / min(spec.get("dt_frame", 1.0), 1.0)
 
     grid = (len(fields), 1) if len(fields) <= 2 else (2, (len(fields) + 1) // 2)
     chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid)

@@ -23,8 +23,10 @@ again with no cache to redraw). **03, 04, 05 and 07 are zoomed x2** about the
 centre (`zoom_frames.py`: the cached slices cropped to the central half and
 redrawn on fixed scales measured over the zoomed series); 01 and 10 are redrawn
 unzoomed with better scales (01's chi on a log scale, 10's wave on 2.5 decades
-of symlog). Every wave panel is symmetric-log, K is linear. The sources are the
-`youtube/` and `youtube_zoom2/` subsets beside each curated set.
+of symlog). Each colour bar states its own scale: K is linear except 02's
+(symmetric-log), and every wave panel is symmetric-log except 09's |Psi4|
+(linear). Sources: 01 and 10 from the `youtube/` subsets, 03, 04, 05 and 07
+from `youtube_zoom2/`, and 02, 06, 08 and 09 straight from the curated sets.
 
 **Branding.** The channel is First Interstellar Institute: its mark `FII` is
 printed inside every panel's plot area, so it cannot be cropped off without
@@ -32,13 +34,14 @@ cropping the data. **Gravity Frontiers, the research sponsor,** is named in full
 at the foot of the right-hand column ("Research sponsored by GRAVITY
 FRONTIERS"); the credit line under it carries both names.
 
-**Playback is real time, 1x.** The frames are one per code-time unit and the
-`t =` label drawn on each panel is the true simulation time. Pass `--speed 2`
-if a particular upload wants it; the on-frame note follows automatically. The
-one exception is `01`: its run's frames are 2 units apart, so it plays
-t = 0–218 at 2x and its frame says so; `10`'s frames are 0.5 units apart, so it
-plays at 0.5x and its frame says so. Every video stops at its run's trust
-window (02 at t = 60, the user's call on 2026-10-05).
+**Playback is real time, 1x**: ten code units per second, and the `t =`
+label drawn on each panel is the true simulation time. Pass `--speed 2` if a
+particular upload wants it; the on-frame note follows automatically. The
+vacuum controls 08, 09 and 10 saved a frame every half unit, so they play at
+20 fps and stay real time (the user's call, 2026-10-05). The one exception is
+`01`: its run's frames are 2 units apart, so it plays t = 0–218 at 2x and its
+frame says so. Every video stops at its run's trust window (02 at t = 60, the
+user's call on 2026-10-05).
 
 | file | length | shows | run |
 |---|---|---|---|
@@ -49,9 +52,9 @@ window (02 at t = 60, the user's call on 2026-10-05).
 | `05_wormhole_flyby_no_merger_mouths_inflate.mp4` | 6.5 s | a fly-by: no merger, no horizon, both mouths inflate | `06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` |
 | `06_plunge_merger_no_horizon_yet.mp4` | 8.2 s | a deeper plunge: the pair merges as wormholes and the horizon stalls | `06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80` |
 | `07_hardest_plunge_mouths_inflate.mp4` | 4.7 s | the hardest plunge: the mouths inflate on the approach and the merging core starts to inflate | `06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45` |
-| `08_control_two_black_holes_merge.mp4` | 30.2 s | vacuum control: black holes merge and ring down | `07_bbh_control/bbh_control_d12_p012_t150` |
-| `09_control_two_black_holes_fly_apart.mp4` | 20.2 s | vacuum control: the fly-by's momentum, no scalar | `07_bbh_control/bbh_control_d12_p045_t100` |
-| `10_control_two_black_holes_collide_headon.mp4` | 20.2 s | vacuum control: the head-on's twin — bare black holes fall together and ring down | `07_bbh_control/bbh_headon_d8_L128_lvl5_t100` |
+| `08_control_two_black_holes_merge.mp4` | 15.2 s | vacuum control: two black holes plunge, merge and ring down | `07_bbh_control/bbh_control_d12_p012_t150` |
+| `09_control_two_black_holes_fly_apart.mp4` | 10.2 s | vacuum control at p = 0.45: two black holes coast apart | `07_bbh_control/bbh_control_d12_p045_t100` |
+| `10_control_two_black_holes_collide_headon.mp4` | 10.2 s | vacuum control: the head-on's twin — bare black holes fall together and ring down | `07_bbh_control/bbh_headon_d8_L128_lvl5_t100` |
 
 **Publish 01 and 02 together, and publish the controls with the channels they
 control.** Alone, the inflating throat invites "so it is just unstable"; beside
@@ -59,8 +62,9 @@ its collapsing twin it shows the branch being chosen. Publish 05–07 as the
 momentum ladder they are: the same pair at p = 0.25, 0.60 and 0.90 — scatter,
 stalled merger, inflating plunge — is one story told three times louder. The
 head-on pair is 03 with 10 (the same collision with and without the exotic
-matter); 08 is the textbook vacuum merger (the d = 12 spiral's parameters) and
-09 the vacuum fly-by at p = 0.45, the references for the wormhole channels.
+matter); 08 (a vacuum plunge at d = 12, p = 0.12) and 09 (a vacuum fly-by at
+p = 0.45) are references for the wormhole channels, not twins of any video
+here.
 
 ---
 
@@ -95,7 +99,9 @@ A single wormhole throat, held open by exotic matter, is given a tiny nudge
 inward. It does not collapse. It keeps opening, 3.8 times wider by t = 218, and
 no horizon forms around it.
 
-TOP LEFT: the curvature K - the expanding shell is the throat opening up.
+TOP LEFT: the curvature K - the small ring at the centre is the throat; the
+wide disc spreading outward is the time slicing's collapse front, which keeps
+pace with the lapse front beside it.
 TOP RIGHT: the lapse, the rate at which time runs at each point.
 BOTTOM LEFT: the conformal factor (log scale) - the throat, then the bright
 inflating shell. BOTTOM RIGHT: the phantom scalar, the exotic matter that holds
@@ -283,43 +289,47 @@ Zoomed 2x on the plunge. TOP LEFT: the curvature K - the expanding structure is
 the mouths opening. TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor.
 BOTTOM RIGHT: the gravitational wave, Re(Psi4).
 
-No horizon is found at any time. The video ends at t = 45.3, where this
-simulation stops: the inflating core outruns the grid's resolution.
+No horizon is found at any time. The video ends at t = 45, just before this
+simulation stops at t = 45.3: the inflating core outruns the grid's resolution.
 ```
 
 ## 8. `08_control_two_black_holes_merge.mp4`
 
-**Title:** Control: Two Black Holes Merge, Same Setup Without the Exotic Matter
+**Title:** Control: Two Black Holes Plunge and Merge, No Exotic Matter
 
 ```
-A control run. The d = 12 wormhole spiral's separation and momentum, with the
-exotic scalar field removed. What is left is an ordinary binary black hole.
+A control run: two black holes at separation 12, each with momentum 0.12, and
+no exotic scalar field. What is left is an ordinary binary black hole.
 
 TOP LEFT: the magnitude of the Weyl scalar, the gravitational wave's strength.
-TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor, two punctures orbiting
+TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor, two punctures plunging
 and merging. BOTTOM RIGHT: the wave itself, Re(Psi4).
 
-This is the textbook case, and it is here to be compared against. The frequency
-climbs as the two holes spiral together - the chirp that gravitational-wave
-detectors are built to find - and settles onto the ringdown tone of the final
-Kerr black hole.
+It is a plunge, not a long inspiral: by t = 60, with the punctures 2.3 apart,
+the pair has turned only 75 degrees. Even so, the wave does what a binary black
+hole's must: its frequency climbs along the point-mass track, then turns toward
+the ringdown tone of the final Kerr black hole - a monotone rise, then a fixed
+frequency.
 
-The wormhole channels never do this. They are short, they do not chirp, and
-where a black hole remnant would hold its ringdown frequency, theirs falls or
-drifts. That difference is the observational signature, and this video is the
-reference it is measured against.
+No wormhole channel follows that track. The head-on's frequency falls from
+contact onto its remnant's ringdown tone, the fly-by's falls as the pair
+separates, and the merger's rises after contact but stays below its remnant's
+tone. Wherever a wormhole remnant's ringdown is resolved, it is the ordinary
+black-hole one: the wormhole is in the burst before it. This video is the
+reference that difference is measured against.
 ```
 
 ## 9. `09_control_two_black_holes_fly_apart.mp4`
 
-**Title:** Control: The Same Fly-By Without Exotic Matter, and They Just Separate
+**Title:** Control: Two Black Holes Fly Apart, No Exotic Matter
 
 ```
 A control run, and the point of it is what does NOT happen.
 
-Two black holes at the fly-bys' separation, 12, each with momentum 0.45, and
-no scalar field. In vacuum that momentum is unbound: the holes begin at their
-closest approach and coast apart, the separation opening from 12 to 21.
+Two black holes at separation 12 (the wormhole fly-bys' separation), each with
+momentum 0.45, and no scalar field. In vacuum that momentum is unbound: the
+holes begin at their closest approach and coast apart, the separation opening
+from 12 to 27 by t = 100.
 
 TOP LEFT: the magnitude of the Weyl scalar. TOP RIGHT: the lapse. BOTTOM LEFT:
 the conformal factor. BOTTOM RIGHT: the wave itself, Re(Psi4).
@@ -351,8 +361,7 @@ wave, Re(Psi4), on a log-type scale so the ringdown stays visible.
 
 Watch it beside video 03. There, the horizon closes over two still-open
 wormholes, and the remnant then LOSES mass to the negative-energy field it
-swallows. A vacuum remnant can only grow. Played at half speed: this run
-saved a frame every half unit of time.
+swallows. A vacuum remnant can only grow.
 ```
 
 ---
@@ -370,23 +379,27 @@ GPU simulation, CCZ4, gravitation, theoretical physics
 
 ## Honest limits, worth knowing before captioning anything
 
-- **The 1080p is upscaled, not native.** Source panels are about 630 px wide, so
-  this is roughly a 1.5x Lanczos enlargement. It looks clean because these are
-  smooth fields rather than fine detail. Native high-resolution rendering is no
-  longer possible for most of these: the plotfiles were pruned after each run.
+- **The panels are not upscaled.** Each source frame (about 640x538) is drawn
+  at about 560x460, a 0.85x reduction. The x2 zooms (03, 04, 05, 07) crop the
+  cached slices to their central half, so each cached pixel spans twice the
+  screen it would unzoomed; that is the only magnification. Native
+  high-resolution rendering is no longer possible for most of these: the
+  plotfiles were pruned after each run.
 - **Colour bars are fixed** over each whole series, so a colour means the same
-  value in the first frame and the last. K is drawn on one fixed LINEAR scale
-  (the series' own envelope) since 2026-10-05 — frame 0 of a K panel is
-  uniformly the zero colour because K is identically zero in the initial data;
-  that is correct, not a blank frame.
+  value in the first frame and the last. K is drawn on one fixed scale (the
+  series' own envelope) since 2026-10-05. K is identically zero in the initial
+  data of 01, 02, 03 and 10, so their first K frame is uniformly the zero
+  colour: correct, not a blank frame. The boosted pairs start with K structure
+  from the boost, faint in 04 and 05 and clear in 06 and 07.
 - **Late speckle in any wave or curvature panel is noise, not structure.** It is
   real grid-scale noise, confined to the refined mesh levels, and it becomes
   visible only because the physical signal has decayed far below the fixed
   colour scale by then. The paper gates every measurement window ahead of its
   onset. The measurement is explained in `../README.md`.
 - **Every video stops at its run's trust window** (`../../trust_windows.tsv`):
-  02 at t = 60, 05 at t = 63, 06 at t = 80, 07 at t = 45 (where that simulation
-  stops), the others at their full records. Nothing on screen after a
+  01 at t = 218 (its record runs to t = 392), 02 at t = 60, 05 at t = 63, 06 at
+  t = 80 and 07 at t = 45 (its last frame; the simulation stops at t = 45.3);
+  03, 04, 08, 09 and 10 run to the end of their records. Nothing on screen after a
   trust window exists in any video.
 - **Nothing on screen is quantitative.** Every number in the paper and in these
   descriptions is measured from the data files, never from an image.
