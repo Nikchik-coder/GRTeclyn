@@ -4199,3 +4199,21 @@ run tree.
   every frame: the in-panel mark is now **FII** (First Interstellar Institute — the publishing channel) and
   the credit line reads "First Interstellar Institute · sponsored by Gravity Frontiers · GRTeclyn · …".
   Descriptions rewritten in `movies/_youtube/README.md`.
+
+## 2026-10-05 (~07:15 UTC) — the YouTube set redesigned (four panels, zoom, branding), 02 cut at t = 60
+
+- **Layout, on the user's word over a dozen mid-turn notes:** every video is a 2x2 of K / lapse / chi / Re(Psi4),
+  labels in the margins beside their panels, panels padded white (the ragged dark corners gone), the `FII` mark
+  inside every plot area (it sat in the dark margins, croppable), "Research sponsored by GRAVITY FRONTIERS" in
+  full beside the grid (the channel's name block was removed again on the user's word: "no need to say it here").
+- **Zoom x2 on 03/04/05/07** via the new `zoom_frames.py` (crops the slice cache to the central half and redraws
+  on fixed scales measured over the zoomed series; `--scale-tmax` keeps p090's final K runaway, 0.30 at t = 45,
+  from washing out the mouth inflation, 0.088 at t ~ 26). Every wave panel is symlog (2 decades; 10's vacuum
+  ringdown 2.5) — the d6/p090 stitches' linear Psi4 was blank after the merger.
+- **Substitutions where no cache exists to redraw:** 02 (pureq) shows Pi in place of the wave (its Psi4 scale
+  was set by the late junk), 08/09 (vacuum controls) show |Psi4| in place of K (live symlog K flooded the frame
+  at t ~ 10–20); 01 (F4) shows phi in place of the wave (no Weyl rendered) and chi on a log scale.
+- **02 cut at t = 60** (the user: "full of junk at the end / stop time here is 60"): trust row
+  `single_pureq_q1e2_ml4_t100 60` added; the curated pureq films cut to 61 frames (no cache, so cut not redrawn).
+- Every panel of all ten videos eyeballed at 5 times: none blank (the near-white early K in 03/04/05/10 is the
+  initial data's K ~ 0). Local commits only; the push waits for the user's word.

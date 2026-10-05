@@ -114,7 +114,7 @@ Folder names are the run names, so a movie can always be traced to its line in
 | set | what it shows | ends at |
 |---|---|---|
 | `01_single_throat/single_eps_m1e2_L512_ml5_oct_t400` | **The throat that INFLATES.** The ε = −0.01 kick in the L = 512 box at level 5 — article Fig. 3. Areal radius grows ×3.8 by t = 218 and no trapped surface forms: the throat stays anti-trapped. Until t ≈ 40 it grows at the Shinkai–Hayward rate; after that the lapse freezes the clock at the neck. Five fields (χ, K, lapse, φ, Π): this run rendered no Weyl4 or shift. Replaced the level-4 arm `single_eps_m1e2_ml4_t100` on 2026-09-26; that arm's movies stay in its run folder | **t = 218**, the trust window (the run reached 392) |
-| `01_single_throat/single_pureq_q1e2_ml4_t100` | **The throat that COLLAPSES.** Pure quadrupole, no radial kick — and it still collapses and radiates. Watch it beside the inflating arm above: same throat, opposite fates | t = 100 |
+| `01_single_throat/single_pureq_q1e2_ml4_t100` | **The throat that COLLAPSES.** Pure quadrupole, no radial kick — and it still collapses and radiates. Watch it beside the inflating arm above: same throat, opposite fates. Cut at t = 60 on 2026-10-05 (the user: K and Weyl4 "full of junk at the end"; trust row added). The run has no slice cache, so the films were cut, not redrawn: their colour scales still span t = 0–100, which is why its Weyl4 film reads blank before the junk | **t = 60**, the trust window (ran to 100) |
 | `01_single_throat/single_eps_p1e2_t100` | the seeded throat, ε = +0.01, at level 3: χ, K, lapse, φ, Π | t = 100 |
 | `01_single_throat/single_eps_p1e2_q5e3_ml4_t100` | the halved quadrupole seed (gate 3's lower point), level 4 | t = 100 |
 | `04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100` | the head-on on the DECLARED-defect data: two throats fall together from rest and make a black hole. Level 5 from t = 0, so no restart, no seam and no interior device anywhere in the record — one grid, 0 aborts. Six fields. **Superseded as the quoted record by the csm stitch below** (constraint-solved data; its horizon numbers, not these, are the paper's) | t = 100 |
@@ -127,8 +127,21 @@ Folder names are the run names, so a movie can always be traced to its line in
 | `06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm` | **The boundary scatter (the "death clock" run): NO WALL at p = 0.45.** Stock settings, no checkpoints, stop 100 — and it survives: nearest approach 2.45 at t ≈ 47, receding after, no MOTS ever. With p060/p090 below it brackets the plunge boundary to p ∈ (0.45, 0.60) | **t = 67.6**, the trust window (ran to 100) |
 | `06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80` | **The plunge whose horizon stalls.** p = 0.60: the pair plunges (separation 3.5 → 0 over t = 36–40), merges as wormholes, and NO trapped surface converges through t = 100 — rms θ_out falls monotonically toward zero (a pinched peanut rounding, extrapolated closure t ≈ 110–115), and the lvl5 discriminator agrees: the stall is physical. The loudest gravitational-wave source in the campaign. It is a STITCH and has to be: the t040 leg to t = 40, the extension to 50 (it died at the single-cell χ wall at 55.5), the min_chi 1e-4 leg after (the floor carries it through the wall to 100); 14 fields, one scale per field, cut at the trust window | **t = 80**, the trust window (ran to 100) |
 | `06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45` | **The hardest plunge — it ends at the curvature wall, and that is its whole history.** p = 0.90: separation 11.8 → 2.6 by t = 40, a violent merger, then max\|K\| at the merged core runs away (93 → 172 in one step) and the run dies at t = 45.27 with χ never near its floor — the K-wall class, whose cure is resolution, not the floor. No horizon found before the end. On the K film the mouths VISIBLY INFLATE on the approach (the user's eye, 10-05) — the fly-by family's inflation carries into the hardest plunge. A STITCH (the t040 leg, then the chi1e4 extension from t = 40); 14 fields | **t = 45** (died 45.27, the wall is the result) |
+| `07_bbh_control/bbh_headon_d8_L128_lvl5_t100` | **the vacuum control for the head-on**: bare punctures (per-hole ADM 1.00) at d = 8 from rest, same box, spheres and cadence as the wormhole head-on. Two black holes fall together, merge and ring down; the reference for the head-on's energy/waveform comparison. Ten fields (a vacuum run renders no φ/Π); frames 0.5 units apart | t = 100 |
 | `07_bbh_control/bbh_control_d12_p012_t150` | the black-hole binary control at the spiral's separation and momentum — what the same encounter looks like with no scalar | t = 150 |
 | `07_bbh_control/bbh_control_d12_p045_t100` | the momentum-matched control: the SAME initial data as the p = 0.45 fly-by, minus the scalar. Two black holes swing past each other and separate -- no merger, no close pass -- because without the ghost field the pull is 6x weaker. Watch it beside `06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl5_t100`, where the same momentum falls to 4.8 and the mouths inflate: the pair of movies is the 70x energy ratio, visible | t = 100 |
+
+## The upload subsets (`youtube/`, `youtube_zoom2/`)
+
+Some sets carry a subfolder of four films drawn for the upload videos
+(`_youtube/`), never for reading off a diagnostic: K, lapse, chi and the wave
+(or the run's nearest substitute), redrawn from the slice cache by
+`grteclyn_wrapper.visualisation.wormhole_merger.zoom_frames` on fixed scales
+measured over the subset's own series. `youtube_zoom2/` is cropped x2 about the
+window centre (the head-on csm stitch, the d6 stitch, the p025 fly-by, the p090
+stitch); `youtube/` is unzoomed with better scales (F4's chi on a log scale,
+the vacuum head-on's wave on 2.5 decades of symlog). Each holds its
+`zoom_zlims.json`. They stop at the same trust windows as their parent sets.
 
 ## Remaking one
 

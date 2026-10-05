@@ -1,0 +1,22 @@
+{
+  "K_z": [
+    -0.09765812940895487,
+    0.09765812940895487
+  ],
+  "Weyl4_Re_z": [
+    -0.06172156399115871,
+    0.06172156399115871
+  ],
+  "_scale_tmin": null,
+  "_source": "runs/wormhole_merger/05_binary_spiral/merger_d6/spiral_d6_p010_L128_lvl4from35_t100_lbf_csm_r03500/stitched_from_t0/frames",
+  "_t_max": null,
+  "_zoom": 2.0,
+  "chi_z": [
+    0.05,
+    0.8379982387134804
+  ],
+  "lapse_z": [
+    0.08731899971142411,
+    0.9109483848512173
+  ]
+}

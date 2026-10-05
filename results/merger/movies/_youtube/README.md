@@ -1,32 +1,44 @@
 # Upload-ready videos
 
-Nine files, 1920x1080 H.264, 10 fps, ready to upload without further editing.
+Ten files, 1920x1080 H.264, 10 fps, ready to upload without further editing.
 Built by
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube
 ```
 
-from the curated masters in `../<group>/<run>/`. Each puts two fields side by
-side, in sync, for one encounter. **The channel is First Interstellar
-Institute** — the in-panel ownership mark reads `FII` and the credit line on
-every frame carries the full name; **Gravity Frontiers is the research
-sponsor** and is credited there too. Rebuilt 2026-10-05 on the constraint-solved
-(csm) records: 03–05 replaced their pre-solve versions, 06 and 07 are new, the
-controls moved to 08/09, and the old `04_spiral_merger_without_a_horizon.mp4`
-was DELETED — its claim did not survive the clean data (the d = 6 merger forms
-a horizon; see 04).
+**Layout (2026-10-05, the user's design): four panels, 2x2, in sync** -- curvature
+K (top left), lapse (top right), conformal factor chi (bottom left), the wave Re(Psi4)
+(bottom right), each named in the margin beside it. Exceptions, each because
+that run has no usable alternative: 01 shows phi in place of the wave (the run
+rendered no Weyl scalar); 02 shows Pi in place of the wave (its Psi4 frames were
+drawn on a scale set by late junk and have no slice cache to redraw); 08 and 09
+show |Psi4| in place of K (their K was drawn live on a flooding symlog scale,
+again with no cache to redraw). **03, 04, 05 and 07 are zoomed x2** about the
+centre (`zoom_frames.py`: the cached slices cropped to the central half and
+redrawn on fixed scales measured over the zoomed series); 01 and 10 are redrawn
+unzoomed with better scales (01's chi on a log scale, 10's wave on 2.5 decades
+of symlog). Every wave panel is symmetric-log, K is linear. The sources are the
+`youtube/` and `youtube_zoom2/` subsets beside each curated set.
+
+**Branding.** The channel is First Interstellar Institute: its mark `FII` is
+printed inside every panel's plot area, so it cannot be cropped off without
+cropping the data. **Gravity Frontiers, the research sponsor,** is named in full
+beside the grid ("Research sponsored by GRAVITY FRONTIERS"); the credit line at
+the foot carries both names.
 
 **Playback is real time, 1x.** The frames are one per code-time unit and the
 `t =` label drawn on each panel is the true simulation time. Pass `--speed 2`
 if a particular upload wants it; the on-frame note follows automatically. The
 one exception is `01`: its run's frames are 2 units apart, so it plays
-t = 0–218 at 2x and its frame says so.
+t = 0–218 at 2x and its frame says so; `10`'s frames are 0.5 units apart, so it
+plays at 0.5x and its frame says so. Every video stops at its run's trust
+window (02 at t = 60, the user's call on 2026-10-05).
 
 | file | length | shows | run |
 |---|---|---|---|
 | `01_wormhole_throat_inflates.mp4` | 11.1 s | one throat, kicked inward: it keeps opening (to its trust window, t = 218) | `01_single_throat/single_eps_m1e2_L512_ml5_oct_t400` |
-| `02_wormhole_throat_collapses.mp4` | 10.2 s | the same throat, seeded the other way: it closes | `01_single_throat/single_pureq_q1e2_ml4_t100` |
+| `02_wormhole_throat_collapses.mp4` | 6.1 s | the same throat, seeded the other way: it closes | `01_single_throat/single_pureq_q1e2_ml4_t100` |
 | `03_headon_collision_makes_black_hole.mp4` | 10.2 s | two wormholes collide head-on and make a black hole (horizon born common at t = 18) | `04_binary_headon/headon_csm_L128_stitched_t0_t100` |
 | `04_spiral_merger_makes_black_hole.mp4` | 10.2 s | the orbital merger — and a horizon DOES form (MOTS from t = 13) | `05_binary_spiral/spiral_d6_p010_L128_csm_stitched_t0_t100` |
 | `05_wormhole_flyby_no_merger_mouths_inflate.mp4` | 6.5 s | a fly-by: no merger, no horizon, both mouths inflate | `06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` |
@@ -34,12 +46,15 @@ t = 0–218 at 2x and its frame says so.
 | `07_hardest_plunge_hits_a_curvature_wall.mp4` | 4.7 s | the hardest plunge: mouths inflate on approach, the merged core hits the K wall | `06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45` |
 | `08_control_two_black_holes_merge.mp4` | 30.2 s | vacuum control: black holes merge and ring down | `07_bbh_control/bbh_control_d12_p012_t150` |
 | `09_control_two_black_holes_fly_apart.mp4` | 20.2 s | vacuum control: the fly-by's momentum, no scalar | `07_bbh_control/bbh_control_d12_p045_t100` |
+| `10_control_two_black_holes_collide_headon.mp4` | 20.2 s | vacuum control: the head-on's twin — bare black holes fall together and ring down | `07_bbh_control/bbh_headon_d8_L128_lvl5_t100` |
 
 **Publish 01 and 02 together, and publish the controls with the channels they
 control.** Alone, the inflating throat invites "so it is just unstable"; beside
 its collapsing twin it shows the branch being chosen. Publish 05–07 as the
 momentum ladder they are: the same pair at p = 0.25, 0.60 and 0.90 — scatter,
-stalled merger, wall — is one story told three times louder.
+stalled merger, wall — is one story told three times louder. The head-on pair
+is 03 with 10 (the same collision with and without the exotic matter), the
+spiral's vacuum reference is 08, the fly-by's is 09.
 
 ---
 
@@ -74,9 +89,11 @@ A single wormhole throat, held open by exotic matter, is given a tiny nudge
 inward. It does not collapse. It keeps opening, 3.8 times wider by t = 218, and
 no horizon forms around it.
 
-LEFT: the phantom scalar field, the exotic matter that holds the throat open.
-Its dark core is the throat, and it widens as the throat inflates.
-RIGHT: the lapse, the rate at which time runs at each point.
+TOP LEFT: the curvature K - the expanding shell is the throat opening up.
+TOP RIGHT: the lapse, the rate at which time runs at each point.
+BOTTOM LEFT: the conformal factor (log scale) - the throat, then the bright
+inflating shell. BOTTOM RIGHT: the phantom scalar, the exotic matter that holds
+the throat open; its dark core widens as the throat inflates.
 
 A wormhole of this kind is an unstable fixed point, like a pencil balanced on
 its tip. It has exactly two ways to fall, and the first perturbation decides
@@ -105,11 +122,13 @@ Watch it beside "A Wormhole Throat Collapses" - same throat, opposite fate.
 The same wormhole throat as the companion video, given a different
 perturbation. This time it closes, and a horizon forms at t = 33.
 
-LEFT: the conformal factor, the throat as a dark pit that deepens.
-RIGHT: the lapse, the rate at which time runs at each point. It dips at the
-centre as the throat closes. It falls in the inflating video too; what tells the
-two apart is the search for trapped surfaces, which finds a horizon here and
-none there.
+TOP LEFT: the curvature K. TOP RIGHT: the lapse, the rate at which time runs
+at each point - it dips at the centre as the throat closes. BOTTOM LEFT: the
+conformal factor, the throat as a dark pit that deepens. BOTTOM RIGHT: the
+scalar field's momentum, the exotic matter falling in. The lapse falls in the
+inflating video too; what tells the two apart is the search for trapped
+surfaces, which finds a horizon here and none there. The video stops at t = 60,
+after which grid noise dominates the curvature panel.
 
 The pair of videos is the actual result. A drainhole wormhole is an unstable
 fixed point with two branches, and the perturbation it is given selects which:
@@ -135,8 +154,10 @@ Two wormhole throats are released from rest and fall together. They touch while
 both are still open wormholes - and then a single horizon closes over the pair
 at t = 18.
 
-LEFT: the conformal factor. Two dark pits approach, meet, and become one.
-RIGHT: the lapse, collapsing at the centre as the horizon forms.
+Zoomed 2x on the collision. TOP LEFT: the curvature K. TOP RIGHT: the lapse,
+collapsing at the centre as the horizon forms. BOTTOM LEFT: the conformal
+factor - two dark pits approach, meet, and become one. BOTTOM RIGHT: the
+gravitational wave, Re(Psi4), on a log-type scale so the ringdown stays visible.
 
 The detail that matters: neither mouth ever has a horizon of its own. At every
 moment the 3D horizon finder sees either no trapped surface at all, or one that
@@ -165,8 +186,10 @@ below the measurement floor, not structure.
 Two wormhole throats, set orbiting at separation 6, spiral together in half an
 orbit - and a single horizon closes over both while they are still wormholes.
 
-LEFT: the conformal factor, the two throats as dark pits that merge into one.
-RIGHT: the lapse, the rate at which time runs, collapsing over the remnant.
+Zoomed 2x on the merger. TOP LEFT: the curvature K. TOP RIGHT: the lapse, the
+rate at which time runs, collapsing over the remnant. BOTTOM LEFT: the conformal
+factor, the two throats as dark pits that merge into one. BOTTOM RIGHT: the
+gravitational wave, Re(Psi4), its two-armed pattern turning with the remnant.
 
 The horizon appears at t = 13, enclosing BOTH mouths at once: like the head-on
 collision, the orbital merger makes its black hole in a single step, with
@@ -193,9 +216,10 @@ Two wormholes at separation 12, each carrying momentum 0.25. They swing past
 each other - closest approach 2.33 - and separate. Nothing merges, no horizon
 ever forms, and as the pair goes by, both mouths INFLATE.
 
-LEFT: the trace of the extrinsic curvature, the field that shows expansion.
-The growing structure is the mouths opening.
-RIGHT: the lapse.
+Zoomed 2x on the encounter. TOP LEFT: the curvature K, the field that shows
+expansion - the growing structure is the mouths opening. TOP RIGHT: the lapse.
+BOTTOM LEFT: the conformal factor, the two mouths. BOTTOM RIGHT: the
+gravitational wave, Re(Psi4).
 
 The encounter is loud. A close pass this deep radiates far more gravitational
 energy than a vacuum black-hole pair on the same trajectory (video 09 is that
@@ -219,9 +243,10 @@ The fly-by's momentum raised to 0.60 - and the pair no longer escapes. The
 mouths plunge, touch at t = 40, and merge into one object. Then the expected
 horizon... does not come.
 
-LEFT: the conformal factor, the two pits plunging and merging.
-RIGHT: the real part of the Weyl scalar - the gravitational wave itself. This
-plunge is the loudest gravitational-wave source in the whole campaign.
+TOP LEFT: the curvature K. TOP RIGHT: the lapse. BOTTOM LEFT: the conformal
+factor, the two pits plunging and merging. BOTTOM RIGHT: the gravitational wave
+itself, Re(Psi4), spiralling out - this plunge is the loudest gravitational-wave
+source in the whole campaign.
 
 Through the entire record the 3D horizon finder closes in on a trapped surface
 that never quite closes: a pinched, peanut-shaped surface that stays marginally
@@ -248,7 +273,9 @@ from separation 11.8 to 2.6 in forty time units and merges violently. Watch the
 curvature field on the approach: both mouths visibly inflate as they close in,
 the same opening-up the fly-by shows, now feeding straight into a merger.
 
-LEFT: the conformal factor. RIGHT: the trace of the extrinsic curvature.
+Zoomed 2x on the plunge. TOP LEFT: the curvature K - watch the mouths open on
+the approach. TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor. BOTTOM
+RIGHT: the gravitational wave, Re(Psi4).
 
 At t = 45.3 the record ends: the curvature at the merged core runs away, nearly
 doubling every step, and the simulation dies. That wall is a result, not a
@@ -271,8 +298,9 @@ p = 0.60 plunge is what the finer continuation will decide.
 A control run. The d = 12 wormhole spiral's separation and momentum, with the
 exotic scalar field removed. What is left is an ordinary binary black hole.
 
-LEFT: the conformal factor, two punctures orbiting and merging.
-RIGHT: the magnitude of the Weyl scalar, the gravitational wave.
+TOP LEFT: the magnitude of the Weyl scalar, the gravitational wave's strength.
+TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor, two punctures orbiting
+and merging. BOTTOM RIGHT: the wave itself, Re(Psi4).
 
 This is the textbook case, and it is here to be compared against. The frequency
 climbs as the two holes spiral together - the chirp that gravitational-wave
@@ -296,7 +324,8 @@ Two black holes with the wormhole fly-by's separation and momentum, and no
 scalar field. In vacuum that momentum is unbound: the holes begin at their
 closest approach and coast apart, the separation opening from 12 to 21.
 
-LEFT: the conformal factor. RIGHT: the magnitude of the Weyl scalar.
+TOP LEFT: the magnitude of the Weyl scalar. TOP RIGHT: the lapse. BOTTOM LEFT:
+the conformal factor. BOTTOM RIGHT: the wave itself, Re(Psi4).
 
 Now compare it with the wormhole fly-by (video 05). There, the same class of
 encounter is not unbound: the exotic matter makes the attraction several times
@@ -308,6 +337,26 @@ A caveat stated plainly: the momentum here is high enough that the standard
 boosted-black-hole initial data is outside its strict validity range, which
 inflates the vacuum emission - so the wormhole-to-vacuum energy ratio read
 from this pair is a lower bound.
+```
+
+## 10. `10_control_two_black_holes_collide_headon.mp4`
+
+**Title:** Control: Two Black Holes Collide Head-On, No Exotic Matter
+
+```
+A control run: the wormhole head-on collision (video 03) with the exotic
+scalar field removed. Two ordinary black holes of the same mass are released
+from rest at the same separation, on the same grid. They fall together, merge,
+and ring down.
+
+TOP LEFT: the curvature K. TOP RIGHT: the lapse. BOTTOM LEFT: the conformal
+factor, the two punctures falling together. BOTTOM RIGHT: the gravitational
+wave, Re(Psi4), on a log-type scale so the ringdown stays visible.
+
+Watch it beside video 03. There, the horizon closes over two still-open
+wormholes, and the remnant then LOSES mass to the negative-energy field it
+swallows. A vacuum remnant can only grow. Played at half speed: this run
+saved a frame every half unit of time.
 ```
 
 ---

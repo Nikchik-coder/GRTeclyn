@@ -77,9 +77,16 @@ from pathlib import Path
 # background, so the margins a 2x2 grid leaves read as deliberate rather than
 # as letterboxing.
 GROUND = "0x0E1216"
+# Panels are padded to their common box with the frames' own white, so a 2x2
+# grid is one clean rectangle.  Padding with GROUND left dark notches wherever
+# two frames differed in width (the colourbar label sets it) -- the ragged
+# corners the user flagged on 2026-10-05.
+PANEL_BG = "0xFFFFFF"
 W_OUT, H_OUT = 1920, 1080
-HEAD_H = 118          # header band: title + speed note + panel labels
+HEAD_H = 118          # header band of a one-row layout: title + speed note + panel labels
+HEAD_H_GRID = 84      # a 2x2 grid's header holds the title only; its labels sit beside the panels
 MARGIN = 40           # left/right text margin, and the gutter the captions wrap in
+SIDE_GAP = 28         # gap between the 2x2 grid and the label / brand text beside it
 
 # Caption typography.  ffmpeg's drawtext does NOT wrap, so a caption longer than
 # the canvas is silently cut off at BOTH ends (it centres, then overflows) and
@@ -87,7 +94,7 @@ MARGIN = 40           # left/right text margin, and the gutter the captions wrap
 # spiral's first build did: its 230-character opening line ran off each side and
 # its second line vanished.  So captions are wrapped here, and the footer's
 # height is computed from how many lines they actually take.
-CAP1_SIZE, CAP2_SIZE, CREDIT_SIZE = 20, 18, 15
+CAP1_SIZE, CAP2_SIZE, CREDIT_SIZE = 20, 18, 16
 CAP1_LEAD, CAP2_LEAD = 26, 24
 # DejaVu Sans averages ~0.55 em per character over mixed-case prose; that is an
 # estimate, so the usable width is taken conservatively.
@@ -103,12 +110,15 @@ _EM = 0.55
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONTB = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
-# The in-panel ownership mark is the CHANNEL the videos publish on — First
-# Interstellar Institute, as "FII" so it fits a panel (the user's word,
-# 2026-10-05); Gravity Frontiers is the research sponsor and sits in the
-# credit line with the full channel name.
+# Branding (the user's word, 2026-10-05).  The CHANNEL is First Interstellar
+# Institute: its mark "FII" is printed inside every panel's plot area, so it
+# cannot be cropped away without cropping the data; the channel's name is not
+# spelled out on the frame (it is where the video is published).  Gravity
+# Frontiers is the research SPONSOR, named in full beside the 2x2 grid
+# (BRAND_RIGHT) and in the credit line.
 MARK = "FII"
-CREDIT = ("First Interstellar Institute  ·  sponsored by Gravity Frontiers  ·  "
+BRAND_RIGHT = ("Research sponsored by", "GRAVITY FRONTIERS")
+CREDIT = ("First Interstellar Institute  ·  research sponsored by Gravity Frontiers  ·  "
           "GRTeclyn  ·  3+1 numerical relativity on GPUs")
 
 # Per-panel label colours: one hue per physical role, kept across every video so
@@ -116,6 +126,7 @@ CREDIT = ("First Interstellar Institute  ·  sponsored by Gravity Frontiers  · 
 ROLE = {
     "chi":        ("GEOMETRY  ·  conformal factor χ", "0x8FB8E8"),
     "phi":        ("MATTER  ·  phantom scalar φ", "0xE58C8C"),
+    "Pi":         ("MATTER  ·  scalar momentum Π", "0xEBA07E"),
     "lapse":      ("GAUGE  ·  lapse α", "0x7FD4A8"),
     "K":          ("CURVATURE  ·  trace K", "0xE0A3D6"),
     "Weyl4_Mag":  ("RADIATION  ·  |Ψ₄|", "0xE8B44A"),
@@ -132,18 +143,20 @@ ROLE = {
 PANELS: dict[str, dict] = {
     "01_single_throat/single_eps_m1e2_L512_ml5_oct_t400": dict(
         out="01_wormhole_throat_inflates.mp4",
-        fields=["phi", "lapse"],
+        fields=["K", "lapse", "chi", "phi"],
+        sub="youtube",
         dt_frame=2.0,
         title="A lone wormhole throat inflates  \u2014  declared kick \u03b5 = \u22120.01",
         cap1="One drainhole throat, given a small inward kick. It does not collapse: it "
              "keeps opening, 3.8\u00d7 in areal radius by t = 218, and no trapped surface forms.",
-        cap2="Until t \u2248 40 it grows at the Shinkai\u2013Hayward rate. Then the lapse (right) "
+        cap2="Until t \u2248 40 it grows at the Shinkai\u2013Hayward rate. Then the lapse (top right) "
              "freezes the clock at the throat, and its growth per unit t slows: the slicing, "
              "not the throat.",
     ),
     "01_single_throat/single_pureq_q1e2_ml4_t100": dict(
         out="02_wormhole_throat_collapses.mp4",
-        fields=["chi", "lapse"],
+        fields=["K", "lapse", "chi", "Pi"],
+        t_end=60.0,
         title="The same throat collapses  \u2014  a quadrupole seed",
         cap1="The mirror of the inflating run: the same throat, given a quadrupole instead "
              "of an inward kick. It closes, and a horizon forms at t = 33.",
@@ -153,7 +166,8 @@ PANELS: dict[str, dict] = {
     ),
     "04_binary_headon/headon_csm_L128_stitched_t0_t100": dict(
         out="03_headon_collision_makes_black_hole.mp4",
-        fields=["chi", "lapse"],
+        fields=["K", "lapse", "chi", "Weyl4_Re"],
+        sub="youtube_zoom2",
         title="Two wormholes collide head-on  \u2014  and make a black hole",
         cap1="Released from rest at separation 8, on constraint-solved initial data. They "
              "touch while both mouths are still open wormholes, and one trapped surface "
@@ -164,7 +178,8 @@ PANELS: dict[str, dict] = {
     ),
     "05_binary_spiral/spiral_d6_p010_L128_csm_stitched_t0_t100": dict(
         out="04_spiral_merger_makes_black_hole.mp4",
-        fields=["chi", "lapse"],
+        fields=["K", "lapse", "chi", "Weyl4_Re"],
+        sub="youtube_zoom2",
         title="Two wormholes spiral in and merge  \u2014  and a horizon forms",
         cap1="Separation 6, tangential momentum 0.10, constraint-solved data. The pair "
              "merges in half an orbit, and a common trapped surface closes over both "
@@ -175,7 +190,8 @@ PANELS: dict[str, dict] = {
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm": dict(
         out="05_wormhole_flyby_no_merger_mouths_inflate.mp4",
-        fields=["K", "lapse"],
+        fields=["K", "lapse", "chi", "Weyl4_Re"],
+        sub="youtube_zoom2",
         title="A wormhole fly-by  \u2014  no merger, and both mouths inflate",
         cap1="Separation 12, momentum 0.25 per mouth, constraint-solved boosted data. The "
              "pair swings past (closest approach 2.33 at t \u2248 47) and separates \u2014 nothing "
@@ -186,7 +202,7 @@ PANELS: dict[str, dict] = {
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80": dict(
         out="06_plunge_merger_no_horizon_yet.mp4",
-        fields=["chi", "Weyl4_Re"],
+        fields=["K", "lapse", "chi", "Weyl4_Re"],
         title="A deeper plunge  \u2014  the mouths merge, and the horizon stalls",
         cap1="The fly-by's momentum raised to 0.60: the pair now PLUNGES \u2014 separation "
              "3.5 \u2192 0 over t = 36\u201340 \u2014 and merges as wormholes. This is the campaign's "
@@ -197,7 +213,8 @@ PANELS: dict[str, dict] = {
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45": dict(
         out="07_hardest_plunge_hits_a_curvature_wall.mp4",
-        fields=["chi", "K"],
+        fields=["K", "lapse", "chi", "Weyl4_Re"],
+        sub="youtube_zoom2",
         title="The hardest plunge  \u2014  the merged core hits a curvature wall",
         cap1="Momentum 0.90 per mouth: the pair falls from separation 11.8 to 2.6 in forty "
              "units and merges violently. The curvature at the merged core then runs away "
@@ -208,16 +225,29 @@ PANELS: dict[str, dict] = {
     ),
     "07_bbh_control/bbh_control_d12_p012_t150": dict(
         out="08_control_two_black_holes_merge.mp4",
-        fields=["chi", "Weyl4_Mag"],
+        fields=["Weyl4_Mag", "lapse", "chi", "Weyl4_Re"],
         title="Control  \u2014  two black holes, same separation and momentum, no scalar",
         cap1="The vacuum comparison: the d = 12 spiral's separation and momentum, with "
              "the ghost scalar removed. Two black holes merge and ring down.",
         cap2="This is what a textbook merger looks like on the same grid \u2014 the chirp the "
              "wormhole channels never produce.",
     ),
+    "07_bbh_control/bbh_headon_d8_L128_lvl5_t100": dict(
+        out="10_control_two_black_holes_collide_headon.mp4",
+        fields=["K", "lapse", "chi", "Weyl4_Re"],
+        sub="youtube",
+        dt_frame=0.5,
+        title="Control  —  the head-on collision in vacuum",
+        cap1="The wormhole head-on's vacuum twin: two bare black holes of the same mass "
+             "released from rest at the same separation, on the same grid. They fall "
+             "together, merge, and ring down.",
+        cap2="Watch it beside the wormhole head-on (video 03): there the horizon closes "
+             "over two still-open wormholes and the remnant then LOSES mass to the "
+             "phantom field it swallows — a vacuum remnant can only grow.",
+    ),
     "07_bbh_control/bbh_control_d12_p045_t100": dict(
         out="09_control_two_black_holes_fly_apart.mp4",
-        fields=["chi", "Weyl4_Mag"],
+        fields=["Weyl4_Mag", "lapse", "chi", "Weyl4_Re"],
         title="Control  \u2014  the fly-by's own momentum, in vacuum",
         cap1="The wormhole fly-by's initial data, minus the scalar field. In vacuum that "
              "momentum is unbound: the two black holes start at closest approach and "
@@ -273,7 +303,8 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
     background at the panel edge.
     """
     cols, rows = grid
-    free_h = H_OUT - HEAD_H - foot_h
+    head_h = HEAD_H if rows == 1 else HEAD_H_GRID
+    free_h = H_OUT - head_h - foot_h
     # Height per panel before the grid-level fit, generous so the final scale
     # is a reduction (sharper) rather than an enlargement.
     panel_h = 900 if rows == 1 else 620
@@ -285,7 +316,7 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
         parts.append(
             f"[{i}:v]setpts=PTS/{speed},"
             f"scale={box_w}:{box_h}:force_original_aspect_ratio=decrease:flags=lanczos,"
-            f"pad={box_w}:{box_h}:(ow-iw)/2:(oh-ih)/2:color={GROUND}[p{i}]")
+            f"pad={box_w}:{box_h}:(ow-iw)/2:(oh-ih)/2:color={PANEL_BG}[p{i}]")
     n_inputs = len(sizes)
     if rows == 1:
         parts.append("".join(f"[p{i}]" for i in range(n_inputs))
@@ -298,17 +329,27 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
                      + f"vstack=inputs={rows}[grid]")
     # Fit the grid inside the free canvas, never upscaling past the canvas.
     parts.append(f"[grid]scale=w=min(iw*{free_h}/ih\\,{W_OUT - 40}):h=-2:flags=lanczos[fit]")
-    parts.append(f"[fit]pad={W_OUT}:{H_OUT}:(ow-iw)/2:{HEAD_H}:color={GROUND}[canvas]")
-    return ";".join(parts), cols, rows
+    parts.append(f"[fit]pad={W_OUT}:{H_OUT}:(ow-iw)/2:{head_h}:color={GROUND}[canvas]")
+    # The fitted grid's true geometry, so labels and marks land ON the panels.
+    # A 2x2 grid is much narrower than the canvas, and placing text by canvas
+    # fractions put the ownership marks in the dark margins OUTSIDE the plots
+    # -- trivially croppable, which defeats them (the user, 2026-10-05).
+    grid_w, grid_h = box_w * cols, box_h * rows
+    s = min(free_h / grid_h, (W_OUT - 40) / grid_w)
+    fit_w = int(grid_w * s) & ~1
+    fit_h = int(round(grid_h * (fit_w / grid_w)))
+    geom = {"x0": (W_OUT - fit_w) // 2, "y0": head_h, "w": fit_w, "h": fit_h}
+    return ";".join(parts), cols, rows, geom
 
 
 def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
-                cap1: list[str], cap2: list[str], foot_h: int) -> str:
-    """Header, per-panel labels, watermarks and captions, all from text files.
+                cap1: list[str], cap2: list[str], geom: dict) -> str:
+    """Header, per-panel labels, watermarks, branding and captions, all from text files.
 
     Everything goes through ``textfile=`` rather than ``text=``: the captions
     carry colons, commas, apostrophes and en-dashes, and escaping those through
     two levels of shell and ffmpeg quoting is how a caption silently truncates.
+    Every position on a panel comes from ``geom``, the grid's real placement.
     """
     fields = spec["fields"]
     files = {}
@@ -318,58 +359,67 @@ def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
         files[name] = str(tmp / name)
         return files[name]
 
+    def text(key: str, font: str, colour: str, size: int, x: str, y: float) -> str:
+        return (f"drawtext=expansion=none:fontfile={font}:textfile={files[key]}:"
+                f"fontcolor={colour}:fontsize={size}:x={x}:y={y:.0f}")
+
     put("title", spec["title"])
     rate = speed * spec.get("dt_frame", 1.0)
     put("speed", "real time" if abs(rate - 1.0) < 1e-9 else f"{rate:g}× speed")
     put("credit", CREDIT)
     put("mark", MARK)
 
-    draw = [
-        f"drawtext=expansion=none:fontfile={FONTB}:textfile={files['title']}:fontcolor=white:"
-        f"fontsize=34:x=(w-tw)/2:y=24",
-        f"drawtext=expansion=none:fontfile={FONTB}:textfile={files['speed']}:fontcolor=0xE8B44A:"
-        f"fontsize=21:x=w-tw-28:y=26",
-    ]
+    draw = [text("title", FONTB, "white", 34, "(w-tw)/2", 22),
+            text("speed", FONTB, "0xE8B44A", 21, "w-tw-28", 26)]
 
-    # Panel labels sit in the header band, each centred over its own column.
-    # With two rows the label names the column's TOP panel and the bottom one
-    # is named by its own colourbar, which is already on the frame -- stacking
-    # two labels per column here would collide with the title.
-    for c in range(cols):
-        for r in range(rows):
-            idx = r * cols + c
-            if idx >= len(fields):
-                continue
-            label, colour = ROLE[fields[idx]]
-            key = f"lab{idx}"
-            put(key, label)
-            y = 78 if r == 0 else 100
-            draw.append(
-                f"drawtext=expansion=none:fontfile={FONTB}:textfile={files[key]}:fontcolor={colour}:"
-                f"fontsize={19 if rows == 1 else 16}:"
-                f"x={c}*w/{cols}+(w/{cols}-tw)/2:y={y}")
+    gx0, gy0, gw, gh = geom["x0"], geom["y0"], geom["w"], geom["h"]
+    pw, ph = gw / cols, gh / rows
+    left_edge, right_edge = gx0 - SIDE_GAP, gx0 + gw + SIDE_GAP
 
-    # An ownership mark inside each panel's PLOT area.  Offset left of the
-    # column centre: a panel is plot + colourbar, so the true centre lands on
-    # the colourbar and the mark printed straight through its tick labels.
-    # Outlined, because it has to read on a near-white lapse panel and a
-    # near-black |Psi4| one alike.
-    for c in range(cols):
-        for r in range(rows):
-            if r * cols + c >= len(fields):
-                continue
-            fx = (c + 0.40) / cols
-            fy = HEAD_H + (H_OUT - HEAD_H - foot_h) * (r + 0.74) / rows
-            draw.append(
-                f"drawtext=expansion=none:fontfile={FONTB}:textfile={files['mark']}:"
-                f"fontcolor=white@0.34:bordercolor=black@0.32:borderw=1:"
-                f"fontsize={26 if rows == 1 else 20}:x=w*{fx:.4f}-tw/2:y={fy:.0f}")
+    # Panel labels hang on the panel they name.  One row: centred over each
+    # panel in the header.  2x2: in the side margins, level with the top of
+    # their panel -- right-aligned left of the grid, left-aligned right of it.
+    for idx, field in enumerate(fields):
+        r, c = divmod(idx, cols)
+        role, colour = ROLE[field]
+        head, _, name = role.partition("  ·  ")
+        put(f"lab{idx}", role)
+        put(f"role{idx}", head)
+        put(f"name{idx}", name)
+        if rows == 1:
+            draw.append(text(f"lab{idx}", FONTB, colour, 19,
+                             f"{gx0 + (c + 0.5) * pw:.0f}-tw/2", 78))
+            continue
+        y = gy0 + r * ph + 0.10 * ph
+        x = f"{left_edge}-tw" if c == 0 else f"{right_edge}"
+        draw.append(text(f"role{idx}", FONTB, colour, 24, x, y))
+        draw.append(text(f"name{idx}", FONT, colour, 21, x, y + 34))
+
+    # The ownership mark inside each panel's PLOT area: left of the panel's
+    # centre (a panel is plot + colourbar, so its centre is on the colourbar)
+    # and low in the plot, where the far field is quiet.  Outlined, so it reads
+    # on a near-white panel and a near-black one alike.
+    for idx in range(len(fields)):
+        r, c = divmod(idx, cols)
+        size = int(0.075 * ph) if rows > 1 else 30
+        draw.append(
+            f"drawtext=expansion=none:fontfile={FONTB}:textfile={files['mark']}:"
+            f"fontcolor=white@0.45:bordercolor=black@0.40:borderw=1:fontsize={size}:"
+            f"x={gx0 + (c + 0.40) * pw:.0f}-tw/2:y={gy0 + (r + 0.76) * ph:.0f}")
+
+    # The sponsor in full, in the margin beside a 2x2 grid, level with the
+    # bottom of its lower panels.
+    if rows > 1:
+        put("br0", BRAND_RIGHT[0])
+        put("br1", BRAND_RIGHT[1])
+        base = gy0 + gh
+        draw += [text("br0", FONT, "0xB8C2CC", 20, f"{right_edge}", base - 70),
+                 text("br1", FONTB, "white", 27, f"{right_edge}", base - 38)]
 
     # Footer, laid out UPWARDS from the credit so a wrapped caption grows into
     # the space the panel fit already gave up for it.
-    y = H_OUT - CREDIT_SIZE - 16
-    draw.append(f"drawtext=expansion=none:fontfile={FONT}:textfile={files['credit']}:"
-                f"fontcolor=0x5C6773:fontsize={CREDIT_SIZE}:x=(w-tw)/2:y={y}")
+    y = H_OUT - CREDIT_SIZE - 14
+    draw.append(text("credit", FONT, "0x9AA6B2", CREDIT_SIZE, "(w-tw)/2", y))
     for i, line in reversed(list(enumerate(cap2))):
         y -= CAP2_LEAD
         key = put(f"c2_{i}", line)
@@ -385,7 +435,9 @@ def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
 
 def build(run_key: str, spec: dict, movies: Path, dest: Path,
           speed: float, fps: float, overwrite: bool) -> bool:
-    src = movies / run_key
+    # ``sub`` names a source subset filed beside the curated set (the zoomed or
+    # re-scaled episodes zoom_frames.py draws for these videos).
+    src = movies / run_key / spec.get("sub", "")
     fields = spec["fields"]
     inputs = [src / f"movie_{f}_z.mp4" for f in fields]
     missing = [p.name for p in inputs if not p.is_file()]
@@ -403,14 +455,21 @@ def build(run_key: str, spec: dict, movies: Path, dest: Path,
     foot_h = _footer_height(cap1, cap2)
 
     grid = (len(fields), 1) if len(fields) <= 2 else (2, (len(fields) + 1) // 2)
-    chain, cols, rows = _panel_chain([_probe_size(p) for p in inputs], speed, grid, foot_h)
+    chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid, foot_h)
+
+    # ``t_end`` cuts a source with no slice cache at its trust window: keep the
+    # frames t <= t_end (one frame per dt_frame code units at fps).
+    trim = []
+    if "t_end" in spec:
+        n_keep = int(round(spec["t_end"] / spec.get("dt_frame", 1.0))) + 1
+        trim = ["-t", f"{(n_keep - 0.5) / fps:.4f}"]
 
     with tempfile.TemporaryDirectory() as td:
         tmp = Path(td)
-        filt = chain + ";" + _text_chain(tmp, spec, cols, rows, speed, cap1, cap2, foot_h)
+        filt = chain + ";" + _text_chain(tmp, spec, cols, rows, speed, cap1, cap2, geom)
         cmd = ["ffmpeg", "-v", "error", "-y"]
         for p in inputs:
-            cmd += ["-i", str(p)]
+            cmd += trim + ["-i", str(p)]
         cmd += ["-filter_complex", filt, "-map", "[v]",
                 "-r", f"{fps * speed:g}", "-c:v", "libx264", "-pix_fmt", "yuv420p",
                 "-crf", "18", "-preset", "slow", "-movflags", "+faststart", str(out)]
