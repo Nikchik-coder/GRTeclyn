@@ -863,3 +863,179 @@ def t0_matching(file: str, match: dict, expr: str) -> float:
     env = {k: float(v) for k, v in hits[0].items() if re.fullmatch(r"-?[\d.]+", v or "")}
     env["RSTAR"] = _RSTAR
     return float(eval(expr, {"__builtins__": {}, "abs": abs, "min": min, "max": max}, env))  # noqa: S307
+
+
+# ------------------------------------------------- the 3D spectral MOTS finder
+# Every horizon number of the production campaign reads mots_spectral.dat (the
+# post-processing spectral finder, Sec. setup:mots): one row per plotfile, a
+# row of nan where no MOTS converged.  The star scans above stay as inner
+# bounds / live monitors only.
+@functools.lru_cache(maxsize=64)
+def _spectral_one(run: str) -> dict[str, np.ndarray]:
+    path = run_dir(run) / "mots_spectral.dat"
+    names, rows = None, []
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#"):
+            toks = line.lstrip("#").split()
+            if toks and toks[0] == "time":
+                names = toks
+            continue
+        p = [float(x) for x in line.split()]
+        if names and len(p) >= len(names) and not math.isnan(p[1]):
+            rows.append(p[:len(names)])
+    if names is None:
+        raise ValueError(f"{run}: no header in mots_spectral.dat")
+    if not rows:
+        raise ValueError(f"{run}: no converged MOTS row in mots_spectral.dat")
+    arr = _sort_unique(np.array(rows), decimals=4)
+    return {c: arr[:, i] for i, c in enumerate(names)}
+
+
+def _spectral(runs) -> dict[str, np.ndarray]:
+    """One run's spectral stream, or several legs' joined in time order (the
+    later leg wins a duplicated time: its restart row is the fresher state)."""
+    if isinstance(runs, str):
+        return _spectral_one(runs)
+    cols, rows = None, {}
+    for r in runs:
+        s = _spectral_one(r)
+        if cols is None:
+            cols = list(s)
+        for i in range(len(s["time"])):
+            rows[round(float(s["time"][i]), 3)] = {c: s[c][i] for c in cols}
+    ts = sorted(rows)
+    return {c: np.array([rows[t][c] for t in ts]) for c in cols}
+
+
+def _spectral_row(s: dict[str, np.ndarray], at) -> int:
+    if at == "first":
+        return 0
+    if at == "last":
+        return len(s["time"]) - 1
+    i = int(np.argmin(np.abs(s["time"] - float(at))))
+    if abs(s["time"][i] - float(at)) > 0.51:
+        raise ValueError(f"no converged row near t = {at} (nearest {s['time'][i]})")
+    return i
+
+
+@extractor
+def mergers_spectral_value(runs, col: str = "R", at="first") -> float:
+    """col of the joined spectral MOTS history on the first/last converged row
+    or the row at time `at` (R, M_MS, deform, time, ...)."""
+    s = _spectral(runs)
+    return float(s[col][_spectral_row(s, at)])
+
+
+@extractor
+def mergers_spectral_shrink(runs, col: str = "R", frm="first", to="last") -> float:
+    """100 (col[frm] - col[to]) / col[frm]: how far the horizon shrinks."""
+    s = _spectral(runs)
+    a, b = s[col][_spectral_row(s, frm)], s[col][_spectral_row(s, to)]
+    return float(100.0 * (a - b) / a)
+
+
+@extractor
+def mergers_solved_madm(run: str, col: str = "M_ADM") -> float:
+    """The pair's solved mass: column M_ADM (the volume identity, Eq. madmvol)
+    of the run's packed constraint_solve.dat, first row; M_ADM_face for the
+    boosted solves, whose volume identity is not computed (printed 0)."""
+    path = run_dir(run) / "constraint_solve.dat"
+    names = None
+    for line in path.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#"):
+            toks = line.lstrip("#").split()
+            if toks and toks[0] == "time":
+                names = toks
+            continue
+        p = [float(x) for x in line.split()[:len(names)]]
+        v = p[names.index(col)]
+        if v == 0.0:
+            raise ValueError(f"{run}: {col} is 0 in constraint_solve.dat (not computed)")
+        return float(v)
+    raise ValueError(f"{run}: no data row in constraint_solve.dat")
+
+
+@extractor
+def mergers_spectral_over(runs, madm_run: str, col: str = "M_MS", at="last",
+                          factor: float = 1.0) -> float:
+    """100 (col[at] / (factor x M_ADM) - 1): the Penrose and settle ratios
+    against the pair's solved mass."""
+    v = mergers_spectral_value(runs=runs, col=col, at=at)
+    return float(100.0 * (v / (factor * mergers_solved_madm(run=madm_run)) - 1.0))
+
+
+@extractor
+def mergers_spectral_area_ratio(runs, at="first") -> float:
+    """MOTS area over the two isolated throats' summed area: (R / sqrt2 R*)^2."""
+    r = mergers_spectral_value(runs=runs, col="R", at=at)
+    return float((r / (math.sqrt(2.0) * _RSTAR)) ** 2)
+
+
+@extractor
+def mergers_spectral_slope(runs, col: str = "R", t0: float = 0.0, t1: float = 1e9,
+                           absolute: bool = True) -> float:
+    """Least-squares slope of col per unit time over [t0, t1] (|slope| by default)."""
+    s = _spectral(runs)
+    m = (s["time"] >= t0) & (s["time"] <= t1)
+    if m.sum() < 3:
+        raise ValueError(f"only {m.sum()} converged rows in [{t0}, {t1}]")
+    k = float(np.polyfit(s["time"][m], s[col][m], 1)[0])
+    return abs(k) if absolute else k
+
+
+@extractor
+def mergers_spectral_asymptote(runs, col: str = "M_MS", t0: float = 0.0,
+                               t1: float = 1e9, what: str = "asymptote") -> float:
+    """Fit col = A + b exp(-(t - t0)/tau) over [t0, t1] (tau grid + linear lsq):
+    what = asymptote (A), tau, or improvement (rms ratio line/exp fit)."""
+    s = _spectral(runs)
+    m = (s["time"] >= t0) & (s["time"] <= t1)
+    t, y = s["time"][m], s[col][m]
+    if len(t) < 6:
+        raise ValueError(f"only {len(t)} converged rows in [{t0}, {t1}]")
+    best = None
+    for tau in np.geomspace(1.0, 200.0, 400):
+        base = np.exp(-(t - t0) / tau)
+        coef, res, *_ = np.linalg.lstsq(np.stack([np.ones_like(t), base], 1), y, rcond=None)
+        rms = float(np.sqrt(np.mean((y - coef[0] - coef[1] * base) ** 2)))
+        if best is None or rms < best[0]:
+            best = (rms, tau, coef[0])
+    line = np.polyfit(t, y, 1)
+    rms_line = float(np.sqrt(np.mean((y - np.polyval(line, t)) ** 2)))
+    return {"asymptote": best[2], "tau": best[1], "improvement": rms_line / best[0]}[what]
+
+
+@extractor
+def mergers_spectral_dropfold(runs, col: str = "dRdt_total", a0: float = 0, a1: float = 0,
+                              b0: float = 0, b1: float = 0) -> float:
+    """Fold by which |col|'s window mean falls from [a0, a1] to [b0, b1]."""
+    s = _spectral(runs)
+    def mean(lo, hi):
+        m = (s["time"] >= lo) & (s["time"] <= hi)
+        if not m.any():
+            raise ValueError(f"no converged rows in [{lo}, {hi}]")
+        return float(np.mean(np.abs(s[col][m])))
+    return mean(a0, a1) / mean(b0, b1)
+
+
+@extractor
+def mergers_spectral_seam(a: str, b: str, col: str = "R") -> float:
+    """100 |col(first row of leg b) / col(last row of leg a) - 1|: the handoff."""
+    va = mergers_spectral_value(runs=a, col=col, at="last")
+    vb = mergers_spectral_value(runs=b, col=col, at="first")
+    return float(100.0 * abs(vb / va - 1.0))
+
+
+@extractor
+def mergers_spectral_count(runs) -> float:
+    """Converged rows of the joined spectral history."""
+    return float(len(_spectral(runs)["time"]))
+
+
+@extractor
+def mergers_spectral_maxrise(runs, col: str = "R") -> float:
+    """Largest single-row fractional RISE of col, in percent: how far the
+    history ever backtracks (0 would be strictly monotone shrink)."""
+    s = _spectral(runs)
+    y = s[col]
+    return float(100.0 * max(0.0, float(np.max(np.diff(y) / y[:-1]))))
