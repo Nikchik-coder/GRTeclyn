@@ -91,7 +91,8 @@ W_OUT, H_OUT = 1920, 1080
 # captions, the sponsor and the credit (the user's design, 2026-10-05).  Under
 # the grid, the captions ran as two full-width lines a viewer could not read in
 # one pass, and they cost the panels 130 px of height.
-HEAD_H = 84           # header band: the title and the speed note
+HEAD_H = 74           # header band: the title and the speed note
+LABEL_H = 32          # the band above each row of panels that carries their labels
 GRID_X0 = 24          # left margin of the grid
 GRID_PAD_B = 20       # space under the grid
 SIDE_GAP = 36         # gap between the grid and the side column
@@ -119,7 +120,7 @@ INK_SOFT = "#B6BCC2"    # second caption, key heads, "Research sponsored by"
 INK_FAINT = "#89929B"   # speed note, credit
 RULE = "#3E464E"        # the side column's hairlines
 TITLE_PX, SPEED_PX = 36, 22
-KEY_HEAD_PX, KEY_NAME_PX, KEY_ROW_H = 15, 21, 62
+LABEL_ROLE_PX, LABEL_NAME_PX = 15, 20
 CAP1_PX, CAP2_PX, CREDIT_PX = 27, 24, 16
 LEAD = 1.32             # baseline to baseline, in font sizes
 DPI = 120               # the overlay: 16 x 9 in at 120 dpi is exactly 1920 x 1080
@@ -137,8 +138,11 @@ CREDIT = ("First Interstellar Institute", "research sponsored by Gravity Frontie
           "GRTeclyn", "3+1 numerical relativity on GPUs")
 CREDIT_SEP = r" $\cdot$ "
 
-# Per-panel labels, role over name, the same in every video so a viewer who
-# watches two of them learns the layout once.
+# Per-panel labels, role then name, each on the band right above its panel:
+# a label hangs on what it names.  A key of the four in the side column, laid
+# out as the panels are, made the viewer map positions by eye -- "hard to
+# associate to frames" (the user, 2026-10-05).  The same in every video, so a
+# viewer who watches two of them learns the roles once.
 ROLE = {
     "chi":        ("GEOMETRY", r"conformal factor $\chi$"),
     "phi":        ("MATTER", r"phantom scalar $\phi$"),
@@ -297,40 +301,37 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
     width, and ``vstack`` then refuses two rows that do not match.  That is what
     broke the spiral's 2x2 the first time this ran.  Padding inside the box
     keeps every aspect ratio exact and turns the difference into a few pixels of
-    background at the panel edge.
+    background at the panel edge.  The box is sized for the canvas up front, so
+    each frame is resampled once, and each row of panels sits under a LABEL_H
+    band of ground for its labels.
     """
     cols, rows = grid
-    free_h = H_OUT - HEAD_H - GRID_PAD_B
+    aspect = max(w / h for w, h in sizes)
+    free_h = H_OUT - HEAD_H - GRID_PAD_B - rows * LABEL_H
     free_w = W_OUT - GRID_X0 - SIDE_GAP - SIDE_MIN_W - SIDE_PAD_R
-    # Height per panel before the grid-level fit, generous so the final scale
-    # is a reduction (sharper) rather than an enlargement.
-    panel_h = 900 if rows == 1 else 620
-    box_w = max(int(round(w * panel_h / h)) for w, h in sizes)
-    box_w += box_w % 2                       # libx264 wants even dimensions
-    box_h = panel_h + panel_h % 2
+    ph = int(min(free_h / rows, free_w / cols / aspect)) & ~1   # libx264 wants even sizes
+    pw = int(ph * aspect) & ~1
+
+    def stack(kind: str, labels: list[str]) -> str:
+        return "".join(labels) + (f"{kind}=inputs={len(labels)}" if len(labels) > 1 else "null")
+
     parts = []
     for i in range(len(sizes)):
         parts.append(
             f"[{i}:v]setpts=PTS/{speed},"
-            f"scale={box_w}:{box_h}:force_original_aspect_ratio=decrease:flags=lanczos,"
-            f"pad={box_w}:{box_h}:(ow-iw)/2:(oh-ih)/2:color={PANEL_BG}[p{i}]")
+            f"scale={pw}:{ph}:force_original_aspect_ratio=decrease:flags=lanczos,"
+            f"pad={pw}:{ph}:(ow-iw)/2:(oh-ih)/2:color={PANEL_BG}[p{i}]")
     for r in range(rows):
-        row_in = "".join(f"[p{r * cols + c}]" for c in range(cols))
-        parts.append(f"{row_in}hstack=inputs={cols}[row{r}]")
-    parts.append("".join(f"[row{r}]" for r in range(rows))
-                 + f"vstack=inputs={rows}[grid]")
-    # Fit the grid inside its share of the canvas, pinned to the left edge.
-    parts.append(f"[grid]scale=w=min(iw*{free_h}/ih\\,{free_w}):h=-2:flags=lanczos[fit]")
-    parts.append(f"[fit]pad={W_OUT}:{H_OUT}:{GRID_X0}:{HEAD_H}:color={GROUND}[canvas]")
-    # The fitted grid's true geometry, so labels and marks land ON the panels.
-    # Placing text by canvas fractions once put the ownership marks in the dark
-    # margins OUTSIDE the plots -- trivially croppable, which defeats them (the
-    # user, 2026-10-05).
-    grid_w, grid_h = box_w * cols, box_h * rows
-    s = min(free_h / grid_h, free_w / grid_w)
-    fit_w = int(grid_w * s) & ~1
-    fit_h = int(round(grid_h * (fit_w / grid_w)))
-    geom = {"x0": GRID_X0, "y0": HEAD_H, "w": fit_w, "h": fit_h}
+        parts.append(stack("hstack", [f"[p{r * cols + c}]" for c in range(cols)])
+                     + f",pad=iw:ih+{LABEL_H}:0:{LABEL_H}:color={GROUND}[row{r}]")
+    parts.append(stack("vstack", [f"[row{r}]" for r in range(rows)])
+                 + f",pad={W_OUT}:{H_OUT}:{GRID_X0}:{HEAD_H}:color={GROUND}[canvas]")
+    # The grid's true geometry, so labels and marks land ON the panels.  Placing
+    # text by canvas fractions once put the ownership marks in the dark margins
+    # OUTSIDE the plots -- trivially croppable, which defeats them (the user,
+    # 2026-10-05).
+    geom = {"x0": GRID_X0, "y0": HEAD_H, "w": pw * cols, "h": rows * (LABEL_H + ph),
+            "pw": pw, "ph": ph}
     return ";".join(parts), cols, rows, geom
 
 
@@ -497,38 +498,35 @@ def _overlay(path: Path, spec: dict, cols: int, rows: int, speed: float, geom: d
     Every position on a panel comes from ``geom``, the grid's real placement.
     """
     page = _Page()
-    gx0, gy0, gw, gh = geom["x0"], geom["y0"], geom["w"], geom["h"]
-    pw, ph = gw / cols, gh / rows
+    pw, ph = geom["pw"], geom["ph"]
     sx, sw = _side_column(geom)
+
+    def corner(r: int, c: int) -> tuple[float, float]:     # a panel's top left
+        return geom["x0"] + c * pw, geom["y0"] + LABEL_H + r * (LABEL_H + ph)
 
     rate = speed * spec.get("dt_frame", 1.0)
     note = "real time" if abs(rate - 1.0) < 1e-9 else rf"${rate:g}{{\times}}$ speed"
-    page.text(gx0, 56, spec["title"], TITLE_PX, INK, bold=True)
-    page.text(W_OUT - SIDE_PAD_R, 56, note, SPEED_PX, INK_FAINT, ha="right")
-    room = W_OUT - SIDE_PAD_R - page.width(note, SPEED_PX) - 30 - gx0
+    page.text(geom["x0"], HEAD_H - 24, spec["title"], TITLE_PX, INK, bold=True)
+    page.text(W_OUT - SIDE_PAD_R, HEAD_H - 24, note, SPEED_PX, INK_FAINT, ha="right")
+    room = W_OUT - SIDE_PAD_R - page.width(note, SPEED_PX) - 30 - geom["x0"]
     if page.width(spec["title"], TITLE_PX, bold=True) > room:
         print(f"[warn] {spec['out']}: the title runs into the speed note", file=sys.stderr)
 
-    # The panel key at the top of the side column: each panel's role over its
-    # name, laid out as the panels are, so "top left" needs no words.  The
-    # grid's left edge leaves no margin to hang a label in.
-    cell_w = (sw - 16 * (cols - 1)) / cols
+    # Each panel's label on the band right above it, flush with its left edge.
     for idx, field in enumerate(spec["fields"]):
-        r, c = divmod(idx, cols)
-        head, name = ROLE[field]
-        x, top = sx + c * (cell_w + 16), gy0 + r * KEY_ROW_H
-        page.text(x, top + KEY_HEAD_PX, head, KEY_HEAD_PX, INK_SOFT, bold=True)
-        page.text(x, top + KEY_HEAD_PX + 8 + KEY_NAME_PX, name, KEY_NAME_PX, INK)
-    y = gy0 + rows * KEY_ROW_H + 2
-    page.rule(sx, sx + sw, y)
+        x, top = corner(*divmod(idx, cols))
+        role, name = ROLE[field]
+        page.text(x, top - 9, role, LABEL_ROLE_PX, INK_SOFT, bold=True)
+        page.text(x + page.width(role, LABEL_ROLE_PX, bold=True) + 10, top - 9, name,
+                  LABEL_NAME_PX, INK)
 
-    # The captions, justified to the column.
-    y = page.paragraph(sx, y + 18 + CAP1_PX, sw, spec["cap1"], CAP1_PX, INK)
+    # The captions, justified to the side column, level with the panels' top.
+    y = page.paragraph(sx, geom["y0"] + LABEL_H + 0.7 * CAP1_PX, sw, spec["cap1"], CAP1_PX, INK)
     y = page.paragraph(sx, y + 10, sw, spec["cap2"], CAP2_PX, INK_SOFT)
     cap_bottom = y - (LEAD - 0.3) * CAP2_PX
 
     # Sponsor and credit at the foot, level with the bottom of the grid.
-    base = gy0 + gh - 6
+    base = geom["y0"] + geom["h"] - 6
     for line in reversed(page.segments(CREDIT, CREDIT_SEP, CREDIT_PX, sw)):
         page.text(sx, base, line, CREDIT_PX, INK_FAINT)
         base -= LEAD * CREDIT_PX
@@ -548,9 +546,9 @@ def _overlay(path: Path, spec: dict, cols: int, rows: int, speed: float, geom: d
     from matplotlib import patheffects
     size = 0.075 * ph
     for idx in range(len(spec["fields"])):
-        r, c = divmod(idx, cols)
-        mark = page.text(gx0 + (c + 0.40) * pw, gy0 + (r + 0.76) * ph + 0.7 * size, MARK,
-                         size, (1, 1, 1, 0.45), bold=True, ha="center")
+        x, top = corner(*divmod(idx, cols))
+        mark = page.text(x + 0.40 * pw, top + 0.76 * ph + 0.7 * size, MARK, size,
+                         (1, 1, 1, 0.45), bold=True, ha="center")
         mark.set_path_effects([patheffects.withStroke(linewidth=1.5,
                                                       foreground=(0, 0, 0, 0.40))])
     page.save(path)

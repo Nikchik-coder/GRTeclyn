@@ -9,10 +9,10 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 
 **Layout (2026-10-05, the user's design): four panels, 2x2, in sync, on the
 left** -- curvature K (top left), lapse (top right), conformal factor chi (bottom
-left), the wave Re(Psi4) (bottom right) -- as tall as the frame allows. Every
-word except the title sits in a column on the right: a small key of the four
-panels (laid out as they are), the two captions, justified, then the sponsor
-and the credit. **Every word is set in Computer Modern** (matplotlib's bundled
+left), the wave Re(Psi4) (bottom right) -- as tall as the frame allows, each
+labelled on a band right above it with its role and its field ("CURVATURE
+trace K"). Every other word except the title sits in a column on the right:
+the two captions, justified, then the sponsor and the credit. **Every word is set in Computer Modern** (matplotlib's bundled
 cmr10/cmb10 and its `cm` maths, no TeX engine needed), in one ink and no
 colour coding: PRD style, the user's word. Exceptions, each because
 that run has no usable alternative: 01 shows phi in place of the wave (the run
