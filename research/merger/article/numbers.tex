@@ -11,8 +11,8 @@
 \newcommand{\clmDetRunsPlacement}{18}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsHeadon}{10}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsHalfMass}{2}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
-\newcommand{\clmDetRunsVacuumBBH}{3}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
-\newcommand{\clmDetRunsConstraintSolved}{7}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsVacuumBBH}{4}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsConstraintSolved}{3}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsMomentumScan}{4}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsFlyby}{2}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsOrbitalChain}{13}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
@@ -23,8 +23,17 @@
 \newcommand{\clmDetRunsHelfer}{6}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsGauge}{10}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetRunsShakedown}{12}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
-\newcommand{\clmDetRunsTotal}{151}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
-\newcommand{\clmDetRunsPhysics}{139}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsTotal}{216}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsPhysics}{204}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsBoostedThroat}{10}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsSolveVerifications}{3}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsMatchedRest}{8}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsMatchedPlacement}{18}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsHeadonModeThree}{8}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsMergerChain}{7}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsDTwelveArms}{3}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsEgwScan}{8}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
+\newcommand{\clmDetRunsConvergence}{3}% auto: claims/table1_groups.tsv + the pack (every run_tail*.log directory under campaig
 \newcommand{\clmDetKnobLoneLevelsLo}{2}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobLoneLevelsHi}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobLoneL}{128}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
@@ -61,16 +70,35 @@
 \newcommand{\clmDetKnobWallPHi}{0.25}% manual: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobProdSpiralL}{128}% manual: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobGaugeEta}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobBoostPHi}{0.45}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobMatchedALo}{1}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobMatchedAHi}{3}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobMatchedDLo}{12}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobMatchedDHi}{18}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobPlaceCsmDLo}{6}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobPlaceCsmDHi}{48}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobHoMotsLevelLo}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobHoMotsLevelHi}{6}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobChainPTang}{0.10}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobChainLevelLo}{3}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobChainLevelHi}{7}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobDTwelvePLo}{0.12}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobDTwelvePHi}{0.25}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobEgwPLo}{0.25}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobEgwPHi}{0.90}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobConvLevel}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobLadderLevelLo}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv)
-\newcommand{\clmDetGpuHours}{680}% manual: run_tail*.log of each run (gpu_hours.py arithmetic: per leg (t_end - t_start)/sp
+\newcommand{\clmDetGpuHours}{995}% manual: sum: clmDetGpuHoursPacked (646.17, auto) + clmDetGpuHoursArchived (349.22, froze
+\newcommand{\clmDetGpuHoursPacked}{646}% auto: run_tail*.log of each packed physics run (gpu_hours.py arithmetic, restart-aware
+\newcommand{\clmDetGpuHoursArchived}{349}% manual: 680.18 (2026-09-28 physics recount) - 330.96 (then-counted still-packed runs, re
 \newcommand{\clmDetGpuHoursShakedown}{9}% manual: run_tail*.log of each run (gpu_hours.py arithmetic: per leg (t_end - t_start)/sp
-\newcommand{\clmDetCostHeadonLevelFive}{28.2}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/run_tail
-\newcommand{\clmDetCostFlybyLevelFive}{46.7}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/run_tail.
-\newcommand{\clmDetCostSpiralChain}{23.5}% manual: campaign/05_binary_spiral/p012_paper/: the three legs' run_tail.log
+\newcommand{\clmDetCostHeadonChain}{29.3}% auto: campaign/04_binary_headon/csm/: the three legs' run_tail.log
+\newcommand{\clmDetCostFlybyLevelFive}{46.3}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm/run_ta
+\newcommand{\clmDetCostMergerChain}{26.9}% auto: campaign/05_binary_spiral/merger_d6/: the six legs' run_tail.log
 \newcommand{\clmDetCostFour}{11.9}% auto: campaign/01_single_throat/seed/single_eps_m1e2_L512_ml5_oct_t400/run_tail.log
 \newcommand{\clmDetSpeedFourLo}{28}% manual: F4 run.log ('average evolution speed' and plotfile write times): ~28 u/h late (l
 \newcommand{\clmDetSpeedFourHi}{74}% manual: F4 run.log: 74-81 u/h early, alone on the card (GPU_PLAN 2026-09-25 19:45: ~74 u
-\newcommand{\clmDetMemFlybyPeak}{58}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/run_tail.
+\newcommand{\clmDetMemFlybyPeak}{58}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm/run_ta
 \newcommand{\clmDetMemDevice}{80}% lit: NVIDIA H100 80GB HBM3 datasheet (nominal capacity)
 \newcommand{\clmDetAmrexVersion}{26.02}% manual: run_tail*.log of the Table I runs: 'AMReX (26.02-12-gd7da50458966) finalized'
 \newcommand{\clmDetSpeedProdLo}{6}% manual: main-leg 'average evolution speed' in run_tail.log. Measured, physics runs at L=

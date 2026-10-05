@@ -52,11 +52,14 @@ HERE = pathlib.Path(__file__).resolve().parent
 TABLE1 = HERE / "table1_groups.tsv"
 GW = PACK / "gw_search"
 
-# Table I's groups, in the table's order (left column, then right).
+# Table I's groups, in the table's order (left column = the mode-3/boost
+# production campaign, then right = the superposed systematics campaign).
 TABLE1_GROUPS = (
     "lone throat", "spherical kicks", "quadrupolar kicks", "scalar-stream re-runs",
+    "boosted throat", "constraint-solved data", "solve verifications", "matched rest pairs",
+    "matched placement", "head-on, mode 3", "merger chain, d=6", "d=12 arms, mode 3",
+    "fly-by and E_GW scan", "convergence, mode 3", "vacuum BBH",
     "two throats at rest", "placement probes", "head-on, d=8", "half-mass, m=0.5",
-    "vacuum BBH", "constraint-solved data",
     "momentum scan", "fly-by, p=0.45", "orbital chain, p=0.12", "refinement ladder",
     "interior freeze, L=64", "wall probes", "production spiral, L=128", "Helfer twins",
     "gauge arms", "shakedown (archived)",
@@ -299,15 +302,19 @@ def _run_hours(d: pathlib.Path, restart_aware: bool = True) -> float:
 
 @extractor
 def detector_gpu_hours(which: str | None = None, runs: list[str] | None = None,
-                       restart_aware: bool = True) -> float:
+                       restart_aware: bool = True, packed_only: bool = False) -> float:
     """GPU-hours from the packed logs: a Table I set ('physics', 'shakedown',
     'all') or an explicit list of packed run names.  restart_aware (default)
     dates a restarted leg that has no packed stream from its checkpoint; False
     is the tracked gpu_hours.py arithmetic (t = 0 fallback), the one the
-    article's 810 was computed with."""
+    article's 810 was computed with.  packed_only skips the counted runs whose
+    files left the pack (the ARCHIVED superposed binaries, 2026-10-02): their
+    frozen total is the manual row clmDetGpuHoursArchived."""
     if (which is None) == (runs is None):
         raise ValueError("give exactly one of which= or runs=")
     names = _counted(which) if which else runs
+    if packed_only:
+        names = [n for n in names if n not in _archived()]
     return float(sum(_run_hours(run_dir(n), restart_aware) for n in names))
 
 
