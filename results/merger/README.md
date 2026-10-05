@@ -900,6 +900,8 @@ and nothing in this section may be quoted as a surface, a mass, or a dissolution
 - **Runs.** `bbh_control_d12_p012_t150` *(pack)* — the control;
   `bbh_control_d12_p045_t100` *(pack)* — the momentum-matched control;
   `bbh_control_d12_p012` *(pack)* — its t = 100 predecessor;
+  `bbh_control_d6_p010_t100` *(pack)* — the d = 6 merger's vacuum twin (d = 6, p = ±0.10, t = 100,
+  2026-10-05; for the gallery's merger-row overlay);
   `merge_twin_p012_plain_t100` *(pack)* — the wormhole side of the
   comparison. Figures: `plot_bbh_ringdown` (retired from figures/ 2026-09-26, not in the paper),
   `figures/05_binary_spiral/bbh_vs_wormhole_psi4.*`.

@@ -4324,3 +4324,14 @@ ringdown trio, scalar figure caption's R=14 ratio on new cut conventions is in.
 - **EGW-p012 dropped (the user):** the d = 12, p = 0.12 boosted spiral `v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm`
   (mode-3 solve + exact boost; far-side mass matched to 4e-6) is the p = 0.12 point; E_GW(p = 0.12) is an
   analysis step on its packed Weyl4 streams.
+
+## 2026-10-05 (~15:40 UTC) — BBH-d6 done; SIGN-dyn read from the packed pairs instead of run
+
+- **BBH-d6 `bbh_control_d6_p010_t100` reached t = 100 clean (14:44 UTC; no NaN, ~50 u/h after the merger).** The
+  d = 6 merger's vacuum twin for the gallery's merger-row overlay. Filed `07_bbh_control/`, closeout with movies
+  (it will be cited beside the d6 merger); its waveform/energy read against the d6 merger is the next analysis step.
+- **SIGN-dyn not run (the user):** the packed mode-3 pairs `ctrl_rest_d12_csm` (like) and `ctrl_flip_d12_csm`
+  (opposite) already ran both signs from t = 0. From `matched_rest_displacement.dat`: the two accelerate in
+  opposite senses from the start (like apart, opposite together) — fixed charge (−0.667, same sense) is excluded
+  already at t → 0; the magnitude ratio is 1.42–1.44 by quadratic fits over t = 2–5 … 3–8, and 1.44–1.49 by
+  displacement over t = 4–11.5, against fixed potential 1.500 (the paper's 1.463 ± 0.023 over t = 3.5–10.5).
