@@ -4406,3 +4406,31 @@ consistency; if any runs are required add them to the status file".
   needle; the level-3 solution is clean).
 - Ledger: 25 rows dropped (the superposed/Bowen–York/stale-source rows), 4 added (clmFreezeRadiusFull/Start,
   clmDampLapseStart, clmNormPitShare); 907 rows, 0 problems. Not compiled here (no TeX).
+
+## 2026-10-05 (late) — the paper shortened: body 18.2k → 15.2k words, freeze sentence out
+
+On the user's word ("if there is a way to shorten paper do it … erasing the frozen core idea"; then "dont even
+brief it"). Body (before the bibliography) 18 168 → 15 197 words; total 20 442 → 17 322.
+- **Freeze out of the paper.** No run froze the merged core (`core_freeze_fill = 0` everywhere since the χ-floor
+  crossing). The per-throat slicing switch-off near each moving puncture (`core_lapse_freeze = 1`,
+  `core_freeze_track_throats = 1`, full inside 0.3, restored by 0.8) is still in the params of the boosted
+  single throat, the d = 6 chain, both level-3 scouts and the d = 12 arms at p ≥ 0.25 (not p = 0.12); on the user's
+  word the paper no longer describes it — the packed params carry it. The scalar damping sentence (α < 3e-2;
+  d = 6 chain and the tangential d = 12 arms at p ≥ 0.25) stays.
+- **Condensed:** heavy seeds (548 words), the constraint caption (423), the scalar channel's flux, sign and
+  angular-momentum paragraphs, the gallery caption, no-inspiral, the inflating half, topology, the collapse
+  endpoint (one clause for the regrowth artefact), diagnostics and MOTS (definition, the scan systematic once),
+  the head-on wall and the merger-chain legs, intro roadmap and ghost sentence, the seeds' radiation rationale,
+  capture and trust windows, radiation reaction, the censorship close, the appendix intro.
+- **Cut as duplicates:** the momentum solve in both II D and II E; the registry three times; the area theorem
+  "run backwards" three times; the head-on legs in text and caption; Scope's "ghost treated classically" and
+  "three asymptotic ends" (both in the intro); the GW intro's energies (= Sec. IX B) and seeded-singles sentence
+  (= VIII A); the vacuum-control settings (= III B); the twin's fM (= IX A); the merger burst's v/c (= gallery
+  caption); the heavy-seed rate in its caption; the "commit 7166787a" sentence (runs use other builds).
+- **Cut as asides, speculation or "not measured":** the boson-star paragraph, the memory aside, the traveller
+  sentences; the inflation branch's three endings, its kinematic-vs-geometric bracket and the θ_k = 0
+  coordinate speed; the never-run 10^-3 / 10^-1 quadrupole arms; "decay time not measurable" and "horizon
+  masses not reliable" in VIII A; the ISCO aside in VII A; Shinkai–Hayward's universal-exponent clause.
+- Bibliography: 7 uncited entries removed (the boson-star four, Christodoulou, Thorne, Favata); 100 left.
+- Ledger: 42 rows dropped with their sentences (907 → 865), 75 re-anchored; 0 problems. Not compiled here
+  (no TeX).
