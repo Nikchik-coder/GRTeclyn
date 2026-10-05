@@ -262,7 +262,7 @@ VACUUM_OVERLAY = {
     # R = 10; the streams carry r*Psi4, so the two are comparable at the few-%
     # level of the 1/r fold).  Drawn whole: nothing contaminates it.
     "head-on": ("07_bbh_control/bbh_headon_d8_L128_lvl5_t100/weyl_extraction_mode_20.dat",
-                14.0, "vacuum BBH head-on", False, (60.0, 100.0), "below"),
+                14.0, "vacuum BBH head-on", False, (38.0, 78.0), "below"),
     "fly-by": ("07_bbh_control/bbh_control_d12_p045_t100/weyl_extraction_mode_22.dat",
                20.0, "vacuum BBH fly-by", True, (5.0, 40.0), "above"),
 }
