@@ -226,7 +226,10 @@ curve (0.25/0.45/0.60), the level-4-vs-5 comparison, Fig. 5/§VI on the complete
 chi leg (t = 100, no horizon at lvl4), EGW-p09 (t = 40, third plunge, burst cut at the stop), MOTS-ho3
 (t = 100, history complete), and CONV-csm-w on the second node (R = 28 ball; R = 44/36 both OOM one card). Both
 nodes' scratch is clean: the first node empty, the second holds only the HFL cell (60G, the deliberate keep;
-CONV-csm-w's 129G cell wiped ~05:35 UTC 10-05, manifest, 584G free).
+CONV-csm-w's 129G cell wiped ~05:35 UTC 10-05, manifest, 584G free). NEW from the full films (the user's eye,
+10-05, on the p = 0.90 stitched t = 0–45 K movie): the mouths VISIBLY INFLATE on the approach — the fly-by
+family's mouth inflation carries into the hardest plunge, before the merger and the K wall. Noted in the
+registry (the chi-leg row) and the movies README; a quantitative mouth-radius read is a pending analysis step.
 
 **EGW-p06 `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` LIVE on card 0 since ~19:25 UTC 10-02 (the
 user's go ~18:20 UTC):** E_GW(p) above the fly-by — the turnover hunt. The fly-by's packed params with only

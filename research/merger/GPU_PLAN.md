@@ -4173,3 +4173,29 @@ run tree.
   continuation from Chk04500 (PROPOSED, no go) — the lvl5 verdict says resolution is the K-wall's knob, so
   that continuation would be lvl5-from-45; E_GW(p = 0.90) still has no outer-sphere number without it.
 - E_GW(p) analysis can now run on p = 0.25/0.45/0.60 (trusted windows) — the turnover curve for Figs. 9/12.
+
+## 2026-10-05 (~07 UTC) — the movie tree and the YouTube set rebuilt on the csm records (the user's order)
+
+- **Seven sets filed into `results/merger/movies/`** (full histories, t = 0 to each trust window): the csm
+  head-on stitch `headon_csm_L128_stitched_t0_t100` (now THE quoted head-on; horizon born t = 18), the d6
+  merger chain as one film `spiral_d6_p010_L128_csm_stitched_t0_t100` (built this pass: legs stitched at
+  t = 25/30/35, 101 frames — THE orbital merger, MOTS from t = 13 to R 4.883 at 100), the corrected d12 p012
+  spiral `v2_spiral_..._lb_csm` (NO merger; movies to 56.5), the csm fly-by p025 (to 63.3), the p045 death
+  clock (to 67.6), the p060 stitch t0–t80 (filed from 10-04's build) and the NEW p090 stitch t0–t45 (built
+  this pass: t040 leg + chi1e4 leg, seam t = 40; the K film shows the mouths visibly inflating on the
+  approach — the user's eye, noted in STATUS/registry/README). README rows updated; the old lvl5from0
+  head-on, the old p045 fly-by and the old then_freeze spiral rows marked SUPERSEDED (kept on disk) — the
+  then_freeze "no horizon" claim is overturned on clean data (the user: "we have proven there is horizon").
+- **The K colour-bar dance, root-caused and ended**: closeout.sh skipped K in every rerender
+  (`WHM_RERENDER_SKIP:-K`) since 10-01, so every pack kept the live per-frame autoscaled K frames; and
+  WHM_SYMLOG's default put K on symlog. Both defaults changed — K now rerenders like every field, one fixed
+  LINEAR scale (the series' envelope), the user's standing convention. Re-rendered and re-filed K for the
+  headon-csm stitch (±0.0686), p025 (cut 63.3), p045 (±0.0805, cut 67.6) and the lb_csm spiral (cut 56.5);
+  the p090 (±0.0625) and d6 (±0.0691) stitches were built linear.
+- **The YouTube set rebuilt, 7 → 9 videos** (`make_youtube.py`): panels now source the csm records — 03
+  head-on (horizon t = 18, mass 2.82 → 2.39), 04 REPLACED: `04_spiral_merger_makes_black_hole.mp4` (the d6
+  chain; the old "without_a_horizon" video was wrong and is deleted), 05 fly-by from p025 csm, NEW 06 p060
+  plunge (horizon stalls, physical), NEW 07 p090 plunge (the K wall), controls renumbered 08/09. Branding on
+  every frame: the in-panel mark is now **FII** (First Interstellar Institute — the publishing channel) and
+  the credit line reads "First Interstellar Institute · sponsored by Gravity Frontiers · GRTeclyn · …".
+  Descriptions rewritten in `movies/_youtube/README.md`.

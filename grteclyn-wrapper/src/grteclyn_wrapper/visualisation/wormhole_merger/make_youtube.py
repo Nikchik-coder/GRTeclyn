@@ -103,9 +103,13 @@ _EM = 0.55
 FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONTB = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 
-MARK = "Gravity Frontiers"
-CREDIT = ("GRTeclyn  ·  3+1 numerical relativity on GPUs  ·  "
-          "Einstein–phantom-scalar (drainhole) throats")
+# The in-panel ownership mark is the CHANNEL the videos publish on — First
+# Interstellar Institute, as "FII" so it fits a panel (the user's word,
+# 2026-10-05); Gravity Frontiers is the research sponsor and sits in the
+# credit line with the full channel name.
+MARK = "FII"
+CREDIT = ("First Interstellar Institute  ·  sponsored by Gravity Frontiers  ·  "
+          "GRTeclyn  ·  3+1 numerical relativity on GPUs")
 
 # Per-panel label colours: one hue per physical role, kept across every video so
 # a viewer who watches two of them learns the code once.
@@ -147,56 +151,80 @@ PANELS: dict[str, dict] = {
              "the perturbation it is given \u2014 and a quadrupole, unlike a spherical kick, "
              "also leaves it something to radiate.",
     ),
-    "04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100": dict(
+    "04_binary_headon/headon_csm_L128_stitched_t0_t100": dict(
         out="03_headon_collision_makes_black_hole.mp4",
         fields=["chi", "lapse"],
         title="Two wormholes collide head-on  \u2014  and make a black hole",
-        cap1="Released from rest at separation 8 with opposite scalar signs. They touch at "
-             "t \u2248 20 while both mouths are still open wormholes, and one trapped surface "
-             "closes over BOTH at t = 22.",
+        cap1="Released from rest at separation 8, on constraint-solved initial data. They "
+             "touch while both mouths are still open wormholes, and one trapped surface "
+             "closes over BOTH at t = 18 (R = 5.63).",
         cap2="Neither mouth ever has a horizon of its own \u2014 it is born common or not at "
-             "all. The remnant then LOSES mass to the phantom field it swallows, 3.0 "
-             "\u2192 2.2, settling with an e-fold of 19.4.",
+             "all. The remnant then LOSES mass to the phantom field it swallows, 2.82 "
+             "\u2192 2.39 by t = 100 (the 3D horizon finder's full history).",
     ),
-    "05_binary_spiral/v2_spiral_d12_p012_L128_lvl5from0_then_freeze_t0-100": dict(
-        out="04_spiral_merger_without_a_horizon.mp4",
-        fields=["lapse", "Weyl4_Re"],
-        title="Two wormholes spiral in and merge  \u2014  with no horizon anywhere",
-        cap1="Separation 12, momentum 0.12. The pair coalesces as wormholes: every scan to "
-             "t = 50 finds zero trapped surfaces, on three centres. The grid then dies at a "
-             "curvature wall at t = 59.94 \u2014 which is the result, not a failure.",
-        cap2="Past t = 59.94 the core is frozen by construction and is not physics; the "
-             "exterior is certified against the free run to 0.1%. Late speckle in the \u03a8\u2084 "
-             "panel is grid noise below the measurement floor, not structure.",
+    "05_binary_spiral/spiral_d6_p010_L128_csm_stitched_t0_t100": dict(
+        out="04_spiral_merger_makes_black_hole.mp4",
+        fields=["chi", "lapse"],
+        title="Two wormholes spiral in and merge  \u2014  and a horizon forms",
+        cap1="Separation 6, tangential momentum 0.10, constraint-solved data. The pair "
+             "merges in half an orbit, and a common trapped surface closes over both "
+             "mouths at t = 13 (R = 5.60): the orbital merger makes a black hole.",
+        cap2="The remnant settles to R = 4.88, losing mass to the phantom it swallows "
+             "(2.80 \u2192 2.44 by t = 100). One chain of certified restarts through two "
+             "numerical walls; the seams sit at t = 25, 30 and 35.",
     ),
-    "06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl5_t100": dict(
+    "06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm": dict(
         out="05_wormhole_flyby_no_merger_mouths_inflate.mp4",
         fields=["K", "lapse"],
         title="A wormhole fly-by  \u2014  no merger, and both mouths inflate",
-        cap1="The same separation, four times the momentum. The pair swings past and "
-             "separates \u2014 nothing merges \u2014 and as it goes both mouths INFLATE, which is "
-             "what the expanding K shows.",
-        cap2="No horizon ever forms, yet this is the campaign's loudest gravitational "
-             "channel: about 70\u00d7 a vacuum black-hole pair carrying the same momentum.",
+        cap1="Separation 12, momentum 0.25 per mouth, constraint-solved boosted data. The "
+             "pair swings past (closest approach 2.33 at t \u2248 47) and separates \u2014 nothing "
+             "merges, no horizon ever \u2014 and both mouths INFLATE as it goes.",
+        cap2="A scatter this close is loud: far more gravitational radiation than a vacuum "
+             "black-hole pair on the same trajectory, plus a phantom-scalar burst a vacuum "
+             "binary has no analogue for.",
+    ),
+    "06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80": dict(
+        out="06_plunge_merger_no_horizon_yet.mp4",
+        fields=["chi", "Weyl4_Re"],
+        title="A deeper plunge  \u2014  the mouths merge, and the horizon stalls",
+        cap1="The fly-by's momentum raised to 0.60: the pair now PLUNGES \u2014 separation "
+             "3.5 \u2192 0 over t = 36\u201340 \u2014 and merges as wormholes. This is the campaign's "
+             "loudest gravitational-wave source.",
+        cap2="No trapped surface converges by t = 100: the finder's surface stays "
+             "marginally untrapped, a pinched peanut rounding toward closure at t \u2248 "
+             "110\u2013115. A finer grid agrees \u2014 the stall is physics, not resolution.",
+    ),
+    "06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45": dict(
+        out="07_hardest_plunge_hits_a_curvature_wall.mp4",
+        fields=["chi", "K"],
+        title="The hardest plunge  \u2014  the merged core hits a curvature wall",
+        cap1="Momentum 0.90 per mouth: the pair falls from separation 11.8 to 2.6 in forty "
+             "units and merges violently. The curvature at the merged core then runs away "
+             "\u2014 K nearly doubles each step \u2014 and the record ends at t = 45.3.",
+        cap2="The wall is the result, not a glitch: the d = 6 merger chain hit the same "
+             "class and only finer resolution carried it through. No horizon is found "
+             "before the end.",
     ),
     "07_bbh_control/bbh_control_d12_p012_t150": dict(
-        out="06_control_two_black_holes_merge.mp4",
+        out="08_control_two_black_holes_merge.mp4",
         fields=["chi", "Weyl4_Mag"],
         title="Control  \u2014  two black holes, same separation and momentum, no scalar",
-        cap1="The vacuum comparison for the spiral: identical separation and momentum, with "
+        cap1="The vacuum comparison: the d = 12 spiral's separation and momentum, with "
              "the ghost scalar removed. Two black holes merge and ring down.",
         cap2="This is what a textbook merger looks like on the same grid \u2014 the chirp the "
              "wormhole channels never produce.",
     ),
     "07_bbh_control/bbh_control_d12_p045_t100": dict(
-        out="07_control_two_black_holes_fly_apart.mp4",
+        out="09_control_two_black_holes_fly_apart.mp4",
         fields=["chi", "Weyl4_Mag"],
         title="Control  \u2014  the fly-by's own momentum, in vacuum",
-        cap1="The same initial data as the wormhole fly-by, minus the scalar field. In "
-             "vacuum that momentum is unbound: the two black holes start at closest "
-             "approach and coast apart, 12 \u2192 21.",
-        cap2="Watch it beside the fly-by, where the same momentum falls to 4.8 and the "
-             "mouths inflate. The pair of videos is the 70\u00d7 energy ratio, visible.",
+        cap1="The wormhole fly-by's initial data, minus the scalar field. In vacuum that "
+             "momentum is unbound: the two black holes start at closest approach and "
+             "coast apart, 12 \u2192 21.",
+        cap2="Watch it beside the fly-by videos: with the phantom field the pull is about "
+             "six times stronger, the pair falls close, and the mouths inflate. The "
+             "difference between the channels is the measurement.",
     ),
 }
 

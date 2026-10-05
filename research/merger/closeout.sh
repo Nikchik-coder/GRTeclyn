@@ -40,9 +40,11 @@ source "${ROOT}/grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.
 # zero crossings stay readable, logarithmic outside), a fixed number of decades
 # below the peak.  Weyl4 takes a shallower range because at two decades most of
 # its frame is the coarse grid's own noise.  chi and lapse are bounded and read
-# correctly on a linear scale, so they are left off.  Override with WHM_SYMLOG,
-# or set it empty for the old all-linear behaviour.
-WHM_SYMLOG="${WHM_SYMLOG:-K,phi,Pi,chi_minus_1,shift1,Weyl4_Re:1.5,Weyl4_Im:1.5}"
+# correctly on a linear scale, so they are left off.  K is linear too since
+# 2026-10-05: the user's standing convention is one fixed LINEAR K scale (the
+# series' measured envelope), set on the p060/p090 stitches and now the
+# close-out default.  Override with WHM_SYMLOG, or set it empty for all-linear.
+WHM_SYMLOG="${WHM_SYMLOG:-phi,Pi,chi_minus_1,shift1,Weyl4_Re:1.5,Weyl4_Im:1.5}"
 DEST="${ROOT}/results/merger"
 TRUST="${DEST}/trust_windows.tsv"
 SCRATCH="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}"
@@ -113,8 +115,14 @@ for run in "$@"; do
         window=(--t-max "${tmax}")
         echo "  movies: cut at the trust window t <= ${tmax} (results/merger/trust_windows.tsv)"
       fi
+      # K is rerendered like every other field (fixed LINEAR, the series' own
+      # envelope).  It used to be skipped by default ("the global rescale washes
+      # out the lobes", 2026-10-01), which left the live per-frame autoscale in
+      # every pack's K movie -- the colour-bar dance the user flagged on four
+      # separate sets (last 2026-10-05).  WHM_RERENDER_SKIP still works for a
+      # deliberate skip.
       "${PY}" "${ROOT}/grteclyn-wrapper/scripts/plot/rerender_frames.py" "${dir}/frames" \
-        --symlog "${WHM_SYMLOG}" --skip "${WHM_RERENDER_SKIP:-K}" "${window[@]}" --movies 2>&1 | tail -n 4 | sed 's/^/  /'
+        --symlog "${WHM_SYMLOG}" --skip "${WHM_RERENDER_SKIP:-}" "${window[@]}" --movies 2>&1 | tail -n 4 | sed 's/^/  /'
     else
       [[ -n "${tmax}" ]] && echo "  WARNING: trust window t <= ${tmax} set but no slice cache -- these movies run to the end"
       bash "${ROOT}/grteclyn-wrapper/scripts/plot/make_movies.sh" "${dir}" 2>&1 | tail -n 2 | sed 's/^/  /'
