@@ -46,13 +46,17 @@ class CoincidenceEngine:
         self.ranking = ranking
         self.window_s = window_s
 
-    def __call__(self, trig_a, trig_b, *, shift: float = 0.0
-                 ) -> list[Coincidence]:
+    def __call__(self, trig_a, trig_b, *, shift: float = 0.0,
+                 wrap: float | None = None) -> list[Coincidence]:
         """Pairs in the same template within the window, ``trig_b`` slid.
 
         Only the loudest partner per template per ``trig_a`` trigger is
         kept, so one loud glitch cannot manufacture a hundred coincidences
         and flood the background with copies of itself.
+
+        ``wrap`` slides cyclically: times are taken modulo it, for triggers
+        already put on the analysed-time clock that starts at zero
+        (:class:`..background.TimeSlideBackground`).
         """
         by_key: dict[str, list] = {}
         for t in trig_b:
@@ -65,6 +69,8 @@ class CoincidenceEngine:
                 continue
             times = np.fromiter((t.time + shift for t in cands), float,
                                 len(cands))
+            if wrap:
+                times = np.mod(times, wrap)
             near = np.flatnonzero(np.abs(times - ta.time) <= self.window_s)
             if not near.size:
                 continue

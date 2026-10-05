@@ -56,6 +56,25 @@ class TriggerGenerator:
         self.snr_floor = snr_floor
         self.psd_seg_s = psd_seg_s
 
+    def sigma(self, strain, template, psd, *,
+              f_lower: float | None = None) -> float:
+        """The template's norm in this block, without filtering.
+
+        For the templates that fired, :meth:`__call__` already carries it on
+        every trigger; this is the same number for the ones that did not.
+        A horizon read off only the templates that happened to trigger is a
+        horizon weighted by where the glitches fell.
+        """
+        from pycbc.filter import sigma as pycbc_sigma
+        from pycbc.filter.matchedfilter import make_frequency_series
+
+        f_lower = self.f_lower if f_lower is None else max(f_lower,
+                                                           self.f_lower)
+        t = template.copy()
+        t.resize(len(strain))
+        return float(pycbc_sigma(make_frequency_series(t), psd=psd,
+                                 low_frequency_cutoff=f_lower))
+
     def __call__(self, strain, template, psd, *, ifo: str, key: str,
                  arm: str, mass_msun: float, f_lower: float | None = None,
                  cluster_s: float | None = None) -> list[Trigger]:

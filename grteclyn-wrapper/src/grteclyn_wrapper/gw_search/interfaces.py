@@ -104,6 +104,11 @@ class RankingStatistic(Protocol):
 
 @runtime_checkable
 class BackgroundEstimator(Protocol):
-    """Accidental-coincidence distribution, and the livetime it took."""
+    """Accidental-coincidence distribution, and the livetime it took.
 
-    def estimate(self, triggers_by_ifo: dict, livetime_s: float): ...
+    ``intervals`` are the analysed (start, end) GPS stretches, disjoint;
+    an estimator that slides cyclically needs them to know where to wrap.
+    """
+
+    def estimate(self, triggers_by_ifo: dict, livetime_s: float,
+                 intervals=None): ...

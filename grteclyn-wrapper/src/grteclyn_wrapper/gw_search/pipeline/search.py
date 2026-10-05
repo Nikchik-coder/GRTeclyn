@@ -67,12 +67,61 @@ def _filter_block(job):
                            arm=bt.arm, mass_msun=bt.mass_msun,
                            f_lower=bt.f_lower_hz())
             found[ifo].extend(got)
-            if got:
-                horizon.setdefault(bt.arm, []).append(got[0].sigma / 8.0)
+            # Every rung counts toward its channel's horizon, fired or not:
+            # sigma is a property of the template and the noise, and taking
+            # it only from templates that triggered weights the median by
+            # where the glitches fell.
+            sig = (got[0].sigma if got else
+                   triggers.sigma(cond[ifo], tmpl, psds[ifo],
+                                  f_lower=bt.f_lower_hz()))
+            horizon.setdefault(bt.arm, []).append(sig / 8.0)
+    # Where this block can hold a trigger: inside the conditioner's crop and
+    # the PSD truncation's ring at each end (the template's own length,
+    # <= 0.13 s, is ignored).  Neighbouring blocks overlap by 2 * overlap_s,
+    # more than these margins, so their valid stretches overlap too.
+    edge = 0.5 * conditioner.lost_s + noise.lost_s
     return {"triggers": found, "horizon": horizon, "gps": bs,
+            "interval": (bs + edge, be - edge),
             "livetime": block_s - conditioner.lost_s - 2.0 * noise.lost_s,
             "seconds": time.time() - t0,
             "n": sum(len(v) for v in found.values())}
+
+
+def _union(intervals):
+    """Disjoint, sorted cover of ``intervals``: time analysed, counted once."""
+    out: list[list[float]] = []
+    for a, b in sorted(intervals):
+        if out and a <= out[-1][1]:
+            out[-1][1] = max(out[-1][1], b)
+        else:
+            out.append([a, b])
+    return [(a, b) for a, b in out]
+
+
+def _dedupe(trigs, window_s: float = 0.1):
+    """One trigger per template per event, across blocks.
+
+    Within a block, clustering already keeps a template's maxima more than
+    ``max(4 T, 0.1 s)`` apart, so two triggers of one template closer than
+    0.1 s can only be the same stretch of data seen by two overlapping
+    blocks.  Counting both would put that event into the foreground, and
+    every slide it takes part in into the background, twice.
+    """
+    by_key: dict = {}
+    for t in trigs:
+        by_key.setdefault(t.template, []).append(t)
+    out = []
+    for ts in by_key.values():
+        ts.sort(key=lambda x: x.time)
+        group = [ts[0]]
+        for t in ts[1:]:
+            if t.time - group[0].time <= window_s:
+                group.append(t)
+            else:
+                out.append(max(group, key=lambda x: x.stat))
+                group = [t]
+        out.append(max(group, key=lambda x: x.stat))
+    return out
 
 
 @dataclasses.dataclass
@@ -220,7 +269,7 @@ class Search:
 
         by_ifo: dict = {ifo: [] for ifo in ifos}
         horizon: dict = {}
-        livetime = 0.0
+        intervals = []
         done = 0
 
         if self.workers > 1:
@@ -232,22 +281,33 @@ class Search:
                 for k, out in enumerate(results):
                     self._absorb(out, by_ifo, horizon, k, len(jobs))
                     if "error" not in out:
-                        livetime += out["livetime"]
+                        intervals.append(out["interval"])
                         done += 1
         else:
             for k, job in enumerate(jobs):
                 out = _filter_block(job)
                 self._absorb(out, by_ifo, horizon, k, len(jobs))
                 if "error" not in out:
-                    livetime += out["livetime"]
+                    intervals.append(out["interval"])
                     done += 1
 
         if done == 0:
             raise SystemExit("no block could be analysed")
 
+        # Overlapping blocks see the same seconds twice: count that time once
+        # and keep one trigger per template per event (_dedupe).
+        analysed = _union(intervals)
+        livetime = sum(b - a for a, b in analysed)
+        for ifo in ifos:
+            n0 = len(by_ifo[ifo])
+            by_ifo[ifo] = _dedupe(by_ifo[ifo])
+            if self.verbose and n0 != len(by_ifo[ifo]):
+                print(f"[search] {ifo}: {n0 - len(by_ifo[ifo])} duplicate "
+                      f"triggers from block overlaps dropped", flush=True)
+
         fg = sorted(self.coincidence(by_ifo[ifos[0]], by_ifo[ifos[1]]),
                     key=lambda c: -c.rank)
-        bg = self.background.estimate(by_ifo, livetime)
+        bg = self.background.estimate(by_ifo, livetime, intervals=analysed)
 
         loudest = {}
         for ifo in ifos:
@@ -263,7 +323,8 @@ class Search:
             horizon_mpc={k: float(np.median(v)) for k, v in horizon.items()},
             loudest_single=loudest,
             meta={"gps_start": start, "gps_end": end,
-                  "sample_rate": self.sample_rate})
+                  "sample_rate": self.sample_rate,
+                  "analysed_intervals": [list(iv) for iv in analysed]})
 
 
 def report(res: SearchResult) -> None:

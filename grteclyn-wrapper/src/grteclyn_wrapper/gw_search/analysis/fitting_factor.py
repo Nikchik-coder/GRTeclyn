@@ -142,7 +142,12 @@ def fitting_factor(wf: NRWaveform, mass_msun: float, psd, sample_rate: int,
     ipk = int(np.argmax(np.abs(wf.H)))
     pre_M, post_M = wf.u[ipk] - wf.u[0], wf.u[-1] - wf.u[ipk]
 
+    # The two maxima are taken over the bank INDEPENDENTLY.  Until
+    # 2026-10-05 a new best full-model match overwrote ff_window with its
+    # own windowed match, discarding a larger one found earlier, so
+    # ff_window could come out below the bank's real maximum.
     best = FitResult(wf.name, mass_msun, 0.0, 0.0, 0.0, 0.0, 0.0)
+    best_win = 0.0
     for M in bank["total_mass"]:
         n_pre = int(pre_M * M * M_SUN_SEC * sample_rate)
         n_post = int(post_M * M * M_SUN_SEC * sample_rate)
@@ -151,21 +156,14 @@ def fitting_factor(wf: NRWaveform, mass_msun: float, psd, sample_rate: int,
                 a = _bbh(float(M), float(q), float(chi), sample_rate)
                 m_full, _ = match(nr, _as_series(a, sample_rate, n), psd=psd,
                                   low_frequency_cutoff=f_lower)
+                m_win, _ = match(nr, windowed(a, sample_rate, n,
+                                               n_pre, n_post),
+                                 psd=psd, low_frequency_cutoff=f_lower)
+                best_win = max(best_win, float(m_win))
                 if m_full > best.ff_bank:
-                    m_win, _ = match(nr, windowed(a, sample_rate, n,
-                                                   n_pre, n_post),
-                                     psd=psd, low_frequency_cutoff=f_lower)
-                    best = FitResult(wf.name, mass_msun, float(m_full),
-                                     float(m_win), float(M), float(q),
-                                     float(chi))
-                else:
-                    m_win, _ = match(nr, windowed(a, sample_rate, n,
-                                                   n_pre, n_post),
-                                     psd=psd, low_frequency_cutoff=f_lower)
-                    if m_win > best.ff_window:
-                        best = dataclasses.replace(best,
-                                                   ff_window=float(m_win))
-    return best
+                    best = FitResult(wf.name, mass_msun, float(m_full), 0.0,
+                                     float(M), float(q), float(chi))
+    return dataclasses.replace(best, ff_window=best_win)
 
 
 def survey(psd, sample_rate: int, masses=(60.0, 100.0, 150.0, 200.0, 300.0),

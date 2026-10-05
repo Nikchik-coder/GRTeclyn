@@ -108,8 +108,21 @@ def run_injections(strain, noise, bank, triggers, *, ifo: str = "H1",
 
     out: list[InjectionResult] = []
     for arm, rungs in by_arm.items():
-        picks = [rungs[int(round(f * (len(rungs) - 1)))]
-                 for f in np.linspace(0.15, 0.85, n_per_arm)]
+        # Each injection sits at the geometric midpoint of two neighbouring
+        # rungs, where the bank is thinnest.  Until 2026-10-05 it sat ON a
+        # rung -- the injected waveform was itself a bank template -- so the
+        # recovered fraction measured the noise and never the bank's
+        # discreteness that point 2 above is about.
+        picks = []
+        for f in np.linspace(0.15, 0.85, n_per_arm):
+            i = int(round(f * (len(rungs) - 1)))
+            if len(rungs) < 2:
+                picks.append(rungs[0])
+                continue
+            i = min(i, len(rungs) - 2)
+            picks.append(dataclasses.replace(
+                rungs[i], mass_msun=float(np.sqrt(rungs[i].mass_msun
+                                                  * rungs[i + 1].mass_msun))))
         for bt in picks:
             # sigma at 1 Mpc IS the distance at which this template rings
             # up SNR 1, so the distance for target_snr is just sigma/target.

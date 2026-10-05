@@ -68,7 +68,8 @@ CHANNELS = ("collapsing throat", "head-on", "spiral", "fly-by")
 CONTROL = "vacuum BBH twin"
 ARM_ALIAS = {"throat": "collapsing throat", "collapsing throat": "collapsing throat",
              "head-on": "head-on", "headon": "head-on", "spiral": "spiral",
-             "fly-by": "fly-by", "flyby": "fly-by", "twin": CONTROL, "control": CONTROL,
+             "fly-by": "fly-by", "flyby": "fly-by", "plunge": "plunge",
+             "twin": CONTROL, "control": CONTROL,
              "vacuum BBH twin": CONTROL}
 
 
