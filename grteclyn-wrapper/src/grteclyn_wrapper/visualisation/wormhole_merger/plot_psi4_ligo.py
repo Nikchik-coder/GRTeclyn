@@ -103,8 +103,9 @@ M_CODE = {
                                 # leg 1's constraint_solve.dat) -- the far-side
                                 # matched data carry the interaction energy the
                                 # superposition missed
-    "spiral": 2.0,              # ditto, d = 12
-    "fly-by": 2.0,              # ditto, d = 12
+    "spiral": 2.3634,           # the d = 6 pair's boosted-solve M_ADM_face
+                                # (its lvl5from0 leg's constraint_solve.dat)
+    "fly-by": 2.0776,           # the p = 0.45 pair's M_ADM_face
     "vacuum BBH twin": 2.0,     # bare 0.9615 -> per-hole ADM ~ 1.00 at d = 12
 }
 

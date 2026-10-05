@@ -231,8 +231,11 @@ PROPOSED (no go yet): the chi-floor continuation from Chk05500 — min_chi 1e-4,
 Queue order (10-05 ~05:45 UTC): NOTHING RUNNING — all three overnight runs finished clean and are packed.
 The verdicts: the p060 stall is PHYSICAL (no MOTS at lvl5 either); p = 0.45 has NO WALL (the plunge boundary
 sits in (0.45, 0.60)); the wave zone is RESOLVED (CONV-csm-w agrees with base-grid extraction to 0.15 % of
-peak). Left in the queue, all PROPOSED with NO go: SIGN-dyn (GPU minutes), EGW-p012 (~4–6 h), and the p09
-finer continuation (lvl5 from its Chk04500 — the K-wall's knob is resolution). Pending analysis: the E_GW(p)
+peak). Left in the queue, all PROPOSED with NO go: SIGN-dyn (GPU minutes), EGW-p012 (~4–6 h), the p09
+finer continuation (lvl5 from its Chk04500 — the K-wall's knob is resolution), and BBH-d6 (the user,
+10-05: the d = 6 merger needs its vacuum twin — a BBH control at d = 6, p = 0.10, bare punctures, the
+d12 controls' template, t = 100; without it the gallery's merger row has no same-settings overlay;
+~BBH-control cost class, a few h). Pending analysis: the E_GW(p)
 curve (0.25/0.45/0.60), the level-4-vs-5 comparison, Fig. 5/§VI on the complete MOTS history. DONE overnight: the p060
 chi leg (t = 100, no horizon at lvl4), EGW-p09 (t = 40, third plunge, burst cut at the stop), MOTS-ho3
 (t = 100, history complete), and CONV-csm-w on the second node (R = 28 ball; R = 44/36 both OOM one card). Both

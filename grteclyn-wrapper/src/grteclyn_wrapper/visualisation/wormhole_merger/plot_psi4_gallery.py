@@ -197,12 +197,29 @@ ARMS = [
     ("head-on", r"$\sigma=-1$, $d=8$", "(2,0)",
      "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20.dat",
      None, 10.0, 76.0, r"level-1 noise"),
-    ("spiral", r"$p=0.12$, $d=12$", "(2,2)",
-     "05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_SERIES/Weyl4_mode_22.dat",
-     None, 20.0, None, r"core frozen $t{>}57$"),
+    # Since 2026-10-05 rows (c)/(d) are the mode-3 boosted campaign: (c) the
+    # d = 6 merger chain glued into one record (its SERIES README documents the
+    # legs and the 4.6e-7 seam check) -- the one orbital merger, drawn whole,
+    # burst through remnant ringdown to t = 100; no vacuum twin exists at
+    # d = 6, so row (c) carries no overlay.  (d) the p = 0.45 boosted
+    # scatterer, the deepest pass that still escapes (the capture boundary's
+    # near side); its ARMS cap is the R = 20 trough t = 94, where the decaying
+    # arch meets the mouths' growing contamination (clmEgwGateFortyFive), and
+    # the momentum-matched vacuum control (same d and p) rides under it.
+    ("spiral", r"$p=0.10$, $d=6$", "(2,2)",
+     "05_binary_spiral/merger_d6/spiral_d6_p010_L128_SERIES/Weyl4_mode_22.dat",
+     None, 20.0, None, r""),
     ("fly-by", r"$p=0.45$, $d=12$", "(2,2)",
-     "06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/Weyl4_mode_22.dat",
-     None, 20.0, 70.0, r"gated $t{=}70$ (mouths expand)"),
+     "06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/Weyl4_mode_22.dat",
+     None, 20.0, 94.0, r"gated $t{=}94$ (mouths expand)"),
+    # The p = 0.60 plunge (2026-10-05): the chain glued into one record (its
+    # SERIES README has the seam checks); the loudest row by amplitude.  Its
+    # trust window t = 80 cuts every sphere (Weyl4 junk on the frames from
+    # ~78), so the outer spheres' bursts are partial and the energy quoted in
+    # Sec. VIII (clmEgwEnergySixty) is a floor.
+    ("plunge", r"$p=0.60$, $d=12$", "(2,2)",
+     "06_binary_flyby/merge_orbit_flip_d12_p060_L128_SERIES/Weyl4_mode_22.dat",
+     None, 20.0, 80.0, r"trust window"),
     # The spiral's vacuum twin: a scenario of the LIGO figure and the ledger,
     # but in the gallery it is drawn UNDER the spiral row (OVERLAID below).
     ("vacuum BBH twin", r"$p=0.12$, $d=12$", "(2,2)",
@@ -240,10 +257,8 @@ ARMS = [
 #           row's scale a rule), and the holes reach r = 13.7 by t = 100.  Its
 #           two lobes fold across R = 20/26/30 at v/c = 0.99/0.96.
 VACUUM_OVERLAY = {
-    "spiral": ("07_bbh_control/bbh_control_d12_p012_t150/weyl_extraction_mode_22.dat",
-               20.0, "vacuum BBH spiral", False, (65.0, 95.0), "below"),
     "fly-by": ("07_bbh_control/bbh_control_d12_p045_t100/weyl_extraction_mode_22.dat",
-               20.0, "vacuum BBH fly-by", True, (10.0, 41.0), "above"),
+               20.0, "vacuum BBH fly-by", True, (5.0, 40.0), "above"),
 }
 # ARMS scenarios the gallery draws only as an overlay, never as a row.
 OVERLAID = {"vacuum BBH twin"}
@@ -259,9 +274,24 @@ DRAW_GATES = {
     # (R <= 20) are clean to t ~ 80, R = 28 to ~ 90, level 0 to the end.
     "head-on": (lambda R: 80.0 if R <= 20.0 else (90.0 if R <= 28.0 else 100.0),
                 r"level-1 noise"),
-    "spiral": (lambda R: 57.0 + (R - 1.9), r"fill's light cone"),
-    "fly-by": (lambda R: 50.0 + R, r"mouths expand"),
+    "fly-by": (lambda R: 74.0 + R, r"mouths expand"),
+    "plunge": (lambda R: 80.0, r"trust window"),
 }
+
+# Drawn-record START per scenario.  The plunge's t040 leg carries loud
+# non-propagating p^2-junk transients (its registry row) that sit on every
+# sphere at zero lag, so correlating the full record reads v >> c; the drawn
+# record opens at contact (t = 45), just ahead of the burst, and the speeds
+# measure the burst alone.
+DRAW_START = {"plunge": 45.0}
+
+# Rows whose truncated records defeat the whole-waveform correlator: the
+# plunge's trust window cuts both spheres mid-burst, leaving two rising
+# ramps whose |xcorr| peaks at maximal overlap (zero coordinate lag, v >> c).
+# For these the quoted v/c is the burst-peak lag on the drawn records --
+# peak timing, the one thing a ramp still dates (67.7 -> 77.4 over
+# Delta R = 8: 0.83 c) -- and the caption says so.
+PEAK_SPEED_ROWS = {"plunge"}
 
 RAMP = [None, "MUTED", "CONTEXT", "FAINT"]   # inner -> outer; None = INK
 
@@ -273,6 +303,11 @@ RAMP = [None, "MUTED", "CONTEXT", "FAINT"]   # inner -> outer; None = INK
 RADII = {
     "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20.dat":
         (10.0, 20.0, 36.0, 44.0),
+    # The plunge's trust window (t = 80) cuts R = 36/44 before their bursts
+    # arrive (~81/89), so only the two inner spheres carry a measurable burst;
+    # correlating the outer, burst-less records read as v >> c.
+    "06_binary_flyby/merge_orbit_flip_d12_p060_L128_SERIES/Weyl4_mode_22.dat":
+        (20.0, 28.0),
 }
 
 
@@ -306,7 +341,9 @@ def drawn(name: str, t: np.ndarray, series: dict) -> dict:
     if name not in DRAW_GATES:
         return dict(series)
     end, _ = DRAW_GATES[name]
-    return {R: np.where(t <= end(R) + 1e-9, y, 0.0) for R, y in series.items()}
+    t0 = DRAW_START.get(name, -1.0)
+    return {R: np.where((t <= end(R) + 1e-9) & (t >= t0), y, 0.0)
+            for R, y in series.items()}
 
 
 def overlay_record(pack: pathlib.Path, name: str):
@@ -415,6 +452,10 @@ def main(argv: list[str] | None = None) -> int:
         radii = sorted(series)
         R_in = min(radii, key=lambda r: abs(r - R0))
         speeds = wavefront_speeds_xcorr(t, series, radii)
+        if name in PEAK_SPEED_ROWS:
+            pk = {R: float(t[int(np.argmax(np.abs(series[R])))]) for R in radii}
+            speeds = [(R1, R2, (R2 - R1) / (pk[R2] - pk[R1]) if pk[R2] != pk[R1]
+                       else np.inf, 0.0) for R1, R2 in zip(radii[:-1], radii[1:])]
         note = DRAW_GATES[name][1] if name in DRAW_GATES else ""
         rows.append(dict(name=name, knob=knob, mode=mode, note=note, t=t,
                          series=series, radii=radii, R_in=R_in, speeds=speeds))
@@ -506,8 +547,12 @@ def main(argv: list[str] | None = None) -> int:
                     kn = (uo > u_end) & (uo < u_end + 0.2 * (xhi - xlo))
                     if kn.any():
                         y_note = max(y_note, ro[kn].max() + 0.06 * pk)
-                axL.text(u_end + 0.012 * (xhi - xlo), y_note, r["note"],
-                         fontsize=6.5, color=style.MUTED, ha="left", va="bottom")
+                if u_end > xlo + 0.72 * (xhi - xlo):
+                    axL.text(0.985, 0.88, r["note"], transform=axL.transAxes,
+                             fontsize=6.5, color=style.MUTED, ha="right", va="top")
+                else:
+                    axL.text(u_end + 0.012 * (xhi - xlo), y_note, r["note"],
+                             fontsize=6.5, color=style.MUTED, ha="left", va="bottom")
         # Row identity on the strip above the frame: nothing inside the
         # panel, so no waveform can ever collide with it.
         axL.text(0.0, 1.05, f"({string.ascii_lowercase[i]})  {r['name']},  {r['knob']}",
