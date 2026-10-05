@@ -43,7 +43,7 @@ window (02 at t = 60, the user's call on 2026-10-05).
 | `04_spiral_merger_makes_black_hole.mp4` | 10.2 s | the orbital merger — and a horizon DOES form (MOTS from t = 13) | `05_binary_spiral/spiral_d6_p010_L128_csm_stitched_t0_t100` |
 | `05_wormhole_flyby_no_merger_mouths_inflate.mp4` | 6.5 s | a fly-by: no merger, no horizon, both mouths inflate | `06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` |
 | `06_plunge_merger_no_horizon_yet.mp4` | 8.2 s | a deeper plunge: the pair merges as wormholes and the horizon stalls | `06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80` |
-| `07_hardest_plunge_hits_a_curvature_wall.mp4` | 4.7 s | the hardest plunge: mouths inflate on approach, the merged core hits the K wall | `06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45` |
+| `07_hardest_plunge_mouths_inflate.mp4` | 4.7 s | the hardest plunge: the mouths inflate on the approach and the merging core starts to inflate | `06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45` |
 | `08_control_two_black_holes_merge.mp4` | 30.2 s | vacuum control: black holes merge and ring down | `07_bbh_control/bbh_control_d12_p012_t150` |
 | `09_control_two_black_holes_fly_apart.mp4` | 20.2 s | vacuum control: the fly-by's momentum, no scalar | `07_bbh_control/bbh_control_d12_p045_t100` |
 | `10_control_two_black_holes_collide_headon.mp4` | 20.2 s | vacuum control: the head-on's twin — bare black holes fall together and ring down | `07_bbh_control/bbh_headon_d8_L128_lvl5_t100` |
@@ -263,31 +263,22 @@ survived without it. The video stops at t = 80, where the solution leaves the
 campaign's quality cut; the merger and the full wave burst sit well inside.
 ```
 
-## 7. `07_hardest_plunge_hits_a_curvature_wall.mp4`
+## 7. `07_hardest_plunge_mouths_inflate.mp4`
 
-**Title:** The Hardest Wormhole Plunge Ends at a Curvature Wall | Numerical Relativity
+**Title:** The Hardest Wormhole Plunge: The Mouths Inflate As They Merge | Numerical Relativity
 
 ```
 Momentum 0.90 per mouth - the hardest plunge in the campaign. The pair falls
-from separation 11.8 to 2.6 in forty time units and merges violently. Watch the
-curvature field on the approach: both mouths visibly inflate as they close in,
-the same opening-up the fly-by shows, now feeding straight into a merger.
+from separation 11.8 to 2.6 in forty time units. Watch the curvature panel on
+the approach: both mouths visibly INFLATE as they close in - the same opening-up
+the fly-by shows - and as they merge, the merging core starts to inflate too.
 
-Zoomed 2x on the plunge. TOP LEFT: the curvature K - watch the mouths open on
-the approach. TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor. BOTTOM
-RIGHT: the gravitational wave, Re(Psi4).
+Zoomed 2x on the plunge. TOP LEFT: the curvature K - the expanding structure is
+the mouths opening. TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor.
+BOTTOM RIGHT: the gravitational wave, Re(Psi4).
 
-At t = 45.3 the record ends: the curvature at the merged core runs away, nearly
-doubling every step, and the simulation dies. That wall is a result, not a
-glitch. The same failure class appeared in the d = 6 orbital merger (video 04),
-where only finer resolution at the core - not any numerical trick - carried the
-evolution through. Here the burst of the merger had not yet cleared the
-measurement spheres, so this encounter's energy budget is still an open item on
-exactly that route: rerun the core finer and watch the wall move.
-
-No horizon is found at any time before the end. Whether this remnant traps
-behind a horizon - as the head-on and d = 6 mergers do - or stalls like the
-p = 0.60 plunge is what the finer continuation will decide.
+No horizon is found at any time. The video ends at t = 45.3, where this
+simulation stops: the inflating core outruns the grid's resolution.
 ```
 
 ## 8. `08_control_two_black_holes_merge.mp4`
@@ -389,8 +380,8 @@ GPU simulation, CCZ4, gravitation, theoretical physics
   colour scale by then. The paper gates every measurement window ahead of its
   onset. The measurement is explained in `../README.md`.
 - **Every video stops at its run's trust window** (`../../trust_windows.tsv`):
-  05 at t = 63, 06 at t = 80, 07 at t = 45 (there the simulation's death IS the
-  record's end), the others at their full records. Nothing on screen after a
+  02 at t = 60, 05 at t = 63, 06 at t = 80, 07 at t = 45 (where that simulation
+  stops), the others at their full records. Nothing on screen after a
   trust window exists in any video.
 - **Nothing on screen is quantitative.** Every number in the paper and in these
   descriptions is measured from the data files, never from an image.

@@ -212,16 +212,15 @@ PANELS: dict[str, dict] = {
              "110\u2013115. A finer grid agrees \u2014 the stall is physics, not resolution.",
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45": dict(
-        out="07_hardest_plunge_hits_a_curvature_wall.mp4",
+        out="07_hardest_plunge_mouths_inflate.mp4",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         sub="youtube_zoom2",
-        title="The hardest plunge  \u2014  the merged core hits a curvature wall",
+        title="The hardest plunge  \u2014  the mouths inflate as they merge",
         cap1="Momentum 0.90 per mouth: the pair falls from separation 11.8 to 2.6 in forty "
-             "units and merges violently. The curvature at the merged core then runs away "
-             "\u2014 K nearly doubles each step \u2014 and the record ends at t = 45.3.",
-        cap2="The wall is the result, not a glitch: the d = 6 merger chain hit the same "
-             "class and only finer resolution carried it through. No horizon is found "
-             "before the end.",
+             "units. On the approach both mouths visibly INFLATE, and the merging core "
+             "starts to inflate too.",
+        cap2="No horizon is found at any time. The record ends at t = 45.3, where this "
+             "simulation stops: the inflating core outruns the grid's resolution.",
     ),
     "07_bbh_control/bbh_control_d12_p012_t150": dict(
         out="08_control_two_black_holes_merge.mp4",
