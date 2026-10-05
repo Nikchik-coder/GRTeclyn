@@ -1,21 +1,32 @@
-# Status — 2026-10-05 ~13:00 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-05 ~17:45 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-05 15:36 UTC) — P060-EXT on the first node's card 0; card 1 idle; the second node idle
+## LIVE NOW (2026-10-05 17:45 UTC) — the first node: P060-EXT on card 0, DAMP-off on card 1, O3B-NEW on the CPU; the second node idle
 
-| run | node / card | t at 15:36 UTC | stop | speed | ETA | checkpoints |
+| run | node / card | t at 17:43 UTC | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| P060-EXT `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | first / 0 | 60.02 | 115 | ~2.5 u/h (lvl5, the parent's pace) | ~22 h → ~13:30 UTC 10-06 | every 5, keep 3 (the user) |
+| P060-EXT `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | first / 0 | 68.17 | 115 | 3.8 u/h (lvl5) | ~12.3 h → ~06:00 UTC 10-06 | every 5, keep 3 (the user) |
+| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 0 (mode-3 solve, 3 of 6 solves) | 70 | — (P045-T100 averaged 4.8 u/h) | ~15 h → ~09:30 UTC 10-06 | none (the user) |
+| O3B-NEW (`gw_search` validate → inject → fitting-factor → scan) | first / CPU | fitting-factor since 17:44 | — | — | the scan is GWOSC-bound; each step capped at 4 h | — |
 
 - **P060-EXT** (the user's go ~15:30 UTC 10-05; launched 15:34): the p = 0.60 plunge's lvl5 check continued from its
   `Chk06000` (t = 60; the NFS copy re-staged to scratch) to t = 115 — does the remnant trap late (the lvl4
   extrapolation puts a converged MOTS at t ≈ 110–115)? The parent's params with ONLY the stop (60 → 115) and the
   names changed; binary `main3d_boostpair_91ed17cd`. Preflight PASS (full; paths one spelling). Started by effect:
   restart at t = 60.00, level 5 stepping, card 0 at 55 GB, the consumer up with the suffixed horizon-track.
-  Pending: frame t = 61 + its MOTS row, the first checkpoint (t = 65).
+  Since: frames and a MOTS row every unit (t = 61–67: no MOTS yet), first checkpoint `Chk06500` written 16:52 UTC.
+- **DAMP-off** (the user's go ~17:25 UTC 10-05, "Required" below; launched 17:35): P045-T100's params with ONLY
+  `core_matter_damping` 1 → 0, the stop (100 → 70; P045-T100's trust 67.6) and the names changed; binary
+  `main3d_boostpair_91ed17cd`; NO checkpoints (the user: "None, as P045-T100"; the inherited lines are off).
+  Preflight PASS. Pending: M_ADM and the far sides against P045-T100's (2.0776; max |M_far/M_iso − 1| = 1.2e-6),
+  frame 0 against P045-T100's, the consumer's first MOTS rows and pruning, card memory.
+- **O3B-NEW** (the same go; the first node's CPU, GWOSC reached with the proxy bypassed): validate PASS 17:28 UTC;
+  inject PASS 17:44 (18/18 found, recovered/optimal SNR 0.93–1.08, median 0.99, χ²_r 0.47–1.24); fitting-factor,
+  then the scan. Then the claims check, Sec. IX's ledger rows and `claims.py tex`; the three json files are committed
+  together at the end.
 
 - **P09-LVL5 `merge_orbit_flip_d12_p090_L128_lvl5from40_chi1e4_t100_lbf_csm_r04000` DIED t = 45.28 (~14:07 UTC
   10-05): h11 NaN on level 4, the SAME instant as the lvl4 chi leg (45.27).** Level 5 changed the core, not the
@@ -34,12 +45,12 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
   d, p, the mass and the checkpoint lines changed. NO checkpoints: `amr.check_int = -1` +
   `amr.checkpoint_files_output = 0` (verified: none written). `WHM_PREFLIGHT=static`, as BBH-HEADON. Started by
   effect: frame 0 eyeballed against BBH-HEADON's, Ψ4 rows landing, keep-last 3 pruning, card 1 at 62 GB.
-- **Storage (the first node, 15:25 UTC):** scratch ~981G free. BBH-d6's 3 plotfiles (3.5G) pruned at its
-  close-out (manifest 10-05); the dead P09-LVL5 cell 25G (its Chk04500, kept for the proposed autopsy; its 3 plotfiles, 18G,
-  pruned at close-out, manifest 10-05); the staged
-  p09 `Chk04000` copy 25G (`merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm/`; the NFS original stays) —
-  both checkpoints wait for the user's word. The second node was not listed from here (05:35 UTC 10-05: only
-  the HFL cell, 60G).
+- **Storage (the first node, 17:43 UTC):** scratch 924G free. Live: P060-EXT 44G (`Chk06500` + 3 plotfiles, in
+  policy); DAMP-off empty (still solving). Leftovers 76G under the user's "wipe all" (10-05; the agent's `rm` was
+  blocked, so the user runs it): the P060-LVL5 cell 26G (`..._p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000/`),
+  the staged p09 `Chk04000` copy 25G (`merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm/`; the NFS original
+  stays) and the dead P09-LVL5 cell 25G (its `Chk04500`; without it the proposed autopsy replays from the NFS
+  Chk04000, ~1.5 GPU-h). The second node was not listed from here (05:35 UTC 10-05: only the HFL cell, 60G).
 
 ## RUNS FOR THE PAPER (the full read of 2026-10-05, late; nothing launches without the go)
 
@@ -47,7 +58,8 @@ The paper was read end to end: the superposition / Bowen–York / workaround wor
 solved, matched, boosted data as the method), duplicates are cut, the d = 6 chain is "the merger" everywhere
 (text and figures), the run matrix (Table III) lost the Bowen–York probes, the GRTresna bridge, the unused CS-1 scout and the
 Bowen–York convergence arms (96 runs, 476 GPU-h; BBH-d6 joined the vacuum controls). Ledger 907 rows, 0 problems.
-**Required:** O3B-NEW and DAMP-off — the text quotes numbers that rest on them. **Recommended:** CONV-lbf-w — no
+**Required:** O3B-NEW and DAMP-off — the text quotes numbers that rest on them (both started ~17:30 UTC 10-05 on
+the user's go: LIVE NOW, top). **Recommended:** CONV-lbf-w — no
 quoted number waits on it, but the paper has no wave-zone resolution test on current data and a referee will ask.
 **Optional:** SOLVE-t0 — the d = 8 shell number it would restore is no longer in the paper. (Classified 10-05 late,
 after the shortening pass.)
@@ -55,7 +67,7 @@ after the shortening pass.)
 | id | what | why the paper needs it | how | cost |
 |---|---|---|---|---|
 | O3B-NEW | the gw_search pipeline (validate, inject, fitting-factor, scan) on the current templates | Sec. IX's bank (127 templates), per-channel horizons, fitting factors and injections still come from the 09-26 templates (superposed spiral, Bowen–York fly-by); the text names them by the current channels | the commands of `results/merger/gw_search/README.md`, on the workstation (GWOSC strain cache `runs/gw_search`; a cloud container cannot reach GWOSC). The plunge now enters the bank (`M_CODE`, corner-protected) unless `TemplateBank(arms=...)` excludes it | CPU hours |
-| DAMP-off | the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); checkpoints asked at launch | ~10 GPU-h (~7 u/h) |
+| DAMP-off | the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); no checkpoints (the user, at launch) | ~15 GPU-h (P045-T100 averaged 4.8 u/h) |
 | CONV-lbf-w | the wave-zone test on exact-boost data | CONV-csm-w resolved the wave zone (0.01–0.15 % of peak) on the Bowen–York `_csm` arm, which the paper no longer cites | the CONV-csm-w recipe (`extraction_levels 0 1 0 0`, the R = 28 ball, 77.6/80 GB) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |
 | SOLVE-t0 | the mode-3 d = 8 head-on at t = 0 | Sec. II quoted the d = 8 throat-shell Hamiltonian from the pre-matching (mode-0) check, now cut; the paper keeps only the boosted pair's mode-3 per-level number | t = 0 only on CS-1's grid, `constraint_solve_t0_check.py` | CPU minutes |
 
@@ -248,7 +260,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## First node (two H100s): P060-EXT on card 0 since 15:34 UTC 10-05; card 1 idle (LIVE NOW, top)
+## First node (two H100s): P060-EXT on card 0 since 15:34 UTC 10-05; DAMP-off on card 1 since 17:35 UTC (LIVE NOW, top)
 
 **P060-LVL5 `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` DONE (t = 60, no NaN, Ham
 2.0e-4) — NO converged MOTS at lvl5 either: THE p060 STALL IS PHYSICAL, not resolution (rms θ_out ~1.8e-2
