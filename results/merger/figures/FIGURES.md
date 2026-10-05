@@ -911,3 +911,5 @@ three-panel strip's scale). Label audit clean.
 2026-10-05: `psi4_gallery` gains row (e), the p = 0.60 plunge (glued SERIES; peak-lag speed, trust cut 80),
 the head-on row gains its vacuum BBH overlay, and `egw_momentum` is new (E_GW vs p, the boundary turnover;
 `plot_egw_momentum`). `psi4_ligo` skips the plunge (floor-cut record; its energy lives in egw_momentum).
+
+2026-10-05: `momentum_scan_orbits` re-fed onto the boosted mode-3 arms (d6 merger, p012 arm, p060/p090 two-leg plunges, gold p025/p045 scatterers; per-arm trust cuts; restart-leg tracker lock-on handled).

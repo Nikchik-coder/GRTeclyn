@@ -206,8 +206,8 @@ clmMergerSeamTwo	30	30		manual			$t=\clmMergerSeamOne$, $30$ and || to $t=30$--$
 clmMergerSeamThree	35	35		manual			$\clmMergerSeamTwo$ and $35$; levels	the chain's restart checkpoints	2026-10-05	
 clmMergerWallLeadLo	15	15		manual			arrive $15$--$\clmMergerWallLeadHi$ units after its horizon	cell NaNs at 27.5-30.5 minus horizon birth 13: leads 14.5-17.5	2026-10-05	
 clmMergerWallLeadHi	18	18		manual			--$18$ units after its horizon	cell NaNs at 27.5-30.5 minus horizon birth 13	2026-10-05	
-clmPSixtyExtDeath	55.5	55.5		manual			plunge at $t=55.5$---in every case || to $t=55.5$ and $\c	results/merger/trust_windows.tsv	2026-10-05	the t100 extension's h11 single-cell NaN at 55.52; the chi-floor leg then crosses it
-clmPNinetyDeath	45.3	45.3		manual			arm at $t=45.3$ with $\chi$ nowhere || and $45.3$), the $d=6$	results/merger/trust_windows.tsv	2026-10-05	the p=0.90 chi leg dies 45.27; trust 45.2
+clmPSixtyExtDeath	55.5	55.5		manual			plunge at $t=55.5$---in every case	results/merger/trust_windows.tsv	2026-10-05	the t100 extension's h11 single-cell NaN at 55.52; the chi-floor leg then crosses it
+clmPNinetyDeath	45.3	45.3		manual			arm at $t=45.3$ with $\chi$	results/merger/trust_windows.tsv	2026-10-05	the p=0.90 chi leg dies 45.27; trust 45.2
 clmPNinetyKLo	93	93		manual			core, $93\to\clmPNinetyKHi$ in one step	results/merger/trust_windows.tsv	2026-10-05	max|K| at the merging core, one step before the NaN
 clmPNinetyKHi	172	172		manual			$\clmPNinetyKLo\to172$ in one step	results/merger/trust_windows.tsv	2026-10-05	
 clmPNinetyChiMin	5.4\times10^{-3}	5.4e-3		manual			($\chi_{\min}=5.4\times10^{-3}$)	results/merger/trust_windows.tsv	2026-10-05	chi never near the 1e-4 floor: the K wall is not the chi-steepness wall

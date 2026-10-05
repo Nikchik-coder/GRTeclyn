@@ -90,29 +90,59 @@ GROUP = "05_binary_spiral"
 CHI_FLOOR = 1.0e-8     # min_chi of every arm here
 HOP = 0.2              # a one-step jump of the pit separation larger than this is a hop
 
-# (p, run, colour, dash, width, merges)
+# Since 2026-10-05 the arms are the boosted mode-3 campaign (the caption of
+# fig:orbits): the d = 6 merger, the d = 12 p = 0.12 arm (pits merge, no
+# horizon), the plunges p = 0.60 / 0.90 (two legs each, concatenated), and
+# the gold scatterers p = 0.25 / 0.45, each cut at its trust window.  The
+# p = 0.90 continuation runs on a 1e-4 chi floor, so the floor cut is
+# per-arm.
+# (p, runs, colour, dash, width, merges, chi floor)
 ARMS = (
-    (0.00, "merge_headon_flip_d12", "#b3b0a9", (0, ()), 1.2, True),
-    (0.12, "v2_spiral_d12_p012_L128_lvl3_t050", "#918e87", (0, ()), 1.2, True),
-    (0.15, "merge_orbit_flip_d12_p015_nofill_t060", "#6f6d67", (0, ()), 1.2, True),
-    (0.20, "merge_orbit_flip_d12_p020_t200", "#474540", (0, ()), 1.2, True),
-    (0.25, "merge_orbit_flip_d12_p025_t200", style.INK, (0, ()), 1.3, True),
-    (0.35, "merge_orbit_flip_d12_p035_t200", "#8b5c00", (0, (4.5, 2.0)), 1.3, False),
-    (0.45, "merge_orbit_flip_d12_p045_L128_lvl5_t100", style.GOLD, (0, ()), 1.5, False),
+    (0.10, ("spiral_d6_p010_L128_lvl5from0_t060_lbf_csm",),
+     style.INK, (0, ()), 1.4, True, 0.0),
+    (0.12, ("v2_spiral_d12_p012_L128_lvl5from0_t100_csm",),
+     "#918e87", (0, ()), 1.2, True, 0.0),
+    (0.60, ("merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm",
+            "merge_orbit_flip_d12_p060_L128_lvl4_t100_lbf_csm_r04000"),
+     "#474540", (0, ()), 1.2, True, 0.0),
+    (0.90, ("merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm",
+            "merge_orbit_flip_d12_p090_L128_lvl4from40_chi1e4_t100_lbf_csm_r04000"),
+     "#6f6d67", (0, ()), 1.2, True, 0.0),
+    (0.25, ("merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm",),
+     style.GOLD, (0, ()), 1.5, False, 1.0e-8),
+    (0.45, ("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm",),
+     style.GOLD, (0, (4.5, 2.0)), 1.3, False, 1.0e-8),
 )
 SMOOTH = 2.0           # time units, centred running mean of the resampled track
 DT = 0.05
-# Last trusted time per run (see the docstring); absent run = its whole record.
-TRUST_END = {"merge_orbit_flip_d12_p045_L128_lvl5_t100": 70.0}
+# Last trusted time per arm, keyed by its FIRST leg (trust_windows.tsv).
+TRUST_END = {"merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm": 63.3,
+             "merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm": 67.6,
+             "merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm": 55.5,
+             "merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm": 45.2}
 
 
-def pit_tracks(run: str, pack_root=None, merges: bool = True):
+def pit_tracks(run, pack_root=None, merges: bool = True, floor: float = CHI_FLOOR):
     """(t, track 1, track 2, cut reason) from the run's chi-pit barycentres.
 
     Track 1 starts at the throat on -x.  Each row's two pits are assigned by
     continuity, and a plunge is cut where its pits stop being trackable.
+    ``run`` may be a tuple of legs, concatenated in time order.
     """
-    b = np.loadtxt(find_packed(run, pack_root) / "binary_throat_diagnostics.dat")
+    runs = (run,) if isinstance(run, str) else tuple(run)
+    parts = [np.loadtxt(find_packed(r, pack_root) / "binary_throat_diagnostics.dat")
+             for r in runs]
+    b = parts[0]
+    for q in parts[1:]:
+        # a restart leg's tracker needs a step to lock on (its first row sits
+        # at the box origin or at the t = 0 throat positions): drop its
+        # leading rows until a pit lands within HOP of the previous leg's end
+        last = b[-1]
+        while q.shape[0] and min(
+                np.hypot(q[0, 2] - last[2], q[0, 3] - last[3]),
+                np.hypot(q[0, 2] - last[7], q[0, 3] - last[8])) > HOP:
+            q = q[1:]
+        b = np.vstack([b[b[:, 0] < q[0, 0]], q])
     t = b[:, 0]
     P = np.stack([b[:, 2:4], b[:, 7:9]], axis=1)          # (n, 2 pits, xy)
     chi = np.minimum(b[:, 5], b[:, 10])
@@ -126,7 +156,8 @@ def pit_tracks(run: str, pack_root=None, merges: bool = True):
         one[i], two[i] = (P[i, 0], P[i, 1]) if keep else (P[i, 1], P[i, 0])
     end, why = len(t), "run end"
     if merges:
-        floored = np.nonzero(chi <= CHI_FLOOR * (1 + 1e-6))[0]
+        floored = (np.nonzero(chi <= floor * (1 + 1e-6))[0] if floor > 0.0
+                   else np.array([], dtype=int))
         step = np.maximum(np.hypot(*np.diff(one, axis=0).T),
                           np.hypot(*np.diff(two, axis=0).T))
         hops = np.nonzero(step > HOP)[0]
@@ -185,18 +216,19 @@ def main(argv: list[str] | None = None) -> int:
     axO.axhline(0.0, color=style.GRID, linewidth=0.6, zorder=0)
     axO.axvline(0.0, color=style.GRID, linewidth=0.6, zorder=0)
     ends = {}
-    for p, run, colr, ls, lw, merges in ARMS:
-        t, one, two, why = pit_tracks(run, args.pack_root, merges)
-        if run in TRUST_END and t[-1] > TRUST_END[run]:
+    for p, run, colr, ls, lw, merges, floor in ARMS:
+        t, one, two, why = pit_tracks(run, args.pack_root, merges, floor)
+        key = run[0] if not isinstance(run, str) else run
+        if key in TRUST_END and t[-1] > TRUST_END[key]:
             # Cut before smoothing: the last drawn point sees no later sample.
-            keep = t <= TRUST_END[run] + 1e-6
+            keep = t <= TRUST_END[key] + 1e-6
             t, one, two = t[keep], one[keep], two[keep]
-            why = f"trust window, t <= {TRUST_END[run]:g}"
+            why = f"trust window, t <= {TRUST_END[key]:g}"
         raw = np.hypot(*(one - two).T)
         t, one, two = smoothed(t, one, two)
         sep = np.hypot(*(one - two).T)
         kw = dict(color=colr, linestyle=ls, linewidth=lw, zorder=3 if merges else 4)
-        t_edge = None if merges else scan_edge_time(run, args.pack_root)
+        t_edge = None if merges else scan_edge_time(key, args.pack_root)
         live = t <= t_edge if t_edge is not None else np.ones(len(t), bool)
         for trk in (one, two):
             axO.plot(trk[live, 0], trk[live, 1], **kw)
@@ -214,7 +246,7 @@ def main(argv: list[str] | None = None) -> int:
             axS.plot(t[-1], sep[-1], marker="o", ms=2.6, color=colr, zorder=5)
         ends[p] = (t, one, two, sep)
         i = int(np.argmin(sep))
-        print(f"[orbits] p = {p:.2f} {run}: t = 0-{t[-1]:.2f} ({why}); "
+        print(f"[orbits] p = {p:.2f} {key}: t = 0-{t[-1]:.2f} ({why}); "
               f"min separation {sep[i]:.3f} at t = {t[i]:.2f} (raw {raw.min():.3f}), "
               f"last {sep[-1]:.3f}")
 
@@ -228,46 +260,29 @@ def main(argv: list[str] | None = None) -> int:
     # for the grey ramp in the empty upper-left corner; the head-on is named
     # on its own axis, the fly-bys where they leave.
     from matplotlib.lines import Line2D
-    keys = [Line2D([], [], color=c, linestyle=ls, linewidth=lw,
-                   label="$0$" if p == 0 else f"${p:.2f}$")
-            for p, _, c, ls, lw, merges in ARMS if merges]
+    keys = [Line2D([], [], color=c, linestyle=ls, linewidth=lw, label=f"${p:.2f}$")
+            for p, _, c, ls, lw, _m, _f in ARMS]
     leg = axO.legend(handles=keys, loc="upper left", ncol=2, fontsize=6.8,
-                     title=r"plunge, $p$", title_fontsize=6.8, frameon=True,
+                     title=r"$p$", title_fontsize=6.8, frameon=True,
                      handlelength=1.4, handletextpad=0.4, columnspacing=0.8,
                      borderpad=0.35, labelspacing=0.25)
     leg.get_frame().set(facecolor=style.GROUND, edgecolor="none", alpha=0.9)
-    axO.text(-4.4, -0.35, r"$p=0$", fontsize=7.5, color=style.MUTED,
-             ha="center", va="top")
-    for p, dx, dy in ((0.35, 0.25, -0.25), (0.45, 0.2, 0.0)):
-        one = ends[p][1]
-        axO.text(one[-1, 0] + dx, one[-1, 1] + dy, f"${p:.2f}$", fontsize=7.5,
-                 color="#8b5c00" if p == 0.35 else style.GOLD, ha="left",
-                 va="center")
 
     # ---- (b) separation -------------------------------------------------------
-    # The longest record drawn is p = 0.35's (t = 74) since the fly-by stops at
-    # its trust window (t = 70), so the clock runs to 80, not the fly-by's 100.
-    axS.set_xlim(0, 80)
-    axS.set_ylim(0, 12.6)
+    # The longest record drawn is the p = 0.45 scatterer's (trust t = 67.6),
+    # so the clock runs to 70.
+    axS.set_xlim(0, 70)
+    axS.set_ylim(0, 13.5)
     axS.set_xlabel(r"$t$")
     axS.set_ylabel(r"separation")
-    for p, dy in ((0.35, 0.45), (0.45, 0.3)):
+    for p, dy, va in ((0.25, 0.45, "bottom"), (0.45, -0.45, "top")):
         t_, sep_ = ends[p][0], ends[p][3]
         axS.text(t_[-1] - 1.0, sep_[-1] + dy, f"$p={p:.2f}$", fontsize=7.5,
-                 color="#8b5c00" if p == 0.35 else style.GOLD, ha="right",
-                 va="bottom")
-    axS.text(26.0, 1.0, r"plunge, $p\leq0.25$", fontsize=7.5, color=style.INK,
-             ha="right", va="center")
-    axS.text(68.0, 1.6, r"fly-by, $p\geq0.35$", fontsize=7.5, color=style.GOLD,
+                 color=style.GOLD, ha="right", va=va)
+    axS.text(24.0, 0.8, r"mergers and plunges", fontsize=7.5, color=style.INK,
+             ha="left", va="center")
+    axS.text(47.0, 11.6, r"scatterers", fontsize=7.5, color=style.GOLD,
              ha="center", va="center")
-    # The fly-by's faint stretch: two inflating mouths, named under the curve
-    # near where it begins -- between it and p = 0.35, left of p = 0.35's name
-    # (above it, the note read as one phrase with the p = 0.45 tag).
-    p_inf, t_inf, tt, ss = inflating
-    k = int(np.argmin(np.abs(tt - (t_inf + 4.0))))
-    axS.text(tt[k], ss[k] - 0.3, f"mouths inflating\n(from $t={t_inf:.0f}$)",
-             fontsize=7, color=style.MUTED, ha="left", va="top", linespacing=1.15)
-    print(f"[orbits] p = {p_inf:.2f}: faint from t = {t_inf:.1f} (scan window edge)")
 
     for k, ax in enumerate((axO, axS)):
         ax.text(0.0, 1.03, f"({'ab'[k]})", transform=ax.transAxes,
