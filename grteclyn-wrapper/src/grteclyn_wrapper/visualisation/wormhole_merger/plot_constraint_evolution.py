@@ -72,7 +72,7 @@ from grteclyn_wrapper.visualisation.wormhole_merger import (  # noqa: E402
     plot_seed_branches,
     plot_single_collapse as collapse,
     plot_single_inflation_L512 as f4,
-    plot_spiral_collapse as spiral,
+    plot_merger_chain as mc,
     style,
 )
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E402
@@ -85,8 +85,10 @@ DOT = (0, (1, 2))
 RULE = (0, (4, 3))          # a faint dashed clock rule, as (e) and (f) draw them
 KEY = dict(title_fontsize=6.5, alignment="left", handlelength=1.8)
 # (g): the fly-by the text quotes (Sec. VII A) and the gallery's fly-by row
-FLYBY_GROUP = "06_binary_flyby/p045"
-FLYBY = "merge_orbit_flip_d12_p045_L128_lvl5_t100"
+FLYBY_GROUP = "06_binary_flyby"
+FLYBY = "merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"
+FLYBY_TRUST = 67.6    # trust_windows.tsv: sustained L2 Ham crossing of 2.5e-2
+FLYBY_GATE = 94.0     # the R = 20 trough gate (clmEgwGateFortyFive)
 FLYBY_READ = (0.0, 30.0, 40.0, 43.0, 50.0, 60.0, 70.0, 80.0, 100.0)   # printed
 FLYBY_FLOOR = (30.0, 40.0)  # the floor the growth is measured against (median)
 
@@ -228,92 +230,66 @@ def inflation(ax, pack_root) -> None:
 
 
 def headon_pair(ax, pack) -> None:
-    """(e): the head-on's Hamiltonian norm on its three arms."""
-    base = pack / "campaign" / headon.GROUP
-    cs = headon._sorted(base / headon.SCOUT / "constraint_norms.dat")
-    c5 = headon._sorted(base / headon.ARM / "constraint_norms.dat")
-    c3 = headon._clipped(base / headon.DOWN / "constraint_norms.dat")
+    """(e): the head-on chain's Hamiltonian norm across its three legs."""
+    base = pack / "campaign" / headon.GROUP / headon.CHAIN
+    c5 = headon._sorted(base / headon.LEG1 / "constraint_norms.dat")
+    c6 = headon._sorted(base / headon.LEG2 / "constraint_norms.dat")
+    c4 = headon._sorted(base / headon.LEG3 / "constraint_norms.dat")
     h5 = _h(ax, c5[:, 0], c5[:, 1], color=style.INK, lw=1.1, zorder=3)
-    hs = _h(ax, cs[:, 0], cs[:, 1], color=style.CONTEXT, lw=0.9, zorder=2)
-    h3 = _h(ax, c3[:, 0], c3[:, 1], color=style.MUTED, lw=0.9, ls=DASH, zorder=2)
+    h6 = _h(ax, c6[:, 0], c6[:, 1], color=style.MUTED, lw=0.9, ls=DASH, zorder=2)
+    h4 = _h(ax, c4[:, 0], c4[:, 1], color=style.CONTEXT, lw=0.9, zorder=2)
+    ax.plot(c5[-1, 0], c5[-1, 1], "X", color=style.INK, ms=5, mec="white", mew=0.8, zorder=4)
     ax.axvline(headon.T_MOTS, color=style.GOLD, lw=0.7, ls=DOT, zorder=1)
-    ax.axvline(headon.T_WALL, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
-    ax.set_ylim(2.5e-4, 3e-2)
-    ax.set_xlim(-1.5, float(c5[-1, 0]) + 1.5)
-    style.legend_top(ax, [(h5, "level 5"), (hs, "level-3 scout"), (h3, "level-3 down-step"),
-                          (_rule(style.GOLD, DOT), rf"MOTS, $t={headon.T_MOTS:g}$"),
-                          (_rule(style.FAINT, (0, (4, 3))), "scout dies")],
-                     ncol=2, title=r"head-on, $\mathcal{H}$", **KEY)
+    ax.set_xlim(-1.5, 101.5)
+    style.legend_top(ax, [(h5, "level-5 leg"), (h6, "level-6 leg"), (h4, "level-4 settle"),
+                          (_cross(), "death (NaN)"),
+                          (_rule(style.GOLD, DOT), rf"MOTS, $t={headon.T_MOTS:g}$")],
+                     ncol=2, title=r"head-on chain, $\mathcal{H}$", **KEY)
     f = float(np.interp(headon.T_MOTS, c5[:, 0], c5[:, 1]))
-    print(f"  (e) head-on level 5: H at formation {f:.2e}, max after {c5[c5[:, 0] > 30, 1].max():.2e}, "
-          f"end {c5[-1, 1]:.2e}; scout at its wall {cs[-1, 1]:.2e}")
+    print(f"  (e) head-on: H at formation {f:.2e}; leg ends {c5[-1, 0]:g}/{c6[-1, 0]:g}/{c4[-1, 0]:g}; "
+          f"leg-1 end H {c5[-1, 1]:.2e}, settle end H {c4[-1, 1]:.2e}")
 
 
 def spiral_chain(ax, pack) -> None:
-    """(f): the spiral's level-5 leg to the wall, the level-3 leg where they overlap."""
-    camp = pack / "campaign" / spiral.GROUP
-    arm = camp / spiral.ARM
-    d = spiral._sorted(arm / "collapse_diagnostics.dat")
-    d = d[d[:, 0] >= d[0, 0] + spiral.SETTLE]
-    t0, t_end = float(d[0, 0]), float(d[-1, 0])
-    # the chi-floor clock as the spiral figure reads it, off the radial profile
-    pt, _, blk = spiral._read_profile(arm / "core_radial_profile.dat.gz")
-    t_floor = float(pt[np.argmax(np.nanmin(blk["chi"], axis=1) <= spiral.CHI_FLOOR * 1.01)])
-    cn = spiral._sorted(arm / "constraint_norms.dat")
-    cn = cn[cn[:, 0] >= t0]
-    t_trans = float(cn[int(np.argmax(cn[:, 2])), 0])
-    c3 = spiral._sorted(camp / spiral.LEVEL3 / "constraint_norms.dat")
-    c3 = c3[(c3[:, 0] >= t0) & (c3[:, 0] <= t_end)]
-    hH = _h(ax, cn[:, 0], cn[:, 1], color=style.INK, lw=1.1, zorder=3)
-    hM = _h(ax, cn[:, 0], cn[:, 2], color=style.MUTED, lw=1.1, ls=DASH, zorder=3)
-    g3 = _h(ax, c3[:, 0], c3[:, 1], color=style.CONTEXT, lw=0.9, zorder=2)
-    _h(ax, c3[:, 0], c3[:, 2], color=style.CONTEXT, lw=0.9, ls=DASH, zorder=2)
-    ax.plot(cn[-1, 0], cn[-1, 1], "X", color=style.INK, ms=5, mec="white", mew=0.8, zorder=4)
-    ax.axvline(t_trans, color=style.FAINT, lw=0.7, ls=(0, (4, 3)), zorder=1)
-    ax.axvline(t_floor, color=style.FAINT, lw=0.7, ls=DOT, zorder=1)
-    ax.set_xlim(t0 - 0.6, t_end + 0.6)
-    style.legend_top(ax, [(hH, r"$\mathcal{H}$, level 5"), (hM, r"$\mathcal{M}$, level 5"),
-                          (g3, "level-3 leg"), (_cross(), "death (NaN)"),
-                          (_rule(style.FAINT, (0, (4, 3))), "merger transient"),
-                          (_rule(style.FAINT, DOT), r"$\chi$ on its floor")],
-                     ncol=2, title=r"spiral, $p=0.12$", **KEY)
-    H5, M5 = np.interp(c3[:, 0], cn[:, 0], cn[:, 1]), np.interp(c3[:, 0], cn[:, 0], cn[:, 2])
-    print(f"  (f) spiral: t = {t0:.1f}-{t_end:.2f}; transient t = {t_trans:.2f} "
-          f"(H {cn[:, 1].max():.2e}, M {cn[:, 2].max():.2e}); chi floor t = {t_floor:.2f}; "
-          f"H at the wall {cn[-1, 1]:.2e} (start {cn[0, 1]:.2e}); level-3 overlap median "
-          f"|dH|/H {np.median(abs(c3[:, 1] - H5) / H5) * 100:.1f}%, "
-          f"|dM|/M {np.median(abs(c3[:, 2] - M5) / M5) * 100:.1f}%")
+    """(f): the d = 6 merger chain's norms across its legs."""
+    base = pack / "campaign" / mc.GROUP / mc.CHAIN
+    c1 = headon._sorted(base / mc.LEG1 / "constraint_norms.dat")
+    cc = headon._sorted(base / mc.CHI / "constraint_norms.dat")
+    c4 = headon._sorted(base / mc.SETTLE / "constraint_norms.dat")
+    h1 = _h(ax, c1[:, 0], c1[:, 1], color=style.INK, lw=1.1, zorder=3)
+    hc = _h(ax, cc[:, 0], cc[:, 1], color=style.MUTED, lw=0.9, ls=DASH, zorder=2)
+    h4 = _h(ax, c4[:, 0], c4[:, 1], color=style.CONTEXT, lw=0.9, zorder=2)
+    hM = _h(ax, c4[:, 0], c4[:, 2], color=style.CONTEXT, lw=0.9, ls=DOT, zorder=2)
+    ax.axvline(mc.T_MOTS, color=style.GOLD, lw=0.7, ls=DOT, zorder=1)
+    ax.set_xlim(-1.5, 101.5)
+    style.legend_top(ax, [(h1, r"$\mathcal{H}$, level-5 leg"), (hc, r"$\chi$-floor leg"),
+                          (h4, r"$\mathcal{H}$, settle leg"), (hM, r"$\mathcal{M}$, settle leg"),
+                          (_rule(style.GOLD, DOT), rf"MOTS, $t={mc.T_MOTS:g}$")],
+                     ncol=2, title=r"merger chain, $d=6$", **KEY)
+    print(f"  (f) d6 chain: leg ends {c1[-1, 0]:g}/{cc[-1, 0]:g}/{c4[-1, 0]:g}; "
+          f"H at contact {float(np.interp(mc.T_MOTS, c1[:, 0], c1[:, 1])):.2e}, "
+          f"settle end H {c4[-1, 1]:.2e} M {c4[-1, 2]:.2e}")
 
 
 def flyby(ax, pack) -> None:
-    """(g): the fly-by's H and M to t = 100, past its gate, with its two clocks."""
+    """(g): the p = 0.45 scatterer's H and M to t = 100, with its two clocks."""
     cn = headon._sorted(pack / "campaign" / FLYBY_GROUP / FLYBY / "constraint_norms.dat")
-    t_edge = orbits.scan_edge_time(FLYBY, pack)       # the ledger's clmFlybyScanEdgeTime
-    t_gate = next(a[6] for a in gallery.ARMS if a[0] == "fly-by")   # clmGwGateFlyby
     hH = _h(ax, cn[:, 0], cn[:, 1], color=style.INK, lw=1.1, zorder=3)
     hM = _h(ax, cn[:, 0], cn[:, 2], color=style.MUTED, lw=1.1, ls=DASH, zorder=3)
-    ax.axvline(t_edge, color=style.FAINT, lw=0.7, ls=RULE, zorder=1)
-    ax.axvline(t_gate, color=style.FAINT, lw=0.7, ls=DOT, zorder=1)
+    ax.axvline(FLYBY_TRUST, color=style.FAINT, lw=0.7, ls=RULE, zorder=1)
+    ax.axvline(FLYBY_GATE, color=style.FAINT, lw=0.7, ls=DOT, zorder=1)
     ax.set_xlim(0, 100)
-    # read row by row: the short names in the first column, the clocks in the
-    # second, so the expanding key puts its slack between them
     style.legend_top(ax, [(hH, r"$\mathcal{H}$"),
-                          (_rule(style.FAINT, RULE), rf"mouths outgrow scan, $t\approx{t_edge:.0f}$"),
+                          (_rule(style.FAINT, RULE), rf"trust window, $t={FLYBY_TRUST:g}$"),
                           (hM, r"$\mathcal{M}$"),
-                          (_rule(style.FAINT, DOT), rf"quoted to $t={t_gate:g}$")],
-                     ncol=2, title=r"fly-by, $p=0.45$, level 5", **KEY)
+                          (_rule(style.FAINT, DOT), rf"wave gate, $t={FLYBY_GATE:g}$")],
+                     ncol=2, title=r"fly-by, $p=0.45$, level 4", **KEY)
     t = cn[:, 0]
-    at = {s: cn[int(np.argmin(abs(t - s)))] for s in FLYBY_READ}
-    print(f"  (g) fly-by: scan edge t = {t_edge:g}, gate t = {t_gate:g}; "
-          + "; ".join(f"t = {s:g}: H {r[1]:.2e} M {r[2]:.2e}" for s, r in at.items()))
-    quiet = (t >= FLYBY_FLOOR[0]) & (t <= FLYBY_FLOOR[1])
+    quiet = (t >= 10.0) & (t <= 40.0)
     for col, nm in ((1, "H"), (2, "M")):
         floor = float(np.median(cn[quiet, col]))
-        late = t > FLYBY_FLOOR[1]
-        x10 = t[late][np.argmax(cn[late, col] > 10.0 * floor)]
-        print(f"      {nm}: median over t = {FLYBY_FLOOR[0]:g}-{FLYBY_FLOOR[1]:g} {floor:.2e}, "
-              f"first above 10x at t = {x10:.2f}; x{at[70.0][col] / floor:.0f} by t = 70, "
-              f"x{cn[-1, col] / floor:.0f} by t = {t[-1]:g}")
+        print(f"  (g) {nm}: quiet median {floor:.2e}; at trust {float(np.interp(FLYBY_TRUST, t, cn[:, col])):.2e}; "
+              f"end {cn[-1, col]:.2e} (x{cn[-1, col] / floor:.0f})")
 
 
 def main(argv: list[str] | None = None) -> int:

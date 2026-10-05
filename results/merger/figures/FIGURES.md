@@ -913,3 +913,5 @@ the head-on row gains its vacuum BBH overlay, and `egw_momentum` is new (E_GW vs
 `plot_egw_momentum`). `psi4_ligo` skips the plunge (floor-cut record; its energy lives in egw_momentum).
 
 2026-10-05: `momentum_scan_orbits` re-fed onto the boosted mode-3 arms (d6 merger, p012 arm, p060/p090 two-leg plunges, gold p025/p045 scatterers; per-arm trust cuts; restart-leg tracker lock-on handled).
+
+2026-10-05: `constraint_evolution` panels (e)-(g) re-fed: the head-on chain's three legs, the d6 merger chain, the p=0.45 scatterer with its trust/gate rules; caption rewritten.
