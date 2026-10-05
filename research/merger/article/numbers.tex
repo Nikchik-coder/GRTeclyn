@@ -142,7 +142,7 @@
 \newcommand{\clmDetSpiralFreqHi}{679}% manual: plot_psi4_ligo.prepare + envelope_and_frequency (the figure's own code) on the g
 \newcommand{\clmDetBankDurLo}{2.5}% manual: gw_search/templates: record length T/M of each arm times the ladder's end masses
 \newcommand{\clmDetBankDurHi}{125}% auto: gw_search/templates: record length T/M of each arm times the ladder's end masses
-\newcommand{\clmDetESpiralSpread}{21}% manual: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
+\newcommand{\clmDetESpiralSpread}{25}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
 \newcommand{\clmDetEHeadon}{3.1\times10^{-3}}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
 \newcommand{\clmDetEHeadonSpread}{31}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
 \newcommand{\clmDetEThroatSpread}{14}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
@@ -286,7 +286,6 @@
 \newcommand{\clmSpiralCoincideEarly}{41}% manual: campaign/05_binary_spiral/p025/merge_orbit_flip_d12_p025_lvl5_t200/binary_throat
 \newcommand{\clmSpiralCoincideLate}{42}% manual: campaign/05_binary_spiral/p020/merge_orbit_flip_d12_p020_lvl5_t200/binary_throat
 \newcommand{\clmFlybyEnd}{100}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/run_tail.
-\newcommand{\clmFlybyClosestApproach}{4.8}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/throat_tr
 \newcommand{\clmFlybyScanEdgeTime}{43}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/horizon_s
 \newcommand{\clmFlybyScanEdge}{2.79}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/horizon_s
 \newcommand{\clmSpiralSeparationOverMass}{6}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl3_t050/evolution
@@ -749,26 +748,24 @@
 \newcommand{\clmBoostMovingDeath}{44.67}% manual: single_boost_p045_lbf_t050 run.log: NaN in h11, level 3, chi at the pit on its f
 
 % ---- waves
-\newcommand{\clmGwPeakFlyby}{4.1\times10^{-2}}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share): campaign/06
-\newcommand{\clmGwPeakSpiral}{2.9\times10^{-2}}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share): campaign/05
-\newcommand{\clmGwPeakHeadon}{2.4\times10^{-2}}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): campaign/04
-\newcommand{\clmGwPeakTwin}{1.1\times10^{-2}}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): campaign/07
-\newcommand{\clmGwPeakThroat}{2.9\times10^{-3}}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): campaign/01
-\newcommand{\clmGwPeakFallHeadon}{22}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) head-on row,
-\newcommand{\clmGwPeakFallFlyby}{40}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share) fly-by row, 
-\newcommand{\clmGwEnergyFlybyLo}{4.2}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
-\newcommand{\clmGwEnergyFlybyHi}{7.4}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
-\newcommand{\clmGwEnergyFlyby}{7.4\times10^{-2}}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
-\newcommand{\clmGwEnergyFlybyLoAbs}{4}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
-\newcommand{\clmGwEnergyFlybyHiAbs}{7}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
-\newcommand{\clmGwEnergySpiral}{2.2\times10^{-2}}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): spi
-\newcommand{\clmGwEnergyTwin}{2.6\times10^{-3}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): vac
+\newcommand{\clmGwPeakFlyby}{6.1\times10^{-2}}% auto: gallery ARMS fly-by = p045 lbf, R = 20
+\newcommand{\clmGwPeakSpiral}{2.1\times10^{-2}}% auto: gallery ARMS spiral = d6 SERIES, R = 20
+\newcommand{\clmGwPeakHeadon}{2.4\times10^{-2}}% auto: head-on SERIES (2,0) R = 10
+\newcommand{\clmGwPeakTwin}{1.1\times10^{-2}}% auto: bbh_control_d12_p012_t150, R = 14
+\newcommand{\clmGwPeakThroat}{2.9\times10^{-3}}% auto: seed arm, R = 10
+\newcommand{\clmGwPeakFallHeadon}{22}% auto: 
+\newcommand{\clmGwPeakFallFlyby}{20}% auto: 
+\newcommand{\clmGwEnergyFlybyLo}{5.3}% auto: ligo panel d, p045 arm
+\newcommand{\clmGwEnergyFlybyHi}{9.0}% auto: 
+\newcommand{\clmGwEnergyFlyby}{9.0\times10^{-2}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
+\newcommand{\clmGwEnergySpiral}{5.7\times10^{-3}}% auto: d6 SERIES, R = 20 to t = 100
+\newcommand{\clmGwEnergyTwin}{2.6\times10^{-3}}% auto: 
 \newcommand{\clmGwEnergyThroat}{2.6\times10^{-5}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): col
 \newcommand{\clmGwEnergyThroatRound}{3\times10^{-5}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): col
-\newcommand{\clmGwSpreadFlyby}{43}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
+\newcommand{\clmGwSpreadFlyby}{41}% auto: 
 \newcommand{\clmGwEnergyRatioFlybyLo}{16}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
 \newcommand{\clmGwEnergyRatioFlybyHi}{29}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
-\newcommand{\clmGwEnergyRatioSpiral}{8.5}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): spi
+\newcommand{\clmGwEnergyRatioSpiral}{2.2}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): spi
 \newcommand{\clmGwVacPassSep}{12}% def: campaign/07_bbh_control/bbh_control_d12_p045_t100/evolution_params.txt: bh2.offs
 \newcommand{\clmGwVacPassMom}{0.45}% def: campaign/07_bbh_control/bbh_control_d12_p045_t100/evolution_params.txt: bh1.mome
 \newcommand{\clmGwVacPassCirc}{0.204}% auto: Newtonian circular momentum per body, equal unit masses at the separation of bbh
@@ -777,10 +774,8 @@
 \newcommand{\clmGwVacPassRatioLo}{40}% manual: fly-by E_lo (plot_psi4_ligo) over the p=0.45 vacuum control's E
 \newcommand{\clmGwVacPassRatioHi}{70}% manual: fly-by E_hi (plot_psi4_ligo) over the p=0.45 vacuum control's E
 \newcommand{\clmGwPeakVacPass}{9.0\times10^{-3}}% auto: plot_psi4_gallery.VACUUM_OVERLAY: campaign/07_bbh_control/bbh_control_d12_p045_t
-\newcommand{\clmGwVacPassPeakRatio}{4.5}% manual: fly-by peak |r Psi4^22| at R=20 (gallery gate) over the p=0.45 vacuum control's 
+\newcommand{\clmGwVacPassPeakRatio}{6.7}% auto: 
 \newcommand{\clmGwGateThroat}{70}% def: plot_psi4_gallery.ARMS collapsing-throat t_max (QUEUE2E_GATES junk cut, R=10 at 
-\newcommand{\clmGwFreezeStart}{57}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r0
-\newcommand{\clmGwFlybyEnd}{100}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/Weyl4_mod
 \newcommand{\clmGwSpeedTwinPeak}{0.57}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): vacuum twin
 \newcommand{\clmGwSpeedTwin}{0.82}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + psi4_math.
 \newcommand{\clmGwSpeedThroatA}{0.94}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
@@ -789,21 +784,21 @@
 \newcommand{\clmGwSpeedHeadonA}{0.94}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedHeadonB}{0.88}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedHeadonC}{0.95}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedSpiralA}{1.00}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedSpiralB}{1.00}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedSpiralC}{1.00}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedFlybyA}{1.00}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedFlybyB}{1.00}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedFlybyC}{1.00}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
+\newcommand{\clmGwSpeedSpiralA}{0.86}% auto: 
+\newcommand{\clmGwSpeedSpiralB}{0.88}% auto: 
+\newcommand{\clmGwSpeedSpiralC}{0.94}% auto: 
+\newcommand{\clmGwSpeedFlybyA}{0.88}% auto: 
+\newcommand{\clmGwSpeedFlybyB}{1.00}% auto: 
+\newcommand{\clmGwSpeedFlybyC}{1.00}% auto: 
 \newcommand{\clmGwLigoMass}{30}% def: plot_psi4_ligo.MASS_MSUN (the figure's calibration)
 \newcommand{\clmGwLigoDist}{10}% def: plot_psi4_ligo.DIST_MPC
-\newcommand{\clmGwEnvPeakFlyby}{8.2\times10^{-2}}% manual: plot_psi4_ligo panel (a): analytic-signal envelope |r Psi4| M, fly-by (M=2)
-\newcommand{\clmGwEnvPeakThroat}{3.1\times10^{-3}}% auto: plot_psi4_ligo panel (a): collapsing throat (M=1)
+\newcommand{\clmGwEnvPeakFlyby}{1.3\times10^{-1}}% auto: 
+\newcommand{\clmGwEnvPeakThroat}{3.1\times10^{-3}}% auto: 
 \newcommand{\clmGwSlopeShallow}{-3.4}% manual: plot_psi4_ligo panel (b): log slope of sqrt(S_h) from each record's corner to 5 
 \newcommand{\clmGwSlopeSteep}{-5.8}% manual: plot_psi4_ligo panel (b): steepest of five
 \newcommand{\clmGwIscoHz}{147}% auto: plot_psi4_ligo.f_isco_M() at 30 Msun: f = 6^-1.5/(pi M)
 \newcommand{\clmGwKerrHz}{599}% auto: plot_psi4_ligo.f_qnm_M() at 30 Msun: Berti-Cardoso-Will l=m=2 fit at the equal-m
-\newcommand{\clmGwTwinPeakFM}{0.065}% auto: plot_psi4_ligo panel (c): energy-weighted instantaneous f M of the vacuum twin a
+\newcommand{\clmGwTwinPeakFM}{0.065}% auto: 
 \newcommand{\clmGwLitHeadonInfall}{5.5\times10^{-4}}% lit: Witek et al., PRD 82, 104014 (2010) (ref. witek2010): '(0.055 +- 0.006)%' of the
 \newcommand{\clmGwLitCircular}{4.84\times10^{-2}}% lit: Scheel et al., PRD 79, 024003 (2009) (ref. scheel2009): M_f = 0.95162(2) M with 
 \newcommand{\clmGwSeedStrong}{0.05}% def: campaign/01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/evolution_params.tx
@@ -832,38 +827,25 @@
 \newcommand{\clmGwSeedFigRadius}{14}% def: plot_seed_linearity.R_SHOW
 \newcommand{\clmGwSeedWindowLo}{30}% def: plot_seed_linearity.WINDOW[0]
 \newcommand{\clmGwSeedWindowHi}{50}% def: plot_seed_linearity.WINDOW[1]
-\newcommand{\clmGwHeadonRadiusA}{10}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/evolutio
-\newcommand{\clmGwHeadonSwingA}{+0.023}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonSwingB}{-0.018}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonSwingC}{+0.011}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonSwingD}{-0.006}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonSwingTimeA}{28.2}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonSwingTimeB}{43.8}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonSwingTimeC}{63.4}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonSwingTimeD}{82.2}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonPeriodLo}{31}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonPeriodHi}{39}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonDecayLo}{0.6}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonDecayHi}{0.8}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonLag}{4}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
-\newcommand{\clmGwHeadonSpacing}{4}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/evolutio
-\newcommand{\clmGwHeadonSpeed}{0.94}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
+\newcommand{\clmGwHeadonRadiusA}{10}% manual: the SERIES' innermost sphere
+\newcommand{\clmGwHeadonSwingA}{2.4\times10^{-2}}% auto: SERIES (2,0) R = 10
+\newcommand{\clmGwHeadonSwingB}{-2.1\times10^{-2}}% auto: 
+\newcommand{\clmGwHeadonSwingC}{1.3\times10^{-2}}% auto: 
+\newcommand{\clmGwHeadonSwingTimeA}{29}% auto: 
+\newcommand{\clmGwHeadonSwingTimeB}{44}% auto: 
+\newcommand{\clmGwHeadonSwingTimeC}{63}% auto: 
+\newcommand{\clmGwHeadonDecayLo}{0.61}% auto: 
+\newcommand{\clmGwHeadonDecayHi}{0.86}% auto: 
+\newcommand{\clmGwHeadonLag}{4.4}% auto: crest A, R = 10 -> 18 on the SERIES
+\newcommand{\clmGwHeadonSpacing}{4}% manual: (18 - 10)/2
+\newcommand{\clmGwHeadonSpeed}{0.92}% auto: 
 \newcommand{\clmGwHeadonFreqHi}{707}% auto: plot_psi4_ligo panel (c): head-on energy-weighted frequency track, max over the 
 \newcommand{\clmGwHeadonFreqLo}{410}% auto: plot_psi4_ligo panel (c): head-on frequency track, min
-\newcommand{\clmGwSpiralRadiusIn}{20}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r0
-\newcommand{\clmGwSpiralRadiusOut}{44}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r0
-\newcommand{\clmGwFillSkin}{1.9}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r0
-\newcommand{\clmGwSpiralPeakTime}{62}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_SERIES/Weyl4_mode_2
-\newcommand{\clmGwFillTwinOuter}{0.013}% manual: plot_fill_insensitivity: the same at R=44
-\newcommand{\clmGwFillFullA}{1.40}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r0
-\newcommand{\clmGwFillStartA}{1.90}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r0
-\newcommand{\clmGwFillFullB}{1.25}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r
-\newcommand{\clmGwFillStartB}{1.75}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze2_r
+\newcommand{\clmGwSpiralRadiusIn}{20}% manual: the d6 chain's innermost psi4 sphere
+\newcommand{\clmGwSpiralRadiusOut}{44}% manual: the d6 chain's outermost psi4 sphere
+\newcommand{\clmGwSpiralPeakTime}{39}% auto: d6 SERIES burst peak at R = 20
 \newcommand{\clmGwTwinFreqLo}{299}% auto: plot_psi4_ligo panel (c): vacuum twin frequency track, min
 \newcommand{\clmGwTwinFreqHi}{473}% auto: plot_psi4_ligo panel (c): vacuum twin frequency track, max
-\newcommand{\clmGwPeakRatioFlyby}{3.8}% manual: plot_psi4_gallery.ARMS (the scenario table both wave figures share): peak |r Psi
-\newcommand{\clmGwPeakRatioSpiral}{2.9}% manual: spiral peak |r Psi4^22| at R=20 (gallery gate) over the vacuum twin's at the sam
-\newcommand{\clmGwTwinPeakDelay}{43}% manual: plot_psi4_gallery: retarded peak time of the vacuum twin (bbh_control_d12_p012_t
 \newcommand{\clmGwScalarRadiusOuter}{30}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/scalar_mo
 \newcommand{\clmGwScalarLapseInit}{0.93}% manual: closed form of the initial data (research.tex Sec. II: alpha = e^(u_A+u_B)) on t
 \newcommand{\clmGwScalarChiInit}{0.87}% manual: closed form of the initial data (chi = e^(2u) psi^-4) on the R = 30 sphere
@@ -926,8 +908,7 @@
 \newcommand{\clmGwEnvWindow}{25}% def: plot_scalar_censorship.WINDOW
 \newcommand{\clmGwFluxSignStretch}{20}% manual: plot_scalar_censorship: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5fr
 \newcommand{\clmGwDrawFloorFrac}{10}% manual: plot_psi4_gallery.DRAW_GATES: each throat sphere drawn to where the level-4 sphe
-\newcommand{\clmGwDrawFlybyRetarded}{50}% manual: plot_psi4_gallery.DRAW_GATES: fly-by drawn to t - R = 50 on every sphere (t = 70
-\newcommand{\clmGwTwinLagExcess}{3.4}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_gallery_audit.py: the va
+\newcommand{\clmGwDrawFlybyRetarded}{74}% manual: 94 - 20: the R = 20 trough gate in retarded time (DRAW_GATES)
 \newcommand{\clmGwPureLeadLo}{1.1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py: the kick
 \newcommand{\clmGwPureLeadHi}{1.5}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py (same)
 \newcommand{\clmGwSeedOldFloorRatio}{2}% manual: campaign single_eps_p1e2_q5e2_ml4_t100 evolution_params.txt header: the 0.01 wav
@@ -944,7 +925,7 @@
 \newcommand{\clmGwFillFrontMax}{1.5\times10^{-5}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_fill_twin.py: the differ
 \newcommand{\clmGwFillPeakLead}{13}% manual: clmGwLightCone - clmGwSpiralPeakTime = 75 - 62: the burst peaks at R = 20 before
 \newcommand{\clmGwLitScatter}{2\times10^{-2}}% lit: Damour, Guercilena, Hinder, Hopper, Nagar & Rezzolla, PRD 89, 081503(R) (2014) (
-\newcommand{\clmGwEnergyFlybyOuter}{4.2\times10^{-2}}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
+\newcommand{\clmGwEnergyFlybyOuter}{5.3\times10^{-2}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
 \newcommand{\clmGwThroatEnergyCut}{58}% def: plot_psi4_ligo.ENERGY_ON_DRAWN: the throat's energy closes at plot_psi4_gallery.
 \newcommand{\clmGwHeadonNoiseGate}{80}% manual: campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t10
 \newcommand{\clmEgwEnergyTwoFive}{3.85\times10^{-2}}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm/Weyl4_
@@ -965,3 +946,10 @@
 \newcommand{\clmBbhHeadonPeakT}{61}% auto: bbh head-on (2,0) peak at R = 14
 \newcommand{\clmHeadonCsmPeakT}{33}% auto: wormhole head-on SERIES (2,0) peak at R = 14
 \newcommand{\clmBbhHeadonPeakLag}{28}% manual: 60.88 - 33.02 = 27.9
+\newcommand{\clmGwPeakPlunge}{5.1\times10^{-2}}% auto: gallery ARMS plunge = p060 SERIES, R = 20
+\newcommand{\clmGwSpeedLow}{0.86}% manual: min of the quoted correlated-lag speeds (the merger's innermost pair)
+\newcommand{\clmGwSpeedHigh}{1.00}% manual: max (the fly-by's outer pairs)
+\newcommand{\clmGwSpeedPlunge}{0.83}% manual: burst-peak lag 67.70 -> 77.35 over Delta R = 8; the trust-cut ramps defeat the c
+\newcommand{\clmBbhHeadonAmpRatio}{6.1}% manual: gallery print: head-on row peak 2.40e-2 / vacuum overlay peak 3.96e-3
+\newcommand{\clmGwHeadonHalfLo}{15.5}% auto: 
+\newcommand{\clmGwHeadonHalfHi}{18.8}% auto: 
