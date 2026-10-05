@@ -11,8 +11,10 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 left** -- curvature K (top left), lapse (top right), conformal factor chi (bottom
 left), the wave Re(Psi4) (bottom right) -- as tall as the frame allows. Every
 word except the title sits in a column on the right: a small key of the four
-panels (laid out as they are, each outlined in its role's colour), the two
-captions, then the sponsor and the credit. Exceptions, each because
+panels (laid out as they are), the two captions, justified, then the sponsor
+and the credit. **Every word is set in Computer Modern** (matplotlib's bundled
+cmr10/cmb10 and its `cm` maths, no TeX engine needed), in one ink and no
+colour coding: PRD style, the user's word. Exceptions, each because
 that run has no usable alternative: 01 shows phi in place of the wave (the run
 rendered no Weyl scalar); 02 shows Pi in place of the wave (its Psi4 frames were
 drawn on a scale set by late junk and have no slice cache to redraw); 08 and 09

@@ -3,13 +3,15 @@ r"""Upload-ready 1080p videos of the wormhole-merger campaign.
 
 The campaign's movies are one field per file, 628x538, 10 fps, drawn for
 reading a diagnostic -- not for watching.  This builds the watchable version:
-the fields that carry each encounter, side by side and in sync, on one 1920x1080
-canvas with a header, per-panel labels, a caption saying what is happening, and
-an ownership mark inside the plot area of every panel (cropping one away crops
+the fields that carry each encounter, 2x2 and in sync, on the left of one
+1920x1080 canvas; on the right, a key of the panels, a caption saying what is
+happening, and the credits, all set in Computer Modern like the paper; and an
+ownership mark inside the plot area of every panel (cropping one away crops
 the data with it).
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube
     python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube --only headon
+
 
 It is the merger campaign's counterpart to ``scripts/plot/youtube_sidebyside.sh``
 (the Bondi set), and deliberately NOT a copy of it: that one pairs matter
@@ -66,6 +68,7 @@ came from is the key in ``PANELS`` and is recorded in the folder's README.
 from __future__ import annotations
 
 import argparse
+import re
 import shutil
 import subprocess
 import sys
@@ -74,7 +77,7 @@ from pathlib import Path
 
 # --------------------------------------------------------------------------
 # Canvas.  1920x1080 with a dark ground that matches the movies' own figure
-# background, so the margins a 2x2 grid leaves read as deliberate rather than
+# background, so the margins the grid leaves read as deliberate rather than
 # as letterboxing.
 GROUND = "0x0E1216"
 # Panels are padded to their common box with the frames' own white, so a 2x2
@@ -83,70 +86,67 @@ GROUND = "0x0E1216"
 # corners the user flagged on 2026-10-05.
 PANEL_BG = "0xFFFFFF"
 W_OUT, H_OUT = 1920, 1080
-HEAD_H = 118          # header band of a one-row layout: title + speed note + panel labels
-HEAD_H_GRID = 84      # a 2x2 grid's header holds the title only; everything else is in the side column
-MARGIN = 40           # left/right text margin, and the gutter the captions wrap in
-SIDE_GAP = 36         # gap between the 2x2 grid and the side column
-# A 2x2 grid sits at the LEFT edge, as tall as the canvas allows, and every word
+# The grid sits at the LEFT edge, as tall as the canvas allows, and every word
 # of text except the title goes in a column to its right: the panel key, the
 # captions, the sponsor and the credit (the user's design, 2026-10-05).  Under
 # the grid, the captions ran as two full-width lines a viewer could not read in
 # one pass, and they cost the panels 130 px of height.
-GRID_X0 = 24          # left margin of a 2x2 grid
-GRID_PAD_B = 20       # space under a 2x2 grid
+HEAD_H = 84           # header band: the title and the speed note
+GRID_X0 = 24          # left margin of the grid
+GRID_PAD_B = 20       # space under the grid
+SIDE_GAP = 36         # gap between the grid and the side column
 SIDE_MIN_W = 600      # the side column is never narrower than this
 SIDE_PAD_R = 28       # right margin of the side column
 
-# Caption typography.  ffmpeg's drawtext does NOT wrap, so a caption longer than
-# the canvas is silently cut off at BOTH ends (it centres, then overflows) and
-# anything drawn under it is pushed off the frame entirely.  That is what the
-# spiral's first build did: its 230-character opening line ran off each side and
-# its second line vanished.  So captions are wrapped here, and the footer's
-# height is computed from how many lines they actually take.
-CAP1_SIZE, CAP2_SIZE, CREDIT_SIZE = 20, 18, 16
-CAP1_LEAD, CAP2_LEAD = 26, 24
-# The side column's sizes: captions larger than the footer's (the lines are
-# short now, so they can be), the panel key small -- it names the panels, it is
-# not the thing to read.
-SIDE_CAP1, SIDE_CAP2, SIDE_CREDIT = 23, 20, 15
-SIDE_LEAD1, SIDE_LEAD2, SIDE_LEAD_CREDIT = 31, 27, 20
-KEY_ROLE, KEY_NAME, KEY_CELL_H = 15, 17, 60
-# DejaVu Sans averages ~0.55 em per character over mixed-case prose; that is an
-# estimate, so the usable width is taken conservatively.
-_EM = 0.55
-
-# EVERY drawtext carries expansion=none.  drawtext expands %{...} in its text by
-# default, and it does that to a textfile too, so a caption containing a bare
-# per-cent sign -- "certified ... to 0.1%" -- silently drops the WHOLE line
-# rather than failing.  The spiral's second caption line vanished that way and
-# the build reported success (2026-09-21).  These captions are literal prose;
-# nothing in them is ever a format string.
-
-FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
-FONTB = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
+# --------------------------------------------------------------------------
+# Typography: the paper's, not a broadcast's (the user, 2026-10-05: "latex
+# format", "PRD style", no colour coding).  Every word is Computer Modern --
+# roman cmr10, bold cmb10, $...$ in matplotlib's "cm" maths, the set the
+# panels' own maths is in -- in one ink, at three greys.  No TeX engine is
+# needed: the fonts ship with matplotlib.  It is all set once per video into a
+# transparent PNG that ffmpeg lays over the panels; nothing in it moves.
+#
+# Titles, captions and labels are written in a small LaTeX subset: $...$ is
+# maths, --- and -- are the em and en dash, \emph{...} is italic.  The bundled
+# fonts are OT1-encoded -- the dashes sit where ASCII has | and {, the curly
+# apostrophe where it has ' -- so _tex() maps the subset onto those slots as
+# TeX does, and refuses any character outside $...$ that would draw as some
+# other glyph or none (a Unicode dash, arrow or Greek letter).  ffmpeg's
+# drawtext, which set the text before, wrapped nothing and dropped a whole line
+# at a bare per-cent sign (2026-09-21); none of that applies here.
+INK = "#F0F0F0"         # title, first caption, key names, sponsor
+INK_SOFT = "#B6BCC2"    # second caption, key heads, "Research sponsored by"
+INK_FAINT = "#89929B"   # speed note, credit
+RULE = "#3E464E"        # the side column's hairlines
+TITLE_PX, SPEED_PX = 36, 22
+KEY_HEAD_PX, KEY_NAME_PX, KEY_ROW_H = 15, 21, 62
+CAP1_PX, CAP2_PX, CREDIT_PX = 27, 24, 16
+LEAD = 1.32             # baseline to baseline, in font sizes
+DPI = 120               # the overlay: 16 x 9 in at 120 dpi is exactly 1920 x 1080
+_OT1_TRAPS = set('"<>\\_^`{|}~')
 
 # Branding (the user's word, 2026-10-05).  The CHANNEL is First Interstellar
 # Institute: its mark "FII" is printed inside every panel's plot area, so it
 # cannot be cropped away without cropping the data; the channel's name is not
 # spelled out on the frame (it is where the video is published).  Gravity
-# Frontiers is the research SPONSOR, named in full beside the 2x2 grid
-# (BRAND_RIGHT) and in the credit line.
+# Frontiers is the research SPONSOR, named in full at the foot of the side
+# column (BRAND_RIGHT) and in the credit line.
 MARK = "FII"
 BRAND_RIGHT = ("Research sponsored by", "GRAVITY FRONTIERS")
-CREDIT = ("First Interstellar Institute  ·  research sponsored by Gravity Frontiers  ·  "
-          "GRTeclyn  ·  3+1 numerical relativity on GPUs")
-CREDIT_SEP = "  ·  "
+CREDIT = ("First Interstellar Institute", "research sponsored by Gravity Frontiers",
+          "GRTeclyn", "3+1 numerical relativity on GPUs")
+CREDIT_SEP = r" $\cdot$ "
 
-# Per-panel label colours: one hue per physical role, kept across every video so
-# a viewer who watches two of them learns the code once.
+# Per-panel labels, role over name, the same in every video so a viewer who
+# watches two of them learns the layout once.
 ROLE = {
-    "chi":        ("GEOMETRY  ·  conformal factor χ", "0x8FB8E8"),
-    "phi":        ("MATTER  ·  phantom scalar φ", "0xE58C8C"),
-    "Pi":         ("MATTER  ·  scalar momentum Π", "0xEBA07E"),
-    "lapse":      ("GAUGE  ·  lapse α", "0x7FD4A8"),
-    "K":          ("CURVATURE  ·  trace K", "0xE0A3D6"),
-    "Weyl4_Mag":  ("RADIATION  ·  |Ψ₄|", "0xE8B44A"),
-    "Weyl4_Re":   ("RADIATION  ·  Re(Ψ₄)", "0xD08A5A"),
+    "chi":        ("GEOMETRY", r"conformal factor $\chi$"),
+    "phi":        ("MATTER", r"phantom scalar $\phi$"),
+    "Pi":         ("MATTER", r"scalar momentum $\Pi$"),
+    "lapse":      ("GAUGE", r"lapse $\alpha$"),
+    "K":          ("CURVATURE", r"trace $K$"),
+    "Weyl4_Mag":  ("RADIATION", r"$|\Psi_4|$"),
+    "Weyl4_Re":   ("RADIATION", r"$\mathrm{Re}(\Psi_4)$"),
 }
 
 # --------------------------------------------------------------------------
@@ -155,121 +155,124 @@ ROLE = {
 # single throat gets exactly two videos, the two FATES -- the other seed arms
 # look almost identical on screen and add nothing for a viewer.  Captions are
 # the paper's own numbers: nothing is rounded further than the article rounds
-# it, and nothing is claimed that the article does not.
+# it, and nothing is claimed that the article does not.  Titles and captions
+# are in the LaTeX subset described under Typography.
 PANELS: dict[str, dict] = {
     "01_single_throat/single_eps_m1e2_L512_ml5_oct_t400": dict(
         out="01_wormhole_throat_inflates.mp4",
         fields=["K", "lapse", "chi", "phi"],
         sub="youtube",
         dt_frame=2.0,
-        title="A lone wormhole throat inflates  \u2014  declared kick \u03b5 = \u22120.01",
-        cap1="One drainhole throat, given a small inward kick. It does not collapse: it "
-             "keeps opening, 3.8\u00d7 in areal radius by t = 218, and no trapped surface forms.",
-        cap2="Until t \u2248 40 it grows at the Shinkai\u2013Hayward rate. Then the lapse (top right) "
-             "freezes the clock at the throat, and its growth per unit t slows: the slicing, "
-             "not the throat.",
+        title=r"A lone wormhole throat inflates --- declared kick $\varepsilon=-0.01$",
+        cap1=r"One drainhole throat, given a small inward kick. It does not collapse: it "
+             r"keeps opening, $3.8{\times}$ in areal radius by $t=218$, and no trapped "
+             r"surface forms.",
+        cap2=r"Until $t\approx40$ it grows at the Shinkai--Hayward rate. Then the lapse "
+             r"(top right) freezes the clock at the throat, and its growth per unit $t$ "
+             r"slows: the slicing, not the throat.",
     ),
     "01_single_throat/single_pureq_q1e2_ml4_t100": dict(
         out="02_wormhole_throat_collapses.mp4",
         fields=["K", "lapse", "chi", "Pi"],
         t_end=60.0,
-        title="The same throat collapses  \u2014  a quadrupole seed",
-        cap1="The mirror of the inflating run: the same throat, given a quadrupole instead "
-             "of an inward kick. It closes, and a horizon forms at t = 33.",
-        cap2="A wormhole throat is an unstable fixed point. Which way it falls is set by "
-             "the perturbation it is given \u2014 and a quadrupole, unlike a spherical kick, "
-             "also leaves it something to radiate.",
+        title=r"The same throat collapses --- a quadrupole seed",
+        cap1=r"The mirror of the inflating run: the same throat, given a quadrupole instead "
+             r"of an inward kick. It closes, and a horizon forms at $t=33$.",
+        cap2=r"A wormhole throat is an unstable fixed point. Which way it falls is set by "
+             r"the perturbation it is given --- and a quadrupole, unlike a spherical kick, "
+             r"also leaves it something to radiate.",
     ),
     "04_binary_headon/headon_csm_L128_stitched_t0_t100": dict(
         out="03_headon_collision_makes_black_hole.mp4",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         sub="youtube_zoom2",
-        title="Two wormholes collide head-on  \u2014  and make a black hole",
-        cap1="Released from rest at separation 8, on constraint-solved initial data. They "
-             "touch while both mouths are still open wormholes, and one trapped surface "
-             "closes over BOTH at t = 18 (R = 5.63).",
-        cap2="Neither mouth ever has a horizon of its own \u2014 it is born common or not at "
-             "all. The remnant then LOSES mass to the phantom field it swallows, 2.82 "
-             "\u2192 2.39 by t = 100 (the 3D horizon finder's full history).",
+        title=r"Two wormholes collide head-on --- and make a black hole",
+        cap1=r"Released from rest at separation 8, on constraint-solved initial data. They "
+             r"touch while both mouths are still open wormholes, and one trapped surface "
+             r"closes over \emph{both} at $t=18$ ($R=5.63$).",
+        cap2=r"Neither mouth ever has a horizon of its own --- it is born common or not at "
+             r"all. The remnant then \emph{loses} mass to the phantom field it swallows, "
+             r"$2.82\to2.39$ by $t=100$ (the 3D horizon finder's full history).",
     ),
     "05_binary_spiral/spiral_d6_p010_L128_csm_stitched_t0_t100": dict(
         out="04_spiral_merger_makes_black_hole.mp4",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         sub="youtube_zoom2",
-        title="Two wormholes spiral in and merge  \u2014  and a horizon forms",
-        cap1="Separation 6, tangential momentum 0.10, constraint-solved data. The pair "
-             "merges in half an orbit, and a common trapped surface closes over both "
-             "mouths at t = 13 (R = 5.60): the orbital merger makes a black hole.",
-        cap2="The remnant settles to R = 4.88, losing mass to the phantom it swallows "
-             "(2.80 \u2192 2.44 by t = 100). One chain of certified restarts through two "
-             "numerical walls; the seams sit at t = 25, 30 and 35.",
+        title=r"Two wormholes spiral in and merge --- and a horizon forms",
+        cap1=r"Separation 6, tangential momentum 0.10, constraint-solved data. The pair "
+             r"merges in half an orbit, and a common trapped surface closes over both "
+             r"mouths at $t=13$ ($R=5.60$): the orbital merger makes a black hole.",
+        cap2=r"The remnant settles to $R=4.88$, losing mass to the phantom it swallows "
+             r"($2.80\to2.44$ by $t=100$). One chain of certified restarts through two "
+             r"numerical walls; the seams sit at $t=25$, 30 and 35.",
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm": dict(
         out="05_wormhole_flyby_no_merger_mouths_inflate.mp4",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         sub="youtube_zoom2",
-        title="A wormhole fly-by  \u2014  no merger, and both mouths inflate",
-        cap1="Separation 12, momentum 0.25 per mouth, constraint-solved boosted data. The "
-             "pair swings past (closest approach 2.33 at t \u2248 47) and separates \u2014 nothing "
-             "merges, no horizon ever \u2014 and both mouths INFLATE as it goes.",
-        cap2="In vacuum, black holes with even more momentum just coast apart (video 09): "
-             "the phantom field's pull is what drags this pair in, and the pass radiates a "
-             "phantom-scalar burst a vacuum binary has no analogue for.",
+        title=r"A wormhole fly-by --- no merger, and both mouths inflate",
+        cap1=r"Separation 12, momentum 0.25 per mouth, constraint-solved boosted data. The "
+             r"pair swings past (closest approach 2.33 at $t\approx47$) and separates --- "
+             r"nothing merges, no horizon ever --- and both mouths \emph{inflate} as it goes.",
+        cap2=r"In vacuum, black holes with even more momentum just coast apart (video 09): "
+             r"the phantom field's pull is what drags this pair in, and the pass radiates a "
+             r"phantom-scalar burst a vacuum binary has no analogue for.",
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80": dict(
         out="06_plunge_merger_no_horizon_yet.mp4",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
-        title="A deeper plunge  \u2014  the mouths merge, and the horizon stalls",
-        cap1="The fly-by's momentum raised to 0.60: the pair now PLUNGES \u2014 separation "
-             "3.5 \u2192 0 over t = 36\u201340 \u2014 and merges as wormholes. This is the campaign's "
-             "loudest gravitational-wave source.",
-        cap2="No trapped surface converges by t = 100: the finder's surface stays "
-             "marginally untrapped, a pinched peanut rounding toward closure at t \u2248 "
-             "110\u2013115. A finer grid agrees \u2014 the stall is physics, not resolution.",
+        title=r"A deeper plunge --- the mouths merge, and the horizon stalls",
+        cap1=r"The fly-by's momentum raised to 0.60: the pair now \emph{plunges} --- "
+             r"separation $3.5\to0$ over $t=36$--40 --- and merges as wormholes. This is "
+             r"the campaign's loudest gravitational-wave source.",
+        cap2=r"No trapped surface converges by $t=100$: the finder's surface stays "
+             r"marginally untrapped, a pinched peanut rounding toward closure at "
+             r"$t\approx110$--115. A finer grid agrees --- the stall is physics, not "
+             r"resolution.",
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45": dict(
         out="07_hardest_plunge_mouths_inflate.mp4",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         sub="youtube_zoom2",
-        title="The hardest plunge  \u2014  the mouths inflate as they merge",
-        cap1="Momentum 0.90 per mouth: the pair falls from separation 11.8 to 2.6 in forty "
-             "units. On the approach both mouths visibly INFLATE, and the merging core "
-             "starts to inflate too.",
-        cap2="No horizon is found at any time. The record ends at t = 45.3, where this "
-             "simulation stops: the inflating core outruns the grid's resolution.",
+        title=r"The hardest plunge --- the mouths inflate as they merge",
+        cap1=r"Momentum 0.90 per mouth: the pair falls from separation 11.8 to 2.6 in forty "
+             r"units. On the approach both mouths visibly \emph{inflate}, and the merging "
+             r"core starts to inflate too.",
+        cap2=r"No horizon is found at any time. The record ends at $t=45.3$, where this "
+             r"simulation stops: the inflating core outruns the grid's resolution.",
     ),
     "07_bbh_control/bbh_control_d12_p012_t150": dict(
         out="08_control_two_black_holes_merge.mp4",
         fields=["Weyl4_Mag", "lapse", "chi", "Weyl4_Re"],
-        title="Control  \u2014  two black holes, same separation and momentum, no scalar",
-        cap1="The vacuum comparison: the d = 12 spiral's separation and momentum, with "
-             "the ghost scalar removed. Two black holes merge and ring down.",
-        cap2="This is what a textbook merger looks like on the same grid \u2014 the chirp the "
-             "wormhole channels never produce.",
+        title=r"Control --- two black holes, same separation and momentum, no scalar",
+        cap1=r"The vacuum comparison: the $d=12$ spiral's separation and momentum, with "
+             r"the ghost scalar removed. Two black holes merge and ring down.",
+        cap2=r"This is what a textbook merger looks like on the same grid --- the chirp the "
+             r"wormhole channels never produce.",
     ),
     "07_bbh_control/bbh_headon_d8_L128_lvl5_t100": dict(
         out="10_control_two_black_holes_collide_headon.mp4",
         fields=["K", "lapse", "chi", "Weyl4_Re"],
         sub="youtube",
         dt_frame=0.5,
-        title="Control  —  the head-on collision in vacuum",
-        cap1="The wormhole head-on's vacuum twin: two bare black holes of the same mass "
-             "released from rest at the same separation, on the same grid. They fall "
-             "together, merge, and ring down.",
-        cap2="Watch it beside the wormhole head-on (video 03): there the horizon closes "
-             "over two still-open wormholes and the remnant then LOSES mass to the "
-             "phantom field it swallows — a vacuum remnant can only grow.",
+        title=r"Control --- the head-on collision in vacuum",
+        cap1=r"The wormhole head-on's vacuum twin: two bare black holes of the same mass "
+             r"released from rest at the same separation, on the same grid. They fall "
+             r"together, merge, and ring down.",
+        cap2=r"Watch it beside the wormhole head-on (video 03): there the horizon closes "
+             r"over two still-open wormholes and the remnant then \emph{loses} mass to the "
+             r"phantom field it swallows --- a vacuum remnant can only grow.",
     ),
     "07_bbh_control/bbh_control_d12_p045_t100": dict(
         out="09_control_two_black_holes_fly_apart.mp4",
         fields=["Weyl4_Mag", "lapse", "chi", "Weyl4_Re"],
-        title="Control  \u2014  the fly-by's own momentum, in vacuum",
-        cap1="Two black holes at the fly-bys' separation, 12, with momentum 0.45 each and "
-             "no scalar field. In vacuum that momentum is unbound: they start at closest "
-             "approach and coast apart, 12 \u2192 21.",
-        cap2="Watch it beside the wormhole fly-by (video 05): with the phantom field the "
-             "pull is several times stronger, so even at momentum 0.25 the pair falls in "
-             "to 2.33, and the mouths inflate as they pass.",
+        title=r"Control --- the fly-by's own momentum, in vacuum",
+        cap1=r"Two black holes at the fly-bys' separation, 12, with momentum 0.45 each and "
+             r"no scalar field. In vacuum that momentum is unbound: they start at closest "
+             r"approach and coast apart, $12\to21$.",
+        cap2=r"Watch it beside the wormhole fly-by (video 05): with the phantom field the "
+             r"pull is several times stronger, so even at momentum 0.25 the pair falls in "
+             r"to 2.33, and the mouths inflate as they pass.",
     ),
 }
 
@@ -283,42 +286,8 @@ def _probe_size(path: Path) -> tuple[int, int]:
     return int(w), int(h)
 
 
-def _wrap(text: str, fontsize: int, width: int = W_OUT - 2 * MARGIN,
-          font: str = FONT, sep: str = " ") -> list[str]:
-    """Greedy wrap to ``width`` pixels, since drawtext will not do it.
-
-    Measured with the font itself when Pillow is there (it is, in the wrapper's
-    venv: matplotlib needs it); the per-character estimate is the fallback.
-    ``sep`` is what a line may break at -- the credit breaks only between its
-    segments, so no line starts with a dot.
-    """
-    try:
-        from PIL import ImageFont
-        face = ImageFont.truetype(font, fontsize)
-        fits = lambda line: face.getlength(line) <= width
-    except (ImportError, OSError):
-        budget = max(int(width / (_EM * fontsize)), 20)
-        fits = lambda line: len(line) <= budget
-    words, lines, cur = text.split() if sep == " " else text.split(sep), [], ""
-    for w in words:
-        trial = f"{cur}{sep}{w}" if cur else w
-        if fits(trial) or not cur:
-            cur = trial
-        else:
-            lines.append(cur)
-            cur = w
-    if cur:
-        lines.append(cur)
-    return lines
-
-
-def _footer_height(cap1: list[str], cap2: list[str]) -> int:
-    return (len(cap1) * CAP1_LEAD + len(cap2) * CAP2_LEAD
-            + CREDIT_SIZE + 34)
-
-
 def _panel_chain(sizes: list[tuple[int, int]], speed: float,
-                 grid: tuple[int, int], foot_h: int) -> tuple[str, int, int]:
+                 grid: tuple[int, int]) -> tuple[str, int, int, dict]:
     """Filter chain that lays the panels out on ``grid`` = (cols, rows).
 
     Every panel is fitted into ONE common box and padded to it, rather than
@@ -331,11 +300,8 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
     background at the panel edge.
     """
     cols, rows = grid
-    head_h = HEAD_H if rows == 1 else HEAD_H_GRID
-    free_h = H_OUT - head_h - foot_h
-    # A one-row layout is centred; a 2x2 grid is pinned to the left edge and
-    # leaves the side column at least SIDE_MIN_W.
-    free_w = W_OUT - 40 if rows == 1 else W_OUT - GRID_X0 - SIDE_GAP - SIDE_MIN_W - SIDE_PAD_R
+    free_h = H_OUT - HEAD_H - GRID_PAD_B
+    free_w = W_OUT - GRID_X0 - SIDE_GAP - SIDE_MIN_W - SIDE_PAD_R
     # Height per panel before the grid-level fit, generous so the final scale
     # is a reduction (sharper) rather than an enlargement.
     panel_h = 900 if rows == 1 else 620
@@ -348,154 +314,246 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
             f"[{i}:v]setpts=PTS/{speed},"
             f"scale={box_w}:{box_h}:force_original_aspect_ratio=decrease:flags=lanczos,"
             f"pad={box_w}:{box_h}:(ow-iw)/2:(oh-ih)/2:color={PANEL_BG}[p{i}]")
-    n_inputs = len(sizes)
-    if rows == 1:
-        parts.append("".join(f"[p{i}]" for i in range(n_inputs))
-                     + f"hstack=inputs={n_inputs}[grid]")
-    else:
-        for r in range(rows):
-            row_in = "".join(f"[p{r * cols + c}]" for c in range(cols))
-            parts.append(f"{row_in}hstack=inputs={cols}[row{r}]")
-        parts.append("".join(f"[row{r}]" for r in range(rows))
-                     + f"vstack=inputs={rows}[grid]")
-    # Fit the grid inside the free canvas, never upscaling past the canvas.
+    for r in range(rows):
+        row_in = "".join(f"[p{r * cols + c}]" for c in range(cols))
+        parts.append(f"{row_in}hstack=inputs={cols}[row{r}]")
+    parts.append("".join(f"[row{r}]" for r in range(rows))
+                 + f"vstack=inputs={rows}[grid]")
+    # Fit the grid inside its share of the canvas, pinned to the left edge.
     parts.append(f"[grid]scale=w=min(iw*{free_h}/ih\\,{free_w}):h=-2:flags=lanczos[fit]")
-    x_pad = "(ow-iw)/2" if rows == 1 else str(GRID_X0)
-    parts.append(f"[fit]pad={W_OUT}:{H_OUT}:{x_pad}:{head_h}:color={GROUND}[canvas]")
+    parts.append(f"[fit]pad={W_OUT}:{H_OUT}:{GRID_X0}:{HEAD_H}:color={GROUND}[canvas]")
     # The fitted grid's true geometry, so labels and marks land ON the panels.
-    # A 2x2 grid is much narrower than the canvas, and placing text by canvas
-    # fractions put the ownership marks in the dark margins OUTSIDE the plots
-    # -- trivially croppable, which defeats them (the user, 2026-10-05).
+    # Placing text by canvas fractions once put the ownership marks in the dark
+    # margins OUTSIDE the plots -- trivially croppable, which defeats them (the
+    # user, 2026-10-05).
     grid_w, grid_h = box_w * cols, box_h * rows
     s = min(free_h / grid_h, free_w / grid_w)
     fit_w = int(grid_w * s) & ~1
     fit_h = int(round(grid_h * (fit_w / grid_w)))
-    x0 = (W_OUT - fit_w) // 2 if rows == 1 else GRID_X0
-    geom = {"x0": x0, "y0": head_h, "w": fit_w, "h": fit_h}
+    geom = {"x0": GRID_X0, "y0": HEAD_H, "w": fit_w, "h": fit_h}
     return ";".join(parts), cols, rows, geom
 
 
 def _side_column(geom: dict) -> tuple[int, int]:
-    """(x, width) of the text column right of a 2x2 grid."""
+    """(x, width) of the text column right of the grid."""
     x = geom["x0"] + geom["w"] + SIDE_GAP
     return x, W_OUT - SIDE_PAD_R - x
 
 
-def _text_chain(tmp: Path, spec: dict, cols: int, rows: int, speed: float,
-                cap1: list[str], cap2: list[str], geom: dict) -> str:
-    """Header, per-panel labels, watermarks, branding and captions, all from text files.
+def _tex(s: str) -> str:
+    """Map the LaTeX subset onto what matplotlib draws in the OT1 fonts."""
+    s = re.sub(r"\\emph\{([^}]*)\}",
+               lambda m: " ".join(rf"$\mathit{{{w}}}$" for w in m.group(1).split()), s)
+    parts = s.split("$")
+    if len(parts) % 2 == 0:
+        raise ValueError(f"unbalanced $ in {s!r}")
+    for i in range(0, len(parts), 2):            # the text between the maths
+        bad = sorted({c for c in parts[i] if not " " <= c <= "~" or c in _OT1_TRAPS})
+        if bad:
+            raise ValueError(f"{''.join(bad)!r} outside $...$ would not draw as itself "
+                             f"in Computer Modern; write it in the LaTeX subset: {s!r}")
+        parts[i] = parts[i].replace("---", "|").replace("--", "{")
+    return "$".join(parts)
 
-    Everything goes through ``textfile=`` rather than ``text=``: the captions
-    carry colons, commas, apostrophes and en-dashes, and escaping those through
-    two levels of shell and ffmpeg quoting is how a caption silently truncates.
+
+def _words(s: str) -> list[str]:
+    """Split at the spaces outside $...$; a space inside maths is no break."""
+    out, cur, maths = [], "", False
+    for ch in s:
+        if ch == "$":
+            maths = not maths
+        if ch == " " and not maths:
+            if cur:
+                out.append(cur)
+            cur = ""
+        else:
+            cur += ch
+    return out + [cur] if cur else out
+
+
+def _pieces(s: str) -> list[tuple[str, bool]]:
+    """A paragraph's break points: (piece, a space follows).  A word also
+    breaks after a hyphen between letters, as TeX's does, so a compound like
+    "constraint-solved" does not have to fit a narrow line whole."""
+    out = []
+    for w in _words(s):
+        parts = [w] if "$" in w else re.split(r"(?<=[A-Za-z]-)(?=[A-Za-z])", w)
+        out += [(part, False) for part in parts[:-1]] + [(parts[-1], True)]
+    return out
+
+
+class _Page:
+    """A transparent 1920x1080 sheet, set in Computer Modern."""
+
+    def __init__(self) -> None:
+        import matplotlib
+        from matplotlib.backends.backend_agg import FigureCanvasAgg
+        from matplotlib.figure import Figure
+        self._ttf = Path(matplotlib.get_data_path()) / "fonts" / "ttf"
+        self.fig = Figure(figsize=(W_OUT / DPI, H_OUT / DPI), dpi=DPI)
+        FigureCanvasAgg(self.fig)
+        self._renderer = self.fig.canvas.get_renderer()
+
+    def _prop(self, px: float, bold: bool):
+        from matplotlib.font_manager import FontProperties
+        return FontProperties(fname=str(self._ttf / ("cmb10.ttf" if bold else "cmr10.ttf")),
+                              size=px * 72 / DPI, math_fontfamily="cm")
+
+    def _width(self, s: str, px: float, bold: bool = False) -> float:
+        w, _, _ = self._renderer.get_text_width_height_descent(
+            s, self._prop(px, bold), ismath="$" in s)
+        return w
+
+    def _set(self, x: float, y: float, s: str, px: float, ink, bold: bool = False,
+             ha: str = "left"):
+        return self.fig.text(x / W_OUT, 1 - y / H_OUT, s, fontproperties=self._prop(px, bold),
+                             color=ink, ha=ha, va="baseline")
+
+    def width(self, s: str, px: float, bold: bool = False) -> float:
+        return self._width(_tex(s), px, bold)
+
+    def text(self, x: float, y: float, s: str, px: float, ink, bold: bool = False,
+             ha: str = "left"):
+        """Set ``s`` with its baseline on pixel row ``y``, counted from the top."""
+        return self._set(x, y, _tex(s), px, ink, bold, ha)
+
+    def rule(self, x0: float, x1: float, y: float) -> None:
+        from matplotlib.lines import Line2D
+        self.fig.add_artist(Line2D([x0 / W_OUT, x1 / W_OUT], [1 - y / H_OUT] * 2,
+                                   transform=self.fig.transFigure, color=RULE, linewidth=0.8))
+
+    def paragraph(self, x: float, y: float, width: float, s: str, px: float, ink) -> float:
+        """Set ``s`` justified to ``width`` px, first baseline at ``y``.
+
+        TeX's way, minus its dictionary hyphenation: the breaks are chosen for
+        the whole paragraph at once, keeping every line's spaces near their
+        natural width (squared deviation, summed), with spaces free to shrink
+        to 80 % and a small charge for breaking at a hyphen.  A greedy fill
+        justified a 600 px column into visible holes.  A line that would still
+        stretch past 2.2 spaces is left ragged, and so is the last.  Returns
+        the baseline a next line would take.
+        """
+        pieces = [(w, self._width(w, px), sp) for w, sp in _pieces(_tex(s))]
+        space = px / 3                           # cmr10's interword space, 1/3 em
+        n = len(pieces)
+
+        def fill(i: int, j: int) -> tuple[float, int]:   # pieces i..j-1 as a line
+            line = pieces[i:j]
+            return sum(wd for _, wd, _ in line), sum(sp for _, _, sp in line[:-1])
+
+        best = [0.0] + [float("inf")] * n        # best[j]: the cheapest set of pieces[:j]
+        cut = [0] * (n + 1)
+        for j in range(1, n + 1):
+            for i in range(j - 1, -1, -1):
+                ink_w, gaps = fill(i, j)
+                if j - i > 1 and ink_w + 0.8 * space * gaps > width:
+                    break                        # a longer line is only tighter
+                if j == n or ink_w >= width:
+                    cost = 0.0
+                elif gaps == 0:
+                    cost = 25.0                  # one word alone on a full line
+                else:
+                    cost = ((width - ink_w) / gaps / space - 1) ** 2
+                if not pieces[j - 1][2]:
+                    cost += 0.5                  # a break at a hyphen
+                if best[i] + cost < best[j]:
+                    best[j], cut[j] = best[i] + cost, i
+        lines, j = [], n
+        while j > 0:
+            lines.append((cut[j], j))
+            j = cut[j]
+        for i, j in reversed(lines):
+            ink_w, gaps = fill(i, j)
+            gap = space
+            if j < n and gaps and (width - ink_w) / gaps <= 2.2 * space:
+                gap = (width - ink_w) / gaps
+            xx = x
+            for w, wd, sp in pieces[i:j]:
+                self._set(xx, y, w, px, ink)
+                xx += wd + (gap if sp else 0.0)
+            y += LEAD * px
+        return y
+
+    def segments(self, segs: tuple[str, ...], sep: str, px: float, width: float) -> list[str]:
+        """Join ``segs`` with ``sep`` into lines no wider than ``width``,
+        breaking only between segments."""
+        lines, cur = [], ""
+        for seg in segs:
+            trial = f"{cur}{sep}{seg}" if cur else seg
+            if cur and self.width(trial, px) > width:
+                lines.append(cur)
+                cur = seg
+            else:
+                cur = trial
+        return lines + [cur]
+
+    def save(self, path: Path) -> None:
+        self.fig.savefig(path, dpi=DPI, transparent=True)
+
+
+def _overlay(path: Path, spec: dict, cols: int, rows: int, speed: float, geom: dict) -> None:
+    """Every word on the frame, set once into a transparent PNG at ``path``.
+
     Every position on a panel comes from ``geom``, the grid's real placement.
     """
-    fields = spec["fields"]
-    files = {}
-
-    def put(name: str, value: str) -> str:
-        (tmp / name).write_text(value, encoding="utf-8")
-        files[name] = str(tmp / name)
-        return files[name]
-
-    def text(key: str, font: str, colour: str, size: int, x: str, y: float) -> str:
-        return (f"drawtext=expansion=none:fontfile={font}:textfile={files[key]}:"
-                f"fontcolor={colour}:fontsize={size}:x={x}:y={y:.0f}")
-
-    put("title", spec["title"])
-    rate = speed * spec.get("dt_frame", 1.0)
-    put("speed", "real time" if abs(rate - 1.0) < 1e-9 else f"{rate:g}× speed")
-    put("credit", CREDIT)
-    put("mark", MARK)
-
+    page = _Page()
     gx0, gy0, gw, gh = geom["x0"], geom["y0"], geom["w"], geom["h"]
     pw, ph = gw / cols, gh / rows
     sx, sw = _side_column(geom)
 
-    # A 2x2 grid's title is left-aligned with the grid it heads.
-    title_x = "(w-tw)/2" if rows == 1 else str(gx0)
-    draw = [text("title", FONTB, "white", 34, title_x, 22),
-            text("speed", FONTB, "0xE8B44A", 21, f"w-tw-{SIDE_PAD_R}", 26)]
+    rate = speed * spec.get("dt_frame", 1.0)
+    note = "real time" if abs(rate - 1.0) < 1e-9 else rf"${rate:g}{{\times}}$ speed"
+    page.text(gx0, 56, spec["title"], TITLE_PX, INK, bold=True)
+    page.text(W_OUT - SIDE_PAD_R, 56, note, SPEED_PX, INK_FAINT, ha="right")
+    room = W_OUT - SIDE_PAD_R - page.width(note, SPEED_PX) - 30 - gx0
+    if page.width(spec["title"], TITLE_PX, bold=True) > room:
+        print(f"[warn] {spec['out']}: the title runs into the speed note", file=sys.stderr)
 
-    # Panel labels.  One row: centred over each panel in the header.  2x2: a
-    # small key at the top of the side column, its four cells laid out as the
-    # panels are, each outlined in its role's colour -- so "top left" needs no
-    # words.  The grid's left edge has no margin left to hang a label in.
-    cell_gap = 12
-    cell_w = (sw - cell_gap * (cols - 1)) / cols
-    for idx, field in enumerate(fields):
+    # The panel key at the top of the side column: each panel's role over its
+    # name, laid out as the panels are, so "top left" needs no words.  The
+    # grid's left edge leaves no margin to hang a label in.
+    cell_w = (sw - 16 * (cols - 1)) / cols
+    for idx, field in enumerate(spec["fields"]):
         r, c = divmod(idx, cols)
-        role, colour = ROLE[field]
-        head, _, name = role.partition("  ·  ")
-        put(f"lab{idx}", role)
-        put(f"role{idx}", head)
-        put(f"name{idx}", name)
-        if rows == 1:
-            draw.append(text(f"lab{idx}", FONTB, colour, 19,
-                             f"{gx0 + (c + 0.5) * pw:.0f}-tw/2", 78))
-            continue
-        x = sx + c * (cell_w + cell_gap)
-        y = gy0 + r * (KEY_CELL_H + cell_gap)
-        draw.append(f"drawbox=x={x:.0f}:y={y:.0f}:w={cell_w:.0f}:h={KEY_CELL_H}:"
-                    f"color={colour}@0.55:t=2")
-        draw.append(text(f"role{idx}", FONTB, colour, KEY_ROLE, f"{x + 14:.0f}", y + 10))
-        draw.append(text(f"name{idx}", FONT, colour, KEY_NAME, f"{x + 14:.0f}", y + 31))
+        head, name = ROLE[field]
+        x, top = sx + c * (cell_w + 16), gy0 + r * KEY_ROW_H
+        page.text(x, top + KEY_HEAD_PX, head, KEY_HEAD_PX, INK_SOFT, bold=True)
+        page.text(x, top + KEY_HEAD_PX + 8 + KEY_NAME_PX, name, KEY_NAME_PX, INK)
+    y = gy0 + rows * KEY_ROW_H + 2
+    page.rule(sx, sx + sw, y)
+
+    # The captions, justified to the column.
+    y = page.paragraph(sx, y + 18 + CAP1_PX, sw, spec["cap1"], CAP1_PX, INK)
+    y = page.paragraph(sx, y + 10, sw, spec["cap2"], CAP2_PX, INK_SOFT)
+    cap_bottom = y - (LEAD - 0.3) * CAP2_PX
+
+    # Sponsor and credit at the foot, level with the bottom of the grid.
+    base = gy0 + gh - 6
+    for line in reversed(page.segments(CREDIT, CREDIT_SEP, CREDIT_PX, sw)):
+        page.text(sx, base, line, CREDIT_PX, INK_FAINT)
+        base -= LEAD * CREDIT_PX
+    base -= 12
+    page.text(sx, base, BRAND_RIGHT[1], 28, INK, bold=True)
+    page.text(sx, base - 36, BRAND_RIGHT[0], 20, INK_SOFT)
+    top_rule = base - 36 - 20 - 16
+    page.rule(sx, sx + sw, top_rule)
+    if cap_bottom + 16 > top_rule:
+        print(f"[warn] {spec['out']}: the captions reach the sponsor block "
+              f"({cap_bottom:.0f} > {top_rule - 16:.0f} px)", file=sys.stderr)
 
     # The ownership mark inside each panel's PLOT area: left of the panel's
     # centre (a panel is plot + colourbar, so its centre is on the colourbar)
     # and low in the plot, where the far field is quiet.  Outlined, so it reads
     # on a near-white panel and a near-black one alike.
-    for idx in range(len(fields)):
+    from matplotlib import patheffects
+    size = 0.075 * ph
+    for idx in range(len(spec["fields"])):
         r, c = divmod(idx, cols)
-        size = int(0.075 * ph) if rows > 1 else 30
-        draw.append(
-            f"drawtext=expansion=none:fontfile={FONTB}:textfile={files['mark']}:"
-            f"fontcolor=white@0.45:bordercolor=black@0.40:borderw=1:fontsize={size}:"
-            f"x={gx0 + (c + 0.40) * pw:.0f}-tw/2:y={gy0 + (r + 0.76) * ph:.0f}")
-
-    if rows > 1:
-        # The side column, top down: captions under the key; sponsor and credit
-        # at the foot, level with the bottom of the grid.
-        y = gy0 + rows * (KEY_CELL_H + cell_gap) + 26
-        for tag, lines, size, lead, colour in (("c1", cap1, SIDE_CAP1, SIDE_LEAD1, "0xD5DEE7"),
-                                               ("c2", cap2, SIDE_CAP2, SIDE_LEAD2, "0x9FB0C0")):
-            for i, line in enumerate(lines):
-                put(f"{tag}_{i}", line)
-                draw.append(text(f"{tag}_{i}", FONT, colour, size, str(sx), y))
-                y += lead
-            y += 18
-        cap_bottom = y - 18
-
-        credit = _wrap(CREDIT, SIDE_CREDIT, sw, sep=CREDIT_SEP)
-        base = gy0 + gh - SIDE_CREDIT
-        for i, line in reversed(list(enumerate(credit))):
-            put(f"cr_{i}", line)
-            draw.append(text(f"cr_{i}", FONT, "0x9AA6B2", SIDE_CREDIT, str(sx), base))
-            base -= SIDE_LEAD_CREDIT
-        put("br0", BRAND_RIGHT[0])
-        put("br1", BRAND_RIGHT[1])
-        draw += [text("br0", FONT, "0xB8C2CC", 20, str(sx), base - 60),
-                 text("br1", FONTB, "white", 27, str(sx), base - 30)]
-        if cap_bottom > base - 60 - 24:
-            print(f"[warn] {spec['out']}: captions reach the sponsor block "
-                  f"({cap_bottom:.0f} > {base - 84:.0f} px)", file=sys.stderr)
-        return "[canvas]" + ",".join(draw) + "[v]"
-
-    # Footer, laid out UPWARDS from the credit so a wrapped caption grows into
-    # the space the panel fit already gave up for it.
-    y = H_OUT - CREDIT_SIZE - 14
-    draw.append(text("credit", FONT, "0x9AA6B2", CREDIT_SIZE, "(w-tw)/2", y))
-    for i, line in reversed(list(enumerate(cap2))):
-        y -= CAP2_LEAD
-        key = put(f"c2_{i}", line)
-        draw.append(f"drawtext=expansion=none:fontfile={FONT}:textfile={key}:fontcolor=0x9FB0C0:"
-                    f"fontsize={CAP2_SIZE}:x=(w-tw)/2:y={y}")
-    for i, line in reversed(list(enumerate(cap1))):
-        y -= CAP1_LEAD
-        key = put(f"c1_{i}", line)
-        draw.append(f"drawtext=expansion=none:fontfile={FONT}:textfile={key}:fontcolor=0xD5DEE7:"
-                    f"fontsize={CAP1_SIZE}:x=(w-tw)/2:y={y}")
-    return "[canvas]" + ",".join(draw) + "[v]"
+        mark = page.text(gx0 + (c + 0.40) * pw, gy0 + (r + 0.76) * ph + 0.7 * size, MARK,
+                         size, (1, 1, 1, 0.45), bold=True, ha="center")
+        mark.set_path_effects([patheffects.withStroke(linewidth=1.5,
+                                                      foreground=(0, 0, 0, 0.40))])
+    page.save(path)
 
 
 def build(run_key: str, spec: dict, movies: Path, dest: Path,
@@ -516,21 +574,7 @@ def build(run_key: str, spec: dict, movies: Path, dest: Path,
         return True
 
     grid = (len(fields), 1) if len(fields) <= 2 else (2, (len(fields) + 1) // 2)
-    if grid[1] == 1:
-        # One row: captions in a footer under the panels, its height set by
-        # how many lines they wrap to.
-        cap1 = _wrap(spec["cap1"], CAP1_SIZE)
-        cap2 = _wrap(spec["cap2"], CAP2_SIZE)
-        chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid,
-                                               _footer_height(cap1, cap2))
-    else:
-        # 2x2: the grid takes the full height, and the captions wrap to the
-        # side column it leaves.
-        chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid,
-                                               GRID_PAD_B)
-        _, sw = _side_column(geom)
-        cap1 = _wrap(spec["cap1"], SIDE_CAP1, sw)
-        cap2 = _wrap(spec["cap2"], SIDE_CAP2, sw)
+    chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid)
 
     # ``t_end`` cuts a source with no slice cache at its trust window: keep the
     # frames t <= t_end (one frame per dt_frame code units at fps).
@@ -540,12 +584,14 @@ def build(run_key: str, spec: dict, movies: Path, dest: Path,
         trim = ["-t", f"{(n_keep - 0.5) / fps:.4f}"]
 
     with tempfile.TemporaryDirectory() as td:
-        tmp = Path(td)
-        filt = chain + ";" + _text_chain(tmp, spec, cols, rows, speed, cap1, cap2, geom)
+        text_png = Path(td) / "text.png"
+        _overlay(text_png, spec, cols, rows, speed, geom)
+        # The text is one still image; overlay repeats it over every frame.
+        filt = chain + f";[canvas][{len(inputs)}:v]overlay=0:0[v]"
         cmd = ["ffmpeg", "-v", "error", "-y"]
         for p in inputs:
             cmd += trim + ["-i", str(p)]
-        cmd += ["-filter_complex", filt, "-map", "[v]",
+        cmd += ["-i", str(text_png), "-filter_complex", filt, "-map", "[v]",
                 "-r", f"{fps * speed:g}", "-c:v", "libx264", "-pix_fmt", "yuv420p",
                 "-crf", "18", "-preset", "slow", "-movflags", "+faststart", str(out)]
         r = subprocess.run(cmd, capture_output=True, text=True)
