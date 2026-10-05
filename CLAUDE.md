@@ -42,7 +42,11 @@ session start goes stale within hours.
 **Before every launch, in this order.** These are the user's standing rules; each one had to be repeated in session
 after session because it lived only in one machine's agent memory.
 1. **Wait for the go.** A proposed run gets no GPU start-up of any kind, not even `--preflight-only`, until the user
-   says go for that run.
+   says go for that run. **If checking the user's plan turns up something better** (another restart checkpoint,
+   setting or card), ask before any start-up, with the better option first, and never launch theirs with a
+   fallback. (2026-10-05: the p09 lvl5 go named Chk04500, which sat mid-K-runaway with NaN 0.27 units later; the
+   agent was about to launch it anyway, with Chk04000 as the fallback, and the user: "next time ask questions if u
+   think something is better than what i proposed".)
 2. **A rerun is its old run.** Start from the old run's packed `results/merger/campaign/.../evolution_params.txt` and
    change only the knob under test (for the mode-3 reruns: the constraint-solve block, and the name + `_csm`). The
    plot variables the frame set needs are the only other change. Keep the same L, N, max_level, tagging_L, sponge,
