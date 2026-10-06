@@ -1,15 +1,15 @@
-# Status — 2026-10-05 ~21:25 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-06 ~04:55 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-05 21:20 UTC) — the first node: P060-EXT on card 0, DAMP-off on card 1; the second node idle
+## LIVE NOW (2026-10-06 04:50 UTC) — the first node: P060-EXT on card 0, DAMP-off on card 1; the second node idle
 
-| run | node / card | t at 21:20 UTC | stop | speed | ETA | checkpoints |
+| run | node / card | t at 04:50 UTC | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| P060-EXT `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | first / 0 | 79.46 | 115 | 3.1 u/h since 17:43 (throttled 19:48–20:16), 3.8 before | ~9.4–11 h → ~06:45–08:30 UTC 10-06 | every 5, keep 3 (the user) |
-| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 11.73 | 70 | 3.75 u/h since 18:12 (throttled 19:48–20:16; P045-T100 averaged 4.8) | ~12–15.5 h → ~09:30–12:50 UTC 10-06 | none (the user) |
+| P060-EXT `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | first / 0 | 108.53 | 115 | 3.9 u/h since 21:20 (3.8 before, throttled 19:48–20:16) | ~1.7 h → ~06:30 UTC 10-06 | every 5, keep 3 (the user) |
+| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 44.67 | 70 | 4.4 u/h since 21:20 (P045-T100 averaged 4.8) | ~5.8 h → ~10:35 UTC 10-06 (slower near the pass) | none (the user) |
 
 - **P060-EXT** (the user's go ~15:30 UTC 10-05; launched 15:34): the p = 0.60 plunge's lvl5 check continued from its
   `Chk06000` (t = 60; the NFS copy re-staged to scratch) to t = 115 — does the remnant trap late (the lvl4
@@ -51,12 +51,11 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
   d, p, the mass and the checkpoint lines changed. NO checkpoints: `amr.check_int = -1` +
   `amr.checkpoint_files_output = 0` (verified: none written). `WHM_PREFLIGHT=static`, as BBH-HEADON. Started by
   effect: frame 0 eyeballed against BBH-HEADON's, Ψ4 rows landing, keep-last 3 pruning, card 1 at 62 GB.
-- **Storage (the first node, 21:20 UTC):** scratch 852G free. Live: P060-EXT 94G (`Chk06500/07000/07500` + 3
-  plotfiles, in policy); DAMP-off 22G (3 plotfiles, no checkpoints, in policy). Leftovers 76G under the user's "wipe all" (10-05; the agent's `rm` was
-  blocked, so the user runs it): the P060-LVL5 cell 26G (`..._p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000/`),
-  the staged p09 `Chk04000` copy 25G (`merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm/`; the NFS original
-  stays) and the dead P09-LVL5 cell 25G (its `Chk04500`; without it the proposed autopsy replays from the NFS
-  Chk04000, ~1.5 GPU-h). The second node was not listed from here (05:35 UTC 10-05: only the HFL cell, 60G).
+- **Storage (the first node, 04:53 UTC 10-06):** scratch 937G free, only the two live runs: P060-EXT 94G (3
+  checkpoints + 3 plotfiles, in policy), DAMP-off 19G (3 plotfiles, in policy). The 76G of leftovers WIPED on the
+  user's "wipe them" (04:53 UTC; MANIFEST_CLEANUP_2026-10-06): the re-staged p060 `Chk06000` and p09 `Chk04000`
+  (their NFS originals stay, byte-identical) and P09-LVL5's `Chk04500`, copied to its NFS run dir first (the
+  proposed autopsy reads it). The second node was not listed from here (05:35 UTC 10-05: only the HFL cell, 60G).
 
 ## RUNS FOR THE PAPER (the full read of 2026-10-05, late; nothing launches without the go)
 
@@ -361,7 +360,8 @@ lvl4 instant), BBH-d6 DONE t = 100. SIGN-dyn will NOT run (the user, 10-05): the
 signs from t = 0, so its initial-acceleration read is an analysis step on them. Left, all PROPOSED with NO go:
 the P09 nan_autopsy restart from P09-LVL5's Chk04500 (~10 GPU-min) and the a = 1.5 / 3 flip arms (~1 GPU-h each:
 they separate the coordinate under-read from finite size; GPU_PLAN 10-05 ~12:20). Restart pins: the P09 autopsy
-reads P09-LVL5's Chk04500 (first-node scratch only — copy it to NFS before any prune); the p060 extension needs
+reads P09-LVL5's Chk04500 (NFS-secured 04:53 UTC 10-06 in its `06_binary_flyby/` run dir; restage to scratch); the
+p060 extension needs
 Chk06000 (NFS). EGW-p012 DROPPED (the user,
 10-05): the d = 12, p = 0.12 boosted spiral (SPIRAL-lbf) already is the p = 0.12 point on the same box and
 spheres, so E_GW(p = 0.12) is an analysis step on its packed Weyl4 streams (no GPU). At 05:45 UTC 10-05 nothing was
