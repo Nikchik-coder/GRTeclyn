@@ -34,7 +34,7 @@ Three findings shape everything else here:
 2. **The validation pipeline *is* the result.** Several would-be headline numbers
    turned out to be numerical artefacts. What separates a physical effect from a
    coordinate one is the 4D evolving probe, the trust flags, and the resolution
-   ladder — see [what was fixed](#what-was-fixed--2026-08-21) and the eleven
+   ladder — see [what was fixed](#what-was-fixed--2026-08-21) and the fourteen
    rules below.
 3. **Ansatz and matter sector dominate the outcome.** Optimizer tuning is
    secondary, and tuning it first wastes GPU time.
@@ -43,20 +43,205 @@ Three findings shape everything else here:
 
 ## Requirements
 
-| | |
-|---|---|
-| **GPU** | NVIDIA with CUDA 12.x — for the GRTeclyn evolution binary |
-| **CPU** | An MPI implementation (OpenMPI) — for the GRTresna elliptic solve |
-| **Python** | ≥ 3.10, managed with [`uv`](https://docs.astral.sh/uv/) |
-| **Siblings** | [GRTresna](https://github.com/GRTLCollaboration/GRTresna) and [Chombo](https://github.com/applied-numerical-algorithms-group-lbnl/Chombo), checked out beside this repository |
+Everything the research needs, as it stood when the merger and Bondi dipole
+campaigns were produced (audited 2026-09-11). **Two codes run the science** —
+GRTeclyn evolves spacetimes on GPUs, GRTresna solves for the initial data on
+CPUs — and each has its own library and its own toolchain. Keep the two
+toolchains apart: the GPU build breaks if the solver's compilers are on `PATH`.
 
-The layout this expects is one parent directory holding `GRTeclyn/`,
-`GRTresna/`, `Chombo/` and a local `openmpi/`. Nothing about that layout is
-hard-coded — you declare it once in a gitignored `.env`, see
-[Site paths](#site-paths-env).
+### The directory layout
 
-Compilers: `nvcc` needs `gcc ≤ 12`, so build the GPU binary with the **system**
-compiler, not the conda environment used for GRTresna.
+One parent directory, `$SIM_ROOT`, holds the codes side by side. Nothing about
+it is hard-coded — declare it once in the gitignored `.env`
+([Site paths](#site-paths-env)).
+
+```
+$SIM_ROOT/
+  GRTeclyn/              this repository: the evolution code, the wrapper, research/, results/
+  amrex/                 the mesh library GRTeclyn compiles against (found as ../../../amrex)
+  GRTresna/              the initial-data solver -- MUST be on the research branch
+  Chombo/                the mesh library GRTresna compiles against; lib/ holds the built archives
+  local/openmpi-5.0.8/   the MPI that GPU builds link and GPU runs launch with
+$GRTRESNA_ENV            a conda environment: the solver's compilers, MPI, HDF5, BLAS/LAPACK
+/usr/local/cuda          the CUDA toolkit
+```
+
+### What each piece is for, and who needs it
+
+| Piece | What it does | Merger (`research/merger`) | Initial-data campaigns (Bondi dipole, boson stars, Q-torus) | Pinned at |
+|---|---|---|---|---|
+| **GRTeclyn** | GPU evolution (CCZ4 + matter), the wrapper, the packing and analysis | required | required | this checkout |
+| **amrex** | adaptive mesh + GPU kernels under GRTeclyn | required (to build) | required (to build) | `26.02-12-gd7da50458`, unmodified |
+| **CUDA** | compiles the GPU kernels; `libcurand` at run time | required | required | 12.9; H100 = `CUDA_ARCH=90`. Existing binaries also run on a 12.1 runtime (merger smoke test, 2026-09-14); a 12.1 rebuild is untested |
+| **System gcc** | host compiler for the GPU build | required | required | 11.4 (CUDA needs ≤ 12) |
+| **OpenMPI** (`local/`) | MPI for the GPU binaries — every merger binary links `libmpi` | required | required | 5.0.8 |
+| **GRTresna** | solves the constraint equations for initial data (phantom / boson-star / Q-torus profiles) | not used — the drainhole data is built into the evolution code (`wormhole_id_type = 1`) | **required** | research branch `feature/grteclyn-wrapper` (12 commits past upstream `main`; upstream lacks the phantom and multi-lump profiles) |
+| **Chombo** | adaptive mesh + multigrid under GRTresna | not used | **required** | `8684f2e`, unmodified, built 3D / MPI / double / `OPT=HIGH` |
+| **`$GRTRESNA_ENV`** (conda) | the solver's toolchain: gcc/gfortran 15.2, OpenMPI 5.0.10, parallel HDF5 2.1.0, MKL BLAS/LAPACK, make | not used | **required** — Chombo and the solver binary are linked against it | as listed |
+| **ffmpeg** | stitches frames into movies | required for movies | required for movies | 4.4 |
+| **4× NVIDIA GPU** | the evolutions | one card per run | one card per run | H100 80 GB |
+
+**Chombo's build settings are not in git.** `Chombo/lib/mk/Make.defs.local` is
+gitignored by Chombo itself, and without it neither Chombo nor GRTresna
+rebuilds. What it must say:
+
+```make
+DIM = 3
+DEBUG = FALSE
+OPT = HIGH
+PRECISION = DOUBLE
+OPENMPCC = FALSE
+MPI = TRUE
+CXX = g++
+FC = gfortran
+MPICXX = $GRTRESNA_ENV/bin/mpicxx
+USE_HDF = TRUE
+HDFINCFLAGS    = -I$GRTRESNA_ENV/include
+HDFLIBFLAGS    = -L$GRTRESNA_ENV/lib -lhdf5 -lz -Wl,-rpath,$GRTRESNA_ENV/lib
+HDFMPIINCFLAGS = -I$GRTRESNA_ENV/include
+HDFMPILIBFLAGS = -L$GRTRESNA_ENV/lib -lhdf5 -lz -Wl,-rpath,$GRTRESNA_ENV/lib
+syslibflags = -lblas -llapack
+cxxoptflags = -march=x86-64-v3 -O3 -fpermissive
+```
+
+(written out with the environment path in place of `$GRTRESNA_ENV` — make does
+not read the shell variable). Build recipes for both codes: [Operations](#operations).
+
+### Python: two environments
+
+| Environment | Created by | Holds | Used by |
+|---|---|---|---|
+| `GRTeclyn/.venv` | `uv sync` in the repository root | numpy, scipy, matplotlib, yt, h5py, pycbc, gwpy | `research/merger/pack_results.sh`, the figure scripts, the gravitational-wave analysis |
+| `grteclyn-wrapper/.venv` | `uv sync` in `grteclyn-wrapper/` | the `grteclyn_wrapper` package itself, numpy, scipy, h5py, yt, matplotlib, cma, pytest | the plotfile consumer every run launches, `closeout.sh`, the search campaigns, the test suite |
+
+The wrapper package is **not** installed in the root environment; scripts that
+need it there set `PYTHONPATH=grteclyn-wrapper/src`.
+
+### Not required
+
+`GRChombo` — not to be confused with **Chombo**, which GRTresna cannot build
+without. GRChombo is the CPU predecessor of GRTeclyn; the `GRChombo*` names inside
+GRTresna (`GRChomboVariables.hpp`, …) are GRTresna's own files, and only GRTresna's
+upstream CI clones GRChombo, to borrow its example `Make.defs.local` templates. Also
+not required: OpenMPI's source tree and tarball (only to rebuild OpenMPI) and extra
+git worktrees of this repository. None of them is read by any local build, run or
+analysis.
+
+### Check an installation
+
+```bash
+source grteclyn-wrapper/scripts/lib/env.sh
+/usr/local/cuda/bin/nvcc --version | grep release          # 12.x
+/usr/bin/gcc --version | head -1                            # <= 12 (the gcc on PATH is now the solver's 15)
+LD_LIBRARY_PATH="$OPENMPI_ROOT/lib:$LD_LIBRARY_PATH" \
+  "$OPENMPI_ROOT/bin/mpirun" --version | head -1            # Open MPI 5.0.8
+"$GRTRESNA_ENV/bin/mpirun" --version | head -1              # the solver's MPI
+ls "$CHOMBO_HOME"/libamrelliptic3d.*.MPI.a                  # Chombo is built
+git -C "$GRTRESNA_ROOT" branch --show-current               # feature/grteclyn-wrapper
+git -C "$SIM_ROOT/amrex" describe --tags                    # 26.02-12-gd7da50458
+ffmpeg -version | head -1
+```
+
+`scripts/lib/env.sh` puts `$GRTRESNA_ENV` on `PATH` and `LD_LIBRARY_PATH` *after*
+`$OPENMPI_ROOT`, which leaves it in front: in a shell that has sourced it, `mpirun`
+is the solver's (5.0.10), and the GPU binaries load the solver environment's `libmpi`
+and `libstdc++` ahead of their own `RUNPATH`. That links cleanly (no unresolved
+symbols, checked 2026-09-14) and it is how `run_single.sh` launches, but it is not
+the separation described above. When the MPI version matters, the full path alone is
+not enough: in that shell `"$OPENMPI_ROOT/bin/mpirun"` loads the solver environment's
+`libprrte` and `libpmix` and dumps core, even for `-np 1 hostname` (checked
+2026-09-14). Put its own libraries back in front for that command —
+`LD_LIBRARY_PATH="$OPENMPI_ROOT/lib:$LD_LIBRARY_PATH" "$OPENMPI_ROOT/bin/mpirun" ...`.
+The plain `mpirun` on `PATH` is unaffected, and so are the launchers that use it
+(`run_single.sh`, `wormhole_case.py --np`): the solver's `prterun` finds its own
+libraries.
+
+### Git: remotes, identity, and setting up a new machine
+
+**Two remotes, and only one is ever pushed to.** In the GRTeclyn and GRTresna
+checkouts on the GPU nodes `origin` is the public GRTLCollaboration project and
+`myfork` is the research fork. Every local branch tracks `myfork`; push with
+`git push -u myfork <branch>`. When a branch has no upstream yet, git suggests
+`git push --set-upstream origin <branch>` — that suggestion pushes research work
+into the public project. Ignore it. Keep `origin` on its `https://` URL, as step 2
+sets it: a push there then stops at a credentials prompt instead of going out
+over the machine's SSH key. A workstation clone may use the opposite names
+(`origin` = the fork, `upstream` = the public project), so run `git remote -v`
+before pasting a push or merge command from one checkout into another.
+
+| Checkout | Comes from | Branch / commit |
+|---|---|---|
+| `GRTeclyn` | the research fork | `feature/merger` (the research: code, `research/`, every campaign pack); `develop` is the public face (code + the Bondi pack) |
+| `GRTresna` | the research fork | `feature/grteclyn-wrapper` (`5bfa15954815e7c799d6e32e9db30bd279e4c791` at the 2026-09-11 audit) |
+| `amrex` | `https://github.com/AMReX-Codes/amrex.git` | `d7da504589664922ce3e21972782713d31ec50e9` |
+| `Chombo` | `https://github.com/GRTLCollaboration/Chombo.git` | `8684f2e000106f1abadb72642e1d15351867f98f` |
+
+**Identity belongs to the checkout, not the machine.** The campaigns ran on a
+shared node whose home directory carries other people's global git identity and
+credentials. So the name, the email and the SSH key are set per repository
+(`git config`, no `--global`), and the key is named explicitly with
+`core.sshCommand` so git never falls back to whatever key the machine offers
+first. On a machine that is yours alone, `--global` is fine.
+
+A new machine, from an empty `$SIM_ROOT`:
+
+```bash
+# 1. A key for THIS machine -- never copy one from another host.
+#    Add the .pub to GitHub -> Settings -> SSH and GPG keys.
+ssh-keygen -t ed25519 -f ~/.ssh/github_research
+KEY='ssh -i ~/.ssh/github_research -o IdentitiesOnly=yes'
+
+# 2. The two research repositories, from the fork, with the upstream beside them.
+cd "$SIM_ROOT"
+for repo in GRTeclyn GRTresna; do
+  GIT_SSH_COMMAND="$KEY" git clone -o myfork "git@github.com:<your-github-user>/${repo}.git"
+  git -C "$repo" remote add origin "https://github.com/GRTLCollaboration/${repo}.git"
+  git -C "$repo" config user.name  "<your-github-user>"
+  git -C "$repo" config user.email "<you@example.com>"
+  git -C "$repo" config core.sshCommand "$KEY"
+done
+git -C GRTeclyn checkout feature/merger
+git -C GRTresna checkout feature/grteclyn-wrapper
+
+# 3. The two libraries, read-only, at the pinned commits.
+git clone https://github.com/AMReX-Codes/amrex.git
+git -C amrex checkout d7da504589664922ce3e21972782713d31ec50e9
+git clone https://github.com/GRTLCollaboration/Chombo.git
+git -C Chombo checkout 8684f2e000106f1abadb72642e1d15351867f98f
+#    then write Chombo/lib/mk/Make.defs.local (above) and build -- see Operations
+
+# 4. On an NFS mount that forces mode 777, every file looks modified until:
+for repo in GRTeclyn GRTresna amrex Chombo; do git -C "$repo" config core.fileMode false; done
+
+# 5. The gate that refuses a commit carrying machine paths or host names.
+cd GRTeclyn && python3 grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook
+
+# 6. Check: the first must greet the fork's account, the second must show -> myfork/...
+ssh -T -o IdentitiesOnly=yes -i ~/.ssh/github_research git@github.com
+git -C "$SIM_ROOT/GRTeclyn" for-each-ref --format='%(refname:short) -> %(upstream:short)' refs/heads/
+```
+
+The pre-commit hook lives in `.git/hooks/`, which git does not track, so every
+fresh clone needs step 5 again (and step 4, on NFS).
+
+**Moving to a node whose home directory differs.** A build remembers the absolute
+paths of the machine it was made on: `.env`, the OpenMPI prefix and every binary's
+`RUNPATH`, `Chombo/lib/mk/Make.defs.local`, the uv interpreter behind both `.venv`s,
+and the key named in `core.sshCommand`. If the new node mounts the same shared
+storage under a different home, nothing needs rebuilding: from the new home, link
+each directory the old paths go through (the parent of `$SIM_ROOT`, the conda
+environments, `~/.local/share/uv`) to where it really lives, then confirm with
+`ldd <binary> | grep 'not found'` (must print nothing) and the
+[installation check](#check-an-installation). Naming the key in `core.sshCommand`
+through the shared mount instead of a home path saves one of those links.
+
+**Leaving a shared machine.** Push every branch first
+(`git rev-list --count --branches --not --remotes=myfork` must print 0 in each
+checkout — not `--all`, which also counts the public project's remote branches and
+can stay above 0 with everything pushed), then delete that machine's key pair and
+revoke the same key on GitHub — it has sat on shared storage. The per-repository identity goes with the
+checkouts. Leave the machine's global `~/.gitconfig`, `~/.git-credentials` and
+`~/.ssh/` alone: on a shared node they belong to other people.
 
 ## Quick start
 
@@ -103,7 +288,7 @@ It is long because it doubles as the campaign run-book. Start where your task is
 
 | Part | Read it when |
 |---|---|
-| [Running a campaign without numerical artifacts](#running-a-campaign-without-numerical-artifacts) | **Before launching anything whose numbers you intend to believe.** Eleven rules, each one there because breaking it silently produced a clean-looking wrong answer. |
+| [Running a campaign without numerical artifacts](#running-a-campaign-without-numerical-artifacts) | **Before launching anything whose numbers you intend to believe.** Fourteen rules, each one there because breaking it silently produced a clean-looking wrong answer. |
 | [What was fixed](#what-was-fixed--2026-08-21) | You are re-deriving an older result and need to know what was invalid, and what was not. |
 | [What is implemented](#what-is-implemented) | You want to know whether a capability already exists before writing it. |
 | [Campaigns](#campaigns) · [How to run](#how-to-run) | You are launching a search. |
@@ -140,6 +325,18 @@ BONDI_GRTRESNA_N        = NFULL * (GRTRESNA_DOMAIN_L / LFULL)
 BONDI_GRTRESNA_MAXLEVEL = 0
 ```
 
+**Enforced in the campaign path since 2026-08-26.** The QD/CMA-ES and HQ libs
+(`search_common.sh`, `promote_common.sh`) now *compute* the aligned solve N by
+default (`GRTRESNA_DOMAIN_NX = N_full * domain_L / L_full`, solve
+`GRTRESNA_MAX_LEVEL = 0`) and export `GRTRESNA_REQUIRE_ALIGNED_SOLVE=1`, which
+makes both the CLI context and the solver runner **refuse** a misaligned solve
+at launch (`solve_grid_alignment_error` in `grtresna/solver/config.py`); the
+Chombo transfer also warns whenever the non-aligned paint path actually runs.
+Before this, search solves ran at dx = 2.0 against an evolution dx of 0.5 with
+3 levels of solve AMR — every candidate's lumps were born off-centre. One-off
+tools outside the campaign libs get the warning but not the hard failure;
+opt in with the same env var.
+
 For the standard `L = 64`, `N = 128` grid solved in an `L = 128` box that is
 `N = 256`, no refinement. Resolving the initial data *finer* than the grid it
 will be evolved on buys nothing and costs exactly this.
@@ -167,10 +364,19 @@ convergence. Rule 1 is what keeps the pair matched.
 A star that has quietly dissolved makes every geometry diagnostic look perfect —
 lapse flat, constraints small, no collapse. Confirm the peak amplitude and the
 confined fraction are steady over the run *first*; only then read the geometry.
-Beware the reverse error too: the campaign scorer flags "matter DISPERSED"
-against an absolute threshold, so a star family that sits at 27% confinement by
-construction trips it while being perfectly stable. Compare against the run's
-own `t = 0`, not against a constant.
+Beware the reverse error too: the campaign scorer used to flag "matter
+DISPERSED" against an absolute threshold, so a star family that sits at 27%
+confinement by construction tripped it while being perfectly stable. Compare
+against the run's own `t = 0`, not against a constant.
+
+**The scorer does this itself since 2026-08-26**: `confinement_retention` in
+`metrics/score/survival.py` is now `final_confined_frac / initial_confined_frac`
+(the run's own t = 0), falling back to the absolute fraction only when t = 0 is
+unavailable. `SCORE_CONFINEMENT_BASELINE=absolute` restores the old behaviour
+for A/B. Because this factor multiplies the dominant `f_geo` terms through
+structural persistence, **scores are not comparable across the change** — which
+costs nothing, since every pre-fix campaign score is void anyway (the trS
+binary, defect 1 of [What was fixed](#what-was-fixed--2026-08-21)).
 
 ### 4. Never trust a diagnostic quantised coarser than its signal
 
@@ -285,6 +491,18 @@ ladder will not be so lucky.
 Remember which side binds: the phantom sector's residual is the one that
 approaches the gate, the canonical sector's sits far inside it. Reading only
 the canonical number will tell you everything is fine when it is not.
+
+**Enforced in the campaign path since 2026-08-26.** The wrapper now classifies
+the exit door itself (`classify_solve_exit` in `grtresna/solver/convergence.py`
+— the library twin of `check_solve_exit.py`, met-on-last-iteration counts as
+`cap`), logs the truth instead of the unconditional "converged" label, records
+the door in every eval's `metadata.json`, and — with
+`GRTRESNA_REQUIRE_CONVERGED=1`, the campaign-lib default — **rejects** stalled
+and capped solves before GPU time. The search-tier tolerance defaults also
+dropped from the throughput values to the bondi-tightened ones
+(`NL_exit 1.0% → 0.1%`, stall `0.005 → 0.002`); pay for them with solver ranks
+(`RANKS=8`, re-verified digit-identical and 6.6× faster at 256³), not by
+loosening the target.
 
 ### 9. Preflight every cell against the cell it will be compared with
 
@@ -443,6 +661,107 @@ cell is suspect, check for an evolution log and a non-empty `data/` before
 believing it; the dry-run signature is everything written within one second
 and `data/` empty. Delete the debris and launch again.
 
+### 12. Launch detached, and prove it detached by ancestry — not by a printed PID
+
+**What was measured, 2026-08-31.** Four H100 runs launched as children of the
+editor session died the moment the editor was restarted — twice in one morning.
+The run that carried a checkpoint resumed with 0.5 code units lost; the three
+launched without checkpoints lost 11, 11 and 3 units and had to start over.
+A launcher backgrounded with plain `&` from an agent/editor shell is *not*
+detached, however healthy it looks.
+
+**The launch form.** Variables first, then the whole `setsid nohup` chain —
+this is rule 11 applied to a detached launch, and `env` is still fatal here:
+
+```bash
+# from the repository root
+WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=my_cell WHM_GPU=0 \
+  WHM_CONSUME_ARGS="--frames-fields chi chi_minus_1 K lapse shift1 phi Pi \
+                    Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed \
+                    --frames-coord 32.0 --frames-zoom 32 \
+                    --frames-cache-slices --frames-auto-zlim" \
+  setsid nohup bash scripts/campaigns/wormhole_merger/run_single.sh \
+  > runs/wormhole_merger/detached_gpu0.log 2>&1 < /dev/null &
+```
+
+`setsid nohup env WHM_...=... bash run_single.sh` exits 0 in under a second and
+writes a zero-byte log. That is rule 11, not a detachment problem, and it is
+the single easiest way to lose an afternoon.
+
+**The verification.** A printed PID proves nothing — the shell prints it before
+the child can die. Detachment means the launcher is a *session leader whose
+parent is init*:
+
+```bash
+ps -eo pid,ppid,sess,args --no-headers | grep "[r]un_single.sh"
+# each launcher must show ppid = 1 and sess = its own pid
+```
+
+Anything else — `ppid` pointing at a `claude`/`node`/editor process, or a
+session id shared with the caller — means the run will die with the session.
+Trace it if unsure: `ps -o ppid= -p <pid>` up the chain must reach `init`
+without passing through the editor.
+
+**A resume writes to a NEW run directory.** `WHM_RESTART` appends `_rNNNNN` to
+the run name (rule: a continuation never clobbers its parent's streams). The
+parent directory stops gaining frames at the restart point and that is correct,
+not a stalled consumer — new frames, `_slice_cache/` and `.dat` streams all
+land under `<name>_rNNNNN`. Two consequences that have both bitten:
+
+* Any watcher, movie build or separation measurement must be re-pointed at the
+  continuation, and a full-history plot has to stitch parent + continuation.
+* Any janitor that protects or prunes **by run name** must match the
+  continuation too. A checkpoint pruner keyed on the bare name treats
+  `<name>_r03000` as an unrelated run and will delete the live run's only
+  restart point. Match `^<name>(_r[0-9]+)?$`, not `<name>`.
+
+### 13. An off-axis frame window must be told its centre — eyeball frame 0
+
+Until 2026-09-15 the frame renderer defaulted its in-plane window centre to
+`z = 0` (`visualize/__main__.py` hard-coded `z_center = 0.0`; the consumer's
+`frames/center.py` copied it). `--frames-coord` overrides only the
+slice-normal component, so on the default `--frames-axis z` the bad component
+is always overwritten and the default never shows — but with
+`--frames-axis x` or `y` on a `[0, L]` domain the window sits at
+`z ∈ [-zoom/2, +zoom/2]` and the physics at `z = L/2` is **out of frame
+entirely**. The frames still render plausible-looking structure without
+erroring, and `--frames-cache-slices` stores only the cropped window, so once
+the plotfiles are deleted nothing can be recovered. This is how both queue-2e
+movies were lost on 2026-09-14 (defect 6 below).
+
+The default is now the domain midpoint on all three axes, but the rule stands:
+
+- any run with `--frames-axis x|y` passes `--frames-center x y z` explicitly;
+- **open the first rendered frame and compare it against a reference run's
+  frame before trusting the movie.** The check costs thirty seconds; skipping
+  it cost two paper movies.
+
+The wave `.dat` streams are extracted with the separate `--center` flag and
+were never affected.
+
+### 14. A boundary condition on the CORRECTION constrains nothing once converged
+
+An iterative solve repeatedly computes a correction and adds it to its current
+answer. It is tempting to state the outer condition there, and on 2026-09-15
+that cost a rebuild and two 700-iteration solves: a converged state has zero
+correction, and zero satisfies any *homogeneous* condition trivially, so the
+condition permits the wall value to drift without pulling it anywhere. The
+final wall value comes out path-dependent rather than determined, and the
+answer relaxes back to whatever the un-fixed code gave (4.89 % → 4.55 %,
+against 0.68 % once the condition was stated properly).
+
+State it on the **solution**, in the fill that runs before the operator's
+coefficients and residual are built — in GRTresna that is
+`fill_boundary_cells_dir` with `filling_solver_vars == false`, which runs at the
+top of every nonlinear iteration and overwrites the solver-var fill. That path
+extrapolated ψ linearly, which carries no information about a 1/r tail.
+
+**And do not read a number off an unconverged solve.** The correction-only
+version read 2.67 % at its 50-iteration cap — a clean-looking near-halving of
+the error — and relaxed to 4.55 % by iteration 700. Quote a solve only once
+`max|dpsi|` has actually settled, and remember that `Converged!` is printed
+whatever happened (rule 8).
+
 ## What was fixed — 2026-08-21
 
 Five defects, found while chasing a spurious drift in the Bondi dipole campaign.
@@ -467,6 +786,15 @@ The corrected campaign and its data are in
 
 ---
 
+## What was fixed — 2026-09-15
+
+| # | Defect | Why it went unseen | Effect once fixed |
+|---|---|---|---|
+| 6 | **Off-axis frame windows centred at `z = 0`, not the domain midpoint** (rule 13 above): `visualize/__main__.py` hard-coded `z_center = 0.0` and `consume_plotfiles/frames/center.py` copied it; `--frames-coord` overrides only the slice-normal component. | Every documented example slices along `z`, where the bad component is always overwritten. Mis-centred frames render plausible structure without erroring, and the slice cache keeps only the cropped window, so the loss is invisible until someone looks and unrecoverable after the plotfiles are gone. | Default centre is now the domain midpoint on all three axes. Both queue-2e movies (`--frames-axis y`, 2026-09-14) were lost to this; every axis-`z` run and all wave `.dat` streams were unaffected. |
+| 7 | **`keep_checkpoints.sh` could never tell whether a run was alive**: its liveness test was `pgrep -f "<exe>.*<run>"`, but every process of a campaign run is deliberately started from inside the run directory with relative paths and a neutral label (`test params.txt`), so the run name is never in the process table. The keeper decided the run was gone on its first poll and abandoned every checkpoint not already written. | It fails silently and in the quiet direction — the keeper prints one "run is gone" line and exits 0, which reads like a finished job. The checkpoints it was told to preserve simply are not there later. | Liveness now comes from the run's own `launcher.pid`, and a missing pidfile is a hard error instead of a guess. The `pgrep` fallback was removed outright rather than kept: a `-f` pattern matches the operator's own shell as readily as the run (verified 2026-09-15), which would have left the keeper polling a dead run forever — the same reason the campaign README forbids `pkill -f`. |
+| 8 | **Frame windows were never stated, only defaulted**: no consumer profile emitted `--frames-center`, and `launch.sh` had no way to pass one. | Defect 6 made the default wrong for off-axis slices; nothing made the *window* visible at launch, so there was no line in the banner to check against. | `launch.sh --center X Y Z` threads an explicit centre through `consumer_profile` into every profile, and the launch banner now prints the window centre (or "domain midpoint" when defaulted). Rule 13's eyeball check stays mandatory regardless. |
+| 9 | **GRTresna pinned ψ_reg = 1 at the outer boundary** (`BoundaryConditions.cpp`, `fill_constant_cell(..., psi_comps, 1.0)`). The code splits ψ = ψ_reg + Σ m_i/(2 r_i), so ψ_reg approaches 1 − m/2r whenever any mass sits outside the punctures; asserting 1 hands the solve a false fact at the wall, which it propagates inward as a near-constant offset across the whole grid. | It looks like a converged solve. The residual is small, the star is intact, the throat is present — and `Converged!` is printed unconditionally (rule 8). The tell is only visible against a case whose exact answer is known, and only after fitting the 1/r coefficient: it is dragged toward 0 as the wall is approached (−0.46 at r = 8–12 against −0.28 at r = 12–16) instead of standing at −m/2. | `psi_robin_boundary = 1` imposes (ψ_reg − 1) ∼ 1/r and lets the solve find the coefficient. On the drainhole test (N = 64, L = 32, exact answer known) the worst ψ error falls 4.89 % → **0.68 %**, the throat 2.145 → **2.039** (exact 2.0), the fitted C −0.28 → **−0.93 and flat in r**, and the Ham residual reaches 3.6e-11 % instead of stalling at 9.6e-3 % — a boundary condition the solution can satisfy is one the solve can converge against. Off by default; with it off the binary reproduces the old answer digit-for-digit. GRTresna `7ae07cd`. |
+
 ## What is implemented
 
 | Capability | Where | Notes |
@@ -476,6 +804,7 @@ The corrected campaign and its data are in
 | **Matter-profile contract (rail)** — single source of truth + t=0 cross-code consistency gate | `grtresna/matter/profile_contract.py`, `tests/grtresna/test_profile_contract.py` | Catches stale-binary empty fields / sign flips / wrong-ω / center bugs before evolution; see [Matter-profile contract](#matter-profile-contract--the-rail-for-adding-new-profiles-safely) |
 | **Plotfile consumer** — streaming `small_data/` + PNG `frames/` + HDF5 deletion | `scripts/lib/`, `src/.../visualisation/` | `consume_plotfiles` sidecar; **required** for every production run |
 | **Ψ₄ / GW extraction** — in-code C++ `WeylExtraction` (spherical-harmonic modes) | `Examples/RotatingWormholeCollapse/`, `src/.../visualisation/process_wave/` | **Primary: in-code GRTeclyn `SphericalExtraction`** → `data/Weyl4_mode_2{0,1,2}.dat`, dense (every coarse step), multi-radius, decoupled from plotfiles. Python `process_wave` sidecar still extracts a coarse cross-check + drives frames |
+| **Scalar-field mode extraction** — s=0 harmonics of `phi`/`Pi` on the Ψ₄ spheres + kinematic flux | `src/.../consume_plotfiles/extraction/scalar_modes.py` | Own stream `small_data/scalar_modes.dat`; **off by default**, enable with `--scalar-modes` in `WHM_CONSUME_ARGS`; see [Scalar-field mode extraction](#scalar-field-mode-extraction---scalar-modes-own-stream-off-by-default) |
 | **Search algorithms** — MAP-Elites (QD) archive, CMA-ES hill-climb | `src/.../search/qd_search/`, `src/.../search/optimize/` | Shared pre-evolution gates; warm-start from any trajectory |
 | **Objectives** — `ftl_first`, `robust_ftl`, `general_ftl`, `f_geo_max`, `f_geo_depth`, `critical_collapse`, `gw_beam`, `spacetime_shear` | `src/.../metrics/score/objectives.py` | See [Campaigns](#campaigns) for which objective each campaign uses |
 | **Descriptors** — `ftl_lifetime`, `speed_horizon`, `wave_focusing`, `spacetime_shear`, `gw_beam` | `src/.../search/qd_search/descriptors.py` | Behavior axes for the MAP-Elites archive |
@@ -609,6 +938,9 @@ Rules:
 - **`.env` is gitignored** — never commit it. Commit only [`.env.example`](.env.example).
 - Already-exported shell variables win over `.env` (safe to override per run).
 - `${VAR}` expansion is supported inside `.env` (e.g. `GRTECLYN_ROOT=${SIM_ROOT}/GRTeclyn`).
+- Every key is exported, not only the path knobs: `scripts/lib/env.sh` and
+  `site_paths` both load the whole file. A machine-level workaround such as
+  `HWLOC_COMPONENTS=-linuxio` ([MPI triage](#mpi-status-and-triage-runbook)) belongs here.
 - Shell scripts that `source scripts/lib/env.sh` pick up the same keys.
 - Python resolves the same layout via `site_paths` (loads `.env` on first use).
 - If `.env` is missing, `GRTECLYN_ROOT` is auto-detected from the wrapper layout;
@@ -676,7 +1008,12 @@ GPU_IDS="0 1 2 3" MAX_CONCURRENT_GRTRESNA=5 BATCH_SIZE=8 \
 
 | Knob | Default (search) | Notes |
 |------|------------------|-------|
-| Grid | N=128, L=64, ml=1–2 | GRTresna solve on 128³ domain |
+| Grid | N=128, L=64, ml=1–2 | GRTresna solve: **aligned 256³ uniform** on the 128³-wide domain (dx = evolution dx, solve ml=0, computed by `search_common.sh`; rule 1) |
+| Solve tolerance | `NL_exit 0.1%`, stall `0.002` | `GRTRESNA_NL_EXIT_TOLERANCE` / `GRTRESNA_NL_STALL_TOLERANCE`; rule 8 |
+| Solve ranks | `RANKS=8` | pays for the aligned 256³ solves (~7 min measured); mind rule 10 with `MAX_CONCURRENT_GRTRESNA` |
+| Slicing | K=0 for **every** candidate | `GRTRESNA_MAXIMAL_SLICING=1` — no CTTK birth-kick asymmetry between canonical and phantom candidates |
+| Exit-door gate | on | `GRTRESNA_REQUIRE_CONVERGED=1` rejects stalled/capped solves pre-GPU |
+| Alignment rail | on | `GRTRESNA_REQUIRE_ALIGNED_SOLVE=1` refuses misaligned solve grids at launch |
 | Stop time | t=16 | `STOP_TIME=16.0` |
 | Archive | 8×8 bins | `BINS=8` |
 | Frames | **off** (search) / **on** (GW beam, boson shell) | `GRTECLYN_FRAMES=0` for speed |
@@ -1026,9 +1363,14 @@ GRTresna (sibling repo, ../GRTresna)        GRTeclyn (this repo, .)
 
 ### Per-eval loop (every CMA-ES member and QD candidate)
 
-1. **Sample ansatz parameters → GRTresna MPI solve** (Ham + Mom). Exotic
-   (`rho<0`) candidates auto-switch to the K=0 maximal-slicing solver
-   (`apply_exotic_safe_solver`).
+1. **Sample ansatz parameters → GRTresna MPI solve** (Ham + Mom). Since
+   2026-08-26 campaigns build **every** candidate on the K=0 maximal-slicing
+   path (`GRTRESNA_MAXIMAL_SLICING=1` → `--grtresna-maximal-slicing`), so
+   canonical and phantom candidates are constructed identically except for the
+   sign of `rho`. The old behaviour — exotic (`rho<0`) candidates auto-switch
+   via `apply_exotic_safe_solver`, canonical ones silently keep the CTTK
+   `K∝√rho` ansatz and are born mid-collapse — remains only as the fallback
+   when the flag is off.
 2. **Reject** if convergence missing, NaN, or above threshold.
 3. **Solved-geometry FTL gate** on `.gridinit` (cheap, pre-GPU, ~1 s).
 4. **Post-load constraint gate** — short GPU launch (`stop_time=0.01`, **no**
@@ -1207,6 +1549,44 @@ bash grteclyn-wrapper/scripts/wormhole/run/wormhole_case.sh --gridinit "$G" --fu
 Implementation note: the wormhole `Main` builds a `BHAMR<1>` purely to reuse
 its `m_weyl_interpolator` (puncture tracking stays disabled) -- requires the
 MPI+CUDA rebuild below.
+
+#### Scalar-field mode extraction (`--scalar-modes`, own stream, off by default)
+
+Added 2026-09-02 for the wormhole-merger ringdown work: the post-merger tail
+is a *coupled* scalar-metric mode, so the scalar field needs the same
+sphere-mode treatment as Ψ₄.  The consumer module
+`consume_plotfiles/extraction/scalar_modes.py` projects `phi` and `Pi` onto
+proper s=0 spherical harmonics (default l = 0, 1, 2, all m -- note l = 0 and
+l = 1 exist for a scalar, unlike for Ψ₄) on the **same extraction spheres**
+as Ψ₄, at every `--radii` value, plus a kinematic scalar energy flux per
+radius (three concentric spheres give the radial derivative).  All radii and
+shells go in one batched field query per plotfile.
+
+- **Own output file** `small_data/scalar_modes.dat` with a self-describing
+  header (`R14_phi_l1_m-1_re`, ..., `R14_scalar_flux_kin`) -- no existing
+  column contract is touched.
+- **Off by default.**  Enable per launch by adding `--scalar-modes` to the
+  consumer arguments -- for campaign launches that means `WHM_CONSUME_ARGS`:
+
+  ```bash
+  WHM_CONSUME_ARGS="--scalar-modes --frames-fields chi phi Pi ..." \
+    bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+  ```
+
+  Optional tuning: `--scalar-mode-ells 0 1 2` (supported 0..4) and
+  `--scalar-flux-delta 0.5` (radial half-step of the derivative stencil).
+- **Failure-isolated**: an exception in this stream is caught and logged
+  without harming the published Ψ₄ streams, and it works even with
+  `--no-psi4`.
+- **Two honesty caveats**, documented in the module docstring: the flux is a
+  *coordinate* proxy (no lapse/shift factors applied), and the **phantom
+  kinetic sign is not applied** -- for phantom matter the physical energy
+  flux is the negative of the canonical-scalar expression.
+
+Validated three ways (see `research/merger/GPU_PLAN.md` section 7): analytic
+selftest (`scalar_modes.selftest()`: orthonormality + projection
+round-trip), mode symmetries on a live merger plotfile, and a 7 % match
+against the independent slice-cache ring harmonic at the same instant.
 
 ### One-off GRTresna solve
 
@@ -1504,6 +1884,7 @@ of whichever node the pod currently sits on, not of this repo.
 | GRTeclyn RadialRecipe MPI+CUDA | **works** — 2 ranks, AMR max_level 3, clean past the old crash point | 2026-08-19 |
 | GRTeclyn RadialRecipe MPI+CUDA, 3 ranks | **works** — 3 ranks on `N=256, L=128, max_level 3`, first AMR advance clean, 22–23 GB per card | 2026-08-19 |
 | GRTresna solver multi-rank | **works** — 8 ranks reproduce the serial residuals digit-for-digit | 2026-08-19 |
+| `mpirun` on a node with NVLink version 6 | **segfaults at start-up, even `-np 1 hostname`, unless `HWLOC_COMPONENTS=-linuxio` is set**; with it 1–8 ranks start and exchange data, for both OpenMPI builds | 2026-09-14 |
 | GRTeclyn RotatingWormholeCollapse MPI+CUDA | worked multi-GPU, but only on an **older node** | 2026-06 |
 
 **The July RadialRecipe AMR crash does not reproduce (retested 2026-08-19).**
@@ -1531,7 +1912,14 @@ available if it ever pays.
 1. *Node-level.* On one node every MPI job died in PRRTE daemon start-up —
    even `mpirun -np 1 hostname`. Nothing in this repo could fix it; it went
    away when the pod moved. If this is happening, stop and check the node, do
-   not rebuild anything.
+   not rebuild anything — but first rule out the one known cause that *can* be
+   worked around. On 2026-09-14 the same silent segfault, in both OpenMPI
+   builds, came from the hwloc 2.7.1 they bundle: it crashes while listing OS
+   devices on a host with NVLink version 6 (`lstopo-no-graphics` warns
+   `Failed to recognize NVLink version 6`). `HWLOC_COMPONENTS=-linuxio` skips
+   that scan and MPI starts normally; put it in `.env`. `-pci`, `-nvml,-cuda`,
+   `PMIX_MCA_gds=hash`, `--bind-to none` and `plm_ssh_agent=false` do not help.
+   Single-rank runs start without `mpirun` and are unaffected.
 2. *Toolchain-level.* GRTresna died with SIGILL from mismatched
    `-march=native` objects. Fixed by rebuilding Chombo's MPI libs
    consistently: `scripts/build/rebuild_grtresna_mpi.sh` (it ends with its own
@@ -1550,6 +1938,7 @@ export LD_LIBRARY_PATH="$OPENMPI_ROOT/lib:${LD_LIBRARY_PATH:-}"
 
 # 1. Is MPI alive at all on this node?  (If this fails, it is the node.)
 mpirun -np 1 hostname
+HWLOC_COMPONENTS=-linuxio mpirun -np 1 hostname   # only if the line above segfaults
 mpirun -np 4 bash -c 'echo "rank $OMPI_COMM_WORLD_RANK of $OMPI_COMM_WORLD_SIZE"'
 
 # 2. Does the CPU solver run multi-rank?  (Wins ~40 min per HQ constraint solve.)

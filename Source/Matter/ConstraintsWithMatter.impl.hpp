@@ -145,7 +145,7 @@ void ConstraintsWithMatter<matter_t>::compute_mf(
                                                           center, time);
 
     amrex::ParallelFor(
-        out_mf,
+        out_mf, out_mf.nGrowVect(),
         [=] AMREX_GPU_DEVICE(int box_no, int ix, int iy, int iz) noexcept
         {
             my_matter_constraints(ix, iy, iz, out_arrays[box_no],

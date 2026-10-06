@@ -1,0 +1,33 @@
+# The sign rule at d = 12: separation change of three rest-released pairs.
+# Inverse-chi-weighted pit centroids of the cached chi_z slices (box +/-3,
+# split x = 32), the apoint_repulsion.py measurement; NOT throat_track.dat.
+# dsep_like: ctrl_rest_d12, sep(0) = 12.0231, last slice t = 11.5
+# dsep_a1: ctrl_rest_a1, sep(0) = 12.0232, last slice t = 11.5
+# dsep_flip: ctrl_flip_d12, sep(0) = 12.0231, last slice t = 10.5
+# ratio = -dsep_flip/dsep_like, only over t = 3.5 .. 10.5 (gauge settles by t ~ 3):
+#   1.518 +/- 0.021 over 15 slices; predicted (Q+1)/(Q-1) = 1.500 at Q = 5
+# time  dsep_like  dsep_a1  dsep_flip  ratio
+     0.00     0.0000     0.0000     0.0000      nan
+     0.50    -0.0002    -0.0007    -0.0002      nan
+     1.00    -0.0003    -0.0010    -0.0003      nan
+     1.50     0.0002    -0.0012    -0.0007      nan
+     2.00     0.0008    -0.0010    -0.0017      nan
+     2.50     0.0023    -0.0003    -0.0040      nan
+     3.00     0.0050     0.0009    -0.0082      nan
+     3.50     0.0095     0.0028    -0.0149    1.565
+     4.00     0.0160     0.0053    -0.0246    1.539
+     4.50     0.0249     0.0116    -0.0380    1.529
+     5.00     0.0364     0.0158    -0.0553    1.522
+     5.50     0.0507     0.0209    -0.0765    1.509
+     6.00     0.0678     0.0268    -0.1012    1.493
+     6.50     0.0874     0.0337    -0.1307    1.496
+     7.00     0.1104     0.0416    -0.1649    1.494
+     7.50     0.1360     0.0507    -0.2038    1.498
+     8.00     0.1653     0.0592    -0.2485    1.503
+     8.50     0.1975     0.0707    -0.2989    1.513
+     9.00     0.2337     0.0853    -0.3544    1.516
+     9.50     0.2737     0.0991    -0.4171    1.524
+    10.00     0.3176     0.1156    -0.4848    1.526
+    10.50     0.3637     0.1309    -0.5614    1.544
+    11.00     0.4155     0.1474        nan      nan
+    11.50     0.4696     0.1655        nan      nan

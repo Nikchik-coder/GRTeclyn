@@ -1,0 +1,14 @@
+[whm] name     : stage1_lapse5_sg01
+[whm] template : Examples/BinaryWormholeMerger/params_stage1_hold.txt
+[whm] binary   : Examples/BinaryWormholeMerger/main3d.gnu.CUDA.ex
+[whm] gpu      : 1
+[whm] run dir  : runs/wormhole_merger/stage1_lapse5_sg01          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/stage1_lapse5_sg01      (node-local: plotfiles, checkpoints)
+[whm] dissipation override: sigma = 0.1
+[whm] lapse override: wormhole_initial_lapse_type = 5
+[whm] refinement override: max_level = 2, regrid_interval = 16 16
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] consumer  : pid 774156 -> runs/wormhole_merger/stage1_lapse5_sg01/small_data
+[whm] === launching stage1_lapse5_sg01 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[whm] draining consumer (final pass) ...
+[whm] run FAILED (exit 1) -- see runs/wormhole_merger/stage1_lapse5_sg01/run.log

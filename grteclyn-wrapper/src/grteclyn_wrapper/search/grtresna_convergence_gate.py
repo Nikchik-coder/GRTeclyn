@@ -16,6 +16,12 @@ class GRTresnaConvergenceConfig:
 
     max_ham_pct: float = 5.0
     max_mom_pct: float = 5.0
+    # Rule 8: the solver leaves its nonlinear loop by three doors (converged /
+    # stalled / iteration cap) and only the first certifies the requested
+    # NL_exit_tolerance was met.  When True, initial data whose solve left by
+    # any other door is rejected before GPU time -- final residual magnitude
+    # alone cannot tell the doors apart.
+    require_converged: bool = False
 
 
 DEFAULT_GRTRESNA_CONVERGENCE_CONFIG = GRTresnaConvergenceConfig()
@@ -48,6 +54,16 @@ def convergence_rejection_reason(
             f"GRTresna convergence too poor: Ham={ham:.6g}% "
             f"Mom={mom:.6g}% thresholds=({cfg.max_ham_pct:g}%, {cfg.max_mom_pct:g}%)"
         )
+    if cfg.require_converged:
+        door = convergence.get("exit_door")
+        if door is not None and door != "converged":
+            return (
+                f"GRTresna solve exited by the '{door}' door at iteration "
+                f"{convergence.get('iteration')} (Ham={ham:.6g}% Mom={mom:.6g}%, "
+                f"requested NL_exit_tolerance="
+                f"{convergence.get('nl_exit_tolerance')}%): the tolerance was "
+                "not certifiably met (rule 8)"
+            )
     return None
 
 

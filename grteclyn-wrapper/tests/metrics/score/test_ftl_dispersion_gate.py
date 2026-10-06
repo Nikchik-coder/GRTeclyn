@@ -21,13 +21,17 @@ from grteclyn_wrapper.metrics.types.episode import EpisodeMetrics
 
 
 def _dispersed_confinement(frac: float) -> ConfinementMetrics:
+    # structural_persistence is retention relative to the run's own t=0
+    # (final/initial; see test_confinement_gate.py for the baseline
+    # semantics), so initial_confined_frac=1.0 makes ``frac`` read directly
+    # as the retention the gate multiplies by.
     return ConfinementMetrics(
         n_frames=2,
         final_time=16.0,
         initial_rms_radius=5.0,
         final_rms_radius=10.0,
         max_rms_radius=10.0,
-        initial_confined_frac=0.9,
+        initial_confined_frac=1.0,
         final_confined_frac=frac,
         min_confined_frac=frac,
         spread_ratio=2.0,

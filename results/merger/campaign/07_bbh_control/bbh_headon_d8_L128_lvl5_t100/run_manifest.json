@@ -1,0 +1,186 @@
+{
+ "schema": 1,
+ "run": "bbh_headon_d8_L128_lvl5_t100",
+ "reconstructed": false,
+ "launched_utc": "2026-10-02T11:40:34Z",
+ "what": "BBH-HEADON (the user's go 10:2x UTC 10-02): bbh_headon_d8_L128_lvl5_t100 -- the vacuum control for the",
+ "template": "runs/wormhole_merger/templates_scan/params_bbh_headon_d8_L128_lvl5_t100.txt",
+ "template_sha256": "987f11bebf12aa2182e061c8d93d648be22e7b16571bcb0d838ee56b042b58b6",
+ "params_sha256": "892a425f85f3bd027a07ad007ae274c8d07c49e57536d5454271f967b4182279",
+ "params": {
+  "amr.verbose": "1",
+  "amr.check_int": "40",
+  "checkpoint_keep": "3",
+  "amr.plot_int": "4",
+  "amr.plot_vars": "chi K lapse shift1 shift2 shift3",
+  "amr.derive_plot_vars": "Weyl4",
+  "bh1.mass": "0.9443",
+  "bh2.mass": "0.9443",
+  "bh1.offset": "-4.0 0.0 0.0",
+  "bh2.offset": "4.0 0.0 0.0",
+  "bh1.momentum": "0.0 0.0 0.0",
+  "bh2.momentum": "0.0 0.0 0.0",
+  "amr.n_cell": "128 128 128",
+  "geometry.prob_extent": "64 64 64",
+  "amr.max_level": "5",
+  "amr.regrid_int": "2 4 8 16 32",
+  "tagging.threshold": "0.014",
+  "amr.max_grid_size": "64",
+  "amr.blocking_factor": "16",
+  "geometry.is_periodic": "0 0 0",
+  "boundary.hi_condition": "\"SOMMERFELD_BC\" \"SOMMERFELD_BC\" \"SOMMERFELD_BC\"",
+  "boundary.lo_condition": "\"SOMMERFELD_BC\" \"SOMMERFELD_BC\" \"SOMMERFELD_BC\"",
+  "evolution.dt_multiplier": "0.25",
+  "evolution.stop_time": "100.0",
+  "evolution.spatial_derivative_order": "4",
+  "evolution.nan_check": "true",
+  "evolution.sigma": "0.5",
+  "ccz4.kappa1": "3.0",
+  "ccz4.kappa2": "0.0",
+  "ccz4.kappa3": "1.0",
+  "ccz4.covariantZ4": "false",
+  "gauge.shift_advec_coeff": "1.0",
+  "center": "32.0 32.0 32.0",
+  "weyl_extraction.enabled": "true",
+  "weyl_extraction.num_radii": "4",
+  "weyl_extraction.radii": "14.0 20.0 26.0 30.0",
+  "weyl_extraction.levels": "0 0 0 0",
+  "weyl_extraction.num_points_phi": "72",
+  "weyl_extraction.num_points_theta": "37",
+  "puncture_tracking.enabled": "true",
+  "output_path": "\"runs/wormhole_merger/bbh_headon_d8_L128_lvl5_t100\"",
+  "amr.plot_file": "\"/tmp/grteclyn_scratch/bbh_headon_d8_L128_lvl5_t100/BinaryWormholePlt\"",
+  "amr.check_file": "\"/tmp/grteclyn_scratch/bbh_headon_d8_L128_lvl5_t100/BinaryWormholeChk\""
+ },
+ "overrides": {
+  "WHM_KEEP_LAST": "3",
+  "WHM_CONSUME_ARGS": "--frames-fields chi chi_minus_1 K lapse shift1 shift2 shift3 Weyl4_Re Weyl4_Im Weyl4_Mag --frames-coord 32 --frames-zoom 40  --frames-cache-slices --frames-auto-zlim",
+  "WHM_PREFLIGHT": "static",
+  "WHM_FRAMES_SUBSET": "vacuum BBH control (profile bbh): its plotfiles carry no scalar field and no h_ij, so no phi, Pi, scalar_activity or local_speed frames"
+ },
+ "restart_from": null,
+ "binary": {
+  "file": "BinaryBH3d.gnu.MPI.CUDA.ex",
+  "path": "Examples/BinaryBH/BinaryBH3d.gnu.MPI.CUDA.ex",
+  "sha256": "42930dcf27b5e381843a43c17d1681b0027e90875a8a29dd5c408c0f6da63621",
+  "grteclyn_version": "unstamped",
+  "binaries_tsv": null
+ },
+ "launcher": {
+  "commit": "f44daee2",
+  "dirty": false
+ },
+ "node": "the first GPU node",
+ "gpu": "1",
+ "paths": {
+  "run_dir": "runs/wormhole_merger/bbh_headon_d8_L128_lvl5_t100",
+  "scratch": "$GRTECLYN_SCRATCH/bbh_headon_d8_L128_lvl5_t100"
+ },
+ "preflight": {
+  "schema": 1,
+  "mode": "static",
+  "restart": false,
+  "exe": "BinaryBH3d.gnu.MPI.CUDA.ex",
+  "exe_sha256": "42930dcf27b5e381843a43c17d1681b0027e90875a8a29dd5c408c0f6da63621",
+  "params_sha256": "892a425f85f3bd027a07ad007ae274c8d07c49e57536d5454271f967b4182279",
+  "verdict": "pass",
+  "reasons": [],
+  "frames": {
+   "fields": [
+    "chi",
+    "chi_minus_1",
+    "K",
+    "lapse",
+    "shift1",
+    "shift2",
+    "shift3",
+    "Weyl4_Re",
+    "Weyl4_Im",
+    "Weyl4_Mag"
+   ],
+   "required": [
+    "chi",
+    "chi_minus_1",
+    "K",
+    "lapse",
+    "shift1",
+    "shift2",
+    "shift3",
+    "phi",
+    "Pi",
+    "Weyl4_Re",
+    "Weyl4_Im",
+    "Weyl4_Mag",
+    "scalar_activity",
+    "local_speed"
+   ],
+   "missing": [
+    "phi",
+    "Pi",
+    "scalar_activity",
+    "local_speed"
+   ],
+   "subset": "vacuum BBH control (profile bbh): its plotfiles carry no scalar field and no h_ij, so no phi, Pi, scalar_activity or local_speed frames",
+   "source": "--frames-fields in WHM_CONSUME_ARGS",
+   "axis": "z",
+   "errors": [],
+   "warnings": [
+    "frames: a SUBSET on purpose (WHM_FRAMES_SUBSET='vacuum BBH control (profile bbh): its plotfiles carry no scalar field and no h_ij, so no phi, Pi, scalar_activity or local_speed frames'): no movie of phi Pi scalar_activity local_speed -- recorded in run_manifest.json"
+   ],
+   "render": {
+    "verdict": "not rendered (static preflight: no start-up, no t = 0 plotfile)"
+   }
+  },
+  "intent": {
+   "errors": [],
+   "warnings": []
+  },
+  "symmetry": {
+   "reflect": [],
+   "errors": [],
+   "warnings": []
+  },
+  "consumer": {
+   "consume": true,
+   "areal_radius": "off",
+   "neck_horizons": false,
+   "reflect": [],
+   "errors": [],
+   "warnings": []
+  },
+  "static": {
+   "keys": 43,
+   "absent_from_binary": [],
+   "allowed_absent": []
+  }
+ },
+ "t0": null,
+ "seed": null,
+ "frames": {
+  "fields": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag"
+  ],
+  "missing_from_default": [
+   "phi",
+   "Pi",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "subset": "vacuum BBH control (profile bbh): its plotfiles carry no scalar field and no h_ij, so no phi, Pi, scalar_activity or local_speed frames",
+  "source": "--frames-fields in WHM_CONSUME_ARGS",
+  "t0_render": "not rendered (static preflight: no start-up, no t = 0 plotfile)"
+ },
+ "status": "finished",
+ "exit_status": 0,
+ "finished_utc": "2026-10-02T13:47:51Z",
+ "t_end": null
+}

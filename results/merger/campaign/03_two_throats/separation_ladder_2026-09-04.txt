@@ -1,0 +1,111 @@
+SEPARATION LADDER — how the throat-throat push scales with distance
+====================================================================
+measured 2026-09-04   GPU_PLAN #8b
+
+WHAT WAS RUN
+------------
+Four like-oriented drainhole pairs released from rest, evolved to t = 15 at
+level 3.  Every parameter is byte-identical between rungs except
+wormhole_centerA/B; verified by diffing the params files (the only other
+differences are the output paths and checkpoints-off, which is probe policy).
+
+  ctrl_rest_d12   runs/wormhole_merger/03_two_throats/ctrl_rest_d12   (to t = 11.8)
+  ctrl_rest_d14   runs/wormhole_merger/ctrl_rest_d14                  (to t = 15.01)
+  ctrl_rest_d16   runs/wormhole_merger/ctrl_rest_d16                  (to t = 15.01)
+  ctrl_rest_d18   runs/wormhole_merger/ctrl_rest_d18                  (to t = 15.01)
+
+a = 2, m = 1, drainhole mass 1 per throat, no momenta, no damping.
+
+WHY THIS AND NOT THE a-LADDER
+-----------------------------
+The earlier a-ladder (#8) varied the throat parameter a and tried to test a
+predicted a^2 law.  It cannot: a is a coordinate label whose physical meaning
+moves as you turn it — tripling a grows the measured throat radius only 1.6x
+(3.38 / 3.80 / 4.29 / 5.37 for a = 1 / 1.5 / 2 / 3).  Holding the throat fixed
+and varying only the gap tests the distance law directly, and the coordinate
+distortion around each throat is then identical in every rung, so it cancels
+between them.
+
+MEASUREMENT
+-----------
+Inverse-chi-weighted pit centroid of each throat from the chi_z slice cache
+(frames/_slice_cache/chi_z/*.npz), +/-3.0 code-unit box around the chi minimum,
+throats split at x = 32.  NOT throat_track.dat, whose 0.03 quantum is larger
+than the whole effect at early times.
+
+Quoted statistic is the DISPLACEMENT at a common time t = 11.5 (set by the
+shortest rung, d = 12).  Displacement, not a fitted acceleration: the quadratic
+coefficient swings by ~2x depending on the fit window, the displacement does
+not.
+
+RESULT
+------
+  d     sep(0)     displ     F*d^2   ratio/d12   pure 1/d^2   1/(d+3.4)^2
+ 12    12.0231    0.4696     67.63       1.000        1.000         1.000
+ 14    14.0271    0.3699     72.50       0.788        0.735         0.783
+ 16    16.0310    0.2980     76.30       0.635        0.562         0.630
+ 18    18.0350    0.2438     79.00       0.519        0.444         0.518
+
+All four displacements are positive and monotonic in time: the throats push
+apart, from rest, with no momenta and no support cuts.  That is the physical
+result, and it is not in doubt.
+
+1.  PURE INVERSE-SQUARE IS EXCLUDED.  F*d^2 rises monotonically 67.6 -> 79.0,
+    a 15.4% spread across the ladder, far outside the measurement scatter.
+    The push falls off MORE SLOWLY than 1/d^2.
+
+2.  AN OFFSET INVERSE-SQUARE FITS.  F ~ 1/(d + delta)^2 with delta ~ 3.5.
+    Solving for delta from every one of the six rung pairs:
+
+      12-14: 3.77    12-16: 3.67    12-18: 3.47
+      14-16: 3.54    14-18: 3.27    16-18: 2.95
+
+3.  IT WAS A BLIND PREDICTION, AND IT HELD.  delta = 3.4 was fitted on
+    d = 12/14/16 only, before d = 18 had reached t = 11.5.  That fit predicts
+    a d = 18 displacement of 0.243; pure 1/d^2 predicts 0.209.  Measured:
+    0.2438 — within 0.3% of the offset model, 17% away from 1/d^2.
+
+INTERPRETATION
+--------------
+delta ~ 3.5 is comparable to the independently measured physical throat radius
+at a = 2, which is 4.29 (areal radius R = r/sqrt(chi) at t = 0).  The natural
+reading is that the coordinate centre separation is not the physical
+separation: these are extended objects a few units across, and once the
+distance is measured between effective source locations rather than between
+coordinate centres, the law is ordinary inverse-square.
+
+This is a claim about the DISTANCE LABEL, not about new physics.  Do not write
+"the repulsion violates the inverse-square law" — write that it is
+inverse-square in an effective separation exceeding the coordinate separation
+by about a throat radius.
+
+SYSTEMATICS
+-----------
+- Window: delta is stable at 3.2-3.8 across t = 8, 9, 10, 11, 11.5, drifting
+  mildly upward with time because the throats have themselves moved apart by
+  then while the model uses the initial d.  The drift does not change the
+  conclusion at any time sampled.
+- Recoil bias is CONSERVATIVE.  Over the window the d = 12 pair separates by
+  3.9% and the d = 18 pair by 1.35%, so the close rung's force weakens more
+  during the measurement.  That biases the apparent falloff toward steeper,
+  i.e. toward 1/d^2.  The measurement is shallower than 1/d^2 anyway, so the
+  true delta is if anything larger than quoted.
+- Resolution is NOT excluded by this ladder.  Every rung ran at level 3 with
+  identical grids, so a resolution error common to all four would cancel in
+  the ratios but would survive in the absolute displacements.  The ratios are
+  what is claimed here; the absolute numbers are not.
+- delta is not perfectly constant: it trends down from 3.77 to 2.95 as the
+  pairs widen, so the offset model is itself an approximation, not exact.
+
+CROSS-CHECK, CONSTRAINTS
+------------------------
+Same four runs, L2 Hamiltonian growth over the common window t = 0 -> 11.5:
+
+  d = 12   1.46x   e-fold  43
+  d = 14   1.40x   e-fold  60
+  d = 16   1.33x   e-fold  85
+  d = 18   1.28x   e-fold 120
+
+Monotonic: closer pairs lose accuracy faster, everything else being equal.
+Recorded in GPU_PLAN section BLOCKER B1 as the controlled confirmation that
+the degradation rate is set by separation.

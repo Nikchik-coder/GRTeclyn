@@ -26,7 +26,8 @@ def _render_projection_frame(
 
     mid_x = float((ds.domain_right_edge[0] + ds.domain_left_edge[0]) / 2.0)
     mid_y = float((ds.domain_right_edge[1] + ds.domain_left_edge[1]) / 2.0)
-    physics_center = [mid_x, mid_y, 0.0]
+    mid_z = float((ds.domain_right_edge[2] + ds.domain_left_edge[2]) / 2.0)
+    physics_center = [mid_x, mid_y, mid_z]
     if center_xyz is not None:
         physics_center = [float(center_xyz[0]), float(center_xyz[1]), float(center_xyz[2])]
 

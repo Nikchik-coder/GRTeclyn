@@ -274,10 +274,21 @@ compute_ricci_Z(const CCZ4Vars &vars, const Tensor::Rank1 &d1_chi,
                 const Tensor::Rank2 &d1_Gamma, const Tensor::Sym12Rank3 &d1_h,
                 const Tensor::Sym12Sym34Rank4 &d2_h,
                 const Tensor::Sym12Rank2 &d2_chi, const Tensor::Rank2 &h_UU,
-                const chris_t &chris, const Tensor::Rank1 &Z_over_chi)
+                const chris_t &chris, const Tensor::Rank1 &Z_over_chi,
+                const amrex::Real chi_rhs_floor = 0.0)
 // NOLINTEND(bugprone-easily-swappable-parameters)
 {
     ricci_t out;
+
+    // The only genuine division by chi in the Ricci tensor is the
+    // (d chi)^2 / chi piece of ricci_chi below; everything else that is
+    // divided by chi here is multiplied back by chi in the caller.  With
+    // chi_rhs_floor > 0 that one term is evaluated against
+    // max(chi, chi_rhs_floor) (CCZ4_params_t::chi_rhs_floor); the default 0
+    // leaves the arithmetic exactly as it was.
+    const amrex::Real chi_den = (chi_rhs_floor > 0.0)
+                                    ? amrex::max(vars.chi(), chi_rhs_floor)
+                                    : vars.chi();
 
     Tensor::Rank2 covdtilde2chi{};
     FOR (k, l)
@@ -308,10 +319,12 @@ compute_ricci_Z(const CCZ4Vars &vars, const Tensor::Rank1 &d1_chi,
                    vars.h(i, j) * boxtildechi -
                    ((GR_SPACEDIM - 2) * d1_chi(i) * d1_chi(j) +
                     GR_SPACEDIM * vars.h(i, j) * dchi_dot_dchi) /
-                       (2 * vars.chi()));
+                       (2 * chi_den));
 
         amrex::Real z_terms = compute_z_terms(i, j, Z_over_chi, vars, d1_chi);
 
+        // Round trip: the RHS multiplies out.LL by chi again, so this
+        // division is not regularised (it would suppress the finite terms).
         out.LL(i, j) =
             (ricci_chi + vars.chi() * ricci_hat + z_terms) / vars.chi();
     }

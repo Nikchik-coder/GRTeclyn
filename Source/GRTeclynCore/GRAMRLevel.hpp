@@ -193,6 +193,18 @@ class GRAMRLevel : public amrex::AmrLevel
 
     bool nan_check{};
 
+    //! NaN autopsy (research/merger/GPU_PLAN_UPDATED.md, Forward Plan, Phase 0
+    //! item 4).  When nan_check trips, print -- before aborting -- which
+    //! variables went non-finite, in which cell, the state before and after
+    //! the step there, the old chi and lapse at its six neighbours, how many
+    //! cells separate it from the edge of this level's grids (and whether that
+    //! edge is a coarse-fine or a domain boundary), and how many steps this
+    //! level has taken since it was last regridded.  Default off; it runs
+    //! only on the abort path, so a healthy run never pays for it.
+    bool nan_autopsy{false};
+    int m_last_regrid_step{0};
+    void nan_autopsy_report(amrex::MultiFab &a_state_new);
+
   private:
 
     GRAMR *m_gramr_ptr = nullptr;

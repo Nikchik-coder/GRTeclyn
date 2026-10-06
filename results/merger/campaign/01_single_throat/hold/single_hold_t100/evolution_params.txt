@@ -1,0 +1,235 @@
+# STAGE 0 CONTROL: ONE isolated drainhole throat, exact static data, t = 100.
+#
+# WHAT QUESTION THIS ANSWERS.  The external audit (research/merger/
+# GPU_PLAN_UPDATED.md) argues that the 44-56 unit "wall" in every binary arm is
+# not gauge and not resolution but the single exponentially growing radial mode
+# that Gonzalez, Guzman & Sarbach (arXiv:0806.0608 / 0806.1370) prove EVERY
+# static spherically symmetric ghost-scalar wormhole carries -- massless and
+# massive alike.  Their e-folding is quoted in units of the throat's own areal
+# radius, T = tau_unstable / R_throat, running from 0.846 at zero mass down to
+# 0.590 as mass grows.  At a = 2, m = 1 that is T ~ 0.68-0.76, i.e. a proper-time
+# e-folding of roughly 2.6-3.0 code units at the throat.
+#
+# THIS RUN IS THE DECISIVE TEST, and it is a test the audit can lose.  The exact
+# static drainhole is a fixed point of the whole evolved system: conformally
+# flat so Gamma^i = 0, K = A_ij = Theta = 0, shift starts and stays at zero, and
+# alpha = e^u is stationary because K = 0.  The exact solution at time t is the
+# exact solution at t = 0.  Every deviation is therefore error or instability
+# with no physics mixed in -- there is no orbit, no companion, no boost.
+#
+# WHY t = 100 AND NOT 40.  The lapse at the throat is alpha = e^{-pi m/(2a)} =
+# 0.456, so coordinate time runs at 2.2x proper time there.  Stage 1's old arms
+# reached t ~ 35-40 coordinate = ~16-18 proper = only ~6 e-folds; a truncation
+# seed would still be at the percent level, which is exactly the size of the
+# wander those runs showed.  That window could not separate the two hypotheses.
+# t = 100 coordinate = ~46 proper = 15-18 e-folds on the audit's own numbers.
+# Any seed at all is driven to O(1).  If R_areal_min is still 3.89 at t = 100,
+# the Gonzalez-Guzman-Sarbach mode is not what kills our binaries.
+#
+# WHAT STAGE 1 ALREADY ESTABLISHED (runs/wormhole_merger/01_single_throat/
+# NOTES.md), and why it is NOT this run:
+#   - the THROAT was healthy in every arm that did not have dissipation eating
+#     it: R = 3.8960 at t = 22.5 (sigma 0.1) and 3.87-3.95 through t = 34.7
+#     (sigma 0.0), against the exact 3.8895;
+#   - the deaths were at the COMPACTIFIED ORIGIN, where chi -> 0 like rbar^4 and
+#     hits the floor, and in the regridder (the sigma = 0 arm ran the card out
+#     of memory at t = 35.2 without ever going unstable);
+#   - sigma = 2.0 reached stop_time t = 40 with the throat down to 2.578, and
+#     drainhole_hold_report.py showed that shrink is an error front creeping
+#     OUTWARD FROM THE ORIGIN, not a mode peaking at the throat.
+# Those arms were max_level = 2 and predate the current code.  This one matches
+# the production binaries exactly, so its death time is directly comparable to
+# the 44-56 unit wall.
+#
+# THE DISCRIMINATOR.  drainhole_hold_report.py reports both R_areal_min(t) and
+# the error profile err(r,t).  A genuine Ellis-Bronnikov instability PEAKS AT
+# THE THROAT.  Origin contamination is a front that starts at rbar -> 0 and
+# creeps outward.  The two are distinguishable in the same data.
+#
+# EVERYTHING BELOW IS THE PRODUCTION BINARY SETUP with throat B switched off.
+# L, N, max_level, sigma, gauge, CCZ4 constants, floors, sponge and boundaries
+# are byte-for-byte the ctrl_rest_d* ladder values, so nothing but the presence
+# of the companion distinguishes this from the arms whose wall it is testing.
+#
+# The three path keys below are placeholders the launcher rewrites.
+
+verbosity = 1
+
+output_path = "runs/wormhole_merger/single_hold_t100"
+amr.plot_file = "/tmp/grteclyn_scratch/single_hold_t100/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/single_hold_t100/BinaryWormholeChk"
+
+# Checkpoints ON -- the one deliberate departure from probe policy.  The audit's
+# own branch point is t >~ 500: if the throat holds to t = 100 the next question
+# is whether it holds five times longer, and without a checkpoint that costs a
+# full re-run.  Every 2000 coarse steps = every 20 time units, keep 2.
+checkpoint_interval = 2000
+checkpoint_keep = 2
+
+# dt_coarse = dt_multiplier * L/N1 = 0.01, so 100 steps = 1.0 time units.
+# 100 samples of R(t) over the run: the e-folding under test is 2.6-3.0 units,
+# so this resolves it ~3x over and keeps the plotfile I/O sane over t = 100.
+plot_interval = 100
+
+amr.plot_vars = chi K lapse phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: ONE regular massive drainhole throat, at rest, at the grid
+# centre.  Throat B is disabled by b0_B = 0: every B contribution in
+# BinaryWormholeInitialData (conformal factor, lapse exponent, scalar profile,
+# Bowen-York A_ij) and every B branch in BinaryWormholeLevel is gated on
+# b0_B > 0, so this is a clean one-body problem, not a two-body problem with a
+# degenerate second body.
+
+wormhole_id_type = 1
+
+# The drainhole's own exact static lapse, alpha = e^u.  1+log takes over from
+# there and should have nothing to do, since K = 0 makes e^u stationary.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a
+wormhole_throat_radius_B = 0.0       # throat B OFF -- this is the control
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_drainhole_mass_B = 0.0
+
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+# Offsets from `center`.  A sits exactly at the grid centre (32,32,32), so the
+# nested tagging boxes and the spherical sponge are both concentric with it.
+wormhole_centerA = 0.0 0.0 0.0
+wormhole_centerB = 0.0 0.0 0.0
+
+# At rest.  No Bowen-York momentum, so A_ij = 0 identically and the momentum
+# constraint is satisfied exactly, not approximately.
+wormhole_momentumA = 0.0 0.0 0.0
+wormhole_momentumB = 0.0 0.0 0.0
+
+# Irrelevant with one throat (it multiplies B's profile only), set for clarity.
+wormhole_phi_sign_B = 1.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+# No Helfer/Ning correction: with one body there is no companion to subtract,
+# and a single exact drainhole satisfies BOTH constraints identically at t = 0.
+# This run therefore has NO superposition defect at all -- which is itself part
+# of the test, since it removes the audit's Finding 4 as a confounder.
+wormhole_helfer_correction = 0
+
+#################################################
+# Grid.  Identical to the ctrl_rest_d* ladder and the production binaries:
+# L = 64, N = 128, max_level = 3 -> dx = 0.0625 on the finest level.  Level 3
+# half-width is tagging_L * 2^-5 = 2.0 about the throat centre, and the minimal
+# surface sits at rbar = (m + sqrt(m^2 + a^2))/2 = 1.618, so the throat is
+# inside the finest level with ~6 cells of margin -- the same margin each throat
+# has in the binary arms.
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  Production values, unchanged.
+
+dt_multiplier = 0.02
+stop_time = 100.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+# Audit Tier (i) item 4: core_matter_damping zeroes phi and Pi wherever the
+# lapse falls into a window, which manufactures and destroys energy and
+# violates the constraints in the region that dominates the dynamics.  It is
+# OFF here, stated explicitly rather than left to the default.  A static throat
+# holds alpha ~ 0.456 at the minimal surface and ~0.2 at its deepest, so the
+# damping window would never open in a healthy run anyway -- if it would have
+# opened, that fact is itself the result.
+core_matter_damping = 0
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+# sigma = 0.1, the production value.  Stage 1 settled this: sigma = 2.0 shrinks
+# the throat 34% over 40 units while every constraint norm reads flat, because
+# a smoothed solution violates the constraints LESS.  Do not raise it to buy
+# survival here -- that would destroy the measurement this run exists to make.
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Refinement: nested boxes on the tracked throat.  Same arithmetic as every
+# binary arm; with one throat the tagger simply unions nothing.
+
+tagging_type = 2
+tagging_L = 64.0
+
+throat_tracking = 1
+throat_track_search_radius = 2.0
+
+#################################################
+# Diagnostics.  binary_throat_diagnostics still writes the A columns (the B
+# columns are inert with b0_B = 0).  chiA_min is the ORIGIN monitor, not the
+# throat: for a wormhole the global chi minimum is the other universe's
+# infinity, compactified to rbar -> 0, where chi vanishes like rbar^4.  At
+# max_level = 3 it starts near 3.6e-7, well above the 1e-8 floor.  The throat
+# itself is R_areal_min from the consumer's areal_radius.dat.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+# A single static throat radiates nothing, and the audit is right that Psi4 in
+# a non-vacuum exterior misses the scalar channel entirely.  Extraction off.
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576

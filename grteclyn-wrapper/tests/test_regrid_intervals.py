@@ -2,7 +2,9 @@ from grteclyn_wrapper.core.params import regrid_intervals_for_max_level
 
 
 def test_regrid_intervals_for_max_level_matches_amr_levels() -> None:
-    assert regrid_intervals_for_max_level(0) == []
+    # Unigrid still emits one benign 0: ParmParse aborts on a key with no
+    # tokens (see regrid_intervals_for_max_level's docstring).
+    assert regrid_intervals_for_max_level(0) == [0]
     assert regrid_intervals_for_max_level(1) == [16]
     assert regrid_intervals_for_max_level(2) == [16, 16]
     assert regrid_intervals_for_max_level(3) == [16, 16, 8]

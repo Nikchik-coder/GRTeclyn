@@ -46,6 +46,12 @@ rl = [
 [project.scripts]
 grteclyn-wrapper = "grteclyn_wrapper.__main__:main"
 
+[dependency-groups]
+# Installed by a plain `uv sync` (uv's default group): the test runner for tests/.
+dev = [
+    "pytest>=8",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

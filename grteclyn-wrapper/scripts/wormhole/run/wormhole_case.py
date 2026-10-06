@@ -254,6 +254,11 @@ data_subpath = "data"
 
 print_progress_only_to_rank_0 = 1
 
+# Required since the 2026-02 upstream merge: ParticleInterpolator does a hard
+# `get` on this, and nothing else in the parameter set adds it, so the run
+# SIGABRTs at the first spherical extraction (right after plotfile 00000).
+particle_interpolator.verbosity = 0
+
 recipe_initial_data_file = "{gridinit}"
 wormhole_matter_model = "complex_scalar"
 
@@ -429,6 +434,12 @@ def _consumer_env() -> dict:
 _run_center: tuple[float, float, float] = (32.0, 32.0, 0.0)
 _run_radii: tuple[float, ...] = (12.0, 24.0)
 _run_L: float = DEFAULT_L
+# Throat-radius readout (default OFF: it costs one extra ray per plotfile and
+# writes its own areal_radius.dat, so it never touches the Psi4/confinement
+# column contracts).  --areal-min-radius is not optional for a compactified
+# throat -- see extraction/areal.py.
+_areal_radius: bool = False
+_areal_min_radius: float = 0.0
 
 
 def _consumer_cmd(run_out: Path, jobs: int, *, watch: bool,
@@ -463,6 +474,9 @@ def _consumer_cmd(run_out: Path, jobs: int, *, watch: bool,
             "--frames-coord", str(cz),
             "--frames-global-zlim", "--frames-out", str(run_out / "frames"),
         ]
+    if _areal_radius:
+        cmd += ["--areal-radius",
+                "--areal-min-radius", str(_areal_min_radius)]
     if delete:
         cmd += ["--delete", "--keep-last", str(keep_last)]
     if watch:
@@ -518,7 +532,7 @@ def prune_plotfiles(run_out: Path) -> None:
 
 
 def main() -> int:
-    global _run_center, _run_radii, _run_L
+    global _run_center, _run_radii, _run_L, _areal_radius, _areal_min_radius
 
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--kappa", type=float, required=True)
@@ -649,6 +663,15 @@ def main() -> int:
                          "cadence). In-code Psi4 extraction is INDEPENDENT of "
                          "this (it runs every coarse step), so use a moderate "
                          "value for smooth movies without a plotfile flood.")
+    ap.add_argument("--areal-radius", action="store_true",
+                    help="also write areal_radius.dat: the throat radius "
+                         "R = r/sqrt(chi) minimised along +x from the run "
+                         "center, one row per plotfile.  Off by default.")
+    ap.add_argument("--areal-min-radius", type=float, default=0.0,
+                    help="exclude r < this from the areal-radius minimum.  "
+                         "Needed whenever the origin is compactified (chi -> 0 "
+                         "there), otherwise the minimum lands on the innermost "
+                         "cell and reports a collapse that is not happening.")
     ap.add_argument("--extraction-radii", type=float, nargs="+", default=None,
                     metavar="R",
                     help="Weyl4/Psi4 spherical-extraction shell radii in code "
@@ -703,6 +726,8 @@ def main() -> int:
     _run_center = center
     _run_radii = radii
     _run_L = L
+    _areal_radius = args.areal_radius
+    _areal_min_radius = args.areal_min_radius
 
     # Constellation ID selection: default to the pump orbit geometry so a
     # pumped constellation auto-loads its matching ID; overridable for a

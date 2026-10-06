@@ -1,0 +1,73 @@
+# BBH-HEADON (the user's go 10:2x UTC 10-02): bbh_headon_d8_L128_lvl5_t100 -- the vacuum control for the
+# head-on wormhole merger (Fig. 5, the gallery/energy comparison): bare punctures at d = 8 FROM REST, t = 100.
+# Template = bbh_control_d12_p012_t150's packed params with d and p changed (the queue row), plus the bare
+# mass rescaled BY THE OLD FILE'S OWN RULE to keep per-hole ADM = 1.00 (Brill-Lindquist M = m(1 + m_other/2d):
+# 0.9615 at d = 12 -> 0.9443 at d = 8; keeping 0.9615 would make each hole 1.9 % heavy). Checkpoints every
+# 5 units keeping 3 (the user's word 10-02): coarse dt = 0.125 -> amr.check_int = 40.
+# LAUNCH: launch.sh --template runs/wormhole_merger/templates_scan/params_bbh_headon_d8_L128_lvl5_t100.txt \
+#   --name bbh_headon_d8_L128_lvl5_t100 --gpu 1 --profile bbh --zoom 40 --coord 32 --keep-last 3 \
+#   --binary Examples/BinaryBH/BinaryBH3d.gnu.MPI.CUDA.ex
+#
+amr.verbose = 1
+amr.check_int = 40    # every 5 units (coarse dt 0.125); keep 3
+checkpoint_keep = 3
+amr.plot_int = 4
+amr.plot_vars = chi K lapse shift1 shift2 shift3
+amr.derive_plot_vars = Weyl4
+
+# ---- initial data: the matched IVP ----
+bh1.mass = 0.9443    # per-hole ADM 1.00 at d = 8 (the Brill-Lindquist rule in the header)
+bh2.mass = 0.9443
+bh1.offset = -4.0 0.0 0.0    # d = 8, the head-on separation
+bh2.offset =  4.0 0.0 0.0
+bh1.momentum = 0.0 0.0 0.0    # FROM REST, the head-on
+bh2.momentum = 0.0 0.0 0.0
+
+# ---- grid: the wormhole box ----
+amr.n_cell = 128 128 128
+geometry.prob_extent = 64 64 64
+amr.max_level = 5
+amr.regrid_int = 2 4 8 16 32
+tagging.threshold = 0.014
+amr.max_grid_size = 64
+amr.blocking_factor = 16
+
+geometry.is_periodic = 0 0 0
+boundary.hi_condition = "SOMMERFELD_BC" "SOMMERFELD_BC" "SOMMERFELD_BC"
+boundary.lo_condition = "SOMMERFELD_BC" "SOMMERFELD_BC" "SOMMERFELD_BC"
+
+# ---- evolution ----
+evolution.dt_multiplier = 0.25
+evolution.stop_time = 100.0
+evolution.spatial_derivative_order = 4
+evolution.nan_check = true
+evolution.sigma = 0.5
+
+ccz4.kappa1 = 3.0
+ccz4.kappa2 = 0.0
+ccz4.kappa3 = 1.0
+ccz4.covariantZ4 = false
+
+gauge.shift_advec_coeff = 1.0
+
+# The flat 'center' key: the C++ Weyl extraction would default to the grid
+# center anyway, but run_single.sh greps this exact key to hand the Python
+# consumer its extraction center -- without it the consumer silently
+# integrates spheres at the DOMAIN CORNER (0,0,0) and writes junk modes
+# (measured on bbh_control_d12_p012: static ~0.006 'signal', no wave).
+center = 32.0 32.0 32.0
+
+# ---- extraction: the wormhole spheres ----
+weyl_extraction.enabled = true
+weyl_extraction.num_radii = 4
+weyl_extraction.radii = 14.0 20.0 26.0 30.0
+weyl_extraction.levels = 0 0 0 0
+weyl_extraction.num_points_phi = 72
+weyl_extraction.num_points_theta = 37
+
+puncture_tracking.enabled = true
+
+# ---- rewritten by run_single.sh at clone time ----
+output_path = "runs/wormhole_merger/bbh_headon_d8_L128_lvl5_t100"
+amr.plot_file = "/tmp/grteclyn_scratch/bbh_headon_d8_L128_lvl5_t100/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/bbh_headon_d8_L128_lvl5_t100/BinaryWormholeChk"

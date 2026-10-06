@@ -1,0 +1,488 @@
+{
+ "schema": 1,
+ "run": "v2_spiral_d12_p012_L128_lvl4w_t040_csm",
+ "reconstructed": false,
+ "launched_utc": "2026-10-04T06:41:19Z",
+ "what": "CONV-csm-w (the user's go 10-03 ~14:05 UTC, \"run next run from queue referee run\"): the wave-zone",
+ "template": "runs/wormhole_merger/templates_scan/params_v2_spiral_d12_p012_L128_lvl4w_t040_csm.txt",
+ "template_sha256": "04b3a9dece1a69ba72312260089560f6dee1f0fcbb260c3a624e07ee011bcd1b",
+ "params_sha256": "40f3606d1e7421a62a90f3bdd12258490b50d82394ec6c28c12ecdf5cfc8a75c",
+ "params": {
+  "verbosity": "1",
+  "output_path": "\"runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl4w_t040_csm\"",
+  "amr.plot_file": "\"/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl4w_t040_csm/BinaryWormholePlt\"",
+  "amr.check_file": "\"/tmp/grteclyn_scratch/v2_spiral_d12_p012_L128_lvl4w_t040_csm/BinaryWormholeChk\"",
+  "amr.checkpoint_files_output": "1",
+  "checkpoint_interval": "500",
+  "checkpoint_keep": "3",
+  "plot_interval": "100",
+  "amr.plot_vars": "chi h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 K lapse shift1 shift2 shift3 phi Pi",
+  "amr.derive_plot_vars": "Weyl4",
+  "hdf5_subpath": "\"hdf5\"",
+  "pout_subpath": "\"pout\"",
+  "data_subpath": "\"data\"",
+  "print_progress_only_to_rank_0": "1",
+  "particle_interpolator.verbosity": "0",
+  "wormhole_id_type": "1",
+  "wormhole_initial_lapse_type": "5",
+  "wormhole_throat_radius_A": "2.0",
+  "wormhole_throat_radius_B": "2.0",
+  "wormhole_drainhole_mass_A": "1.0",
+  "wormhole_drainhole_mass_B": "1.0",
+  "wormhole_bare_mass_A": "0.0",
+  "wormhole_bare_mass_B": "0.0",
+  "wormhole_centerA": "-6.0 0.0 0.0",
+  "wormhole_centerB": "6.0 0.0 0.0",
+  "wormhole_momentumA": "0.0  0.12 0.0",
+  "wormhole_momentumB": "0.0 -0.12 0.0",
+  "wormhole_phi_sign_B": "-1.0",
+  "wormhole_subtract_phi_asymptote": "1",
+  "wormhole_support_strength": "1.0",
+  "phantom_mass": "0.0",
+  "L": "128.0",
+  "N1": "256",
+  "N2": "256",
+  "N3": "256",
+  "center": "64.0 64.0 64.0",
+  "max_level": "4",
+  "regrid_interval": "16 16 16 16 16 16",
+  "regrid_threshold": "0.05",
+  "max_box_size": "32",
+  "min_box_size": "16",
+  "isPeriodic": "0 0 0",
+  "hi_boundary": "1 1 1",
+  "lo_boundary": "1 1 1",
+  "nonzero_asymptotic_vars": "chi h11 h22 h33 lapse",
+  "nonzero_asymptotic_values": "1.0 1.0 1.0 1.0 1.0",
+  "dt_multiplier": "0.02",
+  "stop_time": "40.0",
+  "max_spatial_derivative_order": "4",
+  "nan_check": "1",
+  "min_chi": "1.0e-8",
+  "min_lapse": "1.0e-10",
+  "core_matter_damping": "0",
+  "core_damping_lapse_start": "3.0e-2",
+  "core_damping_lapse_full": "1.0e-3",
+  "lapse_advec_coeff": "1.0",
+  "lapse_coeff": "2.0",
+  "lapse_power": "1.0",
+  "shift_advec_coeff": "1.0",
+  "shift_Gamma_coeff": "0.75",
+  "eta": "1.0",
+  "formulation": "0",
+  "kappa1": "3.0",
+  "kappa2": "0.",
+  "kappa3": "1.",
+  "covariantZ4": "0",
+  "sigma": "0.1",
+  "puncture_tracking.enabled": "0",
+  "calculate_constraint_norms": "1",
+  "tagging_type": "2",
+  "tagging_L": "64.0",
+  "throat_tracking": "1",
+  "throat_track_search_radius": "2.0",
+  "binary_throat_diagnostics": "1",
+  "binary_diag_axis": "0",
+  "binary_diag_split_coord": "0.0",
+  "sponge_enabled": "1",
+  "sponge_inner_radius": "48.0",
+  "sponge_outer_radius": "64.0",
+  "sponge_strength": "4.0",
+  "sponge_ramp_power": "4",
+  "activate_extraction": "1",
+  "write_extraction": "0",
+  "amrex.the_arena_init_size": "1048576",
+  "extraction_subpath": "\"data\"",
+  "extraction_center": "64.0 64.0 64.0",
+  "num_extraction_radii": "4",
+  "extraction_radii": "20.0 28.0 36.0 44.0",
+  "extraction_levels": "0 1 0 0",
+  "num_points_phi": "24",
+  "num_points_theta": "37",
+  "num_modes": "21",
+  "modes": "2 -2  2 -1  2 0  2 1  2 2 \\",
+  "constraint_solve": "1",
+  "constraint_solve_background": "0",
+  "constraint_solve_puncture_mode": "3",
+  "constraint_solve_verbose": "1"
+ },
+ "overrides": {
+  "WHM_KEEP_LAST": "3",
+  "WHM_CONSUME_ARGS": "--radii 14 20 30 44 --scalar-modes --scalar-mode-ells 0 1 2",
+  "WHM_PREFLIGHT": "full",
+  "WHM_FRAMES_SUBSET": "08_convergence study: no frames, no movies (the standing exception)"
+ },
+ "restart_from": null,
+ "binary": {
+  "file": "main3d_csmatch_5f988dbc_2026-09-28.ex",
+  "path": "runs/wormhole_merger/bin/main3d_csmatch_5f988dbc_2026-09-28.ex",
+  "sha256": "5765fee9a29fadff69b3cd28590909da3280ba501834633ac0d3ba568fe1e37f",
+  "grteclyn_version": "5f988dbc",
+  "binaries_tsv": {
+   "file": "main3d_csmatch_5f988dbc_2026-09-28.ex",
+   "sha256_16": "5765fee9a29fadff",
+   "grteclyn_version": "5f988dbc",
+   "amrex": "26.02-12-gd7da5045",
+   "built_utc": "2026-09-28T05:03:33Z",
+   "flags": "USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90",
+   "nvcc": "Build cuda_12.1.r12.1/compiler.32688072_0",
+   "made_by": "build_binary.sh",
+   "note": "constraint_solve mode 3 (far-side matched), far-side report, volume-identity M_ADM (59557600); first CUDA build of that code"
+  }
+ },
+ "launcher": {
+  "commit": "88bcc38e",
+  "dirty": false
+ },
+ "node": "the second GPU node",
+ "gpu": "0",
+ "paths": {
+  "run_dir": "runs/wormhole_merger/v2_spiral_d12_p012_L128_lvl4w_t040_csm",
+  "scratch": "$GRTECLYN_SCRATCH/v2_spiral_d12_p012_L128_lvl4w_t040_csm"
+ },
+ "preflight": {
+  "schema": 1,
+  "mode": "full",
+  "restart": false,
+  "exe": "main3d_csmatch_5f988dbc_2026-09-28.ex",
+  "exe_sha256": "5765fee9a29fadff69b3cd28590909da3280ba501834633ac0d3ba568fe1e37f",
+  "params_sha256": "40f3606d1e7421a62a90f3bdd12258490b50d82394ec6c28c12ecdf5cfc8a75c",
+  "verdict": "pass",
+  "reasons": [],
+  "frames": {
+   "fields": [
+    "chi",
+    "chi_minus_1",
+    "K",
+    "lapse",
+    "shift1",
+    "shift2",
+    "shift3",
+    "phi",
+    "Pi",
+    "Weyl4_Re",
+    "Weyl4_Im",
+    "Weyl4_Mag",
+    "scalar_activity",
+    "local_speed"
+   ],
+   "required": [
+    "chi",
+    "chi_minus_1",
+    "K",
+    "lapse",
+    "shift1",
+    "shift2",
+    "shift3",
+    "phi",
+    "Pi",
+    "Weyl4_Re",
+    "Weyl4_Im",
+    "Weyl4_Mag",
+    "scalar_activity",
+    "local_speed"
+   ],
+   "missing": [],
+   "subset": "08_convergence study: no frames, no movies (the standing exception)",
+   "source": "campaign default (frames_default.txt)",
+   "axis": "z",
+   "errors": [],
+   "warnings": [
+    "WHM_FRAMES_SUBSET='08_convergence study: no frames, no movies (the standing exception)' is set but the frame list is the full set: nothing to excuse"
+   ],
+   "render": {
+    "plotfile": "plt00000",
+    "frame": 0,
+    "status": "ok",
+    "seconds": 12.9,
+    "frames_out": "preflight_frames",
+    "log": "preflight_frames/render.log",
+    "fields": {
+     "chi": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.00017936230869963765,
+      "max": 0.951720118522644,
+      "verdict": "ok"
+     },
+     "chi_minus_1": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": -0.9998206496238708,
+      "max": -0.04827986657619476,
+      "verdict": "ok"
+     },
+     "K": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: K is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "lapse": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.23627986013889313,
+      "max": 0.9796485900878906,
+      "verdict": "ok"
+     },
+     "shift1": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: shift1 is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "shift2": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: shift2 is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "shift3": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "phi": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": -0.8145476579666138,
+      "max": 0.8145476579666138,
+      "verdict": "ok"
+     },
+     "Pi": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0,
+      "max": 0.0,
+      "verdict": "flat",
+      "why": "every pixel 0: Pi is constant everywhere in this plotfile (nothing to show yet)"
+     },
+     "Weyl4_Re": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": -0.00015152612468227744,
+      "max": 0.06504872441291809,
+      "verdict": "ok"
+     },
+     "Weyl4_Im": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": -0.001634106389246881,
+      "max": 0.0016425668727606535,
+      "verdict": "ok"
+     },
+     "Weyl4_Mag": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 1.1935253896311337e-09,
+      "max": 0.0650646984577179,
+      "verdict": "ok"
+     },
+     "scalar_activity": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 6.67209860694129e-06,
+      "max": 0.8145476579666138,
+      "verdict": "ok"
+     },
+     "local_speed": {
+      "pixels": 262144,
+      "nan": 0,
+      "min": 0.0027768954169005156,
+      "max": 0.9557073712348938,
+      "verdict": "ok"
+     }
+    },
+    "log_tail": []
+   }
+  },
+  "intent": {
+   "errors": [],
+   "warnings": []
+  },
+  "symmetry": {
+   "reflect": [],
+   "errors": [],
+   "warnings": []
+  },
+  "consumer": {
+   "consume": true,
+   "areal_radius": "off",
+   "neck_horizons": false,
+   "reflect": [],
+   "errors": [],
+   "warnings": []
+  },
+  "paths": {
+   "name": "v2_spiral_d12_p012_L128_lvl4w_t040_csm",
+   "errors": [],
+   "warnings": []
+  },
+  "static": {
+   "keys": 97,
+   "absent_from_binary": [
+    "hdf5_subpath",
+    "nonzero_asymptotic_vars",
+    "nonzero_asymptotic_values"
+   ],
+   "allowed_absent": [
+    "hdf5_subpath",
+    "nonzero_asymptotic_vars",
+    "nonzero_asymptotic_values"
+   ]
+  },
+  "probe_solve_caps": {
+   "constraint_solve_max_newton": "2",
+   "constraint_solve_match_max_iter": "0"
+  },
+  "probe": {
+   "status": "ok",
+   "exit_code": 6,
+   "unused": [
+    "hdf5_subpath",
+    "nonzero_asymptotic_values",
+    "nonzero_asymptotic_vars"
+   ],
+   "version": "5f988dbc",
+   "seconds": 15.1,
+   "log_tail": [],
+   "allowed_unused": [
+    "hdf5_subpath",
+    "nonzero_asymptotic_values",
+    "nonzero_asymptotic_vars"
+   ]
+  },
+  "t0": {
+   "binary_throat_diagnostics.dat": {
+    "time": 0.0,
+    "separation": 12.03125,
+    "xA": 6.015625,
+    "yA": 0.0,
+    "zA": 0.0,
+    "chiA_min": 2.860824176e-08,
+    "lapseA_min": 0.1981602058,
+    "xB": -6.015625,
+    "yB": 0.0,
+    "zB": 0.0,
+    "chiB_min": 2.860824176e-08,
+    "lapseB_min": 0.1981602058,
+    "theta_A": 0.14827432169,
+    "ah_r_A": 0.0,
+    "theta_B": 0.14827432165,
+    "ah_r_B": 0.0,
+    "theta_common": 1e+30,
+    "ah_r_common": 0.0
+   },
+   "collapse_diagnostics.dat": {
+    "time": 0.0,
+    "min_lapse": 0.1981602058,
+    "min_chi": 2.860824176e-08,
+    "max_abs_K": 0.0,
+    "min_lapse_x": 0.0,
+    "min_lapse_y": 0.0,
+    "min_lapse_z": 0.0,
+    "min_phi": -0.92388932926,
+    "max_phi": 0.92388932926,
+    "min_Pi": 0.0,
+    "max_Pi": 0.0
+   },
+   "constraint_norms.dat": {
+    "time": 0.0,
+    "L2_Ham": 0.0010792261332,
+    "L2_Mom": 1.439519457e-06
+   },
+   "constraint_solve.dat": {
+    "time": 0.0,
+    "mode": 3.0,
+    "M_ADM": 2.2796052267,
+    "M_ADM_face": 2.2121102496,
+    "c_A": 2.1104387813,
+    "sigma_A": 0.92588562354,
+    "w0_A": 0.00018753004302,
+    "Mfar_A": -4.781090488,
+    "Qfar_A": 3.0343679816,
+    "m1_A": 1.0058569269,
+    "c_B": 2.1104387813,
+    "sigma_B": 0.92588562354,
+    "w0_B": 0.00018753006332,
+    "Mfar_B": -4.7810904879,
+    "Qfar_B": 3.0343679816,
+    "m1_B": 1.0058569269,
+    "match_res": 0.0061089348836
+   },
+   "throat_track.dat": {
+    "time": 0.0,
+    "xA": -6.015625,
+    "yA": 0.0,
+    "zA": 0.0,
+    "chiA_pit": 2.860824176e-08,
+    "nA": 4.0,
+    "xB": 6.015625,
+    "yB": 0.0,
+    "zB": 0.0,
+    "chiB_pit": 2.860824176e-08,
+    "nB": 4.0
+   }
+  },
+  "grteclyn_version": "5f988dbc",
+  "seed": {
+   "requested": {}
+  }
+ },
+ "t0": {
+  "time": 0.0,
+  "L2_Ham": 0.0010792261332,
+  "L2_Mom": 1.439519457e-06
+ },
+ "seed": null,
+ "frames": {
+  "fields": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "missing_from_default": [],
+  "subset": "08_convergence study: no frames, no movies (the standing exception)",
+  "source": "campaign default (frames_default.txt)",
+  "t0_render": {
+   "chi": "ok",
+   "chi_minus_1": "ok",
+   "K": "flat",
+   "lapse": "ok",
+   "shift1": "flat",
+   "shift2": "flat",
+   "shift3": "flat",
+   "phi": "ok",
+   "Pi": "flat",
+   "Weyl4_Re": "ok",
+   "Weyl4_Im": "ok",
+   "Weyl4_Mag": "ok",
+   "scalar_activity": "ok",
+   "local_speed": "ok"
+  }
+ },
+ "status": "finished",
+ "exit_status": 0,
+ "finished_utc": "2026-10-04T16:53:48Z",
+ "t_end": 40.0
+}

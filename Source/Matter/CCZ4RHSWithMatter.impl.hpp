@@ -169,15 +169,40 @@ CCZ4RHSWithMatter<matter_t, gauge_t, deriv_t>::add_emtensor_rhs(
     }
 
     // Update RHS for other variables
-    Tensor::Rank2 S_TF = emtensor.S;
-
-    CCZ4Geometry::make_trace_free(S_TF, vars, h_UU);
-
-    FOR2_SYM(i, j)
+    if (this->m_params.chi_rhs_floor > 0.0)
     {
+        // chi regularisation on: assemble chi S_ij FIRST and remove the trace
+        // of that.  S_ij carries h_ij V_t / chi and h_ij V / chi, pure-trace
+        // pieces that make_trace_free cancels by subtracting two numbers of
+        // size 1/chi; multiplying by chi before the subtraction makes the
+        // cancellation happen between O(1) numbers.  Algebraically identical
+        // (trace removal is linear), so nothing but round-off changes.
+        Tensor::Rank2 chi_S_TF;
+        FOR (i, j)
+        {
+            chi_S_TF(i, j) = vars.chi() * emtensor.S(i, j);
+        }
+        CCZ4Geometry::make_trace_free(chi_S_TF, vars, h_UU);
 
-        rhs_cell_data[sym_var_idx(c_A11, i, j)] +=
-            -8.0 * M_PI * m_G_Newton * vars.chi() * vars.lapse() * S_TF(i, j);
+        FOR2_SYM(i, j)
+        {
+            rhs_cell_data[sym_var_idx(c_A11, i, j)] +=
+                -8.0 * M_PI * m_G_Newton * vars.lapse() * chi_S_TF(i, j);
+        }
+    }
+    else
+    {
+        Tensor::Rank2 S_TF = emtensor.S;
+
+        CCZ4Geometry::make_trace_free(S_TF, vars, h_UU);
+
+        FOR2_SYM(i, j)
+        {
+
+            rhs_cell_data[sym_var_idx(c_A11, i, j)] +=
+                -8.0 * M_PI * m_G_Newton * vars.chi() * vars.lapse() *
+                S_TF(i, j);
+        }
     }
 
     FOR (i)

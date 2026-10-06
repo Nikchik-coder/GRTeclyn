@@ -37,6 +37,29 @@ if [[ $# -eq 0 ]]; then
   exit 2
 fi
 
+# EVERY argv-based sweep misses the wormhole-merger evolution binary.  Its
+# processes are started from INSIDE the run directory with relative paths and a
+# neutral process label ("test params.txt"), deliberately, so that a shared
+# machine's process table does not name the run -- so the run directory appears
+# in no argv and `pgrep -f "<dir>/"` cannot match it.  Measured 2026-09-15: the
+# stopper printed "fully stopped" twice while the binary went on holding 52 GB
+# of the card, which is how two runs end up on one GPU.
+#
+# What the process cannot hide is its working directory.  /proc/<pid>/cwd is
+# exact, needs no pattern, and cannot match somebody else's run -- or this
+# script's own shell, which is excluded explicitly.
+pids_with_cwd() {
+  local want="$1" pid cwd
+  want="$(cd -- "${want}" 2>/dev/null && pwd -P)" || return 0
+  [[ -n "${want}" ]] || return 0
+  for pid in /proc/[0-9]*; do
+    pid="${pid#/proc/}"
+    [[ "${pid}" == "$$" || "${pid}" == "${PPID}" ]] && continue
+    cwd="$(readlink "/proc/${pid}/cwd" 2>/dev/null)" || continue
+    [[ "${cwd}" == "${want}" || "${cwd}" == "${want}"/* ]] && printf '%s ' "${pid}"
+  done
+}
+
 resolve_dir() {
   local arg="$1"
   if [[ -d "$arg" ]]; then (cd -- "$arg" && pwd); return 0; fi
@@ -129,6 +152,7 @@ for arg in "$@"; do
   # ---- 2. Workers: anything carrying the runs dir or its scratch in argv ----
   workers=" $(pgrep_safe "${dir}/")"                    # evolution, GRTresna, consumer
   workers+=" $(pgrep_safe "grteclyn_scratch/${name}_")" # scratch-watching consumers
+  workers+=" $(pids_with_cwd "${dir}")"                 # argv says nothing -- see below
   do_kill TERM $workers
 
   # ---- 3. Verify; escalate ---------------------------------------------------
@@ -138,7 +162,7 @@ for arg in "$@"; do
   fi
   survivors=""
   for _pass in 1 2 3; do
-    survivors="$(live_filter $(pgrep_safe "${dir}/|--name ${name}( |$)|grteclyn_scratch/${name}_"))"
+    survivors="$(live_filter $(pgrep_safe "${dir}/|--name ${name}( |$)|grteclyn_scratch/${name}_") $(pids_with_cwd "${dir}"))"
     [[ -z "${survivors// /}" ]] && break
     kill -KILL $survivors 2>/dev/null
   done

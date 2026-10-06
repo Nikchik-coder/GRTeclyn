@@ -28,6 +28,14 @@ struct CCZ4_params_t
     amrex::Real kappa3; //!< Damping parameter kappa3 as in arXiv:1106.2254
     bool covariantZ4;   //!< if true, replace kappa1->kappa1/lapse as in
                         //!<  arXiv:1307.7391 eq. 27
+    //! Point-of-use regularisation of chi in the evolution equations: every
+    //! genuine 1/chi in the RHS (the (d chi)^2 / chi curvature term, the
+    //! A^ij d_j chi / chi term of the Gamma equation, and the matter source,
+    //! which is then assembled as chi S_ij before its trace is removed) is
+    //! evaluated as 1 / max(chi, chi_rhs_floor).  The evolved chi itself is
+    //! left alone -- that is the state clamp's job (ccz4.min_chi), which this
+    //! is meant to replace.  0 (the default) is the old code bit for bit.
+    amrex::Real chi_rhs_floor;
 
     static void check_params();
 
@@ -38,6 +46,8 @@ struct CCZ4_params_t
         ccz4_pp.get("kappa2", kappa2);
         ccz4_pp.get("kappa3", kappa3);
         ccz4_pp.get("covariantZ4", covariantZ4);
+        chi_rhs_floor = 0.0;
+        ccz4_pp.query("chi_rhs_floor", chi_rhs_floor);
     }
 };
 
@@ -110,6 +120,13 @@ class CCZ4RHS
 inline void CCZ4_params_t::check_params()
 {
     GRParmParse ccz4_pp("ccz4");
+
+    double chi_rhs_floor = 0.0;
+    ccz4_pp.queryAdd("chi_rhs_floor", chi_rhs_floor);
+    if (chi_rhs_floor < 0.0)
+    {
+        ccz4_pp.error("chi_rhs_floor", "must be >= 0 (0 = off)");
+    }
 
     int formulation{};
     formulation = CCZ4RHS<>::USE_CCZ4;

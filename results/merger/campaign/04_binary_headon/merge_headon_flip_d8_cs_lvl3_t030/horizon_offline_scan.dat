@@ -1,0 +1,18 @@
+# Offline fine-grid oriented shell scan about the midpoint (scripts/validation/ah_oriented_scan.py,
+# level 3, dx 0.0625, half 4.0, rmin 0.25, dr 0.02), run on the kept plotfiles Plt02000..03000 of
+# merge_headon_flip_d8_cs_lvl3_t030 (2026-09-27): the settings of the scout's record
+# (merge_headon_flip_d8_v1_t100/small_data/horizon_offline_scan.dat), so the two compare row by row.
+# nan = no MOTS by the shell criterion (max theta_out over the sphere crossing 0 with theta_in < 0).
+# From t = 28 the trapped band lies inside the minimal sphere and the criterion finds no outermost MOTS.
+# time  r_mots  R_mots  M_MS_mots  r_trapped_in  r_trapped_out  r_at_R_min  R_min
+20.0  nan  nan  nan  nan  nan  3.030  6.351
+21.0  nan  nan  nan  nan  nan  2.830  6.131
+22.0  nan  nan  nan  nan  nan  2.630  5.929
+23.0  2.879  5.835  3.097  2.830  2.870  2.450  5.747
+24.0  3.131  5.867  3.054  2.410  3.130  2.290  5.586
+25.0  3.348  5.938  3.004  2.050  3.330  2.150  5.444
+26.0  2.833  5.580  3.134  1.710  2.830  2.010  5.318
+27.0  2.219  5.258  3.293  1.470  2.210  1.890  5.206
+28.0  nan  nan  nan  1.330  1.730  1.770  5.103
+29.0  nan  nan  nan  1.210  1.370  1.650  5.008
+30.0  nan  nan  nan  1.090  1.090  1.550  4.917

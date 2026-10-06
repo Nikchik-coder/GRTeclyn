@@ -5,6 +5,9 @@ f/
 o/
 t/
 *.ex
+# A live run holds its executable open, so rebuilding means moving the old one
+# aside first (ETXTBSY otherwise).  Those copies are 120 MB compiled binaries.
+main3d*.bak
 *.dSYM
 *.[oa]
 TAGS
@@ -75,6 +78,9 @@ __pycache__/
 # LaTeX build junk
 *.fdb_latexmk
 *.fls
+# SyncTeX (editor <-> PDF jumps): holds this machine's absolute paths
+*.synctex.gz
+*.synctex(busy)
 
 # Submission bundle (regenerable)
 /research/neuralspacetime/article/research_submission.zip
@@ -92,3 +98,24 @@ __pycache__/
 /results/**/__pycache__/
 /results/**/*.pyc
 *.ex.*
+
+# AMReX drops this in the binary's cwd on every run, and it records the
+# absolute output/plotfile paths of whoever ran it -- home dirs and scratch
+# paths that must never enter git.  It is a run artefact, not configuration.
+parameters_and_version.txt
+
+# Frames belong to the run that produced them, under runs/<campaign>/<run>/frames.
+# consume_plotfiles once defaulted --frames-out into this source directory, so
+# PNGs from unrelated runs accumulated here and 16 of them got committed.  The
+# default now points at the working directory; this keeps any stragglers out.
+grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/*/
+
+# Downloaded GWOSC strain: bulk detector data, re-fetchable from gwosc.org by
+# (ifo, gps_start, gps_end, rate) and never edited by hand.  The default cache
+# now lives outside the source tree (runs/gw_search/strain_cache); the second
+# line retires the one that was briefly written into the package itself.
+runs/gw_search/strain_cache/
+grteclyn-wrapper/src/grteclyn_wrapper/gw_search/data_cache/
+
+# Superseded pack copies (policy: archived, never tracked)
+results/merger/campaign/00_archive/

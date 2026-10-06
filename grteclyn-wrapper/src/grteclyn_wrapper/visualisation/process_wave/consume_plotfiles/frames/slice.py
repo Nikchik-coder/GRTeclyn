@@ -6,11 +6,13 @@ from typing import Sequence
 import matplotlib.pyplot as plt
 import numpy as np
 import yt
+from matplotlib.colors import LogNorm, SymLogNorm
 from matplotlib.ticker import FuncFormatter
 
 from ..config import _FRAME_DPI, _field_frame_config
 from ..fields import _field_key, _register_derived_fields
 from .center import _frame_buff_size, _resolve_frame_physics_center
+from .mirror import mirrored_window
 from .slice_cache import cache_slice
 from .zlim import _resolve_plot_zlim
 
@@ -30,6 +32,8 @@ def draw_slice_png(
     corner: bool = False,
     verbose: bool = False,
     note: str = "",
+    norm: str | None = None,
+    linthresh: float | None = None,
 ) -> str:
     """Draw one slice PNG from an array that is already windowed.
 
@@ -38,6 +42,17 @@ def draw_slice_png(
     That is the only way to get a colourbar that does not move when the
     plotfiles are deleted as they are consumed.  Both callers must draw
     identically, so there is exactly one copy of this code.
+
+    ``norm`` selects how values map to colour.  The default, ``None``, is the
+    linear mapping every frame has always used.  ``"symlog"`` is for a field
+    whose range is set by one compact loud feature while the physics being
+    looked at is orders of magnitude quieter: the merged core's K is a hundred
+    times the ringdown wave crossing the same slice, so on a linear scale the
+    wave is white.  A symmetric log scale is linear within +/-``linthresh``
+    (so the zero crossings of a signed field stay readable, which a plain log
+    cannot do) and logarithmic outside it, showing both at once.  Pick
+    ``linthresh`` at the amplitude of the quiet feature; ``slice_cache``
+    measures it from the series rather than guessing.
     """
     plot_extent = list(plot_extent)
     plt.rcParams.update({
@@ -59,6 +74,20 @@ def draw_slice_png(
         coord_val,
     )
 
+    imshow_kw = {"vmin": zlim[0], "vmax": zlim[1]}
+    if norm == "symlog":
+        lt = float(linthresh) if linthresh else 0.0
+        span = max(abs(float(zlim[0])), abs(float(zlim[1])))
+        # A linthresh at or above the full range would flatten the picture back
+        # to linear, and a non-positive one is undefined; fall back to linear.
+        if 0.0 < lt < span:
+            imshow_kw = {"norm": SymLogNorm(
+                linthresh=lt, vmin=zlim[0], vmax=zlim[1], base=10)}
+    elif norm == "log":
+        lo = max(float(zlim[0]), 1.0e-30)
+        if float(zlim[1]) > lo:
+            imshow_kw = {"norm": LogNorm(vmin=lo, vmax=float(zlim[1]))}
+
     fig, ax = plt.subplots(figsize=(8, 7))
     im = ax.imshow(
         plot_arr,
@@ -66,9 +95,8 @@ def draw_slice_png(
         extent=plot_extent,
         aspect="equal",
         cmap=cfg["cmap"],
-        vmin=zlim[0],
-        vmax=zlim[1],
         interpolation="nearest",
+        **imshow_kw,
     )
     ax.set_xlabel(r"$%s$" % xlabel_name)
     ax.set_ylabel(r"$%s$" % ylabel_name)
@@ -229,11 +257,16 @@ def _render_slice_frame(
     frame_zlims: dict[str, list[float]] | None = None,
     use_global_zlim: bool = True,
     cache_slices: bool = False,
+    reflect: Sequence[str] | None = None,
 ) -> str:
     """
     Render a SlicePlot frame and save it under:
       <frames_out_dir>/<field>_<axis>/frames/frame_<axis>_<idx>.png
     Returns the saved path.
+
+    ``reflect`` (the consumer's ``--reflect``): a symmetry-reduced run's frame
+    is drawn from the simulated part of the window and mirrored into the full
+    plane (frames/mirror.py), so it looks like the full-box run's.
     """
     def _clean_zero(value: float, tol: float = 1.0e-10) -> float:
         value = float(value)
@@ -242,6 +275,21 @@ def _render_slice_frame(
     def _format_tick(value: float, _pos=None) -> str:
         value = _clean_zero(value)
         return f"{value:g}"
+
+    mirrored = (mirrored_window(ds, field, axis, coord, zoom, center_xyz, reflect)
+                if reflect else None)
+    if mirrored is not None:
+        arr, extent, plane = mirrored
+        cfg = _field_frame_config(field)
+        zlim = _resolve_plot_zlim(field, arr, cfg, auto_zlim=auto_zlim,
+                                  frame_zlims=frame_zlims, use_global_zlim=use_global_zlim)
+        coord_val = _clean_zero(plane)
+        if cache_slices:
+            cache_slice(frames_out_dir, field, axis, frame_idx, arr, extent,
+                        time=float(ds.current_time), coord_val=coord_val)
+        return draw_slice_png(arr, extent, field=field, cfg=cfg, axis=axis, coord_val=coord_val,
+                              time=float(ds.current_time), zlim=zlim, frames_out_dir=frames_out_dir,
+                              frame_idx=frame_idx, verbose=verbose, note=" (mirrored)")
 
     if int(ds.index.max_level) == 0:
         return _render_native_slice_frame(
@@ -305,22 +353,47 @@ def _render_slice_frame(
     #   z-axis normal -> x horizontal, y vertical
     # Let's assume standard behavior first.
 
+    # The FRB is the array yt is about to draw.  Pull it out once: the colour
+    # scale is measured from it, and it is also the thing worth caching, being
+    # ~1e4 times smaller than the plotfile that produced it.
     try:
-        zlim = _resolve_plot_zlim(
-            field,
-            np.asarray(slc.frb[plot_field]),
-            cfg,
-            auto_zlim=auto_zlim,
-            frame_zlims=frame_zlims,
-            use_global_zlim=use_global_zlim,
-        )
+        frb_arr = np.asarray(slc.frb[plot_field])
     except Exception:
+        frb_arr = None
+
+    if frb_arr is None:
         zlim = cfg["zlim"]
+    else:
+        try:
+            zlim = _resolve_plot_zlim(
+                field,
+                frb_arr,
+                cfg,
+                auto_zlim=auto_zlim,
+                frame_zlims=frame_zlims,
+                use_global_zlim=use_global_zlim,
+            )
+        except Exception:
+            zlim = cfg["zlim"]
     if zlim[0] is not None:
         slc.set_zlim(plot_field, zlim[0], zlim[1])
     slc.set_cmap(plot_field, cfg["cmap"])
 
     coord_val = _clean_zero(physics_center[{"x": 0, "y": 1, "z": 2}[axis]])
+
+    if cache_slices and frb_arr is not None:
+        # yt hands back the buffer indexed [y, x] with ``bounds`` as
+        # (x_lo, x_hi, y_lo, y_hi) -- exactly what draw_slice_png feeds to
+        # imshow(origin="lower", extent=...), so a redraw from the cache lands
+        # on the same axes as the live frame.
+        try:
+            cache_slice(
+                frames_out_dir, field, axis, frame_idx,
+                frb_arr, [float(b) for b in slc.frb.bounds],
+                time=float(ds.current_time), coord_val=coord_val,
+            )
+        except Exception as exc:
+            print(f"WARNING: slice cache failed for {field}_{axis}: {exc}")
 
     # Format title with LaTeX
     title_text = r"%s $\quad t=%.2f \quad %s=%g$" % (cfg["label"], float(ds.current_time), axis, coord_val)

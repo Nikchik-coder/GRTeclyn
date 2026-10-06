@@ -37,6 +37,7 @@ struct legacy_ccz4_params_t
     double shift_advec_coeff{};
     double shift_Gamma_coeff{};
     double eta{};
+    double lapse_shock_kappa{};
     double kappa1{};
     double kappa2{};
     double kappa3{};
@@ -67,6 +68,8 @@ class SimulationParametersBase : public AMReXParameters
         pp.load("shift_advec_coeff", ccz4_params.shift_advec_coeff, 0.0);
         pp.load("shift_Gamma_coeff", ccz4_params.shift_Gamma_coeff, 0.75);
         pp.load("eta", ccz4_params.eta, 1.0);
+        // Shock-avoiding lapse term, -kappa (K - 2 Theta); 0 = off.
+        pp.load("lapse_shock_kappa", ccz4_params.lapse_shock_kappa, 0.0);
 
         // CCZ4 parameters
         pp.load("formulation", formulation, 0);
@@ -80,8 +83,15 @@ class SimulationParametersBase : public AMReXParameters
 
         // Nan Check and min chi and lapse values
         pp.load("nan_check", nan_check, true);
+        // Read bare, like nan_check, and injected as evolution.nan_autopsy
+        // below.  GRAMRLevel queries the prefixed name; without the inject the
+        // key in the params file is silently ignored and the report never
+        // fires (that is what happened to the 2026-09-08 autopsy run).
+        pp.load("nan_autopsy", nan_autopsy, false);
         pp.load("min_chi", min_chi, 1e-4);
         pp.load("min_lapse", min_lapse, 1e-4);
+        // Point-of-use chi regularisation in the RHS (CCZ4RHS.hpp); 0 = off.
+        pp.load("chi_rhs_floor", chi_rhs_floor, 0.0);
 
         // directory to store data (extraction files, puncture data, constraint
         // norms)
@@ -212,6 +222,7 @@ class SimulationParametersBase : public AMReXParameters
     {
         inject("evolution.sigma", sigma);
         inject("evolution.nan_check", nan_check);
+        inject("evolution.nan_autopsy", nan_autopsy);
 
         inject("ccz4.formulation", formulation);
         inject("ccz4.kappa1", ccz4_params.kappa1);
@@ -220,6 +231,7 @@ class SimulationParametersBase : public AMReXParameters
         inject("ccz4.covariantZ4", ccz4_params.covariantZ4);
         inject("ccz4.min_chi", min_chi);
         inject("ccz4.min_lapse", min_lapse);
+        inject("ccz4.chi_rhs_floor", chi_rhs_floor);
 
         inject("gauge.lapse_advec_coeff", ccz4_params.lapse_advec_coeff);
         inject("gauge.lapse_power", ccz4_params.lapse_power);
@@ -227,6 +239,7 @@ class SimulationParametersBase : public AMReXParameters
         inject("gauge.shift_Gamma_coeff", ccz4_params.shift_Gamma_coeff);
         inject("gauge.shift_advec_coeff", ccz4_params.shift_advec_coeff);
         inject("gauge.eta", ccz4_params.eta);
+        inject("gauge.lapse_shock_kappa", ccz4_params.lapse_shock_kappa);
 
         // Weyl4's base constructor requires weyl_extraction.center whenever a
         // Weyl4 compute class is built, extraction active or not.  Use the
@@ -387,7 +400,10 @@ class SimulationParametersBase : public AMReXParameters
 
     bool nan_check{};
 
+    bool nan_autopsy{};
+
     double min_chi{}, min_lapse{};
+    double chi_rhs_floor{};
 
     int formulation{}; // Whether to use BSSN or CCZ4
 

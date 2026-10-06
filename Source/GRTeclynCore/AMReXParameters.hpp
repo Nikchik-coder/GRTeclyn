@@ -169,6 +169,9 @@ class AMReXParameters
 
         // time stepping outputs and regrid data
         pp.load("checkpoint_interval", checkpoint_interval, 1);
+        // How many of the newest checkpoints to keep on disk; 0 keeps every
+        // one of them, which is what every archived run did.
+        pp.load("checkpoint_keep", checkpoint_keep, 0);
         pp.load("plot_interval", plot_interval, 0);
         pp.load("stop_time", stop_time, 1.0);
         pp.load("max_steps", max_steps, 1000000);
@@ -655,6 +658,7 @@ class AMReXParameters
     bool restart_from_checkpoint{}; // whether or not to restart or start afresh
     double dt_multiplier{}, stop_time{}; // The Courant factor and stop time
     int checkpoint_interval{}, plot_interval{}; // Steps between outputs
+    int checkpoint_keep{}; // Newest checkpoints to keep (0 = keep all)
     int max_grid_size{}, block_factor{};        // max and min box sizes
     double fill_ratio{}; // determines how fussy the regridding is about tags
     std::string output_path; // base path to use for all files

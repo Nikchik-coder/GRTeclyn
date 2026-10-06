@@ -37,6 +37,10 @@ class GRAMR : public amrex::Amr
 
     void init(amrex::Real a_strt_time, amrex::Real a_stop_time) override;
 
+    //! Writes the checkpoint, then drops all but the `checkpoint_keep` newest
+    //! (0 = keep every one, the archived behaviour).
+    void checkPoint() override;
+
     [[nodiscard]] amrex::Real get_walltime_since_start() const;
 
     [[nodiscard]] amrex::Real get_restart_time() const;

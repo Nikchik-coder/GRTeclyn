@@ -1,0 +1,17 @@
+[whm] name     : single_eps_p1e2_q1e2_ml4_t100_r02500
+[whm] template : runs/wormhole_merger/templates_scan/params_single_eps_p1e2_q1e2_ml4_t100.txt
+[whm] binary   : runs/wormhole_merger/bin/main3d_seedl2_2026-09-10.ex
+[whm] gpu      : 0
+[whm] run dir  : runs/wormhole_merger/single_eps_p1e2_q1e2_ml4_t100_r02500          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/single_eps_p1e2_q1e2_ml4_t100_r02500      (node-local: plotfiles, checkpoints)
+[whm] registry : single_eps_p1e2_q1e2_ml4_t100_r02500 -> results/merger/runs_registry.tsv
+[whm] proc     : test (evolution runs from /tmp/ml_jobs/bin/test_49fe018e)
+[whm] refinement override: max_level = 4, regrid_interval = 16 16 16 16
+[whm] restart  : /tmp/grteclyn_scratch/_keep_2e/BinaryWormholeChk02500
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] frames   : as given in WHM_CONSUME_ARGS
+[whm] consumer  : pid 49702 -> runs/wormhole_merger/single_eps_p1e2_q1e2_ml4_t100_r02500/small_data
+[whm]            deleting processed plotfiles, keeping last 3
+[whm] === launching single_eps_p1e2_q1e2_ml4_t100_r02500 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[whm] draining consumer (final pass) ...
+[whm] run FAILED (exit 143) -- see runs/wormhole_merger/single_eps_p1e2_q1e2_ml4_t100_r02500/run.log

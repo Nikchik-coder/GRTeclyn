@@ -2,7 +2,7 @@
 """Isolated rotating Q-torus initial data (stationary m=1 eigenstate).
 
 This is the "torus alone first" validation of the stationary-eigenstate fix
-(research/rotatingwormhole/OrbitalPumpPlan.md, "make mass not disperse").
+(research/rotatingwormhole/RotatingWormhole.md §4.7).
 Instead of twisting a spherical Q-ball into an m=1 torus (a non-stationary
 ansatz that drains its Noether charge with a t~13-16 half-life), we solve the
 GENUINE 2D spinning Q-ball eigenstate

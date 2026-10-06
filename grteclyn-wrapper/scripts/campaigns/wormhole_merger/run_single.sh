@@ -1,0 +1,844 @@
+#!/usr/bin/env bash
+# BinaryWormholeMerger -- single-run launcher (research/merger/Reference.md).
+#
+# One run of Examples/BinaryWormholeMerger through the campaign contract
+# (scripts/campaigns/README.md): launcher.pid registered for stop_campaign.sh,
+# .dat streams on the runs dir (NFS), plotfiles/checkpoints on node-local /tmp
+# scratch.  Never invoke the binary on a params file directly -- clone-and-
+# rewrite here is what keeps plotfiles off NFS and the run stoppable.
+#
+# "Never directly" also includes quick throwaway tests, and that is not a style
+# preference.  AMReX writes `parameters_and_version.txt` into the binary's
+# CURRENT WORKING DIRECTORY on every run, and that file records the absolute
+# output_path / plot_file / check_file it was given.  Run the binary from the
+# repo root or from the example directory and you have just written your home
+# directory into a tracked location; it reached a commit that way on
+# 2026-08-27.  This launcher cd's into the run directory under runs/, which is
+# gitignored, so the artefact lands somewhere harmless.  Machine paths come
+# from the .env overlay below, so nothing here has to know them.
+#
+# Usage (attached, foreground -- detach only with explicit permission):
+#   bash scripts/campaigns/wormhole_merger/run_single.sh
+# Overrides:
+#   WHM_PARAMS    params template, resolved against Examples/BinaryWormholeMerger
+#                 if not an existing path (default params_test.txt)
+#   WHM_GPU       CUDA device (default 0).  With WHM_RANKS > 1 this is a
+#                 COMMA-SEPARATED list of physical ids, one per rank, e.g. "0,1"
+#   WHM_RANKS     MPI ranks for the evolution (default 1 = no mpirun).  Use it
+#                 only to buy VRAM headroom for a grid that will not fit on one
+#                 card: measured throughput is unchanged, memory genuinely
+#                 splits (README, "Multi-GPU").  Must equal the number of ids
+#                 in WHM_GPU, and needs the MPI binary (main3d.*.MPI.*.ex)
+#   WHM_RUNS_DIR  campaign root (default <repo>/runs/wormhole_merger)
+#   WHM_NAME      run name (default: params basename without .txt)
+#   WHM_EXE       evolution binary (default: newest main3d.*.ex in the example)
+#   WHM_BARE_MASS override wormhole_bare_mass_A AND _B in the cloned params
+#                 (equal-mass ladder knob, Plan.md Stage 3; appends _mXXX to
+#                 the run name so ladder rungs never clobber each other)
+#   WHM_MAX_LEVEL override max_level in the cloned params, rewriting
+#                 regrid_interval to match (AMReX aborts if it does not carry
+#                 exactly max_level values)
+#   WHM_SIGMA     override the Kreiss-Oliger coefficient `sigma` in the cloned
+#                 params (appends _sgN to the run name).  A first-class knob for
+#                 drainhole data, not a tuning detail: measured 2026-08-28, the
+#                 inherited sigma = 2.0 kills a unigrid drainhole at t = 0.22 by
+#                 driving chi in the single innermost cell to the min_chi floor
+#                 while its neighbour is still at 3e-2, and CCZ4 divides by chi.
+#                 sigma = 0 survives and is 20x more accurate AT THE THROAT.
+#   WHM_LAPSE_TYPE override wormhole_initial_lapse_type in the cloned params
+#                 (appends _lapseN to the run name).  The collar A/B of
+#                 Plan.md Stage 1.3 is this knob and nothing else: 5 is the
+#                 drainhole's bare static lapse, 6 is that lapse times the
+#                 origin-isolating collar.
+#   WHM_TAGGING_TYPE override tagging_type in the cloned params (appends _fg
+#                 when 1).  0 = refine on chi gradients (ChiTagger, the
+#                 default); 1 = static nested boxes on tagging_center
+#                 (FixedGridsTagger).  Plan.md Stage 1.5: chi tagging follows
+#                 the ERROR, so the sigma = 0 arm's mesh chased its own junk
+#                 to 32.8M cells and died out-of-memory at t = 35.2 with the
+#                 throat still healthy to 0.5 %.  The drainhole's resolution
+#                 demand is static -- the throat and the compactified origin,
+#                 both at the grid centre -- so a fixed box is the honest
+#                 criterion and the footprint is bounded by construction.
+#   WHM_TAGGING_L override tagging_L (appends _tlN).  Level-0 boxes have
+#                 half-width tagging_L / 4 and each finer level halves that.
+#                 Defaults to the domain L, i.e. the stock "inner L/4".
+#                 Only meaningful with WHM_TAGGING_TYPE=1.
+#   WHM_RESTART   absolute path to an AMReX checkpoint directory
+#                 (…/BinaryWormholeChkNNNNN).  Injects `amr.restart` into the
+#                 cloned params -- the ONLY key AMReX actually reads for this;
+#                 the root-level `restart_file` key is a trap (never loaded,
+#                 so its existence check runs on an empty path and aborts).
+#                 Appends _rNNNNN to the run name, so the continuation gets
+#                 its own run dir and scratch and never clobbers the parent
+#                 run's streams.  Restart fidelity is measured, not assumed:
+#                 interior bit-exact, but the outer zone (r > 6) re-seeds at
+#                 ~1.5 % relative, so domain-wide norms are contaminated from
+#                 the restart on and no growth-rate fit may cross one.
+#   WHM_DRYRUN=1  resolve and print everything, touch nothing, exit
+#   WHM_CONSUME   run the plotfile consumer sidecar (default 1)
+#   WHM_CONSUME_ARGS  extra consumer flags, e.g. "--shell-fields chi phi"
+#   WHM_KEEP_PLOTFILES=1  keep the heavy HDF5 on scratch (no --delete)
+#   WHM_KEEP_LAST  plotfiles the consumer leaves behind (default 3)
+#   WHM_WHAT      one line on what the run is for -> results/merger/runs_registry.tsv
+#   WHM_FRAMES_FIELDS  frame fields when WHM_CONSUME_ARGS names none
+#                 (default: the campaign's full set, frames_default.txt)
+#                 ("none": no frames at all -- needs WHM_FRAMES_SUBSET)
+#   WHM_FRAMES_SUBSET="<reason>"  the ONLY way to launch with fewer frame
+#                 fields than frames_default.txt: the preflight refuses a
+#                 subset without it, and records the reason (run_manifest.json)
+#   WHM_PROC_LABEL  what this run calls itself in the machine's process table
+#                 (default "test").  See "Process table" below
+#   WHM_PROC_ALIAS=0  run the binary from its real path instead of the neutral
+#                 copy (the GPU process list then shows the campaign path)
+#   WHM_PROC_BIN_DIR  where the neutral copies live (default /tmp/ml_jobs/bin)
+#   WHM_PREFLIGHT  full (default) | static | off -- see "Preflight" below
+#   WHM_PREFLIGHT_ONLY=1  run the preflight, report, remove the run dir, stop
+#                 (its t = 0 frames are kept in logs/preflight_frames/)
+#
+# Process table.  The cards are shared, and `ps aux` / `nvidia-smi` are
+# readable by anyone who can see this machine's processes, so what a run calls
+# itself there is a launch-time decision like any other.  Every long-lived
+# process of a run is started from the run directory with RELATIVE paths and a
+# neutral argv[0]: `test params.txt` (evolution), `test_post post.py …`
+# (consumer), `tee run.log`.  The GPU process list shows the executable's real
+# path, which argv[0] cannot change, so the binary runs from a copy under
+# WHM_PROC_BIN_DIR named after the label and the binary's own checksum -- one
+# copy per distinct binary, reused by every later run.  What this does NOT
+# hide: the username, that the cards are busy, and the directory names on the
+# shared filesystem.  Nothing here changes what is computed; the real binary
+# and the real paths are logged in the run's own log.
+#
+# Stop:  bash scripts/campaigns/stop_campaign.sh [--dry-run] <runs_dir>
+#
+# Plotfiles stream through the consumer sidecar while the run is going
+# (grteclyn-wrapper/README.md, "ALWAYS extract frames on the fly"): reductions
+# land in <run dir>/small_data on NFS and the heavy HDF5 is deleted from
+# scratch behind them.  WHM_CONSUME=0 turns it off for a t = 0 probe whose
+# plotfile you want to keep and analyse yourself.
+#
+# Deciding WHAT to extract is a launch-time decision and cannot be revisited:
+# deletion is ledger-gated, so anything not extracted during the run is gone
+# with the plotfile.  Pass extra extractions through WHM_CONSUME_ARGS.
+# The whole body is one { ... } block ending in `exit`: bash parses it
+# entirely before running it, so editing this file can never reach a live
+# run.  (bash otherwise reads a script by byte offset as it goes; an edit
+# made under a live run on 2026-09-24 would have had that run read the new
+# file at the old offset when its evolution ended.)  Keep it that way.
+{
+set -euo pipefail
+
+# A launch that dies before the evolution starts must die LOUDLY (2026-10-03:
+# a set -e kill between two echo lines left a stub run dir and an idle card
+# for 25 minutes with nothing in any log).  Until the evolution is launched,
+# any exit -- an uncaught error above all -- names its line and command here,
+# in the same detached log every launch is polled on.
+WHM_EVOLUTION_STARTED=0
+trap 'rc=$?; if [[ "${WHM_EVOLUTION_STARTED}" != "1" && "${rc}" != "0" ]]; then
+  echo "[whm] !! LAUNCH FAILED before the evolution started (exit ${rc})" >&2
+  echo "[whm] !! at line ${LINENO}: ${BASH_COMMAND}" >&2
+  echo "[whm] !! nothing is running; the run dir (if made) is a stub" >&2
+fi' EXIT
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+SELF_DIR="${SCRIPT_DIR}"   # this directory, resolved BEFORE anything moves us
+WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
+
+# Machine paths come from the gitignored .env overlay, never from this file and
+# never from wherever the caller happened to be standing.  env.sh leaves
+# already-exported variables alone, so WHM_*/GRTECLYN_SCRATCH overrides still
+# win.  Sourcing it is also what makes REPO_ROOT authoritative rather than a
+# guess from BASH_SOURCE.
+# shellcheck source=../../lib/env.sh
+source "${WRAPPER_DIR}/scripts/lib/env.sh"
+# env.sh computes a SCRIPT_DIR of its own and exports it, so after sourcing it
+# SCRIPT_DIR points at scripts/lib rather than at this directory.  Restore it
+# from the copy taken above -- every relative source below (launcher_common.sh)
+# resolves against it.  Not re-derived from BASH_SOURCE: when this script is
+# invoked by a relative name (which it is, so that the process table shows no
+# campaign path) a re-derivation resolves against the current directory, and
+# env.sh has already moved us to the repo root by this point.
+SCRIPT_DIR="${SELF_DIR}"
+REPO_ROOT="${GRTECLYN_ROOT:-$(cd -- "${WRAPPER_DIR}/.." && pwd)}"
+EXAMPLE_DIR="${REPO_ROOT}/Examples/BinaryWormholeMerger"
+# The campaign's frame fields (WHM_FRAMES_FULL, from frames_default.txt): the
+# default below and what the preflight holds every launch to.  Stops here if
+# the list is missing.
+# shellcheck source=lib/consumer_profiles.sh
+source "${SELF_DIR}/lib/consumer_profiles.sh"
+
+PARAMS="${WHM_PARAMS:-params_test.txt}"
+GPU="${WHM_GPU:-0}"
+RANKS="${WHM_RANKS:-1}"
+RUNS_DIR="${WHM_RUNS_DIR:-${REPO_ROOT}/runs/wormhole_merger}"
+SCRATCH_ROOT="${GRTECLYN_SCRATCH:-/tmp/grteclyn_scratch}"
+
+# Resolve the params template: an existing path wins, else the example dir.
+if [[ -f "${PARAMS}" ]]; then
+  TEMPLATE="$(cd -- "$(dirname -- "${PARAMS}")" && pwd)/$(basename -- "${PARAMS}")"
+elif [[ -f "${EXAMPLE_DIR}/${PARAMS}" ]]; then
+  TEMPLATE="${EXAMPLE_DIR}/${PARAMS}"
+else
+  echo "[whm] params template not found: ${PARAMS}" >&2
+  exit 1
+fi
+
+NAME="${WHM_NAME:-$(basename "${TEMPLATE}" .txt)}"
+if [[ -n "${WHM_BARE_MASS:-}" ]]; then
+  NAME="${NAME}_m$(printf '%s' "${WHM_BARE_MASS}" | tr -d '.' )"
+fi
+if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
+  NAME="${NAME}_lapse${WHM_LAPSE_TYPE}"
+fi
+if [[ -n "${WHM_SIGMA:-}" ]]; then
+  NAME="${NAME}_sg$(printf '%s' "${WHM_SIGMA}" | tr -d '.')"
+fi
+if [[ "${WHM_TAGGING_TYPE:-0}" != "0" ]]; then
+  NAME="${NAME}_fg"
+fi
+if [[ -n "${WHM_TAGGING_L:-}" ]]; then
+  NAME="${NAME}_tl$(printf '%s' "${WHM_TAGGING_L}" | tr -d '.')"
+fi
+if [[ -n "${WHM_RESTART:-}" ]]; then
+  if [[ ! -d "${WHM_RESTART}" || ! -f "${WHM_RESTART}/Header" ]]; then
+    echo "[whm] WHM_RESTART is not a checkpoint directory: ${WHM_RESTART}" >&2
+    exit 1
+  fi
+  # Suffix from the checkpoint's step number: .../BinaryWormholeChk02000 -> _r02000.
+  # Never doubled: a --name that already carries this restart's suffix is kept
+  # as is (2026-10-03: p06's extension launched as ..._r04000_r04000, and every
+  # path the launch derived -- the consumer's horizon track among them -- split
+  # between the two spellings).
+  if [[ "${NAME}" == *"_r${WHM_RESTART##*Chk}" ]]; then
+    echo "[whm] name already ends _r${WHM_RESTART##*Chk} -- keeping it (no double suffix)"
+  else
+    NAME="${NAME}_r${WHM_RESTART##*Chk}"
+  fi
+fi
+RUN_DIR="${RUNS_DIR}/${NAME}"
+SCRATCH_DIR="${SCRATCH_ROOT}/${NAME}"
+
+# Evolution binary: explicit override, else the newest built .ex in the example.
+if [[ -n "${WHM_EXE:-}" ]]; then
+  EXE="${WHM_EXE}"
+else
+  EXE="$(ls -t "${EXAMPLE_DIR}"/main3d.*.ex 2>/dev/null | head -n 1 || true)"
+fi
+if [[ -z "${EXE}" || ! -x "${EXE}" ]]; then
+  echo "[whm] no built binary in ${EXAMPLE_DIR} (main3d.*.ex) -- build first," >&2
+  echo "[whm] or point WHM_EXE at one." >&2
+  exit 1
+fi
+
+echo "[whm] name     : ${NAME}"
+echo "[whm] template : ${TEMPLATE}"
+echo "[whm] binary   : ${EXE}"
+echo "[whm] gpu      : ${GPU}"
+echo "[whm] run dir  : ${RUN_DIR}          (NFS: params, log, .dat streams)"
+echo "[whm] scratch  : ${SCRATCH_DIR}      (node-local: plotfiles, checkpoints)"
+
+# ---------------------------------------------------------------------------
+# The plotfile consumer's flags.  Built BEFORE the preflight (2026-09-26), which
+# checks the frame list they carry and renders it from the t = 0 plotfile.
+# Fills consumer_args and FRAMES_SOURCE from the params file given: the run's
+# clone, or the template on a dry run.
+# ---------------------------------------------------------------------------
+whm_consumer_args() {
+  local params_file="$1"
+  local -a center_vals
+  # --frames-out defaults to a directory inside the wrapper SOURCE tree, which is
+  # not gitignored, so frames from every run pile up there and are invisible from
+  # the run directory.  Anchor them next to the run they came from.
+  # Relative, because the consumer is started from RUN_DIR and its command line
+  # is public (see "Process table"): "scratch" is the link made below.
+  consumer_args=(--data scratch --out small_data --frames-out frames)
+
+  # The consumer's --center defaults to (0,0,0), but every merger template puts
+  # the physics at center = L/2.  Nothing errors when they disagree: the
+  # extractions still run, they just run in the far field, and --areal-radius
+  # happily reports r/sqrt(chi) ~ r off in the asymptotically flat region as if it
+  # were the throat.  Measured 2026-08-28 on a stage-1 drainhole: 0.845 at
+  # r = 0.829, against a throat of areal radius 3.890 at r = 1.618.  Read the
+  # centre off the params the run is actually using so the two cannot disagree.
+  # It goes in BEFORE WHM_CONSUME_ARGS, so an explicit --center there still wins.
+  if grep -qE "^center[[:space:]]*=" "${params_file}"; then
+    # shellcheck disable=SC2207
+    center_vals=($(grep -E "^center[[:space:]]*=" "${params_file}" \
+                   | head -n 1 | sed -e 's/#.*//' -e 's/.*=//'))
+    if [[ "${#center_vals[@]}" -eq 3 ]]; then
+      consumer_args+=(--center "${center_vals[@]}")
+      echo "[whm] consumer centre: ${center_vals[*]} (from the run's params)"
+    else
+      echo "[whm] WARNING: could not parse 'center' from params (got ${#center_vals[@]} values);" >&2
+      echo "[whm]          consumer will use its (0,0,0) default -- pass --center yourself." >&2
+    fi
+  fi
+  if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
+    consumer_args+=(--delete --keep-last "${WHM_KEEP_LAST:-3}")
+  fi
+  # shellcheck disable=SC2206
+  consumer_args+=(${WHM_CONSUME_ARGS:-})
+
+  # A profile hands over absolute paths into the run (the horizon track), and so
+  # does a hand-written WHM_CONSUME_ARGS.  Fold both back to RUN_DIR-relative:
+  # the consumer runs there, and the command line is public.
+  local i other rest
+  for i in "${!consumer_args[@]}"; do
+    case "${consumer_args[i]}" in
+      "${RUN_DIR}")    consumer_args[i]="." ;;
+      "${RUN_DIR}"/*)  consumer_args[i]="${consumer_args[i]#"${RUN_DIR}"/}" ;;
+      "${SCRATCH_DIR}")   consumer_args[i]="scratch" ;;
+      "${SCRATCH_DIR}"/*) consumer_args[i]="scratch/${consumer_args[i]#"${SCRATCH_DIR}"/}" ;;
+      *wormhole_merger/*/*)
+        # A path into a run that is NOT this run.  When the other name is this
+        # run's own name with a missing or extra _r<step> suffix, it is the
+        # restart-suffix trap (2026-10-03: the extension's --horizon-track named
+        # the un-suffixed run and the consumer tracked a stream that never
+        # existed): repoint it to this run.  A genuinely different run is kept,
+        # loudly -- a cross-run reference must be deliberate.
+        rest="${consumer_args[i]#*wormhole_merger/}"
+        other="${rest%%/*}"
+        if [[ "${other}" != "${NAME}" ]]; then
+          if [[ "${NAME}" == "${other}"_r* || "${other}" == "${NAME}"_r* ]]; then
+            consumer_args[i]="${consumer_args[i]//wormhole_merger\/${other}\//wormhole_merger/${NAME}/}"
+            echo "[whm] consumer arg repointed: '${other}' -> '${NAME}' (restart-suffix trap)"
+          else
+            echo "[whm] WARNING: consumer arg points at another run ('${other}', this run is '${NAME}')" >&2
+            echo "[whm]          kept as given -- make sure that is deliberate: ${consumer_args[i]}" >&2
+          fi
+        fi
+        ;;
+    esac
+  done
+
+  # Frames for EVERY field worth a movie, every launch.  The ladder runs of
+  # 2026-09-08 were launched with chi frames only, and F4 (2026-09-25) with the
+  # old default here, chi K lapse phi Pi: the consumer deleted the plotfiles
+  # behind them, so their other movies can never be made.  A launch that does
+  # not name --frames-fields in WHM_CONSUME_ARGS gets the campaign's full set
+  # (frames_default.txt), with the slice cache (one fixed colour scale per run
+  # through rerender_frames.py) and per-frame auto limits (wormhole values are
+  # not the black-hole presets).  WHM_FRAMES_FIELDS changes the list; an explicit
+  # --frames-fields in WHM_CONSUME_ARGS wins over both -- and either way the
+  # preflight refuses a list that misses a default field unless
+  # WHM_FRAMES_SUBSET says why.
+  local frames_default="${WHM_FRAMES_FIELDS:-${WHM_FRAMES_FULL}}"
+  if [[ "${WHM_FRAMES_FIELDS:-}" == "none" ]]; then
+    # No frames at all (launch.sh --frames-fields none): a study that keeps
+    # none, e.g. the 08_convergence runs (2026-09-27).  The preflight still
+    # refuses it unless WHM_FRAMES_SUBSET says why.
+    FRAMES_SOURCE="none (WHM_FRAMES_FIELDS=none)"
+    echo "[whm] frames   : none (WHM_FRAMES_FIELDS=none)"
+    return 0
+  elif [[ " ${WHM_CONSUME_ARGS:-} " != *" --frames-fields "* ]]; then
+    # shellcheck disable=SC2206
+    consumer_args+=(--frames-fields ${frames_default})
+    [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-cache-slices"* ]] || consumer_args+=(--frames-cache-slices)
+    [[ " ${WHM_CONSUME_ARGS:-} " == *"--frames-auto-zlim"* ]] || consumer_args+=(--frames-auto-zlim)
+    if [[ -n "${WHM_FRAMES_FIELDS:-}" ]]; then
+      FRAMES_SOURCE="WHM_FRAMES_FIELDS"
+    else
+      FRAMES_SOURCE="campaign default (frames_default.txt)"
+    fi
+    echo "[whm] frames   : ${frames_default} (${FRAMES_SOURCE})"
+  else
+    FRAMES_SOURCE="--frames-fields in WHM_CONSUME_ARGS"
+    echo "[whm] frames   : as given in WHM_CONSUME_ARGS"
+  fi
+  if [[ " ${WHM_CONSUME_ARGS:-} " != *"--frames-zoom"* ]]; then
+    echo "[whm] WARNING: no --frames-zoom in WHM_CONSUME_ARGS -- frames will show the whole box" >&2
+  fi
+}
+
+if [[ "${WHM_DRYRUN:-0}" != "0" ]]; then
+  # The no-GPU half of the preflight, on the template as it stands (before the
+  # overrides below): contradictory settings, keys the binary cannot read, and
+  # the frame list the consumer would get.
+  whm_consumer_args "${TEMPLATE}"
+  WHM_CONSUMER_ARGV="$(printf '%q ' "${consumer_args[@]}")"
+  export WHM_CONSUMER_ARGV WHM_FRAMES_SOURCE="${FRAMES_SOURCE}"
+  pf_py="${WRAPPER_DIR}/.venv/bin/python"; [[ -x "${pf_py}" ]] || pf_py="$(command -v python3)"
+  "${pf_py}" "${SELF_DIR}/preflight.py" --mode static --exe "${EXE}" --params "${TEMPLATE}" \
+      --workdir "${SCRATCH_ROOT}/_preflight_dryrun" \
+    || echo "[whm] the preflight would REFUSE this launch (above)" >&2
+  echo "[whm] dry run -- nothing launched."
+  exit 0
+fi
+
+if [[ -d "${RUN_DIR}" ]]; then
+  echo "[whm] ${RUN_DIR} already exists -- delete it or set WHM_NAME/WHM_RUNS_DIR" >&2
+  exit 1
+fi
+
+mkdir -p "${RUN_DIR}" "${SCRATCH_DIR}"
+
+# --- process table (see the header) ----------------------------------------
+# Everything below runs from RUN_DIR, so the scratch cell gets a link inside it
+# and the consumer can be given "scratch" instead of an absolute path.
+PROC_LABEL="${WHM_PROC_LABEL:-test}"
+[[ -e "${RUN_DIR}/scratch" ]] || ln -s "${SCRATCH_DIR}" "${RUN_DIR}/scratch"
+
+# The neutral copy the GPU process list will show.  Keyed by the binary's own
+# checksum, so two runs on different builds never share one and a rebuild
+# never silently reuses the old copy.
+EXE_RUN="${EXE}"
+if [[ "${WHM_PROC_ALIAS:-1}" != "0" ]]; then
+  PROC_BIN_DIR="${WHM_PROC_BIN_DIR:-/tmp/ml_jobs/bin}"
+  mkdir -p "${PROC_BIN_DIR}"
+  exe_sum="$(md5sum "${EXE}" | cut -c1-8)"
+  EXE_RUN="${PROC_BIN_DIR}/${PROC_LABEL}_${exe_sum}"
+  if [[ ! -x "${EXE_RUN}" ]]; then
+    cp "${EXE}" "${EXE_RUN}.part$$"
+    chmod +x "${EXE_RUN}.part$$"
+    mv "${EXE_RUN}.part$$" "${EXE_RUN}"
+  fi
+  echo "[whm] proc     : ${PROC_LABEL} (evolution runs from ${EXE_RUN})"
+fi
+
+
+# Stop handle for scripts/campaigns/stop_campaign.sh.  Registered per RUN dir,
+# not the campaign root: several singles run concurrently (one per GPU), and a
+# shared pid file would be last-writer-wins.  `stop_campaign.sh <RUN_DIR>`
+# targets one rung; sweeping the root still catches workers by path.
+source "${SCRIPT_DIR}/../lib/launcher_common.sh"
+campaign_register_launcher "${RUN_DIR}"
+
+# Clone the template and re-emit the three path keys (README rule 1: a cloned
+# params file must never keep the source run's absolute paths).  Each key must
+# occur exactly once, before and after, or the rewrite silently misses.
+RUN_PARAMS="${RUN_DIR}/params.txt"
+cp "${TEMPLATE}" "${RUN_PARAMS}"
+for key in output_path amr.plot_file amr.check_file; do
+  n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+  if [[ "${n}" != "1" ]]; then
+    echo "[whm] template must define '${key}' exactly once (found ${n})" >&2
+    exit 1
+  fi
+done
+sed -i \
+  -e "s|^output_path[[:space:]]*=.*|output_path = \"${RUN_DIR}\"|" \
+  -e "s|^amr.plot_file[[:space:]]*=.*|amr.plot_file = \"${SCRATCH_DIR}/BinaryWormholePlt\"|" \
+  -e "s|^amr.check_file[[:space:]]*=.*|amr.check_file = \"${SCRATCH_DIR}/BinaryWormholeChk\"|" \
+  "${RUN_PARAMS}"
+
+# Equal-mass ladder override (both throats; B defaults to A only when unset,
+# and the shipped templates set both explicitly, so rewrite both).
+if [[ -n "${WHM_BARE_MASS:-}" ]]; then
+  for key in wormhole_bare_mass_A wormhole_bare_mass_B; do
+    n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+    if [[ "${n}" != "1" ]]; then
+      echo "[whm] WHM_BARE_MASS needs '${key}' exactly once in the template (found ${n})" >&2
+      exit 1
+    fi
+    sed -i "s|^${key}[[:space:]]*=.*|${key} = ${WHM_BARE_MASS}|" "${RUN_PARAMS}"
+  done
+  echo "[whm] bare-mass override: m_A = m_B = ${WHM_BARE_MASS}"
+fi
+
+# Initial-lapse override.  The lapse is not a free gauge choice for a drainhole:
+# alpha = e^{u} is part of the static solution, so type 5 makes the data an exact
+# fixed point of the evolved system and type 6 multiplies in the origin-isolating
+# collar, which deliberately breaks that.  Comparing the two is the whole of
+# Plan.md Stage 1.3, so it gets an override rather than a forked params file --
+# a duplicated 130-line template would drift and the comparison would stop being
+# an A/B.
+if [[ -n "${WHM_SIGMA:-}" ]]; then
+  key=sigma
+  n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+  if [[ "${n}" != "1" ]]; then
+    echo "[whm] WHM_SIGMA needs '${key}' exactly once in the template (found ${n})" >&2
+    exit 1
+  fi
+  sed -i "s|^${key}[[:space:]]*=.*|${key} = ${WHM_SIGMA}|" "${RUN_PARAMS}"
+  echo "[whm] dissipation override: ${key} = ${WHM_SIGMA}"
+fi
+
+if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
+  key=wormhole_initial_lapse_type
+  n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+  if [[ "${n}" != "1" ]]; then
+    echo "[whm] WHM_LAPSE_TYPE needs '${key}' exactly once in the template (found ${n})" >&2
+    exit 1
+  fi
+  sed -i "s|^${key}[[:space:]]*=.*|${key} = ${WHM_LAPSE_TYPE}|" "${RUN_PARAMS}"
+  echo "[whm] lapse override: ${key} = ${WHM_LAPSE_TYPE}"
+fi
+
+# Tagging-criterion override (Plan.md Stage 1.5).  Unlike sigma and the lapse
+# these keys are NEW, so most templates predate them and do not carry them at
+# all; append rather than refuse, or every older params file would have to be
+# touched just to make the knob reachable.
+whm_set_or_append() {
+  local key="$1" value="$2" label="$3"
+  local n
+  n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+  case "${n}" in
+    0) printf '\n# %s (set by run_single.sh)\n%s = %s\n' \
+         "${label}" "${key}" "${value}" >> "${RUN_PARAMS}" ;;
+    1) sed -i "s|^${key}[[:space:]]*=.*|${key} = ${value}|" "${RUN_PARAMS}" ;;
+    *) echo "[whm] '${key}' appears ${n} times in the template; fix it" >&2
+       exit 1 ;;
+  esac
+  echo "[whm] ${label}: ${key} = ${value}"
+}
+
+if [[ -n "${WHM_TAGGING_TYPE:-}" ]]; then
+  whm_set_or_append tagging_type "${WHM_TAGGING_TYPE}" "tagging override"
+fi
+
+if [[ -n "${WHM_TAGGING_L:-}" ]]; then
+  whm_set_or_append tagging_L "${WHM_TAGGING_L}" "tagging-box override"
+fi
+
+# Refinement-depth override (Reference.md Phase 2 resolution study, and the origin
+# instability it is chasing).  This exists because max_level cannot be changed
+# on its own: regrid_interval must carry exactly max_level values or AMReX
+# aborts with "queryarr too many values requested", so the two keys have to be
+# rewritten together.  The interval is taken from the template's first value
+# and repeated, which is what every merger template does anyway.
+#
+# Refining is not automatically safer here.  The throats are compactified at
+# r = 0 -- chi vanishes like r^4 because that point is the other universe's
+# spatial infinity -- and CCZ4 divides by chi.  Each extra level halves the
+# distance from the innermost cell centre to that point and drops chi there by
+# ~16x, so depth makes the origin stencil worse, not better, and the run NaNs
+# in h11 on the finest level while the throat itself is still healthy.
+if [[ -n "${WHM_MAX_LEVEL:-}" ]]; then
+  for key in max_level regrid_interval; do
+    n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
+    if [[ "${n}" != "1" ]]; then
+      echo "[whm] WHM_MAX_LEVEL needs '${key}' exactly once in the template (found ${n})" >&2
+      exit 1
+    fi
+  done
+  ri_first="$(grep "^regrid_interval[[:space:]]*=" "${RUN_PARAMS}" \
+              | sed -e 's/#.*//' -e 's/.*=//' | awk '{print $1}')"
+  if [[ -z "${ri_first}" ]]; then
+    echo "[whm] could not read regrid_interval from the template" >&2
+    exit 1
+  fi
+  ri_list=""
+  for ((i = 0; i < WHM_MAX_LEVEL; i++)); do ri_list+="${ri_first} "; done
+  # max_level = 0 is the unigrid case and it needs ZERO regrid intervals, but
+  # `regrid_interval =` with nothing after it is a ParmParse hard error
+  # ("no values for definition regrid_interval"), so the key cannot simply be
+  # emptied.  A unigrid run never regrids, so the values are dead either way:
+  # leave the template's list alone and rewrite only max_level.
+  if [[ "${WHM_MAX_LEVEL}" -eq 0 ]]; then
+    sed -i -e "s|^max_level[[:space:]]*=.*|max_level = 0|" "${RUN_PARAMS}"
+    echo "[whm] refinement override: max_level = 0 (unigrid; regrid_interval left as-is)"
+  else
+  sed -i \
+    -e "s|^max_level[[:space:]]*=.*|max_level = ${WHM_MAX_LEVEL}|" \
+    -e "s|^regrid_interval[[:space:]]*=.*|regrid_interval = ${ri_list% }|" \
+    "${RUN_PARAMS}"
+  echo "[whm] refinement override: max_level = ${WHM_MAX_LEVEL}, regrid_interval = ${ri_list% }"
+  fi
+fi
+
+# Restart injection.  --restart is the ONE source of amr.restart.  A template
+# cloned from a restart leg's packed params carries the parent's own line
+# (2026-10-03: MOTS-ho2 was refused twice over it -- once for doubling, once,
+# without the flag, by the preflight probe): a line that names the SAME
+# checkpoint as --restart is stripped and re-injected; a different one is a
+# real ambiguity and is refused.  A template with amr.restart and NO --restart
+# is refused up front with the fix, instead of limping into the preflight.
+if [[ -n "${WHM_RESTART:-}" ]]; then
+  tmpl_restart="$( (grep -E "^amr.restart[[:space:]]*=" "${RUN_PARAMS}" || true) | head -n1 \
+                  | sed -e 's/.*=[[:space:]]*//' -e 's/^"//' -e 's/"[[:space:]]*$//')"
+  if [[ -n "${tmpl_restart}" && "${tmpl_restart}" != "${WHM_RESTART}" ]]; then
+    echo "[whm] template sets amr.restart = ${tmpl_restart}" >&2
+    echo "[whm] but --restart gave        ${WHM_RESTART}" >&2
+    echo "[whm] refusing the ambiguity -- remove the template's line or drop --restart" >&2
+    exit 1
+  fi
+  if [[ -n "${tmpl_restart}" ]]; then
+    sed -i "/^amr.restart[[:space:]]*=/d" "${RUN_PARAMS}"
+    echo "[whm] template's own amr.restart (same checkpoint) stripped -- --restart is the one source"
+  fi
+  printf '\n# restart (set by run_single.sh)\namr.restart = "%s"\n' \
+    "${WHM_RESTART}" >> "${RUN_PARAMS}"
+  echo "[whm] restart  : ${WHM_RESTART}"
+elif grep -qE "^amr.restart[[:space:]]*=" "${RUN_PARAMS}"; then
+  echo "[whm] the template carries amr.restart but the launch has no --restart:" >&2
+  grep -E "^amr.restart[[:space:]]*=" "${RUN_PARAMS}" | head -n1 | sed 's/^/[whm]   /' >&2
+  echo "[whm] relaunch with --restart <that checkpoint> (the name then gets its _r<step>" >&2
+  echo "[whm] suffix and the preflight knows it is a restart) -- refusing" >&2
+  exit 1
+fi
+
+# The consumer's final flags (every params override above applied), and its
+# entry point -- here, before the preflight, which renders the t = 0 frames with
+# exactly this consumer and these flags.
+whm_consumer_args "${RUN_PARAMS}"
+CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
+CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
+CONSUMER_PID=""
+
+# The consumer's public name (see "Process table").  Python locates its virtual
+# environment through argv[0], so simply renaming the process loses every
+# installed package ("No module named 'numpy'", measured 2026-09-10).  The
+# neutral name is therefore a real symlink inside the venv's own bin directory,
+# with that directory first on PATH: python looks the bare name up on PATH,
+# resolves the link and finds the environment, and the command line still shows
+# no path at all.
+CONSUMER_BIN="${CONSUMER_PY}"
+if [[ "${WHM_PROC_ALIAS:-1}" != "0" && -x "${CONSUMER_PY}" ]]; then
+  ln -sfn "$(basename "${CONSUMER_PY}")" "$(dirname "${CONSUMER_PY}")/${PROC_LABEL}_post"
+  PATH="$(dirname "${CONSUMER_PY}"):${PATH}"
+  export PATH
+  CONSUMER_BIN="${PROC_LABEL}_post"
+fi
+if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
+  if [[ ! -x "${CONSUMER_PY}" ]]; then
+    echo "[whm] consumer requested but ${CONSUMER_PY} is missing -- run 'uv sync'" >&2
+    exit 1
+  fi
+  # `python -m <module>` would put the package's dotted name on a public
+  # command line, so the module is entered through a one-line file in the run
+  # directory instead and the process is named after the run's label.
+  cat > "${RUN_DIR}/post.py" <<PY
+# written by run_single.sh: entry point for the plotfile consumer
+import runpy
+runpy.run_module("${CONSUMER_MOD}", run_name="__main__")
+PY
+fi
+# What the preflight checks and renders the frames with (through the
+# environment: the process table is public).
+WHM_CONSUMER_ARGV="$(printf '%q ' "${consumer_args[@]}")"
+WHM_FRAMES_SOURCE="${FRAMES_SOURCE}"
+WHM_FRAMES_CMD="${CONSUMER_BIN} post.py"
+export WHM_CONSUMER_ARGV WHM_FRAMES_SOURCE WHM_FRAMES_CMD
+
+# ---------------------------------------------------------------------------
+# Preflight (2026-09-24): refuse a launch the binary would not honour.
+# ---------------------------------------------------------------------------
+# AMReX ignores a key nothing reads, so a binary older than a feature runs the
+# params without it and says nothing: four "quadrupole" arms ran without their
+# quadrupole that way (GPU_PLAN, 2026-09-23 evening), and single_eps_p1e2_t250
+# asked for rolling checkpoints with checkpoint output switched off and died at
+# t = 145.8 with nothing to restart from.  preflight.py checks the FINAL params
+# (every override above applied): contradictory settings, keys absent from the
+# binary, keys a 0-step start-up of the binary did not read, and -- when a seed
+# is set -- that the seed changes the t = 0 data.  A few seconds on the card.
+# A refusal removes the run dir and scratch cell (nothing is registered or
+# started) and keeps the params and the report under logs/preflight_refused/.
+# WHM_PREFLIGHT=static skips the start-ups (a card too full for a second
+# process); =off skips every check of the binary.  Both are recorded in
+# run_manifest.json.
+# The FRAMES (2026-09-26), in every mode, off included: the frame list must hold
+# every field of frames_default.txt (or WHM_FRAMES_SUBSET says why), and each
+# field's plot variable must be written; in full mode the start-up also writes
+# its t = 0 plotfile and the consumer renders every frame field from it, with
+# this run's flags, into preflight_frames/ -- a field that fails or comes out
+# blank refuses the launch.  Those frames are frame 0, before the run exists:
+# eyeball them (logs/preflight_frames/ after --preflight-only).
+TOOLS_PY="${WRAPPER_DIR}/.venv/bin/python"
+[[ -x "${TOOLS_PY}" ]] || TOOLS_PY="$(command -v python3)"
+TOOLS_BIN="${TOOLS_PY}"
+if [[ "${WHM_PROC_ALIAS:-1}" != "0" && "${TOOLS_PY}" == "${WRAPPER_DIR}/.venv/bin/python" ]]; then
+  ln -sfn "$(basename "${TOOLS_PY}")" "$(dirname "${TOOLS_PY}")/${PROC_LABEL}_pre"
+  PATH="$(dirname "${TOOLS_PY}"):${PATH}"
+  export PATH
+  TOOLS_BIN="${PROC_LABEL}_pre"
+fi
+# Entered through a file in the run dir, like post.py, so the public command
+# line shows "<label>_pre pre.py ..." with relative paths only.
+cat > "${RUN_DIR}/pre.py" <<PYTOOLS
+# written by run_single.sh: entry point for the launch-time checks
+import runpy, sys
+tool = sys.argv.pop(1)
+runpy.run_path({"preflight": "${SELF_DIR}/preflight.py",
+                "manifest": "${SELF_DIR}/run_manifest.py"}[tool], run_name="__main__")
+PYTOOLS
+whm_tool() { ( cd "${RUN_DIR:?}" && exec -a "${PROC_LABEL}_pre" "${TOOLS_BIN}" pre.py "$@" ); }
+
+PF_MODE="${WHM_PREFLIGHT:-full}"
+case "${PF_MODE}" in
+  full|static|off) ;;
+  *) echo "[whm] WHM_PREFLIGHT must be full, static or off (got '${PF_MODE}')" >&2; exit 2 ;;
+esac
+if [[ "${PF_MODE}" == "off" ]]; then
+  echo "[whm] preflight: OFF (WHM_PREFLIGHT=off) -- the binary is not checked (the manifest says so);" >&2
+  echo "[whm]            the frame list still is (its only override is WHM_FRAMES_SUBSET)" >&2
+fi
+pf_status=0
+WHM_EXE_NAME="$(basename "${EXE}")" whm_tool preflight \
+    --exe "${EXE_RUN}" --argv0 "${PROC_LABEL}" --params params.txt \
+    --gpu "${GPU%%,*}" --workdir scratch/_preflight --mode "${PF_MODE}" \
+    --frames-out preflight_frames --json preflight.json ${WHM_RESTART:+--restart} || pf_status=$?
+if [[ "${pf_status}" -ne 0 ]]; then
+  kept="${RUNS_DIR:?}/logs/preflight_refused/${NAME:?}_$(date -u +%Y%m%dT%H%M%SZ)"
+  mkdir -p "${kept}"
+  cp "${RUN_DIR:?}/params.txt" "${RUN_DIR:?}/preflight.json" "${kept}/" 2>/dev/null || true
+  for probe in run control; do
+    if [[ -f "${SCRATCH_DIR:?}/_preflight/${probe}/probe.log" ]]; then
+      cp "${SCRATCH_DIR:?}/_preflight/${probe}/probe.log" "${kept}/probe_${probe}.log"
+    fi
+  done
+  # The t = 0 frames show what failed: kept, never deleted.
+  if [[ -d "${RUN_DIR:?}/preflight_frames" ]]; then
+    cp -r "${RUN_DIR:?}/preflight_frames" "${kept}/"
+  fi
+  rm -rf "${SCRATCH_DIR:?}/_preflight" "${RUN_DIR:?}"
+  rmdir "${SCRATCH_DIR:?}" 2>/dev/null || true
+  if [[ "${pf_status}" -eq 1 ]]; then
+    echo "[whm] !! PREFLIGHT REFUSED THE LAUNCH -- nothing started, nothing registered." >&2
+  else
+    echo "[whm] !! PREFLIGHT COULD NOT RUN -- nothing started.  WHM_PREFLIGHT=static skips the start-ups." >&2
+  fi
+  echo "[whm]    params + report kept in runs/wormhole_merger/${kept#"${RUNS_DIR}"/}" >&2
+  exit "${pf_status}"
+fi
+if [[ "${WHM_PREFLIGHT_ONLY:-0}" != "0" ]]; then
+  # The t = 0 frames are the point of asking: kept for the eye, with the report.
+  if [[ -d "${RUN_DIR:?}/preflight_frames" ]]; then
+    shown="${RUNS_DIR:?}/logs/preflight_frames/${NAME:?}_$(date -u +%Y%m%dT%H%M%SZ)"
+    mkdir -p "${shown}"
+    cp -r "${RUN_DIR:?}/preflight_frames/." "${shown}/"
+    cp "${RUN_DIR:?}/preflight.json" "${shown}/" 2>/dev/null || true
+    echo "[whm] t = 0 frames (one per field) kept in runs/wormhole_merger/${shown#"${RUNS_DIR}"/} -- eyeball them"
+  fi
+  rm -rf "${SCRATCH_DIR:?}/_preflight" "${RUN_DIR:?}"
+  rmdir "${SCRATCH_DIR:?}" 2>/dev/null || true
+  echo "[whm] preflight only: PASSED -- nothing launched, run dir removed."
+  exit 0
+fi
+if [[ -d "${RUN_DIR}/preflight_frames" ]]; then
+  echo "[whm] t = 0 frames: ${RUN_DIR}/preflight_frames (rendered at preflight; the run's own go to frames/)"
+fi
+
+# Register the run (2026-09-09): one tab-separated line in the pack's registry,
+# so the summary table needs no code edit per run.  Only when the launch says
+# what the run is for; research/merger/closeout.sh warns about the rest.
+REGISTRY="${WHM_REGISTRY:-${REPO_ROOT}/results/merger/runs_registry.tsv}"
+if [[ -n "${WHM_WHAT:-}" && -f "${REGISTRY}" ]]; then
+  if grep -qP "^${NAME}\t" "${REGISTRY}"; then
+    echo "[whm] registry : ${NAME} already registered (WHM_WHAT ignored)"
+  else
+    printf '%s\t%s\t\t\n' "${NAME}" "${WHM_WHAT}" >> "${REGISTRY}"
+    echo "[whm] registry : ${NAME} -> ${REGISTRY#"${REPO_ROOT}"/}"
+  fi
+fi
+
+# What this run IS -- params, binary and the commit it carries, launcher commit,
+# node, card, preflight verdict, t = 0 diagnostics -- written before the first
+# step and completed at exit (run_manifest.py; packed beside the streams).
+# Revealing values go through the environment, not the public command line.
+WHM_MANIFEST_NAME="${NAME}" WHM_MANIFEST_TEMPLATE="${TEMPLATE}" WHM_MANIFEST_EXE="${EXE}" \
+  whm_tool manifest start --run-dir . --preflight preflight.json \
+  || echo "[whm] WARNING: run_manifest.json not written" >&2
+
+# ---------------------------------------------------------------------------
+# Plotfile consumer sidecar (its flags and post.py were made before the preflight).
+# ---------------------------------------------------------------------------
+if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
+  mkdir -p "${RUN_DIR}/small_data"
+  (
+    cd "${RUN_DIR}"
+    exec -a "${PROC_LABEL}_post" "${CONSUMER_BIN}" post.py "${consumer_args[@]}" \
+      --watch > consumer.log 2>&1
+  ) &
+  CONSUMER_PID=$!
+  echo "[whm] consumer  : pid ${CONSUMER_PID} -> ${RUN_DIR}/small_data"
+
+  # IS IT ACTUALLY UP?  A consumer that dies at startup -- one bad flag is
+  # enough, and argparse exits before it prints anything to the log tail anyone
+  # reads -- takes the frames, the python psi4 cross-check AND the plotfile
+  # deletion with it, and nothing downstream says so: the evolution runs its
+  # full length and scratch fills behind it.  That is exactly how the queue-5
+  # stage-1 arm of 2026-09-15 started (the orbit-modes profile had passed the
+  # multipoles to --scalar-modes, which is a bare switch).  Give it a moment to
+  # fail, then look; the cost is a few seconds once per run.
+  sleep 8
+  if ! kill -0 "${CONSUMER_PID}" 2>/dev/null; then
+    echo "[whm] !! THE CONSUMER DIED AT STARTUP -- no frames, no python psi4, and" >&2
+    echo "[whm]    NOTHING WILL DELETE PLOTFILES.  Last lines of consumer.log:" >&2
+    tail -n 12 "${RUN_DIR}/consumer.log" 2>/dev/null | sed 's/^/[whm]    /' >&2
+    echo "[whm]    Fix the consumer arguments (lib/consumer_profiles.sh) and relaunch." >&2
+    exit 1
+  fi
+  if [[ "${WHM_KEEP_PLOTFILES:-0}" == "0" ]]; then
+    echo "[whm]            deleting processed plotfiles, keeping last ${WHM_KEEP_LAST:-3}"
+  fi
+fi
+
+# Multi-GPU: one rank per physical card.  The binding is done INSIDE each rank
+# and not by exporting CUDA_VISIBLE_DEVICES="0,1" to the parent, because
+# OpenMPI/prterun drops that env often enough that ranks silently pile onto
+# card 0 (README, "Binding rule").  Each rank reads its own id out of
+# GRTECLYN_GPU_IDS by local rank instead.
+if [[ "${RANKS}" -gt 1 ]]; then
+  IFS="," read -ra _gpu_ids <<< "${GPU}"
+  if [[ "${#_gpu_ids[@]}" -ne "${RANKS}" ]]; then
+    echo "[whm] ERROR: WHM_RANKS=${RANKS} needs exactly ${RANKS} comma-separated" >&2
+    echo "[whm]        ids in WHM_GPU, got '${GPU}' (${#_gpu_ids[@]})." >&2
+    exit 2
+  fi
+  if [[ "${EXE}" != *".MPI."* ]]; then
+    echo "[whm] ERROR: WHM_RANKS=${RANKS} needs an MPI binary, but WHM_EXE is" >&2
+    echo "[whm]        ${EXE}.  Build with USE_MPI=TRUE USE_CUDA=TRUE." >&2
+    exit 2
+  fi
+  echo "[whm] ranks    : ${RANKS} (MPI), one per card: ${GPU}"
+fi
+
+WHM_EVOLUTION_STARTED=1
+echo "[whm] === launching ${NAME} (attached; Ctrl-C or stop_campaign.sh to stop) ==="
+status=0
+# From here on the shell stands in the run directory, so the evolution, the
+# log writer and the drain pass all quote relative paths (see "Process table").
+cd "${RUN_DIR}"
+(
+  if [[ "${RANKS}" -gt 1 ]]; then
+    GRTECLYN_GPU_IDS="${GPU}" GRTECLYN_EXE="${EXE_RUN}" \
+    GRTECLYN_LABEL="${PROC_LABEL}" mpirun -n "${RANKS}" bash -c \
+      'IFS="," read -ra _g <<< "${GRTECLYN_GPU_IDS}"; \
+       export CUDA_VISIBLE_DEVICES="${_g[${OMPI_COMM_WORLD_LOCAL_RANK:-0}]}"; \
+       exec -a "${GRTECLYN_LABEL}" "${GRTECLYN_EXE}" params.txt'
+  else
+    CUDA_VISIBLE_DEVICES="${GPU}" exec -a "${PROC_LABEL}" "${EXE_RUN}" params.txt
+  fi
+) 2>&1 | tee run.log || status=$?
+
+# Drain before reporting.  The watcher is stopped and then a single one-shot
+# pass picks up whatever it had not reached: deletion is ledger-gated, so an
+# extraction interrupted by the TERM is retried here rather than lost, and a
+# plotfile that never got extracted is never collected.
+if [[ -n "${CONSUMER_PID}" ]]; then
+  kill "${CONSUMER_PID}" 2>/dev/null || true
+  wait "${CONSUMER_PID}" 2>/dev/null || true
+  echo "[whm] draining consumer (final pass) ..."
+  # --keep-existing-frames is load-bearing here.  The consumer clears the frames
+  # for every requested field at startup, which is right for a fresh run and
+  # catastrophic for a second pass over the same run: without it this drain
+  # deletes every PNG the watcher rendered during the evolution, and if the run
+  # aborted there are no plotfiles left to re-render them from.
+  # --stable-seconds 0 is load-bearing too.  The consumer skips a plotfile whose
+  # Header is younger than 30 s, a guard against reading one mid-write; this
+  # pass starts about a second after the evolution exits, so with the default
+  # the run's last plotfile was never extracted (measured 2026-09-14).  The
+  # binary has exited, so every plotfile on scratch is complete.
+  (
+    cd "${RUN_DIR}"
+    exec -a "${PROC_LABEL}_post" "${CONSUMER_BIN}" post.py "${consumer_args[@]}" \
+      --keep-existing-frames --stable-seconds 0 >> consumer.log 2>&1
+  ) || \
+    echo "[whm] final consumer pass reported an error -- see ${RUN_DIR}/consumer.log" >&2
+fi
+
+whm_tool manifest finish --run-dir . --status "${status}" \
+  || echo "[whm] WARNING: run_manifest.json not finished" >&2
+
+if [[ "${status}" -ne 0 ]]; then
+  echo "[whm] run FAILED (exit ${status}) -- see ${RUN_DIR}/run.log" >&2
+  exit "${status}"
+fi
+
+echo "[whm] run complete: ${RUN_DIR}"
+if [[ "${WHM_CONSUME:-1}" != "0" ]]; then
+  echo "[whm] reductions : ${RUN_DIR}/small_data"
+fi
+left="$(find "${SCRATCH_DIR}" -maxdepth 1 -name '*Plt*' -type d 2>/dev/null | wc -l)"
+echo "[whm] plotfiles left on scratch: ${left} (${SCRATCH_DIR})"
+exit
+}

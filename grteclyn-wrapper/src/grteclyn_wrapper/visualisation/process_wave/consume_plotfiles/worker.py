@@ -13,13 +13,21 @@ from .extraction.confinement import _extract_confinement_line
 from .extraction.sector_barycenters import _extract_sector_barycenters_line
 from .extraction.sector_dynamics import _extract_sector_dynamics_line
 from .extraction.ftl import _extract_ftl_timeseries_line
+from .extraction.horizon import horizon_block as _horizon_block
 from .extraction.psi4 import _extract_mode_amps_l2m0, _extract_mode_amps_l2_all
 from .extraction.psi4_higher_l import (
     extract_higher_l_modes,
     higher_l_line as _higher_l_line,
     parse_ells as _parse_ells,
 )
+from .extraction.scalar_modes import (
+    extract_scalar_modes,
+    parse_scalar_ells as _parse_scalar_ells,
+    scalar_modes_line as _scalar_modes_line,
+)
 from .extraction.shell import _extract_shell_field_stats, _format_shell_stats_line
+from .extraction.neck_horizons import neck_horizons_line, neck_horizons_row
+from .extraction.mots_spectral import mots_spectral_row
 from .fields import _canonical_field_name
 from .frames.embedding import _render_embedding_frame
 from .frames.projection import _render_projection_frame
@@ -67,12 +75,17 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
         "psi4_line": None,
         "psi4_directional_line": None,
         "areal_line": None,
+        "neck_line": None,
+        "neck_x": None,
+        "mots_line": None,
+        "mots_alm": None,
         "shell_line": None,
         "boundary_flux_line": None,
         "ftl_line": None,
         "confinement_line": None,
         "central_line": None,
         "central_radial_block": None,
+        "horizon_block": None,
         "success": False,
         "deleted": False,
         "status_str": "",
@@ -171,6 +184,29 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                     if args_dict.get("verbose", False):
                         print(f"WARNING: higher-l Psi4 extraction failed for {key}: {exc}")
 
+        # Scalar-field modes (phi, Pi on the same spheres) -- own stream, own
+        # flag, off by default; independent of --psi4 so it survives --no-psi4.
+        # Failure must not take down any published stream; log and carry on.
+        if args_dict.get("scalar_modes"):
+            try:
+                s_ells = _parse_scalar_ells(args_dict.get("scalar_mode_ells"))
+                s_radii = [float(r) for r in args_dict["radii"]]
+                phi_modes, pi_modes, s_fluxes = extract_scalar_modes(
+                    ds,
+                    radii=s_radii,
+                    n_points=int(args_dict["n_points"]),
+                    center=args_dict["center"],
+                    ells=s_ells,
+                    flux_delta=float(args_dict.get("scalar_flux_delta", 0.5)),
+                    reflect=args_dict.get("reflect") or None,
+                )
+                result["scalar_modes_line"] = _scalar_modes_line(
+                    t, phi_modes, pi_modes, s_fluxes, s_ells, len(s_radii)
+                )
+            except Exception as exc:
+                if args_dict.get("verbose", False):
+                    print(f"WARNING: scalar mode extraction failed for {key}: {exc}")
+
         shell_fields = list(args_dict.get("shell_fields") or [])
         if shell_fields:
             try:
@@ -180,6 +216,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                     n_points=int(args_dict["n_points"]),
                     center=args_dict["center"],
                     fields=shell_fields,
+                    reflect=args_dict.get("reflect") or None,
                 )
                 result["shell_line"] = _format_shell_stats_line(
                     t,
@@ -216,10 +253,11 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                         frame_zlims=args_dict.get("frame_zlims"),
                         use_global_zlim=args_dict.get("frames_global_zlim", True),
                         cache_slices=bool(args_dict.get("frames_cache_slices", False)),
+                        reflect=args_dict.get("reflect") or None,
                     )
                 except Exception as exc:
-                    if args_dict.get("verbose", False):
-                        print(f"WARNING: frame field {fld!r} skipped for {key}: {exc}")
+                    if args_dict.get("verbose", False) or args_dict.get("reflect"):
+                        print(f"WARNING: frame field {fld!r} skipped for {key}: {exc}", flush=True)
 
         projection_fields = [_canonical_field_name(f) for f in args_dict.get("projection_fields", [])]
         projection_axes = list(args_dict.get("projection_axes", []) or [])
@@ -250,13 +288,55 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
         if args_dict.get("areal_radius"):
             if ("boxlib", "chi") in ds.field_list:
                 try:
-                    R_min, r_min = _extract_areal_radius_min(ds, center=args_dict["center"])
+                    R_min, r_min = _extract_areal_radius_min(
+                        ds,
+                        center=args_dict["center"],
+                        min_radius=args_dict.get("areal_min_radius", 0.0),
+                        full_metric=bool(args_dict.get("areal_full_metric")),
+                    )
                     result["areal_line"] = f"{t:.16e}  {R_min:.16e}  {r_min:.16e}"
                 except Exception as exc:
-                    if args_dict.get("verbose", False):
-                        print(f"WARNING: areal extraction failed for {key}: {exc}")
+                    # Loud when the full metric was asked for: a silent skip
+                    # would leave a gap nobody notices until the figure.
+                    if args_dict.get("verbose", False) or args_dict.get("areal_full_metric"):
+                        print(f"WARNING: areal extraction failed for {key}: {exc}", flush=True)
             elif args_dict.get("verbose", False):
                 print(f"WARNING: plotfile {key} missing chi field; skipping areal radius.")
+
+        if args_dict.get("neck_horizons"):
+            # The neck (tracked from the previous plotfile) and the trapping
+            # horizons around it; extraction/neck_horizons.py.  Loud on failure.
+            try:
+                row, x_neck = neck_horizons_row(ds, center=args_dict["center"],
+                                                x_prev=args_dict.get("neck_x_prev"))
+                result["neck_line"] = neck_horizons_line(row)
+                result["neck_x"] = x_neck
+            except Exception as exc:
+                print(f"WARNING: neck/horizon extraction failed for {key}: {exc}", flush=True)
+
+        if args_dict.get("horizon_scan"):
+            try:
+                result["horizon_block"] = _horizon_block(ds, t, args_dict)
+            except Exception as exc:
+                if args_dict.get("verbose", False):
+                    print(f"WARNING: horizon scan failed for {key}: {exc}")
+
+        if args_dict.get("mots_spectral") and t >= float(args_dict.get("mots_spectral_from") or 0.0):
+            # The common MOTS itself, followed from the previous plotfile's surface
+            # (extraction/mots_spectral.py).  Loud on failure.
+            try:
+                result["mots_line"], result["mots_alm"] = mots_spectral_row(
+                    ds, t,
+                    center=args_dict.get("mots_spectral_center") or args_dict["center"],
+                    half=float(args_dict["mots_spectral_half"]),
+                    level=int(args_dict["mots_spectral_level"]),
+                    lmax=int(args_dict["mots_spectral_lmax"]),
+                    tol=float(args_dict["mots_spectral_tol"]),
+                    seeds=args_dict["mots_spectral_seeds"],
+                    a_prev=args_dict.get("mots_alm_prev"),
+                )
+            except Exception as exc:
+                print(f"WARNING: spectral MOTS failed for {key}: {exc}", flush=True)
 
         if args_dict.get("embedding"):
             if ("boxlib", "chi") in ds.field_list:
@@ -359,6 +439,8 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
             or result.get("confinement_line")
             or result.get("central_line")
             or result.get("central_radial_block")
+            or result.get("horizon_block")
+            or result.get("mots_line")
             or frame_fields
             or projection_fields
         )

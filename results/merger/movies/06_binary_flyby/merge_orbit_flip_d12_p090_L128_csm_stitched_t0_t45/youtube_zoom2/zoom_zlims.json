@@ -1,0 +1,23 @@
+{
+  "K_z": [
+    -0.0879700198769567,
+    0.0879700198769567
+  ],
+  "Weyl4_Re_z": [
+    -0.07034463230520326,
+    0.07034463230520326
+  ],
+  "_scale_tmax": 40.0,
+  "_scale_tmin": null,
+  "_source": "runs/wormhole_merger/06_binary_flyby/merge_orbit_flip_d12_p090_L128_lvl4from40_chi1e4_t100_lbf_csm_r04000/stitched_from_t0/frames",
+  "_t_max": null,
+  "_zoom": 2.0,
+  "chi_z": [
+    0.05,
+    0.9328317175875418
+  ],
+  "lapse_z": [
+    0.146535656452179,
+    0.956837532222271
+  ]
+}

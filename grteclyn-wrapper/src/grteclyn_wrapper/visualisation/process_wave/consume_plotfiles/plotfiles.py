@@ -7,23 +7,31 @@ from pathlib import Path
 from typing import Dict, List
 
 
+# An AMReX plotfile directory is "<whatever the example called it>Plt<index>".
+# Matching the shape rather than a list of known prefixes means a new example
+# is visible to the consumer the day it is written: the old list of four
+# hard-coded names silently skipped every plotfile BinaryWormholeMerger
+# produced, and a consumer that finds nothing looks exactly like a run that
+# has not written anything yet.
+#
+# The trailing digits are load-bearing -- they are what keeps checkpoints out.
+# `<name>Chk<index>` also contains a Header and would otherwise be fed to the
+# extractor as if it were a plotfile.
+_PLOTFILE_DIR_RE = re.compile(r".*[Pp]lt\d+$")
+
+
 def _iter_plotfile_dirs(data_dir: str) -> List[str]:
     """Return sorted plotfile directories under data_dir."""
     out: List[str] = []
     if not os.path.isdir(data_dir):
         return out
-    prefixes = (
-        "WormholePlt",
-        "SupportedWormholePlt",
-        "RotatingWormholePlt",
-        "RadialRecipePlt",
-        "plt",
-    )
     for name in os.listdir(data_dir):
-        if not any(name.startswith(prefix) for prefix in prefixes):
+        if not _PLOTFILE_DIR_RE.match(name):
             continue
         p = os.path.join(data_dir, name)
-        if os.path.isdir(p):
+        # A real plotfile always carries a Header; anything else that happens
+        # to be named this way is not one.
+        if os.path.isdir(p) and os.path.isfile(os.path.join(p, "Header")):
             out.append(p)
     out.sort()
     return out

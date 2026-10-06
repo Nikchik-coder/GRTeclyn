@@ -1,0 +1,16 @@
+# t = 0 checks, d = 8 head-on from rest (CS-1's grid: L = 64, N = 128, level 3), CPU OpenMP build of 5955760.
+# Grader: grteclyn-wrapper/scripts/validation/constraint_solve_t0_check.py --mass [--solve-data]. mode: sup = the analytic
+# superposition (no solve), 0 = solved at the superposition's c, 3 = far-side matched, 3c = far-side mass by c alone.
+# sign = wormhole_phi_sign_B (-1 flipped, attracts; +1 like, repels). M_ADM = volume identity ('' for the superposition).
+# d = 0: the single throat; the d = 12 rows are the spiral's pair (p = 0.12, same grid).
+case	d	sign	mode	R_min	M_far	Q_far	m1	M_ADM
+isolated throat, solved	0	0	0	3.89010	-4.81048	3.03437	1.00000	1.00140
+superposed pair	8	-1	sup	4.46580	-5.36270	3.43620	1.14920	
+solved, superposed c	8	-1	0	4.52250	-5.36750	3.43620	1.14820	2.73800
+solved, far-side matched	8	-1	3	3.89170	-4.81050	3.03440	1.00000	2.36180
+solved, far-side mass by c alone	8	-1	3c	4.28900	-4.81050	3.14610	1.07120	2.52050
+solved, superposed c	8	1	0	4.38110	-5.46750	3.43620	1.12840	1.51460
+solved, far-side matched	8	1	3	3.89300	-4.81050	3.03440	1.00000	1.38330
+superposed pair	12	-1	sup	4.25270	-5.19128	3.29743	1.09391	
+solved, superposed c (p = 0.12)	12	-1	0	4.27750	-5.19283	3.29743	1.09361	2.50086
+solved, far-side matched (p = 0.12)	12	-1	3	3.89050	-4.81048	3.03437	1.00000	2.27920

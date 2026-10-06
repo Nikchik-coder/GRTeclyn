@@ -1,0 +1,194 @@
+# BinaryWormholeMerger -- Stage 1: does ONE regular throat hold still?
+# (research/merger/FIx.md, implementation plan Stage 1.)
+#
+# Stage 0 proved the throat survives being put on a grid.  This asks the next
+# question and it is a much sharper one, because the single massive drainhole
+# is not merely "good" initial data -- it is an EXACT FIXED POINT of the whole
+# evolved system:
+#
+#   gamma-tilde_ij = delta_ij  (the data is conformally flat)  ->  Gamma^i = 0
+#   K = 0, A_ij = 0, Theta = 0
+#   beta^i = 0, B^i = 0        (Gamma-driver starts and stays at zero)
+#   alpha  = e^{u}             (static; 1+log has d_t alpha = -2 alpha K = 0)
+#
+# Every evolved variable is at a stationary point of its own RHS at t = 0.  So
+# with wormhole_initial_lapse_type = 5 there is no transient to ride out and no
+# gauge relaxation to disentangle: ANY drift is either the discretisation or
+# the physical Ellis-Bronnikov unstable mode, and nothing else.  That is what
+# makes this the run that can actually answer the question.
+#
+# The one thing that is NOT a fixed point is the origin-isolating collar.
+# alpha = e^{u} * collar is not the static lapse, so lapse type 6 injects a
+# real perturbation near rbar = 0 by construction.  It exists because chi still
+# vanishes like rbar^4 at the compactified far infinity and CCZ4 divides by
+# chi.  Which of the two survives is FIx.md Stage 1.3, and it is run as a
+# straight A/B on this one file:
+#
+#   WHM_NAME=stage1 WHM_PARAMS=params_stage1_hold.txt WHM_MAX_LEVEL=2 \
+#     WHM_KEEP_PLOTFILES=1 \
+#     WHM_CONSUME_ARGS="--areal-radius --areal-min-radius 0.8" \
+#     WHM_LAPSE_TYPE=5 WHM_GPU=0 \
+#     bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+#   ... and the same with WHM_LAPSE_TYPE=6 WHM_GPU=1.
+#
+# Configuration: one throat, a = 2, m = 1, so M_ADM = 1 and stop_time = 40 is
+# 40 M.  Closed-form predictions (drainhole_throat_check.py):
+#   minimal surface   rbar  = 1.6180      areal radius R_min = 3.8895
+#   chi at the throat = 0.1731            alpha at the throat = 0.4159
+# The run passes if R_min holds 3.890 for 40 M with drift attributable to the
+# known EB mode (one growing mode, timescale ~ throat/c ~ 4) rather than to the
+# grid, and the constraint norms stay flat.
+#
+# The three path keys below are placeholders the launcher rewrites.
+
+verbosity = 1
+
+output_path = "runs/wormhole_merger/stage1_lapse5_sg01"
+amr.plot_file = "/tmp/grteclyn_scratch/stage1_lapse5_sg01/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/stage1_lapse5_sg01/BinaryWormholeChk"
+
+checkpoint_interval = -1
+
+# dt on level 0 is dt_multiplier * dx_coarse = 0.02 * 0.5 = 0.01, so a plotfile
+# every 50 coarse steps is one every 0.5 in time: 80 samples of R_areal(t)
+# across stop_time = 40.  Enough to see a growth rate, not so many that the
+# consumer becomes the bottleneck.
+plot_interval = 50
+
+amr.plot_vars = chi K lapse phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: ONE regular massive drainhole throat, id_type = 1.
+
+wormhole_id_type = 1
+
+# Default 5 = the drainhole's own exact static lapse, no collar.  This is the
+# fixed-point configuration described above; WHM_LAPSE_TYPE=6 is the arm that
+# multiplies in the collar.
+wormhole_initial_lapse_type = 5
+
+wormhole_throat_radius_A = 2.0       # drainhole scale a
+wormhole_throat_radius_B = 0.0       # single-throat mode
+
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_drainhole_mass_B = 0.0
+
+# Not the puncture.  wormhole_bare_mass_* is rejected outright under
+# id_type = 1; it is the failure mode Stage 0 removed.
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+
+wormhole_centerA = 0.0 0.0 0.0
+wormhole_momentumA = 0.0 0.0 0.0
+
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+
+#################################################
+# Grid.  L = 64, N = 128 -> dx = 0.5 on level 0; max_level = 2 gives dx = 0.125
+# at the throat, which Stage 0.6 measured as a proper cell width of 0.31 against
+# a throat of areal radius 3.89.  The outer boundary sits 32 = 8 R_min away.
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+
+max_level = 2
+regrid_interval = 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution.  40 M at dt = 0.01 is 4000 coarse steps.
+
+dt_multiplier = 0.02
+stop_time = 40.0
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+# 1+log slicing and Gamma-driver shift, both starting from the fixed point.
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Diagnostics.
+#
+# READ binary_throat_diagnostics.dat WITH CARE on a single wormhole.  Its
+# chi*_min column is the GLOBAL minimum of chi, and for a wormhole that is NOT
+# the throat -- it is the compactified far infinity at rbar -> 0, where chi
+# vanishes like rbar^4.  Measured here at t = 0: chiA_min = 7.2e-6 at
+# rbar = 0.108, exactly the analytic value, while the throat sits at rbar =
+# 1.618 with chi = 0.173.  Read as a throat tracker that column says the throat
+# has collapsed at t = 0, which is nonsense.  Read as what it is -- an ORIGIN
+# health monitor -- it is the single most useful number in this run, because
+# whether the origin stays numerically survivable without the collar IS the
+# Stage 1.3 question.  The module's two-throat columns are also degenerate here
+# (it splits about z = 0 and finds the same origin cell twice, reporting a
+# spurious separation of one cell); that is a binary diagnostic being used on a
+# single object, and it is harmless.
+#
+# The THROAT is tracked by the areal radius R = r/sqrt(chi), which has its
+# interior minimum at the throat by definition.  That comes off the plotfiles
+# through the consumer (--areal-radius --areal-min-radius 0.8).  0.8 sits
+# outside the collar, which is fully open by rbar = 0.8, and well inside the
+# throat at 1.618: R_areal there is 5.02 against the minimum 3.89, so the cutoff
+# cannot win the argmin.
+#
+# The consumer must also be told the run's centre or it rays out from (0,0,0)
+# and measures the far field.  run_single.sh now reads `center` below and passes
+# it through automatically.
+
+binary_throat_diagnostics = 1
+binary_diag_axis = 2
+binary_diag_split_coord = 0.0
+
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576

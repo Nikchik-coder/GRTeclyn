@@ -10,25 +10,31 @@
 # so the plot never appears to shrink/grow when PNG sizes differ.
 #
 # Usage:
-#   make_movies.sh EPISODE_DIR [EPISODE_DIR ...] [--framerate N] [--only chi_z K_z]
+#   make_movies.sh EPISODE_DIR [EPISODE_DIR ...] [--framerate N] [--only chi_z K_z] [--max-frame N]
+#
+# --max-frame N stitches only frames numbered <= N: the run's trust window
+# (rerender_frames.py --t-max turns a time into the frame number).  Later
+# frames stay on disk; they are just not in the movie.
 #
 # For each EPISODE_DIR it looks under <EPISODE_DIR>/frames/<field>_<axis>/frames/
 # and writes <EPISODE_DIR>/movies/movie_<field>_<axis>.mp4
 set -euo pipefail
 
 FRAMERATE=10
+MAX_FRAME=""
 ONLY=()
 DIRS=()
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --framerate) FRAMERATE="$2"; shift 2;;
+    --max-frame) MAX_FRAME="$2"; shift 2;;
     --only) shift; while [[ $# -gt 0 && "$1" != --* ]]; do ONLY+=("$1"); shift; done;;
     *) DIRS+=("$1"); shift;;
   esac
 done
 
 if [[ ${#DIRS[@]} -eq 0 ]]; then
-  echo "Usage: $0 EPISODE_DIR [EPISODE_DIR ...] [--framerate N] [--only chi_z K_z]" >&2
+  echo "Usage: $0 EPISODE_DIR [EPISODE_DIR ...] [--framerate N] [--only chi_z K_z] [--max-frame N]" >&2
   exit 2
 fi
 
@@ -47,7 +53,8 @@ encode_stable_movie() {
   local frames_dir="$1"
   local out="$2"
   local framerate="$3"
-  python3 - "$frames_dir" "$out" "$framerate" <<'PY'
+  local max_frame="${4:-}"
+  python3 - "$frames_dir" "$out" "$framerate" "$max_frame" <<'PY'
 from __future__ import annotations
 
 import re
@@ -65,12 +72,15 @@ except ImportError:
 frames_dir = Path(sys.argv[1])
 out = Path(sys.argv[2])
 framerate = sys.argv[3]
+max_frame = int(sys.argv[4]) if len(sys.argv) > 4 and sys.argv[4] else None
 
 def sort_key(p: Path) -> int:
     m = re.search(r"(\d+)\s*$", p.stem)
     return int(m.group(1)) if m else 0
 
 pngs = sorted(frames_dir.glob("*.png"), key=sort_key)
+if max_frame is not None:
+    pngs = [p for p in pngs if sort_key(p) <= max_frame]
 if not pngs:
     sys.exit(0)
 
@@ -127,8 +137,8 @@ for ep in "${DIRS[@]}"; do
     shopt -u nullglob
     [[ ${#pngs[@]} -gt 0 ]] || continue
     out="${movies_dir}/movie_${field_axis}.mp4"
-    echo "[movie] $ep :: $field_axis (${#pngs[@]} frames) -> movies/$(basename "$out")"
-    encode_stable_movie "$frames_dir" "$out" "$FRAMERATE"
+    echo "[movie] $ep :: $field_axis (${#pngs[@]} frames${MAX_FRAME:+, up to frame $MAX_FRAME}) -> movies/$(basename "$out")"
+    encode_stable_movie "$frames_dir" "$out" "$FRAMERATE" "$MAX_FRAME"
     made=$((made+1))
   done
 done

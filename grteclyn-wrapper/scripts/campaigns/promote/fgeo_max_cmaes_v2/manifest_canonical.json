@@ -1,0 +1,74 @@
+{
+  "campaign": "fgeo_max_cmaes_canonical",
+  "source_run": "runs/neuralspacetime/search/cma_es/qball_traj_fgeo_max_cmaes_v2",
+  "source_eval": "auto",
+  "objective_mode": "f_geo_max",
+  "physics_frozen": {
+    "matter_model": "grtresna_bicomplex_scalar",
+    "matter_sector": "boson_star",
+    "pump": "on for the ENTIRE run -- rl_pump_stop_time deliberately ABSENT, exactly as the headline matrix. The pump is NOT the variable under test here; the five per-lump exotic dials are.",
+    "max_level": 3,
+    "regrid_threshold": 0.02,
+    "qball": "compact ODE + equilibrium amplitude",
+    "do_not_mutate": true,
+    "exotic_dials_pinned_to_zero": true,
+    "champion_exotic_dials_replaced": {
+      "trajectory_lump0_exotic": 0.9267351635169885,
+      "trajectory_lump1_exotic": 0.7974160073376074,
+      "trajectory_lump2_exotic": 0.7913544924100542,
+      "trajectory_lump3_exotic": 0.6111279792243497,
+      "trajectory_lump4_exotic": 0.27483333033774887
+    }
+  },
+  "extra_overrides": [
+    "grtresna_matter_model=grtresna_bicomplex_scalar",
+    "grtresna_matter_coupling=canonical",
+    "trajectory_lump0_exotic=0",
+    "trajectory_lump1_exotic=0",
+    "trajectory_lump2_exotic=0",
+    "trajectory_lump3_exotic=0",
+    "trajectory_lump4_exotic=0"
+  ],
+  "defaults": {
+    "stop_time": 32.0,
+    "plot_interval": 72,
+    "grteclyn_frames": 1,
+    "grteclyn_psi4": 1,
+    "grteclyn_psi4_n_points": 128,
+    "consumer_radii": [
+      12.0,
+      18.0,
+      24.0
+    ],
+    "geo_directions": "x y z",
+    "geo_emit_interval": 2.0,
+    "geo_max_emissions": 13,
+    "evolving_geodesic_mode": "hq",
+    "gauge_speed_factor": 1.41421356237
+  },
+  "runs": [
+    {
+      "id": "FMAX-CT",
+      "phase": 6,
+      "role": "canonical_twin",
+      "n_full": 192,
+      "l_full": 128.0,
+      "stop_time": 32.0,
+      "plot_interval": 72,
+      "grteclyn_frames": 1,
+      "evolution_mpi_ranks": 1,
+      "consumer_radii": [
+        12.0,
+        18.0,
+        24.0
+      ],
+      "name_prefix": "fmax_ct_L128_N192_t32",
+      "geo_max_emissions": 13,
+      "notes": "Canonical twin of the frozen champion: identical configuration with all five per-lump exotic dials pinned to 0. Geometry deliberately matches FMAX-RC (L=128, N=192, t=32) so it differences directly against a measured cell -- RC gave f_geo_evol 0.1568, confinement retention 0.442, spread x3.01, persistence 0.024. The question is whether the dispersal established in Phases 4-5 survives removal of the exotic sector. 1 GPU."
+    }
+  ],
+  "acceptance": {
+    "compare_against": "FMAX-RC",
+    "notes": "Not a convergence cell. Read the difference in confinement_retention, confinement_spread_ratio and structural_persistence against FMAX-RC. If they match, the dispersal is independent of the exotic dials."
+  }
+}

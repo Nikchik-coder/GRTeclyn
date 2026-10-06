@@ -1,0 +1,410 @@
+"""Build single_throat/BRANCHES.md and figures/single_throat_branches.png.
+
+The isolated-throat resolution ladder read across levels: level 3
+(`single_hold_t100`, with its chi-regularised twin) against level 4 (the
+`single_hold_ml4_t100` pair), plus the level-2 arm to its death.  Everything is
+regenerated from the packed streams under campaign/ and from the shell-scan
+table single_throat/branch_shell_scans_2026-09-08.dat (written from the kept
+plotfiles by the consumer's horizon module).  Do not hand-edit the outputs.
+
+    python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_branches \
+        [--pack-root results/merger]
+"""
+from __future__ import annotations
+
+import pathlib
+import sys
+
+import numpy as np
+
+# The pack ships its own path map (results/merger/analysis/pack_paths.py) so a
+# copy of the pack can be read without this package installed; this module is
+# the writer, so it borrows that map rather than duplicating the layout.
+_REPO = pathlib.Path(__file__).resolve().parents[5]
+sys.path.insert(0, str(_REPO / "results" / "merger" / "analysis"))
+from pack_paths import figure_dir, find_run, group_dir  # noqa: E402
+
+from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
+
+R_EXACT = 3.8895  # closed form for a = 2, m = 1 (INSTABILITY.md)
+ARMS = {
+    "ml2": "single_hold_ml2_t100",
+    "ml3": "single_hold_t100",
+    "ml3 twin": "single_hold_chireg_t100",
+    "ml4": "single_hold_ml4_t100",
+    "ml4 low floor": "single_hold_ml4_lowfloor_t100",
+}
+# Refinement level is an ORDERED family, so it takes the ordinal ramp -- pale
+# for the coarse grid, dark for the fine one -- and the dash cycle with it, not
+# three unrelated hues that say nothing about which grid is which.
+_LEVELS = ("ml2", "ml3", "ml4")
+_KW = dict(zip(_LEVELS, style.ordinal_series(len(_LEVELS), lw=1.7)))
+COLOUR = {k: v["color"] for k, v in _KW.items()}
+
+
+def load(root: pathlib.Path, run: str, name: str) -> np.ndarray:
+    d = find_run(root, run)
+    if d is None:
+        raise FileNotFoundError(f"{run} is not in the pack")
+    return np.loadtxt(d / name, comments="#", ndmin=2)
+
+
+def at(a: np.ndarray, t: float) -> np.ndarray:
+    return a[int(np.argmin(np.abs(a[:, 0] - t)))]
+
+
+def rel(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    return np.abs(a - b) / np.maximum(np.abs(a), 1e-300)
+
+
+def align(a: np.ndarray, b: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """Rows of two streams at their common output times (packs differ in cadence)."""
+    ka = np.round(a[:, 0], 3)
+    kb = np.round(b[:, 0], 3)
+    common, ia, ib = np.intersect1d(ka, kb, return_indices=True)
+    return a[ia], b[ib]
+
+
+def log_slope(t: np.ndarray, d: np.ndarray, t0: float, hw: float = 3.0) -> float:
+    i0 = int(np.argmin(np.abs(t - (t0 - hw))))
+    i1 = int(np.argmin(np.abs(t - (t0 + hw))))
+    if d[i0] == 0 or d[i1] == 0 or np.sign(d[i0]) != np.sign(d[i1]):
+        return float("nan")
+    return float((np.log(abs(d[i1])) - np.log(abs(d[i0]))) / (t[i1] - t[i0]))
+
+
+def crossing(t: np.ndarray, y: np.ndarray, level: float) -> float:
+    """First t at which |y| exceeds ``level`` (linear interpolation)."""
+    idx = np.where(np.abs(y) > level)[0]
+    if idx.size == 0:
+        return float("nan")
+    k = int(idx[0])
+    if k == 0:
+        return float(t[0])
+    y0, y1 = abs(y[k - 1]), abs(y[k])
+    return float(t[k - 1] + (t[k] - t[k - 1]) * (level - y0) / (y1 - y0))
+
+
+def parse_scans(path: pathlib.Path) -> tuple[list[dict], dict[str, np.ndarray]]:
+    summaries, rows = [], {}
+    for line in path.read_text().splitlines():
+        if line.startswith("#S "):
+            d = {"scan": line.split()[1]}
+            for tok in line.split()[2:]:
+                k, v = tok.split("=")
+                d[k] = v
+            summaries.append(d)
+        elif line and not line.startswith("#"):
+            parts = line.split()
+            rows.setdefault(parts[0], []).append([float(x) for x in parts[1:]])
+    return summaries, {k: np.asarray(v) for k, v in rows.items()}
+
+
+def main(argv: list[str]) -> int:
+    """Pack root as a positional or as --pack-root; the packer uses the flag,
+    which every other module in this package also accepts."""
+    rest = [a for a in argv[1:] if a not in ("--pack-root",)]
+    prev_flag = False
+    positional = []
+    for a in argv[1:]:
+        if a == "--pack-root":
+            prev_flag = True
+            continue
+        if prev_flag or not a.startswith("-"):
+            positional.append(a)
+        prev_flag = False
+    root = pathlib.Path(positional[0]) if positional else _REPO / "results" / "merger"
+    ar = {k: load(root, v, "areal_radius.dat") for k, v in ARMS.items()}
+    cn = {k: load(root, v, "constraint_norms.dat") for k, v in ARMS.items()}
+    cd = {k: load(root, v, "collapse_diagnostics.dat") for k, v in ARMS.items()}
+    scans, _profiles = parse_scans(group_dir(root, "01_single_throat") / "branch_shell_scans_2026-09-08.dat")
+    out: list[str] = []
+    w = out.append
+
+    w("# Two resolutions, two fates: the isolated throat at levels 3 and 4\n")
+    w("Generated by `grteclyn_wrapper.visualisation.wormhole_merger.plot_branches` from the packed streams and the")
+    w("shell-scan table `branch_shell_scans_2026-09-08.dat`. Do not hand-edit; re-run it.\n")
+    w(f"Exact static throat for a = 2, m = 1: areal radius R = {R_EXACT}. Arms: level 2")
+    w("`single_hold_ml2_t100` (dies t = 24.17), level 3 `single_hold_t100` and its")
+    w("chi-regularised twin `single_hold_chireg_t100`, level 4 `single_hold_ml4_t100` and")
+    w("`single_hold_ml4_lowfloor_t100` (min_chi 1e-8 / 5e-10). Level 3's rate, plateau method")
+    w("and clipping window are in INSTABILITY.md; this note adds the second level and the twin.\n")
+
+    # --- 1. the twins are the same evolution ------------------------------------------
+    w("## 1. The floors are not load-bearing\n")
+    a, b = align(cn["ml3"], cn["ml3 twin"])
+    n = len(a)
+    diff = np.where(~np.all(a[:, 1:] == b[:, 1:], axis=1))[0]
+    t_first = a[diff[0], 0] if diff.size else float("nan")
+    pre = a[:, 0] < 61.3
+    ev = (a[:, 0] >= 61.3) & (a[:, 0] <= 66.0)
+    ca, cb = align(cd["ml3"], cd["ml3 twin"])
+    m = len(ca)
+    pre_c = ca[:, 0] < 61.3
+    ev_c = (ca[:, 0] >= 61.3) & (ca[:, 0] <= 66.0)
+    w("Level 3 reference (min_chi 1e-8) against its twin (min_chi 1e-20, the two 1/chi terms of")
+    w("the RHS floored at 1e-8):\n")
+    w("| | before t = 61.3 | t = 61.3-66 (origin at the floor 61.3-62.7) | t = 100 |")
+    w("|---|---|---|---|")
+    w(f"| L2_Ham, max relative difference | {rel(a[:n,1],b[:n,1])[pre].max():.1e} | {rel(a[:n,1],b[:n,1])[ev].max():.2e} | {a[-1,1]:.6e} vs {b[-1,1]:.6e} |")
+    w(f"| L2_Mom, max relative difference | {rel(a[:n,2],b[:n,2])[pre].max():.1e} | {rel(a[:n,2],b[:n,2])[ev].max():.2e} | {a[-1,2]:.6e} vs {b[-1,2]:.6e} |")
+    w(f"| origin lapse (min), max relative difference | {rel(ca[:m,1],cb[:m,1])[pre_c].max():.1e} | {rel(ca[:m,1],cb[:m,1])[ev_c].max():.2e} | {ca[-1,1]:.5e} vs {cb[-1,1]:.5e} |")
+    w(f"| max abs K, max relative difference | {rel(ca[:m,3],cb[:m,3])[pre_c].max():.1e} | {rel(ca[:m,3],cb[:m,3])[ev_c].max():.2e} | {ca[-1,3]:.5e} vs {cb[-1,3]:.5e} |")
+    w(f"| origin chi (min) | equal to {rel(ca[:,2],cb[:,2])[pre_c].max():.0e} | 1e-8 vs 1e-20 (each at its own floor from t = 61.3 to 62.7) | {ca[-1,2]:.4e} vs {cb[-1,2]:.4e} |")
+    ra, rb = align(ar["ml3"], ar["ml3 twin"])
+    w(f"| throat radius R_min (t = 99) | equal to {rel(ra[:,1],rb[:,1])[ra[:,0]<61].max():.0e} | {rel(ra[:,1],rb[:,1])[(ra[:,0]>=61)&(ra[:,0]<=66)].max():.1e} | {ra[-1,1]:.6f} vs {rb[-1,1]:.6f} |")
+    w(f"\nCompared at the {n} common output times of the two packs. First bit-level difference in the")
+    w(f"constraint norms at t = {t_first:.2f} (round-off from the regularised RHS: the relative")
+    w("differences before t = 61.3 are at the 1e-10 level). The origin chi reaches the floor at")
+    w("t = 61.3 in both, sits there 1.4 units,")
+    w("and the two runs re-converge to four digits by t = 66. The clamp value is not load-bearing.\n")
+    same = all(
+        np.array_equal(load(root, ARMS["ml4"], f), load(root, ARMS["ml4 low floor"], f))
+        for f in ("constraint_norms.dat", "collapse_diagnostics.dat", "binary_throat_diagnostics.dat", "areal_radius.dat")
+    )
+    w(f"Level 4 pair (min_chi 1e-8 vs 5e-10): all four streams byte-identical = **{same}**; origin chi")
+    w(f"{cd['ml4'][0,2]:.3e} at t = 0, minimum over the run {cd['ml4'][:,2].min():.3e}, {cd['ml4'][-1,2]:.3e} at t = 100 — never near either floor.\n")
+
+    # --- 2. R_min(t) --------------------------------------------------------------------
+    w("## 2. The throat radius, both levels\n")
+    w("`R_areal_min` from `areal_radius.dat` (ray scan, inner cutoff 0.5). Level 3 is clipped at the")
+    w("cutoff from t = 66 (INSTABILITY.md §1); the level-4 minimum stays interior.\n")
+    w("| t | level 2 R (dev) | level 3 R (dev) @ r | level 4 R (dev) @ r |")
+    w("|---|---|---|---|")
+    for t in list(range(0, 101, 10)) + [99]:
+        cells = [f"{t}"]
+        r2 = at(ar["ml2"], t)
+        cells.append(f"{r2[1]:.4f} ({100*(r2[1]/R_EXACT-1):+.2f} %)" if abs(r2[0] - t) < 0.6 else "dead")
+        for k in ("ml3", "ml4"):
+            r = at(ar[k], t)
+            cells.append(f"{r[1]:.4f} ({100*(r[1]/R_EXACT-1):+.1f} %) @ {r[2]:.2f}")
+        w("| " + " | ".join(cells) + " |")
+
+    # --- 3. rate ------------------------------------------------------------------------
+    w("\n## 3. The growth rate: same to 9 %, opposite sign\n")
+    w("Local logarithmic derivative d ln|R(0) - R| / dt over ±3 units (the plateau method of")
+    w("INSTABILITY.md §3), both levels side by side.\n")
+    w("| t | level 3: R0-R | d ln/dt | level 4: R0-R | d ln/dt |")
+    w("|---|---|---|---|---|")
+    d3 = ar["ml3"][:, 1] - ar["ml3"][0, 1]
+    d4 = ar["ml4"][:, 1] - ar["ml4"][0, 1]
+    t3, t4 = ar["ml3"][:, 0], ar["ml4"][:, 0]
+    rates = {"ml3": [], "ml4": []}
+    for t in range(33, 67, 3):
+        s3 = log_slope(t3, d3, t)
+        s4 = log_slope(t4, d4, t)
+        rates["ml3"].append((t, s3))
+        rates["ml4"].append((t, s4))
+        w(f"| {t} | {-d3[int(np.argmin(np.abs(t3-t)))]:+.3e} | {s3:.4f} | {-d4[int(np.argmin(np.abs(t4-t)))]:+.3e} | {s4:.4f} |")
+    def plateau(k, lo, hi):
+        v = np.array([s for t, s in rates[k] if lo <= t <= hi])
+        return v.mean(), v.std()
+    p3 = plateau("ml3", 49, 61)
+    p4 = plateau("ml4", 49, 61)
+    p4b = plateau("ml4", 40, 64)
+    w(f"\n| | level 3 | level 4 |")
+    w("|---|---|---|")
+    w(f"| plateau rate over t = 49-61 | {p3[0]:.4f} ± {p3[1]:.4f} (tau = {1/p3[0]:.2f}) | {p4[0]:.4f} ± {p4[1]:.4f} (tau = {1/p4[0]:.2f}) |")
+    w(f"| level 4 over its own flat stretch t = 40-64 | — | {p4b[0]:.4f} ± {p4b[1]:.4f} (tau = {1/p4b[0]:.2f}) |")
+    w(f"| sign of R - R0 while growing | {'negative (collapse)' if d3[int(np.argmin(np.abs(t3-55)))]<0 else 'positive (inflation)'} | {'negative (collapse)' if d4[int(np.argmin(np.abs(t4-55)))]<0 else 'positive (inflation)'} |")
+    w(f"| ratio tau(level 4) / tau(level 3) | | {p3[0]/p4[0]:.3f} |")
+    w(f"| T = tau_proper / r_throat (x alpha_throat = 0.5749, / 3.8895) | {0.5749/p3[0]/R_EXACT:.3f} | {0.5749/p4[0]/R_EXACT:.3f} |")
+    w("| Gonzalez, Guzman & Sarbach 2008, m/a = 0.5 | 0.68-0.76 | 0.68-0.76 |")
+    w("\nThe rate moves 9 % toward the predicted band per halving of dx; the sign flips.\n")
+
+    # --- 4. onset -----------------------------------------------------------------------
+    w("## 4. Onset: +5.6 to +8.7 units per halving\n")
+    w("| |R - R0| / R0 exceeds | level 3 | level 4 | shift |")
+    w("|---|---|---|---|")
+    for thr in (1e-3, 1e-2, 1e-1):
+        c3 = crossing(t3, d3 / ar["ml3"][0, 1], thr)
+        c4 = crossing(t4, d4 / ar["ml4"][0, 1], thr)
+        w(f"| {thr:.0e} | t = {c3:.1f} | t = {c4:.1f} | {c4-c3:+.1f} |")
+    w("\nA fourth-order truncation seed would move the onset by tau ln 16 ≈ 16 units per halving;")
+    w("+5.6 to +8.7 at a rate of 0.18 is a seed of order 1.5-2.3 (amplitude ratio 3-5x). The pre-registered fork in")
+    w("archive/GPU_PLAN_UPDATED_2026-09-08.md (+5.5 vs +16) resolves to the low-order side.\n")
+
+    # --- 5. shell scans -----------------------------------------------------------------
+    w("## 5. What the kept plotfiles show (oriented shell scans)\n")
+    w("Shells about the grid centre, outward = increasing areal R, both null expansions, Misner-Sharp")
+    w("mass; `depth` is the most negative theta_out inside the outermost zero crossing, to be read")
+    w("against the scan's median |theta_out|. Level-3 scans use the level-3 covering grid (dx 0.0625,")
+    w("half-width 3); wide scans use level 1 (dx 0.25, half-width 16).\n")
+    w("| scan | t | grid | R_min @ r | MOTS: r, R, M_MS | depth / median | trapped | anti-trapped |")
+    w("|---|---|---|---|---|---|---|---|")
+    for s in scans:
+        edge = " (edge)" if s["at_edge"] == "1" else ""
+        mots = "none" if s["n_mots"] == "0" else f"{float(s['r_mots']):.2f}, {float(s['R_mots']):.3f}, {float(s['M_MS_mots']):.3f}"
+        depth = "—" if s["n_mots"] == "0" else f"{float(s['theta_out_min_inside']):+.3f} / {float(s['median_abs_theta_out']):.3f}"
+        w(f"| {s['scan']} | {s['t']} | L{s['level']}, half {s['half']} | {float(s['R_min']):.3f} @ {float(s['r_at_min']):.2f}{edge} | {mots} | {depth} | {s['n_trapped']} | {s['n_anti_trapped']} |")
+    w("\nLevel 3 (collapse): a trapped band around the contracting throat by t = 61 with an outer")
+    w("marginally trapped surface at R = 3.23; the band fills the inner window by t = 66 and the")
+    w("surface shrinks to R = 2.37 by t = 100 while the Misner-Sharp mass inside it falls 1.62 → 1.23.")
+    w("The wide scan at t = 100 sees the same single surface and nothing anti-trapped.")
+    w("Level 4 (inflation): no marginally trapped surface at any time; a growing shell where both")
+    w("expansions are positive (21 → 41 → 58 shells between t = 77 and 100) around a throat that")
+    w("has moved from r = 1.6 to 8.4. The one level-3 crossing flagged at t = 100 sits on a local")
+    w("*maximum* of R(r) (R ≈ 49 at r ≈ 1.2 against 12 at the innermost shell) with a depth of")
+    w("2 % of the scan's typical |theta_out|; it is not counted as a horizon. That maximum is new:")
+    w("at t = 77 R(r) still fell monotonically from the origin to the throat. The compactified inner")
+    w("sheet is deforming once the throat is eight units away from it.\n")
+
+    # --- 6. origin / constraints --------------------------------------------------------
+    w("## 6. Origin, lapse and constraints\n")
+    w("| t | level 3: chi_min, lapse_min, max abs K, phi range | L2_Ham / L2_Mom | level 4: chi_min, lapse_min, max abs K, phi range | L2_Ham / L2_Mom |")
+    w("|---|---|---|---|---|")
+    for t in (0, 25, 50, 61, 75, 100):
+        c3, c4 = at(cd["ml3"], t), at(cd["ml4"], t)
+        n3, n4 = at(cn["ml3"], t), at(cn["ml4"], t)
+        w(f"| {t} | {c3[2]:.2e}, {c3[1]:.3f}, {c3[3]:.3f}, [{c3[7]:+.3f}, {c3[8]:+.3f}] | {n3[1]:.2e} / {n3[2]:.2e} | {c4[2]:.2e}, {c4[1]:.3f}, {c4[3]:.3f}, [{c4[7]:+.3f}, {c4[8]:+.3f}] | {n4[1]:.2e} / {n4[2]:.2e} |")
+    w("\nThe finest-level phi range tells the same story as the radius: at level 3 the scalar has left")
+    w("the origin by t = 100 (range near zero, the exterior value); at level 4 it fills the finest")
+    w("level at its interior value (the wall has moved outward). The constraint norms grow from")
+    w("t ≈ 75 on both branches (60x at level 3, 6x at level 4 by t = 100); level 4 never clamped, so")
+    w("the growth is not the floor's.\n")
+
+    w("## 7. What this settles and what it does not\n")
+    w("- The mode is physics: same rate at two resolutions to 9 %, moving toward the predicted band.")
+    w("- The fate is not: the sign of the truncation seed flipped between the levels. No collapse or")
+    w("  inflation observed without a declared seed may be quoted as the physics of the throat.")
+    w("- The collapse branch ends in a marginally trapped surface losing mass (1.62 → 1.23 over 40")
+    w("  units); whether it settles, and at what fraction of m, is open.")
+    w("- The inflation branch deforms the compactified inner sheet by t = 100; whether that is the")
+    w("  physics of the branch or the origin failing is open (a −ε arm at level 3 answers it).")
+    w("- The late constraint growth on both branches is unexplained.")
+    (group_dir(root, "01_single_throat") / "BRANCHES.md").write_text("\n".join(out) + "\n")
+    # --no-figure: the note only.  The pack runs it so (2026-09-26): figures/ holds
+    # the paper's figures and nothing else, and this stand-alone strip is not one
+    # of them -- its two panels are Fig. 1(a,b), drawn by plot_single_throat_row.
+    if "--no-figure" in argv[1:]:
+        print("[branches] wrote campaign/01_single_throat/BRANCHES.md (no figure)")
+        return 0
+
+    # --- figure ---------------------------------------------------------------------------
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
+    # PRD style (2026-09-16), the grammar of the seed-branches figure; the
+    # drawing itself lives in figure_panels so the article's combined strip
+    # (plot_single_throat_row, 2026-09-18) can lay the same two panels beside
+    # the declared-seed panel.  Single column, the two panels stacked
+    # (2026-09-16): the branching story is one column's worth.
+    style.prd(base=10.0)
+    fig, (axA, axB) = plt.subplots(2, 1, figsize=(3.4, 4.2),
+                                   constrained_layout=True)
+    figure_panels(axA, axB, root)
+    for ax, letter in ((axA, "a"), (axB, "b")):
+        ax.text(0.03, 0.955, f"({letter})", transform=ax.transAxes, ha="left",
+                va="top", fontsize=9, color=style.INK)
+
+    style.save(fig, figure_dir(root, "01_single_throat") / "single_throat_branches.png")
+    print("[branches] wrote campaign/01_single_throat/BRANCHES.md and figures/01_single_throat/single_throat_branches.png")
+    return 0
+
+
+def plateau_rate(a: np.ndarray, lo: float = 49.0, hi: float = 61.0) -> tuple[float, float]:
+    """Mean and spread of the sliding-window growth rate of |R - R(0)| over
+    the plateau t = lo..hi -- the same windows, on the same grid of centres,
+    as the report's Sec. 3 table, so the figure and BRANCHES.md agree."""
+    d = a[:, 1] - a[0, 1]
+    v = np.array([log_slope(a[:, 0], d, t)
+                  for t in range(33, 67, 3) if lo <= t <= hi])
+    return float(v.mean()), float(v.std())
+
+
+def figure_panels(axA, axB, root: pathlib.Path, legends: bool = True) -> None:
+    """The two resolution-ladder panels drawn onto SUPPLIED axes.
+
+    NO colour (dashed = collapse, solid = inflation, muted grey = the arm
+    that dies before branching), a dot where the scan loses the throat, an X
+    where a run dies, a muted flat line for a run that is alive with its
+    radius stalled, keys inside on opaque patches.  No letter tags: the
+    caller owns the lettering ((a)/(b) alone in `main`, (a)/(b) of a longer
+    row in plot_single_throat_row).  ``style.prd`` must already be active.
+    """
+    ar = {k: load(root, ARMS[k], "areal_radius.dat") for k in ("ml2", "ml3", "ml4")}
+    p3, p4 = plateau_rate(ar["ml3"]), plateau_rate(ar["ml4"])
+    KW = {
+        "ml2": dict(color=style.MUTED, linewidth=1.0, linestyle=(0, ())),
+        "ml3": dict(color=style.INK, linewidth=1.4, linestyle=(0, (4, 2.5))),
+        "ml4": dict(color=style.INK, linewidth=1.4, linestyle=(0, ())),
+    }
+
+    def endmark(ax, x, y, dead, colour):
+        ax.plot(x, y, "X" if dead else "o", color=colour,
+                markersize=5 if dead else 3, markeredgecolor="white",
+                markeredgewidth=0.8, zorder=4)
+
+    axA.axhline(R_EXACT, color=style.MUTED, linewidth=0.8,
+                linestyle=(0, (1, 2.5)), zorder=2)
+    hA, lA = [], []
+    for k, lab, dead in (("ml3", "level 3", False), ("ml4", "level 4", False),
+                         ("ml2", "level 2 (NaN)", True)):
+        tt, RR = ar[k][:, 0], ar[k][:, 1]
+        ok = tt <= 65 if k == "ml3" else np.ones(tt.size, bool)
+        (ln,) = axA.plot(tt[ok], RR[ok], zorder=3, **KW[k])
+        hA.append(ln)
+        lA.append(lab)
+        if k == "ml3":
+            # Alive to t = 100 behind a trapped surface with the last throat
+            # reading stalled: the seed figure's muted continuation.
+            axA.plot([tt[ok][-1], tt[-1]], [RR[ok][-1]] * 2, color=style.MUTED,
+                     linewidth=0.9, linestyle=KW[k]["linestyle"], zorder=2.5)
+            endmark(axA, tt[ok][-1], RR[ok][-1], False, KW[k]["color"])
+        elif dead:
+            endmark(axA, tt[-1], RR[-1], True, KW[k]["color"])
+    axA.set_xlim(0, 104)
+    axA.set_xlabel(r"$t$")
+    axA.set_ylabel(r"$R_{\mathrm{min}}$")
+    # legends=False on the row canvas (2026-09-23): the two boxed keys said
+    # the same thing twice and lay on the curves at a third of a page wide,
+    # so the shared identity moved to ONE figure legend on top and the level-2
+    # arm is named at its own cross
+    if legends:
+        legA = style.legend(axA, hA, lA, loc="lower left", pad=0.03, fontsize=7,
+                            handlelength=1.6, labelspacing=0.25, borderaxespad=0.4,
+                            frameon=True, framealpha=1.0)
+        legA.get_frame().set(facecolor=style.GROUND, edgecolor="none")
+    else:
+        axA.text(23.5, 3.55, "level 2", fontsize=7, color=style.CONTEXT,
+                 ha="left", va="top")
+    style.edge_label(axA, R_EXACT, r"$R_\star$")
+
+    # The rate goes in the key, not on the curve.
+    for k, p_, lab in (("ml3", p3, "level 3, shrinking"),
+                       ("ml4", p4, "level 4, growing")):
+        tt = ar[k][:, 0]
+        dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
+        ok = (np.abs(dd) > 0) & (tt <= (65 if k == "ml3" else 100))
+        axB.plot(tt[ok], np.log10(np.abs(dd[ok])),
+                 label=rf"{lab}  ($\tau={1/p_[0]:.2f}$)", **KW[k])
+    for k, p_, t0, t1 in (("ml3", p3, 49, 61), ("ml4", p4, 49, 61)):
+        dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
+        y0 = np.log10(abs(dd[int(np.argmin(np.abs(ar[k][:, 0] - t0)))]))
+        # GOLD, not muted: laid over ink curves the muted fit vanished
+        # entirely (2026-09-16) -- the one colour on the figure is the fit.
+        # Weight 1.9, matching the seed panel's fits: at 1.0 the fit read as a
+        # hairline under the ink arm rather than as a measurement on it.
+        axB.plot([t0, t1], [y0, y0 + p_[0] * (t1 - t0) / np.log(10)],
+                 color=style.GOLD, linewidth=1.9, linestyle=(0, ()),
+                 label="fitted rate" if k == "ml3" else None, zorder=5)
+    axB.set_xlim(20, 105)
+    axB.set_ylim(-4.5, 0.5)
+    axB.set_xlabel(r"$t$")
+    axB.set_ylabel(r"$\log_{10}\,|R-R_0|/R_0$")
+    if legends:
+        legB = style.legend(axB, loc="upper left", pad=0.03, fontsize=7,
+                            handlelength=1.6, labelspacing=0.25, borderaxespad=0.4,
+                            frameon=True, framealpha=1.0)
+        legB.get_frame().set(facecolor=style.GROUND, edgecolor="none")
+    else:
+        # the rates in place of the retired key; the caption carries them too
+        axB.text(46.0, -1.15, r"$\tau=5.88$", fontsize=7, color=style.INK,
+                 ha="right", va="bottom")
+        axB.text(66.0, -2.35, r"$\tau=5.26$", fontsize=7, color=style.INK,
+                 ha="left", va="top")
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv))

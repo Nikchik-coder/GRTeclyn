@@ -92,11 +92,31 @@ def load_collapse_diagnostics(path: Path) -> Dict[str, np.ndarray]:
         raise SystemExit(f"No data rows found in {path}")
 
     arr = np.asarray(rows, dtype=float)
-    if arr.shape[1] not in (4, 7, 8, 10, 14, 15, 23):
+    if arr.shape[1] not in (4, 7, 8, 10, 11, 14, 15, 23):
         raise SystemExit(
             f"Unexpected number of columns in {path}: "
-            f"got {arr.shape[1]}, expected 4, 7, 8, 10, 14, 15, or 23"
+            f"got {arr.shape[1]}, expected 4, 7, 8, 10, 11, 14, 15, or 23"
         )
+
+    if arr.shape[1] == 11:
+        # BinaryWormholeMerger.  Its writer is
+        #   min_lapse, min_chi, max_abs_K, min_lapse_{x,y,z},
+        #   min_phi, max_phi, min_Pi, max_Pi
+        # -- NOT a truncation of the 14-column layout: it carries no max_ah_r
+        # and no theta_plus, and the scalar columns start at 7 rather than 10.
+        # Falling through to the positional branches below would read min_phi
+        # as the horizon radius and max_phi/min_Pi as the null expansion, so
+        # this layout is mapped explicitly and returns here.
+        t = arr[:, 0]
+        nan = np.full_like(t, np.nan)
+        return {
+            "t": t,
+            "min_lapse": arr[:, 1], "min_chi": arr[:, 2], "max_abs_K": arr[:, 3],
+            "min_lapse_x": arr[:, 4], "min_lapse_y": arr[:, 5], "min_lapse_z": arr[:, 6],
+            "min_phi": arr[:, 7], "max_phi": arr[:, 8],
+            "min_Pi": arr[:, 9], "max_Pi": arr[:, 10],
+            "max_ah_r": nan, "min_theta_plus": nan, "r_at_min_theta_plus": nan,
+        }
 
     t = arr[:, 0]
     out: Dict[str, np.ndarray] = {

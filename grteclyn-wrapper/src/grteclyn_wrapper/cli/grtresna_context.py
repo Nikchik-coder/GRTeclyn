@@ -3,13 +3,22 @@
 from __future__ import annotations
 
 import argparse
+import logging
 from dataclasses import dataclass
 from typing import Any
 
 from ..grtresna.domain import GRTresnaDomainConfig
 from ..grtresna.matter.models import matter_selection_base_overrides
-from ..grtresna.solver import GRTresnaConfig
+from ..grtresna.solver import (
+    GRTresnaConfig,
+    aligned_solve_enforced,
+    apply_exotic_safe_solver,
+    REQUIRE_ALIGNED_SOLVE_ENV,
+    solve_grid_alignment_error,
+)
 from ..search.grtresna_convergence_gate import GRTresnaConvergenceConfig
+
+logger = logging.getLogger(__name__)
 from ..search.optimize import ANGULAR_BASE_OVERRIDES, SearchDimension, build_search_space
 from ..search.optimize.spaces import restrict_retrograde_omega
 from ..search.solved_ftl_gate import SolvedFtlGateConfig
@@ -175,10 +184,35 @@ def build_grtresna_search_context(
             **grtresna_speed_kwargs(args),
         )
         grtresna_config = grtresna_domain.apply_to_solver(grtresna_config)
+        if getattr(args, "grtresna_maximal_slicing", False):
+            # One construction method for every candidate: K=0 with the
+            # exotic-safe relaxation, whatever each candidate's exotic dials
+            # say.  Candidates inherit this base via dataclasses.replace, and
+            # the per-candidate exotic auto-switch becomes an idempotent no-op
+            # -- so canonical and phantom candidates are built identically
+            # except for the sign of rho (bondi MatterDebugg 2026-08-21).
+            grtresna_config.maximal_slicing = True
+            apply_exotic_safe_solver(grtresna_config)
+        # Aligned-grid rail (README rule 1).  Campaign launches export
+        # GRTRESNA_REQUIRE_ALIGNED_SOLVE=1 so the launcher dies here, at
+        # startup, before any CPU or GPU time is spent; otherwise warn loudly.
+        alignment_error = solve_grid_alignment_error(grtresna_config)
+        if alignment_error is not None:
+            message = (
+                f"misaligned GRTresna solve grid: {alignment_error}. Set "
+                "GRTRESNA_DOMAIN_NX/NY/NZ = N_full * (domain_L / L_full) and "
+                "GRTRESNA_MAX_LEVEL=0 (search_common.sh computes this by "
+                f"default), or unset {REQUIRE_ALIGNED_SOLVE_ENV} for a "
+                "deliberate misaligned experiment."
+            )
+            if aligned_solve_enforced():
+                raise ValueError(message)
+            logger.warning("%s", message)
         solved_ftl_gate_config = solved_ftl_gate_config_from_args(args)
         grtresna_convergence_config = GRTresnaConvergenceConfig(
             max_ham_pct=getattr(args, "grtresna_max_ham_pct", 5.0),
             max_mom_pct=getattr(args, "grtresna_max_mom_pct", 5.0),
+            require_converged=getattr(args, "grtresna_require_converged", False),
         )
 
     return GRTresnaSearchContext(

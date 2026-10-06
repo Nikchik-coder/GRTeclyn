@@ -1,0 +1,112 @@
+The scalar-charge law from four rest-release a-points (GPU_PLAN #8)
+===================================================================
+Measured 2026-09-04.  Tool: grteclyn-wrapper/scripts/validation/apoint_repulsion.py
+
+THE EXPERIMENT.  Two like-oriented drainhole throats, equal mass m = 1,
+released FROM REST at separation d = 12, nothing pushing them.  Gravity pulls
+them together; the phantom field that holds the throats open pushes them
+apart.  The four arms are byte-identical apart from the throat radius a:
+
+  a = 1.0   03_two_throats/ctrl_rest_a1     archived
+  a = 1.5   ctrl_rest_a15                   new, 2026-09-04
+  a = 2.0   03_two_throats/ctrl_rest_d12    archived (the Stage-2.5 control)
+  a = 3.0   ctrl_rest_a3                    new, 2026-09-04
+
+PREDICTION.  |F_phi / F_grav| = (a^2 + m^2) / m^2, so the NET outward force
+goes as (a^2 + m^2)/m^2 - 1 = a^2 for m = 1: quadrupling from a = 1 to a = 2,
+ninefold from a = 1 to a = 3.
+
+HOW IT IS MEASURED.  Inverse-chi-weighted centroid of each throat pit, taken
+from the cached chi_z slices (sub-cell, smooth at 1e-4) -- never from
+throat_track.dat, whose 0.03 quantum is the entire early displacement.  The
+tool reproduces the two archived numbers before touching the new arms:
+
+  published  ctrl_rest_a1  +0.0042      this tool  +0.00441
+  published  ctrl_rest_d12 +0.0127      this tool  +0.01274
+
+WHAT THE QUOTED "ACCELERATION" IS WORTH -- READ THIS BEFORE USING IT.
+The archived statistic (quadratic coefficient of the separation over a fixed
+time window) is NOT stable, because by t = 10 the four arms sit at different
+separations and the force is therefore being sampled at different distances:
+
+  fit window       a=1.5   a=2.0   a=3.0   (ratio to a = 1)
+  t = 3.5 .. 10.5   1.92    2.89    4.52
+  t = 6.0 .. 10.5   1.64    2.52    3.93
+  t = 8.0 .. 14.5   3.77    5.28    8.91
+
+A statistic that moves a = 3 from 3.9 to 8.9 on the choice of window cannot
+carry a claim, and the formal fit errors (+/-0.0003) badly understate it.
+Reading the local acceleration at matched separation instead is worse still:
+the a = 1 arm only ever traverses 0.17 in separation, so differentiating it
+is dominated by noise.
+
+THE ROBUST STATISTIC is the displacement itself -- no differentiation, no fit
+window, evaluated at matched times:
+
+  displacement (separation minus its t = 0 value)
+    a      t=6.0     t=8.0    t=10.0    t=11.0
+  1.0     0.0268    0.0592    0.1156    0.1474
+  1.5     0.0470    0.1138    0.2158    0.2832
+  2.0     0.0678    0.1653    0.3176    0.4155
+  3.0     0.0939    0.2370    0.4662    0.6154
+
+  ratio to a = 1                                     predicted
+    a      t=6.0     t=8.0    t=10.0    t=11.0        (a^2)
+  1.0       1.00      1.00      1.00      1.00         1.00
+  1.5       1.75      1.92      1.87      1.92         2.25
+  2.0       2.53      2.79      2.75      2.82         4.00
+  3.0       3.50      4.00      4.03      4.18         9.00
+
+These ratios are stable to a few per cent across every time sampled, and are
+insensitive to the centroid window (+/-1.5, +/-3, +/-5 code units all agree to
+2 %).  This is the measurement.
+
+RESULT.  The push is real, it is outward at every width, and it grows with
+throat WIDTH -- but far more slowly than a^2.  Fitting a power law to the
+four ratios gives an exponent of about 1.36, and the local slope FALLS with
+a (1.58 between a = 1 and 1.5, down to 1.27 between a = 2 and 3), so it is
+not a clean power law either: it is flattening.  At a = 3 the prediction
+overshoots the measurement by a factor of 2.2.
+
+WHAT COULD CAUSE THE SHORTFALL.  Three candidates; one is now eliminated.
+
+  1. Coordinate under-read.  Already flagged in 03_two_throats/NOTES.md, and
+     it does NOT cancel between arms of different width.  If the gauge
+     distortion grows with throat size, it suppresses the wide arms more --
+     the observed direction, and it grows with a as observed.  ALIVE.
+  2. Finite size.  (a^2 + m^2)/m^2 is a point-charge formula.  At a = 3 the
+     throat half-width is a quarter of the separation, so higher multipoles
+     matter and the point formula should overshoot.  ALIVE.
+  3. Under-resolution of the wide throats.  ELIMINATED 2026-09-04: both new
+     throats sit on the FINEST level (dx = 0.0625), giving 48 cells across
+     the a = 1.5 throat and 96 across the a = 3 one.  The widest arm is the
+     best resolved, not the worst, so resolution cannot be making the wide
+     arms under-perform.
+
+WHAT THIS LADDER CANNOT DO, AND THE FIX.  Four like-charge arms cannot
+separate cause 1 from cause 2: both suppress wide arms, both grow with a.
+The campaign already owns the instrument that removes cause 1 -- the
+orientation flip, where the two arms have the SAME width so the coordinate
+under-read cancels between them.  It exists at a = 2 only, and there it
+worked: predicted 1.500, measured 1.511 +/- 0.033.
+
+  Flip arms at the other widths would settle it, and the predictions are far
+  apart, so the test is sharp:
+
+     |infall| / |escape| = (1 + R) / (R - 1),   R = (a^2 + m^2)/m^2
+       a = 1.0   R = 2.00   ->  3.000
+       a = 1.5   R = 3.25   ->  1.889
+       a = 2.0   R = 5.00   ->  1.500   (measured 1.511 +/- 0.033)
+       a = 3.0   R = 10.0   ->  1.222
+
+  Two runs (flip at a = 1.5 and a = 3) at about 2 GPU-hours each would turn
+  this from "the law overshoots, cause unknown" into a decided question: if
+  the flip ratios land on 1.889 and 1.222, the law is right and the
+  like-charge shortfall is entirely the coordinate under-read; if they do not,
+  the (a^2 + m^2)/m^2 scaling itself needs revisiting at finite size.
+
+STATUS.  The sign rule and the existence of the push are unaffected and
+remain measured.  The MAGNITUDE law is, as of this file, supported at a = 2
+by the flip pair and NOT confirmed by the width ladder; the paper should say
+the push grows with throat width, quote the four displacements, and not quote
+a^2 as verified until the flip arms exist.

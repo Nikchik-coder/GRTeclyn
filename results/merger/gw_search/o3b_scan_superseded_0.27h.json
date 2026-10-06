@@ -1,0 +1,53 @@
+{
+  "background": {
+    "floor_far_per_year": 16.166803278688526,
+    "livetime_days": 22.59259259259259,
+    "livetime_s": 1952000.0,
+    "loudest_rank": 11.802913803638813,
+    "n_coincidences": 88,
+    "n_slides": 2000
+  },
+  "bank_size": 127,
+  "blocks": 2,
+  "foreground": [],
+  "gps_end": 1264398618.0,
+  "gps_start": 1264312218.0,
+  "horizon_mpc_optimal": {
+    "collapsing throat": 116.48665882392807,
+    "fly-by": 1783.8673249451429,
+    "head-on": 1331.535214302899,
+    "spiral": 4865.0563818055525,
+    "vacuum BBH twin": 1180.116077330611
+  },
+  "horizon_mpc_sky_averaged": {
+    "collapsing throat": 51.54276939111862,
+    "fly-by": 789.321825196966,
+    "head-on": 589.1748735853536,
+    "spiral": 2152.679814958209,
+    "vacuum BBH twin": 522.1752554560226
+  },
+  "ifos": [
+    "H1",
+    "L1"
+  ],
+  "livetime_hours": 0.27111111111111114,
+  "livetime_s": 976.0,
+  "loudest_single_detector": {
+    "H1": {
+      "chisq_r": 2001.9424079873127,
+      "snr": 589.1519114070902,
+      "stat": 14.779956885953597,
+      "template": "fly-by@18.4",
+      "time": 1264318321.5742188
+    },
+    "L1": {
+      "chisq_r": 0.7519893039461298,
+      "snr": 8.40722401909856,
+      "stat": 8.40722401909856,
+      "template": "spiral@259.2",
+      "time": 1264318186.4279785
+    }
+  },
+  "n_foreground": 0,
+  "sample_rate": 4096
+}

@@ -1,0 +1,4 @@
+# thinned to dt=0.05 from the every-step stream; the last 1 time units are kept whole (the death window)
+#       time              L2_Ham              L2_Mom
+   0.0000000    3.6629450216e-03    0.0000000000e+00
+   0.0100000    4.1049433206e-03    5.5897036508e-08

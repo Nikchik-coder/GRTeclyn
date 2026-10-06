@@ -1,0 +1,4 @@
+# thinned to dt=0.05 from the every-step stream; the last 1 time units are kept whole (the death window)
+#       time           min_lapse             min_chi           max_abs_K         min_lapse_x         min_lapse_y         min_lapse_z             min_phi             max_phi              min_Pi              max_Pi
+   0.0000000    1.9890288445e-01    5.6758495652e-07    0.0000000000e+00    0.0000000000e+00    0.0000000000e+00    0.0000000000e+00   -8.8397706496e-01    8.8397706496e-01    0.0000000000e+00    0.0000000000e+00
+   0.0100000    1.9891487993e-01    5.7395332028e-07    5.7165367195e-06    0.0000000000e+00    0.0000000000e+00    0.0000000000e+00   -8.8393637832e-01    8.8393637832e-01   -3.8035294695e-06    3.8035294697e-06

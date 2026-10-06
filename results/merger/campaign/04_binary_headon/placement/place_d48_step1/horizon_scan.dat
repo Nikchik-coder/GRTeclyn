@@ -1,0 +1,4 @@
+# time  centre  cx  cy  cz  R_min  r_at_R_min  dev  log10_abs_dev  n_mots  r_mots  R_mots  M_MS_mots  theta_out_min_inside  theta_out_max_at_R_min  theta_in_max_at_R_min  n_trapped  n_anti_trapped  n_outermost
+0.0000000000000000e+00  A  55.968750  32.000000  32.000000  3.9602700094e+00  1.610000  1.819514e-02  -1.7400  0  nan  nan  nan  +nan  +6.593897e-03  -3.713290e-04  0  0  0
+0.0000000000000000e+00  B  8.031250  32.000000  32.000000  3.9602703102e+00  1.610000  1.819522e-02  -1.7400  0  nan  nan  nan  +nan  +6.593897e-03  -3.713290e-04  0  0  0
+0.0000000000000000e+00  C  32.000000  32.000000  32.000000  2.7667283390e+01  25.088750  6.113326e+00  0.7863  0  nan  nan  nan  +nan  +8.127453e-01  +7.309550e-02  0  0  0

@@ -7,6 +7,26 @@ RUNS_DIR="${RUNS_DIR:-${GRTECLYN_ROOT}/runs/neuralspacetime/hq}"
 N_FULL="${N_FULL:-256}"
 L_FULL="${L_FULL:-128}"
 GRTRESNA_DOMAIN_L="${GRTRESNA_DOMAIN_L:-${L_FULL}}"
+# ---- Solve wiring, retrofitted 2026-08-26 (wrapper README rules 1/8/9) -----
+# Rule 1: the solve cell must equal the evolution cell and the solve must not
+# refine.  GRTRESNA_N defaults to N_full * (domain_L / L_full); with the HQ
+# defaults (domain_L == L_full) that is simply N_FULL.  The old behaviour left
+# --grtresna-n unset and --grtresna-max-level at 3, which put refined solve
+# cells back into the last-source-wins copy.
+GRTRESNA_N="${GRTRESNA_N:-$(awk -v n="${N_FULL}" -v l="${L_FULL}" \
+  -v d="${GRTRESNA_DOMAIN_L}" 'BEGIN{printf "%d", (n * d / l) + 0.5}')}"
+GRTRESNA_MAX_LEVEL="${GRTRESNA_MAX_LEVEL:-0}"
+# Rule 8: bondi-tightened solve tolerances; the old 1.0%/0.02 search values
+# silently turned paper runs into error-floor measurements.
+GRTRESNA_NL_EXIT_TOLERANCE="${GRTRESNA_NL_EXIT_TOLERANCE:-0.1}"
+GRTRESNA_NL_STALL_TOLERANCE="${GRTRESNA_NL_STALL_TOLERANCE:-0.002}"
+# One slicing (K=0) for every solve, canonical included; and reject solves
+# that exited by the stalled/cap door instead of genuinely converging.
+GRTRESNA_MAXIMAL_SLICING="${GRTRESNA_MAXIMAL_SLICING:-1}"
+GRTRESNA_REQUIRE_CONVERGED="${GRTRESNA_REQUIRE_CONVERGED:-1}"
+# Rule 1 rail: fail closed on a misaligned solve grid.
+export GRTRESNA_REQUIRE_ALIGNED_SOLVE="${GRTRESNA_REQUIRE_ALIGNED_SOLVE:-1}"
+# ---------------------------------------------------------------------------
 MAX_LEVEL="${MAX_LEVEL:-3}"
 REGRID_THRESHOLD="${REGRID_THRESHOLD:-0.02}"
 STOP_TIME="${STOP_TIME:-30}"
@@ -14,7 +34,10 @@ PLOT_INTERVAL="${PLOT_INTERVAL:-24}"
 GRTRESNA_MAX_HAM_PCT="${GRTRESNA_MAX_HAM_PCT:-10}"
 GRTRESNA_MAX_MOM_PCT="${GRTRESNA_MAX_MOM_PCT:-10}"
 GRTRESNA_TIMEOUT="${GRTRESNA_TIMEOUT:-7200}"
-GRTRESNA_ITERATIONS="${GRTRESNA_ITERATIONS:-30}"
+GRTRESNA_ITERATIONS="${GRTRESNA_ITERATIONS:-50}"
+# "More cores for the bigger aligned solves": 8 ranks at N=256 re-verified
+# digit-identical and 6.6x faster than 1 rank (2026-08-19).  Mind rule 10
+# when evolutions are in flight.
 GRTRESNA_RANKS="${GRTRESNA_RANKS:-8}"
 # Keep >=3 plotfiles for evolved/geodesic FTL + effective EC scoring.
 CONSUMER_KEEP_LAST="${CONSUMER_KEEP_LAST:-3}"

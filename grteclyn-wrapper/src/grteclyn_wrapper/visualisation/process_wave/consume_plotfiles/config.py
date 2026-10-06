@@ -3,7 +3,8 @@ from __future__ import annotations
 import os
 from typing import Dict
 
-from ....core.config import VISUALISATION_DIR, default_sim_data_dir
+from ....core.config import default_sim_data_dir
+
 
 def _env_int(name: str, default: int) -> int:
     raw = os.environ.get(name, "").strip()
@@ -27,7 +28,17 @@ def _default_data_dir() -> str:
 
 
 def _default_frames_out_dir() -> str:
-    return str(VISUALISATION_DIR / "visualize")
+    """Frames belong to the run that produced them, not to the source tree.
+
+    This used to return ``VISUALISATION_DIR / "visualize"``, so any invocation
+    that forgot ``--frames-out`` wrote PNGs into the package directory, where
+    frames from unrelated runs piled up and some were committed.  Every real
+    launcher passes ``--frames-out`` (campaigns go through
+    ``core/plot_consumer.py``, which sets it to the episode's frames dir), so
+    this default is only reached by ad-hoc calls -- and for those the working
+    directory is both harmless and where the caller will look.
+    """
+    return os.path.join(os.getcwd(), "frames")
 
 
 def _frames_auto_zlim_enabled(explicit: bool | None = None) -> bool:
@@ -126,6 +137,15 @@ def _frames_stable_movie_enabled() -> bool:
 
 def _field_frame_config(field: str) -> dict:
     cfg = dict(_FIELD_FRAME_CONFIGS.get(field, {"zlim": (None, None), "cmap": "viridis", "label": field}))
+    # Opt-in per-frame scaling for named fields (comma-separated), e.g.
+    # GRTECLYN_FRAMES_PER_FRAME_ZLIM=K.  For a field that grows by orders of
+    # magnitude over a run, any fixed scale hides one end: locked at the final
+    # amplitude the early frames render blank, locked early the late frames
+    # saturate.  Default off; an explicit GRTECLYN_FRAMES_ZLIM_<FIELD> or
+    # GRTECLYN_FRAMES_STABLE_MOVIE below still wins.
+    per_frame_fields = os.environ.get("GRTECLYN_FRAMES_PER_FRAME_ZLIM", "")
+    if field in {p.strip() for p in per_frame_fields.split(",") if p.strip()}:
+        cfg["per_frame_zlim"] = True
     env_key = f"GRTECLYN_FRAMES_ZLIM_{field.upper()}"
     override = os.environ.get(env_key, "").strip()
     if override:

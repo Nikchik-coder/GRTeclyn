@@ -1,0 +1,15 @@
+# Energy check, t = 0: M_ADM (volume identity) of far-side-matched pairs (constraint_solve_puncture_mode = 3) from rest,
+# L = 128, N = 128, level 4, tagging_L = 64 (dx = 0.0625 on |x - x_X| < 2). M1 = 1.00156: the single throat on the same grid.
+# E_b = M_ADM - 2 M1; lam = each throat's coordinate scale; sign = wormhole_phi_sign_B.
+d	sign	lam	c	M_ADM	E_b
+8	-1	0.85661	2.02996	2.36041	0.35730
+12	-1	0.90610	2.08777	2.27232	0.26921
+16	-1	0.93092	2.11616	2.21731	0.21419
+24	-1	0.95526	2.14366	2.15432	0.15121
+48	-1	0.97862	2.16971	2.08304	0.07993
+8	1	0.90597	2.08762	1.38386	-0.61925
+12	1	0.93111	2.11638	1.56658	-0.43653
+16	1	0.94579	2.13300	1.66539	-0.33772
+24	1	0.96200	2.15121	1.77036	-0.23275
+48	1	0.97991	2.17114	1.88245	-0.12067
+# single	0	1.00000	2.19328	1.00156	

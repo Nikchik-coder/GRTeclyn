@@ -36,27 +36,62 @@ def test_confinement_absent_leaves_persistence_ungated() -> None:
     assert ctx.components["structural_persistence"] == 1.0
 
 
-def test_dispersed_matter_gates_persistence_and_notes() -> None:
-    # 40% confined, spread almost doubled: clearly dispersed.
-    cm = ConfinementMetrics(
+def _cm(initial: float | None, final: float) -> ConfinementMetrics:
+    return ConfinementMetrics(
         n_frames=2,
         final_time=3.2,
         initial_rms_radius=4.78,
         final_rms_radius=7.04,
         max_rms_radius=7.04,
-        initial_confined_frac=0.83,
-        final_confined_frac=0.40,
-        min_confined_frac=0.40,
+        initial_confined_frac=initial,
+        final_confined_frac=final,
+        min_confined_frac=final,
         spread_ratio=7.04 / 4.78,
         initial_total=208.0,
         final_total=1499.0,
     )
+
+
+def test_dispersed_matter_gates_persistence_and_notes() -> None:
+    # 83% -> 40% confined, spread almost doubled: clearly dispersed.
+    # Rule 3: retention is judged against the run's OWN t=0 fraction.
+    cm = _cm(0.83, 0.40)
+    ctx = _ctx(cm)
+    compute_survival_components(ctx)
+    expected = 0.40 / 0.83
+    assert abs(ctx.components["confinement_retention"] - expected) < 1e-9
+    # density_retention is 1.0 (no constraints series), so persistence == retention.
+    assert abs(ctx.components["structural_persistence"] - expected) < 1e-9
+    # The absolute final fraction stays exposed for objectives that consume it.
+    assert ctx.components["confinement_final_frac"] == 0.40
+    assert any("DISPERSED" in n for n in ctx.notes)
+
+
+def test_low_absolute_but_stable_family_is_not_dispersed() -> None:
+    # A profile family that sits at 27% confinement by construction and HOLDS
+    # it is perfectly stable -- the old absolute 0.5 threshold flagged exactly
+    # this case DISPERSED (README rule 3, bondi 2026-08-21).
+    cm = _cm(0.27, 0.27)
+    ctx = _ctx(cm)
+    compute_survival_components(ctx)
+    assert ctx.components["confinement_retention"] == 1.0
+    assert not any("DISPERSED" in n for n in ctx.notes)
+
+
+def test_missing_initial_frac_falls_back_to_absolute() -> None:
+    cm = _cm(None, 0.40)
     ctx = _ctx(cm)
     compute_survival_components(ctx)
     assert ctx.components["confinement_retention"] == 0.40
-    # density_retention is 1.0 (no constraints series), so persistence == retention.
-    assert ctx.components["structural_persistence"] == 0.40
     assert any("DISPERSED" in n for n in ctx.notes)
+
+
+def test_absolute_baseline_env_restores_old_behaviour(monkeypatch) -> None:
+    monkeypatch.setenv("SCORE_CONFINEMENT_BASELINE", "absolute")
+    cm = _cm(0.83, 0.40)
+    ctx = _ctx(cm)
+    compute_survival_components(ctx)
+    assert ctx.components["confinement_retention"] == 0.40
 
 
 def test_reader_round_trip(tmp_path) -> None:

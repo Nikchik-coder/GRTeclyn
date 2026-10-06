@@ -1,0 +1,200 @@
+[Level 0 step 3415] ADVANCE at time 34.14 with dt = 0.01
+[Level 0 step 3415] average evolution speed = 12.00586868 code units/h
+[Level 0 step 3415] Advanced 2097152 cells
+[Level 1 step 6829] ADVANCE at time 34.14 with dt = 0.005
+[Level 1 step 6829] average evolution speed = 12.0057657 code units/h
+[Level 1 step 6829] Advanced 4096000 cells
+[Level 2 step 13657] ADVANCE at time 34.14 with dt = 0.0025
+[Level 2 step 13657] average evolution speed = 12.00561828 code units/h
+[Level 2 step 13657] Advanced 4096000 cells
+[Level 3 step 27313] ADVANCE at time 34.14 with dt = 0.00125
+[Level 3 step 27313] average evolution speed = 12.00547008 code units/h
+[Level 3 step 27313] Advanced 4096000 cells
+[Level 3 step 27314] ADVANCE at time 34.14125 with dt = 0.00125
+[Level 3 step 27314] average evolution speed = 12.00576095 code units/h
+[Level 3 step 27314] Advanced 4096000 cells
+[Level 2 step 13658] ADVANCE at time 34.1425 with dt = 0.0025
+[Level 2 step 13658] average evolution speed = 12.00604328 code units/h
+[Level 2 step 13658] Advanced 4096000 cells
+[Level 3 step 27315] ADVANCE at time 34.1425 with dt = 0.00125
+[Level 3 step 27315] average evolution speed = 12.00589564 code units/h
+[Level 3 step 27315] Advanced 4096000 cells
+[Level 3 step 27316] ADVANCE at time 34.14375 with dt = 0.00125
+[Level 3 step 27316] average evolution speed = 12.00618636 code units/h
+[Level 3 step 27316] Advanced 4096000 cells
+[Level 1 step 6830] ADVANCE at time 34.145 with dt = 0.005
+[Level 1 step 6830] average evolution speed = 12.00645994 code units/h
+[Level 1 step 6830] Advanced 4096000 cells
+[Level 2 step 13659] ADVANCE at time 34.145 with dt = 0.0025
+[Level 2 step 13659] average evolution speed = 12.00631216 code units/h
+[Level 2 step 13659] Advanced 4096000 cells
+[Level 3 step 27317] ADVANCE at time 34.145 with dt = 0.00125
+[Level 3 step 27317] average evolution speed = 12.00616418 code units/h
+[Level 3 step 27317] Advanced 4096000 cells
+[Level 3 step 27318] ADVANCE at time 34.14625 with dt = 0.00125
+[Level 3 step 27318] average evolution speed = 12.00645488 code units/h
+[Level 3 step 27318] Advanced 4096000 cells
+[Level 2 step 13660] ADVANCE at time 34.1475 with dt = 0.0025
+[Level 2 step 13660] average evolution speed = 12.0067374 code units/h
+[Level 2 step 13660] Advanced 4096000 cells
+[Level 3 step 27319] ADVANCE at time 34.1475 with dt = 0.00125
+[Level 3 step 27319] average evolution speed = 12.00658981 code units/h
+[Level 3 step 27319] Advanced 4096000 cells
+[Level 3 step 27320] ADVANCE at time 34.14875 with dt = 0.00125
+[Level 3 step 27320] average evolution speed = 12.00688053 code units/h
+[Level 3 step 27320] Advanced 4096000 cells
+
+[STEP 3415] Coarse TimeStep time: 2.094801109
+[STEP 3415] FAB kilobyte spread across MPI nodes: [26031064 ... 26031064]
+
+STEP = 3415 TIME = 34.15 DT = 0.01
+
+[Level 0 step 3416] ADVANCE at time 34.15 with dt = 0.01
+[Level 0 step 3416] average evolution speed = 12.00692831 code units/h
+[Level 0 step 3416] Advanced 2097152 cells
+[Level 1 step 6831] ADVANCE at time 34.15 with dt = 0.005
+[Level 1 step 6831] average evolution speed = 12.00682533 code units/h
+[Level 1 step 6831] Advanced 4096000 cells
+[Level 2 step 13661] ADVANCE at time 34.15 with dt = 0.0025
+[Level 2 step 13661] average evolution speed = 12.00667761 code units/h
+[Level 2 step 13661] Advanced 4096000 cells
+[Level 3 step 27321] ADVANCE at time 34.15 with dt = 0.00125
+[Level 3 step 27321] average evolution speed = 12.00652963 code units/h
+[Level 3 step 27321] Advanced 4096000 cells
+[Level 3 step 27322] ADVANCE at time 34.15125 with dt = 0.00125
+[Level 3 step 27322] average evolution speed = 12.0068204 code units/h
+[Level 3 step 27322] Advanced 4096000 cells
+NaN diagnostic: rank=0 level=3 component=1 name=h11
+NaN autopsy [rank 0]: level 3 step 27322 (26 steps since this level was last regridded) t_old 34.15125 -> t_new 34.1525 dt 0.00125
+  cell (507,511,501) at x = (31.71875, 31.96875, 31.34375), dx = 0.0625
+  cells to the edge of this level's grids (+x -x +y -y +z -z; c/f = coarse-fine, dom = domain): 16(+) 16(+) 16(+) 16(+) 16(+) 16(+)
+  floors: min_chi 1e-20 min_lapse 1e-10 chi_rhs_floor 1e-08
+  variable: old -> new   [|new-old|/dt when both finite]
+         chi: 0.02256335111 -> 6.169619346e+181   [4.935695476e+184]
+         h11: 0.9726261006 -> -1.753258636e+218   [1.402606909e+221]
+         h12: 0.004445682203 -> -3.262540239e+217   [2.610032192e+220]
+         h13: 0.09363100216 -> 4.602958529e+216   [3.682366823e+219]
+         h22: 1.092310899 -> -1.138395224e+218   [9.107161789e+220]
+         h23: -0.006777886435 -> 8.261058379e+217   [6.608846703e+220]
+         h33: 0.9503447648 -> 5.230257262e+219   [4.18420581e+222]
+           K: 0.08780237294 -> -2.427647371e+223   [1.942117897e+226]
+         A11: 0.1130011877 -> -nan   <-- NON-FINITE
+         A12: -0.0131372079 -> -nan   <-- NON-FINITE
+         A13: -0.2758201786 -> -nan   <-- NON-FINITE
+         A22: 0.01219544812 -> -nan   <-- NON-FINITE
+         A23: -0.008899710141 -> -nan   <-- NON-FINITE
+         A33: -0.1740433659 -> -nan   <-- NON-FINITE
+       Theta: -7.600743776e-05 -> -7.040524554e+223   [5.632419643e+226]
+      Gamma1: -0.3285602316 -> -8.111921263e+227   [6.48953701e+230]
+      Gamma2: -0.02351307723 -> 3.359382252e+227   [2.687505801e+230]
+      Gamma3: -0.478517224 -> -6.899886868e+225   [5.519909495e+228]
+       lapse: 0.02357364022 -> 4.387748421e+184   [3.510198737e+187]
+      shift1: -0.05409894334 -> 1.285002803e+215   [1.028002243e+218]
+      shift2: -0.004350313085 -> -7.713477366e+215   [6.170781893e+218]
+      shift3: -0.09118409757 -> -1.542695421e+216   [1.234156337e+219]
+          B1: -0.04003253379 -> -8.111921263e+227   [6.48953701e+230]
+          B2: -0.0003114074452 -> 3.359382252e+227   [2.687505801e+230]
+          B3: 0.007797963009 -> -6.89988686e+225   [5.519909488e+228]
+         phi: -0.1853746708 -> -6.475595094e+210   [5.180476075e+213]
+          Pi: -0.003581533556 -> 2.437802979e+219   [1.950242383e+222]
+  old chi/lapse at the six neighbours (-x +x -y +y -z +z; '-' = outside this box): 0.02433981313/0.02660375414 0.0213515005/0.02049474315 0.02301618946/0.0234506755 0.02256335111/0.02357364022 0.02747029512/0.02276656927 0.01794611931/0.02564568797
+NaN autopsy [rank 0]: level 3 step 27322 (26 steps since this level was last regridded) t_old 34.15125 -> t_new 34.1525 dt 0.00125
+  cell (516,511,501) at x = (32.28125, 31.96875, 31.34375), dx = 0.0625
+  cells to the edge of this level's grids (+x -x +y -y +z -z; c/f = coarse-fine, dom = domain): 16(+) 16(+) 16(+) 16(+) 16(+) 16(+)
+  floors: min_chi 1e-20 min_lapse 1e-10 chi_rhs_floor 1e-08
+  variable: old -> new   [|new-old|/dt when both finite]
+         chi: 0.02256335111 -> 6.170612987e+181   [4.93649039e+184]
+         h11: 0.9726261006 -> -1.753545907e+218   [1.402836725e+221]
+         h12: -0.004445682203 -> 3.263074804e+217   [2.610459843e+220]
+         h13: -0.09363100216 -> -4.603711234e+216   [3.682968987e+219]
+         h22: 1.092310899 -> -1.138581749e+218   [9.108653992e+220]
+         h23: -0.006777886435 -> 8.262412108e+217   [6.609929686e+220]
+         h33: 0.9503447648 -> 5.231112291e+219   [4.184889833e+222]
+           K: 0.08780237294 -> -2.428077815e+223   [1.942462252e+226]
+         A11: 0.1130011877 -> -nan   <-- NON-FINITE
+         A12: 0.0131372079 -> -nan   <-- NON-FINITE
+         A13: 0.2758201786 -> -nan   <-- NON-FINITE
+         A22: 0.01219544812 -> -nan   <-- NON-FINITE
+         A23: -0.008899710141 -> -nan   <-- NON-FINITE
+         A33: -0.1740433659 -> -nan   <-- NON-FINITE
+       Theta: -7.600743776e-05 -> -7.041777943e+223   [5.633422354e+226]
+      Gamma1: 0.3285602316 -> 8.113361997e+227   [6.490689598e+230]
+      Gamma2: -0.02351307723 -> 3.359978575e+227   [2.68798286e+230]
+      Gamma3: -0.478517224 -> -6.901116601e+225   [5.520893281e+228]
+       lapse: 0.02357364022 -> 4.388445024e+184   [3.510756019e+187]
+      shift1: 0.05409894334 -> -1.285212755e+215   [1.028170204e+218]
+      shift2: -0.004350313085 -> -7.714737789e+215   [6.171790231e+218]
+      shift3: -0.09118409757 -> -1.54294744e+216   [1.234357952e+219]
+          B1: 0.04003253379 -> 8.113361997e+227   [6.490689598e+230]
+          B2: -0.0003114074452 -> 3.359978575e+227   [2.68798286e+230]
+          B3: 0.007797963009 -> -6.901116592e+225   [5.520893274e+228]
+         phi: 0.1853746708 -> 6.476648459e+210   [5.181318767e+213]
+          Pi: 0.003581533556 -> -2.438237087e+219   [1.95058967e+222]
+  old chi/lapse at the six neighbours (-x +x -y +y -z +z; '-' = outside this box): 0.0213515005/0.02049474315 0.02433981313/0.02660375414 0.02301618946/0.0234506755 0.02256335111/0.02357364022 0.02747029512/0.02276656927 0.01794611931/0.02564568797
+NaN autopsy [rank 0]: level 3 step 27322 (26 steps since this level was last regridded) t_old 34.15125 -> t_new 34.1525 dt 0.00125
+  cell (507,512,501) at x = (31.71875, 32.03125, 31.34375), dx = 0.0625
+  cells to the edge of this level's grids (+x -x +y -y +z -z; c/f = coarse-fine, dom = domain): 16(+) 16(+) 16(+) 16(+) 16(+) 16(+)
+  floors: min_chi 1e-20 min_lapse 1e-10 chi_rhs_floor 1e-08
+  variable: old -> new   [|new-old|/dt when both finite]
+         chi: 0.02256335111 -> 6.169613605e+181   [4.935690884e+184]
+         h11: 0.9726261006 -> -1.753256913e+218   [1.402605531e+221]
+         h12: -0.004445682203 -> 3.262537033e+217   [2.610029627e+220]
+         h13: 0.09363100216 -> 4.602957827e+216   [3.682366262e+219]
+         h22: 1.092310899 -> -1.138394105e+218   [9.107152839e+220]
+         h23: 0.006777886435 -> -8.261051985e+217   [6.608841588e+220]
+         h33: 0.9503447648 -> 5.230252312e+219   [4.18420185e+222]
+           K: 0.08780237294 -> -2.42764594e+223   [1.942116752e+226]
+         A11: 0.1130011877 -> -nan   <-- NON-FINITE
+         A12: 0.0131372079 -> -nan   <-- NON-FINITE
+         A13: -0.2758201786 -> -nan   <-- NON-FINITE
+         A22: 0.01219544812 -> -nan   <-- NON-FINITE
+         A23: 0.008899710141 -> -nan   <-- NON-FINITE
+         A33: -0.1740433659 -> -nan   <-- NON-FINITE
+       Theta: -7.600743777e-05 -> -7.040519874e+223   [5.632415899e+226]
+      Gamma1: -0.3285602316 -> -8.111915809e+227   [6.489532647e+230]
+      Gamma2: 0.02351307723 -> -3.359380001e+227   [2.687504001e+230]
+      Gamma3: -0.478517224 -> -6.899882046e+225   [5.519905637e+228]
+       lapse: 0.02357364022 -> 4.387743827e+184   [3.510195062e+187]
+      shift1: -0.05409894334 -> 1.285001524e+215   [1.028001219e+218]
+      shift2: 0.004350313085 -> 7.71347079e+215   [6.170776632e+218]
+      shift3: -0.09118409757 -> -1.542693917e+216   [1.234155134e+219]
+          B1: -0.04003253379 -> -8.111915809e+227   [6.489532647e+230]
+          B2: 0.0003114074452 -> -3.359380001e+227   [2.687504001e+230]
+          B3: 0.007797963009 -> -6.899882038e+225   [5.51990563e+228]
+         phi: -0.1853746708 -> -6.475589161e+210   [5.180471329e+213]
+          Pi: -0.003581533556 -> 2.437801311e+219   [1.950241049e+222]
+  old chi/lapse at the six neighbours (-x +x -y +y -z +z; '-' = outside this box): 0.02433981313/0.02660375414 0.0213515005/0.02049474315 0.02256335111/0.02357364022 0.02301618946/0.0234506755 0.02747029512/0.02276656927 0.01794611931/0.02564568797
+amrex::Abort::0::NaN in GRAMRLevel::post_timestep !!!
+SIGABRT
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+addr2line: 'runs/wormhole_merger/merge_headon_flip_d8_eta4_t050/test': No such file
+See Backtrace.0 file for details
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 0 in communicator MPI_COMM_WORLD
+  Proc: [[40460,0],0]
+  Errorcode: 6
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------

@@ -1,0 +1,388 @@
+# Common-surface rescan of the held death stacks, corrected orientation
+# Date: 2026-09-08.  Tool: grteclyn-wrapper/scripts/validation/ah_oriented_scan.py
+# Args per plotfile: --half 6.0 --level 3 --rmin 0.3 --table 0.5  (centre = grid centre)
+# Method: areal radius R(r) of every coordinate sphere from the induced 2-metric;
+#   outward = sign(dR/dr); theta_out/in = both null expansions; M_MS from 2M/R = 1 + R^2 theta_l theta_k / 4.
+# Verdict line per stack: "no MOTS with the corrected orientation" = no marginal surface in r = 0.3..5.8.
+# The "(naive +r ...)" line reproduces the old consumer's reading for comparison.
+# Raw batch log follows (scratch paths under /tmp/grteclyn_scratch, plotfiles not kept in git).
+=================== merge_twin_p012_nodamp_t060/BinaryWormholePlt05050  00:50:43
+BinaryWormholePlt05050  t=50.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 1.180: R = 4.297, theta_out max +1.080 / theta_in max +0.190
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.440 .. 1.120 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 470.191 -2218.107 -288.190 +15.664 -15.604 +288.173 -6970275499.978  mixed         5.369  5.198
+   0.80  4.776  -3.410  -0.573  +0.954  -1.323  -0.291  3.491  mixed         4.934  4.929
+   1.30  4.314  +0.270  -0.506  +1.342  -0.439  +0.882  3.016  mixed         4.830  4.831
+   1.80  4.508  +0.442  -0.374  +0.826  -0.368  +0.150  2.594  mixed         4.936  4.936
+   2.30  4.752  +0.543  -0.254  +0.326  -0.326  -0.075  2.465  mixed         5.140  5.140
+   2.80  5.046  +0.631  -0.156  +0.208  -0.298  -0.150  2.413  mixed         5.421  5.421
+   3.30  5.382  +0.706  -0.079  +0.175  -0.278  -0.173  2.383  mixed         5.756  5.756
+   3.80  5.750  +0.765  -0.022  +0.167  -0.261  -0.179  2.361  mixed         6.132  6.132
+   4.30  6.145  +0.811  +0.020  +0.165  -0.246  -0.180  2.343  normal        6.537  6.537
+   4.80  6.561  +0.850  +0.051  +0.164  -0.234  -0.178  2.328  normal        6.964  6.964
+   5.30  6.994  +0.874  +0.068  +0.167  -0.225  -0.166  2.314  normal        7.401  7.401
+=================== merge_twin_p012_nodamp_t060/BinaryWormholePlt05100  00:50:51
+BinaryWormholePlt05100  t=51.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 1.160: R = 4.275, theta_out max +1.163 / theta_in max +0.213
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.420 .. 1.080 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 113.644 -733.839 -12.961  +1.765  -1.824 +12.947 -102837.001  mixed         5.461  5.186
+   0.80  4.706  -3.207  -0.575  +0.996  -1.400  -0.270  3.334  mixed         4.994  4.999
+   1.30  4.298  +0.306  -0.515  +1.801  -0.442  +0.914  3.013  mixed         4.905  4.901
+   1.80  4.496  +0.442  -0.375  +0.795  -0.370  +0.149  2.568  mixed         4.976  4.976
+   2.30  4.741  +0.544  -0.257  +0.305  -0.329  -0.075  2.447  mixed         5.171  5.171
+   2.80  5.036  +0.633  -0.160  +0.197  -0.300  -0.150  2.397  mixed         5.444  5.444
+   3.30  5.372  +0.708  -0.083  +0.169  -0.279  -0.173  2.368  mixed         5.774  5.774
+   3.80  5.742  +0.767  -0.025  +0.163  -0.262  -0.179  2.347  mixed         6.146  6.146
+   4.30  6.137  +0.813  +0.018  +0.163  -0.248  -0.180  2.330  normal        6.548  6.548
+   4.80  6.553  +0.851  +0.050  +0.163  -0.235  -0.178  2.315  normal        6.974  6.974
+   5.30  6.988  +0.875  +0.065  +0.168  -0.226  -0.166  2.302  normal        7.410  7.410
+=================== merge_twin_p012_nodamp_t060/BinaryWormholePlt05150  00:50:59
+BinaryWormholePlt05150  t=51.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 1.140: R = 4.253, theta_out max +1.268 / theta_in max +0.232
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.460 .. 1.060 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 294.686 -1915.182 -877249808238.837 +887540424612523202838528.000 -25223034573.365 +887540424614669075873792.000 5585470536456203119346874560531213018644866219900928.000  mixed         5.402  5.132
+   0.80  4.640  -3.005  -0.579  +1.043  -1.492  -0.248  3.173  mixed         5.065  5.058
+   1.30  4.284  +0.337  -0.521  +2.332  -0.444  +0.938  3.011  mixed         4.960  4.961
+   1.80  4.484  +0.441  -0.385  +0.756  -0.373  +0.149  2.542  mixed         5.018  5.016
+   2.30  4.729  +0.546  -0.260  +0.283  -0.331  -0.076  2.429  mixed         5.195  5.195
+   2.80  5.025  +0.635  -0.161  +0.184  -0.303  -0.150  2.382  mixed         5.464  5.464
+   3.30  5.363  +0.710  -0.086  +0.162  -0.281  -0.173  2.354  mixed         5.790  5.790
+   3.80  5.733  +0.769  -0.028  +0.160  -0.264  -0.180  2.334  mixed         6.159  6.159
+   4.30  6.129  +0.814  +0.015  +0.162  -0.249  -0.180  2.317  normal        6.559  6.559
+   4.80  6.546  +0.853  +0.047  +0.163  -0.236  -0.178  2.303  normal        6.983  6.983
+   5.30  6.981  +0.876  +0.063  +0.168  -0.227  -0.167  2.291  normal        7.418  7.418
+=================== merge_orbit_flip_d12_p015_rr_t060/BinaryWormholePlt05200  00:51:06
+BinaryWormholePlt05200  t=52.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.320: R = 357.600, theta_out max +29.416 / theta_in max +188.628
+  areal-radius minimum (throat) at r = 1.480: R = 4.441, theta_out max +1.231 / theta_in max +0.292
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.400 .. 1.380 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 295.409 +3109.516 -25.656 +102.971 -102.887 +25.618 -149269007.026  mixed         4.986  4.860
+   0.80  6.275  -9.138  -0.664  +0.658  -0.839  -0.249  6.437  mixed         5.527  5.528
+   1.30  4.509  -0.796  -0.495  +1.172  -2.265  -0.123  2.276  mixed         5.429  5.429
+   1.80  4.556  +0.602  -0.456  +4.723  -0.391  +0.833  3.288  mixed         5.406  5.406
+   2.30  4.861  +0.606  -0.325  +1.372  -0.331  +0.177  2.568  mixed         5.497  5.497
+   2.80  5.173  +0.652  -0.212  +0.576  -0.294  -0.043  2.414  mixed         5.695  5.695
+   3.30  5.516  +0.715  -0.118  +0.359  -0.269  -0.128  2.357  mixed         5.975  5.975
+   3.80  5.887  +0.770  -0.048  +0.275  -0.251  -0.157  2.327  mixed         6.311  6.311
+   4.30  6.283  +0.801  +0.003  +0.234  -0.236  -0.162  2.308  normal        6.688  6.688
+   4.80  6.699  +0.839  +0.040  +0.219  -0.232  -0.162  2.289  normal        7.094  7.094
+   5.30  7.132  +0.870  +0.060  +0.200  -0.214  -0.153  2.277  normal        7.514  7.514
+=================== merge_orbit_flip_d12_p015_rr_t060/BinaryWormholePlt05250  00:51:13
+BinaryWormholePlt05250  t=52.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.320: R = 53.281, theta_out max +0.800 / theta_in max +1.889
+  areal-radius minimum (throat) at r = 1.480: R = 4.425, theta_out max +1.278 / theta_in max +0.331
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.400 .. 1.360 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 47.550 +286.548  -1.901  +1.833  -2.579  +1.721 183.892  mixed         5.054  4.946
+   0.80  6.263  -9.118  -0.671  +0.676  -0.867  -0.229  6.311  mixed         5.580  5.566
+   1.30  4.494  -0.798  -0.527  +1.200  -2.349  -0.109  2.205  mixed         5.472  5.473
+   1.80  4.541  +0.615  -0.466  +5.000  -0.393  +0.861  3.308  mixed         5.439  5.439
+   2.30  4.853  +0.614  -0.331  +1.465  -0.333  +0.199  2.561  mixed         5.524  5.524
+   2.80  5.168  +0.655  -0.214  +0.594  -0.295  -0.034  2.402  mixed         5.716  5.716
+   3.30  5.512  +0.717  -0.123  +0.365  -0.270  -0.124  2.345  mixed         5.990  5.990
+   3.80  5.885  +0.771  -0.052  +0.277  -0.252  -0.156  2.315  mixed         6.324  6.324
+   4.30  6.281  +0.803  +0.001  +0.236  -0.237  -0.162  2.296  normal        6.699  6.699
+   4.80  6.698  +0.840  +0.039  +0.219  -0.232  -0.162  2.278  normal        7.104  7.104
+   5.30  7.131  +0.871  +0.059  +0.201  -0.214  -0.154  2.267  normal        7.524  7.524
+=================== merge_orbit_flip_d12_p015_rr_t060/BinaryWormholePlt05300  00:51:20
+BinaryWormholePlt05300  t=53.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 1.480: R = 4.410, theta_out max +1.319 / theta_in max +0.396
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.380 .. 1.360 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 274.854 -3114.559 -11.138  +6.937  -7.201 +11.173 -2235961.690  mixed         5.090  5.030
+   0.80  6.252  -9.109  -0.679  +0.663  -0.885  -0.209  6.190  mixed         5.636  5.595
+   1.30  4.480  -0.804  -0.563  +1.210  -2.413  -0.097  2.131  mixed         5.513  5.510
+   1.80  4.527  +0.627  -0.471  +5.132  -0.395  +0.851  3.269  mixed         5.463  5.463
+   2.30  4.846  +0.622  -0.341  +1.567  -0.334  +0.222  2.555  mixed         5.543  5.543
+   2.80  5.164  +0.658  -0.218  +0.614  -0.297  -0.024  2.391  mixed         5.731  5.731
+   3.30  5.509  +0.720  -0.124  +0.373  -0.271  -0.119  2.334  mixed         6.003  6.003
+   3.80  5.882  +0.773  -0.054  +0.280  -0.252  -0.154  2.304  mixed         6.335  6.335
+   4.30  6.280  +0.815  -0.002  +0.236  -0.237  -0.162  2.284  mixed         6.709  6.709
+   4.80  6.697  +0.851  +0.036  +0.213  -0.225  -0.162  2.269  normal        7.113  7.113
+   5.30  7.130  +0.872  +0.060  +0.203  -0.214  -0.154  2.256  normal        7.532  7.532
+=================== merge_orbit_flip_d12_p015_nofill_t060/BinaryWormholePlt05200  00:51:28
+BinaryWormholePlt05200  t=52.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.320: R = 357.600, theta_out max +29.416 / theta_in max +188.628
+  areal-radius minimum (throat) at r = 1.480: R = 4.441, theta_out max +1.231 / theta_in max +0.292
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.400 .. 1.380 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 295.409 +3109.516 -25.656 +102.971 -102.887 +25.618 -149269007.026  mixed         4.986  4.860
+   0.80  6.275  -9.138  -0.664  +0.658  -0.839  -0.249  6.437  mixed         5.527  5.528
+   1.30  4.509  -0.796  -0.495  +1.172  -2.265  -0.123  2.276  mixed         5.429  5.429
+   1.80  4.556  +0.602  -0.456  +4.723  -0.391  +0.833  3.288  mixed         5.406  5.406
+   2.30  4.861  +0.606  -0.325  +1.372  -0.331  +0.177  2.568  mixed         5.497  5.497
+   2.80  5.173  +0.652  -0.212  +0.576  -0.294  -0.043  2.414  mixed         5.695  5.695
+   3.30  5.516  +0.715  -0.118  +0.359  -0.269  -0.128  2.357  mixed         5.975  5.975
+   3.80  5.887  +0.770  -0.048  +0.275  -0.251  -0.157  2.327  mixed         6.311  6.311
+   4.30  6.283  +0.801  +0.003  +0.234  -0.236  -0.162  2.308  normal        6.688  6.688
+   4.80  6.699  +0.839  +0.040  +0.219  -0.232  -0.162  2.289  normal        7.094  7.094
+   5.30  7.132  +0.870  +0.060  +0.200  -0.214  -0.153  2.277  normal        7.514  7.514
+=================== merge_orbit_flip_d12_p015_nofill_t060/BinaryWormholePlt05250  00:51:35
+BinaryWormholePlt05250  t=52.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.320: R = 53.281, theta_out max +0.800 / theta_in max +1.889
+  areal-radius minimum (throat) at r = 1.480: R = 4.425, theta_out max +1.278 / theta_in max +0.331
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.400 .. 1.360 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 47.550 +286.548  -1.901  +1.833  -2.579  +1.721 183.892  mixed         5.054  4.946
+   0.80  6.263  -9.118  -0.671  +0.676  -0.867  -0.229  6.311  mixed         5.580  5.566
+   1.30  4.494  -0.798  -0.527  +1.200  -2.349  -0.109  2.205  mixed         5.472  5.473
+   1.80  4.541  +0.615  -0.466  +5.000  -0.393  +0.861  3.308  mixed         5.439  5.439
+   2.30  4.853  +0.614  -0.331  +1.465  -0.333  +0.199  2.561  mixed         5.524  5.524
+   2.80  5.168  +0.655  -0.214  +0.594  -0.295  -0.034  2.402  mixed         5.716  5.716
+   3.30  5.512  +0.717  -0.123  +0.365  -0.270  -0.124  2.345  mixed         5.990  5.990
+   3.80  5.885  +0.771  -0.052  +0.277  -0.252  -0.156  2.315  mixed         6.324  6.324
+   4.30  6.281  +0.803  +0.001  +0.236  -0.237  -0.162  2.296  normal        6.699  6.699
+   4.80  6.698  +0.840  +0.039  +0.219  -0.232  -0.162  2.278  normal        7.104  7.104
+   5.30  7.131  +0.871  +0.059  +0.201  -0.214  -0.154  2.267  normal        7.524  7.524
+=================== merge_orbit_flip_d12_p015_nofill_t060/BinaryWormholePlt05300  00:51:42
+BinaryWormholePlt05300  t=53.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 1.480: R = 4.410, theta_out max +1.319 / theta_in max +0.396
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.380 .. 1.360 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 274.854 -3114.559 -11.138  +6.937  -7.201 +11.173 -2235961.690  mixed         5.090  5.030
+   0.80  6.252  -9.109  -0.679  +0.663  -0.885  -0.209  6.190  mixed         5.636  5.595
+   1.30  4.480  -0.804  -0.563  +1.210  -2.413  -0.097  2.131  mixed         5.513  5.510
+   1.80  4.527  +0.627  -0.471  +5.132  -0.395  +0.851  3.269  mixed         5.463  5.463
+   2.30  4.846  +0.622  -0.341  +1.567  -0.334  +0.222  2.555  mixed         5.543  5.543
+   2.80  5.164  +0.658  -0.218  +0.614  -0.297  -0.024  2.391  mixed         5.731  5.731
+   3.30  5.509  +0.720  -0.124  +0.373  -0.271  -0.119  2.334  mixed         6.003  6.003
+   3.80  5.882  +0.773  -0.054  +0.280  -0.252  -0.154  2.304  mixed         6.335  6.335
+   4.30  6.280  +0.815  -0.002  +0.236  -0.237  -0.162  2.284  mixed         6.709  6.709
+   4.80  6.697  +0.851  +0.036  +0.213  -0.225  -0.162  2.269  normal        7.113  7.113
+   5.30  7.130  +0.872  +0.060  +0.203  -0.214  -0.154  2.256  normal        7.532  7.532
+=================== merge_orbit_flip_d12_p020_nofill_t060/BinaryWormholePlt05100  00:51:50
+BinaryWormholePlt05100  t=51.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.600: R = 35.223, theta_out max +0.000 / theta_in max +0.003
+  areal-radius minimum (throat) at r = 2.200: R = 4.971, theta_out max +0.722 / theta_in max +0.478
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.620 .. 2.060 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30  9.280 +67.674  +0.010  +0.616  -0.951  -0.196 -17.195  normal        3.705  3.705
+   0.80 22.771 -84.145  -0.729  +0.123  -0.533  -0.081 194.573  mixed         5.649  5.649
+   1.30  7.125  -7.665  -0.602  +0.505  -0.822  -0.276  8.264  mixed         5.843  5.843
+   1.80  5.249  -1.522  -0.513  +0.767  -1.567  -0.205  3.215  mixed         5.904  5.904
+   2.30  4.980  +0.214  -2.184  +1.201  -0.422  +0.670  2.062  mixed         5.970  5.970
+   2.80  5.303  +0.907  -0.311  +5.608  -0.306  +0.412  3.647  mixed         6.097  6.097
+   3.30  5.758  +0.884  -0.201  +2.035  -0.262  +0.126  2.762  mixed         6.302  6.302
+   3.80  6.190  +0.854  -0.106  +0.982  -0.233  -0.005  2.494  mixed         6.576  6.576
+   4.30  6.616  +0.852  -0.033  +0.617  -0.214  -0.074  2.396  mixed         6.905  6.905
+   4.80  7.045  +0.861  +0.017  +0.446  -0.200  -0.110  2.350  normal        7.274  7.274
+   5.30  7.479  +0.864  +0.047  +0.351  -0.190  -0.125  2.320  normal        7.664  7.664
+=================== merge_orbit_flip_d12_p020_nofill_t060/BinaryWormholePlt05150  00:51:57
+BinaryWormholePlt05150  t=51.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.600: R = 35.447, theta_out max +0.003 / theta_in max +0.000
+  areal-radius minimum (throat) at r = 2.220: R = 4.961, theta_out max +0.720 / theta_in max +0.414
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.620 .. 2.100 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30  9.411 +68.911  +0.016  +0.626  -0.963  -0.190 -18.898  normal        3.736  3.736
+   0.80 23.432 -83.260  -0.745  +0.118  -0.532  -0.072 207.705  mixed         5.699  5.699
+   1.30  7.245  -8.026  -0.611  +0.495  -0.816  -0.264  8.604  mixed         5.918  5.918
+   1.80  5.273  -1.629  -0.536  +0.764  -1.567  -0.199  3.279  mixed         5.980  5.980
+   2.30  4.966  +0.156  -2.455  +0.949  -0.483  +0.694  1.808  mixed         6.037  6.037
+   2.80  5.276  +0.924  -0.318  +6.531  -0.309  +0.478  3.809  mixed         6.152  6.152
+   3.30  5.748  +0.916  -0.209  +2.422  -0.264  +0.152  2.816  mixed         6.345  6.345
+   3.80  6.193  +0.872  -0.114  +1.095  -0.234  +0.012  2.502  mixed         6.611  6.611
+   4.30  6.626  +0.862  -0.039  +0.668  -0.214  -0.063  2.392  mixed         6.933  6.933
+   4.80  7.059  +0.867  +0.016  +0.474  -0.200  -0.102  2.342  normal        7.297  7.297
+   5.30  7.496  +0.868  +0.046  +0.368  -0.189  -0.123  2.312  normal        7.683  7.683
+=================== merge_orbit_flip_d12_p020_nofill_t060/BinaryWormholePlt05200  00:52:06
+BinaryWormholePlt05200  t=52.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.600: R = 35.639, theta_out max +0.013 / theta_in max -0.002
+  areal-radius minimum (throat) at r = 2.260: R = 4.951, theta_out max +0.737 / theta_in max +0.473
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.620 .. 2.140 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30  9.516 +70.243  +0.023  +0.643  -0.976  -0.186 -20.650  normal        3.765  3.765
+   0.80 24.171 -81.913  -0.760  +0.113  -0.528  -0.063 222.379  mixed         5.746  5.746
+   1.30  7.386  -8.452  -0.620  +0.482  -0.808  -0.253  9.000  mixed         5.988  5.988
+   1.80  5.304  -1.749  -0.555  +0.755  -1.597  -0.193  3.356  mixed         6.052  6.052
+   2.30  4.953  +0.092  -2.835  +0.761  -0.553  +0.728  1.584  mixed         6.100  6.100
+   2.80  5.247  +0.922  -0.325  +6.659  -0.681  +0.423  3.481  mixed         6.204  6.204
+   3.30  5.736  +0.953  -0.216  +2.955  -0.266  +0.179  2.886  mixed         6.387  6.387
+   3.80  6.195  +0.893  -0.120  +1.233  -0.235  +0.031  2.514  mixed         6.644  6.644
+   4.30  6.636  +0.874  -0.045  +0.728  -0.214  -0.051  2.389  mixed         6.960  6.960
+   4.80  7.073  +0.874  +0.011  +0.506  -0.199  -0.094  2.336  normal        7.319  7.319
+   5.30  7.513  +0.871  +0.046  +0.387  -0.188  -0.117  2.304  normal        7.702  7.702
+MISSING /tmp/grteclyn_scratch/merge_twin_p012_cf08_t060_r05000/BinaryWormholePlt054{50}
+=================== merge_twin_p012_cf08_t060_r05000/BinaryWormholePlt05500  00:52:13
+BinaryWormholePlt05500  t=55.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 1.000: R = 4.108, theta_out max +1.774 / theta_in max +0.439
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.320 .. 0.940 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 24.723 -531.424  -0.890 +115876.416 -115876.600  +0.128 -158878969871.700  mixed         5.499  5.476
+   0.80  4.246  -1.553  -0.575  +1.515  -2.642  -0.144  2.223  mixed         5.237  5.232
+   1.30  4.197  +0.379  -0.564  +3.661  -0.447  +0.798  2.729  mixed         5.036  5.035
+   1.80  4.391  +0.441  -0.409  +0.412  -0.383  +0.070  2.387  mixed         5.057  5.056
+   2.30  4.641  +0.560  -0.279  +0.145  -0.344  -0.115  2.320  mixed         5.225  5.224
+   2.80  4.945  +0.649  -0.182  +0.128  -0.316  -0.172  2.288  mixed         5.487  5.487
+   3.30  5.289  +0.722  -0.107  +0.141  -0.293  -0.187  2.268  mixed         5.813  5.813
+   3.80  5.665  +0.780  -0.049  +0.152  -0.274  -0.190  2.252  mixed         6.182  6.182
+   4.30  6.067  +0.825  -0.004  +0.159  -0.258  -0.189  2.240  mixed         6.583  6.583
+   4.80  6.489  +0.862  +0.029  +0.163  -0.243  -0.185  2.230  normal        7.008  7.008
+   5.30  6.929  +0.886  +0.054  +0.168  -0.232  -0.173  2.220  normal        7.444  7.444
+=================== merge_twin_p012_cf08_t060_r05000/BinaryWormholePlt05550  00:52:20
+BinaryWormholePlt05550  t=55.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 0.980: R = 4.086, theta_out max +1.929 / theta_in max +0.510
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.320 .. 0.900 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 19.081 -311.171  -0.897 +199471.103 -199471.302  +0.177 -208259351334.405  mixed         5.482  5.452
+   0.80  4.199  -1.362  -0.571  +1.640  -2.947  -0.136  2.101  mixed         5.194  5.191
+   1.30  4.184  +0.366  -0.562  +3.194  -0.446  +0.739  2.666  mixed         5.000  4.999
+   1.80  4.376  +0.442  -0.411  +0.360  -0.384  +0.049  2.370  mixed         5.030  5.030
+   2.30  4.628  +0.563  -0.282  +0.128  -0.345  -0.125  2.308  mixed         5.206  5.206
+   2.80  4.932  +0.652  -0.182  +0.125  -0.317  -0.177  2.278  mixed         5.474  5.474
+   3.30  5.278  +0.724  -0.107  +0.140  -0.295  -0.191  2.258  mixed         5.803  5.803
+   3.80  5.655  +0.782  -0.050  +0.151  -0.276  -0.193  2.243  mixed         6.175  6.175
+   4.30  6.057  +0.826  -0.006  +0.159  -0.259  -0.190  2.231  mixed         6.578  6.578
+   4.80  6.480  +0.864  +0.027  +0.163  -0.244  -0.186  2.221  normal        7.005  7.005
+   5.30  6.921  +0.887  +0.052  +0.168  -0.233  -0.174  2.212  normal        7.442  7.442
+MISSING /tmp/grteclyn_scratch/merge_twin_p012_lc1_t060/BinaryWormholePlt042{50}
+=================== merge_twin_p012_lc1_t060/BinaryWormholePlt04300  00:52:28
+BinaryWormholePlt04300  t=43.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 0.320: R = 29.784, theta_out max +0.299 / theta_in max +0.051
+  areal-radius maximum at r = 0.360: R = 30.118, theta_out max +0.014 / theta_in max +0.250
+  areal-radius minimum (throat) at r = 1.560: R = 4.388, theta_out max +0.470 / theta_in max +0.584
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.380 .. 1.380 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 31.879 -104.761  -0.799  +0.321  -0.566  +0.121 830.607  mixed         7.444  7.444
+   0.80  6.303  -9.335  -0.672  +0.518  -0.807  -0.490  9.320  mixed         4.701  4.701
+   1.30  4.490  -0.889  -0.543  +0.645  -0.646  -0.251  3.808  mixed         3.886  3.886
+   1.80  4.423  +0.279  -0.488  +1.049  -0.442  +0.268  3.230  mixed         4.085  4.085
+   2.30  4.615  +0.459  -0.349  +0.676  -0.378  -0.016  2.814  mixed         4.436  4.436
+   2.80  4.868  +0.548  -0.236  +0.416  -0.338  -0.142  2.661  mixed         4.813  4.813
+   3.30  5.162  +0.624  -0.146  +0.299  -0.310  -0.195  2.591  mixed         5.210  5.210
+   3.80  5.491  +0.688  -0.076  +0.241  -0.289  -0.211  2.550  mixed         5.626  5.626
+   4.30  5.848  +0.741  -0.022  +0.208  -0.273  -0.211  2.519  mixed         6.062  6.062
+   4.80  6.231  +0.789  +0.018  +0.188  -0.259  -0.206  2.494  normal        6.515  6.515
+   5.30  6.637  +0.823  +0.048  +0.175  -0.247  -0.189  2.470  normal        6.979  6.979
+=================== merge_twin_p012_lc1_t060/BinaryWormholePlt04350  00:52:35
+BinaryWormholePlt04350  t=43.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 0.320: R = 28.908, theta_out max +0.189 / theta_in max +0.023
+  areal-radius maximum at r = 0.360: R = 29.120, theta_out max +0.000 / theta_in max +0.110
+  areal-radius minimum (throat) at r = 1.520: R = 4.355, theta_out max +0.531 / theta_in max +0.514
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.380 .. 1.380 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 30.496 -79.389  -0.794  +0.261  -0.603  +0.119 750.670  mixed         6.986  6.986
+   0.80  6.068  -8.451  -0.678  +0.537  -0.792  -0.525  8.552  mixed         4.647  4.647
+   1.30  4.433  -0.760  -0.545  +0.686  -0.637  -0.240  3.696  mixed         3.931  3.931
+   1.80  4.403  +0.312  -0.485  +1.138  -0.443  +0.277  3.187  mixed         4.139  4.139
+   2.30  4.603  +0.467  -0.346  +0.678  -0.380  -0.012  2.787  mixed         4.478  4.478
+   2.80  4.858  +0.551  -0.231  +0.410  -0.339  -0.140  2.642  mixed         4.844  4.844
+   3.30  5.153  +0.625  -0.142  +0.293  -0.312  -0.192  2.576  mixed         5.233  5.233
+   3.80  5.482  +0.689  -0.073  +0.236  -0.291  -0.209  2.536  mixed         5.643  5.643
+   4.30  5.840  +0.742  -0.021  +0.205  -0.274  -0.210  2.506  mixed         6.074  6.074
+   4.80  6.223  +0.789  +0.019  +0.186  -0.259  -0.205  2.482  normal        6.522  6.522
+   5.30  6.629  +0.823  +0.048  +0.173  -0.247  -0.188  2.459  normal        6.982  6.982
+MISSING /tmp/grteclyn_scratch/merge_twin_p012_nodamp_cf10_t060/BinaryWormholePlt043{50}
+=================== merge_twin_p012_nodamp_cf10_t060/BinaryWormholePlt04400  00:52:43
+BinaryWormholePlt04400  t=44.00  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.400: R = 31.441, theta_out max +0.013 / theta_in max +0.063
+  areal-radius minimum (throat) at r = 1.560: R = 4.661, theta_out max +0.257 / theta_in max +0.514
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.420 .. 1.340 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 21.111 +93.759  -0.282  +0.125  -0.639  -0.041 75.826  mixed         6.979  6.979
+   0.80  6.594 -10.089  -0.461  +0.551  -0.641  -0.450  6.523  mixed         4.846  4.846
+   1.30  4.757  -0.844  -0.400  +0.459  -0.546  -0.110  3.545  mixed         4.002  4.002
+   1.80  4.696  +0.276  -0.400  +0.717  -0.339  +0.096  3.003  mixed         4.213  4.213
+   2.30  4.895  +0.493  -0.272  +0.502  -0.299  -0.092  2.727  mixed         4.600  4.600
+   2.80  5.170  +0.599  -0.169  +0.353  -0.274  -0.168  2.629  mixed         5.016  5.016
+   3.30  5.490  +0.678  -0.088  +0.281  -0.257  -0.189  2.580  mixed         5.446  5.446
+   3.80  5.846  +0.740  -0.027  +0.241  -0.243  -0.187  2.547  mixed         5.889  5.889
+   4.30  6.228  +0.788  +0.019  +0.217  -0.233  -0.184  2.520  normal        6.345  6.345
+   4.80  6.633  +0.829  +0.052  +0.202  -0.223  -0.179  2.495  normal        6.813  6.813
+   5.30  7.056  +0.853  +0.076  +0.190  -0.215  -0.164  2.471  normal        7.285  7.285
+=================== merge_twin_p012_nodamp_cf10_t060/BinaryWormholePlt04450  00:52:50
+BinaryWormholePlt04450  t=44.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.400: R = 30.390, theta_out max +0.005 / theta_in max +0.092
+  areal-radius minimum (throat) at r = 1.520: R = 4.628, theta_out max +0.289 / theta_in max +0.517
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.420 .. 1.340 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 23.036 +43.226  -0.297  +0.098  -0.627  +0.046 108.837  mixed         6.861  6.861
+   0.80  6.345  -9.037  -0.470  +0.570  -0.642  -0.460  6.152  mixed         4.777  4.777
+   1.30  4.698  -0.707  -0.404  +0.469  -0.535  -0.091  3.478  mixed         4.027  4.027
+   1.80  4.675  +0.309  -0.395  +0.761  -0.341  +0.090  2.964  mixed         4.256  4.256
+   2.30  4.884  +0.502  -0.268  +0.498  -0.301  -0.097  2.705  mixed         4.636  4.636
+   2.80  5.161  +0.603  -0.165  +0.344  -0.275  -0.172  2.612  mixed         5.044  5.044
+   3.30  5.483  +0.681  -0.084  +0.274  -0.258  -0.187  2.565  mixed         5.468  5.468
+   3.80  5.840  +0.742  -0.023  +0.236  -0.244  -0.186  2.533  mixed         5.906  5.906
+   4.30  6.223  +0.790  +0.021  +0.214  -0.233  -0.183  2.507  normal        6.358  6.358
+   4.80  6.629  +0.830  +0.054  +0.199  -0.223  -0.179  2.483  normal        6.822  6.822
+   5.30  7.053  +0.855  +0.077  +0.188  -0.215  -0.164  2.460  normal        7.291  7.291
+=================== single_hold_t100/BinaryWormholePlt10000  00:52:58
+/tmp/grteclyn_scratch/single_hold_t100/BinaryWormholePlt10000: plotfile lacks ['h11', 'h12', 'h13', 'h22', 'h23', 'h33', 'A11', 'A12', 'A13', 'A22', 'A23', 'A33'] -- this scan needs the full state
+RESCAN_DONE 00:53:00
+# --- addendum: the three earliest stacks the batch skipped (shell name-expansion slip), scanned separately ---
+=================== merge_twin_p012_cf08_t060_r05000/BinaryWormholePlt05450  01:03:00
+BinaryWormholePlt05450  t=54.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 1.020: R = 4.129, theta_out max +1.685 / theta_in max +0.410
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.320 .. 0.940 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 25.605 -520.302  -0.876 +70351.626 -70351.799  +0.382 -62143605811.990  mixed         5.510  5.486
+   0.80  4.294  -1.740  -0.578  +1.407  -2.387  -0.153  2.345  mixed         5.260  5.258
+   1.30  4.210  +0.389  -0.563  +4.018  -0.447  +0.854  2.796  mixed         5.062  5.061
+   1.80  4.406  +0.440  -0.403  +0.462  -0.382  +0.089  2.405  mixed         5.076  5.076
+   2.30  4.655  +0.557  -0.280  +0.161  -0.342  -0.106  2.333  mixed         5.238  5.238
+   2.80  4.957  +0.647  -0.181  +0.133  -0.314  -0.167  2.300  mixed         5.497  5.497
+   3.30  5.300  +0.721  -0.105  +0.143  -0.292  -0.184  2.278  mixed         5.819  5.819
+   3.80  5.675  +0.778  -0.046  +0.153  -0.273  -0.188  2.262  mixed         6.186  6.186
+   4.30  6.076  +0.823  -0.002  +0.159  -0.257  -0.187  2.250  mixed         6.586  6.586
+   4.80  6.498  +0.861  +0.032  +0.163  -0.242  -0.183  2.239  normal        7.009  7.009
+   5.30  6.937  +0.885  +0.057  +0.168  -0.231  -0.172  2.229  normal        7.444  7.444
+=================== merge_twin_p012_lc1_t060/BinaryWormholePlt04250  01:03:08
+BinaryWormholePlt04250  t=42.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius minimum (throat) at r = 0.320: R = 29.953, theta_out max +0.298 / theta_in max +0.073
+  areal-radius maximum at r = 0.380: R = 32.421, theta_out max +0.008 / theta_in max +0.199
+  areal-radius minimum (throat) at r = 1.600: R = 4.421, theta_out max +0.419 / theta_in max +0.615
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.400 .. 1.400 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 31.024 -53.556  -0.849  +0.386  -0.656  +0.073 715.878  mixed         7.383  7.383
+   0.80  6.541 -10.145  -0.661  +0.498  -0.818  -0.462 10.073  mixed         4.775  4.775
+   1.30  4.554  -1.035  -0.540  +0.611  -0.664  -0.250  3.926  mixed         3.852  3.852
+   1.80  4.446  +0.242  -0.501  +0.960  -0.440  +0.260  3.277  mixed         4.036  4.036
+   2.30  4.628  +0.450  -0.358  +0.672  -0.376  -0.017  2.842  mixed         4.397  4.397
+   2.80  4.878  +0.545  -0.241  +0.422  -0.336  -0.144  2.680  mixed         4.784  4.784
+   3.30  5.171  +0.622  -0.148  +0.305  -0.308  -0.197  2.607  mixed         5.188  5.188
+   3.80  5.499  +0.687  -0.077  +0.245  -0.288  -0.213  2.564  mixed         5.611  5.611
+   4.30  5.856  +0.741  -0.022  +0.211  -0.272  -0.213  2.532  mixed         6.051  6.051
+   4.80  6.239  +0.789  +0.018  +0.190  -0.258  -0.207  2.505  normal        6.509  6.509
+   5.30  6.645  +0.823  +0.049  +0.176  -0.246  -0.189  2.481  normal        6.977  6.977
+=================== merge_twin_p012_nodamp_cf10_t060/BinaryWormholePlt04350  01:03:16
+BinaryWormholePlt04350  t=43.50  centre=[32.0, 32.0, 32.0]  level=3 dx=0.0625  half=6.0
+  areal-radius maximum at r = 0.400: R = 31.842, theta_out max +0.018 / theta_in max +0.034
+  areal-radius minimum (throat) at r = 1.600: R = 4.694, theta_out max +0.232 / theta_in max +0.504
+  no MOTS with the corrected orientation
+  (naive +r orientation would call r = 0.440 .. 1.360 trapped)
+     r      R     dR/dr  out:min   max    in:min    max   M_MS   class      r/sqrt(chi) +x  -x
+   0.30 19.574 +119.860  -0.267  +0.149  -0.653  -0.068 53.213  mixed         7.081  7.081
+   0.80  6.874 -11.310  -0.453  +0.531  -0.634  -0.426  6.957  mixed         4.931  4.931
+   1.30  4.821  -0.993  -0.396  +0.453  -0.560  -0.119  3.614  mixed         3.987  3.987
+   1.80  4.718  +0.239  -0.414  +0.667  -0.337  +0.103  3.045  mixed         4.176  4.176
+   2.30  4.908  +0.482  -0.283  +0.504  -0.298  -0.084  2.751  mixed         4.567  4.567
+   2.80  5.179  +0.594  -0.176  +0.360  -0.272  -0.163  2.646  mixed         4.989  4.989
+   3.30  5.497  +0.675  -0.093  +0.287  -0.255  -0.190  2.595  mixed         5.425  5.425
+   3.80  5.851  +0.738  -0.030  +0.246  -0.243  -0.188  2.561  mixed         5.874  5.874
+   4.30  6.232  +0.786  +0.016  +0.221  -0.232  -0.184  2.533  normal        6.334  6.334
+   4.80  6.636  +0.827  +0.051  +0.204  -0.223  -0.180  2.507  normal        6.804  6.804
+   5.30  7.059  +0.852  +0.075  +0.192  -0.215  -0.164  2.483  normal        7.279  7.279

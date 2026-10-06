@@ -1,0 +1,22 @@
+# The placement curve: two exact throats at rest, read at t = 0.
+# Isolated drainhole (a = 2, m = 1) throat areal radius: 3.8895
+# Excess over isolated falls as d^-1.1568 across the probed range.
+# separation  R_mouth  r_at_min  R_common  run
+    6.0000    4.68853    1.6100    7.8761  place_d6_step1
+    6.5000    4.61246    1.6100    8.0452  place_d65_step1
+    7.0000    4.54941    1.6100    8.2195  place_d7_step1
+    7.5000    4.49629    1.6100    8.4003  place_d75_step1
+    8.0000    4.45092    1.6100    8.5882  place_d8_step1
+   10.0000    4.32072    1.6100    9.3742  place_d10_step1
+   12.0000    4.23855    1.6100   10.2155  place_d12_step1
+   14.0000    4.18201    1.6100   11.0913  place_d14_step1
+   16.0000    4.14073    1.6100   11.9966  place_d16_step1
+   18.0000    4.10927    1.6100   12.9203  place_d18_step1
+   20.0000    4.08452    1.6100   13.8628  place_d20_step1
+   24.0000    4.04805    1.6100   15.7790  place_d24_step1
+   28.0000    4.02248    1.6100   17.7266  place_d28_step1
+   32.0000    4.00356    1.6100   19.6958  place_d32_step1
+   36.0000    3.98900    1.6100   21.6800  place_d36_step1
+   40.0000    3.97744    1.6100   23.6717  place_d40_step1
+   44.0000    3.96805    1.6100   25.6664  place_d44_step1
+   48.0000    3.96027    1.6100   27.6673  place_d48_step1

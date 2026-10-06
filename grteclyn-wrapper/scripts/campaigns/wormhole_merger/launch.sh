@@ -1,0 +1,322 @@
+#!/usr/bin/env bash
+# BinaryWormholeMerger -- THE campaign launcher.  One script for every arm.
+#
+#   bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh \
+#        --template <params file> --name <run name> --gpu <id> --profile <name> [options]
+#
+# WHY THIS EXISTS.  Until 2026-09-10 each arm got its own launch_*.sh under
+# runs/wormhole_merger/ -- thirty of them, 18 to 58 lines each, all the same
+# eight steps with four values changed.  Nothing about a new arm is new code:
+# it is a template, a name, a card, and what the consumer should extract.  So
+# those are arguments, the consumer flags are named profiles in
+# lib/consumer_profiles.sh, and the launch policy (dry run, restart suffix,
+# registry line, detach, where the log goes) lives here once.  The old scripts
+# are archived in runs/wormhole_merger/00_archive/ with a table in README.md
+# mapping each to its command line here.
+#
+# WHAT IT DOES NOT DO.  It does not run the binary.  run_single.sh does, and
+# that separation is load-bearing: AMReX writes parameters_and_version.txt
+# into the CURRENT WORKING DIRECTORY with the absolute paths it was handed, so
+# the binary is only ever started from inside a run directory under runs/,
+# which is gitignored.  This script resolves and delegates; run_single.sh
+# clones the params, rewrites the output paths onto node-local scratch,
+# registers launcher.pid and starts the consumer sidecar.
+#
+# OPTIONS
+#   --template FILE   params template; a bare name resolves against
+#                     runs/wormhole_merger/templates_scan/, a path is used as
+#                     given (the BBH control lives in Examples/BinaryBH/)
+#   --name NAME       run name.  With --restart, run_single.sh appends
+#                     _r<step>, and this script accounts for that when it
+#                     builds paths that must point INTO the run directory
+#   --gpu ID          CUDA device.  Check who else is on the card first:
+#                     other people's runs share these GPUs
+#   --profile NAME    consumer profile (see lib/consumer_profiles.sh):
+#                     headon | headon-scout | orbit | orbit-modes | orbit-modes-scan | bbh | chi | none
+#                     Every profile renders the campaign's full frame set,
+#                     frames_default.txt (bbh less the scalar fields, chi only
+#                     chi).  The preflight REFUSES a launch whose frames miss a
+#                     field of that set unless WHM_FRAMES_SUBSET="<reason>" is in
+#                     the environment (the reason goes into run_manifest.json;
+#                     bbh brings its own), and renders every frame field from
+#                     the t = 0 plotfile before anything starts
+#   --frames-fields L the profile's frames, cut to the fields L ("chi", "chi K")
+#                     or to none at all ("none": every --frames-* flag dropped).
+#                     Needs WHM_FRAMES_SUBSET="<reason>" in the environment, which
+#                     the preflight records; for a study that keeps no frames
+#                     (the 08_convergence runs, 2026-09-27) or reads one field
+#                     only (the sign rule reads the chi slice cache)
+#   --consume-args S  raw consumer flags, replacing the profile entirely.  The
+#                     escape hatch for a one-off that no profile covers; if you
+#                     reach for it twice, add a profile instead
+#   --zoom N          frame window width in code units (default 32)
+#   --coord N         slice coordinate along the slice normal (default 32,
+#                     the box centre; the consumer's own default is 0, the
+#                     DOMAIN BOUNDARY, which renders featureless frames
+#                     without erroring)
+#   --center X Y Z    centre of the frame window, all three coordinates.  The
+#                     renderer defaults to the domain midpoint, which is right
+#                     for every [0, L] box this campaign uses -- but it
+#                     defaulted to z = 0 until 2026-09-15 and that silently
+#                     cost queue 2e both its movies, so on a box whose centre
+#                     is not L/2, or whenever the window is off-axis, SAY IT.
+#                     Either way: eyeball frame 0 (README rule 13)
+#   --keep-last N     plotfiles to keep on scratch (default 3)
+#   --restart DIR     checkpoint directory to continue from
+#   --binary PATH     evolution binary.  Default: the campaign pin below; with
+#                     --restart, the parent run's own binary (its run_manifest.json),
+#                     and a refusal if that cannot be found
+#   --max-level N     override max_level (run_single.sh rewrites
+#                     regrid_interval to match; AMReX aborts otherwise)
+#   --what TEXT       the registry line.  Default: the template's first
+#                     comment line, which is why every template starts with one
+#   --label NAME      what the run calls itself in the machine's process table
+#                     (default "test").  The cards are shared and `ps aux` is
+#                     public, so every process of a run is started from the run
+#                     directory with relative paths and this name: "test
+#                     params.txt", "test_post post.py …", "tee run.log".  It
+#                     hides the subject, not the usage: the username and the
+#                     busy cards stay visible.  run_single.sh, "Process table"
+#   --preflight MODE  full (default; or $WHM_PREFLIGHT) | static | off.  run_single.sh checks the
+#                     final params against the binary before anything starts:
+#                     contradictory settings (checkpoints asked for with output
+#                     off), keys the binary does not read, and whether a seed
+#                     changes the t = 0 data.  static skips the two GPU start-ups;
+#                     off skips every check of the binary (the frame list is
+#                     still checked).  Either is recorded in run_manifest.json
+#   --preflight-only  run the preflight attached, print the verdict, launch
+#                     nothing (the run dir is removed again; its t = 0 frames
+#                     are kept in runs/wormhole_merger/logs/preflight_frames/)
+#   --foreground      run attached (dies with the shell; for probes only)
+#   --dry-run         resolve and print everything, touch nothing (includes the
+#                     no-GPU half of the preflight, on the template)
+#
+# EXAMPLES
+#   the level-3 down-step from a kept level-5 checkpoint (queue 1i, 2026-09-09):
+#     ... launch.sh --template params_v1_lvl3down_d8_t100.txt \
+#         --name merge_headon_flip_d8_v1_lvl3down_t100 --gpu 0 --profile headon \
+#         --zoom 40 --keep-last 3 \
+#         --restart /tmp/grteclyn_scratch/_keep_lvl5/BinaryWormholeChk03500
+#   will this template run as written on this binary? (seconds, launches nothing):
+#     ... launch.sh --template params_single_pureq_q1e2_L128_ml4_scalar_t500.txt \
+#         --name check_t500 --gpu 1 --profile none --preflight-only
+#   a one-step placement probe, attached, no consumer:
+#     ... launch.sh --template params_place_d8_step1.txt --name place_d8_step1 \
+#         --gpu 1 --profile none --keep-last 1 --foreground
+set -euo pipefail
+
+# The campaign pin.  Arms are compared against each other, so they must run the
+# SAME binary; the live build product changes under other work.  Frozen copies
+# live in runs/wormhole_merger/bin/.  Change this only when the whole campaign
+# moves to a new build, and say so in research/merger/STATUS.md.
+# 2026-09-24: moved from main3d_boost_2026-09-08.ex (b69c5940, blind to the
+# quadrupole seed and the core profile) to the stamped build of 7166787a, which
+# reads both (results/merger/binaries.tsv).  A restart keeps its parent's binary.
+DEFAULT_BINARY='runs/wormhole_merger/bin/main3d_guard_7166787a_2026-09-24.ex'
+
+HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+REPO="$(cd -- "${HERE}/../../../.." && pwd)"
+CAMPAIGN="${REPO}/runs/wormhole_merger"
+TEMPLATES="${CAMPAIGN}/templates_scan"
+
+TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 CENTER="" KEEP_LAST=3
+RESTART="" BINARY="" MAX_LEVEL="" WHAT="" FOREGROUND=0 DRYRUN=0 LABEL="test"
+PREFLIGHT="${WHM_PREFLIGHT:-full}" PREFLIGHT_ONLY=0 FRAMES_FIELDS=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --template)   TEMPLATE="$2"; shift 2 ;;
+    --name)       NAME="$2"; shift 2 ;;
+    --gpu)        GPU="$2"; shift 2 ;;
+    --profile)    PROFILE="$2"; shift 2 ;;
+    --consume-args) CONSUME_RAW="$2"; shift 2 ;;
+    --frames-fields) FRAMES_FIELDS="$2"; shift 2 ;;
+    --zoom)       ZOOM="$2"; shift 2 ;;
+    --coord)      COORD="$2"; shift 2 ;;
+    --center)     CENTER="$2 $3 $4"; shift 4 ;;
+    --keep-last)  KEEP_LAST="$2"; shift 2 ;;
+    --restart)    RESTART="$2"; shift 2 ;;
+    --binary)     BINARY="$2"; shift 2 ;;
+    --max-level)  MAX_LEVEL="$2"; shift 2 ;;
+    --what)       WHAT="$2"; shift 2 ;;
+    --label)      LABEL="$2"; shift 2 ;;
+    --preflight)  PREFLIGHT="$2"; shift 2 ;;
+    --preflight-only) PREFLIGHT_ONLY=1; shift ;;
+    --foreground) FOREGROUND=1; shift ;;
+    --dry-run)    DRYRUN=1; shift ;;
+    -h|--help)    sed -n '2,105p' "${BASH_SOURCE[0]}"; exit 0 ;;
+    *)            echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
+  esac
+done
+for req in TEMPLATE NAME GPU PROFILE; do
+  [[ -n "${!req}" ]] || { echo "missing --${req,,} (try --help)" >&2; exit 2; }
+done
+case "${PREFLIGHT}" in
+  full|static|off) ;;
+  *) echo "--preflight must be full, static or off (got '${PREFLIGHT}')" >&2; exit 2 ;;
+esac
+
+# --- resolve the template -------------------------------------------------
+if [[ -f "${TEMPLATE}" ]]; then
+  TEMPLATE_PATH="$(cd -- "$(dirname -- "${TEMPLATE}")" && pwd)/$(basename -- "${TEMPLATE}")"
+elif [[ -f "${TEMPLATES}/${TEMPLATE}" ]]; then
+  TEMPLATE_PATH="${TEMPLATES}/${TEMPLATE}"
+elif [[ -f "${REPO}/${TEMPLATE}" ]]; then
+  TEMPLATE_PATH="${REPO}/${TEMPLATE}"
+else
+  echo "template not found: ${TEMPLATE} (looked in ${TEMPLATES#"${REPO}"/} and as a path)" >&2
+  exit 1
+fi
+
+# --- resolve the binary ---------------------------------------------------
+# A restart continues a run, so by default it continues on that run's binary:
+# a leg on another build would splice two codes into one record, and the pin
+# has moved once already.  The parent is the checkpoint's scratch directory
+# (/tmp/grteclyn_scratch/<run>/...Chk<step>); its run_manifest.json names the
+# binary.  A kept copy (_keep_lvl5/...) has no manifest: then say --binary.
+if [[ -n "${BINARY}" ]]; then
+  BINARY_FROM="--binary"
+elif [[ -n "${RESTART}" ]]; then
+  parent="$(basename "$(dirname "${RESTART%/}")")"
+  manifest="$(find "${CAMPAIGN}" -maxdepth 4 -path "*/${parent}/run_manifest.json" -print -quit 2>/dev/null || true)"
+  if [[ -n "${manifest}" ]]; then
+    BINARY="$(python3 -c 'import json, sys; print((json.load(open(sys.argv[1])).get("binary") or {}).get("path") or "")' "${manifest}" 2>/dev/null || true)"
+  fi
+  if [[ -z "${BINARY}" ]]; then
+    echo "--restart without --binary: no run_manifest.json names the binary ${parent} ran on." >&2
+    echo "  Pass --binary explicitly (results/merger/binaries.tsv lists the frozen builds)." >&2
+    exit 2
+  fi
+  BINARY_FROM="the parent run's binary (${manifest#"${REPO}"/})"
+else
+  BINARY="${DEFAULT_BINARY}"
+  BINARY_FROM="campaign pin"
+fi
+[[ "${BINARY}" == /* ]] || BINARY="${REPO}/${BINARY}"
+[[ -x "${BINARY}" ]] || { echo "binary missing or not executable: ${BINARY}" >&2; exit 1; }
+
+# --- the run directory, INCLUDING the restart suffix ----------------------
+# run_single.sh appends _r<step> when restarting.  Anything that must point
+# into the run directory (the horizon track the consumer appends to) has to
+# know the final name, so compute it here rather than let a profile guess.
+FULL_NAME="${NAME}"
+if [[ -n "${RESTART}" ]]; then
+  [[ -f "${RESTART}/Header" ]] || { echo "not a checkpoint directory: ${RESTART}" >&2; exit 1; }
+  FULL_NAME="${NAME}_r${RESTART##*Chk}"
+fi
+RUN_DIR="${CAMPAIGN}/${FULL_NAME}"
+
+# --- the consumer flags ---------------------------------------------------
+# shellcheck source=lib/consumer_profiles.sh
+source "${HERE}/lib/consumer_profiles.sh"
+if [[ -n "${CONSUME_RAW}" ]]; then
+  CONSUME="${CONSUME_RAW}"
+  consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}" "${CENTER}" >/dev/null   # still validate the name
+  FRAMES_SUBSET=""
+else
+  CONSUME="$(consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}" "${CENTER}")"
+  # A profile that exists to be a frame subset (bbh: no scalar field in a vacuum
+  # run) says why; the caller's own WHM_FRAMES_SUBSET wins.
+  FRAMES_SUBSET="$(consumer_profile_frames_subset "${PROFILE}")"
+fi
+
+# --frames-fields: cut the profile's frames to a subset, or to none.  The reason
+# must come with it (WHM_FRAMES_SUBSET), so the preflight and the manifest say
+# why this run has no movie of the fields it dropped.
+if [[ -n "${FRAMES_FIELDS}" ]]; then
+  [[ -n "${CONSUME_RAW}" ]] && { echo "--frames-fields cuts a profile's frames; with --consume-args write the frame flags yourself" >&2; exit 2; }
+  [[ -n "${WHM_FRAMES_SUBSET:-}" ]] || { echo "--frames-fields needs WHM_FRAMES_SUBSET=\"<reason>\" in the environment" >&2; exit 2; }
+  read -r -a _toks <<< "${CONSUME}"
+  _out=() _i=0
+  while (( _i < ${#_toks[@]} )); do
+    _t="${_toks[_i]}"
+    if [[ "${_t}" == --frames-* ]]; then
+      _vals=(); _i=$((_i + 1))
+      while (( _i < ${#_toks[@]} )) && [[ "${_toks[_i]}" != --* ]]; do _vals+=("${_toks[_i]}"); _i=$((_i + 1)); done
+      [[ "${FRAMES_FIELDS}" == "none" ]] && continue
+      if [[ "${_t}" == "--frames-fields" ]]; then _out+=("--frames-fields" ${FRAMES_FIELDS}); else _out+=("${_t}" "${_vals[@]}"); fi
+      continue
+    fi
+    _out+=("${_t}"); _i=$((_i + 1))
+  done
+  CONSUME="${_out[*]}"
+fi
+
+# --- the registry line ----------------------------------------------------
+# Every template's first line is a comment saying what the run is for; that is
+# the sentence the pack's summary table shows, so it is read, not retyped.
+if [[ -z "${WHAT}" ]]; then
+  WHAT="$(head -1 "${TEMPLATE_PATH}" | sed 's/^# *//')"
+  [[ -n "${RESTART}" ]] && WHAT="${WHAT} -- restarted from ${RESTART##*/} (kept in $(basename "$(dirname "${RESTART}")"))"
+fi
+
+# --- hand off -------------------------------------------------------------
+LOG_DIR="${CAMPAIGN}/logs"
+LOG="${LOG_DIR}/${FULL_NAME}.log"
+env_args=(
+  "WHM_PARAMS=${TEMPLATE_PATH}"
+  "WHM_NAME=${NAME}"
+  "WHM_GPU=${GPU}"
+  "WHM_KEEP_LAST=${KEEP_LAST}"
+  "WHM_RUNS_DIR=${CAMPAIGN}"
+  "WHM_EXE=${BINARY}"
+  "WHM_WHAT=${WHAT}"
+  "WHM_PROC_LABEL=${LABEL}"
+  "WHM_PREFLIGHT=${PREFLIGHT}"
+)
+(( PREFLIGHT_ONLY )) && env_args+=("WHM_PREFLIGHT_ONLY=1")
+[[ -n "${RESTART}" ]]   && env_args+=("WHM_RESTART=${RESTART}")
+[[ -n "${FRAMES_SUBSET}" && -z "${WHM_FRAMES_SUBSET:-}" ]] && env_args+=("WHM_FRAMES_SUBSET=${FRAMES_SUBSET}")
+[[ -n "${MAX_LEVEL}" ]] && env_args+=("WHM_MAX_LEVEL=${MAX_LEVEL}")
+[[ "${FRAMES_FIELDS}" == "none" ]] && env_args+=("WHM_FRAMES_FIELDS=none")
+if [[ "${PROFILE}" == "none" ]]; then
+  env_args+=("WHM_CONSUME=0")
+else
+  env_args+=("WHM_CONSUME_ARGS=${CONSUME}")
+fi
+
+echo "[launch] run      : ${FULL_NAME}"
+echo "[launch] template : ${TEMPLATE_PATH#"${REPO}"/}"
+echo "[launch] binary   : ${BINARY#"${REPO}"/}   (${BINARY_FROM})"
+echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" ]] && echo " (OVERRIDDEN by --consume-args)") (zoom ${ZOOM}, coord ${COORD}, centre ${CENTER:-domain midpoint})   keep-last: ${KEEP_LAST}"
+[[ -n "${RESTART}" ]] && echo "[launch] restart  : ${RESTART}"
+echo "[launch] what     : ${WHAT}"
+echo "[launch] label    : ${LABEL}   (process table: '${LABEL} params.txt', '${LABEL}_post post.py …')"
+echo "[launch] preflight: ${PREFLIGHT}$( (( PREFLIGHT_ONLY )) && echo " -- ONLY: nothing will be launched")"
+if [[ -n "${WHM_FRAMES_SUBSET:-}" || -n "${FRAMES_SUBSET}" ]]; then
+  echo "[launch] frames   : SUBSET allowed -- ${WHM_FRAMES_SUBSET:-${FRAMES_SUBSET}}"
+fi
+[[ -n "${FRAMES_FIELDS}" ]] && echo "[launch] frames   : cut to ${FRAMES_FIELDS} (--frames-fields)"
+
+if (( DRYRUN )); then
+  /usr/bin/env "${env_args[@]}" WHM_DRYRUN=1 bash "${HERE}/run_single.sh"
+  exit 0
+fi
+
+# /usr/bin/env BY PATH, never bare `env`: on 2026-09-10 a shell whose PATH put uv's
+# installer directory first resolved `env` to uv's `env` *script* (meant to be
+# sourced, not run), which exports PATH and exits 0 without running anything --
+# four launches and their dry runs reported success and started nothing.
+# Started from the script's own directory and with a neutral argv[0], so the
+# supervisor shows as "<label>_job run_single.sh" rather than a campaign path
+# (run_single.sh, "Process table"); the same reason the log is opened by
+# redirection or written by a tee standing in the log directory.
+mkdir -p "${LOG_DIR}"
+# A preflight-only call is a question with an answer in seconds: run attached,
+# under its own log name so it never overwrites a real run's log.
+if (( PREFLIGHT_ONLY )); then
+  FOREGROUND=1
+  LOG="${LOG_DIR}/${FULL_NAME}.preflight.log"
+fi
+if (( FOREGROUND )); then
+  echo "[launch] attached -- dies with this shell; log also at ${LOG#"${REPO}"/}"
+  ( cd "${LOG_DIR}" \
+    && /usr/bin/env "${env_args[@]}" bash -c 'cd "$3" && exec -a "$1" bash "$2"' \
+         _ "${LABEL}_job" run_single.sh "${HERE}" 2>&1 | tee "$(basename "${LOG}")" )
+else
+  ( cd "${HERE}" \
+    && /usr/bin/env "${env_args[@]}" setsid nohup \
+         bash -c 'exec -a "$1" bash "$2"' _ "${LABEL}_job" run_single.sh \
+         > "${LOG}" 2>&1 < /dev/null & )
+  echo "[launch] detached on gpu ${GPU}; log: ${LOG#"${REPO}"/}"
+  echo "[launch] stop it with the run's launcher.pid, never a pkill pattern."
+fi

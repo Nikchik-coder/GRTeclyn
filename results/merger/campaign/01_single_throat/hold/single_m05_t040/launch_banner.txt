@@ -1,0 +1,14 @@
+[whm] name     : single_m05_t040
+[whm] template : runs/wormhole_merger/templates_scan/params_single_m05_t040.txt
+[whm] binary   : runs/wormhole_merger/bin/main3d_boost_2026-09-08.ex
+[whm] gpu      : 2
+[whm] run dir  : runs/wormhole_merger/single_m05_t040          (NFS: params, log, .dat streams)
+[whm] scratch  : /tmp/grteclyn_scratch/single_m05_t040      (node-local: plotfiles, checkpoints)
+[whm] registry : single_m05_t040 -> results/merger/runs_registry.tsv
+[whm] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[whm] frames   : as given in WHM_CONSUME_ARGS
+[whm] consumer  : pid 979505 -> runs/wormhole_merger/single_m05_t040/small_data
+[whm]            deleting processed plotfiles, keeping last 40
+[whm] === launching single_m05_t040 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[whm] draining consumer (final pass) ...
+[whm] run FAILED (exit 6) -- see runs/wormhole_merger/single_m05_t040/run.log

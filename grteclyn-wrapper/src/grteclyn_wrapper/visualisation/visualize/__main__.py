@@ -123,8 +123,11 @@ def create_visualizations():
         mid_x = float((ds.domain_right_edge[0] + ds.domain_left_edge[0]) / 2.0)
         mid_y = float((ds.domain_right_edge[1] + ds.domain_left_edge[1]) / 2.0)
 
-        # 2. Physics Center: X,Y are in middle.
-        z_center = 0.0
+        # 2. Physics Center: the domain midpoint on every axis.  z_center
+        # used to be hard-coded 0.0 (only right for origin-centred domains);
+        # on a [0, L] domain that put the in-plane centre of x/y-axis slices
+        # at z = 0, off the physics -- README defect 6.
+        z_center = float((ds.domain_right_edge[2] + ds.domain_left_edge[2]) / 2.0)
 
         physics_center = [mid_x, mid_y, z_center]
 

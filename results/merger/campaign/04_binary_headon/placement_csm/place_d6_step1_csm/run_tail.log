@@ -1,0 +1,120 @@
+Initializing AMReX (26.02-12-gd7da50458966)...
+MPI initialized with 1 MPI processes
+MPI initialized with thread support level 0
+Initializing CUDA...
+CUDA initialized with 1 device.
+AMReX (26.02-12-gd7da50458966) initialized
+GRTeclyn (5f988dbc) initialized
+Parameter: verbosity not found in parameter file. It has been set to its default value = 0.
+Parameter: num_ghosts not found in parameter file. It has been set to its default value = 3.
+Parameter: tag_buffer_size not found in parameter file. It has been set to its default value = 3.
+Parameter: grid_buffer_size not found in parameter file. It has been set to its default value = 8.
+Parameter: fill_ratio not found in parameter file. It has been set to its default value = 0.7.
+Using single regrid threshold.
+Parameter: checkpoint_keep not found in parameter file. It has been set to its default value = 0.
+Parameter: lapse_shock_kappa not found in parameter file. It has been set to its default value = 0.
+Parameter: extraction_center not found in parameter file. It has been set to its default value = 32 32 32.
+Parameter: wormhole_lapse_core_fraction not found in parameter file. It has been set to its default value = 0.3.
+Parameter: wormhole_lapse_core_power not found in parameter file. It has been set to its default value = 8.
+Parameter: wormhole_boost_velocity_A not found in parameter file. It has been set to its default value = 0 0 0.
+Parameter: wormhole_boost_velocity_B not found in parameter file. It has been set to its default value = -0 -0 -0.
+Parameter: wormhole_seed_amplitude_A not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_seed_amplitude_B not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_seed_width_A not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_seed_width_B not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_seed_l2_amplitude_A not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_seed_l2_amplitude_B not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_helfer_width not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_helfer_power not found in parameter file. It has been set to its default value = 2.
+Parameter: constraint_solve_puncture_coefficient_A not found in parameter file. It has been set to its default value = 0.
+Parameter: constraint_solve_puncture_coefficient_B not found in parameter file. It has been set to its default value = 0.
+Parameter: constraint_solve_match_charge not found in parameter file. It has been set to its default value = 1.
+Parameter: constraint_solve_match_tolerance not found in parameter file. It has been set to its default value = 1e-06.
+Parameter: constraint_solve_match_max_iter not found in parameter file. It has been set to its default value = 10.
+Parameter: constraint_solve_tolerance not found in parameter file. It has been set to its default value = 1e-10.
+Parameter: constraint_solve_tolerance_abs not found in parameter file. It has been set to its default value = 0.
+Parameter: constraint_solve_max_iter not found in parameter file. It has been set to its default value = 200.
+Parameter: constraint_solve_max_newton not found in parameter file. It has been set to its default value = 30.
+Parameter: constraint_solve_newton_tolerance not found in parameter file. It has been set to its default value = 1e-10.
+Parameter: recipe_initial_data_file not found in parameter file. It has been set to its default value = .
+Parameter: binary_diag_min_radius not found in parameter file. It has been set to its default value = 2.
+Parameter: binary_diag_collapsed_lapse not found in parameter file. It has been set to its default value = 1e-06.
+Parameter: binary_diag_collapsed_min_radius not found in parameter file. It has been set to its default value = 0.5.
+Parameter: core_radial_profile not found in parameter file. It has been set to its default value = 0.
+Parameter: core_profile_r_max not found in parameter file. It has been set to its default value = 2.
+Parameter: core_profile_dr not found in parameter file. It has been set to its default value = 0.03125.
+Parameter: core_profile_interval not found in parameter file. It has been set to its default value = 1.
+Parameter: core_damping_lapse_start not found in parameter file. It has been set to its default value = 0.03.
+Parameter: core_damping_lapse_full not found in parameter file. It has been set to its default value = 0.001.
+Parameter: core_damping_tau not found in parameter file. It has been set to its default value = 0.25.
+Parameter: core_damping_radius_start not found in parameter file. It has been set to its default value = 0.
+Parameter: core_damping_radius_full not found in parameter file. It has been set to its default value = 0.
+Parameter: core_damping_radius_from_time not found in parameter file. It has been set to its default value = 0.
+Parameter: core_lapse_freeze not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_radius_start not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_radius_full not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_from_time not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_shift not found in parameter file. It has been set to its default value = 0.
+Parameter: core_freeze_fill not found in parameter file. It has been set to its default value = 0.
+Parameter: core_fill_radius_start not found in parameter file. It has been set to its default value = 0.
+Parameter: core_fill_radius_full not found in parameter file. It has been set to its default value = 0.
+Parameter: core_fill_from_time not found in parameter file. It has been set to its default value = 0.
+Parameter: sponge_center not found in parameter file. It has been set to its default value = 32 32 32.
+Parameter: tagging_center not found in parameter file. It has been set to its default value = 32 32 32.
+Parameter: tagging_phi_weight not found in parameter file. It has been set to its default value = 0.
+Parameter: tagging_K_weight not found in parameter file. It has been set to its default value = 0.
+Parameter: rescale_det_h not found in parameter file. It has been set to its default value = 0.
+Parameter: tagging_type = 2 warning: selects a geometric tagger (fixed or moving boxes), so regrid_threshold is ignored: refinement no longer responds to the solution at all.  Set tagging_L to control the boxes.!
+Parameter: wormhole_centerA/B = 6 warning: throats are close enough that the analytic superposition error (O(b^2/d^2)) is no longer small; prefer constraint-solved initial data at this separation!
+Parameter: wormhole_bare_mass/drainhole_mass_A/B = 2 warning: masses are large enough that the O(m/d) superposition error is no longer small; prefer the Helfer/Ning conformal-factor correction or constraint-solved initial data (Route B)!
+Parameter: wormhole_support_ramp_start not found in parameter file. It has been set to its default value = -1.
+Parameter: wormhole_support_ramp_duration not found in parameter file. It has been set to its default value = 5.
+Parameter: wormhole_support_causal_speed not found in parameter file. It has been set to its default value = 0.
+Parameter: wormhole_metric_type not found in parameter file. It has been set to its default value = 1.
+Constraint solve: Newton 1, MLMG final residual 3.494009526e-10, max |w_new - w_old| = 0.04267882967
+Constraint solve, far-side matching: start c = 2.041518327 2.041518327, max |M_far/M_iso - 1| = 0.01971825924
+Constraint solve: Newton 1, MLMG final residual 2.069036054e-10, max |w_new - w_old| = 0.001938026775
+Constraint solve: Newton 1, MLMG final residual 3.020357298e-10, max |w_new - w_old| = 0.001456060958
+Constraint solve: Newton 1, MLMG final residual 1.129564886e-09, max |w_new - w_old| = 0.07821423673
+Constraint solve, far-side matching: pass 1, c = 1.973965893 1.973965892, max |M_far/M_iso - 1| = 0.0001401071601
+Constraint solve: Newton 1, MLMG final residual 1.043243159e-09, max |w_new - w_old| = 0.0005541130223
+Constraint solve, far-side matching: pass 2, c = 1.973482467 1.973482467, max |M_far/M_iso - 1| = 6.768435946e-07
+Constraint solve (Hamiltonian, t = 0): 1 Newton pass(es), last update 0.0005541130223; far-side matching (mass and charge): 2 pass(es), 5 solves, max |M_far/M_iso - 1| = 6.768435946e-07
+  puncture coefficient A 1.973482467 (superposed 1.89887979), B 1.973482467 (superposed 1.89887979)
+  max |w| per level: 0.06378179795 0.08060641504 0.09236922977 0.09839394775
+  M_ADM ~ 1.917640045 + 2 x 0.2004588877 = 2.318557821  (background mass + twice <r w> on the level-0 boundary; biased low by the Robin face)
+  mouth A: c 1.973482467, coordinate scale 0.8096146683 (a 1.619229337, m 0.8096146683); d = -1.1390162 + w0 -0.07976182411 (level 3, r < 0.4048073341, 1088 cells)
+    far-side mass -4.810474125 (0.9999993232 x the isolated -4.810477381), far-side charge 3.034367982 (1 x 3.034367982); one-body drainhole a 2.000002996, m 1.000000652
+  mouth B: c 1.973482467, coordinate scale 0.8096146683 (a 1.619229337, m 0.8096146683); d = -1.1390162 + w0 -0.07976182412 (level 3, r < 0.4048073341, 1088 cells)
+    far-side mass -4.810474125 (0.9999993232 x the isolated -4.810477381), far-side charge 3.034367982 (1 x 3.034367982); one-body drainhole a 2.000002996, m 1.000000652
+  M_ADM = 2.424802735 (volume identity; tail 0.004640802827); one-body masses 2.000001304, M_ADM - their sum = 0.4248014312
+[Level 0 step 1] average evolution speed = 0 code units/h
+[Level 1 step 1] average evolution speed = 0 code units/h
+[Level 2 step 1] average evolution speed = 0 code units/h
+[Level 3 step 1] average evolution speed = 0 code units/h
+[Level 3 step 2] average evolution speed = 5.272749489 code units/h
+[Level 2 step 2] average evolution speed = 8.153461 code units/h
+[Level 3 step 3] average evolution speed = 7.183021303 code units/h
+[Level 3 step 4] average evolution speed = 9.309517057 code units/h
+[Level 1 step 2] average evolution speed = 10.78911163 code units/h
+[Level 2 step 3] average evolution speed = 9.905689172 code units/h
+[Level 3 step 5] average evolution speed = 9.148416034 code units/h
+[Level 3 step 6] average evolution speed = 10.39183307 code units/h
+[Level 2 step 4] average evolution speed = 11.37408969 code units/h
+[Level 3 step 7] average evolution speed = 10.7012424 code units/h
+[Level 3 step 8] average evolution speed = 11.57905315 code units/h
+Unused ParmParse Variables:
+  [TOP]::hdf5_subpath(nvals = 1)  :: [hdf5]
+  [TOP]::nonzero_asymptotic_values(nvals = 5)  :: [1.0, 1.0, 1.0, 1.0, 1.0]
+  [TOP]::nonzero_asymptotic_vars(nvals = 5)  :: [chi, h11, h22, h33, lapse]
+  [TOP]::write_extraction(nvals = 1)  :: [0]
+
+Total GPU global memory (MB) spread across MPI: [81079 ... 81079]
+Free  GPU global memory (MB) spread across MPI: [54432 ... 54432]
+[The         Arena] max space (MB) allocated spread across MPI: [25072 ... 25072]
+[The         Arena] max space (MB) used      spread across MPI: [23103 ... 23103]
+[The Managed Arena] max space (MB) allocated spread across MPI: [8 ... 8]
+[The Managed Arena] max space (MB) used      spread across MPI: [0 ... 0]
+[The  Pinned Arena] max space (MB) allocated spread across MPI: [16 ... 16]
+[The  Pinned Arena] max space (MB) used      spread across MPI: [9 ... 9]
+AMReX (26.02-12-gd7da50458966) finalized

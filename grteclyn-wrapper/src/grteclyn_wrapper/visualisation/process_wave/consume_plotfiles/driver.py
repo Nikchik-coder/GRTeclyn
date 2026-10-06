@@ -3,7 +3,9 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shlex
 import shutil
+import sys
 import time
 from pathlib import Path
 
@@ -11,21 +13,29 @@ import yt
 
 from grteclyn_wrapper.objective_modes import QD_OBJECTIVE_MODES
 
+from .extraction.horizon import HORIZON_HEADER
+from .extraction.mots_spectral import MOTS_SPECTRAL_HEADER
 from .config import _default_data_dir, _default_frames_out_dir, _frames_auto_zlim_enabled
 from .extraction.central import CENTRAL_TIMESERIES_HEADER
 from .extraction.confinement import CONFINEMENT_TIMESERIES_HEADER
 from .extraction.sector_barycenters import SECTOR_BARYCENTERS_HEADER
 from .extraction.sector_dynamics import SECTOR_DYNAMICS_HEADER
 from .extraction.psi4_higher_l import higher_l_header as _higher_l_header
+from .extraction.scalar_modes import (
+    parse_scalar_ells as _parse_scalar_ells,
+    scalar_modes_header as _scalar_modes_header,
+)
 from .extraction.ftl import FTL_TIMESERIES_HEADER
 from .extraction.shell import _shell_stats_header
+from .extraction.neck_horizons import NECK_HORIZONS_HEADER
+from .extraction.symmetry import field_parity
 from .fields import _canonical_field_name
 from .frames.cleanup import (
     _cleanup_embedding_frames,
     _cleanup_existing_frames,
     _cleanup_projection_frames,
 )
-from .frames.zlim import _lock_frame_zlims_from_plotfile
+from .frames.zlim import _T0_KEY, _lock_frame_zlims_from_plotfile
 from .frames.zlim_scan import scan_series_zlims
 from .plotfiles import (
     _is_plotfile_ready,
@@ -44,6 +54,16 @@ from grteclyn_wrapper.metrics.splash_early_term import evaluate_splash_early_ter
 def _append_radial_block(path: Path, block: str) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as handle:
+        handle.write(block)
+
+
+def _append_block_with_header(path: Path, header: str, block: str) -> None:
+    """Append a multi-row block, writing the column header once on an empty file."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    need_header = (not path.exists()) or path.stat().st_size == 0
+    with path.open("a", encoding="utf-8") as handle:
+        if need_header:
+            handle.write(header.rstrip("\n") + "\n")
         handle.write(block)
 
 
@@ -101,6 +121,30 @@ def main() -> None:
         help="Multipoles for --psi4-higher-l (supported: 2 3 4; default: 3 4).",
     )
     parser.add_argument(
+        "--scalar-modes",
+        action="store_true",
+        help=(
+            "Project the scalar field phi and its momentum Pi onto s=0 "
+            "spherical harmonics on the extraction spheres, into its own "
+            "stream scalar_modes.dat (plus a kinematic scalar flux per "
+            "radius).  Off by default; costs three extra sphere samplings "
+            "per plotfile.  Leaves every existing stream untouched."
+        ),
+    )
+    parser.add_argument(
+        "--scalar-mode-ells",
+        nargs="+",
+        type=int,
+        default=[0, 1, 2],
+        help="Multipoles for --scalar-modes (supported: 0..4; default: 0 1 2).",
+    )
+    parser.add_argument(
+        "--scalar-flux-delta",
+        type=float,
+        default=0.5,
+        help="Radial half-step for the d_r phi central difference (default: 0.5).",
+    )
+    parser.add_argument(
         "--shell-fields",
         nargs="+",
         default=[],
@@ -148,7 +192,17 @@ def main() -> None:
         help="Scan every Nth plotfile instead of all of them (default 1). The last "
              "plotfile is always scanned.",
     )
-    parser.add_argument("--frames-out", default=_default_frames_out_dir(), help="Frames output base dir (default: grteclyn_wrapper/visualisation/visualize).")
+    parser.add_argument(
+        "--frames-zlim-t0",
+        nargs="+",
+        default=[],
+        metavar="FIELD",
+        help="Lock these fields' colorbars to the full min..max of their slice in the "
+             "run's first plotfile (t = 0), linear, for the whole run; beats "
+             "--frames-auto-zlim and the presets. A field flat at t = 0 (K, Pi) keeps "
+             "its other scale. Stored in consume_state.json, so a restart keeps it.",
+    )
+    parser.add_argument("--frames-out", default=_default_frames_out_dir(), help="Frames output base dir (default: ./frames in the working directory).")
     parser.add_argument(
         "--projection-fields",
         nargs="+",
@@ -171,7 +225,111 @@ def main() -> None:
     parser.add_argument(
         "--areal-radius",
         action="store_true",
-        help="Extract minimum areal radius R_areal = r/sqrt(chi) along x-axis to areal_radius.dat.",
+        help="Extract minimum areal radius R_areal = r/sqrt(chi) along x-axis to areal_radius.dat "
+             "(with --areal-full-metric: r (h22 h33)^(1/4)/sqrt(chi)).",
+    )
+    parser.add_argument(
+        "--areal-full-metric",
+        action="store_true",
+        help="Areal radius from the full induced metric of the coordinate sphere, "
+             "R = r (h22 h33)^(1/4)/sqrt(chi), instead of r/sqrt(chi), which assumes a "
+             "flat conformal metric: exact at t = 0, a lower bound once the Gamma-driver "
+             "shift has moved the grid (h22 = 1.45 at the F1b neck at t = 90). Needs h22 "
+             "and h33 in the plotfile; a plotfile without them gets no row and a warning, "
+             "never the flat estimate. Opt-in; the launch preflight checks it.",
+    )
+    parser.add_argument(
+        "--neck-horizons",
+        action="store_true",
+        help="Per plotfile to neck_horizons.dat: the neck (min of the full-metric areal radius "
+             "along +x from --center, tracked from the previous plotfile) and the theta = 0 "
+             "trapping horizons either side of it, with lapse, Misner-Sharp mass and phi "
+             "(extraction/neck_horizons.py). Needs chi K lapse h11 h22 h33 A11 phi in the plotfile.",
+    )
+    parser.add_argument(
+        "--reflect",
+        nargs="+",
+        default=[],
+        choices=["x", "y", "z"],
+        help="Axes whose LOWER domain face is a reflective symmetry plane through --center "
+             "(the params' lo_boundary = 2). Sphere samplers fold their points into the domain "
+             "(even-parity fields), frames mirror the simulated part into the full plane "
+             "(--frames-zoom is the full width), and what cannot use the symmetry is switched "
+             "off with a notice: psi4 spheres, the boundary flux, the horizon star scan, "
+             "odd-parity frame fields. The launch preflight checks it against the params.",
+    )
+    parser.add_argument(
+        "--areal-min-radius",
+        type=float,
+        default=0.0,
+        help=(
+            "Exclude r < this from the areal-radius minimum.  Required for wormhole "
+            "initial data, where r = 0 is a compactified origin: the unresolved "
+            "inner cells win the argmin and report a collapse that is not happening. "
+            "Use a value below the throat radius b/2 (e.g. 0.1 for b = 0.5)."
+        ),
+    )
+    parser.add_argument(
+        "--horizon-scan",
+        action="store_true",
+        help=(
+            "Orientation-corrected marginal-surface scan per plotfile to horizon_scan.dat: "
+            "areal radius of coordinate spheres about each mouth, outward = increasing R, "
+            "both null expansions, Misner-Sharp mass, outermost MOTS, trapped-shell counts, "
+            "per-mouth health metric R_min/R_exact - 1 and the outermost-surface count. "
+            "Needs full-state plotfiles (chi K h_ij A_ij)."
+        ),
+    )
+    parser.add_argument(
+        "--horizon-centers",
+        type=float,
+        nargs="+",
+        default=None,
+        help="Mouth centres as x y z triples (absolute). Default: --center.",
+    )
+    parser.add_argument(
+        "--horizon-track",
+        type=str,
+        default=None,
+        help=(
+            "Path to binary_throat_diagnostics.dat; mouth centres are read from it at each "
+            "plotfile time (positions relative to --center). Overrides --horizon-centers."
+        ),
+    )
+    parser.add_argument("--horizon-half", type=float, default=2.5, help="Half-width of the scan box about each mouth.")
+    parser.add_argument("--horizon-level", type=int, default=3, help="Covering-grid level for the mouth scans (capped at the finest).")
+    parser.add_argument("--horizon-common-level", type=int, default=1, help="Covering-grid level for the common (midpoint) scan of a pair.")
+    parser.add_argument("--horizon-rmin", type=float, default=0.25, help="Innermost shell radius; keep it inside the throat (r < b/2).")
+    parser.add_argument("--horizon-dr", type=float, default=0.02, help="Shell spacing.")
+    parser.add_argument(
+        "--mots-spectral",
+        action="store_true",
+        help=(
+            "The common MOTS itself per plotfile to mots_spectral.dat, its Y_lm coefficients to "
+            "mots_spectral_alm.jsonl: the spectral finder of headon_first_law.py, followed from the "
+            "previous plotfile's surface by Newton, with the first law's flux and shear on it "
+            "(extraction/mots_spectral.py). The round scan reads a deformed horizon 4-11 %% low "
+            "(2026-10-01). Needs full-state plotfiles plus lapse, phi and Pi."
+        ),
+    )
+    parser.add_argument("--mots-spectral-center", type=float, nargs=3, default=None,
+                        help="Centre of the surface (absolute). Default: --center.")
+    parser.add_argument("--mots-spectral-half", type=float, default=4.5,
+                        help="Half-width of the covering box about the centre.")
+    parser.add_argument("--mots-spectral-level", type=int, default=3,
+                        help="Finest covering-grid level; a coarser one is taken if it does not cover the box.")
+    parser.add_argument("--mots-spectral-lmax", type=int, default=6, help="Highest harmonic of the surface.")
+    parser.add_argument("--mots-spectral-tol", type=float, default=1.0e-6,
+                        help="Newton stops when every projected theta_out harmonic is below this.")
+    parser.add_argument("--mots-spectral-seeds", type=float, nargs="+", default=[3.2, 2.6],
+                        help="Seed radii of the flow when there is no previous surface.")
+    parser.add_argument("--mots-spectral-from", type=float, default=0.0,
+                        help="Search plotfiles from this time on (before the common horizon there is none).")
+    parser.add_argument(
+        "--horizon-r-exact",
+        type=float,
+        default=None,
+        help="Exact static throat areal radius for the health metric R_min/R_exact - 1 (e.g. 3.8895).",
     )
     parser.add_argument(
         "--ftl-timeseries",
@@ -324,7 +482,42 @@ def main() -> None:
         action="store_true",
         help="Do not delete existing frames at startup.",
     )
-    args = parser.parse_args()
+    # Flags added to this run's consumer after launch (restart_consumer.sh appends them to the
+    # run dir's consumer_args.extra).  Every consumer started in the run dir reads them -- the
+    # restarted watcher and run_single.sh's end-of-run drain, which otherwise runs with the
+    # launch flags -- so no plotfile is extracted with less than the live watcher does
+    # (2026-10-01: the drain would have skipped the spectral MOTS on the last plotfiles).
+    extra_path = Path("consumer_args.extra")
+    extra = shlex.split(extra_path.read_text()) if extra_path.is_file() else []
+    if extra:
+        print(f"[consumer] + {extra_path.resolve()}: {' '.join(extra)}", flush=True)
+    args = parser.parse_args(sys.argv[1:] + extra)
+    # A symmetry-reduced run (--reflect): what cannot use the symmetry is
+    # switched off here, once and out loud, instead of producing sphere
+    # integrals over 1/8 of each sphere or a sign-flipped mirror.
+    args.boundary_flux = not args.reflect
+    if args.reflect:
+        off = []
+        if args.psi4:
+            args.psi4 = False
+            off.append("psi4 spheres (Psi4 is not even across the planes; the C++ extraction handles it)")
+        off.append("the boundary flux (the reflective faces are not outer boundary)")
+        if args.horizon_scan:
+            args.horizon_scan = False
+            off.append("the horizon star scan (samples the full sphere round the centre)")
+        if args.mots_spectral:
+            args.mots_spectral = False
+            off.append("the spectral MOTS (its surface spans the full sphere round the centre)")
+        # Odd frame fields are NOT dropped (they were until 2026-09-26, which is
+        # how the octant arm F4 got no shift and no Weyl4 movie): the mirrored
+        # frame carries the sign the code gives them in its own ghost cells
+        # (frames/mirror.py, extraction/symmetry.py field_parity).
+        odd = [f for f in (_canonical_field_name(n) for n in args.frames_fields)
+               if field_parity(f) != (1, 1, 1)]
+        print(f"[reflect] symmetry planes {' '.join(args.reflect)} through --center "
+              f"{' '.join(f'{v:g}' for v in args.center)}; off: {'; '.join(off)}"
+              + (f"; odd frame fields mirrored with their sign: {' '.join(odd)}" if odd else ""),
+              flush=True)
     if args.evolving_geodesic:
         os.environ["GRTECLYN_EVOLVING_GEODESIC"] = "1"
     args.metric_stack_cache = bool(args.evolving_geodesic)
@@ -351,6 +544,7 @@ def main() -> None:
     psi4_all_out_path = out_dir / "psi4_mode_l2_all.dat"
     psi4_directional_out_path = out_dir / "psi4_directional.dat"
     psi4_higher_l_out_path = out_dir / "psi4_mode_higher_l.dat"
+    scalar_modes_out_path = out_dir / "scalar_modes.dat"
     areal_out_path = out_dir / "areal_radius.dat"
     shell_out_path = out_dir / "shell_profiles.dat"
     boundary_flux_out_path = out_dir / "boundary_flux.dat"
@@ -360,6 +554,9 @@ def main() -> None:
     sector_dynamics_out_path = out_dir / "sector_dynamics.dat"
     central_out_path = out_dir / "central_timeseries.dat"
     central_radial_out_path = out_dir / "central_radial_profile.dat"
+    horizon_out_path = out_dir / "horizon_scan.dat"
+    mots_out_path = out_dir / "mots_spectral.dat"
+    mots_alm_path = out_dir / "mots_spectral_alm.jsonl"
     score_ts_path = out_dir / "score_timeseries.jsonl"
     stop_sim_path = Path(args.stop_sim_path) if args.stop_sim_path else Path(data_dir) / ".stop_sim"
     header = "# time  " + "  ".join([f"Re(R={R:g})  Im(R={R:g})" for R in args.radii])
@@ -376,7 +573,10 @@ def main() -> None:
     psi4_directional_header = "# time  P_total  P_z_beam  beam_ratio  beaming_gain  wavezone_std"
     psi4_higher_l_ells = tuple(sorted(set(int(x) for x in args.psi4_ells)))
     psi4_higher_l_header = _higher_l_header(psi4_higher_l_ells, args.radii)
+    scalar_modes_ells = _parse_scalar_ells(args.scalar_mode_ells)
+    scalar_modes_header_str = _scalar_modes_header(scalar_modes_ells, args.radii)
     areal_header = "# time  R_areal_min  r_at_R_areal_min"
+    neck_out_path = out_dir / "neck_horizons.dat"
     shell_header = _shell_stats_header(args.radii, args.shell_fields)
 
     state = _load_state(state_path)
@@ -391,7 +591,11 @@ def main() -> None:
         _truncate_if_exists(psi4_directional_out_path)
         if args.psi4_higher_l:
             _truncate_if_exists(psi4_higher_l_out_path)
+        if args.scalar_modes:
+            _truncate_if_exists(scalar_modes_out_path)
         _truncate_if_exists(areal_out_path)
+        if args.neck_horizons:
+            _truncate_if_exists(neck_out_path)
         if args.shell_fields:
             _truncate_if_exists(shell_out_path)
         if args.ftl_timeseries:
@@ -406,6 +610,11 @@ def main() -> None:
             _truncate_if_exists(central_out_path)
         if args.central_radial_profile:
             _truncate_if_exists(central_radial_out_path)
+        if args.horizon_scan:
+            _truncate_if_exists(horizon_out_path)
+        if args.mots_spectral:
+            _truncate_if_exists(mots_out_path)
+            _truncate_if_exists(mots_alm_path)
         if args.incremental_score:
             _truncate_if_exists(score_ts_path)
         _save_state(state_path, {})
@@ -479,6 +688,21 @@ def main() -> None:
                     )
         if res.get("central_radial_block"):
             _append_radial_block(central_radial_out_path, res["central_radial_block"])
+        if res.get("horizon_block"):
+            _append_block_with_header(horizon_out_path, HORIZON_HEADER, res["horizon_block"])
+
+    def _handle_mots_outputs(res: dict) -> None:
+        # The surface's coefficients are the next plotfile's start, and survive a restart
+        # of the consumer in its state file.
+        if not res.get("mots_line"):
+            return
+        _append_line(mots_out_path, header=MOTS_SPECTRAL_HEADER, line=res["mots_line"])
+        if res.get("mots_alm") is None:   # a row of nan: no MOTS here; keep the last surface as the start
+            return
+        with mots_alm_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps({"t": float(res["t"]), "key": res["key"], "a_lm": res["mots_alm"]}) + "\n")
+        state["mots_alm_prev"] = res["mots_alm"]
+        vars(args)["mots_alm_prev"] = res["mots_alm"]   # process_once's args_dict is vars(args)
 
     # If rendering frames, clear existing frames for the requested fields/axis at startup.
     frame_fields_startup = [_canonical_field_name(f) for f in args.frames_fields]
@@ -584,8 +808,24 @@ def main() -> None:
             if frame_zlims:
                 state["frame_zlims"] = frame_zlims
                 _save_state(state_path, state)
+        t0_fields = [_canonical_field_name(f) for f in args.frames_zlim_t0]
+        if t0_fields and to_process and _T0_KEY not in (frame_zlims or {}):
+            # Once per run, from the lowest-numbered plotfile (Plt00000 at
+            # launch); the empty list marks "tried" so a later batch never
+            # re-locks from a later time.
+            first = min(
+                to_process,
+                key=lambda p: _parse_plot_index(os.path.basename(p)) if _parse_plot_index(os.path.basename(p)) is not None else 10**12,
+            )
+            locked = _lock_frame_zlims_from_plotfile(first, args_dict, t0_minmax_fields=t0_fields)
+            locked.setdefault(_T0_KEY, [])
+            frame_zlims = {**(frame_zlims or {}), **locked}
+            state["frame_zlims"] = frame_zlims
+            _save_state(state_path, state)
         args_dict["frame_zlims"] = frame_zlims
         args_dict["frames_global_zlim"] = use_global_zlim
+        args_dict["neck_x_prev"] = state.get("neck_x_prev")
+        args_dict["mots_alm_prev"] = state.get("mots_alm_prev")
 
         if args.jobs > 1:
             import multiprocessing as mp
@@ -643,8 +883,19 @@ def main() -> None:
                                     header=psi4_higher_l_header,
                                     line=res["psi4_higher_l_line"],
                                 )
+                            if res.get("scalar_modes_line"):
+                                _append_line(
+                                    scalar_modes_out_path,
+                                    header=scalar_modes_header_str,
+                                    line=res["scalar_modes_line"],
+                                )
                             if res["areal_line"]:
                                 _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
+                            if res.get("neck_line"):
+                                _append_line(neck_out_path, header=NECK_HORIZONS_HEADER, line=res["neck_line"])
+                            if res.get("neck_x") is not None:
+                                state["neck_x_prev"] = res["neck_x"]
+                                args_dict["neck_x_prev"] = res["neck_x"]
                             if res["shell_line"]:
                                 _append_line(shell_out_path, header=shell_header, line=res["shell_line"])
                             if res.get("boundary_flux_line"):
@@ -680,6 +931,7 @@ def main() -> None:
                                     line=res["sector_dynamics_line"],
                                 )
                             _handle_central_outputs(res)
+                            _handle_mots_outputs(res)
 
                             state[res["key"]] = True
                             _save_state(state_path, state)
@@ -717,8 +969,19 @@ def main() -> None:
                             header=psi4_higher_l_header,
                             line=res["psi4_higher_l_line"],
                         )
+                    if res.get("scalar_modes_line"):
+                        _append_line(
+                            scalar_modes_out_path,
+                            header=scalar_modes_header_str,
+                            line=res["scalar_modes_line"],
+                        )
                     if res["areal_line"]:
                         _append_line(areal_out_path, header=areal_header, line=res["areal_line"])
+                    if res.get("neck_line"):
+                        _append_line(neck_out_path, header=NECK_HORIZONS_HEADER, line=res["neck_line"])
+                    if res.get("neck_x") is not None:
+                        state["neck_x_prev"] = res["neck_x"]
+                        args_dict["neck_x_prev"] = res["neck_x"]
                     if res["shell_line"]:
                         _append_line(shell_out_path, header=shell_header, line=res["shell_line"])
                     if res.get("boundary_flux_line"):
@@ -760,6 +1023,7 @@ def main() -> None:
                             line=res["sector_dynamics_line"],
                         )
                     _handle_central_outputs(res)
+                    _handle_mots_outputs(res)
 
                     state[res["key"]] = True
                     _save_state(state_path, state)

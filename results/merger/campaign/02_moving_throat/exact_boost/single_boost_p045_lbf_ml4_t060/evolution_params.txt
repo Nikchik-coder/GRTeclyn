@@ -1,0 +1,105 @@
+# LEVEL-4 TWIN of single_boost_p045_lbf_t050 (2026-09-30, the user's go 16:52 UTC): the same exact-boost throat (p = 0.45, v = 0.4104, momentum model 1, the per-throat lapse freeze) with one knob, max_level 3 -> 4 (dx 0.03125 at the throat), to t = 60 -- does the moving throat follow the resting level-4 throat (single_hold_ml4_t100, which inflates) as the level-3 one followed the resting level-3 throat into collapse?
+# WHY. The paper's moving-throat result (Sec. III, Fig. 2(d)) stands on one resolution, level 3, where the resting
+# throat itself collapses (single_hold_t100: -1 % at t = 45, tau 5.88); the moving one left 8 units earlier (-1 % at
+# t = 36.8, tau 5.5-5.7) and died at t = 44.67. At level 4 the resting throat inflates instead (single_hold_ml4_t100:
+# +0.6 % at t = 50, +1 % at t = 53, +3.9 % at t = 60, +11.5 % at t = 66; tau 5.26). This twin says whether the moving
+# throat's fate is the resting throat's at the same resolution, i.e. whether the exact boost adds a kick of its own.
+# CHANGED against single_boost_p045_lbf_t050's packed evolution_params.txt: max_level 3 -> 4, regrid_interval one
+# entry longer (AMReX needs one per level), stop_time 50 -> 60 (GPU_PLAN's "to t ~ 60": at 50 the resting level-4
+# throat has not left yet; the throat is then at y ~ +15 of the centre, 9 units inside the sponge), and the name.
+# Same box, N, tagging, sponge, gauge, dt, freeze window, plot cadence and plot variables. Same binary (the boostfix
+# build). Checkpoints off, as its twin.
+# READ: R_min(t) by the shifted-ellipsoid fit against single_hold_ml4_t100 (branch, the 1 % time, tau) and against
+# the level-3 run; the pit lapse (held at 0.215-0.233 from t = 24 at level 3).
+# LAUNCH: launch.sh --template params_single_boost_p045_lbf_ml4_t060.txt --name single_boost_p045_lbf_ml4_t060 --gpu 0
+#   --profile headon-scout --zoom 40 --coord 32 --binary runs/wormhole_merger/bin/main3d_boostfix_5384c104-dirty_2026-09-29.ex
+#
+verbosity = 1
+output_path = "runs/wormhole_merger/single_boost_p045_lbf_ml4_t060"
+amr.plot_file = "/tmp/grteclyn_scratch/single_boost_p045_lbf_ml4_t060/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/single_boost_p045_lbf_ml4_t060/BinaryWormholeChk"
+checkpoint_interval = -1
+amr.checkpoint_files_output = 0
+plot_interval = 100
+amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
+amr.derive_plot_vars = Weyl4
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+wormhole_id_type = 1
+wormhole_initial_lapse_type = 5
+wormhole_throat_radius_A = 2.0       # drainhole scale a
+wormhole_throat_radius_B = 0.0       # throat B OFF -- this is the control
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_drainhole_mass_B = 0.0
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+wormhole_centerA = 0.0 -8.0 0.0    # PROBE: starts 8 below the box centre, moves +y
+wormhole_centerB = 0.0 0.0 0.0
+wormhole_momentumA = 0.0 0.45 0.0    # ADM momentum gamma m v (v = 0.4104 for m = 1)
+wormhole_momentumB = 0.0 0.0 0.0    # pinned: the default is minus momentumA
+wormhole_momentum_model = 1        # E2E: the exact Lorentz-boosted drainhole (momentumA = ADM momentum gamma m v)
+wormhole_boost_initial_shift = 1   # start from the boosted solution's own shift
+wormhole_phi_sign_B = 1.0
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+wormhole_helfer_correction = 0
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+max_level = 4    # TWIN: the knob under test (was 3)
+regrid_interval = 16 16 16 16 16    # TWIN: one entry per level
+regrid_threshold = 0.05
+max_box_size = 32
+min_box_size = 16
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+dt_multiplier = 0.02
+stop_time = 60.0    # TWIN: the resting level-4 throat leaves at t ~ 53 (was 50)
+max_spatial_derivative_order = 4
+nan_check = 1
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+core_matter_damping = 0
+core_lapse_freeze = 1                  # RERUN: the slicing source off near the moving puncture (was off)
+core_freeze_track_throats = 1          # RERUN: the window rides the tracked throat
+core_freeze_radius_full = 0.3          # RERUN: source fully off inside 0.3 (the runaway lived at r < 0.25)
+core_freeze_radius_start = 0.8         # RERUN: full source from 0.8 out (the throat is at r ~ 1.4-1.6)
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+sigma = 0.1
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+tagging_type = 2
+tagging_L = 64.0
+throat_tracking = 1
+throat_track_search_radius = 2.0
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+activate_extraction = 0
+write_extraction = 0
+amrex.the_arena_init_size = 1048576
+constraint_solve = 0                   # E2E: refused with momentum model 1; one boosted throat is exact

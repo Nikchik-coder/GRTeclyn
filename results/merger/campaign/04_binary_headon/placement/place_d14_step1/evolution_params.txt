@@ -1,0 +1,134 @@
+# Placement probe for the V1 scout (2026-09-09): the two exact drainhole throats
+# of params_v1_headon_d8_t100.txt placed at rest at separation d = 14, ONE step,
+# so the per-mouth horizon scan reads each mouth's radius at t = 0 only.  With
+# d = 8, 7.5, 7, 6.5, 6 these form the placement curve R_mouth(d): how much the
+# neighbour's field alone widens a mouth; the wide points (10, 12, 14) show the
+# curve's approach to the isolated value 3.8895.  Everything else identical to
+# the scout's template.
+# V1 SCOUT (Phase 3, GPU_PLAN.md queue #1, user's go-ahead 2026-09-09):
+# two drainhole throats, head-on from rest, d = 8, level 3.
+#
+# THE RUN.  The exact static drainhole of single_hold_t100 twice, superposed,
+# centres at x = -4 and +4 (separation 8), one scalar sign flipped so the pair
+# attracts, released from rest: K = 0, Pi = 0, no boost, no Bowen-York, so the
+# momentum constraint is exact and the only defect is the Hamiltonian residual
+# of the superposition (its size is the declared seed; nothing is pretended
+# absent).  Every evolution setting is the level-3 production set of
+# single_hold_t100 with the chi regularisation of its twin
+# single_hold_chireg_t100 (chi_rhs_floor 1e-8, min_chi 1e-20 -- shown not
+# load-bearing on the lone throat, kept as the replacement for the hard clamp),
+# the NaN autopsy armed, no checkpoints (a scout).  Nothing modifies the
+# evolution equations: no freeze, no matter damping, no support cut.
+#
+# THE QUESTION.  The lone throat at this resolution is exact to 0.1 % until
+# t = 35 and collapses to a black hole (trapped surface at t ~ 61, no NaN to
+# t = 100).  From d = 8 the pair touches at t ~ 17 by the calibrated law, i.e.
+# as two still-exact wormholes.  Does the merged core then collapse -- the
+# surface count reading two, then one, with no NaN through +30 units past the
+# horizon -- or inflate and dissolve, or pinch without a horizon?  Whichever,
+# it is believed and measured.  The earlier d = 12 arms contacted at t ~ 30 and
+# died at t = 44-56, the lone throat's own clock.
+#
+# READINGS (two streams each).  Contact: binary_throat_diagnostics.dat
+# (separation) against throat_track.dat.  Each throat's areal radius and
+# expansions: horizon_scan.dat (per mouth about the tracked centres, common
+# centre once they are within the box) against the frames.  Fate: the
+# marginal-surface count and Misner-Sharp mass in horizon_scan.dat against
+# collapse_diagnostics.dat (lapse, chi, K, phi extrema on the finest level);
+# constraint_norms.dat for the health.  Waveform: psi4 from the consumer at
+# R = 14 and 30.
+#
+# WHAT WOULD FALSIFY THE PLAN.  A NaN before contact (the pair is worse than
+# the singles); or contact after t ~ 35 (the calibrated law is wrong at d = 8);
+# or a merged core that dies at the lone throat's clock regardless of the
+# merger -- then Phase 3 is a decay problem and V2 is not budgeted.
+#
+# Frames: chi K lapse phi Pi in the x-y plane through the centre (the throats
+# move along x), zoom 24, slice cache on -- movies of every field this time.
+#
+verbosity = 1
+output_path = "runs/wormhole_merger/place_d14_step1"
+amr.plot_file = "/tmp/grteclyn_scratch/place_d14_step1/BinaryWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/place_d14_step1/BinaryWormholeChk"
+checkpoint_interval = -1
+amr.checkpoint_files_output = 0
+checkpoint_keep = 2
+plot_interval = 100    # every 1.0 time unit; the consumer scans and deletes
+amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
+amr.derive_plot_vars = Weyl4
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+print_progress_only_to_rank_0 = 1
+particle_interpolator.verbosity = 0
+wormhole_id_type = 1
+wormhole_initial_lapse_type = 5
+wormhole_throat_radius_A = 2.0       # drainhole scale a
+wormhole_throat_radius_B = 2.0    # throat B on: the binary, a = 2 as A
+wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_drainhole_mass_B = 1.0    # M_ADM = 1 each, carried by the lapse
+wormhole_bare_mass_A = 0.0
+wormhole_bare_mass_B = 0.0
+wormhole_centerA = -7.000 0.0 0.0    # d = 14: throat A at x = -7.000 from the box centre
+wormhole_centerB =  7.000 0.0 0.0    # throat B at x = +7.000
+wormhole_momentumA = 0.0 0.0 0.0    # from rest: K = 0, Pi = 0, momentum constraint exact
+wormhole_momentumB = 0.0 0.0 0.0
+wormhole_phi_sign_B = -1.0    # flipped: like-oriented throats repel, the flipped pair attracts
+wormhole_subtract_phi_asymptote = 1
+wormhole_support_strength = 1.0
+phantom_mass = 0.0
+wormhole_helfer_correction = 0
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+center = 32.0 32.0 32.0
+max_level = 3
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+max_box_size = 32
+min_box_size = 16
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+lo_boundary = 1 1 1
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+dt_multiplier = 0.02
+stop_time = 100.0
+max_steps = 1          # placement probe: initial data + one step, the t = 0 plotfile is all we want
+max_spatial_derivative_order = 4
+nan_check = 1
+nan_autopsy = 1
+min_chi = 1.0e-20   # CHI-REG TWIN: state clamp lowered to a pure safety net (was 1.0e-8)
+chi_rhs_floor = 1.0e-8
+min_lapse = 1.0e-10
+core_matter_damping = 0
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+sigma = 0.1
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+tagging_type = 2
+tagging_L = 64.0
+throat_tracking = 1
+throat_track_search_radius = 2.0
+binary_throat_diagnostics = 1
+binary_diag_axis = 0
+binary_diag_split_coord = 0.0
+sponge_enabled     = 1
+sponge_inner_radius = 24.0
+sponge_outer_radius = 32.0
+sponge_strength    = 4.0
+sponge_ramp_power  = 4
+activate_extraction = 0
+write_extraction = 0
+amrex.the_arena_init_size = 1048576

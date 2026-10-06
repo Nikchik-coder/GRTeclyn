@@ -313,6 +313,12 @@ class BaseParameterChecker
         {
             ccz4_pp.warning("min_lapse", "should normally be >= 0.0");
         }
+        double chi_rhs_floor = 0.0;
+        ccz4_pp.queryAdd("chi_rhs_floor", chi_rhs_floor);
+        if (chi_rhs_floor < 0.0)
+        {
+            ccz4_pp.error("chi_rhs_floor", "must be >= 0.0 (0 = off)");
+        }
 
         bool particle_interpolator_verbosity = false;
         particle_interpolator_pp.queryAdd("verbosity",

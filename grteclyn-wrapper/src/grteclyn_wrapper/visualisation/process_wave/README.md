@@ -61,6 +61,14 @@ uv run python -m grteclyn_wrapper.visualisation.process_wave.consume_plotfiles \
 
 **Outputs:** `.../small_data/psi4_mode_l2m0.dat`, `consume_state.json`
 
+**Optional scalar-field stream:** add `--scalar-modes` to also project the
+scalar field `phi` and its momentum `Pi` onto s=0 spherical harmonics
+(default l = 0, 1, 2, all m) on the same extraction spheres, into its own
+file `scalar_modes.dat`, together with a kinematic scalar energy flux per
+radius.  Off by default; the existing streams are untouched.  Conventions
+(R scaling, flux sign, the un-applied phantom sign) are documented in
+`consume_plotfiles/extraction/scalar_modes.py`.
+
 ### Rendering field frames while consuming plotfiles
 
 You can render 2D slice frames (like `grteclyn_wrapper.visualisation.visualize`) **while** consuming plotfiles, and still delete plotfiles to avoid disk overload.
@@ -184,7 +192,7 @@ uv run python -m grteclyn_wrapper.visualisation.process_wave.plot_extracted_psi4
 - `--frames-zoom WIDTH`: plot width (code units)
 - `--frames-center x y z`: explicit plot center
 - `--frames-corner`: corner mode for symmetry-reduced domains
-- `--frames-out PATH`: base output dir for frames (default: `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize`)
+- `--frames-out PATH`: base output dir for frames (default: `./frames` in the working directory; every launcher sets this explicitly to the run's own frames dir)
 - `--delete`: delete processed plotfile directories after successful extraction
 - `--keep-last N`: keep newest N plotfiles (don’t delete them)
 

@@ -11,6 +11,7 @@ directory — there are no loose campaign folders at this level.
 |---|---|
 | [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | Complete. Data, derived tables and the refit tooling ship together. |
 | [`wormhole-dynamics/`](wormhole-dynamics/) | Complete. Published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071). |
+| [`merger/`](merger/) | In preparation. The drainhole-merger campaign: packed runs, figures and analysis tables. |
 
 The pack scripts scrub machine identity at runtime through the shared scrubber
 [`grteclyn_wrapper.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py)
@@ -54,4 +55,22 @@ configurations share throat radius `R = 0.5` and width `sigma = 0.5`:
 Each holds the constraint and collapse-diagnostic plots, the embedding and
 `K_z` panels, the six-panel `psi4` gravitational-wave analyses at several
 mass/distance configurations, the run parameters (`params_2gpu.txt`) and the
-consume-state record — as `.pdf` and `.png`.
+consume-state record.
+
+Figures ship as `.pdf` and `.png`. The `.eps` renders of the three `psi4`
+panels were dropped: matplotlib emitted every scatter point as vector geometry,
+making them ~215× the size of the `.pdf` of the same figure at no added
+fidelity.
+
+### `merger/`
+
+Two exotic-matter wormhole throats merged in full 3+1 NR, and what became of the object
+they made. Reversing one throat's scalar field is the only gravity-driven route to a
+merger; the pair then forms a common horizon at t ≈ 30 and radiates — and the horizon
+afterwards **shrinks**, 1.07 → 0.59 between t = 51.5 and t = 55.0, as the infalling
+phantom matter eats it. A high-angular-momentum control that never merges runs clean to
+t = 60, which is what separates the physics from a code failure.
+
+Holds the four evolution streams per run (thinned, with the death window kept whole), the
+extracted waveforms at two radii, the launch and parameter provenance, movies, thinned
+stills, the offline horizon scan, and generated summary tables.

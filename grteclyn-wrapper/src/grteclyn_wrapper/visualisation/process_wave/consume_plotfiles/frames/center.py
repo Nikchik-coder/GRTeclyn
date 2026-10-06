@@ -18,7 +18,13 @@ def _resolve_frame_physics_center(
     """Match visualize/__main__.py center logic; auto throat corner when unset."""
     mid_x = float((ds.domain_right_edge[0] + ds.domain_left_edge[0]) / 2.0)
     mid_y = float((ds.domain_right_edge[1] + ds.domain_left_edge[1]) / 2.0)
-    physics_center = [mid_x, mid_y, 0.0]
+    mid_z = float((ds.domain_right_edge[2] + ds.domain_left_edge[2]) / 2.0)
+    # Default to the DOMAIN MIDPOINT on every axis.  The old default left the
+    # z component at 0.0, which is only correct for origin-centred domains:
+    # on a [0, L] domain an axis-x/y slice then centres its window at z = 0
+    # and the physics at z = L/2 is out of frame entirely -- this silently
+    # ruined the queue-2e movies on 2026-09-14 (see README, defect 6).
+    physics_center = [mid_x, mid_y, mid_z]
 
     if corner and zoom is not None:
         slice_plane_val = 0.0 if coord is None else float(coord)
