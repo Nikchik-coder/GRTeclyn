@@ -23,7 +23,7 @@
 #   7. greps the pack and the plan for machine identity (patterns are derived
 #      from the environment at run time, so none is written here);
 #   8. prints the two edits that remain by hand: the README claim line and the
-#      status row in research/merger/GPU_PLAN.md, plus commit and push.
+#      entry in research/merger/STATUS.md, plus commit and push.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
@@ -161,7 +161,7 @@ cat <<TXT
   - file it: bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/file_run.sh --group <NN_group> <run>
     (01_single_throat | 03_two_throats | 04_binary_headon | 05_binary_spiral | 06_binary_flyby | 07_bbh_control), then repack
   - results/merger/README.md: the Claim/Runs line of the section the run answers
-  - research/merger/GPU_PLAN.md: the status row and the queue
+  - research/merger/STATUS.md: the live/queue tables and a dated bullet
   - scratch prune on the user's word, logged in runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md
   - git add results/merger research/merger; commit (no Co-Authored-By); push to myfork
 [closeout] problems flagged: ${problems}

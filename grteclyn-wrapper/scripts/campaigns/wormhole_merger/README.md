@@ -1,8 +1,8 @@
 # Running the drainhole-merger campaign
 
 Everything in this folder launches, watches, or protects one run of
-`Examples/BinaryWormholeMerger`. The reasoning the runs serve is
-[`research/merger/GPU_PLAN.md`](../../../../research/merger/GPU_PLAN.md); the
+`Examples/BinaryWormholeMerger`. What is live and why is
+[`research/merger/STATUS.md`](../../../../research/merger/STATUS.md); the
 working output lands in `runs/wormhole_merger/` (gitignored) and the committed
 extract is [`results/merger/`](../../../../results/merger/).
 
@@ -184,8 +184,8 @@ these cards, and a loose pattern also matches your own shell.
    `bash research/merger/pack_results.sh` again, so the pack mirrors the move
    (or `git mv` the packed directory by hand). The groups are the paper's
    sections; the run tree's README describes each.
-4. Write the claim line in `results/merger/README.md` and the status row in
-   `research/merger/GPU_PLAN.md`.
+4. Write the claim line in `results/merger/README.md` and the entry in
+   `research/merger/STATUS.md`.
 5. Prune scratch only on the user's word, and log every deletion in
    `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md` (append with `cat >>`).
    Frames, the slice cache and movies are never deleted, in a prune or at

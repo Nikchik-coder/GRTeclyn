@@ -9,8 +9,8 @@ showed nothing and every search went through prose.  The rule is the usual one:
   * if there is a body, a blank line between subject and body;
   * no "Co-Authored-By: Claude" / anthropic.com trailers (repo convention).
 
-The detail still belongs in the body, and the running narrative in
-research/merger/GPU_PLAN.md -- the gate only keeps the first line readable.
+The detail still belongs in the body, and the current state in
+research/merger/STATUS.md -- the gate only keeps the first line readable.
 
 Usage:
     check_commit_msg.py <message-file>     # the commit-msg hook

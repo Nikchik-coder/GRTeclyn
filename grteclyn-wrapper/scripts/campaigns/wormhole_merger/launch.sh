@@ -108,7 +108,7 @@ set -euo pipefail
 # The campaign pin.  Arms are compared against each other, so they must run the
 # SAME binary; the live build product changes under other work.  Frozen copies
 # live in runs/wormhole_merger/bin/.  Change this only when the whole campaign
-# moves to a new build, and say so in research/merger/GPU_PLAN.md.
+# moves to a new build, and say so in research/merger/STATUS.md.
 # 2026-09-24: moved from main3d_boost_2026-09-08.ex (b69c5940, blind to the
 # quadrupole seed and the core profile) to the stamped build of 7166787a, which
 # reads both (results/merger/binaries.tsv).  A restart keeps its parent's binary.

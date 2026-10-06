@@ -20,7 +20,7 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | I want to… | go to |
 |---|---|
 | know what is running, queued, decided | [`research/merger/STATUS.md`](research/merger/STATUS.md) — one page, current only |
-| know why (the diary, every decision) | [`research/merger/GPU_PLAN.md`](research/merger/GPU_PLAN.md) — long; search by dated heading |
+| know why (the old diary, to 2026-10-05) | deleted 2026-10-06 (the user); its last version: `git show 94e7df53:research/merger/GPU_PLAN.md` — search by dated heading |
 | decode a run name, a stream column, a sign, "MOTS" | [`research/merger/GLOSSARY.md`](research/merger/GLOSSARY.md) |
 | read or check the paper | [`research/merger/article/research.tex`](research/merger/article/research.tex); its numbers come from [`article/claims/`](research/merger/article/claims/README.md) via the generated `article/numbers.tex` |
 | see what a run is for | [`results/merger/runs_registry.tsv`](results/merger/runs_registry.tsv) (prose, by hand) |

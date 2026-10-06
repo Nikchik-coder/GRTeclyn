@@ -1,7 +1,7 @@
-# Status — 2026-10-06 ~05:30 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-06 ~05:30 UTC (last compacted 2026-10-01)
 
-Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
-(headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
+Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary GPU_PLAN.md was deleted 2026-10-06
+(the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
 ## LIVE NOW (2026-10-06 05:25 UTC) — the first node: DAMP-off on card 1, card 0 idle; the second node idle
@@ -245,17 +245,8 @@ M_ADM misses the interaction energy. No binary number is final until remeasured 
   controls, the group aggregates. Figures 6/9/10/12/13 and the gallery's spiral+fly-by rows redraw only after
   their reruns. Details: GPU_PLAN "2026-10-02 (~06:00 UTC)".
 
-## TO DO: GPU_PLAN.md is OUTDATED (noted 2026-10-05, the user)
+## Done 10-05 (the old diary's last open items)
 
-The diary has not caught up with the 2026-10-05 state and needs a refresh pass: the superposed
-campaign left the paper entirely (Table III = 104 production runs, GPU cost 549 h from packed
-logs, 141 ledger rows retired, Fig. 4 cut to (a)-(c), half-mass/placement/ladder/gauge
-sections removed), the E_GW(p) scatterer points are measured (p025 3.9e-2, p045 9.0e-2,
-trough-gated), and the open work is: E_GW(p060) via a radii passthrough for the header-less
-restart stream, the Sec. VIII waves rewrite, the stale figures (constraint_evolution,
-momentum_scan_orbits, the five waves figures), and the matched width table from the csm
-a-arms' slice caches (restores the width-exponent sentence). The O3b search of Sec. IX is re-run on the current channels (O3B-NEW, DONE 21:17 UTC 10-05).
-Its two flagged items are RESOLVED 10-06 (LIVE NOW: "THE BOOSTED PAIRS' MASS, FIXED").
 - **DONE 10-05 ~12:20 UTC on the second node (it has the run tree): the matched width table and Fig. 4(d).**
   `results/merger/analysis/matched_rest.py` now reduces `ctrl_rest_a{1,15,3}_csm` too: the packed
   `campaign/03_two_throats/matched_rest_displacement.dat` gained `dsep_like_a1/a15/a3` (a = 2 is

@@ -165,7 +165,7 @@ what the claims check or the identity grep flags, and report in a few lines.
 3. **Document it.** Update:
    - its row in `results/merger/runs_registry.tsv` (outcome);
    - its claim line in `results/merger/README.md`;
-   - a dated entry in `research/merger/GPU_PLAN.md`;
+   - no diary: `GPU_PLAN.md` was deleted 2026-10-06 (the user: too big, out of date); never recreate it;
    - `research/merger/STATUS.md` (live runs, queue).
 4. **Prune.**
    - Delete its scratch plotfiles, and any checkpoints no queued run needs.
@@ -184,8 +184,8 @@ what the claims check or the identity grep flags, and report in a few lines.
   every binary profile writes on every plotfile, or `headon_first_law.py` offline. Never take them from the round or
   oriented scans, which read a deformed horizon 3–11 % low (2026-10-01). A row of nan means no MOTS on that plotfile.
 - The paper states verified results only. It has no failure narratives, no "not computed / not measured here" and
-  no mention of data that was not saved. Anything a simulation or analysis could settle goes into `GPU_PLAN.md`
-  with a cost, not into the text. The Scope paragraph keeps only model assumptions.
+  no mention of data that was not saved. Anything a simulation or analysis could settle goes into STATUS.md's
+  "RUNS FOR THE PAPER" table with a cost, not into the text. The Scope paragraph keeps only model assumptions.
 - Figures are `figure*[t]` strips of at most about half a page, never full-page floats. Every caption ends with its
   outcome.
 - Figures: every label hangs on what it names and no line crosses text
@@ -197,7 +197,7 @@ what the claims check or the identity grep flags, and report in a few lines.
 ## Git
 
 - **Commit subjects at most 72 characters**, blank line, then the body; detail goes
-  in the body and the narrative in `GPU_PLAN.md` (the `commit-msg` hook enforces it;
+  in the body and the state in `research/merger/STATUS.md` (the `commit-msg` hook enforces it;
   install with `python3 grteclyn-wrapper/scripts/ops/check_commit_msg.py --install-hook`).
 - No `Co-Authored-By: Claude` trailers.
 - No machine identity in tracked files (user, host, home paths): the `pre-commit`
