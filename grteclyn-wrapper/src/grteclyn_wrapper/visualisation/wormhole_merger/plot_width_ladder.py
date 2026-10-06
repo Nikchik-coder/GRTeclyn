@@ -81,19 +81,21 @@ def power_fit(a: np.ndarray, dd: np.ndarray) -> tuple[float, float]:
     return float(np.exp(ln_amp)), float(n)
 
 
-def figure_panel(ax, pack_root=PACK_ROOT) -> None:
+def figure_panel(ax, pack_root=PACK_ROOT, keys: bool = False) -> None:
     """The ladder drawn onto a SUPPLIED axis (style.prd already active; the
-    caller owns the letter tag)."""
+    caller owns the letter tag).  ``keys=True`` names the lines in a key above
+    the frame (``style.legend_top``) instead of on the curves."""
     a, dd = ladder(pack_root)
     amp, n = power_fit(a, dd)
     two = dd[a == 2.0][0]
     ax.set_xscale("log")
     ax.set_yscale("log")
     s = np.geomspace(0.88, 3.5, 200)
-    ax.plot(s, two * (s / 2.0) ** 2, color=style.CONTEXT, linestyle=(0, (4, 2.2)),
-            linewidth=1.0, zorder=2)
-    ax.plot(s, amp * s ** n, color=style.GOLD, linewidth=1.2, zorder=3)
-    ax.plot(a, dd, linestyle="none", marker="o", ms=3.4, color=style.INK, zorder=4)
+    (h_two,) = ax.plot(s, two * (s / 2.0) ** 2, color=style.CONTEXT,
+                       linestyle=(0, (4, 2.2)), linewidth=1.0, zorder=2)
+    (h_fit,) = ax.plot(s, amp * s ** n, color=style.GOLD, linewidth=1.2, zorder=3)
+    (h_dd,) = ax.plot(a, dd, linestyle="none", marker="o", ms=3.4, color=style.INK,
+                      zorder=4)
     ax.set_xlim(0.88, 3.5)
     ax.set_ylim(0.12, 1.15)
     # Log axes would print powers of ten; the rungs and three doublings say more.
@@ -105,12 +107,16 @@ def figure_panel(ax, pack_root=PACK_ROOT) -> None:
         axis.set_minor_locator(NullLocator())
     ax.set_xlabel(r"$a$")
     ax.set_ylabel(r"$\delta d$ at $t=11.5$")
-    # Names where the two laws have parted, past a = 2: gold below its line,
-    # the grey rule above its own.
-    ax.text(2.45, 0.86 * amp * 2.45 ** n, rf"$a^{{{n:.1f}}}$", fontsize=7.5,
-            color=style.GOLD, ha="left", va="top")
-    ax.text(2.3, 1.12 * two * (2.3 / 2.0) ** 2, r"$a^{2}$", fontsize=7.5,
-            color=style.CONTEXT, ha="right", va="bottom")
+    if keys:
+        style.legend_top(ax, [(h_dd, "measured"), (h_fit, rf"$a^{{{n:.1f}}}$"),
+                              (h_two, r"$a^{2}$")], ncol=1, borderpad=0.35)
+    else:
+        # Names where the two laws have parted, past a = 2: gold below its
+        # line, the grey rule above its own.
+        ax.text(2.45, 0.86 * amp * 2.45 ** n, rf"$a^{{{n:.1f}}}$", fontsize=7.5,
+                color=style.GOLD, ha="left", va="top")
+        ax.text(2.3, 1.12 * two * (2.3 / 2.0) ** 2, r"$a^{2}$", fontsize=7.5,
+                color=style.CONTEXT, ha="right", va="bottom")
     print(f"[width ladder] delta d at t = {T_LADDER}: "
           + ", ".join(f"a = {w:g}: {v:.4f}" for w, v in zip(a, dd))
           + f"; A a^n fit: A = {amp:.4f}, n = {n:.3f} (point charge: n = 2, "

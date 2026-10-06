@@ -217,7 +217,6 @@ def main(argv: list[str] | None = None) -> int:
     lim = 7.0
     axO.axhline(0.0, color=style.GRID, linewidth=0.6, zorder=0)
     axO.axvline(0.0, color=style.GRID, linewidth=0.6, zorder=0)
-    ends = {}
     for p, run, colr, ls, lw, merges, floor in ARMS:
         t, one, two, why = pit_tracks(run, args.pack_root, merges, floor)
         key = run[0] if not isinstance(run, str) else run
@@ -246,7 +245,6 @@ def main(argv: list[str] | None = None) -> int:
         for trk in (one, two):
             axO.plot(*trk[-1], marker="o", ms=2.6, color=colr, zorder=5)
         axS.plot(t[-1], sep[-1], marker="o", ms=2.6, color=colr, zorder=5)
-        ends[p] = (t, one, two, sep)
         i = int(np.argmin(sep))
         print(f"[orbits] p = {p:.2f} {key}: t = 0-{t[-1]:.2f} ({why}); "
               f"min separation {sep[i]:.3f} at t = {t[i]:.2f} (raw {raw.min():.3f}), "
@@ -258,17 +256,16 @@ def main(argv: list[str] | None = None) -> int:
     axO.set_aspect("equal")
     axO.set_xlabel(r"$x$")
     axO.set_ylabel(r"$y$")
-    # The plunges converge on one point and cannot each carry a name: a key
-    # for the grey ramp in the empty upper-left corner; the head-on is named
-    # on its own axis, the fly-bys where they leave.
+    # One key above both frames (the house rule: no key inside a frame), naming
+    # every arm and its outcome; the two panels draw the same arms alike.
     from matplotlib.lines import Line2D
-    keys = [Line2D([], [], color=c, linestyle=ls, linewidth=lw, label=f"${p:.2f}$")
+    fate = {0.10: r"$d{=}6$ merger", 0.12: "contact", 0.60: "plunge", 0.90: "plunge",
+            0.25: "scatter", 0.45: "scatter"}
+    keys = [Line2D([], [], color=c, linestyle=ls, linewidth=lw,
+                   label=f"$p={p:.2f}$, {fate[p]}")
             for p, _, c, ls, lw, _m, _f in ARMS]
-    leg = axO.legend(handles=keys, loc="upper left", ncol=2, fontsize=6.8,
-                     title=r"$p$", title_fontsize=6.8, frameon=True,
-                     handlelength=1.4, handletextpad=0.4, columnspacing=0.8,
-                     borderpad=0.35, labelspacing=0.25)
-    leg.get_frame().set(facecolor=style.GROUND, edgecolor="none", alpha=0.9)
+    fig.legend(handles=keys, loc="outside upper center", ncol=6, fontsize=7.0,
+               frameon=False, handlelength=1.8, handletextpad=0.4, columnspacing=1.1)
 
     # ---- (b) separation -------------------------------------------------------
     # The longest record drawn is the p = 0.45 scatterer's (trust t = 67.6),
@@ -277,14 +274,6 @@ def main(argv: list[str] | None = None) -> int:
     axS.set_ylim(0, 13.5)
     axS.set_xlabel(r"$t$")
     axS.set_ylabel(r"separation")
-    for p, dy, va in ((0.25, 0.45, "bottom"), (0.45, -0.45, "top")):
-        t_, sep_ = ends[p][0], ends[p][3]
-        axS.text(t_[-1] - 1.0, sep_[-1] + dy, f"$p={p:.2f}$", fontsize=7.5,
-                 color=style.GOLD, ha="right", va=va)
-    axS.text(24.0, 0.8, r"mergers and plunges", fontsize=7.5, color=style.INK,
-             ha="left", va="center")
-    axS.text(47.0, 11.6, r"scatterers", fontsize=7.5, color=style.GOLD,
-             ha="center", va="center")
 
     for k, ax in enumerate((axO, axS)):
         ax.text(0.0, 1.03, f"({'ab'[k]})", transform=ax.transAxes,
