@@ -16,8 +16,8 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
   1e-2 from 100.9, 3.1e-2 at the stop — level 5 does not move it; trust t ≤ 80 (trust_windows.tsv). The core itself
   stays calm (max|K| ≈ 0.52, min lapse 0.034–0.042; the lapse minimum splits off-centre to y ≈ ±0.44 at t ≈ 105,
   past the trust window). CLOSED OUT 05:20 UTC: filed and packed `06_binary_flyby/`, no movies (stopped, past
-  trust), 0 problems; plotfiles and Chk10000/10500 pruned; its stop checkpoint `Chk10940` (t = 109.4, 26G) KEPT on
-  scratch for an optional resume to t = 115 — the user's word decides.
+  trust), 0 problems; plotfiles and Chk10000/10500 pruned; its stop checkpoint `Chk10940` wiped 05:28 UTC (the user
+  declined the resume to t = 115).
 - **T0-1THROAT `t0_single_boost_p045_L128_lvl4_lbf_csm` DONE t = 0.5 (card 0, 05:05–05:13 UTC; the user's go "do
   both"): ONE exact-boost throat, p = 0.45, on P045-T100's box with its mode-3 solve. THE SOLVE IS IDLE on it (20
   Newton passes, max |w| ≤ 1.2e-5 per level, c = c_superposed, σ = 1, far side 4e-6 off), the face estimate prints
@@ -78,11 +78,11 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
   d, p, the mass and the checkpoint lines changed. NO checkpoints: `amr.check_int = -1` +
   `amr.checkpoint_files_output = 0` (verified: none written). `WHM_PREFLIGHT=static`, as BBH-HEADON. Started by
   effect: frame 0 eyeballed against BBH-HEADON's, Ψ4 rows landing, keep-last 3 pruning, card 1 at 62 GB.
-- **Storage (the first node, 05:25 UTC 10-06):** scratch 1002G free: DAMP-off 19G (3 plotfiles, in policy) and
-  P060-EXT's stop checkpoint `Chk10940` 26G (kept for the optional resume to 115, on the user's word); nothing else.
-  04:53: the 76G of leftovers wiped on the user's "wipe them" (P09-LVL5's Chk04500 copied to NFS first);
-  05:20–05:30: P060-EXT's and T0-1THROAT's close-out prunes (MANIFEST_CLEANUP_2026-10-06). The second node was not
-  listed from here (05:35 UTC 10-05: only the HFL cell, 60G).
+- **Storage (the first node, 05:28 UTC 10-06):** scratch 1.1T free, CLEAN: only DAMP-off 18G (3 plotfiles, in
+  policy). Today: the 76G of leftovers wiped at 04:53 (the user's "wipe them"; P09-LVL5's Chk04500 copied to NFS
+  first), P060-EXT's and T0-1THROAT's close-out prunes, and P060-EXT's stop checkpoint Chk10940 at 05:28 (the user:
+  "wipe"); MANIFEST_CLEANUP_2026-10-06. The second node was not listed from here (05:35 UTC 10-05: only the HFL
+  cell, 60G).
 
 ## RUNS FOR THE PAPER (the full read of 2026-10-05, late; nothing launches without the go)
 
