@@ -1,0 +1,12 @@
+# The moving pairs' ADM mass MEASURED at t = 0 (MASS-t0, 2026-10-06): the full ADM surface integral of each pair's
+# t = 0 plotfile (level 0, spheres R = 20-56, fit a + b/R + c/R^2; moving the fit to R >= 24 changes each by < 0.005),
+# from a rebuild of the run's own packed params to t = 0.5 whose solve reproduces the parent's row for row
+# (campaign/02_moving_throat/exact_boost/t0mass_* and t0_merge_orbit_flip_d12_p045_*). The same recipe reads one
+# exact-boost throat (t0_single_boost_p045_L128_lvl4_lbf_csm) as 1.0967 = gamma m (1.0966). Source: each run dir's
+# small_data/adm_surface_integral.log on the first GPU node (E(R) tables; not packed). run_tree.pair_mass reads
+# M_ADM_t0 for every run of these three pairs (same p, d = 12, exact boost) and falls back to M_ADM_boost
+# (boosted_adm_mass.tsv) for the rest.
+run	p	M_ADM_t0	M_ADM_boost	ratio	t0_run
+06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm	0.25	2.304	2.233161215	1.0317	t0mass_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm
+06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm	0.45	2.317	2.253600179	1.0281	t0_merge_orbit_flip_d12_p045_L128_lvl4_lbf_csm
+06_binary_flyby/merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm	0.60	2.282	2.228640353	1.0240	t0mass_merge_orbit_flip_d12_p060_L128_lvl4_lbf_csm

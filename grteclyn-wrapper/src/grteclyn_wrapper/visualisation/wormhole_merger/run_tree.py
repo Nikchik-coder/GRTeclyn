@@ -21,8 +21,9 @@ and only the name survives.
 from __future__ import annotations
 
 import pathlib
+import re
 
-__all__ = ["boosted_adm_mass", "figure_dir", "find_packed", "find_run", "iter_packed",
+__all__ = ["boosted_adm_mass", "pair_mass", "figure_dir", "find_packed", "find_run", "iter_packed",
            "PACK_ROOT", "REPO", "RUNS_ROOT"]
 
 # …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger
@@ -120,3 +121,36 @@ def boosted_adm_mass(name: str, pack_root: pathlib.Path | str | None = None) -> 
         if pathlib.Path(f[0]).name == key:
             return float(f[cols.index("M_ADM_boost")])
     raise KeyError(f"{key!r} is not in {table}")
+
+
+# The three d = 12 exact-boost pairs whose t = 0 mass was MEASURED (MASS-t0,
+# 2026-10-06): every run of a family shares its parent's solve.
+_T0_FAMILY = re.compile(r"merge_orbit_flip_d12_p0(25|45|60)_L128_")
+
+
+def pair_mass(name: str, pack_root: pathlib.Path | str | None = None) -> float:
+    """The mass an exact-boost pair's energies are quoted per, by run name.
+
+    The measured t = 0 ADM mass (the full surface integral, ``M_ADM_t0`` of
+    ``<pack>/analysis/t0_adm_mass.tsv``) for the d = 12 pairs at p = 0.25 /
+    0.45 / 0.60, any run of the family (restart legs, twins, SERIES); else
+    ``boosted_adm_mass``.  The prescription reads 2.4-3.2 % below the
+    measurement where both exist.
+    """
+    root = pathlib.Path(pack_root or PACK_ROOT).expanduser()
+    key = pathlib.Path(name.rstrip("/")).name
+    hit = _T0_FAMILY.search(key)
+    if hit:
+        table = root / "analysis" / "t0_adm_mass.tsv"
+        cols = None
+        for line in table.read_text(encoding="utf-8").splitlines():
+            if line.startswith("#") or not line.strip():
+                continue
+            f = line.split("\t")
+            if cols is None:
+                cols = f
+                continue
+            if f"_p0{hit.group(1)}_" in f[0]:
+                return float(f[cols.index("M_ADM_t0")])
+        raise KeyError(f"{key!r}: its family p0{hit.group(1)} is not in {table}")
+    return boosted_adm_mass(name, pack_root)

@@ -30,11 +30,23 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 7 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
 | 8 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
 | 9 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
-| 10 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 11 (App. A) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
-| 12 (App. B) | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
-| 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
-| 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+| 10 (App. A) | `fig:convergence` | `00_code_health/convergence` | `plot_convergence` |
+| 11 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
+| 12 (App. A) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
+| 13 (App. B) | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
+| 14 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
+| 14 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+
+2026-10-06 (the referee pass): new Fig. 10, `00_code_health/convergence` (`plot_convergence`, no arguments),
+which shifts App. A and B by one: (a) the static throat's three-level factor Q(t) at levels 2/3/4 against
+n = 2/3/4; (b) the Bowen-York d = 12, p = 0.12 pair's |r Psi4| at R = 20, level 5, with its level-4 and
+refined-wave-zone differences; (c) E(R)/E(R_out) against R/M for the head-on, the d = 6 merger and the fly-by,
+plus two vacuum controls. Fig. 8 (`psi4_ligo`) re-rendered: (d) reads every energy at the outermost sphere
+that covers its window, the tick its change from the next sphere in. The moving pairs are taken per their
+measured t = 0 mass (`run_tree.pair_mass`, `results/merger/analysis/t0_adm_mass.tsv`). Each source's vacuum
+control is drawn in grey (d = 8 from rest; d = 6, p = 0.10; d = 12, p = 0.45), and the twin's row reads
+"vacuum p = 0.12". Fig. 9 (`heavy_seeds`) re-rendered for the moved energies (its deposit band reads the
+ledger). Every label audit is clean.
 
 2026-10-06 (the validation fixes, `research/merger/article/claims/VALIDATION_2026-10-06.md`): re-rendered
 Figs. 1, 2, 3 top, 5, 7, 8, 9, 10, 12 and 13, every label audit clean. Fig. 1's legend names the contour it

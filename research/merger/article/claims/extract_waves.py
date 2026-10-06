@@ -56,10 +56,11 @@ def _mod(name: str):
 
 def _mass(M) -> float:
     """A mass in code units: a number, or the name of an exact-boost pair whose
-    corrected ADM mass (run_tree.boosted_adm_mass: the solve's face estimate plus
-    each throat's kinetic energy) it is."""
+    quoted mass (run_tree.pair_mass: the measured t = 0 ADM mass of the d = 12
+    pairs at p = 0.25-0.60, else the solve's face estimate plus each throat's
+    kinetic energy) it is."""
     if isinstance(M, str):
-        return float(_mod("run_tree").boosted_adm_mass(M))
+        return float(_mod("run_tree").pair_mass(M))
     if isinstance(M, dict):          # an extractor spec, e.g. a Brill-Lindquist sum
         return float(evaluate(M))
     return float(M)
@@ -916,3 +917,56 @@ def waves_axis_ratio_dev() -> float:
         _, d22, _ = H._read(d / f22)
         devs += [100.0 * abs(x / H.RATIO - 1.0) for x in H.ratios(d20, d22, radii)]
     return float(max(devs))
+
+
+# ---------------------------------------------------------------- convergence (the referee, 2026-10-06)
+@extractor
+def conv_order(era: str, which: str = "lo") -> float:
+    """log2 of the static throat's three-level factor Q (plot_convergence (a)) over
+    an era: 'data' (t = 0-10, the error of reading the exact data dominates) or
+    'evolution' (t = 12-20 less its one level-2 dump); which = 'lo' / 'hi'."""
+    C = _mod("plot_convergence")
+    span, skip = {"data": (C.DATA_ERA, ()), "evolution": (C.EVOL_ERA, C.EVOL_SKIP)}[era]
+    lo, hi = C.order_range(PACK, span, skip)
+    return float(lo if which == "lo" else hi)
+
+
+@extractor
+def conv_psi_difference(pair: str) -> float:
+    """100 max|difference| / burst peak of plot_convergence (b): pair 'level'
+    (throat level 4 vs 5, t <= 56) or 'wave-zone' (refined vs base, t <= 40)."""
+    return float(_mod("plot_convergence").psi_difference(PACK, pair)[2])
+
+
+@extractor
+def near_zone(case: str, what: str = "excess", r_min: float = 0.0) -> float:
+    """plot_convergence (c), one record: 'excess' = 100 (E_in/E_out - 1), the
+    innermost sphere's energy over the outermost's; 'amplitude' = the same in
+    amplitude, 100 (sqrt(E_in/E_out) - 1); 'spread' = 100 (max - min)/E_out over
+    the spheres R >= r_min; 'rmax' = the outermost sphere's R/M."""
+    C = _mod("plot_convergence")
+    if what == "spread":
+        return float(C.near_zone_spread(PACK, case, r_min))
+    if what == "rmax":
+        M, _u, E = C.near_zone_energies(PACK)[case]
+        return float(max(E) / M)
+    q = C.near_zone_ratio(PACK, case)
+    return 100.0 * (q - 1.0) if what == "excess" else 100.0 * (math.sqrt(q) - 1.0)
+
+
+@extractor
+def pair_mass_t0(stat: str = "min", what: str = "M") -> float:
+    """The d = 12 exact-boost pairs' measured t = 0 ADM mass (MASS-t0,
+    analysis/t0_adm_mass.tsv): what = 'M', or 'excess' = 100 (M_t0/M_ADM_boost - 1);
+    stat = 'min' / 'max' over p = 0.25 / 0.45 / 0.60."""
+    rows, cols = [], None
+    for line in (PACK / "analysis" / "t0_adm_mass.tsv").read_text(encoding="utf-8").splitlines():
+        if line.startswith("#") or not line.strip():
+            continue
+        f = line.split("\t")
+        if cols is None:
+            cols = f
+            continue
+        m0, mb = float(f[cols.index("M_ADM_t0")]), float(f[cols.index("M_ADM_boost")])
+        rows.append(m0 if what == "M" else 100.0 * (m0 / mb - 1.0))
+    return float(min(rows) if stat == "min" else max(rows))
