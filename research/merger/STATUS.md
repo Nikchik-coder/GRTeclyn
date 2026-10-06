@@ -1,10 +1,28 @@
-# Status — 2026-10-06 ~14:24 UTC (last compacted 2026-10-01)
+# Status — 2026-10-06 ~14:40 UTC (last compacted 2026-10-01)
 
 Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary GPU_PLAN.md was deleted 2026-10-06
 (the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-06 14:05 UTC) — nothing; both first-node cards free, no queue
+## LIVE NOW (2026-10-06 14:40 UTC) — nothing; both first-node cards free
+
+**NEXT — the referee pass: at most 2 GPU runs, 1 preferred** (full specs: RUNS FOR THE PAPER, below)
+
+| run | status | what | cost | open before launch |
+|---|---|---|---|---|
+| FARZONE-ho `farzone_headon_flip_d8_L512_lvl6_t250_csm` | REQUIRED (the user launches it, on the cluster) | the d = 8 head-on in an L = 512 box, 12 spheres to R = 180 (R/M = 76), t = 250 | ~40 GPU-h, one card (~1.7 days) | checkpoints (spec: every 25 units, keep 2), frames or none, the binary |
+| CONV-ho (levels 3 + 4 from t = 0) | PROPOSED, needs the go | the head-on beside leg 1's level 5: the three-level Richardson set | ~13 GPU-h, one per card (~9 h wall) | the go; checkpoints (proposed none) |
+
+- **FARZONE-ho spec checked (14:35 UTC):** every "from" value matches the base's packed params, and the code confirms
+  the grid mapping (FixedGridsTagger half-width tagging_L·2^-(level+2), so L = 512 level l+2 = production level l in
+  Δx and box; ExtractionTagger refines r < 1.2 R, so R ≤ 44 read at Δx 0.5 as in production). Two gaps: (1) **no
+  binary named** — launch.sh's default (guard_7166787a, 09-24) predates mode-3 matching; the base ran on
+  `main3d_csmatch_5f988dbc_2026-09-28.ex` (boostpair_91ed17cd if the per-throat lapse freeze is wanted). (2)
+  **survival past the interior failure is untested**: min_chi 1e-4 carried runs only together with the per-throat
+  lapse freeze + core damping (the p = 0.60 plunge; the d = 6 chain also at σ = 1.0); the head-on has neither, and its
+  own legs got past t ≈ 35–50 only at level 6 (leg 1 died at 38.8 at level 5). A death near t ≈ 30–39 comes before
+  any far sphere hears the merger (the bell reaches R = 180 at t ≈ 200), so take the checkpoints: a t = 25 one lets
+  a death restart with leg 2's level +2 instead of from t = 0.
 
 - **MASS-t0 DONE for all three p (the twins: p025 card 0 13:17–13:50, p060 card 1 13:17–13:58 UTC 10-06, the
   user's go "use bouth gpus per required run"): THE MEASURED t = 0 MASS IS FLAT IN p — 2.304 / 2.317 / 2.282 at
