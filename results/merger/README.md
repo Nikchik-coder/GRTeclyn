@@ -36,7 +36,8 @@ that produced it does not.
     kicks, quadrupoles, the scalar-stream re-runs), the generated notes (INSTABILITY, BRANCHES,
     QUEUE2E_GATES).
   - `02_moving_throat/` — the boosted throat: `contraction_t0/` (the 1/γ contraction at t = 0),
-    `exact_boost/` (one exact-boost throat on the production box), `csm/` (the Bowen–York
+    `exact_boost/` (one exact-boost throat on the production box, and the MASS-t0 fly-by pairs at
+    t = 0 whose ADM surface integrals measure the moving pairs' mass), `csm/` (the Bowen–York
     momentum probes that ruled that route out).
   - `03_two_throats/csm/` — the matched rest pairs: width and separation ladders, the sign rule.
   - `04_binary_headon/` — `csm/` (the mode-3 head-on legs), `placement_csm/` (the 18 one-step
@@ -89,7 +90,9 @@ campaign/                         (as of 2026-10-06; the superposed-era subfolde
   02_moving_throat/               the boosted throat:
     contraction_t0/<run>/           the 1/γ Lorentz contraction at t = 0, p = 0 -> 0.45
     exact_boost/<run>/              the moving exact-boost throat (the collapse twins, levels
-                                    3/4) and its t = 0 solve check on the production box
+                                    3/4) and its t = 0 solve check on the production box;
+                                    the MASS-t0 pairs (p = 0.25 / 0.45 / 0.60 at t = 0: ADM
+                                    energy 2.304 / 2.317 / 2.282, flat in p)
     csm/<run>/                      the Bowen-York momentum probes (2026-09-29) that ruled
                                     that route out: one throat at p = 0, 0.12, 0.45
     boost_contraction_t0.tsv        the measured contraction against 1/γ, reduced

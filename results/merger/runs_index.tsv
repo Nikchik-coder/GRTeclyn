@@ -44,6 +44,8 @@ single_boost_p045_lbf_ml4_t060	02_moving_throat/exact_boost	launch manifest	main
 single_boost_p045_lbf_t050	02_moving_throat/exact_boost	launch manifest	main3d_boostfix_5384c104-dirty_2026-09-29.ex	5384c104-dirty	pass	0	0	3	64.0	128	50.0		2.2701466330e-03	n/a	ok	unknown	ok
 t0_merge_orbit_flip_d12_p045_L128_lvl4_lbf_csm	02_moving_throat/exact_boost	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	0.5		1.1526591587e-03	n/a	ok	unknown	ok
 t0_single_boost_p045_L128_lvl4_lbf_csm	02_moving_throat/exact_boost	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	0.5		7.0777657226e-04	n/a	ok	unknown	ok
+t0mass_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm	02_moving_throat/exact_boost	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	5	128.0	256	0.5		1.1296028696e-03	n/a	ok	unknown	ok
+t0mass_merge_orbit_flip_d12_p060_L128_lvl4_lbf_csm	02_moving_throat/exact_boost	launch manifest	main3d_boostpair_91ed17cd_2026-09-29.ex	91ed17cd	pass	0	0	4	128.0	256	0.5		1.1778660124e-03	n/a	ok	unknown	ok
 ctrl_flip_d12_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	30.0		3.6629450216e-03	n/a	ok	unknown	ok
 ctrl_rest_a15_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	15.0		4.9133857945e-03	n/a	ok	unknown	ok
 ctrl_rest_a1_csm	03_two_throats/csm	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	3	64.0	128	15.0		6.7258797361e-03	n/a	ok	unknown	ok

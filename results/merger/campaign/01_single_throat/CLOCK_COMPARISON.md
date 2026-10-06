@@ -124,6 +124,10 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `t0_merge_orbit_flip_d12_p045_L128_lvl4_lbf_csm` | B | 0.5 | x3.8 / 0.5 | - | - | - | - | - | - | - | - | too short |
 | `t0_single_boost_p045_L128_lvl4_lbf_csm` | A | 0.5 | x4.3 / 0.5 | - | - | - | - | - | - | - | - | too short |
 | `t0_single_boost_p045_L128_lvl4_lbf_csm` | B | 0.5 | x4.3 / 0.5 | - | - | - | - | - | - | - | - | too short |
+| `t0mass_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | A | 0.5 | x1.1 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
+| `t0mass_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | B | 0.5 | x1.1 / 0.5 | - | - | - | - | - | - | - | 0.0 | too short |
+| `t0mass_merge_orbit_flip_d12_p060_L128_lvl4_lbf_csm` | A | 0.5 | x4.5 / 0.5 | - | - | - | - | - | - | - | - | too short |
+| `t0mass_merge_orbit_flip_d12_p060_L128_lvl4_lbf_csm` | B | 0.5 | x4.5 / 0.5 | - | - | - | - | - | - | - | - | too short |
 | `ctrl_flip_d12_csm` | A | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
 | `ctrl_flip_d12_csm` | B | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_a15_csm` | A | 15.0 | x25.3 / 14.8 | +1.24 | - | - | - | - | - | - | - | too short |
@@ -214,7 +218,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 18 early, 10 same, 45 late, 60 too short, 37 restart arms (own clock only).
+Throats read at t = 30: 18 early, 10 same, 45 late, 64 too short, 37 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the
