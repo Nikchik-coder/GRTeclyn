@@ -115,8 +115,8 @@ The paper was read end to end: the superposition / Bowen–York / workaround wor
 solved, matched, boosted data as the method), duplicates are cut, the d = 6 chain is "the merger" everywhere
 (text and figures), the run matrix (Table III) lost the Bowen–York probes, the GRTresna bridge, the unused CS-1 scout and the
 Bowen–York convergence arms (96 runs, 476 GPU-h; BBH-d6 joined the vacuum controls). Ledger 907 rows, 0 problems.
-**No more GPU runs after DAMP-off (the user, 2026-10-06 06:20 UTC): CONV-lbf-w, HARM-oct, the optional rows and the
-flat-in-p mass rebuild are declined.** **Required:** DAMP-off — DONE 09:12 UTC 10-06: the quoted fly-by numbers hold without the damping (LIVE
+**No more GPU runs after DAMP-off (the user, 2026-10-06 06:20 UTC): CONV-lbf-w, HARM-oct and the optional rows are
+declined.** **Required:** MASS-t0 (the user, 10-06 late: the moving pairs' mass; row below, needs the go); DAMP-off — DONE 09:12 UTC 10-06: the quoted fly-by numbers hold without the damping (LIVE
 NOW, top; O3B-NEW DONE 21:17 UTC 10-05). **Recommended:** CONV-lbf-w — no
 quoted number waits on it, but the paper has no wave-zone resolution test on current data and a referee will ask.
 **Optional:** SOLVE-t0 — the d = 8 shell number it would restore is no longer in the paper. (Classified 10-05 late,
@@ -124,6 +124,7 @@ after the shortening pass.)
 
 | id | what | why the paper needs it | how | cost |
 |---|---|---|---|---|
+| MASS-t0 | REQUIRED (the user, 10-06 late); nothing launches without the go | the moving pairs' mass comes out nearly flat in p (2.233 / 2.254 / 2.229 at p = 0.25 / 0.45 / 0.60) where 2γm′ + E_b(d = 12) expects 2.33 / 2.46 / 2.60, so the prescription (boosted background + face monopole of w) or the boosted superposition misses energy; every quoted E/M of a moving pair is per this mass (4–14 % low → E/M 4–14 % high) | P045-T100's params rebuilt to t = 0.5 (one plotfile at t = 0, no checkpoints): the full ADM surface integral of the t = 0 plotfile, level 0, R = 20–56, fit a + b/R + c/R² (the T0-1THROAT recipe, which read γm on one throat); then p = 0.25 / 0.60 if it disagrees | ~40 GPU-min per p |
 | O3B-NEW | DONE 21:17 UTC 10-05 (LIVE NOW, top) | Sec. IX now quotes the search on the current channels plus the plunge (154 templates, 2.25 h, no candidate) | — | CPU hours |
 | DAMP-off | DONE 09:12 UTC 10-06 (LIVE NOW, top): the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move. The 09-0x damping-off arms (merge_twin_p012_nodamp_t060: fields equal to 3 decimals at t = 32, wall 51.53 vs 52.06; the damped/undamped ladder rungs) tested the superposed p = 0.12 merger's wall, behind a horizon — never a scatterer, where the damping acts outside any horizon | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); no checkpoints (the user, at launch) | ~15 GPU-h (P045-T100 averaged 4.8 u/h) |
 | CONV-lbf-w | the wave-zone test on exact-boost data | CONV-csm-w resolved the wave zone (0.01–0.15 % of peak) on the Bowen–York `_csm` arm, which the paper no longer cites | the CONV-csm-w recipe (`extraction_levels 0 1 0 0`, the R = 28 ball, 77.6/80 GB) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |
