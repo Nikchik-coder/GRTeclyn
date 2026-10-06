@@ -1,14 +1,21 @@
-# Status — 2026-10-06 ~09:25 UTC (last compacted 2026-10-01)
+# Status — 2026-10-06 ~12:50 UTC (last compacted 2026-10-01)
 
 Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary GPU_PLAN.md was deleted 2026-10-06
 (the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-06 09:25 UTC) — nothing live: both nodes idle (no more GPU runs, the user)
+## LIVE NOW (2026-10-06 12:50 UTC) — MASS-t0 on the first node
 
 | run | node / card | t | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| none (DAMP-off done 09:12 UTC 10-06) | — | — | — | — | — | — |
+| MASS-t0 `t0_merge_orbit_flip_d12_p045_L128_lvl4_lbf_csm` | first / 0 | solving | 0.5 | — | ~0.7 h → ~13:30 UTC 10-06 | none (the row's spec) |
+
+- **MASS-t0 LAUNCHED 12:45 UTC 10-06 (the user's go: "launch the single throat required run"):** P045-T100's params
+  rebuilt to t = 0.5 — stop 100 → 0.5, the names, `derive_plot_vars` + constraints with `G_Newton = 1` (the
+  T0-1THROAT recipe); everything else byte-identical (diffed). Binary main3d_boostpair_91ed17cd, `--consume-args` =
+  T0-1THROAT's frame set WITHOUT `--watch`. Preflight PASS (full set 14/14 from t = 0; no-checkpoint warning
+  expected); consumer up. Analysis after: the full ADM surface integral of the t = 0 plotfile (level 0, R = 20–56,
+  a + b/R + c/R²) against M_ADM_boost 2.2536 and 2γm′ + E_b ≈ 2.47; then p = 0.25/0.60 if it disagrees.
 
 - **PAPER VALIDATED AND FIXED (10-06, the user's ask).** Five read-only agents audited every number, table, figure
   and method statement against the pack and the code (`article/claims/VALIDATION_2026-10-06.md`); five fix agents
@@ -124,7 +131,7 @@ after the shortening pass.)
 
 | id | what | why the paper needs it | how | cost |
 |---|---|---|---|---|
-| MASS-t0 | REQUIRED (the user, 10-06 late); nothing launches without the go | the moving pairs' mass comes out nearly flat in p (2.233 / 2.254 / 2.229 at p = 0.25 / 0.45 / 0.60) where 2γm′ + E_b(d = 12) expects 2.33 / 2.46 / 2.60, so the prescription (boosted background + face monopole of w) or the boosted superposition misses energy; every quoted E/M of a moving pair is per this mass (4–14 % low → E/M 4–14 % high) | P045-T100's params rebuilt to t = 0.5 (one plotfile at t = 0, no checkpoints): the full ADM surface integral of the t = 0 plotfile, level 0, R = 20–56, fit a + b/R + c/R² (the T0-1THROAT recipe, which read γm on one throat); then p = 0.25 / 0.60 if it disagrees | ~40 GPU-min per p |
+| MASS-t0 | REQUIRED — LAUNCHED 12:45 UTC 10-06 on the first node's card 0 (LIVE NOW, top) | the moving pairs' mass comes out nearly flat in p (2.233 / 2.254 / 2.229 at p = 0.25 / 0.45 / 0.60) where 2γm′ + E_b(d = 12) expects 2.33 / 2.46 / 2.60, so the prescription (boosted background + face monopole of w) or the boosted superposition misses energy; every quoted E/M of a moving pair is per this mass (4–14 % low → E/M 4–14 % high) | P045-T100's params rebuilt to t = 0.5 (one plotfile at t = 0, no checkpoints): the full ADM surface integral of the t = 0 plotfile, level 0, R = 20–56, fit a + b/R + c/R² (the T0-1THROAT recipe, which read γm on one throat); then p = 0.25 / 0.60 if it disagrees | ~40 GPU-min per p |
 | O3B-NEW | DONE 21:17 UTC 10-05 (LIVE NOW, top) | Sec. IX now quotes the search on the current channels plus the plunge (154 templates, 2.25 h, no candidate) | — | CPU hours |
 | DAMP-off | DONE 09:12 UTC 10-06 (LIVE NOW, top): the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move. The 09-0x damping-off arms (merge_twin_p012_nodamp_t060: fields equal to 3 decimals at t = 32, wall 51.53 vs 52.06; the damped/undamped ladder rungs) tested the superposed p = 0.12 merger's wall, behind a horizon — never a scatterer, where the damping acts outside any horizon | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); no checkpoints (the user, at launch) | ~15 GPU-h (P045-T100 averaged 4.8 u/h) |
 | CONV-lbf-w | the wave-zone test on exact-boost data | CONV-csm-w resolved the wave zone (0.01–0.15 % of peak) on the Bowen–York `_csm` arm, which the paper no longer cites | the CONV-csm-w recipe (`extraction_levels 0 1 0 0`, the R = 28 ball, 77.6/80 GB) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |
