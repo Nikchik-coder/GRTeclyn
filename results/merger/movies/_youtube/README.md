@@ -149,6 +149,8 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 
 ## 6. `06_plunge_merger_no_horizon_yet.mp4`
 
+**YouTube:** https://youtu.be/-ejFKpetL1Y (uploaded 2026-10-06)
+
 **Title:** A Deeper Wormhole Plunge: The Mouths Merge, and No Horizon Closes | Numerical Relativity
 
 ```
