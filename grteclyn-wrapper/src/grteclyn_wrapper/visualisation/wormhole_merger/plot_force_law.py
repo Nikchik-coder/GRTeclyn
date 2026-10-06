@@ -72,31 +72,39 @@ def offset_fit(d: np.ndarray, dd: np.ndarray) -> tuple[float, float]:
     return float(amp), float(delta)
 
 
-def figure_panel(ax, pack_root=PACK_ROOT) -> None:
+def figure_panel(ax, pack_root=PACK_ROOT, keys: bool = False) -> None:
     """The ladder drawn onto a SUPPLIED axis (style.prd already active; the
-    caller owns the letter tag)."""
+    caller owns the letter tag).  ``keys=True`` names the lines in a key above
+    the frame (``style.legend_top``) instead of on the curves."""
     d, dd = ladder(pack_root)
     amp, delta = offset_fit(d, dd)
     s = np.linspace(11.6, 18.8, 200)
     inv = dd[d == 12.0][0] * (12.0 / s) ** 2
-    ax.plot(s, inv, color=style.CONTEXT, linestyle=(0, (4, 2.2)), linewidth=1.0, zorder=2)
+    (h_inv,) = ax.plot(s, inv, color=style.CONTEXT, linestyle=(0, (4, 2.2)),
+                       linewidth=1.0, zorder=2)
     # Solid over the rungs it was fitted on, dotted where it predicts.
     fit = s <= max(FIT_RUNGS)
-    ax.plot(s[fit], amp / (s[fit] + delta) ** 2, color=style.GOLD, linewidth=1.2, zorder=3)
+    (h_fit,) = ax.plot(s[fit], amp / (s[fit] + delta) ** 2, color=style.GOLD,
+                       linewidth=1.2, zorder=3)
     ax.plot(s[~fit], amp / (s[~fit] + delta) ** 2, color=style.GOLD, linewidth=1.2,
             linestyle=(0, (1.2, 1.5)), zorder=3)
-    ax.plot(d, dd, linestyle="none", marker="o", ms=3.4, color=style.INK, zorder=4)
+    (h_dd,) = ax.plot(d, dd, linestyle="none", marker="o", ms=3.4, color=style.INK,
+                      zorder=4)
     ax.set_xlim(11, 19)
     ax.set_xticks([12, 14, 16, 18])
     ax.set_ylim(0.18, 0.53)
     ax.set_xlabel(r"$d$")
     ax.set_ylabel(r"$\delta d$ at $t=11.5$")
-    # Names on the two laws, where they have parted: gold above the points,
-    # the grey rule below them.
-    ax.text(15.1, amp / (15.1 + delta) ** 2 + 0.03, r"$(d{+}\delta)^{-2}$",
-            fontsize=7.5, color=style.GOLD, ha="left", va="bottom")
-    ax.text(16.9, dd[d == 12.0][0] * (12.0 / 16.9) ** 2 - 0.025, r"$d^{-2}$",
-            fontsize=7.5, color=style.CONTEXT, ha="right", va="top")
+    if keys:
+        style.legend_top(ax, [(h_dd, "measured"), (h_fit, r"$(d{+}\delta)^{-2}$"),
+                              (h_inv, r"$d^{-2}$")], ncol=1, borderpad=0.35)
+    else:
+        # Names on the two laws, where they have parted: gold above the
+        # points, the grey rule below them.
+        ax.text(15.1, amp / (15.1 + delta) ** 2 + 0.03, r"$(d{+}\delta)^{-2}$",
+                fontsize=7.5, color=style.GOLD, ha="left", va="bottom")
+        ax.text(16.9, dd[d == 12.0][0] * (12.0 / 16.9) ** 2 - 0.025, r"$d^{-2}$",
+                fontsize=7.5, color=style.CONTEXT, ha="right", va="top")
     print(f"[force law] delta d = {dict(zip(d, dd))}; offset fit on {FIT_RUNGS}: "
           f"A = {amp:.1f}, delta = {delta:.2f}, predicts {amp / (18 + delta) ** 2:.3f} "
           f"at d = 18 (inverse square {dd[d == 12.0][0] * (12 / 18) ** 2:.3f}, "

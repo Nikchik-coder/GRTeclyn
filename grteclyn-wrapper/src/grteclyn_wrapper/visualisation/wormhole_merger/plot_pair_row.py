@@ -49,16 +49,17 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     style.prd(base=10.0)
-    # 1.43 in per panel, as the three-panel strip had.
-    fig, (axA, axB, axF, axW) = plt.subplots(1, 4, figsize=(5.7, 2.3),
+    # 1.43 in per panel, as the three-panel strip had; the extra height holds
+    # the keys above the frames (the paper's rule: no names inside a frame).
+    fig, (axA, axB, axF, axW) = plt.subplots(1, 4, figsize=(5.7, 3.0),
                                              constrained_layout=True)
-    plot_sign_rule.figure_panels(axA, axB, pack_root=args.pack_root, stacked=False)
-    plot_force_law.figure_panel(axF, pack_root=args.pack_root)
-    plot_width_ladder.figure_panel(axW, pack_root=args.pack_root)
-    for ax, letter in zip((axA, axB, axF, axW), "abcd"):
-        ax.text(0.0, 1.05, f"({letter})", transform=ax.transAxes,
-                ha="left", va="bottom", fontsize=9, color=style.INK)
-    style.label_audit(fig)
+    plot_sign_rule.figure_panels(axA, axB, pack_root=args.pack_root, stacked=False,
+                                 keys=True)
+    plot_force_law.figure_panel(axF, pack_root=args.pack_root, keys=True)
+    plot_width_ladder.figure_panel(axW, pack_root=args.pack_root, keys=True)
+    style.tag_keys(fig, (axA, axB, axF, axW), [f"({c})" for c in "abcd"], row="last")
+    problems = style.label_audit(fig)
+    print(f"[pair row] label audit: {len(problems)} problem(s) {problems[:3]}")
 
     out = (pathlib.Path(args.out) if args.out else
            figure_dir("03_two_throats", args.pack_root) / "pair_interaction.png")

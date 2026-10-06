@@ -46,7 +46,9 @@ wave gate moves to t = 87.6; Fig. 12 draws the boosted p = 0.12 arm (contact at 
 scatterers at their trust windows; Fig. 13(c)'s y-range is tightened. Second pass (same day): Fig. 7's right
 column and Fig. 8(a) draw the upper envelope |P₊|+|P₋| for the complex (2,2) modes (the d = 6 merger's
 |rΨ4| beat at 2ω on its counter-rotating content and showed false humps); Fig. 8 cuts the throat at its t = 58
-gate; Fig. 13 bottom gives every legend entry its own style and fits the head-on to t = 80.
+gate; Fig. 13 bottom gives every legend entry its own style and fits the head-on to t = 80. Figs. 4 and 12: every
+name moved out of the frames into keys above them (Fig. 4 one key per panel, `keys=True` on its three panel
+functions; Fig. 12 one key over both panels, each arm with its outcome).
 
 Left the paper with the superposed campaign (2026-10-05) and deleted here 2026-10-06
 (scripts kept in the wrapper): `05_binary_spiral/spiral_refinement_ladder`

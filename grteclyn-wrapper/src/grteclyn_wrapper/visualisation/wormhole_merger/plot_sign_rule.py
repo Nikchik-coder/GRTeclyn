@@ -82,7 +82,8 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
-def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True) -> None:
+def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True,
+                  keys: bool = False) -> None:
     """The two sign-rule panels drawn onto SUPPLIED axes.
 
     ``stacked=True`` is `main`'s own single-column canvas (shared clock, so
@@ -90,6 +91,8 @@ def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     side placement of the article's pair strip (plot_pair_row, 2026-09-18),
     where each panel needs its own $t$ label.  ``style.prd`` must already be
     active, and no letter tags are drawn: the caller owns the lettering.
+    ``keys=True`` names every line in a key above each frame (``style.legend_top``)
+    instead of on the curves, the paper's rule for its strips.
     """
     pack = pathlib.Path(pack_root).expanduser()
     dat = pack / "campaign" / GROUP / TABLE
@@ -120,13 +123,18 @@ def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True) -> None:
         (flip, dict(color=style.INK, linewidth=1.6, linestyle=(0, ())),
          r"$\sigma=-1$", "below"),
     )
+    handles = []
     for y, kw, lab, where in arms:
         ok = np.isfinite(y)
-        axA.plot(t[ok], y[ok], zorder=3, **kw)
+        handles.append((axA.plot(t[ok], y[ok], zorder=3, **kw)[0], lab))
+        if keys:
+            continue
         x_end, y_end = t[ok][-1], y[ok][-1]
         axA.text(x_end - 0.015 * xhi, y_end + (0.05 if where == "above" else -0.05),
                  lab, fontsize=8, ha="right",
                  va="bottom" if where == "above" else "top")
+    if keys:
+        style.legend_top(axA, handles, ncol=1)
     axA.set_xlim(0, xhi)
     axA.margins(y=0.16)   # the end names sit outside the curves' own span
     axA.set_ylabel(r"$\delta d$")
@@ -134,16 +142,16 @@ def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True) -> None:
         axA.set_xlabel(r"$t$")
 
     # ---- (b) the ratio against the scalar-charge prediction ---------------
-    axB.axvspan(0, WINDOW[0], color=style.GRID, lw=0, zorder=0)
-    axB.plot(t[fin], ratio[fin], ls="none", marker="o", ms=2.8,
-             color=style.INK, zorder=4)
+    band = axB.axvspan(0, WINDOW[0], color=style.GRID, lw=0, zorder=0)
+    (used,) = axB.plot(t[fin], ratio[fin], ls="none", marker="o", ms=2.8,
+                       color=style.INK, zorder=4)
     # Past the window the displacements are no longer small -- the closing
     # pair has eaten ~10 % of its gap and accelerates -- so the ratio climbs
     # off the fixed-potential prediction.  Open-faced: real readings, outside
     # the quoted mean (the caption says why).
-    axB.plot(t[late], -flip[late] / like[late], ls="none", marker="o", ms=2.8,
-             mfc=style.GROUND, mec=style.CONTEXT, mew=0.9, zorder=3)
-    axB.axhline(PRED, color=style.GOLD, linewidth=1.0, zorder=3)
+    (excl,) = axB.plot(t[late], -flip[late] / like[late], ls="none", marker="o",
+                       ms=2.8, mfc=style.GROUND, mec=style.CONTEXT, mew=0.9, zorder=3)
+    pred = axB.axhline(PRED, color=style.GOLD, linewidth=1.0, zorder=3)
     lo, hi = 1.40, 1.63
     axB.set_ylim(lo, hi)
     axB.set_yticks([1.4, 1.5, 1.6])
@@ -153,13 +161,17 @@ def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     # upper stretch: below the gold line only 0.10 of the 0.23 y-span is
     # free, less than the rotated text's length, so it sits above, clear of
     # the prediction line and (in the strip) right of the 3/2 name.
-    axB.text(0.5 * WINDOW[0], lo + 0.72 * (hi - lo), "gauge settling",
-             fontsize=7, color=style.MUTED, ha="center", va="center",
-             rotation=90)
+    if keys:
+        style.legend_top(axB, [(used, "measured"), (excl, "excluded"),
+                               (pred, r"$3/2$"), (band, "settling")], ncol=1)
+    else:
+        axB.text(0.5 * WINDOW[0], lo + 0.72 * (hi - lo), "gauge settling",
+                 fontsize=7, color=style.MUTED, ha="center", va="center",
+                 rotation=90)
     if stacked:
         axB.text(0.985 * xhi, PRED - 0.02 * (hi - lo), r"$(Q{+}1)/(Q{-}1)$",
                  fontsize=7.5, color=style.GOLD, ha="right", va="top")
-    else:
+    elif not keys:
         # A quarter-page panel has no room for the algebra beside the points:
         # the rule is named by its value, over the settling band where no
         # measurement lives, and the caption carries (Q+1)/(Q-1).
