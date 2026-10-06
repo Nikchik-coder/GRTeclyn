@@ -152,6 +152,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `single_boost_p045_lbf_ml4_t060` | B | 53.4 | x1660.7 / 52.9 | +0.44 | -0.42 | +1.26 | +1.42 | +1.52 | -0.42 | - | 6.5 | late (+0.11 dex) |
 | `single_boost_p045_lbf_t050` | A | 44.7 | x81.2 / 40.5 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
 | `single_boost_p045_lbf_t050` | B | 44.7 | x51.3 / 34.2 | +0.19 | +1.42 | -1.65 | +1.47 | -1.65 | - | - | 9.3 | late (+0.16 dex) |
+| `t0_single_boost_p045_L128_lvl4_lbf_csm` | A | 0.5 | x4.3 / 0.5 | - | - | - | - | - | - | - | - | too short |
+| `t0_single_boost_p045_L128_lvl4_lbf_csm` | B | 0.5 | x4.3 / 0.5 | - | - | - | - | - | - | - | - | too short |
 | `ctrl_flip_d12_csm` | A | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
 | `ctrl_flip_d12_csm` | B | 15.0 | x15.2 / 15.0 | +0.97 | - | - | - | - | - | - | - | too short |
 | `ctrl_rest_a15_csm` | A | 15.0 | x25.3 / 14.8 | +1.24 | - | - | - | - | - | - | - | too short |
@@ -249,6 +251,8 @@ difference from the isolated throat in dex, `same` within 0.10.
 | `merge_orbit_flip_d12_p060_L128_lvl4from50_chi1e4_t100_lbf_csm_r05000` | A | 100.0 | x1.0 / 50.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -3.55 | - | restart -- own clock only |
 | `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` | A | 60.0 | x1.0 / 40.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -34.00 | -34.00 | - | restart -- own clock only |
 | `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` | B | 60.0 | x1.0 / 40.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | -3.58 | -3.58 | - | restart -- own clock only |
+| `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | A | 109.4 | x1.0 / 60.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | restart -- own clock only |
+| `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | B | 109.4 | x1.0 / 60.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | restart -- own clock only |
 | `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` | A | 40.0 | x66.9 / 28.3 | +0.77 | +1.15 | +1.72 | +1.52 | -0.49 | - | - | 3.5 | late (+0.22 dex) |
 | `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm` | B | 40.0 | x67.1 / 28.3 | +0.77 | +1.15 | +1.72 | +1.53 | -0.49 | - | - | 3.5 | late (+0.22 dex) |
 | `merge_orbit_flip_d12_p090_L128_lvl4from40_chi1e4_t100_lbf_csm_r04000` | A | 45.3 | x1.0 / 40.0 | +0.00 | +0.00 | +0.00 | +0.00 | +0.00 | - | - | - | restart -- own clock only |
@@ -270,7 +274,7 @@ difference from the isolated throat in dex, `same` within 0.10.
 
 ## Reading
 
-Throats read at t = 30: 26 early, 12 same, 71 late, 76 too short, 41 restart arms (own clock only).
+Throats read at t = 30: 26 early, 12 same, 71 late, 78 too short, 43 restart arms (own clock only).
 
 - *early* = the companion has moved that throat's origin clock forward relative
   to an isolated throat: the environment is selecting (accelerating) the

@@ -1,31 +1,49 @@
-# Status — 2026-10-06 ~05:10 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-06 ~05:30 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-06 05:05 UTC) — the first node: T0-1THROAT on card 0, DAMP-off on card 1; the second node idle
+## LIVE NOW (2026-10-06 05:25 UTC) — the first node: DAMP-off on card 1, card 0 idle; the second node idle
 
-| run | node / card | t at 05:05 UTC | stop | speed | ETA | checkpoints |
+| run | node / card | t at 05:24 UTC | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| T0-1THROAT `t0_single_boost_p045_L128_lvl4_lbf_csm` | first / 0 | 0 (preflight) | 0.5 | — (the t = 0 mode-3 solve, ~20–40 min) | ~0.5–1 h → ~05:35–06:05 UTC 10-06 | none (as P045-T100) |
-| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 44.9 | 70 | 4.4 u/h since 21:20 (P045-T100 averaged 4.8) | ~5.8 h → ~10:35 UTC 10-06 (slower near the pass) | none (the user) |
+| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 47.76 | 70 | 5.4 u/h since 04:50 (4.4 before) | ~4.1–5 h → ~09:30–10:25 UTC 10-06 (slower near the pass) | none (the user) |
 
 - **P060-EXT STOPPED t = 109.4 (05:04 UTC 10-06; the user: "its dead") — NO common MOTS at level 5 either, t =
   61–109:** the spectral flow stalls at rms θ_out 1.6–3e-2 on all 49 plotfiles, no trend to 0. The level-1 cube
   fills with grid-scale K noise (the user's eye at t = 109): L2 Ham > 1e-3 from 83.8 (the lvl4 chi leg: 83.7), >
   1e-2 from 100.9, 3.1e-2 at the stop — level 5 does not move it; trust t ≤ 80 (trust_windows.tsv). The core itself
   stays calm (max|K| ≈ 0.52, min lapse 0.034–0.042; the lapse minimum splits off-centre to y ≈ ±0.44 at t ≈ 105,
-  past the trust window). `dump_and_stop` → `Chk10940` (t = 109.4) on scratch with Chk09500/10000/10500; close-out
-  pending (no movies: stopped, past trust).
-- **T0-1THROAT `t0_single_boost_p045_L128_lvl4_lbf_csm` LIVE on card 0 since 05:05 UTC** (the user's go 10-06, "do
-  both"): ONE exact-boost throat, p = 0.45, on P045-T100's box (L = 128, N = 256, level 4) with its mode-3 solve, to
-  t = 0.5; P045-T100's params with ONLY throat B off, throat A at the centre, the stop, the names and `Weyl4
-  constraints` changed; binary `main3d_boostpair_91ed17cd`; no checkpoints. Asks: does the solve leave an exact
-  moving throat alone (w ≈ 0, σ = 1, c = c_iso)? The boosted pairs' face mass omits each throat's (γ−1)σm
-  (`results/merger/analysis/boosted_adm_mass.py`, exact by the closed-form surface integral), and even corrected the
-  pairs weigh ~flat in p (2.23 / 2.25 / 2.23 at p = 0.25 / 0.45 / 0.60) — if w eats the motion energy on one exact
-  throat too, that is a solve defect in every boosted run's data.
+  past the trust window). CLOSED OUT 05:20 UTC: filed and packed `06_binary_flyby/`, no movies (stopped, past
+  trust), 0 problems; plotfiles and Chk10000/10500 pruned; its stop checkpoint `Chk10940` (t = 109.4, 26G) KEPT on
+  scratch for an optional resume to t = 115 — the user's word decides.
+- **T0-1THROAT `t0_single_boost_p045_L128_lvl4_lbf_csm` DONE t = 0.5 (card 0, 05:05–05:13 UTC; the user's go "do
+  both"): ONE exact-boost throat, p = 0.45, on P045-T100's box with its mode-3 solve. THE SOLVE IS IDLE on it (20
+  Newton passes, max |w| ≤ 1.2e-5 per level, c = c_superposed, σ = 1, far side 4e-6 off), the face estimate prints
+  M_ADM_face = 1.000014, and the t = 0 plotfile's full ADM surface integral (level 0, R = 20–56, a + b/R + c/R²)
+  reads 1.0967 = γm (1.0966): the data carry the motion energy, the printout drops it. Filed
+  `02_moving_throat/exact_boost/`, no movies, scratch pruned. (Its drain looped on a `--watch` I put in
+  `--consume-args`; killed by PID once both plotfiles were done — never pass `--watch` there.)
+- **THE BOOSTED PAIRS' MASS, FIXED (10-06, the user's "do both"):** the solve's `M_ADM_face = M_bg + 2<r w>` counts
+  each throat's rest mass σm; the exact-boost background integrates to γσm (+ the shift's 2s·asinh(γv)/γv), so it
+  left out Σ(γ−1)σm. Corrected ADM masses (`results/merger/analysis/boosted_adm_mass.py` → `boosted_adm_mass.tsv`,
+  from the pack; `run_tree.boosted_adm_mass`): d6 merger 2.3634 → 2.3709, p025 2.1783 → 2.2332, p045 2.0776 →
+  2.2536, p060 1.9120 → 2.2286 (p090 1.3419 → 2.1066). The code now prints and writes `M_ADM_boost` (from the next
+  build; the pinned binaries print the old face only). Paper: E/M at p = 0.25/0.45/0.60 3.85/9.0/4.9e-2 →
+  3.75/8.3/4.2e-2 (outer 3.95/8.2e-2), boundary/scatterer 2.3 → 2.2, boundary/plunge 1.8 → 2.0, fly-by gallery 9.0 →
+  8.3e-2 (outer 4.9e-2), envelope 1.3 → 1.4e-1, |E_φ| 5.1 → 4.7e-2, merger mass 2.363 → 2.371; Sec. II.C states how
+  a moving pair's mass is taken and the face estimate's offset (2.8 % low where both apply, clmBoostFaceBias).
+  Search: the ladders scale with the mass, so templates, triggers, horizons and injections are unchanged (labels
+  only); the fitting factors re-run (bank max 0.81 → 0.80, fly-by 0.63–0.80, window max 0.995). Figs psi4_ligo and
+  heavy_seeds redrawn; `egw_momentum` removed (the user: not needed). LISA rows re-measured on the current channels
+  (task 2; frozen → auto): all three ≥ 8 from 3e4 to 6e6 M⊙, fly-by + merger SNR 103–394, the fly-by and head-on
+  hold 8 to 8e6, and at 1e7–1e8 ONLY THE PLUNGE still reaches 8, to ≥ 4e7 (sentence rewritten); (fM)_peak 0.04–0.07,
+  band 0.4–70 mHz, Ω_GW 1e-13–1e-12 at ~7 mHz, PLS threshold n ≳ (6–36)e-4 Mpc⁻³. Claims check: 886 rows, only the
+  10 local-archive LookupErrors. OPEN: even corrected, the moving pairs weigh ~flat in p (2.23 / 2.25 / 2.23) where
+  2γm′ + E_b(rest, d = 12) predicts ~2.34 / 2.47 / 2.61; the solve is idle on one throat, so it is the pair
+  (velocity-dependent interaction or the boosted superposition's companion terms). The model-free test is a t = 0
+  ADM surface integral of one pair's plotfile (P045 rebuild to t = 0.5, ~40 GPU-min; needs the go).
 - **DAMP-off** (the user's go ~17:25 UTC 10-05, "Required" below; launched 17:35): P045-T100's params with ONLY
   `core_matter_damping` 1 → 0, the stop (100 → 70; P045-T100's trust 67.6) and the names changed; binary
   `main3d_boostpair_91ed17cd`; NO checkpoints (the user: "None, as P045-T100"; the inherited lines are off).
@@ -60,11 +78,11 @@ Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
   d, p, the mass and the checkpoint lines changed. NO checkpoints: `amr.check_int = -1` +
   `amr.checkpoint_files_output = 0` (verified: none written). `WHM_PREFLIGHT=static`, as BBH-HEADON. Started by
   effect: frame 0 eyeballed against BBH-HEADON's, Ψ4 rows landing, keep-last 3 pruning, card 1 at 62 GB.
-- **Storage (the first node, 04:53 UTC 10-06):** scratch 937G free, only the two live runs: P060-EXT 94G (3
-  checkpoints + 3 plotfiles, in policy), DAMP-off 19G (3 plotfiles, in policy). The 76G of leftovers WIPED on the
-  user's "wipe them" (04:53 UTC; MANIFEST_CLEANUP_2026-10-06): the re-staged p060 `Chk06000` and p09 `Chk04000`
-  (their NFS originals stay, byte-identical) and P09-LVL5's `Chk04500`, copied to its NFS run dir first (the
-  proposed autopsy reads it). The second node was not listed from here (05:35 UTC 10-05: only the HFL cell, 60G).
+- **Storage (the first node, 05:25 UTC 10-06):** scratch 1002G free: DAMP-off 19G (3 plotfiles, in policy) and
+  P060-EXT's stop checkpoint `Chk10940` 26G (kept for the optional resume to 115, on the user's word); nothing else.
+  04:53: the 76G of leftovers wiped on the user's "wipe them" (P09-LVL5's Chk04500 copied to NFS first);
+  05:20–05:30: P060-EXT's and T0-1THROAT's close-out prunes (MANIFEST_CLEANUP_2026-10-06). The second node was not
+  listed from here (05:35 UTC 10-05: only the HFL cell, 60G).
 
 ## RUNS FOR THE PAPER (the full read of 2026-10-05, late; nothing launches without the go)
 
@@ -237,11 +255,7 @@ trough-gated), and the open work is: E_GW(p060) via a radii passthrough for the 
 restart stream, the Sec. VIII waves rewrite, the stale figures (constraint_evolution,
 momentum_scan_orbits, the five waves figures), and the matched width table from the csm
 a-arms' slice caches (restores the width-exponent sentence). The O3b search of Sec. IX is re-run on the current channels (O3B-NEW, DONE 21:17 UTC 10-05).
-FLAGGED by its validation, each the user's call (GPU_PLAN ["2026-10-05 (~21 UTC) — O3B-NEW"]): the boosted
-pairs' M_ADM_face FALLS with p (2.178 / 2.078 / 1.912 at p = 0.25 / 0.45 / 0.60 against Σγm 2.06 / 2.19 /
-2.33) and every orbital E/M divides by it — a t = 0 face integral of one exact-boost throat settles it; and
-the frozen LISA rows are the superposed campaign's: on the current channels the fly-by reaches SNR 8 only
-to 7.5e6 M⊙, the plunge to 3.4e7, so "at 1e7–1e8 only the fly-by still reaches 8" no longer holds.
+Its two flagged items are RESOLVED 10-06 (LIVE NOW: "THE BOOSTED PAIRS' MASS, FIXED").
 - **DONE 10-05 ~12:20 UTC on the second node (it has the run tree): the matched width table and Fig. 4(d).**
   `results/merger/analysis/matched_rest.py` now reduces `ctrl_rest_a{1,15,3}_csm` too: the packed
   `campaign/03_two_throats/matched_rest_displacement.dat` gained `dsep_like_a1/a15/a3` (a = 2 is

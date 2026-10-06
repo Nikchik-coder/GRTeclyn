@@ -1383,12 +1383,15 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
     fly-by midpoint-growth class); the periapsis burst is quotable at R = 14/20/30.
   - The lvl5 discriminator (t = 40–60, min_chi 1e-4, from the pre-contact Chk04000) finds NO converged MOTS
     either: rms θ_out 3.8e-2 / R 4.514 / deform 0.142 at t = 60, matching the lvl4 arms — **the chi-leg stall
-    is physical, not a resolution artefact**; whether the remnant traps late (lvl4 extrapolation t ≈ 110–115)
-    stays open (its Chk06000 is kept for a lvl5 extension).
+    is physical, not a resolution artefact**. The lvl5 extension (P060-EXT, from Chk06000, stopped by the user at
+    t = 109.4) finds NONE either on t = 61–109 (rms θ_out 1.6–3e-2, no trend to 0): the lvl4 extrapolation to a
+    t ≈ 110–115 horizon does not hold at level 5 before the noise wins. Level 5 does not move the level-1 noise
+    (L2 Ham > 1e-3 from 83.8, lvl4 83.7; 3.1e-2 at the stop), so its trust is t ≤ 80 too.
 - **Runs** *(pack, `campaign/06_binary_flyby/`)*: `merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm` (the t040
   leg), `…_t100_lbf_csm_r04000` (the extension, died 55.52), `…_lvl4from50_chi1e4_t100_lbf_csm_r05000` (the
   chi leg, t = 100; movies cut at 80, the full-chain 0-80 stitch on the user's word),
-  `…_lvl5from40_chi1e4_t060_lbf_csm_r04000` (the lvl5 discriminator), `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm`
+  `…_lvl5from40_chi1e4_t060_lbf_csm_r04000` (the lvl5 discriminator), `…_lvl5from60_chi1e4_t115_lbf_csm_r06000`
+  (its extension, no movies), `merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm`
   + `…_lvl4from40_chi1e4_t100_lbf_csm_r04000` + `…_lvl5from40_chi1e4_t100_lbf_csm_r04000` (the p = 0.90 legs; the
   lvl5 one a diagnostic arm, no movies) and `merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm`
   (the death clock); binary `main3d_boostpair_91ed17cd`.
