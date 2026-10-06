@@ -1901,6 +1901,41 @@ solve_drainhole_constraint(amrex::Amr &a_amr,
     }
     report.background_mass = mass_bg;
 
+    // The exact-boost background is not Psi_bg -> 1 + M_bg / 2r: each
+    // throat's conformal factor falls off with its Lorentz-contracted radius
+    // and its metric carries the anisotropy eps e e, and the full surface
+    // integral gives gamma sigma m per throat and 2 s asinh(gamma v) /
+    // (gamma v) per shift (results/merger/analysis/boosted_adm_mass.py
+    // checks both).  The speeds are the params' (the rescale keeps them).
+    if (boosted && used.solve_background == 0)
+    {
+        double correction = 0.0;
+        for (int X = 0; X < 2; ++X)
+        {
+            const double a = (X == 0) ? used.b0_A : used.b0_B;
+            if (a <= 0.0)
+            {
+                continue;
+            }
+            const auto &v = (X == 0) ? used.boost_v_A : used.boost_v_B;
+            const double speed2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+            if (speed2 <= 0.0)
+            {
+                continue;
+            }
+            const double gamma = 1.0 / std::sqrt(1.0 - speed2);
+            const double gv    = gamma * std::sqrt(speed2);
+            const double m =
+                (X == 0) ? used.drainhole_mass_A : used.drainhole_mass_B;
+            const double s = (X == 0)
+                                 ? report.c_A - report.c_superposed_A
+                                 : report.c_B - report.c_superposed_B;
+            correction += (gamma - 1.0) * m +
+                          2.0 * s * (std::asinh(gv) / gv - 1.0);
+        }
+        report.boost_mass_correction = correction;
+    }
+
     // The volume identity is the conformally flat, K = 0 Hamiltonian's; the
     // boosted data have neither.
     if (!boosted)

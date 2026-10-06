@@ -86,7 +86,9 @@ from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (  # noqa: 
     _compute_radiated_energy, _psd_psi4_to_strain, _scale_to_physical,
     _smooth_psd,
 )
-from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, figure_dir  # noqa: E402
+from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E402
+    PACK_ROOT, boosted_adm_mass, figure_dir,
+)
 
 GROUP = "08_waves"
 MASS_MSUN = 30.0     # the dashboards' calibration: one common physical
@@ -103,13 +105,14 @@ M_CODE = {
                                 # leg 1's constraint_solve.dat) -- the far-side
                                 # matched data carry the interaction energy the
                                 # superposition missed
-    "spiral": 2.3634,           # the d = 6 pair's boosted-solve M_ADM_face
-                                # (its lvl5from0 leg's constraint_solve.dat)
-    "fly-by": 2.0776,           # the p = 0.45 pair's M_ADM_face
-    "plunge": 1.9120,           # the p = 0.60 pair's M_ADM_face (its t040
-                                # leg's constraint_solve.dat); drawn by the
-                                # LISA panel as a floor, kept out of this
-                                # figure (prepare's skip)
+    # The exact-boost pairs: the solve's face estimate plus each throat's
+    # kinetic energy, which the face estimate leaves out (2026-10-06;
+    # results/merger/analysis/boosted_adm_mass.py).
+    "spiral": boosted_adm_mass("spiral_d6_p010_L128_lvl5from0_t060_lbf_csm"),
+    "fly-by": boosted_adm_mass("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"),
+    # the p = 0.60 pair (its t040 leg's solve); drawn by the LISA panel as a
+    # floor, kept out of this figure (prepare's skip)
+    "plunge": boosted_adm_mass("merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm"),
     "vacuum BBH twin": 2.0,     # bare 0.9615 -> per-hole ADM ~ 1.00 at d = 12
 }
 

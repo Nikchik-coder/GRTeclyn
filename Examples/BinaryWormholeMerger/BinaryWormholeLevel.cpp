@@ -604,6 +604,19 @@ void BinaryWormholeLevel::solve_initial_constraints()
                    << report.background_mass + 2.0 * report.boundary_monopole
                    << "  (background mass + twice <r w> on the level-0 "
                       "boundary; biased low by the Robin face)\n";
+    if (report.boosted)
+    {
+        amrex::Print() << "  M_ADM (boosted) ~ "
+                       << report.background_mass +
+                              2.0 * report.boundary_monopole
+                       << " + " << report.boost_mass_correction << " = "
+                       << report.background_mass +
+                              2.0 * report.boundary_monopole +
+                              report.boost_mass_correction
+                       << "  (+ the boosted background's energy beyond M_bg: "
+                          "sum (gamma - 1) sigma m and the shifts' "
+                          "asinh(gamma v) / (gamma v))\n";
+    }
 
     // Each mouth's far side, and the pair's mass from the volume identity.
     double one_body = 0.0;
@@ -646,14 +659,17 @@ void BinaryWormholeLevel::solve_initial_constraints()
     cs_file.write_header_line(
         {"mode", "M_ADM", "M_ADM_face", "c_A", "sigma_A", "w0_A", "Mfar_A",
          "Qfar_A", "m1_A", "c_B", "sigma_B", "w0_B", "Mfar_B", "Qfar_B",
-         "m1_B", "match_res"});
+         "m1_B", "match_res", "M_ADM_boost"});
     const MouthReport &mA = report.mouth[0];
     const MouthReport &mB = report.mouth[1];
+    // M_ADM_face keeps its conformally flat meaning; M_ADM_boost adds the
+    // boosted background's energy beyond M_bg (equal without the boost).
+    const double face = report.background_mass + 2.0 * report.boundary_monopole;
     cs_file.write_time_data_line(std::vector<double>{
-        static_cast<double>(cs.puncture_mode), report.adm_mass_volume,
-        report.background_mass + 2.0 * report.boundary_monopole, mA.c,
-        mA.sigma, mA.w0, mA.M_far, mA.Q_far, mA.m_equiv, mB.c, mB.sigma,
-        mB.w0, mB.M_far, mB.Q_far, mB.m_equiv, report.match_residual});
+        static_cast<double>(cs.puncture_mode), report.adm_mass_volume, face,
+        mA.c, mA.sigma, mA.w0, mA.M_far, mA.Q_far, mA.m_equiv, mB.c, mB.sigma,
+        mB.w0, mB.M_far, mB.Q_far, mB.m_equiv, report.match_residual,
+        face + report.boost_mass_correction});
 }
 
 // NOLINTNEXTLINE(readability-function-cognitive-complexity)

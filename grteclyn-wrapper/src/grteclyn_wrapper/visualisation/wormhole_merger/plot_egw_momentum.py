@@ -42,20 +42,24 @@ from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (  # noqa: 
     _compute_radiated_energy,
 )
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E402
-    PACK_ROOT, figure_dir,
+    PACK_ROOT, boosted_adm_mass, figure_dir,
 )
 
 GROUP = "08_waves"
 
-# (p, stream under campaign/, M = the pair's boosted-solve M_ADM_face,
-#  {R: t_gate}, floor?)  -- the ledger rows' own constants.
+# (p, stream under campaign/, M = the pair's ADM mass -- the boosted solve's
+#  face estimate plus each throat's kinetic energy (run_tree.boosted_adm_mass),
+#  {R: t_gate}, floor?)  -- the ledger rows' own inputs.
 POINTS = [
     (0.25, "06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm/Weyl4_mode_22.dat",
-     2.17828, {20.0: 83.68, 28.0: 98.99}, False),
+     boosted_adm_mass("merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm"),
+     {20.0: 83.68, 28.0: 98.99}, False),
     (0.45, "06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/Weyl4_mode_22.dat",
-     2.07763, {20.0: 94.17, 28.0: 98.99}, False),
+     boosted_adm_mass("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"),
+     {20.0: 94.17, 28.0: 98.99}, False),
     (0.60, "06_binary_flyby/merge_orbit_flip_d12_p060_L128_SERIES/Weyl4_mode_22.dat",
-     1.91204, {20.0: 80.00}, True),
+     boosted_adm_mass("merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm"),
+     {20.0: 80.00}, True),
 ]
 BOUNDARY = (0.45, 0.60)   # the capture boundary's bracket (Sec. VII A)
 

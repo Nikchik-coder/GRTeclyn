@@ -134,6 +134,12 @@ struct ConstraintSolveReport
     amrex::Vector<double> max_w;
     double boundary_monopole{0.0};
     double background_mass{0.0};
+    //! momentum_model = 1: what M_bg leaves out of the boosted background's
+    //! ADM energy.  Each throat integrates to gamma sigma m (M_bg counts
+    //! sigma m) and a shift s / r_rest to 2 s asinh(gamma v) / (gamma v)
+    //! (M_bg counts 2 s): sum (gamma - 1) sigma m + 2 s [asinh(gamma v) /
+    //! (gamma v) - 1].  0 without the boost.
+    double boost_mass_correction{0.0};
     //! M_ADM = 2 sum c - (1/2 pi) int [V Psi - (1/8) Ahat.Ahat Psi^-7] dV,
     //! exact for a solution (the box integral is composite, the tail outside
     //! the box analytic with Psi = 1 + M/2r).  Insensitive to the Robin

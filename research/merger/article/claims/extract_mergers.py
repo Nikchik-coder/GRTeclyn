@@ -937,9 +937,14 @@ def mergers_spectral_shrink(runs, col: str = "R", frm="first", to="last") -> flo
 @extractor
 def mergers_solved_madm(run: str, col: str = "M_ADM") -> float:
     """The pair's solved mass: column M_ADM (the volume identity, Eq. madmvol)
-    of the run's packed constraint_solve.dat, first row; M_ADM_face for the
-    boosted solves, whose volume identity is not computed (printed 0)."""
+    of the run's packed constraint_solve.dat, first row.  The boosted solves
+    compute no volume identity (printed 0): col M_ADM_boost is their face
+    estimate plus each throat's kinetic energy, from the run's own column when
+    its binary prints one, else from analysis/boosted_adm_mass.tsv."""
     path = run_dir(run) / "constraint_solve.dat"
+    if col == "M_ADM_boost" and "M_ADM_boost" not in path.read_text(encoding="utf-8"):
+        from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import boosted_adm_mass
+        return float(boosted_adm_mass(run, pack_root=PACK))
     names = None
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.startswith("#"):
@@ -953,6 +958,16 @@ def mergers_solved_madm(run: str, col: str = "M_ADM") -> float:
             raise ValueError(f"{run}: {col} is 0 in constraint_solve.dat (not computed)")
         return float(v)
     raise ValueError(f"{run}: no data row in constraint_solve.dat")
+
+
+@extractor
+def mergers_face_bias(run: str) -> float:
+    """100 (M_ADM - M_ADM_face) / M_ADM on a solve that has both: how far the face
+    estimate (the background mass plus twice <r w> on the level-0 boundary) reads
+    below the volume identity, Eq. madmvol.  The boosted pairs' masses carry it."""
+    vol = mergers_solved_madm(run=run, col="M_ADM")
+    face = mergers_solved_madm(run=run, col="M_ADM_face")
+    return float(100.0 * (vol - face) / vol)
 
 
 @extractor

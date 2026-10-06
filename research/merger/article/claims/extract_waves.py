@@ -54,6 +54,15 @@ def _mod(name: str):
     return importlib.import_module(f"{WM}.{name}")
 
 
+def _mass(M) -> float:
+    """A mass in code units: a number, or the name of an exact-boost pair whose
+    corrected ADM mass (run_tree.boosted_adm_mass: the solve's face estimate plus
+    each throat's kinetic energy) it is."""
+    if isinstance(M, str):
+        return float(_mod("run_tree").boosted_adm_mass(M))
+    return float(M)
+
+
 def _q2e():
     """The pack's own analysis/queue2e_gates.py (lib put analysis/ on sys.path)."""
     return importlib.import_module("queue2e_gates")
@@ -330,7 +339,7 @@ def waves_energy(scenario: str, which: str = "E", sphere: float | None = None) -
 
 
 @extractor
-def waves_energy_run(run: str, file: str, R: float, m: int, M: float,
+def waves_energy_run(run: str, file: str, R: float, m: int, M: float | str,
                      t_max: float | None = None, radii: list[float] | None = None) -> float:
     """E_rad/M of one (l=2, m) mode on one sphere of any packed stream, with the
     LIGO figure's band integral (psi4_math._compute_radiated_energy cut against the
@@ -347,6 +356,7 @@ def waves_energy_run(run: str, file: str, R: float, m: int, M: float,
     if t_max is not None:
         keep = t <= t_max + 1e-9
         t, y = t[keep], y[keep]
+    M = _mass(M)
     u, w = (t - float(R)) / M, y * M
     f_pk = _band_peak(w, float((u[-1] - u[0]) / (u.size - 1)))
     return float(pm._compute_radiated_energy(u, w, m=int(m), f_peak=f_pk))
@@ -657,7 +667,7 @@ def waves_early_share(cases: list, window: float = 10.0) -> float:
     worst = 0.0
     for c in cases:
         t, ser = streams.load_mode(_run_path(c["run"]) / c["file"])
-        R, M = float(c["R"]), float(c["M"])
+        R, M = float(c["R"]), _mass(c["M"])
         keep = t <= float(c["t_max"]) + 1e-9
         t, y = t[keep], ser[R][keep]
         u, w = (t - R) / M, y * M
@@ -715,12 +725,12 @@ def waves_schw_qnm_hz(scenario: str, m_final: dict, m_omega: float = 0.37367) ->
 
 
 @extractor
-def waves_scalar_energy(run: str, R: int, t_cut: float, M: float = 1.0,
+def waves_scalar_energy(run: str, R: int, t_cut: float, M: float | str = 1.0,
                         signed: bool = False) -> float:
     """E_phi = int^t_cut (-flux_kin) dt through sphere R (physical sign), in units
     of M; its magnitude unless signed."""
     S, _, _, ts, Ep, _ = _scalar_channel(run, R)
-    e = S._at(ts, Ep, t_cut) / M
+    e = S._at(ts, Ep, t_cut) / _mass(M)
     return e if signed else abs(e)
 
 

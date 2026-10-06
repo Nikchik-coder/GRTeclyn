@@ -915,3 +915,8 @@ the head-on row gains its vacuum BBH overlay, and `egw_momentum` is new (E_GW vs
 2026-10-05: `momentum_scan_orbits` re-fed onto the boosted mode-3 arms (d6 merger, p012 arm, p060/p090 two-leg plunges, gold p025/p045 scatterers; per-arm trust cuts; restart-leg tracker lock-on handled).
 
 2026-10-05: `constraint_evolution` panels (e)-(g) re-fed: the head-on chain's three legs, the d6 merger chain, the p=0.45 scatterer with its trust/gate rules; caption rewritten.
+
+2026-10-06: `egw_momentum` removed (the user: not needed); `plot_egw_momentum.py` stays as the check of the
+clmEgwEnergy* rows. `psi4_ligo` and `heavy_seeds` redrawn on the boosted pairs' corrected ADM masses (the face
+estimate plus each throat's kinetic energy; `run_tree.boosted_adm_mass`): the fly-by's E/M 9.0e-2 -> 8.3e-2 and envelope
+1.3e-1 -> 1.4e-1, the merger +0.3 %, the LISA tracks shifted by the same masses. Label audit clean (heavy_seeds).

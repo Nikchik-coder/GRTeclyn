@@ -27,7 +27,17 @@ floor of one false alarm per 469 days. Horizons at single-detector SNR 8,
 optimal orientation, median over each ladder: fly-by 5.1 Gpc, head-on 3.0,
 merger 2.7, plunge 1.7, vacuum twin 1.3, collapsing throat 0.15.
 Injections: 18/18 found at 92–123 % of optimal, none vetoed. Fitting
-factors, same window: 0.893–0.996 (channels), 0.935–0.951 (the twin).
+factors, same window: 0.893–0.995 (channels), 0.935–0.951 (the twin).
+
+**The boosted pairs' masses (2026-10-06).** Each record is reduced to units of its
+own total ADM mass (`plot_psi4_ligo.M_CODE`). For the merger, fly-by and plunge
+that mass is now the solve's face estimate plus each throat's kinetic energy
+(`run_tree.boosted_adm_mass`; 2.3709 / 2.2536 / 2.2286, was 2.3634 / 2.0776 /
+1.9120). The bank's ladders scale with it, so the templates, triggers, horizons and
+injection recoveries are the same physical waveforms: only their solar-mass labels
+in `o3b_scan.json` and `injections.json` (2026-10-05) read ×1.003 / ×1.085 / ×1.166
+too low. `fitting_factors.json` evaluates fixed labels (60–300 M⊙), so it was re-run
+(bank FF max 0.81 → 0.80, fly-by 0.63–0.80, same-window max 0.996 → 0.995).
 
 Superseded and kept because the article quoted them:
 `o3b_scan_superseded_2026-09-18.json` (2.26 h on the old campaign's

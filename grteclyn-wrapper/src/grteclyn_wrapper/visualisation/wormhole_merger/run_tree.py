@@ -22,7 +22,7 @@ from __future__ import annotations
 
 import pathlib
 
-__all__ = ["figure_dir", "find_packed", "find_run", "iter_packed",
+__all__ = ["boosted_adm_mass", "figure_dir", "find_packed", "find_run", "iter_packed",
            "PACK_ROOT", "REPO", "RUNS_ROOT"]
 
 # …/GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger
@@ -96,3 +96,27 @@ def iter_packed(pack_root: pathlib.Path | str | None = None):
                 for f in sorted(e.iterdir()):
                     if f.is_dir() and is_run(f):
                         yield f"{d.name}/{e.name}", f
+
+
+def boosted_adm_mass(name: str, pack_root: pathlib.Path | str | None = None) -> float:
+    """The ADM mass of an exact-boost pair (momentum model 1), by run name.
+
+    The solve's face estimate leaves out each throat's kinetic energy; the
+    corrected value is the ``M_ADM_boost`` column of
+    ``<pack>/analysis/boosted_adm_mass.tsv`` (results/merger/analysis/
+    boosted_adm_mass.py).  Raises KeyError for a run the table lacks.
+    """
+    root = pathlib.Path(pack_root or PACK_ROOT).expanduser()
+    table = root / "analysis" / "boosted_adm_mass.tsv"
+    key = pathlib.Path(name.rstrip("/")).name
+    cols = None
+    for line in table.read_text(encoding="utf-8").splitlines():
+        if line.startswith("#") or not line.strip():
+            continue
+        f = line.split("\t")
+        if cols is None:
+            cols = f
+            continue
+        if pathlib.Path(f[0]).name == key:
+            return float(f[cols.index("M_ADM_boost")])
+    raise KeyError(f"{key!r} is not in {table}")
