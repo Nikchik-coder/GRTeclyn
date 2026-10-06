@@ -4,11 +4,11 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
 (the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-06 05:25 UTC) — the first node: DAMP-off on card 1, card 0 idle; the second node idle
+## LIVE NOW (2026-10-06 06:23 UTC) — the first node: DAMP-off on card 1, card 0 idle; the second node idle
 
-| run | node / card | t at 05:24 UTC | stop | speed | ETA | checkpoints |
+| run | node / card | t at 06:23 UTC | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 47.76 | 70 | 5.4 u/h since 04:50 (4.4 before) | ~4.1–5 h → ~09:30–10:25 UTC 10-06 (slower near the pass) | none (the user) |
+| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 53.52 | 70 | 6 u/h since the pass (4.4 before it) | ~2.8 h → ~09:10 UTC 10-06 | none (the user) |
 
 - **P060-EXT STOPPED t = 109.4 (05:04 UTC 10-06; the user: "its dead") — NO common MOTS at level 5 either, t =
   61–109:** the spectral flow stalls at rms θ_out 1.6–3e-2 on all 49 plotfiles, no trend to 0. The level-1 cube
@@ -90,7 +90,8 @@ The paper was read end to end: the superposition / Bowen–York / workaround wor
 solved, matched, boosted data as the method), duplicates are cut, the d = 6 chain is "the merger" everywhere
 (text and figures), the run matrix (Table III) lost the Bowen–York probes, the GRTresna bridge, the unused CS-1 scout and the
 Bowen–York convergence arms (96 runs, 476 GPU-h; BBH-d6 joined the vacuum controls). Ledger 907 rows, 0 problems.
-**Required:** DAMP-off — the text quotes numbers that rest on it (started ~17:30 UTC 10-05 on the user's go: LIVE
+**No more GPU runs after DAMP-off (the user, 2026-10-06 06:20 UTC): CONV-lbf-w, HARM-oct, the optional rows and the
+flat-in-p mass rebuild are declined.** **Required:** DAMP-off — the text quotes numbers that rest on it (started ~17:30 UTC 10-05 on the user's go: LIVE
 NOW, top; O3B-NEW DONE 21:17 UTC 10-05). **Recommended:** CONV-lbf-w — no
 quoted number waits on it, but the paper has no wave-zone resolution test on current data and a referee will ask.
 **Optional:** SOLVE-t0 — the d = 8 shell number it would restore is no longer in the paper. (Classified 10-05 late,
