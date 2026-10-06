@@ -19,10 +19,9 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   four times farther); 60.7M cells, 64.7 GB; Chk00000 written. The χ floor clips the throat cores from t = 0 (χ
   min 1e-4; production 8.8e-7). Two earlier launches (14:43 zoom 40, 14:48 zoom 512) were stopped at t ≤ 0.2 for the
   frame window, their scratch wiped, run dirs moved to `runs/wormhole_merger/00_archive/*_zoom{40,512}_aborted/`.
-- **Watch t ≈ 30–39 (spec check, 14:35):** survival past the head-on's interior failure is untested with min_chi
-  1e-4 + σ 0.3 alone (min_chi 1e-4 carried runs only with the per-throat lapse freeze + core damping; the head-on's
-  own legs passed t ≈ 35–50 only at level 6; leg 1 died at 38.8 at level 5). The far spheres hear the merger only
-  from t ≈ 200 at R = 180, so a death there restarts from the t = 25 checkpoint with leg 2's level +2.
+- **The wall at t ≈ 30–39 (leg 1 died at 38.8):** the head-on is expected to hit it, and the way through is the χ
+  floor (the user, 10-06: "we will need to go throw the wall with min chi, no question here"). min_chi 1e-4 is on
+  from t = 0; a death restarts from the newest checkpoint (every 25 units, keep 2) with the floor the user sets.
 
 **NEXT — the referee pass: at most 2 GPU runs, 1 preferred** (full specs: RUNS FOR THE PAPER, below)
 
