@@ -1396,6 +1396,18 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
   lvl5 one a diagnostic arm, no movies) and `merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm`
   (the death clock); binary `main3d_boostpair_91ed17cd`.
 
+### The core damping does not shape the fly-by's waves (DAMP-off, 2026-10-06)
+- **Claim.** The orbital runs damp the scalar where the lapse collapses: on the p = 0.45 fly-by, the grid centre
+  between the mouths from t ≈ 34–36, during the dipole arch. With the damping off (everything else P045-T100's) the
+  run matches its damped twin outside the core through t = 70: Ψ4 (2,2) within 1.9e-7 of its peak at R = 20 (the
+  core's signal arrives there from t ≈ 58) and 4e-10 at R = 28–44; E_GW through R = 20/28 to t = 70 equal to 1e-9,
+  |E_φ| through R = 14/20/30 to 8e-8, the arch ratio (both records cut at 70) to 1e-7. Inside the core the damping
+  is what drives max|K| (1.19 damped against 0.17 undamped at t = 70); the constraints are equal (L2 Ham crosses
+  2.5e-2 for good at 67.7, the twin at 67.6). No NaN, no MOTS. The quoted totals run to t ≈ 94–99, past this record.
+- **Runs.** `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` *(pack, `campaign/06_binary_flyby/`)*:
+  P045-T100's params with only `core_matter_damping` 1 → 0 and the stop 70; no checkpoints; binary
+  `main3d_boostpair_91ed17cd`; trust t ≤ 67.7; no movies (a diagnostic twin).
+
 ### The head-on's true horizon history (MOTS-ho1, 2026-10-02)
 - **Claim.** Re-running the head-on's leg 1 with the 3D spectral finder on every plotfile gives the true common
   MOTS history over t = 0–35: birth at t = 18 (R 5.634, M_MS 2.817, deform 0.104), settling to R 4.789,

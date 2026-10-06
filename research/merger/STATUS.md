@@ -1,14 +1,14 @@
-# Status — 2026-10-06 ~05:30 UTC (last compacted 2026-10-01)
+# Status — 2026-10-06 ~09:25 UTC (last compacted 2026-10-01)
 
 Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary GPU_PLAN.md was deleted 2026-10-06
 (the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-06 06:23 UTC) — the first node: DAMP-off on card 1, card 0 idle; the second node idle
+## LIVE NOW (2026-10-06 09:25 UTC) — nothing live: both nodes idle (no more GPU runs, the user)
 
-| run | node / card | t at 06:23 UTC | stop | speed | ETA | checkpoints |
+| run | node / card | t | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 53.52 | 70 | 6 u/h since the pass (4.4 before it) | ~2.8 h → ~09:10 UTC 10-06 | none (the user) |
+| none (DAMP-off done 09:12 UTC 10-06) | — | — | — | — | — | — |
 
 - **P060-EXT STOPPED t = 109.4 (05:04 UTC 10-06; the user: "its dead") — NO common MOTS at level 5 either, t =
   61–109:** the spectral flow stalls at rms θ_out 1.6–3e-2 on all 49 plotfiles, no trend to 0. The level-1 cube
@@ -44,12 +44,14 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   2γm′ + E_b(rest, d = 12) predicts ~2.34 / 2.47 / 2.61; the solve is idle on one throat, so it is the pair
   (velocity-dependent interaction or the boosted superposition's companion terms). The model-free test is a t = 0
   ADM surface integral of one pair's plotfile (P045 rebuild to t = 0.5, ~40 GPU-min; needs the go).
-- **DAMP-off** (the user's go ~17:25 UTC 10-05, "Required" below; launched 17:35): P045-T100's params with ONLY
-  `core_matter_damping` 1 → 0, the stop (100 → 70; P045-T100's trust 67.6) and the names changed; binary
-  `main3d_boostpair_91ed17cd`; NO checkpoints (the user: "None, as P045-T100"; the inherited lines are off).
-  Preflight PASS. Started by effect: the ~35-min mode-3 solve gave M_ADM 2.077626359 and far sides 1.249e-6, P045-T100's
-  to every digit; frame 0 matches P045-T100's (the mouths at ±6; the renderer's newer style); the consumer's t = 0
-  rows landed (no common MOTS, as expected); card 1 at 57 GB. Pending: the keep-last pruning (from t = 3).
+- **DAMP-off DONE 09:12 UTC 10-06: the core damping does not shape the fly-by's waves.** P045-T100 with only
+  `core_matter_damping` 1 → 0 (stop 70, no checkpoints) reached t = 70.01, no NaN, no MOTS. Against the damped twin on
+  the same samples: Ψ4 (2,2) within 1.9e-7 of its peak at R = 20 (the core's signal arriving from t ≈ 58), 4e-10 at
+  R = 28–44; E_GW through R = 20/28 to t = 70 equal to 1e-9; |E_φ| through R = 14/20/30 to 8e-8; the arch ratio (both
+  records cut at 70) to 1e-7. Only the core differs, and there the damping is what drives max|K| (1.19 damped vs 0.17
+  undamped at t = 70); L2 Ham equal (2.5e-2 crossed for good at 67.7 vs 67.6). Trust t ≤ 67.7. The quoted totals run
+  to t ≈ 94–99, past this record. CLOSED OUT ~09:25 UTC: filed and packed `06_binary_flyby/`, no movies (a diagnostic
+  twin); its 3 scratch plotfiles pruned (the user: "wipe leftovers").
 - **O3B-NEW DONE 21:17 UTC 10-05 (the same go; the first node's CPU): the LIGO search on every wormhole channel of the
   paper — throat, head-on, d = 6 merger, p = 0.45 fly-by and now the p = 0.60 plunge — plus the vacuum twin: 2.25 h,
   154 templates, NO candidate; background 20 231 accidentals over 469 days (floor 1 per 469 days); horizons
@@ -78,8 +80,8 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   d, p, the mass and the checkpoint lines changed. NO checkpoints: `amr.check_int = -1` +
   `amr.checkpoint_files_output = 0` (verified: none written). `WHM_PREFLIGHT=static`, as BBH-HEADON. Started by
   effect: frame 0 eyeballed against BBH-HEADON's, Ψ4 rows landing, keep-last 3 pruning, card 1 at 62 GB.
-- **Storage (the first node, 05:28 UTC 10-06):** scratch 1.1T free, CLEAN: only DAMP-off 18G (3 plotfiles, in
-  policy). Today: the 76G of leftovers wiped at 04:53 (the user's "wipe them"; P09-LVL5's Chk04500 copied to NFS
+- **Storage (the first node, ~09:25 UTC 10-06):** scratch EMPTY: DAMP-off's 18G (3 plotfiles) pruned at its
+  close-out. Today: the 76G of leftovers wiped at 04:53 (the user's "wipe them"; P09-LVL5's Chk04500 copied to NFS
   first), P060-EXT's and T0-1THROAT's close-out prunes, and P060-EXT's stop checkpoint Chk10940 at 05:28 (the user:
   "wipe"); MANIFEST_CLEANUP_2026-10-06. The second node was not listed from here (05:35 UTC 10-05: only the HFL
   cell, 60G).
@@ -91,7 +93,7 @@ solved, matched, boosted data as the method), duplicates are cut, the d = 6 chai
 (text and figures), the run matrix (Table III) lost the Bowen–York probes, the GRTresna bridge, the unused CS-1 scout and the
 Bowen–York convergence arms (96 runs, 476 GPU-h; BBH-d6 joined the vacuum controls). Ledger 907 rows, 0 problems.
 **No more GPU runs after DAMP-off (the user, 2026-10-06 06:20 UTC): CONV-lbf-w, HARM-oct, the optional rows and the
-flat-in-p mass rebuild are declined.** **Required:** DAMP-off — the text quotes numbers that rest on it (started ~17:30 UTC 10-05 on the user's go: LIVE
+flat-in-p mass rebuild are declined.** **Required:** DAMP-off — DONE 09:12 UTC 10-06: the quoted fly-by numbers hold without the damping (LIVE
 NOW, top; O3B-NEW DONE 21:17 UTC 10-05). **Recommended:** CONV-lbf-w — no
 quoted number waits on it, but the paper has no wave-zone resolution test on current data and a referee will ask.
 **Optional:** SOLVE-t0 — the d = 8 shell number it would restore is no longer in the paper. (Classified 10-05 late,
@@ -100,7 +102,7 @@ after the shortening pass.)
 | id | what | why the paper needs it | how | cost |
 |---|---|---|---|---|
 | O3B-NEW | DONE 21:17 UTC 10-05 (LIVE NOW, top) | Sec. IX now quotes the search on the current channels plus the plunge (154 templates, 2.25 h, no candidate) | — | CPU hours |
-| DAMP-off | the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move. The 09-0x damping-off arms (merge_twin_p012_nodamp_t060: fields equal to 3 decimals at t = 32, wall 51.53 vs 52.06; the damped/undamped ladder rungs) tested the superposed p = 0.12 merger's wall, behind a horizon — never a scatterer, where the damping acts outside any horizon | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); no checkpoints (the user, at launch) | ~15 GPU-h (P045-T100 averaged 4.8 u/h) |
+| DAMP-off | DONE 09:12 UTC 10-06 (LIVE NOW, top): the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move. The 09-0x damping-off arms (merge_twin_p012_nodamp_t060: fields equal to 3 decimals at t = 32, wall 51.53 vs 52.06; the damped/undamped ladder rungs) tested the superposed p = 0.12 merger's wall, behind a horizon — never a scatterer, where the damping acts outside any horizon | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); no checkpoints (the user, at launch) | ~15 GPU-h (P045-T100 averaged 4.8 u/h) |
 | CONV-lbf-w | the wave-zone test on exact-boost data | CONV-csm-w resolved the wave zone (0.01–0.15 % of peak) on the Bowen–York `_csm` arm, which the paper no longer cites | the CONV-csm-w recipe (`extraction_levels 0 1 0 0`, the R = 28 ball, 77.6/80 GB) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |
 | SOLVE-t0 | the mode-3 d = 8 head-on at t = 0 | Sec. II quoted the d = 8 throat-shell Hamiltonian from the pre-matching (mode-0) check, now cut; the paper keeps only the boosted pair's mode-3 per-level number | t = 0 only on CS-1's grid, `constraint_solve_t0_check.py` | CPU minutes |
 | HARM-oct (referee 1, recommended) | the ε = −10⁻² inflating throat in harmonic slicing, octant, to t ≈ 45 | the referee asks whether 1+log shapes the inflation; F2/F3 (harmonic, 09-25) kept α_neck ≈ 0.45 and grew R_neck 3.81 → 9.89 by t = 46 (1+log: 12.2 only by t = 90), F6 (zero shift) matched R_neck to 3 digits — but all were wiped, so nothing is quotable; their grid died at t ≈ 46.6 on the level-5 box faces | F3's template from `templates_scan/` (`lapse_coeff`/`lapse_power` harmonic), the full consumer (`inflation-octant`), stop 45; quote the neck's proper-time onset rate against F4's H R₀ | ~1 GPU-h |
@@ -300,7 +302,7 @@ Constraint norms are not a paper problem: the logged ℋ is the base-grid box av
 smaller matched throats), every paper claim is relative, and the mode-3 reruns' norms match or better their
 superposed twins (checked 09-28/09-29; details in the archive).
 
-## First node (two H100s): P060-EXT on card 0 since 15:34 UTC 10-05; DAMP-off on card 1 since 17:35 UTC (LIVE NOW, top)
+## First node (two H100s): idle since 09:12 UTC 10-06 (P060-EXT stopped 05:04, DAMP-off done; LIVE NOW, top)
 
 **P060-LVL5 `merge_orbit_flip_d12_p060_L128_lvl5from40_chi1e4_t060_lbf_csm_r04000` DONE (t = 60, no NaN, Ham
 2.0e-4) — NO converged MOTS at lvl5 either: THE p060 STALL IS PHYSICAL, not resolution (rms θ_out ~1.8e-2
