@@ -50,7 +50,7 @@ user's call on 2026-10-05).
 | `03_headon_collision_makes_black_hole.mp4` | 10.2 s | two wormholes collide head-on and make a black hole (horizon born common at t = 18) | `04_binary_headon/headon_csm_L128_stitched_t0_t100` |
 | `04_spiral_merger_makes_black_hole.mp4` | 10.2 s | the orbital merger — and a horizon DOES form (MOTS from t = 13) | `05_binary_spiral/spiral_d6_p010_L128_csm_stitched_t0_t100` |
 | `05_wormhole_flyby_no_merger_mouths_inflate.mp4` | 6.5 s | a fly-by: no merger, no horizon, both mouths inflate | `06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm` |
-| `held_back/06_plunge_merger_no_horizon_yet.mp4` | 8.2 s | **held back, not for upload**: the p = 0.60 plunge, until P060-EXT settles its horizon | `06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80` |
+| `06_plunge_merger_no_horizon_yet.mp4` | 8.2 s | a deeper plunge: contact at t ≈ 40, the mouths merge, and no horizon closes (to its trust window, t = 80) | `06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80` |
 | `07_hardest_plunge_mouths_inflate.mp4` | 4.7 s | the hardest plunge: the mouths inflate on the approach and the merging core starts to inflate | `06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45` |
 | `08_control_two_black_holes_merge.mp4` | 15.2 s | vacuum control: two black holes plunge, merge and ring down | `07_bbh_control/bbh_control_d12_p012_t150` |
 | `09_control_two_black_holes_fly_apart.mp4` | 10.2 s | vacuum control at p = 0.45: two black holes coast apart | `07_bbh_control/bbh_control_d12_p045_t100` |
@@ -58,9 +58,9 @@ user's call on 2026-10-05).
 
 **Publish 01 and 02 together, and publish the controls with the channels they
 control.** Alone, the inflating throat invites "so it is just unstable"; beside
-its collapsing twin it shows the branch being chosen. Publish 05 and 07
-together: the same pair at p = 0.25 and 0.90, a scatter and an inflating
-plunge (06, the p = 0.60 plunge between them, is held back). The
+its collapsing twin it shows the branch being chosen. Publish 05, 06
+and 07 together: the same pair at p = 0.25, 0.60 and 0.90, a scatter, a plunge
+with no horizon and an inflating plunge. The
 head-on pair is 03 with 10 (the same collision with and without the exotic
 matter); 08 (a vacuum plunge at d = 12, p = 0.12) and 09 (a vacuum fly-by at
 p = 0.45) are references for the wormhole channels, not twins of any video
@@ -149,12 +149,22 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 
 ## 6. `06_plunge_merger_no_horizon_yet.mp4`
 
-**Held back (the user, 2026-10-05): not for upload yet.** The record is too
-short to say what this plunge becomes: its wave burst is cut at the t = 80
-trust window, and whether a horizon forms waits on P060-EXT (to t = 115). Its
-on-frame captions must be rewritten before release: the "loudest source", the
-"separation 3.5 to 0 over t = 36-40" and the "closure at t = 110-115" lines do
-not hold. The file sits in `held_back/`, out of the upload set.
+**YouTube:** https://youtu.be/-ejFKpetL1Y (uploaded 2026-10-06)
+
+**Title:** A Deeper Wormhole Plunge: The Mouths Merge, and No Horizon Closes | Numerical Relativity
+
+```
+Two wormholes start at separation 12, each with momentum 0.60, past the circular value. The pair plunges, reaches contact at t = 40 and merges as wormholes. No trapped surface converges on the merged core through t = 80, the end of the trustworthy record, on either of two grids: unlike the head-on and the close orbit, this merger is not hidden behind a horizon as far as the simulation can see. It is not the loudest encounter either: the p = 0.45 fly-by, which just escapes, radiates more.
+
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
+```
+
+Released 2026-10-06 (the user), after P060-EXT: held back since 10-05, its on-frame
+captions rewritten (the old "loudest source", "separation 3.5 to 0" and "closure
+at t = 110-115" lines did not hold).
 
 ## 7. `07_hardest_plunge_mouths_inflate.mp4`
 

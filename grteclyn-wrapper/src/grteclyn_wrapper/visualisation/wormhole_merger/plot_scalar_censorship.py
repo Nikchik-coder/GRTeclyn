@@ -245,7 +245,9 @@ def main(argv: list[str] | None = None) -> int:
     style.label_audit(fig)
     out = pathlib.Path(args.out) if args.out else (
         figure_dir(GROUP, args.pack_root) / "scalar_censorship.png")
+    hits = style.label_audit(fig)
     png = style.save(fig, out)
+    print(f"[label audit] {'clean' if not hits else hits}")
     print(f"[censorship] wrote {png} (+pdf)")
     return 0
 

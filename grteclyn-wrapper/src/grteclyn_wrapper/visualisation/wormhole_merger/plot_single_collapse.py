@@ -49,6 +49,10 @@ ARM = "seed/single_pureq_q1e2_ml4_t100"
 TWIN = "hold/single_hold_ml4_t100"   # the unkicked level-4 twin, as on the inflation page
 SNAPS = (33.0, 40.0, 45.0, 48.0, 50.0, 55.0)   # grey ramp, light = early; the collapse is 45-55
 T_MOTS = 33.0
+# The arm's trust window (results/merger/trust_windows.tsv: grid-scale junk from
+# t ~ 60).  Nothing of THIS arm is drawn past it (validation A12/B7, 2026-10-06);
+# the unkicked twin has no trust row and runs to t = 100.
+T_TRUST = 60.0
 
 
 def _profile(path: pathlib.Path):
@@ -81,6 +85,8 @@ def main(argv: list[str] | None = None) -> int:
     tp, blocks = _profile(arm / "core_radial_profile.dat")
     h = np.genfromtxt(arm / "horizon_scan.dat", dtype=None, encoding=None, names=True)
     hA = h[(h["centre"] == "A") & (h["n_mots"] > 0)]
+    ar, cd = ar[ar[:, 0] <= T_TRUST + 1e-6], cd[cd[:, 0] <= T_TRUST + 1e-6]
+    hA = hA[hA["time"] <= T_TRUST + 1e-6]
 
     style.prd(base=10.0)
     fig = plt.figure(figsize=(7.05, 5.0), constrained_layout=True)
@@ -134,8 +140,9 @@ def main(argv: list[str] | None = None) -> int:
     axT.annotate("minimal-surface areal radius", (2.0, ar[0, 1]),
                  xytext=(0, -3), textcoords="offset points", fontsize=7.5,
                  color=style.INK, ha="left", va="top")
-    axT.text(72, 2.85, "oriented scan's MOTS", fontsize=7,
-             color=style.GOLD)
+    axT.annotate("oriented scan's MOTS", (hA["time"][-1], hA["R_mots"][-1]), xytext=(5, 0),
+                 textcoords="offset points", fontsize=7, color=style.GOLD,
+                 ha="left", va="center")
     axT.set_xlim(0, 100)
     axT.set_ylim(1.5, 6.0)
     axT.set_ylabel(r"$R_{\rm areal}$")
@@ -152,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
         ax.axvline(T_MOTS, color=style.FAINT, linewidth=0.7, zorder=1)
         if logy:
             ax.set_yscale("log")
-        ax.set_xlim(0, 100)
+        ax.set_xlim(0, T_TRUST)
         ax.set_ylabel(lab)
 
     # ---- (e)/(f) the shells: |K| and lapse profiles, light = early --------

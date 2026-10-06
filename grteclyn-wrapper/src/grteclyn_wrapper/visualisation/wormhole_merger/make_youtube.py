@@ -228,20 +228,20 @@ PANELS: dict[str, dict] = {
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80": dict(
         out="06_plunge_merger_no_horizon_yet.mp4",
-        # Held back (the user, 2026-10-05): the record is too short to say what
-        # this plunge becomes -- its burst is cut at the t = 80 trust window and
-        # the horizon question waits on P060-EXT.  The captions below carry
-        # claims the data do not support; rewrite them before it is released.
-        hold="the p = 0.60 record is too short; rewrite the captions after P060-EXT",
+        # Held back 2026-10-05 until P060-EXT; released 2026-10-06 (the user)
+        # with the captions rewritten after it (no MOTS at level 5 either):
+        # contact at t ~ 40, no horizon through the t = 80 trust window, and the
+        # p = 0.45 fly-by, not this plunge, radiates hardest (research.tex).
         fields=["K", "lapse", "chi", "Weyl4_Re"],
-        title=r"A deeper plunge --- the mouths merge, and the horizon stalls",
-        cap1=r"The fly-by's momentum raised to 0.60: the pair now \emph{plunges} --- "
-             r"separation $3.5\to0$ over $t=36$--40 --- and merges as wormholes. This is "
-             r"the campaign's loudest gravitational-wave source.",
-        cap2=r"No trapped surface converges by $t=100$: the finder's surface stays "
-             r"marginally untrapped, a pinched peanut rounding toward closure at "
-             r"$t\approx110$--115. A finer grid agrees --- the stall is physics, not "
-             r"resolution.",
+        title=r"A deeper plunge --- the mouths merge, and no horizon closes",
+        cap1=r"The fly-by's momentum raised to 0.60 per mouth, past the circular value: the "
+             r"pair now \emph{plunges}, reaches contact at $t\approx40$ and merges as "
+             r"wormholes. It is not the loudest encounter: the $p=0.45$ fly-by, which "
+             r"just escapes, radiates more.",
+        cap2=r"No trapped surface converges on the merged core through $t=80$, the end of "
+             r"the trustworthy record, on either of two grids. Unlike the head-on (03) and "
+             r"the close orbit (04), this merger is not hidden behind a horizon as far as "
+             r"the simulation can see.",
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p090_L128_csm_stitched_t0_t45": dict(
         out="07_hardest_plunge_mouths_inflate.mp4",

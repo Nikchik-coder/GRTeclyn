@@ -323,7 +323,9 @@ def main(argv: list[str] | None = None) -> int:
     # curve's start (the separation opens at 8.0).
     # "level" and the digit stack in the first era (one line is wider than
     # the 22 units left of the t = 22 rule at this panel's width).
-    for x, name in ((7.5, "level\n5"), (43.0, "6"), (76.0, "4")):
+    # The bare digit, as in (d): "level" overran the left spine at this
+    # panel's width ((a) and (e) carry the word; 2026-10-06).
+    for x, name in ((8.0, "5"), (43.0, "6"), (76.0, "4")):
         axC.text(x, 10.35, name, fontsize=fs, ha="center", va="top",
                  color=style.INK, linespacing=1.1)
     axC.text(76.0, 0.55, "merged pit", fontsize=fs, ha="center", va="bottom",

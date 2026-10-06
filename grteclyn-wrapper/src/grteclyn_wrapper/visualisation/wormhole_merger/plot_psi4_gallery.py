@@ -152,6 +152,22 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT, f
 
 GROUP = "08_waves"   # cross-cutting: the figure belongs to no single group
 
+
+def trust_window(run: str) -> float:
+    """t_max of ``run`` in the pack's trust_windows.tsv.  On a wave record it
+    is retarded: a sphere R is quotable to t - R <= t_max (2026-10-06)."""
+    for line in (PACK_ROOT / "trust_windows.tsv").read_text(encoding="utf-8").splitlines():
+        cells = line.split("\t")
+        if cells[0] == run:
+            return float(cells[1])
+    raise KeyError(f"{run} has no row in trust_windows.tsv")
+
+
+# The fly-by's trust window (L2 Ham crosses 2.5e-2 for good), t - R <= 67.6:
+# the gallery, the LIGO figure and every quoted fly-by number stop there
+# (2026-10-06 validation; it was the R = 20 trough, t - R = 74).
+FLYBY_TRUST = trust_window("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm")
+
 # One row per scenario: (name, knob, mode label, stream path under campaign/,
 # m or None, innermost extraction radius, t_max, end-note).  m=None means a
 # single-mode file; an integer selects that m from psi4_mode_l2_all.dat.
@@ -208,15 +224,15 @@ ARMS = [
     # burst through remnant ringdown to t = 100, its vacuum twin (BBH-d6,
     # 2026-10-05) under it (VACUUM_OVERLAY).  (d) the p = 0.45 boosted
     # scatterer, the deepest pass that still escapes (the capture boundary's
-    # near side); its ARMS cap is the R = 20 trough t = 94, where the decaying
-    # arch meets the mouths' growing contamination (clmEgwGateFortyFive), and
-    # the momentum-matched vacuum control (same d and p) rides under it.
+    # near side); its ARMS cap is its trust window at R = 20 (FLYBY_TRUST,
+    # t - R <= 67.6; the R = 20 trough t = 94 until 2026-10-06), and the
+    # momentum-matched vacuum control (same d and p) rides under it.
     ("spiral", r"$p=0.10$, $d=6$", "(2,2)",
      "05_binary_spiral/merger_d6/spiral_d6_p010_L128_SERIES/Weyl4_mode_22.dat",
      None, 20.0, None, r""),
     ("fly-by", r"$p=0.45$, $d=12$", "(2,2)",
      "06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/Weyl4_mode_22.dat",
-     None, 20.0, 94.0, r"gated $t{=}94$ (mouths expand)"),
+     None, 20.0, 20.0 + FLYBY_TRUST, r"trust window"),
     # The p = 0.60 plunge (2026-10-05): the chain glued into one record (its
     # SERIES README has the seam checks); the loudest row by amplitude.  Its
     # trust window t = 80 cuts every sphere (Weyl4 junk on the frames from
@@ -299,7 +315,7 @@ DRAW_GATES = {
     # (R <= 20) are clean to t ~ 80, R = 28 to ~ 90, level 0 to the end.
     "head-on": (lambda R: 80.0 if R <= 20.0 else (90.0 if R <= 28.0 else 100.0),
                 r"level-1 noise"),
-    "fly-by": (lambda R: 74.0 + R, r"mouths expand"),
+    "fly-by": (lambda R: FLYBY_TRUST + R, r"trust window"),
     "plunge": (lambda R: 80.0, r"trust window"),
 }
 

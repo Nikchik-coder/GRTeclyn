@@ -116,9 +116,25 @@ P60_TRUST = 80.0      # trust_windows.tsv: the floored core's junk from ~80
 FLYBY_GROUP = "06_binary_flyby"
 FLYBY = "merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"
 FLYBY_TRUST = 67.6    # trust_windows.tsv: sustained L2 Ham crossing of 2.5e-2
-FLYBY_GATE = 94.0     # the R = 20 trough gate (clmEgwGateFortyFive)
+FLYBY_GATE_ROW = "clmEgwGateFortyFive"   # the wave gate: recomputed by that ledger row's extractor
 FLYBY_READ = (0.0, 30.0, 40.0, 43.0, 50.0, 60.0, 70.0, 80.0, 100.0)   # printed
 FLYBY_FLOOR = (30.0, 40.0)  # the floor the growth is measured against (median)
+
+
+def _ledger_value(row_id: str) -> tuple[float, str]:
+    """A claims-ledger row recomputed by its own extractor, so a rule drawn here
+    moves with the row the caption quotes (manual rows: their printed num), and
+    the text the paper prints for it (the key's label)."""
+    import importlib.util
+    import json
+    path = pathlib.Path(PACK_ROOT).parents[1] / "research" / "merger" / "article" / "claims" / "claims.py"
+    spec = importlib.util.spec_from_file_location("claims", path)
+    claims = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(claims)
+    row = next(r for r in claims.load() if r["id"] == row_id)
+    if not row["extractor"]:
+        return float(row["num"]), row["tex"]
+    return float(claims.lib.EXTRACTORS[row["extractor"]](**json.loads(row["args"] or "{}"))), row["tex"]
 
 
 def _h(ax, t, y, **kw):
@@ -207,11 +223,16 @@ def pure_quadrupole(ax, pack) -> None:
     hH = _h(ax, cn[:, 0], cn[:, 1], color=style.INK, lw=1.1, zorder=3)
     hM = _h(ax, cn[:, 0], cn[:, 2], color=style.MUTED, lw=1.1, ls=DASH, zorder=3)
     ax.axvline(collapse.T_MOTS, color=style.GOLD, lw=0.7, ls=DOT, zorder=1)
+    # post-trust norms kept, behind the arm's trust rule (validation B7, 2026-10-06)
+    ax.axvline(collapse.T_TRUST, color=style.FAINT, lw=0.7, ls=DOT, zorder=1)
     ax.set_xlim(0, 100)
     style.legend_top(ax, [(hH, r"$\mathcal{H}$"), (hM, r"$\mathcal{M}$"),
-                          (_rule(style.GOLD, DOT), rf"MOTS, $t={collapse.T_MOTS:g}$")],
-                     ncol=2, title="pure quadrupole,\n" r"$\varepsilon_2=0.01$, level 4", **KEY)
-    late = cn[cn[:, 0] >= 60.0]
+                          (_rule(style.GOLD, DOT), rf"MOTS, $t={collapse.T_MOTS:g}$"),
+                          (_rule(style.FAINT, DOT), rf"trust window, $t={collapse.T_TRUST:g}$")],
+                     ncol=1, title="pure quadrupole,\n" r"$\varepsilon_2=0.01$, level 4", **KEY)
+    late = cn[cn[:, 0] >= collapse.T_TRUST]
+    early = cn[cn[:, 0] <= collapse.T_TRUST]
+    print(f"  (c) to the trust window: H max {early[:, 1].max():.2e}, M max {early[:, 2].max():.2e}")
     print(f"  (c) pure quadrupole: H {cn[0, 1]:.2e} -> {cn[-1, 1]:.2e}; "
           f"x{late[-1, 1] / late[0, 1]:.0f} over t = 60-{late[-1, 0]:.0f}")
 
@@ -402,11 +423,12 @@ def flyby(ax, pack) -> None:
     hH = _h(ax, cn[:, 0], cn[:, 1], color=style.INK, lw=1.1, zorder=3)
     hM = _h(ax, cn[:, 0], cn[:, 2], color=style.MUTED, lw=1.1, ls=DASH, zorder=3)
     ax.axvline(FLYBY_TRUST, color=style.FAINT, lw=0.7, ls=RULE, zorder=1)
-    ax.axvline(FLYBY_GATE, color=style.FAINT, lw=0.7, ls=DOT, zorder=1)
+    gate, gate_tex = _ledger_value(FLYBY_GATE_ROW)
+    ax.axvline(gate, color=style.FAINT, lw=0.7, ls=DOT, zorder=1)
     ax.set_xlim(0, 100)
     style.legend_top(ax, [(hH, r"$\mathcal{H}$"), (hM, r"$\mathcal{M}$"),
                           (_rule(style.FAINT, RULE), rf"trust window, $t={FLYBY_TRUST:g}$"),
-                          (_rule(style.FAINT, DOT), rf"wave gate, $t={FLYBY_GATE:g}$")],
+                          (_rule(style.FAINT, DOT), rf"wave gate, $t={gate_tex}$")],
                      ncol=1, title=r"fly-by, $p=0.45$, level 4", **KEY)
     t = cn[:, 0]
     quiet = (t >= 10.0) & (t <= 40.0)

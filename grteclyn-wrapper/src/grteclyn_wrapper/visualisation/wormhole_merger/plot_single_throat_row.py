@@ -51,10 +51,31 @@ CEILING_ARMS = (("single_eps_p1e1_t100", "+0.1"), ("single_eps_m1e1_t100", "-0.1
 # the boosted wormhole collapse").  One exact Lorentz-boosted drainhole
 # (momentum model 1, p = 0.45, v = 0.41, level 3, the per-throat slicing
 # freeze), read from the pack's round-scan A rows (horizon_scan.dat; the scan
-# re-centres on the moving pit).  It rides R_star to t ~ 29 (+2.0 % at most),
-# then collapses on the resting throat's mode (tau 5.5-5.7 against 5.88) and
-# dies at t = 44.67 (NaN in h11): the level-3 branch, carried with the motion.
+# re-centres on the moving pit).  It rides R_star to t ~ 25 (+1.2 % at most),
+# then collapses on the resting throat's mode (free-offset tau 5.0-6.1 against
+# 5.12) and dies at t = 44.67 (NaN in h11): the level-3 branch, carried with
+# the motion.  The numbers are extract_single.single_boost_record's.
 MOVING_ARM = "single_boost_p045_lbf_t050"
+SPIKE_FRAC = 0.0025
+
+
+def moving_record(pack_root, run: str = MOVING_ARM):
+    """(t, R_min) of the moving arm's round-scan A rows, one row per time, with
+    one-sample scan glitches dropped (validation A13, 2026-10-06).  The rule: a
+    sample standing above, or below, BOTH neighbours by more than SPIKE_FRAC
+    (0.25 %) of R is the scan centre stepping, not the throat.  It drops t = 29
+    alone (3.919 -> 3.953 -> 3.912, +0.9 % for one sample); the collapse's
+    largest steps (t = 37-39) are monotone and stay."""
+    import numpy as np
+    d = find_run(pathlib.Path(pack_root).expanduser() / "campaign", run)
+    rows = np.loadtxt(d / "horizon_scan.dat", dtype=str)
+    a = rows[rows[:, 1] == "A"][:, [0, 5]].astype(float)
+    a = a[np.unique(a[:, 0], return_index=True)[1]]
+    r = a[:, 1]
+    mid, lo, hi = r[1:-1], np.minimum(r[:-2], r[2:]), np.maximum(r[:-2], r[2:])
+    spike = np.zeros(r.size, bool)
+    spike[1:-1] = (mid - hi > SPIKE_FRAC * mid) | (lo - mid > SPIKE_FRAC * mid)
+    return a[~spike]
 
 
 def moving_panel(axD, pack_root) -> None:
@@ -69,15 +90,11 @@ def moving_panel(axD, pack_root) -> None:
     """
     import numpy as np
     root = pathlib.Path(pack_root).expanduser()
-    campaign = root / "campaign"
     try:
-        d = find_run(campaign, MOVING_ARM)
+        a = moving_record(root)
     except FileNotFoundError:
         print(f"  {MOVING_ARM}: not in the pack, skipped"); return
-    rows = np.loadtxt(d / "horizon_scan.dat", dtype=str)
-    a = rows[rows[:, 1] == "A"][:, [0, 5]].astype(float)
-    a = a[np.unique(a[:, 0], return_index=True)[1]]
-    rest = plot_branches.load(root, plot_branches.ARMS["ml3"], "areal_radius.dat")
+    rest =plot_branches.load(root, plot_branches.ARMS["ml3"], "areal_radius.dat")
     rest = rest[rest[:, 0] <= 47.0]
     axD.axhline(plot_branches.R_EXACT, color=style.MUTED, linewidth=0.8,
                 linestyle=(0, (1, 2.5)), zorder=2)

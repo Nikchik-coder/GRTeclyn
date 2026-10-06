@@ -1,4 +1,0 @@
-# Scout merge_headon_flip_d8_v1_t100 against the placement curve, before contact (sep >= 2.5).
-# own response = R_scout / R_placement - 1; negative = squeezed, positive = widened.
-# in_range = 1 where the curve is interpolated, 0 where it is held at its last point.
-# time  separation  R_scout  R_placement  response_pct  in_range
