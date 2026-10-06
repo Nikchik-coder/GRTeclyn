@@ -407,10 +407,37 @@ def overlay_record(pack: pathlib.Path, name: str):
     return tt, yy, R
 
 
+def upper_envelope(y: np.ndarray) -> np.ndarray:
+    """|P+| + |P-| of a complex (2,2) record: P+ / P- its positive- and
+    negative-frequency parts, split with an FFT mask on the zero-padded record
+    (2026-10-06).  The d = 6 merger carries ~20 % counter-rotating power -- the
+    pair turns only ~15 deg, so its quadrupole is mostly linearly polarised --
+    and |r Psi4| beats at twice the carrier; this traces the tops of those
+    beats, and equals |r Psi4| for a purely co-rotating wave."""
+    y = np.asarray(y, complex)
+    n = y.size
+    if n < 3:
+        return np.abs(y)
+    # Extended past both cuts by phase-aligned conjugate reflections: conj and
+    # time reversal each flip the sign of frequency, so together they keep each
+    # rotation sense, and the phase factor makes the join continuous -- a plain
+    # zero-pad put a jump at every cut and spiked the envelope there.
+    ua = y[0] / abs(y[0]) if abs(y[0]) > 0 else 1.0
+    ub = y[-1] / abs(y[-1]) if abs(y[-1]) > 0 else 1.0
+    z = np.concatenate([ua ** 2 * np.conj(y[:0:-1]), y, ub ** 2 * np.conj(y[-2::-1])])
+    Z = np.fft.fft(z)
+    f = np.fft.fftfreq(z.size)
+    dc = np.where(f == 0, 0.5 * Z, 0)
+    pp = np.fft.ifft(np.where(f > 0, Z, 0) + dc)[n - 1:2 * n - 1]
+    pm = np.fft.ifft(np.where(f < 0, Z, 0) + dc)[n - 1:2 * n - 1]
+    return np.abs(pp) + np.abs(pm)
+
+
 def envelope(y: np.ndarray) -> tuple[np.ndarray, int]:
     """Amplitude envelope of r*Psi4 and how many samples of it to draw.
 
-    A complex mode carries its own, |y|, drawn to the end.  A real one gets the
+    A complex mode gets its upper envelope |P+| + |P-| (``upper_envelope``),
+    drawn to the end.  A real one gets the
     analytic-signal modulus, the record reflected at both ends first so the
     transform does not ring at the start; but no extension knows what follows a
     cut made mid-oscillation, and past the last crest of |y| the modulus sags
@@ -423,7 +450,7 @@ def envelope(y: np.ndarray) -> tuple[np.ndarray, int]:
     # for a complex mode -- |y| then drew the rectified wave and the phase
     # derivative read zero.  A mode that is genuinely complex has Im ~ Re.
     if np.abs(y.imag).max() > 1e-2 * np.abs(y.real).max():
-        return np.abs(y), y.size
+        return upper_envelope(y), y.size
     x = np.real(y)
     n = x.size
     env = np.abs(hilbert(np.concatenate([x[::-1], x, x[::-1]])))[n:2 * n]

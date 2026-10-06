@@ -21,7 +21,7 @@ from scipy.signal.windows import tukey
 M_SUN_KG = 1.98892e30
 G_SI = 6.67430e-11
 C_SI = 2.99792458e8
-M_SUN_SEC = G_SI * M_SUN_KG / C_SI**3
+M_SUN_SEC = 4.925491e-6   # G M_sun / c^3 in s (nominal GM_sun); G_SI*M_SUN_KG/C_SI**3 read 4.9268e-6
 M_SUN_METER = G_SI * M_SUN_KG / C_SI**2
 MPC_METER = 3.08568e22
 

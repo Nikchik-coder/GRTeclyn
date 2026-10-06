@@ -95,7 +95,8 @@ KICKED = "01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100"
 
 T_MOTS = 18.0        # head-on chain: common MOTS, the mots_spectral replay
 T_MOTS_MERGER = 13.0  # d6 merger chain: common MOTS, its own mots_spectral
-FIT = (30.0, 95.0)   # head-on decay-fit window (the article's rows)
+FIT = (30.0, 80.0)   # head-on decay-fit window: to the level-1 noise gate
+                     # (R <= 20 clean to t ~ 80, clmGwHeadonNoiseGate; was 95)
 FIT_MERGER = (45.0, 95.0)  # merger: past its t = 39 crest on R = 20
 WINDOW = 25.0      # running-max window: about one period of the dipole
 SMOOTH = 5.0       # Gaussian on log amplitude, to round the staircase
@@ -158,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
               f"envelope {e.max():.2e} -> {np.interp(95.0, t, e):.2e} at t=95, "
               f"tau = {-1 / c[0]:.1f}, E_post(t>={T_MOTS:g}) = "
               f"{-np.trapezoid(k[s], t[s]):+.4e}")
-    axA.axvline(T_MOTS, color=style.CONTEXT, lw=0.8, ls=(0, (1, 2)), zorder=1)
+    axA.axvline(T_MOTS, color=style.CONTEXT, lw=0.8, ls=(0, (6, 2.5)), zorder=1)
 
     # NOTHING is written inside either frame (every note tried ended against
     # a spine); the key above carries the identities and the caption the
@@ -179,6 +180,7 @@ def main(argv: list[str] | None = None) -> int:
     t, k = t[gate], k[gate]
     ef = _envelope(t, k)
     axB.semilogy(t, ef, color=style.INK, lw=1.35, zorder=3,
+                 ls=(0, (5, 2, 1, 2)),  # Fig. 8's fly-by dash-dot, not head-on R = 10's solid
                  label=r"fly-by, $R=30$")
     print(f"[censorship] fly-by R=30 to t={t[-1]:.1f} (t-R <= {FLYBY_U_GATE:g}): "
           f"crest {ef.max():.2e} at t={t[np.argmax(ef)]:.0f} -> {ef[-1]:.2e} at "
@@ -207,6 +209,7 @@ def main(argv: list[str] | None = None) -> int:
     tk, kk = _flux(camp / KICKED / "scalar_modes.dat", 18)
     ek = _envelope(tk, kk)
     axB.semilogy(tk, ek, color=style.MUTED, lw=1.2, zorder=3,
+                 ls=(0, (7, 1.5, 1, 1.5, 1, 1.5)),  # distinct from head-on R = 14
                  label="lone throat, collapsed")
     tl, kl = _flux(camp / SINGLE / "scalar_modes.dat", 18)
     el = _envelope(tl, kl)
@@ -235,7 +238,7 @@ def main(argv: list[str] | None = None) -> int:
     # naming is unambiguous anywhere on this page.
     hA, lA = axA.get_legend_handles_labels()
     hB, lB = axB.get_legend_handles_labels()
-    rules = [Line2D([], [], color=style.CONTEXT, lw=0.8, ls=(0, (1, 2)),
+    rules = [Line2D([], [], color=style.CONTEXT, lw=0.8, ls=(0, (6, 2.5)),
                     label=r"common MOTS, $t=18$")]
     fig.legend(hA + hB + rules, lA + lB + [h.get_label() for h in rules],
                loc="upper center", bbox_to_anchor=(0.5, 1.0), ncols=4,

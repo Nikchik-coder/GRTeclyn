@@ -43,7 +43,10 @@ glitch; Fig. 3 top stops the pure-quadrupole arm at its trust window (t = 60); F
 spine; Figs. 7 and 8 stop the fly-by at its trust gate (t − R = 67.6), and Fig. 8's energies use one retarded
 window per record; Fig. 9 reads its scalar ratios from the ledger; Fig. 10(c) gains its trust rule and (h)'s
 wave gate moves to t = 87.6; Fig. 12 draws the boosted p = 0.12 arm (contact at t ≈ 37) and stops the
-scatterers at their trust windows; Fig. 13(c)'s y-range is tightened.
+scatterers at their trust windows; Fig. 13(c)'s y-range is tightened. Second pass (same day): Fig. 7's right
+column and Fig. 8(a) draw the upper envelope |P₊|+|P₋| for the complex (2,2) modes (the d = 6 merger's
+|rΨ4| beat at 2ω on its counter-rotating content and showed false humps); Fig. 8 cuts the throat at its t = 58
+gate; Fig. 13 bottom gives every legend entry its own style and fits the head-on to t = 80.
 
 Left the paper with the superposed campaign (2026-10-05) and deleted here 2026-10-06
 (scripts kept in the wrapper): `05_binary_spiral/spiral_refinement_ladder`
