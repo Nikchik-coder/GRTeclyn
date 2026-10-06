@@ -21,25 +21,17 @@ The fix pass (five agents by area plus the coordinator) settled every A and B fi
 Measured state after the pass: claims check 905 rows (651 recomputed, 0 problems); both engines build at 26 pages; body
 15 299 → 15 212 words. The abstract also now says "first three-dimensional" and carries no citation (the user).
 
-**Left open, each for a stated reason:**
-- The moving pairs' flat mass in p. It is an analysis question, already OPEN in STATUS.
-- The idle-solve bounds `clmBoostSolveW/Wvec/Far`. Their run is not packed.
-- The throat's Fig. 8(c) track to t = 70. Cutting it moves the spectrum rows.
-- In-frame keys of Figs. 4 and 12. Moving them is a re-layout.
-- The waves C items:
-  - the head-on R = 10 E_φ window;
-  - the τ fits past the t ≈ 80 noise;
-  - the scalar QNM robustness at R = 14/18;
-  - the flux-envelope τ against ω_I;
-  - the scalar crest speed;
-  - the memory-range windows;
-  - the BBH M = 2.0 normalisation;
-  - `clmBbhHeadonAmpRatio`;
-  - `clmGwScalarFluxFactor`'s archived source;
-  - the "10 % floor";
-  - Fig. 13's legend styles;
-  - `M_SUN_SEC`, which feeds the search templates.
-- The 24 lit rows. Only Witek, Scheel, Berti, the JWST objects, the Salpeter time and D_L were checked.
+**Second pass (same day, the user's "finish the fixes"):**
+- **Fixed.**
+  - The idle-solve bounds are re-pointed to the packed L = 128 test (|w0| = 4.5e-6, far side 4e-6; max|W| unquoted).
+  - Every waves C item: the head-on E_phi on outgoing windows to the t = 80 noise gate, with tau fits over t = 30-80; the memory range on one window; the BBH head-on per its Brill-Lindquist mass (18x); the amplitude ratio at R = 14; the flux factor from the two-throat formulas; the 14 % floor; Fig. 13 legend styles; M_SUN_SEC; the throat's Fig. 8 track cut at t = 58; the scalar QNM fit ending at t = 80 (damping 10 % slower).
+  - Fig. 7 / 8(a): the merger's |rPsi4| beat at 2 omega (counter-rotating content), so complex modes now draw the upper envelope |P+| + |P-|.
+- **Literature (24 rows).** 22 are verified against their sources. The FIRAS range is corrected to 1e5-1e12 Msun (Nakama et al. 2018 abstract), and the natarajan2024 title is corrected. The l = 1 scalar QNM is confirmed by a Leaver continued fraction; it is not printed in Berti et al.'s text.
+- **Left open.**
+  - The moving pairs' flat mass in p is now the REQUIRED run MASS-t0 in STATUS (needs the go).
+  - In-frame keys of Figs. 4 and 12 (a re-layout).
+
+Final state: claims check 906 rows, 667 recomputed, 0 problems; both engines build at 26 pages; body 15 299 -> 15 214 words.
 
 ## Bottom line (as found, before the fixes)
 

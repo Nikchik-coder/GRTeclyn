@@ -60,6 +60,8 @@ def _mass(M) -> float:
     each throat's kinetic energy) it is."""
     if isinstance(M, str):
         return float(_mod("run_tree").boosted_adm_mass(M))
+    if isinstance(M, dict):          # an extractor spec, e.g. a Brill-Lindquist sum
+        return float(evaluate(M))
     return float(M)
 
 
@@ -243,8 +245,9 @@ def waves_front_u(scenario: str, sphere: int = -1) -> float:
 
 @extractor
 def waves_peak_time(run: str, file: str, R: float, radii: list[float] | None = None, t_min: float | None = None,
-                    t_max: float | None = None, retarded: bool = False) -> float:
-    """Time (or retarded time t - R) of max |r Psi4| at sphere R over [t_min, t_max]."""
+                    t_max: float | None = None, retarded: bool = False, value: bool = False) -> float:
+    """Time (or retarded time t - R) of max |r Psi4| at sphere R over [t_min, t_max];
+    value=True returns that max |r Psi4| instead."""
     t, ser = _mod("streams").load_mode(_run_path(run) / file, radii=radii)
     y = np.abs(ser[float(R)])
     keep = np.ones(t.size, bool)
@@ -252,6 +255,8 @@ def waves_peak_time(run: str, file: str, R: float, radii: list[float] | None = N
         keep &= t >= t_min
     if t_max is not None:
         keep &= t <= t_max + 1e-9
+    if value:
+        return float(y[keep].max())
     tp = float(t[keep][int(np.argmax(y[keep]))])
     return tp - float(R) if retarded else tp
 
@@ -377,9 +382,13 @@ def waves_energy_run(run: str, file: str, R: float, m: int, M: float | str,
 
 @extractor
 def waves_ligo_env_peak(scenario: str) -> float:
-    """Peak of the analytic-signal envelope |r Psi4| M (panel a of psi4_ligo)."""
+    """Peak of the envelope |r Psi4| M drawn in panel (a) of psi4_ligo: the upper
+    envelope |P+| + |P-| of a complex (2,2) record, the analytic-signal one of a (2,0)."""
     L = _mod("plot_psi4_ligo")
     a = _ligo_arm(scenario)
+    y = a["y"]
+    if np.abs(y.imag).max() > 1e-2 * np.abs(y.real).max():
+        return float(_mod("plot_psi4_gallery").upper_envelope(y).max())
     env, _ = L.envelope_and_frequency(a["y"], a["dt"], _band_peak(a["y"], a["dt"]))
     return float(env.max())
 
@@ -820,11 +829,15 @@ def waves_outgoing_from(run: str, R: int, hold: float = 15.0) -> float:
 
 
 @extractor
-def waves_post_energy(run: str, R: int, t0: float, M: float = 1.0) -> float:
-    """Post-horizon E_phi = int_{t >= t0} (-flux_kin) dt at sphere R, physical sign,
-    in units of M (the censorship figure's numbers are in code units, M = 1)."""
+def waves_post_energy(run: str, R: int, t0: float | dict, M: float = 1.0,
+                      t1: float | dict | None = None) -> float:
+    """Post-horizon E_phi = int_{t0 <= t <= t1} (-flux_kin) dt at sphere R, physical
+    sign, in units of M (the censorship figure's numbers are in code units, M = 1);
+    t0 / t1 may be extractor specs (waves_outgoing_from, a noise gate)."""
+    t0 = evaluate(t0) if isinstance(t0, dict) else float(t0)
+    t1 = math.inf if t1 is None else (evaluate(t1) if isinstance(t1, dict) else float(t1))
     t, k = _flux(run, R)
-    s = t >= t0
+    s = (t >= t0) & (t <= t1 + 1e-9)
     return float(-np.trapezoid(k[s], t[s]) / M)
 
 

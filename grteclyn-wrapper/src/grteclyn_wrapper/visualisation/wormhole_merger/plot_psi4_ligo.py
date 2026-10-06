@@ -79,7 +79,7 @@ from scipy.signal import hilbert  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_gallery import (  # noqa: E402
-    ARMS, DRAW_GATES, FLYBY_TRUST, load, trim_zeros_tail,
+    ARMS, DRAW_GATES, FLYBY_TRUST, load, trim_zeros_tail, upper_envelope,
 )
 from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (  # noqa: E402
     C_SI, G_SI, M_SUN_KG, M_SUN_SEC, MPC_METER, _aLIGO_noise_psd, _burst_psd,
@@ -296,6 +296,9 @@ def prepare(pack: pathlib.Path):
             keep = t <= t_max + 1e-9
             t, series = t[keep], {r: y[keep] for r, y in series.items()}
         R_in = min(series, key=lambda r: abs(r - R0))
+        if name in ENERGY_ON_DRAWN:      # (a)-(c) stop where the energy does
+            keep = t <= DRAW_GATES[name][0](R_in) + 1e-9
+            t, series = t[keep], {r: y[keep] for r, y in series.items()}
         tt, yy = trim_zeros_tail(t, series[R_in])
         M = M_CODE[name]
         mm = 0 if mode == "(2,0)" else 2
@@ -376,10 +379,13 @@ def main(argv: list[str] | None = None) -> int:
         f_pk = float(f[1:][np.argmax(_smooth_psd(S, _smooth_window(S.size), 5)[1:])])
         env, _ = envelope_and_frequency(a["y"], a["dt"], f_pk)
         a["env"], a["f_pk"] = env, f_pk
-        a["tau"] = a["u"] - a["u"][int(np.argmax(env))]
+        y_ = a["y"]       # drawn: the gallery's upper envelope of a complex (2,2)
+        drawn_env = (upper_envelope(y_) if np.abs(y_.imag).max() > 1e-2 * np.abs(y_.real).max()
+                     else env)
+        a["tau"] = a["u"] - a["u"][int(np.argmax(drawn_env))]   # aligned at the drawn peak
         # The key names, and only names: the energies are panel (d)'s subject
         # and repeating them here made the key a second table.
-        axA.semilogy(a["tau"], env, zorder=3, label={"spiral": "merger"}.get(a["name"], a["name"]),
+        axA.semilogy(a["tau"], drawn_env, zorder=3, label={"spiral": "merger"}.get(a["name"], a["name"]),
                      **LOOKS[a["name"]])
         print(f"  {a['name']:<18s} peak |rPsi4| M = {env.max():.3e} at "
               f"u = {a['u'][int(np.argmax(env))]:.1f} M, "
