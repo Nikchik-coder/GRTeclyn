@@ -56,8 +56,6 @@ Warning--I didn't find a database entry for "grteclyn"
 Warning--I didn't find a database entry for "amrex"
 Warning--I didn't find a database entry for "grchombo"
 Warning--I didn't find a database entry for "shirokov2026b"
-Warning--I didn't find a database entry for "bowen_york1980"
-Warning--I didn't find a database entry for "helfer2022"
 Warning--I didn't find a database entry for "alic2012"
 Warning--I didn't find a database entry for "bona1995"
 Warning--I didn't find a database entry for "alcubierre2003gauge"
@@ -76,14 +74,9 @@ Warning--I didn't find a database entry for "gundlach2007"
 Warning--I didn't find a database entry for "choptuik1996"
 Warning--I didn't find a database entry for "huisken2001"
 Warning--I didn't find a database entry for "mars2009"
-Warning--I didn't find a database entry for "alcubierre2003"
 Warning--I didn't find a database entry for "penrose1969"
 Warning--I didn't find a database entry for "wald1997"
 Warning--I didn't find a database entry for "damour2014"
-Warning--I didn't find a database entry for "palenzuela2017"
-Warning--I didn't find a database entry for "bezares2017"
-Warning--I didn't find a database entry for "bezares2022"
-Warning--I didn't find a database entry for "palenzuela2007"
 Warning--I didn't find a database entry for "witek2010"
 Warning--I didn't find a database entry for "scheel2009"
 Warning--I didn't find a database entry for "berti2009"
@@ -105,18 +98,18 @@ Warning--I didn't find a database entry for "maiolino2024"
 Warning--I didn't find a database entry for "banados2018"
 Warning--I didn't find a database entry for "robson2019"
 Warning--I didn't find a database entry for "thrane2013"
-Warning--I didn't find a database entry for "kleihaus_kunz2014"
 Warning--I didn't find a database entry for "dzhunushaliev2013"
 Warning--I didn't find a database entry for "azad2024plb"
 Warning--I didn't find a database entry for "azad2024prd"
 Warning--I didn't find a database entry for "khoo2024"
+Warning--I didn't find a database entry for "kleihaus_kunz2014"
 Warning--I didn't find a database entry for "poisson_visser1995"
 Warning--I didn't find a database entry for "kanti2011"
 Warning--I didn't find a database entry for "cardoso2016"
 Warning--I didn't find a database entry for "bueno2018"
-Warning--I didn't find a database entry for "kardashev2007"
 Warning--I didn't find a database entry for "nakama2018"
 Warning--I didn't find a database entry for "planck2018"
+Warning--I didn't find a database entry for "kardashev2007"
 Warning--I didn't find a database entry for "bambi2013"
 Warning--I didn't find a database entry for "farhi_guth1987"
 Warning--I didn't find a database entry for "blau1987"
@@ -137,7 +130,7 @@ Control: year (1) truncated
 Control: production of eprint (0) enabled
 You've used 2 entries,
             6079 wiz_defined-function locations,
-            1745 strings with 16275 characters,
+            1738 strings with 16187 characters,
 and the built_in function-call counts, 991 in all, are:
 = -- 12
 > -- 16
@@ -176,4 +169,4 @@ warning$ -- 1
 while$ -- 11
 width$ -- 0
 write$ -- 52
-(There were 111 warnings)
+(There were 104 warnings)

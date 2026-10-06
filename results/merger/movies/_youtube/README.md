@@ -70,184 +70,81 @@ here.
 
 # YouTube descriptions
 
-Paste-ready. Shared boilerplate, reused at the foot of each description:
-
-```
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the
-Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
-Code and data: https://github.com/Nikchik-coder/GRTeclyn
-First Interstellar Institute: https://www.youtube.com/@First_Interstellar_Institute
-Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
-
-Method: Einstein equations coupled to a phantom (ghost) scalar field, the matter
-that holds a drainhole wormhole open, evolved in full 3+1 numerical relativity
-with the CCZ4 formulation on GPUs (GRTeclyn / AMReX), with adaptive mesh
-refinement. A single throat starts as the exact drainhole with a small declared
-seed; a pair starts from constraint-solved data, each throat an exact drainhole
-boosted to its momentum; the controls are ordinary black-hole punctures. The
-t = value on each panel is the simulation time in code units; the corner note
-gives the playback speed.
-```
-
----
+Paste-ready: each block is one video's whole description, footer included. The footer is the same in all nine; change them together.
 
 ## 1. `01_wormhole_throat_inflates.mp4`
 
 **Title:** A Wormhole Throat Blows Open | Full Numerical Relativity
 
+**YouTube:** https://youtu.be/RIQCitu4tSc
+
 ```
-A single wormhole throat, held open by exotic matter, is given a tiny nudge
-inward. It does not collapse. It keeps opening, 3.8 times wider by t = 218, and
-no horizon forms around it.
+A wormhole throat, held open by exotic matter, gets a tiny inward nudge. It does not collapse: it keeps opening, 3.8 times wider by t = 218, and no black-hole horizon forms.
 
-TOP LEFT: the curvature K - the small ring at the centre is the throat; the
-wide disc spreading outward is the time slicing's collapse front, which keeps
-pace with the lapse front beside it.
-TOP RIGHT: the lapse, the rate at which time runs at each point.
-BOTTOM LEFT: the conformal factor (log scale) - the throat, then the bright
-inflating shell. BOTTOM RIGHT: the phantom scalar, the exotic matter that holds
-the throat open; its dark core widens as the throat inflates.
-
-A wormhole of this kind is an unstable fixed point, like a pencil balanced on
-its tip. It has exactly two ways to fall, and the first perturbation decides
-which: inflate, as here, or collapse to a black hole, as in the companion video.
-
-Until t = 40 the throat grows exponentially in its own proper time, at a rate
-6 per cent below that of its linear unstable mode. Then
-the lapse falls almost to zero at the throat, so the throat's own clock nearly
-stops against the simulation's: from t = 40 to 218 only about 5 units of its
-time pass, and its growth per unit of simulation time slows. That is the time
-slicing, not the throat. No horizon forms: the throat stays anti-trapped, the
-mirror image of a black hole's trapped surface.
-
-The video stops at t = 218. After that a gauge wave reflected off the edge of
-the simulation box comes back to the throat, and nothing later is trusted.
-Played at 2x speed.
-
-Watch it beside "A Wormhole Throat Collapses" - same throat, opposite fate.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ## 2. `02_wormhole_throat_collapses.mp4`
 
 **Title:** A Wormhole Throat Collapses Into a Black Hole | Full Numerical Relativity
 
+**YouTube:** https://youtu.be/Cc87mHcBPOA
+
 ```
-The same wormhole throat as the companion video, given a different
-perturbation. This time it closes, and a horizon forms at t = 33.
+The same wormhole throat as in the companion video, perturbed differently: this time it closes, and a black-hole horizon forms at t = 33.
 
-TOP LEFT: the curvature K. TOP RIGHT: the lapse, the rate at which time runs
-at each point - it dips at the centre as the throat closes. BOTTOM LEFT: the
-conformal factor, the throat as a dark pit that deepens. BOTTOM RIGHT: the
-scalar field's momentum, the exotic matter falling in. The lapse falls in the
-inflating video too; what tells the two apart is the search for trapped
-surfaces, which finds a horizon here and none there. The video stops at t = 60,
-after which grid noise dominates the curvature panel.
-
-The pair of videos is the actual result. A drainhole wormhole is an unstable
-fixed point with two branches, and the perturbation it is given selects which:
-an inward spherical kick opens it, as in the companion video, and the
-quadrupole used here closes it. With a spherical kick the choice is just as
-sharp - push outward by one per cent and the horizon forms at t = 11, push
-inward by the same amount and the throat inflates instead. The instability is
-fast either way, an e-fold of a few code units, which is why a wormhole of this
-class cannot survive long enough to do anything slow.
-
-This particular run carries a quadrupole and no radial kick at all, which is
-what lets it radiate: a perfectly spherical collapse cannot emit gravitational
-waves, by symmetry. The paper's numbers for a collapsing throat's waves come
-from a sister run that adds a quadrupole to a radial kick; this one, quadrupole
-only, is its cross-check.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ## 3. `03_headon_collision_makes_black_hole.mp4`
 
 **Title:** Two Wormholes Collide Head-On and Form a Black Hole | Numerical Relativity
 
+**YouTube:** https://youtu.be/3sx9GHRTYVs
+
 ```
-Two wormhole throats are released from rest and fall together. They touch while
-both are still open wormholes - and then a single horizon closes over the pair
-at t = 18.
+Two wormhole throats are released from rest and fall together. They touch while both are still open, and a single horizon closes over the pair at t = 18.
 
-Zoomed 2x on the collision. TOP LEFT: the curvature K. TOP RIGHT: the lapse,
-collapsing at the centre as the horizon forms. BOTTOM LEFT: the conformal
-factor - two dark pits approach, meet, and become one. BOTTOM RIGHT: the
-gravitational wave, Re(Psi4), on a log-type scale so the ringdown stays visible.
-
-The detail that matters: neither mouth ever has a horizon of its own. At every
-moment the 3D horizon finder sees either no trapped surface at all, or one that
-encloses BOTH mouths together. The horizon is born common or not at all, so
-this is not two black holes merging - it is two wormholes becoming one black
-hole in a single step.
-
-Then something a vacuum black hole cannot do. The remnant LOSES mass, from 2.82
-at the horizon's birth to 2.39 by t = 100, because what it is swallowing is
-negative-energy matter. By the end it sits almost perfectly round, its horizon
-tracked on every output by a spectral finder solving the full trapped-surface
-equation.
-
-Honest notes: the initial data here has the constraints solved, not just
-declared, and the record is a chain of three runs at different resolutions,
-joined at t = 35 and t = 50 and verified to agree across each seam. The faint
-speckle far from the remnant late in the video is grid-scale numerical noise
-below the measurement floor, not structure.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ## 4. `04_spiral_merger_makes_black_hole.mp4`
 
 **Title:** Two Wormholes With Orbital Momentum Merge and Form a Black Hole | Numerical Relativity
 
+**YouTube:** https://youtu.be/jNnMAXPjyRA
+
 ```
-Two wormhole throats at separation 6, given tangential momentum 0.10, fall
-together - turning only 15 degrees - and a single horizon closes over both
-while they are still wormholes.
+Two wormhole throats at separation 6, with tangential momentum 0.10, fall together, turning only 15 degrees, and a single horizon closes over both at t = 13 while they are still wormholes.
 
-Zoomed 2x on the merger. TOP LEFT: the curvature K. TOP RIGHT: the lapse, the
-rate at which time runs, collapsing over the remnant. BOTTOM LEFT: the conformal
-factor, the two throats as dark pits that merge into one. BOTTOM RIGHT: the
-gravitational wave, Re(Psi4), its two-armed pattern turning with the remnant.
-
-The horizon appears at t = 13, enclosing BOTH mouths at once: like the head-on
-collision, the orbital merger makes its black hole in a single step, with
-neither mouth ever trapped on its own. The remnant then does what a wormhole
-remnant does and a vacuum one cannot - it loses mass, 2.80 to 2.44 by t = 100,
-by swallowing the negative-energy field that held the throats open, and settles
-toward a round, quiet black hole.
-
-An honest note on the record: no single simulation survives this merger's core.
-The movie is one certified chain of four runs - each restart verified against
-its parent before the previous one failed - carried through two distinct
-numerical walls (one cured by stronger dissipation, one by a floor on the
-conformal factor). From t = 25 on, the constraints stay two orders of
-magnitude inside the campaign's quality cut; before that, the first run
-exceeds it briefly near t = 7 (3.8e-2 against the cut's 2.5e-2). The horizon
-history is continuous across every seam.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ## 5. `05_wormhole_flyby_no_merger_mouths_inflate.mp4`
 
 **Title:** A Wormhole Fly-By: No Merger, No Horizon, and the Mouths Inflate | Numerical Relativity
 
+**YouTube:** https://youtu.be/fh3pU7xCU_I
+
 ```
-Two wormholes at separation 12, each carrying momentum 0.25. They swing past
-each other - closest approach 2.32, at t = 48 - and separate. Nothing merges, no horizon
-ever forms, and as the pair goes by, both mouths INFLATE.
+Two wormholes start at separation 12, each with momentum 0.25. They swing past each other, closest approach 2.32 at t = 48, and separate: no merger, no horizon, and both mouths INFLATE as they pass.
 
-Zoomed 2x on the encounter. TOP LEFT: the curvature K, the field that shows
-expansion - the growing structure is the mouths opening. TOP RIGHT: the lapse.
-BOTTOM LEFT: the conformal factor, the two mouths. BOTTOM RIGHT: the
-gravitational wave, Re(Psi4).
-
-The pull is the surprise. Without the exotic field, black holes with even
-more momentum than this simply coast apart (video 09, the vacuum control at
-momentum 0.45): the phantom field makes the mutual attraction several times
-stronger, which is what drags this pair in so close. And the pass radiates
-through a second channel a vacuum binary cannot have at all: the exotic scalar
-field itself radiates, in a dipole pattern, carrying its energy with the
-opposite sign.
-
-The video stops at t = 63, where the quality of the solution (the constraint
-norms) stops meeting the campaign's cut; the close pass and the whole burst
-happen well inside it.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ## 6. `06_plunge_merger_no_horizon_yet.mp4`
@@ -263,90 +160,60 @@ not hold. The file sits in `held_back/`, out of the upload set.
 
 **Title:** The Hardest Wormhole Plunge: The Mouths Inflate As They Merge | Numerical Relativity
 
+**YouTube:** https://youtu.be/yzvwjC46lJY
+
 ```
-Momentum 0.90 per mouth - the hardest plunge in the campaign. The pair falls
-from separation 12 to 2.4 by t = 40. Watch the curvature panel on
-the approach: both mouths visibly INFLATE as they close in - the same opening-up
-the fly-by shows - and as they merge, the merging core starts to inflate too.
+Momentum 0.90 per mouth, the hardest plunge in the campaign: the pair falls from separation 12 to 2.4 by t = 40. On the approach both mouths visibly INFLATE, as in the fly-by, and as they merge the core starts to inflate too.
 
-Zoomed 2x on the plunge. TOP LEFT: the curvature K - the expanding structure is
-the mouths opening. TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor.
-BOTTOM RIGHT: the gravitational wave, Re(Psi4).
-
-No horizon is found at any time. The video ends at t = 45, just before this
-simulation stops at t = 45.3, where the curvature at the merging core runs
-away; a run at twice the resolution stops at the same instant.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ## 8. `08_control_two_black_holes_merge.mp4`
 
 **Title:** Control: Two Black Holes Plunge and Merge, No Exotic Matter
 
+**YouTube:** https://youtu.be/NkcpGiJIxXI
+
 ```
-A control run: two black holes at separation 12, each with momentum 0.12, and
-no exotic scalar field. What is left is an ordinary binary black hole.
+A control run: two ordinary black holes at separation 12, each with momentum 0.12, and no exotic matter. They plunge, merge and ring down.
 
-TOP LEFT: the magnitude of the Weyl scalar, the gravitational wave's strength.
-TOP RIGHT: the lapse. BOTTOM LEFT: the conformal factor, two punctures plunging
-and merging. BOTTOM RIGHT: the wave itself, Re(Psi4).
-
-It is a plunge, not a long inspiral: by t = 60, with the punctures 2.3 apart,
-the pair has turned only 75 degrees. Even so, the wave does what a binary black
-hole's must: its frequency climbs along the point-mass track, then turns toward
-the ringdown tone of the final Kerr black hole - a monotone rise, then a fixed
-frequency.
-
-No wormhole channel follows that track. The head-on's frequency falls from
-contact onto its remnant's ringdown tone, the fly-by's falls as the pair
-separates, and the merger's rises after contact but stays below its remnant's
-tone. Wherever a wormhole remnant's ringdown is resolved, it is the ordinary
-black-hole one: the wormhole is in the burst before it. This video is the
-reference that difference is measured against.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ## 9. `09_control_two_black_holes_fly_apart.mp4`
 
 **Title:** Control: Two Black Holes Fly Apart, No Exotic Matter
 
+**YouTube:** https://youtu.be/65_3kw4obvE
+
 ```
-A control run, and the point of it is what does NOT happen.
+A control run, and the point is what does NOT happen. Two ordinary black holes at separation 12, each with momentum 0.45, no exotic matter: in vacuum that momentum is unbound, and the holes coast apart, 12 to 27 by t = 100.
 
-Two black holes at separation 12 (the wormhole fly-bys' separation), each with
-momentum 0.45, and no scalar field. In vacuum that momentum is unbound: the
-holes begin at their closest approach and coast apart, the separation opening
-from 12 to 27 by t = 100.
-
-TOP LEFT: the magnitude of the Weyl scalar. TOP RIGHT: the lapse. BOTTOM LEFT:
-the conformal factor. BOTTOM RIGHT: the wave itself, Re(Psi4).
-
-Now compare it with the wormhole fly-by (video 05). There the exotic matter
-makes the attraction several times stronger: even at the lower momentum 0.25
-the pair falls in to a separation of 2.32 before it swings apart, and the
-mouths inflate as they pass. The difference between the two videos is the
-exotic matter's pull, made visible.
-
-A caveat stated plainly: the momentum here is high enough that the standard
-boosted-black-hole initial data is outside its strict validity range, which
-inflates this run's emission.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ## 10. `10_control_two_black_holes_collide_headon.mp4`
 
 **Title:** Control: Two Black Holes Collide Head-On, No Exotic Matter
 
+**YouTube:** https://youtu.be/aRWvD4W8OOg
+
 ```
-A control run: the wormhole head-on collision (video 03) with the exotic
-scalar field removed. Two ordinary black holes of the same mass are released
-from rest at the same separation and base resolution, in a box half the
-size. They fall together, merge, and ring down.
+A control run: the wormhole head-on collision with the exotic matter removed. Two ordinary black holes of the same mass start from rest at the same separation and base resolution, in a box half the size, and fall together, merge and ring down.
 
-TOP LEFT: the curvature K. TOP RIGHT: the lapse. BOTTOM LEFT: the conformal
-factor, the two punctures falling together. BOTTOM RIGHT: the gravitational
-wave, Re(Psi4), on a log-type scale so the ringdown stays visible.
-
-Watch it beside video 03. There, the horizon closes over two still-open
-wormholes, and the remnant then LOSES mass to the negative-energy field it
-swallows. A vacuum remnant can only grow.
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
 ---
@@ -354,10 +221,7 @@ swallows. A vacuum remnant can only grow.
 ## Tags
 
 ```
-numerical relativity, general relativity, wormhole, Einstein-Rosen bridge,
-exotic matter, negative energy, black hole, event horizon, gravitational waves,
-spacetime, Einstein equations, astrophysics, computational physics,
-GPU simulation, CCZ4, gravitation, theoretical physics
+numerical relativity, general relativity, wormhole, Einstein-Rosen bridge, exotic matter, negative energy, black hole, event horizon, gravitational waves, spacetime, Einstein equations, astrophysics, computational physics, GPU simulation, CCZ4, gravitation, theoretical physics
 ```
 
 ---
