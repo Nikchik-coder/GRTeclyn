@@ -10,11 +10,15 @@ extract of that campaign: every number the analysis rests on, the movies, a thin
 of stills, and enough provenance to rebuild any run. It is what survives if the machine
 that produced it does not.
 
-> **Data note (2026-09-28).** Every binary run below dated before 2026-09-28 started from
-> superposed initial data, which does not satisfy the Hamiltonian constraint; those results
-> are systematics/history, each superseded by its `csm` (constraint-solve mode 3) rerun as it
-> lands. The single-throat results stand as is: the isolated drainhole is an exact solution.
-> The registry classifies every run (`runs_registry.tsv`, DATA CLASSIFICATION).
+> **Data note (2026-10-06).** The pack now holds the production campaign only: constraint-solved
+> (mode-3 `csm`) initial data, exact-boost momentum (`lbf`), plus its verification and
+> convergence arms. The earlier superposed / Bowen-York campaign does not satisfy the
+> Hamiltonian constraint; it left the paper on 2026-10-05 and left this pack on
+> 2026-10-02 / 2026-10-06. Its run directories live untracked in `campaign/00_archive/`
+> (pack extracts) and `runs/wormhole_merger/00_archive/` (raw), on the production machine
+> only. The single-throat results stand as is: the isolated drainhole is an exact solution.
+> `runs_registry.tsv` still registers every run ever launched; which packed run Table I of
+> the paper counts, run by run, is `research/merger/article/claims/table1_groups.tsv`.
 
 - The reasoning and the full argument: [`research/merger/Plan.md`](../../research/merger/Plan.md)
 - The article in preparation: [`research/merger/article/research.tex`](../../research/merger/article/research.tex)
@@ -22,6 +26,37 @@ that produced it does not.
   `runs/wormhole_merger/`, filed by physics since 2026-09-10 into the same
   `NN_group/` folders as `campaign/` here; its README is the run inventory
 - Rebuild this directory: `bash research/merger/pack_results.sh`
+
+## Where everything is
+
+- `campaign/<NN_group>/<run>/` — one directory per production run; Table I of the paper counts
+  exactly these (per-run map: `research/merger/article/claims/table1_groups.tsv`).
+  - `01_single_throat/` — the lone throat: `hold/` (levels, floors, Δt, box), `seed/` (declared
+    kicks, quadrupoles, the scalar-stream re-runs), the generated notes (INSTABILITY, BRANCHES,
+    QUEUE2E_GATES).
+  - `02_moving_throat/` — the boosted throat: `contraction_t0/` (the 1/γ contraction at t = 0),
+    `exact_boost/` (one exact-boost throat on the production box), `csm/` (the Bowen–York
+    momentum probes that ruled that route out).
+  - `03_two_throats/csm/` — the matched rest pairs: width and separation ladders, the sign rule.
+  - `04_binary_headon/` — `csm/` (the mode-3 head-on legs), `placement_csm/` (the 18 one-step
+    placement probes), `first_law/`, `mots/`, and the CS-1 solve scout.
+  - `05_binary_spiral/` — `merger_d6/` (the d = 6 merger chain), `csm/` + `lbf/` (the d = 12
+    arms), `verify_p012/`, `scout_merger/`, `horizon/` (the retracted scan record).
+  - `06_binary_flyby/` — the fly-by and E_GW scan, p = 0.25–0.90, with `verify_p025/`.
+  - `07_bbh_control/` — the vacuum BBH controls.
+  - `08_convergence/` — the referee's convergence arms (no frames, no movies, by design).
+  - `00_archive/` (untracked) — the superseded superposed / Bowen-York campaign; see the data
+    note above.
+- `figures/<group>/` (index: `figures/FIGURES.md`), `movies/<group>/`, `gw_search/` (the
+  LIGO/LISA search JSONs), `analysis/` (stock-Python reductions), `t0_matching/`.
+- One line per run: `runs_registry.tsv`. What each run actually ran: `runs_index.tsv`.
+  Binary → commit: `binaries.tsv`. Last trustworthy time per run: `trust_windows.tsv`.
+  Per-run summaries: `summary.md`, `summary.csv`.
+
+> **The sections below are the campaign diary** (2026-09 → 2026-10), kept as the record of how
+> the results were reached, retractions included. They predate the 2026-10-05 production-only
+> rewrite of the paper: runs marked *(pack)* that belonged to the superposed campaign now live
+> in the untracked `campaign/00_archive/`.
 
 ## The result, in seven lines
 
@@ -1451,49 +1486,14 @@ R = 10/14/18 were written before the abort, so the run is fully analysable.
 - **Runs.** `v2_spiral_d12_p012_L128_lvl4_t100_freeze_r03600` *(pack, 08_convergence/)* against the production
   legs `v2_spiral_d12_p012_L128_lvl5_t150_prof_r03600` and `…_lvl5_t100_freeze_r05700` (05_binary_spiral/p012_paper/).
 
-## `figures/` — the campaign figures, by group
+## `figures/` — the paper's figures
 
-One folder per group, the same names as `campaign/`.
-
-**Since 2026-09-10 every merger figure is drawn by one package**,
-`grteclyn_wrapper.visualisation.wormhole_merger`, in one house style: journal
-typography, at most three dark hues told apart by their dash pattern first,
-an ordinal ramp for ordered families (refinement levels, extraction radii),
-`cividis`/`RdBu_r` for anything two-dimensional, and symbols — not sentences —
-on the axes. Its README carries the palette and the rules. Every figure now
-ships a PDF beside its PNG.
-
-`pack_results.sh` runs the reductions (which write the generated notes and the
-small tables beside them) and then the figure modules that need no arguments.
-The rest are one command each, given below.
-
-Removed on 2026-09-10 along with their scripts: `throat_clock_comparison.png`
-(the origin-χ clock — a gauge-dependent monitor that could not be read as the
-throat quantity it looked like) and `scalar_vs_psi4_R14*.png`. The two
-live-snapshot figures of the head-on freeze arm (t = 38 and t = 54) went
-earlier the same day; the t = 100 figure supersedes both.
-
-| file | what it shows |
-| --- | --- |
-| `01_single_throat/single_throat_branches.{png,pdf}` | the level-3 / level-4 ladder of the lone throat: the same unstable mode at the same rate, opposite sign — collapse at level 3, inflation at level 4. Two panels: the throat radius, and its logarithmic deviation with each arm's fitted rate in the key. The third panel of shell profiles was dropped on 2026-09-10 (its own key covered the curves, and the shell scans are in the table in `BRANCHES.md`, which is where they can be read) (generated) |
-| `04_binary_headon/placement_curve.png` | the placement curve from the eighteen one-step probes (d = 6 → 48) and the V1 scout's mouths against it before contact. The reduction (`analysis/placement_curve.py`) writes `placement_curve.dat` and `placement_scout_residual.dat` beside the note; `plot_placement_curve` draws them (generated) |
-| `04_binary_headon/psi4_analysis_merge_headon_flip_d8_v1c_latefreeze_t100.{png,pdf}` | the six-panel wave analysis of the head-on programme, on V1c — the only head-on arm never restarted, so its spectrum carries no seam. The wave sits at f ≈ 0.03 and stays there: a bell, not a chirp. Panel (e)'s frequency band and wavelet width are chosen from the record itself — the band from the spectral peak, the width the widest that still leaves half the record outside the cone of influence — and the part the wavelet cannot reach is faded rather than hatched. Drawn to a fixed f = 1 with a fixed width, the panel was a decade and a half of empty page above the wave and almost entirely cone. `plot_psi4_analysis` |
-| `04_binary_headon/headon_freeze_psi4_20_R10_14_18_t100.png` | the head-on freeze arm's (2,0) mode at R = 10/14/18 to t = 100 (final, 2026-09-09): **three swings of the merged object, outgoing all the way** — at R = 10 peak +0.23 (t = 28.2), trough −0.18 (43.6), peak +0.11 (62.7), trough −0.06 (79.0), period ≈ 33 and ×0.6 per half-swing; R = 14 and 18 the same, each ~4 units later per 4 units of radius. The cross-correlation lag from R = 10 to 18 is positive in every window, so nothing comes back from the wall. The fill twin (dashed, 1.0/1.5) lies on V1c to 3e-4 of peak until each fill's imprint arrives (red dotted), then differs by 1–5 % of peak at R = 10 and 3–12 % at R = 14 — a drift later shown to be V1c's own, not the fill's; at R = 18 both runs grow a grid-scale wobble (period ≈ 1.5) from t ≈ 80. Amplitude still grows with R: R = 18 is not the wave zone. |
-| `04_binary_headon/headon_downstep_psi4_20_R10_14_18_t100.png` | the level-3 down-step (restarted from the level-5 t = 35 checkpoint with max_level 3) against the level-5 arm, the narrow-fill twin and V1c: Re r·ψ4 (2,0) at R = 10/14/18 to t = 100 (2026-09-10). The down-step and the level-5 arm lie on top of each other to 0.05 / 0.19 / 0.25 % of peak through t = 98.4, the fill twin inside 0.07 / 0.14 / 0.25 %; V1c, the only never-restarted arm, drifts by 6 / 14 / 41 %. Grey band: initial-data junk; black dotted: the restart at t = 35; red dotted: the earliest arrival of anything the restart changed. Made by `python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_psi4_modes --restart 35 …` from the every-step Weyl4 streams. |
-| `05_binary_spiral/psi4_analysis_freeze_wide_t080.{png,pdf}` | six-panel analysis of the (2,0) breathing mode, full history t = 0–80 stitched across the restart chain: waveform at both radii, retarded-time overlay, PSD, propagation speed (0.889 of coordinate light — see the speed check below), spectrogram, strain vs Advanced LIGO |
-| `05_binary_spiral/psi4_analysis_freeze_wide_t080_m2.{png,pdf}` | same six panels for the (2,2) whirl mode — the channel that carries the plunge burst |
-| `05_binary_spiral/psi4_analysis_freeze_narrow_t100.{png,pdf}` | the six panels for the narrow-fill drain arm (fill 1.3/1.8) to t = 97 — the seam twin of the wide-fill analysis; the two agree to five digits outside the fill |
-| `05_binary_spiral/gw_merger_full_history_0_97.png` | the stitched p = 0.12 waveform t = 0 → 97 (`campaign/05_binary_spiral/psi4_merger_stitched_0_97.dat`: r03000 to 50.5, fillwide80 to 79.5, fillwide100 to 97): no chirp and no ringdown anywhere in it (archive GPU_PLAN_2026-09-03 §B4) |
-| `05_binary_spiral/merger_ladder_psi4_R14.{png,pdf}` | **one panel**: the refinement ladder (levels 4–7) and both freeze arms at R = 14, on the (2,2) channel. Every ladder arm dies at t = 53–56, short of the collapse band at 58–66; only the freeze arms cross it. All six trace the same wave to the width of the line where they overlap, which is the result — so the ladder is drawn on top of the freeze arms and its dashes let them show through. Redrawn 2026-09-10: it was two panels, (2,2) over (2,0), and the freeze arms were a fat quarter-opacity burgundy stroke that printed mauve. `plot_ladder_psi4 --radius 14 --mode 22 --run "level N=…" --under "…freeze arm=…"` |
-| `05_binary_spiral/merger_constraints_t80.{png,pdf}` | Hamiltonian and momentum L2 for both completed t = 80 freeze arms, t = 0–80: the spikes before t = 34 are regrid transients; the smooth bump is the collapse; after the freeze engages at 53 both norms sit flat for 27 units |
-| `05_binary_spiral/wave_speed_check.png` | why 0.889 c is not sub-luminal junk: the metric's own local light speed along the extraction path predicts a 14→30 crossing of ~19.5; the wave took 18.0. Constraint/gauge modes travel at √2 × light and are excluded |
-| `05_binary_spiral/seam_ring_rescaling.png` | why the freeze-arm frames *look* like the signal vanishes: a growing Ψ₄ artefact confined to the freeze seam hijacks the per-frame colour scale; the radiation field is bit-identical to the unfrozen twin beyond r = 6 |
-| `05_binary_spiral/bbh_vs_wormhole_psi4.{png,pdf}` | same masses, same orbit, different object: wormhole vs BBH waveforms, envelopes (2.3× / 5.5×), PSD |
-| `06_binary_flyby/p045_flyby_separation.{png,pdf}` | the p = 0.45 arm's separation to t = 91: closest approach 3.95 at t = 40.05, then out again, with each throat's own monitor below. Redrawn 2026-09-10 as two stacked panels — the earlier version put separation and min χ on a shared frame with a second y-axis, where the crossing of the two curves read as an event it is not. `plot_separation --run merge_orbit_flip_d12_p045_t200` |
-| `06_binary_flyby/p045_flyby_chi_linear.png`, `p045_flyby_logchi.png`, `p045_flyby_phi.png`, `p045_flyby_lapse_t84.png`, `p045_flyby_weyl4mag_t60.png` | slices of χ, φ, the lapse and \|Ψ₄\| through the fly-by (2026-09-02, drawn as "the throats survive it"). **Read with item 5 above:** from t ≈ 45 the midpoint lapse collapses and the Hamiltonian norm doubles every 5 units, so the frames after t ≈ 50 (the t = 60 and t = 84 ones here) show a run whose constraints are 3–100× the initial data's |
-| `06_binary_flyby/gw_flyby_vs_merger_m0_chain.png`, `gw_flyby_vs_merger_m2.png`, `gw_merger_vs_flyby_full.png` | the p = 0.12 chain's (2,0) and (2,2) modes against the p = 0.45 fly-by's (2026-09-04): superposed over t = 0–25 (the initial-data junk, not the orbit); in the clean window the fly-by radiates ~1.7× harder than the merger; across the stitched 0–97 no chirp and no ringdown (archive GPU_PLAN_2026-09-03 §B4) |
-| `07_bbh_control/bbh_t150_ringdown.{png,pdf}` | the BBH control's full (2,2) ringdown at R = 30 with the QNM fit (period 29.7, τ 27.1) and the Kerr known-answer comparison |
-| `07_bbh_control/psi4_analysis_bbh_control.{png,pdf}`, `_m2.{png,pdf}` | the six-panel analysis of the vacuum control's (2,0) and (2,2) modes at R = 14/30 (2026-09-03, the t = 100 run); the ringdown figure above supersedes them for the late time |
+`figures/<group>/` holds the article's figures and nothing else (the user's rule,
+2026-09-26): every PNG/PDF pair there is included by `research/merger/article/research.tex`,
+and [`figures/FIGURES.md`](figures/FIGURES.md) maps each file to its figure number, label and
+the wrapper module that redraws it (one command each, no arguments). Every figure is drawn by
+`grteclyn_wrapper.visualisation.wormhole_merger` in one house style; when a figure leaves the
+paper its files are deleted and its script stays in the wrapper.
 
 ## Layout
 
@@ -1502,48 +1502,57 @@ the sections of the paper, and inside a group one directory per run. A run that
 is still on a card sits at the top of `campaign/` until close-out files it.
 
 ```
-campaign/
+campaign/                         (as of 2026-10-06; the superposed-era subfolders gauge/,
+                                  grid/, placement/, p012/, p012_ladder/, p012_freeze/ and
+                                  their runs are in the untracked 00_archive/)
   01_single_throat/               one throat, filed by question:
-    gauge/<run>/, grid/<run>/       the Stage-1 ladder (11 arms, old binary): lapse and
-                                    dissipation, fine-cell placement and unigrid controls
     hold/<run>/                     the production hold single_hold_t100 and its one-knob
                                     twins (resolution, chi floor, time step, the L = 128
                                     box), and the half-mass lone throat single_m05_t040
-    seed/<run>/                     the declared-kick scan (+-0.1 / 0.01 / 0.001), the
-                                    +-0.01 pair at level 4, the +0.01 arm with a quadrupole
+    seed/<run>/                     the declared-kick scan, the +-0.01 pair at level 4, the
+                                    quadrupolar kicks, the scalar-stream re-runs, the L = 512
+                                    octant inflation arm
     INSTABILITY.md                  the isolated-throat systematics, generated
     QUEUE2E_GATES.md                the five gates of the wave from one throat, generated
     BRANCHES.md                     the level-3 / level-4 ladder read (two fates), generated
     CLOCK_COMPARISON.md             the throat clocks across arms, generated
     NOTES.md                        the Stage-1 working notes, copied from the run tree
-  02_moving_throat/s20_boost_p02/ the boosted throat that crosses the grid (Stage 2.0)
-    csm/<run>/                      the mode-3 momentum probes (2026-09-29): one throat at p = 0, 0.12, 0.45
-  03_two_throats/<run>/           two throats released from rest: the four Stage-2.5/2.6
-                                  controls (push, rest, width, flip) and the five a-point /
-                                  separation rungs of 2026-09-04; the two ladder tables
-                                  scalar_charge_apoints_*.txt, separation_ladder_*.txt
-  04_binary_headon/<run>/         the head-on programme: the d = 12 old-binary run, the
-                                  low-mass d = 6 pair, the V1 scout and its five arms
-    placement/place_d*_step1/       the eighteen one-step placement probes
-    PLACEMENT_CURVE.md              the placement curve and the scout against it, generated
-  05_binary_spiral/<run>/         the p = 0.12 chain and its one-knob probes, the twins
-                                  (plain, Helfer x4, damping, gauge, floors), the capture
-                                  scan p = 0.15 / 0.20 / 0.25 with their level-5 and no-fill
-                                  arms, the two NaN autopsies
-    p012_ladder/<arm>/             every rung of the refinement ladder, levels 3-7
-    p012_freeze/<arm>/             the interior-freeze programme, the headline waveform
-                                    programme (fill80 / fillwide80 / fill100 / fillwide100,
-                                    the Weyl-extraction tests) with its LAUNCHES.md
+  02_moving_throat/               the boosted throat:
+    contraction_t0/<run>/           the 1/γ Lorentz contraction at t = 0, p = 0 -> 0.45
+    exact_boost/<run>/              the moving exact-boost throat (the collapse twins, levels
+                                    3/4) and its t = 0 solve check on the production box
+    csm/<run>/                      the Bowen-York momentum probes (2026-09-29) that ruled
+                                    that route out: one throat at p = 0, 0.12, 0.45
+    boost_contraction_t0.tsv        the measured contraction against 1/γ, reduced
+  03_two_throats/
+    csm/<run>/                      the matched rest pairs: width rungs a = 1/1.5/2/3,
+                                    separation rungs d = 12/14/16/18, the flip control
+    matched_rest_displacement.dat   the width/separation ladder, reduced
+    sign_rule_displacement.dat      the sign rule (pull/push), reduced
+  04_binary_headon/
+    csm/<run>/                      the mode-3 head-on legs to t = 100
+    placement_csm/<run>/            the eighteen one-step placement probes (d = 6 -> 75)
+    first_law/, mots/               the first-law window and the MOTS replay legs
+    merge_headon_flip_d8_cs_lvl3_t030/  CS-1, the in-code constraint-solve scout
+  05_binary_spiral/
+    merger_d6/<run>/                the d = 6 merger chain (p = 0.10 tangential) and its
+                                    level / sigma / chi-floor / settle legs
+    csm/, lbf/<run>/                the d = 12 arms on solved data (tangential and inward)
+    verify_p012/, scout_merger/     solve verifications and the merger scout
     horizon/                        the offline Theta = 0 scans: the naive-orientation
                                     "dissolution" record (retracted) and the oriented
                                     rescan that overturned it (ORIENTED_RESCAN_2026-09-08.md)
-    psi4_merger_stitched_0_97.dat   the stitched p = 0.12 waveform, t = 0 -> 97
-  06_binary_flyby/<run>/          p = 0.35 and 0.45: the fly-bys (and p045's Helfer twin)
-  07_bbh_control/<run>/           the vacuum binary-black-hole control, t = 100 and t = 150
-  08_convergence/<run>/           the convergence study for the referee (2026-09-26/27): each arm is its
-                                  partner's params with one knob changed (max_level, dt, the wave
-                                  zone's level, or the dissipation); no movies, no frames kept (the
-                                  user's word) -- except NOISE-1 (σ), which kept its frames
+  06_binary_flyby/<run>/          the fly-by and E_GW scan: p = 0.25 (level 5), 0.45 (t = 100,
+                                  the no-damp twin), 0.60 (plunge series + extensions), 0.90;
+                                  verify_p025/ holds the t = 0 and t = 20 solve checks
+  07_bbh_control/<run>/           the vacuum binary-black-hole controls: same d and p, no
+                                  scalar, no sponge (d = 12 p = 0.12/0.45, d = 6, head-on)
+  08_convergence/<run>/           the convergence study for the referee: each arm is its
+                                  partner's params with one knob changed (max_level from 0,
+                                  the wave zone's level, the dissipation); no movies, no
+                                  frames kept (the user's word)
+  00_archive/                     UNTRACKED: the superseded superposed / Bowen-York campaign
+                                  (pack extracts, moved 2026-10-02 / 2026-10-06)
   <group>/NOTES.md                the group's working notes, copied from the run tree
 
 campaign/<group>/<run>/           what every run directory holds

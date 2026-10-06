@@ -12,7 +12,7 @@ leaves the paper, delete its PNG/PDF here and its row below; its script stays in
 
 Run each command from the repository root with the wrapper's venv; every one
 takes no arguments (`--pack-root` defaults to `results/merger`) and writes the
-PNG + PDF pair named in the table. Numbers are the article's as of 2026-09-26.
+PNG + PDF pair named in the table. Numbers are the article's as of 2026-10-06.
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.<module>
@@ -26,17 +26,22 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 3 bottom | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
 | 4 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
 | 5 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
-| 6 | `fig:spiral_collapse` | `05_binary_spiral/p012_collapse_diagnostics` | `plot_spiral_collapse` |
+| 6 | `fig:spiral_collapse` | `05_binary_spiral/d6_merger_chain` | `plot_merger_chain` |
 | 7 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
 | 8 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
 | 9 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
 | 10 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 11 (App. A) top | `fig:spiral_ladder` | `05_binary_spiral/spiral_refinement_ladder` | `plot_spiral_ladder` |
-| 11 (App. A) bottom | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
-| 12 (App. B) top | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
-| 12 (App. B) bottom | `fig:mouth_growth` | `05_binary_spiral/mouth_growth` | `plot_mouth_growth` |
+| 11 (App. A) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
+| 12 (App. B) | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
 | 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+
+Left the paper with the superposed campaign (2026-10-05) and deleted here 2026-10-06
+(scripts kept in the wrapper): `05_binary_spiral/spiral_refinement_ladder`
+(`plot_spiral_ladder`), `05_binary_spiral/mouth_growth` (`plot_mouth_growth`),
+`05_binary_spiral/p012_collapse_diagnostics` (`plot_spiral_collapse`),
+`03_two_throats/sign_rule` (`plot_sign_rule`, a standalone render of 2026-09-30, never
+included; the paper draws the sign rule inside `pair_interaction`).
 
 2026-09-30 (night): `pair_interaction` (b)'s "gauge settling" tag
 rotated up the grey band ("text doesnt fit here" -- the two-line

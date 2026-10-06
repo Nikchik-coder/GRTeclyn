@@ -10,6 +10,19 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
 |---|---|---|---|---|---|---|
 | none (DAMP-off done 09:12 UTC 10-06) | — | — | — | — | — | — |
 
+- **PACK CLEANED FOR THE REVIEWER (10-06, the user's ask): the pack = the paper.** The 53 still-packed
+  SUPERSEDED-2026-10-05 runs (gauge/grid shakedown, placement probes, Helfer twins, p012 gauge arms, the
+  superposed refinement ladder) plus 3 uncited early arms (bridge_grtresna, the two eps t250 seeds) left
+  `results/merger/campaign/` to the untracked `00_archive/superseded_2026-10-06/` (raw dirs likewise, under
+  runs/.../00_archive; nothing deleted, frames and movies untouched). Superseded aggregates (placement curve,
+  refinement_ladder/wall_clocks/stitched-psi4 dat, 2 old o3b JSONs) went with them. Figures: the 4 pairs not in
+  the tex deleted per the figures/ rule (scripts stay); FIGURES.md re-mapped (Fig. 6 = d6_merger_chain).
+  Ledger: 7 Helfer/eta provenance rows frozen manual, clmResArmsLevelHi re-pointed to the d6 lvl7 rung,
+  numbers.tex regenerated (also catching up the 10-06 FF values 0.80/0.63–0.80/0.995). pack_paths.iter_runs
+  now skips 00_archive, which cleared the 10 duplicate-name LookupErrors: claims check 886 rows, 0 problems.
+  Pack now 109 run dirs: the 96 Table-I runs + 13 named verification/convergence arms. README.md rewritten
+  (data note, "Where everything is", current Layout tree). Identity gate clean.
+
 - **P060-EXT STOPPED t = 109.4 (05:04 UTC 10-06; the user: "its dead") — NO common MOTS at level 5 either, t =
   61–109:** the spectral flow stalls at rms θ_out 1.6–3e-2 on all 49 plotfiles, no trend to 0. The level-1 cube
   fills with grid-scale K noise (the user's eye at t = 109): L2 Ham > 1e-3 from 83.8 (the lvl4 chi leg: 83.7), >

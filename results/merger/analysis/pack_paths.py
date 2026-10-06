@@ -31,6 +31,10 @@ def iter_runs(root: pathlib.Path):
     for d in sorted(camp.iterdir()):
         if not d.is_dir():
             continue
+        # campaign/00_archive holds the untracked pack extracts of superseded
+        # runs (moved out of the pack, not results): never a resolvable run.
+        if d.name == "00_archive":
+            continue
         if _is_run(d):
             yield "", d
             continue
