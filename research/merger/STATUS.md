@@ -1,22 +1,31 @@
-# Status — 2026-10-06 ~04:55 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
+# Status — 2026-10-06 ~05:10 UTC (last compacted 2026-10-01; the full pre-compaction page is in GPU_PLAN.md ["2026-09-30 (~07 UTC) — STATUS.md compacted"])
 
 Current state only; the evidence and history are in [`GPU_PLAN.md`](GPU_PLAN.md)
 (headings quoted in brackets), the map in [`../../MAP.md`](../../MAP.md).
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-06 04:50 UTC) — the first node: P060-EXT on card 0, DAMP-off on card 1; the second node idle
+## LIVE NOW (2026-10-06 05:05 UTC) — the first node: T0-1THROAT on card 0, DAMP-off on card 1; the second node idle
 
-| run | node / card | t at 04:50 UTC | stop | speed | ETA | checkpoints |
+| run | node / card | t at 05:05 UTC | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| P060-EXT `merge_orbit_flip_d12_p060_L128_lvl5from60_chi1e4_t115_lbf_csm_r06000` | first / 0 | 108.53 | 115 | 3.9 u/h since 21:20 (3.8 before, throttled 19:48–20:16) | ~1.7 h → ~06:30 UTC 10-06 | every 5, keep 3 (the user) |
-| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 44.67 | 70 | 4.4 u/h since 21:20 (P045-T100 averaged 4.8) | ~5.8 h → ~10:35 UTC 10-06 (slower near the pass) | none (the user) |
+| T0-1THROAT `t0_single_boost_p045_L128_lvl4_lbf_csm` | first / 0 | 0 (preflight) | 0.5 | — (the t = 0 mode-3 solve, ~20–40 min) | ~0.5–1 h → ~05:35–06:05 UTC 10-06 | none (as P045-T100) |
+| DAMP-off `merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm` | first / 1 | 44.9 | 70 | 4.4 u/h since 21:20 (P045-T100 averaged 4.8) | ~5.8 h → ~10:35 UTC 10-06 (slower near the pass) | none (the user) |
 
-- **P060-EXT** (the user's go ~15:30 UTC 10-05; launched 15:34): the p = 0.60 plunge's lvl5 check continued from its
-  `Chk06000` (t = 60; the NFS copy re-staged to scratch) to t = 115 — does the remnant trap late (the lvl4
-  extrapolation puts a converged MOTS at t ≈ 110–115)? The parent's params with ONLY the stop (60 → 115) and the
-  names changed; binary `main3d_boostpair_91ed17cd`. Preflight PASS (full; paths one spelling). Started by effect:
-  restart at t = 60.00, level 5 stepping, card 0 at 55 GB, the consumer up with the suffixed horizon-track.
-  Since: frames and a MOTS row every unit (t = 61–67: no MOTS yet), first checkpoint `Chk06500` written 16:52 UTC.
+- **P060-EXT STOPPED t = 109.4 (05:04 UTC 10-06; the user: "its dead") — NO common MOTS at level 5 either, t =
+  61–109:** the spectral flow stalls at rms θ_out 1.6–3e-2 on all 49 plotfiles, no trend to 0. The level-1 cube
+  fills with grid-scale K noise (the user's eye at t = 109): L2 Ham > 1e-3 from 83.8 (the lvl4 chi leg: 83.7), >
+  1e-2 from 100.9, 3.1e-2 at the stop — level 5 does not move it; trust t ≤ 80 (trust_windows.tsv). The core itself
+  stays calm (max|K| ≈ 0.52, min lapse 0.034–0.042; the lapse minimum splits off-centre to y ≈ ±0.44 at t ≈ 105,
+  past the trust window). `dump_and_stop` → `Chk10940` (t = 109.4) on scratch with Chk09500/10000/10500; close-out
+  pending (no movies: stopped, past trust).
+- **T0-1THROAT `t0_single_boost_p045_L128_lvl4_lbf_csm` LIVE on card 0 since 05:05 UTC** (the user's go 10-06, "do
+  both"): ONE exact-boost throat, p = 0.45, on P045-T100's box (L = 128, N = 256, level 4) with its mode-3 solve, to
+  t = 0.5; P045-T100's params with ONLY throat B off, throat A at the centre, the stop, the names and `Weyl4
+  constraints` changed; binary `main3d_boostpair_91ed17cd`; no checkpoints. Asks: does the solve leave an exact
+  moving throat alone (w ≈ 0, σ = 1, c = c_iso)? The boosted pairs' face mass omits each throat's (γ−1)σm
+  (`results/merger/analysis/boosted_adm_mass.py`, exact by the closed-form surface integral), and even corrected the
+  pairs weigh ~flat in p (2.23 / 2.25 / 2.23 at p = 0.25 / 0.45 / 0.60) — if w eats the motion energy on one exact
+  throat too, that is a solve defect in every boosted run's data.
 - **DAMP-off** (the user's go ~17:25 UTC 10-05, "Required" below; launched 17:35): P045-T100's params with ONLY
   `core_matter_damping` 1 → 0, the stop (100 → 70; P045-T100's trust 67.6) and the names changed; binary
   `main3d_boostpair_91ed17cd`; NO checkpoints (the user: "None, as P045-T100"; the inherited lines are off).
