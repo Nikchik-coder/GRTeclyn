@@ -1,21 +1,35 @@
-# Status — 2026-10-06 ~12:50 UTC (last compacted 2026-10-01)
+# Status — 2026-10-06 ~13:20 UTC (last compacted 2026-10-01)
 
 Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary GPU_PLAN.md was deleted 2026-10-06
 (the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-06 12:50 UTC) — MASS-t0 on the first node
+## LIVE NOW (2026-10-06 13:30 UTC) — the MASS-t0 twins, one per card (the user's go: "use bouth gpus per required run")
 
 | run | node / card | t | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| MASS-t0 `t0_merge_orbit_flip_d12_p045_L128_lvl4_lbf_csm` | first / 0 | solving | 0.5 | — | ~0.7 h → ~13:30 UTC 10-06 | none (the row's spec) |
+| MASS-t0-p025 `t0mass_merge_orbit_flip_d12_p025_L128_lvl5_lbf_csm` | first / 0 | solving | 0.5 | — | ~1 h → ~14:30 UTC 10-06 (lvl5) | none (the spec) |
+| MASS-t0-p060 `t0mass_merge_orbit_flip_d12_p060_L128_lvl4_lbf_csm` | first / 1 | solving | 0.5 | — | ~0.5 h → ~14:00 UTC 10-06 | none (the spec) |
 
-- **MASS-t0 LAUNCHED 12:45 UTC 10-06 (the user's go: "launch the single throat required run"):** P045-T100's params
-  rebuilt to t = 0.5 — stop 100 → 0.5, the names, `derive_plot_vars` + constraints with `G_Newton = 1` (the
-  T0-1THROAT recipe); everything else byte-identical (diffed). Binary main3d_boostpair_91ed17cd, `--consume-args` =
-  T0-1THROAT's frame set WITHOUT `--watch`. Preflight PASS (full set 14/14 from t = 0; no-checkpoint warning
-  expected); consumer up. Analysis after: the full ADM surface integral of the t = 0 plotfile (level 0, R = 20–56,
-  a + b/R + c/R²) against M_ADM_boost 2.2536 and 2γm′ + E_b ≈ 2.47; then p = 0.25/0.60 if it disagrees.
+- **The twins LAUNCHED 13:27 UTC 10-06:** each pair's own packed params (p025's lvl5 t100 leg, p060's lvl4 t040
+  leg) with only stop → 0.5, the names (`t0mass_`, since `t0_..._p025_lvl5_lbf_csm` is the 09-29 verification),
+  derive_plot_vars + constraints with G_Newton = 1, and checkpoints OFF (`checkpoint_keep` dropped too — the
+  preflight refused the first attempt over keep-3 with output off; nothing had started). Same binary and consumer
+  args as the p045 twin. Both preflights PASS. Analysis on each t = 0 plotfile: the T0-1THROAT surface integral.
+
+- **MASS-t0 `t0_merge_orbit_flip_d12_p045_L128_lvl4_lbf_csm` DONE t = 0.5 (card 0, 12:45–13:11 UTC 10-06; the
+  user's go "launch the single throat required run"): THE PAIR'S t = 0 ADM ENERGY IS 2.317 — the prescription
+  undercounts, the point-particle sum overcounts.** P045-T100's params rebuilt to t = 0.5 (only stop, names,
+  `derive_plot_vars` + constraints with G_Newton = 1; diffed), binary main3d_boostpair_91ed17cd, T0-1THROAT's
+  consumer args without `--watch` (the drain exited by itself this time). The solve reproduces P045-T100's exactly
+  (face M_ADM 2.077626, far sides 1.2e-6 off isolated, 23 passes); no NaN, Ham norm flat (1.58e-3). The t = 0
+  plotfile's full ADM surface integral (level 0, R = 20–56; the T0-1THROAT script, whose quadratic fit reads the
+  single throat's γm to 0.02 %) gives **2.317** (a + b/R + c/R²; linear-in-1/R 2.275): **2.8 % above M_ADM_boost
+  2.2536, 6 % below 2γm′ + E_b ≈ 2.47**, far above the face 2.0776. So every quoted E/M at p = 0.45 is ~3 % high
+  on the measured mass, and the flat-in-p puzzle is PARTLY the prescription (the data do carry more than
+  M_ADM_boost) — whether the measured masses still come out flat in p needs the p = 0.25 / 0.60 twins (the row's
+  "if it disagrees" clause — triggered; ~40 GPU-min each, NEED THE GO). Filed `02_moving_throat/exact_boost/`,
+  no movies; the E(R) table is `small_data/adm_surface_integral.log` in the run dir.
 
 - **PAPER VALIDATED AND FIXED (10-06, the user's ask).** Five read-only agents audited every number, table, figure
   and method statement against the pack and the code (`article/claims/VALIDATION_2026-10-06.md`); five fix agents
@@ -131,7 +145,7 @@ after the shortening pass.)
 
 | id | what | why the paper needs it | how | cost |
 |---|---|---|---|---|
-| MASS-t0 | REQUIRED — LAUNCHED 12:45 UTC 10-06 on the first node's card 0 (LIVE NOW, top) | the moving pairs' mass comes out nearly flat in p (2.233 / 2.254 / 2.229 at p = 0.25 / 0.45 / 0.60) where 2γm′ + E_b(d = 12) expects 2.33 / 2.46 / 2.60, so the prescription (boosted background + face monopole of w) or the boosted superposition misses energy; every quoted E/M of a moving pair is per this mass (4–14 % low → E/M 4–14 % high) | P045-T100's params rebuilt to t = 0.5 (one plotfile at t = 0, no checkpoints): the full ADM surface integral of the t = 0 plotfile, level 0, R = 20–56, fit a + b/R + c/R² (the T0-1THROAT recipe, which read γm on one throat); then p = 0.25 / 0.60 if it disagrees | ~40 GPU-min per p |
+| MASS-t0 | DONE 13:11 UTC 10-06 (LIVE NOW, top): the p = 0.45 pair's t = 0 ADM energy is 2.317 — between M_ADM_boost 2.2536 (+2.8 %) and 2γm′ + E_b 2.47 (−6 %); the p = 0.25 / 0.60 twins need the go | the moving pairs' mass comes out nearly flat in p (2.233 / 2.254 / 2.229 at p = 0.25 / 0.45 / 0.60) where 2γm′ + E_b(d = 12) expects 2.33 / 2.46 / 2.60, so the prescription (boosted background + face monopole of w) or the boosted superposition misses energy; every quoted E/M of a moving pair is per this mass (4–14 % low → E/M 4–14 % high) | P045-T100's params rebuilt to t = 0.5 (one plotfile at t = 0, no checkpoints): the full ADM surface integral of the t = 0 plotfile, level 0, R = 20–56, fit a + b/R + c/R² (the T0-1THROAT recipe, which read γm on one throat); then p = 0.25 / 0.60 if it disagrees | ~40 GPU-min per p |
 | O3B-NEW | DONE 21:17 UTC 10-05 (LIVE NOW, top) | Sec. IX now quotes the search on the current channels plus the plunge (154 templates, 2.25 h, no candidate) | — | CPU hours |
 | DAMP-off | DONE 09:12 UTC 10-06 (LIVE NOW, top): the p = 0.45 fly-by with `core_matter_damping = 0` | the orbital runs damp the scalar where the lapse collapses; on both scatterers that is the grid centre between the mouths from t ≈ 34–36, during the dipole arch the scalar channel quotes (\|E_φ\| = 0.56 E_GW). The twin shows whether the arch and E_GW move. The 09-0x damping-off arms (merge_twin_p012_nodamp_t060: fields equal to 3 decimals at t = 32, wall 51.53 vs 52.06; the damped/undamped ladder rungs) tested the superposed p = 0.12 merger's wall, behind a horizon — never a scatterer, where the damping acts outside any horizon | P045-T100's params with only the damping off and the name; level 4, stop 70 (trust 67.6); no checkpoints (the user, at launch) | ~15 GPU-h (P045-T100 averaged 4.8 u/h) |
 | CONV-lbf-w | the wave-zone test on exact-boost data | CONV-csm-w resolved the wave zone (0.01–0.15 % of peak) on the Bowen–York `_csm` arm, which the paper no longer cites | the CONV-csm-w recipe (`extraction_levels 0 1 0 0`, the R = 28 ball, 77.6/80 GB) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |

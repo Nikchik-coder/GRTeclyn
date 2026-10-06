@@ -117,34 +117,12 @@ the mode is visible. A numerical departure changes its rate instead.
 | arm | dx (finest) | varies | turnover t | peak height | ran to |
 |---|---|---|---|---|---|
 | `single_hold_t100` | 0.0625 | production arm, t = 100 | 26.0 | +0.0181% | 99.0 |
-| `s16ml3_lapse5_sg01_fg` | 0.0625 | same resolution, other tagger | 26.5 | +0.0181% | 39.5 |
-| `s15_lapse5_sg01_fg` | 0.125 | half resolution | 20.5 | +0.1163% | 23.5 |
-| `s15_lapse5_sg00_fg` | 0.125 | half resolution, no dissipation | 20.5 | +0.0637% | 23.0 |
-| `s15_lapse6_sg00_fg` | 0.125 | half resolution, origin collar | none | monotone from t = 0 | 26.0 |
 
 Turnover times are resolved only to each arm's output cadence (1.0 unit for the
 production arm, 0.5 for the rest), so the two dx = 0.0625 rows differ by sampling
 and not by evolution. The collar arm carries a finite perturbation at t = 0 and
 never swells, so it has no knee to compare and is excluded from the shift below.
 
-Halving dx delays the turnover by **+5.5 units** (20.5 -> 26.0)
-and shrinks the peak by **3.5x**, i.e. the seed converges at order
-1.8. Delay and seed are consistent with a fixed-rate
-mode if tau = dt/ln(ratio) = 4.4, against the measured 5.9 above.
-
-**This is suggestive, not decisive.** Both coarse arms die within ~3 units of
-their own turnover, so neither ever shows a growth *rate* to compare against.
-Two resolutions with one rate between them cannot separate `delayed at fixed
-rate` from `slower at coarse dx`. The test that settles it is stated below.
-
-## 5. The same-resolution arm is not a second opinion
-
-`s16ml3_lapse5_sg01_fg` differs from the production arm only in the tagging scheme, and
-agrees with it bit for bit -- max |dR| = 0.0e+00 over every shared output
-time, and the constraint
-norms are bit-identical. For a single centred throat the two taggers build the
-same grids, so this is one evolution computed twice. It is a determinism check
-and **must not be reported as independent corroboration**.
 
 ## 6. What ends the run, and what does not
 
