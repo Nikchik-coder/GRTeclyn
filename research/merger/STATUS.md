@@ -10,6 +10,16 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
 |---|---|---|---|---|---|---|
 | none (DAMP-off done 09:12 UTC 10-06) | — | — | — | — | — | — |
 
+- **PAPER VALIDATED AND FIXED (10-06, the user's ask).** Five read-only agents audited every number, table, figure
+  and method statement against the pack and the code (`article/claims/VALIDATION_2026-10-06.md`); five fix agents
+  then corrected them, concisely (body 15 299 → 15 212 words). Main changes: small-amplitude τ = 5.12 / 5.23 matches
+  τ_lin at both levels (the "approaches with resolution" claim withdrawn); quotes cut at trust windows (pure-quad
+  horizon 2.50 / 1.25 at t = 60, fly-by E_GW 8.0e-2 at t−R ≤ 67.6, scatterer separations at their windows);
+  head-on horizon regrows ≤ 0.34 % (not monotone), GW share 6.4 %, E_φ −0.059; d = 6 remnant still falling at
+  t = 100; p = 0.12 reaches contact (not a scatter); energies over common retarded windows; LISA SNRs on the
+  stated (conservative) method 35–230; P 75–93 (matched δ); abstract: "first three-dimensional", no citations.
+  GPU-hours rechecked: 476 h (speed × span); manifest wall clock on the 63 stamped runs reads 4 % more.
+  Claims check 905 rows, 651 recomputed, 0 problems; both engines build, 26 pages.
 - **PACK CLEANED FOR THE REVIEWER (10-06, the user's ask): the pack = the paper.** The 53 still-packed
   SUPERSEDED-2026-10-05 runs (gauge/grid shakedown, placement probes, Helfer twins, p012 gauge arms, the
   superposed refinement ladder) plus 3 uncited early arms (bridge_grtresna, the two eps t250 seeds) left
@@ -144,8 +154,9 @@ Referee ideas checked on the packed data (2026-10-05, late; the scalar ringdown 
 
 `single_boost_p045_lbf_t050` (one exact Lorentz-boosted drainhole, momentum model 1, p = 0.45, v = 0.41, L = 64,
 level 3, the per-throat slicing freeze; packed `campaign/02_moving_throat/exact_boost/`): the throat holds while
-moving (R_min at most +2.0 %, t = 29), falls 1 % below its start at t = 36.8 (the resting level-3 throat: t = 44),
-collapses on the resting throat's own mode (τ = 5.5–5.7 against 5.88; same branch — level 3 collapses) and dies at
+moving (R_min at most +1.2 %, t = 25; the old +2.0 % at t = 29 was a one-sample scan glitch), falls 1 % below its
+start at t = 36.8 (the resting level-3 throat: t = 44), collapses on the resting throat's own mode (free-offset
+τ = 5.0–6.1 against the resting small-amplitude 5.12; same branch — level 3 collapses) and dies at
 t = 44.67 (NaN in h11, χ at the pit on its floor: numerical, inside the collapse). Gauge and boundary ruled out.
 - **In the paper (2026-09-30):** Sec. III "The throat in motion" + Fig. 2(d); the boosted setup is
   Sec. II "Throats with momentum" + Fig. 1 (`boost_contraction`). Every number is a ledger row (`clmBoost*`).
@@ -789,8 +800,9 @@ archive. Checkpoints: asked per run at launch, never on by default.
 
 ## Verdicts (the paper's wording; every binary verdict is on superposed data and stands only until its mode-3 rerun)
 
-- **Single throat**: unstable fixed point, one exponential mode within 2.5 % (level 4) of the matched
-  González–Guzmán–Sarbach rate; truncation noise picks the branch. Collapse horizon shrinks 40 %; the 9–11 %
+- **Single throat**: unstable fixed point, one exponential mode; at small amplitude (< 4 % deviation) its e-fold
+  matches the linear rate at BOTH levels (τ = 5.12 / 5.23 against 5.13, ≤ 1.9 %; 10-06 — the old "approaches it
+  with resolution" was a fit-window artifact, withdrawn); truncation noise picks the branch. Collapse horizon shrinks 40 %; the 9–11 %
   "regrowth" is numerical. Inflation (F4, quotable to t = 218): keeps growing, anti-trapped, Shinkai–Hayward
   rate in proper time; the late slowdown is the slicing. **New (2026-09-30): a moving throat collapses on the
   resting throat's mode (the RESULT above; in the paper), at levels 3 and 4 (the twin, 10-01).** (§III–IV)
@@ -815,7 +827,8 @@ archive. Checkpoints: asked per run at launch, never on by default.
 - **Fly-by / capture**: p = 0.45 scatters; p ≤ 0.25 merges, p ≥ 0.35 does not — **withdrawn. The boosted reruns
   (10-02–10-05): p = 0.25 and 0.45 scatter (no wall, no MOTS), p = 0.60 and 0.90 plunge; the boundary sits in
   (0.45, 0.60), and E_GW(p) turns over there (Sec. VIII).** (§VII.A)
-- **Waves**: every channel radiates; the fly-by is loudest; the collapsing throat's wave is linear in ε₂; the
+- **Waves**: every channel radiates; of the measured energies the p = 0.45 fly-by's is the largest (the plunge's a
+  floor), at its trust gate 8.0e-2 (10-06); the collapsing throat's wave is linear in ε₂; the
   scalar channel is comparable and negative-energy; the horizon switches it off. (§VIII)
 - **LIGO**: no candidate in 2.26 h of O3b, none expected. (§IX)
 - **Astrophysics**: LISA is the headline (burst SNR 61–500 at 10⁵–10⁶ M⊙, z = 20), LIGO the null channel; the

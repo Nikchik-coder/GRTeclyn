@@ -1,7 +1,7 @@
 """Extractors for the ledger's 'detector' area (ledger_detector.tsv).
 
-What they cover in research.tex: Table I (tab:matrix) -- its run counts and the
-totals 144 / 12 / 132, recounted from claims/table1_groups.tsv against the pack
+What they cover in research.tex: Table I (tab:matrix) -- its run counts and
+totals, recounted from claims/table1_groups.tsv against the pack
 (an unclassified packed run is an ERROR), and its knob column read back from
 the group's evolution_params.txt; Sec. "Pattern matching against detector
 data" (strain pedestal, IMRPhenomD validation, fitting factors, the O3b
@@ -303,8 +303,7 @@ def detector_gpu_hours(which: str | None = None, runs: list[str] | None = None,
     """GPU-hours from the packed logs: a Table I set ('physics', 'shakedown',
     'all') or an explicit list of packed run names.  restart_aware (default)
     dates a restarted leg that has no packed stream from its checkpoint; False
-    is the tracked gpu_hours.py arithmetic (t = 0 fallback), the one the
-    article's 810 was computed with.  packed_only skips the counted runs whose
+    is the tracked gpu_hours.py arithmetic (t = 0 fallback).  packed_only skips the counted runs whose
     files left the pack (the ARCHIVED superposed binaries, 2026-10-02): their
     frozen total is the manual row clmDetGpuHoursArchived."""
     if (which is None) == (runs is None):
@@ -718,20 +717,24 @@ ISO_TAU_RUNS = {"iso_lo": "single_hold_ml4_t100", "iso_hi": "single_hold_t100"}
 
 
 def _clock(tau) -> float:
+    """iso_lo / iso_hi: the smaller / larger small-amplitude e-fold (single_efold)
+    of the two resolutions, the tau range Sec. X.A quotes."""
     if tau in ISO_TAU_RUNS:
-        return float(EXTRACTORS["single_plateau"](run=ISO_TAU_RUNS[tau]))
+        taus = [float(EXTRACTORS["single_efold"](run=r)) for r in ISO_TAU_RUNS.values()]
+        return min(taus) if tau == "iso_lo" else max(taus)
     return _tau(tau)
 
 
 @extractor
-def detector_pull_period(delta="max", d: float = 12.0, m: float = 1.0) -> float:
+def detector_pull_period(delta="max", d: float = 12.0, m: float = 1.0,
+                         source: str = "matched") -> float:
     """Newtonian circular period of two throats of mass m at separation d under the
     combined pull of Eq. (force), F = (1 + Q) m^2 / (d + delta)^2 (Q = single_drainhole Q):
     omega^2 = 2 (1 + Q) m / [d (d + delta)^2].  delta: 0 (the pure inverse square, six
     times gravity), 'min'/'max' (the offset fitted on the force-law ladder,
-    single_offset_delta), or a number."""
+    single_offset_delta on the paper's matched ladder), or a number."""
     if isinstance(delta, str):
-        delta = EXTRACTORS["single_offset_delta"](kind=delta)
+        delta = EXTRACTORS["single_offset_delta"](kind=delta, source=source)
     q = float(EXTRACTORS["single_drainhole"](quantity="Q"))
     omega2 = 2.0 * (1.0 + q) * m / (d * (d + float(delta)) ** 2)
     return 2.0 * math.pi / math.sqrt(omega2)
@@ -845,17 +848,18 @@ def detector_dm_fraction(n: float, m: float, log10: bool = False) -> float:
     return math.log10(f) if log10 else f
 
 
-def _fM(fM) -> float:
+def _fM(fM, arms="channels") -> float:
     if fM in ("min", "max"):
-        return detector_fpk_range(stat=fM)
+        return detector_fpk_range(stat=fM, arms=arms)
     return float(fM)
 
 
 @extractor
-def detector_f_obs(m: float, fM="min", z: float = 20.0, unit: str = "mHz") -> float:
+def detector_f_obs(m: float, fM="min", z: float = 20.0, unit: str = "mHz",
+                   arms="channels") -> float:
     """Observed frequency (fM)/[M(1+z)] of a conversion of mass m (Msun); fM
-    'min'/'max' = the measured drainhole band peaks."""
-    f = _fM(fM) / (m * _hs().MSUN_S * (1.0 + z))
+    'min'/'max' = the measured band peaks over `arms` (detector_fpk_range)."""
+    f = _fM(fM, arms) / (m * _hs().MSUN_S * (1.0 + z))
     return f * {"Hz": 1.0, "mHz": 1e3, "uHz": 1e6}[unit]
 
 
@@ -870,6 +874,25 @@ def detector_omega_log10(n: float, m: float, E="flyby", z: float = 20.0) -> floa
     """log10 Omega_GW = log10[n E_rad / (rho_c (1+z))], E_rad = E m; E an arm name
     (its measured E_rad/M) or a number; rho_c from plot_heavy_seeds (H0 = 67.7)."""
     return math.log10(n * _energy(E) * m / (_hs().RHO_C_MSUN_MPC3 * (1.0 + z)))
+
+
+@extractor
+def detector_omega_wh(end: str) -> float:
+    """Omega_WH = n M / rho_c at which the scalar deposit |Omega_phi,0| reaches
+    Omega_Lambda (Fig. heavy_seeds(c)): Omega_Lambda (1 + z_e) / (|E_phi|/M), on the
+    figure's deposit band (plot_heavy_seeds.deposit: the waves rows' |E_phi|/E_GW
+    times E_GW from the merger to the fly-by); 'lo' = largest deposit, 'hi' = smallest."""
+    H = _hs()
+    lo, hi = H.deposit()
+    return H.OMEGA_L * (1.0 + H.Z_EMIT) / (hi if end == "lo" else lo)
+
+
+@extractor
+def detector_deposit_ceiling() -> float:
+    """|Omega_phi,0| at the dark-matter ceiling n M = rho_DM for the largest deposit
+    (Fig. heavy_seeds(c)): (rho_DM / rho_c) (|E_phi|/M) / (1 + z_e)."""
+    H = _hs()
+    return H.RHO_DM_MSUN_MPC3 / H.RHO_C_MSUN_MPC3 * H.deposit()[1] / (1.0 + H.Z_EMIT)
 
 
 @extractor
@@ -1044,3 +1067,33 @@ def detector_stall(what: str, n_exp: float | None = None, z: float | None = None
     if what == "vmax":
         return (3.0 / (4.0 * math.pi * 10.0 ** n_exp)) ** (1.0 / 3.0) / dc
     raise ValueError(f"detector_stall: unknown what={what!r}")
+
+
+@extractor
+def detector_prod_legs(what: str, stat: str, t_end_min: float = 10.0) -> float:
+    """Main legs of the counted runs at production settings (L = 64, max_level 3,
+    dt_multiplier 0.02) that reach t >= t_end_min: the logged speed ('speed', code
+    units per hour, run_tail.log) or the run's GPU-hours ('hours', _run_hours);
+    stat 'min' or 'max'.  Added 2026-10-06 for the Sec. XI speed and cost range."""
+    gh = _gh()
+    vals = []
+    for n in _counted("all"):
+        d = run_dir(n)
+        p = {}
+        for ln in (d / "evolution_params.txt").read_text(errors="replace").splitlines():
+            k, eq, v = ln.split("#", 1)[0].partition("=")
+            if eq:
+                p[k.strip()] = v.strip()
+        try:
+            prod = (float(p["L"]) == 64.0 and int(p["max_level"]) == 3
+                    and abs(float(p["dt_multiplier"]) - 0.02) < 1e-12)
+        except (KeyError, ValueError):
+            prod = False
+        tail = d / "run_tail.log"
+        speed, t_end = gh.parse_tail(tail) if tail.exists() else (None, None)
+        if not prod or not speed or t_end is None or t_end < t_end_min:
+            continue
+        vals.append(speed if what == "speed" else _run_hours(d))
+    if not vals:
+        raise ValueError("no counted production leg")
+    return float({"min": min, "max": max}[stat](vals))

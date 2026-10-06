@@ -263,22 +263,43 @@ def single_plateau(run: str, what: str = "tau", lo: float = 49.0, hi: float = 61
     return val
 
 
+# The small-amplitude windows of the unkicked arms (validation A10, 2026-10-06):
+# |R/R(0) - 1| stays below 4 % there (level 3: 0.4-2.9 %, level 4: 0.1-3.9 %),
+# where the mode is linear.  The plateau above (centres t = 49-61) reaches 19 %
+# at level 3, where the collapse slows (tau 5.9-6.1), so it is no linear rate.
+SMALL_AMP = {LEVEL3: (40.0, 50.0), LEVEL4: (40.0, 60.0)}
+
+
+@extractor
+def single_efold(run: str, t0: float | None = None, t1: float | None = None) -> float:
+    """The unstable mode's e-fold at small amplitude: 1 / the least-squares
+    slope of ln |R - R(0)| over the unit-cadence samples in [t0, t1]
+    (default: the run's SMALL_AMP window)."""
+    if t0 is None or t1 is None:
+        t0, t1 = SMALL_AMP[run]
+    a = _areal(run)
+    m = _sel(a[:, 0], t0, t1)
+    return float(1.0 / np.polyfit(a[m, 0], np.log(np.abs(a[m, 1] - a[0, 1])), 1)[0])
+
+
 @extractor
 def single_proper_efold(run: str) -> float:
-    """T = tau alpha_th / R_star: the proper-time e-fold in light-crossing units."""
+    """T = tau alpha_th / R_star, tau the small-amplitude e-fold (single_efold):
+    the proper-time e-fold in light-crossing units."""
     dh = _drainhole(*_am(run))
-    return single_plateau(run=run, what="tau") * dh["alpha_th"] / dh["R_min"]
+    return single_efold(run=run) * dh["alpha_th"] / dh["R_min"]
 
 
 @extractor
 def single_ggs_excess(runs: list[str], t_ggs: float | None = None) -> float:
-    """Largest excess, in percent, of the measured T over the top of the
-    Gonzalez-Guzman-Sarbach prediction interpolated to m/a = 0.5 (T_PREDICTED
-    of results/merger/analysis/single_throat_instability.py, 0.68-0.76)."""
+    """Largest |T / t_ggs - 1|, in percent, over the runs: the measured
+    small-amplitude T against the linear T (default: the top of the
+    Gonzalez-Guzman-Sarbach prediction interpolated to m/a = 0.5, T_PREDICTED
+    of results/merger/analysis/single_throat_instability.py)."""
     if t_ggs is None:
         import single_throat_instability as sti  # the pack's analysis module (lib puts it on the path)
         t_ggs = float(sti.T_PREDICTED[1])
-    return max(100.0 * (single_proper_efold(run=r) / t_ggs - 1.0) for r in runs)
+    return max(100.0 * abs(single_proper_efold(run=r) / t_ggs - 1.0) for r in runs)
 
 
 @extractor
@@ -336,13 +357,16 @@ def single_pair_crossing_mean(pairs: list[list[str]]) -> float:
 
 
 @extractor
-def single_mots(run: str, what: str, centre: str | None = "A") -> float:
+def single_mots(run: str, what: str, centre: str | None = "A", t_max: float | None = None) -> float:
     """One number of a run's MOTS history on the oriented scan (centre A = the
     throat-centred fine scan, as plot_horizon_regrowth; None = any centre):
     first_time / first_R / first_M, last_time / last_R / last_M, floor_time /
     floor_R / floor_M (at the radius minimum), regrowth_R / regrowth_M
-    (100 (last/floor - 1), plot_horizon_regrowth._gain)."""
+    (100 (last/floor - 1), plot_horizon_regrowth._gain).  t_max cuts the
+    history there (a run's trust window, trust_windows.tsv)."""
     a = _mots(run, centre)
+    if t_max is not None:
+        a = a[_sel(a[:, 0], None, t_max)]
     i = int(np.nanargmin(a[:, 1]))
     col = {"time": 0, "R": 1, "M": 2}
     head, _, tail = what.partition("_")
@@ -360,6 +384,54 @@ def single_mots(run: str, what: str, centre: str | None = "A") -> float:
 @extractor
 def single_mots_over_runs(runs: list[str], what: str, kind: str, centre: str | None = "A") -> float:
     return _pick([single_mots(run=r, what=what, centre=centre) for r in runs], kind)
+
+
+def _free_offset_efold(t: np.ndarray, r: np.ndarray) -> float:
+    """tau of the least-squares R = c + B exp(t/tau), c and B free (tau on a 0.005 grid)."""
+    best = (math.inf, math.nan)
+    for tau in np.arange(2.0, 12.0, 0.005):
+        x = np.c_[np.ones_like(t), np.exp((t - t[0]) / tau)]
+        res = float(np.sum((x @ np.linalg.lstsq(x, r, rcond=None)[0] - r) ** 2))
+        best = min(best, (res, float(tau)))
+    return best[1]
+
+
+@extractor
+def single_boost_record(what: str, run: str = "single_boost_p045_lbf_t050") -> float:
+    """The exact-boost throat of Sec. IV D on its round-scan A rows, one-sample
+    scan glitches dropped by plot_single_throat_row.moving_record (the rule is
+    stated there): hold_max (largest rise above R(0) before the fall, percent),
+    peak_time, one_pct (first fall 1 % below R(0), interpolated), tau_lo /
+    tau_hi (the collapse e-fold, free-offset fits R = c + B e^(t/tau) over
+    [t0, t1], t0 = 28, 30, ..., 36, t1 = 42, 44: inside its t = 44.5 trust window)."""
+    wm = __import__("grteclyn_wrapper.visualisation.wormhole_merger.plot_single_throat_row",
+                    fromlist=["moving_record"])
+    a = wm.moving_record(lib.PACK, run)
+    t, r = a[:, 0], a[:, 1]
+    x = r / r[0] - 1.0
+    i_pk = int(np.argmax(np.where(t <= 40.0, r, -np.inf)))
+    if what == "hold_max":
+        return float(100.0 * x[i_pk])
+    if what == "peak_time":
+        return float(t[i_pk])
+    if what == "one_pct":
+        i = int(np.nonzero((x < -0.01) & (t > t[i_pk]))[0][0])
+        return float(np.interp(-0.01, [x[i], x[i - 1]], [t[i], t[i - 1]]))
+    taus = [_free_offset_efold(t[_sel(t, t0, t1)], r[_sel(t, t0, t1)])
+            for t0 in (28, 30, 32, 34, 36) for t1 in (42, 44)]
+    return {"tau_lo": min(taus), "tau_hi": max(taus)}[what]
+
+
+@extractor
+def single_seed_floor_ratio(eps2: float = 0.01) -> float:
+    """Fig. 11(b)'s own measure (plot_seed_linearity): rms Re Psi4^{2,0} over its
+    WINDOW at R_SHOW for the eps2 kicked arm, over the level-4 spherical control's."""
+    m = __import__("grteclyn_wrapper.visualisation.wormhole_merger.plot_seed_linearity",
+                   fromlist=["_l2m0"])
+    seed = lib.PACK / "campaign" / m.GROUP / m.SEED_DIR
+    t, y = m._l2m0(seed / m.ARMS[eps2] / "psi4_mode_l2m0.dat")
+    tc, yc = m._l2m0(seed / m.CONTROL / "psi4_mode_l2m0.dat")
+    return float(m._rms(t, y[m.R_SHOW]) / m._rms(tc, yc[m.R_SHOW]))
 
 
 @extractor
@@ -603,13 +675,13 @@ def single_max_rel_diff(run_a: str, run_b: str, file: str = "areal_radius.dat", 
 # ===================================================== lifetime and scale
 def _clock(quantity: str) -> float:
     """The drainhole clock in units of M, from the data: Rstar (closed form of
-    the production throat), tau (level-3 plateau, rounded to 2 s.f. as Table II
-    states tau = 5.9 M), t_eps2 / t_eps3 (first MOTS of the +1e-2 / +1e-3
-    arms), t_noise (the unkicked level-3 throat's first scanned MOTS)."""
+    the production throat), tau (the level-3 small-amplitude e-fold, unrounded;
+    the clock's arms are level 3), t_eps2 / t_eps3 (first MOTS of the +1e-2 /
+    +1e-3 arms), t_noise (the unkicked level-3 throat's first scanned MOTS)."""
     if quantity == "Rstar":
         return single_drainhole(quantity="R_min", run=LEVEL3)
     if quantity == "tau":
-        return single_plateau(run=LEVEL3, what="tau", round_sf=2)
+        return single_efold(run=LEVEL3)
     if quantity == "t_eps2":
         return single_mots(run=KICK_P2, what="first_time")
     if quantity == "t_eps3":
@@ -653,8 +725,8 @@ def single_traveller(mass_kg: float, mass_msun: float, unit: str = "M") -> float
 @extractor
 def single_noise_seed() -> float:
     """The truncation seed the unkicked level-3 horizon implies: 1e-2
-    exp(-(t_noise - t_eps2)/tau), tau the unrounded level-3 plateau."""
-    tau = single_plateau(run=LEVEL3, what="tau")
+    exp(-(t_noise - t_eps2)/tau), tau the level-3 small-amplitude e-fold."""
+    tau = _clock("tau")
     return 1e-2 * math.exp(-(_clock("t_noise") - _clock("t_eps2")) / tau)
 
 
@@ -711,6 +783,17 @@ def single_matched_sign_rule(what: str) -> float:
     win = (t >= 3.5) & (t <= 10.5)
     r = -flip[win] / like[win]
     return {"mean": float(r.mean()), "sd": float(r.std(ddof=1)), "n": float(r.size)}[what]
+
+
+@extractor
+def single_matched_closed(t: float) -> float:
+    """How much of its gap the opposite-signed d = 12 rest pair has closed by time
+    t, in percent: -dsep_flip_d12(t) / sep(0), sep(0) from the table's header."""
+    names, a = _matched_table()
+    head = _campaign_file("matched_rest_displacement.dat").read_text(encoding="utf-8")
+    sep0 = float(re.search(r"ctrl_flip_d12_csm: .*?sep\(0\) = ([\d.]+)", head).group(1))
+    flip = np.interp(t, a[:, names.index("time")], a[:, names.index("dsep_flip_d12")])
+    return float(-100.0 * flip / sep0)
 
 
 @extractor
@@ -1059,3 +1142,18 @@ def single_f4_pop(what: str, run: str = F4) -> float:
         k = ts <= m.T_WALL + 1e-9
         return float(abs(np.trapezoid(-flux[k], ts[k])))
     raise ValueError(f"single_f4_pop: unknown what={what!r}")
+
+
+@extractor
+def single_identical_rows(a: str, b: str, files: list) -> float:
+    """Byte identity of two runs' streams: the data-row count of files[0] when every
+    listed file holds the same data rows, byte for byte, in both runs (else an error).
+    Added 2026-10-06: the Sec. XI bit-reproducibility pair."""
+    n = None
+    for f in files:
+        rows = [[ln for ln in (run_dir(r) / f).read_text().splitlines()
+                 if ln.strip() and not ln.startswith("#")] for r in (a, b)]
+        if rows[0] != rows[1]:
+            raise ValueError(f"{f}: {a} and {b} differ")
+        n = len(rows[0]) if n is None else n
+    return float(n)

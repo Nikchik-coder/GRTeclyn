@@ -20,6 +20,7 @@
 \newcommand{\clmDetKnobLoneLevelsLo}{2}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobLoneLevelsHi}{4}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobLoneL}{128}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
+\newcommand{\clmDetKnobLoneM}{0.5}% auto: claims/table1_groups.tsv + the packed evolution_params.txt (single_m05_t040)
 \newcommand{\clmDetKnobKickEpsLo}{10^{-3}}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobKickEpsHi}{10^{-1}}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobKickLevel}{5}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
@@ -46,7 +47,7 @@
 \newcommand{\clmDetKnobDTwelvePHi}{0.25}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobEgwPLo}{0.25}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
 \newcommand{\clmDetKnobEgwPHi}{0.90}% def: evolution_params.txt of the group's runs (table1_groups.tsv); derived keys: sepa
-\newcommand{\clmDetGpuHours}{476}% auto: sum: clmDetGpuHoursPacked (646.17, auto) + clmDetGpuHoursArchived (349.22, froze
+\newcommand{\clmDetGpuHours}{476}% auto: detector_gpu_hours over the Table III runs (claims/table1_groups.tsv), restart-a
 \newcommand{\clmDetCostHeadonChain}{29.3}% auto: campaign/04_binary_headon/csm/: the three legs' run_tail.log
 \newcommand{\clmDetCostFlybyLevelFive}{46.3}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm/run_ta
 \newcommand{\clmDetCostMergerChain}{26.9}% auto: campaign/05_binary_spiral/merger_d6/: the six legs' run_tail.log
@@ -56,10 +57,10 @@
 \newcommand{\clmDetMemFlybyPeak}{58}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm/run_ta
 \newcommand{\clmDetMemDevice}{80}% lit: NVIDIA H100 80GB HBM3 datasheet (nominal capacity)
 \newcommand{\clmDetAmrexVersion}{26.02}% manual: run_tail*.log of the Table I runs: 'AMReX (26.02-12-gd7da50458966) finalized'
-\newcommand{\clmDetSpeedProdLo}{6}% manual: main-leg 'average evolution speed' in run_tail.log. Measured, physics runs at L=
-\newcommand{\clmDetSpeedProdHi}{18}% manual: main-leg 'average evolution speed' in run_tail.log. Measured, physics runs at L=
-\newcommand{\clmDetCostTHundredLo}{5}% manual: main-leg 'average evolution speed' in run_tail.log. Measured, physics runs at L=
-\newcommand{\clmDetCostTHundredHi}{7}% manual: main-leg 'average evolution speed' in run_tail.log. Measured, physics runs at L=
+\newcommand{\clmDetSpeedProdLo}{4}% auto: detector_prod_legs: the counted runs at production settings (L = 64, max_level 3
+\newcommand{\clmDetSpeedProdHi}{18}% auto: detector_prod_legs: the counted runs at production settings (L = 64, max_level 3
+\newcommand{\clmDetCostTHundredLo}{5.4}% auto: detector_prod_legs: the counted runs at production settings (L = 64, max_level 3
+\newcommand{\clmDetCostTHundredHi}{5.5}% auto: detector_prod_legs: the counted runs at production settings (L = 64, max_level 3
 \newcommand{\clmDetSpeedLevelFiveLo}{2}% manual: main-leg speed in run_tail.log of the level-5 physics runs: 2.14-4.34 u/h over t
 \newcommand{\clmDetSpeedLevelFiveHi}{4}% manual: main-leg speed in run_tail.log of the level-5 physics runs: 2.14-4.34 u/h over t
 \newcommand{\clmDetPedestalCleanLo}{0.02}% auto: gw_search/templates/nr.py load_arm(): drift = |h| at the record's ends / at its 
@@ -108,7 +109,7 @@
 \newcommand{\clmDetInjEffLo}{92}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetInjEffHi}{123}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetInjEffMedian}{101}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
-\newcommand{\clmDetInjDt}{11}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
+\newcommand{\clmDetInjDt}{11.5}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetInjChiLo}{0.5}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetInjChiHi}{1.6}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetShortestMs}{3.2}% manual: gw_search/templates/nr.py duration_s at the demoted injection's mass (fly-by, 18
@@ -139,11 +140,11 @@
 \newcommand{\clmDetSpiralFreqHi}{679}% manual: plot_psi4_ligo.prepare + envelope_and_frequency (the figure's own code) on the g
 \newcommand{\clmDetBankDurLo}{2.5}% manual: gw_search/templates: record length T/M of each arm times the ladder's end masses
 \newcommand{\clmDetBankDurHi}{125}% auto: gw_search/templates: record length T/M of each arm times the ladder's end masses
-\newcommand{\clmDetESpiralSpread}{25}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
+\newcommand{\clmDetESpiralSpread}{15}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
 \newcommand{\clmDetEHeadon}{1.2\times10^{-2}}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
-\newcommand{\clmDetEHeadonSpread}{31}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
-\newcommand{\clmDetEThroatSpread}{14}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
-\newcommand{\clmDetETwinSpread}{5}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
+\newcommand{\clmDetEHeadonSpread}{30}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
+\newcommand{\clmDetEThroatSpread}{3.5}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
+\newcommand{\clmDetETwinSpread}{9}% auto: plot_psi4_ligo.prepare: band energy of the dominant multipole at the innermost s
 \newcommand{\clmDetTauAdopted}{4.3}% manual: plot_mouth_growth._scan/_tau on horizon_scan.dat: exponential fit of R/R0-1 over
 \newcommand{\clmDetInspTimeIsco}{202}% auto: arithmetic: t_insp = (5/256)(d/M)^4 M/eta, M = 2 (total), eta = 1/4; T_orb = 2 p
 \newcommand{\clmDetInspTimeWide}{640}% auto: arithmetic: t_insp = (5/256)(d/M)^4 M/eta, M = 2 (total), eta = 1/4; T_orb = 2 p
@@ -180,23 +181,23 @@
 \newcommand{\clmDetLightSeedGap}{two}% auto: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py (t_of_z, SALP
 \newcommand{\clmDetNMin}{10^{-4}}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py N_RANGE
 \newcommand{\clmDetNMax}{10^{-2}}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py N_RANGE
-\newcommand{\clmDetFMPeakLo}{0.04}% auto: plot_psi4_ligo: resolved Psi4 band peak f_pk of the four drainhole channels (fly
-\newcommand{\clmDetFMPeakHi}{0.07}% auto: plot_psi4_ligo: resolved Psi4 band peak f_pk of the four drainhole channels (fly
+\newcommand{\clmDetFMPeakLo}{0.051}% auto: plot_psi4_ligo: resolved Psi4 band peak f_pk of the encounters (head-on, spiral,
+\newcommand{\clmDetFMPeakHi}{0.071}% auto: plot_psi4_ligo: resolved Psi4 band peak f_pk of the encounters (head-on, spiral,
 \newcommand{\clmDetConvMassLo}{10^{7}}% manual: input: the heavier mass decades the text considers
 \newcommand{\clmDetConvMassHi}{10^{8}}% manual: input
 \newcommand{\clmDetGrowthTarget}{10^{9}}% lit: z >~ 7 quasar mass scale, e.g. J1342+0928 7.8e8 Msun [banados2018]
 \newcommand{\clmDetGrowthTimeLo}{414}% auto: arithmetic 45 Myr x ln(1e9/1e5) (grteclyn_wrapper/visualisation/wormhole_merger/
-\newcommand{\clmDetGrowthTimeHi}{520}% auto: arithmetic 45 Myr x ln(1e9/1e4)
+\newcommand{\clmDetGrowthTimeHi}{518}% auto: arithmetic 45 Myr x ln(1e9/1e4)
 \newcommand{\clmDetGrowthWindow}{600}% auto: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py t_of_z (flat 
 \newcommand{\clmDetGrowthZ}{7}% lit: epoch of the earliest quasars (J1342+0928 at z = 7.54, [banados2018])
 \newcommand{\clmDetDMFracLo}{3\times10^{-11}}% auto: arithmetic n M / rho_DM, rho_DM = Omega_c h^2 x 2.775e11 = 3.33e10 Msun/Mpc^3 (P
 \newcommand{\clmDetDMFracHi}{3\times10^{-7}}% auto: same
 \newcommand{\clmDetFirasLo}{10^{4}}% lit: Nakama, Carr & Silk 2018 [nakama2018]
 \newcommand{\clmDetFirasHi}{10^{13}}% lit: Nakama, Carr & Silk 2018 [nakama2018]
-\newcommand{\clmDetBandLo}{0.4}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
+\newcommand{\clmDetBandLo}{0.5}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
 \newcommand{\clmDetBandHi}{70}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
-\newcommand{\clmDetOmegaHi}{10^{-12}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
-\newcommand{\clmDetOmegaLo}{10^{-13}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
+\newcommand{\clmDetOmegaHi}{10^{-11}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
+\newcommand{\clmDetOmegaLo}{10^{-14}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
 \newcommand{\clmDetOmegaFreq}{7}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
 \newcommand{\clmDetRateLo}{0.05}% auto: arithmetic: each seed converts once, so the observed rate is n 4 pi D_c(z_e)^2 c
 \newcommand{\clmDetRateHi}{5}% auto: arithmetic: each seed converts once, so the observed rate is n 4 pi D_c(z_e)^2 c
@@ -208,11 +209,11 @@
 \newcommand{\clmDetHeadonWobble}{80}% manual: the outermost (R=18) Psi4 sphere of the head-on arms (psi4_mode_l2m0.dat); onset
 \newcommand{\clmDetDetectMassLo}{3\times10^{4}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
 \newcommand{\clmDetDetectMassHi}{6\times10^{6}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetBurstSnrLo}{119}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetBurstSnrHi}{394}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetBurstSnrLo}{56}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetBurstSnrHi}{230}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
 \newcommand{\clmDetCollapseSnr}{6}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetLoudSnrLo}{103}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetHeadonSnrHi}{159}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetLoudSnrLo}{35}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
+\newcommand{\clmDetHeadonSnrHi}{84}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
 \newcommand{\clmDetFlybyDetectMassHi}{8\times10^{6}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
 \newcommand{\clmDetPlungeDetectMassHi}{4\times10^{7}}% auto: gw_search.lisa mass_range of the p = 0.60 plunge (conservative: inclination aver
 \newcommand{\clmDetBandFloor}{0.1}% def: grteclyn_wrapper/gw_search/lisa.py F_MIN: LISA measures from below 1e-4 Hz (Amar
@@ -222,13 +223,13 @@
 \newcommand{\clmDetPlsNHi}{36}% manual: detector_pls_n_threshold(m=1e5, arm=spiral) = 3.596e-3 Mpc^-3, quoted in units o
 \newcommand{\clmDetDilution}{2\times10^{5}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S8: (1+z_e
 \newcommand{\clmOmegaLambda}{0.69}% lit: Planck 2018 VI (A&A 641, A6), Table 2: Omega_Lambda = 0.6889
-\newcommand{\clmDetOmegaWHLo}{60}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: Omega_
-\newcommand{\clmDetOmegaWHHi}{800}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5 (same)
+\newcommand{\clmDetOmegaWHLo}{49}% auto: plot_heavy_seeds.deposit(): |E_phi|/E_GW = clmGwScalarRatioFull..clmGwScalarBand
+\newcommand{\clmDetOmegaWHHi}{5200}% auto: as clmDetOmegaWHLo, the smallest deposit (clmGwScalarRatioFull x clmGwEnergySpir
 \newcommand{\clmDetOmegaWHDMLo}{230}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: the sa
 \newcommand{\clmDetOmegaWHDMHi}{3100}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5 (same)
 \newcommand{\clmDetDepositOverMatter}{47}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: |rho_p
 \newcommand{\clmDetHubbleCap}{0.015}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: H^2 > 
-\newcommand{\clmDetDepositCeiling}{3\times10^{-3}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: |Omega
+\newcommand{\clmDetDepositCeiling}{3.7\times10^{-3}}% auto: plot_heavy_seeds.deposit() as clmDetOmegaWHLo: |Omega_phi,0| = (rho_DM/rho_c) (|
 \newcommand{\clmDetBackreactLo}{5\times10^{-13}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5: |rho_p
 \newcommand{\clmDetBackreactHi}{6\times10^{-8}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S5 (same):
 \newcommand{\clmDetLrdNLo}{3}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py S6: little
@@ -243,25 +244,25 @@
 \newcommand{\clmInfStallFactor}{270}% auto: arithmetic: the recorded boundary speed over the loosest percolation bound; anal
 \newcommand{\clmInfEfoldsNeeded}{60}% lit: Liddle & Leach 2003, PRD 68, 103503: observable scales leave the horizon 50-60 e
 \newcommand{\clmDetOrbitPeriodLo}{75}% auto: Eq. (force): omega^2 = 2(1+Q) m/[d (d+delta)^2], Q = 5 (single_drainhole), d = 1
-\newcommand{\clmDetOrbitPeriodHi}{100}% auto: Eq. (force): omega^2 = 2(1+Q) m/[d (d+delta)^2], Q = 5 (single_drainhole), d = 1
+\newcommand{\clmDetOrbitPeriodHi}{93}% auto: Eq. (force): omega^2 = 2(1+Q) m/[d (d+delta)^2], Q = 5 (single_drainhole), d = 1
 \newcommand{\clmDetEffSeedOrder}{10^{-3}}% manual: log10 of clmDetEffSeed: the fly-by mouth fit's t = 0 amplitude (plot_mouth_growt
-\newcommand{\clmDetLifePeriodsLo}{1.8}% auto: tau ln(1e15) / P: the level-4 isolated clock (5.26) over the longer pull period 
-\newcommand{\clmDetLifePeriodsHi}{2.7}% auto: tau ln(1e15) / P: the level-3 isolated clock (5.875) over the shorter pull perio
+\newcommand{\clmDetLifePeriodsLo}{1.9}% auto: tau ln(1e15) / P: the level-4 isolated clock (single_plateau) over the longer pu
+\newcommand{\clmDetLifePeriodsHi}{2.4}% auto: tau ln(1e15) / P: the level-3 isolated clock (5.875) over the shorter pull perio
 \newcommand{\clmDetDecadeUnitsLo}{12}% auto: tau ln 10, tau = the level-4 isolated clock (single_plateau)
-\newcommand{\clmDetDecadeUnitsHi}{14}% auto: tau ln 10, tau = the level-3 isolated clock (single_plateau)
+\newcommand{\clmDetDecadeUnitsHi}{12}% auto: tau ln 10, tau = the level-3 isolated clock (single_plateau)
 \newcommand{\clmDetLumDist}{230}% auto: (1 + z_emit) x the comoving distance to z_emit = 20 in the flat LCDM of plot_hea
 \newcommand{\clmDetReentryTime}{1}% lit: horizon mass at re-entry M_H ~ 1e5 Msun (t / 1 s) (e.g. Carr et al., Rep. Prog. 
 \newcommand{\clmDetReentryZLo}{10^{9}}% lit: 1 + z = T / T_0 at t ~ 1 s: T ~ 1 MeV, T_0 = 2.35e-4 eV -> 4e9
 \newcommand{\clmDetReentryZHi}{10^{10}}% lit: as clmDetReentryZLo
-\newcommand{\clmDetCompanionLifeLo}{29}% auto: tau ln(1/0.004): the companion compression at d = 12 (clmRaceKickTwelve) as the 
-\newcommand{\clmDetCompanionLifeHi}{32}% auto: tau ln(1/0.004), level-3 isolated clock
+\newcommand{\clmDetCompanionLifeLo}{28}% auto: tau ln(1/0.004): the companion compression at d = 12 (clmRaceKickTwelve) as the 
+\newcommand{\clmDetCompanionLifeHi}{29}% auto: tau ln(1/0.004), level-3 isolated clock
 \newcommand{\clmNormPitShare}{99.99}% manual: GPU_PLAN 2026-09-29 (verification B, check_flyby_d12_p025_lbf_csm_t020): four le
 
 % ---- mergers
 \newcommand{\clmHeadonSeparation}{8}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_t100/evolution_params.txt (wor
-\newcommand{\clmSpiralMomentumProd}{0.12}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl3_t050/evolution
-\newcommand{\clmSpiralMomentumTwentyFive}{0.25}% manual: campaign/05_binary_spiral/p025/merge_orbit_flip_d12_p025_t200/evolution_params.t
-\newcommand{\clmSpiralMomentumFlyby}{0.45}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/evolution
+\newcommand{\clmSpiralMomentumProd}{0.12}% auto: campaign: v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm
+\newcommand{\clmSpiralMomentumTwentyFive}{0.25}% auto: campaign: merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm
+\newcommand{\clmSpiralMomentumFlyby}{0.45}% auto: campaign: merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm
 \newcommand{\clmSpiralBoundaryLow}{90}% auto: campaign/05_binary_spiral/p025/merge_orbit_flip_d12_p025_t200/evolution_params.t
 \newcommand{\clmSpiralBoundaryHigh}{120}% auto: campaign/06_binary_flyby/p035/merge_orbit_flip_d12_p035_t200/evolution_params.tx
 \newcommand{\clmSpiralCoincideEarly}{41}% manual: campaign/05_binary_spiral/p025/merge_orbit_flip_d12_p025_lvl5_t200/binary_throat
@@ -284,7 +285,7 @@
 \newcommand{\clmControlChiDigits}{four}% auto: campaign/01_single_throat/hold/single_hold_t100 vs campaign/01_single_throat/hol
 \newcommand{\clmControlOverlapStart}{57.0}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t100_freeze_r0
 \newcommand{\clmControlOverlapEnd}{60.4}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t150_prof_r036
-\newcommand{\clmControlByteRows}{2384}% manual: campaign/05_binary_spiral/p012_paper/v2_spiral_d12_p012_L128_lvl5_t150_prof_r036
+\newcommand{\clmControlByteRows}{633}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_t100 against campaign/01_sin
 \newcommand{\clmControlDtMedium}{0.05}% def: campaign/01_single_throat/hold/single_hold_dt005_t070/evolution_params.txt
 \newcommand{\clmControlDtMediumDeparture}{33}% auto: campaign/01_single_throat/hold/single_hold_dt005_t070 vs campaign/01_single_thro
 \newcommand{\clmControlDtLarge}{0.1}% def: campaign/01_single_throat/hold/single_hold_dt01_t070/evolution_params.txt
@@ -301,12 +302,12 @@
 \newcommand{\clmHelferFlybyHamEnd}{1.6\times10^{-2}}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_helfer_t090/constraint_n
 \newcommand{\clmGrtresnaErrorBefore}{4.9}% manual: research/merger/GPU_PLAN.md §2 checklist ('GRTresna outer boundary condition on 
 \newcommand{\clmGrtresnaErrorAfter}{0.7}% manual: same GPU_PLAN lines as clmGrtresnaErrorBefore (0.68 %)
-\newcommand{\clmHeadonGwShare}{1.7}% manual: 100 x E_GW / (M_MS(18) - M_MS(100)) = 100 x 0.0073 / 0.4276
-\newcommand{\clmFlybyTrustRetarded}{67.6}% manual: the fly-by's trust window (results/merger/trust_windows.tsv), stated there as a 
+\newcommand{\clmHeadonGwShare}{6.4}% auto: 100 E_GW / (M_MS(birth) - M_MS(100)) on 04_binary_headon/mots/: the chain's MOTS
+\newcommand{\clmFlybyTrustRetarded}{67.6}% auto: trust_windows.tsv: the p=0.45 fly-by t_max (L2 Ham crossing 2.5e-2), applied to 
 \newcommand{\clmFarMassIso}{-4.8105}% auto: results/merger/t0_matching/t0_checks.tsv (t = 0, CPU, 2026-09-27; GPU_PLAN 12:15
 \newcommand{\clmFarChargeIso}{3.0344}% auto: results/merger/t0_matching/t0_checks.tsv (t = 0, CPU, 2026-09-27; GPU_PLAN 12:15
 \newcommand{\clmMatchedRminDev}{0.06}% auto: results/merger/t0_matching/t0_checks.tsv (t = 0, CPU, 2026-09-27; GPU_PLAN 12:15
-\newcommand{\clmMatchedRminDevOrbit}{0.02}% auto: results/merger/t0_matching/t0_checks.tsv (t = 0, CPU, 2026-09-27; GPU_PLAN 12:15
+\newcommand{\clmMatchedRminDevOrbit}{0.04}% auto: campaign/05_binary_spiral/verify_p012/t0_v2_spiral_d12_p012_L128_lvl5_lb_csm/hor
 \newcommand{\clmVolumeIdentityExact}{0.14}% auto: results/merger/t0_matching/t0_checks.tsv (t = 0, CPU, 2026-09-27; GPU_PLAN 12:15
 \newcommand{\clmEnergyLawDevNear}{3}% auto: results/merger/t0_matching/energy_scan.tsv (t = 0, CPU, 2026-09-27; GPU_PLAN 12:
 \newcommand{\clmEnergyLawDevFar}{0.5}% auto: results/merger/t0_matching/energy_scan.tsv (t = 0, CPU, 2026-09-27; GPU_PLAN 12:
@@ -362,8 +363,8 @@
 \newcommand{\clmHeadonCsmEndMassOverAdm}{1.4}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
 \newcommand{\clmHeadonCsmPenrose}{19.5}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
 \newcommand{\clmHeadonCsmBornArea}{1.05}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
-\newcommand{\clmHeadonCsmScalarImplied}{0.039}% manual: M_ADM - M_MS(100) - E_GW = 2.3573 - 2.3894 - 0.0073 = -0.0394
-\newcommand{\clmHeadonCsmBirthSep}{3.4}% manual: binary_throat_diagnostics.dat of the csm leg 1: separation interpolated at t = 1
+\newcommand{\clmHeadonCsmScalarImplied}{0.059}% auto: -E_phi = M_MS(100) + E_GW - M_ADM on 04_binary_headon/mots/: the chain's MOTS re
+\newcommand{\clmHeadonCsmBirthSep}{3.5}% auto: binary_throat_diagnostics.dat of the csm leg 1: separation interpolated at t = 1
 \newcommand{\clmHeadonCsmBornDeform}{0.104}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
 \newcommand{\clmHeadonCsmEndDeform}{0.004}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
 \newcommand{\clmHeadonScanLate}{4}% manual: round scan first MOTS row t = 22 (horizon_scan.dat centre C of the csm legs) min
@@ -374,19 +375,24 @@
 \newcommand{\clmHeadonCsmShrinkArea}{28}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
 \newcommand{\clmHeadonCsmRows}{84}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
 \newcommand{\clmHeadonCsmRowWobble}{0.08}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
+\newcommand{\clmHeadonCsmRegrow}{0.34}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
+\newcommand{\clmHeadonCsmRegrowLoA}{34}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
+\newcommand{\clmHeadonCsmRegrowHiA}{40}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
+\newcommand{\clmHeadonCsmRegrowLoB}{58}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
+\newcommand{\clmHeadonCsmRegrowHiB}{88}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
 \newcommand{\clmHeadonFirstLawMeasured}{-4.1\times10^{-3}}% manual: 04_binary_headon/first_law/merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_
 \newcommand{\clmHeadonFirstLawPhantom}{-7.0\times10^{-3}}% manual: 04_binary_headon/first_law/merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_
 \newcommand{\clmHeadonFirstLawShear}{-2.5\times10^{-3}}% manual: 04_binary_headon/first_law/merge_headon_flip_d8_v1_L128_lvl4from50_hfl_t060_csm_
 \newcommand{\clmHeadonCsmFluxFold}{69}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
 \newcommand{\clmHeadonCsmRateFold}{112}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
-\newcommand{\clmHeadonCsmSlope}{3.2\times10^{-4}}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
-\newcommand{\clmMergerRemnantAgree}{2.2}% manual: d6 settle leg mots_spectral R(100) = 4.883 vs the head-on chain's 4.7787: 100 x 
+\newcommand{\clmHeadonCsmSlope}{7.7\times10^{-4}}% auto: 04_binary_headon/mots/: the chain's MOTS replay (ho1/ho2/ho3), mots_spectral.dat
+\newcommand{\clmMergerRemnantAgree}{2.2}% auto: R(100) of 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 
 \newcommand{\clmFlybyLbfClosest}{2.32}% auto: binary_throat_diagnostics.dat (packed)
 \newcommand{\clmFlybyLbfClosestTime}{48}% auto: binary_throat_diagnostics.dat (packed)
-\newcommand{\clmFlybyLbfFar}{8.5}% auto: binary_throat_diagnostics.dat (packed)
+\newcommand{\clmFlybyLbfFar}{3.37}% auto: binary_throat_diagnostics.dat (packed)
 \newcommand{\clmPFortyFiveClosest}{2.18}% auto: binary_throat_diagnostics.dat (packed)
 \newcommand{\clmPFortyFiveClosestTime}{48}% auto: binary_throat_diagnostics.dat (packed)
-\newcommand{\clmPFortyFiveFar}{5.3}% auto: binary_throat_diagnostics.dat (packed)
+\newcommand{\clmPFortyFiveFar}{2.62}% auto: binary_throat_diagnostics.dat (packed)
 \newcommand{\clmPSixtyContactSep}{1.86}% auto: binary_throat_diagnostics.dat (packed)
 \newcommand{\clmPNinetyContactSep}{2.4}% auto: binary_throat_diagnostics.dat (packed)
 \newcommand{\clmPFortyFiveCircFrac}{90}% auto: evolution_params.txt (p, d) through p_circ = m sqrt((1+Q) m / 2d)
@@ -399,18 +405,22 @@
 \newcommand{\clmDTwelveInflTwentyFour}{72}% manual: runs_registry.tsv / STATUS 2026-10-01: SCOUT-d12pin R_min growth
 \newcommand{\clmDTwelveStallSep}{2.2}% manual: SCOUT-d12pin binary_throat_diagnostics: the infall stalls at ~2.2 against the sw
 \newcommand{\clmSpiralLbfDeath}{71.78}% manual: results/merger/trust_windows.tsv
+\newcommand{\clmPTwelveContactTime}{37}% auto: binary_throat_diagnostics.dat (packed): pit separation < 2 (the p = 0.60 contact
+\newcommand{\clmPTwelveMotsFrom}{51}% auto: mots_spectral.dat (packed): first searched plotfile; no converged row through th
+\newcommand{\clmPTwelveTrust}{56.5}% manual: results/merger/trust_windows.tsv (v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm)
 \newcommand{\clmRaceKickTwelve}{0.4}% manual: GPU_PLAN 2026-09-29: the companion compresses each mouth; same in superposed and
 \newcommand{\clmRaceKickEight}{1.2}% manual: GPU_PLAN 2026-09-29
 \newcommand{\clmSeedSolvedMotsR}{4.306}% auto: 01_single_throat/seed/single_eps_p1e1_t100_csm/mots_spectral.dat
-\newcommand{\clmRaceFoldsHeadon}{3.1}% manual: horizon birth t = 18 (clmHeadonCsmMotsTime) / tau = 5.88 (clmTauLevelThree)
-\newcommand{\clmRaceFoldsSix}{2.2}% manual: horizon birth t = 13 (clmMergerMotsTime) / tau = 5.88
-\newcommand{\clmRaceFoldsTwelve}{8}% manual: closest approach t ~ 48 (clmFlybyLbfClosestTime) / tau = 5.88 = 8.2
+\newcommand{\clmRaceFoldsHeadon}{3.5}% auto: expr: the head-on MOTS birth time (clmHeadonCsmMotsTime) / the small-amplitude t
+\newcommand{\clmRaceFoldsSix}{2.5}% auto: expr: the d=6 MOTS birth time (clmMergerMotsTime) / clmTauLevelThree
+\newcommand{\clmRaceFoldsTwelve}{9}% auto: expr: the p=0.25 closest-pass time (clmFlybyLbfClosestTime) / clmTauLevelThree
 \newcommand{\clmDSixP}{0.10}% manual: evolution_params.txt of the d6 chain (tangential momentum per mouth)
 \newcommand{\clmMergerMotsTime}{13}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerMotsRadius}{5.60}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerMotsMass}{2.80}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerBornDeform}{0.115}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerRowWobble}{0.05}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
+\newcommand{\clmMergerRegrow}{0.38}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerRows}{88}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerShrinkR}{12.8}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerEndRadius}{4.883}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
@@ -421,7 +431,7 @@
 \newcommand{\clmMergerLvlSixDeath}{29.4}% manual: results/merger/trust_windows.tsv
 \newcommand{\clmMergerLvlSevenDeath}{27.5}% manual: results/merger/trust_windows.tsv
 \newcommand{\clmMergerSigDeath}{30.5}% manual: results/merger/trust_windows.tsv
-\newcommand{\clmMergerChiStop}{36.6}% manual: results/merger/trust_windows.tsv / STATUS 2026-10-02 (D6-chi)
+\newcommand{\clmMergerChiStop}{36.7}% auto: run_tail.log of the chi-floor leg (last ADVANCE, no NaN)
 \newcommand{\clmMergerSeamOne}{25}% manual: the chain's restart checkpoints (Chk02500/Chk03000/Chk03500)
 \newcommand{\clmMergerSeamTwo}{30}% manual: the chain's restart checkpoints
 \newcommand{\clmMergerSeamThree}{35}% manual: the chain's restart checkpoints
@@ -432,6 +442,7 @@
 \newcommand{\clmPNinetyKLo}{93}% manual: results/merger/trust_windows.tsv
 \newcommand{\clmPNinetyKHi}{172}% manual: results/merger/trust_windows.tsv
 \newcommand{\clmPNinetyChiMin}{5.4\times10^{-3}}% manual: results/merger/trust_windows.tsv
+\newcommand{\clmPNinetyLvlFiveDeath}{45.28}% auto: run_tail.log (packed): the level-5 continuation's NaN, level 4 at 45.27
 \newcommand{\clmEgwPSixty}{0.60}% manual: evolution_params.txt of merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm (tangen
 \newcommand{\clmEgwPNinety}{0.90}% manual: evolution_params.txt of merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm (tangen
 \newcommand{\clmHeadonCsmWallLead}{21}% manual: campaign/04_binary_headon/csm: level-5 cell NaN at t=38.845 (clmHeadonCsmNanTime
@@ -449,8 +460,8 @@
 \newcommand{\clmScalarQ}{5}% def: closed form Q = (a^2+m^2)/m^2, a and m from the production params
 \newcommand{\clmScalarQRatio}{3/2}% def: closed form (Q+1)/(Q-1) at the production a, m; sign_rule.py Q = 5
 \newcommand{\clmSeedArealFactor}{2}% auto: campaign/01_single_throat/seed/single_eps_{m,p}1e2_t100 and hold/single_hold_t10
-\newcommand{\clmMergerSign}{-1}% manual: campaign/03_two_throats/ctrl_flip_d12/evolution_params.txt: wormhole_phi_sign_B
-\newcommand{\clmPairSeparation}{12}% manual: campaign/03_two_throats/ctrl_rest_d12/evolution_params.txt: |wormhole_centerB - 
+\newcommand{\clmMergerSign}{-1}% auto: campaign: ctrl_flip_d12_csm evolution_params.txt: wormhole_phi_sign_B
+\newcommand{\clmPairSeparation}{12}% auto: campaign: ctrl_rest_d12_csm
 \newcommand{\clmBoxL}{64}% def: campaign/01_single_throat/hold/single_hold_t100/evolution_params.txt
 \newcommand{\clmBaseN}{128}% def: same params, N1
 \newcommand{\clmTimeStepFactor}{0.02}% def: same params, dt_multiplier
@@ -466,7 +477,7 @@
 \newcommand{\clmFinestDx}{1/16}% def: same params: L / N1 / 2^max_level
 \newcommand{\clmResArmsLevelLo}{4}% def: campaign/01_single_throat/hold/single_hold_ml4_t100/evolution_params.txt: max_le
 \newcommand{\clmResArmsLevelHi}{7}% def: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_lvl7from25_t060_lbf_csm_
-\newcommand{\clmBigBoxL}{128}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/evolution
+\newcommand{\clmBigBoxL}{128}% auto: campaign: merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm evolution_params.txt:
 \newcommand{\clmSpongeInner}{24}% def: campaign/01_single_throat/hold/single_hold_t100/evolution_params.txt: sponge_inn
 \newcommand{\clmSpongeOuter}{32}% def: same params, sponge_outer_radius
 \newcommand{\clmSpongeStrength}{4}% def: same params, sponge_strength
@@ -475,20 +486,20 @@
 \newcommand{\clmLapseFloor}{10^{-10}}% def: same params, min_lapse
 \newcommand{\clmChiFloorVariant}{10^{-20}}% def: campaign/01_single_throat/hold/single_hold_chireg_t100/evolution_params.txt: min
 \newcommand{\clmChiRhsFloor}{10^{-8}}% def: campaign/01_single_throat/hold/single_hold_chireg_t100/evolution_params.txt: chi
-\newcommand{\clmExtractRadiusTen}{10}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/evolutio
-\newcommand{\clmExtractRadiusFourteen}{14}% manual: same params, extraction_radii[1]
-\newcommand{\clmExtractRadiusEighteen}{18}% manual: same params, extraction_radii[2]
+\newcommand{\clmExtractRadiusTen}{10}% auto: campaign: merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm evolution_p
+\newcommand{\clmExtractRadiusFourteen}{14}% auto: campaign: merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm evolution_p
+\newcommand{\clmExtractRadiusEighteen}{18}% auto: campaign: merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm evolution_p
 \newcommand{\clmExtractRadiusTwentyTwo}{22}% def: campaign/01_single_throat/seed/single_eps_p1e2_q5e3_ml4_t100/evolution_params.tx
-\newcommand{\clmExtractRadiusTwenty}{20}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/evolution
-\newcommand{\clmExtractRadiusTwentyEight}{28}% manual: same params, extraction_radii[1]
-\newcommand{\clmExtractRadiusThirtySix}{36}% manual: same params, extraction_radii[2]
-\newcommand{\clmExtractRadiusFortyFour}{44}% manual: same params, extraction_radii[3]
+\newcommand{\clmExtractRadiusTwenty}{20}% auto: campaign: merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm evolution_params.txt:
+\newcommand{\clmExtractRadiusTwentyEight}{28}% auto: campaign: merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm evolution_params.txt:
+\newcommand{\clmExtractRadiusThirtySix}{36}% auto: campaign: merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm evolution_params.txt:
+\newcommand{\clmExtractRadiusFortyFour}{44}% auto: campaign: merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm evolution_params.txt:
 \newcommand{\clmShapeSystLone}{3}% auto: horizon_scan.dat (centre A, the throat-centred scan) of the seven perturbative c
 \newcommand{\clmFlowFinderLmax}{6}% manual: GPU_PLAN.md '### R0 VERDICT (2026-09-21, ~07:20)': flow finder runs at lmax 4/6/
 \newcommand{\clmFlowFinderLmaxAlt}{8}% manual: as clmFlowFinderLmax; the production-chain t = 55.0 surface converged at lmax 8 
 \newcommand{\clmFlowFinderSchw}{0.24}% auto: campaign/05_binary_spiral/flow_finder_selftest.log (ah_flow_finder.py --analytic
 \newcommand{\clmFlowFinderSchwMass}{0.12}% auto: campaign/05_binary_spiral/flow_finder_selftest.log
-\newcommand{\clmPsiPipelines}{0.2}% manual: campaign/04_binary_headon/merge_headon_flip_d8_v1_lvl5from0_scalar_t100/Weyl4_mo
+\newcommand{\clmPsiPipelines}{0.4}% auto: campaign/04_binary_headon/*/merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t1
 \newcommand{\clmHoldTimeLevelThree}{35}% auto: campaign/01_single_throat/hold/single_hold_t100/areal_radius.dat; BRANCHES.md Se
 \newcommand{\clmHoldTolLevelThree}{0.1}% auto: campaign/01_single_throat/hold/single_hold_t100/areal_radius.dat
 \newcommand{\clmHoldTimeOnePct}{44}% auto: campaign/01_single_throat/hold/single_hold_t100/areal_radius.dat; BRANCHES.md Se
@@ -502,16 +513,17 @@
 \newcommand{\clmHalfMassHoldTol}{0.1}% auto: campaign/01_single_throat/hold/single_m05_t040/areal_radius.dat
 \newcommand{\clmHalfMassHoldTime}{17}% auto: campaign/01_single_throat/hold/single_m05_t040/areal_radius.dat
 \newcommand{\clmHalfMassDeath}{26.3}% auto: campaign/01_single_throat/hold/single_m05_t040/constraint_norms.dat (last row)
-\newcommand{\clmTauLevelThree}{5.88}% auto: campaign/01_single_throat/hold/single_hold_t100/areal_radius.dat; plot_branches.
-\newcommand{\clmTauLevelFour}{5.26}% auto: campaign/01_single_throat/hold/single_hold_ml4_t100/areal_radius.dat; plot_branc
-\newcommand{\clmTauRounded}{5.9}% auto: as clmTauLevelThree
-\newcommand{\clmTauLevelFourRounded}{5.3}% auto: as clmTauLevelFour
-\newcommand{\clmProperEfoldThree}{0.87}% auto: tau (clmTauLevelThree) x alpha_th / R_star, closed form at the production a, m
-\newcommand{\clmProperEfoldFour}{0.78}% auto: as clmProperEfoldThree
+\newcommand{\clmTauLevelThree}{5.12}% auto: campaign/01_single_throat/hold/single_hold_t100/areal_radius.dat; extract_single
+\newcommand{\clmTauLevelFour}{5.23}% auto: campaign/01_single_throat/hold/single_hold_ml4_t100/areal_radius.dat; extract_si
+\newcommand{\clmTauFitDev}{4}% auto: largest |R/R(0) - 1| inside the two small-amplitude fit windows (single_hold_t10
+\newcommand{\clmTauRounded}{5.2}% auto: the larger of clmTauLevelThree / clmTauLevelFour at two figures
+\newcommand{\clmTauLevelFourRounded}{5.1}% auto: the smaller of clmTauLevelThree / clmTauLevelFour at two figures
+\newcommand{\clmProperEfoldThree}{0.76}% auto: tau (clmTauLevelThree, small amplitude) x alpha_th / R_star, closed form at the 
+\newcommand{\clmProperEfoldFour}{0.77}% auto: as clmProperEfoldThree
 \newcommand{\clmThroatLapse}{0.575}% def: closed form e^{u(r_t)} at the production a, m
 \newcommand{\clmGgsMassless}{0.846}% lit: Gonzalez, Guzman & Sarbach, Class. Quantum Grav. 26, 015010 (2009) [arXiv:0806.0
 \newcommand{\clmGgsMassive}{0.590}% lit: as clmGgsMassless, the gamma_1 -> infinity end
-\newcommand{\clmGgsAgreement}{15}% auto: largest excess of the measured T (level 3) over the parameter-matched linear T =
+\newcommand{\clmGgsAgreement}{0.2}% auto: |T / T_lin - 1| of the level-3 small-amplitude T against the parameter-matched l
 \newcommand{\clmCrossingMean}{13.0}% auto: campaign/01_single_throat/seed/single_eps_{m,p}1e{2,3}_t100/areal_radius.dat; pl
 \newcommand{\clmKickThreeDeath}{40.1}% auto: campaign/01_single_throat/seed/single_eps_p1e3_t100/constraint_norms.dat (last r
 \newcommand{\clmKickThreeLead}{15}% auto: campaign/01_single_throat/seed/single_eps_p1e3_t100/{constraint_norms.dat,horizo
@@ -532,16 +544,16 @@
 \newcommand{\clmHorizonRadiusEpsThree}{3.81}% auto: campaign/01_single_throat/seed/single_eps_p1e3_t100/horizon_scan.dat (first MOTS
 \newcommand{\clmHorizonTimeNoise}{61}% auto: campaign/01_single_throat/branch_shell_scans_2026-09-08.dat (ml3_twin_t061, the 
 \newcommand{\clmDecadeCost}{14}% auto: clmHorizonTimeEpsThree - clmHorizonTimeEpsTwo
-\newcommand{\clmNoiseSeed}{2\times10^{-6}}% auto: 1e-2 exp(-(61 - 11)/tau), tau = 5.875 (level-3 plateau)
-\newcommand{\clmQuietLifetime}{22}% auto: Table II caption's t_BH = 11 M + tau ln(1e-2/eps) at eps = 1e-12 (ten decades be
+\newcommand{\clmNoiseSeed}{6\times10^{-7}}% auto: 1e-2 exp(-(61 - 11)/tau), tau = 5.119 (clmTauLevelThree, small amplitude)
+\newcommand{\clmQuietLifetime}{19}% auto: Table IV caption's t_BH = 11 M + tau ln(1e-2/eps) at eps = 1e-12 (ten decades be
 \newcommand{\clmPhysRstarThirty}{172}% auto: clmRstar (closed form) x G M/c^2; M = 30 M_sun; G M_sun = 1.3271244e20 m^3/s^2 (
 \newcommand{\clmPhysRstarThousand}{5.7\times10^{3}}% auto: clmRstar (closed form) x G M/c^2; M = 1000 M_sun; G M_sun = 1.3271244e20 m^3/s^2
 \newcommand{\clmPhysRstarMillion}{5.7\times10^{6}}% auto: clmRstar (closed form) x G M/c^2; M = 1e+06 M_sun; G M_sun = 1.3271244e20 m^3/s^
 \newcommand{\clmPhysRstarBillion}{38}% auto: clmRstar (closed form) x G M/c^2; M = 1e+09 M_sun; G M_sun = 1.3271244e20 m^3/s^
-\newcommand{\clmPhysTauThirty}{0.87}% auto: clmTauLevelThree rounded to 5.9 (the caption's tau = 5.9 M) x G M/c^3; M = 30 M_
-\newcommand{\clmPhysTauThousand}{29}% auto: clmTauLevelThree rounded to 5.9 (the caption's tau = 5.9 M) x G M/c^3; M = 1000 
-\newcommand{\clmPhysTauMillion}{29}% auto: clmTauLevelThree rounded to 5.9 (the caption's tau = 5.9 M) x G M/c^3; M = 1e+06
-\newcommand{\clmPhysTauBillion}{8.1}% auto: clmTauLevelThree rounded to 5.9 (the caption's tau = 5.9 M) x G M/c^3; M = 1e+09
+\newcommand{\clmPhysTauThirty}{0.76}% auto: clmTauLevelThree (5.119 M, unrounded) x G M/c^3; M = 30 M_sun; G M_sun = 1.32712
+\newcommand{\clmPhysTauThousand}{25}% auto: clmTauLevelThree (5.119 M, unrounded) x G M/c^3; M = 1000 M_sun
+\newcommand{\clmPhysTauMillion}{25}% auto: clmTauLevelThree (5.119 M, unrounded) x G M/c^3; M = 1e6 M_sun
+\newcommand{\clmPhysTauBillion}{7.0}% auto: clmTauLevelThree (5.119 M, unrounded) x G M/c^3; M = 1e9 M_sun
 \newcommand{\clmPhysEpsTwoThirty}{1.6}% auto: clmHorizonTimeEpsTwo (11 M) x G M/c^3; M = 30 M_sun; G M_sun = 1.3271244e20 m^3/
 \newcommand{\clmPhysEpsTwoThousand}{54}% auto: clmHorizonTimeEpsTwo (11 M) x G M/c^3; M = 1000 M_sun; G M_sun = 1.3271244e20 m^
 \newcommand{\clmPhysEpsTwoMillion}{54}% auto: clmHorizonTimeEpsTwo (11 M) x G M/c^3; M = 1e+06 M_sun; G M_sun = 1.3271244e20 m
@@ -568,9 +580,13 @@
 \newcommand{\clmPureQuadAmpCaption}{0.01}% def: as clmPureQuadAmp (Fig. 2 caption prints it as 0.01)
 \newcommand{\clmPureQuadMotsTime}{33}% auto: campaign/01_single_throat/seed/single_pureq_q1e2_ml4_t100/horizon_scan.dat (cent
 \newcommand{\clmPureQuadMotsRStart}{3.80}% auto: as clmPureQuadMotsTime
-\newcommand{\clmPureQuadMotsREnd}{2.41}% auto: as clmPureQuadMotsTime
+\newcommand{\clmPureQuadMotsREnd}{2.50}% auto: campaign/01_single_throat/seed/single_pureq_q1e2_ml4_t100/horizon_scan.dat (cent
 \newcommand{\clmPureQuadMotsMStart}{1.90}% auto: as clmPureQuadMotsTime
-\newcommand{\clmPureQuadMotsMEnd}{1.24}% auto: as clmPureQuadMotsTime
+\newcommand{\clmPureQuadMotsMEnd}{1.25}% auto: as clmPureQuadMotsREnd
+\newcommand{\clmPureQuadTrust}{60}% auto: results/merger/trust_windows.tsv (single_pureq_q1e2_ml4_t100)
+\newcommand{\clmGwKickedRadiusFloor}{2.33}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100/horizon_scan
+\newcommand{\clmGwSingleAgreePct}{3}% manual: single_pureq_q1e2_ml4_scalar_t100 against its box-doubled copy single_pureq_q1e2
+\newcommand{\clmGwSingleAgreeFrom}{50}% manual: as clmGwSingleAgreePct
 \newcommand{\clmPureQuadDeparture}{42}% auto: campaign/01_single_throat/seed/single_pureq_q1e2_ml4_t100 and hold/single_hold_m
 \newcommand{\clmCollapseViolentLo}{45}% manual: plot_single_collapse.py SNAPS comment ('the collapse is 45-55'); panels (b)-(d) 
 \newcommand{\clmCollapseViolentHi}{55}% manual: as clmCollapseViolentLo
@@ -609,6 +625,7 @@
 \newcommand{\clmSignSlices}{15}% auto: as clmSignRatio (rows with a ratio)
 \newcommand{\clmSignSettleWindow}{3.5}% auto: as clmSignRatio (first slice with a ratio; sign_rule.py WINDOW)
 \newcommand{\clmSignWindowEnd}{10.5}% manual: campaign/03_two_throats/matched_rest_displacement.dat (header: ratio over t = 3.
+\newcommand{\clmSignWindowClosed}{4.6}% auto: campaign/03_two_throats/matched_rest_displacement.dat: -dsep_flip_d12(10.5) / se
 \newcommand{\clmMatchedSignRatio}{1.462}% auto: campaign/03_two_throats/matched_rest_displacement.dat: -dsep_flip_d12/dsep_like_
 \newcommand{\clmMatchedSignRatioErr}{0.022}% auto: as clmMatchedSignRatio (sample sd, ddof 1)
 \newcommand{\clmMatchedOffsetDelta}{2.65}% auto: as clmMatchedSignRatio (least-squares A/(d+delta)^2 on the full d = 12..18 ladde
@@ -630,15 +647,16 @@
 \newcommand{\clmWidthExponentLo}{1.2}% auto: campaign/03_two_throats/matched_rest_displacement.dat: least-squares log-log fit
 \newcommand{\clmWidthExponentHi}{1.4}% auto: as clmWidthExponentLo
 \newcommand{\clmWidthExponentFit}{1.4}% auto: as clmWidthExponentLo, at t = 11.5 alone: the gold line of Fig. 4(d) (plot_width
-\newcommand{\clmSpongeInnerBig}{48}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/evolution
-\newcommand{\clmSpongeOuterBig}{64}% manual: same params, sponge_outer_radius
+\newcommand{\clmSpongeInnerBig}{48}% auto: campaign: merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm evolution_params.txt:
+\newcommand{\clmSpongeOuterBig}{64}% auto: campaign: merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm evolution_params.txt:
 \newcommand{\clmThroatGammaOne}{0.5}% def: production params: gamma_1 = m/a of GGS I
 \newcommand{\clmGgsMatched}{0.758}% lit: Gonzalez, Guzman & Sarbach, CQG 26, 015010 (2009), Table I at gamma_1 = 0.5 (arX
 \newcommand{\clmLinT}{0.7584}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/linear_mode.py: three solvers 
 \newcommand{\clmLinTau}{5.13}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/linear_mode.py: tau_lin = 1/la
-\newcommand{\clmGgsAgreementFour}{2.5}% auto: level-4 plateau T over the parameter-matched linear T (grteclyn-wrapper/scripts/
+\newcommand{\clmGgsAgreementFour}{1.9}% auto: |T / T_lin - 1| of the level-4 small-amplitude T against the parameter-matched l
 \newcommand{\clmThroatOwnMass}{1.94}% def: closed form: M_MS on the time-symmetric throat = R_min/2 (theta_pm = 0 there)
 \newcommand{\clmSeedDefectPeak}{0.93}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/c_seed_constraints.py: closed-
+\newcommand{\clmSeedDefectPeakHi}{0.94}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/c_seed_constraints.py: closed-
 \newcommand{\clmSeedBagThreshold}{0.025}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/c_eps01_fates.py: R''(r_t) = 0
 \newcommand{\clmSeedDefectBox}{0.090}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/c_seed_constraints.py: quadrat
 \newcommand{\clmKickNormSpread}{5.4}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/c_seed_constraints.py: kicked 
@@ -669,11 +687,11 @@
 \newcommand{\clmBoostPairRmin}{0.09}% manual: verify_p025 A: R_min 3.8807 per mouth against the isolated 3.8772
 \newcommand{\clmBoostPairShellHam}{7.8\times10^{-5}}% manual: verify_p025 A: shell Hamiltonian rms 7.8e-5 / 3.2e-5 / 5.6e-5 on levels 3 / 4 / 
 \newcommand{\clmBoostSpeed}{0.41}% manual: closed form v = p/sqrt(m^2+p^2) = 0.4104 at p = 0.45, m = 1
-\newcommand{\clmBoostMovingHoldMax}{2.0}% manual: campaign/02_moving_throat/exact_boost/single_boost_p045_lbf_t050/horizon_scan.da
-\newcommand{\clmBoostMovingPeakTime}{29}% manual: single_boost_p045_lbf_t050 horizon_scan A rows: R max at t = 29
-\newcommand{\clmBoostMovingOnePct}{36.8}% manual: single_boost_p045_lbf_t050 horizon_scan A rows: R 1 % below R(0)
-\newcommand{\clmBoostMovingTauLo}{5.5}% manual: single_boost_p045_lbf_t050: ln(R_peak - R) e-fold, fits from t = 32-38 to 44
-\newcommand{\clmBoostMovingTauHi}{5.7}% manual: as clmBoostMovingTauLo
+\newcommand{\clmBoostMovingHoldMax}{1.2}% auto: campaign/02_moving_throat/exact_boost/single_boost_p045_lbf_t050/horizon_scan.da
+\newcommand{\clmBoostMovingPeakTime}{25}% auto: as clmBoostMovingHoldMax
+\newcommand{\clmBoostMovingOnePct}{36.8}% auto: as clmBoostMovingHoldMax
+\newcommand{\clmBoostMovingTauLo}{5.0}% auto: as clmBoostMovingHoldMax: free-offset fits R = c + B e^(t/tau) over [t0, t1], t0
+\newcommand{\clmBoostMovingTauHi}{6.1}% auto: as clmBoostMovingTauLo
 \newcommand{\clmBoostMovingDeath}{44.67}% manual: single_boost_p045_lbf_t050 run.log: NaN in h11, level 3, chi at the pit on its f
 \newcommand{\clmFreezeRadiusFull}{0.3}% manual: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_lvl5from0_t060_lbf_csm/e
 \newcommand{\clmFreezeRadiusStart}{0.8}% manual: same params: core_freeze_radius_start
@@ -687,12 +705,12 @@
 \newcommand{\clmGwPeakThroat}{2.9\times10^{-3}}% auto: seed arm, R = 10
 \newcommand{\clmGwPeakFallHeadon}{22}% auto: 
 \newcommand{\clmGwPeakFallFlyby}{20}% auto: 
-\newcommand{\clmGwEnergyFlyby}{8.3\times10^{-2}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
-\newcommand{\clmGwEnergySpiral}{5.7\times10^{-3}}% auto: d6 SERIES, R = 20 to t = 100
-\newcommand{\clmGwEnergyTwin}{2.6\times10^{-3}}% auto: 
+\newcommand{\clmGwEnergyFlyby}{8.0\times10^{-2}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled): fly-by at the innermost sph
+\newcommand{\clmGwEnergySpiral}{5.0\times10^{-3}}% auto: d6 SERIES, R = 20, over t - R <= 56, the window every sphere's record covers (un
+\newcommand{\clmGwEnergyTwin}{2.7\times10^{-3}}% auto: 
 \newcommand{\clmGwEnergyThroat}{2.6\times10^{-5}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): col
 \newcommand{\clmGwEnergyThroatRound}{3\times10^{-5}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): col
-\newcommand{\clmGwSpreadFlyby}{41}% auto: 
+\newcommand{\clmGwSpreadFlyby}{2}% auto: 
 \newcommand{\clmGwEnergyRatioFlybyLo}{16}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
 \newcommand{\clmGwEnergyRatioFlybyHi}{29}% manual: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
 \newcommand{\clmGwVacPassSep}{12}% def: campaign/07_bbh_control/bbh_control_d12_p045_t100/evolution_params.txt: bh2.offs
@@ -700,8 +718,8 @@
 \newcommand{\clmGwVacPassCirc}{0.204}% auto: Newtonian circular momentum per body, equal unit masses at the separation of bbh
 \newcommand{\clmGwVacPassPar}{0.289}% auto: Newtonian parabolic (escape) momentum per body at the separation of bbh_control_
 \newcommand{\clmGwEnergyVacPass}{1.05\times10^{-3}}% auto: campaign/07_bbh_control/bbh_control_d12_p045_t100/psi4_mode_l2_all.dat, (2,2) at
-\newcommand{\clmGwVacPassRatioLo}{40}% manual: fly-by E_lo (plot_psi4_ligo) over the p=0.45 vacuum control's E
-\newcommand{\clmGwVacPassRatioHi}{70}% manual: fly-by E_hi (plot_psi4_ligo) over the p=0.45 vacuum control's E
+\newcommand{\clmGwVacPassRatioLo}{75}% auto: fly-by E_lo (plot_psi4_ligo, R = 28 on t - R <= 67.6) over the p = 0.45 vacuum c
+\newcommand{\clmGwVacPassRatioHi}{76}% auto: fly-by E_hi (plot_psi4_ligo, R = 20 on t - R <= 67.6) over the p = 0.45 vacuum c
 \newcommand{\clmGwPeakVacPass}{9.0\times10^{-3}}% auto: plot_psi4_gallery.VACUUM_OVERLAY: campaign/07_bbh_control/bbh_control_d12_p045_t
 \newcommand{\clmGwVacPassPeakRatio}{6.7}% auto: 
 \newcommand{\clmGwGateThroat}{70}% def: plot_psi4_gallery.ARMS collapsing-throat t_max (QUEUE2E_GATES junk cut, R=10 at 
@@ -710,13 +728,13 @@
 \newcommand{\clmGwSpeedThroatA}{0.94}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedThroatB}{0.97}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedThroatC}{0.95}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
-\newcommand{\clmGwSpeedHeadonA}{0.94}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
+\newcommand{\clmGwSpeedHeadonA}{0.90}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedHeadonB}{0.88}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedHeadonC}{0.95}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
 \newcommand{\clmGwSpeedSpiralA}{0.86}% auto: 
 \newcommand{\clmGwSpeedSpiralB}{0.88}% auto: 
 \newcommand{\clmGwSpeedSpiralC}{0.94}% auto: 
-\newcommand{\clmGwSpeedFlybyA}{0.88}% auto: 
+\newcommand{\clmGwSpeedFlybyA}{0.91}% auto: 
 \newcommand{\clmGwSpeedFlybyB}{1.00}% auto: 
 \newcommand{\clmGwSpeedFlybyC}{1.00}% auto: 
 \newcommand{\clmGwLigoMass}{30}% def: plot_psi4_ligo.MASS_MSUN (the figure's calibration)
@@ -810,7 +828,7 @@
 \newcommand{\clmGwKickedEfoldLo}{6}% auto: plot_scalar_censorship envelope of campaign/01_single_throat/seed/single_eps_p1e
 \newcommand{\clmGwKickedEfoldHi}{7}% auto: the same fit, largest over R=10/14/18
 \newcommand{\clmGwSingleLevel}{4}% def: campaign/01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100/evolution_param
-\newcommand{\clmGwSingleEfold}{5}% auto: plot_scalar_censorship envelope of campaign/01_single_throat/seed/single_pureq_q
+\newcommand{\clmGwSingleEfold}{4.6}% auto: plot_scalar_censorship envelope of campaign/01_single_throat/seed/single_pureq_q
 \newcommand{\clmGwSingleWindowLo}{45}% manual: GPU_PLAN.md '2026-09-23 (midday) -- the L=128 discriminator LANDS': 'identical e
 \newcommand{\clmGwSingleWindowHi}{75}% manual: GPU_PLAN.md '2026-09-23 (midday) -- the L=128 discriminator LANDS'
 \newcommand{\clmGwSingleBox}{128}% def: campaign/01_single_throat/seed/single_pureq_q1e2_L128_ml4_scalar_t100/evolution_
@@ -820,10 +838,10 @@
 \newcommand{\clmGwEnvWindow}{25}% def: plot_scalar_censorship.WINDOW
 \newcommand{\clmGwFluxSignStretch}{13}% manual: campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/scalar_modes.d
 \newcommand{\clmGwDrawFloorFrac}{10}% manual: plot_psi4_gallery.DRAW_GATES: each throat sphere drawn to where the level-4 sphe
-\newcommand{\clmGwDrawFlybyRetarded}{74}% manual: 94 - 20: the R = 20 trough gate in retarded time (DRAW_GATES)
-\newcommand{\clmGwPureLeadLo}{1.1}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py: the kick
-\newcommand{\clmGwPureLeadHi}{1.5}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py (same)
-\newcommand{\clmGwSeedOldFloorRatio}{2}% manual: campaign single_eps_p1e2_q5e2_ml4_t100 evolution_params.txt header: the 0.01 wav
+\newcommand{\clmGwDrawFlybyRetarded}{67.6}% auto: plot_psi4_gallery.FLYBY_TRUST = the fly-by's trust window (trust_windows.tsv), r
+\newcommand{\clmGwPureLeadLo}{1.0}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py: the kick
+\newcommand{\clmGwPureLeadHi}{2.0}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py (same)
+\newcommand{\clmGwSeedOldFloorRatio}{5}% auto: plot_seed_linearity, Fig. 11(b)'s own measure: rms Re Psi4^{2,0} over t = 30-50 
 \newcommand{\clmGwThroatPeriodFit}{20.61}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py: scip
 \newcommand{\clmGwThroatPeriodFitErr}{0.15}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py (same
 \newcommand{\clmGwThroatHalfPeriodA}{9.4}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py: inte
@@ -836,38 +854,38 @@
 \newcommand{\clmGwFillFrontMax}{1.5\times10^{-5}}% manual: grteclyn-wrapper/scripts/analysis/merger_feedback/waves_fill_twin.py: the differ
 \newcommand{\clmGwFillPeakLead}{13}% manual: clmGwLightCone - clmGwSpiralPeakTime = 75 - 62: the burst peaks at R = 20 before
 \newcommand{\clmGwLitScatter}{2\times10^{-2}}% lit: Damour, Guercilena, Hinder, Hopper, Nagar & Rezzolla, PRD 89, 081503(R) (2014) (
-\newcommand{\clmGwEnergyFlybyOuter}{4.9\times10^{-2}}% auto: plot_psi4_ligo.prepare (band integral, +-m doubled, common retarded window): fly
+\newcommand{\clmGwEnergyFlybyOuter}{7.8\times10^{-2}}% auto: plot_psi4_ligo.prepare: fly-by at R = 28, the outermost sphere whose record cove
 \newcommand{\clmGwThroatEnergyCut}{58}% def: plot_psi4_ligo.ENERGY_ON_DRAWN: the throat's energy closes at plot_psi4_gallery.
 \newcommand{\clmGwHeadonNoiseGate}{80}% manual: campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L128_lvl4from50_scalar_t10
 \newcommand{\clmEgwEnergyTwoFive}{3.75\times10^{-2}}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm/Weyl4_
-\newcommand{\clmEgwEnergyFortyFive}{8.3\times10^{-2}}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/Weyl4_
+\newcommand{\clmEgwEnergyFortyFive}{8.0\times10^{-2}}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/Weyl4_
 \newcommand{\clmEgwEnergySixty}{4.2\times10^{-2}}% auto: 06_binary_flyby/merge_orbit_flip_d12_p060_L128_SERIES/Weyl4_mode_22.dat: band E,
-\newcommand{\clmEgwEnergyTwoFiveOuter}{3.95\times10^{-2}}% auto: p025 Weyl4_mode_22.dat, R = 28, trough gate 99
-\newcommand{\clmEgwEnergyFortyFiveOuter}{8.2\times10^{-2}}% auto: p045 Weyl4_mode_22.dat, R = 28, trough gate 99
+\newcommand{\clmEgwEnergyTwoFiveOuter}{3.64\times10^{-2}}% auto: p025 Weyl4_mode_22.dat, R = 28, to t - R <= 63.3 (trust)
+\newcommand{\clmEgwEnergyFortyFiveOuter}{7.8\times10^{-2}}% auto: p045 Weyl4_mode_22.dat, R = 28, to t - R <= 67.6 (trust)
 \newcommand{\clmEgwGateTwoFive}{84}% auto: p025 R = 20: |r Psi4| trough after the arch (decaying burst meets the mouths' co
-\newcommand{\clmEgwGateFortyFive}{94}% auto: p045 R = 20 trough
+\newcommand{\clmEgwGateFortyFive}{87.6}% auto: expr: the p=0.45 fly-by trust window (trust_windows.tsv, t_max 67.6) applied in 
 \newcommand{\clmEgwGateSixty}{12}% manual: 80 (trust) - 67.70 (R = 20 peak, waves_peak_time) = 12.3
-\newcommand{\clmEgwBoundaryOverScatter}{2.2}% manual: 0.083168 / 0.037546 = 2.22 (clmEgwEnergyFortyFive / clmEgwEnergyTwoFive)
-\newcommand{\clmEgwBoundaryOverPlunge}{2.0}% manual: 0.083168 / 0.041936 = 1.98; the plunge energy is a floor, so this ratio is a cei
-\newcommand{\clmHeadonCsmGwEnergy}{1.2\times10^{-2}}% auto: 04_binary_headon/csm SERIES glued record, (2,0) at R = 14, full record to 100; M
-\newcommand{\clmHeadonCsmGwEnergyInner}{1.3\times10^{-2}}% auto: SERIES (2,0) R = 10
-\newcommand{\clmHeadonCsmGwEnergyOuter}{1.1\times10^{-2}}% auto: SERIES (2,0) R = 18
+\newcommand{\clmEgwBoundaryOverScatter}{2.1}% auto: clmEgwEnergyFortyFive / clmEgwEnergyTwoFive
+\newcommand{\clmEgwBoundaryOverPlunge}{1.9}% auto: clmEgwEnergyFortyFive / clmEgwEnergySixty; the plunge energy is a floor, so this
+\newcommand{\clmHeadonCsmGwEnergy}{1.1\times10^{-2}}% auto: 04_binary_headon/csm SERIES glued record, (2,0) at R = 14, over t - R <= 60 (the
+\newcommand{\clmHeadonCsmGwEnergyInner}{1.2\times10^{-2}}% auto: SERIES (2,0) R = 10, t - R <= 60
+\newcommand{\clmHeadonCsmGwEnergyOuter}{1.0\times10^{-2}}% auto: SERIES (2,0) R = 18, t - R <= 60
 \newcommand{\clmBbhHeadonGwEnergy}{5.6\times10^{-4}}% auto: 07_bbh_control/bbh_headon_d8_L128_lvl5_t100, (2,0) at R = 14, record to 100; M =
 \newcommand{\clmBbhHeadonGwRatio}{21}% manual: 0.0030163 / 0.00014041 = 21.5 (E/M at the common R = 14 sphere)
 \newcommand{\clmBbhHeadonPeakT}{61}% auto: bbh head-on (2,0) peak at R = 14
 \newcommand{\clmHeadonCsmPeakT}{33}% auto: wormhole head-on SERIES (2,0) peak at R = 14
 \newcommand{\clmBbhHeadonPeakLag}{28}% manual: 60.88 - 33.02 = 27.9
 \newcommand{\clmGwPeakPlunge}{5.1\times10^{-2}}% auto: gallery ARMS plunge = p060 SERIES, R = 20
-\newcommand{\clmGwSpeedLow}{0.86}% manual: min of the quoted correlated-lag speeds (the merger's innermost pair)
-\newcommand{\clmGwSpeedHigh}{1.00}% manual: max (the fly-by's outer pairs)
-\newcommand{\clmGwSpeedPlunge}{0.83}% manual: burst-peak lag 67.70 -> 77.35 over Delta R = 8; the trust-cut ramps defeat the c
+\newcommand{\clmGwSpeedLow}{0.82}% auto: min over every record named: the gallery speeds, the twin's correlated lag and t
+\newcommand{\clmGwSpeedHigh}{1.00}% auto: max over every record named (as clmGwSpeedLow)
+\newcommand{\clmGwSpeedPlunge}{0.83}% auto: plot_psi4_gallery PEAK_SPEED_ROWS: burst-peak lag R = 20 -> 28 on the drawn reco
 \newcommand{\clmBbhHeadonAmpRatio}{6.1}% manual: gallery print: head-on row peak 2.40e-2 / vacuum overlay peak 3.96e-3
 \newcommand{\clmGwHeadonHalfLo}{15.5}% auto: 
 \newcommand{\clmGwHeadonHalfHi}{18.8}% auto: 
 \newcommand{\clmGwScalarCrestInner}{47}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
 \newcommand{\clmGwScalarCrestOuter}{60}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
 \newcommand{\clmGwScalarRatioFull}{0.56}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
-\newcommand{\clmJunkShareMax}{2.6}% auto: packed Weyl4 streams of the five binaries at the spheres and gates of their quot
+\newcommand{\clmJunkShareMax}{2.7}% auto: packed Weyl4 streams of the five binaries at the spheres and gates of their quot
 \newcommand{\clmScalarNearSlope}{2.5}% auto: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
 \newcommand{\clmScalarPrearchShare}{14}% auto: same scalar_modes.dat: share of |E_phi| through R = 30 (to the trusted end t = 9
 \newcommand{\clmScalarArchRatio}{0.48}% auto: same: both running integrals from t = 38 to 97.6 at R = 30 (whole record: clmGwS
@@ -887,11 +905,12 @@
 \newcommand{\clmGwScalarRatioWaveZoneSixty}{3.1}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
 \newcommand{\clmGwScalarGateOuter}{97.6}% manual: the R = 30 sphere's retarded gate: the fly-by's trust window 67.6 (trust_windows
 \newcommand{\clmGwCensCrestMid}{34}% manual: campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/scalar_modes.d
-\newcommand{\clmGwCensCrestOuter}{39}% manual: campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/scalar_modes.d
-\newcommand{\clmGwCensMergerCrest}{39}% manual: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_SERIES/scalar_modes.dat 
+\newcommand{\clmGwCensCrestOuter}{38}% auto: campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/scalar_modes.d
+\newcommand{\clmGwCensMergerCrest}{38}% auto: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_SERIES/scalar_modes.dat 
 \newcommand{\clmGwCensMergerRadius}{20}% manual: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_SERIES/scalar_modes.dat 
 \newcommand{\clmGwCensMergerTau}{22}% manual: plot_scalar_censorship: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_
 \newcommand{\clmGwCensMergerFitLo}{45}% def: plot_scalar_censorship.FIT_MERGER = (45, 95): past the merger's t = 39 crest on 
 \newcommand{\clmGwCensMergerDrop}{19}% manual: plot_scalar_censorship: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_
 \newcommand{\clmGwVacMergerPeakRatio}{3.0}% auto: plot_psi4_gallery.VACUUM_OVERLAY: campaign/07_bbh_control/bbh_control_d6_p010_t1
 \newcommand{\clmHeadonAxisRatioDev}{2}% auto: results/merger/analysis/headon_axis_modes.py on the head-on SERIES and bbh_heado
+\newcommand{\clmEgwTrustTwoFive}{63.3}% auto: results/merger/trust_windows.tsv, the p = 0.25 row; a wave record is quotable to

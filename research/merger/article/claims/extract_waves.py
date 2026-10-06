@@ -85,7 +85,7 @@ def _arms() -> dict:
     out = {}
     for name, _knob, mode, rel, m, R0, t_max, _note in _mod("plot_psi4_gallery").ARMS:
         p = pathlib.PurePosixPath(rel)
-        out[name] = dict(run=p.parent.name, file=p.name, m=m, R0=R0, t_max=t_max, mode=mode)
+        out[name] = dict(run=p.parent.name, file=p.name, m=m, R0=R0, t_max=t_max, mode=mode, rel=rel)
     return out
 
 
@@ -109,6 +109,10 @@ def _series(scenario: str, gated: bool = True):
         t, d = streams.load_l2_all(path)
         ser = {r: d[(mm, r)] for (mm, r) in d if mm == a["m"]}
     gallery = _mod("plot_psi4_gallery")
+    if a["rel"] in getattr(gallery, "RADII", {}):
+        # the spheres the gallery keeps (gallery.load): the head-on correlated
+        # 10 -> 14 -> 18 -> 20 here against the figure's 10 -> 20 -> 36 -> 44
+        ser = {r: y for r, y in ser.items() if r in gallery.RADII[a["rel"]]}
     if gated and scenario in getattr(gallery, "DRAW_GATES", {}):
         # the gallery's per-sphere drawing gates (2026-09-24) replace the ARMS
         # coordinate cut, which clipped the outer fly-by spheres before their peaks
@@ -320,13 +324,15 @@ def waves_energy(scenario: str, which: str = "E", sphere: float | None = None) -
     'spread' = 100 (hi - lo)/E in %.  One sphere on that same window: 'inner' /
     'outer' (the innermost / outermost sphere the figure compares) or 'sphere'
     with sphere = R.  't_end': the coordinate time at the innermost sphere where
-    the energy integral closes (the ARMS gate, or the gallery's drawn end for
-    plot_psi4_ligo.ENERGY_ON_DRAWN)."""
+    the energy integral closes; 'u_end': the same in retarded time t - R, the
+    window common to every sphere that enters (plot_psi4_ligo.U_END)."""
     a = _ligo_arm(scenario)
     if which == "spread":
         return 100.0 * (a["E_hi"] - a["E_lo"]) / a["E"]
     if which == "t_end":
         return float(a["t_E"])
+    if which == "u_end":
+        return float(a["t_E"] - a["R_in"])
     if which in ("inner", "outer", "sphere"):
         per = a["E_R"]
         R = {"inner": min(per, default=None), "outer": max(per, default=None)}.get(
@@ -340,11 +346,18 @@ def waves_energy(scenario: str, which: str = "E", sphere: float | None = None) -
 
 @extractor
 def waves_energy_run(run: str, file: str, R: float, m: int, M: float | str,
-                     t_max: float | None = None, radii: list[float] | None = None) -> float:
+                     t_max: float | None = None, radii: list[float] | None = None,
+                     u_max: float | dict | None = None) -> float:
     """E_rad/M of one (l=2, m) mode on one sphere of any packed stream, with the
     LIGO figure's band integral (psi4_math._compute_radiated_energy cut against the
     smoothed band peak; m != 0 doubled for +-m).  radii: the sphere columns of a
-    header-less restart stream, in column order."""
+    header-less restart stream, in column order.  u_max: a retarded cut t - R <=
+    u_max (a number, or an extractor spec such as a trust_window), applied on top
+    of t_max."""
+    if isinstance(u_max, dict):
+        u_max = evaluate(u_max)
+    if u_max is not None:
+        t_max = min(math.inf if t_max is None else float(t_max), float(R) + float(u_max))
     streams, pm = _mod("streams"), _mod("psi4_math")
     path = _run_path(run) / file
     if file.startswith("psi4_mode_l2_all"):

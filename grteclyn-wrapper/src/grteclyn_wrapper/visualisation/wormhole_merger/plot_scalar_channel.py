@@ -276,14 +276,14 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[scalar-channel] flyby (c): R=30 drawn to t = {U_GATE + 30:.1f}, "
           f"R=14 solid to t = {arms['flyby']['t_cut']:.0f}, dashed to "
           f"t = {U_GATE + 14:.1f} (near zone: mouths inflating)")
-    axC.vlines(arms["flyby"]["t_cut"], 1e-8, 4e1, color=style.DEEP_BLUE,
+    axC.vlines(arms["flyby"]["t_cut"], 1e-8, 1.2e-2, color=style.DEEP_BLUE,
                linewidth=0.7, linestyle=(0, (2.5, 2.0)), zorder=2)
     axC.set_yscale("log")
-    axC.set_ylim(1e-8, 3e3)
+    axC.set_ylim(1e-8, 3e0)   # the data stay below 1e-2; the top holds the note
     axC.set_xlim(0.0, T_MAX)
     axC.set_ylabel(r"$|F_\phi|$")
     axC.set_xlabel(r"$t$")
-    axC.text(2.5, 1.6e3, "left of the blue rule the inner sphere\nis still clear of the inflating mouths",
+    axC.text(2.5, 1.6e0, "left of the blue rule the inner sphere\nis still clear of the inflating mouths",
              fontsize=6, color=style.MUTED, va="top")
     axC.text(20.0, 1.0e-6, r"$R=30$", fontsize=7, color=style.GOLD,
              ha="center", va="top")
@@ -300,7 +300,9 @@ def main(argv: list[str] | None = None) -> int:
     out = pathlib.Path(args.out) if args.out else (
         figure_dir("08_waves", args.pack_root) / "scalar_channel.png")
     out.parent.mkdir(parents=True, exist_ok=True)
+    hits = style.label_audit(fig)
     png = style.save(fig, out)
+    print(f"[label audit] {'clean' if not hits else hits}")
     print(f"[scalar-channel] wrote {png} (+pdf)")
     return 0
 

@@ -47,12 +47,12 @@ requires").  Omega today against the comoving MASS density of converting
 wormholes, n M, on which alone both deposits depend: Omega_GW of the
 conversions (gold, E/M from the head-on to the spiral; since 2026-09-25 -- it
 ran to the fly-by's, which converts nothing) and the negative scalar deposit
-|Omega_phi,0| (blue, |E_phi| = r E_GW with r = 0.8-3.2, every estimator of
-Sec. VIII F, E_GW from the spiral to the fly-by: every encounter, the most
-favourable to Lambda), both radiation-like, Omega_0 = n E / [rho_c (1+z_e)] at
-z_e = 20.  Solid up to the dark-matter ceiling n M = rho_DM (vertical rule),
-faint beyond it, where the deposit would meet Omega_Lambda only at
-Omega_WH = n M / rho_c = 60-800 (top axis).  Dotted: H^2 > 0 at z_e caps any
+|Omega_phi,0| (blue, |E_phi| = r E_GW, r and E_GW (spiral to fly-by: every
+encounter, the most favourable to Lambda) read from the claims ledger's rows
+the caption quotes, see deposit()), both radiation-like, Omega_0 = n E /
+[rho_c (1+z_e)] at z_e = 20.  Solid up to the dark-matter ceiling n M = rho_DM
+(vertical rule), faint beyond it, where the deposit would meet Omega_Lambda
+only at the Omega_WH of the ledger's detector_omega_wh (top axis).  Dotted: H^2 > 0 at z_e caps any
 radiation-like negative deposit at Omega_m/(1+z_e).  Ink ticks: the 4-yr
 power-law-integrated sensitivity (Thrane-Romano, instrument noise) at each
 mass's conversion frequency, where the gold band meets it.  Grey: the
@@ -113,8 +113,46 @@ SEED_RANGE = (1.0e4, 1.0e6)   # the Table-II decade band the section quotes
 N_RANGE = (1.0e-4, 1.0e-2)    # one seed per massive galaxy, comoving Mpc^-3
 BURST_MASSES = (1.0e4, 1.0e5, 1.0e6, 1.0e7, 1.0e8)
 
-SCALAR_RATIO = (0.8, 3.2)     # |E_phi|/E_GW, extremes over the Sec. VIII F estimators
 RHO_DM_MSUN_MPC3 = 0.1200 * 2.775e11   # Planck 2018 Omega_c h^2 (the ledger's f_DM)
+
+# Panel (c)'s deposit, |E_phi|/M = r E_GW: the claims-ledger rows the caption quotes,
+# |E_phi|/E_GW = clmGwScalarRatioFull..clmGwScalarBandSixty and E_GW from the merger
+# to the fly-by, each recomputed by its own extractor (no number typed in here).
+CLAIMS = PACK_ROOT.parent.parent / "research" / "merger" / "article" / "claims"
+SCALAR_ROWS = ("clmGwScalarRatioFull", "clmGwScalarBandSixty")
+DEPOSIT_ROWS = ("clmGwEnergySpiral", "clmGwEnergyFlyby")
+
+
+@functools.lru_cache(maxsize=None)
+def ledger_value(row_id: str) -> float:
+    """A claims-ledger row's value, from its own extractor and args."""
+    import csv
+    import importlib.util
+    import json
+    import sys
+    if str(CLAIMS) not in sys.path:
+        sys.path.insert(0, str(CLAIMS))
+    import lib  # the claims machinery (research/merger/article/claims/lib.py)
+    rows = {}
+    for path in sorted(CLAIMS.glob("ledger_*.tsv")):
+        with path.open(encoding="utf-8", newline="") as fh:
+            rows.update((r["id"], r) for r in csv.DictReader(
+                (x for x in fh if x.strip() and not x.startswith("#")),
+                delimiter="\t", quoting=csv.QUOTE_NONE))
+    row = rows[row_id]
+    if row["extractor"] not in lib.EXTRACTORS:  # standalone: register them as claims.py does
+        for mod in sorted(CLAIMS.glob("extract_*.py")):
+            spec = importlib.util.spec_from_file_location(mod.stem, mod)
+            spec.loader.exec_module(importlib.util.module_from_spec(spec))
+    return float(lib.evaluate({"fn": row["extractor"], **json.loads(row["args"] or "{}")}))
+
+
+def deposit() -> tuple[float, float]:
+    """|E_phi|/M of panel (c)'s blue band: the smallest ratio on the smaller E_GW
+    to the largest ratio on the larger."""
+    r = [ledger_value(i) for i in SCALAR_ROWS]
+    e = [ledger_value(i) for i in DEPOSIT_ROWS]
+    return min(r) * min(e), max(r) * max(e)
 
 
 @functools.lru_cache(maxsize=None)
@@ -363,8 +401,7 @@ def panel_population(ax) -> None:
     (the LISA ticks) and where an abundance n is quoted."""
     x_min, x_max = 1.0e-2, 1.0e15
     e_gw = e_range(CONVERSIONS)
-    e_dep = e_range(DEPOSIT)
-    dep = (SCALAR_RATIO[0] * e_dep[0], SCALAR_RATIO[1] * e_dep[1])   # |E_phi|/M
+    dep = deposit()                            # |E_phi|/M
     blue = "#6a93bd"                           # the pale member of the deep-blue family
     k = 1.0 / (RHO_C_MSUN_MPC3 * (1.0 + Z_EMIT))  # Omega_0 per unit of n E
 

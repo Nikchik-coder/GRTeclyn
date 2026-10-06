@@ -247,7 +247,7 @@ def figure(pack_root=PACK_ROOT):
     ax_a.plot(THROAT * np.cos(th), THROAT * float(inverse_gamma(0.45)) * np.sin(th),
               color=style.GOLD, lw=1.0, linestyle=(0, (3, 2)), zorder=4)
     handles.append((Line2D([], [], color=style.GOLD, lw=1.0, linestyle=(0, (3, 2))),
-                    r"$x^2+\gamma^2y^2=r_t^2$"))
+                    r"$x^2+\gamma^2y^2=1.55^2$"))
     # The same law continued toward the disc limit (the user, 2026-09-30:
     # "update panel (a) with a few extra ellipses", then "less ellipses pls"
     # -- three read busy, two stay): prediction alone, no data behind these
@@ -285,7 +285,7 @@ def figure(pack_root=PACK_ROOT):
     ax_b.set_ylabel("axis ratio along/across")
     keys_b = [(Line2D([], [], color=style.GOLD, lw=1.1), r"$1/\gamma=\sqrt{1-v^2}$"),
               (Line2D([], [], linestyle="none", marker="o", ms=2.8, color=style.INK),
-               "measured (throat contour)")]
+               "measured ($r_c=1.55$)")]
     style.legend_top(ax_b, keys_b, ncol=1, borderpad=0.6)
 
     # (c) the residual at the three contour levels.  The axis hugs the data

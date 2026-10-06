@@ -371,22 +371,29 @@ def figure_panels(axA, axB, root: pathlib.Path, legends: bool = True) -> None:
                  ha="left", va="top")
     style.edge_label(axA, R_EXACT, r"$R_\star$")
 
+    # The fits are the SMALL-AMPLITUDE ones (validation A10, 2026-10-06):
+    # least-squares ln|R - R0| where |R/R0 - 1| < 4 %, the ledger's
+    # clmTauLevelThree/Four (extract_single.SMALL_AMP).  The plateau above
+    # (t = 49-61) reaches 19 % at level 3, where the collapse slows.
+    fits = {}
+    for k, t0, t1 in (("ml3", 40, 50), ("ml4", 40, 60)):
+        tt, dd = ar[k][:, 0], np.abs(ar[k][:, 1] / ar[k][0, 1] - 1.0)
+        m = (tt >= t0 - 1e-6) & (tt <= t1 + 1e-6)
+        s, c = np.polyfit(tt[m], np.log(dd[m]), 1)
+        fits[k] = (1.0 / s, [t0, t1], [(c + s * t0) / np.log(10), (c + s * t1) / np.log(10)])
     # The rate goes in the key, not on the curve.
-    for k, p_, lab in (("ml3", p3, "level 3, shrinking"),
-                       ("ml4", p4, "level 4, growing")):
+    for k, lab in (("ml3", "level 3, shrinking"), ("ml4", "level 4, growing")):
         tt = ar[k][:, 0]
         dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
         ok = (np.abs(dd) > 0) & (tt <= (65 if k == "ml3" else 100))
         axB.plot(tt[ok], np.log10(np.abs(dd[ok])),
-                 label=rf"{lab}  ($\tau={1/p_[0]:.2f}$)", **KW[k])
-    for k, p_, t0, t1 in (("ml3", p3, 49, 61), ("ml4", p4, 49, 61)):
-        dd = (ar[k][:, 1] - ar[k][0, 1]) / ar[k][0, 1]
-        y0 = np.log10(abs(dd[int(np.argmin(np.abs(ar[k][:, 0] - t0)))]))
+                 label=rf"{lab}  ($\tau={fits[k][0]:.2f}$)", **KW[k])
+    for k in ("ml3", "ml4"):
         # GOLD, not muted: laid over ink curves the muted fit vanished
         # entirely (2026-09-16) -- the one colour on the figure is the fit.
         # Weight 1.9, matching the seed panel's fits: at 1.0 the fit read as a
         # hairline under the ink arm rather than as a measurement on it.
-        axB.plot([t0, t1], [y0, y0 + p_[0] * (t1 - t0) / np.log(10)],
+        axB.plot(fits[k][1], fits[k][2],
                  color=style.GOLD, linewidth=1.9, linestyle=(0, ()),
                  label="fitted rate" if k == "ml3" else None, zorder=5)
     axB.set_xlim(20, 105)
@@ -400,9 +407,9 @@ def figure_panels(axA, axB, root: pathlib.Path, legends: bool = True) -> None:
         legB.get_frame().set(facecolor=style.GROUND, edgecolor="none")
     else:
         # the rates in place of the retired key; the caption carries them too
-        axB.text(46.0, -1.15, r"$\tau=5.88$", fontsize=7, color=style.INK,
+        axB.text(46.0, -1.15, rf"$\tau={fits['ml3'][0]:.2f}$", fontsize=7, color=style.INK,
                  ha="right", va="bottom")
-        axB.text(66.0, -2.35, r"$\tau=5.26$", fontsize=7, color=style.INK,
+        axB.text(66.0, -2.35, rf"$\tau={fits['ml4'][0]:.2f}$", fontsize=7, color=style.INK,
                  ha="left", va="top")
 
 

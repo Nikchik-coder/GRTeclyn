@@ -12,8 +12,8 @@ checkpoint time for a restart).  Wall hours per leg are then
 which reproduces the hand-recorded numbers (the level-5 head-on: 18.6 h).
 Legs that pre-date the pack format (``__partN`` streams with no tail of their
 own) get an estimate from the same run's main-leg speed and are reported
-separately.  Re-run after filing new runs; the total is what the article's
-"Computational cost" section quotes.
+separately.  Re-run after filing new runs.  This walks every packed run; the
+article quotes the Table III subset (claims.py check --id clmDetGpuHours).
 
 WHAT IS *NOT* COUNTED, and why the number used to be too high.  This walks
 directories, and the pack holds directories that are not evolutions:
@@ -225,8 +225,9 @@ def main():
     print(f"{'TOTAL':<24}{n_runs:>6}{total:>12.1f}")
     print(f"{'  of which shakedown':<24}{shakedown[0]:>6}{shakedown[1]:>12.1f}"
           "   (archived, not used for physics)")
-    print(f"{'  CITED PHYSICS':<24}{n_runs - shakedown[0]:>6}"
-          f"{total - shakedown[1]:>12.1f}   <- the article's number")
+    print(f"{'  NOT SHAKEDOWN':<24}{n_runs - shakedown[0]:>6}"
+          f"{total - shakedown[1]:>12.1f}   (every packed run; the article quotes "
+          "the Table III subset: claims.py check --id clmDetGpuHours)")
 
     if dropped:
         print(f"\nnot evolutions, dropped ({len(dropped)}) -- copies and dead "

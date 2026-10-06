@@ -1082,3 +1082,75 @@ def mergers_pit_separation(runs, what: str = "sep", at="min") -> float:
         if abs(t[i] - float(at)) > 0.51:
             raise ValueError(f"no row near t = {at}")
     return float(t[i] if what == "time" else s[i])
+
+
+@extractor
+def mergers_spectral_regrow(runs, col: str = "R", what: str = "max", episode: int = 0,
+                            floor: float = 0.05) -> float:
+    """Regrowth of the joined spectral history.  what = 'max': the largest rise
+    above the running minimum, in percent (0 for a monotone shrink); 't_lo' /
+    't_hi': where the episode-th rise of more than `floor` percent starts (its
+    local minimum) and ends (the next local maximum), in time order."""
+    s = _spectral(runs)
+    t, y = s["time"], s[col]
+    if what == "max":
+        return float(100.0 * max(0.0, float(np.max(y / np.minimum.accumulate(y) - 1.0))))
+    eps, lo = [], 0
+    for k in range(1, len(y)):
+        if y[k] < y[lo]:
+            lo = k
+        if k + 1 == len(y) or y[k + 1] < y[k]:
+            if 100.0 * (y[k] / y[lo] - 1.0) > floor:
+                eps.append((t[lo], t[k]))
+            lo = min(k + 1, len(y) - 1)
+    return float(eps[episode][{"t_lo": 0, "t_hi": 1}[what]])
+
+
+@extractor
+def mergers_spectral_span(run: str, what: str = "first") -> float:
+    """The span the finder searched: the first / last row of mots_spectral.dat,
+    nan rows (no MOTS on that plotfile) included."""
+    ts = [float(ln.split()[0]) for ln in (run_dir(run) / "mots_spectral.dat").read_text(
+        encoding="utf-8").splitlines() if ln.strip() and not ln.startswith("#")]
+    return float(min(ts) if what == "first" else max(ts))
+
+
+@extractor
+def mergers_spectral_ratio(a, b, col: str = "R", at="last") -> float:
+    """100 (col_a / col_b - 1) on row `at` of two joined spectral histories: how
+    far one remnant sits from another (the d = 6 merger against the head-on)."""
+    return float(100.0 * (mergers_spectral_value(runs=a, col=col, at=at)
+                          / mergers_spectral_value(runs=b, col=col, at=at) - 1.0))
+
+
+@extractor
+def mergers_contact_time(runs, below: float = 2.0) -> float:
+    """Contact: the first time the chi pits' separation in
+    binary_throat_diagnostics.dat (legs concatenated) drops below `below`."""
+    rows = {}
+    for r in ([runs] if isinstance(runs, str) else runs):
+        _, arr = _table(r, "binary_throat_diagnostics.dat")
+        for tt, ss in zip(arr[:, 0], arr[:, 1]):
+            rows[round(float(tt), 4)] = float(ss)
+    t = np.array(sorted(rows))
+    hit = np.nonzero(np.array([rows[x] for x in t]) < below)[0]
+    if not len(hit):
+        raise ValueError(f"{runs}: the pits never come within {below}")
+    return float(t[hit[0]])
+
+
+@extractor
+def mergers_headon_budget(runs, madm_run: str, what: str = "gw_share") -> float:
+    """The head-on remnant's mass budget with the wave ledger's E_GW: E/M from
+    waves_energy('head-on') -- the extractor behind clmDetEHeadon, so these rows
+    follow it -- times the pair's M_ADM.  'gw_share': 100 E_GW / (M_MS[birth] -
+    M_MS[last]); 'scalar': the implied -E_phi = M_MS[last] + E_GW - M_ADM from
+    R = 2 (M_ADM - E_GW - E_phi) on the last row."""
+    from lib import EXTRACTORS
+    madm = mergers_solved_madm(run=madm_run)
+    egw = EXTRACTORS["waves_energy"](scenario="head-on", which="E") * madm
+    m0 = mergers_spectral_value(runs=runs, col="M_MS", at="first")
+    m1 = mergers_spectral_value(runs=runs, col="M_MS", at="last")
+    if what == "gw_share":
+        return float(100.0 * egw / (m0 - m1))
+    return float(m1 + egw - madm)

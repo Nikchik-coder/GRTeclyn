@@ -100,7 +100,8 @@ HOP = 0.2              # a one-step jump of the pit separation larger than this 
 ARMS = (
     (0.10, ("spiral_d6_p010_L128_lvl5from0_t060_lbf_csm",),
      style.INK, (0, ()), 1.4, True, 0.0),
-    (0.12, ("v2_spiral_d12_p012_L128_lvl5from0_t100_csm",),
+    # the boosted (lb) arm the text quotes, since 2026-10-06 (validation B1)
+    (0.12, ("v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm",),
      "#918e87", (0, ()), 1.2, True, 0.0),
     (0.60, ("merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm",
             "merge_orbit_flip_d12_p060_L128_lvl4_t100_lbf_csm_r04000"),
@@ -116,7 +117,8 @@ ARMS = (
 SMOOTH = 2.0           # time units, centred running mean of the resampled track
 DT = 0.05
 # Last trusted time per arm, keyed by its FIRST leg (trust_windows.tsv).
-TRUST_END = {"merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm": 63.3,
+TRUST_END = {"v2_spiral_d12_p012_L128_lvl5from0_t100_lb_csm": 56.5,
+             "merge_orbit_flip_d12_p025_L128_lvl5_t100_lbf_csm": 63.3,
              "merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm": 67.6,
              "merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm": 55.5,
              "merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm": 45.2}
@@ -240,10 +242,10 @@ def main(argv: list[str] | None = None) -> int:
             k0 = max(int(live.sum()) - 1, 0)
             axS.plot(t[k0:], sep[k0:], alpha=0.4, **kw)
             inflating = (p, t_edge, t[k0:], sep[k0:])
-        if merges:
-            for trk in (one, two):
-                axO.plot(*trk[-1], marker="o", ms=2.6, color=colr, zorder=5)
-            axS.plot(t[-1], sep[-1], marker="o", ms=2.6, color=colr, zorder=5)
+        # every track ends in a dot (the scatterers' at their trust window)
+        for trk in (one, two):
+            axO.plot(*trk[-1], marker="o", ms=2.6, color=colr, zorder=5)
+        axS.plot(t[-1], sep[-1], marker="o", ms=2.6, color=colr, zorder=5)
         ends[p] = (t, one, two, sep)
         i = int(np.argmin(sep))
         print(f"[orbits] p = {p:.2f} {key}: t = 0-{t[-1]:.2f} ({why}); "
