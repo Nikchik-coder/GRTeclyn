@@ -12,7 +12,6 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: researchNotes.bib
-Warning--I didn't find a database entry for "shirokov2026"
 Warning--I didn't find a database entry for "wheeler1955"
 Warning--I didn't find a database entry for "wheeler1957"
 Warning--I didn't find a database entry for "misner_wheeler1957"
@@ -36,6 +35,7 @@ Warning--I didn't find a database entry for "gonzalez2009"
 Warning--I didn't find a database entry for "doroshkevich2009"
 Warning--I didn't find a database entry for "hayward2009"
 Warning--I didn't find a database entry for "novikov2019"
+Warning--I didn't find a database entry for "shirokov2026"
 Warning--I didn't find a database entry for "cline2004"
 Warning--I didn't find a database entry for "geroch1967"
 Warning--I didn't find a database entry for "tipler1977"
