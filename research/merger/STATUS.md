@@ -1,21 +1,16 @@
-# Status — 2026-10-07 ~07:35 UTC (last compacted 2026-10-01)
+# Status — 2026-10-07 ~07:40 UTC (last compacted 2026-10-01)
 
 Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary GPU_PLAN.md was deleted 2026-10-06
 (the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-07 07:35 UTC) — FARZONE-ho (first node, card 0) and its lvl5 twin (card 1); lvl7 queued on the second node
+## LIVE NOW (2026-10-07 07:40 UTC) — FARZONE-ho (first node, card 0), its lvl5 twin (card 1) and lvl7 twin (second node)
 
 | run | node / card | t | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
 | FARZONE-ho `farzone_headon_flip_d8_L512_lvl6_t250_csm` | first / 0 | 105 | 250 | ~7.3 u/h | ~20 h → ~03:15 UTC 10-08 | every 25 units, keep 2 (the user): t = 75 / 100, 33 GB each |
 | CONV-fz lvl5 `farzone_headon_flip_d8_L512_lvl5_t100_csm` | first / 1 | 0 (launched 07:30 UTC 10-07) | 100 | ~10 u/h expected | ~8 h → ~15:30 UTC 10-07 | every 25 units, keep 3 (the user) |
-
-QUEUED on the second node (one H100), the user's word 10-07 ("lvl7 will go to the second node"), launched by that node's session:
-
-| run | node / card | stop | cost | checkpoints |
-|---|---|---|---|---|
-| CONV-fz lvl7 `farzone_headon_flip_d8_L512_lvl7_t100_csm` | second / 0 | 100 | ~35 GPU-h, ~73 GB of 80 (the finest member: +8.2M cells on FARZONE's 61M) | every 25 units, keep 3 (the user) |
+| CONV-fz lvl7 `farzone_headon_flip_d8_L512_lvl7_t100_csm` | second / 0 | 0 (launched 07:34 UTC 10-07) | 100 | 2.0 u/h (start) | ~37 h → ~20:30 UTC 10-08 | every 25 units, keep 3 (the user) |
 
 - **FARZONE-ho LAUNCHED 14:58 UTC 10-06 (the user's go "run the head on farzone"):** template
   `templates_scan/params_farzone_headon_flip_d8_L512_lvl6_t250_csm.txt` = the spec's changes on MOTS-ho1's packed
@@ -49,6 +44,10 @@ QUEUED on the second node (one H100), the user's word 10-07 ("lvl7 will go to th
   NaN at the wall, which the checkpoints cover. Supersedes CONV-ho (the unfloored lvl3/lvl4 set that dies before
   the burst has passed). A launch at 07:29 UTC without frames was stopped at its start (the user wanted frames),
   its dir moved to `runs/wormhole_merger/00_archive/farzone_headon_flip_d8_L512_lvl5_t100_csm_noframes_aborted/`.
+- **CONV-fz lvl7 LAUNCHED 07:34 UTC 10-07 on the second node (the user: "we are on the second node launch the lvl7"):**
+  preflight PASS on that node; the solve as FARZONE-ho's (far sides 3.8e-8, face M_ADM 2.34217 vs 2.34216; lvl5 2.34211);
+  level 7 = 8.19M cells (production level 5's count), 72.2 GB of 80; frame 0 as FARZONE-ho's; Chk00000 written; second-node
+  scratch 549G free (the HFL cell, 60G, kept).
 
 - **MASS-t0 DONE for all three p (the twins: p025 card 0 13:17–13:50, p060 card 1 13:17–13:58 UTC 10-06, the
   user's go "use bouth gpus per required run"): THE MEASURED t = 0 MASS IS FLAT IN p — 2.304 / 2.317 / 2.282 at
