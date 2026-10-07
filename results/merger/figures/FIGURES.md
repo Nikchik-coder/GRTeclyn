@@ -8,12 +8,11 @@ scripts so they do not regenerate them"). Every file here is included by
 --no-figure` for `campaign/01_single_throat/BRANCHES.md` only). When a figure
 leaves the paper, delete its PNG/PDF here and its row below; its script stays in
 `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/`.
-**Add the row when you add a figure to the paper.** One file waits here ahead of the
-paper, on the user's word (2026-10-07): `00_overview/fates`, the last row below.
+**Add the row when you add a figure to the paper.**
 
 Run each command from the repository root with the wrapper's venv; every one
 takes no arguments (`--pack-root` defaults to `results/merger`) and writes the
-PNG + PDF pair named in the table. Numbers are the article's as of 2026-10-06.
+PNG + PDF pair named in the table. Numbers are the article's as of 2026-10-07.
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.<module>
@@ -21,21 +20,29 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 
 | Fig. | label | file | module |
 |---|---|---|---|
-| 1 | `fig:boost_contraction` | `02_moving_throat/boost_contraction` | `plot_boost_contraction` |
-| 2 | `fig:single_throat` | `01_single_throat/single_throat_instability` | `plot_single_throat_row` |
-| 3 top | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
-| 3 bottom | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
-| 4 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
-| 5 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
-| 6 | `fig:spiral_collapse` | `05_binary_spiral/d6_merger_chain` | `plot_merger_chain` |
-| 7 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
-| 8 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
-| 9 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
-| 10 (App. A) | `fig:convergence` | `00_code_health/convergence` | `plot_convergence` |
-| 11 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 12 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
-| 12 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
-| not yet in the paper | — | `00_overview/fates` | `plot_fates` |
+| 1 | `fig:fates` | `00_overview/fates` | `plot_fates` |
+| 2 | `fig:boost_contraction` | `02_moving_throat/boost_contraction` | `plot_boost_contraction` |
+| 3 | `fig:single_throat` | `01_single_throat/single_throat_instability` | `plot_single_throat_row` |
+| 4 top | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
+| 4 bottom | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
+| 5 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
+| 6 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
+| 7 | `fig:spiral_collapse` | `05_binary_spiral/d6_merger_chain` | `plot_merger_chain` |
+| 8 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
+| 9 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
+| 10 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
+| 11 (App. A) | `fig:convergence` | `00_code_health/convergence` | `plot_convergence` |
+| 12 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
+| 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
+| 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+
+2026-10-07 (the user): `00_overview/fates` is now Fig. 1 (`fig:fates`), every later figure one up. The intro's
+four-fates sentence cites it; the caption is three lines. Squeezed for the page to 7.05 x 1.95 in (one-line leaf
+texts), at 0.88 textwidth. Its source is read at Sec. II, so it heads page 3: read on page 1 it heads page 2, but
+the intro's last column there is then too short for the Sec. II heading block and stretches. Fig. 13 (scalar) is
+read in Appendix A as `[t]`, so pdflatex, whose Appendix B text runs a few lines past page 21, puts those lines
+atop the references instead of on a bare page. Also cut from Sec. I: "the stipulated initial data of every
+numerical binary, here with a physical origin attached". 26 pages, both engines; claims 923 rows, 0 problems.
 
 2026-10-07 (the user): new `00_overview/fates` (`plot_fates`, no arguments), saved here ahead of the paper and not
 yet included. It is a schematic in the manner of Hubble's tuning fork, with no numbers drawn. Foam-born throats fork by
