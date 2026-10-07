@@ -49,9 +49,11 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     style.prd(base=10.0)
-    # 1.43 in per panel, as the three-panel strip had; the extra height holds
-    # the keys above the frames (the paper's rule: no names inside a frame).
-    fig, (axA, axB, axF, axW) = plt.subplots(1, 4, figsize=(5.7, 3.0),
+    # 1.43 in per panel, as the three-panel strip had; the keys sit above the
+    # frames (the paper's rule: no names inside a frame).  2.0 in tall, near-
+    # square frames: at 3.0 in they were tall slivers (the user, 2026-10-07:
+    # "too tall for no reason").
+    fig, (axA, axB, axF, axW) = plt.subplots(1, 4, figsize=(5.7, 2.0),
                                              constrained_layout=True)
     plot_sign_rule.figure_panels(axA, axB, pack_root=args.pack_root, stacked=False,
                                  keys=True)

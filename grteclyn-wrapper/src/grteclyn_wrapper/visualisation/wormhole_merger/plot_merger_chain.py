@@ -47,7 +47,7 @@ settle leg carry the history through where every other arm died.
 R_star = 3.8895, sqrt2 R_star = 5.50 (both throats' area), and the head-on
 chain's settled remnant R = 4.7787 (M_MS = 2.3894 on (b)).
 
-STYLE: the head-on page's grammar -- 7.05 x 4.3 in strip, style.prd, GOLD is
+STYLE: the head-on page's grammar -- 7.05 x 3.0 in strip, style.prd, GOLD is
 the horizon instrument, era rules at the restarts, levels named per era,
 label audit clean.
 
@@ -132,6 +132,15 @@ def _era(d: np.ndarray, lo: float, hi: float, settle: float = 0.0) -> np.ndarray
     return d[(d[:, 0] > lo + settle + 1e-9) & (d[:, 0] <= hi + 1e-9)]
 
 
+def _top_name(ax, x: float, name: str, **kw) -> None:
+    """A name hung 4.5 pt under the top spine, clear of its 3.4 pt ticks at
+    any figure height (data-unit offsets shrank into the ticks when the strip
+    went from 4.3 to 3.0 in, 2026-10-07)."""
+    ax.annotate(name, (x, 1.0), xycoords=("data", "axes fraction"),
+                xytext=(0, -4.5), textcoords="offset points", ha="center",
+                va="top", **kw)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -183,7 +192,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- the strip ----------------------------------------------------------
     style.prd(base=10.0)
-    fig = plt.figure(figsize=(7.05, 4.3), constrained_layout=True)
+    # 3.0 in tall (was 4.3; the user, 2026-10-07: "very big for no reason").
+    fig = plt.figure(figsize=(7.05, 3.0), constrained_layout=True)
     gs = fig.add_gridspec(2, 4, width_ratios=[1.0, 1.0, 0.86, 0.86])
     axA = fig.add_subplot(gs[0, 0:2])
     axB = fig.add_subplot(gs[1, 0:2], sharex=axA)
@@ -220,13 +230,17 @@ def main(argv: list[str] | None = None) -> int:
     axB.set_xlabel(r"$t$")
 
     fs = 7.5
-    axA.text(55.0, 5.08, "3D finder", fontsize=fs, ha="center", va="bottom",
-             color=style.GOLD)
-    axA.annotate(r"one throat, $R_\star$", (68.0, R_STAR), xytext=(0, -2),
-                 textcoords="offset points", ha="center", va="top", fontsize=fs,
+    # Hung on the gold curve itself, just above it (the user, 2026-10-07:
+    # "3D finder should be closer to the golden line").
+    axA.annotate("3D finder", (55.0, np.interp(55.0, ts, Rs)), xytext=(0, 2),
+                 textcoords="offset points", ha="center", va="bottom",
+                 fontsize=fs, color=style.GOLD)
+    # Above its rule: at 3.0 in there is no room under it (the bottom spine).
+    axA.annotate(r"one throat, $R_\star$", (68.0, R_STAR), xytext=(0, 2),
+                 textcoords="offset points", ha="center", va="bottom", fontsize=fs,
                  color=style.MUTED)
     axA.annotate(r"$\sqrt{2}\,R_\star$: both throats' area",
-                 (t_end, np.sqrt(2) * R_STAR), xytext=(0, 2),
+                 (t_end, np.sqrt(2) * R_STAR), xytext=(-3, 2),
                  textcoords="offset points", ha="right", va="bottom",
                  fontsize=fs, color=style.MUTED)
     axA.annotate("head-on remnant", (76.0, R_HEADON), xytext=(0, -3),
@@ -239,24 +253,22 @@ def main(argv: list[str] | None = None) -> int:
     # across the legs (the user, 2026-10-05: "why there is no level text
     # still"): the full ladder -- level 5, the sigma leg, the chi-floor leg,
     # level 4 -- where the panel is wide, (a) and (e); digits in (c), (d).
-    def ladder(ax, y, first="level 5", x1=19.0, last="level 4", x4=55.0):
+    def ladder(ax, first="level 5", x1=19.0, last="level 4", x4=55.0):
         for x, name in ((x1, first), (27.5, r"$\sigma$"), (32.5, r"$\chi$"),
                         (x4, last)):
-            ax.text(x, y, name, fontsize=7, ha="center", va="top",
-                    color=style.MUTED)
-    ladder(axA, 5.90)   # tops below the 3.4 pt ticks
+            _top_name(ax, x, name, fontsize=7, color=style.MUTED)
+    ladder(axA)
 
     # (c) the approach, drawn across the legs ----------------------------------
     for b in b_used:
         axC.plot(b[:, 0], b[:, 1], color=style.INK, lw=1.2)
     axC.plot(b1_over[:, 0], b1_over[:, 1], color=style.CONTEXT, lw=0.9)
-    axC.set_ylim(-0.4, 7.0)
+    axC.set_ylim(-0.4, 7.6)   # headroom: the era digits hang over the 6.0 start
     axC.set_ylabel(r"$\chi$-pit separation")
     axC.text(68.0, 0.45, "merged pit", fontsize=fs, ha="center", va="bottom",
              color=style.INK)
     for x, name in ((6.0, "5"), (68.0, "4")):
-        axC.text(x, 6.9, name, fontsize=fs, ha="center", va="top",
-                 color=style.MUTED)
+        _top_name(axC, x, name, fontsize=fs, color=style.MUTED)
 
     # (d) the wall: every arm's max|K|; the cures carry the history ------------
     for d in d_used:
@@ -275,8 +287,8 @@ def main(argv: list[str] | None = None) -> int:
                  zorder=4)
     axD.set_ylim(2e-2, 90)
     axD.set_ylabel(r"$\max|K|$")
-    axD.text(6.0, 55.0, "5", fontsize=fs, ha="center", va="top", color=style.MUTED)
-    axD.text(68.0, 55.0, "4", fontsize=fs, ha="center", va="top", color=style.MUTED)
+    _top_name(axD, 6.0, "5", fontsize=fs, color=style.MUTED)
+    _top_name(axD, 68.0, "4", fontsize=fs, color=style.MUTED)
     axD.text(68.0, 6.0, "6, 7: dashed\n$\\sigma$: solid", fontsize=6.3,
              ha="center", va="top", color=style.CONTEXT, linespacing=1.2)
 
@@ -288,14 +300,14 @@ def main(argv: list[str] | None = None) -> int:
         tt = d[:, 0]
         axE.semilogy(tt[tt > 0.2], pi[tt > 0.2], color=style.MUTED, lw=0.9,
                      ls=(0, (4, 2.5)))
-    axE.set_ylim(1.5e-3, 2.5)
+    axE.set_ylim(1.5e-3, 4.0)   # headroom for the era names
     axE.set_ylabel(r"$\max|\phi|,\ \max|\Pi|$")
     axE.set_xlabel(r"$t$")
     axE.text(6.0, 1.15, r"$|\phi|$", fontsize=8, ha="left", va="bottom",
              color=style.INK)
     axE.text(63.0, 0.0075, r"$|\Pi|$", fontsize=8, ha="center", va="top",
              color=style.MUTED)
-    ladder(axE, 1.95, first="5", x4=67.0)   # 13-25 is too narrow for "level 5" here
+    ladder(axE, first="5", x4=67.0)   # 13-25 is too narrow for "level 5" here
 
     for ax in (axC, axD, axE):
         rules(ax)

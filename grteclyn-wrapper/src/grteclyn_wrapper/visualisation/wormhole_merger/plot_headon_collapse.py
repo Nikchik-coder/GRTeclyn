@@ -54,7 +54,7 @@ mass 2 M_ADM = 4.715; on (b), M_ADM = 2.357 itself.  No fit is drawn: the
 finder's late track is flat to the eye at this scale.
 
 STYLE (grammar of 2026-09-24, "the plot is junk, why is there no solid
-line"): a top-of-page strip, 7.05 x 4.3 in, set at 0.80\textwidth under [t].
+line"): a top-of-page strip, 7.05 x 3.0 in, set at 0.80\textwidth under [t].
 The remnant's horizon is the figure -- areal radius (a) and Misner-Sharp
 mass (b) on the left half, data joined, the initial data ruled -- and the
 right half keeps the three panels the text leans on: the approach (c), the
@@ -170,6 +170,15 @@ def _era(d: np.ndarray, lo: float, hi: float, settle: float = 0.0) -> np.ndarray
     return d[(d[:, 0] > lo + settle + 1e-9) & (d[:, 0] <= hi + 1e-9)]
 
 
+def _top_name(ax, x: float, name: str, **kw) -> None:
+    """A name hung 4.5 pt under the top spine, clear of its 3.4 pt ticks at
+    any figure height (data-unit offsets shrank into the ticks when the strip
+    went from 4.3 to 3.0 in, 2026-10-07)."""
+    ax.annotate(name, (x, 1.0), xycoords=("data", "axes fraction"),
+                xytext=(0, -4.5), textcoords="offset points", ha="center",
+                va="top", **kw)
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -235,7 +244,8 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- the strip ----------------------------------------------------------
     style.prd(base=10.0)
-    fig = plt.figure(figsize=(7.05, 4.3), constrained_layout=True)
+    # 3.0 in tall (was 4.3; the user, 2026-10-07: "very big for no reason").
+    fig = plt.figure(figsize=(7.05, 3.0), constrained_layout=True)
     gs = fig.add_gridspec(2, 4, width_ratios=[1.0, 1.0, 0.86, 0.86])
     axA = fig.add_subplot(gs[0, 0:2])
     axB = fig.add_subplot(gs[1, 0:2], sharex=axA)
@@ -287,29 +297,32 @@ def main(argv: list[str] | None = None) -> int:
     # verticals, so a label that spans one is struck through): the reference
     # names in the blind window t = 26-35 or under their own rule past t = 52,
     # the instrument names over stretches their own rows leave clear.
-    axA.annotate(r"one throat, $R_\star$", (68.0, R_STAR), xytext=(0, -2),
-                 textcoords="offset points", ha="center", va="top", fontsize=fs,
+    # Above its rule: at 3.0 in there is no room under it (the bottom spine).
+    axA.annotate(r"one throat, $R_\star$", (68.0, R_STAR), xytext=(0, 2),
+                 textcoords="offset points", ha="center", va="bottom", fontsize=fs,
                  color=style.MUTED)
     axA.annotate(r"$2M_{\rm ADM}$", (28.5, 4.53), xytext=(0, 0),
                  textcoords="offset points", ha="center", va="top", fontsize=fs,
                  color=style.MUTED)
+    # Under its rule, clear of the era names above it.
     axA.annotate(r"$\sqrt{2}\,R_\star$: both throats' area",
                  (t_end, np.sqrt(2) * R_STAR),
-                 xytext=(0, 2), textcoords="offset points", ha="right", va="bottom",
+                 xytext=(0, -2), textcoords="offset points", ha="right", va="top",
                  fontsize=fs, color=style.MUTED)
-    axA.text(43.0, 5.30, "3D finder", fontsize=fs, ha="center", va="bottom",
-             color=style.GOLD)
+    # Hung on the gold curve itself, just above it (the user, 2026-10-07).
+    axA.annotate("3D finder", (43.0, np.interp(43.0, ts, Rs)), xytext=(0, 2),
+                 textcoords="offset points", ha="center", va="bottom",
+                 fontsize=fs, color=style.GOLD)
     axA.text(86.0, 4.47, "round scan (inner bound)", fontsize=fs, ha="center",
              va="top", color=style.CONTEXT)
     # The composition's levels, named per era in every panel that draws
     # across the legs (the user, 2026-09-30: "what is the level at least").
-    def era_levels(ax, y, first="level 5", x1=27.5):
+    def era_levels(ax, first="level 5", x1=27.5):
         for x, name in ((x1, first), (43.0, "6"), (76.0, "4")):
-            ax.text(x, y, name, fontsize=7, ha="center", va="top",
-                    color=style.MUTED)
-    era_levels(axA, 5.93)
-    axB.annotate(r"$M_{\rm ADM}$", (19.3, M_ADM), xytext=(0, 3),
-                 textcoords="offset points", ha="left", va="bottom", fontsize=fs,
+            _top_name(ax, x, name, fontsize=7, color=style.MUTED)
+    era_levels(axA)
+    axB.annotate(r"$M_{\rm ADM}$", (19.3, M_ADM), xytext=(0, -3),
+                 textcoords="offset points", ha="left", va="top", fontsize=fs,
                  color=style.MUTED)
 
     # (c) the approach, drawn across the legs ----------------------------------
@@ -326,8 +339,7 @@ def main(argv: list[str] | None = None) -> int:
     # The bare digit, as in (d): "level" overran the left spine at this
     # panel's width ((a) and (e) carry the word; 2026-10-06).
     for x, name in ((8.0, "5"), (43.0, "6"), (76.0, "4")):
-        axC.text(x, 10.35, name, fontsize=fs, ha="center", va="top",
-                 color=style.INK, linespacing=1.1)
+        _top_name(axC, x, name, fontsize=fs, color=style.INK)
     axC.text(76.0, 0.55, "merged pit", fontsize=fs, ha="center", va="bottom",
              color=style.INK)
 
@@ -340,7 +352,7 @@ def main(argv: list[str] | None = None) -> int:
     axD.semilogy(d3_used[:, 0], col(d3_used, "max_abs_K"), color=style.INK, lw=1.1)
     axD.set_ylim(2e-2, 90)
     axD.set_ylabel(r"$\max|K|$")
-    era_levels(axD, 60.0, first="5", x1=9.0)
+    era_levels(axD, first="5", x1=9.0)
     # Leg 1's overrun ends on the death cross; at this panel's width no name
     # fits between the era rules, so the NaN in h11 is the caption's to state.
 
@@ -355,13 +367,13 @@ def main(argv: list[str] | None = None) -> int:
         axE.semilogy(tt[tt > 0.2], pi[tt > 0.2],
                      color=style.CONTEXT if faint else style.MUTED,
                      lw=0.9, ls=(0, (4, 2.5)))
-    axE.set_ylim(1.5e-3, 2.5)
+    axE.set_ylim(1.5e-3, 4.0)   # headroom for the era names
     axE.set_ylabel(r"$\max|\phi|,\ \max|\Pi|$")
     axE.set_xlabel(r"$t$")
     axE.text(6.0, 1.15, r"$|\phi|$", fontsize=8, ha="left", va="bottom", color=style.INK)
     # Between the gold t = 22 rule and the t = 35 seam, the one 13-unit
     # corridor of this panel's first era that a "level 5" fits.
-    era_levels(axE, 1.95, first="level 5", x1=28.5)
+    era_levels(axE, first="level 5", x1=28.5)
     # Under the two tails' close pass (t ~ 60-66, both >= 0.016), where the
     # panel is empty below 0.009.
     axE.text(63.0, 0.0085, r"$|\Pi|$", fontsize=8, ha="center", va="top",
@@ -381,7 +393,7 @@ def main(argv: list[str] | None = None) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     hits = style.label_audit(fig)
     png = style.save(fig, out)
-    print(f"[headon collapse] wrote {png} (+pdf); 5 panels, 7.05 x 4.3 in, "
+    print(f"[headon collapse] wrote {png} (+pdf); 5 panels, 7.05 x 3.0 in, "
           f"{len(ts)} finder rows (gold) + {len(tm)} round-scan rows (grey); "
           f"label audit: {len(hits)} crossing(s)")
     return 0

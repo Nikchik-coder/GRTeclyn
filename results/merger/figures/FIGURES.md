@@ -979,3 +979,11 @@ the head-on row gains its vacuum BBH overlay, and `egw_momentum` is new (E_GW vs
 clmEgwEnergy* rows. `psi4_ligo` and `heavy_seeds` redrawn on the boosted pairs' corrected ADM masses (the face
 estimate plus each throat's kinetic energy; `run_tree.boosted_adm_mass`): the fly-by's E/M 9.0e-2 -> 8.3e-2 and envelope
 1.3e-1 -> 1.4e-1, the merger +0.3 %, the LISA tracks shifted by the same masses. Label audit clean (heavy_seeds).
+
+2026-10-07: squeezed on the user's read of the paper ("too tall for no reason"; Figs. 6 and 7 "span 1/3 of the
+page"). `pair_interaction` 5.7 × 3.0 → 5.7 × 2.0 in (near-square frames); `headon_collapse_diagnostics` and
+`d6_merger_chain` 7.05 × 4.3 → 7.05 × 3.0 in. Their "3D finder" name now hangs on the gold curve, 2 pt above it
+("should be closer to the golden line"). At 3.0 in: every era name hangs a fixed 4.5 pt under the top spine
+(`_top_name`, clear of the 3.4 pt ticks at any height), "one throat, R⋆" sits above its rule (the bottom spine
+left no room under it), (e) gets headroom to 4.0, the head-on's √2R⋆ and M_ADM names go under their rules, and
+the d = 6 (c) panel's top rises to 7.6. Label audit clean on all three.
