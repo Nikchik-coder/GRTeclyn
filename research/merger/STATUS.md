@@ -25,6 +25,16 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   "we will need to go throw the wall with min chi") carried the head-on past t ≈ 30–39, where leg 1 died at 38.8.
   Constraints flat: L2 Ham ~2.0e-4 before the merger, 1.00–1.07e-4 over t = 25–100 (production ~1.2e-4); L2 Mom
   5.5–5.9e-5. The common MOTS as production's: from t = 18.0 with M_MS 2.817 (production 2.817); 2.390 at t = 99.
+- **Interim wave read (t = 169, 16:05 UTC 10-07):** constraints plateaued (L2 Ham 1.11e-4, Mom 6.2e-5, flat since
+  t ≈ 140). Near zone = production (E/M at R = 10 / 18 / 44 within −0.3 / −0.1 / +1.0 %); the same waveform to R = 90
+  (2.6 % of peak once aligned), axisymmetric (|22|/|20| = 1.225). BUT the paper's window t − R ≤ 56 is not one
+  retarded window on every sphere: the swings arrive 0.075–0.09 later per unit R (the tortoise log term), so on it
+  E/M RISES outward (8.6e-3 at R = 44, 9.2e-3 at 60, 1.04e-2 at 90). On tortoise-aligned windows E/M falls smoothly
+  as E∞ + 0.06/R at every window start: 7.7–8.5e-3 at R = 44, 7.0–7.8e-3 at 90 → E∞ = 6.3–7.2e-3, 15–25 % below the
+  quoted 8.5e-3 (the window start, i.e. how much pre-arrival junk enters, moves E∞ by 13 %). Final read when R = 180
+  completes (t = 236, ~01:30 UTC 10-08); the paper's head-on E_GW and its "converges outward" sentence wait on it.
+  The horizon's area drifts down from t ≈ 100 (M_MS 2.389 → 2.362 at t = 128) with no first-law flux behind it:
+  horizon numbers after t ≈ 100 are not trusted.
 
 - **CONV-fz (REQUIRED, the user 10-07): the head-on's three-level convergence set on FARZONE-ho's box, FARZONE-ho
   the middle member.** lvl5 / lvl6 (FARZONE-ho) / lvl7 = Δx 1/16, 1/32, 1/64 = production levels 3 / 4 / 5 (the
