@@ -1,16 +1,16 @@
-# Status — 2026-10-07 ~07:40 UTC (last compacted 2026-10-01)
+# Status — 2026-10-07 ~10:15 UTC (last compacted 2026-10-01)
 
 Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary GPU_PLAN.md was deleted 2026-10-06
 (the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-07 07:40 UTC) — FARZONE-ho (first node, card 0), its lvl5 twin (card 1) and lvl7 twin (second node)
+## LIVE NOW (2026-10-07 10:15 UTC) — FARZONE-ho (first node, card 0), its lvl5 twin (card 1) and lvl7 twin (second node)
 
 | run | node / card | t | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| FARZONE-ho `farzone_headon_flip_d8_L512_lvl6_t250_csm` | first / 0 | 105 | 250 | ~7.3 u/h | ~20 h → ~03:15 UTC 10-08 | every 25 units, keep 2 (the user): t = 75 / 100, 33 GB each |
-| CONV-fz lvl5 `farzone_headon_flip_d8_L512_lvl5_t100_csm` | first / 1 | 0 (launched 07:30 UTC 10-07) | 100 | ~10 u/h expected | ~8 h → ~15:30 UTC 10-07 | every 25 units, keep 3 (the user) |
-| CONV-fz lvl7 `farzone_headon_flip_d8_L512_lvl7_t100_csm` | second / 0 | 0 (launched 07:34 UTC 10-07) | 100 | 2.0 u/h (start) | ~37 h → ~20:30 UTC 10-08 | every 25 units, keep 3 (the user) |
+| FARZONE-ho `farzone_headon_flip_d8_L512_lvl6_t250_csm` | first / 0 | 126 (10:15 UTC) | 250 | 7.3 u/h | ~17 h → ~03:10 UTC 10-08 | every 25 units, keep 2 (the user): t = 100 / 125, 33 GB each; t = 100 copied to its NFS run dir (CONV-fz, below) |
+| CONV-fz lvl5 `farzone_headon_flip_d8_L512_lvl5_t100_csm` | first / 1 | 30 (launched 07:30 UTC 10-07) | 100 | 13 u/h after the merger (9.8 before) | ~5.5 h → ~15:35 UTC 10-07 | every 25 units, keep 3 (the user); its t = 100 Chk02500 is kept (CONV-fz) |
+| CONV-fz lvl7 `farzone_headon_flip_d8_L512_lvl7_t100_csm` | second / 0 | 5.4 (launched 07:34 UTC 10-07) | 100 | 2.07 u/h to the merger, ~4 after (lvl5/lvl6 extrapolated) | ~25 h → ~11:00 UTC 10-08 | every 25 units, keep 3 (the user); its t = 100 Chk02500 is kept (CONV-fz) |
 
 - **FARZONE-ho LAUNCHED 14:58 UTC 10-06 (the user's go "run the head on farzone"):** template
   `templates_scan/params_farzone_headon_flip_d8_L512_lvl6_t250_csm.txt` = the spec's changes on MOTS-ho1's packed
@@ -48,6 +48,14 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   preflight PASS on that node; the solve as FARZONE-ho's (far sides 3.8e-8, face M_ADM 2.34217 vs 2.34216; lvl5 2.34211);
   level 7 = 8.19M cells (production level 5's count), 72.2 GB of 80; frame 0 as FARZONE-ho's; Chk00000 written; second-node
   scratch 549G free (the HFL cell, 60G, kept).
+- **CONV-fz constraint check at t = 100 (the user 10-07 ~10:10, "lets do it"): the three full states meet only at
+  t = 100** (step 2500; the consumer keeps 3 plotfiles, and the logged L2 norms are level 0 only — Δx = 2 over the
+  whole box, equal in all three to 1e-4 — so they cannot show convergence). FARZONE-ho's Chk02500 (33 GB) copied to
+  its NFS run dir 10:14 UTC 10-07 (its keep 2 deletes the scratch copy at t = 150); each twin's Chk02500 goes there at
+  its close-out and is NOT pruned until read. Read: Ham / Mom on the finest common levels outside the MOTS, three
+  levels. Early read (t ≤ 5.2, in-code streams): r Ψ4 (2,0) at R = 10–44 converges at second order (|Q5−Q6| / |Q6−Q7|
+  = 3.7–3.9, one sign), set by the t = 0 solve (M_ADM 2.3597 / 2.3573 / 2.3568 → 2.3567 extrapolated; c_A order
+  1.96); the throat-core extremes (max |K|, max Π, max φ) do not converge — they sit in the χ-floored core.
 
 - **MASS-t0 DONE for all three p (the twins: p025 card 0 13:17–13:50, p060 card 1 13:17–13:58 UTC 10-06, the
   user's go "use bouth gpus per required run"): THE MEASURED t = 0 MASS IS FLAT IN p — 2.304 / 2.317 / 2.282 at
