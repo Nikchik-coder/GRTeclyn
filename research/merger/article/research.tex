@@ -612,6 +612,14 @@ The negative-energy scalar radiation dilutes like radiation ($w=1/3$) and has th
 
 Seeding is half the census. The branch is chosen by the perturbation's sign (Sec.~\ref{sec:single:branching}), so a sign-symmetric seed distribution converts about half of a population of lone throats and sets the other half inflating. A companion tilts the census toward inflation: its squeeze starts both mouths on the inflation branch (Sec.~\ref{sec:spiral:race}), and only pairs whose common horizon wins the race convert---here the head-on and the $d=6$ orbit, no $d=12$ pair. An inflating throat creates, from regular data, an expanding anti-trapped region (Sec.~\ref{sec:single:fate}), which under the null energy condition would need an initial singularity~\cite{farhi_guth1987,blau1987}; unlike the false-vacuum bubbles of those references and the domain-wall wormholes of Ref.~\cite{deng2017}, whose inflating interiors pinch off behind a horizon, it lies on our side of the throat and grows into the surrounding space, as the massless throat's explosion does~\cite{shinkai2002}. Over its record the neck accumulates $\clmInfEfoldNeck$ areal e-folds and the boundary $\clmInfEfoldBoundary$, against the ${\sim}\clmInfEfoldsNeeded$ of cosmic inflation~\cite{liddle2003}: the record shows the mechanism, not the magnitude, and the seed channel of Sec.~\ref{sec:discussion:seeds} requires either that such regions stall or that the inflating half is rare.
 
+% Read here, a page early, so it heads the appendix's first page instead of a float page of its own.
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.80\textwidth]{00_code_health/convergence.pdf}
+\caption{Convergence. (a)~The static throat from exact data at levels 2--4: the three-level factor $Q=(R_2-R_3)/(R_3-R_4)$ of its minimal areal radius against the orders $n=2$, 3, 4 (rules); the dip at $t=16$ is one level-2 dump. (b)~$|r\Psi_4^{22}|$ at $R=\clmExtractRadiusTwenty$ of the $d=12$, $p=\clmSpiralMomentumProd$ pair with Bowen--York momentum (otherwise our data) at throat level 5, its difference from level 4, and the difference made by refining the wave zone to half the base cell. (c)~Radiated energy on each sphere over the outermost sphere's, against $R/M$: the head-on, the $d=6$ merger and the fly-by (ink) and two vacuum controls (grey). The outcome: the scheme converges at order $\clmConvOrderEvolLo$--$\clmConvOrderEvolHi$, a binary's waveform is resolved to $\clmConvPsiLevelDiff\%$ of its peak, and the energy converges in extraction radius.}
+\label{fig:convergence}
+\end{figure*}
+
 \subsection{Topological censorship}
 \label{sec:discussion:topology}
 
@@ -649,13 +657,6 @@ and \texttt{GRTeclyn}.
 \packfloatpages
 
 Figure~\ref{fig:convergence} tests convergence. The static throat, the one configuration with an exact answer, gives at levels 2--4 a three-level order of $\clmConvOrderDataLo$--$\clmConvOrderDataHi$ while the error of reading the exact data dominates and $\clmConvOrderEvolLo$--$\clmConvOrderEvolHi$ once the evolution's own error does, between the fourth order of the stencils and the second of the time interpolation at refinement boundaries; later the unstable mode amplifies each level's own seed, which is why the unkicked fates differ (Sec.~\ref{sec:single:branching}). A pair's branch is set by its data instead: the companion squeezes each mouth like a declared inward kick of $\clmRaceKickTwelve\%$ at $d=12$ and $\clmRaceKickEight\%$ at $d=8$ (Sec.~\ref{sec:spiral:race}), while a kick of $10^{-3}$ already overrides the level-3 seed and a kick's branch survives refinement to level 4 (Sec.~\ref{sec:single:branching}). A $d=12$ binary at throat levels 4 and 5 agrees in $r\Psi_4$ to $\clmConvPsiLevelDiff\%$ of its burst peak, and refining its wave zone moves it by $\clmConvPsiWaveZoneDiff\%$.
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.80\textwidth]{00_code_health/convergence.pdf}
-\caption{Convergence. (a)~The static throat from exact data at levels 2--4: the three-level factor $Q=(R_2-R_3)/(R_3-R_4)$ of its minimal areal radius against the orders $n=2$, 3, 4 (rules); the dip at $t=16$ is one level-2 dump. (b)~$|r\Psi_4^{22}|$ at $R=\clmExtractRadiusTwenty$ of the $d=12$, $p=\clmSpiralMomentumProd$ pair with Bowen--York momentum (otherwise our data) at throat level 5, its difference from level 4, and the difference made by refining the wave zone to half the base cell. (c)~Radiated energy on each sphere over the outermost sphere's, against $R/M$: the head-on, the $d=6$ merger and the fly-by (ink) and two vacuum controls (grey). The outcome: the scheme converges at order $\clmConvOrderEvolLo$--$\clmConvOrderEvolHi$, a binary's waveform is resolved to $\clmConvPsiLevelDiff\%$ of its peak, and the energy converges in extraction radius.}
-\label{fig:convergence}
-\end{figure*}
 
 Figure~\ref{fig:constraints} gives the constraint record of every run the main-text figures draw, and Fig.~\ref{fig:seed_linearity} the linearity of the collapsing throat's wave in its quadrupole seed (Sec.~\ref{sec:single:gw}).
 
