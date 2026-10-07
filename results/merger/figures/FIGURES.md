@@ -8,7 +8,8 @@ scripts so they do not regenerate them"). Every file here is included by
 --no-figure` for `campaign/01_single_throat/BRANCHES.md` only). When a figure
 leaves the paper, delete its PNG/PDF here and its row below; its script stays in
 `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/`.
-**Add the row when you add a figure to the paper.**
+**Add the row when you add a figure to the paper.** One file waits here ahead of the
+paper, on the user's word (2026-10-07): `00_overview/fates`, the last row below.
 
 Run each command from the repository root with the wrapper's venv; every one
 takes no arguments (`--pack-root` defaults to `results/merger`) and writes the
@@ -34,6 +35,15 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 11 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
 | 12 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 12 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+| not yet in the paper | — | `00_overview/fates` | `plot_fates` |
+
+2026-10-07 (the user): new `00_overview/fates` (`plot_fates`, no arguments), saved here ahead of the paper and not
+yet included. It is a schematic in the manner of Hubble's tuning fork, with no numbers drawn. Foam-born throats fork by
+birth separation: a lone throat goes to collapse if pushed out (eps > 0) or to inflation if squeezed (eps < 0); a pair
+forks by its relative sign: like signs repel and scatter, while opposite signs attract and enter the race, where short
+d and small p reach the merger and otherwise both throats inflate, at contact or after a fly-by. Gold rings only the
+two horizons (collapse, merger). Label audit clean. The like-signed "scattering" leaf says only that the pair recedes:
+what each mouth does next waits on SCATTER-fate (STATUS, required).
 
 2026-10-07 (the user): `01_single_throat/seed_linearity` and `05_binary_spiral/momentum_scan_orbits` left the
 paper; their files stay. Sec. VIII A states the seed linearity in words (it already carried the numbers, and now
