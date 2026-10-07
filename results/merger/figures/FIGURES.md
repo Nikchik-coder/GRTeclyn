@@ -32,10 +32,16 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 | 9 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
 | 10 (App. A) | `fig:convergence` | `00_code_health/convergence` | `plot_convergence` |
 | 11 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 12 (App. A) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
-| 13 (App. B) | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
-| 14 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
-| 14 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+| 12 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
+| 12 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+
+2026-10-07 (the user): `01_single_throat/seed_linearity` and `05_binary_spiral/momentum_scan_orbits` left the
+paper; their files stay. Sec. VIII A states the seed linearity in words (it already carried the numbers, and now
+says where the slope-one line meets the spherical control's floor, eps2 ~ 2e-3). Sec. VII A points to the
+momentum scan's movies instead, Videos 4-6 at p = 0.25/0.60/0.90, and the later videos are renumbered 7-10 in
+order of appearance. Fig. 10 is read a page early, so it heads the appendix's first page. The two appendix
+figures are now [t] and ride at the tops of the first reference pages; the barrier before the references and
+the float-page macro are gone. The result has no float pages and runs 25 pages, both engines.
 
 2026-10-06 (the referee pass): new Fig. 10, `00_code_health/convergence` (`plot_convergence`, no arguments),
 which shifts App. A and B by one: (a) the static throat's three-level factor Q(t) at levels 2/3/4 against
