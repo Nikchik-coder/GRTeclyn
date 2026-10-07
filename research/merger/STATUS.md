@@ -68,7 +68,9 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   1.96); the throat-core extremes (max |K|, max Π, max φ) do not converge — they sit in the χ-floored core.
 - **CONV-fz lvl5 DONE t = 100 (~15:28 UTC 10-07), no NaN:** the common MOTS at t = 100 R 4.7784 / M_MS 2.3892
   (FARZONE-ho 4.7789 / 2.3894); L2 Ham 1.066e-4, Mom 5.94e-5 at t = 100 (FARZONE-ho 1.065e-4 / 5.95e-5); 101 frames.
-  Its Chk02500 (30 GB) copied to its NFS run dir 15:54 UTC 10-07, sizes verified (CONV-fz). Close-out: 08_convergence.
+  Its Chk02500 (30 GB) copied to its NFS run dir 15:54 UTC 10-07, sizes verified (CONV-fz). CLOSED OUT ~16:10 UTC:
+  filed and packed in 08_convergence, no movies (the user: "we dont need movies"; the stopped redraw had put 11 of 14
+  series on fixed scales, the other 3 were finished so the frame set is uniform), scratch pruned (112G, manifest 10-07).
 - **SCATTER-fate LAUNCHED 15:54 UTC 10-07 on the first node's card 1 (the user's go 10-07 ~10:30 UTC, "at lvl5's
   end"; ~25 min late: the session watching for lvl5's end restarted).** Template
   `templates_scan/params_ctrl_rest_d12_csm_t060.txt` = ctrl_rest_d12_csm's packed params with ONLY stop 15 → 60, the
@@ -76,6 +78,10 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   `--consume-args` (the user: the 3D finder on mouth A, B its mirror; the box-centre default sees only a common
   horizon), full frames at zoom 32. Start: preflight PASS; the solve bit-identical to the base (M_ADM 1.565790979,
   c_A 2.1155364, far sides 2.3e-7); t = 0 L2 Ham 3.3508e-3 = the base's; frame 0 as the base's; 34.2 GB on card 1.
+  The mouth-A finder holds the throat as a MOTS (R 3.8864 against the exact 3.8895). Consumer RESTARTED 16:08 UTC
+  (restart_consumer.sh, frames kept): the launch's relative `--horizon-track` did not resolve from the run dir (the
+  consumer's cwd), so the per-mouth scan failed silently on t = 0–2; now the absolute path. FARZONE-ho and the CONV-fz
+  twins carry the same relative path, so they have no horizon_scan.dat; their horizon numbers come from mots_spectral.
 
 - **MASS-t0 DONE for all three p (the twins: p025 card 0 13:17–13:50, p060 card 1 13:17–13:58 UTC 10-06, the
   user's go "use bouth gpus per required run"): THE MEASURED t = 0 MASS IS FLAT IN p — 2.304 / 2.317 / 2.282 at

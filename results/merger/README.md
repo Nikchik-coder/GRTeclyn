@@ -46,7 +46,9 @@ that produced it does not.
     arms), `verify_p012/`, `scout_merger/`, `horizon/` (the retracted scan record).
   - `06_binary_flyby/` — the fly-by and E_GW scan, p = 0.25–0.90, with `verify_p025/`.
   - `07_bbh_control/` — the vacuum BBH controls.
-  - `08_convergence/` — the referee's convergence arms (no frames, no movies, by design).
+  - `08_convergence/` — the referee's convergence arms (no frames, no movies, by design — except
+    CONV-fz, the head-on's three-level set lvl5 / FARZONE-ho / lvl7 on the L = 512 box, which keeps
+    its frames on the user's word, 10-07).
   - `00_archive/` (untracked) — the superseded superposed / Bowen-York campaign; see the data
     note above.
 - `figures/<group>/` (index: `figures/FIGURES.md`), `movies/<group>/`, `gw_search/` (the
@@ -122,7 +124,8 @@ campaign/                         (as of 2026-10-06; the superposed-era subfolde
   08_convergence/<run>/           the convergence study for the referee: each arm is its
                                   partner's params with one knob changed (max_level from 0,
                                   the wave zone's level, the dissipation); no movies, no
-                                  frames kept (the user's word)
+                                  frames kept (the user's word) -- except CONV-fz, which
+                                  keeps them (the user, 10-07)
   00_archive/                     UNTRACKED: the superseded superposed / Bowen-York campaign
                                   (pack extracts, moved 2026-10-02 / 2026-10-06)
   <group>/NOTES.md                the group's working notes, copied from the run tree
