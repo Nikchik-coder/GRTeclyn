@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import yt
 from matplotlib.colors import LogNorm, SymLogNorm
-from matplotlib.ticker import FuncFormatter
+from matplotlib.font_manager import FontProperties
+from matplotlib.ticker import FuncFormatter, LogFormatterMathtext, SymmetricalLogLocator
 
 from ..config import _FRAME_DPI, _field_frame_config
 from ..fields import _field_key, _register_derived_fields
@@ -88,38 +89,97 @@ def draw_slice_png(
         if float(zlim[1]) > lo:
             imshow_kw = {"norm": LogNorm(vmin=lo, vmax=float(zlim[1]))}
 
-    fig, ax = plt.subplots(figsize=(8, 7))
+    # The live AMR frames come out of yt's SlicePlot, so a frame redrawn from the
+    # slice cache copies yt's layout and type (base_plot_types._get_best_layout,
+    # yt/default.mplstyle): an 8 in image, the colour bar 0.0375 x 8 in wide and
+    # flush against it, 18 pt STIX text with Computer Modern maths, ticks in on
+    # every side with minor ticks, scientific labels with a x10^n offset -- and the
+    # live frame's x - x0 / y - y0 axes about the window centre.  Until 2026-10-07
+    # the redraw was a plain 8 x 7 figure in absolute coordinates with 12 pt ticks,
+    # so a rerendered movie did not look like the run's own frames.
+    font = FontProperties(family="stixgeneral", size=18.0, math_fontfamily="cm")
+    span_x = abs(float(plot_extent[1]) - float(plot_extent[0]))
+    span_y = abs(float(plot_extent[3]) - float(plot_extent[2]))
+    img_w = img_h = 8.0
+    if span_x > 0 and span_y > 0:
+        if span_x >= span_y:
+            img_h *= span_y / span_x
+        else:
+            img_w *= span_x / span_y
+    left, bottom, top, cb_w = 1.2, 0.9, 0.30, 0.0375 * 8.0
+    cb_text = 0.9 + 0.45
+    fig_w, fig_h = left + img_w + cb_w + cb_text, bottom + img_h + top
+    fig = plt.figure(figsize=(fig_w, fig_h))
+    ax = fig.add_axes((left / fig_w, bottom / fig_h, img_w / fig_w, img_h / fig_h))
+    cax = fig.add_axes(((left + img_w) / fig_w, bottom / fig_h, cb_w / fig_w, img_h / fig_h))
     im = ax.imshow(
         plot_arr,
         origin="lower",
         extent=plot_extent,
-        aspect="equal",
+        aspect="auto",
         cmap=cfg["cmap"],
         interpolation="nearest",
         **imshow_kw,
     )
-    ax.set_xlabel(r"$%s$" % xlabel_name)
-    ax.set_ylabel(r"$%s$" % ylabel_name)
-    ax.set_title(title_text, pad=8)
-    cb = fig.colorbar(im, ax=ax)
+    ax.tick_params(which="both", axis="both", direction="in", top=True, right=True)
+    ax.minorticks_on()
+    fmt_kwargs = {"style": "scientific", "scilimits": (-2, 3), "useMathText": True}
+    ax.ticklabel_format(**fmt_kwargs)
+    cb = fig.colorbar(im, cax=cax)
+    cax.tick_params(which="both", direction="in")
+    cb_axis = cax.yaxis
+    if cb_axis.get_scale() == "symlog":
+        trf = cb_axis.get_transform()
+        cb_axis.set_major_locator(SymmetricalLogLocator(trf))
+        cb_axis.set_major_formatter(LogFormatterMathtext(linthresh=trf.linthresh, base=trf.base))
+        if float(trf.base).is_integer():
+            cb_axis.set_minor_locator(SymmetricalLogLocator(trf, subs=list(range(1, int(trf.base)))))
+    elif cb_axis.get_scale() == "log":
+        cb.minorticks_on()
+    else:
+        cax.ticklabel_format(**fmt_kwargs)
+        cb.minorticks_on()
+
+    # The live frame's title comes out in STIX at the 16 pt set above; spelled out
+    # here because the serif list above resolves to DejaVu outside yt.
+    ax.set_title(title_text, pad=8, fontproperties=FontProperties(
+        family="stixgeneral", size=16.0, math_fontfamily="cm"))
+    if corner:
+        ax.set_xlabel(r"$%s$" % xlabel_name)
+        ax.set_ylabel(r"$%s$" % ylabel_name)
+        x_off = y_off = 0.0
+    else:
+        ax.set_xlabel(r"$%s-%s_0$" % (xlabel_name, xlabel_name))
+        ax.set_ylabel(r"$%s-%s_0$" % (ylabel_name, ylabel_name))
+        x_off = 0.5 * (float(plot_extent[0]) + float(plot_extent[1]))
+        y_off = 0.5 * (float(plot_extent[2]) + float(plot_extent[3]))
     cb.set_label(cfg["label"])
+
+    def _clean(val: float) -> float:
+        return 0.0 if abs(float(val)) < 1.0e-10 else float(val)
 
     x_ticks = ax.get_xticks()
     left_x_native = float(x_ticks[0]) if len(x_ticks) else None
 
     def _fmt_x(val, _pos):
-        return f"{float(val):g}"
+        return f"{_clean(val - x_off):g}"
 
     def _fmt_y(val, pos):
         if corner and abs(float(val)) < 1.0e-12:
             return ""
-        display = f"{float(val):g}"
-        if pos == 0 and left_x_native is not None and display == f"{left_x_native:g}":
+        display = f"{_clean(val - y_off):g}"
+        # Bottom-left corner: the x and y minimum ticks overlap (e.g. "-32 -32").
+        if pos == 0 and left_x_native is not None and display == f"{_clean(left_x_native - x_off):g}":
             return ""
         return display
 
     ax.xaxis.set_major_formatter(FuncFormatter(_fmt_x))
     ax.yaxis.set_major_formatter(FuncFormatter(_fmt_y))
+    for a in (ax, cax):
+        a.tick_params(which="both", labelsize=font.get_size(), labelfontfamily=font.get_family()[0])
+    for text in (ax.xaxis.label, ax.yaxis.label, cax.yaxis.label,
+                 ax.xaxis.get_offset_text(), ax.yaxis.get_offset_text(), cax.yaxis.get_offset_text()):
+        text.set_fontproperties(font)
 
     output_dir = os.path.join(frames_out_dir, f"{field}_{axis}")
     frames_dir = os.path.join(output_dir, "frames")

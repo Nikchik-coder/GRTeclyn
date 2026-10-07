@@ -6,8 +6,13 @@
 #   - mixed PNG pixel sizes (colorbar label width / zoom changes)
 #   - unsorted ffmpeg glob demuxer order
 #
-# Each series is *resized to fill* a fixed canvas (max even WxH in that series)
-# so the plot never appears to shrink/grow when PNG sizes differ.
+# Each frame is pasted UNSCALED onto a fixed white canvas (the largest even WxH
+# in that series), its bottom-left corner on the canvas's.  The frames are
+# bbox-tight PNGs that differ only on the right, where a per-frame colour scale
+# changes the width of the colour bar's tick labels, so the plot and the colour
+# bar keep the same pixels in every frame.  Stretching each frame to one size
+# (the old way) squeezed the wider frames sideways: the colour bar wobbled in
+# every movie (2026-10-07).
 #
 # Usage:
 #   make_movies.sh EPISODE_DIR [EPISODE_DIR ...] [--framerate N] [--only chi_z K_z] [--max-frame N]
@@ -61,7 +66,6 @@ import re
 import subprocess
 import sys
 import tempfile
-from collections import Counter
 from pathlib import Path
 
 try:
@@ -85,10 +89,11 @@ if not pngs:
     sys.exit(0)
 
 sizes = [Image.open(p).size for p in pngs]
-# Prefer the most common size (stable majority render); fall back to max.
-(mode_w, mode_h), _ = Counter(sizes).most_common(1)[0]
-W = mode_w + (mode_w % 2)
-H = mode_h + (mode_h % 2)
+# The largest frame sets the canvas (even sides for yuv420p); nothing is scaled.
+W = max(w for w, _ in sizes)
+H = max(h for _, h in sizes)
+W += W % 2
+H += H % 2
 
 with tempfile.TemporaryDirectory(prefix="movie_frames_") as tmp:
     tmp_path = Path(tmp)
@@ -96,8 +101,9 @@ with tempfile.TemporaryDirectory(prefix="movie_frames_") as tmp:
     with list_path.open("w", encoding="utf-8") as lst:
         for i, src in enumerate(pngs):
             im = Image.open(src).convert("RGB")
-            # Stretch to fill — every frame occupies the same pixels.
-            canvas = im.resize((W, H), Image.Resampling.LANCZOS)
+            # Unscaled, bottom-left on bottom-left, white padding right / top.
+            canvas = Image.new("RGB", (W, H), (255, 255, 255))
+            canvas.paste(im, (0, H - im.size[1]))
             dst = tmp_path / f"frame_{i:05d}.png"
             canvas.save(dst)
             lst.write(f"file '{dst.as_posix()}'\n")
@@ -116,7 +122,7 @@ with tempfile.TemporaryDirectory(prefix="movie_frames_") as tmp:
     ]
     subprocess.run(cmd, check=True)
 
-print(f"  canvas={W}x{H} (mode) from {len(pngs)} frames, {len(set(sizes))} source sizes")
+print(f"  canvas={W}x{H} (largest, frames unscaled) from {len(pngs)} frames, {len(set(sizes))} source sizes")
 PY
 }
 
