@@ -78,9 +78,11 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   flags with an ABSOLUTE `--horizon-track` and `--mots-spectral-center 26 32 32` (the user: the 3D finder on mouth A,
   B its mirror) via `--consume-args`, full frames on the whole box (zoom 64). Start: preflight PASS; the solve
   bit-identical to the base (M_ADM 1.565790979, c_A 2.1155364); t = 0 L2 Ham 3.3508e-3 = the base's; Chk00000
-  written; frame 0 shows the whole box; 34.0 GB on card 1. The mouth-A finder is centred at x = 26 and does not
-  follow the mouth: it loses it once mouth A has moved ~1–2 units (the base: 0.56 by t = 15); the per-mouth scan
-  tracks both. THE FIRST LAUNCH (`ctrl_rest_d12_csm_t060`, 15:54–16:20 UTC: the user's go "at lvl5's end", ~25 min
+  written; frame 0 shows the whole box; 34.0 GB on card 1. The mouth-A finder FOLLOWS THE MOUTH since 16:33 UTC (the
+  user: "make this change"): the consumer's new `--mots-spectral-track` centres it on each plotfile on the
+  `--horizon-track` mouth nearest x = 26 and writes each centre to the JSONL (consumer restart, frames kept; tested
+  on t = 1.5: R 3.8863889600, the fixed-centre value to 10 digits). A fixed centre would have lost the mouth once it
+  moved ~1–2 units (the base: 0.56 by t = 15). The per-mouth scan tracks both mouths. THE FIRST LAUNCH (`ctrl_rest_d12_csm_t060`, 15:54–16:20 UTC: the user's go "at lvl5's end", ~25 min
   late as the watching session restarted; stop 60, no checkpoints, zoom 32) was stopped at t = 4.42 — with checkpoint
   output off AMReX writes no checkpoint, not even on dump_and_stop, so it could not be extended — and its scratch and
   run dir wiped on the user's word (manifest 10-07). There the launch's RELATIVE `--horizon-track` never resolved
