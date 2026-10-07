@@ -1,14 +1,14 @@
-# Status — 2026-10-06 ~15:05 UTC (last compacted 2026-10-01)
+# Status — 2026-10-07 ~06:45 UTC (last compacted 2026-10-01)
 
 Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary GPU_PLAN.md was deleted 2026-10-06
 (the user: too big, out of date); the GPU_PLAN headings quoted below are in `git show 94e7df53:research/merger/GPU_PLAN.md`.
 **Update this page whenever a verdict or the queue changes; keep it this size.**
 
-## LIVE NOW (2026-10-06 15:05 UTC) — FARZONE-ho on card 0; card 1 free
+## LIVE NOW (2026-10-07 06:45 UTC) — FARZONE-ho on card 0; card 1 free
 
 | run | node / card | t | stop | speed | ETA | checkpoints |
 |---|---|---|---|---|---|---|
-| FARZONE-ho `farzone_headon_flip_d8_L512_lvl6_t250_csm` | first / 0 | 0.04 | 250 | 3.9 u/h (start) | ~40 h (spec) → ~07 UTC 10-08; ~64 h → ~07 UTC 10-09 at the start speed | every 25 units, keep 2 (the user) |
+| FARZONE-ho `farzone_headon_flip_d8_L512_lvl6_t250_csm` | first / 0 | 100.2 | 250 | ~7 u/h (6.4 average) | ~21 h → ~04 UTC 10-08 | every 25 units, keep 2 (the user): t = 75 / 100, 33 GB each |
 
 - **FARZONE-ho LAUNCHED 14:58 UTC 10-06 (the user's go "run the head on farzone"):** template
   `templates_scan/params_farzone_headon_flip_d8_L512_lvl6_t250_csm.txt` = the spec's changes on MOTS-ho1's packed
@@ -19,9 +19,10 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   four times farther); 60.7M cells, 64.7 GB; Chk00000 written. The χ floor clips the throat cores from t = 0 (χ
   min 1e-4; production 8.8e-7). Two earlier launches (14:43 zoom 40, 14:48 zoom 512) were stopped at t ≤ 0.2 for the
   frame window, their scratch wiped, run dirs moved to `runs/wormhole_merger/00_archive/*_zoom{40,512}_aborted/`.
-- **The wall at t ≈ 30–39 (leg 1 died at 38.8):** the head-on is expected to hit it, and the way through is the χ
-  floor (the user, 10-06: "we will need to go throw the wall with min chi, no question here"). min_chi 1e-4 is on
-  from t = 0; a death restarts from the newest checkpoint (every 25 units, keep 2) with the floor the user sets.
+- **THROUGH THE WALL (t = 100.2 at 06:38 UTC 10-07), no NaN:** the χ floor (min_chi 1e-4 from t = 0; the user, 10-06:
+  "we will need to go throw the wall with min chi") carried the head-on past t ≈ 30–39, where leg 1 died at 38.8.
+  Constraints flat: L2 Ham ~2.0e-4 before the merger, 1.00–1.07e-4 over t = 25–100 (production ~1.2e-4); L2 Mom
+  5.5–5.9e-5. The common MOTS as production's: from t = 18.0 with M_MS 2.817 (production 2.817); 2.390 at t = 99.
 
 **NEXT — the referee pass: at most 2 GPU runs, 1 preferred** (full specs: RUNS FOR THE PAPER, below)
 
