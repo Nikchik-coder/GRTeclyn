@@ -14,17 +14,26 @@ rule the paper measures, and each leaf is a fate it evolves.
                        companion starts -- short d, small p; otherwise both
                        throats inflate, at contact or after a fly-by (Sec. VII B)
 
+    gravitational waves  beside the two fates that end in a black hole, a sketch of
+                       r Psi4 (shapes after Fig. gw_gallery, not data): the
+                       collapse rings down at the new hole's frequency; the merger
+                       is one burst with no chirp before it (Secs. VIII B, VIII D).
+                       The lone inflating throat is spherical: no gravitational
+                       wave, a flat line.  The inflating pair is not silent: its
+                       encounter radiates one burst (the fly-by's is the loudest).
+
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_fates
 
 STYLE: the full 7.05 in width, no frame, Hubble's tuning fork: each fork splits
 into level prongs, and every label sits flat above or below its prong.  Throats
 are ink rings with their scalar sign; gold is the horizon, so it rings the two
 fates that end in a black hole and nothing else; grey carries the context (the
-growing necks' earlier shells).
+growing necks' earlier shells, the waves' zero lines).
 
 WHY: 2026-10-07, the user: a population fork for the fates, like Hubble's
 tuning fork for the shapes of galaxies; the attracting pair branches too, into
-the merger (by d and p) and both throats inflating.
+the merger (by d and p) and both throats inflating; a sketched GW signal beside
+the collapse and the merger.
 """
 
 from __future__ import annotations
@@ -57,14 +66,19 @@ LEAVES = (("collapse", 4.5), ("inflation", 3.5), ("scattering", 2.5), ("merger",
 Y = dict(LEAVES)
 FOAM = (0.95, 2.95)
 ROOT = (2.0, 2.95)                              # birth separation
-LONE = (4.3, 0.5 * (Y["collapse"] + Y["inflation"]))      # the perturbation's sign
-RACE = (7.6, 0.5 * (Y["merger"] + Y["pair inflation"]))   # contact against inflation
-PAIR = (4.3, 0.5 * (Y["scattering"] + RACE[1]))           # the relative sign
+LONE = (5.0, 0.5 * (Y["collapse"] + Y["inflation"]))      # the perturbation's sign
+RACE = (6.4, 0.5 * (Y["merger"] + Y["pair inflation"]))   # contact against inflation
+PAIR = (3.85, 0.5 * (Y["scattering"] + RACE[1]))           # the relative sign
 KNEE = 0.55                 # how far a prong runs on the slant before it levels
-LEAF_X = 10.55
+LEAF_X = 8.6
 REACH = {"collapse": 0.5, "inflation": 0.58, "scattering": 0.76, "merger": 0.5,
          "pair inflation": 0.74}
 TEXT_X = LEAF_X + 0.78
+WAVE_X = (11.4, 12.75)      # the GW sketches' span, right of the leaf texts
+# the lone inflating throat is spherical, and gravitational waves start at l = 2; the
+# pair that inflates is not silent -- its encounter radiates (the fly-by is the loudest burst)
+GW = {"collapse": "Schwarzschild ringdown", "inflation": "none",
+      "merger": "one burst, no chirp", "pair inflation": "one burst at the encounter"}
 
 
 def throat(ax, x, y, r, sign="", lw=1.1, fill=style.GRID, fs=7.5, z=3):
@@ -90,9 +104,9 @@ def prong(ax, a, b):
     return a[0] + KNEE, b[0]
 
 
-def over(ax, x0, x1, y, text, *, below=False, **kw):
-    """A flat label centred on the level run x0..x1 at height y."""
-    ax.text(0.5 * (x0 + x1), y + (-0.13 if below else 0.13), text, ha="center",
+def over(ax, x0, x1, y, text, *, below=False, dx=0.0, **kw):
+    """A flat label centred on the level run x0..x1 at height y (moved by dx)."""
+    ax.text(0.5 * (x0 + x1) + dx, y + (-0.13 if below else 0.13), text, ha="center",
             va="top" if below else "bottom", **{**LABEL, **kw})
 
 
@@ -141,14 +155,42 @@ def merger(ax, x, y):
     throat(ax, x + 0.15, y, 0.12, "−", fs=6.5, z=4)
 
 
+def wave(ax, x0, x1, y, kind, amp=0.15):
+    """A sketched r Psi4: silent, then the burst -- no chirp ahead of either.
+
+    The collapse rings at one frequency as its new hole settles; the merger's
+    burst is broader and its frequency drifts down into the remnant's ringdown.
+    """
+    t = np.linspace(0.0, 1.0, 600)
+    ax.plot([x0, x1], [y, y], color=style.FAINT, lw=0.6, zorder=1)
+    if kind == "inflation":
+        ax.plot([x0, x1], [y, y], color=style.INK, lw=1.0, zorder=2)
+        return
+    if kind == "pair inflation":
+        # the pass: one broad arch and no remnant left to ring
+        h = np.exp(-((t - 0.55) / 0.14) ** 2) * np.sin(2.0 * np.pi * 2.3 * (t - 0.55) + 0.9)
+        ax.plot(x0 + (x1 - x0) * t, y + amp * h / np.abs(h).max(), color=style.INK, lw=1.0,
+                zorder=2)
+        return
+    if kind == "collapse":
+        t0, rise, fall = 0.4, 0.03, 0.2
+        phase = 2.0 * np.pi * 5.5 * (t - t0)
+    else:
+        t0, rise, fall = 0.36, 0.05, 0.2
+        phase = 2.0 * np.pi * (3.4 * (t - t0) - 1.0 * (t - t0) ** 2)
+    env = 0.5 * (1.0 + np.tanh((t - t0) / rise)) * np.exp(-np.clip(t - t0 - 0.06, 0.0, None) / fall)
+    h = env * np.sin(phase)
+    ax.plot(x0 + (x1 - x0) * t, y + amp * h / np.abs(h).max(), color=style.INK, lw=1.0, zorder=2)
+
+
 DRAW = {"collapse": collapse, "inflation": inflation, "scattering": scattering,
         "merger": merger, "pair inflation": pair_inflation}
 TEXT = {
     "collapse": ("collapse", "a black hole that\nswallows its field"),
-    "inflation": ("inflation", "the throat stays open\nand grows, anti-trapped"),
+    "inflation": ("inflation", "an open throat that\ngrows, anti-trapped"),
     "scattering": ("scattering", "the pair recedes"),
     "merger": ("merger", "one black hole,\nboth throats inside"),
-    "pair inflation": ("inflation", "both throats inflate, at\ncontact or after a fly-by"),
+    "pair inflation": ("inflation", "both inflate, after\ncontact or a fly-by"),
 }
 
 
@@ -185,7 +227,7 @@ def draw(ax) -> None:
     x0, x1 = prong(ax, pair_out, end["scattering"])
     over(ax, x0, x1, Y["scattering"], "like signs: repel")
     x0, x1 = prong(ax, pair_out, (RACE[0] - 0.42, RACE[1]))
-    over(ax, x0, x1, RACE[1], "opposite signs: attract", below=True)
+    over(ax, x0, x1, RACE[1], "opposite signs: attract", below=True, dx=-0.4)
 
     # the attracting pair: its horizon against the inflation its companion starts
     throat(ax, RACE[0] - 0.18, RACE[1], 0.17, "+", fs=7.0)
@@ -193,9 +235,9 @@ def draw(ax) -> None:
     ax.text(RACE[0], RACE[1] + 0.3, "the race", ha="center", va="bottom", **RULE)
     race_out = (RACE[0] + 0.37, RACE[1])
     x0, x1 = prong(ax, race_out, end["merger"])
-    over(ax, x0, x1, Y["merger"], r"short $d$, small $p$")
+    over(ax, x0, x1, Y["merger"], r"short $d$, small $p$", dx=-0.32)
     x0, x1 = prong(ax, race_out, end["pair inflation"])
-    over(ax, x0, x1, Y["pair inflation"], "otherwise", below=True)
+    over(ax, x0, x1, Y["pair inflation"], "otherwise", below=True, dx=-0.22)
 
     for k, y in LEAVES:
         DRAW[k](ax, LEAF_X, y)
@@ -204,6 +246,10 @@ def draw(ax) -> None:
                 color=style.INK, weight="bold")
         ax.text(TEXT_X, y, what, ha="left", va="top", fontsize=8.0,
                 color=style.MUTED, linespacing=1.1)
+        if k in GW:
+            wave(ax, *WAVE_X, y + 0.06, k)
+            ax.text(WAVE_X[0], y - 0.18, f"GW: {GW[k]}", ha="left", va="top", fontsize=6.5,
+                    color=style.MUTED)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -222,6 +268,13 @@ def main(argv: list[str] | None = None) -> int:
     ax.axis("off")
     draw(ax)
     problems = style.label_audit(fig)
+    # the audit cannot see a label that runs off the canvas
+    frame = fig.bbox
+    for txt in ax.texts:
+        b = txt.get_window_extent()
+        if b.x0 < frame.x0 or b.x1 > frame.x1 or b.y0 < frame.y0 or b.y1 > frame.y1:
+            problems.append(f"'{txt.get_text()[:32]}' runs off the canvas")
+            print(f"{TAG} '{txt.get_text()[:32]}' runs off the canvas")
     print(f"{TAG} label audit: {len(problems)} problem(s) {problems[:3]}")
 
     out = (pathlib.Path(args.out) if args.out else

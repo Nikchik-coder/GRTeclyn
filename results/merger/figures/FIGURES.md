@@ -42,7 +42,11 @@ yet included. It is a schematic in the manner of Hubble's tuning fork, with no n
 birth separation: a lone throat goes to collapse if pushed out (eps > 0) or to inflation if squeezed (eps < 0); a pair
 forks by its relative sign: like signs repel and scatter, while opposite signs attract and enter the race, where short
 d and small p reach the merger and otherwise both throats inflate, at contact or after a fly-by. Gold rings only the
-two horizons (collapse, merger). Label audit clean. The like-signed "scattering" leaf says only that the pair recedes:
+two horizons (collapse, merger). Beside those two, a sketched r Psi4 (shapes after Fig. 7, not data): the collapse
+rings down at the new hole's frequency, the merger is one burst with no chirp before it; the lone inflating throat
+gets a flat line, "GW: none" (it is spherical, and gravitational waves start at l = 2); the inflating pair gets one
+broad arch, "GW: one burst at the encounter" (its pass or contact radiates; the fly-by is the loudest burst
+measured). Label audit clean. The like-signed "scattering" leaf says only that the pair recedes:
 what each mouth does next waits on SCATTER-fate (STATUS, required).
 
 2026-10-07 (the user): `01_single_throat/seed_linearity` and `05_binary_spiral/momentum_scan_orbits` left the
