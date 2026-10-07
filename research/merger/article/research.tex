@@ -47,6 +47,22 @@
   \setcounter{dbltopnumber}{2}%
 }
 
+% The appendices are figures and little text, so every appendix page is a float
+% page.  Stock float pages centre their floats and spread the slack between
+% them; \packfloatpages stacks them from the top at a fixed gap instead.  A
+% figure* page reads the double-column set, which each new page copies over the
+% single-column one, so both are set.
+\makeatletter
+\newcommand{\packfloatpages}{%
+  \setlength{\@fptop}{0pt}%
+  \setlength{\@fpsep}{12pt}%
+  \setlength{\@fpbot}{0pt plus 1fil}%
+  \setlength{\@dblfptop}{0pt}%
+  \setlength{\@dblfpsep}{12pt}%
+  \setlength{\@dblfpbot}{0pt plus 1fil}%
+}
+\makeatother
+
 \graphicspath{{figures/}{../../../results/merger/figures/}}
 
 \hypersetup{
@@ -643,12 +659,13 @@ and \texttt{GRTeclyn}.
 
 \section{Convergence and Code Health}
 \label{app:health}
+\packfloatpages
 
 Figure~\ref{fig:convergence} tests convergence. The static throat, the one configuration with an exact answer, gives at levels 2--4 a three-level order of $\clmConvOrderDataLo$--$\clmConvOrderDataHi$ while the error of reading the exact data dominates and $\clmConvOrderEvolLo$--$\clmConvOrderEvolHi$ once the evolution's own error does, between the fourth order of the stencils and the second of the time interpolation at refinement boundaries; later the unstable mode amplifies each level's own seed, which is why the unkicked fates differ (Sec.~\ref{sec:single:branching}). A pair's branch is set by its data instead: the companion squeezes each mouth like a declared inward kick of $\clmRaceKickTwelve\%$ at $d=12$ and $\clmRaceKickEight\%$ at $d=8$ (Sec.~\ref{sec:spiral:race}), while a kick of $10^{-3}$ already overrides the level-3 seed and a kick's branch survives refinement to level 4 (Sec.~\ref{sec:single:branching}). A $d=12$ binary at throat levels 4 and 5 agrees in $r\Psi_4$ to $\clmConvPsiLevelDiff\%$ of its burst peak, and refining its wave zone moves it by $\clmConvPsiWaveZoneDiff\%$.
 
 Figure~\ref{fig:constraints} gives the constraint record of every run the main-text figures draw.
 
-\begin{figure*}[t]
+\begin{figure*}[p]
 \centering
 \includegraphics[width=0.80\textwidth]{00_code_health/constraint_evolution.pdf}
 \caption{Constraint evolution of every run the main-text figures draw, each at the highest refinement level it was run at (named in each panel's key): $L^2$ norms of the Hamiltonian ($\mathcal{H}$, ink) and momentum ($\mathcal{M}$, grey dashed) constraints, box averages on the base grid ($\Delta x=\clmDxBase$; $\clmFourDxBase$ on the octant of (d)) that compare only within one box (Sec.~\ref{sec:setup:diagnostics}). (a),(b)~The lone throat of Fig.~\ref{fig:single_throat}: level 4 for the unkicked throat and $\varepsilon=\pm10^{-2}$ ($+10^{-2}$ stopped by hand, dot), level 3 for $\pm10^{-3}$ and $\pm0.1$ (dash = sign, weight = amplitude, grey = no kick, crosses = deaths). At $t=0$ the norms carry the exact data's discretisation floor plus the kick's own defect, $\clmSeedDefectBox\,|\varepsilon|$ (Sec.~\ref{sec:model:seeds}), which feeds $\mathcal{M}$ within the first steps; the $|\varepsilon|\le10^{-2}$ arms then follow the unkicked norms to $\clmKickNormSpread\%$ until the fates part, while $\varepsilon=\pm0.1$ starts $\clmCeilingHamLo$--$\clmCeilingHamHi\times$ high and dies in a one-step overflow at the compactified origin. (c)~The pure-quadrupole collapse of Fig.~\ref{fig:single_collapse} (gold, its MOTS from $t=\clmPureQuadMotsTime$; dotted, its trust window, $t=\clmPureQuadTrust$): the late rise comes after it. (d)~The inflating throat of Fig.~\ref{fig:single_inflation} to $t=\clmFourWall$. (e)~The head-on chain of Fig.~\ref{fig:headon_collapse} with its ladder (era rules at the restarts, levels per era): the level-5 leg's overrun dies of the censored interior NaN at $t=\clmHeadonCsmNanTime$ (cross) with its norm below its value at formation (gold rule, $t=\clmHeadonCsmMotsTime$). (f)~The $d=6$ merger chain of Fig.~\ref{fig:spiral_collapse}: the used legs in ink, every failed arm in grey to its death cross (the level-6 and level-7 restarts dashed; times in Fig.~\ref{fig:spiral_collapse}(d)). At every end, hand stop and death alike, the Hamiltonian norm sits at or below its start: each failure is the interior NaN of Sec.~\ref{sec:spiral:wall}, not a constraint blow-up. (g)~The $p=\clmEgwPSixty$ plunge, level 4 throughout: the floor-free extension (grey) dies of the merged core's cell NaN at $t=\clmPSixtyExtDeath$ with its norm at its floor, the $\chi$-floor leg carries the record to $t=100$, and a level-5 restart (grey dashed) crosses the merger with clean norms; dotted, the trust window ($t=\clmPSixtyTrust$). (h)~The $p=\clmSpiralMomentumFlyby$ scatterer: the norms sit on their floor through the pass and grow as the mouths inflate; rules, the trust window ($t=\clmPFortyFiveTrust$) and the wave gate ($t=\clmEgwGateFortyFive$). The needles on (g), (h) and the $p=\clmSpiralMomentumTwentyFive$ arm, never on the head-on or $d=6$ chains, are the base-grid norm reading the moving throats' $\chi$ pits: on the $p=\clmSpiralMomentumTwentyFive$ verification pair four cells next to the pits carry $\clmNormPitShare\%$ of a needle while the level-3 solution is clean, and neither $\max|K|$ nor the waves carry a counterpart.}
@@ -660,7 +677,7 @@ Figure~\ref{fig:constraints} gives the constraint record of every run the main-t
 
 Two measurements support the main text without being needed to follow it: the scalar channel's energy, multipoles and validity window on the $\Psi_4$ spheres (Fig.~\ref{fig:scalar_channel}; Sec.~\ref{sec:gw:scalar}), and the horizon's shut-off of that channel (Fig.~\ref{fig:scalar_censorship}; Sec.~\ref{sec:gw:censorship}).
 
-\begin{figure*}[t]
+\begin{figure*}[p]
 \centering
 \includegraphics[width=0.62\textwidth]{08_waves/scalar_channel.pdf}\\[4pt]
 \includegraphics[width=0.62\textwidth]{08_waves/scalar_censorship.pdf}
@@ -673,8 +690,10 @@ Two measurements support the main text without being needed to follow it: the sc
 \label{fig:scalar_channel}\label{fig:scalar_censorship}
 \end{figure*}
 
-% No barrier here: the two appendix figures ride at the tops of the first
-% reference pages, so the references fill the space a float page leaves.
+% Every float lands inside the body: without this the queue's tail printed
+% after the references.
+\FloatBarrier
+
 \begin{thebibliography}{999}
 
 \bibitem{wheeler1955}

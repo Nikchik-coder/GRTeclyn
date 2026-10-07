@@ -39,9 +39,10 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 paper; their files stay. Sec. VIII A states the seed linearity in words (it already carried the numbers, and now
 says where the slope-one line meets the spherical control's floor, eps2 ~ 2e-3). Sec. VII A points to the
 momentum scan's movies instead, Videos 4-6 at p = 0.25/0.60/0.90, and the later videos are renumbered 7-10 in
-order of appearance. Fig. 10 is read a page early, so it heads the appendix's first page. The two appendix
-figures are now [t] and ride at the tops of the first reference pages; the barrier before the references and
-the float-page macro are gone. The result has no float pages and runs 25 pages, both engines.
+order of appearance. Fig. 10 is read a page early, so it heads the appendix's first page. Figs. 11 and 12
+keep their own float pages before the references (the user: no figures among the references). These pages are
+top-aligned now, because `\packfloatpages` also sets the double-column registers that a figure* page reads.
+26 pages, both engines.
 
 2026-10-06 (the referee pass): new Fig. 10, `00_code_health/convergence` (`plot_convergence`, no arguments),
 which shifts App. A and B by one: (a) the static throat's three-level factor Q(t) at levels 2/3/4 against
