@@ -82,7 +82,13 @@ Current state only; the map is in [`../../MAP.md`](../../MAP.md). The old diary 
   user: "make this change"): the consumer's new `--mots-spectral-track` centres it on each plotfile on the
   `--horizon-track` mouth nearest x = 26 and writes each centre to the JSONL (consumer restart, frames kept; tested
   on t = 1.5: R 3.8863889600, the fixed-centre value to 10 digits). A fixed centre would have lost the mouth once it
-  moved ~1–2 units (the base: 0.56 by t = 15). The per-mouth scan tracks both mouths. THE FIRST LAUNCH (`ctrl_rest_d12_csm_t060`, 15:54–16:20 UTC: the user's go "at lvl5's end", ~25 min
+  moved ~1–2 units (the base: 0.56 by t = 15). The per-mouth scan tracks both mouths.
+  INTERIM (t = 17.5, 18:05 UTC; constraints still the base's to the digit through t = 15): the mouths recede faster
+  (separation 12.56 at t = 12 → 13.31 at 16) and INFLATE — throat R_min 3.8775 at t = 0 → 3.9158 at t = 16.5 (+1.0 %),
+  the excess growing ~×1.6 per 1.5 units (e-fold ~3); both expansions > 0 on the throat sphere (anti-trapped), and from
+  t = 16.5 the finder's θ_out = 0 surface has θ_in ≥ 0, so it reports no MOTS (it looks for black-hole horizons; the
+  scan's R_min carries the throat). The inflation branch, opposite to the collapse that level 3's own seed drives in a
+  lone throat (Sec. IV B), so not the grid's pick. L2 Mom climbing (8e-6 at t = 4 → 5e-5 at 17.5, e-fold ~10); Ham ~4–5e-3. THE FIRST LAUNCH (`ctrl_rest_d12_csm_t060`, 15:54–16:20 UTC: the user's go "at lvl5's end", ~25 min
   late as the watching session restarted; stop 60, no checkpoints, zoom 32) was stopped at t = 4.42 — with checkpoint
   output off AMReX writes no checkpoint, not even on dump_and_stop, so it could not be extended — and its scratch and
   run dir wiped on the user's word (manifest 10-07). There the launch's RELATIVE `--horizon-track` never resolved
