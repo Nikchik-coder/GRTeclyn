@@ -18,10 +18,13 @@ the second node's card since CONV-fz lvl7 finished at 13:58 UTC 10-08 (scratch: 
 **CONV-fz: done 10-08.** lvl7 is packed in `08_convergence/` (frames kept, no movies), Table III counts it as measured,
 Fig. 11(d) draws Δx 1/64 and both neighbouring differences, and (e) draws ⟨H_ADM⟩ from
 `results/merger/analysis/convfz_constraints_t100.tsv` (`c_checkpoint_hamiltonian.py --out`). The results are under
-Main results, Convergence. Left for the paper, on the workstation:
-- (e)'s caption sentence and its ledger row (max |H_1/16 / H_1/32 − 1| = 1.43 %, `conv_farzone` `ham`; 1/32 against
-  1/64 is 0.43 %).
-- The PDF rebuild: the caption dropped "so far run to t = 67", and `clmConvFzOrder` (1.7) is auto now.
+Main results, Convergence. The paper side is done 10-08 on the workstation: the Fig. 11 caption covers all three
+levels and panel (e), with four new ledger rows (`clmConvFzPsiDiffFine` 0.54, `clmConvFzEnergyDiffFine` 0.09,
+`clmConvFzHamDiff` 1.4, `clmConvFzHamDiffFine` 0.4; `clmConvFzPsiDiff` prints 0.55 now). The waveform wording
+chosen: both pairwise |r Ψ4| differences are quoted (0.55 % / 0.54 % of peak — resolved at the half-percent floor,
+not shrinking pointwise), while the energy carries the order (1.7) and the caption/appendix carry the H leak test.
+The figure re-render on the workstation is byte-identical to the node's. PDF rebuilt: 26 pages, zero overfull,
+both engines, text ends on page 21.
 
 **Paper updates waiting on the user's call:**
 - FARZONE-ho's far-zone energy: Sec. VIII and Fig. `convergence`(c). (Fig. 8's head-on row is FARZONE-ho since 10-08;
@@ -47,8 +50,8 @@ Main results, Convergence. Left for the paper, on the workstation:
   10-08 fixed the last one).
 - Referee-response text added 10-08, existing ledger rows only: the LISA SNRs' near-zone error bound (Sec.
   heavy seeds) and why Fig. 12's L2 norms are large yet the waves clean (Appendix A, the Fig. 11(d) leak test).
-  Still open for the same critique: Fig. 11(e)'s caption sentence (the table is pushed); the three-level GW order
-  is in (1.7).
+  Closed 10-08 with lvl7's pack: the three-level GW order (1.7) and Fig. 11(e)'s H leak test are in the caption
+  and Appendix A. All three referee points are now answered in the text.
 - Before submitting: Videos 1–12 public, and both authors' sign-off.
 - After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
   Zenodo record's arXiv link.

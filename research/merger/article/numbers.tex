@@ -935,11 +935,15 @@
 \newcommand{\clmConvFzDxLo}{16}% def: campaign/08_convergence/farzone_headon_flip_d8_L512_lvl5_t100_csm params: N1 2^m
 \newcommand{\clmConvFzDxMid}{32}% def: campaign/08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm params: N1 2^m
 \newcommand{\clmConvFzDxHi}{64}% def: campaign/08_convergence/farzone_headon_flip_d8_L512_lvl7_t100_csm params: N1 2^m
-\newcommand{\clmConvFzPsiDiff}{0.5}% auto: plot_convergence (d): max |rPsi4^20(dx 1/16) - rPsi4^20(dx 1/32)| / the 1/32 pea
+\newcommand{\clmConvFzPsiDiff}{0.55}% auto: plot_convergence (d): max |rPsi4^20(dx 1/16) - rPsi4^20(dx 1/32)| / the 1/32 pea
+\newcommand{\clmConvFzPsiDiffFine}{0.54}% auto: plot_convergence (d): max |rPsi4^20(dx 1/32) - rPsi4^20(dx 1/64)| / the 1/64 pea
 \newcommand{\clmConvFzMotsTime}{18}% auto: plot_convergence (d): the first mots_spectral.dat dump with a common MOTS, the s
 \newcommand{\clmConvFzMotsDiff}{0.08}% auto: plot_convergence (d): max over t = 18-100 of |dR/R|, |dM_MS/M_MS| between dx 1/1
 \newcommand{\clmConvFzEnergyDiff}{0.3}% auto: plot_convergence (d): |E(dx 1/16)/E(dx 1/32) - 1| at R = 10, (c)'s band integral
+\newcommand{\clmConvFzEnergyDiffFine}{0.09}% auto: plot_convergence (d): |E(dx 1/32)/E(dx 1/64) - 1| at R = 10, (c)'s band integral
 \newcommand{\clmConvFzOrder}{1.7}% auto: plot_convergence (d): log2 of (E_1/16 - E_1/32) / (E_1/32 - E_1/64), E at R = 10
+\newcommand{\clmConvFzHamDiff}{1.4}% auto: plot_convergence (e): max over the shared shells r <= 7.3 of |<H_ADM>(1/16)/<H_A
+\newcommand{\clmConvFzHamDiffFine}{0.4}% auto: plot_convergence (e): max over the shared shells r <= 7.3 of |<H_ADM>(1/32)/<H_A
 \newcommand{\clmMassTzeroLo}{2.28}% auto: analysis/t0_adm_mass.tsv (MASS-t0; the surface-integral logs live in each run di
 \newcommand{\clmMassTzeroHi}{2.32}% auto: as clmMassTzeroLo
 \newcommand{\clmMassTzeroExcessLo}{2.4}% auto: analysis/t0_adm_mass.tsv: 100 (M_t0 / M_ADM_boost - 1)
