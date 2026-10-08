@@ -103,6 +103,13 @@ def _arm(scenario: str) -> dict:
 def _series(scenario: str, gated: bool = True):
     """(t, {R: complex r Psi4}, radii, R_in) exactly as the gallery reads it."""
     a = _arm(scenario)
+    gallery = _mod("plot_psi4_gallery")
+    if scenario in getattr(gallery, "GALLERY_ROW", {}):
+        # a row the gallery draws from another run than ARMS (2026-10-08: the
+        # head-on from FARZONE-ho), with its own spheres and ends
+        t, ser = gallery.row_record(PACK, scenario, a["rel"], a["m"], gated=gated)
+        radii = sorted(ser)
+        return t, ser, radii, min(radii, key=lambda r: abs(r - a["R0"]))
     streams = _mod("streams")
     path = _run_path(a["run"]) / a["file"]
     if a["m"] is None:

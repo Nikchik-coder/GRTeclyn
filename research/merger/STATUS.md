@@ -26,6 +26,10 @@ Main results in a line or two; the details go to the registry.**
    r Ψ4 / E/M at R = 10–44.
 3. Read Ham and Mom on the finest common levels outside the MOTS from the three Chk02500. This needs an AMReX
    checkpoint reader, which is still to write. Then wipe the three checkpoints.
+4. Table III already counts it, as an in-flight estimate (+1 run, +30.31 GPU-h: 22.18 h to t = 68.3, then 8.13 h at
+   3.9 u/h). At its pack: list it in `table1_groups.tsv` as `convergence, mode 3`, then drop the constants from
+   `clmDetRunsTotal`, `clmDetRunsConvergence` and `clmDetGpuHours` (ledger_detector.tsv). Until then the claims
+   check fails on those rows (it double-counts the run).
 
 Interim (lvl7 to t = 67):
 - E/M at R = 10 converges (C = 3.2, order ~1.7); FARZONE-ho is within 0.1 % of the extrapolated value.
@@ -33,9 +37,11 @@ Interim (lvl7 to t = 67):
 - The r Ψ4 differences (~1e-3 of peak) shrink more slowly than second order: the χ-floored core.
 
 **Paper updates waiting on the user's call:**
-- FARZONE-ho's far-zone energy: Sec. VIII and Fig. `convergence`(c).
+- FARZONE-ho's far-zone energy: Sec. VIII and Fig. `convergence`(c). (Fig. 8's head-on row is FARZONE-ho since 10-08;
+  Fig. 9 and every quoted energy still read the production chain.)
 - CONV-fz: App. A.
-- SCATTER-fate: the fate fork (Sec. I, `plot_fates`) and the like-signed branch.
+- Done 10-08: SCATTER-fate in Fig. 1 (the like-signed branch ends in inflation) and Sec. V C (Video 12).
+- Done 10-08: Table III counts the convergence set (6 runs, lvl7 in flight) and SCATTER-fate: 103 runs, 592 GPU-h.
 
 RUNS FOR THE PAPER — proposed, no go yet (CLAUDE.md: anything a run or an analysis could settle goes here, with a cost):
 
@@ -77,7 +83,7 @@ against 5.12), at levels 3 and 4.
 - The force goes as (d + δ)⁻² with δ = 2.65.
 - The push grows with the width as a^1.2–1.4, not the point-charge a².
 
-**SCATTER-fate** (NEW 10-08, not in the paper yet; packed `03_two_throats/csm/ctrl_rest_d12_csm_t100`): the
+**SCATTER-fate** (NEW 10-08, in the paper: Fig. 1, Sec. V C; packed `03_two_throats/csm/ctrl_rest_d12_csm_t100`): the
 like-signed d = 12 rest pair recedes, and both mouths inflate, mirror-symmetric.
 - The separation grows from 11.94 to 26.4 by t = 60.
 - The throat R grows from 3.88 to 4.78 by t = 30 (the per-mouth scan; anti-trapped), then to 7.7 by t ≈ 48 (χ
@@ -85,6 +91,9 @@ like-signed d = 12 rest pair recedes, and both mouths inflate, mirror-symmetric.
 - There is no MOTS about either mouth after t = 16.5.
 - The constraints sit at their t = 0 level to t = 50. Then the L = 64 box's collapsed lapse reaches the sponge.
 - Trust t ≤ 80 (the user); the run died at t = 95.08.
+- No GW burst: the l = 2 Ψ4 at R = 14 and 30 is a smooth, single-signed drift that grows with the inflation (e-fold
+  ~5 at R = 30), the same in every like-signed rest pair from t = 0 (d = 12/14/18 alike); the box (L = 64) cannot
+  split it into near field and radiation.
 
 **Head-on** (d = 8, t = 0–100; §VI, Fig. 5):
 - A common MOTS forms at t = 18.0 (R 5.634, M_MS 2.817 > M_ADM 2.357) and holds to the end (R 4.779, M_MS 2.389 at
@@ -92,7 +101,7 @@ like-signed d = 12 rest pair recedes, and both mouths inflate, mirror-symmetric.
 - It never bounces, and R settles toward 2 M_ADM.
 - After it forms, the ℓ = 1 scalar rings at ω = 0.122–0.124, against the final mass's QNM of 0.1226.
 
-**FARZONE-ho** (NEW 10-08; packed `08_convergence/`): the head-on in an L = 512 box with spheres to R = 180
+**FARZONE-ho** (NEW 10-08; packed `08_convergence/`; Fig. 8's head-on row, Video 11): the head-on in an L = 512 box with spheres to R = 180
 (R/M = 76), clean over t = 0–250.
 - The near zone reproduces production: E/M at R = 10 / 18 / 44 within −0.3 / −0.1 / +1.0 %.
 - On windows aligned with the burst, E/M converges outward: 7.66e-3 (R = 44), 6.98e-3 (90), 6.82e-3 (150), 6.81e-3

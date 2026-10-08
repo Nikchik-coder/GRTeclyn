@@ -7,8 +7,8 @@ rule the paper measures, and each leaf is a fate it evolves.
     birth separation   born apart -> a lone throat; born close -> a pair
     perturbation       a lone throat pushed out (eps > 0) collapses, squeezed
                        (eps < 0) inflates (Sec. IV C)
-    relative sign      like signs repel and the pair recedes; opposite signs
-                       attract (Sec. V A)
+    relative sign      like signs repel: the pair recedes and both throats
+                       inflate (Sec. V C); opposite signs attract (Sec. V A)
     the race           an attracting pair merges into one black hole where its
                        common horizon wins the race against the inflation the
                        companion starts -- short d, small p; otherwise both
@@ -20,7 +20,9 @@ rule the paper measures, and each leaf is a fate it evolves.
                        burst with no chirp before it (Secs. VIII B, VIII D); the
                        lone inflating throat is spherical, so no gravitational
                        wave, a flat line; the inflating pair is not silent, its
-                       encounter radiates one burst (the fly-by's is the loudest).
+                       encounter radiates one burst (the fly-by's is the loudest);
+                       the receding pair radiates no burst: its l = 2 field only
+                       drifts, smoothly, as its throats inflate (SCATTER-fate).
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_fates
 
@@ -72,13 +74,15 @@ ROOT = (2.0, 0.5 * (LONE[1] + PAIR[1]))                   # birth separation
 FOAM = (0.95, ROOT[1] + 0.25)
 KNEE = 0.5                  # how far a prong runs on the slant before it levels
 LEAF_X = 8.45
-REACH = {"collapse": 0.42, "inflation": 0.46, "scattering": 0.6, "merger": 0.42,
+REACH = {"collapse": 0.42, "inflation": 0.46, "scattering": 0.58, "merger": 0.42,
          "pair inflation": 0.58}
 TEXT_X = LEAF_X + 0.62
 WAVE_X = (11.75, 13.0)      # the GW sketches' span, right of the leaf texts
 # the lone inflating throat is spherical, and gravitational waves start at l = 2; the
 # pair that inflates is not silent -- its encounter radiates (the fly-by is the loudest burst)
-GW = {"collapse": "Schwarzschild ringdown", "inflation": "none",
+# the receding pair's l = 2 field drifts smoothly as its throats inflate, with
+# no burst (SCATTER-fate, 2026-10-08)
+GW = {"collapse": "Schwarzschild ringdown", "inflation": "none", "scattering": "no burst",
       "merger": "one burst, no chirp", "pair inflation": "one burst at the encounter"}
 
 
@@ -119,12 +123,12 @@ def foam(ax, cx, cy):
         throat(ax, cx + dx, cy + dy, 0.14, s, lw=0.8, fs=6.0)
 
 
-def growing(ax, x, y, r, shells, reach, ms=4.0):
+def growing(ax, x, y, r, shells, reach, ms=4.0, sign=""):
     """A throat that inflates: its earlier shells in grey, arrows outward."""
     for rs, a in zip(shells, (0.55, 0.8)):
         ax.add_patch(Circle((x, y), rs, facecolor="none", edgecolor=style.CONTEXT, lw=0.7,
                             linestyle=(0, (2.0, 1.6)), alpha=a, zorder=2))
-    throat(ax, x, y, r)
+    throat(ax, x, y, r, sign, fs=5.0)
     for t in np.deg2rad((45, 135, 225, 315)):
         u = np.array([np.cos(t), np.sin(t)])
         arrow(ax, (x, y) + (r + 0.02) * u, (x, y) + reach * u, lw=0.7, ms=ms)
@@ -140,14 +144,15 @@ def inflation(ax, x, y):
 
 
 def pair_inflation(ax, x, y):
-    for sx in (-1, +1):
-        growing(ax, x + sx * 0.3, y, 0.1, (0.22, 0.16), 0.24, ms=3.5)
+    for sx, sign in ((-1, "+"), (+1, "−")):
+        growing(ax, x + sx * 0.3, y, 0.1, (0.22, 0.16), 0.24, ms=3.5, sign=sign)
 
 
 def scattering(ax, x, y):
+    """Like signs recede, and both throats inflate: the race's losing pair's
+    pictogram, signed."""
     for sx in (-1, +1):
-        throat(ax, x + sx * 0.16, y, 0.12, "+", fs=6.0)
-        arrow(ax, (x + sx * 0.3, y), (x + sx * 0.5, y), lw=0.8, ms=4.5)
+        growing(ax, x + sx * 0.3, y, 0.1, (0.22, 0.16), 0.24, ms=3.5, sign="+")
 
 
 def merger(ax, x, y):
@@ -161,7 +166,7 @@ DRAW = {"collapse": collapse, "inflation": inflation, "scattering": scattering,
 TEXT = {
     "collapse": ("collapse", "a black hole"),
     "inflation": ("inflation", "open, anti-trapped, growing"),
-    "scattering": ("scattering", "the pair recedes"),
+    "scattering": ("scattering", "recede, both throats inflate"),
     "merger": ("merger", "one black hole, both inside"),
     "pair inflation": ("inflation", "both throats inflate"),
 }
@@ -177,7 +182,7 @@ def wave(ax, x0, x1, y, kind, amp=0.13):
     """
     t = np.linspace(0.0, 1.0, 600)
     ax.plot([x0, x1], [y, y], color=style.FAINT, lw=0.6, zorder=1)
-    if kind == "inflation":
+    if kind in ("inflation", "scattering"):
         ax.plot([x0, x1], [y, y], color=style.INK, lw=0.9, zorder=2)
         return
     if kind == "pair inflation":
@@ -245,7 +250,7 @@ def draw(ax) -> None:
         ax.text(TEXT_X, y + 0.02, name, ha="left", va="bottom", fontsize=9.0,
                 color=style.INK, weight="bold")
         ax.text(TEXT_X, y - 0.02, what, ha="left", va="top", fontsize=7.5, color=style.MUTED)
-        if k in GW:         # the like-signed pair's signal is not measured
+        if k in GW:
             wave(ax, *WAVE_X, y + 0.08, k)
             ax.text(WAVE_X[0], y - 0.1, f"GW: {GW[k]}", ha="left", va="top", fontsize=6.5,
                     color=style.MUTED)

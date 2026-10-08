@@ -352,6 +352,41 @@ RADII = {
 }
 
 
+# Rows drawn from another run than their ARMS stream.  Since 2026-10-08 the
+# head-on row is FARZONE-ho: the same pair and grid in an L = 512 box with
+# sigma 0.3, so no level-1 noise gate, clean to t = 250, spheres to R = 180.
+# Per row: the stream under campaign/, m as in ARMS, the spheres drawn, and
+# the last coordinate time drawn at each.  Every sphere runs to t - R = 86, the
+# clock's edge (the vacuum head-on under the row ends at t = 100 on R = 14), so
+# the row has no cap.  R = 180 is left out: its record stops at t - R = 70, 12
+# inside the sponge.  ARMS, DRAW_GATES and RADII keep the production chain,
+# which the LIGO figure and the quoted energies read.
+GALLERY_ROW = {
+    "head-on": ("08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm/Weyl4_mode_20_axis.dat",
+                None, (10.0, 44.0, 90.0, 150.0), lambda R: R + 86.0),
+}
+
+
+def row_record(pack: pathlib.Path, name: str, rel: str, m: int | None,
+               gated: bool = True):
+    """``(t, {R: complex r*Psi4})`` as the gallery draws row ``name``: its
+    GALLERY_ROW stream, spheres and ends where it has one, else the ARMS
+    stream (``rel``, ``m``) through ``drawn``; ``gated=False`` keeps the whole
+    record.  None while the stream is not packed."""
+    if name in GALLERY_ROW:
+        rel, m, radii, end = GALLERY_ROW[name]
+    got = load(pack, rel, m)
+    if got is None:
+        return None
+    t, series = got
+    if name in GALLERY_ROW:
+        series = {R: series[R] for R in radii}
+        if gated:
+            series = {R: np.where(t <= end(R) + 1e-9, y, 0.0) for R, y in series.items()}
+        return t, series
+    return t, (drawn(name, t, series) if gated else series)
+
+
 def load(pack: pathlib.Path, rel: str, m: int | None):
     """``(t, {R: complex r*Psi4})`` or None while the stream is not packed."""
     p = pack / "campaign" / rel
@@ -515,12 +550,11 @@ def main(argv: list[str] | None = None) -> int:
     for name, knob, mode, rel, m, R0, _t_max, _note in ARMS:
         if name in OVERLAID:
             continue
-        got = load(pack, rel, m)
+        got = row_record(pack, name, rel, m)
         if got is None:
-            print(f"  {name:<18s} PENDING -- no {rel}")
+            print(f"  {name:<18s} PENDING -- no {GALLERY_ROW.get(name, (rel,))[0]}")
             continue
         t, series = got
-        series = drawn(name, t, series)
         radii = sorted(series)
         R_in = min(radii, key=lambda r: abs(r - R0))
         speeds = wavefront_speeds_xcorr(t, series, radii)
@@ -528,7 +562,7 @@ def main(argv: list[str] | None = None) -> int:
             pk = {R: float(t[int(np.argmax(np.abs(series[R])))]) for R in radii}
             speeds = [(R1, R2, (R2 - R1) / (pk[R2] - pk[R1]) if pk[R2] != pk[R1]
                        else np.inf, 0.0) for R1, R2 in zip(radii[:-1], radii[1:])]
-        note = DRAW_GATES[name][1] if name in DRAW_GATES else ""
+        note = DRAW_GATES[name][1] if name in DRAW_GATES and name not in GALLERY_ROW else ""
         rows.append(dict(name=name, knob=knob, mode=mode, note=note, t=t,
                          series=series, radii=radii, R_in=R_in, speeds=speeds))
         ends = ", ".join(f"{trim_zeros_tail(t, series[R])[0][-1]:.1f}" for R in radii)

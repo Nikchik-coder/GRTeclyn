@@ -987,3 +987,12 @@ page"). `pair_interaction` 5.7 × 3.0 → 5.7 × 2.0 in (near-square frames); `h
 (`_top_name`, clear of the 3.4 pt ticks at any height), "one throat, R⋆" sits above its rule (the bottom spine
 left no room under it), (e) gets headroom to 4.0, the head-on's √2R⋆ and M_ADM names go under their rules, and
 the d = 6 (c) panel's top rises to 7.6. Label audit clean on all three.
+
+2026-10-08: `fates` (Fig. 1): the like-signed branch ends in inflation (SCATTER-fate). The scattering leaf is drawn
+with the inflating pair's pictogram (dashed shells, outward arrows) signed +/+, the race's inflating pair is signed
++/−, and the leaf reads "recede, both throats inflate" with "GW: no burst": the receding pair's l = 2 Ψ4 is a smooth,
+single-signed drift as its throats inflate (identical in every like-signed rest pair from t = 0), no burst.
+`psi4_gallery` (Fig. 8): row (b) is FARZONE-ho (`plot_psi4_gallery.GALLERY_ROW`): the same head-on in an L = 512 box,
+σ = 0.3, spheres R = 10/44/90/150 drawn to the clock's edge (t − R ≤ 86), no level-1 noise cap; v/c 0.89/0.94/0.96.
+Its collision-axis stream is `headon_axis_modes.py`'s third entry. ARMS, DRAW_GATES and RADII keep the production
+chain, so `psi4_ligo` and the quoted energies are unchanged. Label audit clean on both.

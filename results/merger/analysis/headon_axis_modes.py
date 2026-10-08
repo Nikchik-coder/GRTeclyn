@@ -38,6 +38,10 @@ STREAMS = (   # (run dir under campaign/, (2,0) file, (2,2) file)
      "Weyl4_mode_20.dat", "Weyl4_mode_22.dat"),
     ("07_bbh_control/bbh_headon_d8_L128_lvl5_t100",
      "weyl_extraction_mode_20.dat", "weyl_extraction_mode_22.dat"),
+    # FARZONE-ho: the same head-on in an L = 512 box, spheres to R = 180, t = 250
+    # (2026-10-08: the gallery's head-on row).
+    ("08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm",
+     "Weyl4_mode_20.dat", "Weyl4_mode_22.dat"),
 )
 
 
