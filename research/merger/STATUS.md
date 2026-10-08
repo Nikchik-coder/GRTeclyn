@@ -32,10 +32,33 @@ Main results in a line or two; the details go to the registry.**
    3.9 u/h). At its pack: list it in `table1_groups.tsv` as `convergence, mode 3`, then drop the constants from
    `clmDetRunsTotal`, `clmDetRunsConvergence` and `clmDetGpuHours` (ledger_detector.tsv). Until then the claims
    check fails on those rows (it double-counts the run).
+5. Fig. 11(d) draws lvl5 and FARZONE-ho; its caption quotes the interim read below as manual rows (`clmConvFzDxHi`,
+   `clmConvFzFineTime`, `clmConvFzOrder`). At its pack: add lvl7 to `results/merger/analysis/headon_axis_modes.py`'s
+   STREAMS and run it (its `_axis.dat`), then re-render `plot_convergence`, which already lists lvl7 in `CONV_FZ`:
+   (d) then draws 1/64 and the 1/32 − 1/64 difference. Make the three rows def / auto, and drop the caption's "so
+   far run to t = 67".
 
 At t = 100 every fine level is one cube about the centre: level 4 ±10, level 5 ±5, level 6 ±2.5 (level 7 ±1.25
 expected). The MOTS has coordinate radius 3.48–3.53, so level 6 pokes out of it only in its cube's corners
 (r ≤ 4.33). The checkpoints hold 27 components in the code's order, with 3 ghost cells, as little-endian doubles.
+So outside the MOTS the three levels share one grid: this read checks that the interior's resolution does not leak
+out, and cannot give a convergence order (that needs the static throat's levels 2/3/4, ~3 GPU-h, no go).
+
+**The H table for Fig. 11(e): do it now on the finished runs (CPU, on the node).** `plot_convergence` (e) draws
+⟨H_ADM⟩ against r outside the MOTS, one curve per level, from `results/merger/analysis/convfz_constraints_t100.tsv`.
+Its caption sentence and ledger row (max |H_1/16 / H_1/32 − 1|, `conv_farzone` `ham`) go in once the table is
+pushed. Until then `plot_convergence` cannot render, because it needs the table.
+1. Give `c_checkpoint_hamiltonian.py` an `--out TSV` option.
+   - Start the file with `#` lines: what it is, the exact command, the date.
+   - Then the header `run	t	level	r	H_ADM	rho16pi	Theta	alpha	dZ`, and one row per checkpoint and shell, with `run` = the
+     checkpoint's parent dir name.
+   - A rerun keeps the rows of the runs it is not given.
+   - Write only the shells clear of the 4-cell stencil band at the cube's edge (`np.roll` wraps there): r ≤ 7.3 at
+     `--half 7.9`.
+2. Run it on lvl5's and FARZONE-ho's Chk02500 with step 3's arguments, plus
+   `--out results/merger/analysis/convfz_constraints_t100.tsv`. Commit the script and the table, and push.
+3. lvl7: the same once its Chk02500 is in its run dir (step 1). Commit and push the updated table, then re-render
+   `plot_convergence`.
 
 Interim (lvl7 to t = 67, and H from lvl5's and FARZONE-ho's Chk02500):
 - E/M at R = 10 converges (C = 3.2, order ~1.7); FARZONE-ho is within 0.1 % of the extrapolated value.
@@ -48,7 +71,8 @@ Interim (lvl7 to t = 67, and H from lvl5's and FARZONE-ho's Chk02500):
 **Paper updates waiting on the user's call:**
 - FARZONE-ho's far-zone energy: Sec. VIII and Fig. `convergence`(c). (Fig. 8's head-on row is FARZONE-ho since 10-08;
   Fig. 9 and every quoted energy still read the production chain.)
-- CONV-fz: App. A.
+- CONV-fz: App. A's text.
+- Done 10-08: Fig. 11(d), CONV-fz at Δx 1/16 and 1/32, with lvl7's interim order in the caption (step 5 above).
 - Done 10-08: SCATTER-fate in Fig. 1 (the like-signed branch ends in inflation) and Sec. V C (Video 12).
 - Done 10-08: Table III counts the convergence set (6 runs, lvl7 in flight) and SCATTER-fate: 103 runs, 592 GPU-h.
 
@@ -145,7 +169,9 @@ headline channel.
 **Convergence** (App. A):
 - The static throat at levels 2 / 3 / 4 against the exact solution: order ~2.2 early, ~3 later.
 - The wave zone is resolved (CONV-csm-w: 0.01–0.15 % of peak).
-- CONV-fz (Planned, above) adds the binary three-level set.
+- CONV-fz, the binary three-level set (Fig. 11(d), lvl7 in flight): Δx 1/16 and 1/32 agree in r Ψ4 at R = 10 to
+  0.55 % of the peak and in E at R = 10 to 0.29 %, and both find the common MOTS from t = 18, R and M_MS equal to
+  0.084 %.
 
 ## Traps (each has cost a run)
 

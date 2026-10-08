@@ -915,14 +915,16 @@ def waves_newtonian_momentum(run: str, kind: str, mass: float = 1.0) -> float:
 def waves_axis_ratio_dev() -> float:
     """Largest |(|h22/h20|) / sqrt(3/2) - 1|, in %, over both head-ons' spheres
     (analysis/headon_axis_modes.py, burst-body rms): how closely the z-based
-    modes split as a quadrupole axisymmetric about the collision axis x must."""
+    modes split as a quadrupole axisymmetric about the collision axis x must.
+    A sphere the record stops short of (nan) is left out."""
     H = importlib.import_module("headon_axis_modes")
     devs = []
     for run, f20, f22 in H.STREAMS:
         d = PACK / "campaign" / run
         _, d20, radii = H._read(d / f20)
         _, d22, _ = H._read(d / f22)
-        devs += [100.0 * abs(x / H.RATIO - 1.0) for x in H.ratios(d20, d22, radii)]
+        devs += [100.0 * abs(x / H.RATIO - 1.0) for x in H.ratios(d20, d22, radii)
+                 if math.isfinite(x)]
     return float(max(devs))
 
 
@@ -959,6 +961,29 @@ def near_zone(case: str, what: str = "excess", r_min: float = 0.0) -> float:
         return float(max(E) / M)
     q = C.near_zone_ratio(PACK, case)
     return 100.0 * (q - 1.0) if what == "excess" else 100.0 * (math.sqrt(q) - 1.0)
+
+
+@extractor
+def conv_farzone(what: str, coarse: str = "1/16", fine: str = "1/32") -> float:
+    """plot_convergence (d), CONV-fz, two levels named by finest dx: 'psi' = 100
+    max|difference| of the collision-axis r Psi4^20 at R = 10 over the finer
+    level's peak, t <= 100; 'energy' = 100 |E_coarse/E_fine - 1| at R = 10 on
+    (c)'s head-on window; 'mots' = 100 max(|dR/R|, |dM_MS/M_MS|) of the common
+    MOTS over the dumps both levels find it on; 'birth' = its first dump, the
+    same at every packed level; 'ham' = 100 max |H_coarse/H_fine - 1| of the
+    t = 100 shell averages of H_ADM outside the MOTS (analysis/convfz_constraints_t100.tsv)."""
+    C = _mod("plot_convergence")
+    if what == "birth":
+        return float(C.fz_mots_birth(PACK))
+    if what == "ham":
+        return float(C.fz_ham_difference(PACK, coarse, fine))
+    if what == "psi":
+        return float(C.fz_psi_difference(PACK, coarse, fine)[2])
+    if what == "energy":
+        return float(C.fz_energy_difference(PACK, coarse, fine))
+    if what == "mots":
+        return float(C.fz_mots_difference(PACK, coarse, fine)[0])
+    raise ValueError(what)
 
 
 @extractor

@@ -42,6 +42,10 @@ STREAMS = (   # (run dir under campaign/, (2,0) file, (2,2) file)
     # (2026-10-08: the gallery's head-on row).
     ("08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm",
      "Weyl4_mode_20.dat", "Weyl4_mode_22.dat"),
+    # CONV-fz: FARZONE-ho at one level coarser, to t = 100 (2026-10-08: Fig. convergence (d));
+    # the level-7 twin joins at its pack.
+    ("08_convergence/farzone_headon_flip_d8_L512_lvl5_t100_csm",
+     "Weyl4_mode_20.dat", "Weyl4_mode_22.dat"),
 )
 
 
@@ -75,6 +79,9 @@ def ratios(d20: np.ndarray, d22: np.ndarray, radii) -> list[float]:
         a20 = np.hypot(d20[:, 1 + 2 * k], d20[:, 2 + 2 * k])
         a22 = np.hypot(d22[:, 1 + 2 * k], d22[:, 2 + 2 * k])
         win = (t >= R) & (t <= R + BURST)
+        if not win.any():    # the record stops before the burst reaches this sphere
+            out.append(float("nan"))
+            continue
         body = win & (a20 >= BODY * a20[win].max())
         out.append(float(np.sqrt((a22[body] ** 2).sum()
                                  / (a20[body] ** 2).sum())))

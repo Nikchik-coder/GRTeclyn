@@ -28,20 +28,37 @@ r"""Convergence on one strip: the static throat's order, the wave at two resolut
     E(10)/E(44) = 1.28), the d = 6 merger to 55.96 (the last u its R = 44
     record covers), the fly-by to 67.6 on R = 20/28 (the outer spheres stop
     short of it), and the two vacuum controls to 70.
+(d) CONV-fz: the far-zone head-on (FARZONE-ho, the gallery's head-on row) on
+    its L = 512 box at finest dx = 1/16, 1/32, 1/64 (max_level 5 / 6 / 7, its
+    params otherwise), to t = 100: the collision-axis |r Psi4^20| at R = 10 of
+    the finest level packed and each neighbouring pair's difference.  A level
+    joins once its run is packed (``CONV_FZ``; 2026-10-08 the level-7 twin is
+    in flight).  Levels 5 / 6: the difference peaks at 0.55 % of the level-6
+    peak (t = 38); E at R = 10 on (c)'s head-on window differs by 0.29 %; both
+    find the common MOTS from t = 18, its R and M_MS equal to 0.084 % (t = 26,
+    as it settles; 1e-4 at birth and at t = 100).
+(e) The same levels' Hamiltonian constraint at t = 100, shell averages of
+    H_ADM outside the common MOTS (gold, its largest coordinate extent), read
+    on level 4 (dx = 1/8): at t = 100 levels 6 and 7 sit within |x| < 2.5 and
+    1.25 of the merged centre, so level 4 is the grid every level shares there.
+    The table (``FZ_HAM``) is written on the node from each run's Chk02500 by
+    grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_convergence
 
 The file lives under ``figures/00_code_health/``; every number is printed.
 The ledger reads (a) through its own recomputation (``extract_single``'s
-``single_conv_order``) and (b)/(c) through ``psi_difference``,
-``near_zone_ratio`` and ``near_zone_spread`` here (``extract_waves``).
+``single_conv_order``) and (b)/(c)/(d) through ``psi_difference``,
+``near_zone_ratio``, ``near_zone_spread`` and the ``fz_*`` functions here
+(``extract_waves``).
 
 WHY: 2026-10-06, the referee: the paper had no Richardson convergence plot.
+2026-10-08: (d), the binary's own three-level set; (e), its constraints.
 
-STYLE: the code-health strip on the full 7.05 in width; a key above every
-frame names each line, letter tags level on the keys' last rows; ink for
-the measurements, grey for the references and the vacuum controls, no gold
-(nothing here is a fitted law or a horizon).
+STYLE: the code-health strip, five panels on 9.4 in set at the full text
+width (0.75 scale); a key above every frame names each line, letter tags
+level on the keys' last rows; ink for the measurements, grey for the
+references and the vacuum controls, gold only for (e)'s horizon.
 """
 
 from __future__ import annotations
@@ -108,6 +125,24 @@ NEAR_ZONE = {
 }
 MARKERS = {"headon": "o", "d6": "s", "flyby": "^", "vac-headon": "o", "vac-d6": "s"}
 
+# (d) CONV-fz, coarse to fine: (finest dx, run under campaign/); a level is drawn once packed
+CONV_FZ = (
+    ("1/16", "08_convergence/farzone_headon_flip_d8_L512_lvl5_t100_csm"),
+    ("1/32", "08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm"),
+    ("1/64", "08_convergence/farzone_headon_flip_d8_L512_lvl7_t100_csm"),
+)
+FZ_SPHERE = 10.0
+FZ_T = 100.0                # the twins' stop time
+FZ_PAIRS = ((style.MUTED, "-"), (style.CONTEXT, (0, (3, 1.5))))   # by neighbouring pair
+
+# (e) <H_ADM> at t = 100 on shells outside the common MOTS, read on level 4 (dx = 1/8), the grid
+# every CONV-fz level shares there (levels 6 and 7 sit within |x| < 2.5 and 1.25 of the merged
+# centre): written on the node from each run's Chk02500 by c_checkpoint_hamiltonian.py
+FZ_HAM = "analysis/convfz_constraints_t100.tsv"
+FZ_HAM_STYLE = {"1/16": dict(color=style.INK, lw=0.7, marker="o", ms=2.6),
+                "1/32": dict(color=style.MUTED, lw=0.9),
+                "1/64": dict(color=style.CONTEXT, lw=0.9, ls=(0, (3, 1.5)))}
+
 
 def _campaign(pack_root) -> pathlib.Path:
     return pathlib.Path(pack_root).expanduser() / "campaign"
@@ -165,7 +200,7 @@ def draw_order(ax, pack_root) -> list:
     entries = [(q_line, "$Q$, levels 2/3/4")]
     for q, n, dash in RULES:
         rule = ax.axhline(q, color=style.MUTED, lw=0.8, ls=dash, zorder=1)
-        entries.append((rule, f"$n={n}$ ($Q={q:g}$)"))
+        entries.append((rule, f"$n={n}$"))   # Q = 2^n: the ticks
     ax.set_yscale("log")
     ax.set_ylim(3.3, 20.0)
     ax.set_yticks([4, 8, 16], ["4", "8", "16"])
@@ -303,6 +338,148 @@ def draw_extraction(ax, pack_root) -> list:
     return [(handles[c], NEAR_ZONE[c][0]) for c in order]
 
 
+# ------------------------------------------------------------------ (d)
+def fz_levels(pack_root) -> list[str]:
+    """The CONV-fz levels packed so far, coarse to fine."""
+    return [dx for dx, run in CONV_FZ if (_campaign(pack_root) / run).is_dir()]
+
+
+@functools.lru_cache(maxsize=None)
+def _fz_psi(pack_root: str, dx: str) -> dict:
+    t, modes = streams.load_mode(_campaign(pack_root) / dict(CONV_FZ)[dx] / "Weyl4_mode_20_axis.dat")
+    return {x: y for x, y in zip(np.round(t, 4), modes[FZ_SPHERE]) if x <= FZ_T + 1e-9}
+
+
+def fz_psi_difference(pack_root, a: str, b: str):
+    """(t, |difference|, 100 max|difference| / the finer level's peak, time of the max):
+    the collision-axis r Psi4^20 at R = 10 of levels a and b on their common samples."""
+    ra, rb = _fz_psi(str(pack_root), a), _fz_psi(str(pack_root), b)
+    t = np.array(sorted(set(ra) & set(rb)))
+    d = np.abs(np.array([ra[x] for x in t]) - np.array([rb[x] for x in t]))
+    i = int(np.argmax(d))
+    return t, d, 100.0 * float(d[i]) / max(abs(v) for v in rb.values()), float(t[i])
+
+
+@functools.lru_cache(maxsize=None)
+def _fz_energy(pack_root: str, dx: str) -> float:
+    _, _, m, M, _, u_max, _ = NEAR_ZONE["headon"]
+    r = _fz_psi(pack_root, dx)
+    t = np.array(sorted(r))
+    return energy(t, np.array([r[x] for x in t]), FZ_SPHERE, M, m, u_max)
+
+
+def fz_energy_difference(pack_root, a: str, b: str) -> float:
+    """100 |E_a/E_b - 1|: E at R = 10 by (c)'s band integral on its head-on window."""
+    return 100.0 * abs(_fz_energy(str(pack_root), a) / _fz_energy(str(pack_root), b) - 1.0)
+
+
+@functools.lru_cache(maxsize=None)
+def _fz_mots(pack_root: str, dx: str) -> dict:
+    """{t: (R, M_MS)} of the common MOTS on the dumps t <= FZ_T that find it."""
+    a = streams.read_rows(_campaign(pack_root) / dict(CONV_FZ)[dx] / "mots_spectral.dat", 3)
+    return {round(float(t), 3): (float(R), float(M)) for t, R, M in a
+            if np.isfinite(R) and t <= FZ_T + 1e-9}
+
+
+def fz_mots_birth(pack_root) -> float:
+    """The common MOTS's first dump, the same at every packed level."""
+    births = {dx: min(_fz_mots(str(pack_root), dx)) for dx in fz_levels(pack_root)}
+    if len(set(births.values())) > 1:
+        raise SystemExit(f"{TAG} (d) the levels' common MOTS first appear apart: {births}")
+    return next(iter(births.values()))
+
+
+def fz_mots_difference(pack_root, a: str, b: str):
+    """(100 max(|R_a/R_b - 1|, |M_a/M_b - 1|) over the dumps both levels find the
+    common MOTS on, the dump of the max)."""
+    ma, mb = _fz_mots(str(pack_root), a), _fz_mots(str(pack_root), b)
+    rel = {t: max(abs(ma[t][0] / mb[t][0] - 1.0), abs(ma[t][1] / mb[t][1] - 1.0))
+           for t in set(ma) & set(mb)}
+    t = max(rel, key=rel.get)
+    return 100.0 * rel[t], t
+
+
+def draw_farzone(ax, pack_root) -> list:
+    """Panel (d); returns its key entries."""
+    levels = fz_levels(pack_root)
+    r = _fz_psi(str(pack_root), levels[-1])
+    t = np.array(sorted(r))
+    y = np.abs(np.array([r[x] for x in t]))
+    print(f"{TAG} (d) levels packed: {', '.join(levels)}; dx = {levels[-1]} peak "
+          f"|r Psi4^20|(R = 10) = {y.max():.4e} at t = {t[np.argmax(y)]:.2f}; common MOTS "
+          f"from t = {fz_mots_birth(pack_root):g}")
+    entries = [(ax.plot(t, y, color=style.INK, lw=0.9, zorder=3)[0], f"$\\Delta x={levels[-1]}$")]
+    for (a, b), (color, dash) in zip(zip(levels, levels[1:]), FZ_PAIRS):
+        td, d, pct, t_max = fz_psi_difference(pack_root, a, b)
+        mots, t_mots = fz_mots_difference(pack_root, a, b)
+        print(f"{TAG} (d) {a} - {b}: max|diff| = {d.max():.3e} at t = {t_max:.2f}, {pct:.4f} % "
+              f"of the {b} peak; E(R = 10) {_fz_energy(str(pack_root), a):.5e} / "
+              f"{_fz_energy(str(pack_root), b):.5e}, {fz_energy_difference(pack_root, a, b):.4f} %; "
+              f"MOTS R, M_MS to {mots:.4f} % (t = {t_mots:g})")
+        line, = ax.plot(td, np.where(d > 0, d, np.nan), color=color, lw=0.7, ls=dash, zorder=2)
+        entries.append((line, f"${a}-{b}$"))
+    ax.set_yscale("log")
+    ax.set_xlim(0.0, FZ_T)
+    ax.set_xlabel("$t$")
+    ax.set_ylabel(r"$|r\Psi_4^{20}|$ at $R=10$")
+    return entries
+
+
+# ------------------------------------------------------------------ (e)
+@functools.lru_cache(maxsize=None)
+def _fz_ham(pack_root: str) -> dict:
+    """{dx: (r, <H_ADM>)} for the CONV-fz levels the table holds, coarse to fine."""
+    lines = [l for l in (pathlib.Path(pack_root).expanduser() / FZ_HAM).read_text(
+        encoding="utf-8").splitlines() if l.strip() and not l.startswith("#")]
+    head = lines[0].split("\t")
+    shells: dict[str, list] = {}
+    for line in lines[1:]:
+        f = dict(zip(head, line.split("\t")))
+        shells.setdefault(f["run"], []).append((float(f["r"]), float(f["H_ADM"])))
+    return {dx: tuple(np.array(sorted(shells[pathlib.Path(run).name])).T)
+            for dx, run in CONV_FZ if pathlib.Path(run).name in shells}
+
+
+def fz_ham_difference(pack_root, a: str = "1/16", b: str = "1/32") -> float:
+    """100 max |H_a/H_b - 1| over the shells both levels have."""
+    (ra, Ha), (rb, Hb) = (_fz_ham(str(pack_root))[x] for x in (a, b))
+    common = np.intersect1d(np.round(ra, 6), np.round(rb, 6))
+    pick = lambda r, H: H[np.isin(np.round(r, 6), common)]   # noqa: E731
+    return 100.0 * float(np.max(np.abs(pick(ra, Ha) / pick(rb, Hb) - 1.0)))
+
+
+def fz_mots_extent(pack_root) -> float:
+    """The common MOTS's largest coordinate extent from the centre at t = FZ_T (h_x, h_y, h_z),
+    on the finest packed level."""
+    run = dict(CONV_FZ)[fz_levels(pack_root)[-1]]
+    a = streams.read_rows(_campaign(pack_root) / run / "mots_spectral.dat", 7)
+    row = a[np.argmin(np.abs(a[:, 0] - FZ_T))]
+    return float(np.max(row[4:7]))
+
+
+def draw_constraint(ax, pack_root) -> list:
+    """Panel (e); returns its key entries."""
+    ham = _fz_ham(str(pack_root))
+    entries = []
+    for dx, (r, H) in ham.items():
+        print(f"{TAG} (e) dx = {dx}: <H_ADM>(t = {FZ_T:g}) " + "  ".join(
+            f"{x:g}: {h:.4e}" for x, h in zip(r, H)))
+        line, = ax.plot(r, -1e4 * H, zorder=3, **FZ_HAM_STYLE[dx])
+        entries.append((line, f"$\\Delta x={dx}$"))
+    levels = list(ham)
+    for a, b in zip(levels, levels[1:]):
+        print(f"{TAG} (e) {a} vs {b}: max |H_a/H_b - 1| = {fz_ham_difference(pack_root, a, b):.3f} %")
+    r_mots = fz_mots_extent(pack_root)
+    print(f"{TAG} (e) the common MOTS reaches r = {r_mots:.3f} from the centre at t = {FZ_T:g}")
+    ax.axvline(r_mots, color=style.GOLD, lw=0.9, zorder=2)
+    ax.annotate("MOTS", (r_mots, 0.0), xycoords=("data", "axes fraction"), xytext=(2.5, 4.0),
+                textcoords="offset points", ha="left", va="bottom", fontsize=7.5, color=style.GOLD)
+    ax.set_xlim(r_mots - 0.3, max(float(r.max()) for r, _ in ham.values()) + 0.3)
+    ax.set_xlabel("$r$")
+    ax.set_ylabel(r"$-10^4\langle\mathcal{H}\rangle$ at $t=100$")
+    return entries
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -311,11 +488,15 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     style.prd(base=10.0)
-    fig, (axA, axB, axC) = plt.subplots(1, 3, figsize=(7.05, 2.6), constrained_layout=True)
+    fig, axes = plt.subplots(1, 5, figsize=(9.4, 2.6), constrained_layout=True,
+                             gridspec_kw={"width_ratios": (1.0, 1.05, 1.35, 0.95, 0.75)})
+    axA, axB, axC, axD, axE = axes
     style.legend_top(axA, draw_order(axA, args.pack_root), ncol=2)
     style.legend_top(axB, draw_wave(axB, args.pack_root), ncol=1)
     style.legend_top(axC, draw_extraction(axC, args.pack_root), ncol=2)
-    style.tag_keys(fig, (axA, axB, axC), [f"({c})" for c in "abc"], row="last")
+    style.legend_top(axD, draw_farzone(axD, args.pack_root), ncol=1)
+    style.legend_top(axE, draw_constraint(axE, args.pack_root), ncol=1)
+    style.tag_keys(fig, axes, [f"({c})" for c in "abcde"], row="last")
     problems = style.label_audit(fig)
     print(f"{TAG} label audit: {len(problems)} problem(s) {problems[:3]}")
 

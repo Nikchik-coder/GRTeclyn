@@ -996,3 +996,14 @@ single-signed drift as its throats inflate (identical in every like-signed rest 
 σ = 0.3, spheres R = 10/44/90/150 drawn to the clock's edge (t − R ≤ 86), no level-1 noise cap; v/c 0.89/0.94/0.96.
 Its collision-axis stream is `headon_axis_modes.py`'s third entry. ARMS, DRAW_GATES and RADII keep the production
 chain, so `psi4_ligo` and the quoted energies are unchanged. Label audit clean on both.
+
+2026-10-08: `convergence` (Fig. 11) gains (d), CONV-fz: the far-zone head-on (FARZONE-ho) on its L = 512 box at finest
+Δx = 1/16 and 1/32 to t = 100, the collision-axis |r Ψ4^20| at R = 10 of the finer level and the two levels' difference
+(0.55 % of the peak at most). `plot_convergence.CONV_FZ` already lists the level-7 twin: once packed (with its
+`_axis.dat`, `headon_axis_modes.py`), it becomes the drawn level and its difference from 1/32 is added, dashed. The
+strip is 8.8 × 2.6 in and set at the full text width: the same 0.80 scale as the 7.05 in strips. Label audit clean.
+(e), CONV-fz's H_ADM at t = 100 on shells outside the common MOTS (gold rule: its largest coordinate extent), one
+curve per level on level 4, is coded. It reads `analysis/convfz_constraints_t100.tsv`, written on the node (STATUS,
+"The H table"). With it the strip becomes five panels on 9.4 in (widths 1 / 1.05 / 1.35 / 0.95 / 0.75), and (a)'s
+rules are keyed "n = 2/3/4" (the ticks give Q). The layout passed the label audit on a scratch copy of the node's
+five shells; the pack figure is still the four-panel one.
