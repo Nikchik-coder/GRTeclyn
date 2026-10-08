@@ -39,7 +39,8 @@ that produced it does not.
     `exact_boost/` (one exact-boost throat on the production box, and the MASS-t0 fly-by pairs at
     t = 0 whose ADM surface integrals measure the moving pairs' mass), `csm/` (the Bowen–York
     momentum probes that ruled that route out).
-  - `03_two_throats/csm/` — the matched rest pairs: width and separation ladders, the sign rule.
+  - `03_two_throats/csm/` — the matched rest pairs: width and separation ladders, the sign rule, and
+    SCATTER-fate (the d = 12 rest pair to t = 95: the mouths recede and both inflate).
   - `04_binary_headon/` — `csm/` (the mode-3 head-on legs), `placement_csm/` (the 18 one-step
     placement probes), `first_law/`, `mots/`, and the CS-1 solve scout.
   - `05_binary_spiral/` — `merger_d6/` (the d = 6 merger chain), `csm/` + `lbf/` (the d = 12
@@ -48,7 +49,7 @@ that produced it does not.
   - `07_bbh_control/` — the vacuum BBH controls.
   - `08_convergence/` — the referee's convergence arms (no frames, no movies, by design — except
     CONV-fz, the head-on's three-level set lvl5 / FARZONE-ho / lvl7 on the L = 512 box, which keeps
-    its frames on the user's word, 10-07).
+    its frames on the user's word, 10-07; FARZONE-ho itself runs to t = 250 with spheres to R = 180).
   - `00_archive/` (untracked) — the superseded superposed / Bowen-York campaign; see the data
     note above.
 - `figures/<group>/` (index: `figures/FIGURES.md`), `movies/<group>/`, `gw_search/` (the
@@ -100,7 +101,8 @@ campaign/                         (as of 2026-10-06; the superposed-era subfolde
     boost_contraction_t0.tsv        the measured contraction against 1/γ, reduced
   03_two_throats/
     csm/<run>/                      the matched rest pairs: width rungs a = 1/1.5/2/3,
-                                    separation rungs d = 12/14/16/18, the flip control
+                                    separation rungs d = 12/14/16/18, the flip control,
+                                    SCATTER-fate (d = 12 to t = 95: both mouths inflate)
     matched_rest_displacement.dat   the width/separation ladder, reduced
     sign_rule_displacement.dat      the sign rule (pull/push), reduced
   04_binary_headon/
