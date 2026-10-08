@@ -41,7 +41,6 @@ See also the wrapper overview: [`grteclyn-wrapper/README.md`](../../../README.md
 |----------|------|
 | **`visualize/`** | 2D field slices from plotfiles; optional MP4 via `ffmpeg` or separate stitcher. |
 | **`grteclyn-wrapper/scripts/plot/rerender_frames.py`** | Redraw a run's frames from its slice cache on ONE fixed colour scale per field (linear, or `--symlog` for signed fields), then `--movies` stitches them. The movie path the merger close-out uses. |
-| **`make_evolution_panel/`** | Multi-panel strip figure from saved frame PNGs. |
 | **`extract_wave/`** | Extract \(\Psi_4\) from plotfiles and plot time series + PSD. |
 | **`process_wave/`** | Stream plotfiles to `psi4_mode_l2m0.dat`, render frames while consuming, plot from `.dat`, LIGO/strain propagation extras. |
 | **`diagnostic/`** | Collapse diagnostics multi-panel plot (`collapse_diagnostics.dat`, optional `areal_radius.dat`). |
@@ -154,67 +153,7 @@ Both need `ffmpeg` on `PATH`.
 
 ---
 
-## 2. `make_evolution_panel/` — Strip figure from frames
-
-Builds a horizontal panel (one column per timestep) from `frame_z_NNNN.png` or `frame_NNNN.png` in `--frame_dir`. Writes `.png` and `.pdf` under `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/plots/` when `--out` is relative.
-
-```bash
-# K_z frames (default mode: k_z)
-python grteclyn-wrapper/src/grteclyn_wrapper/visualisation/make_evolution_panel/make_evolution_panel.py \
-  --frame_dir grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/K_z/frames \
-  --out evolution_K_z_panel \
-  --frames 0 500 1000 1500
-
-python grteclyn-wrapper/src/grteclyn_wrapper/visualisation/make_evolution_panel/make_evolution_panel.py \
-  --frame_dir grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/K_z/frames \
-  --out evolution_K_z_gray \
-  --frames 0 20 40 60 \
-  --grayscale
-
-# Embedding frames (3D embedding snapshots): use --mode embedding
-# (expects frame_NNNN.png in the embedding frames folder)
-python grteclyn-wrapper/src/grteclyn_wrapper/visualisation/make_evolution_panel/make_evolution_panel.py \
-  --frame_dir grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/embedding/frames \
-  --mode embedding \
-  --out evolution_embedding_panel \
-  --frames 2 3001 4002
-
-# Keep the title area ("Embedding Diagram  t=...") in each panel
-python grteclyn-wrapper/src/grteclyn_wrapper/visualisation/make_evolution_panel/make_evolution_panel.py \
-  --frame_dir grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/embedding/frames \
-  --mode embedding \
-  --keep-title \
-  --out evolution_embedding_with_title \
-  --frames 2 3001 4002
-
-# 4 panels: just provide 4 frame indices
-python grteclyn-wrapper/src/grteclyn_wrapper/visualisation/make_evolution_panel/make_evolution_panel.py \
-  --frame_dir grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/embedding/frames \
-  --mode embedding \
-  --keep-title \
-  --out evolution_embedding_4panels \
-  --frames 2 1002 3001 4002
-
-# Absolute --out writes exactly there
-python grteclyn-wrapper/src/grteclyn_wrapper/visualisation/make_evolution_panel/make_evolution_panel.py \
-  --frame_dir grteclyn-wrapper/src/grteclyn_wrapper/visualisation/visualize/K_z/frames \
-  --out /tmp/my_panel \
-  --frames 0 100 200
-```
-
-| Option | Description |
-|--------|-------------|
-| `--frame_dir` | Folder with frame PNGs |
-| `--mode` | Frame type/layout: `k_z` (default) or `embedding` |
-| `--out` | Output stem (`.png`/`.pdf` added); relative → under `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/plots/` |
-| `--frames` | Indices (default `0 20 40 60`) |
-| `--grayscale` | Grayscale panels |
-| `--no-grid` | Disable dashed overlay grid (K_z mode only) |
-| `--keep-title` | Keep title area at the top (embedding mode only) |
-
----
-
-## 3. `extract_wave/` — \(\Psi_4\) from plotfiles
+## 2. `extract_wave/` — \(\Psi_4\) from plotfiles
 
 Extracts the \(l=2,m=0\) mode of \(\Psi_4\) on spheres at chosen radii and plots waveform + PSD. Does **not** integrate to strain \(h(t)\) (ill-conditioned); frequency content comes from \(\Psi_4\) in the frequency domain. Supports symmetry-reduced domains via partial-sphere integration normalized to \(4\pi\).
 
@@ -245,7 +184,7 @@ uv run python -m grteclyn_wrapper.visualisation.extract_wave --data /path/to/dat
 
 ---
 
-## 4. `process_wave/` — Streaming extraction and post-processing
+## 3. `process_wave/` — Streaming extraction and post-processing
 
 - **`consume_plotfiles`**: while a run produces plotfiles, extract \(\Psi_4\) to `small_data/psi4_mode_l2m0.dat`, optionally render slice frames under `visualize/`, optionally delete processed plotfiles, optionally areal radius / embedding. See [`process_wave/README.md`](process_wave/README.md).
 - **`plot_extracted_psi4`**: plot from an existing `.dat` without plotfiles (waveform + PSD; optional strain, LIGO overlay, propagation speed).
@@ -300,7 +239,7 @@ overlays follow the implementation in `plot_extracted_psi4.py`.
 
 ---
 
-## 5. `diagnostic/` — Collapse diagnostics
+## 4. `diagnostic/` — Collapse diagnostics
 
 Reads `collapse_diagnostics.dat` (SmallDataIO ASCII under `<run>/data/` or path you pass). Optionally overlays `areal_radius.dat` (e.g. from `consume_plotfiles --areal-radius`) for throat radius, expansion velocity, and K-decay fit.
 
@@ -329,7 +268,7 @@ uv run python -m grteclyn_wrapper.visualisation.diagnostic.diagnostic --data /pa
 
 ---
 
-## 6. `constraines/` — Constraint norms
+## 5. `constraines/` — Constraint norms
 
 Plots \(L_2\) norms of Hamiltonian and momentum constraints from `constraint_norms.dat`
 (typically `<run>/data/constraint_norms.dat`). Two log-scale panels: \(\|\mathcal{H}\|_{L^2}\) and
@@ -351,7 +290,7 @@ If you pass only `-o myplot.eps` (no directory component), outputs go under
 
 ---
 
-## 7. `figures/` — Paper figures (schematic)
+## 6. `figures/` — Paper figures (schematic)
 
 Helper scripts for publication-style visuals **not** tied to a single run’s plotfiles. Example: `plot_collapse_stages.py` builds a 2×3 panel of schematic embedding-style wormhole stages (collapse and expansion rows); saves `wormhole_collapse_stages.png` and `.pdf`.
 
@@ -363,7 +302,7 @@ The script’s `__main__` block sets the output directory; edit that path if you
 
 ---
 
-## 7a. `search/` — QD campaign batch progress
+## 6a. `search/` — QD campaign batch progress
 
 Marginal archive score gain per GPU batch (bar) plus cumulative best (saturation curve). Reads `trajectory.jsonl` from a finished or in-progress MAP-Elites run.
 
@@ -381,7 +320,7 @@ Default output: `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/plots/qd_ba
 
 ---
 
-## 8. GW proxies without Weyl4
+## 7. GW proxies without Weyl4
 
 From extrinsic curvature on a slice (approximate \(h_+\), \(h_\times\) for propagation along \(z\)):
 
@@ -392,7 +331,7 @@ uv run python -m grteclyn_wrapper.visualisation.visualize --field GW_Cross --axi
 
 ---
 
-## 9. Symmetry-reduced domains
+## 8. Symmetry-reduced domains
 
 For octant-style runs (`lo_boundary = 2 2 2`, etc.), use `--center` and/or `--corner` so the origin is readable on the slice.
 
@@ -499,9 +438,6 @@ modification time**; if that fails, falls back to an existing `data_2gpu` or `da
 | `constraints_plot.*` | Hamiltonian and momentum L2 constraint norms |
 | `collapse_diagnostics_plot.*` | Collapse diagnostics (+ areal radius and K-decay fit when data exist) |
 | `psi4_analysis_M1000_D1.*` etc. | 6-panel GW analysis (`--combined --strain`) at several mass/distance configs |
-
-Also attempts K_z and embedding evolution panels from `frames/` (skipped with a warning if frame
-indices are missing — common while a run is still in progress).
 
 **Environment:** `MASS_MSUN`, `DISTANCE_MPC` (defaults include `1000:1`, `1000:0.002`, `30:10`);
 `ESD_FMAX` (PSD frequency cap); `LIGO_QUANTITY` (`asd` or `hchar`).
