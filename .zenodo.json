@@ -1,32 +1,33 @@
 {
   "upload_type": "software",
-  "title": "GRTeclyn research fork — Bondi dipole campaign",
-  "description": "<p>Code, run matrix and packed campaign data behind <em>The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive-Negative Mass Binary</em> (arXiv:2608.24577).</p><p>A GRTeclyn (AMReX/GPU) research fork with a Python orchestration layer: GRTresna constraint-solved initial data for dressed soliton stars of both mass signs, CCZ4 evolution of a bicomplex scalar in which only the phantom sector enters Einstein's equations with a minus sign, and the diagnostics that measure the runaway. Includes the scrubbed per-cell time series, dressed-star tables, solve and evolution parameters, curated frames and movies, and the refit tooling — reproducible without a GPU.</p>",
+  "title": "GRTeclyn research fork — colliding traversable wormholes",
+  "description": "<p>Code, run matrix and packed campaign data behind <em>Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds</em> (N. M. Shirokov and I. Nachevsky, 2026).</p><p>A GRTeclyn (AMReX/GPU) research fork with a Python orchestration layer: constraint-solved and exactly boosted binaries of Ellis–Bronnikov drainholes held open by a ghost scalar, CCZ4 evolution with refinement boxes that follow the throats, a spectral MOTS finder, Weyl-scalar and scalar-flux extraction, and the analysis and figure scripts. Includes the parameter files and thinned diagnostic streams of every run, the run registry, the figures and the movies — reproducible without a GPU.</p>",
   "creators": [
     {
       "name": "Shirokov, Nikita M.",
-      "affiliation": "Independent Researcher, Moscow, Russia"
+      "affiliation": "Moscow Institute of Physics and Technology, Moscow, Russia"
+    },
+    {
+      "name": "Nachevsky, Ilya",
+      "affiliation": "Higher School of Economics, Moscow, Russia"
     }
   ],
   "license": "BSD-3-Clause",
   "access_right": "open",
   "keywords": [
     "numerical relativity",
-    "negative mass",
-    "Bondi dipole",
-    "boson stars",
+    "traversable wormholes",
+    "Ellis-Bronnikov drainhole",
     "phantom scalar field",
+    "binary mergers",
+    "gravitational waves",
+    "black hole seeds",
     "AMReX",
     "GPU"
   ],
   "related_identifiers": [
     {
-      "identifier": "arXiv:2608.24577",
-      "relation": "isSupplementTo",
-      "scheme": "arxiv"
-    },
-    {
-      "identifier": "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole",
+      "identifier": "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-wormhole-merger",
       "relation": "isSupplementTo",
       "scheme": "url"
     }

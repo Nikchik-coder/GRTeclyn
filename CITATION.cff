@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "GRTeclyn research fork — Bondi dipole campaign"
+title: "GRTeclyn research fork — colliding traversable wormholes"
 message: >-
   If you use this code or the packed campaign data, please cite the
   paper under "preferred-citation" below.
@@ -8,33 +8,54 @@ authors:
   - family-names: Shirokov
     given-names: "Nikita M."
     email: shirokov.nm@phystech.edu
-    affiliation: "Independent Researcher, Moscow, Russia"
+    affiliation: "Moscow Institute of Physics and Technology, Moscow, Russia"
+  - family-names: Nachevsky
+    given-names: Ilya
+    affiliation: "Higher School of Economics, Moscow, Russia"
 repository-code: "https://github.com/Nikchik-coder/GRTeclyn"
-url: "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole"
+url: "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-wormhole-merger"
 license: BSD-3-Clause
-version: v1.0-bondi-dipole
-date-released: "2026-08-25"
+version: v1.0-wormhole-merger
 keywords:
   - numerical relativity
-  - negative mass
-  - Bondi dipole
-  - boson stars
+  - traversable wormholes
+  - Ellis-Bronnikov drainhole
   - phantom scalar field
+  - binary mergers
+  - gravitational waves
+  - black hole seeds
   - AMReX
   - GPU
 preferred-citation:
   type: article
   title: >-
-    The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating
-    Positive-Negative Mass Binary
+    Colliding Traversable Wormholes: Gravitational Waves and the Formation
+    of Heavy Black Hole Seeds
   authors:
     - family-names: Shirokov
       given-names: "Nikita M."
       email: shirokov.nm@phystech.edu
-      affiliation: "Independent Researcher, Moscow, Russia"
+      affiliation: "Moscow Institute of Physics and Technology, Moscow, Russia"
+    - family-names: Nachevsky
+      given-names: Ilya
+      affiliation: "Higher School of Economics, Moscow, Russia"
   year: 2026
-  month: 8
+  month: 10
   journal: "arXiv e-prints"
-  doi: 10.48550/arXiv.2608.24577
-  url: "https://arxiv.org/abs/2608.24577"
-  notes: "arXiv:2608.24577 [gr-qc]"
+  notes: "arXiv:XXXX.XXXXX [gr-qc] (the number comes with the submission)"
+references:
+  - type: article
+    title: >-
+      The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating
+      Positive-Negative Mass Binary
+    authors:
+      - family-names: Shirokov
+        given-names: "Nikita M."
+        email: shirokov.nm@phystech.edu
+        affiliation: "Independent Researcher, Moscow, Russia"
+    year: 2026
+    month: 8
+    journal: "arXiv e-prints"
+    doi: 10.48550/arXiv.2608.24577
+    url: "https://arxiv.org/abs/2608.24577"
+    notes: "arXiv:2608.24577 [gr-qc]; code at tag v1.0-bondi-dipole"
