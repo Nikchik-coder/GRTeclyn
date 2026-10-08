@@ -626,8 +626,9 @@ def build(run_key: str, spec: dict, movies: Path, dest: Path,
         return True
 
     # Frames closer than one code unit apart play at a higher frame rate, so the
-    # video stays real time; frames further apart play fast, and say so.
-    speed = speed / min(spec.get("dt_frame", 1.0), 1.0)
+    # video stays real time; frames further apart play fast, and say so.  An
+    # entry's own ``speed`` scales that, and the on-frame note follows it.
+    speed = speed * spec.get("speed", 1.0) / min(spec.get("dt_frame", 1.0), 1.0)
 
     grid = (len(fields), 1) if len(fields) <= 2 else (2, (len(fields) + 1) // 2)
     chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid)
