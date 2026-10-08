@@ -2,7 +2,7 @@
 # H_ADM = the ADM Hamiltonian constraint, rho16pi = 16 pi |rho| (its matter term),
 # Theta = CCZ4's Theta, alpha = the lapse, dZ = 2 chi d_k Z~^k (the code's H is ~H_ADM + dZ).
 # Shells |r - r0| < dx/2 about --centre, r0 clear of the cube's 4-cell edge band.
-# Written by grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py --out;
+# Written by grteclyn-wrapper/scripts/analysis/wormhole_merger/checkpoint_hamiltonian.py --out;
 # one command line per run set below, dated (UTC).
 # 2026-10-08: python grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py runs/wormhole_merger/08_convergence/farzone_headon_flip_d8_L512_lvl5_t100_csm/BinaryWormholeChk02500 runs/wormhole_merger/08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm/BinaryWormholeChk02500 runs/wormhole_merger/08_convergence/farzone_headon_flip_d8_L512_lvl7_t100_csm/BinaryWormholeChk02500 --level 4 --dx0 2.0 --centre 256 256 256 --half 7.9 --rmin 3.7 --rstep 0.3 --out results/merger/analysis/convfz_constraints_t100.tsv
 run	t	level	r	H_ADM	rho16pi	Theta	alpha	dZ

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Parameter-matched linear growth rate of the production drainhole (a = 2, m = 1).
 
 The campaign's massive Ellis-Bronnikov drainhole is the gamma1 = m/a member of the
@@ -19,7 +18,8 @@ T = tau*alpha_th/R_star = GGS's tau_unstable/r_throat.  Prints closed forms, con
 GGS Table I reproduction, the gamma1 -> infinity limit (their Eq. 43), and the comparison with
 the measured plateau rates (read through the claims extractors when the pack is present).
 
-Usage: linear_mode.py [--no-derive] [--quick] [--json OUT]
+    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/wormhole_merger/linear_mode.py \
+        [--no-derive] [--quick] [--json OUT]
 """
 from __future__ import annotations
 

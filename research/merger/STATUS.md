@@ -17,7 +17,7 @@ the second node's card since CONV-fz lvl7 finished at 13:58 UTC 10-08 (scratch: 
 
 **CONV-fz: done 10-08.** lvl7 is packed in `08_convergence/` (frames kept, no movies), Table III counts it as measured,
 Fig. 11(d) draws Δx 1/64 and both neighbouring differences, and (e) draws ⟨H_ADM⟩ from
-`results/merger/analysis/convfz_constraints_t100.tsv` (`c_checkpoint_hamiltonian.py --out`). The results are under
+`results/merger/analysis/convfz_constraints_t100.tsv` (`checkpoint_hamiltonian.py --out`). The results are under
 Main results, Convergence. The paper side is done 10-08 on the workstation: the Fig. 11 caption covers all three
 levels and panel (e), with four new ledger rows (`clmConvFzPsiDiffFine` 0.54, `clmConvFzEnergyDiffFine` 0.09,
 `clmConvFzHamDiff` 1.4, `clmConvFzHamDiffFine` 0.4; `clmConvFzPsiDiff` prints 0.55 now). The waveform wording

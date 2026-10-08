@@ -49,8 +49,8 @@ linear) component of its plunge -- 13-15 % of the power sits at the other
 sign of frequency -- not noise.
 
 THE DRAWING GATES (``DRAW_GATES``, same review).  What grew in the right
-column was, row by row (numbers from
-``grteclyn-wrapper/scripts/analysis/merger_feedback/waves_gallery_audit.py``):
+column was, row by row (numbers from an audit of the gallery's records, since
+removed with the superposed runs it read):
 
   collapsing throat  sphere-local numerical growth.  The exact level-4
          spherical control (``single_eps_p1e2_q1e2_ml4_scalar_t100``: the +0.01

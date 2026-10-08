@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
-r"""The head-on remnant's horizon against the spherical first law (HFL-ho, 2026-10-01).
+r"""The head-on remnant's horizon against the spherical first law (run HFL-ho).
 
 Sec. VI says the phantom can only shrink a horizon (the spherical first law,
-verified symbolically in c_spherical_horizon_law.py), yet the mode-3 head-on's
+verified symbolically in spherical_horizon_law.py), yet the mode-3 head-on's
 star scan reads the common horizon GROWING over t = 51-60 (leg 3,
 horizon_scan.dat, centre C: R 4.247 -> 4.580, M_MS 2.300 -> 2.362).  The scan's
 round sphere only bounds a still-unround MOTS from inside (2 M_MS / R = 1.08 at
@@ -14,7 +13,7 @@ t = 50-60 with every plotfile kept):
      r = h(theta, phi) in real harmonics to --lmax, no star-shaped assumption);
   2. MEASURED: its areal radius R(t) from the found surface's area, and dR/dt
      by central differences between consecutive plotfiles;
-  3. PREDICTED from one slice, c_horizon_first_law.py's law with averages over
+  3. PREDICTED from one slice, horizon_first_law.py's law with averages over
      the found surface instead of a round shell:
          dR/dt = 2 pi R^3 < alpha f theta_in > / (1 + q),   q = 4 pi R^2 < f >,
          f = (Pi + s.grad phi)^2      (l = n + s, k = n - s, theta_in that of k)
@@ -35,7 +34,7 @@ per plotfile, cached per plotfile in --json, so a re-run does only new ones.
 Background and niced:
 
     OMP_NUM_THREADS=8 nice -n 19 grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/merger_feedback/headon_first_law.py \
+        grteclyn-wrapper/scripts/analysis/wormhole_merger/headon_first_law.py \
         --json OUT.json [--level 3] [--half 4.5] [--lmax 6] PLT [PLT ...]
 """
 
@@ -65,7 +64,7 @@ def fields_on_box(ds, centre: np.ndarray, half: float, level: int) -> tuple[dict
     lev = int(min(level, ds.index.max_level))
     # A covering grid fills what its level does not cover by injecting coarser cells, whose
     # finite differences are staircases: the head-on's level 4 is the cube +-2.5 about the
-    # centre, its horizon at r = 3.0-3.4 (2026-10-01).  Refuse a box the level does not cover.
+    # centre, its horizon at r = 3.0-3.4.  Refuse a box the level does not cover.
     grids = [g for g in ds.index.grids if g.Level == lev]
     lo = np.min([g.LeftEdge.d for g in grids], axis=0)
     hi = np.max([g.RightEdge.d for g in grids], axis=0)
@@ -109,7 +108,7 @@ def refine(box: aff.Box, a_lm: np.ndarray, tol: float, iters: int = 40, nth: int
     """Newton on the flow's own residual: theta_out projected on the box's harmonics.
 
     The flow stops at rms theta_out < 2e-3, which leaves R uncertain by ~0.02 here
-    (two seeds of one plotfile, 2026-10-01) -- ten times the rate the law predicts
+    (two seeds of one plotfile) -- ten times the rate the law predicts
     per unit.  Near round, the MOTS stability operator is diagonal in l, so its
     eigenvalue per l, read off the m = 0 mode by one finite difference, gives a
     Newton step for every a_lm.  Stops when every projected harmonic of theta_out

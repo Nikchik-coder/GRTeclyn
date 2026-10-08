@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-r"""Fits to the single-throat MOTS histories of Fig. 3 (task C(c)(i), 2026-09-24).
+r"""Fits to the single-throat MOTS histories of the horizon-regrowth figure (plot_horizon_regrowth).
 
 Descriptive only: the forms are compared by their rms residual and by AIC
 (n ln(RSS/n) + 2k), on the throat-centred oriented scan (horizon_scan.dat,
@@ -21,7 +20,7 @@ Arms: level 3 (single_eps_p1e2_t100), level 4 spherical
 its data are the +1e-2 kick alone -- runs_index.tsv), level 4 + eps_2 = 0.005,
 level 4 + eps_2 = 0.05, and the pure-quadrupole arm (shrink only).
 
-    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/merger_feedback/c_regrowth_fits.py
+    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/wormhole_merger/horizon_regrowth_fits.py
 """
 
 from __future__ import annotations

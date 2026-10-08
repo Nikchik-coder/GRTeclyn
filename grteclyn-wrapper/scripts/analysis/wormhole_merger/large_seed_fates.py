@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-r"""The eps = +-0.1 arms: do both collapse, what goes NaN, and when (task C(a), 2026-09-24).
+r"""The eps = +-0.1 arms: do both collapse, what goes NaN, and when.
 
 Reads the pack only (single_eps_{p,m}1e1_t100, with single_eps_p1e3_t100 and
 single_eps_p1e2_t100 for comparison) and prints, per arm:
@@ -16,7 +15,7 @@ single_eps_p1e2_t100 for comparison) and prints, per arm:
     whether the minimal surface has become a maximum flanked by two minima
     (a "bag"), and the kick at which that happens: R''(r_t) = 0.
 
-    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/merger_feedback/c_eps01_fates.py
+    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/wormhole_merger/large_seed_fates.py
 """
 
 from __future__ import annotations

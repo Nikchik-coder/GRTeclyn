@@ -44,7 +44,7 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E
 # re-expansion (3.15 -> 3.36 by t = 4) -- the rule "fate opposite to the push"
 # fails at -0.1 -- and both die at the compactified origin (NaN in h11 on level
 # 3, t = 14.06 / 15.17), as the +0.001 arm does at t = 40.07.  Evidence:
-# grteclyn-wrapper/scripts/analysis/merger_feedback/c_eps01_fates.py.
+# grteclyn-wrapper/scripts/analysis/wormhole_merger/large_seed_fates.py.
 CEILING_ARMS = (("single_eps_p1e1_t100", "+0.1"), ("single_eps_m1e1_t100", "-0.1"))
 
 # The moving throat on panel (a) (2026-09-30: "update figure 1 with

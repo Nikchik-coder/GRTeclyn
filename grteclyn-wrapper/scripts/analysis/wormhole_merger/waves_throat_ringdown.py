@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """The collapsing throat's ringdown (article Sec. VIII.A, wave gate 4):
 verify the fitted period against an independent fit, test whether the period
 drifts across the window (does the ring follow the falling horizon mass?),
@@ -8,7 +7,7 @@ Misner-Sharp mass at the observation time and at the retarded (emission) time.
 Reads only the tracked pack; prints a report; writes nothing.
 
     grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/merger_feedback/waves_throat_ringdown.py
+        grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_throat_ringdown.py
 """
 
 from __future__ import annotations

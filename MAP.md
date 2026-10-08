@@ -32,7 +32,7 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | find raw output | `runs/wormhole_merger/<NN_group>/[<sub>/]<run>/` — `params.txt`, `run.log`, `run_manifest.json`, `data/*.dat`, `small_data/`, `frames/` |
 | find plotfiles / checkpoints | `/tmp/grteclyn_scratch/<run>/` on the GPU node that ran it — node-local, pruned by hand (`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md`) |
 | find packed results | `results/merger/campaign/<group>/[<sub>/]<run>/` — thinned streams, `evolution_params.txt`, `run_manifest.json`; resolve runs by name with `grteclyn_wrapper.analysis.wormhole_merger.pack.paths` |
-| run an analysis | [`grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/`](grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/README.md) (numpy only; read the pack) |
+| run an analysis | [`grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/`](grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/README.md) (numpy only; read the pack); the one-off checks behind the paper's hand-entered numbers: [`grteclyn-wrapper/scripts/analysis/wormhole_merger/`](grteclyn-wrapper/scripts/analysis/wormhole_merger/README.md) |
 | find a figure / its script | [`results/merger/figures/FIGURES.md`](results/merger/figures/FIGURES.md); scripts in `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/wormhole_merger/plot_*.py` |
 | close out a finished run | `research/merger/closeout.sh <run>` → `file_run.sh` → `research/merger/pack_results.sh` |
 | movies, GW search | `results/merger/movies/`, `results/merger/gw_search/` (strain cache in `runs/gw_search/`) |
@@ -40,7 +40,8 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 The campaign's code lives in four places by design: the launcher in
 `grteclyn-wrapper/scripts/campaigns/wormhole_merger/`, figures in the wrapper's
 `visualisation/wormhole_merger/`, pack analysis in the wrapper's
-`analysis/wormhole_merger/`, closeout and packing in `research/merger/`.
+`analysis/wormhole_merger/` (with its one-off checks in `scripts/analysis/wormhole_merger/`),
+closeout and packing in `research/merger/`.
 
 ## How to
 

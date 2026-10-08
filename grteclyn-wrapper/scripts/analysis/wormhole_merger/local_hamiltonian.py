@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-r"""The Hamiltonian constraint near the collapse horizon, computed directly (task C(c)(iii)).
+r"""The Hamiltonian constraint near the collapse horizon, computed directly.
 
 The global norm the runs write (constraint_norms.dat) is an L2 average over the
 level-0 grid (dx = 0.5, the whole box): a violation confined to the horizon
@@ -13,10 +12,10 @@ covering grid about the throat,
 (R[gamma] from the Christoffels of gamma_ij with fourth-order centred stencils),
 and prints its shell averages against 16 pi |rho| on the same shells.
 Validation: on the closed-form eps = 0 data H must vanish to truncation, on
-eps = +1e-2 data it must reproduce the analytic seed violation (c_seed_constraints.py).
+eps = +1e-2 data it must reproduce the analytic seed violation (seed_constraints.py).
 
     OMP_NUM_THREADS=4 nice -n 19 grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/merger_feedback/c_local_hamiltonian.py \
+        grteclyn-wrapper/scripts/analysis/wormhole_merger/local_hamiltonian.py \
         [--analytic EPS | PLT --centre X Y Z] [--level 4] [--half 2.3]
 """
 
@@ -24,15 +23,15 @@ from __future__ import annotations
 
 import argparse
 import math
-import sys
 import pathlib
+import sys
 import warnings
 
 import numpy as np
 
 warnings.filterwarnings("ignore")
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import c_horizon_first_law as fl  # noqa: E402
+import horizon_first_law as fl  # noqa: E402
 
 SYM = fl.SYM
 

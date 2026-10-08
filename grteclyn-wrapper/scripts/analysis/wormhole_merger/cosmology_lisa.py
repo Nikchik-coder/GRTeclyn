@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-r"""F_cosmology (merger-paper feedback): the conversion bursts in LISA, the
-conversion background against LISA, and the negative-energy deposit against
-Lambda -- the numbers behind Sec. XI B and Fig. heavy_seeds.
+r"""The conversion bursts in LISA, the conversion background against LISA, and
+the little-red-dot abundances a seeding population is set against -- the
+numbers behind Sec. XI B and Fig. heavy_seeds.
 
     grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/merger_feedback/f_cosmology_lisa.py [--json OUT]
+        grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py [--json OUT]
 
 Nothing here is new physics input.  Every campaign number comes from the pack
 through the code the article already uses:
@@ -57,20 +56,20 @@ from grteclyn_wrapper.gw_search import lisa as LISA  # noqa: E402
 from grteclyn_wrapper.gw_search.templates.nr import load_all_arms  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger import plot_heavy_seeds as HS  # noqa: E402
 
-# The noise, the record's spectrum and the burst SNR are gw_search.lisa's
-# (2026-09-25: one implementation for this script, Fig. heavy_seeds and the
-# claims extractors).  "fig16" is the instrument noise the PLS is built from.
+# The noise, the record's spectrum and the burst SNR are gw_search.lisa's, the one
+# implementation this script, Fig. heavy_seeds and the claims extractors share.
+# "instrument" is the noise the PLS is built from.
 F_MIN, F_MAX = LISA.F_MIN, LISA.F_MAX
 YEAR_S = LISA.YEAR_S
 C_MPC_PER_YR = 299792.458 * YEAR_S / 3.0857e19
-NOISES = {"fig16": LISA.sn_instrument, "conservative": LISA.sn_confusion}
+NOISES = {"instrument": LISA.sn_instrument, "conservative": LISA.sn_confusion}
 VARIANTS = LISA.VARIANTS
 spectrum = LISA.spectrum
 energy_quantile = LISA.energy_quantile
 
 
 def snr_parts(wf, spec, m_src, z, noise, corners, window=None):
-    name = {"fig16": "instrument", "conservative": "confusion"}[noise]
+    name = {"instrument": "instrument", "conservative": "confusion"}[noise]
     return LISA.snr_parts(wf, spec, m_src, z, name, corners, window, fmin=F_MIN, fmax=F_MAX)
 
 
@@ -102,7 +101,7 @@ def pls_in_band(m, z=HS.Z_EMIT):
     return float(curve.min()), float(curve.max()), f_lo, f_hi
 
 
-def background_snr(wf, spec, m, n, e_over_m, z=HS.Z_EMIT, years=4.0, noise="fig16"):
+def background_snr(wf, spec, m, n, e_over_m, z=HS.Z_EMIT, years=4.0, noise="instrument"):
     """Stationary-background SNR of the population, with the record's own
     spectral shape: Omega(f) = n/(rho_c (1+z)) dE/dlnf_e, dE/dF ~ F^2 |H~|^2
     normalised to the measured E/M; SNR^2 = 2T int (Omega/Omega_n)^2 df with
@@ -145,16 +144,17 @@ def main(argv=None) -> int:
     sys.path.insert(0, str(CLAIMS))
     import lib  # noqa: F401,E402  (sets up the pack paths for the extractors)
     import extract_detector as XD  # noqa: E402
-    import extract_waves as XW  # noqa: E402
 
     wfs = {wf.name: wf for wf in load_all_arms()}
     specs = {k: spectrum(w) for k, w in wfs.items()}
-    E = {k: XD.detector_gw_energy(arm=k) for k in wfs}
+    # E/M of the three burst channels the background integrates below (the LIGO
+    # figure's energies; it carries no plunge row since 2026-10-05).
+    E = {k: XD.detector_gw_energy(arm=k) for k in ("fly-by", "spiral", "head-on")}
     out["E_over_M"] = E
 
     # ---------------------------------------------------------- 1. burst SNR
     print("\n=== 1. LISA burst SNR ===")
-    print("nominal      = Fig. 16 noise (RCL Eq. 13, instrument), optimal orientation, whole record")
+    print("nominal      = Fig. heavy_seeds' noise (RCL Eq. 13, instrument), optimal orientation, whole record")
     print("conservative = RCL Eq. 13 full transfer + 4-yr galactic confusion, inclination-averaged,")
     print("               only f0 <= |F| <= F99 (above the integration corner, below 99% of the energy)")
     print("Planck18: D_L(10) = %.1f Gpc, D_L(20) = %.1f Gpc" % (
@@ -175,7 +175,7 @@ def main(argv=None) -> int:
         for name, wf in wfs.items():
             corners = {"f0": wf.f0, "1/T": 1.0 / wf.duration_M}
             for m in (1e4, 1e5, 1e6):
-                rho, share = snr_parts(wf, specs[name], m, z, "fig16", corners)
+                rho, share = snr_parts(wf, specs[name], m, z, "instrument", corners)
                 rc = rho_variant(wf, specs[name], m, z, "conservative", f99[name])
                 r = dict(z=z, arm=name, mode=wf.mode, M=m, rho_nominal=rho,
                          share_below_f0=share["f0"], share_below_1overT=share["1/T"],
@@ -234,67 +234,10 @@ def main(argv=None) -> int:
     print(f"\n  events per year at z_e=20 (Planck18 D_c={dc20 / 1e3:.2f} Gpc): "
           + ", ".join(f"n={n:.0e}: {r:.3g}/yr ({4 * r:.3g} in 4 yr)" for n, r in rates.items()))
 
-    # ---------------------------------------------------------- 3. Lambda
-    print("\n=== 3. The negative-energy deposit against Lambda ===")
-    rho_c = HS.RHO_C_MSUN_MPC3
+    # ---------------------------------------------------------- 3. JWST / LRD abundance
+    print("\n=== 3. Little-red-dot number densities, summed over the published bins ===")
     rho_dm = XD.RHO_DM_PLANCK
-    om_l, om_m = HS.OMEGA_L, HS.OMEGA_M
-    run = "merge_orbit_flip_d12_p045_L128_lvl5_t100"
-    ratios = {
-        "kin_t50": XW.waves_scalar_ratio(run=run, R=30, t_cut=50.0),
-        "kin_t60": XW.waves_scalar_ratio(run=run, R=30, t_cut=60.0),
-        "kin_t70": XW.waves_scalar_ratio(run=run, R=30, t_cut=70.0),
-        "kin_t80": XW.waves_scalar_ratio(run=run, R=30, t_cut=80.0),
-        "band_t60": XW.waves_scalar_ratio(run=run, R=30, t_cut=60.0, estimator="band"),
-        "band_t70": XW.waves_scalar_ratio(run=run, R=30, t_cut=70.0, estimator="band"),
-        "band_t80": XW.waves_scalar_ratio(run=run, R=30, t_cut=80.0, estimator="band"),
-        "wavezone_t60": XW.waves_scalar_ratio(run=run, R=30, t_cut=60.0, estimator="wavezone"),
-        "inner_t60": XW.waves_scalar_ratio(run=run, R=14, t_cut=60.0),
-    }
-    ephi = {f"R{R}_t{int(t)}": XW.waves_scalar_energy(run=run, R=R, t_cut=t, M=2.0)
-            for R in (14, 30) for t in (50.0, 60.0, 70.0, 80.0)}
-    out["scalar_ratios"], out["ephi_over_M_flyby"] = ratios, ephi
-    r_lo, r_hi = min(ratios.values()), max(ratios.values())
-    e_lo, e_hi = HS.e_range(HS.DEPOSIT)       # the Lambda envelope: spiral .. fly-by
-    dep_lo, dep_hi = r_lo * e_lo, r_hi * e_hi               # |E_phi|/M envelope
-    print("  |E_phi|/E_GW estimators: " + ", ".join(f"{k}={v:.3f}" for k, v in ratios.items()))
-    print("  fly-by |E_phi|/M direct: " + ", ".join(f"{k}={v:.4f}" for k, v in ephi.items()))
-    print(f"  envelope |E_phi|/M = r (E_GW/M): {dep_lo:.4f} .. {dep_hi:.4f}")
-    lam = {}
-    for z in (0.0, 5.0, 10.0, 20.0, 30.0):
-        need_hi = om_l * (1.0 + z) / dep_hi                 # Omega_WH, most favourable
-        need_lo = om_l * (1.0 + z) / dep_lo
-        lam[z] = dict(omega_wh_min=need_hi, omega_wh_max=need_lo,
-                      x_dm_min=need_hi * rho_c / rho_dm, x_dm_max=need_lo * rho_c / rho_dm,
-                      n_1e5_min=need_hi * rho_c / 1e5, dep_to_rho_m_at_ze=om_l * (1 + z) / om_m)
-        print(f"  z_e={z:4.0f}: Omega_WH needed {need_hi:.3g} .. {need_lo:.3g} "
-              f"(= {need_hi * rho_c / rho_dm:.3g} .. {need_lo * rho_c / rho_dm:.3g} rho_DM); "
-              f"then |rho_phi|/rho_m at z_e = {om_l * (1 + z) / om_m:.3g}")
-    out["lambda"] = lam
-    ceiling = {z: om_m / (1.0 + z) for z in (10.0, 20.0)}
-    out["H2_ceiling_omega_phi0"] = ceiling
-    print("  H^2 > 0 at z_e caps |Omega_phi,0| < Omega_m/(1+z_e) (+Omega_r): "
-          + ", ".join(f"z_e={z:g}: {c:.3g}" for z, c in ceiling.items()))
-    dm_cap = {k: dict(omega_gw=e * om_ratio, omega_phi=d * om_ratio) for k, (e, d, om_ratio) in {
-        "z20": (e_hi, dep_hi, rho_dm / rho_c / 21.0)}.items()}
-    out["dm_ceiling"] = dm_cap
-    print(f"  at the dark-matter ceiling nM = rho_DM, z_e=20: Omega_GW <= {e_hi * rho_dm / rho_c / 21:.3g}, "
-          f"|Omega_phi| <= {dep_hi * rho_dm / rho_c / 21:.3g}  (Omega_Lambda = {om_l})")
-
-    print("\n  back-reaction |rho_phi|/rho_m at z_e (z_e independent) for the fiducial population:")
-    br = []
-    for n, m in ((1e-4, 1e4), (1e-4, 1e5), (1e-2, 1e5), (1e-2, 1e6)):
-        lo = n * m * dep_lo / (om_m * rho_c)
-        hi = n * m * dep_hi / (om_m * rho_c)
-        br.append(dict(n=n, M=m, lo=lo, hi=hi))
-        print(f"  n={n:.0e} M={m:.0e}: {lo:.2e} .. {hi:.2e}")
-    out["backreaction"] = br
-    om_phi = {f"n{n:.0e}_M1e5": (omega_gw(n, 1e5, dep_lo), omega_gw(n, 1e5, dep_hi)) for n in (1e-4, 1e-2)}
-    out["omega_phi0_fiducial_M1e5"] = om_phi
-    print("  |Omega_phi,0| at M=1e5: " + ", ".join(f"{k}: {a:.2e}..{b:.2e}" for k, (a, b) in om_phi.items()))
-
-    # ---------------------------------------------------------- 4. JWST / LRD abundance
-    print("\n=== 4. Little-red-dot number densities, summed over the published bins ===")
+    e_lo, e_hi = HS.e_range(HS.DEPOSIT)       # E_GW/M envelope: spiral .. fly-by
     matthee_uv = sum(10 ** x for x in (-5.06, -4.78, -4.98)) * 1.0           # Table 4, 1-mag bins
     matthee_bh = 10 ** -4.86 * 0.4 + 10 ** -4.27 * 0.4 + 10 ** -5.05 * 0.8    # Table 6, dex bins
     greene_uv56 = (3.0 + 2.1 + 2.1) * 1e-5 * 0.5                              # Table 4, 0.5-mag bins

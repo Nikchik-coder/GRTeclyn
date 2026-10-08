@@ -16,13 +16,13 @@ WHAT THE REGROWTH IS (2026-09-24, reviewer feedback C): not physics.  In
 spherical symmetry a massless phantom can only shrink a MOTS -- on it
 d_v m = 4 pi R^2 e^f (d_v phi)^2 d_u R <= 0, d_u m = 0, and the tube is timelike
 or null, so R = 2m falls on any slicing (checked symbolically in
-scripts/analysis/merger_feedback/c_spherical_horizon_law.py).  The growth is the
+scripts/analysis/wormhole_merger/spherical_horizon_law.py).  The growth is the
 same in purely spherical arms (a level-4 arm whose binary never read eps_2
 lies on the eps_2 = 0.005 curve), no device is active, and it tracks the
 Hamiltonian-constraint violation near the horizon, a radial double layer whose
-positive lobe reaches the MOTS at the floor time (c_checkpoint_hamiltonian.py,
-c_horizon_first_law.py on the L = 128 level-4 twin).  Fits to the regrowth
-(c_regrowth_fits.py: tanh, t0 ~ 68, w ~ 17-19) are deliberately NOT drawn:
+positive lobe reaches the MOTS at the floor time (checkpoint_hamiltonian.py,
+horizon_first_law.py on the L = 128 level-4 twin).  Fits to the regrowth
+(horizon_regrowth_fits.py: tanh, t0 ~ 68, w ~ 17-19) are deliberately NOT drawn:
 they would give an artefact a law.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_horizon_regrowth

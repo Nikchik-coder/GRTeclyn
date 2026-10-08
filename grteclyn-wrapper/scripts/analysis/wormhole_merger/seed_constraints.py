@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-r"""What the declared seed does to the constraints (task C(b), 2026-09-24).
+r"""What the declared seed does to the constraints.
 
 The paper (Sec. II.D) seeds psi -> psi (1 + eps g), g = exp(-(r - r_t)^2 / w^2),
 w = a/4, with K_ij = Pi = 0.  Three questions, three blocks of output:
@@ -28,7 +27,7 @@ w = a/4, with K_ij = Pi = 0.  Three questions, three blocks of output:
    an unperturbed discretisation floor from the steep far-side data plus the
    seed's shell, which is one level-0 cell wide.
 
-    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/merger_feedback/c_seed_constraints.py
+    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/wormhole_merger/seed_constraints.py
 """
 
 from __future__ import annotations
@@ -158,7 +157,7 @@ def main() -> int:
     print(f"   eps = 0: box-L2 of the exact data on the fine radial grid = {c0['l2_box']:.1e} (the continuum floor)")
 
     print("\n3. REPRODUCTION of the recorded level-0 H(0) (4th-order stencils, dx = 0.5)")
-    for eps, run in sorted(LEVEL3.items()):
+    for eps in sorted(LEVEL3):
         h = level0_H(eps)
         print(f"   eps = {eps:+7.0e}: reproduced {h:.6e}   recorded {H0[eps]:.6e}   ratio {h/H0[eps]:.5f}")
     return 0

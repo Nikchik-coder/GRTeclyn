@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
 r"""Symbolic check: in spherical symmetry a massless PHANTOM scalar can only shrink a MOTS.
 
-Task C (reviewer feedback on Fig. 3, 2026-09-24).  Independent check of the
-derivation offered for the single-throat "regrowth":
+An independent check of the derivation offered for the single-throat
+horizon's "regrowth":
 
     ds^2 = -2 e^{-f} du dv + r^2 dOmega^2,      m = (r/2)(1 + 2 e^f r_u r_v)
     T_ab = -(d_a phi d_b phi - 1/2 g_ab (d phi)^2)            (research.tex Eq. 1)
@@ -25,7 +24,7 @@ paper.  Printed checks (each must print 0 or True):
   5. The same algebra with a CANONICAL scalar flips the sign (du/dv <= 0:
      the familiar spacelike dynamical horizon whose area grows).
 
-    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/merger_feedback/c_spherical_horizon_law.py
+    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/wormhole_merger/spherical_horizon_law.py
 """
 
 from __future__ import annotations

@@ -41,7 +41,7 @@ reviewer asked about, 1e-3 to 1e-1, with the slope-one line carried across it
 as a reference (no arm exists at either end): it meets the floor at
 eps2 ~ 2e-3, which is where 1e-3 would sit, raw, at half the floor.  The
 numbers behind this, and the floor-subtracted linearity, are in
-``grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py``.
+``grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_seed_ladder.py``.
 """
 
 from __future__ import annotations

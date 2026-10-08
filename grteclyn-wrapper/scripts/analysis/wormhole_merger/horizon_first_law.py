@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-r"""Does the numerical collapse horizon obey the spherical first law?  (task C(c)(iii))
+r"""Does the numerical collapse horizon obey the spherical first law?
 
-Exact spherical GR with the massless phantom (c_spherical_horizon_law.py) fixes
+Exact spherical GR with the massless phantom (spherical_horizon_law.py) fixes
 the areal radius of the MOTS tube per unit coordinate time on any slicing:
 
     dR/dt = 2 pi R^3 < alpha (Pi + s.grad phi)^2 theta_in > / (1 + q),
@@ -28,7 +27,7 @@ Runs on full-state plotfiles (chi, h, A, K, lapse, phi, Pi), background and
 niced -- it builds one covering grid per plotfile and level:
 
     OMP_NUM_THREADS=4 nice -n 19 grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/merger_feedback/c_horizon_first_law.py \
+        grteclyn-wrapper/scripts/analysis/wormhole_merger/horizon_first_law.py \
         --centre 64.015625 64 64 --levels 3 4 PLT [PLT ...]
 """
 

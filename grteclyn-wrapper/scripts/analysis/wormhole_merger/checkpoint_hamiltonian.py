@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 r"""Hamiltonian constraint and CCZ4 Theta near the throat, read from AMReX CHECKPOINTS.
 
 Checkpoints carry the whole evolved state -- including Theta and Gamma^i, which
@@ -7,14 +6,14 @@ from its rolling checkpoints (read-only; nothing on scratch is touched).
 Reads one level of Level_<L>/SD_0_New_MF (VisMF: text FAB header + raw doubles,
 ghost cells included), assembles the valid boxes into a cube about the centre,
 and prints the shell averages of the ADM Hamiltonian constraint (same formula
-as c_local_hamiltonian.py), of 16 pi |rho| and of Theta.
+as local_hamiltonian.py), of 16 pi |rho| and of Theta.
 
 Component order (Source/CCZ4/CCZ4StateVariables.hpp + StateVariables.hpp):
 chi h11 h12 h13 h22 h23 h33 K A11 A12 A13 A22 A23 A33 Theta Gamma1-3 lapse
 shift1-3 B1-3 phi Pi.
 
     OMP_NUM_THREADS=4 nice -n 19 grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py \
+        grteclyn-wrapper/scripts/analysis/wormhole_merger/checkpoint_hamiltonian.py \
         CHK [CHK ...] --level 4 --centre 64 64 64 --half 2.25 [--out TSV]
 
 --out also writes the shells as a table, one row per checkpoint and shell, with
@@ -38,7 +37,7 @@ import sys
 import numpy as np
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-import c_local_hamiltonian as lh  # noqa: E402
+import local_hamiltonian as lh  # noqa: E402
 
 NAMES = (["chi", "h11", "h12", "h13", "h22", "h23", "h33", "K", "A11", "A12", "A13", "A22", "A23", "A33",
           "Theta", "Gamma1", "Gamma2", "Gamma3", "lapse", "shift1", "shift2", "shift3", "B1", "B2", "B3",
@@ -79,7 +78,7 @@ TSV_ABOUT = ("# Shell averages outside the throat at the checkpoint's time t, re
              "# H_ADM = the ADM Hamiltonian constraint, rho16pi = 16 pi |rho| (its matter term),",
              "# Theta = CCZ4's Theta, alpha = the lapse, dZ = 2 chi d_k Z~^k (the code's H is ~H_ADM + dZ).",
              "# Shells |r - r0| < dx/2 about --centre, r0 clear of the cube's 4-cell edge band.",
-             "# Written by grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py --out;",
+             "# Written by grteclyn-wrapper/scripts/analysis/wormhole_merger/checkpoint_hamiltonian.py --out;",
              "# one command line per run set below, dated (UTC).")
 
 

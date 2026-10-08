@@ -1,16 +1,14 @@
-#!/usr/bin/env python3
 """One throat or two?  Areal radius of coordinate spheres about each chi pit
 and about their midpoint, on a binary-wormhole plotfile.
 
-Why (2026-09-24, reviewer on Sec. VII.B): the paper's "still-open throat"
-(R = 3.87) is the areal minimum of the oriented star scan, whose spheres are
-centred on the box centre -- the merged pit.  Each wormhole carries its own
-compactified far side at its chi pit (chi ~ r^4), and the in-code half-space
-diagnostic still separates two pits at level 5 until chi floors (t ~ 58.4).
-This script asks the geometry directly:
+Why: the oriented star scan's neck is the areal minimum of spheres centred on
+the box centre -- the merged pit -- and cannot tell one throat from two.  Each
+wormhole carries its own compactified far side at its chi pit (chi ~ r^4), and
+the in-code half-space diagnostic separates two pits until chi floors.  This
+script asks the geometry directly:
 
-  R_mid(r)   spheres about the pits' midpoint: the common neck (the paper's
-             number when the midpoint is the box centre)
+  R_mid(r)   spheres about the pits' midpoint: the common neck (the oriented
+             scan's number when the midpoint is the box centre)
   R_A(rho)   spheres about pit A alone (rho < |AB| encloses A only): a
              minimum there is a per-mouth throat resolved inside the neck
   L_AB       proper length of the straight segment between the pits (dominated
@@ -30,8 +28,8 @@ ln chi and h_ij and rebuilds gamma, which follows chi ~ r^4 far better.  Their
 difference is the interpolation systematic of anything read within a few cells
 of a pit.
 
-    python pit_throats.py PLT [--level 5] [--half 1.25] [--centre 64 64 64]
-                              [--json out.json]
+    grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/wormhole_merger/pit_throats.py \
+        PLT [--level 5] [--half 1.25] [--centre 64 64 64] [--json out.json]
 
 Reads chi and h_ij only (no K, A_ij: no expansions -- areas only).
 """
@@ -225,7 +223,7 @@ def main(argv=None) -> int:
     seg = A[:, None] + (B - A)[:, None] * u[None, :]
     idx = (seg + half) / dx - 0.5
     cseg = np.exp(map_coordinates(np.log(chi), idx, order=1))
-    print(f"  chi along AB (every 0.1 |AB|): " + " ".join(f"{c:.1e}" for c in cseg[::2])
+    print("  chi along AB (every 0.1 |AB|): " + " ".join(f"{c:.1e}" for c in cseg[::2])
           + f"; midpoint / pit = {cseg[10] / min(pits[0][1], pits[1][1]):.0f}")
     res["chi_AB"] = cseg.tolist()
     # displaced-centre spheres enclosing A alone

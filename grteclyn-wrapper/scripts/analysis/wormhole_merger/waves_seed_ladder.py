@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
 """The quadrupole-seed ladder (article Fig. 12, plot_seed_linearity) against the
 RIGHT floor, and what a decade ladder (eps2 = 1e-3 ... 1e-1) would buy.
 
 Reads only the tracked pack; prints a report; writes nothing.
 
     grteclyn-wrapper/.venv/bin/python \
-        grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py
+        grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_seed_ladder.py
 
 WHY A NEW FLOOR.  Fig. 12(b)'s dashed "spherical control" is
 `single_eps_p1e2_t100`, a LEVEL-3 run, while every eps2 arm on the figure is

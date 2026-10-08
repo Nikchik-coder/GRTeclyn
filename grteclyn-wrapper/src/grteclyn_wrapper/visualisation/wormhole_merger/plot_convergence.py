@@ -45,7 +45,7 @@ r"""Convergence on one strip: the static throat's order, the wave at two resolut
     on level 4 (dx = 1/8): at t = 100 levels 6 and 7 sit within |x| < 2.5 and
     1.25 of the merged centre, so level 4 is the grid every level shares there.
     The table (``FZ_HAM``) is written on the node from each run's Chk02500 by
-    grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py.
+    grteclyn-wrapper/scripts/analysis/wormhole_merger/checkpoint_hamiltonian.py.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_convergence
 
@@ -139,7 +139,7 @@ FZ_PAIRS = ((style.MUTED, "-"), (style.CONTEXT, (0, (3, 1.5))))   # by neighbour
 
 # (e) <H_ADM> at t = 100 on shells outside the common MOTS, read on level 4 (dx = 1/8), the grid
 # every CONV-fz level shares there (levels 6 and 7 sit within |x| < 2.5 and 1.25 of the merged
-# centre): written on the node from each run's Chk02500 by c_checkpoint_hamiltonian.py
+# centre): written on the node from each run's Chk02500 by checkpoint_hamiltonian.py
 FZ_HAM = "analysis/convfz_constraints_t100.tsv"
 FZ_HAM_STYLE = {"1/16": dict(color=style.INK, lw=0.7, marker="o", ms=2.6),
                 "1/32": dict(color=style.MUTED, lw=0.9),

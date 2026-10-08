@@ -6,7 +6,7 @@ mode-3 head-on's t = 51-60 slices they read R 4-11 % and 3-7 % low.  The surface
 was found offline, which meant keeping every plotfile (5.5 GB a unit).  Here the consumer
 runs the same finder on each plotfile it has loaded anyway:
 
-  the spectral MOTS finder of scripts/analysis/merger_feedback/headon_first_law.py --
+  the spectral MOTS finder of scripts/analysis/wormhole_merger/headon_first_law.py --
   r = h(theta, phi) in real Y_lm to lmax, found once by the flow (ah_flow_finder.py) and
   then followed from plotfile to plotfile by Newton from the previous surface (~20 s at
   level 3) -- with the first law's scalar flux and shear on it.
@@ -46,7 +46,7 @@ def _finder():
     """headon_first_law.py, imported once per process (it brings ah_flow_finder with it)."""
     global _FINDER
     if _FINDER is None:
-        path = WRAPPER_ROOT / "scripts" / "analysis" / "merger_feedback" / "headon_first_law.py"
+        path = WRAPPER_ROOT / "scripts" / "analysis" / "wormhole_merger" / "headon_first_law.py"
         spec = importlib.util.spec_from_file_location("headon_first_law", path)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)

@@ -12,7 +12,9 @@ $PY -m grteclyn_wrapper.analysis.wormhole_merger.<subpackage>.<module> [<pack-ro
 
 `<pack-root>` defaults to `results/merger` in this checkout. On an unchanged pack, every
 writer reproduces its committed output exactly. The figures drawn from the same pack are
-in `grteclyn_wrapper.visualisation.wormhole_merger`.
+in `grteclyn_wrapper.visualisation.wormhole_merger`; the one-off checks behind the paper's
+hand-entered numbers, which need the claims code, plotfiles or heavier libraries, are the
+scripts in `grteclyn-wrapper/scripts/analysis/wormhole_merger/`.
 
 ## Modules
 
