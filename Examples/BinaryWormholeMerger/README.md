@@ -2,9 +2,8 @@
 
 Merger of **two phantom-supported Ellis–Bronnikov wormhole throats** — the binary
 generalisation of `Examples/SupportedWormholeCollapse`, built on the two-body
-conventions of `Examples/BinaryBH`. Governing plan:
-`research/merger/Plan.md`, with the prior art and file-by-file design in
-`research/merger/Reference.md` (both kept out of the public tree).
+conventions of `Examples/BinaryBH`. The merger paper's runs, each with its
+parameter file, are packed in [`results/merger/`](../../results/merger/).
 
 ## The one piece of physics you need to know
 
@@ -116,13 +115,16 @@ not see the difference — it cannot resolve a throat. `--mass` needs only
 
 | Key | Meaning |
 | --- | --- |
+| `wormhole_id_type` | 0 = the isotropic Ellis throat plus a bare mass (Route A above; default); 1 = the regular massive drainhole, which carries its mass `wormhole_drainhole_mass_A/B` in the lapse and keeps χ = O(1) at the throat. Every packed wormhole run uses 1. |
 | `wormhole_throat_radius_A/B` | throat radii b (B defaults to A; 0 removes B) |
 | `wormhole_bare_mass_A/B` | puncture masses m — the gravity (B defaults to A) |
+| `wormhole_phi_sign_B` | +1 / −1: the sign of throat B's scalar relative to A's |
 | `wormhole_centerA/B` | offsets from `center` (B defaults to −A) |
 | `wormhole_momentumA/B` | Bowen–York momenta (B defaults to −A); under momentum model 1, each throat's ADM momentum γmv |
 | `wormhole_momentum_model` | 0 = Bowen–York on the static throat with the scalar at rest (default, bit for bit; the mismatch kicks a moving throat toward inflation as p²); 1 = the exact Lorentz-boosted drainhole: metric, K_ij, φ and Π together, lapse type 5 or 6; with `constraint_solve = 1` a pair is solved in both constraints (w and a vector potential W, Â → Â + L_G W) (see "EXACT BOOST" in `BinaryWormholeInitialData.hpp`) |
 | `wormhole_boost_initial_shift` | momentum model 1: 1 = the boosted solution's own shift (default), 0 = zero shift |
 | `wormhole_subtract_phi_asymptote` | shift φ → 0 at infinity (default 1; free only for `phantom_mass = 0`) |
+| `tagging_type`, `tagging_L`, `throat_tracking` | 2 (with `throat_tracking = 1`): refined boxes of half-width `tagging_L`·2^−(l+2) that follow each tracked throat. Every packed wormhole run uses 2. |
 | `binary_throat_diagnostics` | own module, own file, **default off** |
 | `recipe_initial_data_file` | `.gridinit` from GRTresna (Route B) — overrides the analytic ID |
 
@@ -140,15 +142,40 @@ not see the difference — it cannot resolve a throat. `--mass` needs only
   evidence of fusion.
 - `Weyl4_mode_*.dat` — in-code Ψ₄ spherical-harmonic extraction (`BHAMR`).
 
-## Running
+## Running a campaign
 
-Always through the wrapper campaign launcher (registers `launcher.pid`, keeps
-plotfiles on node-local scratch):
+Every run goes through the launcher, never the binary directly. It copies the
+params into `runs/wormhole_merger/<name>/` (untracked), puts plotfiles and
+checkpoints on node-local scratch (`/tmp/grteclyn_scratch/<name>/`), checks the
+params against the binary, and starts the run detached, together with a
+consumer that writes the waves, horizons and frames into the run directory.
 
-```bash
-WHM_PARAMS=params_test.txt   bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh  # smoke
-WHM_PARAMS=params_headon.txt bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh  # from rest
-WHM_PARAMS=params_spiral.txt bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh  # headline
-```
+1. **Build** a binary stamped with its commit (into `runs/wormhole_merger/bin/`,
+   listed in `results/merger/binaries.tsv`):
+   `bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/build_binary.sh --tag <word>`.
+2. **Pick a template.** Every packed run keeps its params as
+   `results/merger/campaign/<group>/<run>/evolution_params.txt`: copy the
+   closest one and change only what the new run tests. Its first line, a
+   comment, becomes the run's registry line.
+3. **Launch**:
 
-Stop with `bash grteclyn-wrapper/scripts/campaigns/stop_campaign.sh <runs_dir>`.
+   ```bash
+   bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh \
+     --template <params file> --name <run name> --gpu <id> --profile headon \
+     --binary runs/wormhole_merger/bin/<build>.ex \
+     < /dev/null > launch_<run name>.log 2>&1
+   ```
+
+   `--profile` sets what the consumer extracts (`headon`, `orbit`, their
+   `-modes` variants, `none`, …: `lib/consumer_profiles.sh`). `--dry-run`
+   resolves everything and starts nothing; `--preflight-only` also runs the
+   binary's checks; `--restart <checkpoint dir>` continues a run.
+4. **Stop**: `bash grteclyn-wrapper/scripts/campaigns/stop_campaign.sh
+   runs/wormhole_merger/<name>`, or create `dump_and_stop` in the run
+   directory, which writes a checkpoint and exits.
+
+Smoke test (tiny box, one level, t = 0.5, attached): `launch.sh --template
+Examples/BinaryWormholeMerger/params_test.txt --name smoke_test --gpu 0
+--profile none --foreground`. Every option is in the header of `launch.sh`;
+the other campaign scripts are described in
+`grteclyn-wrapper/scripts/campaigns/wormhole_merger/README.md`.

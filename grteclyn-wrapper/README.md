@@ -670,19 +670,20 @@ launched without checkpoints lost 11, 11 and 3 units and had to start over.
 A launcher backgrounded with plain `&` from an agent/editor shell is *not*
 detached, however healthy it looks.
 
-**The launch form.** Variables first, then the whole `setsid nohup` chain —
-this is rule 11 applied to a detached launch, and `env` is still fatal here:
+**The launch form.** `launch.sh` detaches every run itself (`setsid nohup`
+through the real `/usr/bin/env`); launch through it, with its own output sent
+to a file:
 
 ```bash
 # from the repository root
-WHM_PARAMS=params_merge_orbit_flip.txt WHM_NAME=my_cell WHM_GPU=0 \
-  WHM_CONSUME_ARGS="--frames-fields chi chi_minus_1 K lapse shift1 phi Pi \
-                    Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed \
-                    --frames-coord 32.0 --frames-zoom 32 \
-                    --frames-cache-slices --frames-auto-zlim" \
-  setsid nohup bash scripts/campaigns/wormhole_merger/run_single.sh \
-  > runs/wormhole_merger/detached_gpu0.log 2>&1 < /dev/null &
+bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh \
+  --template <params file> --name my_cell --gpu 0 --profile headon \
+  < /dev/null > launch_my_cell.log 2>&1
 ```
+
+By hand the rule is the same: variables first, then the whole `setsid nohup`
+chain. That is rule 11 applied to a detached launch, and `env` is still fatal
+there.
 
 `setsid nohup env WHM_...=... bash run_single.sh` exits 0 in under a second and
 writes a zero-byte log. That is rule 11, not a detachment problem, and it is
