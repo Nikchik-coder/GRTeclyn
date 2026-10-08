@@ -16,6 +16,7 @@ repository-code: "https://github.com/Nikchik-coder/GRTeclyn"
 url: "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-wormhole-merger"
 license: BSD-3-Clause
 version: v1.0-wormhole-merger
+date-released: "2026-10-09"
 keywords:
   - numerical relativity
   - traversable wormholes
