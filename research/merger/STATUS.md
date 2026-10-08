@@ -34,15 +34,17 @@ both engines, text ends on page 21.
 - Done 10-08: SCATTER-fate in Fig. 1 (the like-signed branch ends in inflation) and Sec. V C (Video 12).
 - Done 10-08: Table III counts the convergence set (6 runs) and SCATTER-fate: 103 runs, 592 GPU-h (lvl7 measured).
 
-**arXiv submission (decided 10-08).** After the final PDF (lvl7 is closed out):
-- Merge feature/merger into develop, keeping research/ off develop as on 10-06. Tag the merge `v1.0-wormhole-merger`.
-- Publish a GitHub release on the tag (public, not a draft), so that Zenodo archives it and mints a DOI. Before
-  that, the repo must be switched on in Zenodo (account menu → GitHub → Sync now → the Nikchik-coder/GRTeclyn
-  toggle; the user's step, account made 10-08): Zenodo archives only releases published after the switch. The DOI
-  then goes into the cost section's code statement (it cites the tag since 10-08), before the arXiv submission.
+**arXiv submission (decided 10-08; submission day is 10-09).** After the final PDF (lvl7 is closed out):
+- Done 10-08: feature/merger merged into develop (fbdfa55b), keeping off develop — as on 10-06 — `research/`, the
+  matter-first results pack and develop's own `results/README.md`. The merge is tagged `v1.0-wormhole-merger`;
+  branch and tag are pushed.
+- Done 10-08: the repo is switched ON in Zenodo (GitHub sync page, Nikchik-coder/GRTeclyn toggle confirmed).
+- Next (10-09): publish a GitHub release on the tag (public, not a draft) — Zenodo archives it and mints the DOI.
+  The DOI then goes into the cost section's code statement (it cites the tag since 10-08), before the submission.
 - `CITATION.cff`, `.zenodo.json`, `README.md` and `results/README.md` describe this paper since 10-08, with arXiv
   placeholders `XXXX.XXXXX`. `.zenodo.json` has none, because Zenodo validates identifiers: add the arXiv link on the
-  Zenodo record once the number exists. Set `date-released` (and the DOI) in `CITATION.cff` at the release.
+  Zenodo record once the number exists. `CITATION.cff` carries `date-released: 2026-10-09` since 10-08; its DOI is
+  added once Zenodo mints it.
 - arXiv: gr-qc primary, cross-lists astro-ph.HE and astro-ph.CO. The abstract is cut to ~1,760 rendered characters
   (the form takes 1,920).
 - The source package is research.tex, numbers.tex and the 15 figure PDFs under `figures/`, which the graphicspath
@@ -52,7 +54,8 @@ both engines, text ends on page 21.
   heavy seeds) and why Fig. 12's L2 norms are large yet the waves clean (Appendix A, the Fig. 11(d) leak test).
   Closed 10-08 with lvl7's pack: the three-level GW order (1.7) and Fig. 11(e)'s H leak test are in the caption
   and Appendix A. All three referee points are now answered in the text.
-- Before submitting: Videos 1–12 public, and both authors' sign-off.
+- Videos 1–12 are unlisted (link-only) — enough, decided 10-08: the paper carries the URLs. Before submitting:
+  both authors' sign-off on the final PDF.
 - After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
   Zenodo record's arXiv link.
 
