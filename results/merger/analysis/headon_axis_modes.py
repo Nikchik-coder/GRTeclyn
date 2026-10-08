@@ -42,9 +42,11 @@ STREAMS = (   # (run dir under campaign/, (2,0) file, (2,2) file)
     # (2026-10-08: the gallery's head-on row).
     ("08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm",
      "Weyl4_mode_20.dat", "Weyl4_mode_22.dat"),
-    # CONV-fz: FARZONE-ho at one level coarser, to t = 100 (2026-10-08: Fig. convergence (d));
-    # the level-7 twin joins at its pack.
+    # CONV-fz: FARZONE-ho one level coarser and one finer, to t = 100 (2026-10-08: Fig.
+    # convergence (d)).
     ("08_convergence/farzone_headon_flip_d8_L512_lvl5_t100_csm",
+     "Weyl4_mode_20.dat", "Weyl4_mode_22.dat"),
+    ("08_convergence/farzone_headon_flip_d8_L512_lvl7_t100_csm",
      "Weyl4_mode_20.dat", "Weyl4_mode_22.dat"),
 )
 

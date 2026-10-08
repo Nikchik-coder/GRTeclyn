@@ -32,11 +32,14 @@ r"""Convergence on one strip: the static throat's order, the wave at two resolut
     its L = 512 box at finest dx = 1/16, 1/32, 1/64 (max_level 5 / 6 / 7, its
     params otherwise), to t = 100: the collision-axis |r Psi4^20| at R = 10 of
     the finest level packed and each neighbouring pair's difference.  A level
-    joins once its run is packed (``CONV_FZ``; 2026-10-08 the level-7 twin is
-    in flight).  Levels 5 / 6: the difference peaks at 0.55 % of the level-6
+    joins once its run is packed (``CONV_FZ``; the level-7 twin since its pack,
+    2026-10-08).  Levels 5 / 6: the difference peaks at 0.55 % of the level-6
     peak (t = 38); E at R = 10 on (c)'s head-on window differs by 0.29 %; both
     find the common MOTS from t = 18, its R and M_MS equal to 0.084 % (t = 26,
-    as it settles; 1e-4 at birth and at t = 100).
+    as it settles; 1e-4 at birth and at t = 100).  Levels 6 / 7: 0.54 % of the
+    level-7 peak (t = 39), E by 0.092 %, the MOTS to 0.078 % (t = 27).  So E
+    converges at order 1.67, while the pointwise difference does not shrink
+    over t = 36-60 (it does before and after).
 (e) The same levels' Hamiltonian constraint at t = 100, shell averages of
     H_ADM outside the common MOTS (gold, its largest coordinate extent), read
     on level 4 (dx = 1/8): at t = 100 levels 6 and 7 sit within |x| < 2.5 and
@@ -372,6 +375,12 @@ def fz_energy_difference(pack_root, a: str, b: str) -> float:
     return 100.0 * abs(_fz_energy(str(pack_root), a) / _fz_energy(str(pack_root), b) - 1.0)
 
 
+def fz_energy_order(pack_root, a: str = "1/16", b: str = "1/32", c: str = "1/64") -> float:
+    """log2 of the three-level factor (E_a - E_b) / (E_b - E_c) of E at R = 10."""
+    ea, eb, ec = (_fz_energy(str(pack_root), x) for x in (a, b, c))
+    return math.log2((ea - eb) / (eb - ec))
+
+
 @functools.lru_cache(maxsize=None)
 def _fz_mots(pack_root: str, dx: str) -> dict:
     """{t: (R, M_MS)} of the common MOTS on the dumps t <= FZ_T that find it."""
@@ -417,6 +426,9 @@ def draw_farzone(ax, pack_root) -> list:
               f"MOTS R, M_MS to {mots:.4f} % (t = {t_mots:g})")
         line, = ax.plot(td, np.where(d > 0, d, np.nan), color=color, lw=0.7, ls=dash, zorder=2)
         entries.append((line, f"${a}-{b}$"))
+    if len(levels) == 3:
+        print(f"{TAG} (d) E(R = 10) three-level order log2[(E_{levels[0]} - E_{levels[1]}) / "
+              f"(E_{levels[1]} - E_{levels[2]})] = {fz_energy_order(pack_root, *levels):.4f}")
     ax.set_yscale("log")
     ax.set_xlim(0.0, FZ_T)
     ax.set_xlabel("$t$")

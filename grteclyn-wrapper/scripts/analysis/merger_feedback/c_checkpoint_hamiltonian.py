@@ -15,15 +15,24 @@ shift1-3 B1-3 phi Pi.
 
     OMP_NUM_THREADS=4 nice -n 19 grteclyn-wrapper/.venv/bin/python \
         grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py \
-        CHK [CHK ...] --level 4 --centre 64 64 64 --half 2.25
+        CHK [CHK ...] --level 4 --centre 64 64 64 --half 2.25 [--out TSV]
+
+--out also writes the shells as a table, one row per checkpoint and shell, with
+run = the checkpoint's parent directory.  Only the shells clear of the cube's
+4-cell edge band are written (np.roll wraps the stencils there): r + dx/2 <=
+half - 4 dx, i.e. r <= 7.3 at --half 7.9 on level 4.  A rerun keeps the rows
+(and command lines) of the runs it is not given.
 """
 
 from __future__ import annotations
 
 import argparse
+import datetime
 import math
+import os
 import pathlib
 import re
+import shlex
 import sys
 
 import numpy as np
@@ -65,6 +74,33 @@ def read_level(chk: pathlib.Path, level: int, lo_idx: np.ndarray, n: int) -> tup
     return out, t
 
 
+TSV_COLS = ("run", "t", "level", "r", "H_ADM", "rho16pi", "Theta", "alpha", "dZ")
+TSV_ABOUT = ("# Shell averages outside the throat at the checkpoint's time t, read on one AMR level:",
+             "# H_ADM = the ADM Hamiltonian constraint, rho16pi = 16 pi |rho| (its matter term),",
+             "# Theta = CCZ4's Theta, alpha = the lapse, dZ = 2 chi d_k Z~^k (the code's H is ~H_ADM + dZ).",
+             "# Shells |r - r0| < dx/2 about --centre, r0 clear of the cube's 4-cell edge band.",
+             "# Written by grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py --out;",
+             "# one command line per run set below, dated (UTC).")
+
+
+def write_tsv(path: pathlib.Path, rows: list[tuple], runs: set[str]) -> None:
+    """Write ``rows`` for ``runs``, keeping the existing rows and command lines of every other run."""
+    kept_rows, kept_cmds = [], []
+    if path.exists():
+        lines = path.read_text(encoding="utf-8").splitlines()
+        body = [l for l in lines if l.strip() and not l.startswith("#")]
+        kept_rows = [l for l in body[1:] if l.split("\t")[0] not in runs]
+        left = {l.split("\t")[0] for l in kept_rows}
+        kept_cmds = [l for l in lines if l.startswith("# 20") and any(r in l for r in left)]
+    argv = [os.path.relpath(a) if os.path.isabs(a) else a for a in sys.argv]
+    cmd = f"# {datetime.datetime.now(datetime.timezone.utc):%Y-%m-%d}: python " + shlex.join(argv)
+    new = ["\t".join([run, f"{t:.4f}", str(lev)] + [f"{x:.6e}" for x in vals])
+           for run, t, lev, *vals in rows]
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("\n".join([*TSV_ABOUT, *kept_cmds, cmd, "\t".join(TSV_COLS), *kept_rows, *new]) + "\n",
+                    encoding="utf-8")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("chk", nargs="+")
@@ -74,11 +110,13 @@ def main() -> int:
     ap.add_argument("--half", type=float, default=2.25)
     ap.add_argument("--rmin", type=float, default=0.3)
     ap.add_argument("--rstep", type=float, default=0.3)
+    ap.add_argument("--out", type=pathlib.Path, help="also write the shells clear of the edge band to this TSV")
     args = ap.parse_args()
     dx = args.dx0 / 2**args.level
     n = int(round(2 * args.half / dx))
     c = np.array(args.centre)
     lo_idx = np.round((c - args.half) / dx).astype(int)
+    rows, runs = [], set()
     for p in args.chk:
         arr, t = read_level(pathlib.Path(p), args.level, lo_idx, n)
         if np.isnan(arr).any():
@@ -109,6 +147,13 @@ def main() -> int:
         print("   r     <H_ADM>      <16pi|rho|>   ratio     <2chi dZ>    <H_ADM+2chi dZ>  <Theta>      <alpha>")
         for k in range(rs.size):
             print(f"   {rs[k]:.2f}  {Hs[k]:+.4e}  {src[k]:.4e}   {Hs[k]/src[k]:+.3f}   {dZ[k]:+.4e}  {Hs[k]+dZ[k]:+.4e}      {Th[k]:+.4e}  {al[k]:.4f}")
+        run = pathlib.Path(p).absolute().parent.name
+        runs.add(run)
+        clear = rs + 0.5 * dx <= args.half - 4 * dx + 1e-9
+        rows += [(run, t, args.level, rs[k], Hs[k], src[k], Th[k], al[k], dZ[k]) for k in np.flatnonzero(clear)]
+    if args.out is not None and rows:
+        write_tsv(args.out, rows, runs)
+        print(f"wrote {len(rows)} rows ({len(runs)} runs) to {args.out}")
     return 0
 
 

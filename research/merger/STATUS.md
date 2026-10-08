@@ -1,4 +1,4 @@
-# Status — 2026-10-08 ~05:50 UTC
+# Status — 2026-10-08 ~14:35 UTC
 
 What is live, what is planned, the main results — nothing else. Run-by-run outcomes are in
 `results/merger/runs_registry.tsv`, cleanups in `runs/wormhole_merger/manifests/`, the map in
@@ -8,75 +8,30 @@ Main results in a line or two; the details go to the registry.**
 
 ## Live
 
-| run | node / card | t | stop | speed | ETA | checkpoints |
-|---|---|---|---|---|---|---|
-| CONV-fz lvl7 `farzone_headon_flip_d8_L512_lvl7_t100_csm` | second / 0 | 68.3 (05:45 UTC; launched 07:34 UTC 10-07) | 100 | 3.9 u/h | ~8.2 h → ~13:55 UTC 10-08 | every 25 units, keep 3 (the user): t = 0 / 25 / 50 written |
-
-- The first node (two H100s) is idle since 03:10 UTC 10-08; its scratch is empty (1.1T free).
-- NFS checkpoints: only CONV-fz's two t = 100 states, lvl5's and FARZONE-ho's `Chk02500` (64G, in their
-  `08_convergence/` run dirs), kept for the three-level constraint check (the user, 10-08); lvl7's joins them at its
-  close-out. The second node also keeps the HFL cell (60G, deliberate).
+No run is live. Both nodes are idle: the first node's two H100s since 03:10 UTC 10-08 (scratch empty, 1.1T free),
+the second node's card since CONV-fz lvl7 finished at 13:58 UTC 10-08 (scratch: only the HFL cell, 60G, deliberate;
+585G free). NFS holds no checkpoints: CONV-fz's three t = 100 states were wiped 10-08 after the constraint check
+(`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-08.md`).
 
 ## Planned (nothing launches without the go)
 
-**Next: CONV-fz, the head-on's three-level convergence set (REQUIRED).** lvl5 / FARZONE-ho / lvl7 = Δx 1/16, 1/32,
-1/64, all on FARZONE-ho's L = 512 box. When lvl7 lands:
-1. Copy its Chk02500 to its NFS run dir. Its scratch is on the second node, so the copy runs there. Close it out
-   as lvl5 was: into `08_convergence/`, frames kept, no movies.
-2. Read the three levels to t = 100: Richardson on the common MOTS (birth t, R, M_MS), the throat tracks and
-   r Ψ4 / E/M at R = 10–44.
-3. Read H outside the MOTS from the three Chk02500 with
-   `grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py` (level 4, `--dx0 2.0 --centre
-   256 256 256 --half 7.9 --rmin 3.7 --rstep 0.3`; it reads H and Θ, not Mom). Then wipe the three checkpoints.
-4. Table III already counts it, as an in-flight estimate (+1 run, +30.31 GPU-h: 22.18 h to t = 68.3, then 8.13 h at
-   3.9 u/h). At its pack: list it in `table1_groups.tsv` as `convergence, mode 3`, then drop the constants from
-   `clmDetRunsTotal`, `clmDetRunsConvergence` and `clmDetGpuHours` (ledger_detector.tsv). Until then the claims
-   check fails on those rows (it double-counts the run).
-5. Fig. 11(d) draws lvl5 and FARZONE-ho; its caption quotes the interim read below as manual rows (`clmConvFzDxHi`,
-   `clmConvFzFineTime`, `clmConvFzOrder`). At its pack: add lvl7 to `results/merger/analysis/headon_axis_modes.py`'s
-   STREAMS and run it (its `_axis.dat`), then re-render `plot_convergence`, which already lists lvl7 in `CONV_FZ`:
-   (d) then draws 1/64 and the 1/32 − 1/64 difference. Make the three rows def / auto, and drop the caption's "so
-   far run to t = 67".
-
-At t = 100 every fine level is one cube about the centre: level 4 ±10, level 5 ±5, level 6 ±2.5 (level 7 ±1.25
-expected). The MOTS has coordinate radius 3.48–3.53, so level 6 pokes out of it only in its cube's corners
-(r ≤ 4.33). The checkpoints hold 27 components in the code's order, with 3 ghost cells, as little-endian doubles.
-So outside the MOTS the three levels share one grid: this read checks that the interior's resolution does not leak
-out, and cannot give a convergence order (that needs the static throat's levels 2/3/4, ~3 GPU-h, no go).
-
-**The H table for Fig. 11(e): do it now on the finished runs (CPU, on the node).** `plot_convergence` (e) draws
-⟨H_ADM⟩ against r outside the MOTS, one curve per level, from `results/merger/analysis/convfz_constraints_t100.tsv`.
-Its caption sentence and ledger row (max |H_1/16 / H_1/32 − 1|, `conv_farzone` `ham`) go in once the table is
-pushed. Until then `plot_convergence` cannot render, because it needs the table.
-1. Give `c_checkpoint_hamiltonian.py` an `--out TSV` option.
-   - Start the file with `#` lines: what it is, the exact command, the date.
-   - Then the header `run	t	level	r	H_ADM	rho16pi	Theta	alpha	dZ`, and one row per checkpoint and shell, with `run` = the
-     checkpoint's parent dir name.
-   - A rerun keeps the rows of the runs it is not given.
-   - Write only the shells clear of the 4-cell stencil band at the cube's edge (`np.roll` wraps there): r ≤ 7.3 at
-     `--half 7.9`.
-2. Run it on lvl5's and FARZONE-ho's Chk02500 with step 3's arguments, plus
-   `--out results/merger/analysis/convfz_constraints_t100.tsv`. Commit the script and the table, and push.
-3. lvl7: the same once its Chk02500 is in its run dir (step 1). Commit and push the updated table, then re-render
-   `plot_convergence`.
-
-Interim (lvl7 to t = 67, and H from lvl5's and FARZONE-ho's Chk02500):
-- E/M at R = 10 converges (C = 3.2, order ~1.7); FARZONE-ho is within 0.1 % of the extrapolated value.
-- The MOTS R and M_MS agree across the levels to ≤ 6e-4.
-- The r Ψ4 differences (~1e-3 of peak) shrink more slowly than second order: the χ-floored core.
-- ⟨H_ADM⟩ on level 4 outside the MOTS (r = 3.7–7.3): −4.9e-4 falling to −2.3e-4, the same in lvl5 and FARZONE-ho
-  to 0.6–1.4 % (FARZONE-ho ~1 % larger). Θ agrees to ~1.5 %. So the exterior violation does not move when the finest
-  level goes from 5 to 6. The r = 7.6 shell is the cube's edge and is not read.
+**CONV-fz: done 10-08.** lvl7 is packed in `08_convergence/` (frames kept, no movies), Table III counts it as measured,
+Fig. 11(d) draws Δx 1/64 and both neighbouring differences, and (e) draws ⟨H_ADM⟩ from
+`results/merger/analysis/convfz_constraints_t100.tsv` (`c_checkpoint_hamiltonian.py --out`). The results are under
+Main results, Convergence. Left for the paper, on the workstation:
+- (e)'s caption sentence and its ledger row (max |H_1/16 / H_1/32 − 1| = 1.43 %, `conv_farzone` `ham`; 1/32 against
+  1/64 is 0.43 %).
+- The PDF rebuild: the caption dropped "so far run to t = 67", and `clmConvFzOrder` (1.7) is auto now.
 
 **Paper updates waiting on the user's call:**
 - FARZONE-ho's far-zone energy: Sec. VIII and Fig. `convergence`(c). (Fig. 8's head-on row is FARZONE-ho since 10-08;
   Fig. 9 and every quoted energy still read the production chain.)
-- CONV-fz: App. A's text.
-- Done 10-08: Fig. 11(d), CONV-fz at Δx 1/16 and 1/32, with lvl7's interim order in the caption (step 5 above).
+- CONV-fz: App. A's text, and how to word r Ψ4's non-convergence over t = 36–60 (Main results, Convergence).
+- Done 10-08: Fig. 11(d) with all three levels; the caption's order 1.7 is the final three-level value.
 - Done 10-08: SCATTER-fate in Fig. 1 (the like-signed branch ends in inflation) and Sec. V C (Video 12).
-- Done 10-08: Table III counts the convergence set (6 runs, lvl7 in flight) and SCATTER-fate: 103 runs, 592 GPU-h.
+- Done 10-08: Table III counts the convergence set (6 runs) and SCATTER-fate: 103 runs, 592 GPU-h (lvl7 measured).
 
-**arXiv submission (decided 10-08).** After lvl7's close-out and the final PDF:
+**arXiv submission (decided 10-08).** After the final PDF (lvl7 is closed out):
 - Merge feature/merger into develop, keeping research/ off develop as on 10-06. Tag the merge `v1.0-wormhole-merger`.
 - Publish a GitHub release on the tag (public, not a draft), so that Zenodo archives it and mints a DOI. Before
   that, the repo must be switched on in Zenodo (account menu → GitHub → Sync now → the Nikchik-coder/GRTeclyn
@@ -92,8 +47,8 @@ Interim (lvl7 to t = 67, and H from lvl5's and FARZONE-ho's Chk02500):
   10-08 fixed the last one).
 - Referee-response text added 10-08, existing ledger rows only: the LISA SNRs' near-zone error bound (Sec.
   heavy seeds) and why Fig. 12's L2 norms are large yet the waves clean (Appendix A, the Fig. 11(d) leak test).
-  Still open for the same critique: Fig. 11(e) H(r) outside the MOTS (waits on the node's table), and the
-  three-level GW order quoted from CONV-fz once lvl7 lands.
+  Still open for the same critique: Fig. 11(e)'s caption sentence (the table is pushed); the three-level GW order
+  is in (1.7).
 - Before submitting: Videos 1–12 public, and both authors' sign-off.
 - After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
   Zenodo record's arXiv link.
@@ -179,9 +134,14 @@ headline channel.
 **Convergence** (App. A):
 - The static throat at levels 2 / 3 / 4 against the exact solution: order ~2.2 early, ~3 later.
 - The wave zone is resolved (CONV-csm-w: 0.01–0.15 % of peak).
-- CONV-fz, the binary three-level set (Fig. 11(d), lvl7 in flight): Δx 1/16 and 1/32 agree in r Ψ4 at R = 10 to
-  0.55 % of the peak and in E at R = 10 to 0.29 %, and both find the common MOTS from t = 18, R and M_MS equal to
-  0.084 %.
+- CONV-fz, the binary three-level set (Δx 1/16, 1/32, 1/64 on FARZONE-ho's L = 512 box, t = 0–100; Fig. 11(d, e)):
+  - E at R = 10 converges at order 1.67: the levels differ by 0.29 % and then 0.09 % (C = 3.18).
+  - Every level forms the common MOTS at t = 18; R and M_MS agree to 0.084 % and then 0.078 %.
+  - r Ψ4 at R = 10 converges before the merger, at the burst peak and in the late ringdown (C = 2.3–3.2), but not
+    over t = 36–60 (C = 0.5–1.0), so its largest difference stays 0.54 % of the peak for both pairs.
+  - ⟨H_ADM⟩ outside the MOTS at t = 100, read on level 4, which all three share there: 1/16 against 1/32 within
+    1.4 %, 1/32 against 1/64 within 0.43 % (C = 2.9–8.4). The interior's resolution does not leak out; an order for
+    the exterior violation itself needs the static throat's levels (~3 GPU-h, no go).
 
 ## Traps (each has cost a run)
 

@@ -50,6 +50,9 @@ that produced it does not.
   - `08_convergence/` — the referee's convergence arms (no frames, no movies, by design — except
     CONV-fz, the head-on's three-level set lvl5 / FARZONE-ho / lvl7 on the L = 512 box, which keeps
     its frames on the user's word, 10-07; FARZONE-ho itself runs to t = 250 with spheres to R = 180).
+    CONV-fz, all three levels packed 10-08 (Fig. 11(d, e)): E at R = 10 converges at order 1.67; the
+    common MOTS forms at t = 18 at every level, R and M_MS equal to 0.08 %; ⟨H_ADM⟩ outside the MOTS
+    at t = 100 changes by 1.4 % and then 0.4 % (`analysis/convfz_constraints_t100.tsv`).
   - `00_archive/` (untracked) — the superseded superposed / Bowen-York campaign; see the data
     note above.
 - `figures/<group>/` (index: `figures/FIGURES.md`), `movies/<group>/`, `gw_search/` (the

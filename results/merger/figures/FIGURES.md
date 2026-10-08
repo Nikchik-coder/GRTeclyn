@@ -1007,3 +1007,6 @@ curve per level on level 4, is coded. It reads `analysis/convfz_constraints_t100
 "The H table"). With it the strip becomes five panels on 9.4 in (widths 1 / 1.05 / 1.35 / 0.95 / 0.75), and (a)'s
 rules are keyed "n = 2/3/4" (the ticks give Q). The layout passed the label audit on a scratch copy of the node's
 five shells; the pack figure is still the four-panel one.
+Later on 10-08 (lvl7 packed): the pack figure is the five-panel one. (d) draws Δx = 1/64 with 1/16 − 1/32 (solid)
+and 1/32 − 1/64 (dashed): 0.545 % and 0.541 % of the peak at most, E at R = 10 by 0.29 % and 0.09 % (order 1.67).
+(e) reads the node's table (13 shells r = 3.7–7.3 per level): 1.43 % and 0.43 %. Label audit clean.

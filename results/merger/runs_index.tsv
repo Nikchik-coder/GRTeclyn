@@ -113,6 +113,7 @@ bbh_control_d6_p010_t100	07_bbh_control	launch manifest	BinaryBH3d.gnu.MPI.CUDA.
 bbh_headon_d8_L128_lvl5_t100	07_bbh_control	launch manifest	BinaryBH3d.gnu.MPI.CUDA.ex	unstamped	pass	0	0							n/a	MISMATCH: L128: box_side = 64.0, name says 128.0	unknown	ok
 farzone_headon_flip_d8_L512_lvl5_t100_csm	08_convergence	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	5	512.0	256	100.0		2.0220447907e-04	n/a	silent: (no token): sigma = 0.3, production value 0.1	unknown	ok
 farzone_headon_flip_d8_L512_lvl6_t250_csm	08_convergence	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	6	512.0	256	250.0		2.0219117786e-04	n/a	silent: (no token): sigma = 0.3, production value 0.1	unknown	ok
+farzone_headon_flip_d8_L512_lvl7_t100_csm	08_convergence	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	7	512.0	256	100.0		2.0218765594e-04	n/a	silent: (no token): sigma = 0.3, production value 0.1	unknown	ok
 merge_headon_flip_d8_v1_L128_lvl4from50_sig03_t080_csm_r05000	08_convergence	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	4	128.0	256	80.0	yes		n/a	MISMATCH: d8: separation = 0.02, name says 8.0	unknown	ok
 v2_spiral_d12_p012_L128_lvl4from0_t100_csm	08_convergence	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	4	128.0	256	100.0		1.1204204592e-03	n/a	ok	unknown	ok
 v2_spiral_d12_p012_L128_lvl4w_t040_csm	08_convergence	launch manifest	main3d_csmatch_5f988dbc_2026-09-28.ex	5f988dbc	pass	0	0	4	128.0	256	40.0		1.1204210573e-03	n/a	ok	unknown	ok
