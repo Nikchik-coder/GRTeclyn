@@ -1,6 +1,6 @@
 """The unkicked L = 128 throat's long inflation record -- the t500 arm.
 
-A separate page from ``single_throat_inflation`` (untouched on the user's word,
+A separate page from ``single_throat_inflation`` (untouched by decision,
 2026-09-24: the L2 norms are domain norms and the 8x bigger box dilutes them
 x1.4-3.2 against the L = 64 twin, so the records cannot be spliced): this
 figure carries the new run's own data, with the L = 64 twin drawn as a halo
@@ -13,7 +13,7 @@ as "the pure-quadrupole inflation arm" but the launcher's default binary
 the live process (exe hash == the pin, zero l2 strings).  What evolved is
 THE UNKICKED L = 128, max_level 4 throat, and that is what this page shows:
 the throat's own truncation-seeded inflation, decelerating.  STOPPED BY HAND
-at t = 195.14 on the user's word (2026-09-24 16:12): not quotable past
+at t = 195.14 by decision (2026-09-24 16:12): not quotable past
 t ~ 100 -- box reflections, the refinement-box crossing, H ~ 0.13.
 
 WHAT THE PANELS SAY (the whole record, t = 0-195.14):

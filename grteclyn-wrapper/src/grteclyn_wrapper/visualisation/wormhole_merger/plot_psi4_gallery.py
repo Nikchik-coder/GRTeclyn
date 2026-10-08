@@ -111,21 +111,21 @@ inner->outer on the envelopes, the gold accent reserved for the wavefront,
 deep blue for the one fitted model, (a)-(d) tags, semantics in the caption.
 7.05 x 4.6 in since 2026-09-25 (was 7.05 x 5.6 with the twin as row (e)).
 
-THE VACUUM CONTROLS UNDER ROWS (c) AND (d) (2026-09-25, the user: "we also
+THE VACUUM CONTROLS UNDER ROWS (c) AND (d) (2026-09-25: "we also
 did a BBH fly-by with the same params -- add its extracted signal for
 comparison", then "place the BBH spiral into (c) the same way, so it is
 compared").  Each drainhole binary's black-hole twin -- same d and p, bare
 punctures, no scalar -- in the LIGO figure's vacuum colour (CONTEXT) under the
 ink, on the SAME sphere (R = 20, from each control's in-code extraction) and
 scale, named on its own curve ("vacuum BBH spiral" / "vacuum BBH fly-by";
-"vacuum BBH" alone read as the spiral's twin, the user); left panel only,
+"vacuum BBH" alone read as the spiral's twin); left panel only,
 since CONTEXT is also a sphere of the envelope ramp.  The spiral's twin was row
 (e) until then; it stays in ARMS, which the LIGO figure and the ledger read.
 It is drawn whole, its merger (peak 1.02e-2 at t - R = 84.8) 2.9x below and
 43 units after the drainhole burst; the vacuum fly-by is drawn over the
 fly-by's own window: one cycle as the holes swing off periapsis (peak 9.0e-3,
 4.5x below the fly-by) and nothing at the pass.  Row (a)'s dashed curve is
-named "ringdown fit" on the curve (the user).  The momentum knob prints as p,
+named "ringdown fit" on the curve.  The momentum knob prints as p,
 the article's symbol (it printed P).
 """
 
@@ -260,7 +260,7 @@ ARMS = [
     # fly-by row instead (VACUUM_OVERLAY below).
 ]
 
-# Drawn UNDER a row, not as one (2026-09-25, the user; the docstring's last
+# Drawn UNDER a row, not as one (2026-09-25; the docstring's last
 # section): each drainhole binary's black-hole twin, the same d and p on bare
 # punctures, from the control's in-code extraction at the row's own sphere.
 # Per row: (stream under campaign/, sphere, name, cut to the row's drawn
@@ -278,7 +278,7 @@ ARMS = [
 #           row's scale a rule), and the holes reach r = 13.7 by t = 100.  Its
 #           two lobes fold across R = 20/26/30 at v/c = 0.99/0.96.
 VACUUM_OVERLAY = {
-    # The merger's vacuum twin (2026-10-05, the user: "should now have the
+    # The merger's vacuum twin (2026-10-05: "should now have the
     # curve for bbh p010 d6 ... so we can compare the signal strength"):
     # bare punctures at +-3, tangential p = 0.10 in the merger's sense, per-
     # hole ADM mass 1.00, on the BBH controls' box (spheres 14/20/26/30), so
@@ -570,7 +570,7 @@ def main(argv: list[str] | None = None) -> int:
             # queue-2e gate 4's damped sinusoid, over the window it was fitted on
             axL.plot(ring[0] - R_in, ring[1], color=style.DEEP_BLUE, linewidth=1.1,
                      linestyle=(0, (3.2, 1.8)), zorder=4)
-            # Named on the curve (the user, 2026-09-25): under its second
+            # Named on the curve (2026-09-25): under its second
             # trough, below both the fit and the data over the name's width.
             uf = ring[0] - R_in
             kf = np.nonzero((uf > 30) & (uf < 45))[0]

@@ -62,7 +62,7 @@ Reads ``scalar_modes.dat`` from, all under ``campaign/``:
 twin).  Writes ``figures/08_waves/scalar_censorship``.
 
 STYLE: full-width pair (7.05 x 3.35), style.prd, no titles, no boxed key.
-MONOCHROME THROUGHOUT (2026-09-23, on the user's word -- the scenario
+MONOCHROME THROUGHOUT (2026-09-23, by decision -- the scenario
 colours of the first revision read as a rainbow): (a)'s three spheres are an
 ink ramp, dark = inner, and (b) carries identity in GREY LEVEL + LINE STYLE
 -- fly-by ink solid, merger ink dashed, lone throat muted (collapsed solid,

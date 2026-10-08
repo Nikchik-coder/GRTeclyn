@@ -30,7 +30,7 @@ prong.  Throats are ink rings with their scalar sign; gold is the horizon, so it
 rings the two fates that end in a black hole and nothing else; grey carries the
 context (the growing necks' earlier shells, the waves' zero lines).
 
-WHY: 2026-10-07, the user: a population fork for the fates, like Hubble's
+WHY: 2026-10-07: a population fork for the fates, like Hubble's
 tuning fork for the shapes of galaxies; the attracting pair branches too, into
 the merger (by d and p) and both throats inflating; a sketched GW signal per
 fate; then squeezed in height for Fig. 1 of the paper.

@@ -209,7 +209,7 @@ def paper(base: float = 10.0) -> None:
 
 
 def prd(base: float = 10.0) -> None:
-    """``paper`` plus the REVTeX frame the user asked for on the seed-branches
+    """``paper`` plus the REVTeX frame asked for on the seed-branches
     figure (2026-09-16, "PRD review style"), adopted for every article figure:
     full box, inward major+minor ticks on all four sides, ink ticks, no grid.
     Keys go INSIDE the axes, on an opaque patch, placed by ``legend``."""
@@ -491,7 +491,7 @@ def _line_points(ax, px_step: float = 3.0) -> np.ndarray:
 def declutter(fig, pad: float = 0.004, max_shift: float = 12.0, step: float = 1.5,
               px_step: float = 3.0) -> list[str]:
     """Move each label ``label_audit`` would report the shortest way off its
-    line, or off another label or the key (2026-09-25, on the user's word: the vis package has the tools, use
+    line, or off another label or the key (2026-09-25: the vis package has the tools, use
     them instead of hand-nudging).
 
     Candidates are shifts of up to ``max_shift`` points, nearest first; the
@@ -674,7 +674,7 @@ def legend(ax, *args, loc: str | None = None, pad: float = 0.015,
 
 
 # ---------------------------------------------------------------------------
-# Keys on top (the user's standing rule, 2026-09-26: a key ABOVE every panel
+# Keys on top (the standing rule, 2026-09-26: a key ABOVE every panel
 # names each of its lines, and nothing but tiny tags sits inside a frame).
 # ---------------------------------------------------------------------------
 

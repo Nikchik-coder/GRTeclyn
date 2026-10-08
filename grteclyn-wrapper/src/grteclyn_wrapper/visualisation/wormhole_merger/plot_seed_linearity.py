@@ -20,7 +20,7 @@ from ``campaign/01_single_throat/seed/`` and writes
 
 STYLE (the seed-branches grammar): a two-column PRD strip, two panels side
 by side (stacked in one column until 2026-09-26, when the article moved the
-figure to its appendix and the user asked for the horizontal layout, "so they
+figure to its appendix and the review asked for the horizontal layout, "so they
 take less space"), no boxed key, curves named in place.  Panel (a) divides each arm's
 R = 14 waveform by its own seed: linearity is the collapse of four curves
 onto one.  Panel (b) is amplitude against seed on log-log with the slope-1

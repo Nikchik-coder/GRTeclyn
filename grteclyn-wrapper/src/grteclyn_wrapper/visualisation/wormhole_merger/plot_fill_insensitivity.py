@@ -20,7 +20,7 @@ Reads both arms' in-code ``Weyl4_mode_22.dat`` (dt = 0.01, spheres
 
 STYLE (the seed-branches grammar): a two-column PRD strip, two panels side
 by side on one clock (stacked in one column until 2026-09-26, when the
-article moved the figure to its appendix and the user asked for the
+article moved the figure to its appendix and the review asked for the
 horizontal layout, "so they take less space"), no boxed key, every curve
 named in place.  Panel (a)
 overlays the two arms at R = 20 -- ink solid under gold dots, so

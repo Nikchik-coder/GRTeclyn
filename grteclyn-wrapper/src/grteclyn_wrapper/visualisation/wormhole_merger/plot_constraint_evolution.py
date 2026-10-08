@@ -18,7 +18,7 @@ the same streams by the same rules, so the main figures now show physics only:
           dx = 1/16, the level-3 class of the L = 64/128 boxes, so "level 5"
           read finer than it is.  Read from the run's evolution_params.txt;
 (e)       the head-on chain's H, drawn with the ladder grammar of its
-          main-text page (2026-10-05, the user: "this ladder can be
+          main-text page (2026-10-05: "this ladder can be
           represented here on the ham plot"): the used legs in ink across
           era rules at t = 35 / 50.8, levels named per era, leg 1's overrun
           in grey to its NaN at t = 38.845 (cross);
@@ -30,7 +30,7 @@ the same streams by the same rules, so the main figures now show physics only:
           death cross.  The deaths are single-cell h11 NaNs with the box
           norms clean to the last step, so the grey curves end mid-air at
           ordinary values: the crosses, not blow-ups, mark them;
-(g)       the p = 0.60 plunge chain (2026-10-05, the user: "add here p060"),
+(g)       the p = 0.60 plunge chain (2026-10-05: "add here p060"),
           same ladder grammar: the used legs (level 4: to 40, the restart to
           50, the chi-floor leg to 100) in ink across era rules at t = 40 /
           50, the min-chi 1e-8 extension in grey to its merged-core cell NaN
@@ -54,7 +54,7 @@ the same streams by the same rules, so the main figures now show physics only:
           layout the run log reports.
 
 Two rows of four, one sub-grid each: the lone throat on top, (a)-(d); the
-binaries below, (e)-(h) (2026-10-05, the user: "second row make it 4 figures
+binaries below, (e)-(h) (2026-10-05: "second row make it 4 figures
 same as first row").
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_constraint_evolution
@@ -152,7 +152,7 @@ def _cross(color=style.INK, ms=5):
                   mec="white", mew=0.8)
 
 
-# (a)/(b): every seed amplitude at the HIGHEST level it was run at (the user,
+# (a)/(b): every seed amplitude at the HIGHEST level it was run at (
 # 2026-09-26: "max level available should be shown").  At L = 64 that is level
 # 4 for the unkicked throat and the +-0.01 pair -- +0.01 was stopped by hand at
 # t = 13.5 (registry), so it ends in a dot, not a cross -- and level 3 for

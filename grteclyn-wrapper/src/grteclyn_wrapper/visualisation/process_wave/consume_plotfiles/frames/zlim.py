@@ -17,7 +17,7 @@ _SCANNED_KEY = "__scanned_series__"
 #: Lists the fields whose limits are the full min..max of their t = 0 slice
 #: (``--frames-zlim-t0``).  Those limits beat everything, --frames-auto-zlim and
 #: the presets included: the frame at t = 0 spans the whole colourbar and every
-#: later frame is read against it (the user, 2026-09-25: "proper means rescaled
+#: later frame is read against it (2026-09-25: "proper means rescaled
 #: from t 0").  The 1-99 % percentile lock clipped the throat core out of the
 #: scale (lapse 0.965-0.995 on the L = 512 box, for a true 0.397-0.997).
 _T0_KEY = "__t0_minmax__"

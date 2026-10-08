@@ -2,7 +2,7 @@
 r"""The single-throat story on one strip: undeclared seed, its rate, declared seed.
 
 The article's first two single-column figures merged into one two-column
-``figure*`` at the top of the page (the user, 2026-09-18): panels (a)/(b)
+``figure*`` at the top of the page (2026-09-18): panels (a)/(b)
 are ``plot_branches``' resolution ladder -- one exact throat, two
 resolutions, two fates, and the common exponential mode -- and panel (c) is
 ``plot_seed_branches``' declared-kick branching at one resolution.  Each
@@ -47,7 +47,7 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E
 # grteclyn-wrapper/scripts/analysis/merger_feedback/c_eps01_fates.py.
 CEILING_ARMS = (("single_eps_p1e1_t100", "+0.1"), ("single_eps_m1e1_t100", "-0.1"))
 
-# The moving throat on panel (a) (the user, 2026-09-30: "update figure 1 with
+# The moving throat on panel (a) (2026-09-30: "update figure 1 with
 # the boosted wormhole collapse").  One exact Lorentz-boosted drainhole
 # (momentum model 1, p = 0.45, v = 0.41, level 3, the per-throat slicing
 # freeze), read from the pack's round-scan A rows (horizon_scan.dat; the scan
@@ -81,7 +81,7 @@ def moving_record(pack_root, run: str = MOVING_ARM):
 def moving_panel(axD, pack_root) -> None:
     """Panel (d): the boosted throat against the resting level-3 arm, zoomed.
 
-    Overlaying the moving arm on (a) was unreadable (the user, 2026-09-30:
+    Overlaying the moving arm on (a) was unreadable (2026-09-30:
     "it's unclear what is what here"): at the full x-range its hold stretch
     lies on the resting curves and the tag floated over the cluster.  Here
     the two arms get their own window (t <= 47), each named in place; both
@@ -107,7 +107,7 @@ def moving_panel(axD, pack_root) -> None:
     axD.annotate(r"moving, $p=0.45$", (a[int(np.argmax(a[:, 1])), 0],
                  a[:, 1].max()), xytext=(-2, 4), textcoords="offset points",
                  fontsize=7, ha="center", va="bottom")
-    # Hung just under the resting curve's flat hold stretch (the user,
+    # Hung just under the resting curve's flat hold stretch (
     # 2026-09-30: floating mid-frame, "completely unclear what is actually at
     # rest"); the moving arm rides its hump ABOVE the grey line there and the
     # space below is empty until its fall at t ~ 37.  At the curve's end the
@@ -178,7 +178,7 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     style.prd(base=10.0)
-    # One row again since 2026-09-26 (the user: "extract the measurement
+    # One row again since 2026-09-26 ("extract the measurement
     # plots ... to the single plot in appendix"): the constraint record of
     # these arms, once row two here, is panels (a)/(b) of the appendix's
     # code-health figure (plot_constraint_evolution), drawn by the same
@@ -195,7 +195,7 @@ def main(argv: list[str] | None = None) -> int:
     for ax, letter in zip((axA, axB, axC, axD), "abcd"):
         ax.text(0.0, 1.05, f"({letter})", transform=ax.transAxes,
                 ha="left", va="bottom", fontsize=9, color=style.INK)
-    # ONE legend for the whole strip, on top (the user, 2026-09-23: the boxed
+    # ONE legend for the whole strip, on top (2026-09-23: the boxed
     # keys in (a)/(b) said the same thing twice and sat on the curves).  It
     # carries what is shared; panel-local identity stays written in place
     # ((c)'s kick names).

@@ -196,7 +196,7 @@ consumer_profile() {
            "--scalar-modes --scalar-mode-ells 0 1 2"
       ;;
     orbit-modes-scan-prod)
-      # The production set (the user, 2026-09-28): the mode-3 head-on, spiral and fly-by share
+      # The production set (2026-09-28): the mode-3 head-on, spiral and fly-by share
       # the L = 128 box and extract at the same four radii, 14/20/30/44, inside its sponge (r >= 48).
       echo "$(consumer_profile orbit-modes-scan "${zoom}" "${coord}" "${center}") --radii 14 20 30 44"
       ;;

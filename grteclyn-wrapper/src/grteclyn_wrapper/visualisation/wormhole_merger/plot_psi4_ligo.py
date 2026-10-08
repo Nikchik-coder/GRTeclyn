@@ -160,7 +160,7 @@ ENERGY_ON_DRAWN = ("collapsing throat",)
 U_END = {"fly-by": FLYBY_TRUST, "head-on": DRAW_GATES["head-on"][0](44.0) - 44.0}
 CLEAN_GATED = ("fly-by", "head-on")   # spheres clean only to DRAW_GATES
 
-# Each source's vacuum control in panel (d) (the user, 2026-10-06: "we have
+# Each source's vacuum control in panel (d) (2026-10-06: "we have
 # several BBH runs ... why are they not present here?"): bare punctures at the
 # same d and p, read by the same rule as the sources -- the band integral at
 # the outermost sphere over the shortest sphere record (t - R <= 70), the tick
@@ -428,7 +428,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- (a) the records themselves, on the same clock as (c) ------------
     # NOT the power spectrum: that is panel (b) multiplied by (2 pi f)^4, so
-    # the two panels carried one plot twice (the user, 2026-09-18).  What the
+    # the two panels carried one plot twice (2026-09-18).  What the
     # strip was missing is the time domain -- the burst SHAPES and the
     # loudness ordering that (b) states in frequency, on (c)'s merger clock,
     # so a shape in (a) and a sweep in (c) are read off the same abscissa.
@@ -578,7 +578,7 @@ def main(argv: list[str] | None = None) -> int:
     rows = [(SHORT[a["name"]], a["E"], a["E_lo"], a["E_hi"],
              LOOKS[a["name"]]["color"], True, vac.get(a["name"])) for a in arms]
     # NOT "BBH head-on": this campaign has no head-on black-hole run, and a
-    # row named like one reads as data (the user, 2026-09-18).  Nor "analytic":
+    # row named like one reads as data (2026-09-18).  Nor "analytic":
     # both are PUBLISHED numerical-relativity results for the equal-mass
     # non-spinning binary, not closed forms -- the only closed form on this
     # page is panel (c)'s Newtonian chirp.

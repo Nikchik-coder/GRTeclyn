@@ -141,7 +141,7 @@ def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     # third of the panel unlabelled.  Log minors off: with hand-set ticks
     # they crowd the short decade.
     lo = min(d.min(), scout[:, 1].min()) if len(scout) else d.min()
-    # Eight numbers across a quarter page ran into one another (the user,
+    # Eight numbers across a quarter page ran into one another (
     # 2026-09-18): the narrow canvas gets the factor-two ladder instead.
     candidates = (3, 4, 6, 8, 12, 20, 32, 48) if stacked else (3, 6, 12, 24, 48)
     ticks = [x for x in candidates if lo * 0.95 <= x <= d.max() * 1.05]

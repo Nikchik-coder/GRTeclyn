@@ -6,7 +6,7 @@
 # For every run named (a directory under runs/wormhole_merger/):
 #   1. refuses if its launcher is still alive;
 #   2. reports what is left on scratch (plotfiles, checkpoints, size) -- it never
-#      deletes anything: pruning is done by hand, on the user's word, and logged
+#      deletes anything: pruning is done by hand, on request, and logged
 #      in runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md;
 #   3. checks the death window of the data streams for NaN rows and prints the
 #      last time, so no number is quoted from a polluted row;
@@ -41,7 +41,7 @@ source "${ROOT}/grteclyn-wrapper/scripts/campaigns/wormhole_merger/lib/run_tree.
 # below the peak.  Weyl4 takes a shallower range because at two decades most of
 # its frame is the coarse grid's own noise.  chi and lapse are bounded and read
 # correctly on a linear scale, so they are left off.  K is linear too since
-# 2026-10-05: the user's standing convention is one fixed LINEAR K scale (the
+# 2026-10-05: the standing convention is one fixed LINEAR K scale (the
 # series' measured envelope), set on the p060/p090 stitches and now the
 # close-out default.  Override with WHM_SYMLOG, or set it empty for all-linear.
 WHM_SYMLOG="${WHM_SYMLOG:-phi,Pi,chi_minus_1,shift1,Weyl4_Re:1.5,Weyl4_Im:1.5}"
@@ -118,7 +118,7 @@ for run in "$@"; do
       # K is rerendered like every other field (fixed LINEAR, the series' own
       # envelope).  It used to be skipped by default ("the global rescale washes
       # out the lobes", 2026-10-01), which left the live per-frame autoscale in
-      # every pack's K movie -- the colour-bar dance the user flagged on four
+      # every pack's K movie -- the colour-bar dance flagged in review on four
       # separate sets (last 2026-10-05).  WHM_RERENDER_SKIP still works for a
       # deliberate skip.
       "${PY}" "${ROOT}/grteclyn-wrapper/scripts/plot/rerender_frames.py" "${dir}/frames" \
@@ -162,7 +162,7 @@ cat <<TXT
     (01_single_throat | 03_two_throats | 04_binary_headon | 05_binary_spiral | 06_binary_flyby | 07_bbh_control), then repack
   - results/merger/README.md: the Claim/Runs line of the section the run answers
   - research/merger/STATUS.md: the live/queue tables and a dated bullet
-  - scratch prune on the user's word, logged in runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md
+  - scratch prune on request, logged in runs/wormhole_merger/manifests/MANIFEST_CLEANUP_*.md
   - git add results/merger research/merger; commit (no Co-Authored-By); push to myfork
 [closeout] problems flagged: ${problems}
 TXT

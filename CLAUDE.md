@@ -207,6 +207,15 @@ what the claims check or the identity grep flags, and report in a few lines.
   (the horizon, or the fitted exponential); everything else is ink or grey.
 - A figure fix: make the minimal fix, render, run the label audit and show the image first; audits come after.
 
+## Code
+
+- **Never write "the user" in code**: not in comments, docstrings, help text or printed messages, and not
+  "the user's word / call / rule / design / choice" either (2026-10-08). Say what was decided and why, with the date
+  if it matters: `# 2026-10-05: K on one fixed linear scale (the colour bar danced)`, never
+  `# (the user, 2026-10-05: ...)`. Write "decided", "the standing rule" or "the chosen design", or drop the
+  attribution. Upstream GRTeclyn and vendored code (`Source/`, `external/`), where "the user" means a library's
+  caller, stay as they are.
+
 ## Git
 
 - **Commit subjects at most 72 characters**, blank line, then the body; detail goes

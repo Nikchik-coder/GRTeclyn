@@ -57,7 +57,7 @@ GROUP = "05_binary_spiral"
 # shift by the Gamma-driver with damping eta: standard is c = 2, p = 1, eta = 1
 # (1+log).  Two rows change the LAPSE and one the SHIFT, so the axis title
 # is the gauge condition, not the lapse; the rows are named by their driver
-# (the user, 2026-09-23: these names "were fine"), dropping the CCZ4 Theta
+# (2026-09-23: these names "were fine"), dropping the CCZ4 Theta
 # as the article does.
 GAUGE_NAME = {
     "lc1": r"$\partial_t\alpha=-\alpha K$",
@@ -117,7 +117,7 @@ def _panel_ladder(ax, rows) -> None:
                     fontsize=7, ha="left" if below else "right",
                     va="top" if below else "bottom", color=style.INK)
 
-    # One key for the three kinds of death point (the user, 2026-09-23: "a
+    # One key for the three kinds of death point (2026-09-23: "a
     # legend as on (b), with a description of the different death points"),
     # in the empty lower-right quarter under both lines.
     from matplotlib.lines import Line2D
@@ -143,7 +143,7 @@ def _panel_ladder(ax, rows) -> None:
 
 
 def _panel_clocks(ax, clocks) -> None:
-    """One row per gauge on a common death clock (the user, 2026-09-23, on
+    """One row per gauge on a common death clock (2026-09-23, on
     the first draw -- start time on x with the level-3 walls as full-width
     rules -- "I don't like how it looks").  Level 3 from t = 0 is the filled
     dot; each level-5 arm is an open marker tagged with the time t0 its

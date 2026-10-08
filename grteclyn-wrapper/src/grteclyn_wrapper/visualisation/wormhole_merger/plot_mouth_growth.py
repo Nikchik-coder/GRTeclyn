@@ -54,8 +54,8 @@ Reads ``horizon_scan.dat`` from both arms under ``campaign/`` and writes
 
 STYLE: a two-column PRD strip, three panels side by side on one clock
 (stacked in one column until 2026-09-26, when the article moved the figure to
-its appendix and the user asked for the horizontal layout, "so they take less
-space").  Since 2026-09-26 (the user's standing rule, "add legend on top
+its appendix and the review asked for the horizontal layout, "so they take less
+space").  Since 2026-09-26 (the standing rule, "add legend on top
 saying what each line is ... so we dont pollute the figures with the text")
 a key ABOVE every panel names each of its lines (``style.legend_top``), the
 letter tags sit at the keys' left (``style.tag_keys``) and no text is left

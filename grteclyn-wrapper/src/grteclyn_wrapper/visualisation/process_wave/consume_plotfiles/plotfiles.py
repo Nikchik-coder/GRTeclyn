@@ -54,8 +54,8 @@ def _parse_plot_index(plot_dir_basename: str) -> int | None:
 def _should_auto_reset(plot_dirs: List[str], state: Dict[str, bool]) -> bool:
     """
     Heuristic: if the output folder contains a "fresh" plot index (0) but the
-    saved state references plotfiles that do not exist anymore, assume the user
-    restarted a run in the same directory and reset outputs.
+    saved state references plotfiles that do not exist anymore, assume the run
+    was restarted in the same directory and reset outputs.
     """
     if not plot_dirs or not state:
         return False

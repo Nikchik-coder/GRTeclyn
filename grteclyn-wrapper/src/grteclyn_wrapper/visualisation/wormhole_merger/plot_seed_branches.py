@@ -334,7 +334,7 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
     print(f"  level 3's own truncation seed, for comparison: {SEED_RATE:.4f}")
 
     def style_of(label: str) -> dict:
-        """Identity without colour -- the user's call for THIS figure (2026-09-10
+        """Identity without colour -- the call for THIS figure (2026-09-10
         "no coloring", reaffirmed 2026-09-16), overriding the campaign palette.
         The dash pattern is the SIGN of the kick and the weight is its SIZE, so
         the two members of a pair read as a pair and the amplitudes stay apart.
@@ -459,7 +459,7 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
         ylo, yhi_ = axA.get_ylim()
         # The crossing rule runs only as high as the crossing: it marks WHEN
         # the twins cross, and they cross on R_star.  Full height it ran
-        # through the heavy arm's name and the gold fit's (the user,
+        # through the heavy arm's name and the gold fit's (
         # 2026-09-23: "overlaps with dotted line"); stopped 6 pt above
         # R_star -- an offset in POINTS, so on any panel width -- it meets
         # neither.  Drawn after the limits are fixed, so it cannot move them.
@@ -477,7 +477,7 @@ if __name__ == "__main__":
 
 # ---------------------------------------------------------------------------
 # The constraint record of the same scan -- panels (d)/(e) of the combined
-# strip (the user, 2026-09-23: "add to fig 1 the hamiltonian and momentum
+# strip (2026-09-23: "add to fig 1 the hamiltonian and momentum
 # constraints data for these runs to show how it behaves").  Same identity
 # grammar as panel (c): dash is the SIGN of the kick, weight is its SIZE;
 # the unkicked control is the one grey curve; the eps = +-0.1 pair, the
@@ -507,7 +507,7 @@ def _cut_overflow(a: np.ndarray, jump: float = 10.0) -> np.ndarray:
     abort and then jump two to four decades in ONE step (+0.1: 3.1e-3 ->
     0.38 -> 56 over t = 14.04-14.06; +0.001: 1.3e-3 -> 28 at 40.07).  That
     step is the overflow itself, not a measurement, and on a log axis it
-    drew a vertical line the height of the panel (the user, 2026-09-23:
+    drew a vertical line the height of the panel (2026-09-23:
     "these vertical lines are garbage").  The curve now ends where the run
     was last healthy and the cross -- the death -- sits there.  Only the
     last time unit is searched: the momentum norm rises from ~0 at t = 0,

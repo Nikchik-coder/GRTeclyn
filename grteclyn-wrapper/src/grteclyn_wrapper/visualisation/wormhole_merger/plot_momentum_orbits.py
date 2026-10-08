@@ -11,7 +11,7 @@ of the circular value.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_momentum_orbits
 
-WHAT IS DRAWN (2026-09-25, the user: "draw the trajectories for different p,
+WHAT IS DRAWN (2026-09-25: "draw the trajectories for different p,
 head-on p = 0 to p = 0.45; we have precise orbits from those runs").  The
 chi-pit barycentres of ``binary_throat_diagnostics.dat`` -- identical to the
 throat tracker's centres until the tracker fuses the two (separation ~ 2,
@@ -43,7 +43,7 @@ drawn minimum by more than a few hundredths.  The caption says so.
 Reads ``campaign/`` streams only (no frames).  Writes
 ``figures/05_binary_spiral/momentum_scan_orbits``.
 
-WHERE THE FLY-BY STOPS BEING TWO BODIES (2026-09-25, the user: "why do they
+WHERE THE FLY-BY STOPS BEING TWO BODIES (2026-09-25: "why do they
 fly by if they are attracted so strongly -- is this fly-away the inflation of
 one of the throats?").  The turn at closest approach (t ~ 40) is orbital: the
 pull is central and the pair keeps its angular momentum.  But the fly-by's

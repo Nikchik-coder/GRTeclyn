@@ -117,14 +117,14 @@ while IFS= read -r rundir; do
   rel="${rundir%/}"; rel="${rel#"${RUNS}"/}"
   out="${DEST}/campaign/${rel}"
   # PACK_SKIP="<run> <run> ...": finished runs left out of this pack because
-  # their chain is closed out together later (2026-09-30, the user's word: the
+  # their chain is closed out together later (2026-09-30, decided: the
   # head-on's legs 1-2 wait for leg 3).  Their pack folder is left as it is.
   if [[ " ${PACK_SKIP:-} " == *" ${run} "* ]]; then
     echo "[pack-merger] campaign/${rel}: in PACK_SKIP -- not packed"
     continue
   fi
   # A run still on a card is not packed: it is packed once, at its close-out
-  # (2026-09-27, the user's word -- a partial pack of a live run is git
+  # (2026-09-27, decided -- a partial pack of a live run is git
   # pollution, and the 08_convergence close-out repack had copied the three
   # live convergence arms to the top of campaign/).
   if [[ -f "${rundir}launcher.pid" ]] && kill -0 "$(cat "${rundir}launcher.pid" 2>/dev/null)" 2>/dev/null; then
@@ -411,7 +411,7 @@ fi
 # ---------------------------------------------------------------------------
 # 3. Campaign figures: none are copied (2026-09-26)
 # ---------------------------------------------------------------------------
-# results/merger/figures holds the PAPER'S figures and nothing else (the user,
+# results/merger/figures holds the PAPER'S figures and nothing else (
 # 2026-09-26: "wipe out figures that are not present in the paper ... check
 # the packing scripts so they do not regenerate them").  Every one of them is
 # drawn by its own script in the wrapper's figure package, listed with its

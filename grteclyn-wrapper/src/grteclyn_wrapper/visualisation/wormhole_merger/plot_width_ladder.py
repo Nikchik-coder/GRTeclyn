@@ -13,7 +13,7 @@ slope is its exponent.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_width_ladder
 
-WHY THIS PANEL (2026-10-05, the user: "create the required figure").  Sec.
+WHY THIS PANEL (2026-10-05: "create the required figure").  Sec.
 V B's width sentence left the paper with the superposed campaign that
 morning: its a-ladder was superposed, and the matched reruns
 (ctrl_rest_a{1,15,3}_csm, 10-02) had never been reduced, because their chi_z

@@ -7,7 +7,7 @@ common MOTS encloses both mouths from t = 22 -- neither mouth ever has its
 own -- and the remnant's horizon sheds the phantom scalar that held the
 throats open and settles onto the Schwarzschild size of the pair's ADM mass.
 
-SINCE 2026-09-30 THE FIGURE DRAWS THE MODE-3 PRODUCTION CHAIN (the user:
+SINCE 2026-09-30 THE FIGURE DRAWS THE MODE-3 PRODUCTION CHAIN (
 "the head-on now is the composition of the legs, like the spiral page"), the
 far-side-matched (mode-3) data replacing the superposed runs.  One evolution
 in three legs (d = 8, p = 0, flipped, L = 128, N = 256, M_ADM = 2.3573),
@@ -244,7 +244,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- the strip ----------------------------------------------------------
     style.prd(base=10.0)
-    # 3.0 in tall (was 4.3; the user, 2026-10-07: "very big for no reason").
+    # 3.0 in tall (was 4.3; 2026-10-07: "very big for no reason").
     fig = plt.figure(figsize=(7.05, 3.0), constrained_layout=True)
     gs = fig.add_gridspec(2, 4, width_ratios=[1.0, 1.0, 0.86, 0.86])
     axA = fig.add_subplot(gs[0, 0:2])
@@ -309,14 +309,14 @@ def main(argv: list[str] | None = None) -> int:
                  (t_end, np.sqrt(2) * R_STAR),
                  xytext=(0, -2), textcoords="offset points", ha="right", va="top",
                  fontsize=fs, color=style.MUTED)
-    # Hung on the gold curve itself, just above it (the user, 2026-10-07).
+    # Hung on the gold curve itself, just above it (2026-10-07).
     axA.annotate("3D finder", (43.0, np.interp(43.0, ts, Rs)), xytext=(0, 2),
                  textcoords="offset points", ha="center", va="bottom",
                  fontsize=fs, color=style.GOLD)
     axA.text(86.0, 4.47, "round scan (inner bound)", fontsize=fs, ha="center",
              va="top", color=style.CONTEXT)
     # The composition's levels, named per era in every panel that draws
-    # across the legs (the user, 2026-09-30: "what is the level at least").
+    # across the legs (2026-09-30: "what is the level at least").
     def era_levels(ax, first="level 5", x1=27.5):
         for x, name in ((x1, first), (43.0, "6"), (76.0, "4")):
             _top_name(ax, x, name, fontsize=7, color=style.MUTED)

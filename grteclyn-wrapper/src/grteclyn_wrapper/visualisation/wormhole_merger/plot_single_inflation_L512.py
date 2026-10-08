@@ -88,7 +88,7 @@ T_WALL = 218.0
 # t <= 12); later the lapse at the neck drops and the rate with it (e-fold
 # 6.6 at t = 30, 8.8 at t = 34).  The table the script prints is the check.
 ONSET = (0.03, 0.30)
-# Shinkai-Hayward's window (2026-09-26, the user: "place the line where we can
+# Shinkai-Hayward's window (2026-09-26: "place the line where we can
 # quote shinkai"): the local H R0 = R0 d ln(R/R0 - 1)/d tau over the growth
 # phase (R/R0 - 1 >= 0.02, t <= 80), from its peak both ways while >= 1.0.  On
 # F4: t = 16-40 (tau = 9.21-20.26, R/R0 1.03 -> 2.01, alpha_neck 0.57 -> 0.23),

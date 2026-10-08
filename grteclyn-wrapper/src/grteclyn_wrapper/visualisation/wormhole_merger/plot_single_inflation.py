@@ -7,7 +7,7 @@ F4 is ``campaign/01_single_throat/seed/single_eps_m1e2_L512_ml5_oct_t400`` in th
 pack: eps = -1e-2, L = 512, max_level 5, on an octant, the neck's areal radius in
 the FULL metric.  Every panel stops at T_WALL = 218, F4's trust limit (also in
 results/merger/trust_windows.tsv): the paper shows the quotable record only.  No
-level-4 data (2026-09-26, the user): those arms' radii are r / sqrt(chi), a lower
+level-4 data (2026-09-26): those arms' radii are r / sqrt(chi), a lower
 bound once the grid has moved.  The arm's method -- the record's cut, the onset
 fit, Shinkai-Hayward's window and fit, the theta_k track -- is imported from
 ``plot_single_inflation_L512``, as the claims ledger imports it.

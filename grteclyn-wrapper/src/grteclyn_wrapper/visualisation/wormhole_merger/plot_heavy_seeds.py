@@ -32,13 +32,13 @@ carries the numbers of the text: heavier bursts are louder but redder; the
 tracks climb one decade per mass decade while the noise wall below ~0.1 mHz
 climbs faster, and past 10^7 M_sun they slide out of the band (hatched, not
 counted).  Grey dashed: the lone collapse at 10^5 M_sun, below the noise.
-Since 2026-10-05 (the user: "why this fig doesn't have the other signals such
+Since 2026-10-05 ("why this fig doesn't have the other signals such
 as p060?"): at 10^5 M_sun the d = 6 merger (blue), the p = 0.60 plunge (blue
 dotted, a FLOOR -- its record ends at its trust window mid-decay), the
 head-on (dashed ink) and the lone collapse, all near fM ~ 0.05 and so
 overlapping on the panel's seven decades: an inset magnifies the 10^5
 cluster with the noise under it, its window ruled on the panel.  The key is
-one row across the top of the figure, over (a)-(c) (the user: "the
+one row across the top of the figure, over (a)-(c) ("the
 horizontal layout on top of all the a b c").
 
 PANEL (c) -- THE POPULATION CURVE (2026-09-24, the first author's request:
@@ -331,7 +331,7 @@ def panel_bursts(ax) -> list:
     # seven decades; the inset (upper right, empty since the key moved above
     # the frame) magnifies them so their strengths can be compared.
     #   merger   the d = 6 chain;
-    #   plunge   p = 0.60 (2026-10-05, the user: "why this fig doesn't have
+    #   plunge   p = 0.60 (2026-10-05: "why this fig doesn't have
     #            the other signals such as p060?"): its record ends at the
     #            trust window mid-decay, so its track is a FLOOR (the key);
     #   head-on  the conversion channel's own burst (2026-09-30);

@@ -192,7 +192,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- the strip ----------------------------------------------------------
     style.prd(base=10.0)
-    # 3.0 in tall (was 4.3; the user, 2026-10-07: "very big for no reason").
+    # 3.0 in tall (was 4.3; 2026-10-07: "very big for no reason").
     fig = plt.figure(figsize=(7.05, 3.0), constrained_layout=True)
     gs = fig.add_gridspec(2, 4, width_ratios=[1.0, 1.0, 0.86, 0.86])
     axA = fig.add_subplot(gs[0, 0:2])
@@ -230,7 +230,7 @@ def main(argv: list[str] | None = None) -> int:
     axB.set_xlabel(r"$t$")
 
     fs = 7.5
-    # Hung on the gold curve itself, just above it (the user, 2026-10-07:
+    # Hung on the gold curve itself, just above it (2026-10-07:
     # "3D finder should be closer to the golden line").
     axA.annotate("3D finder", (55.0, np.interp(55.0, ts, Rs)), xytext=(0, 2),
                  textcoords="offset points", ha="center", va="bottom",
@@ -250,7 +250,7 @@ def main(argv: list[str] | None = None) -> int:
                  textcoords="offset points", ha="center", va="top", fontsize=fs,
                  color=style.MUTED)
     # The composition's levels, named per era in every panel that draws
-    # across the legs (the user, 2026-10-05: "why there is no level text
+    # across the legs (2026-10-05: "why there is no level text
     # still"): the full ladder -- level 5, the sigma leg, the chi-floor leg,
     # level 4 -- where the panel is wide, (a) and (e); digits in (c), (d).
     def ladder(ax, first="level 5", x1=19.0, last="level 4", x4=55.0):

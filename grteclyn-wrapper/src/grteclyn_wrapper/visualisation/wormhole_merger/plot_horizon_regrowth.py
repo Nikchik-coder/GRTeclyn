@@ -9,8 +9,8 @@ carries matter damping: core_matter_damping = 0 in all three).  Each swallows
 its own phantom support (areal radius and Misner-Sharp mass falling), bottoms
 out near t = 43-47, and the scans then regrow +9-11 % in radius and +10-12 % in
 mass.  (The pure-quadrupole
-arm was drawn as context in an earlier revision and removed on the user's
-word 2026-09-23: its floor arrives only at t = 92, so it decides nothing here.)
+arm was drawn as context in an earlier revision and removed on review
+2026-09-23: its floor arrives only at t = 92, so it decides nothing here.)
 
 WHAT THE REGROWTH IS (2026-09-24, reviewer feedback C): not physics.  In
 spherical symmetry a massless phantom can only shrink a MOTS -- on it
@@ -32,14 +32,14 @@ MOTS: the throat-centred fine scan; the coarse common centre C reads
 M_MS/(R/2) up to 1.15 at the floor and is not used, 2026-09-23) under ``campaign/01_single_throat/seed/``.  Writes
 ``figures/01_single_throat/single_horizon_regrowth``.
 
-THE NUMERICAL STRETCH IS SHADED (2026-09-25, the user: "the transition to
+THE NUMERICAL STRETCH IS SHADED (2026-09-25: "the transition to
 numerical should be shown -- the part where numerical errors dominate and we
 can't cite it").  From the first floor on (t = 43) the panels carry a grey
 band named as numerical, and each curve is drawn faint after its own floor:
 what is left at full weight is the shrink, the one thing the figure claims.
 The legend names the radial kick on EVERY arm ("eps = +1e-2 with eps_2 =
 0.005"): written "+ eps_2 = 0.005" it was read as a pure-quadrupole arm, which
-the text says does not regrow (the user's read of the PDF, same date).
+the text says does not regrow (a read of the PDF, same date).
 
 STYLE: style.prd, no titles, letter tags above the frames, one shared top
 figure legend.  INK is the level-3 kick (the headline numbers of Sec. IV D),
