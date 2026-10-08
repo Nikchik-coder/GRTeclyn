@@ -28,7 +28,7 @@ its quadrupole splits over the z-based (2,0) (a quarter of the power) and
 
 `Weyl4_mode_20_axis.dat` (2026-10-05): the quadrupole about the collision axis,
 h'20 = 2 × the z-based (2,0) (sign kept), written by
-`results/merger/analysis/headon_axis_modes.py` after it checks that split. The
+`grteclyn_wrapper.analysis.wormhole_merger.waves.headon_axis_modes` after it checks that split. The
 figures, the search templates and every head-on number in the paper read this
 file.
 

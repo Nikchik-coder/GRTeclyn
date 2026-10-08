@@ -20,14 +20,14 @@ template, a name, a card and a profile. It is not a new script.**
 | `lib/consumer_profiles.sh` | What the consumer extracts, under a name. Data, not code. |
 | `run_single.sh` | The engine: clones the params, rewrites output paths onto node-local scratch, starts the binary and the consumer sidecar, registers `launcher.pid`. Called by `launch.sh`; do not call the binary yourself. |
 | `preflight.py` | Run by `run_single.sh` on the final params before anything is registered or started: refuses contradictory settings (checkpoints asked for with output off; the consumer's `--areal-full-metric` without h22/h33 in `amr.plot_vars` or without `--areal-radius`, read from `$WHM_CONSUME_ARGS`), warns on a flat-metric `--areal-radius`, keys the binary does not read (static + a 0-step start-up with `amr.abort_on_unused_inputs`), and seeds that do not change the t = 0 data. Seconds. Allowed exceptions, each with its reason: `preflight_allow.txt`. |
-| `run_manifest.py` | Writes `run_manifest.json` at launch (params, binary + its commit, launcher commit, node label, card, preflight verdict, t = 0 norms) and completes it at exit; `backfill-all` reconstructs one for older runs. The pack carries it; `results/merger/analysis/run_index.py` checks names and seeds against it. |
+| `run_manifest.py` | Writes `run_manifest.json` at launch (params, binary + its commit, launcher commit, node label, card, preflight verdict, t = 0 norms) and completes it at exit; `backfill-all` reconstructs one for older runs. The pack carries it; `grteclyn_wrapper.analysis.wormhole_merger.pack.run_index` checks names and seeds against it. |
 | `build_binary.sh` | Builds `main3d_<tag>_<commit>_<date>.ex` into `runs/wormhole_merger/bin/` from a clean tree, stamped with its commit, and appends its row to `results/merger/binaries.tsv`. Its own object dir: the example's live build product is never touched. |
 | `phase1_initial_data.sh` | The t = 0 GO/NO-GO gate. Every run in it sets `max_steps = 0`; the measurement is the initial data. |
 | `keep_checkpoints.sh` | Copies named checkpoints out of a rolling run before it deletes them. |
 | `prune_checkpoints.sh` | Drops restart checkpoints from scratch, per-run policy. |
 | `tidy_logs.sh` | Reduces a finished run's launcher log to the provenance banner. |
 | `file_run.sh` | Files a closed-out run into its physics group (`--group 04_binary_headon`), repairing the stitched-movie symlinks that point into it. |
-| `lib/run_tree.sh` | How every script here finds a run by name, wherever it is filed. The Python side is `grteclyn_wrapper.visualisation.wormhole_merger.run_tree`; the pack's is `results/merger/analysis/pack_paths.py`. |
+| `lib/run_tree.sh` | How every script here finds a run by name, wherever it is filed. The Python side is `grteclyn_wrapper.visualisation.wormhole_merger.run_tree`; the pack's is `grteclyn_wrapper.analysis.wormhole_merger.pack.paths`. |
 
 ## Launching a run
 

@@ -12,8 +12,8 @@ A name is a string of `_`-separated tokens. Most are hand-chosen (`launch.sh --n
 suffixes, always in this order: `_m<mass>` `_lapse<N>` `_sg<NN>` `_fg` `_tl<N>` `_r<NNNNN>`. Numbers drop the decimal point:
 `p012` = 0.12, `sg01` = 0.1, `a15` = 1.5, `d65` = 6.5. A knob with no token is at its production value: the run-tree README
 says "everything not named in the suffix is identical" (`runs/wormhole_merger/README.md` §"Reading a run name").
-Machine form: [`results/merger/name_grammar.tsv`](../../results/merger/name_grammar.tsv) (95 rules);
-checker: `results/merger/analysis/name_check.py`, whose verdict per run is the `name_check` column of
+Machine form: [`results/merger/name_grammar.tsv`](../../results/merger/name_grammar.tsv) (101 rules);
+checker: `grteclyn_wrapper.analysis.wormhole_merger.pack.name_check`, whose verdict per run is the `name_check` column of
 [`results/merger/runs_index.tsv`](../../results/merger/runs_index.tsv).
 
 | token | meaning | param = value (evolution_params.txt) | example |
@@ -136,7 +136,7 @@ unless marked **absolute**. Writer paths: `.hpp`/`.cpp` files are in `Examples/B
 General pitfalls (`pack_results.sh`):
 - Packed in-code streams are thinned to Δt ≥ 0.05, except the last time unit, which is kept whole. Rows step by 0.056 when dt₀ = 0.008 (`n160`).
 - Restart legs start at t_restart + dt and carry **no header** in any in-code stream except core_radial_profile. Read the sphere radii from `extraction_radii`.
-- `X.__keep` directories are byte-identical copies left by an interrupted pack; `pack_paths.py` skips them since 2026-09-24. `merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22` is packed twice, filed and at top level.
+- `X.__keep` directories are byte-identical copies left by an interrupted pack; the analysis package's `pack.paths` skips them. `merge_headon_flip_d8_lp2_lvl5_t030_OOMFAIL_2026-09-22` is packed twice, filed and at top level.
 
 Offline / hand-made files (one per run or group; headers name their producer):
 - `horizon_offline_scan*.dat`: ah_oriented_scan.py output (`time r_mots R_mots M_MS_mots r_trapped_in r_trapped_out r_at_R_min R_min`).

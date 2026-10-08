@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """The sign rule, reduced to one table: separation change of the d = 12 pairs.
 
 Two like-oriented drainhole throats released from rest PUSH apart; flipping
@@ -21,8 +20,8 @@ gauge settles, so the ratio is only quoted over t = 3.5 .. 10.5.
 Reads the RUN TREE (the caches are not packed); writes the reduced table
 into the pack, next to the group's NOTES.md:
 
-    python results/merger/analysis/sign_rule.py \
-        [--runs runs/wormhole_merger/03_two_throats] [--pack results/merger]
+    python -m grteclyn_wrapper.analysis.wormhole_merger.two_throats.sign_rule \
+        [--runs runs/wormhole_merger] [--pack results/merger]
 
 The figure is
 ``python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_sign_rule``,
@@ -31,15 +30,12 @@ which reads the table this writes and draws nothing the table does not hold.
 from __future__ import annotations
 
 import argparse
-import glob
-import os
 import pathlib
-import sys
 
 import numpy as np
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from pack_paths import group_dir  # noqa: E402
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import (
+    PACK_ROOT, RUNS_ROOT, find_in_run_tree, group_dir)
 
 ARMS = (  # column name in the table -> run directory
     ("dsep_like", "ctrl_rest_d12"),   # sigma = +1, a = 2: the baseline push
@@ -65,11 +61,10 @@ def pit_centroid(arr, extent, xlo, xhi, box=3.0):
     return float((w * X).sum() / w.sum())
 
 
-def series(run_dir: str, split: float = 32.0) -> np.ndarray:
+def series(run_dir: pathlib.Path, split: float = 32.0) -> np.ndarray:
     """(t, separation) from every cached chi_z slice of one run."""
     rows = []
-    for f in sorted(glob.glob(os.path.join(run_dir, "frames", "_slice_cache",
-                                           "chi_z", "*.npz"))):
+    for f in sorted((run_dir / "frames" / "_slice_cache" / "chi_z").glob("*.npz")):
         d = np.load(f)
         arr, ext, t = d["arr"], d["extent"], float(d["time"])
         rows.append((t, pit_centroid(arr, ext, split, ext[1])
@@ -79,15 +74,16 @@ def series(run_dir: str, split: float = 32.0) -> np.ndarray:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--runs", default="runs/wormhole_merger/03_two_throats")
-    ap.add_argument("--pack", default="results/merger")
+    ap.add_argument("--runs", type=pathlib.Path, default=RUNS_ROOT, help="the run tree")
+    ap.add_argument("--pack", type=pathlib.Path, default=PACK_ROOT)
     a = ap.parse_args()
 
     ser = {}
     for col, run in ARMS:
-        s = series(os.path.join(a.runs, run))
+        run_dir = find_in_run_tree(a.runs, run)
+        s = series(run_dir) if run_dir else np.empty((0, 2))
         if not len(s):
-            raise SystemExit(f"no chi_z slice cache under {a.runs}/{run}")
+            raise SystemExit(f"no chi_z slice cache for {run} under {a.runs}")
         ser[col] = s
         print(f"  {run:<16} t = {s[0, 0]:g} .. {s[-1, 0]:g}   sep(0) = {s[0, 1]:.4f}"
               f"   dsep(end) = {s[-1, 1] - s[0, 1]:+.4f}")
@@ -111,7 +107,7 @@ def main() -> int:
           f"  {r.mean():.3f} +/- {r.std(ddof=1):.3f}  (n = {r.size},"
           f"  predicted (Q+1)/(Q-1) = {(Q + 1) / (Q - 1):.3f})")
 
-    out = group_dir(pathlib.Path(a.pack), "03_two_throats") / "sign_rule_displacement.dat"
+    out = group_dir(a.pack, "03_two_throats") / "sign_rule_displacement.dat"
     with open(out, "w", encoding="utf-8") as f:
         f.write("# The sign rule at d = 12: separation change of three rest-released pairs.\n")
         f.write("# Inverse-chi-weighted pit centroids of the cached chi_z slices (box +/-3,\n")

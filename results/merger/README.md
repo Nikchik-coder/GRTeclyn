@@ -34,7 +34,7 @@ that produced it does not.
   exactly these (per-run map: `research/merger/article/claims/table1_groups.tsv`).
   - `01_single_throat/` — the lone throat: `hold/` (levels, floors, Δt, box), `seed/` (declared
     kicks, quadrupoles, the scalar-stream re-runs), the generated notes (INSTABILITY, BRANCHES,
-    QUEUE2E_GATES).
+    WAVE_GATES).
   - `02_moving_throat/` — the boosted throat: `contraction_t0/` (the 1/γ contraction at t = 0),
     `exact_boost/` (one exact-boost throat on the production box, and the MASS-t0 fly-by pairs at
     t = 0 whose ADM surface integrals measure the moving pairs' mass), `csm/` (the Bowen–York
@@ -89,7 +89,7 @@ campaign/                         (as of 2026-10-06; the superposed-era subfolde
                                     quadrupolar kicks, the scalar-stream re-runs, the L = 512
                                     octant inflation arm
     INSTABILITY.md                  the isolated-throat systematics, generated
-    QUEUE2E_GATES.md                the five gates of the wave from one throat, generated
+    WAVE_GATES.md                   the five gates of the wave from one throat, generated
     BRANCHES.md                     the level-3 / level-4 ladder read (two fates), generated
     CLOCK_COMPARISON.md             the throat clocks across arms, generated
     NOTES.md                        the Stage-1 working notes, copied from the run tree
@@ -156,15 +156,15 @@ figures/<group>/                  the paper's figures (index: figures/FIGURES.md
 runs_registry.tsv                 ONE line per run: what is different, caveat, stopped
                                   note -- the only place a run is registered (the
                                   launcher appends it when WHM_WHAT is set)
-analysis/pack_paths.py            how every script here finds a run by name, wherever filed
-analysis/make_summary.py          builds the two summary tables, one block per group
-analysis/*.py                     the REDUCTIONS: they write the generated notes above
-                                  (INSTABILITY.md, BRANCHES.md, QUEUE2E_GATES.md) and the
-                                  small .dat tables a figure needs, from the packed
-                                  streams alone, with a stock Python.  The FIGURES all
-                                  live in grteclyn_wrapper.visualisation.wormhole_merger
+analysis/                         small derived tables: boosted_adm_mass.tsv (the boosted
+                                  pairs' ADM mass), t0_adm_mass.tsv (their measured t = 0
+                                  mass), convfz_constraints_t100.tsv (CONV-fz's H_ADM shells)
 summary.md, summary.csv           one row per run (csv: plus a `group` column), generated
 ```
+
+The generated notes, the summary tables and `analysis/` are written from the packed streams
+alone by the reductions in `grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/`
+(its README lists each one); the figures are drawn by `grteclyn_wrapper.visualisation.wormhole_merger`.
 
 The four evolution streams are written every step (dt = 0.01) and thinned here to
 dt = 0.05 — **except the last time unit of each run, kept at full cadence**, because that
@@ -182,7 +182,7 @@ says which).
   constraint norm on the final row is the NaN arriving. `summary.md` quotes the row
   half a unit earlier for exactly this reason; do the same.
 - **Separation can glitch to ~0 for a single row** when both trackers latch onto the
-  same throat as the pair swaps sides. `make_summary.py` drops rows that disagree with
+  same throat as the pair swaps sides. `pack.summary` drops rows that disagree with
   both neighbours by more than half; read the stream the same way.
 - **Horizon numbers come from the spectral MOTS finder** (`small_data/mots_spectral.dat`,
   written on every plotfile of every binary profile), never from the in-code θ/AH scan

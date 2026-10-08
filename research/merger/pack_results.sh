@@ -29,8 +29,9 @@
 # 06_binary_flyby, 07_bbh_control.  A run still on a card sits at the top of
 # both trees until closeout.sh and file_run.sh move it.  Each group's NOTES.md
 # is copied beside its runs; the generated notes (INSTABILITY.md, BRANCHES.md,
-# CLOCK_COMPARISON.md, PLACEMENT_CURVE.md, QUEUE2E_GATES.md) are written into their group by the
-# analysis scripts, which resolve runs by name through analysis/pack_paths.py.
+# CLOCK_COMPARISON.md, WAVE_GATES.md) are written into their group by the
+# wrapper's analysis package (grteclyn_wrapper.analysis.wormhole_merger), which
+# resolves runs by name through its pack.paths.
 # 00_archive/ and 90_probes/ (build smoke tests, the initial-data check E) are
 # not packed: they are plan material, not results.
 #
@@ -263,7 +264,7 @@ PY
   [[ -f "${rundir}launch_banner.txt" ]] && cp "${rundir}launch_banner.txt" "${out}/"
   # What the run IS (run_manifest.py): the launcher writes it since 2026-09-24,
   # `run_manifest.py backfill-all` reconstructs it for older runs.  It feeds
-  # analysis/run_index.py, which checks every name and seed against it.
+  # the analysis package's pack.run_index, which checks every name and seed against it.
   [[ -f "${rundir}run_manifest.json" ]] && cp "${rundir}run_manifest.json" "${out}/"
   [[ -f "${rundir}Backtrace.0" ]] && cp "${rundir}Backtrace.0" "${out}/backtrace.txt"
   if [[ -f "${rundir}run.log.gz" ]]; then
@@ -422,15 +423,17 @@ fi
 # ---------------------------------------------------------------------------
 # 4. Reductions: the generated notes and the small tables beside them
 # ---------------------------------------------------------------------------
-# These write markdown and .dat only, and import nothing outside the pack, so a
-# copy of results/merger stays runnable with a stock Python.  Figures are step 5.
-"${PY_BIN}" "${DEST}/analysis/make_summary.py" "${DEST}"
-"${PY_BIN}" "${DEST}/analysis/name_check.py" "${DEST}" || echo "[pack-merger] name check failed -- continuing"
-"${PY_BIN}" "${DEST}/analysis/run_index.py" "${DEST}" || echo "[pack-merger] run index failed -- continuing"
-"${PY_BIN}" "${DEST}/analysis/single_throat_instability.py" "${DEST}"
-"${PY_BIN}" "${DEST}/analysis/throat_clock_comparison.py" "${DEST}" || echo "[pack-merger] clock comparison failed -- continuing"
-"${PY_BIN}" "${DEST}/analysis/placement_curve.py" "${DEST}" || echo "[pack-merger] placement curve failed -- continuing"
-"${PY_BIN}" "${DEST}/analysis/queue2e_gates.py" "${DEST}" || echo "[pack-merger] queue 2e gates failed -- continuing"
+# The wrapper's analysis package (grteclyn-wrapper/src/grteclyn_wrapper/
+# analysis/wormhole_merger, numpy only) writes markdown and .dat only, reading
+# nothing outside the pack.  Figures are step 5.
+export PYTHONPATH="${ROOT}/grteclyn-wrapper/src${PYTHONPATH:+:${PYTHONPATH}}"
+ANA="grteclyn_wrapper.analysis.wormhole_merger"
+"${PY_BIN}" -m "${ANA}.pack.summary" "${DEST}"
+"${PY_BIN}" -m "${ANA}.pack.name_check" "${DEST}" || echo "[pack-merger] name check failed -- continuing"
+"${PY_BIN}" -m "${ANA}.pack.run_index" "${DEST}" || echo "[pack-merger] run index failed -- continuing"
+"${PY_BIN}" -m "${ANA}.single_throat.instability" "${DEST}"
+"${PY_BIN}" -m "${ANA}.single_throat.clock_comparison" "${DEST}" || echo "[pack-merger] clock comparison failed -- continuing"
+"${PY_BIN}" -m "${ANA}.waves.single_throat_gates" "${DEST}" || echo "[pack-merger] wave gates failed -- continuing"
 
 # ---------------------------------------------------------------------------
 # 5. The figure package's one pack note (no figures)
@@ -440,7 +443,6 @@ fi
 # all of them share one house style; they resolve runs by NAME and write into
 # results/merger/figures/<group>/.
 VIS="grteclyn_wrapper.visualisation.wormhole_merger"
-export PYTHONPATH="${ROOT}/grteclyn-wrapper/src${PYTHONPATH:+:${PYTHONPATH}}"
 # No figure is drawn here any more (2026-09-26): figures/ is the paper's, and
 # the three modules this loop ran (plot_branches, plot_placement_curve,
 # plot_bbh_ringdown) drew figures the paper does not use -- a pack that

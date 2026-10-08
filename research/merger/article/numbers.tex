@@ -731,7 +731,7 @@
 \newcommand{\clmGwVacPassRatioHi}{74}% auto: fly-by E_hi (plot_psi4_ligo, R = 20 on t - R <= 67.6) over the p = 0.45 vacuum c
 \newcommand{\clmGwPeakVacPass}{9.0\times10^{-3}}% auto: plot_psi4_gallery.VACUUM_OVERLAY: campaign/07_bbh_control/bbh_control_d12_p045_t
 \newcommand{\clmGwVacPassPeakRatio}{6.7}% auto: 
-\newcommand{\clmGwGateThroat}{70}% def: plot_psi4_gallery.ARMS collapsing-throat t_max (QUEUE2E_GATES junk cut, R=10 at 
+\newcommand{\clmGwGateThroat}{70}% def: plot_psi4_gallery.ARMS collapsing-throat t_max (WAVE_GATES junk cut, R=10 at t=7
 \newcommand{\clmGwSpeedTwinPeak}{0.57}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share): vacuum twin
 \newcommand{\clmGwSpeedTwin}{0.82}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + psi4_math.
 \newcommand{\clmGwSpeedThroatA}{0.94}% auto: plot_psi4_gallery.ARMS (the scenario table both wave figures share) + wavefront_
@@ -758,11 +758,11 @@
 \newcommand{\clmGwLitHeadonInfall}{5.5\times10^{-4}}% lit: Witek et al., PRD 82, 104014 (2010) (ref. witek2010), Table II, D = 4 row: E_rad
 \newcommand{\clmGwLitCircular}{4.84\times10^{-2}}% lit: Scheel et al., PRD 79, 024003 (2009) (ref. scheel2009), abstract and Table II: M
 \newcommand{\clmGwSeedStrong}{0.05}% def: campaign/01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/evolution_params.tx
-\newcommand{\clmGwThroatOverControl}{44}% auto: results/merger/analysis/queue2e_gates.py gate 5: max |r Psi4^20| at R=14 for t<=
-\newcommand{\clmGwThroatSpeedLo}{0.8}% auto: results/merger/analysis/queue2e_gates.py (campaign/01_single_throat/QUEUE2E_GATE
-\newcommand{\clmGwThroatSpeedHi}{1.0}% auto: results/merger/analysis/queue2e_gates.py (campaign/01_single_throat/QUEUE2E_GATE
-\newcommand{\clmGwThroatSphereSpread}{7.2}% auto: results/merger/analysis/queue2e_gates.py (campaign/01_single_throat/QUEUE2E_GATE
-\newcommand{\clmGwThroatFiveFold}{4.85}% auto: results/merger/analysis/queue2e_gates.py (campaign/01_single_throat/QUEUE2E_GATE
+\newcommand{\clmGwThroatOverControl}{44}% auto: analysis/wormhole_merger/waves/single_throat_gates.py gate 5: max |r Psi4^20| at
+\newcommand{\clmGwThroatSpeedLo}{0.8}% auto: analysis/wormhole_merger/waves/single_throat_gates.py (campaign/01_single_throat
+\newcommand{\clmGwThroatSpeedHi}{1.0}% auto: analysis/wormhole_merger/waves/single_throat_gates.py (campaign/01_single_throat
+\newcommand{\clmGwThroatSphereSpread}{7.2}% auto: analysis/wormhole_merger/waves/single_throat_gates.py (campaign/01_single_throat
+\newcommand{\clmGwThroatFiveFold}{4.85}% auto: analysis/wormhole_merger/waves/single_throat_gates.py (campaign/01_single_throat
 \newcommand{\clmGwThroatSeedRatio}{5}% def: ratio of wormhole_seed_l2_amplitude_A, eps2=0.05 arm over eps2=0.01 arm (evoluti
 \newcommand{\clmGwHalvedRatioA}{1.99}% auto: plot_seed_linearity: rms Re Psi4^20 over t=30-50 at R=10, eps2=0.01 arm over eps
 \newcommand{\clmGwHalvedRatioB}{1.97}% auto: plot_seed_linearity: rms Re Psi4^20 over t=30-50 at R=14, eps2=0.01 arm over eps
@@ -774,7 +774,7 @@
 \newcommand{\clmGwSeedPure}{0.01}% def: campaign/01_single_throat/seed/single_pureq_q1e2_ml4_t100/evolution_params.txt: 
 \newcommand{\clmGwSeedKicked}{0.01}% def: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_ml4_t100_r02500/evolution_pa
 \newcommand{\clmGwPureVsKicked}{2}% auto: plot_seed_linearity: max over R=10/14/18 of |rms(pure quadrupole)/rms(kicked eps
-\newcommand{\clmGwThroatPeriod}{20.6}% auto: results/merger/analysis/queue2e_gates.py (campaign/01_single_throat/QUEUE2E_GATE
+\newcommand{\clmGwThroatPeriod}{20.6}% auto: analysis/wormhole_merger/waves/single_throat_gates.py (campaign/01_single_throat
 \newcommand{\clmGwThroatSchwLo}{19.6}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/horizon_scan.dat (c
 \newcommand{\clmGwThroatSchwHi}{20.4}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/horizon_scan.dat (c
 \newcommand{\clmGwThroatMassFloor}{1.16}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/horizon_scan.dat (c
@@ -904,7 +904,7 @@
 \newcommand{\clmScalarQnmPredI}{0.0409}% auto: 0.0977 over the same mass
 \newcommand{\clmScalarQnmFreqDev}{1}% auto: largest |omega_R / prediction - 1| over fit starts t0 = 35/40/45 (0.71 %)
 \newcommand{\clmScalarQnmDampDev}{10}% auto: 1 - omega_I / prediction at t0 = 40 (9.1 %)
-\newcommand{\clmMemoryRatioLo}{0.34}% auto: results/merger/analysis/scalar_memory_angmom.py budget() on the fly-by: (2,0) me
+\newcommand{\clmMemoryRatioLo}{0.34}% auto: analysis/wormhole_merger/waves/scalar_memory_angmom.py budget() on the fly-by: (
 \newcommand{\clmMemoryRatioHi}{0.46}% auto: same script: the wave-zone angular pattern over the whole trusted record (t <= 9
 \newcommand{\clmHeadonQnmHz}{397}% auto: Schwarzschild l = 2, n = 0 (M omega = 0.37367, Berti-Cardoso-Will) for the final
 \newcommand{\clmHeadonQnmDev}{3}% auto: the head-on track's last (lowest) frequency, 410 Hz (clmGwHeadonFreqLo), over cl
@@ -918,7 +918,7 @@
 \newcommand{\clmGwCensMergerFitLo}{45}% def: plot_scalar_censorship.FIT_MERGER = (45, 95): past the merger's t = 39 crest on 
 \newcommand{\clmGwCensMergerDrop}{19}% manual: plot_scalar_censorship: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_
 \newcommand{\clmGwVacMergerPeakRatio}{3.0}% auto: plot_psi4_gallery.VACUUM_OVERLAY: campaign/07_bbh_control/bbh_control_d6_p010_t1
-\newcommand{\clmHeadonAxisRatioDev}{2}% auto: results/merger/analysis/headon_axis_modes.py on the head-on SERIES and bbh_heado
+\newcommand{\clmHeadonAxisRatioDev}{2}% auto: analysis/wormhole_merger/waves/headon_axis_modes.py on the head-on SERIES and bb
 \newcommand{\clmEgwTrustTwoFive}{63.3}% auto: results/merger/trust_windows.tsv, the p = 0.25 row; a wave record is quotable to
 \newcommand{\clmGwCensMergerFitHi}{95}% def: plot_scalar_censorship.FIT_MERGER: the merger keeps its own fit end
 \newcommand{\clmConvOrderDataLo}{2.2}% auto: plot_convergence (a): log2 Q over t = 0-10, levels 2/3/4 hold runs

@@ -17,14 +17,9 @@ import sys
 
 import numpy as np
 
-# The pack ships its own path map (results/merger/analysis/pack_paths.py) so a
-# copy of the pack can be read without this package installed; this module is
-# the writer, so it borrows that map rather than duplicating the layout.
-_REPO = pathlib.Path(__file__).resolve().parents[5]
-sys.path.insert(0, str(_REPO / "results" / "merger" / "analysis"))
-from pack_paths import figure_dir, find_run, group_dir  # noqa: E402
-
-from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import (
+    PACK_ROOT, figure_dir, find_run, group_dir)
+from grteclyn_wrapper.visualisation.wormhole_merger import style
 
 R_EXACT = 3.8895  # closed form for a = 2, m = 1 (INSTABILITY.md)
 ARMS = {
@@ -112,7 +107,7 @@ def main(argv: list[str]) -> int:
         if prev_flag or not a.startswith("-"):
             positional.append(a)
         prev_flag = False
-    root = pathlib.Path(positional[0]) if positional else _REPO / "results" / "merger"
+    root = pathlib.Path(positional[0]) if positional else PACK_ROOT
     ar = {k: load(root, v, "areal_radius.dat") for k, v in ARMS.items()}
     cn = {k: load(root, v, "constraint_norms.dat") for k, v in ARMS.items()}
     cd = {k: load(root, v, "collapse_diagnostics.dat") for k, v in ARMS.items()}

@@ -1905,8 +1905,8 @@ solve_drainhole_constraint(amrex::Amr &a_amr,
     // throat's conformal factor falls off with its Lorentz-contracted radius
     // and its metric carries the anisotropy eps e e, and the full surface
     // integral gives gamma sigma m per throat and 2 s asinh(gamma v) /
-    // (gamma v) per shift (results/merger/analysis/boosted_adm_mass.py
-    // checks both).  The speeds are the params' (the rescale keeps them).
+    // (gamma v) per shift (grteclyn-wrapper's analysis/wormhole_merger/
+    // two_throats/boosted_adm_mass.py checks both).  The speeds are the params' (the rescale keeps them).
     if (boosted && used.solve_background == 0)
     {
         double correction = 0.0;

@@ -46,7 +46,7 @@ import statistics
 import numpy as np
 
 from lib import EXTRACTORS, PACK, extractor, run_dir
-from pack_paths import iter_runs
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import iter_runs
 
 HERE = pathlib.Path(__file__).resolve().parent
 TABLE1 = HERE / "table1_groups.tsv"
@@ -227,7 +227,7 @@ def detector_table1_param(group: str, key: str, stat: str, log10: bool = False) 
 
 # =============================================================== cost (run_tail logs)
 def _gh():
-    import gpu_hours  # results/merger/analysis/gpu_hours.py, on sys.path via lib
+    from grteclyn_wrapper.analysis.wormhole_merger.pack import gpu_hours
     return gpu_hours
 
 
@@ -750,13 +750,9 @@ def detector_life_periods(log10_eps: float, tau="iso_hi", delta="max") -> float:
 def detector_clock_units(tau="iso_hi", factor=10.0, what: str = "ln") -> float:
     """tau ln(factor), code units: what a factor-`factor` quieter seed buys.  factor =
     'measured' uses detector_seed_budget_measured's ratio (effective seed over the
-    level-3 truncation seed); 'measured_placed' takes the effective seed of the fly-by's
-    fit with the companion's field removed (mergers_mouth what='seed_placed')."""
+    level-3 truncation seed)."""
     if factor == "measured":
         factor = detector_seed_budget_measured(what="ratio")
-    elif factor == "measured_placed":
-        factor = (EXTRACTORS["mergers_mouth"](run="merge_orbit_flip_d12_p045_L128_lvl5_t100", what="seed_placed")
-                  / EXTRACTORS["single_noise_seed"]())
     return _clock(tau) * math.log(float(factor))
 
 

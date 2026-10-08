@@ -1,24 +1,22 @@
-#!/usr/bin/env python3
 """Check wormhole-merger run NAMES against their packed evolution_params.txt.
 
-    name_check.py [<pack-root>] [--report FILE] [--templates] [--include-copies]
+    python -m grteclyn_wrapper.analysis.wormhole_merger.pack.name_check \
+        [<pack-root>] [--report FILE] [--templates]
 
-A run's name is the first thing anyone reads about it, and until 2026-09-24
-nothing checked it: four arms named q1e2 ran without their quadrupole.  The
-grammar -- what each name token claims about the params -- is RULES below; it
-is written out as <pack-root>/name_grammar.tsv (the human-readable grammar,
-with the holds/fails counts this run measured) and read back from that text,
-so the TSV is the contract and this file supplies the derived quantities.
-run_index.py calls findings() for its name_check column.  --report writes a
-per-run account of every failure.  Written 2026-09-24 from a full sweep of the
-pack (95 rules, 149 runs; every failure explained in research/merger/GLOSSARY.md).
+A run's name is the first thing anyone reads about it, and a name nobody checks
+can lie: four arms named q1e2 once ran without their quadrupole.  The grammar
+-- what each name token claims about the params -- is RULES below; it is
+written out as <pack-root>/name_grammar.tsv (the human-readable grammar, with
+the holds/fails counts this run measured) and read back from that text, so the
+TSV is the contract and this file supplies the derived quantities.  run_index
+calls findings() for its name_check column.  --report writes a per-run account
+of every failure (each one is explained in research/merger/GLOSSARY.md).
 
 TSV columns: token_regex  param  expected  compare  note  holds  fails
   token_regex  fullmatch on ONE underscore-separated name token, unless the
                note says "spans tokens": then re.search on the whole name
                (the regex carries its own (?:^|_) ... (?:_|$) anchors).
-               A trailing ".__keep" (a pack copy) is stripped first.
-  param        an AMReX key of evolution_params.txt (code default when the
+  param       an AMReX key of evolution_params.txt (code default when the
                key is absent -- see DEFAULTS), "key[i]" for a vector
                component, "derived:<name>" (computed below, formula in the
                note), "(consumer)" (visible only in the packed streams) or
@@ -30,10 +28,8 @@ TSV columns: token_regex  param  expected  compare  note  holds  fails
                value cannot be computed (no params, no stream) is counted in
                the report as untestable, not here.
 
-Packed runs are walked with results/merger/analysis/pack_paths.iter_runs.
-A "X.__keep" directory with X beside it is a byte-identical pack copy and is
-skipped (gpu_hours.py's rule), as is a second directory of the same name;
---include-copies counts them too.
+Packed runs are walked with pack.paths.iter_runs; a second directory of the
+same name is skipped.
 """
 
 from __future__ import annotations
@@ -42,9 +38,9 @@ import argparse
 import math
 import pathlib
 import re
-import sys
 
-HERE = pathlib.Path(__file__).resolve().parent
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import PACK_ROOT, RUNS_ROOT, iter_runs
+from grteclyn_wrapper.analysis.wormhole_merger.pack.readers import parse_params
 
 # --------------------------------------------------------------------------
 # the rule set
@@ -134,7 +130,7 @@ RULES: list[tuple[str, str, str, str, str]] = [
      "lc<N>: Bona-Masso lapse_coeff N (production 2.0). lc4 exists only as a template"),
     (r"harm", "lapse_power", "2.0", "approx",
      "harm: harmonic slicing, d_t alpha = -alpha^2 (K - 2 Theta): lapse_power 2 ... (the inflation "
-     "arms F2/F3, GPU_PLAN 2026-09-25)"),
+     "arms F2/F3)"),
     (r"harm", "lapse_coeff", "1.0", "approx",
      "harm: ... and lapse_coeff 1 (no shock-avoiding term: lapse_shock_kappa 0)"),
     (r"sg(\d)(\d+)", "sigma", "float(g1 + '.' + g2)", "approx",
@@ -330,12 +326,9 @@ RULES: list[tuple[str, str, str, str, str]] = [
      "control: part of bbh_control (see bbh)"),
     (r"HOOKFAIL|OOMFAIL", "(none)", "-", "-",
      "close-out label appended by hand to a failed launch (HOOKFAIL: a params key read without its "
-     "evolution. prefix, report silently disarmed; OOMFAIL: out of GPU memory); gpu_hours.py drops HOOKFAIL"),
+     "evolution. prefix, report silently disarmed; OOMFAIL: out of GPU memory)"),
     (r"20\d\d-\d\d-\d\d", "(none)", "-", "-",
      "date of the failed launch, always after HOOKFAIL/OOMFAIL"),
-    (r"(?:^|_)[^_]*\.__keep$", "(none)", "-", "-",
-     "spans tokens (suffix): X.__keep = byte-identical pack copy of X left by pack_results.sh; skipped "
-     "when X is beside it, so 0 here (10 directories with --include-copies)"),
 ]
 
 # --------------------------------------------------------------------------
@@ -400,28 +393,6 @@ ALIASES = {
 }
 
 
-def parse_params(path: pathlib.Path) -> dict[str, str]:
-    """AMReX ParmParse-style: '#' comments, 'key = value', '\\' continuation,
-    last definition wins.  Lines whose key contains blanks are not keys."""
-    out: dict[str, str] = {}
-    pending = ""
-    for raw in path.read_text(errors="replace").splitlines():
-        line = raw.split("#", 1)[0].rstrip()
-        if line.endswith("\\"):
-            pending += line[:-1] + " "
-            continue
-        line = pending + line
-        pending = ""
-        if "=" not in line:
-            continue
-        k, v = line.split("=", 1)
-        k = k.strip()
-        if not k or re.search(r"\s", k):
-            continue
-        out[k] = v.strip()
-    return out
-
-
 def _num(s):
     s = str(s).strip().strip('"')
     try:
@@ -441,8 +412,7 @@ class Run:
     def __init__(self, group: str, path: pathlib.Path):
         self.group = group
         self.path = path
-        self.dirname = path.name
-        self.name = re.sub(r"\.__keep$", "", path.name)
+        self.name = path.name
         pf = path / "evolution_params.txt"
         self.P = parse_params(pf) if pf.exists() else None
         self._h0 = "unset"
@@ -495,18 +465,17 @@ class Run:
     def binarybh(self):
         return self.P is not None and "bh1.mass" in self.P
 
-    # -- streams ------------------------------------------------------------
     @classmethod
     def from_template(cls, tpl: pathlib.Path):
         r = cls.__new__(cls)
         r.group, r.path = "templates_scan", tpl.parent / ("__template__" + tpl.stem)
-        r.dirname = tpl.stem
         r.name = re.sub(r"^params_", "", tpl.stem)
         r.P = parse_params(tpl)
         r._h0 = None
         r.is_template = True
         return r
 
+    # -- streams ------------------------------------------------------------
     def first_row(self):
         for stem in ("constraint_norms", "collapse_diagnostics",
                      "binary_throat_diagnostics", "throat_track"):
@@ -607,7 +576,7 @@ class Deriver:
 
     def effective_seed(self, run: Run, key: str, depth: int = 0):
         """(value, how) for a seed key after the t = 0 constraint test."""
-        ck = (run.dirname, str(run.path), key)
+        ck = (str(run.path), key)
         if ck not in self._eff:
             self._eff[ck] = self._effective_seed(run, key, depth)
         return self._eff[ck]
@@ -745,30 +714,12 @@ def compare(mode: str, actual, expected, run: Run) -> bool:
 # --------------------------------------------------------------------------
 # driver
 # --------------------------------------------------------------------------
-def load_runs(pack_root: pathlib.Path, include_copies: bool) -> tuple[list[Run], list[str]]:
-    sys.path.insert(0, str(HERE))
-    import pack_paths  # noqa: E402
-
-    def iter_runs(root):
-        """pack_paths.iter_runs, with its X.__keep filter lifted so that
-        --include-copies can count the copies; they are skipped below otherwise."""
-        orig = pack_paths._is_run
-        pack_paths._is_run = lambda d: any((d / f).exists() for f in (
-            "evolution_params.txt", "run_tail.log", "LOST.md", "launch_banner.txt"))
-        try:
-            yield from pack_paths.iter_runs(root)
-        finally:
-            pack_paths._is_run = orig
-
+def load_runs(pack_root: pathlib.Path) -> tuple[list[Run], list[str]]:
     runs, skipped, seen = [], [], set()
     for group, d in iter_runs(pack_root):
-        if not include_copies:
-            if d.name.endswith(".__keep") and (d.parent / d.name[: -len(".__keep")]).is_dir():
-                skipped.append(f"{group}/{d.name} (pack copy of {d.name[:-7]})")
-                continue
-            if d.name in seen:
-                skipped.append(f"{group or '<top>'}/{d.name} (second directory of the same name)")
-                continue
+        if d.name in seen:
+            skipped.append(f"{group or '<top>'}/{d.name} (second directory of the same name)")
+            continue
         seen.add(d.name)
         runs.append(Run(group, d))
     return runs, skipped
@@ -803,6 +754,12 @@ def matches(rule_regex: str, note: str, name: str):
     return out
 
 
+def expected_value(m: re.Match, exp_src: str):
+    """A rule's `expected` expression evaluated on the regex groups g1, g2, ..."""
+    g = {f"g{i}": m.group(i) for i in range(1, (m.re.groups or 0) + 1)}
+    return eval(exp_src, {"__builtins__": {"float": float, "int": int}}, g)  # noqa: S307
+
+
 def evaluate(rules, runs, der, label="packed run"):
     """Apply every rule to every run.  Returns (tsv_rows, report_lines)."""
     out_rows, report = [], []
@@ -812,15 +769,14 @@ def evaluate(rules, runs, der, label="packed run"):
         holds = fails = untest = carrying = 0
         fail_lines, untest_names, unverified, fail_names = [], [], [], []
         for run in runs:
-            ms = matches(rx, note, run.dirname if "__keep" in rx else run.name)
+            ms = matches(rx, note, run.name)
             if not ms:
                 continue
             carrying += 1
             if param == "(none)":
                 continue
             m = ms[0]
-            g = {f"g{i}": m.group(i) for i in range(1, (m.re.groups or 0) + 1)}
-            expected = eval(exp_src, {"__builtins__": {"float": float, "int": int}}, g)  # noqa: S307
+            expected = expected_value(m, exp_src)
             if param in ("(consumer)", "(stream)"):
                 if run.is_template or run.P is None and not run.path.is_dir():
                     untest += 1
@@ -891,7 +847,7 @@ def findings(pack_root: pathlib.Path) -> dict[str, list[tuple[str, str]]]:
     name does not mention, e.g. a restart leg raised to level 5)."""
     rules = read_tsv(pack_root / "name_grammar.tsv") if (pack_root / "name_grammar.tsv").exists() \
         else [dict(zip(["token_regex", "param", "expected", "compare", "note"], r)) for r in RULES]
-    runs, _ = load_runs(pack_root, include_copies=False)
+    runs, _ = load_runs(pack_root)
     der = Deriver(runs)
     out: dict[str, list[tuple[str, str]]] = {}
     for rule in rules:
@@ -900,14 +856,13 @@ def findings(pack_root: pathlib.Path) -> dict[str, list[tuple[str, str]]]:
         if param == "(none)":
             continue
         for run in runs:
-            ms = matches(rx, note, run.dirname if "__keep" in rx else run.name)
+            ms = matches(rx, note, run.name)
             if not ms:
                 continue
             m = ms[0]
-            g = {f"g{i}": m.group(i) for i in range(1, (m.re.groups or 0) + 1)}
-            expected = eval(exp_src, {"__builtins__": {"float": float, "int": int}}, g)  # noqa: S307
+            expected = expected_value(m, exp_src)
             if param in ("(consumer)", "(stream)"):
-                ok, actual = compare("file_exists", None, expected, run), None
+                ok = compare("file_exists", None, expected, run)
                 actual = "present" if ok else "absent"
             else:
                 actual, _why = der.value(run, param)
@@ -926,10 +881,8 @@ def findings(pack_root: pathlib.Path) -> dict[str, list[tuple[str, str]]]:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("pack_root", nargs="?", type=pathlib.Path, default=HERE.parent,
-                    help="the pack (default: results/merger, this file's parent's parent)")
-    ap.add_argument("--include-copies", action="store_true",
-                    help="also count X.__keep pack copies and same-name duplicates")
+    ap.add_argument("pack_root", nargs="?", type=pathlib.Path, default=PACK_ROOT,
+                    help="the pack (default: results/merger)")
     ap.add_argument("--report", type=pathlib.Path, help="write the per-run failure account here")
     ap.add_argument("--templates", action="store_true",
                     help="also check runs/wormhole_merger/templates_scan/params_*.txt (untracked); "
@@ -945,10 +898,10 @@ def main():
     rules = read_tsv(args.tsv)
 
     # 2. packed runs
-    runs, skipped = load_runs(pack, args.include_copies)
+    runs, skipped = load_runs(pack)
     der = Deriver(runs)
     out_rows, body = evaluate(rules, runs, der)
-    report = [f"# check_grammar.py over {len(runs)} packed runs "
+    report = [f"# name_check over {len(runs)} packed runs "
               f"({sum(r.P is not None for r in runs)} with evolution_params.txt)"]
     report += [f"# skipped: {s}" for s in skipped]
     report += body
@@ -968,7 +921,7 @@ def main():
 
     # 3. optional: the untracked templates (names are template stems, not run names)
     if args.templates:
-        tdir = pack.parents[1] / "runs" / "wormhole_merger" / "templates_scan"
+        tdir = RUNS_ROOT / "templates_scan"
         tpls = [Run.from_template(t) for t in sorted(tdir.glob("params_*.txt"))]
         t_rows, t_body = evaluate(rules, tpls, Deriver(tpls), label="template")
         nt = sum(int(r[6]) for r in t_rows if r[6] not in ("-", ""))

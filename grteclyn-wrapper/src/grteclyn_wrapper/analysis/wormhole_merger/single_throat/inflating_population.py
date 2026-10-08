@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
 """The inflating branch as a population member (paper Secs. IV.D and X,
 "The inflating half of the population"): every number quoted there, from the
-pack.  Numpy only; reads results/merger/campaign.
+pack.  Numpy only; reads results/merger/campaign and prints.
 
 Ledger rows this script backs (claims/ledger_single.tsv, ledger_detector.tsv;
 the registered extractors are single_f4_pop and detector_stall, plus
@@ -35,19 +34,20 @@ waves_scalar_energy for the quiet-window shed):
                        10^-4 (Hi) Mpc^-3, the seed abundances of Sec. X.B.
   clmInfStallFactor    the recorded boundary speed over the loosest bound.
 
-Run:  grteclyn-wrapper/.venv/bin/python results/merger/analysis/inflating_population.py
+    python -m grteclyn_wrapper.analysis.wormhole_merger.single_throat.inflating_population
 """
 from __future__ import annotations
 
 import math
-import pathlib
 import sys
 
 import numpy as np
 
-PACK = pathlib.Path(__file__).resolve().parents[1] / "campaign"
-F4 = PACK / "01_single_throat/seed/single_eps_m1e2_L512_ml5_oct_t400"
-QUIET = PACK / "01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100"
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import PACK_ROOT, find_run
+from grteclyn_wrapper.analysis.wormhole_merger.pack.readers import read_columns as stream
+
+F4 = "single_eps_m1e2_L512_ml5_oct_t400"
+QUIET = "single_pureq_q1e2_ml4_scalar_t100"
 T_WALL = 218.0          # F4's trust window (results/merger/trust_windows.tsv)
 T_QUIET = 80.0          # the counted window of Sec. VIII.G
 A, M = 2.0, 1.0         # the production throat
@@ -56,31 +56,30 @@ Z_EMIT = 20.0
 N_RANGE = (1e-4, 1e-2)  # seed abundances, Mpc^-3 (Sec. X.B)
 
 
-def stream(path: pathlib.Path):
-    names = None
-    with path.open() as fh:
-        for line in fh:
-            if line.startswith("#") and "time" in line:
-                names = line.lstrip("#").split()
-    data = np.loadtxt(path)
-    return {n: data[:, i] for i, n in enumerate(names)}
+def run_dir(name: str):
+    d = find_run(PACK_ROOT, name)
+    if d is None:
+        raise SystemExit(f"{name} is not in the pack ({PACK_ROOT})")
+    return d
 
 
 def main() -> int:
+    f4, quiet = run_dir(F4), run_dir(QUIET)
+
     # -- the store: R*/2 - m (closed form, paper Sec. II.B)
     r_star = math.sqrt(A**2 + M**2) * math.exp((M / A) * math.atan(A / M))
     store = r_star / 2.0 - M
     print(f"store R*/2 - m               = {store:.4f}   (R* = {r_star:.4f})")
 
     # -- quiet-window shed (level-4 arm, R=18, t <= 80)
-    s = stream(QUIET / "scalar_modes.dat")
+    s = stream(quiet / "scalar_modes.dat")
     k = s["time"] <= T_QUIET
     e_quiet = abs(np.trapezoid(-s["R18_scalar_flux_kin"][k], s["time"][k]))
     print(f"shed, quiet window (R=18,80) = {e_quiet:.4f}   ({e_quiet / store * 100:.1f}% of the store)")
 
     # -- F4: shed through the coordinate-60 sphere, kinematic and geometric
-    s = stream(F4 / "scalar_modes.dat")
-    p = stream(F4 / "core_radial_profile.dat")
+    s = stream(f4 / "scalar_modes.dat")
+    p = stream(f4 / "core_radial_profile.dat")
     ts = s["time"]
     alpha = np.interp(ts, p["time"], p["lapse_min_r60.25"])
     chi = np.interp(ts, p["time"], p["chi_min_r60.25"])
@@ -91,7 +90,7 @@ def main() -> int:
         print(f"shed, F4 (r=60, {name}, 218)   = {e:.4f}   ({e / store:.2f}x the store)")
 
     # -- F4: e-folds and the boundary's speed
-    n = stream(F4 / "neck_horizons.dat")
+    n = stream(f4 / "neck_horizons.dat")
     t, r_neck, r_hk = n["time"], n["R_neck"], n["R_hk"]
     r0 = r_neck[0]
     i_wall = int(np.argmin(np.abs(t - T_WALL)))

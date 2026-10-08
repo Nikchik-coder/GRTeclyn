@@ -114,7 +114,7 @@ TAPER = 0.12       # Tukey fraction, both ends, before the transform
 # axisymmetric about x splits as h_20 = -h'_20 / 2, h_2,+-2 = sqrt(3/8) h'_20:
 # the z-based (2,0) carried a quarter of the l = 2 power, and a template
 # built on it half the edge-on strain.  ARMS now names the _axis stream
-# (results/merger/analysis/headon_axis_modes.py: 2 x the z-based record,
+# (analysis/wormhole_merger/waves/headon_axis_modes.py: 2 x the z-based record,
 # written only after |h22/h20| = sqrt(3/2) is checked on every sphere), so
 # nothing here rescales it.
 

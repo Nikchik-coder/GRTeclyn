@@ -1,4 +1,4 @@
-# collision-axis quadrupole: h'_20 = -2 h_20 (x-axis source; the z-based (2,0) carries a quarter of the l = 2 power), sign kept from the z-based record; written by results/merger/analysis/headon_axis_modes.py from Weyl4_mode_20.dat
+# collision-axis quadrupole: h'_20 = -2 h_20 (x-axis source; the z-based (2,0) carries a quarter of the l = 2 power), sign kept from the z-based record; written by grteclyn_wrapper.analysis.wormhole_merger.waves.headon_axis_modes from Weyl4_mode_20.dat
 # check, burst-body rms |h22|/|h20| per sphere against sqrt(3/2) = 1.2247: 10:1.2446 14:1.2329 18:1.2290 20:1.2280 28:1.2242 36:1.2249 44:1.2243
 # SERIES: the mode-3 production head-on glued into one record, t = 0-100.
 # rows t <= 35.00 from merge_headon_flip_d8_v1_L128_lvl5from0_scalar_chk_t100_csm (level 5; ran to NaN at t = 38.845, later rows dropped),

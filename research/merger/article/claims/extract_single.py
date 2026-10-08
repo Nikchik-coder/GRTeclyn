@@ -4,7 +4,7 @@ single wormhole and two throats at rest (research.tex Secs. II-V).
 Every function registered here returns ONE float recomputed from the tracked
 pack (results/merger), never from the run tree.  Runs are named, and resolved
 through lib.run_dir; the few group-level reduced tables (the level-3 shell
-scans, the sign-rule table, the two ladder notes, the placement probes) are
+scans, the sign-rule table, the two ladder notes) are
 found by file name under results/merger/campaign.
 
 Where a number is a method's output (a plateau rate, a crossing time, a fit),
@@ -17,8 +17,7 @@ rather than argued about:
   plot_single_collapse.py   the pure-quadrupole MOTS history, 10 % departure
   plot_single_inflation.py  the eps = -0.01 level-4 arm
   plot_horizon_regrowth.py  MOTS floor and regrowth, centre-A rows
-  sign_rule.py              the sign-rule table and its ratio
-  placement_curve.py        the placement curve and the scout's residual
+  sign_rule                 the sign-rule table and its ratio
 """
 
 from __future__ import annotations
@@ -295,9 +294,9 @@ def single_ggs_excess(runs: list[str], t_ggs: float | None = None) -> float:
     """Largest |T / t_ggs - 1|, in percent, over the runs: the measured
     small-amplitude T against the linear T (default: the top of the
     Gonzalez-Guzman-Sarbach prediction interpolated to m/a = 0.5, T_PREDICTED
-    of results/merger/analysis/single_throat_instability.py)."""
+    of analysis/wormhole_merger/single_throat/instability.py)."""
     if t_ggs is None:
-        import single_throat_instability as sti  # the pack's analysis module (lib puts it on the path)
+        from grteclyn_wrapper.analysis.wormhole_merger.single_throat import instability as sti
         t_ggs = float(sti.T_PREDICTED[1])
     return max(100.0 * abs(single_proper_efold(run=r) / t_ggs - 1.0) for r in runs)
 
@@ -986,74 +985,6 @@ def single_matched_width_exponent(kind: str, times: tuple[float, ...] = (8.0, 10
         widths = sorted(row)
         vals.append(float(np.polyfit(np.log(widths), np.log([row[a] for a in widths]), 1)[0]))
     return _pick(vals, kind)
-
-
-@functools.lru_cache(maxsize=None)
-def _placement() -> tuple[np.ndarray, np.ndarray]:
-    """(d, R_mouth) of the one-step placement probes: mean of the mouth-A/B
-    minimum areal radius at t = 0 (placement_curve.py), d = |x_B - x_A|."""
-    pts = []
-    for _, d in lib.iter_runs(lib.PACK):
-        if not re.fullmatch(r"place_d\d+_step1", d.name):
-            continue
-        hdr, rows = _hscan(d.name)
-        it, ic, ir = (hdr.index(k) for k in ("time", "centre", "R_min"))
-        mouths = [float(r[ir]) for r in rows if r[ic] in ("A", "B") and float(r[it]) == 0.0]
-        if mouths:
-            pts.append((single_pair_separation(run=d.name), float(np.mean(mouths))))
-    pts.sort()
-    return np.array([p[0] for p in pts]), np.array([p[1] for p in pts])
-
-
-@extractor
-def single_placement(d: float | None = None, what: str = "R") -> float:
-    """The placement curve: R (per-mouth radius) or excess (percent above the
-    isolated R_star) of the probe at separation d; what = slope gives the
-    exponent of the excess, -d ln(excess)/d ln d over all probes."""
-    ds, rs = _placement()
-    rstar = single_drainhole(quantity="R_min", run=LEVEL3)
-    if what == "slope":
-        return float(-np.polyfit(np.log(ds), np.log(rs / rstar - 1.0), 1)[0])
-    r = float(rs[int(np.argmin(np.abs(ds - d)))])
-    return r if what == "R" else 100.0 * (r / rstar - 1.0)
-
-
-@functools.lru_cache(maxsize=None)
-def _scout_residual(scout: str = "merge_headon_flip_d8_v1_t100", contact: float = 2.5) -> np.ndarray:
-    """(t, sep, response %, in_range) of the head-on scout's mouths against the
-    placement curve at the separation reached (placement_curve.py Sec. 2)."""
-    ds, rs = _placement()
-    sep = {round(t, 3): s for t, s in zip(*window(scout, "binary_throat_diagnostics.dat", "separation", "time"))}
-    hdr, rows = _hscan(scout)
-    it, ic, ir = (hdr.index(k) for k in ("time", "centre", "R_min"))
-    by_t: dict[float, list[float]] = {}
-    for r in rows:
-        if r[ic] in ("A", "B"):
-            by_t.setdefault(float(r[it]), []).append(float(r[ir]))
-    out = []
-    for t in sorted(by_t):
-        s = sep.get(round(t, 3))
-        if s is None or s < contact:
-            continue
-        rp = float(np.interp(s, ds, rs))
-        inside = ds.min() - 1e-9 <= s <= ds.max() + 1e-9
-        out.append((t, s, 100.0 * (np.mean(by_t[t]) / rp - 1.0), float(inside)))
-    return np.array(out)
-
-
-@extractor
-def single_scout(what: str, t: float | None = None) -> float:
-    """The scout's own response: response (percent, at time t), plateau_end
-    (last time the tracked separation still equals its t = 0 value), or
-    last_in_range (last time inside the probed separations)."""
-    a = _scout_residual()
-    if what == "response":
-        return float(a[int(np.argmin(np.abs(a[:, 0] - t))), 2])
-    if what == "plateau_end":
-        return float(a[a[:, 1] == a[0, 1], 0][-1])
-    if what == "last_in_range":
-        return float(a[a[:, 3] > 0, 0][-1])
-    raise ValueError(what)
 
 
 # ========================================================= the L = 512 arm (F4)

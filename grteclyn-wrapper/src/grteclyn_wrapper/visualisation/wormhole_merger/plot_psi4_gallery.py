@@ -96,9 +96,9 @@ already fold the extraction radius into the amplitude (r*Psi4, see
 streams.py); nothing here multiplies by R again.
 
 THE RINGDOWN FIT (same review: "this fit should be shown on the GW
-pictures").  Row (a) carries the damped sinusoid of queue-2e gate 4 --
-``results/merger/analysis/queue2e_gates.py``, recomputed here with the pack's
-own routine on the same record and window (R = 10, from the burst peak at
+pictures").  Row (a) carries the damped sinusoid of the single throat's wave
+gate 4 -- ``analysis/wormhole_merger/waves/single_throat_gates.py``, recomputed
+here with that module's own routine on the same record and window (R = 10, from the burst peak at
 t = 26 to t = 58), drawn dashed over exactly that window.
 
 STYLE (the seed-branches grammar): figure* width, style.prd frame, no boxed
@@ -132,10 +132,8 @@ the article's symbol (it printed P).
 from __future__ import annotations
 
 import argparse
-import importlib
 import pathlib
 import string
-import sys
 
 import matplotlib
 
@@ -174,7 +172,7 @@ FLYBY_TRUST = trust_window("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm")
 # t_max is the gate the LIGO figure and the claims ledger apply (a coordinate
 # cap at the innermost sphere); the gallery itself draws with DRAW_GATES below,
 # which are per-sphere and, where it matters, retarded.
-#   single  QUEUE2E_GATES.md junk cuts (R=10 from t=70; the gated file holds
+#   single  WAVE_GATES.md junk cuts (R=10 from t=70; the gated file holds
 #           zeros past each sphere's cut, trimmed per sphere below).
 ARMS = [
     ("collapsing throat", r"$\varepsilon_2=5\times10^{-2}$", "(2,0)",
@@ -191,7 +189,7 @@ ARMS = [
     # Since 2026-10-05 the stream is the quadrupole about the COLLISION axis
     # (x): the z-based (2,0) the extraction writes is -h'_20/2 of it and
     # carries a quarter of the l = 2 power (|h22/h20| = sqrt(3/2) on every
-    # sphere); results/merger/analysis/headon_axis_modes.py writes the
+    # sphere); analysis/wormhole_merger/waves/headon_axis_modes.py writes the
     # _axis file, h'_20 = 2 x the z-based record, sign kept.
     ("head-on", r"$\sigma=-1$, $d=8$", "(2,0)",
      "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20_axis.dat",
@@ -467,18 +465,13 @@ def envelope(y: np.ndarray) -> tuple[np.ndarray, int]:
 
 
 def throat_ringdown(pack: pathlib.Path):
-    """Queue-2e gate 4 on its own record and window, with the pack's own
-    routine: ``(t_fine, fit, period, e-fold)`` at R = 10, or None if the pack
-    does not carry the run.  The routine returns (period, e-fold, f) only; the
-    two linear coefficients are the exact least squares at that (f, e-fold),
-    as inside the routine's own scan."""
-    ana = pathlib.Path(pack) / "analysis"
-    if str(ana) not in sys.path:
-        sys.path.insert(0, str(ana))
-    try:
-        Q = importlib.import_module("queue2e_gates")
-    except ImportError:
-        return None
+    """The single throat's wave gate 4 on its own record and window, with
+    single_throat_gates' own routine: ``(t_fine, fit, period, e-fold)`` at
+    R = 10, or None if the pack does not carry the run.  The routine returns
+    (period, e-fold, f) only; the two linear coefficients are the exact least
+    squares at that (f, e-fold), as inside the routine's own scan."""
+    from grteclyn_wrapper.analysis.wormhole_merger.waves import single_throat_gates as Q
+
     d = Q.find_run(pathlib.Path(pack), Q.STRONG)
     if d is None:
         return None

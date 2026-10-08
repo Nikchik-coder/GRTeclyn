@@ -17,7 +17,7 @@ As read, the merging arm's mouths grow from the same initial areal radius
 against the fly-by's 4.33, over the same fitted window t = 8-25 -- while one
 binary closes from 11.9 to contact and the other misses at 4.8.  But the
 coordinate-sphere reading includes the companion's field (the placement
-curve; results/merger/analysis/mouth_placement.py).  With it removed
+curve).  With it removed
 (2026-09-26) the merging arm's mouths read BELOW a freshly placed pair at every
 fitted time -- no growth of their own before contact -- and the fly-by's e-fold
 time is 3.9: the old verdict "the clock belongs to the throat, not to the

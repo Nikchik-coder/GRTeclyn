@@ -1,12 +1,12 @@
 # Run registry for the packed merger campaign -- ONE line per run, in the order the
 # campaign reads in.  Tab-separated: run, what is different, caveat appended to the
 # outcome, stopped-by-hand note ({t:.2f} is the last time).  Read by
-# analysis/make_summary.py; the launcher appends a line when WHM_WHAT is set at
+# grteclyn_wrapper.analysis.wormhole_merger.pack.summary; the launcher appends a line when WHM_WHAT is set at
 # launch (research/merger/closeout.sh warns about any run missing here).
 # Lines starting with # are comments.
 # Since 2026-09-24 this file is the PROSE half of the registry.  The facts -- binary
 # and its commit, seeds and whether they took, name-vs-params check -- are generated
-# into runs_index.tsv from each run's run_manifest.json (analysis/run_index.py).
+# into runs_index.tsv from each run's run_manifest.json (pack.run_index, same package).
 #
 # DATA CLASSIFICATION (the user, 2026-09-28). Three kinds of initial data:
 #   exact      -- single-throat runs (groups 01/02): the isolated drainhole is an exact solution; they STAND AS IS.

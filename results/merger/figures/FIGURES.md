@@ -510,7 +510,7 @@ legend or in the caption; there is no in-frame prose at all.
 The scenario table (stream, mode, innermost sphere, gate) is `ARMS` in
 `plot_psi4_gallery.py` and the LIGO figure imports it, so the two figures
 cannot disagree about what a scenario is. The gates: the collapsing throat's
-stream is the queue-2e gated file clipped at t = 70 (QUEUE2E_GATES.md); the
+stream is the gated file clipped at t = 70 (WAVE_GATES.md); the
 fly-by row is now the L = 128 level-5 arm
 (`campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100`,
 (2,2) single-mode file; finished t = 100 clean on 2026-09-18). It is gated at t = 76: no horizon ever

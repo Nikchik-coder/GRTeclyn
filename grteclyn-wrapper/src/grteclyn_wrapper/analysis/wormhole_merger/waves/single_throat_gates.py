@@ -1,15 +1,14 @@
-#!/usr/bin/env python3
-"""The five gates of the wave from ONE throat (GPU_PLAN.md queue 2e).
+"""The five gates of the wave from ONE throat.
 
 A quadrupolar kick is put on a single collapsing throat and the question is
-whether it radiates.  The plan set five gates BEFORE the runs were launched, so
+whether it radiates.  Five gates were set BEFORE the runs were launched, so
 that the answer could not be argued after the fact; this module measures all
 five from the packed streams and writes them down, pass or fail:
 
   1. the burst arrives ORDERED in radius, lag ~ dR;
   2. r.Psi4 (2,0) is equal across the four spheres to a few per cent, read only
-     over a window where the signal has reached ALL FOUR -- and never as
-     run-maxima (the mistake of 2026-09-10, corrected in commit 7b6cc3d8);
+     over a window where the signal has reached ALL FOUR -- never as
+     run-maxima, which compare different stretches of the record;
   3. the amplitude TRACKS eps2 between the arms -- a wave scales with the kick,
      noise does not;
   4. the late signal decays with a period near 2 pi M / 0.374 ~ 26 units and an
@@ -35,9 +34,9 @@ log|envelope|.  Both are straight least squares on numpy alone -- no curve
 fitting, nothing to converge on the wrong solution, and the fit's window
 dependence is reported rather than hidden.
 
-Reads only the packed tree.  Writes campaign/01_single_throat/QUEUE2E_GATES.md.
+Reads only the packed tree.  Writes campaign/01_single_throat/WAVE_GATES.md.
 
-Usage: queue2e_gates.py <pack-root>   (default: this file's parent's parent)
+    python -m grteclyn_wrapper.analysis.wormhole_merger.waves.single_throat_gates [<pack-root>]
 """
 
 from __future__ import annotations
@@ -47,8 +46,7 @@ import sys
 
 import numpy as np
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from pack_paths import find_run, group_dir  # noqa: E402
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import PACK_ROOT, find_run, group_dir
 
 GROUP = "01_single_throat"
 STRONG = "single_eps_p1e2_q5e2_ml4_t100"
@@ -62,6 +60,7 @@ T_QUOTE_MAX = 80.0        # the constraint onset in this family is t ~ 81
 T_JUNK_FREE = 58.0        # the ringdown is fitted only this far
 T_BURST_END = 45.0        # by here the burst has crossed all four spheres
 ARRIVAL_FLOOR = 2.0e-4    # threshold on |r.Psi4| for the arrival time
+MIN_CYCLES = 1.5          # below this a damped sinusoid is not a measurement
 M_MS = 1.56
 TARGET_PERIOD = 2.0 * np.pi * M_MS / 0.374
 TARGET_EFOLD = M_MS / 0.089
@@ -111,16 +110,14 @@ def ringdown(t, y):
     e^(-t/tau) [a cos + b sin] -- so the fit is a scan over (f, tau) with an
     exact 2x2 least squares at each node, then one refinement pass around the
     best node.  Deterministic, no starting guess, and nothing to converge on the
-    wrong solution: the earlier curve-fit version of this measurement returned
-    super-Nyquist aliases when its seed was poor (fixed 2026-09-15, f303b2a9),
-    and a phase-slope estimator reads pure noise on a window shorter than a
-    cycle.  A window carrying less than MIN_CYCLES of the fitted period is not
+    wrong solution: a curve fit returns super-Nyquist aliases when its seed is
+    poor, and a phase-slope estimator reads pure noise on a window shorter than
+    a cycle.  A window carrying less than MIN_CYCLES of the fitted period is not
     fitted at all -- see the callers.
 
-    Cross-checked 2026-09-15 against an independent scipy curve_fit of the same
-    model on the same record: period 20.6 M and f = 0.0485/M from both, and the
-    same window-by-window drift of the e-fold.  The scan is kept because the
-    pack must run on numpy alone.
+    An independent scipy curve_fit of the same model on the same record gives
+    the same period 20.6 M and f = 0.0485/M, and the same window-by-window
+    drift of the e-fold.
     """
     t = np.asarray(t, float)
     y = np.real(np.asarray(y, float))
@@ -252,9 +249,6 @@ def gate3(t_s, cols_s, t_w, cols_w, u_win, out):
     return ratios
 
 
-MIN_CYCLES = 1.5   # below this a damped sinusoid is not a measurement
-
-
 def horizon_mass(run_dir, t0, t1):
     """(M_MS at t0, its minimum over [t0, t1], M_MS at t1) of the MOTS on the
     throat-centred scan (centre A of horizon_scan.dat), or None if not packed."""
@@ -309,7 +303,7 @@ def gate4(t, cols, out, run_dir=None):
         if mass is not None:
             m0, m_min, m1, w0, w1 = mass
             p_lo, p_hi = (2.0 * np.pi * m / 0.374 for m in (m_min, m1))
-            out.append(f"**Against the hole's own mass** (2026-09-24). The fixed target takes M_MS = {M_MS}, "
+            out.append(f"**Against the hole's own mass.** The fixed target takes M_MS = {M_MS}, "
                        f"the scan's reading near t = 24. Over the fitted window (t = {w0:.0f}–{w1:.0f}) the "
                        f"throat-centred scan's M_MS falls {m0:.2f} → {m_min:.2f} and recovers to {m1:.2f}, "
                        f"where the Schwarzschild period 2π M/0.374 is {p_lo:.1f}–{p_hi:.1f} M: the measured "
@@ -356,9 +350,11 @@ def gate5(t_s, cols_s, control, out):
     out.append("")
     out.append(f"Over the burst window (t ≤ {T_BURST_END:.0f}) the control floor is **{floor:.1e}** and the "
                f"seeded arm reads {sig:.1e} at the same sphere — **{sig / floor:.0f}× the floor**.\n")
-    # The paper's gate (referee fixes, 2026-09-26): kept here, not by hand in the
-    # generated file, which every repack rewrites (the 2026-09-27 repack dropped it).
-    out.append('2026-09-26 (referee fixes): the paper quotes this gate against the MATCHED level-4 control, `single_eps_p1e2_q1e2_ml4_scalar_t100` (the +0.01 kick at level 4, no quadrupole read by its binary; Fig. 16\'s floor): floor 6.5e-05 at R = 14, **44×** (75× at R = 10, 25× at R = 18; `extract_waves.waves_q2e(gate="floor_ratio", control=...)`). The table above is the level-3 control.\n')
+    out.append("The paper quotes this gate against the MATCHED level-4 control, "
+               "`single_eps_p1e2_q1e2_ml4_scalar_t100` (the +0.01 kick at level 4, no quadrupole "
+               "read by its binary): floor 6.5e-05 at R = 14, **44×** (75× at R = 10, 25× at R = 18; "
+               "`extract_waves.waves_q2e(gate=\"floor_ratio\", control=...)`). The table above is "
+               "the level-3 control.\n")
     if other:
         R2 = other[0]
         e2 = np.abs(cc[R2])
@@ -373,11 +369,11 @@ def gate5(t_s, cols_s, control, out):
 # ----------------------------------------------------------------------- report
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
-    root = pathlib.Path(argv[0]) if argv else pathlib.Path(__file__).resolve().parents[1]
+    root = pathlib.Path(argv[0]) if argv else PACK_ROOT
 
     d_s = find_run(root, STRONG)
     if d_s is None:
-        print(f"[queue2e] {STRONG} not packed -- skipped")
+        print(f"[wave-gates] {STRONG} not packed -- skipped")
         return 0
     t_s, cols_s = load(d_s / "psi4_mode_l2m0.dat")
     weak = [find_run(root, n) for n in WEAK]
@@ -386,12 +382,13 @@ def main(argv=None):
     control = d_c / "psi4_mode_l2m0.dat" if d_c is not None else None
 
     out: list[str] = []
-    out.append("# The wave from one throat — the five gates of queue 2e\n")
-    out.append("*Generated by `analysis/queue2e_gates.py`; edit that, not this file.*\n")
+    out.append("# The wave from one throat — five gates\n")
+    out.append("*Generated by `grteclyn_wrapper.analysis.wormhole_merger.waves.single_throat_gates`; "
+               "edit that, not this file.*\n")
     out.append(f"A quadrupolar kick (`wormhole_seed_l2_amplitude_A` = {EPS_STRONG}) on the +0.01 spherical "
                "kick of a single collapsing throat, spheres R = 10 / 14 / 18 / 22, against the same "
-               f"kick at ε₂ = {EPS_WEAK} and against the spherical control. The gates were written into "
-               "GPU_PLAN.md before the runs were launched.\n")
+               f"kick at ε₂ = {EPS_WEAK} and against the spherical control. The gates were set "
+               "before the runs were launched.\n")
     out.append(f"- strong arm `{STRONG}`: ε₂ = {EPS_STRONG}, t = {t_s[0]:.0f}–{t_s[-1]:.0f}")
     if weak:
         t_w, cols_w = stitch(weak)
@@ -423,9 +420,9 @@ def main(argv=None):
                "and its damping time cannot be measured on this record at all. Gates 1, 2, 3 "
                "and 5 pass; gate 4 passes on the period and fails on the e-fold.\n")
 
-    dest = group_dir(root, GROUP) / "QUEUE2E_GATES.md"
+    dest = group_dir(root, GROUP) / "WAVE_GATES.md"
     dest.write_text("\n".join(out) + "\n", encoding="utf-8")
-    print(f"[queue2e] wrote campaign/{GROUP}/QUEUE2E_GATES.md ({len(out)} lines)")
+    print(f"[wave-gates] wrote campaign/{GROUP}/WAVE_GATES.md ({len(out)} lines)")
     return 0
 
 

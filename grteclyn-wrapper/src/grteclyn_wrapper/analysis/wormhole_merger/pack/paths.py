@@ -1,24 +1,27 @@
-"""Where a run's packed streams live in results/merger, by name.
+"""Where a run lives, by name: in the pack (results/merger) or in the run tree.
 
-Since 2026-09-10 the pack is filed by physics, mirroring the run tree:
-campaign/<group>/<run>/ with the groups 01_single_throat (filed by question:
-gauge/ grid/ hold/), 03_two_throats,
-04_binary_headon (its one-step placement probes one level deeper, under
-placement/), 05_binary_spiral and 06_binary_flyby (both one level deeper, filed
-by the tangential kick that decides the outcome: p012/ p012_freeze/ p012_ladder/
-p015/ p020/ p025/ capture and merge, p035/ p045/ miss), 07_bbh_control.  Every analysis script resolves
-a run through here, so none of them knows the layout.
+The pack is filed by physics, mirroring the run tree: campaign/<group>/<run>/,
+or one level deeper where a group is split by question (01_single_throat/seed/,
+04_binary_headon/csm/, 06_binary_flyby/verify_p025/, ...).  A run still on a
+card sits at the top level until close-out files it.  Every analysis module
+resolves a run through here, so none of them knows the layout:
 
-    from pack_paths import find_run, iter_runs, group_of
+    from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import find_run, iter_runs
 """
 
 from __future__ import annotations
 
 import pathlib
 
+# .../GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/pack
+REPO = pathlib.Path(__file__).resolve().parents[6]
+PACK_ROOT = REPO / "results" / "merger"
+RUNS_ROOT = REPO / "runs" / "wormhole_merger"
+
 CAMPAIGN = "campaign"
 # Folders inside a run directory that are not runs themselves.
 NOT_RUNS = {"movies", "frames", "part1", "horizon", "__pycache__"}
+RUN_MARKERS = ("evolution_params.txt", "run_tail.log", "LOST.md", "launch_banner.txt")
 
 
 def iter_runs(root: pathlib.Path):
@@ -31,8 +34,7 @@ def iter_runs(root: pathlib.Path):
     for d in sorted(camp.iterdir()):
         if not d.is_dir():
             continue
-        # campaign/00_archive holds the untracked pack extracts of superseded
-        # runs (moved out of the pack, not results): never a resolvable run.
+        # campaign/00_archive holds untracked extracts of superseded runs.
         if d.name == "00_archive":
             continue
         if _is_run(d):
@@ -50,12 +52,10 @@ def iter_runs(root: pathlib.Path):
 
 
 def _is_run(d: pathlib.Path) -> bool:
-    # <run>.__keep is pack_results.sh's temporary copy; ten were committed by an
-    # interrupted pack on 2026-09-16 (byte-identical to their runs' files) and
-    # were being counted as runs, e.g. ten phantom rows in summary.csv.
+    # <run>.__keep is pack_results.sh's temporary copy of a run being repacked.
     if d.name.endswith(".__keep"):
         return False
-    return any((d / f).exists() for f in ("evolution_params.txt", "run_tail.log", "LOST.md", "launch_banner.txt"))
+    return any((d / f).exists() for f in RUN_MARKERS)
 
 
 def find_run(root: pathlib.Path, name: str) -> pathlib.Path | None:
@@ -66,15 +66,19 @@ def find_run(root: pathlib.Path, name: str) -> pathlib.Path | None:
     return None
 
 
-def group_of(root: pathlib.Path, path: pathlib.Path) -> str:
-    """'05_binary_spiral' for campaign/05_binary_spiral/<run>."""
-    rel = path.resolve().relative_to((root / CAMPAIGN).resolve())
-    return rel.parts[0] if len(rel.parts) > 1 else ""
+def find_in_run_tree(root: pathlib.Path, name: str) -> pathlib.Path | None:
+    """The directory of run <name> in the run tree: at the top level while it
+    is on a card, else one or two levels down in its group."""
+    for pattern in (name, f"*/{name}", f"*/*/{name}"):
+        hits = sorted(p for p in pathlib.Path(root).glob(pattern) if p.is_dir())
+        if hits:
+            return hits[0]
+    return None
 
 
 def group_dir(root: pathlib.Path, group: str) -> pathlib.Path:
     """<root>/campaign/<group>, created if missing -- where a group's generated
-    notes (INSTABILITY.md, BRANCHES.md, PLACEMENT_CURVE.md, ...) are written."""
+    notes (INSTABILITY.md, BRANCHES.md, WAVE_GATES.md, ...) are written."""
     d = root / CAMPAIGN / group
     d.mkdir(parents=True, exist_ok=True)
     return d

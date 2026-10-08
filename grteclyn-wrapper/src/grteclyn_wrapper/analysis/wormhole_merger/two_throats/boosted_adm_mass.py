@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 r"""The boosted pairs' ADM mass: the solve's face estimate plus what it leaves out.
 
 The mode-3 solve prints ``M_ADM_face = M_bg + 2 <r w>`` (constraint_solve.dat),
@@ -21,8 +20,8 @@ boost must give), and a shift s / r_rest contributes 2 s asinh(gamma v) /
                        + 2 sum_X s_X [asinh(gamma_X v_X) / (gamma_X v_X) - 1].
 
 The first term is the throats' kinetic energy: 3-17 % of the pair's mass at
-p = 0.25-0.60, which the face estimate dropped (2026-10-06; until then the
-boosted pairs' quoted mass FELL with p, 2.18 / 2.08 / 1.91).  The script checks
+p = 0.25-0.60, which the face estimate drops (read alone, it makes the pair's
+mass FALL with p: 2.18 / 2.08 / 1.91).  The script checks
 both closed-form statements on each run's own (sigma, p, s) by the full
 surface integral of the background's closed forms (BinaryWormholeInitialData::
 boost_background, one throat, two radii extrapolated in 1/R) and refuses if
@@ -32,8 +31,8 @@ c_sup is rebuilt from the pack (superposed_puncture_coefficient on the rescaled
 throats, the companion at its rest-frame distance); for the three fly-by/plunge
 pairs it reproduces the run logs' "superposed" values to 1e-9.
 
-Writes ``boosted_adm_mass.tsv`` beside this script, one row per packed
-exact-boost solve.  The ledger's ``mergers_solved_madm(col="M_ADM_boost")`` and
+Writes ``<pack>/analysis/boosted_adm_mass.tsv``, one row per packed
+exact-boost pair (a single boosted throat is not a pair and is skipped).  The ledger's ``mergers_solved_madm(col="M_ADM_boost")`` and
 the figures read it.  Binaries built from 2026-10-06 on print the same sum as
 constraint_solve.dat's ``M_ADM_boost`` column; where a run has it, the two must
 agree to 1e-6.
@@ -44,7 +43,7 @@ volume identity wherever both exist -- 2.8 % for the d = 12, p = 0.12
 Bowen-York pair on the production box (2.2107 against 2.2748; L = 128), whose
 exact-boost twin reads 2.2127 here.
 
-    python results/merger/analysis/boosted_adm_mass.py [pack]   # pack = results/merger
+    python -m grteclyn_wrapper.analysis.wormhole_merger.two_throats.boosted_adm_mass [<pack-root>]
 """
 
 from __future__ import annotations
@@ -55,8 +54,9 @@ import sys
 
 import numpy as np
 
-HERE = pathlib.Path(__file__).resolve().parent
-OUT = HERE / "boosted_adm_mass.tsv"
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import PACK_ROOT
+
+OUT = pathlib.Path("analysis") / "boosted_adm_mass.tsv"     # inside the pack
 TOL = 1.0e-4
 
 
@@ -151,7 +151,7 @@ def _adm_inf(a, m, gv, s, R1=2000.0, R2=8000.0):
 
 
 def main(argv: list[str]) -> int:
-    pack = pathlib.Path(argv[1]) if len(argv) > 1 else HERE.parent
+    pack = pathlib.Path(argv[1]) if len(argv) > 1 else PACK_ROOT
     campaign = pack / "campaign"
     rows = []
     for cs in sorted(campaign.rglob("constraint_solve.dat")):
@@ -164,8 +164,10 @@ def main(argv: list[str]) -> int:
         p = _params(pfile)
         if p.get("wormhole_momentum_model", [0])[0] != 1:
             continue
-        r = _solve_row(cs)
         b0 = [p["wormhole_throat_radius_A"][0], p["wormhole_throat_radius_B"][0]]
+        if min(b0) <= 0.0:          # throat B removed: a single boosted throat
+            continue
+        r = _solve_row(cs)
         m0 = [p["wormhole_drainhole_mass_A"][0], p["wormhole_drainhole_mass_B"][0]]
         ctr = [np.array(p["wormhole_centerA"]), np.array(p["wormhole_centerB"])]
         P = [np.array(p["wormhole_momentumA"]), np.array(p["wormhole_momentumB"])]
@@ -211,8 +213,8 @@ def main(argv: list[str]) -> int:
 
     header = ("run\tp\tgamma\tsigma_A\tsigma_B\tc_A\tc_sup_A\tc_B\tc_sup_B\t"
               "M_ADM_face\tkinetic\tshift_corr\tM_ADM_boost")
-    lines = ["# The exact-boost pairs' ADM mass (boosted_adm_mass.py): M_ADM_boost = "
-             "M_ADM_face + kinetic + shift_corr.",
+    lines = ["# The exact-boost pairs' ADM mass (grteclyn_wrapper.analysis.wormhole_merger."
+             "two_throats.boosted_adm_mass): M_ADM_boost = M_ADM_face + kinetic + shift_corr.",
              "# kinetic = sum (gamma - 1) sigma m; shift_corr = 2 sum s [asinh(gamma v)/"
              "(gamma v) - 1], s = c - c_sup.  Inputs: each run's packed",
              "# constraint_solve.dat (first row) and evolution_params.txt.",
@@ -220,11 +222,12 @@ def main(argv: list[str]) -> int:
     for row in rows:
         lines.append("\t".join([row[0], f"{row[1]:.4g}"] +
                                [f"{x:.10g}" for x in row[2:]]))
-    OUT.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    out = pack / OUT
+    out.write_text("\n".join(lines) + "\n", encoding="utf-8")
     for row in rows:
         print(f"{row[0]:<80s} p {row[1]:.3g}  face {row[9]:.5f}  + kin {row[10]:.5f}"
               f"  + shift {row[11]:+.5f}  = {row[12]:.5f}")
-    print(f"wrote {OUT} ({len(rows)} runs)")
+    print(f"wrote {out} ({len(rows)} runs)")
     return 0
 
 

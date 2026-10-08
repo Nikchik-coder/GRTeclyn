@@ -1,20 +1,18 @@
-#!/usr/bin/env python3
 """Build runs_index.tsv -- the machine half of the run registry -- and check
 every run's NAME and seeds against what it actually ran.
 
 One row per packed run, from its run_manifest.json (written by run_single.sh
-at launch since 2026-09-24, or reconstructed afterwards by `run_manifest.py
-backfill-all`) and its packed streams.  Nothing here is typed by hand: the
-prose stays in runs_registry.tsv, the facts come from here.
+at launch, or reconstructed afterwards by `run_manifest.py backfill-all`) and
+its packed streams.  Nothing here is typed by hand: the prose stays in
+runs_registry.tsv, the facts come from here.
 
 Four checks, each of which would have caught a real error:
   seed      a seed requested in the params that did not take -- the binary
             lacks the key, the launch-time preflight said "no effect", or the
             run's t = 0 constraint norms are bit-identical to an unseeded run's
-            (how the 2026-09-23 audit found four quadrupole arms without their
-            quadrupole);
+            (how four quadrupole arms were found without their quadrupole);
   name      each token of the run name that name_grammar.tsv knows (q1e2, ml4,
-            p012, eta4, ...) against the params the run used (name_check.py):
+            p012, eta4, ...) against the params the run used (name_check):
             MISMATCH when a token contradicts what ran, "silent" when a knob is
             off its production value and the name does not say so;
   binary    keys in the params that the binary does not contain (frozen binaries
@@ -24,52 +22,37 @@ Four checks, each of which would have caught a real error:
             at t = 145.8 with nothing to restart from).  Same rule as the launch
             preflight (grteclyn-wrapper/.../preflight.py, intent_check).
 
-Usage: run_index.py [<pack-root>]      (default: this file's parent's parent)
+    python -m grteclyn_wrapper.analysis.wormhole_merger.pack.run_index [<pack-root>]
+
 Exit status 0 always (a report, not a gate); the problem count is printed.
-Standard library + numpy only, reading nothing outside the pack.
+Reads nothing outside the pack.
 """
 
 from __future__ import annotations
 
 import csv
 import json
-import math
 import pathlib
 import re
 import sys
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
-from pack_paths import iter_runs  # noqa: E402
-import name_check  # noqa: E402
+from grteclyn_wrapper.analysis.wormhole_merger.pack import name_check
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import PACK_ROOT, iter_runs
+from grteclyn_wrapper.analysis.wormhole_merger.pack.readers import parse_params
 
 SEED_KEYS = ("wormhole_seed_amplitude_A", "wormhole_seed_l2_amplitude_A")
 FIELDS = ["run", "group", "provenance", "binary", "binary_version", "preflight",
           "eps", "eps2", "max_level", "L", "N1", "stop_time", "restart", "H0",
           "seed_check", "name_check", "binary_check", "intent_check"]
-
-
-def parse_params(path: pathlib.Path) -> dict[str, str]:
-    out: dict[str, str] = {}
-    if path.exists():
-        for line in path.read_text(encoding="utf-8", errors="replace").splitlines():
-            m = re.match(r"\s*([A-Za-z_][\w.]*)\s*=(.*)$", line.split("#", 1)[0])
-            if m:
-                out[m.group(1)] = m.group(2).strip()
-    return out
+# Keys no binary reads, by design (see preflight_allow.txt): not a finding.
+ALLOW_DEAD = {"hdf5_subpath", "nonzero_asymptotic_vars", "nonzero_asymptotic_values",
+              "amr.plot_vars", "amr.derive_plot_vars"}
 
 
 def num(params: dict[str, str], key: str, index: int = 0) -> float | None:
     try:
         return float(params[key].split()[index].strip('"'))
     except (KeyError, IndexError, ValueError):
-        return None
-
-
-def vec(params: dict[str, str], key: str) -> list[float] | None:
-    try:
-        v = [float(x) for x in params[key].split()[:3]]
-        return v if len(v) == 3 else None
-    except (KeyError, ValueError):
         return None
 
 
@@ -121,13 +104,14 @@ def first_row(path: pathlib.Path) -> tuple[list[str], list[str]] | None:
 
 
 def main(argv: list[str]) -> int:
-    root = pathlib.Path(argv[0]) if argv else pathlib.Path(__file__).resolve().parents[1]
+    root = pathlib.Path(argv[0]) if argv else PACK_ROOT
     names = name_check.findings(root)
     rows, h0_by_value = [], {}
     for group, d in iter_runs(root):
         man_path = d / "run_manifest.json"
         man = json.loads(man_path.read_text(encoding="utf-8")) if man_path.exists() else {}
-        params = man.get("params") or parse_params(d / "evolution_params.txt")
+        pfile = d / "evolution_params.txt"
+        params = man.get("params") or (parse_params(pfile) if pfile.exists() else {})
         binary = man.get("binary") or {}
         pf = man.get("preflight") or {}
         seeds = {k: num(params, k) or 0.0 for k in SEED_KEYS}
@@ -209,8 +193,9 @@ def main(argv: list[str]) -> int:
 
     out = root / "runs_index.tsv"
     with out.open("w", encoding="utf-8", newline="") as fh:
-        fh.write("# GENERATED by analysis/run_index.py from the packed run_manifest.json files and streams"
-                 " -- do not edit.\n# The prose half of the registry is runs_registry.tsv.\n")
+        fh.write("# GENERATED by grteclyn_wrapper.analysis.wormhole_merger.pack.run_index from the"
+                 " packed run_manifest.json files and streams -- do not edit.\n"
+                 "# The prose half of the registry is runs_registry.tsv.\n")
         w = csv.DictWriter(fh, fieldnames=FIELDS, delimiter="\t", extrasaction="ignore",
                            quoting=csv.QUOTE_NONE, escapechar="\\")
         w.writeheader()
@@ -225,10 +210,6 @@ def main(argv: list[str]) -> int:
             print(f"  {row['run']}: seed {row['seed_check']}; name {row['name_check']}")
     return 0
 
-
-# Keys no binary reads, by design (see preflight_allow.txt): not a finding.
-ALLOW_DEAD = {"hdf5_subpath", "nonzero_asymptotic_vars", "nonzero_asymptotic_values",
-              "amr.plot_vars", "amr.derive_plot_vars"}
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))

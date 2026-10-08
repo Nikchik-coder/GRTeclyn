@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """The rest pairs rerun on far-side-matched data: the sign rule and the force law, old against new.
 
 Every old pair at rest (03_two_throats: ctrl_rest_d12/14/16/18, ctrl_flip_d12) started from the
@@ -18,12 +17,12 @@ forces (Q = (a^2 + m^2)/m^2 = 5, in units of gravity's m^2/d^2):
 so -dsep_flip/dsep_like is +(Q+1)/(Q-1) = 1.5 at fixed potential (what the superposed pairs did:
 1.518 +/- 0.021) and -(Q-1)/(Q+1) = -0.67 at fixed charge.
 
-Measurement: sign_rule.py's, with its pit_centroid imported: inverse-chi-weighted centroids of
+Measurement: sign_rule's, with its pit_centroid imported: inverse-chi-weighted centroids of
 the cached chi_z slices, box +/-3 around each chi minimum, throats split at the frame centre.
 The ratio uses t = 3.5 .. 10.5 only (the gauge settles by t ~ 3); the force law is the
 displacement at t = 11.5 (separation_ladder_2026-09-04.txt), fitted with A/(d + delta)^2.
 
-The width ladder (added 2026-10-05): the like pairs at d = 12 with throat width a = 1/1.5/3
+The width ladder: the like pairs at d = 12 with throat width a = 1/1.5/3
 (ctrl_rest_a{1,15,3}_csm, the superposed a-points' params with only the solve block changed;
 a = 2 is ctrl_rest_d12_csm), the same displacement at t = 11.5, fitted with dsep ~ a^n by least
 squares in log-log over the four widths.  The point-charge prediction is n = 2: the net push is
@@ -31,21 +30,19 @@ squares in log-log over the four widths.  The point-charge prediction is n = 2: 
 
 Reads the RUN TREE (the caches are not packed); writes the reduced table into the pack:
 
-    python results/merger/analysis/matched_rest.py [--runs runs/wormhole_merger] [--pack results/merger]
+    python -m grteclyn_wrapper.analysis.wormhole_merger.two_throats.matched_rest \
+        [--runs runs/wormhole_merger] [--pack results/merger] [--no-write]
 """
 from __future__ import annotations
 
 import argparse
-import glob
-import os
 import pathlib
-import sys
 
 import numpy as np
 
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from pack_paths import group_dir  # noqa: E402
-from sign_rule import pit_centroid  # noqa: E402
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import (
+    PACK_ROOT, RUNS_ROOT, find_in_run_tree, group_dir)
+from grteclyn_wrapper.analysis.wormhole_merger.two_throats.sign_rule import pit_centroid
 
 LIKE = {12: "ctrl_rest_d12_csm", 14: "ctrl_rest_d14_csm", 16: "ctrl_rest_d16_csm", 18: "ctrl_rest_d18_csm"}
 FLIP = {12: "ctrl_flip_d12_csm"}
@@ -77,19 +74,10 @@ def width_exponent(vals: dict[float, float]) -> float:
     return float(np.polyfit(np.log(a), np.log([vals[w] for w in a]), 1)[0])
 
 
-def find_run(runs: str, name: str) -> str | None:
-    """The run directory, at the top of the run tree or filed in a group."""
-    for pattern in (name, f"*/{name}", f"*/*/{name}"):
-        hits = [p for p in glob.glob(os.path.join(runs, pattern)) if os.path.isdir(p)]
-        if hits:
-            return sorted(hits)[0]
-    return None
-
-
-def series(run_dir: str) -> np.ndarray:
+def series(run_dir: pathlib.Path) -> np.ndarray:
     """(t, separation) from every cached chi_z slice, split at the frame centre."""
     rows = []
-    for f in sorted(glob.glob(os.path.join(run_dir, "frames", "_slice_cache", "chi_z", "*.npz"))):
+    for f in sorted((run_dir / "frames" / "_slice_cache" / "chi_z").glob("*.npz")):
         d = np.load(f)
         arr, ext, t = d["arr"], d["extent"], float(d["time"])
         split = 0.5 * (ext[0] + ext[1])
@@ -97,10 +85,10 @@ def series(run_dir: str) -> np.ndarray:
     return np.array(rows)
 
 
-def t0_solve(run_dir: str) -> dict[str, float]:
+def t0_solve(run_dir: pathlib.Path) -> dict[str, float]:
     """The t = 0 row of constraint_solve.dat (M_ADM, sigma, c, far side)."""
-    path = os.path.join(run_dir, "data", "constraint_solve.dat")
-    if not os.path.isfile(path):
+    path = run_dir / "data" / "constraint_solve.dat"
+    if not path.is_file():
         return {}
     head = None
     with open(path, encoding="utf-8") as fh:
@@ -137,15 +125,15 @@ def offset_fit(ds: dict[int, float]) -> tuple[float, float]:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--runs", default="runs/wormhole_merger")
-    ap.add_argument("--pack", default="results/merger")
+    ap.add_argument("--runs", type=pathlib.Path, default=RUNS_ROOT, help="the run tree")
+    ap.add_argument("--pack", type=pathlib.Path, default=PACK_ROOT)
     ap.add_argument("--no-write", action="store_true", help="print only")
     a = ap.parse_args()
 
     ser, solve, names = {}, {}, {}
     for sign, arms in (("like", LIKE), ("flip", FLIP), ("width", WIDTH)):
         for d, name in arms.items():
-            run_dir = find_run(a.runs, name)
+            run_dir = find_in_run_tree(a.runs, name)
             s = series(run_dir) if run_dir else np.empty((0, 2))
             if not len(s):
                 print(f"  {name:<20} {'not in the run tree' if run_dir is None else 'no chi_z slice cache yet'}")
@@ -194,7 +182,7 @@ def main() -> int:
 
     if a.no_write or not ser:
         return 0
-    out = group_dir(pathlib.Path(a.pack), "03_two_throats") / "matched_rest_displacement.dat"
+    out = group_dir(a.pack, "03_two_throats") / "matched_rest_displacement.dat"
     keys = [k for kind, arms in (("like", LIKE), ("flip", FLIP), ("width", WIDTH))
             for k in ((kind, x) for x in arms) if k in ser]
     t_all = np.unique(np.concatenate([ser[k][:, 0] for k in keys]))

@@ -104,8 +104,9 @@ def boosted_adm_mass(name: str, pack_root: pathlib.Path | str | None = None) -> 
 
     The solve's face estimate leaves out each throat's kinetic energy; the
     corrected value is the ``M_ADM_boost`` column of
-    ``<pack>/analysis/boosted_adm_mass.tsv`` (results/merger/analysis/
-    boosted_adm_mass.py).  Raises KeyError for a run the table lacks.
+    ``<pack>/analysis/boosted_adm_mass.tsv`` (grteclyn_wrapper.analysis.
+    wormhole_merger.two_throats.boosted_adm_mass).  Raises KeyError for a run
+    the table lacks.
     """
     root = pathlib.Path(pack_root or PACK_ROOT).expanduser()
     table = root / "analysis" / "boosted_adm_mass.tsv"

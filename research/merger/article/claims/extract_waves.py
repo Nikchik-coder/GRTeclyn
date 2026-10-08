@@ -17,7 +17,7 @@ draws the figure it belongs to, so the ledger cannot drift from the page:
   plot_scalar_censorship     the running-max envelope, its fits, post-horizon E_phi;
   plot_seed_linearity        the rms amplitudes of the quadrupole-seed arms;
   plot_fill_insensitivity    the fill-window twin;
-  analysis/queue2e_gates.py  (in the pack) the five gates of the lone throat's wave.
+  single_throat_gates        (analysis.wormhole_merger.waves) the five gates of the lone throat's wave.
 
 The grteclyn_wrapper modules are imported INSIDE the extractors, so claims.py
 still loads with a numpy-only Python for the other areas.
@@ -67,8 +67,8 @@ def _mass(M) -> float:
 
 
 def _q2e():
-    """The pack's own analysis/queue2e_gates.py (lib put analysis/ on sys.path)."""
-    return importlib.import_module("queue2e_gates")
+    """The lone throat's wave gates (analysis.wormhole_merger.waves.single_throat_gates)."""
+    return importlib.import_module("grteclyn_wrapper.analysis.wormhole_merger.waves.single_throat_gates")
 
 
 @functools.lru_cache(maxsize=None)
@@ -461,7 +461,7 @@ def _q2e_period() -> float:
 
 @extractor
 def waves_q2e(gate: str, stat: str = "mean", control: str | None = None) -> float:
-    """The lone throat's wave gates (analysis/queue2e_gates.py, on its own arms):
+    """The lone throat's wave gates (waves/single_throat_gates.py, on its own arms):
     'arrival_speed' (gate 1, stat min/max over sphere pairs), 'peak_spread'
     (gate 2, % on the peak), 'eps_ratio' (gate 3, mean amplitude ratio for the
     five-fold seed), 'period' / 'period_short' (gate 4: period in M, and % short of
@@ -738,7 +738,7 @@ def waves_memory_ratio(run: str, R: int, t0: float, t1: float, estimator: str = 
     scalar_memory_angmom.budget: estimator 'W' (the wave-zone angular pattern),
     'kin' (that pattern rescaled to the kinematic energy) or 'rad' (the radiative
     l = 1 dipole).  Positive: the negative-energy flux ADDS to the GW memory."""
-    S = importlib.import_module("scalar_memory_angmom")
+    S = importlib.import_module("grteclyn_wrapper.analysis.wormhole_merger.waves.scalar_memory_angmom")
     b = S.budget(run, int(R), float(t0), float(t1), "z")
     h = {"W": b["h_W"][0].real, "kin": b["h_kin"], "rad": b["h_rad"]}[estimator]
     return float(h / b["h_GW"][0].real)
@@ -914,10 +914,10 @@ def waves_newtonian_momentum(run: str, kind: str, mass: float = 1.0) -> float:
 @extractor
 def waves_axis_ratio_dev() -> float:
     """Largest |(|h22/h20|) / sqrt(3/2) - 1|, in %, over both head-ons' spheres
-    (analysis/headon_axis_modes.py, burst-body rms): how closely the z-based
+    (waves/headon_axis_modes.py, burst-body rms): how closely the z-based
     modes split as a quadrupole axisymmetric about the collision axis x must.
     A sphere the record stops short of (nan) is left out."""
-    H = importlib.import_module("headon_axis_modes")
+    H = importlib.import_module("grteclyn_wrapper.analysis.wormhole_merger.waves.headon_axis_modes")
     devs = []
     for run, f20, f22 in H.STREAMS:
         d = PACK / "campaign" / run

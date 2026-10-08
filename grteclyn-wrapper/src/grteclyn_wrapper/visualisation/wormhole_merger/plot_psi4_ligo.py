@@ -110,7 +110,7 @@ M_CODE = {
     # mass measured by the full surface integral (MASS-t0, 2026-10-06:
     # analysis/t0_adm_mass.tsv, 2.4-3.2 % above the prescription); the d = 6
     # pair, unmeasured, the solve's face estimate plus each throat's kinetic
-    # energy (analysis/boosted_adm_mass.py).
+    # energy (analysis/boosted_adm_mass.tsv).
     "spiral": pair_mass("spiral_d6_p010_L128_lvl5from0_t060_lbf_csm"),
     "fly-by": pair_mass("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"),
     # the p = 0.60 pair (its t040 leg's solve); drawn by the LISA panel as a

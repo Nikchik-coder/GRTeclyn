@@ -26,7 +26,7 @@ them.
 | `plot_bbh_ringdown` | the vacuum control's ringdown and its quasi-normal fit — the known answer every instrument is calibrated against | the pack | `figures/07_bbh_control/` |
 | `plot_merger_constraints` | how well the equations are actually satisfied, stitched across a restart chain | the pack | wherever `--out` says |
 | `plot_separation` | one binary arm's separation and throat monitors: does it merge, or fly by | the pack | `figures/06_binary_flyby/` |
-| `plot_placement_curve` | what two throats read simply by being placed near each other, and the throats' own response once that is subtracted | the two tables `analysis/placement_curve.py` writes | `figures/04_binary_headon/` |
+| `plot_placement_curve` | what two throats read simply by being placed near each other, and the throats' own response once that is subtracted | the two placement tables of the superposed probes (no longer in the pack) | `figures/04_binary_headon/` |
 | `plot_boost_contraction` | **the moving throat's Lorentz contraction**: its t = 0 axis ratio along/across the motion against p, on 1/γ = 1/√(1 + p²), and the residual — the boosted setup's check. `--measure` reads the t = 0 plotfiles of the shape set and writes the table first | the pack (`campaign/02_moving_throat/boost_contraction_t0.*`) | `figures/02_moving_throat/` |
 | `plot_branches` | **the lone throat's two fates across resolution** — level 3 collapses, level 4 inflates, at the same rate. Also writes the note `BRANCHES.md`; `--no-figure` writes the note only (what the pack runs) | the pack | `BRANCHES.md` + `figures/01_single_throat/` |
 | `plot_constraint_evolution` | **the paper's code-health figure** (Appendix A, `fig:constraints`): the constraint norms of every run the main-text figures draw, each at its highest refinement level | the pack | `figures/00_code_health/` |
@@ -134,12 +134,11 @@ and nothing copies its output into `results/` or into git.
 
 ## Where the reductions live
 
-Three scripts under `results/merger/analysis/` do reductions and write the
-generated notes (`INSTABILITY.md`, `PLACEMENT_CURVE.md`, `CLOCK_COMPARISON.md`,
-`summary.md`). They stay there and stay figure-free, because a copy of the pack
-has to be runnable with nothing but a stock Python. Where a figure needs their
-numbers, they write a small table beside the note and the figure module reads
-it — that is how `plot_placement_curve` gets its curve.
+The reductions are the wrapper's `analysis/wormhole_merger/` package (its README
+lists them). They write the generated notes (`INSTABILITY.md`,
+`CLOCK_COMPARISON.md`, `WAVE_GATES.md`, `summary.md`) into the pack and stay
+figure-free: where a figure needs their numbers, they write a small table beside
+the note and the figure module reads it.
 
 ## The two branch figures are a pair
 

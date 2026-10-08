@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""The collapsing throat's ringdown (article Sec. VIII.A, queue-2e gate 4):
+"""The collapsing throat's ringdown (article Sec. VIII.A, wave gate 4):
 verify the fitted period against an independent fit, test whether the period
 drifts across the window (does the ring follow the falling horizon mass?),
 and set it against the Schwarzschild l = 2 fundamental of the horizon's
@@ -13,15 +13,11 @@ Reads only the tracked pack; prints a report; writes nothing.
 
 from __future__ import annotations
 
-import sys
-
 import numpy as np
 from scipy.optimize import curve_fit
 
-from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import PACK_ROOT
-
-sys.path.insert(0, str(PACK_ROOT / "analysis"))
-import queue2e_gates as Q  # noqa: E402
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import PACK_ROOT
+from grteclyn_wrapper.analysis.wormhole_merger.waves import single_throat_gates as Q
 
 OMEGA_SCHW = 0.3737     # M omega_R of the Schwarzschild l = 2, n = 0 mode (ledger uses 0.374)
 
