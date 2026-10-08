@@ -94,20 +94,8 @@ Interim (lvl7 to t = 67, and H from lvl5's and FARZONE-ho's Chk02500):
 - After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
   Zenodo record's arXiv link.
 
-RUNS FOR THE PAPER — proposed, no go yet (CLAUDE.md: anything a run or an analysis could settle goes here, with a cost):
-
-| id | what | cost |
-|---|---|---|
-| CONV-lbf-w (recommended) | the wave-zone test on exact-boost data: CONV-csm-w's recipe (`extraction_levels 0 1 0 0`) on P045-T100's params, t = 0–40 | ~11 GPU-h, a whole card |
-| HARM-oct (referee 1, recommended) | the ε = −10⁻² inflating throat in harmonic slicing (octant, F3's template, stop 45): does 1+log shape the inflation? | ~1 GPU-h |
-| SCATTER-box | SCATTER-fate in a bigger box, to follow the inflated mouths past t ≈ 50, where the L = 64 box's collapsed lapse reaches the sponge (a box change: the user's call) | ~25–30 GPU-h (L = 128, N = 256) |
-| SIGN-d (referee minor 2) | flipped rest pairs at d = 14 / 16 / 18 (+ d = 12 at level 4): does pull/push 1.462 tend to 3/2? | ~1–2 GPU-h |
-| FLIP-a | flipped pairs at a = 1.5 / 3: the coordinate under-read against finite size (predicted 1.889 / 1.222) | ~1 GPU-h each |
-| KRETSCH (referee 4) | curvature invariants (R, I, J) at a dying core, from plotfiles every step over a leg's last unit; no death checkpoint is kept, so it reruns to the death | ~1 GPU-h + the rerun |
-| SOLVE-t0 (optional) | the mode-3 d = 8 head-on at t = 0 (`constraint_solve_t0_check.py`) | CPU minutes |
-| PALETTE (no GPU) | a greyscale-safe accent: GOLD and FAINT print as the same grey; re-render every figure | CPU |
-
-Analysis only: E_GW(p = 0.12) on SPIRAL-lbf's packed streams (a fourth point for Sec. VIII D).
+RUNS FOR THE PAPER: none. The proposals listed here until 10-08 (CONV-lbf-w, HARM-oct, six more and one analysis) were dropped
+before the arXiv submission; `git show 2acaa681:research/merger/STATUS.md` has them.
 
 ## Main results (the paper's wording; every quoted number is a ledger row)
 
