@@ -88,8 +88,12 @@ Interim (lvl7 to t = 67, and H from lvl5's and FARZONE-ho's Chk02500):
 - arXiv: gr-qc primary, cross-lists astro-ph.HE and astro-ph.CO. The abstract is cut to ~1,760 rendered characters
   (the form takes 1,920).
 - The source package is research.tex, numbers.tex and the 15 figure PDFs under `figures/`, which the graphicspath
-  searches first. A clean-copy pdfLaTeX build passes (26 pages). Still to fix: the overfull line at tex line 167
-  (10.6 pt) and the 0.6 pt float overrun at line 379.
+  searches first. Clean-copy builds pass on both engines with zero overfull boxes (26 pages; Eq. (force) split
+  10-08 fixed the last one).
+- Referee-response text added 10-08, existing ledger rows only: the LISA SNRs' near-zone error bound (Sec.
+  heavy seeds) and why Fig. 12's L2 norms are large yet the waves clean (Appendix A, the Fig. 11(d) leak test).
+  Still open for the same critique: Fig. 11(e) H(r) outside the MOTS (waits on the node's table), and the
+  three-level GW order quoted from CONV-fz once lvl7 lands.
 - Before submitting: Videos 1–12 public, and both authors' sign-off.
 - After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
   Zenodo record's arXiv link.
