@@ -39,12 +39,13 @@ both engines, text ends on page 21.
   matter-first results pack and develop's own `results/README.md`. The merge is tagged `v1.0-wormhole-merger`;
   branch and tag are pushed.
 - Done 10-08: the repo is switched ON in Zenodo (GitHub sync page, Nikchik-coder/GRTeclyn toggle confirmed).
-- Next (10-09): publish a GitHub release on the tag (public, not a draft) — Zenodo archives it and mints the DOI.
-  The DOI then goes into the cost section's code statement (it cites the tag since 10-08), before the submission.
+- Done 10-08: the GitHub release on the tag is published (public) and Zenodo archived it. Version DOI
+  10.5281/zenodo.23245934 (concept 10.5281/zenodo.23245933). The version DOI is in the cost section's code
+  statement and in `CITATION.cff`; PDF rebuilt, both engines, 26 pages, zero overfull, text ends p. 21.
 - `CITATION.cff`, `.zenodo.json`, `README.md` and `results/README.md` describe this paper since 10-08, with arXiv
   placeholders `XXXX.XXXXX`. `.zenodo.json` has none, because Zenodo validates identifiers: add the arXiv link on the
-  Zenodo record once the number exists. `CITATION.cff` carries `date-released: 2026-10-09` since 10-08; its DOI is
-  added once Zenodo mints it.
+  Zenodo record once the number exists. `CITATION.cff` carries `date-released: 2026-10-09` and the version DOI
+  since 10-08.
 - arXiv: gr-qc primary, cross-lists astro-ph.HE and astro-ph.CO. The abstract is cut to ~1,760 rendered characters
   (the form takes 1,920).
 - The source package is research.tex, numbers.tex and the 15 figure PDFs under `figures/`, which the graphicspath
