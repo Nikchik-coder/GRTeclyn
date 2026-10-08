@@ -21,20 +21,29 @@ Main results in a line or two; the details go to the registry.**
 
 **Next: CONV-fz, the head-on's three-level convergence set (REQUIRED).** lvl5 / FARZONE-ho / lvl7 = Δx 1/16, 1/32,
 1/64, all on FARZONE-ho's L = 512 box. When lvl7 lands:
-1. Copy its Chk02500 to its NFS run dir. Close it out as lvl5 was: into `08_convergence/`, frames kept, no movies.
+1. Copy its Chk02500 to its NFS run dir. Its scratch is on the second node, so the copy runs there. Close it out
+   as lvl5 was: into `08_convergence/`, frames kept, no movies.
 2. Read the three levels to t = 100: Richardson on the common MOTS (birth t, R, M_MS), the throat tracks and
    r Ψ4 / E/M at R = 10–44.
-3. Read Ham and Mom on the finest common levels outside the MOTS from the three Chk02500. This needs an AMReX
-   checkpoint reader, which is still to write. Then wipe the three checkpoints.
+3. Read H outside the MOTS from the three Chk02500 with
+   `grteclyn-wrapper/scripts/analysis/merger_feedback/c_checkpoint_hamiltonian.py` (level 4, `--dx0 2.0 --centre
+   256 256 256 --half 7.9 --rmin 3.7 --rstep 0.3`; it reads H and Θ, not Mom). Then wipe the three checkpoints.
 4. Table III already counts it, as an in-flight estimate (+1 run, +30.31 GPU-h: 22.18 h to t = 68.3, then 8.13 h at
    3.9 u/h). At its pack: list it in `table1_groups.tsv` as `convergence, mode 3`, then drop the constants from
    `clmDetRunsTotal`, `clmDetRunsConvergence` and `clmDetGpuHours` (ledger_detector.tsv). Until then the claims
    check fails on those rows (it double-counts the run).
 
-Interim (lvl7 to t = 67):
+At t = 100 every fine level is one cube about the centre: level 4 ±10, level 5 ±5, level 6 ±2.5 (level 7 ±1.25
+expected). The MOTS has coordinate radius 3.48–3.53, so level 6 pokes out of it only in its cube's corners
+(r ≤ 4.33). The checkpoints hold 27 components in the code's order, with 3 ghost cells, as little-endian doubles.
+
+Interim (lvl7 to t = 67, and H from lvl5's and FARZONE-ho's Chk02500):
 - E/M at R = 10 converges (C = 3.2, order ~1.7); FARZONE-ho is within 0.1 % of the extrapolated value.
 - The MOTS R and M_MS agree across the levels to ≤ 6e-4.
 - The r Ψ4 differences (~1e-3 of peak) shrink more slowly than second order: the χ-floored core.
+- ⟨H_ADM⟩ on level 4 outside the MOTS (r = 3.7–7.3): −4.9e-4 falling to −2.3e-4, the same in lvl5 and FARZONE-ho
+  to 0.6–1.4 % (FARZONE-ho ~1 % larger). Θ agrees to ~1.5 %. So the exterior violation does not move when the finest
+  level goes from 5 to 6. The r = 7.6 shell is the cube's edge and is not read.
 
 **Paper updates waiting on the user's call:**
 - FARZONE-ho's far-zone energy: Sec. VIII and Fig. `convergence`(c). (Fig. 8's head-on row is FARZONE-ho since 10-08;
