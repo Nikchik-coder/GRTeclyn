@@ -27,7 +27,7 @@ Sections
 
 Conventions: R, M_MS are the oriented star scan's (the scan's sphere bounds the
 MOTS from inside, so R is a lower bound on the MOTS areal radius); code units,
-throat mass m = 1 each, M_ADM = 2 (clmHeadonADMMass); R* = 3.8895 (clmRstar,
+throat mass m = 1 each, M_ADM = 2; R* = 3.8895 (clmRstar,
 closed form).  Rows of the fill arms whose surface sits inside the fill's taper
 (r_mots <= core_fill_radius_start) are surfaces of the device and are dropped.
 """
@@ -56,7 +56,7 @@ V1C = "merge_headon_flip_d8_v1c_latefreeze_t100"        # level 3, fill 1.2/1.8,
 EPSM = "merge_headon_flip_d8_v1c_eps_m1e2_t100"         # V1c + eps = -1e-2 on both throats
 SEAMED = "merge_headon_flip_d8_v1_lvl5_t100_r02200"     # offline anchors at t = 42.5 / 43
 
-M_ADM = 2.0                                  # clmHeadonADMMass (params: 1 + 1)
+M_ADM = 2.0                                  # params: 1 + 1
 # Schwarzschild l = 1, n = 0 massless-scalar quasinormal frequency, M omega =
 # 0.2929 - 0.0977 i (the standard value; numerical and 6th-order WKB agree, e.g.
 # the tables in J. Phys. Stud. 8, 93 (2004)).  Used only for an order of magnitude.
@@ -189,7 +189,7 @@ def main(argv: list[str] | None = None) -> int:
     Minf = XM.mergers_headon_fit(run=DOWN, what="Minf")
     keep("Minf/M_ADM", Minf / M_ADM, "clmHeadonMassAsymptote / clmHeadonADMMass")
     keep("shrink_R_form_to_t97", 1 - R_e / R_f, "clmHeadonShrink")
-    # the placed mouths read wide at t = 0 (PLACEMENT_CURVE.md); the pair's own t = 0 reading
+    # the placed mouths read wide at t = 0; the pair's own t = 0 reading
     s0 = XM._scan(ARM, "A")
     keep("R_mouth_t0_placed", s0["R_min"][0], f"{ARM}/horizon_scan.dat centre A, t = 0 (placement: +14.4 % at d = 8)")
     keep("R_form/(sqrt2*R_mouth_t0)", R_f / (math.sqrt(2) * s0["R_min"][0]), "ratio against the placed mouths")

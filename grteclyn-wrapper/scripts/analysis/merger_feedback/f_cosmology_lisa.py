@@ -60,8 +60,6 @@ from grteclyn_wrapper.visualisation.wormhole_merger import plot_heavy_seeds as H
 # The noise, the record's spectrum and the burst SNR are gw_search.lisa's
 # (2026-09-25: one implementation for this script, Fig. heavy_seeds and the
 # claims extractors).  "fig16" is the instrument noise the PLS is built from.
-INC_POWER = LISA.INC_POWER
-SNR_THRESHOLD = LISA.SNR_THRESHOLD
 F_MIN, F_MAX = LISA.F_MIN, LISA.F_MAX
 YEAR_S = LISA.YEAR_S
 C_MPC_PER_YR = 299792.458 * YEAR_S / 3.0857e19

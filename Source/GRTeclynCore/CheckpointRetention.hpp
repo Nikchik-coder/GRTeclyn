@@ -84,7 +84,7 @@ inline void prune(const std::string &a_check_file_root, int a_keep,
         }
     }
 
-    // Every complete checkpoint of THIS run: <prefix> followed by digits only.
+    // Every checkpoint of THIS run: <prefix> followed by digits only.
     std::vector<std::pair<long long, fs::path>> checkpoints;
     for (const auto &entry : fs::directory_iterator{dir, ec})
     {

@@ -38,7 +38,6 @@ from __future__ import annotations
 
 import argparse
 import pathlib
-import string
 
 import matplotlib
 import numpy as np

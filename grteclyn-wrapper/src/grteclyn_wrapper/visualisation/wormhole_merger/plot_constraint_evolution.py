@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 r"""Code health on one page: the constraint record of every run the paper draws.
 
-The appendix figure "Code health and constraint evolution" (2026-09-26, the
-user: "for fig 1 2 4 6 9 extract the measurement plots, the ones that validate
+The appendix figure "Code health and constraint evolution" (2026-09-26:
+"for fig 1 2 4 6 9 extract the measurement plots, the ones that validate
 the results are correct, and move them to the single plot in appendix that
 covers the constraints for all of them; keep the physical observables").  Each
 panel is the constraint panel its main-text figure used to carry, drawn from
@@ -84,7 +84,6 @@ from matplotlib.lines import Line2D  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import (  # noqa: E402
     plot_headon_collapse as headon,
-    plot_momentum_orbits as orbits,
     plot_psi4_gallery as gallery,
     plot_seed_branches,
     plot_single_collapse as collapse,
@@ -117,8 +116,6 @@ FLYBY_GROUP = "06_binary_flyby"
 FLYBY = "merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"
 FLYBY_TRUST = 67.6    # trust_windows.tsv: sustained L2 Ham crossing of 2.5e-2
 FLYBY_GATE_ROW = "clmEgwGateFortyFive"   # the wave gate: recomputed by that ledger row's extractor
-FLYBY_READ = (0.0, 30.0, 40.0, 43.0, 50.0, 60.0, 70.0, 80.0, 100.0)   # printed
-FLYBY_FLOOR = (30.0, 40.0)  # the floor the growth is measured against (median)
 
 
 def _ledger_value(row_id: str) -> tuple[float, str]:
@@ -238,8 +235,7 @@ def pure_quadrupole(ax, pack) -> None:
 
 
 def _param(run: pathlib.Path, key: str) -> float:
-    """One numeric key of a packed run's evolution_params.txt (the reader the
-    pre-csm plot_headon_collapse carried; local since its 09-30 rewrite)."""
+    """One numeric key of a packed run's evolution_params.txt."""
     for ln in (run / "evolution_params.txt").read_text().splitlines():
         ln = ln.split("#", 1)[0].strip()
         if "=" in ln:

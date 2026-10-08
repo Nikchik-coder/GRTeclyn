@@ -260,23 +260,8 @@ struct BinaryThroatDiagnostics
 
         // ---- Pass 3: theta_+ on radial SHELLS about A, B and their midpoint --
         //
-        // A closed surface is trapped when theta_+ <= 0 EVERYWHERE on it, so
-        // the statistic that matters per coordinate sphere is the MAXIMUM of
-        // theta_+ over that sphere.  Reducing a global minimum over all points
-        // instead - the obvious but wrong thing - declares a horizon as soon as
-        // a SINGLE point of a large sphere about throat A happens to graze
-        // throat B, where B's steep gradients drive theta_+ locally negative.
-        // That produces an enormous phantom "trapped surface" straddling
-        // the whole binary at t = 0, and no exclusion radius fixes it: the
-        // grazing region extends over a distance set by the separation, not by
-        // the throat radius.
-        //
-        // Shells the finest level does not COVER carry no verdict.  Under AMR
-        // the fine grid is a small patch around the throats, so most large
-        // shells are empty or partial; an unsampled shell must read "unknown",
-        // never "trapped".  Coverage is tested against the shell volume in
-        // cells; uncovered shells are skipped and, if none is covered, the
-        // reported theta is the BIG sentinel (1e30 = no verdict).
+        // Reduced as the MAXIMUM of theta_+ per shell, and uncovered shells
+        // carry no verdict; the class comment ("IMPORTANT") says why.
         constexpr int NSHELL       = 256;
         const amrex::Real shell_dr = amrex::max(
             dx_arr[0], amrex::max(dx_arr[1], amrex::Real(dx_arr[2])));

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Score a single-drainhole static-hold run against the closed form.
 
-research/merger/Plan.md, implementation plan Stage 1.
+Implementation plan Stage 1.
 
 The massive Ellis-Bronnikov drainhole is an EXACT fixed point of the evolved
 CCZ4 + 1+log + Gamma-driver system: the spatial metric is conformally flat so
@@ -22,8 +22,7 @@ Two numbers are worth having and they answer different questions:
     A genuine throat instability would peak AT the throat instead.
 
 Do not read min(chi) as a throat tracker.  For a wormhole the global minimum of
-chi is the compactified far infinity at rbar -> 0, not the minimal surface; see
-the header of params_stage1_hold.txt.
+chi is the compactified far infinity at rbar -> 0, not the minimal surface.
 
 Usage:
     drainhole_hold_report.py RUN_DIR [RUN_DIR ...] [-a A] [-m M] [--times ...]

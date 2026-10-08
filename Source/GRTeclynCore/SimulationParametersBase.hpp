@@ -289,8 +289,6 @@ class SimulationParametersBase : public AMReXParameters
         // NOLINTEND(bugprone-branch-clone)
         else if (formulation == CCZ4RHS<>::USE_BSSN)
         {
-            // maybe we should just set these to zero and print a warning
-            // in the BSSN case
             warn_parameter("kappa1", ccz4_params.kappa1,
                            ccz4_params.kappa1 == 0.0,
                            "setting to 0.0 as required for BSSN");

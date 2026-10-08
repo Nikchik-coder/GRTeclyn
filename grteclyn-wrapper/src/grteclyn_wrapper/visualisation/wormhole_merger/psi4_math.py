@@ -377,7 +377,7 @@ def _find_peak_times(
         peaks_list: List[Tuple[float, float]] = []
 
         prominence = 0.1 * np.max(env_masked[mask]) if np.any(mask) else 0.0
-        idxs, props = find_peaks(env_masked, prominence=max(prominence, 1e-30))
+        idxs, _ = find_peaks(env_masked, prominence=max(prominence, 1e-30))
         if len(idxs) > 0:
             order = np.argsort(-env_masked[idxs])
             for idx in idxs[order[:5]]:

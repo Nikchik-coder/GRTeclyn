@@ -269,8 +269,8 @@ def figure(pack_root=PACK_ROOT):
     style.legend_top(ax_a, handles, ncol=2)
 
     # (b) the axis ratio against the boost speed, on 1/gamma -- no free
-    # parameter -- drawn to v = c, where the throat flattens to a disc (the
-    # user, 2026-09-30: "lets also plot predictions till v = c").  The speed
+    # parameter -- drawn to v = c, where the throat flattens to a disc
+    # (2026-09-30: "lets also plot predictions till v = c").  The speed
     # axis is the one on which the law reaches its limit: v = 1 is p = inf.
     vs = np.linspace(0.0, 1.0, 400)
     ax_b.plot(vs, np.sqrt(1.0 - vs * vs), color=style.GOLD, lw=1.1, zorder=2)

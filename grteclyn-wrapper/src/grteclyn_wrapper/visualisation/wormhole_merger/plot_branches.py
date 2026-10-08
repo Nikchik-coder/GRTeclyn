@@ -103,7 +103,6 @@ def parse_scans(path: pathlib.Path) -> tuple[list[dict], dict[str, np.ndarray]]:
 def main(argv: list[str]) -> int:
     """Pack root as a positional or as --pack-root; the packer uses the flag,
     which every other module in this package also accepts."""
-    rest = [a for a in argv[1:] if a not in ("--pack-root",)]
     prev_flag = False
     positional = []
     for a in argv[1:]:
@@ -324,7 +323,6 @@ def figure_panels(axA, axB, root: pathlib.Path, legends: bool = True) -> None:
     row in plot_single_throat_row).  ``style.prd`` must already be active.
     """
     ar = {k: load(root, ARMS[k], "areal_radius.dat") for k in ("ml2", "ml3", "ml4")}
-    p3, p4 = plateau_rate(ar["ml3"]), plateau_rate(ar["ml4"])
     KW = {
         "ml2": dict(color=style.MUTED, linewidth=1.0, linestyle=(0, ())),
         "ml3": dict(color=style.INK, linewidth=1.4, linestyle=(0, (4, 2.5))),

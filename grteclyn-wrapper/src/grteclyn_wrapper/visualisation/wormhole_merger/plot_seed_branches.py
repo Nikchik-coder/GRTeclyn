@@ -47,8 +47,8 @@ STYLE (2026-09-16, "PRD review style"): a single-column REVTeX figure -- full
 box frame, inward ticks on all four sides with minors, no grid, and NO boxed
 key: a five-row legend made the measuring `legend()` grow a dead band above
 the curves, so each arm is named in place along its own curve and the axis
-hugs the data (user, 2026-09-16).  NO colour: the
-user's call, twice (2026-09-10 "no coloring", 2026-09-16 again when a signed
+hugs the data (2026-09-16).  NO colour, decided twice
+(2026-09-10 "no coloring", 2026-09-16 again when a signed
 palette was tried) -- identity is the dash (solid in, dashed out) and the
 weight (the size).  The numbers that used to sit in the caption (growth rates,
 how far each arm has run, where the scan clips) are printed to the console
@@ -393,8 +393,8 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
             fit_top = (f1, exact + np.exp(lnA + lam * f1))
         print(f"  exp fit {lab:>6s} over t = {f0:.0f}-{f1:.0f}:"
               f" rate {lam:.3f}, tau {1 / lam:.2f}")
-    # One gold name serves both gold lines, in equation form -- the
-    # user's call (2026-09-16): "exp. fit" out, the law itself in.  Up-left of
+    # One gold name serves both gold lines, in equation form (decided
+    # 2026-09-16): "exp. fit" out, the law itself in.  Up-left of
     # the inflation fit's end, where the heavy arm has not yet risen.
     if fit_top is not None:
         axA.text(fit_top[0] - 1.0, fit_top[1] + 0.15, r"$\propto e^{t/\tau}$",
@@ -411,7 +411,7 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
     # ---- names written along the curves, no boxed key ----------------------
     # A five-row key forced the measuring legend to grow the axis until a dead
     # band sat above every curve; a two-column key still needed a third of the
-    # frame.  So the box went (user, 2026-09-16) and each arm is named in
+    # frame.  So the box went (2026-09-16) and each arm is named in
     # place: inflating arms along their rise (the heavy one up-left, the light
     # one down-right, each on its own empty side), the stalled arm above its
     # flat line, the dead arm at its cross.  Anchors are read off the data, so
@@ -579,8 +579,7 @@ def figure_panels_constraints(axH, axM, pack_root) -> None:
         ax.set_xlim(0, 100)
         ax.set_xlabel(r"$t$")
         ax.set_ylabel(ylab)
-    # two names in place, sparing the caption a hunt: the ceiling pair at its
-    # cross, the control at its late rise (axH only; (e) reads by grammar)
+    # two names in place, sparing the caption a hunt.
     # The ceiling pair is named up-right of its later cross (t = 15.2), in
     # the empty band above the flat norms; offsets in points.
     ceil = [a for lab, a in drawn if lab in ("+0.1", "-0.1")]

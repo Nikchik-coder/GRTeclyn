@@ -23,9 +23,8 @@
 /// CCZ4RHSWithMatter evaluation, so the total effective dissipation is:
 ///   sigma_total(r) = sigma_base + extra_sigma(r)
 ///
-/// Design: Option A from SPONGE_ZONE_INTEGRATION_PLAN.md — per-example,
-/// applied in RadialRecipeMatterDispatch::eval_rhs() as a second ParallelFor.
-/// No changes to shared CCZ4 infrastructure.
+/// Design: per-example, applied in RadialRecipeMatterDispatch::eval_rhs() as
+/// a second ParallelFor.  No changes to shared CCZ4 infrastructure.
 struct SpongeZoneParams
 {
     bool enabled{false};

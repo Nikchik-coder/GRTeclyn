@@ -15,7 +15,7 @@ fields) norm, and write to ``frames_log/`` rather than over ``frames/``.  The
 linear frames stay exactly as they were -- the two say different things and
 both are worth keeping.
 
-    logscale_frames.py <run>/frames [--only chi_z ...] [--ring R] [-j N]
+    frames_logscale.py <run>/frames [--only chi_z ...] [--ring R] [-j N]
 
 ``--ring`` draws a circle of that coordinate radius on every frame.  For a
 drainhole it is the difference between a diagnostic and a picture: the throat

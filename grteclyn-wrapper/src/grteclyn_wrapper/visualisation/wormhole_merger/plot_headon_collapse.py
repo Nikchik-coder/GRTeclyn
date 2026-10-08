@@ -63,15 +63,13 @@ The era rules at t = 35 and 50.8 mark the seams in every panel, with the
 levels named in (c), the composition panel -- the spiral collapse page's
 grammar for a history drawn across legs.  style.prd frame, letter tags
 above the frames, every series named in place, no boxed key.  GOLD is the
-horizon instrument -- open circles the live round scan, filled diamonds the
-oriented scan -- and nothing else.
+horizon instrument and nothing else.
 """
 
 from __future__ import annotations
 
 import argparse
 import pathlib
-import re
 
 import matplotlib
 import numpy as np
@@ -108,7 +106,6 @@ SETTLE = 0.15          # time clipped after a restart (incomplete hierarchy)
 T_MOTS = 18.0          # horizon birth: the 3D finder's first converged row
 T_SEAM1 = 35.0         # leg 1 -> leg 2 (level 5 -> 6)
 T_SEAM2 = 50.8         # leg 2 -> leg 3 (level 6 -> 4)
-T_NAN = 38.845         # leg 1's death: NaN in h11 at the merged core
 
 R_STAR = 3.8895        # one isolated throat, closed form for a = 2, m = 1 (clmRstar)
 M_ADM = 2.3573         # the pair's ADM mass, mode-3 volume identity (leg 1's solve)
@@ -334,8 +331,6 @@ def main(argv: list[str] | None = None) -> int:
     axC.set_ylabel(r"$\chi$-pit separation")
     # The composition named in ITS panel: one level per era, above the
     # curve's start (the separation opens at 8.0).
-    # "level" and the digit stack in the first era (one line is wider than
-    # the 22 units left of the t = 22 rule at this panel's width).
     # The bare digit, as in (d): "level" overran the left spine at this
     # panel's width ((a) and (e) carry the word; 2026-10-06).
     for x, name in ((8.0, "5"), (43.0, "6"), (76.0, "4")):

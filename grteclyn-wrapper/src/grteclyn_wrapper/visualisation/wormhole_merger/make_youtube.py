@@ -4,14 +4,13 @@ r"""Upload-ready 1080p videos of the wormhole-merger campaign.
 The campaign's movies are one field per file, 628x538, 10 fps, drawn for
 reading a diagnostic -- not for watching.  This builds the watchable version:
 the fields that carry each encounter, 2x2 and in sync, on the left of one
-1920x1080 canvas; on the right, a key of the panels, a caption saying what is
+1920x1080 canvas; on the right, a caption saying what is
 happening, and the credits, all set in Computer Modern like the paper; and an
 ownership mark inside the plot area of every panel (cropping one away crops
 the data with it).
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube
     python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube --only headon
-
 
 It is the merger campaign's counterpart to ``scripts/plot/youtube_sidebyside.sh``
 (the Bondi set), and deliberately NOT a copy of it: that one pairs matter
@@ -51,13 +50,6 @@ which is not the same as what the paper measures from:
   horizon, and the vacuum controls, where the wave is textbook and the
   comparison IS the result.
 
-A CAVEAT THAT HAS TO TRAVEL ON THE FRAME, not only in a description a viewer
-may not open: past t = 59.94 the spiral is the frozen-core arm, so its dark
-centre stops evolving BY CONSTRUCTION.  ``caption2`` says so for that video.
-The same goes for the late grid-scale speckle documented in the movies README --
-the last third of any Weyl panel is below the campaign's own noise floor, and
-the caption says to read it as noise rather than structure.
-
 Sources are the curated masters in ``results/merger/movies/<group>/<run>/``,
 never a run's scratch copy, so what is published is what is filed.
 
@@ -90,7 +82,7 @@ GROUND = "0x0E1216"
 PANEL_BG = "0xFFFFFF"
 W_OUT, H_OUT = 1920, 1080
 # The grid sits at the LEFT edge, as tall as the canvas allows, and every word
-# of text except the title goes in a column to its right: the panel key, the
+# of text except the title goes in a column to its right: the
 # captions, the sponsor and the credit (the chosen design, 2026-10-05).  Under
 # the grid, the captions ran as two full-width lines a viewer could not read in
 # one pass, and they cost the panels 130 px of height.
@@ -118,8 +110,8 @@ SIDE_PAD_R = 28       # right margin of the side column
 # other glyph or none (a Unicode dash, arrow or Greek letter).  ffmpeg's
 # drawtext, which set the text before, wrapped nothing and dropped a whole line
 # at a bare per-cent sign (2026-09-21); none of that applies here.
-INK = "#F0F0F0"         # title, first caption, key names, sponsor
-INK_SOFT = "#B6BCC2"    # second caption, key heads, "Research sponsored by"
+INK = "#F0F0F0"         # title, first caption, label names, sponsor
+INK_SOFT = "#B6BCC2"    # second caption, label roles, "Research sponsored by"
 INK_FAINT = "#89929B"   # speed note, credit
 RULE = "#3E464E"        # the side column's hairlines
 TITLE_PX, SPEED_PX = 36, 22
@@ -377,8 +369,8 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
                  + f",pad={W_OUT}:{H_OUT}:{GRID_X0}:{HEAD_H}:color={GROUND}[canvas]")
     # The grid's true geometry, so labels and marks land ON the panels.  Placing
     # text by canvas fractions once put the ownership marks in the dark margins
-    # OUTSIDE the plots -- trivially croppable, which defeats them (
-    # 2026-10-05).
+    # OUTSIDE the plots -- trivially croppable, which defeats them
+    # (2026-10-05).
     geom = {"x0": GRID_X0, "y0": HEAD_H, "w": pw * cols, "h": rows * (LABEL_H + ph),
             "pw": pw, "ph": ph}
     return ";".join(parts), cols, rows, geom

@@ -7,8 +7,7 @@ Why this exists
 puncture to the conformal factor, ``psi += m/(2 rbar)``.  That works for black
 holes and is fatal for a wormhole: it drives chi -> 0 *at the throat itself*, so
 the proper cell width dx/sqrt(chi) at the minimal surface exceeded the throat's
-own areal radius and no matter model could be evaluated on the geometry (see
-research/merger/Plan.md, "Route B traps").
+own areal radius and no matter model could be evaluated on the geometry.
 
 The massive drainhole earns the same ADM mass from the LAPSE instead and leaves
 the spatial conformal factor bounded.  In the isotropic radius rbar the code

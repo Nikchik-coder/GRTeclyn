@@ -2,7 +2,7 @@
 r"""The p = 0.12 spiral's wall: refinement from one checkpoint, then every other start.
 
 The article's Fig. for sec:spiral:wall, a two-column strip since 2026-09-23 (the
-user: the gauge arms "have a different start time -- we can have a second plot,
+gauge arms "have a different start time -- we can have a second plot,
 so it is two columns like the other figures").
 
 (a) THE LADDER.  Every arm starts from ONE t = 50 state and raises max_level;
@@ -40,7 +40,6 @@ import argparse
 import pathlib
 
 import matplotlib
-import numpy as np
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402

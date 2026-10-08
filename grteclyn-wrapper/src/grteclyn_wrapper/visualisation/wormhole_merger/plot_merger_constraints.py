@@ -94,8 +94,6 @@ def main() -> None:
         t = float(tval)
         for ax in (ax_h, ax_m):
             ax.axvline(t, color=style.FAINT, ls=(0, (2, 2)), lw=0.8, zorder=1)
-        # Labels alternate high/low so a cluster of markers stays readable
-        # instead of overprinting the way it did at t = 45 / 50 / 53.
         ax_h.annotate(vlab, (t, 1.0), xycoords=("data", "axes fraction"),
                       xytext=(2, -3), textcoords="offset points",
                       va="top", ha="left", rotation=90,

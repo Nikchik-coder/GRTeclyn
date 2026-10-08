@@ -34,8 +34,6 @@ Sections
 
 from __future__ import annotations
 
-import pathlib
-
 import numpy as np
 
 from grteclyn_wrapper.visualisation.wormhole_merger import plot_seed_linearity as P
@@ -172,7 +170,6 @@ def main():
           " eps2 = 0.1 moves the poles by +20 % and the equator by -10 %; eps = +-0.1 moves the whole throat by +-20 %")
 
     print("\n=== 5. waveform shape, seed-normalised and floor-subtracted, over t = 20-50")
-    tq = np.arange(20.0, W1 + 1e-9, 0.05)
 
     def match(ta_, a_, tb_, b_, lo, hi):
         q = np.arange(lo, hi + 1e-9, 0.05)

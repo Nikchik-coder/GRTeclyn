@@ -117,7 +117,6 @@ class AMReXParameters
 
     void read_params(GRParmParse &pp)
     {
-        // must be before any amrex::Print() in the code to setPoutBaseName
         read_filesystem_params(pp);
 
         pp.load("verbosity", verbosity, 0);
@@ -205,12 +204,9 @@ class AMReXParameters
 
     void read_filesystem_params(GRParmParse &pp)
     {
-        // In this function, cannot use default value - it may print a 'default
-        // message' to pout and a 'setPoutBaseName' must happen before
         restart_from_checkpoint = pp.contains("restart_file");
 
 #ifdef AMREX_USE_MPI
-        // Again, cannot use default value
         if (pp.contains("pout_prefix"))
         {
             pp.load("pout_prefix", pout_prefix);
@@ -254,10 +250,6 @@ class AMReXParameters
             pout_path += "/";
         }
 #endif
-#if 0 
-        if (!hdf5_path.empty() && hdf5_path.back() != '/')
-            hdf5_path += "/";
-#endif
 
         if (output_path != "./" && !output_path.empty())
         {
@@ -267,12 +259,8 @@ class AMReXParameters
         }
 
 #ifdef AMREX_USE_MPI
-        // change pout base name!
         FilesystemTools::ensure_directory_exists(pout_path);
-        // xxxxx setPoutBaseName(pout_path + pout_prefix);
 #endif
-
-        // only create hdf5 directory in setupAMRObject (when it becomes needed)
     }
 
     // NOLINTBEGIN(readability-function-cognitive-complexity)
@@ -489,27 +477,12 @@ class AMReXParameters
             grid_buffer_size >= ceil(num_ghosts / 2.0),
             "must be >= ceil(num_ghosts/max_ref_ratio) for proper nesting");
 
-        // check the restart_file exists and can be read if restarting from a
-        // checkpoint
-#if 0 // TODO
-        if (restart_from_checkpoint)
-        {
-            bool restart_file_exists =
-                (access((restart_file).c_str(), R_OK) == 0);
-            check_parameter("restart_file", restart_file, restart_file_exists,
-                            "file cannot be opened for reading");
-        }
-#endif
-
         check_parameter("dt_multiplier", dt_multiplier, dt_multiplier > 0.0,
                         "must be > 0.0");
         check_parameter("max_grid_size/max_box_size", max_grid_size,
                         max_grid_size >= 0, "must be >= 0");
         check_parameter("block_factor/min_box_size", block_factor,
                         block_factor >= 1, "must be >= 1");
-        //        check_parameter("block_factor/min_box_size", block_factor,
-        // xxxxx                        Misc::isPower2(block_factor), "must be a
-        // power of 2");
         // note that this also enforces block_factor <= max_grid_size
         // if max_grid_size > 0
         check_parameter("block_factor/min_box_size", block_factor,
@@ -537,7 +510,6 @@ class AMReXParameters
                         std::filesystem::is_directory(output_path),
                         "should be a valid directory");
         // pout directory exists - we create it in read_filesystem_params()
-        // can't check hdf5 directory yet - only created after
     }
 
     void set_amrex_params()
@@ -730,26 +702,6 @@ class AMReXParameters
             amrex::Warning(warning_message_ss.str().c_str());
         }
     }
-
-    template <typename T, size_t N>
-    void check_array_parameter(const std::string &a_name,
-                               const std::array<T, N> &a_value,
-                               const bool a_valid,
-                               const std::string &a_invalid_explanation)
-    {
-        std::string value_str = ArrayTools::to_string(a_value);
-        check_parameter(a_name, value_str, a_valid, a_invalid_explanation);
-    }
-
-    template <typename T, size_t N>
-    void warn_array_parameter(const std::string &a_name,
-                              const std::array<T, N> &a_value,
-                              const bool a_nowarn,
-                              const std::string &a_warning_explanation)
-    {
-        std::string value_str = ArrayTools::to_string(a_value);
-        check_parameter(a_name, value_str, a_nowarn, a_warning_explanation);
-    }
 };
 
-#endif /* CHOMBOPARAMETERS_HPP_ */
+#endif /* AMREXPARAMETERS_HPP_ */

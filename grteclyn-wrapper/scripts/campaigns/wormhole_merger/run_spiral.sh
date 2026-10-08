@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# BinaryWormholeMerger -- spiral/orbit entry point (research/merger/archive/Plan_2026-09-02.md Stage 2.5).
+# BinaryWormholeMerger -- spiral/orbit entry point.
 #
 # Thin front-end over run_single.sh ("single" = one run at a time, not one
-# wormhole): sets the two-throat orbit defaults and delegates, so the 400
-# lines of launcher logic (path rewrites, consumer sidecar, stop handle,
-# WHM_RESTART) live in exactly one place.  Every WHM_* override still works
-# and still wins over the defaults below.
+# wormhole): sets the two-throat orbit defaults and delegates, so the
+# launcher logic (path rewrites, consumer sidecar, stop handle, WHM_RESTART)
+# lives in exactly one place.  Every WHM_* override still works and still
+# wins over the defaults below.
 #
 # Usage (attached, foreground -- detach only with explicit permission):
 #   bash scripts/campaigns/wormhole_merger/run_spiral.sh

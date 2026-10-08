@@ -94,7 +94,6 @@ SINGLE = "01_single_throat/seed/single_pureq_q1e2_ml4_scalar_t100"
 KICKED = "01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100"
 
 T_MOTS = 18.0        # head-on chain: common MOTS, the mots_spectral replay
-T_MOTS_MERGER = 13.0  # d6 merger chain: common MOTS, its own mots_spectral
 FIT = (30.0, 80.0)   # head-on decay-fit window: to the level-1 noise gate
                      # (R <= 20 clean to t ~ 80, clmGwHeadonNoiseGate; was 95)
 FIT_MERGER = (45.0, 95.0)  # merger: past its t = 39 crest on R = 20

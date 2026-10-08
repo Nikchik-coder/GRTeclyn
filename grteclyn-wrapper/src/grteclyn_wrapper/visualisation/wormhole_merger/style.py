@@ -380,9 +380,9 @@ _CORNERS = ("upper right", "upper left", "lower right", "lower left")
 
 
 def label_audit(fig, pad: float = 0.004, px_step: float = 3.0) -> list[str]:
-    """Every text box a drawn line passes through, named (2026-09-24, on the
-    user's mark: 'there should be some instruments in the repo to check
-    whether text crosses the lines').
+    """Every text box a drawn line passes through, named (2026-09-24: 'there
+    should be some instruments in the repo to check whether text crosses the
+    lines').
 
     Unlike ``_drawn`` this walks each line in ITS OWN transform -- an axvline
     is blended (data x, axes y) and would land in the wrong place through
@@ -771,7 +771,6 @@ def _y_fraction(ax, y: float) -> float:
         if np.isfinite(d0) and np.isfinite(d1) and d1 > d0:
             if log and d0 > 0:
                 d0, d1 = np.log10(d0), np.log10(d1)
-                lo, hi = (np.log10(lo), np.log10(hi)) if lo > 0 else (d0, d1)
             pad = ax.margins()[1] * (d1 - d0)
             lo, hi = d0 - pad, d1 + pad
             return float((np.log10(y) - lo) / (hi - lo)) if log else float((y - lo) / (hi - lo))

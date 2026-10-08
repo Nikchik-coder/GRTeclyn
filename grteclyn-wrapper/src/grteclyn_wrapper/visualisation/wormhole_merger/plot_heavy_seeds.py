@@ -106,7 +106,6 @@ def t_of_z(z: np.ndarray | float) -> np.ndarray | float:
 # --- the campaign's measured numbers (read from the pack) -------------------
 CONVERSIONS = ("head-on", "spiral")   # the encounters that end in one black hole
 DEPOSIT = ("spiral", "fly-by")        # the Lambda envelope's E_GW (every encounter)
-BURSTS = (("fly-by", style.GOLD), ("spiral", style.DEEP_BLUE))
 Z_EMIT = 20.0
 SALPETER_MYR = 45.0
 SEED_RANGE = (1.0e4, 1.0e6)   # the Table-II decade band the section quotes
@@ -276,8 +275,7 @@ def panel_seed_race(ax) -> None:
 
 
 
-# --- LISA (gw_search.lisa; kept under these names for the claims extractors) --
-lisa_sn = LISA.sn_instrument
+# --- LISA (gw_search.lisa; kept under this name for the claims extractors) --
 
 
 def lisa_pls(f: np.ndarray, years: float = 4.0, snr: float = 10.0) -> np.ndarray:
@@ -382,8 +380,8 @@ def panel_bursts(ax) -> list:
     ax.set_xticks([1e-6, 1e-4, 1e-2, 1e0])
     ax.set_xlabel(r"$f_{\rm obs}$ [Hz]")
     ax.set_ylabel(r"$h_c$,  $\sqrt{f S_n}$")
-    # The key is ONE ROW ACROSS THE TOP OF THE FIGURE, over (a)-(c) (the
-    # user, 2026-10-05: "moving the legend to the top so it's not polluting
+    # The key is ONE ROW ACROSS THE TOP OF THE FIGURE, over (a)-(c)
+    # (2026-10-05: "moving the legend to the top so it's not polluting
     # the figure content", then "the horizontal layout on top of all the a b
     # c"), drawn by main(); the unit of the mass names sits in the one empty
     # corner, under the noise floor's right arm.

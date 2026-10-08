@@ -24,8 +24,6 @@ Sections
 
 from __future__ import annotations
 
-import pathlib
-
 import numpy as np
 from scipy.signal import butter, hilbert, sosfiltfilt
 
@@ -229,7 +227,6 @@ def section_c(A):
         ip = int(np.argmax(np.where(mb, e, -1)))
         after = np.arange(t.size) > ip
         it = int(np.argmin(np.where(after, e, np.inf)))
-        mu = (t - R) <= 50.0
         print(f"   R = {R:g}: burst peak {e[ip]:.3e} at t = {t[ip]:.2f} (u = {t[ip] - R:.2f});  "
               f"trough {e[it]:.3e} at t = {t[it]:.2f} (u = {t[it] - R:.2f});  "
               f"|y| at record end {e[-1]:.3e} ({e[-1] / e[ip]:.2f} x burst);  "

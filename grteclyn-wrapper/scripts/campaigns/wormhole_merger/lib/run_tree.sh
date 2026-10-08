@@ -15,7 +15,7 @@
 #
 # A name is matched at the top level first, then one and two levels down
 # (05_binary_spiral/p012_freeze/<arm> is the deepest shape).  Folders whose
-# names start with 00_, 90_, bin, logs or templates_scan are never runs.
+# names start with 00_archive, 90_, bin, logs or templates_scan are never runs.
 
 run_tree_find() {
   local root="$1" name="$2" d

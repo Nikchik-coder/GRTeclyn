@@ -6,7 +6,7 @@ higher momentum and therefore stronger curvature that goes NaN".  This reads
 the packed streams of every arm that died at (or ran through) a merger core --
 the head-ons (p = 0) and the orbital family at d = 12 -- and tabulates, per arm:
 
-  t_death     last 'ADVANCE at time' before the NaN in run_tail*.log ('-' if none)
+  t_death     last 'ADVANCE at time' before the NaN in run_tail*.log ('(t_last)' if none)
   t_floor     first row with min(chi) on the clamp (<= 1.01 x min_chi)
   K@floor     max|K| (collapse_diagnostics, global) at t_floor
   K-2/K-1/K-.5/K-.1   max|K| that long before the death

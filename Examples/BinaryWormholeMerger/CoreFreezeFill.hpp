@@ -22,9 +22,8 @@
 
    so the region inside radius_full stops evolving entirely and becomes
    static junk data, while the exterior -- including the whole wave zone --
-   evolves untouched.  Third rung of the M9 formulation ladder in
-   research/merger/Plan.md, and the one the campaign's own measurements
-   point at.
+   evolves untouched.  Third rung of the M9 formulation ladder, and the
+   one the campaign's own measurements point at.
 
    WHY THIS AND NOT THE EARLIER MODULES.  Three failure modes were measured
    before this module was written, and the design answers each:

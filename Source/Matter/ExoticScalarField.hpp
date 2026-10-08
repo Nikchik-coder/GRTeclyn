@@ -28,11 +28,11 @@
      ramped down in time (support_schedule) with an optional causal delay from
      the throat (local_support_strength), which is why the EM tensor also has a
      (coords, time) overload: the drivers pick it through MatterDispatch.
-     \sa MatterCCZ4(), ConstraintsMatter()
 */
 template <class potential_t = DefaultPotential> class ExoticScalarField
 {
   protected:
+    //! The local copy of the potential
     potential_t m_potential;
     double m_support_strength;
     double m_support_ramp_start;
@@ -43,7 +43,6 @@ template <class potential_t = DefaultPotential> class ExoticScalarField
     double m_throat_radius_B;
     std::array<double, AMREX_SPACEDIM> m_centerA;
     std::array<double, AMREX_SPACEDIM> m_centerB;
-    //! The local copy of the potential
 
     [[nodiscard]] AMREX_GPU_HOST_DEVICE AMREX_FORCE_INLINE double
     support_schedule(amrex::Real time) const;

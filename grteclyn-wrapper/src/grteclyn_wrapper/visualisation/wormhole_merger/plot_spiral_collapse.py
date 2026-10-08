@@ -40,9 +40,7 @@ PANELS
     summed area, sqrt(2) R_star.
 (c) Core extrema on one log axis: min chi, min lapse, max|K|, max|phi|, max|Pi|.
     (Until 2026-09-26 a panel (d) set the constraint norms against max|K| on a
-    normalised log scale; the norms, with the level-3 leg, are now panel (f) of
-    the appendix's code-health figure, ``plot_constraint_evolution``, and
-    max|K| joined the other extrema here.)
+    normalised log scale; max|K| joined the other extrema here.)
 (d) The |K| spike (radius of the radial maximum, from the first time it stands
     2x above the background) and its |K| > 0.2 edge, against the neck's
     coordinate radius from the scans.
@@ -51,7 +49,7 @@ WHAT THE FIGURE HAS TO GET RIGHT
 
 *The horizon columns of the in-code stream are not drawn.*  Its theta_common
 goes negative at t = 30.77 with the naive +r orientation, a signal once quoted
-as a common horizon and withdrawn (GPU_PLAN, 2026-09-15).  The horizon
+as a common horizon and withdrawn (2026-09-15).  The horizon
 instruments here are the orientation-corrected offline scan (the neck) and the
 shape-free flow finder (the MOTS).
 
@@ -113,13 +111,12 @@ HANDOVER = 36.0        # level 3 -> 5 in the glued series (its README)
 # (t, areal R, on the production chain?).  t = 55-57 from the production
 # chain's level-5 slices (t = 55: outer seed, lmax 8); t = 59 from the arm
 # evolved at level 5 from t = 0 (inner + outer seeds, R = 4.72 +- 0.01).
-# Source: GPU_PLAN, "R0 VERDICT (2026-09-21)" and its slice-hunt bullets;
-# ledger rows clmSpiralFlowRadius*.
+# Source: the R0 verdict and its slice hunt (2026-09-21).
 FLOW_MOTS = ((55.0, 4.83, True), (56.0, 4.80, True), (57.0, 4.77, True),
              (59.0, 4.72, False))
 # The remnant on the frozen-core leg's live exterior (fill r <= 1.9, inside the
 # surface, whose h >= 2.33): R ~ 4.15 on each of t = 98/99/100, M_MS 2.083 ->
-# 2.079 -> 2.075.  Same source; ledger clmSpiralRemnantRadius (t = 97 corrupt).
+# 2.079 -> 2.075.  Same source (t = 97 corrupt).
 REMNANT_MOTS = ((98.0, 4.15), (99.0, 4.15), (100.0, 4.15))
 
 
@@ -416,7 +413,7 @@ def main(argv: list[str] | None = None) -> int:
         ax.set_xlim(t[0] - 0.6, t_end + 0.6)
         ax.set_xlabel(r"$t$")
 
-    # (e) the wall rides the neck ---------------------------------------------
+    # (d) the wall rides the neck ---------------------------------------------
     ok = real & (pt >= t_spike)
     axE.plot(pt[ok], rr[pk[ok]], color=style.INK, lw=1.1)
     axE.plot(pt, edge, color=style.MUTED, lw=0.9, ls=(0, (4, 2.5)))

@@ -240,7 +240,6 @@ def main(argv: list[str] | None = None) -> int:
         if not live.all():
             k0 = max(int(live.sum()) - 1, 0)
             axS.plot(t[k0:], sep[k0:], alpha=0.4, **kw)
-            inflating = (p, t_edge, t[k0:], sep[k0:])
         # every track ends in a dot (the scatterers' at their trust window)
         for trk in (one, two):
             axO.plot(*trk[-1], marker="o", ms=2.6, color=colr, zorder=5)

@@ -47,8 +47,8 @@ r"""Convergence on one strip: the static throat's order, the wave at two resolut
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_convergence
 
 The file lives under ``figures/00_code_health/``; every number is printed.
-The ledger reads (a) through its own recomputation (``extract_single``'s
-``single_conv_order``) and (b)/(c)/(d) through ``psi_difference``,
+The ledger reads (a) through its own recomputation (``extract_single``)
+and (b)/(c)/(d) through ``psi_difference``,
 ``near_zone_ratio``, ``near_zone_spread`` and the ``fz_*`` functions here
 (``extract_waves``).
 
@@ -73,7 +73,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
-from matplotlib.lines import Line2D  # noqa: E402
 from matplotlib.ticker import NullLocator  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import (  # noqa: E402

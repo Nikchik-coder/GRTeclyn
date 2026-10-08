@@ -175,29 +175,7 @@ FLYBY_TRUST = trust_window("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm")
 # cap at the innermost sphere); the gallery itself draws with DRAW_GATES below,
 # which are per-sphere and, where it matters, retarded.
 #   single  QUEUE2E_GATES.md junk cuts (R=10 from t=70; the gated file holds
-#           zeros past each sphere's cut, trimmed per sphere below);
-#   fly-by  the L = 128 level-5 arm, finished t = 100 clean 2026-09-18 and
-#           filed under 06_binary_flyby/p045/.  No horizon ever forms: both
-#           mouths expand (areal R 4.2 -> 33 by t = 97) and that expansion
-#           contaminates the innermost sphere, so the row is gated.
-#           GATED t = 70 (was 76 until 2026-09-18).  t = 76.08 is where
-#           |rPsi4| at R = 20 TURNS BACK UP -- the trough, i.e. the point
-#           where the contaminant has grown to EQUAL the decaying burst, not
-#           where it arrives.  It is already comparable well before that, and
-#           by t = 100 it is 2.0x the burst peak.  t = 70 keeps 15.5 units
-#           (7.8 M) past the R = 20 burst peak at t = 54.5 and leaves the
-#           contaminant sub-dominant throughout.
-#           The retired note on this row claimed "R = 36/44 decay
-#           monotonically to the record's end".  They do not: that reading
-#           normalised each sphere by its max over t <= 60, which truncates
-#           the OUTER spheres' bursts before they peak (light travel puts the
-#           R = 44 burst at t ~ 78, not 60).  In retarded time all four
-#           spheres peak together at u = t - R ~ 34.5, as radiation must;
-#   spiral  the freeze arm finished t = 100 on 2026-09-16, so the SERIES now
-#           runs t = 0-100 in three legs.  Leg 3 holds the core frozen inside
-#           r = 1.40 from t = 57, which transports the burst the merger
-#           already made rather than evolving a remnant -- so the gallery
-#           draws it only to the fill's causal clock (DRAW_GATES).
+#           zeros past each sphere's cut, trimmed per sphere below).
 ARMS = [
     ("collapsing throat", r"$\varepsilon_2=5\times10^{-2}$", "(2,0)",
      "01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/psi4_mode_l2m0_gated.dat",
@@ -242,13 +220,13 @@ ARMS = [
      "06_binary_flyby/merge_orbit_flip_d12_p060_L128_SERIES/Weyl4_mode_22.dat",
      None, 20.0, 80.0, r"trust window"),
     # The spiral's vacuum twin: a scenario of the LIGO figure and the ledger,
-    # but in the gallery it is drawn UNDER the spiral row (OVERLAID below).
+    # but not a gallery row (OVERLAID below).
     ("vacuum BBH twin", r"$p=0.12$, $d=12$", "(2,2)",
      "07_bbh_control/bbh_control_d12_p012_t150/psi4_mode_l2_all.dat",
      2, 14.0, None, ""),
     # NOT a row here: bbh_control_d12_p045_t100, the momentum-matched vacuum
-    # control (2026-09-19).  Its energy is quoted in Sec. VIII of the article
-    # and in the GPU plan, but it cannot join this table, because the table's
+    # control (2026-09-19).  Its energy is quoted in Sec. VIII of the article,
+    # but it cannot join this table, because the table's
     # contract is "innermost sphere, spread over spheres as the error bar" and
     # that arm has two spheres of which one is contaminated: its punctures
     # recede to r = 13.7 by t = 100, almost onto R = 14, whose reading is their
@@ -265,12 +243,7 @@ ARMS = [
 # punctures, from the control's in-code extraction at the row's own sphere.
 # Per row: (stream under campaign/, sphere, name, cut to the row's drawn
 # window?, the t - R span its name covers, and whether it sits above or below
-# both curves there).  The spiral's twin is named under its merger trough, so
-# the name cannot run on from the spiral's cap note ("fill's light cone").
-#   spiral  bbh_control_d12_p012_t150 (the ARMS twin, whose consumer stream
-#           has only R = 14/30; the in-code one agrees with it to 0.3 % of
-#           peak on both).  Drawn whole: nothing contaminates it, and its
-#           merger comes after the spiral's drawn record ends.
+# both curves there).
 #   fly-by  bbh_control_d12_p045_t100 (1.5 % of peak against its consumer at
 #           R = 30).  Cut to the fly-by's own window: past t - R ~ 30 its
 #           record is no longer radiation but the receding holes' near field,
@@ -297,7 +270,7 @@ VACUUM_OVERLAY = {
     "fly-by": ("07_bbh_control/bbh_control_d12_p045_t100/weyl_extraction_mode_22.dat",
                20.0, "vacuum BBH fly-by", True, (5.0, 40.0), "above"),
 }
-# ARMS scenarios the gallery draws only as an overlay, never as a row.
+# ARMS scenarios the gallery never draws as a row.
 OVERLAID = {"vacuum BBH twin"}
 
 # Row titles in the article's words (2026-10-05): the d = 6 chain is "the

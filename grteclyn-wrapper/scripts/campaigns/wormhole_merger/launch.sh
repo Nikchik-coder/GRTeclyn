@@ -296,6 +296,7 @@ fi
 # installer directory first resolved `env` to uv's `env` *script* (meant to be
 # sourced, not run), which exports PATH and exits 0 without running anything --
 # four launches and their dry runs reported success and started nothing.
+#
 # Started from the script's own directory and with a neutral argv[0], so the
 # supervisor shows as "<label>_job run_single.sh" rather than a campaign path
 # (run_single.sh, "Process table"); the same reason the log is opened by
