@@ -31,7 +31,7 @@ reads into the pack: ``campaign/02_moving_throat/boost_contraction_t0.tsv`` and
 ``..._slices.npz``.  The figure reads the pack alone and writes
 ``figures/02_moving_throat/boost_contraction``.
 
-WHY (the user, 2026-09-29 ~16:55 UTC): the article's section on the boosted
+WHY (2026-09-29 ~16:55 UTC): the article's section on the boosted
 setup needs "the plot for different p of the shape change of the throat,
 connected with the analytic equation -- the good proof that it's valid".
 
@@ -229,7 +229,7 @@ def figure(pack_root=PACK_ROOT):
 
     # (a) the throat's chi contour in the plane through its centre, at rest and
     # at the fastest p, on the analytic ellipse x^2 + (gamma y)^2 = r_t^2.
-    # Line weights and limits tightened 2026-09-30 (the user: "looks childish,
+    # Line weights and limits tightened 2026-09-30 ("looks childish,
     # update it for the PRD level style"): hairline contours, the frame cut to
     # the contours' own span, the house base size (10, as the other strips).
     shown = ((0.0, style.FAINT, 0.9, r"$p=0$"),
@@ -248,7 +248,7 @@ def figure(pack_root=PACK_ROOT):
               color=style.GOLD, lw=1.0, linestyle=(0, (3, 2)), zorder=4)
     handles.append((Line2D([], [], color=style.GOLD, lw=1.0, linestyle=(0, (3, 2))),
                     r"$x^2+\gamma^2y^2=1.55^2$"))
-    # The same law continued toward the disc limit (the user, 2026-09-30:
+    # The same law continued toward the disc limit (2026-09-30:
     # "update panel (a) with a few extra ellipses", then "less ellipses pls"
     # -- three read busy, two stay): prediction alone, no data behind these
     # -- panel (b)'s curve past the measured range, drawn as shapes.
@@ -269,8 +269,8 @@ def figure(pack_root=PACK_ROOT):
     style.legend_top(ax_a, handles, ncol=2)
 
     # (b) the axis ratio against the boost speed, on 1/gamma -- no free
-    # parameter -- drawn to v = c, where the throat flattens to a disc (the
-    # user, 2026-09-30: "lets also plot predictions till v = c").  The speed
+    # parameter -- drawn to v = c, where the throat flattens to a disc
+    # (2026-09-30: "lets also plot predictions till v = c").  The speed
     # axis is the one on which the law reaches its limit: v = 1 is p = inf.
     vs = np.linspace(0.0, 1.0, 400)
     ax_b.plot(vs, np.sqrt(1.0 - vs * vs), color=style.GOLD, lw=1.1, zorder=2)

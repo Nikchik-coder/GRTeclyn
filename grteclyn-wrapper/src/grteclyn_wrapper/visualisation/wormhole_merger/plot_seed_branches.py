@@ -47,8 +47,8 @@ STYLE (2026-09-16, "PRD review style"): a single-column REVTeX figure -- full
 box frame, inward ticks on all four sides with minors, no grid, and NO boxed
 key: a five-row legend made the measuring `legend()` grow a dead band above
 the curves, so each arm is named in place along its own curve and the axis
-hugs the data (user, 2026-09-16).  NO colour: the
-user's call, twice (2026-09-10 "no coloring", 2026-09-16 again when a signed
+hugs the data (2026-09-16).  NO colour, decided twice
+(2026-09-10 "no coloring", 2026-09-16 again when a signed
 palette was tried) -- identity is the dash (solid in, dashed out) and the
 weight (the size).  The numbers that used to sit in the caption (growth rates,
 how far each arm has run, where the scan clips) are printed to the console
@@ -334,7 +334,7 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
     print(f"  level 3's own truncation seed, for comparison: {SEED_RATE:.4f}")
 
     def style_of(label: str) -> dict:
-        """Identity without colour -- the user's call for THIS figure (2026-09-10
+        """Identity without colour -- the call for THIS figure (2026-09-10
         "no coloring", reaffirmed 2026-09-16), overriding the campaign palette.
         The dash pattern is the SIGN of the kick and the weight is its SIZE, so
         the two members of a pair read as a pair and the amplitudes stay apart.
@@ -393,8 +393,8 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
             fit_top = (f1, exact + np.exp(lnA + lam * f1))
         print(f"  exp fit {lab:>6s} over t = {f0:.0f}-{f1:.0f}:"
               f" rate {lam:.3f}, tau {1 / lam:.2f}")
-    # One gold name serves both gold lines, in equation form -- the
-    # user's call (2026-09-16): "exp. fit" out, the law itself in.  Up-left of
+    # One gold name serves both gold lines, in equation form (decided
+    # 2026-09-16): "exp. fit" out, the law itself in.  Up-left of
     # the inflation fit's end, where the heavy arm has not yet risen.
     if fit_top is not None:
         axA.text(fit_top[0] - 1.0, fit_top[1] + 0.15, r"$\propto e^{t/\tau}$",
@@ -411,7 +411,7 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
     # ---- names written along the curves, no boxed key ----------------------
     # A five-row key forced the measuring legend to grow the axis until a dead
     # band sat above every curve; a two-column key still needed a third of the
-    # frame.  So the box went (user, 2026-09-16) and each arm is named in
+    # frame.  So the box went (2026-09-16) and each arm is named in
     # place: inflating arms along their rise (the heavy one up-left, the light
     # one down-right, each on its own empty side), the stalled arm above its
     # flat line, the dead arm at its cross.  Anchors are read off the data, so
@@ -459,7 +459,7 @@ def figure_panel(axA, *, runs_root=RUNS_ROOT, arms_spec=None,
         ylo, yhi_ = axA.get_ylim()
         # The crossing rule runs only as high as the crossing: it marks WHEN
         # the twins cross, and they cross on R_star.  Full height it ran
-        # through the heavy arm's name and the gold fit's (the user,
+        # through the heavy arm's name and the gold fit's (
         # 2026-09-23: "overlaps with dotted line"); stopped 6 pt above
         # R_star -- an offset in POINTS, so on any panel width -- it meets
         # neither.  Drawn after the limits are fixed, so it cannot move them.
@@ -477,7 +477,7 @@ if __name__ == "__main__":
 
 # ---------------------------------------------------------------------------
 # The constraint record of the same scan -- panels (d)/(e) of the combined
-# strip (the user, 2026-09-23: "add to fig 1 the hamiltonian and momentum
+# strip (2026-09-23: "add to fig 1 the hamiltonian and momentum
 # constraints data for these runs to show how it behaves").  Same identity
 # grammar as panel (c): dash is the SIGN of the kick, weight is its SIZE;
 # the unkicked control is the one grey curve; the eps = +-0.1 pair, the
@@ -507,7 +507,7 @@ def _cut_overflow(a: np.ndarray, jump: float = 10.0) -> np.ndarray:
     abort and then jump two to four decades in ONE step (+0.1: 3.1e-3 ->
     0.38 -> 56 over t = 14.04-14.06; +0.001: 1.3e-3 -> 28 at 40.07).  That
     step is the overflow itself, not a measurement, and on a log axis it
-    drew a vertical line the height of the panel (the user, 2026-09-23:
+    drew a vertical line the height of the panel (2026-09-23:
     "these vertical lines are garbage").  The curve now ends where the run
     was last healthy and the cross -- the death -- sits there.  Only the
     last time unit is searched: the momentum norm rises from ~0 at t = 0,
@@ -579,8 +579,7 @@ def figure_panels_constraints(axH, axM, pack_root) -> None:
         ax.set_xlim(0, 100)
         ax.set_xlabel(r"$t$")
         ax.set_ylabel(ylab)
-    # two names in place, sparing the caption a hunt: the ceiling pair at its
-    # cross, the control at its late rise (axH only; (e) reads by grammar)
+    # two names in place, sparing the caption a hunt.
     # The ceiling pair is named up-right of its later cross (t = 15.2), in
     # the empty band above the flat norms; offsets in points.
     ceil = [a for lab, a in drawn if lab in ("+0.1", "-0.1")]

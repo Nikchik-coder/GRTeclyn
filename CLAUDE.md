@@ -132,6 +132,19 @@ after session because it lived only in one machine's agent memory.
   `results/merger/trust_windows.tsv` (wall reflection, blow-up, lost resolution) and
   close out: the movies and their colour scales use only frames up to it, and later
   frames stay on disk. Figures and the paper quote nothing after it either.
+- **Movies come from the slice cache, never from the live PNGs.** The live frames are drawn with per-frame
+  colour limits (`--frames-auto-zlim`), so stitching them makes the colour bar's ticks and numbers slide in every
+  frame of every movie, and no stitching change can fix that. The way (close-out step 5 does it for a finished run):
+  1. A live run: copy `<run>/frames` aside first (the consumer still writes there) and work on the copy.
+  2. `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/plot/rerender_frames.py <frames dir> --symlog
+     "phi,Pi,chi_minus_1,shift1,Weyl4_Re:1.5,Weyl4_Im:1.5" --skip "" [--t-max <trust window>] --movies`: one fixed
+     scale per field from the slice cache (K linear, the signed fields symlog), then `make_movies.sh` stitches them.
+  3. Take shots of the finished mp4 (ffmpeg a run of consecutive frames, side by side) and look at the colour
+     bar before saying it is done; then copy the mp4s into `<run>/movies/`.
+  `make_movies.sh` alone only stitches (unscaled, padded: since 2026-10-07 it never stretches a frame), and a run
+  without `frames/_slice_cache/` cannot get a steady bar. The redraw draws exactly like the live yt frame (same
+  layout, x − x₀ axes, fonts) since 2026-10-07. (2026-10-07: FARZONE-ho's movies were stitched from the live
+  frames, and the bar "wobbled" in all 14 for three rounds before the rerender was used.)
 - Plotfiles: the consumer keeps the last 3 on scratch (`--keep-last 3`); that is the intended retention.
 - Heavy analysis (yt, covering grids) runs in the background with a log; trim the matrix first.
 - GWOSC downloads are the slow part of any search: bypass the local proxy, use `--block-s 4096`.
@@ -193,6 +206,15 @@ what the claims check or the identity grep flags, and report in a few lines.
   naming every line; inside the frame there are at most tiny tags on vertical rules. `style.GOLD` is the one accent
   (the horizon, or the fitted exponential); everything else is ink or grey.
 - A figure fix: make the minimal fix, render, run the label audit and show the image first; audits come after.
+
+## Code
+
+- **Never write "the user" in code**: not in comments, docstrings, help text or printed messages, and not
+  "the user's word / call / rule / design / choice" either (2026-10-08). Say what was decided and why, with the date
+  if it matters: `# 2026-10-05: K on one fixed linear scale (the colour bar danced)`, never
+  `# (the user, 2026-10-05: ...)`. Write "decided", "the standing rule" or "the chosen design", or drop the
+  attribution. Upstream GRTeclyn and vendored code (`Source/`, `external/`), where "the user" means a library's
+  caller, stay as they are.
 
 ## Git
 

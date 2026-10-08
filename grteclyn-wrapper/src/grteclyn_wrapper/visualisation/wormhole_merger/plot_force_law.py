@@ -12,12 +12,12 @@ prediction (drawn dotted past d = 16).
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_force_law
 
-WHY THIS PANEL (2026-09-25, the user's read of Sec. V B: "what are those
+WHY THIS PANEL (2026-09-25, a read of Sec. V B: "what are those
 numbers, I don't get it -- there should be a figure").  The text quoted the
 four displacements and the two predictions with nothing to look at; the
 sign-rule panel shows only the d = 12 pairs.  This is the ladder itself.
 
-SWITCHED TO THE MATCHED PAIRS 2026-09-30 (the user; with plot_sign_rule).
+SWITCHED TO THE MATCHED PAIRS 2026-09-30 (with plot_sign_rule).
 Reads ``campaign/03_two_throats/matched_rest_displacement.dat`` (the mode-3
 csm like pairs) at t = 11.5: 0.4791 / 0.3716 / 0.2963 / 0.2406, each within
 2 % of the superposed ladder (``separation_ladder_2026-09-04.txt``, kept --

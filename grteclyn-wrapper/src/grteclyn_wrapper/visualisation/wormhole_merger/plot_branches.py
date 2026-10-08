@@ -17,14 +17,9 @@ import sys
 
 import numpy as np
 
-# The pack ships its own path map (results/merger/analysis/pack_paths.py) so a
-# copy of the pack can be read without this package installed; this module is
-# the writer, so it borrows that map rather than duplicating the layout.
-_REPO = pathlib.Path(__file__).resolve().parents[5]
-sys.path.insert(0, str(_REPO / "results" / "merger" / "analysis"))
-from pack_paths import figure_dir, find_run, group_dir  # noqa: E402
-
-from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
+from grteclyn_wrapper.analysis.wormhole_merger.pack.paths import (
+    PACK_ROOT, figure_dir, find_run, group_dir)
+from grteclyn_wrapper.visualisation.wormhole_merger import style
 
 R_EXACT = 3.8895  # closed form for a = 2, m = 1 (INSTABILITY.md)
 ARMS = {
@@ -103,7 +98,6 @@ def parse_scans(path: pathlib.Path) -> tuple[list[dict], dict[str, np.ndarray]]:
 def main(argv: list[str]) -> int:
     """Pack root as a positional or as --pack-root; the packer uses the flag,
     which every other module in this package also accepts."""
-    rest = [a for a in argv[1:] if a not in ("--pack-root",)]
     prev_flag = False
     positional = []
     for a in argv[1:]:
@@ -113,7 +107,7 @@ def main(argv: list[str]) -> int:
         if prev_flag or not a.startswith("-"):
             positional.append(a)
         prev_flag = False
-    root = pathlib.Path(positional[0]) if positional else _REPO / "results" / "merger"
+    root = pathlib.Path(positional[0]) if positional else PACK_ROOT
     ar = {k: load(root, v, "areal_radius.dat") for k, v in ARMS.items()}
     cn = {k: load(root, v, "constraint_norms.dat") for k, v in ARMS.items()}
     cd = {k: load(root, v, "collapse_diagnostics.dat") for k, v in ARMS.items()}
@@ -324,7 +318,6 @@ def figure_panels(axA, axB, root: pathlib.Path, legends: bool = True) -> None:
     row in plot_single_throat_row).  ``style.prd`` must already be active.
     """
     ar = {k: load(root, ARMS[k], "areal_radius.dat") for k in ("ml2", "ml3", "ml4")}
-    p3, p4 = plateau_rate(ar["ml3"]), plateau_rate(ar["ml4"])
     KW = {
         "ml2": dict(color=style.MUTED, linewidth=1.0, linestyle=(0, ())),
         "ml3": dict(color=style.INK, linewidth=1.4, linestyle=(0, (4, 2.5))),

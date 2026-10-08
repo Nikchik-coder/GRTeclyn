@@ -326,6 +326,16 @@ def main() -> None:
     parser.add_argument("--mots-spectral-from", type=float, default=0.0,
                         help="Search plotfiles from this time on (before the common horizon there is none).")
     parser.add_argument(
+        "--mots-spectral-track",
+        action="store_true",
+        help=(
+            "Follow a moving mouth: on each plotfile, centre the surface on the --horizon-track mouth "
+            "nearest --mots-spectral-center (default --center) instead of on that fixed point, and "
+            "record each centre in mots_spectral_alm.jsonl. A fixed centre loses a receding mouth once "
+            "it has moved about its own coordinate radius (SCATTER-fate, 2026-10-07). Needs --horizon-track."
+        ),
+    )
+    parser.add_argument(
         "--horizon-r-exact",
         type=float,
         default=None,
@@ -492,6 +502,8 @@ def main() -> None:
     if extra:
         print(f"[consumer] + {extra_path.resolve()}: {' '.join(extra)}", flush=True)
     args = parser.parse_args(sys.argv[1:] + extra)
+    if args.mots_spectral_track and not args.horizon_track:
+        parser.error("--mots-spectral-track follows a --horizon-track mouth; pass --horizon-track")
     # A symmetry-reduced run (--reflect): what cannot use the symmetry is
     # switched off here, once and out loud, instead of producing sphere
     # integrals over 1/8 of each sphere or a sign-flipped mirror.
@@ -699,8 +711,11 @@ def main() -> None:
         _append_line(mots_out_path, header=MOTS_SPECTRAL_HEADER, line=res["mots_line"])
         if res.get("mots_alm") is None:   # a row of nan: no MOTS here; keep the last surface as the start
             return
+        record = {"t": float(res["t"]), "key": res["key"], "a_lm": res["mots_alm"]}
+        if res.get("mots_centre") is not None:   # --mots-spectral-track: the a_lm are about this point
+            record["centre"] = res["mots_centre"]
         with mots_alm_path.open("a", encoding="utf-8") as handle:
-            handle.write(json.dumps({"t": float(res["t"]), "key": res["key"], "a_lm": res["mots_alm"]}) + "\n")
+            handle.write(json.dumps(record) + "\n")
         state["mots_alm_prev"] = res["mots_alm"]
         vars(args)["mots_alm_prev"] = res["mots_alm"]   # process_once's args_dict is vars(args)
 

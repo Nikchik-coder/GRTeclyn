@@ -12,7 +12,7 @@ leaves the paper, delete its PNG/PDF here and its row below; its script stays in
 
 Run each command from the repository root with the wrapper's venv; every one
 takes no arguments (`--pack-root` defaults to `results/merger`) and writes the
-PNG + PDF pair named in the table. Numbers are the article's as of 2026-10-06.
+PNG + PDF pair named in the table. Numbers are the article's as of 2026-10-07.
 
 ```
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.<module>
@@ -20,21 +20,61 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_mer
 
 | Fig. | label | file | module |
 |---|---|---|---|
-| 1 | `fig:boost_contraction` | `02_moving_throat/boost_contraction` | `plot_boost_contraction` |
-| 2 | `fig:single_throat` | `01_single_throat/single_throat_instability` | `plot_single_throat_row` |
-| 3 top | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
-| 3 bottom | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
-| 4 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
-| 5 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
-| 6 | `fig:spiral_collapse` | `05_binary_spiral/d6_merger_chain` | `plot_merger_chain` |
-| 7 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
-| 8 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
-| 9 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
-| 10 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
-| 11 (App. A) | `fig:seed_linearity` | `01_single_throat/seed_linearity` | `plot_seed_linearity` |
-| 12 (App. B) | `fig:orbits` | `05_binary_spiral/momentum_scan_orbits` | `plot_momentum_orbits` |
+| 1 | `fig:fates` | `00_overview/fates` | `plot_fates` |
+| 2 | `fig:boost_contraction` | `02_moving_throat/boost_contraction` | `plot_boost_contraction` |
+| 3 | `fig:single_throat` | `01_single_throat/single_throat_instability` | `plot_single_throat_row` |
+| 4 top | `fig:single_collapse` | `01_single_throat/single_throat_collapse` | `plot_single_collapse` |
+| 4 bottom | `fig:single_inflation` | `01_single_throat/single_throat_inflation` | `plot_single_inflation` |
+| 5 | `fig:pair` | `03_two_throats/pair_interaction` | `plot_pair_row` |
+| 6 | `fig:headon_collapse` | `04_binary_headon/headon_collapse_diagnostics` | `plot_headon_collapse` |
+| 7 | `fig:spiral_collapse` | `05_binary_spiral/d6_merger_chain` | `plot_merger_chain` |
+| 8 | `fig:gw_gallery` | `08_waves/psi4_gallery` | `plot_psi4_gallery` |
+| 9 | `fig:gw_ligo` | `08_waves/psi4_ligo` | `plot_psi4_ligo` |
+| 10 | `fig:heavy_seeds` | `08_waves/heavy_seeds` | `plot_heavy_seeds` |
+| 11 (App. A) | `fig:convergence` | `00_code_health/convergence` | `plot_convergence` |
+| 12 (App. A) | `fig:constraints` | `00_code_health/constraint_evolution` | `plot_constraint_evolution` |
 | 13 (App. B) top | `fig:scalar_channel` | `08_waves/scalar_channel` | `plot_scalar_channel` |
 | 13 (App. B) bottom | `fig:scalar_censorship` | `08_waves/scalar_censorship` | `plot_scalar_censorship` |
+
+2026-10-07 (the user): `00_overview/fates` is now Fig. 1 (`fig:fates`), every later figure one up. The intro's
+four-fates sentence cites it; the caption is three lines. Squeezed for the page to 7.05 x 1.95 in (one-line leaf
+texts), at 0.88 textwidth. Its source is read at Sec. II, so it heads page 3: read on page 1 it heads page 2, but
+the intro's last column there is then too short for the Sec. II heading block and stretches. Fig. 13 (scalar) is
+read in Appendix A as `[t]`, so pdflatex, whose Appendix B text runs a few lines past page 21, puts those lines
+atop the references instead of on a bare page. Also cut from Sec. I: "the stipulated initial data of every
+numerical binary, here with a physical origin attached". 26 pages, both engines; claims 923 rows, 0 problems.
+
+2026-10-07 (the user): new `00_overview/fates` (`plot_fates`, no arguments), saved here ahead of the paper and not
+yet included. It is a schematic in the manner of Hubble's tuning fork, with no numbers drawn. Foam-born throats fork by
+birth separation: a lone throat goes to collapse if pushed out (eps > 0) or to inflation if squeezed (eps < 0); a pair
+forks by its relative sign: like signs repel and scatter, while opposite signs attract and enter the race, where short
+d and small p reach the merger and otherwise both throats inflate, at contact or after a fly-by. Gold rings only the
+two horizons (collapse, merger). Beside those two, a sketched r Psi4 (shapes after Fig. 7, not data): the collapse
+rings down at the new hole's frequency, the merger is one burst with no chirp before it; the lone inflating throat
+gets a flat line, "GW: none" (it is spherical, and gravitational waves start at l = 2); the inflating pair gets one
+broad arch, "GW: one burst at the encounter" (its pass or contact radiates; the fly-by is the loudest burst
+measured). Label audit clean. The like-signed "scattering" leaf says only that the pair recedes:
+what each mouth does next waits on SCATTER-fate (STATUS, required).
+
+2026-10-07 (the user): `01_single_throat/seed_linearity` and `05_binary_spiral/momentum_scan_orbits` left the
+paper; their files stay. Sec. VIII A states the seed linearity in words (it already carried the numbers, and now
+says where the slope-one line meets the spherical control's floor, eps2 ~ 2e-3). Sec. VII A points to the
+momentum scan's movies instead, Videos 4-6 at p = 0.25/0.60/0.90, and the later videos are renumbered 7-10 in
+order of appearance. Fig. 10 is read a page early, so it heads the appendix's first page. Figs. 11 and 12
+keep their own float pages before the references (the user: no figures among the references). These pages are
+top-aligned now, because `\packfloatpages` also sets the double-column registers that a figure* page reads.
+26 pages, both engines.
+
+2026-10-06 (the referee pass): new Fig. 10, `00_code_health/convergence` (`plot_convergence`, no arguments),
+which shifts App. A and B by one: (a) the static throat's three-level factor Q(t) at levels 2/3/4 against
+n = 2/3/4; (b) the Bowen-York d = 12, p = 0.12 pair's |r Psi4| at R = 20, level 5, with its level-4 and
+refined-wave-zone differences; (c) E(R)/E(R_out) against R/M for the head-on, the d = 6 merger and the fly-by,
+plus two vacuum controls. Fig. 8 (`psi4_ligo`) re-rendered: (d) reads every energy at the outermost sphere
+that covers its window, the tick its change from the next sphere in. The moving pairs are taken per their
+measured t = 0 mass (`run_tree.pair_mass`, `results/merger/analysis/t0_adm_mass.tsv`). Each source's vacuum
+control is drawn in grey (d = 8 from rest; d = 6, p = 0.10; d = 12, p = 0.45), and the twin's row reads
+"vacuum p = 0.12". Fig. 9 (`heavy_seeds`) re-rendered for the moved energies (its deposit band reads the
+ledger). Every label audit is clean.
 
 2026-10-06 (the validation fixes, `research/merger/article/claims/VALIDATION_2026-10-06.md`): re-rendered
 Figs. 1, 2, 3 top, 5, 7, 8, 9, 10, 12 and 13, every label audit clean. Fig. 1's legend names the contour it
@@ -470,7 +510,7 @@ legend or in the caption; there is no in-frame prose at all.
 The scenario table (stream, mode, innermost sphere, gate) is `ARMS` in
 `plot_psi4_gallery.py` and the LIGO figure imports it, so the two figures
 cannot disagree about what a scenario is. The gates: the collapsing throat's
-stream is the queue-2e gated file clipped at t = 70 (QUEUE2E_GATES.md); the
+stream is the gated file clipped at t = 70 (WAVE_GATES.md); the
 fly-by row is now the L = 128 level-5 arm
 (`campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100`,
 (2,2) single-mode file; finished t = 100 clean on 2026-09-18). It is gated at t = 76: no horizon ever
@@ -507,7 +547,8 @@ and R = 44 before it). (3) Row (a) carries queue-2e gate 4's damped sinusoid
 (t = 26–58, period 20.6). (4) 7.05 × 5.6 in. Speeds on the drawn records:
 throat 0.95/0.97/0.95, spiral 1.00/1.00/1.00 (the 0.95 came from the spiral's
 post-light-cone stretch alone), the rest unchanged. The numbers behind all of
-this: `grteclyn-wrapper/scripts/analysis/merger_feedback/waves_gallery_audit.py`.
+this: an audit of the gallery's records (`waves_gallery_audit.py`, removed 2026-10-08 with the
+superposed runs it read).
 Same day: `seed_linearity` reads its floor from the level-4 control
 (`single_eps_p1e2_q1e2_ml4_scalar_t100`, seed not applied; 6.75e-5 at R = 14
 against the level-3 6.79e-5), spans the decade 1e-3–1e-1 in (b) and names the
@@ -639,7 +680,7 @@ spiral collapse figure (sec:spiral:inspiral), drawn with no arguments:
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_spiral_collapse
 ```
 
-**REDRAWN 2026-09-24** (the user's read of the paper: "it shouldn't span the whole page"; "we extended the run after death with freeze, why is this not shown on (a)"): a `figure*[t]` strip, 7.05 x 4.3 in, five panels. (a) pit separation over the whole history t = 0-100, the frozen era from t = 57 shaded and labelled (no core quantity drawn inside the fill), gold rug on the slices carrying a common MOTS (55-57, 59, 98-100); (b) areal radius of the common MOTS (incl. the remnant R = 4.15 at t = 98-100) and of the common NECK (the smallest sphere about the pits' midpoint, enclosing BOTH pits), against R_star and sqrt(2) R_star; (c) core extrema; (d) constraint norms against max|K|; (e) the |K| spike and edge against the neck. SINCE 2026-09-26 four panels: (d) went to `constraint_evolution` (f) as plain norms, max|K| joined (c), and (e) is (d). Old (a)->(a), (g)->(b), (b)+(c)+(d)->(c), (e)->(d), (f)->(e); (h)-(j) dropped. The two chi pits stay distinct until chi floors at t = 58.43 (0.31 apart at t = 57): both wormholes are inside the MOTS (`scripts/analysis/merger_feedback/pit_throats.py`). The older notes below describe the ten-panel page.
+**REDRAWN 2026-09-24** (the user's read of the paper: "it shouldn't span the whole page"; "we extended the run after death with freeze, why is this not shown on (a)"): a `figure*[t]` strip, 7.05 x 4.3 in, five panels. (a) pit separation over the whole history t = 0-100, the frozen era from t = 57 shaded and labelled (no core quantity drawn inside the fill), gold rug on the slices carrying a common MOTS (55-57, 59, 98-100); (b) areal radius of the common MOTS (incl. the remnant R = 4.15 at t = 98-100) and of the common NECK (the smallest sphere about the pits' midpoint, enclosing BOTH pits), against R_star and sqrt(2) R_star; (c) core extrema; (d) constraint norms against max|K|; (e) the |K| spike and edge against the neck. SINCE 2026-09-26 four panels: (d) went to `constraint_evolution` (f) as plain norms, max|K| joined (c), and (e) is (d). Old (a)->(a), (g)->(b), (b)+(c)+(d)->(c), (e)->(d), (f)->(e); (h)-(j) dropped. The two chi pits stay distinct until chi floors at t = 58.43 (0.31 apart at t = 57): both wormholes are inside the MOTS (`scripts/analysis/wormhole_merger/pit_throats.py`). The older notes below describe the ten-panel page.
 
 Panel (g) REDRAWN 2026-09-23 (article audit): besides the star-scan throat
 radii (no MOTS -- a blindness about the merged pit, not an absence) it now
@@ -672,7 +713,7 @@ head-on figure (sec:headon:contact), drawn with no arguments:
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_headon_collapse
 ```
 
-**REDRAWN 2026-09-24** (the user: "what happens to the formed black hole ... the plot is junk, why is there no solid line ... how the radius compares to the initial 2 wormholes"): a `figure*[t]` strip, 7.05 x 4.3 in, six panels. (a) horizon areal radius and (b) M_MS fill the left half, rows joined by solid lines within contiguous runs, rules at R_star, sqrt(2) R_star (both throats' area) and 2 M_ADM = 4 (M_ADM = 2 in b); (c) pit separation, (d) max|K|, (e) Hamiltonian norm, (f) grid max|phi|, max|Pi|. SINCE 2026-09-26 five panels: (e) went to `constraint_evolution` (e), and (f) is (e), spanning the right half's bottom row. The (2,0) wave panel is gone (waves have their own section). Old (f)->(a), (g)->(b), (a)->(c), (d)->(d), (e)->(e), (i)->(f). Numbers: `scripts/analysis/merger_feedback/headon_remnant.py` (born with both throats' area, R = 1.01 sqrt(2) R_star; M_MS never rises after t = 36). The older notes below describe the ten-panel page.
+**REDRAWN 2026-09-24** (the user: "what happens to the formed black hole ... the plot is junk, why is there no solid line ... how the radius compares to the initial 2 wormholes"): a `figure*[t]` strip, 7.05 x 4.3 in, six panels. (a) horizon areal radius and (b) M_MS fill the left half, rows joined by solid lines within contiguous runs, rules at R_star, sqrt(2) R_star (both throats' area) and 2 M_ADM = 4 (M_ADM = 2 in b); (c) pit separation, (d) max|K|, (e) Hamiltonian norm, (f) grid max|phi|, max|Pi|. SINCE 2026-09-26 five panels: (e) went to `constraint_evolution` (e), and (f) is (e), spanning the right half's bottom row. The (2,0) wave panel is gone (waves have their own section). Old (f)->(a), (g)->(b), (a)->(c), (d)->(d), (e)->(e), (i)->(f). Numbers: `headon_remnant.py` (removed 2026-10-08 with the superposed head-on runs it read; born with both throats' area, R = 1.01 sqrt(2) R_star; M_MS never rises after t = 36). The older notes below describe the ten-panel page.
 
 The spiral collapse page's counterpart with the opposite verdict: the pair
 MAKES a black hole, and every horizon point is the corrected orientation
@@ -939,3 +980,34 @@ the head-on row gains its vacuum BBH overlay, and `egw_momentum` is new (E_GW vs
 clmEgwEnergy* rows. `psi4_ligo` and `heavy_seeds` redrawn on the boosted pairs' corrected ADM masses (the face
 estimate plus each throat's kinetic energy; `run_tree.boosted_adm_mass`): the fly-by's E/M 9.0e-2 -> 8.3e-2 and envelope
 1.3e-1 -> 1.4e-1, the merger +0.3 %, the LISA tracks shifted by the same masses. Label audit clean (heavy_seeds).
+
+2026-10-07: squeezed on the user's read of the paper ("too tall for no reason"; Figs. 6 and 7 "span 1/3 of the
+page"). `pair_interaction` 5.7 × 3.0 → 5.7 × 2.0 in (near-square frames); `headon_collapse_diagnostics` and
+`d6_merger_chain` 7.05 × 4.3 → 7.05 × 3.0 in. Their "3D finder" name now hangs on the gold curve, 2 pt above it
+("should be closer to the golden line"). At 3.0 in: every era name hangs a fixed 4.5 pt under the top spine
+(`_top_name`, clear of the 3.4 pt ticks at any height), "one throat, R⋆" sits above its rule (the bottom spine
+left no room under it), (e) gets headroom to 4.0, the head-on's √2R⋆ and M_ADM names go under their rules, and
+the d = 6 (c) panel's top rises to 7.6. Label audit clean on all three.
+
+2026-10-08: `fates` (Fig. 1): the like-signed branch ends in inflation (SCATTER-fate). The scattering leaf is drawn
+with the inflating pair's pictogram (dashed shells, outward arrows) signed +/+, the race's inflating pair is signed
++/−, and the leaf reads "recede, both throats inflate" with "GW: no burst": the receding pair's l = 2 Ψ4 is a smooth,
+single-signed drift as its throats inflate (identical in every like-signed rest pair from t = 0), no burst.
+`psi4_gallery` (Fig. 8): row (b) is FARZONE-ho (`plot_psi4_gallery.GALLERY_ROW`): the same head-on in an L = 512 box,
+σ = 0.3, spheres R = 10/44/90/150 drawn to the clock's edge (t − R ≤ 86), no level-1 noise cap; v/c 0.89/0.94/0.96.
+Its collision-axis stream is `headon_axis_modes.py`'s third entry. ARMS, DRAW_GATES and RADII keep the production
+chain, so `psi4_ligo` and the quoted energies are unchanged. Label audit clean on both.
+
+2026-10-08: `convergence` (Fig. 11) gains (d), CONV-fz: the far-zone head-on (FARZONE-ho) on its L = 512 box at finest
+Δx = 1/16 and 1/32 to t = 100, the collision-axis |r Ψ4^20| at R = 10 of the finer level and the two levels' difference
+(0.55 % of the peak at most). `plot_convergence.CONV_FZ` already lists the level-7 twin: once packed (with its
+`_axis.dat`, `headon_axis_modes.py`), it becomes the drawn level and its difference from 1/32 is added, dashed. The
+strip is 8.8 × 2.6 in and set at the full text width: the same 0.80 scale as the 7.05 in strips. Label audit clean.
+(e), CONV-fz's H_ADM at t = 100 on shells outside the common MOTS (gold rule: its largest coordinate extent), one
+curve per level on level 4, is coded. It reads `analysis/convfz_constraints_t100.tsv`, written on the node (STATUS,
+"The H table"). With it the strip becomes five panels on 9.4 in (widths 1 / 1.05 / 1.35 / 0.95 / 0.75), and (a)'s
+rules are keyed "n = 2/3/4" (the ticks give Q). The layout passed the label audit on a scratch copy of the node's
+five shells; the pack figure is still the four-panel one.
+Later on 10-08 (lvl7 packed): the pack figure is the five-panel one. (d) draws Δx = 1/64 with 1/16 − 1/32 (solid)
+and 1/32 − 1/64 (dashed): 0.545 % and 0.541 % of the peak at most, E at R = 10 by 0.29 % and 0.09 % (order 1.67).
+(e) reads the node's table (13 shells r = 3.7–7.3 per level): 1.43 % and 0.43 %. Label audit clean.

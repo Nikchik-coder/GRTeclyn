@@ -33,6 +33,7 @@
 #   --dry-run       print what would happen, build nothing
 #   WHM_BUILD_FLAGS make flags (default: USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90,
 #                   what every campaign binary since 2026-09-02 was built with)
+#
 # The whole body is one { ... } block ending in `exit`: bash parses it
 # entirely before running it, so editing this file can never reach a live
 # run.  (bash otherwise reads a script by byte offset as it goes; an edit

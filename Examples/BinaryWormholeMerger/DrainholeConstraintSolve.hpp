@@ -96,8 +96,8 @@ struct ConstraintSolveParams
     double tolerance_rel{1.0e-10};
     double tolerance_abs{0.0};
     int max_iter{200};
-    //! Newton: stop once max |w_{k+1} - w_k| falls below this.
     int max_newton{30};
+    //! Newton: stop once max |w_{k+1} - w_k| falls below this.
     double newton_tolerance{1.0e-10};
     int verbose{1};
 };

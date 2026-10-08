@@ -43,7 +43,7 @@
 
     The fix is NOT to push them artificially.  The Ellis drainhole is a
     one-parameter family, and its other branch carries genuine positive ADM
-    mass (the Lanzhou solutions quoted in research/merger/Reference.md).
+    mass (the Lanzhou solutions).
     bare_mass_X adds the puncture-like m/(2r) piece of that branch, so each
     throat has M_ADM ~ m and the pair falls together UNDER ITS OWN GRAVITY -
     released from rest for a head-on, or with transverse Bowen-York momenta
@@ -86,7 +86,7 @@
     i.e. the proper cell width dx/sqrt(chi) there is 4 dx, and it keeps growing
     inwards - measured 6.2 proper units at dx = 0.5 on an m = 2 solve, against a
     throat of areal radius 4.5.  One cell was wider than the throat, and no
-    matter model could be evaluated on the geometry (research/merger/Plan.md, "Route B traps").
+    matter model could be evaluated on the geometry.
 
     id_type = 1 earns the same ADM mass from the LAPSE instead, and leaves the
     spatial conformal factor bounded.  With the Ellis coordinate
@@ -131,8 +131,8 @@
         chi   = e^{2 u_sum} psi^{-4},       phi = phi_A + phi_B.
 
     Each u_X vanishes at infinity, so the ADM masses add.  Exact for one throat;
-    for two the error is the usual O(a^2/d^2) plus O(m/d) - Plan.md Stage 2
-    replaces it with the Helfer/Ning correction and then a CTTK solve.
+    for two the error is the usual O(a^2/d^2) plus O(m/d) - the Helfer/Ning
+    correction and then a CTTK solve replace it.
 
     ---- THE HELFER/NING ONE-BODY CORRECTION (helfer_correction = 1) --------
     Plain superposition is not innocent near a throat.  Expand it about throat
@@ -326,7 +326,7 @@
     throat A the factor e^{-u_B(x_A)/2} on top (1.064 at d = 8), exactly the
     uniform rescaling that keeps a static throat static in the companion's
     potential.  The background therefore carries c through
-    solve_puncture_shift_X / r_X.
+    m_solve_shift_X / r_X.
 
     WHICH THROAT IS IT?  Its far side says so: Psi = c/r + d near the centre,
     and the inversion r' = c^2/r makes that an asymptotically flat end with
@@ -416,7 +416,7 @@ class BinaryWormholeInitialData
         int id_type;
 
         //! Throat radii.  b0_B = 0 removes throat B entirely (the
-        //! single-throat regression mode of Reference.md Phases 1-2).  Under
+        //! single-throat regression mode).  Under
         //! id_type = 1 this is the drainhole scale a, which at m = 0 is the
         //! areal throat radius exactly.
         double b0_A;
@@ -528,9 +528,6 @@ class BinaryWormholeInitialData
     BinaryWormholeInitialData(params_t a_params, double a_dx)
         : m_params(a_params), m_dx(a_dx)
     {
-        // Precompute the four Helfer constants once on the host: they are
-        // pure functions of the parameters, so the device kernel only pays
-        // for the two windows.
         const double bA = m_params.b0_A;
         const double bB = m_params.b0_B;
         for (int idir = 0; idir < AMREX_SPACEDIM; ++idir)
@@ -589,6 +586,9 @@ class BinaryWormholeInitialData
             }
         }
 
+        // Precompute the four Helfer constants once on the host: they are
+        // pure functions of the parameters, so the device kernel only pays
+        // for the two windows.
         if (m_params.helfer_correction == 0 || bA <= 0.0 || bB <= 0.0)
         {
             return; // off, or only one body present - nothing to correct
@@ -1072,7 +1072,7 @@ class BinaryWormholeInitialData
             u_sum -= WA * (data_t)m_helfer_du_A + WB * (data_t)m_helfer_du_B;
         }
 
-        // ---- Declared perturbation seed (Forward Plan, Phase 1) ------------
+        // ---- Declared perturbation seed ------------------------------------
         // psi -> psi (1 + eps g(r)), g a unit Gaussian shell on the minimal
         // surface, so the throat's areal radius R = r psi^2 e^{-u} moves by
         // ~2 eps with the sign of eps.  The branch is skipped at eps = 0, so

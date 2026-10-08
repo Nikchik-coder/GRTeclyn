@@ -12,9 +12,9 @@ four arms named q1e2 ran without their quadrupole, two arms described as
 "scalar-damped" ran with damping 0.  The manifest records the facts at launch --
 the exact params, the binary and the commit it carries, the source commit of
 the launcher, the node and card, the preflight verdict and the t = 0
-diagnostics -- and the run's end state at exit.  results/merger/analysis/
-run_index.py turns the packed manifests into runs_index.tsv and checks every
-name against its params.
+diagnostics -- and the run's end state at exit.  The analysis package's
+pack.run_index (grteclyn_wrapper.analysis.wormhole_merger) turns the packed
+manifests into runs_index.tsv and checks every name against its params.
 
 `backfill` reconstructs a manifest for a run launched before this existed, from
 its params.txt, parameters_and_version.txt, launcher log and streams; it is

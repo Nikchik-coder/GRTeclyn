@@ -17,7 +17,7 @@ csm rest pairs, written by the sign_rule.py measurement from the chi_z
 slice-cache centroids -- never from throat_track.dat, whose 0.03 quantum is
 the whole early displacement) and writes ``figures/03_two_throats/sign_rule``.
 
-SWITCHED TO THE MATCHED PAIRS 2026-09-30 (the user: "we have new csm data
+SWITCHED TO THE MATCHED PAIRS 2026-09-30 ("we have new csm data
 ... and the attraction changes").  Before, the superposed d = 12 trio of
 ``sign_rule_displacement.dat``, whose ratio was 1.518 +/- 0.021; matched,
 1.462 +/- 0.022 over the same t = 3.5..10.5 window (the ledger's
@@ -157,7 +157,7 @@ def figure_panels(axA, axB, pack_root=PACK_ROOT, stacked: bool = True,
     axB.set_yticks([1.4, 1.5, 1.6])
     # Rotated up the band: at the pair strip's quarter-page width the
     # two-line horizontal version spilled over the band's edge onto the
-    # points (the user, 2026-09-30: "text doesnt fit here").  In the band's
+    # points (2026-09-30: "text doesnt fit here").  In the band's
     # upper stretch: below the gold line only 0.10 of the 0.23 y-span is
     # free, less than the rotated text's length, so it sits above, clear of
     # the prediction line and (in the strip) right of the 3/2 name.

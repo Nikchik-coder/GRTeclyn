@@ -49,8 +49,8 @@ linear) component of its plunge -- 13-15 % of the power sits at the other
 sign of frequency -- not noise.
 
 THE DRAWING GATES (``DRAW_GATES``, same review).  What grew in the right
-column was, row by row (numbers from
-``grteclyn-wrapper/scripts/analysis/merger_feedback/waves_gallery_audit.py``):
+column was, row by row (numbers from an audit of the gallery's records, since
+removed with the superposed runs it read):
 
   collapsing throat  sphere-local numerical growth.  The exact level-4
          spherical control (``single_eps_p1e2_q1e2_ml4_scalar_t100``: the +0.01
@@ -96,9 +96,9 @@ already fold the extraction radius into the amplitude (r*Psi4, see
 streams.py); nothing here multiplies by R again.
 
 THE RINGDOWN FIT (same review: "this fit should be shown on the GW
-pictures").  Row (a) carries the damped sinusoid of queue-2e gate 4 --
-``results/merger/analysis/queue2e_gates.py``, recomputed here with the pack's
-own routine on the same record and window (R = 10, from the burst peak at
+pictures").  Row (a) carries the damped sinusoid of the single throat's wave
+gate 4 -- ``analysis/wormhole_merger/waves/single_throat_gates.py``, recomputed
+here with that module's own routine on the same record and window (R = 10, from the burst peak at
 t = 26 to t = 58), drawn dashed over exactly that window.
 
 STYLE (the seed-branches grammar): figure* width, style.prd frame, no boxed
@@ -111,31 +111,29 @@ inner->outer on the envelopes, the gold accent reserved for the wavefront,
 deep blue for the one fitted model, (a)-(d) tags, semantics in the caption.
 7.05 x 4.6 in since 2026-09-25 (was 7.05 x 5.6 with the twin as row (e)).
 
-THE VACUUM CONTROLS UNDER ROWS (c) AND (d) (2026-09-25, the user: "we also
+THE VACUUM CONTROLS UNDER ROWS (c) AND (d) (2026-09-25: "we also
 did a BBH fly-by with the same params -- add its extracted signal for
 comparison", then "place the BBH spiral into (c) the same way, so it is
 compared").  Each drainhole binary's black-hole twin -- same d and p, bare
 punctures, no scalar -- in the LIGO figure's vacuum colour (CONTEXT) under the
 ink, on the SAME sphere (R = 20, from each control's in-code extraction) and
 scale, named on its own curve ("vacuum BBH spiral" / "vacuum BBH fly-by";
-"vacuum BBH" alone read as the spiral's twin, the user); left panel only,
+"vacuum BBH" alone read as the spiral's twin); left panel only,
 since CONTEXT is also a sphere of the envelope ramp.  The spiral's twin was row
 (e) until then; it stays in ARMS, which the LIGO figure and the ledger read.
 It is drawn whole, its merger (peak 1.02e-2 at t - R = 84.8) 2.9x below and
 43 units after the drainhole burst; the vacuum fly-by is drawn over the
 fly-by's own window: one cycle as the holes swing off periapsis (peak 9.0e-3,
 4.5x below the fly-by) and nothing at the pass.  Row (a)'s dashed curve is
-named "ringdown fit" on the curve (the user).  The momentum knob prints as p,
+named "ringdown fit" on the curve.  The momentum knob prints as p,
 the article's symbol (it printed P).
 """
 
 from __future__ import annotations
 
 import argparse
-import importlib
 import pathlib
 import string
-import sys
 
 import matplotlib
 
@@ -174,30 +172,8 @@ FLYBY_TRUST = trust_window("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm")
 # t_max is the gate the LIGO figure and the claims ledger apply (a coordinate
 # cap at the innermost sphere); the gallery itself draws with DRAW_GATES below,
 # which are per-sphere and, where it matters, retarded.
-#   single  QUEUE2E_GATES.md junk cuts (R=10 from t=70; the gated file holds
-#           zeros past each sphere's cut, trimmed per sphere below);
-#   fly-by  the L = 128 level-5 arm, finished t = 100 clean 2026-09-18 and
-#           filed under 06_binary_flyby/p045/.  No horizon ever forms: both
-#           mouths expand (areal R 4.2 -> 33 by t = 97) and that expansion
-#           contaminates the innermost sphere, so the row is gated.
-#           GATED t = 70 (was 76 until 2026-09-18).  t = 76.08 is where
-#           |rPsi4| at R = 20 TURNS BACK UP -- the trough, i.e. the point
-#           where the contaminant has grown to EQUAL the decaying burst, not
-#           where it arrives.  It is already comparable well before that, and
-#           by t = 100 it is 2.0x the burst peak.  t = 70 keeps 15.5 units
-#           (7.8 M) past the R = 20 burst peak at t = 54.5 and leaves the
-#           contaminant sub-dominant throughout.
-#           The retired note on this row claimed "R = 36/44 decay
-#           monotonically to the record's end".  They do not: that reading
-#           normalised each sphere by its max over t <= 60, which truncates
-#           the OUTER spheres' bursts before they peak (light travel puts the
-#           R = 44 burst at t ~ 78, not 60).  In retarded time all four
-#           spheres peak together at u = t - R ~ 34.5, as radiation must;
-#   spiral  the freeze arm finished t = 100 on 2026-09-16, so the SERIES now
-#           runs t = 0-100 in three legs.  Leg 3 holds the core frozen inside
-#           r = 1.40 from t = 57, which transports the burst the merger
-#           already made rather than evolving a remnant -- so the gallery
-#           draws it only to the fill's causal clock (DRAW_GATES).
+#   single  WAVE_GATES.md junk cuts (R=10 from t=70; the gated file holds
+#           zeros past each sphere's cut, trimmed per sphere below).
 ARMS = [
     ("collapsing throat", r"$\varepsilon_2=5\times10^{-2}$", "(2,0)",
      "01_single_throat/seed/single_eps_p1e2_q5e2_ml4_t100/psi4_mode_l2m0_gated.dat",
@@ -213,7 +189,7 @@ ARMS = [
     # Since 2026-10-05 the stream is the quadrupole about the COLLISION axis
     # (x): the z-based (2,0) the extraction writes is -h'_20/2 of it and
     # carries a quarter of the l = 2 power (|h22/h20| = sqrt(3/2) on every
-    # sphere); results/merger/analysis/headon_axis_modes.py writes the
+    # sphere); analysis/wormhole_merger/waves/headon_axis_modes.py writes the
     # _axis file, h'_20 = 2 x the z-based record, sign kept.
     ("head-on", r"$\sigma=-1$, $d=8$", "(2,0)",
      "04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/Weyl4_mode_20_axis.dat",
@@ -242,13 +218,13 @@ ARMS = [
      "06_binary_flyby/merge_orbit_flip_d12_p060_L128_SERIES/Weyl4_mode_22.dat",
      None, 20.0, 80.0, r"trust window"),
     # The spiral's vacuum twin: a scenario of the LIGO figure and the ledger,
-    # but in the gallery it is drawn UNDER the spiral row (OVERLAID below).
+    # but not a gallery row (OVERLAID below).
     ("vacuum BBH twin", r"$p=0.12$, $d=12$", "(2,2)",
      "07_bbh_control/bbh_control_d12_p012_t150/psi4_mode_l2_all.dat",
      2, 14.0, None, ""),
     # NOT a row here: bbh_control_d12_p045_t100, the momentum-matched vacuum
-    # control (2026-09-19).  Its energy is quoted in Sec. VIII of the article
-    # and in the GPU plan, but it cannot join this table, because the table's
+    # control (2026-09-19).  Its energy is quoted in Sec. VIII of the article,
+    # but it cannot join this table, because the table's
     # contract is "innermost sphere, spread over spheres as the error bar" and
     # that arm has two spheres of which one is contaminated: its punctures
     # recede to r = 13.7 by t = 100, almost onto R = 14, whose reading is their
@@ -260,17 +236,12 @@ ARMS = [
     # fly-by row instead (VACUUM_OVERLAY below).
 ]
 
-# Drawn UNDER a row, not as one (2026-09-25, the user; the docstring's last
+# Drawn UNDER a row, not as one (2026-09-25; the docstring's last
 # section): each drainhole binary's black-hole twin, the same d and p on bare
 # punctures, from the control's in-code extraction at the row's own sphere.
 # Per row: (stream under campaign/, sphere, name, cut to the row's drawn
 # window?, the t - R span its name covers, and whether it sits above or below
-# both curves there).  The spiral's twin is named under its merger trough, so
-# the name cannot run on from the spiral's cap note ("fill's light cone").
-#   spiral  bbh_control_d12_p012_t150 (the ARMS twin, whose consumer stream
-#           has only R = 14/30; the in-code one agrees with it to 0.3 % of
-#           peak on both).  Drawn whole: nothing contaminates it, and its
-#           merger comes after the spiral's drawn record ends.
+# both curves there).
 #   fly-by  bbh_control_d12_p045_t100 (1.5 % of peak against its consumer at
 #           R = 30).  Cut to the fly-by's own window: past t - R ~ 30 its
 #           record is no longer radiation but the receding holes' near field,
@@ -278,7 +249,7 @@ ARMS = [
 #           row's scale a rule), and the holes reach r = 13.7 by t = 100.  Its
 #           two lobes fold across R = 20/26/30 at v/c = 0.99/0.96.
 VACUUM_OVERLAY = {
-    # The merger's vacuum twin (2026-10-05, the user: "should now have the
+    # The merger's vacuum twin (2026-10-05: "should now have the
     # curve for bbh p010 d6 ... so we can compare the signal strength"):
     # bare punctures at +-3, tangential p = 0.10 in the merger's sense, per-
     # hole ADM mass 1.00, on the BBH controls' box (spheres 14/20/26/30), so
@@ -297,7 +268,7 @@ VACUUM_OVERLAY = {
     "fly-by": ("07_bbh_control/bbh_control_d12_p045_t100/weyl_extraction_mode_22.dat",
                20.0, "vacuum BBH fly-by", True, (5.0, 40.0), "above"),
 }
-# ARMS scenarios the gallery draws only as an overlay, never as a row.
+# ARMS scenarios the gallery never draws as a row.
 OVERLAID = {"vacuum BBH twin"}
 
 # Row titles in the article's words (2026-10-05): the d = 6 chain is "the
@@ -350,6 +321,41 @@ RADII = {
     "06_binary_flyby/merge_orbit_flip_d12_p060_L128_SERIES/Weyl4_mode_22.dat":
         (20.0, 28.0),
 }
+
+
+# Rows drawn from another run than their ARMS stream.  Since 2026-10-08 the
+# head-on row is FARZONE-ho: the same pair and grid in an L = 512 box with
+# sigma 0.3, so no level-1 noise gate, clean to t = 250, spheres to R = 180.
+# Per row: the stream under campaign/, m as in ARMS, the spheres drawn, and
+# the last coordinate time drawn at each.  Every sphere runs to t - R = 86, the
+# clock's edge (the vacuum head-on under the row ends at t = 100 on R = 14), so
+# the row has no cap.  R = 180 is left out: its record stops at t - R = 70, 12
+# inside the sponge.  ARMS, DRAW_GATES and RADII keep the production chain,
+# which the LIGO figure and the quoted energies read.
+GALLERY_ROW = {
+    "head-on": ("08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm/Weyl4_mode_20_axis.dat",
+                None, (10.0, 44.0, 90.0, 150.0), lambda R: R + 86.0),
+}
+
+
+def row_record(pack: pathlib.Path, name: str, rel: str, m: int | None,
+               gated: bool = True):
+    """``(t, {R: complex r*Psi4})`` as the gallery draws row ``name``: its
+    GALLERY_ROW stream, spheres and ends where it has one, else the ARMS
+    stream (``rel``, ``m``) through ``drawn``; ``gated=False`` keeps the whole
+    record.  None while the stream is not packed."""
+    if name in GALLERY_ROW:
+        rel, m, radii, end = GALLERY_ROW[name]
+    got = load(pack, rel, m)
+    if got is None:
+        return None
+    t, series = got
+    if name in GALLERY_ROW:
+        series = {R: series[R] for R in radii}
+        if gated:
+            series = {R: np.where(t <= end(R) + 1e-9, y, 0.0) for R, y in series.items()}
+        return t, series
+    return t, (drawn(name, t, series) if gated else series)
 
 
 def load(pack: pathlib.Path, rel: str, m: int | None):
@@ -459,18 +465,13 @@ def envelope(y: np.ndarray) -> tuple[np.ndarray, int]:
 
 
 def throat_ringdown(pack: pathlib.Path):
-    """Queue-2e gate 4 on its own record and window, with the pack's own
-    routine: ``(t_fine, fit, period, e-fold)`` at R = 10, or None if the pack
-    does not carry the run.  The routine returns (period, e-fold, f) only; the
-    two linear coefficients are the exact least squares at that (f, e-fold),
-    as inside the routine's own scan."""
-    ana = pathlib.Path(pack) / "analysis"
-    if str(ana) not in sys.path:
-        sys.path.insert(0, str(ana))
-    try:
-        Q = importlib.import_module("queue2e_gates")
-    except ImportError:
-        return None
+    """The single throat's wave gate 4 on its own record and window, with
+    single_throat_gates' own routine: ``(t_fine, fit, period, e-fold)`` at
+    R = 10, or None if the pack does not carry the run.  The routine returns
+    (period, e-fold, f) only; the two linear coefficients are the exact least
+    squares at that (f, e-fold), as inside the routine's own scan."""
+    from grteclyn_wrapper.analysis.wormhole_merger.waves import single_throat_gates as Q
+
     d = Q.find_run(pathlib.Path(pack), Q.STRONG)
     if d is None:
         return None
@@ -515,12 +516,11 @@ def main(argv: list[str] | None = None) -> int:
     for name, knob, mode, rel, m, R0, _t_max, _note in ARMS:
         if name in OVERLAID:
             continue
-        got = load(pack, rel, m)
+        got = row_record(pack, name, rel, m)
         if got is None:
-            print(f"  {name:<18s} PENDING -- no {rel}")
+            print(f"  {name:<18s} PENDING -- no {GALLERY_ROW.get(name, (rel,))[0]}")
             continue
         t, series = got
-        series = drawn(name, t, series)
         radii = sorted(series)
         R_in = min(radii, key=lambda r: abs(r - R0))
         speeds = wavefront_speeds_xcorr(t, series, radii)
@@ -528,7 +528,7 @@ def main(argv: list[str] | None = None) -> int:
             pk = {R: float(t[int(np.argmax(np.abs(series[R])))]) for R in radii}
             speeds = [(R1, R2, (R2 - R1) / (pk[R2] - pk[R1]) if pk[R2] != pk[R1]
                        else np.inf, 0.0) for R1, R2 in zip(radii[:-1], radii[1:])]
-        note = DRAW_GATES[name][1] if name in DRAW_GATES else ""
+        note = DRAW_GATES[name][1] if name in DRAW_GATES and name not in GALLERY_ROW else ""
         rows.append(dict(name=name, knob=knob, mode=mode, note=note, t=t,
                          series=series, radii=radii, R_in=R_in, speeds=speeds))
         ends = ", ".join(f"{trim_zeros_tail(t, series[R])[0][-1]:.1f}" for R in radii)
@@ -570,7 +570,7 @@ def main(argv: list[str] | None = None) -> int:
             # queue-2e gate 4's damped sinusoid, over the window it was fitted on
             axL.plot(ring[0] - R_in, ring[1], color=style.DEEP_BLUE, linewidth=1.1,
                      linestyle=(0, (3.2, 1.8)), zorder=4)
-            # Named on the curve (the user, 2026-09-25): under its second
+            # Named on the curve (2026-09-25): under its second
             # trough, below both the fit and the data over the name's width.
             uf = ring[0] - R_in
             kf = np.nonzero((uf > 30) & (uf < 45))[0]

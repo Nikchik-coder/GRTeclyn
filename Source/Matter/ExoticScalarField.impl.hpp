@@ -155,7 +155,6 @@ ExoticScalarField<potential_t>::add_matter_rhs(
         state.cellData(ix, iy, iz);
     const Vars vars(state_cell_data);
 
-    // call the function for the rhs excluding the potential
     const auto h_UU  = CCZ4Geometry::compute_inverse_metric(vars);
     const auto d1_h  = a_deriv.d1_sym_tensor(ix, iy, iz, state, c_h11);
     const auto chris = CCZ4Geometry::compute_christoffel(d1_h, h_UU);

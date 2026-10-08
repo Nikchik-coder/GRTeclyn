@@ -15,7 +15,7 @@ It reached t = 60.01 (exit 0, no NaN). Every stream is bit-identical to leg 3's 
 
 Its plotfiles are therefore leg 3's at t = 51–60.
 
-## 2. Method (`grteclyn-wrapper/scripts/analysis/merger_feedback/headon_first_law.py`)
+## 2. Method (`grteclyn-wrapper/scripts/analysis/wormhole_merger/headon_first_law.py`)
 
 - **The surface.** The common MOTS r = h(θ, φ) about the centre, in real Y_lm to ℓ = 6.
   - Found by the spectral flow finder (`ah_flow_finder.py`; no star-shaped assumption).
@@ -123,4 +123,4 @@ The consumer's round scan (`horizon_scan.dat`, centre C) reads the horizon growi
   flux, shear, q, the three rates, and the surface's a_lm.
 - The plotfiles stay on the second node's scratch, on the user's word (2026-10-01).
 - To re-run:
-  `OMP_NUM_THREADS=8 nice -n 19 grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/merger_feedback/headon_first_law.py --json OUT.json --level 3 --lmax 6 PLT ...`
+  `OMP_NUM_THREADS=8 nice -n 19 grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/wormhole_merger/headon_first_law.py --json OUT.json --level 3 --lmax 6 PLT ...`

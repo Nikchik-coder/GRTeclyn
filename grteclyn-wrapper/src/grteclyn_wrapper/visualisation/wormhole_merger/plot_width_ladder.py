@@ -13,12 +13,12 @@ slope is its exponent.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_width_ladder
 
-WHY THIS PANEL (2026-10-05, the user: "create the required figure").  Sec.
+WHY THIS PANEL (2026-10-05: "create the required figure").  Sec.
 V B's width sentence left the paper with the superposed campaign that
 morning: its a-ladder was superposed, and the matched reruns
 (ctrl_rest_a{1,15,3}_csm, 10-02) had never been reduced, because their chi_z
-slice caches live only in the run tree.  ``results/merger/analysis/
-matched_rest.py`` now reduces them into the packed
+slice caches live only in the run tree.  ``analysis/wormhole_merger/
+two_throats/matched_rest.py`` now reduces them into the packed
 ``campaign/03_two_throats/matched_rest_displacement.dat`` (dsep_like_a1 /
 a15 / a3; a = 2 is dsep_like_d12): at t = 11.5, 0.1623 / 0.3250 / 0.4791 /
 0.7583, n = 1.40 (1.21 at t = 8, 1.34 at t = 10; the superposed ladder gave
@@ -68,8 +68,8 @@ def ladder(pack_root=PACK_ROOT, t: float = T_LADDER) -> tuple[np.ndarray, np.nda
     tab = table(pack_root)
     missing = [c for c in RUNGS.values() if c not in tab]
     if missing:
-        raise SystemExit(f"{TABLE} has no {missing}: run results/merger/analysis/matched_rest.py "
-                         "where the run tree is (the slice caches are not packed)")
+        raise SystemExit(f"{TABLE} has no {missing}: run grteclyn_wrapper.analysis.wormhole_merger."
+                         "two_throats.matched_rest where the run tree is (the slice caches are not packed)")
     a = np.array(sorted(RUNGS))
     return a, np.array([np.interp(t, tab["time"], tab[RUNGS[w]]) for w in a])
 

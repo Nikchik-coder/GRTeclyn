@@ -166,13 +166,11 @@ def main(argv: list[str] | None = None) -> int:
         arms[key] = a
 
     # ---- the numbers, printed for the caption and the article ---------------
-    ratio = {}
     for key, a in arms.items():
         for R in RADII:
             tg, Eg = a["gw"][R]
             ts, Ep, _ = a["kin"][R]
             g, p = _at(tg, Eg, a["t_cut"]), _at(ts, Ep, a["t_cut"])
-            ratio[(key, R)] = (g, p, abs(p) / g)
             tl, per_l = a["per_l"][R]
             k = tl <= a["t_cut"]
             E = {l: np.trapezoid(per_l[l][k], tl[k]) for l in ELLS}
@@ -184,8 +182,7 @@ def main(argv: list[str] | None = None) -> int:
 
     style.prd(base=10.0)
     # Full-page width (figure* at 0.80\textwidth): three panels ACROSS on one
-    # clock.  Every arm's record ends by t = 60, so in (a) and (b) the right
-    # third of the frame is free and every label lives there, clear of a curve.
+    # clock.
     fig, (axA, axB, axC) = plt.subplots(
         1, 3, figsize=(7.05, 2.55), sharex=True, constrained_layout=True)
 
@@ -194,11 +191,8 @@ def main(argv: list[str] | None = None) -> int:
     # before its burst reaches R = 30, so its "ratio" divides by a pre-burst
     # E_GW and is not a measurement (dropped 2026-09-23).  The ratio is
     # cut-dependent -- the gravitational burst peaks at R = 30 near t = 65, so
-    # a t = 60 cut still misses most of it -- and the panel shows that: both
-    # curves run to t = 80, where the fly-by's trust window closes on this
-    # sphere (u = t - R = 50; past it both integrals grow without bound as
-    # the mouths inflate), with the ratio printed at each cut the article
-    # quotes.
+    # a t = 60 cut still misses most of it -- and the panel shows that, with
+    # the ratio printed at each cut the article quotes.
     a = arms["flyby"]
     tg, Eg = a["gw"][30]
     ts, Ep, _ = a["kin"][30]

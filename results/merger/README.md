@@ -34,18 +34,25 @@ that produced it does not.
   exactly these (per-run map: `research/merger/article/claims/table1_groups.tsv`).
   - `01_single_throat/` — the lone throat: `hold/` (levels, floors, Δt, box), `seed/` (declared
     kicks, quadrupoles, the scalar-stream re-runs), the generated notes (INSTABILITY, BRANCHES,
-    QUEUE2E_GATES).
+    WAVE_GATES).
   - `02_moving_throat/` — the boosted throat: `contraction_t0/` (the 1/γ contraction at t = 0),
-    `exact_boost/` (one exact-boost throat on the production box), `csm/` (the Bowen–York
+    `exact_boost/` (one exact-boost throat on the production box, and the MASS-t0 fly-by pairs at
+    t = 0 whose ADM surface integrals measure the moving pairs' mass), `csm/` (the Bowen–York
     momentum probes that ruled that route out).
-  - `03_two_throats/csm/` — the matched rest pairs: width and separation ladders, the sign rule.
+  - `03_two_throats/csm/` — the matched rest pairs: width and separation ladders, the sign rule, and
+    SCATTER-fate (the d = 12 rest pair to t = 95: the mouths recede and both inflate).
   - `04_binary_headon/` — `csm/` (the mode-3 head-on legs), `placement_csm/` (the 18 one-step
     placement probes), `first_law/`, `mots/`, and the CS-1 solve scout.
   - `05_binary_spiral/` — `merger_d6/` (the d = 6 merger chain), `csm/` + `lbf/` (the d = 12
     arms), `verify_p012/`, `scout_merger/`, `horizon/` (the retracted scan record).
   - `06_binary_flyby/` — the fly-by and E_GW scan, p = 0.25–0.90, with `verify_p025/`.
   - `07_bbh_control/` — the vacuum BBH controls.
-  - `08_convergence/` — the referee's convergence arms (no frames, no movies, by design).
+  - `08_convergence/` — the referee's convergence arms (no frames, no movies, by design — except
+    CONV-fz, the head-on's three-level set lvl5 / FARZONE-ho / lvl7 on the L = 512 box, which keeps
+    its frames on the user's word, 10-07; FARZONE-ho itself runs to t = 250 with spheres to R = 180).
+    CONV-fz, all three levels packed 10-08 (Fig. 11(d, e)): E at R = 10 converges at order 1.67; the
+    common MOTS forms at t = 18 at every level, R and M_MS equal to 0.08 %; ⟨H_ADM⟩ outside the MOTS
+    at t = 100 changes by 1.4 % and then 0.4 % (`analysis/convfz_constraints_t100.tsv`).
   - `00_archive/` (untracked) — the superseded superposed / Bowen-York campaign; see the data
     note above.
 - `figures/<group>/` (index: `figures/FIGURES.md`), `movies/<group>/`, `gw_search/` (the
@@ -82,20 +89,23 @@ campaign/                         (as of 2026-10-06; the superposed-era subfolde
                                     quadrupolar kicks, the scalar-stream re-runs, the L = 512
                                     octant inflation arm
     INSTABILITY.md                  the isolated-throat systematics, generated
-    QUEUE2E_GATES.md                the five gates of the wave from one throat, generated
+    WAVE_GATES.md                   the five gates of the wave from one throat, generated
     BRANCHES.md                     the level-3 / level-4 ladder read (two fates), generated
     CLOCK_COMPARISON.md             the throat clocks across arms, generated
     NOTES.md                        the Stage-1 working notes, copied from the run tree
   02_moving_throat/               the boosted throat:
     contraction_t0/<run>/           the 1/γ Lorentz contraction at t = 0, p = 0 -> 0.45
     exact_boost/<run>/              the moving exact-boost throat (the collapse twins, levels
-                                    3/4) and its t = 0 solve check on the production box
+                                    3/4) and its t = 0 solve check on the production box;
+                                    the MASS-t0 pairs (p = 0.25 / 0.45 / 0.60 at t = 0: ADM
+                                    energy 2.304 / 2.317 / 2.282, flat in p)
     csm/<run>/                      the Bowen-York momentum probes (2026-09-29) that ruled
                                     that route out: one throat at p = 0, 0.12, 0.45
     boost_contraction_t0.tsv        the measured contraction against 1/γ, reduced
   03_two_throats/
     csm/<run>/                      the matched rest pairs: width rungs a = 1/1.5/2/3,
-                                    separation rungs d = 12/14/16/18, the flip control
+                                    separation rungs d = 12/14/16/18, the flip control,
+                                    SCATTER-fate (d = 12 to t = 95: both mouths inflate)
     matched_rest_displacement.dat   the width/separation ladder, reduced
     sign_rule_displacement.dat      the sign rule (pull/push), reduced
   04_binary_headon/
@@ -119,7 +129,8 @@ campaign/                         (as of 2026-10-06; the superposed-era subfolde
   08_convergence/<run>/           the convergence study for the referee: each arm is its
                                   partner's params with one knob changed (max_level from 0,
                                   the wave zone's level, the dissipation); no movies, no
-                                  frames kept (the user's word)
+                                  frames kept (the user's word) -- except CONV-fz, which
+                                  keeps them (the user, 10-07)
   00_archive/                     UNTRACKED: the superseded superposed / Bowen-York campaign
                                   (pack extracts, moved 2026-10-02 / 2026-10-06)
   <group>/NOTES.md                the group's working notes, copied from the run tree
@@ -145,15 +156,15 @@ figures/<group>/                  the paper's figures (index: figures/FIGURES.md
 runs_registry.tsv                 ONE line per run: what is different, caveat, stopped
                                   note -- the only place a run is registered (the
                                   launcher appends it when WHM_WHAT is set)
-analysis/pack_paths.py            how every script here finds a run by name, wherever filed
-analysis/make_summary.py          builds the two summary tables, one block per group
-analysis/*.py                     the REDUCTIONS: they write the generated notes above
-                                  (INSTABILITY.md, BRANCHES.md, QUEUE2E_GATES.md) and the
-                                  small .dat tables a figure needs, from the packed
-                                  streams alone, with a stock Python.  The FIGURES all
-                                  live in grteclyn_wrapper.visualisation.wormhole_merger
+analysis/                         small derived tables: boosted_adm_mass.tsv (the boosted
+                                  pairs' ADM mass), t0_adm_mass.tsv (their measured t = 0
+                                  mass), convfz_constraints_t100.tsv (CONV-fz's H_ADM shells)
 summary.md, summary.csv           one row per run (csv: plus a `group` column), generated
 ```
+
+The generated notes, the summary tables and `analysis/` are written from the packed streams
+alone by the reductions in `grteclyn-wrapper/src/grteclyn_wrapper/analysis/wormhole_merger/`
+(its README lists each one); the figures are drawn by `grteclyn_wrapper.visualisation.wormhole_merger`.
 
 The four evolution streams are written every step (dt = 0.01) and thinned here to
 dt = 0.05 — **except the last time unit of each run, kept at full cadence**, because that
@@ -171,7 +182,7 @@ says which).
   constraint norm on the final row is the NaN arriving. `summary.md` quotes the row
   half a unit earlier for exactly this reason; do the same.
 - **Separation can glitch to ~0 for a single row** when both trackers latch onto the
-  same throat as the pair swaps sides. `make_summary.py` drops rows that disagree with
+  same throat as the pair swaps sides. `pack.summary` drops rows that disagree with
   both neighbours by more than half; read the stream the same way.
 - **Horizon numbers come from the spectral MOTS finder** (`small_data/mots_spectral.dat`,
   written on every plotfile of every binary profile), never from the in-code θ/AH scan

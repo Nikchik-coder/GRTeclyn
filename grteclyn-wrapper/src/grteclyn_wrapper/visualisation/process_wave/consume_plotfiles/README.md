@@ -63,11 +63,15 @@ Off by default. Since 2026-10-01 it is on in every binary launch profile (`lib/c
   - R, its Hawking mass, the area, the extent along each axis, the deformation, the residual;
   - the spherical first law's rates from the phantom flux and the shear on the surface;
   - the coefficients go to the JSONL file and the state, the next plotfile's start.
-- **Implementation.** The finder is `scripts/analysis/merger_feedback/headon_first_law.py`, loaded
+- **Implementation.** The finder is `scripts/analysis/wormhole_merger/headon_first_law.py`, loaded
   from the wrapper (one implementation; its `--selftest` checks Kerr–Schild Schwarzschild and a
   flat spheroid).
 - **Cost and needs.** About 20 s per plotfile at level 3 once it is following a surface. It needs
   full-state plotfiles plus lapse, phi and Pi. Plotfiles before `--mots-spectral-from` are skipped.
+- **Moving mouths (`--mots-spectral-track`).** The surface is centred, on each plotfile, on the
+  `--horizon-track` mouth nearest `--mots-spectral-center` (default `--center`), and each centre is
+  written beside its coefficients (`"centre"` in the JSONL; the a_lm are about it). A fixed centre
+  loses a receding mouth once it has moved about its own coordinate radius (SCATTER-fate, 2026-10-07).
 
 ## Horizon scan (`--horizon-scan`, own file `horizon_scan.dat`)
 

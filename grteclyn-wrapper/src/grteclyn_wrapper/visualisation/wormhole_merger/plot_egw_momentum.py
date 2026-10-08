@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 r"""E_GW against the initial momentum: the turnover at the capture boundary.
 
-OFF THE PAPER since 2026-10-05 (the user: "not representative ... describe
+OFF THE PAPER since 2026-10-05 ("not representative ... describe
 it in text, wipe the figure"): three points, one a floor, read better as the
 sentence sec:gw:flyby already carries.  Kept as a check of those numbers.
 

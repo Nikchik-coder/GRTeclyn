@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 r"""Code health on one page: the constraint record of every run the paper draws.
 
-The appendix figure "Code health and constraint evolution" (2026-09-26, the
-user: "for fig 1 2 4 6 9 extract the measurement plots, the ones that validate
+The appendix figure "Code health and constraint evolution" (2026-09-26:
+"for fig 1 2 4 6 9 extract the measurement plots, the ones that validate
 the results are correct, and move them to the single plot in appendix that
 covers the constraints for all of them; keep the physical observables").  Each
 panel is the constraint panel its main-text figure used to carry, drawn from
@@ -18,7 +18,7 @@ the same streams by the same rules, so the main figures now show physics only:
           dx = 1/16, the level-3 class of the L = 64/128 boxes, so "level 5"
           read finer than it is.  Read from the run's evolution_params.txt;
 (e)       the head-on chain's H, drawn with the ladder grammar of its
-          main-text page (2026-10-05, the user: "this ladder can be
+          main-text page (2026-10-05: "this ladder can be
           represented here on the ham plot"): the used legs in ink across
           era rules at t = 35 / 50.8, levels named per era, leg 1's overrun
           in grey to its NaN at t = 38.845 (cross);
@@ -30,7 +30,7 @@ the same streams by the same rules, so the main figures now show physics only:
           death cross.  The deaths are single-cell h11 NaNs with the box
           norms clean to the last step, so the grey curves end mid-air at
           ordinary values: the crosses, not blow-ups, mark them;
-(g)       the p = 0.60 plunge chain (2026-10-05, the user: "add here p060"),
+(g)       the p = 0.60 plunge chain (2026-10-05: "add here p060"),
           same ladder grammar: the used legs (level 4: to 40, the restart to
           50, the chi-floor leg to 100) in ink across era rules at t = 40 /
           50, the min-chi 1e-8 extension in grey to its merged-core cell NaN
@@ -54,7 +54,7 @@ the same streams by the same rules, so the main figures now show physics only:
           layout the run log reports.
 
 Two rows of four, one sub-grid each: the lone throat on top, (a)-(d); the
-binaries below, (e)-(h) (2026-10-05, the user: "second row make it 4 figures
+binaries below, (e)-(h) (2026-10-05: "second row make it 4 figures
 same as first row").
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_constraint_evolution
@@ -84,7 +84,6 @@ from matplotlib.lines import Line2D  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import (  # noqa: E402
     plot_headon_collapse as headon,
-    plot_momentum_orbits as orbits,
     plot_psi4_gallery as gallery,
     plot_seed_branches,
     plot_single_collapse as collapse,
@@ -117,8 +116,6 @@ FLYBY_GROUP = "06_binary_flyby"
 FLYBY = "merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"
 FLYBY_TRUST = 67.6    # trust_windows.tsv: sustained L2 Ham crossing of 2.5e-2
 FLYBY_GATE_ROW = "clmEgwGateFortyFive"   # the wave gate: recomputed by that ledger row's extractor
-FLYBY_READ = (0.0, 30.0, 40.0, 43.0, 50.0, 60.0, 70.0, 80.0, 100.0)   # printed
-FLYBY_FLOOR = (30.0, 40.0)  # the floor the growth is measured against (median)
 
 
 def _ledger_value(row_id: str) -> tuple[float, str]:
@@ -152,7 +149,7 @@ def _cross(color=style.INK, ms=5):
                   mec="white", mew=0.8)
 
 
-# (a)/(b): every seed amplitude at the HIGHEST level it was run at (the user,
+# (a)/(b): every seed amplitude at the HIGHEST level it was run at (
 # 2026-09-26: "max level available should be shown").  At L = 64 that is level
 # 4 for the unkicked throat and the +-0.01 pair -- +0.01 was stopped by hand at
 # t = 13.5 (registry), so it ends in a dot, not a cross -- and level 3 for
@@ -238,8 +235,7 @@ def pure_quadrupole(ax, pack) -> None:
 
 
 def _param(run: pathlib.Path, key: str) -> float:
-    """One numeric key of a packed run's evolution_params.txt (the reader the
-    pre-csm plot_headon_collapse carried; local since its 09-30 rewrite)."""
+    """One numeric key of a packed run's evolution_params.txt."""
     for ln in (run / "evolution_params.txt").read_text().splitlines():
         ln = ln.split("#", 1)[0].strip()
         if "=" in ln:

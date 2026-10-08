@@ -1,6 +1,6 @@
 """BBH control t150: the full ringdown at the outer sphere, with its QNM fit.
 
-GPU_PLAN #2 close-out figure: the t = 150 rerun exists to deliver the ringdown
+Close-out figure: the t = 150 rerun exists to deliver the ringdown
 tail that the t100 run cut at 96 % of peak.  Panels: (a) Re/Im of the (2,2)
 mode at R = 30 over the whole run, (b) the log envelope with the fitted
 exponential decay and the fit window marked.

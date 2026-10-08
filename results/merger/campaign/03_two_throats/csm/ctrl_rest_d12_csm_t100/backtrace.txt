@@ -1,0 +1,33 @@
+Host Name: <redacted>
+=== If no file names and line numbers are shown below, one can run
+            addr2line -Cpfie my_exefile my_line_address
+    to convert `my_line_address` (e.g., 0x4a6b) into file name and line number.
+    Or one can use amrex/Tools/Backtrace/parse_bt.py.
+
+=== Please note that the line number reported by addr2line may not be accurate.
+    One can use
+            readelf -wl my_exefile | grep my_line_address'
+    to find out the offset for that line.
+
+ 0: test(+0x2c88f5) [0x55dac97468f5]
+
+ 1: test(+0x2cbef5) [0x55dac9749ef5]
+
+ 2: test(+0x645092) [0x55dac9ac3092]
+
+ 3: test(+0x40ca70) [0x55dac988aa70]
+
+ 4: test(+0x40ca4d) [0x55dac988aa4d]
+
+ 5: test(+0x40b1e1) [0x55dac98891e1]
+
+ 6: test(+0x6072f2) [0x55dac9a852f2]
+
+ 7: test(+0x44acf) [0x55dac94c2acf]
+
+ 8: /usr/lib/x86_64-linux-gnu/libc.so.6(+0x29d90) [0x7fd6bbe9ad90]
+
+ 9: /usr/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x80) [0x7fd6bbe9ae40]
+
+10: test(+0x46205) [0x55dac94c4205]
+

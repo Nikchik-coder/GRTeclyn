@@ -1,6 +1,6 @@
 """The unkicked L = 128 throat's long inflation record -- the t500 arm.
 
-A separate page from ``single_throat_inflation`` (untouched on the user's word,
+A separate page from ``single_throat_inflation`` (untouched by decision,
 2026-09-24: the L2 norms are domain norms and the 8x bigger box dilutes them
 x1.4-3.2 against the L = 64 twin, so the records cannot be spliced): this
 figure carries the new run's own data, with the L = 64 twin drawn as a halo
@@ -13,7 +13,7 @@ as "the pure-quadrupole inflation arm" but the launcher's default binary
 the live process (exe hash == the pin, zero l2 strings).  What evolved is
 THE UNKICKED L = 128, max_level 4 throat, and that is what this page shows:
 the throat's own truncation-seeded inflation, decelerating.  STOPPED BY HAND
-at t = 195.14 on the user's word (2026-09-24 16:12): not quotable past
+at t = 195.14 by decision (2026-09-24 16:12): not quotable past
 t ~ 100 -- box reflections, the refinement-box crossing, H ~ 0.13.
 
 WHAT THE PANELS SAY (the whole record, t = 0-195.14):
@@ -99,8 +99,8 @@ def _src(run: pathlib.Path, name: str) -> pathlib.Path:
 
 # The true neck, measured by hand off the rolling plotfiles' x-rays (r ~ 20,
 # min of R over r > 2), 2026-09-24: the stream stops tracking it at t = 145
-# when its argmin falls onto the r = 0.5 cut.  Extend at each regeneration
-# while the artifact stands (plotfiles roll -- these points are irreplaceable).
+# when its argmin falls onto the r = 0.5 cut (plotfiles roll -- these points
+# are irreplaceable).
 NECK = np.array([
     [154.0, 10.3209],
     [157.0, 10.3468],
@@ -305,9 +305,9 @@ def main(argv: list[str] | None = None) -> int:
     axs[0].plot(t_line, rate_line, color=style.INK, linewidth=1.1, zorder=3)
     axs[0].axvline(t_dep, color=style.FAINT, linewidth=0.7, zorder=1)
     axs[0].axhline(0.0, color=style.FAINT, linewidth=0.6, zorder=1)
-    # Two right-aligned lines ending at t = 62, left of the t = 66 vline: the
-    # audit showed a left-anchored block at t = 4 still reaches t ~ 78 at 7 pt
-    # and the rising limb (0.016 -> 0.032 over t = 66-74) cuts through it.
+    # Two right-aligned lines.  The audit showed a left-anchored block at
+    # t = 4 still reaches t ~ 78 at 7 pt and the rising limb (0.016 -> 0.032
+    # over t = 66-74) cuts through it.
     # Upper-right: the coast is low (< 0.008) past t ~ 95, and the left
     # margin is owned by the tick labels at this x-range.
     axs[0].text(0.96, 0.95, f"${rate[i_pk]:.3f}$ at $t={arv[i_pk, 0]:.0f}$",

@@ -143,7 +143,7 @@ class ExternalGridInitialData
         // A header that lists names but not the same NUMBER of them as it
         // declares components is the ambiguous-stride case: one of the two is
         // wrong, and guessing positionally would misalign every row after the
-        // first.  Refuse rather than fall back.  (See DebugPreGPU.md.)
+        // first.  Refuse rather than fall back.
         if (!file_comp_names.empty() &&
             static_cast<int>(file_comp_names.size()) != m_ncomp)
         {

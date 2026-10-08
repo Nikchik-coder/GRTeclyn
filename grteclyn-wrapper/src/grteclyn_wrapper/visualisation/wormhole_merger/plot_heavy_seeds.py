@@ -32,13 +32,13 @@ carries the numbers of the text: heavier bursts are louder but redder; the
 tracks climb one decade per mass decade while the noise wall below ~0.1 mHz
 climbs faster, and past 10^7 M_sun they slide out of the band (hatched, not
 counted).  Grey dashed: the lone collapse at 10^5 M_sun, below the noise.
-Since 2026-10-05 (the user: "why this fig doesn't have the other signals such
+Since 2026-10-05 ("why this fig doesn't have the other signals such
 as p060?"): at 10^5 M_sun the d = 6 merger (blue), the p = 0.60 plunge (blue
 dotted, a FLOOR -- its record ends at its trust window mid-decay), the
 head-on (dashed ink) and the lone collapse, all near fM ~ 0.05 and so
 overlapping on the panel's seven decades: an inset magnifies the 10^5
 cluster with the noise under it, its window ruled on the panel.  The key is
-one row across the top of the figure, over (a)-(c) (the user: "the
+one row across the top of the figure, over (a)-(c) ("the
 horizontal layout on top of all the a b c").
 
 PANEL (c) -- THE POPULATION CURVE (2026-09-24, the first author's request:
@@ -106,7 +106,6 @@ def t_of_z(z: np.ndarray | float) -> np.ndarray | float:
 # --- the campaign's measured numbers (read from the pack) -------------------
 CONVERSIONS = ("head-on", "spiral")   # the encounters that end in one black hole
 DEPOSIT = ("spiral", "fly-by")        # the Lambda envelope's E_GW (every encounter)
-BURSTS = (("fly-by", style.GOLD), ("spiral", style.DEEP_BLUE))
 Z_EMIT = 20.0
 SALPETER_MYR = 45.0
 SEED_RANGE = (1.0e4, 1.0e6)   # the Table-II decade band the section quotes
@@ -276,8 +275,7 @@ def panel_seed_race(ax) -> None:
 
 
 
-# --- LISA (gw_search.lisa; kept under these names for the claims extractors) --
-lisa_sn = LISA.sn_instrument
+# --- LISA (gw_search.lisa; kept under this name for the claims extractors) --
 
 
 def lisa_pls(f: np.ndarray, years: float = 4.0, snr: float = 10.0) -> np.ndarray:
@@ -331,7 +329,7 @@ def panel_bursts(ax) -> list:
     # seven decades; the inset (upper right, empty since the key moved above
     # the frame) magnifies them so their strengths can be compared.
     #   merger   the d = 6 chain;
-    #   plunge   p = 0.60 (2026-10-05, the user: "why this fig doesn't have
+    #   plunge   p = 0.60 (2026-10-05: "why this fig doesn't have
     #            the other signals such as p060?"): its record ends at the
     #            trust window mid-decay, so its track is a FLOOR (the key);
     #   head-on  the conversion channel's own burst (2026-09-30);
@@ -382,8 +380,8 @@ def panel_bursts(ax) -> list:
     ax.set_xticks([1e-6, 1e-4, 1e-2, 1e0])
     ax.set_xlabel(r"$f_{\rm obs}$ [Hz]")
     ax.set_ylabel(r"$h_c$,  $\sqrt{f S_n}$")
-    # The key is ONE ROW ACROSS THE TOP OF THE FIGURE, over (a)-(c) (the
-    # user, 2026-10-05: "moving the legend to the top so it's not polluting
+    # The key is ONE ROW ACROSS THE TOP OF THE FIGURE, over (a)-(c)
+    # (2026-10-05: "moving the legend to the top so it's not polluting
     # the figure content", then "the horizontal layout on top of all the a b
     # c"), drawn by main(); the unit of the mass names sits in the one empty
     # corner, under the noise floor's right arm.

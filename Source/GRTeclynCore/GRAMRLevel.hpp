@@ -193,8 +193,7 @@ class GRAMRLevel : public amrex::AmrLevel
 
     bool nan_check{};
 
-    //! NaN autopsy (research/merger/GPU_PLAN_UPDATED.md, Forward Plan, Phase 0
-    //! item 4).  When nan_check trips, print -- before aborting -- which
+    //! NaN autopsy.  When nan_check trips, print -- before aborting -- which
     //! variables went non-finite, in which cell, the state before and after
     //! the step there, the old chi and lapse at its six neighbours, how many
     //! cells separate it from the edge of this level's grids (and whether that

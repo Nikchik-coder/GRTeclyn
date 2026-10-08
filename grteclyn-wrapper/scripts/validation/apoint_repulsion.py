@@ -1,4 +1,4 @@
-"""GPU_PLAN #8: the scalar-charge law from the rest-release a-points.
+"""The scalar-charge law from the rest-release a-points.
 
 Two like-oriented drainhole throats, equal mass, released from rest at
 d = 12.  Gravity pulls them together; the phantom support field pushes them

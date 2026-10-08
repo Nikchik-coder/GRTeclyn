@@ -74,6 +74,7 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
+from matplotlib.patches import Patch  # noqa: E402
 import numpy as np  # noqa: E402
 from scipy.signal import hilbert  # noqa: E402
 
@@ -87,7 +88,7 @@ from grteclyn_wrapper.visualisation.wormhole_merger.psi4_math import (  # noqa: 
     _smooth_psd,
 )
 from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E402
-    PACK_ROOT, boosted_adm_mass, figure_dir,
+    PACK_ROOT, figure_dir, pair_mass,
 )
 
 GROUP = "08_waves"
@@ -105,14 +106,16 @@ M_CODE = {
                                 # leg 1's constraint_solve.dat) -- the far-side
                                 # matched data carry the interaction energy the
                                 # superposition missed
-    # The exact-boost pairs: the solve's face estimate plus each throat's
-    # kinetic energy, which the face estimate leaves out (2026-10-06;
-    # results/merger/analysis/boosted_adm_mass.py).
-    "spiral": boosted_adm_mass("spiral_d6_p010_L128_lvl5from0_t060_lbf_csm"),
-    "fly-by": boosted_adm_mass("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"),
+    # The exact-boost pairs (run_tree.pair_mass): the d = 12 pairs' t = 0 ADM
+    # mass measured by the full surface integral (MASS-t0, 2026-10-06:
+    # analysis/t0_adm_mass.tsv, 2.4-3.2 % above the prescription); the d = 6
+    # pair, unmeasured, the solve's face estimate plus each throat's kinetic
+    # energy (analysis/boosted_adm_mass.tsv).
+    "spiral": pair_mass("spiral_d6_p010_L128_lvl5from0_t060_lbf_csm"),
+    "fly-by": pair_mass("merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm"),
     # the p = 0.60 pair (its t040 leg's solve); drawn by the LISA panel as a
     # floor, kept out of this figure (prepare's skip)
-    "plunge": boosted_adm_mass("merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm"),
+    "plunge": pair_mass("merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm"),
     "vacuum BBH twin": 2.0,     # bare 0.9615 -> per-hole ADM ~ 1.00 at d = 12
 }
 
@@ -144,14 +147,68 @@ ENERGY_ON_DRAWN = ("collapsing throat",)
 # the energy nor its spread (records end at t = 100, so an outer sphere holds
 # less retarded time; letting it in read truncation as near-zone spread).
 #   fly-by   its trust window, retarded: R = 20 / 28 enter, R = 36 / 44 do not;
-#   head-on  where the level-1 noise reaches R = 20 (t = 80, DRAW_GATES);
+#   head-on  the outermost sphere's clean end (R = 44 at t = 100, so u = 56):
+#            all seven spheres enter, R <= 20 well inside their level-1 noise
+#            gate (t = 80);
 #   throat   its drawn end at the innermost sphere (ENERGY_ON_DRAWN);
 #   others   ungated: the shortest sphere record, so every sphere enters.
-U_END = {"fly-by": FLYBY_TRUST, "head-on": DRAW_GATES["head-on"][0](20.0) - 20.0}
+# The quoted energy is the OUTERMOST entering sphere's (the referee, 2026-10-06:
+# the inner spheres sit in the near zone, where the head-on reads up to 28 %
+# high; across R = 28-44 it holds to 1.5 %, plot_convergence (c)); its error
+# bar is the change from the next sphere in.  E_in keeps the innermost
+# sphere's reading, the near-zone excess.
+U_END = {"fly-by": FLYBY_TRUST, "head-on": DRAW_GATES["head-on"][0](44.0) - 44.0}
 CLEAN_GATED = ("fly-by", "head-on")   # spheres clean only to DRAW_GATES
 
+# Each source's vacuum control in panel (d) (2026-10-06: "we have
+# several BBH runs ... why are they not present here?"): bare punctures at the
+# same d and p, read by the same rule as the sources -- the band integral at
+# the outermost sphere over the shortest sphere record (t - R <= 70), the tick
+# its change from the next sphere in.  Masses: the two near-rest pairs in their
+# Brill-Lindquist ADM mass, the bare-mass sum (the ledger's clmBbhHeadonGwEnergy
+# convention); the d = 12 control at per-hole ADM 1.00, as the twin (M_CODE) and
+# clmGwEnergyVacPass.  The fly-by control's R = 14 is left out: its receding
+# punctures reach r = 13.7 by t = 100 and sweep it.
+VACUUM_CONTROLS = {
+    "head-on": ("07_bbh_control/bbh_headon_d8_L128_lvl5_t100/weyl_extraction_mode_20_axis.dat",
+                0, 2 * 0.9443, (14.0, 20.0, 26.0, 30.0)),
+    "spiral": ("07_bbh_control/bbh_control_d6_p010_t100/weyl_extraction_mode_22.dat",
+               2, 2 * 0.9282, (14.0, 20.0, 26.0, 30.0)),
+    "fly-by": ("07_bbh_control/bbh_control_d12_p045_t100/weyl_extraction_mode_22.dat",
+               2, 2.0, (20.0, 26.0, 30.0)),
+}
+
+
+def vacuum_energies(pack: pathlib.Path) -> dict:
+    """{scenario: (E, E_lo, E_hi, R)} of each VACUUM_CONTROLS record: E/M at the
+    outermost sphere, the range against the next sphere in."""
+    out = {}
+    for name, (rel, m, M, spheres) in VACUUM_CONTROLS.items():
+        got = load(pack, rel, None)      # per-mode streams; m only doubles +-m
+        if got is None:
+            continue
+        t, series = got
+        u_end = min(float(t[np.nonzero(np.abs(series[R]))[0][-1]]) - R for R in spheres)
+        E = {}
+        for R in spheres:
+            keep = t - R <= u_end + 1e-9
+            t2, y2 = trim_zeros_tail(t[keep], series[R][keep])
+            uu, ww = (t2 - R) / M, y2 * M
+            f, S = _burst_psd(ww, (uu.size - 1) / (uu[-1] - uu[0]))
+            E[R] = _compute_radiated_energy(
+                uu, ww, m=m,
+                f_peak=float(f[1:][np.argmax(_smooth_psd(S, _smooth_window(S.size), 5)[1:])]))
+        r_out, r_in = sorted(E)[-1], sorted(E)[-2]
+        out[name] = (E[r_out], min(E[r_out], E[r_in]), max(E[r_out], E[r_in]), r_out)
+        print(f"  vacuum control of {name:<10s} E/M = {E[r_out]:.3e} at R = {r_out:g} "
+              f"(R = {r_in:g}: {E[r_in]:.3e}; M = {M:.4f}, t - R <= {u_end:.1f})")
+    return out
+
 SHORT = {"collapsing throat": "throat", "head-on": "head-on",
-         "spiral": "merger", "fly-by": "fly-by", "vacuum BBH twin": "BBH twin"}
+         "spiral": "merger", "fly-by": "fly-by",
+         # the chirp reference of (c): the p = 0.12 arm's vacuum twin, whose
+         # drainhole pair never merges (no energy to pair it with in (d))
+         "vacuum BBH twin": "vacuum\n$p{=}0.12$"}
 
 # One identity per scenario, shared by all three panels (and nothing else):
 # the wormhole sources are ink told apart by dash, the lone throat is the
@@ -334,11 +391,12 @@ def prepare(pack: pathlib.Path):
             keep = t_raw - R <= u_end + 1e-9
             t2, y2 = trim_zeros_tail(t_raw[keep], series_raw[R][keep])
             spread[R] = band_energy((t2 - R) / M, y2 * M)
-        E = spread[R_in]
+        outer = sorted(spread)[-2:]      # the outermost entering sphere and the next in
+        E = spread[outer[-1]]
         arms.append(dict(name=name, knob=knob, mode=mode, R_in=R_in, M=M,
-                         u=u, y=yy * M, dt=dt, E=E,
-                         E_lo=min(spread.values()) if spread else E,
-                         E_hi=max(spread.values()) if spread else E,
+                         u=u, y=yy * M, dt=dt, E=E, E_in=spread[R_in], R_E=outer[-1],
+                         E_lo=min(spread[R] for R in outer),
+                         E_hi=max(spread[R] for R in outer),
                          E_R=spread, t_E=u_end + R_in))
     return arms
 
@@ -370,7 +428,7 @@ def main(argv: list[str] | None = None) -> int:
 
     # ---- (a) the records themselves, on the same clock as (c) ------------
     # NOT the power spectrum: that is panel (b) multiplied by (2 pi f)^4, so
-    # the two panels carried one plot twice (the user, 2026-09-18).  What the
+    # the two panels carried one plot twice (2026-09-18).  What the
     # strip was missing is the time domain -- the burst SHAPES and the
     # loudness ordering that (b) states in frequency, on (c)'s merger clock,
     # so a shape in (a) and a sweep in (c) are read off the same abscissa.
@@ -390,9 +448,9 @@ def main(argv: list[str] | None = None) -> int:
         print(f"  {a['name']:<18s} peak |rPsi4| M = {env.max():.3e} at "
               f"u = {a['u'][int(np.argmax(env))]:.1f} M, "
               f"band peak f M = {f_pk:.4f} ({f_pk * to_hz:.0f} Hz); "
-              f"E/M = {a['E']:.3e} (spheres {a['E_lo']:.2e}-{a['E_hi']:.2e}, "
-              f"{(a['E_hi'] - a['E_lo']) / a['E'] * 100:.0f}%; to t = {a['t_E']:.0f} "
-              f"at R = {a['R_in']:g}), "
+              f"E/M = {a['E']:.3e} at R = {a['R_E']:g} (next sphere in "
+              f"{a['E_lo']:.2e}-{a['E_hi']:.2e}, {(a['E_hi'] - a['E_lo']) / a['E'] * 100:.1f}%; "
+              f"innermost R = {a['R_in']:g} reads {a['E_in']:.2e}; to u = {a['t_E'] - a['R_in']:.1f}), "
               f"{a['E'] * MASS_MSUN:.4f} Msun c^2")
     axA.set_xlim(-45, 30)
     axA.set_ylim(2e-4, 2e-1)
@@ -516,27 +574,38 @@ def main(argv: list[str] | None = None) -> int:
     # names had to be set rotated inside the bars they cross, and a reference
     # a reader cannot name is not a reference.  As open gold bars in the
     # same ranking they say the same thing and are read in the same glance.
+    vac = vacuum_energies(pathlib.Path(args.pack_root).expanduser())
     rows = [(SHORT[a["name"]], a["E"], a["E_lo"], a["E_hi"],
-             LOOKS[a["name"]]["color"], True) for a in arms]
+             LOOKS[a["name"]]["color"], True, vac.get(a["name"])) for a in arms]
     # NOT "BBH head-on": this campaign has no head-on black-hole run, and a
-    # row named like one reads as data (the user, 2026-09-18).  Nor "analytic":
+    # row named like one reads as data (2026-09-18).  Nor "analytic":
     # both are PUBLISHED numerical-relativity results for the equal-mass
     # non-spinning binary, not closed forms -- the only closed form on this
     # page is panel (c)'s Newtonian chirp.
-    rows += [("literature\nhead-on", E_BBH_HEADON, None, None, style.GOLD, False),
-             ("literature\ncircular", E_BBH_CIRCULAR, None, None, style.GOLD, False)]
+    rows += [("literature\nhead-on", E_BBH_HEADON, None, None, style.GOLD, False, None),
+             ("literature\ncircular", E_BBH_CIRCULAR, None, None, style.GOLD, False, None)]
     rows.sort(key=lambda r: r[1])
-    for i, (lab, E, lo, hi, col, measured) in enumerate(rows):
-        axD.barh(i, E, height=0.62, left=1e-6, zorder=3,
+
+    def tick(lo, hi, y):
+        # The bar is read at the outermost sphere that covers the window;
+        # the tick is its change from the next sphere in, the convergence in
+        # extraction radius (prepare, 2026-10-06).
+        axD.plot([lo, hi], [y, y], color=style.GROUND, lw=2.0, solid_capstyle="butt", zorder=4)
+        axD.plot([lo, hi], [y, y], color=style.INK, lw=0.8, solid_capstyle="butt", zorder=5)
+
+    for i, (lab, E, lo, hi, col, measured, ctl) in enumerate(rows):
+        # A source with a vacuum control shares its row with it: the source
+        # above, its control (grey, the same d and p) below.
+        y, h = (i + 0.17, 0.36) if ctl else (i, 0.62)
+        axD.barh(y, E, height=h, left=1e-6, zorder=3,
                  color=col if measured else style.GROUND,
                  edgecolor=col, linewidth=0.0 if measured else 0.9)
         if measured:
-            # The error bar is the spread over the extraction spheres, the
-            # only one that catches near-zone content posing as a wave.
-            axD.plot([lo, hi], [i, i], color=style.GROUND, lw=2.0,
-                     solid_capstyle="butt", zorder=4)
-            axD.plot([lo, hi], [i, i], color=style.INK, lw=0.8,
-                     solid_capstyle="butt", zorder=5)
+            tick(lo, hi, y)
+        if ctl:
+            axD.barh(i - 0.2, ctl[0], height=0.3, left=1e-6, zorder=3,
+                     color=LOOKS["vacuum BBH twin"]["color"], linewidth=0.0)
+            tick(ctl[1], ctl[2], i - 0.2)
     axD.set_xscale("log")
     axD.set_xlim(1e-5, 4e-1)
     axD.set_ylim(-0.7, len(rows) - 0.3)
@@ -556,6 +625,8 @@ def main(argv: list[str] | None = None) -> int:
     # references where they are (b); one strip carries both.
     hA, lA = axA.get_legend_handles_labels()
     hB, lB = axB.get_legend_handles_labels()
+    hB.append(Patch(facecolor=LOOKS["vacuum BBH twin"]["color"], linewidth=0.0))
+    lB.append("vacuum control (d)")
     fig.legend(hA + hB, lA + lB, loc="upper center", bbox_to_anchor=(0.5, 1.0),
                ncols=4, fontsize=6.5, frameon=False, handlelength=2.4,
                columnspacing=1.4, borderaxespad=0.2)

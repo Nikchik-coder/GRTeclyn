@@ -222,7 +222,7 @@ class CoreRadialProfile
         // file over", so it must stay false on a restart or an existing file is
         // renamed away and lost.  But a restart into a FRESH run directory has
         // no file yet, and keying the header off first_step alone would leave
-        // that file's 257 columns unlabelled forever -- which is exactly what
+        // that file's columns unlabelled forever -- which is exactly what
         // collapse_diagnostics.dat does on every restart in this campaign.
         // Decide the header on the file instead: write it when there is nothing
         // there to describe.  Probed on every rank (same filesystem, so the

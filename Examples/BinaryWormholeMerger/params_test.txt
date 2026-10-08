@@ -1,10 +1,12 @@
-# BinaryWormholeMerger -- Phase 0 smoke test (research/merger/Reference.md).
+# BinaryWormholeMerger -- the smoke test.
 # Tiny box, single level, stop_time = 0.5: exercises the whole plumbing
 # (two-throat ID with bare masses, matter RHS, diagnostics, Weyl4 derive)
 # without doing any physics.
 #
 # Launch through the campaign launcher, never directly:
-#   WHM_PARAMS=params_test.txt bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/run_single.sh
+#   bash grteclyn-wrapper/scripts/campaigns/wormhole_merger/launch.sh \
+#     --template Examples/BinaryWormholeMerger/params_test.txt --name smoke_test \
+#     --gpu 0 --profile none --foreground
 # The three path keys below are placeholders the launcher rewrites (each must
 # appear exactly once).
 

@@ -10,10 +10,10 @@ left is the throats' OWN response to the interaction.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_placement_curve
 
-Reads the two tables the pack's reduction writes --
+Reads two tables of the superposed placement probes --
 ``campaign/04_binary_headon/placement_curve.dat`` and
-``placement_scout_residual.dat`` (``results/merger/analysis/placement_curve.py``,
-run at every pack) -- and writes ``figures/04_binary_headon/placement_curve``.
+``placement_scout_residual.dat``, which left the pack with those probes -- and
+writes ``figures/04_binary_headon/placement_curve``.
 
 WHAT THE FIGURE HAS TO GET RIGHT
 
@@ -107,7 +107,7 @@ def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     group = pack / "campaign" / GROUP
     curve_f, scout_f = group / "placement_curve.dat", group / "placement_scout_residual.dat"
     if not curve_f.exists():
-        raise SystemExit(f"no {curve_f}\nRun results/merger/analysis/placement_curve.py first.")
+        raise SystemExit(f"no {curve_f}: the placement tables left the pack with the superposed probes")
 
     curve = np.loadtxt(curve_f, usecols=(0, 1, 2, 3))
     d, R_mouth = curve[:, 0], curve[:, 1]
@@ -141,7 +141,7 @@ def figure_panels(ax1, ax2, pack_root=PACK_ROOT, stacked: bool = True) -> None:
     # third of the panel unlabelled.  Log minors off: with hand-set ticks
     # they crowd the short decade.
     lo = min(d.min(), scout[:, 1].min()) if len(scout) else d.min()
-    # Eight numbers across a quarter page ran into one another (the user,
+    # Eight numbers across a quarter page ran into one another (
     # 2026-09-18): the narrow canvas gets the factor-two ladder instead.
     candidates = (3, 4, 6, 8, 12, 20, 32, 48) if stacked else (3, 6, 12, 24, 48)
     ticks = [x for x in candidates if lo * 0.95 <= x <= d.max() * 1.05]

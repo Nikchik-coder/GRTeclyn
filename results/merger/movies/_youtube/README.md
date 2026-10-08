@@ -1,6 +1,6 @@
 # Upload-ready videos
 
-Ten files, 1920x1080 H.264, 10 fps, ready to upload without further editing.
+Twelve files, 1920x1080 H.264, 10 fps (20 for the half-unit records), ready to upload without further editing.
 Built by
 
 ```
@@ -19,14 +19,15 @@ that run has no usable alternative: 01 shows phi in place of the wave (the run
 rendered no Weyl scalar); 02 shows Pi in place of the wave (its Psi4 frames were
 drawn on a scale set by late junk and have no slice cache to redraw); 08 and 09
 show |Psi4| in place of K (their K was drawn live on a flooding symlog scale,
-again with no cache to redraw). **03, 04, 05 and 07 are zoomed x2** about the
+again with no cache to redraw); 12 shows phi in place of the wave, as 01 does (its inflating
+mouths are the point, and phi carries them). **03, 04, 05 and 07 are zoomed x2** about the
 centre (`zoom_frames.py`: the cached slices cropped to the central half and
 redrawn on fixed scales measured over the zoomed series); 01 and 10 are redrawn
 unzoomed with better scales (01's chi on a log scale, 10's wave on 2.5 decades
 of symlog). Each colour bar states its own scale: K is linear except 02's
 (symmetric-log), and every wave panel is symmetric-log except 09's |Psi4|
 (linear). Sources: 01 and 10 from the `youtube/` subsets, 03, 04, 05 and 07
-from `youtube_zoom2/`, and 02, 06, 08 and 09 straight from the curated sets.
+from `youtube_zoom2/`, and 02, 06, 08, 09, 11 and 12 straight from the curated sets.
 
 **Branding.** The channel is First Interstellar Institute: its mark `FII` is
 printed inside every panel's plot area, so it cannot be cropped off without
@@ -37,7 +38,7 @@ FRONTIERS"); the credit line under it carries both names.
 **Playback is real time, 1x**: ten code units per second, and the `t =`
 label drawn on each panel is the true simulation time. Pass `--speed 2` if a
 particular upload wants it; the on-frame note follows automatically. The
-vacuum controls 08, 09 and 10 saved a frame every half unit, so they play at
+vacuum controls 08, 09 and 10 and the receding pair 12 saved a frame every half unit, so they play at
 20 fps and stay real time (the user's call, 2026-10-05). The one exception is
 `01`: its run's frames are 2 units apart, so it plays t = 0–218 at 2x and its
 frame says so. Every video stops at its run's trust window (02 at t = 60, the
@@ -55,6 +56,8 @@ user's call on 2026-10-05).
 | `08_control_two_black_holes_merge.mp4` | 15.2 s | vacuum control: two black holes plunge, merge and ring down | `07_bbh_control/bbh_control_d12_p012_t150` |
 | `09_control_two_black_holes_fly_apart.mp4` | 10.2 s | vacuum control at p = 0.45: two black holes coast apart | `07_bbh_control/bbh_control_d12_p045_t100` |
 | `10_control_two_black_holes_collide_headon.mp4` | 10.2 s | vacuum control: the head-on's twin — bare black holes fall together and ring down | `07_bbh_control/bbh_headon_d8_L128_lvl5_t100` |
+| `11_headon_collision_far_zone_waves.mp4` | 25.3 s | the head-on of 03 in a box four times wider, to t = 250, with wave detectors out to R = 180: the same horizon at t = 18 | `08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm` |
+| `12_wormholes_push_apart_mouths_inflate.mp4` | 8.2 s | two like-signed wormholes released from rest repel, fly apart, and both mouths inflate (to its trust window, t = 80) | `03_two_throats/csm/ctrl_rest_d12_csm_t100` |
 
 **Publish 01 and 02 together, and publish the controls with the channels they
 control.** Alone, the inflating throat invites "so it is just unstable"; beside
@@ -62,7 +65,9 @@ its collapsing twin it shows the branch being chosen. Publish 05, 06
 and 07 together: the same pair at p = 0.25, 0.60 and 0.90, a scatter, a plunge
 with no horizon and an inflating plunge. The
 head-on pair is 03 with 10 (the same collision with and without the exotic
-matter); 08 (a vacuum plunge at d = 12, p = 0.12) and 09 (a vacuum fly-by at
+matter), and 11 goes with 03 (the same collision in a box four times wider, run
+to t = 250 for the far-zone waves). Publish 12 with 01 and 05: a lone throat, a fly-by
+and a receding pair, all three inflating; 08 (a vacuum plunge at d = 12, p = 0.12) and 09 (a vacuum fly-by at
 p = 0.45) are references for the wormhole channels, not twins of any video
 here.
 
@@ -70,7 +75,7 @@ here.
 
 # YouTube descriptions
 
-Paste-ready: each block is one video's whole description, footer included. The footer is the same in all nine; change them together.
+Paste-ready: each block is one video's whole description, footer included. The footer is the same in all twelve; change them together.
 
 ## 1. `01_wormhole_throat_inflates.mp4`
 
@@ -226,6 +231,36 @@ First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
+## 11. `11_headon_collision_far_zone_waves.mp4`
+
+**Title:** The Wormhole Head-On Collision in a Four Times Wider Box | Numerical Relativity
+
+**YouTube:** (link once uploaded)
+
+```
+The head-on collision of video 3, run again in a box four times wider, to t = 250, with gravitational-wave detectors out to 180 units, 76 times the pair's mass. A single horizon closes over both throats at t = 18, as in the smaller box. On the far detectors the radiated energy settles as the detector moves out, and the near ones agree with the production run to 1%.
+
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
+```
+
+## 12. `12_wormholes_push_apart_mouths_inflate.mp4`
+
+**Title:** Two Wormholes Push Each Other Apart, and Both Mouths Inflate | Numerical Relativity
+
+**YouTube:** (link once uploaded)
+
+```
+Two identical wormholes, released from rest at separation 12 with like-signed phantom fields, repel each other and fly apart, to separation 26 by t = 60. As they go, both mouths inflate: each throat widens from 3.88 to 4.78 by t = 30 and keeps growing, and no horizon forms. The video stops at t = 80; after that the edge of the simulation box spoils the picture.
+
+Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Code and data: https://github.com/Nikchik-coder/GRTeclyn
+First Interstellar Institute: https://www.firstinterstellarinstitute.com/
+Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
+```
+
 ---
 
 ## Tags
@@ -247,7 +282,7 @@ numerical relativity, general relativity, wormhole, Einstein-Rosen bridge, exoti
 - **Colour bars are fixed** over each whole series, so a colour means the same
   value in the first frame and the last. K is drawn on one fixed scale (the
   series' own envelope) since 2026-10-05. K is identically zero in the initial
-  data of 01, 02, 03 and 10, so their first K frame is uniformly the zero
+  data of 01, 02, 03, 10, 11 and 12, so their first K frame is uniformly the zero
   colour: correct, not a blank frame. The boosted pairs start with K structure
   from the boost, faint in 04 and 05 and clear in 06 and 07.
 - **Late speckle in any wave or curvature panel is noise, not structure.** It is
@@ -257,8 +292,9 @@ numerical relativity, general relativity, wormhole, Einstein-Rosen bridge, exoti
   onset. The measurement is explained in `../README.md`.
 - **Every video stops at its run's trust window** (`../../trust_windows.tsv`):
   01 at t = 218 (its record runs to t = 392), 02 at t = 60, 05 at t = 63, 06 at
-  t = 80 and 07 at t = 45 (its last frame; the simulation stops at t = 45.3);
-  03, 04, 08, 09 and 10 run to the end of their records. Nothing on screen after a
+  t = 80, 07 at t = 45 (its last frame; the simulation stops at t = 45.3) and 12
+  at t = 80 (the box's edge spoils its frames by t = 95; the run died at 95.08);
+  03, 04, 08, 09, 10 and 11 run to the end of their records. Nothing on screen after a
   trust window exists in any video.
 - **Nothing on screen is quantitative.** Every number in the paper and in these
   descriptions is measured from the data files, never from an image.

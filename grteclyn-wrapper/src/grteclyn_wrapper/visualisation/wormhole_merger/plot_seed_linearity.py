@@ -20,7 +20,7 @@ from ``campaign/01_single_throat/seed/`` and writes
 
 STYLE (the seed-branches grammar): a two-column PRD strip, two panels side
 by side (stacked in one column until 2026-09-26, when the article moved the
-figure to its appendix and the user asked for the horizontal layout, "so they
+figure to its appendix and the review asked for the horizontal layout, "so they
 take less space"), no boxed key, curves named in place.  Panel (a) divides each arm's
 R = 14 waveform by its own seed: linearity is the collapse of four curves
 onto one.  Panel (b) is amplitude against seed on log-log with the slope-1
@@ -41,7 +41,7 @@ reviewer asked about, 1e-3 to 1e-1, with the slope-one line carried across it
 as a reference (no arm exists at either end): it meets the floor at
 eps2 ~ 2e-3, which is where 1e-3 would sit, raw, at half the floor.  The
 numbers behind this, and the floor-subtracted linearity, are in
-``grteclyn-wrapper/scripts/analysis/merger_feedback/waves_seed_ladder.py``.
+``grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_seed_ladder.py``.
 """
 
 from __future__ import annotations

@@ -6,8 +6,9 @@
 #   bash scripts/campaigns/stop_campaign.sh [--dry-run] <runs_dir | campaign_name> ...
 #
 #   --dry-run    print what would be killed, kill nothing
-#   arguments    absolute runs dir, or a name resolved under
-#                runs/neuralspacetime/search/map_elites/<name> then runs/<name>
+#   arguments    a runs dir (any existing path), or a name resolved under
+#                runs/neuralspacetime/search/{map_elites,cma_es}/<name>,
+#                runs/neuralspacetime/hq/<name>, then runs/<name>
 #
 # Why this exists (2026-08-05 post-mortem, bondi_dipole_v1): stopping a
 # detached campaign by the pid captured at launch, or by pattern-killing its
@@ -152,7 +153,7 @@ for arg in "$@"; do
   # ---- 2. Workers: anything carrying the runs dir or its scratch in argv ----
   workers=" $(pgrep_safe "${dir}/")"                    # evolution, GRTresna, consumer
   workers+=" $(pgrep_safe "grteclyn_scratch/${name}_")" # scratch-watching consumers
-  workers+=" $(pids_with_cwd "${dir}")"                 # argv says nothing -- see below
+  workers+=" $(pids_with_cwd "${dir}")"                 # argv says nothing -- see pids_with_cwd
   do_kill TERM $workers
 
   # ---- 3. Verify; escalate ---------------------------------------------------

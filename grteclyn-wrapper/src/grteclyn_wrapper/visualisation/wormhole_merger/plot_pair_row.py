@@ -2,12 +2,12 @@
 r"""The pair interaction on one strip: sign rule, force law and width ladder (matched pairs).
 
 The article's two single-column pair figures merged into one two-column
-``figure*`` at the top of the page (the user, 2026-09-18): panels (a)/(b)
+``figure*`` at the top of the page (2026-09-18): panels (a)/(b)
 are ``plot_sign_rule``'s three-pairs-one-knob-apart story with the 3/2
 ratio, panel (c) is ``plot_force_law``'s separation ladder (added
-2026-09-25, when the user asked where Sec. V B's four displacements are
+2026-09-25, when it was asked where Sec. V B's four displacements are
 drawn).  The placement panels (d)/(e) left with the superposed campaign
-(the user, 2026-10-05), and panel (d) became ``plot_width_ladder``'s width
+(2026-10-05), and panel (d) became ``plot_width_ladder``'s width
 ladder the same day, once the matched a = 1/1.5/3 pairs were reduced into
 the pack.  Each panel is drawn by ITS OWN module
 (``figure_panels`` / ``figure_panel``), so this module owns nothing but the
@@ -49,9 +49,11 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     style.prd(base=10.0)
-    # 1.43 in per panel, as the three-panel strip had; the extra height holds
-    # the keys above the frames (the paper's rule: no names inside a frame).
-    fig, (axA, axB, axF, axW) = plt.subplots(1, 4, figsize=(5.7, 3.0),
+    # 1.43 in per panel, as the three-panel strip had; the keys sit above the
+    # frames (the paper's rule: no names inside a frame).  2.0 in tall, near-
+    # square frames: at 3.0 in they were tall slivers (2026-10-07:
+    # "too tall for no reason").
+    fig, (axA, axB, axF, axW) = plt.subplots(1, 4, figsize=(5.7, 2.0),
                                              constrained_layout=True)
     plot_sign_rule.figure_panels(axA, axB, pack_root=args.pack_root, stacked=False,
                                  keys=True)

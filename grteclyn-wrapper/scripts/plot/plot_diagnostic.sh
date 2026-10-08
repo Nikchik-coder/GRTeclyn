@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-# Writes to grteclyn-wrapper/src/grteclyn_wrapper/visualisation/plots/ (directory cleared each run).
+# Writes to <RUN_DIR>/plots/ (removed and recreated each run).
 # Usage: ./grteclyn-wrapper/scripts/plot/plot_diagnostic.sh [RUN_DIR] [RADIUS ...]
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -75,7 +75,6 @@ if [[ $# -gt 0 ]]; then
 fi
 
 PLOTS_DIR="${RUN_DIR}/plots"
-FRAMES_DIR="${RUN_DIR}/frames"
 
 CONSTRAINT_FILE="${RUN_DIR}/data/constraint_norms.dat"
 COLLAPSE_FILE="${RUN_DIR}/data/collapse_diagnostics.dat"
@@ -117,18 +116,18 @@ if command -v uv >/dev/null 2>&1 && [[ -f "${WRAPPER_ROOT}/pyproject.toml" ]]; t
   PYTHON=(uv run --directory "${WRAPPER_ROOT}" python)
 fi
 
-echo "[1/5] Plotting constraint norms..."
+echo "[1/3] Plotting constraint norms..."
 "${PYTHON[@]}" -m grteclyn_wrapper.visualisation.constraines \
   "${CONSTRAINT_FILE}" \
   -o "${PLOTS_DIR}/constraints_plot.eps"
 
-echo "[2/5] Plotting collapse diagnostics (+ areal radius + K-decay lifetime)..."
+echo "[2/3] Plotting collapse diagnostics (+ areal radius + K-decay lifetime)..."
 "${PYTHON[@]}" "${VIS_DIR}/diagnostic/diagnostic.py" \
   "${COLLAPSE_FILE}" \
   --data "${RUN_DIR}" \
   --out "${PLOTS_DIR}"
 
-echo "[3/5] Plotting combined Psi4 analysis (waveforms + PSD + propagation + strain + LIGO)..."
+echo "[3/3] Plotting combined Psi4 analysis (waveforms + PSD + propagation + strain + LIGO)..."
 
 CONFIGS=(
   "${MASS_MSUN}:${DISTANCE_MPC}"
@@ -156,22 +155,6 @@ for CONFIG in "${UNIQUE_CONFIGS[@]}"; do
     --combined \
     --strain --mass-msun "${M_VAL}" --distance-mpc "${D_VAL}"
 done
-
-echo "[4/5] Plotting K_z evolution panel (color)..."
-"${PYTHON[@]}" "${VIS_DIR}/make_evolution_panel/make_evolution_panel.py" \
-  --frame_dir "${FRAMES_DIR}/K_z/frames" \
-  --out evolution_K_z_panel \
-  --frames 20 1002 2001 3002 4500 \
-  || echo "Warning: K_z evolution panel failed (missing frames under ${FRAMES_DIR}/K_z/frames?)." >&2
-
-echo "[5/5] Plotting embedding evolution panel..."
-"${PYTHON[@]}" "${VIS_DIR}/make_evolution_panel/make_evolution_panel.py" \
-  --frame_dir "${FRAMES_DIR}/embedding/frames" \
-  --mode embedding \
-  --keep-title \
-  --out evolution_embedding_4panels \
-  --frames 20 1002 2001 3002 4500 \
-  || echo "Warning: embedding evolution panel failed (missing frames under ${FRAMES_DIR}/embedding/frames?)." >&2
 
 echo ""
 echo "All plots saved to: ${PLOTS_DIR}"

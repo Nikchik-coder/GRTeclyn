@@ -4,14 +4,13 @@ r"""Upload-ready 1080p videos of the wormhole-merger campaign.
 The campaign's movies are one field per file, 628x538, 10 fps, drawn for
 reading a diagnostic -- not for watching.  This builds the watchable version:
 the fields that carry each encounter, 2x2 and in sync, on the left of one
-1920x1080 canvas; on the right, a key of the panels, a caption saying what is
+1920x1080 canvas; on the right, a caption saying what is
 happening, and the credits, all set in Computer Modern like the paper; and an
 ownership mark inside the plot area of every panel (cropping one away crops
 the data with it).
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube
     python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube --only headon
-
 
 It is the merger campaign's counterpart to ``scripts/plot/youtube_sidebyside.sh``
 (the Bondi set), and deliberately NOT a copy of it: that one pairs matter
@@ -29,7 +28,7 @@ per second of video; an entry whose frames are further apart than one unit says
 so with ``dt_frame`` and its note follows (F4's inflation record: frames 2 units
 apart, t = 0-218 in 11 s, "2x speed").  One whose frames are closer together
 plays them at a higher frame rate instead and stays real time: the vacuum
-controls save one every half unit and play at 20 fps (the user, 2026-10-05:
+controls save one every half unit and play at 20 fps (2026-10-05:
 "bbh should be real time").
 
 WHICH FIELDS, AND WHY THOSE.  Chosen for what reads on screen at a glance,
@@ -50,13 +49,6 @@ which is not the same as what the paper measures from:
   point: the spiral, the one encounter that merges without ever making a
   horizon, and the vacuum controls, where the wave is textbook and the
   comparison IS the result.
-
-A CAVEAT THAT HAS TO TRAVEL ON THE FRAME, not only in a description a viewer
-may not open: past t = 59.94 the spiral is the frozen-core arm, so its dark
-centre stops evolving BY CONSTRUCTION.  ``caption2`` says so for that video.
-The same goes for the late grid-scale speckle documented in the movies README --
-the last third of any Weyl panel is below the campaign's own noise floor, and
-the caption says to read it as noise rather than structure.
 
 Sources are the curated masters in ``results/merger/movies/<group>/<run>/``,
 never a run's scratch copy, so what is published is what is filed.
@@ -86,12 +78,12 @@ GROUND = "0x0E1216"
 # Panels are padded to their common box with the frames' own white, so a 2x2
 # grid is one clean rectangle.  Padding with GROUND left dark notches wherever
 # two frames differed in width (the colourbar label sets it) -- the ragged
-# corners the user flagged on 2026-10-05.
+# corners flagged in review on 2026-10-05.
 PANEL_BG = "0xFFFFFF"
 W_OUT, H_OUT = 1920, 1080
 # The grid sits at the LEFT edge, as tall as the canvas allows, and every word
-# of text except the title goes in a column to its right: the panel key, the
-# captions, the sponsor and the credit (the user's design, 2026-10-05).  Under
+# of text except the title goes in a column to its right: the
+# captions, the sponsor and the credit (the chosen design, 2026-10-05).  Under
 # the grid, the captions ran as two full-width lines a viewer could not read in
 # one pass, and they cost the panels 130 px of height.
 HEAD_H = 74           # header band: the title and the speed note
@@ -103,7 +95,7 @@ SIDE_MIN_W = 600      # the side column is never narrower than this
 SIDE_PAD_R = 28       # right margin of the side column
 
 # --------------------------------------------------------------------------
-# Typography: the paper's, not a broadcast's (the user, 2026-10-05: "latex
+# Typography: the paper's, not a broadcast's (2026-10-05: "latex
 # format", "PRD style", no colour coding).  Every word is Computer Modern --
 # roman cmr10, bold cmb10, $...$ in matplotlib's "cm" maths, the set the
 # panels' own maths is in -- in one ink, at three greys.  No TeX engine is
@@ -118,8 +110,8 @@ SIDE_PAD_R = 28       # right margin of the side column
 # other glyph or none (a Unicode dash, arrow or Greek letter).  ffmpeg's
 # drawtext, which set the text before, wrapped nothing and dropped a whole line
 # at a bare per-cent sign (2026-09-21); none of that applies here.
-INK = "#F0F0F0"         # title, first caption, key names, sponsor
-INK_SOFT = "#B6BCC2"    # second caption, key heads, "Research sponsored by"
+INK = "#F0F0F0"         # title, first caption, label names, sponsor
+INK_SOFT = "#B6BCC2"    # second caption, label roles, "Research sponsored by"
 INK_FAINT = "#89929B"   # speed note, credit
 RULE = "#3E464E"        # the side column's hairlines
 TITLE_PX, SPEED_PX = 36, 22
@@ -129,7 +121,7 @@ LEAD = 1.32             # baseline to baseline, in font sizes
 DPI = 120               # the overlay: 16 x 9 in at 120 dpi is exactly 1920 x 1080
 _OT1_TRAPS = set('"<>\\_^`{|}~')
 
-# Branding (the user's word, 2026-10-05).  The CHANNEL is First Interstellar
+# Branding (decided 2026-10-05).  The CHANNEL is First Interstellar
 # Institute: its mark "FII" is printed inside every panel's plot area, so it
 # cannot be cropped away without cropping the data; the channel's name is not
 # spelled out on the frame (it is where the video is published).  Gravity
@@ -144,7 +136,7 @@ CREDIT_SEP = r" $\cdot$ "
 # Per-panel labels, role then name, each on the band right above its panel:
 # a label hangs on what it names.  A key of the four in the side column, laid
 # out as the panels are, made the viewer map positions by eye -- "hard to
-# associate to frames" (the user, 2026-10-05).  The same in every video, so a
+# associate to frames" (2026-10-05).  The same in every video, so a
 # viewer who watches two of them learns the roles once.
 ROLE = {
     "chi":        ("GEOMETRY", r"conformal factor $\chi$"),
@@ -157,7 +149,7 @@ ROLE = {
 }
 
 # --------------------------------------------------------------------------
-# What to build.  The panel list per campaign is the user's choice of what reads
+# What to build.  The panel list per campaign is a deliberate choice of what reads
 # well; the layout code handles 2 or 4, and every entry currently takes 4.  The
 # single throat gets exactly two videos, the two FATES -- the other seed arms
 # look almost identical on screen and add nothing for a viewer.  Captions are
@@ -228,7 +220,7 @@ PANELS: dict[str, dict] = {
     ),
     "06_binary_flyby/merge_orbit_flip_d12_p060_L128_csm_stitched_t0_t80": dict(
         out="06_plunge_merger_no_horizon_yet.mp4",
-        # Held back 2026-10-05 until P060-EXT; released 2026-10-06 (the user)
+        # Held back 2026-10-05 until P060-EXT; released 2026-10-06
         # with the captions rewritten after it (no MOTS at level 5 either):
         # contact at t ~ 40, no horizon through the t = 80 trust window, and the
         # p = 0.45 fly-by, not this plunge, radiates hardest (research.tex).
@@ -295,6 +287,38 @@ PANELS: dict[str, dict] = {
              r"pull is several times stronger, so even at momentum 0.25 the pair falls in "
              r"to 2.32, and the mouths inflate as they pass.",
     ),
+    # 11 and 12 (2026-10-08): the referee pass's far-zone head-on and the like-signed pair's fate.
+    # Their numbers are the registry's (FARZONE-ho, SCATTER-fate); the far-zone energy itself is not on the
+    # frame until the article quotes it.  Both keep their runs' own windows: +-32 about the centre, which is
+    # the whole box for SCATTER-fate (the mouths must stay in view as they fly apart).
+    "08_convergence/farzone_headon_flip_d8_L512_lvl6_t250_csm": dict(
+        out="11_headon_collision_far_zone_waves.mp4",
+        fields=["K", "lapse", "chi", "Weyl4_Re"],
+        title=r"The head-on collision in a box four times wider --- run to $t=250$",
+        cap1=r"The head-on of video 03 again, in a box of side 512 instead of 128, with wave "
+             r"detectors out to $R=180$ (76 masses). Released from rest at separation 8, the "
+             r"throats touch and one trapped surface closes over both at $t=18$, as in the "
+             r"smaller box.",
+        cap2=r"This run is for the waves: on spheres from $R=10$ out to 180 the radiated "
+             r"energy settles as the sphere moves out, and the near spheres agree with the "
+             r"production run to 1%. The frame shows the central $\pm32$; the wave leaves it "
+             r"and travels on to the far spheres.",
+    ),
+    "03_two_throats/csm/ctrl_rest_d12_csm_t100": dict(
+        out="12_wormholes_push_apart_mouths_inflate.mp4",
+        fields=["K", "lapse", "chi", "phi"],
+        dt_frame=0.5,
+        title=r"Two like-signed wormholes push apart --- and both mouths inflate",
+        cap1=r"Two identical wormholes released from rest at separation 12, on "
+             r"constraint-solved data. Like-signed phantom fields repel: the pair flies "
+             r"apart, to separation 26 by $t=60$, and both mouths \emph{inflate} as they go "
+             r"--- each throat's areal radius grows from 3.88 to 4.78 by $t=30$ and keeps "
+             r"growing.",
+        cap2=r"Both light-ray expansions are positive at each throat: the mouths are "
+             r"anti-trapped, on the inflating branch of the lone throat (video 01), and no "
+             r"horizon forms. The video stops at $t=80$; later frames are spoiled by the "
+             r"box's edge.",
+    ),
 }
 
 
@@ -345,8 +369,8 @@ def _panel_chain(sizes: list[tuple[int, int]], speed: float,
                  + f",pad={W_OUT}:{H_OUT}:{GRID_X0}:{HEAD_H}:color={GROUND}[canvas]")
     # The grid's true geometry, so labels and marks land ON the panels.  Placing
     # text by canvas fractions once put the ownership marks in the dark margins
-    # OUTSIDE the plots -- trivially croppable, which defeats them (the user,
-    # 2026-10-05).
+    # OUTSIDE the plots -- trivially croppable, which defeats them
+    # (2026-10-05).
     geom = {"x0": GRID_X0, "y0": HEAD_H, "w": pw * cols, "h": rows * (LABEL_H + ph),
             "pw": pw, "ph": ph}
     return ";".join(parts), cols, rows, geom
@@ -594,8 +618,9 @@ def build(run_key: str, spec: dict, movies: Path, dest: Path,
         return True
 
     # Frames closer than one code unit apart play at a higher frame rate, so the
-    # video stays real time; frames further apart play fast, and say so.
-    speed = speed / min(spec.get("dt_frame", 1.0), 1.0)
+    # video stays real time; frames further apart play fast, and say so.  An
+    # entry's own ``speed`` scales that, and the on-frame note follows it.
+    speed = speed * spec.get("speed", 1.0) / min(spec.get("dt_frame", 1.0), 1.0)
 
     grid = (len(fields), 1) if len(fields) <= 2 else (2, (len(fields) + 1) // 2)
     chain, cols, rows, geom = _panel_chain([_probe_size(p) for p in inputs], speed, grid)

@@ -15,6 +15,7 @@
 >
 > | Paper | Data in this repo |
 > |---|---|
+> | *Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds* — arXiv:XXXX.XXXXX (number to come) | [`results/merger/`](results/merger/) |
 > | *The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive–Negative Mass Binary* — [arXiv:2608.24577](https://arxiv.org/abs/2608.24577) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/) |
 > | *Wormhole Dynamics: Nonlinear Collapse and Gravitational-Wave Emission* — [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) |
 >
@@ -24,9 +25,11 @@
 > `a ∝ d^−2.028` across separations, `a ∝ M^0.966 ± 0.061` across a ×2.46 mass
 > range.
 >
-> The Bondi dipole paper cites this repository at tag
+> The colliding-wormholes paper cites this repository at tag
+> [`v1.0-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-wormhole-merger),
+> the Bondi dipole paper at tag
 > [`v1.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole).
-> To cite the paper or this code, see [CITATION.cff](CITATION.cff).
+> To cite the papers or this code, see [CITATION.cff](CITATION.cff).
 >
 > Upstream GRTeclyn is BSD-3-Clause; see [LICENSE](LICENSE). The research tree
 > inherits it.

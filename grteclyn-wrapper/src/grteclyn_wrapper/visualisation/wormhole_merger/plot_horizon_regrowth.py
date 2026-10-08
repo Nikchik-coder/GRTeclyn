@@ -9,20 +9,20 @@ carries matter damping: core_matter_damping = 0 in all three).  Each swallows
 its own phantom support (areal radius and Misner-Sharp mass falling), bottoms
 out near t = 43-47, and the scans then regrow +9-11 % in radius and +10-12 % in
 mass.  (The pure-quadrupole
-arm was drawn as context in an earlier revision and removed on the user's
-word 2026-09-23: its floor arrives only at t = 92, so it decides nothing here.)
+arm was drawn as context in an earlier revision and removed on review
+2026-09-23: its floor arrives only at t = 92, so it decides nothing here.)
 
 WHAT THE REGROWTH IS (2026-09-24, reviewer feedback C): not physics.  In
 spherical symmetry a massless phantom can only shrink a MOTS -- on it
 d_v m = 4 pi R^2 e^f (d_v phi)^2 d_u R <= 0, d_u m = 0, and the tube is timelike
 or null, so R = 2m falls on any slicing (checked symbolically in
-scripts/analysis/merger_feedback/c_spherical_horizon_law.py).  The growth is the
+scripts/analysis/wormhole_merger/spherical_horizon_law.py).  The growth is the
 same in purely spherical arms (a level-4 arm whose binary never read eps_2
 lies on the eps_2 = 0.005 curve), no device is active, and it tracks the
 Hamiltonian-constraint violation near the horizon, a radial double layer whose
-positive lobe reaches the MOTS at the floor time (c_checkpoint_hamiltonian.py,
-c_horizon_first_law.py on the L = 128 level-4 twin).  Fits to the regrowth
-(c_regrowth_fits.py: tanh, t0 ~ 68, w ~ 17-19) are deliberately NOT drawn:
+positive lobe reaches the MOTS at the floor time (checkpoint_hamiltonian.py,
+horizon_first_law.py on the L = 128 level-4 twin).  Fits to the regrowth
+(horizon_regrowth_fits.py: tanh, t0 ~ 68, w ~ 17-19) are deliberately NOT drawn:
 they would give an artefact a law.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_horizon_regrowth
@@ -32,14 +32,14 @@ MOTS: the throat-centred fine scan; the coarse common centre C reads
 M_MS/(R/2) up to 1.15 at the floor and is not used, 2026-09-23) under ``campaign/01_single_throat/seed/``.  Writes
 ``figures/01_single_throat/single_horizon_regrowth``.
 
-THE NUMERICAL STRETCH IS SHADED (2026-09-25, the user: "the transition to
+THE NUMERICAL STRETCH IS SHADED (2026-09-25: "the transition to
 numerical should be shown -- the part where numerical errors dominate and we
 can't cite it").  From the first floor on (t = 43) the panels carry a grey
 band named as numerical, and each curve is drawn faint after its own floor:
 what is left at full weight is the shrink, the one thing the figure claims.
 The legend names the radial kick on EVERY arm ("eps = +1e-2 with eps_2 =
 0.005"): written "+ eps_2 = 0.005" it was read as a pure-quadrupole arm, which
-the text says does not regrow (the user's read of the PDF, same date).
+the text says does not regrow (a read of the PDF, same date).
 
 STYLE: style.prd, no titles, letter tags above the frames, one shared top
 figure legend.  INK is the level-3 kick (the headline numbers of Sec. IV D),

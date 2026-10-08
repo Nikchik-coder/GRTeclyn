@@ -202,7 +202,6 @@ def main() -> int:
                 f"t in [{field.times[0]:g}, {field.times[-1]:g}]")
     else:
         ap.error("give 1 plotfile (frozen) or >= 3 (evolving)")
-        return 2
 
     domain_center = np.asarray(field.origin[:3]) + 0.5 * (
         np.array(field.spatial_shape) - 1

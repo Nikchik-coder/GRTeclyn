@@ -3,8 +3,8 @@
 The wormhole-merger campaign needs the collapse signature at the R = 14
 extraction sphere.  The collapse sources it over t = 44-51.5; a signal at
 radius R lags its source by R, so it crosses R = 14 over t = 58-65.5.  Every
-arm so far dies before that, and the AMR refinement ladder (M4e in
-research/merger/Plan.md) is the axis that moves the death time.
+arm so far dies before that, and the AMR refinement ladder (M4e) is the
+axis that moves the death time.
 
 This module plots what has actually been recorded -- the l = 2 modes at both
 extraction radii -- for any number of runs on one axis, with the target
@@ -28,7 +28,7 @@ import numpy as np
 
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 
-# The physics the plot is drawn against; see research/merger/Plan.md.
+# The physics the plot is drawn against.
 COLLAPSE_SOURCE = (44.0, 51.5)
 SOURCE_RADIUS = 1.5  # where the collapsing core radiates from
 

@@ -11,8 +11,7 @@ before the run is registered or started.  Standalone:
 WHY.  AMReX's ParmParse ignores a key that nothing reads.  On 2026-09-23 the
 campaign pin turned out to predate the quadrupole seed, so four arms launched
 with wormhole_seed_l2_amplitude_A = 0.01 ran without a quadrupole and nothing
-said so for a week (research/merger/GPU_PLAN.md, 2026-09-23 evening).  This
-turns that into a refusal at launch, in seconds.
+said so for a week.  This turns that into a refusal at launch, in seconds.
 
 WHAT IT CHECKS
   0. intent (no GPU, instant).  Settings that contradict each other, so the run

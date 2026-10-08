@@ -97,7 +97,7 @@ def main(argv: list[str] | None = None) -> int:
     tags = "abcdef"
 
     # ---- context strip: the throat itself, and the horizon instrument -----
-    # The unkicked twin rides along, as on the inflation page (the user,
+    # The unkicked twin rides along, as on the inflation page (
     # 2026-09-23: the two branch figures carry the same reference), and the
     # same 10 % departure clock is marked for THIS arm.
     tw = np.loadtxt(pathlib.Path(args.pack_root).expanduser()
@@ -106,7 +106,7 @@ def main(argv: list[str] | None = None) -> int:
     twi = np.interp(ar[:, 0], tw[:, 0], tw[:, 1])
     dep = np.abs(ar[:, 1] / twi - 1.0) >= 0.10
     t_dep = float(ar[dep, 0][0]) if dep.any() else None
-    # Each name hangs on the thing it names (the user, 2026-09-23: "to what
+    # Each name hangs on the thing it names (2026-09-23: "to what
     # exactly is it connected?" -- the departure note sat in the bottom-left
     # corner, 40 units from its rule, and the twin's name floated a unit
     # above the flat line and seven units short of the rise).  Both rules

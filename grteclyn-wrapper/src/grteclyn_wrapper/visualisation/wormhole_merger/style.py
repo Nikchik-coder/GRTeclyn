@@ -209,7 +209,7 @@ def paper(base: float = 10.0) -> None:
 
 
 def prd(base: float = 10.0) -> None:
-    """``paper`` plus the REVTeX frame the user asked for on the seed-branches
+    """``paper`` plus the REVTeX frame asked for on the seed-branches
     figure (2026-09-16, "PRD review style"), adopted for every article figure:
     full box, inward major+minor ticks on all four sides, ink ticks, no grid.
     Keys go INSIDE the axes, on an opaque patch, placed by ``legend``."""
@@ -380,9 +380,9 @@ _CORNERS = ("upper right", "upper left", "lower right", "lower left")
 
 
 def label_audit(fig, pad: float = 0.004, px_step: float = 3.0) -> list[str]:
-    """Every text box a drawn line passes through, named (2026-09-24, on the
-    user's mark: 'there should be some instruments in the repo to check
-    whether text crosses the lines').
+    """Every text box a drawn line passes through, named (2026-09-24: 'there
+    should be some instruments in the repo to check whether text crosses the
+    lines').
 
     Unlike ``_drawn`` this walks each line in ITS OWN transform -- an axvline
     is blended (data x, axes y) and would land in the wrong place through
@@ -491,7 +491,7 @@ def _line_points(ax, px_step: float = 3.0) -> np.ndarray:
 def declutter(fig, pad: float = 0.004, max_shift: float = 12.0, step: float = 1.5,
               px_step: float = 3.0) -> list[str]:
     """Move each label ``label_audit`` would report the shortest way off its
-    line, or off another label or the key (2026-09-25, on the user's word: the vis package has the tools, use
+    line, or off another label or the key (2026-09-25: the vis package has the tools, use
     them instead of hand-nudging).
 
     Candidates are shifts of up to ``max_shift`` points, nearest first; the
@@ -674,7 +674,7 @@ def legend(ax, *args, loc: str | None = None, pad: float = 0.015,
 
 
 # ---------------------------------------------------------------------------
-# Keys on top (the user's standing rule, 2026-09-26: a key ABOVE every panel
+# Keys on top (the standing rule, 2026-09-26: a key ABOVE every panel
 # names each of its lines, and nothing but tiny tags sits inside a frame).
 # ---------------------------------------------------------------------------
 
@@ -771,7 +771,6 @@ def _y_fraction(ax, y: float) -> float:
         if np.isfinite(d0) and np.isfinite(d1) and d1 > d0:
             if log and d0 > 0:
                 d0, d1 = np.log10(d0), np.log10(d1)
-                lo, hi = (np.log10(lo), np.log10(hi)) if lo > 0 else (d0, d1)
             pad = ax.margins()[1] * (d1 - d0)
             lo, hi = d0 - pad, d1 + pad
             return float((np.log10(y) - lo) / (hi - lo)) if log else float((y - lo) / (hi - lo))

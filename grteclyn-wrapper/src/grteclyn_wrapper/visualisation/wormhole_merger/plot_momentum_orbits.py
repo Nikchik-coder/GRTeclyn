@@ -11,7 +11,7 @@ of the circular value.
 
     python -m grteclyn_wrapper.visualisation.wormhole_merger.plot_momentum_orbits
 
-WHAT IS DRAWN (2026-09-25, the user: "draw the trajectories for different p,
+WHAT IS DRAWN (2026-09-25: "draw the trajectories for different p,
 head-on p = 0 to p = 0.45; we have precise orbits from those runs").  The
 chi-pit barycentres of ``binary_throat_diagnostics.dat`` -- identical to the
 throat tracker's centres until the tracker fuses the two (separation ~ 2,
@@ -43,7 +43,7 @@ drawn minimum by more than a few hundredths.  The caption says so.
 Reads ``campaign/`` streams only (no frames).  Writes
 ``figures/05_binary_spiral/momentum_scan_orbits``.
 
-WHERE THE FLY-BY STOPS BEING TWO BODIES (2026-09-25, the user: "why do they
+WHERE THE FLY-BY STOPS BEING TWO BODIES (2026-09-25: "why do they
 fly by if they are attracted so strongly -- is this fly-away the inflation of
 one of the throats?").  The turn at closest approach (t ~ 40) is orbital: the
 pull is central and the pair keeps its angular momentum.  But the fly-by's
@@ -240,7 +240,6 @@ def main(argv: list[str] | None = None) -> int:
         if not live.all():
             k0 = max(int(live.sum()) - 1, 0)
             axS.plot(t[k0:], sep[k0:], alpha=0.4, **kw)
-            inflating = (p, t_edge, t[k0:], sep[k0:])
         # every track ends in a dot (the scatterers' at their trust window)
         for trk in (one, two):
             axO.plot(*trk[-1], marker="o", ms=2.6, color=colr, zorder=5)

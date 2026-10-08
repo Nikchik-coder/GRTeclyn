@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# BinaryWormholeMerger -- single-run launcher (research/merger/Reference.md).
+# BinaryWormholeMerger -- single-run launcher.
 #
 # One run of Examples/BinaryWormholeMerger through the campaign contract
 # (scripts/campaigns/README.md): launcher.pid registered for stop_campaign.sh,
@@ -33,8 +33,8 @@
 #   WHM_NAME      run name (default: params basename without .txt)
 #   WHM_EXE       evolution binary (default: newest main3d.*.ex in the example)
 #   WHM_BARE_MASS override wormhole_bare_mass_A AND _B in the cloned params
-#                 (equal-mass ladder knob, Plan.md Stage 3; appends _mXXX to
-#                 the run name so ladder rungs never clobber each other)
+#                 (equal-mass ladder knob; appends _mXXX to the run name so
+#                 ladder rungs never clobber each other)
 #   WHM_MAX_LEVEL override max_level in the cloned params, rewriting
 #                 regrid_interval to match (AMReX aborts if it does not carry
 #                 exactly max_level values)
@@ -46,20 +46,19 @@
 #                 while its neighbour is still at 3e-2, and CCZ4 divides by chi.
 #                 sigma = 0 survives and is 20x more accurate AT THE THROAT.
 #   WHM_LAPSE_TYPE override wormhole_initial_lapse_type in the cloned params
-#                 (appends _lapseN to the run name).  The collar A/B of
-#                 Plan.md Stage 1.3 is this knob and nothing else: 5 is the
-#                 drainhole's bare static lapse, 6 is that lapse times the
-#                 origin-isolating collar.
+#                 (appends _lapseN to the run name).  The collar A/B is this
+#                 knob and nothing else: 5 is the drainhole's bare static
+#                 lapse, 6 is that lapse times the origin-isolating collar.
 #   WHM_TAGGING_TYPE override tagging_type in the cloned params (appends _fg
 #                 when 1).  0 = refine on chi gradients (ChiTagger, the
 #                 default); 1 = static nested boxes on tagging_center
-#                 (FixedGridsTagger).  Plan.md Stage 1.5: chi tagging follows
-#                 the ERROR, so the sigma = 0 arm's mesh chased its own junk
-#                 to 32.8M cells and died out-of-memory at t = 35.2 with the
-#                 throat still healthy to 0.5 %.  The drainhole's resolution
-#                 demand is static -- the throat and the compactified origin,
-#                 both at the grid centre -- so a fixed box is the honest
-#                 criterion and the footprint is bounded by construction.
+#                 (FixedGridsTagger).  Chi tagging follows the ERROR, so the
+#                 sigma = 0 arm's mesh chased its own junk to 32.8M cells and
+#                 died out-of-memory at t = 35.2 with the throat still healthy
+#                 to 0.5 %.  The drainhole's resolution demand is static -- the
+#                 throat and the compactified origin, both at the grid centre --
+#                 so a fixed box is the honest criterion and the footprint is
+#                 bounded by construction.
 #   WHM_TAGGING_L override tagging_L (appends _tlN).  Level-0 boxes have
 #                 half-width tagging_L / 4 and each finer level halves that.
 #                 Defaults to the domain L, i.e. the stock "inner L/4".
@@ -120,6 +119,7 @@
 # Deciding WHAT to extract is a launch-time decision and cannot be revisited:
 # deletion is ledger-gated, so anything not extracted during the run is gone
 # with the plotfile.  Pass extra extractions through WHM_CONSUME_ARGS.
+#
 # The whole body is one { ... } block ending in `exit`: bash parses it
 # entirely before running it, so editing this file can never reach a live
 # run.  (bash otherwise reads a script by byte offset as it goes; an edit
@@ -150,8 +150,8 @@ WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
 # guess from BASH_SOURCE.
 # shellcheck source=../../lib/env.sh
 source "${WRAPPER_DIR}/scripts/lib/env.sh"
-# env.sh computes a SCRIPT_DIR of its own and exports it, so after sourcing it
-# SCRIPT_DIR points at scripts/lib rather than at this directory.  Restore it
+# env.sh computes a SCRIPT_DIR of its own and, being sourced, overwrites ours:
+# SCRIPT_DIR now points at scripts/lib rather than at this directory.  Restore it
 # from the copy taken above -- every relative source below (launcher_common.sh)
 # resolves against it.  Not re-derived from BASH_SOURCE: when this script is
 # invoked by a relative name (which it is, so that the process table shows no
@@ -434,13 +434,7 @@ if [[ -n "${WHM_BARE_MASS:-}" ]]; then
   echo "[whm] bare-mass override: m_A = m_B = ${WHM_BARE_MASS}"
 fi
 
-# Initial-lapse override.  The lapse is not a free gauge choice for a drainhole:
-# alpha = e^{u} is part of the static solution, so type 5 makes the data an exact
-# fixed point of the evolved system and type 6 multiplies in the origin-isolating
-# collar, which deliberately breaks that.  Comparing the two is the whole of
-# Plan.md Stage 1.3, so it gets an override rather than a forked params file --
-# a duplicated 130-line template would drift and the comparison would stop being
-# an A/B.
+# Kreiss-Oliger dissipation override (the header's WHM_SIGMA entry says why).
 if [[ -n "${WHM_SIGMA:-}" ]]; then
   key=sigma
   n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
@@ -452,6 +446,12 @@ if [[ -n "${WHM_SIGMA:-}" ]]; then
   echo "[whm] dissipation override: ${key} = ${WHM_SIGMA}"
 fi
 
+# Initial-lapse override.  The lapse is not a free gauge choice for a drainhole:
+# alpha = e^{u} is part of the static solution, so type 5 makes the data an exact
+# fixed point of the evolved system and type 6 multiplies in the origin-isolating
+# collar, which deliberately breaks that.  Comparing the two is the whole collar
+# A/B, so it gets an override rather than a forked params file -- a duplicated
+# 130-line template would drift and the comparison would stop being an A/B.
 if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
   key=wormhole_initial_lapse_type
   n="$(grep -c "^${key}[[:space:]]*=" "${RUN_PARAMS}" || true)"
@@ -463,10 +463,10 @@ if [[ -n "${WHM_LAPSE_TYPE:-}" ]]; then
   echo "[whm] lapse override: ${key} = ${WHM_LAPSE_TYPE}"
 fi
 
-# Tagging-criterion override (Plan.md Stage 1.5).  Unlike sigma and the lapse
-# these keys are NEW, so most templates predate them and do not carry them at
-# all; append rather than refuse, or every older params file would have to be
-# touched just to make the knob reachable.
+# Tagging-criterion override.  Unlike sigma and the lapse these keys are NEW,
+# so most templates predate them and do not carry them at all; append rather
+# than refuse, or every older params file would have to be touched just to
+# make the knob reachable.
 whm_set_or_append() {
   local key="$1" value="$2" label="$3"
   local n
@@ -489,8 +489,8 @@ if [[ -n "${WHM_TAGGING_L:-}" ]]; then
   whm_set_or_append tagging_L "${WHM_TAGGING_L}" "tagging-box override"
 fi
 
-# Refinement-depth override (Reference.md Phase 2 resolution study, and the origin
-# instability it is chasing).  This exists because max_level cannot be changed
+# Refinement-depth override (the resolution study, and the origin instability
+# it is chasing).  This exists because max_level cannot be changed
 # on its own: regrid_interval must carry exactly max_level values or AMReX
 # aborts with "queryarr too many values requested", so the two keys have to be
 # rewritten together.  The interval is taken from the template's first value
@@ -614,7 +614,7 @@ export WHM_CONSUMER_ARGV WHM_FRAMES_SOURCE WHM_FRAMES_CMD
 # ---------------------------------------------------------------------------
 # AMReX ignores a key nothing reads, so a binary older than a feature runs the
 # params without it and says nothing: four "quadrupole" arms ran without their
-# quadrupole that way (GPU_PLAN, 2026-09-23 evening), and single_eps_p1e2_t250
+# quadrupole that way (2026-09-23 evening), and single_eps_p1e2_t250
 # asked for rolling checkpoints with checkpoint output switched off and died at
 # t = 145.8 with nothing to restart from.  preflight.py checks the FINAL params
 # (every override above applied): contradictory settings, keys absent from the

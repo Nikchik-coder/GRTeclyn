@@ -1,4 +1,4 @@
-"""GPU_PLAN #13: what IS the inter-throat blob / collapsed core?
+"""What IS the inter-throat blob / collapsed core?
 
 Gauge-invariant(ish) scalars on coordinate shells about a center, computed
 offline from a plotfile's raw CCZ4 state (chi h_ij K A_ij lapse phi Pi
@@ -16,7 +16,7 @@ Weyl4_Re/Im) with the code's own conventions:
           (energy flux seen by normal observers; negative rho flowing
           inward shows as the sign of this integral times the rho sign)
 
-The discriminator the plan names: curvature (|Weyl4|, R) bounded while the
+The discriminator: curvature (|Weyl4|, R) bounded while the
 lapse runs to its floor = slicing artefact; curvature AND constraint growing
 together = constraint mode; bounded curvature + clean Ham + concentrated
 negative rho = a genuine negative-energy structure.
@@ -25,7 +25,6 @@ Usage: blob_nature_scan.py <plt> [--center X Y Z] [--half H] [--level L]
 Defaults match the merger campaign box (center 32,32,32).
 """
 import argparse
-import sys
 import warnings
 
 import numpy as np

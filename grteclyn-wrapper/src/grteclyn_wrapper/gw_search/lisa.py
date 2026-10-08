@@ -3,7 +3,7 @@ r"""LISA: the analytic noise, and a campaign burst at a mass and a redshift.
 One implementation for the three places that need it: Fig. heavy_seeds (the
 burst panel and the power-law-integrated curve of the population panel), the
 claims extractors behind the article's Sec. X B, and
-``scripts/analysis/merger_feedback/f_cosmology_lisa.py``.  Until 2026-09-25 the
+``scripts/analysis/wormhole_merger/cosmology_lisa.py``.  Until 2026-09-25 the
 noise lived in the figure and the SNR in that script, and the SNR rows of the
 ledger were typed in by hand from its printout.
 

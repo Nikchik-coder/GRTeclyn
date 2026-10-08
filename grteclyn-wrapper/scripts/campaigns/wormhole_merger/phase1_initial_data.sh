@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# BinaryWormholeMerger -- Phase 1 initial-data validation (research/merger/Reference.md).
+# BinaryWormholeMerger -- Phase 1 initial-data validation.
 #
 # Phase 1 is the GO/NO-GO gate: every statement in it is about the data AT
 # t = 0, so every run here sets `max_steps = 0`.  The evolution never starts;
 # BinaryWormholeLevel::specific_post_init writes the t = 0 row of
 # constraint_norms.dat and the step-0 plotfile, and that is the measurement.
 #
-# Checks.  A/B/C are the three gates Reference.md names; D and E exist because the
-# first pass at B and C measured the grid rather than the physics.
+# Checks.  A/B/C are the three gates Phase 1 was planned with; D and E exist
+# because the first pass at B and C measured the grid rather than the physics.
 #   A  single-throat limit -- b_B = 0, no bare mass, no momenta, reproduces
 #      Examples/SupportedWormholeCollapse on the same grid (fcompare on chi;
 #      phi up to the subtracted asymptotic constant)
@@ -27,6 +27,10 @@
 #      L2_Ham(N) = A + B N^-p at each separation and tests the 1/d^2 law on A,
 #      the part refinement does not remove, with the exact single-throat
 #      solution as the zero control.
+#   F  phi at the outer boundary -- the asymptotic constant the Sommerfeld
+#      condition needs removed, measured by differencing subtraction on and off
+#   G  bare-mass tail -- the ADM mass read off psi - 1 in the far field,
+#      against the m_A + m_B the orbit calculation assumes
 #
 # Usage (attached; each sub-run goes through run_single.sh so the campaign
 # contract -- launcher.pid, node-local plotfile scratch -- still holds):
@@ -494,14 +498,13 @@ shells() {
 # condition is wrong from the first step.  wormhole_subtract_phi_asymptote
 # removes it.
 #
-# The gate cannot be "phi < 1e-3 at the boundary", though, and the plan's
-# wording asks for exactly that.  After the constant is removed what is left is
-# the physical tail, and for this field that tail falls like 1/r -- so pushing
-# it below 1e-3 needs a domain hundreds of throat radii wide, which no run in
-# this campaign will ever have.  Fitting the constant out of a single run does
-# not work either: over the radii a finite box offers, a constant, a 1/r and a
-# 1/r^2 term are not separable, and the fitted constant moves around with the
-# radius range and even changes sign.
+# The gate cannot be "phi < 1e-3 at the boundary", though.  After the constant
+# is removed what is left is the physical tail, and for this field that tail
+# falls like 1/r -- so pushing it below 1e-3 needs a domain hundreds of throat
+# radii wide, which no run in this campaign will ever have.  Fitting the
+# constant out of a single run does not work either: over the radii a finite
+# box offers, a constant, a 1/r and a 1/r^2 term are not separable, and the
+# fitted constant moves around with the radius range and even changes sign.
 #
 # So F measures the constant directly instead, by DIFFERENCING two runs that
 # are identical but for the subtraction.  That difference is the subtracted

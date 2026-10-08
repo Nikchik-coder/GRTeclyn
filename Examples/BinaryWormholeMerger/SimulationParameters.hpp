@@ -62,7 +62,7 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("center", wormhole_params.grid_center, center);
 
         // Throat radii.  B defaults to A (equal-throat binary); B = 0 removes
-        // throat B entirely (single-throat regression mode, Reference.md Phase 1-2).
+        // throat B entirely (single-throat regression mode).
         pp.load("wormhole_throat_radius_A", wormhole_params.b0_A, 1.0);
         pp.load("wormhole_throat_radius_B", wormhole_params.b0_B,
                 wormhole_params.b0_A);
@@ -152,9 +152,8 @@ class SimulationParameters : public SimulationParametersBase
             }
         }
 
-        // The perturbation dial (research/merger/GPU_PLAN_UPDATED.md, Forward
-        // Plan, Phase 1).  A unit Gaussian shell on each throat's minimal
-        // surface, multiplied into the conformal factor,
+        // The perturbation dial.  A unit Gaussian shell on each throat's
+        // minimal surface, multiplied into the conformal factor,
         //     psi -> psi (1 + eps exp[-((r - r_t)/w)^2]),
         // so the areal radius of that throat moves by ~2 eps with the SIGN of
         // eps.  This is the declared, signed, measured seed for the
@@ -435,12 +434,12 @@ class SimulationParameters : public SimulationParametersBase
         // *error*, so once a run develops junk the mesh chases it and the
         // footprint runs away: the Stage 1 sigma = 0 arm ended in out-of-
         // memory at t = 35.2 with level 2 covering 24 % of the domain and
-        // 32.8M cells, while the throat itself was still healthy to 0.5 %
-        // (research/merger/Plan.md, 1.5).  The drainhole's resolution demand
-        // is by contrast *static*: it sits at the throat and at the
-        // compactified far universe, r -> 0, both fixed at the grid centre
-        // for a single throat.  A fixed box asks for resolution where the
-        // solution needs it rather than where the error happens to be.
+        // 32.8M cells, while the throat itself was still healthy to 0.5 %.
+        // The drainhole's resolution demand is by contrast *static*: it sits
+        // at the throat and at the compactified far universe, r -> 0, both
+        // fixed at the grid centre for a single throat.  A fixed box asks for
+        // resolution where the solution needs it rather than where the error
+        // happens to be.
         pp.load("tagging_type", tagging_type, 0);
 
         // FixedGridsTagger tags |x - tagging_center|_inf < tagging_L *
@@ -460,8 +459,8 @@ class SimulationParameters : public SimulationParametersBase
         // the second derivatives of phi and of K added in quadrature to the
         // chi term, dx * sqrt(|d2 chi|^2 + w_phi^2 |d2 phi|^2 + w_K^2 |d2 K|^2)
         // >= regrid_threshold.  Both default 0, which is exactly ChiTagger,
-        // so no archived run changes.  Forward Plan Phase 1: refine the
-        // steepening front before it outruns the mesh.
+        // so no archived run changes.  The aim: refine the steepening front
+        // before it outruns the mesh.
         pp.load("tagging_phi_weight", tagging_phi_weight, 0.0);
         pp.load("tagging_K_weight", tagging_K_weight, 0.0);
         if (tagging_phi_weight < 0.0 || tagging_K_weight < 0.0)
@@ -471,10 +470,10 @@ class SimulationParameters : public SimulationParametersBase
 
         // Algebraic det(h~) = 1 enforcement beside the trace-A~ removal at
         // every RK substage (DetHRescale.hpp).  Default off so no archived
-        // run changes.  Forward Plan Phase 1.
+        // run changes.
         pp.load("rescale_det_h", rescale_det_h, 0);
 
-        // Throat tracking (Plan.md Stage 2.0): locate each throat as the chi
+        // Throat tracking: locate each throat as the chi
         // pit it carries at its centre and follow it, one row per coarse step
         // in throat_track.dat.  Default off so no archived run changes.  The
         // moving-box tagger (tagging_type = 2) requires it - the boxes are
@@ -937,7 +936,7 @@ class SimulationParameters : public SimulationParametersBase
                        "potential is being evaluated about a shifted field.");
 
         // Object B is absent in the single-throat regression mode (b_B = 0 and
-        // no bare mass).  Everything below compares the two centres, and none
+        // no mass).  Everything below compares the two centres, and none
         // of it means anything when there is only one object: with centerA at
         // the origin, centerB defaults to its mirror image, which is the SAME
         // point, and a coincidence check would reject a perfectly valid
@@ -1010,7 +1009,8 @@ class SimulationParameters : public SimulationParametersBase
 
     bool calculate_constraint_norms{};
 
-    // Refinement criterion: 0 = ChiTagger (default), 1 = FixedGridsTagger.
+    // Refinement criterion: 0 = ChiTagger (default), 1 = FixedGridsTagger,
+    // 2 = FixedGridsTagger on each tracked throat.
     int tagging_type{};
     double tagging_L{};
     double tagging_phi_weight{};

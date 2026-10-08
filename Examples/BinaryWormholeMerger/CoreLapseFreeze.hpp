@@ -21,8 +21,8 @@
      d/dt alpha = advection - (1 - W(r)) * c * alpha^p * (K - 2 Theta)
 
    Companion to CoreMatterDamping.hpp, attacking the other half of the
-   post-collapse instability.  The matter-damping sweep (M4b waves 1-2,
-   research/merger/Plan.md) exhausted the (window, rate) plane: the damping
+   post-collapse instability.  The matter-damping sweep (M4b waves 1-2)
+   exhausted the (window, rate) plane: the damping
    rate has a measured optimum (tau ~ 0.05) worth ~0.5 code units and no
    window geometry adds anything; best survival 52.55 against a NaN that
    must be held off until the burst reaches the extraction sphere.  The

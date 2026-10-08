@@ -29,10 +29,10 @@ struct CCZ4_params_t
     bool covariantZ4;   //!< if true, replace kappa1->kappa1/lapse as in
                         //!<  arXiv:1307.7391 eq. 27
     //! Point-of-use regularisation of chi in the evolution equations: every
-    //! genuine 1/chi in the RHS (the (d chi)^2 / chi curvature term, the
-    //! A^ij d_j chi / chi term of the Gamma equation, and the matter source,
-    //! which is then assembled as chi S_ij before its trace is removed) is
-    //! evaluated as 1 / max(chi, chi_rhs_floor).  The evolved chi itself is
+    //! genuine 1/chi in the vacuum RHS (the (d chi)^2 / chi curvature term and
+    //! the A^ij d_j chi / chi term of the Gamma equation) is evaluated as
+    //! 1 / max(chi, chi_rhs_floor); the matter source is instead assembled as
+    //! chi S_ij before its trace is removed.  The evolved chi itself is
     //! left alone -- that is the state clamp's job (ccz4.min_chi), which this
     //! is meant to replace.  0 (the default) is the old code bit for bit.
     amrex::Real chi_rhs_floor;

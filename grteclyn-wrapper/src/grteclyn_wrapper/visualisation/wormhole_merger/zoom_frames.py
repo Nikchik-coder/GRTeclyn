@@ -14,7 +14,7 @@ plain redraw, for a series that only needs a different scale.
 
 Every field gets ONE fixed scale measured over the cropped series (the live
 renderer's per-slice rule, enveloped), so nothing cropped away sets the
-colours.  K is linear, the user's standing convention; ``--symlog`` and
+colours.  K is linear, the standing convention; ``--symlog`` and
 ``--log`` name the fields drawn otherwise (FIELD:DECADES for symlog).
 
 ``--t-max`` is the trust window: later frames are not drawn.  ``--scale-tmin``

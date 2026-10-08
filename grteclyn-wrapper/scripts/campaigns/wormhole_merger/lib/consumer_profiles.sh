@@ -19,7 +19,7 @@
 # in-plane centre defaulted to z=0 and axis-y frames missed the throat
 # entirely -- both queue-2e movies were lost to this, unrecoverably, because
 # the slice cache stores only the cropped window.  Eyeball frame 0 against a
-# reference run either way (README rule 13).
+# reference run either way.
 # coord is the slice coordinate along the slice normal -- NOT optional in
 # spirit, because the consumer's default is 0, the domain boundary, and a
 # slice that misses the physics renders featureless frames without erroring
@@ -69,10 +69,10 @@
 #                 runs of 2026-09-08 were chi-only and lost every other movie).
 #   none          one-step probes: no consumer at all (sets WHM_CONSUME=0).
 #
-# Related: research/merger/Reference.md, and the frame rules the hard way --
-# a chi-only launch loses the collapse movies; omitting Weyl4 from the plot
-# vars silently produces no wave files at all (the preflight now refuses a
-# frame field whose plot variable the params do not write).
+# The frame rules, learnt the hard way: a chi-only launch loses the collapse
+# movies; omitting Weyl4 from the plot vars silently produces no wave files at
+# all (the preflight now refuses a frame field whose plot variable the params
+# do not write).
 
 # Every profile keeps the slice cache and auto colour limits: the live watcher
 # locks the colour scale from the FIRST plotfile, which under-ranges any field
@@ -173,7 +173,7 @@ consumer_profile() {
            "--frames-fields chi --frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_WHM_FRAME_TAIL}"
       ;;
     inflation)
-      # The inflation arms (GPU_PLAN 2026-09-25): the areal radius on the full
+      # The inflation arms (2026-09-25): the areal radius on the full
       # metric, the neck and its two trapping horizons per plotfile, frames
       # whose lapse/chi/phi bars are fixed at their t = 0 range, scalar modes.
       echo "--areal-radius --areal-full-metric --areal-min-radius 0.5 --neck-horizons --radii 40 60 80 120" \
@@ -196,7 +196,7 @@ consumer_profile() {
            "--scalar-modes --scalar-mode-ells 0 1 2"
       ;;
     orbit-modes-scan-prod)
-      # The production set (the user, 2026-09-28): the mode-3 head-on, spiral and fly-by share
+      # The production set (2026-09-28): the mode-3 head-on, spiral and fly-by share
       # the L = 128 box and extract at the same four radii, 14/20/30/44, inside its sponge (r >= 48).
       echo "$(consumer_profile orbit-modes-scan "${zoom}" "${coord}" "${center}") --radii 14 20 30 44"
       ;;

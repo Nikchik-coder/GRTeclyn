@@ -14,6 +14,7 @@ from .extraction.sector_barycenters import _extract_sector_barycenters_line
 from .extraction.sector_dynamics import _extract_sector_dynamics_line
 from .extraction.ftl import _extract_ftl_timeseries_line
 from .extraction.horizon import horizon_block as _horizon_block
+from .extraction.horizon import read_tracked_centres
 from .extraction.psi4 import _extract_mode_amps_l2m0, _extract_mode_amps_l2_all
 from .extraction.psi4_higher_l import (
     extract_higher_l_modes,
@@ -57,6 +58,17 @@ def _load_plotfile_with_retry(yt, p: str, retries: int = 3, delay_s: float = 10.
                     )
                 time.sleep(delay_s)
     raise last_exc
+
+
+def _nearest_tracked_mouth(args_dict: dict, t: float, anchor) -> np.ndarray:
+    """The --horizon-track mouth at time t nearest `anchor` (--mots-spectral-track).
+
+    A receding pair's mouths move apart symmetrically, so the mouth that starts nearest the
+    anchor stays nearest it; the finder follows that one mouth for the whole run.
+    """
+    mouths = read_tracked_centres(args_dict["horizon_track"], t, args_dict["center"])
+    a = np.asarray(anchor, dtype=float)
+    return min((c for _, c in mouths), key=lambda c: float(np.linalg.norm(c - a)))
 
 
 def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_frame_idx: int) -> dict:
@@ -325,9 +337,14 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
             # The common MOTS itself, followed from the previous plotfile's surface
             # (extraction/mots_spectral.py).  Loud on failure.
             try:
+                centre = args_dict.get("mots_spectral_center") or args_dict["center"]
+                if args_dict.get("mots_spectral_track"):
+                    # The tracked mouth nearest the anchor: a receding mouth leaves a fixed box.
+                    centre = _nearest_tracked_mouth(args_dict, t, centre)
+                    result["mots_centre"] = [float(c) for c in centre]
                 result["mots_line"], result["mots_alm"] = mots_spectral_row(
                     ds, t,
-                    center=args_dict.get("mots_spectral_center") or args_dict["center"],
+                    center=centre,
                     half=float(args_dict["mots_spectral_half"]),
                     level=int(args_dict["mots_spectral_level"]),
                     lmax=int(args_dict["mots_spectral_lmax"]),
