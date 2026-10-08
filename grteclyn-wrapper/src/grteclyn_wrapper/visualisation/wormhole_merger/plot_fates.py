@@ -202,7 +202,7 @@ def wave(ax, x0, x1, y, kind, amp=0.13):
 def draw(ax) -> None:
     # the foam and the first fork: birth separation
     foam(ax, *FOAM)
-    ax.text(FOAM[0], FOAM[1] - 0.72, "foam-born throats\nat $t=0$", ha="center", va="top",
+    ax.text(FOAM[0], FOAM[1] - 0.72, "newborn throats\nat $t=0$", ha="center", va="top",
             fontsize=8.0, color=style.INK, linespacing=1.1)
     prong(ax, (FOAM[0] + 0.72, ROOT[1]), ROOT)
     x0, x1 = prong(ax, ROOT, (LONE[0] - 0.25, LONE[1]))
