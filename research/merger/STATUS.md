@@ -78,17 +78,21 @@ Interim (lvl7 to t = 67, and H from lvl5's and FARZONE-ho's Chk02500):
 
 **arXiv submission (decided 10-08).** After lvl7's close-out and the final PDF:
 - Merge feature/merger into develop, keeping research/ off develop as on 10-06. Tag the merge `v1.0-wormhole-merger`.
-- Publish a GitHub release on the tag (public, not a draft). No Zenodo DOI: there is no Zenodo account (10-08). The
-  cost section's code statement cites the tag since 10-08.
-- `CITATION.cff`, `README.md` and `results/README.md` describe this paper since 10-08, with arXiv placeholders
-  `XXXX.XXXXX`. Set `date-released` in `CITATION.cff` at the release. (`.zenodo.json` describes it too, unused.)
+- Publish a GitHub release on the tag (public, not a draft), so that Zenodo archives it and mints a DOI. Before
+  that, the repo must be switched on in Zenodo (account menu → GitHub → Sync now → the Nikchik-coder/GRTeclyn
+  toggle; the user's step, account made 10-08): Zenodo archives only releases published after the switch. The DOI
+  then goes into the cost section's code statement (it cites the tag since 10-08), before the arXiv submission.
+- `CITATION.cff`, `.zenodo.json`, `README.md` and `results/README.md` describe this paper since 10-08, with arXiv
+  placeholders `XXXX.XXXXX`. `.zenodo.json` has none, because Zenodo validates identifiers: add the arXiv link on the
+  Zenodo record once the number exists. Set `date-released` (and the DOI) in `CITATION.cff` at the release.
 - arXiv: gr-qc primary, cross-lists astro-ph.HE and astro-ph.CO. The abstract is cut to ~1,760 rendered characters
   (the form takes 1,920).
 - The source package is research.tex, numbers.tex and the 15 figure PDFs under `figures/`, which the graphicspath
   searches first. A clean-copy pdfLaTeX build passes (26 pages). Still to fix: the overfull line at tex line 167
   (10.6 pt) and the 0.6 pt float overrun at line 379.
 - Before submitting: Videos 1–12 public, and both authors' sign-off.
-- After the number: fill the placeholders (README, results/README.md, CITATION.cff) and the release notes.
+- After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
+  Zenodo record's arXiv link.
 
 RUNS FOR THE PAPER — proposed, no go yet (CLAUDE.md: anything a run or an analysis could settle goes here, with a cost):
 
