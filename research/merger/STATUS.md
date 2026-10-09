@@ -1,4 +1,4 @@
-# Status — 2026-10-08 ~14:35 UTC
+# Status — 2026-10-09 ~09:15 UTC
 
 What is live, what is planned, the main results — nothing else. Run-by-run outcomes are in
 `results/merger/runs_registry.tsv`, cleanups in `runs/wormhole_merger/manifests/`, the map in
@@ -9,8 +9,8 @@ Main results in a line or two; the details go to the registry.**
 ## Live
 
 No run is live. Both nodes are idle: the first node's two H100s since 03:10 UTC 10-08 (scratch empty, 1.1T free),
-the second node's card since CONV-fz lvl7 finished at 13:58 UTC 10-08 (scratch: only the HFL cell, 60G, deliberate;
-585G free). NFS holds no checkpoints: CONV-fz's three t = 100 states were wiped 10-08 after the constraint check
+the second node's card since CONV-fz lvl7 finished at 13:58 UTC 10-08 (scratch empty since the HFL cell's wipe on
+10-09, 614G free). NFS holds no checkpoints: CONV-fz's three t = 100 states were wiped 10-08 after the constraint check
 (`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-08.md`).
 
 ## Planned (nothing launches without the go)
