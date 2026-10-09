@@ -65,15 +65,9 @@ both engines, text ends on page 21.
 - After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
   Zenodo record's arXiv link.
 
-RUNS FOR THE PAPER (referee round, 10-09; the text now says what each one would settle):
-- DAMP-off to t ~ 100: the p = 0.45 fly-by undamped (`merge_orbit_flip_d12_p045_L128_lvl4_t070_nodamp_lbf_csm`'s params,
-  stop 100). The t = 70 run covers only R <= 34 (damping on from t = 36); E_GW at R = 28 integrates to t ~ 96.
-  It had no checkpoints, so this is a fresh run: ~22 h on one card at its ~4.4 units/h.
-- Far-side flux: each mouth's scalar flux into its own far universe (Sec. II D and X D now say it is not measured).
-  Needs a flux diagnostic near the compactified puncture: code plus a rerun; not costed.
-Not ours to run: post the arXiv replacement of 2604.00071 (Sec. IV E now calls its bounce an artifact of the halved
-stress-energy).
-Earlier proposals (CONV-lbf-w, HARM-oct, ...) were dropped before submission; `git show 2acaa681:research/merger/STATUS.md`.
+RUNS FOR THE PAPER: none, and no new runs (decided 10-09): referee items that a run would settle are answered in the
+text only. Not ours to run: post the arXiv replacement of 2604.00071 (Sec. IV E calls its bounce an artifact of the
+halved stress-energy). Earlier proposals were dropped before submission; `git show 2acaa681:research/merger/STATUS.md`.
 
 ## Main results (the paper's wording; every quoted number is a ledger row)
 
