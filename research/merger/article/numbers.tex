@@ -65,8 +65,6 @@
 \newcommand{\clmDetSpeedLevelFiveHi}{4}% manual: main-leg speed in run_tail.log of the level-5 physics runs: 2.14-4.34 u/h over t
 \newcommand{\clmDetPedestalCleanLo}{0.02}% auto: gw_search/templates/nr.py load_arm(): drift = |h| at the record's ends / at its 
 \newcommand{\clmDetPedestalCleanHi}{0.07}% auto: gw_search/templates/nr.py load_arm(): drift = |h| at the record's ends / at its 
-\newcommand{\clmDetPedestalLo}{0.10}% auto: gw_search/templates/nr.py load_arm(): drift = |h| at the record's ends / at its 
-\newcommand{\clmDetPedestalHi}{0.48}% auto: gw_search/templates/nr.py load_arm(): drift = |h| at the record's ends / at its 
 \newcommand{\clmDetValidMatchLo}{0.902}% auto: gw_search/analysis/validation.py validate_bbh_twin re-run (IMRPhenomD, aLIGO zer
 \newcommand{\clmDetValidMatchHi}{0.938}% auto: gw_search/analysis/validation.py validate_bbh_twin re-run (IMRPhenomD, aLIGO zer
 \newcommand{\clmDetValidMassLo}{60}% def: gw_search/analysis/validation.py validate_bbh_twin re-run (IMRPhenomD, aLIGO zer
@@ -102,32 +100,18 @@
 \newcommand{\clmDetFFWindowLo}{0.893}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
 \newcommand{\clmDetFFWindowHi}{0.995}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
 \newcommand{\clmDetBankMinMatch}{0.97}% def: grteclyn_wrapper/gw_search/templates/bank.py MIN_MATCH
-\newcommand{\clmDetBankSize}{154}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
 \newcommand{\clmDetSlides}{5000}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
-\newcommand{\clmDetInjCount}{18}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
-\newcommand{\clmDetInjSnr}{20}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s)
-\newcommand{\clmDetInjEffLo}{92}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
-\newcommand{\clmDetInjEffHi}{123}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetInjEffMedian}{101}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
-\newcommand{\clmDetInjDt}{11.5}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetInjChiLo}{0.5}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetInjChiHi}{1.6}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetShortestMs}{3.2}% manual: gw_search/templates/nr.py duration_s at the demoted injection's mass (fly-by, 18
 \newcommand{\clmDetShortestBins}{four}% manual: gw_search/pipeline/triggers.py chisq_bins on that template
 \newcommand{\clmDetVetoSnrBefore}{20.2}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
 \newcommand{\clmDetVetoSnrAfter}{19.2}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
-\newcommand{\clmDetLivetime}{2.25}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
 \newcommand{\clmDetBgCoinc}{20\,231}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
 \newcommand{\clmDetBgLivetime}{469}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
 \newcommand{\clmDetBgLoudest}{52.4}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
 \newcommand{\clmDetGlitchSnr}{833}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
-\newcommand{\clmDetHorizonSnr}{8}% def: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
-\newcommand{\clmDetHorizonSpiral}{2.7}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
-\newcommand{\clmDetHorizonFlyby}{5.1}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
-\newcommand{\clmDetHorizonHeadon}{3.0}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
-\newcommand{\clmDetHorizonTwin}{1.3}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
-\newcommand{\clmDetHorizonThroat}{0.15}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
-\newcommand{\clmDetHorizonPlunge}{1.7}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
 \newcommand{\clmDetSkyAverage}{2.26}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
 \newcommand{\clmDetKerrFM}{0.0885}% auto: plot_psi4_ligo.f_qnm_M: Berti-Cardoso-Will (2,2,0) fit at a_f = 0.6864, M_f = 0.
 \newcommand{\clmDetHeadonFreqRatio}{0.58}% auto: plot_psi4_ligo.prepare + envelope_and_frequency (the figure's own code) on the g
@@ -449,6 +433,7 @@
 \newcommand{\clmMergerAdmMass}{2.371}% auto: M_ADM_boost: the d6 pair's boosted-solve face estimate plus each throat's kineti
 \newcommand{\clmPSixtyTrust}{80}% manual: results/merger/trust_windows.tsv
 \newcommand{\clmBoostFaceBias}{2.8}% auto: constraint_solve.dat of the d12 p012 Bowen-York pair on the production grid: M_A
+\newcommand{\clmDampOffPsi}{2\times10^{-7}}% manual: results/merger/runs_registry.tsv, merge_orbit_flip_d12_p045_L128_lvl4_t070_nodam
 
 % ---- single
 \newcommand{\clmThroatA}{2}% def: campaign/01_single_throat/hold/single_hold_t100/evolution_params.txt: wormhole_t
@@ -540,6 +525,7 @@
 \newcommand{\clmCrossingLevelThree}{13.01}% auto: campaign/01_single_throat/seed/single_eps_{m,p}1e2_t100/areal_radius.dat
 \newcommand{\clmHorizonTimeEpsTwo}{11}% auto: campaign/01_single_throat/seed/single_eps_p1e2_t100/horizon_scan.dat (first MOTS
 \newcommand{\clmHorizonTimeEpsThree}{25}% auto: campaign/01_single_throat/seed/single_eps_p1e3_t100/horizon_scan.dat (first MOTS
+\newcommand{\clmLawEpsThree}{22.8}% auto: Table IV caption law t_BH = 11 M + tau ln(1e-2/eps) at eps = 1e-3 (clmHorizonTim
 \newcommand{\clmHorizonRadiusEpsTwo}{3.88}% auto: campaign/01_single_throat/seed/single_eps_p1e2_t100/horizon_scan.dat (first MOTS
 \newcommand{\clmHorizonRadiusEpsThree}{3.81}% auto: campaign/01_single_throat/seed/single_eps_p1e3_t100/horizon_scan.dat (first MOTS
 \newcommand{\clmHorizonTimeNoise}{61}% auto: campaign/01_single_throat/branch_shell_scans_2026-09-08.dat (ml3_twin_t061, the 
@@ -851,6 +837,8 @@
 \newcommand{\clmGwSeedOldFloorRatio}{5}% auto: plot_seed_linearity, Fig. 11(b)'s own measure: rms Re Psi4^{2,0} over t = 30-50 
 \newcommand{\clmGwThroatPeriodFit}{20.61}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_throat_ringdown.py: scip
 \newcommand{\clmGwThroatPeriodFitErr}{0.15}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_throat_ringdown.py (same
+\newcommand{\clmGwThroatRingMass}{1.226}% manual: clmGwThroatPeriodFit x 0.3737/(2 pi): 20.61 x 0.3737/6.2832 = 1.2258 (Schwarzsch
+\newcommand{\clmGwThroatRingMassErr}{0.009}% manual: clmGwThroatPeriodFitErr x 0.3737/(2 pi): 0.15 x 0.05948 = 0.0089
 \newcommand{\clmGwThroatHalfPeriodA}{9.4}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_throat_ringdown.py: inte
 \newcommand{\clmGwThroatHalfPeriodB}{10.3}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_throat_ringdown.py (same
 \newcommand{\clmGwThroatHalfPeriodC}{9.0}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/waves_throat_ringdown.py (same
