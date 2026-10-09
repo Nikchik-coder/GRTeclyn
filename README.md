@@ -26,7 +26,7 @@
 > range.
 >
 > The colliding-wormholes paper cites this repository at tag
-> [`v1.0-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-wormhole-merger),
+> [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger),
 > the Bondi dipole paper at tag
 > [`v1.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole).
 > To cite the papers or this code, see [CITATION.cff](CITATION.cff).
