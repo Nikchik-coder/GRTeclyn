@@ -86,7 +86,7 @@ Paste-ready: each block is one video's whole description, footer included. The f
 ```
 A wormhole throat, held open by exotic matter, gets a tiny inward nudge. It does not collapse: it keeps opening, 3.8 times wider by t = 218, and no black-hole horizon forms.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -101,7 +101,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 The same wormhole throat as in the companion video, perturbed differently: this time it closes, and a black-hole horizon forms at t = 33.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -116,7 +116,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 Two wormhole throats are released from rest and fall together. They touch while both are still open, and a single horizon closes over the pair at t = 18.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -131,7 +131,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 Two wormhole throats at separation 6, with tangential momentum 0.10, fall together, turning only 15 degrees, and a single horizon closes over both at t = 13 while they are still wormholes.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -146,7 +146,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 Two wormholes start at separation 12, each with momentum 0.25. They swing past each other, closest approach 2.32 at t = 48, and separate: no merger, no horizon, and both mouths INFLATE as they pass.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -161,7 +161,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 Two wormholes start at separation 12, each with momentum 0.60, past the circular value. The pair plunges, reaches contact at t = 40 and merges as wormholes. No trapped surface converges on the merged core through t = 80, the end of the trustworthy record, on either of two grids: unlike the head-on and the close orbit, this merger is not hidden behind a horizon as far as the simulation can see. It is not the loudest encounter either: the p = 0.45 fly-by, which just escapes, radiates more.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -180,7 +180,7 @@ at t = 110-115" lines did not hold).
 ```
 Momentum 0.90 per mouth, the hardest plunge in the campaign: the pair falls from separation 12 to 2.4 by t = 40. On the approach both mouths visibly INFLATE, as in the fly-by, and as they merge the core starts to inflate too.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -195,7 +195,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 A control run: two ordinary black holes at separation 12, each with momentum 0.12, and no exotic matter. They plunge, merge and ring down.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -210,7 +210,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 A control run, and the point is what does NOT happen. Two ordinary black holes at separation 12, each with momentum 0.45, no exotic matter: in vacuum that momentum is unbound, and the holes coast apart, 12 to 27 by t = 100.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -225,7 +225,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 A control run: the wormhole head-on collision with the exotic matter removed. Two ordinary black holes of the same mass start from rest at the same separation and base resolution, in a box half the size, and fall together, merge and ring down.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -240,7 +240,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 The head-on collision of video 3, run again in a box four times wider, to t = 250, with gravitational-wave detectors out to 180 units, 76 times the pair's mass. A single horizon closes over both throats at t = 18, as in the smaller box. On the far detectors the radiated energy settles as the detector moves out, and the near ones agree with the production run to 1%.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
@@ -255,7 +255,7 @@ Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 Two identical wormholes, released from rest at separation 12 with like-signed phantom fields, repel each other and fly apart, to separation 26 by t = 60. As they go, both mouths inflate: each throat widens from 3.88 to 4.78 by t = 30 and keeps growing, and no horizon forms. The video stops at t = 80; after that the edge of the simulation box spoils the picture.
 
-Paper: "Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds", Nikita M. Shirokov and Ilya Nachevsky
+Paper: "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves", Nikita M. Shirokov and Ilya Nachevsky
 Code and data: https://github.com/Nikchik-coder/GRTeclyn
 First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
