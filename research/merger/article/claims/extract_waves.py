@@ -972,12 +972,16 @@ def conv_farzone(what: str, coarse: str = "1/16", fine: str = "1/32") -> float:
     MOTS over the dumps both levels find it on; 'birth' = its first dump, the
     same at every packed level; 'ham' = 100 max |H_coarse/H_fine - 1| of the
     t = 100 shell averages of H_ADM outside the MOTS (analysis/convfz_constraints_t100.tsv);
-    'order' = log2 of (E_1/16 - E_1/32) / (E_1/32 - E_1/64) at R = 10."""
+    'order' = log2 of (E_1/16 - E_1/32) / (E_1/32 - E_1/64) at R = 10;
+    'hamorder' = log2 of the ratio of the two 'ham' differences (1/16-1/32 over 1/32-1/64)."""
     C = _mod("plot_convergence")
     if what == "birth":
         return float(C.fz_mots_birth(PACK))
     if what == "order":
         return float(C.fz_energy_order(PACK))
+    if what == "hamorder":
+        return math.log2(C.fz_ham_difference(PACK, "1/16", "1/32")
+                         / C.fz_ham_difference(PACK, "1/32", "1/64"))
     if what == "ham":
         return float(C.fz_ham_difference(PACK, coarse, fine))
     if what == "psi":
