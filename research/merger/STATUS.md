@@ -40,26 +40,19 @@ both engines, text ends on page 21.
   The title is changed in the tex, the root README, `.zenodo.json`, `CITATION.cff`'s preferred-citation and all 12
   paste-ready YouTube descriptions in `results/merger/movies/_youtube/README.md`; pasting those into the 12
   YouTube videos is a by-hand step. The upload zip on the workstation desktop is rebuilt with the new title.
-- Done 10-08: feature/merger merged into develop (fbdfa55b), keeping off develop — as on 10-06 — `research/`, the
-  matter-first results pack and develop's own `results/README.md`. The merge is tagged `v1.0-wormhole-merger`;
-  branch and tag are pushed.
-- Done 10-08: the repo is switched ON in Zenodo (GitHub sync page, Nikchik-coder/GRTeclyn toggle confirmed).
-- Done 10-08: the GitHub release on the tag is published (public) and Zenodo archived it. Version DOI
-  10.5281/zenodo.23245934 (concept 10.5281/zenodo.23245933). The version DOI is in the cost section's code
-  statement and in `CITATION.cff`; PDF rebuilt, both engines, 26 pages, zero overfull, text ends p. 21.
-- `CITATION.cff`, `.zenodo.json`, `README.md` and `results/README.md` describe this paper since 10-08, with arXiv
-  placeholders `XXXX.XXXXX`. `.zenodo.json` has none, because Zenodo validates identifiers: add the arXiv link on the
-  Zenodo record once the number exists. `CITATION.cff` carries `date-released: 2026-10-09` and the version DOI
-  since 10-08.
-- arXiv: gr-qc primary, cross-lists astro-ph.HE and astro-ph.CO. The abstract is cut to ~1,760 rendered characters
-  (the form takes 1,920).
-- The source package is research.tex, numbers.tex and the 15 figure PDFs under `figures/`, which the graphicspath
-  searches first. Clean-copy builds pass on both engines with zero overfull boxes (26 pages; Eq. (force) split
-  10-08 fixed the last one).
-- Referee-response text added 10-08, existing ledger rows only: the LISA SNRs' near-zone error bound (Sec.
-  heavy seeds) and why Fig. 12's L2 norms are large yet the waves clean (Appendix A, the Fig. 11(d) leak test).
-  Closed 10-08 with lvl7's pack: the three-level GW order (1.7) and Fig. 11(e)'s H leak test are in the caption
-  and Appendix A. All three referee points are now answered in the text.
+- Done 10-08: v1.0 — feature/merger merged into develop (fbdfa55b) without `research/`, the matter-first pack and
+  develop's own `results/README.md`; tag `v1.0-wormhole-merger`, GitHub release, Zenodo version DOI
+  10.5281/zenodo.23245934 (concept 10.5281/zenodo.23245933). The repo's Zenodo toggle is ON.
+- Done 10-09: v1.0.1 — the same merge (657fd997, same exclusions), tag `v1.0.1-wormhole-merger`, release published,
+  Zenodo version DOI 10.5281/zenodo.23257999. It carries the new Fig. 1 (plunge leaf) and the new title in the
+  READMEs, `.zenodo.json` and the YouTube descriptions. The paper's code statement cites the v1.0.1 tag and its
+  version DOI; `CITATION.cff` carries the concept DOI, which always resolves to the newest version.
+- arXiv: gr-qc primary, cross-list astro-ph.HE. astro-ph.CO no longer fits since Sec. X B (heavy seeds, LISA) was
+  cut on 10-09; the authors decide. The abstract now ends at "no inspiral".
+- Source package: research.tex, numbers.tex, research.bbl, the 14 figure PDFs under `figures/`, and `anc/` (12 videos
+  and README.txt). 25 pages on both engines, zero overfull, appendix text ends p. 20.
+- Referee rounds of 10-09 (commits 2061076b to a9512c58), text only: O3b search and Sec. X B cut, sign rule,
+  remnant and plunge wording, convergence orders, Table IV of numerical modifications, references.
 - Videos 1–12 are unlisted (link-only) — enough, decided 10-08: the paper carries the URLs. Before submitting:
   both authors' sign-off on the final PDF.
 - After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
