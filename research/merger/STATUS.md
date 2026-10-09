@@ -11,7 +11,9 @@ Main results in a line or two; the details go to the registry.**
 No run is live. Both nodes are idle: the first node's two H100s since 03:10 UTC 10-08 (scratch empty, 1.1T free),
 the second node's card since CONV-fz lvl7 finished at 13:58 UTC 10-08 (scratch empty since the HFL cell's wipe on
 10-09, 614G free). NFS holds no checkpoints: CONV-fz's three t = 100 states were wiped 10-08 after the constraint check
-(`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-08.md`).
+(`runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-08.md`). `runs/` pruned 10-09 to 28G: `logs/`, the archive's
+non-frame files and every frame PNG that has a cached slice (`rerender_frames.py` redraws them); every slice cache and
+movie kept (MANIFEST_CLEANUP_2026-10-09).
 
 ## Planned (nothing launches without the go)
 
