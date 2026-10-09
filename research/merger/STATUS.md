@@ -35,6 +35,11 @@ both engines, text ends on page 21.
 - Done 10-08: Table III counts the convergence set (6 runs) and SCATTER-fate: 103 runs, 592 GPU-h (lvl7 measured).
 
 **arXiv submission (decided 10-08; submission day is 10-09).** After the final PDF (lvl7 is closed out):
+- Done 10-09: the paper is retitled "Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers,
+  fly-bys and gravitational waves" (the old title claimed the seed story and undersold the single-throat half).
+  The title is changed in the tex, the root README, `.zenodo.json`, `CITATION.cff`'s preferred-citation and all 12
+  paste-ready YouTube descriptions in `results/merger/movies/_youtube/README.md`; pasting those into the 12
+  YouTube videos is a by-hand step. The upload zip on the workstation desktop is rebuilt with the new title.
 - Done 10-08: feature/merger merged into develop (fbdfa55b), keeping off develop — as on 10-06 — `research/`, the
   matter-first results pack and develop's own `results/README.md`. The merge is tagged `v1.0-wormhole-merger`;
   branch and tag are pushed.

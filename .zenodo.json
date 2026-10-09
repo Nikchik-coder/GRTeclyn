@@ -1,7 +1,7 @@
 {
   "upload_type": "software",
   "title": "GRTeclyn research fork — colliding traversable wormholes",
-  "description": "<p>Code, run matrix and packed campaign data behind <em>Colliding Traversable Wormholes: Gravitational Waves and the Formation of Heavy Black Hole Seeds</em> (N. M. Shirokov and I. Nachevsky, 2026).</p><p>A GRTeclyn (AMReX/GPU) research fork with a Python orchestration layer: constraint-solved and exactly boosted binaries of Ellis–Bronnikov drainholes held open by a ghost scalar, CCZ4 evolution with refinement boxes that follow the throats, a spectral MOTS finder, Weyl-scalar and scalar-flux extraction, and the analysis and figure scripts. Includes the parameter files and thinned diagnostic streams of every run, the run registry, the figures and the movies — reproducible without a GPU.</p>",
+  "description": "<p>Code, run matrix and packed campaign data behind <em>Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves</em> (N. M. Shirokov and I. Nachevsky, 2026).</p><p>A GRTeclyn (AMReX/GPU) research fork with a Python orchestration layer: constraint-solved and exactly boosted binaries of Ellis–Bronnikov drainholes held open by a ghost scalar, CCZ4 evolution with refinement boxes that follow the throats, a spectral MOTS finder, Weyl-scalar and scalar-flux extraction, and the analysis and figure scripts. Includes the parameter files and thinned diagnostic streams of every run, the run registry, the figures and the movies — reproducible without a GPU.</p>",
   "creators": [
     {
       "name": "Shirokov, Nikita M.",
