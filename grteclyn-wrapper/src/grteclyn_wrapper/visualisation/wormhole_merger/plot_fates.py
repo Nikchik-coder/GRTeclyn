@@ -35,7 +35,9 @@ context (the growing necks' earlier shells, the waves' zero lines).
 WHY: 2026-10-07: a population fork for the fates, like Hubble's
 tuning fork for the shapes of galaxies; the attracting pair branches too, into
 the merger (by d and p) and both throats inflating; a sketched GW signal per
-fate; then squeezed in height for Fig. 1 of the paper.
+fate; then squeezed in height for Fig. 1 of the paper. 2026-10-09: the hard plunge
+(d = 12, p = 0.60 and 0.90) gets its own leaf: a merged core on which no common MOTS
+converges (Sec. VII A).
 """
 
 from __future__ import annotations
@@ -57,15 +59,15 @@ from grteclyn_wrapper.visualisation.wormhole_merger.run_tree import (  # noqa: E
 
 TAG = "[fates]"
 
-W, H = 14.1, 3.9            # canvas in half-inches: 1 unit = 0.5 in at 7.05 x 1.95 in
+W, H = 14.1, 4.55           # canvas in half-inches: 1 unit = 0.5 in at 7.05 x 2.28 in
 EDGE = dict(color=style.INK, lw=1.0, solid_capstyle="round", solid_joinstyle="round", zorder=1)
 LABEL = dict(fontsize=8.0, color=style.INK)
 RULE = dict(fontsize=7.5, color=style.MUTED, style="italic")
 
 # leaves, top to bottom: (fate, pictogram centre y); 0.7 apart within a fork, 0.85
 # between the lone throat's fork and the pair's, where two prong labels face each other
-LEAVES = (("collapse", 3.4), ("inflation", 2.7), ("scattering", 1.85), ("merger", 1.15),
-          ("pair inflation", 0.45))
+LEAVES = (("collapse", 4.05), ("inflation", 3.35), ("scattering", 2.5), ("merger", 1.8),
+          ("plunge", 1.125), ("pair inflation", 0.45))
 Y = dict(LEAVES)
 LONE = (5.0, 0.5 * (Y["collapse"] + Y["inflation"]))      # the perturbation's sign
 RACE = (6.4, 0.5 * (Y["merger"] + Y["pair inflation"]))   # contact against inflation
@@ -75,7 +77,7 @@ FOAM = (0.95, ROOT[1] + 0.25)
 KNEE = 0.5                  # how far a prong runs on the slant before it levels
 LEAF_X = 8.45
 REACH = {"collapse": 0.42, "inflation": 0.46, "scattering": 0.58, "merger": 0.42,
-         "pair inflation": 0.58}
+         "plunge": 0.42, "pair inflation": 0.58}
 TEXT_X = LEAF_X + 0.62
 WAVE_X = (11.75, 13.0)      # the GW sketches' span, right of the leaf texts
 # the lone inflating throat is spherical, and gravitational waves start at l = 2; the
@@ -83,7 +85,8 @@ WAVE_X = (11.75, 13.0)      # the GW sketches' span, right of the leaf texts
 # the receding pair's l = 2 field drifts smoothly as its throats inflate, with
 # no burst (SCATTER-fate, 2026-10-08)
 GW = {"collapse": "Schwarzschild ringdown", "inflation": "none", "scattering": "no burst",
-      "merger": "one burst, no chirp", "pair inflation": "one burst at the encounter"}
+      "merger": "one burst, no chirp", "plunge": "one burst at contact",
+      "pair inflation": "one burst at the encounter"}
 
 
 def throat(ax, x, y, r, sign="", lw=1.0, fill=style.GRID, fs=6.5, z=3):
@@ -155,6 +158,14 @@ def scattering(ax, x, y):
         growing(ax, x + sx * 0.3, y, 0.1, (0.22, 0.16), 0.24, ms=3.5, sign="+")
 
 
+def plunge(ax, x, y):
+    """The hard plunge: the mouths merge into one core, and no common MOTS
+    converges about it (dashed grey, where the horizon would be)."""
+    ax.add_patch(Circle((x, y), 0.29, facecolor="none", edgecolor=style.CONTEXT, lw=1.0,
+                        linestyle=(0, (2.0, 1.6)), zorder=3))
+    ax.add_patch(Circle((x, y), 0.17, facecolor=style.INK, edgecolor=style.INK, lw=0.8, zorder=3))
+
+
 def merger(ax, x, y):
     ax.add_patch(Circle((x, y), 0.3, facecolor="#f4f2ec", edgecolor=style.GOLD, lw=1.8, zorder=3))
     throat(ax, x - 0.12, y, 0.1, "+", fs=5.5, z=4)
@@ -162,12 +173,13 @@ def merger(ax, x, y):
 
 
 DRAW = {"collapse": collapse, "inflation": inflation, "scattering": scattering,
-        "merger": merger, "pair inflation": pair_inflation}
+        "merger": merger, "plunge": plunge, "pair inflation": pair_inflation}
 TEXT = {
     "collapse": ("collapse", "a black hole"),
     "inflation": ("inflation", "open, anti-trapped, growing"),
     "scattering": ("scattering", "recede, both throats inflate"),
-    "merger": ("merger", "one black hole, both inside"),
+    "merger": ("merger", "one horizon around both"),
+    "plunge": ("plunge", "merged core, no MOTS"),
     "pair inflation": ("inflation", "both throats inflate"),
 }
 
@@ -185,7 +197,7 @@ def wave(ax, x0, x1, y, kind, amp=0.13):
     if kind in ("inflation", "scattering"):
         ax.plot([x0, x1], [y, y], color=style.INK, lw=0.9, zorder=2)
         return
-    if kind == "pair inflation":
+    if kind in ("pair inflation", "plunge"):
         h = np.exp(-((t - 0.55) / 0.14) ** 2) * np.sin(2.0 * np.pi * 2.3 * (t - 0.55) + 0.9)
     else:
         if kind == "collapse":
@@ -241,6 +253,8 @@ def draw(ax) -> None:
     race_out = (RACE[0] + 0.31, RACE[1])
     x0, x1 = prong(ax, race_out, end["merger"])
     over(ax, x0, x1, Y["merger"], r"short $d$, small $p$", dx=-0.3)
+    x0, x1 = prong(ax, race_out, end["plunge"])
+    over(ax, x0, x1, Y["plunge"], r"large $p$", dx=0.05)
     x0, x1 = prong(ax, race_out, end["pair inflation"])
     over(ax, x0, x1, Y["pair inflation"], "otherwise", below=True, dx=-0.2)
 

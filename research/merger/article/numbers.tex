@@ -91,14 +91,15 @@
 \newcommand{\clmDetFFFlybyHi}{0.80}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
 \newcommand{\clmDetFFTwinLo}{0.52}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-09-18; 5
 \newcommand{\clmDetFFTwinHi}{0.74}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-09-18; 5
-\newcommand{\clmDetFFMassLo}{0.11}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
-\newcommand{\clmDetFFMassHi}{1.23}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
 \newcommand{\clmDetFFTwinMassLo}{0.11}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-09-18; 5
 \newcommand{\clmDetFFTwinMassHi}{0.53}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-09-18; 5
 \newcommand{\clmDetFFTwinWindowLo}{0.935}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
 \newcommand{\clmDetFFTwinWindowHi}{0.951}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
 \newcommand{\clmDetFFWindowLo}{0.893}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
 \newcommand{\clmDetFFWindowHi}{0.995}% auto: results/merger/gw_search/fitting_factors.json (gws fitting-factor, 2026-10-05; 5
+\newcommand{\clmDetFFMassLo}{60}% auto: results/merger/gw_search/fitting_factors.json: the five masses 60-300 Msun per a
+\newcommand{\clmDetFFMassHi}{300}% auto: as clmDetFFMassLo
+\newcommand{\clmDetFFFlow}{20}% manual: grteclyn_wrapper/gw_search/analysis/fitting_factor.py F_LOWER = 20 Hz; noise aLI
 \newcommand{\clmDetBankMinMatch}{0.97}% def: grteclyn_wrapper/gw_search/templates/bank.py MIN_MATCH
 \newcommand{\clmDetSlides}{5000}% auto: results/merger/gw_search/o3b_scan.json (gws scan, GPS 1264317000-1264340000, 202
 \newcommand{\clmDetInjEffMedian}{101}% auto: results/merger/gw_search/injections.json (gws inject, H1 GPS 1264317634 +128 s, 
@@ -154,74 +155,18 @@
 \newcommand{\clmDetEfoldsPosHi}{23}% manual: arithmetic: t_insp = (5/256)(d/M)^4 M/eta, M = 2 (total), eta = 1/4; T_orb = 2 p
 \newcommand{\clmDetSeedPosLo}{10^{-5}}% manual: arithmetic: t_insp = (5/256)(d/M)^4 M/eta, M = 2 (total), eta = 1/4; T_orb = 2 p
 \newcommand{\clmDetSeedPosHi}{10^{-10}}% manual: arithmetic: t_insp = (5/256)(d/M)^4 M/eta, M = 2 (total), eta = 1/4; T_orb = 2 p
-\newcommand{\clmDetSeedMassLo}{10^{4}}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py SEED_RANGE
-\newcommand{\clmDetSeedMassHi}{10^{6}}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py SEED_RANGE
-\newcommand{\clmDetSeedMassMid}{10^{5}}% manual: input of the text's growth and Omega_GW examples (the middle mass decade of grte
-\newcommand{\clmDetZConv}{20}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py Z_EMIT
-\newcommand{\clmDetSalpeter}{45}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py SALPETER_MYR
-\newcommand{\clmDetJQuasarZ}{7.5}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py J1342 = z 7.5
-\newcommand{\clmDetLightSeedMass}{10^{2}}% manual: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py panel_seed_ra
-\newcommand{\clmDetLightSeedZ}{25}% manual: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py panel_seed_ra
-\newcommand{\clmDetLightSeedGap}{two}% auto: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py (t_of_z, SALP
-\newcommand{\clmDetNMin}{10^{-4}}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py N_RANGE
-\newcommand{\clmDetNMax}{10^{-2}}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py N_RANGE
-\newcommand{\clmDetFMPeakLo}{0.053}% auto: plot_psi4_ligo: resolved Psi4 band peak f_pk of the encounters (head-on, spiral,
-\newcommand{\clmDetFMPeakHi}{0.071}% auto: plot_psi4_ligo: resolved Psi4 band peak f_pk of the encounters (head-on, spiral,
-\newcommand{\clmDetConvMassLo}{10^{7}}% manual: input: the heavier mass decades the text considers
-\newcommand{\clmDetConvMassHi}{10^{8}}% manual: input
-\newcommand{\clmDetGrowthTarget}{10^{9}}% lit: z >~ 7 quasar mass scale: Banados et al., Nature 553, 473 (2018) [banados2018]: 
-\newcommand{\clmDetGrowthTimeLo}{414}% auto: arithmetic 45 Myr x ln(1e9/1e5) (grteclyn_wrapper/visualisation/wormhole_merger/
-\newcommand{\clmDetGrowthTimeHi}{518}% auto: arithmetic 45 Myr x ln(1e9/1e4)
-\newcommand{\clmDetGrowthWindow}{600}% auto: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py t_of_z (flat 
-\newcommand{\clmDetGrowthZ}{7}% lit: epoch of the earliest quasars: Banados et al., Nature 553, 473 (2018) [banados20
-\newcommand{\clmDetDMFracLo}{3\times10^{-11}}% auto: arithmetic n M / rho_DM, rho_DM = Omega_c h^2 x 2.775e11 = 3.33e10 Msun/Mpc^3 (P
-\newcommand{\clmDetDMFracHi}{3\times10^{-7}}% auto: same
-\newcommand{\clmDetFirasLo}{10^{5}}% lit: Nakama, Carr & Silk, PRD 97, 043525 (2018) [nakama2018], abstract (p. 1): PBHs f
-\newcommand{\clmDetFirasHi}{10^{12}}% lit: as clmDetFirasLo: Nakama, Carr & Silk 2018 [nakama2018] abstract, upper edge 10^
-\newcommand{\clmDetBandLo}{0.5}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
-\newcommand{\clmDetBandHi}{70}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
-\newcommand{\clmDetOmegaHi}{10^{-11}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
-\newcommand{\clmDetOmegaLo}{10^{-14}}% auto: arithmetic Omega_GW = n E_rad/[rho_c (1+z_e)], rho_c = 2.775e11 h^2 (H0 67.7, gr
-\newcommand{\clmDetOmegaFreq}{7}% auto: arithmetic f_obs = (fM)_peak / [M (1+z_e)], GM_sun/c^3 = 4.9255e-6 s, z_e = 20, 
-\newcommand{\clmDetRateLo}{0.05}% auto: arithmetic: each seed converts once, so the observed rate is n 4 pi D_c(z_e)^2 c
-\newcommand{\clmDetRateHi}{5}% auto: arithmetic: each seed converts once, so the observed rate is n 4 pi D_c(z_e)^2 c
-\newcommand{\clmDetIntroSeedLo}{10^4}% lit: heavy-seed mass range: Bogdan et al., Nat. Astron. 8, 126 (2024) [bogdan2024], a
-\newcommand{\clmDetIntroSeedHi}{10^6}% lit: heavy-seed mass range, upper edge: Inayoshi, Visbal & Haiman 2020 [inayoshi2020]
 \newcommand{\clmDetScalarSpread}{30}% manual: plot_scalar_channel _gw_flux/_scalar/_cum on campaign/06_binary_flyby/p045/merge
 \newcommand{\clmDetEphiSphereRatio}{12}% manual: campaign/06_binary_flyby/p045/merge_orbit_flip_d12_p045_L128_lvl5_t100/scalar_mo
 \newcommand{\clmDetThroatEphiSpread}{6}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100/scalar_modes
 \newcommand{\clmDetHeadonWobble}{80}% manual: the outermost (R=18) Psi4 sphere of the head-on arms (psi4_mode_l2m0.dat); onset
-\newcommand{\clmDetDetectMassLo}{3\times10^{4}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetDetectMassHi}{6\times10^{6}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetBurstSnrLo}{56}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetBurstSnrHi}{220}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetCollapseSnr}{6}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetLoudSnrLo}{35}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetHeadonSnrHi}{84}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetFlybyDetectMassHi}{8\times10^{6}}% auto: grteclyn_wrapper/gw_search/lisa.py (the pack's search templates at z_e = 20, Pla
-\newcommand{\clmDetPlungeDetectMassHi}{4\times10^{7}}% auto: gw_search.lisa mass_range of the p = 0.60 plunge (conservative: inclination aver
-\newcommand{\clmDetBandFloor}{0.1}% def: grteclyn_wrapper/gw_search/lisa.py F_MIN: LISA measures from below 1e-4 Hz (Amar
-\newcommand{\clmDetTrackShare}{90}% def: grteclyn_wrapper/visualisation/wormhole_merger/plot_heavy_seeds.py _track share
-\newcommand{\clmDetBurstsPerN}{1.9\times10^{3}}% auto: arithmetic 4 pi D_c(20)^2 c T, T = 4 yr (flat LCDM of plot_heavy_seeds)
-\newcommand{\clmDetPlsNLo}{6}% manual: detector_pls_n_threshold(m=1e6, arm=spiral) = 5.914e-4 Mpc^-3, quoted in units o
-\newcommand{\clmDetPlsNHi}{36}% manual: detector_pls_n_threshold(m=1e5, arm=spiral) = 3.596e-3 Mpc^-3, quoted in units o
 \newcommand{\clmDetDilution}{2\times10^{5}}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S8: (1+z_e)^
 \newcommand{\clmOmegaLambda}{0.69}% lit: Planck 2018 VI, A&A 641, A6 (2020) [planck2018], Table 2, last column (TT,TE,EE+
-\newcommand{\clmDetOmegaWHLo}{52}% auto: plot_heavy_seeds.deposit(): |E_phi|/E_GW = clmGwScalarRatioFull..clmGwScalarBand
-\newcommand{\clmDetOmegaWHHi}{6100}% auto: as clmDetOmegaWHLo, the smallest deposit (clmGwScalarRatioFull x clmGwEnergySpir
 \newcommand{\clmDetOmegaWHDMLo}{230}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S5 (removed 
 \newcommand{\clmDetOmegaWHDMHi}{3100}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S5 (removed 
 \newcommand{\clmDetDepositOverMatter}{47}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S5 (removed 
 \newcommand{\clmDetHubbleCap}{0.015}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S5 (removed 
-\newcommand{\clmDetDepositCeiling}{3.5\times10^{-3}}% auto: plot_heavy_seeds.deposit() as clmDetOmegaWHLo: |Omega_phi,0| = (rho_DM/rho_c) (|
 \newcommand{\clmDetBackreactLo}{5\times10^{-13}}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S5 (removed 
 \newcommand{\clmDetBackreactHi}{6\times10^{-8}}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S5 (removed 
-\newcommand{\clmDetLrdNLo}{3}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S6: little-r
-\newcommand{\clmDetLrdNHi}{6}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S6 (same)
-\newcommand{\clmDetLrdFracLo}{10^{-11}}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S6: f_DM = 1
-\newcommand{\clmDetLrdFracHi}{2\times10^{-9}}% manual: grteclyn-wrapper/scripts/analysis/wormhole_merger/cosmology_lisa.py S6 (same)
-\newcommand{\clmDetLrdBurstsLo}{0.06}% auto: arithmetic: the summed LRD densities (plot_heavy_seeds.LRD_DENSITY) x 4 pi D_c(2
-\newcommand{\clmDetLrdBurstsHi}{0.1}% auto: arithmetic: the summed LRD densities (plot_heavy_seeds.LRD_DENSITY) x 4 pi D_c(2
 \newcommand{\clmInfDcGpc}{11}% auto: arithmetic: comoving distance to z_emit = 20 in the flat LCDM of plot_heavy_seed
 \newcommand{\clmInfStallLo}{2.6\times10^{-4}}% auto: arithmetic: (3/(4 pi n))^(1/3) / D_c(20) at n = 10^-2 Mpc^-3 (clmDetNMax); analy
 \newcommand{\clmInfStallHi}{1.2\times10^{-3}}% auto: as clmInfStallLo at n = 10^-4 Mpc^-3 (clmDetNMin)
@@ -234,10 +179,6 @@
 \newcommand{\clmDetLifePeriodsHi}{2.4}% auto: tau ln(1e15) / P: the level-3 isolated clock (5.875) over the shorter pull perio
 \newcommand{\clmDetDecadeUnitsLo}{12}% auto: tau ln 10, tau = the level-4 isolated clock (single_plateau)
 \newcommand{\clmDetDecadeUnitsHi}{12}% auto: tau ln 10, tau = the level-3 isolated clock (single_plateau)
-\newcommand{\clmDetLumDist}{230}% auto: (1 + z_emit) x the comoving distance to z_emit = 20 in the flat LCDM of plot_hea
-\newcommand{\clmDetReentryTime}{1}% lit: Carr, Kohri, Sendouda & Yokoyama, Rep. Prog. Phys. 84, 116902 (2021) [carr2021],
-\newcommand{\clmDetReentryZLo}{10^{9}}% lit: 1 + z = (g_*s/3.91)^(1/3) T/T_0 at t ~ 1 s: T ~ 0.86 MeV (t = 0.74 s (MeV/T)^2 a
-\newcommand{\clmDetReentryZHi}{10^{10}}% lit: as clmDetReentryZLo
 \newcommand{\clmDetCompanionLifeLo}{28}% auto: tau ln(1/0.004): the companion compression at d = 12 (clmRaceKickTwelve) as the 
 \newcommand{\clmDetCompanionLifeHi}{29}% auto: tau ln(1/0.004), level-3 isolated clock
 \newcommand{\clmNormPitShare}{99.99}% manual: GPU_PLAN 2026-09-29 (verification B, check_flyby_d12_p025_lbf_csm_t020): four le
@@ -399,6 +340,11 @@
 \newcommand{\clmRaceFoldsSix}{2.5}% auto: expr: the d=6 MOTS birth time (clmMergerMotsTime) / clmTauLevelThree
 \newcommand{\clmRaceFoldsTwelve}{9}% auto: expr: the p=0.25 closest-pass time (clmFlybyLbfClosestTime) / clmTauLevelThree
 \newcommand{\clmDSixP}{0.10}% manual: evolution_params.txt of the d6 chain (tangential momentum per mouth)
+\newcommand{\clmDSixCircFrac}{14}% auto: p / p_circ at d = 6 (extract_mergers.mergers_circular_fraction)
+\newcommand{\clmPairAdmAttractTwelve}{2.27}% auto: 2m + E_b of the attracting d = 12 matched pair (energy_scan.tsv), m = 1
+\newcommand{\clmPairAdmRepelTwelve}{1.56}% auto: 2m + E_b of the repelling d = 12 matched pair (energy_scan.tsv), m = 1
+\newcommand{\clmDampOnTime}{36}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/collap
+\newcommand{\clmDampOffReach}{34}% manual: 70 - clmDampOnTime: the radius a change at the centre from t = 36 reaches by the
 \newcommand{\clmMergerMotsTime}{13}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerMotsRadius}{5.60}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
 \newcommand{\clmMergerMotsMass}{2.80}% auto: 05_binary_spiral/merger_d6/: the chain's own mots_spectral.dat (leg 1 + sigma + 
@@ -430,7 +376,6 @@
 \newcommand{\clmEgwPSixty}{0.60}% manual: evolution_params.txt of merge_orbit_flip_d12_p060_L128_lvl4_t040_lbf_csm (tangen
 \newcommand{\clmEgwPNinety}{0.90}% manual: evolution_params.txt of merge_orbit_flip_d12_p090_L128_lvl4_t040_lbf_csm (tangen
 \newcommand{\clmHeadonCsmWallLead}{21}% manual: campaign/04_binary_headon/csm: level-5 cell NaN at t=38.845 (clmHeadonCsmNanTime
-\newcommand{\clmMergerAdmMass}{2.371}% auto: M_ADM_boost: the d6 pair's boosted-solve face estimate plus each throat's kineti
 \newcommand{\clmPSixtyTrust}{80}% manual: results/merger/trust_windows.tsv
 \newcommand{\clmBoostFaceBias}{2.8}% auto: constraint_solve.dat of the d12 p012 Bowen-York pair on the production grid: M_A
 \newcommand{\clmDampOffPsi}{2\times10^{-7}}% manual: results/merger/runs_registry.tsv, merge_orbit_flip_d12_p045_L128_lvl4_t070_nodam
@@ -678,6 +623,8 @@
 \newcommand{\clmBoostMovingOnePct}{36.8}% auto: as clmBoostMovingHoldMax
 \newcommand{\clmBoostMovingTauLo}{5.0}% auto: as clmBoostMovingHoldMax: free-offset fits R = c + B e^(t/tau) over [t0, t1], t0
 \newcommand{\clmBoostMovingTauHi}{6.1}% auto: as clmBoostMovingTauLo
+\newcommand{\clmBoostGamma}{1.10}% manual: closed form gamma = sqrt(1 + p^2) at p = 0.45 per unit one-body mass
+\newcommand{\clmBoostDilatedTau}{5.6}% auto: gamma x clmTauLevelThree (unrounded 5.119): the coordinate-time e-fold a dilated
 \newcommand{\clmBoostMovingDeath}{44.67}% manual: single_boost_p045_lbf_t050 run.log: NaN in h11, level 3, chi at the pit on its f
 \newcommand{\clmFreezeRadiusFull}{0.3}% manual: campaign/05_binary_spiral/merger_d6/spiral_d6_p010_L128_lvl5from0_t060_lbf_csm/e
 \newcommand{\clmFreezeRadiusStart}{0.8}% manual: same params: core_freeze_radius_start
@@ -790,7 +737,6 @@
 \newcommand{\clmGwScalarFluxFactor}{0.94}% auto: waves_id_sphere: area mean of alpha^2 chi^-1/2 at R = 30 from the Sec. II two-th
 \newcommand{\clmGwScalarFluxCorr}{6}% auto: 100 (1 - clmGwScalarFluxFactor), packed fly-by params
 \newcommand{\clmGwScalarDipoleShare}{6.2}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
-\newcommand{\clmGwScalarDipoleGap}{6.4}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
 \newcommand{\clmGwScalarRadiusInner}{14}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
 \newcommand{\clmGwScalarCut}{60}% def: plot_scalar_channel.FLYBY[2] (the mid-burst cut: the blue rule of panel c)
 \newcommand{\clmGwScalarEnergyFlyby}{4.7\times10^{-2}}% manual: campaign/06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/scalar
@@ -809,7 +755,6 @@
 \newcommand{\clmGwCensEnergyMid}{-0.0571}% auto: scalar_modes.dat of the head-on SERIES: int (-flux_kin) dt from where the sphere
 \newcommand{\clmGwCensEnergyOuter}{-0.0594}% auto: scalar_modes.dat of the head-on SERIES: int (-flux_kin) dt from where the sphere
 \newcommand{\clmGwCensIngoing}{26}% auto: campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L128_SERIES/scalar_modes.d
-\newcommand{\clmGwShedClock}{20}% manual: plot_scalar_censorship: campaign/04_binary_headon/csm/merge_headon_flip_d8_v1_L1
 \newcommand{\clmGwKickedLevel}{4}% def: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100/evolution_pa
 \newcommand{\clmGwKickedEps}{+10^{-2}}% def: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100/evolution_pa
 \newcommand{\clmGwKickedMotsTime}{11}% auto: campaign/01_single_throat/seed/single_eps_p1e2_q1e2_ml4_scalar_t100/horizon_scan

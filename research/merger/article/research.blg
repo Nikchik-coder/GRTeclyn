@@ -1,48 +1,165 @@
 This is BibTeX, Version 0.99d (TeX Live 2023/Debian)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: research.aux
-I found no \citation commands---while reading file research.aux
-I found no \bibdata command---while reading file research.aux
-I found no \bibstyle command---while reading file research.aux
-You've used 0 entries,
-            0 wiz_defined-function locations,
-            83 strings with 490 characters,
-and the built_in function-call counts, 0 in all, are:
-= -- 0
-> -- 0
-< -- 0
-+ -- 0
-- -- 0
-* -- 0
-:= -- 0
+The style file: apsrev4-2.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Database file #1: researchNotes.bib
+Warning--I didn't find a database entry for "wheeler1955"
+Warning--I didn't find a database entry for "wheeler1957"
+Warning--I didn't find a database entry for "misner_wheeler1957"
+Warning--I didn't find a database entry for "roman1993"
+Warning--I didn't find a database entry for "garriga2016"
+Warning--I didn't find a database entry for "deng2017"
+Warning--I didn't find a database entry for "deng_vilenkin2017"
+Warning--I didn't find a database entry for "gouttenoire2024"
+Warning--I didn't find a database entry for "kirillov2008"
+Warning--I didn't find a database entry for "kirillov2011"
+Warning--I didn't find a database entry for "ellis1973"
+Warning--I didn't find a database entry for "bronnikov1973"
+Warning--I didn't find a database entry for "morris_thorne1988"
+Warning--I didn't find a database entry for "visser1995"
+Warning--I didn't find a database entry for "gonzalez2009lin"
+Warning--I didn't find a database entry for "bronnikov2011"
+Warning--I didn't find a database entry for "cremona2019"
+Warning--I didn't find a database entry for "hayward1999"
+Warning--I didn't find a database entry for "shinkai2002"
+Warning--I didn't find a database entry for "gonzalez2009"
+Warning--I didn't find a database entry for "doroshkevich2009"
+Warning--I didn't find a database entry for "hayward2009"
+Warning--I didn't find a database entry for "novikov2019"
+Warning--I didn't find a database entry for "shirokov2026"
+Warning--I didn't find a database entry for "cline2004"
+Warning--I didn't find a database entry for "geroch1967"
+Warning--I didn't find a database entry for "tipler1977"
+Warning--I didn't find a database entry for "hawking1988"
+Warning--I didn't find a database entry for "zeldovich1967"
+Warning--I didn't find a database entry for "carr_hawking1974"
+Warning--I didn't find a database entry for "carr2021"
+Warning--I didn't find a database entry for "caprini2018"
+Warning--I didn't find a database entry for "nanograv2023"
+Warning--I didn't find a database entry for "lisa2017"
+Warning--I didn't find a database entry for "lvk2021"
+Warning--I didn't find a database entry for "grteclyn"
+Warning--I didn't find a database entry for "amrex"
+Warning--I didn't find a database entry for "grchombo"
+Warning--I didn't find a database entry for "shirokov2026b"
+Warning--I didn't find a database entry for "alic2012"
+Warning--I didn't find a database entry for "bona1995"
+Warning--I didn't find a database entry for "alcubierre2003gauge"
+Warning--I didn't find a database entry for "campanelli2006"
+Warning--I didn't find a database entry for "baker2006"
+Warning--I didn't find a database entry for "hochberg_visser1998"
+Warning--I didn't find a database entry for "hawking1968"
+Warning--I didn't find a database entry for "misner_sharp1964"
+Warning--I didn't find a database entry for "reisswig2011"
+Warning--I didn't find a database entry for "gundlach1998"
+Warning--I didn't find a database entry for "calhoun2022"
+Warning--I didn't find a database entry for "xu2025"
+Warning--I didn't find a database entry for "hayward1996"
+Warning--I didn't find a database entry for "hayward1994"
+Warning--I didn't find a database entry for "babichev2004"
+Warning--I didn't find a database entry for "gao2008"
+Warning--I didn't find a database entry for "hawking1971"
+Warning--I didn't find a database entry for "ashtekar_krishnan2004"
+Warning--I didn't find a database entry for "gundlach2007"
+Warning--I didn't find a database entry for "choptuik1996"
+Warning--I didn't find a database entry for "huisken2001"
+Warning--I didn't find a database entry for "mars2009"
+Warning--I didn't find a database entry for "kain2026"
+Warning--I didn't find a database entry for "penrose1969"
+Warning--I didn't find a database entry for "wald1997"
+Warning--I didn't find a database entry for "damour2014"
+Warning--I didn't find a database entry for "witek2010"
+Warning--I didn't find a database entry for "scheel2009"
+Warning--I didn't find a database entry for "berti2009"
+Warning--I didn't find a database entry for "clough2021"
+Warning--I didn't find a database entry for "gourgoulhon2012"
+Warning--I didn't find a database entry for "carroll2003"
+Warning--I didn't find a database entry for "christodoulou1991"
+Warning--I didn't find a database entry for "thorne1992"
+Warning--I didn't find a database entry for "favata2009"
+Warning--I didn't find a database entry for "husa2016"
+Warning--I didn't find a database entry for "khan2016"
+Warning--I didn't find a database entry for "aligo2010"
+Warning--I didn't find a database entry for "berti2006"
+Warning--I didn't find a database entry for "gwtc3"
+Warning--I didn't find a database entry for "pagano2016"
+Warning--I didn't find a database entry for "lvk2021burst"
+Warning--I didn't find a database entry for "dzhunushaliev2013"
+Warning--I didn't find a database entry for "azad2024plb"
+Warning--I didn't find a database entry for "azad2024prd"
+Warning--I didn't find a database entry for "khoo2024"
+Warning--I didn't find a database entry for "kleihaus_kunz2014"
+Warning--I didn't find a database entry for "poisson_visser1995"
+Warning--I didn't find a database entry for "kanti2011"
+Warning--I didn't find a database entry for "cardoso2016"
+Warning--I didn't find a database entry for "bueno2018"
+Warning--I didn't find a database entry for "farhi_guth1987"
+Warning--I didn't find a database entry for "blau1987"
+Warning--I didn't find a database entry for "liddle2003"
+Warning--I didn't find a database entry for "friedman1993"
+Warning--I didn't find a database entry for "gwosc"
+Warning--I didn't find a database entry for "pycbc"
+control{REVTEX42Control}, control.key{N/A}, control.author{N/A}, control.editor{N/A}, control.title{N/A}, control.pages{N/A}, control.year{N/A}, control.eprint{N/A}, 
+control{apsrev42Control}, control.key{N/A}, control.author{08}, control.editor{1}, control.title{0}, control.pages{0}, control.year{1}, control.eprint{N/A}, 
+Warning--jnrlst (dependency: not reversed) set 1
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+apsrev4-2.bst 2019-01-14 (MD) hand-edited version of apsrev4-1.bst
+Control: key (0) 
+Control: author (8) initials jnrlst
+Control: editor formatted (1) identically to author
+Control: production of article title (0) allowed
+Control: page (0) single
+Control: year (1) truncated
+Control: production of eprint (0) enabled
+You've used 2 entries,
+            6079 wiz_defined-function locations,
+            1731 strings with 16098 characters,
+and the built_in function-call counts, 991 in all, are:
+= -- 12
+> -- 16
+< -- 35
++ -- 8
+- -- 20
+* -- 131
+:= -- 72
 add.period$ -- 0
-call.type$ -- 0
+call.type$ -- 2
 change.case$ -- 0
-chr.to.int$ -- 0
-cite$ -- 0
-duplicate$ -- 0
-empty$ -- 0
+chr.to.int$ -- 12
+cite$ -- 2
+duplicate$ -- 137
+empty$ -- 17
 format.name$ -- 0
-if$ -- 0
-int.to.chr$ -- 0
-int.to.str$ -- 0
-missing$ -- 0
-newline$ -- 0
+if$ -- 127
+int.to.chr$ -- 1
+int.to.str$ -- 9
+missing$ -- 28
+newline$ -- 52
 num.names$ -- 0
-pop$ -- 0
-preamble$ -- 0
+pop$ -- 68
+preamble$ -- 1
 purify$ -- 0
 quote$ -- 0
-skip$ -- 0
+skip$ -- 33
 stack$ -- 0
-substring$ -- 0
-swap$ -- 0
+substring$ -- 12
+swap$ -- 110
 text.length$ -- 0
 text.prefix$ -- 0
-top$ -- 0
-type$ -- 0
-warning$ -- 0
-while$ -- 0
+top$ -- 10
+type$ -- 12
+warning$ -- 1
+while$ -- 11
 width$ -- 0
-write$ -- 0
-(There were 3 error messages)
+write$ -- 52
+(There were 97 warnings)
