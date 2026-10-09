@@ -66,8 +66,7 @@ both engines, text ends on page 21.
   Zenodo record's arXiv link.
 
 RUNS FOR THE PAPER: none, and no new runs (decided 10-09): referee items that a run would settle are answered in the
-text only. Not ours to run: post the arXiv replacement of 2604.00071 (Sec. IV E calls its bounce an artifact of the
-halved stress-energy). Earlier proposals were dropped before submission; `git show 2acaa681:research/merger/STATUS.md`.
+text only. Earlier proposals were dropped before submission; `git show 2acaa681:research/merger/STATUS.md`.
 
 ## Main results (the paper's wording; every quoted number is a ledger row)
 
