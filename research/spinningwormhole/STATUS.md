@@ -22,10 +22,13 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
   initial data, Γ̃ FD fill, throat/ergoregion diagnostics), static `.spinbg`
   generator (exact under the loader's interpolation), legacy
   `RotatingWormholeCollapse` deleted.
-- Campaign scripts (`spinning_wormhole/`, launch → run_single → shared
-  `campaigns/lib/preflight.py` + consumer): in progress this session.
-- No pinned binary yet (`launch.sh` requires `--binary` until the first
-  `build_binary.sh --tag` lands and sets the pin).
+- Campaign scripts landed: `spinning_wormhole/` (launch → run_single →
+  consumer) on the NEW shared preflight engine `campaigns/lib/preflight.py`
+  (per-campaign facts in `preflight_campaign.json`; the merger keeps its
+  frozen copy).  Dry-run against the built binary + static table: PASS,
+  59/59 template keys read.
+- Example compiles (CUDA+MPI, sm_90).  No pinned binary yet (`launch.sh`
+  requires `--binary` until the first `build_binary.sh --tag` sets the pin).
 
 ## NEXT (the plan's order)
 

@@ -29,7 +29,6 @@ plot_interval       = 10
 amr.plot_vars = chi h11 h22 h33 K lapse shift1 shift2 shift3 phi Pi
 amr.derive_plot_vars = Weyl4
 
-hdf5_subpath = "hdf5"
 pout_subpath = "pout"
 data_subpath = "data"
 
@@ -72,8 +71,9 @@ isPeriodic = 0 0 0
 hi_boundary = 1 1 1
 lo_boundary = 1 1 1
 
-nonzero_asymptotic_vars = chi h11 h22 h33 lapse
-nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+# Sommerfeld asymptotic values come from StateVariables::asymptotic_values in
+# code; the old nonzero_asymptotic_* keys are accepted but ignored, so this
+# campaign's templates do not carry them.
 
 #################################################
 # Evolution

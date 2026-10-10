@@ -1,0 +1,12 @@
+{
+  "name": "spinning_wormhole",
+  "env_prefix": "SWH",
+  "run_root": "spinning_wormhole",
+  "seed_key_regex": "^spinning_seed_amplitude$",
+  "mirror_keys": ["center", "extraction_center"],
+  "forbid_reflection_axes": [0, 1],
+  "required_file_keys": ["spinning_background_file"],
+  "probe_param_caps": {},
+  "allow_file": "preflight_allow.txt",
+  "frames_file": "frames_default.txt"
+}
