@@ -1,0 +1,8 @@
+# Campaign binaries: which build is which.  One row per frozen binary under
+# runs/spinning_wormhole/bin/ -- that directory is untracked, so THIS file is
+# the record.  Rows are written by
+# grteclyn-wrapper/scripts/campaigns/spinning_wormhole/build_binary.sh; the
+# binaries carry grteclyn_version inside them (start-up banner,
+# parameters_and_version.txt).  Deleted binaries keep their row: packed runs
+# still name them.  Tab-separated; build_binary.sh appends.
+#file	sha256_16	grteclyn_version	amrex	built_utc	flags	nvcc	made_by	note

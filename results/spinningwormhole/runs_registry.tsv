@@ -1,0 +1,4 @@
+# Run registry for the packed spinning-wormhole campaign -- ONE line per run, in
+# the order the campaign reads in.  Tab-separated: run, what is different, caveat
+# appended to the outcome, stopped-by-hand note ({t:.2f} is the last time).  The
+# launcher appends a line when SWH_WHAT is set at launch.

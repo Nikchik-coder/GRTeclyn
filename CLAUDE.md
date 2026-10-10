@@ -226,6 +226,9 @@ what the claims check or the identity grep flags, and report in a few lines.
   hook (`grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook`) blocks
   it. Say "the first/second GPU node", never the hostname.
 - Several sessions may share this working tree: **stage explicit paths**, never `git add -A`.
+- **Push to `myfork`, never `origin`** (2026-10-10): `origin` is upstream GRTLCollaboration (and its
+  https URL has no credentials here); the working remote is the SSH fork `myfork`. Every push and
+  `ls-remote` check uses `myfork`.
 - "Commit and push" from the user means now, in one step: stage, commit, push, one `ls-remote` check.
 - Push in the background with a timeout (`< /dev/null`), then verify with
   `git ls-remote`; a foreground push can hang the shell.
