@@ -2,3 +2,6 @@
 # the order the campaign reads in.  Tab-separated: run, what is different, caveat
 # appended to the outcome, stopped-by-hand note ({t:.2f} is the last time).  The
 # launcher appends a line when SWH_WHAT is set at launch.
+smoke_test	campaign smoke: static massless table, full pipeline	crashed at exit (managed-arena free after Finalize, fixed bfb65e8e); physics clean to t=0.5, L2_Mom(0)=0	
+smoke_test2	campaign smoke rerun on the fixed pin (exit, R_pol, psi4)	clean exit; frames sliced the domain edge (coord 32 on L=16); superseded by smoke_test3	
+smoke_test3	campaign smoke, correct frame window (zoom 16, coord 8)	PASS: clean exit, 14 frames through the throat, consumer 3/3, R_eq 0.97 R_pol 0.92 at t=0	

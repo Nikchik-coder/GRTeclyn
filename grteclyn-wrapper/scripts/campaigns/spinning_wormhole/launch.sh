@@ -97,10 +97,10 @@ set -euo pipefail
 # The campaign pin.  Arms are compared against each other, so they must run the
 # SAME binary; the live build product changes under other work.  Frozen copies
 # live in runs/spinning_wormhole/bin/.  The pin is the campaign's first build
-# (2026-10-10, commit cf8cca48; results/spinningwormhole/binaries.tsv row 1).
+# (2026-10-10, commit bfb65e8e, the smoke-test fixes; binaries.tsv row 2).
 # Change it only when the whole campaign moves to a new build, and say so in
 # the campaign STATUS.
-DEFAULT_BINARY='runs/spinning_wormhole/bin/main3d_first_cf8cca48_2026-10-10.ex'
+DEFAULT_BINARY='runs/spinning_wormhole/bin/main3d_smoke_bfb65e8e_2026-10-10.ex'
 
 HERE="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 REPO="$(cd -- "${HERE}/../../../.." && pwd)"

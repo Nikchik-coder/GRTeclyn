@@ -489,6 +489,29 @@ def consumer_check(params: dict[str, str], consume_args: str, consume_on: bool,
         if bad:
             errors.append(f"--frames-center {' '.join(fc)} is off the reflective plane(s) {bad}: the frames "
                           "mirror about the centre")
+
+    # A slice coordinate outside the box renders the clamped domain edge:
+    # featureless frames, no error anywhere (2026-10-10: the first smoke
+    # frames sliced z = 32 on an L = 16 box and showed no throat at all).
+    # The coordinates are absolute code units, so the valid window is [0, L].
+    L_box = as_float(params.get("L", "")) if "L" in params else None
+    if L_box:
+        for v in _flag_values(toks, "--frames-coord"):
+            try:
+                fv = float(v)
+            except ValueError:
+                continue
+            if fv < 0.0 or fv > L_box:
+                errors.append(f"--frames-coord {v} is outside the box [0, {L_box:g}]: the renderer clamps "
+                              "the slice to the domain edge and draws featureless frames")
+        for v in _flag_values(toks, "--frames-center"):
+            try:
+                fv = float(v)
+            except ValueError:
+                continue
+            if fv < 0.0 or fv > L_box:
+                errors.append(f"--frames-center component {v} is outside the box [0, {L_box:g}]: the window "
+                              "would be clamped off the physics")
     return errors, warnings, summary
 
 
