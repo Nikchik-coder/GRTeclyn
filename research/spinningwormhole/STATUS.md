@@ -27,8 +27,9 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
   (per-campaign facts in `preflight_campaign.json`; the merger keeps its
   frozen copy).  Dry-run against the built binary + static table: PASS,
   59/59 template keys read.
-- Example compiles (CUDA+MPI, sm_90).  No pinned binary yet (`launch.sh`
-  requires `--binary` until the first `build_binary.sh --tag` sets the pin).
+- Campaign pin: `main3d_first_cf8cca48_2026-10-10.ex` (launch.sh
+  DEFAULT_BINARY; `results/spinningwormhole/binaries.tsv`).  Built, never
+  launched: the smoke test waits for the go.
 
 ## NEXT (the plan's order)
 

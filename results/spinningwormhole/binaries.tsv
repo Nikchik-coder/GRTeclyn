@@ -6,3 +6,4 @@
 # parameters_and_version.txt).  Deleted binaries keep their row: packed runs
 # still name them.  Tab-separated; build_binary.sh appends.
 #file	sha256_16	grteclyn_version	amrex	built_utc	flags	nvcc	made_by	note
+main3d_first_cf8cca48_2026-10-10.ex	fad71629e6dd4025	cf8cca48	26.02-12-gd7da5045	2026-10-10T16:36:47Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	
