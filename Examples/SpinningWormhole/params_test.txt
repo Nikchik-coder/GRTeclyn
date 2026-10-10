@@ -1,0 +1,123 @@
+# SpinningWormhole -- the smoke test.
+# Tiny box, single level, stop_time = 0.5: exercises the whole plumbing
+# (background-table ID, Gamma fill, matter RHS, diagnostics, Weyl4 derive)
+# without doing any physics.
+#
+# Needs a background table next to the params file; generate the static one
+# (= the drainhole, the v_e = 0 member of the rotating family) with:
+#   grteclyn-wrapper/.venv/bin/python -m \
+#     grteclyn_wrapper.analysis.spinning_wormhole.backgrounds static \
+#     --eta0 1.0 --out background.spinbg
+# Launch through the campaign launcher, never directly:
+#   bash grteclyn-wrapper/scripts/campaigns/spinning_wormhole/launch.sh \
+#     --template Examples/SpinningWormhole/params_test.txt --name smoke_test \
+#     --gpu 0 --profile none --foreground --binary <bin>
+# The three path keys below are placeholders the launcher rewrites (each must
+# appear exactly once).
+
+verbosity = 1
+
+output_path    = "./output"
+amr.plot_file  = "./scratch/SpinningWormholePlt"
+amr.check_file = "./scratch/SpinningWormholeChk"
+
+checkpoint_interval = -1
+plot_interval       = 10
+
+# The full campaign frame set (frames_default.txt) needs the shift and the
+# metric diagonal (local_speed) as well as the core fields.
+amr.plot_vars = chi h11 h22 h33 K lapse shift1 shift2 shift3 phi Pi
+amr.derive_plot_vars = Weyl4
+
+hdf5_subpath = "hdf5"
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+
+# Required (ParmParse get) by the BHAMR Weyl4 particle interpolator
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: one rotating Ellis-Bronnikov wormhole from a background table
+
+spinning_background_file = "background.spinbg"
+spinning_initial_lapse_type = 0      # keep the background's stationary lapse
+
+# No seed: the smoke test checks plumbing, not modes.
+spinning_seed_amplitude = 0.0
+spinning_seed_width = 1.0
+spinning_seed_radius = 0.0
+
+phantom_mass = 0.0
+
+#################################################
+# Grid
+
+L = 16.0
+N1 = 64
+N2 = 64
+N3 = 64
+
+center = 8.0 8.0 8.0
+
+max_level = 0                        # single level: this is a smoke test
+regrid_interval = 32
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1
+lo_boundary = 1 1 1
+
+nonzero_asymptotic_vars = chi h11 h22 h33 lapse
+nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
+
+#################################################
+# Evolution
+
+dt_multiplier = 0.1
+stop_time = 0.5
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 1.0
+shift_Gamma_coeff = 0.75
+eta = 1.0                            # massless symmetric throat: M_ADM ~ 0
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 2.0
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+
+#################################################
+# Diagnostics + extraction
+
+spinning_diagnostics = 1
+core_radial_profile = 0
+
+sponge_enabled = 0
+
+tagging_type = 1                     # fixed boxes on the centred throat
+tagging_L = 16.0
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576

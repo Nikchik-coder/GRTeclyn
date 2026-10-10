@@ -1,0 +1,2 @@
+GRTECLYN_CEXE_sources += SpinningWormholeLevel.cpp Main_SpinningWormhole.cpp
+GRTECLYN_CEXE_headers += SpinningWormholeLevel.hpp SimulationParameters.hpp StateVariables.hpp SpinningWormholeInitialData.hpp RotatingBackgroundTable.hpp InitialGammas.hpp SpinningThroatDiagnostics.hpp CoreRadialProfile.hpp PhantomDecayPotential.hpp

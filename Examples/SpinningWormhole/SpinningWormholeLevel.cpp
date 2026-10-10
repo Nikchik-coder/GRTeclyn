@@ -1,0 +1,637 @@
+#include "SpinningWormholeLevel.hpp"
+#include "CCZ4RHSWithMatter.hpp"
+#include "ChiPhiKTagger.hpp"
+#include "ConstraintsWithMatter.hpp"
+#include "CoreRadialProfile.hpp"
+#include "DetHRescale.hpp"
+#include "ExoticScalarField.hpp"
+#include "ExtractionTagger.hpp"
+#include "FixedGridsTagger.hpp"
+#include "GRParmParse.hpp"
+#include "InitialGammas.hpp"
+#include "Interval.hpp"
+#include "PhantomDecayPotential.hpp"
+#include "PositiveChiAndLapse.hpp"
+#include "RotatingBackgroundTable.hpp"
+#include "SimulationParameters.hpp"
+#include "SmallDataIO.hpp"
+#include "SpinningThroatDiagnostics.hpp"
+#include "SpinningWormholeInitialData.hpp"
+#include "SpongeZone.hpp"
+#include "TraceARemoval.hpp"
+#include "Weyl4WithMatter.hpp"
+#include "WeylExtraction.hpp"
+
+#include <AMReX_MultiFabUtil.H>
+#include <AMReX_Reduce.H>
+#include <AMReX_Utility.H>
+#include <cmath>
+#include <memory>
+
+namespace
+{
+const SimulationParameters *s_sim_params = nullptr;
+
+//! The background table, loaded once and shared by every level's initData
+//! (the file never changes during a run; managed memory serves CPU and GPU).
+std::unique_ptr<RotatingBackgroundTable> s_table;
+
+const RotatingBackgroundTable &background_table()
+{
+    if (!s_table)
+    {
+        s_table = std::make_unique<RotatingBackgroundTable>(
+            SpinningWormholeLevel::simParams().spinning_background_file);
+    }
+    return *s_table;
+}
+
+//! Resolve output_path + data_subpath into a single directory prefix and make
+//! sure it exists.
+std::string resolve_out_dir()
+{
+    GRParmParse pp;
+    std::string output_path = "./";
+    pp.load("output_path", output_path, std::string("./"));
+    std::string data_subpath;
+    pp.load("data_subpath", data_subpath, std::string(""));
+
+    if (!output_path.empty() && output_path.back() != '/')
+        output_path += "/";
+    if (!data_subpath.empty() && data_subpath.back() != '/')
+        data_subpath += "/";
+
+    const std::string out_dir = output_path + data_subpath;
+    if (!out_dir.empty())
+    {
+        amrex::UtilCreateDirectory(out_dir, 0755, false);
+    }
+    return out_dir;
+}
+} // namespace
+
+void SpinningWormholeLevel::set_sim_params(
+    const SimulationParameters *a_sim_params)
+{
+    s_sim_params = a_sim_params;
+}
+
+const SimulationParameters &SpinningWormholeLevel::simParams()
+{
+    AMREX_ALWAYS_ASSERT_WITH_MESSAGE(
+        s_sim_params != nullptr,
+        "set_sim_params must be called before simParams");
+    return *s_sim_params;
+}
+
+BHAMR<SpinningWormholeLevel::num_punctures> *
+SpinningWormholeLevel::get_bhamr_ptr()
+{
+    return dynamic_cast<BHAMR<num_punctures> *>(get_gramr_ptr());
+}
+
+void SpinningWormholeLevel::variableSetUp()
+{
+    BL_PROFILE("SpinningWormholeLevel::variableSetUp()");
+    stateVariableSetUp();
+
+    PhantomDecayPotential potential;
+    ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
+    ConstraintsWithMatter<
+        ExoticScalarField<PhantomDecayPotential>>::set_up(state_index);
+    Weyl4WithMatter<ExoticScalarField<PhantomDecayPotential>>::set_up(
+        state_index);
+}
+
+void SpinningWormholeLevel::specificAdvance()
+{
+    amrex::MultiFab &S_new = get_new_data(state_index);
+    const auto &arrs       = S_new.arrays();
+    TraceARemoval trace_A_removal;
+    PositiveChiAndLapse positive_chi_lapse;
+
+    amrex::ParallelFor(S_new,
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       {
+                           trace_A_removal(i, j, k, arrs[box_no]);
+                           positive_chi_lapse(i, j, k, arrs[box_no]);
+                       });
+}
+
+void SpinningWormholeLevel::initData()
+{
+    BL_PROFILE("SpinningWormholeLevel::initData");
+
+    amrex::MultiFab &state = get_new_data(state_index);
+    const auto &arrs       = state.arrays();
+
+    const SpinningWormholeInitialData id(simParams().spinning_params,
+                                         background_table().view(),
+                                         Geom().CellSize(0));
+
+    // Valid cells AND ghosts: the Gamma pass below takes +-2 finite
+    // differences of h_ij on every valid cell, so the ghosts must carry the
+    // analytic data too.
+    amrex::ParallelFor(state, state.nGrowVect(),
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       {
+                           amrex::CellData<amrex::Real> cell =
+                               arrs[box_no].cellData(i, j, k);
+                           for (int n = 0; n < cell.nComp(); ++n)
+                           {
+                               cell[n] = 0.;
+                           }
+                           id.compute(i, j, k, arrs[box_no]);
+                       });
+    amrex::Gpu::streamSynchronize();
+
+    // The metric is not conformally flat: Gamma^i = h^{jk} Gamma^i_{jk} != 0.
+    // Fill it by finite differences of the h_ij just written (valid cells
+    // only; ghost Gammas follow from the next FillPatch, which every reader
+    // performs first).
+    const InitialGammas gammas(Geom().CellSize(0));
+    amrex::ParallelFor(state,
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       { gammas.compute(i, j, k, arrs[box_no]); });
+
+    amrex::Gpu::streamSynchronize();
+}
+
+void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
+                                            amrex::MultiFab &a_rhs,
+                                            const double a_time)
+{
+    BL_PROFILE("SpinningWormholeLevel::specificEvalRHS()");
+    const int soln_ghosts = a_soln.nGrowVect()[0];
+    if (soln_ghosts > 0)
+    {
+        FillPatch(*this, a_soln, soln_ghosts, a_time, state_index, 0,
+                  a_soln.nComp());
+    }
+    const auto &soln_arrs   = a_soln.arrays();
+    const auto &soln_c_arrs = a_soln.const_arrays();
+    const auto &rhs_arrs    = a_rhs.arrays();
+    TraceARemoval trace_A_removal;
+    PositiveChiAndLapse positive_chi_lapse;
+    DetHRescale det_h_rescale;
+    const bool do_det_h = (simParams().rescale_det_h != 0);
+
+    amrex::ParallelFor(a_soln, a_soln.nGrowVect(),
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       {
+                           if (do_det_h)
+                           {
+                               det_h_rescale(i, j, k, soln_arrs[box_no]);
+                           }
+                           trace_A_removal(i, j, k, soln_arrs[box_no]);
+                           positive_chi_lapse(i, j, k, soln_arrs[box_no]);
+                       });
+
+    PhantomDecayPotential potential(simParams().phantom_mass);
+    ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
+    CCZ4RHSWithMatter<ExoticScalarField<PhantomDecayPotential>,
+                      MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
+        ccz4rhs(exotic_scalar, Geom().CellSize(0), 1.0,
+                simParams().spinning_params.grid_center, a_time);
+
+    amrex::ParallelFor(a_rhs,
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       {
+                           ccz4rhs.compute_full_rhs(i, j, k, rhs_arrs[box_no],
+                                                    soln_c_arrs[box_no]);
+                       });
+
+    // Sponge zone: extra radially-ramped Kreiss-Oliger dissipation in an
+    // outer shell, damping outgoing junk before the Sommerfeld boundary
+    // returns it as a reflection.  The tabulated backgrounds carry O(h^2)
+    // interpolation defects (and the slow-spin family an O(J^3) truncation),
+    // so the first thing a run emits is a constraint burst from the throat;
+    // without a sponge it reflects and comes back through the throat at
+    // t ~ L, exactly when the radial modes are being measured.
+    if (simParams().sponge_params.enabled)
+    {
+        const SpongeZone sponge(simParams().sponge_params, Geom().CellSize(0));
+        amrex::ParallelFor(a_rhs,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           {
+                               sponge.apply(i, j, k, rhs_arrs[box_no],
+                                            soln_c_arrs[box_no]);
+                           });
+    }
+
+    amrex::Gpu::streamSynchronize();
+}
+
+void SpinningWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)
+{
+    const auto &soln_arrs = a_soln.arrays();
+    TraceARemoval trace_A_removal;
+    PositiveChiAndLapse positive_chi_lapse;
+    DetHRescale det_h_rescale;
+    const bool do_det_h = (simParams().rescale_det_h != 0);
+    amrex::ParallelFor(a_soln, amrex::IntVect(0),
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       {
+                           if (do_det_h)
+                           {
+                               det_h_rescale(i, j, k, soln_arrs[box_no]);
+                           }
+                           trace_A_removal(i, j, k, soln_arrs[box_no]);
+                           positive_chi_lapse(i, j, k, soln_arrs[box_no]);
+                       });
+
+    amrex::Gpu::streamSynchronize();
+}
+
+void SpinningWormholeLevel::pre_tag_cells()
+{
+    // The ghost fill exists solely so ChiPhiKTagger can take second
+    // derivatives of chi.  The fixed-box tagger never reads the state.
+    if (simParams().tagging_type != 0)
+    {
+        return;
+    }
+
+    amrex::MultiFab &state_new = get_new_data(state_index);
+    const auto cur_time        = get_state_data(state_index).curTime();
+    FillPatch(*this, state_new, 2, cur_time, state_index, c_chi, 1);
+}
+
+void SpinningWormholeLevel::tag_cells(amrex::TagBoxArray &a_tag_box_array,
+                                      amrex::Real a_regrid_threshold)
+{
+    BL_PROFILE("SpinningWormholeLevel::tag_cells()");
+    amrex::MultiFab &state_new = get_new_data(state_index);
+    const auto &tag_arrs       = a_tag_box_array.arrays();
+
+    // Fixed nested boxes on the grid centre: for one centred throat the
+    // resolution demand is static (the throat and the compactified far
+    // universe both sit at the centre), so the footprint is bounded by
+    // construction.  The wave zone composes in via the stock
+    // ExtractionTagger, which enforces its required level inside 1.2x each
+    // extraction radius and compiles to a no-op when extraction is off.
+    if (simParams().tagging_type == 1)
+    {
+        const amrex::Real dx0 = Geom().CellSize(0);
+        const std::array<amrex::Real, AMREX_SPACEDIM> tag_center{
+            AMREX_D_DECL(simParams().tagging_center[0],
+                         simParams().tagging_center[1],
+                         simParams().tagging_center[2])};
+
+        const FixedGridsTagger fixed_tagger(dx0, Level(),
+                                            simParams().tagging_L, tag_center);
+        // simParams() outlives every kernel, as ExtractionTagger requires.
+        const ExtractionTagger shell_tagger(dx0, Level(),
+                                            simParams().extraction_params);
+
+        amrex::ParallelFor(a_tag_box_array,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           {
+                               fixed_tagger(i, j, k, tag_arrs[box_no]);
+                               shell_tagger(i, j, k, tag_arrs[box_no]);
+                           });
+        amrex::Gpu::streamSynchronize();
+        return;
+    }
+
+    const auto &state_new_arrs = state_new.const_arrays();
+
+    // ChiTagger's criterion, plus optional phi and K second-derivative terms
+    // (tagging_phi_weight / tagging_K_weight, both 0 by default).
+    ChiPhiKTagger chi_tagger(Geom().CellSize(0), a_regrid_threshold,
+                             simParams().tagging_phi_weight,
+                             simParams().tagging_K_weight, c_chi, c_phi, c_K);
+
+    amrex::ParallelFor(state_new, amrex::IntVect(0),
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       {
+                           const auto &tags_arr  = tag_arrs[box_no];
+                           const auto &state_arr = state_new_arrs[box_no];
+                           chi_tagger(i, j, k, tags_arr, state_arr);
+                       });
+    amrex::Gpu::streamSynchronize();
+}
+
+void SpinningWormholeLevel::specific_post_init()
+{
+    BL_PROFILE("SpinningWormholeLevel::specific_post_init");
+
+    // AMReX builds the whole initial hierarchy and calls computeInitialDt
+    // before post_init, so dtLevel(0) and the fine levels are both valid
+    // here; the t = 0 diagnostics rows below are the initial-data checks.
+    write_scalar_diagnostics();
+}
+
+// NOLINTNEXTLINE(readability-function-cognitive-complexity)
+void SpinningWormholeLevel::write_scalar_diagnostics()
+{
+    BL_PROFILE("SpinningWormholeLevel::write_scalar_diagnostics");
+
+    // ---- Constraint norms -------------------------------------------------
+    if (simParams().calculate_constraint_norms && Level() == 0)
+    {
+        const amrex::Real time         = get_state_data(state_index).curTime();
+        const amrex::Real dt           = parent->dtLevel(0);
+        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const bool first_step          = (time == 0.0);
+
+        amrex::MultiFab &state_new = get_new_data(state_index);
+        FillPatch(*this, state_new, 2, time, state_index, 0,
+                  state_new.nComp());
+
+        amrex::MultiFab cst(state_new.boxArray(), state_new.DistributionMap(),
+                            4, 0);
+        cst.setVal(0.0);
+        PhantomDecayPotential potential(simParams().phantom_mass);
+        ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
+        const auto dx = Geom().CellSizeArray();
+        ConstraintsWithMatter<ExoticScalarField<PhantomDecayPotential>>
+            my_constraints(exotic_scalar, dx[0], 1.0, 0, Interval(1, 3),
+                           simParams().spinning_params.grid_center, time);
+
+        for (amrex::MFIter mfi(cst, amrex::TilingIfNotGPU()); mfi.isValid();
+             ++mfi)
+        {
+            const amrex::Box &bx = mfi.validbox();
+            const auto arr       = cst.array(mfi);
+            const auto src_arr   = state_new.const_array(mfi);
+
+            amrex::ParallelFor(
+                bx, [=] AMREX_GPU_DEVICE(int ix, int iy, int iz) noexcept
+                { my_constraints(ix, iy, iz, arr, src_arr); });
+        }
+
+        const amrex::Real cell_vol = dx[0] * dx[1] * dx[2];
+
+        amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum>
+            reduce_ops;
+        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real> reduce_data(
+            reduce_ops);
+        using ReduceTuple = typename decltype(reduce_data)::Type;
+
+        for (amrex::MFIter mfi(cst, amrex::TilingIfNotGPU()); mfi.isValid();
+             ++mfi)
+        {
+            const amrex::Box &bx = mfi.validbox();
+            const auto arr       = cst.const_array(mfi);
+            reduce_ops.eval(
+                bx, reduce_data,
+                [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTuple
+                {
+                    const amrex::Real ham  = arr(i, j, k, 0);
+                    const amrex::Real m1   = arr(i, j, k, 1);
+                    const amrex::Real m2   = arr(i, j, k, 2);
+                    const amrex::Real m3   = arr(i, j, k, 3);
+                    const amrex::Real mom2 = (m1 * m1 + m2 * m2 + m3 * m3);
+                    return {ham * ham * cell_vol, mom2 * cell_vol, cell_vol};
+                });
+        }
+
+        auto [sum_ham2, sum_mom2, sum_vol] = reduce_data.value();
+        amrex::ParallelDescriptor::ReduceRealSum(sum_ham2);
+        amrex::ParallelDescriptor::ReduceRealSum(sum_mom2);
+        amrex::ParallelDescriptor::ReduceRealSum(sum_vol);
+
+        const double L2_Ham =
+            (sum_vol > 0.0) ? std::sqrt(sum_ham2 / sum_vol) : 0.0;
+        const double L2_Mom =
+            (sum_vol > 0.0) ? std::sqrt(sum_mom2 / sum_vol) : 0.0;
+
+        const std::string prefix = resolve_out_dir() + "constraint_norms";
+
+        SmallDataIO constraints_file(prefix, dt, time, restart_time,
+                                     SmallDataIO::APPEND, first_step);
+        constraints_file.remove_duplicate_time_data();
+        if (first_step)
+        {
+            constraints_file.write_header_line({"L2_Ham", "L2_Mom"});
+        }
+        constraints_file.write_time_data_line(
+            std::vector<double>{L2_Ham, L2_Mom});
+    }
+
+    // ---- Global collapse diagnostics (same column contract as the merger
+    // and SupportedWormholeCollapse examples, so the existing single-throat
+    // analysis scripts read it without modification) ------------------------
+    if (Level() == 0)
+    {
+        const amrex::Real time         = get_state_data(state_index).curTime();
+        const amrex::Real dt           = parent->dtLevel(0);
+        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const bool first_step          = (time == 0.0);
+
+        const int finest_lev        = parent->finestLevel();
+        auto &fine_level            = parent->getLevel(finest_lev);
+        amrex::MultiFab &state_fine = fine_level.get_new_data(state_index);
+        const auto &fine_geom       = parent->Geom(finest_lev);
+
+        FillPatch(fine_level, state_fine, 2, time, state_index, 0,
+                  state_fine.nComp());
+
+        {
+            const auto &arrs = state_fine.arrays();
+            TraceARemoval trace_A_removal;
+            PositiveChiAndLapse positive_chi_lapse;
+            amrex::ParallelFor(
+                state_fine, amrex::IntVect(0),
+                [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                {
+                    trace_A_removal(i, j, k, arrs[box_no]);
+                    positive_chi_lapse(i, j, k, arrs[box_no]);
+                });
+            amrex::Gpu::streamSynchronize();
+        }
+
+        const auto prob_lo = fine_geom.ProbLoArray();
+        const auto dx_arr  = fine_geom.CellSizeArray();
+
+        const amrex::Real cx = simParams().spinning_params.grid_center[0];
+        const amrex::Real cy = simParams().spinning_params.grid_center[1];
+        const amrex::Real cz = simParams().spinning_params.grid_center[2];
+
+        amrex::ReduceOps<amrex::ReduceOpMin, amrex::ReduceOpMin,
+                         amrex::ReduceOpMax, amrex::ReduceOpMin,
+                         amrex::ReduceOpMax, amrex::ReduceOpMin,
+                         amrex::ReduceOpMax>
+            reduce_ops;
+        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real,
+                          amrex::Real, amrex::Real, amrex::Real>
+            reduce_data(reduce_ops);
+        using ReduceTuple = typename decltype(reduce_data)::Type;
+
+        for (amrex::MFIter mfi(state_fine, amrex::TilingIfNotGPU());
+             mfi.isValid(); ++mfi)
+        {
+            const amrex::Box &bx = mfi.validbox();
+            const auto arr       = state_fine.const_array(mfi);
+            reduce_ops.eval(
+                bx, reduce_data,
+                [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTuple
+                {
+                    const amrex::Real lapse = arr(i, j, k, c_lapse);
+                    const amrex::Real chi   = arr(i, j, k, c_chi);
+                    const amrex::Real K     = arr(i, j, k, c_K);
+                    const amrex::Real sf_phi = arr(i, j, k, c_phi);
+                    const amrex::Real sf_Pi  = arr(i, j, k, c_Pi);
+
+                    return {lapse,  chi,    amrex::Math::abs(K),
+                            sf_phi, sf_phi, sf_Pi, sf_Pi};
+                });
+        }
+
+        const auto reduce_vals = reduce_data.value();
+        amrex::Real min_lapse  = amrex::get<0>(reduce_vals);
+        amrex::Real min_chi    = amrex::get<1>(reduce_vals);
+        amrex::Real max_abs_K  = amrex::get<2>(reduce_vals);
+        amrex::Real min_phi    = amrex::get<3>(reduce_vals);
+        amrex::Real max_phi    = amrex::get<4>(reduce_vals);
+        amrex::Real min_Pi     = amrex::get<5>(reduce_vals);
+        amrex::Real max_Pi     = amrex::get<6>(reduce_vals);
+        amrex::ParallelDescriptor::ReduceRealMin(min_lapse);
+        amrex::ParallelDescriptor::ReduceRealMin(min_chi);
+        amrex::ParallelDescriptor::ReduceRealMax(max_abs_K);
+        amrex::ParallelDescriptor::ReduceRealMin(min_phi);
+        amrex::ParallelDescriptor::ReduceRealMax(max_phi);
+        amrex::ParallelDescriptor::ReduceRealMin(min_Pi);
+        amrex::ParallelDescriptor::ReduceRealMax(max_Pi);
+
+        // Barycentre of the min-lapse cells: WHERE the collapse (or gauge
+        // wave) sits; off-centre drift flags an m = 1 instability.
+        const amrex::Real tol =
+            amrex::max(amrex::Real(1.0e-14),
+                       amrex::Real(1.0e-12) * amrex::Math::abs(min_lapse));
+
+        amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum, amrex::ReduceOpSum>
+            reduce_ops_loc;
+        amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real>
+            reduce_data_loc(reduce_ops_loc);
+        using ReduceTupleLoc = typename decltype(reduce_data_loc)::Type;
+
+        for (amrex::MFIter mfi(state_fine, amrex::TilingIfNotGPU());
+             mfi.isValid(); ++mfi)
+        {
+            const amrex::Box &bx = mfi.validbox();
+            const auto arr       = state_fine.const_array(mfi);
+            reduce_ops_loc.eval(
+                bx, reduce_data_loc,
+                [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTupleLoc
+                {
+                    const amrex::Real lapse = arr(i, j, k, c_lapse);
+                    const bool is_min =
+                        (amrex::Math::abs(lapse - min_lapse) <= tol);
+                    if (!is_min)
+                    {
+                        return {0.0, 0.0, 0.0, 0.0};
+                    }
+                    const amrex::Real x =
+                        prob_lo[0] + (amrex::Real(i) + 0.5) * dx_arr[0] - cx;
+                    const amrex::Real y =
+                        prob_lo[1] + (amrex::Real(j) + 0.5) * dx_arr[1] - cy;
+                    const amrex::Real z =
+                        prob_lo[2] + (amrex::Real(k) + 0.5) * dx_arr[2] - cz;
+                    return {x, y, z, 1.0};
+                });
+        }
+
+        auto [sum_x, sum_y, sum_z, count] = reduce_data_loc.value();
+        amrex::ParallelDescriptor::ReduceRealSum(sum_x);
+        amrex::ParallelDescriptor::ReduceRealSum(sum_y);
+        amrex::ParallelDescriptor::ReduceRealSum(sum_z);
+        amrex::ParallelDescriptor::ReduceRealSum(count);
+
+        const amrex::Real min_lapse_x = (count > 0.0) ? (sum_x / count) : 0.0;
+        const amrex::Real min_lapse_y = (count > 0.0) ? (sum_y / count) : 0.0;
+        const amrex::Real min_lapse_z = (count > 0.0) ? (sum_z / count) : 0.0;
+
+        const std::string out_dir = resolve_out_dir();
+        const std::string prefix  = out_dir + "collapse_diagnostics";
+        SmallDataIO diag_file(prefix, dt, time, restart_time,
+                              SmallDataIO::APPEND, first_step);
+        diag_file.remove_duplicate_time_data();
+        if (first_step)
+        {
+            diag_file.write_header_line({"min_lapse", "min_chi", "max_abs_K",
+                                         "min_lapse_x", "min_lapse_y",
+                                         "min_lapse_z", "min_phi", "max_phi",
+                                         "min_Pi", "max_Pi"});
+        }
+        diag_file.write_time_data_line(std::vector<double>{
+            static_cast<double>(min_lapse), static_cast<double>(min_chi),
+            static_cast<double>(max_abs_K), static_cast<double>(min_lapse_x),
+            static_cast<double>(min_lapse_y), static_cast<double>(min_lapse_z),
+            static_cast<double>(min_phi), static_cast<double>(max_phi),
+            static_cast<double>(min_Pi), static_cast<double>(max_Pi)});
+
+        // ---- Throat radii + ergoregion (own module, own file, own switch) -
+        if (simParams().spinning_diag_params.enabled)
+        {
+            SpinningThroatDiagnostics::execute(
+                state_fine, fine_geom, simParams().spinning_diag_params,
+                out_dir, dt, time, restart_time, first_step);
+        }
+
+        // ---- Radially binned core profile (own module, own file, switch) --
+        // collapse_diagnostics.dat above says WHEN; this says WHERE.
+        // COMPOSITE over the whole hierarchy: each level contributes where no
+        // finer level covers it, so every shell is complete.
+        if (simParams().core_profile_params.enabled)
+        {
+            const int interval =
+                amrex::max(1, simParams().core_profile_params.interval);
+            if (parent->levelSteps(0) % interval == 0)
+            {
+                std::vector<amrex::iMultiFab> masks(finest_lev + 1);
+                std::vector<CoreRadialProfile::level_input_t> inputs;
+                inputs.reserve(finest_lev + 1);
+                for (int lev = 0; lev <= finest_lev; ++lev)
+                {
+                    auto &amr_lev = parent->getLevel(lev);
+                    CoreRadialProfile::level_input_t in;
+                    in.state = &amr_lev.get_new_data(state_index);
+                    in.geom  = &parent->Geom(lev);
+                    if (lev < finest_lev)
+                    {
+                        masks[lev] = amrex::makeFineMask(
+                            *in.state, parent->boxArray(lev + 1),
+                            parent->refRatio(lev), 0, 1);
+                        in.mask = &masks[lev];
+                    }
+                    inputs.push_back(in);
+                }
+                CoreRadialProfile::execute(
+                    inputs, simParams().core_profile_params, out_dir, dt, time,
+                    restart_time, first_step);
+            }
+        }
+    }
+}
+
+void SpinningWormholeLevel::specificPostTimeStep()
+{
+    BL_PROFILE("SpinningWormholeLevel::specificPostTimeStep");
+
+    write_scalar_diagnostics();
+
+    // ---- In-code Weyl4 / Psi4 spherical-harmonic extraction ---------------
+    if (simParams().activate_extraction)
+    {
+        const int min_level =
+            simParams().extraction_params.min_extraction_level();
+        const bool calculate_weyl = at_level_timestep_multiple(min_level);
+
+        if (calculate_weyl && Level() == min_level)
+        {
+            const amrex::Real m_time = get_state_data(state_index).curTime();
+            const amrex::Real m_dt   = get_gramr_ptr()->dtLevel(Level());
+            const amrex::Real restart_time =
+                get_gramr_ptr()->get_restart_time();
+            const bool first_step = (m_time <= m_dt);
+
+            WeylExtraction my_extraction(simParams().extraction_params, m_dt,
+                                         m_time, first_step, restart_time);
+            my_extraction.execute_query(&get_bhamr_ptr()->m_weyl_interpolator);
+        }
+    }
+}
