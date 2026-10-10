@@ -8,19 +8,23 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| — | | | | | |
+| static_hold_L64_t100 | first node / GPU 0 | 0.5 (17:40) | 100 | 18.3 u/h | ~5.5 h → ≈23:10 UTC 10 Oct |
+
+static_hold_L64_t100 (launched 17:35 UTC 2026-10-10, no checkpoints — decided
+at launch): the Step 0 anchor, ONE resolution first.  L = 64, N = 128
+(dx0 = 0.5, the merger hold's), max_level 3 with the merger hold's exact
+nested boxes (tagging_L = 64 → ±16/±8/±4), its dt 0.02 Δx, sigma 0.1 and gauge
+numbers; background `static_eta2_m1.spinbg` (a = 2, M = 1); profile hold.
+**t = 0 is bit-identical to the merger hold's collapse_diagnostics row**
+(min_lapse 2.1942989020e-01, min_chi 4.1085936805e-07, min/max_phi equal to
+all printed digits); L2_Mom(0) = 0; L2_Ham is √8× the merger's, the halved
+box's volume norm.  Target: reproduce the growth rate (merger hold: τ ≈ 5.12).
 
 ## QUEUED
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| static_hold_L64_t100 (Step 0 anchor, ONE resolution first) | template + massive table ready | — | the checkpoint answer |
-
-The plan (approved 2026-10-10): L = 64, N = 128 (dx0 = 0.5, the merger hold's),
-max_level 3 with the merger hold's exact nested boxes (tagging_L = 64 →
-±16/±8/±4), its dt_multiplier 0.02, sigma 0.1 and gauge numbers; background
-`static_eta2_m1.spinbg` (a = 2, M = 1 — the drainhole the merger evolved);
-profile hold on GPU 0.  Template: `runs/spinning_wormhole/templates/params_static_hold.txt`.
+| — | | | |
 
 ## SMOKE: PASS (2026-10-10)
 
