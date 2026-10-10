@@ -1,6 +1,13 @@
-# Paper idea: nonlinear 3D evolutions of rotating Ellis–Bronnikov wormholes
+# Paper idea: nonlinear 3D evolutions of rotating Ellis–Bronnikov wormholes, from slow to near-extremal spin
 
-**Pitch.** Linear studies now predict that rotation changes the instability of Ellis–Bronnikov (EB) wormholes in a specific, non-trivial way: the known unstable mode weakens, a second one appears, the two merge, and probably survive as an oscillating instability that slows down only near extremal Kerr. No one has evolved a rotating wormhole nonlinearly. A 3D numerical-relativity study can test all of this, measure the wormhole's lifetime as a function of spin, and find its end state. This has to come before any spinning-binary or anti-chirp work (pbh_reentry_wormholes.md, Sec. 4.1).
+**Pitch.** Linear studies predict that rotation changes the instability of Ellis–Bronnikov (EB) wormholes in a specific, non-trivial way:
+- the known unstable mode weakens;
+- a second one appears;
+- the two merge, and probably survive as an oscillating instability that slows down only near extremal Kerr.
+
+No one has evolved a rotating wormhole nonlinearly. **One paper** covers the whole spin range: it tests the slow-spin predictions, follows the instability through the predicted merger to near-extremal spin, measures the lifetime against spin, and finds the end state. This has to come before any spinning-binary or anti-chirp work (pbh_reentry_wormholes.md, Sec. 4.1).
+
+**Working title:** *Does rotation stabilize traversable wormholes? Nonlinear evolutions of Ellis–Bronnikov wormholes from slow rotation to the extremal Kerr limit.*
 
 ---
 
@@ -32,8 +39,7 @@ The idea that rotation might stabilize wormholes goes back to Matos & Núñez (2
 3. **Charged analogue** (Blázquez-Salcedo et al., arXiv:2510.11406):
    - After the two modes merge, the instability does **not** disappear. It continues as a complex pair, ±ω_R with a common ω_I: growth that also oscillates.
    - ω_I → 0 only as the extremal black-hole limit is approached, so the instability time can be made arbitrarily long but never infinite.
-   - The authors *conjecture* the same for rotating wormholes near extremal Kerr.
-   - This is the "unstable in another mode, stable at the speed limit" picture. It is a conjecture, not a result.
+   - The authors *conjecture* the same for rotating wormholes near extremal Kerr. It is a conjecture, not a result.
 
 **Other routes to stability.** Higher-curvature terms in the action can stabilize wormholes (Kanti, Kleihaus & Kunz 2011). That is a different theory and outside this paper.
 
@@ -51,76 +57,122 @@ None of rotating wormholes. All existing evolutions are static or spherical, inc
 
 ## 2. Questions the paper answers
 
-1. **Q1. Growth rate against spin.** Does the measured growth rate follow the O(J²) predictions for both radial modes, and do they cross or merge?
-2. **Q2. Merger.** Beyond J ≈ J_max/3, does the instability become oscillatory (ω_R ≠ 0)? How do ω_I and the lifetime scale as v_e → 1? Does the 5D "the mode disappears" picture hold in 4D, or is it a complex continuation?
-3. **Q3. Non-axisymmetric modes.** Do m = 1, 2 modes or an ergoregion instability grow at high spin, possibly ending any "long-lived near-extremal" regime?
-4. **Q4. End state.**
+1. **Q1. Slow spin.** Does the measured growth rate follow the O(J²) predictions for both radial modes, and do they cross or merge?
+2. **Q2. Through the merger.** Beyond J ≈ J_max/3, does the instability become oscillatory (ω_R ≠ 0)? Does the 5D "the mode disappears" picture hold in 4D, or is it a complex continuation?
+3. **Q3. Near-extremal lifetime.** How do ω_I and the lifetime scale as v_e → 1?
+4. **Q4. Non-axisymmetric modes.** Do m = 1, 2 modes or an ergoregion instability grow at high spin, possibly ending any "long-lived near-extremal" regime?
+5. **Q5. End state.**
    - The collapse branch should end in a Kerr-like remnant: measure its M and J.
    - **Overspin test:** slowly rotating symmetric wormholes may have J/M_ADM² > 1, because the static symmetric throat has M = 0 (verify on the backgrounds). Their collapse cannot simply produce Kerr with M = M_ADM. In the binary paper, phantom accretion let the horizon mass end *above* M_ADM, which makes this a sharp cosmic-censorship test.
    - **Inflation branch:** does spin halt it?
-5. **Q5. Validation.** Does the ringdown match the Khoo et al. quasinormal modes?
-6. **Q6. Exotic matter against stability.** The null-energy violation decreases with spin. Does weaker exotic support go with slower growth? Track a violation measure against spin and against ω_I.
+6. **Q6. Exotic matter against stability.** The null-energy violation decreases with spin. Does weaker exotic support go with slower growth?
+7. **Q7. Validation.** Does the ringdown match the Khoo et al. quasinormal modes?
 
 ---
 
-## 3. Implementation
+## 3. Step-by-step plan (one paper, slow to fast spin)
 
-### 3.1 Backgrounds
-Use the Kleihaus–Kunz ansatz (check their conventions):
+Each step lists what to do, what it produces, and the check that must pass before moving on.
 
-$$ds^2=-e^{f}dt^2+e^{-f}\left[e^{\nu}(d\eta^2+h\,d\theta^2)+h\sin^2\theta\,(d\varphi-\omega\,dt)^2\right],\qquad h=\eta^2+\eta_0^2,$$
+### Step 0. Fix the numerics first (2–3 weeks)
+- **Do:**
+  - Find the cause of the Δt = 0.02 Δx limit.
+  - Move constraint norms to the finest levels, excluding the punctures.
+  - Build constraint-solved seeds: perturb Π, then solve the constraints.
+  - Add waveform extrapolation in 1/R.
+- **Produces:** a cheaper, more defensible code; every later step depends on it.
+- **Check:** the static drainhole reproduces the binary paper's growth rate (τ ≈ 5.12) at the new Δt, at three resolutions.
 
-with unknowns f, ω, ν(η, θ) and the phantom φ. The static limit (ν = ω = 0, e^f = α²) is exactly our drainhole, with η₀ = a.
+### Step 1. Background solutions across the full spin range (3–6 weeks, or 1–2 if shared)
+- **Do:**
+  - **Choose the family.** The *symmetric* family starts from the massless static throat (M = 0), matches the published Kleihaus–Kunz data and suits the overspin test. The *non-symmetric* family through your m/a = 1/2 drainhole continues from your static results. Azad et al. treat both.
+  - **Slow spin:** build the O(J²) solutions of Azad et al. for J ≲ 0.4 J_max.
+  - **Fast spin:** either write a 2D spectral Newton solver, or ask the Oldenburg/Madrid group (Kunz, Kleihaus, Blázquez-Salcedo, Khoo) for their backgrounds up to v_e ≈ 0.95.
+    - Solver details: Chebyshev in x = (2/π) arctan(η/η₀), which compactifies both ends; even cos(2kθ) in θ.
+- **Produces:** one family of backgrounds from v_e = 0 to about 0.95.
+- **Check:**
+  - The full solver reproduces Kleihaus–Kunz M/R_e and J/R_e² against v_e, and the static limit.
+  - At small spin it agrees with the O(J²) solutions. This overlap validates both routes.
 
-**Choose the family deliberately.** Azad et al. treat both families, so route A can do either.
-- The *symmetric* family starts from the massless static throat (M = 0). It matches the published Kleihaus–Kunz data and is where J/M_ADM² > 1 is most likely, so it suits the overspin test.
-- The *non-symmetric* family through your m/a = 1/2 drainhole connects directly to your static results.
+The ansatz (Kleihaus & Kunz; check conventions):
 
-Three routes:
-- **A. Slow rotation, O(J²) (start here).** Build from the Azad et al. second-order solutions. It is cheap and covers J up to about J_max/3, which is exactly where the crossing or merger is predicted. The data are exact only to O(J²), so either project them onto the constraint surface or report the O(J³) violation and show it doesn't matter.
-- **B. Full rapid rotation.** Write a 2D spectral Newton solver:
-  - Chebyshev in x = (2/π) arctan(η/η₀), which compactifies both ends; even cos(2kθ) in θ.
-  - Validate by reproducing Kleihaus–Kunz M/R_e and J/R_e² against v_e, the static limit, and spectral convergence.
-- **C. Ask the Oldenburg/Madrid group** (Kunz, Kleihaus, Blázquez-Salcedo, Khoo) for their backgrounds. They have both the solutions and the linear predictions, and nonlinear evolutions complement their work directly.
+$$ds^2=-e^{f}dt^2+e^{-f}\left[e^{\nu}(d\eta^2+h\,d\theta^2)+h\sin^2\theta\,(d\varphi-\omega\,dt)^2\right],\qquad h=\eta^2+\eta_0^2.$$
 
-### 3.2 Mapping onto the AMR grid
-- **Radius.** Use η = r − η₀²/(4r), the same isotropic radius as the binary paper. Then h = r²Ω² and dη = Ω dr, with Ω = 1 + η₀²/4r².
-- **Metric.** The spatial metric is γ = e^{−f}Ω²[e^ν(dr² + r²dθ²) + r² sin²θ dφ²]. It is not conformally flat, so the conformal metric h_ij starts non-trivial.
-- **Lapse and shift.** α = e^{f/2} and β^φ = −ω.
-- **Extrinsic curvature.** For stationary data K_ij = (D_iβ_j + D_jβ_i)/(2α), so only K_rφ and K_θφ are non-zero. Π = 0 for a static, axisymmetric φ.
-- **Cartesian conversion.** Build everything from smooth functions of (r, cos θ) to keep the axis regular.
-- **Far end.** The puncture at r → 0 is the far infinity. The far frame rotates at ω₋∞, giving β ≈ ω₋∞(y, −x, 0) near the puncture. This is regular because it vanishes at the puncture, but start the shift from the data, as in the binary paper.
-- **Checks at t = 0.**
+The static limit (ν = ω = 0, e^f = α²) is exactly our drainhole, with η₀ = a.
+
+### Step 2. Put the backgrounds on the AMR grid (1–2 weeks)
+- **Do:**
+  - **Radius.** Use η = r − η₀²/(4r), the same isotropic radius as the binary paper. Then h = r²Ω² and dη = Ω dr, with Ω = 1 + η₀²/4r².
+  - **Metric.** γ = e^{−f}Ω²[e^ν(dr² + r²dθ²) + r² sin²θ dφ²]. It is not conformally flat, so the conformal metric starts non-trivial.
+  - **Lapse and shift.** α = e^{f/2} and β^φ = −ω.
+  - **Extrinsic curvature.** K_ij = (D_iβ_j + D_jβ_i)/(2α), so only K_rφ and K_θφ are non-zero. Π = 0.
+  - **Cartesian conversion.** Build from smooth functions of (r, cos θ) to keep the axis regular.
+  - **Far end.** At the puncture (the far infinity) the frame rotates at ω₋∞, giving β ≈ ω₋∞(y, −x, 0). This is regular; start the shift from the data.
+  - **Slow-spin data** are exact only to O(J²): either project them onto the constraint surface or report the O(J³) violation.
+- **Produces:** t = 0 data at every spin in the scan.
+- **Check:**
   - Constraint convergence at three resolutions.
-  - ADM M and J from surface integrals.
-  - Equatorial and polar circumferential radii of the throat against the background values.
+  - ADM M and J, and the equatorial and polar throat radii, match the background values.
 
-### 3.3 Numerics: carry over the fixes from the binary paper
-- **Time step.** Find the cause of the Δt = 0.02 Δx limit before starting long rotating runs. Fixing it could cut cost about 10×.
-- **Constraint norms.** Compute them on the finest levels, excluding the punctures, instead of on the base grid.
-- **Seeds.** Constraint-solved: perturb Π, then solve the constraints.
-- **Resolution.** Run every quoted growth rate at three resolutions.
-- **Waves.** Extract at larger radius or extrapolate the waveforms.
-- **Gauge.** Start from the data's lapse and shift. Test a frozen shift against the Gamma driver, and the 1+log switch-off near the puncture.
+### Step 3. Hold tests (1–2 weeks of GPU time)
+- **Do:** evolve each spin unperturbed. Try a frozen shift against the Gamma driver, and the 1+log switch-off near the puncture.
+- **Produces:** the hold time and the growth seeded by truncation error at each spin.
+- **Check:** each wormhole holds its shape for at least several static e-folds before departing, and the departure moves later with resolution. Instant departure means a setup bug, not physics.
 
-### 3.4 Run protocol
-1. **Hold tests at each J.** Evolve unperturbed and fit the equatorial and polar radii with A e^{ω_I t} cos(ω_R t + ϕ). The complex fit is essential to detect the merged, oscillating modes.
-2. **Declared seeds.**
-   - Radial: ℓ = 0 Π-shells, both signs, amplitudes 10⁻⁴ to 10⁻².
-   - Non-axisymmetric: ℓ = 2 with m = 0, and m = 2 bar-type, for Q3.
-   - Separating the two radial modes near the merger needs ± twins and two different seed profiles.
-3. **Spin scan.** Use J/J_max = 0, 0.05, 0.1, 0.2, 0.3, then 0.4–0.8 past the predicted merger, then near-extremal (v_e = 0.9, 0.95) on a resolution ladder. Near-extremal runs are the hardest because the throat develops steep gradients as it approaches a degenerate horizon.
-4. **Long baselines.** "Effectively stable" needs no growth over many static e-folds (τ_static ≈ 1.3 R★), say ≥ 300 M, with constraints under control.
+### Step 4. Slow spin: J/J_max = 0, 0.05, 0.1, 0.2, 0.3, 0.4 (answers Q1)
+- **Do:**
+  - Apply ℓ = 0 Π-shell seeds, both signs, amplitudes 10⁻⁴ to 10⁻².
+  - Fit the equatorial and polar radii with A e^{ω_I t} cos(ω_R t + ϕ).
+  - Separate the two radial modes with ± twins and two different seed profiles.
+- **Produces:** ω_I(J) for both modes at three resolutions, plotted against Azad et al.
+- **Check:** at J = 0 you recover the static rate; the rates converge with resolution.
 
-### 3.5 Diagnostics
-- **Throat.** A minimal-surface finder for non-round surfaces, giving equatorial and polar radii and deformation. Keep the null-expansion orientation of the binary paper.
-- **Global quantities.**
-  - M and J from ADM integrals at large radius.
-  - The scalar charge.
-  - The ergoregion boundary (g_tt = 0) against time.
-- **Waves.** Ψ₄ (2,0), (2,±2) and (3,±3), with ringdown compared against the Khoo et al. modes.
-- **Remnants.** A MOTS finder with a spin measurement (approximate Killing vector). Track J/M_BH² for the overspin test.
-- **Exotic support (Q6).** The integrated negative phantom energy outside the throat, and the most negative T_ab k^a k^b on the throat, against time and spin.
+### Step 5. Through the merger to fast spin: v_e from ≈ 0.4 to 0.95 (answers Q2, Q3)
+- **Do:** repeat Step 4's protocol on the full backgrounds. Use long baselines, at least 300 M, so that slow and oscillatory growth is visible.
+- **Produces:**
+  - Where the modes merge.
+  - Whether ω_R ≠ 0 beyond it.
+  - ω_I(v_e) and the lifetime against spin, quoted in physical units.
+- **Check:** a resolution ladder at the highest spins. Near-extremal throats develop steep gradients; stop at the highest spin you can resolve and say so.
+
+### Step 6. Lopsided perturbations and the ergoregion (answers Q4)
+- **Do:**
+  - At the three highest spins, apply ℓ = 2, m = 0 and m = 2 (bar-type) seeds.
+  - Track the ergoregion boundary (g_tt = 0) and any m ≥ 1 growth.
+- **Produces:** whether a non-axisymmetric or ergoregion instability limits the near-extremal window.
+- **Check:** compare the m ≥ 1 content against an unperturbed twin, to rule out growth from truncation noise.
+
+### Step 7. End states (answers Q5)
+- **Do:**
+  - Follow collapse-branch runs to the remnant: measure M_BH and J_BH with a MOTS finder and approximate Killing vector.
+  - For the overspin test, take the slowest-spinning symmetric wormholes, where J/M_ADM² > 1 if confirmed.
+  - Follow inflation-branch runs at several spins.
+- **Produces:** the remnant spin against wormhole spin; whether censorship holds and how; whether spin stops inflation.
+- **Check:** the remnant's ringdown frequency matches Kerr with the measured M_BH and J_BH.
+
+### Step 8. Validation and the exotic-matter measure (answers Q6, Q7)
+- **Do:**
+  - Compare the Ψ₄ (2,0), (2,±2) and (3,±3) ringing of the stable-looking or slowly growing runs with Khoo et al.
+  - Plot the integrated negative phantom energy outside the throat, and the most negative T_ab k^a k^b on it, against spin and against ω_I.
+- **Produces:** an independent check of the backgrounds and code, and the link between exotic support and stability.
+
+### Step 9. Error budget and write-up (3–4 weeks)
+- **Do:** collect the resolution, extraction and seed-amplitude errors for every quoted number; write the paper.
+- **Paper outline:**
+  1. Introduction
+  2. Rotating EB family and backgrounds
+  3. Numerics and validation
+  4. Slow spin against perturbation theory
+  5. Merger and fast spin
+  6. Non-axisymmetric and ergoregion runs
+  7. End states and the overspin test
+  8. Exotic matter against stability
+  9. Discussion
+
+### Timeline and compute
+- **Calendar:** about 4–6 months. Step 1 is the critical path, and getting backgrounds from the Kunz group shortens it most.
+- **Don't let Step 1 block progress.** Run Steps 3–4 on the slow-spin data while the fast-spin backgrounds are being built or requested.
+- **GPU budget:** about 170 runs at 15–60 GPU-hours each, i.e. roughly 2.5–10 × 10³ GPU-hours, or 2–7 weeks on 8×H100. The Step 0 time-step fix could cut this by up to 10×.
 
 ---
 
@@ -129,28 +181,24 @@ Three routes:
 | Result | Meaning |
 |---|---|
 | ω_I(J) matches O(J²) for both modes | First nonlinear confirmation of the slow-rotation analysis |
-| ω_R appears past ~J_max/3 | Confirms the charged-analogue conjecture for rotation |
+| ω_R appears past ~J_max/3 | Confirms the charged-analogue conjecture for rotation; the 5D "disappearance" was a complex continuation |
 | ω_I → 0 as v_e → 1 | Lifetime grows near extremal Kerr; quote τ(v_e) in physical units |
 | m ≥ 1 growth at high spin | Ergoregion or non-axisymmetric instability ends the near-extremal window |
-| Long-lived throats exist | Spinning binaries become meaningful, which reopens the anti-chirp idea |
+| Long-lived throats exist | Spinning binaries become meaningful, which reopens the anti-chirp idea as a follow-up |
 | Overspun collapse leaves J/M_BH² < 1 via M_BH > M_ADM | Censorship is preserved by the phantom-mass mechanism |
 
 ---
 
-## 5. Scope, staging, cost
+## 5. Main risks
 
-- **Paper A (minimum publishable unit).** Route-A data with J ≲ 0.4 J_max: both radial modes against spin at three resolutions, compared with Azad et al., plus the collapse remnant's spin. Working title: *Rotation and the radial instability of Ellis–Bronnikov wormholes: 3D nonlinear evolutions*.
-- **Paper B.** Full rapid rotation (route B or C): merger and oscillatory regime, near-extremal lifetime, non-axisymmetric and ergoregion runs, quasinormal-mode comparison.
-- **Paper C.** Spinning binaries and the anti-chirp, only if Paper B finds throats that live long enough.
-- **Cost (rough).** Level 3–4 to t ≈ 300 M is about 15–60 GPU-hours per run. Paper A is about 70 runs (8 spins × 3 resolutions × 3 seeds), roughly 10³–4×10³ GPU-hours, or one to three weeks on 8×H100. Fixing the Δt limit first changes this a lot.
-
-## 6. Main risks
-
+- **Fast-spin backgrounds are the critical path:** writing a solver, or depending on another group.
 - **Accuracy of imported backgrounds** near the axis, the puncture and extremality.
 - **Mode identification** near the merger, where the two growth rates are close.
-- **O(J³) constraint violation** in route-A data.
+- **O(J³) constraint violation** in slow-spin data.
 - **Gauge behaviour** with a rotating far frame at the puncture.
-- **Long-run constraint growth** in the near-extremal runs.
+- **Long-run constraint growth** and resolution cost in the near-extremal runs.
+
+**After this paper:** spinning binaries and the anti-chirp, only if Step 5 finds throats that live long enough.
 
 ---
 
@@ -168,8 +216,8 @@ Three routes:
 - C. Hoffmann, T. Ioannidou, S. Kahlen, B. Kleihaus & J. Kunz, *Wormholes immersed in rotating matter*, [arXiv:1712.02143](https://arxiv.org/abs/1712.02143).
 - G. Clément & D. Gal'tsov, *Rotating traversable wormholes in Einstein-Maxwell theory*, PLB 838, 137677 (2023), [arXiv:2210.08913](https://arxiv.org/abs/2210.08913).
 - E. Franzin, S. Liberati, J. Mazza, R. Dey & S. Chakraborty, PRD 105, 124051 (2022), [arXiv:2201.01650](https://arxiv.org/abs/2201.01650).
-- N. M. Shirokov, *Wormhole dynamics: nonlinear collapse and gravitational-wave emission*, [arXiv:2604.00071](https://arxiv.org/abs/2604.00071).
 - T. Matos & D. Núñez, CQG 23, 4485 (2006).
 - T. Matos, GRG 42, 1969 (2010).
 - J. A. González, F. S. Guzmán & O. Sarbach, PRD 80, 024023 (2009) (charged Ellis wormholes).
 - P. Kanti, B. Kleihaus & J. Kunz, *Wormholes in dilatonic Einstein-Gauss-Bonnet theory*, PRL 107, 271101 (2011).
+- N. M. Shirokov, *Wormhole dynamics: nonlinear collapse and gravitational-wave emission*, [arXiv:2604.00071](https://arxiv.org/abs/2604.00071).
