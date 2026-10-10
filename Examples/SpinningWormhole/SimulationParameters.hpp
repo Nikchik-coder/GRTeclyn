@@ -66,6 +66,10 @@ class SimulationParameters : public SimulationParametersBase
         // off; every campaign template turns it on.
         pp.load("spinning_diagnostics", spinning_diag_params.enabled, false);
         spinning_diag_params.grid_center = spinning_params.grid_center;
+        // Negative (the default) means 0.3 eta0, taken from the loaded table
+        // at run time (eta0 lives in the .spinbg header, not in the params).
+        pp.load("spinning_diag_min_radius", spinning_diag_params.min_radius,
+                -1.0);
 
         // Radially binned min/max profile about the centre, shared with the
         // merger example (CoreRadialProfile.hpp).

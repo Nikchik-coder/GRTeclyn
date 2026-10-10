@@ -22,6 +22,7 @@
 #include "Weyl4WithMatter.hpp"
 #include "WeylExtraction.hpp"
 
+#include <AMReX.H>
 #include <AMReX_MultiFabUtil.H>
 #include <AMReX_Reduce.H>
 #include <AMReX_Utility.H>
@@ -42,6 +43,10 @@ const RotatingBackgroundTable &background_table()
     {
         s_table = std::make_unique<RotatingBackgroundTable>(
             SpinningWormholeLevel::simParams().spinning_background_file);
+        // The table's managed memory must be freed BEFORE amrex::Finalize
+        // tears the arenas down; a static-destruction-time free crashed the
+        // first smoke test at exit ("pure virtual method called", 2026-10-10).
+        amrex::ExecOnFinalize([]() { s_table.reset(); });
     }
     return *s_table;
 }
@@ -567,9 +572,15 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
         // ---- Throat radii + ergoregion (own module, own file, own switch) -
         if (simParams().spinning_diag_params.enabled)
         {
-            SpinningThroatDiagnostics::execute(
-                state_fine, fine_geom, simParams().spinning_diag_params,
-                out_dir, dt, time, restart_time, first_step);
+            SpinningThroatDiagnostics::params_t diag =
+                simParams().spinning_diag_params;
+            if (diag.min_radius < 0.0)
+            {
+                diag.min_radius = 0.3 * background_table().eta0();
+            }
+            SpinningThroatDiagnostics::execute(state_fine, fine_geom, diag,
+                                               out_dir, dt, time, restart_time,
+                                               first_step);
         }
 
         // ---- Radially binned core profile (own module, own file, switch) --

@@ -41,6 +41,12 @@ struct SpinningThroatDiagnostics
     {
         bool enabled{false};
         std::array<double, AMREX_SPACEDIM> grid_center{};
+        //! Cells with r < min_radius are excluded from BOTH ray minima: the
+        //! near-axis sampling columns pass within half a cell of the puncture,
+        //! where z * sqrt(gamma) of an off-axis cell is finite and small and
+        //! polluted the first smoke test's R_pol (0.79 instead of eta0 = 1,
+        //! 2026-10-10).  The level sets 0.3 eta0 when the key is negative.
+        double min_radius{0.0};
     };
 
     static void execute(const amrex::MultiFab &a_state,
@@ -56,6 +62,9 @@ struct SpinningThroatDiagnostics
         const amrex::Real cx = a_params.grid_center[0];
         const amrex::Real cy = a_params.grid_center[1];
         const amrex::Real cz = a_params.grid_center[2];
+        const amrex::Real min_r2 =
+            static_cast<amrex::Real>(a_params.min_radius *
+                                     a_params.min_radius);
 
         constexpr amrex::Real BIG = 1.0e30;
 
@@ -91,9 +100,12 @@ struct SpinningThroatDiagnostics
                     const amrex::Real h23 = arr(i, j, k, c_h23);
                     const amrex::Real h33 = arr(i, j, k, c_h33);
 
+                    const amrex::Real r2 = X * X + Y * Y + Z * Z;
+
                     // Equatorial circumferential radius on the +x ray.
                     amrex::Real r_eq = BIG;
-                    if (X > 0.25 * dx && amrex::Math::abs(Y) < 0.75 * dx &&
+                    if (r2 > min_r2 && X > 0.25 * dx &&
+                        amrex::Math::abs(Y) < 0.75 * dx &&
                         amrex::Math::abs(Z) < 0.75 * dx)
                     {
                         const amrex::Real gpp =
@@ -104,7 +116,8 @@ struct SpinningThroatDiagnostics
 
                     // Meridional circumferential radius on the +z ray.
                     amrex::Real r_pol = BIG;
-                    if (Z > 0.25 * dx && amrex::Math::abs(X) < 0.75 * dx &&
+                    if (r2 > min_r2 && Z > 0.25 * dx &&
+                        amrex::Math::abs(X) < 0.75 * dx &&
                         amrex::Math::abs(Y) < 0.75 * dx)
                     {
                         r_pol = Z * std::sqrt(amrex::max(

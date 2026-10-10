@@ -36,6 +36,10 @@
 #          on every plotfile, before the consumer deletes it (the round and
 #          oriented scans read a deformed horizon 3-11 % low, 2026-10-01, so
 #          horizon numbers come from the 3D finder or not at all).
+#   smoke  tiny-box plumbing runs: the full frame set, no psi4 spheres and no
+#          MOTS.  The psi4 default radii (14, 30) do not fit an L = 16 box, and
+#          on 2026-10-10 that refused every plotfile of the first smoke test --
+#          no frames, no pruning; a massless static throat has no MOTS either.
 #   none   one-step probes: no consumer at all (sets SWH_CONSUME=0).
 
 # Every profile keeps the slice cache and auto colour limits: the live watcher
@@ -72,6 +76,11 @@ consumer_profile() {
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_SWH_FRAME_TAIL}" \
            "--mots-spectral ${mots_center_arg}"
       ;;
+    smoke)
+      echo "--frames-fields ${SWH_FRAMES_FULL}" \
+           "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_SWH_FRAME_TAIL}" \
+           "--no-psi4"
+      ;;
     none)
       echo ""
       ;;
@@ -84,7 +93,7 @@ consumer_profile() {
 }
 
 consumer_profile_names() {
-  echo "hold none"
+  echo "hold smoke none"
 }
 
 # The reason a profile renders less than the full frame set, when the subset is
