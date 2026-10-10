@@ -423,7 +423,16 @@ def paths_check(params: dict[str, str], argv: str | None, consume_args: str) -> 
         m = RUN_PATH_RE.search(t)
         if not m or m.group(1) == name:
             continue
-        other = m.group(1)
+        # The run dir may sit one level down (<run_root>/smoke/<name>/...):
+        # the run's name can be any component after the root, not just the
+        # first.  Only a path that names NO component equal to this run is a
+        # disagreement.
+        parts = [p for p in t[m.start(1):].split("/") if p]
+        if name in parts:
+            continue
+        other = next((p for p in parts
+                      if p.startswith(name + "_r") or name.startswith(p + "_r")),
+                     m.group(1))
         if other.startswith(name + "_r") or name.startswith(other + "_r"):
             errors.append(f"a consumer flag points at '{other}' but this run is '{name}' "
                           f"(the restart-suffix trap): {t}")

@@ -27,7 +27,7 @@
 #   --gpu ID          CUDA device.  Check who else is on the card first:
 #                     other people's runs share these GPUs
 #   --profile NAME    consumer profile (see lib/consumer_profiles.sh):
-#                     hold | none
+#                     hold | smoke | none
 #                     Every profile renders the campaign's full frame set,
 #                     frames_default.txt.  The preflight REFUSES a launch whose
 #                     frames miss a field of that set unless
@@ -53,6 +53,10 @@
 #                     box whose centre is not L/2, or whenever the window is
 #                     off-axis, SAY IT.  Either way: eyeball frame 0
 #   --keep-last N     plotfiles to keep on scratch (default 3)
+#   --subdir NAME     run-tree subfolder under runs/spinning_wormhole/ the run
+#                     dir lands in.  Default: "smoke" for the smoke and none
+#                     profiles, the campaign root otherwise -- so probe runs
+#                     never mix into the production tree (decided 2026-10-10)
 #   --restart DIR     checkpoint directory to continue from
 #   --binary PATH     evolution binary.  REQUIRED while the campaign has no
 #                     pinned binary (DEFAULT_BINARY below is empty); with
@@ -107,7 +111,7 @@ REPO="$(cd -- "${HERE}/../../../.." && pwd)"
 CAMPAIGN="${REPO}/runs/spinning_wormhole"
 TEMPLATES="${CAMPAIGN}/templates"
 
-TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 CENTER="" KEEP_LAST=3
+TEMPLATE="" NAME="" GPU="" PROFILE="" CONSUME_RAW="" ZOOM=32 COORD=32 CENTER="" KEEP_LAST=3 SUBDIR=""
 RESTART="" BINARY="" MAX_LEVEL="" WHAT="" FOREGROUND=0 DRYRUN=0 LABEL="test"
 PREFLIGHT="${SWH_PREFLIGHT:-full}" PREFLIGHT_ONLY=0 FRAMES_FIELDS=""
 while [[ $# -gt 0 ]]; do
@@ -122,6 +126,7 @@ while [[ $# -gt 0 ]]; do
     --coord)      COORD="$2"; shift 2 ;;
     --center)     CENTER="$2 $3 $4"; shift 4 ;;
     --keep-last)  KEEP_LAST="$2"; shift 2 ;;
+    --subdir)     SUBDIR="$2"; shift 2 ;;
     --restart)    RESTART="$2"; shift 2 ;;
     --binary)     BINARY="$2"; shift 2 ;;
     --max-level)  MAX_LEVEL="$2"; shift 2 ;;
@@ -196,7 +201,14 @@ if [[ -n "${RESTART}" ]]; then
   [[ -f "${RESTART}/Header" ]] || { echo "not a checkpoint directory: ${RESTART}" >&2; exit 1; }
   FULL_NAME="${NAME}_r${RESTART##*Chk}"
 fi
-RUN_DIR="${CAMPAIGN}/${FULL_NAME}"
+
+# Probe runs live one level down so the campaign root holds production runs
+# only (decided 2026-10-10, after three smoke tests sat next to the templates).
+if [[ -z "${SUBDIR}" ]] && [[ "${PROFILE}" == "smoke" || "${PROFILE}" == "none" ]]; then
+  SUBDIR="smoke"
+fi
+RUNS_DIR="${CAMPAIGN}${SUBDIR:+/${SUBDIR}}"
+RUN_DIR="${RUNS_DIR}/${FULL_NAME}"
 
 # --- the consumer flags ---------------------------------------------------
 # shellcheck source=lib/consumer_profiles.sh
@@ -250,7 +262,7 @@ env_args=(
   "SWH_NAME=${NAME}"
   "SWH_GPU=${GPU}"
   "SWH_KEEP_LAST=${KEEP_LAST}"
-  "SWH_RUNS_DIR=${CAMPAIGN}"
+  "SWH_RUNS_DIR=${RUNS_DIR}"
   "SWH_EXE=${BINARY}"
   "SWH_WHAT=${WHAT}"
   "SWH_PROC_LABEL=${LABEL}"
@@ -267,7 +279,7 @@ else
   env_args+=("SWH_CONSUME_ARGS=${CONSUME}")
 fi
 
-echo "[launch] run      : ${FULL_NAME}"
+echo "[launch] run      : ${SUBDIR:+${SUBDIR}/}${FULL_NAME}"
 echo "[launch] template : ${TEMPLATE_PATH#"${REPO}"/}"
 echo "[launch] binary   : ${BINARY#"${REPO}"/}   (${BINARY_FROM})"
 echo "[launch] gpu      : ${GPU}   profile: ${PROFILE}$( [[ -n "${CONSUME_RAW}" ]] && echo " (OVERRIDDEN by --consume-args)") (zoom ${ZOOM}, coord ${COORD}, centre ${CENTER:-domain midpoint})   keep-last: ${KEEP_LAST}"

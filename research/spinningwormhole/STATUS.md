@@ -14,9 +14,19 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| static hold (Step 0 anchor: τ ≈ 5.12 at three resolutions) | run plan (L, N, levels) | — | the go |
+| static_hold_L64_t100 (Step 0 anchor, ONE resolution first) | template + massive table ready | — | the checkpoint answer |
+
+The plan (approved 2026-10-10): L = 64, N = 128 (dx0 = 0.5, the merger hold's),
+max_level 3 with the merger hold's exact nested boxes (tagging_L = 64 →
+±16/±8/±4), its dt_multiplier 0.02, sigma 0.1 and gauge numbers; background
+`static_eta2_m1.spinbg` (a = 2, M = 1 — the drainhole the merger evolved);
+profile hold on GPU 0.  Template: `runs/spinning_wormhole/templates/params_static_hold.txt`.
 
 ## SMOKE: PASS (2026-10-10)
+
+Smoke runs live under `runs/spinning_wormhole/smoke/` (moved 2026-10-10 so the
+campaign root holds production runs only; launch.sh now routes the smoke and
+none profiles there, `--subdir` overrides).
 
 `smoke_test3` (static massless table, L = 16, N = 64, t → 0.5, GPU 0, ~1 min):
 clean exit, 0 NaN, L2_Mom(t=0) = 0 exactly, 14 frames through the throat,
