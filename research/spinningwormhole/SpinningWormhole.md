@@ -5,6 +5,47 @@
 - a second one appears;
 - the two merge, and probably survive as an oscillating instability that slows down only near extremal Kerr.
 
+Here are the core scientific questions this study needs to address, kept short
+and direct:
+
+1. The Fate of the Radial Instability
+
+  - Do the unstable radial modes perfectly match the O(J^2) predictions at slow
+    spins, and do they merge as spin increases?
+  - After the merger, does the instability actually disappear, or does it just
+    become a complex, oscillating instability (wobbling while collapsing)?
+  - Does the wormhole's lifetime approach infinity (complete stability) exactly
+    at the extremal Kerr limit?
+
+2. The Ergoregion Threat
+
+  - Because fast-spinning wormholes develop an ergoregion, do they fall victim
+    to non-axisymmetric (m \ge 1) ergoregion instabilities before radial
+    collapse can even happen?
+
+3. End States and Cosmic Censorship
+
+  - When the spinning wormhole collapses, does it always settle into a standard
+    Kerr black hole?
+  - The Overspin Test: For wormhole initial data where J/M_{ADM}^2 > 1, does the
+    collapse violate cosmic censorship (forming a naked singularity), or does
+    the phantom matter adjust the final mass to save the laws of physics?
+  - If the wormhole is perturbed to expand (the "inflation" branch), does rapid
+    rotation halt this expansion?
+
+4. Dynamics of the Phantom Matter
+
+  - How does the amount of negative-energy exotic matter (and the violation of
+    the Null Energy Condition) dynamically change, move, or dissipate during the
+    collapse?
+
+5. Observational Signatures
+
+  - What is the exact gravitational wave signal (\Psi_4) emitted during the
+    death of a spinning wormhole, and does the final ringdown perfectly match a
+    Kerr black hole or leave an echo?
+
+
 No one has evolved a rotating wormhole nonlinearly. **One paper** covers the whole spin range: it tests the slow-spin predictions, follows the instability through the predicted merger to near-extremal spin, measures the lifetime against spin, and finds the end state. This has to come before any spinning-binary or anti-chirp work (pbh_reentry_wormholes.md, Sec. 4.1).
 
 **Working title:** *Does rotation stabilize traversable wormholes? Nonlinear evolutions of Ellis–Bronnikov wormholes from slow rotation to the extremal Kerr limit.*
