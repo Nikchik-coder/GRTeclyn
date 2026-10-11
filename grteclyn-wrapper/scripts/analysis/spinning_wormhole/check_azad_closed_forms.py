@@ -124,8 +124,8 @@ def build() -> None:
     COMPONENTS["ang"] = E[2, 2] + E[3, 3] / s**2
 
 
-def residual(task: tuple[str, str]) -> tuple[str, str, sp.Expr]:
-    nm, reading = task
+def residual(task: tuple[str, str, str]) -> tuple[str, str, sp.Expr]:
+    nm, reading, variable = task
     four = READINGS[reading]
     A20 = 3 * J**2 / (r * r0**3) * (phi + sp.pi / 2 - 3 * r / (2 * r0) - four
                                     - (3 * r**2 + 4 * r0**2) / (2 * R2 * phi))
@@ -134,8 +134,17 @@ def residual(task: tuple[str, str]) -> tuple[str, str, sp.Expr]:
     e2 = e2.subs({h0: H0, b0: B0, p20: A20}).doit()
     log(f"{nm} [{reading}]: projecting on l = 0")
     proj = sp.integrate(sp.expand(e2) * s, (th, 0, sp.pi)) / 2
-    log(f"{nm} [{reading}]: simplifying the residual")
+    if variable == "u":
+        # Exact change of variable r = r0 tan(u) (bijective on u in
+        # (-pi/2, pi/2)): atan(r/r0) becomes the plain symbol u and the
+        # residual a trig polynomial, which simplify handles in seconds
+        # instead of hours.  Zero here iff zero in r.
+        uu = sp.Symbol("u", real=True)
+        proj = proj.xreplace({sp.atan(r / r0): uu}).subs(r, r0 * sp.tan(uu))
+    log(f"{nm} [{reading}]: simplifying the residual ({variable} variable)")
     res = sp.simplify(sp.radsimp(sp.expand(sp.together(proj))))
+    if res != 0:
+        res = sp.simplify(sp.expand_trig(res))
     return nm, reading, res
 
 
@@ -144,10 +153,15 @@ def main() -> int:
     ap.add_argument("--procs", type=int, default=min(6, os.cpu_count() or 1),
                     help="worker processes (6 independent tasks; default "
                     "min(6, cores))")
+    ap.add_argument("--variable", choices=("r", "u"), default="r",
+                    help="simplify the residual in r as it stands, or after "
+                    "the exact substitution r = r0 tan(u) (same zeros, "
+                    "orders of magnitude faster)")
     args = ap.parse_args()
 
     build()
-    tasks = [(nm, rd) for rd in READINGS for nm in ("tt", "rr", "ang")]
+    tasks = [(nm, rd, args.variable)
+             for rd in READINGS for nm in ("tt", "rr", "ang")]
     log(f"forking {min(args.procs, len(tasks))} workers for {len(tasks)} tasks")
     ctx = mp.get_context("fork")  # inherit the Ricci; forkserver recomputes it
     failures = 0
