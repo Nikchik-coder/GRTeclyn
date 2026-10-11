@@ -1,0 +1,5 @@
+# Trust windows: the last time each run's solution can be trusted -- one line per run, tab-separated.
+# Movies cut there (rerender_frames.py --t-max): only frames at or before t_max set the colour scale and
+# are stitched; later frames stay on disk, untouched.  Figures and any paper quote nothing after t_max.
+run	t_max	why
+static_hold_L64_t100	64	boundary return on the halved box (r = 32 out and back; local_speed frames speckle from t ~ 60); constraints stay ~3e-3 until t ~ 78 and the settled horizon R 2.4746 is unchanged to t = 100, but nothing after 64 is quoted

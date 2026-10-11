@@ -8,23 +8,34 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| static_hold_L64_t100 | first node / GPU 0 | 0.5 (17:40) | 100 | 18.3 u/h | ~5.5 h → ≈23:10 UTC 10 Oct |
-
-static_hold_L64_t100 (launched 17:35 UTC 2026-10-10, no checkpoints — decided
-at launch): the Step 0 anchor, ONE resolution first.  L = 64, N = 128
-(dx0 = 0.5, the merger hold's), max_level 3 with the merger hold's exact
-nested boxes (tagging_L = 64 → ±16/±8/±4), its dt 0.02 Δx, sigma 0.1 and gauge
-numbers; background `static_eta2_m1.spinbg` (a = 2, M = 1); profile hold.
-**t = 0 is bit-identical to the merger hold's collapse_diagnostics row**
-(min_lapse 2.1942989020e-01, min_chi 4.1085936805e-07, min/max_phi equal to
-all printed digits); L2_Mom(0) = 0; L2_Ham is √8× the merger's, the halved
-box's volume norm.  Target: reproduce the growth rate (merger hold: τ ≈ 5.12).
+| — | | | | | |
 
 ## QUEUED
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
 | — | | | |
+
+## STEP 0 ANCHOR: PASS (2026-10-11)
+
+`static_hold_L64_t100` (L = 64, N = 128, ml3 = the merger hold's grid on a
+halved box; a = 2, M = 1 table; no checkpoints; GPU 0, 5.6 h): reached
+t = 100 clean, 0 NaN.
+- **Trajectory-identical to the merger `single_hold`**: t = 0 bit-identical;
+  over the whole packed overlap (t ≤ 41.3) max rel diff 5e-5 in min_lapse and
+  max|K|, median 0 — the table-driven pipeline IS the merger drainhole.
+- **Collapse as expected (GGS mode)**: throat R 3.89 → 1.99;
+  τ(δR ∈ [0.01, 0.3], t = 38–56) = **5.27** vs the paper's 5.12 (the fit is
+  window-sensitive at the ±0.2 level; MOTS-R gives 5.5).
+- **Horizon forms**: spectral MOTS on 101/101 plotfiles; at t = 0 it is the
+  throat (R 3.886, M_MS 1.943), by t = 100 it detaches (R_MOTS 2.47 outside
+  the throat's 1.99, θ_in = −0.61) and its area SHRINKS — the phantom flux
+  term of the first-law columns, as in the merger paper.
+- Trust window t_max = 80 (`results/spinningwormhole/trust_windows.tsv`):
+  constraints clean (L2_Ham ~ 3e-3) and the horizon settled by t = 80; after
+  it the collapsed puncture region grows grid-scale noise (L2_Ham 0.13 at
+  t = 100, the speckled late frames).  Boundary return on the halved box is
+  t ~ 64 and left no visible mark before that.
 
 ## SMOKE: PASS (2026-10-10)
 
