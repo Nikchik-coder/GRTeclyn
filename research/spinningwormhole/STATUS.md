@@ -31,11 +31,11 @@ t = 100 clean, 0 NaN.
   throat (R 3.886, M_MS 1.943), by t = 100 it detaches (R_MOTS 2.47 outside
   the throat's 1.99, θ_in = −0.61) and its area SHRINKS — the phantom flux
   term of the first-law columns, as in the merger paper.
-- Trust window t_max = 80 (`results/spinningwormhole/trust_windows.tsv`):
-  constraints clean (L2_Ham ~ 3e-3) and the horizon settled by t = 80; after
-  it the collapsed puncture region grows grid-scale noise (L2_Ham 0.13 at
-  t = 100, the speckled late frames).  Boundary return on the halved box is
-  t ~ 64 and left no visible mark before that.
+- Trust window t_max = 64 (`results/spinningwormhole/trust_windows.tsv`):
+  boundary return on the halved box (r = 32 out and back; speckle in the
+  local_speed frames from t ~ 60).  Constraints stay ~3e-3 to t ~ 78 and the
+  settled horizon R 2.4746 is unchanged to t = 100, but nothing after 64 is
+  quoted; movies cut there.
 
 ## SMOKE: PASS (2026-10-10)
 

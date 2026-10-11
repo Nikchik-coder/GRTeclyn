@@ -1,0 +1,40 @@
+[swh] name     : static_hold_L64_t100
+[swh] template : runs/spinning_wormhole/templates/params_static_hold.txt
+[swh] binary   : runs/spinning_wormhole/bin/main3d_smoke_bfb65e8e_2026-10-10.ex
+[swh] gpu      : 0
+[swh] run dir  : runs/spinning_wormhole/static_hold_L64_t100          (NFS: params, log, .dat streams)
+[swh] scratch  : /tmp/grteclyn_scratch/static_hold_L64_t100      (node-local: plotfiles, checkpoints)
+[swh] proc     : test (evolution runs from /tmp/ml_jobs/bin/test_3348bbb8)
+[swh] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[swh] frames   : as given in SWH_CONSUME_ARGS
+[preflight] frames : 14 field(s), the full set: chi chi_minus_1 K lapse shift1 shift2 shift3 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed
+[preflight] files  : spinning_background_file = runs/spinning_wormhole/backgrounds/static_eta2_m1.spinbg
+[preflight] consumer: areal radius off
+[preflight] paths  : one spelling, 'static_hold_L64_t100'
+[preflight] WARNING: this run writes no checkpoints: if it dies, it cannot be restarted
+[preflight] static : 63 keys, 0 absent from main3d_smoke_bfb65e8e_2026-10-10.ex
+[preflight] start-up with every key checked (gpu 0, 0 steps; writes its plotfile for the frames) ...
+[preflight] probe  : ok in 3.9 s; binary version (bfb65e8e); 1 unread key(s)
+[preflight] t = 0  : L2_Ham 2.0955094722e-03  L2_Mom 0.0000000000e+00
+[preflight] frames : rendering 14 field(s) from plt00000 with the consumer -> preflight_frames ...
+[preflight]   chi              ok     4.11e-07 .. 0.911
+[preflight]   chi_minus_1      ok     -1 .. -0.0888
+[preflight]   K                flat   0 .. 0  (every pixel 0: K is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   lapse            ok     0.219 .. 0.956
+[preflight]   shift1           flat   0 .. 0  (every pixel 0: shift1 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   shift2           flat   0 .. 0  (every pixel 0: shift2 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   shift3           flat   0 .. 0  (every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   phi              ok     -0.957 .. -0.0281
+[preflight]   Pi               flat   0 .. 0  (every pixel 0: Pi is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   Weyl4_Re         ok     -3.64e-06 .. 8.86e-06
+[preflight]   Weyl4_Im         ok     -5.13e-07 .. 5.13e-07
+[preflight]   Weyl4_Mag        ok     1.28e-19 .. 8.86e-06
+[preflight]   scalar_activity  ok     0.0281 .. 0.957
+[preflight]   local_speed      ok     0.000141 .. 0.913
+[preflight] frames : 14 of 14 rendered in 12.4 s (ok); flat at this time: K shift1 shift2 shift3 Pi
+[preflight] verdict: PASS
+[swh] t = 0 frames: runs/spinning_wormhole/static_hold_L64_t100/preflight_frames (rendered at preflight; the run's own go to frames/)
+[swh] registry : static_hold_L64_t100 -> results/spinningwormhole/runs_registry.tsv
+[manifest] runs/spinning_wormhole/static_hold_L64_t100/run_manifest.json: binary main3d_smoke_bfb65e8e_2026-10-10.ex (bfb65e8e), preflight pass
+[swh] consumer  : pid 1514865 -> runs/spinning_wormhole/static_hold_L64_t100/small_data
+[swh]            deleting processed plotfiles, keeping last 3
