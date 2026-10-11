@@ -124,6 +124,29 @@ def build() -> None:
     COMPONENTS["ang"] = E[2, 2] + E[3, 3] / s**2
 
 
+def project_l0(expr: sp.Expr) -> sp.Expr:
+    """(1/2) integral of expr*sin(theta) over [0, pi], term by term.
+
+    Exact and fast: each top-level term first has its theta-FREE factors
+    (the radial jungle) split off unexpanded -- a whole-expression expand is
+    what ran for hours -- then only the small theta-dependent remainder is
+    expanded, and each distinct theta factor integrates once from a cache.
+    (A Poly split over (sin, cos) is NOT safe here: simplify leaves
+    sin(2 theta) and tan(theta) atoms, which Poly silently holds as
+    constant coefficients and the projection comes out theta-dependent.)
+    """
+    acc: dict[sp.Expr, sp.Expr] = {}
+    for term in sp.Add.make_args(expr):
+        rfree, dep = term.as_independent(th)
+        for sub in sp.Add.make_args(sp.expand(dep)):
+            rp, tp = sub.as_independent(th)
+            acc[tp] = acc.get(tp, sp.S(0)) + rfree * rp
+    out = sp.S(0)
+    for tp, coeff in acc.items():
+        out += coeff * sp.integrate(tp * s, (th, 0, sp.pi))
+    return out / 2
+
+
 def residual(task: tuple[str, str, str]) -> tuple[str, str, sp.Expr]:
     nm, reading, variable = task
     four = READINGS[reading]
@@ -132,15 +155,15 @@ def residual(task: tuple[str, str, str]) -> tuple[str, str, sp.Expr]:
     log(f"{nm} [{reading}]: expanding to O(eps^2)")
     e2 = sp.diff(COMPONENTS[nm], eps, 2).subs(eps, 0) / 2
     e2 = e2.subs({h0: H0, b0: B0, p20: A20}).doit()
-    log(f"{nm} [{reading}]: projecting on l = 0")
-    proj = sp.integrate(sp.expand(e2) * s, (th, 0, sp.pi)) / 2
     if variable == "u":
         # Exact change of variable r = r0 tan(u) (bijective on u in
-        # (-pi/2, pi/2)): atan(r/r0) becomes the plain symbol u and the
-        # residual a trig polynomial, which simplify handles in seconds
+        # (-pi/2, pi/2)): atan(r/r0) becomes the plain symbol u and every
+        # coefficient a trig polynomial, which simplify handles in seconds
         # instead of hours.  Zero here iff zero in r.
         uu = sp.Symbol("u", real=True)
-        proj = proj.xreplace({sp.atan(r / r0): uu}).subs(r, r0 * sp.tan(uu))
+        e2 = e2.xreplace({sp.atan(r / r0): uu}).subs(r, r0 * sp.tan(uu))
+    log(f"{nm} [{reading}]: projecting on l = 0")
+    proj = project_l0(e2)
     log(f"{nm} [{reading}]: simplifying the residual ({variable} variable)")
     res = sp.simplify(sp.radsimp(sp.expand(sp.together(proj))))
     if res != 0:
