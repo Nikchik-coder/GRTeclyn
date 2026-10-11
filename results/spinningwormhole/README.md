@@ -18,9 +18,12 @@ live state: `research/spinningwormhole/STATUS.md`; code:
 ## Claims
 
 - `01_static_hold/static_hold_L64_t100` (2026-10-11): the Step 0 anchor.
-  The table-driven pipeline reproduces the merger campaign's `single_hold`
-  drainhole evolution exactly — t = 0 bit-identical, max rel diff 5e-5 over
-  the packed overlap, collapse milestones within one time unit (−10 % throat
-  at t = 57 vs 58, −25 % at 62.6 vs 63); τ(δR) = 5.27 vs the merger's 5.12
-  fit; MOTS on every plotfile, horizon detaches at t ≈ 61 and shrinks under
-  the phantom flux.  Trust window t ≤ 64.
+  The merger's production `single_hold_t100` ran on this exact grid (L = 64,
+  N = 128, ml3), and the new table-driven pipeline reproduces it as a
+  numerical twin over the FULL record: t = 0 bit-identical, L2_Ham within
+  5e-7 (median 0) for all t ≤ 100, collapse milestones within one time unit;
+  τ(δR) = 5.27 vs the merger's 5.12 fit; MOTS on every plotfile, horizon
+  detaches at t ≈ 61 and shrinks under the phantom flux.  The t > 80
+  constraint growth is the same in both runs — a property of this grid, not
+  of the new code.  Trust window t ≤ 64.  Constraint overlay:
+  the run's `figures/constraint_norms.png` (both curves within linewidth).

@@ -70,13 +70,19 @@ outside the box (the featureless-frames trap).
 
 ## NEXT (the plan's order)
 
-1. **Step 0 anchor**: smoke test, then the static hold — the massless static
-   table must reproduce the merger drainhole's t = 0 constraint norms and the
-   binary paper's growth rate (τ ≈ 5.12) at three resolutions.
-2. **Step 0 numerics**: the Δt = 0.02 Δx cause; constraint norms on the finest
-   levels; constraint-solved Π seeds; 1/R waveform extrapolation.
-3. **Step 1 backgrounds**: O(J²) slow-spin generator (Azad et al.) into the
-   same `.spinbg` format; decide solver-vs-Oldenburg-request for fast spin.
+1. ~~**Step 0 anchor**~~ DONE 2026-10-11: smoke PASS, and the static hold is a
+   numerical twin of the merger's production `single_hold_t100` (same grid)
+   over the full record — packed as `01_static_hold/static_hold_L64_t100`.
+   One resolution was decided to suffice: the twin check is stronger than a
+   three-resolution τ fit (the merger already owns the resolution ladder on
+   this grid).
+2. **Step 0 numerics** (optional hardening, none blocks Step 1): the
+   Δt = 0.02 Δx cause; constraint norms on the finest levels;
+   constraint-solved Π seeds; 1/R waveform extrapolation.
+3. **Step 1 backgrounds** ← THE FRONT: O(J²) slow-spin generator
+   (Azad et al.) into the same `.spinbg` format (the C++ side needs no
+   change — that was the point of the table design); first spinning hold at
+   small J, then decide solver-vs-Oldenburg-request for fast spin.
 
 ## RULES CARRIED OVER
 
