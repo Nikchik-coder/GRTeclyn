@@ -36,6 +36,15 @@ session start goes stale within hours.
 - **GPUs are shared** with other people's jobs: check `nvidia-smi` before every
   launch. Campaign processes are renamed: `test params.txt` (evolution),
   `test_post post.py` (consumer), `test_pre pre.py` (launch checks), `test_job run_single.sh`.
+- **On the cluster, one runaway process restarts the whole node container.** The containers run with
+  `memory.oom.group = 1` and no swap: a process that pushes the container over its memory limit
+  (`/sys/fs/cgroup/memory.max`) gets EVERY process in it OOM-killed (evolutions, consumers, sshd, the editor,
+  agent sessions), and the container restarts with an empty /tmp (scratch plotfiles, checkpoints, logs gone).
+  It looks like a reboot, and the OOM counters reset with it, so it leaves no trace. Run any CPU job that can
+  blow up (sympy `integrate`/`simplify`, large numpy work) under a per-process cap (`ulimit -v` in its
+  subshell, or `RLIMIT_AS`) with workers × cap well under the limit, its log on NFS, and inside the 24-CPU
+  quota (`/sys/fs/cgroup/cpu.max`; `nproc` says 128). (2026-10-12: a term-wise sympy integrate on 32 workers
+  restarted a GPU node's container twice within minutes.)
 
 ## Launching runs
 
