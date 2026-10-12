@@ -19,12 +19,6 @@
 > | *The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive–Negative Mass Binary* — [arXiv:2608.24577](https://arxiv.org/abs/2608.24577) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/) |
 > | *Wormhole Dynamics: Nonlinear Collapse and Gravitational-Wave Emission* — [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) |
 >
-> **Headline result — the Bondi dipole runaway.** A positive-mass boson star
-> paired with a negative-mass phantom one self-accelerates, with no horizon and
-> no numerical artefact. Both axes of `a = GM/d²` are measured directly:
-> `a ∝ d^−2.028` across separations, `a ∝ M^0.966 ± 0.061` across a ×2.46 mass
-> range.
->
 > The colliding-wormholes paper cites this repository at tag
 > [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger),
 > the Bondi dipole paper at tag
