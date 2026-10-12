@@ -26,6 +26,14 @@ be the faulty one: ang (−2r h0′ + 2r b0′ + 4 b0) fixes it given h0 up to
 c/r²; φ20 enters rr alone.  `derive_phi20_correction.py` (spinning_wormhole
 analysis scripts; 45 s, one core, every residual cancels to 0).
 
+Generator: `backgrounds.py slowspin` solves the same O(J²) member directly in
+the table's KK gauge (Chebyshev; writes `.spinbg`).  Validated: the full
+R_ab + 2∂ψ∂ψ residuals fall as J⁴ (t-φ as J³) on the Step 0 drainhole
+(η0 = 2, M = 1; `check_slowspin_einstein.py`); at γ = 0 with f(−∞) matched
+to Azad's C = 0 member, its l = 0 f equals their exact 2h0 to 1e-14 and its
+M their ΔM.  Drainhole at J = 0.25 / 0.5 / 1: J/M² = 0.25 / 0.47 / 0.79,
+3 / 6 / 12 % of the extremal J/A; Einstein residual 3e-5 / 5e-4 / 1e-2.
+
 ## STEP 0 ANCHOR: PASS (2026-10-11)
 
 `static_hold_L64_t100` (L = 64, N = 128, ml3 = the merger hold's grid on a
@@ -89,10 +97,10 @@ outside the box (the featureless-frames trap).
 2. **Step 0 numerics** (optional hardening, none blocks Step 1): the
    Δt = 0.02 Δx cause; constraint norms on the finest levels;
    constraint-solved Π seeds; 1/R waveform extrapolation.
-3. **Step 1 backgrounds** ← THE FRONT: O(J²) slow-spin generator
-   (Azad et al.) into the same `.spinbg` format (the C++ side needs no
-   change — that was the point of the table design); first spinning hold at
-   small J, then decide solver-vs-Oldenburg-request for fast spin.
+3. **Step 1 backgrounds** ← THE FRONT: the O(J²) slow-spin generator is in
+   (`backgrounds.py slowspin`, same `.spinbg` format, validated above); next
+   the first spinning hold at small J on the Step 0 grid, then decide
+   solver-vs-Oldenburg-request for fast spin.
 
 ## RULES CARRIED OVER
 
