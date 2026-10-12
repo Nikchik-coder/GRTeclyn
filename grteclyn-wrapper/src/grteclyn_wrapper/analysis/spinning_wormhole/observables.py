@@ -208,3 +208,51 @@ def observables(sol: Solution) -> dict:
     out["J_over_A"] = out["J"] / max(throat["area_throat"], 1e-300)
     out["J_over_A_extremal_frac"] = 8.0 * math.pi * out["J_over_A"]
     return out
+
+
+def symmetric_checks(sol: Solution) -> dict:
+    """Family (b) extras (gamma = 0), checked and never imposed: mirror
+    symmetry f(x) = f(-x), omega(x) + omega(-x) = omega_inf, and
+    omega_0 = omega_inf / 2 (CKK's symmetric family)."""
+    mirror_f = float(np.max(np.abs(sol.F - sol.F[::-1])))
+    mirror_w = float(np.max(np.abs(sol.W + sol.W[::-1] - sol.omega_inf)))
+    w0 = float(sol.eval_xy("w", np.array([0.0]), np.array([-1.0]))[0])
+    return {"mirror_f": mirror_f, "mirror_w": mirror_w,
+            "omega0": w0,
+            "omega0_rel_defect": abs(w0 - 0.5 * sol.omega_inf)
+            / max(abs(w0), 1e-300)}
+
+
+def ergosurface_equator(sol: Solution) -> dict:
+    """The equatorial ergosurface: g_tt = 0 where e^{2f} = h omega^2 on
+    the equator.  Returns the outer root eta_ergo (None without an
+    ergoregion) and, for the symmetric family, the deviation from CKK's
+    law arctan(eta_ergo/eta0) = arccos(2 omega_0)."""
+    m = sol.radial_map
+    xi = np.linspace(-0.98, 0.98, 393)
+    eta = m.eta(xi)
+    f = sol.eval_xy("f", xi, np.full(xi.size, -1.0))
+    w = sol.eval_xy("w", xi, np.full(xi.size, -1.0))
+    g = np.exp(2 * f) - (eta**2 + sol.eta0**2) * w**2
+    sign = np.sign(g)
+    flips = np.nonzero(np.diff(sign))[0]
+    if flips.size == 0:
+        return {"eta_ergo": None}
+    from scipy.optimize import brentq
+
+    def gtt(e):
+        x = np.atleast_1d(m.xi_of_eta(e))
+        y = np.array([-1.0])
+        return (float(np.exp(2 * sol.eval_xy("f", x, y)[0]))
+                - (e * e + sol.eta0**2)
+                * float(sol.eval_xy("w", x, y)[0]) ** 2)
+
+    k = flips[-1]                              # the outer boundary
+    eta_ergo = brentq(gtt, eta[k], eta[k + 1], xtol=1e-12)
+    out = {"eta_ergo": float(eta_ergo)}
+    w0 = float(sol.eval_xy("w", np.array([0.0]), np.array([-1.0]))[0])
+    if abs(2 * w0) <= 1.0:
+        law = math.acos(2 * w0)
+        out["ckk_law_deviation"] = float(
+            math.atan(eta_ergo / sol.eta0) - law)
+    return out

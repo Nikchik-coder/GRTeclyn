@@ -201,8 +201,11 @@ class CollocationProblem:
         self.bc_w = np.zeros((2, ny + 1))
 
         self._jnp = jnp
+        # the prescribed value (J or omega_inf) is a TRACED argument, so a
+        # continuation driver can step it without retracing or, worse,
+        # silently keeping the first compiled constant
         self._jit_residual = jax.jit(self._residual)
-        self._jit_jacobian = jax.jit(jax.jacfwd(self._residual))
+        self._jit_jacobian = jax.jit(jax.jacfwd(self._residual, argnums=0))
 
     # -- packing ------------------------------------------------------------
 
@@ -244,11 +247,11 @@ class CollocationProblem:
             jets[name] = z
         return jets
 
-    def _residual(self, u):
+    def _residual(self, u, value):
         jnp = self._jnp
         df = u[: self.n].reshape(self.nx + 1, self.ny + 1)
         dw = u[self.n: 2 * self.n].reshape(self.nx + 1, self.ny + 1)
-        omega_inf = u[-1] if self.mode == "J" else self.value
+        omega_inf = u[-1] if self.mode == "J" else value
         F = self.f_bg + df
         W = omega_inf * self.q + dw
         jets = self._jets(F, W)
@@ -269,15 +272,18 @@ class CollocationProblem:
         out = jnp.concatenate([R_f.ravel(), R_w.ravel()])
         if self.mode == "J":
             out = jnp.concatenate(
-                [out, jnp.atleast_1d(self.j_flux(F, self.Dx @ W))
-                 - self.value])
+                [out, jnp.atleast_1d(self.j_flux(F, self.Dx @ W)) - value])
         return out
 
+    def set_prescribed(self, value: float) -> None:
+        """Step the prescribed J (or omega_inf) -- continuation."""
+        self.value = float(value)
+
     def residual(self, u):
-        return self._jit_residual(u)
+        return self._jit_residual(u, self.value)
 
     def jacobian(self, u):
-        return self._jit_jacobian(u)
+        return self._jit_jacobian(u, self.value)
 
     def j_flux(self, F, W_x, column: int | None = None):
         """J measured on one xi column: -(1/8) int (1-mu^2) h^2 e^{-2f}
