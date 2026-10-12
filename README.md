@@ -15,7 +15,7 @@
 >
 > | Paper | Data in this repo |
 > |---|---|
-> | *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves* — arXiv:XXXX.XXXXX (number to come) | [`results/merger/`](results/merger/) |
+> | *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves* — [arXiv:2610.13206](https://arxiv.org/abs/2610.13206) | [`results/merger/`](results/merger/) |
 > | *The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive–Negative Mass Binary* — [arXiv:2608.24577](https://arxiv.org/abs/2608.24577) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/) |
 > | *Wormhole Dynamics: Nonlinear Collapse and Gravitational-Wave Emission* — [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) |
 >

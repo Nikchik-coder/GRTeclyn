@@ -57,8 +57,9 @@ both engines, text ends on page 21.
   remnant and plunge wording, convergence orders, Table IV of numerical modifications, references.
 - Videos 1–12 are unlisted (link-only) — enough, decided 10-08: the paper carries the URLs. Before submitting:
   both authors' sign-off on the final PDF.
-- After the number: fill the placeholders (README, results/README.md, CITATION.cff), the release notes and the
-  Zenodo record's arXiv link.
+- Done 10-12: announced as arXiv:2610.13206 (gr-qc, cross-list astro-ph.HE). The number is in the READMEs,
+  `CITATION.cff` and the v1.0.1 release notes; the Zenodo record's arXiv link is a by-hand edit. Next: Phys. Rev. D
+  (regular article, submitted from the arXiv ID).
 
 RUNS FOR THE PAPER: none, and no new runs (decided 10-09): referee items that a run would settle are answered in the
 text only. Earlier proposals were dropped before submission; `git show 2acaa681:research/merger/STATUS.md`.
