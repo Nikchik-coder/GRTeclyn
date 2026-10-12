@@ -17,7 +17,8 @@ live state: `research/spinningwormhole/STATUS.md`; code:
 
 ## Claims
 
-- `01_static_hold/static_hold_L64_t100` (2026-10-11): the Step 0 anchor.
+- `01_static_hold/static_hold_L64_ml3_t100` (2026-10-11; launched as
+  `static_hold_L64_t100`, renamed 2026-10-12): the Step 0 anchor.
   The merger's production `single_hold_t100` ran on this exact grid (L = 64,
   N = 128, ml3), and the new table-driven pipeline reproduces it as a
   numerical twin over the FULL record: t = 0 bit-identical, L2_Ham within
@@ -27,3 +28,14 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   constraint growth is the same in both runs — a property of this grid, not
   of the new code.  Trust window t ≤ 64.  Constraint overlay:
   the run's `figures/constraint_norms.png` (both curves within linewidth).
+- `02_spin_hold/spin_hold_L64_ml3_J025_t100` and `…_J100_t100` (2026-10-12):
+  Step 1's first spinning holds, the Step 0 drainhole at J = 0.25 and 1.0 on
+  the same grid.  Both throats INFLATE where the static one collapses: the
+  same unstable mode with the opposite sign (τ = 5.8 and 5.6 vs 5.26), no
+  horizon about the throat (anti-trapped), R_eq 3.90 → 5.34 at t = 64
+  (J025) and 4.09 → 7.36 at t = 40 (J100).  In the merger seed arms' terms
+  they act as radial kicks ε ≈ −3e-5 and −7e-3, the inflating sign; that
+  equivalent kick grows ~J⁴ (×230 for ×4 in J), the size of the O(J²)
+  data's own error, so the branch is set by the data, not yet by the spin.
+  The spin's own signature is the throat's flattening, at a rate ∝ J².
+  Constraints at the static hold's level.  Trust windows t ≤ 64 and t ≤ 57.

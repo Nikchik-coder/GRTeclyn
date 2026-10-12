@@ -8,18 +8,42 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| `spin_hold_L64_J025_t100` (Step 1's first spinning hold: the Step 0 drainhole at J = 0.25, `slowspin_eta2_m1_J025.spinbg`; no checkpoints) | node-3220ddd4 / GPU 0 (Step 0's card) | 24.3 at 08:19 (launched 06:58) | 100 | 18.0 u/h | 4.2 h, ~12:31 |
-| `spin_hold_L64_ml3_J100_t100` (the O(J²) solver's fast end: the same drainhole at J = 1.0, v_e 0.24 c, J/M² 0.79, 12 % of extremal J/A; `slowspin_eta2_m1_J100.spinbg`, chosen by a t = 0 probe at J = 0.6/0.8/1.0: L2_Ham 2.07/2.06/2.04e-3 vs static 2.10e-3, L2_Mom linear in J; no checkpoints) | node-3220ddd4 / GPU 1 | 0.0 at 08:19 (launched 08:18) | 100 | 17.4 u/h | 5.7 h, ~14:03 |
+| — | | | | | |
 
-At its close-out (decided 2026-10-12): rename `spin_hold_L64_J025_t100` to
-`spin_hold_L64_ml3_J025_t100` and the Step 0 run to `static_hold_L64_ml3_t100`
-(registry, pack, references); every new run name carries its level.
+Both GPUs of node-3220ddd4 are free since 13:49 (the two J holds finished).
+Every run name carries its level (decided 2026-10-12): `spin_hold_L64_J025_t100`
+and `static_hold_L64_t100` were renamed at close-out to
+`spin_hold_L64_ml3_J025_t100` and `static_hold_L64_ml3_t100` (registry, pack,
+references; their run dirs keep the old name as a symlink).
 
 ## QUEUED
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
 | — | | | |
+
+## STEP 1: THE SPINNING HOLDS INFLATE (2026-10-12)
+
+`spin_hold_L64_ml3_J025_t100` and `spin_hold_L64_ml3_J100_t100` (the Step 0
+drainhole at J = 0.25 and 1.0, same grid, gauge and table pipeline; no
+checkpoints) reached t = 100 clean, 0 NaN.  Packed as `02_spin_hold/`.
+- **Inflation, not collapse**: the throat grows on the static hold's unstable
+  mode with the opposite sign: τ = 5.8 (J025) and 5.6 (J100) vs 5.26.
+  R_eq 3.90 → 5.34 at t = 64 (J025); 4.09 → 7.36 at t = 40 and ~9.3 by
+  t = 56 from the χ slice (J100; the in-code rays cover the finest level
+  only, r < 4, and lose the throat at t ≈ 41).  No MOTS about the throat
+  once it opens (from t = 42 / 11): it is anti-trapped, as in the merger's
+  ε < 0 arms; a MOTS on its far side (coordinate r ≈ 1.5, R 36 / 30.5)
+  appears from t = 55 (J100) / 84 (J025).
+- **The branch is set by the data, not yet by the spin**: in the merger seed
+  arms' terms the holds act as radial kicks ε ≈ −3e-5 and −7e-3; ×230 for
+  ×4 in J is ~J⁴, the size of the O(J²) data's own error (J² would give ×16).
+  The spin's own signature is the throat's flattening, at a rate ∝ J²
+  (R_eq − R_pol 0.04 → 0.35 by t = 25 at J = 1).
+- **Constraints at the static hold's level** to the trust windows: L2_Ham
+  ≤ 2.5e-3; L2_Mom rises with the grid's K speckle exactly as in the static
+  hold.  Trust windows t ≤ 64 (J025, the box's boundary return) and t ≤ 57
+  (J100: throat leaves level 2 at r = 8, Ham doubles off its floor at 59).
 
 ## STEP 1 INPUT: AZAD O(J²) CLOSED FORMS CHECKED (2026-10-12)
 
@@ -41,7 +65,7 @@ M their ΔM.  Drainhole at J = 0.25 / 0.5 / 1: J/M² = 0.25 / 0.47 / 0.79,
 
 ## STEP 0 ANCHOR: PASS (2026-10-11)
 
-`static_hold_L64_t100` (L = 64, N = 128, ml3 = the merger hold's grid on a
+`static_hold_L64_ml3_t100` (L = 64, N = 128, ml3 = the merger hold's grid on a
 halved box; a = 2, M = 1 table; no checkpoints; GPU 0, 5.6 h): reached
 t = 100 clean, 0 NaN.
 - **Trajectory-identical to the merger `single_hold`**: t = 0 bit-identical;
@@ -95,7 +119,7 @@ outside the box (the featureless-frames trap).
 
 1. ~~**Step 0 anchor**~~ DONE 2026-10-11: smoke PASS, and the static hold is a
    numerical twin of the merger's production `single_hold_t100` (same grid)
-   over the full record — packed as `01_static_hold/static_hold_L64_t100`.
+   over the full record — packed as `01_static_hold/static_hold_L64_ml3_t100`.
    One resolution was decided to suffice: the twin check is stronger than a
    three-resolution τ fit (the merger already owns the resolution ladder on
    this grid).
@@ -103,9 +127,10 @@ outside the box (the featureless-frames trap).
    Δt = 0.02 Δx cause; constraint norms on the finest levels;
    constraint-solved Π seeds; 1/R waveform extrapolation.
 3. **Step 1 backgrounds** ← THE FRONT: the O(J²) slow-spin generator is in
-   (`backgrounds.py slowspin`, same `.spinbg` format, validated above); next
-   the first spinning hold at small J on the Step 0 grid, then decide
-   solver-vs-Oldenburg-request for fast spin.
+   (`backgrounds.py slowspin`, same `.spinbg` format, validated above); the
+   first spinning holds are done (J = 0.25, 1.0: they inflate, the branch set
+   by the data's J⁴ error, above).  Next: decide solver-vs-Oldenburg-request
+   for fast spin (`deep_research_fast_spin_solver.md`).
 
 ## RULES CARRIED OVER
 
@@ -121,4 +146,4 @@ L = 128 choice; on L = 64 (sponge 24–32) R = 30 is damped and R = 14 is
 near-zone — e.g. 12 / 16 / 20 there, and the in-code extraction
 (`activate_extraction = 1`) on for a per-step waveform.  A spinning collapse
 radiates l = 2, m = 0 with no seed (the oblate throat), so it needs this.
-The two live J holds keep 14 / 30 (no live change).
+The two J holds ran with 14 / 30.

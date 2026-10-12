@@ -2,4 +2,6 @@
 # Movies cut there (rerender_frames.py --t-max): only frames at or before t_max set the colour scale and
 # are stitched; later frames stay on disk, untouched.  Figures and any paper quote nothing after t_max.
 run	t_max	why
-static_hold_L64_t100	64	boundary return on the halved box (r = 32 out and back; local_speed frames speckle from t ~ 60); constraints stay ~3e-3 until t ~ 78 and the settled horizon R 2.4746 is unchanged to t = 100, but nothing after 64 is quoted
+static_hold_L64_ml3_t100	64	boundary return on the halved box (r = 32 out and back; local_speed frames speckle from t ~ 60); constraints stay ~3e-3 until t ~ 78 and the settled horizon R 2.4746 is unchanged to t = 100, but nothing after 64 is quoted
+spin_hold_L64_ml3_J025_t100	64	boundary return on the halved box, as static_hold_L64_ml3_t100 (same grid); its K speckle reaches the static hold's t = 64 level at t = 62 and L2_Ham leaves its 2.5e-3 floor (x2) at t = 72
+spin_hold_L64_ml3_J100_t100	57	the inflating throat leaves level 2 for level 1 (coordinate r = 8) at t ~ 57 and L2_Ham doubles off its 1.3e-3 floor at t = 59; the in-code R_eq/R_pol rays (finest level, r < 4) lose the throat at t ~ 41, so later throat radii come from the chi slice
