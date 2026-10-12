@@ -218,6 +218,14 @@ what the claims check or the identity grep flags, and report in a few lines.
 
 ## Code
 
+- **Judge a solver by the equations it was never asked to satisfy.** Driving the discretized equations to 1e-12
+  proves only self-consistency. Overdetermined systems (Einstein's equations: five equations, three unknowns) come
+  with spare equations the solution must satisfy for free — measure them on every solution, unimposed. A defect
+  there that does not shrink with resolution and scales with a physical parameter is a wrong continuous equation,
+  not a numerics bug; convict the culprit by substituting a closed-form exact solution into each printed equation.
+  (2026-10-12: the spinning-wormhole solver converged at every resolution while the published CKK eq. (12) was
+  wrong; the unimposed constraints flagged it at O(J⁴), and extremal Kerr closed four equations to 160 digits
+  and left a finite residue in eq. (12) alone.)
 - **Never write "the user" in code**: not in comments, docstrings, help text or printed messages, and not
   "the user's word / call / rule / design / choice" either (2026-10-08). Say what was decided and why, with the date
   if it matters: `# 2026-10-05: K on one fixed linear scale (the colour bar danced)`, never
