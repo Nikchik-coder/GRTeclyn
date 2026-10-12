@@ -261,6 +261,7 @@ def rerender_all(
     norms: dict[str, str] | None = None,
     decades: float = DEFAULT_SYMLOG_DECADES,
     field_decades: dict[str, float] | None = None,
+    field_zlims: dict[str, Sequence[float]] | None = None,
     only: Iterable[str] | None = None,
     skip: Iterable[str] | None = None,
     t_max: float | None = None,
@@ -268,7 +269,8 @@ def rerender_all(
     """Redraw every cached series, each against its own fixed scale.
 
     ``t_max`` restricts every series to the run's trust window (see
-    ``within_window``).
+    ``within_window``).  ``field_zlims`` hand-sets the scale of named fields
+    instead of measuring it, for a series whose loudest frames are noise.
 
     ``norms`` maps a field name to a colour normalisation ("symlog", "log") for
     that field only; every field left out keeps the linear default.  A key of
@@ -283,6 +285,7 @@ def rerender_all(
     used: dict[str, list[float]] = {}
     norms = norms or {}
     field_decades = field_decades or {}
+    field_zlims = field_zlims or {}
     only = set(only) if only else None
     skip = set(skip) if skip else set()
     for field, axis in cached_fields(frames_out_dir):
@@ -293,7 +296,8 @@ def rerender_all(
             continue
         norm = norms.get(field, norms.get("*"))
         written, limits = rerender_series(
-            frames_out_dir, field, axis, corner=corner, verbose=verbose,
+            frames_out_dir, field, axis, zlim=field_zlims.get(field),
+            corner=corner, verbose=verbose,
             norm=norm, decades=field_decades.get(field, decades), t_max=t_max,
         )
         if not written or limits is None:
@@ -302,6 +306,8 @@ def rerender_all(
         used[f"{field}_{axis}"] = [limits[0], limits[1]]
         dec = field_decades.get(field, decades)
         how = f" [{norm}, {dec:g} decades]" if norm == "symlog" else (f" [{norm}]" if norm else "")
+        if field in field_zlims:
+            how += " [hand-set]"
         print(
             f"[rerender] {field}_{axis}: {written} frame(s) at a fixed "
             f"{limits[0]:.6g} .. {limits[1]:.6g}{how}"

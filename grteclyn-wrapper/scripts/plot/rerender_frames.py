@@ -76,6 +76,17 @@ def main(argv: list[str] | None = None) -> int:
         "scale, are redrawn and go into the movies; later frames are left as "
         "they are (a gauge wave back from the wall, a blow-up on the way)",
     )
+    ap.add_argument(
+        "--zlim",
+        metavar="FIELD:LO:HI",
+        action="append",
+        default=[],
+        help="hand-set one field's fixed scale instead of measuring it (repeatable). "
+        "For a series whose loudest frames are noise: on spin_hold_L64_ml3_J025_t100 "
+        "(2026-10-12) the late grid speckle set Weyl4's envelope to 2.9e-3 against "
+        "a 1e-4 signal on the finest level, and the movie came out blank until "
+        "the speckle took over.  Values beyond the scale saturate.",
+    )
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args(argv)
 
@@ -110,9 +121,15 @@ def main(argv: list[str] | None = None) -> int:
             if dec:
                 field_decades[name] = float(dec)
 
+    field_zlims = {}
+    for item in args.zlim:
+        name, lo, hi = item.split(":")
+        field_zlims[name] = (float(lo), float(hi))
+
     used = slice_cache.rerender_all(
         frames_dir, corner=args.corner, verbose=args.verbose, norms=norms,
         decades=args.symlog_decades, field_decades=field_decades,
+        field_zlims=field_zlims,
         only=[f.strip() for f in args.only.split(",")] if args.only else None,
         skip=[f.strip() for f in args.skip.split(",")] if args.skip else None,
         t_max=args.t_max,
