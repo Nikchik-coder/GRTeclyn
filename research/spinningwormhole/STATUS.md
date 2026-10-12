@@ -8,9 +8,10 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| `spin_hold_L64_J025_t100` (Step 1's first spinning hold: the Step 0 drainhole at J = 0.25, `slowspin_eta2_m1_J025.spinbg`; no checkpoints) | node-3220ddd4 / GPU 0 (Step 0's card) | 1.8 at 07:05 (launched 06:58) | 100 | 16.6 u/h | 5.9 h, ~13:00 |
+| `spin_hold_L64_J025_t100` (Step 1's first spinning hold: the Step 0 drainhole at J = 0.25, `slowspin_eta2_m1_J025.spinbg`; no checkpoints) | node-3220ddd4 / GPU 0 (Step 0's card) | 24.3 at 08:19 (launched 06:58) | 100 | 18.0 u/h | 4.2 h, ~12:31 |
+| `spin_hold_L64_ml3_J100_t100` (the O(J²) solver's fast end: the same drainhole at J = 1.0, v_e 0.24 c, J/M² 0.79, 12 % of extremal J/A; `slowspin_eta2_m1_J100.spinbg`, chosen by a t = 0 probe at J = 0.6/0.8/1.0: L2_Ham 2.07/2.06/2.04e-3 vs static 2.10e-3, L2_Mom linear in J; no checkpoints) | node-3220ddd4 / GPU 1 | 0.0 at 08:19 (launched 08:18) | 100 | 17.4 u/h | 5.7 h, ~14:03 |
 
-At its close-out (decided 2026-10-12): rename this run to
+At its close-out (decided 2026-10-12): rename `spin_hold_L64_J025_t100` to
 `spin_hold_L64_ml3_J025_t100` and the Step 0 run to `static_hold_L64_ml3_t100`
 (registry, pack, references); every new run name carries its level.
 
