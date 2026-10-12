@@ -16,6 +16,16 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
 |---|---|---|---|
 | — | | | |
 
+## STEP 1 INPUT: AZAD O(J²) CLOSED FORMS CHECKED (2026-10-12)
+
+Exact symbolic check at C = 0 against all four O(J²) l = 0 equations (tt, rr,
+ang, □Φ): the printed w, h0 and b0 are exact; the printed φ20 (eq. 2.7, the
+4/π reading) is missing an overall factor φ — **φ20 = φ(r) × the printed
+expression**, which → 0 at r → +∞ and is regular at the throat.  b0 cannot
+be the faulty one: ang (−2r h0′ + 2r b0′ + 4 b0) fixes it given h0 up to
+c/r²; φ20 enters rr alone.  `derive_phi20_correction.py` (spinning_wormhole
+analysis scripts; 45 s, one core, every residual cancels to 0).
+
 ## STEP 0 ANCHOR: PASS (2026-10-11)
 
 `static_hold_L64_t100` (L = 64, N = 128, ml3 = the merger hold's grid on a

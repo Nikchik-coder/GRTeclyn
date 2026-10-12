@@ -101,13 +101,19 @@ READINGS = {"4/pi": 4 / sp.pi, "4/(pi r0)": 4 / (sp.pi * r0)}
 COMPONENTS: dict[str, sp.Expr] = {}
 
 
-def build() -> None:
+def metric() -> sp.Matrix:
+    """The O(eps^2) metric on X: eq. (2.3), l = 2 sector off, k0 = 0."""
     g = sp.zeros(4)
     g[0, 0] = -(1 + 2 * eps**2 * h0) + R2 * s**2 * eps**2 * w**2
     g[0, 3] = g[3, 0] = -R2 * s**2 * eps * w
     g[3, 3] = R2 * s**2
     g[1, 1] = 1 + 2 * eps**2 * b0
     g[2, 2] = R2
+    return g
+
+
+def build() -> None:
+    g = metric()
     log("metric set; computing Ricci")
     Ric = ricci(g)
     log("Ricci done")
