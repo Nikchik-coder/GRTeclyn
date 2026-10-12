@@ -142,9 +142,11 @@ class CollocationProblem:
 
         import jax
 
-        # CPU only: the cards are shared with live evolutions, and the
-        # solver's dense LU wants the host anyway.
-        jax.config.update("jax_platforms", "cpu")
+        # CPU by default: the cards are shared with live evolutions, and the
+        # solver's dense LU wants the host anyway.  JAX_PLATFORMS=cuda (plus
+        # CUDA_VISIBLE_DEVICES to pick a free card) opts a run onto a GPU.
+        jax.config.update("jax_platforms",
+                          os.environ.get("JAX_PLATFORMS", "cpu"))
         jax.config.update("jax_enable_x64", True)
         import jax.numpy as jnp
 

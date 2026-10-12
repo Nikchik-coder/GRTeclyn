@@ -123,7 +123,7 @@ def run_family(*, eta0: float, gamma: float, j_start: float,
                tol: float = 1e-12, tail_gate: float = 1e-11,
                nx_max: int = 192, max_steps: int = 500,
                out_dir=None, name: str = "family", log=print,
-               stop_fn=None) -> dict:
+               stop_fn=None, seed_npz=None) -> dict:
     """Continuation in log(J/eta0^2) along one fixed-gamma family
     (SpinningSolver.md section 4).
 
@@ -146,6 +146,19 @@ def run_family(*, eta0: float, gamma: float, j_start: float,
     lj = math.log(j_start / eta0**2)
     du = du0
     state = []                     # (lj, u) on the CURRENT grid
+    if seed_npz is not None:
+        # Exact restart: a saved J-prescribed Solution becomes the first
+        # state entry, and stepping continues one du beyond its J.
+        from .solution import Solution
+        s0 = Solution.load(seed_npz)
+        if s0.F.shape != (nx + 1, ny + 1):
+            raise ValueError(
+                f"seed grid {s0.F.shape} != requested {(nx + 1, ny + 1)}")
+        lj = math.log(s0.observables["J"] / eta0**2)
+        df = s0.F - problem.f_bg
+        dw = s0.W - s0.omega_inf * problem.q
+        state = [(lj, problem.pack(df, dw, s0.omega_inf))]
+        lj += du0
     rows = []
     reason = "max_steps"
     slope_sign = None
