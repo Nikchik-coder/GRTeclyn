@@ -126,11 +126,14 @@ outside the box (the featureless-frames trap).
 2. **Step 0 numerics** (optional hardening, none blocks Step 1): the
    Δt = 0.02 Δx cause; constraint norms on the finest levels;
    constraint-solved Π seeds; 1/R waveform extrapolation.
-3. **Step 1 backgrounds** ← THE FRONT: the O(J²) slow-spin generator is in
-   (`backgrounds.py slowspin`, same `.spinbg` format, validated above); the
-   first spinning holds are done (J = 0.25, 1.0: they inflate, the branch set
-   by the data's J⁴ error, above).  Next: decide solver-vs-Oldenburg-request
-   for fast spin (`deep_research_fast_spin_solver.md`).
+3. ~~**Step 1 slow spin**~~ DONE 2026-10-12: the O(J²) slow-spin generator
+   is in (`backgrounds.py slowspin`, same `.spinbg` format, validated above)
+   and the first spinning holds are done (J = 0.25, 1.0: they inflate, the
+   branch set by the data's J⁴ error, above).
+4. **The full solver** ← THE NEXT STEP (decided 2026-10-12): the rotating
+   Ellis–Bronnikov backgrounds solved in full, not as the O(J²) expansion —
+   fast spin, and data accurate enough that the spin, not the data's error,
+   picks the throat's branch (`deep_research_fast_spin_solver.md`).
 
 ## RULES CARRIED OVER
 
