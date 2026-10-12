@@ -112,3 +112,13 @@ outside the box (the featureless-frames trap).
 Same launch discipline as the merger campaign: no GPU start-up before the go,
 checkpoints are asked per run, full default frame set, STATUS updated and
 pushed at every launch/stop/wipe, scratch checked with every run check.
+
+**Wave extraction placed for the box (decided 2026-10-12).** Production runs
+must put their Ψ4 extraction radii in the wave zone of *their* box: outside
+the near zone (≳ one ringdown wavelength from the throat) and inside the
+sponge's inner radius.  The consumer's default `--radii 14 30` is the merger's
+L = 128 choice; on L = 64 (sponge 24–32) R = 30 is damped and R = 14 is
+near-zone — e.g. 12 / 16 / 20 there, and the in-code extraction
+(`activate_extraction = 1`) on for a per-step waveform.  A spinning collapse
+radiates l = 2, m = 0 with no seed (the oblate throat), so it needs this.
+The two live J holds keep 14 / 30 (no live change).
