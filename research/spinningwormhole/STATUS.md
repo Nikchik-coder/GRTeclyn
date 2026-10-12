@@ -8,7 +8,7 @@ Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes 
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| — | | | | | |
+| `spin_hold_L64_J025_t100` (Step 1's first spinning hold: the Step 0 drainhole at J = 0.25, `slowspin_eta2_m1_J025.spinbg`; no checkpoints) | node-3220ddd4 / GPU 0 (Step 0's card) | 0.2 (launched 06:58) | 100 | 18.4 u/h | 5.4 h, ~12:25 |
 
 ## QUEUED
 
