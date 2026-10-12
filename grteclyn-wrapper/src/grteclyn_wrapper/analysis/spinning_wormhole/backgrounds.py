@@ -73,6 +73,9 @@ from pathlib import Path
 
 import numpy as np
 
+from .spectral import cheb_eval as _cheb_eval
+from .spectral import lobatto as _cheb
+
 COMPONENT_NAMES = (
     "f",
     "nu_bar",
@@ -213,33 +216,8 @@ def static_background(
 
 
 # --- slow rotation, O(J^2) (module docstring) ------------------------------
-
-
-def _cheb(n: int) -> tuple[np.ndarray, np.ndarray]:
-    """Chebyshev-Lobatto nodes s_j = cos(pi j / n) and the derivative matrix."""
-    j = np.arange(n + 1)
-    s = np.cos(math.pi * j / n)
-    c = np.where((j == 0) | (j == n), 2.0, 1.0) * (-1.0) ** j
-    ds = s[:, None] - s[None, :]
-    d = np.outer(c, 1.0 / c) / (ds + np.eye(n + 1))
-    d -= np.diag(d.sum(axis=1))
-    return s, d
-
-
-def _cheb_eval(nodes: np.ndarray, vals: np.ndarray, s: np.ndarray) -> np.ndarray:
-    """Barycentric interpolation from Chebyshev-Lobatto nodes (spectral)."""
-    s = np.atleast_1d(np.asarray(s, dtype=np.float64))
-    w = (-1.0) ** np.arange(nodes.size)
-    w[0] *= 0.5
-    w[-1] *= 0.5
-    diff = s[:, None] - nodes[None, :]
-    hit = diff == 0.0
-    diff[hit] = 1.0
-    tmp = w / diff
-    out = (tmp @ vals) / tmp.sum(axis=1)
-    rows, cols = np.nonzero(hit)
-    out[rows] = vals[cols]
-    return out
+# The Lobatto nodes/derivative matrix and barycentric evaluation moved to
+# spectral.py (2026-10-12), shared with the full fast-spin solver.
 
 
 def slow_rotation_omega(eta0: float, gamma: float, chi: np.ndarray) -> np.ndarray:
