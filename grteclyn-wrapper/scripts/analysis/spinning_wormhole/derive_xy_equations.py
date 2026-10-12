@@ -272,6 +272,54 @@ def check_maps() -> bool:
     return ok
 
 
+def check_kerr() -> bool:
+    """Extremal Kerr (a = M) fits the ansatz exactly with eta0 = 0:
+    r = eta + M, e^{-f} = g_phph/(eta^2 sin^2 th), omega = -g_tph/g_phph,
+    e^{nu} = (Sigma/eta^2) e^{f}.  The imposed forms E_f, E_w and the
+    monitors E_c, D2 (D = 0 here) must vanish on it; the PUBLISHED eq. 12
+    (= sin^3 th * E_N) must NOT -- it leaves ~1e-2, the 2016 paper's typo
+    (found 2026-10-12).  Kept as a regression check so the N solve never
+    reverts to the printed equation."""
+    M = sp.Symbol("M", positive=True)
+    eta = XI
+    r = eta + M
+    c2 = (1 + Y) / 2
+    s2v = (1 - Y) / 2
+    Sig = r**2 + M**2 * c2
+    gpp_over_s2 = r**2 + M**2 + 2 * M**3 * r * s2v / Sig
+    F = -sp.log(gpp_over_s2 / eta**2)
+    W = 2 * M**2 * r / (Sig * gpp_over_s2)
+    NU = sp.log(Sig / eta**2) + F
+    Nbar = NU / s2v
+    jets = {}
+    for tag, e in (("f", F), ("w", W), ("N", Nbar)):
+        jets[tag], jets[f"{tag}_x"], jets[f"{tag}_xx"], jets[f"{tag}_y"], \
+            jets[f"{tag}_yy"] = jets_of(e)
+    E = residual_forms(sp.exp, eta0=0, y=Y, eta=eta, deta=sp.Integer(1),
+                       d2eta=sp.Integer(0), jets=jets)
+    pts = [{XI: sp.Rational(7, 10), Y: sp.Rational(-1, 3), M: 1},
+           {XI: sp.Rational(3, 2), Y: sp.Rational(2, 5), M: 1},
+           {XI: 4, Y: sp.Rational(1, 5), M: 2}]
+    ok = True
+    worst = {k: 0 for k in ("E_f", "E_w", "E_c", "D2")}
+    eq12_floor = sp.oo
+    for at in pts:
+        for k in worst:
+            worst[k] = max(worst[k], abs(E[k].subs(at).evalf(50)))
+        s3 = ((1 - Y) / 2 * sp.sqrt((1 - Y) / 2)).subs(at)
+        eq12_floor = min(eq12_floor, abs((E["E_N"] * s3).subs(at).evalf(50)))
+    for k, v in worst.items():
+        good = v <= sp.Float(1e-30)
+        ok = ok and good
+        print(f"  kerr[{k}]: max {sp.N(v, 3)} "
+              f"{'(vanishes, as required)' if good else 'FAIL'}")
+    good = eq12_floor >= sp.Float(1e-4)
+    ok = ok and good
+    print(f"  kerr[printed eq12]: min |residual| {sp.N(eq12_floor, 3)} "
+          f"{'(nonzero: the published typo, as expected)' if good else 'FAIL'}")
+    return ok
+
+
 def emit() -> None:
     print("""\
   Generic-map operator coefficients (equations.residual_forms), with
@@ -289,10 +337,11 @@ def emit() -> None:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--stage", choices=["forms", "doc", "static", "maps",
-                                        "emit"], action="append",
+                                        "kerr", "emit"], action="append",
                     help="run only these stages (default: all)")
     args = ap.parse_args()
-    stages = args.stage or ["forms", "doc", "static", "maps", "emit"]
+    stages = args.stage or ["forms", "doc", "static", "maps", "kerr",
+                            "emit"]
     failed = []
     if "forms" in stages:
         print("forms: residual_forms vs CKK (10)-(13), (19), 50 digits")
@@ -313,6 +362,10 @@ def main() -> int:
         print("maps: spectral.py derivatives; log-stretch analyticity")
         if not check_maps():
             failed.append("maps")
+    if "kerr" in stages:
+        print("kerr: extremal Kerr closes every form; the printed eq. 12 fails")
+        if not check_kerr():
+            failed.append("kerr")
     if "emit" in stages:
         emit()
     print("ALL PASS" if not failed else f"FAILED: {', '.join(failed)}")

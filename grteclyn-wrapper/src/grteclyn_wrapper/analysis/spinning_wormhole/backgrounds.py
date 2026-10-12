@@ -438,6 +438,83 @@ def _throat_numbers(sol: dict, eta0: float, gamma: float, J: float,
     }
 
 
+def full_background(
+    solution_path: str | Path,
+    n_x: int,
+    n_mu: int,
+    rescale: float = 1.0,
+) -> tuple[np.ndarray, np.ndarray, dict[str, np.ndarray], dict]:
+    """A fast-spin Solution (solution.py) on the table grid, plus numbers.
+
+    The six columns follow SpinningSolver.md section 2; ``rescale`` = lambda
+    applies eta -> lambda eta at write time (f, N, phi, x unchanged;
+    omega -> omega/lambda, d_eta omega -> /lambda^2, (d_theta omega)/sin
+    -> /lambda; header eta0 -> lambda eta0; D -> lambda D, M -> lambda M).
+    """
+    from .observables import identity_gates, observables as sol_observables
+    from .solution import Solution
+
+    sol = Solution.load(solution_path)
+    if not sol.gates:
+        sol.gates = identity_gates(sol)
+    if not sol.observables:
+        sol.observables = sol_observables(sol)
+
+    x = np.linspace(-1.0, 1.0, n_x)
+    mu = np.linspace(0.0, 1.0, n_mu)
+    y = 2.0 * mu * mu - 1.0
+    m = sol.radial_map
+    eta_tab = sol.eta0 * np.tan(0.5 * math.pi * np.clip(x, -1 + 1e-16, 1 - 1e-16))
+    xi = m.xi_of_eta(eta_tab)
+    xi[0], xi[-1] = -1.0, 1.0
+
+    f = sol.eval_grid("f", xi, y).T              # -> (n_mu, n_x)
+    nf = sol.eval_grid("N", xi, y).T
+    w = sol.eval_grid("w", xi, y).T
+    w_x = sol.eval_grid("w", xi, y, dx_order=1).T
+    w_y = sol.eval_grid("w", xi, y, dy_order=1).T
+    deta = m.deta(xi)[None, :]
+    dw_deta = w_x / deta
+    dw_dth_over_s = -4.0 * mu[:, None] * w_y
+
+    d = sol.observables["D"]
+    phi = np.ones((n_mu, 1)) * (
+        (d / sol.eta0) * 0.5 * math.pi * (x - 1.0) / math.sqrt(4.0 * math.pi)
+    )[None, :]
+
+    lam = float(rescale)
+    comps = {
+        "f": f,
+        "nu_bar": nf,
+        "omega": w / lam,
+        "domega_deta": dw_deta / lam**2,
+        "domega_dtheta_over_sintheta": dw_dth_over_s / lam,
+        "phi": phi,
+    }
+    info = dict(sol.observables)
+    info["table_eta0"] = lam * sol.eta0
+    info["table_D"] = lam * d
+    info["table_M_ADM"] = lam * info["M_ADM"]
+    info["table_J"] = lam * lam * info["J"]
+    info["gates"] = sol.gates
+    info["midpoint_err_f"] = _table_midpoint_error(sol, xi, x, y, f)
+    return x, mu, comps, info
+
+
+def _table_midpoint_error(sol, xi, x, y, f_tab) -> float:
+    """Bilinear-vs-spectral error of f at the table cell centres (the
+    fidelity gate: <= 1e-7 in f, SpinningSolver.md P5)."""
+    xm = 0.5 * (x[:-1] + x[1:])
+    ym = 0.5 * (y[:-1] + y[1:])
+    m = sol.radial_map
+    eta_m = sol.eta0 * np.tan(0.5 * math.pi * xm)
+    xi_m = m.xi_of_eta(eta_m)
+    exact = sol.eval_grid("f", xi_m, ym)                       # (nx-1, nmu-1)
+    bilin = 0.25 * (f_tab[:-1, :-1] + f_tab[:-1, 1:]
+                    + f_tab[1:, :-1] + f_tab[1:, 1:]).T
+    return float(np.max(np.abs(exact - bilin)))
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="backgrounds",
@@ -478,6 +555,19 @@ def main(argv: list[str] | None = None) -> int:
     p_slow.add_argument("--out", help="output .spinbg path (omit: numbers "
                         "only)")
 
+    p_full = sub.add_parser(
+        "full", help="write a .spinbg from a saved fast-spin Solution "
+        "(solution.py .npz; solver: SpinningSolver.md)"
+    )
+    p_full.add_argument("solution", help="Solution .npz path")
+    p_full.add_argument("--n-x", type=int, default=1025)
+    p_full.add_argument("--n-mu", type=int, default=65)
+    p_full.add_argument("--rescale", type=float, default=1.0,
+                        help="lambda of eta -> lambda eta at write time "
+                        "(default 1: the solution's own eta0)")
+    p_full.add_argument("--out", help="output .spinbg path (omit: numbers "
+                        "only)")
+
     p_info = sub.add_parser("info", help="print a table's header and ranges")
     p_info.add_argument("file")
 
@@ -512,6 +602,27 @@ def main(argv: list[str] | None = None) -> int:
                 "backgrounds slowspin",
             ] + lines
             write_spinbg(args.out, args.eta0, x, mu, comps, meta)
+            print(f"wrote {args.out} ({args.n_x} x {args.n_mu})")
+        return 0
+
+    if args.command == "full":
+        x, mu, comps, info = full_background(args.solution, args.n_x,
+                                             args.n_mu, args.rescale)
+        gates = info.pop("gates")
+        lines = [f"{k} {v!r}" for k, v in info.items()
+                 if isinstance(v, (int, float))]
+        lines += [f"gate_{k} {v!r}" for k, v in gates.items()
+                  if isinstance(v, (int, float))]
+        for line in lines:
+            print(line)
+        if args.out:
+            meta = [
+                f"family full fast-spin solution {Path(args.solution).name}, "
+                f"rescale {args.rescale!r}",
+                "generator grteclyn_wrapper.analysis.spinning_wormhole."
+                "backgrounds full",
+            ] + lines
+            write_spinbg(args.out, info["table_eta0"], x, mu, comps, meta)
             print(f"wrote {args.out} ({args.n_x} x {args.n_mu})")
         return 0
 

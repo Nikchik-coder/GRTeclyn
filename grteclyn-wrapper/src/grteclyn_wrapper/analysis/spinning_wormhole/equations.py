@@ -19,6 +19,16 @@ divided by their angular weights so every equation is regular on the axis
     eq.(13) = sin^2 theta cos theta * (h / eta') * E_c
     eq.(19) rewritten as the D2 expression.
 
+THE PUBLISHED EQ. (12) IS WRONG (found 2026-10-12): closed-form extremal
+Kerr (a = M, eta0 = 0, which fits the ansatz exactly) satisfies eqs. 10,
+11, 13 and 19 to 1e-160 but leaves 1e-2 in the printed eq. 12, and the
+solutions of the printed elliptic system carry a J^4-sized violation of
+(13)/(19) at every resolution.  The solver therefore imposes E_f, E_w
+(Newton) and obtains N and D^2 from the CONSTRAINTS (solve_N_constrained,
+eqs. 13 + 19, linear in both); E_N is only a reported diagnostic of the
+paper's equation.  derive_xy_equations.py --stage kerr keeps the finding
+as a regression check.
+
 ``residual_forms`` below is the one place these forms exist.  It is written
 against a generic radial map -- the coefficients take eta(xi), eta'(xi),
 eta''(xi) at the nodes -- and uses only arithmetic plus a caller-supplied
@@ -119,6 +129,17 @@ class CollocationProblem:
     def __init__(self, *, eta0: float, gamma: float, radial_map=None,
                  nx: int = 64, ny: int = 16,
                  prescribe: tuple[str, float] = ("omega_inf", 0.0)):
+        import os
+
+        # Modest thread pool BEFORE the first jax import: the container
+        # advertises 128 CPUs but is quota-capped at 24, and XLA's default
+        # one-thread-per-CPU pool both busts a ulimit -v sandbox
+        # (pthread_create EAGAIN, 2026-10-12) and would throttle live runs.
+        os.environ.setdefault(
+            "XLA_FLAGS",
+            "--xla_cpu_multi_thread_eigen=false "
+            "intra_op_parallelism_threads=8")
+
         import jax
 
         # CPU only: the cards are shared with live evolutions, and the
@@ -304,7 +325,10 @@ class CollocationProblem:
         return L
 
     def solve_N(self, F, W):
-        """N from the linear eq. (12) at fixed (f, omega)."""
+        """N from the PRINTED eq. (12) at fixed (f, omega): the paper's
+        scheme, kept for comparison only.  Production is
+        solve_N_constrained -- the printed eq. 12 fails on extremal Kerr
+        (2026-10-12), see the module docstring."""
         import numpy as np
 
         nx, ny = self.nx, self.ny
@@ -342,3 +366,85 @@ class CollocationProblem:
                            for i in range(1, self.nx)])
         return {"E_c": E["E_c"], "D2": E["D2"], "E_N": E["E_N"],
                 "j_of_x": j_of_x, "C2_i": (self.eta0**2 / self.h_i)[:, 0]}
+
+    def solve_N_constrained(self, F, W):
+        """N and D^2 jointly from the CONSTRAINT sector: the eq. (13) rows
+        (E_c) and the eq. (19) rows (D^2 minus its field expression), both
+        linear in (N, D^2), plus N = 0 at xi = +-1, solved as one
+        equilibrated least squares.
+
+        Decided 2026-10-12 after the P2 gate failure: the elliptic eq. (12)
+        solve leaves a J^4-sized violation of (13)/(19) that no resolution
+        removes -- the (f, omega) pair is exact (the quadrature nu built
+        from the constraints lands on nu(-inf) = 0 to 5e-9 by itself), so
+        the constraints, whose geometric content is R_{eta theta} and the
+        scalar's R_{eta eta}, are made the DEFINITION of N, and the printed
+        eq. (12) residual becomes a reported diagnostic instead of an
+        imposed equation.  Gradient data plus one Dirichlet end determine N
+        uniquely; D^2 is the one extra unknown and eq. (19) at the far end
+        fixes it.
+
+        Returns (N, D2, info) with the per-class residuals.
+        """
+        import numpy as np
+
+        nx, ny = self.nx, self.ny
+        n = self.n
+        y = self.sy[None, :]
+        F = np.asarray(F)
+        W = np.asarray(W)
+        F_x, F_y = self.Dx @ F, F @ self.Dy.T
+        W_x, W_y = self.Dx @ W, W @ self.Dy.T
+        e2f = np.exp(-2.0 * F[1:-1])
+        h, eta, ep = self.h_i, self.eta_i, self.deta_i
+        W2 = (h / ep) ** 2
+        eye_y = np.eye(ny + 1)
+        n_int = (nx - 1) * (ny + 1)
+        dx_rows = np.kron(self.Dx, eye_y)[(ny + 1):-(ny + 1)]
+
+        def ang_rows(xcoef, ang):
+            full = np.concatenate([[0.0], xcoef, [0.0]])
+            return np.kron(np.diag(full), ang)[(ny + 1):-(ny + 1)]
+
+        # E_c rows: N_x + (2 eta ep / h)(N - (1 - y) N_y)
+        #           = -4 f_x f_y + 2 h (1 - y) e^{-2f} w_x w_y
+        ang_c = eye_y - np.diag(1.0 - self.sy) @ self.Dy
+        A_c = dx_rows + ang_rows(2 * eta[:, 0] * ep[:, 0] / h[:, 0], ang_c)
+        b_c = (-4.0 * F_x[1:-1] * F_y[1:-1]
+               + 2.0 * h * (1 - y) * e2f * W_x[1:-1] * W_y[1:-1]).ravel()
+
+        # E19 rows: (eta (1-y) h / (4 ep)) N_x
+        #           + (h/2)((1-y^2) N_y - (1+y) N) + D2
+        #           = eta0^2 + W2/4 f_x^2 - h (1-y^2) f_y^2
+        #             - (1-y)/8 e^{-2f} (h W2 w_x^2 - 4 h^2 (1-y^2) w_y^2)
+        v1 = (eta[:, 0] * h[:, 0] / (4 * ep[:, 0]))[:, None] * (1 - y)
+        ang_19 = np.diag(1.0 - self.sy**2) @ self.Dy - np.diag(1.0 + self.sy)
+        A_19 = v1.ravel()[:, None] * dx_rows + ang_rows(h[:, 0] / 2.0, ang_19)
+        b_19 = (self.eta0**2 + W2 / 4 * F_x[1:-1]**2
+                - h * (1 - y**2) * F_y[1:-1]**2
+                - (1 - y) / 8 * e2f * (h * W2 * W_x[1:-1]**2
+                                       - 4 * h * h * (1 - y**2)
+                                       * W_y[1:-1]**2)).ravel()
+
+        A_bc = np.zeros((2 * (ny + 1), n))
+        for j in range(ny + 1):
+            A_bc[j, j] = 1.0
+            A_bc[ny + 1 + j, n - (ny + 1) + j] = 1.0
+        A = np.vstack([A_c, A_19, A_bc])
+        col_d2 = np.concatenate([np.zeros(n_int), np.ones(n_int),
+                                 np.zeros(2 * (ny + 1))])
+        A = np.hstack([A, col_d2[:, None]])
+        b = np.concatenate([b_c, b_19, np.zeros(2 * (ny + 1))])
+        scale = 1.0 / np.maximum(np.max(np.abs(A), axis=1), 1e-300)
+        sol_vec, *_ = np.linalg.lstsq(scale[:, None] * A, scale * b,
+                                      rcond=None)
+        Nf = sol_vec[:n].reshape(nx + 1, ny + 1)
+        d2 = float(sol_vec[-1])
+        res = scale * (A @ sol_vec - b)
+        info = {
+            "res_Ec": float(np.max(np.abs(res[:n_int]))),
+            "res_E19": float(np.max(np.abs(res[n_int:2 * n_int]))),
+            "res_bc": float(np.max(np.abs(res[2 * n_int:]))),
+            "D2": d2,
+        }
+        return Nf, d2, info

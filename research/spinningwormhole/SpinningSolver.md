@@ -259,6 +259,28 @@ A `Solution` becomes a `.spinbg` through the existing `write_spinbg`, so `Rotati
 
 ---
 
+## Execution notes
+
+**2026-10-12 (P0-P2 done, M1 passed).** The published eq. (12) is wrong:
+closed-form extremal Kerr (a = M, eta0 = 0, which fits the ansatz exactly)
+satisfies eqs. (10), (11), (13) and (19) exactly but leaves ~1e-2 in the
+printed eq. (12), and solutions of the printed elliptic system carry a
+J^4-sized violation of (13)/(19) at every resolution (first seen as
+D^2 spread 5.5e-7 at J = 0.25).  The production solver therefore imposes
+(10), (11) by Newton and obtains N and D^2 jointly from the CONSTRAINTS
+(13) + (19) as one linear least squares (`solve_N_constrained`); the
+printed eq. (12) is a reported diagnostic only, and
+`derive_xy_equations.py --stage kerr` keeps the finding as a regression
+check.  Measured gates at 64 x 16: D^2 spread 1.4e-12, E_c <= 1.3e-9,
+J-flux spread <= 1.3e-9 (floors, C >= 0.05), Smarr <= 9e-11, tails <=
+5e-12; independent full-Einstein residual (masked) 1.0e-10 at J = 0.25
+and 4.2e-10 at J = 1 against the static member's 2e-11 floor -- vs 3e-5
+and 1e-2 for the O(J^2) data.  J^4 agreement with the O(J^2) generator:
+ratios constant to 1 %.  First table written (1025 x 65, midpoint error
+in f 1.8e-7, just above the 1e-7 target -- P5 sizes the grid).
+
+---
+
 ## 11. Parallel track: data request to Oldenburg
 
 Send now, as a cross-check only; nothing in the plan waits for a reply. Their finite-difference data (constraint norms around 1e−4 to 1e−3 in the group's related papers) cannot replace ours, but an independent family is useful in P3.
@@ -271,7 +293,7 @@ To: Burkhard Kleihaus, Jutta Kunz, Fech Scen Khoo (Oldenburg); cc Jose Luis Blá
 >
 > I evolve Ellis–Bronnikov wormholes nonlinearly in 3+1 (arXiv:2604.00071) and am now extending this to rotating ones, from slow spin to near-extremal Kerr. I am building a spectral solver for your quasi-isotropic ansatz and would value your backgrounds as an independent check.
 >
-> Would you be willing to share, in any format: (1) the symmetric family at η₀ = 1 across both ω₀ branches, up to v_e ≈ 0.95, as f, ν, ω on your grid; (2) any non-symmetric family, ideally near γ = −π; (3) your grid sizes and accuracy; and (4) whether CKK's Fig. 2 plots J/R_e² or 2J/R_e², as Volkov's 2026 paper suggests? I will cite and acknowledge the data, and share our solutions and 3D results.
+> Would you be willing to share, in any format: (1) the symmetric family at η₀ = 1 across both ω₀ branches, up to v_e ≈ 0.95, as f, ν, ω on your grid; (2) any non-symmetric family, ideally near γ = −π; (3) your grid sizes and accuracy; (4) whether CKK's Fig. 2 plots J/R_e² or 2J/R_e², as Volkov's 2026 paper suggests; and (5) whether an erratum exists for CKK's eq. (12) — in our tests extremal Kerr in your ansatz satisfies eqs. (10), (11), (13) and (19) exactly but not the printed (12), and we instead fix ν from (13) and (19)? I will cite and acknowledge the data, and share our solutions and 3D results.
 >
 > Best regards,
 > [name]

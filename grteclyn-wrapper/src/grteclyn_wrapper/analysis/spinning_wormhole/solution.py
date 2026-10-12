@@ -80,6 +80,16 @@ class Solution:
             out[k] = spectral.cheb_eval(self.sy, rows[k], np.array([y[k]]))[0]
         return out
 
+    def eval_grid(self, which: str, xi, y, dx_order: int = 0,
+                  dy_order: int = 0) -> np.ndarray:
+        """Barycentric evaluation on the tensor grid xi x y: (len(xi),
+        len(y)), two 1-D passes (fast path for table writing)."""
+        xi = np.atleast_1d(np.asarray(xi, float))
+        y = np.atleast_1d(np.asarray(y, float))
+        a = self.jet(which, dx_order, dy_order)
+        rows = spectral.cheb_eval(self.sx, a, xi)        # (nxi, ny+1)
+        return spectral.cheb_eval(self.sy, rows.T, y).T  # (nxi, nyv)
+
     def eval(self, which: str, eta, theta, deta_order: int = 0) -> np.ndarray:
         """Field (or its 1st/2nd eta-derivative) at (eta, theta).
 

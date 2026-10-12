@@ -22,6 +22,35 @@ references; their run dirs keep the old name as a symlink).
 |---|---|---|---|
 | — | | | |
 
+## STEP 2 STARTED: THE FULL SOLVER, M1 PASSED (2026-10-12)
+
+`SpinningSolver.md` P0-P2 are done on `feature/spinning` (pure CPU, the
+wrapper venv + jax; no GPU use):
+- **The published CKK eq. (12) is wrong**: extremal Kerr (a = M, eta0 = 0,
+  closed form, fits their ansatz exactly) satisfies eqs. (10), (11), (13),
+  (19) exactly and leaves ~1e-2 in the printed (12).  Solutions of the
+  printed elliptic system violate the constraints at J^4 at EVERY
+  resolution; the solver instead takes N and D^2 jointly from the
+  constraints (13)+(19) (linear least squares), and
+  `derive_xy_equations.py --stage kerr` pins the finding as a regression
+  check.  The Oldenburg email (plan section 11) now asks about an erratum.
+- **First full (non-perturbative) rotating backgrounds**: the a = 2, M = 1
+  drainhole at J = 0.25 and J = 1 (v_e 0.057 / 0.21), ~2 s each at
+  64 x 16.  Independent full-Einstein residual (sympy Ricci, C >= 0.05)
+  1.0e-10 / 4.2e-10 vs the static member's 2e-11 floor -- against 3e-5 /
+  1e-2 for the O(J^2) tables that ran the Step 1 holds.  D^2 spread
+  1.4e-12, Smarr 9e-11, J-flux spread <= 1.3e-9, tails <= 5e-12.
+- Agreement with the O(J^2) generator at equal J: f, N differ by J^4 and
+  omega by J^3 with ratios constant to 1 % (J = 0.05-0.2); at J = 1 the
+  full M_ADM is 1.4 % below O(J^2), D +0.3 %, the omega sector -13 %
+  (its own J^2-relative correction).
+- First `.spinbg` from the full solver written (`backgrounds.py full`,
+  1025 x 65; bilinear midpoint error in f 1.8e-7 -- P5 sizes the final
+  grids).  22 wrapper tests in `tests/spinning_wormhole/`.
+- NEXT in the plan: P3 (continuation to v_e ~ 0.9 on both families, CKK
+  anchors), then P4 near-extremal, P5 tables + the 3D acceptance hold
+  (GPU; will be proposed before any launch).
+
 ## STEP 1: THE SPINNING HOLDS INFLATE (2026-10-12)
 
 `spin_hold_L64_ml3_J025_t100` and `spin_hold_L64_ml3_J100_t100` (the Step 0
@@ -130,10 +159,11 @@ outside the box (the featureless-frames trap).
    is in (`backgrounds.py slowspin`, same `.spinbg` format, validated above)
    and the first spinning holds are done (J = 0.25, 1.0: they inflate, the
    branch set by the data's J⁴ error, above).
-4. **The full solver** ← THE NEXT STEP (decided 2026-10-12): the rotating
+4. **The full solver** ← IN PROGRESS (started 2026-10-12): the rotating
    Ellis–Bronnikov backgrounds solved in full, not as the O(J²) expansion —
    fast spin, and data accurate enough that the spin, not the data's error,
-   picks the throat's branch (`deep_research_fast_spin_solver.md`).
+   picks the throat's branch.  Plan `SpinningSolver.md`; P0–P2 (M1) done
+   (above), P3 continuation next.
 
 ## RULES CARRIED OVER
 
