@@ -131,14 +131,16 @@ Two folders share the name `spinning_wormhole`:
   - `observables.py`: the physical numbers and identity gates;
   - `conventions.py`: every sign and normalisation;
   - `backgrounds.py`: the `.spinbg` writer, static and O(J²) generators, and `full` for a
-    solver `Solution`.
+    solver `Solution`;
+  - `adm.py`: ADM mass and angular momentum of the 3D data on coordinate spheres, set against
+    the same integral of the table's own metric (used by `t0_checks.py`).
 - **`grteclyn-wrapper/scripts/analysis/spinning_wormhole/`** holds the command-line tools that use
   it:
   - `solve_family.py`: runs a family;
   - `check_einstein.py`: the full-Einstein check;
   - `derive_xy_equations.py`: the symbolic proof that the solver's equations equal CKK's, and the
     extremal-Kerr regression;
-  - `t0_checks.py`: the 3D t = 0 checks;
+  - `t0_checks.py`: the 3D t = 0 checks (throat radii, constraint shells, ADM mass and spin);
   - the O(J²) and Azad checks.
 
 Outputs: the solver's saved solutions and the 15 tables live in `runs/spinning_p3/`, which is

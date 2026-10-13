@@ -15,6 +15,8 @@
   solution       the Solution container: save/load, spectral evaluation
   observables    identity gates (D2, E_c, J flux, Smarr) and throat numbers
   continuation   solve_point: O(J^2)-seeded solve of one background
+  adm            ADM mass and angular momentum of 3D data on coordinate
+                 spheres, against the table's own metric (Step 3 check A1)
 
 The fast-spin solver plan: research/spinningwormhole/SpinningSolver.md.
 Run as ``python -m grteclyn_wrapper.analysis.spinning_wormhole.<module>``.

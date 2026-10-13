@@ -31,7 +31,7 @@ two live drainhole holds finish as they are.
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| A1 t = 0 validation at v_e 0.24 / 0.43 / 0.67 / 0.85 / 0.9 / 0.95 / 0.99, N 64/96/128 | GPU minutes each; ADM M, J extraction (to add; `t0_checks.py` has the throat radii) | — | its go |
+| A1 t = 0 validation at v_e 0.24 / 0.43 / 0.67 / 0.85 / 0.9 / 0.95 / 0.99, N 64/96/128 | GPU minutes each; `t0_checks.py` reads throat radii, constraint shells and ADM M, J (`adm.py`, added 2026-10-13) | — | its go |
 | A2 `static_hold_L64_ml3_sym_t100` ×3 (N 64/96/128) | ~7.6 GPU-h; static table η0 2, M 0 (`backgrounds.py static`) | — | A1, its go |
 | A3 `spin_hold_L64_ml3_ve024b_t100` ×3 | ~7.6 GPU-h; family (b) table at v_e 0.24, η0 2 (CPU, saved solution) | — | A2, its go |
 | A3 `spin_hold_L64_ml3_ve043b_t100` ×3 | as above, v_e 0.43 | — | A2, its go |
