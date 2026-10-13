@@ -21,7 +21,7 @@ No checkpoints (A1: asked, none). A1 runs pop `runs/spinning_wormhole/logs/a1_qu
 (`a1_queue_v3.sh`, one worker per card) into `symmetric_massless/validation/`; tables
 `runs/spinning_p3/tables_eta2/` (ve024–085 new: `p5_A1_tables.py`, midpoint error ≤ 8.5e-8).
 The first six A1 runs on L = 64 (v_e 0.24, 0.43; 13:49–14:10) are superseded by
-the L = 128 set (decided 2026-10-13); their 25 GB of scratch wait for the word.
+the L = 128 set (decided 2026-10-13); their scratch was pruned 14:31 (22 GB).
 Closed out today, all in `drainhole/04_fast_spin_hold/`: v_e 0.7 (died t = 42.36,
 far-side puncture), v_e 0.5 (finished; 14 movies to t = 64), J = 1 on exact data
 (died t = 70.64 at the end of a collapse).
@@ -61,6 +61,7 @@ spinning ones are not.
 | run | needs | restart from | waiting on |
 |---|---|---|---|
 | A2 `static_hold_L128_ml3_sym_t100` ×3 (N 128/192/256) | ~10 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | A1, its go |
+| **Puncture probes (go 14:33, no checkpoints):** `spin_hold_L128_N128_ml3_ve043b/067b/085b_t100`, the N = 128 members of A3 | <1 h evolution each (A1 ran N = 128 at ~129 t/h); `params_spin_hold_L128_N128_ve0XXb.txt` = the A1 L128 N128 template with stop_time 100 | — | the A1 queue (~15:15); `logs/probe_queue.sh` workers wait on both cards, runs into `symmetric_massless/` |
 | A3 `spin_hold_L128_ml3_ve024b_t100` ×3 | ~10 GPU-h; table `fam_b_ve024_eta2` (built) | — | A2, its go; the far-side puncture |
 | A3 `spin_hold_L128_ml3_ve043b_t100` ×3 | as above, v_e 0.43 | — | A2, its go; the far-side puncture |
 | A3 `spin_hold_L128_ml3_ve067b_t100` ×3 | as above, v_e 0.67 | — | A2, its go; the far-side puncture |
