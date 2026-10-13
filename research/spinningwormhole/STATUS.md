@@ -21,14 +21,39 @@ The t = 0 checks are packed as `03_t0_checks/`; their scratch was wiped
 
 ## QUEUED
 
+**Order (decided 2026-10-13): the symmetric family first, then the drainhole.**
+The symmetric family is the one Kleihaus–Kunz and CKK published and Azad et al.
+analysed in full, so it validates the 3D pipeline against published values before
+the drainhole, which has no published fast-spin data, is taken to high spin. The
+two live drainhole holds finish as they are.
+
+*Phase A: symmetric, family (b) at η0 2*
+
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| `static_hold_L64_ml3_sym_t100` ×3 (N 64/96/128) | ~7.6 GPU-h; static table η0 2, M 0 (`backgrounds.py static`) | — | its go |
-| `spin_hold_L64_ml3_ve024b_t100` ×3 | ~7.6 GPU-h; family (b) table at v_e 0.24, η0 2 (CPU, saved solution) | — | its go |
-| `spin_hold_L64_ml3_ve043b_t100` ×3 | as above, v_e 0.43 | — | its go |
-| `spin_hold_L64_ml3_ve067b_t100` ×3 | as above, v_e 0.67 | — | its go; the ve070a puncture death |
-| `spin_hold_L64_ml3_ve085b_t100` ×3 | as above, v_e 0.85 | — | its go; the ve070a puncture death |
-| N 64 / 96 partners of `static_hold_L64_ml3_t100`, `spin_hold_L64_ml3_ve050a_t100`, `spin_hold_L64_ml3_J100_full_t100` | ~2.1 GPU-h each pair | — | its go |
+| A1 t = 0 validation at v_e 0.24 / 0.43 / 0.67 / 0.85 / 0.9 / 0.95 / 0.99, N 64/96/128 | GPU minutes each; ADM M, J extraction (to add; `t0_checks.py` has the throat radii) | — | its go |
+| A2 `static_hold_L64_ml3_sym_t100` ×3 (N 64/96/128) | ~7.6 GPU-h; static table η0 2, M 0 (`backgrounds.py static`) | — | A1, its go |
+| A3 `spin_hold_L64_ml3_ve024b_t100` ×3 | ~7.6 GPU-h; family (b) table at v_e 0.24, η0 2 (CPU, saved solution) | — | A2, its go |
+| A3 `spin_hold_L64_ml3_ve043b_t100` ×3 | as above, v_e 0.43 | — | A2, its go |
+| A3 `spin_hold_L64_ml3_ve067b_t100` ×3 | as above, v_e 0.67 | — | A2, its go; the ve070a puncture death |
+| A3 `spin_hold_L64_ml3_ve085b_t100` ×3 | as above, v_e 0.85 | — | A2, its go; the ve070a puncture death |
+| A4 `spin_hold_L64_ml3_ve090b/095b/099b_t100` ×3 | tables exist (`tables_eta2/`); a bigger box near 0.99 | — | A3, its go |
+
+- **A1, what it validates:** the Kleihaus–Kunz 2014 Fig. 1 quantities (M/M0,
+  J/J0, R_p/R, R_A/R, ΩJ), read off the 3D grid at t = 0 and compared with the
+  table and the digitized KK curves, converging across N.
+- **A2:** the static Ellis growth against Azad et al.'s C = 0 rate (τ ≈ 1.7 at
+  η0 = 2).
+- **A3:** their two modes and the crossing.
+- **A4:** beyond any published stability result.
+
+*Phase B: drainhole, family (a), after Phase A*
+
+| run | needs | restart from | waiting on |
+|---|---|---|---|
+| B1 N 64 / 96 partners of `static_hold_L64_ml3_t100`, `spin_hold_L64_ml3_ve050a_t100`, `spin_hold_L64_ml3_J100_full_t100` | ~2.1 GPU-h each pair | — | Phase A, its go |
+| B2 `spin_hold_L64_ml3_ve070a_t100` again ×3 | the far-side puncture fix | — | Phase A, the fix, its go |
+| B3 higher spin ×3 (v_e 0.9 / 0.95 / 0.99) | tables exist; a bigger box near 0.99 | — | B2, its go |
 
 **Every quoted run is a triplet** (decided 2026-10-13; the stability protocol in
 `SpinningWormhole.md`, after Evstafyeva, Siemonsen & East, arXiv:2508.11527):
