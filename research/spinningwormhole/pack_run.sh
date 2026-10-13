@@ -34,7 +34,9 @@ for run in "$@"; do
   find "${run}/small_data" -maxdepth 1 -type f -exec cp {} "${dest}/" \;
   cp "${run}/params.txt" "${dest}/evolution_params.txt"
   cp "${run}/preflight.json" "${run}/run_manifest.json" "${dest}/"
-  grep -E '^\[(swh|preflight|manifest)\]' "${LOGS}/${name}.log" | head -n 40 > "${dest}/launch_banner.txt"
+  # grep -m, not | head: under pipefail a head that closes early kills grep with SIGPIPE
+  # (exit 141) and set -e stops the pack before the scrub (2026-10-13)
+  grep -m 40 -E '^\[(swh|preflight|manifest)\]' "${LOGS}/${name}.log" > "${dest}/launch_banner.txt"
   tail -n 200 "${run}/run.log" > "${dest}/run_tail.log"
   ROOT="${ROOT}" python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py" "${dest}"/*
   echo "[pack] ${name} (${status}) -> ${dest#"${ROOT}"/} ($(ls "${dest}" | wc -l) files)"

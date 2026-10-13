@@ -1,0 +1,241 @@
+{
+ "schema": 1,
+ "campaign": "spinning_wormhole",
+ "mode": "full",
+ "restart": false,
+ "exe": "main3d_smoke_bfb65e8e_2026-10-10.ex",
+ "exe_sha256": "972ec4dad80167e64a1a2ffec205057092d89f97d414383957b48900b01c69c5",
+ "params_sha256": "6b82045463bcbb887876ba0113292bc23a826abb3c74a2afb049f3f51d5e50ed",
+ "verdict": "pass",
+ "reasons": [],
+ "frames": {
+  "fields": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "required": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "missing": [],
+  "subset": null,
+  "source": "--frames-fields in SWH_CONSUME_ARGS",
+  "axis": "z",
+  "errors": [],
+  "warnings": [],
+  "render": {
+   "plotfile": "plt00000",
+   "frame": 0,
+   "status": "ok",
+   "seconds": 12.0,
+   "frames_out": "preflight_frames",
+   "log": "preflight_frames/render.log",
+   "fields": {
+    "chi": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": 0.00012926670024171472,
+     "max": 0.9957553744316101,
+     "verdict": "ok"
+    },
+    "chi_minus_1": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": -0.9998707175254822,
+     "max": -0.004244600422680378,
+     "verdict": "ok"
+    },
+    "K": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": 0.0,
+     "max": 0.0,
+     "verdict": "flat",
+     "why": "every pixel 0: K is constant everywhere in this plotfile (nothing to show yet)"
+    },
+    "lapse": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": 0.9009082317352295,
+     "max": 0.9979843497276306,
+     "verdict": "ok"
+    },
+    "shift1": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": -0.19639131426811218,
+     "max": 0.19639131426811218,
+     "verdict": "ok"
+    },
+    "shift2": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": -0.19639131426811218,
+     "max": 0.19639131426811218,
+     "verdict": "ok"
+    },
+    "shift3": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": 0.0,
+     "max": 0.0,
+     "verdict": "flat",
+     "why": "every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet)"
+    },
+    "phi": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": -0.7909321784973145,
+     "max": -0.006019944325089455,
+     "verdict": "ok"
+    },
+    "Pi": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": 0.0,
+     "max": 0.0,
+     "verdict": "flat",
+     "why": "every pixel 0: Pi is constant everywhere in this plotfile (nothing to show yet)"
+    },
+    "Weyl4_Re": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": -0.00463079521432519,
+     "max": 8.775125752435997e-05,
+     "verdict": "ok"
+    },
+    "Weyl4_Im": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": -0.0001203687788802199,
+     "max": 6.281772948568687e-05,
+     "verdict": "ok"
+    },
+    "Weyl4_Mag": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": 6.440832589493795e-11,
+     "max": 0.004630849231034517,
+     "verdict": "ok"
+    },
+    "scalar_activity": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": 0.006019944325089455,
+     "max": 0.7909321784973145,
+     "verdict": "ok"
+    },
+    "local_speed": {
+     "pixels": 1048576,
+     "nan": 0,
+     "min": 0.03552413359284401,
+     "max": 0.9959413409233093,
+     "verdict": "ok"
+    }
+   },
+   "log_tail": []
+  }
+ },
+ "intent": {
+  "errors": [],
+  "warnings": [
+   "this run writes no checkpoints: if it dies, it cannot be restarted"
+  ]
+ },
+ "required_files": {
+  "files": {
+   "spinning_background_file": "runs/spinning_p3/tables_eta2/fam_b_ve043_eta2.spinbg"
+  },
+  "errors": []
+ },
+ "symmetry": {
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "consumer": {
+  "consume": true,
+  "areal_radius": "off",
+  "neck_horizons": false,
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "paths": {
+  "name": "spin_hold_L128_N128_ml3_ve043b_t100",
+  "errors": [],
+  "warnings": []
+ },
+ "static": {
+  "keys": 64,
+  "absent_from_binary": [],
+  "allowed_absent": []
+ },
+ "probe": {
+  "status": "ok",
+  "exit_code": 6,
+  "unused": [
+   "write_extraction"
+  ],
+  "version": "bfb65e8e",
+  "seconds": 3.0,
+  "log_tail": [],
+  "allowed_unused": [
+   "write_extraction"
+  ]
+ },
+ "t0": {
+  "collapse_diagnostics.dat": {
+   "time": 0.0,
+   "min_lapse": 0.90090823034,
+   "min_chi": 0.00012926670098,
+   "max_abs_K": 0.0,
+   "min_lapse_x": 0.0,
+   "min_lapse_y": 0.0,
+   "min_lapse_z": 0.0,
+   "min_phi": -0.79093218405,
+   "max_phi": -0.052405688222,
+   "min_Pi": 0.0,
+   "max_Pi": 0.0
+  },
+  "constraint_norms.dat": {
+   "time": 0.0,
+   "L2_Ham": 0.00092776128939,
+   "L2_Mom": 0.00022463088428
+  },
+  "throat_geometry.dat": {
+   "time": 0.0,
+   "R_eq_min": 2.2185914719,
+   "R_pol_min": 2.1709818567,
+   "ergo_min": -8.248865882
+  }
+ },
+ "grteclyn_version": "bfb65e8e",
+ "seed": {
+  "requested": {}
+ }
+}

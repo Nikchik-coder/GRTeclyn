@@ -93,6 +93,28 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   grid, N = 128, to t = 1) on family (b) rescaled to η0 = 2, at
   v_e 0.50 / 0.70 / 0.90 / 0.95 / 0.99: throat rays within 0.1 % of the
   table, constraints at the static hold's level.
+- `01_t0_checks/L128_A1/<spin>/` (2026-10-13), Phase A1: the t = 0 check on
+  the L = 128 box (the merger's `single_hold_L128_t100` layout) at
+  v_e 0.24 / 0.43 / 0.67 / 0.85 / 0.90 / 0.95 / 0.99, each as a triplet
+  N = 128 / 192 / 256 run to t = 1; per spin `t0conv_<spin>_L128_checks.txt`
+  (`t0_checks.py` with `adm.py`).  PASS at every spin: the throat's ray
+  radii converge to the table's (R_eq −7e-5 at v_e 0.24 to −9e-4 at 0.99
+  on N = 256); Ham and Mom converge at ~4th order inside the throat and
+  grow as 1/dx² and 1/dx outside, the tables' interpolation error (at
+  0.95–0.99 the innermost shell, at the far-side puncture, stops
+  converging); the 3D ADM mass integral equals the table metric's on the
+  same grid to ≤ 1e-12, and its extrapolation meets the table's meta M to
+  2e-5–7e-4 (0.7 % at 0.99, the extrapolation at R ≤ 46); J meets the
+  table's to 2e-3 at 0.24 falling to 2e-5 at 0.99 (an R- and
+  N-independent offset of 1e-4–9e-4).
+- `03_spin_hold/<spin>/spin_hold_L128_N128_ml3_<spin>_t100` (2026-10-13),
+  the puncture probes: the A3 holds' N = 128 members at v_e 0.43 / 0.67 /
+  0.85 on L = 128, the A1 data and gauge run on.  All three DIED at
+  t = 3.4–4.0 (NaN in h11, finest level) at the far-side puncture: the
+  lapse or χ at the centre (the compactified far end, a positive mass in
+  this family) hits its floor and K runs away, while the throat never
+  moved (R_eq to 1e-3).  With this gauge family (b) cannot be held; the
+  drainhole's v_e 0.7 hold died the same way.  Trust windows t ≤ 3.
 
 ## Fast-spin solver
 

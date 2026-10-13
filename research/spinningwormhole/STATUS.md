@@ -21,19 +21,14 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## LIVE
 
-| run | node/card | t | stop | speed | ETA (h, UTC) |
-|---|---|---|---|---|---|
-| A1 on L = 128: 21 t = 0 checks `t0conv_ve0XXb_L128_N{128,192,256}_ml3` (symmetric, each to t = 1) | first GPU node / 0 and 1, one run per card | 16 of 21 started (14:46) | 1 | ~3 / 4 / 7.5 min (N 128/192/256) | ~0.5 h, ~15:15 |
-
-No checkpoints (A1: asked, none). The queue `runs/spinning_wormhole/logs/spin_queue.txt`
-(`queue_worker.sh`, one worker per card) holds the last A1 runs, then the three probes;
-tables `runs/spinning_p3/tables_eta2/` (ve024–085 new: `p5_A1_tables.py`, midpoint error
-≤ 8.5e-8).
-The first six A1 runs on L = 64 (v_e 0.24, 0.43; 13:49–14:10) are superseded by
-the L = 128 set (decided 2026-10-13); their scratch was pruned 14:31 (22 GB).
-Closed out today, all in `drainhole/04_fast_spin_hold/`: v_e 0.7 (died t = 42.36,
-far-side puncture), v_e 0.5 (finished; 14 movies to t = 64), J = 1 on exact data
-(died t = 70.64 at the end of a collapse).
+**Nothing live; nothing launches until the next go** (final packing 2026-10-13,
+19:50 UTC: every run packed, scratch empty, the queue `logs/spin_queue.txt` empty
+and its workers gone). Closed out today: in `drainhole/04_fast_spin_hold/` v_e 0.7
+(died t = 42.36, far-side puncture), v_e 0.5 (finished; 14 movies to t = 64) and
+J = 1 on exact data (died t = 70.64 at the end of a collapse); in
+`symmetric_massless/` the 21 A1 runs (`01_t0_checks/L128_A1/`) and the three puncture
+probes (`03_spin_hold/`). The six L = 64 A1 runs are superseded
+(`symmetric_massless/00_archive/`, not packed).
 
 **Frames over the whole box** (decided 2026-10-13): launch with `--zoom 128
 --coord 64 --center 64 64 64` and `GRTECLYN_FRAMES_BUFF_CAP=2048`, so the live frames,
@@ -59,22 +54,27 @@ K enters the frame window from t ≈ 60). The layout is the merger's own
 return comes at t ≈ 120–128. Triplets are N = 128 / 192 / 256 (dx0 1 / 0.667 /
 0.5; finest Δx 0.125 / 0.083 / 0.0625, N = 256 being the Step 1 grid's Δx
 everywhere). The merger ran this layout at 13.9 t/h: ~7.2 h to t = 100 at
-N = 256, ~10 GPU-h a triplet. Still open for "clean to t = 100": the far-side
-puncture. In every family (b) run so far min χ falls ×8 in the first time unit
-(the far side has positive mass, a black-hole-like puncture), the way the dead
-ve070a's did before it hit the floor; A2's static Ellis is massless there, the
-spinning ones are not.
+N = 256, ~10 GPU-h a triplet (measured on A1: 14.1 t/h, 46 GB of the 81.5 GB
+card).
+
+**BLOCKER: the far-side puncture** (the probes, 2026-10-13). The three N = 128
+holds at v_e 0.43 / 0.67 / 0.85 on L = 128 all died at t = 3.4–4.0 at the centre
+(the compactified far end, a positive mass in family (b)): the lapse or χ there
+hits its floor and K runs away, while the throat never moves. The drainhole's
+v_e 0.7 hold died the same way. No spinning family (b) hold (A3, A4) and no fast
+drainhole hold (B2, B3) can run until the far side is handled; A2's static Ellis
+is massless there and the slow drainhole (v_e ≤ 0.51, negative far-side mass)
+held. Candidates to test, each a short probe: min_chi 1e-4 (the merger's FARZONE
+survival knob), a pre-collapsed initial lapse at the far side, a shift that does
+not co-rotate there.
 
 *Phase A: symmetric, family (b) at η0 2*
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| A2 `static_hold_L128_ml3_sym_t100` ×3 (N 128/192/256) | ~10 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | A1, its go |
-| **Puncture probes (go 14:33, no checkpoints):** `spin_hold_L128_N128_ml3_ve043b/067b/085b_t100`, the N = 128 members of A3 | <1 h evolution each (A1 ran N = 128 at ~129 t/h); `params_spin_hold_L128_N128_ve0XXb.txt` = the A1 L128 N128 template with stop_time 100 | — | the A1 queue (~15:15); the last three lines of `logs/spin_queue.txt`, runs into `symmetric_massless/03_spin_hold/<spin>/` |
-| A3 `spin_hold_L128_ml3_ve024b_t100` ×3 | ~10 GPU-h; table `fam_b_ve024_eta2` (built) | — | A2, its go; the far-side puncture |
-| A3 `spin_hold_L128_ml3_ve043b_t100` ×3 | as above, v_e 0.43 | — | A2, its go; the far-side puncture |
-| A3 `spin_hold_L128_ml3_ve067b_t100` ×3 | as above, v_e 0.67 | — | A2, its go; the far-side puncture |
-| A3 `spin_hold_L128_ml3_ve085b_t100` ×3 | as above, v_e 0.85 | — | A2, its go; the far-side puncture |
+| A2 `static_hold_L128_ml3_sym_t100` ×3 (N 128/192/256) | ~10 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | its go |
+| A3 `spin_hold_L128_ml3_ve024b_t100` ×3 | ~10 GPU-h; table `fam_b_ve024_eta2` (built) | — | the far-side puncture fix, its go |
+| A3 `spin_hold_L128_ml3_ve043b/067b/085b_t100` ×3 | as above; the N = 128 templates exist (`params_spin_hold_L128_N128_ve0XXb.txt`) | — | the far-side puncture fix, its go |
 | A4 `spin_hold_L128_ml3_ve090b/095b/099b_t100` ×3 | tables exist (`tables_eta2/`) | — | A3, its go |
 
 - **A1, what it validates:** the Kleihaus–Kunz 2014 Fig. 1 quantities (M/M0,
@@ -90,7 +90,7 @@ spinning ones are not.
 | run | needs | restart from | waiting on |
 |---|---|---|---|
 | B1 the three drainhole holds again as L128 triplets: static, v_e 0.51, J = 1 | ~10 GPU-h each; replaces the L64 N 64 / 96 partners, which would stop at t = 64 too | — | Phase A, its go |
-| B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far-side puncture fix | — | Phase A, the fix, its go |
+| B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far-side puncture fix | — | the fix, its go |
 | B3 higher spin ×3 (v_e 0.9 / 0.95 / 0.99), L128 | tables exist | — | B2, its go |
 
 **Every quoted run is a triplet** (decided 2026-10-13; the stability protocol in
@@ -115,8 +115,8 @@ rescale as the family (b) t = 0 ladder; no checkpoints unless asked.
 The question the solver was built for: **does fast spin fix the instability?**
 The O(J²) holds could not tell (their push was the data's own J⁴ error); the
 full tables are exact to ~1e-10.
-1. **t = 0 checks: PASS** (07:03–07:50; `runs/spinning_wormhole/*/validation/`,
-   `t0_checks.py`). v_e 0.5, 3 grids: constraints converge at 4th order
+1. **t = 0 checks: PASS** (07:03–07:50; `*/0N_t0_checks/`, `t0_checks.py`).
+   v_e 0.5, 3 grids: constraints converge at 4th order
    inside the throat; outside they grow as 1/dx² (Ham) and 1/dx (Mom), the
    fingerprint of the tables' fixed ~2e-7 bilinear error, 10⁴× below the
    O(J²) holds' push; throat radii converge to the table (R_eq −5e-5 at
@@ -134,6 +134,14 @@ full tables are exact to ~1e-10.
    at t = 70.64. The O(J²) hold's inflation was its data's error. With 0.5
    (−0.5 % by t = 64) the collapse slows with spin: the headline to confirm on
    L = 128 (B1).
+4. **A1, family (b) on L = 128: PASS** (21 runs, v_e 0.24–0.99 × N 128/192/256;
+   `L128_A1/<spin>/t0conv_<spin>_L128_checks.txt`). Throat radii converge to the
+   table (R_eq −7e-5 to −9e-4 at N = 256); Ham/Mom 4th order inside the throat,
+   1/dx² and 1/dx outside (the tables' interpolation); the 3D ADM mass integral
+   equals the table metric's on the same grid to ≤ 1e-12, extrapolated M within
+   2e-5–7e-4 of the table's (0.7 % at 0.99), J within 2e-3 (0.24) to 2e-5 (0.99).
+5. **The family (b) holds die at the far-side puncture** by t ≈ 4 (the BLOCKER
+   above), before the throat does anything.
 
 ## DONE
 

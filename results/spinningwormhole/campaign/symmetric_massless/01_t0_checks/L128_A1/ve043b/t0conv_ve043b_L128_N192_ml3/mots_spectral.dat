@@ -1,0 +1,5 @@
+# time  R  M_MS  area  h_x  h_y  h_z  r_mean  deform  rms_theta_out  newton_iters  newton_resid  alpha  theta_in_mean  flux  sigma2  q  dRdt_phantom  dRdt_shear  dRdt_total  level  lmax
+# the common MOTS r = h(theta, phi) about the centre (headon_first_law.py): R = sqrt(A / 4 pi), M_MS its Hawking mass, h_x/h_y/h_z its coordinate extent along each axis, <.> surface averages; dRdt_* the spherical first law's rate from the phantom flux, the shear, and both; a row of nan: no MOTS on that plotfile (searched from the seeds, none converged)
+0.0000000000000000e+00  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  3  6
+9.9999999999999900e-01  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  3  6
+1.0133333333333301e+00  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  nan  3  6
