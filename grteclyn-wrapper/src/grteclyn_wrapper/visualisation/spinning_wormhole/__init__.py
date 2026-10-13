@@ -20,6 +20,12 @@
         an internal check only: our solutions as circles on the published
         raster itself (a paper cannot reuse that image)
 
+    python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_spin_trends
+        both families against v_e at fixed eta0: mass, J and size, J/M^2
+        against the Kerr bound, the far side's mass, the flattening R_p/R_e,
+        the scalar charge D and the throat's rotation rate, with the
+        extremal-Kerr limits and the drainhole holds evolved in 3D
+
 Figures go to results/spinningwormhole/figures/solver/.  The paper figure
 reads only the two packed tables, so it rebuilds from a clean checkout.
 """
