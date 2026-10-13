@@ -49,10 +49,21 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   conventions, and the identity gates.  Packed from the untracked
   `runs/spinning_p3/` by `python -m
   grteclyn_wrapper.visualisation.spinning_wormhole.solutions`.
-- `figures/solver/kk2014_fig1_overlay` (2026-10-13): Kleihaus & Kunz 2014
-  Fig. 1 as published, with our symmetric family (eta0 = 1, gamma = 0,
-  81 members, v_e 0.02-0.99) as open circles.  M/M0 = mu_+/R, J/J0 =
-  2J/R^2, R_p/R and R_A/R all lie on the published wormhole curves within
-  the line width over the whole range; the closed-form Kerr curves drawn
-  on the calibrated axes (`--check`) land on the printed Kerr curves, which
-  fixes both the pixel calibration and the paper's J0 = R^2/2.
+- `solver/kk2014_fig1_digitized.tsv` (2026-10-13): the wormhole curves of
+  Kleihaus & Kunz 2014 Fig. 1 (M/M0, their Smarr dots Omega J/(Omega0 J0),
+  J/J0, R_p/R, R_A/R) read off the published raster by
+  `grteclyn_wrapper.visualisation.spinning_wormhole.kk2014`.  Reading error,
+  measured by reading their printed Kerr curves the same way: rms 1-6e-4,
+  max 1.1e-3.
+- `figures/solver/kk2014_comparison` (2026-10-13), THE PAPER FIGURE: our
+  symmetric family (eta0 = 1, gamma = 0; 81 solutions, v_e 0.02-0.991, plus
+  the exact static member) as curves in KK's normalisation (M0 = R,
+  J0 = R^2/2, Omega0 = 1/R), their digitized points as open symbols, Kerr
+  from closed forms.  Digitized minus ours: rms 2.5-8e-4, max 2.5e-3 over
+  all five curves, the size of the reading error, so the two solvers agree
+  to the precision a printed figure carries.
+- `figures/solver/kk2014_fig1_overlay` (2026-10-13), INTERNAL CHECK ONLY
+  (it shows the published raster itself, which a paper cannot reuse): our
+  solutions as circles on KK's Fig. 1.  The closed-form Kerr curves drawn on
+  the calibrated axes (`--check`) land on the printed Kerr curves, fixing
+  both the pixel calibration and their J0 = R^2/2.

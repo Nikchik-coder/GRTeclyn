@@ -4,11 +4,20 @@
         collects every saved fast-spin Solution under runs/spinning_p3/ into
         results/spinningwormhole/solver/solutions.tsv (tracked; runs/ is not)
 
-    python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_kk2014_fig1
-        the published Kleihaus & Kunz 2014 Fig. 1 with our symmetric family
-        on it as open circles, written to results/spinningwormhole/figures/solver/
+    python -m grteclyn_wrapper.visualisation.spinning_wormhole.kk2014
+        digitizes the wormhole curves of Kleihaus & Kunz 2014 Fig. 1 from the
+        published raster into results/spinningwormhole/solver/
+        kk2014_fig1_digitized.tsv, with the reading error measured on their
+        Kerr curves
 
-The figures read only the packed table (and, for an overlay, the published
-raster kept beside the papers in research/spinningwormhole/article/articles/),
-so they rebuild from a clean checkout.
+    python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_kk2014_comparison
+        THE PAPER FIGURE: our symmetric family as curves against KK 2014's
+        digitized points and the closed-form Kerr curves
+
+    python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_kk2014_fig1
+        an internal check only: our solutions as circles on the published
+        raster itself (a paper cannot reuse that image)
+
+Figures go to results/spinningwormhole/figures/solver/.  The paper figure
+reads only the two packed tables, so it rebuilds from a clean checkout.
 """
