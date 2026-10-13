@@ -9,9 +9,10 @@ Branch `feature/spinning` (pushes to `myfork`).
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| `spin_hold_L64_ml3_ve050a_t100` | first GPU node / 0 | 0 | 100 | ~17 t/h | ~5.6 h, ~13:20 |
+| `spin_hold_L64_ml3_ve050a_t100` | first GPU node / 0 | 1.6 | 100 | ~19 t/h | ~5.2 h, ~13:05 |
+| `spin_hold_L64_ml3_ve070a_t100` | first GPU node / 1 | 0.2 | 100 | ~18 t/h | ~5.6 h, ~13:25 |
 
-Launched 07:44 UTC 2026-10-13, no checkpoints. GPU 1 free from ~07:50.
+Launched 07:44 / 07:49 UTC 2026-10-13, no checkpoints.
 
 ## QUEUED
 
@@ -29,10 +30,10 @@ full tables are exact to ~1e-10.
    inside the throat; outside they grow as 1/dx² (Ham) and 1/dx (Mom), the
    fingerprint of the tables' fixed ~2e-7 bilinear error, 10⁴× below the
    O(J²) holds' push; throat radii converge to the table (R_eq −5e-5 at
-   N = 192). Family (b) to v_e 0.95: throat radii within 0.1 %, constraints
+   N = 192). Family (b) to v_e 0.99: throat radii within 0.1 %, constraints
    at the static hold's level.
-2. **The test** (live): a hold at v_e 0.5 (family (a), the earlier holds'
-   grid) to t = 100: collapse, inflation, or does it hold?
+2. **The test** (live): holds at v_e 0.5 and 0.7 (family (a), the earlier
+   holds' grid) to t = 100: collapse, inflation, or do they hold?
 3. Then higher spin (a bigger box near 0.99), and the J = 1 hold on full data
    (does the push vanish?).
 
