@@ -246,6 +246,12 @@ what the claims check or the identity grep flags, and report in a few lines.
 - **Push to `myfork`, never `origin`** (2026-10-10): `origin` is upstream GRTLCollaboration (and its
   https URL has no credentials here); the working remote is the SSH fork `myfork`. Every push and
   `ls-remote` check uses `myfork`.
-- "Commit and push" from the user means now, in one step: stage, commit, push, one `ls-remote` check.
+- **Pull before you commit and push** (2026-10-13): `timeout 120 git pull --autostash < /dev/null`
+  first (`pull.rebase` is true, so a plain pull refuses while anything is unstaged), then re-read the
+  diff of every file both sides touched (STATUS.md above all) before staging. Other sessions push to
+  the same branch all day; a commit on a stale base needs a rebase later, and in the worst case
+  resolving a STATUS conflict. (2026-10-13: a close-out went straight to commit + push while
+  another session had just pushed a rewritten STATUS queue.)
+- "Commit and push" from the user means now, in one step: pull, stage, commit, push, one `ls-remote` check.
 - Push in the background with a timeout (`< /dev/null`), then verify with
   `git ls-remote`; a foreground push can hang the shell.
