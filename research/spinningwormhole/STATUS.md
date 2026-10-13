@@ -24,6 +24,15 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
 | B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`) | first GPU node, card 0 | launched 20:22 UTC | 100 | ~14 t/h (A1's measure) | ~7.2 h, ≈ 03:30 UTC 10-14 |
+| probe `spin_hold_L128_N192_ml3_ve085b_lapse1_t100` (`symmetric_massless/03_spin_hold/ve085b/`) | first GPU node, card 1 | launched 20:54 UTC | 100 | ~45 t/h (N⁴) | dies by t ≈ 4 in ~10 min, or t = 100 in ~2.2 h ≈ 23:10 UTC |
+
+**The far-side fix probe** (its go 2026-10-13, no checkpoints; N = 192 —
+dx0 = 1 is retired): the A3 ve085b hold with one knob,
+`spinning_initial_lapse_type = 1` (lapse = √χ at t = 0, pre-collapsed at the
+punctures) instead of the stationary lapse that died there at t ≈ 4. If it
+dies too, the agreed next probe on this card is min_chi 1e-4 (the merger's
+FARZONE knob), same grid. A survivor then reruns ve070a (drainhole) with the
+winning knob — that one still waits for its go.
 
 The B1 production member (its go 2026-10-13): the v_e 0.513 drainhole on plain
 L128 N256 ml3 (`params_spin_hold_ve050a_L128_N256.txt`), full-box frames
