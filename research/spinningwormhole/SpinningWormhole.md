@@ -156,6 +156,29 @@ The static limit (ν = ω = 0, e^f = α²) is exactly our drainhole, with η₀ 
   - Constraint convergence at three resolutions.
   - ADM M and J, and the equatorial and polar throat radii, match the background values.
 
+### Stability protocol for Steps 3–6 (adopted 2026-10-13)
+
+Modelled on Evstafyeva, Siemonsen & East, *Assessing the stability of ultracompact spinning boson stars with nonlinear evolutions* (arXiv:2508.11527). This is a stability paper, so there is no wave or far-zone work.
+- **Every quoted run is a resolution triplet.** L = 64, max_level 3, N = 64 / 96 / 128, giving finest Δx 0.125 / 0.083 / 0.0625. That is their 1 : 2/3 : 1/2 ladder, and the N = 128 member is the production run. Each triplet costs about 0.4 + 1.7 + 5.5 GPU-h to t = 100 (the N = 128 time is measured; the others are estimated as N⁴). Names carry `_N064` / `_N096`; the N = 128 runs keep their current names.
+- **Box.** L = 64 is the box. The boundary return sets the trust window at t ≈ 64, as in the static hold. A case that needs a longer baseline gets more coarse outer levels, decided when it arises.
+- **Perturbations, in this order:**
+  - unperturbed holds, seeded only by discretization error;
+  - ℓ = 0 Π shells of both signs, with the amplitude stepped up toward the prompt-collapse threshold;
+  - m = 1, 2 seeds at the highest spins (Step 6).
+- **When a growth counts as a physical instability.** All three must hold:
+  - its e-folding time converges to a nonzero value across the triplet;
+  - the finest-level constraints converge at the code's order while it grows (the logged L2 norms are level 0 only);
+  - a gauge-invariant measure grows with it: the throat's areal radii or area, or the MOTS.
+- **What the other outcomes mean:**
+  - a rate that changes with resolution, or that breaks the constraints, is numerical;
+  - a rate that converges while the gauge-invariant measures stay flat is a gauge instability (their Fig. 3);
+  - in an unperturbed hold, the departure must start later as resolution rises;
+  - a stable case's departure from stationarity must converge to zero.
+- **Diagnostics:**
+  - max|∂_t α| and max|Π| for departure from stationarity;
+  - the throat's areal radii, area and MOTS as the gauge-invariant check;
+  - for non-axisymmetric growth, the azimuthal m-mode power of |Π|² up to m ≈ 8. Add this where the consumer lacks it.
+
 ### Step 3. Hold tests (1–2 weeks of GPU time)
 - **Do:** evolve each spin unperturbed. Try a frozen shift against the Gamma driver, and the 1+log switch-off near the puncture.
 - **Produces:** the hold time and the growth seeded by truncation error at each spin.

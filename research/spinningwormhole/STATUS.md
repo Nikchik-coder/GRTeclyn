@@ -22,11 +22,19 @@ checks are packed as `03_t0_checks/`; their scratch was wiped 08:00 (54 GB).
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| `static_hold_L64_ml3_sym_t100` | a GPU ~5.5 h; static table η0 2, M 0 (`backgrounds.py static`) | — | its go |
-| `spin_hold_L64_ml3_ve024b_t100` | a GPU ~5.5 h; family (b) table at v_e 0.24, η0 2 (CPU, saved solution) | — | its go |
-| `spin_hold_L64_ml3_ve043b_t100` | as above, v_e 0.43 | — | its go |
-| `spin_hold_L64_ml3_ve067b_t100` | as above, v_e 0.67 | — | its go; the ve070a puncture death |
-| `spin_hold_L64_ml3_ve085b_t100` | as above, v_e 0.85 | — | its go; the ve070a puncture death |
+| `static_hold_L64_ml3_sym_t100` ×3 (N 64/96/128) | ~7.6 GPU-h; static table η0 2, M 0 (`backgrounds.py static`) | — | its go |
+| `spin_hold_L64_ml3_ve024b_t100` ×3 | ~7.6 GPU-h; family (b) table at v_e 0.24, η0 2 (CPU, saved solution) | — | its go |
+| `spin_hold_L64_ml3_ve043b_t100` ×3 | as above, v_e 0.43 | — | its go |
+| `spin_hold_L64_ml3_ve067b_t100` ×3 | as above, v_e 0.67 | — | its go; the ve070a puncture death |
+| `spin_hold_L64_ml3_ve085b_t100` ×3 | as above, v_e 0.85 | — | its go; the ve070a puncture death |
+| N 64 / 96 partners of `static_hold_L64_ml3_t100`, `spin_hold_L64_ml3_ve050a_t100`, `spin_hold_L64_ml3_J100_full_t100` | ~2.1 GPU-h each pair | — | its go |
+
+**Every quoted run is a triplet** (decided 2026-10-13; the stability protocol in
+`SpinningWormhole.md`, after Evstafyeva, Siemonsen & East, arXiv:2508.11527):
+L64 ml3 at N = 64 / 96 / 128 (finest Δx 0.125 / 0.083 / 0.0625). A growth is
+physical only if its τ converges to a nonzero value, the finest-level constraints
+converge while it grows, and the throat's areal radii or MOTS grow with it.
+N 64 / 96 costs are N⁴ estimates from the measured ~5.5 h at N = 128.
 
 **Why a symmetric ladder** (decided 2026-10-13: the paper carries both
 families). Azad et al. computed the second unstable mode, and its crossing
