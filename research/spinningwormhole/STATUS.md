@@ -9,14 +9,15 @@ Branch `feature/spinning` (pushes to `myfork`).
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| `spin_hold_L64_ml3_ve050a_t100` | first GPU node / 0 | 47 | 100 | ~18 t/h | ~2.9 h, ~13:15 |
-| `spin_hold_L64_ml3_J100_full_t100` | first GPU node / 1 | 1 | 100 | ~18 t/h | ~5.4 h, ~15:45 |
+| `spin_hold_L64_ml3_ve050a_t100` | first GPU node / 0 | 68 | 100 | ~18 t/h | ~1.8 h, ~13:15 |
+| `spin_hold_L64_ml3_J100_full_t100` | first GPU node / 1 | 21 | 100 | ~18 t/h | ~4.3 h, ~15:45 |
 
 No checkpoints. `spin_hold_L64_ml3_ve070a_t100` (GPU 1, 07:49) DIED at
 t = 42.36 at its far-side puncture (χ at the 1e-8 floor from t ≈ 4, then the
-shift ran away); its throat never moved.  Closed out as
-`04_fast_spin_hold/` (trust window 40) once its consumer drains.  The t = 0
-checks are packed as `03_t0_checks/`; their scratch was wiped 08:00 (54 GB).
+shift ran away); its throat never moved.  Closed out 11:30: packed as
+`04_fast_spin_hold/` (trust window 40, no movies), scratch pruned (7 GB).
+The t = 0 checks are packed as `03_t0_checks/`; their scratch was wiped
+08:00 (54 GB).
 
 ## QUEUED
 
@@ -60,6 +61,10 @@ full tables are exact to ~1e-10.
    at the static hold's level.
 2. **The test** (live): holds at v_e 0.5 and 0.7 (family (a), the earlier
    holds' grid) to t = 100: collapse, inflation, or do they hold?
+   0.7: died at the far side (above), throat frozen.  0.5 (t = 67): the
+   throat shrinks (R_eq −0.6 %, MOTS R −0.8 %), the static hold's sign, but
+   slower than exponential since t ≈ 50 (e-fold time 5 → 14; the static's
+   stays ≈ 5); constraints flat, Mom +30 % since t = 60.
 3. Then higher spin (a bigger box near 0.99), and the J = 1 hold on full data
    (does the push vanish?).
 
