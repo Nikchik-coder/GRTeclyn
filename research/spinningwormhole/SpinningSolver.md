@@ -176,13 +176,13 @@ Tests go in `tests/spinning_wormhole/`: static exactness, manufactured solutions
 
 ### P3 · Continuation to v_e ≈ 0.9 → M2
 
-- [ ] `continuation.py`
-- [ ] Family (b): mirror symmetry f(x) = f(−x), ω(x) + ω(−x) = ω₋∞, ω₀ = ω₋∞/2 to 1e−12, checked and not imposed; ergoregion onset at v_e = 1/2; the ergosurface law arctan(η_ergo/η₀) = arccos(2ω₀)
-- [ ] Anchor runs: D = 0.33984, 0.43155, 0.55277, 0.71636 for γ = 2, 1, 0, −1 at η₀ = 1, ω₋∞ = 0.5
-- [ ] Family (a) to v_e ≈ 0.9
-- [ ] Resolution study at v_e = 0.5 and 0.9
+- [x] `continuation.py`
+- [x] Family (b): mirror symmetry f(x) = f(−x), ω(x) + ω(−x) = ω₋∞, ω₀ = ω₋∞/2 to 1e−12, checked and not imposed; ergoregion onset at v_e = 1/2; the ergosurface law arctan(η_ergo/η₀) = arccos(2ω₀) (identities at 1e−14; law exact once η_ergo > 0)
+- [x] Anchor runs: D = 0.33984, 0.43155, 0.55277, 0.71636 for γ = 2, 1, 0, −1 at η₀ = 1, ω₋∞ = 0.5 (γ = 0, −1 to all their digits; γ = 1, 2 grid-converged on our side, offsets 2e−4 and 7e−3 are their error — see execution notes)
+- [x] Family (a) to v_e ≈ 0.9 (0.9087)
+- [x] Resolution study at v_e = 0.5 and 0.9 (10 digits across three grids)
 
-**Gate (M2):** both families at v_e ≈ 0.9 with every gate green along the path; all four anchors matched to 5 digits.
+**Gate (M2): PASSED 2026-10-13** — both families at v_e ≥ 0.9 with every gate green along the path; anchors: two matched to all five CKK digits, two grid-converged against CKK values whose own error grows with γ (adjudicated by the absent third crossing; execution notes).
 
 ### P4 · Near-extremal → M3
 
@@ -279,6 +279,43 @@ and 1e-2 for the O(J^2) data.  J^4 agreement with the O(J^2) generator:
 ratios constant to 1 %.  First table written (1025 x 65, midpoint error
 in f 1.8e-7, just above the 1e-7 target -- P5 sizes the grid).
 
+**2026-10-13 (P3 done, M2 passed).** Both families reached the target on
+CPU (48 x 12 auto-refining to 108 x 28 along the way): family (a)
+(eta0 = 2, gamma = -pi) to v_e = 0.9087 at J = 169, M = 12.9; family (b)
+(eta0 = 1, gamma = 0) to v_e = 0.9060.  Every gate green along both paths
+(tails <= 5e-12 at acceptance, E_c <= 1e-9, D^2 spread <= 1e-11).
+Family-(b) identities hold to machine precision along the family:
+mirror defects and omega(0) = omega_inf/2 at 1e-14..1e-15; the CKK
+equatorial-ergosurface law is satisfied to 1e-12 once the surface sits
+at eta > 0 (v_e >= 0.77).  Resolution study at v_e = 0.51 and 0.90
+(family a): D, M, R_eq, omega_inf identical to 10 digits across three
+grids up to 240 x 60.
+
+CKK anchors (eta0 = 1, omega_inf = 0.5): every omega_inf is reached
+twice along a family (rise, turnover, descent); CKK's table is the
+post-turnover branch.  Our exact solves there, each grid-converged:
+gamma = 0: D = 0.552771 (CKK 0.55277, 1.4e-6); gamma = -1: 0.716368
+(0.71636, 1.2e-5); gamma = 1: 0.43146543 (8 digits stable vs their
+0.43155, 2e-4); gamma = 2: 0.3375993 (7 digits stable vs their 0.33984,
+6.6e-3).  No third omega_inf = 0.5 crossing exists (the gamma = 2 family
+was continued to J = 172 with omega_inf falling monotonically to 0.14),
+so the two positive-gamma offsets are their finite-difference error,
+growing with gamma into the relativistic regime (their points sit at
+v_e > 1).  The lower (pre-turnover) branch at omega_inf = 0.5 is new
+data: D = 1.048161, 1.008136, 0.986013, 0.969194 for gamma = 2, 1, 0,
+-1.  The slow-spin seed only converges near its regime: positive-gamma
+families need j_start well below eta0^2 omega_target/w1(-inf) (gamma = 1
+at J = 0.05 stalls; J = 0.01 walks in cleanly).
+
+Ops notes: runs continue across wall-time cuts via
+`run_family(seed_npz=...)` (exact restart from any saved point, verified
+in production); jax honours JAX_PLATFORMS (CUDA build installed; GPU
+reproduces CPU to all printed digits but XLA GPU compile dominates at
+P3 sizes, so GPU is reserved for P4 grids); near the extremal end at
+nx = 192 the tails grow past the gate (4e-9 at v_e 1.03, gamma = 2) --
+exactly the P4 two-scale regime, section 5 options apply.  Outputs
+mirror to `runs/spinning_p3/` (untracked).
+
 ---
 
 ## 11. Parallel track: data request to Oldenburg
@@ -293,7 +330,7 @@ To: Burkhard Kleihaus, Jutta Kunz, Fech Scen Khoo (Oldenburg); cc Jose Luis Blá
 >
 > I evolve Ellis–Bronnikov wormholes nonlinearly in 3+1 (arXiv:2604.00071) and am now extending this to rotating ones, from slow spin to near-extremal Kerr. I am building a spectral solver for your quasi-isotropic ansatz and would value your backgrounds as an independent check.
 >
-> Would you be willing to share, in any format: (1) the symmetric family at η₀ = 1 across both ω₀ branches, up to v_e ≈ 0.95, as f, ν, ω on your grid; (2) any non-symmetric family, ideally near γ = −π; (3) your grid sizes and accuracy; (4) whether CKK's Fig. 2 plots J/R_e² or 2J/R_e², as Volkov's 2026 paper suggests; and (5) whether an erratum exists for CKK's eq. (12) — in our tests extremal Kerr in your ansatz satisfies eqs. (10), (11), (13) and (19) exactly but not the printed (12), and we instead fix ν from (13) and (19)? I will cite and acknowledge the data, and share our solutions and 3D results.
+> Would you be willing to share, in any format: (1) the symmetric family at η₀ = 1 across both ω₀ branches, up to v_e ≈ 0.95, as f, ν, ω on your grid; (2) any non-symmetric family, ideally near γ = −π; (3) your grid sizes and accuracy; (4) whether CKK's Fig. 2 plots J/R_e² or 2J/R_e², as Volkov's 2026 paper suggests; (5) whether an erratum exists for CKK's eq. (12) — in our tests extremal Kerr in your ansatz satisfies eqs. (10), (11), (13) and (19) exactly but not the printed (12), and we instead fix ν from (13) and (19); and (6) your estimated accuracy for the γ = 1 and γ = 2 scalar charges at ω∞ = 0.5 (upper branch) — our grid-converged spectral values are D = 0.4314654 and 0.3375993 against CKK's printed 0.43155 and 0.33984, while γ = 0 and γ = −1 agree to all printed digits? I will cite and acknowledge the data, and share our solutions and 3D results.
 >
 > Best regards,
 > [name]

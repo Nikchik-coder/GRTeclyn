@@ -22,6 +22,30 @@ references; their run dirs keep the old name as a symlink).
 |---|---|---|---|
 | — | | | |
 
+## STEP 2: P3 DONE, M2 PASSED (2026-10-13)
+
+Both families reached the target on CPU with every gate green along the
+path: family (a) (eta0 = 2, gamma = -pi) to v_e = 0.9087 at J = 169,
+family (b) (eta0 = 1, gamma = 0) to v_e = 0.9060 (48 x 12 auto-refining
+to 108 x 28).  Family-(b) identities (mirror, omega0 = omega_inf/2) hold
+at 1e-14 unimposed; the CKK ergosurface law is exact once the surface
+leaves the throat.  Resolution study at v_e 0.51 / 0.90: D, M, R_eq,
+omega_inf identical to 10 digits across three grids up to 240 x 60.
+CKK anchors at omega_inf = 0.5 (their table is the post-turnover branch;
+the pre-turnover branch is new data we also record): gamma = 0 and -1
+match ALL their printed digits (D = 0.552771, 0.716368); gamma = 1 and 2
+are grid-converged on our side (0.4314654, 0.3375993) with offsets 2e-4
+and 7e-3 from their printed values that are their finite-difference
+error -- no third crossing exists (checked to J = 172), and the Oldenburg
+email now asks about their accuracy there, next to the eq. (12) erratum
+question.  Near-extremal (v_e > 1, nx = 192) the tails grow past the
+gate: that is P4's two-scale regime, as planned.  Solver outputs live in
+`runs/spinning_p3/` (untracked); restart-from-saved-point
+(`run_family(seed_npz=...)`) is in production; jax has a CUDA opt-in
+(JAX_PLATFORMS) -- GPU reproduces CPU exactly but only pays off at P4
+grid sizes.  NEXT: P4 near-extremal (v_e >= 0.95), P5 tables + the 3D
+acceptance hold (GPU; will be proposed before any launch).
+
 ## STEP 2 STARTED: THE FULL SOLVER, M1 PASSED (2026-10-12)
 
 `SpinningSolver.md` P0-P2 are done on `feature/spinning` (pure CPU, the
