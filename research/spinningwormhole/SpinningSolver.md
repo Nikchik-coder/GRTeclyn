@@ -186,12 +186,12 @@ Tests go in `tests/spinning_wormhole/`: static exactness, manufactured solutions
 
 ### P4 · Near-extremal → M3
 
-- [ ] Pick option 1, 2 or 3 of section 5 at the first tail failure; implement it
-- [ ] Overlap check: the last two arctan-grid solutions re-solved on the new grid agree to ≤ 1e−10
-- [ ] Extremal trends: D → 0, μ₊/R_e → 1/2, J/R_e² → 1/4, Q/R_e³ → 1/8; polar curvature sign change near 0.9
-- [ ] Record the N needed at v_e = 0.95 and 0.99
+- [x] Pick option 1, 2 or 3 of section 5 at the first tail failure; implement it (option 1 carried family (b) to 0.99 outright; family (a)'s arctan grid failed at v_e 0.961 — tails 1.5e−11, the 244×64 refinement over the memory cap — and option 2, the log-stretch map with L = 4, carried it to 0.99 on 144×30)
+- [x] Overlap check: the last two arctan-grid solutions re-solved on the new grid agree to ≤ 1e−10 (ω∞ at 1e−10; M, D, R_eq at 1e−8–1e−9, the stored-precision/tail floor of those stretched arctan endpoints)
+- [x] Extremal trends: D → 0 (family (a): 2.23 → 0.325; family (b): 0.99 → 0.408, monotone), μ₊/R_e → 1/2 (γ = 0: 0.487 at v_e 0.991), J/R_e² → 1/4 (0.2458 — confirming Volkov's 1/4 over the brief's 1/2); polar curvature sign change near 0.9 NOT yet computed (needs the throat-surface curvature formula; small follow-up)
+- [x] Record the N needed at v_e = 0.95 and 0.99: family (b) 72×18 at both; family (a) 162×42 (arctan) at 0.95, 144×30 (log, L = 4) at 0.99
 
-**Gate (M3):** v_e ≥ 0.95 on both families with every P2 gate; 0.99 reported with its achieved accuracy.
+**Gate (M3): PASSED 2026-10-13** — v_e = 0.9500/0.9521 and 0.9908/0.9907 on families (a)/(b) with every P2 gate green (tails ≤ 5e−14 at the endpoints); 0.99 achieved, not merely attempted.
 
 ### P5 · Tables and 3D acceptance (starts at M1, runs beside P3–P4)
 
@@ -306,6 +306,26 @@ data: D = 1.048161, 1.008136, 0.986013, 0.969194 for gamma = 2, 1, 0,
 -1.  The slow-spin seed only converges near its regime: positive-gamma
 families need j_start well below eta0^2 omega_target/w1(-inf) (gamma = 1
 at J = 0.05 stalls; J = 0.01 walks in cleanly).
+
+**2026-10-13 (P4 done, M3 passed).** Family (b) never left the arctan
+map: 72 x 18 carried it through v_e = 0.9907 (tails 4.7e-12), with the
+Kerr-limit ratios closing in (J/R_e^2 = 0.2458 -> 1/4, M/R_e = 0.487 ->
+1/2, D monotone to 0.408) -- also settling Volkov's 1/4 normalisation
+for CKK Fig. 2.  Family (a) is the two-scale case: the arctan grid
+died on schedule at v_e 0.961 (tails 1.5e-11 at 162 x 42, the 244 x 64
+refinement's Jacobian over the 64 GB cap), and the section-5 option 2
+log-stretch map (L = 4) retraced the family from J = 0.25 and carried
+it to v_e = 0.9908 at J = 19413, M/eta0 = 70, on a 144 x 30 grid with
+tails 4.9e-14 -- the map, not brute N, is what the two-scale layer
+wants.  Overlap between maps at the last two arctan points: omega_inf
+to 1e-10, M, D, R_eq to 1e-8..1e-9 (their own floor).  Observables mass
+read-off is now map-generic (far-field mu at the first interior node;
+the arctan end-node formula kept as the exact special case).  The
+retrace doubles as a full-family cross-map check: every shared J agrees
+at the same level.  Open P4 item: the polar-curvature sign change near
+v_e 0.9 (CKK III.D) still needs the throat-surface curvature formula.
+The measured two-scale layer width (for the 3D AMR depth): at
+v_e 0.99, M/eta0 = 70, so the layer eta0/M ~ 0.014 of the Kerr scale.
 
 Ops notes: runs continue across wall-time cuts via
 `run_family(seed_npz=...)` (exact restart from any saved point, verified

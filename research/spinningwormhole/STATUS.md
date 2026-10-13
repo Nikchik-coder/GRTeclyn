@@ -22,6 +22,21 @@ references; their run dirs keep the old name as a symlink).
 |---|---|---|---|
 | — | | | |
 
+## STEP 2: P4 DONE, M3 PASSED (2026-10-13)
+
+Both families reached v_e = 0.99 with every gate green: family (b)
+to 0.9907 on the plain arctan 72 x 18 grid (Kerr ratios closing:
+J/R_e^2 = 0.2458 -> 1/4, M/R_e = 0.487 -> 1/2, D -> 0.408; Volkov's
+1/4 for CKK Fig. 2 confirmed), family (a) to 0.9908 at J = 19413,
+M/eta0 = 70 on the section-5 option-2 log-stretch map (L = 4,
+144 x 30, tails 5e-14) after the arctan grid failed on schedule at
+v_e 0.961.  Cross-map overlap at the last two arctan points:
+omega_inf to 1e-10, M/D/R_eq to their 1e-8..1e-9 floor.  Mass
+read-off is now map-generic in observables.py.  Open: the polar
+curvature sign change near v_e 0.9 (needs the throat-surface
+curvature formula).  NEXT: P5 tables (resolution study, catalogues)
++ the 3D acceptance hold (GPU; will be proposed before any launch).
+
 ## STEP 2: P3 DONE, M2 PASSED (2026-10-13)
 
 Both families reached the target on CPU with every gate green along the

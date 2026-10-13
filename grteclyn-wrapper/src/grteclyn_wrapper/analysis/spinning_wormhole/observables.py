@@ -68,18 +68,27 @@ def j_of_x(sol: Solution, work=None) -> tuple[np.ndarray, np.ndarray]:
 
 
 def _mu_ends(sol: Solution) -> tuple[float, float, float]:
-    """mu_+ and mu_- from f_x at the end nodes (exact on the arctan grid),
-    plus the spread of f_x over y there (must vanish: f is
-    theta-independent at the infinities)."""
-    if sol.map_name != "arctan":
-        raise NotImplementedError(
-            "mu_+- from the end nodes is the arctan-grid formula; other "
-            "maps read the mass from the far field (P4)")
+    """mu_+ and mu_- from the far field, plus their spread over y (must
+    vanish: f is theta-independent at the infinities).
+
+    On the arctan grid the end nodes give mu exactly (f_x(+-1) =
+    +-pi mu/eta0).  On other maps the end node can be degenerate
+    (logstretch with L >= 4 has eta'/eta^2 -> 0 there), so mu =
+    +-eta^2 f_x/(2 eta') is read one node in, where |eta| is already
+    huge (~eta0 (nx/pi)^L) and the 1/eta correction sits below
+    round-off."""
     fx = sol.jet("f", 1, 0)
-    spread = max(float(np.ptp(fx[0])), float(np.ptp(fx[-1])))
-    return (cv.mu_plus_from_fx(float(np.mean(fx[0])), sol.eta0),
-            cv.mu_minus_from_fx(float(np.mean(fx[-1])), sol.eta0),
-            spread)
+    if sol.map_name == "arctan":
+        spread = max(float(np.ptp(fx[0])), float(np.ptp(fx[-1])))
+        return (cv.mu_plus_from_fx(float(np.mean(fx[0])), sol.eta0),
+                cv.mu_minus_from_fx(float(np.mean(fx[-1])), sol.eta0),
+                spread)
+    m = sol.radial_map
+    xp, xm = float(sol.sx[1]), float(sol.sx[-2])
+    mu_p = m.eta(xp) ** 2 * fx[1] / (2.0 * m.deta(xp))
+    mu_m = -(m.eta(xm) ** 2) * fx[-2] / (2.0 * m.deta(xm))
+    spread = max(float(np.ptp(mu_p)), float(np.ptp(mu_m)))
+    return float(np.mean(mu_p)), float(np.mean(mu_m)), spread
 
 
 def _area_of_eta(sol: Solution, eta_vals: np.ndarray) -> np.ndarray:
