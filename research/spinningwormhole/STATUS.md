@@ -12,7 +12,9 @@ Branch `feature/spinning` (pushes to `myfork`).
 | `spin_hold_L64_ml3_ve050a_t100` | first GPU node / 0 | 1.6 | 100 | ~19 t/h | ~5.2 h, ~13:05 |
 | `spin_hold_L64_ml3_ve070a_t100` | first GPU node / 1 | 0.2 | 100 | ~18 t/h | ~5.6 h, ~13:25 |
 
-Launched 07:44 / 07:49 UTC 2026-10-13, no checkpoints.
+Launched 07:44 / 07:49 UTC 2026-10-13, no checkpoints. Scratch: the t = 0
+checks' plotfiles wiped 08:00 (54 GB, `MANIFEST_CLEANUP_2026-10-13.md`);
+only the two holds remain.
 
 ## QUEUED
 
