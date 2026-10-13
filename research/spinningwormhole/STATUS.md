@@ -51,11 +51,14 @@ throat by t ≈ 64 on L = 64, which ends every L64 hold's trust window (in ve050
 K enters the frame window from t ≈ 60). The layout is the merger's own
 `single_hold_L128_t100`: the L64 Step 1 grid's base Δx and nested boxes
 (tagging_L 64: ±16/8/4, max_level 3) in a box twice as wide, sponge 48–64, so the
-return comes at t ≈ 120–128. Triplets are N = 128 / 192 / 256 (dx0 1 / 0.667 /
-0.5; finest Δx 0.125 / 0.083 / 0.0625, N = 256 being the Step 1 grid's Δx
-everywhere). The merger ran this layout at 13.9 t/h: ~7.2 h to t = 100 at
-N = 256, ~10 GPU-h a triplet (measured on A1: 14.1 t/h, 46 GB of the 81.5 GB
-card).
+return comes at t ≈ 120–128. **Triplets are N = 192 / 256 / 384** (dx0 0.667 /
+0.5 / 0.333; finest Δx 0.0833 / 0.0625 / 0.0417): dx0 = 1 is too coarse for any
+evolution, so the coarsest member keeps dx0 ≤ 2/3 and the production grid is
+dx0 = 0.5 (corrected 2026-10-13; the A1 N = 128 members stand as t = 0 checks
+only, and the old L = 64 at N = 128 was this same dx0 0.5). From the measured
+14.1 t/h and 46 GB at N = 256: ~2.2 / 7.1 / ~36 h to t = 100 (N⁴), ~45 GPU-h a
+triplet; N = 384 scales to ~155 GB, over the 81.5 GB card, so those members
+need both cards (MPI) or their own decision.
 
 **BLOCKER: the far-side puncture** (the probes, 2026-10-13). The three N = 128
 holds at v_e 0.43 / 0.67 / 0.85 on L = 128 all died at t = 3.4–4.0 at the centre
@@ -72,9 +75,9 @@ not co-rotate there.
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| A2 `static_hold_L128_ml3_sym_t100` ×3 (N 128/192/256) | ~10 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | its go |
-| A3 `spin_hold_L128_ml3_ve024b_t100` ×3 | ~10 GPU-h; table `fam_b_ve024_eta2` (built) | — | the far-side puncture fix, its go |
-| A3 `spin_hold_L128_ml3_ve043b/067b/085b_t100` ×3 | as above; the N = 128 templates exist (`params_spin_hold_L128_N128_ve0XXb.txt`) | — | the far-side puncture fix, its go |
+| A2 `static_hold_L128_ml3_sym_t100` ×3 (N 192/256/384) | ~45 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | its go |
+| A3 `spin_hold_L128_ml3_ve024b_t100` ×3 | ~45 GPU-h; table `fam_b_ve024_eta2` (built) | — | the far-side puncture fix, its go |
+| A3 `spin_hold_L128_ml3_ve043b/067b/085b_t100` ×3 | as above (the N = 128 probe templates sit below the ladder now) | — | the far-side puncture fix, its go |
 | A4 `spin_hold_L128_ml3_ve090b/095b/099b_t100` ×3 | tables exist (`tables_eta2/`) | — | A3, its go |
 
 - **A1, what it validates:** the Kleihaus–Kunz 2014 Fig. 1 quantities (M/M0,
@@ -89,16 +92,17 @@ not co-rotate there.
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| B1 the three drainhole holds again as L128 triplets: static, v_e 0.51, J = 1 | ~10 GPU-h each; replaces the L64 N 64 / 96 partners, which would stop at t = 64 too | — | Phase A, its go |
+| B1 the three drainhole holds again as L128 triplets: static, v_e 0.51, J = 1 | ~45 GPU-h each; templates written (`params_{static_hold,spin_hold_ve050a,spin_hold_J100_full}_L128_N{192,256,384}.txt`); replaces the L64 N 64 / 96 partners | — | go given 2026-10-13, launch held ("do not launch anything"); the N = 384 two-card question |
 | B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far-side puncture fix | — | the fix, its go |
 | B3 higher spin ×3 (v_e 0.9 / 0.95 / 0.99), L128 | tables exist | — | B2, its go |
 
 **Every quoted run is a triplet** (decided 2026-10-13; the stability protocol in
 `SpinningWormhole.md`, after Evstafyeva, Siemonsen & East, arXiv:2508.11527):
-L128 ml3 at N = 128 / 192 / 256 (finest Δx 0.125 / 0.083 / 0.0625). A growth is
-physical only if its τ converges to a nonzero value, the finest-level constraints
-converge while it grows, and the throat's areal radii or MOTS grow with it. N 128 /
-192 costs are N⁴ estimates from the merger's 13.9 t/h at N = 256.
+L128 ml3 at N = 192 / 256 / 384 (finest Δx 0.0833 / 0.0625 / 0.0417; dx0 never
+1). A growth is physical only if its τ converges to a nonzero value, the
+finest-level constraints converge while it grows, and the throat's areal radii
+or MOTS grow with it. N 192 / 384 costs are N⁴ estimates from the measured
+14.1 t/h at N = 256.
 
 **Why a symmetric ladder** (decided 2026-10-13: the paper carries both
 families). Azad et al. computed the second unstable mode, and its crossing
@@ -142,6 +146,25 @@ full tables are exact to ~1e-10.
    2e-5–7e-4 of the table's (0.7 % at 0.99), J within 2e-3 (0.24) to 2e-5 (0.99).
 5. **The family (b) holds die at the far-side puncture** by t ≈ 4 (the BLOCKER
    above), before the throat does anything.
+
+## NUMERICS DEBT (Step 0 of `SpinningWormhole.md`, none done; re-noted 2026-10-13)
+
+This file carried the list until ca71ceed compacted it away; restored because
+every item is still open:
+1. **Why Δt = 0.02 Δx.** The only evidence is the merger's
+   `single_hold_dt005_t070`: at 0.05 it matched to t ≈ 30, then drifted to a
+   different solution (max|K| ×30 by t = 35, L2_Ham ×35 by t = 40, lapse
+   floored at t = 61). A measured limit, cause unknown; every hold pays it
+   (~7 h to t = 100 at N = 256).
+2. **Constraint norms are level 0 only**
+   (`Examples/SpinningWormhole/SpinningWormholeLevel.cpp:336`); the triplet
+   protocol wants the finest levels with the punctures masked (today the
+   plotfiles' derived constraints cover this offline, in `t0_checks.py`).
+3. **Constraint-solved seeds.** The Π shell seed violates the constraints in
+   proportion to its amplitude (`SimulationParameters.hpp:50`); perturb Π,
+   then re-solve the constraints.
+4. **Waveform extrapolation in 1/R**: absent; matters least under the
+   stability-only plan.
 
 ## DONE
 
