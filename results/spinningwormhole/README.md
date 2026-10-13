@@ -13,9 +13,17 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   and quoted numbers stop there.
 - `campaign/` — packed runs (full `.dat` streams, `evolution_params.txt`,
   `run_manifest.json`, `mots_spectral.dat`; paths scrubbed by
-  `grteclyn_wrapper.packaging.scrub_paths`).
+  `grteclyn_wrapper.packaging.scrub_paths`; packed by
+  `research/spinningwormhole/pack_run.sh`), one folder per family
+  (decided 2026-10-13):
+  - `drainhole/` — family (a): η0 = 2, γ = −π, the static drainhole
+    a = 2, M = 1 (the merger's single wormhole) spun up;
+  - `symmetric_massless/` — family (b): CKK's symmetric family (γ = 0,
+    equal masses on both sides), whose static member is the massless
+    Ellis wormhole; rescaled η0 1 → 2 so its throat sits on the
+    drainhole's cells.
 
-## Claims
+## Claims: drainhole (`campaign/drainhole/`)
 
 - `01_static_hold/static_hold_L64_ml3_t100` (2026-10-11; launched as
   `static_hold_L64_t100`, renamed 2026-10-12): the Step 0 anchor.
@@ -42,16 +50,14 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   (2026-10-13: that "flattening" is most likely the coordinates, not the
   geometry: in the full-data holds the in-code R_pol ray falls 14–16 % by
   t ≈ 11 while the MOTS area about the same throat stays constant to 1e-4.)
-- `03_t0_checks/` (2026-10-13): Step 3's t = 0 checks of the fast-spin
-  tables in 3D, each run to t = 1 on the Step 1 grid (`t0_checks.py`:
+- `03_t0_checks/` (2026-10-13): Step 3's t = 0 check of the fast-spin
+  tables in 3D, run to t = 1 on the Step 1 grid (`t0_checks.py`:
   per-level constraint shells away from the puncture, throat-ray minima
-  against the table's own).  Family (a) at v_e 0.51 on three grids
+  against the table's own), at v_e 0.51 on three grids
   (N = 96 / 128 / 192): Ham and Mom converge at 4th order inside the
   throat; outside they grow as 1/dx² and 1/dx, the tables' fixed ~2e-7
   bilinear error, 10⁴× below the O(J²) holds' push; throat rays converge
-  to the table (−5e-5 at N = 192).  Family (b), rescaled to η0 = 2, at
-  v_e 0.50 / 0.70 / 0.90 / 0.95 / 0.99: throat rays within 0.1 % of the
-  table, constraints at the static hold's level.
+  to the table (−5e-5 at N = 192).
 - `04_fast_spin_hold/spin_hold_L64_ml3_ve070a_t100` (2026-10-13): the
   drainhole family at v_e 0.70 on the J holds' grid and gauge, only the
   table changed.  DIED at t = 42.36 at the far-side puncture, not the
@@ -59,6 +65,22 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   other hold it rises) and its shift ran away; the throat never moved
   (R_eq 7.7710 → 7.7713, MOTS area constant to 1e-4 while found).
   Trust window t ≤ 40.
+- `04_fast_spin_hold/spin_hold_L64_ml3_ve050a_t100` (2026-10-13): the
+  drainhole family at v_e 0.51 on the J holds' grid and gauge, only the
+  table changed; reached t = 100 clean.  The throat SHRINKS, the static
+  hold's sign, but far more slowly: MOTS R −0.61 % at t = 64, where the
+  static hold's had shrunk 2.5 % by t = 49 and detached a horizon at
+  t ≈ 61.  The shrink's e-fold time is ~5 at t = 40–50, then its rate
+  stops growing; no horizon forms.  Constraints at the static hold's
+  level until the boundary return (t ≈ 62).  Trust window t ≤ 64; 14
+  movies to t = 64 in the run directory.
+
+## Claims: symmetric, massless (`campaign/symmetric_massless/`)
+
+- `01_t0_checks/` (2026-10-13): the same t = 0 check (Step 1 grid,
+  N = 128, to t = 1) on family (b) rescaled to η0 = 2, at
+  v_e 0.50 / 0.70 / 0.90 / 0.95 / 0.99: throat rays within 0.1 % of the
+  table, constraints at the static hold's level.
 
 ## Fast-spin solver
 
