@@ -10,7 +10,11 @@ Branch `feature/spinning` (pushes to `myfork`).
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
 | `spin_hold_L64_ml3_ve050a_t100` | first GPU node / 0 | 1.6 | 100 | ~19 t/h | ~5.2 h, ~13:05 |
-| `spin_hold_L64_ml3_ve070a_t100` | first GPU node / 1 | 0.2 | 100 | ~18 t/h | ~5.6 h, ~13:25 |
+| `spin_hold_L64_ml3_ve070a_t100` | first GPU node / 1 | **died 42.36** | 100 | — | NaN 10:09 UTC |
+
+`ve070a` died at t = 42.36 (NaN in h11, level 3): the far side's shift ran
+away (the ergo diagnostic −90 → −8e5 from t ≈ 20, then −3e7 in the last 0.02);
+the throat never moved (R_eq 7.7710 → 7.7713). Consumer draining; GPU 1 free.
 
 Launched 07:44 / 07:49 UTC 2026-10-13, no checkpoints. Scratch: the t = 0
 checks' plotfiles wiped 08:00 (54 GB, `MANIFEST_CLEANUP_2026-10-13.md`);
