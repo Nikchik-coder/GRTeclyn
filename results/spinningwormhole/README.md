@@ -39,3 +39,20 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   data's own error, so the branch is set by the data, not yet by the spin.
   The spin's own signature is the throat's flattening, at a rate ∝ J².
   Constraints at the static hold's level.  Trust windows t ≤ 64 and t ≤ 57.
+
+## Fast-spin solver
+
+- `solver/solutions.tsv` — every converged solution of the fast-spin
+  solver (462 rows, 20 continuation legs: families (a) and (b), the four CKK
+  anchor families, the low-spin end of the symmetric family), one row each:
+  family, grid and map, the global charges and throat radii in CKK
+  conventions, and the identity gates.  Packed from the untracked
+  `runs/spinning_p3/` by `python -m
+  grteclyn_wrapper.visualisation.spinning_wormhole.solutions`.
+- `figures/solver/kk2014_fig1_overlay` (2026-10-13): Kleihaus & Kunz 2014
+  Fig. 1 as published, with our symmetric family (eta0 = 1, gamma = 0,
+  81 members, v_e 0.02-0.99) as open circles.  M/M0 = mu_+/R, J/J0 =
+  2J/R^2, R_p/R and R_A/R all lie on the published wormhole curves within
+  the line width over the whole range; the closed-form Kerr curves drawn
+  on the calibrated axes (`--check`) land on the printed Kerr curves, which
+  fixes both the pixel calibration and the paper's J0 = R^2/2.
