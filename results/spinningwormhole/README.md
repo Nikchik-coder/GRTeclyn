@@ -59,9 +59,12 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   symmetric family (eta0 = 1, gamma = 0; 81 solutions, v_e 0.02-0.991, plus
   the exact static member) as curves in KK's normalisation (M0 = R,
   J0 = R^2/2, Omega0 = 1/R), their digitized points as open symbols, Kerr
-  from closed forms.  Digitized minus ours: rms 2.5-8e-4, max 2.5e-3 over
-  all five curves, the size of the reading error, so the two solvers agree
-  to the precision a printed figure carries.
+  from closed forms (dashed).  Coloured by quantity as KK do (red M/M0 and
+  R_p/R, green J/J0 and R_A/R, blue Omega J), the spinning paper's scheme;
+  `--palette house` or `--colors C1,C2,C3` redraws it in another.
+  Digitized minus ours: rms 2.5-8e-4, max 2.5e-3 over all five curves, the
+  size of the reading error, so the two solvers agree to the precision a
+  printed figure carries.
 - `figures/solver/kk2014_fig1_overlay` (2026-10-13), INTERNAL CHECK ONLY
   (it shows the published raster itself, which a paper cannot reuse): our
   solutions as circles on KK's Fig. 1.  The closed-form Kerr curves drawn on

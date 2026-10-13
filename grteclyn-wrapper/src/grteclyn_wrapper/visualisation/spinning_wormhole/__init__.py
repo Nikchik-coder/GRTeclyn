@@ -12,7 +12,9 @@
 
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_kk2014_comparison
         THE PAPER FIGURE: our symmetric family as curves against KK 2014's
-        digitized points and the closed-form Kerr curves
+        digitized points and the closed-form Kerr curves; red/green/blue by
+        default (the spinning paper's colours; gold is the merger paper's),
+        --palette house or --colors C1,C2,C3 to redraw
 
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_kk2014_fig1
         an internal check only: our solutions as circles on the published
