@@ -5,21 +5,30 @@ One page, current only. Plans: [`SpinningWormhole.md`](SpinningWormhole.md) (pap
 `grteclyn-wrapper/scripts/campaigns/spinning_wormhole/`. Packed: `results/spinningwormhole/`.
 Branch `feature/spinning` (pushes to `myfork`).
 
-**Folders by family** (decided 2026-10-13): run dirs in
-`runs/spinning_wormhole/{drainhole,symmetric_massless}/` (launch with `--subdir
-drainhole` or `--subdir symmetric_massless[/validation]`), packed runs in
-`results/spinningwormhole/campaign/{drainhole,symmetric_massless}/NN_study/`
-(`pack_run.sh <family>/NN_study <run dir>`).
+**Folders** (decided 2026-10-13; no flat folders): `runs/spinning_wormhole/<family>/<NN_study>/`
+mirrors `results/spinningwormhole/campaign/<family>/<NN_study>/`; a triplet sits in a per-spin
+folder; superseded runs go to `<family>/00_archive/`. Shared: `backgrounds/ bin/ logs/
+manifests/ smoke/ templates/`. Now:
+- `drainhole/`: `01_static_hold/`, `02_spin_hold/` (the O(J²) holds), `03_t0_checks/`
+  (v_e 0.5, N 96/128/192), `04_fast_spin_hold/` (v_e 0.5, 0.7, J = 1);
+- `symmetric_massless/`: `00_archive/L64_A1_superseded/`, `01_t0_checks/L64_ladder/` (the
+  morning's v_e 0.5–0.99 checks) and `01_t0_checks/L128_A1/<spin>/` (A1: N 128/192/256
+  per spin), `03_spin_hold/<spin>/` (the A3 holds; the probes first).
+
+Launch through `logs/queue_worker.sh <gpu> logs/spin_queue.txt` (each line: template, name,
+target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack with
+`pack_run.sh <family>/<NN_study> <run dir>`.
 
 ## LIVE
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| A1 on L = 128: 21 t = 0 checks `t0conv_ve0XXb_L128_N{128,192,256}_ml3` (symmetric, to t = 1) | first GPU node / 0 and 1 | 2 of 21 started (14:14) | 1 | ~2–10 min each | ~1.2 h, ~15:30 |
+| A1 on L = 128: 21 t = 0 checks `t0conv_ve0XXb_L128_N{128,192,256}_ml3` (symmetric, each to t = 1) | first GPU node / 0 and 1, one run per card | 16 of 21 started (14:46) | 1 | ~3 / 4 / 7.5 min (N 128/192/256) | ~0.5 h, ~15:15 |
 
-No checkpoints (A1: asked, none). A1 runs pop `runs/spinning_wormhole/logs/a1_queue_L128.txt`
-(`a1_queue_v3.sh`, one worker per card) into `symmetric_massless/validation/`; tables
-`runs/spinning_p3/tables_eta2/` (ve024–085 new: `p5_A1_tables.py`, midpoint error ≤ 8.5e-8).
+No checkpoints (A1: asked, none). The queue `runs/spinning_wormhole/logs/spin_queue.txt`
+(`queue_worker.sh`, one worker per card) holds the last A1 runs, then the three probes;
+tables `runs/spinning_p3/tables_eta2/` (ve024–085 new: `p5_A1_tables.py`, midpoint error
+≤ 8.5e-8).
 The first six A1 runs on L = 64 (v_e 0.24, 0.43; 13:49–14:10) are superseded by
 the L = 128 set (decided 2026-10-13); their scratch was pruned 14:31 (22 GB).
 Closed out today, all in `drainhole/04_fast_spin_hold/`: v_e 0.7 (died t = 42.36,
@@ -61,7 +70,7 @@ spinning ones are not.
 | run | needs | restart from | waiting on |
 |---|---|---|---|
 | A2 `static_hold_L128_ml3_sym_t100` ×3 (N 128/192/256) | ~10 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | A1, its go |
-| **Puncture probes (go 14:33, no checkpoints):** `spin_hold_L128_N128_ml3_ve043b/067b/085b_t100`, the N = 128 members of A3 | <1 h evolution each (A1 ran N = 128 at ~129 t/h); `params_spin_hold_L128_N128_ve0XXb.txt` = the A1 L128 N128 template with stop_time 100 | — | the A1 queue (~15:15); `logs/probe_queue.sh` workers wait on both cards, runs into `symmetric_massless/` |
+| **Puncture probes (go 14:33, no checkpoints):** `spin_hold_L128_N128_ml3_ve043b/067b/085b_t100`, the N = 128 members of A3 | <1 h evolution each (A1 ran N = 128 at ~129 t/h); `params_spin_hold_L128_N128_ve0XXb.txt` = the A1 L128 N128 template with stop_time 100 | — | the A1 queue (~15:15); the last three lines of `logs/spin_queue.txt`, runs into `symmetric_massless/03_spin_hold/<spin>/` |
 | A3 `spin_hold_L128_ml3_ve024b_t100` ×3 | ~10 GPU-h; table `fam_b_ve024_eta2` (built) | — | A2, its go; the far-side puncture |
 | A3 `spin_hold_L128_ml3_ve043b_t100` ×3 | as above, v_e 0.43 | — | A2, its go; the far-side puncture |
 | A3 `spin_hold_L128_ml3_ve067b_t100` ×3 | as above, v_e 0.67 | — | A2, its go; the far-side puncture |

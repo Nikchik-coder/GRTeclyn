@@ -9,7 +9,7 @@
 #
 #   research/spinningwormhole/pack_run.sh <group> <run dir> [<run dir> ...]
 #   e.g. research/spinningwormhole/pack_run.sh symmetric_massless/01_t0_checks \
-#            runs/spinning_wormhole/symmetric_massless/validation/t0conv_*
+#            runs/spinning_wormhole/symmetric_massless/01_t0_checks/L128_A1/*/t0conv_*
 # <group> is <family>/<NN_study>: the family folder (drainhole/ or symmetric_massless/,
 # decided 2026-10-13) first, so the two families never mix.
 set -euo pipefail
