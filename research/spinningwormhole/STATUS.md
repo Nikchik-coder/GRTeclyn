@@ -15,16 +15,22 @@ drainhole` or `--subdir symmetric_massless[/validation]`), packed runs in
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| `spin_hold_L64_ml3_J100_full_t100` (drainhole) | first GPU node / 1 | 66 | 100 | ~18 t/h | ~1.8 h, ~15:45 |
-| A1: 21 t = 0 checks `t0conv_ve0XXb_L64_N{064,096,128}_ml3` (symmetric, to t = 1) | first GPU node / 0 (1 joins when free) | 3 of 21 started | 1 | 3–6 min each | ~1.4 h, ~15:20 |
+| A1 on L = 128: 21 t = 0 checks `t0conv_ve0XXb_L128_N{128,192,256}_ml3` (symmetric, to t = 1) | first GPU node / 0 and 1 | 2 of 21 started (14:14) | 1 | ~2–10 min each | ~1.2 h, ~15:30 |
 
-No checkpoints (A1: asked, none). A1 runs pop `runs/spinning_wormhole/logs/a1_queue.txt`
-(`a1_queue_v2.sh`, one worker per card) into `symmetric_massless/validation/`; new tables
-`runs/spinning_p3/tables_eta2/fam_b_ve0{24,43,67,85}_eta2.spinbg` (`p5_A1_tables.py`,
-midpoint error ≤ 8.5e-8). Closed out today: the drainhole holds at v_e 0.7 (died
-t = 42.36) and 0.5 (finished; 14 movies to t = 64), both packed in
-`drainhole/04_fast_spin_hold/`, their scratch pruned. The J = 1 hold moves into
-`runs/spinning_wormhole/drainhole/` at its close-out.
+No checkpoints (A1: asked, none). A1 runs pop `runs/spinning_wormhole/logs/a1_queue_L128.txt`
+(`a1_queue_v3.sh`, one worker per card) into `symmetric_massless/validation/`; tables
+`runs/spinning_p3/tables_eta2/` (ve024–085 new: `p5_A1_tables.py`, midpoint error ≤ 8.5e-8).
+The first six A1 runs on L = 64 (v_e 0.24, 0.43; 13:49–14:10) are superseded by
+the L = 128 set (decided 2026-10-13); their 25 GB of scratch wait for the word.
+Closed out today, all in `drainhole/04_fast_spin_hold/`: v_e 0.7 (died t = 42.36,
+far-side puncture), v_e 0.5 (finished; 14 movies to t = 64), J = 1 on exact data
+(died t = 70.64 at the end of a collapse).
+
+**Frames over the whole box** (decided 2026-10-13): launch with `--zoom 128
+--coord 64 --center 64 64 64` and `GRTECLYN_FRAMES_BUFF_CAP=2048`, so the live frames,
+the preflight's frame 0 and the slice cache cover ±64 at one pixel per finest cell
+(2048² at N = 256); zooming is done later, when the frames are redrawn from the cache
+(`rerender_frames.py` needs a window option for that, not yet written).
 
 ## QUEUED
 
@@ -33,27 +39,33 @@ The symmetric family is the one Kleihaus–Kunz and CKK published and Azad et al
 analysed in full, so it validates the 3D pipeline against published values before
 the drainhole, which has no published fast-spin data, is taken to high spin.
 
-**New holds run on L = 128, max_level 4** (decided 2026-10-13). The sponge (extra
-Kreiss–Oliger dissipation in r 24–32; the merger's `Source/Grids/SpongeZone.hpp`)
-removes only grid-scale noise: the outgoing gauge pulse (λ ~ 8 ≫ Δx 0.5) passes
-it, reflects off the faces and is back at the throat by t ≈ 64 on L = 64, which
-ends every L64 hold's trust window (in ve050a, K enters the frame window from
-t ≈ 60). The merger avoids it by box size (binaries L = 128, long single holds
-L = 512). L = 128 with tagging_L 128 (boxes ±32/16/8/4) keeps the L64 ml3
-hierarchy and adds one coarse level: the same finest Δx at N 64/96/128
-(0.125/0.083/0.0625), sponge 48–64, the return at t ≈ 128, cost ≈ +5 % by cell
-count (measure it on the first A2 run).
+**Every run from now on is on L = 128, clean to t = 100** (decided 2026-10-13).
+The sponge (extra Kreiss–Oliger dissipation in r 24–32; the merger's
+`Source/Grids/SpongeZone.hpp`) removes only grid-scale noise: the outgoing gauge
+pulse (λ ~ 8 ≫ Δx 0.5) passes it, reflects off the faces and is back at the
+throat by t ≈ 64 on L = 64, which ends every L64 hold's trust window (in ve050a,
+K enters the frame window from t ≈ 60). The layout is the merger's own
+`single_hold_L128_t100`: the L64 Step 1 grid's base Δx and nested boxes
+(tagging_L 64: ±16/8/4, max_level 3) in a box twice as wide, sponge 48–64, so the
+return comes at t ≈ 120–128. Triplets are N = 128 / 192 / 256 (dx0 1 / 0.667 /
+0.5; finest Δx 0.125 / 0.083 / 0.0625, N = 256 being the Step 1 grid's Δx
+everywhere). The merger ran this layout at 13.9 t/h: ~7.2 h to t = 100 at
+N = 256, ~10 GPU-h a triplet. Still open for "clean to t = 100": the far-side
+puncture. In every family (b) run so far min χ falls ×8 in the first time unit
+(the far side has positive mass, a black-hole-like puncture), the way the dead
+ve070a's did before it hit the floor; A2's static Ellis is massless there, the
+spinning ones are not.
 
 *Phase A: symmetric, family (b) at η0 2*
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| A2 `static_hold_L128_ml4_sym_t100` ×3 (N 64/96/128) | ~7.6 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | A1, its go |
-| A3 `spin_hold_L128_ml4_ve024b_t100` ×3 | ~7.6 GPU-h; table `fam_b_ve024_eta2` (built) | — | A2, its go |
-| A3 `spin_hold_L128_ml4_ve043b_t100` ×3 | as above, v_e 0.43 | — | A2, its go |
-| A3 `spin_hold_L128_ml4_ve067b_t100` ×3 | as above, v_e 0.67 | — | A2, its go; the ve070a puncture death |
-| A3 `spin_hold_L128_ml4_ve085b_t100` ×3 | as above, v_e 0.85 | — | A2, its go; the ve070a puncture death |
-| A4 `spin_hold_L128_ml4_ve090b/095b/099b_t100` ×3 | tables exist (`tables_eta2/`) | — | A3, its go |
+| A2 `static_hold_L128_ml3_sym_t100` ×3 (N 128/192/256) | ~10 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | A1, its go |
+| A3 `spin_hold_L128_ml3_ve024b_t100` ×3 | ~10 GPU-h; table `fam_b_ve024_eta2` (built) | — | A2, its go; the far-side puncture |
+| A3 `spin_hold_L128_ml3_ve043b_t100` ×3 | as above, v_e 0.43 | — | A2, its go; the far-side puncture |
+| A3 `spin_hold_L128_ml3_ve067b_t100` ×3 | as above, v_e 0.67 | — | A2, its go; the far-side puncture |
+| A3 `spin_hold_L128_ml3_ve085b_t100` ×3 | as above, v_e 0.85 | — | A2, its go; the far-side puncture |
+| A4 `spin_hold_L128_ml3_ve090b/095b/099b_t100` ×3 | tables exist (`tables_eta2/`) | — | A3, its go |
 
 - **A1, what it validates:** the Kleihaus–Kunz 2014 Fig. 1 quantities (M/M0,
   J/J0, R_p/R, R_A/R, ΩJ), read off the 3D grid at t = 0 and compared with the
@@ -67,17 +79,16 @@ count (measure it on the first A2 run).
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| B1 N 64 / 96 partners of `static_hold_L64_ml3_t100`, `spin_hold_L64_ml3_ve050a_t100`, `spin_hold_L64_ml3_J100_full_t100` | ~2.1 GPU-h each pair; L64 ml3, their partners' grid | — | Phase A, its go |
-| B2 `spin_hold_L128_ml4_ve070a_t100` ×3 | the far-side puncture fix | — | Phase A, the fix, its go |
-| B3 higher spin ×3 (v_e 0.9 / 0.95 / 0.99), L128 ml4 | tables exist | — | B2, its go |
+| B1 the three drainhole holds again as L128 triplets: static, v_e 0.51, J = 1 | ~10 GPU-h each; replaces the L64 N 64 / 96 partners, which would stop at t = 64 too | — | Phase A, its go |
+| B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far-side puncture fix | — | Phase A, the fix, its go |
+| B3 higher spin ×3 (v_e 0.9 / 0.95 / 0.99), L128 | tables exist | — | B2, its go |
 
 **Every quoted run is a triplet** (decided 2026-10-13; the stability protocol in
 `SpinningWormhole.md`, after Evstafyeva, Siemonsen & East, arXiv:2508.11527):
-N = 64 / 96 / 128 (finest Δx 0.125 / 0.083 / 0.0625; L128 ml4 for new holds,
-L64 ml3 for the B1 partners). A growth is physical only if its τ converges to a
-nonzero value, the finest-level constraints converge while it grows, and the
-throat's areal radii or MOTS grow with it. N 64 / 96 costs are N⁴ estimates from
-the measured ~5.5 h at N = 128.
+L128 ml3 at N = 128 / 192 / 256 (finest Δx 0.125 / 0.083 / 0.0625). A growth is
+physical only if its τ converges to a nonzero value, the finest-level constraints
+converge while it grows, and the throat's areal radii or MOTS grow with it. N 128 /
+192 costs are N⁴ estimates from the merger's 13.9 t/h at N = 256.
 
 **Why a symmetric ladder** (decided 2026-10-13: the paper carries both
 families). Azad et al. computed the second unstable mode, and its crossing
@@ -107,7 +118,12 @@ full tables are exact to ~1e-10.
    −0.61 % at t = 64, −2.9 % at 100; e-fold time ~5 at t 40–50, then a
    steady rate); no horizon, where the static hold's detached at t ≈ 61.
    Both are cut by the L64 boundary return (t ≈ 64), hence L = 128 above.
-3. The J = 1 hold on full data (live: does the O(J²) holds' push vanish?).
+3. **J = 1 on exact data: the push vanishes.** The throat collapses on the
+   static hold's mode (R_eq −1 % at t = 46.9, −10 % at 61.8; τ 6.8 against the
+   static hold's 5.8 by the same measure) and the run dies inside the collapse
+   at t = 70.64. The O(J²) hold's inflation was its data's error. With 0.5
+   (−0.5 % by t = 64) the collapse slows with spin: the headline to confirm on
+   L = 128 (B1).
 
 ## DONE
 

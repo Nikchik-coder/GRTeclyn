@@ -74,6 +74,15 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   stops growing; no horizon forms.  Constraints at the static hold's
   level until the boundary return (t ≈ 62).  Trust window t ≤ 64; 14
   movies to t = 64 in the run directory.
+- `04_fast_spin_hold/spin_hold_L64_ml3_J100_full_t100` (2026-10-13): the
+  J = 1 acceptance hold — the point the O(J²) `…_J100_t100` ran, now on
+  the exact table (v_e 0.21), same grid and gauge.  The throat COLLAPSES
+  on the static hold's mode: R_eq −1 % at t = 46.9 and −10 % at 61.8
+  (static: 44.1 / 57.0), τ 6.8 against the static hold's 5.8 by the same
+  measure; the run dies inside the collapsing throat at t = 70.64.  So
+  the O(J²) hold's inflation was its data's error, and with the 0.5c
+  hold the rate falls with spin: τ 5.8 (J = 0), 6.8 (v_e 0.21), and at
+  v_e 0.51 only −0.5 % by t = 64.  Trust window t ≤ 64.
 
 ## Claims: symmetric, massless (`campaign/symmetric_massless/`)
 
