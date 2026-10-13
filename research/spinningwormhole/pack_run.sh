@@ -8,10 +8,10 @@
 # still draining) is refused: a partial pack is git pollution.
 #
 #   research/spinningwormhole/pack_run.sh <group> <run dir> [<run dir> ...]
-#   e.g. research/spinningwormhole/pack_run.sh symmetric_massless/01_t0_checks \
-#            runs/spinning_wormhole/symmetric_massless/01_t0_checks/L128_A1/*/t0conv_*
-# <group> is <family>/<NN_study>: the family folder (drainhole/ or symmetric_massless/,
-# decided 2026-10-13) first, so the two families never mix.
+#   e.g. research/spinningwormhole/pack_run.sh symmetric_massless/01_t0_checks/L128_A1/ve024b \
+#            runs/spinning_wormhole/symmetric_massless/01_t0_checks/L128_A1/ve024b/t0conv_*
+# <group> is the run's folder under runs/spinning_wormhole/ -- <family>/<NN_study>[/<set>]
+# [/<spin>] (decided 2026-10-13) -- so the packed tree mirrors the run tree.
 set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 LOGS="${ROOT}/runs/spinning_wormhole/logs"

@@ -14,8 +14,11 @@ live state: `research/spinningwormhole/STATUS.md`; code:
 - `campaign/` — packed runs (full `.dat` streams, `evolution_params.txt`,
   `run_manifest.json`, `mots_spectral.dat`; paths scrubbed by
   `grteclyn_wrapper.packaging.scrub_paths`; packed by
-  `research/spinningwormhole/pack_run.sh`), one folder per family
-  (decided 2026-10-13):
+  `research/spinningwormhole/pack_run.sh`), laid out as the run tree
+  (decided 2026-10-13): `campaign/<family>/<NN_study>/` here is
+  `runs/spinning_wormhole/<family>/<NN_study>/` there, a triplet in a
+  per-spin folder (the merger's convention: `results/merger/campaign/<group>`
+  ↔ `runs/wormhole_merger/<group>`).  The families:
   - `drainhole/` — family (a): η0 = 2, γ = −π, the static drainhole
     a = 2, M = 1 (the merger's single wormhole) spun up;
   - `symmetric_massless/` — family (b): CKK's symmetric family (γ = 0,
@@ -86,8 +89,8 @@ live state: `research/spinningwormhole/STATUS.md`; code:
 
 ## Claims: symmetric, massless (`campaign/symmetric_massless/`)
 
-- `01_t0_checks/` (2026-10-13): the same t = 0 check (Step 1 grid,
-  N = 128, to t = 1) on family (b) rescaled to η0 = 2, at
+- `01_t0_checks/L64_ladder/` (2026-10-13): the same t = 0 check (Step 1
+  grid, N = 128, to t = 1) on family (b) rescaled to η0 = 2, at
   v_e 0.50 / 0.70 / 0.90 / 0.95 / 0.99: throat rays within 0.1 % of the
   table, constraints at the static hold's level.
 
