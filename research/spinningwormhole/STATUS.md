@@ -22,7 +22,21 @@ checks are packed as `03_t0_checks/`; their scratch was wiped 08:00 (54 GB).
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| — | | | |
+| `static_hold_L64_ml3_sym_t100` | a GPU ~5.5 h; static table η0 2, M 0 (`backgrounds.py static`) | — | its go |
+| `spin_hold_L64_ml3_ve024b_t100` | a GPU ~5.5 h; family (b) table at v_e 0.24, η0 2 (CPU, saved solution) | — | its go |
+| `spin_hold_L64_ml3_ve043b_t100` | as above, v_e 0.43 | — | its go |
+| `spin_hold_L64_ml3_ve067b_t100` | as above, v_e 0.67 | — | its go; the ve070a puncture death |
+| `spin_hold_L64_ml3_ve085b_t100` | as above, v_e 0.85 | — | its go; the ve070a puncture death |
+
+**Why a symmetric ladder** (decided 2026-10-13: the paper carries both
+families). Azad et al. computed the second unstable mode, and its crossing
+with the main one, only for C ≤ 0.2 (near-symmetric). For our drainhole
+(C = 1) they give the main mode alone (τ ≈ 5.1 at η0 = 2). So the paper's
+mode-merger test runs on family (b): spins at 10 / 20 / 33 / 50 % of the
+limiting J/A, where 33 % is their predicted crossing (J/A ≈ 0.013) and 50 %
+is where their O(J²) main mode reaches zero. The static Ellis anchor comes
+first (their C = 0 rate gives τ ≈ 1.7 at η0 = 2). Same grid, gauge and
+η0 1 → 2 rescale as the family (b) t = 0 ladder; no checkpoints unless asked.
 
 ## NOW: STEP 3, TEST THE FAST-SPIN TABLES
 

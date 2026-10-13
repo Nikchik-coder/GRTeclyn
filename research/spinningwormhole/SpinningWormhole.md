@@ -127,6 +127,7 @@ Each step lists what to do, what it produces, and the check that must pass befor
 ### Step 1. Background solutions across the full spin range (3–6 weeks, or 1–2 if shared)
 - **Do:**
   - **Choose the family.** The *symmetric* family starts from the massless static throat (M = 0), matches the published Kleihaus–Kunz data and suits the overspin test. The *non-symmetric* family through your m/a = 1/2 drainhole continues from your static results. Azad et al. treat both.
+    - **Decided 2026-10-13: both families go in the paper.** The drainhole is the main line: it has mass, so binaries are possible, and it continues the merger paper. The symmetric family carries the test of Azad et al.'s two-mode crossing, which they computed only for C ≤ 0.2, and the overspin test.
   - **Slow spin:** build the O(J²) solutions of Azad et al. for J ≲ 0.4 J_max.
   - **Fast spin:** either write a 2D spectral Newton solver, or ask the Oldenburg/Madrid group (Kunz, Kleihaus, Blázquez-Salcedo, Khoo) for their backgrounds up to v_e ≈ 0.95.
     - Solver details: Chebyshev in x = (2/π) arctan(η/η₀), which compactifies both ends; even cos(2kθ) in θ.
