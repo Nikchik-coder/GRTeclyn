@@ -1,232 +1,51 @@
 # Spinning-wormhole campaign — status
 
-One page, current only. Plan: [`SpinningWormhole.md`](SpinningWormhole.md).
-Code: `Examples/SpinningWormhole/` + `grteclyn-wrapper/scripts/campaigns/spinning_wormhole/`.
-Packed results: `results/spinningwormhole/`. Branch: `feature/spinning` (pushes to `myfork`).
+One page, current only. Plans: [`SpinningWormhole.md`](SpinningWormhole.md) (paper),
+[`SpinningSolver.md`](SpinningSolver.md) (solver, done). Code: `Examples/SpinningWormhole/` +
+`grteclyn-wrapper/scripts/campaigns/spinning_wormhole/`. Packed: `results/spinningwormhole/`.
+Branch `feature/spinning` (pushes to `myfork`).
 
 ## LIVE
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| — | | | | | |
+| `t0conv_ve050a_L64_N096/N128/N192_ml3`, one after another | first GPU node / 0 | 0 | 1 | — | ~0.5 h, ~07:35 |
+| `t0_ladder_ve050b/070b/090b/095b/099b_L64_ml3`, one after another | first GPU node / 1 | 0 | 1 | — | ~0.4 h, ~07:30 |
 
-Both GPUs of node-3220ddd4 are free since 13:49 (the two J holds finished).
-Every run name carries its level (decided 2026-10-12): `spin_hold_L64_J025_t100`
-and `static_hold_L64_t100` were renamed at close-out to
-`spin_hold_L64_ml3_J025_t100` and `static_hold_L64_ml3_t100` (registry, pack,
-references; their run dirs keep the old name as a symlink).
+Started 07:03 UTC 2026-10-13, no checkpoints, under `runs/spinning_wormhole/validation/`.
 
 ## QUEUED
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| — | | | |
+| `spin_hold_L64_ml3_ve050a_t100` | a GPU, ~5.5 h, no checkpoints | — | the v_e 0.5 check passing (go given) |
+| `spin_hold_L64_ml3_J100_full_t100` | a GPU, ~5.5 h | — | its go |
 
-## STEP 2: P4 DONE, M3 PASSED (2026-10-13)
+## NOW: STEP 3, TEST THE FAST-SPIN TABLES
 
-Both families reached v_e = 0.99 with every gate green: family (b)
-to 0.9907 on the plain arctan 72 x 18 grid (Kerr ratios closing:
-J/R_e^2 = 0.2458 -> 1/4, M/R_e = 0.487 -> 1/2, D -> 0.408; Volkov's
-1/4 for CKK Fig. 2 confirmed), family (a) to 0.9908 at J = 19413,
-M/eta0 = 70 on the section-5 option-2 log-stretch map (L = 4,
-144 x 30, tails 5e-14) after the arctan grid failed on schedule at
-v_e 0.961.  Cross-map overlap at the last two arctan points:
-omega_inf to 1e-10, M/D/R_eq to their 1e-8..1e-9 floor.  Mass
-read-off is now map-generic in observables.py.  Open: the polar
-curvature sign change near v_e 0.9 (needs the throat-surface
-curvature formula).
+The question the solver was built for: **does fast spin fix the instability?**
+The O(J²) holds could not tell (their push was the data's own J⁴ error); the
+full tables are exact to ~1e-10.
+1. **t = 0 checks** (live): at v_e 0.5 the constraints must fall with the grid
+   (3 grids); up to v_e 0.99 the constraints and throat radii must match each
+   table (family (b), rescaled to η0 = 2 to fit the box).
+2. **The test**: a hold at v_e 0.5 (family (a), the earlier holds' grid) to
+   t = 100: collapse, inflation, or does it hold?
+3. Then higher spin (a bigger box near 0.99), and the J = 1 hold on full data
+   (does the push vanish?).
 
-P5 catalogue built (15 tables, 2.1 GB, runs/spinning_p3/tables/):
-one .spinbg per family at v_e = 0.5-0.99 plus family (b)'s ergoregion
-onset pair, each sized by measured bilinear midpoint error.  The 1e-7
-target in f holds through v_e ~ 0.9 (2049x129 to 8193x513); past that
-even 8193x513 leaves 2e-6 (fam a, 0.95) to 7e-5 (fam a, 0.99) -- the
-plan's "uniform grid grows unreasonable near extremality" case, so
-near-extremal 3D work needs the bicubic loader (outside the solver
-plan) or lives with the measured error, which every table's meta
-records.  REMAINING in P5, both GPU (will be proposed before any
-launch): the J = 1 acceptance hold on the Step 1 grid, and t = 0
-constraint convergence at three resolutions at v_e ~ 0.5.
+## DONE
 
-## STEP 2: P3 DONE, M2 PASSED (2026-10-13)
+- **Step 0** (2026-10-11): the static hold twins the merger's `single_hold`:
+  collapse, τ 5.27, trust window t ≤ 64.
+- **Step 1** (2026-10-12): the O(J²) holds at J = 0.25 / 1 inflate (τ 5.8 / 5.6);
+  their push grew as J⁴, the data's error, not the spin.
+- **Step 2** (2026-10-13): full solver, both families to v_e 0.99, every gate
+  green; CKK's eq. (12) is wrong; tables in `runs/spinning_p3/tables/`
+  (error ≤ 1e-7 to v_e 0.9).
 
-Both families reached the target on CPU with every gate green along the
-path: family (a) (eta0 = 2, gamma = -pi) to v_e = 0.9087 at J = 169,
-family (b) (eta0 = 1, gamma = 0) to v_e = 0.9060 (48 x 12 auto-refining
-to 108 x 28).  Family-(b) identities (mirror, omega0 = omega_inf/2) hold
-at 1e-14 unimposed; the CKK ergosurface law is exact once the surface
-leaves the throat.  Resolution study at v_e 0.51 / 0.90: D, M, R_eq,
-omega_inf identical to 10 digits across three grids up to 240 x 60.
-CKK anchors at omega_inf = 0.5 (their table is the post-turnover branch;
-the pre-turnover branch is new data we also record): gamma = 0 and -1
-match ALL their printed digits (D = 0.552771, 0.716368); gamma = 1 and 2
-are grid-converged on our side (0.4314654, 0.3375993) with offsets 2e-4
-and 7e-3 from their printed values that are their finite-difference
-error -- no third crossing exists (checked to J = 172), and the Oldenburg
-email now asks about their accuracy there, next to the eq. (12) erratum
-question.  Near-extremal (v_e > 1, nx = 192) the tails grow past the
-gate: that is P4's two-scale regime, as planned.  Solver outputs live in
-`runs/spinning_p3/` (untracked); restart-from-saved-point
-(`run_family(seed_npz=...)`) is in production; jax has a CUDA opt-in
-(JAX_PLATFORMS) -- GPU reproduces CPU exactly but only pays off at P4
-grid sizes.  NEXT: P4 near-extremal (v_e >= 0.95), P5 tables + the 3D
-acceptance hold (GPU; will be proposed before any launch).
+## RULES
 
-## STEP 2 STARTED: THE FULL SOLVER, M1 PASSED (2026-10-12)
-
-`SpinningSolver.md` P0-P2 are done on `feature/spinning` (pure CPU, the
-wrapper venv + jax; no GPU use):
-- **The published CKK eq. (12) is wrong**: extremal Kerr (a = M, eta0 = 0,
-  closed form, fits their ansatz exactly) satisfies eqs. (10), (11), (13),
-  (19) exactly and leaves ~1e-2 in the printed (12).  Solutions of the
-  printed elliptic system violate the constraints at J^4 at EVERY
-  resolution; the solver instead takes N and D^2 jointly from the
-  constraints (13)+(19) (linear least squares), and
-  `derive_xy_equations.py --stage kerr` pins the finding as a regression
-  check.  The Oldenburg email (plan section 11) now asks about an erratum.
-- **First full (non-perturbative) rotating backgrounds**: the a = 2, M = 1
-  drainhole at J = 0.25 and J = 1 (v_e 0.057 / 0.21), ~2 s each at
-  64 x 16.  Independent full-Einstein residual (sympy Ricci, C >= 0.05)
-  1.0e-10 / 4.2e-10 vs the static member's 2e-11 floor -- against 3e-5 /
-  1e-2 for the O(J^2) tables that ran the Step 1 holds.  D^2 spread
-  1.4e-12, Smarr 9e-11, J-flux spread <= 1.3e-9, tails <= 5e-12.
-- Agreement with the O(J^2) generator at equal J: f, N differ by J^4 and
-  omega by J^3 with ratios constant to 1 % (J = 0.05-0.2); at J = 1 the
-  full M_ADM is 1.4 % below O(J^2), D +0.3 %, the omega sector -13 %
-  (its own J^2-relative correction).
-- First `.spinbg` from the full solver written (`backgrounds.py full`,
-  1025 x 65; bilinear midpoint error in f 1.8e-7 -- P5 sizes the final
-  grids).  22 wrapper tests in `tests/spinning_wormhole/`.
-- NEXT in the plan: P3 (continuation to v_e ~ 0.9 on both families, CKK
-  anchors), then P4 near-extremal, P5 tables + the 3D acceptance hold
-  (GPU; will be proposed before any launch).
-
-## STEP 1: THE SPINNING HOLDS INFLATE (2026-10-12)
-
-`spin_hold_L64_ml3_J025_t100` and `spin_hold_L64_ml3_J100_t100` (the Step 0
-drainhole at J = 0.25 and 1.0, same grid, gauge and table pipeline; no
-checkpoints) reached t = 100 clean, 0 NaN.  Packed as `02_spin_hold/`.
-- **Inflation, not collapse**: the throat grows on the static hold's unstable
-  mode with the opposite sign: τ = 5.8 (J025) and 5.6 (J100) vs 5.26.
-  R_eq 3.90 → 5.34 at t = 64 (J025); 4.09 → 7.36 at t = 40 and ~9.3 by
-  t = 56 from the χ slice (J100; the in-code rays cover the finest level
-  only, r < 4, and lose the throat at t ≈ 41).  No MOTS about the throat
-  once it opens (from t = 42 / 11): it is anti-trapped, as in the merger's
-  ε < 0 arms; a MOTS on its far side (coordinate r ≈ 1.5, R 36 / 30.5)
-  appears from t = 55 (J100) / 84 (J025).
-- **The branch is set by the data, not yet by the spin**: in the merger seed
-  arms' terms the holds act as radial kicks ε ≈ −3e-5 and −7e-3; ×230 for
-  ×4 in J is ~J⁴, the size of the O(J²) data's own error (J² would give ×16).
-  The spin's own signature is the throat's flattening, at a rate ∝ J²
-  (R_eq − R_pol 0.04 → 0.35 by t = 25 at J = 1).
-- **Constraints at the static hold's level** to the trust windows: L2_Ham
-  ≤ 2.5e-3; L2_Mom rises with the grid's K speckle exactly as in the static
-  hold.  Trust windows t ≤ 64 (J025, the box's boundary return) and t ≤ 57
-  (J100: throat leaves level 2 at r = 8, Ham doubles off its floor at 59).
-
-## STEP 1 INPUT: AZAD O(J²) CLOSED FORMS CHECKED (2026-10-12)
-
-Exact symbolic check at C = 0 against all four O(J²) l = 0 equations (tt, rr,
-ang, □Φ): the printed w, h0 and b0 are exact; the printed φ20 (eq. 2.7, the
-4/π reading) is missing an overall factor φ — **φ20 = φ(r) × the printed
-expression**, which → 0 at r → +∞ and is regular at the throat.  b0 cannot
-be the faulty one: ang (−2r h0′ + 2r b0′ + 4 b0) fixes it given h0 up to
-c/r²; φ20 enters rr alone.  `derive_phi20_correction.py` (spinning_wormhole
-analysis scripts; 45 s, one core, every residual cancels to 0).
-
-Generator: `backgrounds.py slowspin` solves the same O(J²) member directly in
-the table's KK gauge (Chebyshev; writes `.spinbg`).  Validated: the full
-R_ab + 2∂ψ∂ψ residuals fall as J⁴ (t-φ as J³) on the Step 0 drainhole
-(η0 = 2, M = 1; `check_slowspin_einstein.py`); at γ = 0 with f(−∞) matched
-to Azad's C = 0 member, its l = 0 f equals their exact 2h0 to 1e-14 and its
-M their ΔM.  Drainhole at J = 0.25 / 0.5 / 1: J/M² = 0.25 / 0.47 / 0.79,
-3 / 6 / 12 % of the extremal J/A; Einstein residual 3e-5 / 5e-4 / 1e-2.
-
-## STEP 0 ANCHOR: PASS (2026-10-11)
-
-`static_hold_L64_ml3_t100` (L = 64, N = 128, ml3 = the merger hold's grid on a
-halved box; a = 2, M = 1 table; no checkpoints; GPU 0, 5.6 h): reached
-t = 100 clean, 0 NaN.
-- **Trajectory-identical to the merger `single_hold`**: t = 0 bit-identical;
-  over the whole packed overlap (t ≤ 41.3) max rel diff 5e-5 in min_lapse and
-  max|K|, median 0 — the table-driven pipeline IS the merger drainhole.
-- **Collapse as expected (GGS mode)**: throat R 3.89 → 1.99;
-  τ(δR ∈ [0.01, 0.3], t = 38–56) = **5.27** vs the paper's 5.12 (the fit is
-  window-sensitive at the ±0.2 level; MOTS-R gives 5.5).
-- **Horizon forms**: spectral MOTS on 101/101 plotfiles; at t = 0 it is the
-  throat (R 3.886, M_MS 1.943), by t = 100 it detaches (R_MOTS 2.47 outside
-  the throat's 1.99, θ_in = −0.61) and its area SHRINKS — the phantom flux
-  term of the first-law columns, as in the merger paper.
-- Trust window t_max = 64 (`results/spinningwormhole/trust_windows.tsv`):
-  boundary return on the halved box (r = 32 out and back; speckle in the
-  local_speed frames from t ~ 60).  Constraints stay ~3e-3 to t ~ 78 and the
-  settled horizon R 2.4746 is unchanged to t = 100, but nothing after 64 is
-  quoted; movies cut there.
-
-## SMOKE: PASS (2026-10-10)
-
-Smoke runs live under `runs/spinning_wormhole/smoke/` (moved 2026-10-10 so the
-campaign root holds production runs only; launch.sh now routes the smoke and
-none profiles there, `--subdir` overrides).
-
-`smoke_test3` (static massless table, L = 16, N = 64, t → 0.5, GPU 0, ~1 min):
-clean exit, 0 NaN, L2_Mom(t=0) = 0 exactly, 14 frames through the throat,
-consumer 3/3 plotfiles + keep-last 3, R_eq 0.97 / R_pol 0.92 / ergo_min 1 at
-t = 0.  Scratch: clean — smoke_test/smoke_test2 plotfiles pruned
-(manifests/MANIFEST_CLEANUP_2026-10-10.md), 79M used, 1.0T free.
-Three faults found and fixed on the way (commit bfb65e8e + the coord guard):
-exit-time managed-arena free, near-puncture R_pol contamination, psi4 radii
-vs tiny box; plus a new shared-preflight refusal for a slice coordinate
-outside the box (the featureless-frames trap).
-
-## STATE (2026-10-10)
-
-- Campaign scaffold landed on `feature/spinning`: clean example (background-table
-  initial data, Γ̃ FD fill, throat/ergoregion diagnostics), static `.spinbg`
-  generator (exact under the loader's interpolation), legacy
-  `RotatingWormholeCollapse` deleted.
-- Campaign scripts landed: `spinning_wormhole/` (launch → run_single →
-  consumer) on the NEW shared preflight engine `campaigns/lib/preflight.py`
-  (per-campaign facts in `preflight_campaign.json`; the merger keeps its
-  frozen copy).  Dry-run against the built binary + static table: PASS,
-  59/59 template keys read.
-- Campaign pin: `main3d_smoke_bfb65e8e_2026-10-10.ex` (launch.sh
-  DEFAULT_BINARY; binaries.tsv row 2 — row 1 `main3d_first_cf8cca48` had the
-  exit-time crash and is superseded).
-
-## NEXT (the plan's order)
-
-1. ~~**Step 0 anchor**~~ DONE 2026-10-11: smoke PASS, and the static hold is a
-   numerical twin of the merger's production `single_hold_t100` (same grid)
-   over the full record — packed as `01_static_hold/static_hold_L64_ml3_t100`.
-   One resolution was decided to suffice: the twin check is stronger than a
-   three-resolution τ fit (the merger already owns the resolution ladder on
-   this grid).
-2. **Step 0 numerics** (optional hardening, none blocks Step 1): the
-   Δt = 0.02 Δx cause; constraint norms on the finest levels;
-   constraint-solved Π seeds; 1/R waveform extrapolation.
-3. ~~**Step 1 slow spin**~~ DONE 2026-10-12: the O(J²) slow-spin generator
-   is in (`backgrounds.py slowspin`, same `.spinbg` format, validated above)
-   and the first spinning holds are done (J = 0.25, 1.0: they inflate, the
-   branch set by the data's J⁴ error, above).
-4. **The full solver** ← IN PROGRESS (started 2026-10-12): the rotating
-   Ellis–Bronnikov backgrounds solved in full, not as the O(J²) expansion —
-   fast spin, and data accurate enough that the spin, not the data's error,
-   picks the throat's branch.  Plan `SpinningSolver.md`; P0–P2 (M1) done
-   (above), P3 continuation next.
-
-## RULES CARRIED OVER
-
-Same launch discipline as the merger campaign: no GPU start-up before the go,
-checkpoints are asked per run, full default frame set, STATUS updated and
-pushed at every launch/stop/wipe, scratch checked with every run check.
-
-**Wave extraction placed for the box (decided 2026-10-12).** Production runs
-must put their Ψ4 extraction radii in the wave zone of *their* box: outside
-the near zone (≳ one ringdown wavelength from the throat) and inside the
-sponge's inner radius.  The consumer's default `--radii 14 30` is the merger's
-L = 128 choice; on L = 64 (sponge 24–32) R = 30 is damped and R = 14 is
-near-zone — e.g. 12 / 16 / 20 there, and the in-code extraction
-(`activate_extraction = 1`) on for a per-step waveform.  A spinning collapse
-radiates l = 2, m = 0 with no seed (the oblate throat), so it needs this.
-The two J holds ran with 14 / 30.
+Merger launch discipline: go first, checkpoints asked per run, full frame set,
+STATUS pushed at every launch/stop. Ψ4 radii in the box's wave zone (L = 64:
+12 / 16 / 20, decided 2026-10-12).
