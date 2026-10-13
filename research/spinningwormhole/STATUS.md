@@ -9,16 +9,14 @@ Branch `feature/spinning` (pushes to `myfork`).
 
 | run | node/card | t | stop | speed | ETA (h, UTC) |
 |---|---|---|---|---|---|
-| `t0conv_ve050a_L64_N096/N128/N192_ml3`, one after another | first GPU node / 0 | 0 | 1 | — | ~0.5 h, ~07:35 |
-| `t0_ladder_ve050b/070b/090b/095b/099b_L64_ml3`, one after another | first GPU node / 1 | 0 | 1 | — | ~0.4 h, ~07:30 |
+| `spin_hold_L64_ml3_ve050a_t100` | first GPU node / 0 | 0 | 100 | ~17 t/h | ~5.6 h, ~13:20 |
 
-Started 07:03 UTC 2026-10-13, no checkpoints, under `runs/spinning_wormhole/validation/`.
+Launched 07:44 UTC 2026-10-13, no checkpoints. GPU 1 free from ~07:50.
 
 ## QUEUED
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| `spin_hold_L64_ml3_ve050a_t100` | a GPU, ~5.5 h, no checkpoints | — | the v_e 0.5 check passing (go given) |
 | `spin_hold_L64_ml3_J100_full_t100` | a GPU, ~5.5 h | — | its go |
 
 ## NOW: STEP 3, TEST THE FAST-SPIN TABLES
@@ -26,11 +24,15 @@ Started 07:03 UTC 2026-10-13, no checkpoints, under `runs/spinning_wormhole/vali
 The question the solver was built for: **does fast spin fix the instability?**
 The O(J²) holds could not tell (their push was the data's own J⁴ error); the
 full tables are exact to ~1e-10.
-1. **t = 0 checks** (live): at v_e 0.5 the constraints must fall with the grid
-   (3 grids); up to v_e 0.99 the constraints and throat radii must match each
-   table (family (b), rescaled to η0 = 2 to fit the box).
-2. **The test**: a hold at v_e 0.5 (family (a), the earlier holds' grid) to
-   t = 100: collapse, inflation, or does it hold?
+1. **t = 0 checks: PASS** (07:03–07:50; `runs/spinning_wormhole/validation/`,
+   `t0_checks.py`). v_e 0.5, 3 grids: constraints converge at 4th order
+   inside the throat; outside they grow as 1/dx² (Ham) and 1/dx (Mom), the
+   fingerprint of the tables' fixed ~2e-7 bilinear error, 10⁴× below the
+   O(J²) holds' push; throat radii converge to the table (R_eq −5e-5 at
+   N = 192). Family (b) to v_e 0.95: throat radii within 0.1 %, constraints
+   at the static hold's level.
+2. **The test** (live): a hold at v_e 0.5 (family (a), the earlier holds'
+   grid) to t = 100: collapse, inflation, or does it hold?
 3. Then higher spin (a bigger box near 0.99), and the J = 1 hold on full data
    (does the push vanish?).
 
