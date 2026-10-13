@@ -78,16 +78,20 @@ only, and the old L = 64 at N = 128 was this same dx0 0.5). From the measured
 triplet; N = 384 scales to ~155 GB, over the 81.5 GB card, so those members
 need both cards (MPI) or their own decision.
 
-**BLOCKER: the far-side puncture** (the probes, 2026-10-13). The three N = 128
-holds at v_e 0.43 / 0.67 / 0.85 on L = 128 all died at t = 3.4–4.0 at the centre
-(the compactified far end, a positive mass in family (b)): the lapse or χ there
-hits its floor and K runs away, while the throat never moves. The drainhole's
-v_e 0.7 hold died the same way. No spinning family (b) hold (A3, A4) and no fast
-drainhole hold (B2, B3) can run until the far side is handled; A2's static Ellis
-is massless there and the slow drainhole (v_e ≤ 0.51, negative far-side mass)
-held. Candidates to test, each a short probe: min_chi 1e-4 (the merger's FARZONE
-survival knob), a pre-collapsed initial lapse at the far side, a shift that does
-not co-rotate there.
+**BLOCKER: the far-side puncture.** The valid evidence is the drainhole's
+v_e 0.7 hold (L64, dx0 0.5): died at t = 42.36 at the centre (the compactified
+far end), lapse/χ to the floor, K runaway, throat unmoved. The three first
+probes (v_e 0.43 / 0.67 / 0.85) died at t ≈ 4 the same way but were SUPERSEDED
+2026-10-13: they ran N = 128 on L = 128 (dx0 = 1, below the floor), so grid and
+physics are confounded there (archived in
+`00_archive/L128_N128_probes_superseded/`, ve085b wiped; packs removed). No
+spinning family (b) hold (A3, A4) and no fast drainhole hold (B2, B3) runs
+until the far side is handled; A2's static Ellis is massless there and the
+slow drainhole (v_e ≤ 0.51) held. Probes at N ≥ 192: the √χ initial lapse
+(type 1, LIVE on card 1 — cleared the t ≈ 4 window, χ recovered off the
+floor); if it dies later, min_chi 1e-4 (its go given); a control at N = 192
+with the original stationary lapse, to split the lapse from the resolution,
+waits for its go.
 
 *Phase A: symmetric, family (b) at η0 2*
 
@@ -171,8 +175,9 @@ full tables are exact to ~1e-10.
    1/dx² and 1/dx outside (the tables' interpolation); the 3D ADM mass integral
    equals the table metric's on the same grid to ≤ 1e-12, extrapolated M within
    2e-5–7e-4 of the table's (0.7 % at 0.99), J within 2e-3 (0.24) to 2e-5 (0.99).
-5. **The family (b) holds die at the far-side puncture** by t ≈ 4 (the BLOCKER
-   above), before the throat does anything.
+5. **The first family (b) hold probes died at the far-side puncture** by
+   t ≈ 4, but on a dx0 = 1 grid — SUPERSEDED; the N ≥ 192 retests (the
+   BLOCKER above) are what counts now.
 
 ## NUMERICS DEBT (Step 0 of `SpinningWormhole.md`, none done; re-noted 2026-10-13)
 

@@ -107,14 +107,14 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   2e-5–7e-4 (0.7 % at 0.99, the extrapolation at R ≤ 46); J meets the
   table's to 2e-3 at 0.24 falling to 2e-5 at 0.99 (an R- and
   N-independent offset of 1e-4–9e-4).
-- `03_spin_hold/<spin>/spin_hold_L128_N128_ml3_<spin>_t100` (2026-10-13),
-  the puncture probes: the A3 holds' N = 128 members at v_e 0.43 / 0.67 /
-  0.85 on L = 128, the A1 data and gauge run on.  All three DIED at
-  t = 3.4–4.0 (NaN in h11, finest level) at the far-side puncture: the
-  lapse or χ at the centre (the compactified far end, a positive mass in
-  this family) hits its floor and K runs away, while the throat never
-  moved (R_eq to 1e-3).  With this gauge family (b) cannot be held; the
-  drainhole's v_e 0.7 hold died the same way.  Trust windows t ≤ 3.
+- `03_spin_hold/` (2026-10-13): the first puncture probes (v_e 0.43 / 0.67 /
+  0.85, N = 128 on L = 128) all DIED at t = 3.4–4.0 at the far-side
+  puncture, but were SUPERSEDED the same day and their packs removed:
+  they ran at dx0 = 1, below the resolution floor (triplets are
+  N 192 / 256 / 384), so the deaths are confounded between the coarse grid
+  and the puncture itself.  The far-side evidence that stands is the
+  drainhole's v_e 0.7 hold (dx0 0.5).  Retests run at N ≥ 192 (the first:
+  the √χ-lapse probe, 2026-10-13).
 
 ## Fast-spin solver
 
