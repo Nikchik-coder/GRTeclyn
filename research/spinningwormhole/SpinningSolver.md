@@ -195,10 +195,10 @@ Tests go in `tests/spinning_wormhole/`: static exactness, manufactured solutions
 
 ### P5 · Tables and 3D acceptance (starts at M1, runs beside P3–P4)
 
-- [ ] Table resolution study: choose n_x, n_mu so bilinear interpolation stays ≤ 1e−7 in f (current default 1025 × 65)
-- [ ] 3D J = 1 hold with full data, set up like `spin_hold_L64_ml3_J100_t100`; compare its kick ε with the O(J²) run's −7e−3 and with the static hold
-- [ ] t = 0 constraint convergence at three resolutions for v_e ≈ 0.5
-- [ ] Production catalogue tables for both families (section 9)
+- [x] Table resolution study: choose n_x, n_mu so bilinear interpolation stays ≤ 1e−7 in f (met through v_e ≈ 0.9: 2049 × 129 at v_e 0.5 up to 8193 × 513 at 0.9; beyond that even 8193 × 513 leaves 2e−6 (a, 0.95) to 7e−5 (a, 0.99) — the bicubic-loader case; every table's meta records its measured error)
+- [ ] 3D J = 1 hold with full data, set up like `spin_hold_L64_ml3_J100_t100`; compare its kick ε with the O(J²) run's −7e−3 and with the static hold (GPU — awaiting the go)
+- [ ] t = 0 constraint convergence at three resolutions for v_e ≈ 0.5 (GPU — awaiting the go)
+- [x] Production catalogue tables for both families (section 9): 15 tables in `runs/spinning_p3/tables/` (v_e 0.5–0.99 each family + family (b)'s ergoregion-onset pair), 2.1 GB
 
 **Gate:** the J = 1 kick sits at the static hold's floor; t = 0 L2_Ham is no worse than the static hold's.
 

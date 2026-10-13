@@ -34,8 +34,19 @@ v_e 0.961.  Cross-map overlap at the last two arctan points:
 omega_inf to 1e-10, M/D/R_eq to their 1e-8..1e-9 floor.  Mass
 read-off is now map-generic in observables.py.  Open: the polar
 curvature sign change near v_e 0.9 (needs the throat-surface
-curvature formula).  NEXT: P5 tables (resolution study, catalogues)
-+ the 3D acceptance hold (GPU; will be proposed before any launch).
+curvature formula).
+
+P5 catalogue built (15 tables, 2.1 GB, runs/spinning_p3/tables/):
+one .spinbg per family at v_e = 0.5-0.99 plus family (b)'s ergoregion
+onset pair, each sized by measured bilinear midpoint error.  The 1e-7
+target in f holds through v_e ~ 0.9 (2049x129 to 8193x513); past that
+even 8193x513 leaves 2e-6 (fam a, 0.95) to 7e-5 (fam a, 0.99) -- the
+plan's "uniform grid grows unreasonable near extremality" case, so
+near-extremal 3D work needs the bicubic loader (outside the solver
+plan) or lives with the measured error, which every table's meta
+records.  REMAINING in P5, both GPU (will be proposed before any
+launch): the J = 1 acceptance hold on the Step 1 grid, and t = 0
+constraint convergence at three resolutions at v_e ~ 0.5.
 
 ## STEP 2: P3 DONE, M2 PASSED (2026-10-13)
 
