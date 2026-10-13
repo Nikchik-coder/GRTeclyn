@@ -39,6 +39,26 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   data's own error, so the branch is set by the data, not yet by the spin.
   The spin's own signature is the throat's flattening, at a rate ∝ J².
   Constraints at the static hold's level.  Trust windows t ≤ 64 and t ≤ 57.
+  (2026-10-13: that "flattening" is most likely the coordinates, not the
+  geometry: in the full-data holds the in-code R_pol ray falls 14–16 % by
+  t ≈ 11 while the MOTS area about the same throat stays constant to 1e-4.)
+- `03_t0_checks/` (2026-10-13): Step 3's t = 0 checks of the fast-spin
+  tables in 3D, each run to t = 1 on the Step 1 grid (`t0_checks.py`:
+  per-level constraint shells away from the puncture, throat-ray minima
+  against the table's own).  Family (a) at v_e 0.51 on three grids
+  (N = 96 / 128 / 192): Ham and Mom converge at 4th order inside the
+  throat; outside they grow as 1/dx² and 1/dx, the tables' fixed ~2e-7
+  bilinear error, 10⁴× below the O(J²) holds' push; throat rays converge
+  to the table (−5e-5 at N = 192).  Family (b), rescaled to η0 = 2, at
+  v_e 0.50 / 0.70 / 0.90 / 0.95 / 0.99: throat rays within 0.1 % of the
+  table, constraints at the static hold's level.
+- `04_fast_spin_hold/spin_hold_L64_ml3_ve070a_t100` (2026-10-13): the
+  drainhole family at v_e 0.70 on the J holds' grid and gauge, only the
+  table changed.  DIED at t = 42.36 at the far-side puncture, not the
+  throat: the puncture's χ fell to the min_chi floor by t ≈ 4 (in every
+  other hold it rises) and its shift ran away; the throat never moved
+  (R_eq 7.7710 → 7.7713, MOTS area constant to 1e-4 while found).
+  Trust window t ≤ 40.
 
 ## Fast-spin solver
 

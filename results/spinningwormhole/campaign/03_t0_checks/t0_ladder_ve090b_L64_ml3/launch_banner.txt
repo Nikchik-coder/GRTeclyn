@@ -1,0 +1,40 @@
+[swh] name     : t0_ladder_ve090b_L64_ml3
+[swh] template : runs/spinning_wormhole/templates/params_t0_ladder_ve090b.txt
+[swh] binary   : runs/spinning_wormhole/bin/main3d_smoke_bfb65e8e_2026-10-10.ex
+[swh] gpu      : 1
+[swh] run dir  : runs/spinning_wormhole/validation/t0_ladder_ve090b_L64_ml3          (NFS: params, log, .dat streams)
+[swh] scratch  : /tmp/grteclyn_scratch/t0_ladder_ve090b_L64_ml3      (node-local: plotfiles, checkpoints)
+[swh] proc     : test (evolution runs from /tmp/ml_jobs/bin/test_3348bbb8)
+[swh] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[swh] frames   : as given in SWH_CONSUME_ARGS
+[preflight] frames : 14 field(s), the full set: chi chi_minus_1 K lapse shift1 shift2 shift3 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed
+[preflight] files  : spinning_background_file = runs/spinning_p3/tables_eta2/fam_b_ve090_eta2.spinbg
+[preflight] consumer: areal radius off
+[preflight] paths  : one spelling, 't0_ladder_ve090b_L64_ml3'
+[preflight] WARNING: this run writes no checkpoints: if it dies, it cannot be restarted
+[preflight] static : 64 keys, 0 absent from main3d_smoke_bfb65e8e_2026-10-10.ex
+[preflight] start-up with every key checked (gpu 1, 0 steps; writes its plotfile for the frames) ...
+[preflight] probe  : ok in 4.7 s; binary version (bfb65e8e); 1 unread key(s)
+[preflight] t = 0  : L2_Ham 1.9359003342e-03  L2_Mom 7.5333140832e-04
+[preflight] frames : rendering 14 field(s) from plt00000 with the consumer -> preflight_frames ...
+[preflight]   chi              ok     7.12e-06 .. 0.859
+[preflight]   chi_minus_1      ok     -1 .. -0.141
+[preflight]   K                flat   0 .. 0  (every pixel 0: K is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   lapse            ok     0.44 .. 0.925
+[preflight]   shift1           ok     -0.214 .. 0.214
+[preflight]   shift2           ok     -0.214 .. 0.214
+[preflight]   shift3           flat   0 .. 0  (every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   phi              ok     -0.603 .. -0.0177
+[preflight]   Pi               flat   0 .. 0  (every pixel 0: Pi is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   Weyl4_Re         ok     -0.00756 .. 0.000456
+[preflight]   Weyl4_Im         ok     -9.41e-05 .. 0.000109
+[preflight]   Weyl4_Mag        ok     1.47e-06 .. 0.00756
+[preflight]   scalar_activity  ok     0.0177 .. 0.603
+[preflight]   local_speed      ok     0.0147 .. 0.867
+[preflight] frames : 14 of 14 rendered in 12.8 s (ok); flat at this time: K shift3 Pi
+[preflight] verdict: PASS
+[swh] t = 0 frames: runs/spinning_wormhole/validation/t0_ladder_ve090b_L64_ml3/preflight_frames (rendered at preflight; the run's own go to frames/)
+[swh] registry : t0_ladder_ve090b_L64_ml3 -> results/spinningwormhole/runs_registry.tsv
+[manifest] runs/spinning_wormhole/validation/t0_ladder_ve090b_L64_ml3/run_manifest.json: binary main3d_smoke_bfb65e8e_2026-10-10.ex (bfb65e8e), preflight pass
+[swh] consumer  : pid 193486 -> runs/spinning_wormhole/validation/t0_ladder_ve090b_L64_ml3/small_data
+[swh]            deleting processed plotfiles, keeping last 3
