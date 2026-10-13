@@ -21,9 +21,18 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## LIVE
 
-**Nothing live; nothing launches until the next go** (final packing 2026-10-13,
-19:50 UTC: every run packed, scratch empty, the queue `logs/spin_queue.txt` empty
-and its workers gone). Closed out today: in `drainhole/04_fast_spin_hold/` v_e 0.7
+| run | node/card | t | stop | speed | ETA |
+|---|---|---|---|---|---|
+| B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`) | first GPU node, card 0 | launched 20:22 UTC | 100 | ~14 t/h (A1's measure) | ~7.2 h, ≈ 03:30 UTC 10-14 |
+
+The B1 production member (its go 2026-10-13): the v_e 0.513 drainhole on plain
+L128 N256 ml3 (`params_spin_hold_ve050a_L128_N256.txt`), full-box frames
+(zoom 128, cache 2048), rolling checkpoints every t = 10 keep 3 (asked). Its
+static twin on this exact layout is the merger's `single_hold_L128_t100`:
+the question is whether the L64 result (collapse slows with spin) holds with
+the clean t = 100 baseline. Card 1 stays free; nothing else launches without
+its go. Earlier today (final packing 19:50 UTC): every previous run packed,
+scratch empty. Closed out: in `drainhole/04_fast_spin_hold/` v_e 0.7
 (died t = 42.36, far-side puncture), v_e 0.5 (finished; 14 movies to t = 64) and
 J = 1 on exact data (died t = 70.64 at the end of a collapse); in
 `symmetric_massless/` the 21 A1 runs (`01_t0_checks/L128_A1/`) and the three puncture
@@ -92,7 +101,16 @@ not co-rotate there.
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| B1 the three drainhole holds again as L128 triplets: static, v_e 0.51, J = 1 | ~45 GPU-h each; templates written (`params_{static_hold,spin_hold_ve050a,spin_hold_J100_full}_L128_N{192,256,384}.txt`); replaces the L64 N 64 / 96 partners | — | go given 2026-10-13, launch held ("do not launch anything"); the N = 384 two-card question |
+| B1 the rest: ve050a N 192 / 384, static ×3, J = 1 ×3 | templates written (`params_{static_hold,spin_hold_ve050a,spin_hold_J100_full}_L128_N{192,256,384}.txt`); the static L128 N256 anchor already exists (the merger's `single_hold_L128_t100`) | — | its go; the N = 384 members on the junk-shell layout (below) |
+
+**Junk-shell layout for the N = 384-class members** (agreed 2026-10-13, not yet
+templated): same L = 128 box, but the outer r > 32 shell stays one level
+coarser (tagging_L 128, max_level 4, base dx0 = 2× the interior) — the
+wormhole keeps its full resolution, the startup pulse dies in the 48–64 sponge,
+return still t ≈ 128. Params-only (no code change). It cuts the finest triplet
+member from ~36 h / 155 GB (impossible on one card) to ~16 h / ~70 GB, a
+triplet to ~25 GPU-h. The production N = 256 member gains little (~7 h either
+way), so it runs plain.
 | B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far-side puncture fix | — | the fix, its go |
 | B3 higher spin ×3 (v_e 0.9 / 0.95 / 0.99), L128 | tables exist | — | B2, its go |
 
