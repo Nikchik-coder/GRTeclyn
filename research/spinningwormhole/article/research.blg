@@ -12,14 +12,33 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: researchNotes.bib
-Warning--I didn't find a database entry for "morris88"
-Warning--I didn't find a database entry for "ellis73"
-Warning--I didn't find a database entry for "bronnikov73"
-Warning--I didn't find a database entry for "shinkai02"
-Warning--I didn't find a database entry for "gonzalez09"
+Warning--I didn't find a database entry for "ellis1973"
+Warning--I didn't find a database entry for "bronnikov1973"
+Warning--I didn't find a database entry for "morris_thorne1988"
+Warning--I didn't find a database entry for "visser1995"
+Warning--I didn't find a database entry for "gonzalez2009lin"
+Warning--I didn't find a database entry for "gonzalez2009"
+Warning--I didn't find a database entry for "shinkai2002"
+Warning--I didn't find a database entry for "bronnikov2011"
+Warning--I didn't find a database entry for "cremona2019"
+Warning--I didn't find a database entry for "shirokov2026"
+Warning--I didn't find a database entry for "shirokov2026c"
+Warning--I didn't find a database entry for "matos2006"
+Warning--I didn't find a database entry for "kashargin2008"
+Warning--I didn't find a database entry for "kleihaus_kunz2014"
+Warning--I didn't find a database entry for "chew2016"
+Warning--I didn't find a database entry for "volkov2021"
+Warning--I didn't find a database entry for "azad2023"
+Warning--I didn't find a database entry for "azad2024"
+Warning--I didn't find a database entry for "dzhunushaliev2013"
+Warning--I didn't find a database entry for "blazquez2025"
 Warning--I didn't find a database entry for "grteclyn"
+Warning--I didn't find a database entry for "amrex"
 Warning--I didn't find a database entry for "grchombo"
-Warning--I didn't find a database entry for "teo98"
+Warning--I didn't find a database entry for "alic2012"
+Warning--I didn't find a database entry for "bona1995"
+Warning--I didn't find a database entry for "alcubierre2003gauge"
+Warning--I didn't find a database entry for "evstafyeva2025"
 control{REVTEX42Control}, control.key{N/A}, control.author{N/A}, control.editor{N/A}, control.title{N/A}, control.pages{N/A}, control.year{N/A}, control.eprint{N/A}, 
 control{apsrev42Control}, control.key{N/A}, control.author{08}, control.editor{1}, control.title{0}, control.pages{0}, control.year{1}, control.eprint{N/A}, 
 Warning--jnrlst (dependency: not reversed) set 1
@@ -35,7 +54,7 @@ Control: year (1) truncated
 Control: production of eprint (0) enabled
 You've used 2 entries,
             6079 wiz_defined-function locations,
-            1643 strings with 15094 characters,
+            1662 strings with 15336 characters,
 and the built_in function-call counts, 991 in all, are:
 = -- 12
 > -- 16
@@ -74,4 +93,4 @@ warning$ -- 1
 while$ -- 11
 width$ -- 0
 write$ -- 52
-(There were 9 warnings)
+(There were 28 warnings)

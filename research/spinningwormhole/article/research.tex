@@ -1,336 +1,391 @@
-\documentclass[twocolumn,aps,prd,nofootinbib,natbib]{revtex4-2}
+% DRAFT. Numbers are typed in place for now; before submission every quoted
+% number moves to a claims ledger (claims/ledger_*.tsv -> numbers.tex), as in
+% the binary paper.
+\documentclass[twocolumn,floatfix,aps,prd,superscriptaddress,nofootinbib]{revtex4-2}
 
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
+% Engine guard: glyphtounicode and \pdfgentounicode are pdfTeX primitives.
+% Under LuaLaTeX/XeLaTeX they are undefined and the run aborts in the preamble.
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[utf8]{inputenc}
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+  \input{glyphtounicode}
+  \pdfgentounicode=1
+\else
+  \usepackage{fontspec}
+  \setmainfont{Latin Modern Roman}
+  \setsansfont{Latin Modern Sans}
+  \setmonofont{Latin Modern Mono}
+\fi
 \usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{amsmath}
 \usepackage{xcolor}
 \usepackage{hyperref}
 \usepackage{textcase}
-\graphicspath{{figures/}}
+\usepackage{placeins}
+\usepackage[protrusion=true,expansion=false]{microtype}
+
+% Half-page figure* strips must ride at the top of a text page, not own a
+% float page of their own (the binary paper's Fig. 2 lesson).
+\AtBeginDocument{%
+  \renewcommand{\dbltopfraction}{0.92}%
+  \renewcommand{\dblfloatpagefraction}{0.55}%
+  \renewcommand{\textfraction}{0.1}%
+  \setcounter{dbltopnumber}{2}%
+}
+
+\graphicspath{{figures/}{../../../results/spinningwormhole/figures/}}
 
 \hypersetup{
-  colorlinks=true,
-  linkcolor=blue,
-  urlcolor=blue,
-  citecolor=blue
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=blue,
 }
 \urlstyle{same}
+\emergencystretch=2em
 
 \begin{document}
 
-\title{\MakeTextUppercase{Collapse-on-Command of an Actively Supported Rotating
-Wormhole: Horizon Formation and Gravitational-Wave Emission Without an Imposed
-Quadrupole Kick}}
+\title{\texorpdfstring{\MakeTextUppercase{Investigating the stability of spinning wormholes with nonlinear evolutions}}{Investigating the stability of spinning wormholes with nonlinear evolutions}}
 
 \author{\MakeTextUppercase{Nikita M. Shirokov}}
 \email{shirokov.nm@phystech.edu}
-\affiliation{\textit{Independent Researcher, Moscow, Russia}}
+\affiliation{\textit{Moscow Institute of Physics and Technology, Moscow, Russia}}
+\author{\MakeTextUppercase{Ilya Nachevsky}}
+\email{ommnammashivaya@gmail.com}
+\affiliation{\textit{Higher School of Economics, Moscow, Russia}}
 \date{\today}
 
 \begin{abstract}
-We evolve a rotating, actively supported wormhole in three-dimensional numerical
-relativity. Constraint-solved initial data contain an exotic complex scalar
-Q-torus with winding $m=1$; collapse is triggered by ramping its support to zero
-over $t\in[8,10]$, without an imposed perturbation. The lapse reaches
-$\min\alpha\simeq10^{-3}$, the conformal factor pinches, and a coordinate-sphere
-trapped-surface proxy grows to $r_{\rm AH}\simeq9.2$. The proxy then shrinks while
-the lapse recovers, indicating a phantom-matter rebound rather than a quiescent
-black hole. A coherent $\ell=2$ curvature wave propagates at approximately the
-speed of light and is overwhelmingly $m=0$, linking the radiation primarily to
-the collapsing toroidal density rather than to a nonaxisymmetric spin mode.
-The collapse, rebound, and burst reproduce for base spacings
-$h\simeq0.667,0.5,0.4$. Richardson behavior is quantity-dependent: selected
-geometric and momentum-constraint measures converge, whereas the Hamiltonian
-maximum and waveform peak do not admit controlled extrapolation. A completed
-$L=128$ run gives an independent intermediate-zone waveform check. The result is
-an engineered dynamical experiment, not a stationary solution of the unforced
-Einstein--Klein--Gordon system.
+We investigate the stability of spinning Ellis--Bronnikov wormholes using fully nonlinear 3+1 numerical relativity simulations, for two families of solutions: the symmetric family of Kleihaus and Kunz, and the massive drainhole family whose static member we evolved in our previous work. We reconstruct the stationary metrics with a spectral solver that is exact to ${\sim}10^{-10}$ across the spin range, correcting an inconsistency in a published field equation and mapping the previously unpublished parameter space of the massive family, and we verify fourth-order convergence of the 3D initial data. We find that rotation slows the radial instability: on exact backgrounds the slowly spinning drainhole collapses with an $e$-fold time of 6.8 against the static 5.8, and at rotation velocity $v_e=0.51$ the throat loses only $0.6\%$ of its radius over the simulation, where the static throat has long since formed a horizon. Second-order perturbative initial data instead seed the instability at the level of their own truncation error.
 \end{abstract}
 
 \maketitle
 
 \section{Introduction}
-Traversable wormholes require null-energy-condition (NEC) violation
-~\cite{morris88}. Static Ellis--Bronnikov throats are dynamically unstable:
-compressive perturbations collapse them, while rarefactive perturbations drive
-expansion~\cite{ellis73,bronnikov73,shinkai02,gonzalez09}. We ask whether support
-can be withdrawn from a rotating exotic throat in a controlled way and whether
-the collapse radiates without an imposed quadrupolar kick.
+\label{sec:intro}
 
-The rotation is carried by a complex scalar Q-torus rather than prescribed
-through an analytic rotating metric. An elliptic solve supplies
-constraint-consistent geometry and extrinsic curvature; an external support
-coupling holds the composite configuration temporarily and provides the trigger.
-This construction isolates the response to support removal but explicitly
-introduces a nonconservative source while support is active.
+The Ellis--Bronnikov wormhole, a throat held open by a phantom scalar field~\cite{ellis1973,bronnikov1973,morris_thorne1988,visser1995}, is unstable: depending on the sign of the perturbation it collapses to a black hole or inflates, on a timescale set by the throat radius~\cite{gonzalez2009lin,gonzalez2009,shinkai2002,bronnikov2011,cremona2019}. Nonlinear 3+1 evolutions confirm both branches for the lone throat~\cite{shirokov2026} and carry them into binaries, whose every channel ends in collapse, inflation or a merged horizon within a few dynamical times~\cite{shirokov2026c}. If traversable wormholes are to persist anywhere, something must shut this instability off.
 
-\begin{figure*}[tp]
+Rotation is the oldest candidate~\cite{matos2006}. Spinning Ellis--Bronnikov solutions are known perturbatively~\cite{kashargin2008} and, beyond perturbation theory, from the elliptic solver of Kleihaus and Kunz~\cite{kleihaus_kunz2014,chew2016}: a family that starts at the static throat and ends, at equatorial rotation velocity $v_e=1$, on an extremal Kerr black hole, the phantom field vanishing in the limit; no closed form exists~\cite{volkov2021}. On the stability side, Azad, Bl\'azquez-Salcedo, Khoo and Kunz~\cite{azad2023,azad2024} carried the radial mode to second order in spin: the static unstable mode weakens, with a positive $O(J^2)$ correction for every asymmetry, while a second unstable mode grows out of a static zero mode; the two cross near $30\%$ of the limiting angular momentum, where the quadratic approximation gives out, and the authors conjecture the modes merge and the instability disappears, as purely imaginary modes do in five dimensions~\cite{dzhunushaliev2013}. The charged analogue warns against optimism: there the merged modes continue as a complex pair, growth that oscillates, and the growth rate reaches zero only in the extremal limit~\cite{blazquez2025}. Which continuation rotation takes in four dimensions is exactly the question a perturbative method cannot answer, and no rotating wormhole has ever been evolved nonlinearly.
+
+This paper builds the tools for that evolution and takes its first step. We construct both families of backgrounds as exact stationary solutions: the symmetric family ($\gamma=0$), massless when static, which carries every published number---the curves of Ref.~\cite{kleihaus_kunz2014}, the scalar charges of Ref.~\cite{chew2016}, the mode structure of Refs.~\cite{azad2023,azad2024}---and so validates the pipeline; and the drainhole family ($\gamma=-\pi$), whose static member is the mass-1 drainhole evolved in Refs.~\cite{shirokov2026,shirokov2026c}, for which the literature has no fast-spin data at all. The solver is gated on identities it never imposes, a discipline that pays immediately: one of the published field equations is inconsistent (Sec.~\ref{sec:model:eq12}), and second-order perturbative initial data turn out to seed the instability at their own error level (Sec.~\ref{sec:slow}). We then put the backgrounds on the AMR grid, verify them at fourth order, and evolve the drainhole's slow-spin end. The result so far is one-sided but clean: rotation slows the collapse, as the perturbative sign predicts.
+
+Section~\ref{sec:model} gives the family and the corrected field equations; Sec.~\ref{sec:solver} the solver, the validation against the published data, and the map of the parameter space (Table~\ref{tab:backgrounds}); Sec.~\ref{sec:setup} the 3D initial data and the evolution protocol; Sec.~\ref{sec:slow} the slow-spin evolutions; Sec.~\ref{sec:conclusions} the conclusions. Appendix~\ref{app:solver} holds solver details and the comparison with the anchor solutions of Ref.~\cite{chew2016}. We use $G=c=1$; lengths are quoted in units of the throat parameter $\eta_0$.
+
+\section{The spinning wormhole family}
+\label{sec:model}
+
+The matter model is that of our previous work~\cite{shirokov2026,shirokov2026c}: Einstein gravity coupled to a phantom (ghost) scalar field $\psi$,
+\begin{equation}
+S=\frac{1}{16\pi}\int d^4x\,\sqrt{-g}\left(R+2\,g^{\mu\nu}\partial_\mu\psi\,\partial_\nu\psi\right),
+\label{eq:action}
+\end{equation}
+gives $R_{\mu\nu}=-2\,\partial_\mu\psi\,\partial_\nu\psi$. Those papers evolved its best-known static wormhole---the Ellis--Bronnikov drainhole with throat parameter $a=2$ and end masses $\pm1$---and measured the instability that this paper asks rotation to cure. Spinning that wormhole up requires the stationary rotating solution of the same theory, and none is known in closed form~\cite{volkov2021}: it has to be constructed numerically, inside an \emph{ansatz}---an assumed form of the metric with stationarity and axisymmetry built in and a few unknown functions left for the field equations to determine. We take the ansatz of Refs.~\cite{kleihaus_kunz2014,chew2016}, who first constructed these solutions,
+\begin{equation}
+ds^2=-e^{f}dt^2+e^{-f}\!\left[e^{\nu}\!\left(d\eta^2+h\,d\theta^2\right)+h\sin^2\!\theta\left(d\varphi-\omega\,dt\right)^2\right],
+\label{eq:metric}
+\end{equation}
+with $\eta\in(-\infty,\infty)$. The fixed function $h=\eta^2+\eta_0^2$ is what makes this a wormhole ansatz. In the trivial limit $f=\nu=\omega=0$ the spatial metric is $d\eta^2+h\,d\Omega^2$, so $\sqrt{h}$ is the radius of the sphere at coordinate $\eta$---and by construction it never vanishes: it falls from $\eta^2$ at large $|\eta|$, bottoms out at $\eta_0$ at $\eta=0$, and rises again. The spacetime therefore has no center; a minimal sphere of radius set by $\eta_0$, the throat, joins the two asymptotically flat ends $\eta\to\pm\infty$. Choosing $h$ hard-wires this two-ended, horizonless topology into Eq.~\eqref{eq:metric}, while $f$, $\nu$, $\omega$ deform the geometry on top of it ($h$ also recurs as the weight in every equation below); conversely, $\eta_0\to0$ closes the throat and lets the same ansatz hold a black hole, which is how extremal Kerr enters in Sec.~\ref{sec:model:eq12}. Our previous wormhole sits inside this form: with $\omega=\nu=0$ and the closed-form $\arctan$ profile for $f$~\cite{chew2016}, Eq.~\eqref{eq:metric} is the static drainhole of Refs.~\cite{shirokov2026,shirokov2026c}---$\eta$ is the isotropic radius $r$ used there, unfolded through the throat by $\eta=r-\eta_0^2/4r$ (Sec.~\ref{sec:setup}), and $\eta_0=a$ its throat parameter---while $f=0$ gives the massless Ellis wormhole. Everything the ansatz~\eqref{eq:metric} leaves open---the metric functions $f(\eta,\theta)$ (the redshift of the two ends), $\omega(\eta,\theta)$ (the frame dragging) and $\nu(\eta,\theta)$, together with the phantom field---must come from the field equations: determining them at each spin is what Sec.~\ref{sec:solver} is for. Substituting the ansatz~\eqref{eq:metric} into the field equations reduces them in four steps. The reduction is not ours: it is the recipe of Kleihaus and Kunz~\cite{kleihaus_kunz2014}, derived in full in Sec.~II of Ref.~\cite{chew2016}, whose equation numbers we quote; we retrace it here in words only. First, the equation for a fourth metric function $p$, usually carried alongside $f$, $\nu$, $\omega$, decouples from the rest and is solved by $p=1$ under flat boundary conditions, eliminating it from the start [Eqs.~(5)--(6) there]. Second, with $p=1$ the phantom field equation---the curved-space wave equation, which stationarity and axisymmetry reduce to a function of $\eta$ alone---integrates in closed form to $\psi=D\left[\arctan(\eta/\eta_0)-\pi/2\right]$ [Eqs.~(7)--(9) there]: the scalar enters the rest of the problem only through its constant of integration $D$, the scalar charge. Third, because $\partial_\mu\psi$ points along $\eta$, the source term $-2\,\partial_\mu\psi\,\partial_\nu\psi$ survives only in the $\eta\eta$ Einstein equation; each other nontrivial component ($tt$, $t\varphi$, $\theta\theta$, $\varphi\varphi$, $\eta\theta$) is a statement about the metric functions alone, and these organize by order and role. Two are second-order elliptic equations,
+\begin{align}
+0&=\partial_\eta\!\left(h s\,\partial_\eta f\right)+\partial_\theta\!\left(s\,\partial_\theta f\right)
+-h s^3 e^{-2f}\!\left[h(\partial_\eta\omega)^2+(\partial_\theta\omega)^2\right],
+\label{eq:feq}\\
+0&=\partial_\eta\!\left(h^2 s^3 e^{-2f}\partial_\eta\omega\right)+\partial_\theta\!\left(h s^3 e^{-2f}\partial_\theta\omega\right),
+\label{eq:omeq}
+\end{align}
+with $s\equiv\sin\theta$ [Eqs.~(10)--(11) of Ref.~\cite{chew2016}]: Eq.~\eqref{eq:feq} is a Laplace-type equation for the redshift $f$, sourced by the squared gradients of the frame dragging---rotation gravitates---and Eq.~\eqref{eq:omeq} is a total divergence, the local form of angular-momentum conservation, which integrated over the domain forces the same $J$ through every $\eta=\mathrm{const}$ surface. The single off-diagonal component is only first order in $\nu$,
+\begin{equation}
+0=-h s\,\partial_\eta f\,\partial_\theta f+h\cos\theta\,\partial_\eta\nu+\eta s\,\partial_\theta\nu
++h^2 s^3 e^{-2f}\partial_\eta\omega\,\partial_\theta\omega,
+\label{eq:constraint}
+\end{equation}
+so $\nu$ follows by integration once $f$ and $\omega$ are known [Eq.~(13) there]. (The remaining diagonal components give a second-order equation for $\nu$ as well---the published Eq.~(12), shown misprinted in Sec.~\ref{sec:model:eq12}; we never use it.) Fourth, the one sourced component, $R_{\eta\eta}=-2D^2/h^2$ [Eq.~(18) there], rearranges into an algebraic identity for the charge [Eq.~(19) there]: the metric functions fix $D^2$ at every point, so its constancy over the domain is a solution test that comes for free. Three unknown functions thus face more equations than they need; the Bianchi identities make the overdetermined set consistent on a true solution, and a numerical scheme must choose which subset to impose---a choice Sec.~\ref{sec:model:eq12} shows matters. The boundary conditions select the family: Minkowski at $\eta\to+\infty$, and $f\to\gamma$, $\omega\to\omega_\infty$ at $\eta\to-\infty$, so the constant $\gamma$ measures how unequal the two ends are and $\omega_\infty$ sets the spin.
+
+A solution of this system is three functions and one number, $(f,\nu,\omega;D)$. Every physical quantity we quote---the columns of Table~\ref{tab:backgrounds}---is read off them directly~\cite{kleihaus_kunz2014,chew2016}:
+\begin{itemize}
+\item far from the throat the metric settles to the field of a point mass, $f\to-2\mu_+/\eta$ as $\eta\to+\infty$ and $f\to\gamma+2\mu_-/\eta$ as $\eta\to-\infty$, so the end masses $\mu_\pm$ are the $1/\eta$ coefficients of $f$;
+\item likewise $\omega\to2J/\eta^3$, and the conservation law~\eqref{eq:omeq} forces the same $J$ on both ends; the charges obey the Smarr-type relation $\mu_++\mu_-=2\,\omega_\infty J$~\cite{chew2016}, which the solver never imposes and uses as an acceptance gate;
+\item the throat is the minimal sphere at $\eta=0$: its equatorial circumference gives the radius $R_e=e^{-f/2}\sqrt{h}\,\big|_{\eta=0,\,\theta=\pi/2}$, its meridians the polar radius $R_p$, its area the areal radius $R_A$---three numbers that coincide while the throat is round and split as rotation flattens it;
+\item the throat is dragged at the angular velocity $\Omega=\omega(\eta{=}0)$, and $v_e=R_e\,\Omega$ is its equatorial linear velocity in units of $c$: the dimensionless spin label used throughout, 0 when static and 1 at the extremal Kerr endpoint.
+\end{itemize}
+The same read-offs, applied to the 3D grid data instead of the solver's functions, are how Sec.~\ref{sec:setup} verifies the initial data against Table~\ref{tab:backgrounds}.
+
+Two one-parameter families, labelled by $\omega_\infty$ (equivalently $J$ or $v_e$), are evolved in this work:
+\begin{itemize}
+\item[(a)] \emph{the drainhole family}, $\eta_0=2$, $\gamma=-\pi$: its static member is the Ellis drainhole with throat parameter $a=2$ and unequal end masses $\mu_+=1$, $\mu_-=-1$, the wormhole of Refs.~\cite{shirokov2026,shirokov2026c} (the asymmetry $C=1$ of Refs.~\cite{azad2023,azad2024});
+\item[(b)] \emph{the symmetric family}, $\gamma=0$ ($C=0$): equal masses on both ends, massless and identical to the Ellis wormhole when static; the family of Refs.~\cite{kleihaus_kunz2014,chew2016} and the only one for which the second mode and the mode crossing of Ref.~\cite{azad2023} are published. For evolution it is rescaled $\eta_0\,{=}\,1\to2$, so its throat sits on family (a)'s grid.
+\end{itemize}
+
+\subsection{An inconsistency in the published field equations}
+\label{sec:model:eq12}
+
+Refs.~\cite{kleihaus_kunz2014,chew2016} close the system with a second-order equation for $\nu$, Eq.~(12) of Ref.~\cite{chew2016}. That equation is inconsistent with the rest. Extremal Kerr fits the ansatz~\eqref{eq:metric} in closed form (with $\eta_0=0$), and substituted symbolically, at 160-digit arithmetic, it satisfies Eqs.~\eqref{eq:feq}--\eqref{eq:constraint} and the $D^2$ identity exactly---while leaving an $O(10^{-2})$ residue in the printed $\nu$ equation alone. The error also shows dynamically: solutions of the printed elliptic system converge at every resolution, yet carry a violation of the unimposed Eq.~\eqref{eq:constraint} and $D^2$ identity that scales as $J^4$ and does not shrink with the grid---the fingerprint of a wrong continuous equation, not of numerics (first seen as a spread of $5.5\times10^{-7}$ in $D^2$ at $J=0.25$). We therefore never solve the printed $\nu$ equation: $\nu$ and $D^2$ are obtained jointly from Eq.~\eqref{eq:constraint} and the $D^2$ identity, and the printed equation is kept only as a reported diagnostic. Every published conclusion of Refs.~\cite{kleihaus_kunz2014,chew2016} that we can test survives the correction (Sec.~\ref{sec:solver}, Appendix~\ref{app:solver}); the published positive-asymmetry scalar charges do not (Appendix~\ref{app:solver}).
+
+\section{Backgrounds across the spin range}
+\label{sec:solver}
+
+\begin{figure*}[t]
 \centering
-\includegraphics[width=0.98\textwidth]{fig_initial_matter.png}
-\caption{Initial exotic matter. \textbf{(a)} The solved meridional eigenfunction
-$f(\rho,z)$. \textbf{(b)} Its axisymmetric toroidal modulus on the equatorial
-plane. \textbf{(c)} The real field at $t=0$, showing the $m=1$ phase winding.
-The cyan circle/segment marks the throat scale. Thus the density is
-axisymmetric although the complex phase carries angular momentum.}
-\label{fig:initial_matter}
+\includegraphics[width=0.85\textwidth]{solver/kk2014_comparison.pdf}
+\caption{The symmetric family ($\eta_0=1$, $\gamma=0$; 81 solutions, $v_e=0.02$--$0.991$, plus the exact static member) in the normalization of Ref.~\cite{kleihaus_kunz2014} ($M_0=R_e$, $J_0=R_e^2/2$, $\Omega_0=1/R_e$): our curves, the digitized points of their Fig.~1 (open symbols), and closed-form Kerr (dashed). The digitization's reading error, measured by reading their printed Kerr curves the same way, is rms $1$--$6\times10^{-4}$; digitized minus ours is rms $2.5$--$8\times10^{-4}$, max $2.5\times10^{-3}$, over all five curves. The two solvers agree to the precision a printed figure carries.}
+\label{fig:kk2014}
 \end{figure*}
 
-\section{Method}
-
-\subsection{Evolution system and initial data}
-We use the $3+1$ line element
-\begin{equation}
- ds^2=-\alpha^2dt^2+\gamma_{ij}(dx^i+\beta^i dt)(dx^j+\beta^jdt)
-\end{equation}
-and evolve the CCZ4 system with \texttt{GRTeclyn}~\cite{grteclyn,grchombo}.
-The conformal decomposition is
-\begin{equation}
- \gamma_{ij}=\chi^{-1}\tilde\gamma_{ij},\qquad
- \det\tilde\gamma_{ij}=1 ,
-\end{equation}
-with $1+\log$ slicing and a Gamma-driver shift. A collapsing lapse diagnoses
-strong gravitational collapse; $\chi\to0$ marks large metric stretching.
-
-The seed slice is a puncture representation of an
-Ellis--Bronnikov-class throat, not the analytic Teo metric~\cite{teo98}.
-\texttt{GRTresna} solves the Hamiltonian and momentum constraints for the exact
-throat-plus-matter configuration and exports a uniform \texttt{.gridinit} at the
-evolution base spacing. The evolution is never initialized at finer spacing
-than this solve.
-
-The exotic complex scalar has potential
-\begin{equation}
- V(|\Phi|^2)=\frac{\mu^2}{2}|\Phi|^2-\frac{\lambda}{4}|\Phi|^4
-             +\frac{\mu_6}{6}|\Phi|^6
-\end{equation}
-with $\mu^2=0.5$, $\lambda=170$, and $\mu_6=1.445\times10^4$. Its stationary
-flat-space profile is
-\begin{equation}
- \Phi=f(\rho,z)e^{i(m\varphi-\omega t)},\qquad
- m=1,\quad\omega=0.2507 .
-\end{equation}
-The solved torus is shown in Fig.~\ref{fig:initial_matter}. Curvature and
-self-gravity detune this profile after embedding, so the complete gravitating
-object is actively supported rather than a passive equilibrium.
-
-\subsection{Trigger and numerical setup}
-The support strength is ramped from one to zero as
-\begin{equation}
- S(t)=\frac{1}{2}\left[1+\cos\left(\pi\frac{t-8}{2}\right)\right],
- \qquad 8\le t\le10 ,
-\end{equation}
-with $S=0$ thereafter. No monopolar or quadrupolar field perturbation is added.
-
-The headline domain has side $L=64$, base spacing $h=0.5$, and three AMR levels.
-A sponge occupies $r=28$--$30$. The resolution ladder uses matched
-\texttt{GRTresna} data at $h=0.667,0.5,0.4$, with otherwise identical evolution
-parameters. The large-box check uses $L=128$, $h=0.5$, two AMR levels, a sponge
-at $r=52$--$62$, and runs to $t=80$.
-
-Because \texttt{GRTeclyn} has no production apparent-horizon finder, we use the
-coordinate-sphere outgoing-expansion proxy
-\begin{equation}
- \theta_+=\frac{2\sqrt{\chi}}{\bar r}
- -\frac{\partial_{\bar r}\chi}{\sqrt{\chi}}
- +\tilde A_{rr}-\frac{2}{3}K .
-\end{equation}
-The largest sampled radius with $\theta_+\le0$ defines $r_{\rm AH}$. This is a
-trapped-surface indicator, not a horizon mass or spin measurement.
-
-Surface integrals give $M_{\rm ADM}=0.209\pm0.001$ and
-$J_{{\rm ADM},z}\simeq-1.93$ in code units. We do not use these values to make
-precision detector forecasts because extraction systematics dominate.
-
-\subsection{Wave extraction}
-\label{sec:gw_extract}
-We project $\Psi_4$ onto ${}_{-2}Y_{\ell m}$ on spheres at
-$R_{\rm ext}=12,18,24$. Physics results use the post-processed Python extraction
-from plotfiles; its files already store $r\Psi_4^{2,0}$. The in-code C++ Weyl
-extraction is retained only for debugging because its $m=0$ imaginary component
-fails the expected null test. In contrast, the Python signal has
-$\max|\mathrm{Im}\Psi_4^{2,0}|/\max|\mathrm{Re}\Psi_4^{2,0}|\lesssim1.2\times10^{-3}$,
-and more than $99.998\%$ of integrated $\ell=2$ power lies in $m=0$.
-
-The headline radii are in the near zone. The $L=128$ run extracts at
-$R_{\rm ext}=36,48$, both inside the sponge onset, and is therefore an
-intermediate-zone check rather than a wave-zone extrapolation.
-
-\section{Results}
-
-\subsection{Collapse and rebound}
-Once support vanishes, the lapse and conformal factor collapse while the
-trapped-surface proxy grows (Fig.~\ref{fig:diagnostics}). In the headline run,
-\[
- \min\alpha=9.8\times10^{-4},\quad
- \min\chi=0.0185,\quad
- \max r_{\rm AH}=9.18 .
-\]
-The robust proxy turns on after the support cut and peaks near $t=15.1$.
-Thereafter $r_{\rm AH}$ shrinks to $1.92$ by $t=40$, while
-$\min\alpha$ recovers to $0.033$. The longer $L=128$ run reaches comparable
-collapse depth and loses the proxy by $t\simeq78.4$. We call this
-collapse--rebound morphology a \emph{phantom bounce}; the term does not imply
-that a true apparent horizon has been located.
-
-\begin{figure}[htp]
+\begin{figure*}[t]
 \centering
-\includegraphics[width=\linewidth]{fig_collapse_diagnostics.png}
-\caption{Headline collapse diagnostics. The support ramp is shaded. The lapse
-and $\chi$ pinch as curvature grows; the trapped-surface proxy then forms and
-subsequently shrinks.}
-\label{fig:diagnostics}
-\end{figure}
-
-\subsection{Gravitational-wave signal}
-The dominant $r\Psi_4^{2,0}$ signal is coherent across extraction radii and its
-peak delay is consistent with propagation at $c$ to the post-processing cadence.
-Its $m=0$ dominance means that the principal quadrupole follows the changing
-toroidal density; it is not evidence for an $m=2$ bar mode.
-
-Figure~\ref{fig:wave_systematics}(a) compares the three resolutions at $R=12$.
-The medium and fine curves closely agree, but the coarse post-processing record
-has no samples over part of the principal burst. We therefore do not assign a
-three-point Richardson order to the burst amplitude. In the large box,
-$R=36$ and $R=48$ align in retarded time with overlap $0.993$ after a residual
-shift of $0.35$ and a relative $L_2$ residual of $12.3\%$
-[Fig.~\ref{fig:wave_systematics}(b)]. This supports approximate $1/r$ behavior
-in the intermediate zone. Late growth at $R=36$ is not shared by $R=48$ and
-coincides with constraint growth, so it is not interpreted as a runaway
-gravitational-wave instability.
-
-\begin{figure*}[tp]
-\centering
-\includegraphics[width=0.94\textwidth]{fig_waveform_systematics.png}
-\caption{\textbf{(a)} Validated $r\Psi_4^{2,0}$ at $R_{\rm ext}=12$ for the
-resolution ladder; the shaded region includes the coarse extraction gap and is
-excluded from formal waveform convergence. \textbf{(b)} Retarded-time comparison
-at $R=36,48$ in the $L=128$ run. The agreement is an intermediate-zone
-cross-check, not a fourth resolution rung.}
-\label{fig:wave_systematics}
+\includegraphics[width=0.95\textwidth]{solver/spin_trends.pdf}
+\caption{The two families across the spin range (solid: drainhole, $\eta_0=2$, $\gamma=-\pi$; dashed: symmetric, $\eta_0=1$, $\gamma=0$), against $v_e$: (a) mass, angular momentum and equatorial throat radius; (b) $J/M^2$ against the Kerr bound; (c) the ratio of end masses; (d) the flattening $R_p/R_e$; (e) the scalar charge; (f) the throat angular velocity, which peaks and falls to zero at extremality. Grey verticals in (a): the spins of the first two drainhole holds. The symmetric family violates the Kerr bound at every spin and the drainhole family exceeds it by up to $\sim20\%$ at intermediate spin; both families end on extremal Kerr.}
+\label{fig:trends}
 \end{figure*}
 
-\subsection{Constraints and controls}
-For the headline run, the volume-weighted norms remain below
-$\|\mathcal H\|_2=3.25\times10^{-2}$ and
-$\|\mathcal M\|_2=9.67\times10^{-3}$ through $t=40$
-(Fig.~\ref{fig:constraints}). The large-box norms are smaller than these values
-through $t=40$ but later reach $0.155$ and $0.0417$, respectively. Consequently
-its late waveform is treated cautiously.
-
-\begin{figure}[htp]
-\centering
-\includegraphics[width=\linewidth]{fig_constraints.png}
-\caption{Volume-weighted Hamiltonian and momentum constraint norms for the
-$h=0.5$ headline run. They remain bounded through the collapse and emission
-interval.}
-\label{fig:constraints}
-\end{figure}
-
-No-ramp and delayed-ramp controls do not produce the same resolved deep-collapse
-branch before numerical failure. A nonrotating run built from the same toroidal
-modulus follows a pathological trajectory: its coordinate-sphere proxy expands,
-momentum constraints grow rapidly, and AMR memory approaches exhaustion. It was
-stopped at $t\simeq13.5$. Thus the present data do not isolate rotation from
-toroidal geometry; the measured $m=0$ dominance only shows that rotation is not
-radiated mainly through nonaxisymmetric $\ell=2$ modes.
-
-\subsection{Resolution study}
-\label{sec:convergence}
-For unequal spacings we assume, only where supported,
-\begin{equation}
- Q(h)=Q_0+Ch^p
-\end{equation}
-and solve
-\begin{equation}
- \frac{Q_c-Q_m}{Q_m-Q_f}
- =\frac{h_c^p-h_m^p}{h_m^p-h_f^p}
-\end{equation}
-for $p>0$. Sign-changing differences or unphysical continuum estimates are
-reported as non-asymptotic.
-
-All three runs reproduce the collapse, peak proxy radius, shrinkage, lapse
-recovery, and axisymmetric burst (Fig.~\ref{fig:convergence}). Selected scalar
-measures admit formal orders:
-\[
-\begin{array}{lccc}
-Q & p & Q_0 & {\rm GCI}_f\\
+\begin{table*}[t]
+\caption{The two families at representative spins, in units of $\eta_0$ ($G=c=1$): rotation velocity $v_e$, angular momentum, mass of the $\eta\to+\infty$ end, ratio of end masses, scalar charge, equatorial throat radius, flattening, and throat angular velocity---each read off the solution's functions as defined in Sec.~\ref{sec:model}. Every row is a converged solution with the acceptance gates of Sec.~\ref{sec:solver} (unimposed identities at the $10^{-9}$ level or better); family (b) is evolved after the rescale $\eta_0\to2$. The published record covers family (b) only, as curves~\cite{kleihaus_kunz2014,chew2016}; the massive family (a) is mapped here for the first time.}
+\label{tab:backgrounds}
+\begin{ruledtabular}
+\begin{tabular}{llllllllll}
+family & $v_e$ & $J/\eta_0^2$ & $\mu_+/\eta_0$ & $\mu_-/\mu_+$ & $D/\eta_0$ & $R_e/\eta_0$ & $R_p/R_e$ & $\Omega\,\eta_0$ \\
 \hline
-\max|K| & 3.78 & 0.663 & 3.31\%\\
-\max r_{\rm AH} & 0.91 & 9.39 & 2.39\%\\
-t(\max r_{\rm AH}) & 2.09 & 14.68 & 2.42\%\\
-\max\|\mathcal M\|_2 & 1.82 & 9.45\times10^{-3} & 1.95\%
-\end{array}
-\]
-The Hamiltonian maximum instead increases slightly,
-$0.0310\to0.0325\to0.0340$, and has no positive observed order. The lapse and
-$\chi$ minima deepen with refinement but extrapolate to unphysical negative
-values under the one-term model. These quantities establish qualitative
-multi-resolution robustness, not a universal continuum order.
+(a) drainhole & 0.213 & 0.2535 & 0.5574 & $-0.850$ & 1.1004 & 2.0319 & 0.9873 & 0.1046 \\
+              & 0.513 & 1.0278 & 0.9302 & $-0.339$ & 1.0007 & 2.6271 & 0.9194 & 0.1952 \\
+              & 0.699 & 3.0417 & 1.6557 & $-0.032$ & 0.8598 & 3.8864 & 0.8351 & 0.1798 \\
+              & 0.900 & 34.550 & 5.8400 & $+0.179$ & 0.5327 & 11.911 & 0.6926 & 0.0755 \\
+              & 0.950 & 152.16 & 12.316 & $+0.201$ & 0.3785 & 24.751 & 0.6504 & 0.0384 \\
+              & 0.990 & 4053.8 & 63.666 & $+0.208$ & 0.1698 & 127.36 & 0.6165 & 0.0078 \\
+\hline
+(b) symmetric & 0.239 & 0.0542 & 0.0252 & 1 & 0.9881 & 1.0299 & 0.9913 & 0.2323 \\
+              & 0.434 & 0.1158 & 0.0906 & 1 & 0.9583 & 1.1101 & 0.9699 & 0.3911 \\
+              & 0.667 & 0.2683 & 0.2666 & 1 & 0.8854 & 1.3420 & 0.9197 & 0.4969 \\
+              & 0.847 & 0.7007 & 0.6305 & 1 & 0.7653 & 1.8836 & 0.8440 & 0.4499 \\
+              & 0.898 & 1.0989 & 0.8685 & 1 & 0.7043 & 2.2722 & 0.8092 & 0.3952 \\
+              & 0.952 & 2.4701 & 1.4383 & 1 & 0.5971 & 3.2703 & 0.7539 & 0.2911 \\
+              & 0.990 & 12.235 & 3.4312 & 1 & 0.4157 & 7.0595 & 0.6795 & 0.1402 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
 
-\begin{figure*}[tp]
-\centering
-\includegraphics[width=0.92\textwidth]{fig_convergence.png}
-\caption{Resolution ladder at $h=0.667,0.5,0.4$. The support ramp is shaded.
-Collapse and proxy shrinkage are common to all runs. Momentum constraints show
-limited convergence; Hamiltonian maxima remain bounded but do not converge
-monotonically.}
-\label{fig:convergence}
-\end{figure*}
+The solver turns the system of Sec.~\ref{sec:model} into numbers in five steps; Appendix~\ref{app:solver} gives the details. First, the infinite domain is made finite: the coordinate $x=(2/\pi)\arctan(\eta/\eta_0)$ maps both asymptotic ends to $x=\pm1$, and the unknowns $f$ and $\omega$ are expanded in Chebyshev polynomials of $x$ and even cosine modes of $\theta$. The expansion is spectral: for smooth solutions the error falls exponentially with the number of modes, so modest grids reach near machine precision. Second, the two elliptic equations~\eqref{eq:feq}--\eqref{eq:omeq} are solved for the expansion coefficients by Newton iteration---guess, linearize, correct---until their residual sits at round-off. Third, $\nu$ and the scalar charge are recovered without ever touching the misprinted second-order $\nu$ equation: the first-order constraint~\eqref{eq:constraint} and the $D^2$ identity together overdetermine $\nu$ and the single number $D^2$, so both are extracted as one linear least-squares problem---and the redundancy is a feature, since the leftover misfit measures the error. Fourth, each family is walked in spin: every converged solution seeds the Newton iteration at a slightly higher spin, with $J$ as the continuation parameter ($\omega_\infty$ is not monotone along a family; Appendix~\ref{app:solver}), and the grid refines automatically, from $48\times12$ up to $240\times60$, whenever the acceptance gates fail. Fifth---the point of the whole design---a solution is accepted only on identities the solver never imposes: the spread of $D^2$ over the domain ($\le10^{-11}$), the Smarr relation ($\le10^{-10}$), equality of the angular-momentum flux through the two ends ($\le1.3\times10^{-9}$), the asymptotic tails ($\le5\times10^{-12}$), and an independent, symbolically generated residual of the full Einstein equations: $1.0\times10^{-10}$ at $J=0.25$ and $4.2\times10^{-10}$ at $J=1$ against the static member's $2\times10^{-11}$ round-off floor---where the $O(J^2)$ perturbative data give $3\times10^{-5}$ and $1\times10^{-2}$ on the same meshes. The products: 462 converged solutions over 20 continuation legs, global charges stable to 10 digits across three grids, and, for evolution, each background exported as a $1025\times65$ table whose bilinear interpolation error is $\le10^{-7}$ up to $v_e=0.9$.
 
-\section{Discussion}
-Withdrawing support from this rotating exotic throat produces a trapped-surface
-proxy, a collapsing lapse, and a coherent $\ell=2$ wave without an imposed kick.
-The same collapse--rebound morphology appears at three resolutions and in a
-larger domain. This removes the strongest single-resolution and small-box
-concerns, but it does not turn every observable into a precision result.
+Figure~\ref{fig:kk2014} is the validation: in the normalization of Ref.~\cite{kleihaus_kunz2014}, our symmetric family lands on the digitized curves of their Fig.~1 to the digitization's own reading error. Their four anchor solutions at $\omega_\infty=0.5$~\cite{chew2016} split: the $\gamma=0$ and $\gamma=-1$ scalar charges agree to all printed digits, while $\gamma=1$ and $\gamma=2$ differ by $2\times10^{-4}$ and $6.6\times10^{-3}$ from our grid-converged values---their finite-difference error, growing with $\gamma$ (Appendix~\ref{app:solver}).
 
-Three limitations define the claim. First, $r_{\rm AH}$ is a coordinate-sphere
-proxy; a production apparent-horizon finder is needed for horizon mass and spin.
-Second, the waveform is extracted at finite, intermediate radii, and the coarse
-record misses part of the main burst. Third, active support is an external,
-nonconservative source, and whole-domain charge and angular momentum budgets do
-not close. The result is therefore a controlled numerical experiment on an
-engineered spacetime.
+Figure~\ref{fig:trends} and Table~\ref{tab:backgrounds} are the map of the parameter space the foundation papers left open. Published data exist only for the symmetric family and only as figures; the massive drainhole family---the one whose static member has been evolved, and the one from which binaries can be built~\cite{shirokov2026c}---is mapped here from slow spin to $v_e=0.99$. Two of its features matter later. First, both families violate the Kerr bound: the symmetric family everywhere ($J/\mu_+^2\approx85$ already at $v_e=0.24$, falling monotonically to 1 at extremality, since its static member is massless), the drainhole family by up to $\sim20\%$ at intermediate spin. A collapsing overspun throat cannot settle to a Kerr black hole of the same mass and spin, which makes these backgrounds sharp cosmic-censorship initial data. Second, the drainhole's negative far-end mass $\mu_-$ rises through zero at $v_e\approx0.7$ and turns positive: fast rotation un-does the static drainhole's negative-mass end.
 
-Future work should obtain a clean nonrotating control, add a genuine
-apparent-horizon finder, repeat the large box at higher AMR depth, and use
-wave-zone or characteristic extraction. These steps are required before quoting
-precision energies, quasinormal frequencies, or detector horizons.
+\section{3D initial data and evolution setup}
+\label{sec:setup}
 
-\section{Code and Data Availability}
-The evolution example, initial-data solver, run parameters, validated
-\texttt{small\_data/psi4\_mode\_l2m0.dat} files, diagnostics, and figure scripts
-are maintained in the project repository. The manuscript directory contains
-only the figures used here.
+The stationary metric~\eqref{eq:metric} goes onto the Cartesian AMR grid through the isotropic radius $r$, $\eta=r-\eta_0^2/4r$: the far end $\eta\to-\infty$ compactifies to the puncture $r=0$, as for the static drainhole~\cite{shirokov2026}. The induced metric and the fields are read from the tables; the lapse and shift start from the stationary data, $\alpha=e^{f/2}$, $\beta^\varphi=-\omega$, so the extrinsic curvature $K_{ij}=(D_i\beta_j+D_j\beta_i)/2\alpha$ has only $r\varphi$ and $\theta\varphi$ components and the scalar momentum vanishes; at the puncture the frame rotates at $\omega_\infty$. Evolution uses \texttt{GRTeclyn}~\cite{grteclyn,amrex,grchombo} with the setup of Refs.~\cite{shirokov2026,shirokov2026c}: CCZ4~\cite{alic2012}, $1{+}\log$ slicing~\cite{bona1995}, Gamma-driver shift~\cite{alcubierre2003gauge}, fourth-order stencils, RK4, Kreiss--Oliger dissipation, $\Delta t=0.02\,\Delta x$, and a floored conformal factor at the puncture.
 
-\section{Acknowledgements}
-The author thanks Ilya Nachevsky for providing the high-performance computing
-resources and acknowledges the GRTL collaboration for \texttt{GRChombo} and
-\texttt{GRTeclyn}.
+Stability claims follow the triplet protocol of Ref.~\cite{evstafyeva2025}: every quoted growth must have an $e$-fold time that converges to a nonzero value across three resolutions, constraints that converge at the code's order while it grows, and a gauge-invariant measure---the throat's areal radii, or the marginally outer-trapped surface (MOTS) found spectrally on every output---growing with it. The production grid is a box of half-size $L=128$ with three nested refinements on the throat, run at $N=192/256/384$ base points (finest $\Delta x=0.083/0.0625/0.042$); the evolutions reported in Sec.~\ref{sec:slow} ran on the $L=64$, $N=128$ grid of the static hold of Ref.~\cite{shirokov2026c} (same finest $\Delta x=0.0625$), whose outer-boundary return sets their trust window at $t\approx64$.
+
+Three checks validate the pipeline. (i) At $t=0$, on the symmetric family at seven spins $v_e=0.24$--$0.99$ and three resolutions each, the Hamiltonian and momentum constraints converge at fourth order inside the throat region and are limited outside only by the tables' interpolation error (growing as $1/\Delta x^2$ and $1/\Delta x$ respectively); the throat's ray radii converge to the solver's, within $7\times10^{-5}$ ($v_e=0.24$) to $9\times10^{-4}$ ($0.99$) at $N=256$. (ii) The 3D ADM mass integral evaluated on the grid equals the same integral on the exact table metric to $\le10^{-12}$, and its Richardson extrapolation meets the solver's mass to $2\times10^{-5}$--$7\times10^{-4}$ (at worst $0.7\%$ relative, at $v_e=0.99$); the ADM angular momentum matches to between $2\times10^{-3}$ ($v_e=0.24$) and $2\times10^{-5}$ ($0.99$). (iii) Dynamically, the static drainhole run through this pipeline is a numerical twin of the production hold of Ref.~\cite{shirokov2026c} over the full record: $t=0$ bit-identical, Hamiltonian norm within $5\times10^{-7}$ for all $t\le100$, collapse milestones within one time unit, and a fitted $e$-fold time $\tau(\delta R)=5.27$ against 5.12 there.
+
+\section{Slow spin: rotation slows the collapse}
+\label{sec:slow}
+
+\emph{Perturbative initial data fail first.} Our first spinning holds used the $O(J^2)$ backgrounds of Ref.~\cite{azad2024} at $J=0.25$ and $J=1$ on the drainhole family. Both throats inflated where the static throat collapses---the same unstable mode with the opposite sign ($\tau=5.8$ and $5.6$). But expressed as the equivalent radial kick of Ref.~\cite{shirokov2026c}, the push was $\varepsilon\approx-3\times10^{-5}$ at $J=0.25$ and $-7\times10^{-3}$ at $J=1$: growth by a factor ${\sim}230$ for a factor 4 in $J$, i.e.\ ${\sim}J^4$---the size of the $O(J^2)$ data's own truncation error, which the independent Einstein residual puts at $10^{-2}$ at $J=1$ (Sec.~\ref{sec:solver}). Second-order data seed the very instability under study at their own error level; nothing at slow spin can be concluded from them.
+
+\emph{On exact data the throat collapses, more slowly the faster it spins.} On the solver tables the verdict reverses. The $J=1$ drainhole ($v_e=0.213$) collapses on the static mode: the equatorial radius falls $1\%$ by $t=46.9$ and $10\%$ by $t=61.8$, against the static hold's $t=44.1$ and $57.0$---an $e$-fold time of 6.8 against 5.8 by the same measure. At $v_e=0.513$ the collapse slows much further: the MOTS radius is down only $0.61\%$ at $t=64$, the end of the trust window, with no horizon formed---where the static throat had shrunk $2.5\%$ by $t=49$ and detached a horizon at $t\approx61$. Constraints hold at the static run's level throughout, and in each case the unperturbed hold is seeded only by discretization error, so the ordering of rates is the ordering of $|\omega_I|$.
+
+\emph{Against the perturbative prediction.} The static rate itself checks the linear theory: $\tau(\delta R)=5.27$ against $\tau\approx5.1$ from the $C=1$ static mode of Ref.~\cite{azad2023} at $\eta_0=2$. For the spin trend, Ref.~\cite{azad2023} predicts $\Delta\omega_I^{(2)}>0$ for every asymmetry---the main unstable mode weakens with spin. The measured sequence $\tau=5.8\;(J=0)\to6.8\;(v_e=0.21)\to{>}\,$several tens $(v_e=0.51)$ is that prediction's sign, now established nonlinearly and, at $v_e=0.51$, far beyond the formal reach of the $O(J^2)$ expansion.
+
+% ---------------------------------------------------------------------------
+% PENDING SECTIONS (campaign live; no text until the runs are closed out):
+%
+% \section{Through the predicted crossing}  [Phase A3/A4, B2/B3]
+%   - symmetric family at 10/20/33/50% of limiting J/A (v_e 0.24/0.43/0.67/0.85):
+%     omega_I(J/A) overlay on Azad et al. Figs. 2-3 for BOTH modes; the crossing
+%     at J/A ~ 0.013; beyond it: mode merger and disappearance (5D picture) vs
+%     complex continuation with omega_R != 0 (charged-analogue picture);
+%   - near-extremal members (0.90/0.95/0.99): lifetime vs v_e;
+%   - headline figure: measured omega_I vs J/A over the O(J^2) curves.
+%
+% \section{End states and the overspin test}  [Phase A collapse branches]
+%   - J/M^2 >> 1 collapse: remnant M, J from MOTS + ringdown; censorship
+%     via phantom accretion raising M_BH above M_ADM (binary-paper mechanism);
+%   - inflation branch under spin.
+% ---------------------------------------------------------------------------
+
+\section{Conclusions}
+\label{sec:conclusions}
+
+Three results stand. First, the spinning Ellis--Bronnikov parameter space is now mapped as data, not curves: both families, from slow rotation to $v_e\approx0.99$, as solutions exact to the $10^{-10}$ level (Table~\ref{tab:backgrounds}), including the massive drainhole family for which nothing was published---and including the correction of a field equation, Eq.~(12) of Ref.~\cite{chew2016}, that closed-form extremal Kerr convicts directly. The practical lesson generalizes: a solver gated only on the equations it imposes would have passed every test while solving the wrong system; the unimposed identities caught it. Second, the pipeline from these solutions to 3+1 evolution is validated at fourth order, with the static limit a numerical twin of the production run of Ref.~\cite{shirokov2026c}, and $O(J^2)$ initial data are shown to be unusable for stability work: their truncation error seeds the instability itself. Third, the first nonlinear evolutions of rotating wormholes show the radial collapse surviving but slowing with spin---$\tau=5.8\to6.8$ from $J=0$ to $v_e=0.21$, and an order-of-magnitude slower decay at $v_e=0.51$---the sign predicted at $O(J^2)$~\cite{azad2023,azad2024}, now beyond perturbation theory. Whether the two predicted modes merge and the instability disappears near a third of the limiting spin, or continues as an oscillating complex pair as in the charged analogue~\cite{blazquez2025}, is now a question the validated pipeline can put to the backgrounds of Table~\ref{tab:backgrounds} directly.
+
+\begin{acknowledgments}
+All evolutions use \texttt{GRTeclyn}~\cite{grteclyn}, the AMReX-based~\cite{amrex} GPU port of \texttt{GRChombo}~\cite{grchombo}.
+\end{acknowledgments}
+
+\appendix
+
+\section{Solver details and the anchor comparison}
+\label{app:solver}
+
+\begin{table}[b]
+\caption{Scalar charge $D$ of the anchor solutions ($\eta_0=1$, $\omega_\infty=0.5$) against Ref.~\cite{chew2016}. Along each fixed-$\gamma$ family, $\omega_\infty$ rises, turns over and descends, so $\omega_\infty=0.5$ is reached twice; the published values sit on the post-turnover branch. Our values are grid-converged to the digits shown; the $\gamma=2$ family continued to $J=172$ confirms no third crossing exists. The two positive-$\gamma$ offsets are the published values' finite-difference error, growing with $\gamma$; the pre-turnover branch is new.}
+\label{tab:anchors}
+\begin{ruledtabular}
+\begin{tabular}{llll}
+$\gamma$ & $D$ (this work) & $D$~\cite{chew2016} & $D$ (pre-turnover, new) \\
+\hline
+$-1$ & 0.716368   & 0.71636 & 0.969194 \\
+$0$  & 0.552771   & 0.55277 & 0.986013 \\
+$1$  & 0.4314654  & 0.43155 & 1.008136 \\
+$2$  & 0.3375993  & 0.33984 & 1.048161 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+The unknowns $f,\omega$ are expanded in Chebyshev polynomials of $x=(2/\pi)\arctan(\eta/\eta_0)\in[-1,1]$, which compactifies both ends, and in even cosine modes of $\theta$; derivatives are spectral, and the nonlinear system \eqref{eq:feq}--\eqref{eq:omeq} is solved by Newton iteration with a direct linear solve. At each Newton step, $\nu$ and the constant $D^2$ are recovered together from the overdetermined pair---the first-order constraint~\eqref{eq:constraint} and the $D^2$ identity---as one linear least-squares problem, which is what makes the acceptance gates of Sec.~\ref{sec:solver} meaningful: the reported $D^2$ spread, Smarr defect, flux equality and full-Einstein residual are all computed from equations that never entered the solve. Spin is walked by pseudo-arclength continuation in $(\text{state},J)$, since $\omega_\infty$ is not monotone along a family (Table~\ref{tab:anchors}); grids refine automatically from $48\times12$ when the acceptance gates demand it, to $162\times42$ at $v_e=0.95$ on the drainhole family. On the symmetric family the mirror identities are satisfied at the $10^{-14}$ level, including $\omega(0)=\omega_\infty/2$, and the equatorial ergosurface law of Ref.~\cite{chew2016} holds to $10^{-12}$ wherever the ergosurface sits at $\eta>0$ ($v_e\ge0.77$). The extremal-Kerr substitution of Sec.~\ref{sec:model:eq12} is kept in the pipeline as a symbolic regression test.
+
+\FloatBarrier
 
 \begin{thebibliography}{99}
-\bibitem{baumgarte10} T.~W.~Baumgarte and S.~L.~Shapiro,
-\textit{Numerical Relativity: Solving Einstein's Equations on the Computer}
-(Cambridge University Press, 2010).
-\bibitem{morris88} M.~S.~Morris and K.~S.~Thorne,
-\textit{Am.\ J.\ Phys.}\ \textbf{56}, 395 (1988).
-\bibitem{kleihaus14} B.~Kleihaus and J.~Kunz,
-\textit{Phys.\ Rev.\ D}\ \textbf{90}, 121503 (2014).
-\bibitem{ellis73} H.~G.~Ellis, \textit{J.\ Math.\ Phys.}\ \textbf{14}, 104 (1973).
-\bibitem{bronnikov73} K.~A.~Bronnikov, \textit{Acta Phys.\ Pol.\ B}\ \textbf{4},
-251 (1973).
-\bibitem{shinkai02} H.~Shinkai and S.~A.~Hayward,
-\textit{Phys.\ Rev.\ D}\ \textbf{66}, 044005 (2002).
-\bibitem{gonzalez09} J.~A.~Gonz\'alez, F.~S.~Guzm\'an, and O.~Sarbach,
-\textit{Class.\ Quantum Grav.}\ \textbf{26}, 015010 (2009).
-\bibitem{teo98} E.~Teo, \textit{Phys.\ Rev.\ D}\ \textbf{58}, 024014 (1998).
-\bibitem{grteclyn} GRTL Collaboration, \texttt{GRTeclyn}: a GPU-accelerated,
-AMReX-based numerical-relativity code,
-\url{https://github.com/GRTLCollaboration/GRTeclyn}.
-\bibitem{grchombo} T.~Andrade \textit{et al.},
-\textit{J.\ Open Source Softw.}\ \textbf{6}, 3703 (2021).
+
+\bibitem{ellis1973}
+H.~G.~Ellis,
+\newblock ``Ether flow through a drainhole: A particle model in general relativity,''
+\newblock J.\ Math.\ Phys.\ \textbf{14}, 104 (1973).
+
+\bibitem{bronnikov1973}
+K.~A.~Bronnikov,
+\newblock ``Scalar-tensor theory and scalar charge,''
+\newblock Acta Phys.\ Polon.\ B \textbf{4}, 251 (1973).
+
+\bibitem{morris_thorne1988}
+M.~S.~Morris and K.~S.~Thorne,
+\newblock ``Wormholes in spacetime and their use for interstellar travel: A tool for teaching general relativity,''
+\newblock Am.\ J.\ Phys.\ \textbf{56}, 395 (1988).
+
+\bibitem{visser1995}
+M.~Visser,
+\newblock \emph{Lorentzian Wormholes: From Einstein to Hawking}
+\newblock (AIP Press, Woodbury, NY, 1995).
+
+\bibitem{gonzalez2009lin}
+J.~A.~Gonz\'alez, F.~S.~Guzm\'an, and O.~Sarbach,
+\newblock ``Instability of wormholes supported by a ghost scalar field. I. Linear stability analysis,''
+\newblock Class.\ Quantum Grav.\ \textbf{26}, 015010 (2009).
+
+\bibitem{gonzalez2009}
+J.~A.~Gonz\'alez, F.~S.~Guzm\'an, and O.~Sarbach,
+\newblock ``Instability of wormholes supported by a ghost scalar field. II. Nonlinear evolution,''
+\newblock Class.\ Quantum Grav.\ \textbf{26}, 015011 (2009).
+
+\bibitem{shinkai2002}
+H.~Shinkai and S.~A.~Hayward,
+\newblock ``Fate of the first traversible wormhole: Black-hole collapse or inflationary expansion,''
+\newblock Phys.\ Rev.\ D \textbf{66}, 044005 (2002).
+
+\bibitem{bronnikov2011}
+K.~A.~Bronnikov, J.~C.~Fabris, and A.~Zhidenko,
+\newblock ``On the stability of scalar-vacuum space-times,''
+\newblock Eur.\ Phys.\ J.\ C \textbf{71}, 1791 (2011).
+
+\bibitem{cremona2019}
+F.~Cremona, F.~Pirotta, and L.~Pizzocchero,
+\newblock ``On the linear instability of the Ellis--Bronnikov--Morris--Thorne wormhole,''
+\newblock Gen.\ Relativ.\ Gravit.\ \textbf{51}, 19 (2019).
+
+\bibitem{shirokov2026}
+N.~M.~Shirokov,
+\newblock ``Wormhole dynamics: nonlinear collapse and gravitational-wave emission,''
+\newblock arXiv:2604.00071 [gr-qc] (2026).
+
+\bibitem{shirokov2026c}
+N.~M.~Shirokov and I.~Nachevsky,
+\newblock ``Binary Ellis--Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves,''
+\newblock arXiv:2610.13206 [gr-qc] (2026).
+
+\bibitem{matos2006}
+T.~Matos and D.~N\'u\~nez,
+\newblock ``Rotating scalar field wormhole,''
+\newblock Class.\ Quantum Grav.\ \textbf{23}, 4485 (2006).
+
+\bibitem{kashargin2008}
+P.~E.~Kashargin and S.~V.~Sushkov,
+\newblock ``Slowly rotating wormholes: The first order approximation,''
+\newblock Grav.\ Cosmol.\ \textbf{14}, 80 (2008);
+\newblock ``Slowly rotating scalar field wormholes: The second order approximation,''
+\newblock Phys.\ Rev.\ D \textbf{78}, 064071 (2008).
+
+\bibitem{kleihaus_kunz2014}
+B.~Kleihaus and J.~Kunz,
+\newblock ``Rotating Ellis wormholes in four dimensions,''
+\newblock Phys.\ Rev.\ D \textbf{90}, 121503(R) (2014).
+
+\bibitem{chew2016}
+X.~Y.~Chew, B.~Kleihaus, and J.~Kunz,
+\newblock ``Geometry of spinning Ellis wormholes,''
+\newblock Phys.\ Rev.\ D \textbf{94}, 104031 (2016).
+
+\bibitem{volkov2021}
+M.~S.~Volkov,
+\newblock ``Stationary generalizations for the Bronnikov--Ellis wormhole and for the vacuum ring wormhole,''
+\newblock Phys.\ Rev.\ D \textbf{104}, 124064 (2021).
+
+\bibitem{azad2023}
+B.~Azad, J.~L.~Bl\'azquez-Salcedo, F.~S.~Khoo, and J.~Kunz,
+\newblock ``Are slowly rotating Ellis--Bronnikov wormholes stable?,''
+\newblock Phys.\ Lett.\ B \textbf{848}, 138349 (2024).
+
+\bibitem{azad2024}
+B.~Azad, J.~L.~Bl\'azquez-Salcedo, F.~S.~Khoo, and J.~Kunz,
+\newblock ``Radial perturbations of Ellis--Bronnikov wormholes in slow rotation up to second order,''
+\newblock Phys.\ Rev.\ D \textbf{109}, 124051 (2024).
+
+\bibitem{dzhunushaliev2013}
+V.~Dzhunushaliev, V.~Folomeev, B.~Kleihaus, J.~Kunz, and E.~Radu,
+\newblock ``Rotating wormholes in five dimensions,''
+\newblock Phys.\ Rev.\ D \textbf{88}, 124028 (2013).
+
+\bibitem{blazquez2025}
+J.~L.~Bl\'azquez-Salcedo, L.~M.~Gonz\'alez-Romero, F.~S.~Khoo, J.~Kunz, and P.~Navarro Moreno,
+\newblock ``Radial perturbations of charged wormholes,''
+\newblock arXiv:2510.11406 [gr-qc] (2025).
+
+\bibitem{khoo2024}
+F.~S.~Khoo \emph{et al.},
+\newblock ``Quasinormal modes of rapidly rotating Ellis--Bronnikov wormholes,''
+\newblock Phys.\ Rev.\ D \textbf{109}, 084013 (2024).
+
+\bibitem{evstafyeva2025}
+T.~Evstafyeva, N.~Siemonsen, and W.~E.~East,
+\newblock ``Assessing the stability of ultracompact spinning boson stars with nonlinear evolutions,''
+\newblock arXiv:2508.11527 [gr-qc] (2025).
+
+\bibitem{alic2012}
+D.~Alic, C.~Bona-Casas, C.~Bona, L.~Rezzolla, and C.~Palenzuela,
+\newblock ``Conformal and covariant formulation of the Z4 system with constraint-violation damping,''
+\newblock Phys.\ Rev.\ D \textbf{85}, 064040 (2012).
+
+\bibitem{bona1995}
+C.~Bona, J.~Mass\'o, E.~Seidel, and J.~Stela,
+\newblock ``New formalism for numerical relativity,''
+\newblock Phys.\ Rev.\ Lett.\ \textbf{75}, 600 (1995).
+
+\bibitem{alcubierre2003gauge}
+M.~Alcubierre, B.~Br\"ugmann, P.~Diener, M.~Koppitz, D.~Pollney, E.~Seidel, and R.~Takahashi,
+\newblock ``Gauge conditions for long-term numerical black hole evolutions without excision,''
+\newblock Phys.\ Rev.\ D \textbf{67}, 084023 (2003).
+
+\bibitem{grteclyn}
+GRTL Collaboration,
+\newblock \texttt{GRTeclyn},
+\newblock \url{https://github.com/GRTLCollaboration/GRTeclyn}.
+
+\bibitem{amrex}
+W.~Zhang \emph{et al.},
+\newblock ``AMReX: a framework for block-structured adaptive mesh refinement,''
+\newblock J.\ Open Source Softw.\ \textbf{4}, 1370 (2019).
+
+\bibitem{grchombo}
+T.~Andrade \emph{et al.},
+\newblock ``GRChombo: an adaptable numerical relativity code for fundamental physics,''
+\newblock J.\ Open Source Softw.\ \textbf{6}, 3703 (2021).
+
 \end{thebibliography}
 
 \end{document}
