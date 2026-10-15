@@ -112,7 +112,16 @@ slow drainhole (v_e ≤ 0.51) held. Probes at N ≥ 192: the √χ initial lapse
 χ on the 1e-8 floor, |K|max → 94) — it helps, it does not win; min_chi 1e-4
 on top of it is LIVE on card 1 (launched 05:00 UTC 10-15); a control at
 N = 192 with the original stationary lapse, to split the lapse from the
-resolution, waits for its go.
+resolution, waits for its go. Agreed 2026-10-15: if min_chi does not win,
+the next knob is DEEPER CENTRE REFINEMENT — the far side is a genuine
+positive-mass puncture and likely needs BH-class resolution at r = 0.
+Params-only: raising max_level to 4 (or 5) under the same tagging_L 64 adds
+nested boxes ±2 (±1) on the puncture alone, finest dx 0.0417 (0.0208) at
+N 192 — the BH rule of thumb dx ≲ M/40 with the far mass M ≈ 2.5 wants
+≤ 0.06, so ml3's 0.083 is under-resolved there and ml4 is the first
+compliant level. Each added level carries about the level-3 box's cell
+count at 2× the substeps; measure the real cost on the probe grid before
+sizing production. The throat keeps its ml3 structure either way.
 
 *Phase A: symmetric, family (b) at η0 2*
 
