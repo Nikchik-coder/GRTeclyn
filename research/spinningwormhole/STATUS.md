@@ -34,8 +34,14 @@ stays idle — the launch freeze above holds until the σ verdict.**
 |---|---|---|---|---|---|
 | **verification rung N 256** `spin_hold_L128_ml3_J100_full_t100` (`drainhole/05_hold_L128/J100_full/`; J = 1 exact, v_e 0.21 — the published-domain model check; levnorm binary, per-level masked Ham/Mom live in `constraint_norms_levels.dat`; NO checkpoints — the policy question got no answer, template default; freeze lifted for this rung on the go 13:1x UTC) | first GPU node, card 0 | launched ≈ 13:15 UTC 10-15 (first attempt stopped seconds in: profile's L64 frame window; relaunched with zoom 128 / coord 64 / centre 64) | 100 | ~14 t/h (B1's measured) | ~7 h, ≈ 20:15 UTC 10-15 |
 | rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` (`drainhole/04_fast_spin_hold/`; the old ve070a run rerun exactly, one knob: min_chi 1e-8 → 1e-4 — there χ DID clamp to the floor from t ≈ 4, unlike family (b) where a 1e-4 floor never engaged) | first GPU node, card 1 | launched 10:55 UTC 10-15 | 100 | ~17 t/h (est., card to itself) | verdict vs the old t = 42.36 death ≈ 13:30 UTC; t = 100 ≈ 16:50 UTC 10-15 |
-| sigma ladder `static_hold_L64_ml3_dt005_sig03_t045` (one knob vs the sig04 arm: sigma 0.3 — the gentlest KO that still kills the mode?) | second GPU node, card 0 | launched 12:30 UTC 10-15 | 45 | ~12 t/h (est.) | ≈ 16:15 UTC 10-15 |
-| sigma-default test `static_hold_L64_ml3_dt002_sig04_t100` (sigma 0.4 at the production dt 0.02, one knob vs the live control: flatten the slow level-2 growth, extend the trust window?) | second GPU node, card 0 | launched 13:02 UTC 10-15 | 100 | ~5.9 t/h (est.) | ≈ 06:00 UTC 10-16 |
+| sigma ladder `static_hold_L64_ml3_dt005_sig02_t045` (the floor rung: sigma 0.2 at dt 0.05 — 0.3 and 0.4 both clean, does 0.2 still kill the mode?) | second GPU node, card 0 | launched 19:32 UTC 10-15 | 45 | ~12 t/h (est.) | ≈ 23:15 UTC 10-15 |
+| sigma-default test `static_hold_L64_ml3_dt002_sig04_t100` (sigma 0.4 at the production dt 0.02, one knob vs the live control: flatten the slow level-2 growth, extend the trust window?) | second GPU node, card 0 | t = 44.9 at 19:23 UTC 10-15; **level-2 Ham at 0.094 of control at t = 40 and falling — the trust-window mode is being wiped out** | 100 | ~7 t/h | ≈ 03:15 UTC 10-16 |
+
+**σ = 0.3 VERDICT 19:30 UTC 10-15: `dt005_sig03_t045` CLEAN TO 45, CLEANER
+THAN σ 0.4** (0 NaN, packed): smaller perturbation (max|K| offset ×1.51 →
+×1.11) and level-2 Ham FALLS to 0.3–0.5 of the dt 0.02 control by t = 30–45,
+still falling; level-3 ×2.2 → ×1.19. The gentlest working KO so far; the
+σ 0.2 rung (live) decides the floor.
 | dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 35.3 at 12:22 UTC 10-15 | 100 | ~5.9 t/h | ≈ 23:00 UTC 10-15 |
 
 **σ VERDICT 13:00 UTC 10-15: `dt005_sig04_t045` CLEAN TO 45** (0 NaN,
