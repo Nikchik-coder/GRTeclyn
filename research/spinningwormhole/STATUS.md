@@ -93,6 +93,17 @@ into the production curve while the fix is being measured. Cards freed by
 finishing runs (B1 ≈ 12:15 UTC, the ve070a rescue probe ≈ 13:20 UTC) stay
 idle; systematics passes still run.
 
+**FIRST AFTER THE FREEZE (decided 2026-10-15): the v_e ≈ 0.2 verification
+triplet** (`spin_hold_L128_ml3_J100_full_*`, the J = 1 exact point) — before
+any other ladder rung, because it is the one rung the published O(J²) rate can
+check: if the nonlinear τ there does not meet the perturbative prediction,
+the model is wrong and the fast rungs are worthless. The B1 rung's N 192/384
+members and everything faster run only after this rung passes. Order within
+the rung: N 256 (production grid, ~7 h) first, then N 192 (~2.2 h), N 384
+last (needs the junk-shell templates). All start from t = 0 — no queued run
+restarts from any checkpoint. Launches still wait on the σ verdict, the go,
+and the per-member checkpoint answer.
+
 **SCOPE (decided 2026-10-15, supersedes the 10-13 order): the paper is the
 drainhole's.** Campaign A (the symmetric family (b) evolutions A2–A4) is
 DROPPED: four one-knob probes all die at t ≈ 23–24 at the far-side
@@ -139,8 +150,8 @@ four new rungs, ~2–2.5 days on both cards.
 | rung | run | needs | waiting on |
 |---|---|---|---|
 | v_e = 0 | static ×3: N 256 EXISTS (the merger's `single_hold_L128_t100`), run N 192 / 384 | templates written (`params_static_hold_L128_N*.txt`) | its go |
-| v_e ≈ 0.2 (the published-domain rung) | `spin_hold_L128_ml3_J100_full_t100` ×3 — **the J = 1 exact point IS this rung**: its table meta reads v_e = 0.2100 (eta0 2, family a), and the freshly built `fam_a_ve020` came out at v_e 0.1984, J 0.936 — the same background twice (found 2026-10-15, one triplet saved) | table + templates exist (`params_spin_hold_J100_full_L128_N*.txt`); L64 run already measured τ 6.8 here. `fam_a_ve020.spinbg` (2049×129, err 3.9e-8) stays on disk as an optional same-rung cross-check from a different solver leg | its go |
-| v_e = 0.5 | **N 256 DONE** (reached t = 100 clean 12:15 UTC 10-15, trust window 78, packed); next N 192, then N 384 | templates written (`params_spin_hold_ve050a_L128_N{192,384}.txt`); N 384 needs the junk-shell layout (below) or both cards | the launch freeze (σ verdict), then its go + checkpoint policy per member (N 256 ran every t = 10 keep 3 + NFS keeper) |
+| v_e ≈ 0.2 (the published-domain rung) | `spin_hold_L128_ml3_J100_full_t100` ×3 — **the J = 1 exact point IS this rung**: its table meta reads v_e = 0.2100 (eta0 2, family a), and the freshly built `fam_a_ve020` came out at v_e 0.1984, J 0.936 — the same background twice (found 2026-10-15, one triplet saved) | table + templates exist (`params_spin_hold_J100_full_L128_N*.txt`, levnorm keys wired); L64 run already measured τ 6.8 here. `fam_a_ve020.spinbg` (2049×129, err 3.9e-8) stays on disk as an optional same-rung cross-check from a different solver leg | **FIRST after the freeze** (the model-verification rung, decided 2026-10-15), its go |
+| v_e = 0.5 | **N 256 DONE** (reached t = 100 clean 12:15 UTC 10-15, trust window 78, packed); N 192/384 AFTER the 0.2 verification rung passes | templates written (`params_spin_hold_ve050a_L128_N{192,384}.txt`, levnorm keys wired); N 384 needs the junk-shell layout (below) or both cards | the 0.2 rung's verdict, then its go + checkpoint policy per member (N 256 ran every t = 10 keep 3 + NFS keeper) |
 | v_e = 0.7 | B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far side to clear t = 100: the min_chi 1e-4 rescue probe is LIVE on card 1 (the drainhole's χ does clamp to the floor, so the knob engages here — unlike family (b)) | the probe's verdict (≈ 13:30 UTC vs the old t = 42.36 death), its go |
 | v_e = 0.9 (stretch 0.95 / 0.99) | B3 ×3 per spin | tables exist; expect a resolution wall before 0.99 and say so | B2, its go |
 
