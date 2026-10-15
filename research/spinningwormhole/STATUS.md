@@ -196,6 +196,35 @@ Intermediate rungs (0.35, 0.6) only if the curve bends oddly between
 neighbours. ~25 GPU-h a triplet (junk-shell N 384) → ~100 GPU-h for the
 four new rungs, ~2–2.5 days on both cards.
 
+**FOR THE ARTICLE (noted 2026-10-15): the exotic-matter trend is the
+physics behind the ladder — don't forget the τ(v_e) vs D/M(v_e) figure.**
+From the family (a) tables themselves (D = the phantom scalar charge, the
+source of the exotic matter; values read off the solver legs, no new runs
+needed):
+
+| v_e | D (scalar charge) | M_ADM | D/M |
+|---|---|---|---|
+| 0.06 | 2.23 | 1.01 | 2.22 |
+| 0.51 | 2.00 | 1.87 | 1.07 |
+| 0.70 | 1.72 | 3.31 | 0.52 |
+| 0.90 | 1.07 | 11.7 | 0.09 |
+| 0.96 | 0.67 | 32.0 | 0.02 |
+
+Two effects compound: D shrinks monotonically with spin while M_ADM grows
+(rotational energy), so the exotic fraction D/M collapses a hundred-fold
+across the family — at 0.7c the wormhole is already half as "exotic" per
+unit mass as at 0.5c, and by 0.95c the phantom field is a trace
+ingredient; in the extremal limit the family approaches extremal Kerr with
+the scalar switching off entirely. Rotation progressively replaces exotic
+matter as what holds the throat open. This makes the stability result
+physically coherent rather than mysterious: the phantom field both
+sustains the throat and drives its collapse, and the faster the spin, the
+less of it there is — at 0.7c (exotic fraction halved vs 0.5c) the
+collapse is already below detection. The correlation plot τ(v_e) against
+D/M(v_e) is the paper's physical-mechanism figure once the ladder runs;
+the D, M_ADM columns are in `results/spinningwormhole/solutions/<leg>/
+<leg>.tsv` (tracked 2026-10-15).
+
 | rung | run | needs | waiting on |
 |---|---|---|---|
 | v_e = 0 | static ×3: N 256 EXISTS (the merger's `single_hold_L128_t100`), run N 192 / 384 | templates written (`params_static_hold_L128_N*.txt`) | its go |
