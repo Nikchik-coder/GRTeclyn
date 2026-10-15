@@ -32,6 +32,7 @@ stays idle — the launch freeze above holds until the σ verdict.**
 
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
+| **sponge-fix arm** `static_hold_L64_ml3_spdrv1_t100` (`drainhole/07_sponge_fix/`; damping sponge, one knob vs the dt002ctl control: `sponge_drive_strength` 0 → 1 — rhs −= A·f(r)·(state − background) in the 24–32 shell, binary `main3d_spdrv_59345984`, commit 59345984; does it absorb the t ≈ 62 boundary return that ends every L64 trust window? t = 0 bit-identical to the packed static hold) | first GPU node, card 1 | launched ≈ 19:40 UTC 10-15 | 100 | ~18 t/h | return-window verdict ≈ 23:15 UTC; t = 100 ≈ 01:15 UTC 10-16 |
 | **verification rung N 256** `spin_hold_L128_ml3_J100_full_t100` (`drainhole/05_hold_L128/J100_full/`; J = 1 exact, v_e 0.21 — the published-domain model check; levnorm binary, per-level masked Ham/Mom live in `constraint_norms_levels.dat`; NO checkpoints — the policy question got no answer, template default; freeze lifted for this rung on the go 13:1x UTC) | first GPU node, card 0 | launched ≈ 13:15 UTC 10-15 (first attempt stopped seconds in: profile's L64 frame window; relaunched with zoom 128 / coord 64 / centre 64) | 100 | ~14 t/h (B1's measured) | ~7 h, ≈ 20:15 UTC 10-15 |
 **Verification rung N 192 STOPPED by hand ~19:50 UTC 10-15 at t = 1.6 on the no-launch order** (it had launched 19:30 under the earlier rung go, minutes before the freeze; clean while it ran). Its registry row records it; it reruns from t = 0 when the rung gets its go. Card 1 idle. Its 5.2 GB scratch dir awaits the prune word.
 
@@ -45,36 +46,57 @@ slowdown trend continues to 0.7c, below detection). Trust window t ≤ 64
 (L64 boundary return). Packed, registry + README + trust row written,
 scratch pruned (~19 GB). **B2 (v_e 0.7, L = 128 ×3) is unblocked at the
 data level — min_chi 1e-4 goes into its templates; launches stay frozen.**
-| sigma ladder `static_hold_L64_ml3_dt005_sig02_t045` (the floor rung: sigma 0.2 at dt 0.05 — 0.3 and 0.4 both clean, does 0.2 still kill the mode?) | second GPU node, card 0 | launched 19:32 UTC 10-15 | 45 | ~12 t/h (est.) | ≈ 23:15 UTC 10-15 |
-| sigma-default test `static_hold_L64_ml3_dt002_sig04_t100` (sigma 0.4 at the production dt 0.02, one knob vs the live control: flatten the slow level-2 growth, extend the trust window?) | second GPU node, card 0 | t = 44.9 at 19:23 UTC 10-15; **level-2 Ham at 0.094 of control at t = 40 and falling — the trust-window mode is being wiped out** | 100 | ~7 t/h | ≈ 03:15 UTC 10-16 |
+| sigma ladder `static_hold_L64_ml3_dt005_sig02_t045` (the floor rung: sigma 0.2 at dt 0.05) | second GPU node, card 0 | launched 19:32 UTC 10-15 | 45 | ~12 t/h (est.) | ≈ 23:15 UTC 10-15 |
+| sigma-default test `static_hold_L64_ml3_dt002_sig04_t100` (sigma 0.4 at the production dt 0.02, vs the live control) | second GPU node, card 0 | t = 44.9 at 19:23 UTC 10-15, clean | 100 | ~7 t/h | ≈ 03:15 UTC 10-16 |
+| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 81.8 at 19:23 UTC 10-15, clean | 100 | ~5.9 t/h | ≈ 23:30 UTC 10-15 |
 
-**σ = 0.3 VERDICT 19:30 UTC 10-15: `dt005_sig03_t045` CLEAN TO 45, CLEANER
-THAN σ 0.4** (0 NaN, packed): smaller perturbation (max|K| offset ×1.51 →
-×1.11) and level-2 Ham FALLS to 0.3–0.5 of the dt 0.02 control by t = 30–45,
-still falling; level-3 ×2.2 → ×1.19. The gentlest working KO so far; the
-σ 0.2 rung (live) decides the floor.
-| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 35.3 at 12:22 UTC 10-15 | 100 | ~5.9 t/h | ≈ 23:00 UTC 10-15 |
+The whole dt × σ study, its verdicts and its history: **SPEED-UP RESEARCH**
+below.
 
-**σ VERDICT 13:00 UTC 10-15: `dt005_sig04_t045` CLEAN TO 45** (0 NaN,
-packed): sigma 0.4 kills the checkerboard at the known-bad dt 0.05 — the
-early max|K| offset ×1.68 DECAYS to ×1.07 at t = 45 (e-fold ~100+, no
-growth), converging onto the safe-dt track 1.5× past the sigma-0.1
-breakout; residual slow level-2 growth e-fold ~11.6, slightly cleaner than
-the dt 0.02 control's ~8.9. **"sigma 0.3–0.4 + dt 0.05" is the 2.5×
-production candidate**, pending the sig03 arm (≈ 16:15) and the control's
-regression (≈ 23:00).
+## SPEED-UP RESEARCH (dt × σ) — goes fully to the article
 
-dt ladder arms closed 10-15: `dt005_t070` stopped by plan at t = 45 (packed);
-`dt0035_t070` **stopped by hand at t = 62.1, verdict in hand: UNSTABLE TOO** —
-on the dt002 reference to 5 digits through t = 40, max|K| leaves the track at
-t ≈ 43 and is ×41 by t = 55 (0.74 vs 0.018), same level-2 signature. At
-sigma 0.1 only dt_mult 0.02 is safe; the speed-up must come through sigma
-(debt item 1). Queued on the sig04 share (its go 12:00 UTC): **sigma-default
-test `static_hold_L64_ml3_dt002_sig04_t100`** (sigma 0.4 at the production
-dt 0.02, one knob vs the live control) — does the KO raise flatten the slow
-level-2 growth (e-fold ~9 at sigma 0.1, ALSO in the dt 0.02 control — the
-very growth that ends every trust window, cf. B1's ×2 at t = 78.8) and
-extend the window?
+**Current result (2026-10-15 evening).** Production candidate: **sigma =
+0.3, dt_multiplier = 0.05** — 2.5× today's (0.1, 0.02) and cleaner than it
+(level-2 masked Ham at 0.3–0.5 of the dt 0.02 control, falling; startup
+max|K| offset ×1.51 decays to ×1.11 by t = 45; 0 NaN). Second result:
+raising sigma pays even at the safe dt — sigma 0.4 at dt 0.02 cuts the
+slow level-2 growth to 0.094 of control by t = 40 and falling, i.e. the
+very mode whose late growth ends every trust window (B1: L2_Ham ×2 at
+t = 78.8) is wiped out; a trust-window extension at production settings.
+
+**The finding.** The dt ceiling was never hard CFL (local speeds ≤ 0.95;
+the KO+RK4 bound allows dt_mult ~0.23 at sigma 0.1) — it is a weak AMR
+interface-mode instability: a grid-scale checkerboard pinned to the fixed
+nested coarse–fine box edges (square halos in K; shells r ≈ 5–7.5 fastest,
+level-3 box corners at 4√3 ≈ 6.9), dissipation-starved at sigma 0.1 and
+radiating into the wave zone long before breakout (ψ4 ×373 at t = 10,
+×8,600 at t = 15 at dt_mult 0.05). One mode at every dt, a growth-rate
+ladder, not a threshold: e-fold ~0.8 at dt_mult 0.1, breakout t ≈ 28–30 at
+0.05, t ≈ 43 at 0.035, e-fold ~9 (slow but present) at the production
+0.02. The composite constraint norm is blind to it until breakout (level-0
+volume dominates); the per-level masked norms (debt item 2) flag it by
+t = 10. Stronger KO kills it where it lives.
+
+**History, one line per arm** (all on the L64 static hold, levnorm binary
+`main3d_levnorm_73793542`, packed in `drainhole/06_dt_ladder/`):
+- Merger-era evidence: dt_mult 0.1 NaN at t = 16; 0.05 drifted after
+  t ≈ 30; 0.02 clean to 100 — cause unknown, every hold paid ~7 h.
+- `dt005_t070`: localized the mode (level-2 Ham ×61 at t = 15, max|K|
+  1.37 at t = 40); stopped by plan at t = 45.
+- `dt0035_t070`: unstable too, later (left the reference t ≈ 43, ×41 by
+  t = 55); stopped by hand at t = 62.
+- `dt002ctl_t100`: bit-exact vs the packed Step 0 hold (binary regression
+  clean); carries the slow mode itself (level-2 e-fold ~9).
+- `dt005_sig04_t045`: sigma 0.4 kills the checkerboard at the bad dt;
+  clean to 45, offset ×1.68 → ×1.07.
+- `dt005_sig03_t045`: clean to 45 and cleaner than 0.4 — level-2 at
+  0.3–0.5 of control; the gentlest working KO so far.
+- `dt005_sig02_t045` (live): the floor rung.
+- `dt002_sig04_t100` (live): the sigma-default / trust-window test.
+
+**Owed before adoption:** sig02 verdict (≈ 23:15); control to 100 (τ +
+regression, ≈ 23:30); one confirmation hold at (0.3, 0.05) to t = 100 on
+L64 and the same one-knob check on L128 — both proposed, awaiting the go.
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
@@ -257,45 +279,10 @@ full tables are exact to ~1e-10.
 
 This file carried the list until ca71ceed compacted it away; restored because
 every item is still open:
-1. **Why Δt = 0.02 Δx — MECHANISM LOCALIZED 2026-10-15** (dt ladder,
-   breakout measured at t = 42.5): a grid-scale checkerboard pinned to the
-   fixed nested coarse–fine interfaces — a weak AMR interface-mode
-   instability, NOT hard CFL (local coordinate speeds ≤ 0.95; the KO+RK4
-   real-axis bound allows dt_mult ~0.23 at sigma 0.1), not the sponge,
-   boundary or puncture. The evidence, dt_mult 0.05 vs the 0.02 control:
-   - WHICH level: the new per-level norms see it long before max|K| —
-     level-2 Ham ×7.5 at t = 10, ×61 at t = 15 (level 1 ×14, level 3 ×3,
-     level 0 at 1.000). The composite Ham_all/ctl stays 1.000 throughout
-     (level-0 volume dominates), which is exactly why the historic
-     level-0-only norm was blind to it until breakout.
-   - WHERE: K frames show square halos on the level-3 box edges; shells
-     r ≈ 5–7.5 grow fastest (×75–160 over t 5→15; box corners at 4√3 ≈ 6.9).
-   - Radiated early: wave-zone ψ4 P_total ×373 at t = 10, ×8,600 at t = 15,
-     2.0e-3 absolute by t = 30 (background ~1e-13).
-   - Breakout in max|K|: leaves the control track t ≈ 28–30, e-fold 4.2 →
-     1.2 (t ~27 → 35), max|K| 0.56 at t = 35, 1.37 at t = 40.
-   - dt_mult 0.035: max|K| on the control to 5 digits through t = 25, but
-     the SAME mode grows weakly (level-2 Ham ×4.1 at t = 15, ψ4 ×20 at
-     t = 14) — the threshold is a growth-rate ladder, not on/off; clean-to-70
-     verdict pending (≈ 12:20 UTC).
-   - Control: bit-exact vs the packed Step 0 hold (ψ4 ratio 1.000) —
-     levnorm-binary regression clean so far.
-   dt005 stopped by plan at t = 45 (09:00 UTC 10-15, zero NaN, clean exit;
-   nothing new after saturation, every extra hour was control-share); its
-   scratch pruned and logged. The one-knob isolation arm
-   `static_hold_L64_ml3_dt005_sig04_t045` (sigma 0.1 → 0.4, dt_mult 0.05
-   kept, live since 09:12 UTC) **CONFIRMS THE MECHANISM at its t = 15
-   check (~10:35 UTC)**: where the sigma-0.1 dt005 arm had level-2 Ham ×61
-   and ψ4 ×8,600 vs control at t = 15, the sigma-0.4 arm sits at level-2
-   Ham 0.85–0.98 (slightly BELOW control) and ψ4 0.45× — the interface
-   checkerboard is dissipation-starved and KO 0.4 kills it outright.
-   Not free: max|K| carries a flat ×1.55–1.68 offset (e-folds 6.7 → 13.2,
-   DECELERATING — background offset, not growth) and level-3 Ham sits at a
-   flat ×2.7; sigma 0.4 measurably perturbs the hold. Verdicts still owed:
-   this arm clean to t = 45 (≈ 13:00 UTC), dt0035 clean to 70 (≈ 12:20),
-   control to 100 (regression + τ). Then "sigma ≈ 0.3–0.4 + dt_mult
-   0.035–0.05" is the production speed-up candidate (1.75–2.5×), sigma
-   tuned down if the ×1.55 K offset matters at production resolution.
+1. **Why Δt = 0.02 Δx — SOLVED 2026-10-15**: a weak AMR interface-mode
+   instability (grid-scale checkerboard on the nested box edges),
+   dissipation-starved at sigma 0.1; stronger KO kills it and buys 2.5×.
+   The full finding, verdicts and arm history: **SPEED-UP RESEARCH** above.
 2. **Constraint norms level 0 only — DONE 2026-10-15** (commit 73793542,
    binary `main3d_levnorm_73793542_2026-10-15.ex`): `constraint_norms_levels
    = 1` writes `constraint_norms_levels.dat` — one masked L2_Ham/L2_Mom pair
