@@ -416,6 +416,166 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
             std::vector<double>{L2_Ham, L2_Mom});
     }
 
+    // ---- Per-level masked constraint norms --------------------------------
+    // The level-0 file above is the historic contract (whole box, puncture
+    // included) and stays untouched.  The triplet protocol needs each level's
+    // own norm: a growth is physical only if the finest-level constraints
+    // converge while it grows.  COMPOSITE coverage like CoreRadialProfile:
+    // a level's cell contributes only where no finer level covers it
+    // (amrex::makeFineMask), so every cell counts exactly once; cells within
+    // mask_radius of the centre are excluded on every level, because the
+    // compactified far end is a puncture whose floor-limited residual cannot
+    // converge.  Columns are sized by max_level, not finestLevel(), so the
+    // file's width never changes mid-run; levels that do not exist yet write
+    // 0.  The last pair is the hierarchy-wide (masked) norm.
+    if (simParams().constraint_norms_levels && Level() == 0)
+    {
+        const amrex::Real time         = get_state_data(state_index).curTime();
+        const amrex::Real dt           = parent->dtLevel(0);
+        const amrex::Real restart_time = get_gramr_ptr()->get_restart_time();
+        const bool first_step          = (time == 0.0);
+
+        const int finest_lev     = parent->finestLevel();
+        const int max_lev        = parent->maxLevel();
+        const amrex::Real r_mask = simParams().constraint_norms_mask_radius;
+        const amrex::Real cx     = simParams().spinning_params.grid_center[0];
+        const amrex::Real cy     = simParams().spinning_params.grid_center[1];
+        const amrex::Real cz     = simParams().spinning_params.grid_center[2];
+
+        std::vector<double> cols;
+        cols.reserve(2 * (max_lev + 2));
+        double all_ham2 = 0.0;
+        double all_mom2 = 0.0;
+        double all_vol  = 0.0;
+
+        for (int lev = 0; lev <= max_lev; ++lev)
+        {
+            if (lev > finest_lev)
+            {
+                cols.push_back(0.0);
+                cols.push_back(0.0);
+                continue;
+            }
+
+            auto &amr_lev              = parent->getLevel(lev);
+            amrex::MultiFab &state_lev = amr_lev.get_new_data(state_index);
+            FillPatch(amr_lev, state_lev, 2, time, state_index, 0,
+                      state_lev.nComp());
+
+            amrex::MultiFab cst(state_lev.boxArray(),
+                                state_lev.DistributionMap(), 4, 0);
+            cst.setVal(0.0);
+            PhantomDecayPotential potential(simParams().phantom_mass);
+            ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
+            const auto &geom_lev = parent->Geom(lev);
+            const auto dx        = geom_lev.CellSizeArray();
+            ConstraintsWithMatter<ExoticScalarField<PhantomDecayPotential>>
+                lev_constraints(exotic_scalar, dx[0], 1.0, 0, Interval(1, 3),
+                                simParams().spinning_params.grid_center, time);
+
+            for (amrex::MFIter mfi(cst, amrex::TilingIfNotGPU()); mfi.isValid();
+                 ++mfi)
+            {
+                const amrex::Box &bx = mfi.validbox();
+                const auto arr       = cst.array(mfi);
+                const auto src_arr   = state_lev.const_array(mfi);
+                amrex::ParallelFor(
+                    bx, [=] AMREX_GPU_DEVICE(int ix, int iy, int iz) noexcept
+                    { lev_constraints(ix, iy, iz, arr, src_arr); });
+            }
+
+            amrex::iMultiFab fine_mask;
+            const bool have_mask = (lev < finest_lev);
+            if (have_mask)
+            {
+                fine_mask =
+                    amrex::makeFineMask(state_lev, parent->boxArray(lev + 1),
+                                        parent->refRatio(lev), 0, 1);
+            }
+
+            const amrex::Real cell_vol = dx[0] * dx[1] * dx[2];
+            const auto prob_lo         = geom_lev.ProbLoArray();
+
+            amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
+                             amrex::ReduceOpSum>
+                reduce_ops;
+            amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real>
+                reduce_data(reduce_ops);
+            using ReduceTuple = typename decltype(reduce_data)::Type;
+
+            for (amrex::MFIter mfi(cst, amrex::TilingIfNotGPU()); mfi.isValid();
+                 ++mfi)
+            {
+                const amrex::Box &bx = mfi.validbox();
+                const auto arr       = cst.const_array(mfi);
+                const auto mask_arr  = have_mask
+                                           ? fine_mask.const_array(mfi)
+                                           : amrex::Array4<const int>();
+                reduce_ops.eval(
+                    bx, reduce_data,
+                    [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTuple
+                    {
+                        if (have_mask && mask_arr(i, j, k) != 0)
+                        {
+                            return {0.0, 0.0, 0.0};
+                        }
+                        const amrex::Real x =
+                            prob_lo[0] + (amrex::Real(i) + 0.5) * dx[0] - cx;
+                        const amrex::Real y =
+                            prob_lo[1] + (amrex::Real(j) + 0.5) * dx[1] - cy;
+                        const amrex::Real z =
+                            prob_lo[2] + (amrex::Real(k) + 0.5) * dx[2] - cz;
+                        if (x * x + y * y + z * z < r_mask * r_mask)
+                        {
+                            return {0.0, 0.0, 0.0};
+                        }
+                        const amrex::Real ham  = arr(i, j, k, 0);
+                        const amrex::Real m1   = arr(i, j, k, 1);
+                        const amrex::Real m2   = arr(i, j, k, 2);
+                        const amrex::Real m3   = arr(i, j, k, 3);
+                        const amrex::Real mom2 = m1 * m1 + m2 * m2 + m3 * m3;
+                        return {ham * ham * cell_vol, mom2 * cell_vol,
+                                cell_vol};
+                    });
+            }
+
+            auto [sum_ham2, sum_mom2, sum_vol] = reduce_data.value();
+            amrex::ParallelDescriptor::ReduceRealSum(sum_ham2);
+            amrex::ParallelDescriptor::ReduceRealSum(sum_mom2);
+            amrex::ParallelDescriptor::ReduceRealSum(sum_vol);
+
+            cols.push_back((sum_vol > 0.0) ? std::sqrt(sum_ham2 / sum_vol)
+                                           : 0.0);
+            cols.push_back((sum_vol > 0.0) ? std::sqrt(sum_mom2 / sum_vol)
+                                           : 0.0);
+            all_ham2 += sum_ham2;
+            all_mom2 += sum_mom2;
+            all_vol += sum_vol;
+        }
+
+        cols.push_back((all_vol > 0.0) ? std::sqrt(all_ham2 / all_vol) : 0.0);
+        cols.push_back((all_vol > 0.0) ? std::sqrt(all_mom2 / all_vol) : 0.0);
+
+        const std::string prefix = resolve_out_dir() + "constraint_norms_levels";
+        SmallDataIO levels_file(prefix, dt, time, restart_time,
+                                SmallDataIO::APPEND, first_step);
+        levels_file.remove_duplicate_time_data();
+        if (first_step)
+        {
+            std::vector<std::string> header;
+            header.reserve(2 * (max_lev + 2));
+            for (int lev = 0; lev <= max_lev; ++lev)
+            {
+                header.push_back("L2_Ham_" + std::to_string(lev));
+                header.push_back("L2_Mom_" + std::to_string(lev));
+            }
+            header.emplace_back("L2_Ham_all");
+            header.emplace_back("L2_Mom_all");
+            levels_file.write_header_line(header);
+        }
+        levels_file.write_time_data_line(cols);
+    }
+
     // ---- Global collapse diagnostics (same column contract as the merger
     // and SupportedWormholeCollapse examples, so the existing single-throat
     // analysis scripts read it without modification) ------------------------

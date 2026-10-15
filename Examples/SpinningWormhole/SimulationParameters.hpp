@@ -29,6 +29,16 @@ class SimulationParameters : public SimulationParametersBase
     {
         pp.load("calculate_constraint_norms", calculate_constraint_norms,
                 false);
+
+        // Per-level masked norms (constraint_norms_levels.dat): each level's
+        // cells where no finer level covers them, outside mask_radius of the
+        // centre.  The compactified far end is a puncture at r = 0 whose
+        // floor-limited cells dominate an unmasked norm without converging;
+        // the triplet protocol reads the masked file.  mask_radius 0.125 is
+        // the offline shell protocol's innermost edge (t0_checks.py).
+        pp.load("constraint_norms_levels", constraint_norms_levels, false);
+        pp.load("constraint_norms_mask_radius", constraint_norms_mask_radius,
+                0.125);
     }
 
     void read_spinning_params(GRParmParse &pp)
@@ -152,9 +162,15 @@ class SimulationParameters : public SimulationParametersBase
         {
             amrex::Abort("tagging_phi_weight / tagging_K_weight must be >= 0");
         }
+        if (constraint_norms_mask_radius < 0.0)
+        {
+            amrex::Abort("constraint_norms_mask_radius must be >= 0");
+        }
     }
 
     bool calculate_constraint_norms{};
+    bool constraint_norms_levels{};
+    double constraint_norms_mask_radius{};
 
     std::string spinning_background_file;
     SpinningWormholeInitialData::params_t spinning_params{};
