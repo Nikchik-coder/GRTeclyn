@@ -33,9 +33,21 @@ stays idle — the launch freeze above holds until the σ verdict.**
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
 | rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` (`drainhole/04_fast_spin_hold/`; the old ve070a run rerun exactly, one knob: min_chi 1e-8 → 1e-4 — there χ DID clamp to the floor from t ≈ 4, unlike family (b) where a 1e-4 floor never engaged) | first GPU node, card 1 | launched 10:55 UTC 10-15 | 100 | ~17 t/h (est., card to itself) | verdict vs the old t = 42.36 death ≈ 13:30 UTC; t = 100 ≈ 16:50 UTC 10-15 |
-| dt isolation `static_hold_L64_ml3_dt005_sig04_t045` (one knob vs the dt005 arm: sigma 0.1 → 0.4, dt_mult 0.05 kept; kills the interface checkerboard?) | second GPU node, card 0 | launched 09:12 UTC 10-15 | 45 | ~12 t/h (3-way share) | ~3.7 h, ≈ 13:00 UTC 10-15 |
-| dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | t = 29.3 at 08:55 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
-| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 17 at 08:55 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
+| dt isolation `static_hold_L64_ml3_dt005_sig04_t045` (sigma 0.1 → 0.4 at dt_mult 0.05; t = 15 check: checkerboard KILLED, see debt item 1) | second GPU node, card 0 | t = 42.3 at 12:22 UTC 10-15 | 45 | ~12 t/h (3-way share) | ≈ 12:40 UTC 10-15; its share then gets the sigma-0.4 + dt 0.02 t100 arm |
+| sigma ladder `static_hold_L64_ml3_dt005_sig03_t045` (one knob vs the sig04 arm: sigma 0.3 — the gentlest KO that still kills the mode?) | second GPU node, card 0 | launched 12:30 UTC 10-15 | 45 | ~12 t/h (est.) | ≈ 16:15 UTC 10-15 |
+| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 35.3 at 12:22 UTC 10-15 | 100 | ~5.9 t/h | ≈ 23:00 UTC 10-15 |
+
+dt ladder arms closed 10-15: `dt005_t070` stopped by plan at t = 45 (packed);
+`dt0035_t070` **stopped by hand at t = 62.1, verdict in hand: UNSTABLE TOO** —
+on the dt002 reference to 5 digits through t = 40, max|K| leaves the track at
+t ≈ 43 and is ×41 by t = 55 (0.74 vs 0.018), same level-2 signature. At
+sigma 0.1 only dt_mult 0.02 is safe; the speed-up must come through sigma
+(debt item 1). Queued on the sig04 share (its go 12:00 UTC): **sigma-default
+test `static_hold_L64_ml3_dt002_sig04_t100`** (sigma 0.4 at the production
+dt 0.02, one knob vs the live control) — does the KO raise flatten the slow
+level-2 growth (e-fold ~9 at sigma 0.1, ALSO in the dt 0.02 control — the
+very growth that ends every trust window, cf. B1's ×2 at t = 78.8) and
+extend the window?
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
