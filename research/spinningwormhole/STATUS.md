@@ -26,9 +26,9 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 | B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | t = 20.4 at 06:30 UTC 10-15 | 100 | ~13.9 t/h | ~5.7 h, ≈ 12:15 UTC 10-15 |
 | probe `spin_hold_L128_N192_ml4_ve085b_lapse1_eta02_t100` (eta 1 → 0.2, the shift damping matched to the far puncture ~1/(2M); else the dead ml4 template) | first GPU node, card 1 (2-way share) | launched 06:55 UTC 10-15 | 100 | ~14 t/h (est., shared) | dies by t ≈ 24 in ~1.7 h ≈ 08:40 UTC, or t = 100 ≈ 14:00 UTC 10-15 |
 | probe `spin_hold_L128_N192_ml4_ve085b_lapse1_minchi4_t100` (min_chi 1e-8 → 1e-4 on the ml4 grid — the FARZONE floor at compliant resolution; else the dead ml4 template) | first GPU node, card 1 (2-way share) | launched 06:57 UTC 10-15 | 100 | ~14 t/h (est., shared) | same windows |
-| dt ladder `static_hold_L64_ml3_dt005_t070` (`drainhole/06_dt_ladder/`; numerics debt 1, its go 10-15) | second GPU node, card 0 | launched 05:31 UTC 10-15 | 70 | ~12 t/h (3-way card share, 88 % aggregate) | ~5.5 h, ≈ 11:00 UTC 10-15 |
-| dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | launched 05:34 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
-| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | launched 05:35 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
+| dt ladder `static_hold_L64_ml3_dt005_t070` (`drainhole/06_dt_ladder/`; numerics debt 1, its go 10-15) | second GPU node, card 0 | t = 42.5 at 08:55 UTC 10-15; breakout measured (item 1 below) | **45** (planned stop, `dump_and_stop` armed) | ~12 t/h | ≈ 09:05 UTC 10-15; the σ-isolation arm takes its share |
+| dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | t = 29.3 at 08:55 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
+| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 17 at 08:55 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
@@ -246,20 +246,35 @@ full tables are exact to ~1e-10.
 
 This file carried the list until ca71ceed compacted it away; restored because
 every item is still open:
-1. **Why Δt = 0.02 Δx — MEASUREMENT LIVE** (the dt ladder above; its go
-   2026-10-15, "use this gpu for testing"). The evidence re-read 10-15 from the
-   merger's packs: it is a dt-dependent WEAK INSTABILITY growing from t = 0,
-   visible when it crosses the background, NOT a hard CFL blow-up and NOT the
-   hold's physical mode — `single_hold_dt01_t070` (dt_mult 0.1): max|K| bump
-   visible t ≈ 10, e-fold ~0.8, NaN at t = 16; `single_hold_dt005_t070`
-   (0.05): visible t ≈ 28, e-fold ~1.5, K SATURATES ~1.9 while min_lapse
-   stays on the control to 4 digits until t = 40, then the collapse runs away
-   (L2_Ham ×35); 0.02 clean to 100. Threshold sits in (0.02, 0.05]. The
-   ladder reruns the spinning static hold (same numbers verbatim) at 0.05 /
-   0.035 / 0.02 with the new per-level norms (WHICH level) and the radial
-   profile to r = 34 (WHERE: throat / AMR interfaces ±4/8/16 / sponge 24–32 /
-   boundary). Then one-knob isolation arms at 0.05 (sigma, sponge) as the
-   location dictates.
+1. **Why Δt = 0.02 Δx — MECHANISM LOCALIZED 2026-10-15** (dt ladder,
+   breakout measured at t = 42.5): a grid-scale checkerboard pinned to the
+   fixed nested coarse–fine interfaces — a weak AMR interface-mode
+   instability, NOT hard CFL (local coordinate speeds ≤ 0.95; the KO+RK4
+   real-axis bound allows dt_mult ~0.23 at sigma 0.1), not the sponge,
+   boundary or puncture. The evidence, dt_mult 0.05 vs the 0.02 control:
+   - WHICH level: the new per-level norms see it long before max|K| —
+     level-2 Ham ×7.5 at t = 10, ×61 at t = 15 (level 1 ×14, level 3 ×3,
+     level 0 at 1.000). The composite Ham_all/ctl stays 1.000 throughout
+     (level-0 volume dominates), which is exactly why the historic
+     level-0-only norm was blind to it until breakout.
+   - WHERE: K frames show square halos on the level-3 box edges; shells
+     r ≈ 5–7.5 grow fastest (×75–160 over t 5→15; box corners at 4√3 ≈ 6.9).
+   - Radiated early: wave-zone ψ4 P_total ×373 at t = 10, ×8,600 at t = 15,
+     2.0e-3 absolute by t = 30 (background ~1e-13).
+   - Breakout in max|K|: leaves the control track t ≈ 28–30, e-fold 4.2 →
+     1.2 (t ~27 → 35), max|K| 0.56 at t = 35, 1.37 at t = 40.
+   - dt_mult 0.035: max|K| on the control to 5 digits through t = 25, but
+     the SAME mode grows weakly (level-2 Ham ×4.1 at t = 15, ψ4 ×20 at
+     t = 14) — the threshold is a growth-rate ladder, not on/off; clean-to-70
+     verdict pending (≈ 12:20 UTC).
+   - Control: bit-exact vs the packed Step 0 hold (ψ4 ratio 1.000) —
+     levnorm-binary regression clean so far.
+   Next: dt005 stops by plan at t = 45 (nothing new after saturation; every
+   extra hour is control-share), and the one-knob isolation arm
+   `static_hold_L64_ml3_dt005_sig04_t045` (sigma 0.1 → 0.4, dt_mult 0.05
+   kept, template diff-verified) takes its share. If KO dissipation kills
+   the checkerboard, "sigma ≈ 0.3–0.4 + dt_mult 0.035–0.05" becomes the
+   production speed-up candidate (1.75–2.5×).
 2. **Constraint norms level 0 only — DONE 2026-10-15** (commit 73793542,
    binary `main3d_levnorm_73793542_2026-10-15.ex`): `constraint_norms_levels
    = 1` writes `constraint_norms_levels.dat` — one masked L2_Ham/L2_Mom pair
