@@ -25,9 +25,9 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 |---|---|---|---|---|---|
 | B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | launched 05:00 UTC 10-15 | 100 | ~14 t/h | ~7.2 h, ≈ 12:15 UTC 10-15 |
 | probe `spin_hold_L128_N192_ml4_ve085b_lapse1_t100` (`symmetric_massless/03_spin_hold/ve085b/`) | first GPU node, card 1 | launched 05:35 UTC 10-15 | 100 | ~20 t/h (est.) | dies by t ≈ 23 in ~1.2 h, or t = 100 in ~5 h ≈ 10:30 UTC 10-15 |
-| dt ladder `static_hold_L64_ml3_dt005_t070` (`drainhole/06_dt_ladder/`; numerics debt 1, its go 10-15) | second GPU node, card 0 | launched 05:31 UTC 10-15 | 70 | ~41 t/h | ~1.7 h, ≈ 07:20 UTC 10-15 |
-| dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | launched 05:34 UTC 10-15 | 70 | ~30 t/h (est.) | ~2.3 h, ≈ 08:00 UTC 10-15 |
-| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | launched 05:35 UTC 10-15 | 100 | ~18 t/h (est.) | ~5.6 h, ≈ 11:15 UTC 10-15 |
+| dt ladder `static_hold_L64_ml3_dt005_t070` (`drainhole/06_dt_ladder/`; numerics debt 1, its go 10-15) | second GPU node, card 0 | launched 05:31 UTC 10-15 | 70 | ~12 t/h (3-way card share, 88 % aggregate) | ~5.5 h, ≈ 11:00 UTC 10-15 |
+| dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | launched 05:34 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
+| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | launched 05:35 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
