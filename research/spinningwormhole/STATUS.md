@@ -33,7 +33,18 @@ stays idle — the launch freeze above holds until the σ verdict.**
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
 | **verification rung N 256** `spin_hold_L128_ml3_J100_full_t100` (`drainhole/05_hold_L128/J100_full/`; J = 1 exact, v_e 0.21 — the published-domain model check; levnorm binary, per-level masked Ham/Mom live in `constraint_norms_levels.dat`; NO checkpoints — the policy question got no answer, template default; freeze lifted for this rung on the go 13:1x UTC) | first GPU node, card 0 | launched ≈ 13:15 UTC 10-15 (first attempt stopped seconds in: profile's L64 frame window; relaunched with zoom 128 / coord 64 / centre 64) | 100 | ~14 t/h (B1's measured) | ~7 h, ≈ 20:15 UTC 10-15 |
-| rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` (`drainhole/04_fast_spin_hold/`; the old ve070a run rerun exactly, one knob: min_chi 1e-8 → 1e-4 — there χ DID clamp to the floor from t ≈ 4, unlike family (b) where a 1e-4 floor never engaged) | first GPU node, card 1 | launched 10:55 UTC 10-15 | 100 | ~17 t/h (est., card to itself) | verdict vs the old t = 42.36 death ≈ 13:30 UTC; t = 100 ≈ 16:50 UTC 10-15 |
+| **verification rung N 192** `spin_hold_L128_N192_ml3_J100_full_t100` (same rung, coarse member; levnorm binary, per-level norms; no checkpoints, template default; launched under the 13:1x go, minutes before the 19:3x "do not launch anything new" — nothing further launches) | first GPU node, card 1 | launched ≈ 19:30 UTC 10-15 | 100 | ~30 t/h (N⁴ est.) | ~3.3 h, ≈ 22:50 UTC 10-15 |
+
+**Rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` FINISHED ≈ 15:30 UTC
+10-15: RESCUE PASS — reached t = 100, 0 NaN** (the parent died t = 42.36).
+One knob, min_chi 1e-8 → 1e-4: the floor is pinned only t = 0–3.17, then
+χ_min lifts off and rises to 1.0e-3 by the end — the far side heals, not
+just clamps. L2_Ham flat at 3.4e-3 the whole run (never ×2); throat frozen,
+R_eq −0.016 % over t = 0–100 (0.5c shrinks −2.9 % on this grid — the
+slowdown trend continues to 0.7c, below detection). Trust window t ≤ 64
+(L64 boundary return). Packed, registry + README + trust row written,
+scratch pruned (~19 GB). **B2 (v_e 0.7, L = 128 ×3) is unblocked at the
+data level — min_chi 1e-4 goes into its templates; launches stay frozen.**
 | sigma ladder `static_hold_L64_ml3_dt005_sig02_t045` (the floor rung: sigma 0.2 at dt 0.05 — 0.3 and 0.4 both clean, does 0.2 still kill the mode?) | second GPU node, card 0 | launched 19:32 UTC 10-15 | 45 | ~12 t/h (est.) | ≈ 23:15 UTC 10-15 |
 | sigma-default test `static_hold_L64_ml3_dt002_sig04_t100` (sigma 0.4 at the production dt 0.02, one knob vs the live control: flatten the slow level-2 growth, extend the trust window?) | second GPU node, card 0 | t = 44.9 at 19:23 UTC 10-15; **level-2 Ham at 0.094 of control at t = 40 and falling — the trust-window mode is being wiped out** | 100 | ~7 t/h | ≈ 03:15 UTC 10-16 |
 

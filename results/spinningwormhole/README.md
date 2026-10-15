@@ -68,6 +68,17 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   other hold it rises) and its shift ran away; the throat never moved
   (R_eq 7.7710 → 7.7713, MOTS area constant to 1e-4 while found).
   Trust window t ≤ 40.
+- `04_fast_spin_hold/spin_hold_L64_ml3_ve070a_minchi4_t100` (2026-10-15):
+  the run above rerun exactly, one knob — min_chi 1e-8 → 1e-4.  RESCUE
+  PASS: reaches t = 100 with 0 NaN.  The floor is pinned only t = 0–3.17,
+  then χ_min lifts off and rises to 1.0e-3 by t = 100 — the far side
+  heals rather than clamps.  L2_Ham flat at 3.4e-3 the whole run; the
+  throat is frozen, R_eq −0.016 % over t = 0–100 (the 0.5c hold shrinks
+  −2.9 % on this grid; the spin-slowdown trend continues to 0.7c, where
+  it is below detection).  Trust window t ≤ 64 (the L64 boundary
+  return).  Verdict: the 0.7c far-side death is cured at the data level;
+  B2 (v_e 0.7 on L = 128, ×3) unblocked with min_chi 1e-4 in its
+  templates.
 - `04_fast_spin_hold/spin_hold_L64_ml3_ve050a_t100` (2026-10-13): the
   drainhole family at v_e 0.51 on the J holds' grid and gauge, only the
   table changed; reached t = 100 clean.  The throat SHRINKS, the static
