@@ -26,6 +26,10 @@
 \usepackage{textcase}
 \usepackage{placeins}
 \usepackage[protrusion=true,expansion=false]{microtype}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\definecolor{figink}{HTML}{1A1A18}
+\definecolor{figmuted}{HTML}{5F5D57}
 
 % Half-page figure* strips must ride at the top of a text page, not own a
 % float page of their own (the binary paper's Fig. 2 lesson).
@@ -137,6 +141,37 @@ Refs.~\cite{kleihaus_kunz2014,chew2016} close the system with a second-order equ
 
 \begin{figure*}[t]
 \centering
+\begin{tikzpicture}[
+  font=\scriptsize, node distance=4.5mm,
+  box/.style={draw=figink, line width=0.6pt, rounded corners=2pt, align=center,
+              text width=28.5mm, minimum height=20mm, inner sep=3pt, text=figink},
+  gate/.style={box, line width=1.4pt},
+  flow/.style={-{Stealth[length=2mm]}, line width=0.6pt, draw=figink},
+  back/.style={-{Stealth[length=2mm]}, line width=0.6pt, draw=figmuted},
+  tag/.style={text=figmuted, inner sep=1.5pt}]
+\node[box] (seed) {{\footnotesize\bfseries Guess}\\[2pt]
+  the $O(J^2)$ solution,\\ then the line through\\ the last two solutions};
+\node[box, right=of seed] (newton) {{\footnotesize\bfseries Newton}\\[2pt]
+  $f$, $\omega$ and $\omega_\infty$ from\\ Eqs.~(\ref{eq:feq})--(\ref{eq:omeq})\\ and the row $J(\omega)=J$};
+\node[box, right=of newton] (nu) {{\footnotesize\bfseries Least squares}\\[2pt]
+  $\nu$ and $D^2$ from\\ Eq.~(\ref{eq:constraint})\\ and the $D^2$ identity};
+\node[gate, right=of nu] (gates) {{\footnotesize\bfseries Check}\\[2pt]
+  never imposed:\\ $D^2$ spread, Smarr,\\ equal end fluxes, tails,\\ Einstein residual};
+\node[box, right=7mm of gates] (out) {{\footnotesize\bfseries Accept}\\[2pt]
+  save the solution\\ and its $1025\times65$ table,\\ step up in $\log J$};
+\draw[flow] (seed) -- (newton);
+\draw[flow] (newton) -- (nu);
+\draw[flow] (nu) -- (gates);
+\draw[flow] (gates) -- node[tag, above] {pass} (out);
+\draw[back] (gates.north) -- ++(0,5mm) -| node[tag, pos=0.25, above] {fail: grid $\times1.5$, same $J$} (newton.north);
+\draw[back] (out.south) -- ++(0,-5mm) -| node[tag, pos=0.25, below] {next $J$} (seed.south);
+\end{tikzpicture}
+\caption{The solver loop for one family (Sec.~\ref{sec:solver}). Thin boxes impose equations; the heavy box tests identities the solver never imposes, and only it decides acceptance. A failed check refines the Chebyshev grid ($48\times12$ up to $240\times60$) and solves the same $J$ again; an accepted solution seeds the next $J$. The loop gave 462 accepted solutions over 20 continuation legs, both families to $v_e\approx0.99$.}
+\label{fig:solver}
+\end{figure*}
+
+\begin{figure*}[t]
+\centering
 \includegraphics[width=0.85\textwidth]{solver/kk2014_comparison.pdf}
 \caption{The symmetric family ($\eta_0=1$, $\gamma=0$; 81 solutions, $v_e=0.02$--$0.991$, plus the exact static member) in the normalization of Ref.~\cite{kleihaus_kunz2014} ($M_0=R_e$, $J_0=R_e^2/2$, $\Omega_0=1/R_e$): our curves, the digitized points of their Fig.~1 (open symbols), and closed-form Kerr (dashed). The digitization's reading error, measured by reading their printed Kerr curves the same way, is rms $1$--$6\times10^{-4}$; digitized minus ours is rms $2.5$--$8\times10^{-4}$, max $2.5\times10^{-3}$, over all five curves. The two solvers agree to the precision a printed figure carries.}
 \label{fig:kk2014}
@@ -174,7 +209,7 @@ family & $v_e$ & $J/\eta_0^2$ & $\mu_+/\eta_0$ & $\mu_-/\mu_+$ & $D/\eta_0$ & $R
 \end{ruledtabular}
 \end{table*}
 
-The solver turns the system of Sec.~\ref{sec:model} into numbers in five steps; Appendix~\ref{app:solver} gives the details. First, the infinite domain is made finite: the coordinate $x=(2/\pi)\arctan(\eta/\eta_0)$ maps both asymptotic ends to $x=\pm1$, and the unknowns $f$ and $\omega$ are expanded in Chebyshev polynomials of $x$ and even cosine modes of $\theta$. The expansion is spectral: for smooth solutions the error falls exponentially with the number of modes, so modest grids reach near machine precision. Second, the two elliptic equations~\eqref{eq:feq}--\eqref{eq:omeq} are solved for the expansion coefficients by Newton iteration---guess, linearize, correct---until their residual sits at round-off. Third, $\nu$ and the scalar charge are recovered without ever touching the misprinted second-order $\nu$ equation: the first-order constraint~\eqref{eq:constraint} and the $D^2$ identity together overdetermine $\nu$ and the single number $D^2$, so both are extracted as one linear least-squares problem---and the redundancy is a feature, since the leftover misfit measures the error. Fourth, each family is walked in spin: every converged solution seeds the Newton iteration at a slightly higher spin, with $J$ as the continuation parameter ($\omega_\infty$ is not monotone along a family; Appendix~\ref{app:solver}), and the grid refines automatically, from $48\times12$ up to $240\times60$, whenever the acceptance gates fail. Fifth---the point of the whole design---a solution is accepted only on identities the solver never imposes: the spread of $D^2$ over the domain ($\le10^{-11}$), the Smarr relation ($\le10^{-10}$), equality of the angular-momentum flux through the two ends ($\le1.3\times10^{-9}$), the asymptotic tails ($\le5\times10^{-12}$), and an independent, symbolically generated residual of the full Einstein equations, evaluated out to 20 throat radii: $1.0\times10^{-10}$ at $J=0.25$ and $4.2\times10^{-10}$ at $J=1$ against the static member's $2\times10^{-11}$ round-off floor---where the $O(J^2)$ perturbative data give $3\times10^{-5}$ and $1\times10^{-2}$ on the same meshes---staying near $10^{-9}$ up to $v_e\approx0.85$ and reaching ${\sim}10^{-7}$ at $v_e=0.91$--$0.99$. The high-spin $10^{-7}$ is round-off, not solution error: it does not shrink on finer grids, while the mass and scalar charge come out identical to 12 digits across them; and the test does catch genuine failures, scoring a deliberately under-resolved solution at $10^{-4}$, which the resolution check rejects. Beyond 20 throat radii the residual's normalization inflates round-off and the test is switched off; that outer region is covered by the resolution study, by the end charges, and by the 3D constraint checks of Sec.~\ref{sec:setup}. The products: 462 converged solutions over 20 continuation legs, global charges stable to 10 digits across three grids, and, for evolution, each background exported as a $1025\times65$ table whose bilinear interpolation error is $\le10^{-7}$ up to $v_e=0.9$.
+The solver turns the system of Sec.~\ref{sec:model} into numbers in five steps (Fig.~\ref{fig:solver}); Appendix~\ref{app:solver} gives the details. First, the infinite domain is made finite: the coordinate $x=(2/\pi)\arctan(\eta/\eta_0)$ maps both asymptotic ends to $x=\pm1$, and the unknowns $f$ and $\omega$ are expanded in Chebyshev polynomials of $x$ and even cosine modes of $\theta$. The expansion is spectral: for smooth solutions the error falls exponentially with the number of modes, so modest grids reach near machine precision. Second, the two elliptic equations~\eqref{eq:feq}--\eqref{eq:omeq} are solved for the expansion coefficients by Newton iteration---guess, linearize, correct---until their residual sits at round-off. Third, $\nu$ and the scalar charge are recovered without ever touching the misprinted second-order $\nu$ equation: the first-order constraint~\eqref{eq:constraint} and the $D^2$ identity together overdetermine $\nu$ and the single number $D^2$, so both are extracted as one linear least-squares problem---and the redundancy is a feature, since the leftover misfit measures the error. Fourth, each family is walked in spin: every converged solution seeds the Newton iteration at a slightly higher spin, with $J$ as the continuation parameter ($\omega_\infty$ is not monotone along a family; Appendix~\ref{app:solver}), and the grid refines automatically, from $48\times12$ up to $240\times60$, whenever the acceptance gates fail. Fifth---the point of the whole design---a solution is accepted only on identities the solver never imposes: the spread of $D^2$ over the domain ($\le10^{-11}$), the Smarr relation ($\le10^{-10}$), equality of the angular-momentum flux through the two ends ($\le1.3\times10^{-9}$), the asymptotic tails ($\le5\times10^{-12}$), and an independent, symbolically generated residual of the full Einstein equations, evaluated out to 20 throat radii: $1.0\times10^{-10}$ at $J=0.25$ and $4.2\times10^{-10}$ at $J=1$ against the static member's $2\times10^{-11}$ round-off floor---where the $O(J^2)$ perturbative data give $3\times10^{-5}$ and $1\times10^{-2}$ on the same meshes---staying near $10^{-9}$ up to $v_e\approx0.85$ and reaching ${\sim}10^{-7}$ at $v_e=0.91$--$0.99$. The high-spin $10^{-7}$ is round-off, not solution error: it does not shrink on finer grids, while the mass and scalar charge come out identical to 12 digits across them; and the test does catch genuine failures, scoring a deliberately under-resolved solution at $10^{-4}$, which the resolution check rejects. Beyond 20 throat radii the residual's normalization inflates round-off and the test is switched off; that outer region is covered by the resolution study, by the end charges, and by the 3D constraint checks of Sec.~\ref{sec:setup}. The products: 462 converged solutions over 20 continuation legs, global charges stable to 10 digits across three grids, and, for evolution, each background exported as a $1025\times65$ table whose bilinear interpolation error is $\le10^{-7}$ up to $v_e=0.9$.
 
 Figure~\ref{fig:kk2014} is the validation: in the normalization of Ref.~\cite{kleihaus_kunz2014}, our symmetric family lands on the digitized curves of their Fig.~1 to the digitization's own reading error. Their four anchor solutions at $\omega_\infty=0.5$~\cite{chew2016} split: the $\gamma=0$ and $\gamma=-1$ scalar charges agree to all printed digits, while $\gamma=1$ and $\gamma=2$ differ by $2\times10^{-4}$ and $6.6\times10^{-3}$ from our grid-converged values---their finite-difference error, growing with $\gamma$ (Appendix~\ref{app:solver}).
 
@@ -244,7 +279,7 @@ $2$  & 0.3375993  & 0.33984 & 1.048161 \\
 \end{ruledtabular}
 \end{table}
 
-The unknowns $f,\omega$ are expanded in Chebyshev polynomials of $x=(2/\pi)\arctan(\eta/\eta_0)\in[-1,1]$, which compactifies both ends, and in even cosine modes of $\theta$; derivatives are spectral, and the nonlinear system \eqref{eq:feq}--\eqref{eq:omeq} is solved by Newton iteration with a direct linear solve. At each Newton step, $\nu$ and the constant $D^2$ are recovered together from the overdetermined pair---the first-order constraint~\eqref{eq:constraint} and the $D^2$ identity---as one linear least-squares problem, which is what makes the acceptance gates of Sec.~\ref{sec:solver} meaningful: the reported $D^2$ spread, Smarr defect, flux equality and full-Einstein residual are all computed from equations that never entered the solve. Spin is walked by pseudo-arclength continuation in $(\text{state},J)$, since $\omega_\infty$ is not monotone along a family (Table~\ref{tab:anchors}); grids refine automatically from $48\times12$ when the acceptance gates demand it, to $162\times42$ at $v_e=0.95$ on the drainhole family. On the symmetric family the mirror identities are satisfied at the $10^{-14}$ level, including $\omega(0)=\omega_\infty/2$, and the equatorial ergosurface law of Ref.~\cite{chew2016} holds to $10^{-12}$ wherever the ergosurface sits at $\eta>0$ ($v_e\ge0.77$). The extremal-Kerr substitution of Sec.~\ref{sec:model:eq12} is kept in the pipeline as a symbolic regression test.
+The unknowns $f,\omega$ are expanded in Chebyshev polynomials of $x=(2/\pi)\arctan(\eta/\eta_0)\in[-1,1]$, which compactifies both ends, and in even cosine modes of $\theta$; derivatives are spectral, and the nonlinear system \eqref{eq:feq}--\eqref{eq:omeq} is solved by Newton iteration with a direct linear solve. At each Newton step, $\nu$ and the constant $D^2$ are recovered together from the overdetermined pair---the first-order constraint~\eqref{eq:constraint} and the $D^2$ identity---as one linear least-squares problem, which is what makes the acceptance gates of Sec.~\ref{sec:solver} meaningful: the reported $D^2$ spread, Smarr defect, flux equality and full-Einstein residual are all computed from equations that never entered the solve. Spin is walked with $J$ held fixed in each solve: $\omega_\infty$ joins the unknowns and one extra row imposes the target $J$, since $\omega_\infty$ is not monotone along a family (Table~\ref{tab:anchors}). Steps are taken in $\log J$, predicted by the secant through the last two solutions, with pseudo-arclength in $(\text{state},J)$ as the fallback should $J$ itself fold; grids refine automatically from $48\times12$ when the acceptance gates demand it, to $162\times42$ at $v_e=0.95$ on the drainhole family. On the symmetric family the mirror identities are satisfied at the $10^{-14}$ level, including $\omega(0)=\omega_\infty/2$, and the equatorial ergosurface law of Ref.~\cite{chew2016} holds to $10^{-12}$ wherever the ergosurface sits at $\eta>0$ ($v_e\ge0.77$). The extremal-Kerr substitution of Sec.~\ref{sec:model:eq12} is kept in the pipeline as a symbolic regression test.
 
 \FloatBarrier
 
