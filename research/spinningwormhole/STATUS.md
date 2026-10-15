@@ -33,7 +33,7 @@ stays idle — the launch freeze above holds until the σ verdict.**
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
 | **verification rung N 256** `spin_hold_L128_ml3_J100_full_t100` (`drainhole/05_hold_L128/J100_full/`; J = 1 exact, v_e 0.21 — the published-domain model check; levnorm binary, per-level masked Ham/Mom live in `constraint_norms_levels.dat`; NO checkpoints — the policy question got no answer, template default; freeze lifted for this rung on the go 13:1x UTC) | first GPU node, card 0 | launched ≈ 13:15 UTC 10-15 (first attempt stopped seconds in: profile's L64 frame window; relaunched with zoom 128 / coord 64 / centre 64) | 100 | ~14 t/h (B1's measured) | ~7 h, ≈ 20:15 UTC 10-15 |
-| **verification rung N 192** `spin_hold_L128_N192_ml3_J100_full_t100` (same rung, coarse member; levnorm binary, per-level norms; no checkpoints, template default; launched under the 13:1x go, minutes before the 19:3x "do not launch anything new" — nothing further launches) | first GPU node, card 1 | launched ≈ 19:30 UTC 10-15 | 100 | ~30 t/h (N⁴ est.) | ~3.3 h, ≈ 22:50 UTC 10-15 |
+**Verification rung N 192 STOPPED by hand ~19:50 UTC 10-15 at t = 1.6 on the no-launch order** (it had launched 19:30 under the earlier rung go, minutes before the freeze; clean while it ran). Its registry row records it; it reruns from t = 0 when the rung gets its go. Card 1 idle. Its 5.2 GB scratch dir awaits the prune word.
 
 **Rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` FINISHED ≈ 15:30 UTC
 10-15: RESCUE PASS — reached t = 100, 0 NaN** (the parent died t = 42.36).
