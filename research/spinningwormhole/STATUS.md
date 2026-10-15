@@ -65,6 +65,14 @@ the preflight's frame 0 and the slice cache cover ±64 at one pixel per finest c
 
 ## QUEUED
 
+**LAUNCH FREEZE (2026-10-15, ~12:00 UTC): no new run starts until the
+slow-interface-mode / sigma question on the second node is settled** (the
+σ = 0.4 + dt 0.02 head-to-head vs the σ = 0.1 control, verdict expected
+tomorrow morning). The triplet members would otherwise bake today's σ = 0.1
+into the production curve while the fix is being measured. Cards freed by
+finishing runs (B1 ≈ 12:15 UTC, the ve070a rescue probe ≈ 13:20 UTC) stay
+idle; systematics passes still run.
+
 **SCOPE (decided 2026-10-15, supersedes the 10-13 order): the paper is the
 drainhole's.** Campaign A (the symmetric family (b) evolutions A2–A4) is
 DROPPED: four one-knob probes all die at t ≈ 23–24 at the far-side
