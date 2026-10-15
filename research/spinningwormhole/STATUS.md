@@ -26,7 +26,7 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 | B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | t = 20.4 at 06:30 UTC 10-15 | 100 | ~13.9 t/h | ~5.7 h, ≈ 12:15 UTC 10-15 |
 | probe `spin_hold_L128_N192_ml4_ve085b_lapse1_eta02_t100` (eta 1 → 0.2, the shift damping matched to the far puncture ~1/(2M); else the dead ml4 template) | first GPU node, card 1 (2-way share) | launched 06:55 UTC 10-15 | 100 | ~14 t/h (est., shared) | dies by t ≈ 24 in ~1.7 h ≈ 08:40 UTC, or t = 100 ≈ 14:00 UTC 10-15 |
 | probe `spin_hold_L128_N192_ml4_ve085b_lapse1_minchi4_t100` (min_chi 1e-8 → 1e-4 on the ml4 grid — the FARZONE floor at compliant resolution; else the dead ml4 template) | first GPU node, card 1 (2-way share) | launched 06:57 UTC 10-15 | 100 | ~14 t/h (est., shared) | same windows |
-| dt ladder `static_hold_L64_ml3_dt005_t070` (`drainhole/06_dt_ladder/`; numerics debt 1, its go 10-15) | second GPU node, card 0 | t = 42.5 at 08:55 UTC 10-15; breakout measured (item 1 below) | **45** (planned stop, `dump_and_stop` armed) | ~12 t/h | ≈ 09:05 UTC 10-15; the σ-isolation arm takes its share |
+| dt isolation `static_hold_L64_ml3_dt005_sig04_t045` (one knob vs the dt005 arm: sigma 0.1 → 0.4, dt_mult 0.05 kept; kills the interface checkerboard?) | second GPU node, card 0 | launched 09:12 UTC 10-15 | 45 | ~12 t/h (3-way share) | ~3.7 h, ≈ 13:00 UTC 10-15 |
 | dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | t = 29.3 at 08:55 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
 | dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 17 at 08:55 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
 
@@ -269,11 +269,12 @@ every item is still open:
      verdict pending (≈ 12:20 UTC).
    - Control: bit-exact vs the packed Step 0 hold (ψ4 ratio 1.000) —
      levnorm-binary regression clean so far.
-   Next: dt005 stops by plan at t = 45 (nothing new after saturation; every
-   extra hour is control-share), and the one-knob isolation arm
+   dt005 stopped by plan at t = 45 (09:00 UTC 10-15, zero NaN, clean exit;
+   nothing new after saturation, every extra hour was control-share); its
+   scratch pruned and logged. The one-knob isolation arm
    `static_hold_L64_ml3_dt005_sig04_t045` (sigma 0.1 → 0.4, dt_mult 0.05
-   kept, template diff-verified) takes its share. If KO dissipation kills
-   the checkerboard, "sigma ≈ 0.3–0.4 + dt_mult 0.035–0.05" becomes the
+   kept) is LIVE on its share since 09:12 UTC. If KO dissipation kills the
+   checkerboard, "sigma ≈ 0.3–0.4 + dt_mult 0.035–0.05" becomes the
    production speed-up candidate (1.75–2.5×).
 2. **Constraint norms level 0 only — DONE 2026-10-15** (commit 73793542,
    binary `main3d_levnorm_73793542_2026-10-15.ex`): `constraint_norms_levels
