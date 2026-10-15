@@ -33,9 +33,18 @@ stays idle — the launch freeze above holds until the σ verdict.**
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
 | rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` (`drainhole/04_fast_spin_hold/`; the old ve070a run rerun exactly, one knob: min_chi 1e-8 → 1e-4 — there χ DID clamp to the floor from t ≈ 4, unlike family (b) where a 1e-4 floor never engaged) | first GPU node, card 1 | launched 10:55 UTC 10-15 | 100 | ~17 t/h (est., card to itself) | verdict vs the old t = 42.36 death ≈ 13:30 UTC; t = 100 ≈ 16:50 UTC 10-15 |
-| dt isolation `static_hold_L64_ml3_dt005_sig04_t045` (sigma 0.1 → 0.4 at dt_mult 0.05; t = 15 check: checkerboard KILLED, see debt item 1) | second GPU node, card 0 | t = 42.3 at 12:22 UTC 10-15 | 45 | ~12 t/h (3-way share) | ≈ 12:40 UTC 10-15; its share then gets the sigma-0.4 + dt 0.02 t100 arm |
 | sigma ladder `static_hold_L64_ml3_dt005_sig03_t045` (one knob vs the sig04 arm: sigma 0.3 — the gentlest KO that still kills the mode?) | second GPU node, card 0 | launched 12:30 UTC 10-15 | 45 | ~12 t/h (est.) | ≈ 16:15 UTC 10-15 |
+| sigma-default test `static_hold_L64_ml3_dt002_sig04_t100` (sigma 0.4 at the production dt 0.02, one knob vs the live control: flatten the slow level-2 growth, extend the trust window?) | second GPU node, card 0 | launched 13:02 UTC 10-15 | 100 | ~5.9 t/h (est.) | ≈ 06:00 UTC 10-16 |
 | dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 35.3 at 12:22 UTC 10-15 | 100 | ~5.9 t/h | ≈ 23:00 UTC 10-15 |
+
+**σ VERDICT 13:00 UTC 10-15: `dt005_sig04_t045` CLEAN TO 45** (0 NaN,
+packed): sigma 0.4 kills the checkerboard at the known-bad dt 0.05 — the
+early max|K| offset ×1.68 DECAYS to ×1.07 at t = 45 (e-fold ~100+, no
+growth), converging onto the safe-dt track 1.5× past the sigma-0.1
+breakout; residual slow level-2 growth e-fold ~11.6, slightly cleaner than
+the dt 0.02 control's ~8.9. **"sigma 0.3–0.4 + dt 0.05" is the 2.5×
+production candidate**, pending the sig03 arm (≈ 16:15) and the control's
+regression (≈ 23:00).
 
 dt ladder arms closed 10-15: `dt005_t070` stopped by plan at t = 45 (packed);
 `dt0035_t070` **stopped by hand at t = 62.1, verdict in hand: UNSTABLE TOO** —
