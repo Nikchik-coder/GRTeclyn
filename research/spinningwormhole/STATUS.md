@@ -95,10 +95,26 @@ need both cards (MPI) or their own decision.
 
 *Phase B: drainhole, family (a) — THE HEADLINE*
 
-| run | needs | restart from | waiting on |
+**The spin ladder (agreed 2026-10-15): six rungs in v_e, every rung a
+triplet, one τ(v_e) curve.** Rationale per rung — 0 is the anchor every
+"spin slows collapse by X" divides by; 0.2 sits inside the source paper's
+perturbative O(J²) domain, the one rung where the nonlinear rate checks
+against a published number (the validation that licenses the fast rungs,
+which have none); J = 1 exact brackets where the slowdown turns on (L64:
+τ 6.8 vs static 5.8); 0.5 is the production line; 0.7 and 0.9 (then
+0.95/0.99 stretch) are the fast end, behind the far-side rescue.
+Intermediate rungs (0.35, 0.6) only if the curve bends oddly between
+neighbours. ~25 GPU-h a triplet (junk-shell N 384) → ~125 GPU-h for the
+five new rungs, ~2.5–3 days on both cards.
+
+| rung | run | needs | waiting on |
 |---|---|---|---|
-| **B1 triplet, next: ve050a N = 192 then N = 384** (the v = 0.5 resolution runs named 2026-10-15; N = 256 finishes ≈ 12:15 UTC 10-15) | templates written (`params_spin_hold_ve050a_L128_N{192,384}.txt`); N = 384 needs the junk-shell layout (below) or both cards | — | card 0 free after B1 N256 systematics; checkpoint policy per member (B1 N256 ran every t = 10 keep 3 + NFS keeper) |
-| B1 the rest: static ×3, J = 1 ×3 | templates written (`params_{static_hold,spin_hold_J100_full}_L128_N*.txt`); the static L128 N256 anchor already exists (the merger's `single_hold_L128_t100`) | — | its go |
+| v_e = 0 | static ×3: N 256 EXISTS (the merger's `single_hold_L128_t100`), run N 192 / 384 | templates written (`params_static_hold_L128_N*.txt`) | its go |
+| v_e = 0.2 | `spin_hold_L128_ml3_ve020a_t100` ×3 | **table `fam_a_ve020` building 2026-10-15** (the one missing family (a) table); then templates off the ve050a ones | the table + t = 0 check, its go |
+| J = 1 exact | `spin_hold_L128_ml3_J100_full_t100` ×3 | table + templates exist (`params_spin_hold_J100_full_L128_N*.txt`) | its go |
+| v_e = 0.5 | **B1, LIVE**: N 256 finishes ≈ 12:15 UTC 10-15; then N 192, then N 384 | templates written (`params_spin_hold_ve050a_L128_N{192,384}.txt`); N 384 needs the junk-shell layout (below) or both cards | card 0 free after N 256 systematics; checkpoint policy per member (N 256 ran every t = 10 keep 3 + NFS keeper) |
+| v_e = 0.7 | B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far side to clear t = 100: the min_chi 1e-4 rescue probe is LIVE on card 1 (the drainhole's χ does clamp to the floor, so the knob engages here — unlike family (b)) | the probe's verdict (≈ 13:30 UTC vs the old t = 42.36 death), its go |
+| v_e = 0.9 (stretch 0.95 / 0.99) | B3 ×3 per spin | tables exist; expect a resolution wall before 0.99 and say so | B2, its go |
 
 **Junk-shell layout for the N = 384-class members** (agreed 2026-10-13, not yet
 templated): same L = 128 box, but the outer r > 32 shell stays one level
@@ -108,8 +124,6 @@ return still t ≈ 128. Params-only (no code change). It cuts the finest triplet
 member from ~36 h / 155 GB (impossible on one card) to ~16 h / ~70 GB, a
 triplet to ~25 GPU-h. The production N = 256 member gains little (~7 h either
 way), so it runs plain.
-| B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the drainhole far side to clear t = 100: the min_chi 1e-4 rescue probe is LIVE on card 1 (the drainhole's χ does clamp to the floor, so the knob engages here — unlike family (b)) | — | the probe's verdict (≈ 13:30 UTC vs the old t = 42.36 death), its go |
-| B3 higher spin ×3 (v_e 0.9 / 0.95 / 0.99), L128 | tables exist | — | B2, its go |
 
 **Every quoted run is a triplet** (decided 2026-10-13; the stability protocol in
 `SpinningWormhole.md`, after Evstafyeva, Siemonsen & East, arXiv:2508.11527):
