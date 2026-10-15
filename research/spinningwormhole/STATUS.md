@@ -133,6 +133,26 @@ finest-level constraints converge while it grows, and the throat's areal radii
 or MOTS grow with it. N 192 / 384 costs are N⁴ estimates from the measured
 14.1 t/h at N = 256.
 
+**Per-level masked constraint norms are wired into every queued triplet
+member** (2026-10-15): all six templates (`params_spin_hold_ve050a_L128_N*`,
+`params_spin_hold_J100_full_L128_N*`) now carry `constraint_norms_levels = 1`
++ `constraint_norms_mask_radius = 0.125` (commit 73793542), so each run writes
+`constraint_norms_levels.dat` — one Ham/Mom pair per AMR level plus a
+hierarchy-wide pair, masked outside r = 0.125. The keys need the levnorm
+binary: these launches pass `--binary
+runs/spinning_wormhole/bin/main3d_levnorm_73793542_2026-10-15.ex` (the smoke
+pin does not read them; preflight would refuse). Why: B1's level-0 norms grow
+late (Ham 5.0e-4 → 6.3e-3 by t = 91, doubling ~5 units), and the dt-ladder
+analysis identified it as the SLOW interface mode near level 2 (e-fold ~9 at
+dt 0.02 in the control — the fast dt ≥ 0.035 checkerboard's quiet sibling),
+not the throat and not the far-end floor. The per-level file makes that
+attribution native to every triplet member. **Sigma stays 0.1 in the queued
+templates for now**: the σ = 0.4 + dt 0.02 head-to-head vs the σ = 0.1
+control (launching ≈ 13:00 UTC on the second node, verdict tomorrow morning)
+directly measures whether a default σ raise flattens the late growth and
+extends the trust window; if it does, raising σ in these templates is the
+one-knob follow-up.
+
 
 ## NOW: STEP 3, TEST THE FAST-SPIN TABLES
 
