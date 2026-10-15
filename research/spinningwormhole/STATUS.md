@@ -24,6 +24,8 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
 | B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | t = 20.4 at 06:30 UTC 10-15 | 100 | ~13.9 t/h | ~5.7 h, ≈ 12:15 UTC 10-15 |
+| probe `spin_hold_L128_N192_ml4_ve085b_lapse1_eta02_t100` (eta 1 → 0.2, the shift damping matched to the far puncture ~1/(2M); else the dead ml4 template) | first GPU node, card 1 (2-way share) | launched 06:55 UTC 10-15 | 100 | ~14 t/h (est., shared) | dies by t ≈ 24 in ~1.7 h ≈ 08:40 UTC, or t = 100 ≈ 14:00 UTC 10-15 |
+| probe `spin_hold_L128_N192_ml4_ve085b_lapse1_minchi4_t100` (min_chi 1e-8 → 1e-4 on the ml4 grid — the FARZONE floor at compliant resolution; else the dead ml4 template) | first GPU node, card 1 (2-way share) | launched 06:57 UTC 10-15 | 100 | ~14 t/h (est., shared) | same windows |
 | dt ladder `static_hold_L64_ml3_dt005_t070` (`drainhole/06_dt_ladder/`; numerics debt 1, its go 10-15) | second GPU node, card 0 | launched 05:31 UTC 10-15 | 70 | ~12 t/h (3-way card share, 88 % aggregate) | ~5.5 h, ≈ 11:00 UTC 10-15 |
 | dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | launched 05:34 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
 | dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | launched 05:35 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
@@ -63,8 +65,15 @@ What each had shown by then:
   suspects are its parameters at the heavy puncture — eta = 1 is set by
   M_ADM = 1, while the BH rule of thumb eta ≈ 1/(2M_punc) with
   M_punc ≈ 2.5 wants ~0.2 — and the initial data itself (whether the
-  compactified far end is evolvable at all). Next knob needs its own
-  decision.
+  compactified far end is evolvable at all). Both remaining knobs went
+  live in parallel on card 1 (the go 06:50 UTC 10-15): the **eta02
+  probe** (eta 0.2, one-line diff) and the **minchi4-ml4 probe**
+  (min_chi 1e-4 on the ml4 grid — the floor retried at compliant
+  resolution, its ml3 test never got a verdict). One-line-diff templates
+  `..._ml4_eta02.txt` / `..._ml4_minchi4.txt`; frame 0 of both is
+  byte-identical to the dead ml4 probe's, both floors confirmed in
+  `collapse_diagnostics.dat` (1e-8 vs 1e-4). No checkpoints (per-run
+  call, none asked).
 
 **The far-side fix probe** (its go 2026-10-13, no checkpoints; N = 192 —
 dx0 = 1 is retired): the A3 ve085b hold with one knob,

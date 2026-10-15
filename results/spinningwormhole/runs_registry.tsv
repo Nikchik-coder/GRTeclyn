@@ -57,3 +57,5 @@ smoke_levnorm_ml3	Smoke test: per-level masked constraint norms on the ml3 stati
 static_hold_L64_ml3_dt005_t070	dt ladder, dt_multiplier 0.05: the merger's single_hold_dt005_t070 on the spinning static hold (a = 2, M = 1), to t = 70 -- reproduce + localize the dt-dependent mode.		
 static_hold_L64_ml3_dt0035_t070	dt ladder, dt_multiplier 0.035: brackets the stability threshold between the production 0.02 and the known-bad 0.05, to t = 70.		
 static_hold_L64_ml3_dt002ctl_t100	dt ladder control, dt_multiplier 0.02: the packed static_hold_L64_ml3_t100 rerun on the levnorm binary -- regression check + per-level norm baseline, to t = 100.		
+spin_hold_L128_N192_ml4_ve085b_lapse1_eta02_t100	Far-side puncture fix probe (2026-10-13): family (b) at v_e 0.8474 on L = 128 at N = 192 with the PRE-COLLAPSED initial lapse sqrt(chi).		
+spin_hold_L128_N192_ml4_ve085b_lapse1_minchi4_t100	Far-side puncture fix probe (2026-10-13): family (b) at v_e 0.8474 on L = 128 at N = 192 with the PRE-COLLAPSED initial lapse sqrt(chi).		
