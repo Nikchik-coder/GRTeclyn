@@ -21,6 +21,17 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## LIVE
 
+**Verification rung N 256 `spin_hold_L128_ml3_J100_full_t100` FINISHED
+≈ 20:20 UTC 10-15: reached t = 100 clean, 0 NaN — THE MODEL CHECK PASSES.**
+τ(ΔR ∈ [0.01, 0.3]) = 6.78 vs the L64 acceptance run's 6.8 (static 5.8);
+milestones −1 % / −10 % at t = 46.85 / 61.82 vs L64's 46.9 / 61.8 — box-
+and resolution-independent to 0.05 time units. Full collapse with a
+detached horizon at t ≈ 64 (static ≈ 61), throat −44 % by t = 96, ridden
+cleanly to t = 100. Trust window t ≤ 67 (Ham ×2 at 67.1; the τ window and
+the detachment inside). Registry + trust row written; pack + movies follow
+the consumer drain. The formal triplet still needs the N 192 rerun and
+N 384 — both behind the freeze.
+
 **B1 `spin_hold_L128_ml3_ve050a_t100` FINISHED ≈ 12:15 UTC 10-15: reached
 t = 100 clean, 0 NaN** — packed, registry + README + trust window (t ≤ 78)
 done, movies rendering. MOTS R −1 % at t = 71 (static twin: t = 44), −3.14 %
@@ -32,8 +43,8 @@ stays idle — the launch freeze above holds until the σ verdict.**
 
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
+| **speed-recipe test** `spin_hold_L128_ml3_ve050a_sig04_dt005_t100` (`drainhole/06_dt_ladder/`; B1's N 256 production run rerun with σ 0.4 + dt_mult 0.05 as a package — the 2.5× candidate on production spin data; baseline spin_hold_L128_ml3_ve050a_t100, t = 0 byte-identical L2_Ham 4.9965560986e-04; no checkpoints, asked; levnorm binary) | first GPU node, card 0 | launched ≈ 20:30 UTC 10-15 | 100 | ~35 t/h (2.5× B1's 14) | t = 100 ≈ 23:30 UTC 10-15; diff vs B1: speed, the t = 78.8 Ham knee, the MOTS track (−1 % at t = 71 must reproduce) |
 | **sponge-fix arm** `static_hold_L64_ml3_spdrv1_t100` (`drainhole/07_sponge_fix/`; damping sponge, one knob vs the dt002ctl control: `sponge_drive_strength` 0 → 1 — rhs −= A·f(r)·(state − background) in the 24–32 shell, binary `main3d_spdrv_59345984`, commit 59345984; does it absorb the t ≈ 62 boundary return that ends every L64 trust window? t = 0 bit-identical to the packed static hold) | first GPU node, card 1 | launched ≈ 19:40 UTC 10-15 | 100 | ~18 t/h | return-window verdict ≈ 23:15 UTC; t = 100 ≈ 01:15 UTC 10-16 |
-| **verification rung N 256** `spin_hold_L128_ml3_J100_full_t100` (`drainhole/05_hold_L128/J100_full/`; J = 1 exact, v_e 0.21 — the published-domain model check; levnorm binary, per-level masked Ham/Mom live in `constraint_norms_levels.dat`; NO checkpoints — the policy question got no answer, template default; freeze lifted for this rung on the go 13:1x UTC) | first GPU node, card 0 | launched ≈ 13:15 UTC 10-15 (first attempt stopped seconds in: profile's L64 frame window; relaunched with zoom 128 / coord 64 / centre 64) | 100 | ~14 t/h (B1's measured) | ~7 h, ≈ 20:15 UTC 10-15 |
 **Verification rung N 192 STOPPED by hand ~19:50 UTC 10-15 at t = 1.6 on the no-launch order** (it had launched 19:30 under the earlier rung go, minutes before the freeze; clean while it ran). Its registry row records it; it reruns from t = 0 when the rung gets its go. Card 1 idle. Its 5.2 GB scratch dir awaits the prune word.
 
 **Rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` FINISHED ≈ 15:30 UTC

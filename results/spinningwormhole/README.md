@@ -97,6 +97,17 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   the O(J²) hold's inflation was its data's error, and with the 0.5c
   hold the rate falls with spin: τ 5.8 (J = 0), 6.8 (v_e 0.21), and at
   v_e 0.51 only −0.5 % by t = 64.  Trust window t ≤ 64.
+- `05_hold_L128/J100_full/spin_hold_L128_ml3_J100_full_t100` (2026-10-15),
+  the verification rung's N = 256 member: the J = 1 exact point (v_e 0.21)
+  on the production L = 128 box, levnorm binary (per-level masked norms).
+  REACHED t = 100 clean, 0 NaN.  THE MODEL CHECK PASSES:
+  τ(ΔR ∈ [0.01, 0.3]) = 6.78 vs the L64 acceptance run's 6.8 (static 5.8);
+  R_eq −1 % / −10 % at t = 46.85 / 61.82 vs L64's 46.9 / 61.8 — the
+  nonlinear collapse rate at the published-domain point is box- and
+  resolution-independent to 0.05 time units.  Full collapse with a
+  detached horizon at t ≈ 64 (static ≈ 61), throat −44 % by t = 96,
+  ridden cleanly to t = 100 (χ_min ~1e-3, puncture-style).  Trust window
+  t ≤ 67.  The formal triplet awaits the N 192 rerun and N 384.
 - `05_hold_L128/ve050a/spin_hold_L128_ml3_ve050a_t100` (2026-10-15), Phase
   B1's N = 256 member: the drainhole at v_e 0.513 on the production L = 128
   box (the merger hold's layout, return t ≈ 120), to t = 100.  REACHED
