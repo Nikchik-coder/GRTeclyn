@@ -23,8 +23,7 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | launched 05:00 UTC 10-15 | 100 | ~14 t/h | ~7.2 h, ≈ 12:15 UTC 10-15 |
-| probe `spin_hold_L128_N192_ml4_ve085b_lapse1_t100` (`symmetric_massless/03_spin_hold/ve085b/`) | first GPU node, card 1 | launched 05:35 UTC 10-15 | 100 | ~20 t/h (est.) | dies by t ≈ 23 in ~1.2 h, or t = 100 in ~5 h ≈ 10:30 UTC 10-15 |
+| B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | t = 20.4 at 06:30 UTC 10-15 | 100 | ~13.9 t/h | ~5.7 h, ≈ 12:15 UTC 10-15 |
 | dt ladder `static_hold_L64_ml3_dt005_t070` (`drainhole/06_dt_ladder/`; numerics debt 1, its go 10-15) | second GPU node, card 0 | launched 05:31 UTC 10-15 | 70 | ~12 t/h (3-way card share, 88 % aggregate) | ~5.5 h, ≈ 11:00 UTC 10-15 |
 | dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | launched 05:34 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
 | dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | launched 05:35 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
@@ -54,6 +53,18 @@ What each had shown by then:
   (dx 0.0417) on the puncture alone
   (`params_spin_hold_L128_N192_ve085b_lapse1_ml4.txt`, two-line diff:
   max_level + the regrid_interval entry it sizes).
+- **ml4 probe DIED at t = 23.76** (06:25 UTC 10-15): NaN in h11 on level 4,
+  far-side χ pinned on the 1e-8 floor, lapse_min 2.2e-4 (collapsed at the
+  puncture, as it should), |K|max 64 → 2009 in one coarse step — the same
+  K-runaway death as ml3's t = 22.87, **+0.9 time units for 2× resolution**.
+  The BH-rule dx (0.0417 ≤ M/40) is satisfied and changes nothing:
+  RESOLUTION IS RULED OUT as the far-side fix. The gauge is already full
+  moving-puncture (advective 1+log + Gamma-driver), so the surviving
+  suspects are its parameters at the heavy puncture — eta = 1 is set by
+  M_ADM = 1, while the BH rule of thumb eta ≈ 1/(2M_punc) with
+  M_punc ≈ 2.5 wants ~0.2 — and the initial data itself (whether the
+  compactified far end is evolvable at all). Next knob needs its own
+  decision.
 
 **The far-side fix probe** (its go 2026-10-13, no checkpoints; N = 192 —
 dx0 = 1 is retired): the A3 ve085b hold with one knob,
@@ -118,12 +129,16 @@ spinning family (b) hold (A3, A4) and no fast drainhole hold (B2, B3) runs
 until the far side is handled; A2's static Ellis is massless there and the
 slow drainhole (v_e ≤ 0.51) held. Probes at N ≥ 192: the √χ initial lapse
 (type 1) cleared the t ≈ 4 window but DIED at t = 22.87 (NaN in h11, far-side
-χ on the 1e-8 floor, |K|max → 94) — it helps, it does not win; min_chi 1e-4
-on top of it is LIVE on card 1 (launched 05:00 UTC 10-15); a control at
-N = 192 with the original stationary lapse, to split the lapse from the
-resolution, waits for its go. Agreed 2026-10-15: if min_chi does not win,
-the next knob is DEEPER CENTRE REFINEMENT — the far side is a genuine
-positive-mass puncture and likely needs BH-class resolution at r = 0.
+χ on the 1e-8 floor, |K|max → 94) — it helps, it does not win; the ml4
+probe on top of it (level-4 box ±2, dx 0.0417, BH rule satisfied) DIED THE
+SAME WAY at t = 23.76 (06:25 UTC 10-15), +0.9 time units for 2× resolution:
+resolution is ruled out, the puncture K-runaway is gauge- or data-level.
+A control at N = 192 with the original stationary lapse, to split the lapse
+from the resolution, waits for its go. Agreed 2026-10-15: if min_chi does
+not win, the next knob is DEEPER CENTRE REFINEMENT — the far side is a
+genuine positive-mass puncture and likely needs BH-class resolution at r = 0.
+(Both tried 10-15: the min_chi 1e-4 probe was killed pre-verdict for the
+missed resolution check, and ml4 then failed on its own — see above.)
 Params-only: raising max_level to 4 (or 5) under the same tagging_L 64 adds
 nested boxes ±2 (±1) on the puncture alone, finest dx 0.0417 (0.0208) at
 N 192 — the BH rule of thumb dx ≲ M/40 with the far mass M ≈ 2.5 wants
