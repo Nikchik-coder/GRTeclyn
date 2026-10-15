@@ -184,9 +184,18 @@ every item is still open:
    nothing new after saturation, every extra hour was control-share); its
    scratch pruned and logged. The one-knob isolation arm
    `static_hold_L64_ml3_dt005_sig04_t045` (sigma 0.1 → 0.4, dt_mult 0.05
-   kept) is LIVE on its share since 09:12 UTC. If KO dissipation kills the
-   checkerboard, "sigma ≈ 0.3–0.4 + dt_mult 0.035–0.05" becomes the
-   production speed-up candidate (1.75–2.5×).
+   kept, live since 09:12 UTC) **CONFIRMS THE MECHANISM at its t = 15
+   check (~10:35 UTC)**: where the sigma-0.1 dt005 arm had level-2 Ham ×61
+   and ψ4 ×8,600 vs control at t = 15, the sigma-0.4 arm sits at level-2
+   Ham 0.85–0.98 (slightly BELOW control) and ψ4 0.45× — the interface
+   checkerboard is dissipation-starved and KO 0.4 kills it outright.
+   Not free: max|K| carries a flat ×1.55–1.68 offset (e-folds 6.7 → 13.2,
+   DECELERATING — background offset, not growth) and level-3 Ham sits at a
+   flat ×2.7; sigma 0.4 measurably perturbs the hold. Verdicts still owed:
+   this arm clean to t = 45 (≈ 13:00 UTC), dt0035 clean to 70 (≈ 12:20),
+   control to 100 (regression + τ). Then "sigma ≈ 0.3–0.4 + dt_mult
+   0.035–0.05" is the production speed-up candidate (1.75–2.5×), sigma
+   tuned down if the ×1.55 K offset matters at production resolution.
 2. **Constraint norms level 0 only — DONE 2026-10-15** (commit 73793542,
    binary `main3d_levnorm_73793542_2026-10-15.ex`): `constraint_norms_levels
    = 1` writes `constraint_norms_levels.dat` — one masked L2_Ham/L2_Mom pair
