@@ -86,6 +86,16 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   the O(J²) hold's inflation was its data's error, and with the 0.5c
   hold the rate falls with spin: τ 5.8 (J = 0), 6.8 (v_e 0.21), and at
   v_e 0.51 only −0.5 % by t = 64.  Trust window t ≤ 64.
+- `05_hold_L128/ve050a/spin_hold_L128_ml3_ve050a_t100` (2026-10-15), Phase
+  B1's N = 256 member: the drainhole at v_e 0.513 on the production L = 128
+  box (the merger hold's layout, return t ≈ 120), to t = 100.  REACHED
+  t = 100 clean, 0 NaN; matches its killed first launch exactly through
+  t = 46 (MOTS R byte-level).  The throat shrinks slowly throughout:
+  MOTS R −1 % at t = 71 where the static twin took t = 44, −3.14 % at
+  t = 100, no horizon detaches.  L2_Ham doubles off its 5.4e-4 plateau at
+  t = 78.8 (the slow level-2 interface mode the dt ladder identified;
+  L2_Mom ×2 off 3.8e-5 at 66.8); the far-side χ reaches the 1e-8 floor at
+  t = 91.9.  Trust window t ≤ 78; movies to t = 78 in the run directory.
 
 ## Claims: symmetric, massless (`campaign/symmetric_massless/`)
 

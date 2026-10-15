@@ -21,9 +21,17 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## LIVE
 
+**B1 `spin_hold_L128_ml3_ve050a_t100` FINISHED ≈ 12:15 UTC 10-15: reached
+t = 100 clean, 0 NaN** — packed, registry + README + trust window (t ≤ 78)
+done, movies rendering. MOTS R −1 % at t = 71 (static twin: t = 44), −3.14 %
+at t = 100, no horizon; L2_Ham ×2 off plateau at t = 78.8 (the slow level-2
+interface mode), far-side χ on the 1e-8 floor from t = 91.9. Final Chk10000
+copied to the run's `nfs_chk/` (a t = 100 restart point if the hold is ever
+extended toward the t ≈ 120 return); scratch pruned. **Card 0 is free and
+stays idle — the launch freeze above holds until the σ verdict.**
+
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | t = 67.0 at 09:53 UTC 10-15, clean, past the first launch's kill point | 100 | ~13.9 t/h | ~2.4 h, ≈ 12:15 UTC 10-15 |
 | rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` (`drainhole/04_fast_spin_hold/`; the old ve070a run rerun exactly, one knob: min_chi 1e-8 → 1e-4 — there χ DID clamp to the floor from t ≈ 4, unlike family (b) where a 1e-4 floor never engaged) | first GPU node, card 1 | launched 10:55 UTC 10-15 | 100 | ~17 t/h (est., card to itself) | verdict vs the old t = 42.36 death ≈ 13:30 UTC; t = 100 ≈ 16:50 UTC 10-15 |
 | dt isolation `static_hold_L64_ml3_dt005_sig04_t045` (one knob vs the dt005 arm: sigma 0.1 → 0.4, dt_mult 0.05 kept; kills the interface checkerboard?) | second GPU node, card 0 | launched 09:12 UTC 10-15 | 45 | ~12 t/h (3-way share) | ~3.7 h, ≈ 13:00 UTC 10-15 |
 | dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | t = 29.3 at 08:55 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
@@ -120,7 +128,7 @@ four new rungs, ~2–2.5 days on both cards.
 |---|---|---|---|
 | v_e = 0 | static ×3: N 256 EXISTS (the merger's `single_hold_L128_t100`), run N 192 / 384 | templates written (`params_static_hold_L128_N*.txt`) | its go |
 | v_e ≈ 0.2 (the published-domain rung) | `spin_hold_L128_ml3_J100_full_t100` ×3 — **the J = 1 exact point IS this rung**: its table meta reads v_e = 0.2100 (eta0 2, family a), and the freshly built `fam_a_ve020` came out at v_e 0.1984, J 0.936 — the same background twice (found 2026-10-15, one triplet saved) | table + templates exist (`params_spin_hold_J100_full_L128_N*.txt`); L64 run already measured τ 6.8 here. `fam_a_ve020.spinbg` (2049×129, err 3.9e-8) stays on disk as an optional same-rung cross-check from a different solver leg | its go |
-| v_e = 0.5 | **B1, LIVE**: N 256 finishes ≈ 12:15 UTC 10-15; then N 192, then N 384 | templates written (`params_spin_hold_ve050a_L128_N{192,384}.txt`); N 384 needs the junk-shell layout (below) or both cards | card 0 free after N 256 systematics; checkpoint policy per member (N 256 ran every t = 10 keep 3 + NFS keeper) |
+| v_e = 0.5 | **N 256 DONE** (reached t = 100 clean 12:15 UTC 10-15, trust window 78, packed); next N 192, then N 384 | templates written (`params_spin_hold_ve050a_L128_N{192,384}.txt`); N 384 needs the junk-shell layout (below) or both cards | the launch freeze (σ verdict), then its go + checkpoint policy per member (N 256 ran every t = 10 keep 3 + NFS keeper) |
 | v_e = 0.7 | B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far side to clear t = 100: the min_chi 1e-4 rescue probe is LIVE on card 1 (the drainhole's χ does clamp to the floor, so the knob engages here — unlike family (b)) | the probe's verdict (≈ 13:30 UTC vs the old t = 42.36 death), its go |
 | v_e = 0.9 (stretch 0.95 / 0.99) | B3 ×3 per spin | tables exist; expect a resolution wall before 0.99 and say so | B2, its go |
 
