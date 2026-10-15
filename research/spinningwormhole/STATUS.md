@@ -95,23 +95,23 @@ need both cards (MPI) or their own decision.
 
 *Phase B: drainhole, family (a) — THE HEADLINE*
 
-**The spin ladder (agreed 2026-10-15): six rungs in v_e, every rung a
+**The spin ladder (agreed 2026-10-15): five rungs in v_e, every rung a
 triplet, one τ(v_e) curve.** Rationale per rung — 0 is the anchor every
-"spin slows collapse by X" divides by; 0.2 sits inside the source paper's
-perturbative O(J²) domain, the one rung where the nonlinear rate checks
-against a published number (the validation that licenses the fast rungs,
-which have none); J = 1 exact brackets where the slowdown turns on (L64:
-τ 6.8 vs static 5.8); 0.5 is the production line; 0.7 and 0.9 (then
+"spin slows collapse by X" divides by; ≈ 0.2 sits inside the source
+paper's perturbative O(J²) domain, the one rung where the nonlinear rate
+checks against a published number (the validation that licenses the fast
+rungs, which have none) — and the J = 1 exact point (v_e 0.2100) IS that
+rung (L64 already measured τ 6.8 vs static 5.8 there, i.e. where the
+slowdown turns on); 0.5 is the production line; 0.7 and 0.9 (then
 0.95/0.99 stretch) are the fast end, behind the far-side rescue.
 Intermediate rungs (0.35, 0.6) only if the curve bends oddly between
-neighbours. ~25 GPU-h a triplet (junk-shell N 384) → ~125 GPU-h for the
-five new rungs, ~2.5–3 days on both cards.
+neighbours. ~25 GPU-h a triplet (junk-shell N 384) → ~100 GPU-h for the
+four new rungs, ~2–2.5 days on both cards.
 
 | rung | run | needs | waiting on |
 |---|---|---|---|
 | v_e = 0 | static ×3: N 256 EXISTS (the merger's `single_hold_L128_t100`), run N 192 / 384 | templates written (`params_static_hold_L128_N*.txt`) | its go |
-| v_e = 0.2 | `spin_hold_L128_ml3_ve020a_t100` ×3 | **table `fam_a_ve020` building 2026-10-15** (the one missing family (a) table); then templates off the ve050a ones | the table + t = 0 check, its go |
-| J = 1 exact | `spin_hold_L128_ml3_J100_full_t100` ×3 | table + templates exist (`params_spin_hold_J100_full_L128_N*.txt`) | its go |
+| v_e ≈ 0.2 (the published-domain rung) | `spin_hold_L128_ml3_J100_full_t100` ×3 — **the J = 1 exact point IS this rung**: its table meta reads v_e = 0.2100 (eta0 2, family a), and the freshly built `fam_a_ve020` came out at v_e 0.1984, J 0.936 — the same background twice (found 2026-10-15, one triplet saved) | table + templates exist (`params_spin_hold_J100_full_L128_N*.txt`); L64 run already measured τ 6.8 here. `fam_a_ve020.spinbg` (2049×129, err 3.9e-8) stays on disk as an optional same-rung cross-check from a different solver leg | its go |
 | v_e = 0.5 | **B1, LIVE**: N 256 finishes ≈ 12:15 UTC 10-15; then N 192, then N 384 | templates written (`params_spin_hold_ve050a_L128_N{192,384}.txt`); N 384 needs the junk-shell layout (below) or both cards | card 0 free after N 256 systematics; checkpoint policy per member (N 256 ran every t = 10 keep 3 + NFS keeper) |
 | v_e = 0.7 | B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far side to clear t = 100: the min_chi 1e-4 rescue probe is LIVE on card 1 (the drainhole's χ does clamp to the floor, so the knob engages here — unlike family (b)) | the probe's verdict (≈ 13:30 UTC vs the old t = 42.36 death), its go |
 | v_e = 0.9 (stretch 0.95 / 0.99) | B3 ×3 per spin | tables exist; expect a resolution wall before 0.99 and say so | B2, its go |
