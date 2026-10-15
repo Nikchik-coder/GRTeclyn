@@ -24,6 +24,7 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
 | B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | t = 67.0 at 09:53 UTC 10-15, clean, past the first launch's kill point | 100 | ~13.9 t/h | ~2.4 h, ≈ 12:15 UTC 10-15 |
+| rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` (`drainhole/04_fast_spin_hold/`; the old ve070a run rerun exactly, one knob: min_chi 1e-8 → 1e-4 — there χ DID clamp to the floor from t ≈ 4, unlike family (b) where a 1e-4 floor never engaged) | first GPU node, card 1 | launched 10:55 UTC 10-15 | 100 | ~17 t/h (est., card to itself) | verdict vs the old t = 42.36 death ≈ 13:30 UTC; t = 100 ≈ 16:50 UTC 10-15 |
 | dt isolation `static_hold_L64_ml3_dt005_sig04_t045` (one knob vs the dt005 arm: sigma 0.1 → 0.4, dt_mult 0.05 kept; kills the interface checkerboard?) | second GPU node, card 0 | launched 09:12 UTC 10-15 | 45 | ~12 t/h (3-way share) | ~3.7 h, ≈ 13:00 UTC 10-15 |
 | dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | t = 29.3 at 08:55 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
 | dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 17 at 08:55 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
@@ -40,69 +41,15 @@ What each had shown by then:
   1.5e-6, lapse_min 0.17, all smooth. 47 frames + 363 MB slice cache to
   t = 46 survive on NFS (`..._t100_killed_t46/`), so movies to t ≈ 46 are
   makeable. Relaunched from t = 0 on the same template, 05:00 UTC 10-15.
-- **√χ-lapse probe: a genuine physics death, not the kill** — NaN in h11 at
-  **t = 22.87** (21:07 UTC 10-13): far-side χ pinned at the 1e-8 floor,
-  |K|max 1.2 → 94, MOTS lost from t ≈ 20. The √χ lapse cleared the old
-  t ≈ 4 window (~6× later death) but the far-side puncture still wins.
-  The min_chi 1e-4 probe launched 05:00 UTC 10-15 was KILLED BY HAND at
-  t = 9.13, before its verdict: the resolution check that should have run
-  before the launch (BH rule dx ≲ M/40, far mass M ≈ 2.5 → dx ≤ 0.06;
-  ml3 gives the puncture 0.083) says ml3 under-resolves the far side
-  whatever the floor. Superseded 05:35 UTC 10-15 by the **ml4 probe**:
-  min_chi back at 1e-8, √χ lapse kept, `max_level = 4` → level-4 box ±2
-  (dx 0.0417) on the puncture alone
-  (`params_spin_hold_L128_N192_ve085b_lapse1_ml4.txt`, two-line diff:
-  max_level + the regrid_interval entry it sizes).
-- **ml4 probe DIED at t = 23.76** (06:25 UTC 10-15): NaN in h11 on level 4,
-  far-side χ pinned on the 1e-8 floor, lapse_min 2.2e-4 (collapsed at the
-  puncture, as it should), |K|max 64 → 2009 in one coarse step — the same
-  K-runaway death as ml3's t = 22.87, **+0.9 time units for 2× resolution**.
-  The BH-rule dx (0.0417 ≤ M/40) is satisfied and changes nothing:
-  RESOLUTION IS RULED OUT as the far-side fix. The gauge is already full
-  moving-puncture (advective 1+log + Gamma-driver), so the surviving
-  suspects are its parameters at the heavy puncture — eta = 1 is set by
-  M_ADM = 1, while the BH rule of thumb eta ≈ 1/(2M_punc) with
-  M_punc ≈ 2.5 wants ~0.2 — and the initial data itself (whether the
-  compactified far end is evolvable at all). Both remaining knobs went
-  live in parallel on card 1 (the go 06:50 UTC 10-15): the **eta02
-  probe** (eta 0.2, one-line diff) and the **minchi4-ml4 probe**
-  (min_chi 1e-4 on the ml4 grid — the floor retried at compliant
-  resolution, its ml3 test never got a verdict). One-line-diff templates
-  `..._ml4_eta02.txt` / `..._ml4_minchi4.txt`; frame 0 of both is
-  byte-identical to the dead ml4 probe's, both floors confirmed in
-  `collapse_diagnostics.dat` (1e-8 vs 1e-4). No checkpoints (per-run
-  call, none asked).
-- **BOTH DIED ~09:45 UTC 10-15 — the knob ladder is exhausted.**
-  eta02: NaN h11 (level 3) at **t = 23.24**, χ on the 1e-8 floor, |K|max
-  climbing through 3.4 — half a unit EARLIER than eta = 1. minchi4-ml4:
-  NaN in K (level 4) at **t = 23.76** — the parent's death time to the
-  step — |K|max 60 → 2516; its χ_min sat at 2.2e-3 the whole time, 22×
-  ABOVE the 1e-4 floor, so the floor never engaged yet the run died
-  identically. Four one-knob probes (√χ lapse, 2× resolution, eta, χ
-  floor) all die at **t ≈ 23–24** with the same far-side K runaway:
-  the time is knob-independent, so it tracks the data, not the numerics
-  — the far-side positive-mass end collapses on its own timescale and
-  this gauge family cannot ride through it. Qualitatively different
-  tools (excision/turducken, a puncture-pinning shift, or declaring
-  family (b) unevolvable past t ≈ 23 and scoping the paper to
-  drainhole + static) are the remaining options — each needs its own
-  decision.
-
-**The far-side fix probe** (its go 2026-10-13, no checkpoints; N = 192 —
-dx0 = 1 is retired): the A3 ve085b hold with one knob,
-`spinning_initial_lapse_type = 1` (lapse = √χ at t = 0, pre-collapsed at the
-punctures) instead of the stationary lapse that died there at t ≈ 4. If it
-dies too, the agreed next probe on this card is min_chi 1e-4 (the merger's
-FARZONE knob), same grid. A survivor then reruns ve070a (drainhole) with the
-winning knob — that one still waits for its go.
+- The family (b) probe ladder died the same morning — the full story is in
+  **CAMPAIGN A — DROPPED** at the bottom; it no longer gates the plan.
 
 The B1 production member (its go 2026-10-13): the v_e 0.513 drainhole on plain
 L128 N256 ml3 (`params_spin_hold_ve050a_L128_N256.txt`), full-box frames
 (zoom 128, cache 2048), rolling checkpoints every t = 10 keep 3 (asked). Its
 static twin on this exact layout is the merger's `single_hold_L128_t100`:
 the question is whether the L64 result (collapse slows with spin) holds with
-the clean t = 100 baseline. Card 1 stays free; nothing else launches without
-its go. Earlier today (final packing 19:50 UTC): every previous run packed,
+the clean t = 100 baseline. Earlier today (final packing 19:50 UTC): every previous run packed,
 scratch empty. Closed out: in `drainhole/04_fast_spin_hold/` v_e 0.7
 (died t = 42.36, far-side puncture), v_e 0.5 (finished; 14 movies to t = 64) and
 J = 1 on exact data (died t = 70.64 at the end of a collapse); in
@@ -118,10 +65,16 @@ the preflight's frame 0 and the slice cache cover ±64 at one pixel per finest c
 
 ## QUEUED
 
-**Order (decided 2026-10-13): the symmetric family first, then the drainhole.**
-The symmetric family is the one Kleihaus–Kunz and CKK published and Azad et al.
-analysed in full, so it validates the 3D pipeline against published values before
-the drainhole, which has no published fast-spin data, is taken to high spin.
+**SCOPE (decided 2026-10-15, supersedes the 10-13 order): the paper is the
+drainhole's.** Campaign A (the symmetric family (b) evolutions A2–A4) is
+DROPPED: four one-knob probes all die at t ≈ 23–24 at the far-side
+positive-mass end, knob-independently (the postmortem at the bottom), and a
+paper that introduces the symmetric case only to abandon it mid-story is
+worse than one that never promises it. Family (b) stays in the paper as
+theory and as the solver's validation only — the Step 2 gates, the A1
+t = 0 ladder (21 runs, every quantity against Kleihaus–Kunz/CKK) and the
+t = 0 convergence figures. No family (b) evolution is queued; the
+postmortem section keeps everything needed to return to it.
 
 **Every run from now on is on L = 128, clean to t = 100** (decided 2026-10-13).
 The sponge (extra Kreiss–Oliger dissipation in r 24–32; the merger's
@@ -140,57 +93,12 @@ only, and the old L = 64 at N = 128 was this same dx0 0.5). From the measured
 triplet; N = 384 scales to ~155 GB, over the 81.5 GB card, so those members
 need both cards (MPI) or their own decision.
 
-**BLOCKER: the far-side puncture.** The valid evidence is the drainhole's
-v_e 0.7 hold (L64, dx0 0.5): died at t = 42.36 at the centre (the compactified
-far end), lapse/χ to the floor, K runaway, throat unmoved. The three first
-probes (v_e 0.43 / 0.67 / 0.85) died at t ≈ 4 the same way but were SUPERSEDED
-2026-10-13: they ran N = 128 on L = 128 (dx0 = 1, below the floor), so grid and
-physics are confounded there (archived in
-`00_archive/L128_N128_probes_superseded/`, ve085b wiped; packs removed). No
-spinning family (b) hold (A3, A4) and no fast drainhole hold (B2, B3) runs
-until the far side is handled; A2's static Ellis is massless there and the
-slow drainhole (v_e ≤ 0.51) held. Probes at N ≥ 192: the √χ initial lapse
-(type 1) cleared the t ≈ 4 window but DIED at t = 22.87 (NaN in h11, far-side
-χ on the 1e-8 floor, |K|max → 94) — it helps, it does not win; the ml4
-probe on top of it (level-4 box ±2, dx 0.0417, BH rule satisfied) DIED THE
-SAME WAY at t = 23.76 (06:25 UTC 10-15), +0.9 time units for 2× resolution:
-resolution is ruled out, the puncture K-runaway is gauge- or data-level.
-A control at N = 192 with the original stationary lapse, to split the lapse
-from the resolution, waits for its go. Agreed 2026-10-15: if min_chi does
-not win, the next knob is DEEPER CENTRE REFINEMENT — the far side is a
-genuine positive-mass puncture and likely needs BH-class resolution at r = 0.
-(Both tried 10-15: the min_chi 1e-4 probe was killed pre-verdict for the
-missed resolution check, and ml4 then failed on its own — see above.)
-Params-only: raising max_level to 4 (or 5) under the same tagging_L 64 adds
-nested boxes ±2 (±1) on the puncture alone, finest dx 0.0417 (0.0208) at
-N 192 — the BH rule of thumb dx ≲ M/40 with the far mass M ≈ 2.5 wants
-≤ 0.06, so ml3's 0.083 is under-resolved there and ml4 is the first
-compliant level. Each added level carries about the level-3 box's cell
-count at 2× the substeps; measure the real cost on the probe grid before
-sizing production. The throat keeps its ml3 structure either way.
-
-*Phase A: symmetric, family (b) at η0 2*
+*Phase B: drainhole, family (a) — THE HEADLINE*
 
 | run | needs | restart from | waiting on |
 |---|---|---|---|
-| A2 `static_hold_L128_ml3_sym_t100` ×3 (N 192/256/384) | ~45 GPU-h; static table η0 2, M 0 (`backgrounds.py static`); L128 templates | — | its go |
-| A3 `spin_hold_L128_ml3_ve024b_t100` ×3 | ~45 GPU-h; table `fam_b_ve024_eta2` (built) | — | the far-side puncture fix, its go |
-| A3 `spin_hold_L128_ml3_ve043b/067b/085b_t100` ×3 | as above (the N = 128 probe templates sit below the ladder now) | — | the far-side puncture fix, its go |
-| A4 `spin_hold_L128_ml3_ve090b/095b/099b_t100` ×3 | tables exist (`tables_eta2/`) | — | A3, its go |
-
-- **A1, what it validates:** the Kleihaus–Kunz 2014 Fig. 1 quantities (M/M0,
-  J/J0, R_p/R, R_A/R, ΩJ), read off the 3D grid at t = 0 and compared with the
-  table and the digitized KK curves, converging across N.
-- **A2:** the static Ellis growth against Azad et al.'s C = 0 rate (τ ≈ 1.7 at
-  η0 = 2).
-- **A3:** their two modes and the crossing.
-- **A4:** beyond any published stability result.
-
-*Phase B: drainhole, family (a), after Phase A*
-
-| run | needs | restart from | waiting on |
-|---|---|---|---|
-| B1 the rest: ve050a N 192 / 384, static ×3, J = 1 ×3 | templates written (`params_{static_hold,spin_hold_ve050a,spin_hold_J100_full}_L128_N{192,256,384}.txt`); the static L128 N256 anchor already exists (the merger's `single_hold_L128_t100`) | — | its go; the N = 384 members on the junk-shell layout (below) |
+| **B1 triplet, next: ve050a N = 192 then N = 384** (the v = 0.5 resolution runs named 2026-10-15; N = 256 finishes ≈ 12:15 UTC 10-15) | templates written (`params_spin_hold_ve050a_L128_N{192,384}.txt`); N = 384 needs the junk-shell layout (below) or both cards | — | card 0 free after B1 N256 systematics; checkpoint policy per member (B1 N256 ran every t = 10 keep 3 + NFS keeper) |
+| B1 the rest: static ×3, J = 1 ×3 | templates written (`params_{static_hold,spin_hold_J100_full}_L128_N*.txt`); the static L128 N256 anchor already exists (the merger's `single_hold_L128_t100`) | — | its go |
 
 **Junk-shell layout for the N = 384-class members** (agreed 2026-10-13, not yet
 templated): same L = 128 box, but the outer r > 32 shell stays one level
@@ -200,7 +108,7 @@ return still t ≈ 128. Params-only (no code change). It cuts the finest triplet
 member from ~36 h / 155 GB (impossible on one card) to ~16 h / ~70 GB, a
 triplet to ~25 GPU-h. The production N = 256 member gains little (~7 h either
 way), so it runs plain.
-| B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the far-side puncture fix | — | the fix, its go |
+| B2 `spin_hold_L128_ml3_ve070a_t100` ×3 | the drainhole far side to clear t = 100: the min_chi 1e-4 rescue probe is LIVE on card 1 (the drainhole's χ does clamp to the floor, so the knob engages here — unlike family (b)) | — | the probe's verdict (≈ 13:30 UTC vs the old t = 42.36 death), its go |
 | B3 higher spin ×3 (v_e 0.9 / 0.95 / 0.99), L128 | tables exist | — | B2, its go |
 
 **Every quoted run is a triplet** (decided 2026-10-13; the stability protocol in
@@ -211,15 +119,6 @@ finest-level constraints converge while it grows, and the throat's areal radii
 or MOTS grow with it. N 192 / 384 costs are N⁴ estimates from the measured
 14.1 t/h at N = 256.
 
-**Why a symmetric ladder** (decided 2026-10-13: the paper carries both
-families). Azad et al. computed the second unstable mode, and its crossing
-with the main one, only for C ≤ 0.2 (near-symmetric). For our drainhole
-(C = 1) they give the main mode alone (τ ≈ 5.1 at η0 = 2). So the paper's
-mode-merger test runs on family (b): spins at 10 / 20 / 33 / 50 % of the
-limiting J/A, where 33 % is their predicted crossing (J/A ≈ 0.013) and 50 %
-is where their O(J²) main mode reaches zero. The static Ellis anchor comes
-first (their C = 0 rate gives τ ≈ 1.7 at η0 = 2). Same gauge and η0 1 → 2
-rescale as the family (b) t = 0 ladder; no checkpoints unless asked.
 
 ## NOW: STEP 3, TEST THE FAST-SPIN TABLES
 
@@ -251,9 +150,8 @@ full tables are exact to ~1e-10.
    1/dx² and 1/dx outside (the tables' interpolation); the 3D ADM mass integral
    equals the table metric's on the same grid to ≤ 1e-12, extrapolated M within
    2e-5–7e-4 of the table's (0.7 % at 0.99), J within 2e-3 (0.24) to 2e-5 (0.99).
-5. **The first family (b) hold probes died at the far-side puncture** by
-   t ≈ 4, but on a dx0 = 1 grid — SUPERSEDED; the N ≥ 192 retests (the
-   BLOCKER above) are what counts now.
+5. **The family (b) holds died at the far-side puncture** at every knob
+   setting — campaign A dropped 2026-10-15 (the postmortem below).
 
 ## NUMERICS DEBT (Step 0 of `SpinningWormhole.md`; items 1 + 2 in work 2026-10-15, second node's card)
 
@@ -314,6 +212,62 @@ every item is still open:
 - **Step 2** (2026-10-13): full solver, both families to v_e 0.99, every gate
   green; CKK's eq. (12) is wrong; tables in `runs/spinning_p3/tables/`
   (error ≤ 1e-7 to v_e 0.9).
+
+## CAMPAIGN A — DROPPED 2026-10-15 (postmortem, kept in case we return)
+
+Not part of any evolution plan; nothing here is queued. The record of why
+the symmetric family (b) holds cannot run, and what was already tried, so a
+return does not repeat it.
+
+**The wall.** Family (b) is mirror-symmetric: its compactified far end is a
+genuine positive-mass puncture (M ≈ 2.5) at the grid centre. Every hold dies
+there in a K runaway (χ → floor, |K|max explodes ~30× in one coarse step,
+NaN in h11 or K on the finest level), with the throat unmoved. The drainhole
+differs in kind: its far end is the repulsive/negative-mass side (stationary
+lapse 0.21 ≈ gauge equilibrium), which is why B-campaign runs are not behind
+this wall (the slow v_e ≤ 0.51 holds ran clean; the fast ve070a death is a
+different, floor-engaged variant under its own rescue probe).
+
+**The probe ladder — four one-knob probes, N ≥ 192, all ve085b, all dead at
+t ≈ 23–24** (templates `params_spin_hold_L128_N192_ve085b_lapse1*.txt`; runs
+kept in `symmetric_massless/03_spin_hold/ve085b/`, frames + slice caches on
+NFS):
+1. √χ initial lapse (pre-collapsed punctures), ml3: died t = 22.87 —
+   cleared the old t ≈ 4 window (~6×), insufficient.
+2. max_level 4 on the puncture (dx 0.0417, satisfying the BH rule
+   dx ≲ M/40): died t = 23.76 — +0.9 units for 2× resolution. Resolution
+   ruled out.
+3. eta 1 → 0.2 (shift damping ~1/(2M_punc)): died t = 23.24 — EARLIER.
+   Gauge-parameter tuning ruled out.
+4. min_chi 1e-4 on the ml4 grid: died t = 23.76, the parent's time to the
+   step, with χ_min 2.2e-3 the whole run — the floor never engaged. Floor
+   ruled out.
+   (A fifth, min_chi 1e-4 on ml3, was killed by hand at t = 9.13
+   pre-verdict — under-resolved, no information.)
+
+**Conclusion.** The death time is knob-independent across lapse, resolution,
+shift damping and floor: it tracks the initial data, not the numerics. The
+far-side positive-mass end collapses on its own timescale (~23 at N192-class
+grids) and the moving-puncture gauge family cannot ride through THIS
+puncture (plausibly because it is a compactified image of infinity carrying
+the scalar field, not a vacuum Schwarzschild end). What a return would need:
+excision/turducken at the far puncture, a qualitatively different gauge, or
+different data (a family (b) slice whose far end is regularized) — code or
+theory work, not params.
+
+**What the paper keeps from A** (validation, not evolution): Step 2 solver
+gates (both families to v_e 0.99, CKK eq. (12) corrected); A1 t = 0 ladder
+— 21 runs, v_e 0.24–0.99 × N 128/192/256, every Kleihaus–Kunz Fig. 1
+quantity and M/J against the tables (`L128_A1/`); the t = 0 convergence
+figures. The clean t < 23 windows of the probes exist on NFS if ever needed,
+but are quoted nowhere.
+
+**Shelved rationale** (for a return): Azad et al.'s mode-crossing test lived
+on family (b) — second mode and crossing only for C ≤ 0.2, spins at
+10/20/33/50 % of limiting J/A, crossing predicted at J/A ≈ 0.013 (33 %),
+static Ellis anchor τ ≈ 1.7 at η0 = 2. The A2 static (massless far side,
+NOT behind the wall) ×3, A3 ×4 spins ×3, A4 ×3 ×3 run lists and templates
+are in git history at 2998819f.
 
 ## RULES
 

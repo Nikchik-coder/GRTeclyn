@@ -127,7 +127,7 @@ Each step lists what to do, what it produces, and the check that must pass befor
 ### Step 1. Background solutions across the full spin range (3–6 weeks, or 1–2 if shared)
 - **Do:**
   - **Choose the family.** The *symmetric* family starts from the massless static throat (M = 0), matches the published Kleihaus–Kunz data and suits the overspin test. The *non-symmetric* family through your m/a = 1/2 drainhole continues from your static results. Azad et al. treat both.
-    - **Decided 2026-10-13: both families go in the paper.** The drainhole is the main line: it has mass, so binaries are possible, and it continues the merger paper. The symmetric family carries the test of Azad et al.'s two-mode crossing, which they computed only for C ≤ 0.2, and the overspin test.
+    - ~~Decided 2026-10-13: both families go in the paper.~~ **Superseded 2026-10-15: the paper is the drainhole's alone.** The symmetric family's evolutions are dropped — its compactified far end is a positive-mass puncture that kills every hold at t ≈ 23–24 regardless of lapse, resolution, shift damping or χ floor (the postmortem in STATUS.md). The symmetric family stays as theory and as solver validation only (Step 2 gates, the A1 t = 0 ladder and its convergence figures); no symmetric evolution is planned, and the paper does not promise one. Azad et al.'s two-mode-crossing and overspin tests are shelved with it.
   - **Slow spin:** build the O(J²) solutions of Azad et al. for J ≲ 0.4 J_max.
   - **Fast spin:** either write a 2D spectral Newton solver, or ask the Oldenburg/Madrid group (Kunz, Kleihaus, Blázquez-Salcedo, Khoo) for their backgrounds up to v_e ≈ 0.95.
     - Solver details: Chebyshev in x = (2/π) arctan(η/η₀), which compactifies both ends; even cos(2kθ) in θ.
@@ -210,7 +210,7 @@ Modelled on Evstafyeva, Siemonsen & East, *Assessing the stability of ultracompa
 ### Step 7. End states (answers Q5)
 - **Do:**
   - Follow collapse-branch runs to the remnant: measure M_BH and J_BH with a MOTS finder and approximate Killing vector.
-  - For the overspin test, take the slowest-spinning symmetric wormholes, where J/M_ADM² > 1 if confirmed.
+  - ~~For the overspin test, take the slowest-spinning symmetric wormholes~~ (shelved 2026-10-15 with the symmetric evolutions).
   - Follow inflation-branch runs at several spins.
 - **Produces:** the remnant spin against wormhole spin; whether censorship holds and how; whether spin stops inflation.
 - **Check:** the remnant's ringdown frequency matches Kerr with the measured M_BH and J_BH.
