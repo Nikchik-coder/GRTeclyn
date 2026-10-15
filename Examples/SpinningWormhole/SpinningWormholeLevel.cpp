@@ -17,6 +17,7 @@
 #include "SmallDataIO.hpp"
 #include "SpinningThroatDiagnostics.hpp"
 #include "SpinningWormholeInitialData.hpp"
+#include "SpongeDrive.hpp"
 #include "SpongeZone.hpp"
 #include "TraceARemoval.hpp"
 #include "Weyl4WithMatter.hpp"
@@ -224,6 +225,77 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                            });
     }
 
+    // Damping sponge (SpongeDrive.hpp): drive the state back to the
+    // stationary background in the sponge shell.  The KO sponge above damps
+    // at (k dx)^6 and passes the long-wavelength gauge pulse, which the
+    // Sommerfeld boundary (flat asymptotics; here M_ADM ~ 2 at the box
+    // edge) partially reflects -- every L64 trust window died at that t ~ 62
+    // return.  The reference is rebuilt from the table whenever the level's
+    // grids change, so restarts drive toward the same background.
+    if (simParams().sponge_drive_strength > 0.0)
+    {
+        if (!m_sponge_ref.ok() ||
+            m_sponge_ref.boxArray() != a_rhs.boxArray() ||
+            m_sponge_ref.DistributionMap() != a_rhs.DistributionMap())
+        {
+            build_sponge_ref();
+        }
+        const auto &p = simParams().sponge_params;
+        SpongeDrive drive;
+        drive.enabled      = true;
+        drive.inner_radius = p.inner_radius;
+        drive.inv_width    = (p.outer_radius > p.inner_radius)
+                                 ? 1.0 / (p.outer_radius - p.inner_radius)
+                                 : 0.0;
+        drive.strength     = simParams().sponge_drive_strength;
+        drive.ramp_power   = p.ramp_power;
+        drive.dx           = Geom().CellSize(0);
+        drive.center       = p.center;
+        const auto &ref_arrs = m_sponge_ref.const_arrays();
+        amrex::ParallelFor(a_rhs,
+                           [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                           {
+                               drive.apply(i, j, k, rhs_arrs[box_no],
+                                           soln_c_arrs[box_no],
+                                           ref_arrs[box_no]);
+                           });
+    }
+
+    amrex::Gpu::streamSynchronize();
+}
+
+void SpinningWormholeLevel::build_sponge_ref()
+{
+    BL_PROFILE("SpinningWormholeLevel::build_sponge_ref");
+
+    const amrex::MultiFab &state = get_new_data(state_index);
+    m_sponge_ref.define(grids, dmap, state.nComp(), state.nGrowVect());
+
+    const auto &arrs = m_sponge_ref.arrays();
+    const SpinningWormholeInitialData id(simParams().spinning_params,
+                                         background_table().view(),
+                                         Geom().CellSize(0));
+
+    // The same fill as initData: analytic data on valid cells AND ghosts
+    // (the Gamma pass takes +-2 finite differences of h_ij), then Gamma^i by
+    // finite differences on the valid cells.
+    amrex::ParallelFor(m_sponge_ref, m_sponge_ref.nGrowVect(),
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       {
+                           amrex::CellData<amrex::Real> cell =
+                               arrs[box_no].cellData(i, j, k);
+                           for (int n = 0; n < cell.nComp(); ++n)
+                           {
+                               cell[n] = 0.;
+                           }
+                           id.compute(i, j, k, arrs[box_no]);
+                       });
+    amrex::Gpu::streamSynchronize();
+
+    const InitialGammas gammas(Geom().CellSize(0));
+    amrex::ParallelFor(m_sponge_ref,
+                       [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
+                       { gammas.compute(i, j, k, arrs[box_no]); });
     amrex::Gpu::streamSynchronize();
 }
 

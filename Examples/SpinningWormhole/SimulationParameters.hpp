@@ -110,6 +110,12 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("sponge_ramp_power", sponge_params.ramp_power, 4);
         pp.load("sponge_center", sponge_params.center,
                 spinning_params.grid_center);
+        // Damping sponge (SpongeDrive.hpp): drive the state back to the
+        // stationary background in the same shell, absorbing the
+        // long-wavelength gauge pulse the KO sponge passes.  0 = off (the
+        // old evolution bit for bit); explicit stability needs
+        // strength * dt < ~1.
+        pp.load("sponge_drive_strength", sponge_drive_strength, 0.0);
     }
 
     void read_tagging_params(GRParmParse &pp)
@@ -179,6 +185,7 @@ class SimulationParameters : public SimulationParametersBase
     SpinningThroatDiagnostics::params_t spinning_diag_params{};
     CoreRadialProfile::params_t core_profile_params{};
     SpongeZoneParams sponge_params{};
+    double sponge_drive_strength{0.0};
 
     int tagging_type{};
     double tagging_L{};
