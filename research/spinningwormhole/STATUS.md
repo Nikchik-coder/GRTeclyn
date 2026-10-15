@@ -24,7 +24,7 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
 | B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | launched 05:00 UTC 10-15 | 100 | ~14 t/h | ~7.2 h, ≈ 12:15 UTC 10-15 |
-| probe `spin_hold_L128_N192_ml3_ve085b_lapse1_minchi4_t100` (`symmetric_massless/03_spin_hold/ve085b/`) | first GPU node, card 1 | launched 05:00 UTC 10-15 | 100 | ~34 t/h | dies by t ≈ 23 in ~40 min, or t = 100 in ~3 h ≈ 08:00 UTC 10-15 |
+| probe `spin_hold_L128_N192_ml4_ve085b_lapse1_t100` (`symmetric_massless/03_spin_hold/ve085b/`) | first GPU node, card 1 | launched 05:35 UTC 10-15 | 100 | ~20 t/h (est.) | dies by t ≈ 23 in ~1.2 h, or t = 100 in ~5 h ≈ 10:30 UTC 10-15 |
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
@@ -42,9 +42,15 @@ What each had shown by then:
   **t = 22.87** (21:07 UTC 10-13): far-side χ pinned at the 1e-8 floor,
   |K|max 1.2 → 94, MOTS lost from t ≈ 20. The √χ lapse cleared the old
   t ≈ 4 window (~6× later death) but the far-side puncture still wins.
-  Next per the approved sequence, launched 05:00 UTC 10-15: **min_chi 1e-4**
-  on the same N192 grid, √χ lapse kept
-  (`params_spin_hold_L128_N192_ve085b_lapse1_minchi4.txt`, one-knob diff).
+  The min_chi 1e-4 probe launched 05:00 UTC 10-15 was KILLED BY HAND at
+  t = 9.13, before its verdict: the resolution check that should have run
+  before the launch (BH rule dx ≲ M/40, far mass M ≈ 2.5 → dx ≤ 0.06;
+  ml3 gives the puncture 0.083) says ml3 under-resolves the far side
+  whatever the floor. Superseded 05:35 UTC 10-15 by the **ml4 probe**:
+  min_chi back at 1e-8, √χ lapse kept, `max_level = 4` → level-4 box ±2
+  (dx 0.0417) on the puncture alone
+  (`params_spin_hold_L128_N192_ve085b_lapse1_ml4.txt`, two-line diff:
+  max_level + the regrid_interval entry it sizes).
 
 **The far-side fix probe** (its go 2026-10-13, no checkpoints; N = 192 —
 dx0 = 1 is retired): the A3 ve085b hold with one knob,
