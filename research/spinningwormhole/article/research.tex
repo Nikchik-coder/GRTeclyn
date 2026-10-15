@@ -87,21 +87,27 @@ S=\frac{1}{16\pi}\int d^4x\,\sqrt{-g}\left(R+2\,g^{\mu\nu}\partial_\mu\psi\,\par
 \end{equation}
 gives $R_{\mu\nu}=-2\,\partial_\mu\psi\,\partial_\nu\psi$. Those papers evolved its best-known static wormhole---the Ellis--Bronnikov drainhole with throat parameter $a=2$ and end masses $\pm1$---and measured the instability that this paper asks rotation to cure. Spinning that wormhole up requires the stationary rotating solution of the same theory, and none is known in closed form~\cite{volkov2021}: it has to be constructed numerically, inside an \emph{ansatz}---an assumed form of the metric with stationarity and axisymmetry built in and a few unknown functions left for the field equations to determine. We take the ansatz of Refs.~\cite{kleihaus_kunz2014,chew2016}, who first constructed these solutions,
 \begin{equation}
-ds^2=-e^{f}dt^2+e^{-f}\!\left[e^{\nu}\!\left(d\eta^2+h\,d\theta^2\right)+h\sin^2\!\theta\left(d\varphi-\omega\,dt\right)^2\right],
+\begin{split}
+ds^2&=-e^{f}dt^2+e^{-f}\Big[e^{\nu}\left(d\eta^2+h\,d\theta^2\right)\\
+&\quad+h\sin^2\!\theta\left(d\varphi-\omega\,dt\right)^2\Big],
+\end{split}
 \label{eq:metric}
 \end{equation}
 with $\eta\in(-\infty,\infty)$. The fixed function $h=\eta^2+\eta_0^2$ is what makes this a wormhole ansatz. In the trivial limit $f=\nu=\omega=0$ the spatial metric is $d\eta^2+h\,d\Omega^2$, so $\sqrt{h}$ is the radius of the sphere at coordinate $\eta$---and by construction it never vanishes: it falls from $\eta^2$ at large $|\eta|$, bottoms out at $\eta_0$ at $\eta=0$, and rises again. The spacetime therefore has no center; a minimal sphere of radius set by $\eta_0$, the throat, joins the two asymptotically flat ends $\eta\to\pm\infty$. Choosing $h$ hard-wires this two-ended, horizonless topology into Eq.~\eqref{eq:metric}, while $f$, $\nu$, $\omega$ deform the geometry on top of it ($h$ also recurs as the weight in every equation below); conversely, $\eta_0\to0$ closes the throat and lets the same ansatz hold a black hole, which is how extremal Kerr enters in Sec.~\ref{sec:model:eq12}. Our previous wormhole sits inside this form: with $\omega=\nu=0$ and the closed-form $\arctan$ profile for $f$~\cite{chew2016}, Eq.~\eqref{eq:metric} is the static drainhole of Refs.~\cite{shirokov2026,shirokov2026c}---$\eta$ is the isotropic radius $r$ used there, unfolded through the throat by $\eta=r-\eta_0^2/4r$ (Sec.~\ref{sec:setup}), and $\eta_0=a$ its throat parameter---while $f=0$ gives the massless Ellis wormhole. Everything the ansatz~\eqref{eq:metric} leaves open---the metric functions $f(\eta,\theta)$ (the redshift of the two ends), $\omega(\eta,\theta)$ (the frame dragging) and $\nu(\eta,\theta)$, together with the phantom field---must come from the field equations: determining them at each spin is what Sec.~\ref{sec:solver} is for. Substituting the ansatz~\eqref{eq:metric} into the field equations reduces them in four steps. The reduction is not ours: it is the recipe of Kleihaus and Kunz~\cite{kleihaus_kunz2014}, derived in full in Sec.~II of Ref.~\cite{chew2016}, whose equation numbers we quote; we retrace it here in words only. First, the equation for a fourth metric function $p$, usually carried alongside $f$, $\nu$, $\omega$, decouples from the rest and is solved by $p=1$ under flat boundary conditions, eliminating it from the start [Eqs.~(5)--(6) there]. Second, with $p=1$ the phantom field equation---the curved-space wave equation, which stationarity and axisymmetry reduce to a function of $\eta$ alone---integrates in closed form to $\psi=D\left[\arctan(\eta/\eta_0)-\pi/2\right]$ [Eqs.~(7)--(9) there]: the scalar enters the rest of the problem only through its constant of integration $D$, the scalar charge. Third, because $\partial_\mu\psi$ points along $\eta$, the source term $-2\,\partial_\mu\psi\,\partial_\nu\psi$ survives only in the $\eta\eta$ Einstein equation; each other nontrivial component ($tt$, $t\varphi$, $\theta\theta$, $\varphi\varphi$, $\eta\theta$) is a statement about the metric functions alone, and these organize by order and role. Two are second-order elliptic equations,
 \begin{align}
-0&=\partial_\eta\!\left(h s\,\partial_\eta f\right)+\partial_\theta\!\left(s\,\partial_\theta f\right)
--h s^3 e^{-2f}\!\left[h(\partial_\eta\omega)^2+(\partial_\theta\omega)^2\right],
+0={}&\partial_\eta\!\left(h s\,\partial_\eta f\right)+\partial_\theta\!\left(s\,\partial_\theta f\right)\nonumber\\
+&-h s^3 e^{-2f}\!\left[h(\partial_\eta\omega)^2+(\partial_\theta\omega)^2\right],
 \label{eq:feq}\\
-0&=\partial_\eta\!\left(h^2 s^3 e^{-2f}\partial_\eta\omega\right)+\partial_\theta\!\left(h s^3 e^{-2f}\partial_\theta\omega\right),
+0={}&\partial_\eta\!\left(h^2 s^3 e^{-2f}\partial_\eta\omega\right)\nonumber\\
+&+\partial_\theta\!\left(h s^3 e^{-2f}\partial_\theta\omega\right),
 \label{eq:omeq}
 \end{align}
 with $s\equiv\sin\theta$ [Eqs.~(10)--(11) of Ref.~\cite{chew2016}]: Eq.~\eqref{eq:feq} is a Laplace-type equation for the redshift $f$, sourced by the squared gradients of the frame dragging---rotation gravitates---and Eq.~\eqref{eq:omeq} is a total divergence, the local form of angular-momentum conservation, which integrated over the domain forces the same $J$ through every $\eta=\mathrm{const}$ surface. The single off-diagonal component is only first order in $\nu$,
 \begin{equation}
-0=-h s\,\partial_\eta f\,\partial_\theta f+h\cos\theta\,\partial_\eta\nu+\eta s\,\partial_\theta\nu
-+h^2 s^3 e^{-2f}\partial_\eta\omega\,\partial_\theta\omega,
+\begin{split}
+0&=-h s\,\partial_\eta f\,\partial_\theta f+h\cos\theta\,\partial_\eta\nu\\
+&\quad+\eta s\,\partial_\theta\nu+h^2 s^3 e^{-2f}\partial_\eta\omega\,\partial_\theta\omega,
+\end{split}
 \label{eq:constraint}
 \end{equation}
 so $\nu$ follows by integration once $f$ and $\omega$ are known [Eq.~(13) there]. (The remaining diagonal components give a second-order equation for $\nu$ as well---the published Eq.~(12), shown misprinted in Sec.~\ref{sec:model:eq12}; we never use it.) Fourth, the one sourced component, $R_{\eta\eta}=-2D^2/h^2$ [Eq.~(18) there], rearranges into an algebraic identity for the charge [Eq.~(19) there]: the metric functions fix $D^2$ at every point, so its constancy over the domain is a solution test that comes for free. Three unknown functions thus face more equations than they need; the Bianchi identities make the overdetermined set consistent on a true solution, and a numerical scheme must choose which subset to impose---a choice Sec.~\ref{sec:model:eq12} shows matters. The boundary conditions select the family: Minkowski at $\eta\to+\infty$, and $f\to\gamma$, $\omega\to\omega_\infty$ at $\eta\to-\infty$, so the constant $\gamma$ measures how unequal the two ends are and $\omega_\infty$ sets the spin.
