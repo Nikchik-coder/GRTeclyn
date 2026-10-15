@@ -23,9 +23,7 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | t = 20.4 at 06:30 UTC 10-15 | 100 | ~13.9 t/h | ~5.7 h, ≈ 12:15 UTC 10-15 |
-| probe `spin_hold_L128_N192_ml4_ve085b_lapse1_eta02_t100` (eta 1 → 0.2, the shift damping matched to the far puncture ~1/(2M); else the dead ml4 template) | first GPU node, card 1 (2-way share) | launched 06:55 UTC 10-15 | 100 | ~14 t/h (est., shared) | dies by t ≈ 24 in ~1.7 h ≈ 08:40 UTC, or t = 100 ≈ 14:00 UTC 10-15 |
-| probe `spin_hold_L128_N192_ml4_ve085b_lapse1_minchi4_t100` (min_chi 1e-8 → 1e-4 on the ml4 grid — the FARZONE floor at compliant resolution; else the dead ml4 template) | first GPU node, card 1 (2-way share) | launched 06:57 UTC 10-15 | 100 | ~14 t/h (est., shared) | same windows |
+| B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | t = 67.0 at 09:53 UTC 10-15, clean, past the first launch's kill point | 100 | ~13.9 t/h | ~2.4 h, ≈ 12:15 UTC 10-15 |
 | dt isolation `static_hold_L64_ml3_dt005_sig04_t045` (one knob vs the dt005 arm: sigma 0.1 → 0.4, dt_mult 0.05 kept; kills the interface checkerboard?) | second GPU node, card 0 | launched 09:12 UTC 10-15 | 45 | ~12 t/h (3-way share) | ~3.7 h, ≈ 13:00 UTC 10-15 |
 | dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | t = 29.3 at 08:55 UTC 10-15 | 70 | ~9.5 t/h (shares rise as arms finish) | ≈ 12:20 UTC 10-15 |
 | dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 17 at 08:55 UTC 10-15 | 100 | ~5.4 t/h now | ≈ 15:40 UTC 10-15 |
@@ -74,6 +72,21 @@ What each had shown by then:
   byte-identical to the dead ml4 probe's, both floors confirmed in
   `collapse_diagnostics.dat` (1e-8 vs 1e-4). No checkpoints (per-run
   call, none asked).
+- **BOTH DIED ~09:45 UTC 10-15 — the knob ladder is exhausted.**
+  eta02: NaN h11 (level 3) at **t = 23.24**, χ on the 1e-8 floor, |K|max
+  climbing through 3.4 — half a unit EARLIER than eta = 1. minchi4-ml4:
+  NaN in K (level 4) at **t = 23.76** — the parent's death time to the
+  step — |K|max 60 → 2516; its χ_min sat at 2.2e-3 the whole time, 22×
+  ABOVE the 1e-4 floor, so the floor never engaged yet the run died
+  identically. Four one-knob probes (√χ lapse, 2× resolution, eta, χ
+  floor) all die at **t ≈ 23–24** with the same far-side K runaway:
+  the time is knob-independent, so it tracks the data, not the numerics
+  — the far-side positive-mass end collapses on its own timescale and
+  this gauge family cannot ride through it. Qualitatively different
+  tools (excision/turducken, a puncture-pinning shift, or declaring
+  family (b) unevolvable past t ≈ 23 and scoping the paper to
+  drainhole + static) are the remaining options — each needs its own
+  decision.
 
 **The far-side fix probe** (its go 2026-10-13, no checkpoints; N = 192 —
 dx0 = 1 is retired): the A3 ve085b hold with one knob,
