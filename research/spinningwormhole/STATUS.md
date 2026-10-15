@@ -23,8 +23,28 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`) | first GPU node, card 0 | launched 20:22 UTC | 100 | ~14 t/h (A1's measure) | ~7.2 h, ≈ 03:30 UTC 10-14 |
-| probe `spin_hold_L128_N192_ml3_ve085b_lapse1_t100` (`symmetric_massless/03_spin_hold/ve085b/`) | first GPU node, card 1 | launched 20:54 UTC | 100 | ~45 t/h (N⁴) | dies by t ≈ 4 in ~10 min, or t = 100 in ~2.2 h ≈ 23:10 UTC |
+| B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | launched 05:00 UTC 10-15 | 100 | ~14 t/h | ~7.2 h, ≈ 12:15 UTC 10-15 |
+| probe `spin_hold_L128_N192_ml3_ve085b_lapse1_minchi4_t100` (`symmetric_massless/03_spin_hold/ve085b/`) | first GPU node, card 1 | launched 05:00 UTC 10-15 | 100 | ~34 t/h | dies by t ≈ 23 in ~40 min, or t = 100 in ~3 h ≈ 08:00 UTC 10-15 |
+
+**2026-10-14 ~21:53 UTC the node container was killed externally** (and once
+before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
+first-launch runs gone, no checkpoints survived (they lived on scratch only).
+What each had shown by then:
+
+- **B1 first launch (killed, not a death): clean to t = 46.70, zero NaN.**
+  MOTS R 4.9612 → 4.9573, **−0.08 % by t = 46**, where the static twin
+  (`single_hold_L128_t100`) was already −1 % by t = 44 — the spin is slowing
+  the collapse ~10× at mid-time, matching the L64 result. χ_min steady
+  1.5e-6, lapse_min 0.17, all smooth. 47 frames + 363 MB slice cache to
+  t = 46 survive on NFS (`..._t100_killed_t46/`), so movies to t ≈ 46 are
+  makeable. Relaunched from t = 0 on the same template, 05:00 UTC 10-15.
+- **√χ-lapse probe: a genuine physics death, not the kill** — NaN in h11 at
+  **t = 22.87** (21:07 UTC 10-13): far-side χ pinned at the 1e-8 floor,
+  |K|max 1.2 → 94, MOTS lost from t ≈ 20. The √χ lapse cleared the old
+  t ≈ 4 window (~6× later death) but the far-side puncture still wins.
+  Next per the approved sequence, launched 05:00 UTC 10-15: **min_chi 1e-4**
+  on the same N192 grid, √χ lapse kept
+  (`params_spin_hold_L128_N192_ve085b_lapse1_minchi4.txt`, one-knob diff).
 
 **The far-side fix probe** (its go 2026-10-13, no checkpoints; N = 192 —
 dx0 = 1 is retired): the A3 ve085b hold with one knob,
@@ -88,10 +108,11 @@ physics are confounded there (archived in
 spinning family (b) hold (A3, A4) and no fast drainhole hold (B2, B3) runs
 until the far side is handled; A2's static Ellis is massless there and the
 slow drainhole (v_e ≤ 0.51) held. Probes at N ≥ 192: the √χ initial lapse
-(type 1, LIVE on card 1 — cleared the t ≈ 4 window, χ recovered off the
-floor); if it dies later, min_chi 1e-4 (its go given); a control at N = 192
-with the original stationary lapse, to split the lapse from the resolution,
-waits for its go.
+(type 1) cleared the t ≈ 4 window but DIED at t = 22.87 (NaN in h11, far-side
+χ on the 1e-8 floor, |K|max → 94) — it helps, it does not win; min_chi 1e-4
+on top of it is LIVE on card 1 (launched 05:00 UTC 10-15); a control at
+N = 192 with the original stationary lapse, to split the lapse from the
+resolution, waits for its go.
 
 *Phase A: symmetric, family (b) at η0 2*
 
