@@ -25,6 +25,9 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 |---|---|---|---|---|---|
 | B1 `spin_hold_L128_ml3_ve050a_t100` (N 256, `drainhole/05_hold_L128/ve050a/`), relaunch from t = 0 | first GPU node, card 0 | launched 05:00 UTC 10-15 | 100 | ~14 t/h | ~7.2 h, ≈ 12:15 UTC 10-15 |
 | probe `spin_hold_L128_N192_ml4_ve085b_lapse1_t100` (`symmetric_massless/03_spin_hold/ve085b/`) | first GPU node, card 1 | launched 05:35 UTC 10-15 | 100 | ~20 t/h (est.) | dies by t ≈ 23 in ~1.2 h, or t = 100 in ~5 h ≈ 10:30 UTC 10-15 |
+| dt ladder `static_hold_L64_ml3_dt005_t070` (`drainhole/06_dt_ladder/`; numerics debt 1, its go 10-15) | second GPU node, card 0 | launched 05:31 UTC 10-15 | 70 | ~41 t/h | ~1.7 h, ≈ 07:20 UTC 10-15 |
+| dt ladder `static_hold_L64_ml3_dt0035_t070` (same study) | second GPU node, card 0 | launched 05:34 UTC 10-15 | 70 | ~30 t/h (est.) | ~2.3 h, ≈ 08:00 UTC 10-15 |
+| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (same study; levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | launched 05:35 UTC 10-15 | 100 | ~18 t/h (est.) | ~5.6 h, ≈ 11:15 UTC 10-15 |
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
@@ -215,22 +218,37 @@ full tables are exact to ~1e-10.
    t ≈ 4, but on a dx0 = 1 grid — SUPERSEDED; the N ≥ 192 retests (the
    BLOCKER above) are what counts now.
 
-## NUMERICS DEBT (Step 0 of `SpinningWormhole.md`, none done; re-noted 2026-10-13)
+## NUMERICS DEBT (Step 0 of `SpinningWormhole.md`; items 1 + 2 in work 2026-10-15, second node's card)
 
 This file carried the list until ca71ceed compacted it away; restored because
 every item is still open:
-1. **Why Δt = 0.02 Δx.** The only evidence is the merger's
-   `single_hold_dt005_t070`: at 0.05 it matched to t ≈ 30, then drifted to a
-   different solution (max|K| ×30 by t = 35, L2_Ham ×35 by t = 40, lapse
-   floored at t = 61). A measured limit, cause unknown; every hold pays it
-   (~7 h to t = 100 at N = 256).
-2. **Constraint norms are level 0 only**
-   (`Examples/SpinningWormhole/SpinningWormholeLevel.cpp:336`); the triplet
-   protocol wants the finest levels with the punctures masked (today the
-   plotfiles' derived constraints cover this offline, in `t0_checks.py`).
+1. **Why Δt = 0.02 Δx — MEASUREMENT LIVE** (the dt ladder above; its go
+   2026-10-15, "use this gpu for testing"). The evidence re-read 10-15 from the
+   merger's packs: it is a dt-dependent WEAK INSTABILITY growing from t = 0,
+   visible when it crosses the background, NOT a hard CFL blow-up and NOT the
+   hold's physical mode — `single_hold_dt01_t070` (dt_mult 0.1): max|K| bump
+   visible t ≈ 10, e-fold ~0.8, NaN at t = 16; `single_hold_dt005_t070`
+   (0.05): visible t ≈ 28, e-fold ~1.5, K SATURATES ~1.9 while min_lapse
+   stays on the control to 4 digits until t = 40, then the collapse runs away
+   (L2_Ham ×35); 0.02 clean to 100. Threshold sits in (0.02, 0.05]. The
+   ladder reruns the spinning static hold (same numbers verbatim) at 0.05 /
+   0.035 / 0.02 with the new per-level norms (WHICH level) and the radial
+   profile to r = 34 (WHERE: throat / AMR interfaces ±4/8/16 / sponge 24–32 /
+   boundary). Then one-knob isolation arms at 0.05 (sigma, sponge) as the
+   location dictates.
+2. **Constraint norms level 0 only — DONE 2026-10-15** (commit 73793542,
+   binary `main3d_levnorm_73793542_2026-10-15.ex`): `constraint_norms_levels
+   = 1` writes `constraint_norms_levels.dat` — one masked L2_Ham/L2_Mom pair
+   per level (cells no finer level covers, `makeFineMask`) plus a
+   hierarchy-wide pair, puncture excluded inside `constraint_norms_mask_radius`
+   (default 0.125, t0_checks.py's innermost shell edge). Historic level-0
+   file untouched; smoke-tested on the ml3 grid (t = 0 value bit-identical to
+   the packed Step 0 hold, speed unchanged 17.8 t/h). Adopt in production
+   templates at the next binary bump.
 3. **Constraint-solved seeds.** The Π shell seed violates the constraints in
    proportion to its amplitude (`SimulationParameters.hpp:50`); perturb Π,
-   then re-solve the constraints.
+   then re-solve the constraints. Dormant until a seeded spinning run is
+   queued: every current hold runs seed_amplitude 0.
 4. **Waveform extrapolation in 1/R**: absent; matters least under the
    stability-only plan.
 

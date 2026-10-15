@@ -9,3 +9,4 @@
 main3d_first_cf8cca48_2026-10-10.ex	fad71629e6dd4025	cf8cca48	26.02-12-gd7da5045	2026-10-10T16:36:47Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	
 main3d_smoke_bfb65e8e_2026-10-10.ex	972ec4dad80167e6	bfb65e8e	26.02-12-gd7da5045	2026-10-10T16:44:58Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	
 main3d_levnorm_e6494a53-dirty_2026-10-15.ex	94d8ea2c85b5d9b2	e6494a53-dirty	26.02-12-gd7da5045	2026-10-15T05:30:13Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	compile test: per-level masked constraint norms
+main3d_levnorm_73793542_2026-10-15.ex	c796b327efc1943d	73793542	26.02-12-gd7da5045	2026-10-15T05:35:11Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	per-level masked constraint norms (numerics debt 2); dt-ladder binary
