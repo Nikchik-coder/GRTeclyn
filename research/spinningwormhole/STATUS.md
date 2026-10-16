@@ -43,6 +43,39 @@ Confirmed if the GPU 1 template run lands clean at t = 150 (≈ 19:00 UTC 10-16)
 - Stable (non-collapsing) spins radiate nothing (checked 0.5c/0.7c: ψ4 deviations at the
   noise floor, no R = 14 → 30 propagation); the two-radius check matters for collapsing arms
 
+## PAPER RUN MATRIX (2026-10-16) — the final list, checked off as they land
+
+Paper runs live in `runs/spinning_wormhole/drainhole/00_paper_runs/` and pack to
+`results/spinningwormhole/campaign/drainhole/00_paper_runs/`: new members launch
+with `--subdir drainhole/00_paper_runs`; already-finished qualifying runs mv
+there (run dir + repack, old pack git-rm'd) at their close-out.
+
+**SLOW recipe (≤ 0.5c)**: L64 N128 ml3, σ 0.1, min_chi 1e-8, dt 0.02, drive 1.0,
+**stop 85** (brackets the 78–85 knee; the paper quotes t ≤ 80), ψ4 R 14/18.
+**FAST recipe (0.7c+)**: same grid, σ 0.4, min_chi 1e-4, dt 0.02, drive 1.0,
+**stop 150**.
+
+| ✓ | run | recipe | stop | status |
+|---|---|---|---|---|
+| ☑ | 0c static anchor | slow | 85 | DONE — `static_hold_L64_ml3_spdrv1_t100` (clean t 100); mv at its turn |
+| ☑ | 0.5c | slow | 85 | live `ve050a_spdrv1_t150`, finishes ≈ 15:30; quote t ≤ 80 |
+| ☑ | 0.9c | fast | 150 | live 2nd node, finishes ≈ 15:10; recipe-exact (ψ4 14/30 — fine, stable throat radiates nothing) |
+| ☐ | 0.21c (J = 1) = triplet N 128 | slow | 85 | to run (~5 h) — the old L64 J100_full predates the drive |
+| ☐ | 0.21c triplet N 96 | slow | 85 | to run (~1.6 h) |
+| ☐ | 0.21c triplet N 192 | slow | 85 | to run (~24 h) |
+| ☐ | 0.7c | fast | 150 | to run (~8.5 h) — the minchi4 rescue predates σ 0.4 + drive |
+| ☐ | 0.9c fast pair N 192 | fast | 100 | to run (~29 h) |
+| ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | to run (~8.5 h) |
+| ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | to run (~8.5 h) |
+| ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | to run (~8.5 h) |
+| ☐ | 0.99c stretch | fast | 150 | rerun under σ 0.4 (~8.5 h; the live probe runs σ 0.1 = feasibility only) |
+| ☐ | 0.95c stretch | fast | 150 | optional, only if the 0.99c curve wants the point |
+| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | live ≈ 17:05; methods appendix, stays in `06_dt_ladder/` |
+
+Remaining ☐ ≈ 100 card-hours ≈ 2 days on the two first-node cards once the
+current probes clear. Kick amplitudes fixed at template time (A1 = the merger
+seed's scale, A2 = ×10), constraint-compatible Gaussian scalar seed.
+
 ## RUN LEDGER — every arm so far
 
 All N 128 base, max_level 3. drv = sponge_drive_strength. Outcomes frozen in
