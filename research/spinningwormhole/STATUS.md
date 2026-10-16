@@ -150,6 +150,12 @@ the two-regime split predicted. Trust 80; moved + packed `00_paper_runs/`;
 scratch pruned (7.1 GB).
 
 Notes: every live run no-checkpoint, spdrv binary, full frames, keep-last 3.
+psi4 radii 14/18/30 on every run — baked into the hold profile 2026-10-16 after
+the triplet went up on the old 14/30 default; the three J=1 members' consumers
+were restarted with --radii 14 18 30 at t <= 5 (earlier rows 2-radius, read by
+row width, nothing physical lost: waves start at the ~64 collapse). The node-2
+pair (0.7c, 0.99c) still runs 14/30 — fast end, stability claim, no waveform
+quoted; restart needs a node-2 session if R=18 is wanted there.
 0.99c psi4 is 3-radius (14/18/30) from t = 22 only — the consumer was killed by a
 wrong-flag restart ~11:44 and hand-rebuilt ~11:50; earlier rows are 2-radius and
 the header names 2, so read `psi4_mode_l2_all/l2m0.dat` by row width. B1's final
