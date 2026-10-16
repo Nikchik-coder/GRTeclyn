@@ -64,8 +64,8 @@ Schedule below from 18:30 MSK 10-16. Card 0/1 = 1st node; 2nd node has one card.
 | ☑ | 0.5c | slow | 85 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | – | – |
 | ☑ | 0.9c | fast | 150 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | – | – |
 | ☐ | **1st** 0.21c triplet N 192 | slow | 85 | LIVE card 1 since 17:58, 4.3 t/h measured | ~19 h | ≈ 10-17 13:45 |
-| ☐ | **1st** 0.21c triplet N 128 | slow | 85 | card 0 when the probe ends (~4.9 h run) | – | – |
-| ☐ | **1st** 0.21c triplet N 96 | slow | 85 | card 0 after N 128 (~1.5 h run) | – | – |
+| ☐ | **1st** 0.21c triplet N 128 | slow | 85 | LIVE card 0 since 18:52 MSK, shared with N 96 | ~9 h | ≈ 10-17 04:00 |
+| ☐ | **1st** 0.21c triplet N 96 | slow | 85 | LIVE card 0 since 18:53 MSK, shared with N 128 | ~5.5 h | ≈ 10-17 00:30 |
 | ☐ | 0.7c | fast | 150 | LIVE 2nd node since ≈ 18:15, shared from 18:30 (~9.5 t/h) | ~15 h | ≈ 10-17 09:30 |
 | ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | LIVE 2nd node since 18:30, shared with the 0.7c (~9.5 t/h) | ~16 h | ≈ 10-17 10:30 |
 | ☐ | 0.9c fast triplet N 96 | fast | 100 | card 1 after the J=1 N 192 (~1.8 h run) | – | – |
@@ -132,6 +132,8 @@ What the ledger says, four lines:
 | run | node/card | t @ 18:25 MSK | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
 | triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | ~2 | 85 | 4.3 t/h measured | ≈ 10-17 13:45 |
+| triplet N 128 `L64_ml3_J100_full_spdrv1_t85` | 1st, card 0 (shared) | 0 (launched 18:52 MSK) | 85 | ~10 t/h est. | ≈ 10-17 04:00 |
+| triplet N 96 `L64_N96_ml3_J100_full_spdrv1_t85` | 1st, card 0 (shared) | 0 (launched 18:53 MSK) | 85 | ~15 t/h est. | ≈ 10-17 00:30 |
 | 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared 18:30) | 4.5 | 150 | ~9.5 t/h shared | ≈ 10-17 09:30 |
 | 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 0 (launched 18:30) | 150 | ~9.5 t/h shared | ≈ 10-17 10:30 |
 
