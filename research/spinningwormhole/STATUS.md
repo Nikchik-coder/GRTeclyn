@@ -59,11 +59,11 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 |---|---|---|---|---|
 | ☑ | 0c static anchor | slow | 85 | DONE — `static_hold_L64_ml3_spdrv1_t100` (clean t 100); moved + repacked in `00_paper_runs/` 12:5x UTC |
 | ☑ | 0.5c | slow | 85 | DONE — `ve050a_spdrv1_t150` DIED t 130.0 (NaN h11, L3), window t ≤ 80 clean; moved + packed `00_paper_runs/` 14:55 |
-| ☑ | 0.9c | fast | 150 | live 2nd node, finishes ≈ 15:10; recipe-exact (ψ4 14/30 — fine, stable throat radiates nothing) |
+| ☑ | 0.9c | fast | 150 | DONE — clean t 150, Ham flat, no MOTS ever; moved + packed `00_paper_runs/` ≈ 15:55 |
 | ☐ | **1st** 0.21c (J = 1) = triplet N 128 | slow | 85 | QUEUE FIRST, verification before every other rung (~5 h); template ready |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | with it (~1.6 h); template ready |
 | ☐ | **1st** 0.21c triplet N 192 | slow | 85 | LIVE card 1 since 14:58 (~24 h, the long pole); frame 0 = parent's |
-| ☐ | 0.7c | fast | 150 | to run (~8.5 h) — the minchi4 rescue predates σ 0.4 + drive |
+| ☐ | 0.7c | fast | 150 | LIVE 2nd node since ≈ 15:55 (~8.5 h, ETA ≈ 10-17 00:30); template = 0.9c params, background swap only |
 | ☐ | 0.9c fast triplet N 96 | fast | 100 | to run (~2.7 h) |
 | ☐ | 0.9c fast triplet N 192 | fast | 100 | to run (~29 h); N 128 member = the paper 0.9c run itself → full σ 0.4 + clamp triplet |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | to run (~8.5 h) |
@@ -110,7 +110,8 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` | 0.5c | 64 | 0.2 | 0.02 | 1e-8 | 1.0 | stopped 23.9 (two-regime decision; chi already on the dt005 decay curve — sigma-driven, dt-independent) | 25 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100` | 0.5c | 64 | 0.2 | 0.05 | 1e-8 | 1.0 | stopped 44.5: slow puncture decay | 20 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | LIVE; the ONE-RECIPE candidate | tbd |
-| `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; Ham FLAT (+2 % at t 92) | tbd |
+| `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | CLEAN t 150: Ham flat (1.07e-2 → 1.17e-2 over 60 → 150), no MOTS ever — the paper 0.9c run | 150 |
+| `spin_hold_L64_ml3_ve070a_spdrv1_sig04_t150` | 0.7c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; the paper 0.7c run (fast recipe, 0.9c params + background swap) | tbd |
 | `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | stopped 50.4 (feasibility answered: Ham flat 3.94e-2, K flat, chi on the 1e-4 floor); paper 0.99c = σ 0.4 rerun | 50 |
 
 What the ledger says, four lines:
@@ -121,11 +122,17 @@ What the ledger says, four lines:
 
 ## LIVE
 
-| run | node/card | t @ 14:55 | stop | speed | ETA (UTC) |
+| run | node/card | t @ 15:55 | stop | speed | ETA (UTC) |
 |---|---|---|---|---|---|
-| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | 0 (launched 14:58) | 85 | ~3.5 t/h est. | ≈ 10-17 15:00 |
-| ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 | 54.6 | 100 | ~31 t/h shared | ≈ 16:25 |
-| 0.9c `ve090a_spdrv1_sig04_t150` | 2nd node | 144.0 | 150 | 17.5 t/h | ≈ 15:15 |
+| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | launched 14:58 | 85 | ~3.5 t/h est. | ≈ 10-17 15:00 |
+| ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 (solo from 15:15) | ~75 | 100 | ~31 t/h | ≈ 16:30 |
+| 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node | launched ≈ 15:55 | 150 | ~17.5 t/h est. | ≈ 10-17 00:30 |
+
+0.9c `ve090a_spdrv1_sig04_t150` FINISHED CLEAN t = 150 ≈ 15:30: Ham flat
+(1.07e-2 → 1.17e-2 over t 60 → 150), max|K| flat 2.0e-2, no MOTS ever — the
+stability claim delivered, trust full 150. Moved + packed `00_paper_runs/`;
+scratch pruned (7.1 GB). The paper 0.7c run launched on its card from the
+0.9c params (background swap only, diff-proven).
 
 0.5c drive `ve050a_spdrv1_t150` FINISHED-DEAD: NaN (h11, L3) at t = 130.0. Clean
 through the Ham ×2 knee (~83); then Ham 0.157@110 → 0.367@120, max|K| > 0.1 at
