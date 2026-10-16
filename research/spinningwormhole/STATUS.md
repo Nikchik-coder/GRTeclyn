@@ -60,9 +60,9 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 | ☑ | 0c static anchor | slow | 85 | DONE — `static_hold_L64_ml3_spdrv1_t100` (clean t 100); moved + repacked in `00_paper_runs/` 12:5x UTC |
 | ☑ | 0.5c | slow | 85 | live `ve050a_spdrv1_t150`, finishes ≈ 15:30; quote t ≤ 80 |
 | ☑ | 0.9c | fast | 150 | live 2nd node, finishes ≈ 15:10; recipe-exact (ψ4 14/30 — fine, stable throat radiates nothing) |
-| ☐ | 0.21c (J = 1) = triplet N 128 | slow | 85 | to run (~5 h) — the old L64 J100_full predates the drive |
-| ☐ | 0.21c triplet N 96 | slow | 85 | to run (~1.6 h) |
-| ☐ | 0.21c triplet N 192 | slow | 85 | to run (~24 h) |
+| ☐ | **1st** 0.21c (J = 1) = triplet N 128 | slow | 85 | QUEUE FIRST, verification before every other rung (~5 h); template ready |
+| ☐ | **1st** 0.21c triplet N 96 | slow | 85 | with it (~1.6 h); template ready |
+| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | with it (~24 h, the long pole — earliest big slot); template ready |
 | ☐ | 0.7c | fast | 150 | to run (~8.5 h) — the minchi4 rescue predates σ 0.4 + drive |
 | ☐ | 0.9c fast triplet N 96 | fast | 100 | to run (~2.7 h) |
 | ☐ | 0.9c fast triplet N 192 | fast | 100 | to run (~29 h); N 128 member = the paper 0.9c run itself → full σ 0.4 + clamp triplet |
