@@ -57,7 +57,7 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 
 | ✓ | run | recipe | stop | status |
 |---|---|---|---|---|
-| ☑ | 0c static anchor | slow | 85 | DONE — `static_hold_L64_ml3_spdrv1_t100` (clean t 100); mv at its turn |
+| ☑ | 0c static anchor | slow | 85 | DONE — `static_hold_L64_ml3_spdrv1_t100` (clean t 100); moved + repacked in `00_paper_runs/` 12:5x UTC |
 | ☑ | 0.5c | slow | 85 | live `ve050a_spdrv1_t150`, finishes ≈ 15:30; quote t ≤ 80 |
 | ☑ | 0.9c | fast | 150 | live 2nd node, finishes ≈ 15:10; recipe-exact (ψ4 14/30 — fine, stable throat radiates nothing) |
 | ☐ | 0.21c (J = 1) = triplet N 128 | slow | 85 | to run (~5 h) — the old L64 J100_full predates the drive |
@@ -72,8 +72,9 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 | ☐ | 0.95c stretch | fast | 150 | optional, only if the 0.99c curve wants the point |
 | – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | live ≈ 17:05; methods appendix, stays in `06_dt_ladder/` |
 
-Remaining ☐ ≈ 100 card-hours ≈ 2 days on the two first-node cards once the
-current probes clear. Kick amplitudes fixed at template time (A1 = the merger
+Remaining ☐ ≈ 100 card-hours on THREE cards (both first-node + the second
+node's) ≈ 1.4 days once the current probes clear; second-node launches run
+from a session on that node. Kick amplitudes fixed at template time (A1 = the merger
 seed's scale, A2 = ×10), constraint-compatible Gaussian scalar seed.
 
 ## RUN LEDGER — every arm so far
