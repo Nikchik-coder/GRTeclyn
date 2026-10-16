@@ -21,19 +21,28 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## LIVE
 
-**Speed rung 2 `spin_hold_L128_ml3_ve050a_sig04_dt0035_t060` FAILED the
-discriminator — stopped by hand at t = 26.4, ~06:30 UTC 10-16. An
-intermediate dt does NOT survive either:** χ_min followed B1's 1.5e-6
-track to t ≈ 15, decayed and hit the 1e-8 floor at t = 22.3 (dt 0.05:
-t ≈ 20 — the same puncture-sector crash, postponed only ~2 units);
-max|K| in runaway 3e-3 → 9e-2 over t = 20–26. **The dt ladder on L128
-spin data is closed: production dt stays 0.02; the surviving speed-up is
-σ 0.4 alone** — the one-knob adoption check is live on the first node
-(verdict ≈ 12:20 UTC). Packed, registry row written, scratch pruned,
-2026-10-16 ~06:40 UTC. Second node's card 0 idle.
+**σ adoption check `spin_hold_L128_ml3_ve050a_sig04_t100` DIED t = 46.47
+(NaN in post_timestep), ~08:10 UTC 10-16 — σ 0.4 FAILS on L128 spin data
+even at dt 0.02. The speed-up program on the L128 spin holds is CLOSED:
+production stays σ 0.1 + dt 0.02.** One knob vs B1 (σ 0.1 → 0.4, dt
+kept): χ_min followed B1's 1.5e-6 track to t ≈ 15, decayed and hit the
+1e-8 floor at t = 22.34 — within 0.05 units of the dt 0.035 arm (22.3)
+and ~2 of dt 0.05 (~20). The floor-hit time is set by σ, not dt: the
+stronger filter itself kills the far-side puncture sector (B1 at σ 0.1
+holds 1.5e-6 to t = 100); the L64 static-ladder pass and the σ-kick
+head-to-head (static data) do not transfer. Runs on the min_chi 1e-4
+rescue floor are unaffected so far (the 0.9c hold below: χ_min rising,
+2.9e-4 at t = 33). max|K| 0.44 → 52.6 in the final steps. Packed,
+registry + trust rows written, scratch pruned, 2026-10-16 ~08:45 UTC.
+First node's card 0 idle; nothing launches without the go.
+
+**Prior rung for the record: `spin_hold_L128_ml3_ve050a_sig04_dt0035_t060`
+FAILED the discriminator** — stopped by hand at t = 26.4, ~06:30 UTC
+10-16; χ_min floored at t = 22.3, max|K| runaway 3e-3 → 9e-2 over
+t = 20–26. Packed, registry row written, scratch pruned, ~06:40 UTC.
 
 | **L64 long-run test** `spin_hold_L64_ml3_ve050a_spdrv1_t150` (`drainhole/07_sponge_fix/`; the packed L64 0.5c hold rerun with the damping sponge, stop_time 150 — does L64+drive stay clean past its old t = 64 window and the t ≈ 128 crossing? σ 0.1 kept for direct comparison to the parent through t = 100; psi4 R = 14 is the trusted sphere (R = 30 sits in the drive shell); per-level norms on; no checkpoints; spdrv binary; first attempt REFUSED — the packed params' scrubbed relative table path; absolute path fixed in the template) | first GPU node, card 1 | launched 05:10 UTC 10-16, t = 0 byte-identical to the parent (Ham 2.1412059709e-03) | 150 | ~17.8 t/h | t = 150 ≈ 13:40 UTC 10-16 |
-| **σ adoption check** `spin_hold_L128_ml3_ve050a_sig04_t100` (`drainhole/06_dt_ladder/`; ONE knob vs B1: σ 0.1 → 0.4, dt 0.02 kept — does the filter keep τ and the −1 % at t = 71 (modulo the ~4-unit σ kick) while erasing B1's t = 78.8 Ham knee? t = 0 byte-identical to B1; no checkpoints; levnorm binary) | first GPU node, card 0 | launched ≈ 05:1x UTC 10-16 | 100 | ~14 t/h | t = 100 ≈ 12:20 UTC 10-16 |
+| **0.9c fast-end hold** `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` (`drainhole/04_fast_spin_hold/`; family (a) at v_e 0.90, the ve070a-minchi4 L64 grid with the three knobs together — min_chi 1e-4 rescue floor, σ 0.4, damping sponge drive 1.0; ψ4 R = 14 is the trusted sphere; no checkpoints; χ_min lifts off the floor and rises, 2.9e-4 at t = 33, max|K| 1.8e-2) | second GPU node | launched ≈ 06:36 UTC 10-16, t = 33.2 at 08:30 UTC | 150 | ~17.6 t/h | t = 150 ≈ 15:10 UTC 10-16 |
 **Speed-recipe test `spin_hold_L128_ml3_ve050a_sig04_dt005_t100` DIED
 t = 47.85 (NaN in K, level 3) — the 2.5× package is DEAD on production spin
 data.** It tracked B1 to t ≈ 20, then χ_min crashed to the 1e-8 floor (B1
