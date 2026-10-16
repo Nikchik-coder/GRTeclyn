@@ -251,48 +251,35 @@ the preflight's frame 0 and the slice cache cover ±64 at one pixel per finest c
 
 ## QUEUED
 
-**Kick (perturbed-stability) study — planned 2026-10-16, launches later on the go.**
-As in Evstafyeva–Siemonsen–East (arXiv 2508.11527: ultracompact spinning boson
-stars show no instability to tμ ~ 1e4 under truncation-error AND imposed
-perturbations): our fast-end holds are so far stable only against truncation
-error, so rerun the stable 0.9c (and 0.7c) with the Gaussian scalar seed at 2–3
-amplitudes (`spinning_seed_amplitude/width/radius`, currently 0 in every hold),
-applied constraint-compatibly as in the merger paper's kick. Fast-end recipe
-(σ 0.4, min_chi 1e-4, dt 0.02, drive 1.0), stop 150. Discriminators: ring-down
-back to the hold vs triggered collapse/migration; the ψ4 response at R 14/18.
+Current queue (2026-10-16 ~19:45 MSK; the PAPER RUN MATRIX above is the
+authority — this is the launch order on freed slots). Every launch waits for
+its go; no queued run writes or needs checkpoints.
 
-**Convergence policy (2026-10-16, revised same day): ONE Richardson triplet,
-ON THE PRODUCTION BOX.** The triplet moves to L = 64 at the J = 1 rung with the
-production slow-end recipe (σ 0.1, 1e-8, drive 1.0, dt 0.02, stop 85):
-**N 96 / 128 / 192** — the same dx₀ ladder (0.667/0.5/0.333) the L128 plan
-used, with production N 128 as the middle member (~1.6 + 5 + 24 h, one card).
-The finished L128 N 256 run keeps its two roles — the O(J²) model check and
-the box-independence cross-check (milestones match L64 to 0.05 u) — but is no
-longer the formal triplet; **the L128 N 192 rerun and the N 384 member
-(155 GB, MPI over both cards) are DROPPED.** Fast-end: a FULL second triplet at 0.9c, N 96/128/192 on the fast recipe to
-t ≈ 100 (~2.7 + 29 h; the N 128 member is the paper 0.9c run itself), so the
-σ 0.4 + clamp recipe carries its own convergence order rather than borrowing
-the slow triplet's. Every other run: production N 128 with its regime's
-triplet error bar.
+| next free slot | run | needs |
+|---|---|---|
+| node 1 gpu 0 or 1, after the J=1 members / N 192 | 0.9c fast triplet N 192 (~23 h, ~67 GB) | template: paper 0.9c params, N → 192, stop 100 |
+| node 2, after 0.7c + 0.99c (~ 10:30 MSK) | kick 0.9c A1, then A2 (×10) | kick templates: seed amplitude A1 = merger seed scale |
+| node 1 gpu 1, after fast N 192 | kick 0.7c A1 | same template, ve070 background |
+| anywhere, only if the 0.99c curve wants it | 0.95c stretch | background fam_a_ve095 |
 
-**LAUNCH FREEZE (2026-10-15, ~12:00 UTC): no new run starts until the
-slow-interface-mode / sigma question on the second node is settled** (the
-σ = 0.4 + dt 0.02 head-to-head vs the σ = 0.1 control, verdict expected
-tomorrow morning). The triplet members would otherwise bake today's σ = 0.1
-into the production curve while the fix is being measured. Cards freed by
-finishing runs (B1 ≈ 12:15 UTC, the ve070a rescue probe ≈ 13:20 UTC) stay
-idle; systematics passes still run.
+**Kick (perturbed-stability) study — planned 2026-10-16.** As in
+Evstafyeva–Siemonsen–East (arXiv 2508.11527): the fast-end holds are so far
+stable only against truncation error, so rerun the stable 0.9c (A1 and ×10)
+and 0.7c (A1) with the Gaussian scalar seed (`spinning_seed_amplitude/width/
+radius`, constraint-compatible as in the merger paper's kick), fast recipe,
+stop 150. Discriminators: ring-down back to the hold vs triggered collapse;
+ψ4 response at R 14/18.
 
-**FIRST AFTER THE FREEZE (decided 2026-10-15): the v_e ≈ 0.2 verification
-triplet** (`spin_hold_L128_ml3_J100_full_*`, the J = 1 exact point) — before
-any other ladder rung, because it is the one rung the published O(J²) rate can
-check: if the nonlinear τ there does not meet the perturbative prediction,
-the model is wrong and the fast rungs are worthless. The B1 rung's N 192/384
-members and everything faster run only after this rung passes. Order within
-the rung: N 256 (production grid, ~7 h) first, then N 192 (~2.2 h), N 384
-last (needs the junk-shell templates). All start from t = 0 — no queued run
-restarts from any checkpoint. Launches still wait on the σ verdict, the go,
-and the per-member checkpoint answer.
+**Convergence: two triplets on the L64 production box** (policy 2026-10-16;
+both LIVE or done — see the matrix): slow at the J = 1 rung (N 96/128/192,
+licenses the fast rungs via the published O(J²) rate), fast at 0.9c
+(N 96/128/192, the paper 0.9c run is the middle member). The L128 N 256 run
+keeps the model-check and box-independence roles; the L128 N 192 rerun and the
+155 GB N 384 are DROPPED.
+
+Everything below this line is the 10-13/10-15 planning record (launch freeze,
+L128-box policy, L128 triplet ladders) — SUPERSEDED by the two-regime L64
+recipe and the matrix above; kept for the paper trail only.
 
 **SCOPE (decided 2026-10-15, supersedes the 10-13 order): the paper is the
 drainhole's.** Campaign A (the symmetric family (b) evolutions A2–A4) is
