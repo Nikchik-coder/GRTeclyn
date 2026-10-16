@@ -21,6 +21,34 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## LIVE
 
+| **σ adoption check** `spin_hold_L128_ml3_ve050a_sig04_t100` (`drainhole/06_dt_ladder/`; ONE knob vs B1: σ 0.1 → 0.4, dt 0.02 kept — does the filter keep τ and the −1 % at t = 71 (modulo the ~4-unit σ kick) while erasing B1's t = 78.8 Ham knee? t = 0 byte-identical to B1; no checkpoints; levnorm binary) | first GPU node, card 0 | launched ≈ 05:1x UTC 10-16 | 100 | ~14 t/h | t = 100 ≈ 12:20 UTC 10-16 |
+**Speed-recipe test `spin_hold_L128_ml3_ve050a_sig04_dt005_t100` DIED
+t = 47.85 (NaN in K, level 3) — the 2.5× package is DEAD on production spin
+data.** It tracked B1 to t ≈ 20, then χ_min crashed to the 1e-8 floor (B1
+holds 1.5e-6 throughout) and max|K| jumped 40×; K runaway at the end. With
+the L64 static ladder clean at dt 0.05 + σ 0.3–0.4, this isolates dt as the
+killer on the L128 drainhole: **dt stays 0.02; the surviving speed-up is
+σ 0.4 alone** (the second node's head-to-head: constraints 400–40,000×
+below control at t = 100, a ~4-unit σ kick to collapse times). Owed before
+adoption: the one-knob σ 0.4 + dt 0.02 check on L128 spin data. Packed,
+registry row written, scratch pruned, 2026-10-16 ~04:55 UTC.
+
+**Sponge-fix arm `static_hold_L64_ml3_spdrv1_t100` REACHED t = 100, 0 NaN —
+the damping sponge WORKS as an absorber, and FALSIFIES the echo story.**
+One knob (drive A = 1) vs the packed static hold: throat identical to
+4 digits, global Ham/Mom identical, the 12–16 ring |K| identical at every
+time — while |K| falls TWO DECADES across the 24–32 shell (0.27 → 0.003 at
+t = 100), so the drive engages hard. Conclusion: the t ≈ 60+ growth that
+set every L64 t_max = 64 window is NOT a boundary echo (an echo crosses the
+shell twice, e⁻¹² with the drive) — it is the collapse itself radiating K
+outward (the horizon forms at t ≈ 61). For non-collapsing holds the box
+wall is therefore the true limit only where a run outlives the crossing
+time, and **the drive guarantees absorption there: adopt
+`sponge_drive_strength = 1.0` for any run intended past t ≈ L** (the L128
+t = 128+ holds the 0.5c/0.7c trends need). Packed, registry + trust rows
+written, scratch pruned, 2026-10-16 ~04:55 UTC. Both cards idle; nothing
+launches without the go.
+
 **Verification rung N 256 `spin_hold_L128_ml3_J100_full_t100` FINISHED
 ≈ 20:20 UTC 10-15: reached t = 100 clean, 0 NaN — THE MODEL CHECK PASSES.**
 τ(ΔR ∈ [0.01, 0.3]) = 6.78 vs the L64 acceptance run's 6.8 (static 5.8);
@@ -43,8 +71,6 @@ stays idle — the launch freeze above holds until the σ verdict.**
 
 | run | node/card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| **speed-recipe test** `spin_hold_L128_ml3_ve050a_sig04_dt005_t100` (`drainhole/06_dt_ladder/`; B1's N 256 production run rerun with σ 0.4 + dt_mult 0.05 as a package — the 2.5× candidate on production spin data; baseline spin_hold_L128_ml3_ve050a_t100, t = 0 byte-identical L2_Ham 4.9965560986e-04; no checkpoints, asked; levnorm binary) | first GPU node, card 0 | first launch 20:26 REFUSED by preflight (checkpoint_keep leftover vs output 0 — the documented contradiction); template cleaned, relaunched 20:57 UTC 10-15 | 100 | ~35 t/h (2.5× B1's 14) | t = 100 ≈ 23:50 UTC 10-15; diff vs B1: speed, the t = 78.8 Ham knee, the MOTS track (−1 % at t = 71 must reproduce) |
-| **sponge-fix arm** `static_hold_L64_ml3_spdrv1_t100` (`drainhole/07_sponge_fix/`; damping sponge, one knob vs the dt002ctl control: `sponge_drive_strength` 0 → 1 — rhs −= A·f(r)·(state − background) in the 24–32 shell, binary `main3d_spdrv_59345984`, commit 59345984; does it absorb the t ≈ 62 boundary return that ends every L64 trust window? t = 0 bit-identical to the packed static hold) | first GPU node, card 1 | launched ≈ 19:40 UTC 10-15 | 100 | ~18 t/h | return-window verdict ≈ 23:15 UTC; t = 100 ≈ 01:15 UTC 10-16 |
 **Verification rung N 192 STOPPED by hand ~19:50 UTC 10-15 at t = 1.6 on the no-launch order** (it had launched 19:30 under the earlier rung go, minutes before the freeze; clean while it ran). Its registry row records it; it reruns from t = 0 when the rung gets its go. Card 1 idle. Its 5.2 GB scratch dir awaits the prune word.
 
 **Rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` FINISHED ≈ 15:30 UTC

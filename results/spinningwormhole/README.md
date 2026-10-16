@@ -108,6 +108,21 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   detached horizon at t ≈ 64 (static ≈ 61), throat −44 % by t = 96,
   ridden cleanly to t = 100 (χ_min ~1e-3, puncture-style).  Trust window
   t ≤ 67.  The formal triplet awaits the N 192 rerun and N 384.
+- `06_dt_ladder/spin_hold_L128_ml3_ve050a_sig04_dt005_t100` (2026-10-16),
+  speed-recipe test: B1's production run with σ 0.4 + dt 0.05 as a
+  package.  DIED at t = 47.85 (NaN in K): χ_min crashed to the floor by
+  t ≈ 30 and max|K| ran away, where B1 held 1.5e-6 to t = 100.  dt 0.05
+  is unstable on L128 spin data even with σ 0.4; dt stays 0.02 and the
+  speed-up candidate is σ 0.4 alone.  Nothing from this run is quoted.
+- `07_sponge_fix/static_hold_L64_ml3_spdrv1_t100` (2026-10-16), damping
+  sponge test: the static hold with `sponge_drive_strength = 1` (drive
+  the 24–32 shell back to the stationary background).  Reached t = 100
+  clean; throat and all interior diagnostics identical to the packed
+  static hold to 4 digits while |K| falls two decades across the shell.
+  The unchanged interior ring shows the t ≈ 60+ growth is
+  collapse-sourced, not a boundary echo — the drive is adopted for runs
+  intended past the box-crossing time (t ≳ L), where it guarantees
+  absorption.
 - `05_hold_L128/ve050a/spin_hold_L128_ml3_ve050a_t100` (2026-10-15), Phase
   B1's N = 256 member: the drainhole at v_e 0.513 on the production L = 128
   box (the merger hold's layout, return t ≈ 120), to t = 100.  REACHED
