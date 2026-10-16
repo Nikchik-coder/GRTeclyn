@@ -187,6 +187,22 @@ the preflight's frame 0 and the slice cache cover ±64 at one pixel per finest c
 
 ## QUEUED
 
+**Kick (perturbed-stability) study — planned 2026-10-16, launches later on the go.**
+As in Evstafyeva–Siemonsen–East (arXiv 2508.11527: ultracompact spinning boson
+stars show no instability to tμ ~ 1e4 under truncation-error AND imposed
+perturbations): our fast-end holds are so far stable only against truncation
+error, so rerun the stable 0.9c (and 0.7c) with the Gaussian scalar seed at 2–3
+amplitudes (`spinning_seed_amplitude/width/radius`, currently 0 in every hold),
+applied constraint-compatibly as in the merger paper's kick. Fast-end recipe
+(σ 0.4, min_chi 1e-4, dt 0.02, drive 1.0), stop 150. Discriminators: ring-down
+back to the hold vs triggered collapse/migration; the ψ4 response at R 14/18.
+
+**Convergence policy (2026-10-16): ONE full Richardson triplet for the paper**
+— the 0.21c J = 1 validation rung (N 256 done and passing; N 192 rerun + N 384
+pending) — plus a two-point N 128/192 check at one fast rung (0.9c), because
+the clamp + σ 0.4 recipe differs there. Every other run: production N 128 with
+the triplet's error bar.
+
 **LAUNCH FREEZE (2026-10-15, ~12:00 UTC): no new run starts until the
 slow-interface-mode / sigma question on the second node is settled** (the
 σ = 0.4 + dt 0.02 head-to-head vs the σ = 0.1 control, verdict expected
