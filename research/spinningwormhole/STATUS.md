@@ -21,7 +21,16 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## LIVE
 
-| speed rung 2 `spin_hold_L128_ml3_ve050a_sig04_dt0035_t060` (`drainhole/06_dt_ladder/`; one knob vs the dead sig04_dt005 run: dt 0.05 → 0.035; discriminator: χ_min stays on B1's 1.5e-6 track or crashes by t ≈ 25) | second GPU node, card 0 | launched 05:11 UTC 10-16 (first attempt preflight-refused: pack-scrubbed table path; fixed) | 60 | ~24 t/h (est., 1.75× B1) | ≈ 07:45 UTC 10-16 |
+**Speed rung 2 `spin_hold_L128_ml3_ve050a_sig04_dt0035_t060` FAILED the
+discriminator — stopped by hand at t = 26.4, ~06:30 UTC 10-16. An
+intermediate dt does NOT survive either:** χ_min followed B1's 1.5e-6
+track to t ≈ 15, decayed and hit the 1e-8 floor at t = 22.3 (dt 0.05:
+t ≈ 20 — the same puncture-sector crash, postponed only ~2 units);
+max|K| in runaway 3e-3 → 9e-2 over t = 20–26. **The dt ladder on L128
+spin data is closed: production dt stays 0.02; the surviving speed-up is
+σ 0.4 alone** — the one-knob adoption check is live on the first node
+(verdict ≈ 12:20 UTC). Packed, registry row written, scratch pruned,
+2026-10-16 ~06:40 UTC. Second node's card 0 idle.
 
 | **L64 long-run test** `spin_hold_L64_ml3_ve050a_spdrv1_t150` (`drainhole/07_sponge_fix/`; the packed L64 0.5c hold rerun with the damping sponge, stop_time 150 — does L64+drive stay clean past its old t = 64 window and the t ≈ 128 crossing? σ 0.1 kept for direct comparison to the parent through t = 100; psi4 R = 14 is the trusted sphere (R = 30 sits in the drive shell); per-level norms on; no checkpoints; spdrv binary; first attempt REFUSED — the packed params' scrubbed relative table path; absolute path fixed in the template) | first GPU node, card 1 | launched 05:10 UTC 10-16, t = 0 byte-identical to the parent (Ham 2.1412059709e-03) | 150 | ~17.8 t/h | t = 150 ≈ 13:40 UTC 10-16 |
 | **σ adoption check** `spin_hold_L128_ml3_ve050a_sig04_t100` (`drainhole/06_dt_ladder/`; ONE knob vs B1: σ 0.1 → 0.4, dt 0.02 kept — does the filter keep τ and the −1 % at t = 71 (modulo the ~4-unit σ kick) while erasing B1's t = 78.8 Ham knee? t = 0 byte-identical to B1; no checkpoints; levnorm binary) | first GPU node, card 0 | launched ≈ 05:1x UTC 10-16 | 100 | ~14 t/h | t = 100 ≈ 12:20 UTC 10-16 |
@@ -94,8 +103,10 @@ go. Verdicts and history: **SPEED-UP RESEARCH** below.
 
 ## SPEED-UP RESEARCH (dt × σ) — goes fully to the article
 
-**RESULT (study complete 2026-10-16).** Three verdicts, all in:
-1. **Production speed-up: sigma = 0.3, dt_multiplier = 0.05** — 2.5×
+**RESULT (study complete 2026-10-16; the L128 rungs decided it the same
+day).** Four verdicts:
+1. **L64-static speed-up (OVERRULED for production by verdict 4):
+   sigma = 0.3, dt_multiplier = 0.05** — 2.5×
    today's (0.1, 0.02) and cleaner than it (level-2 masked Ham at 0.3–0.5
    of the dt 0.02 control, falling; startup max|K| offset ×1.51 decays to
    ×1.11 by t = 45). **Sigma 0.3 is the floor**: the 0.2 rung FAILED —
@@ -112,6 +123,13 @@ go. Verdicts and history: **SPEED-UP RESEARCH** below.
 3. **Binary regression: the levnorm binary is bit-exact** — the dt 0.02
    control twins the packed Step 0 hold to all printed digits over the
    full t ≤ 100 record, same collapse milestone t = 61.97.
+4. **The fast dt DIES on production L128 spin data — production dt stays
+   0.02.** dt 0.05 + sigma 0.4 NaN'd at t = 47.85 (chi_min to the 1e-8
+   floor from t ≈ 20; B1 holds 1.5e-6 throughout); the in-between rung
+   dt 0.035 crashed the same way, floor at t = 22.3 — a puncture/gauge-
+   sector failure sigma cannot fix, distinct from the L64 interface
+   mode. **The adopted speed-up is verdict 2 alone: sigma 0.4 at
+   dt 0.02** (one-knob adoption check live on the first node).
 
 **The finding.** The dt ceiling was never hard CFL (local speeds ≤ 0.95;
 the KO+RK4 bound allows dt_mult ~0.23 at sigma 0.1) — it is a weak AMR
@@ -145,10 +163,18 @@ t = 10. Stronger KO kills it where it lives.
 - `dt002_sig04_t100`: the sigma-default / trust-window test PASSES —
   constraints 400–40,000× below control at t = 100; collapse ~4 units
   earlier (the sigma kick).
+- `sig04_dt005_t100` (L128 spin, first node): the 2.5× package on
+  production data DIED t = 47.85 — chi_min to the 1e-8 floor from
+  t ≈ 20, NaN in K level 3; a puncture-sector failure, not the
+  interface mode.
+- `sig04_dt0035_t060` (L128 spin): the in-between rung crashes the same
+  way — chi_min floored at t = 22.3, max|K| runaway; stopped at
+  t = 26.4. dt stays 0.02.
 
-**Owed before adoption** (proposed, awaiting the go; card 0 idle): one
-confirmation hold at (0.3, 0.05) to t = 100 on L64, and the same one-knob
-check on L128 before the triplets switch.
+**Owed before adoption**: the sigma 0.4 + dt 0.02 one-knob check on L128
+spin data — LIVE on the first node (card 0, t = 100 ≈ 12:20 UTC 10-16).
+The L64 confirmation hold at (0.3, 0.05) is moot for production (dt 0.02
+fixed by verdict 4); it stays available only as a numerics cross-check.
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
