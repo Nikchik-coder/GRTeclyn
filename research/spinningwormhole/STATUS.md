@@ -24,16 +24,19 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 Confirmed if the GPU 1 template run lands clean at t = 150 (≈ 19:00 UTC 10-16):
 - **Grid**: L = 64, N = 128 base, max_level 3 (dx 0.5 → 0.0625), sponge 24–32
 - **dt_multiplier = 0.02** (the ladder closed: 0.035 and 0.05 die on L128 spin data)
-- **σ = 0.1 at every spin** (σ 0.4 kills the spin far-side puncture at any dt)
-- **min_chi**: 1e-8 up to 0.5c; **1e-4 for the fast spinners** (0.7c+ — the far-side
-  rescue floor is the enabler there, proven on 0.7c to t = 100)
+- **TWO REGIMES (realised 2026-10-16 ~12:30 UTC), two recipes, both proven:**
+  - **≤ 0.5c (the collapse/shrink end): σ 0.1, min_chi 1e-8, stop 85.** Everything
+    that collapses does so by t ≈ 64 (static 61, 0.21c 64; 0.5c never collapses,
+    its shrink trend is measured inside t ≤ 78) — the σ 0.1 interface knee at
+    78–85 costs nothing here, and the throat stays unclamped for the quoted τ.
+  - **0.7c+ (the stability end): σ 0.4, min_chi 1e-4, stop 150.** The claim IS
+    long-time stability; σ 0.1 recipes NaN here, and floor + σ 0.4 holds the 0.9c
+    FLAT past t = 90 (Ham +2 %). σ 0.4 is safe because the floor forbids the χ
+    depth it kills.
 - **sponge_drive_strength = 1.0** (physics-neutral absorber; makes L64 viable past t ≈ 64)
-- **stop_time = 85** (decided 2026-10-16): the quotable window dies at the interface-mode
-  knee (~75–85, box-independent: B1 Ham ×2 at 78.8, the L64 parent at 84.5; the drive run
-  tracks the parent to 1 % through t = 72, so the growth is interior, not the echo) —
-  stop just past it, bracket the ×2 point for the trust row. **2–3 L64 runs per card**
-  (~25 GB each) is the campaign throughput. The ONE-RECIPE probe (σ 0.4 + min_chi 1e-4 +
-  dt 0.05, live) may replace this whole block — verdict ≈ 17:05 UTC 10-16.
+- **2–3 L64 runs per card** (~25 GB each) is the campaign throughput. The window-extension
+  probes for the slow end (σ 0.2, dt 0.05, ml4) are MOOT under the two-regime split; the
+  ONE-RECIPE probe stays only as the clamp-validation methods check (verdict ≈ 17:05 UTC).
 - **ψ4 radii 14, 18** (both outside the drive shell; 30 = in-shell reference only)
 - spdrv binary, full frame set, no checkpoints, consumer keep-last 3; movies and quotes
   cut at each run's trust window
