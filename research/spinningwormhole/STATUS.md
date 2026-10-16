@@ -97,8 +97,9 @@ Notes: every live run no-checkpoint, spdrv binary, full frames, keep-last 3.
 0.99c psi4 is 3-radius (14/18/30) from t = 22 only — the consumer was killed by a
 wrong-flag restart ~11:44 and hand-rebuilt ~11:50; earlier rows are 2-radius and
 the header names 2, so read `psi4_mode_l2_all/l2m0.dat` by row width. B1's final
-Chk10000 sits in its `nfs_chk/` (t = 100 restart point). The N 192 verification
-member stopped at t = 1.6 under the freeze and reruns from t = 0 on its go.
+Chk10000 sits in its `nfs_chk/` (t = 100 restart point). The L128 N 192/384
+verification members are DROPPED — the triplet moved to the L64 production
+box (convergence policy, QUEUED).
 
 ## SPEED-UP RESEARCH (dt × σ) — goes fully to the article
 
@@ -197,10 +198,17 @@ applied constraint-compatibly as in the merger paper's kick. Fast-end recipe
 (σ 0.4, min_chi 1e-4, dt 0.02, drive 1.0), stop 150. Discriminators: ring-down
 back to the hold vs triggered collapse/migration; the ψ4 response at R 14/18.
 
-**Convergence policy (2026-10-16): ONE full Richardson triplet for the paper**
-— the 0.21c J = 1 validation rung (N 256 done and passing; N 192 rerun + N 384
-pending) — plus a two-point N 128/192 check at one fast rung (0.9c), because
-the clamp + σ 0.4 recipe differs there. Every other run: production N 128 with
+**Convergence policy (2026-10-16, revised same day): ONE Richardson triplet,
+ON THE PRODUCTION BOX.** The triplet moves to L = 64 at the J = 1 rung with the
+production slow-end recipe (σ 0.1, 1e-8, drive 1.0, dt 0.02, stop 85):
+**N 96 / 128 / 192** — the same dx₀ ladder (0.667/0.5/0.333) the L128 plan
+used, with production N 128 as the middle member (~1.6 + 5 + 24 h, one card).
+The finished L128 N 256 run keeps its two roles — the O(J²) model check and
+the box-independence cross-check (milestones match L64 to 0.05 u) — but is no
+longer the formal triplet; **the L128 N 192 rerun and the N 384 member
+(155 GB, MPI over both cards) are DROPPED.** Fast-end pair: 0.9c L64
+N 128 vs 192, fast recipe, to t ≈ 100 (~29 h fine member), because the
+clamp + σ 0.4 recipe differs there. Every other run: production N 128 with
 the triplet's error bar.
 
 **LAUNCH FREEZE (2026-10-15, ~12:00 UTC): no new run starts until the
