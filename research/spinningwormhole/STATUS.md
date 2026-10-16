@@ -117,7 +117,7 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` | 0.5c | 64 | 0.2 | 0.02 | 1e-8 | 1.0 | stopped 23.9 (two-regime decision; chi already on the dt005 decay curve — sigma-driven, dt-independent) | 25 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100` | 0.5c | 64 | 0.2 | 0.05 | 1e-8 | 1.0 | stopped 44.5: slow puncture decay | 20 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | DIED 81.1 (NaN in K): dt 0.05 K instability delayed (0.1 at 64.5) not cured; clamp validated t ≤ 70 (ψ4 0.9 %, throat 0.3 % vs parent) | 70 |
-| `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | CLEAN t 150: Ham flat (1.07e-2 → 1.17e-2 over 60 → 150), no MOTS ever — the paper 0.9c run | 150 |
+| `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | CLEAN t 150: Ham flat (1.07e-2 → 1.17e-2 over 60 → 150); its all-nan MOTS rows were the finder's 400-step cap, not physics (the fast N 96 finds the throat surface, R 18.46, with 700–1200 steps; this run's plotfiles are gone) — the paper 0.9c run | 150 |
 | `spin_hold_L64_ml3_ve070a_spdrv1_sig04_t150` | 0.7c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; the paper 0.7c run (fast recipe, 0.9c params + background swap); horizon rows nan at t 16–25 (the throat's θ_in mean stays ~1e-5, its max flips sign at noise level and the strict finder dropped it); consumer restarted 21:13 MSK with `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500`, rows again from t 26 (R 6.8704) | tbd |
 | `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | stopped 50.4 (feasibility answered: Ham flat 3.94e-2, K flat, chi on the 1e-4 floor); paper 0.99c = σ 0.4 rerun | 50 |
 
@@ -139,7 +139,8 @@ What the ledger says, four lines:
 | 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 8.5 | 150 | 7.5 t/h shared (solo ~17.5 after 13:10) | ≈ 10-17 13:40 |
 
 0.9c `ve090a_spdrv1_sig04_t150` FINISHED CLEAN t = 150 ≈ 15:05: Ham flat
-(1.07e-2 → 1.17e-2 over t 60 → 150), max|K| flat 2.0e-2, no MOTS ever — the
+(1.07e-2 → 1.17e-2 over t 60 → 150), max|K| flat 2.0e-2 (its "no MOTS" was the finder's 400-step cap: the fast N 96
+finds the throat surface at R 18.46) — the
 stability claim delivered, trust full 150. Moved + packed `00_paper_runs/`;
 scratch pruned (7.1 GB). The paper 0.7c run launched ≈ 15:15 on its card from the
 0.9c params (background swap only, diff-proven).
