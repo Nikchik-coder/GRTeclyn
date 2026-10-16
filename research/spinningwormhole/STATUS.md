@@ -74,7 +74,7 @@ Schedule below from 18:30 MSK 10-16. Card 0/1 = 1st node; 2nd node has one card.
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2nd node after kick A1 (~8.5 h run) | – | – |
 | ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | card 1 after the 0.9c N 96 (~8.5 h run) | – | – |
 | ☐ | 0.95c stretch | fast | 150 | optional, only if the 0.99c curve wants the point | – | – |
-| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | LIVE card 0 solo, 32 t/h; stays `06_dt_ladder/` | ~0.8 h | ≈ 19:15 |
+| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | DIED 81.1 (NaN in K — the dt 0.05 instability, delayed 22 → 64 by σ0.4+floor); clamp validated in the clean window (ψ4@14 0.9 %, throat R 0.3 % vs parent); `06_dt_ladder/` | – | – |
 
 Campaign total ~34 h if the queue runs back-to-back. Kick templates
 (A1 = merger seed scale, A2 = ×10) still to be built; every launch waits
@@ -116,7 +116,7 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L64_ml3_ve050a_spdrv1_t150` | 0.5c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | DIED 130.0 (NaN h11): K > 0.1 at 110, lapse pinned 128 — slow recipe breaks long; paper 0.5c run, quotes t ≤ 80 | 80 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` | 0.5c | 64 | 0.2 | 0.02 | 1e-8 | 1.0 | stopped 23.9 (two-regime decision; chi already on the dt005 decay curve — sigma-driven, dt-independent) | 25 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100` | 0.5c | 64 | 0.2 | 0.05 | 1e-8 | 1.0 | stopped 44.5: slow puncture decay | 20 |
-| `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | LIVE; the ONE-RECIPE candidate | tbd |
+| `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | DIED 81.1 (NaN in K): dt 0.05 K instability delayed (0.1 at 64.5) not cured; clamp validated t ≤ 70 (ψ4 0.9 %, throat 0.3 % vs parent) | 70 |
 | `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | CLEAN t 150: Ham flat (1.07e-2 → 1.17e-2 over 60 → 150), no MOTS ever — the paper 0.9c run | 150 |
 | `spin_hold_L64_ml3_ve070a_spdrv1_sig04_t150` | 0.7c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; the paper 0.7c run (fast recipe, 0.9c params + background swap) | tbd |
 | `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | stopped 50.4 (feasibility answered: Ham flat 3.94e-2, K flat, chi on the 1e-4 floor); paper 0.99c = σ 0.4 rerun | 50 |
@@ -124,7 +124,7 @@ dropped campaign, postmortem at the bottom.
 What the ledger says, four lines:
 - sigma ≥ 0.2 kills the spin far-side puncture on the 1e-8 floor at any dt (0.4 by t ≈ 22, 0.2 slowly); the min_chi 1e-4 floor removes that failure mode.
 - sigma 0.1 caps every slow run at the interior interface knee, Ham ×2 at 78–85, box-independent; the drive does not cure it.
-- sigma 0.4 + floor 1e-4 holds the 0.9c flat past t = 90 — the ONE-RECIPE probe is testing that combo + dt 0.05 at 0.5c; pass = one recipe at every spin, stop 150, 2.5× faster.
+- ONE-RECIPE verdict (died 81.1): sigma 0.4 + floor 1e-4 do NOT cure the dt 0.05 K instability at 0.5c, only delay it (K > 0.1 at 64.5 vs 22). dt 0.02 everywhere; the two-regime recipe is final. The probe doubles as the clamp methods check: physics unchanged vs the unclamped parent in the clean window.
 - dt alone never killed a spin run; dt 0.05 needs sigma ≥ 0.3 (static) and the floor (spin).
 
 ## LIVE
@@ -132,7 +132,6 @@ What the ledger says, four lines:
 | run | node/card | t @ 18:25 MSK | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
 | triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | ~2 | 85 | 4.3 t/h measured | ≈ 10-17 13:45 |
-| ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 (solo from ~15:10) | 71.6 | 100 | ~32 t/h | ≈ 19:15 |
 | 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared 18:30) | 4.5 | 150 | ~9.5 t/h shared | ≈ 10-17 09:30 |
 | 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 0 (launched 18:30) | 150 | ~9.5 t/h shared | ≈ 10-17 10:30 |
 
