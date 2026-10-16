@@ -72,7 +72,7 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L128_ml3_ve050a_sig04_t100` | 0.5c | 128 | 0.4 | 0.02 | 1e-8 | – | DIED 46.47: sigma kills at ANY dt | 15 |
 | `spin_hold_L64_ml3_ve070a_minchi4_t100` | 0.7c | 64 | 0.1 | 0.02 | 1e-4 | – | RESCUE PASS, clean t 100, chi heals | 64 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_t150` | 0.5c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | LIVE; Ham ×2 at ≈ 83 (interior knee) | ≈83 |
-| `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` | 0.5c | 64 | 0.2 | 0.02 | 1e-8 | 1.0 | LIVE; puncture verdict in the t 25–40 window | tbd |
+| `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` | 0.5c | 64 | 0.2 | 0.02 | 1e-8 | 1.0 | stopped 23.9 (two-regime decision; chi already on the dt005 decay curve — sigma-driven, dt-independent) | 25 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100` | 0.5c | 64 | 0.2 | 0.05 | 1e-8 | 1.0 | stopped 44.5: slow puncture decay | 20 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | LIVE; the ONE-RECIPE candidate | tbd |
 | `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; Ham FLAT (+2 % at t 92) | tbd |
@@ -88,8 +88,7 @@ What the ledger says, four lines:
 
 | run | node/card | t @ 12:00 | stop | speed | ETA (UTC 10-16) |
 |---|---|---|---|---|---|
-| 0.5c drive `ve050a_spdrv1_t150` | 1st, card 1 | 95 | 150 | 7.9 t/h shared | ≈ 19:00 |
-| sigma 0.2 probe `..._sig02_t100` | 1st, card 1 | 20 | 100 | 7.8 t/h shared | verdict 12:45–14:30; t 100 ≈ 22:15 |
+| 0.5c drive `ve050a_spdrv1_t150` | 1st, card 1 (solo from 12:30) | 99.2 | 150 | ~17 t/h solo | ≈ 15:30 |
 | ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 | 1 | 100 | 19.5 t/h shared | gate t ≈ 48 ≈ 14:25; t 100 ≈ 17:05 |
 | 0.99c `ve099a_spdrv1_t150` | 1st, card 0 | 25 | 150 | ~9 t/h shared | ≈ 21:30 |
 | 0.9c `ve090a_spdrv1_sig04_t150` | 2nd node | 90 | 150 | 17.5 t/h | ≈ 15:00 |
