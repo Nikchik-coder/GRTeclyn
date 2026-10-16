@@ -21,7 +21,7 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## FINAL PAPER-RUN SETTINGS (decided 2026-10-16; template = the L64 0.5c drive run)
 
-Confirmed if the GPU 1 template run lands clean at t = 150 (≈ 13:40 UTC 10-16):
+Confirmed if the GPU 1 template run lands clean at t = 150 (≈ 19:00 UTC 10-16):
 - **Grid**: L = 64, N = 128 base, max_level 3 (dx 0.5 → 0.0625), sponge 24–32
 - **dt_multiplier = 0.02** (the ladder closed: 0.035 and 0.05 die on L128 spin data)
 - **σ = 0.1 at every spin** (σ 0.4 kills the spin far-side puncture at any dt)
@@ -32,119 +32,71 @@ Confirmed if the GPU 1 template run lands clean at t = 150 (≈ 13:40 UTC 10-16)
   knee (~75–85, box-independent: B1 Ham ×2 at 78.8, the L64 parent at 84.5; the drive run
   tracks the parent to 1 % through t = 72, so the growth is interior, not the echo) —
   stop just past it, bracket the ×2 point for the trust row. **2–3 L64 runs per card**
-  (~25 GB each) is the campaign throughput. A σ 0.2 probe (untested middle filter) may yet
-  move the knee — pending its go.
+  (~25 GB each) is the campaign throughput. The ONE-RECIPE probe (σ 0.4 + min_chi 1e-4 +
+  dt 0.05, live) may replace this whole block — verdict ≈ 17:05 UTC 10-16.
 - **ψ4 radii 14, 18** (both outside the drive shell; 30 = in-shell reference only)
 - spdrv binary, full frame set, no checkpoints, consumer keep-last 3; movies and quotes
   cut at each run's trust window
 - Stable (non-collapsing) spins radiate nothing (checked 0.5c/0.7c: ψ4 deviations at the
   noise floor, no R = 14 → 30 propagation); the two-radius check matters for collapsing arms
 
+## RUN LEDGER — every arm so far
+
+All N 128 base, max_level 3. drv = sponge_drive_strength. Outcomes frozen in
+`runs_registry.tsv` / `trust_windows.tsv`; family (b) (the ve0xxb probes) is the
+dropped campaign, postmortem at the bottom.
+
+| run | data | L | sigma | dt | floor | drv | outcome | trust |
+|---|---|---|---|---|---|---|---|---|
+| `static_hold_L64_ml3_t100` | static | 64 | 0.1 | 0.02 | 1e-8 | – | Step 0 anchor, clean t 100 | 64 |
+| `static_hold_L64_ml3_dt002ctl_t100` | static | 64 | 0.1 | 0.02 | 1e-8 | – | bit-exact twin of Step 0 | 100 |
+| `static_hold_L64_ml3_dt005_t070` | static | 64 | 0.1 | 0.05 | 1e-8 | – | interface mode ×61 by t 15; stopped 45 | – |
+| `static_hold_L64_ml3_dt0035_t070` | static | 64 | 0.1 | 0.035 | 1e-8 | – | same mode, later; stopped 62 | – |
+| `static_hold_L64_ml3_dt005_sig02_t045` | static | 64 | 0.2 | 0.05 | 1e-8 | – | FAIL: mode only postponed | – |
+| `static_hold_L64_ml3_dt005_sig03_t045` | static | 64 | 0.3 | 0.05 | 1e-8 | – | clean 45, gentlest working KO | – |
+| `static_hold_L64_ml3_dt005_sig04_t045` | static | 64 | 0.4 | 0.05 | 1e-8 | – | clean 45, mode killed | – |
+| `static_hold_L64_ml3_dt002_sig04_t100` | static | 64 | 0.4 | 0.02 | 1e-8 | – | constraints 400–40,000× below ctl; collapse 4 u early | 100 |
+| `static_hold_L64_ml3_spdrv1_t100` | static | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | drive is a clean absorber; echo story falsified | 64 |
+| `spin_hold_L64_ml3_J025_t100` | 0.1c | 64 | 0.1 | 0.02 | 1e-8 | – | clean t 100 | 64 |
+| `spin_hold_L64_ml3_J100_t100` | 0.21c | 64 | 0.1 | 0.02 | 1e-8 | – | collapse; tau 6.8 vs static 5.8 | 57 |
+| `spin_hold_L64_ml3_J100_full_t100` | 0.21c | 64 | 0.1 | 0.02 | 1e-8 | – | exact-data collapse; died 70.64 at its end | 64 |
+| `spin_hold_L64_ml3_ve050a_t100` | 0.5c | 64 | 0.1 | 0.02 | 1e-8 | – | clean t 100; Ham ×2 at 84.5 | 64 |
+| `spin_hold_L64_ml3_ve070a_t100` | 0.7c | 64 | 0.1 | 0.02 | 1e-8 | – | DIED 42.36, far-side puncture | 40 |
+| `spin_hold_L128_ml3_ve050a_t100` (B1) | 0.5c | 128 | 0.1 | 0.02 | 1e-8 | – | clean t 100; Ham ×2 at 78.8 | 78 |
+| `spin_hold_L128_ml3_J100_full_t100` (N 256) | 0.21c | 128 | 0.1 | 0.02 | 1e-8 | – | model check PASSES (tau 6.78 = L64's); GW burst 500× floor | 67 |
+| `spin_hold_L128_ml3_ve050a_sig04_dt005_t100` | 0.5c | 128 | 0.4 | 0.05 | 1e-8 | – | DIED 47.85, puncture floored from t 20 | 20 |
+| `spin_hold_L128_ml3_ve050a_sig04_dt0035_t060` | 0.5c | 128 | 0.4 | 0.035 | 1e-8 | – | floored 22.3; stopped 26.4 | – |
+| `spin_hold_L128_ml3_ve050a_sig04_t100` | 0.5c | 128 | 0.4 | 0.02 | 1e-8 | – | DIED 46.47: sigma kills at ANY dt | 15 |
+| `spin_hold_L64_ml3_ve070a_minchi4_t100` | 0.7c | 64 | 0.1 | 0.02 | 1e-4 | – | RESCUE PASS, clean t 100, chi heals | 64 |
+| `spin_hold_L64_ml3_ve050a_spdrv1_t150` | 0.5c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | LIVE; Ham ×2 at ≈ 83 (interior knee) | ≈83 |
+| `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` | 0.5c | 64 | 0.2 | 0.02 | 1e-8 | 1.0 | LIVE; puncture verdict in the t 25–40 window | tbd |
+| `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100` | 0.5c | 64 | 0.2 | 0.05 | 1e-8 | 1.0 | stopped 44.5: slow puncture decay | 20 |
+| `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | LIVE; the ONE-RECIPE candidate | tbd |
+| `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; Ham FLAT (+2 % at t 92) | tbd |
+| `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | LIVE; max-spin probe, t0 cleaner than 0.9c | tbd |
+
+What the ledger says, four lines:
+- sigma ≥ 0.2 kills the spin far-side puncture on the 1e-8 floor at any dt (0.4 by t ≈ 22, 0.2 slowly); the min_chi 1e-4 floor removes that failure mode.
+- sigma 0.1 caps every slow run at the interior interface knee, Ham ×2 at 78–85, box-independent; the drive does not cure it.
+- sigma 0.4 + floor 1e-4 holds the 0.9c flat past t = 90 — the ONE-RECIPE probe is testing that combo + dt 0.05 at 0.5c; pass = one recipe at every spin, stop 150, 2.5× faster.
+- dt alone never killed a spin run; dt 0.05 needs sigma ≥ 0.3 (static) and the floor (spin).
+
 ## LIVE
 
-**σ adoption check `spin_hold_L128_ml3_ve050a_sig04_t100` DIED t = 46.47
-(NaN in post_timestep), ~08:10 UTC 10-16 — σ 0.4 FAILS on L128 spin data
-even at dt 0.02. The speed-up program on the L128 spin holds is CLOSED:
-production stays σ 0.1 + dt 0.02.** One knob vs B1 (σ 0.1 → 0.4, dt
-kept): χ_min followed B1's 1.5e-6 track to t ≈ 15, decayed and hit the
-1e-8 floor at t = 22.34 — within 0.05 units of the dt 0.035 arm (22.3)
-and ~2 of dt 0.05 (~20). The floor-hit time is set by σ, not dt: the
-stronger filter itself kills the far-side puncture sector (B1 at σ 0.1
-holds 1.5e-6 to t = 100); the L64 static-ladder pass and the σ-kick
-head-to-head (static data) do not transfer. Runs on the min_chi 1e-4
-rescue floor are unaffected so far (the 0.9c hold below: χ_min rising,
-2.9e-4 at t = 33). max|K| 0.44 → 52.6 in the final steps. Packed,
-registry + trust rows written, scratch pruned, 2026-10-16 ~08:45 UTC.
-Both first-node cards now carry two runs each (~50 GB/card).
-
-**dt 0.05 + σ 0.2 probe `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100`
-STOPPED BY HAND t = 44.5 (no NaN), ~12:05 UTC 10-16 — FAILS the puncture
-discriminator.** χ_min on the healthy 1.5e-6 track to t ≈ 20, then monotone
-decay (4.9e-7 at t = 40, halving every ~5 units, floor extrapolates to
-t ≈ 65–70) while Ham/Mom still sat flat at baseline: the σ 0.4 death in slow
-motion — the filter kills the far-side puncture long before the constraints
-feel it. Matches the static ladder's dt005_sig02 floor rung and the L128
-dt005 σ04 death. dt 0.05 is dead at any production σ WITHOUT the rescue
-floor; whether σ 0.2 alone kills is the dt 0.02 arm's verdict (t = 25–40
-window ≈ 12:45–14:30 UTC). Packed, registry + trust rows written, scratch
-pruned ~12:05 UTC. Its card-0 slot went to the one-recipe probe below.
-
-**Prior rung for the record: `spin_hold_L128_ml3_ve050a_sig04_dt0035_t060`
-FAILED the discriminator** — stopped by hand at t = 26.4, ~06:30 UTC
-10-16; χ_min floored at t = 22.3, max|K| runaway 3e-3 → 9e-2 over
-t = 20–26. Packed, registry row written, scratch pruned, ~06:40 UTC.
-
-| **L64 long-run test** `spin_hold_L64_ml3_ve050a_spdrv1_t150` (`drainhole/07_sponge_fix/`; the packed L64 0.5c hold rerun with the damping sponge, stop_time 150 — does L64+drive stay clean past its old t = 64 window and the t ≈ 128 crossing? σ 0.1 kept for direct comparison to the parent through t = 100; psi4 R = 14 is the trusted sphere (R = 30 sits in the drive shell); per-level norms on; no checkpoints; spdrv binary; first attempt REFUSED — the packed params' scrubbed relative table path; absolute path fixed in the template) | first GPU node, card 1 | launched 05:10 UTC 10-16, t = 0 byte-identical to the parent (Ham 2.1412059709e-03); t = 76.0 at 09:32 | 150 | ~7.8 t/h shared (17.8 solo) | t = 150 ≈ 19:00 UTC 10-16 (recovers when the σ 0.2 probe ends) |
-| **σ 0.2 probe** `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` (`drainhole/06_dt_ladder/`; its go 2026-10-16 — the untested middle filter: does σ 0.2 spare the far-side puncture (0.4 kills it by t ≈ 22 at any dt) while slowing the interface-mode knee (Ham ×2 at 78–85 on every 0.5c hold at σ 0.1)? One knob vs the live σ 0.1 drive run, stop 100; second run on a shared card — both slow; no checkpoints; spdrv binary) | first GPU node, card 1 (shared with the t150 run) | launched ≈ 09:25 UTC 10-16, t = 0 byte-identical (Ham 2.1412059709e-03 — σ doesn't touch initial data); t = 1.0 at 09:32 | 100 | ~7.8 t/h shared | χ_min discriminator (t = 25) ≈ 12:45 UTC; t = 100 ≈ 22:15 UTC 10-16 |
-| **ONE-RECIPE probe** `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` (`drainhole/06_dt_ladder/`; its go 2026-10-16 — σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c: every pair is proven (floor+σ0.4 holds the 0.9c flat to t = 92; dt005+σ04 clean on static data; the dead L128 2.5× package ran on the 1e-8 floor). If it survives past t ≈ 48, holds Ham/Mom flat past 85 AND matches the parent's ψ4/exotic-matter numbers at close-out, the whole campaign unifies on this recipe at every spin — stop 150, no 85 cap, 2.5× faster. Also the revived slow-end floor-validation rung; no checkpoints; spdrv binary) | first GPU node, card 0 (shared with the 0.99c) | launched ≈ 11:57 UTC 10-16, t = 0 byte-identical (Ham 2.1412059709e-03) | 100 | ~19.5 t/h shared | survives-t≈48 gate ≈ 14:25 UTC; t = 100 ≈ 17:05 UTC 10-16 |
-| **Max-spin probe, 0.99c** `spin_hold_L64_ml3_ve099a_spdrv1_t150` (`drainhole/04_fast_spin_hold/`; its go 2026-10-16 — "what max c can we run": the top of the family-(a) catalogue, v_e 0.9899, J 16215, M_ADM 127.3, D 0.3396, areal R_e 254.7 at coordinate throat η ≈ 1.29; the final paper-run recipe — σ 0.1, dt 0.02, min_chi 1e-4, drive 1.0, stop 150; preflight t = 0 L2_Ham 1.47e-3, CLEANER than 0.9c's 6.3e-3 (the phantom shrinks toward extremality faster than the metric steepens); spdrv binary; no checkpoints. R = 18 APPENDED at t = 22: a wrong-flag-order restart_consumer call killed the consumer ~11:44, hand-rebuilt ~11:50 with --radii 14 18 30, no row gap — but psi4_mode_l2_all/l2m0 rows before t = 22 carry R = 14/30 only and the header still names 2 radii: read those files by row width) | first GPU node, card 0 (shared with the dt005 probe) | launched ≈ 09:16 UTC 10-16, t = 0 Ham matches preflight; t = 5.1 at 09:32, χ_min ON the 1e-4 floor (engaged as designed, the 0.9c's pattern) | 150 | 17.3 t/h solo, ~9 t/h shared | t = 150 ≈ 21:30 UTC 10-16 (shares card 0 with the one-recipe probe until ≈ 17:05) |
-| **0.9c fast-end hold** `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` (`drainhole/04_fast_spin_hold/`; family (a) at v_e 0.90, the ve070a-minchi4 L64 grid with the three knobs together — min_chi 1e-4 rescue floor, σ 0.4, damping sponge drive 1.0; ψ4 R = 14 is the trusted sphere; no checkpoints; χ_min lifts off the floor and rises, 2.9e-4 at t = 33, max|K| 1.8e-2) | second GPU node | launched ≈ 06:36 UTC 10-16, t = 33.2 at 08:30 UTC | 150 | ~17.6 t/h | t = 150 ≈ 15:10 UTC 10-16 |
-**Speed-recipe test `spin_hold_L128_ml3_ve050a_sig04_dt005_t100` DIED
-t = 47.85 (NaN in K, level 3) — the 2.5× package is DEAD on production spin
-data.** It tracked B1 to t ≈ 20, then χ_min crashed to the 1e-8 floor (B1
-holds 1.5e-6 throughout) and max|K| jumped 40×; K runaway at the end. With
-the L64 static ladder clean at dt 0.05 + σ 0.3–0.4, this isolates dt as the
-killer on the L128 drainhole: **dt stays 0.02; the surviving speed-up is
-σ 0.4 alone** (the second node's head-to-head: constraints 400–40,000×
-below control at t = 100, a ~4-unit σ kick to collapse times). Owed before
-adoption: the one-knob σ 0.4 + dt 0.02 check on L128 spin data. Packed,
-registry row written, scratch pruned, 2026-10-16 ~04:55 UTC.
-
-**Sponge-fix arm `static_hold_L64_ml3_spdrv1_t100` REACHED t = 100, 0 NaN —
-the damping sponge WORKS as an absorber, and FALSIFIES the echo story.**
-One knob (drive A = 1) vs the packed static hold: throat identical to
-4 digits, global Ham/Mom identical, the 12–16 ring |K| identical at every
-time — while |K| falls TWO DECADES across the 24–32 shell (0.27 → 0.003 at
-t = 100), so the drive engages hard. Conclusion: the t ≈ 60+ growth that
-set every L64 t_max = 64 window is NOT a boundary echo (an echo crosses the
-shell twice, e⁻¹² with the drive) — it is the collapse itself radiating K
-outward (the horizon forms at t ≈ 61). For non-collapsing holds the box
-wall is therefore the true limit only where a run outlives the crossing
-time, and **the drive guarantees absorption there: adopt
-`sponge_drive_strength = 1.0` for any run intended past t ≈ L** (the L128
-t = 128+ holds the 0.5c/0.7c trends need). Packed, registry + trust rows
-written, scratch pruned, 2026-10-16 ~04:55 UTC. Both cards idle; nothing
-launches without the go.
-
-**Verification rung N 256 `spin_hold_L128_ml3_J100_full_t100` FINISHED
-≈ 20:20 UTC 10-15: reached t = 100 clean, 0 NaN — THE MODEL CHECK PASSES.**
-τ(ΔR ∈ [0.01, 0.3]) = 6.78 vs the L64 acceptance run's 6.8 (static 5.8);
-milestones −1 % / −10 % at t = 46.85 / 61.82 vs L64's 46.9 / 61.8 — box-
-and resolution-independent to 0.05 time units. Full collapse with a
-detached horizon at t ≈ 64 (static ≈ 61), throat −44 % by t = 96, ridden
-cleanly to t = 100. Trust window t ≤ 67 (Ham ×2 at 67.1; the τ window and
-the detachment inside). Registry + trust row written; pack + movies follow
-the consumer drain. The formal triplet still needs the N 192 rerun and
-N 384 — both behind the freeze.
-
-**B1 `spin_hold_L128_ml3_ve050a_t100` FINISHED ≈ 12:15 UTC 10-15: reached
-t = 100 clean, 0 NaN** — packed, registry + README + trust window (t ≤ 78)
-done, movies rendering. MOTS R −1 % at t = 71 (static twin: t = 44), −3.14 %
-at t = 100, no horizon; L2_Ham ×2 off plateau at t = 78.8 (the slow level-2
-interface mode), far-side χ on the 1e-8 floor from t = 91.9. Final Chk10000
-copied to the run's `nfs_chk/` (a t = 100 restart point if the hold is ever
-extended toward the t ≈ 120 return); scratch pruned. **Card 0 is free and
-stays idle — the launch freeze above holds until the σ verdict.**
-
-| run | node/card | t | stop | speed | ETA |
+| run | node/card | t @ 12:00 | stop | speed | ETA (UTC 10-16) |
 |---|---|---|---|---|---|
-**Verification rung N 192 STOPPED by hand ~19:50 UTC 10-15 at t = 1.6 on the no-launch order** (it had launched 19:30 under the earlier rung go, minutes before the freeze; clean while it ran). Its registry row records it; it reruns from t = 0 when the rung gets its go. Card 1 idle. Its 5.2 GB scratch dir awaits the prune word.
+| 0.5c drive `ve050a_spdrv1_t150` | 1st, card 1 | 95 | 150 | 7.9 t/h shared | ≈ 19:00 |
+| sigma 0.2 probe `..._sig02_t100` | 1st, card 1 | 20 | 100 | 7.8 t/h shared | verdict 12:45–14:30; t 100 ≈ 22:15 |
+| ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 | 1 | 100 | 19.5 t/h shared | gate t ≈ 48 ≈ 14:25; t 100 ≈ 17:05 |
+| 0.99c `ve099a_spdrv1_t150` | 1st, card 0 | 25 | 150 | ~9 t/h shared | ≈ 21:30 |
+| 0.9c `ve090a_spdrv1_sig04_t150` | 2nd node | 90 | 150 | 17.5 t/h | ≈ 15:00 |
 
-**Rescue probe `spin_hold_L64_ml3_ve070a_minchi4_t100` FINISHED ≈ 15:30 UTC
-10-15: RESCUE PASS — reached t = 100, 0 NaN** (the parent died t = 42.36).
-One knob, min_chi 1e-8 → 1e-4: the floor is pinned only t = 0–3.17, then
-χ_min lifts off and rises to 1.0e-3 by the end — the far side heals, not
-just clamps. L2_Ham flat at 3.4e-3 the whole run (never ×2); throat frozen,
-R_eq −0.016 % over t = 0–100 (0.5c shrinks −2.9 % on this grid — the
-slowdown trend continues to 0.7c, below detection). Trust window t ≤ 64
-(L64 boundary return). Packed, registry + README + trust row written,
-scratch pruned (~19 GB). **B2 (v_e 0.7, L = 128 ×3) is unblocked at the
-data level — min_chi 1e-4 goes into its templates; launches stay frozen.**
-**The dt × σ study FINISHED overnight 10-15→10-16** (all three arms clean,
-0 NaN, packed, scratch empty; close-out 04:55 UTC 10-16). Second node's
-card 0 is idle; the two adoption runs (confirmation hold at (0.3, 0.05) to
-t = 100 on L64, and the L128 one-knob check) are proposed and await the
-go. Verdicts and history: **SPEED-UP RESEARCH** below.
+Notes: every live run no-checkpoint, spdrv binary, full frames, keep-last 3.
+0.99c psi4 is 3-radius (14/18/30) from t = 22 only — the consumer was killed by a
+wrong-flag restart ~11:44 and hand-rebuilt ~11:50; earlier rows are 2-radius and
+the header names 2, so read `psi4_mode_l2_all/l2m0.dat` by row width. B1's final
+Chk10000 sits in its `nfs_chk/` (t = 100 restart point). The N 192 verification
+member stopped at t = 1.6 under the freeze and reruns from t = 0 on its go.
 
 ## SPEED-UP RESEARCH (dt × σ) — goes fully to the article
 
@@ -189,37 +141,13 @@ ladder, not a threshold: e-fold ~0.8 at dt_mult 0.1, breakout t ≈ 28–30 at
 volume dominates); the per-level masked norms (debt item 2) flag it by
 t = 10. Stronger KO kills it where it lives.
 
-**History, one line per arm** (all on the L64 static hold, levnorm binary
-`main3d_levnorm_73793542`, packed in `drainhole/06_dt_ladder/`):
-- Merger-era evidence: dt_mult 0.1 NaN at t = 16; 0.05 drifted after
-  t ≈ 30; 0.02 clean to 100 — cause unknown, every hold paid ~7 h.
-- `dt005_t070`: localized the mode (level-2 Ham ×61 at t = 15, max|K|
-  1.37 at t = 40); stopped by plan at t = 45.
-- `dt0035_t070`: unstable too, later (left the reference t ≈ 43, ×41 by
-  t = 55); stopped by hand at t = 62.
-- `dt002ctl_t100`: bit-exact vs the packed Step 0 hold (binary regression
-  clean); carries the slow mode itself (level-2 e-fold ~9).
-- `dt005_sig04_t045`: sigma 0.4 kills the checkerboard at the bad dt;
-  clean to 45, offset ×1.68 → ×1.07.
-- `dt005_sig03_t045`: clean to 45 and cleaner than 0.4 — level-2 at
-  0.3–0.5 of control; the gentlest working KO so far.
-- `dt005_sig02_t045`: the floor rung FAILS — 0.2 only postpones breakout;
-  the floor is 0.3.
-- `dt002_sig04_t100`: the sigma-default / trust-window test PASSES —
-  constraints 400–40,000× below control at t = 100; collapse ~4 units
-  earlier (the sigma kick).
-- `sig04_dt005_t100` (L128 spin, first node): the 2.5× package on
-  production data DIED t = 47.85 — chi_min to the 1e-8 floor from
-  t ≈ 20, NaN in K level 3; a puncture-sector failure, not the
-  interface mode.
-- `sig04_dt0035_t060` (L128 spin): the in-between rung crashes the same
-  way — chi_min floored at t = 22.3, max|K| runaway; stopped at
-  t = 26.4. dt stays 0.02.
+**History**: one row per arm in the RUN LEDGER above; packed in
+`drainhole/06_dt_ladder/`.
 
-**Owed before adoption**: the sigma 0.4 + dt 0.02 one-knob check on L128
-spin data — LIVE on the first node (card 0, t = 100 ≈ 12:20 UTC 10-16).
-The L64 confirmation hold at (0.3, 0.05) is moot for production (dt 0.02
-fixed by verdict 4); it stays available only as a numerics cross-check.
+**Adoption state (2026-10-16)**: the one-knob sigma 0.4 + dt 0.02 check on L128
+spin data DIED t = 46.47 — verdict 2 does NOT transfer to spin data on the 1e-8
+floor. The surviving path is sigma 0.4 + min_chi 1e-4 (+ dt 0.05): the
+ONE-RECIPE probe.
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both
