@@ -60,9 +60,9 @@ Schedule below from 19:36 MSK 10-16 (speeds measured then). Card 0/1 = 1st node;
 
 | ✓ | run | recipe | stop | node | gpu | where / when | ends in | ETA (MSK) |
 |---|---|---|---|---|---|---|---|---|
-| ☑ | 0c static anchor | slow | 85 | 1 | – | DONE, `00_paper_runs/` | – | – |
-| ☑ | 0.5c | slow | 85 | 1 | 1 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | – | – |
-| ☑ | 0.9c | fast | 150 | 2 | 0 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | – | – |
+| ☑ | 0c static anchor | slow | 85 | 1 | – | DONE, `00_paper_runs/` | finished | finished |
+| ☑ | 0.5c | slow | 85 | 1 | 1 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | finished | finished |
+| ☑ | 0.9c | fast | 150 | 2 | 0 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | finished | finished |
 | ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, solo 4.3 t/h | ~18 h | ≈ 10-17 13:45 |
 | ☐ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | LIVE since 18:52, 3-way 6.3 t/h → 2-way ~9 → solo ~17.6 | ~9.5 h | ≈ 10-17 05:10 |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | LIVE since 18:53, 3-way 10.9 t/h; frames χ ×2 = slicer artifact on this grid, data clean (t0 Ham family converges) | ~7 h | ≈ 10-17 02:25 |
@@ -74,7 +74,7 @@ Schedule below from 19:36 MSK 10-16 (speeds measured then). Card 0/1 = 1st node;
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
 | ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | 1 | 1 | after the 0.9c N 96 (~8.5 h run) | – | – |
 | ☐ | 0.95c stretch | fast | 150 | – | – | optional, only if the 0.99c curve wants the point | – | – |
-| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | 1 | 0 | DIED 81.1 (NaN in K — the dt 0.05 instability, delayed 22 → 64 by σ0.4+floor); clamp validated in the clean window (ψ4@14 0.9 %, throat R 0.3 % vs parent); `06_dt_ladder/` | – | – |
+| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | 1 | 0 | DIED 81.1 (NaN in K — the dt 0.05 instability, delayed 22 → 64 by σ0.4+floor); clamp validated in the clean window (ψ4@14 0.9 %, throat R 0.3 % vs parent); `06_dt_ladder/` | finished | finished |
 
 Campaign total ~34 h if the queue runs back-to-back. Kick templates
 (A1 = merger seed scale, A2 = ×10) still to be built; every launch waits
