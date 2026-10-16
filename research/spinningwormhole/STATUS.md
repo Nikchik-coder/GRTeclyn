@@ -28,8 +28,13 @@ Confirmed if the GPU 1 template run lands clean at t = 150 (≈ 13:40 UTC 10-16)
 - **min_chi**: 1e-8 up to 0.5c; **1e-4 for the fast spinners** (0.7c+ — the far-side
   rescue floor is the enabler there, proven on 0.7c to t = 100)
 - **sponge_drive_strength = 1.0** (physics-neutral absorber; makes L64 viable past t ≈ 64)
-- **stop_time = 150**, **ψ4 radii 14, 18** (both outside the drive shell; 30 = in-shell
-  reference only)
+- **stop_time = 85** (decided 2026-10-16): the quotable window dies at the interface-mode
+  knee (~75–85, box-independent: B1 Ham ×2 at 78.8, the L64 parent at 84.5; the drive run
+  tracks the parent to 1 % through t = 72, so the growth is interior, not the echo) —
+  stop just past it, bracket the ×2 point for the trust row. **2–3 L64 runs per card**
+  (~25 GB each) is the campaign throughput. A σ 0.2 probe (untested middle filter) may yet
+  move the knee — pending its go.
+- **ψ4 radii 14, 18** (both outside the drive shell; 30 = in-shell reference only)
 - spdrv binary, full frame set, no checkpoints, consumer keep-last 3; movies and quotes
   cut at each run's trust window
 - Stable (non-collapsing) spins radiate nothing (checked 0.5c/0.7c: ψ4 deviations at the
@@ -58,6 +63,7 @@ FAILED the discriminator** — stopped by hand at t = 26.4, ~06:30 UTC
 t = 20–26. Packed, registry row written, scratch pruned, ~06:40 UTC.
 
 | **L64 long-run test** `spin_hold_L64_ml3_ve050a_spdrv1_t150` (`drainhole/07_sponge_fix/`; the packed L64 0.5c hold rerun with the damping sponge, stop_time 150 — does L64+drive stay clean past its old t = 64 window and the t ≈ 128 crossing? σ 0.1 kept for direct comparison to the parent through t = 100; psi4 R = 14 is the trusted sphere (R = 30 sits in the drive shell); per-level norms on; no checkpoints; spdrv binary; first attempt REFUSED — the packed params' scrubbed relative table path; absolute path fixed in the template) | first GPU node, card 1 | launched 05:10 UTC 10-16, t = 0 byte-identical to the parent (Ham 2.1412059709e-03) | 150 | ~17.8 t/h | t = 150 ≈ 13:40 UTC 10-16 |
+| **σ 0.2 probe** `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` (`drainhole/06_dt_ladder/`; its go 2026-10-16 — the untested middle filter: does σ 0.2 spare the far-side puncture (0.4 kills it by t ≈ 22 at any dt) while slowing the interface-mode knee (Ham ×2 at 78–85 on every 0.5c hold at σ 0.1)? One knob vs the live σ 0.1 drive run, stop 100; second run on a shared card — both slow; no checkpoints; spdrv binary) | first GPU node, card 1 (shared with the t150 run until ≈ 13:40) | launched ≈ 09:5x UTC 10-16 | 100 | shared-card speed TBD | ETA after first speed numbers |
 | **Max-spin probe, 0.99c** `spin_hold_L64_ml3_ve099a_spdrv1_t150` (`drainhole/04_fast_spin_hold/`; its go 2026-10-16 — "what max c can we run": the top of the family-(a) catalogue, v_e 0.9899, J 16215, M_ADM 127.3, D 0.3396, areal R_e 254.7 at coordinate throat η ≈ 1.29; the final paper-run recipe — σ 0.1, dt 0.02, min_chi 1e-4, drive 1.0, stop 150; preflight t = 0 L2_Ham 1.47e-3, CLEANER than 0.9c's 6.3e-3 (the phantom shrinks toward extremality faster than the metric steepens); spdrv binary; no checkpoints; R = 18 to be appended to the consumer once Plt00000 rotates) | first GPU node, card 0 | launched ≈ 09:20 UTC 10-16, t = 0 Ham matches preflight | 150 | — | first speed numbers pending |
 | **0.9c fast-end hold** `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` (`drainhole/04_fast_spin_hold/`; family (a) at v_e 0.90, the ve070a-minchi4 L64 grid with the three knobs together — min_chi 1e-4 rescue floor, σ 0.4, damping sponge drive 1.0; ψ4 R = 14 is the trusted sphere; no checkpoints; χ_min lifts off the floor and rises, 2.9e-4 at t = 33, max|K| 1.8e-2) | second GPU node | launched ≈ 06:36 UTC 10-16, t = 33.2 at 08:30 UTC | 150 | ~17.6 t/h | t = 150 ≈ 15:10 UTC 10-16 |
 **Speed-recipe test `spin_hold_L128_ml3_ve050a_sig04_dt005_t100` DIED
