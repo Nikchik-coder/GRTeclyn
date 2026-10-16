@@ -21,6 +21,7 @@ target folder, fg|bg) or `launch.sh --subdir <family>/<NN_study>[/<spin>]`; pack
 
 ## LIVE
 
+| **L64 long-run test** `spin_hold_L64_ml3_ve050a_spdrv1_t150` (`drainhole/07_sponge_fix/`; the packed L64 0.5c hold rerun with the damping sponge, stop_time 150 — does L64+drive stay clean past its old t = 64 window and the t ≈ 128 crossing? σ 0.1 kept for direct comparison to the parent through t = 100; psi4 R = 14 is the trusted sphere (R = 30 sits in the drive shell); per-level norms on; no checkpoints; spdrv binary) | first GPU node, card 1 | launched ≈ 05:5x UTC 10-16 | 150 | ~17.8 t/h | t = 150 ≈ 14:20 UTC 10-16 |
 | **σ adoption check** `spin_hold_L128_ml3_ve050a_sig04_t100` (`drainhole/06_dt_ladder/`; ONE knob vs B1: σ 0.1 → 0.4, dt 0.02 kept — does the filter keep τ and the −1 % at t = 71 (modulo the ~4-unit σ kick) while erasing B1's t = 78.8 Ham knee? t = 0 byte-identical to B1; no checkpoints; levnorm binary) | first GPU node, card 0 | launched ≈ 05:1x UTC 10-16 | 100 | ~14 t/h | t = 100 ≈ 12:20 UTC 10-16 |
 **Speed-recipe test `spin_hold_L128_ml3_ve050a_sig04_dt005_t100` DIED
 t = 47.85 (NaN in K, level 3) — the 2.5× package is DEAD on production spin
@@ -244,6 +245,19 @@ slowdown turns on); 0.5 is the production line; 0.7 and 0.9 (then
 Intermediate rungs (0.35, 0.6) only if the curve bends oddly between
 neighbours. ~25 GPU-h a triplet (junk-shell N 384) → ~100 GPU-h for the
 four new rungs, ~2–2.5 days on both cards.
+
+**FOR THE ARTICLE (noted 2026-10-16): the rotating collapse EMITS A REAL
+GRAVITATIONAL WAVE — the second headline observable.** At the outer
+extraction sphere (R = 30), the 0.21c collapse (`spin_hold_L128_ml3_
+J100_full_t100`) shows an l = 2, m = 0 burst of |ψ₄| = 3.0e-2 arriving at
+t = 81 — horizon formation (t ≈ 64) plus the light-travel time (~17). The
+static (spherical) collapse at the same radius reads 6.0e-5 — spherical
+collapse cannot radiate, so that is the numerical floor: **the spinning
+burst is 500× above it**, and 10⁴× above the run's own quiet-phase noise;
+B1 (0.5c, no collapse) stays quiet. The GW burst is measurable per ladder
+rung alongside τ (`psi4_mode_l2m0.dat` in every pack). Later: a few
+larger-box runs to show the burst is not near-zone extraction (R = 30 on
+L = 128 is base-grid; raise extraction_levels or the radius there).
 
 **FOR THE ARTICLE (noted 2026-10-15): the exotic-matter trend is the
 physics behind the ladder — don't forget the τ(v_e) vs D/M(v_e) figure.**
