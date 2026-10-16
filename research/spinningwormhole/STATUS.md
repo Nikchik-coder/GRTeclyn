@@ -111,7 +111,7 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100` | 0.5c | 64 | 0.2 | 0.05 | 1e-8 | 1.0 | stopped 44.5: slow puncture decay | 20 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | LIVE; the ONE-RECIPE candidate | tbd |
 | `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; Ham FLAT (+2 % at t 92) | tbd |
-| `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | LIVE; max-spin probe, t0 cleaner than 0.9c | tbd |
+| `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | stopped 50.4 (feasibility answered: Ham flat 3.94e-2, K flat, chi on the 1e-4 floor); paper 0.99c = σ 0.4 rerun | 50 |
 
 What the ledger says, four lines:
 - sigma ≥ 0.2 kills the spin far-side puncture on the 1e-8 floor at any dt (0.4 by t ≈ 22, 0.2 slowly); the min_chi 1e-4 floor removes that failure mode.
@@ -125,7 +125,6 @@ What the ledger says, four lines:
 |---|---|---|---|---|---|
 | triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | 0 (launched 14:58) | 85 | ~3.5 t/h est. | ≈ 10-17 15:00 |
 | ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 | 54.6 | 100 | ~31 t/h shared | ≈ 16:25 |
-| 0.99c `ve099a_spdrv1_t150` | 1st, card 0 | 48.3 | 150 | ~11 t/h shared | ≈ 10-17 00:15 |
 | 0.9c `ve090a_spdrv1_sig04_t150` | 2nd node | 144.0 | 150 | 17.5 t/h | ≈ 15:15 |
 
 0.5c drive `ve050a_spdrv1_t150` FINISHED-DEAD: NaN (h11, L3) at t = 130.0. Clean
