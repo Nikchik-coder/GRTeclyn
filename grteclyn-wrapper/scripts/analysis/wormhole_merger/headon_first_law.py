@@ -92,15 +92,24 @@ def load(plt: str, centre: np.ndarray, half: float, level: int) -> tuple[dict, f
     return fields, dx, float(ds.current_time), lev
 
 
-def find_mots(box: aff.Box, seeds: list[float], steps: int) -> aff.FlowResult | None:
-    """The outermost converged surface over the seeds (outer seeds flow onto the apparent horizon)."""
+def find_mots(box: aff.Box, seeds: list[float], steps: int,
+              untrapped: bool = False) -> aff.FlowResult | None:
+    """The outermost converged surface over the seeds (outer seeds flow onto the apparent horizon).
+
+    untrapped: also take a surface with theta_out -> 0 whose theta_in is >= 0 somewhere (a MOTS
+    that is not marginally trapped).  2026-10-16: the 0.7c spinning throat stays at R 6.86 with
+    theta_out -> 0 from t = 16 on, but theta_in turns >= 0 on part of it, and the strict rule
+    wrote nan rows."""
     best = None
     for r0 in seeds:
         res = aff.flow(box, r0, steps=steps)
         print(f"    seed r0 = {r0:.3f}: {res.reason}; steps {res.steps}, rms theta_out {res.rms_theta:.2e},"
               f" R {res.R_areal:.5f}, h [{res.h_min:.3f}, {res.h_max:.3f}], deform {res.deform:.3f}", flush=True)
-        if res.converged and (best is None or res.R_areal > best.R_areal):
+        ok = res.converged or (untrapped and res.reason.startswith("theta_out -> 0"))
+        if ok and (best is None or res.R_areal > best.R_areal):
             best = res
+    if best is not None and not best.converged:
+        print(f"    taken although untrapped: max theta_in {best.theta_in_max:+.2e}", flush=True)
     return best
 
 
@@ -260,8 +269,24 @@ def analyse_fields(fields: dict, dx: float, t: float, lev: int, args, warm: list
                 a_lm = None
         except FloatingPointError as err:
             print(f"    warm start failed ({err}); flowing from seeds", flush=True)
+        if a_lm is None and getattr(args, "warm_flow", False):
+            # 2026-10-16: on a deformed surface (0.7c spin, deform 0.1) Newton's diagonal step
+            # stalls at 3 iterations and the flow from round seeds needs ~400 steps a plotfile,
+            # more each time; flowing from the previous surface keeps what is already resolved.
+            res = aff.flow(box, 0.0, steps=args.steps, a_init=a0)
+            print(f"    warm flow: {res.reason}; steps {res.steps}, rms theta_out {res.rms_theta:.2e},"
+                  f" R {res.R_areal:.5f}, deform {res.deform:.3f}", flush=True)
+            untrapped_ok = getattr(args, "untrapped", False) and res.reason.startswith("theta_out -> 0")
+            if res.converged or untrapped_ok:
+                if not res.converged:
+                    print(f"    taken although untrapped: max theta_in {res.theta_in_max:+.2e}", flush=True)
+                steps, rms_flow, R_flow = res.steps, res.rms_theta, res.R_areal
+                a_lm, its, resid = refine(box, res.a_lm, args.tol)
+                print(f"    Newton refinement: {its} iterations, max |theta_out_lm| {resid:.1e} (tol {args.tol:.0e})",
+                      flush=True)
     if a_lm is None:
-        res = find_mots(box, sorted(args.seeds, reverse=True), args.steps)
+        res = find_mots(box, sorted(args.seeds, reverse=True), args.steps,
+                        untrapped=bool(getattr(args, "untrapped", False)))
         if res is None:
             print("    no MOTS found from any seed", flush=True)
             return None

@@ -55,13 +55,17 @@ def _finder():
 
 
 def mots_spectral_row(ds, t: float, *, center, half: float, level: int, lmax: int, tol: float,
-                      seeds, a_prev) -> tuple[str, list[float] | None]:
+                      seeds, a_prev, steps: int = 400, untrapped: bool = False,
+                      warm_flow: bool = False) -> tuple[str, list[float] | None]:
     """(row, a_lm) of the common MOTS on this plotfile; (row of nan, None) if there is none.
 
     The box is +-half about center on the finest level <= `level` that covers it: a covering
     grid fills an uncovered region with injected coarser cells, whose derivatives are
     staircases.  a_prev, the previous plotfile's a_lm, starts Newton; without it, or if
-    Newton fails, the flow starts from the seed radii.
+    Newton fails, the flow starts from the seed radii, for at most `steps` steps each.
+    untrapped also keeps a theta_out = 0 surface whose theta_in is >= 0 somewhere
+    (find_mots in headon_first_law.py); without it such a plotfile gets a row of nan.
+    warm_flow: when Newton from a_prev fails, flow from a_prev before the round seeds.
     """
     hfl = _finder()
     centre = np.asarray(center, dtype=float)
@@ -75,7 +79,8 @@ def mots_spectral_row(ds, t: float, *, center, half: float, level: int, lmax: in
     if fields is None:
         raise ValueError(f"no level covers the box +-{half} about {list(centre)} ({why})")
     args = SimpleNamespace(centre=list(centre), half=half, level=lev, lmax=lmax, tol=tol,
-                           seeds=list(seeds), steps=400)
+                           seeds=list(seeds), steps=int(steps), untrapped=bool(untrapped),
+                           warm_flow=bool(warm_flow))
     row = hfl.analyse_fields(fields, dx, t, lev, args, a_prev, name=f"MOTS at t = {t:.3f}")
     if row is None:
         return f"{t:.16e}  " + "  ".join("nan" for _ in _KEYS) + f"  {lev}  {lmax}", None

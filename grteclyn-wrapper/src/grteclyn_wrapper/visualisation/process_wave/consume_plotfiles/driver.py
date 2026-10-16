@@ -323,6 +323,28 @@ def main() -> None:
                         help="Newton stops when every projected theta_out harmonic is below this.")
     parser.add_argument("--mots-spectral-seeds", type=float, nargs="+", default=[3.2, 2.6],
                         help="Seed radii of the flow when there is no previous surface.")
+    parser.add_argument("--mots-spectral-steps", type=int, default=400,
+                        help="Flow steps per seed when Newton has no previous surface to start from. "
+                             "A deforming surface needs more each plotfile (0.7c spin: 311 at t = 13, "
+                             "400 stalled at t = 22).")
+    parser.add_argument(
+        "--mots-spectral-untrapped",
+        action="store_true",
+        help=(
+            "Also record a surface with theta_out -> 0 whose theta_in is >= 0 somewhere (a MOTS that "
+            "is not marginally trapped; the log says 'taken although untrapped'). Without it such a "
+            "plotfile gets a row of nan (2026-10-16: the 0.7c spinning throat from t = 16 on)."
+        ),
+    )
+    parser.add_argument(
+        "--mots-spectral-warm-flow",
+        action="store_true",
+        help=(
+            "When Newton from the previous plotfile's surface fails, flow from that surface before "
+            "the round seeds: a deformed surface (0.7c spin, 2026-10-16) stalls Newton, and the "
+            "flow from round seeds costs ~0.25 s a step and needs more steps each plotfile."
+        ),
+    )
     parser.add_argument("--mots-spectral-from", type=float, default=0.0,
                         help="Search plotfiles from this time on (before the common horizon there is none).")
     parser.add_argument(

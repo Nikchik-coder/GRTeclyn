@@ -351,6 +351,9 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                     tol=float(args_dict["mots_spectral_tol"]),
                     seeds=args_dict["mots_spectral_seeds"],
                     a_prev=args_dict.get("mots_alm_prev"),
+                    steps=int(args_dict.get("mots_spectral_steps") or 400),
+                    untrapped=bool(args_dict.get("mots_spectral_untrapped")),
+                    warm_flow=bool(args_dict.get("mots_spectral_warm_flow")),
                 )
             except Exception as exc:
                 print(f"WARNING: spectral MOTS failed for {key}: {exc}", flush=True)
