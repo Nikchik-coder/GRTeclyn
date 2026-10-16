@@ -55,25 +55,26 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 **FAST recipe (0.7c+)**: same grid, σ 0.4, min_chi 1e-4, dt 0.02, drive 1.0,
 **stop 150**.
 
-Schedule below from 15:30 UTC 10-16. Card 0/1 = 1st node; 2nd node has one card.
+All clock times Moscow (UTC+3, decided 2026-10-16); older prose entries are UTC.
+Schedule below from 18:30 MSK 10-16. Card 0/1 = 1st node; 2nd node has one card.
 
-| ✓ | run | recipe | stop | where / when | ends in | ETA (UTC) |
+| ✓ | run | recipe | stop | where / when | ends in | ETA (MSK) |
 |---|---|---|---|---|---|---|
 | ☑ | 0c static anchor | slow | 85 | DONE, `00_paper_runs/` | – | – |
 | ☑ | 0.5c | slow | 85 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | – | – |
-| ☑ | 0.9c | fast | 150 | DONE (clean t 150), `00_paper_runs/` ≈ 15:10 | – | – |
-| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | LIVE card 1 since 14:58, 4.3 t/h measured | ~19 h | ≈ 10-17 10:45 |
+| ☑ | 0.9c | fast | 150 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | – | – |
+| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | LIVE card 1 since 17:58, 4.3 t/h measured | ~19 h | ≈ 10-17 13:45 |
 | ☐ | **1st** 0.21c triplet N 128 | slow | 85 | card 0 when the probe ends (~4.9 h run) | – | – |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | card 0 after N 128 (~1.5 h run) | – | – |
-| ☐ | 0.7c | fast | 150 | LIVE 2nd node since ≈ 15:15, shared from 15:30 (~9.5 t/h) | ~15 h | ≈ 10-17 06:30 |
-| ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | LIVE 2nd node since 15:30, shared with the 0.7c (~9.5 t/h) | ~16 h | ≈ 10-17 07:30 |
+| ☐ | 0.7c | fast | 150 | LIVE 2nd node since ≈ 18:15, shared from 18:30 (~9.5 t/h) | ~15 h | ≈ 10-17 09:30 |
+| ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | LIVE 2nd node since 18:30, shared with the 0.7c (~9.5 t/h) | ~16 h | ≈ 10-17 10:30 |
 | ☐ | 0.9c fast triplet N 96 | fast | 100 | card 1 after the J=1 N 192 (~1.8 h run) | – | – |
 | ☐ | 0.9c fast triplet N 192 | fast | 100 | card 0 after the J=1 members (~23 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2nd node when a slot frees (~8.5 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2nd node after kick A1 (~8.5 h run) | – | – |
 | ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | card 1 after the 0.9c N 96 (~8.5 h run) | – | – |
 | ☐ | 0.95c stretch | fast | 150 | optional, only if the 0.99c curve wants the point | – | – |
-| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | LIVE card 0 solo, 32 t/h; stays `06_dt_ladder/` | ~0.8 h | ≈ 16:15 |
+| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | LIVE card 0 solo, 32 t/h; stays `06_dt_ladder/` | ~0.8 h | ≈ 19:15 |
 
 Campaign total ~34 h if the queue runs back-to-back. Kick templates
 (A1 = merger seed scale, A2 = ×10) still to be built; every launch waits
@@ -128,12 +129,12 @@ What the ledger says, four lines:
 
 ## LIVE
 
-| run | node/card | t @ 15:25 | stop | speed | ETA (UTC) |
+| run | node/card | t @ 18:25 MSK | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | ~2 | 85 | 4.3 t/h measured | ≈ 10-17 10:45 |
-| ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 (solo from ~15:10) | 71.6 | 100 | ~32 t/h | ≈ 16:15 |
-| 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared 15:30) | 4.5 | 150 | ~9.5 t/h shared | ≈ 10-17 06:30 |
-| 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 0 (launched 15:30) | 150 | ~9.5 t/h shared | ≈ 10-17 07:30 |
+| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | ~2 | 85 | 4.3 t/h measured | ≈ 10-17 13:45 |
+| ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 (solo from ~15:10) | 71.6 | 100 | ~32 t/h | ≈ 19:15 |
+| 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared 18:30) | 4.5 | 150 | ~9.5 t/h shared | ≈ 10-17 09:30 |
+| 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 0 (launched 18:30) | 150 | ~9.5 t/h shared | ≈ 10-17 10:30 |
 
 0.9c `ve090a_spdrv1_sig04_t150` FINISHED CLEAN t = 150 ≈ 15:05: Ham flat
 (1.07e-2 → 1.17e-2 over t 60 → 150), max|K| flat 2.0e-2, no MOTS ever — the

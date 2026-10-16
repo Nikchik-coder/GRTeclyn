@@ -19,7 +19,7 @@ session start goes stale within hours.
   - No leftovers of finished runs, except the checkpoints a queued run needs.
   - Report it in one line: clean (GB used and free), or what pollutes and how many GB.
   - A node this session cannot list: read its runs' logs for the checkpoint lines, and say its disk was not listed.
-- Every ETA is in hours and clock time (UTC).
+- Every ETA is in hours and clock time in Moscow time, UTC+3 (decided 2026-10-16; `date` on the nodes prints UTC — add 3).
 
 ## Environment
 
