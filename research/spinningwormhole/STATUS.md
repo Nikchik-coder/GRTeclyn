@@ -64,7 +64,8 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 | ☐ | 0.21c triplet N 96 | slow | 85 | to run (~1.6 h) |
 | ☐ | 0.21c triplet N 192 | slow | 85 | to run (~24 h) |
 | ☐ | 0.7c | fast | 150 | to run (~8.5 h) — the minchi4 rescue predates σ 0.4 + drive |
-| ☐ | 0.9c fast pair N 192 | fast | 100 | to run (~29 h) |
+| ☐ | 0.9c fast triplet N 96 | fast | 100 | to run (~2.7 h) |
+| ☐ | 0.9c fast triplet N 192 | fast | 100 | to run (~29 h); N 128 member = the paper 0.9c run itself → full σ 0.4 + clamp triplet |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | to run (~8.5 h) |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | to run (~8.5 h) |
 | ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | to run (~8.5 h) |
@@ -240,10 +241,11 @@ used, with production N 128 as the middle member (~1.6 + 5 + 24 h, one card).
 The finished L128 N 256 run keeps its two roles — the O(J²) model check and
 the box-independence cross-check (milestones match L64 to 0.05 u) — but is no
 longer the formal triplet; **the L128 N 192 rerun and the N 384 member
-(155 GB, MPI over both cards) are DROPPED.** Fast-end pair: 0.9c L64
-N 128 vs 192, fast recipe, to t ≈ 100 (~29 h fine member), because the
-clamp + σ 0.4 recipe differs there. Every other run: production N 128 with
-the triplet's error bar.
+(155 GB, MPI over both cards) are DROPPED.** Fast-end: a FULL second triplet at 0.9c, N 96/128/192 on the fast recipe to
+t ≈ 100 (~2.7 + 29 h; the N 128 member is the paper 0.9c run itself), so the
+σ 0.4 + clamp recipe carries its own convergence order rather than borrowing
+the slow triplet's. Every other run: production N 128 with its regime's
+triplet error bar.
 
 **LAUNCH FREEZE (2026-10-15, ~12:00 UTC): no new run starts until the
 slow-interface-mode / sigma question on the second node is settled** (the
