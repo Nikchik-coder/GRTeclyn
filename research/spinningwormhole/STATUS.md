@@ -58,23 +58,23 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 All clock times Moscow (UTC+3, decided 2026-10-16); older prose entries are UTC.
 Schedule below from 18:30 MSK 10-16. Card 0/1 = 1st node; 2nd node has one card.
 
-| ✓ | run | recipe | stop | where / when | ends in | ETA (MSK) |
-|---|---|---|---|---|---|---|
-| ☑ | 0c static anchor | slow | 85 | DONE, `00_paper_runs/` | – | – |
-| ☑ | 0.5c | slow | 85 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | – | – |
-| ☑ | 0.9c | fast | 150 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | – | – |
-| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | LIVE card 1 since 17:58, 4.3 t/h measured | ~19 h | ≈ 10-17 13:45 |
-| ☐ | **1st** 0.21c triplet N 128 | slow | 85 | LIVE card 0 since 18:52 MSK, shared with N 96 | ~9 h | ≈ 10-17 04:00 |
-| ☐ | **1st** 0.21c triplet N 96 | slow | 85 | LIVE card 0 since 18:53 MSK, shared with N 128 | ~5.5 h | ≈ 10-17 00:30 |
-| ☐ | 0.7c | fast | 150 | LIVE 2nd node since ≈ 18:15, shared from 18:30 (~9.5 t/h) | ~15 h | ≈ 10-17 09:30 |
-| ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | LIVE 2nd node since 18:30, shared with the 0.7c (~9.5 t/h) | ~16 h | ≈ 10-17 10:30 |
-| ☐ | 0.9c fast triplet N 96 | fast | 100 | card 1 after the J=1 N 192 (~1.8 h run) | – | – |
-| ☐ | 0.9c fast triplet N 192 | fast | 100 | card 0 after the J=1 members (~23 h run) | – | – |
-| ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2nd node when a slot frees (~8.5 h run) | – | – |
-| ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2nd node after kick A1 (~8.5 h run) | – | – |
-| ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | card 1 after the 0.9c N 96 (~8.5 h run) | – | – |
-| ☐ | 0.95c stretch | fast | 150 | optional, only if the 0.99c curve wants the point | – | – |
-| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | DIED 81.1 (NaN in K — the dt 0.05 instability, delayed 22 → 64 by σ0.4+floor); clamp validated in the clean window (ψ4@14 0.9 %, throat R 0.3 % vs parent); `06_dt_ladder/` | – | – |
+| ✓ | run | recipe | stop | node | gpu | where / when | ends in | ETA (MSK) |
+|---|---|---|---|---|---|---|---|---|
+| ☑ | 0c static anchor | slow | 85 | 1 | – | DONE, `00_paper_runs/` | – | – |
+| ☑ | 0.5c | slow | 85 | 1 | 1 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | – | – |
+| ☑ | 0.9c | fast | 150 | 2 | 0 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | – | – |
+| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, 4.3 t/h measured | ~19 h | ≈ 10-17 13:45 |
+| ☐ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | LIVE since 18:52, shared with N 96 | ~9 h | ≈ 10-17 04:00 |
+| ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | LIVE since 18:53, shared with N 128; frames χ ×2 = slicer artifact on this grid, data clean (t0 Ham family converges) | ~5.5 h | ≈ 10-17 00:30 |
+| ☐ | 0.7c | fast | 150 | 2 | 0 | LIVE since ≈ 18:15, shared from 18:30 (~9.5 t/h) | ~15 h | ≈ 10-17 09:30 |
+| ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c (~9.5 t/h) | ~16 h | ≈ 10-17 10:30 |
+| ☐ | 0.9c fast triplet N 96 | fast | 100 | 1 | 1 | after the J=1 N 192 (~1.8 h run) | – | – |
+| ☐ | 0.9c fast triplet N 192 | fast | 100 | 1 | 0 | after the J=1 members (~23 h run) | – | – |
+| ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees (~8.5 h run) | – | – |
+| ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
+| ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | 1 | 1 | after the 0.9c N 96 (~8.5 h run) | – | – |
+| ☐ | 0.95c stretch | fast | 150 | – | – | optional, only if the 0.99c curve wants the point | – | – |
+| – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | 1 | 0 | DIED 81.1 (NaN in K — the dt 0.05 instability, delayed 22 → 64 by σ0.4+floor); clamp validated in the clean window (ψ4@14 0.9 %, throat R 0.3 % vs parent); `06_dt_ladder/` | – | – |
 
 Campaign total ~34 h if the queue runs back-to-back. Kick templates
 (A1 = merger seed scale, A2 = ×10) still to be built; every launch waits
