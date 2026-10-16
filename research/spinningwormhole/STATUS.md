@@ -316,6 +316,27 @@ D/M(v_e) is the paper's physical-mechanism figure once the ladder runs;
 the D, M_ADM columns are in `results/spinningwormhole/solutions/<leg>/
 <leg>.tsv` (tracked 2026-10-15).
 
+**FOR THE ARTICLE (noted 2026-10-16): the exotic matter is MEASURED ON THE
+GRID, at t = 0 and in time — collapse swallows it, the spinning survivors
+keep it.** The scalar charge is fit from the equatorial φ frame slices
+(closed form φ = D/(η₀√4π)·[arctan(η/η₀) − π/2], annulus r = 4–22). At
+t = 0 the grid reproduces the solver's D to ~2×10⁻⁴ at all four spins
+(static 2.2358/√5, 0.21c 2.2014, 0.51c 2.0010, 0.70c 1.7194) — the
+pipeline carries exactly the right charge, and the decrease with spin
+stands on the evolved grids themselves. In time (quoted to each trust
+window): the static hold drains D 2.24 → 1.39 (−38 %) by t = 64 and the
+0.21c collapse 2.20 → 1.61 (−27 %) by t = 67, max|φ| falling with it —
+the horizon swallows the phantom, the merger paper's head-on panel (e)
+picture (grid max|φ|, max|Π|); past trust both continue to ~0, consistent
+but unquotable. B1 (0.51c, no horizon) and 0.70c (frozen throat) stay
+flat: max|φ| −2.5 % over 78 units and −6 % (settled by t = 40), the slow
+±15–20 % wobble of the fitted D there is the coordinate annulus feeling
+the gauge, not matter moving. Paper figure when wanted: D(t) + max|φ|,
+max|Π| per hold, cut at trust. **No extra plotfile retention is needed**:
+everything reads the frame slice caches (phi_z, Pi_z, kept forever),
+unlike the merger campaign, where plotfiles were consumed live for the
+3D MOTS horizon numbers; the fit reruns from the caches in minutes.
+
 | rung | run | needs | waiting on |
 |---|---|---|---|
 | v_e = 0 | static ×3: N 256 EXISTS (the merger's `single_hold_L128_t100`), run N 192 / 384 | templates written (`params_static_hold_L128_N*.txt`) | its go |
