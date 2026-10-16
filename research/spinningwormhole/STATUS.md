@@ -56,21 +56,21 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 **stop 150**.
 
 All clock times Moscow (UTC+3, decided 2026-10-16); older prose entries are UTC.
-Schedule below from 18:30 MSK 10-16. Card 0/1 = 1st node; 2nd node has one card.
+Schedule below from 19:36 MSK 10-16 (speeds measured then). Card 0/1 = 1st node; 2nd node has one card.
 
 | ✓ | run | recipe | stop | node | gpu | where / when | ends in | ETA (MSK) |
 |---|---|---|---|---|---|---|---|---|
 | ☑ | 0c static anchor | slow | 85 | 1 | – | DONE, `00_paper_runs/` | – | – |
 | ☑ | 0.5c | slow | 85 | 1 | 1 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | – | – |
 | ☑ | 0.9c | fast | 150 | 2 | 0 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | – | – |
-| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, 4.3 t/h measured | ~19 h | ≈ 10-17 13:45 |
-| ☐ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | LIVE since 18:52, shared with N 96 | ~9 h | ≈ 10-17 04:00 |
-| ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | LIVE since 18:53, shared with N 128; frames χ ×2 = slicer artifact on this grid, data clean (t0 Ham family converges) | ~5.5 h | ≈ 10-17 00:30 |
-| ☐ | 0.7c | fast | 150 | 2 | 0 | LIVE since ≈ 18:15, shared from 18:30 (~9.5 t/h) | ~15 h | ≈ 10-17 09:30 |
-| ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c (~9.5 t/h) | ~16 h | ≈ 10-17 10:30 |
-| ☐ | 0.9c fast triplet N 96 | fast | 100 | 1 | 0 | LIVE since 19:25, 3-way shared on gpu 0 | ~9 h | ≈ 10-17 04:30 |
+| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, solo 4.3 t/h | ~18 h | ≈ 10-17 13:45 |
+| ☐ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | LIVE since 18:52, 3-way 6.3 t/h → 2-way ~9 → solo ~17.6 | ~9.5 h | ≈ 10-17 05:10 |
+| ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | LIVE since 18:53, 3-way 10.9 t/h; frames χ ×2 = slicer artifact on this grid, data clean (t0 Ham family converges) | ~7 h | ≈ 10-17 02:25 |
+| ☐ | 0.7c | fast | 150 | 2 | 0 | LIVE since ≈ 18:15, shared from 18:30, 7.7 t/h | ~17.5 h | ≈ 10-17 13:10 |
+| ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c, 7.5 t/h | ~18 h | ≈ 10-17 13:40 |
+| ☐ | 0.9c fast triplet N 96 | fast | 100 | 1 | 0 | LIVE since 19:25, 3-way 11.0 t/h → 2-way ~16 | ~8 h | ≈ 10-17 03:50 |
 | ☐ | 0.9c fast triplet N 192 | fast | 100 | 1 | 0 | after the J=1 members (~23 h run) | – | – |
-| ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees (~8.5 h run) | – | – |
+| ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees ≈ 13:40 (~8.5 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
 | ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | 1 | 1 | after the 0.9c N 96 (~8.5 h run) | – | – |
 | ☐ | 0.95c stretch | fast | 150 | – | – | optional, only if the 0.99c curve wants the point | – | – |
@@ -129,14 +129,14 @@ What the ledger says, four lines:
 
 ## LIVE
 
-| run | node/card | t @ 18:25 MSK | stop | speed | ETA (MSK) |
+| run | node/card | t @ 19:36 MSK | stop | speed (measured 19:29–19:36) | ETA (MSK) |
 |---|---|---|---|---|---|
-| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | ~2 | 85 | 4.3 t/h measured | ≈ 10-17 13:45 |
-| triplet N 128 `L64_ml3_J100_full_spdrv1_t85` | 1st, card 0 (3-way from 19:25) | 3.8 @ 19:16 | 85 | ~7 t/h est. | ≈ 10-17 06:30 |
-| triplet N 96 `L64_N96_ml3_J100_full_spdrv1_t85` | 1st, card 0 (3-way from 19:25) | 6.3 @ 19:16 | 85 | ~12 t/h est. | ≈ 10-17 02:00 |
-| fast N 96 `L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 1st, card 0 (3-way) | 0 (launched 19:25) | 100 | ~11 t/h est. | ≈ 10-17 04:30 |
-| 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared 18:30) | 4.5 | 150 | ~9.5 t/h shared | ≈ 10-17 09:30 |
-| 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 0 (launched 18:30) | 150 | ~9.5 t/h shared | ≈ 10-17 10:30 |
+| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | 7.1 | 85 | 4.3 t/h | ≈ 10-17 13:45 |
+| triplet N 128 `L64_ml3_J100_full_spdrv1_t85` | 1st, card 0 (3-way from 19:25) | 6.1 | 85 | 6.3 t/h (2-way ~9 from 02:25, solo ~17.6 from 03:50) | ≈ 10-17 05:10 |
+| triplet N 96 `L64_N96_ml3_J100_full_spdrv1_t85` | 1st, card 0 (3-way from 19:25) | 10.3 | 85 | 10.9 t/h | ≈ 10-17 02:25 |
+| fast N 96 `L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 1st, card 0 (3-way) | 3.0 | 100 | 11.0 t/h (2-way ~16 from 02:25) | ≈ 10-17 03:50 |
+| 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared 18:30) | 12.8 | 150 | 7.7 t/h shared | ≈ 10-17 13:10 |
+| 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 8.5 | 150 | 7.5 t/h shared (solo ~17.5 after 13:10) | ≈ 10-17 13:40 |
 
 0.9c `ve090a_spdrv1_sig04_t150` FINISHED CLEAN t = 150 ≈ 15:05: Ham flat
 (1.07e-2 → 1.17e-2 over t 60 → 150), max|K| flat 2.0e-2, no MOTS ever — the
@@ -157,7 +157,7 @@ were restarted with --radii 14 18 30 at t <= 5 (earlier rows 2-radius, read by
 row width, nothing physical lost: waves start at the ~64 collapse). The node-2
 pair (0.7c, 0.99c) still runs 14/30 — fast end, stability claim, no waveform
 quoted; restart needs a node-2 session if R=18 is wanted there.
-0.99c psi4 is 3-radius (14/18/30) from t = 22 only — the consumer was killed by a
+The packed 0.99c σ 0.1 probe's psi4 is 3-radius (14/18/30) from t = 22 only — the consumer was killed by a
 wrong-flag restart ~11:44 and hand-rebuilt ~11:50; earlier rows are 2-radius and
 the header names 2, so read `psi4_mode_l2_all/l2m0.dat` by row width. B1's final
 Chk10000 sits in its `nfs_chk/` (t = 100 restart point). The L128 N 192/384
@@ -257,8 +257,8 @@ its go; no queued run writes or needs checkpoints.
 
 | next free slot | run | needs |
 |---|---|---|
-| node 1 gpu 0 or 1, after the J=1 members / N 192 | 0.9c fast triplet N 192 (~23 h, ~67 GB) | template: paper 0.9c params, N → 192, stop 100 |
-| node 2, after 0.7c + 0.99c (~ 10:30 MSK) | kick 0.9c A1, then A2 (×10) | kick templates: seed amplitude A1 = merger seed scale |
+| node 1 gpu 0, free ≈ 05:10 MSK (after the J=1 N 128) | 0.9c fast triplet N 192 (~23 h, ~67 GB) | template: paper 0.9c params, N → 192, stop 100 |
+| node 2, after 0.7c + 0.99c (≈ 13:40 MSK) | kick 0.9c A1, then A2 (×10) | kick templates: seed amplitude A1 = merger seed scale |
 | node 1 gpu 1, after fast N 192 | kick 0.7c A1 | same template, ve070 background |
 | anywhere, only if the 0.99c curve wants it | 0.95c stretch | background fam_a_ve095 |
 
