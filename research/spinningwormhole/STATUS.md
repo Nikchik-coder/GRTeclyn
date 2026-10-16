@@ -68,7 +68,7 @@ Schedule below from 18:30 MSK 10-16. Card 0/1 = 1st node; 2nd node has one card.
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | LIVE since 18:53, shared with N 128; frames χ ×2 = slicer artifact on this grid, data clean (t0 Ham family converges) | ~5.5 h | ≈ 10-17 00:30 |
 | ☐ | 0.7c | fast | 150 | 2 | 0 | LIVE since ≈ 18:15, shared from 18:30 (~9.5 t/h) | ~15 h | ≈ 10-17 09:30 |
 | ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c (~9.5 t/h) | ~16 h | ≈ 10-17 10:30 |
-| ☐ | 0.9c fast triplet N 96 | fast | 100 | 1 | 1 | after the J=1 N 192 (~1.8 h run) | – | – |
+| ☐ | 0.9c fast triplet N 96 | fast | 100 | 1 | 0 | LIVE since 19:25, 3-way shared on gpu 0 | ~9 h | ≈ 10-17 04:30 |
 | ☐ | 0.9c fast triplet N 192 | fast | 100 | 1 | 0 | after the J=1 members (~23 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees (~8.5 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
@@ -132,8 +132,9 @@ What the ledger says, four lines:
 | run | node/card | t @ 18:25 MSK | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
 | triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | ~2 | 85 | 4.3 t/h measured | ≈ 10-17 13:45 |
-| triplet N 128 `L64_ml3_J100_full_spdrv1_t85` | 1st, card 0 (shared) | 0 (launched 18:52 MSK) | 85 | ~10 t/h est. | ≈ 10-17 04:00 |
-| triplet N 96 `L64_N96_ml3_J100_full_spdrv1_t85` | 1st, card 0 (shared) | 0 (launched 18:53 MSK) | 85 | ~15 t/h est. | ≈ 10-17 00:30 |
+| triplet N 128 `L64_ml3_J100_full_spdrv1_t85` | 1st, card 0 (3-way from 19:25) | 3.8 @ 19:16 | 85 | ~7 t/h est. | ≈ 10-17 06:30 |
+| triplet N 96 `L64_N96_ml3_J100_full_spdrv1_t85` | 1st, card 0 (3-way from 19:25) | 6.3 @ 19:16 | 85 | ~12 t/h est. | ≈ 10-17 02:00 |
+| fast N 96 `L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 1st, card 0 (3-way) | 0 (launched 19:25) | 100 | ~11 t/h est. | ≈ 10-17 04:30 |
 | 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared 18:30) | 4.5 | 150 | ~9.5 t/h shared | ≈ 10-17 09:30 |
 | 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 0 (launched 18:30) | 150 | ~9.5 t/h shared | ≈ 10-17 10:30 |
 
