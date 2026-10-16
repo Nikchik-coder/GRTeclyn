@@ -57,23 +57,32 @@ slowdown trend continues to 0.7c, below detection). Trust window t ≤ 64
 (L64 boundary return). Packed, registry + README + trust row written,
 scratch pruned (~19 GB). **B2 (v_e 0.7, L = 128 ×3) is unblocked at the
 data level — min_chi 1e-4 goes into its templates; launches stay frozen.**
-| sigma ladder `static_hold_L64_ml3_dt005_sig02_t045` (the floor rung: sigma 0.2 at dt 0.05) | second GPU node, card 0 | launched 19:32 UTC 10-15 | 45 | ~12 t/h (est.) | ≈ 23:15 UTC 10-15 |
-| sigma-default test `static_hold_L64_ml3_dt002_sig04_t100` (sigma 0.4 at the production dt 0.02, vs the live control) | second GPU node, card 0 | t = 44.9 at 19:23 UTC 10-15, clean | 100 | ~7 t/h | ≈ 03:15 UTC 10-16 |
-| dt ladder control `static_hold_L64_ml3_dt002ctl_t100` (levnorm-binary regression vs the packed Step 0 hold) | second GPU node, card 0 | t = 81.8 at 19:23 UTC 10-15, clean | 100 | ~5.9 t/h | ≈ 23:30 UTC 10-15 |
-
-The whole dt × σ study, its verdicts and its history: **SPEED-UP RESEARCH**
-below.
+**The dt × σ study FINISHED overnight 10-15→10-16** (all three arms clean,
+0 NaN, packed, scratch empty; close-out 04:55 UTC 10-16). Second node's
+card 0 is idle; the two adoption runs (confirmation hold at (0.3, 0.05) to
+t = 100 on L64, and the L128 one-knob check) are proposed and await the
+go. Verdicts and history: **SPEED-UP RESEARCH** below.
 
 ## SPEED-UP RESEARCH (dt × σ) — goes fully to the article
 
-**Current result (2026-10-15 evening).** Production candidate: **sigma =
-0.3, dt_multiplier = 0.05** — 2.5× today's (0.1, 0.02) and cleaner than it
-(level-2 masked Ham at 0.3–0.5 of the dt 0.02 control, falling; startup
-max|K| offset ×1.51 decays to ×1.11 by t = 45; 0 NaN). Second result:
-raising sigma pays even at the safe dt — sigma 0.4 at dt 0.02 cuts the
-slow level-2 growth to 0.094 of control by t = 40 and falling, i.e. the
-very mode whose late growth ends every trust window (B1: L2_Ham ×2 at
-t = 78.8) is wiped out; a trust-window extension at production settings.
+**RESULT (study complete 2026-10-16).** Three verdicts, all in:
+1. **Production speed-up: sigma = 0.3, dt_multiplier = 0.05** — 2.5×
+   today's (0.1, 0.02) and cleaner than it (level-2 masked Ham at 0.3–0.5
+   of the dt 0.02 control, falling; startup max|K| offset ×1.51 decays to
+   ×1.11 by t = 45). **Sigma 0.3 is the floor**: the 0.2 rung FAILED —
+   it only slows the mode (level-2 Ham ×29 at t = 40, ×69 at t = 45,
+   ψ4 ×10 and rising; breakout postponed past the window, not removed).
+2. **Trust-window fix: sigma 0.4 at the production dt 0.02 erases the
+   late constraint growth.** At t = 100 the masked Ham norms sit at
+   2.4e-5 / 4.1e-5 / 7.9e-4 of the sigma-0.1 control on levels 1/2/3
+   (composite 2.5e-3 of it): the interface mode IS the late growth that
+   ended every trust window (B1: ×2 at t = 78.8). Cost, measured on the
+   hold: the collapse milestone comes ~4 time units earlier (max|K| > 0.1
+   at t = 57.9 vs 61.97 — the sigma-induced initial kick is larger), so
+   collapse-time comparisons across sigma values need matched sigma.
+3. **Binary regression: the levnorm binary is bit-exact** — the dt 0.02
+   control twins the packed Step 0 hold to all printed digits over the
+   full t ≤ 100 record, same collapse milestone t = 61.97.
 
 **The finding.** The dt ceiling was never hard CFL (local speeds ≤ 0.95;
 the KO+RK4 bound allows dt_mult ~0.23 at sigma 0.1) — it is a weak AMR
@@ -102,12 +111,15 @@ t = 10. Stronger KO kills it where it lives.
   clean to 45, offset ×1.68 → ×1.07.
 - `dt005_sig03_t045`: clean to 45 and cleaner than 0.4 — level-2 at
   0.3–0.5 of control; the gentlest working KO so far.
-- `dt005_sig02_t045` (live): the floor rung.
-- `dt002_sig04_t100` (live): the sigma-default / trust-window test.
+- `dt005_sig02_t045`: the floor rung FAILS — 0.2 only postpones breakout;
+  the floor is 0.3.
+- `dt002_sig04_t100`: the sigma-default / trust-window test PASSES —
+  constraints 400–40,000× below control at t = 100; collapse ~4 units
+  earlier (the sigma kick).
 
-**Owed before adoption:** sig02 verdict (≈ 23:15); control to 100 (τ +
-regression, ≈ 23:30); one confirmation hold at (0.3, 0.05) to t = 100 on
-L64 and the same one-knob check on L128 — both proposed, awaiting the go.
+**Owed before adoption** (proposed, awaiting the go; card 0 idle): one
+confirmation hold at (0.3, 0.05) to t = 100 on L64, and the same one-knob
+check on L128 before the triplets switch.
 
 **2026-10-14 ~21:53 UTC the node container was killed externally** (and once
 before, 23:44 UTC 10-13, which is what stopped B1): scratch wiped, both

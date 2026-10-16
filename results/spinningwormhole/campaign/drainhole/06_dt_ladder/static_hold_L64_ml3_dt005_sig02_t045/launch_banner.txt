@@ -1,0 +1,40 @@
+[swh] name     : static_hold_L64_ml3_dt005_sig02_t045
+[swh] template : runs/spinning_wormhole/templates/params_static_hold_dt005_sig02_t045.txt
+[swh] binary   : runs/spinning_wormhole/bin/main3d_levnorm_73793542_2026-10-15.ex
+[swh] gpu      : 0
+[swh] run dir  : runs/spinning_wormhole/drainhole/06_dt_ladder/static_hold_L64_ml3_dt005_sig02_t045          (NFS: params, log, .dat streams)
+[swh] scratch  : /tmp/grteclyn_scratch/static_hold_L64_ml3_dt005_sig02_t045      (node-local: plotfiles, checkpoints)
+[swh] proc     : test (evolution runs from /tmp/ml_jobs/bin/test_4b545fc8)
+[swh] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[swh] frames   : as given in SWH_CONSUME_ARGS
+[preflight] frames : 14 field(s), the full set: chi chi_minus_1 K lapse shift1 shift2 shift3 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed
+[preflight] files  : spinning_background_file = runs/spinning_wormhole/backgrounds/static_eta2_m1.spinbg
+[preflight] consumer: areal radius off
+[preflight] paths  : one spelling, 'static_hold_L64_ml3_dt005_sig02_t045'
+[preflight] WARNING: this run writes no checkpoints: if it dies, it cannot be restarted
+[preflight] static : 68 keys, 0 absent from main3d_levnorm_73793542_2026-10-15.ex
+[preflight] start-up with every key checked (gpu 0, 0 steps; writes its plotfile for the frames) ...
+[preflight] probe  : ok in 24.1 s; binary version (73793542); 1 unread key(s)
+[preflight] t = 0  : L2_Ham 2.0955094722e-03  L2_Mom 0.0000000000e+00
+[preflight] frames : rendering 14 field(s) from plt00000 with the consumer -> preflight_frames ...
+[preflight]   chi              ok     4.11e-07 .. 0.955
+[preflight]   chi_minus_1      ok     -1 .. -0.0445
+[preflight]   K                flat   0 .. 0  (every pixel 0: K is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   lapse            ok     0.219 .. 0.978
+[preflight]   shift1           flat   0 .. 0  (every pixel 0: shift1 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   shift2           flat   0 .. 0  (every pixel 0: shift2 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   shift3           flat   0 .. 0  (every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   phi              ok     -0.957 .. -0.014
+[preflight]   Pi               flat   0 .. 0  (every pixel 0: Pi is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   Weyl4_Re         ok     -3.12e-05 .. 0.000413
+[preflight]   Weyl4_Im         ok     -4.81e-06 .. 4.81e-06
+[preflight]   Weyl4_Mag        ok     1.28e-19 .. 0.000413
+[preflight]   scalar_activity  ok     0.014 .. 0.957
+[preflight]   local_speed      ok     0.000141 .. 0.956
+[preflight] frames : 14 of 14 rendered in 13.3 s (ok); flat at this time: K shift1 shift2 shift3 Pi
+[preflight] verdict: PASS
+[swh] t = 0 frames: runs/spinning_wormhole/drainhole/06_dt_ladder/static_hold_L64_ml3_dt005_sig02_t045/preflight_frames (rendered at preflight; the run's own go to frames/)
+[swh] registry : static_hold_L64_ml3_dt005_sig02_t045 -> results/spinningwormhole/runs_registry.tsv
+[manifest] runs/spinning_wormhole/drainhole/06_dt_ladder/static_hold_L64_ml3_dt005_sig02_t045/run_manifest.json: binary main3d_levnorm_73793542_2026-10-15.ex (73793542), preflight pass
+[swh] consumer  : pid 137429 -> runs/spinning_wormhole/drainhole/06_dt_ladder/static_hold_L64_ml3_dt005_sig02_t045/small_data
+[swh]            deleting processed plotfiles, keeping last 3
