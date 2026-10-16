@@ -58,11 +58,11 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 | ✓ | run | recipe | stop | status |
 |---|---|---|---|---|
 | ☑ | 0c static anchor | slow | 85 | DONE — `static_hold_L64_ml3_spdrv1_t100` (clean t 100); moved + repacked in `00_paper_runs/` 12:5x UTC |
-| ☑ | 0.5c | slow | 85 | live `ve050a_spdrv1_t150`, finishes ≈ 15:30; quote t ≤ 80 |
+| ☑ | 0.5c | slow | 85 | DONE — `ve050a_spdrv1_t150` DIED t 130.0 (NaN h11, L3), window t ≤ 80 clean; moved + packed `00_paper_runs/` 14:55 |
 | ☑ | 0.9c | fast | 150 | live 2nd node, finishes ≈ 15:10; recipe-exact (ψ4 14/30 — fine, stable throat radiates nothing) |
 | ☐ | **1st** 0.21c (J = 1) = triplet N 128 | slow | 85 | QUEUE FIRST, verification before every other rung (~5 h); template ready |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | with it (~1.6 h); template ready |
-| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | with it (~24 h, the long pole — earliest big slot); template ready |
+| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | LIVE card 1 since 14:58 (~24 h, the long pole); frame 0 = parent's |
 | ☐ | 0.7c | fast | 150 | to run (~8.5 h) — the minchi4 rescue predates σ 0.4 + drive |
 | ☐ | 0.9c fast triplet N 96 | fast | 100 | to run (~2.7 h) |
 | ☐ | 0.9c fast triplet N 192 | fast | 100 | to run (~29 h); N 128 member = the paper 0.9c run itself → full σ 0.4 + clamp triplet |
@@ -106,7 +106,7 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L128_ml3_ve050a_sig04_dt0035_t060` | 0.5c | 128 | 0.4 | 0.035 | 1e-8 | – | floored 22.3; stopped 26.4 | – |
 | `spin_hold_L128_ml3_ve050a_sig04_t100` | 0.5c | 128 | 0.4 | 0.02 | 1e-8 | – | DIED 46.47: sigma kills at ANY dt | 15 |
 | `spin_hold_L64_ml3_ve070a_minchi4_t100` | 0.7c | 64 | 0.1 | 0.02 | 1e-4 | – | RESCUE PASS, clean t 100, chi heals | 64 |
-| `spin_hold_L64_ml3_ve050a_spdrv1_t150` | 0.5c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | LIVE; Ham ×2 at ≈ 83 (interior knee) | ≈83 |
+| `spin_hold_L64_ml3_ve050a_spdrv1_t150` | 0.5c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | DIED 130.0 (NaN h11): K > 0.1 at 110, lapse pinned 128 — slow recipe breaks long; paper 0.5c run, quotes t ≤ 80 | 80 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100` | 0.5c | 64 | 0.2 | 0.02 | 1e-8 | 1.0 | stopped 23.9 (two-regime decision; chi already on the dt005 decay curve — sigma-driven, dt-independent) | 25 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100` | 0.5c | 64 | 0.2 | 0.05 | 1e-8 | 1.0 | stopped 44.5: slow puncture decay | 20 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | LIVE; the ONE-RECIPE candidate | tbd |
@@ -121,12 +121,18 @@ What the ledger says, four lines:
 
 ## LIVE
 
-| run | node/card | t @ 12:00 | stop | speed | ETA (UTC 10-16) |
+| run | node/card | t @ 14:55 | stop | speed | ETA (UTC) |
 |---|---|---|---|---|---|
-| 0.5c drive `ve050a_spdrv1_t150` | 1st, card 1 (solo from 12:30) | 99.2 | 150 | ~17 t/h solo | ≈ 15:30 |
-| ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 | 1 | 100 | 19.5 t/h shared | gate t ≈ 48 ≈ 14:25; t 100 ≈ 17:05 |
-| 0.99c `ve099a_spdrv1_t150` | 1st, card 0 | 25 | 150 | ~9 t/h shared | ≈ 21:30 |
-| 0.9c `ve090a_spdrv1_sig04_t150` | 2nd node | 90 | 150 | 17.5 t/h | ≈ 15:00 |
+| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | 0 (launched 14:58) | 85 | ~3.5 t/h est. | ≈ 10-17 15:00 |
+| ONE-RECIPE `..._sig04_mc4_dt005_t100` | 1st, card 0 | 54.6 | 100 | ~31 t/h shared | ≈ 16:25 |
+| 0.99c `ve099a_spdrv1_t150` | 1st, card 0 | 48.3 | 150 | ~11 t/h shared | ≈ 10-17 00:15 |
+| 0.9c `ve090a_spdrv1_sig04_t150` | 2nd node | 144.0 | 150 | 17.5 t/h | ≈ 15:15 |
+
+0.5c drive `ve050a_spdrv1_t150` FINISHED-DEAD: NaN (h11, L3) at t = 130.0. Clean
+through the Ham ×2 knee (~83); then Ham 0.157@110 → 0.367@120, max|K| > 0.1 at
+t ≈ 110, lapse pinned 1e-10 by 128 — the slow recipe going unphysical long, as
+the two-regime split predicted. Trust 80; moved + packed `00_paper_runs/`;
+scratch pruned (7.1 GB).
 
 Notes: every live run no-checkpoint, spdrv binary, full frames, keep-last 3.
 0.99c psi4 is 3-radius (14/18/30) from t = 22 only — the consumer was killed by a

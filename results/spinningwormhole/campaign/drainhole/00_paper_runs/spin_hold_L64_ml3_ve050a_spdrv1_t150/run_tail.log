@@ -1,0 +1,200 @@
+[Level 3 step 103942] ADVANCE at time 129.92625 with dt = 0.00125
+[Level 3 step 103942] average evolution speed = 14.39451917 code units/h
+[Level 3 step 103942] Advanced 4096000 cells
+[Level 2 step 51972] ADVANCE at time 129.9275 with dt = 0.0025
+[Level 2 step 51972] average evolution speed = 14.39459801 code units/h
+[Level 2 step 51972] Advanced 4096000 cells
+[Level 3 step 103943] ADVANCE at time 129.9275 with dt = 0.00125
+[Level 3 step 103943] average evolution speed = 14.39454204 code units/h
+[Level 3 step 103943] Advanced 4096000 cells
+[Level 3 step 103944] ADVANCE at time 129.92875 with dt = 0.00125
+[Level 3 step 103944] average evolution speed = 14.39462445 code units/h
+[Level 3 step 103944] Advanced 4096000 cells
+
+[STEP 12993] Coarse TimeStep time: 2.035696898
+[STEP 12993] FAB kilobyte spread across MPI nodes: [22380487 ... 22380487]
+
+STEP = 12993 TIME = 129.93 DT = 0.01
+
+[Level 0 step 12994] ADVANCE at time 129.93 with dt = 0.01
+[Level 0 step 12994] average evolution speed = 14.39466009 code units/h
+[Level 0 step 12994] Advanced 2097152 cells
+[Level 1 step 25987] ADVANCE at time 129.93 with dt = 0.005
+[Level 1 step 25987] average evolution speed = 14.39461781 code units/h
+[Level 1 step 25987] Advanced 4096000 cells
+[Level 2 step 51973] ADVANCE at time 129.93 with dt = 0.0025
+[Level 2 step 51973] average evolution speed = 14.39456148 code units/h
+[Level 2 step 51973] Advanced 4096000 cells
+[Level 3 step 103945] ADVANCE at time 129.93 with dt = 0.00125
+[Level 3 step 103945] average evolution speed = 14.39450549 code units/h
+[Level 3 step 103945] Advanced 4096000 cells
+[Level 3 step 103946] ADVANCE at time 129.93125 with dt = 0.00125
+[Level 3 step 103946] average evolution speed = 14.39458792 code units/h
+[Level 3 step 103946] Advanced 4096000 cells
+[Level 2 step 51974] ADVANCE at time 129.9325 with dt = 0.0025
+[Level 2 step 51974] average evolution speed = 14.39466671 code units/h
+[Level 2 step 51974] Advanced 4096000 cells
+[Level 3 step 103947] ADVANCE at time 129.9325 with dt = 0.00125
+[Level 3 step 103947] average evolution speed = 14.39461075 code units/h
+[Level 3 step 103947] Advanced 4096000 cells
+[Level 3 step 103948] ADVANCE at time 129.93375 with dt = 0.00125
+[Level 3 step 103948] average evolution speed = 14.39469314 code units/h
+[Level 3 step 103948] Advanced 4096000 cells
+[Level 1 step 25988] ADVANCE at time 129.935 with dt = 0.005
+[Level 1 step 25988] average evolution speed = 14.39476821 code units/h
+[Level 1 step 25988] Advanced 4096000 cells
+[Level 2 step 51975] ADVANCE at time 129.935 with dt = 0.0025
+[Level 2 step 51975] average evolution speed = 14.3947119 code units/h
+[Level 2 step 51975] Advanced 4096000 cells
+[Level 3 step 103949] ADVANCE at time 129.935 with dt = 0.00125
+[Level 3 step 103949] average evolution speed = 14.39465592 code units/h
+[Level 3 step 103949] Advanced 4096000 cells
+[Level 3 step 103950] ADVANCE at time 129.93625 with dt = 0.00125
+[Level 3 step 103950] average evolution speed = 14.39473838 code units/h
+[Level 3 step 103950] Advanced 4096000 cells
+[Level 2 step 51976] ADVANCE at time 129.9375 with dt = 0.0025
+[Level 2 step 51976] average evolution speed = 14.39481747 code units/h
+[Level 2 step 51976] Advanced 4096000 cells
+[Level 3 step 103951] ADVANCE at time 129.9375 with dt = 0.00125
+[Level 3 step 103951] average evolution speed = 14.3947616 code units/h
+[Level 3 step 103951] Advanced 4096000 cells
+[Level 3 step 103952] ADVANCE at time 129.93875 with dt = 0.00125
+[Level 3 step 103952] average evolution speed = 14.39484404 code units/h
+[Level 3 step 103952] Advanced 4096000 cells
+
+[STEP 12994] Coarse TimeStep time: 2.036289203
+[STEP 12994] FAB kilobyte spread across MPI nodes: [22380487 ... 22380487]
+
+STEP = 12994 TIME = 129.94 DT = 0.01
+
+[Level 0 step 12995] ADVANCE at time 129.94 with dt = 0.01
+[Level 0 step 12995] average evolution speed = 14.3948659 code units/h
+[Level 0 step 12995] Advanced 2097152 cells
+[Level 1 step 25989] ADVANCE at time 129.94 with dt = 0.005
+[Level 1 step 25989] average evolution speed = 14.39482623 code units/h
+[Level 1 step 25989] Advanced 4096000 cells
+[Level 2 step 51977] ADVANCE at time 129.94 with dt = 0.0025
+[Level 2 step 51977] average evolution speed = 14.39476994 code units/h
+[Level 2 step 51977] Advanced 4096000 cells
+[Level 3 step 103953] ADVANCE at time 129.94 with dt = 0.00125
+[Level 3 step 103953] average evolution speed = 14.39471409 code units/h
+[Level 3 step 103953] Advanced 4096000 cells
+[Level 3 step 103954] ADVANCE at time 129.94125 with dt = 0.00125
+[Level 3 step 103954] average evolution speed = 14.39479658 code units/h
+[Level 3 step 103954] Advanced 4096000 cells
+[Level 2 step 51978] ADVANCE at time 129.9425 with dt = 0.0025
+[Level 2 step 51978] average evolution speed = 14.39487575 code units/h
+[Level 2 step 51978] Advanced 4096000 cells
+[Level 3 step 103955] ADVANCE at time 129.9425 with dt = 0.00125
+[Level 3 step 103955] average evolution speed = 14.39481994 code units/h
+[Level 3 step 103955] Advanced 4096000 cells
+[Level 3 step 103956] ADVANCE at time 129.94375 with dt = 0.00125
+[Level 3 step 103956] average evolution speed = 14.39490234 code units/h
+[Level 3 step 103956] Advanced 4096000 cells
+[Level 1 step 25990] ADVANCE at time 129.945 with dt = 0.005
+[Level 1 step 25990] average evolution speed = 14.39497734 code units/h
+[Level 1 step 25990] Advanced 4096000 cells
+[Level 2 step 51979] ADVANCE at time 129.945 with dt = 0.0025
+[Level 2 step 51979] average evolution speed = 14.39492096 code units/h
+[Level 2 step 51979] Advanced 4096000 cells
+[Level 3 step 103957] ADVANCE at time 129.945 with dt = 0.00125
+[Level 3 step 103957] average evolution speed = 14.39486498 code units/h
+[Level 3 step 103957] Advanced 4096000 cells
+[Level 3 step 103958] ADVANCE at time 129.94625 with dt = 0.00125
+[Level 3 step 103958] average evolution speed = 14.39494729 code units/h
+[Level 3 step 103958] Advanced 4096000 cells
+[Level 2 step 51980] ADVANCE at time 129.9475 with dt = 0.0025
+[Level 2 step 51980] average evolution speed = 14.39502609 code units/h
+[Level 2 step 51980] Advanced 4096000 cells
+[Level 3 step 103959] ADVANCE at time 129.9475 with dt = 0.00125
+[Level 3 step 103959] average evolution speed = 14.39497022 code units/h
+[Level 3 step 103959] Advanced 4096000 cells
+[Level 3 step 103960] ADVANCE at time 129.94875 with dt = 0.00125
+[Level 3 step 103960] average evolution speed = 14.39505272 code units/h
+[Level 3 step 103960] Advanced 4096000 cells
+
+[STEP 12995] Coarse TimeStep time: 1.994500033
+[STEP 12995] FAB kilobyte spread across MPI nodes: [22380487 ... 22380487]
+
+STEP = 12995 TIME = 129.95 DT = 0.01
+
+[Level 0 step 12996] ADVANCE at time 129.95 with dt = 0.01
+[Level 0 step 12996] average evolution speed = 14.39509019 code units/h
+[Level 0 step 12996] Advanced 2097152 cells
+[Level 1 step 25991] ADVANCE at time 129.95 with dt = 0.005
+[Level 1 step 25991] average evolution speed = 14.39505062 code units/h
+[Level 1 step 25991] Advanced 4096000 cells
+[Level 2 step 51981] ADVANCE at time 129.95 with dt = 0.0025
+[Level 2 step 51981] average evolution speed = 14.39499444 code units/h
+[Level 2 step 51981] Advanced 4096000 cells
+[Level 3 step 103961] ADVANCE at time 129.95 with dt = 0.00125
+[Level 3 step 103961] average evolution speed = 14.39493861 code units/h
+[Level 3 step 103961] Advanced 4096000 cells
+[Level 3 step 103962] ADVANCE at time 129.95125 with dt = 0.00125
+[Level 3 step 103962] average evolution speed = 14.3950211 code units/h
+[Level 3 step 103962] Advanced 4096000 cells
+[Level 2 step 51982] ADVANCE at time 129.9525 with dt = 0.0025
+[Level 2 step 51982] average evolution speed = 14.39510047 code units/h
+[Level 2 step 51982] Advanced 4096000 cells
+[Level 3 step 103963] ADVANCE at time 129.9525 with dt = 0.00125
+[Level 3 step 103963] average evolution speed = 14.39504466 code units/h
+[Level 3 step 103963] Advanced 4096000 cells
+[Level 3 step 103964] ADVANCE at time 129.95375 with dt = 0.00125
+[Level 3 step 103964] average evolution speed = 14.39512723 code units/h
+[Level 3 step 103964] Advanced 4096000 cells
+[Level 1 step 25992] ADVANCE at time 129.955 with dt = 0.005
+[Level 1 step 25992] average evolution speed = 14.39520277 code units/h
+[Level 1 step 25992] Advanced 4096000 cells
+[Level 2 step 51983] ADVANCE at time 129.955 with dt = 0.0025
+[Level 2 step 51983] average evolution speed = 14.39514651 code units/h
+[Level 2 step 51983] Advanced 4096000 cells
+[Level 3 step 103965] ADVANCE at time 129.955 with dt = 0.00125
+[Level 3 step 103965] average evolution speed = 14.39509069 code units/h
+[Level 3 step 103965] Advanced 4096000 cells
+[Level 3 step 103966] ADVANCE at time 129.95625 with dt = 0.00125
+[Level 3 step 103966] average evolution speed = 14.39517322 code units/h
+[Level 3 step 103966] Advanced 4096000 cells
+[Level 2 step 51984] ADVANCE at time 129.9575 with dt = 0.0025
+[Level 2 step 51984] average evolution speed = 14.39525244 code units/h
+[Level 2 step 51984] Advanced 4096000 cells
+[Level 3 step 103967] ADVANCE at time 129.9575 with dt = 0.00125
+[Level 3 step 103967] average evolution speed = 14.39519665 code units/h
+[Level 3 step 103967] Advanced 4096000 cells
+[Level 3 step 103968] ADVANCE at time 129.95875 with dt = 0.00125
+[Level 3 step 103968] average evolution speed = 14.39527904 code units/h
+[Level 3 step 103968] Advanced 4096000 cells
+NaN diagnostic: rank=0 level=3 component=1 name=h11
+amrex::Abort::0::NaN in GRAMRLevel::post_timestep !!!
+SIGABRT
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+addr2line: 'runs/spinning_wormhole/drainhole/07_sponge_fix/spin_hold_L64_ml3_ve050a_spdrv1_t150/test': No such file
+See Backtrace.0 file for details
+--------------------------------------------------------------------------
+MPI_ABORT was invoked on rank 0 in communicator MPI_COMM_WORLD
+  Proc: [[20094,0],0]
+  Errorcode: 6
+
+NOTE: invoking MPI_ABORT causes Open MPI to kill all MPI processes.
+You may or may not see output from other processes, depending on
+exactly when Open MPI kills them.
+--------------------------------------------------------------------------
