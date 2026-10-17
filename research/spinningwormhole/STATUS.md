@@ -97,11 +97,11 @@ triplets pass (decided 10-17).
 
 | ✓ | run | recipe | stop | cost | status |
 |---|---|---|---|---|---|
-| ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | LIVE since 18:27 MSK 10-17, 1st node card 0 (go 10-17: stop 100 to test the late constraint growth) |
-| ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | LIVE since 18:27 MSK 10-17, 1st node card 0 |
+| ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | NOT STARTED — launched 18:27, stopped by decision at t 2.85 (10-17) so card 0 takes the 0.9c pair; stop 100 kept (go 10-17: test the late constraint growth) |
+| ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | NOT STARTED — launched 18:27, stopped by decision at t 1.2 (10-17) so card 0 takes the 0.9c pair |
 | ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | NOT STARTED — launched 18:27, stopped by decision at t 0.44 (10-17) so card 1 takes the 0.9c N 192 first; run dir in `00_archive/aborted_2026-10-17/`; next: the second node's card (a session there) or card 1 after the 0.9c |
-| ☐ | 0.9c triplet N 96 | fast | 150 | ~4 h | NOT STARTED |
-| ☐ | 0.9c triplet N 128 (= the paper 0.9c) | fast | 150 | ~9 h | NOT STARTED |
+| ☐ | 0.9c triplet N 96 `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~5 h | LIVE since 18:35 MSK 10-17, 1st node card 0 (go 10-17) |
+| ☐ | 0.9c triplet N 128 (= the paper 0.9c) `spin_hold_L64_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~12 h | LIVE since 18:36 MSK 10-17, 1st node card 0 (go 10-17) |
 | ☐ | 0.9c triplet N 192 `spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~34 h, ~67 GB (a card alone) | LIVE since 18:33 MSK 10-17, 1st node card 1 (go 10-17) |
 | ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
 | ☐ | 0.5c | slow | 85 | ~9 h | NOT STARTED |
@@ -122,15 +122,13 @@ constraint-solved seed before templating.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.2c triplet rerun N 96 + N 128 `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_fix_t100` (binary rkfix 0661dac4, stop 100, hold profile, no checkpoints; t = 0 norms = the old members' to 6 digits) | 1st, card 0 | 0 @ 18:27 | 100 | measuring | N 96 ≈ 23:30, N 128 ≈ 10-18 05:30 (est.) |
+| 0.9c triplet rerun N 96 + N 128 `00_paper_runs/spin_hold_L64_{N96_,}ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints; t = 0 norms = the old members') | 1st, card 0 | 0 @ 18:35 | 150 | measuring | N 96 ≈ 23:30, N 128 ≈ 10-18 06:30 (est.) |
 | 0.9c triplet rerun N 192 `00_paper_runs/spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints) | 1st, card 1 (solo) | 0 @ 18:33 | 150 | measuring | ≈ 10-19 04:30 (~34 h, est.) |
 
 ## NEXT
 
-- The 0.9c N 96 + N 128 (templates `params_spin_hold_L64_{N96_,}ml3_ve090a_spdrv1_sig04_fix_t150.txt`): on card 0
-  when the 0.2c N 96 frees room (~39 GB the pair), each on its go.
-- The 0.2c N 192 (template `params_spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100.txt`): the second node's card
-  (a session there) or card 1 after the 0.9c N 192.
+- The 0.2c triplet rerun (templates `params_spin_hold_L64_{N96_,,N192_}ml3_J100_full_spdrv1_fix_t100.txt`, stop 100):
+  after the 0.9c triplet (decided 10-17: the 0.9c first, whole), or its N 192 on the second node's card (a session there).
 - Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB
   (prune needs a session there).
 
