@@ -79,9 +79,9 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 | ☑ | RK stage re-fill OFF checks (0.2c × N 96/128/192, t 0.5) | slow | 0.5 | 1 | 0, 1 | DONE 17:41 MSK 10-17 (binary rkfix 0661dac4, `rk_stage_refill = 0`, `03_t0_checks/t0rk0_J100_*`): levels 1–3 converge (N 128 → 192 at t 0.49: levels 1–2 +2.0 to +2.2, 7–50× lower than t0exq; throat level +3.8); level 0 is the box face — the 0.2c triplet rerun is clear | finished | finished |
 | ☐ | 0.9c level-3 mask checks (N 96/128/192, t 0.5) | fast | 0.5 | 1 | 0, 1 | LIVE since 17:41 MSK 10-17 (go 10-17): the t0rk0 0.9c params with `constraint_norms_mask_radius = 0.75`, `03_t0_checks/t0mask_*`, no checkpoints: does level 3 converge outside the χ-floored core? | ~20 min | ≈ 10-17 18:20 |
 | ☐ | sponge drive on/off pair, 0.9c N 96 to t 60 | fast | 60 | 1 | 0 | LIVE since 17:09 MSK 10-17: binary exq 16228dcd, `07_sponge_fix/sptest_L64_N96_ml3_ve090a_drv{1,0}_t60`, hold profile with whole-box frames (zoom 64), ψ4 14/18/30, no checkpoints: does the drive shell corrupt the border? t 2.1 @ 17:21, ~16.5 t/h | ~3.5 h | ≈ 10-17 20:50 |
-| ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees ≈ 13:40 (~8.5 h run) | – | – |
-| ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
-| ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | 1 | 1 | after the 0.9c N 96 (~8.5 h run) | – | – |
+| ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | BLOCKED (decided 10-17): no kick run until the non-kick runs pass the convergence study (the 0.9c and 0.2c triplet reruns); then ~8.5 h | – | – |
+| ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | BLOCKED (decided 10-17): no kick run until the non-kick runs pass the convergence study (the 0.9c and 0.2c triplet reruns); then after kick A1, ~8.5 h | – | – |
+| ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | 1 | 1 | BLOCKED (decided 10-17): no kick run until the non-kick runs pass the convergence study (the 0.9c and 0.2c triplet reruns); then ~8.5 h | – | – |
 | ☐ | 0.95c stretch | fast | 150 | – | – | optional, only if the 0.99c curve wants the point | – | – |
 | – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | 1 | 0 | DIED 81.1 (NaN in K — the dt 0.05 instability, delayed 22 → 64 by σ0.4+floor); clamp validated in the clean window (ψ4@14 0.9 %, throat R 0.3 % vs parent); `06_dt_ladder/` | finished | finished |
 
@@ -315,8 +315,8 @@ its go; no queued run writes or needs checkpoints.
 | next free slot | run | needs |
 |---|---|---|
 | node 2 now (a session there; nothing to kill) — or node 1 card 0 after the 0.7c extra run (≈ 18:25) | **0.9c N 128 + N 96 throat reruns** (`…_t150_thr`): same params as the packed runs (templates diff-proven: paths only), hold profile (throat spheres, ψ4 14/18/30), no checkpoints; both on one card (39 GB) ≈ 12 h | go given 10-17 |
-| node 2, free since ≈ 12:19 MSK (0.7c died, 0.99c done) | kick 0.9c A1, then A2 (×10) | kick templates: seed amplitude A1 = merger seed scale |
-| node 1 gpu 1, after fast N 192 | kick 0.7c A1 | same template, ve070 background |
+| node 2, free since ≈ 12:19 MSK (0.7c died, 0.99c done) | BLOCKED until the triplets pass (decided 10-17): kick 0.9c A1, then A2 (×10) | kick templates: seed amplitude A1 = merger seed scale |
+| node 1 gpu 1, after fast N 192 | BLOCKED until the triplets pass (decided 10-17): kick 0.7c A1 | same template, ve070 background |
 | anywhere, only if the 0.99c curve wants it | 0.95c stretch | background fam_a_ve095 |
 
 **Kick (perturbed-stability) study — planned 2026-10-16.** As in
