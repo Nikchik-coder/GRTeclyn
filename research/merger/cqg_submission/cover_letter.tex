@@ -1,0 +1,41 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.7em}
+\pagestyle{empty}
+
+\begin{document}
+
+\begin{flushright}
+17 October 2026
+\end{flushright}
+
+To the Editor, \emph{Classical and Quantum Gravity}
+
+Dear Editor,
+
+We submit our manuscript \emph{``Binary Ellis--Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves''}, by Nikita M.\ Shirokov and Ilya Nachevsky, for consideration as a Paper in \emph{Classical and Quantum Gravity}.
+
+The manuscript presents, to our knowledge, the first 3D numerical-relativity evolutions of wormhole binaries: pairs of massive Ellis--Bronnikov drainholes held open by a ghost scalar field, evolved with the CCZ4 formulation and adaptive mesh refinement. It extends work published in this journal. Gonz\'alez, Guzm\'an and Sarbach established the instability of these wormholes in spherical symmetry (CQG \textbf{26} 015010 and 015011, 2009), and Kain showed that a collapsed throat settles to Schwarzschild (CQG \textbf{43} 045014, 2026). We take the problem from one throat in spherical symmetry to two throats in full 3D. The main results are:
+
+\begin{itemize}\setlength{\itemsep}{0.2em}
+\item A single throat's e-fold time matches the Gonz\'alez--Guzm\'an--Sarbach linear rate to within 1.9\%.
+\item Two throats obey a charge-sign rule. Like scalar charges repel and opposite charges attract, with a measured attraction-to-repulsion ratio of $1.462\pm0.022$ against the predicted $3/2$, so only opposite-signed pairs merge.
+\item A head-on collision forms a common marginally outer trapped surface around both still-open throats. The horizon then loses 28\% of its area as it swallows the phantom field, and by $t=100$ lies within 1.4\% of the Schwarzschild radius of the pair's mass.
+\item Every encounter radiates a burst of gravitational waves and a scalar dipole of comparable energy and negative sign. A throat survives at most a few orbital periods, and the negative-energy dipole would pump rather than drain the orbit, so these binaries have no inspiral.
+\end{itemize}
+
+The work lies where numerical relativity, exotic compact objects and gravitational-wave sources meet, and builds directly on the CQG papers above. We therefore believe it suits the journal's readership.
+
+The code, analysis scripts, parameter files and diagnostic streams of every run are public (GitHub tag \texttt{v1.0.1-wormhole-merger}, archived at \url{https://doi.org/10.5281/zenodo.23257999}). A preprint is available as arXiv:2610.13206. The manuscript has not been published and is not under consideration elsewhere, and both authors have approved this submission.
+
+Yours sincerely,
+
+Nikita M.\ Shirokov (corresponding author)\\
+Moscow Institute of Physics and Technology\\
+\href{mailto:shirokov.nm@phystech.edu}{shirokov.nm@phystech.edu}
+
+\end{document}
