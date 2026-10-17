@@ -57,7 +57,11 @@ def _auto_zlim_from_array(values: np.ndarray, field_name: str) -> tuple[float, f
         # matter spacetimes -- the champion reaches chi ~ 1.44, and a 1.05 cap
         # saturates the whole structure into one flat colour.  The 99.5th
         # percentile above already keeps outliers from setting the scale.
-        return (max(0.05, lo - pad), hi + pad)
+        # 2026-10-17: the 0.05 floor keeps a puncture's chi -> 0 from setting the
+        # scale, but a field living entirely below it (the 0.99c hold: chi < 0.016
+        # in the window) got lo > hi and every frame drew black; floor at 0 there.
+        floor = 0.05 if hi + pad > 0.05 + min_span else 0.0
+        return (max(floor, lo - pad), hi + pad)
 
     if field_name in {"shift1", "shift2", "shift3"}:
         max_abs = float(np.nanpercentile(np.abs(finite), 99.5))
