@@ -215,7 +215,8 @@ bool BoundaryConditions::is_periodic(const int a_dir) const
 }
 
 void BoundaryConditions::apply_sommerfeld_boundaries(
-    amrex::MultiFab &a_rhs, const amrex::MultiFab &a_soln) const
+    amrex::MultiFab &a_rhs, const amrex::MultiFab &a_soln,
+    const amrex::MultiFab *a_reference) const
 {
     // First-order extrapolation and reflection are imposed by AMReX when it
     // fills physical ghost cells. Sommerfeld instead requires this additional
@@ -283,6 +284,7 @@ void BoundaryConditions::apply_sommerfeld_boundaries(
             m_params.vars_asymptotic_values.end(), m_asymptotic_values.begin());
     }
     auto *asymptotic_values = m_asymptotic_values.data();
+    const bool relative     = (a_reference != nullptr);
 
 #if defined(AMREX_USE_OMP) && !defined(AMREX_USE_GPU)
 #pragma omp parallel
@@ -292,6 +294,9 @@ void BoundaryConditions::apply_sommerfeld_boundaries(
         const amrex::Box &valid_box                 = mfi.validbox();
         const amrex::Array4<amrex::Real const> &sol = a_soln.const_array(mfi);
         const amrex::Array4<amrex::Real> &rhs       = a_rhs.array(mfi);
+        const amrex::Array4<amrex::Real const> ref =
+            relative ? a_reference->const_array(mfi)
+                     : amrex::Array4<amrex::Real const>{};
         for (const auto &sommbox : sommboxes)
         {
             amrex::Box valid_sommbox = sommbox & valid_box;
@@ -301,6 +306,13 @@ void BoundaryConditions::apply_sommerfeld_boundaries(
                     valid_sommbox, a_rhs.nComp(),
                     [=] AMREX_GPU_DEVICE(int i, int j, int k, int n) noexcept
                     {
+                        // the field the condition acts on: the state, or its
+                        // deviation from the reference
+                        auto f = [&](const amrex::IntVect &a_iv)
+                        {
+                            return relative ? sol(a_iv, n) - ref(a_iv, n)
+                                            : sol(a_iv, n);
+                        };
                         amrex::RealVect loc((i + 0.5) * dx - center[0],
                                             (j + 0.5) * dx - center[1],
                                             (k + 0.5) * dx - center[2]);
@@ -315,36 +327,38 @@ void BoundaryConditions::apply_sommerfeld_boundaries(
                             {
                                 iv_offset1[idir2] += +1;
                                 iv_offset2[idir2] += +2;
-                                d1 = (1.0 / dx) * (-1.5 * sol(iv, n) +
-                                                   2.0 * sol(iv_offset1, n) -
-                                                   0.5 * sol(iv_offset2, n));
+                                d1 = (1.0 / dx) * (-1.5 * f(iv) +
+                                                   2.0 * f(iv_offset1) -
+                                                   0.5 * f(iv_offset2));
                             }
                             else if (iv[idir2] == domhi[idir2])
                             {
                                 iv_offset1[idir2] += -1;
                                 iv_offset2[idir2] += -2;
-                                d1 = (1.0 / dx) * (+1.5 * sol(iv, n) -
-                                                   2.0 * sol(iv_offset1, n) +
-                                                   0.5 * sol(iv_offset2, n));
+                                d1 = (1.0 / dx) * (+1.5 * f(iv) -
+                                                   2.0 * f(iv_offset1) +
+                                                   0.5 * f(iv_offset2));
                             }
                             else
                             {
                                 iv_offset1[idir2] += +1;
                                 iv_offset2[idir2] += -1;
-                                d1                 = (0.5 / dx) *
-                                     (sol(iv_offset1, n) - sol(iv_offset2, n));
+                                d1 = (0.5 / dx) *
+                                     (f(iv_offset1) - f(iv_offset2));
                             }
                             // for each direction add dphidx * x^i
                             tmp += -d1 * loc[idir2];
                         }
                         // asymptotic values - these need to have been set in
-                        // the params file
+                        // the params file (zero for the deviation from a
+                        // reference)
+                        const amrex::Real asymptote =
+                            relative ? 0. : asymptotic_values[n];
                         amrex::Real radius =
                             std::sqrt(loc[0] * loc[0] + loc[1] * loc[1] +
                                       loc[2] * loc[2]);
                         rhs(i, j, k, n) =
-                            (asymptotic_values[n] - sol(i, j, k, n) + tmp) *
-                            (1. / radius);
+                            (asymptote - f(iv) + tmp) * (1. / radius);
                     });
             }
         }

@@ -241,14 +241,19 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     // edge) partially reflects -- every L64 trust window died at that t ~ 62
     // return.  The reference is rebuilt from the table whenever the level's
     // grids change, so restarts drive toward the same background.
+    // The background-relative Sommerfeld boundaries (applied after this
+    // function in the same RK stage) read the same reference.
+    const bool need_ref =
+        simParams().sponge_drive_strength > 0.0 ||
+        simParams().sommerfeld_relative_to_background != 0;
+    if (need_ref &&
+        (!m_sponge_ref.ok() || m_sponge_ref.boxArray() != a_rhs.boxArray() ||
+         m_sponge_ref.DistributionMap() != a_rhs.DistributionMap()))
+    {
+        build_sponge_ref();
+    }
     if (simParams().sponge_drive_strength > 0.0)
     {
-        if (!m_sponge_ref.ok() ||
-            m_sponge_ref.boxArray() != a_rhs.boxArray() ||
-            m_sponge_ref.DistributionMap() != a_rhs.DistributionMap())
-        {
-            build_sponge_ref();
-        }
         const auto &p = simParams().sponge_params;
         SpongeDrive drive;
         drive.enabled      = true;
@@ -306,6 +311,17 @@ void SpinningWormholeLevel::build_sponge_ref()
                        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k)
                        { gammas.compute(i, j, k, arrs[box_no]); });
     amrex::Gpu::streamSynchronize();
+
+    // Gamma^i exists on the valid cells only; the Sommerfeld stencil reads
+    // across box edges, so copy the neighbours' valid cells into the ghosts.
+    // (The drive reads valid cells only.)
+    m_sponge_ref.FillBoundary(Geom().periodicity());
+}
+
+const amrex::MultiFab *SpinningWormholeLevel::sommerfeld_reference() const
+{
+    return (simParams().sommerfeld_relative_to_background != 0) ? &m_sponge_ref
+                                                                : nullptr;
 }
 
 void SpinningWormholeLevel::specificUpdateODE(amrex::MultiFab &a_soln)

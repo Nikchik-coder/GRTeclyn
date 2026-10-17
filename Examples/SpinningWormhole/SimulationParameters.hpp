@@ -121,6 +121,13 @@ class SimulationParameters : public SimulationParametersBase
         // old evolution bit for bit); explicit stability needs
         // strength * dt < ~1.
         pp.load("sponge_drive_strength", sponge_drive_strength, 0.0);
+        // Sommerfeld boundaries on the deviation from the t = 0 background
+        // (the drive's reference) instead of on the state.  2026-10-17: the
+        // 0.9c box face sits at ~5.5 M_ADM (chi 0.71, lapse 0.83), where the
+        // flat-space condition pushed junk in from t = 1 at every N.  0 = off
+        // (the old evolution bit for bit).
+        pp.load("sommerfeld_relative_to_background",
+                sommerfeld_relative_to_background, 0);
     }
 
     void read_tagging_params(GRParmParse &pp)
@@ -194,6 +201,7 @@ class SimulationParameters : public SimulationParametersBase
     CoreRadialProfile::params_t core_profile_params{};
     SpongeZoneParams sponge_params{};
     double sponge_drive_strength{0.0};
+    int sommerfeld_relative_to_background{0};
 
     int tagging_type{};
     double tagging_L{};

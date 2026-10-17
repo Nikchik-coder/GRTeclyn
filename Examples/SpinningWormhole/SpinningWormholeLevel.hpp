@@ -57,15 +57,20 @@ class SpinningWormholeLevel : public GRAMRLevel
     //! refuses extended __device__ lambdas inside a private member function.
     void write_scalar_diagnostics();
 
-    //! Reference state for the damping sponge (sponge_drive_strength > 0):
-    //! the stationary background on this level's grids (table data +
-    //! InitialGammas, the same fill as initData).  Built lazily in
-    //! specificEvalRHS and rebuilt whenever the level's BoxArray or
-    //! DistributionMapping changes (regrid, restart), so a restarted run
-    //! drives toward the same background as a fresh one.  Public for the
-    //! same nvcc extended-lambda reason as write_scalar_diagnostics.
+    //! Reference state for the damping sponge (sponge_drive_strength > 0)
+    //! and the background-relative Sommerfeld boundaries
+    //! (sommerfeld_relative_to_background = 1): the stationary background on
+    //! this level's grids (table data + InitialGammas, the same fill as
+    //! initData).  Built lazily in specificEvalRHS and rebuilt whenever the
+    //! level's BoxArray or DistributionMapping changes (regrid, restart), so a
+    //! restarted run drives toward the same background as a fresh one.  Public
+    //! for the same nvcc extended-lambda reason as write_scalar_diagnostics.
     amrex::MultiFab m_sponge_ref;
     void build_sponge_ref();
+
+    //! The background as the Sommerfeld reference when
+    //! sommerfeld_relative_to_background = 1, else none.
+    [[nodiscard]] const amrex::MultiFab *sommerfeld_reference() const override;
 };
 
 #endif /* SPINNINGWORMHOLELEVEL_HPP_ */

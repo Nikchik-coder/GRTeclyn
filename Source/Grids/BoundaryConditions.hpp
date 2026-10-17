@@ -92,9 +92,14 @@ class BoundaryConditions
     [[nodiscard]] bool is_periodic(int a_dir) const;
 
     /// Apply the Sommerfeld condition explicitly to the RHS after AMReX has
-    /// filled its physical ghost cells using first-order extrapolation
-    void apply_sommerfeld_boundaries(amrex::MultiFab &a_rhs,
-                                     const amrex::MultiFab &a_soln) const;
+    /// filled its physical ghost cells using first-order extrapolation.
+    /// With a_reference (same BoxArray and DistributionMapping as a_rhs, its
+    /// ghosts filled) the condition acts on the deviation a_soln - a_reference
+    /// with asymptotic value zero: exact for a stationary reference that is
+    /// not flat at the boundary, outgoing for perturbations of it.
+    void apply_sommerfeld_boundaries(
+        amrex::MultiFab &a_rhs, const amrex::MultiFab &a_soln,
+        const amrex::MultiFab *a_reference = nullptr) const;
 };
 
 #endif /* BOUNDARYCONDITIONS_HPP_ */
