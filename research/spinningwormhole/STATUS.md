@@ -66,7 +66,7 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 | ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, solo 4.3 t/h; t 63.3 @ 08:39, collapse under way (R −1 % at 56) | ~5 h | ≈ 10-17 13:40 |
 | ☑ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | DONE t 85 ≈ 04:35 through the throat collapse (R −1 % at 47, 2.53 at 85; trust 66), `00_paper_runs/` | finished | finished |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | FAILED, not finished: died 64.83 ≈ 00:30 at the end of the throat collapse (R −1 % at 43); pulled from the paper folders 10-17, archived in `drainhole/00_archive/failed_2026-10-17/` | failed | failed |
-| ☐ | 0.7c | fast | 150 | 2 | 0 | LIVE since ≈ 18:15, shared, 7.9 t/h; t 116.4 @ 08:39 | ~4.2 h | ≈ 10-17 12:55 |
+| ☐ | 0.7c | fast | 150 | 2 | 0 | DIED 135.85 ≈ 11:06 MSK (NaN in K, level 3): the lapse collapsed to its 1e-10 floor at t 102.4, K > 0.1 at 105.8, Ham ×2 at 127.5; throat size unchanged to t 127 (6.86–6.89) — the slicing breaks, not the throat; trust 102; close-out after its consumer drain | died | died |
 | ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c, 7.8 t/h (solo ~17.5 after 12:55); t 109.9 @ 08:39 | ~4.7 h | ≈ 10-17 13:20 |
 | ☐ | 0.9c fast triplet N 96 (t 150 window) | fast | 150 | 1 | 0 | LIVE since 09:11 MSK, solo 44.8 t/h — rerun to 150; the `_t100` member stopped at 100 (planning error: the triplet window is the recipe's 150) and is superseded | ~3.2 h | ≈ 10-17 12:35 |
 | ☐ | 0.9c fast triplet N 192 (t 150 window) | fast | 150 | 1 | 1 | go given 10-17; aborted at start on card 0 beside the N 96 (Arena OOM at 64 GB — needs a card to itself); relaunch on card 1 when the J=1 N 192 ends ≈ 13:40 (~35 h) | – | – |
@@ -85,12 +85,12 @@ marginal tube, R within 2 % from r 2.4 to 8). No fast throat shrinks: the 0.9c i
 `throat_geometry.dat` is NOT a throat measure on the fast runs: its rays start at r = 0.6, inside the χ-floored
 core, and the minimum lands there (0.9c from t ≈ 45, 0.99c from t = 0; the polar ray on the 0.7c too) — the
 "0.9c 23.8 → 5.9 / 0.99c 101 → 76" readings are that core, as is the lapse → 0.001; the 0.9c N 96-vs-N 128
-throat-ray comparison (0.6 % / 11 %) is void. Open: on the 0.7c |K| grows at the throat after t ≈ 100
-(0.1 at 106) — checked at its close-out.
+throat-ray comparison (0.6 % / 11 %) is void. The 0.7c's late |K| growth was the breakdown: it died at
+t 135.85 (see the matrix; trust 102).
 From 10-17 ≈ 10:40 MSK the consumer writes the throat per plotfile (`--throat-spheres` → `small_data/throat_spheres.dat`,
 in the hold profile): live on the 0.99c (consumer restarted), in the 0.7c and 0.9c N 96 rerun drains, on every
 future launch (the 0.9c N 192). Spinning paper runs differ by spin: static + 0.21c collapse (τ ≈ 5–6); 0.5c
-shrinks slowly (−1.6 % by t 80); 0.7c holds its size (late |K| growth open); 0.9c and 0.99c hold flat.
+shrinks slowly (−1.6 % by t 80); 0.7c holds its size to t 127 but its slicing breaks from t ≈ 102 (NaN 135.85); 0.9c and 0.99c hold flat.
 
 Campaign total ~34 h if the queue runs back-to-back. Kick templates
 (A1 = merger seed scale, A2 = ×10) still to be built; every launch waits
@@ -152,8 +152,7 @@ What the ledger says, four lines:
 | run | node/card | t @ 08:39 MSK | stop | speed (21:43 → 08:39) | ETA (MSK) |
 |---|---|---|---|---|---|
 | triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | 63.3 | 85 | 4.3 t/h | ≈ 10-17 13:40 |
-| 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared) | 116.4 | 150 | 7.9 t/h shared | ≈ 10-17 12:55 |
-| 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 109.9 | 150 | 7.8 t/h shared (solo ~17.5 after 12:55) | ≈ 10-17 13:20 |
+| 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (solo since the 0.7c died 11:06) | 129.3 @ 11:10 | 150 | ~17.5 t/h solo | ≈ 10-17 12:20 |
 | 0.9c fast N 96 rerun `L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 0 (solo) | 6.6 @ 09:21 | 150 | 44.8 t/h | ≈ 10-17 12:35 |
 
 0.9c triplet window = t 150 (the fast recipe's stop, as its N 128 member). 10-17: the N 96 reruns to 150 on card 0
