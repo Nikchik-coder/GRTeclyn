@@ -177,13 +177,14 @@ constraint-solved seed before templating.
 
 Settings (go 10-17 ≈ 23:20): the stopped L 128 triplet's (records below) plus `shift_advec_coeff = 0`,
 `sommerfeld_relative_to_background = 1` and `constraint_norms_edge_cells = 3` on binary
-`main3d_farfix_891d817d_2026-10-17.ex`; consumer flags plus `--frames-blank-edge 2`; no checkpoints. Speeds and ETAs
-below are the stopped triplet's, until measured.
+`main3d_farfix_891d817d_2026-10-17.ex`; consumer flags plus `--frames-blank-edge 2`; no checkpoints. Start checked
+23:30: preflights PASS, N 128 frame 0 identical to the stopped run's in all 14 fields (Weyl4 with the blank border),
+ψ4 header R 14 18 30 40 45, MOTS rows nan; level 0's per-level Ham at t 0 1.6e-9 / 5.4e-10 / 2.3e-10 (+2.7 / +3.0).
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.9c L 128 N 256 farfix `00_paper_runs/spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 0 (solo) | 0 @ 23:28 | 150 | ~15.6 t/h | ≈ 10-18 09:05 (~9.6 h) |
-| 0.9c L 128 N 192 + N 128 farfix `00_paper_runs/spin_hold_L128_N{192,128}_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 1 | 0 @ 23:28 | 150 | N 192 ~21, N 128 ~44 t/h | N 192 ≈ 10-18 06:35, N 128 ≈ 10-18 02:55 |
+| 0.9c L 128 N 256 farfix `00_paper_runs/spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 0 (solo), 51.1 GB | 0.97 @ 23:32 | 150 | 15.6 t/h | ≈ 10-18 09:05 (~9.5 h) |
+| 0.9c L 128 N 192 + N 128 farfix `00_paper_runs/spin_hold_L128_N{192,128}_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 1, 34.1 GB together | N 192 1.36, N 128 3.07 @ 23:32 | 150 | N 192 21.3, N 128 46.1 t/h | N 192 ≈ 10-18 06:30 (~7 h), N 128 ≈ 10-18 02:45 (~3.2 h) |
 
 Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archive/aborted_2026-10-17/`):
 
