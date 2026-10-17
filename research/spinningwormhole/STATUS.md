@@ -122,8 +122,17 @@ constraint-solved seed before templating.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.9c triplet rerun N 96 + N 128 `00_paper_runs/spin_hold_L64_{N96_,}ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints; t = 0 norms = the old members') | 1st, card 0 | N 96 2.0, N 128 0.8 @ 18:41 | 150 | N 96 ~18.6, N 128 ~10.3 t/h | N 96 ≈ 10-18 02:30, N 128 ≈ 10-18 09:00 |
-| 0.9c triplet rerun N 192 `00_paper_runs/spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints) | 1st, card 1 (solo) | 0.66 @ 18:41 | 150 | ~5.1 t/h | ≈ 10-18 23:30 (~29 h) |
+| 0.9c triplet rerun N 96 + N 128 `00_paper_runs/spin_hold_L64_{N96_,}ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints; t = 0 norms = the old members') | 1st, card 0 | N 96 12.2, N 128 6.2 @ 19:14 | 150 | N 96 ~19.5, N 128 ~10.1 t/h | N 96 ≈ 10-18 02:15, N 128 ≈ 10-18 09:30 |
+| 0.9c triplet rerun N 192 `00_paper_runs/spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints) | 1st, card 1 (solo) | 3.4 @ 19:14 | 150 | ~5.1 t/h | ≈ 10-18 24:00 (~29 h) |
+
+- Consumers (10-17 19:13 MSK on): restarted with `--mots-spectral-steps 150` (`restart_consumer.sh --busy`, frames and
+  rows kept). The N 192's MOTS search (2 seeds × 400 flow steps; the 0.9c never has a MOTS: 151/151 empty in the old
+  run) took 22 min per plotfile against one every 12 min (N 128 7 vs 6, N 96 3.3 vs 3.1), so scratch would have
+  filled before t 150. The N 192 restarts at its first save after its Plt00000 leaves scratch (≈ 19:40).
+- Early orders at t 2.0 (96→128 / 128→192): level 0 Ham −0.6/−0.7, Mom −0.9/−0.6 (box face, expected); level 1
+  Ham +1.5/+1.8, Mom +1.3/+3.4 (slipping: Ham 128→192 was +3.0 at t 1; 96→128 at t 3.4 is +1.0/+1.4); level 2
+  +2.2/+2.4, +1.8/+2.1; level 3 +1.9/+5.8, +3.0/+3.9. Frames: all 14 fields on all three, t 0 identical, values =
+  the plotfile; the old run's coarse–fine stripes in K and Pi are gone.
 
 ## NEXT
 

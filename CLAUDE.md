@@ -69,7 +69,12 @@ after session because it lived only in one machine's agent memory.
    extraction/MOTS rows land in `small_data/`, and the keep-last pruning runs. A consumer that died (or was never
    started) is silent: the evolution runs happily while scratch fills and no frames, movies or horizon data exist.
    (2026-10-02: SEED-csm ran 1.5 h consumer-less — `--profile none` sets `WHM_CONSUME=0` and silently drops
-   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`.) **Changing or fixing a live
+   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`.) **The consumer must also keep
+   up**: time one plotfile's pass (its frame's mtime to its `small_data` rows) against the run's plotfile interval;
+   a slower consumer piles plotfiles up on scratch until the disk fills. (2026-10-17: the 0.9c N 192's spectral MOTS
+   search, 2 seeds × 400 flow steps on a run that never has a MOTS, took 22 min per plotfile against one every
+   12 min; its cost grows as N³: 2.5 min at N 96, 6 at N 128. Fixed live with `--mots-spectral-steps 150` through
+   `restart_consumer.sh --busy`, since a lagging watcher is never idle.) **Changing or fixing a live
    run's consumer: only via `restart_consumer.sh <run_dir> <flag> ...`** (campaigns/wormhole_merger; `--check`
    first). It reuses the live watcher's exact command line, appends the flags, keeps the frames, and persists
    the flags in `consumer_args.extra` so the end-of-run drain gets them too. If the run has NO watcher at all,
