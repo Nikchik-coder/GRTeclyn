@@ -63,13 +63,13 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 | ☑ | 0c static anchor | slow | 85 | 1 | – | DONE, `00_paper_runs/` | finished | finished |
 | ☑ | 0.5c | slow | 85 | 1 | 1 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | finished | finished |
 | ☑ | 0.9c | fast | 150 | 2 | 0 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | finished | finished |
-| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, solo 4.3 t/h; t 63.3 @ 08:39, collapse under way (R −1 % at 56) | ~5 h | ≈ 10-17 13:40 |
+| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | DIED 78.66 ≈ 12:10 MSK (NaN, post_timestep) late in the throat collapse, before its stop: R −1 % at 56, 2.98 at 78; χ on the 1e-8 floor at 75.7, K > 0.1 at 76.4 (the N 128's sequence 9.3 later); trust 75; packed `00_paper_runs/`; 1st-node scratch prune needs a session there | died | died |
 | ☑ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | DONE t 85 ≈ 04:35 through the throat collapse (R −1 % at 47, 2.53 at 85; trust 66), `00_paper_runs/` | finished | finished |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | FAILED, not finished: died 64.83 ≈ 00:30 at the end of the throat collapse (R −1 % at 43); pulled from the paper folders 10-17, archived in `drainhole/00_archive/failed_2026-10-17/` | failed | failed |
 | ☐ | 0.7c | fast | 150 | 2 | 0 | DIED 135.85 ≈ 11:06 MSK (NaN in K, level 3): the lapse collapsed to its 1e-10 floor at t 102.4, K > 0.1 at 105.8, Ham ×2 at 127.5; the throat holds in the window (MOTS R 6.870–6.873 over t 0–83) — the slicing breaks, not the throat; trust 102; packed `00_paper_runs/` 10-17 ≈ 11:50, 2nd-node scratch pruned | died | died |
 | ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c, 7.8 t/h (solo ~17.5 after 12:55); t 109.9 @ 08:39 | ~4.7 h | ≈ 10-17 13:20 |
 | ☐ | 0.9c fast triplet N 96 (t 150 window) | fast | 150 | 1 | 0 | LIVE since 09:11 MSK, solo 44.8 t/h — rerun to 150; the `_t100` member stopped at 100 (planning error: the triplet window is the recipe's 150) and is superseded | ~3.2 h | ≈ 10-17 12:35 |
-| ☐ | 0.9c fast triplet N 192 (t 150 window) | fast | 150 | 1 | 1 | go given 10-17; aborted at start on card 0 beside the N 96 (Arena OOM at 64 GB — needs a card to itself); relaunch on card 1 when the J=1 N 192 ends ≈ 13:40 (~35 h) | – | – |
+| ☐ | 0.9c fast triplet N 192 (t 150 window) | fast | 150 | 1 | 1 | go given 10-17; aborted at start on card 0 beside the N 96 (Arena OOM at 64 GB — needs a card to itself); card 1 free since the J=1 N 192 died ≈ 12:10 (~35 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees ≈ 13:40 (~8.5 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
 | ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | 1 | 1 | after the 0.9c N 96 (~8.5 h run) | – | – |
@@ -137,6 +137,7 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L64_ml3_ve070a_spdrv1_sig04_t150` | 0.7c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | DIED 135.85 (NaN in K; lapse floor 102.4), packed; the paper 0.7c run (fast recipe, 0.9c params + background swap); horizon rows nan at t 16–25 (the throat's θ_in mean stays ~1e-5, its max flips sign at noise level and the strict finder dropped it); consumer restarted 21:13 MSK with `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500`, rows again from t 26 (R 6.8704) | 102 |
 | `spin_hold_L64_N96_ml3_J100_full_spdrv1_t85` | 0.21c | 64 (N 96) | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 96: FAILED 64.83 at the collapse end (not finished); R −1 % at 43; τ ≈ 5.4–6.6; archived 10-17, out of the paper folders | 58 |
 | `spin_hold_L64_ml3_J100_full_spdrv1_t85` | 0.21c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 128: through the collapse to 85; R −1 % at 47, 2.53 at 85; τ ≈ 4.7–5.8 | 66 |
+| `spin_hold_L64_N192_ml3_J100_full_spdrv1_t85` | 0.21c | 64 (N 192) | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 192: DIED 78.66 late in the collapse (not finished); R −1 % at 56, 2.98 at 78; τ ≈ 5.5–6.5 | 75 |
 | `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 0.9c | 64 (N 96) | 0.4 | 0.02 | 1e-4 | 1.0 | fast triplet N 96, SUPERSEDED (stopped at 100; the triplet window is 150): CLEAN t 100; MOTS t 24–26 only (its throat-ray comparison is void, see Throat check) | 100 |
 | `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 (N 96) | 0.4 | 0.02 | 1e-4 | 1.0 | fast triplet N 96 rerun to 150: LIVE | tbd |
 | `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | stopped 50.4 (feasibility answered: Ham flat 3.94e-2, K flat, chi on the 1e-4 floor); paper 0.99c = σ 0.4 rerun | 50 |
@@ -151,14 +152,13 @@ What the ledger says, four lines:
 
 | run | node/card | t @ 08:39 MSK | stop | speed (21:43 → 08:39) | ETA (MSK) |
 |---|---|---|---|---|---|
-| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | 63.3 | 85 | 4.3 t/h | ≈ 10-17 13:40 |
 | 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (solo since the 0.7c died 11:06) | 129.3 @ 11:10 | 150 | ~17.5 t/h solo | ≈ 10-17 12:20 |
 | 0.9c fast N 96 rerun `L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 0 (solo) | 6.6 @ 09:21 | 150 | 44.8 t/h | ≈ 10-17 12:35 |
 
 0.9c triplet window = t 150 (the fast recipe's stop, as its N 128 member). 10-17: the N 96 reruns to 150 on card 0
 (launched 09:11 MSK, t = 0 Ham bit-identical to the `_t100` run, frame 0 identical, ψ4 14/18/30); the N 192 to 150
 aborted at start beside it (Arena out of memory at 64 GB of 80; run dir in `drainhole/00_archive/aborted_2026-10-17/`,
-6.7 GB scratch pruned) and relaunches on card 1 when the J=1 N 192 ends ≈ 13:40. The N 96 rerun's consumer lags the
+6.7 GB scratch pruned) and relaunches solo (card 1 free since the J=1 N 192 died ≈ 12:10). The N 96 rerun's consumer lags the
 solo run (plotfile every ~1.3 min); the drain finishes after the run.
 
 Closed out 10-17 ≈ 08:45 MSK (packed to `00_paper_runs/`, 16 files each; scratch pruned, 14.3 GB):
@@ -293,7 +293,7 @@ its go; no queued run writes or needs checkpoints.
 
 | next free slot | run | needs |
 |---|---|---|
-| node 1 gpu 1, ≈ 13:40 MSK (after the J=1 N 192) | 0.9c fast triplet N 192 to 150 (~35 h, 66 GB: a card to itself) | go given 10-17; template `params_spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_t150.txt`: paper 0.9c params, N → 192, stop 150 (diff-proven); consumer `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500` (+ lmax 8, test first) |
+| node 1 gpu 1, free since ≈ 12:10 MSK (the J=1 N 192 died) | 0.9c fast triplet N 192 to 150 (~35 h, 66 GB: a card to itself) | go given 10-17; template `params_spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_t150.txt`: paper 0.9c params, N → 192, stop 150 (diff-proven); consumer `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500` (+ lmax 8, test first) |
 | node 2, after 0.7c + 0.99c (≈ 13:40 MSK) | kick 0.9c A1, then A2 (×10) | kick templates: seed amplitude A1 = merger seed scale |
 | node 1 gpu 1, after fast N 192 | kick 0.7c A1 | same template, ve070 background |
 | anywhere, only if the 0.99c curve wants it | 0.95c stretch | background fam_a_ve095 |
