@@ -53,6 +53,7 @@ class SimulationParameters : public SimulationParametersBase
         // table; 0: the bilinear sample of the earlier binaries, whose kinks
         // made the constraints grow with resolution (RotatingBackgroundTable.hpp).
         pp.load("spinning_background_interp", spinning_background_interp, 1);
+        pp.load("rk_stage_refill", rk_stage_refill, 1);
 
         pp.load("center", spinning_params.grid_center, center);
 
@@ -184,6 +185,8 @@ class SimulationParameters : public SimulationParametersBase
 
     std::string spinning_background_file;
     int spinning_background_interp = 1;
+    //! 1: specificEvalRHS re-fills each RK stage from StateData (see there)
+    int rk_stage_refill = 1;
     SpinningWormholeInitialData::params_t spinning_params{};
     double phantom_mass{};
 

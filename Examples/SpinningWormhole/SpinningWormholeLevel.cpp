@@ -169,8 +169,16 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                                             const double a_time)
 {
     BL_PROFILE("SpinningWormholeLevel::specificEvalRHS()");
+    // AmrLevel::RK has already filled this stage's ghost cells (FillRKPatch,
+    // from the coarse level's stored RK stages).  This FillPatch re-reads the
+    // WHOLE MultiFab, valid cells included, from the level's StateData at
+    // a_time; RK4 keeps the stage in the new data, so at the half-step stages
+    // it hands the RHS (U^n + U_stage)/2 = U^n + dt/4 k instead of
+    // U^n + dt/2 k, and refills the ghosts by linear time interpolation.
+    // rk_stage_refill = 0 skips it, as upstream BinaryBH does; 1 (default)
+    // keeps the behaviour every run so far had (2026-10-17, under test).
     const int soln_ghosts = a_soln.nGrowVect()[0];
-    if (soln_ghosts > 0)
+    if (soln_ghosts > 0 && simParams().rk_stage_refill != 0)
     {
         FillPatch(*this, a_soln, soln_ghosts, a_time, state_index, 0,
                   a_soln.nComp());
