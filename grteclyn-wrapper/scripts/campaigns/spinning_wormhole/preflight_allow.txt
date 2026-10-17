@@ -15,6 +15,7 @@
 # path): an entry that is right for one binary can be a hole for another.
 amr.plot_vars              # read by AmrLevel::setPlotVariables() when the first plotfile is written; the probe writes none unless it renders the frames (amr.plot_files_output = 0 otherwise)
 amr.derive_plot_vars       # same reader as amr.plot_vars
+G_Newton                   # read only by the 'constraints' derived plot variable (ConstraintsWithMatter::compute_mf, Source/Matter/ConstraintsWithMatter.impl.hpp: pp.get, no default -- the first plotfile aborts without it), so unread by a probe that writes no plotfile (2026-10-17)
 nonzero_asymptotic_vars    # ignored by design: asymptotic values are compile-time, StateVariables.hpp (Source/GRTeclynCore/AMReXParameters.hpp, LegacyBoundaryParams comment)
 nonzero_asymptotic_values  # same as nonzero_asymptotic_vars
 write_extraction when activate_extraction = 0  # read only inside the activate_extraction block of SimulationParametersBase::read_params (Source/GRTeclynCore/SimulationParametersBase.hpp); with in-code extraction off it is correctly unread
