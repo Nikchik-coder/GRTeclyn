@@ -75,9 +75,12 @@ consumer_profile() {
       # 2026-10-16: psi4 at 14 18 30 ALWAYS -- post.py's default (14, 30) misses the
       # R = 18 sphere the recipe quotes (R = 30 sits inside the drive shell 24-32);
       # three launches went up without it and needed live consumer restarts.
+      # 2026-10-17: --throat-spheres, the throat's areal radius (throat_geometry.dat's rays
+      # land in the min_chi-floored core on the fast holds).
       echo "--frames-fields ${SWH_FRAMES_FULL}" \
            "--frames-coord ${coord} --frames-zoom ${zoom} ${center_arg} ${_SWH_FRAME_TAIL}" \
            "--mots-spectral ${mots_center_arg}" \
+           "--throat-spheres" \
            "--radii 14 18 30"
       ;;
     smoke)

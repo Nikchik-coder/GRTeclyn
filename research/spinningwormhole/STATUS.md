@@ -87,6 +87,10 @@ core, and the minimum lands there (0.9c from t ≈ 45, 0.99c from t = 0; the pol
 "0.9c 23.8 → 5.9 / 0.99c 101 → 76" readings are that core, as is the lapse → 0.001; the 0.9c N 96-vs-N 128
 throat-ray comparison (0.6 % / 11 %) is void. Open: on the 0.7c |K| grows at the throat after t ≈ 100
 (0.1 at 106) — checked at its close-out.
+From 10-17 ≈ 10:40 MSK the consumer writes the throat per plotfile (`--throat-spheres` → `small_data/throat_spheres.dat`,
+in the hold profile): live on the 0.99c (consumer restarted), in the 0.7c and 0.9c N 96 rerun drains, on every
+future launch (the 0.9c N 192). Spinning paper runs differ by spin: static + 0.21c collapse (τ ≈ 5–6); 0.5c
+shrinks slowly (−1.6 % by t 80); 0.7c holds its size (late |K| growth open); 0.9c and 0.99c hold flat.
 
 Campaign total ~34 h if the queue runs back-to-back. Kick templates
 (A1 = merger seed scale, A2 = ×10) still to be built; every launch waits

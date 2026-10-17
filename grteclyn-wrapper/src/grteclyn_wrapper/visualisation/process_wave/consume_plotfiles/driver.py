@@ -15,6 +15,7 @@ from grteclyn_wrapper.objective_modes import QD_OBJECTIVE_MODES
 
 from .extraction.horizon import HORIZON_HEADER
 from .extraction.mots_spectral import MOTS_SPECTRAL_HEADER
+from .extraction.throat_spheres import THROAT_SPHERES_HEADER
 from .config import _default_data_dir, _default_frames_out_dir, _frames_auto_zlim_enabled
 from .extraction.central import CENTRAL_TIMESERIES_HEADER
 from .extraction.confinement import CONFINEMENT_TIMESERIES_HEADER
@@ -337,6 +338,19 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--throat-spheres",
+        action="store_true",
+        help=(
+            "The throat's areal radius per plotfile to throat_spheres.dat: the outermost local minimum "
+            "of sqrt(A/4 pi) over coordinate spheres about the centre, full metric h_ij/chi "
+            "(extraction/throat_spheres.py). throat_geometry.dat's r >= 0.6 rays land in the min_chi-"
+            "floored core on the fast holds (2026-10-17)."
+        ),
+    )
+    parser.add_argument("--throat-spheres-center", type=float, nargs=3, default=None,
+                        help="Centre of the spheres (absolute). Default: --center.")
+    parser.add_argument("--throat-spheres-rmin", type=float, default=0.3, help="Innermost sphere radius.")
+    parser.add_argument(
         "--mots-spectral-warm-flow",
         action="store_true",
         help=(
@@ -591,6 +605,7 @@ def main() -> None:
     horizon_out_path = out_dir / "horizon_scan.dat"
     mots_out_path = out_dir / "mots_spectral.dat"
     mots_alm_path = out_dir / "mots_spectral_alm.jsonl"
+    throat_out_path = out_dir / "throat_spheres.dat"
     score_ts_path = out_dir / "score_timeseries.jsonl"
     stop_sim_path = Path(args.stop_sim_path) if args.stop_sim_path else Path(data_dir) / ".stop_sim"
     header = "# time  " + "  ".join([f"Re(R={R:g})  Im(R={R:g})" for R in args.radii])
@@ -649,6 +664,8 @@ def main() -> None:
         if args.mots_spectral:
             _truncate_if_exists(mots_out_path)
             _truncate_if_exists(mots_alm_path)
+        if args.throat_spheres:
+            _truncate_if_exists(throat_out_path)
         if args.incremental_score:
             _truncate_if_exists(score_ts_path)
         _save_state(state_path, {})
@@ -728,6 +745,8 @@ def main() -> None:
     def _handle_mots_outputs(res: dict) -> None:
         # The surface's coefficients are the next plotfile's start, and survive a restart
         # of the consumer in its state file.
+        if res.get("throat_line"):
+            _append_line(throat_out_path, header=THROAT_SPHERES_HEADER, line=res["throat_line"])
         if not res.get("mots_line"):
             return
         _append_line(mots_out_path, header=MOTS_SPECTRAL_HEADER, line=res["mots_line"])

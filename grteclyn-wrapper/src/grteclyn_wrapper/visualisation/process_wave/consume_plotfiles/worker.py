@@ -15,6 +15,7 @@ from .extraction.sector_dynamics import _extract_sector_dynamics_line
 from .extraction.ftl import _extract_ftl_timeseries_line
 from .extraction.horizon import horizon_block as _horizon_block
 from .extraction.horizon import read_tracked_centres
+from .extraction.throat_spheres import throat_spheres_row
 from .extraction.psi4 import _extract_mode_amps_l2m0, _extract_mode_amps_l2_all
 from .extraction.psi4_higher_l import (
     extract_higher_l_modes,
@@ -91,6 +92,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
         "neck_x": None,
         "mots_line": None,
         "mots_alm": None,
+        "throat_line": None,
         "shell_line": None,
         "boundary_flux_line": None,
         "ftl_line": None,
@@ -358,6 +360,16 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
             except Exception as exc:
                 print(f"WARNING: spectral MOTS failed for {key}: {exc}", flush=True)
 
+        if args_dict.get("throat_spheres"):
+            # The throat's areal radius from coordinate spheres (extraction/throat_spheres.py).
+            try:
+                result["throat_line"] = throat_spheres_row(
+                    ds, t, center=args_dict.get("throat_spheres_center") or args_dict["center"],
+                    rmin=float(args_dict.get("throat_spheres_rmin") or 0.3),
+                )
+            except Exception as exc:
+                print(f"WARNING: throat spheres failed for {key}: {exc}", flush=True)
+
         if args_dict.get("embedding"):
             if ("boxlib", "chi") in ds.field_list:
                 e_idx = _parse_plot_index(key)
@@ -461,6 +473,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
             or result.get("central_radial_block")
             or result.get("horizon_block")
             or result.get("mots_line")
+            or result.get("throat_line")
             or frame_fields
             or projection_fields
         )
