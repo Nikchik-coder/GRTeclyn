@@ -87,3 +87,6 @@ spin_hold_L64_ml3_ve070a_spdrv1_t100	Experimental fast-end hold (its go 2026-10-
 t0spline_ve090a_L64_N096_ml3	t = 0 constraint check of the spline binary (faadc95e) on the 0.9c table: the fast triplet's params at N 96, stop 0.5 (2026-10-17)		
 t0spline_ve090a_L64_N192_ml3	t = 0 constraint check of the spline binary (faadc95e) on the 0.9c table: the fast triplet's params at N 192, stop 0.5 (2026-10-17)		
 t0spline_ve090a_L64_N128_ml3	t = 0 constraint check of the spline binary (faadc95e) on the 0.9c table: the fast triplet's params at N 128, stop 0.5 (2026-10-17)		
+t0spline_J100_L64_N096_ml3	t = 0 constraint check of the spline binary (faadc95e) on the 0.2c table: the slow triplet's params at N 96, stop 0.5 (2026-10-17)		
+t0spline_J100_L64_N128_ml3	t = 0 constraint check of the spline binary (faadc95e) on the 0.2c table: the slow triplet's params at N 128, stop 0.5 (2026-10-17)		
+t0spline_J100_L64_N192_ml3	t = 0 constraint check of the spline binary (faadc95e) on the 0.2c table: the slow triplet's params at N 192, stop 0.5 (2026-10-17)		
