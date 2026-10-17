@@ -122,7 +122,7 @@ constraint-solved seed before templating.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| sponge drive pair `07_sponge_fix/sptest_L64_N96_ml3_ve090a_drv{1,0}_t60` (pre-fix binary exq 16228dcd, no checkpoints): does the drive shell corrupt the border? | 1st, card 0 | 10.3 @ 17:54 | 60 | ~16.5 t/h | ≈ 10-17 20:50 (~3 h) |
+| – (both cards of the first node free since 18:09 MSK; the second node idle) | | | | | |
 
 ## NEXT
 
@@ -297,7 +297,12 @@ What the ledger says (pre-fix):
 ## OPEN
 
 - Level 0's box face (Sommerfeld on a non-flat background): a better outer condition or a bigger box, only
-  on decision; the sponge pair (LIVE) shows whether the drive keeps the border clean.
+  on decision.
+- The sponge drive (pair `07_sponge_fix/sptest_*`, pre-fix binary, stopped by decision at t 14.5, 10-17):
+  levels 2–3 identical drive on/off; level 1 grows with the drive (×8 by t 14.5, ×1.1 at t 2), the drive
+  acting directly on the level-1 corners inside the shell (r 24–27.7). The drive pulls every field to the
+  t = 0 data, which is not constraint-preserving: watch the triplets' level-1 norms (it does not converge
+  away); the throat levels 2–3 had seen nothing by t 14.5.
 - Retest dt 0.05 / σ on the fixed binary after the triplets (the interface mode sat on the coarse–fine edges).
 - Upstream AMReX PR for the rounded `cell_quartic_interp` weights (later, on decision).
 - The RK stage re-fill in the merger, RadialRecipe and SupportedWormholeCollapse examples (their campaigns'
