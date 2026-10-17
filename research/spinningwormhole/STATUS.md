@@ -67,8 +67,9 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 | ☑ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | DONE t 85 ≈ 04:35 through the throat collapse (R −1 % at 47, 2.53 at 85; trust 66), `00_paper_runs/` | finished | finished |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | FAILED, not finished: died 64.83 ≈ 00:30 at the end of the throat collapse (R −1 % at 43); pulled from the paper folders 10-17, archived in `drainhole/00_archive/failed_2026-10-17/` | failed | failed |
 | ☐ | 0.7c | fast | 150 | 2 | 0 | DIED 135.85 ≈ 11:06 MSK (NaN in K, level 3): the lapse collapsed to its 1e-10 floor at t 102.4, K > 0.1 at 105.8, Ham ×2 at 127.5; the throat holds in the window (MOTS R 6.870–6.873 over t 0–83) — the slicing breaks, not the throat; trust 102; packed `00_paper_runs/` 10-17 ≈ 11:50, 2nd-node scratch pruned | died | died |
+| ☐ | **0.7c extra run**: slow recipe `ve070a_spdrv1_t100` | slow | 100 | 1 | 0 | LIVE since 12:45 MSK 10-17 — the 0.7c on the 0.5c's settings (min_chi 1e-8, σ 0.1; params = the 0.5c's with the ve070 background, diff-proven), no checkpoints. Question: does the 0.7c hold or slowly collapse like the 0.5c? (On the fast recipe its centre stayed pinned near the 1e-4 floor, K ≈ 0.035 drained the lapse e-fold ~15 to its floor at 102.) | ~6 h | ≈ 10-17 18:45 |
 | ☑ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | DONE clean t 150 ≈ 12:19 MSK: Ham flat 3.93e-2, Mom 1.50e-3, lapse 8.1e-3, K 2.2e-3; MOTS R 181.76 → 181.72; `00_paper_runs/`; 2nd-node scratch prune (7.1 GB) needs a session there | finished | finished |
-| ☐ | 0.9c fast triplet N 96 (t 150 window) | fast | 150 | 1 | 0 | LIVE since 09:11 MSK, solo 44.8 t/h — rerun to 150; the `_t100` member stopped at 100 (planning error: the triplet window is the recipe's 150) and is superseded | ~3.2 h | ≈ 10-17 12:35 |
+| ☐ | 0.9c fast triplet N 96 (t 150 window) | fast | 150 | 1 | 0 | evolution reached t 150 ≈ 12:30 MSK (no NaN); consumer draining its last 73 plotfiles (frames 2× until the N 96 repair, see below) | drain | ≈ 10-17 14:45 |
 | ☐ | 0.9c fast triplet N 192 (t 150 window) | fast | 150 | 1 | 1 | LIVE since 12:23 MSK 10-17, solo on card 1 (67.3 GB of 80), ~4.4 t/h at start; hold profile (throat spheres, ψ4 14/18/30); the MOTS flags go on by restart_consumer once plt 0 leaves scratch | ~34 h | ≈ 10-18 22:40 |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees ≈ 13:40 (~8.5 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
@@ -153,8 +154,9 @@ What the ledger says, four lines:
 
 | run | node/card | t @ 08:39 MSK | stop | speed (21:43 → 08:39) | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.9c fast N 96 rerun `L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 0 (solo) | 6.6 @ 09:21 | 150 | 44.8 t/h | ≈ 10-17 12:35 |
+| 0.9c fast N 96 rerun `L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 0 → freed | 150 done ≈ 12:30 | 150 | consumer drain | ≈ 10-17 14:45 (drain) |
 | 0.9c fast N 192 `L64_N192_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 1 (solo, 67.3 GB) | 0 @ 12:23 | 150 | ~4.4 t/h (start) | ≈ 10-18 22:40 |
+| 0.7c extra run, slow recipe `L64_ml3_ve070a_spdrv1_t100` | 1st, card 0 | 0 @ 12:45 | 100 | ~16 t/h (est.) | ≈ 10-17 18:45 |
 
 **N 96 frames were drawn 2× (found 10-17, renderer fixed ≈ 13:00 MSK).** yt's SlicePlot through a plane exactly on a cell face (z = 32 on the N 96 grids) summed the cells on both sides: every field in the N 96 runs' frames and slice caches is exactly 2.000× the plotfile (0.2c N 96, 0.9c N 96 `_t100` and `_t150`). The evolution data and every number from them are unaffected (t = 0 throat rays agree with N 128/192 to 0.03 %); N 128/192 frames are right. The consumer now slices a millionth of a cell off the face; live consumers pick it up per batch. Frames rendered before the fix stay 2× until repaired.
 
