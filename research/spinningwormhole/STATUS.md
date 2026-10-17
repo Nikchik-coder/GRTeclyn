@@ -122,8 +122,8 @@ constraint-solved seed before templating.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.9c triplet rerun N 96 + N 128 `00_paper_runs/spin_hold_L64_{N96_,}ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints; t = 0 norms = the old members') | 1st, card 0 | 0 @ 18:35 | 150 | measuring | N 96 ≈ 23:30, N 128 ≈ 10-18 06:30 (est.) |
-| 0.9c triplet rerun N 192 `00_paper_runs/spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints) | 1st, card 1 (solo) | 0 @ 18:33 | 150 | measuring | ≈ 10-19 04:30 (~34 h, est.) |
+| 0.9c triplet rerun N 96 + N 128 `00_paper_runs/spin_hold_L64_{N96_,}ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints; t = 0 norms = the old members') | 1st, card 0 | N 96 2.0, N 128 0.8 @ 18:41 | 150 | N 96 ~18.6, N 128 ~10.3 t/h | N 96 ≈ 10-18 02:30, N 128 ≈ 10-18 09:00 |
+| 0.9c triplet rerun N 192 `00_paper_runs/spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints) | 1st, card 1 (solo) | 0.66 @ 18:41 | 150 | ~5.1 t/h | ≈ 10-18 23:30 (~29 h) |
 
 ## NEXT
 
