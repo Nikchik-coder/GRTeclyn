@@ -103,11 +103,12 @@ run dirs):
    norms are unchanged on every level (the drift was pure gauge). The Π ring at r 48–52 fell 8× at t 3, but
    by t 10 the faces' junk fills the drive shell (Π at r 52–56 3.5e-9 in both runs, K at r ≥ 48 identical): the
    frames still show it. Adopt `shift_advec_coeff = 0` for every rotating hold.
-6. **Face fix, proposed** (waits on the go): apply the Sommerfeld condition to (state − t 0 background), zero for
-   the unperturbed wormhole, outgoing waves still leave. Code: an optional reference state in
-   `apply_sommerfeld_boundaries` (off by default, other examples bit-identical) and a key
-   `sommerfeld_relative_to_background = 1` in the spinning example (its reference is the drive's `m_sponge_ref`);
-   new binary; the same N 128 test to t 10 with both fixes.
+6. **Face fix** (go 10-17; code f01991c8, binary `main3d_somref_f01991c8_2026-10-17.ex`): the Sommerfeld condition
+   acts on (state − t 0 background), zero for the unperturbed wormhole, outgoing for perturbations. An optional
+   reference state in `apply_sommerfeld_boundaries` via the virtual `GRAMRLevel::sommerfeld_reference()` (default
+   none: other examples bit-identical); the spinning key `sommerfeld_relative_to_background = 1` returns the
+   drive's `m_sponge_ref` (built for either knob, its ghosts filled across box edges). Test: the gauge test plus
+   the key (`09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10`), live.
 
 ## PAPER-RUN SETTINGS (decided 2026-10-16; fix keys 2026-10-17)
 
@@ -158,7 +159,12 @@ constraint-solved seed before templating.
 
 ## LIVE
 
-None since 21:26 MSK 10-17 (the gauge test finished; the first node's two cards idle, its scratch empty).
+| run | node/card | t | stop | speed | ETA (MSK) |
+|---|---|---|---|---|---|
+| boundary test `09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10`: the gauge test plus `sommerfeld_relative_to_background = 1`, binary `main3d_somref_f01991c8_2026-10-17.ex`, stop 10, no checkpoints (go 10-17) | 1st, card 0 (solo) | 0 @ 23:11 | 10 | ~140 t/h expected | ≈ 23:25 (run), frames ≈ 23:35 |
+
+Card 1 idle. Pass = the faces and the drive shell quiet: K, Π and the shift drift at r ≥ 48 far below the gauge test's
+(FAR-ZONE JUNK, point 6).
 
 Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archive/aborted_2026-10-17/`):
 
@@ -183,9 +189,8 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
 
 ## NEXT
 
-- **The face fix first** (proposed 10-17 21:30, waits on the go): Sommerfeld relative to the t 0 background (code,
-  new binary), then the N 128 test to t 10 with both fixes (FAR-ZONE JUNK, point 6). If it passes, the 0.9c triplet
-  reruns on L 128 with both.
+- **The boundary test first** (live, FAR-ZONE JUNK point 6). If it passes, the 0.9c triplet reruns on L 128 with
+  both fixes (`shift_advec_coeff = 0`, `sommerfeld_relative_to_background = 1`, binary somref f01991c8).
 - The 0.2c triplet rerun (templates `params_spin_hold_L64_{N96_,,N192_}ml3_J100_full_spdrv1_fix_t100.txt`, stop 100):
   after the 0.9c triplet (decided 10-17: the 0.9c first, whole), or its N 192 on the second node's card (a session there).
 - Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB
