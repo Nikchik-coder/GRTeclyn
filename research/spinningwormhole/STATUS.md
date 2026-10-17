@@ -62,14 +62,14 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 |---|---|---|---|---|---|---|---|---|
 | ☑ | 0c static anchor | slow | 85 | 1 | – | DONE, `00_paper_runs/` | finished | finished |
 | ☑ | 0.5c | slow | 85 | 1 | 1 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | finished | finished |
-| ☑ | 0.9c | fast | 150 | 2 | 0 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | finished | finished |
+| ☐ | 0.9c | fast | 150 | 2 | 0 | ran clean to t 150 (packed `00_paper_runs/`) — **RERUN REQUIRED**: no throat-size record (ran before the throat measure; the horizon finder found nothing; plotfiles gone) → rerun `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150_thr`, same params, ~9 h | rerun | – |
 | ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | DIED 78.66 ≈ 12:10 MSK (NaN, post_timestep) late in the throat collapse, before its stop: R −1 % at 56, 2.98 at 78; χ on the 1e-8 floor at 75.7, K > 0.1 at 76.4 (the N 128's sequence 9.3 later); trust 75; packed `00_paper_runs/`; 1st-node scratch prune needs a session there | died | died |
 | ☑ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | DONE t 85 ≈ 04:35 through the throat collapse (R −1 % at 47, 2.53 at 85; trust 66), `00_paper_runs/` | finished | finished |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | FAILED, not finished: died 64.83 ≈ 00:30 at the end of the throat collapse (R −1 % at 43); pulled from the paper folders 10-17, archived in `drainhole/00_archive/failed_2026-10-17/` | failed | failed |
 | ☐ | 0.7c | fast | 150 | 2 | 0 | DIED 135.85 ≈ 11:06 MSK (NaN in K, level 3): the lapse collapsed to its 1e-10 floor at t 102.4, K > 0.1 at 105.8, Ham ×2 at 127.5; the throat holds in the window (MOTS R 6.870–6.873 over t 0–83) — the slicing breaks, not the throat; trust 102; packed `00_paper_runs/` 10-17 ≈ 11:50, 2nd-node scratch pruned | died | died |
 | ☐ | **0.7c extra run**: slow recipe `ve070a_spdrv1_t100` | slow | 100 | 1 | 0 | LIVE since 12:45 MSK 10-17 — the 0.7c on the 0.5c's settings (min_chi 1e-8, σ 0.1; params = the 0.5c's with the ve070 background, diff-proven), no checkpoints. Question: does the 0.7c hold or slowly collapse like the 0.5c? (On the fast recipe its centre stayed pinned near the 1e-4 floor, K ≈ 0.035 drained the lapse e-fold ~15 to its floor at 102.) | ~6 h | ≈ 10-17 18:45 |
 | ☑ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | DONE clean t 150 ≈ 12:19 MSK: Ham flat 3.93e-2, Mom 1.50e-3, lapse 8.1e-3, K 2.2e-3; MOTS R 181.76 → 181.72; `00_paper_runs/`; 2nd-node scratch prune (7.1 GB) needs a session there | finished | finished |
-| ☐ | 0.9c fast triplet N 96 (t 150 window) | fast | 150 | 1 | 0 | evolution reached t 150 ≈ 12:30 MSK (no NaN); consumer draining its last 73 plotfiles (frames 2× until the N 96 repair, see below) | drain | ≈ 10-17 14:45 |
+| ☐ | 0.9c fast triplet N 96 (t 150 window) | fast | 150 | 1 | 0 | evolution reached t 150 ≈ 12:30 MSK (no NaN); consumer draining its last 73 plotfiles (frames 2× until the N 96 repair, see below) — **RERUN REQUIRED**: throat measure only from t 79 → rerun `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t150_thr`, ~3.5 h | drain | ≈ 10-17 14:20 |
 | ☐ | 0.9c fast triplet N 192 (t 150 window) | fast | 150 | 1 | 1 | LIVE since 12:23 MSK 10-17, solo on card 1 (67.3 GB of 80), ~4.4 t/h at start; hold profile (throat spheres, ψ4 14/18/30); the MOTS flags go on by restart_consumer once plt 0 leaves scratch | ~34 h | ≈ 10-18 22:40 |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees ≈ 13:40 (~8.5 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
@@ -157,6 +157,8 @@ What the ledger says, four lines:
 | 0.9c fast N 96 rerun `L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 0 → freed | 150 done ≈ 12:30 | 150 | consumer drain | ≈ 10-17 14:45 (drain) |
 | 0.9c fast N 192 `L64_N192_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 1 (solo, 67.3 GB) | 0 @ 12:23 | 150 | ~4.4 t/h (start) | ≈ 10-18 22:40 |
 | 0.7c extra run, slow recipe `L64_ml3_ve070a_spdrv1_t100` | 1st, card 0 | 0 @ 12:45 | 100 | ~16 t/h (est.) | ≈ 10-17 18:45 |
+
+**Constraints on every level (checked 10-17, `constraint_norms_levels.dat`, r < 0.125 masked).** 0.2c: only the finest level (|x| < 4, around the throat) converges, order 3–4 from t ≈ 1 (Ham 3.7/2.7, Mom 3.5/3.7 at t 20); levels 0–2 GROW with N (order −0.4 to −4). 0.9c: no level converges (order −0.3 to −1.8 at t ≤ 2.4 for all three; N 96 → N 128 at most +1 through t 150). Likely causes, to be tested: the background table's bilinear interpolation (the atan map thins its points at large radius, and finite-difference second derivatives of a piecewise-bilinear field grow like (Δ_table/h)² as the grid refines) on the outer levels; on the 0.9c's finest level, the χ floor (1e-4) clipping the core out to r ≈ 0.6, beyond the r < 0.125 mask. Until fixed, the fast triplet's convergence rests on the throat size and the lapse, not the constraints.
 
 **N 96 frames were drawn 2× (found 10-17, renderer fixed ≈ 13:00 MSK).** yt's SlicePlot through a plane exactly on a cell face (z = 32 on the N 96 grids) summed the cells on both sides: every field in the N 96 runs' frames and slice caches is exactly 2.000× the plotfile (0.2c N 96, 0.9c N 96 `_t100` and `_t150`). The evolution data and every number from them are unaffected (t = 0 throat rays agree with N 128/192 to 0.03 %); N 128/192 frames are right. The consumer now slices a millionth of a cell off the face; live consumers pick it up per batch. Frames rendered before the fix stay 2× until repaired.
 
@@ -298,6 +300,7 @@ its go; no queued run writes or needs checkpoints.
 
 | next free slot | run | needs |
 |---|---|---|
+| node 2 now (a session there; nothing to kill) — or node 1 card 0 after the 0.7c extra run (≈ 18:25) | **0.9c N 128 + N 96 throat reruns** (`…_t150_thr`): same params as the packed runs (templates diff-proven: paths only), hold profile (throat spheres, ψ4 14/18/30), no checkpoints; both on one card (39 GB) ≈ 12 h | go given 10-17 |
 | node 2, free since ≈ 12:19 MSK (0.7c died, 0.99c done) | kick 0.9c A1, then A2 (×10) | kick templates: seed amplitude A1 = merger seed scale |
 | node 1 gpu 1, after fast N 192 | kick 0.7c A1 | same template, ve070 background |
 | anywhere, only if the 0.99c curve wants it | 0.95c stretch | background fam_a_ve095 |
