@@ -43,7 +43,8 @@ const RotatingBackgroundTable &background_table()
     if (!s_table)
     {
         s_table = std::make_unique<RotatingBackgroundTable>(
-            SpinningWormholeLevel::simParams().spinning_background_file);
+            SpinningWormholeLevel::simParams().spinning_background_file,
+            SpinningWormholeLevel::simParams().spinning_background_interp);
         // The table's managed memory must be freed BEFORE amrex::Finalize
         // tears the arenas down; a static-destruction-time free crashed the
         // first smoke test at exit ("pure virtual method called", 2026-10-10).
