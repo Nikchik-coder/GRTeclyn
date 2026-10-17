@@ -70,7 +70,8 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 | ☐ | **0.7c extra run**: slow recipe `ve070a_spdrv1_t100` | slow | 100 | 1 | 0 | LIVE since 12:45 MSK 10-17 — the 0.7c on the 0.5c's settings (min_chi 1e-8, σ 0.1; params = the 0.5c's with the ve070 background, diff-proven), no checkpoints. Question: does the 0.7c hold or slowly collapse like the 0.5c? (On the fast recipe its centre stayed pinned near the 1e-4 floor, K ≈ 0.035 drained the lapse e-fold ~15 to its floor at 102.) | ~6 h | ≈ 10-17 18:45 |
 | ☑ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | DONE clean t 150 ≈ 12:19 MSK: Ham flat 3.93e-2, Mom 1.50e-3, lapse 8.1e-3, K 2.2e-3; MOTS R 181.76 → 181.72; `00_paper_runs/`; 2nd-node scratch prune (7.1 GB) needs a session there | finished | finished |
 | ☐ | 0.9c fast triplet N 96 (t 150 window) | fast | 150 | 1 | 0 | evolution reached t 150 ≈ 12:30 MSK (no NaN); consumer draining its last 73 plotfiles (frames 2× until the N 96 repair, see below) — **RERUN REQUIRED**: throat measure only from t 79 → rerun `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t150_thr`, ~3.5 h | drain | ≈ 10-17 14:20 |
-| ☐ | 0.9c fast triplet N 192 (t 150 window) | fast | 150 | 1 | 1 | LIVE since 12:23 MSK 10-17, solo on card 1 (67.3 GB of 80), ~4.4 t/h at start; hold profile (throat spheres, ψ4 14/18/30); the MOTS flags go on by restart_consumer once plt 0 leaves scratch | ~34 h | ≈ 10-18 22:40 |
+| ☐ | 0.9c fast triplet N 192 (t 150 window) | fast | 150 | 1 | 1 | NOT STARTED — runs on the spline binary once its t = 0 checks pass (solo on a card, ~67 GB of 80; hold profile with throat spheres, ψ4 14/18/30) | ~34 h | – |
+| ☐ | spline t = 0 checks: 0.9c and 0.2c × N 96/128/192 | as the triplets | 0.5 | 1 | 0, 1 | LIVE since 13:32 MSK 10-17: the spline binary (faadc95e) on the triplets' params, stop 0.5, `03_t0_checks/t0spline_*`; no consumer, no frames, no checkpoints; 0.9c first, then 0.2c on the same cards; gates the reruns | ~30 min | ≈ 10-17 14:05 |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees ≈ 13:40 (~8.5 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
 | ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | 1 | 1 | after the 0.9c N 96 (~8.5 h run) | – | – |
@@ -155,7 +156,7 @@ What the ledger says, four lines:
 | run | node/card | t @ 08:39 MSK | stop | speed (21:43 → 08:39) | ETA (MSK) |
 |---|---|---|---|---|---|
 | 0.9c fast N 96 rerun `L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 0 → freed | 150 done ≈ 12:30 | 150 | consumer drain | ≈ 10-17 14:45 (drain) |
-| 0.9c fast N 192 `L64_N192_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 1 (solo, 67.3 GB) | 0 @ 12:23 | 150 | ~4.4 t/h (start) | ≈ 10-18 22:40 |
+| spline t = 0 checks `03_t0_checks/t0spline_{ve090a,J100}_L64_N{096,128,192}_ml3` | 1st, card 0 (N 96 + 128) and card 1 (N 192) | 0 @ 13:32 | 0.5 | N 96 ~15 t/h, N 192 ~4 t/h | ≈ 10-17 14:05 |
 | 0.7c extra run, slow recipe `L64_ml3_ve070a_spdrv1_t100` | 1st, card 0 | 0 @ 12:45 | 100 | ~16 t/h (est.) | ≈ 10-17 18:45 |
 
 **Constraints on every level (checked 10-17, `constraint_norms_levels.dat`, r < 0.125 masked).** 0.2c: only the finest level (|x| < 4, around the throat) converges, order 3–4 from t ≈ 1 (Ham 3.7/2.7, Mom 3.5/3.7 at t 20); levels 0–2 GROW with N (order −0.4 to −4). 0.9c: no level converges (order −0.3 to −1.8 at t ≤ 2.4 for all three; N 96 → N 128 at most +1 through t 150). Likely causes, to be tested: the background table's bilinear interpolation (the atan map thins its points at large radius, and finite-difference second derivatives of a piecewise-bilinear field grow like (Δ_table/h)² as the grid refines) on the outer levels; on the 0.9c's finest level, the χ floor (1e-4) clipping the core out to r ≈ 0.6, beyond the r < 0.125 mask. Until fixed, the fast triplet's convergence rests on the throat size and the lapse, not the constraints. **Confirmed 10-17 ≈ 13:45 (CPU check on both tables, equatorial row):** 4th-order FD second derivatives of the linearly interpolated f and nu_bar get WORSE with N on every level (order −0.8 to −2.8); a C2 cubic spline of the same table converges (order +4.2 near the throat). Fix = spline interpolation in RotatingBackgroundTable, then a t = 0 constraint check at N 96/128/192, then the triplets on the fixed data.
@@ -168,7 +169,7 @@ What the ledger says, four lines:
 (launched 09:11 MSK, t = 0 Ham bit-identical to the `_t100` run, frame 0 identical, ψ4 14/18/30); the N 192 to 150
 aborted at start beside it (Arena out of memory at 64 GB of 80; run dir in `drainhole/00_archive/aborted_2026-10-17/`,
 6.7 GB scratch pruned) and was relaunched solo on card 1 at 12:23 (67.3 GB of 80). The N 96 rerun's consumer lags the
-solo run (plotfile every ~1.3 min); the drain finishes after the run.
+solo run (plotfile every ~1.3 min); the drain finishes after the run. The solo N 192 was stopped 10-17 ≈ 13:30 MSK at t 4.67 by decision (bilinear table data): run dir moved out of the paper runs to `drainhole/00_archive/aborted_2026-10-17/…_t150_bilinear`, 27 GB scratch pruned, registry row removed; the N 192 is not started on the fixed data.
 
 Closed out 10-17 ≈ 08:45 MSK (packed to `00_paper_runs/`, 16 files each; scratch pruned, 14.3 GB):
 - J=1 N 96 DIED 64.83 (NaN) at the end of the throat collapse (FAILED, not finished; pulled from the paper
