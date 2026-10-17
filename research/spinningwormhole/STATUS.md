@@ -30,11 +30,12 @@ converging, outside the measured physics: level 0's outer ~4 units (the box face
 The pre-fix paper runs are archived (`drainhole/00_archive/superseded_2026-10-17/`); their results stay
 below as the pre-fix record, to be requoted from the reruns.
 
-**Nothing live since ≈ 23:25 MSK: the far-zone junk is fixed** (FAR-ZONE JUNK below). Two causes, two fixes, both
-tested on the 0.9c L 128 N 128 to t 10: the Γ-driver advected the rotating background shift (`shift_advec_coeff = 0`),
-and the flat-space Sommerfeld faces sat at 5.5 M_ADM (`sommerfeld_relative_to_background = 1`, binary somref f01991c8).
-With both, the far zone is quieter than the inside. The 0.9c L 128 triplet (stopped 21:09, archived) reruns with both
-on the go; the Weyl4 frames now blank the box's outer 2 cells (`--frames-blank-edge 2`, point 7).
+**The far-zone junk is fixed** (FAR-ZONE JUNK below). Two causes, two fixes, both tested on the 0.9c L 128 N 128 to
+t 10: the Γ-driver advected the rotating background shift (`shift_advec_coeff = 0`), and the flat-space Sommerfeld
+faces sat at 5.5 M_ADM (`sommerfeld_relative_to_background = 1`). With both, the far zone is quieter than the inside.
+The 0.9c L 128 triplet reruns with both since 23:28 MSK (`_farfix_t150`, binary farfix 891d817d, whose per-level
+norms also skip the box's outer 3 cells: `constraint_norms_edge_cells = 3`); the Weyl4 frames blank the box's outer
+2 cells (`--frames-blank-edge 2`, point 7).
 
 ## CONVERGENCE: HOW THE BUGS WERE FOUND (10-17)
 
@@ -152,7 +153,10 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | NOT STARTED — launched 18:27, stopped by decision at t 2.85 (10-17) so card 0 takes the 0.9c pair; stop 100 kept (go 10-17: test the late constraint growth) |
 | ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | NOT STARTED — launched 18:27, stopped by decision at t 1.2 (10-17) so card 0 takes the 0.9c pair |
 | ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | NOT STARTED — launched 18:27, stopped by decision at t 0.44 (10-17) so card 1 takes the 0.9c N 192 first; run dir in `00_archive/aborted_2026-10-17/`; next: the second node's card (a session there) or card 1 after the 0.9c |
-| ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; reruns with both far-zone fixes (waits on the go) |
+| ☐ | 0.9c triplet on L 128 with the far-zone fixes, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | ~13 GB est. | LIVE since 23:28 MSK 10-17, 1st node card 1 (go 10-17) |
+| ☐ | 0.9c triplet on L 128 with the far-zone fixes, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | ~25 GB est. | LIVE since 23:28 MSK 10-17, 1st node card 1 (go 10-17) |
+| ☐ | 0.9c triplet on L 128 with the far-zone fixes, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | ~10 h, ~51 GB est. | LIVE since 23:28 MSK 10-17, 1st node card 0 (go 10-17) |
+| ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; rerun with both far-zone fixes as `_farfix_t150` |
 | ✗ | 0.9c triplet on L 64 `spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 ~20:07 at t 29.2 / 15.15 / 7.94, no NaN: the L 64 box is too small for the 0.9c throat (level 0 never converged; level 1 slid to order +0.7 by t 7); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned |
 | ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
 | ☐ | 0.5c | slow | 85 | ~9 h | NOT STARTED |
@@ -171,7 +175,15 @@ constraint-solved seed before templating.
 
 ## LIVE
 
-None since ≈ 23:25 MSK 10-17 (the boundary test finished; the first node's two cards idle, its scratch empty).
+Settings (go 10-17 ≈ 23:20): the stopped L 128 triplet's (records below) plus `shift_advec_coeff = 0`,
+`sommerfeld_relative_to_background = 1` and `constraint_norms_edge_cells = 3` on binary
+`main3d_farfix_891d817d_2026-10-17.ex`; consumer flags plus `--frames-blank-edge 2`; no checkpoints. Speeds and ETAs
+below are the stopped triplet's, until measured.
+
+| run | node/card | t | stop | speed | ETA (MSK) |
+|---|---|---|---|---|---|
+| 0.9c L 128 N 256 farfix `00_paper_runs/spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 0 (solo) | 0 @ 23:28 | 150 | ~15.6 t/h | ≈ 10-18 09:05 (~9.6 h) |
+| 0.9c L 128 N 192 + N 128 farfix `00_paper_runs/spin_hold_L128_N{192,128}_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 1 | 0 @ 23:28 | 150 | N 192 ~21, N 128 ~44 t/h | N 192 ≈ 10-18 06:35, N 128 ≈ 10-18 02:55 |
 
 Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archive/aborted_2026-10-17/`):
 
@@ -196,9 +208,6 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
 
 ## NEXT
 
-- **The 0.9c triplet on L 128 with both fixes** (waits on the go): the stopped triplet's settings plus
-  `shift_advec_coeff = 0` and `sommerfeld_relative_to_background = 1` on binary `main3d_somref_f01991c8_2026-10-17.ex`,
-  consumer flags plus `--frames-blank-edge 2`; N 128 / 192 / 256, stop 150, no checkpoints.
 - The 0.2c triplet rerun (templates `params_spin_hold_L64_{N96_,,N192_}ml3_J100_full_spdrv1_fix_t100.txt`, stop 100):
   after the 0.9c triplet (decided 10-17: the 0.9c first, whole), or its N 192 on the second node's card (a session there).
 - Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB
