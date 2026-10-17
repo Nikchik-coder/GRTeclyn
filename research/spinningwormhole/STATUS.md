@@ -150,7 +150,11 @@ constraint-solved seed before templating.
 
 ## LIVE
 
-None since 21:09 MSK 10-17 (the first node's two cards idle, its scratch empty).
+| run | node/card | t | stop | speed | ETA (MSK) |
+|---|---|---|---|---|---|
+| gauge test `08_gauge_fix/advtest_L128_N128_ml3_ve090a_adv0_t10`: the stopped L 128 0.9c N 128 with only `shift_advec_coeff = 0`, stop 10, no checkpoints (go 10-17 21:15) | 1st, card 0 (solo) | 0 @ 21:15 | 10 | – | ≈ 21:30 (~15 min) |
+
+Card 1 idle. Pass = no Π ring in the drive shell and the shift's drift at truncation level (FAR-ZONE JUNK, point 5).
 
 Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archive/aborted_2026-10-17/`):
 
