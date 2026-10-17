@@ -4,6 +4,7 @@
  */
 
 #include "GRAMRLevel.hpp"
+#include "CellQuarticExact.hpp"
 #include "NullBCFill.hpp"
 #include "StateTypes.hpp"
 
@@ -21,7 +22,7 @@ void GRAMRLevel::stateVariableSetUp()
     pp.get("evolution.num_ghosts", nghost);
     desc_lst.addDescriptor(state_index, amrex::IndexType::TheCellType(),
                            amrex::StateDescriptor::Point, nghost, NUM_VARS,
-                           &amrex::cell_quartic_interp);
+                           grteclyn_cell_interp());
 
     BoundaryConditions boundary_conditions;
     boundary_conditions.define(amrex::DefaultGeometry());

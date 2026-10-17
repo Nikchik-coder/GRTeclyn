@@ -13,6 +13,7 @@
 #include <AMReX_AmrLevel.H>
 
 #include "CCZ4Geometry.hpp"
+#include "CellQuarticExact.hpp"
 #include "DimensionDefinitions.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "Interval.hpp"
@@ -102,7 +103,7 @@ EMTensor<matter_t, em_tensor_options>::set_up(int a_state_index)
     derive_lst.add(
         name, amrex::IndexType::TheCellType(), derive_var_names.size(),
         derive_var_names, EMTensor::compute_mf, [=](const amrex::Box &box)
-        { return amrex::grow(box, num_ghosts); }, &amrex::cell_quartic_interp);
+        { return amrex::grow(box, num_ghosts); }, grteclyn_cell_interp());
 
     derive_lst.addComponent(name, desc_lst, a_state_index, 0, NUM_VARS);
 }

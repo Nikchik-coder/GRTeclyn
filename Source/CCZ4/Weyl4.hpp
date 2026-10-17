@@ -8,6 +8,7 @@
 
 #include "CCZ4Geometry.hpp"
 #include "CCZ4RHS.hpp"
+#include "CellQuarticExact.hpp"
 #include "Coordinates.hpp"
 #include "FourthOrderDerivatives.hpp"
 #include "GRParmParse.hpp"
