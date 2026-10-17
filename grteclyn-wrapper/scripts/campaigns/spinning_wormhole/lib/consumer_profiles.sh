@@ -45,7 +45,10 @@
 # Every profile keeps the slice cache and auto colour limits: the live watcher
 # locks the colour scale from the FIRST plotfile, which under-ranges any field
 # that grows, and only a cached slice can be re-scaled over the finished run.
-_SWH_FRAME_TAIL='--frames-cache-slices --frames-auto-zlim'
+# 2026-10-17: --frames-blank-edge 2 draws the outer 2 base-grid cells of the
+# Weyl4 frames blank: Weyl4's stencil reaches outside the box there (2.4e-4
+# against 5.5e-7 one cell in on the 0.9c, from t = 0), and it set the colour scale.
+_SWH_FRAME_TAIL='--frames-cache-slices --frames-auto-zlim --frames-blank-edge 2'
 
 # The campaign's frame fields, from ../frames_default.txt (field per line,
 # "# why" comments).  Read once, at source time, so a missing or empty file

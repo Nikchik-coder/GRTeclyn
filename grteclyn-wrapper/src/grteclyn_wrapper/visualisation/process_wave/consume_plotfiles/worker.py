@@ -268,6 +268,7 @@ def _process_single_plotfile(p: str, args_dict: dict, protected: set, fallback_f
                         use_global_zlim=args_dict.get("frames_global_zlim", True),
                         cache_slices=bool(args_dict.get("frames_cache_slices", False)),
                         reflect=args_dict.get("reflect") or None,
+                        blank_edge_cells=int(args_dict.get("frames_blank_edge") or 0),
                     )
                 except Exception as exc:
                     if args_dict.get("verbose", False) or args_dict.get("reflect"):

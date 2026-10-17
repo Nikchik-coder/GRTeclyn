@@ -181,6 +181,16 @@ def main() -> None:
              "to get a still colorbar when plotfiles are deleted on the fly.",
     )
     parser.add_argument(
+        "--frames-blank-edge",
+        type=int,
+        default=0,
+        metavar="CELLS",
+        help="Draw the outer CELLS base-grid cells of the Weyl4 frames blank (NaN in "
+             "the slice cache too). Weyl4's 4th-order stencil reaches two cells beyond "
+             "the box there, into extrapolated ghosts, so those values are not data and "
+             "would set the colour scale (frames/edge.py). 0 (default) draws them.",
+    )
+    parser.add_argument(
         "--frames-zlim-scan",
         action="store_true",
         help="Measure one fixed colorbar per field over ALL plotfiles before rendering "

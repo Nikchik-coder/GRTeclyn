@@ -804,7 +804,7 @@ PLOTFILE_RE = re.compile(r".*[Pp]lt(\d+)$")      # consume_plotfiles/plotfiles.p
 SKIPPED_RE = re.compile(r"WARNING: frame field '([^']+)' skipped for \S+: (.*)")
 #: The consumer flags that decide what a frame shows (the rest are extractions).
 FRAME_FLAGS = ("--frames-axis", "--frames-coord", "--frames-zoom", "--frames-center", "--center",
-               "--reflect", "--frames-zlim-t0")
+               "--reflect", "--frames-zlim-t0", "--frames-blank-edge")
 FRAME_SWITCHES = ("--frames-corner", "--frames-auto-zlim", "--frames-global-zlim", "--no-frames-global-zlim")
 
 

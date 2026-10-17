@@ -30,11 +30,11 @@ converging, outside the measured physics: level 0's outer ~4 units (the box face
 The pre-fix paper runs are archived (`drainhole/00_archive/superseded_2026-10-17/`); their results stay
 below as the pre-fix record, to be requoted from the reruns.
 
-**Nothing live since 21:09 MSK: the far-zone junk is the gauge** (found ≈ 21:00, FAR-ZONE JUNK below). The
-`shift_advec_coeff = 1` Γ-driver advects the rotating background shift, so every spinning hold drifts from t 0, and
-the sponge drive and the Sommerfeld faces fight the drift. The 0.9c L 128 triplet was stopped and archived. The
-`shift_advec_coeff = 0` test (21:15–21:26) removed the drift inside the box (10³–10⁵×); the faces' junk is unchanged and
-by t 10 fills the drive shell, so every paper run now waits on the face fix (Sommerfeld relative to the background).
+**Nothing live since ≈ 23:25 MSK: the far-zone junk is fixed** (FAR-ZONE JUNK below). Two causes, two fixes, both
+tested on the 0.9c L 128 N 128 to t 10: the Γ-driver advected the rotating background shift (`shift_advec_coeff = 0`),
+and the flat-space Sommerfeld faces sat at 5.5 M_ADM (`sommerfeld_relative_to_background = 1`, binary somref f01991c8).
+With both, the far zone is quieter than the inside. The 0.9c L 128 triplet (stopped 21:09, archived) reruns with both
+on the go; the Weyl4 frames now blank the box's outer 2 cells (`--frames-blank-edge 2`, point 7).
 
 ## CONVERGENCE: HOW THE BUGS WERE FOUND (10-17)
 
@@ -108,7 +108,19 @@ run dirs):
    reference state in `apply_sommerfeld_boundaries` via the virtual `GRAMRLevel::sommerfeld_reference()` (default
    none: other examples bit-identical); the spinning key `sommerfeld_relative_to_background = 1` returns the
    drive's `m_sponge_ref` (built for either knob, its ghosts filled across box edges). Test: the gauge test plus
-   the key (`09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10`), live.
+   the key (`09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10`, finished t 10.02, no NaN, packed):
+   **PASS**. Against the gauge test at t 10: K at r 60–64 4.8e-11 vs 1.9e-4, Π 5.2e-13 vs 1.7e-9, the shift drift
+   3.8e-10 vs 2.3e-4, χ and the lapse there exactly constant; the drive shell (r 48–56) Π 100–1000× and K 10⁴×
+   lower; the inside identical. Level 0's constraint norms stay at their t 0 values (Ham 1.15e-3, Mom 1.78e-6; the
+   gauge test's Mom grew 7× by t 10): what is left there is the outer 2 cells' t 0 diagnostic (their derivative
+   stencils reach the extrapolated ghosts, as Weyl4's do), not evolution.
+7. **Weyl4 frames: the box's outer 2 cells blank** (decided 2026-10-17). Weyl4's 4th-order stencil reaches two cells
+   beyond the box there, into first-order extrapolated ghosts: 2.4e-4 in the outermost cell and 1.8e-5 in the next,
+   against 5.5e-7 further in, from t 0 in every run; it never feeds back into the evolution, but it set the Weyl4
+   colour scale. The consumer flag `--frames-blank-edge CELLS` (frames/edge.py; default 0) draws those cells blank
+   and caches them as NaN, so redraws and movies from the cache match; it is in every spinning profile
+   (`_SWH_FRAME_TAIL`) and goes into every `--consume-args` launch. On the boundary test's t 10 plotfile the Weyl4
+   colour scale fell from 2.6e-4 (the strip) to 6e-5 (the throat's field).
 
 ## PAPER-RUN SETTINGS (decided 2026-10-16; fix keys 2026-10-17)
 
@@ -140,7 +152,7 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | NOT STARTED — launched 18:27, stopped by decision at t 2.85 (10-17) so card 0 takes the 0.9c pair; stop 100 kept (go 10-17: test the late constraint growth) |
 | ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | NOT STARTED — launched 18:27, stopped by decision at t 1.2 (10-17) so card 0 takes the 0.9c pair |
 | ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | NOT STARTED — launched 18:27, stopped by decision at t 0.44 (10-17) so card 1 takes the 0.9c N 192 first; run dir in `00_archive/aborted_2026-10-17/`; next: the second node's card (a session there) or card 1 after the 0.9c |
-| ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; reruns with `shift_advec_coeff = 0` after the face fix |
+| ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; reruns with both far-zone fixes (waits on the go) |
 | ✗ | 0.9c triplet on L 64 `spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 ~20:07 at t 29.2 / 15.15 / 7.94, no NaN: the L 64 box is too small for the 0.9c throat (level 0 never converged; level 1 slid to order +0.7 by t 7); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned |
 | ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
 | ☐ | 0.5c | slow | 85 | ~9 h | NOT STARTED |
@@ -159,12 +171,7 @@ constraint-solved seed before templating.
 
 ## LIVE
 
-| run | node/card | t | stop | speed | ETA (MSK) |
-|---|---|---|---|---|---|
-| boundary test `09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10`: the gauge test plus `sommerfeld_relative_to_background = 1`, binary `main3d_somref_f01991c8_2026-10-17.ex`, stop 10, no checkpoints (go 10-17) | 1st, card 0 (solo) | 0 @ 23:11 | 10 | ~140 t/h expected | ≈ 23:25 (run), frames ≈ 23:35 |
-
-Card 1 idle. Pass = the faces and the drive shell quiet: K, Π and the shift drift at r ≥ 48 far below the gauge test's
-(FAR-ZONE JUNK, point 6).
+None since ≈ 23:25 MSK 10-17 (the boundary test finished; the first node's two cards idle, its scratch empty).
 
 Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archive/aborted_2026-10-17/`):
 
@@ -189,8 +196,9 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
 
 ## NEXT
 
-- **The boundary test first** (live, FAR-ZONE JUNK point 6). If it passes, the 0.9c triplet reruns on L 128 with
-  both fixes (`shift_advec_coeff = 0`, `sommerfeld_relative_to_background = 1`, binary somref f01991c8).
+- **The 0.9c triplet on L 128 with both fixes** (waits on the go): the stopped triplet's settings plus
+  `shift_advec_coeff = 0` and `sommerfeld_relative_to_background = 1` on binary `main3d_somref_f01991c8_2026-10-17.ex`,
+  consumer flags plus `--frames-blank-edge 2`; N 128 / 192 / 256, stop 150, no checkpoints.
 - The 0.2c triplet rerun (templates `params_spin_hold_L64_{N96_,,N192_}ml3_J100_full_spdrv1_fix_t100.txt`, stop 100):
   after the 0.9c triplet (decided 10-17: the 0.9c first, whole), or its N 192 on the second node's card (a session there).
 - Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB

@@ -13,6 +13,7 @@ from matplotlib.ticker import FuncFormatter, LogFormatterMathtext, SymmetricalLo
 from ..config import _FRAME_DPI, _field_frame_config
 from ..fields import _field_key, _register_derived_fields
 from .center import _frame_buff_size, _resolve_frame_physics_center, _yt_slice_center
+from .edge import blank_edge, blanks_edge, domain_bounds, edge_widths
 from .mirror import mirrored_window
 from .slice_cache import cache_slice
 from .zlim import _resolve_plot_zlim
@@ -210,6 +211,7 @@ def _render_native_slice_frame(
     frame_zlims: dict[str, list[float]] | None = None,
     use_global_zlim: bool = True,
     cache_slices: bool = False,
+    blank_edge_cells: int = 0,
 ) -> str:
     """Render from a uniform covering grid (native cell resolution, no FRB blocks)."""
     def _clean_zero(value: float, tol: float = 1.0e-10) -> float:
@@ -239,6 +241,9 @@ def _render_native_slice_frame(
     remaining = [a for a in (0, 1, 2) if a != ai]
     arr = slab if remaining == [v_ax, h_ax] else slab.T
     extent = [le[h_ax], re[h_ax], le[v_ax], re[v_ax]]
+    if blank_edge_cells > 0 and blanks_edge(field):
+        arr = np.array(arr, dtype=float)
+        blank_edge(arr, extent, domain_bounds(ds, axis), edge_widths(ds, axis, blank_edge_cells))
 
     if zoom is not None:
         hh = float(zoom) / 2.0
@@ -318,6 +323,7 @@ def _render_slice_frame(
     use_global_zlim: bool = True,
     cache_slices: bool = False,
     reflect: Sequence[str] | None = None,
+    blank_edge_cells: int = 0,
 ) -> str:
     """
     Render a SlicePlot frame and save it under:
@@ -327,6 +333,10 @@ def _render_slice_frame(
     ``reflect`` (the consumer's ``--reflect``): a symmetry-reduced run's frame
     is drawn from the simulated part of the window and mirrored into the full
     plane (frames/mirror.py), so it looks like the full-box run's.
+
+    ``blank_edge_cells`` (the consumer's ``--frames-blank-edge``): the outer
+    that many base-grid cells of a Weyl4 frame are drawn blank and cached as
+    NaN (frames/edge.py: Weyl4's stencil reaches outside the box there).
     """
     def _clean_zero(value: float, tol: float = 1.0e-10) -> float:
         value = float(value)
@@ -367,6 +377,7 @@ def _render_slice_frame(
             frame_zlims=frame_zlims,
             use_global_zlim=use_global_zlim,
             cache_slices=cache_slices,
+            blank_edge_cells=blank_edge_cells,
         )
 
     # AMR (level > 0) draws through yt's fixed-resolution buffer, which this
@@ -420,6 +431,13 @@ def _render_slice_frame(
         frb_arr = np.asarray(slc.frb[plot_field])
     except Exception:
         frb_arr = None
+
+    if frb_arr is not None and blank_edge_cells > 0 and blanks_edge(field):
+        # In place: the FRB keeps this buffer and yt draws it; NaN shows the
+        # (white) background.
+        blank_edge(frb_arr, [float(b) for b in slc.frb.bounds],
+                   domain_bounds(ds, axis), edge_widths(ds, axis, blank_edge_cells))
+        slc.set_background_color(plot_field, "white")
 
     if frb_arr is None:
         zlim = cfg["zlim"]

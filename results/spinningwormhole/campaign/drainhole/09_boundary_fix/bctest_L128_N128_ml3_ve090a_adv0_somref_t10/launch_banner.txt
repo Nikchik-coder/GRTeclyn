@@ -1,0 +1,40 @@
+[swh] name     : bctest_L128_N128_ml3_ve090a_adv0_somref_t10
+[swh] template : runs/spinning_wormhole/templates/params_bctest_L128_N128_ml3_ve090a_adv0_somref_t10.txt
+[swh] binary   : runs/spinning_wormhole/bin/main3d_somref_f01991c8_2026-10-17.ex
+[swh] gpu      : 0
+[swh] run dir  : runs/spinning_wormhole/drainhole/09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10          (NFS: params, log, .dat streams)
+[swh] scratch  : /tmp/grteclyn_scratch/bctest_L128_N128_ml3_ve090a_adv0_somref_t10      (node-local: plotfiles, checkpoints)
+[swh] proc     : test (evolution runs from /tmp/ml_jobs/bin/test_1ec79c2c)
+[swh] consumer centre: 64.0 64.0 64.0 (from the run's params)
+[swh] frames   : as given in SWH_CONSUME_ARGS
+[preflight] frames : 14 field(s), the full set: chi chi_minus_1 K lapse shift1 shift2 shift3 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed
+[preflight] files  : spinning_background_file = runs/spinning_p3/tables/fam_a_ve090.spinbg
+[preflight] consumer: areal radius off
+[preflight] paths  : one spelling, 'bctest_L128_N128_ml3_ve090a_adv0_somref_t10'
+[preflight] WARNING: this run writes no checkpoints: if it dies, it cannot be restarted
+[preflight] static : 69 keys, 0 absent from main3d_somref_f01991c8_2026-10-17.ex
+[preflight] start-up with every key checked (gpu 0, 0 steps; writes its plotfile for the frames) ...
+[preflight] probe  : ok in 5.2 s; binary version (f01991c8); 1 unread key(s)
+[preflight] t = 0  : L2_Ham 1.1219394760e-03  L2_Mom 8.6306059262e-05
+[preflight] frames : rendering 14 field(s) from plt00000 with the consumer -> preflight_frames ...
+[preflight]   chi              ok     0.0001 .. 0.779
+[preflight]   chi_minus_1      ok     -1 .. -0.221
+[preflight]   K                flat   0 .. 0  (every pixel 0: K is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   lapse            ok     0.0826 .. 0.878
+[preflight]   shift1           ok     -0.169 .. 0.169
+[preflight]   shift2           ok     -0.169 .. 0.169
+[preflight]   shift3           flat   0 .. 0  (every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   phi              ok     -0.44 .. -0.00335
+[preflight]   Pi               flat   0 .. 0  (every pixel 0: Pi is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   Weyl4_Re         ok     -0.000382 .. 0.000476
+[preflight]   Weyl4_Im         ok     -0.00025 .. 0.000326
+[preflight]   Weyl4_Mag        ok     2e-07 .. 0.000476
+[preflight]   scalar_activity  ok     0.00335 .. 0.44
+[preflight]   local_speed      ok     0.00475 .. 0.79
+[preflight] frames : 14 of 14 rendered in 13.4 s (ok); flat at this time: K shift3 Pi
+[preflight] verdict: PASS
+[swh] t = 0 frames: runs/spinning_wormhole/drainhole/09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10/preflight_frames (rendered at preflight; the run's own go to frames/)
+[swh] registry : bctest_L128_N128_ml3_ve090a_adv0_somref_t10 -> results/spinningwormhole/runs_registry.tsv
+[manifest] runs/spinning_wormhole/drainhole/09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10/run_manifest.json: binary main3d_somref_f01991c8_2026-10-17.ex (f01991c8), preflight pass
+[swh] consumer  : pid 631010 -> runs/spinning_wormhole/drainhole/09_boundary_fix/bctest_L128_N128_ml3_ve090a_adv0_somref_t10/small_data
+[swh]            deleting processed plotfiles, keeping last 3
