@@ -220,13 +220,13 @@ def _lock_frame_zlims_from_plotfile(
     # 2048³ array (~200+ GB).  Use the same FRB SlicePlot path as rendering.
     use_frb = int(ds.index.max_level) > 0
     if use_frb:
-        from .center import _frame_buff_size, _resolve_frame_physics_center
+        from .center import _frame_buff_size, _resolve_frame_physics_center, _yt_slice_center
         from ..fields import _field_key, _register_derived_fields
 
         physics_center = _resolve_frame_physics_center(
             ds, axis, args_dict.get("frames_coord"), zoom, center_xyz, corner
         )
-        plot_center = ds.arr(physics_center, "code_length")
+        plot_center = _yt_slice_center(ds, axis, physics_center)
         buff = _frame_buff_size(ds, zoom)
 
     reflect = args_dict.get("reflect") or None

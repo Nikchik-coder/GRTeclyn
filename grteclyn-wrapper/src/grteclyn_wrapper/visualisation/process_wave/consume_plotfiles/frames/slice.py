@@ -12,7 +12,7 @@ from matplotlib.ticker import FuncFormatter, LogFormatterMathtext, SymmetricalLo
 
 from ..config import _FRAME_DPI, _field_frame_config
 from ..fields import _field_key, _register_derived_fields
-from .center import _frame_buff_size, _resolve_frame_physics_center
+from .center import _frame_buff_size, _resolve_frame_physics_center, _yt_slice_center
 from .mirror import mirrored_window
 from .slice_cache import cache_slice
 from .zlim import _resolve_plot_zlim
@@ -373,7 +373,7 @@ def _render_slice_frame(
     # cache does not cover; those movies keep the old per-frame behaviour.
     cfg = _field_frame_config(field)
     physics_center = _resolve_frame_physics_center(ds, axis, coord, zoom, center_xyz, corner)
-    plot_center = ds.arr(physics_center, "code_length")
+    plot_center = _yt_slice_center(ds, axis, physics_center)
 
     _register_derived_fields(ds, field)
     plot_field = _field_key(ds, field)

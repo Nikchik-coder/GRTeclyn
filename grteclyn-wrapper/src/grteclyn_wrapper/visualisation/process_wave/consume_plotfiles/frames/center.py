@@ -56,6 +56,32 @@ def _resolve_frame_physics_center(
     return physics_center
 
 
+def _yt_slice_center(ds, axis: str, physics_center: Sequence[float]):
+    """``physics_center`` as the centre handed to yt.SlicePlot: its plane moved off any cell face."""
+    centre = [float(v) for v in physics_center]
+    ai = {"x": 0, "y": 1, "z": 2}[axis]
+    centre[ai] = _off_cell_face(ds, ai, centre[ai])
+    return ds.arr(centre, "code_length")
+
+
+def _off_cell_face(ds, axis: int, plane: float) -> float:
+    """The slice plane, moved a millionth of the finest cell off a cell face it sits on.
+
+    2026-10-17: yt's SlicePlot through a plane exactly on a cell face selects the
+    cells on BOTH sides and its fixed-resolution buffer sums them, so every field
+    was drawn 2x (the N 96 spinning runs: z = 32 is a face on every level there;
+    measured 2.0000 against the plotfile).  Off the face, the cell above the plane
+    is drawn (the one below it at the domain's upper edge).
+    """
+    dx = float(ds.index.get_smallest_dx().d)
+    le = float(ds.domain_left_edge.d[axis])
+    re = float(ds.domain_right_edge.d[axis])
+    k = (float(plane) - le) / dx
+    if abs(k - round(k)) > 1e-6:
+        return float(plane)
+    return float(plane) - 1e-6 * dx if plane >= re else float(plane) + 1e-6 * dx
+
+
 def _frame_buff_size(ds, zoom: float | None) -> int:
     """Pixels across the FRB: ``_FRAME_SAMPLES_PER_CELL`` samples per simulation
     cell in the zoom window (capped at ``_FRAME_BUFF_CAP``)."""

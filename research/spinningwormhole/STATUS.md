@@ -156,6 +156,8 @@ What the ledger says, four lines:
 | 0.9c fast N 96 rerun `L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 0 (solo) | 6.6 @ 09:21 | 150 | 44.8 t/h | ≈ 10-17 12:35 |
 | 0.9c fast N 192 `L64_N192_ml3_ve090a_spdrv1_sig04_t150` | 1st, card 1 (solo, 67.3 GB) | 0 @ 12:23 | 150 | ~4.4 t/h (start) | ≈ 10-18 22:40 |
 
+**N 96 frames were drawn 2× (found 10-17, renderer fixed ≈ 13:00 MSK).** yt's SlicePlot through a plane exactly on a cell face (z = 32 on the N 96 grids) summed the cells on both sides: every field in the N 96 runs' frames and slice caches is exactly 2.000× the plotfile (0.2c N 96, 0.9c N 96 `_t100` and `_t150`). The evolution data and every number from them are unaffected (t = 0 throat rays agree with N 128/192 to 0.03 %); N 128/192 frames are right. The consumer now slices a millionth of a cell off the face; live consumers pick it up per batch. Frames rendered before the fix stay 2× until repaired.
+
 0.9c triplet window = t 150 (the fast recipe's stop, as its N 128 member). 10-17: the N 96 reruns to 150 on card 0
 (launched 09:11 MSK, t = 0 Ham bit-identical to the `_t100` run, frame 0 identical, ψ4 14/18/30); the N 192 to 150
 aborted at start beside it (Arena out of memory at 64 GB of 80; run dir in `drainhole/00_archive/aborted_2026-10-17/`,
