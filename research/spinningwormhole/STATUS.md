@@ -97,9 +97,9 @@ triplets pass (decided 10-17).
 
 | ✓ | run | recipe | stop | cost | status |
 |---|---|---|---|---|---|
-| ☐ | 0.2c triplet N 96 | slow | 85 | ~4 h | NOT STARTED |
-| ☐ | 0.2c triplet N 128 (= the paper 0.2c) | slow | 85 | ~9 h | NOT STARTED |
-| ☐ | 0.2c triplet N 192 | slow | 85 | ~20 h, ~60 GB (a card alone) | NOT STARTED |
+| ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | LIVE since 18:27 MSK 10-17, 1st node card 0 (go 10-17: stop 100 to test the late constraint growth) |
+| ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | LIVE since 18:27 MSK 10-17, 1st node card 0 |
+| ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | LIVE since 18:27 MSK 10-17, 1st node card 1 |
 | ☐ | 0.9c triplet N 96 | fast | 150 | ~4 h | NOT STARTED |
 | ☐ | 0.9c triplet N 128 (= the paper 0.9c) | fast | 150 | ~9 h | NOT STARTED |
 | ☐ | 0.9c triplet N 192 | fast | 150 | ~34 h, ~67 GB (a card alone) | NOT STARTED |
@@ -122,13 +122,12 @@ constraint-solved seed before templating.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| – (both cards of the first node free since 18:09 MSK; the second node idle) | | | | | |
+| 0.2c triplet rerun `00_paper_runs/spin_hold_L64_{N96_,,N192_}ml3_J100_full_spdrv1_fix_t100` (binary rkfix 0661dac4, stop 100, hold profile, no checkpoints; t = 0 norms = the old members' to 6 digits) | 1st, card 0 (N 96 + 128), card 1 (N 192) | 0 @ 18:27 | 100 | measuring | N 96 ≈ 23:30, N 128 ≈ 10-18 05:30, N 192 ≈ 10-18 16:30 (est.) |
 
 ## NEXT
 
-- The two triplet reruns: waiting for the go and the checkpoint answer. Each N 192 needs a card alone (the
-  0.9c on card 1; the 0.2c on the second node's card, from a session there, or after); the N 96 + N 128 pair
-  of each spin takes ~39 GB on card 0.
+- The 0.9c triplet rerun (templates `params_spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_t150_fix.txt`, mask 0.75):
+  after the 0.2c, or its N 192 on the second node's card (a session there); its go given with the 0.2c's? — ask.
 - Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB
   (prune needs a session there).
 
