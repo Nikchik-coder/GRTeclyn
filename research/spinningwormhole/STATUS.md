@@ -32,8 +32,9 @@ below as the pre-fix record, to be requoted from the reruns.
 
 **Nothing live since 21:09 MSK: the far-zone junk is the gauge** (found ≈ 21:00, FAR-ZONE JUNK below). The
 `shift_advec_coeff = 1` Γ-driver advects the rotating background shift, so every spinning hold drifts from t 0, and
-the sponge drive and the Sommerfeld faces fight the drift. The 0.9c L 128 triplet was stopped and archived; every
-paper run waits on a `shift_advec_coeff = 0` test.
+the sponge drive and the Sommerfeld faces fight the drift. The 0.9c L 128 triplet was stopped and archived. The
+`shift_advec_coeff = 0` test (21:15–21:26) removed the drift inside the box (10³–10⁵×); the faces' junk is unchanged and
+by t 10 fills the drive shell, so every paper run now waits on the face fix (Sommerfeld relative to the background).
 
 ## CONVERGENCE: HOW THE BUGS WERE FOUND (10-17)
 
@@ -96,10 +97,17 @@ run dirs):
    (χ in the outer 4 units moves 2.7e-4 by t 1, against 6e-7 just inside).
 4. **Reach.** All 146 spinning templates carry `shift_advec_coeff = 1`: every hold with a rotating background,
    pre-fix ones included, drifted this way.
-5. **Proposed fix** (waits on the go): `shift_advec_coeff = 0`, so the background shift has no source at t 0.
-   Test: N 128 on the stopped triplet's settings to t 10; pass = no ring, and the shift's drift at truncation
-   level (shrinking with N). The faces are a separate fix: a bigger box, or Sommerfeld taken relative to the
-   t 0 background (code).
+5. **Gauge fix: `shift_advec_coeff = 0`** (test `08_gauge_fix/advtest_L128_N128_ml3_ve090a_adv0_t10`, the stopped
+   N 128 with only that knob, finished t 10.02, no NaN, packed). Against the stopped run at t 10: the shift drift
+   is 3000× lower at the throat (6.7e-6 vs 2.1e-2) and 10⁵× at r 24–36, the χ drift 1000× lower; the constraint
+   norms are unchanged on every level (the drift was pure gauge). The Π ring at r 48–52 fell 8× at t 3, but
+   by t 10 the faces' junk fills the drive shell (Π at r 52–56 3.5e-9 in both runs, K at r ≥ 48 identical): the
+   frames still show it. Adopt `shift_advec_coeff = 0` for every rotating hold.
+6. **Face fix, proposed** (waits on the go): apply the Sommerfeld condition to (state − t 0 background), zero for
+   the unperturbed wormhole, outgoing waves still leave. Code: an optional reference state in
+   `apply_sommerfeld_boundaries` (off by default, other examples bit-identical) and a key
+   `sommerfeld_relative_to_background = 1` in the spinning example (its reference is the drive's `m_sponge_ref`);
+   new binary; the same N 128 test to t 10 with both fixes.
 
 ## PAPER-RUN SETTINGS (decided 2026-10-16; fix keys 2026-10-17)
 
@@ -131,7 +139,7 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | NOT STARTED — launched 18:27, stopped by decision at t 2.85 (10-17) so card 0 takes the 0.9c pair; stop 100 kept (go 10-17: test the late constraint growth) |
 | ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | NOT STARTED — launched 18:27, stopped by decision at t 1.2 (10-17) so card 0 takes the 0.9c pair |
 | ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | NOT STARTED — launched 18:27, stopped by decision at t 0.44 (10-17) so card 1 takes the 0.9c N 192 first; run dir in `00_archive/aborted_2026-10-17/`; next: the second node's card (a session there) or card 1 after the 0.9c |
-| ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; reruns after the gauge test |
+| ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; reruns with `shift_advec_coeff = 0` after the face fix |
 | ✗ | 0.9c triplet on L 64 `spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 ~20:07 at t 29.2 / 15.15 / 7.94, no NaN: the L 64 box is too small for the 0.9c throat (level 0 never converged; level 1 slid to order +0.7 by t 7); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned |
 | ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
 | ☐ | 0.5c | slow | 85 | ~9 h | NOT STARTED |
@@ -150,11 +158,7 @@ constraint-solved seed before templating.
 
 ## LIVE
 
-| run | node/card | t | stop | speed | ETA (MSK) |
-|---|---|---|---|---|---|
-| gauge test `08_gauge_fix/advtest_L128_N128_ml3_ve090a_adv0_t10`: the stopped L 128 0.9c N 128 with only `shift_advec_coeff = 0`, stop 10, no checkpoints (go 10-17 21:15) | 1st, card 0 (solo) | 0 @ 21:15 | 10 | – | ≈ 21:30 (~15 min) |
-
-Card 1 idle. Pass = no Π ring in the drive shell and the shift's drift at truncation level (FAR-ZONE JUNK, point 5).
+None since 21:26 MSK 10-17 (the gauge test finished; the first node's two cards idle, its scratch empty).
 
 Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archive/aborted_2026-10-17/`):
 
@@ -179,9 +183,9 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
 
 ## NEXT
 
-- **The gauge test first** (proposed 10-17 21:15, waits on the go): N 128 on the stopped L 128 triplet's settings with
-  only `shift_advec_coeff = 0`, to t 10, no checkpoints (FAR-ZONE JUNK, point 5). If it passes, the 0.9c triplet
-  reruns on L 128 with it.
+- **The face fix first** (proposed 10-17 21:30, waits on the go): Sommerfeld relative to the t 0 background (code,
+  new binary), then the N 128 test to t 10 with both fixes (FAR-ZONE JUNK, point 6). If it passes, the 0.9c triplet
+  reruns on L 128 with both.
 - The 0.2c triplet rerun (templates `params_spin_hold_L64_{N96_,,N192_}ml3_J100_full_spdrv1_fix_t100.txt`, stop 100):
   after the 0.9c triplet (decided 10-17: the 0.9c first, whole), or its N 192 on the second node's card (a session there).
 - Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB
