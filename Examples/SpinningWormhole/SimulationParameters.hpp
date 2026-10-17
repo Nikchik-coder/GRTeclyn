@@ -39,6 +39,13 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("constraint_norms_levels", constraint_norms_levels, false);
         pp.load("constraint_norms_mask_radius", constraint_norms_mask_radius,
                 0.125);
+        // Cells within this many cells of the domain boundary are left out of
+        // the per-level norms too.  2026-10-17: the outer 3 base-grid cells
+        // evolve under the Sommerfeld condition, not Einstein's equations,
+        // and the constraint stencil there reaches the extrapolated ghosts;
+        // on the 0.9c that layer held level 0's norm at 1e5 x level 1's,
+        // frozen at its t = 0 value.  0 = the whole level (the old file).
+        pp.load("constraint_norms_edge_cells", constraint_norms_edge_cells, 0);
     }
 
     void read_spinning_params(GRParmParse &pp)
@@ -184,11 +191,16 @@ class SimulationParameters : public SimulationParametersBase
         {
             amrex::Abort("constraint_norms_mask_radius must be >= 0");
         }
+        if (constraint_norms_edge_cells < 0)
+        {
+            amrex::Abort("constraint_norms_edge_cells must be >= 0");
+        }
     }
 
     bool calculate_constraint_norms{};
     bool constraint_norms_levels{};
     double constraint_norms_mask_radius{};
+    int constraint_norms_edge_cells{};
 
     std::string spinning_background_file;
     int spinning_background_interp = 1;

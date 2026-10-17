@@ -522,7 +522,9 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
     // (amrex::makeFineMask), so every cell counts exactly once; cells within
     // mask_radius of the centre are excluded on every level, because the
     // compactified far end is a puncture whose floor-limited residual cannot
-    // converge.  Columns are sized by max_level, not finestLevel(), so the
+    // converge; so are cells within edge_cells of the domain boundary (the
+    // Sommerfeld layer, where Einstein's equations are not what is solved).
+    // Columns are sized by max_level, not finestLevel(), so the
     // file's width never changes mid-run; levels that do not exist yet write
     // 0.  The last pair is the hierarchy-wide (masked) norm.
     if (simParams().constraint_norms_levels && Level() == 0)
@@ -592,6 +594,9 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
 
             const amrex::Real cell_vol = dx[0] * dx[1] * dx[2];
             const auto prob_lo         = geom_lev.ProbLoArray();
+            const int edge_cells = simParams().constraint_norms_edge_cells;
+            const amrex::Box interior =
+                amrex::grow(geom_lev.Domain(), -edge_cells);
 
             amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
                              amrex::ReduceOpSum>
@@ -613,6 +618,11 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
                     [=] AMREX_GPU_DEVICE(int i, int j, int k) -> ReduceTuple
                     {
                         if (have_mask && mask_arr(i, j, k) != 0)
+                        {
+                            return {0.0, 0.0, 0.0};
+                        }
+                        if (edge_cells > 0 &&
+                            !interior.contains(amrex::IntVect(i, j, k)))
                         {
                             return {0.0, 0.0, 0.0};
                         }
