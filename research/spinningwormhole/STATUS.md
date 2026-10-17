@@ -100,9 +100,8 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | NOT STARTED — launched 18:27, stopped by decision at t 2.85 (10-17) so card 0 takes the 0.9c pair; stop 100 kept (go 10-17: test the late constraint growth) |
 | ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | NOT STARTED — launched 18:27, stopped by decision at t 1.2 (10-17) so card 0 takes the 0.9c pair |
 | ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | NOT STARTED — launched 18:27, stopped by decision at t 0.44 (10-17) so card 1 takes the 0.9c N 192 first; run dir in `00_archive/aborted_2026-10-17/`; next: the second node's card (a session there) or card 1 after the 0.9c |
-| ☐ | 0.9c triplet N 96 `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~5 h | LIVE since 18:35 MSK 10-17, 1st node card 0 (go 10-17) |
-| ☐ | 0.9c triplet N 128 (= the paper 0.9c) `spin_hold_L64_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~12 h | LIVE since 18:36 MSK 10-17, 1st node card 0 (go 10-17) |
-| ☐ | 0.9c triplet N 192 `spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~34 h, ~67 GB (a card alone) | LIVE since 18:33 MSK 10-17, 1st node card 1 (go 10-17) |
+| ☐ | 0.9c on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_fix_t150` (template = the L 64 N 128 rerun's, box only: L 128, N 256, centre 64, sponge 48–64) | fast | 150 | ~11 h, ~50 GB | PROPOSED 10-17 ~20:15, settings shown, waiting for the go; triplet partners open (N 384 does not fit a card) |
+| ✗ | 0.9c triplet on L 64 `spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 ~20:07 at t 29.2 / 15.15 / 7.94, no NaN: the L 64 box is too small for the 0.9c throat (level 0 never converged; level 1 slid to order +0.7 by t 7); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned |
 | ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
 | ☐ | 0.5c | slow | 85 | ~9 h | NOT STARTED |
 | ☐ | 0.7c | fast | 150 | ~9 h | NOT STARTED |
@@ -120,19 +119,14 @@ constraint-solved seed before templating.
 
 ## LIVE
 
-| run | node/card | t | stop | speed | ETA (MSK) |
-|---|---|---|---|---|---|
-| 0.9c triplet rerun N 96 + N 128 `00_paper_runs/spin_hold_L64_{N96_,}ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints; t = 0 norms = the old members') | 1st, card 0 | N 96 20.9, N 128 10.8 @ 19:41 | 150 | N 96 ~19.4, N 128 ~10.1 t/h | N 96 ≈ 10-18 02:20, N 128 ≈ 10-18 09:30 |
-| 0.9c triplet rerun N 192 `00_paper_runs/spin_hold_L64_N192_ml3_ve090a_spdrv1_sig04_fix_t150` (binary rkfix 0661dac4, mask 0.75, stop 150, hold profile, no checkpoints) | 1st, card 1 (solo) | 5.7 @ 19:41 | 150 | ~5.1 t/h | ≈ 10-18 24:00 (~28 h) |
+None (10-17 20:07 MSK): both cards of the 1st node free.
 
-- Consumers (10-17 19:13 MSK on): restarted with `--mots-spectral-steps 150` (`restart_consumer.sh --busy`, frames and
-  rows kept). The N 192's MOTS search (2 seeds × 400 flow steps; the 0.9c never has a MOTS: 151/151 empty in the old
-  run) took 22 min per plotfile against one every 12 min (N 128 7 vs 6, N 96 3.3 vs 3.1), so scratch would have
-  filled before t 150. N 96 restarted 19:13, N 128 19:15, N 192 19:40; every check OK (no duplicated rows).
-- Early orders at t 2.0 (96→128 / 128→192): level 0 Ham −0.6/−0.7, Mom −0.9/−0.6 (box face, expected); level 1
-  Ham +1.5/+1.8, Mom +1.3/+3.4 (slipping: Ham 128→192 was +3.0 at t 1; 96→128 at t 3.4 is +1.0/+1.4); level 2
-  +2.2/+2.4, +1.8/+2.1; level 3 +1.9/+5.8, +3.0/+3.9. Frames: all 14 fields on all three, t 0 identical, values =
-  the plotfile; the old run's coarse–fine stripes in K and Pi are gone.
+- The L 64 0.9c triplet rerun (stopped 20:07): orders at t 7.0 (96→128 / 128→192): level 0 Ham −0.3/−0.4, Mom
+  −0.8/−0.8; level 1 +0.7/+0.9, +1.0/+1.1 (from +3 at t 1); level 2 +2.3/+2.4, +2.1/+2.3; level 3 +1.2/+3.2,
+  +0.8/+2.5 (96→128 to t 13.3: level 2 +2.5/+2.2, level 3 +1.9/+1.8). Frames: all 14 fields, t 0 identical, values
+  = the plotfile; the old run's coarse–fine stripes in K and Pi gone. Its consumers had run `--mots-spectral-steps
+  150` since 19:13–19:40 (`restart_consumer.sh --busy`): the N 192's 400-step MOTS search took 22 min per plotfile
+  against one every 12 min (the 0.9c never has a MOTS).
 
 ## NEXT
 
