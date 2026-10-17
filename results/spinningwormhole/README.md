@@ -28,6 +28,11 @@ live state: `research/spinningwormhole/STATUS.md`; code:
 
 ## Claims: drainhole (`campaign/drainhole/`)
 
+Every evolution below ran before the three numerics fixes of 2026-10-17 (spline table, exact
+coarse–fine weights, no RK stage re-fill; `research/spinningwormhole/STATUS.md`): none is quoted until
+its rerun on binary rkfix 0661dac4. The pre-fix paper runs and their packs were moved to
+`runs/spinning_wormhole/drainhole/00_archive/superseded_2026-10-17/` (untracked).
+
 - `01_static_hold/static_hold_L64_ml3_t100` (2026-10-11; launched as
   `static_hold_L64_t100`, renamed 2026-10-12): the Step 0 anchor.
   The merger's production `single_hold_t100` ran on this exact grid (L = 64,
@@ -114,7 +119,8 @@ live state: `research/spinningwormhole/STATUS.md`; code:
   t ≈ 30 and max|K| ran away, where B1 held 1.5e-6 to t = 100.  dt 0.05
   is unstable on L128 spin data even with σ 0.4; dt stays 0.02 and the
   speed-up candidate is σ 0.4 alone.  Nothing from this run is quoted.
-- `07_sponge_fix/static_hold_L64_ml3_spdrv1_t100` (2026-10-16), damping
+- `static_hold_L64_ml3_spdrv1_t100` (2026-10-16; ARCHIVED 2026-10-17 in
+  `drainhole/00_archive/superseded_2026-10-17/`, pre-fix), damping
   sponge test: the static hold with `sponge_drive_strength = 1` (drive
   the 24–32 shell back to the stationary background).  Reached t = 100
   clean; throat and all interior diagnostics identical to the packed

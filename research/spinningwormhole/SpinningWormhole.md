@@ -267,6 +267,52 @@ Modelled on Evstafyeva, Siemonsen & East, *Assessing the stability of ultracompa
 
 ---
 
+## 6. Article notes (moved from STATUS.md 2026-10-17)
+
+Every evolution number below comes from runs made before the three numerics fixes of 2026-10-17 (spline
+table, exact coarse–fine weights, no RK stage re-fill; STATUS.md): requote each from the reruns. Numbers
+read off the solver tables or the t = 0 data stand.
+
+**The rotating collapse emits a real gravitational wave (noted 10-16).** At R = 30 the 0.21c collapse
+(`spin_hold_L128_ml3_J100_full_t100`) shows an l = 2, m = 0 burst |ψ₄| = 3.0e-2 arriving at t = 81 (horizon
+formation t ≈ 64 plus ~17 of light travel). The static (spherical) collapse at the same radius reads 6.0e-5,
+the numerical floor (spherical collapse cannot radiate): the spinning burst is 500× above it and 10⁴× above
+the run's own quiet-phase noise; the 0.5c (no collapse) stays quiet. Measurable per spin alongside τ
+(`psi4_mode_l2m0.dat` in every pack). Later: a few larger-box runs to show it is not near-zone extraction.
+
+**The exotic-matter trend is the physics behind the spin ladder (noted 10-15): plot τ(v_e) against
+D/M(v_e).** From the family (a) tables (D = the phantom scalar charge; `results/spinningwormhole/solutions/
+<leg>/<leg>.tsv`): v_e 0.06 / 0.51 / 0.70 / 0.90 / 0.96 give D 2.23 / 2.00 / 1.72 / 1.07 / 0.67, M_ADM
+1.01 / 1.87 / 3.31 / 11.7 / 32.0, so D/M 2.22 / 1.07 / 0.52 / 0.09 / 0.02. D shrinks with spin while M grows,
+so the exotic fraction falls a hundred-fold across the family; at extremality the family approaches extremal
+Kerr with the scalar switched off. Rotation progressively replaces exotic matter as what holds the throat
+open: the phantom field both sustains the throat and drives its collapse, and the faster the spin, the less
+of it there is.
+
+**The exotic matter is measured on the grid (noted 10-16).** The scalar charge is fit from the equatorial φ
+frame slices (φ = D/(η₀√4π)·[arctan(η/η₀) − π/2], annulus r = 4–22). At t = 0 the grid reproduces the
+solver's D to ~2×10⁻⁴ at four spins (static 2.2358/√5, 0.21c 2.2014, 0.51c 2.0010, 0.70c 1.7194). In time,
+to each trust window: the static hold drains D 2.24 → 1.39 (−38 %) by t = 64 and the 0.21c collapse
+2.20 → 1.61 (−27 %) by t = 67, max|φ| falling with it (the horizon swallows the phantom); the 0.51c and
+0.70c stay flat (max|φ| −2.5 % over 78 units, −6 % settled by t = 40; the ±15–20 % wobble of the fitted D
+there is the coordinate annulus feeling the gauge). Figure when wanted: D(t), max|φ|, max|Π| per hold, cut at
+trust; it reads only the frame slice caches (phi_z, Pi_z), so no plotfile retention is needed.
+
+**Speed-up research (dt × σ, study closed 10-16; "goes fully to the article").** The dt ceiling was never
+hard CFL (local speeds ≤ 0.95; KO + RK4 allow dt_mult ~0.23 at σ 0.1): it was a weak AMR interface-mode
+instability, a grid-scale checkerboard pinned to the fixed nested coarse–fine box edges (square halos in K,
+shells r ≈ 5–7.5 fastest), dissipation-starved at σ 0.1 and radiating into the wave zone long before
+breakout (ψ4 ×373 at t = 10 at dt_mult 0.05). One mode at every dt, a growth-rate ladder: e-fold ~0.8 at
+dt_mult 0.1, breakout t ≈ 28–30 at 0.05 and t ≈ 43 at 0.035, e-fold ~9 at the production 0.02. Verdicts:
+L64 static σ 0.3 + dt 0.05 ran clean (2.5× faster; σ 0.2 only postponed the mode); σ 0.4 at dt 0.02 erases
+the late constraint growth (masked Ham 2.4e-5 / 4.1e-5 / 7.9e-4 of the σ 0.1 control on levels 1/2/3 at
+t = 100, collapse ~4 units earlier); dt 0.05 and 0.035 died on L128 spin data (χ to the 1e-8 floor), so
+production stayed at dt 0.02. The mode lived exactly where bugs 2 and 3 acted (the coarse–fine edges):
+retest on the fixed binary before quoting any of this. Arm history: `drainhole/06_dt_ladder/` and the
+registry.
+
+---
+
 ## References
 
 - B. Kleihaus & J. Kunz, *Rotating Ellis wormholes in four dimensions*, PRD 90, 121503(R) (2014), [arXiv:1409.1503](https://arxiv.org/abs/1409.1503).
