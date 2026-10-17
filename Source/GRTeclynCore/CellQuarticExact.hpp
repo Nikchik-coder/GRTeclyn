@@ -115,7 +115,6 @@ class CellQuarticExact : public amrex::Interpolater
 
         const bool run_on_gpu =
             (runon == amrex::RunOn::Gpu && amrex::Gpu::inLaunchRegion());
-        amrex::ignore_unused(run_on_gpu);
 
         amrex::Array4<amrex::Real const> const &crsearr =
             crse.const_array(crse_comp);
@@ -134,9 +133,12 @@ class CellQuarticExact : public amrex::Interpolater
         }
 #endif
         amrex::Array4<amrex::Real> const &tmpzarr = tmpz.array();
-        AMREX_HOST_DEVICE_PARALLEL_FOR_4D_FLAG(
-            runon, bz, ncomp, i, j, k, n,
-            { cell_quartic_exact::interp_z(i, j, k, n, tmpzarr, crsearr); });
+        parallel_for(run_on_gpu, bz, ncomp,
+                     [=] AMREX_GPU_HOST_DEVICE(int i, int j, int k,
+                                               int n) noexcept {
+                         cell_quartic_exact::interp_z(i, j, k, n, tmpzarr,
+                                                      crsearr);
+                     });
 
         amrex::Box by =
             amrex::coarsen(target_fine_region, amrex::IntVect(2, 1, 1));
@@ -151,14 +153,37 @@ class CellQuarticExact : public amrex::Interpolater
 #endif
         amrex::Array4<amrex::Real> const &tmpyarr = tmpy.array();
         amrex::Array4<amrex::Real const> const tmpzc = tmpz.const_array();
-        AMREX_HOST_DEVICE_PARALLEL_FOR_4D_FLAG(
-            runon, by, ncomp, i, j, k, n,
-            { cell_quartic_exact::interp_y(i, j, k, n, tmpyarr, tmpzc); });
+        parallel_for(run_on_gpu, by, ncomp,
+                     [=] AMREX_GPU_HOST_DEVICE(int i, int j, int k,
+                                               int n) noexcept {
+                         cell_quartic_exact::interp_y(i, j, k, n, tmpyarr,
+                                                      tmpzc);
+                     });
 
         amrex::Array4<amrex::Real const> const tmpyc = tmpy.const_array();
-        AMREX_HOST_DEVICE_PARALLEL_FOR_4D_FLAG(
-            runon, target_fine_region, ncomp, i, j, k, n,
-            { cell_quartic_exact::interp_x(i, j, k, n, finearr, tmpyc); });
+        parallel_for(run_on_gpu, target_fine_region, ncomp,
+                     [=] AMREX_GPU_HOST_DEVICE(int i, int j, int k,
+                                               int n) noexcept {
+                         cell_quartic_exact::interp_x(i, j, k, n, finearr,
+                                                      tmpyc);
+                     });
+    }
+
+  private:
+    // What AMREX_HOST_DEVICE_PARALLEL_FOR_4D_FLAG does; the macro names
+    // RunOn and Gpu unqualified, so it only compiles inside namespace amrex.
+    template <class F>
+    static void parallel_for(bool a_on_gpu, const amrex::Box &a_box,
+                             int a_ncomp, F const &a_f)
+    {
+        if (a_on_gpu)
+        {
+            amrex::ParallelFor(a_box, a_ncomp, a_f);
+        }
+        else
+        {
+            amrex::LoopConcurrentOnCpu(a_box, a_ncomp, a_f);
+        }
     }
 };
 
