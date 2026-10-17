@@ -66,7 +66,7 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 | ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, solo 4.3 t/h; t 63.3 @ 08:39, collapse under way (R −1 % at 56) | ~5 h | ≈ 10-17 13:40 |
 | ☑ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | DONE t 85 ≈ 04:35 through the throat collapse (R −1 % at 47, 2.53 at 85; trust 66), `00_paper_runs/` | finished | finished |
 | ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | FAILED, not finished: died 64.83 ≈ 00:30 at the end of the throat collapse (R −1 % at 43); pulled from the paper folders 10-17, archived in `drainhole/00_archive/failed_2026-10-17/` | failed | failed |
-| ☐ | 0.7c | fast | 150 | 2 | 0 | DIED 135.85 ≈ 11:06 MSK (NaN in K, level 3): the lapse collapsed to its 1e-10 floor at t 102.4, K > 0.1 at 105.8, Ham ×2 at 127.5; throat size unchanged to t 127 (6.86–6.89) — the slicing breaks, not the throat; trust 102; close-out after its consumer drain | died | died |
+| ☐ | 0.7c | fast | 150 | 2 | 0 | DIED 135.85 ≈ 11:06 MSK (NaN in K, level 3): the lapse collapsed to its 1e-10 floor at t 102.4, K > 0.1 at 105.8, Ham ×2 at 127.5; the throat holds in the window (MOTS R 6.870–6.873 over t 0–83) — the slicing breaks, not the throat; trust 102; packed `00_paper_runs/` 10-17 ≈ 11:50, 2nd-node scratch pruned | died | died |
 | ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c, 7.8 t/h (solo ~17.5 after 12:55); t 109.9 @ 08:39 | ~4.7 h | ≈ 10-17 13:20 |
 | ☐ | 0.9c fast triplet N 96 (t 150 window) | fast | 150 | 1 | 0 | LIVE since 09:11 MSK, solo 44.8 t/h — rerun to 150; the `_t100` member stopped at 100 (planning error: the triplet window is the recipe's 150) and is superseded | ~3.2 h | ≈ 10-17 12:35 |
 | ☐ | 0.9c fast triplet N 192 (t 150 window) | fast | 150 | 1 | 1 | go given 10-17; aborted at start on card 0 beside the N 96 (Arena OOM at 64 GB — needs a card to itself); relaunch on card 1 when the J=1 N 192 ends ≈ 13:40 (~35 h) | – | – |
@@ -78,8 +78,8 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 
 **Throat check (10-17 ≈ 10:00 MSK) — the fast throats hold their size.** Areal throat radius (MOTS, or the
 min over coordinate spheres of sqrt(A/4π) from the full metric of the live plotfiles):
-0.5c 4.961 → 4.881 at t 80 (−1.6 %, slow shrink from t ≈ 45; 4.79 at 110) · 0.7c 6.873 → 6.871 at t 83 →
-6.86–6.89 at t 127 (≤ 0.2 %) · 0.9c 18.476 at t 24–31 (N 96; equatorial circumference 23.82 flat to t 40;
+0.5c 4.961 → 4.881 at t 80 (−1.6 %, slow shrink from t ≈ 45; 4.79 at 110) · 0.7c 6.873 → 6.871 at t 83 (MOTS, ≤ 0.05 %; after its
+slicing breaks at 102 both measures drift: sphere R 7.41 at 109 → 6.81 at 125 → 7.75 at 135, MOTS 6.79–6.99 at 123–134) · 0.9c 18.476 at t 24–31 (N 96; equatorial circumference 23.82 flat to t 40;
 later times from the N 96 rerun's plotfiles on node 1, TBD) · 0.99c 181.76 → 182.4 at t 120 (≤ 0.3 %, a long
 marginal tube, R within 2 % from r 2.4 to 8). No fast throat shrinks: the 0.9c is stable to 150.
 `throat_geometry.dat` is NOT a throat measure on the fast runs: its rays start at r = 0.6, inside the χ-floored
@@ -90,7 +90,7 @@ t 135.85 (see the matrix; trust 102).
 From 10-17 ≈ 10:40 MSK the consumer writes the throat per plotfile (`--throat-spheres` → `small_data/throat_spheres.dat`,
 in the hold profile): live on the 0.99c (consumer restarted), in the 0.7c and 0.9c N 96 rerun drains, on every
 future launch (the 0.9c N 192). Spinning paper runs differ by spin: static + 0.21c collapse (τ ≈ 5–6); 0.5c
-shrinks slowly (−1.6 % by t 80); 0.7c holds its size to t 127 but its slicing breaks from t ≈ 102 (NaN 135.85); 0.9c and 0.99c hold flat.
+shrinks slowly (−1.6 % by t 80); 0.7c holds its size (MOTS to t 83) but its slicing breaks from t ≈ 102 (NaN 135.85); 0.9c and 0.99c hold flat.
 
 Campaign total ~34 h if the queue runs back-to-back. Kick templates
 (A1 = merger seed scale, A2 = ×10) still to be built; every launch waits
@@ -134,7 +134,7 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100` | 0.5c | 64 | 0.2 | 0.05 | 1e-8 | 1.0 | stopped 44.5: slow puncture decay | 20 |
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | DIED 81.1 (NaN in K): dt 0.05 K instability delayed (0.1 at 64.5) not cured; clamp validated t ≤ 70 (ψ4 0.9 %, throat 0.3 % vs parent) | 70 |
 | `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | CLEAN t 150: Ham flat (1.07e-2 → 1.17e-2 over 60 → 150); its all-nan MOTS rows were the finder's 400-step cap, not physics (the fast N 96 finds the throat surface, R 18.46, with 700–1200 steps; this run's plotfiles are gone) — the paper 0.9c run | 150 |
-| `spin_hold_L64_ml3_ve070a_spdrv1_sig04_t150` | 0.7c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; the paper 0.7c run (fast recipe, 0.9c params + background swap); horizon rows nan at t 16–25 (the throat's θ_in mean stays ~1e-5, its max flips sign at noise level and the strict finder dropped it); consumer restarted 21:13 MSK with `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500`, rows again from t 26 (R 6.8704) | tbd |
+| `spin_hold_L64_ml3_ve070a_spdrv1_sig04_t150` | 0.7c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | DIED 135.85 (NaN in K; lapse floor 102.4), packed; the paper 0.7c run (fast recipe, 0.9c params + background swap); horizon rows nan at t 16–25 (the throat's θ_in mean stays ~1e-5, its max flips sign at noise level and the strict finder dropped it); consumer restarted 21:13 MSK with `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500`, rows again from t 26 (R 6.8704) | 102 |
 | `spin_hold_L64_N96_ml3_J100_full_spdrv1_t85` | 0.21c | 64 (N 96) | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 96: FAILED 64.83 at the collapse end (not finished); R −1 % at 43; τ ≈ 5.4–6.6; archived 10-17, out of the paper folders | 58 |
 | `spin_hold_L64_ml3_J100_full_spdrv1_t85` | 0.21c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 128: through the collapse to 85; R −1 % at 47, 2.53 at 85; τ ≈ 4.7–5.8 | 66 |
 | `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 0.9c | 64 (N 96) | 0.4 | 0.02 | 1e-4 | 1.0 | fast triplet N 96, SUPERSEDED (stopped at 100; the triplet window is 150): CLEAN t 100; MOTS t 24–26 only (its throat-ray comparison is void, see Throat check) | 100 |
