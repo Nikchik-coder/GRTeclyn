@@ -31,7 +31,8 @@ for run in "$@"; do
   dest="${ROOT}/results/spinningwormhole/campaign/${group}/${name}"
   mkdir -p "${dest}"
   cp "${run}"/data/*.dat "${dest}/"
-  find "${run}/small_data" -maxdepth 1 -type f -exec cp {} "${dest}/" \;
+  # a run launched with --profile none has no consumer and so no small_data/
+  [[ -d "${run}/small_data" ]] && find "${run}/small_data" -maxdepth 1 -type f -exec cp {} "${dest}/" \;
   cp "${run}/params.txt" "${dest}/evolution_params.txt"
   cp "${run}/preflight.json" "${run}/run_manifest.json" "${dest}/"
   # grep -m, not | head: under pipefail a head that closes early kills grep with SIGPIPE

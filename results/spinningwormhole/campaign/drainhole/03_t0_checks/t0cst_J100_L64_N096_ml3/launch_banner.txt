@@ -1,0 +1,25 @@
+[swh] name     : t0cst_J100_L64_N096_ml3
+[swh] template : runs/spinning_wormhole/templates/params_t0cst_J100_L64_N096_ml3.txt
+[swh] binary   : runs/spinning_wormhole/bin/main3d_spline_faadc95e_2026-10-17.ex
+[swh] gpu      : 0
+[swh] run dir  : runs/spinning_wormhole/drainhole/03_t0_checks/t0cst_J100_L64_N096_ml3          (NFS: params, log, .dat streams)
+[swh] scratch  : /tmp/grteclyn_scratch/t0cst_J100_L64_N096_ml3      (node-local: plotfiles, checkpoints)
+[swh] proc     : test (evolution runs from /tmp/ml_jobs/bin/test_3038602a)
+[swh] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[swh] frames   : none (SWH_FRAMES_FIELDS=none)
+[preflight] frames : none (no consumer: SWH_CONSUME=0)
+[preflight] files  : spinning_background_file = runs/spinning_wormhole/backgrounds/full_eta2_m1_J100.spinbg
+[preflight] consumer: areal radius off (no consumer: SWH_CONSUME=0)
+[preflight] paths  : one spelling, 't0cst_J100_L64_N096_ml3'
+[preflight] WARNING: this run writes no checkpoints: if it dies, it cannot be restarted
+[preflight] static : 67 keys, 0 absent from main3d_spline_faadc95e_2026-10-17.ex
+[preflight] start-up with every key checked (gpu 0, 0 steps) ...
+[preflight] probe  : ok in 3.0 s; binary version (faadc95e); 4 unread key(s)
+[preflight] t = 0  : L2_Ham 3.4707376011e-03  L2_Mom 1.2618988494e-04
+[preflight] verdict: PASS
+[swh] registry : t0cst_J100_L64_N096_ml3 already registered (SWH_WHAT ignored)
+[manifest] runs/spinning_wormhole/drainhole/03_t0_checks/t0cst_J100_L64_N096_ml3/run_manifest.json: binary main3d_spline_faadc95e_2026-10-17.ex (faadc95e), preflight pass
+[swh] === launching t0cst_J100_L64_N096_ml3 (attached; Ctrl-C or stop_campaign.sh to stop) ===
+[manifest] finished: status finished (exit 0), t_end 0.5066667
+[swh] run complete: runs/spinning_wormhole/drainhole/03_t0_checks/t0cst_J100_L64_N096_ml3
+[swh] plotfiles left on scratch: 2 (/tmp/grteclyn_scratch/t0cst_J100_L64_N096_ml3)

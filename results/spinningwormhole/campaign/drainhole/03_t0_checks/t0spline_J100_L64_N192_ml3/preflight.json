@@ -1,0 +1,132 @@
+{
+ "schema": 1,
+ "campaign": "spinning_wormhole",
+ "mode": "full",
+ "restart": false,
+ "exe": "main3d_spline_faadc95e_2026-10-17.ex",
+ "exe_sha256": "c23dd9113f280f7b39915f861a762a96c59fc9412738ea91897ace1cd5b779b1",
+ "params_sha256": "de26ccaa2e6af4840a85c2bf15aac6abce67b5a7ce47fe6187c36e2ba7f6a5b9",
+ "verdict": "pass",
+ "reasons": [],
+ "frames": {
+  "fields": [],
+  "required": [
+   "chi",
+   "chi_minus_1",
+   "K",
+   "lapse",
+   "shift1",
+   "shift2",
+   "shift3",
+   "phi",
+   "Pi",
+   "Weyl4_Re",
+   "Weyl4_Im",
+   "Weyl4_Mag",
+   "scalar_activity",
+   "local_speed"
+  ],
+  "missing": [],
+  "subset": "t = 0 constraint convergence check of the spline binary (stop 0.5): a convergence study, no frames and no movies",
+  "source": "none (SWH_FRAMES_FIELDS=none)",
+  "axis": "z",
+  "note": "no consumer (SWH_CONSUME=0): no frames, and no plotfile is deleted",
+  "errors": [],
+  "warnings": []
+ },
+ "intent": {
+  "errors": [],
+  "warnings": [
+   "this run writes no checkpoints: if it dies, it cannot be restarted"
+  ]
+ },
+ "required_files": {
+  "files": {
+   "spinning_background_file": "runs/spinning_wormhole/backgrounds/full_eta2_m1_J100.spinbg"
+  },
+  "errors": []
+ },
+ "symmetry": {
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "consumer": {
+  "consume": false,
+  "areal_radius": "off",
+  "neck_horizons": false,
+  "reflect": [],
+  "errors": [],
+  "warnings": []
+ },
+ "paths": {
+  "name": "t0spline_J100_L64_N192_ml3",
+  "errors": [],
+  "warnings": []
+ },
+ "static": {
+  "keys": 66,
+  "absent_from_binary": [],
+  "allowed_absent": []
+ },
+ "probe": {
+  "status": "ok",
+  "exit_code": 6,
+  "unused": [
+   "amr.derive_plot_vars",
+   "amr.plot_vars",
+   "write_extraction"
+  ],
+  "version": "faadc95e",
+  "seconds": 3.1,
+  "log_tail": [],
+  "allowed_unused": [
+   "amr.derive_plot_vars",
+   "amr.plot_vars",
+   "write_extraction"
+  ]
+ },
+ "t0": {
+  "collapse_diagnostics.dat": {
+   "time": 0.0,
+   "min_lapse": 0.2151155365,
+   "min_chi": 7.8253553045e-08,
+   "max_abs_K": 0.0,
+   "min_lapse_x": -3.5527136788e-15,
+   "min_lapse_y": -3.5527136788e-15,
+   "min_lapse_z": -3.5527136788e-15,
+   "min_phi": -0.95319349659,
+   "max_phi": -0.076789994269,
+   "min_Pi": 0.0,
+   "max_Pi": 0.0
+  },
+  "constraint_norms.dat": {
+   "time": 0.0,
+   "L2_Ham": 0.0015233672487,
+   "L2_Mom": 1.418269309e-05
+  },
+  "constraint_norms_levels.dat": {
+   "time": 0.0,
+   "L2_Ham_0": 0.0016604649226,
+   "L2_Mom_0": 2.665861394e-07,
+   "L2_Ham_1": 6.4917593228e-07,
+   "L2_Mom_1": 2.6625955643e-11,
+   "L2_Ham_2": 2.3422429584e-06,
+   "L2_Mom_2": 4.5220157805e-10,
+   "L2_Ham_3": 7.2467894858e-06,
+   "L2_Mom_3": 1.0181575852e-07,
+   "L2_Ham_all": 0.0014865611072,
+   "L2_Mom_all": 2.3873337596e-07
+  },
+  "throat_geometry.dat": {
+   "time": 0.0,
+   "R_eq_min": 4.059576944,
+   "R_pol_min": 4.0271383753,
+   "ergo_min": -74.060739703
+  }
+ },
+ "grteclyn_version": "faadc95e",
+ "seed": {
+  "requested": {}
+ }
+}
