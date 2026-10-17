@@ -1,0 +1,40 @@
+[swh] name     : spin_hold_L64_N96_ml3_J100_full_spdrv1_t85
+[swh] template : runs/spinning_wormhole/templates/params_spin_hold_L64_N96_ml3_J100_full_spdrv1_t85.txt
+[swh] binary   : runs/spinning_wormhole/bin/main3d_spdrv_59345984_2026-10-15.ex
+[swh] gpu      : 0
+[swh] run dir  : runs/spinning_wormhole/drainhole/00_paper_runs/spin_hold_L64_N96_ml3_J100_full_spdrv1_t85          (NFS: params, log, .dat streams)
+[swh] scratch  : /tmp/grteclyn_scratch/spin_hold_L64_N96_ml3_J100_full_spdrv1_t85      (node-local: plotfiles, checkpoints)
+[swh] proc     : test (evolution runs from /tmp/ml_jobs/bin/test_f72c295e)
+[swh] consumer centre: 32.0 32.0 32.0 (from the run's params)
+[swh] frames   : as given in SWH_CONSUME_ARGS
+[preflight] frames : 14 field(s), the full set: chi chi_minus_1 K lapse shift1 shift2 shift3 phi Pi Weyl4_Re Weyl4_Im Weyl4_Mag scalar_activity local_speed
+[preflight] files  : spinning_background_file = runs/spinning_wormhole/backgrounds/full_eta2_m1_J100.spinbg
+[preflight] consumer: areal radius off
+[preflight] paths  : one spelling, 'spin_hold_L64_N96_ml3_J100_full_spdrv1_t85'
+[preflight] WARNING: this run writes no checkpoints: if it dies, it cannot be restarted
+[preflight] static : 66 keys, 0 absent from main3d_spdrv_59345984_2026-10-15.ex
+[preflight] start-up with every key checked (gpu 0, 0 steps; writes its plotfile for the frames) ...
+[preflight] probe  : ok in 6.2 s; binary version (59345984); 1 unread key(s)
+[preflight] t = 0  : L2_Ham 3.4707390546e-03  L2_Mom 1.2619096751e-04
+[preflight] frames : rendering 14 field(s) from plt00000 with the consumer -> preflight_frames ...
+[preflight]   chi              ok     2.66e-06 .. 1.8
+[preflight]   chi_minus_1      ok     -2 .. -0.195
+[preflight]   K                flat   0 .. 0  (every pixel 0: K is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   lapse            ok     0.445 .. 1.9
+[preflight]   shift1           ok     -0.168 .. 0.168
+[preflight]   shift2           ok     -0.168 .. 0.168
+[preflight]   shift3           flat   0 .. 0  (every pixel 0: shift3 is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   phi              ok     -1.86 .. -0.0554
+[preflight]   Pi               flat   0 .. 0  (every pixel 0: Pi is constant everywhere in this plotfile (nothing to show yet))
+[preflight]   Weyl4_Re         ok     -0.00112 .. 3.07e-05
+[preflight]   Weyl4_Im         ok     -2e-14 .. 2e-14
+[preflight]   Weyl4_Mag        ok     5.49e-09 .. 0.00112
+[preflight]   scalar_activity  ok     0.0554 .. 1.86
+[preflight]   local_speed      ok     0.00732 .. 1.81
+[preflight] frames : 14 of 14 rendered in 12.3 s (ok); flat at this time: K shift3 Pi
+[preflight] verdict: PASS
+[swh] t = 0 frames: runs/spinning_wormhole/drainhole/00_paper_runs/spin_hold_L64_N96_ml3_J100_full_spdrv1_t85/preflight_frames (rendered at preflight; the run's own go to frames/)
+[swh] registry : spin_hold_L64_N96_ml3_J100_full_spdrv1_t85 -> results/spinningwormhole/runs_registry.tsv
+[manifest] runs/spinning_wormhole/drainhole/00_paper_runs/spin_hold_L64_N96_ml3_J100_full_spdrv1_t85/run_manifest.json: binary main3d_spdrv_59345984_2026-10-15.ex (59345984), preflight pass
+[swh] consumer  : pid 312085 -> runs/spinning_wormhole/drainhole/00_paper_runs/spin_hold_L64_N96_ml3_J100_full_spdrv1_t85/small_data
+[swh]            deleting processed plotfiles, keeping last 3

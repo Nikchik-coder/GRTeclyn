@@ -56,20 +56,20 @@ there (run dir + repack, old pack git-rm'd) at their close-out.
 **stop 150**.
 
 All clock times Moscow (UTC+3, decided 2026-10-16); older prose entries are UTC.
-Schedule below from 19:36 MSK 10-16 (speeds measured then). Card 0/1 = 1st node; 2nd node has one card.
+Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 = 1st node; 2nd node has one card.
 
 | ✓ | run | recipe | stop | node | gpu | where / when | ends in | ETA (MSK) |
 |---|---|---|---|---|---|---|---|---|
 | ☑ | 0c static anchor | slow | 85 | 1 | – | DONE, `00_paper_runs/` | finished | finished |
 | ☑ | 0.5c | slow | 85 | 1 | 1 | DONE (died 130.0, window t ≤ 80 clean), `00_paper_runs/` | finished | finished |
 | ☑ | 0.9c | fast | 150 | 2 | 0 | DONE (clean t 150), `00_paper_runs/` ≈ 18:10 | finished | finished |
-| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, solo 4.3 t/h | ~18 h | ≈ 10-17 13:45 |
-| ☐ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | LIVE since 18:52, 3-way 6.3 t/h → 2-way ~9 → solo ~17.6 | ~9.5 h | ≈ 10-17 05:10 |
-| ☐ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | LIVE since 18:53, 3-way 10.9 t/h; frames χ ×2 = slicer artifact on this grid, data clean (t0 Ham family converges) | ~7 h | ≈ 10-17 02:25 |
-| ☐ | 0.7c | fast | 150 | 2 | 0 | LIVE since ≈ 18:15, shared from 18:30, 7.7 t/h | ~17.5 h | ≈ 10-17 13:10 |
-| ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c, 7.5 t/h | ~18 h | ≈ 10-17 13:40 |
-| ☐ | 0.9c fast triplet N 96 | fast | 100 | 1 | 0 | LIVE since 19:25, 3-way 11.0 t/h → 2-way ~16 | ~8 h | ≈ 10-17 03:50 |
-| ☐ | 0.9c fast triplet N 192 | fast | 100 | 1 | 0 | after the J=1 members (~23 h run) | – | – |
+| ☐ | **1st** 0.21c triplet N 192 | slow | 85 | 1 | 1 | LIVE since 17:58, solo 4.3 t/h; t 63.3 @ 08:39, collapse under way (R −1 % at 56) | ~5 h | ≈ 10-17 13:40 |
+| ☑ | **1st** 0.21c triplet N 128 | slow | 85 | 1 | 0 | DONE t 85 ≈ 04:35 through the throat collapse (R −1 % at 47, 2.53 at 85; trust 66), `00_paper_runs/` | finished | finished |
+| ☑ | **1st** 0.21c triplet N 96 | slow | 85 | 1 | 0 | DIED 64.83 ≈ 00:30 at the end of the throat collapse (R −1 % at 43; trust 58), `00_paper_runs/` | finished | finished |
+| ☐ | 0.7c | fast | 150 | 2 | 0 | LIVE since ≈ 18:15, shared, 7.9 t/h; t 116.4 @ 08:39 | ~4.2 h | ≈ 10-17 12:55 |
+| ☐ | 0.99c stretch (σ 0.4 rerun) | fast | 150 | 2 | 0 | LIVE since 18:30, shared with the 0.7c, 7.8 t/h (solo ~17.5 after 12:55); t 109.9 @ 08:39 | ~4.7 h | ≈ 10-17 13:20 |
+| ☑ | 0.9c fast triplet N 96 | fast | 100 | 1 | 0 | DONE clean t 100 ≈ 03:10 (throat R_pol 0.6 % / R_eq_min 11 % vs N 128 at 100; trust 100), `00_paper_runs/` | finished | finished |
+| ☐ | 0.9c fast triplet N 192 | fast | 100 | 1 | 0 | card 0 idle since ≈ 04:35 MSK — waits for its go (~23 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A1 | fast + seed | 150 | 2 | 0 | when the 2nd node frees ≈ 13:40 (~8.5 h run) | – | – |
 | ☐ | kick 0.9c, amplitude A2 (×10) | fast + seed | 150 | 2 | 0 | after kick A1 (~8.5 h run) | – | – |
 | ☐ | kick 0.7c, amplitude A1 | fast + seed | 150 | 1 | 1 | after the 0.9c N 96 (~8.5 h run) | – | – |
@@ -119,6 +119,9 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100` | 0.5c | 64 | 0.4 | 0.05 | 1e-4 | 1.0 | DIED 81.1 (NaN in K): dt 0.05 K instability delayed (0.1 at 64.5) not cured; clamp validated t ≤ 70 (ψ4 0.9 %, throat 0.3 % vs parent) | 70 |
 | `spin_hold_L64_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | CLEAN t 150: Ham flat (1.07e-2 → 1.17e-2 over 60 → 150); its all-nan MOTS rows were the finder's 400-step cap, not physics (the fast N 96 finds the throat surface, R 18.46, with 700–1200 steps; this run's plotfiles are gone) — the paper 0.9c run | 150 |
 | `spin_hold_L64_ml3_ve070a_spdrv1_sig04_t150` | 0.7c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; the paper 0.7c run (fast recipe, 0.9c params + background swap); horizon rows nan at t 16–25 (the throat's θ_in mean stays ~1e-5, its max flips sign at noise level and the strict finder dropped it); consumer restarted 21:13 MSK with `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500`, rows again from t 26 (R 6.8704) | tbd |
+| `spin_hold_L64_N96_ml3_J100_full_spdrv1_t85` | 0.21c | 64 (N 96) | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 96: DIED 64.83 at the collapse end; R −1 % at 43; τ ≈ 5.4–6.6 | 58 |
+| `spin_hold_L64_ml3_J100_full_spdrv1_t85` | 0.21c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 128: through the collapse to 85; R −1 % at 47, 2.53 at 85; τ ≈ 4.7–5.8 | 66 |
+| `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 0.9c | 64 (N 96) | 0.4 | 0.02 | 1e-4 | 1.0 | fast triplet N 96: CLEAN t 100; vs N 128 at 100: R_pol 0.6 %, R_eq_min 11 %; MOTS t 24–26 only | 100 |
 | `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | stopped 50.4 (feasibility answered: Ham flat 3.94e-2, K flat, chi on the 1e-4 floor); paper 0.99c = σ 0.4 rerun | 50 |
 
 What the ledger says, four lines:
@@ -129,14 +132,24 @@ What the ledger says, four lines:
 
 ## LIVE
 
-| run | node/card | t @ 19:36 MSK | stop | speed (measured 19:29–19:36) | ETA (MSK) |
+| run | node/card | t @ 08:39 MSK | stop | speed (21:43 → 08:39) | ETA (MSK) |
 |---|---|---|---|---|---|
-| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | 7.1 | 85 | 4.3 t/h | ≈ 10-17 13:45 |
-| triplet N 128 `L64_ml3_J100_full_spdrv1_t85` | 1st, card 0 (3-way from 19:25) | 6.1 | 85 | 6.3 t/h (2-way ~9 from 02:25, solo ~17.6 from 03:50) | ≈ 10-17 05:10 |
-| triplet N 96 `L64_N96_ml3_J100_full_spdrv1_t85` | 1st, card 0 (3-way from 19:25) | 10.3 | 85 | 10.9 t/h | ≈ 10-17 02:25 |
-| fast N 96 `L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 1st, card 0 (3-way) | 3.0 | 100 | 11.0 t/h (2-way ~16 from 02:25) | ≈ 10-17 03:50 |
-| 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared 18:30) | 12.8 | 150 | 7.7 t/h shared | ≈ 10-17 13:10 |
-| 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 8.5 | 150 | 7.5 t/h shared (solo ~17.5 after 13:10) | ≈ 10-17 13:40 |
+| triplet N 192 `L64_N192_ml3_J100_full_spdrv1_t85` | 1st, card 1 (solo) | 63.3 | 85 | 4.3 t/h | ≈ 10-17 13:40 |
+| 0.7c `ve070a_spdrv1_sig04_t150` | 2nd node (shared) | 116.4 | 150 | 7.9 t/h shared | ≈ 10-17 12:55 |
+| 0.99c `ve099a_spdrv1_sig04_t150` | 2nd node (shared) | 109.9 | 150 | 7.8 t/h shared (solo ~17.5 after 12:55) | ≈ 10-17 13:20 |
+
+Card 0 of the 1st node idle since ≈ 04:35 MSK (fast N 192 waits for its go).
+
+Closed out 10-17 ≈ 08:45 MSK (packed to `00_paper_runs/`, 16 files each; scratch pruned, 14.3 GB):
+- J=1 N 96 DIED 64.83 (NaN) at the end of the throat collapse; J=1 N 128 ran to 85
+  through it. The collapse is in every member, onset later with N (MOTS R −1 % at
+  t 43 / 47 / 56 for N 96 / 128 / 192), growth time similar (τ ≈ 5–6.5 from the
+  MOTS deficit, window-dependent) — a resolution-seeded onset, rate set by the
+  physics. Members agree on R to 0.1 % only to t 30 (N 96) / 37 (N 128).
+- 0.9c fast N 96 CLEAN t 100: Ham flat 9.3e-3 → 9.6e-3; vs the N 128 at t 100
+  R_pol 0.6 %, ergo_min equal, R_eq_min 11 %. MOTS only t 24–26 (R 18.476): from
+  t 27 the lmax-6 surface stalls at rms θ_out 2–3e-3, later the flow hits the inner
+  floor. The fast N 192 template should carry the three MOTS flags and lmax 8 (test first).
 
 0.9c `ve090a_spdrv1_sig04_t150` FINISHED CLEAN t = 150 ≈ 15:05: Ham flat
 (1.07e-2 → 1.17e-2 over t 60 → 150), max|K| flat 2.0e-2 (its "no MOTS" was the finder's 400-step cap: the fast N 96
@@ -258,7 +271,7 @@ its go; no queued run writes or needs checkpoints.
 
 | next free slot | run | needs |
 |---|---|---|
-| node 1 gpu 0, free ≈ 05:10 MSK (after the J=1 N 128) | 0.9c fast triplet N 192 (~23 h, ~67 GB) | template: paper 0.9c params, N → 192, stop 100 |
+| node 1 gpu 0, idle since ≈ 04:35 MSK | 0.9c fast triplet N 192 (~23 h, ~67 GB) | template: paper 0.9c params, N → 192, stop 100; consumer `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500` (+ lmax 8, test first) |
 | node 2, after 0.7c + 0.99c (≈ 13:40 MSK) | kick 0.9c A1, then A2 (×10) | kick templates: seed amplitude A1 = merger seed scale |
 | node 1 gpu 1, after fast N 192 | kick 0.7c A1 | same template, ve070 background |
 | anywhere, only if the 0.99c curve wants it | 0.95c stretch | background fam_a_ve095 |
