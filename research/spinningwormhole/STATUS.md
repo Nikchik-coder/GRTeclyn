@@ -12,7 +12,7 @@ done). Code: `Examples/SpinningWormhole/` + `grteclyn-wrapper/scripts/campaigns/
 Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
 `launch.sh --subdir <family>/<NN_study>`; pack with `research/spinningwormhole/pack_run.sh <family>/<NN_study> <run dir>`.
 
-## STATE (2026-10-17 ≈ 18:00 MSK)
+## STATE (2026-10-17 ≈ 21:15 MSK)
 
 **Every run before 10-17 carries three numerics bugs, all found and fixed 10-17** (how: CONVERGENCE below),
 so every paper run reruns on binary rkfix 0661dac4:
@@ -29,6 +29,11 @@ so every paper run reruns on binary rkfix 0661dac4:
 converging, outside the measured physics: level 0's outer ~4 units (the box face, inside the sponge shell).
 The pre-fix paper runs are archived (`drainhole/00_archive/superseded_2026-10-17/`); their results stay
 below as the pre-fix record, to be requoted from the reruns.
+
+**Nothing live since 21:09 MSK: the far-zone junk is the gauge** (found ≈ 21:00, FAR-ZONE JUNK below). The
+`shift_advec_coeff = 1` Γ-driver advects the rotating background shift, so every spinning hold drifts from t 0, and
+the sponge drive and the Sommerfeld faces fight the drift. The 0.9c L 128 triplet was stopped and archived; every
+paper run waits on a `shift_advec_coeff = 0` test.
 
 ## CONVERGENCE: HOW THE BUGS WERE FOUND (10-17)
 
@@ -69,6 +74,32 @@ below as the pre-fix record, to be requoted from the reruns.
 9. **Level 0, the box face** (`logs/t0rk0_layers_2026-10-17.log`, `t0rk0_level0_bins_2026-10-17.log`): at
    t = 0 only the outer 2 cells (Sommerfeld boundary, order −0.4); by t 0.5 spread ~12 cells in (r ≥ 24,
    inside the sponge shell; Mom −1.5 to −2 there); level 0 inside r 24 converges (+2.0/+2.5). Not fixed.
+   Explained ≈ 21:00: FAR-ZONE JUNK below.
+
+## FAR-ZONE JUNK: THE ADVECTED ROTATING SHIFT (found 10-17 ≈ 21:00)
+
+From the stopped L 128 0.9c triplet's slice caches (z = 64, the full box; `frames/_slice_cache/` in the archived
+run dirs):
+1. **Symptom.** Π shows a ring at r ≈ 44–58 (the drive shell is 48–64), RMS 1.4e-11 at t 3, 1.2e-9 at t 9,
+   ≈ 4e-8 peak by t 25, plus blobs on the box faces from t 1; K on the faces reaches 1.7e-4 RMS by t 9 (the
+   throat's: 4.4e-4). Both are the same at N 128 / 192 / 256 (a continuum effect, not truncation), and level 0's
+   constraints never converge. Inside r ≈ 44, Π and K converge at 3rd–4th order, and the stripes on the
+   refinement-box edges shrink with N. The single-wormhole and merger runs never showed it.
+2. **Cause 1, the gauge.** The 0.9c background shift rotates (|β| 0.17 at r 10, 0.04 at the face). With
+   `shift_advec_coeff = 1` the Γ-driver's advection term β·∇β = −ω²(x, y), the centripetal term, is nonzero at
+   t 0, so the shift moves inward everywhere from the first step, linearly in t. The measured change over t 0→1
+   equals −ω²r at r 10, 30 and 46 to 1 %, at every N; χ and the lapse follow as t². By t 12 the shift near the
+   throat has moved 2.3e-2 (≈ 25 %). A zero-shift background (the single wormhole, the merger) has β·∇β = 0. The
+   sponge drive holds r 48–64 at the t 0 state while the inside drifts: the ring.
+3. **Cause 2, the box.** M_ADM = 11.7, so the face at r 64 is ≈ 5.5 M: χ 0.71 and lapse 0.83 at the face centre
+   (0.78 / 0.88 at the corner). The flat-space Sommerfeld condition is far off there and pushes junk in from t 1
+   (χ in the outer 4 units moves 2.7e-4 by t 1, against 6e-7 just inside).
+4. **Reach.** All 146 spinning templates carry `shift_advec_coeff = 1`: every hold with a rotating background,
+   pre-fix ones included, drifted this way.
+5. **Proposed fix** (waits on the go): `shift_advec_coeff = 0`, so the background shift has no source at t 0.
+   Test: N 128 on the stopped triplet's settings to t 10; pass = no ring, and the shift's drift at truncation
+   level (shrinking with N). The faces are a separate fix: a bigger box, or Sommerfeld taken relative to the
+   t 0 background (code).
 
 ## PAPER-RUN SETTINGS (decided 2026-10-16; fix keys 2026-10-17)
 
@@ -100,9 +131,7 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | NOT STARTED — launched 18:27, stopped by decision at t 2.85 (10-17) so card 0 takes the 0.9c pair; stop 100 kept (go 10-17: test the late constraint growth) |
 | ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | NOT STARTED — launched 18:27, stopped by decision at t 1.2 (10-17) so card 0 takes the 0.9c pair |
 | ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | NOT STARTED — launched 18:27, stopped by decision at t 0.44 (10-17) so card 1 takes the 0.9c N 192 first; run dir in `00_archive/aborted_2026-10-17/`; next: the second node's card (a session there) or card 1 after the 0.9c |
-| ☐ | 0.9c triplet on L 128, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~13 GB est. | LIVE since 20:22 MSK 10-17, 1st node card 1 (go 10-17) |
-| ☐ | 0.9c triplet on L 128, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~25 GB est. | LIVE since 20:22 MSK 10-17, 1st node card 1 (go 10-17) |
-| ☐ | 0.9c triplet on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~11 h, ~51 GB est. | LIVE since 20:22 MSK 10-17, 1st node card 0 (go 10-17) |
+| ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; reruns after the gauge test |
 | ✗ | 0.9c triplet on L 64 `spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 ~20:07 at t 29.2 / 15.15 / 7.94, no NaN: the L 64 box is too small for the 0.9c throat (level 0 never converged; level 1 slid to order +0.7 by t 7); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned |
 | ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
 | ☐ | 0.5c | slow | 85 | ~9 h | NOT STARTED |
@@ -121,20 +150,23 @@ constraint-solved seed before templating.
 
 ## LIVE
 
-Settings (go 10-17 20:15): the L 64 N 128 rerun's params with only the box changed: L 128, centre 64, sponge 48–64
-(strength 4, drive 1.0), N 128 / 192 / 256 (dx 1 → 0.125, 0.667 → 0.083, 0.5 → 0.0625; refined boxes ±16/8/4 via
-tagging_L 64); σ 0.4, min_chi 1e-4, dt 0.02, stop 150, a plotfile every t 1, mask 0.75, `exact_quartic_interp = 1`,
-`rk_stage_refill = 0`, binary rkfix 0661dac4, no checkpoints. Consumer (hold flags via `--consume-args`): ψ4 at R 14 18
-30 40 45, throat spheres, MOTS 150 steps, frames and slice cache of the full box (zoom 128, centre 64) at the finest dx
-(`GRTECLYN_FRAMES_BUFF_CAP=2048`: 1024 / 1536 / 2048 px). Start checked 20:25: preflights PASS, frame 0 of all 14
-fields on all three agree, ψ4 header has the 5 radii, MOTS rows nan (no MOTS, as on L 64).
+None since 21:09 MSK 10-17 (the first node's two cards idle, its scratch empty).
 
-| run | node/card | t | stop | speed | ETA (MSK) |
-|---|---|---|---|---|---|
-| 0.9c L 128 N 256 `00_paper_runs/spin_hold_L128_ml3_ve090a_spdrv1_sig04_fix_t150` | 1st, card 0 (solo), 51.1 GB | 0.15 @ 20:23 | 150 | ~15.2 t/h | ≈ 10-18 06:15 (~10 h) |
-| 0.9c L 128 N 192 + N 128 `00_paper_runs/spin_hold_L128_N{192,128}_ml3_ve090a_spdrv1_sig04_fix_t150` | 1st, card 1, 33.8 GB together | N 192 0.25, N 128 0.8 @ 20:23 | 150 | N 192 ~21, N 128 ~56 t/h | N 192 ≈ 10-18 03:30, N 128 ≈ 10-17 23:05 |
+Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archive/aborted_2026-10-17/`):
 
-- The L 64 0.9c triplet rerun (stopped 20:07): orders at t 7.0 (96→128 / 128→192): level 0 Ham −0.3/−0.4, Mom
+- **L 128** (stopped 21:09 at t 33.95 / 16.34 / 11.99, no NaN; far-zone junk: FAR-ZONE JUNK above). Orders at t 7
+  (128→192 / 192→256): level 0 Ham −0.5/−0.5, Mom −0.6/−0.9; level 1 +2.0/+2.3, +1.9/+2.2; level 2 +2.0/+2.3,
+  +1.7/+2.1; level 3 +2.1/+1.2, +3.5/+0.8 (level 3 from about +4 at t 1). Each level's boxes shrink with N (the
+  same ±16/8/4 tags rounded to each grid: level 3 is 12 / 10.7 / 10 wide), so per-level orders compare slightly
+  different regions. Consumers kept pace (one plotfile per t 1). Settings (go 10-17 20:15), the base for the rerun:
+  the L 64 N 128 rerun's params with only the box changed: L 128, centre 64, sponge 48–64 (strength 4, drive 1.0),
+  N 128 / 192 / 256 (dx 1 → 0.125, 0.667 → 0.083, 0.5 → 0.0625; refined boxes ±16/8/4 via tagging_L 64); σ 0.4,
+  min_chi 1e-4, dt 0.02, stop 150, a plotfile every t 1, mask 0.75, `exact_quartic_interp = 1`, `rk_stage_refill = 0`,
+  binary rkfix 0661dac4, no checkpoints. Consumer (hold flags via `--consume-args`): ψ4 at R 14 18 30 40 45, throat
+  spheres, MOTS 150 steps, frames and slice cache of the full box (zoom 128, centre 64) at the finest dx
+  (`GRTECLYN_FRAMES_BUFF_CAP=2048`: 1024 / 1536 / 2048 px). Card memory: N 256 51.1 GB alone, N 192 + N 128 33.8 GB
+  together; speeds 15.6 / 21.2 / 44 t/h.
+- **L 64** (stopped 20:07): orders at t 7.0 (96→128 / 128→192): level 0 Ham −0.3/−0.4, Mom
   −0.8/−0.8; level 1 +0.7/+0.9, +1.0/+1.1 (from +3 at t 1); level 2 +2.3/+2.4, +2.1/+2.3; level 3 +1.2/+3.2,
   +0.8/+2.5 (96→128 to t 13.3: level 2 +2.5/+2.2, level 3 +1.9/+1.8). Frames: all 14 fields, t 0 identical, values
   = the plotfile; the old run's coarse–fine stripes in K and Pi gone. Its consumers had run `--mots-spectral-steps
@@ -143,6 +175,9 @@ fields on all three agree, ψ4 header has the 5 radii, MOTS rows nan (no MOTS, a
 
 ## NEXT
 
+- **The gauge test first** (proposed 10-17 21:15, waits on the go): N 128 on the stopped L 128 triplet's settings with
+  only `shift_advec_coeff = 0`, to t 10, no checkpoints (FAR-ZONE JUNK, point 5). If it passes, the 0.9c triplet
+  reruns on L 128 with it.
 - The 0.2c triplet rerun (templates `params_spin_hold_L64_{N96_,,N192_}ml3_J100_full_spdrv1_fix_t100.txt`, stop 100):
   after the 0.9c triplet (decided 10-17: the 0.9c first, whole), or its N 192 on the second node's card (a session there).
 - Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB
