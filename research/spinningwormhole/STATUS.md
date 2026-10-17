@@ -100,7 +100,9 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | NOT STARTED — launched 18:27, stopped by decision at t 2.85 (10-17) so card 0 takes the 0.9c pair; stop 100 kept (go 10-17: test the late constraint growth) |
 | ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | NOT STARTED — launched 18:27, stopped by decision at t 1.2 (10-17) so card 0 takes the 0.9c pair |
 | ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | NOT STARTED — launched 18:27, stopped by decision at t 0.44 (10-17) so card 1 takes the 0.9c N 192 first; run dir in `00_archive/aborted_2026-10-17/`; next: the second node's card (a session there) or card 1 after the 0.9c |
-| ☐ | 0.9c on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_fix_t150` (template = the L 64 N 128 rerun's, box only: L 128, N 256, centre 64, sponge 48–64) | fast | 150 | ~11 h, ~50 GB | PROPOSED 10-17 ~20:15, settings shown, waiting for the go; triplet partners open (N 384 does not fit a card) |
+| ☐ | 0.9c triplet on L 128, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~13 GB est. | LIVE since 20:22 MSK 10-17, 1st node card 1 (go 10-17) |
+| ☐ | 0.9c triplet on L 128, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~25 GB est. | LIVE since 20:22 MSK 10-17, 1st node card 1 (go 10-17) |
+| ☐ | 0.9c triplet on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | ~11 h, ~51 GB est. | LIVE since 20:22 MSK 10-17, 1st node card 0 (go 10-17) |
 | ✗ | 0.9c triplet on L 64 `spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 ~20:07 at t 29.2 / 15.15 / 7.94, no NaN: the L 64 box is too small for the 0.9c throat (level 0 never converged; level 1 slid to order +0.7 by t 7); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned |
 | ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
 | ☐ | 0.5c | slow | 85 | ~9 h | NOT STARTED |
@@ -119,7 +121,18 @@ constraint-solved seed before templating.
 
 ## LIVE
 
-None (10-17 20:07 MSK): both cards of the 1st node free.
+Settings (go 10-17 20:15): the L 64 N 128 rerun's params with only the box changed: L 128, centre 64, sponge 48–64
+(strength 4, drive 1.0), N 128 / 192 / 256 (dx 1 → 0.125, 0.667 → 0.083, 0.5 → 0.0625; refined boxes ±16/8/4 via
+tagging_L 64); σ 0.4, min_chi 1e-4, dt 0.02, stop 150, a plotfile every t 1, mask 0.75, `exact_quartic_interp = 1`,
+`rk_stage_refill = 0`, binary rkfix 0661dac4, no checkpoints. Consumer (hold flags via `--consume-args`): ψ4 at R 14 18
+30 40 45, throat spheres, MOTS 150 steps, frames and slice cache of the full box (zoom 128, centre 64) at the finest dx
+(`GRTECLYN_FRAMES_BUFF_CAP=2048`: 1024 / 1536 / 2048 px). Start checked 20:25: preflights PASS, frame 0 of all 14
+fields on all three agree, ψ4 header has the 5 radii, MOTS rows nan (no MOTS, as on L 64).
+
+| run | node/card | t | stop | speed | ETA (MSK) |
+|---|---|---|---|---|---|
+| 0.9c L 128 N 256 `00_paper_runs/spin_hold_L128_ml3_ve090a_spdrv1_sig04_fix_t150` | 1st, card 0 (solo), 51.1 GB | 0.15 @ 20:23 | 150 | ~15.2 t/h | ≈ 10-18 06:15 (~10 h) |
+| 0.9c L 128 N 192 + N 128 `00_paper_runs/spin_hold_L128_N{192,128}_ml3_ve090a_spdrv1_sig04_fix_t150` | 1st, card 1, 33.8 GB together | N 192 0.25, N 128 0.8 @ 20:23 | 150 | N 192 ~21, N 128 ~56 t/h | N 192 ≈ 10-18 03:30, N 128 ≈ 10-17 23:05 |
 
 - The L 64 0.9c triplet rerun (stopped 20:07): orders at t 7.0 (96→128 / 128→192): level 0 Ham −0.3/−0.4, Mom
   −0.8/−0.8; level 1 +0.7/+0.9, +1.0/+1.1 (from +3 at t 1); level 2 +2.3/+2.4, +2.1/+2.3; level 3 +1.2/+3.2,
