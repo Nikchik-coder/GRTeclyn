@@ -76,6 +76,18 @@ Schedule below from 08:39 MSK 10-17 (speeds measured 21:43 → 08:39). Card 0/1 
 | ☐ | 0.95c stretch | fast | 150 | – | – | optional, only if the 0.99c curve wants the point | – | – |
 | – | clamp validation (methods) | σ04 + mc4 + dt005 @ 0.5c | 100 | 1 | 0 | DIED 81.1 (NaN in K — the dt 0.05 instability, delayed 22 → 64 by σ0.4+floor); clamp validated in the clean window (ψ4@14 0.9 %, throat R 0.3 % vs parent); `06_dt_ladder/` | finished | finished |
 
+**Throat check (10-17 ≈ 10:00 MSK) — the fast throats hold their size.** Areal throat radius (MOTS, or the
+min over coordinate spheres of sqrt(A/4π) from the full metric of the live plotfiles):
+0.5c 4.961 → 4.881 at t 80 (−1.6 %, slow shrink from t ≈ 45; 4.79 at 110) · 0.7c 6.873 → 6.871 at t 83 →
+6.86–6.89 at t 127 (≤ 0.2 %) · 0.9c 18.476 at t 24–31 (N 96; equatorial circumference 23.82 flat to t 40;
+later times from the N 96 rerun's plotfiles on node 1, TBD) · 0.99c 181.76 → 182.4 at t 120 (≤ 0.3 %, a long
+marginal tube, R within 2 % from r 2.4 to 8). No fast throat shrinks: the 0.9c is stable to 150.
+`throat_geometry.dat` is NOT a throat measure on the fast runs: its rays start at r = 0.6, inside the χ-floored
+core, and the minimum lands there (0.9c from t ≈ 45, 0.99c from t = 0; the polar ray on the 0.7c too) — the
+"0.9c 23.8 → 5.9 / 0.99c 101 → 76" readings are that core, as is the lapse → 0.001; the 0.9c N 96-vs-N 128
+throat-ray comparison (0.6 % / 11 %) is void. Open: on the 0.7c |K| grows at the throat after t ≈ 100
+(0.1 at 106) — checked at its close-out.
+
 Campaign total ~34 h if the queue runs back-to-back. Kick templates
 (A1 = merger seed scale, A2 = ×10) still to be built; every launch waits
 for its go. ETAs only for launched runs.
@@ -121,7 +133,7 @@ dropped campaign, postmortem at the bottom.
 | `spin_hold_L64_ml3_ve070a_spdrv1_sig04_t150` | 0.7c | 64 | 0.4 | 0.02 | 1e-4 | 1.0 | LIVE; the paper 0.7c run (fast recipe, 0.9c params + background swap); horizon rows nan at t 16–25 (the throat's θ_in mean stays ~1e-5, its max flips sign at noise level and the strict finder dropped it); consumer restarted 21:13 MSK with `--mots-spectral-untrapped --mots-spectral-warm-flow --mots-spectral-steps 1500`, rows again from t 26 (R 6.8704) | tbd |
 | `spin_hold_L64_N96_ml3_J100_full_spdrv1_t85` | 0.21c | 64 (N 96) | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 96: FAILED 64.83 at the collapse end (not finished); R −1 % at 43; τ ≈ 5.4–6.6; archived 10-17, out of the paper folders | 58 |
 | `spin_hold_L64_ml3_J100_full_spdrv1_t85` | 0.21c | 64 | 0.1 | 0.02 | 1e-8 | 1.0 | J=1 triplet N 128: through the collapse to 85; R −1 % at 47, 2.53 at 85; τ ≈ 4.7–5.8 | 66 |
-| `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 0.9c | 64 (N 96) | 0.4 | 0.02 | 1e-4 | 1.0 | fast triplet N 96, SUPERSEDED (stopped at 100; the triplet window is 150): CLEAN t 100; vs N 128 at 100: R_pol 0.6 %, R_eq_min 11 %; MOTS t 24–26 only | 100 |
+| `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t100` | 0.9c | 64 (N 96) | 0.4 | 0.02 | 1e-4 | 1.0 | fast triplet N 96, SUPERSEDED (stopped at 100; the triplet window is 150): CLEAN t 100; MOTS t 24–26 only (its throat-ray comparison is void, see Throat check) | 100 |
 | `spin_hold_L64_N96_ml3_ve090a_spdrv1_sig04_t150` | 0.9c | 64 (N 96) | 0.4 | 0.02 | 1e-4 | 1.0 | fast triplet N 96 rerun to 150: LIVE | tbd |
 | `spin_hold_L64_ml3_ve099a_spdrv1_t150` | 0.99c | 64 | 0.1 | 0.02 | 1e-4 | 1.0 | stopped 50.4 (feasibility answered: Ham flat 3.94e-2, K flat, chi on the 1e-4 floor); paper 0.99c = σ 0.4 rerun | 50 |
 
@@ -153,8 +165,8 @@ Closed out 10-17 ≈ 08:45 MSK (packed to `00_paper_runs/`, 16 files each; scrat
   t 43 / 47 / 56 for N 96 / 128 / 192), growth time similar (τ ≈ 5–6.5 from the
   MOTS deficit, window-dependent) — a resolution-seeded onset, rate set by the
   physics. Members agree on R to 0.1 % only to t 30 (N 96) / 37 (N 128).
-- 0.9c fast N 96 `_t100` CLEAN t 100 (superseded: the triplet window is 150, rerun live): Ham flat 9.3e-3 → 9.6e-3; vs the N 128 at t 100
-  R_pol 0.6 %, ergo_min equal, R_eq_min 11 %. MOTS only t 24–26 (R 18.476): from
+- 0.9c fast N 96 `_t100` CLEAN t 100 (superseded: the triplet window is 150, rerun live): Ham flat 9.3e-3 → 9.6e-3 (the throat-ray
+  comparison with the N 128 is void: see Throat check). MOTS only t 24–26 (R 18.476): from
   t 27 the lmax-6 surface stalls at rms θ_out 2–3e-3, later the flow hits the inner
   floor. The fast N 192 template should carry the three MOTS flags and lmax 8 (test first).
 
