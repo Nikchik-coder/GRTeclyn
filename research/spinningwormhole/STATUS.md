@@ -172,7 +172,8 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
 | ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints): the first empty card, the 1st node's card 1 after the 0.2c N 128 (≈ 18:15 MSK, sooner if the N 128 dies in its collapse) |
-| ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
+| ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`; pre-fix, rerun next row) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
+| ☐ | 0c static rerun on the fixed binary `static_hold_L64_ml3_spdrv0_farfix_t100` (the anchor's packed params + the numerics and far-zone fix keys, drive off; diffed) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18 ≈ 17:20 MSK, no checkpoints; card not chosen; template ready) |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
 | ☐ | 0.30c on L 64, N 128 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` (table `fam_a_ve030`: v_e 0.304, J 1.61; Azad's τ 6.1) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen; template ready) |
 | ☐ | 0.40c on L 64, N 128 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` (table `fam_a_ve040`: v_e 0.395, J 2.41; Azad's τ 8.0) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen; template ready) |
