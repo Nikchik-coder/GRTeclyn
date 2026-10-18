@@ -170,7 +170,7 @@ triplets pass (decided 10-17).
 | ✓ | 0.9c triplet on L 128, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 5.4 h | FINISHED 10-18 04:52 MSK |
 | ✓ | 0.9c triplet on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 9.7 h | FINISHED 10-18 09:08 MSK |
 | ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | DIED 62.59 10-18 12:12 MSK: the collapse (trust 55) |
-| ✓ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 9.3 h | FINISHED 10-18 18:12 MSK: through the collapse to t 100, horizon settled (trust 66) |
+| ✓ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 9.3 h | FINISHED 10-18 18:12 MSK: through the collapse to t 100, horizon settled, (2,0) wave out (trust 100) |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
 | ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints), HELD 10-18 ≈ 18:40 MSK (nothing launches): the 1st node's card 1, idle since 18:12 |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`; pre-fix, rerun next row) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
@@ -234,8 +234,16 @@ sequence ~3 later: floor 58.0, NaN 64.83); packed, scratch pruned. Orders at t 6
 1.2e-6 / 3.8e-7 / 7.8e-8 at t 6 (≈ 4th order). **N 128 FINISHED t 100** (18:12 MSK, no NaN) through the collapse into
 a settled horizon: R_eq −1 % at 46.9, −10 % at 62.0, −20 % at 67.0 (τ 6.6 over −1 → −10 %; the N 96 6.7); the MOTS
 leaves the throat at t ≈ 60 (θ_in −0.09), the throat's minimal sphere is gone from 75, and the MOTS settles at R 2.524
-(M_MS 1.262) over t 88–100; χ on the floor at 66.2, max|K| > 0.1 at 67.5; trust 66; the pre-fix N 128's sequence
-within 0.2. Packed; its 3 plotfiles (7.1 GB) still on scratch, the prune awaiting a word.
+(M_MS 1.262) over t 88–100; χ on the floor at 66.2 (the central cell only, inside the horizon, t 66–67; χ back to 1e-3
+there), max|K| > 0.1 at 67.5; trust 100 (raised from 66 for the waves, 10-18); the pre-fix N 128's sequence within
+0.2. Packed, scratch pruned. **The (2,0) wave** (ψ4 minus its t 0 value, the static part of the rotating background):
+R·Δψ4 1.2e-3 in the first lobe at R 10 (t 74), ≈ 3e-3 at R 10 and 14 by t 96–100, still rising at R 14–18 at the stop
+(the burst has not fully passed R 14–30 by t 100); outgoing at ≈ c (R 14 → 18: 1.00 c on the features that passed
+both; the equatorial Weyl4 lobe r 10 → 22: 1.0 / 1.0 / 0.89 c); the size of the merger's 5 % quadrupole-kicked static
+collapse (r ψ4 ≈ 2.5e-3 at R 10, `results/merger/figures/08_waves/psi4_gallery.png` (a)): a wave, not junk. Its
+convergence waits for the N 192 (the N 96 died before its burst reached R 10). Figure:
+`<run>/waves/psi4_l2m0_radiated_N128.png` (plot_extracted_psi4.py on the background-subtracted file; that script plots
+raw ψ4 under an r·Re label).
 
 **Constraint growth: the slow runs' t ≈ 80 knee is gone** (the N 128 to t 100, 10-18). The pre-fix "Ham ×2 at 78–85"
 was levels 1–2 growing exponentially (e-fold 5–7) from t ≈ 30 until they dominated the whole-box norm (pre-fix 0.2c
@@ -243,8 +251,8 @@ N 128: level 1 Ham 1.6e-5 at t 30, 1.6e-1 at 80; the static and the 0.5c alike).
 1.8e-4, level 2 5.9e-6 (900× / 8000× lower); level 2 flat at ~5e-6 over t 75–100. Still growing: the throat level
 through the collapse (Mom 3.1e-4 at 60 → 5.4e-3 at 80, flat to 100), and levels 0–1 from t 31 at every N, the drive's
 shell junk (the drive-off sponge test: level 1 1100× lower at t 55; order +4.1 to +5.1 across N 96/128/192 at
-t 35–45), to 2e-4 at 80 and 7e-4 at 100. The whole-box L2_Ham never doubles. The 0.2c's quotes stop at its collapse
-(trust 66); whether the slow recipe now quotes past 80 is the 0.5c N 192's test (no collapse; at t 40 its levels 1–2
+t 35–45), to 2e-4 at 80 and 7e-4 at 100. The whole-box L2_Ham never doubles. The 0.2c's throat quotes stop at its collapse;
+its exterior and waves hold to t 100; whether the slow recipe now quotes past 80 is the 0.5c N 192's test (no collapse; at t 40 its levels 1–2
 sit ~1000× below the pre-fix 0.5c's).
 
 0.5c settings (go 10-18 ≈ 09:45, second node): the archived pre-fix 0.5c `spin_hold_L64_ml3_ve050a_spdrv1_t150`
