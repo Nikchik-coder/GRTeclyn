@@ -20,6 +20,10 @@ session start goes stale within hours.
   - Report it in one line: clean (GB used and free), or what pollutes and how many GB.
   - A node this session cannot list: read its runs' logs for the checkpoint lines, and say its disk was not listed.
 - Every ETA is in hours and clock time in Moscow time, UTC+3 (decided 2026-10-16; `date` on the nodes prints UTC — add 3).
+- **A convergence question wants the order table** (the user, 2026-10-18: "that is what i wanted"): one row per level
+  and constraint (Ham L0, Mom L0, … Ham L3, Mom L3), one column per time (e.g. t 10 / 20 / 30 / 40 / 50), each cell
+  the order between the members, N₁→N₂ / N₂→N₃ (from `constraint_norms_levels.dat`, p = ln(e₁/e₂) / ln(N₂/N₁)),
+  then two lines on what it shows. Not the norms' magnitudes, not prose.
 
 ## Environment
 

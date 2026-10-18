@@ -172,7 +172,7 @@ triplets pass (decided 10-17).
 | ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | DIED 62.59 10-18 12:12 MSK: the collapse (trust 55) |
 | ✓ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 9.3 h | FINISHED 10-18 18:12 MSK: through the collapse to t 100, horizon settled, (2,0) wave out (trust 100) |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t150` | slow | 150 | ~11 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints; stop 100 → 150 decided ≈ 19:20 so the burst passes R 30–45), HELD 10-18 ≈ 18:40 MSK (nothing launches): the 1st node's card 1, idle since 18:12 |
+| ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t150` | slow | 150 | ~11 h, 51 GB | LIVE since 10-18 19:24 MSK, 1st node card 1 (go 10-18, stop 150 decided ≈ 19:20 so the burst passes R 30–45; no checkpoints) |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`; pre-fix, rerun next row) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0c static rerun on the fixed binary `static_hold_L64_ml3_spdrv0_farfix_t100` (the anchor's packed params + the numerics and far-zone fix keys, drive off; diffed) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18 ≈ 17:20 MSK, no checkpoints; card not chosen; template ready) |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
@@ -214,8 +214,9 @@ its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 |---|---|---|---|---|---|
 | 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 48.5 @ 18:48 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
 | 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 45.0 @ 18:48 | 100 | 5.0 t/h | ≈ 10-19 05:45 |
+| 0.2c L 128 N 256 far-zone GW run `00_paper_runs/spin_hold_L128_ml3_J100_full_farfix_t150` | 1st, card 1, 49.0 GB | 0.03 @ 19:25 | 150 | ≈ 14.9 t/h (first steps) | ≈ 10-19 05:30 |
 
-The 1st node's card 1 is idle since 18:12 MSK (the 0.2c N 128 finished); nothing launches on it (10-18 ≈ 18:40 MSK).
+Far-zone run (go 10-18 ≈ 19:20 MSK, the held run released): preflight PASS, t 0 L2_Ham 6.2029e-4 (the old run's), 14 frames.
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
@@ -244,6 +245,15 @@ collapse (r ψ4 ≈ 2.5e-3 at R 10, `results/merger/figures/08_waves/psi4_galler
 convergence waits for the N 192 (the N 96 died before its burst reached R 10). Figure:
 `<run>/waves/psi4_l2m0_radiated_N128.png` (plot_extracted_psi4.py on the background-subtracted file; that script plots
 raw ψ4 under an r·Re label).
+
+**Triplet convergence to t 50** (10-18 ≈ 19:30, the N 192 at t 51; orders 96→128 / 128→192 from
+`constraint_norms_levels.dat`): every level converges in both pairs. Ham L0 2.8/2.8 at t 10 → 4.2/4.5 at t 50; Mom L0
+2.3/2.4 → 4.4/4.4; Ham L1 2.1/2.4 → 4.7/4.9; Mom L1 1.8/2.1 → 4.6/4.8; Ham L2 2.2/2.4 → 1.9/1.9; Mom L2 2.0/2.3 →
+3.7/4.0; Ham L3 4.0/4.3 → 3.4/4.0; Mom L3 3.0/4.1 → 4.3/4.3 (levels 0–1 jump to 4–5 from t ≈ 30, where the drive's
+shell junk takes over their error). The throat's pre-collapse drift converges at 4th order (t 5–10: 3.6–4.2). The
+collapse onset is resolution-seeded (R_eq −0.1 % at 30.7 / 36.1 / 46.1: shifts that fit a seed shrinking at 4th–5th
+order); τ(−1 → −10 %) 6.72 / 6.57 for N 96 / 128; the N 192's τ and the waves' convergence wait for its collapse
+(R_eq −0.29 % at t 51; −1 % expected at t ≈ 57, −10 % at ≈ 72, if it survives).
 
 **Constraint growth: the slow runs' t ≈ 80 knee is gone** (the N 128 to t 100, 10-18). The pre-fix "Ham ×2 at 78–85"
 was levels 1–2 growing exponentially (e-fold 5–7) from t ≈ 30 until they dominated the whole-box norm (pre-fix 0.2c
@@ -316,7 +326,7 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
 
 - The 0.2c triplet (N 96 and N 128 done, N 192 LIVE, ETA ≈ 10-19 05:00 MSK): close it out when it finishes; then the
   triplet's per-level convergence and the collapse τ across N.
-- QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints), HELD since 10-18 ≈ 18:40 MSK (nothing launches): the far-zone GW run `spin_hold_L128_ml3_J100_full_farfix_t150`,
+- LIVE since 10-18 19:24 MSK (1st node card 1; go 10-18, no checkpoints): the far-zone GW run `spin_hold_L128_ml3_J100_full_farfix_t150`,
   a rerun of the pre-fix `05_hold_L128/J100_full/spin_hold_L128_ml3_J100_full_t100` (through the collapse to t 100
   with 0 NaN, horizon at t ≈ 64, the R 30 burst; 7.5 h): its template plus the farfix keys (`exact_quartic_interp
   1`, `rk_stage_refill 0`, `shift_advec_coeff 0`, `sommerfeld_relative_to_background 1`, `constraint_norms_edge_cells
