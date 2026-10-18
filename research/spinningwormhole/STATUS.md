@@ -163,14 +163,20 @@ triplets pass (decided 10-17).
 | ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
-| ☐ | kick 0.9c A1, kick 0.9c A2 (×10), kick 0.7c A1 | fast + seed | 150 | ~9 h each | |
+| ☐ | kicks (proposed): 0.9c l 0 at ±1e-3 and +1e-2, m 2 and m 1 at 1e-3; 0.7c l 0 and m 2 at 1e-3 | fast + kick | 150 | ~9.7 h each on L 128 N 256 | |
 | ☐ | 0.95c stretch (optional) | fast | 150 | ~9 h | |
 
-Kick study (planned 10-16): as Evstafyeva–Siemonsen–East, the stable 0.9c (A1 = the merger seed's scale,
-A2 = ×10) and 0.7c (A1) with the constraint-compatible Gaussian scalar seed (`spinning_seed_amplitude/width/
-radius`), fast recipe, stop 150; discriminators: ring-down back to the hold or a triggered collapse, ψ4 at
-R 14/18. The Π shell seed violates the constraints in proportion to its amplitude: decide on a
-constraint-solved seed before templating.
+Kick study (planned 10-16; the kick built 10-18): as Evstafyeva–Siemonsen–East (arXiv:2508.11527), kicked
+holds of the stable 0.9c (A1 = 1e-3, the merger's smallest seed arm; A2 = ×10) and the 0.7c, fast recipe,
+stop 150. The kick (`spinning_kick_amplitude/l/m/radius/width`, commit af28ad29; binary
+`main3d_kick_af28ad29_2026-10-18.ex` = farfix + kick, the old data bit for bit at 0) is the merger's
+single-throat seed on the spinning throat: ψ → ψ (1 + ε e^{−((η−η_c)/w)²} S), S = 1 (l 0: ΔR/R ≈ 2ε, the
+radial branch), P2 (l 2, m 0) or sin^m θ cos mφ (m 1 pushes the throat off centre; m 2 is the bar, which the
+holds seed only at round-off), with A_ij × ψ_k^−6 so the momentum constraint stays exact; the Hamiltonian
+constraint is violated at O(ε), declared and measured (decided 10-18: no constraint solve, as the merger seeds
+and ESE's kicks). Throat η_c (minimal coordinate sphere of each table): 0.9c 1.237, 0.7c 1.117, 0.5c 1.054,
+0.2c 1.008. Discriminators: ring-down back to the hold or a triggered collapse; R_throat, ψ4 (2,0) and
+(2,±2) at R 14/18, the per-level constraints.
 
 ## LIVE
 
@@ -417,7 +423,6 @@ What the ledger says (pre-fix):
 - Upstream AMReX PR for the rounded `cell_quartic_interp` weights (later, on decision).
 - The RK stage re-fill in the merger, RadialRecipe and SupportedWormholeCollapse examples (their campaigns'
   call).
-- Constraint-solved seeds before the kicks (the Π shell seed violates the constraints ∝ its amplitude).
 - Waveform extrapolation in 1/R: absent; matters least under the stability-only plan.
 
 ## DECISIONS (compact history)
@@ -432,6 +437,8 @@ What the ledger says (pre-fix):
   profile.
 - 10-17: the three numerics fixes; every paper run reruns; the pre-fix paper runs archived; kicks wait for
   both triplets.
+- 10-18: the kick is the merger's unsolved conformal-factor shell, momentum-exact (af28ad29); no constraint
+  solve.
 
 ## DONE
 
