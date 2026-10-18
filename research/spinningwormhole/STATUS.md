@@ -12,7 +12,7 @@ done). Code: `Examples/SpinningWormhole/` + `grteclyn-wrapper/scripts/campaigns/
 Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
 `launch.sh --subdir <family>/<NN_study>`; pack with `research/spinningwormhole/pack_run.sh <family>/<NN_study> <run dir>`.
 
-## STATE (2026-10-18 ≈ 12:25 MSK)
+## STATE (2026-10-18 ≈ 13:05 MSK)
 
 **Every run before 10-17 carries three numerics bugs, all found and fixed 10-17** (how: CONVERGENCE below),
 so every paper run reruns on binary rkfix 0661dac4:
@@ -187,9 +187,11 @@ its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.2c L 64 N 128 farfix `00_paper_runs/spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 22.9 GB | 34.4 @ 12:16 | 100 | 10.3 t/h | ≈ 18:40 |
-| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 15.4 @ 12:16 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
-| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 12.5 @ 12:18 | 100 | 5.0 t/h | ≈ 10-19 05:45 |
+| 0.2c L 64 N 128 farfix `00_paper_runs/spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 22.9 GB (+ the two sponge tests) | 49.3 @ 13:00 | 100 | 12.2 t/h alone, slower shared | ≈ 19:00–21:00 |
+| sponge test, drive off `10_sponge_test/spin_hold_L64_N96_ml3_J100_full_spdrv0_farfix_t055` | 1st, card 1, 12 GB | 0 @ 13:00 | 55 | ~10 t/h shared | ≈ 18:30 |
+| sponge test, wider absorber `10_sponge_test/spin_hold_L64_N96_ml3_J100_full_spdrv1w20p2_farfix_t055` | 1st, card 1, 12 GB | 0 @ 13:00 | 55 | ~10 t/h shared | ≈ 18:30 |
+| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 19.1 @ 13:00 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
+| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 15.9 @ 13:00 | 100 | 5.0 t/h | ≈ 10-19 05:45 |
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
@@ -247,6 +249,16 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
   = the plotfile; the old run's coarse–fine stripes in K and Pi gone. Its consumers had run `--mots-spectral-steps
   150` since 19:13–19:40 (`restart_consumer.sh --busy`): the N 192's 400-step MOTS search took 22 min per plotfile
   against one every 12 min (the 0.9c never has a MOTS).
+
+**ψ4 junk at the box faces in the collapse (found 10-18).** In the 0.2c farfix runs Weyl4 grows at the faces
+(r 28–32) once the outgoing K pulse reaches them (t ≈ 30–40): Re ψ4 change 2.8e-5 there at t 55 on N 96, 4× less
+on N 128 at equal t (numerical), creeping inward at ~0.4 c (r 20–24: 1.3e-6 at t 62); r < 20 (R 14, 18) still
+≤ 4e-7 at t 55. The 0.9c on L 128 (nothing leaves its interior) shows none. Suspect: the drive — its quartic ramp
+bites only in the last 2–3 units (∫ ≈ 1.6 e-folds across the shell) and its pull to the t 0 state is not Einstein
+evolution once a pulse is in the shell. The pre-fix runs were far worse (1e-4–1e-2 in every shell by t 46–85), so
+the pre-fix 0.21c GW-burst number needs a farfix re-measurement. Test (go 10-18, L stays 64): `10_sponge_test`,
+the N 96 to t 55 with the drive off, and with a wider, gentler absorber (20–32, ramp power 2: ∫ 4.0 e-folds);
+start checks 13:00: preflights PASS, t 0 L2_Ham/Mom identical to the N 96's (3.4707e-3 / 1.2619e-4); no checkpoints.
 
 ## NEXT
 
