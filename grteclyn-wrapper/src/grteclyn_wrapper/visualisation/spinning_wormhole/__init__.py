@@ -30,8 +30,10 @@
         the 0.9c hold's resolution triplet (N 128 / 192 / 256): the
         Hamiltonian and momentum constraints on every refinement level, with
         the finest member rescaled at 2nd and 4th order to bracket the
-        coarsest; reads the packed runs, writes
-        results/spinningwormhole/figures/convergence_09c
+        coarsest, and a row on the throat and the wave zone (the equatorial
+        radius against its exact value, the areal radius's drift, Psi4 (2,0)
+        at R = 18, the far-side lapse); reads the packed runs and the solver
+        table, writes results/spinningwormhole/figures/convergence_09c
 
 The solver figures go to results/spinningwormhole/figures/solver/.  The paper
 figure reads only the two packed tables, so it rebuilds from a clean checkout.
