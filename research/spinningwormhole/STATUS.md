@@ -199,8 +199,9 @@ only); full-box frames (zoom 64, centre 32) with the Weyl4 edge blanked; default
 checks: preflights PASS, t 0 constraints identical to the fix_t100 launches (N 192 L2_Ham 1.5234e-3); level 0's
 per-level Ham at t 0 8.5e-11 / 3.5e-11 (+3.1); ψ4 header R 10 14 18 30; t 0 MOTS R 4.022 / 4.022 / 4.023; consumers
 keep pace (≈ 1 / 1.5 / 2.5 min per plotfile against one every 3 / 6 / 12 min at N 96 / 128 / 192; the N 192's t 0
-pass, a cold MOTS search, 9.4 min). **N 96 DIED 62.59** (12:12 MSK; NaN in h11, level 3) at the end of the
-throat collapse, the 0.2c result, with `shift_advec_coeff = 0` all the way: R_eq −3.1 % at 50, −10.4 % at 58, −20.5 % at
+pass, a cold MOTS search, 9.4 min). **N 96 DIED 62.59** (12:12 MSK; NaN in h11, level 3) mid-collapse, after
+its horizon formed (the MOTS left the throat at t ≈ 55 and was 0.13 outside it at 62, θ_in −0.26), the 0.2c result,
+with `shift_advec_coeff = 0` all the way: R_eq −3.1 % at 50, −10.4 % at 58, −20.5 % at
 the end; χ on the 1e-8 floor at 55.4, max|K| > 0.1 at 56.5, L2_Mom ×2 at 59.0; trust 55 (the pre-fix N 96 ran the same
 sequence ~3 later: floor 58.0, NaN 64.83); packed, scratch pruned. Orders at t 6 (the N 192's t at 10:23): level 0 Ham
 +2.6–2.7, Mom +2.1–2.5; levels 1–2 +1.8–2.4; level 3 +3.0–4.3; 96→128 the same to t 14.8; the throat's R_eq drift
