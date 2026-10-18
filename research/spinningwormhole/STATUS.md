@@ -12,7 +12,7 @@ done). Code: `Examples/SpinningWormhole/` + `grteclyn-wrapper/scripts/campaigns/
 Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
 `launch.sh --subdir <family>/<NN_study>`; pack with `research/spinningwormhole/pack_run.sh <family>/<NN_study> <run dir>`.
 
-## STATE (2026-10-18 ≈ 09:20 MSK)
+## STATE (2026-10-18 ≈ 12:25 MSK)
 
 **Every run before 10-17 carries three numerics bugs, all found and fixed 10-17** (how: CONVERGENCE below),
 so every paper run reruns on binary rkfix 0661dac4:
@@ -154,7 +154,7 @@ triplets pass (decided 10-17).
 | ✓ | 0.9c triplet on L 128, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 3.4 h | FINISHED 10-18 02:55 MSK |
 | ✓ | 0.9c triplet on L 128, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 5.4 h | FINISHED 10-18 04:52 MSK |
 | ✓ | 0.9c triplet on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 9.7 h | FINISHED 10-18 09:08 MSK |
-| ☐ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~5 h | LIVE |
+| ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | DIED 62.59 10-18 12:12 MSK: the collapse (trust 55) |
 | ☐ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
@@ -163,7 +163,8 @@ triplets pass (decided 10-17).
 | ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
-| ☐ | kicks (proposed): 0.9c l 0 at ±1e-3 and +1e-2, m 2 and m 1 at 1e-3; 0.7c l 0 and m 2 at 1e-3 | fast + kick | 150 | ~9.7 h each on L 128 N 256 | |
+| ☐ | kicks 0.9c on L 128, N 256 `spin_kick_L128_ml3_ve090a_{l0_eps_p1e3, l0_eps_m1e3, l0_eps_p1e2, m2_eps_p1e3, m1_eps_p1e3}_spdrv1_sig04_farfix_t150` | fast + kick | 150 | 9.7 h each | QUEUED (go 10-18, no checkpoints): from ≈ 05:00 MSK 10-19, two at a time; t 0 probes PASS |
+| ☐ | kicks 0.7c (l 0, m 2 at 1e-3) | fast + kick | 150 | ~30 h each on L 64 N 192 | |
 | ☐ | 0.95c stretch (optional) | fast | 150 | ~9 h | |
 
 Kick study (planned 10-16; the kick built 10-18): as Evstafyeva–Siemonsen–East (arXiv:2508.11527), kicked
@@ -176,15 +177,19 @@ holds seed only at round-off), with A_ij × ψ_k^−6 so the momentum constraint
 constraint is violated at O(ε), declared and measured (decided 10-18: no constraint solve, as the merger seeds
 and ESE's kicks). Throat η_c (minimal coordinate sphere of each table): 0.9c 1.237, 0.7c 1.117, 0.5c 1.054,
 0.2c 1.008. Discriminators: ring-down back to the hold or a triggered collapse; R_throat, ψ4 (2,0) and
-(2,±2) at R 14/18, the per-level constraints.
+(2,±2) at R 14/18, the per-level constraints. t 0 probes (10-18, 1st node card 1, `--preflight-only` PASS, all
+75 keys read, 14 frames): l 0 at +1e-3 moves R_pol +1.9989e-3 (table +1.9993e-3) and R_eq +1.707e-3 (table
++1.65e-3: the flat equatorial minimum moves out); m 2 moves R_eq +1.706e-3 (the +x ray, S = 1) and R_pol by 0
+(S = 0 on the axis). The throat level's L2_Ham goes 4.4e-8 → 2.0e-4 (l 0) / 1.2e-4 (m 2), the declared violation;
+its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 
 ## LIVE
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 35.0 GB together | 10.6 / 5.5 @ 09:29 | 100 | 19.3 / 10.1 t/h | N 96 ≈ 14:05, N 128 ≈ 18:50 |
-| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 1.3 @ 09:29 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
-| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 0.57 @ 09:56 | 100 | 5.0 t/h | ≈ 10-19 05:40 |
+| 0.2c L 64 N 128 farfix `00_paper_runs/spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 22.9 GB | 34.4 @ 12:16 | 100 | 10.3 t/h | ≈ 18:40 |
+| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 15.4 @ 12:16 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
+| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 12.5 @ 12:18 | 100 | 5.0 t/h | ≈ 10-19 05:45 |
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
@@ -194,8 +199,12 @@ only); full-box frames (zoom 64, centre 32) with the Weyl4 edge blanked; default
 checks: preflights PASS, t 0 constraints identical to the fix_t100 launches (N 192 L2_Ham 1.5234e-3); level 0's
 per-level Ham at t 0 8.5e-11 / 3.5e-11 (+3.1); ψ4 header R 10 14 18 30; t 0 MOTS R 4.022 / 4.022 / 4.023; consumers
 keep pace (≈ 1 / 1.5 / 2.5 min per plotfile against one every 3 / 6 / 12 min at N 96 / 128 / 192; the N 192's t 0
-pass, a cold MOTS search, 9.4 min). `shift_advec_coeff = 0` has not been through a collapse
-yet (the N 96 reaches it at t ≈ 50–60).
+pass, a cold MOTS search, 9.4 min). **N 96 DIED 62.59** (12:12 MSK; NaN in h11, level 3) at the end of the
+throat collapse, the 0.2c result, with `shift_advec_coeff = 0` all the way: R_eq −3.1 % at 50, −10.4 % at 58, −20.5 % at
+the end; χ on the 1e-8 floor at 55.4, max|K| > 0.1 at 56.5, L2_Mom ×2 at 59.0; trust 55 (the pre-fix N 96 ran the same
+sequence ~3 later: floor 58.0, NaN 64.83); packed, scratch pruned. Orders at t 6 (the N 192's t at 10:23): level 0 Ham
++2.6–2.7, Mom +2.1–2.5; levels 1–2 +1.8–2.4; level 3 +3.0–4.3; 96→128 the same to t 14.8; the throat's R_eq drift
+1.2e-6 / 3.8e-7 / 7.8e-8 at t 6 (≈ 4th order).
 
 0.5c settings (go 10-18 ≈ 09:45, second node): the archived pre-fix 0.5c `spin_hold_L64_ml3_ve050a_spdrv1_t150`
 (slow recipe: σ 0.1, min_chi 1e-8, dt 0.02, sponge 24–32 with drive 1.0) with N 128 → 192 and stop 150 → 100, plus
@@ -240,8 +249,14 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
 
 ## NEXT
 
-- The 0.2c triplet (LIVE): close out each member as it finishes; then its per-level convergence and the collapse τ
-  across N. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
+- The 0.2c triplet (N 96 done, N 128 + N 192 LIVE): close out each member as it finishes; then its per-level
+  convergence and the collapse τ across N.
+- QUEUED (go 10-18, no checkpoints): the five 0.9c kicks (templates ready in `templates/`: the paper 0.9c's
+  params plus the kick keys; binary `main3d_kick_af28ad29_2026-10-18.ex`; the N 256's launch line with its
+  consumer flags, `--subdir drainhole/00_paper_runs`; 51 GB, 9.7 h each). Order: l 0 +1e-3, m 2, l 0 −1e-3, m 1,
+  l 0 +1e-2. First node card 0 after the 0.2c N 192 (≈ 05:00 MSK 10-19), second node after the 0.5c (≈ 05:45);
+  two at a time, all done ≈ 10-20 11:00 MSK. Start checks: R_pol/R_eq at t 0 as the probes, frame 0 against the
+  hold's, ψ4 header R 14 18 30 40 45. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
 - PENDING: the 0.7c `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` (template ready; ~60 GB, ~30 h to t 150)
   on the first node's card 1 once the 0.2c N 128 ends (≈ 18:49 MSK 10-18; with the N 128 on it the card has no room,
   24 + 60 GB). Same launch line as the 0.5c with `--gpu 1`; needs a session on the first node.
