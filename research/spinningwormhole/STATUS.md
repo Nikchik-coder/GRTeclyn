@@ -16,7 +16,7 @@ Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
 
 1. **Stability**: the fast-spinning throat is stable (the 0.9c farfix triplet holds to t 150; the kicks test it).
 2. **Stability grows with spin**: the collapse slows as the spin grows and the fast throats hold (the ladder static →
-   0.2c → 0.5c → 0.7c → 0.9c; onset times and τ from the reruns).
+   0.2c → 0.3c / 0.4c / 0.45c → 0.5c → 0.9c; τ(J) against Azad et al.'s second-order rate, FOR THE ARTICLE).
 3. **A GW signal with no nonspherical perturbation**: the rotating collapse radiates (l 2, m 0) from unperturbed data,
    where the static wormhole needed a nonspherical perturbation to radiate at all. The far-zone waveform comes from
    one big-box run, the 0.2c on L 128 N 256 (PAPER RUN MATRIX); the L 64 runs' ψ4 at R 14/18 carries face junk
@@ -170,16 +170,14 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints): the first empty card, the 1st node's card 1 after the 0.2c N 128 and the sponge tests (≈ 20:15 MSK, sooner if the N 128 dies in its collapse) |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | 0.7c on L 64, N 192 `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` | fast | 150 | ~30 h | PENDING: 1st node card 1 after the L 128 0.2c (≈ 10-19 04:00 MSK) |
-| ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | |
+| ☐ | middle rungs 0.3c / 0.4c / 0.45c on L 64, N 128 (Azad's second-order τ 6.1 / 8.0 / 13) | slow | 100 | ~10 h each | PLANNED 10-18: family (a) tables to make (none between ve020 and ve050); go to ask |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
 | ☐ | kicks 0.9c on L 128, N 256 `spin_kick_L128_ml3_ve090a_{l0_eps_p1e3, l0_eps_m1e3, l0_eps_p1e2, m2_eps_p1e3, m1_eps_p1e3}_spdrv1_sig04_farfix_t150` | fast + kick | 150 | 9.7 h each | QUEUED (go 10-18, no checkpoints): from ≈ 05:00 MSK 10-19, two at a time; t 0 probes PASS |
-| ☐ | kicks 0.7c (l 0, m 2 at 1e-3) | fast + kick | 150 | ~30 h each on L 64 N 192 | |
 | ☐ | 0.95c stretch (optional) | fast | 150 | ~9 h | |
 
 Kick study (planned 10-16; the kick built 10-18): as Evstafyeva–Siemonsen–East (arXiv:2508.11527), kicked
-holds of the stable 0.9c (A1 = 1e-3, the merger's smallest seed arm; A2 = ×10) and the 0.7c, fast recipe,
+holds of the stable 0.9c (A1 = 1e-3, the merger's smallest seed arm; A2 = ×10), fast recipe,
 stop 150. The kick (`spinning_kick_amplitude/l/m/radius/width`, commit af28ad29; binary
 `main3d_kick_af28ad29_2026-10-18.ex` = farfix + kick, the old data bit for bit at 0) is the merger's
 single-throat seed on the spinning throat: ψ → ψ (1 + ε e^{−((η−η_c)/w)²} S), S = 1 (l 0: ΔR/R ≈ 2ε, the
@@ -282,8 +280,8 @@ start checks 13:00: preflights PASS, t 0 L2_Ham/Mom identical to the N 96's (3.4
   3`) on binary farfix 891d817d; L 128, N 256, boxes ±16/8/4 (`tagging_L 64`, the L 64 N 128 grid inside), KO
   sponge 48–64 with no drive, as the old run; slow recipe, stop 100, a plotfile every t 1. Consumer: the 0.9c
   N 256's flags with the default MOTS search and `--radii 14 18 30 40 45`, `GRTECLYN_FRAMES_BUFF_CAP=2048`,
-  `--subdir drainhole/00_paper_runs`. Card: the first node's card 1 once the 0.2c N 128 ends (≈ 20:15 MSK),
-  before the 0.7c. Start checks: frame 0 and the t 0 constraints against the old run's (L2_Ham 6.2029e-4), ψ4
+  `--subdir drainhole/00_paper_runs`. Card: the first node's card 1 once the 0.2c N 128 ends (≈ 20:15 MSK).
+  Start checks: frame 0 and the t 0 constraints against the old run's (L2_Ham 6.2029e-4), ψ4
   header R 14 18 30 40 45, the consumer's pace (a plotfile every ≈ 4 min).
 - QUEUED (go 10-18, no checkpoints): the five 0.9c kicks (templates ready in `templates/`: the paper 0.9c's
   params plus the kick keys; binary `main3d_kick_af28ad29_2026-10-18.ex`; the N 256's launch line with its
@@ -291,9 +289,6 @@ start checks 13:00: preflights PASS, t 0 L2_Ham/Mom identical to the N 96's (3.4
   l 0 +1e-2. First node card 0 after the 0.2c N 192 (≈ 05:00 MSK 10-19), second node after the 0.5c (≈ 05:45);
   two at a time, all done ≈ 10-20 11:00 MSK. Start checks: R_pol/R_eq at t 0 as the probes, frame 0 against the
   hold's, ψ4 header R 14 18 30 40 45. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
-- PENDING: the 0.7c `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` (template ready; ~60 GB, ~30 h to t 150)
-  on the first node's card 1 after the L 128 0.2c (≈ 10-19 04:00 MSK; neither fits beside the N 128, 24 + 51/60 GB).
-  Same launch line as the 0.5c with `--gpu 1`; needs a session on the first node.
 - Second node (one card): the 0.5c live since 09:48 MSK 10-18 (ETA ≈ 05:40 MSK 10-19); scratch clean (the 0.99c σ 0.4
   run's 7.1 GB of leftovers pruned 10-18).
 
@@ -361,6 +356,15 @@ found nothing). The pre-fix N 96 frames are 2× the data (yt summed both sides o
 renderer fixed 10-17 ≈ 13:00 MSK; the data are unaffected).
 
 ## FOR THE ARTICLE (paper notes and additions; evolution numbers pre-fix)
+
+**The ladder against Azad, Blázquez-Salcedo, Khoo & Kunz (arXiv:2301.05243; 10-18).** Their second-order radial
+mode ω_I = ω_I⁽⁰⁾ + J² Δω_I⁽²⁾ (r₀ = 1) for our drainhole (η₀ = 2, M = 1: their C = 1 row, ω_I⁽⁰⁾ = −0.390,
+Δω_I⁽²⁾ = +0.384) gives τ = η₀ / (0.390 − 0.384 (J/η₀²)²): static 5.13, 0.2c 5.46 (+6.6 %), 0.3c 6.1, 0.4c 8.0,
+0.45c 13.2, and stability at J/η₀² = 1.008 (J 4.03, v_e ≈ 0.51c): our 0.5c (J 4.13) sits on it. Measured (pre-fix,
+ΔR 1–30 %): static 5.8, 0.2c 6.8 (+17 %), the same slowing with a J² coefficient 0.81 against their 0.384; that
+would move the threshold to J ≈ 2.6, v_e ≈ 0.41c, in line with their conjecture that the full instability ends
+below the second-order value (≈ 30 % of the extremal J/A = 1/8π). On their J/A scale (area from the t 0 MOTS):
+0.2c 12 %, 0.5c 34 %, 0.9c 81 %. Astrophysically only J/M² < 1 is realistic: v_e < 0.29c on this family.
 
 **The rotating collapse emits a real gravitational wave (10-16).** At R = 30 the 0.21c collapse
 (`spin_hold_L128_ml3_J100_full_t100`) shows an l = 2, m = 0 burst |ψ₄| = 3.0e-2 arriving at t = 81 (horizon
@@ -488,6 +492,8 @@ What the ledger says (pre-fix):
   both triplets.
 - 10-18: the kick is the merger's unsolved conformal-factor shell, momentum-exact (af28ad29); no constraint
   solve.
+- 10-18: the 0.7c wiped (hold, slow-recipe extra, kicks): above the Kerr bound (J/M² 1.11), not astrophysical; the
+  0.9c stays the one stable anchor. The ladder fills 0.2c–0.5c instead, against Azad et al. (FOR THE ARTICLE).
 
 ## DONE
 
