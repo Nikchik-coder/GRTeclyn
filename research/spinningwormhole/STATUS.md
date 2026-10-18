@@ -150,9 +150,9 @@ triplets pass (decided 10-17).
 
 | ✓ | run | recipe | stop | cost | status |
 |---|---|---|---|---|---|
-| ☐ | 0.2c triplet N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~5 h | NOT STARTED — launched 18:27, stopped by decision at t 2.85 (10-17) so card 0 takes the 0.9c pair; stop 100 kept (go 10-17: test the late constraint growth) |
-| ☐ | 0.2c triplet N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~11 h | NOT STARTED — launched 18:27, stopped by decision at t 1.2 (10-17) so card 0 takes the 0.9c pair |
-| ☐ | 0.2c triplet N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_fix_t100` | slow | 100 | ~22 h, ~60 GB (a card alone) | NOT STARTED — launched 18:27, stopped by decision at t 0.44 (10-17) so card 1 takes the 0.9c N 192 first; run dir in `00_archive/aborted_2026-10-17/`; next: the second node's card (a session there) or card 1 after the 0.9c |
+| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~5 h | LIVE since 08:56 MSK 10-18, 1st node card 1 (go 10-18) |
+| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE since 08:56 MSK 10-18, 1st node card 1 (go 10-18) |
+| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h, ~60 GB (a card alone) | NOT STARTED — template ready; card 0 once the 0.9c N 256 ends, on the go. (The fix_t100 launches of 10-17 18:27 were stopped at t ≤ 2.85; run dirs in `00_archive/aborted_2026-10-17/`) |
 | ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 3.4 h | FINISHED t 150 (10-18 02:55 MSK), no NaN; throat R 18.409, +7e-5 over the run; packed, scratch pruned |
 | ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 5.4 h | FINISHED t 150 (10-18 04:52 MSK), no NaN; throat R 18.480, +2e-5 over the run; packed, scratch pruned |
 | ☐ | 0.9c triplet on L 128 with the far-zone fixes, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | ~10 h, ~51 GB est. | LIVE since 23:28 MSK 10-17, 1st node card 0 (go 10-17) |
@@ -183,9 +183,18 @@ Settings (go 10-17 ≈ 23:20): the stopped L 128 triplet's (records below) plus 
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.9c L 128 N 256 farfix `00_paper_runs/spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 0 (solo), 51.1 GB | 143.4 @ 10-18 08:42 | 150 | 15.5 t/h | ≈ 10-18 09:08 |
+| 0.9c L 128 N 256 farfix `00_paper_runs/spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 0 (solo), 51.1 GB | 147.0 @ 10-18 08:56 | 150 | 15.5 t/h | ≈ 10-18 09:08 |
+| 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 34.4 GB together | 0 @ 08:56 | 100 | to be measured (~20 / ~10 t/h est.) | N 96 ≈ 14:00, N 128 ≈ 19:00 (est.) |
 
-Card 1 idle since 04:52. The N 128 and N 192 finished clean at t 150 (02:55, 04:52; packed, scratch pruned).
+0.2c settings (go 10-18 ≈ 08:50): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8, dt 0.02, stop 100, L 64,
+centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`, `sommerfeld_relative_to_background = 1`,
+`constraint_norms_edge_cells = 3` on binary farfix 891d817d; ψ4 at R 10 14 18 (each wholly on level 1, whose box
+reaches ±21.3 / 20 / 18.7 at N 96 / 128 / 192) and 30 (in the drive shell: reference only); full-box frames (zoom 64,
+centre 32) with the Weyl4 edge blanked; default MOTS search; no checkpoints. Preflights PASS, t 0 constraints identical
+to the fix_t100 launches; level 0's per-level Ham at t 0 8.5e-11 / 3.5e-11 (+3.1). `shift_advec_coeff = 0` has not
+been through a collapse yet (the N 96 reaches it at t ≈ 50–60).
+
+The 0.9c N 128 and N 192 finished clean at t 150 (02:55, 04:52; packed, scratch pruned).
 Per-level orders through t 143 (128→192 / 192→256), steady over the whole run: level 0 +2.3 to +3.3 / +2.5 to +3.2,
 level 1 +1.9 to +2.3 / +2.2 to +2.6, level 2 +1.8 to +2.5 / +1.9 to +2.8; level 3 Mom +3.2 to +4.3 / +0.8 to +3.9,
 Ham +1.7 to +3.4 / +1.0 to +4.4 (192→256 Ham3 ≈ +1.0–1.5 from t 100; level 3's boxes shrink with N). Throat areal
