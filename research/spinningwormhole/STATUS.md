@@ -153,7 +153,7 @@ triplets pass (decided 10-17).
 |---|---|---|---|---|---|
 | ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~5 h | LIVE since 08:56 MSK 10-18, 1st node card 1 (go 10-18) |
 | ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE since 08:56 MSK 10-18, 1st node card 1 (go 10-18) |
-| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h, 58.5 GB (a card alone) | LIVE since 09:13 MSK 10-18, 1st node card 0 (go 10-18). (The fix_t100 launches of 10-17 18:27 were stopped at t ≤ 2.85; run dirs in `00_archive/aborted_2026-10-17/`) |
+| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h, 59.7 GB (a card alone) | LIVE since 09:13 MSK 10-18, 1st node card 0 (go 10-18). (The fix_t100 launches of 10-17 18:27 were stopped at t ≤ 2.85; run dirs in `00_archive/aborted_2026-10-17/`) |
 | ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 3.4 h | FINISHED t 150 (10-18 02:55 MSK), no NaN; throat R 18.409, +7e-5 over the run; packed, scratch pruned |
 | ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 5.4 h | FINISHED t 150 (10-18 04:52 MSK), no NaN; throat R 18.480, +2e-5 over the run; packed, scratch pruned |
 | ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 9.7 h, 51.1 GB | FINISHED t 150 (10-18 09:08 MSK), no NaN; throat R 18.478, +3e-5 over the run; packed, scratch pruned |
@@ -178,8 +178,8 @@ constraint-solved seed before templating.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 35.0 GB together | 5.9 / 3.0 @ 09:15 | 100 | 19.5 / 10.1 t/h | N 96 ≈ 14:05, N 128 ≈ 18:50 |
-| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 1.0 @ 09:25 | 100 | 5.1 t/h | ≈ 10-19 04:55 |
+| 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 35.0 GB together | 10.6 / 5.5 @ 09:29 | 100 | 19.3 / 10.1 t/h | N 96 ≈ 14:05, N 128 ≈ 18:50 |
+| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 1.3 @ 09:29 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
