@@ -12,7 +12,7 @@ done). Code: `Examples/SpinningWormhole/` + `grteclyn-wrapper/scripts/campaigns/
 Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
 `launch.sh --subdir <family>/<NN_study>`; pack with `research/spinningwormhole/pack_run.sh <family>/<NN_study> <run dir>`.
 
-## STATE (2026-10-17 ≈ 21:15 MSK)
+## STATE (2026-10-18 ≈ 09:20 MSK)
 
 **Every run before 10-17 carries three numerics bugs, all found and fixed 10-17** (how: CONVERGENCE below),
 so every paper run reruns on binary rkfix 0661dac4:
@@ -33,9 +33,10 @@ below as the pre-fix record, to be requoted from the reruns.
 **The far-zone junk is fixed** (FAR-ZONE JUNK below). Two causes, two fixes, both tested on the 0.9c L 128 N 128 to
 t 10: the Γ-driver advected the rotating background shift (`shift_advec_coeff = 0`), and the flat-space Sommerfeld
 faces sat at 5.5 M_ADM (`sommerfeld_relative_to_background = 1`). With both, the far zone is quieter than the inside.
-The 0.9c L 128 triplet reruns with both since 23:28 MSK (`_farfix_t150`, binary farfix 891d817d, whose per-level
-norms also skip the box's outer 3 cells: `constraint_norms_edge_cells = 3`); the Weyl4 frames blank the box's outer
-2 cells (`--frames-blank-edge 2`, point 7).
+The 0.9c L 128 triplet reran with both (`_farfix_t150`, binary farfix 891d817d, whose per-level norms also skip the
+box's outer 3 cells: `constraint_norms_edge_cells = 3`) and PASSES: all three clean to t 150, every level converging
+(orders under LIVE), throat areal radius flat to ≤ 7e-5, no MOTS. The 0.2c L 64 triplet runs with the same fixes
+since 08:56 / 09:13 MSK 10-18. The Weyl4 frames blank the box's outer 2 cells (`--frames-blank-edge 2`, point 7).
 
 ## CONVERGENCE: HOW THE BUGS WERE FOUND (10-17)
 
@@ -152,10 +153,10 @@ triplets pass (decided 10-17).
 |---|---|---|---|---|---|
 | ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~5 h | LIVE since 08:56 MSK 10-18, 1st node card 1 (go 10-18) |
 | ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE since 08:56 MSK 10-18, 1st node card 1 (go 10-18) |
-| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h, ~60 GB (a card alone) | NOT STARTED — template ready; card 0 once the 0.9c N 256 ends, on the go. (The fix_t100 launches of 10-17 18:27 were stopped at t ≤ 2.85; run dirs in `00_archive/aborted_2026-10-17/`) |
+| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h, 58.5 GB (a card alone) | LIVE since 09:13 MSK 10-18, 1st node card 0 (go 10-18). (The fix_t100 launches of 10-17 18:27 were stopped at t ≤ 2.85; run dirs in `00_archive/aborted_2026-10-17/`) |
 | ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 3.4 h | FINISHED t 150 (10-18 02:55 MSK), no NaN; throat R 18.409, +7e-5 over the run; packed, scratch pruned |
 | ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 5.4 h | FINISHED t 150 (10-18 04:52 MSK), no NaN; throat R 18.480, +2e-5 over the run; packed, scratch pruned |
-| ☐ | 0.9c triplet on L 128 with the far-zone fixes, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | ~10 h, ~51 GB est. | LIVE since 23:28 MSK 10-17, 1st node card 0 (go 10-17) |
+| ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 9.7 h, 51.1 GB | FINISHED t 150 (10-18 09:08 MSK), no NaN; throat R 18.478, +3e-5 over the run; packed, scratch pruned |
 | ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; rerun with both far-zone fixes as `_farfix_t150` |
 | ✗ | 0.9c triplet on L 64 `spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 ~20:07 at t 29.2 / 15.15 / 7.94, no NaN: the L 64 box is too small for the 0.9c throat (level 0 never converged; level 1 slid to order +0.7 by t 7); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned |
 | ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
@@ -175,31 +176,33 @@ constraint-solved seed before templating.
 
 ## LIVE
 
+| run | node/card | t | stop | speed | ETA (MSK) |
+|---|---|---|---|---|---|
+| 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 35.0 GB together | 5.9 / 3.0 @ 09:15 | 100 | 19.5 / 10.1 t/h | N 96 ≈ 14:05, N 128 ≈ 18:50 |
+| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 58.5 GB | 0.05 @ 09:14 | 100 | to be measured (4.3–5.1 t/h on the earlier N 192s) | ≈ 10-19 05:00–08:30 (est.) |
+
+0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
+dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
+`sommerfeld_relative_to_background = 1`, `constraint_norms_edge_cells = 3` on binary farfix 891d817d; ψ4 at R 10 14 18
+(each wholly on level 1, whose box reaches ±21.3 / 20 / 18.7 at N 96 / 128 / 192) and 30 (in the drive shell: reference
+only); full-box frames (zoom 64, centre 32) with the Weyl4 edge blanked; default MOTS search; no checkpoints. Start
+checks: preflights PASS, t 0 constraints identical to the fix_t100 launches (N 192 L2_Ham 1.5234e-3); level 0's
+per-level Ham at t 0 8.5e-11 / 3.5e-11 (+3.1); ψ4 header R 10 14 18 30; t 0 MOTS R 4.022; consumers keep pace (≈ 1 /
+1.5 min per plotfile against one every 3 / 6 min at N 96 / 128). `shift_advec_coeff = 0` has not been through a collapse
+yet (the N 96 reaches it at t ≈ 50–60).
+
+**The 0.9c farfix triplet** (FINISHED 10-18: N 128 02:55, N 192 04:52, N 256 09:08 MSK; packed, scratch pruned).
 Settings (go 10-17 ≈ 23:20): the stopped L 128 triplet's (records below) plus `shift_advec_coeff = 0`,
 `sommerfeld_relative_to_background = 1` and `constraint_norms_edge_cells = 3` on binary
 `main3d_farfix_891d817d_2026-10-17.ex`; consumer flags plus `--frames-blank-edge 2`; no checkpoints. Start checked
 23:30: preflights PASS, N 128 frame 0 identical to the stopped run's in all 14 fields (Weyl4 with the blank border),
 ψ4 header R 14 18 30 40 45, MOTS rows nan; level 0's per-level Ham at t 0 1.6e-9 / 5.4e-10 / 2.3e-10 (+2.7 / +3.0).
-
-| run | node/card | t | stop | speed | ETA (MSK) |
-|---|---|---|---|---|---|
-| 0.9c L 128 N 256 farfix `00_paper_runs/spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | 1st, card 0 (solo), 51.1 GB | 147.0 @ 10-18 08:56 | 150 | 15.5 t/h | ≈ 10-18 09:08 |
-| 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 34.4 GB together | 0 @ 08:56 | 100 | to be measured (~20 / ~10 t/h est.) | N 96 ≈ 14:00, N 128 ≈ 19:00 (est.) |
-
-0.2c settings (go 10-18 ≈ 08:50): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8, dt 0.02, stop 100, L 64,
-centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`, `sommerfeld_relative_to_background = 1`,
-`constraint_norms_edge_cells = 3` on binary farfix 891d817d; ψ4 at R 10 14 18 (each wholly on level 1, whose box
-reaches ±21.3 / 20 / 18.7 at N 96 / 128 / 192) and 30 (in the drive shell: reference only); full-box frames (zoom 64,
-centre 32) with the Weyl4 edge blanked; default MOTS search; no checkpoints. Preflights PASS, t 0 constraints identical
-to the fix_t100 launches; level 0's per-level Ham at t 0 8.5e-11 / 3.5e-11 (+3.1). `shift_advec_coeff = 0` has not
-been through a collapse yet (the N 96 reaches it at t ≈ 50–60).
-
-The 0.9c N 128 and N 192 finished clean at t 150 (02:55, 04:52; packed, scratch pruned).
-Per-level orders through t 143 (128→192 / 192→256), steady over the whole run: level 0 +2.3 to +3.3 / +2.5 to +3.2,
+Per-level orders t 1–150 (128→192 / 192→256), steady over the whole run: level 0 +2.3 to +3.7 / +2.5 to +3.4,
 level 1 +1.9 to +2.3 / +2.2 to +2.6, level 2 +1.8 to +2.5 / +1.9 to +2.8; level 3 Mom +3.2 to +4.3 / +0.8 to +3.9,
-Ham +1.7 to +3.4 / +1.0 to +4.4 (192→256 Ham3 ≈ +1.0–1.5 from t 100; level 3's boxes shrink with N). Throat areal
-radius flat (18.41 / 18.48 / 18.48, drift ≤ 7e-5); no MOTS; min lapse 0.083 → ~0.001 at the far-side puncture, the
-same at every N.
+Ham +1.7 to +3.4 / +1.0 to +4.4 (192→256 Ham3 ≈ +1.0–1.5 from t 100; level 3's boxes shrink with N). One late
+exception: 192→256 level-0 Mom falls from +2.9 at t 140 to +1.2 at t 150, as every member's level-0 Mom grows from
+t 140 (at ~5e-9). Throat areal radius flat (18.410 / 18.480 / 18.478, drift ≤ 7e-5); no MOTS; min lapse 0.083 →
+~0.001 at the far-side puncture, the same at every N.
 
 Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archive/aborted_2026-10-17/`):
 
@@ -224,8 +227,8 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
 
 ## NEXT
 
-- The 0.2c triplet rerun (templates `params_spin_hold_L64_{N96_,,N192_}ml3_J100_full_spdrv1_fix_t100.txt`, stop 100):
-  after the 0.9c triplet (decided 10-17: the 0.9c first, whole), or its N 192 on the second node's card (a session there).
+- The 0.2c triplet (LIVE): close out each member as it finishes; then its per-level convergence and the collapse τ
+  across N. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
 - Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB
   (prune needs a session there).
 
