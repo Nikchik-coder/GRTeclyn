@@ -177,7 +177,8 @@ triplets pass (decided 10-17).
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
 | ✗ | kicks 0.9c on L 128, N 256 `spin_kick_L128_ml3_ve090a_{l0_eps_p1e3, l0_eps_m1e3, l0_eps_p1e2, m2_eps_p1e3, m1_eps_p1e3}_spdrv1_sig04_farfix_t150` | fast + kick | 150 | 9.7 h each | CANCELLED 10-18 ≈ 17:15 MSK: the 0.9c is too far from physical spins; the kicks move to the low spins (next row) |
-| ☐ | kicks at low spin: the 0.2c and one more rung (in, out, bar), L 64, N 128, drive off | slow + kick | 100 | ~10 h, 23 GB each | PROPOSED 10-18: does a push bring the collapse earlier? Spins and the go open |
+| ☐ | kicks 0.2c on L 64, N 128 `spin_kick_L64_ml3_J100_full_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | PENDING (go 10-18, no checkpoints; card not chosen; templates ready): does a push bring the collapse earlier? |
+| ☐ | kicks 0.30c on L 64, N 128 `spin_kick_L64_ml3_ve030a_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | PENDING (go 10-18, no checkpoints; card not chosen; templates ready): the same at the black-hole spin limit (J/M² 1.03) |
 | ☐ | 0.95c stretch (optional) | fast | 150 | ~9 h | |
 
 Middle rungs (10-18): tables in `runs/spinning_p3/tables/` (script `p5_mid_tables.py`, the saved fam_a_r1 solutions
@@ -298,11 +299,14 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
   Start checks: frame 0 and the t 0 constraints against the old run's (L2_Ham 6.2029e-4), ψ4
   header R 14 18 30 40 45, the consumer's pace (a plotfile every ≈ 4 min).
 - CANCELLED 10-18 ≈ 17:15 MSK: the five 0.9c kicks (the 0.9c is too far from physical spins; their templates stay in
-  `templates/`). PROPOSED instead: kicks at the low spins, the 0.2c first (does a push bring the collapse earlier?)
-  and one more rung: a push in (l 0 −1e-3), out (l 0 +1e-3) and a bar (m 2 +1e-3) on each; the rung's L 64 N 128
-  params with the drive off plus the kick keys (η_c from the table: 0.2c 1.008, 0.30c 1.017, 0.40c 1.030, 0.46c
-  1.041), binary `main3d_kick_af28ad29_2026-10-18.ex`; ~10 h and 23 GB each, three per card. Waits for the spins
-  and the go. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
+  `templates/`). PENDING instead (go 10-18 ≈ 17:30 MSK, no checkpoints; cards not chosen): six kicks at the low
+  spins, the 0.2c and the 0.30c (the black-hole spin limit, J/M² 1.03), each a push in (l 0 −1e-3), out (l 0 +1e-3)
+  and a bar (m 2 +1e-3): does a push bring the collapse earlier? Templates ready
+  (`templates/params_spin_kick_L64_ml3_{J100_full,ve030a}_*_spdrv0_farfix_t100.txt`): the hold's L 64 N 128 params
+  with the drive off plus the kick keys (η_c 1.0079 / 1.0171 from the tables, width 0.5), binary
+  `main3d_kick_af28ad29_2026-10-18.ex`, `--subdir drainhole/00_paper_runs`, the hold's consumer flags; ~10 h and
+  23 GB each, three per card. Start checks: R_pol/R_eq at t 0 (+/−2e-3 for l 0), frame 0 against the hold's, ψ4
+  header R 10 14 18 30. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
 - Second node (one card): the 0.5c live since 09:48 MSK 10-18 (ETA ≈ 05:40 MSK 10-19); scratch clean (the 0.99c σ 0.4
   run's 7.1 GB of leftovers pruned 10-18).
 
