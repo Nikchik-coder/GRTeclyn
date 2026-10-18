@@ -286,8 +286,12 @@ void SpinningWormholeLevel::build_sponge_ref()
     m_sponge_ref.define(grids, dmap, state.nComp(), state.nGrowVect());
 
     const auto &arrs = m_sponge_ref.arrays();
-    const SpinningWormholeInitialData id(simParams().spinning_params,
-                                         background_table().view(),
+    // The reference is the stationary background: the kick is a t = 0
+    // perturbation, never a state to drive back to.
+    SpinningWormholeInitialData::params_t ref_params =
+        simParams().spinning_params;
+    ref_params.kick_amplitude = 0.0;
+    const SpinningWormholeInitialData id(ref_params, background_table().view(),
                                          Geom().CellSize(0));
 
     // The same fill as initData: analytic data on valid cells AND ghosts

@@ -8,7 +8,10 @@
 #include "SpinningWormholeInitialData.hpp"
 #include "SpongeZone.hpp"
 
+#include <AMReX_Print.H>
+
 #include <array>
+#include <cmath>
 #include <fstream>
 #include <string>
 
@@ -75,6 +78,23 @@ class SimulationParameters : public SimulationParametersBase
                 0.0);
         pp.load("spinning_seed_width", spinning_params.seed_width, 1.0);
         pp.load("spinning_seed_radius", spinning_params.seed_radius, 0.0);
+
+        // The kick (SpinningWormholeInitialData.hpp): the merger's declared
+        // conformal-factor shell on the throat, with an angular profile for
+        // the sectors the unkicked holds never seed.  m alone picks the
+        // sectoral (m, m); l = 2 alone the axisymmetric P2.  Default 0 =
+        // off, bit for bit.
+        pp.load("spinning_kick_amplitude", spinning_params.kick_amplitude,
+                0.0);
+        pp.load("spinning_kick_m", spinning_params.kick_m, 0);
+        pp.load("spinning_kick_l", spinning_params.kick_l,
+                spinning_params.kick_m);
+        pp.load("spinning_kick_width", spinning_params.kick_width, 0.0);
+        // No default centre: a shell off the throat leaves the throat alone.
+        // The throat's eta is r - eta0^2/(4 r) at throat_spheres.dat's
+        // r_throat.
+        kick_radius_given = pp.contains("spinning_kick_radius");
+        pp.load("spinning_kick_radius", spinning_params.kick_radius, 0.0);
 
         // Potential mass of the phantom scalar (0 = the Ellis-Bronnikov
         // massless field that supports the throat).
@@ -183,6 +203,35 @@ class SimulationParameters : public SimulationParametersBase
             amrex::Abort("spinning_seed_width must be > 0 when "
                          "spinning_seed_amplitude != 0");
         }
+        if (spinning_params.kick_amplitude != 0.0)
+        {
+            const int l = spinning_params.kick_l;
+            const int m = spinning_params.kick_m;
+            const bool axisymmetric = (m == 0 && (l == 0 || l == 2));
+            const bool sectoral     = (m >= 1 && m <= 8 && l == m);
+            if (!axisymmetric && !sectoral)
+            {
+                amrex::Abort("spinning_kick (l, m) must be (0, 0), (2, 0) or "
+                             "(m, m) with 1 <= m <= 8");
+            }
+            if (!kick_radius_given)
+            {
+                amrex::Abort("spinning_kick_radius must be given with the "
+                             "kick: the throat's eta, r - eta0^2/(4 r) at "
+                             "throat_spheres.dat's r_throat");
+            }
+            if (std::abs(spinning_params.kick_amplitude) >= 1.0)
+            {
+                amrex::Abort("|spinning_kick_amplitude| must be < 1 "
+                             "(psi_k > 0)");
+            }
+            amrex::Print() << "SpinningWormhole kick: eps "
+                           << spinning_params.kick_amplitude << ", (l, m) = ("
+                           << l << ", " << m << "), eta_c "
+                           << spinning_params.kick_radius << ", width "
+                           << spinning_params.kick_width
+                           << " (<= 0: eta0/4)\n";
+        }
         if (tagging_phi_weight < 0.0 || tagging_K_weight < 0.0)
         {
             amrex::Abort("tagging_phi_weight / tagging_K_weight must be >= 0");
@@ -207,6 +256,7 @@ class SimulationParameters : public SimulationParametersBase
     //! 1: specificEvalRHS re-fills each RK stage from StateData (see there)
     int rk_stage_refill = 1;
     SpinningWormholeInitialData::params_t spinning_params{};
+    bool kick_radius_given{};
     double phantom_mass{};
 
     SpinningThroatDiagnostics::params_t spinning_diag_params{};

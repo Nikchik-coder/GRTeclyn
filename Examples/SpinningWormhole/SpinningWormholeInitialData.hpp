@@ -50,6 +50,24 @@
  * A exp(-(eta - eta_c)^2 / w^2), seeds the radial modes; like the merger
  * seeds it violates the constraints at O(A) (constraint-solved seeds are a
  * planned upgrade, 2026-10: perturb Pi, then re-solve).
+ *
+ * The kick (2026-10-18; the stability study after Evstafyeva, Siemonsen &
+ * East, arXiv:2508.11527): the merger's single-throat seed carried over, a
+ * Gaussian shell in the conformal factor laid on the throat,
+ *
+ *   gamma_ij -> psi_k^4 gamma_ij,
+ *   psi_k = 1 + eps exp(-((eta - eta_c)/w)^2) S(theta, varphi),
+ *
+ * with S = 1 (l = 0: the throat's areal radius moves by ~2 eps with the sign
+ * of eps, the radial branch), P2(cos theta) (l = 2, m = 0), or
+ * sin^m(theta) cos(m varphi) = Re[(X + iY)^m] / r^m (l = m >= 1: m = 1 pushes
+ * the throat off centre, m = 2 is the bar, which the unkicked holds seed only
+ * at round-off).  K_ij goes with it as psi_k^-2 K_ij (A_ij -> psi_k^-6 A_ij),
+ * York's conformal scaling of a traceless K: with K = 0 and Pi = 0 the
+ * momentum constraint stays exact for any psi_k, and only the Hamiltonian
+ * constraint is violated, at O(eps) -- declared and measured, as with the
+ * merger seeds, not solved away.  h_ij, the lapse and the shift keep their
+ * background values (lapse types 1-3 read the kicked chi).
  */
 
 #ifndef SPINNINGWORMHOLEINITIALDATA_HPP_
@@ -81,6 +99,15 @@ class SpinningWormholeInitialData
         double seed_amplitude{0.0};
         double seed_width{1.0};
         double seed_radius{0.0};
+
+        //! The kick (psi_k above): signed amplitude eps, angular profile
+        //! (l, m) = (0, 0), (2, 0) or (m, m), shell centre eta_c and width
+        //! in eta (<= 0: eta0 / 4, the merger's a / 4).
+        double kick_amplitude{0.0};
+        int kick_l{0};
+        int kick_m{0};
+        double kick_radius{0.0};
+        double kick_width{0.0};
     };
 
     SpinningWormholeInitialData(const params_t &a_params,
@@ -116,6 +143,19 @@ class SpinningWormholeInitialData
         const double emf = std::exp(-bg.f); // e^{-f}
         const double nu  = bg.nu_bar * s2;
 
+        // The kick's conformal factor; exactly 1 when off, so unkicked data
+        // are the old ones bit for bit.
+        double psi_k = 1.0;
+        if (m_params.kick_amplitude != 0.0)
+        {
+            const double w = (m_params.kick_width > 0.0) ? m_params.kick_width
+                                                         : 0.25 * eta0;
+            const double d = (eta - m_params.kick_radius) / w;
+            psi_k += m_params.kick_amplitude * kick_profile(X, Y, mu, r) *
+                     std::exp(-d * d);
+        }
+        const double psi_k4 = psi_k * psi_k * psi_k * psi_k;
+
         // gamma_ij = a delta_ij + c (phihat phihat rho^2)_ij
         const double a_coef = emf * Om * Om * std::exp(nu);
         const double b_coef = emf * Om * Om;
@@ -135,8 +175,11 @@ class SpinningWormholeInitialData
         const double det_gamma = a_coef * a_coef * b_coef;
         const double chi       = amrex::max(std::pow(det_gamma, -1.0 / 3.0),
                                             1.0e-10);
+        // The kick scales the physical metric by psi_k^4: chi by psi_k^-4,
+        // h_ij unchanged.
+        const double chi_k = amrex::max(chi / psi_k4, 1.0e-10);
 
-        cell(i, j, k, c_chi) = static_cast<amrex::Real>(chi);
+        cell(i, j, k, c_chi) = static_cast<amrex::Real>(chi_k);
         cell(i, j, k, c_h11) = static_cast<amrex::Real>(chi * g_xx);
         cell(i, j, k, c_h12) = static_cast<amrex::Real>(chi * g_xy);
         cell(i, j, k, c_h13) = 0.0;
@@ -158,7 +201,8 @@ class SpinningWormholeInitialData
         const double m1 = -b_coef * Y;
         const double m2 = b_coef * X;
 
-        const double pre = -chi / (2.0 * alpha);
+        // A_ij = chi_k K_ij with the kicked K_ij = psi_k^-2 K_ij: psi_k^-6.
+        const double pre = -chi / (2.0 * alpha * psi_k4 * psi_k * psi_k);
         cell(i, j, k, c_K)   = 0.0;
         cell(i, j, k, c_A11) = static_cast<amrex::Real>(pre * 2.0 * w1 * m1);
         cell(i, j, k, c_A12) =
@@ -174,15 +218,15 @@ class SpinningWormholeInitialData
         double lapse = alpha;
         if (m_params.initial_lapse_type == 1)
         {
-            lapse = std::sqrt(chi);
+            lapse = std::sqrt(chi_k);
         }
         else if (m_params.initial_lapse_type == 2)
         {
-            lapse = 1.0 - 3.0 * std::log(chi);
+            lapse = 1.0 - 3.0 * std::log(chi_k);
         }
         else if (m_params.initial_lapse_type == 3)
         {
-            lapse = chi;
+            lapse = chi_k;
         }
         cell(i, j, k, c_lapse) =
             amrex::max(static_cast<amrex::Real>(lapse), amrex::Real(1.0e-10));
@@ -205,6 +249,29 @@ class SpinningWormholeInitialData
             Pi = m_params.seed_amplitude * std::exp(-d * d);
         }
         cell(i, j, k, c_Pi) = static_cast<amrex::Real>(Pi);
+    }
+
+    //! The kick's angular profile S: 1 (l = 0), P2(cos theta) (l = 2, m = 0),
+    //! or sin^m(theta) cos(m varphi) = Re[(X + iY)^m] / r^m (l = m >= 1),
+    //! regular on the axis.
+    AMREX_GPU_DEVICE AMREX_FORCE_INLINE double
+    kick_profile(double X, double Y, double mu, double r) const
+    {
+        if (m_params.kick_m == 0)
+        {
+            return (m_params.kick_l == 2) ? 1.5 * mu * mu - 0.5 : 1.0;
+        }
+        const double xh = X / r;
+        const double yh = Y / r;
+        double re       = 1.0;
+        double im       = 0.0;
+        for (int n = 0; n < m_params.kick_m; ++n)
+        {
+            const double t = re * xh - im * yh;
+            im             = re * yh + im * xh;
+            re             = t;
+        }
+        return re;
     }
 
   protected:

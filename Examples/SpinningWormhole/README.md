@@ -17,7 +17,7 @@ changes with the family.
 | file | responsibility |
 |---|---|
 | `RotatingBackgroundTable.hpp` | load + GPU-sample the `.spinbg` table |
-| `SpinningWormholeInitialData.hpp` | background → CCZ4 variables (conventions in its header) |
+| `SpinningWormholeInitialData.hpp` | background → CCZ4 variables, plus the declared Π seed and the throat kick (conventions in its header) |
 | `InitialGammas.hpp` | Γ̃^i from h_ij by FD (the metric is not conformally flat) |
 | `SpinningWormholeLevel.{hpp,cpp}` | initData, CCZ4+matter RHS, sponge, tagging, diagnostics |
 | `SpinningThroatDiagnostics.hpp` | R_eq(t), R_pol(t), min(−g_tt) → `throat_geometry.dat` |
