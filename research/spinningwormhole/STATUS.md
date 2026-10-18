@@ -172,7 +172,7 @@ triplets pass (decided 10-17).
 | ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | DIED 62.59 10-18 12:12 MSK: the collapse (trust 55) |
 | ✓ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 9.3 h | FINISHED 10-18 18:12 MSK: through the collapse to t 100, horizon settled, (2,0) wave out (trust 100) |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints), HELD 10-18 ≈ 18:40 MSK (nothing launches): the 1st node's card 1, idle since 18:12 |
+| ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t150` | slow | 150 | ~11 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints; stop 100 → 150 decided ≈ 19:20 so the burst passes R 30–45), HELD 10-18 ≈ 18:40 MSK (nothing launches): the 1st node's card 1, idle since 18:12 |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`; pre-fix, rerun next row) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0c static rerun on the fixed binary `static_hold_L64_ml3_spdrv0_farfix_t100` (the anchor's packed params + the numerics and far-zone fix keys, drive off; diffed) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18 ≈ 17:20 MSK, no checkpoints; card not chosen; template ready) |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
@@ -316,12 +316,14 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
 
 - The 0.2c triplet (N 96 and N 128 done, N 192 LIVE, ETA ≈ 10-19 05:00 MSK): close it out when it finishes; then the
   triplet's per-level convergence and the collapse τ across N.
-- QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints), HELD since 10-18 ≈ 18:40 MSK (nothing launches): the far-zone GW run `spin_hold_L128_ml3_J100_full_farfix_t100`,
+- QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints), HELD since 10-18 ≈ 18:40 MSK (nothing launches): the far-zone GW run `spin_hold_L128_ml3_J100_full_farfix_t150`,
   a rerun of the pre-fix `05_hold_L128/J100_full/spin_hold_L128_ml3_J100_full_t100` (through the collapse to t 100
   with 0 NaN, horizon at t ≈ 64, the R 30 burst; 7.5 h): its template plus the farfix keys (`exact_quartic_interp
   1`, `rk_stage_refill 0`, `shift_advec_coeff 0`, `sommerfeld_relative_to_background 1`, `constraint_norms_edge_cells
   3`) on binary farfix 891d817d; L 128, N 256, boxes ±16/8/4 (`tagging_L 64`, the L 64 N 128 grid inside), KO
-  sponge 48–64 with no drive, as the old run; slow recipe, stop 100, a plotfile every t 1. Consumer: the 0.9c
+  sponge 48–64 with no drive, as the old run; slow recipe, stop 150 (100 → 150 decided 10-18 ≈ 19:20: the L 64 N 128's
+  burst had not passed R 14–30 by t 100; ~11 h; `templates/params_spin_hold_L128_ml3_J100_full_farfix_t150.txt`, the
+  stop its only change), a plotfile every t 1. Consumer: the 0.9c
   N 256's flags with the default MOTS search and `--radii 14 18 30 40 45`, `GRTECLYN_FRAMES_BUFF_CAP=2048`,
   `--subdir drainhole/00_paper_runs`. Card: the first node's card 1 (idle since 18:12 MSK), on a new go.
   Start checks: frame 0 and the t 0 constraints against the old run's (L2_Ham 6.2029e-4), ψ4
