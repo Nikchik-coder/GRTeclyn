@@ -14,7 +14,9 @@ names fields whose linear scale is dominated by one loud feature, so the quiet
 structure elsewhere in the frame is visible too.  ``--t-max`` is the run's
 trust window: only frames at or before it set the scale, are redrawn and go
 into the movies (closeout.sh reads it from results/merger/trust_windows.tsv);
-later frames are kept untouched.
+later frames are kept untouched.  ``--crop`` with ``--out`` draws a second set
+over the central window only (a collapsing throat at a tenth of a full-box
+frame, 2026-10-18), its movies under the ``--out`` frames directory's parent.
 
 The cached slices are kept, so this can be re-run (with a hand-set scale, for
 instance) without re-simulating.  Never delete ``frames/_slice_cache/``: once
@@ -87,8 +89,25 @@ def main(argv: list[str] | None = None) -> int:
         "a 1e-4 signal on the finest level, and the movie came out blank until "
         "the speckle took over.  Values beyond the scale saturate.",
     )
+    ap.add_argument(
+        "--crop",
+        type=float,
+        metavar="HALF",
+        help="redraw only the central window |x - x0|, |y - y0| <= HALF of each "
+        "cached slice, its scale measured there; needs --out, so the full frames "
+        "stay as they are",
+    )
+    ap.add_argument(
+        "--out",
+        metavar="DIR",
+        help="the frames/ directory to draw into (default: in place).  With "
+        "--movies the movies go to DIR's parent/movies, e.g. <run>/core/frames "
+        "-> <run>/core/movies",
+    )
     ap.add_argument("-v", "--verbose", action="store_true")
     args = ap.parse_args(argv)
+    if args.crop is not None and not args.out:
+        ap.error("--crop needs --out: the cropped set never overwrites the full frames")
 
     sys.path.insert(
         0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "src")
@@ -133,6 +152,8 @@ def main(argv: list[str] | None = None) -> int:
         only=[f.strip() for f in args.only.split(",")] if args.only else None,
         skip=[f.strip() for f in args.skip.split(",")] if args.skip else None,
         t_max=args.t_max,
+        crop=args.crop,
+        draw_dir=os.path.abspath(args.out) if args.out else None,
     )
     if not used:
         print("nothing was redrawn", file=sys.stderr)
@@ -141,7 +162,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[rerender] {len(used)} series redrawn at a fixed scale{window}")
 
     if args.movies:
-        episode = os.path.dirname(frames_dir)
+        episode = os.path.dirname(os.path.abspath(args.out) if args.out else frames_dir)
         script = os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "make_movies.sh"
         )
