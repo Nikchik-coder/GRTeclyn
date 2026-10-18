@@ -179,7 +179,7 @@ constraint-solved seed before templating.
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
 | 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 35.0 GB together | 5.9 / 3.0 @ 09:15 | 100 | 19.5 / 10.1 t/h | N 96 ≈ 14:05, N 128 ≈ 18:50 |
-| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 58.5 GB | 0.05 @ 09:14 | 100 | to be measured (4.3–5.1 t/h on the earlier N 192s) | ≈ 10-19 05:00–08:30 (est.) |
+| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 1.0 @ 09:25 | 100 | 5.1 t/h | ≈ 10-19 04:55 |
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
@@ -187,8 +187,9 @@ dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_a
 (each wholly on level 1, whose box reaches ±21.3 / 20 / 18.7 at N 96 / 128 / 192) and 30 (in the drive shell: reference
 only); full-box frames (zoom 64, centre 32) with the Weyl4 edge blanked; default MOTS search; no checkpoints. Start
 checks: preflights PASS, t 0 constraints identical to the fix_t100 launches (N 192 L2_Ham 1.5234e-3); level 0's
-per-level Ham at t 0 8.5e-11 / 3.5e-11 (+3.1); ψ4 header R 10 14 18 30; t 0 MOTS R 4.022; consumers keep pace (≈ 1 /
-1.5 min per plotfile against one every 3 / 6 min at N 96 / 128). `shift_advec_coeff = 0` has not been through a collapse
+per-level Ham at t 0 8.5e-11 / 3.5e-11 (+3.1); ψ4 header R 10 14 18 30; t 0 MOTS R 4.022 / 4.022 / 4.023; consumers
+keep pace (≈ 1 / 1.5 / 2.5 min per plotfile against one every 3 / 6 / 12 min at N 96 / 128 / 192; the N 192's t 0
+pass, a cold MOTS search, 9.4 min). `shift_advec_coeff = 0` has not been through a collapse
 yet (the N 96 reaches it at t ≈ 50–60).
 
 **The 0.9c farfix triplet** (FINISHED 10-18: N 128 02:55, N 192 04:52, N 256 09:08 MSK; packed, scratch pruned).
