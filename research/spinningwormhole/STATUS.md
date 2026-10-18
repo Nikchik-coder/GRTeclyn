@@ -138,7 +138,10 @@ run dirs):
 ## PAPER-RUN SETTINGS (decided 2026-10-16; fix keys 2026-10-17)
 
 - Grid: L 64, N 128, max_level 3 (dx 0.5 → 0.0625), sponge 24–32 (KO) + `sponge_drive_strength = 1.0`
-  (a physics-neutral absorber; makes L64 viable past t ≈ 64), dt_multiplier 0.02.
+  (a physics-neutral absorber; makes L64 viable past t ≈ 64), dt_multiplier 0.02. **Since 10-18 every new run
+  has the drive off** (`sponge_drive_strength = 0`, the KO sponge kept): the sponge test (`10_sponge_test`) found the
+  drive making the face junk once a wave reaches the shell, with the throat unchanged. The runs made with it stand:
+  their throats and ψ4 inside R 18 are the same, and the far-zone waves come from the big box (no drive).
 - **SLOW (≤ 0.5c)**: σ 0.1, min_chi 1e-8, stop 85 (brackets the 78–85 knee; quotes t ≤ 80). Everything that
   collapses does so by t ≈ 64, and the throat stays unclamped for the quoted τ.
 - **FAST (0.7c+)**: σ 0.4, min_chi 1e-4, stop 150. The claim is long-time stability; σ 0.1 recipes NaN
@@ -516,7 +519,8 @@ What the ledger says (pre-fix):
   solve.
 - 10-18: the 0.7c wiped (hold, slow-recipe extra, kicks): above the Kerr bound (J/M² 1.11), not astrophysical; the
   0.9c stays the one stable anchor. The ladder fills 0.2c–0.5c instead, against Azad et al. (FOR THE ARTICLE).
-- 10-18: the drive off for new L 64 runs (the sponge test: the drive made the face junk; the throat is the same).
+- 10-18: the drive off for all new runs (the sponge test: the drive made the face junk; the throat is the same).
+  No reruns for it: the runs with the drive keep their throats and their ψ4 inside R 18.
   The 0.9c kicks dropped (too far from physical spins): the kick study moves to the low spins, the 0.2c first.
 
 ## DONE
