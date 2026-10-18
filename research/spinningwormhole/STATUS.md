@@ -144,29 +144,27 @@ run dirs):
   is a triplet member or licensed by one; a growth is physical only if its τ converges to a nonzero value,
   the finest-level constraints converge while it grows, and the throat's areal radius or MOTS grows with it.
 
-## PAPER RUN MATRIX — reset 2026-10-17: all NOT STARTED
+## PAPER RUN MATRIX — fresh campaign since 2026-10-17
 
 New runs launch with `--subdir drainhole/00_paper_runs`. The triplets first; no kick run before both
 triplets pass (decided 10-17).
 
 | ✓ | run | recipe | stop | cost | status |
 |---|---|---|---|---|---|
-| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~5 h | LIVE since 08:56 MSK 10-18, 1st node card 1 (go 10-18) |
-| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE since 08:56 MSK 10-18, 1st node card 1 (go 10-18) |
-| ☐ | 0.2c triplet on L 64 with the far-zone fixes, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h, 59.7 GB (a card alone) | LIVE since 09:13 MSK 10-18, 1st node card 0 (go 10-18). (The fix_t100 launches of 10-17 18:27 were stopped at t ≤ 2.85; run dirs in `00_archive/aborted_2026-10-17/`) |
-| ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 3.4 h | FINISHED t 150 (10-18 02:55 MSK), no NaN; throat R 18.409, +7e-5 over the run; packed, scratch pruned |
-| ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 5.4 h | FINISHED t 150 (10-18 04:52 MSK), no NaN; throat R 18.480, +2e-5 over the run; packed, scratch pruned |
-| ✓ | 0.9c triplet on L 128 with the far-zone fixes, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 9.7 h, 51.1 GB | FINISHED t 150 (10-18 09:08 MSK), no NaN; throat R 18.478, +3e-5 over the run; packed, scratch pruned |
-| ✗ | 0.9c triplet on L 128 `spin_hold_L128_{N128_,N192_,}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 21:09 MSK at t 33.95 / 16.34 / 11.99, no NaN: far-zone junk the same at every N (FAR-ZONE JUNK); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned; rerun with both far-zone fixes as `_farfix_t150` |
-| ✗ | 0.9c triplet on L 64 `spin_hold_L64_{N96_,,N192_}ml3_ve090a_spdrv1_sig04_fix_t150` | fast | 150 | – | STOPPED by decision 10-17 ~20:07 at t 29.2 / 15.15 / 7.94, no NaN: the L 64 box is too small for the 0.9c throat (level 0 never converged; level 1 slid to order +0.7 by t 7); run dirs in `00_archive/aborted_2026-10-17/`, scratch pruned |
-| ☐ | 0c static anchor | slow | 85 | ~9 h | NOT STARTED |
-| ☐ | 0.5c | slow | 85 | ~9 h | NOT STARTED |
-| ☐ | 0.7c | fast | 150 | ~9 h | NOT STARTED |
-| ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | NOT STARTED |
-| ☐ | 0.99c | fast | 150 | ~9 h | NOT STARTED |
-| ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | NOT STARTED |
-| ☐ | kick 0.9c A1, kick 0.9c A2 (×10), kick 0.7c A1 | fast + seed | 150 | ~9 h each | BLOCKED until both triplets pass; templates not built |
-| ☐ | 0.95c stretch | fast | 150 | ~9 h | optional, only if the 0.99c curve wants it |
+| ✓ | 0.9c triplet on L 128, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 3.4 h | FINISHED 10-18 02:55 MSK |
+| ✓ | 0.9c triplet on L 128, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 5.4 h | FINISHED 10-18 04:52 MSK |
+| ✓ | 0.9c triplet on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 9.7 h | FINISHED 10-18 09:08 MSK |
+| ☐ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~5 h | LIVE |
+| ☐ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE |
+| ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
+| ☐ | 0c static anchor | slow | 85 | ~9 h | |
+| ☐ | 0.5c | slow | 85 | ~9 h | |
+| ☐ | 0.7c | fast | 150 | ~9 h | |
+| ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | |
+| ☐ | 0.99c | fast | 150 | ~9 h | |
+| ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
+| ☐ | kick 0.9c A1, kick 0.9c A2 (×10), kick 0.7c A1 | fast + seed | 150 | ~9 h each | |
+| ☐ | 0.95c stretch (optional) | fast | 150 | ~9 h | |
 
 Kick study (planned 10-16): as Evstafyeva–Siemonsen–East, the stable 0.9c (A1 = the merger seed's scale,
 A2 = ×10) and 0.7c (A1) with the constraint-compatible Gaussian scalar seed (`spinning_seed_amplitude/width/
