@@ -170,7 +170,7 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints): the first empty card, the 1st node's card 1 after the 0.2c N 128 and the sponge tests (≈ 20:15 MSK, sooner if the N 128 dies in its collapse) |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | middle rungs 0.3c / 0.4c / 0.45c on L 64, N 128 (Azad's second-order τ 6.1 / 8.0 / 13) | slow | 100 | ~10 h each | PLANNED 10-18: family (a) tables to make (none between ve020 and ve050); go to ask |
+| ☐ | middle rungs 0.3c / 0.4c / 0.45c on L 64, N 128 (Azad's second-order τ 6.1 / 8.0 / 13) | slow | 100 | ~10 h each | PLANNED 10-18: tables ready (`spinning_p3/tables/fam_a_ve030/040/045.spinbg`: v_e 0.304 / 0.395 / 0.456, J 1.61 / 2.41 / 3.15, f error ≤ 1e-7; script `p5_mid_tables.py`); templates after the sponge test; go to ask |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
 | ☐ | kicks 0.9c on L 128, N 256 `spin_kick_L128_ml3_ve090a_{l0_eps_p1e3, l0_eps_m1e3, l0_eps_p1e2, m2_eps_p1e3, m1_eps_p1e3}_spdrv1_sig04_farfix_t150` | fast + kick | 150 | 9.7 h each | QUEUED (go 10-18, no checkpoints): from ≈ 05:00 MSK 10-19, two at a time; t 0 probes PASS |
@@ -365,6 +365,10 @@ mode ω_I = ω_I⁽⁰⁾ + J² Δω_I⁽²⁾ (r₀ = 1) for our drainhole (η�
 would move the threshold to J ≈ 2.6, v_e ≈ 0.41c, in line with their conjecture that the full instability ends
 below the second-order value (≈ 30 % of the extremal J/A = 1/8π). On their J/A scale (area from the t 0 MOTS):
 0.2c 12 %, 0.5c 34 %, 0.9c 81 %. Astrophysically only J/M² < 1 is realistic: v_e < 0.29c on this family.
+Caveat (10-18): our τ is a coordinate-time fit over a window, not their mode, and it drifts with the window even
+for the static throat: 4.1 / 5.1 / 5.8 for deficits 0.1–1 / 0.3–3 / 1–30 % (the 0.2c 4.7 / 5.8 / 6.8, the same in
+the farfix N 128), bracketing their 5.13; the spin's slowing grows as the throat shrinks (+13 % early, +17 % late,
+against their +6.6 %). Like for like needs the linear mode in Killing time, e.g. small l 0 kicks of both holds.
 
 **The rotating collapse emits a real gravitational wave (10-16).** At R = 30 the 0.21c collapse
 (`spin_hold_L128_ml3_J100_full_t100`) shows an l = 2, m = 0 burst |ψ₄| = 3.0e-2 arriving at t = 81 (horizon
