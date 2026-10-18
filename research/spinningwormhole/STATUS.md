@@ -157,7 +157,7 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~5 h | LIVE |
 | ☐ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | 0c static anchor | slow | 85 | ~9 h | |
+| ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0.5c | slow | 85 | ~9 h | |
 | ☐ | 0.7c | fast | 150 | ~9 h | |
 | ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | |
