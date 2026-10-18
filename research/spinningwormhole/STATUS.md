@@ -167,7 +167,7 @@ triplets pass (decided 10-17).
 | ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | DIED 62.59 10-18 12:12 MSK: the collapse (trust 55) |
 | ☐ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | PENDING (planned 10-18): go and checkpoints to ask; template ready |
+| ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints): the first empty card, the 1st node's card 1 after the 0.2c N 128 and the sponge tests (≈ 20:15 MSK, sooner if the N 128 dies in its collapse) |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
 | ☐ | 0.7c on L 64, N 192 `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` | fast | 150 | ~30 h | PENDING: 1st node card 1 after the L 128 0.2c (≈ 10-19 04:00 MSK) |
@@ -275,7 +275,7 @@ start checks 13:00: preflights PASS, t 0 L2_Ham/Mom identical to the N 96's (3.4
 
 - The 0.2c triplet (N 96 done, N 128 + N 192 LIVE): close out each member as it finishes; then its per-level
   convergence and the collapse τ across N.
-- PENDING (planned 10-18; go and checkpoints to ask): the far-zone GW run `spin_hold_L128_ml3_J100_full_farfix_t100`,
+- QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints; on the first empty card): the far-zone GW run `spin_hold_L128_ml3_J100_full_farfix_t100`,
   a rerun of the pre-fix `05_hold_L128/J100_full/spin_hold_L128_ml3_J100_full_t100` (through the collapse to t 100
   with 0 NaN, horizon at t ≈ 64, the R 30 burst; 7.5 h): its template plus the farfix keys (`exact_quartic_interp
   1`, `rk_stage_refill 0`, `shift_advec_coeff 0`, `sommerfeld_relative_to_background 1`, `constraint_norms_edge_cells
