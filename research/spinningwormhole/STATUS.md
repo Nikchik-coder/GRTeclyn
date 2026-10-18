@@ -159,7 +159,7 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | 0.7c on L 64, N 192 `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` | fast | 150 | ~30 h | |
+| ☐ | 0.7c on L 64, N 192 `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` | fast | 150 | ~30 h | PENDING: 1st node card 1 once the 0.2c N 128 ends (≈ 18:49 MSK 10-18) |
 | ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
@@ -234,9 +234,11 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
 
 - The 0.2c triplet (LIVE): close out each member as it finishes; then its per-level convergence and the collapse τ
   across N. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
-- Second node (one card): the 0.5c live since 09:48 MSK 10-18; the 0.7c next on that card (template
-  `params_spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150.txt`, stop 150, ~30 h), on the go. The 0.99c σ 0.4
-  run's 7.1 GB of scratch leftovers pruned 10-18.
+- PENDING: the 0.7c `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` (template ready; ~60 GB, ~30 h to t 150)
+  on the first node's card 1 once the 0.2c N 128 ends (≈ 18:49 MSK 10-18; with the N 128 on it the card has no room,
+  24 + 60 GB). Same launch line as the 0.5c with `--gpu 1`; needs a session on the first node.
+- Second node (one card): the 0.5c live since 09:48 MSK 10-18 (ETA ≈ 05:40 MSK 10-19); scratch clean (the 0.99c σ 0.4
+  run's 7.1 GB of leftovers pruned 10-18).
 
 ## MAIN RESULTS SO FAR — PRE-FIX (requote every evolution number from the reruns)
 
