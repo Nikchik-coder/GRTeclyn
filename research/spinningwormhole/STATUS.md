@@ -170,11 +170,16 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | QUEUED (go 10-18 ≈ 16:20 MSK, no checkpoints): the first empty card, the 1st node's card 1 after the 0.2c N 128 and the sponge tests (≈ 20:15 MSK, sooner if the N 128 dies in its collapse) |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | middle rungs 0.3c / 0.4c / 0.45c on L 64, N 128 (Azad's second-order τ 6.1 / 8.0 / 13) | slow | 100 | ~10 h each | PLANNED 10-18: tables ready (`spinning_p3/tables/fam_a_ve030/040/045.spinbg`: v_e 0.304 / 0.395 / 0.456, J 1.61 / 2.41 / 3.15, f error ≤ 1e-7; script `p5_mid_tables.py`); templates after the sponge test; go to ask |
+| ☐ | 0.30c on L 64, N 128 `spin_hold_L64_ml3_ve030a_spdrv1_farfix_t100` (table `fam_a_ve030`: v_e 0.304, J 1.61; Azad's τ 6.1) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen) |
+| ☐ | 0.40c on L 64, N 128 `spin_hold_L64_ml3_ve040a_spdrv1_farfix_t100` (table `fam_a_ve040`: v_e 0.395, J 2.41; Azad's τ 8.0) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen) |
+| ☐ | 0.46c on L 64, N 128 `spin_hold_L64_ml3_ve045a_spdrv1_farfix_t100` (table `fam_a_ve045`: v_e 0.456, J 3.15; Azad's τ 13) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen) |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
 | ☐ | kicks 0.9c on L 128, N 256 `spin_kick_L128_ml3_ve090a_{l0_eps_p1e3, l0_eps_m1e3, l0_eps_p1e2, m2_eps_p1e3, m1_eps_p1e3}_spdrv1_sig04_farfix_t150` | fast + kick | 150 | 9.7 h each | QUEUED (go 10-18, no checkpoints): from ≈ 05:00 MSK 10-19, two at a time; t 0 probes PASS |
 | ☐ | 0.95c stretch (optional) | fast | 150 | ~9 h | |
+
+Middle rungs (10-18): tables in `runs/spinning_p3/tables/` (script `p5_mid_tables.py`, the saved fam_a_r1 solutions
+nearest 0.3/0.4/0.45, f error ≤ 1e-7); templates = the paper 0.2c's with the table swapped, after the sponge test.
 
 Kick study (planned 10-16; the kick built 10-18): as Evstafyeva–Siemonsen–East (arXiv:2508.11527), kicked
 holds of the stable 0.9c (A1 = 1e-3, the merger's smallest seed arm; A2 = ×10), fast recipe,
