@@ -178,7 +178,7 @@ constraint-solved seed before templating.
 |---|---|---|---|---|---|
 | 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 35.0 GB together | 10.6 / 5.5 @ 09:29 | 100 | 19.3 / 10.1 t/h | N 96 ≈ 14:05, N 128 ≈ 18:50 |
 | 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 1.3 @ 09:29 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
-| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo) | 0 @ 09:48 | 100 | to be measured (~5 t/h est.) | ≈ 10-19 06:00 (est.) |
+| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 0.57 @ 09:56 | 100 | 5.0 t/h | ≈ 10-19 05:40 |
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
@@ -194,7 +194,9 @@ yet (the N 96 reaches it at t ≈ 50–60).
 0.5c settings (go 10-18 ≈ 09:45, second node): the archived pre-fix 0.5c `spin_hold_L64_ml3_ve050a_spdrv1_t150`
 (slow recipe: σ 0.1, min_chi 1e-8, dt 0.02, sponge 24–32 with drive 1.0) with N 128 → 192 and stop 150 → 100, plus
 the far-zone and numerics fixes; otherwise the live 0.2c N 192's template with the ve050a table (M_ADM 1.86, R_A
-4.97: the box face at 17 M). Same binary and consumer flags as the 0.2c; no checkpoints.
+4.97: the box face at 17 M). Same binary and consumer flags as the 0.2c; no checkpoints. Start checks: preflight PASS,
+t 0 L2_Ham 2.32e-3; ψ4 header R 10 14 18 30; t 0 MOTS R 4.962 (table R_A 4.966); first consumer pass ≤ 7 min against
+one plotfile every 12 min.
 
 **The 0.9c farfix triplet** (FINISHED 10-18: N 128 02:55, N 192 04:52, N 256 09:08 MSK; packed, scratch pruned).
 Settings (go 10-17 ≈ 23:20): the stopped L 128 triplet's (records below) plus `shift_advec_coeff = 0`,
