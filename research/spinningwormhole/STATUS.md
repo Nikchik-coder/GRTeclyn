@@ -12,6 +12,16 @@ done). Code: `Examples/SpinningWormhole/` + `grteclyn-wrapper/scripts/campaigns/
 Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
 `launch.sh --subdir <family>/<NN_study>`; pack with `research/spinningwormhole/pack_run.sh <family>/<NN_study> <run dir>`.
 
+## THE PAPER'S CLAIMS (decided 2026-10-18)
+
+1. **Stability**: the fast-spinning throat is stable (the 0.9c farfix triplet holds to t 150; the kicks test it).
+2. **Stability grows with spin**: the collapse slows as the spin grows and the fast throats hold (the ladder static →
+   0.2c → 0.5c → 0.7c → 0.9c; onset times and τ from the reruns).
+3. **A GW signal with no nonspherical perturbation**: the rotating collapse radiates (l 2, m 0) from unperturbed data,
+   where the static wormhole needed a nonspherical perturbation to radiate at all. The far-zone waveform comes from
+   one big-box run, the 0.2c on L 128 N 256 (PAPER RUN MATRIX); the L 64 runs' ψ4 at R 14/18 carries face junk
+   from t ≈ 45 (below).
+
 ## STATE (2026-10-18 ≈ 13:05 MSK)
 
 **Every run before 10-17 carries three numerics bugs, all found and fixed 10-17** (how: CONVERGENCE below),
@@ -157,9 +167,10 @@ triplets pass (decided 10-17).
 | ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | DIED 62.59 10-18 12:12 MSK: the collapse (trust 55) |
 | ☐ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
+| ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t100` | slow | 100 | ~7.5 h, 51 GB | PENDING (planned 10-18): go and checkpoints to ask; template ready |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | 0.7c on L 64, N 192 `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` | fast | 150 | ~30 h | PENDING: 1st node card 1 once the 0.2c N 128 ends (≈ 18:49 MSK 10-18) |
+| ☐ | 0.7c on L 64, N 192 `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` | fast | 150 | ~30 h | PENDING: 1st node card 1 after the L 128 0.2c (≈ 10-19 04:00 MSK) |
 | ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
@@ -187,11 +198,11 @@ its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.2c L 64 N 128 farfix `00_paper_runs/spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 22.9 GB (+ the two sponge tests) | 49.3 @ 13:00 | 100 | 12.2 t/h alone, slower shared | ≈ 19:00–21:00 |
-| sponge test, drive off `10_sponge_test/spin_hold_L64_N96_ml3_J100_full_spdrv0_farfix_t055` | 1st, card 1, 12 GB | 0 @ 13:00 | 55 | ~10 t/h shared | ≈ 18:30 |
-| sponge test, wider absorber `10_sponge_test/spin_hold_L64_N96_ml3_J100_full_spdrv1w20p2_farfix_t055` | 1st, card 1, 12 GB | 0 @ 13:00 | 55 | ~10 t/h shared | ≈ 18:30 |
-| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 19.1 @ 13:00 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
-| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 15.9 @ 13:00 | 100 | 5.0 t/h | ≈ 10-19 05:45 |
+| 0.2c L 64 N 128 farfix `00_paper_runs/spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 22.9 GB (+ the two sponge tests) | 71.1 @ 16:07 | 100 | 7.0 t/h shared | ≈ 20:15 (or its collapse death) |
+| sponge test, drive off `10_sponge_test/spin_hold_L64_N96_ml3_J100_full_spdrv0_farfix_t055` | 1st, card 1, 12 GB | 42.5 @ 16:07 | 55 | 13.6 t/h shared | ≈ 17:00 |
+| sponge test, wider absorber `10_sponge_test/spin_hold_L64_N96_ml3_J100_full_spdrv1w20p2_farfix_t055` | 1st, card 1, 12 GB | 40.6 @ 16:07 | 55 | 13.0 t/h shared | ≈ 17:15 |
+| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 34.9 @ 16:07 | 100 | 5.1 t/h | ≈ 10-19 04:55 |
+| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 31.5 @ 16:07 | 100 | 5.0 t/h | ≈ 10-19 05:50 |
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
@@ -264,6 +275,16 @@ start checks 13:00: preflights PASS, t 0 L2_Ham/Mom identical to the N 96's (3.4
 
 - The 0.2c triplet (N 96 done, N 128 + N 192 LIVE): close out each member as it finishes; then its per-level
   convergence and the collapse τ across N.
+- PENDING (planned 10-18; go and checkpoints to ask): the far-zone GW run `spin_hold_L128_ml3_J100_full_farfix_t100`,
+  a rerun of the pre-fix `05_hold_L128/J100_full/spin_hold_L128_ml3_J100_full_t100` (through the collapse to t 100
+  with 0 NaN, horizon at t ≈ 64, the R 30 burst; 7.5 h): its template plus the farfix keys (`exact_quartic_interp
+  1`, `rk_stage_refill 0`, `shift_advec_coeff 0`, `sommerfeld_relative_to_background 1`, `constraint_norms_edge_cells
+  3`) on binary farfix 891d817d; L 128, N 256, boxes ±16/8/4 (`tagging_L 64`, the L 64 N 128 grid inside), KO
+  sponge 48–64 with no drive, as the old run; slow recipe, stop 100, a plotfile every t 1. Consumer: the 0.9c
+  N 256's flags with the default MOTS search and `--radii 14 18 30 40 45`, `GRTECLYN_FRAMES_BUFF_CAP=2048`,
+  `--subdir drainhole/00_paper_runs`. Card: the first node's card 1 once the 0.2c N 128 ends (≈ 20:15 MSK),
+  before the 0.7c. Start checks: frame 0 and the t 0 constraints against the old run's (L2_Ham 6.2029e-4), ψ4
+  header R 14 18 30 40 45, the consumer's pace (a plotfile every ≈ 4 min).
 - QUEUED (go 10-18, no checkpoints): the five 0.9c kicks (templates ready in `templates/`: the paper 0.9c's
   params plus the kick keys; binary `main3d_kick_af28ad29_2026-10-18.ex`; the N 256's launch line with its
   consumer flags, `--subdir drainhole/00_paper_runs`; 51 GB, 9.7 h each). Order: l 0 +1e-3, m 2, l 0 −1e-3, m 1,
@@ -271,8 +292,8 @@ start checks 13:00: preflights PASS, t 0 L2_Ham/Mom identical to the N 96's (3.4
   two at a time, all done ≈ 10-20 11:00 MSK. Start checks: R_pol/R_eq at t 0 as the probes, frame 0 against the
   hold's, ψ4 header R 14 18 30 40 45. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
 - PENDING: the 0.7c `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` (template ready; ~60 GB, ~30 h to t 150)
-  on the first node's card 1 once the 0.2c N 128 ends (≈ 18:49 MSK 10-18; with the N 128 on it the card has no room,
-  24 + 60 GB). Same launch line as the 0.5c with `--gpu 1`; needs a session on the first node.
+  on the first node's card 1 after the L 128 0.2c (≈ 10-19 04:00 MSK; neither fits beside the N 128, 24 + 51/60 GB).
+  Same launch line as the 0.5c with `--gpu 1`; needs a session on the first node.
 - Second node (one card): the 0.5c live since 09:48 MSK 10-18 (ETA ≈ 05:40 MSK 10-19); scratch clean (the 0.99c σ 0.4
   run's 7.1 GB of leftovers pruned 10-18).
 
@@ -346,7 +367,7 @@ renderer fixed 10-17 ≈ 13:00 MSK; the data are unaffected).
 formation t ≈ 64 plus ~17 of light travel). The static collapse at the same radius reads 6.0e-5, the
 numerical floor (spherical collapse cannot radiate): the spinning burst is 500× above it and 10⁴× above the
 run's quiet-phase noise; B1 (0.5c, no collapse) stays quiet. Measurable per spin alongside τ
-(`psi4_mode_l2m0.dat` in every pack). Later: a few larger-box runs to show it is not near-zone extraction.
+(`psi4_mode_l2m0.dat` in every pack). Its farfix re-measurement is the L 128 N 256 0.2c (claim 3, PAPER RUN MATRIX).
 
 **The exotic-matter trend is the physics behind the ladder (10-15): plot τ(v_e) against D/M(v_e).** From
 the family (a) tables (D = the phantom scalar charge; `results/spinningwormhole/solutions/<leg>/<leg>.tsv`):
