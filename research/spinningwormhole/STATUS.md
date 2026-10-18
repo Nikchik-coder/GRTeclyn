@@ -158,8 +158,8 @@ triplets pass (decided 10-17).
 | ☐ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~10 h | LIVE |
 | ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
-| ☐ | 0.5c | slow | 85 | ~9 h | |
-| ☐ | 0.7c | fast | 150 | ~9 h | |
+| ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
+| ☐ | 0.7c on L 64, N 192 `spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150` | fast | 150 | ~30 h | |
 | ☐ | 0.7c on the slow recipe (extra) | slow | 100 | ~9 h | |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
@@ -178,6 +178,7 @@ constraint-solved seed before templating.
 |---|---|---|---|---|---|
 | 0.2c L 64 N 96 + N 128 farfix `00_paper_runs/spin_hold_L64_{N96_,}ml3_J100_full_spdrv1_farfix_t100` | 1st, card 1, 35.0 GB together | 10.6 / 5.5 @ 09:29 | 100 | 19.3 / 10.1 t/h | N 96 ≈ 14:05, N 128 ≈ 18:50 |
 | 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 1.3 @ 09:29 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
+| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo) | 0 @ 09:48 | 100 | to be measured (~5 t/h est.) | ≈ 10-19 06:00 (est.) |
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
@@ -189,6 +190,11 @@ per-level Ham at t 0 8.5e-11 / 3.5e-11 (+3.1); ψ4 header R 10 14 18 30; t 0 MOT
 keep pace (≈ 1 / 1.5 / 2.5 min per plotfile against one every 3 / 6 / 12 min at N 96 / 128 / 192; the N 192's t 0
 pass, a cold MOTS search, 9.4 min). `shift_advec_coeff = 0` has not been through a collapse
 yet (the N 96 reaches it at t ≈ 50–60).
+
+0.5c settings (go 10-18 ≈ 09:45, second node): the archived pre-fix 0.5c `spin_hold_L64_ml3_ve050a_spdrv1_t150`
+(slow recipe: σ 0.1, min_chi 1e-8, dt 0.02, sponge 24–32 with drive 1.0) with N 128 → 192 and stop 150 → 100, plus
+the far-zone and numerics fixes; otherwise the live 0.2c N 192's template with the ve050a table (M_ADM 1.86, R_A
+4.97: the box face at 17 M). Same binary and consumer flags as the 0.2c; no checkpoints.
 
 **The 0.9c farfix triplet** (FINISHED 10-18: N 128 02:55, N 192 04:52, N 256 09:08 MSK; packed, scratch pruned).
 Settings (go 10-17 ≈ 23:20): the stopped L 128 triplet's (records below) plus `shift_advec_coeff = 0`,
@@ -228,8 +234,9 @@ Records of the two 0.9c triplets stopped 10-17 (run dirs in `drainhole/00_archiv
 
 - The 0.2c triplet (LIVE): close out each member as it finishes; then its per-level convergence and the collapse τ
   across N. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
-- Second node (one card): idle since ≈ 12:19 MSK; its scratch still holds the 0.99c σ 0.4 run's 7.1 GB
-  (prune needs a session there).
+- Second node (one card): the 0.5c live since 09:48 MSK 10-18; the 0.7c next on that card (template
+  `params_spin_hold_L64_N192_ml3_ve070a_spdrv1_sig04_farfix_t150.txt`, stop 150, ~30 h), on the go. The 0.99c σ 0.4
+  run's 7.1 GB of scratch leftovers pruned 10-18.
 
 ## MAIN RESULTS SO FAR — PRE-FIX (requote every evolution number from the reruns)
 
