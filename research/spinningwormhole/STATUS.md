@@ -79,20 +79,24 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 | run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 2nd / 0, with the 0.40c t 150 | 13.4 @ 20:09 | 130 | 9.1 t/h | 10-20 ≈ 08:50 |
-| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 2nd / 0, with the 0.30c t 130 | 13.3 @ 20:09 | 150 | 9.1 t/h (20 alone after the 0.30c) | 10-20 ≈ 09:55 |
-| 0.6c `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.7c | 21.0 @ 20:09 | 150 | 9.1 t/h | 10-20 ≈ 10:20 |
-| 0.7c `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.6c | 16.7 @ 20:09 | 150 | 9.1 t/h | 10-20 ≈ 10:35 |
-| 0.5c to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 1st / 1, with the 0.46c t 150 | 6.1 @ 20:12 | 150 | 20.5 t/h alone, ≈ 9.2 shared | 10-20 ≈ 11:50 |
-| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 1st / 1, with the 0.5c t 150 | 0 @ 20:15 | 150 | ≈ 9.2 t/h | 10-20 ≈ 12:10 |
+| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 2nd / 0, with the 0.40c t 150 | 15.5 @ 20:23 | 130 | 9.1 t/h | 10-20 ≈ 08:55 |
+| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 2nd / 0, with the 0.30c t 130 | 15.4 @ 20:23 | 150 | 9.1 t/h (20 alone after the 0.30c) | 10-20 ≈ 09:55 |
+| 0.6c `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.7c | 23.1 @ 20:23 | 150 | 9.0 t/h | 10-20 ≈ 10:30 |
+| 0.7c `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.6c | 18.9 @ 20:23 | 150 | 9.0 t/h (20 alone after the 0.6c) | 10-20 ≈ 10:40 |
+| 0.5c to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 1st / 1, with the 0.46c t 150 | 8.1 @ 20:23 | 150 | 9.0 t/h | 10-20 ≈ 12:05 |
+| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 1st / 1, with the 0.5c t 150 | 1.3 @ 20:23 | 150 | 9.1 t/h (20 alone after the 0.5c) | 10-20 ≈ 12:20 |
 
-- Start checks passed: t 0 MOTS R 5.5367 (0.6c; table 5.5419), 6.8730 (0.7c; table 6.8795) and 4.9613 (0.5c; its
-  N 192 run 4.9620), ψ4 header R 10 14 18 30, frames, keep-last pruning. Decided 10-19: the 0.7c shares card 0 now
-  rather than running alone on card 1 from 19:50. Watch the 0.7c: the archived one's slicing broke at t ≈ 102 (lapse
-  floor, NaN 135.85), its MOTS gone by t 49.
+- Start checks passed: t 0 MOTS R 5.5367 (0.6c; table 5.5419), 6.8730 (0.7c; table 6.8795), 4.9613 (0.5c; its
+  N 192 run 4.9620) and 4.67186 (0.46c t 150; its t 100 run identical, t 0 constraints too), ψ4 header R 10 14 18 30,
+  frames, keep-last pruning. Decided 10-19: the 0.7c shares card 0 now rather than running alone on card 1 from
+  19:50. Watch the 0.7c: the archived one's slicing broke at t ≈ 102 (lapse floor, NaN 135.85), its MOTS gone by t 49.
+- Watch level 1 in the t 130 / 150 runs: in the 0.40c and 0.46c t 100, L2_Ham on level 1 rises from t ≈ 90 (×1.5 per
+  2 t units, slowing; ×9 / ×4.5 by t 100, to ≤ 7.5e-7), in the 0.46c too, so not the collapse. Every other level grows
+  ≤ ×5 after t 80, except the 0.40c's level 3 (×10 at t 96–98 to 2.9e-3, then flat: the collapse inside the horizon,
+  as the 0.30c's).
 - Done and packed 10-19: the static, the 0.30c, both 0.2c kicks, the 0.2c N 192, the L 128 far-zone run, the 0.5c
-  N 192, the 0.40c and 0.46c t 100 (19:54; their movies rendering). The first node's scratch was pruned of the 0.40c /
-  0.46c last plotfiles (14 GB, ≈ 20:10).
+  N 192, the 0.40c and 0.46c t 100 (19:54; full movies done 20:15, core movies rendering, contact sheets pending).
+  The first node's scratch was pruned of the 0.40c / 0.46c last plotfiles (14 GB, ≈ 20:10).
 - The 0.30c t 130 and 0.40c t 150 (go 10-19 ≈ 18:40; decided: both on the second node's card now rather than the
   0.40c alone on the first node's card 1 from 19:50) are the 0.30c / 0.40c rungs' own params with only the name and
   the stop changed (diffed); t 0 constraints and R_eq identical to the t 100 runs. The second node's scratch was
