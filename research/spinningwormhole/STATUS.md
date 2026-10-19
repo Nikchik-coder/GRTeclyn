@@ -273,7 +273,13 @@ throat lapse (0.549 / 0.518 / 0.529 at −1 %), so the coordinate rate does not 
 3.7/4.0; Ham L3 4.0/4.3 → 3.4/4.0; Mom L3 3.0/4.1 → 4.3/4.3 (levels 0–1 jump to 4–5 from t ≈ 30, where the drive's
 shell junk takes over their error). The throat's pre-collapse drift converges at 4th order (t 5–10: 3.6–4.2). The
 collapse onset is resolution-seeded (R_eq −0.1 % at 30.7 / 36.1 / 46.1: shifts that fit a seed shrinking at 4th–5th
-order); the N 192's collapse came where expected (−1 % at 57.8, −10 % at 71.9; τ above).
+order); the N 192's collapse came where expected (−1 % at 57.8, −10 % at 71.9; τ above). **Through the collapse
+(10-19, figure `results/spinningwormhole/figures/convergence_02c.png`, `plot_convergence --spin 0.2c`):** past t ≈ 45 the
+members sit at different collapse stages, so equal-t orders mean nothing; at equal R_eq deficit (−0.1 % … −10 %) the
+throat level converges at 3.3–4.0 (Ham) and 3.4–4.2 (Mom). Aligned at −10 %, the collapse curves, the R 14 wave
+(N 128 / 192 within 6 %) and the horizons overlap. After the collapse levels 0–1 keep growing with the drive's shell
+junk (the undriven far-zone run's are 600–2000× lower at t 80–100), while the throat level jumps during the collapse
+and then stays flat inside the horizon (3.5e-4 / 5.4e-3 over t 80–150 in the far-zone run).
 
 **Constraint growth: the slow runs' t ≈ 80 knee is gone** (the N 128 to t 100, 10-18). The pre-fix "Ham ×2 at 78–85"
 was levels 1–2 growing exponentially (e-fold 5–7) from t ≈ 30 until they dominated the whole-box norm (pre-fix 0.2c
@@ -349,9 +355,12 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
 - The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); the first node's scratch pruned
   (41 GB, 10-19 ≈ 08:10 MSK); the second node's (the 0.5c's last plotfiles) not listed from here. Movies to the trust
   windows rendering (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`).
-- Claim 3's figure (10-19): `<far-zone run>/figures/farzone_wave.png` (`plot_farzone_wave`): the throat against the
-  L 64 hold, r·Δψ4 (2,0) at R 14–45 against t and t − R, the extrema against R (over R 30–45 the peak holds to 1.3 %,
-  the troughs to 6.5 % / 1.8 %). The static rerun (PENDING) is the no-radiation control on the fixed binary.
+- Claim 3's figure (10-19): `results/spinningwormhole/figures/farzone_wave_02c.png` (`plot_farzone_wave`; a copy in the
+  run's `figures/`): the throat against the L 64 hold, r·Δψ4 (2,0) at R 14–45 against t and t − R, the extrema against
+  R (over R 30–45 the peak holds to 1.5 %, the troughs to 7.2 % / 2.4 %), and their speed between neighbouring spheres
+  against light's over the same stretch (α√χ − β^r on the equator: 0.86 at R 14–18, 0.95 at 40–45): within 1 % of
+  light over R 40–45 and 2.5 % over 30–40, ahead of it further in (4–15 %) while the near field fades. The static
+  rerun (PENDING) is the no-radiation control on the fixed binary.
 - CANCELLED 10-18 ≈ 17:15 MSK: the five 0.9c kicks (the 0.9c is too far from physical spins; their templates stay in
   `templates/`). PENDING instead (go 10-18 ≈ 17:30 MSK, no checkpoints; cards not chosen): six kicks at the low
   spins, the 0.2c and the 0.30c (the black-hole spin limit, J/M² 1.03), each a push in (l 0 −1e-3), out (l 0 +1e-3)
