@@ -170,13 +170,13 @@ def draw(points, pal) -> None:
     ax.set_xlim(0.0, 100.0)
     ax.set_ylim(-0.009, 0.19)
     ax.set_xlabel(r"$J/A$, % of the extremal limit $1/8\pi$")
-    ax.set_ylabel(r"growth rate $1/\tau$ (code units)")
+    ax.set_ylabel(r"$1/\tau$")
     # The same scale relabelled in tau on the right edge: one axis, two units.
     right = ax.secondary_yaxis("right")
     taus = (5.0, 10.0, 20.0, 50.0)
     right.set_yticks([0.0] + [1.0 / v for v in taus])
     right.set_yticklabels([r"$\infty$"] + [f"{v:g}" for v in taus])
-    right.set_ylabel(r"e-fold time $\tau$")
+    right.set_ylabel(r"$\tau$", rotation=0, labelpad=8.0)
     entries = [
         (mlines.Line2D([], [], marker="o", ls="none", ms=5, color=pal["measured"]),
          "measured ($R_{\\mathrm{eq}}$ deficit fit)"),
