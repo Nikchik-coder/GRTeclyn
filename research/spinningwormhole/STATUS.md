@@ -380,7 +380,7 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
   MSK. The 0.2c push-in kick LIVE alone on the second node since 09:12 MSK, ETA ≈ 14:10 MSK; the other five kicks
   PENDING after it.
 - The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); the first node's scratch pruned
-  (41 GB, 10-19 ≈ 08:10 MSK); the second node's holds the 0.5c N 192's last plotfiles (21 GB, no checkpoints). Movies
+  (41 GB, 10-19 ≈ 08:10 MSK); the second node's (the 0.5c N 192's last plotfiles, 21 GB) pruned 10-19 ≈ 09:35 MSK. Movies
   to the trust windows (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`):
   14 full-box + 14 core for each of the three (the N 192s 10-19 08:28, the far-zone run 09:07 MSK), all checked on
   contact sheets (fixed bars).
@@ -402,8 +402,8 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
   `main3d_kick_af28ad29_2026-10-18.ex`, `--subdir drainhole/00_paper_runs`, the hold's consumer flags; ~10 h and
   23 GB each, three per card. Start checks: R_pol/R_eq at t 0 (+/−2e-3 for l 0), frame 0 against the hold's, ψ4
   header R 10 14 18 30. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
-- Second node (one card): the 0.2c push-in kick since 10-19 09:12 MSK; its scratch also holds the 0.5c N 192's last plotfiles
-  (21 GB, no checkpoints; 841 GB free; listed 10-19 09:08 MSK).
+- Second node (one card): the 0.2c push-in kick since 10-19 09:12 MSK; the 0.5c N 192's last plotfiles pruned from
+  its scratch (21 GB, 10-19 ≈ 09:35 MSK); 854 GB free.
 
 ## MAIN RESULTS SO FAR — PRE-FIX (requote every evolution number from the reruns)
 
