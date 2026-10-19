@@ -12,6 +12,40 @@ done). Code: `Examples/SpinningWormhole/` + `grteclyn-wrapper/scripts/campaigns/
 Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
 `launch.sh --subdir <family>/<NN_study>`; pack with `research/spinningwormhole/pack_run.sh <family>/<NN_study> <run dir>`.
 
+## THE THRESHOLD AGAINST AZAD ET AL. (2026-10-19)
+
+The claims stand on the current runs — stability at fast spin (the 0.9c triplet) and the GW signal of the
+rotating collapse (the far-zone 0.2c). What is missing is the curve between them: where the instability's
+growth dies with spin. The 0.6c/0.7c holds below are those missing pieces.
+
+The background tables carry Azad et al.'s own measure (J/A as a fraction of the extremal-Kerr limit
+1/(8π)), so the comparison with arXiv:2301.05243 is direct. What they actually claim:
+1. The static radial mode weakens quadratically with J and, in their second-order expansion, vanishes at
+   J/A ≈ 50 % of the extremal limit.
+2. **The second mode**: the moment the throat rotates, a zero mode of the static wormhole becomes a second
+   unstable radial mode. It grows with J and crosses the main mode at ≈ 30 % of the limit. Past the
+   crossing their expansion fails, so they conjecture the two modes merge there and the instability
+   disappears at ≈ 30 % — a conjecture, not a result.
+
+Our ladder in their units: 0.2c = 12 %, 0.30c = 18 %, 0.40c = 24 %, 0.46c = 29 %, 0.5c = 33 %, then
+nothing until 0.9c = 81 %. So:
+- The 0.46c sits exactly on their mode crossing, and the 0.5c just **above** their conjectured threshold —
+  and our 0.5c still drifts down (τ 13.4, −1 % at t 99). Nonperturbatively their 30 % conjecture already
+  fails on our data (caveat: that run had the drive on; the drive-off rungs land tonight and make it clean).
+- The whole 33–81 % band is unsampled, and the true threshold must sit in it — that is the point of going
+  beyond 0.5c. Locating it turns claim 2 from a trend into a number and answers Azad's open question
+  nonperturbatively.
+- Near the crossing the departure should be **two-mode**: the τ(J) fits are single exponentials, so re-fit
+  the 0.46c/0.5c deficits with two modes once tonight's holds land — free, no new runs.
+- Physicality: by J/M² the family bulges in the middle — 0.5c is the worst offender (1.19), 0.7c is 1.11,
+  and the fast end returns to the Kerr value (0.9c 1.013); "unphysical" does not single out the fast rungs.
+
+The runs: two drive-off holds, 0.6c (40 %) and 0.7c (51 %, right on Azad's quadratic J_c), tables
+fam_a_ve060/ve070, L 64 N 128, the FAST recipe (σ 0.4, min_chi 1e-4, dt 0.02, stop 150 — the 1e-4 floor is
+what carries >0.5c: at 1e-8 the 0.7c died t 42.6, floored from t 2.3; rescued clean with 1e-4). If the
+0.6c drifts and the 0.7c holds, the threshold is bracketed at 40–51 % against their 30 % conjecture. Kicks
+then go only on the rung that holds — the ring-back test. PENDING in the matrix below.
+
 ## THE PAPER'S CLAIMS (decided 2026-10-18)
 
 1. **Stability**: the fast-spinning throat is stable (the 0.9c farfix triplet holds to t 150). The kicks moved to the
@@ -215,6 +249,8 @@ triplets pass (decided 10-17).
 | ☐ | 0.46c on L 64, N 128 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` (table `fam_a_ve045`: v_e 0.456, J 3.15; Azad's τ 13) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 1 (with the 0.40c; no checkpoints) |
 | ☐ | kicks 0.2c on L 64, N 128 `spin_kick_L64_ml3_J100_full_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | push in (`l0_eps_m1e3`) LIVE since 10-19 09:12 MSK and push out (`l0_eps_p1e3`) since 10:51 MSK, both on the 2nd node's card (no checkpoints); the bar PENDING (go 10-18; card not chosen): does a push bring the collapse earlier? The push in inflates, as the merger paper's sign rule says |
 | ☐ | kicks 0.30c on L 64, N 128 `spin_kick_L64_ml3_ve030a_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | PENDING (go 10-18, no checkpoints; card not chosen; templates ready): the same at the black-hole spin limit (J/M² 1.03) |
+| ☐ | 0.6c on L 64, N 128 `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` (table `fam_a_ve060`: v_e 0.592, J 6.19, J/A 40 % of extremal; never run) | fast + drive off | 150 | ~15 h shared, 22 GB | PENDING (10-19, the threshold bracket's lower arm; no card chosen) |
+| ☐ | 0.7c rerun on L 64, N 128 `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` (the archived fast 0.7c's params + the fix/far-zone keys, drive off; J/A 51 %, Azad's quadratic J_c; old run: throat flat t 0–83, slicing broke 102) | fast + drive off | 150 | ~15 h shared, 22 GB | PENDING (10-19, the threshold bracket's upper arm; no card chosen) |
 
 Middle rungs (10-18): tables in `runs/spinning_p3/tables/` (script `p5_mid_tables.py`, the saved fam_a_r1 solutions
 nearest 0.3/0.4/0.45, f error ≤ 1e-7); templates (`templates/params_spin_hold_L64_ml3_ve0{30,40,45}a_spdrv0_farfix_t100.txt`)
