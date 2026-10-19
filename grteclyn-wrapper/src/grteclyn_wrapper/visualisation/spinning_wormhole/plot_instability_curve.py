@@ -75,6 +75,7 @@ AZAD_TAU = {"0.30c": 6.1, "0.40c": 8.0, "0.46c": 13.0}
 AZAD_CROSSING = 30.0      # their mode crossing: the conjectured threshold (% of extremal)
 AZAD_QUADRATIC = 50.0     # their second-order J_c (% of extremal)
 BAND = (2e-3, 0.1)        # the deficit band the growth rate is fitted over
+TAG_SIDES = {"0.2c": (-7, -16, "right")}  # per-rung tag offsets; default above-right
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
 PALETTES = {
     "rgb": dict(measured=SPIN_RED, azad=SPIN_BLUE, stable="#1a1a18"),
@@ -125,10 +126,10 @@ def rate(tau: float, r_a: float) -> float:
 
 def draw(points, pal) -> None:
     fig, ax = plt.subplots(figsize=(4.0, 3.0), layout="constrained")
-    for x, tag, y, ha, dx in ((AZAD_CROSSING, "merger conjecture, 30 %", 0.25, "right", -1.2),
-                              (AZAD_QUADRATIC, "quadratic $J_c$, 50 %", 0.66, "left", 1.2)):
+    # The two thresholds are named in the key, not inside the frame (their
+    # in-frame tags kept colliding with the rules and the fit, 2026-10-19).
+    for x in (AZAD_CROSSING, AZAD_QUADRATIC):
         ax.axvline(x, color="#b5b5b2", lw=0.8, ls=":")
-        ax.text(x + dx, y, tag, fontsize=6.0, color="#8a8a86", va="top", ha=ha)
     az_x = [p["frac"] for p in points if p["label"] in AZAD_TAU and p["r_a"]]
     az_y = [rate(AZAD_TAU[p["label"]], p["r_a"]) for p in points
             if p["label"] in AZAD_TAU and p["r_a"]]
@@ -153,10 +154,13 @@ def draw(points, pal) -> None:
         if p["tau"] is not None:
             ax.plot(p["frac"], rate(p["tau"], p["r_a"]), "o", ms=5.0,
                     color=pal["measured"], zorder=4)
+            # Each tag sits on the side its stretch of curve leaves free:
+            # below-left where the curve still climbs to the key, else above-right.
+            dx, dy, ha = TAG_SIDES.get(p["label"], (7, 1, "left"))
             ax.annotate(f"{p['label']}\n$\\tau$ {p['tau']:.1f}",
                         (p["frac"], rate(p["tau"], p["r_a"])),
-                        textcoords="offset points", xytext=(7, 1), fontsize=6.5,
-                        ha="left")
+                        textcoords="offset points", xytext=(dx, dy), fontsize=6.5,
+                        ha=ha)
         else:
             ax.plot(p["frac"], 0.0, "o", ms=5.5, mfc="none", mec=pal["stable"],
                     mew=1.2, zorder=4)
@@ -179,6 +183,8 @@ def draw(points, pal) -> None:
     if az_x:
         entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=4.5, mfc="none",
                                       mec=pal["azad"], mew=1.1), "Azad et al., 2nd order"))
+    entries.append((mlines.Line2D([], [], ls=":", lw=0.8, color="#b5b5b2"),
+                    "Azad's thresholds: 30 % (merger conj.), 50 % (quadratic $J_c$)"))
     style.legend_top(ax, entries, ncol=1, borderpad=0.6)
     for ext in ("png", "pdf"):
         fig.savefig(FIGURES / f"instability_curve.{ext}", dpi=300)
