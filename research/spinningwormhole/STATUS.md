@@ -87,7 +87,36 @@ the fixed binary (LIVE notes). Live: the four holds (first node, since 10-19 08:
 
 ## CODEBASE DIAGNOSTIC (2026-10-19)
 
-The codebase checks out: none of the five reviewers found a defect that changes any of the three claims. Each part was
+**Throat radii, second check (10-19 afternoon).** Two reviewers checked the radius measurements: one audited the radius
+code and the data streams, the other recomputed the radii independently from the four holds' plotfiles.
+
+The radii are measured correctly:
+- every t 0 row reproduces from the tables (≤ 4e-10);
+- the 0.9c flatness, the 0.2c onsets and τ, and the holds' t 42 deficits and spin ordering all hold;
+- each stream's error is about 1e-4, and streams differ from each other by about 2e-4.
+
+Changes:
+- **Use one τ definition.**
+  - STATUS uses −1 → −10 % for the 0.2c and −0.1 → −1 % for the 0.5c. `plot_instability_curve` fits whatever part of
+    0.2–10 % a run reaches.
+  - At 0.5c the choice of radius matters too: 13.4 from the equatorial radius, 11.7 from the areal radius.
+  - So the 0.2c reads 6.10 in the figure and 6.57 here, and the 0.5c 15.7 and 13.4. "Dies at 41 %" moves between 40 and
+    48 %.
+  - The N 96's τ of 6.72 uses a crossing at t 57.7, past its trust window (55).
+- **The holds' e-folds at t 40–46 are transient.** They are still rising with t, and the 0.46c shrinks fastest: 4.0
+  against the static's 4.8 at t 42. Compare τ with Azad only once the holds reach a common band.
+- **The push-in kick's throat left the finest box (r 5) at t ≈ 61.4.**
+  - After that, `throat_geometry` reads the box edge, not the throat. Read `throat_spheres` instead.
+  - The throat is now evolving at dx 0.125. Its +92 % at t 57.5 stands.
+- **The push-out's −1 % at t 24 is measured against its own kicked t 0,** which sits 0.2 % above the hold. Against the
+  unperturbed throat it passes −1 % at t 25.3, which is 21.6 before the hold.
+- **Which streams to quote.**
+  - Never quote R_pol_min: it depends on the coordinates, and the 0.9c's late growth in it is gauge.
+  - `throat_spheres` is too coarse for the small rungs: it reads the 0.46c deficit 20 % high. At dx = 1/6 it also sits
+    half a cell off centre, which is why the 0.9c reads 18.409 / 18.480 / 18.477, not monotone in N.
+  - The MOTS stream is the most accurate, to 3e-6.
+
+**The codebase review (five reviewers, 10-19 morning).** The codebase checks out: none of the five reviewers found a defect that changes any of the three claims. Each part was
 confirmed by re-deriving it independently:
 - **Solver:** its equations match an independent Ricci computation to 1e-50, and the eq. (12) finding about CKK holds.
 - **Tables:** they solve Einstein's equations to between 1e-10 (0.2c) and 1e-8 (0.9c).
