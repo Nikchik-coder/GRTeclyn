@@ -19,11 +19,11 @@ Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
 2. **Stability grows with spin**: the collapse slows as the spin grows and the fast throats hold (the ladder static →
    0.2c → 0.3c / 0.4c / 0.45c → 0.5c → 0.9c; τ(J) against Azad et al.'s second-order rate, FOR THE ARTICLE).
 3. **A GW signal with no nonspherical perturbation**: the rotating collapse radiates (l 2, m 0) from unperturbed data,
-   where the static wormhole needed a nonspherical perturbation to radiate at all. The far-zone waveform comes from
-   one big-box run, the 0.2c on L 128 N 256 (PAPER RUN MATRIX); the L 64 runs' ψ4 at R 14/18 carries face junk
-   from t ≈ 45 (below).
+   where the static wormhole needed a nonspherical perturbation to radiate at all. The far-zone waveform is the 0.2c
+   on L 128 N 256 (FINISHED 10-19): r·ψ4 2.0–2.3e-4, one waveform in t − R at R 14–45, flat in R (LIVE notes); the
+   L 64 runs' ψ4 at R 14/18 matches it to ≤ 2 % through t 100.
 
-## STATE (2026-10-18 ≈ 18:55 MSK)
+## STATE (2026-10-19 ≈ 08:00 MSK)
 
 **Every run before 10-17 carries three numerics bugs, all found and fixed 10-17** (how: CONVERGENCE below),
 so every paper run reruns on binary rkfix 0661dac4:
@@ -46,9 +46,10 @@ t 10: the Γ-driver advected the rotating background shift (`shift_advec_coeff =
 faces sat at 5.5 M_ADM (`sommerfeld_relative_to_background = 1`). With both, the far zone is quieter than the inside.
 The 0.9c L 128 triplet reran with both (`_farfix_t150`, binary farfix 891d817d, whose per-level norms also skip the
 box's outer 3 cells: `constraint_norms_edge_cells = 3`) and PASSES: all three clean to t 150, every level converging
-(orders under LIVE), throat areal radius flat to ≤ 7e-5, no MOTS. The 0.2c L 64 triplet runs with the same fixes
-since 08:56 / 09:13 MSK 10-18; its N 128 went through the collapse to t 100 with no NaN, and the slow runs' t ≈ 80
-constraint knee is gone on the fixed binary (LIVE notes). The Weyl4 frames blank the box's outer 2 cells (`--frames-blank-edge 2`, point 7).
+(orders under LIVE), throat areal radius flat to ≤ 7e-5, no MOTS. The 0.2c L 64 triplet ran with the same fixes: the
+N 96 died in its collapse, the N 128 and N 192 went through it to t 100 with no NaN (10-18 / 10-19); the far-zone
+0.2c on L 128 finished t 150 and the 0.5c N 192 t 100 (10-19); the slow runs' t ≈ 80 constraint knee is gone on
+the fixed binary (LIVE notes). No run is live since 10-19 05:47 MSK. The Weyl4 frames blank the box's outer 2 cells (`--frames-blank-edge 2`, point 7).
 
 ## CONVERGENCE: HOW THE BUGS WERE FOUND (10-17)
 
@@ -171,11 +172,11 @@ triplets pass (decided 10-17).
 | ✓ | 0.9c triplet on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 9.7 h | FINISHED 10-18 09:08 MSK |
 | ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | DIED 62.59 10-18 12:12 MSK: the collapse (trust 55) |
 | ✓ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 9.3 h | FINISHED 10-18 18:12 MSK: through the collapse to t 100, horizon settled, (2,0) wave out (trust 100) |
-| ☐ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
-| ☐ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t150` | slow | 150 | ~11 h, 51 GB | LIVE since 10-18 19:24 MSK, 1st node card 1 (go 10-18, stop 150 decided ≈ 19:20 so the burst passes R 30–45; no checkpoints) |
+| ✓ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 19.8 h | FINISHED 10-19 04:58 MSK: through the collapse to t 100 (trust 100) |
+| ✓ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t150` | slow | 150 | 9.7 h | FINISHED 10-19 05:06 MSK: the (2,0) wave passes R 14–45 at c, r·ψ4 flat in R (trust 150) |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`; pre-fix, rerun next row) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
 | ☐ | 0c static rerun on the fixed binary `static_hold_L64_ml3_spdrv0_farfix_t100` (the anchor's packed params + the numerics and far-zone fix keys, drive off; diffed) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18 ≈ 17:20 MSK, no checkpoints; card not chosen; template ready) |
-| ☐ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | ~20 h | LIVE |
+| ✓ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | 20.0 h | FINISHED 10-19 05:47 MSK: clean t 100, no constraint knee, throat −1.3 % (trust 100) |
 | ☐ | 0.30c on L 64, N 128 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` (table `fam_a_ve030`: v_e 0.304, J 1.61; Azad's τ 6.1) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen; template ready) |
 | ☐ | 0.40c on L 64, N 128 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` (table `fam_a_ve040`: v_e 0.395, J 2.41; Azad's τ 8.0) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen; template ready) |
 | ☐ | 0.46c on L 64, N 128 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` (table `fam_a_ve045`: v_e 0.456, J 3.15; Azad's τ 13) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen; template ready) |
@@ -212,11 +213,23 @@ its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 (solo), 59.7 GB | 48.5 @ 18:48 | 100 | 5.1 t/h | ≈ 10-19 05:00 |
-| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 (solo), 59.9 GB | 45.0 @ 18:48 | 100 | 5.0 t/h | ≈ 10-19 05:45 |
-| 0.2c L 128 N 256 far-zone GW run `00_paper_runs/spin_hold_L128_ml3_J100_full_farfix_t150` | 1st, card 1, 49.0 GB | 0.03 @ 19:25 | 150 | ≈ 14.9 t/h (first steps) | ≈ 10-19 05:30 |
+| none since 10-19 05:47 MSK: the first node's cards 0 and 1 and the second node's card are idle | | | | | |
 
-Far-zone run (go 10-18 ≈ 19:20 MSK, the held run released): preflight PASS, t 0 L2_Ham 6.2029e-4 (the old run's), 14 frames.
+**The far-zone run FINISHED t 150** (L 128 N 256, 10-19 05:06 MSK, no NaN). Its throat is the L 64 N 128's to 4
+digits (R_eq −1 / −10 / −20 % at 46.86 / 61.99 / 66.95, τ 6.57; χ on the floor at 66.2–68.4 in the four central
+cells only; the MOTS R 2.522, M_MS 1.261, over t 138–150): the box and the sponge never reach the throat. Levels 0–1
+Ham 3.1e-7 / 1.7e-7 at t 80, 600–1000× below the driven L 64's. **The wave (claim 3):** r·Δψ4 (2,0) has one waveform
+in t − R at R 14 / 18 / 30 / 40 / 45: trough −1.47e-4 at t − R 75, peak 2.27e-4 / 2.15e-4 / 2.05e-4 / 2.03e-4 /
+2.02e-4 at t − R 86–88, trough −1.53e-4 to −1.56e-4 at t − R 99–100, then a ring-down (period ≈ 24). It is flat in
+R to 11 % over R 14–45 and to 1.3 % over R 30–45 (a 1/r radiative field), 10⁴–10⁵× the pre-collapse level at
+R 30–45, and R 14 / 18 match the L 64 N 128's to ≤ 2 % through t 100 (the drive's face junk does not reach them).
+The pre-fix run's R 30 burst (r ψ4 up to 0.9 by t 94) was junk. Trust 150; packed.
+
+**The 0.5c N 192 FINISHED t 100** (10-19 05:47 MSK, second node, no NaN): no floor, max|K| 1.0e-2, no horizon. The
+throat shrinks slowly from t ≈ 55 (R_eq −0.1 % at 68.5, −1.0 % at 99.4: τ 13.4 over that window, the 0.2c's 4.7–5.1;
+MOTS R 4.962 → 4.898, −1.3 % at t 100; the pre-fix L 64 0.5c was −1.6 % at t 80). No constraint knee: L2_Ham flat
+(2.32e-3 → 2.34e-3), L2_Mom ×2 at 83 with the shrinking throat (level 3), levels 0–1 the drive's shell junk (Ham
+8e-5 at t 100), level 2 9e-7. **The slow recipe now quotes to t 100.** Trust 100; packed.
 
 0.2c settings (go 10-18 ≈ 08:50; the N 192's ≈ 09:10): the fix_t100 templates (slow recipe: σ 0.1, min_chi 1e-8,
 dt 0.02, stop 100, L 64, centre 32, sponge 24–32 with drive 1.0) plus `shift_advec_coeff = 0`,
@@ -237,14 +250,22 @@ a settled horizon: R_eq −1 % at 46.9, −10 % at 62.0, −20 % at 67.0 (τ 6.6
 leaves the throat at t ≈ 60 (θ_in −0.09), the throat's minimal sphere is gone from 75, and the MOTS settles at R 2.524
 (M_MS 1.262) over t 88–100; χ on the floor at 66.2 (the central cell only, inside the horizon, t 66–67; χ back to 1e-3
 there), max|K| > 0.1 at 67.5; trust 100 (raised from 66 for the waves, 10-18); the pre-fix N 128's sequence within
-0.2. Packed, scratch pruned. **The (2,0) wave** (ψ4 minus its t 0 value, the static part of the rotating background):
-R·Δψ4 1.2e-3 in the first lobe at R 10 (t 74), ≈ 3e-3 at R 10 and 14 by t 96–100, still rising at R 14–18 at the stop
-(the burst has not fully passed R 14–30 by t 100); outgoing at ≈ c (R 14 → 18: 1.00 c on the features that passed
-both; the equatorial Weyl4 lobe r 10 → 22: 1.0 / 1.0 / 0.89 c); the size of the merger's 5 % quadrupole-kicked static
-collapse (r ψ4 ≈ 2.5e-3 at R 10, `results/merger/figures/08_waves/psi4_gallery.png` (a)): a wave, not junk. Its
-convergence waits for the N 192 (the N 96 died before its burst reached R 10). Figure:
-`<run>/waves/psi4_l2m0_radiated_N128.png` (plot_extracted_psi4.py on the background-subtracted file; that script plots
-raw ψ4 under an r·Re label).
+0.2. Packed, scratch pruned. **The (2,0) wave** (r·ψ4 minus its t 0 value, the static part of the rotating
+background; the consumer's stream already carries the factor r): r·Δψ4 1.2e-4 in the first lobe at R 10 (t 74),
+3.0e-4 at R 10 (t 96) and 2.3e-4 at R 14 (t 100); outgoing at ≈ c (R 14 → 18: 1.00 c on the features that passed
+both; the equatorial Weyl4 lobe r 10 → 22: 1.0 / 1.0 / 0.89 c); about 10× below the merger's 5 % quadrupole-kicked
+static collapse (r ψ4 2.9e-3 at R 10, `results/merger/figures/08_waves/psi4_gallery.png` (a)). **Corrected 10-19:**
+the first quote (1.2e-3, ≈ 3e-3, "the size of the merger's kick") multiplied the stream by R a second time. Still a
+wave, not junk (the far-zone run above). Figure: `<run>/waves/psi4_l2m0_radiated_N128.png` (plot_extracted_psi4.py on
+the background-subtracted file; its r·Re axis is right).
+
+**N 192 FINISHED t 100** (10-19 04:58 MSK, no NaN) through the collapse: R_eq −1 % at 57.8, −10 % at 71.9, −20 % at
+76.6 (about 10 after the N 128: the resolution-seeded onset); the MOTS leaves the throat at t ≈ 70 and reads R 2.533
+(M_MS 1.266) at t 100, still settling; χ on the floor at 78.3–79.9 in the four central cells only (inside the
+horizon), max|K| > 0.1 at 79.2; trust 100. τ(−1 → −10 %) 6.72 / 6.57 / 6.12 (N 96 / 128 / 192) in coordinate time,
+3.57 / 3.28 / 3.13 in the proper time of the throat's equatorial ring (∫α dt): each member collapses at a different
+throat lapse (0.549 / 0.518 / 0.529 at −1 %), so the coordinate rate does not converge and the proper one does
+(≈ 3rd order). Its wave, shifted by the collapse delay (9.9), matches the N 128's at R 10 / 14 / 18 to 6–9 %. Packed.
 
 **Triplet convergence to t 50** (10-18 ≈ 19:30, the N 192 at t 51; orders 96→128 / 128→192 from
 `constraint_norms_levels.dat`): every level converges in both pairs. Ham L0 2.8/2.8 at t 10 → 4.2/4.5 at t 50; Mom L0
@@ -252,8 +273,7 @@ raw ψ4 under an r·Re label).
 3.7/4.0; Ham L3 4.0/4.3 → 3.4/4.0; Mom L3 3.0/4.1 → 4.3/4.3 (levels 0–1 jump to 4–5 from t ≈ 30, where the drive's
 shell junk takes over their error). The throat's pre-collapse drift converges at 4th order (t 5–10: 3.6–4.2). The
 collapse onset is resolution-seeded (R_eq −0.1 % at 30.7 / 36.1 / 46.1: shifts that fit a seed shrinking at 4th–5th
-order); τ(−1 → −10 %) 6.72 / 6.57 for N 96 / 128; the N 192's τ and the waves' convergence wait for its collapse
-(R_eq −0.29 % at t 51; −1 % expected at t ≈ 57, −10 % at ≈ 72, if it survives).
+order); the N 192's collapse came where expected (−1 % at 57.8, −10 % at 71.9; τ above).
 
 **Constraint growth: the slow runs' t ≈ 80 knee is gone** (the N 128 to t 100, 10-18). The pre-fix "Ham ×2 at 78–85"
 was levels 1–2 growing exponentially (e-fold 5–7) from t ≈ 30 until they dominated the whole-box norm (pre-fix 0.2c
@@ -262,8 +282,8 @@ N 128: level 1 Ham 1.6e-5 at t 30, 1.6e-1 at 80; the static and the 0.5c alike).
 through the collapse (Mom 3.1e-4 at 60 → 5.4e-3 at 80, flat to 100), and levels 0–1 from t 31 at every N, the drive's
 shell junk (the drive-off sponge test: level 1 1100× lower at t 55; order +4.1 to +5.1 across N 96/128/192 at
 t 35–45), to 2e-4 at 80 and 7e-4 at 100. The whole-box L2_Ham never doubles. The 0.2c's throat quotes stop at its collapse;
-its exterior and waves hold to t 100; whether the slow recipe now quotes past 80 is the 0.5c N 192's test (no collapse; at t 40 its levels 1–2
-sit ~1000× below the pre-fix 0.5c's).
+its exterior and waves hold to t 100; the 0.5c N 192 settles whether the slow recipe quotes past 80: yes (no knee to
+t 100, above).
 
 0.5c settings (go 10-18 ≈ 09:45, second node): the archived pre-fix 0.5c `spin_hold_L64_ml3_ve050a_spdrv1_t150`
 (slow recipe: σ 0.1, min_chi 1e-8, dt 0.02, sponge 24–32 with drive 1.0) with N 128 → 192 and stop 150 → 100, plus
@@ -324,20 +344,13 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
 
 ## NEXT
 
-- The 0.2c triplet (N 96 and N 128 done, N 192 LIVE, ETA ≈ 10-19 05:00 MSK): close it out when it finishes; then the
-  triplet's per-level convergence and the collapse τ across N.
-- LIVE since 10-18 19:24 MSK (1st node card 1; go 10-18, no checkpoints): the far-zone GW run `spin_hold_L128_ml3_J100_full_farfix_t150`,
-  a rerun of the pre-fix `05_hold_L128/J100_full/spin_hold_L128_ml3_J100_full_t100` (through the collapse to t 100
-  with 0 NaN, horizon at t ≈ 64, the R 30 burst; 7.5 h): its template plus the farfix keys (`exact_quartic_interp
-  1`, `rk_stage_refill 0`, `shift_advec_coeff 0`, `sommerfeld_relative_to_background 1`, `constraint_norms_edge_cells
-  3`) on binary farfix 891d817d; L 128, N 256, boxes ±16/8/4 (`tagging_L 64`, the L 64 N 128 grid inside), KO
-  sponge 48–64 with no drive, as the old run; slow recipe, stop 150 (100 → 150 decided 10-18 ≈ 19:20: the L 64 N 128's
-  burst had not passed R 14–30 by t 100; ~11 h; `templates/params_spin_hold_L128_ml3_J100_full_farfix_t150.txt`, the
-  stop its only change), a plotfile every t 1. Consumer: the 0.9c
-  N 256's flags with the default MOTS search and `--radii 14 18 30 40 45`, `GRTECLYN_FRAMES_BUFF_CAP=2048`,
-  `--subdir drainhole/00_paper_runs`. Card: the first node's card 1 (idle since 18:12 MSK), on a new go.
-  Start checks: frame 0 and the t 0 constraints against the old run's (L2_Ham 6.2029e-4), ψ4
-  header R 14 18 30 40 45, the consumer's pace (a plotfile every ≈ 4 min).
+- Three cards idle since 10-19 05:47 MSK (the first node's 0 and 1, the second node's): the PENDING runs below and in
+  the matrix wait for the card choice.
+- The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); scratch not pruned yet (first
+  node: the far-zone run's 3 plotfiles, 17 GB, and the N 192's 4, 24 GB; second node: the 0.5c's, not listed from
+  here). Movies to the trust windows rendering (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`).
+- Claim 3's figure, when wanted: the far-zone r·Δψ4 (2,0) at R 14–45 against t − R; the static rerun (PENDING) is the
+  no-radiation control on the fixed binary.
 - CANCELLED 10-18 ≈ 17:15 MSK: the five 0.9c kicks (the 0.9c is too far from physical spins; their templates stay in
   `templates/`). PENDING instead (go 10-18 ≈ 17:30 MSK, no checkpoints; cards not chosen): six kicks at the low
   spins, the 0.2c and the 0.30c (the black-hole spin limit, J/M² 1.03), each a push in (l 0 −1e-3), out (l 0 +1e-3)
@@ -347,8 +360,8 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
   `main3d_kick_af28ad29_2026-10-18.ex`, `--subdir drainhole/00_paper_runs`, the hold's consumer flags; ~10 h and
   23 GB each, three per card. Start checks: R_pol/R_eq at t 0 (+/−2e-3 for l 0), frame 0 against the hold's, ψ4
   header R 10 14 18 30. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
-- Second node (one card): the 0.5c live since 09:48 MSK 10-18 (ETA ≈ 05:40 MSK 10-19); scratch clean (the 0.99c σ 0.4
-  run's 7.1 GB of leftovers pruned 10-18).
+- Second node (one card): idle since the 0.5c finished (10-19 05:47 MSK); its scratch holds that run's last plotfiles
+  (not listed from here; no checkpoints).
 
 ## MAIN RESULTS SO FAR — PRE-FIX (requote every evolution number from the reruns)
 
@@ -433,7 +446,9 @@ against their +6.6 %). Like for like needs the linear mode in Killing time, e.g.
 formation t ≈ 64 plus ~17 of light travel). The static collapse at the same radius reads 6.0e-5, the
 numerical floor (spherical collapse cannot radiate): the spinning burst is 500× above it and 10⁴× above the
 run's quiet-phase noise; B1 (0.5c, no collapse) stays quiet. Measurable per spin alongside τ
-(`psi4_mode_l2m0.dat` in every pack). Its farfix re-measurement is the L 128 N 256 0.2c (claim 3, PAPER RUN MATRIX).
+(`psi4_mode_l2m0.dat` in every pack). **Re-measured on the fixed binary (10-19, the far-zone run, LIVE notes):** r·ψ4
+2.0e-4 at R 30–45, flat in R and outgoing at c; the pre-fix burst above was junk; the static control is the pending
+static rerun.
 
 **The exotic-matter trend is the physics behind the ladder (10-15): plot τ(v_e) against D/M(v_e).** From
 the family (a) tables (D = the phantom scalar charge; `results/spinningwormhole/solutions/<leg>/<leg>.tsv`):
