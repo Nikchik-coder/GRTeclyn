@@ -346,11 +346,12 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
 
 - Three cards idle since 10-19 05:47 MSK (the first node's 0 and 1, the second node's): the PENDING runs below and in
   the matrix wait for the card choice.
-- The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); scratch not pruned yet (first
-  node: the far-zone run's 3 plotfiles, 17 GB, and the N 192's 4, 24 GB; second node: the 0.5c's, not listed from
-  here). Movies to the trust windows rendering (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`).
-- Claim 3's figure, when wanted: the far-zone r·Δψ4 (2,0) at R 14–45 against t − R; the static rerun (PENDING) is the
-  no-radiation control on the fixed binary.
+- The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); the first node's scratch pruned
+  (41 GB, 10-19 ≈ 08:10 MSK); the second node's (the 0.5c's last plotfiles) not listed from here. Movies to the trust
+  windows rendering (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`).
+- Claim 3's figure (10-19): `<far-zone run>/figures/farzone_wave.png` (`plot_farzone_wave`): the throat against the
+  L 64 hold, r·Δψ4 (2,0) at R 14–45 against t and t − R, the extrema against R (over R 30–45 the peak holds to 1.3 %,
+  the troughs to 6.5 % / 1.8 %). The static rerun (PENDING) is the no-radiation control on the fixed binary.
 - CANCELLED 10-18 ≈ 17:15 MSK: the five 0.9c kicks (the 0.9c is too far from physical spins; their templates stay in
   `templates/`). PENDING instead (go 10-18 ≈ 17:30 MSK, no checkpoints; cards not chosen): six kicks at the low
   spins, the 0.2c and the 0.30c (the black-hole spin limit, J/M² 1.03), each a push in (l 0 −1e-3), out (l 0 +1e-3)
