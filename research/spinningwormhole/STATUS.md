@@ -280,6 +280,8 @@ same). The spinning 0.2c keeps the rule.
 The 0.2c push-out kick (l 0, ε +1e-3, the collapse sign; go 10-19) started 10:51 MSK on the same card as the push in
 (no checkpoints). Start checks: preflight PASS; t 0 R_eq / R_pol 4.06758 / 4.03465, both +1.988e-3 against the hold
 (2ε); levels 0–2 identical to the hold's, the throat level's L2_Ham 2.29e-3 (the push in's 2.31e-3); 46 GB on the card.
+The consumer's t 0 pass: ψ4 header R 10 14 18 30, MOTS R 4.0303 (+1.99e-3), 14 frames; the t 0 slices equal the
+hold's except χ out to r 3.3 and Ψ4 out to r 4.1.
 
 **The far-zone run FINISHED t 150** (L 128 N 256, 10-19 05:06 MSK, no NaN). Its throat is the L 64 N 128's to 4
 digits (R_eq −1 / −10 / −20 % at 46.86 / 61.99 / 66.95, τ 6.57; χ on the floor at 66.2–68.4 in the four central
