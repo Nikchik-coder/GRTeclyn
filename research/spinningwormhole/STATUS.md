@@ -51,9 +51,12 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.2c push out (l 0, ε +1e-3) | 12.3 | 25.3 | – | 3.03 | DIED 44.08, after its horizon formed | 42 |
 | 0.2c push in (l 0, ε −1e-3) | 12.3 | +1 % at 25.6 | – | 3.06 | inflates, +105 % at t 60 | 61 |
 | 0.30c | 18.3 | 51.4 | 5.9 | 3.76 | horizon R 2.571, M_MS 1.286, settling | 100 |
+| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 18.3 | – | – | – | PROPOSED (no go), ≈ 6.3 h alone: its whole burst (peak t ≈ 108, second trough ≈ 120 at R 14), the wave against spin | – |
 | 0.40c | 24.4 | 60.2 | 8.0 | – | LIVE, −9 % at t 86 | – |
+| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | PROPOSED (no go), ≈ 7.3 h alone: a third wave point (its burst reaches R 14 at t ≈ 115–140) | – |
 | 0.46c | 28.8 | −0.9 % at 87 | 15.2 | – | LIVE | – |
 | 0.5c (N 192, drive on) | 33.3 | 99.4 | 13.6 | – | clean t 100, MOTS −1.3 %, no horizon | 100 |
+| 0.5c on N 128, drive off `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t100` | 33.3 | – | – | – | PROPOSED (no go), ≈ 4.9 h alone: the 0.5c like the other rungs (its N 192 / drive-on τ is out of order) | – |
 | 0.6c (fast) | 40.3 | – | – | – | LIVE since 10-19 18:05 | – |
 | 0.7c (fast) | 51.4 | – | – | – | LIVE since 10-19 18:19 | – |
 | 0.9c (L 128 triplet, fast) | 80.8 | flat to t 150 | ∞ | – | stable: areal R drift ≤ 7e-5, no MOTS | 150 |
@@ -78,15 +81,16 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
   N 192 (movies to the trust windows; the 0.30c's core movies still rendering).
 - Second node: idle since 10-19 16:48. The kicks' last plotfiles (14 GB) are still on its scratch: prune from a
   session there.
-- Queue: empty. Cancelled 10-19: the 0.2c bar and the three 0.30c kicks (both rungs collapse anyway; templates stay).
+- Queue: empty; three runs PROPOSED in the main results table, no go. Cancelled 10-19: the 0.2c bar and the three
+  0.30c kicks (both rungs collapse anyway; templates stay).
 
 ## RUNS FOR THE PAPER (proposed, no go yet)
 
-| run | what it settles | cost |
+The three proposed runs are the PROPOSED rows of the main results table (L 64, N 128, slow recipe, drive off, from
+t 0: none of the old runs wrote checkpoints). Free analyses:
+
+| analysis | what it settles | cost |
 |---|---|---|
-| 0.30c to t 130 (from t 0) | its whole burst (peak t ≈ 108, second trough ≈ 120 at R 14): the wave against spin | ≈ 6.3 h alone |
-| 0.40c to t 150 (from t 0) | a third wave point (its burst reaches R 14 at t ≈ 115–140) | ≈ 7.3 h alone |
-| 0.5c on L 64, N 128, drive off | the ladder's one N 192 / drive-on rung (its τ out of order) | ≈ 4.9 h alone |
 | two-mode refit of the 0.46c / 0.5c | Azad's second mode near the mode crossing | free |
 | horizon mass integral | the 0.2c's settled M_irr 1.262 against the exterior's ≈ 1.16 | free |
 
