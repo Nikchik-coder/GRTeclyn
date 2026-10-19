@@ -363,7 +363,11 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
   the matrix wait for the card choice.
 - The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); the first node's scratch pruned
   (41 GB, 10-19 ≈ 08:10 MSK); the second node's (the 0.5c's last plotfiles) not listed from here. Movies to the trust
-  windows rendering (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`).
+  windows (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`): the two N 192s'
+  rendered 10-19 08:28 MSK (14 full-box + 14 core each, contact sheets pending), the far-zone run's still rendering.
+- Card sharing (measured 10-18 on the 0.2c N 128, L 64): 20.6 t/h alone, 10.2 with one more run on the card, 7.0 with
+  two more: one card does ≈ 20 t/h of L 64 N 128 however it is split, so a 100-unit hold takes ≈ 4.9 h alone or
+  ≈ 14.5 h three to a card.
 - Claim 3's figure (10-19): `results/spinningwormhole/figures/farzone_wave_02c.png` (`plot_farzone_wave`; a copy in the
   run's `figures/`): the throat against the L 64 hold, r·Δψ4 (2,0) at R 14–45 against t − R, the extrema against
   R (over R 30–45 the peak holds to 1.5 %, the troughs to 7.2 % / 2.4 %), and their speed between neighbouring spheres
