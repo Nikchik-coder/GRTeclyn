@@ -18,7 +18,10 @@ wider band lengthens tau as the collapse turns nonlinear (0.2c: 5.0 over
 0.2-1 %, 6.5 over 1-10 %).  The MOTS (``mots_spectral.dat``) is printed as
 a check: it sits on the throat through the band.  A rung is drawn once its
 deficit has crossed the band; a finished run that never enters it is stable
-on its window and sits at zero (open marker).
+on its window and sits at zero (open marker).  A finished run whose deficit
+crossed the band and then fell back below half its peak turned back instead
+of collapsing (the 0.46c, 2026-10-19: 1.12 % at t 83, 0.21 % at t 100): it is
+drawn open at its band rate and left out of the fit.
 
 Against it, Azad et al.'s second-order rate for this family (their C = 1
 row: |omega_I| eta0 = 0.390 - 0.384 (J/eta0^2)^2) at every rung where it is
@@ -167,6 +170,12 @@ def measure(run: str):
              span=span if tau is not None else None,
              flat=None if tau is not None else span)
     m["stable"] = tau is None and s["ended"] and m["flat"] < BAND[0]
+    # Turned back: through the band, then below half its peak at the end of a
+    # finished run (a NaN last row is a throat swallowed by its horizon).
+    d = 1.0 - sph[:, 2] / sph[0, 2]
+    k = int(np.nanargmax(d))
+    m["turned"] = bool(tau is not None and s["ended"] and d[-1] < 0.5 * d[k])
+    m["peak"] = (float(sph[k, 0]), float(d[k]), float(d[-1]))
     m["tau_eq"] = band_tau(s["geom"][:, 0], s["geom"][:, 1])[0] if s["geom"] is not None else None
     m["tau_mots"] = (band_tau(s["mots"][:, 0], s["mots"][:, 1])[0]
                      if s["mots"] is not None and s["mots"].ndim == 2 else None)
@@ -216,7 +225,7 @@ def draw(points, pal, jc_frac) -> None:
         # Open diamonds over smaller dots: where a rung matches Azad the dot
         # shows inside its diamond instead of hiding it.
         ax.plot(*zip(*az), "D", ms=6.5, mfc="none", mec=pal["azad"], mew=1.0, zorder=5)
-    fit = fit_zero(drawn)
+    fit = fit_zero([p for p in drawn if not p["turned"]])
     x0 = None
     if fit is not None:
         a, b, x0 = fit
@@ -225,10 +234,14 @@ def draw(points, pal, jc_frac) -> None:
                             lw=1.0, color=pal["measured"], zorder=2)
     for p in drawn:
         if p["tau"] is not None:
-            ax.plot(p["frac"], rate(p["tau"]), "o", ms=3.8,
-                    color=pal["measured"], zorder=4)
+            turned = p["turned"]
+            ax.plot(p["frac"], rate(p["tau"]), "o", ms=4.5 if turned else 3.8,
+                    mfc="none" if turned else pal["measured"], mec=pal["measured"],
+                    mew=1.0, zorder=4)
             dx, dy, ha, va = TAG_SIDES.get(p["label"], (5, 3, "left", "bottom"))
-            ax.annotate(f"{p['label']}: {p['tau']:.1f}",
+            # A turned rung's tag stays short: the long one ran across the left
+            # spine (2026-10-19); the key says what the open marker means.
+            ax.annotate(f"{p['label']}: turned" if turned else f"{p['label']}: {p['tau']:.1f}",
                         (p["frac"], rate(p["tau"])),
                         textcoords="offset points", xytext=(dx, dy), fontsize=6.5,
                         ha=ha, va=va)
@@ -252,6 +265,10 @@ def draw(points, pal, jc_frac) -> None:
         (mlines.Line2D([], [], marker="o", ls="none", ms=3.8, color=pal["measured"]),
          "measured $\\tau$ (areal-radius deficit, 0.2–1 %)"),
     ]
+    if any(p["turned"] for p in drawn):
+        entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=4.5, mfc="none",
+                                      mec=pal["measured"], mew=1.0),
+                        "through the band, then turned back (not fitted)"))
     if any(p["stable"] for p in drawn):
         entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
                                       mec=pal["stable"], mew=1.2), "stable on its window"))
@@ -297,12 +314,14 @@ def main() -> None:
                   f" | {fmt(p['tau_eq'])} | {fmt(p['tau_mots'])} || "
                   + " / ".join(fmt(v) for v in p["tau_wide"])
                   + f"   (fit t {p['span'][0]:.1f}-{p['span'][1]:.1f}; Azad"
-                  f" {fmt(1 / azad_rate(p['j']) if azad_rate(p['j']) > 0 else None)})")
+                  f" {fmt(1 / azad_rate(p['j']) if azad_rate(p['j']) > 0 else None)})"
+                  + (f"  TURNED: peak {100 * p['peak'][1]:.2f} % at t {p['peak'][0]:.0f},"
+                     f" {100 * p['peak'][2]:.2f} % at t {p['t_end']:.0f}" if p["turned"] else ""))
         elif p["stable"]:
             print(f"{p['label']:6s} J/A {p['frac']:5.1f} %  R_A {p['r_a']:.3f}  "
                   f"stable: |deficit| <= {p['flat']:.1e} to t {p['t_end']:.0f}")
     for key, name in (("tau", "areal"), ("tau_eq", "equatorial"), ("tau_mots", "MOTS")):
-        fit = fit_zero([p for p in points if p["tau"] is not None], key)
+        fit = fit_zero([p for p in points if p["tau"] is not None and not p["turned"]], key)
         if fit is not None:
             print(f"fit a - b (J/A)^2 on the {name} tau: a {fit[0]:.4f}, b {fit[1]:.3e}"
                   + (f", zero at {fit[2]:.1f} % of extremal" if fit[2] else ""))

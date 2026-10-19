@@ -10,20 +10,29 @@ Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per ru
 
 ## RESULTS SO FAR (2026-10-19)
 
-Spin delays the instability, steadily up to the 0.5c, and the 0.9c is stable. Where it stops lies between 33 % and
-81 % of the extremal spin; the 0.6c and 0.7c (LIVE) pin it down.
+Spin delays the instability and the 0.9c is stable. The 0.40c (24 % of extremal) still collapses into a black hole;
+the 0.46c (29 %) does not on t ≤ 100: its throat shrank to −1.1 % and turned back. That is where Azad et al.
+conjecture the instability ends (≈ 30 %), but the 0.5c on N 192 (33 %, drive on) was still shrinking at t 100; the
+0.5c on N 128 to t 150 (LIVE) and the 0.6c / 0.7c settle it.
 
 - **Collapse is delayed by spin.** The throat reaches −1 % at t 43.7 (static), 46.9 (0.2c), 51.4 (0.30c) and 60.2
-  (0.40c); the 0.46c is at −0.9 % at t 87, the 0.5c reached −1 % only at t 99.4, and the 0.9c stays flat to t 150 at
-  all three resolutions.
-- **Instability curve** (`figures/instability_curve.png`, `plot_instability_curve`): τ 4.4 / 5.0 / 5.9 / 8.0 / 15.2
-  from the static to the 0.46c. The 0.5c's 13.6 is out of order: it ran at N 192 with the sponge drive on. The fit's
-  growth rate reaches zero at 38 % of extremal.
-- **Against Azad et al.** (arXiv:2301.05243): their second-order rate matches ours within 3 % at the 0.30c and 0.40c,
-  but by their formula the instability is gone at 33 % (they conjecture ≈ 30 %), and our 0.5c, at 33 %, is still
-  unstable.
+  (0.40c); the 0.46c peaked at −0.9 % at t 82 and turned back, the 0.5c (N 192) reached −1 % only at t 99.4, and the
+  0.9c stays flat to t 150 at all three resolutions.
+- **The 0.46c turned.** Its areal throat radius fell through the band at a near-constant 0.035 %/t (linear, not
+  exponential), peaked at −1.12 % at t 83 and was back to −0.21 % at t 100; R_eq and the MOTS move with it, no
+  trapped surface. The 0.40c's grew exponentially into the collapse.
+- **Instability curve** (`figures/instability_curve.png`, `plot_instability_curve`): τ 4.4 / 5.0 / 5.9 / 8.0 from
+  the static to the 0.40c; the 0.46c went through the band (15.2) and turned back, drawn open and not fitted. The
+  0.5c's 13.6 is out of order: it ran at N 192 with the sponge drive on. The fit's growth rate reaches zero at 40 %
+  of extremal with it, 36 % without it.
+- **Against Azad et al.** (Azad, Blázquez-Salcedo, Khoo, Kunz, arXiv:2301.05243): their second-order rate matches ours
+  within 3 % at the 0.30c and 0.40c (5.9 vs 6.1, 8.0 vs 8.0); their formula zeroes at 33 % and they conjecture the
+  instability ends at ≈ 30 %, where their main mode meets a second unstable mode and both should merge and vanish.
+  The 0.46c's turn at 29 % fits that conjecture; the 0.5c N 192 still shrinking at 33 % does not, unless it turns
+  later. Kleihaus & Kunz (2014) left 4D stability open; our 0.9c is stable.
 - **End state.** The low spins collapse into a black hole: the horizon settles at R 2.52 (0.2c) and 2.57 (0.30c,
-  still settling at t 100). The static died just after its horizon formed.
+  still settling at t 100); the 0.40c's MOTS leaves the throat at t 92 and reads R 3.22 at t 100, still shrinking.
+  The static died just after its horizon formed.
 - **Gravitational waves.** The 0.2c's collapse emits a (2,0) burst, r·Δψ4 ≈ 2e-4: one waveform from R 14 to 45, at
   the speed of light, ring-down period ≈ 24 (the L 128 far-zone run, `figures/farzone_wave_02c.png`).
 - **Larger spin, stronger wave, same shape.** Aligned on each run's own collapse (u = t − R − t₁₀, t₁₀ when R_eq is
@@ -52,11 +61,12 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.2c push in (l 0, ε −1e-3) | 12.3 | +1 % at 25.6 | – | 3.06 | inflates, +105 % at t 60 | 61 |
 | 0.30c | 18.3 | 51.4 | 5.9 | 3.76 | horizon R 2.571, M_MS 1.286, settling | 100 |
 | 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 18.3 | – | – | – | LIVE since 10-19 18:41 (2nd node): its whole burst (peak t ≈ 108, second trough ≈ 120 at R 14), the wave against spin | – |
-| 0.40c | 24.4 | 60.2 | 8.0 | – | LIVE, −9 % at t 86 | – |
+| 0.40c | 24.4 | 60.2 | 8.0 | 5.03 | horizon forming: MOTS off the throat from t 92, R 3.223 (M_MS 1.612) at t 100 | 100 |
 | 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | LIVE since 10-19 18:41 (2nd node): a third wave point (its burst reaches R 14 at t ≈ 115–140) | – |
-| 0.46c | 28.8 | −0.9 % at 87 | 15.2 | – | LIVE | – |
+| 0.46c | 28.8 | never (−0.92 % at 82) | 15.2, then turned | – | no collapse: areal −1.12 % at t 83, back to −0.21 % at t 100; MOTS on the throat | 100 |
+| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 28.8 | – | – | – | PROPOSED (no go), ≈ 7.3 h alone: whether the 0.46c's turn is a slow swing that comes back | – |
 | 0.5c (N 192, drive on) | 33.3 | 99.4 | 13.6 | – | clean t 100, MOTS −1.3 %, no horizon | 100 |
-| 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | QUEUED (go 10-19): 1st / 1 when the 0.40c / 0.46c t 100 end; the 0.5c like the other rungs (its N 192 / drive-on τ is out of order) | – |
+| 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | LIVE since 10-19 19:54 (1st / 1, alone): the 0.5c like the other rungs (its N 192 / drive-on τ is out of order) | – |
 | 0.6c (fast) | 40.3 | – | – | – | LIVE since 10-19 18:05 | – |
 | 0.7c (fast) | 51.4 | – | – | – | LIVE since 10-19 18:19 | – |
 | 0.9c (L 128 triplet, fast) | 80.8 | flat to t 150 | ∞ | – | stable: areal R drift ≤ 7e-5, no MOTS | 150 |
@@ -69,32 +79,33 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 | run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 2nd / 0, with the 0.40c t 150 | 0 @ 18:41 | 130 | ≈ 9.5 t/h | 10-20 ≈ 08:25 |
-| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 2nd / 0, with the 0.30c t 130 | 0 @ 18:41 | 150 | ≈ 9.5 t/h (20 alone after the 0.30c) | 10-20 ≈ 09:25 |
-| 0.6c `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.7c | 5.9 @ 18:29 | 150 | 9.2 t/h | 10-20 ≈ 10:05 |
-| 0.7c `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.6c | 1.7 @ 18:29 | 150 | 9.2 t/h | 10-20 ≈ 10:35 |
-| 0.40c `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` | 1st / 1, with the 0.46c | 87.4 @ 18:29 | 100 | 9.2 t/h | ≈ 19:50 |
-| 0.46c `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` | 1st / 1, with the 0.40c | 87.3 @ 18:29 | 100 | 9.2 t/h | ≈ 19:50 |
+| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 2nd / 0, with the 0.40c t 150 | 13.4 @ 20:09 | 130 | 9.1 t/h | 10-20 ≈ 08:50 |
+| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 2nd / 0, with the 0.30c t 130 | 13.3 @ 20:09 | 150 | 9.1 t/h (20 alone after the 0.30c) | 10-20 ≈ 09:55 |
+| 0.6c `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.7c | 21.0 @ 20:09 | 150 | 9.1 t/h | 10-20 ≈ 10:20 |
+| 0.7c `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.6c | 16.7 @ 20:09 | 150 | 9.1 t/h | 10-20 ≈ 10:35 |
+| 0.5c to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 1st / 1, alone | 5.0 @ 20:09 | 150 | 20.5 t/h | 10-20 ≈ 03:15 |
 
-- Start checks passed: t 0 MOTS R 5.5367 (0.6c; table 5.5419) and 6.8730 (0.7c; table 6.8795), ψ4 header R 10 14 18
-  30, frames, keep-last pruning. Decided 10-19: the 0.7c shares card 0 now rather than running alone on card 1 from
-  19:50. Watch the 0.7c: the archived one's slicing broke at t ≈ 102 (lapse floor, NaN 135.85), its MOTS gone by t 49.
+- Start checks passed: t 0 MOTS R 5.5367 (0.6c; table 5.5419), 6.8730 (0.7c; table 6.8795) and 4.9613 (0.5c; its
+  N 192 run 4.9620), ψ4 header R 10 14 18 30, frames, keep-last pruning. Decided 10-19: the 0.7c shares card 0 now
+  rather than running alone on card 1 from 19:50. Watch the 0.7c: the archived one's slicing broke at t ≈ 102 (lapse
+  floor, NaN 135.85), its MOTS gone by t 49.
 - Done and packed 10-19: the static, the 0.30c, both 0.2c kicks, the 0.2c N 192, the L 128 far-zone run, the 0.5c
-  N 192 (movies to the trust windows; the 0.30c's core movies still rendering).
+  N 192, the 0.40c and 0.46c t 100 (19:54; their movies rendering). The first node's scratch was pruned of the 0.40c /
+  0.46c last plotfiles (14 GB, ≈ 20:10).
 - The 0.30c t 130 and 0.40c t 150 (go 10-19 ≈ 18:40; decided: both on the second node's card now rather than the
   0.40c alone on the first node's card 1 from 19:50) are the 0.30c / 0.40c rungs' own params with only the name and
   the stop changed (diffed); t 0 constraints and R_eq identical to the t 100 runs. The second node's scratch was
   wiped of the kicks' last plotfiles (14 GB, 10-19 ≈ 18:40).
-- Queue: the 0.5c N 128 drive off to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` (go 10-19 ≈ 19:10, no
-  checkpoints): 1st / 1, launched by a watcher the moment the 0.40c / 0.46c t 100 exit (≈ 19:52), alone ≈ 20 t/h, so
-  ≈ 7.3 h, ETA 10-20 ≈ 03:15. Template: the 0.40c t 150's params with the 0.5c table (diffed: against the N 192 run only
-  N, plot_interval, drive, name and stop differ). t 150 rather than 100: the 0.46c's throat turned at t 84 (areal radius
-  −1.12 %, back to −0.99 % at t 91), so t 100 may not show whether the 0.5c collapses. Cancelled 10-19: the 0.2c bar and
-  the three 0.30c kicks (both rungs collapse anyway; templates stay).
+- The 0.5c N 128 drive off to t 150 (go 10-19 ≈ 19:10, no checkpoints) started at 19:54 on the first node's card 1,
+  launched by a watcher the moment the 0.40c / 0.46c t 100 exited. Template: the 0.40c t 150's params with the 0.5c
+  table (diffed: against the N 192 run only N, plot_interval, drive, name and stop differ). t 150 rather than 100: the
+  0.46c's throat turned at t 83, so t 100 may not show whether the 0.5c collapses.
+- Queue: empty; the 0.46c to t 150 PROPOSED in the main results table, no go. Cancelled 10-19: the 0.2c bar and the
+  three 0.30c kicks (both rungs collapse anyway; templates stay).
 
 ## RUNS FOR THE PAPER (proposed, no go yet)
 
-No proposed run (the 0.30c t 130 and 0.40c t 150 went LIVE 10-19; the 0.5c N 128 t 150 is queued).
+The proposed run is the PROPOSED row of the main results table (the 0.46c to t 150).
 Free analyses:
 
 | analysis | what it settles | cost |
