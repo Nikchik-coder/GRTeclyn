@@ -126,13 +126,27 @@ def rate(tau: float, r_a: float) -> float:
 def draw(points, pal) -> None:
     fig, ax = plt.subplots(figsize=(4.0, 3.0), layout="constrained")
     for x, tag, y, ha, dx in ((AZAD_CROSSING, "merger conjecture, 30 %", 0.25, "right", -1.2),
-                              (AZAD_QUADRATIC, "quadratic $J_c$, 50 %", 0.40, "left", 1.2)):
+                              (AZAD_QUADRATIC, "quadratic $J_c$, 50 %", 0.66, "left", 1.2)):
         ax.axvline(x, color="#b5b5b2", lw=0.8, ls=":")
         ax.text(x + dx, y, tag, fontsize=6.0, color="#8a8a86", va="top", ha=ha)
     az_x = [p["frac"] for p in points if p["label"] in AZAD_TAU and p["r_a"]]
     az_y = [rate(AZAD_TAU[p["label"]], p["r_a"]) for p in points
             if p["label"] in AZAD_TAU and p["r_a"]]
     ax.plot(az_x, az_y, "D", ms=4.5, mfc="none", mec=pal["azad"], mew=1.1, zorder=3)
+    # Azad's form through the measured rungs: rate = a - b (J/A)^2, zero at
+    # x0 = sqrt(a/b) -- the nonperturbative threshold this fit predicts.
+    mx = np.array([p["frac"] for p in points if p["tau"] is not None])
+    my = np.array([rate(p["tau"], p["r_a"]) for p in points if p["tau"] is not None])
+    x0 = None
+    if mx.size >= 2:
+        b, a = np.linalg.lstsq(np.stack([-mx ** 2, np.ones_like(mx)], 1), my, rcond=None)[0]
+        if b > 0:
+            x0 = float(np.sqrt(a / b))
+        xs = np.linspace(0.0, 100.0, 400)
+        fit_line, = ax.plot(xs, np.clip(a - b * xs ** 2, 0.0, None), ls="--",
+                            lw=1.0, color=pal["measured"], zorder=2)
+        print(f"fit a - b (J/A)^2: a {a:.3f}, b {b:.5f}" +
+              (f", zero at {x0:.1f} % of extremal" if x0 else ""))
     for p in points:
         if p["r_a"] is None:
             continue
@@ -141,7 +155,8 @@ def draw(points, pal) -> None:
                     color=pal["measured"], zorder=4)
             ax.annotate(f"{p['label']}\n$\\tau$ {p['tau']:.1f}",
                         (p["frac"], rate(p["tau"], p["r_a"])),
-                        textcoords="offset points", xytext=(6, -12), fontsize=6.5)
+                        textcoords="offset points", xytext=(7, 1), fontsize=6.5,
+                        ha="left")
         else:
             ax.plot(p["frac"], 0.0, "o", ms=5.5, mfc="none", mec=pal["stable"],
                     mew=1.2, zorder=4)
@@ -158,6 +173,9 @@ def draw(points, pal) -> None:
         (mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
                        mec=pal["stable"], mew=1.2), "stable on its window"),
     ]
+    if mx.size >= 2:
+        tag = f"fit $a-b\\,(J/A)^2$" + (f": dies at {x0:.0f} %" if x0 else "")
+        entries.append((fit_line, tag))
     if az_x:
         entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=4.5, mfc="none",
                                       mec=pal["azad"], mew=1.1), "Azad et al., 2nd order"))
