@@ -180,12 +180,8 @@ triplets pass (decided 10-17).
 | ☐ | 0.30c on L 64, N 128 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` (table `fam_a_ve030`: v_e 0.304, J 1.61; Azad's τ 6.1) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 0 (with the static; no checkpoints) |
 | ☐ | 0.40c on L 64, N 128 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` (table `fam_a_ve040`: v_e 0.395, J 2.41; Azad's τ 8.0) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 1 (with the 0.46c; no checkpoints) |
 | ☐ | 0.46c on L 64, N 128 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` (table `fam_a_ve045`: v_e 0.456, J 3.15; Azad's τ 13) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 1 (with the 0.40c; no checkpoints) |
-| ☐ | 0.99c | fast | 150 | ~9 h | |
-| ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
-| ✗ | kicks 0.9c on L 128, N 256 `spin_kick_L128_ml3_ve090a_{l0_eps_p1e3, l0_eps_m1e3, l0_eps_p1e2, m2_eps_p1e3, m1_eps_p1e3}_spdrv1_sig04_farfix_t150` | fast + kick | 150 | 9.7 h each | CANCELLED 10-18 ≈ 17:15 MSK: the 0.9c is too far from physical spins; the kicks move to the low spins (next row) |
 | ☐ | kicks 0.2c on L 64, N 128 `spin_kick_L64_ml3_J100_full_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | PENDING (go 10-18, no checkpoints; card not chosen; templates ready): does a push bring the collapse earlier? |
 | ☐ | kicks 0.30c on L 64, N 128 `spin_kick_L64_ml3_ve030a_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | PENDING (go 10-18, no checkpoints; card not chosen; templates ready): the same at the black-hole spin limit (J/M² 1.03) |
-| ☐ | 0.95c stretch (optional) | fast | 150 | ~9 h | |
 
 Middle rungs (10-18): tables in `runs/spinning_p3/tables/` (script `p5_mid_tables.py`, the saved fam_a_r1 solutions
 nearest 0.3/0.4/0.45, f error ≤ 1e-7); templates (`templates/params_spin_hold_L64_ml3_ve0{30,40,45}a_spdrv0_farfix_t100.txt`)
@@ -607,6 +603,7 @@ What the ledger says (pre-fix):
 - 10-18: the drive off for all new runs (the sponge test: the drive made the face junk; the throat is the same).
   No reruns for it: the runs with the drive keep their throats and their ψ4 inside R 18.
   The 0.9c kicks dropped (too far from physical spins): the kick study moves to the low spins, the 0.2c first.
+- 10-19: the 0.99c, the 0.95c stretch, the clamp validation and the cancelled 0.9c kicks taken off the run matrix.
 
 ## DONE
 
