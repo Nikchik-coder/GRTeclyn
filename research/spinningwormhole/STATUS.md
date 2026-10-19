@@ -23,7 +23,7 @@ Shared: `backgrounds/ bin/ logs/ manifests/ smoke/ templates/`. Launch with
    on L 128 N 256 (FINISHED 10-19): r·ψ4 2.0–2.3e-4, one waveform in t − R at R 14–45, flat in R (LIVE notes); the
    L 64 runs' ψ4 at R 14/18 matches it to ≤ 2 % through t 100.
 
-## STATE (2026-10-19 ≈ 08:00 MSK)
+## STATE (2026-10-19 ≈ 08:45 MSK)
 
 **Every run before 10-17 carries three numerics bugs, all found and fixed 10-17** (how: CONVERGENCE below),
 so every paper run reruns on binary rkfix 0661dac4:
@@ -170,7 +170,7 @@ triplets pass (decided 10-17).
 | ✓ | 0.9c triplet on L 128, N 128 `spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 3.4 h | FINISHED 10-18 02:55 MSK |
 | ✓ | 0.9c triplet on L 128, N 192 `spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 5.4 h | FINISHED 10-18 04:52 MSK |
 | ✓ | 0.9c triplet on L 128, N 256 (= the paper 0.9c) `spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150` | fast | 150 | 9.7 h | FINISHED 10-18 09:08 MSK |
-| ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | DIED 62.59 10-18 12:12 MSK: the collapse (trust 55) |
+| ✓ | 0.2c triplet on L 64, N 96 `spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 3.3 h | FINISHED 10-18 12:12 MSK: died 62.59 mid-collapse, the result (trust 55) |
 | ✓ | 0.2c triplet on L 64, N 128 (= the paper 0.2c) `spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 9.3 h | FINISHED 10-18 18:12 MSK: through the collapse to t 100, horizon settled, (2,0) wave out (trust 100) |
 | ✓ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 19.8 h | FINISHED 10-19 04:58 MSK: through the collapse to t 100 (trust 100) |
 | ✓ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t150` | slow | 150 | 9.7 h | FINISHED 10-19 05:06 MSK: the (2,0) wave passes R 14–45 at c, r·ψ4 flat in R (trust 150) |
@@ -213,7 +213,11 @@ its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| none since 10-19 05:47 MSK: the first node's cards 0 and 1 and the second node's card are idle | | | | | |
+| 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 | 100.01 | 100 | – | FINISHED 10-19 04:58 |
+| 0.2c L 128 N 256 far-zone GW run `00_paper_runs/spin_hold_L128_ml3_J100_full_farfix_t150` | 1st, card 1 | 150.00 | 150 | – | FINISHED 10-19 05:06 |
+| 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 | 100.01 | 100 | – | FINISHED 10-19 05:47 |
+
+Nothing live since 10-19 05:47 MSK: all three cards idle.
 
 **The far-zone run FINISHED t 150** (L 128 N 256, 10-19 05:06 MSK, no NaN). Its throat is the L 64 N 128's to 4
 digits (R_eq −1 / −10 / −20 % at 46.86 / 61.99 / 66.95, τ 6.57; χ on the floor at 66.2–68.4 in the four central
@@ -277,9 +281,7 @@ order); the N 192's collapse came where expected (−1 % at 57.8, −10 % at 71.
 (10-19, figure `results/spinningwormhole/figures/convergence_02c.png`, `plot_convergence --spin 0.2c`):** past t ≈ 45 the
 members sit at different collapse stages, so equal-t orders mean nothing; at equal R_eq deficit (−0.1 % … −10 %) the
 throat level converges at 3.3–4.0 (Ham) and 3.4–4.2 (Mom). Aligned at −10 %, the collapse curves, the R 14 wave
-(N 128 / 192 within 6 %) and the horizons overlap. After the collapse levels 0–1 keep growing with the drive's shell
-junk (the undriven far-zone run's are 600–2000× lower at t 80–100), while the throat level jumps during the collapse
-and then stays flat inside the horizon (3.5e-4 / 5.4e-3 over t 80–150 in the far-zone run).
+(N 128 / 192 within 6 %) and the horizons overlap. Why the constraints still grow after the collapse: the note below.
 
 **Constraint growth: the slow runs' t ≈ 80 knee is gone** (the N 128 to t 100, 10-18). The pre-fix "Ham ×2 at 78–85"
 was levels 1–2 growing exponentially (e-fold 5–7) from t ≈ 30 until they dominated the whole-box norm (pre-fix 0.2c
@@ -290,6 +292,13 @@ shell junk (the drive-off sponge test: level 1 1100× lower at t 55; order +4.1 
 t 35–45), to 2e-4 at 80 and 7e-4 at 100. The whole-box L2_Ham never doubles. The 0.2c's throat quotes stop at its collapse;
 its exterior and waves hold to t 100; the 0.5c N 192 settles whether the slow recipe quotes past 80: yes (no knee to
 t 100, above).
+
+**Why the constraints grow after the collapse** (10-19). Two separate causes:
+- **Levels 0–1: the sponge drive.** Once the collapse's outgoing pulse reaches the sponge shell, the drive keeps
+  pulling the shell back to the t = 0 data, and that breaks the constraints. The far-zone run has no drive, and its
+  levels 0–1 are 600–2000× lower at t 80–100 (3e-7 against 2e-4).
+- **Level 3: the collapse itself.** It jumps while the throat pinches into a black hole, then stays flat inside the
+  horizon: 3.5e-4 (Ham) and 5.4e-3 (Mom) from t 80 to 150 in the far-zone run.
 
 0.5c settings (go 10-18 ≈ 09:45, second node): the archived pre-fix 0.5c `spin_hold_L64_ml3_ve050a_spdrv1_t150`
 (slow recipe: σ 0.1, min_chi 1e-8, dt 0.02, sponge 24–32 with drive 1.0) with N 128 → 192 and stop 150 → 100, plus
