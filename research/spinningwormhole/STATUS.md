@@ -83,7 +83,7 @@ box's outer 3 cells: `constraint_norms_edge_cells = 3`) and PASSES: all three cl
 (orders under LIVE), throat areal radius flat to ≤ 7e-5, no MOTS. The 0.2c L 64 triplet ran with the same fixes: the
 N 96 died in its collapse, the N 128 and N 192 went through it to t 100 with no NaN (10-18 / 10-19); the far-zone
 0.2c on L 128 finished t 150 and the 0.5c N 192 t 100 (10-19); the slow runs' t ≈ 80 constraint knee is gone on
-the fixed binary (LIVE notes). Live: the four holds (first node, since 10-19 08:48 MSK) and the 0.2c push-in and push-out kicks (second node, since 09:12 and 10:51 MSK). The Weyl4 frames blank the box's outer 2 cells (`--frames-blank-edge 2`, point 7).
+the fixed binary (LIVE notes). Live: the four holds (first node, since 10-19 08:48 MSK). The 0.2c push-in and push-out kicks are done (10-19: push in FINISHED t 100, push out DIED 44.08 mid-collapse; packed). The Weyl4 frames blank the box's outer 2 cells (`--frames-blank-edge 2`, point 7).
 
 ## CODEBASE DIAGNOSTIC (2026-10-19)
 
@@ -276,10 +276,10 @@ triplets pass (decided 10-17).
 | ☐ | 0.30c on L 64, N 128 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` (table `fam_a_ve030`: v_e 0.304, J 1.61; Azad's τ 6.1) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 0 (with the static; no checkpoints) |
 | ☐ | 0.40c on L 64, N 128 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` (table `fam_a_ve040`: v_e 0.395, J 2.41; Azad's τ 8.0) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 1 (with the 0.46c; no checkpoints) |
 | ☐ | 0.46c on L 64, N 128 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` (table `fam_a_ve045`: v_e 0.456, J 3.15; Azad's τ 13) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 1 (with the 0.40c; no checkpoints) |
-| ☐ | kicks 0.2c on L 64, N 128 `spin_kick_L64_ml3_J100_full_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | push in (`l0_eps_m1e3`) LIVE since 10-19 09:12 MSK and push out (`l0_eps_p1e3`) since 10:51 MSK, both on the 2nd node's card (no checkpoints); the bar PENDING (go 10-18; card not chosen): does a push bring the collapse earlier? The push in inflates, as the merger paper's sign rule says |
+| ☐ | kicks 0.2c on L 64, N 128 `spin_kick_L64_ml3_J100_full_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | push in (`l0_eps_m1e3`) FINISHED t 100 (trust 61) and push out (`l0_eps_p1e3`) DIED 44.08 mid-collapse (trust 42), both packed 10-19; the bar PENDING (go 10-18; card not chosen). The sign picks the branch (the merger paper's rule) and either way the throat passes ∓1 % 21.5 before the hold |
 | ☐ | kicks 0.30c on L 64, N 128 `spin_kick_L64_ml3_ve030a_{l0_eps_m1e3, l0_eps_p1e3, m2_eps_p1e3}_spdrv0_farfix_t100` (push in, out, bar; drive off) | slow + kick | 100 | ~10 h, 23 GB each | PENDING (go 10-18, no checkpoints; card not chosen; templates ready): the same at the black-hole spin limit (J/M² 1.03) |
-| ☐ | 0.6c on L 64, N 128 `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` (table `fam_a_ve060`: v_e 0.592, J 6.19, J/A 40 % of extremal; never run) | fast + drive off | 150 | ~15 h shared, 22 GB | QUEUED (go 10-19 ≈ 11:20 MSK, template written and diffed; no checkpoints): on the 2nd node's card when the kicks end ≈ 19:30 MSK, with the 0.7c |
-| ☐ | 0.7c rerun on L 64, N 128 `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` (the archived fast 0.7c's params + the fix/far-zone keys, drive off; J/A 51 %, Azad's quadratic J_c; old run: throat flat t 0–83, slicing broke 102) | fast + drive off | 150 | ~15 h shared, 22 GB | QUEUED (go 10-19 ≈ 11:20 MSK, template written and diffed; no checkpoints): on the 2nd node's card when the kicks end ≈ 19:30 MSK, with the 0.6c; shared ≈ 10 t/h, ETA ≈ 10:30 10-20 |
+| ☐ | 0.6c on L 64, N 128 `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` (table `fam_a_ve060`: v_e 0.592, J 6.19, J/A 40 % of extremal; never run) | fast + drive off | 150 | ~15 h shared, 22 GB | QUEUED (go 10-19 ≈ 11:20 MSK, template written and diffed; no checkpoints): placement open (10-19 ≈ 17:50 MSK: the kicks ended early; free are the 2nd node's card and the 1st node's card 0) |
+| ☐ | 0.7c rerun on L 64, N 128 `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` (the archived fast 0.7c's params + the fix/far-zone keys, drive off; J/A 51 %, Azad's quadratic J_c; old run: throat flat t 0–83, slicing broke 102) | fast + drive off | 150 | ~15 h shared, 22 GB | QUEUED (go 10-19 ≈ 11:20 MSK, template written and diffed; no checkpoints): placement open, as the 0.6c's; ≈ 20 t/h alone (≈ 7.3 h), ≈ 10 shared |
 
 Middle rungs (10-18): tables in `runs/spinning_p3/tables/` (script `p5_mid_tables.py`, the saved fam_a_r1 solutions
 nearest 0.3/0.4/0.45, f error ≤ 1e-7); templates (`templates/params_spin_hold_L64_ml3_ve0{30,40,45}a_spdrv0_farfix_t100.txt`)
@@ -311,8 +311,8 @@ its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 | 0.30c hold `00_paper_runs/spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` | 1st, card 0 (with the static), 22 GB | 17.7 @ 10:48 | 100 | 9.00 t/h | ≈ 10-19 19:55 |
 | 0.40c hold `00_paper_runs/spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` | 1st, card 1 (with the 0.46c), 22 GB | 17.8 @ 10:48 | 100 | 9.05 t/h | ≈ 10-19 19:55 |
 | 0.46c hold `00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` | 1st, card 1 (with the 0.40c), 22 GB | 17.8 @ 10:48 | 100 | 9.03 t/h | ≈ 10-19 19:55 |
-| 0.2c kick, push in `00_paper_runs/spin_kick_L64_ml3_J100_full_l0_eps_m1e3_spdrv0_farfix_t100` | 2nd, card 0 (with the push out), 22 GB | 32.1 @ 10:48 | 100 | ≈ 10 t/h shared (20.3 alone) | ≈ 10-19 17:20 |
-| 0.2c kick, push out `00_paper_runs/spin_kick_L64_ml3_J100_full_l0_eps_p1e3_spdrv0_farfix_t100` | 2nd, card 0 (with the push in), 22 GB | 0 @ 10:51 | 100 | ≈ 10 t/h shared | ≈ 10-19 19:05 |
+| 0.2c kick, push in `00_paper_runs/spin_kick_L64_ml3_J100_full_l0_eps_m1e3_spdrv0_farfix_t100` | 2nd, card 0 | 100.00 | 100 | – | FINISHED 10-19 16:48 (trust 61; packed) |
+| 0.2c kick, push out `00_paper_runs/spin_kick_L64_ml3_J100_full_l0_eps_p1e3_spdrv0_farfix_t100` | 2nd, card 0 | 44.08 | 100 | – | DIED 10-19 15:41, NaN mid-collapse (trust 42; packed) |
 | 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 | 100.01 | 100 | – | FINISHED 10-19 04:58 |
 | 0.2c L 128 N 256 far-zone GW run `00_paper_runs/spin_hold_L128_ml3_J100_full_farfix_t150` | 1st, card 1 | 150.00 | 150 | – | FINISHED 10-19 05:06 |
 | 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 | 100.01 | 100 | – | FINISHED 10-19 05:47 |
@@ -347,6 +347,24 @@ The 0.2c push-out kick (l 0, ε +1e-3, the collapse sign; go 10-19) started 10:5
 (2ε); levels 0–2 identical to the hold's, the throat level's L2_Ham 2.29e-3 (the push in's 2.31e-3); 46 GB on the card.
 The consumer's t 0 pass: ψ4 header R 10 14 18 30, MOTS R 4.0303 (+1.99e-3), 14 frames; the t 0 slices equal the
 hold's except χ out to r 3.3 and Ψ4 out to r 4.1.
+
+**The 0.2c kicks are done (10-19): the push picks the branch and brings it 21.5 earlier.** Against the unperturbed
+hold's t 0 throat (each kick starts 0.2 % off it), the two are mirror images: R_eq ∓1 / ∓10 / ∓20 % at 25.31 / 37.98 /
+42.22 (push out, shrinking) and 25.61 / 38.44 / 42.72 (push in, growing), against the hold's 46.85 / 61.98 / 66.95.
+τ(1 → 10 %) 5.50 / 5.57 in coordinate time, 3.03 / 3.06 in the proper time of the throat's equatorial ring (∫α dt, the
+lapse read on the ring r_throat(t) from the slice cache; the method gives the hold's 3.28 exactly), against the hold's
+6.57 / 3.28 (its N 192: 3.13): the kicks collapse at a higher throat lapse (0.556 against 0.519 at 1 %), and their
+proper τ sits below even the N 192's. The static and the 0.30c in the same units: 2.96 and 3.76 (5.59 and
+8.06 coordinate). **Push out DIED 44.08** (15:41 MSK; NaN in h11, level 3) mid-collapse after its horizon formed: the
+MOTS leaves the throat from t ≈ 35 (θ_in −0.08; 1 % outside it at 38, 9 % at 44 with θ_in −0.36), L2_Mom ×2 (vs
+t 20) at 33.9 with the shrinking throat, χ on the 1e-8 floor at 42.34, max|K| > 0.1 at 42.67, throat −27 % at the end:
+the N 96 member's death sequence 18.5 earlier. Trust 42. **Push in FINISHED t 100** (16:48 MSK, no NaN): +105 % at
+t 60 (throat_spheres R 4.01 → 8.22), no MOTS after t 23; the throat leaves the finest box (r 5) at t ≈ 61.4, so trust
+61: afterwards throat_geometry reads the box edge, the growth slows (+183 % at t 100 in throat_spheres), L2_Ham rises
+×20 over t 70–100 (1.7e-3 → 3.6e-2) and a far-side MOTS (R 32.6 at r_mean 3.2–3.5) appears from t 68, none of it
+quoted. Both packed (`00_paper_runs`), trust windows in `trust_windows.tsv`, movies to t 61 / 42
+(`logs/rerender_0p2c_kick_push{in,out}_t100*.log`). Their last 3 plotfiles each (14 GB) are still on the second node's
+scratch, to prune from a session there; its card is idle since 16:48 MSK.
 
 **The far-zone run FINISHED t 150** (L 128 N 256, 10-19 05:06 MSK, no NaN). Its throat is the L 64 N 128's to 4
 digits (R_eq −1 / −10 / −20 % at 46.86 / 61.99 / 66.95, τ 6.57; χ on the floor at 66.2–68.4 in the four central
@@ -489,8 +507,8 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
 ## NEXT
 
 - The four holds (static, 0.30c, 0.40c, 0.46c) LIVE on the first node since 10-19 08:48 MSK, two per card, ETA ≈ 19:55
-  MSK. The 0.2c push-in (inflating, the sign rule) and push-out (the collapse sign, since 10:51 MSK) kicks LIVE on
-  the second node's card, ETA ≈ 17:20 / 19:05 MSK; the other four kicks PENDING.
+  MSK. The 0.2c push-in and push-out kicks are done (push in FINISHED t 100, inflating; push out DIED 44.08
+  mid-collapse; both 21.5 ahead of the hold; packed 10-19, movies to t 61 / 42); the other four kicks PENDING.
 - The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); the first node's scratch pruned
   (41 GB, 10-19 ≈ 08:10 MSK); the second node's (the 0.5c N 192's last plotfiles, 21 GB) pruned 10-19 ≈ 09:35 MSK. Movies
   to the trust windows (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`):
@@ -514,8 +532,8 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
   `main3d_kick_af28ad29_2026-10-18.ex`, `--subdir drainhole/00_paper_runs`, the hold's consumer flags; ~10 h and
   23 GB each, three per card. Start checks: R_pol/R_eq at t 0 (+/−2e-3 for l 0), frame 0 against the hold's, ψ4
   header R 10 14 18 30. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
-- Second node (one card): the 0.2c push-in and push-out kicks since 10-19 09:12 / 10:51 MSK; the 0.5c N 192's last plotfiles pruned from
-  its scratch (21 GB, 10-19 ≈ 09:35 MSK); 854 GB free.
+- Second node (one card): idle since 10-19 16:48 MSK (the kicks ended); their last plotfiles (2 × 3, 14 GB) are still
+  on its scratch, to prune from a session there; the 0.5c N 192's were pruned 10-19 ≈ 09:35 MSK (21 GB).
 
 ## MAIN RESULTS SO FAR — PRE-FIX (requote every evolution number from the reruns)
 
