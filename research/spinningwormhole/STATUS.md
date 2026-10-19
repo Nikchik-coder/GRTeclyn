@@ -356,7 +356,7 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
   (41 GB, 10-19 ≈ 08:10 MSK); the second node's (the 0.5c's last plotfiles) not listed from here. Movies to the trust
   windows rendering (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`).
 - Claim 3's figure (10-19): `results/spinningwormhole/figures/farzone_wave_02c.png` (`plot_farzone_wave`; a copy in the
-  run's `figures/`): the throat against the L 64 hold, r·Δψ4 (2,0) at R 14–45 against t and t − R, the extrema against
+  run's `figures/`): the throat against the L 64 hold, r·Δψ4 (2,0) at R 14–45 against t − R, the extrema against
   R (over R 30–45 the peak holds to 1.5 %, the troughs to 7.2 % / 2.4 %), and their speed between neighbouring spheres
   against light's over the same stretch (α√χ − β^r on the equator: 0.86 at R 14–18, 0.95 at 40–45): within 1 % of
   light over R 40–45 and 2.5 % over 30–40, ahead of it further in (4–15 %) while the near field fades. The static

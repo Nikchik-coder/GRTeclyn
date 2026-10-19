@@ -10,13 +10,12 @@ r = 48-64 with no drive.
     1 - R_eq / R_eq(0) (``throat_geometry.dat``) in the far-zone run and in the
     L = 64 hold, and the difference of the two deficits;
 (b) the (l, m) = (2, 0) mode of r Psi4 at R = 14, 18, 30, 40, 45 minus its
-    t = 0 value (the stationary background's own curvature), against t: the
+    t = 0 value (the stationary background's own curvature), against t - R: the
     consumer's stream already carries the factor r, so nothing here multiplies
     by R; the imaginary part stays below 1.1e-3 of the real one (axisymmetry);
-(c) the same against t - R;
-(d) the three extrema of (c) at each radius, in absolute value: the first
+(c) the three extrema of (b) at each radius, in absolute value: the first
     trough (t - R in 68-81), the peak (81-93) and the second trough (93-106);
-(e) the speed of each extremum between neighbouring spheres, Delta R over the
+(d) the speed of each extremum between neighbouring spheres, Delta R over the
     difference of its arrival times (each time the vertex of a parabola through
     the three samples about the extremum), against the speed of light over the
     same stretch, Delta R / int dr / c(r) with c = alpha sqrt(chi) - beta^r, the
@@ -45,7 +44,7 @@ draws the radii in its blue, light (R = 14) to dark (R = 45), and the speed of
 light in its red; ``house`` is the house ordinal ramp with an ink light speed.
 ``--colors`` takes five colours, innermost radius first.
 
-Reads the packed runs under ``results/spinningwormhole/campaign/`` and, for (e),
+Reads the packed runs under ``results/spinningwormhole/campaign/`` and, for (d),
 the far-zone run's slice cache under ``runs/``; writes
 ``results/spinningwormhole/figures/farzone_wave_02c`` (PNG + PDF) and the same
 figure into the run's ``figures/farzone_wave``.
@@ -71,11 +70,11 @@ FIGURES = solutions.REPO / "results" / "spinningwormhole" / "figures"
 FARZONE = "spin_hold_L128_ml3_J100_full_farfix_t150"
 HOLD = "spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100"
 RUN_DIR = solutions.REPO / "runs" / "spinning_wormhole" / "drainhole" / "00_paper_runs" / FARZONE
-# the extrema of (d) and (e), as windows in t - R
+# the extrema of (c) and (d), as windows in t - R
 FEATURES = (("trough 1", (68.0, 81.0)), ("peak", (81.0, 93.0)), ("trough 2", (93.0, 106.0)))
 T_HOLD = 100.0              # the L = 64 hold's stop: the throat comparison runs to here
-T_FROM = 40.0               # (b) starts here: before it r Psi4 stays below 1e-6
-U_RANGE = (30.0, 110.0)     # (c)'s window in t - R
+T_QUIET = 40.0              # before this r Psi4 stays below 1e-6 (printed)
+U_RANGE = (30.0, 110.0)     # (b)'s window in t - R
 T_LIGHT = np.arange(100.0, 146.0, 5.0)   # the slices the light speed is averaged over
 R_FAR = 30.0                # the far zone: the speed fits use R >= this
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
@@ -173,8 +172,7 @@ def speeds(feats, light):
 
 def draw(t, waves, throat, look, light) -> plt.Figure:
     style.prd(8.0)
-    fig, ax = plt.subplot_mosaic([["a", "a", "b", "b", "c", "c"], ["d", "d", "d", "e", "e", "e"]],
-                                 figsize=(7.0, 4.8), layout="constrained")
+    fig, ax = plt.subplot_mosaic([["a", "b"], ["c", "d"]], figsize=(7.0, 4.8), layout="constrained")
     radii = sorted(waves)
     lines = style.ordinal_series(len(radii), lw=1.1)
     for line, c in zip(lines, look["radii"]):
@@ -190,19 +188,16 @@ def draw(t, waves, throat, look, light) -> plt.Figure:
                (ax["a"].plot(tf[keep], diff, color=style.MUTED, lw=0.7)[0], "difference")]
     ax["a"].set(yscale="log", ylim=(1e-7, 1.0), xlim=(0.0, tf[-1]), xlabel=r"$t$",
                 ylabel=r"$1-R_{\rm eq}/R_{\rm eq}(0)$")
-    style.legend_top(ax["a"], entries, ncol=1)
+    style.legend_top(ax["a"], entries, ncol=3)
 
-    # (b) and (c): the wave against t and against t - R
-    for key, shift, xlim, xlabel in (("b", False, (T_FROM, t[-1]), r"$t$"), ("c", True, U_RANGE, r"$t-R$")):
-        handles = []
-        for r, line in zip(radii, lines):
-            x = t - r if shift else t
-            handles.append((ax[key].plot(x, 1e4 * waves[r].real, **line)[0], rf"$R={r:g}$"))
-        ax[key].axhline(0.0, color=style.GRID, lw=0.6, zorder=0)
-        ax[key].set(xlim=xlim, xlabel=xlabel, ylabel=r"$10^4\, r\,\Delta\psi_4^{20}$")
-        style.legend_top(ax[key], handles, ncol=3)
+    # (b) the wave against t - R
+    handles = [(ax["b"].plot(t - r, 1e4 * waves[r].real, **line)[0], rf"$R={r:g}$")
+               for r, line in zip(radii, lines)]
+    ax["b"].axhline(0.0, color=style.GRID, lw=0.6, zorder=0)
+    ax["b"].set(xlim=U_RANGE, xlabel=r"$t-R$", ylabel=r"$10^4\, r\,\Delta\psi_4^{20}$")
+    style.legend_top(ax["b"], handles, ncol=len(radii))
 
-    # (d) the extrema against R; (e) their speed between neighbouring spheres
+    # (c) the extrema against R; (d) their speed between neighbouring spheres
     feats = extrema(t, waves)
     marks = {"trough 1": dict(marker="o", mfc="none", color=style.CONTEXT),
              "peak": dict(marker="o", color=style.INK),
@@ -210,27 +205,27 @@ def draw(t, waves, throat, look, light) -> plt.Figure:
     entries_d, entries_e = [], []
     for name, rows in feats.items():
         r, _, y = np.array(rows).T
-        entries_d.append((ax["d"].plot(r, 1e4 * np.abs(y), ls="-", lw=0.7, ms=4.0, **marks[name])[0], name))
+        entries_d.append((ax["c"].plot(r, 1e4 * np.abs(y), ls="-", lw=0.7, ms=4.0, **marks[name])[0], name))
     vel = speeds(feats, light)
     for name, pairs in vel.items():
         rm, v, _ = np.array(pairs).T
-        entries_e.append((ax["e"].plot(rm, v, ls="-", lw=0.7, ms=4.0, **marks[name])[0], name))
+        entries_e.append((ax["d"].plot(rm, v, ls="-", lw=0.7, ms=4.0, **marks[name])[0], name))
     if light is not None:
         rm, _, vl = np.array(vel["peak"]).T
-        entries_e.append((ax["e"].plot(rm, vl, color=look["light"], lw=1.1, marker="x", ms=4.5)[0],
+        entries_e.append((ax["d"].plot(rm, vl, color=look["light"], lw=1.1, marker="x", ms=4.5)[0],
                           "light, over the same stretch"))
-    entries_e.append((ax["e"].axhline(1.0, color=style.MUTED, lw=0.8, ls=(0, (3.0, 2.0)), zorder=1),
+    entries_e.append((ax["d"].axhline(1.0, color=style.MUTED, lw=0.8, ls=(0, (3.0, 2.0)), zorder=1),
                       r"$c=1$"))
-    ax["d"].set(xlim=(10.0, 48.0), ylim=(0.0, 2.6), xlabel=r"$R$",
+    ax["c"].set(xlim=(10.0, 48.0), ylim=(0.0, 2.6), xlabel=r"$R$",
                 ylabel=r"$10^4\, |r\,\Delta\psi_4^{20}|$ at the extremum")
-    ax["e"].set(xlim=(10.0, 48.0), ylim=(0.84, 1.02), xlabel=r"$R$ (between neighbouring spheres)",
+    ax["d"].set(xlim=(10.0, 48.0), ylim=(0.84, 1.02), xlabel=r"$R$ (between neighbouring spheres)",
                 ylabel=r"speed $\Delta R/\Delta t$")
-    for key in ("d", "e"):
+    for key in ("c", "d"):
         ax[key].set_xticks(radii)
     # the marker handles' extent pads past the key's left edge: inset the key a little
-    style.legend_top(ax["d"], entries_d, ncol=3, borderpad=0.6)
-    style.legend_top(ax["e"], entries_e, ncol=3, borderpad=0.6)
-    keys = ("a", "b", "c", "d", "e")
+    style.legend_top(ax["c"], entries_d, ncol=3, borderpad=0.6)
+    style.legend_top(ax["d"], entries_e, ncol=3, borderpad=0.6)
+    keys = ("a", "b", "c", "d")
     style.tag_keys(fig, [ax[k] for k in keys], [f"({k})" for k in keys])
     return fig
 
@@ -242,27 +237,27 @@ def report(t, waves, throat, light) -> None:
     print(f"(a) deficit at t 60 / 100 / {tf[-1]:.0f}: far {np.interp(60, tf, df):.4f} / "
           f"{np.interp(100, tf, df):.4f} / {df[-1]:.4f}; hold {np.interp(60, th, dh):.4f} / "
           f"{np.interp(100, th, dh):.4f}; max |difference| to t {T_HOLD:g} {diff.max():.1e}")
-    quiet = {r: np.abs(w[t <= T_FROM]).max() for r, w in waves.items()}
-    print("(b) max |r dPsi4| to t %g: " % T_FROM + ", ".join(f"R {r:g} {q:.1e}" for r, q in quiet.items()))
+    quiet = {r: np.abs(w[t <= T_QUIET]).max() for r, w in waves.items()}
+    print("(b) max |r dPsi4| to t %g: " % T_QUIET + ", ".join(f"R {r:g} {q:.1e}" for r, q in quiet.items()))
     print("    max |Im| / max |Re|: " + ", ".join(
         f"R {r:g} {np.abs(w.imag).max() / np.abs(w.real).max():.1e}" for r, w in waves.items()))
     feats = extrema(t, waves)
     for name, rows in feats.items():
         ys = np.array([y for _, _, y in rows])
         far = np.array([abs(y) for r, _, y in rows if r >= R_FAR])
-        print(f"(d) {name}: " + ", ".join(f"R {r:g} {y:+.3e} at t-R {ta - r:.1f}" for r, ta, y in rows)
+        print(f"(c) {name}: " + ", ".join(f"R {r:g} {y:+.3e} at t-R {ta - r:.1f}" for r, ta, y in rows)
               + f"; spread {100 * (np.abs(ys).max() / np.abs(ys).min() - 1):.1f} %, "
               f"over R >= {R_FAR:g} {100 * (far.max() / far.min() - 1):.1f} %")
     for name, pairs in speeds(feats, light).items():
         r, ta, _ = np.array(feats[name]).T
         far = r >= R_FAR
         fit = 1.0 / np.polyfit(r[far], ta[far], 1)[0]
-        print(f"(e) {name}: " + ", ".join(f"R {rm:g}: {v:.3f} (light {vl:.3f})" for rm, v, vl in pairs)
+        print(f"(d) {name}: " + ", ".join(f"R {rm:g}: {v:.3f} (light {vl:.3f})" for rm, v, vl in pairs)
               + f"; fit over R >= {R_FAR:g}: {fit:.3f}")
     if light is None:
-        print("(e) no slice cache: the light speed is not drawn")
+        print("(d) no slice cache: the light speed is not drawn")
     else:
-        print("(e) light, alpha sqrt(chi) - beta^r at R 14 / 30 / 45: " + " / ".join(
+        print("(d) light, alpha sqrt(chi) - beta^r at R 14 / 30 / 45: " + " / ".join(
             f"{np.interp(r, *light):.3f}" for r in (14.0, 30.0, 45.0)))
 
 
