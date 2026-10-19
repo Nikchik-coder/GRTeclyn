@@ -56,7 +56,7 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | LIVE since 10-19 18:41 (2nd node): a third wave point (its burst reaches R 14 at t ≈ 115–140) | – |
 | 0.46c | 28.8 | −0.9 % at 87 | 15.2 | – | LIVE | – |
 | 0.5c (N 192, drive on) | 33.3 | 99.4 | 13.6 | – | clean t 100, MOTS −1.3 %, no horizon | 100 |
-| 0.5c on N 128, drive off `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t100` | 33.3 | – | – | – | PROPOSED (no go), ≈ 4.9 h alone: the 0.5c like the other rungs (its N 192 / drive-on τ is out of order) | – |
+| 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | QUEUED (go 10-19): 1st / 1 when the 0.40c / 0.46c t 100 end; the 0.5c like the other rungs (its N 192 / drive-on τ is out of order) | – |
 | 0.6c (fast) | 40.3 | – | – | – | LIVE since 10-19 18:05 | – |
 | 0.7c (fast) | 51.4 | – | – | – | LIVE since 10-19 18:19 | – |
 | 0.9c (L 128 triplet, fast) | 80.8 | flat to t 150 | ∞ | – | stable: areal R drift ≤ 7e-5, no MOTS | 150 |
@@ -85,12 +85,16 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
   0.40c alone on the first node's card 1 from 19:50) are the 0.30c / 0.40c rungs' own params with only the name and
   the stop changed (diffed); t 0 constraints and R_eq identical to the t 100 runs. The second node's scratch was
   wiped of the kicks' last plotfiles (14 GB, 10-19 ≈ 18:40).
-- Queue: empty; the 0.5c N 128 drive off PROPOSED in the main results table, no go. Cancelled 10-19: the 0.2c bar and the three
-  0.30c kicks (both rungs collapse anyway; templates stay).
+- Queue: the 0.5c N 128 drive off to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` (go 10-19 ≈ 19:10, no
+  checkpoints): 1st / 1, launched by a watcher the moment the 0.40c / 0.46c t 100 exit (≈ 19:52), alone ≈ 20 t/h, so
+  ≈ 7.3 h, ETA 10-20 ≈ 03:15. Template: the 0.40c t 150's params with the 0.5c table (diffed: against the N 192 run only
+  N, plot_interval, drive, name and stop differ). t 150 rather than 100: the 0.46c's throat turned at t 84 (areal radius
+  −1.12 %, back to −0.99 % at t 91), so t 100 may not show whether the 0.5c collapses. Cancelled 10-19: the 0.2c bar and
+  the three 0.30c kicks (both rungs collapse anyway; templates stay).
 
 ## RUNS FOR THE PAPER (proposed, no go yet)
 
-The proposed run is the PROPOSED row of the main results table (the 0.30c t 130 and 0.40c t 150 went LIVE 10-19).
+No proposed run (the 0.30c t 130 and 0.40c t 150 went LIVE 10-19; the 0.5c N 128 t 150 is queued).
 Free analyses:
 
 | analysis | what it settles | cost |
