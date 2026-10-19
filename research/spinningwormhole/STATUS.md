@@ -232,7 +232,9 @@ The 0.2c push-in kick (l 0, ε −1e-3 at η_c 1.0079, width 0.5; go 10-18) star
 09:12 MSK as the first kick evolution (decided 10-19: one kick first, the other five after it), binary kick af28ad29,
 the paper 0.2c's params plus the kick keys with the drive off (diffed), no checkpoints. Start checks: preflight
 PASS; t 0 R_eq / R_pol 4.05145 / 4.01865, both −1.986e-3 against the hold's (2ε); levels 0–2 identical to the
-hold's; the throat level's L2_Ham 2.31e-3 (hold 8.0e-6), the declared O(ε) violation; 22 GB; 20.3 t/h.
+hold's; the throat level's L2_Ham 2.31e-3 (hold 8.0e-6), the declared O(ε) violation; 22 GB; 20.3 t/h. At t 3 (09:21
+MSK): keep-last pruning runs (3 plotfiles, 7.1 GB); the consumer takes 1.4 min a plotfile against one every 3.0 min;
+the throat springs back, R_eq −1.99e-3 → −1.26e-3 against the hold (R_pol −1.30e-3).
 
 **The far-zone run FINISHED t 150** (L 128 N 256, 10-19 05:06 MSK, no NaN). Its throat is the L 64 N 128's to 4
 digits (R_eq −1 / −10 / −20 % at 46.86 / 61.99 / 66.95, τ 6.57; χ on the floor at 66.2–68.4 in the four central
