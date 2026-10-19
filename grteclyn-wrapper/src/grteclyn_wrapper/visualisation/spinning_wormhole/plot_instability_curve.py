@@ -4,12 +4,12 @@ unstable mode, on Azad et al.'s axes (arXiv:2301.05243).
 
 One panel.  x is the angular momentum over the throat area, J/A, as a
 percentage of the extremal-Kerr limit 1/(8 pi) -- read from each rung's
-background table (``meta J_over_A_extremal_frac``).  y is the dimensionless
-growth rate |omega_I| sqrt(A): 1/tau from a log-linear fit of the equatorial
-deficit 1 - R_eq/R_eq(0) (``throat_geometry.dat``) over the band 0.2-10 %,
-times sqrt(A) with A = 4 pi R_A(0)^2 from the throat sphere's areal radius
-(``throat_spheres.dat``).  A rung whose deficit never reaches the band is
-stable on its window and sits at zero (open marker).
+background table (``meta J_over_A_extremal_frac``).  y is the growth rate
+1/tau in code units, tau from a log-linear fit of the equatorial deficit
+1 - R_eq/R_eq(0) (``throat_geometry.dat``) over the band 0.2-10 %; the right
+edge relabels the same scale in tau (5, 10, 20, 50, infinity), so the e-fold
+time reads directly.  A rung whose deficit never reaches the band is stable
+on its window and sits at zero (open marker), tau = infinity.
 
 Against it, Azad et al.'s second-order rates at the ladder's middle rungs
 (their tau 6.1 / 8.0 / 13 at 0.30c / 0.40c / 0.46c, the values quoted in
@@ -119,9 +119,9 @@ def measure(run: str):
                 flat=None, t_end=t[-1])
 
 
-def rate(tau: float, r_a: float) -> float:
-    """|omega_I| sqrt(A) = sqrt(4 pi) R_A / tau."""
-    return np.sqrt(4.0 * np.pi) * r_a / tau
+def rate(tau: float) -> float:
+    """The growth rate 1/tau, code units."""
+    return 1.0 / tau
 
 
 def draw(points, pal) -> None:
@@ -131,13 +131,13 @@ def draw(points, pal) -> None:
     for x in (AZAD_CROSSING, AZAD_QUADRATIC):
         ax.axvline(x, color="#b5b5b2", lw=0.8, ls=":")
     az_x = [p["frac"] for p in points if p["label"] in AZAD_TAU and p["r_a"]]
-    az_y = [rate(AZAD_TAU[p["label"]], p["r_a"]) for p in points
+    az_y = [rate(AZAD_TAU[p["label"]]) for p in points
             if p["label"] in AZAD_TAU and p["r_a"]]
     ax.plot(az_x, az_y, "D", ms=4.5, mfc="none", mec=pal["azad"], mew=1.1, zorder=3)
     # Azad's form through the measured rungs: rate = a - b (J/A)^2, zero at
     # x0 = sqrt(a/b) -- the nonperturbative threshold this fit predicts.
     mx = np.array([p["frac"] for p in points if p["tau"] is not None])
-    my = np.array([rate(p["tau"], p["r_a"]) for p in points if p["tau"] is not None])
+    my = np.array([rate(p["tau"]) for p in points if p["tau"] is not None])
     x0 = None
     if mx.size >= 2:
         b, a = np.linalg.lstsq(np.stack([-mx ** 2, np.ones_like(mx)], 1), my, rcond=None)[0]
@@ -152,13 +152,13 @@ def draw(points, pal) -> None:
         if p["r_a"] is None:
             continue
         if p["tau"] is not None:
-            ax.plot(p["frac"], rate(p["tau"], p["r_a"]), "o", ms=5.0,
+            ax.plot(p["frac"], rate(p["tau"]), "o", ms=5.0,
                     color=pal["measured"], zorder=4)
             # Each tag sits on the side its stretch of curve leaves free:
             # below-left where the curve still climbs to the key, else above-right.
             dx, dy, ha = TAG_SIDES.get(p["label"], (7, 1, "left"))
             ax.annotate(f"{p['label']}\n$\\tau$ {p['tau']:.1f}",
-                        (p["frac"], rate(p["tau"], p["r_a"])),
+                        (p["frac"], rate(p["tau"])),
                         textcoords="offset points", xytext=(dx, dy), fontsize=6.5,
                         ha=ha)
         else:
@@ -168,9 +168,15 @@ def draw(points, pal) -> None:
                         (p["frac"], 0.0), textcoords="offset points",
                         xytext=(-4, 7), fontsize=6.5, ha="right")
     ax.set_xlim(0.0, 100.0)
-    ax.set_ylim(-0.12, 2.6)
+    ax.set_ylim(-0.009, 0.19)
     ax.set_xlabel(r"$J/A$, % of the extremal limit $1/8\pi$")
-    ax.set_ylabel(r"growth rate $|\omega_I|\sqrt{A}$")
+    ax.set_ylabel(r"growth rate $1/\tau$ (code units)")
+    # The same scale relabelled in tau on the right edge: one axis, two units.
+    right = ax.secondary_yaxis("right")
+    taus = (5.0, 10.0, 20.0, 50.0)
+    right.set_yticks([0.0] + [1.0 / v for v in taus])
+    right.set_yticklabels([r"$\infty$"] + [f"{v:g}" for v in taus])
+    right.set_ylabel(r"e-fold time $\tau$")
     entries = [
         (mlines.Line2D([], [], marker="o", ls="none", ms=5, color=pal["measured"]),
          "measured ($R_{\\mathrm{eq}}$ deficit fit)"),
@@ -184,7 +190,7 @@ def draw(points, pal) -> None:
         entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=4.5, mfc="none",
                                       mec=pal["azad"], mew=1.1), "Azad et al., 2nd order"))
     entries.append((mlines.Line2D([], [], ls=":", lw=0.8, color="#b5b5b2"),
-                    "Azad's thresholds: 30 % (merger conj.), 50 % (quadratic $J_c$)"))
+                    "Azad's 30 % (merger) and 50 % ($J_c$) thresholds"))
     style.legend_top(ax, entries, ncol=1, borderpad=0.6)
     for ext in ("png", "pdf"):
         fig.savefig(FIGURES / f"instability_curve.{ext}", dpi=300)
@@ -208,7 +214,7 @@ def main() -> None:
         if p["tau"] is not None:
             print(f"{p['label']:6s} J/A {p['frac']:5.1f} %  R_A {p['r_a']:.3f}  "
                   f"tau {p['tau']:6.2f} (fit t {p['span'][0]:.1f}-{p['span'][1]:.1f})  "
-                  f"rate {rate(p['tau'], p['r_a']):.3f}")
+                  f"rate {rate(p['tau']):.4f}")
         else:
             print(f"{p['label']:6s} J/A {p['frac']:5.1f} %  R_A {p['r_a']:.3f}  "
                   f"stable: |deficit| <= {p['flat']:.1e} to t {p['t_end']:.0f}")
