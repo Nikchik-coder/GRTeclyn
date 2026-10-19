@@ -51,6 +51,39 @@ N 96 died in its collapse, the N 128 and N 192 went through it to t 100 with no 
 0.2c on L 128 finished t 150 and the 0.5c N 192 t 100 (10-19); the slow runs' t ≈ 80 constraint knee is gone on
 the fixed binary (LIVE notes). Live: the four holds (first node, since 10-19 08:48 MSK) and the 0.2c push-in kick (second node, since 09:12 MSK). The Weyl4 frames blank the box's outer 2 cells (`--frames-blank-edge 2`, point 7).
 
+## CODEBASE DIAGNOSTIC (2026-10-19)
+
+The codebase checks out: none of the five reviewers found a defect that changes any of the three claims. Each part was
+confirmed by re-deriving it independently:
+- **Solver:** its equations match an independent Ricci computation to 1e-50, and the eq. (12) finding about CKK holds.
+- **Tables:** they solve Einstein's equations to between 1e-10 (0.2c) and 1e-8 (0.9c).
+- **C++ initial data:** it matches the runs' own t 0 output to float32 precision.
+- **The three 10-17 fixes:** all are correct.
+- **Diagnostics:** τ, the collapse onsets, the wave amplitudes and the 0.2c orders all recompute from the data.
+
+**One physics question is open.** The settled 0.2c horizon (M_irr 1.262) comes out heavier than the exterior mass fitted
+from χ at r 26–58 (about 1.16 at t 150). The field near the hole can't account for the gap. Settle it with a proper mass
+integral before the paper quotes a horizon mass.
+
+**Worth fixing (none of these moves a claim):**
+- **ψ4 has no matter term in any run.** It reads the key `G_newton`, which no run sets, so it defaults to 0. The effect is
+  ≤ 0.4 % at R ≥ 30, but up to 17 % at R 10.
+- **The throat-sphere areal radius is read slightly low.** The interpolation is linear, so the 0.9c reads 18.41 / 18.48
+  against the true 18.499. The flatness claim still holds.
+- **μ₋ is read too close to the end on the log-stretched map.** That puts the Smarr check at 8e-7, against the 1e-10 the
+  paper states.
+- **`article/research.tex`:**
+  - it drops a 1/η₀ in ψ (line 106);
+  - it double-rounds two Table I digits;
+  - it describes solver features the code doesn't have.
+- **Some STATUS numbers don't reproduce:**
+  - the 0.9c minimum orders;
+  - the troughs' flatness in R;
+  - the N 192 ring lapse (0.508, not 0.529);
+  - the order of τ_proper (about 2, not 3).
+- **The 0.9c polar radius grows by 1e-3 after t 110, at every N.** The areal radius stays flat, so it's a coordinate
+  effect, but STATUS doesn't mention it.
+
 ## CONVERGENCE: HOW THE BUGS WERE FOUND (10-17)
 
 1. **Symptom** (`constraint_norms_levels.dat`, r < 0.125 masked). 0.2c triplet: only the finest level
