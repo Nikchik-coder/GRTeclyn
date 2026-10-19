@@ -95,8 +95,9 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
   ≤ ×5 after t 80, except the 0.40c's level 3 (×10 at t 96–98 to 2.9e-3, then flat: the collapse inside the horizon,
   as the 0.30c's).
 - Done and packed 10-19: the static, the 0.30c, both 0.2c kicks, the 0.2c N 192, the L 128 far-zone run, the 0.5c
-  N 192, the 0.40c and 0.46c t 100 (19:54; full movies done 20:15, core movies rendering, contact sheets pending).
-  The first node's scratch was pruned of the 0.40c / 0.46c last plotfiles (14 GB, ≈ 20:10).
+  N 192, the 0.40c and 0.46c t 100 (19:54). Every movie of these and of the static and 0.30c checked on contact
+  sheets (10-19 ≈ 21:30): fixed scales, none blank. The first node's scratch was pruned of the 0.40c / 0.46c last
+  plotfiles (14 GB, ≈ 20:10).
 - The 0.30c t 130 and 0.40c t 150 (go 10-19 ≈ 18:40; decided: both on the second node's card now rather than the
   0.40c alone on the first node's card 1 from 19:50) are the 0.30c / 0.40c rungs' own params with only the name and
   the stop changed (diffed); t 0 constraints and R_eq identical to the t 100 runs. The second node's scratch was
