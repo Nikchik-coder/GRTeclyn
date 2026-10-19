@@ -169,7 +169,7 @@ def draw(points, pal) -> None:
                         xytext=(-4, 7), fontsize=6.5, ha="right")
     ax.set_xlim(0.0, 100.0)
     ax.set_ylim(-0.009, 0.19)
-    ax.set_xlabel(r"$J/A$, % of the extremal limit $1/8\pi$")
+    ax.set_xlabel(r"$8\pi J/A$ [%]")
     ax.set_ylabel(r"$1/\tau$")
     # The same scale relabelled in tau on the right edge: one axis, two units.
     right = ax.secondary_yaxis("right")
