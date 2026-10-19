@@ -175,11 +175,11 @@ triplets pass (decided 10-17).
 | ✓ | 0.2c triplet on L 64, N 192 `spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | slow | 100 | 19.8 h | FINISHED 10-19 04:58 MSK: through the collapse to t 100 (trust 100) |
 | ✓ | 0.2c on L 128, N 256, the far-zone GW run (claim 3) `spin_hold_L128_ml3_J100_full_farfix_t150` | slow | 150 | 9.7 h | FINISHED 10-19 05:06 MSK: the (2,0) wave passes R 14–45 at c, r·ψ4 flat in R (trust 150) |
 | ✓ | 0c static anchor `static_hold_L64_ml3_spdrv1_t100` (in `00_archive/superseded_2026-10-17/`; pre-fix, rerun next row) | slow | 100 | 5.7 h | FINISHED 10-16 04:19 MSK |
-| ☐ | 0c static rerun on the fixed binary `static_hold_L64_ml3_spdrv0_farfix_t100` (the anchor's packed params + the numerics and far-zone fix keys, drive off; diffed) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18 ≈ 17:20 MSK, no checkpoints; card not chosen; template ready) |
+| ☐ | 0c static rerun on the fixed binary `static_hold_L64_ml3_spdrv0_farfix_t100` (the anchor's packed params + the numerics and far-zone fix keys, drive off; diffed) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 0 (with the 0.30c; no checkpoints) |
 | ✓ | 0.5c on L 64, N 192 `spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | slow | 100 | 20.0 h | FINISHED 10-19 05:47 MSK: clean t 100, no constraint knee, throat −1.3 % (trust 100) |
-| ☐ | 0.30c on L 64, N 128 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` (table `fam_a_ve030`: v_e 0.304, J 1.61; Azad's τ 6.1) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen; template ready) |
-| ☐ | 0.40c on L 64, N 128 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` (table `fam_a_ve040`: v_e 0.395, J 2.41; Azad's τ 8.0) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen; template ready) |
-| ☐ | 0.46c on L 64, N 128 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` (table `fam_a_ve045`: v_e 0.456, J 3.15; Azad's τ 13) | slow | 100 | ~10 h, 23 GB | PENDING (go 10-18, no checkpoints; card not chosen; template ready) |
+| ☐ | 0.30c on L 64, N 128 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` (table `fam_a_ve030`: v_e 0.304, J 1.61; Azad's τ 6.1) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 0 (with the static; no checkpoints) |
+| ☐ | 0.40c on L 64, N 128 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` (table `fam_a_ve040`: v_e 0.395, J 2.41; Azad's τ 8.0) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 1 (with the 0.46c; no checkpoints) |
+| ☐ | 0.46c on L 64, N 128 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` (table `fam_a_ve045`: v_e 0.456, J 3.15; Azad's τ 13) | slow | 100 | ~11 h, 22 GB | LIVE since 10-19 08:48 MSK, 1st node card 1 (with the 0.40c; no checkpoints) |
 | ☐ | 0.99c | fast | 150 | ~9 h | |
 | ☐ | clamp validation (methods): σ 0.4 + min_chi 1e-4 + dt 0.05 at 0.5c | – | 100 | ~4 h | |
 | ✗ | kicks 0.9c on L 128, N 256 `spin_kick_L128_ml3_ve090a_{l0_eps_p1e3, l0_eps_m1e3, l0_eps_p1e2, m2_eps_p1e3, m1_eps_p1e3}_spdrv1_sig04_farfix_t150` | fast + kick | 150 | 9.7 h each | CANCELLED 10-18 ≈ 17:15 MSK: the 0.9c is too far from physical spins; the kicks move to the low spins (next row) |
@@ -213,11 +213,21 @@ its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
+| 0c static rerun `00_paper_runs/static_hold_L64_ml3_spdrv0_farfix_t100` | 1st, card 0 (with the 0.30c), 22 GB | 0.28 @ 08:51 | 100 | 9.1 t/h | ≈ 10-19 19:50 |
+| 0.30c hold `00_paper_runs/spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` | 1st, card 0 (with the static), 22 GB | 0.26 @ 08:51 | 100 | 9.1 t/h | ≈ 10-19 19:50 |
+| 0.40c hold `00_paper_runs/spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` | 1st, card 1 (with the 0.46c), 22 GB | 0.27 @ 08:51 | 100 | 9.1 t/h | ≈ 10-19 19:50 |
+| 0.46c hold `00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` | 1st, card 1 (with the 0.40c), 22 GB | 0.27 @ 08:51 | 100 | 9.1 t/h | ≈ 10-19 19:50 |
 | 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 | 100.01 | 100 | – | FINISHED 10-19 04:58 |
 | 0.2c L 128 N 256 far-zone GW run `00_paper_runs/spin_hold_L128_ml3_J100_full_farfix_t150` | 1st, card 1 | 150.00 | 150 | – | FINISHED 10-19 05:06 |
 | 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 | 100.01 | 100 | – | FINISHED 10-19 05:47 |
 
-Nothing live since 10-19 05:47 MSK: all three cards idle.
+The four holds (go 10-18, confirmed 10-19 ≈ 08:45 MSK; no checkpoints) started 10-19 08:48 MSK, two per card on the
+first node; the second node's card is idle. Start checks: preflights PASS; the static's t 0 L2_Ham 2.0955094722e-3 and
+L2_Mom 0 equal its archived anchor's, and its frame 0 is the anchor's (identical outside r 3); t 0 L2_Ham / L2_Mom
+2.0120e-3 / 7.43e-5 (0.30c), 2.0120e-3 / 9.73e-5 (0.40c), 2.0528e-3 / 1.132e-4 (0.46c), the 0.2c's 2.0448e-3 / 5.10e-5;
+level boxes ±20 / 10 / 5 in every run, so R 14 and 18 sit wholly on level 1, R 10 is inscribed in level 2's cube and
+R 30 is on level 0 inside the KO sponge (reference only), as in the paper 0.2c; 22 GB per run, 45 GB per card. The ψ4
+header and the first MOTS rows come with the consumers' t 0 pass (a cold MOTS search).
 
 **The far-zone run FINISHED t 150** (L 128 N 256, 10-19 05:06 MSK, no NaN). Its throat is the L 64 N 128's to 4
 digits (R_eq −1 / −10 / −20 % at 46.86 / 61.99 / 66.95, τ 6.57; χ on the floor at 66.2–68.4 in the four central
@@ -359,8 +369,8 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
 
 ## NEXT
 
-- Three cards idle since 10-19 05:47 MSK (the first node's 0 and 1, the second node's): the PENDING runs below and in
-  the matrix wait for the card choice.
+- The four holds (static, 0.30c, 0.40c, 0.46c) LIVE on the first node since 10-19 08:48 MSK, two per card, ETA ≈ 19:50
+  MSK. The second node's card is idle; the six low-spin kicks (PENDING) wait for a card choice.
 - The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); the first node's scratch pruned
   (41 GB, 10-19 ≈ 08:10 MSK); the second node's (the 0.5c's last plotfiles) not listed from here. Movies to the trust
   windows (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`): the two N 192s'
