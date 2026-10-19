@@ -370,9 +370,10 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
 - The four holds (static, 0.30c, 0.40c, 0.46c) LIVE on the first node since 10-19 08:48 MSK, two per card, ETA ≈ 19:55
   MSK. The second node's card is idle; the six low-spin kicks (PENDING) wait for a card choice.
 - The 0.2c triplet, the far-zone run and the 0.5c N 192 are done and packed (10-19); the first node's scratch pruned
-  (41 GB, 10-19 ≈ 08:10 MSK); the second node's (the 0.5c's last plotfiles) not listed from here. Movies to the trust
-  windows (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`): the two N 192s'
-  rendered 10-19 08:28 MSK (14 full-box + 14 core each, contact sheets pending), the far-zone run's still rendering.
+  (41 GB, 10-19 ≈ 08:10 MSK); the second node's holds the 0.5c N 192's last plotfiles (21 GB, no checkpoints). Movies
+  to the trust windows (`logs/rerender_{0p2c_N192_farfix_t100,0p2c_L128_farzone_t150,0p5c_N192_farfix_t100}*.log`):
+  14 full-box + 14 core for each of the three (the N 192s 10-19 08:28, the far-zone run 09:07 MSK), all checked on
+  contact sheets (fixed bars).
 - Card sharing (measured 10-18 on the 0.2c N 128, L 64): 20.6 t/h alone, 10.2 with one more run on the card, 7.0 with
   two more: one card does ≈ 20 t/h of L 64 N 128 however it is split, so a 100-unit hold takes ≈ 4.9 h alone or
   ≈ 14.5 h three to a card.
@@ -392,7 +393,7 @@ level 1's box (from r 20; level 1 to 21.3) and raises levels 1–2 (Ham 1.8e-4 /
   23 GB each, three per card. Start checks: R_pol/R_eq at t 0 (+/−2e-3 for l 0), frame 0 against the hold's, ψ4
   header R 10 14 18 30. The 0.9c triplet's convergence figure: `results/spinningwormhole/figures/` (10-18).
 - Second node (one card): idle since the 0.5c finished (10-19 05:47 MSK); its scratch holds that run's last plotfiles
-  (not listed from here; no checkpoints).
+  (21 GB, no checkpoints; 841 GB free; listed 10-19 09:08 MSK).
 
 ## MAIN RESULTS SO FAR — PRE-FIX (requote every evolution number from the reruns)
 
