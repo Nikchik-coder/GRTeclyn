@@ -242,11 +242,11 @@ its L2_Mom moves +0.2 %; levels 0–2 identical in both.
 
 | run | node/card | t | stop | speed | ETA (MSK) |
 |---|---|---|---|---|---|
-| 0c static rerun `00_paper_runs/static_hold_L64_ml3_spdrv0_farfix_t100` | 1st, card 0 (with the 0.30c), 22 GB | 1.9 @ 09:02 | 100 | 9.06 t/h | ≈ 10-19 19:55 |
-| 0.30c hold `00_paper_runs/spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` | 1st, card 0 (with the static), 22 GB | 1.9 @ 09:02 | 100 | 9.00 t/h | ≈ 10-19 19:55 |
-| 0.40c hold `00_paper_runs/spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` | 1st, card 1 (with the 0.46c), 22 GB | 1.9 @ 09:02 | 100 | 9.06 t/h | ≈ 10-19 19:55 |
-| 0.46c hold `00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` | 1st, card 1 (with the 0.40c), 22 GB | 1.9 @ 09:02 | 100 | 9.03 t/h | ≈ 10-19 19:55 |
-| 0.2c kick, push in `00_paper_runs/spin_kick_L64_ml3_J100_full_l0_eps_m1e3_spdrv0_farfix_t100` | 2nd, card 0 (alone), 22 GB | 0.22 @ 09:13 | 100 | 20.3 t/h | ≈ 10-19 14:10 |
+| 0c static rerun `00_paper_runs/static_hold_L64_ml3_spdrv0_farfix_t100` | 1st, card 0 (with the 0.30c), 22 GB | 17.7 @ 10:48 | 100 | 9.02 t/h | ≈ 10-19 19:55 |
+| 0.30c hold `00_paper_runs/spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100` | 1st, card 0 (with the static), 22 GB | 17.7 @ 10:48 | 100 | 9.00 t/h | ≈ 10-19 19:55 |
+| 0.40c hold `00_paper_runs/spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` | 1st, card 1 (with the 0.46c), 22 GB | 17.8 @ 10:48 | 100 | 9.05 t/h | ≈ 10-19 19:55 |
+| 0.46c hold `00_paper_runs/spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` | 1st, card 1 (with the 0.40c), 22 GB | 17.8 @ 10:48 | 100 | 9.03 t/h | ≈ 10-19 19:55 |
+| 0.2c kick, push in `00_paper_runs/spin_kick_L64_ml3_J100_full_l0_eps_m1e3_spdrv0_farfix_t100` | 2nd, card 0 (alone), 22 GB | 32.1 @ 10:48 | 100 | 20.3 t/h | ≈ 10-19 14:08 |
 | 0.2c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100` | 1st, card 0 | 100.01 | 100 | – | FINISHED 10-19 04:58 |
 | 0.2c L 128 N 256 far-zone GW run `00_paper_runs/spin_hold_L128_ml3_J100_full_farfix_t150` | 1st, card 1 | 150.00 | 150 | – | FINISHED 10-19 05:06 |
 | 0.5c L 64 N 192 farfix `00_paper_runs/spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100` | 2nd, card 0 | 100.01 | 100 | – | FINISHED 10-19 05:47 |
@@ -267,7 +267,13 @@ the paper 0.2c's params plus the kick keys with the drive off (diffed), no check
 PASS; t 0 R_eq / R_pol 4.05145 / 4.01865, both −1.986e-3 against the hold's (2ε); levels 0–2 identical to the
 hold's; the throat level's L2_Ham 2.31e-3 (hold 8.0e-6), the declared O(ε) violation; 22 GB; 20.3 t/h. At t 3 (09:21
 MSK): keep-last pruning runs (3 plotfiles, 7.1 GB); the consumer takes 1.4 min a plotfile against one every 3.0 min;
-the throat springs back, R_eq −1.99e-3 → −1.26e-3 against the hold (R_pol −1.30e-3).
+the throat springs back, R_eq −1.99e-3 → −1.26e-3 against the hold (R_pol −1.30e-3). **No collapse at t 32
+(10:48 MSK): the throat goes the other way.** It passes the hold's radius at t 12.8 and then grows exponentially,
+R_eq +3.3 % and R_pol +3.6 % above the hold at t 32, e-folding every ≈ 5 (4.0 over t 16–24, 5.2 over 24–32); the
+MOTS is lost from t ≈ 23; no NaN; the throat level's L2_Ham 4.7e-4 (hold 6.2e-5), level 0's 3e-6 (the kick's
+violation travelling out). Likely the sign of the declared violation: ε < 0 lowers ψ at the throat, which reads as
+negative energy there (−∇²ψ falls at the Gaussian's peak), and a throat given negative energy inflates (the Ellis
+wormhole's expanding branch, Shinkai–Hayward). By the same sign the push out (+1e-3) should bring the collapse earlier.
 
 **The far-zone run FINISHED t 150** (L 128 N 256, 10-19 05:06 MSK, no NaN). Its throat is the L 64 N 128's to 4
 digits (R_eq −1 / −10 / −20 % at 46.86 / 61.99 / 66.95, τ 6.57; χ on the floor at 66.2–68.4 in the four central
