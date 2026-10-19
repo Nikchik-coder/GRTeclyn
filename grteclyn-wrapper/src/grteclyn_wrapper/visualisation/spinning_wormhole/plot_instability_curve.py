@@ -5,19 +5,28 @@ unstable mode, on Azad et al.'s axes (arXiv:2301.05243).
 One panel.  x is the angular momentum over the throat area, J/A, as a
 percentage of the extremal-Kerr limit 1/(8 pi) -- read from each rung's
 background table (``meta J_over_A_extremal_frac``).  y is the growth rate
-1/tau in code units, tau from a log-linear fit of the equatorial deficit
-1 - R_eq/R_eq(0) (``throat_geometry.dat``) over the band 0.2-10 %; the right
-edge relabels the same scale in tau (5, 10, 20, 50, infinity), so the e-fold
-time reads directly.  A rung whose deficit never reaches the band is stable
-on its window and sits at zero (open marker), tau = infinity.
+1/tau in code units; the right edge relabels the same scale in tau.
 
-Against it, Azad et al.'s second-order rates at the ladder's middle rungs
-(their tau 6.1 / 8.0 / 13 at 0.30c / 0.40c / 0.46c, the values quoted in
-STATUS), and their two thresholds: the mode crossing at ~30 % of the limit,
-where they conjecture the two radial modes merge and the instability dies,
-and their quadratic J_c at ~50 %.
+tau is measured the same way on every rung (decided 2026-10-19, after the
+throat-radius check): a log-linear fit of the areal-radius deficit
+1 - R_A(t)/R_A(0) (``throat_spheres.dat``, the minimal coordinate sphere) on
+its first pass through 0.2-1 %, the band every rung crosses (the 0.5c reaches
+1.3 % by t 100).  The areal radius is the size of the l = 0 mode Azad et al.
+compute.  Two choices move tau and are printed, not drawn: the equatorial
+radius (``throat_geometry.dat``) runs 10-30 % slower at 0.46c-0.5c, and a
+wider band lengthens tau as the collapse turns nonlinear (0.2c: 5.0 over
+0.2-1 %, 6.5 over 1-10 %).  The MOTS (``mots_spectral.dat``) is printed as
+a check: it sits on the throat through the band.  A rung is drawn once its
+deficit has crossed the band; a finished run that never enters it is stable
+on its window and sits at zero (open marker).
 
-A rung is drawn when its pack (or live run dir) holds the two streams, so the
+Against it, Azad et al.'s second-order rate for this family (their C = 1
+row: |omega_I| eta0 = 0.390 - 0.384 (J/eta0^2)^2) at every rung where it is
+positive, and two rules: where that rate vanishes on this axis (J_c 4.03,
+33 %; their "about 50 %" uses their second-order throat area), and their
+conjectured end of the instability, about 30 %.
+
+A rung is drawn when its pack (or live run dir) holds the streams, so the
 curve fills by itself as the ladder lands: rerun after each close-out.
 
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_instability_curve
@@ -47,8 +56,9 @@ TABLES = solutions.REPO / "runs" / "spinning_p3" / "tables"
 BACKGROUNDS = solutions.REPO / "runs" / "spinning_wormhole" / "backgrounds"
 FIGURES = solutions.REPO / "results" / "spinningwormhole" / "figures"
 
-# The ladder, slowest first.  Each rung names its background table (the x value
-# comes from its meta) and its hold run; the static anchor sits at J = 0.
+# The ladder, slowest first.  Each rung names its background table (x and J
+# come from its meta) and its hold run; the static anchor sits at J = 0.  The
+# L 64 rungs are the N 128 paper runs; the 0.5c exists at N 192 only.
 RUNS = (
     dict(label="0c", table=None, run="static_hold_L64_ml3_spdrv0_farfix_t100"),
     dict(label="0.2c", table=BACKGROUNDS / "full_eta2_m1_J100.spinbg",
@@ -69,13 +79,19 @@ RUNS = (
          run="spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150"),
 )
 
-# Azad et al.'s second-order rates at the middle rungs: their tau in code
-# units at our 0.30c / 0.40c / 0.46c (STATUS run matrix, 2026-10-18).
-AZAD_TAU = {"0.30c": 6.1, "0.40c": 8.0, "0.46c": 13.0}
-AZAD_CROSSING = 30.0      # their mode crossing: the conjectured threshold (% of extremal)
-AZAD_QUADRATIC = 50.0     # their second-order J_c (% of extremal)
-BAND = (2e-3, 0.1)        # the deficit band the growth rate is fitted over
-TAG_SIDES = {"0.2c": (-7, -16, "right")}  # per-rung tag offsets; default above-right
+# Azad et al.'s second-order unstable mode for this family (their C = 1 row,
+# Table 1): |omega_I| eta0 = W0 - DW2 (J/eta0^2)^2, eta0 = 2 here.
+AZAD_W0, AZAD_DW2, ETA0 = 0.390, 0.384, 2.0
+AZAD_CONJECTURE = 30.0    # their conjectured end of the instability (% of extremal)
+BAND = (2e-3, 1e-2)       # the deficit band every rung's tau is fitted over
+WIDE_BANDS = ((3e-3, 3e-2), (1e-2, 1e-1))   # printed for comparison only
+# Per-rung tag offsets (points) and anchors: above-right where the falling fit
+# leaves that side free, below-left where a tag there would reach the rules.
+TAG_SIDES = {
+    "0.30c": (-5, -4, "right", "top"),
+    "0.40c": (-5, -4, "right", "top"),
+    "0.46c": (-5, -4, "right", "top"),
+}
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
 PALETTES = {
     "rgb": dict(measured=SPIN_RED, azad=SPIN_BLUE, stable="#1a1a18"),
@@ -83,40 +99,79 @@ PALETTES = {
 }
 
 
-def table_frac(table) -> float:
-    """J/A as a percentage of the extremal limit, from the table's meta line."""
+def table_meta(table) -> tuple[float, float]:
+    """(J, J/A as a percentage of the extremal limit) from the table's meta lines."""
     if table is None:
-        return 0.0
-    head = open(table, "rb").read(1200).decode("latin-1")
-    key = "meta J_over_A_extremal_frac "
-    return 100.0 * float(head[head.index(key) + len(key):].split()[0])
+        return 0.0, 0.0
+    head = open(table, "rb").read(1500).decode("latin-1")
+
+    def read(key: str) -> float:
+        key = f"meta {key} "
+        return float(head[head.index(key) + len(key):].split()[0])
+
+    return read("J"), 100.0 * read("J_over_A_extremal_frac")
+
+
+def azad_rate(j: float) -> float:
+    """Azad et al.'s second-order growth rate 1/tau at angular momentum J."""
+    return (AZAD_W0 - AZAD_DW2 * (j / ETA0 ** 2) ** 2) / ETA0
 
 
 def streams(run: str):
-    """The run's throat geometry and spheres, packed first, else live."""
-    for base in (PACKED, LIVE):
-        g = base / run / "throat_geometry.dat"
-        s = (base / run / "throat_spheres.dat"
-             if base is PACKED else base / run / "small_data" / "throat_spheres.dat")
-        if g.exists() and s.exists():
-            return np.loadtxt(g, ndmin=2), np.loadtxt(s, ndmin=2)
-    return None, None
+    """The run's spheres, geometry and MOTS streams (packed first, else live),
+    and whether the run has ended; None when it has no spheres yet."""
+    for base, data, small in ((PACKED, "", ""), (LIVE, "data", "small_data")):
+        spheres = base / run / small / "throat_spheres.dat"
+        if not spheres.exists():
+            continue
+        geom = base / run / data / "throat_geometry.dat"
+        mots = base / run / small / "mots_spectral.dat"
+        log = base / run / "run.log"
+        ended = base is PACKED or (log.exists() and "finalized" in log.read_text()[-4000:])
+        return dict(
+            spheres=np.loadtxt(spheres, ndmin=2),
+            geom=np.loadtxt(geom, ndmin=2) if geom.exists() else None,
+            mots=np.genfromtxt(mots, invalid_raise=False) if mots.exists() else None,
+            ended=ended)
+    return None
+
+
+def band_tau(t, radius, band=BAND):
+    """tau of a log-linear fit to the deficit 1 - R/R(0) on its first pass
+    through the band, with the fit's time span; (None, max |deficit|) when the
+    deficit has not crossed the band's upper edge."""
+    ok = np.isfinite(radius) & (radius > 0)
+    t, radius = t[ok], radius[ok]
+    if t.size < 2:
+        return None, 0.0
+    d = 1.0 - radius / radius[0]
+    above = np.flatnonzero(d > band[1])
+    if above.size == 0:
+        return None, float(np.max(np.abs(d)))
+    sel = d[:above[0]] >= band[0]
+    tt, dd = t[:above[0]][sel], d[:above[0]][sel]
+    if tt.size < 4:
+        return None, float(np.max(np.abs(d)))
+    return 1.0 / np.polyfit(tt, np.log(dd), 1)[0], (tt[0], tt[-1])
 
 
 def measure(run: str):
-    """(R_A(0), tau, fit band, flatness): tau is None where the deficit never
-    enters the band -- stable on the run's window."""
-    g, s = streams(run)
-    if g is None or g.shape[0] < 20:
+    """The rung's tau from the areal radius (None while its deficit has not
+    crossed the band), its stability flag, and the printed comparisons."""
+    s = streams(run)
+    if s is None or s["spheres"].shape[0] < 5:
         return None
-    t, d = g[:, 0], 1.0 - g[:, 1] / g[0, 1]
-    r_a = s[0, 2]
-    sel = (d >= BAND[0]) & (d <= BAND[1])
-    if sel.sum() < 5:
-        return dict(r_a=r_a, tau=None, span=None, flat=float(np.nanmax(np.abs(d))), t_end=t[-1])
-    slope = np.polyfit(t[sel], np.log(d[sel]), 1)[0]
-    return dict(r_a=r_a, tau=1.0 / slope, span=(t[sel][0], t[sel][-1]),
-                flat=None, t_end=t[-1])
+    sph = s["spheres"]
+    tau, span = band_tau(sph[:, 0], sph[:, 2])
+    m = dict(r_a=sph[0, 2], tau=tau, t_end=sph[-1, 0], ended=s["ended"],
+             span=span if tau is not None else None,
+             flat=None if tau is not None else span)
+    m["stable"] = tau is None and s["ended"] and m["flat"] < BAND[0]
+    m["tau_eq"] = band_tau(s["geom"][:, 0], s["geom"][:, 1])[0] if s["geom"] is not None else None
+    m["tau_mots"] = (band_tau(s["mots"][:, 0], s["mots"][:, 1])[0]
+                     if s["mots"] is not None and s["mots"].ndim == 2 else None)
+    m["tau_wide"] = [band_tau(sph[:, 0], sph[:, 2], b)[0] for b in WIDE_BANDS]
+    return m
 
 
 def rate(tau: float) -> float:
@@ -124,51 +179,67 @@ def rate(tau: float) -> float:
     return 1.0 / tau
 
 
-def draw(points, pal) -> None:
+def fit_zero(points, key="tau"):
+    """Azad's form through the measured rungs, rate = a - b (J/A)^2: (a, b, the
+    zero sqrt(a/b) or None)."""
+    pts = [p for p in points if p.get(key) is not None]
+    if len(pts) < 2:
+        return None
+    mx = np.array([p["frac"] for p in pts])
+    my = np.array([rate(p[key]) for p in pts])
+    b, a = np.linalg.lstsq(np.stack([-mx ** 2, np.ones_like(mx)], 1), my, rcond=None)[0]
+    return a, b, (float(np.sqrt(a / b)) if b > 0 else None)
+
+
+def azad_jc_frac(points) -> float | None:
+    """Where Azad's second-order rate vanishes on this axis: J_c = eta0^2
+    sqrt(W0/DW2), mapped to J/A along the family's tables."""
+    jc = ETA0 ** 2 * np.sqrt(AZAD_W0 / AZAD_DW2)
+    js = np.array([p["j"] for p in points])
+    xs = np.array([p["frac"] for p in points])
+    if js.size < 2 or js.max() < jc:
+        return None
+    order = np.argsort(js)
+    return float(np.interp(jc, js[order], xs[order]))
+
+
+def draw(points, pal, jc_frac) -> None:
     fig, ax = plt.subplots(figsize=(4.0, 3.0), layout="constrained")
     # The two thresholds are named in the key, not inside the frame (their
     # in-frame tags kept colliding with the rules and the fit, 2026-10-19).
-    for x in (AZAD_CROSSING, AZAD_QUADRATIC):
+    rules = [AZAD_CONJECTURE] + ([jc_frac] if jc_frac else [])
+    for x in rules:
         ax.axvline(x, color="#b5b5b2", lw=0.8, ls=":")
-    az_x = [p["frac"] for p in points if p["label"] in AZAD_TAU and p["r_a"]]
-    az_y = [rate(AZAD_TAU[p["label"]]) for p in points
-            if p["label"] in AZAD_TAU and p["r_a"]]
-    ax.plot(az_x, az_y, "D", ms=4.5, mfc="none", mec=pal["azad"], mew=1.1, zorder=3)
-    # Azad's form through the measured rungs: rate = a - b (J/A)^2, zero at
-    # x0 = sqrt(a/b) -- the nonperturbative threshold this fit predicts.
-    mx = np.array([p["frac"] for p in points if p["tau"] is not None])
-    my = np.array([rate(p["tau"]) for p in points if p["tau"] is not None])
+    drawn = [p for p in points if p["tau"] is not None or p["stable"]]
+    az = [(p["frac"], azad_rate(p["j"])) for p in drawn if azad_rate(p["j"]) > 0]
+    if az:
+        # Open diamonds over smaller dots: where a rung matches Azad the dot
+        # shows inside its diamond instead of hiding it.
+        ax.plot(*zip(*az), "D", ms=6.5, mfc="none", mec=pal["azad"], mew=1.0, zorder=5)
+    fit = fit_zero(drawn)
     x0 = None
-    if mx.size >= 2:
-        b, a = np.linalg.lstsq(np.stack([-mx ** 2, np.ones_like(mx)], 1), my, rcond=None)[0]
-        if b > 0:
-            x0 = float(np.sqrt(a / b))
+    if fit is not None:
+        a, b, x0 = fit
         xs = np.linspace(0.0, 100.0, 400)
         fit_line, = ax.plot(xs, np.clip(a - b * xs ** 2, 0.0, None), ls="--",
                             lw=1.0, color=pal["measured"], zorder=2)
-        print(f"fit a - b (J/A)^2: a {a:.3f}, b {b:.5f}" +
-              (f", zero at {x0:.1f} % of extremal" if x0 else ""))
-    for p in points:
-        if p["r_a"] is None:
-            continue
+    for p in drawn:
         if p["tau"] is not None:
-            ax.plot(p["frac"], rate(p["tau"]), "o", ms=5.0,
+            ax.plot(p["frac"], rate(p["tau"]), "o", ms=3.8,
                     color=pal["measured"], zorder=4)
-            # Each tag sits on the side its stretch of curve leaves free:
-            # below-left where the curve still climbs to the key, else above-right.
-            dx, dy, ha = TAG_SIDES.get(p["label"], (7, 1, "left"))
-            ax.annotate(f"{p['label']}\n$\\tau$ {p['tau']:.1f}",
+            dx, dy, ha, va = TAG_SIDES.get(p["label"], (5, 3, "left", "bottom"))
+            ax.annotate(f"{p['label']}: {p['tau']:.1f}",
                         (p["frac"], rate(p["tau"])),
                         textcoords="offset points", xytext=(dx, dy), fontsize=6.5,
-                        ha=ha)
+                        ha=ha, va=va)
         else:
             ax.plot(p["frac"], 0.0, "o", ms=5.5, mfc="none", mec=pal["stable"],
                     mew=1.2, zorder=4)
             ax.annotate(f"{p['label']}: flat to t {p['t_end']:.0f}",
                         (p["frac"], 0.0), textcoords="offset points",
                         xytext=(-4, 7), fontsize=6.5, ha="right")
-    ax.set_xlim(0.0, 100.0)
-    ax.set_ylim(-0.009, 0.19)
+    ax.set_xlim(-2.0, 100.0)   # the static rung sits at 0: keep its marker whole
+    ax.set_ylim(-0.012, 0.26)
     ax.set_xlabel(r"$8\pi J/A$ [%]")
     ax.set_ylabel(r"$1/\tau$")
     # The same scale relabelled in tau on the right edge: one axis, two units.
@@ -178,19 +249,21 @@ def draw(points, pal) -> None:
     right.set_yticklabels([r"$\infty$"] + [f"{v:g}" for v in taus])
     right.set_ylabel(r"$\tau$", rotation=0, labelpad=8.0)
     entries = [
-        (mlines.Line2D([], [], marker="o", ls="none", ms=5, color=pal["measured"]),
-         "measured ($R_{\\mathrm{eq}}$ deficit fit)"),
-        (mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
-                       mec=pal["stable"], mew=1.2), "stable on its window"),
+        (mlines.Line2D([], [], marker="o", ls="none", ms=3.8, color=pal["measured"]),
+         "measured $\\tau$ (areal-radius deficit, 0.2–1 %)"),
     ]
-    if mx.size >= 2:
+    if any(p["stable"] for p in drawn):
+        entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
+                                      mec=pal["stable"], mew=1.2), "stable on its window"))
+    if fit is not None:
         tag = f"fit $a-b\\,(J/A)^2$" + (f": dies at {x0:.0f} %" if x0 else "")
         entries.append((fit_line, tag))
-    if az_x:
-        entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=4.5, mfc="none",
-                                      mec=pal["azad"], mew=1.1), "Azad et al., 2nd order"))
+    if az:
+        entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=6.5, mfc="none",
+                                      mec=pal["azad"], mew=1.0), "Azad et al., 2nd order"))
     entries.append((mlines.Line2D([], [], ls=":", lw=0.8, color="#b5b5b2"),
-                    "Azad's 30 % (merger) and 50 % ($J_c$) thresholds"))
+                    "Azad: conjectured end (30 %), 2nd-order $J_c$"
+                    + (f" ({jc_frac:.0f} %)" if jc_frac else "")))
     style.legend_top(ax, entries, ncol=1, borderpad=0.6)
     for ext in ("png", "pdf"):
         fig.savefig(FIGURES / f"instability_curve.{ext}", dpi=300)
@@ -205,22 +278,41 @@ def main() -> None:
     args = ap.parse_args()
     points, pending = [], []
     for rung in RUNS:
+        j, frac = table_meta(rung["table"])
         m = measure(rung["run"])
-        if m is None:
-            pending.append(rung["label"])
-            continue
-        points.append(dict(label=rung["label"], frac=table_frac(rung["table"]), **m))
+        if m is None or (m["tau"] is None and not m["stable"]):
+            pending.append(rung["label"] + ("" if m is None else
+                                            f" (|deficit| {m['flat']:.1e} at t {m['t_end']:.0f})"))
+        if m is not None:
+            points.append(dict(label=rung["label"], j=j, frac=frac, **m))
+
+    def fmt(v):
+        return f"{v:6.2f}" if v is not None else "     -"
+
+    print(f"tau over {100 * BAND[0]:g}-{100 * BAND[1]:g} %: areal (drawn) | equatorial | MOTS"
+          " || areal over " + " / ".join(f"{100 * lo:g}-{100 * hi:g} %" for lo, hi in WIDE_BANDS))
     for p in points:
         if p["tau"] is not None:
-            print(f"{p['label']:6s} J/A {p['frac']:5.1f} %  R_A {p['r_a']:.3f}  "
-                  f"tau {p['tau']:6.2f} (fit t {p['span'][0]:.1f}-{p['span'][1]:.1f})  "
-                  f"rate {rate(p['tau']):.4f}")
-        else:
+            print(f"{p['label']:6s} J/A {p['frac']:5.1f} %  R_A {p['r_a']:.3f}  tau {fmt(p['tau'])}"
+                  f" | {fmt(p['tau_eq'])} | {fmt(p['tau_mots'])} || "
+                  + " / ".join(fmt(v) for v in p["tau_wide"])
+                  + f"   (fit t {p['span'][0]:.1f}-{p['span'][1]:.1f}; Azad"
+                  f" {fmt(1 / azad_rate(p['j']) if azad_rate(p['j']) > 0 else None)})")
+        elif p["stable"]:
             print(f"{p['label']:6s} J/A {p['frac']:5.1f} %  R_A {p['r_a']:.3f}  "
                   f"stable: |deficit| <= {p['flat']:.1e} to t {p['t_end']:.0f}")
+    for key, name in (("tau", "areal"), ("tau_eq", "equatorial"), ("tau_mots", "MOTS")):
+        fit = fit_zero([p for p in points if p["tau"] is not None], key)
+        if fit is not None:
+            print(f"fit a - b (J/A)^2 on the {name} tau: a {fit[0]:.4f}, b {fit[1]:.3e}"
+                  + (f", zero at {fit[2]:.1f} % of extremal" if fit[2] else ""))
+    jc_frac = azad_jc_frac(points)
+    if jc_frac:
+        print(f"Azad's 2nd-order J_c {ETA0 ** 2 * np.sqrt(AZAD_W0 / AZAD_DW2):.3f} "
+              f"sits at {jc_frac:.1f} % on this axis")
     if pending:
-        print("pending rungs (no data yet):", ", ".join(pending))
-    draw(points, PALETTES[args.palette])
+        print("pending rungs (deficit not yet through the band, or no data):", ", ".join(pending))
+    draw(points, PALETTES[args.palette], jc_frac)
     print("wrote", FIGURES / "instability_curve.png")
 
 
