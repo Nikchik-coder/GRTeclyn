@@ -51,9 +51,9 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.2c push out (l 0, ε +1e-3) | 12.3 | 25.3 | – | 3.03 | DIED 44.08, after its horizon formed | 42 |
 | 0.2c push in (l 0, ε −1e-3) | 12.3 | +1 % at 25.6 | – | 3.06 | inflates, +105 % at t 60 | 61 |
 | 0.30c | 18.3 | 51.4 | 5.9 | 3.76 | horizon R 2.571, M_MS 1.286, settling | 100 |
-| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 18.3 | – | – | – | PROPOSED (no go), ≈ 6.3 h alone: its whole burst (peak t ≈ 108, second trough ≈ 120 at R 14), the wave against spin | – |
+| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 18.3 | – | – | – | LIVE since 10-19 18:41 (2nd node): its whole burst (peak t ≈ 108, second trough ≈ 120 at R 14), the wave against spin | – |
 | 0.40c | 24.4 | 60.2 | 8.0 | – | LIVE, −9 % at t 86 | – |
-| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | PROPOSED (no go), ≈ 7.3 h alone: a third wave point (its burst reaches R 14 at t ≈ 115–140) | – |
+| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | LIVE since 10-19 18:41 (2nd node): a third wave point (its burst reaches R 14 at t ≈ 115–140) | – |
 | 0.46c | 28.8 | −0.9 % at 87 | 15.2 | – | LIVE | – |
 | 0.5c (N 192, drive on) | 33.3 | 99.4 | 13.6 | – | clean t 100, MOTS −1.3 %, no horizon | 100 |
 | 0.5c on N 128, drive off `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t100` | 33.3 | – | – | – | PROPOSED (no go), ≈ 4.9 h alone: the 0.5c like the other rungs (its N 192 / drive-on τ is out of order) | – |
@@ -65,29 +65,33 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), trough ≤ −1.9e-4 (cut at t 100); static
 ≤ 3e-8.
 
-## LIVE (first node; MSK; no checkpoints)
+## LIVE (MSK; no checkpoints)
 
-| run | card | t | stop | speed | ETA |
+| run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| 0.6c `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 0, with the 0.7c | 5.9 @ 18:29 | 150 | 9.2 t/h | 10-20 ≈ 10:05 |
-| 0.7c `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 0, with the 0.6c | 1.7 @ 18:29 | 150 | 9.2 t/h | 10-20 ≈ 10:35 |
-| 0.40c `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` | 1, with the 0.46c | 87.4 @ 18:29 | 100 | 9.2 t/h | ≈ 19:50 |
-| 0.46c `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` | 1, with the 0.40c | 87.3 @ 18:29 | 100 | 9.2 t/h | ≈ 19:50 |
+| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 2nd / 0, with the 0.40c t 150 | 0 @ 18:41 | 130 | ≈ 9.5 t/h | 10-20 ≈ 08:25 |
+| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 2nd / 0, with the 0.30c t 130 | 0 @ 18:41 | 150 | ≈ 9.5 t/h (20 alone after the 0.30c) | 10-20 ≈ 09:25 |
+| 0.6c `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.7c | 5.9 @ 18:29 | 150 | 9.2 t/h | 10-20 ≈ 10:05 |
+| 0.7c `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.6c | 1.7 @ 18:29 | 150 | 9.2 t/h | 10-20 ≈ 10:35 |
+| 0.40c `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100` | 1st / 1, with the 0.46c | 87.4 @ 18:29 | 100 | 9.2 t/h | ≈ 19:50 |
+| 0.46c `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100` | 1st / 1, with the 0.40c | 87.3 @ 18:29 | 100 | 9.2 t/h | ≈ 19:50 |
 
 - Start checks passed: t 0 MOTS R 5.5367 (0.6c; table 5.5419) and 6.8730 (0.7c; table 6.8795), ψ4 header R 10 14 18
   30, frames, keep-last pruning. Decided 10-19: the 0.7c shares card 0 now rather than running alone on card 1 from
   19:50. Watch the 0.7c: the archived one's slicing broke at t ≈ 102 (lapse floor, NaN 135.85), its MOTS gone by t 49.
 - Done and packed 10-19: the static, the 0.30c, both 0.2c kicks, the 0.2c N 192, the L 128 far-zone run, the 0.5c
   N 192 (movies to the trust windows; the 0.30c's core movies still rendering).
-- Second node: idle since 10-19 16:48. The kicks' last plotfiles (14 GB) are still on its scratch: prune from a
-  session there.
-- Queue: empty; three runs PROPOSED in the main results table, no go. Cancelled 10-19: the 0.2c bar and the three
+- The 0.30c t 130 and 0.40c t 150 (go 10-19 ≈ 18:40; decided: both on the second node's card now rather than the
+  0.40c alone on the first node's card 1 from 19:50) are the 0.30c / 0.40c rungs' own params with only the name and
+  the stop changed (diffed); t 0 constraints and R_eq identical to the t 100 runs. The second node's scratch was
+  wiped of the kicks' last plotfiles (14 GB, 10-19 ≈ 18:40).
+- Queue: empty; the 0.5c N 128 drive off PROPOSED in the main results table, no go. Cancelled 10-19: the 0.2c bar and the three
   0.30c kicks (both rungs collapse anyway; templates stay).
 
 ## RUNS FOR THE PAPER (proposed, no go yet)
 
-The three proposed runs are the PROPOSED rows of the main results table (L 64, N 128, slow recipe, drive off, from
-t 0: none of the old runs wrote checkpoints). Free analyses:
+The proposed run is the PROPOSED row of the main results table (the 0.30c t 130 and 0.40c t 150 went LIVE 10-19).
+Free analyses:
 
 | analysis | what it settles | cost |
 |---|---|---|
