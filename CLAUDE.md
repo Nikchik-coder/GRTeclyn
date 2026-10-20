@@ -208,6 +208,9 @@ what the claims check or the identity grep flags, and report in a few lines.
 
 ## The paper
 
+- **Readability: [`research/WRITING_STANDARDS.md`](research/WRITING_STANDARDS.md)**, for every paper (2026-10-20: GRG
+  rejected the Bondi dipole paper because both referees could not follow its undefined lab vocabulary and its excess
+  of numbers). Read it before writing or revising, and run its checklist before every submission.
 - Every quoted number is a row in `research/merger/article/claims/ledger_*.tsv` and
   reaches the text as a `\clm...` macro from the generated `numbers.tex`. Change the
   ledger, run `claims.py check`, then `claims.py tex` — never edit `numbers.tex`.
