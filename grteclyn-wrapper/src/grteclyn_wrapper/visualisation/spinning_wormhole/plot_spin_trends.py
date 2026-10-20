@@ -12,7 +12,9 @@ eta0 fixed along a family, so mass and size grow without bound as v_e -> 1):
   R_e/eta0 (log);
 - (b) J/M^2 against the Kerr bound 1 (log);
 - (c) the far side's mass over ours, M_-/M_+ (the drainhole's far side turns
-  from negative to positive mass);
+  from negative to positive mass); the dotted rule marks the drainhole's sign
+  change (v_e ~ 0.72) and the squares the 3D runs' backgrounds at their own
+  M_-/M_+ (the packed table headers);
 - (d) the throat's flattening R_p/R_e;
 - (e) the exotic matter: the phantom field's volume integral quantifier
   |int (rho + p_eta) dV| (Visser, Kar & Dadhich 2003) over the equatorial
@@ -110,6 +112,25 @@ def family(rows: list[dict], eta0: float, gamma: float) -> dict[str, np.ndarray]
     }
 
 
+def sign_change(fam: dict) -> float:
+    """The v_e where the family's M_-/M_+ crosses zero (linear between the two
+    members that bracket it)."""
+    v, m = fam["v"], fam["Mratio"]
+    i = int(np.flatnonzero((m[:-1] < 0.0) & (m[1:] >= 0.0))[0])
+    return float(v[i] - m[i] * (v[i + 1] - v[i]) / (m[i + 1] - m[i]))
+
+
+def run_ratios() -> tuple[np.ndarray, np.ndarray]:
+    """The 3D runs on (c): each evolved background's own v_e and M_-/M_+ from its
+    packed header; the static drainhole's ends are exactly -1."""
+    vs, ms = [0.0], [-1.0]
+    for bg in headers.ARTICLE:
+        meta = headers.meta(bg)
+        vs.append(float(meta["v_e"]))
+        ms.append(float(meta["mu_minus"]) / float(meta["mu_plus"]))
+    return np.array(vs), np.array(ms)
+
+
 def run_points(fam: dict) -> tuple[np.ndarray, np.ndarray]:
     """The 3D runs on (e): per background, the family's curve at its v_e times
     (D_run / D_background)^2, D_run the median t = 0 charge its runs measured
@@ -182,11 +203,22 @@ def draw(fams, colours):
     ax_b.set_yticks([0.1, 1.0, 10.0])      # no label on the top edge, where the tag sits
     style.legend_top(ax_b, [key(rule, "Kerr bound")])
 
-    # (c) far-side mass over ours
+    # the 3D runs' marker, on (c) and (e)
+    runmark = dict(ls="none", marker="s", ms=3.4, mfc="white", mec=style.INK, mew=0.8,
+                   zorder=6, clip_on=False)
+
+    # (c) far-side mass over ours; 2026-10-20: the drainhole's sign change as a dotted
+    # rule (named in the key, as on the instability curve) and the 3D runs on it
     ax_c.axhline(0.0, **rule)
+    vrule = dict(color="#b5b5b2", lw=0.8, ls=":")
+    v0 = sign_change(fams[0])
+    ax_c.axvline(v0, **vrule)
     for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_c, f, "Mratio", red, ls)
+    ax_c.plot(*run_ratios(), **runmark)
     ax_c.set(xlim=(0, 1), ylim=(-1.1, 1.1), ylabel=r"$M_-/M_+$")
+    style.legend_top(ax_c, [key(vrule, rf"$M_-=0$, $v_e={v0:.2f}$"), key(runmark, "3D runs")],
+                     ncol=2, borderpad=0.4, **TIGHT)
 
     # (d) flattening
     ext = kk2014.kerr(np.array([1.0]))
@@ -197,8 +229,6 @@ def draw(fams, colours):
 
     # (e) exotic matter per throat radius (2026-10-20: replaces the scalar charge, which
     # Table II lists); the 3D runs' measured charge put on the drainhole curve
-    runmark = dict(ls="none", marker="s", ms=3.4, mfc="white", mec=style.INK, mew=0.8,
-                   zorder=6, clip_on=False)
     for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_e, f, "X", style.INK, ls)
     ax_e.plot(*run_points(fams[0]), **runmark)
