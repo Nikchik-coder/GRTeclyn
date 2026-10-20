@@ -56,10 +56,15 @@ draws the radii in its blue, light (R = 14) to dark (R = 45), and the speed of
 light in its red; ``house`` is the house ordinal ramp with an ink light speed.
 ``--colors`` takes five colours, innermost radius first.
 
-Reads the packed runs under ``results/spinningwormhole/campaign/`` and, for (d),
-the far-zone run's slice cache under ``runs/``; writes
-``results/spinningwormhole/figures/farzone_wave_02c`` (PNG + PDF) and the same
-figure into the run's ``figures/farzone_wave``.
+Reads only tracked files: the packed runs under
+``results/spinningwormhole/campaign/``, the background tables' headers under
+``results/spinningwormhole/backgrounds/`` (``headers``), and for (d) the
+far-zone pack's ``light_speed_equator.dat``, which ``--light-from-cache``
+rebuilds from the run's slice cache under ``runs/``.  Writes
+``results/spinningwormhole/figures/farzone_wave_02c`` (PNG + PDF) and, where
+``runs/`` holds the run, the same figure into its ``figures/farzone_wave``.
+
+    ... plot_farzone_wave --light-from-cache
 """
 
 from __future__ import annotations
@@ -74,20 +79,20 @@ import matplotlib.colors as mcolors  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
-from grteclyn_wrapper.visualisation.spinning_wormhole import solutions  # noqa: E402
+from grteclyn_wrapper.visualisation.spinning_wormhole import headers, solutions  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 
 PACKED = solutions.REPO / "results" / "spinningwormhole" / "campaign" / "drainhole" / "00_paper_runs"
 FIGURES = solutions.REPO / "results" / "spinningwormhole" / "figures"
 FARZONE = "spin_hold_L128_ml3_J100_full_farfix_t150"
 RUN_DIR = solutions.REPO / "runs" / "spinning_wormhole" / "drainhole" / "00_paper_runs" / FARZONE
-TABLES = solutions.REPO / "runs" / "spinning_p3" / "tables"
-BACKGROUNDS = solutions.REPO / "runs" / "spinning_wormhole" / "backgrounds"
+# (d)'s light speed against R, kept in the run's pack: its 1.2 GB slice cache stays under runs/
+LIGHT = PACKED / FARZONE / "light_speed_equator.dat"
 # the rungs of (b) and (c): label, packed run, trust window, background table (None: the static)
 SPINS = (
     ("0c", "static_hold_L64_ml3_spdrv0_farfix_t100", 60.0, None),
-    ("0.2c", FARZONE, 150.0, BACKGROUNDS / "full_eta2_m1_J100.spinbg"),
-    ("0.30c", "spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130", 130.0, TABLES / "fam_a_ve030.spinbg"),
+    ("0.2c", FARZONE, 150.0, "full_eta2_m1_J100"),
+    ("0.30c", "spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130", 130.0, "fam_a_ve030"),
 )
 M_STATIC = 1.0              # the massive drainhole's M (a = 2, M = 1): the static has no table
 R_SPIN = 14.0               # (b)'s radius: the one every rung extracts
@@ -127,11 +132,9 @@ def read_psi4(run: str) -> tuple[np.ndarray, dict[float, np.ndarray]]:
                         + 1j * (data[:, 2 + 2 * i] - data[0, 2 + 2 * i]) for i, r in enumerate(radii)}
 
 
-def meta_float(table: pathlib.Path, key: str) -> float:
-    """One ``meta <key> <value>`` line from a background table's header."""
-    head = open(table, "rb").read(1500).decode("latin-1")
-    key = f"meta {key} "
-    return float(head[head.index(key) + len(key):].split()[0])
+def meta_float(table: str, key: str) -> float:
+    """One ``meta <key> <value>`` line from a background table's packed header."""
+    return float(headers.meta(table)[key])
 
 
 def burst_energy(u: np.ndarray, w: np.ndarray) -> float | None:
@@ -190,6 +193,23 @@ def extrema(t: np.ndarray, waves: dict[float, np.ndarray]) -> dict[str, list[tup
 
 
 def light_speed() -> tuple[np.ndarray, np.ndarray] | None:
+    """(d)'s light speed against R from the far-zone pack; None without it."""
+    if not LIGHT.is_file():
+        return None
+    r, c = np.loadtxt(LIGHT, unpack=True)
+    return r, c
+
+
+def write_light(light: tuple[np.ndarray, np.ndarray]) -> None:
+    """Keep the light speed in the far-zone pack, every digit (the figure reads it back)."""
+    np.savetxt(LIGHT, np.column_stack(light), fmt="%.17g", delimiter="\t",
+               header=f"radial null speed alpha sqrt(chi) - beta^r on the equator (z slice) of {FARZONE},\n"
+                      f"averaged over rings |r - R| < 0.3 and the slices nearest t = "
+                      f"{', '.join(f'{t:g}' for t in T_LIGHT)}\n"
+                      "R\tc")
+
+
+def light_speed_from_cache() -> tuple[np.ndarray, np.ndarray] | None:
     """The radial null speed alpha sqrt(chi) - beta^r on the equator, averaged over
     rings and over the slices at T_LIGHT, from the run's slice cache; None without it."""
     cache = RUN_DIR / "frames" / "_slice_cache"
@@ -331,7 +351,7 @@ def report(t, waves, spins, light) -> None:
         print(f"(d) {name}: " + ", ".join(f"R {rm:g}: {v:.3f} (light {vl:.3f})" for rm, v, vl in pairs)
               + f"; fit over R >= {R_FAR:g}: {fit:.3f}")
     if light is None:
-        print("(d) no slice cache: the light speed is not drawn")
+        print("(d) no light speed in the far-zone pack: the light speed is not drawn")
     else:
         print("(d) light, alpha sqrt(chi) - beta^r at R 14 / 30 / 45: " + " / ".join(
             f"{np.interp(r, *light):.3f}" for r in (14.0, 30.0, 45.0)))
@@ -346,7 +366,15 @@ def main(argv=None) -> int:
                     help="colour scheme (default rgb, the spinning paper's)")
     ap.add_argument("--colors", default=None,
                     help="five comma-separated colours for the radii, innermost first")
+    ap.add_argument("--light-from-cache", action="store_true",
+                    help="recompute (d)'s light speed from the run's slice cache under runs/ "
+                         "and rewrite the packed light_speed_equator.dat")
     args = ap.parse_args(argv)
+    if args.light_from_cache:
+        light = light_speed_from_cache()
+        if light is None:
+            ap.error(f"no slice cache under {RUN_DIR}")
+        write_light(light)
 
     t, waves = read_psi4(FARZONE)
     look = dict(PALETTES[args.palette])

@@ -4,6 +4,12 @@
         collects every saved fast-spin Solution under runs/spinning_p3/ into
         results/spinningwormhole/solver/solutions.tsv (tracked; runs/ is not)
 
+    python -m grteclyn_wrapper.visualisation.spinning_wormhole.headers
+        copies the header (grid and meta numbers) of each background table
+        the article's 3D runs use into results/spinningwormhole/backgrounds/
+        (tracked; the 12.7 MB tables are not), where the figures read J,
+        J/A and M_ADM
+
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.kk2014
         digitizes the wormhole curves of Kleihaus & Kunz 2014 Fig. 1 from the
         published raster into results/spinningwormhole/solver/
@@ -35,6 +41,8 @@
         at R = 18, the far-side lapse); reads the packed runs and the solver
         table, writes results/spinningwormhole/figures/convergence_09c
 
-The solver figures go to results/spinningwormhole/figures/solver/.  The paper
-figure reads only the two packed tables, so it rebuilds from a clean checkout.
+The solver figures go to results/spinningwormhole/figures/solver/.  Every
+paper figure reads only tracked files under results/, so it rebuilds from a
+clean checkout (the instability curve takes a live run's streams from runs/
+until its pack lands).
 """

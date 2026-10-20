@@ -171,6 +171,10 @@ Paper notes:
 - **Figures**: all four are cited since the 10-20 rewrite — `instability_curve` (Fig. in Sec. V),
   `farzone_wave_02c` (claim 3, figure*), `convergence_02c` / `convergence_09c` (Appendix B). The wave-against-spin
   panel lives inside `farzone_wave_02c` (panel b).
+- **Figure data** (10-20): every figure rebuilds from tracked `results/` (pixel-identical, checked). The eight table
+  headers are in `results/spinningwormhole/backgrounds/` (`headers`), and Fig. 5's light speed is in the far-zone
+  pack's `light_speed_equator.dat` (`plot_farzone_wave --light-from-cache` rebuilds it). Fig. 4's live rungs
+  (0.46c, 0.6c, 0.7c) arrive with their packs at close-out.
 - **`article/research.tex` rewrite 10-20** (the structure the draft now has): Sec. IV = "Numerical setup" with
   subsections (3D initial data / Evolution scheme / Long evolutions: the outer boundary / The runs); tab:ladder is
   the full 13-row run table (settings + trust + outcome, live runs marked "running"); Table I (backgrounds) moved

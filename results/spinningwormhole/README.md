@@ -11,6 +11,13 @@ live state: `research/spinningwormhole/STATUS.md`; code:
 - `runs_registry.tsv` — one line per run: what it is for, outcome.
 - `trust_windows.tsv` — the last trustworthy time per run; movies, figures
   and quoted numbers stop there.
+- `backgrounds/` (2026-10-20) — the header (grid + `meta` numbers: J, M_ADM,
+  v_e, J/A, the solver gates) of each background table the article's 3D runs
+  start from, copied verbatim from the untracked 12.7 MB `.spinbg` tables by
+  `python -m grteclyn_wrapper.visualisation.spinning_wormhole.headers`; the
+  figures read these.  The far-zone 0.2c pack also holds
+  `light_speed_equator.dat`, the light speed of its wave figure's panel (d),
+  taken from the run's slice cache (`plot_farzone_wave --light-from-cache`).
 - `campaign/` — packed runs (full `.dat` streams, `evolution_params.txt`,
   `run_manifest.json`, `mots_spectral.dat`; paths scrubbed by
   `grteclyn_wrapper.packaging.scrub_paths`; packed by

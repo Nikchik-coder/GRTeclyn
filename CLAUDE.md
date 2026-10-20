@@ -211,6 +211,9 @@ what the claims check or the identity grep flags, and report in a few lines.
 - Every quoted number is a row in `research/merger/article/claims/ledger_*.tsv` and
   reaches the text as a `\clm...` macro from the generated `numbers.tex`. Change the
   ledger, run `claims.py check`, then `claims.py tex` — never edit `numbers.tex`.
+- **The article's data lives in `results/`, git-tracked** (the user, 2026-10-20): every figure and table must rebuild
+  from a clean checkout off the cluster. When a figure input lives only under `runs/`, pack it into `results/`; if it
+  is big, ask first and pack the part the figure reads (the spinning tables' headers, the far-zone light speed).
 - Horizon numbers (R, M_MS, formation times) come from the 3D MOTS finder: `small_data/mots_spectral.dat`, which
   every binary profile writes on every plotfile, or `headon_first_law.py` offline. Never take them from the round or
   oriented scans, which read a deformed horizon 3–11 % low (2026-10-01). A row of nan means no MOTS on that plotfile.

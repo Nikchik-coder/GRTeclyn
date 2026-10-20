@@ -4,7 +4,8 @@ unstable mode, on Azad et al.'s axes (arXiv:2301.05243).
 
 One panel.  x is the angular momentum over the throat area, J/A, as a
 percentage of the extremal-Kerr limit 1/(8 pi) -- read from each rung's
-background table (``meta J_over_A_extremal_frac``).  y is the growth rate
+background table header (``meta J_over_A_extremal_frac``; tracked under
+``results/spinningwormhole/backgrounds/``, see ``headers``).  y is the growth rate
 1/tau in code units; the right edge relabels the same scale in tau.
 
 tau is measured the same way on every rung (decided 2026-10-19, after the
@@ -55,37 +56,35 @@ import matplotlib.lines as mlines  # noqa: E402
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 
-from grteclyn_wrapper.visualisation.spinning_wormhole import solutions  # noqa: E402
+from grteclyn_wrapper.visualisation.spinning_wormhole import headers, solutions  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 
 PACKED = solutions.REPO / "results" / "spinningwormhole" / "campaign" / "drainhole" / "00_paper_runs"
 LIVE = solutions.REPO / "runs" / "spinning_wormhole" / "drainhole" / "00_paper_runs"
-TABLES = solutions.REPO / "runs" / "spinning_p3" / "tables"
-BACKGROUNDS = solutions.REPO / "runs" / "spinning_wormhole" / "backgrounds"
 FIGURES = solutions.REPO / "results" / "spinningwormhole" / "figures"
 
 # The ladder, slowest first.  Each rung names its background table (x and J
-# come from its meta) and its hold run; the static anchor sits at J = 0.  The
-# L 64 rungs are the N 128 paper runs; the 0.5c exists at N 192 only.
+# come from its packed header) and its hold run; the static anchor sits at J = 0.
+# The L 64 rungs are the N 128 paper runs; the 0.5c exists at N 192 only.
 RUNS = (
     dict(label="0c", table=None, run="static_hold_L64_ml3_spdrv0_farfix_t100"),
-    dict(label="0.2c", table=BACKGROUNDS / "full_eta2_m1_J100.spinbg",
+    dict(label="0.2c", table="full_eta2_m1_J100",
          run="spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100"),
-    dict(label="0.30c", table=TABLES / "fam_a_ve030.spinbg",
+    dict(label="0.30c", table="fam_a_ve030",
          run="spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100"),
-    dict(label="0.40c", table=TABLES / "fam_a_ve040.spinbg",
+    dict(label="0.40c", table="fam_a_ve040",
          run="spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100"),
     # 10-20: the 0.46c / 0.5c point at their t 150 / N 128 runs (both inflate); the
     # 0.6c / 0.7c at their L 128 reruns (the L 64 box was too small, DIED 10-20).
-    dict(label="0.46c", table=TABLES / "fam_a_ve045.spinbg",
+    dict(label="0.46c", table="fam_a_ve045",
          run="spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150"),
-    dict(label="0.5c", table=TABLES / "fam_a_ve050.spinbg",
+    dict(label="0.5c", table="fam_a_ve050",
          run="spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150"),
-    dict(label="0.6c", table=TABLES / "fam_a_ve060.spinbg",
+    dict(label="0.6c", table="fam_a_ve060",
          run="spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150"),
-    dict(label="0.7c", table=TABLES / "fam_a_ve070.spinbg",
+    dict(label="0.7c", table="fam_a_ve070",
          run="spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150"),
-    dict(label="0.9c", table=TABLES / "fam_a_ve090.spinbg",
+    dict(label="0.9c", table="fam_a_ve090",
          run="spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150"),
 )
 
@@ -110,16 +109,11 @@ PALETTES = {
 
 
 def table_meta(table) -> tuple[float, float]:
-    """(J, J/A as a percentage of the extremal limit) from the table's meta lines."""
+    """(J, J/A as a percentage of the extremal limit) from the table's packed header."""
     if table is None:
         return 0.0, 0.0
-    head = open(table, "rb").read(1500).decode("latin-1")
-
-    def read(key: str) -> float:
-        key = f"meta {key} "
-        return float(head[head.index(key) + len(key):].split()[0])
-
-    return read("J"), 100.0 * read("J_over_A_extremal_frac")
+    meta = headers.meta(table)
+    return float(meta["J"]), 100.0 * float(meta["J_over_A_extremal_frac"])
 
 
 def azad_rate(j: float) -> float:
