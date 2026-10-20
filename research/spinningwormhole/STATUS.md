@@ -72,9 +72,11 @@ t 150 run shows its throat inflating from t 101.
 - **The far-side centre (10-20).** The cause is the Kreiss–Oliger term at the puncture, not σ or the floor as such.
   The far end sits at the grid centre with χ ≈ e^f r⁴ (1 + O(r)): the r⁴ part has no sixth difference, the O(r)
   correction does, so KO moves χ at the 8 centre cells from t 0 at a constant rate ∝ σ whose sign the table sets.
-  Rebuilt from the tables on the level-3 grid, per unit σ and relative to χ there: +5.6 (0.46c),
-  +3.9 (0.5c), +1.1 (0.6c), −3.7 (0.7c), −14 (0.9c); the measured initial slopes match in all seven runs checked (0.7c σ 0.1:
-  −1.37e-7 computed vs −1.5e-7 per unit time; σ 0.4: −5.5e-7 vs −5.8e-7). It is 100× its effect on the lapse or φ.
+  Rebuilt from the tables on the level-3 grid, per unit σ and relative to χ there, it falls steadily with spin:
+  ≈ +11 (static, measured), +10 (0.2c), +8.8 (0.30c), +7.0 (0.40c), +5.6 (0.46c), +3.9 (0.5c), +1.1 (0.6c), −3.7
+  (0.7c), −14 (0.9c); the measured initial slopes match in all ten runs checked (0.7c σ 0.1: −1.37e-7 computed vs
+  −1.5e-7 per unit time; σ 0.4: −5.5e-7 vs −5.8e-7). It is 100× its effect on the lapse or φ. The static–0.40c
+  throats collapse (−1 % at t 44–60) while their centres still drift the harmless way (K > 0 to t 60–80).
   What follows depends on the sign of K it leaves at the centre (slice caches): K > 0 there (0.46c to t 90, 0.5c N 192
   to t 100: the lapse falls slowly, a trumpet-like drift) keeps the centre alive; once K < 0 (0.6c / 0.7c from t ≈ 5,
   the 0.5c N 128 from t ≈ 58, the 0.46c from ≈ 95) the 1+log lapse there grows (to 14 in the 0.46c / 0.5c) and the
