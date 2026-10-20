@@ -75,10 +75,11 @@ RUNS = (
     dict(label="D40", table="fam_a_ve040",
          run="spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100"),
     # 10-20: the 0.46c / 0.5c point at their t 150 / N 128 runs (both inflate).  The
-    # 0.6c / 0.7c point at their L 128 runs on the slow recipe (sigma 0.1, min_chi 1e-8):
-    # sigma 0.4 kills these negative-mass far-side centres -- slowly on the 1e-4 floor
-    # (the 0.5c / 0.6c L 128 DIED 84.81 / 99.16, the 0.7c was stopped at 107.65), by
-    # t ~ 33 on the 1e-8 floor -- and the throats' late motion there was numerical.
+    # 0.6c / 0.7c point at their L 128 runs on the slow recipe (sigma 0.1, min_chi 1e-8),
+    # which died at the far-side centre too (66.70 / 52.88) with the throats short of the
+    # band: pending.  Every 0.6c / 0.7c run so far broke at that centre, where the
+    # Kreiss-Oliger term moves chi from t 0 (the 1e-4 floor runs died 85-136, the sigma
+    # 0.4 + 1e-8 runs by t ~ 33); the throats' late motion there was numerical.
     dict(label="D46", table="fam_a_ve045",
          run="spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150"),
     dict(label="D51", table="fam_a_ve050",

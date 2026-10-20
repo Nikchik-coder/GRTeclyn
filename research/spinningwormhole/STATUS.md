@@ -13,9 +13,9 @@ Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per ru
 Spin slows the instability and the 0.9c is stable. Up to the 0.40c (24 % of extremal) the unperturbed throat
 collapses into a black hole. At the 0.46c (29 %) and the 0.5c (33 %, N 128) it shrinks a little, turns, and then
 inflates, growing as e^(t/τ) with τ ≈ 10–12: the instability's other branch, not its end. Where it ends lies between
-33 % and 81 %; the 0.6c / 0.7c runs on the fast recipe broke down numerically at the far-side centre — not the
-box: σ 0.4 kills these negative-mass centres (with min_chi 1e-4 slowly, deaths at 85–136; with 1e-8 by t ≈ 33).
-The 0.6c and the 0.7c rerun on the slow recipe (σ 0.1, min_chi 1e-8) on L 128 (LIVE since 10-20 17:43).
+33 % and 81 %; every 0.6c / 0.7c run broke down numerically at the far-side centre, never at the throat: the
+Kreiss–Oliger term moves χ at the puncture from t 0 (the "far-side centre" bullet below). On σ 0.1 + min_chi 1e-8
+they died at 66.70 / 52.88 (10-20), later than on σ 0.4 (34 / 32) but no throat data past t 55 / 45.
 Correction (10-20): on 10-19 the 0.46c's turn at t 83 was read as the end of the instability near Azad's ≈ 30 %; the
 t 150 run shows its throat inflating from t 101.
 
@@ -36,7 +36,8 @@ t 150 run shows its throat inflating from t 101.
   order), and sits on a band plateau (< 4 % between 0.2–1 % and 0.5–2 %). Collapse dots τ 5.4 / 6.6 /
   8.3 / 13.3 (D0–D40), expansion triangles 12.1 / 8.8 (D46, D51). The fit a − b(J/A)² now goes through the collapse
   branch ALONE (rms 2e-3): zero at 32 %; one curve through both branches described neither. The D59 / D70 rungs
-  point at the σ 0.1 L 128 reruns (`sig01_mc8`) and the curve refills as they land.
+  point at the σ 0.1 L 128 reruns (`sig01_mc8`, both dead at the far-side centre, the throats never through the band:
+  pending).
 - **Against Azad et al.** (Azad, Blázquez-Salcedo, Khoo, Kunz, arXiv:2301.05243; their C = 1 row — our family):
   where 2nd order should hold the methods are close — D21 continuum 5.9 within 8 % of their 5.46, static 5.4
   (N 128) beside the linear 5.13; at intermediate spin ours is slower beyond the ~13 % resolution bias (8.3 vs 6.1
@@ -68,15 +69,19 @@ t 150 run shows its throat inflating from t 101.
   out, it collapses. Both pass 1 % at t ≈ 25, 21.5 before the unkicked 0.2c, at the same rate. No more kicks.
 - **Numerics.** The 0.2c triplet converges at 3rd–4th order, the 0.9c triplet is stable at every resolution, and the
   code review (10-19) found nothing that changes these results.
-- **The far-side centre (10-20).** σ 0.4 kills the centre of the negative-mass far sides (0.46c–0.7c: μ₋ −0.72 …
-  −0.11, central χ ≈ 4e-7 at t 0); the 0.9c survives it because its far side has positive mass (+2.09): its central
-  lapse collapses gently and freezes the centre. With min_chi 1e-4 the floor slows the damage — the central lapse
-  falls 0.21 → 0.04 → 0.003 by t 40 / 80 on the same curve at L 64 and L 128, the constraints grow ×100 from t ≈ 40–50,
-  deaths at 84.81 / 99.16 / 136 (0.5c / 0.6c L 128, 0.7c L 64). With min_chi 1e-8 it is fast: χ on the floor by t 5,
-  |K| at r ≈ 0.2 growing from 9e-4 (t 5) to 0.4, the lapse on its floor at t 27–30, NaN at 32.36 / 34.33 (0.7c /
-  0.6c). Every healthy centre ran σ 0.1 (0.2c–0.5c: χ ~ 1e-6, K ~ 5e-3 at t 30); the old 0.5c with σ 0.4 + 1e-8
-  had χ on the floor and K 0.2 by t 30. The throat never moved in any of these (≤ 0.006 % before the breakdown).
-  The paper's recipe F (and its box explanation) holds for the 0.9c only.
+- **The far-side centre (10-20).** The cause is the Kreiss–Oliger term at the puncture, not σ or the floor as such.
+  The far end sits at the grid centre with χ ≈ e^f r⁴ (1 + O(r)): the r⁴ part has no sixth difference, the O(r)
+  correction does, so KO moves χ at the 8 centre cells from t 0 at a constant rate ∝ σ whose sign the table sets.
+  Rebuilt from the tables on the level-3 grid, per unit σ and relative to χ there: +5.6 (0.46c),
+  +3.9 (0.5c), +1.1 (0.6c), −3.7 (0.7c), −14 (0.9c); the measured initial slopes match in all seven runs checked (0.7c σ 0.1:
+  −1.37e-7 computed vs −1.5e-7 per unit time; σ 0.4: −5.5e-7 vs −5.8e-7). It is 100× its effect on the lapse or φ.
+  What follows depends on the sign of K it leaves at the centre (slice caches): K > 0 there (0.46c to t 90, 0.5c N 192
+  to t 100: the lapse falls slowly, a trumpet-like drift) keeps the centre alive; once K < 0 (0.6c / 0.7c from t ≈ 5,
+  the 0.5c N 128 from t ≈ 58, the 0.46c from ≈ 95) the 1+log lapse there grows (to 14 in the 0.46c / 0.5c) and the
+  NaN follows. The 1e-4 floor clips the profile instead: K > 0 and the lapse collapses 0.21 → 0.002 by t 90, spreading
+  outward, then K blows up (deaths 85–136). σ 0.4 vs 0.1 only scales the rate (deaths 32–34 vs 53–67 on 1e-8). The
+  throat never moved before the breakdown in any of them. Fix proposed: KO on the deviation from the background
+  (RUNS FOR THE PAPER). The paper's recipe F (and its box explanation) holds for the 0.9c only.
 
 ## MAIN RESULTS TABLE
 
@@ -103,11 +108,11 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.6c (fast) `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 40.3 | – | – | – | DIED 98.99 (K NaN, finest level): the χ floor (read on 10-19 as the box) — central lapse ≈ 0 from t 38, throat flat (≤ 0.2 %) only to t 75. Not packed, not usable | – |
 | 0.6c on L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 40.3 | – | – | – | DIED 99.16 (10-20 14:09; h11 NaN, finest level): the χ floor, as the 0.5c L 128 — central lapse 0.003 and constraints 2e-3 at t 80, throat −2.1 % areal / −47 % R_eq at the end. Not packed, not usable; rerun below | – |
 | 0.6c on L 128, min_chi 1e-8 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_mc8_farfix_t150` | 40.3 | – | – | – | DIED 34.33 (10-20 17:27; h11 NaN): σ 0.4 at the far-side centre — χ on the 1e-8 floor from t 5, |K| there 9e-4 → 0.4, the lapse on its floor at t 30; throat flat (≤ 0.0033 %). Not packed, not usable | – |
-| 0.6c on L 128, σ 0.1 `spin_hold_L128_ml3_ve060a_spdrv1_sig01_mc8_farfix_t150` | 40.3 | – | – | – | LIVE since 10-20 17:43 (1st / 0, alone): the slow recipe (σ 0.1, min_chi 1e-8) on the L 128 setup; only σ 0.4 → 0.1 vs the dead run (diffed) | – |
+| 0.6c on L 128, σ 0.1 `spin_hold_L128_ml3_ve060a_spdrv1_sig01_mc8_farfix_t150` | 40.3 | – | – | – | DIED 66.70 (10-20 ≈ 22:01; h11 NaN): the far-side centre — χ there on the 1e-8 floor from t ≈ 18, K negative, the lapse rising 0.21 → 0.39; throat within 0.002 % to t 45, −0.03 % at 55, finest-level Ham off its trend at 55–60. Not packed, not usable | – |
 | 0.7c (fast) `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 51.4 | – | – | – | DIED 136.03 (h11 NaN, finest level), as the archived 0.7c (135.85): the χ floor (read on 10-19 as the box) — central lapse ≈ 0 from t 39.5, throat ±0.8 % to t 124. Not packed, not usable | – |
 | 0.7c on L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 51.4 | – | – | – | STOPPED 107.65 (10-20 15:27, on the word): the χ floor, as the 0.5c / 0.6c L 128 — throat flat (≤ 0.006 %) to t 70, then the central lapse reached 0, the finest-level constraints 1.6e-3 (100× the 0.9c's) and the throat swung +0.18 % (t 100) → +0.03 % (t 106). Not packed, not usable; rerun below | – |
 | 0.7c on L 128, min_chi 1e-8 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_mc8_farfix_t150` | 51.4 | – | – | – | DIED 32.36 (10-20 17:33; A11 NaN): σ 0.4 at the far-side centre, as the 0.6c — the lapse on its floor at t 27, |K| there 4.2 at the end; throat flat (≤ 0.0006 %). Not packed, not usable | – |
-| 0.7c on L 128, σ 0.1 `spin_hold_L128_ml3_ve070a_spdrv1_sig01_mc8_farfix_t150` | 51.4 | – | – | – | LIVE since 10-20 17:43 (1st / 1, alone): the slow recipe on the L 128 setup; only σ 0.4 → 0.1 vs the dead run (diffed) | – |
+| 0.7c on L 128, σ 0.1 `spin_hold_L128_ml3_ve070a_spdrv1_sig01_mc8_farfix_t150` | 51.4 | – | – | – | DIED 52.88 (10-20 ≈ 21:07; h11 NaN): the far-side centre — χ there on the 1e-8 floor by t 2.5, K negative, the lapse 0.21 → 0.26 (t 45), then collapsed along the axis; throat within 0.003 % to t 50, finest-level Ham off its trend at 45–50. Not packed, not usable | – |
 | 0.9c (L 128 triplet, fast) | 80.8 | flat to t 150 | ∞ | – | stable: areal R drift ≤ 7e-5, no MOTS | 150 |
 
 ψ4 (2,0), r·Δψ4 at R 14 (u as above): 0.2c trough −1.47e-4 (u 13), peak +2.3e-4 (u 24), ring-down period ≈ 24 (L 128,
@@ -116,15 +121,11 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 ## LIVE (MSK; no checkpoints)
 
-| run | node / card | t | stop | speed | ETA |
-|---|---|---|---|---|---|
-| 0.6c L 128, σ 0.1 `spin_hold_L128_ml3_ve060a_spdrv1_sig01_mc8_farfix_t150` | 1st / 0, alone | 0 @ 17:43 | 150 | ≈ 15.5 t/h | 10-21 ≈ 03:30 |
-| 0.7c L 128, σ 0.1 `spin_hold_L128_ml3_ve070a_spdrv1_sig01_mc8_farfix_t150` | 1st / 1, alone | 0 @ 17:43 | 150 | ≈ 15.5 t/h | 10-21 ≈ 03:30 |
+None. Both first-node cards and the second node's card are idle.
 
-- The σ 0.1 reruns (go 10-20 ≈ 17:40, no checkpoints): the dead min_chi 1e-8 reruns' templates with only the name and
-  σ 0.4 → 0.1 changed (diffed); preflights pass, t 0 constraints identical to every earlier run of each rung. The
-  centre's fate shows by t 5–10 (the σ 0.4 + 1e-8 runs had χ on the floor by t 5). Consumer args as before (ψ4 R 14
-  18 30 40 45, MOTS steps 150). The second node's card is idle.
+- Ended 10-20: the 0.6c / 0.7c L 128 σ 0.1 + min_chi 1e-8 reruns (DIED 66.70 / 52.88 at ≈ 22:01 / 21:07, the far-side
+  centre; not packed). Their last plotfiles (2 × 15 GB) are still on the first node's scratch: pruning waits for the
+  word.
 
 - The L 128 reruns (go 10-20 ≈ 07:30, no checkpoints; decided: the 0.7c shares card 1 with the 0.46c now): preflights
   pass, t 0 constraints at N 256 (Ham 5.1e-4 / 6.1e-4) below the L 64 runs' (2.1e-3), consumer args the 0.9c's
@@ -168,9 +169,13 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 No proposed run (decided 10-20: keep and pack the 0.30c t 130, the 0.5c t 150 and the 0.46c t 150; no 0.40c wave
 rerun — the 0.2c and 0.30c carry the wave claim). The 0.46c t 150 is packed (died 130.23, trust 121). Decided 10-20
-after the far-side-centre deaths: the 0.6c and 0.7c rerun on L 128 with the slow recipe (σ 0.1, min_chi 1e-8; LIVE
-since 17:43, after their σ 0.4 + 1e-8 reruns died at 34.33 / 32.36) for "flat to t 150" points beside the fit's zero;
-the 0.5c is not rerun (its L 64 runs cover the rung); the dead L 128 rows leave the paper's table.
+after the far-side-centre deaths: the 0.6c and 0.7c rerun on L 128 with the slow recipe (σ 0.1, min_chi 1e-8) for
+"flat to t 150" points beside the fit's zero; both died at the centre (66.70 / 52.88). The 0.5c is not rerun (its
+L 64 runs cover the rung); the dead L 128 rows leave the paper's table.
+Proposed 10-20 (no go yet): Kreiss–Oliger on the deviation from the background, σ KO(state − background), with the
+background the drive and the Sommerfeld fix already hold on every level: a code option and a rebuild, then a
+≈ 20 min 0.7c check (χ at the centre must stay at 3.7e-7 past t 3, where σ 0.1 put it on the floor), then the 0.6c /
+0.7c L 128 to t 150 (≈ 10 h, both first-node cards).
 Free analyses:
 
 | analysis | what it settles | cost |
@@ -261,7 +266,7 @@ Paper notes:
 - **Above 0.5c**: with min_chi 1e-8 the 0.7c died at the far-side puncture (t 42.6, floored from t 2.3); σ ≥ 0.2 kills
   that puncture on the 1e-8 floor; dt 0.05 has a K instability on spin data that σ 0.4 + floor only delay. So: floor
   1e-4 on the fast runs, dt 0.02 everywhere. 10-20: the 1e-4 floor only delays σ 0.4's damage on the negative-mass
-  far sides (deaths at 85–136; the "far-side centre" bullet above); they rerun on σ 0.1 + 1e-8.
+  far sides (deaths at 85–136; the "far-side centre" bullet above); σ 0.1 + 1e-8 died too (66.70 / 52.88).
 - **Measuring the throat**: never quote R_pol_min (coordinate-dependent). `throat_geometry` reads the box edge once the
   throat leaves the finest box (the push-in after t 61.4): use `throat_spheres` there; it reads small deficits ≈ 20 %
   high. The MOTS stream is the most accurate (3e-6). ψ4 has no matter term (`G_newton` unset → 0): ≤ 0.4 % at
