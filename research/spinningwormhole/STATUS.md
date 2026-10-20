@@ -13,8 +13,10 @@ Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per ru
 Spin slows the instability and the 0.9c is stable. Up to the 0.40c (24 % of extremal) the unperturbed throat
 collapses into a black hole. At the 0.46c (29 %) and the 0.5c (33 %, N 128) it shrinks a little, turns, and then
 inflates, growing as e^(t/τ) with τ ≈ 10–12: the instability's other branch, not its end. Where it ends lies between
-33 % and 81 %; the 0.6c / 0.7c L 64 runs broke down numerically (the box too small for these large throats — the
-gauge collapsed at the centre from t ≈ 40), and their L 128 reruns on the 0.9c's proven setup are LIVE.
+33 % and 81 %; the 0.6c / 0.7c runs on the fast recipe broke down numerically — not the box but its χ floor
+(min_chi 1e-4), which rewrites the centre of these negative-mass far sides: the central lapse collapses from t ≈ 40
+and the constraints follow (the 0.5c / 0.6c L 128 died at 84.81 / 99.16 the same way). The 0.6c reruns with
+min_chi 1e-8 (LIVE); the 0.7c L 128 (fast) is live.
 Correction (10-20): on 10-19 the 0.46c's turn at t 83 was read as the end of the instability near Azad's ≈ 30 %; the
 t 150 run shows its throat inflating from t 101.
 
@@ -60,6 +62,12 @@ t 150 run shows its throat inflating from t 101.
   out, it collapses. Both pass 1 % at t ≈ 25, 21.5 before the unkicked 0.2c, at the same rate. No more kicks.
 - **Numerics.** The 0.2c triplet converges at 3rd–4th order, the 0.9c triplet is stable at every resolution, and the
   code review (10-19) found nothing that changes these results.
+- **The χ floor (10-20).** The fast recipe's min_chi 1e-4 is harmless on the 0.9c (far-side mass μ₋ +2.09, an
+  ordinary puncture) but rewrites the centre of the 0.5c–0.7c's negative-mass far sides (μ₋ −0.63 / −0.46 / −0.11,
+  true central χ ≈ 4e-7): the central lapse falls 0.21 → 0.04 → 0.003 by t 40 / 80 on the same curve at L 64 and
+  L 128, and the finest-level constraints grow ×100 from t ≈ 40–50 until h11 goes NaN. The A/B is σ-free: the 0.5c on
+  L 128 with σ 0.4 and min_chi 1e-8 (06_dt_ladder) held its central lapse at 0.21 to t 40; with 1e-4 (L 64) it fell
+  to 0.012 by t 60. The paper's recipe F and its box explanation for the 0.6c / 0.7c change when the rerun lands.
 
 ## MAIN RESULTS TABLE
 
@@ -82,10 +90,11 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 28.8 | – | – | – | DIED 130.23 (10-20 09:01; h11 NaN, finest level): inflated from t 101 to +1.8 / +6.2 / +15 % at t 110 / 120 / 130 (τ 12.1); the finest level's Mom leaves its 1.9e-3 plateau at t 121.4, the lapse on its floor from t 127. Packed, trust 121 | 121 |
 | 0.5c (N 192, drive on) | 33.3 | 99.4 | 13.6 | – | clean t 100, MOTS −1.3 %, no horizon | 100 |
 | 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | DIED 100.10 (K NaN, finest level): inflated from t ≈ 70 to +6.9 % at t 100 (τ 9–11.5 from dR/dt), MOTS lost from t 78. Packed, trust 95 | 95 |
-| 0.5c on L 128 `spin_hold_L128_ml3_ve050a_spdrv1_sig04_farfix_t150` | 33.3 | – | – | – | LIVE since 10-20 08:00 (2nd node, alone): the 0.9c's setup, table swapped — decides the 0.5c's branch (L 64: N 192 drive-on shrank, N 128 drive-off inflated) on a face of 34.4 M_ADM | – |
-| 0.6c (fast) `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 40.3 | – | – | – | DIED 98.99 (K NaN, finest level): the L 64 box too small — central lapse ≈ 0 from t 38, throat flat (≤ 0.2 %) only to t 75. Not packed, not usable; rerun below | – |
-| 0.6c on L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 40.3 | – | – | – | LIVE since 10-20 07:45 (1st / 0, alone): the 0.9c's proven setup (N 256, drive on, min_chi 1e-4, σ 0.4) with only the table swapped | – |
-| 0.7c (fast) `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 51.4 | – | – | – | DIED 136.03 (h11 NaN, finest level), as the archived 0.7c (135.85): the L 64 box too small — central lapse ≈ 0 from t 39.5, throat ±0.8 % to t 124. Not packed, not usable; rerun below | – |
+| 0.5c on L 128 `spin_hold_L128_ml3_ve050a_spdrv1_sig04_farfix_t150` | 33.3 | – | – | – | DIED 84.81 (10-20 13:32; h11 NaN, finest level): the χ floor (min_chi 1e-4) — central lapse 0.003, constraints ×100 from t 50, throat flat (≤ 0.14 %) to t 69 then a shrink 3–5× faster than the mode (−4.4 % areal at t 84): numerical. Not packed, not usable; not rerun (decided 10-20: the L 64 runs cover the rung) | – |
+| 0.6c (fast) `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 40.3 | – | – | – | DIED 98.99 (K NaN, finest level): the χ floor (read on 10-19 as the box) — central lapse ≈ 0 from t 38, throat flat (≤ 0.2 %) only to t 75. Not packed, not usable | – |
+| 0.6c on L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 40.3 | – | – | – | DIED 99.16 (10-20 14:09; h11 NaN, finest level): the χ floor, as the 0.5c L 128 — central lapse 0.003 and constraints 2e-3 at t 80, throat −2.1 % areal / −47 % R_eq at the end. Not packed, not usable; rerun below | – |
+| 0.6c on L 128, min_chi 1e-8 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_mc8_farfix_t150` | 40.3 | – | – | – | LIVE since 10-20 15:14 (1st / 0, alone): the dead 0.6c L 128 with only min_chi 1e-4 → 1e-8 (diffed) | – |
+| 0.7c (fast) `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 51.4 | – | – | – | DIED 136.03 (h11 NaN, finest level), as the archived 0.7c (135.85): the χ floor (read on 10-19 as the box) — central lapse ≈ 0 from t 39.5, throat ±0.8 % to t 124. Not packed, not usable | – |
 | 0.7c on L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 51.4 | – | – | – | LIVE since 10-20 07:45 (1st / 1, alone since the 0.46c t 150 died at 09:01): the 0.9c's setup, table swapped | – |
 | 0.9c (L 128 triplet, fast) | 80.8 | flat to t 150 | ∞ | – | stable: areal R drift ≤ 7e-5, no MOTS | 150 |
 
@@ -97,18 +106,23 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 | run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| 0.6c L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 1st / 0, alone | 28.1 @ 09:35 | 150 | 15.6 t/h | 10-20 ≈ 17:25 |
-| 0.7c L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 1st / 1, alone since 09:01 | 16.7 @ 09:35 | 150 | 15.6 t/h | 10-20 ≈ 18:10 |
-| 0.5c L 128 `spin_hold_L128_ml3_ve050a_spdrv1_sig04_farfix_t150` | 2nd / 0, alone | 24.1 @ 09:35 | 150 | 15.3 t/h | 10-20 ≈ 17:50 |
+| 0.6c L 128, min_chi 1e-8 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_mc8_farfix_t150` | 1st / 0, alone | 0.1 @ 15:14 | 150 | ≈ 15.5 t/h | 10-21 ≈ 01:00 |
+| 0.7c L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 1st / 1, alone | 102.4 @ 15:06 | 150 | 15.5 t/h | 10-20 ≈ 18:10 |
+
+- The 0.6c min_chi 1e-8 rerun (go 10-20 ≈ 15:10, no checkpoints): the dead 0.6c L 128's template with only the name
+  and min_chi changed (diffed); preflight pass, t 0 constraints identical (Ham 5.06e-4 / Mom 5.35e-5); the t 0 frames
+  differ only at the centre (χ 1.17e-4 on the slice instead of the floor, 8128 Weyl4 NaN pixels instead of 130048).
+  Consumer args as that run (ψ4 R 14 18 30 40 45, MOTS steps 150). The second node's card is idle.
 
 - The L 128 reruns (go 10-20 ≈ 07:30, no checkpoints; decided: the 0.7c shares card 1 with the 0.46c now): preflights
   pass, t 0 constraints at N 256 (Ham 5.1e-4 / 6.1e-4) below the L 64 runs' (2.1e-3), consumer args the 0.9c's
   (ψ4 R 14 18 30 40 45, MOTS steps 150).
-- Ended 10-20: the 0.46c t 150 (DIED 130.23 at 09:01, inflating, h11 NaN on the finest level; packed, trust 121;
+- Ended 10-20: the 0.5c / 0.6c L 128 (DIED 84.81 / 99.16 at 13:32 / 14:09, the χ floor; not packed; the 0.6c's
+  scratch pruned ≈ 15:20, the 0.5c's 15 GB still on the second node's scratch), the 0.46c t 150 (DIED 130.23 at 09:01, inflating, h11 NaN on the finest level; packed, trust 121;
   scratch pruned ≈ 11:15), the 0.30c t 130
   (FINISHED, packed, trust 130), the 0.5c t 150 (DIED 100.10 inflating, packed, trust
   95), the 0.40c t 150 (DIED 100.72, not packed: no third wave point needed), the 0.6c / 0.7c L 64 (DIED 98.99 /
-  136.03, not packed: box too small, L 128 reruns live). First-node scratch pruned of the three dead L 64 runs'
+  136.03, not packed: the χ floor, read then as the box). First-node scratch pruned of the three dead L 64 runs'
   plotfiles (21 GB, ≈ 07:50); the second node's (0.30c t 130, 0.40c t 150, 14 GB) wiped ≈ 08:00 before the 0.5c L 128
   launch. The keepers' movies (0.30c t 130 to t ≤ 130, 0.5c t 150 to t ≤ 95; full + core) rendered on the second
   node and checked on contact sheets 10-20 ≈ 08:40: one fixed scale per field, none blank, both stop at their
@@ -139,8 +153,9 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 ## RUNS FOR THE PAPER (proposed, no go yet)
 
 No proposed run (decided 10-20: keep and pack the 0.30c t 130, the 0.5c t 150 and the 0.46c t 150; no 0.40c wave
-rerun — the 0.2c and 0.30c carry the wave claim; the 0.6c / 0.7c reruns on L 128 went LIVE). The 0.46c t 150 is
-packed (died 130.23, trust 121).
+rerun — the 0.2c and 0.30c carry the wave claim). The 0.46c t 150 is packed (died 130.23, trust 121). Decided 10-20
+after the χ-floor deaths: the 0.6c reruns with min_chi 1e-8 (LIVE) for a "flat to t 150 at 40 %" point beside the
+fit's 42 % zero; the 0.5c is not rerun (its L 64 runs cover the rung); the dead L 128 rows leave the paper's table.
 Free analyses:
 
 | analysis | what it settles | cost |
