@@ -105,7 +105,7 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
   pass, t 0 constraints at N 256 (Ham 5.1e-4 / 6.1e-4) below the L 64 runs' (2.1e-3), consumer args the 0.9c's
   (ψ4 R 14 18 30 40 45, MOTS steps 150).
 - Ended 10-20: the 0.46c t 150 (DIED 130.23 at 09:01, inflating, h11 NaN on the finest level; packed, trust 121;
-  its last plotfiles still sit on the first node's scratch — the prune needs a first-node session), the 0.30c t 130
+  scratch pruned ≈ 11:15), the 0.30c t 130
   (FINISHED, packed, trust 130), the 0.5c t 150 (DIED 100.10 inflating, packed, trust
   95), the 0.40c t 150 (DIED 100.72, not packed: no third wave point needed), the 0.6c / 0.7c L 64 (DIED 98.99 /
   136.03, not packed: box too small, L 128 reruns live). First-node scratch pruned of the three dead L 64 runs'
