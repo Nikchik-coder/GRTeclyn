@@ -15,8 +15,10 @@ Updated 2026-10-20.
 
 1. [ ] Wait for GRG to confirm the merger paper's withdrawal.
 2. [ ] Revise the Bondi paper first, because its referee list is concrete. Answer every point in the reports,
-   following `research/WRITING_STANDARDS.md`. The convergence figure can probably come from the three resolutions
-   the paper already has (Δx = 0.50, 0.33, 0.25), so it should not need new runs.
+   following `research/WRITING_STANDARDS.md` and its open items for this paper. Convergence is the one point the text
+   cannot fix: the three existing resolutions give Q_meas = −10.8 for the drift, so N = 128 is outside the convergent
+   regime. Either run a fourth resolution, N = 320 (a new run, so it needs a go), or quote the N = 192/256 difference
+   as the error bar and put every base-grid number behind that caveat.
 3. [ ] Give the merger paper the same pass. Replace "arm", "trust window" and "results pack", cut the abstract (six
    numbers) down to the qualitative story, and put the title and author names in normal case. Text only, no new runs.
 4. [ ] Reader test on both. Someone with no project context reads the abstract, the introduction and one results
