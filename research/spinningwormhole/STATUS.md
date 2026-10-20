@@ -163,6 +163,11 @@ Paper notes:
   is off for every run since 10-18 (`sponge_drive_strength = 0`).
 - SLOW (≤ 0.5c): σ 0.1, min_chi 1e-8, stop 100. FAST (> 0.5c): σ 0.4, min_chi 1e-4, `constraint_norms_mask_radius =
   0.75`, stop 150; the 1e-4 floor is what carries > 0.5c.
+- **A rung's box is picked by its M_ADM, not by habit** (10-20, after the L 64 0.6c / 0.7c died of central gauge
+  collapse): M_ADM triples along the family (0.2c 1.26 → 0.6c 2.30 → 0.7c 3.31 → 0.9c 11.7), so the L 64 face falls
+  from 25 M of clearance at the 0.2c to 13.9 / 9.7 M at the 0.6c / 0.7c, while the L 64 recipes were validated only
+  at ≥ 17 M (0.2c–0.5c). From the 0.6c up, a run gets the 0.9c's convergence settings — L 128, N 256 (same dx), drive
+  on over 48–64, min_chi 1e-4, σ 0.4 — never the 0.2c family's box.
 - Binary `main3d_farfix_891d817d_2026-10-17.ex` (kicks: `main3d_kick_af28ad29_2026-10-18.ex`) with
   `exact_quartic_interp = 1`, `rk_stage_refill = 0`, `shift_advec_coeff = 0`, `sommerfeld_relative_to_background = 1`,
   `constraint_norms_edge_cells = 3`.
