@@ -6,28 +6,40 @@ wide: the same refined boxes about the throat (+-16 / 8 / 4, so the same grid
 inside r = 16), the base grid dx = 0.5 out to the face at 64, and a KO sponge at
 r = 48-64 with no drive.
 
-(a) the throat: the equatorial circumferential radius's deficit
-    1 - R_eq / R_eq(0) (``throat_geometry.dat``) in the far-zone run and in the
-    L = 64 hold, and the difference of the two deficits;
-(b) the (l, m) = (2, 0) mode of r Psi4 at R = 14, 18, 30, 40, 45 minus its
+(a) the (l, m) = (2, 0) mode of r Psi4 at R = 14, 18, 30, 40, 45 minus its
     t = 0 value (the stationary background's own curvature), against t - R: the
     consumer's stream already carries the factor r, so nothing here multiplies
     by R; the imaginary part stays below 1.1e-3 of the real one (axisymmetry);
-(c) the three extrema of (b) at each radius, in absolute value: the first
-    trough (t - R in 68-81), the peak (81-93) and the second trough (93-106);
-(d) the speed of each extremum between neighbouring spheres, Delta R over the
-    difference of its arrival times (each time the vertex of a parabola through
-    the three samples about the extremum), against the speed of light over the
-    same stretch, Delta R / int dr / c(r) with c = alpha sqrt(chi) - beta^r, the
-    radial null speed in these coordinates (conformal metric ~ flat there), read
-    on the equator from the run's slice cache over t = 100-145.
+(b) the wave against spin: the same mode at R = 14 for this run (the 0.2c)
+    and the 0.30c (its t = 130 run), each against t - R - t10 with t10 the
+    time its own equatorial deficit reaches 10 %, so the bursts align on each
+    rung's collapse.  The static's line is the exact zero of spherical
+    symmetry, dashed; its run confirms <= 4.2e-9 before it dies (NaN at
+    horizon formation, trust 60) at u = -10.6, short of this window;
+(c) the energy radiated in the (2, 0) mode over the burst (t - R - t10 in
+    0-45, the pre-burst mean subtracted before integrating),
+    E = 1/(16 pi) int |int r Psi4 dt'|^2 dt, over each rung's M_ADM, against
+    the spin 8 pi J/A: at R = 18 and, as the measurement spread, R = 14;
+(d) the speed of each extremum of (a) between neighbouring spheres, Delta R
+    over the difference of its arrival times (each time the vertex of a
+    parabola through the three samples about the extremum), against the speed
+    of light over the same stretch, Delta R / int dr / c(r) with
+    c = alpha sqrt(chi) - beta^r, the radial null speed in these coordinates,
+    read on the equator from the run's slice cache over t = 100-145.
 
-Outcome: the throat collapses as in the L = 64 hold (the deficits differ by at
-most 3.2e-4 of R_eq(0) through t = 100), so the box and the sponge never reach
-it; the wave has one shape in t - R at all five radii, and r Psi4 is flat in
-R, a radiative field: over R = 30-45 the peak (2.05e-4 to 2.02e-4) holds to
+Axis labels carry only the quantity (decided 2026-10-20); everything else is
+caption material, including the dropped panels' numbers: the far-zone throat
+collapses as the L 64 hold's to <= 3.2e-4 of R_eq(0) through t = 100, and the
+extrema of (a) are flat in R (the peak holds to 1.5 % over R = 30-45).
+
+Outcome: the wave has one shape in t - R at all five radii, and r Psi4 is flat
+in R, a radiative field: over R = 30-45 the peak (2.05e-4 to 2.02e-4) holds to
 1.5 %, the troughs to 7.2 % and 2.4 %; R = 14-18 differ more (the peak 2.27e-4
-at R = 14).  It travels at the speed of light: over R = 30-45 its extrema move
+at R = 14).  It grows with spin: aligned on each rung's collapse the 0.30c is
+the 0.2c's shape at 1.5x the amplitude (R 14 peak +3.4e-4 vs +2.3e-4) and
+2.6-2.8x the energy (E_20/M_ADM 8.0e-7 vs 2.9e-7 at R 18), while the static
+stays below 4.2e-9 to its death -- a spherical collapse radiates nothing.
+It travels at the speed of light: over R = 30-45 its extrema move
 at 0.951-0.963 in coordinate units (fits through R = 30, 40, 45), where light
 moves at 0.94-0.95 (the lapse and conformal factor of the mass-1.1 background;
 c = 1 only far out): within 1 % of light over R = 40-45 and 2.5 % over 30-40.
@@ -68,13 +80,23 @@ from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 PACKED = solutions.REPO / "results" / "spinningwormhole" / "campaign" / "drainhole" / "00_paper_runs"
 FIGURES = solutions.REPO / "results" / "spinningwormhole" / "figures"
 FARZONE = "spin_hold_L128_ml3_J100_full_farfix_t150"
-HOLD = "spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100"
 RUN_DIR = solutions.REPO / "runs" / "spinning_wormhole" / "drainhole" / "00_paper_runs" / FARZONE
-# the extrema of (c) and (d), as windows in t - R
+TABLES = solutions.REPO / "runs" / "spinning_p3" / "tables"
+BACKGROUNDS = solutions.REPO / "runs" / "spinning_wormhole" / "backgrounds"
+# the rungs of (b) and (c): label, packed run, trust window, background table (None: the static)
+SPINS = (
+    ("0c", "static_hold_L64_ml3_spdrv0_farfix_t100", 60.0, None),
+    ("0.2c", FARZONE, 150.0, BACKGROUNDS / "full_eta2_m1_J100.spinbg"),
+    ("0.30c", "spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130", 130.0, TABLES / "fam_a_ve030.spinbg"),
+)
+M_STATIC = 1.0              # the massive drainhole's M (a = 2, M = 1): the static has no table
+R_SPIN = 14.0               # (b)'s radius: the one every rung extracts
+U_SPIN = (-25.0, 46.0)      # (b)'s window in t - R - t10
+E_WINDOW = 45.0             # (c) integrates the burst over t - R - t10 in (0, this)
+# the extrema of (a) and (d), as windows in t - R
 FEATURES = (("trough 1", (68.0, 81.0)), ("peak", (81.0, 93.0)), ("trough 2", (93.0, 106.0)))
-T_HOLD = 100.0              # the L = 64 hold's stop: the throat comparison runs to here
 T_QUIET = 40.0              # before this r Psi4 stays below 1e-6 (printed)
-U_RANGE = (30.0, 110.0)     # (b)'s window in t - R
+U_RANGE = (30.0, 110.0)     # (a)'s window in t - R
 T_LIGHT = np.arange(100.0, 146.0, 5.0)   # the slices the light speed is averaged over
 R_FAR = 30.0                # the far zone: the speed fits use R >= this
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
@@ -105,9 +127,46 @@ def read_psi4(run: str) -> tuple[np.ndarray, dict[float, np.ndarray]]:
                         + 1j * (data[:, 2 + 2 * i] - data[0, 2 + 2 * i]) for i, r in enumerate(radii)}
 
 
-def read_deficit(run: str) -> tuple[np.ndarray, np.ndarray]:
-    g = np.loadtxt(PACKED / run / "throat_geometry.dat")
-    return g[:, 0], 1.0 - g[:, 1] / g[0, 1]
+def meta_float(table: pathlib.Path, key: str) -> float:
+    """One ``meta <key> <value>`` line from a background table's header."""
+    head = open(table, "rb").read(1500).decode("latin-1")
+    key = f"meta {key} "
+    return float(head[head.index(key) + len(key):].split()[0])
+
+
+def burst_energy(u: np.ndarray, w: np.ndarray) -> float | None:
+    """E_20 = 1/(16 pi) int |int r Psi4 dt'|^2 dt over the burst (u in 0 to
+    E_WINDOW), the pre-burst mean (u in -20 to 0) subtracted; None when the
+    run does not cover the burst at this radius."""
+    base = (u >= -20.0) & (u <= 0.0)
+    burst = (u >= 0.0) & (u <= E_WINDOW)
+    # the 0.30c's t = 130 covers u = 41.0 at R = 18 (its t10 70.001): the burst is
+    # over by u ~ 40, so a window reaching 40 is enough
+    if burst.sum() < 40 or not base.any() or u[burst][-1] < E_WINDOW - 5.0:
+        return None
+    y, uu = w[burst] - w[base].mean(), u[burst]
+    news = np.concatenate([[0.0], np.cumsum(0.5 * (y[1:] + y[:-1]) * np.diff(uu))])
+    return float(np.trapezoid(np.abs(news) ** 2, uu)) / (16.0 * np.pi)
+
+
+def rungs() -> list[dict]:
+    """Per rung of SPINS: the R_SPIN waveform against t - R - t10 inside the
+    trust window, the spin 8 pi J/A (% of extremal), M_ADM, and E_20 per radius."""
+    out = []
+    for label, run, trust, table in SPINS:
+        t, waves = read_psi4(run)
+        g = np.loadtxt(PACKED / run / "throat_geometry.dat")
+        d = 1.0 - g[:, 1] / g[0, 1]
+        j = int(np.flatnonzero(d >= 0.10)[0])
+        t10 = float(np.interp(0.10, d[j - 1:j + 1], g[j - 1:j + 1, 0]))
+        keep = t <= trust
+        out.append(dict(
+            label=label, t10=t10,
+            frac=100.0 * meta_float(table, "J_over_A_extremal_frac") if table else 0.0,
+            m_adm=meta_float(table, "M_ADM") if table else M_STATIC,
+            u=t[keep] - R_SPIN - t10, w=waves[R_SPIN][keep],
+            energies={r: burst_energy(t[keep] - r - t10, waves[r][keep]) for r in sorted(waves)}))
+    return out
 
 
 def extrema(t: np.ndarray, waves: dict[float, np.ndarray]) -> dict[str, list[tuple[float, float, float]]]:
@@ -170,7 +229,7 @@ def speeds(feats, light):
     return out
 
 
-def draw(t, waves, throat, look, light) -> plt.Figure:
+def draw(t, waves, spins, look, light) -> plt.Figure:
     style.prd(8.0)
     fig, ax = plt.subplot_mosaic([["a", "b"], ["c", "d"]], figsize=(7.0, 4.8), layout="constrained")
     radii = sorted(waves)
@@ -178,74 +237,91 @@ def draw(t, waves, throat, look, light) -> plt.Figure:
     for line, c in zip(lines, look["radii"]):
         line["color"] = c
 
-    # (a) the throat, both boxes, and the difference of their deficits
-    (tf, df), (th, dh) = throat["far"], throat["hold"]
-    keep = tf <= T_HOLD
-    diff = np.abs(df[keep] - np.interp(tf[keep], th, dh))
-    entries = [(ax["a"].plot(tf, df, color=style.INK, lw=1.3)[0], r"$L=128$, $N=256$"),
-               (ax["a"].plot(th, dh, color=style.CONTEXT, lw=1.1, ls=(0, (4.0, 2.0)))[0],
-                r"$L=64$, $N=128$"),
-               (ax["a"].plot(tf[keep], diff, color=style.MUTED, lw=0.7)[0], "difference")]
-    ax["a"].set(yscale="log", ylim=(1e-7, 1.0), xlim=(0.0, tf[-1]), xlabel=r"$t$",
-                ylabel=r"$1-R_{\rm eq}/R_{\rm eq}(0)$")
-    style.legend_top(ax["a"], entries, ncol=3)
-
-    # (b) the wave against t - R
-    handles = [(ax["b"].plot(t - r, 1e4 * waves[r].real, **line)[0], rf"$R={r:g}$")
+    # (a) the wave against t - R, every radius
+    handles = [(ax["a"].plot(t - r, 1e4 * waves[r].real, **line)[0], rf"$R={r:g}$")
                for r, line in zip(radii, lines)]
-    ax["b"].axhline(0.0, color=style.GRID, lw=0.6, zorder=0)
-    ax["b"].set(xlim=U_RANGE, xlabel=r"$t-R$", ylabel=r"$10^4\, r\,\Delta\psi_4^{20}$")
-    style.legend_top(ax["b"], handles, ncol=len(radii))
+    ax["a"].axhline(0.0, color=style.GRID, lw=0.6, zorder=0)
+    ax["a"].set(xlim=U_RANGE, xlabel=r"$t-R$", ylabel=r"$10^4\, r\,\Delta\psi_4^{20}$")
+    style.legend_top(ax["a"], handles, ncol=len(radii))
 
-    # (c) the extrema against R; (d) their speed between neighbouring spheres
+    # (b) the wave against spin at R_SPIN, aligned on each rung's collapse.  The
+    # static's line is the exact zero of spherical symmetry (dashed: a symmetry
+    # statement, not a stream) -- the run confirms <= 4.2e-9 before it dies at
+    # u = -10.6, short of this window.
+    entries_b = []
+    for sp, c in zip(spins, look["spins"]):
+        if sp["label"] == "0c":
+            entries_b.append((ax["b"].plot(U_SPIN, [0.0, 0.0], color=c, lw=0.9,
+                                           ls=(0, (4.0, 2.0)))[0], sp["label"]))
+        else:
+            entries_b.append((ax["b"].plot(sp["u"], 1e4 * sp["w"].real, color=c, lw=1.1)[0],
+                              sp["label"]))
+    ax["b"].axhline(0.0, color=style.GRID, lw=0.6, zorder=0)
+    ax["b"].set(xlim=U_SPIN, xlabel=r"$t-R-t_{10}$", ylabel=r"$10^4\, r\,\Delta\psi_4^{20}$")
+    style.legend_top(ax["b"], entries_b, ncol=len(spins))
+
+    # (c) the (2, 0) energy over M_ADM against spin, at R = 18 and 14
+    entries_c = []
+    for r, mark in ((18.0, dict(marker="o", color=style.INK)),
+                    (14.0, dict(marker="o", mfc="none", color=style.CONTEXT))):
+        x = [sp["frac"] for sp in spins]
+        y = [1e7 * (sp["energies"].get(r) or 0.0) / sp["m_adm"] for sp in spins]
+        entries_c.append((ax["c"].plot(x, y, ls="-", lw=0.7, ms=4.0, **mark)[0], rf"$R={r:g}$"))
+    ax["c"].set(xlim=(-2.0, 22.0), ylim=(-0.4, 9.0), xlabel=r"$8\pi J/A$ [%]",
+                ylabel=r"$10^7\, E_{20}/M_{\rm ADM}$")
+    ax["c"].set_xticks([sp["frac"] for sp in spins], [f"{sp['frac']:.1f}" for sp in spins])
+    style.legend_top(ax["c"], entries_c, ncol=2, borderpad=0.6)
+
+    # (d) the extrema's speed between neighbouring spheres, against light
     feats = extrema(t, waves)
     marks = {"trough 1": dict(marker="o", mfc="none", color=style.CONTEXT),
              "peak": dict(marker="o", color=style.INK),
              "trough 2": dict(marker="s", mfc="none", color=style.CONTEXT)}
-    entries_d, entries_e = [], []
-    for name, rows in feats.items():
-        r, _, y = np.array(rows).T
-        entries_d.append((ax["c"].plot(r, 1e4 * np.abs(y), ls="-", lw=0.7, ms=4.0, **marks[name])[0], name))
+    entries_d = []
     vel = speeds(feats, light)
     for name, pairs in vel.items():
         rm, v, _ = np.array(pairs).T
-        entries_e.append((ax["d"].plot(rm, v, ls="-", lw=0.7, ms=4.0, **marks[name])[0], name))
+        entries_d.append((ax["d"].plot(rm, v, ls="-", lw=0.7, ms=4.0, **marks[name])[0], name))
     if light is not None:
         rm, _, vl = np.array(vel["peak"]).T
-        entries_e.append((ax["d"].plot(rm, vl, color=look["light"], lw=1.1, marker="x", ms=4.5)[0],
-                          "light, over the same stretch"))
-    entries_e.append((ax["d"].axhline(1.0, color=style.MUTED, lw=0.8, ls=(0, (3.0, 2.0)), zorder=1),
+        entries_d.append((ax["d"].plot(rm, vl, color=look["light"], lw=1.1, marker="x", ms=4.5)[0],
+                          "light"))
+    entries_d.append((ax["d"].axhline(1.0, color=style.MUTED, lw=0.8, ls=(0, (3.0, 2.0)), zorder=1),
                       r"$c=1$"))
-    ax["c"].set(xlim=(10.0, 48.0), ylim=(0.0, 2.6), xlabel=r"$R$",
-                ylabel=r"$10^4\, |r\,\Delta\psi_4^{20}|$ at the extremum")
-    ax["d"].set(xlim=(10.0, 48.0), ylim=(0.84, 1.02), xlabel=r"$R$ (between neighbouring spheres)",
-                ylabel=r"speed $\Delta R/\Delta t$")
-    for key in ("c", "d"):
-        ax[key].set_xticks(radii)
+    ax["d"].set(xlim=(10.0, 48.0), ylim=(0.84, 1.02), xlabel=r"$R$",
+                ylabel=r"$\Delta R/\Delta t$")
+    ax["d"].set_xticks(radii)
     # the marker handles' extent pads past the key's left edge: inset the key a little
-    style.legend_top(ax["c"], entries_d, ncol=3, borderpad=0.6)
-    style.legend_top(ax["d"], entries_e, ncol=3, borderpad=0.6)
+    style.legend_top(ax["d"], entries_d, ncol=3, borderpad=0.6)
     keys = ("a", "b", "c", "d")
     style.tag_keys(fig, [ax[k] for k in keys], [f"({k})" for k in keys])
     return fig
 
 
-def report(t, waves, throat, light) -> None:
-    (tf, df), (th, dh) = throat["far"], throat["hold"]
-    keep = tf <= T_HOLD
-    diff = np.abs(df[keep] - np.interp(tf[keep], th, dh))
-    print(f"(a) deficit at t 60 / 100 / {tf[-1]:.0f}: far {np.interp(60, tf, df):.4f} / "
-          f"{np.interp(100, tf, df):.4f} / {df[-1]:.4f}; hold {np.interp(60, th, dh):.4f} / "
-          f"{np.interp(100, th, dh):.4f}; max |difference| to t {T_HOLD:g} {diff.max():.1e}")
+def report(t, waves, spins, light) -> None:
     quiet = {r: np.abs(w[t <= T_QUIET]).max() for r, w in waves.items()}
-    print("(b) max |r dPsi4| to t %g: " % T_QUIET + ", ".join(f"R {r:g} {q:.1e}" for r, q in quiet.items()))
+    print("(a) max |r dPsi4| to t %g: " % T_QUIET + ", ".join(f"R {r:g} {q:.1e}" for r, q in quiet.items()))
+    for sp in spins:
+        burst = (sp["u"] >= 0.0) & (sp["u"] <= E_WINDOW)
+        w = sp["w"].real
+        if burst.any() and sp["label"] != "0c":
+            print(f"(b) {sp['label']}: t10 {sp['t10']:.2f}; R {R_SPIN:g} trough {w[burst].min():+.2e} at "
+                  f"u {sp['u'][burst][np.argmin(w[burst])]:.1f}, peak {w[burst].max():+.2e} at "
+                  f"u {sp['u'][burst][np.argmax(w[burst])]:.1f}")
+        else:
+            print(f"(b) {sp['label']}: t10 {sp['t10']:.2f}; max |r dPsi4| {np.abs(w).max():.1e} "
+                  f"to its end (u {sp['u'][-1]:.1f})")
+        es = {r: e for r, e in sp["energies"].items() if e is not None}
+        print(f"(c) {sp['label']}: M_ADM {sp['m_adm']:.3f}; E_20: "
+              + (", ".join(f"R {r:g} {e:.2e} (/M {1e7 * e / sp['m_adm']:.2f}e-7)" for r, e in es.items())
+                 if es else "no covered burst"))
     print("    max |Im| / max |Re|: " + ", ".join(
         f"R {r:g} {np.abs(w.imag).max() / np.abs(w.real).max():.1e}" for r, w in waves.items()))
     feats = extrema(t, waves)
     for name, rows in feats.items():
         ys = np.array([y for _, _, y in rows])
         far = np.array([abs(y) for r, _, y in rows if r >= R_FAR])
-        print(f"(c) {name}: " + ", ".join(f"R {r:g} {y:+.3e} at t-R {ta - r:.1f}" for r, ta, y in rows)
+        print(f"(a) {name}: " + ", ".join(f"R {r:g} {y:+.3e} at t-R {ta - r:.1f}" for r, ta, y in rows)
               + f"; spread {100 * (np.abs(ys).max() / np.abs(ys).min() - 1):.1f} %, "
               f"over R >= {R_FAR:g} {100 * (far.max() / far.min() - 1):.1f} %")
     for name, pairs in speeds(feats, light).items():
@@ -274,19 +350,20 @@ def main(argv=None) -> int:
 
     t, waves = read_psi4(FARZONE)
     look = dict(PALETTES[args.palette])
+    look["spins"] = (style.CONTEXT,) + tuple(look["radii"](2))
     look["radii"] = look["radii"](len(waves))
     if args.colors:
         look["radii"] = tuple(c.strip() for c in args.colors.split(","))
         if len(look["radii"]) != len(waves):
             ap.error(f"--colors takes exactly {len(waves)} colours")
-    throat = {"far": read_deficit(FARZONE), "hold": read_deficit(HOLD)}
+    spins = rungs()
     light = light_speed()
-    fig = draw(t, waves, throat, look, light)
+    fig = draw(t, waves, spins, look, light)
     problems = style.label_audit(fig)
     outs = [args.out] if args.out else [FIGURES / "farzone_wave_02c", RUN_DIR / "figures" / "farzone_wave"]
     pngs = [style.save(fig, out) for out in outs if out.parent.is_dir()]
 
-    report(t, waves, throat, light)
+    report(t, waves, spins, light)
     print(f"palette {args.palette}; label audit: "
           f"{'clean' if not problems else f'{len(problems)} problem(s): {problems}'}")
     for png in pngs:

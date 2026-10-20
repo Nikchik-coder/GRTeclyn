@@ -44,8 +44,14 @@ t 150 run shows its throat inflating from t 101.
   still deepening when it stops at t 100. The first lobe falls with R (near field); the trough is flat from R 14
   (the radiation). The static is flat at ≤ 3e-8 (a spherical collapse emits no quadrupole wave). No burst in the
   rest: the 0.2c N 96 and the push-out died before theirs reached R 10, the 0.40c t 150 at t 100.7 in its collapse.
-  The 0.30c t 130 caught its whole burst: at R 14 the trough at t 98, the peak at t 110 and a second trough at
-  t ≈ 120 (R 18: peak t 115); identical to the t 100 run up to t 100.
+  The 0.30c t 130 caught its whole burst: at R 14 trough −1.9e-4 (u ≈ 14), peak +3.4e-4 (u ≈ 26), second trough
+  ≈ −1.4e-4; identical to the t 100 run up to t 100.
+- **Radiated energy grows with spin** (10-20): E₂₀ = 1/(16π)∫|∫r ψ4 dt′|² dt over the aligned burst (u 0–45),
+  per M_ADM: 0.2c 3.3e-7, 0.30c 8.0e-7 at R 18 (R 14: 2.5e-7 / 7.5e-7) — 2.6–2.8×, the square of the 1.5×
+  amplitude; the static is zero by spherical symmetry (its run: ≤ 4.2e-9 to its death). `farzone_wave_02c.png`
+  redesigned 10-20: (a) the 0.2c wave at R 14–45, (b) the wave against spin aligned on each collapse, (c) E₂₀/M_ADM
+  against 8πJ/A, (d) the extrema's speed against light; axis labels carry only the quantity, the dropped panels'
+  numbers (throat–box agreement ≤ 3.2e-4, extrema flat in R to 1.5 % over R 30–45) go to the caption.
 - **Kicks.** The sign of the push decides the fate, the merger paper's rule: pushed in, the throat inflates; pushed
   out, it collapses. Both pass 1 % at t ≈ 25, 21.5 before the unkicked 0.2c, at the same rate. No more kicks.
 - **Numerics.** The 0.2c triplet converges at 3rd–4th order, the 0.9c triplet is stable at every resolution, and the
