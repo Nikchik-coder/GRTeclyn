@@ -168,11 +168,20 @@ Paper notes:
   grid (t 0 to 2e-4; the static drains D by 38 % by t 64, pre-fix: requote).
 - **Speed-up research** (dt × σ, 10-16, "goes fully to the article"): the dt ceiling was an AMR interface mode on
   the coarse–fine edges, where bugs 2–3 acted; retest dt 0.05 on the fixed binary before quoting it.
-- **Figures**: `instability_curve.png` (not yet cited), `farzone_wave_02c.png` (claim 3), `convergence_02c.png`,
-  `convergence_09c.png`. To make: the wave against spin (the aligned R 14 waveforms above).
-- **`article/research.tex` fixes** (code review 10-19): it drops a 1/η₀ in ψ (line 106), double-rounds two Table I
-  digits and describes solver features the code does not have. Every evolution number is requoted from the farfix
-  runs; the pre-fix numbers are archived.
+- **Figures**: all four are cited since the 10-20 rewrite — `instability_curve` (Fig. in Sec. V),
+  `farzone_wave_02c` (claim 3, figure*), `convergence_02c` / `convergence_09c` (Appendix B). The wave-against-spin
+  panel lives inside `farzone_wave_02c` (panel b).
+- **`article/research.tex` rewrite 10-20** (the structure the draft now has): Sec. IV = "Numerical setup" with
+  subsections (3D initial data / Evolution scheme / Long evolutions: the outer boundary / The runs); tab:ladder is
+  the full 13-row run table (settings + trust + outcome, live runs marked "running"); Table I (backgrounds) moved
+  to Appendix A; Appendix B = the two convergence figures; Sec. V requoted from the farfix runs (τ 4.4/5.0/5.9/8.0,
+  the two branches, Azad comparison, GW energies); acknowledgments carry the Gravity Frontiers note. Text states:
+  no speed-up adopted — dt 0.02 Δx everywhere, only σ varies (0.1 slow / 0.4 fast); the sponge-zone updates
+  (background-relative Sommerfeld + damping layer) are what carry the L 64 runs past t ≈ 64.
+- **`article/research.tex` fixes** (code review 10-19): the dropped 1/η₀ in ψ — FIXED 10-20; the pseudo-arclength
+  fallback the code does not have — REMOVED 10-20; the two double-rounded Table I digits — still open (the table
+  now sits in Appendix A; recheck against the family TSV legs when the ledger is built). Every evolution number is
+  requoted from the farfix runs; the pre-fix numbers are archived.
 
 ## SETTINGS
 
