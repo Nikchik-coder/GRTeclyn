@@ -75,18 +75,18 @@ RUNS = (
     dict(label="D40", table="fam_a_ve040",
          run="spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100"),
     # 10-20: the 0.46c / 0.5c point at their t 150 / N 128 runs (both inflate).  The
-    # 0.6c / 0.7c point at their L 128 runs with min_chi 1e-8: with the fast recipe's
-    # 1e-4 the floor rewrote the negative-mass far side's centre and the throat's late
-    # motion was numerical (the 0.5c / 0.6c L 128 DIED 84.81 / 99.16, the 0.7c was
-    # stopped at 107.65).
+    # 0.6c / 0.7c point at their L 128 runs on the slow recipe (sigma 0.1, min_chi 1e-8):
+    # sigma 0.4 kills these negative-mass far-side centres -- slowly on the 1e-4 floor
+    # (the 0.5c / 0.6c L 128 DIED 84.81 / 99.16, the 0.7c was stopped at 107.65), by
+    # t ~ 33 on the 1e-8 floor -- and the throats' late motion there was numerical.
     dict(label="D46", table="fam_a_ve045",
          run="spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150"),
     dict(label="D51", table="fam_a_ve050",
          run="spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150"),
     dict(label="D59", table="fam_a_ve060",
-         run="spin_hold_L128_ml3_ve060a_spdrv1_sig04_mc8_farfix_t150"),
+         run="spin_hold_L128_ml3_ve060a_spdrv1_sig01_mc8_farfix_t150"),
     dict(label="D70", table="fam_a_ve070",
-         run="spin_hold_L128_ml3_ve070a_spdrv1_sig04_mc8_farfix_t150"),
+         run="spin_hold_L128_ml3_ve070a_spdrv1_sig01_mc8_farfix_t150"),
     dict(label="D90", table="fam_a_ve090",
          run="spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150"),
 )
