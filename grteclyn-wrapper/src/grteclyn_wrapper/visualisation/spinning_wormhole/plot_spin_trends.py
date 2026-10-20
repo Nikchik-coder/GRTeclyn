@@ -87,8 +87,10 @@ def family(rows: list[dict], eta0: float, gamma: float) -> dict[str, np.ndarray]
 
 
 def draw(fams, colours):
-    style.prd(9.0)
-    fig, axes = plt.subplots(2, 3, figsize=(7.0, 5.0), layout="constrained")
+    style.prd(8.0)
+    # 2026-10-20: a lower grid (7 x 5 in took half a page); the top row keeps its v_e
+    # tick labels, which hold the rows far enough apart for the bottom row's tags
+    fig, axes = plt.subplots(2, 3, figsize=(7.05, 3.5), layout="constrained")
     (ax_a, ax_b, ax_c), (ax_d, ax_e, ax_f) = axes
     red, green, blue = colours
     dot = dict(ls="none", marker="o", ms=4.5, mfc="black", mec="black", zorder=6,
@@ -132,6 +134,7 @@ def draw(fams, colours):
         curve(ax_b, f, "JM2", green, ls)
     ax_b.plot([1.0], [1.0], **dot)
     ax_b.set(yscale="log", xlim=(0, 1), ylim=(0.1, 100), ylabel=r"$J/M^2$")
+    ax_b.set_yticks([0.1, 1.0, 10.0])      # no label on the top edge, where the tag sits
     style.legend_top(ax_b, [key(line(green, ls), name) for *_, name, ls in FAMILIES]
                      + [key(rule, "Kerr bound"), key(dot, "extremal Kerr")], ncol=2)
 
@@ -156,6 +159,7 @@ def draw(fams, colours):
         curve(ax_e, f, "D", style.INK, ls)
     ax_e.plot([1.0], [0.0], **dot)
     ax_e.set(xlim=(0, 1), ylim=(0.0, 1.25), ylabel=r"$D/\eta_0$", xlabel=r"$v_e$")
+    ax_e.set_yticks([0.0, 0.5, 1.0])       # as (b): the top edge is the tag's
     style.legend_top(ax_e, [key(line(style.INK, ls), name) for *_, name, ls in FAMILIES]
                      + [blank, key(dot, "extremal Kerr")], ncol=2, **TIGHT)
 

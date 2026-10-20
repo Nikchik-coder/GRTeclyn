@@ -105,9 +105,9 @@ def agreement(fam, kk) -> dict[str, tuple[float, float, int]]:
 
 def draw(fam, kk, sep: float, lk: dict[str, dict]):
     style.prd(8.0)
-    # 2026-10-20: a low strip whose keys read one quantity per row (the 7 x 3.4 in
-    # figure with its five-row keys took 40 % of a page)
-    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(7.05, 2.3), layout="constrained")
+    # 2026-10-20: one column, the panels stacked, keys reading one quantity per row
+    # (the full-width figure was wider than two smooth curves need)
+    fig, (ax_a, ax_b) = plt.subplots(2, 1, figsize=(3.4, 3.6), layout="constrained", sharex=True)
     v_ours = np.linspace(0.0, fam["v"][-1], 600)
     v_kerr = np.linspace(0.0, 1.0, 401)
     kerr = kk2014.kerr(v_kerr)
@@ -135,7 +135,7 @@ def draw(fam, kk, sep: float, lk: dict[str, dict]):
     points(ax_a, "OmJ_over_OmJ0", spans, lk["kk3"])
     points(ax_a, "J_over_J0", spans, lk["kk2"])
     ax_a.plot([1.0], ext["M"], **lk["extremal"])
-    ax_a.set(xlim=XLIM, ylim=YLIM_A, xlabel=r"$v_e$")
+    ax_a.set(xlim=XLIM, ylim=YLIM_A)
     style.legend_top(ax_a, [
         key(lk["ours1"], r"$M/M_0$ this work"),
         key(lk["kk1"], rf"$M/M_0$ {KK}"),
@@ -158,6 +158,7 @@ def draw(fam, kk, sep: float, lk: dict[str, dict]):
     points(ax_b, "RA_over_R", spans, lk["kk2"])
     ax_b.plot([1.0, 1.0], [ext["Rp"][0], ext["RA"][0]], **lk["extremal"])
     ax_b.set(xlim=XLIM, ylim=YLIM_B, xlabel=r"$v_e$")
+    ax_b.set_yticks([0.6, 0.7, 0.8, 0.9])  # no label on the top edge, where the tag sits
     style.legend_top(ax_b, [
         key(lk["ours1"], r"$R_p/R$ this work"),
         key(lk["kk1"], rf"$R_p/R$ {KK}"),
