@@ -100,9 +100,11 @@ WIDE_BANDS = ((3e-3, 3e-2), (1e-2, 1e-1))   # printed for comparison only
 # Per-rung tag offsets (points) and anchors: above-right where the falling fit
 # leaves that side free, below-left where a tag there would reach the rules.
 TAG_SIDES = {
+    "D0": (4, 11, "left", "bottom"),
+    "D21": (-6, -9, "right", "top"),
     "D30": (-5, -4, "right", "top"),
-    "D40": (-5, -4, "right", "top"),
-    "D46": (-5, -4, "right", "top"),
+    "D40": (-10, -9, "right", "top"),
+    "D46": (12, 0, "left", "center"),
 }
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
 PALETTES = {
@@ -143,46 +145,34 @@ def streams(run: str):
     return None
 
 
-def band_tau(t, radius, band=BAND):
-    """tau of a log-linear fit to the deficit 1 - R/R(0) on its first pass
-    through the band, with the fit's time span; (None, max |deficit|) when the
-    deficit has not crossed the band's upper edge."""
-    ok = np.isfinite(radius) & (radius > 0)
-    t, radius = t[ok], radius[ok]
-    if t.size < 2:
-        return None, 0.0
-    d = 1.0 - radius / radius[0]
-    above = np.flatnonzero(d > band[1])
-    if above.size == 0:
-        return None, float(np.max(np.abs(d)))
-    sel = d[:above[0]] >= band[0]
-    tt, dd = t[:above[0]][sel], d[:above[0]][sel]
-    if tt.size < 4:
-        return None, float(np.max(np.abs(d)))
-    return 1.0 / np.polyfit(tt, np.log(dd), 1)[0], (tt[0], tt[-1])
-
-
-def growth_tau(t, radius, band=BAND):
-    """tau of the inflating branch: ln |d(R/R(0))/dt| fitted over the first span
-    where R/R(0) - 1 rises through the band.  dR/dt is offset-free, so the fit
-    stands although the mode grows atop the turn's finite radius (the deficit
-    itself crosses zero linearly there); on a pure exponential it equals the
-    deficit-band fit.  (None, last growth) while the band is not crossed."""
+def rate_tau(t, radius, band=BAND, collapse=False):
+    """tau of the offset-free fit, both branches: ln |d(R/R(0))/dt| fitted over
+    the first span where the areal deficit 1 - R/R(0) (collapse) or the growth
+    R/R(0) - 1 (expansion) rises through the band.  dR/dt carries no offset, so
+    neither the early transient (collapse) nor the turn's finite radius
+    (expansion) biases the slope; on a pure exponential it equals a log-linear
+    fit of the deficit itself.  2026-10-20: the deficit-band fit, used for the
+    collapse side until now, inherits the transient's offset, which is larger
+    at lower resolution (1e-4 at N 96 against 4e-6 at N 192) and steepens the
+    slope -- it failed to self-converge on the D21 triplet (Q_meas < 0), while
+    this fit gives tau 7.8 / 6.6 / 6.1 there, Q_meas 2.3 between the order-3/4
+    expectations 1.95 and 2.69.  (None, max |deviation|) while the band is not
+    crossed."""
     ok = np.isfinite(radius) & (radius > 0)
     t, radius = t[ok], radius[ok]
     if t.size < 5:
         return None, 0.0
-    g = radius / radius[0] - 1.0
+    g = 1.0 - radius / radius[0] if collapse else radius / radius[0] - 1.0
     above = np.flatnonzero(g > band[1])
     if above.size == 0:
-        return None, float(g[-1])
+        return None, float(np.max(np.abs(g)))
     sel = np.flatnonzero(g[:above[0]] >= band[0])
     if sel.size < 4:
-        return None, float(g[-1])
+        return None, float(np.max(np.abs(g)))
     v = np.gradient(radius, t) / radius[0]
-    tt, vv = t[sel], v[sel]
+    tt, vv = t[sel], (-v[sel] if collapse else v[sel])
     if np.any(vv <= 0):
-        return None, float(g[-1])
+        return None, float(np.max(np.abs(g)))
     return 1.0 / np.polyfit(tt, np.log(vv), 1)[0], (tt[0], tt[-1])
 
 
@@ -193,8 +183,8 @@ def measure(run: str):
     if s is None or s["spheres"].shape[0] < 5:
         return None
     sph = s["spheres"]
-    tau, span = band_tau(sph[:, 0], sph[:, 2])
-    g_tau, g_span = growth_tau(sph[:, 0], sph[:, 2])
+    tau, span = rate_tau(sph[:, 0], sph[:, 2], collapse=True)
+    g_tau, g_span = rate_tau(sph[:, 0], sph[:, 2])
     m = dict(r_a=sph[0, 2], t_end=sph[-1, 0], ended=s["ended"], tau_shrink=tau)
     if g_tau is not None:
         # the terminal behaviour wins: a shrink that turned and grew through the
@@ -205,10 +195,11 @@ def measure(run: str):
     else:
         m.update(tau=None, span=None, branch=None, flat=span)
     m["stable"] = m["tau"] is None and s["ended"] and abs(m["flat"]) < BAND[0]
-    m["tau_eq"] = band_tau(s["geom"][:, 0], s["geom"][:, 1])[0] if s["geom"] is not None else None
-    m["tau_mots"] = (band_tau(s["mots"][:, 0], s["mots"][:, 1])[0]
+    m["tau_eq"] = (rate_tau(s["geom"][:, 0], s["geom"][:, 1], collapse=True)[0]
+                   if s["geom"] is not None else None)
+    m["tau_mots"] = (rate_tau(s["mots"][:, 0], s["mots"][:, 1], collapse=True)[0]
                      if s["mots"] is not None and s["mots"].ndim == 2 else None)
-    m["tau_wide"] = [band_tau(sph[:, 0], sph[:, 2], b)[0] for b in WIDE_BANDS]
+    m["tau_wide"] = [rate_tau(sph[:, 0], sph[:, 2], b, collapse=True)[0] for b in WIDE_BANDS]
     return m
 
 
@@ -218,9 +209,12 @@ def rate(tau: float) -> float:
 
 
 def fit_zero(points, key="tau"):
-    """Azad's form through the measured rungs, rate = a - b (J/A)^2: (a, b, the
-    zero sqrt(a/b) or None)."""
-    pts = [p for p in points if p.get(key) is not None]
+    """Azad's form through the collapse branch, rate = a - b (J/A)^2: (a, b, the
+    zero sqrt(a/b) or None).  2026-10-20: the collapse branch alone -- with the
+    offset-free rates it follows the parabola to rms 2e-3 and dies at 32 %,
+    beside the second-order zero (33 %), while the expansion rates RISE with
+    spin past the crossing; one curve through both branches described neither."""
+    pts = [p for p in points if p.get(key) is not None and p.get("branch") == "collapses"]
     if len(pts) < 2:
         return None
     mx = np.array([p["frac"] for p in pts])
@@ -261,7 +255,7 @@ def draw(points, pal, jc_frac) -> None:
     x0 = None
     if fit is not None:
         a, b, x0 = fit
-        xs = np.linspace(0.0, 100.0, 400)
+        xs = np.linspace(0.0, x0 if x0 else 100.0, 400)
         fit_line, = ax.plot(xs, np.clip(a - b * xs ** 2, 0.0, None), ls="--",
                             lw=1.0, color=pal["measured"], zorder=2)
     for p in drawn:
@@ -272,7 +266,7 @@ def draw(points, pal, jc_frac) -> None:
                     ms=4.6 if p["branch"] == "inflates" else 3.8,
                     color=pal["measured"], zorder=4)
             dx, dy, ha, va = TAG_SIDES.get(p["label"], (5, 3, "left", "bottom"))
-            ax.annotate(f"{p['label']}: {p['tau']:.1f}",
+            ax.annotate(p["label"],
                         (p["frac"], rate(p["tau"])),
                         textcoords="offset points", xytext=(dx, dy), fontsize=6.5,
                         ha=ha, va=va)
@@ -306,7 +300,7 @@ def draw(points, pal, jc_frac) -> None:
         entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
                                       mec=pal["stable"], mew=1.2), "stable over the run"))
     if fit is not None:
-        tag = f"fit $a-b\\,(J/A)^2$" + (f": zero at {x0:.0f} %" if x0 else "")
+        tag = "collapse fit" + (f": zero at {x0:.0f} %" if x0 else "")
         entries.append((fit_line, tag))
     if az:
         entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=6.5, mfc="none",

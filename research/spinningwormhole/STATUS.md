@@ -28,17 +28,22 @@ t 150 run shows its throat inflating from t 101.
   +6.89 % at t 90 / 95 / 100. Their growth from the throat's speed dR/dt: τ ≈ 8–12 (0.46c) and 9–11.5 (0.5c); the
   0.40c's collapse 12–13.6 on the same measure. The MOTS is lost once a throat expands (0.46c from t 104, 0.5c from
   t 78). The N 192 / drive-on 0.5c went the collapse way: the seed's sign picks the branch (the kicks' sign rule).
-- **Instability curve** (`figures/instability_curve.png`, `plot_instability_curve`; redone 10-20): one rate, two
-  fates — collapsing rungs as dots (τ 4.4 / 5.0 / 5.9 / 8.0, static → 0.40c, deficit-band fit), inflating rungs as
-  triangles (0.46c 12.1, 0.5c N 128 8.8; ln|dR_A/dt| over the +0.2–1 % band, offset-free, = the band fit on a pure
-  exponential), both in the fit: its growth rate reaches zero at 42 % of extremal. The rungs now point at the t 150 /
-  N 128 / L 128 runs and the curve refills as they land.
-- **Against Azad et al.** (Azad, Blázquez-Salcedo, Khoo, Kunz, arXiv:2301.05243): their second-order rate matches ours
-  within 3 % at the 0.30c and 0.40c (5.9 vs 6.1, 8.0 vs 8.0); their formula zeroes at 33 % and they conjecture the
-  instability ends at ≈ 30 %, where their main mode meets a second unstable mode. Our 0.46c (29 %) and 0.5c (33 %) are
-  still unstable, on the inflating branch — and the 0.46c's inflating τ 12.1 matches their 13.2 within 9 %: the mode's
-  magnitude survives where only its fate changes; the 0.5c is unstable (τ 8.8) where their formula already zeroes.
-  Kleihaus & Kunz (2014) left 4D stability open; our 0.9c is stable.
+- **Instability curve** (`figures/instability_curve.png`, `plot_instability_curve`; remeasured 10-20, models D0–D90):
+  every τ is now the offset-free fit, the slope of ln|dR_A/dt| over the first 0.2–1 % pass of the deficit (collapse)
+  or growth (expansion). The old deficit-band fit carried the early transient's baseline (1e-4 at N 96 vs 4e-6 at
+  N 192), biased τ short by a resolution-dependent amount and failed to self-converge (Q_meas < 0); the offset-free
+  fit gives τ 7.8 / 6.6 / 6.1 on the 0.2c triplet, Q_meas 2.3 between the order-3/4 expectations 1.95 / 2.69,
+  continuum 5.5–5.7, and sits on a band plateau (< 4 % between 0.2–1 % and 0.5–2 %). Collapse dots τ 5.4 / 6.6 /
+  8.3 / 13.3 (D0–D40), expansion triangles 12.1 / 8.8 (D46, D51). The fit a − b(J/A)² now goes through the collapse
+  branch ALONE (rms 2e-3): zero at 32 %; one curve through both branches described neither. The D59 / D70 rungs
+  point at the mc8 L 128 reruns and the curve refills as they land.
+- **Against Azad et al.** (Azad, Blázquez-Salcedo, Khoo, Kunz, arXiv:2301.05243; their C = 1 row — our family):
+  where 2nd order should hold the methods agree — D21 continuum 5.5–5.7 vs their 5.46, static 5.4 (N 128) beside
+  the linear 5.13; at intermediate spin ours is slower beyond the ~13 % resolution bias (8.3 vs 6.1 at 0.30c, 13.3
+  vs 8.0 at 0.40c), growing as the dropped O(J⁴) terms must. The collapse branch dies at 32 %, beside their J_c
+  (33 %) and conjectured crossing (≈ 30 %); the 0.46c / 0.5c expand with RISING rates (τ 12.1 → 8.8), consistent
+  with their second mode taking over, not the modes merging away. The old "matches within 3 %" was the deficit-fit
+  bias cancelling their truncation. Kleihaus & Kunz (2014) left 4D stability open; our 0.9c is stable.
 - **End state.** The low spins collapse into a black hole: the horizon settles at R 2.52 (0.2c) and 2.57 (0.30c,
   2.567 at t 130); the 0.40c's MOTS leaves the throat at t 92 and reads R 3.22 at t 100, still shrinking. The static
   died just after its horizon formed, the 0.40c at t 100.7 in its collapse.

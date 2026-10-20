@@ -250,11 +250,14 @@ is substance:
 - [ ] Control the perturbation sign at 33%. The vₑ = 0.51 model expands with one outer-boundary treatment and shrinks
   with the other, so its end state depends on the boundary. Repeat the explicit ±ε radial perturbations run at
   vₑ = 0.21 on this model before claiming a branch switch.
-- [ ] Converge τ, not only the constraints. Appendix A's constraint rescaling is valid but does not cover τ. Measured
-  2026-10-20 from the packed streams, the band-fit τ on D21 is 5.65 / 5.00 / 5.15 at N = 96/128/192 and the D90
-  drift at t = 150 is 6.4 / 2.2 / 3.2 ×10⁻⁵ at N = 128/192/256: both Q_meas are negative (−4.5 and −4.1), i.e.
-  non-monotone, so a plain Q_meas quote would hurt. Needs a decision: a different τ estimator window, an error bar
-  from the top pair, or stating the lowest member sits outside the convergent regime.
+- [x] Converge τ (resolved 2026-10-20, the offset-free estimator adopted everywhere). The deficit-band fit was biased
+  by the early transient's baseline, resolution-dependently, and failed to self-converge; the offset-free fit (slope
+  of ln |dR_A/dt| over the same band) gives Q_meas = 2.3 between Q₃ = 1.95 and Q₄ = 2.69 on the D21 triplet, sits on
+  a band plateau, and its D21 continuum (5.5–5.7) and static (toward 5.1) values land on the second-order and
+  linear-theory rates. The paper now quotes τ = 5.4/6.6/8.3/13.3 (D0–D40), fits a − b(J/A)² through the collapse
+  branch alone (zero at 32%, beside the second-order 33%), and the expansion rates rise past the crossing. D90 needs
+  no Q_meas: its drift is a null bounded by 7×10⁻⁵ at all three resolutions. Still open: the τ = 5.8/5.6 quoted for
+  the O(J²)-seeded evolutions predate the estimator change — re-measure when those numbers enter the claims ledger.
 - [ ] Consider writing to the authors of Ref. [15] about the ν-equation correction before submission; Kunz's group
   is a likely referee.
 
