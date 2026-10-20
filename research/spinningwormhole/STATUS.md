@@ -121,7 +121,17 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 ## LIVE (MSK; no checkpoints)
 
-None. Both first-node cards and the second node's card are idle.
+| run | node / card | t | stop | speed | ETA |
+|---|---|---|---|---|---|
+| 0.75c L 128 `spin_hold_L128_ml3_ve075a_spdrv1_sig04_farfix_t150` | 1st / 0, alone | 0 @ 22:46 | 150 | ≈ 15.5 t/h | 10-21 ≈ 08:45 |
+| 0.8c L 128 `spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150` | 1st / 1, alone | 0 @ 22:46 | 150 | ≈ 15.5 t/h | 10-21 ≈ 08:45 |
+
+- The positive-far-side-mass rungs (go 10-20 ≈ 22:45, no checkpoints): the far-side mass changes sign at v_e ≈ 0.72
+  (fam_a_r1 step 19, the 0.7c, −0.106; step 20, v_e 0.725, +0.016); every negative one broke at the grid centre,
+  the 0.9c (+2.09) and 0.99c (+26) ran clean. 0.75c = step 21 (v_e 0.749, 57.6 % of extremal, +0.147; the 0.72c
+  was set aside as too close to the sign change), 0.8c = the catalogue's fam_a_ve080 (v_e 0.799, 64.4 %, +0.50).
+  New tables fam_a_ve072 / ve075 (8193 × 513, `runs/spinning_p3/p5_edge_tables.py`). Templates: the paper 0.9c's
+  params with only the table and the name swapped (diffed). The second node's card is idle.
 
 - Ended 10-20: the 0.6c / 0.7c L 128 σ 0.1 + min_chi 1e-8 reruns (DIED 66.70 / 52.88 at ≈ 22:01 / 21:07, the far-side
   centre; not packed). Their last plotfiles (2 × 15 GB) are still on the first node's scratch: pruning waits for the
@@ -172,7 +182,8 @@ rerun — the 0.2c and 0.30c carry the wave claim). The 0.46c t 150 is packed (d
 after the far-side-centre deaths: the 0.6c and 0.7c rerun on L 128 with the slow recipe (σ 0.1, min_chi 1e-8) for
 "flat to t 150" points beside the fit's zero; both died at the centre (66.70 / 52.88). The 0.5c is not rerun (its
 L 64 runs cover the rung); the dead L 128 rows leave the paper's table.
-Proposed 10-20 (no go yet): Kreiss–Oliger on the deviation from the background, σ KO(state − background), with the
+Launched instead 10-20 ≈ 22:45: the 0.75c and 0.8c on the 0.9c's settings (LIVE). Still proposed (no go yet):
+Kreiss–Oliger on the deviation from the background, σ KO(state − background), with the
 background the drive and the Sommerfeld fix already hold on every level: a code option and a rebuild, then a
 ≈ 20 min 0.7c check (χ at the centre must stay at 3.7e-7 past t 3, where σ 0.1 put it on the floor), then the 0.6c /
 0.7c L 128 to t 150 (≈ 10 h, both first-node cards).
@@ -202,6 +213,17 @@ Paper notes:
 - **Exotic matter**: D/M falls 2.22 → 1.07 → 0.52 → 0.09 → 0.02 at v_e 0.06 / 0.51 / 0.70 / 0.90 / 0.96 (family (a)
   tables): rotation replaces the phantom field as what holds the throat open. The scalar charge is measured on the
   grid (t 0 to 2e-4; the static drains D by 38 % by t 64, pre-fix: requote).
+- **The far side's mass** (10-20, goes to the article): along family (a) the far-side ADM mass μ₋ changes sign at
+  v_e ≈ 0.72 (54.5 % of extremal): −0.95 / −0.72 / −0.46 / −0.11 at 0.21c / 0.46c / 0.6c / 0.7c, then +0.016 / +0.15 /
+  +0.50 / +2.09 / +26 at 0.725c / 0.75c / 0.8c / 0.9c / 0.99c (tracked: `results/spinningwormhole/solutions/fam_a_r1/
+  *.json`, `observables.mu_minus`). It decides how long a 3D run lives, because the far end is compactified to a
+  puncture at the grid centre (χ ≈ e^f r⁴ (1 + O(r))). μ₋ > 0: the centre settles (the 1+log lapse there falls, K
+  levels off at ≈ 0.02) and the runs hold to t 150 (the 0.9c triplet, the 0.99c). μ₋ < 0: the puncture has no
+  stationary end state; the Kreiss–Oliger term on the profile's O(r) part moves χ at the centre cells from t 0 (rate
+  ∝ σ, sign set by the table; computed from the tables = measured in seven runs), and every non-collapsing
+  negative-mass run (0.46c–0.7c) broke down there (t 53–136), never at the throat. For the article this is a methods
+  statement (the compactified far end bounds the trust windows of the μ₋ < 0 rungs; the μ₋ > 0 ones run to t 150),
+  not a failure narrative. The 0.75c / 0.8c (LIVE 10-20) test it on the positive side.
 - **Speed-up research** (dt × σ, 10-16, "goes fully to the article"): the dt ceiling was an AMR interface mode on
   the coarse–fine edges, where bugs 2–3 acted; retest dt 0.05 on the fixed binary before quoting it.
 - **Figures**: all four are cited since the 10-20 rewrite — `instability_curve` (Fig. in Sec. V),
