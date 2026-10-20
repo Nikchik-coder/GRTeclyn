@@ -71,7 +71,8 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.46c | 28.8 | never (−0.92 % at 82) | 15.2 (the early shrink) | – | no collapse to t 100: areal −1.12 % at t 83, −0.21 % at t 100; then inflates (t 150 run) | 100 |
 | 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 28.8 | – | – | – | LIVE (1st / 1, alone since 10-20 06:32): inflating since t 101, +1.01 % at t 107 (τ ≈ 8–12 from dR/dt) | – |
 | 0.5c (N 192, drive on) | 33.3 | 99.4 | 13.6 | – | clean t 100, MOTS −1.3 %, no horizon | 100 |
-| 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | DIED 100.10 (K NaN, finest level): inflated from t ≈ 70 to +6.9 % at t 100 (τ 9–11.5 from dR/dt), MOTS lost from t 78; finest-level constraints ×20 over t 90–98. Not packed | – |
+| 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | DIED 100.10 (K NaN, finest level): inflated from t ≈ 70 to +6.9 % at t 100 (τ 9–11.5 from dR/dt), MOTS lost from t 78. Packed, trust 95 | 95 |
+| 0.5c on L 128 `spin_hold_L128_ml3_ve050a_spdrv1_sig04_farfix_t150` | 33.3 | – | – | – | LIVE since 10-20 08:00 (2nd node, alone): the 0.9c's setup, table swapped — decides the 0.5c's branch (L 64: N 192 drive-on shrank, N 128 drive-off inflated) on a face of 34.4 M_ADM | – |
 | 0.6c (fast) `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 40.3 | – | – | – | DIED 98.99 (K NaN, finest level): the L 64 box too small — central lapse ≈ 0 from t 38, throat flat (≤ 0.2 %) only to t 75. Not packed, not usable; rerun below | – |
 | 0.6c on L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 40.3 | – | – | – | LIVE since 10-20 07:45 (1st / 0, alone): the 0.9c's proven setup (N 256, drive on, min_chi 1e-4, σ 0.4) with only the table swapped | – |
 | 0.7c (fast) `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 51.4 | – | – | – | DIED 136.03 (h11 NaN, finest level), as the archived 0.7c (135.85): the L 64 box too small — central lapse ≈ 0 from t 39.5, throat ±0.8 % to t 124. Not packed, not usable; rerun below | – |
@@ -86,9 +87,10 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 | run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 1st / 1, with the 0.7c L 128 | 117.2 @ 07:43 | 150 | ≈ 10 t/h shared | 10-20 ≈ 11:10 |
-| 0.6c L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 1st / 0, alone | 0.2 @ 07:48 | 150 | ≈ 15.1 t/h | 10-20 ≈ 17:45 |
-| 0.7c L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 1st / 1, with the 0.46c | 0.03 @ 07:48 | 150 | ≈ 15.5 alone after the 0.46c | 10-20 ≈ 19:15 |
+| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 1st / 1, with the 0.7c L 128 | 120.5 @ 08:00 | 150 | 10.3 t/h shared | 10-20 ≈ 10:55 |
+| 0.6c L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 1st / 0, alone | 3.2 @ 08:00 | 150 | 15.5 t/h | 10-20 ≈ 17:30 |
+| 0.7c L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 1st / 1, with the 0.46c | 1.3 @ 08:00 | 150 | ≈ 15.5 alone after the 0.46c | 10-20 ≈ 19:10 |
+| 0.5c L 128 `spin_hold_L128_ml3_ve050a_spdrv1_sig04_farfix_t150` | 2nd / 0, alone | 0.01 @ 08:00 | 150 | ≈ 15 t/h | 10-20 ≈ 18:10 |
 
 - The L 128 reruns (go 10-20 ≈ 07:30, no checkpoints; decided: the 0.7c shares card 1 with the 0.46c now): preflights
   pass, t 0 constraints at N 256 (Ham 5.1e-4 / 6.1e-4) below the L 64 runs' (2.1e-3), consumer args the 0.9c's
@@ -96,7 +98,10 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 - Ended 10-20: the 0.30c t 130 (FINISHED, packed, trust 130), the 0.5c t 150 (DIED 100.10 inflating, packed, trust
   95), the 0.40c t 150 (DIED 100.72, not packed: no third wave point needed), the 0.6c / 0.7c L 64 (DIED 98.99 /
   136.03, not packed: box too small, L 128 reruns live). First-node scratch pruned of the three dead L 64 runs'
-  plotfiles (21 GB, ≈ 07:50); the second node's (0.30c t 130, 0.40c t 150) pends a session there.
+  plotfiles (21 GB, ≈ 07:50); the second node's (0.30c t 130, 0.40c t 150, 14 GB) wiped ≈ 08:00 before the 0.5c L 128
+  launch. The keepers' movies render on the second node (the first try died with its session).
+- The 0.5c L 128 (go 10-20 ≈ 08:00, no checkpoints — the 0.9c settings as given): preflight pass, t 0 constraints
+  Ham 5.0e-4 / Mom 4.5e-5 (the L 128 family's level), ≈ 13–15 t/h alone on the second node's card.
 - The 0.46c t 150's consumer lagged while its MOTS search fails on the growing throat; restarted 10-20 ≈ 07:35 with
   `--mots-spectral-steps 150` (`restart_consumer.sh --busy`).
 - Level 1 rises from t ≈ 90 in every L 64 run (the 0.30c t 130: 3.7e-6 at t 130, still clean); in the fast 0.6c /

@@ -1,0 +1,145 @@
+# 0.5c rung on L 64 at N 128, drive off, to t 150 (go 2026-10-19, first node card 1 after the 0.40c / 0.46c t 100): the
+# 0.5c like the other rungs, whose N 192 / drive-on run (spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100) has its tau out
+# of order.  The 0.40c t 150's params below (the 0.40c / 0.46c rungs' own, stop 150) with the 0.5c table; against the
+# N 192 run only N 192 -> 128, plot_interval 150 -> 100 (t = 1.0 cadence), sponge_drive_strength 1.0 -> 0.0, the name
+# and stop 100 -> 150 differ.  t 150: the 0.46c's throat turned at t 84 (-1.12 %), so t 100 may not show a collapse.
+#
+# Background: runs/spinning_p3/tables/fam_a_ve050.spinbg (P5 catalogue, 4097 x 257): eta0 = 2, gamma = -pi,
+#   v_e 0.5127, J 4.111, M_ADM 1.860, R_A 4.966, R_eq 5.254 (the box face at 17 M_ADM).  No seed.
+#
+# 0.40c middle rung on L 64 at N 128 (go 2026-10-18, no checkpoints; STATUS, PAPER RUN MATRIX): the ladder
+# between the 0.2c and the 0.5c against Azad et al.'s second-order radial rate (their tau 8.0 here).  The paper
+# 0.2c's params below (spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100) with the table swapped and the drive off:
+# sponge_drive_strength 1.0 -> 0.0, the sponge test's result (10_sponge_test, 2026-10-18: the drive made the face
+# junk; off, Weyl4 at r 28-32 48x lower, levels 0-1 Ham 14x / 1000x lower, the throat unchanged).  KO sponge 24-32
+# and the Sommerfeld-relative faces kept.
+#
+# 0.2c triplet on L 64 with the far-zone fixes (go 2026-10-18; STATUS, FAR-ZONE JUNK): the fix_t100 template
+# below plus shift_advec_coeff 1 -> 0, sommerfeld_relative_to_background = 1 and constraint_norms_edge_cells = 3;
+# binary farfix 891d817d.  psi4 at R 10 14 18 (each wholly on level 1, whose box reaches +-21.3 / 20 / 18.7 at
+# N 96 / 128 / 192) and 30 (inside the drive shell 24-32: reference only).
+#
+# spin_hold_L64_ml3_J100_full_spdrv1_t85 (its go 2026-10-16): the verification triplet's N 128 (production) member, FIRST
+# in the paper queue -- the J = 1 exact point (v_e 0.2100) is the one rung the
+# published O(J^2) rate checks, licensing the fast rungs.  Base: the 0.5c drive
+# template (= the packed J100_full params + the three recipe keys, diffed
+# 2026-10-16) with the J100 background, stop 85 (slow recipe; quote t <= 80).
+#
+# Background: backgrounds/full_eta2_m1_J100.spinbg (exact data, J = 1,
+#   v_e 0.2100).  No seed.
+
+verbosity = 1
+
+output_path = "runs/spinning_wormhole/drainhole/00_paper_runs/spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150"
+amr.plot_file = "/tmp/grteclyn_scratch/spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150/SpinningWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150/SpinningWormholeChk"
+
+checkpoint_interval = -1
+plot_interval       = 100            # dt0 = 0.01 -> a plotfile every t = 1.0
+
+# The merger hold's full list: the spectral MOTS finder (hold profile) needs
+# the whole metric and A_ij once a horizon forms.
+amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
+amr.derive_plot_vars = Weyl4
+
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+
+# Required (ParmParse get) by the BHAMR Weyl4 particle interpolator
+particle_interpolator.verbosity = 0
+
+#################################################
+# Initial data: family (a) at v_e 0.513 from the P5 catalogue
+
+spinning_background_file = "runs/spinning_p3/tables/fam_a_ve050.spinbg"
+spinning_initial_lapse_type = 0      # e^{f/2} = e^u, the drainhole's static lapse
+
+# No seed: a hold run measures the instability the truncation error excites.
+spinning_seed_amplitude = 0.0
+spinning_seed_width = 1.0
+spinning_seed_radius = 0.0
+
+phantom_mass = 0.0
+
+#################################################
+# Grid
+
+L = 64.0
+N1 = 128
+N2 = 128
+N3 = 128
+
+center = 32.0 32.0 32.0
+
+max_level = 3                        # dx: 0.5 / 0.25 / 0.125 / 0.0625
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # Sommerfeld (outgoing)
+sommerfeld_relative_to_background = 1  # 2026-10-17: Sommerfeld on (state - t 0 background), the face fix
+lo_boundary = 1 1 1
+
+#################################################
+# Evolution
+
+dt_multiplier = 0.02                 # the merger campaign's stable value
+stop_time = 150.0                     # 2026-10-19: t 150, whether the 0.5c collapses (the 0.46c turned at t 84)
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-8
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 0.0              # 2026-10-17: no advection of the rotating background shift (FAR-ZONE JUNK)
+shift_Gamma_coeff = 0.75
+eta = 1.0                            # M_ADM = 1
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.1                          # the merger production value
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+constraint_norms_levels = 1          # per-level masked norms (73793542): which level carries any long-run growth
+constraint_norms_mask_radius = 0.125
+constraint_norms_edge_cells = 3      # 2026-10-17: per-level norms skip the Sommerfeld layer (outer 3 cells)
+
+#################################################
+# Diagnostics + extraction
+
+spinning_diagnostics = 1
+core_radial_profile = 0
+
+sponge_enabled = 1
+sponge_inner_radius = 24.0           # merger's 48/64, scaled to the L = 64 box
+sponge_outer_radius = 32.0
+sponge_strength = 4.0
+sponge_ramp_power = 4
+sponge_drive_strength = 0.0          # 2026-10-18: off, the sponge test's result (the drive made the face junk)
+
+tagging_type = 1                     # fixed boxes on the centred throat
+tagging_L = 64.0                     # NOT L: 64 * 2^-(l+2) = merger's +/-16/8/4
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576
+
+# 2026-10-17 rerun on the fixed binary (rkfix 0661dac4): the only changes from the old run
+exact_quartic_interp = 1             # exact coarse-fine weights (AMReX's are rounded: ghosts 6e-8 low)
+rk_stage_refill = 0                  # no RHS re-fill of the RK stage (AmrLevel::RK already filled the ghosts)
