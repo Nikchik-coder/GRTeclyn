@@ -80,7 +80,7 @@
 \date{\today}
 
 \begin{abstract}
-We investigate the stability of spinning Ellis--Bronnikov wormholes using fully nonlinear 3+1 numerical relativity simulations of the drainhole family, whose static member we evolved in our previous work. We construct the stationary metrics with a spectral solver that is exact to ${\sim}10^{-10}$ at slow spin and ${\sim}10^{-7}$ near the extremal limit, and validate it against the published symmetric family of Kleihaus and Kunz. In doing so we correct an inconsistency in a published field equation and map the drainhole family, for which no fast-spin solutions were known, up to $v_e=0.99$; the 3D initial data converge at fourth order. We find that rotation slows the radial instability and then changes its fate. Along the ladder of evolved spins the collapse $e$-fold time grows from 4.4 (static) to 8.0 at $24\%$ of the extremal angular momentum; at $29\%$ and $33\%$ the unperturbed throat turns and inflates instead of collapsing---the instability's other branch, with the seed's sign selecting the fate---and at $81\%$ the throat is stable to $t=150$ at three resolutions. The measured rate tracks the second-order prediction of Azad \emph{et al.} where both exist and extrapolates to zero at ${\approx}42\%$ of the extremal angular momentum. The unperturbed rotating collapse radiates an $\ell=2$, $m=0$ burst whose energy grows with spin, while the static collapse radiates nothing; second-order perturbative initial data instead seed the instability at the level of their own truncation error.
+We investigate the stability of spinning Ellis--Bronnikov wormholes using fully nonlinear 3+1 numerical relativity simulations of the drainhole family. We construct the stationary metrics with a spectral solver that is exact to ${\sim}10^{-10}$ at slow spin and ${\sim}10^{-7}$ near the extremal limit, and validate it against the published symmetric family of Kleihaus and Kunz. In doing so we correct an inconsistency in a published field equation and map the drainhole family, for which no fast-spin solutions were known, up to $v_e=0.99$; the 3D initial data converge at fourth order. We find that rotation slows the radial instability and then changes its fate. Along the ladder of evolved spins the collapse $e$-fold time grows from 4.4 (static) to 8.0 at $24\%$ of the extremal angular momentum; at $29\%$ and $33\%$ the unperturbed throat turns and inflates instead of collapsing---the instability's other branch, with the seed's sign selecting the fate---and at $81\%$ the throat is stable to $t=150$ at three resolutions. The measured rate tracks the second-order prediction of Azad \emph{et al.} where both exist and extrapolates to zero at ${\approx}42\%$ of the extremal angular momentum. The unperturbed rotating collapse radiates an $\ell=2$, $m=0$ burst whose energy grows with spin, while the static collapse radiates nothing; second-order perturbative initial data instead seed the instability at the level of their own truncation error.
 \end{abstract}
 
 \maketitle
@@ -208,7 +208,7 @@ where the printed form has $-2(\partial_\theta\omega)^2$ and no $s\,(\partial_\t
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{solver/spin_trends.pdf}
-\caption{The two families across the spin range (solid: drainhole, $\eta_0=2$, $\gamma=-\pi$; dashed: symmetric, $\eta_0=1$, $\gamma=0$), against $v_e$: (a) mass, angular momentum and equatorial throat radius; (b) $J/M^2$ against the Kerr bound; (c) the ratio of end masses; (d) the flattening $R_p/R_e$; (e) the scalar charge; (f) the throat angular velocity, which peaks and falls to zero at extremality. Grey verticals in (a): the 0.2c and 0.5c rungs of the evolution ladder (Table~\ref{tab:ladder}). The symmetric family violates the Kerr bound at every spin and the drainhole family exceeds it by up to $\sim20\%$ at intermediate spin; both families end on extremal Kerr.}
+\caption{The drainhole ($\eta_0=2$, $\gamma=-\pi$) and symmetric ($\eta_0=1$, $\gamma=0$) families across the spin range, against $v_e$: (a) mass, angular momentum and equatorial throat radius; (b) $J/M^2$ against the Kerr bound; (c) the ratio of end masses; (d) the flattening $R_p/R_e$; (e) the scalar charge; (f) the throat angular velocity, which peaks and falls to zero at extremality. The symmetric family violates the Kerr bound at every spin and the drainhole family exceeds it by up to $\sim20\%$ at intermediate spin; both families end on extremal Kerr.}
 \label{fig:trends}
 \end{figure*}
 
@@ -284,27 +284,27 @@ Evolutions that must outlive the outer-boundary crossing time $t\approx L$ need 
 Stability claims follow the triplet protocol of Ref.~\cite{evstafyeva2025}: a quoted growth must have an $e$-fold time that converges to a nonzero value across resolutions, constraints that converge at the code's order while it grows, and a gauge-invariant measure---the throat's areal radius, or the marginally outer-trapped surface (MOTS) found spectrally on every output---growing with it. Every run carries three nested refinement levels on the throat, and the box is picked by the rung's mass: $M_{\rm ADM}$ triples along the family (1.11 at $v_e=0.21$, 3.31 at $0.70$), so the face of the $L=64$ box recedes from $25\,M_{\rm ADM}$ of clearance at slow spin to under $10\,M_{\rm ADM}$ at $v_e=0.70$. Rungs up to $v_e=0.51$ therefore run on the $L=64$, $N=128$ grid of the static hold of Ref.~\cite{shirokov2026c}, and rungs from $v_e=0.59$ on $L=128$, $N=256$ at the same finest $\Delta x$. $\Psi_4$ is extracted on spheres at $R=10$--30 ($L=64$) and $R=14$--45 ($L=128$); the signal is the $(2,0)$ mode. Resolution triplets anchor the two ends of the ladder (Appendix~\ref{app:conv}). Table~\ref{tab:ladder} lists every run, from the static reference through the $O(J^2)$ regime~\cite{azad2023,azad2024} to far beyond any perturbative result.
 
 \begin{table*}[t]
-\caption{The runs: the drainhole family (a) along the ladder, in code units. $8\pi J/A$ is the angular momentum in per cent of its extremal bound and $M_{\rm ADM}$ the mass of the $\eta\to+\infty$ end (both from the background tables). The finest $\Delta x$ is $0.0625$ at $N=128$ on $L=64$ and at $N=256$ on $L=128$, and scales inversely with $N$ within a triplet. Recipe S (slow): $\sigma=0.1$, $\chi\ge10^{-8}$; F (fast): $\sigma=0.4$, $\chi\ge10^{-4}$. Shell: the damping layer of Sec.~\ref{sec:setup:boundary} on ($\checkmark$) or the background-relative boundary alone (--). Trust: the last time the run is quoted. The last three rows are in flight at this draft.}
+\caption{The runs: the drainhole family (a) along the ladder, in code units. $8\pi J/A$ is the angular momentum in per cent of its extremal bound and $M_{\rm ADM}$ the mass of the $\eta\to+\infty$ end (both from the background tables). The finest $\Delta x$ is $0.0625$ at $N=128$ on $L=64$ and at $N=256$ on $L=128$, and scales inversely with $N$ within a triplet. Recipe S (slow): $\sigma=0.1$, $\chi\ge10^{-8}$; F (fast): $\sigma=0.4$, $\chi\ge10^{-4}$. Shell: the damping layer of Sec.~\ref{sec:setup:boundary} on ($\checkmark$) or the background-relative boundary alone (--). Trust: the last time the run is quoted. GW: the $(2,0)$ burst at $R=14$ inside the trust window ($\checkmark$), only its onset (the signal still rising at the window's end), or nothing above the extraction floor (--). The last three rows are in flight at this draft.}
 \label{tab:ladder}
 \scriptsize
-\setlength{\tabcolsep}{2.5pt}
+\setlength{\tabcolsep}{2pt}
 \begin{ruledtabular}
-\begin{tabular}{llllllllllp{0.35\textwidth}}
-rung & $v_e$ & $8\pi J/A$ & $M_{\rm ADM}$ & $L$ & $N$ & recipe & shell & stop $t$ & trust & outcome \\
+\begin{tabular}{lllllllllllp{0.332\textwidth}}
+rung & $v_e$ & $8\pi J/A$ & $M_{\rm ADM}$ & $L$ & $N$ & recipe & shell & stop $t$ & trust & GW & outcome \\
 \hline
-0c & 0 & 0 & 1.000 & 64 & 128 & S & -- & 100 & 60 & collapses, $\tau=4.4$; dies inside its horizon, $t=62.7$ \\
-0.2c & 0.210 & 12.3 & 1.112 & 64 & 96/128/192 & S & $\checkmark$ & 100 & 55/100/100 & collapses, $\tau=5.0$; horizon settles at $R=2.52$ \\
-0.2c, kicks & 0.210 & 12.3 & 1.112 & 64 & 128 & S & -- & 100 & 42/61 & $\varepsilon=\pm10^{-3}$: pushed out collapses, in inflates \\
-0.2c, far zone & 0.210 & 12.3 & 1.112 & 128 & 256 & S & -- & 150 & 150 & the $(2,0)$ burst on spheres $R=14$--45 (Fig.~\ref{fig:wave}) \\
-0.30c & 0.304 & 18.3 & 1.248 & 64 & 128 & S & -- & 100, 130 & 130 & collapses, $\tau=5.9$; horizon at $R=2.567$; full burst \\
-0.40c & 0.395 & 24.4 & 1.448 & 64 & 128 & S & -- & 100 & 100 & collapses, $\tau=8.0$; MOTS leaves throat at $t=92$ \\
-0.46c & 0.456 & 28.8 & 1.634 & 64 & 128 & S & -- & 100, 150 & 100, 121 & $-1.1\%$ at $t=83$, inflates from $t=101$, $\tau=12.1$ \\
-0.5c & 0.513 & 33.3 & 1.860 & 64 & 192 & S & $\checkmark$ & 100 & 100 & shrinks, $-1\%$ at $t=99$: the seed's other sign \\
-0.5c & 0.513 & 33.3 & 1.860 & 64 & 128 & S & -- & 150 & 95 & inflates from $t\approx70$, $\tau=8.8$ \\
-0.5c & 0.513 & 33.3 & 1.860 & 128 & 256 & F & $\checkmark$ & 150 & -- & running \\
-0.6c & 0.592 & 40.3 & 2.305 & 128 & 256 & F & $\checkmark$ & 150 & -- & running \\
-0.7c & 0.699 & 51.4 & 3.311 & 128 & 256 & F & $\checkmark$ & 150 & -- & running \\
-0.9c & 0.900 & 80.8 & 11.68 & 128 & 128/192/256 & F & $\checkmark$ & 150 & 150 & stable: areal drift $\le7\times10^{-5}$ at all three $N$ \\
+0c & 0 & 0 & 1.000 & 64 & 128 & S & -- & 100 & 60 & -- & collapses, $\tau=4.4$; dies in its horizon, $t=62.7$ \\
+0.2c & 0.210 & 12.3 & 1.112 & 64 & 96/128/192 & S & $\checkmark$ & 100 & 55/100/100 & $\checkmark$ & collapses, $\tau=5.0$; horizon settles at $R=2.52$ \\
+0.2c, kicks & 0.210 & 12.3 & 1.112 & 64 & 128 & S & -- & 100 & 42/61 & onset & $\varepsilon=\pm10^{-3}$: pushed out collapses, in inflates \\
+0.2c, far zone & 0.210 & 12.3 & 1.112 & 128 & 256 & S & -- & 150 & 150 & $\checkmark$ & the $(2,0)$ burst on spheres $R=14$--45 (Fig.~\ref{fig:wave}) \\
+0.30c & 0.304 & 18.3 & 1.248 & 64 & 128 & S & -- & 100, 130 & 130 & $\checkmark$ & collapses, $\tau=5.9$; horizon at $R=2.567$ \\
+0.40c & 0.395 & 24.4 & 1.448 & 64 & 128 & S & -- & 100 & 100 & onset & collapses, $\tau=8.0$; MOTS leaves throat, $t=92$ \\
+0.46c & 0.456 & 28.8 & 1.634 & 64 & 128 & S & -- & 100, 150 & 100, 121 & onset & $-1.1\%$ at $t=83$, inflates from $t=101$, $\tau=12.1$ \\
+0.5c & 0.513 & 33.3 & 1.860 & 64 & 192 & S & $\checkmark$ & 100 & 100 & -- & shrinks, $-1\%$ at $t=99$: the seed's other sign \\
+0.5c & 0.513 & 33.3 & 1.860 & 64 & 128 & S & -- & 150 & 95 & -- & inflates from $t\approx70$, $\tau=8.8$ \\
+0.5c & 0.513 & 33.3 & 1.860 & 128 & 256 & F & $\checkmark$ & 150 & -- & & running \\
+0.6c & 0.592 & 40.3 & 2.305 & 128 & 256 & F & $\checkmark$ & 150 & -- & & running \\
+0.7c & 0.699 & 51.4 & 3.311 & 128 & 256 & F & $\checkmark$ & 150 & -- & & running \\
+0.9c & 0.900 & 80.8 & 11.68 & 128 & 128/192/256 & F & $\checkmark$ & 150 & 150 & -- & stable: areal drift $\le7\times10^{-5}$ at all three $N$ \\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
@@ -357,10 +357,12 @@ rung & $v_e$ & $8\pi J/A$ & $M_{\rm ADM}$ & $L$ & $N$ & recipe & shell & stop $t
 
 Three results stand. First, the spinning Ellis--Bronnikov parameter space is now mapped as data, not curves: both families from slow rotation to $v_e\approx0.99$, including the drainhole family for which nothing was published, with the published $\nu$ equation, Eq.~(12) of Ref.~\cite{chew2016}, corrected to Eq.~\eqref{eq:nueq}. The practical lesson generalizes: a solver gated only on the equations it imposes would have passed every test while solving the wrong system; the unimposed identities caught it. Second, the pipeline from these solutions to 3+1 evolution is validated at fourth order, and $O(J^2)$ initial data are shown to be unusable for stability work: their truncation error seeds the instability itself. Third, the first nonlinear evolutions of rotating wormholes show one rate with two fates: the radial collapse slows with spin ($\tau=4.4\to8.0$ from the static to $24\%$ of the extremal angular momentum), the sign predicted at $O(J^2)$~\cite{azad2023,azad2024}; near $30\%$, where the perturbative mode crossing was conjectured to end the instability, the unperturbed throat inflates instead, with the mode's magnitude intact; the measured rate extrapolates to zero at ${\approx}42\%$, and at $81\%$ the throat is stable to $t=150$ across three resolutions---answering, for this family, the four-dimensional stability question left open in Ref.~\cite{kleihaus_kunz2014}. The rotating collapse also radiates a $(2,0)$ burst from unperturbed, axisymmetric data, its energy growing with spin as the amplitude squared, while the static collapse radiates nothing. What remains on the ladder is in flight: the $v_e=0.51$--0.70 rungs on the large box, which fix where between $33\%$ and $81\%$ the instability actually dies---and whether it dies monotonically or as the oscillating complex pair of the charged analogue~\cite{blazquez2025}---and the end states of the inflating branch.
 
-\section{Data availability}
+\section{Reproducibility and cost}
 \label{sec:data}
 
 The solver, the evolution code and the figure scripts are in the \texttt{GRTeclyn}~\cite{grteclyn} fork at \url{https://github.com/Nikchik-coder/GRTeclyn} (branch \texttt{feature/spinning}). Its \texttt{results/spinningwormhole} pack holds the solver's accepted solutions, the headers of the background tables the evolutions start from, and the parameter files and diagnostic streams of the finished runs of Table~\ref{tab:ladder}, with a run registry.
+
+Every evolution ran on one NVIDIA H100 80\,GB device, with \texttt{GRTeclyn} built CUDA-native against AMReX~26.02. A rung on the $L=64$, $N=128$ grid advances 9--13 code units per hour, and a $t=100$ evolution takes 7.6--11.1\,h; the $N=192$ members run at 5 units per hour (20\,h to $t=100$), peaking at 53\,GiB of the device, and the $L=128$, $N=256$ runs at 15.5 (9.7\,h to $t=150$). The 17 finished evolutions of Table~\ref{tab:ladder} total 167 GPU-hours, each run's cost recomputed from its archived logs: the logged speed and time span.
 
 \begin{acknowledgments}
 This work was supported by Gravity Frontiers

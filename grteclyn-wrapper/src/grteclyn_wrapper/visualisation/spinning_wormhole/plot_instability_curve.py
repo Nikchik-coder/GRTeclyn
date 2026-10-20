@@ -239,7 +239,10 @@ def azad_jc_frac(points) -> float | None:
 
 
 def draw(points, pal, jc_frac) -> None:
-    fig, ax = plt.subplots(figsize=(4.0, 3.0), layout="constrained")
+    style.prd(8.0)
+    # 2026-10-20: the house typography (it drew in matplotlib's default sans), at the
+    # column width it is printed at
+    fig, ax = plt.subplots(figsize=(3.4, 2.6), layout="constrained")
     # The two thresholds are named in the key, not inside the frame (their
     # in-frame tags kept colliding with the rules and the fit, 2026-10-19).
     rules = [AZAD_CONJECTURE] + ([jc_frac] if jc_frac else [])
@@ -273,15 +276,17 @@ def draw(points, pal, jc_frac) -> None:
         else:
             ax.plot(p["frac"], 0.0, "o", ms=5.5, mfc="none", mec=pal["stable"],
                     mew=1.2, zorder=4)
-            ax.annotate(f"{p['label']}: flat to t {p['t_end']:.0f}",
+            ax.annotate(f"{p['label']}: flat to $t={p['t_end']:.0f}$",
                         (p["frac"], 0.0), textcoords="offset points",
-                        xytext=(-4, 7), fontsize=6.5, ha="right")
+                        xytext=(0, 7), fontsize=6.5, ha="center", va="bottom")
     ax.set_xlim(-2.0, 100.0)   # the static rung sits at 0: keep its marker whole
     ax.set_ylim(-0.012, 0.26)
     ax.set_xlabel(r"$8\pi J/A$ [%]")
     ax.set_ylabel(r"$1/\tau$")
     # The same scale relabelled in tau on the right edge: one axis, two units.
     right = ax.secondary_yaxis("right")
+    ax.tick_params(axis="y", which="both", right=False)   # the right edge is tau's alone
+    right.minorticks_off()
     taus = (5.0, 10.0, 20.0, 50.0)
     right.set_yticks([0.0] + [1.0 / v for v in taus])
     right.set_yticklabels([r"$\infty$"] + [f"{v:g}" for v in taus])

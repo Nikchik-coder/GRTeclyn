@@ -9,7 +9,7 @@ eta0 fixed along a family, so mass and size grow without bound as v_e -> 1):
   drainhole a = 2, M = 1 spun up); dashed: the symmetric family (eta0 = 1,
   gamma = 0, equal masses on both sides, CKK's);
 - (a) mass M/eta0, angular momentum J/eta0^2 and equatorial throat radius
-  R_e/eta0 (log); thin grey rules mark the drainhole holds evolved in 3D;
+  R_e/eta0 (log);
 - (b) J/M^2 against the Kerr bound 1 (log);
 - (c) the far side's mass over ours, M_-/M_+ (the drainhole's far side turns
   from negative to positive mass);
@@ -21,6 +21,10 @@ Black dots: the extremal-Kerr values at v_e = 1 (J/M^2 = 1, R_p/R_e from
 the closed form, D = 0, Omega eta0 = 0 at fixed eta0).  The static members
 (v_e = 0) are exact and drawn where the axis is linear: M_-/M_+ = -1 and
 +1, R_p/R_e = 1, D^2 = eta0^2 + M^2, Omega = 0.
+
+One key above the figure names the families' dashes and the extremal
+dots; a panel's own key names only what is its alone (the quantities of
+(a), the Kerr bound of (b)).
 
 Colours follow the spinning paper's red / green / blue by quantity (mass and
 shape red, angular momentum green, size and rotation blue; the scalar charge
@@ -56,7 +60,6 @@ FAMILIES = (
     (2.0, -math.pi, "drainhole", SOLID),
     (1.0, 0.0, "symmetric", DASHED),
 )
-HOLDS = (0.5127, 0.6988)       # the drainhole holds live in 3D (2026-10-13)
 # three keys to a row fit a third of the page with shorter handles
 TIGHT = dict(handlelength=1.5, handletextpad=0.35, columnspacing=0.5)
 
@@ -96,7 +99,6 @@ def draw(fams, colours):
     dot = dict(ls="none", marker="o", ms=4.5, mfc="black", mec="black", zorder=6,
                clip_on=False)
     rule = dict(color=style.FAINT, lw=0.6, zorder=0)
-    blank = (Line2D([], [], alpha=0.0), "")      # keeps a lone entry in the right column
 
     def line(color, ls, **kw):
         return dict(color=color, ls=ls, lw=1.3, **kw)
@@ -114,62 +116,57 @@ def draw(fams, colours):
     jmark = dict(marker="s", ms=2.6, mfc="none", mew=0.6, markevery=0.08)
 
     # (a) mass, angular momentum, size
-    for ax_v in HOLDS:
-        ax_a.axvline(ax_v, **rule)
-    for f, (_, _, name, ls) in zip(fams, FAMILIES):
+    for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_a, f, "M", red, ls)
         curve(ax_a, f, "J", green, ls, **jmark)
         curve(ax_a, f, "Re", blue, ls)
-    # colour names the quantity, the dash the family
+    # colour names the quantity; the figure's key names the dashes
     ax_a.set(yscale="log", xlim=(0, 1), ylim=(1e-3, 1e4))
     style.legend_top(ax_a, [key(line(red, SOLID), r"$M/\eta_0$"),
                             key(line(green, SOLID, **jmark), r"$J/\eta_0^2$"),
-                            key(line(blue, SOLID), r"$R_e/\eta_0$")]
-                     + [key(line(style.INK, ls), name) for *_, name, ls in FAMILIES]
-                     + [key(rule, "3D holds")], ncol=3, **TIGHT)
+                            key(line(blue, SOLID), r"$R_e/\eta_0$")], ncol=3, **TIGHT)
 
     # (b) J/M^2 against the Kerr bound
     ax_b.axhline(1.0, **rule)
-    for f, (_, _, name, ls) in zip(fams, FAMILIES):
+    for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_b, f, "JM2", green, ls)
     ax_b.plot([1.0], [1.0], **dot)
     ax_b.set(yscale="log", xlim=(0, 1), ylim=(0.1, 100), ylabel=r"$J/M^2$")
     ax_b.set_yticks([0.1, 1.0, 10.0])      # no label on the top edge, where the tag sits
-    style.legend_top(ax_b, [key(line(green, ls), name) for *_, name, ls in FAMILIES]
-                     + [key(rule, "Kerr bound"), key(dot, "extremal Kerr")], ncol=2)
+    style.legend_top(ax_b, [key(rule, "Kerr bound")])
 
     # (c) far-side mass over ours
     ax_c.axhline(0.0, **rule)
-    for f, (_, _, name, ls) in zip(fams, FAMILIES):
+    for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_c, f, "Mratio", red, ls)
     ax_c.set(xlim=(0, 1), ylim=(-1.1, 1.1), ylabel=r"$M_-/M_+$")
-    style.legend_top(ax_c, [key(line(red, ls), name) for *_, name, ls in FAMILIES], ncol=2)
 
     # (d) flattening
     ext = kk2014.kerr(np.array([1.0]))
-    for f, (_, _, name, ls) in zip(fams, FAMILIES):
+    for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_d, f, "Rp", red, ls)
     ax_d.plot([1.0], ext["Rp"], **dot)
     ax_d.set(xlim=(0, 1), ylim=(0.58, 1.02), ylabel=r"$R_p/R_e$", xlabel=r"$v_e$")
-    style.legend_top(ax_d, [key(line(red, ls), name) for *_, name, ls in FAMILIES]
-                     + [blank, key(dot, "extremal Kerr")], ncol=2, **TIGHT)
 
     # (e) scalar charge
-    for f, (_, _, name, ls) in zip(fams, FAMILIES):
+    for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_e, f, "D", style.INK, ls)
     ax_e.plot([1.0], [0.0], **dot)
     ax_e.set(xlim=(0, 1), ylim=(0.0, 1.25), ylabel=r"$D/\eta_0$", xlabel=r"$v_e$")
     ax_e.set_yticks([0.0, 0.5, 1.0])       # as (b): the top edge is the tag's
-    style.legend_top(ax_e, [key(line(style.INK, ls), name) for *_, name, ls in FAMILIES]
-                     + [blank, key(dot, "extremal Kerr")], ncol=2, **TIGHT)
 
     # (f) rotation rate
-    for f, (_, _, name, ls) in zip(fams, FAMILIES):
+    for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_f, f, "Om", blue, ls)
     ax_f.plot([1.0], [0.0], **dot)
     ax_f.set(xlim=(0, 1), ylim=(0.0, 0.55), ylabel=r"$\Omega\,\eta_0$", xlabel=r"$v_e$")
-    style.legend_top(ax_f, [key(line(blue, ls), name) for *_, name, ls in FAMILIES]
-                     + [blank, key(dot, "extremal Kerr")], ncol=2, **TIGHT)
+
+    # 2026-10-20: the families' dashes and the extremal dots keyed once, above the
+    # figure (every panel repeated them)
+    fig.legend(*zip(*[key(line(style.INK, ls), name) for *_, name, ls in FAMILIES],
+                    key(dot, "extremal Kerr")),
+               loc="outside upper center", ncol=3, frameon=False, fontsize=7.0,
+               handlelength=2.0, columnspacing=1.8)
 
     style.tag_keys(fig, [ax_a, ax_b, ax_c, ax_d, ax_e, ax_f],
                    ["(a)", "(b)", "(c)", "(d)", "(e)", "(f)"], row="last")
