@@ -32,14 +32,16 @@ t 150 run shows its throat inflating from t 101.
   or growth (expansion). The old deficit-band fit carried the early transient's baseline (1e-4 at N 96 vs 4e-6 at
   N 192), biased τ short by a resolution-dependent amount and failed to self-converge (Q_meas < 0); the offset-free
   fit gives τ 7.8 / 6.6 / 6.1 on the 0.2c triplet, Q_meas 2.3 between the order-3/4 expectations 1.95 / 2.69,
-  continuum 5.5–5.7, and sits on a band plateau (< 4 % between 0.2–1 % and 0.5–2 %). Collapse dots τ 5.4 / 6.6 /
+  continuum 5.9 (Richardson AT the measured order p 3.5; extrapolating at p 2 gives the earlier 5.5–5.7, wrong
+  order), and sits on a band plateau (< 4 % between 0.2–1 % and 0.5–2 %). Collapse dots τ 5.4 / 6.6 /
   8.3 / 13.3 (D0–D40), expansion triangles 12.1 / 8.8 (D46, D51). The fit a − b(J/A)² now goes through the collapse
   branch ALONE (rms 2e-3): zero at 32 %; one curve through both branches described neither. The D59 / D70 rungs
   point at the σ 0.1 L 128 reruns (`sig01_mc8`) and the curve refills as they land.
 - **Against Azad et al.** (Azad, Blázquez-Salcedo, Khoo, Kunz, arXiv:2301.05243; their C = 1 row — our family):
-  where 2nd order should hold the methods agree — D21 continuum 5.5–5.7 vs their 5.46, static 5.4 (N 128) beside
-  the linear 5.13; at intermediate spin ours is slower beyond the ~13 % resolution bias (8.3 vs 6.1 at 0.30c, 13.3
-  vs 8.0 at 0.40c), growing as the dropped O(J⁴) terms must. The collapse branch dies at 32 %, beside their J_c
+  where 2nd order should hold the methods are close — D21 continuum 5.9 within 8 % of their 5.46, static 5.4
+  (N 128) beside the linear 5.13; at intermediate spin ours is slower beyond the ~13 % resolution bias (8.3 vs 6.1
+  at 0.30c, 13.3 vs 8.0 at 0.40c), as expected if the dropped O(J⁴) terms matter. The collapse-branch fit
+  extrapolates to zero at 32 % (last collapsing model 24 %), beside their J_c
   (33 %) and conjectured crossing (≈ 30 %); the 0.46c / 0.5c expand with RISING rates (τ 12.1 → 8.8), consistent
   with their second mode taking over, not the modes merging away. The old "matches within 3 %" was the deficit-fit
   bias cancelling their truncation. Kleihaus & Kunz (2014) left 4D stability open; our 0.9c is stable.

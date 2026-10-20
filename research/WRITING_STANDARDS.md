@@ -253,8 +253,9 @@ is substance:
 - [x] Converge τ (resolved 2026-10-20, the offset-free estimator adopted everywhere). The deficit-band fit was biased
   by the early transient's baseline, resolution-dependently, and failed to self-converge; the offset-free fit (slope
   of ln |dR_A/dt| over the same band) gives Q_meas = 2.3 between Q₃ = 1.95 and Q₄ = 2.69 on the D21 triplet, sits on
-  a band plateau, and its D21 continuum (5.5–5.7) and static (toward 5.1) values land on the second-order and
-  linear-theory rates. The paper now quotes τ = 5.4/6.6/8.3/13.3 (D0–D40), fits a − b(J/A)² through the collapse
+  a band plateau, and its D21 continuum (5.9, Richardson at the measured order p = 3.5 — the earlier 5.5–5.7 was a
+  second-order extrapolation, inconsistent with Q = 2.3; caught 2026-10-20) sits within 8% of the second-order rate,
+  the static (toward 5.1) beside linear theory. The paper now quotes τ = 5.4/6.6/8.3/13.3 (D0–D40), fits a − b(J/A)² through the collapse
   branch alone (zero at 32%, beside the second-order 33%), and the expansion rates rise past the crossing. D90 needs
   no Q_meas: its drift is a null bounded by 7×10⁻⁵ at all three resolutions. Still open: the τ = 5.8/5.6 quoted for
   the O(J²)-seeded evolutions predate the estimator change — re-measure when those numbers enter the claims ledger.

@@ -273,7 +273,7 @@ def draw(points, pal, jc_frac) -> None:
         else:
             ax.plot(p["frac"], 0.0, "o", ms=5.5, mfc="none", mec=pal["stable"],
                     mew=1.2, zorder=4)
-            ax.annotate(f"{p['label']}: flat to $t={p['t_end']:.0f}$",
+            ax.annotate(f"{p['label']}: no growth to $t={p['t_end']:.0f}$",
                         (p["frac"], 0.0), textcoords="offset points",
                         xytext=(0, 7), fontsize=6.5, ha="center", va="bottom")
     ax.set_xlim(-2.0, 100.0)   # the static rung sits at 0: keep its marker whole
@@ -298,7 +298,7 @@ def draw(points, pal, jc_frac) -> None:
                         "measured $\\tau$, expansion"))
     if any(p["stable"] for p in drawn):
         entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
-                                      mec=pal["stable"], mew=1.2), "stable over the run"))
+                                      mec=pal["stable"], mew=1.2), "no growth to $t=150$"))
     if fit is not None:
         tag = "collapse fit" + (f": zero at {x0:.0f} %" if x0 else "")
         entries.append((fit_line, tag))
