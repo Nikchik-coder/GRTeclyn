@@ -225,7 +225,8 @@ Paper notes:
   ∝ σ, sign set by the table; computed from the tables = measured in seven runs), and every non-collapsing
   negative-mass run (0.46c–0.7c) broke down there (t 53–136), never at the throat. For the article this is a methods
   statement (the compactified far end bounds the trust windows of the μ₋ < 0 rungs; the μ₋ > 0 ones run to t 150),
-  not a failure narrative. The 0.75c / 0.8c (LIVE 10-20) test it on the positive side.
+  not a failure narrative. The 0.75c / 0.8c (LIVE 10-20) test it on the positive side. Fig. 3(c) carries it
+  (10-20): the sign change (dotted, v_e 0.72), the 3D runs (squares) and the breakdown band 0.46c–0.7c (shaded).
 - **Speed-up research** (dt × σ, 10-16, "goes fully to the article"): the dt ceiling was an AMR interface mode on
   the coarse–fine edges, where bugs 2–3 acted; retest dt 0.05 on the fixed binary before quoting it.
 - **Figures**: all four are cited since the 10-20 rewrite — `instability_curve` (Fig. in Sec. V),

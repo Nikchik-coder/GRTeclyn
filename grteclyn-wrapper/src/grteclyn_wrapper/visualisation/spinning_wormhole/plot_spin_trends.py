@@ -13,8 +13,9 @@ eta0 fixed along a family, so mass and size grow without bound as v_e -> 1):
 - (b) J/M^2 against the Kerr bound 1 (log);
 - (c) the far side's mass over ours, M_-/M_+ (the drainhole's far side turns
   from negative to positive mass); the dotted rule marks the drainhole's sign
-  change (v_e ~ 0.72) and the squares the 3D runs' backgrounds at their own
-  M_-/M_+ (the packed table headers);
+  change (v_e ~ 0.72), the squares the 3D runs' backgrounds at their own
+  M_-/M_+ (the packed table headers), and the grey band the rungs whose runs
+  broke down at the compactified far end before t = 150 (0.46c-0.7c);
 - (d) the throat's flattening R_p/R_e;
 - (e) the exotic matter: the phantom field's volume integral quantifier
   |int (rho + p_eta) dV| (Visser, Kar & Dadhich 2003) over the equatorial
@@ -57,6 +58,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
+from matplotlib.patches import Patch  # noqa: E402
 
 from scipy.interpolate import PchipInterpolator  # noqa: E402
 
@@ -78,6 +80,10 @@ FAMILIES = (
 )
 # three keys to a row fit a third of the page with shorter handles
 TIGHT = dict(handlelength=1.5, handletextpad=0.35, columnspacing=0.5)
+# 2026-10-20: the first and last rung whose 3D runs broke down at the far-side centre
+# (the compactified far end) before t = 150: 0.46c at 130.2, 0.5c at 100.1, 0.6c at
+# 66.7, 0.7c at 52.9; the slower rungs form a horizon first and the 0.9c holds
+FAR_END_BAND = ("fam_a_ve045", "fam_a_ve070")
 
 
 def family(rows: list[dict], eta0: float, gamma: float) -> dict[str, np.ndarray]:
@@ -213,11 +219,14 @@ def draw(fams, colours):
     vrule = dict(color="#b5b5b2", lw=0.8, ls=":")
     v0 = sign_change(fams[0])
     ax_c.axvline(v0, **vrule)
+    band = dict(facecolor="#d9d9d6", edgecolor="#9a9a96", lw=0.6, ls="--")
+    ax_c.axvspan(*(float(headers.meta(bg)["v_e"]) for bg in FAR_END_BAND), zorder=0, **band)
     for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_c, f, "Mratio", red, ls)
     ax_c.plot(*run_ratios(), **runmark)
     ax_c.set(xlim=(0, 1), ylim=(-1.1, 1.1), ylabel=r"$M_-/M_+$")
-    style.legend_top(ax_c, [key(vrule, rf"$M_-=0$, $v_e={v0:.2f}$"), key(runmark, "3D runs")],
+    style.legend_top(ax_c, [key(vrule, rf"$M_-=0$, $v_e={v0:.2f}$"), key(runmark, "3D runs"),
+                            (Patch(**band), "run breaks down at the far end")],
                      ncol=2, borderpad=0.4, **TIGHT)
 
     # (d) flattening
