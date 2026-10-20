@@ -109,7 +109,9 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
   95), the 0.40c t 150 (DIED 100.72, not packed: no third wave point needed), the 0.6c / 0.7c L 64 (DIED 98.99 /
   136.03, not packed: box too small, L 128 reruns live). First-node scratch pruned of the three dead L 64 runs'
   plotfiles (21 GB, ≈ 07:50); the second node's (0.30c t 130, 0.40c t 150, 14 GB) wiped ≈ 08:00 before the 0.5c L 128
-  launch. The keepers' movies render on the second node (the first try died with its session).
+  launch. The keepers' movies (0.30c t 130 to t ≤ 130, 0.5c t 150 to t ≤ 95; full + core) rendered on the second
+  node and checked on contact sheets 10-20 ≈ 08:40: one fixed scale per field, none blank, both stop at their
+  trust windows.
 - The 0.5c L 128 (go 10-20 ≈ 08:00, no checkpoints — the 0.9c settings as given): preflight pass, t 0 constraints
   Ham 5.0e-4 / Mom 4.5e-5 (the L 128 family's level), ≈ 13–15 t/h alone on the second node's card.
 - The 0.46c t 150's consumer lagged while its MOTS search fails on the growing throat; restarted 10-20 ≈ 07:35 with
