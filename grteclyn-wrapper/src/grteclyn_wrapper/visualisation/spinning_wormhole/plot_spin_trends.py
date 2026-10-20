@@ -14,31 +14,38 @@ eta0 fixed along a family, so mass and size grow without bound as v_e -> 1):
 - (c) the far side's mass over ours, M_-/M_+ (the drainhole's far side turns
   from negative to positive mass);
 - (d) the throat's flattening R_p/R_e;
-- (e) the phantom field's scalar charge D/eta0;
+- (e) the exotic matter: the phantom field's volume integral quantifier
+  |int (rho + p_eta) dV| (Visser, Kar & Dadhich 2003) over the equatorial
+  throat radius (log), from the packed solutions; squares: the 3D runs, each
+  rung's value scaled by (D_run / D_background)^2 with D_run the charge
+  measured on the run's own t = 0 slice (results/spinningwormhole/
+  scalar_charge_runs.tsv);
 - (f) the throat's rotation rate Omega eta0.
 
 Black dots: the extremal-Kerr values at v_e = 1 (J/M^2 = 1, R_p/R_e from
-the closed form, D = 0, Omega eta0 = 0 at fixed eta0).  The static members
-(v_e = 0) are exact and drawn where the axis is linear: M_-/M_+ = -1 and
-+1, R_p/R_e = 1, D^2 = eta0^2 + M^2, Omega = 0.
+the closed form, Omega eta0 = 0 at fixed eta0).  The static members
+(v_e = 0) are exact: M_-/M_+ = -1 and +1, R_p/R_e = 1, Omega = 0, and the
+exotic matter in closed form (observables.static_exotic_matter).
 
 One key above the figure names the families' dashes and the extremal
 dots; a panel's own key names only what is its alone (the quantities of
 (a), the Kerr bound of (b)).
 
 Colours follow the spinning paper's red / green / blue by quantity (mass and
-shape red, angular momentum green, size and rotation blue; the scalar charge
+shape red, angular momentum green, size and rotation blue; the exotic matter
 ink); ``--colors C1,C2,C3`` redraws in another scheme.
 
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_spin_trends
 
-Reads ``results/spinningwormhole/solver/solutions.tsv``; writes
+Reads ``results/spinningwormhole/solver/solutions.tsv``, the packed solutions
+under ``results/spinningwormhole/solutions/`` and ``scalar_charge_runs.tsv``; writes
 ``results/spinningwormhole/figures/solver/spin_trends`` (PNG + PDF).
 """
 
 from __future__ import annotations
 
 import argparse
+import csv
 import math
 import pathlib
 
@@ -49,10 +56,17 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 from matplotlib.lines import Line2D  # noqa: E402
 
-from grteclyn_wrapper.visualisation.spinning_wormhole import kk2014, solutions  # noqa: E402
+from scipy.interpolate import PchipInterpolator  # noqa: E402
+
+from grteclyn_wrapper.analysis.spinning_wormhole.observables import (  # noqa: E402
+    exotic_matter, static_exotic_matter)
+from grteclyn_wrapper.analysis.spinning_wormhole.solution import Solution  # noqa: E402
+from grteclyn_wrapper.visualisation.spinning_wormhole import headers, kk2014, solutions  # noqa: E402
 from grteclyn_wrapper.visualisation.wormhole_merger import style  # noqa: E402
 
 OUT = solutions.REPO / "results" / "spinningwormhole" / "figures" / "solver" / "spin_trends"
+PACKED = solutions.REPO / "results" / "spinningwormhole" / "solutions"
+CHARGES = solutions.REPO / "results" / "spinningwormhole" / "scalar_charge_runs.tsv"
 RGB = ("#d62728", "#2ca02c", "#1f77b4")
 SOLID, DASHED = "-", (0, (3.0, 1.6))       # short dashes: the keys' short handles show them
 # (eta0, gamma, name in the keys, the line style)
@@ -78,15 +92,47 @@ def family(rows: list[dict], eta0: float, gamma: float) -> dict[str, np.ndarray]
     c = {k: np.array([r[k] for r in keep]) for k in
          ("v_e", "J", "mu_plus", "mu_minus", "D", "R_e", "R_pol", "Omega_throat")}
     m0 = -gamma * eta0 / (2.0 * math.pi)            # the static member's mass
+    exotic = []                    # |VIQ| / R_e where the solution itself is packed
+    for r in keep:
+        path = PACKED / r["leg"] / f"{r['leg']}_{r['step']:04d}.npz"
+        exotic.append(abs(exotic_matter(Solution.load(path), r["D"])) / r["R_e"]
+                      if path.exists() else math.nan)
+    viq0, re0 = static_exotic_matter(eta0, gamma)
     return {
         "v": c["v_e"], "M": c["mu_plus"] / eta0, "J": c["J"] / eta0**2,
         "Re": c["R_e"] / eta0, "JM2": c["J"] / c["mu_plus"] ** 2,
         "Mratio": c["mu_minus"] / c["mu_plus"], "Rp": c["R_pol"] / c["R_e"],
-        "D": c["D"] / eta0, "Om": c["Omega_throat"] * eta0,
-        # exact static ends (v_e = 0) for the linear panels
+        "X": np.array(exotic), "Om": c["Omega_throat"] * eta0,
+        "D0": math.sqrt(eta0**2 + m0**2),          # the static member's charge
+        # exact static ends (v_e = 0)
         "static": {"Mratio": -1.0 if m0 > 0 else 1.0, "Rp": 1.0,
-                   "D": math.sqrt(eta0**2 + m0**2) / eta0, "Om": 0.0},
+                   "X": abs(viq0) / re0, "Om": 0.0},
     }
+
+
+def run_points(fam: dict) -> tuple[np.ndarray, np.ndarray]:
+    """The 3D runs on (e): per background, the family's curve at its v_e times
+    (D_run / D_background)^2, D_run the median t = 0 charge its runs measured
+    (VIQ goes as D^2 on a fixed geometry)."""
+    charges: dict[str, list[float]] = {}
+    with open(CHARGES) as fh:
+        for row in csv.DictReader((ln for ln in fh if not ln.startswith("#")), delimiter="\t"):
+            if row["which"] == "t0":
+                charges.setdefault(row["background"], []).append(float(row["D"]))
+    v = np.concatenate(([0.0], fam["v"]))
+    x = np.concatenate(([fam["static"]["X"]], fam["X"]))
+    ok = np.isfinite(x)
+    log_x = PchipInterpolator(v[ok], np.log(x[ok]))
+    vs, xs = [], []
+    for bg, ds in sorted(charges.items()):
+        if bg == "static":
+            v_bg, d_bg = 0.0, fam["D0"]
+        else:
+            meta = headers.meta(bg)
+            v_bg, d_bg = float(meta["v_e"]), float(meta["D"])
+        vs.append(v_bg)
+        xs.append(float(np.exp(log_x(v_bg))) * (float(np.median(ds)) / d_bg) ** 2)
+    return np.array(vs), np.array(xs)
 
 
 def draw(fams, colours):
@@ -110,7 +156,8 @@ def draw(fams, colours):
         v, y = f["v"], f[q]
         if static and q in f["static"]:
             v, y = np.concatenate(([0.0], v)), np.concatenate(([f["static"][q]], y))
-        ax.plot(v, y, **line(color, ls, **kw))
+        ok = np.isfinite(y)                     # (e) has only the packed solutions
+        ax.plot(v[ok], y[ok], **line(color, ls, **kw))
 
     # J's markers keep it apart from M where red and green cross
     jmark = dict(marker="s", ms=2.6, mfc="none", mew=0.6, markevery=0.08)
@@ -148,12 +195,18 @@ def draw(fams, colours):
     ax_d.plot([1.0], ext["Rp"], **dot)
     ax_d.set(xlim=(0, 1), ylim=(0.58, 1.02), ylabel=r"$R_p/R_e$", xlabel=r"$v_e$")
 
-    # (e) scalar charge
+    # (e) exotic matter per throat radius (2026-10-20: replaces the scalar charge, which
+    # Table II lists); the 3D runs' measured charge put on the drainhole curve
+    runmark = dict(ls="none", marker="s", ms=3.4, mfc="white", mec=style.INK, mew=0.8,
+                   zorder=6, clip_on=False)
     for f, (*_, ls) in zip(fams, FAMILIES):
-        curve(ax_e, f, "D", style.INK, ls)
-    ax_e.plot([1.0], [0.0], **dot)
-    ax_e.set(xlim=(0, 1), ylim=(0.0, 1.25), ylabel=r"$D/\eta_0$", xlabel=r"$v_e$")
-    ax_e.set_yticks([0.0, 0.5, 1.0])       # as (b): the top edge is the tag's
+        curve(ax_e, f, "X", style.INK, ls)
+    ax_e.plot(*run_points(fams[0]), **runmark)
+    ax_e.set(yscale="log", xlim=(0, 1), ylim=(0.03, 10), ylabel=r"$|\mathcal{I}|/R_e$",
+             xlabel=r"$v_e$")
+    # a marker-only handle measures half a marker past its box: a little more border keeps
+    # it inside the key
+    style.legend_top(ax_e, [key(runmark, r"3D runs, $t=0$")], borderpad=0.4)
 
     # (f) rotation rate
     for f, (*_, ls) in zip(fams, FAMILIES):

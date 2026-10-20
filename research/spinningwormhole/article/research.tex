@@ -67,6 +67,13 @@
 \urlstyle{same}
 \emergencystretch=2em
 
+% A figure written in place, at the full page width, in a one-column stretch
+% (\onecolumngrid): a minipage whose \caption is a figure's.
+\makeatletter
+\newenvironment{pagefigure}{\par\vspace{\intextsep}\noindent\begin{minipage}{\textwidth}%
+  \def\@captype{figure}\centering}{\end{minipage}\par\vspace{\intextsep}}
+\makeatother
+
 \begin{document}
 
 \title{\texorpdfstring{\MakeTextUppercase{Investigating the stability of spinning wormholes with nonlinear evolutions}}{Investigating the stability of spinning wormholes with nonlinear evolutions}}
@@ -208,7 +215,7 @@ where the printed form has $-2(\partial_\theta\omega)^2$ and no $s\,(\partial_\t
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{solver/spin_trends.pdf}
-\caption{The drainhole ($\eta_0=2$, $\gamma=-\pi$) and symmetric ($\eta_0=1$, $\gamma=0$) families across the spin range, against $v_e$: (a) mass, angular momentum and equatorial throat radius; (b) $J/M^2$ against the Kerr bound; (c) the ratio of end masses; (d) the flattening $R_p/R_e$; (e) the scalar charge; (f) the throat angular velocity, which peaks and falls to zero at extremality. The symmetric family violates the Kerr bound at every spin and the drainhole family exceeds it by up to $\sim20\%$ at intermediate spin; both families end on extremal Kerr.}
+\caption{The drainhole ($\eta_0=2$, $\gamma=-\pi$) and symmetric ($\eta_0=1$, $\gamma=0$) families across the spin range, against $v_e$: (a) mass, angular momentum and equatorial throat radius; (b) $J/M^2$ against the Kerr bound; (c) the ratio of end masses; (d) the flattening $R_p/R_e$; (e) the exotic matter, the phantom field's integrated null-energy violation $\mathcal{I}=\int(\rho+p_\eta)\,dV$ over the $t=\,$const slice~\cite{visser2003}, per equatorial throat radius, with the 3D runs (squares) placed by the scalar charge measured on each run's own $t=0$ slice, which reproduces its background's to $3\times10^{-4}$; (f) the throat angular velocity, which peaks and falls to zero at extremality. The symmetric family violates the Kerr bound at every spin and the drainhole family exceeds it by up to $\sim20\%$ at intermediate spin; the exotic matter per throat radius falls a hundredfold along the drainhole family and tenfold along the symmetric one by $v_e=0.99$; both families end on extremal Kerr.}
 \label{fig:trends}
 \end{figure*}
 
@@ -305,28 +312,12 @@ Three checks validate the pipeline. (i) At $t=0$ the Hamiltonian and momentum co
 \label{fig:curve}
 \end{figure}
 
-% Figs. 5-7 are read here, with Fig. 4, a page early so that each heads a page of text.
+% Figs. 4 and 5 are read here, a page early, so that each heads a page of text.
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{farzone_wave_02c.pdf}
 \caption{The $(2,0)$ wave of the unperturbed rotating collapse. (a)~$r\,\Delta\psi_4^{20}$ of the 0.2c far-zone run on spheres $R=14$--45 against retarded time: one waveform with ring-down period ${\approx}24$; only the first lobe falls with $R$ (near field), the extrema are flat in $R$ to $1.5\%$ over $R=30$--45, and this box reproduces the $L=64$ run's throat history to $3.2\times10^{-4}$. (b)~The wave against spin at $R=14$, each run on its own collapse clock $u=t-R-t_{10}$ ($t_{10}$: its equatorial deficit at $10\%$): the 0.30c burst has the 0.2c's shape and timing at ${\sim}1.5\times$ the amplitude, and the static run is drawn at zero---a spherical collapse radiates no quadrupole; its measured record stays below $3\times10^{-8}$. (c)~The radiated energy $E_{20}=\tfrac{1}{16\pi}\int|\int r\psi_4\,dt'|^{2}\,dt$ over the aligned burst, per unit $M_{\rm ADM}$, at $R=18$ (filled) and $R=14$ (open): $3.3\times10^{-7}\to8.0\times10^{-7}$ from the 0.2c to the 0.30c, a factor 2.5--3---the square of the amplitude ratio in (b)---with the static at zero. (d)~The speed of each extremum between neighbouring spheres, against the local coordinate speed of light (crosses): the burst propagates at light speed. The outcome: an unperturbed, axisymmetric rotating collapse radiates a quadrupole burst whose energy grows with spin as the amplitude squared, and the static collapse radiates nothing.}
 \label{fig:wave}
-\end{figure*}
-
-% The appendix figures are read here, with Fig. 5, so that each heads a page the text still
-% runs onto: they are all placed before the references start (the barrier below).
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.97\textwidth]{convergence_02c.pdf}
-\caption{Convergence of the 0.2c rung over its triplet $N=96/128/192$ ($L=64$; finest $\Delta x$ in each panel title). (a)--(d)~Hamiltonian and (e)--(h)~momentum constraint norms per refinement level; dashed and dotted, the $N=192$ norms rescaled by $2^{2}$ and $2^{4}$: the measured $N=96$ norms lie between the second- and fourth-order brackets on every level while the collapse grows. (i)~The equatorial throat radius against the stationary solution, falling with resolution. (j)~The collapse, each run aligned at its own $10\%$ time: the three resolutions land on one curve. (k)~$r\,\Delta\psi_4^{20}$ at $R=14$, aligned: $N=128$ and 192 overlap ($N=96$ dies in its collapse before the burst arrives). (l)~The MOTS radius, aligned: one horizon, settling at $R=2.52$. The outcome: the collapse rate, the waveform and the horizon are grid-converged at third to fourth order.}
-\label{fig:conv02}
-\end{figure*}
-
-\begin{figure*}[t]
-\centering
-\includegraphics[width=0.97\textwidth]{convergence_09c.pdf}
-\caption{Stability of the 0.9c rung over its triplet $N=128/192/256$ ($L=128$; finest $\Delta x$ in each panel title), to $t=150$. (a)--(h)~Constraint norms per level with the same second-/fourth-order brackets as Fig.~\ref{fig:conv02}: every level converges with resolution and nothing breaks out over the window. (i)~The equatorial throat radius holds the stationary value, its offset falling with resolution. (j)~The areal throat radius drifts by $\le7\times10^{-5}$ over the full window. (k)~The $(2,0)$ extraction at $R=18$, relative to its $t=0$ read-off: fluctuations at the $10^{-4}$ level, no burst. (l)~The far-side puncture lapse falls smoothly at all three resolutions (the gauge, not the geometry). The outcome: the 0.9c throat is stable on its window at every resolution---no growing radius, no constraint breakout, no wave.}
-\label{fig:conv09}
 \end{figure*}
 
 
@@ -378,11 +369,32 @@ and \texttt{GRTeclyn}.
 
 \appendix
 
+% The appendix is one column: a short text that its two full-width figures follow,
+% written in place, before the references; ragged bottoms, so a page that a figure cannot
+% fill leaves its space at the foot, not between heading, text and figure.
+\raggedbottom
+\onecolumngrid
+
 \section{Convergence of the evolutions}
 \label{app:conv}
 \packfloatpages
 
 The two triplets are the 0.2c, the slowest spinning collapse (Fig.~\ref{fig:conv02}), and the 0.9c, the stable fast rung (Fig.~\ref{fig:conv09}), both read through the per-level constraint norms of Sec.~\ref{sec:setup:scheme}.
+
+\begin{pagefigure}
+\centering
+\includegraphics[width=0.97\textwidth]{convergence_02c.pdf}
+\caption{Convergence of the 0.2c rung over its triplet $N=96/128/192$ ($L=64$; finest $\Delta x$ in each panel title). (a)--(d)~Hamiltonian and (e)--(h)~momentum constraint norms per refinement level; dashed and dotted, the $N=192$ norms rescaled by $2^{2}$ and $2^{4}$: the measured $N=96$ norms lie between the second- and fourth-order brackets on every level while the collapse grows. (i)~The equatorial throat radius against the stationary solution, falling with resolution. (j)~The collapse, each run aligned at its own $10\%$ time: the three resolutions land on one curve. (k)~$r\,\Delta\psi_4^{20}$ at $R=14$, aligned: $N=128$ and 192 overlap ($N=96$ dies in its collapse before the burst arrives). (l)~The MOTS radius, aligned: one horizon, settling at $R=2.52$. The outcome: the collapse rate, the waveform and the horizon are grid-converged at third to fourth order.}
+\label{fig:conv02}
+\end{pagefigure}
+
+\begin{pagefigure}
+\centering
+\includegraphics[width=0.97\textwidth]{convergence_09c.pdf}
+\caption{Stability of the 0.9c rung over its triplet $N=128/192/256$ ($L=128$; finest $\Delta x$ in each panel title), to $t=150$. (a)--(h)~Constraint norms per level with the same second-/fourth-order brackets as Fig.~\ref{fig:conv02}: every level converges with resolution and nothing breaks out over the window. (i)~The equatorial throat radius holds the stationary value, its offset falling with resolution. (j)~The areal throat radius drifts by $\le7\times10^{-5}$ over the full window. (k)~The $(2,0)$ extraction at $R=18$, relative to its $t=0$ read-off: fluctuations at the $10^{-4}$ level, no burst. (l)~The far-side puncture lapse falls smoothly at all three resolutions (the gauge, not the geometry). The outcome: the 0.9c throat is stable on its window at every resolution---no growing radius, no constraint breakout, no wave.}
+\label{fig:conv09}
+\end{pagefigure}
+\twocolumngrid
 
 \FloatBarrier
 
@@ -489,6 +501,11 @@ V.~Dzhunushaliev, V.~Folomeev, B.~Kleihaus, J.~Kunz, and E.~Radu,
 J.~L.~Bl\'azquez-Salcedo, L.~M.~Gonz\'alez-Romero, F.~S.~Khoo, J.~Kunz, and P.~Navarro Moreno,
 \newblock ``Radial perturbations of charged wormholes,''
 \newblock arXiv:2510.11406 [gr-qc] (2025).
+
+\bibitem{visser2003}
+M.~Visser, S.~Kar, and N.~Dadhich,
+\newblock ``Traversable wormholes with arbitrarily small energy condition violations,''
+\newblock Phys.\ Rev.\ Lett.\ \textbf{90}, 201102 (2003).
 
 \bibitem{khoo2024}
 F.~S.~Khoo \emph{et al.},

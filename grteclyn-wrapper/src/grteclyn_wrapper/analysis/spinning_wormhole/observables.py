@@ -22,7 +22,8 @@ from .equations import residual_forms
 from .solution import Solution
 from .spectral import cheb_eval
 
-__all__ = ["observables", "identity_gates", "C_GATE"]
+__all__ = ["observables", "identity_gates", "C_GATE", "exotic_matter",
+           "static_exotic_matter"]
 
 C_GATE = 0.05
 
@@ -265,3 +266,35 @@ def ergosurface_equator(sol: Solution) -> dict:
         out["ckk_law_deviation"] = float(
             math.atan(eta_ergo / sol.eta0) - law)
     return out
+
+
+def exotic_matter(sol: Solution, d: float, n_x: int = 96, n_mu: int = 48) -> float:
+    """The phantom field's volume integral quantifier (Visser, Kar & Dadhich,
+    PRL 90, 201102), VIQ = int (rho + p_eta) dV over the t = const slice,
+    both universes; d is the solution's scalar charge D.
+
+    The field is exactly psi = (D/eta0)(atan(eta/eta0) - pi/2), the table's
+    phi = psi / sqrt(4 pi), so rho + p_eta = -g^{eta eta} phi'^2 and, with
+    dV = e^{-3f/2 + nu} h sin(theta) deta dtheta dvarphi, nu drops out:
+    VIQ = -(D^2/2) int deta/h int dmu e^{-f/2}, mu = cos(theta).  Negative,
+    and -pi eta0 for the static Ellis wormhole.  Gauss-Legendre in x on the
+    solution's own radial map and in mu."""
+    xg, wx = np.polynomial.legendre.leggauss(n_x)
+    mg, wm = np.polynomial.legendre.leggauss(n_mu)
+    m = sol.radial_map
+    jac = m.deta(xg) / (m.eta(xg) ** 2 + sol.eta0**2)          # deta / h per dx
+    f = sol.eval_grid("f", xg, 2.0 * mg**2 - 1.0)               # y = cos 2 theta
+    return float(-0.5 * d * d * np.einsum("i,i,j,ij->", wx, jac, wm, np.exp(-0.5 * f)))
+
+
+def static_exotic_matter(eta0: float, gamma: float) -> tuple[float, float]:
+    """(VIQ, R_e) of the static member in closed form: f = (gamma/2)(1 - x)
+    gives int dx e^{-f/2} = (e^{2k} - 1)/k, k = -gamma/4, and the throat (the
+    area minimum, eta = mu_+) has R_e = e^{-f/2} sqrt(mu_+^2 + eta0^2)."""
+    st = cv.static_member(eta0, gamma)
+    k = -gamma / 4.0
+    ix = math.expm1(2.0 * k) / k if k else 2.0
+    viq = -math.pi * st["D"] ** 2 * ix / (2.0 * eta0)
+    eta_t = st["eta_throat"]
+    f_t = cv.static_f_of_x(2.0 / math.pi * math.atan(eta_t / eta0), gamma)
+    return viq, math.exp(-0.5 * f_t) * math.hypot(eta_t, eta0)

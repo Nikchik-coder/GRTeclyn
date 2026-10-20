@@ -1,0 +1,49 @@
+# The phantom scalar charge D each Table III run carries, measured on its own equatorial phi
+# slice (frames/_slice_cache/phi_z) by grteclyn-wrapper/scripts/analysis/spinning_wormhole/
+# measure_scalar_charge.py, run on a GPU node beside the runs 2026-10-20: phi = a + D g(r), the
+# background's exact profile on the isotropic radius, fitted over 6 <= r <= 0.35 L.  which: t0 = the
+# first slice, end = the last slice inside the run's trust window (the three L 128 0.5c/0.6c/0.7c
+# runs were live: their latest slice).  rms_rel is the fit's rms over the field's range: at t0 every
+# run matches its background's D to 1e-4; at the window's end only the stable 0.9c keeps the
+# stationary profile (the collapse's or inflation's scalar field fills the annulus elsewhere).
+run	background	which	t	L	D	a	rms_rel	pixels
+static_hold_L64_ml3_spdrv0_farfix_t100	static	t0	0.0000	64	2.23599650	2.015e-06	2.70e-03	374532
+static_hold_L64_ml3_spdrv0_farfix_t100	static	end	60.0000	64	1.88399411	-5.229e-03	1.16e-02	374532
+spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100	full_eta2_m1_J100	t0	0.0000	64	2.20151357	1.703e-06	3.34e-03	210716
+spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100	full_eta2_m1_J100	end	55.0000	64	2.10526122	-1.390e-03	3.89e-03	210716
+spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100	full_eta2_m1_J100	t0	0.0000	64	2.20161219	1.984e-06	2.70e-03	374532
+spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100	full_eta2_m1_J100	end	99.0000	64	-0.70301450	-1.435e-02	1.06e-01	374532
+spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100	full_eta2_m1_J100	t0	0.0000	64	2.20164099	8.368e-07	1.96e-03	842808
+spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100	full_eta2_m1_J100	end	66.0000	64	2.10350787	-1.483e-03	3.75e-03	842808
+spin_kick_L64_ml3_J100_full_l0_eps_m1e3_spdrv0_farfix_t100	full_eta2_m1_J100	t0	0.0000	64	2.20161219	1.984e-06	2.70e-03	374532
+spin_kick_L64_ml3_J100_full_l0_eps_m1e3_spdrv0_farfix_t100	full_eta2_m1_J100	end	61.0000	64	8.41467796	8.883e-02	3.85e-02	374532
+spin_kick_L64_ml3_J100_full_l0_eps_p1e3_spdrv0_farfix_t100	full_eta2_m1_J100	t0	0.0000	64	2.20161219	1.984e-06	2.70e-03	374532
+spin_kick_L64_ml3_J100_full_l0_eps_p1e3_spdrv0_farfix_t100	full_eta2_m1_J100	end	42.0000	64	1.91476710	-4.193e-03	9.45e-03	374532
+spin_hold_L128_ml3_J100_full_farfix_t150	full_eta2_m1_J100	t0	0.0000	128	2.20149230	-8.869e-07	1.39e-03	1585180
+spin_hold_L128_ml3_J100_full_farfix_t150	full_eta2_m1_J100	end	99.0000	128	-1.01120971	-2.102e-02	8.36e-02	1585180
+spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100	fam_a_ve030	t0	0.0000	64	2.16166188	1.948e-06	2.70e-03	374532
+spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100	fam_a_ve030	end	99.0000	64	-0.72044405	-2.565e-02	4.29e-02	374532
+spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130	fam_a_ve030	t0	0.0000	64	2.16166188	1.948e-06	2.70e-03	374532
+spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130	fam_a_ve030	end	99.0000	64	-0.72044405	-2.565e-02	4.29e-02	374532
+spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100	fam_a_ve040	t0	0.0000	64	2.10584933	1.898e-06	2.70e-03	374532
+spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100	fam_a_ve040	end	99.0000	64	0.95310292	-1.343e-02	2.89e-02	374532
+spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100	fam_a_ve045	t0	0.0000	64	2.05708728	1.854e-06	2.70e-03	374532
+spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100	fam_a_ve045	end	99.0000	64	1.92235228	-1.091e-03	3.11e-03	374532
+spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150	fam_a_ve045	t0	0.0000	64	2.05708728	1.854e-06	2.70e-03	374532
+spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150	fam_a_ve045	end	99.0000	64	1.92235228	-1.091e-03	3.11e-03	374532
+spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100	fam_a_ve050	t0	0.0000	64	2.00125259	7.608e-07	1.96e-03	842808
+spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100	fam_a_ve050	end	66.0000	64	2.00427316	3.779e-05	1.96e-03	842808
+spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150	fam_a_ve050	t0	0.0000	64	2.00122640	1.803e-06	2.70e-03	374532
+spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150	fam_a_ve050	end	95.0000	64	2.18075384	2.912e-03	5.74e-03	374532
+spin_hold_L128_ml3_ve050a_spdrv1_sig04_farfix_t150	fam_a_ve050	t0	0.0000	128	2.00111742	-8.062e-07	1.39e-03	1585180
+spin_hold_L128_ml3_ve050a_spdrv1_sig04_farfix_t150	fam_a_ve050	end	78.0000	128	1.54560273	-3.752e-03	1.55e-02	1585180
+spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150	fam_a_ve060	t0	0.0000	128	1.90231226	-7.664e-07	1.39e-03	1585180
+spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150	fam_a_ve060	end	82.0000	128	1.51703063	-3.167e-03	1.23e-02	1585180
+spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150	fam_a_ve070	t0	0.0000	128	1.71951427	-6.927e-07	1.39e-03	1585180
+spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150	fam_a_ve070	end	71.0000	128	1.60154968	-1.027e-03	4.83e-03	1585180
+spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150	fam_a_ve090	t0	0.0000	128	1.06512412	-1.395e-06	2.35e-03	396268
+spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150	fam_a_ve090	end	150.0000	128	1.05691655	-7.199e-05	2.39e-03	396268
+spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150	fam_a_ve090	t0	0.0000	128	1.06528652	-6.693e-07	1.75e-03	891684
+spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150	fam_a_ve090	end	133.0000	128	1.06308673	-2.089e-05	1.76e-03	891684
+spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150	fam_a_ve090	t0	0.0000	128	1.06534235	-4.292e-07	1.39e-03	1585180
+spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150	fam_a_ve090	end	99.0000	128	1.06534450	-4.086e-07	1.39e-03	1585180
