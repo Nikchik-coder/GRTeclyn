@@ -67,27 +67,27 @@ FIGURES = solutions.REPO / "results" / "spinningwormhole" / "figures"
 # come from its packed header) and its hold run; the static anchor sits at J = 0.
 # The L 64 rungs are the N 128 paper runs; the 0.5c exists at N 192 only.
 RUNS = (
-    dict(label="0c", table=None, run="static_hold_L64_ml3_spdrv0_farfix_t100"),
-    dict(label="0.2c", table="full_eta2_m1_J100",
+    dict(label="D0", table=None, run="static_hold_L64_ml3_spdrv0_farfix_t100"),
+    dict(label="D21", table="full_eta2_m1_J100",
          run="spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100"),
-    dict(label="0.30c", table="fam_a_ve030",
+    dict(label="D30", table="fam_a_ve030",
          run="spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100"),
-    dict(label="0.40c", table="fam_a_ve040",
+    dict(label="D40", table="fam_a_ve040",
          run="spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100"),
     # 10-20: the 0.46c / 0.5c point at their t 150 / N 128 runs (both inflate).  The
     # 0.6c / 0.7c point at their L 128 runs with min_chi 1e-8: with the fast recipe's
     # 1e-4 the floor rewrote the negative-mass far side's centre and the throat's late
     # motion was numerical (the 0.5c / 0.6c L 128 DIED 84.81 / 99.16, the 0.7c was
     # stopped at 107.65).
-    dict(label="0.46c", table="fam_a_ve045",
+    dict(label="D46", table="fam_a_ve045",
          run="spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150"),
-    dict(label="0.5c", table="fam_a_ve050",
+    dict(label="D51", table="fam_a_ve050",
          run="spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150"),
-    dict(label="0.6c", table="fam_a_ve060",
+    dict(label="D59", table="fam_a_ve060",
          run="spin_hold_L128_ml3_ve060a_spdrv1_sig04_mc8_farfix_t150"),
-    dict(label="0.7c", table="fam_a_ve070",
+    dict(label="D70", table="fam_a_ve070",
          run="spin_hold_L128_ml3_ve070a_spdrv1_sig04_mc8_farfix_t150"),
-    dict(label="0.9c", table="fam_a_ve090",
+    dict(label="D90", table="fam_a_ve090",
          run="spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150"),
 )
 
@@ -100,9 +100,9 @@ WIDE_BANDS = ((3e-3, 3e-2), (1e-2, 1e-1))   # printed for comparison only
 # Per-rung tag offsets (points) and anchors: above-right where the falling fit
 # leaves that side free, below-left where a tag there would reach the rules.
 TAG_SIDES = {
-    "0.30c": (-5, -4, "right", "top"),
-    "0.40c": (-5, -4, "right", "top"),
-    "0.46c": (-5, -4, "right", "top"),
+    "D30": (-5, -4, "right", "top"),
+    "D40": (-5, -4, "right", "top"),
+    "D46": (-5, -4, "right", "top"),
 }
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
 PALETTES = {
@@ -301,12 +301,12 @@ def draw(points, pal, jc_frac) -> None:
     if any(p["branch"] == "inflates" for p in drawn):
         entries.append((mlines.Line2D([], [], marker="^", ls="none", ms=4.6,
                                       color=pal["measured"]),
-                        "measured $\\tau$, inflation"))
+                        "measured $\\tau$, expansion"))
     if any(p["stable"] for p in drawn):
         entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
-                                      mec=pal["stable"], mew=1.2), "stable on its window"))
+                                      mec=pal["stable"], mew=1.2), "stable over the run"))
     if fit is not None:
-        tag = f"fit $a-b\\,(J/A)^2$" + (f": dies at {x0:.0f} %" if x0 else "")
+        tag = f"fit $a-b\\,(J/A)^2$" + (f": zero at {x0:.0f} %" if x0 else "")
         entries.append((fit_line, tag))
     if az:
         entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=6.5, mfc="none",

@@ -31,6 +31,7 @@ Warning--I didn't find a database entry for "volkov2021"
 Warning--I didn't find a database entry for "azad2023"
 Warning--I didn't find a database entry for "azad2024"
 Warning--I didn't find a database entry for "dzhunushaliev2013"
+Warning--I didn't find a database entry for "khoo2024"
 Warning--I didn't find a database entry for "blazquez2025"
 Warning--I didn't find a database entry for "visser2003"
 Warning--I didn't find a database entry for "grteclyn"
@@ -55,7 +56,7 @@ Control: year (1) truncated
 Control: production of eprint (0) enabled
 You've used 2 entries,
             6079 wiz_defined-function locations,
-            1663 strings with 15346 characters,
+            1664 strings with 15354 characters,
 and the built_in function-call counts, 991 in all, are:
 = -- 12
 > -- 16
@@ -94,4 +95,4 @@ warning$ -- 1
 while$ -- 11
 width$ -- 0
 write$ -- 52
-(There were 29 warnings)
+(There were 30 warnings)

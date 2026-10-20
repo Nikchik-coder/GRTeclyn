@@ -240,53 +240,23 @@ What to show (as in Evstafyeva et al., Appendix A, Fig. 5, and Clough et al., Ap
 
 ### Spinning-wormhole paper
 
-Substance:
+The presentation pass landed 2026-10-20 (models D0–D90, Table III rebuilt, the rewritten abstract, the softened
+Sec. II A, the condensed Sec. IV B with the interface appendix, captions, title "Rotation slows the instability of
+Ellis–Bronnikov wormholes"; "to our knowledge, the first" was dropped from the abstract on 2026-10-20). What remains
+is substance:
 
-- [ ] Remove unfinished runs. Table III lists rows as "running", and the caption calls them "in flight at this draft".
-  Submit only finished runs.
+- [ ] Remove unfinished runs before submission. Table III still lists the D59 and D70 rows as "in progress"; they
+  leave the table (or land finished) before anything goes out.
 - [ ] Control the perturbation sign at 33%. The vₑ = 0.51 model expands with one outer-boundary treatment and shrinks
   with the other, so its end state depends on the boundary. Repeat the explicit ±ε radial perturbations run at
   vₑ = 0.21 on this model before claiming a branch switch.
-- [ ] Downgrade the 42% extrapolation. The fit joins two branches whose τ come from different estimators, as the
-  draft admits. Take it out of the abstract and keep it in the discussion as indicative.
-- [ ] Cite Ref. [23] accurately. "The triplet protocol" is not its term; its Sec. II lists four checks. Say which are
-  met: a gauge-invariant measure (areal radius, MOTS), converging constraints during growth, a converged non-zero τ
-  (needs Q_meas), and a varied perturbation amplitude (met only at vₑ = 0.21).
-- [ ] Scale the stability claim: "no evidence of instability up to t = 150, about 34 static e-folding times" for
-  vₑ = 0.90, and replace "answering … the stability question left open in Ref. [14]" with "addressing, for this family
-  and timescale".
-- [ ] Converge τ, not only the constraints. Appendix A's constraint rescaling (N = 192 against N = 96, by 2² and 2⁴) is
-  valid but does not cover τ. Quote Q_meas for τ on D21 against Q₃ = 1.95 and Q₄ = 2.69, and for the areal-radius
-  drift on D90 against Q₄ = 5.94.
-
-Presentation:
-
-- [ ] Rename the models D0, D21, D30, D40, D46, D51, D59, D70, D90 instead of "0.2c", "0.30c" and so on.
-- [ ] Rebuild Table III with plain columns: model, vₑ, J/J_ext, M_ADM, L, N, σ, boundary damping (on/off), final t,
-  converged-to t, end state, τ. Drop "recipe", "shell", "trust" and the ✓/onset codes.
-- [ ] Define at first use: vₑ, η₀, γ, the asymmetry C, J_ext ≡ A/8π (so that 8πJ/A reads as a fraction), MOTS, Ψ₄ and
-  its (ℓ, m) = (2, 0) mode, and M_MS, which appears once undefined.
-- [ ] Cut the abstract from about ten numbers to two or three.
-- [ ] Condense Sec. IV B. The timestep investigation (interface mode, σ, failed speed-ups) becomes two sentences on
-  what was used and why; the rest goes to a short appendix.
-- [ ] Shorten the captions: remove the "The outcome: …" labels in Figs. 5–7 (keeping one outcome sentence) and the
-  "One rate, two fates" opener in Fig. 4.
-- [ ] Present Eq. (7) as a correction to Eq. (12) of Ref. [15], not an indictment, and consider writing to that
-  paper's authors before submission.
-- [ ] Let the title state the result, for example "Rotation slows and redirects the instability of Ellis–Bronnikov
-  wormholes".
-- [ ] A draft abstract to start from. Check every claim and number against the ledger before using it.
-
-  > We present, to our knowledge, the first nonlinear 3+1 evolutions of rotating Ellis–Bronnikov wormholes. We
-  > construct stationary rotating drainhole solutions with a spectral solver up to an equatorial throat velocity of
-  > 0.99c, validate the solver against published symmetric solutions, and correct an inconsistency in a published
-  > field equation. Perturbed only by truncation error, the rotating throats show that rotation slows the radial
-  > instability of the static wormhole. Near 30% of the extremal angular momentum the unstable mode switches from
-  > collapse to expansion, rather than disappearing as second-order perturbation theory suggests. At 81% we find no
-  > evidence of instability over the evolved time at three resolutions. Collapsing rotating throats emit an ℓ = 2,
-  > m = 0 gravitational-wave burst whose energy grows with spin. We also show that second-order perturbative initial
-  > data seed the instability at the level of their own truncation error, so they are unsuitable for stability
-  > studies.
+- [ ] Converge τ, not only the constraints. Appendix A's constraint rescaling is valid but does not cover τ. Measured
+  2026-10-20 from the packed streams, the band-fit τ on D21 is 5.65 / 5.00 / 5.15 at N = 96/128/192 and the D90
+  drift at t = 150 is 6.4 / 2.2 / 3.2 ×10⁻⁵ at N = 128/192/256: both Q_meas are negative (−4.5 and −4.1), i.e.
+  non-monotone, so a plain Q_meas quote would hurt. Needs a decision: a different τ estimator window, an error bar
+  from the top pair, or stating the lowest member sits outside the convergent regime.
+- [ ] Consider writing to the authors of Ref. [15] about the ν-equation correction before submission; Kunz's group
+  is a likely referee.
 
 ## Sources
 

@@ -90,9 +90,9 @@ RUN_DIR = solutions.REPO / "runs" / "spinning_wormhole" / "drainhole" / "00_pape
 LIGHT = PACKED / FARZONE / "light_speed_equator.dat"
 # the rungs of (b) and (c): label, packed run, trust window, background table (None: the static)
 SPINS = (
-    ("0c", "static_hold_L64_ml3_spdrv0_farfix_t100", 60.0, None),
-    ("0.2c", FARZONE, 150.0, "full_eta2_m1_J100"),
-    ("0.30c", "spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130", 130.0, "fam_a_ve030"),
+    ("D0", "static_hold_L64_ml3_spdrv0_farfix_t100", 60.0, None),
+    ("D21", FARZONE, 150.0, "full_eta2_m1_J100"),
+    ("D30", "spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130", 130.0, "fam_a_ve030"),
 )
 M_STATIC = 1.0              # the massive drainhole's M (a = 2, M = 1): the static has no table
 R_SPIN = 14.0               # (b)'s radius: the one every rung extracts
@@ -273,7 +273,7 @@ def draw(t, waves, spins, look, light) -> plt.Figure:
     # u = -10.6, short of this window.
     entries_b = []
     for sp, c in zip(spins, look["spins"]):
-        if sp["label"] == "0c":
+        if sp["label"] == "D0":
             entries_b.append((ax["b"].plot(U_SPIN, [0.0, 0.0], color=c, lw=0.9,
                                            ls=(0, (4.0, 2.0)))[0], sp["label"]))
         else:
@@ -327,7 +327,7 @@ def report(t, waves, spins, light) -> None:
     for sp in spins:
         burst = (sp["u"] >= 0.0) & (sp["u"] <= E_WINDOW)
         w = sp["w"].real
-        if burst.any() and sp["label"] != "0c":
+        if burst.any() and sp["label"] != "D0":
             print(f"(b) {sp['label']}: t10 {sp['t10']:.2f}; R {R_SPIN:g} trough {w[burst].min():+.2e} at "
                   f"u {sp['u'][burst][np.argmin(w[burst])]:.1f}, peak {w[burst].max():+.2e} at "
                   f"u {sp['u'][burst][np.argmax(w[burst])]:.1f}")
