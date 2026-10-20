@@ -251,7 +251,9 @@ def speeds(feats, light):
 
 def draw(t, waves, spins, look, light) -> plt.Figure:
     style.prd(8.0)
-    fig, ax = plt.subplot_mosaic([["a", "b"], ["c", "d"]], figsize=(7.0, 4.8), layout="constrained")
+    # 2026-10-20: one row, a strip across the page top (the 2 x 2 grid took half a page)
+    fig, ax = plt.subplot_mosaic([["a", "b", "c", "d"]], figsize=(7.05, 2.25), layout="constrained",
+                                 width_ratios=(1.25, 1.15, 0.8, 1.0))
     radii = sorted(waves)
     lines = style.ordinal_series(len(radii), lw=1.1)
     for line, c in zip(lines, look["radii"]):
@@ -262,7 +264,8 @@ def draw(t, waves, spins, look, light) -> plt.Figure:
                for r, line in zip(radii, lines)]
     ax["a"].axhline(0.0, color=style.GRID, lw=0.6, zorder=0)
     ax["a"].set(xlim=U_RANGE, xlabel=r"$t-R$", ylabel=r"$10^4\, r\,\Delta\psi_4^{20}$")
-    style.legend_top(ax["a"], handles, ncol=len(radii))
+    ax["a"].set_xticks(np.arange(40.0, U_RANGE[1] + 1.0, 20.0))
+    style.legend_top(ax["a"], handles, ncol=3)
 
     # (b) the wave against spin at R_SPIN, aligned on each rung's collapse.  The
     # static's line is the exact zero of spherical symmetry (dashed: a symmetry
@@ -290,7 +293,7 @@ def draw(t, waves, spins, look, light) -> plt.Figure:
     ax["c"].set(xlim=(-2.0, 22.0), ylim=(-0.4, 9.0), xlabel=r"$8\pi J/A$ [%]",
                 ylabel=r"$10^7\, E_{20}/M_{\rm ADM}$")
     ax["c"].set_xticks([sp["frac"] for sp in spins], [f"{sp['frac']:.1f}" for sp in spins])
-    style.legend_top(ax["c"], entries_c, ncol=2, borderpad=0.6)
+    style.legend_top(ax["c"], entries_c, ncol=1, borderpad=0.6)
 
     # (d) the extrema's speed between neighbouring spheres, against light
     feats = extrema(t, waves)
@@ -312,9 +315,9 @@ def draw(t, waves, spins, look, light) -> plt.Figure:
                 ylabel=r"$\Delta R/\Delta t$")
     ax["d"].set_xticks(radii)
     # the marker handles' extent pads past the key's left edge: inset the key a little
-    style.legend_top(ax["d"], entries_d, ncol=3, borderpad=0.6)
+    style.legend_top(ax["d"], entries_d, ncol=2, borderpad=0.6)
     keys = ("a", "b", "c", "d")
-    style.tag_keys(fig, [ax[k] for k in keys], [f"({k})" for k in keys])
+    style.tag_keys(fig, [ax[k] for k in keys], [f"({k})" for k in keys], row="last")
     return fig
 
 

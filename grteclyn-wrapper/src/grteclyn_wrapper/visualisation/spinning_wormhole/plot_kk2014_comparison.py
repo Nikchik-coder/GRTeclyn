@@ -53,7 +53,7 @@ OUT = solutions.REPO / "results" / "spinningwormhole" / "figures" / "solver" / "
 XLIM = (0.0, 1.0)
 YLIM_A = (0.0, 0.52)
 YLIM_B = (0.595, 1.005)
-KK = "KK 2014, digitized"
+KK = "KK 2014"
 SOLID, DASHED, DOTTED = "-", (0, (6.5, 2.2)), (0, (1.3, 1.7))
 
 # 2026-10-13: the spinning paper colours its quantities red / green / blue,
@@ -104,13 +104,14 @@ def agreement(fam, kk) -> dict[str, tuple[float, float, int]]:
 
 
 def draw(fam, kk, sep: float, lk: dict[str, dict]):
-    style.prd(9.0)
-    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(7.0, 3.4), layout="constrained")
+    style.prd(8.0)
+    # 2026-10-20: a low strip whose keys read one quantity per row (the 7 x 3.4 in
+    # figure with its five-row keys took 40 % of a page)
+    fig, (ax_a, ax_b) = plt.subplots(1, 2, figsize=(7.05, 2.3), layout="constrained")
     v_ours = np.linspace(0.0, fam["v"][-1], 600)
     v_kerr = np.linspace(0.0, 1.0, 401)
     kerr = kk2014.kerr(v_kerr)
     ext = kk2014.kerr(np.array([1.0]))
-    blank = (Line2D([], [], alpha=0.0), "")
 
     def ours(q):
         return PchipInterpolator(fam["v"], fam[q])(v_ours)
@@ -138,15 +139,14 @@ def draw(fam, kk, sep: float, lk: dict[str, dict]):
     style.legend_top(ax_a, [
         key(lk["ours1"], r"$M/M_0$ this work"),
         key(lk["kk1"], rf"$M/M_0$ {KK}"),
+        key(lk["kerr1"], r"$M/M_0$ Kerr"),
         key(lk["ours2"], r"$J/J_0$ this work"),
         key(lk["kk2"], rf"$J/J_0$ {KK}"),
-        key(lk["kerr1"], r"$M/M_0$ Kerr"),
-        key(lk["kk3"], rf"$\Omega J/\Omega_0 J_0$ {KK}"),
         key(lk["kerr2"], r"$J/J_0$ Kerr"),
-        key(lk["kerr3"], r"$\Omega J/\Omega_0 J_0$ Kerr"),
-        blank,
         key(lk["extremal"], "extremal Kerr"),
-    ], ncol=2)
+        key(lk["kk3"], rf"$\Omega J/\Omega_0 J_0$ {KK}"),
+        key(lk["kerr3"], r"$\Omega J/\Omega_0 J_0$ Kerr"),
+    ], ncol=3, borderpad=0.6)
 
     # (b) the throat's polar and areal radii.
     spans = (XLIM[1] - XLIM[0], YLIM_B[1] - YLIM_B[0])
@@ -161,13 +161,12 @@ def draw(fam, kk, sep: float, lk: dict[str, dict]):
     style.legend_top(ax_b, [
         key(lk["ours1"], r"$R_p/R$ this work"),
         key(lk["kk1"], rf"$R_p/R$ {KK}"),
+        key(lk["kerr1"], r"$R_p/R$ Kerr"),
         key(lk["ours2"], r"$R_A/R$ this work"),
         key(lk["kk2"], rf"$R_A/R$ {KK}"),
-        key(lk["kerr1"], r"$R_p/R$ Kerr"),
         key(lk["kerr2"], r"$R_A/R$ Kerr"),
-        blank,
         key(lk["extremal"], "extremal Kerr"),
-    ], ncol=2)
+    ], ncol=3, borderpad=0.6)
 
     style.tag_keys(fig, [ax_a, ax_b], ["(a)", "(b)"], row="last")
     return fig

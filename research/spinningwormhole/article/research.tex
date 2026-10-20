@@ -40,6 +40,21 @@
   \setcounter{dbltopnumber}{2}%
 }
 
+% The appendix is two large figures and little text, so its pages are float
+% pages.  Stock float pages centre their floats and spread the slack between
+% them; \packfloatpages stacks them from the top at a fixed gap instead (as in
+% the binary paper).  Both the single- and double-column sets are set.
+\makeatletter
+\newcommand{\packfloatpages}{%
+  \setlength{\@fptop}{0pt}%
+  \setlength{\@fpsep}{12pt}%
+  \setlength{\@fpbot}{0pt plus 1fil}%
+  \setlength{\@dblfptop}{0pt}%
+  \setlength{\@dblfpsep}{12pt}%
+  \setlength{\@dblfpbot}{0pt plus 1fil}%
+}
+\makeatother
+
 \graphicspath{{figures/}{../../../results/spinningwormhole/figures/}}
 
 \hypersetup{
@@ -79,7 +94,7 @@ Rotation is the oldest candidate~\cite{matos2006}. Spinning Ellis--Bronnikov sol
 
 This paper builds the tools for that evolution and takes its first step. We construct two families of backgrounds as exact stationary solutions. The symmetric family ($\gamma=0$), massless when static, is the one with published data---the curves of Ref.~\cite{kleihaus_kunz2014} and the scalar charges of Ref.~\cite{chew2016}---and we use it to validate the solver and the 3D initial data across the spin range. The drainhole family ($\gamma=-\pi$), whose static member is the mass-1 drainhole evolved in Refs.~\cite{shirokov2026,shirokov2026c}, has no published fast-spin data at all; it is the family we evolve. The solver is gated on identities it never imposes, a discipline that pays immediately: one of the published field equations is inconsistent (Sec.~\ref{sec:model:eq12}), and second-order perturbative initial data turn out to seed the instability at their own error level (Sec.~\ref{sec:slow}). We then put the backgrounds on the AMR grid, verify them at fourth order, and evolve the drainhole along a ladder of nine spins (Table~\ref{tab:ladder}). The result: rotation slows the collapse, as the perturbative sign predicts, and near $30\%$ of the extremal angular momentum the same mode changes fate---the unperturbed throat turns and inflates---while at $81\%$ the throat is stable over the full run.
 
-Section~\ref{sec:model} gives the family and the corrected field equations; Sec.~\ref{sec:solver} the solver, the validation against the published data, and the map of the parameter space (Table~\ref{tab:backgrounds}); Sec.~\ref{sec:setup} the numerical setup and the runs (Table~\ref{tab:ladder}); Sec.~\ref{sec:slow} the evolutions; Sec.~\ref{sec:conclusions} the conclusions. Appendix~\ref{app:solver} holds solver details, the comparison with the anchor solutions of Ref.~\cite{chew2016} and the background table (Table~\ref{tab:backgrounds}); Appendix~\ref{app:conv} the convergence of the evolutions at the two ends of the ladder. We use $G=c=1$. Table~\ref{tab:backgrounds} quotes the backgrounds in units of the throat parameter $\eta_0$; the evolutions use the code units of Refs.~\cite{shirokov2026,shirokov2026c}, $\eta_0=2$, in which the static drainhole has mass $M=1$.
+Section~\ref{sec:model} gives the family and the corrected field equations; Sec.~\ref{sec:solver} the solver, the validation against the published data, and the map of the parameter space (Table~\ref{tab:backgrounds}); Sec.~\ref{sec:setup} the numerical setup and the runs (Table~\ref{tab:ladder}); Sec.~\ref{sec:slow} the evolutions; Sec.~\ref{sec:conclusions} the conclusions. Appendix~\ref{app:solver} holds solver details; Appendix~\ref{app:conv} the convergence of the evolutions at the two ends of the ladder. We use $G=c=1$. Table~\ref{tab:backgrounds} quotes the backgrounds in units of the throat parameter $\eta_0$; the evolutions use the code units of Refs.~\cite{shirokov2026,shirokov2026c}, $\eta_0=2$, in which the static drainhole has mass $M=1$.
 
 \section{The spinning wormhole family}
 \label{sec:model}
@@ -140,7 +155,7 @@ We construct two one-parameter families, labelled by $\omega_\infty$ (equivalent
 \subsection{An inconsistency in the published field equations}
 \label{sec:model:eq12}
 
-Refs.~\cite{kleihaus_kunz2014,chew2016} close the system with a second-order equation for $\nu$, Eq.~(12) of Ref.~\cite{chew2016}. That equation is inconsistent with the rest. Extremal Kerr fits the ansatz~\eqref{eq:metric} in closed form (with $\eta_0=0$), and substituted symbolically, at 160-digit arithmetic, it satisfies Eqs.~\eqref{eq:feq}--\eqref{eq:constraint} and the $D^2$ identity exactly---while leaving an $O(10^{-2})$ residue in the printed $\nu$ equation alone. The error also shows dynamically: solutions of the printed elliptic system converge at every resolution, yet carry a violation of the unimposed Eq.~\eqref{eq:constraint} and $D^2$ identity that scales as $J^4$ and does not shrink with the grid---the fingerprint of a wrong continuous equation, not of numerics (first seen as a spread of $5.5\times10^{-7}$ in $D^2$ at $J=0.25$). We therefore never solve the printed $\nu$ equation: $\nu$ and $D^2$ are obtained jointly from Eq.~\eqref{eq:constraint} and the $D^2$ identity, and the printed equation is kept only as a reported diagnostic. Every published conclusion of Refs.~\cite{kleihaus_kunz2014,chew2016} that we can test survives the correction (Sec.~\ref{sec:solver}, Appendix~\ref{app:solver}); the published positive-asymmetry scalar charges do not (Appendix~\ref{app:solver}).
+Refs.~\cite{kleihaus_kunz2014,chew2016} close the system with a second-order equation for $\nu$, Eq.~(12) of Ref.~\cite{chew2016}. That equation is inconsistent with the rest. Extremal Kerr fits the ansatz~\eqref{eq:metric} in closed form (with $\eta_0=0$), and substituted symbolically, at 160-digit arithmetic, it satisfies Eqs.~\eqref{eq:feq}--\eqref{eq:constraint} and the $D^2$ identity exactly---while leaving an $O(10^{-2})$ residue in the printed $\nu$ equation alone. The error also shows dynamically: solutions of the printed elliptic system converge at every resolution, yet carry a violation of the unimposed Eq.~\eqref{eq:constraint} and $D^2$ identity that scales as $J^4$ and does not shrink with the grid---the fingerprint of a wrong continuous equation, not of numerics (first seen as a spread of $5.5\times10^{-7}$ in $D^2$ at $J=0.25$). We therefore never solve the printed $\nu$ equation: $\nu$ and $D^2$ are obtained jointly from Eq.~\eqref{eq:constraint} and the $D^2$ identity, and the printed equation is kept only as a reported diagnostic. Every published conclusion of Refs.~\cite{kleihaus_kunz2014,chew2016} that we can test survives the correction (Sec.~\ref{sec:solver}, Appendix~\ref{app:solver}); the published positive-asymmetry scalar charges do not (Table~\ref{tab:anchors}).
 
 \section{Backgrounds across the spin range}
 \label{sec:solver}
@@ -178,7 +193,7 @@ Refs.~\cite{kleihaus_kunz2014,chew2016} close the system with a second-order equ
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.85\textwidth]{solver/kk2014_comparison.pdf}
+\includegraphics[width=\textwidth]{solver/kk2014_comparison.pdf}
 \caption{The symmetric family ($\eta_0=1$, $\gamma=0$; 81 solutions, $v_e=0.02$--$0.991$, plus the exact static member) in the normalization of Ref.~\cite{kleihaus_kunz2014} ($M_0=R_e$, $J_0=R_e^2/2$, $\Omega_0=1/R_e$): our curves, the digitized points of their Fig.~1 (open symbols), and closed-form Kerr (dashed). The digitization's reading error, measured by reading their printed Kerr curves the same way, is rms $1$--$6\times10^{-4}$; digitized minus ours is rms $2.5$--$8\times10^{-4}$, max $2.5\times10^{-3}$, over all five curves. The two solvers agree to the precision a printed figure carries.}
 \label{fig:kk2014}
 \end{figure*}
@@ -192,7 +207,47 @@ Refs.~\cite{kleihaus_kunz2014,chew2016} close the system with a second-order equ
 
 The solver turns the system of Sec.~\ref{sec:model} into numbers in five steps (Fig.~\ref{fig:solver}); Appendix~\ref{app:solver} gives the details. First, the infinite domain is made finite: the coordinate $x=(2/\pi)\arctan(\eta/\eta_0)$ maps both asymptotic ends to $x=\pm1$, and the unknowns $f$ and $\omega$ are expanded in Chebyshev polynomials of $x$ and even cosine modes of $\theta$. The expansion is spectral: for smooth solutions the error falls exponentially with the number of modes, so modest grids reach near machine precision. Second, the two elliptic equations~\eqref{eq:feq}--\eqref{eq:omeq} are solved for the expansion coefficients by Newton iteration---guess, linearize, correct---until their residual sits at round-off. Third, $\nu$ and the scalar charge are recovered without ever touching the misprinted second-order $\nu$ equation: the first-order constraint~\eqref{eq:constraint} and the $D^2$ identity together overdetermine $\nu$ and the single number $D^2$, so both are extracted as one linear least-squares problem---and the redundancy is a feature, since the leftover misfit measures the error. Fourth, each family is walked in spin: every converged solution seeds the Newton iteration at a slightly higher spin, with $J$ as the continuation parameter ($\omega_\infty$ is not monotone along a family; Appendix~\ref{app:solver}), and the grid refines automatically, from $48\times12$ up to $240\times60$, whenever the acceptance gates fail. Fifth---the point of the whole design---a solution is accepted only on identities the solver never imposes: the spread of $D^2$ over the domain ($\le10^{-11}$), the Smarr relation ($\le10^{-10}$), equality of the angular-momentum flux through the two ends ($\le1.3\times10^{-9}$), the asymptotic tails ($\le5\times10^{-12}$), and an independent, symbolically generated residual of the full Einstein equations, evaluated out to 20 throat radii: $1.0\times10^{-10}$ at $J=0.25$ and $4.2\times10^{-10}$ at $J=1$ against the static member's $2\times10^{-11}$ round-off floor---where the $O(J^2)$ perturbative data give $3\times10^{-5}$ and $1\times10^{-2}$ on the same meshes---staying near $10^{-9}$ up to $v_e\approx0.85$ and reaching ${\sim}10^{-7}$ at $v_e=0.91$--$0.99$. The high-spin $10^{-7}$ is round-off, not solution error: it does not shrink on finer grids, while the mass and scalar charge come out identical to 12 digits across them; and the test does catch genuine failures, scoring a deliberately under-resolved solution at $10^{-4}$, which the resolution check rejects. Beyond 20 throat radii the residual's normalization inflates round-off and the test is switched off; that outer region is covered by the resolution study, by the end charges, and by the 3D constraint checks of Sec.~\ref{sec:setup}. The products: 462 converged solutions over 20 continuation legs, global charges stable to 10 digits across three grids, and, for evolution, each background exported as a $1025\times65$ table whose bilinear interpolation error is $\le10^{-7}$ up to $v_e=0.9$.
 
-Figure~\ref{fig:kk2014} is the validation: in the normalization of Ref.~\cite{kleihaus_kunz2014}, our symmetric family lands on the digitized curves of their Fig.~1 to the digitization's own reading error. Their four anchor solutions at $\omega_\infty=0.5$~\cite{chew2016} split: the $\gamma=0$ and $\gamma=-1$ scalar charges agree to all printed digits, while $\gamma=1$ and $\gamma=2$ differ by $2\times10^{-4}$ and $6.6\times10^{-3}$ from our grid-converged values---their finite-difference error, growing with $\gamma$ (Appendix~\ref{app:solver}).
+\begin{table}[t]
+\caption{Scalar charge $D$ of the anchor solutions ($\eta_0=1$, $\omega_\infty=0.5$) against Ref.~\cite{chew2016}. Along each fixed-$\gamma$ family, $\omega_\infty$ rises, turns over and descends, so $\omega_\infty=0.5$ is reached twice; the published values sit on the post-turnover branch. Our values are grid-converged to the digits shown; the $\gamma=2$ family continued to $J=172$ confirms no third crossing exists. The two positive-$\gamma$ offsets are the published values' finite-difference error, growing with $\gamma$; the pre-turnover branch is new.}
+\label{tab:anchors}
+\begin{ruledtabular}
+\begin{tabular}{llll}
+$\gamma$ & $D$ (this work) & $D$~\cite{chew2016} & $D$ (pre-turnover, new) \\
+\hline
+$-1$ & 0.716368   & 0.71636 & 0.969194 \\
+$0$  & 0.552771   & 0.55277 & 0.986013 \\
+$1$  & 0.4314654  & 0.43155 & 1.008136 \\
+$2$  & 0.3375993  & 0.33984 & 1.048161 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table}
+
+Figure~\ref{fig:kk2014} is the validation: in the normalization of Ref.~\cite{kleihaus_kunz2014}, our symmetric family lands on the digitized curves of their Fig.~1 to the digitization's own reading error. Their four anchor solutions at $\omega_\infty=0.5$~\cite{chew2016} split: the $\gamma=0$ and $\gamma=-1$ scalar charges agree to all printed digits, while $\gamma=1$ and $\gamma=2$ differ by $2\times10^{-4}$ and $6.6\times10^{-3}$ from our grid-converged values---their finite-difference error, growing with $\gamma$ (Table~\ref{tab:anchors}).
+
+\begin{table*}[t]
+\caption{The two families at representative spins, in units of $\eta_0$ ($G=c=1$): rotation velocity $v_e$, angular momentum, mass of the $\eta\to+\infty$ end, ratio of end masses, scalar charge, equatorial throat radius, flattening, and throat angular velocity---each read off the solution's functions as defined in Sec.~\ref{sec:model}. Every row is a converged solution that passed the acceptance gates of Sec.~\ref{sec:solver}. The published record covers family (b) only, as curves~\cite{kleihaus_kunz2014,chew2016}, and we use it for validation; family (a), the one we evolve, is mapped here for the first time.}
+\label{tab:backgrounds}
+\begin{ruledtabular}
+\begin{tabular}{llllllllll}
+family & $v_e$ & $J/\eta_0^2$ & $\mu_+/\eta_0$ & $\mu_-/\mu_+$ & $D/\eta_0$ & $R_e/\eta_0$ & $R_p/R_e$ & $\Omega\,\eta_0$ \\
+\hline
+(a) drainhole & 0.213 & 0.2535 & 0.5574 & $-0.850$ & 1.1004 & 2.0319 & 0.9873 & 0.1046 \\
+              & 0.513 & 1.0278 & 0.9302 & $-0.339$ & 1.0007 & 2.6271 & 0.9194 & 0.1952 \\
+              & 0.699 & 3.0417 & 1.6557 & $-0.032$ & 0.8598 & 3.8864 & 0.8351 & 0.1798 \\
+              & 0.900 & 34.550 & 5.8400 & $+0.179$ & 0.5327 & 11.911 & 0.6926 & 0.0755 \\
+              & 0.950 & 152.16 & 12.316 & $+0.201$ & 0.3785 & 24.751 & 0.6504 & 0.0384 \\
+              & 0.990 & 4053.8 & 63.666 & $+0.208$ & 0.1698 & 127.36 & 0.6165 & 0.0078 \\
+\hline
+(b) symmetric & 0.239 & 0.0542 & 0.0252 & 1 & 0.9881 & 1.0299 & 0.9913 & 0.2323 \\
+              & 0.434 & 0.1158 & 0.0906 & 1 & 0.9583 & 1.1101 & 0.9699 & 0.3911 \\
+              & 0.667 & 0.2683 & 0.2666 & 1 & 0.8854 & 1.3420 & 0.9197 & 0.4969 \\
+              & 0.847 & 0.7007 & 0.6305 & 1 & 0.7653 & 1.8836 & 0.8440 & 0.4499 \\
+              & 0.898 & 1.0989 & 0.8685 & 1 & 0.7043 & 2.2722 & 0.8092 & 0.3952 \\
+              & 0.952 & 2.4701 & 1.4383 & 1 & 0.5971 & 3.2703 & 0.7539 & 0.2911 \\
+              & 0.990 & 12.235 & 3.4312 & 1 & 0.4157 & 7.0595 & 0.6795 & 0.1402 \\
+\end{tabular}
+\end{ruledtabular}
+\end{table*}
 
 Figure~\ref{fig:trends} and Table~\ref{tab:backgrounds} are the map of the parameter space the foundation papers left open. Published data exist only for the symmetric family and only as figures; the massive drainhole family---the one whose static member has been evolved, and the one from which binaries can be built~\cite{shirokov2026c}---is mapped here from slow spin to $v_e=0.99$. Two of its features matter later. First, both families violate the Kerr bound: the symmetric family everywhere ($J/\mu_+^2\approx85$ already at $v_e=0.24$, falling monotonically to 1 at extremality, since its static member is massless), the drainhole family by up to $\sim20\%$ at intermediate spin. A collapsing overspun throat cannot settle to a Kerr black hole of the same mass and spin, which makes these backgrounds sharp cosmic-censorship initial data. Second, the drainhole's negative far-end mass $\mu_-$ rises through zero at $v_e\approx0.7$ and turns positive: fast rotation un-does the static drainhole's negative-mass end.
 
@@ -224,21 +279,21 @@ Evolutions that must outlive the outer-boundary crossing time $t\approx L$ need 
 Stability claims follow the triplet protocol of Ref.~\cite{evstafyeva2025}: a quoted growth must have an $e$-fold time that converges to a nonzero value across resolutions, constraints that converge at the code's order while it grows, and a gauge-invariant measure---the throat's areal radius, or the marginally outer-trapped surface (MOTS) found spectrally on every output---growing with it. Every run carries three nested refinement levels on the throat, and the box is picked by the rung's mass: $M_{\rm ADM}$ triples along the family (1.11 at $v_e=0.21$, 3.31 at $0.70$), so the face of the $L=64$ box recedes from $25\,M_{\rm ADM}$ of clearance at slow spin to under $10\,M_{\rm ADM}$ at $v_e=0.70$. Rungs up to $v_e=0.51$ therefore run on the $L=64$, $N=128$ grid of the static hold of Ref.~\cite{shirokov2026c} (finest $\Delta x=0.0625$), and rungs from $v_e=0.59$ on $L=128$, $N=256$ at the same finest $\Delta x$. $\Psi_4$ is extracted on spheres at $R=10$--30 ($L=64$) and $R=14$--45 ($L=128$); the signal is the $(2,0)$ mode. Resolution triplets anchor the two ends of the ladder, $N=96/128/192$ at $v_e=0.21$ and $N=128/192/256$ at $v_e=0.90$ (Appendix~\ref{app:conv}). Table~\ref{tab:ladder} lists every run: nine spins from the static reference through the $O(J^2)$ regime~\cite{azad2023,azad2024} to far beyond any perturbative result, with the $v_e=0.51$--$0.70$ rungs being remeasured on the $L=128$ box at this draft.
 
 \begin{table*}[t]
-\caption{The runs: the drainhole family (a) along the ladder, in code units ($\eta_0=2$; the static member has $M=1$). $8\pi J/A$ is the angular momentum as a fraction of its extremal bound and $M_{\rm ADM}$ the mass of the $\eta\to+\infty$ end (both from the background tables). Every run: three nested refinement levels on the throat, $\Delta t=0.02\,\Delta x$; the finest $\Delta x$ is $0.0625$ at $N=128$ on $L=64$ and at $N=256$ on $L=128$, and scales inversely with $N$ within a triplet. Recipe S (slow): $\sigma=0.1$, $\chi\ge10^{-8}$; F (fast): $\sigma=0.4$, $\chi\ge10^{-4}$. Shell: the damping layer of Sec.~\ref{sec:setup:boundary} on ($\checkmark$) or the background-relative boundary alone (--). Trust: the last time the run is quoted. The last three rows are in flight at this draft.}
+\caption{The runs: the drainhole family (a) along the ladder, in code units ($\eta_0=2$; the static member has $M=1$). $8\pi J/A$ is the angular momentum in per cent of its extremal bound and $M_{\rm ADM}$ the mass of the $\eta\to+\infty$ end (both from the background tables). Every run: three nested refinement levels on the throat, $\Delta t=0.02\,\Delta x$; the finest $\Delta x$ is $0.0625$ at $N=128$ on $L=64$ and at $N=256$ on $L=128$, and scales inversely with $N$ within a triplet. Recipe S (slow): $\sigma=0.1$, $\chi\ge10^{-8}$; F (fast): $\sigma=0.4$, $\chi\ge10^{-4}$. Shell: the damping layer of Sec.~\ref{sec:setup:boundary} on ($\checkmark$) or the background-relative boundary alone (--). Trust: the last time the run is quoted. The last three rows are in flight at this draft.}
 \label{tab:ladder}
 \scriptsize
-\setlength{\tabcolsep}{3.5pt}
+\setlength{\tabcolsep}{2.5pt}
 \begin{ruledtabular}
-\begin{tabular}{lllllllllll}
-rung & $v_e$ & $8\pi J/A$ [\%] & $M_{\rm ADM}$ & $L$ & $N$ & recipe & shell & stop $t$ & trust & outcome \\
+\begin{tabular}{llllllllllp{0.35\textwidth}}
+rung & $v_e$ & $8\pi J/A$ & $M_{\rm ADM}$ & $L$ & $N$ & recipe & shell & stop $t$ & trust & outcome \\
 \hline
-0c & 0 & 0 & 1.000 & 64 & 128 & S & -- & 100 & 60 & collapses, $\tau=4.4$; horizon forms, dies at $t=62.7$ inside it \\
+0c & 0 & 0 & 1.000 & 64 & 128 & S & -- & 100 & 60 & collapses, $\tau=4.4$; dies inside its horizon, $t=62.7$ \\
 0.2c & 0.210 & 12.3 & 1.112 & 64 & 96/128/192 & S & $\checkmark$ & 100 & 55/100/100 & collapses, $\tau=5.0$; horizon settles at $R=2.52$ \\
-0.2c, kicks $\varepsilon=\pm10^{-3}$ & 0.210 & 12.3 & 1.112 & 64 & 128 & S & -- & 100 & 42/61 & the sign rule: pushed out collapses, pushed in inflates \\
-0.2c, far zone & 0.210 & 12.3 & 1.112 & 128 & 256 & S & -- & 150 & 150 & the $(2,0)$ burst on spheres $R=14$--45 [Fig.~\ref{fig:wave}] \\
-0.30c & 0.304 & 18.3 & 1.248 & 64 & 128 & S & -- & 100, 130 & 130 & collapses, $\tau=5.9$; horizon at $R=2.567$; its whole burst \\
-0.40c & 0.395 & 24.4 & 1.448 & 64 & 128 & S & -- & 100 & 100 & collapses, $\tau=8.0$; MOTS leaves the throat at $t=92$ \\
-0.46c & 0.456 & 28.8 & 1.634 & 64 & 128 & S & -- & 100, 150 & 100, live & turns at $-1.1\%$ ($t=83$), inflates from $t=101$, $\tau=12.1$ \\
+0.2c, kicks & 0.210 & 12.3 & 1.112 & 64 & 128 & S & -- & 100 & 42/61 & $\varepsilon=\pm10^{-3}$: pushed out collapses, in inflates \\
+0.2c, far zone & 0.210 & 12.3 & 1.112 & 128 & 256 & S & -- & 150 & 150 & the $(2,0)$ burst on spheres $R=14$--45 (Fig.~\ref{fig:wave}) \\
+0.30c & 0.304 & 18.3 & 1.248 & 64 & 128 & S & -- & 100, 130 & 130 & collapses, $\tau=5.9$; horizon at $R=2.567$; full burst \\
+0.40c & 0.395 & 24.4 & 1.448 & 64 & 128 & S & -- & 100 & 100 & collapses, $\tau=8.0$; MOTS leaves throat at $t=92$ \\
+0.46c & 0.456 & 28.8 & 1.634 & 64 & 128 & S & -- & 100, 150 & 100, live & $-1.1\%$ at $t=83$, inflates from $t=101$, $\tau=12.1$ \\
 0.5c & 0.513 & 33.3 & 1.860 & 64 & 192 & S & $\checkmark$ & 100 & 100 & shrinks, $-1\%$ at $t=99$: the seed's other sign \\
 0.5c & 0.513 & 33.3 & 1.860 & 64 & 128 & S & -- & 150 & 95 & inflates from $t\approx70$, $\tau=8.8$ \\
 0.5c & 0.513 & 33.3 & 1.860 & 128 & 256 & F & $\checkmark$ & 150 & -- & running \\
@@ -261,7 +316,7 @@ rung & $v_e$ & $8\pi J/A$ [\%] & $M_{\rm ADM}$ & $L$ & $N$ & recipe & shell & st
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=0.95\textwidth]{farzone_wave_02c.pdf}
+\includegraphics[width=\textwidth]{farzone_wave_02c.pdf}
 \caption{The $(2,0)$ wave of the unperturbed rotating collapse. (a)~$r\,\Delta\psi_4^{20}$ of the 0.2c far-zone run on spheres $R=14$--45 against retarded time: one waveform with ring-down period ${\approx}24$; only the first lobe falls with $R$ (near field), the extrema are flat in $R$ to $1.5\%$ over $R=30$--45, and this box reproduces the $L=64$ run's throat history to $3.2\times10^{-4}$. (b)~The wave against spin at $R=14$, each run on its own collapse clock $u=t-R-t_{10}$ ($t_{10}$: its equatorial deficit at $10\%$): the 0.30c burst has the 0.2c's shape and timing at ${\sim}1.5\times$ the amplitude, and the static run is drawn at zero---a spherical collapse radiates no quadrupole; its measured record stays below $3\times10^{-8}$. (c)~The radiated energy $E_{20}=\tfrac{1}{16\pi}\int|\int r\psi_4\,dt'|^{2}\,dt$ over the aligned burst, per unit $M_{\rm ADM}$, at $R=18$ (filled) and $R=14$ (open): $3.3\times10^{-7}\to8.0\times10^{-7}$ from the 0.2c to the 0.30c, a factor 2.5--3---the square of the amplitude ratio in (b)---with the static at zero. (d)~The speed of each extremum between neighbouring spheres, against the local coordinate speed of light (crosses): the burst propagates at light speed. The outcome: an unperturbed, axisymmetric rotating collapse radiates a quadrupole burst whose energy grows with spin as the amplitude squared, and the static collapse radiates nothing.}
 \label{fig:wave}
 \end{figure*}
@@ -292,53 +347,14 @@ the AMReX-based~\cite{amrex} GPU port of \texttt{GRChombo}~\cite{grchombo}.
 
 \appendix
 
-\section{Solver details, the background table and the anchor comparison}
+\section{Solver details}
 \label{app:solver}
-
-\begin{table*}[t]
-\caption{The two families at representative spins, in units of $\eta_0$ ($G=c=1$): rotation velocity $v_e$, angular momentum, mass of the $\eta\to+\infty$ end, ratio of end masses, scalar charge, equatorial throat radius, flattening, and throat angular velocity---each read off the solution's functions as defined in Sec.~\ref{sec:model}. Every row is a converged solution that passed the acceptance gates of Sec.~\ref{sec:solver}. The published record covers family (b) only, as curves~\cite{kleihaus_kunz2014,chew2016}, and we use it for validation; family (a), the one we evolve, is mapped here for the first time.}
-\label{tab:backgrounds}
-\begin{ruledtabular}
-\begin{tabular}{llllllllll}
-family & $v_e$ & $J/\eta_0^2$ & $\mu_+/\eta_0$ & $\mu_-/\mu_+$ & $D/\eta_0$ & $R_e/\eta_0$ & $R_p/R_e$ & $\Omega\,\eta_0$ \\
-\hline
-(a) drainhole & 0.213 & 0.2535 & 0.5574 & $-0.850$ & 1.1004 & 2.0319 & 0.9873 & 0.1046 \\
-              & 0.513 & 1.0278 & 0.9302 & $-0.339$ & 1.0007 & 2.6271 & 0.9194 & 0.1952 \\
-              & 0.699 & 3.0417 & 1.6557 & $-0.032$ & 0.8598 & 3.8864 & 0.8351 & 0.1798 \\
-              & 0.900 & 34.550 & 5.8400 & $+0.179$ & 0.5327 & 11.911 & 0.6926 & 0.0755 \\
-              & 0.950 & 152.16 & 12.316 & $+0.201$ & 0.3785 & 24.751 & 0.6504 & 0.0384 \\
-              & 0.990 & 4053.8 & 63.666 & $+0.208$ & 0.1698 & 127.36 & 0.6165 & 0.0078 \\
-\hline
-(b) symmetric & 0.239 & 0.0542 & 0.0252 & 1 & 0.9881 & 1.0299 & 0.9913 & 0.2323 \\
-              & 0.434 & 0.1158 & 0.0906 & 1 & 0.9583 & 1.1101 & 0.9699 & 0.3911 \\
-              & 0.667 & 0.2683 & 0.2666 & 1 & 0.8854 & 1.3420 & 0.9197 & 0.4969 \\
-              & 0.847 & 0.7007 & 0.6305 & 1 & 0.7653 & 1.8836 & 0.8440 & 0.4499 \\
-              & 0.898 & 1.0989 & 0.8685 & 1 & 0.7043 & 2.2722 & 0.8092 & 0.3952 \\
-              & 0.952 & 2.4701 & 1.4383 & 1 & 0.5971 & 3.2703 & 0.7539 & 0.2911 \\
-              & 0.990 & 12.235 & 3.4312 & 1 & 0.4157 & 7.0595 & 0.6795 & 0.1402 \\
-\end{tabular}
-\end{ruledtabular}
-\end{table*}
-
-\begin{table}[b]
-\caption{Scalar charge $D$ of the anchor solutions ($\eta_0=1$, $\omega_\infty=0.5$) against Ref.~\cite{chew2016}. Along each fixed-$\gamma$ family, $\omega_\infty$ rises, turns over and descends, so $\omega_\infty=0.5$ is reached twice; the published values sit on the post-turnover branch. Our values are grid-converged to the digits shown; the $\gamma=2$ family continued to $J=172$ confirms no third crossing exists. The two positive-$\gamma$ offsets are the published values' finite-difference error, growing with $\gamma$; the pre-turnover branch is new.}
-\label{tab:anchors}
-\begin{ruledtabular}
-\begin{tabular}{llll}
-$\gamma$ & $D$ (this work) & $D$~\cite{chew2016} & $D$ (pre-turnover, new) \\
-\hline
-$-1$ & 0.716368   & 0.71636 & 0.969194 \\
-$0$  & 0.552771   & 0.55277 & 0.986013 \\
-$1$  & 0.4314654  & 0.43155 & 1.008136 \\
-$2$  & 0.3375993  & 0.33984 & 1.048161 \\
-\end{tabular}
-\end{ruledtabular}
-\end{table}
 
 The unknowns $f,\omega$ are expanded in Chebyshev polynomials of $x=(2/\pi)\arctan(\eta/\eta_0)\in[-1,1]$, which compactifies both ends, and in even cosine modes of $\theta$; derivatives are spectral, and the nonlinear system \eqref{eq:feq}--\eqref{eq:omeq} is solved by Newton iteration with a direct linear solve. At each Newton step, $\nu$ and the constant $D^2$ are recovered together from the overdetermined pair---the first-order constraint~\eqref{eq:constraint} and the $D^2$ identity---as one linear least-squares problem, which is what makes the acceptance gates of Sec.~\ref{sec:solver} meaningful: the reported $D^2$ spread, Smarr defect, flux equality and full-Einstein residual are all computed from equations that never entered the solve. Spin is walked with $J$ held fixed in each solve: $\omega_\infty$ joins the unknowns and one extra row imposes the target $J$, since $\omega_\infty$ is not monotone along a family (Table~\ref{tab:anchors}). Steps are taken in $\log J$, predicted by the secant through the last two solutions, growing after fast Newton convergence and halving after slow convergence or a failure; grids refine automatically from $48\times12$ when the acceptance gates demand it, to $162\times42$ at $v_e=0.95$ on the drainhole family. On the symmetric family the mirror identities are satisfied at the $10^{-14}$ level, including $\omega(0)=\omega_\infty/2$, and the equatorial ergosurface law of Ref.~\cite{chew2016} holds to $10^{-12}$ wherever the ergosurface sits at $\eta>0$ ($v_e\ge0.77$). The extremal-Kerr substitution of Sec.~\ref{sec:model:eq12} is kept in the pipeline as a symbolic regression test.
 
 \section{Convergence of the evolutions}
 \label{app:conv}
+\packfloatpages
 
 Resolution triplets anchor the two ends of the ladder: the 0.2c, the slowest spinning collapse (Fig.~\ref{fig:conv02}), and the 0.9c, the stable fast rung (Fig.~\ref{fig:conv09}). In both, the constraint norms are evaluated per refinement level with cells covered by finer levels masked (Sec.~\ref{sec:setup:scheme}), and the coarsest member's norms are compared against the finest member's rescaled by $2^{2}$ and $2^{4}$---where they would sit at second and at fourth order.
 
