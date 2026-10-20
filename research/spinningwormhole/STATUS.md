@@ -13,7 +13,8 @@ Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per ru
 Spin slows the instability and the 0.9c is stable. Up to the 0.40c (24 % of extremal) the unperturbed throat
 collapses into a black hole. At the 0.46c (29 %) and the 0.5c (33 %, N 128) it shrinks a little, turns, and then
 inflates, growing as e^(t/τ) with τ ≈ 10–12: the instability's other branch, not its end. Where it ends lies between
-33 % and 81 %; the 0.6c / 0.7c broke down numerically before they could tell (reruns: open, below).
+33 % and 81 %; the 0.6c / 0.7c L 64 runs broke down numerically (the box too small for these large throats — the
+gauge collapsed at the centre from t ≈ 40), and their L 128 reruns on the 0.9c's proven setup are LIVE.
 Correction (10-20): on 10-19 the 0.46c's turn at t 83 was read as the end of the instability near Azad's ≈ 30 %; the
 t 150 run shows its throat inflating from t 101.
 
@@ -66,13 +67,15 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.30c | 18.3 | 51.4 | 5.9 | 3.76 | horizon R 2.571, M_MS 1.286, settling | 100 |
 | 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 18.3 | – | – | – | FINISHED t 130 (10-20 ≈ 07:12): the whole burst (R 14: trough t 98, peak t 110, second trough ≈ 120); horizon R 2.567 at t 130. Not packed (value check) | – |
 | 0.40c | 24.4 | 60.2 | 8.0 | 5.03 | horizon forming: MOTS off the throat from t 92, R 3.223 (M_MS 1.612) at t 100 | 100 |
-| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | DIED 100.72 (h11 NaN, finest level) in its collapse (max K 6.8e3), before its burst reached R 14: nothing beyond the t 100 run. Not packed | – |
+| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | DIED 100.72 (h11 NaN, finest level) in its collapse, before its burst reached R 14. Decided 10-20: no third wave point needed (the 0.2c and 0.30c carry the wave claim); not packed, nothing beyond the t 100 run | – |
 | 0.46c | 28.8 | never (−0.92 % at 82) | 15.2 (the early shrink) | – | no collapse to t 100: areal −1.12 % at t 83, −0.21 % at t 100; then inflates (t 150 run) | 100 |
 | 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 28.8 | – | – | – | LIVE (1st / 1, alone since 10-20 06:32): inflating since t 101, +1.01 % at t 107 (τ ≈ 8–12 from dR/dt) | – |
 | 0.5c (N 192, drive on) | 33.3 | 99.4 | 13.6 | – | clean t 100, MOTS −1.3 %, no horizon | 100 |
 | 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | DIED 100.10 (K NaN, finest level): inflated from t ≈ 70 to +6.9 % at t 100 (τ 9–11.5 from dR/dt), MOTS lost from t 78; finest-level constraints ×20 over t 90–98. Not packed | – |
-| 0.6c (fast) `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 40.3 | – | – | – | DIED 98.99 (K NaN, finest level): central lapse ≈ 0 from t 38, max K > 0.1 from 75.7, finest-level constraints ×100 by t 96; throat flat (≤ 0.2 %) to t 75, −3 % at t 95 as it broke. Not packed | – |
-| 0.7c (fast) `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 51.4 | – | – | – | DIED 136.03 (h11 NaN, finest level), as the archived 0.7c (135.85): central lapse ≈ 0 from t 39.5, max K > 0.1 from 107, constraints up from t 90; throat within ±0.8 % to t 124, +4.4 % at t 132 as it broke. Not packed | – |
+| 0.6c (fast) `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 40.3 | – | – | – | DIED 98.99 (K NaN, finest level): the L 64 box too small — central lapse ≈ 0 from t 38, throat flat (≤ 0.2 %) only to t 75. Not packed, not usable; rerun below | – |
+| 0.6c on L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 40.3 | – | – | – | LIVE since 10-20 07:45 (1st / 0, alone): the 0.9c's proven setup (N 256, drive on, min_chi 1e-4, σ 0.4) with only the table swapped | – |
+| 0.7c (fast) `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 51.4 | – | – | – | DIED 136.03 (h11 NaN, finest level), as the archived 0.7c (135.85): the L 64 box too small — central lapse ≈ 0 from t 39.5, throat ±0.8 % to t 124. Not packed, not usable; rerun below | – |
+| 0.7c on L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 51.4 | – | – | – | LIVE since 10-20 07:45 (1st / 1, with the 0.46c t 150): the 0.9c's setup, table swapped | – |
 | 0.9c (L 128 triplet, fast) | 80.8 | flat to t 150 | ∞ | – | stable: areal R drift ≤ 7e-5, no MOTS | 150 |
 
 ψ4 (2,0), r·Δψ4 at R 14 (u as above): 0.2c trough −1.47e-4 (u 13), peak +2.3e-4 (u 24), ring-down period ≈ 24 (L 128,
@@ -83,15 +86,19 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 | run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 1st / 1, alone | 114.2 @ 07:34 | 150 | ≈ 20 t/h | 10-20 ≈ 09:20 |
+| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 1st / 1, with the 0.7c L 128 | 117.2 @ 07:43 | 150 | ≈ 10 t/h shared | 10-20 ≈ 11:10 |
+| 0.6c L 128 `spin_hold_L128_ml3_ve060a_spdrv1_sig04_farfix_t150` | 1st / 0, alone | 0.2 @ 07:48 | 150 | ≈ 15.1 t/h | 10-20 ≈ 17:45 |
+| 0.7c L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 1st / 1, with the 0.46c | 0.03 @ 07:48 | 150 | ≈ 15.5 alone after the 0.46c | 10-20 ≈ 19:15 |
 
-- Idle since 10-20: the first node's card 0 (the 0.6c died 04:48, the 0.7c 06:50) and the second node's card (the
-  0.40c t 150 died 05:46, the 0.30c t 130 finished 07:12).
-- Ended 10-20, NOT packed (decided 10-20: first judge what each is worth for the paper and what needs a rerun): the
-  0.30c t 130, the 0.40c t 150, the 0.5c t 150, the 0.6c, the 0.7c. Their last plotfiles stay on scratch for now
-  (first node: the 0.5c, 0.6c, 0.7c, 3 each; second node: the 0.30c t 130 and 0.40c t 150, not listed from here).
-- The 0.46c t 150's consumer lags since its MOTS search fails (t ≥ 104: 6.3 min a plotfile against one every 3);
-  restarted 10-20 ≈ 07:35 with `--mots-spectral-steps 150` (`restart_consumer.sh --busy`).
+- The L 128 reruns (go 10-20 ≈ 07:30, no checkpoints; decided: the 0.7c shares card 1 with the 0.46c now): preflights
+  pass, t 0 constraints at N 256 (Ham 5.1e-4 / 6.1e-4) below the L 64 runs' (2.1e-3), consumer args the 0.9c's
+  (ψ4 R 14 18 30 40 45, MOTS steps 150).
+- Ended 10-20: the 0.30c t 130 (FINISHED, packed, trust 130), the 0.5c t 150 (DIED 100.10 inflating, packed, trust
+  95), the 0.40c t 150 (DIED 100.72, not packed: no third wave point needed), the 0.6c / 0.7c L 64 (DIED 98.99 /
+  136.03, not packed: box too small, L 128 reruns live). First-node scratch pruned of the three dead L 64 runs'
+  plotfiles (21 GB, ≈ 07:50); the second node's (0.30c t 130, 0.40c t 150) pends a session there.
+- The 0.46c t 150's consumer lagged while its MOTS search fails on the growing throat; restarted 10-20 ≈ 07:35 with
+  `--mots-spectral-steps 150` (`restart_consumer.sh --busy`).
 - Level 1 rises from t ≈ 90 in every L 64 run (the 0.30c t 130: 3.7e-6 at t 130, still clean); in the fast 0.6c /
   0.7c the finest level ran away first, after the central lapse had sat at ≈ 0 since t ≈ 40.
 - Done and packed 10-19: the static, the 0.30c, both 0.2c kicks, the 0.2c N 192, the L 128 far-zone run, the 0.5c
@@ -113,9 +120,9 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 ## RUNS FOR THE PAPER (proposed, no go yet)
 
-Open (10-20): what the ended runs are worth and which need reruns: the 0.6c / 0.7c (numerics broke at t ≈ 75 /
-≈ 100), the 0.40c's third wave point (its collapse kills it at t 100.7). The setup proven to t 150 is the 0.9c's:
-L 128, N 256 (the same finest dx, faces at 64), drive on, ≈ 15.5 t/h alone, so ≈ 9.7 h a run to t 150.
+No proposed run (decided 10-20: keep and pack the 0.30c t 130, the 0.5c t 150 and the 0.46c t 150; no 0.40c wave
+rerun — the 0.2c and 0.30c carry the wave claim; the 0.6c / 0.7c reruns on L 128 went LIVE). The 0.46c t 150 is
+packed when it ends (≈ 11:10).
 Free analyses:
 
 | analysis | what it settles | cost |
