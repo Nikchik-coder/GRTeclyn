@@ -241,8 +241,8 @@ def azad_jc_frac(points) -> float | None:
 def draw(points, pal, jc_frac) -> None:
     style.prd(8.0)
     # 2026-10-20: the house typography (it drew in matplotlib's default sans), at the
-    # column width it is printed at
-    fig, ax = plt.subplots(figsize=(3.4, 2.6), layout="constrained")
+    # column width it is printed at; 2.3 in tall since its key went to two columns
+    fig, ax = plt.subplots(figsize=(3.4, 2.3), layout="constrained")
     # The two thresholds are named in the key, not inside the frame (their
     # in-frame tags kept colliding with the rules and the fit, 2026-10-19).
     rules = [AZAD_CONJECTURE] + ([jc_frac] if jc_frac else [])
@@ -293,12 +293,12 @@ def draw(points, pal, jc_frac) -> None:
     right.set_ylabel(r"$\tau$", rotation=0, labelpad=8.0)
     entries = [
         (mlines.Line2D([], [], marker="o", ls="none", ms=3.8, color=pal["measured"]),
-         "measured $\\tau$, throat collapses"),
+         "measured $\\tau$, collapse"),
     ]
     if any(p["branch"] == "inflates" for p in drawn):
         entries.append((mlines.Line2D([], [], marker="^", ls="none", ms=4.6,
                                       color=pal["measured"]),
-                        "measured $\\tau$, throat inflates"))
+                        "measured $\\tau$, inflation"))
     if any(p["stable"] for p in drawn):
         entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
                                       mec=pal["stable"], mew=1.2), "stable on its window"))
@@ -309,9 +309,12 @@ def draw(points, pal, jc_frac) -> None:
         entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=6.5, mfc="none",
                                       mec=pal["azad"], mew=1.0), "Azad et al., 2nd order"))
     entries.append((mlines.Line2D([], [], ls=":", lw=0.8, color="#b5b5b2"),
-                    "Azad: conjectured end (30 %), 2nd-order $J_c$"
-                    + (f" ({jc_frac:.0f} %)" if jc_frac else "")))
-    style.legend_top(ax, entries, ncol=1, borderpad=0.6)
+                    "Azad: end (30 %)" + (f", $J_c$ ({jc_frac:.0f} %)" if jc_frac else "")))
+    # 2026-10-20: two columns, read row by row (one entry a row took a third of the
+    # figure); the caption spells out what the two Azad rules are; rows opened so the large
+    # open markers do not touch
+    style.legend_top(ax, entries, ncol=2, borderpad=0.6, handlelength=1.8, columnspacing=0.8,
+                     labelspacing=0.65)
     for ext in ("png", "pdf"):
         fig.savefig(FIGURES / f"instability_curve.{ext}", dpi=300)
     bad = style.label_audit(fig)
