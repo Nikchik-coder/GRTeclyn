@@ -8,31 +8,33 @@ pre-fix ledger) is `git show 57c23b77:research/spinningwormhole/STATUS.md`. Plan
 Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per run; `trust_windows.tsv`). Branch
 `feature/spinning`, pushed to `myfork`.
 
-## RESULTS SO FAR (2026-10-19)
+## RESULTS SO FAR (2026-10-20)
 
-Spin delays the instability and the 0.9c is stable. The 0.40c (24 % of extremal) still collapses into a black hole;
-the 0.46c (29 %) does not on t ≤ 100: its throat shrank to −1.1 % and turned back. That is where Azad et al.
-conjecture the instability ends (≈ 30 %), but the 0.5c on N 192 (33 %, drive on) was still shrinking at t 100; the
-0.5c on N 128 and the 0.46c, both to t 150 (LIVE), and the 0.6c / 0.7c settle it.
+Spin slows the instability and the 0.9c is stable. Up to the 0.40c (24 % of extremal) the unperturbed throat
+collapses into a black hole. At the 0.46c (29 %) and the 0.5c (33 %, N 128) it shrinks a little, turns, and then
+inflates, growing as e^(t/τ) with τ ≈ 10–12: the instability's other branch, not its end. Where it ends lies between
+33 % and 81 %; the 0.6c / 0.7c broke down numerically before they could tell (reruns: open, below).
+Correction (10-20): on 10-19 the 0.46c's turn at t 83 was read as the end of the instability near Azad's ≈ 30 %; the
+t 150 run shows its throat inflating from t 101.
 
 - **Collapse is delayed by spin.** The throat reaches −1 % at t 43.7 (static), 46.9 (0.2c), 51.4 (0.30c) and 60.2
-  (0.40c); the 0.46c peaked at −0.9 % at t 82 and turned back, the 0.5c (N 192) reached −1 % only at t 99.4, and the
-  0.9c stays flat to t 150 at all three resolutions.
-- **The 0.46c turned.** Its areal throat radius fell through the band at a near-constant 0.035 %/t (linear, not
-  exponential), peaked at −1.12 % at t 83 and was back to −0.21 % at t 100; R_eq and the MOTS move with it, no
-  trapped surface. The 0.40c's grew exponentially into the collapse.
+  (0.40c); the 0.5c on N 192 (drive on) reached −1 % at t 99.4, and the 0.9c stays flat to t 150 at all three
+  resolutions.
+- **The 0.46c and the 0.5c inflate.** The 0.46c's areal throat radius peaked at −1.12 % at t 83, crossed zero at
+  t 101 and was +1.01 % at t 107, growing; the 0.5c on N 128 turned at −0.30 % (t 65–68) and grew to +1.98 / +3.86 /
+  +6.89 % at t 90 / 95 / 100. Their growth from the throat's speed dR/dt: τ ≈ 8–12 (0.46c) and 9–11.5 (0.5c); the
+  0.40c's collapse 12–13.6 on the same measure. The MOTS is lost once a throat expands (0.46c from t 104, 0.5c from
+  t 78). The N 192 / drive-on 0.5c went the collapse way: the seed's sign picks the branch (the kicks' sign rule).
 - **Instability curve** (`figures/instability_curve.png`, `plot_instability_curve`): τ 4.4 / 5.0 / 5.9 / 8.0 from
-  the static to the 0.40c; the 0.46c went through the band (15.2) and turned back, drawn open and not fitted. The
-  0.5c's 13.6 is out of order: it ran at N 192 with the sponge drive on. The fit's growth rate reaches zero at 40 %
-  of extremal with it, 36 % without it.
+  the static to the 0.40c stand. Its open "0.46c turned" marker is wrong (it inflates): to redo with one τ for both
+  branches. The 0.2–1 % deficit band caught the 0.46c's early shrink, not its growing mode.
 - **Against Azad et al.** (Azad, Blázquez-Salcedo, Khoo, Kunz, arXiv:2301.05243): their second-order rate matches ours
   within 3 % at the 0.30c and 0.40c (5.9 vs 6.1, 8.0 vs 8.0); their formula zeroes at 33 % and they conjecture the
-  instability ends at ≈ 30 %, where their main mode meets a second unstable mode and both should merge and vanish.
-  The 0.46c's turn at 29 % fits that conjecture; the 0.5c N 192 still shrinking at 33 % does not, unless it turns
-  later. Kleihaus & Kunz (2014) left 4D stability open; our 0.9c is stable.
+  instability ends at ≈ 30 %, where their main mode meets a second unstable mode. Our 0.46c (29 %) and 0.5c (33 %) are
+  still unstable, on the inflating branch. Kleihaus & Kunz (2014) left 4D stability open; our 0.9c is stable.
 - **End state.** The low spins collapse into a black hole: the horizon settles at R 2.52 (0.2c) and 2.57 (0.30c,
-  still settling at t 100); the 0.40c's MOTS leaves the throat at t 92 and reads R 3.22 at t 100, still shrinking.
-  The static died just after its horizon formed.
+  2.567 at t 130); the 0.40c's MOTS leaves the throat at t 92 and reads R 3.22 at t 100, still shrinking. The static
+  died just after its horizon formed, the 0.40c at t 100.7 in its collapse.
 - **Gravitational waves.** The 0.2c's collapse emits a (2,0) burst, r·Δψ4 ≈ 2e-4: one waveform from R 14 to 45, at
   the speed of light, ring-down period ≈ 24 (the L 128 far-zone run, `figures/farzone_wave_02c.png`).
 - **Larger spin, stronger wave, same shape.** Aligned on each run's own collapse (u = t − R − t₁₀, t₁₀ when R_eq is
@@ -40,7 +42,9 @@ conjecture the instability ends (≈ 30 %), but the 0.5c on N 192 (33 %, drive o
   at u ≈ 24). The 0.30c has the same shape and timing, bigger: its first lobe ≈ 1.5×, its R 14 trough −1.9e-4 and
   still deepening when it stops at t 100. The first lobe falls with R (near field); the trough is flat from R 14
   (the radiation). The static is flat at ≤ 3e-8 (a spherical collapse emits no quadrupole wave). No burst in the
-  rest: the 0.2c N 96 and the push-out died before theirs reached R 10, the 0.40c+ collapse too late for t 100.
+  rest: the 0.2c N 96 and the push-out died before theirs reached R 10, the 0.40c t 150 at t 100.7 in its collapse.
+  The 0.30c t 130 caught its whole burst: at R 14 the trough at t 98, the peak at t 110 and a second trough at
+  t ≈ 120 (R 18: peak t 115); identical to the t 100 run up to t 100.
 - **Kicks.** The sign of the push decides the fate, the merger paper's rule: pushed in, the throat inflates; pushed
   out, it collapses. Both pass 1 % at t ≈ 25, 21.5 before the unkicked 0.2c, at the same rate. No more kicks.
 - **Numerics.** The 0.2c triplet converges at 3rd–4th order, the 0.9c triplet is stable at every resolution, and the
@@ -60,15 +64,15 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.2c push out (l 0, ε +1e-3) | 12.3 | 25.3 | – | 3.03 | DIED 44.08, after its horizon formed | 42 |
 | 0.2c push in (l 0, ε −1e-3) | 12.3 | +1 % at 25.6 | – | 3.06 | inflates, +105 % at t 60 | 61 |
 | 0.30c | 18.3 | 51.4 | 5.9 | 3.76 | horizon R 2.571, M_MS 1.286, settling | 100 |
-| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 18.3 | – | – | – | LIVE since 10-19 18:41 (2nd node): its whole burst (peak t ≈ 108, second trough ≈ 120 at R 14), the wave against spin | – |
+| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 18.3 | – | – | – | FINISHED t 130 (10-20 ≈ 07:12): the whole burst (R 14: trough t 98, peak t 110, second trough ≈ 120); horizon R 2.567 at t 130. Not packed (value check) | – |
 | 0.40c | 24.4 | 60.2 | 8.0 | 5.03 | horizon forming: MOTS off the throat from t 92, R 3.223 (M_MS 1.612) at t 100 | 100 |
-| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | LIVE since 10-19 18:41 (2nd node): a third wave point (its burst reaches R 14 at t ≈ 115–140) | – |
-| 0.46c | 28.8 | never (−0.92 % at 82) | 15.2, then turned | – | no collapse: areal −1.12 % at t 83, back to −0.21 % at t 100; MOTS on the throat | 100 |
-| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 28.8 | – | – | – | LIVE since 10-19 20:15 (1st / 1, with the 0.5c t 150): whether the 0.46c's turn is a slow swing that comes back | – |
+| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 24.4 | – | – | – | DIED 100.72 (h11 NaN, finest level) in its collapse (max K 6.8e3), before its burst reached R 14: nothing beyond the t 100 run. Not packed | – |
+| 0.46c | 28.8 | never (−0.92 % at 82) | 15.2 (the early shrink) | – | no collapse to t 100: areal −1.12 % at t 83, −0.21 % at t 100; then inflates (t 150 run) | 100 |
+| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 28.8 | – | – | – | LIVE (1st / 1, alone since 10-20 06:32): inflating since t 101, +1.01 % at t 107 (τ ≈ 8–12 from dR/dt) | – |
 | 0.5c (N 192, drive on) | 33.3 | 99.4 | 13.6 | – | clean t 100, MOTS −1.3 %, no horizon | 100 |
-| 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | LIVE since 10-19 19:54 (1st / 1, alone): the 0.5c like the other rungs (its N 192 / drive-on τ is out of order) | – |
-| 0.6c (fast) | 40.3 | – | – | – | LIVE since 10-19 18:05 | – |
-| 0.7c (fast) | 51.4 | – | – | – | LIVE since 10-19 18:19 | – |
+| 0.5c on N 128, drive off, to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 33.3 | – | – | – | DIED 100.10 (K NaN, finest level): inflated from t ≈ 70 to +6.9 % at t 100 (τ 9–11.5 from dR/dt), MOTS lost from t 78; finest-level constraints ×20 over t 90–98. Not packed | – |
+| 0.6c (fast) `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 40.3 | – | – | – | DIED 98.99 (K NaN, finest level): central lapse ≈ 0 from t 38, max K > 0.1 from 75.7, finest-level constraints ×100 by t 96; throat flat (≤ 0.2 %) to t 75, −3 % at t 95 as it broke. Not packed | – |
+| 0.7c (fast) `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 51.4 | – | – | – | DIED 136.03 (h11 NaN, finest level), as the archived 0.7c (135.85): central lapse ≈ 0 from t 39.5, max K > 0.1 from 107, constraints up from t 90; throat within ±0.8 % to t 124, +4.4 % at t 132 as it broke. Not packed | – |
 | 0.9c (L 128 triplet, fast) | 80.8 | flat to t 150 | ∞ | – | stable: areal R drift ≤ 7e-5, no MOTS | 150 |
 
 ψ4 (2,0), r·Δψ4 at R 14 (u as above): 0.2c trough −1.47e-4 (u 13), peak +2.3e-4 (u 24), ring-down period ≈ 24 (L 128,
@@ -79,21 +83,17 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 | run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| 0.30c to t 130 `spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130` | 2nd / 0, with the 0.40c t 150 | 15.5 @ 20:23 | 130 | 9.1 t/h | 10-20 ≈ 08:55 |
-| 0.40c to t 150 `spin_hold_L64_ml3_ve040a_spdrv0_farfix_t150` | 2nd / 0, with the 0.30c t 130 | 15.4 @ 20:23 | 150 | 9.1 t/h (20 alone after the 0.30c) | 10-20 ≈ 09:55 |
-| 0.6c `spin_hold_L64_ml3_ve060a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.7c | 23.1 @ 20:23 | 150 | 9.0 t/h | 10-20 ≈ 10:30 |
-| 0.7c `spin_hold_L64_ml3_ve070a_spdrv0_mc4_sig04_farfix_t150` | 1st / 0, with the 0.6c | 18.9 @ 20:23 | 150 | 9.0 t/h (20 alone after the 0.6c) | 10-20 ≈ 10:40 |
-| 0.5c to t 150 `spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150` | 1st / 1, with the 0.46c t 150 | 8.1 @ 20:23 | 150 | 9.0 t/h | 10-20 ≈ 12:05 |
-| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 1st / 1, with the 0.5c t 150 | 1.3 @ 20:23 | 150 | 9.1 t/h (20 alone after the 0.5c) | 10-20 ≈ 12:20 |
+| 0.46c to t 150 `spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150` | 1st / 1, alone | 114.2 @ 07:34 | 150 | ≈ 20 t/h | 10-20 ≈ 09:20 |
 
-- Start checks passed: t 0 MOTS R 5.5367 (0.6c; table 5.5419), 6.8730 (0.7c; table 6.8795), 4.9613 (0.5c; its
-  N 192 run 4.9620) and 4.67186 (0.46c t 150; its t 100 run identical, t 0 constraints too), ψ4 header R 10 14 18 30,
-  frames, keep-last pruning. Decided 10-19: the 0.7c shares card 0 now rather than running alone on card 1 from
-  19:50. Watch the 0.7c: the archived one's slicing broke at t ≈ 102 (lapse floor, NaN 135.85), its MOTS gone by t 49.
-- Watch level 1 in the t 130 / 150 runs: in the 0.40c and 0.46c t 100, L2_Ham on level 1 rises from t ≈ 90 (×1.5 per
-  2 t units, slowing; ×9 / ×4.5 by t 100, to ≤ 7.5e-7), in the 0.46c too, so not the collapse. Every other level grows
-  ≤ ×5 after t 80, except the 0.40c's level 3 (×10 at t 96–98 to 2.9e-3, then flat: the collapse inside the horizon,
-  as the 0.30c's).
+- Idle since 10-20: the first node's card 0 (the 0.6c died 04:48, the 0.7c 06:50) and the second node's card (the
+  0.40c t 150 died 05:46, the 0.30c t 130 finished 07:12).
+- Ended 10-20, NOT packed (decided 10-20: first judge what each is worth for the paper and what needs a rerun): the
+  0.30c t 130, the 0.40c t 150, the 0.5c t 150, the 0.6c, the 0.7c. Their last plotfiles stay on scratch for now
+  (first node: the 0.5c, 0.6c, 0.7c, 3 each; second node: the 0.30c t 130 and 0.40c t 150, not listed from here).
+- The 0.46c t 150's consumer lags since its MOTS search fails (t ≥ 104: 6.3 min a plotfile against one every 3);
+  restarted 10-20 ≈ 07:35 with `--mots-spectral-steps 150` (`restart_consumer.sh --busy`).
+- Level 1 rises from t ≈ 90 in every L 64 run (the 0.30c t 130: 3.7e-6 at t 130, still clean); in the fast 0.6c /
+  0.7c the finest level ran away first, after the central lapse had sat at ≈ 0 since t ≈ 40.
 - Done and packed 10-19: the static, the 0.30c, both 0.2c kicks, the 0.2c N 192, the L 128 far-zone run, the 0.5c
   N 192, the 0.40c and 0.46c t 100 (19:54). Every movie of these and of the static and 0.30c checked on contact
   sheets (10-19 ≈ 21:30): fixed scales, none blank. The first node's scratch was pruned of the 0.40c / 0.46c last
@@ -113,7 +113,9 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 ## RUNS FOR THE PAPER (proposed, no go yet)
 
-No proposed run (the 0.46c t 150 went LIVE 10-19).
+Open (10-20): what the ended runs are worth and which need reruns: the 0.6c / 0.7c (numerics broke at t ≈ 75 /
+≈ 100), the 0.40c's third wave point (its collapse kills it at t 100.7). The setup proven to t 150 is the 0.9c's:
+L 128, N 256 (the same finest dx, faces at 64), drive on, ≈ 15.5 t/h alone, so ≈ 9.7 h a run to t 150.
 Free analyses:
 
 | analysis | what it settles | cost |
