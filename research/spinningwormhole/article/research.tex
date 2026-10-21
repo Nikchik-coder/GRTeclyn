@@ -1,6 +1,3 @@
-% DRAFT. Numbers are typed in place for now; before submission every quoted
-% number moves to a claims ledger (claims/ledger_*.tsv -> numbers.tex), as in
-% the binary paper.
 \documentclass[twocolumn,floatfix,aps,prd,superscriptaddress,nofootinbib]{revtex4-2}
 
 % Engine guard: glyphtounicode and \pdfgentounicode are pdfTeX primitives.
@@ -39,10 +36,10 @@
   \setcounter{dbltopnumber}{2}%
 }
 
-% The appendix is two large figures and little text, so its pages are float
-% pages.  Stock float pages centre their floats and spread the slack between
-% them; \packfloatpages stacks them from the top at a fixed gap instead (as in
-% the binary paper).  Both the single- and double-column sets are set.
+% The appendix's two figures share a float page.  Stock float pages centre
+% their floats and spread the slack between them; \packfloatpages stacks them
+% from the top at a fixed gap instead (as in the binary paper).  Both the
+% single- and double-column sets are set.
 \makeatletter
 \newcommand{\packfloatpages}{%
   \setlength{\@fptop}{0pt}%
@@ -65,13 +62,6 @@
 }
 \urlstyle{same}
 \emergencystretch=2em
-
-% A figure written in place, at the full page width, in a one-column stretch
-% (\onecolumngrid): a minipage whose \caption is a figure's.
-\makeatletter
-\newenvironment{pagefigure}{\par\vspace{\intextsep}\noindent\begin{minipage}{\textwidth}%
-  \def\@captype{figure}\centering}{\end{minipage}\par\vspace{\intextsep}}
-\makeatother
 
 \begin{document}
 
@@ -100,7 +90,7 @@ We present nonlinear 3+1 evolutions of rotating Ellis--Bronnikov wormholes. We c
 
 The Ellis--Bronnikov wormhole, a throat held open by a phantom scalar field~\cite{ellis1973,bronnikov1973,morris_thorne1988,visser1995}, is unstable: depending on the sign of the perturbation it collapses to a black hole or expands without bound, on a timescale set by the throat radius~\cite{gonzalez2009lin,gonzalez2009,shinkai2002,bronnikov2011,cremona2019}. Nonlinear 3+1 evolutions confirm both branches for the lone throat~\cite{shirokov2026} and carry them into binaries, whose every channel ends in collapse, expansion or a merged horizon within a few dynamical times~\cite{shirokov2026c}. If traversable wormholes are to persist anywhere, something must shut this instability off.
 
-Rotation is the oldest candidate~\cite{matos2006}. Spinning Ellis--Bronnikov solutions are known perturbatively~\cite{kashargin2008} and, beyond perturbation theory, from the elliptic solver of Kleihaus and Kunz~\cite{kleihaus_kunz2014,chew2016}: a family that starts at the static throat and ends, at equatorial rotation velocity $v_e=1$, on an extremal Kerr black hole, the phantom field vanishing in the limit; no closed form exists~\cite{volkov2021}. On the stability side, Azad, Bl\'azquez-Salcedo, Khoo and Kunz~\cite{azad2023,azad2024} carried the radial mode to second order in spin: the static unstable mode weakens, with a positive $O(J^2)$ correction for every asymmetry, while for nearly symmetric wormholes a second unstable mode grows out of a static zero mode. The two modes cross near $30\%$ of the extremal angular momentum, where the quadratic approximation gives out. The authors conjecture that the modes merge there and the instability disappears, as purely imaginary modes do in five dimensions~\cite{dzhunushaliev2013}. Quasinormal modes of the rapidly rotating family have also been computed~\cite{khoo2024}. The charged analogue warns against optimism: there the merged modes continue as a complex pair, growth that oscillates, and the growth rate reaches zero only in the extremal limit~\cite{blazquez2025}. Which continuation rotation takes in four dimensions is exactly the question a perturbative method cannot answer, and no rotating wormhole has ever been evolved nonlinearly.
+Rotation is the oldest candidate~\cite{matos2006}. Spinning Ellis--Bronnikov solutions are known perturbatively~\cite{kashargin2008} and, beyond perturbation theory, from the elliptic solver of Kleihaus and Kunz~\cite{kleihaus_kunz2014,chew2016}: a family that starts at the static throat and ends, at equatorial rotation velocity $v_e=1$, on an extremal Kerr black hole, the phantom field vanishing in the limit; no closed form exists~\cite{volkov2021}. On the stability side, Azad, Bl\'azquez-Salcedo, Khoo and Kunz~\cite{azad2023,azad2024} carried the radial mode to second order in spin: the static unstable mode weakens, with a positive $O(J^2)$ correction for every asymmetry, while for nearly symmetric wormholes a second unstable mode grows out of a static zero mode. The two modes cross near $30\%$ of the extremal angular momentum, where the quadratic approximation gives out. The authors conjecture that the modes merge there and the instability disappears, as purely imaginary modes do in five dimensions~\cite{dzhunushaliev2013}. Quasinormal modes of the rapidly rotating family have also been computed~\cite{khoo2024}. The charged analogue warns against optimism: there the merged modes continue as a complex pair, growth that oscillates, and the growth rate reaches zero only in the extremal limit~\cite{blazquez2025}. Which continuation rotation takes in four dimensions is a question a perturbative method cannot answer, and, to our knowledge, no rotating wormhole has yet been evolved nonlinearly.
 
 This paper builds the tools for that evolution and takes its first step. We construct two families of backgrounds as exact stationary solutions, distinguished by the asymmetry $\gamma$ between their two ends (defined in Sec.~\ref{sec:model}). The symmetric family ($\gamma=0$), massless when static, is the one with published data, the curves of Ref.~\cite{kleihaus_kunz2014} and the scalar charges of Ref.~\cite{chew2016}, and we use it to validate the solver and the 3D initial data across the spin range. The drainhole family ($\gamma=-\pi$), whose static member is the mass-1 drainhole evolved in Refs.~\cite{shirokov2026,shirokov2026c}, has no published fast-spin data at all; it is the family we evolve. The solver accepts a solution only if it also satisfies identities it does not impose. These checks exposed an error in a published field equation (Sec.~\ref{sec:model:eq12}) and showed that second-order initial data seed the instability at their own error level (Sec.~\ref{sec:slow}). We then put the backgrounds on the adaptive-mesh-refinement (AMR) evolution grid, verify them at fourth order, and evolve the drainhole at nine spins (Table~\ref{tab:ladder}). We find that rotation slows the collapse, as second-order perturbation theory predicts; that near $30\%$ of the extremal angular momentum the instability changes its end state, the unperturbed throat turning to expansion; and that from $58\%$ upward the throat shows no growth within the converged spans, at $81\%$ over the full run.
 
@@ -302,7 +292,7 @@ Figure~\ref{fig:trends} and Table~\ref{tab:backgrounds} are the map of the param
 \label{sec:setup}
 
 \begin{table*}[t]
-\caption{The simulations: the drainhole family (a), in code units. Model D$n$ is the drainhole background with $v_e\approx n/100$ (D0: static). $8\pi J/A$ is the angular momentum as a percentage of its extremal value $J_{\rm ext}=A/8\pi$ at the throat area $A$, and $M_{\rm ADM}$ the mass of the $\eta\to+\infty$ end (both from the background tables). The finest $\Delta x$ is $0.0625$ at $N=128$ on $L=64$ and at $N=256$ on $L=128$, and scales inversely with $N$ within a triplet. $\sigma$ is the Kreiss--Oliger dissipation strength (Sec.~\ref{sec:setup:scheme}); the conformal factor is floored at $10^{-8}$, except at $10^{-4}$ in the D75, D80 and D90 runs. Damping: the boundary damping layer of Sec.~\ref{sec:setup:boundary} on, or the background-relative boundary alone (off). Trust $t$: the trust window, the last time up to which the run is converged; nothing later is quoted, in the text or the figures. $\tau$: the $e$-fold time of the unstable mode (Sec.~\ref{sec:slow}); MOTS: the marginally outer-trapped surface (Sec.~\ref{sec:setup:runs}). GW: the $(2,0)$ burst at $R=14$ arrives within the trust window (burst), is still rising at its end (onset), or stays below the extraction floor (none). Between D51 and D75 (models D59 and D70, not listed) the far end of the wormhole, compactified to a point at the grid centre, breaks down before the throat's behaviour can be measured, and no result is quoted there.}
+\caption{The simulations: the drainhole family (a), in code units. Model D$n$ is the drainhole background with $v_e\approx n/100$ (D0: static). $8\pi J/A$ is the angular momentum as a percentage of its extremal value $J_{\rm ext}=A/8\pi$ at the throat area $A$, and $M_{\rm ADM}$ the mass of the $\eta\to+\infty$ end (both from the background tables). The finest $\Delta x$ is $0.0625$ at $N=128$ on $L=64$ and at $N=256$ on $L=128$, and scales inversely with $N$ within a triplet. $\sigma$ is the Kreiss--Oliger dissipation strength (Sec.~\ref{sec:setup:scheme}); the conformal factor is floored at $10^{-8}$, except at $10^{-4}$ in the D75, D80 and D90 runs. Damping: the boundary damping layer of Sec.~\ref{sec:setup:boundary} on, or the background-relative boundary alone (off). Final $t$: the time the run reached; trust $t$: the trust window, the last time up to which the run is converged; nothing later is quoted, in the text or the figures. $\tau$: the $e$-fold time of the unstable mode (Sec.~\ref{sec:slow}); MOTS: the marginally outer-trapped surface (Sec.~\ref{sec:setup:runs}). GW: the $(2,0)$ burst at $R=14$ arrives within the trust window (burst), is still rising at its end (onset), or stays below the extraction floor (none). Between D51 and D75 (models D59 and D70, not listed) the far end of the wormhole, compactified to a point at the grid centre, breaks down before the throat's behaviour can be measured, and no result is quoted there.}
 \label{tab:ladder}
 \scriptsize
 \setlength{\tabcolsep}{2pt}
@@ -310,17 +300,17 @@ Figure~\ref{fig:trends} and Table~\ref{tab:backgrounds} are the map of the param
 \begin{tabular}{llllllllllllp{0.26\textwidth}}
 model & $v_e$ & $8\pi J/A$ & $M_{\rm ADM}$ & $L$ & $N$ & $\sigma$ & damping & final $t$ & trust $t$ & $\tau$ & GW & end state \\
 \hline
-D0 & 0 & 0 & 1.000 & 64 & 128 & 0.1 & off & 100 & 60 & 5.4 & none & collapses; run ends inside the horizon at $t=62.7$ \\
-D21 & 0.210 & 12.3 & 1.112 & 64 & 96/128/192 & 0.1 & on & 100 & 55/100/100 & 6.6 & burst & collapses; horizon settles at $R=2.52$ \\
-D21 & 0.210 & 12.3 & 1.112 & 64 & 128 & 0.1 & off & 100 & 42/61 & -- & onset & perturbation $|\varepsilon|=10^{-3}$: outward collapses, inward expands \\
+D0 & 0 & 0 & 1.000 & 64 & 128 & 0.1 & off & 63 & 60 & 5.4 & none & collapses; ends inside the horizon \\
+D21 & 0.210 & 12.3 & 1.112 & 64 & 96/128/192 & 0.1 & on & 63/100/100 & 55/100/100 & 6.6 & burst & collapses; horizon settles at $R=2.52$ \\
+D21 & 0.210 & 12.3 & 1.112 & 64 & 128 & 0.1 & off & 44/100 & 42/61 & -- & onset & perturbation $|\varepsilon|=10^{-3}$: outward collapses, inward expands \\
 D21 & 0.210 & 12.3 & 1.112 & 128 & 256 & 0.1 & off & 150 & 150 & -- & burst & collapses; the $(2,0)$ burst on spheres $R=14$--45 (Fig.~\ref{fig:wave}) \\
 D30 & 0.304 & 18.3 & 1.248 & 64 & 128 & 0.1 & off & 100 & 100 & 8.3 & burst & collapses; horizon at $R=2.571$ at $t=100$ \\
 D30 & 0.304 & 18.3 & 1.248 & 64 & 128 & 0.1 & off & 130 & 130 & 8.3 & burst & collapses; horizon settles at $R=2.567$ \\
 D40 & 0.395 & 24.4 & 1.448 & 64 & 128 & 0.1 & off & 100 & 100 & 13.3 & onset & collapses; MOTS leaves the throat, $t=92$ \\
 D46 & 0.456 & 28.8 & 1.634 & 64 & 128 & 0.1 & off & 100 & 100 & -- & onset & $-1.12\%$ at $t=83$, turning back by $t=100$ \\
-D46 & 0.456 & 28.8 & 1.634 & 64 & 128 & 0.1 & off & 150 & 121 & 12.1 & onset & expands from $t=101$ \\
+D46 & 0.456 & 28.8 & 1.634 & 64 & 128 & 0.1 & off & 130 & 121 & 12.1 & onset & expands from $t=101$ \\
 D51 & 0.513 & 33.3 & 1.860 & 64 & 192 & 0.1 & on & 100 & 100 & -- & none & shrinks, $-1\%$ at $t=99$: the opposite perturbation sign \\
-D51 & 0.513 & 33.3 & 1.860 & 64 & 128 & 0.1 & off & 150 & 95 & 8.8 & none & expands from $t\approx70$ \\
+D51 & 0.513 & 33.3 & 1.860 & 64 & 128 & 0.1 & off & 100 & 95 & 8.8 & none & expands from $t\approx70$ \\
 D75 & 0.749 & 57.6 & 4.110 & 128 & 256 & 0.4 & on & 147 & 75 & -- & none & no growth: areal drift $\le6\times10^{-5}$ \\
 D80 & 0.799 & 64.4 & 5.318 & 128 & 256 & 0.4 & on & 147 & 94 & -- & none & no growth: areal drift $\le7\times10^{-5}$ \\
 D90 & 0.900 & 80.8 & 11.68 & 128 & 128/192/256 & 0.4 & on & 150 & 150 & -- & none & no growth: areal drift $\le7\times10^{-5}$ at all three $N$ \\
@@ -375,32 +365,27 @@ Stability claims follow the criteria of Sec.~II of Ref.~\cite{evstafyeva2025}: a
 
 \emph{Measuring the growth.} The diagnostic for every unperturbed evolution is the throat's areal radius $R_A(t)$, the size of the $\ell=0$ mode the perturbative work computes. The $e$-fold time is an offset-free fit: the slope of $\ln|dR_A/dt|$ over the span where the areal deficit $1-R_A(t)/R_A(0)$ (collapse) or growth (expansion) first passes 0.2--1\%. Fitting the rate of change rather than the deficit itself removes the initial transient's baseline, which biases a direct log fit of the deficit by a resolution-dependent amount. The band sits on a plateau: the measured $\tau$ moves by under $4\%$ between the 0.2--1\% and 0.5--2\% bands. So measured, $\tau$ self-converges across the D21 resolution triplet, 7.8, 6.6 and 6.1 at $N=96$, 128 and 192, at third to fourth order ($Q=2.3$; Appendix~\ref{app:conv}); Richardson extrapolation at that measured order gives the continuum value $\tau=5.9$. The finite-resolution bias is close to a common factor on every rate, so it cancels in the zero of the fit below.
 
-\emph{The collapse branch.} On the spectral backgrounds (Table~\ref{tab:ladder}) the behaviour reverses, and the unperturbed throat collapses on the static mode, later the faster it spins: the areal deficit passes $1\%$ at $t=43.7$, 46.9, 51.4 and 60.2 along the models D0--D40, with $\tau$ rising from 5.4 (D0) to 13.3 (D40) (Fig.~\ref{fig:curve}; Table~\ref{tab:ladder}). Each collapse ends in a black hole: the D21 horizon settles at $R=2.524$ (irreducible mass $M_{\rm irr}=R/2=1.26$), the D30 at $R=2.567$ by $t=130$; the D40's MOTS leaves the throat at $t=92$ and reads $R=3.22$, still shrinking, at $t=100$. Each evolution is seeded only by its own discretization error; because $\tau$ comes from the growth rate, it does not depend on the seed amplitude, which differs between runs.
+\emph{The collapse branch.} On the spectral backgrounds (Table~\ref{tab:ladder}) the behaviour reverses, and the unperturbed throat collapses on the static mode, later the faster it spins: the areal deficit passes $1\%$ at $t=43.7$, 46.9, 51.4 and 60.2 along the models D0--D40, with $\tau$ rising from 5.4 (D0) to 13.3 (D40) (Fig.~\ref{fig:curve}; Table~\ref{tab:ladder}). Each collapse ends in a black hole: the D21 horizon settles at $R=2.524$ (irreducible mass $M_{\rm irr}=R/2=1.26$), the D30 at $R=2.567$ by $t=130$; the D40's MOTS leaves the throat at $t=92$ and reads $R=3.22$, still shrinking, at $t=100$. Each evolution is perturbed only by its own discretization error; because $\tau$ comes from the growth rate, it does not depend on the perturbation amplitude, which differs between runs.
 
 \emph{The expanding branch.} At $v_e=0.456$ ($28.8\%$ of extremal) the end state changes: the areal radius falls by $1.12\%$ by $t=83$, turns, crosses zero at $t=101$ and grows exponentially, $\tau=12.1$. The D51 model behaves the same way ($-0.30\%$ at $t=65$--68, then exponential growth with $\tau=8.8$), and the MOTS is lost once a throat expands: no trapped surface forms. Collapse and expansion are the instability's two end states, and the sign of the initial perturbation selects between them. The imposed radial perturbations at D21 show it directly: pushed inward, the throat expands; pushed outward, it collapses; both pass $1\%$ at $t\approx25$ at the same rate. The D51 run whose absorbing layer gives the opposite effective perturbation shrinks instead ($-1\%$ at $t=99$). At the fast end, the D75 and D80 throat radii show no growth within their converged spans (areal drift $\le7\times10^{-5}$), and the D90 throat radius shows no growth up to $t=150$, about 28 $e$-folding times of the static mode, at all three resolutions (Appendix~\ref{app:conv}). Between D51 and D75 the compactified far end breaks down before the throat's behaviour can be measured (the shaded band of Fig.~\ref{fig:trends}c).
 
 \emph{Against the perturbative prediction.} Figure~\ref{fig:curve} puts both branches on one axis. Where second order should hold, the two methods are close: the D21 continuum rate lies within $8\%$ of the second-order $C=1$ value of Refs.~\cite{azad2023,azad2024} ($\tau=5.9$ against 5.46), and the static member lies beside its linear mode (5.4 at $N=128$, extrapolating toward 5.1). At intermediate spin the measured mode is slower than their second-order values by more than the resolution bias ($\tau=8.3$ against 6.1 at $v_e=0.30$, 13.3 against 8.0 at 0.40), a gap that grows with spin, as expected if the neglected $O(J^4)$ terms become important. The collapse branch itself follows $a-b\,(J/A)^2$ to rms $2\times10^{-3}$ in $1/\tau$ and extrapolates to zero at $32\%$ of the extremal angular momentum, beside the zero of their second-order rate ($33\%$) and their conjectured mode crossing (${\approx}30\%$). The instability nevertheless does not end there: the $28.8\%$ and $33\%$ models expand with rates that rise with spin ($\tau=12.1$, then 8.8), consistent with their second unstable mode taking over rather than the two modes merging away. Their $\tau$ is a linear mode in Killing time, ours a nonlinear areal-radius fit, so the pointwise comparison is indicative.
 
-\emph{Gravitational waves.} The rotating collapse radiates with no nonspherical perturbation put in (Fig.~\ref{fig:wave}): a single $(2,0)$ burst with ring-down period ${\approx}24$, propagating at the local light speed, its extrema flat in extraction radius to $1.5\%$ over $R=30$--45. Aligned on each model's own collapse, the D30 burst has the D21's shape and timing at about 1.5 times the amplitude, and the radiated energy per unit mass grows as the amplitude squared, $E_{20}/M_{\rm ADM}=3.3\times10^{-7}\to8.0\times10^{-7}$. The spherical static collapse radiates nothing: its measured record stays below $3\times10^{-8}$. Rotation thus imprints itself on the burst a collapsing throat emits, before any horizon forms. (The $L=128$ box reproduces the $L=64$ throat history to $3\times10^{-4}$.)
+\emph{Gravitational waves.} The rotating collapse radiates with no nonspherical perturbation put in (Fig.~\ref{fig:wave}): a single $(2,0)$ burst with ring-down period ${\approx}24$, propagating at the local light speed, its extrema flat in extraction radius to $1.5\%$ over $R=30$--45 on the $L=128$ box, which reproduces the $L=64$ throat history to $3\times10^{-4}$. Aligned on each model's own collapse, the D30 burst has the D21's shape and timing at about 1.5 times the amplitude, and the radiated energy per unit mass grows as the amplitude squared, $E_{20}/M_{\rm ADM}=3.3\times10^{-7}\to8.0\times10^{-7}$. The spherical static collapse radiates nothing: its measured record stays below $3\times10^{-8}$. Rotation thus imprints itself on the burst a collapsing throat emits, before any horizon forms.
 
 \section{Conclusions}
 \label{sec:conclusions}
 
-First, the spinning Ellis--Bronnikov parameter space is now available as tabulated solutions: both families from slow rotation to $v_e\approx0.99$, including the drainhole family for which nothing was published, with the published $\nu$ equation, Eq.~(12) of Ref.~\cite{chew2016}, corrected to Eq.~\eqref{eq:nueq}. The practical lesson generalizes: a solver checked only against the equations it imposes would have passed every test while solving a different system; the unimposed identities caught the difference. Second, the pipeline from these solutions to 3+1 evolution is validated at fourth order, and $O(J^2)$ initial data are shown to be unsuitable for stability work: their truncation error seeds the instability itself. Third, these first nonlinear evolutions of rotating wormholes show the instability slowing and then changing branch. The radial collapse slows with spin ($\tau=5.4\to13.3$ from the static model to $24\%$ of the extremal angular momentum), its rate following $a-b\,(J/A)^2$, which extrapolates to zero at $32\%$, beside the second-order prediction of $33\%$~\cite{azad2023,azad2024}. Near $30\%$, where the perturbative mode crossing was conjectured to end the instability, the unperturbed throat expands instead, with a rate that rises with spin. From $58\%$ of the extremal angular momentum upward the throat shows no growth within the converged spans; at $81\%$ this holds to $t=150$, about 28 $e$-folding times of the static mode, at three resolutions, addressing, for this family and timescale, the four-dimensional stability question left open in Ref.~\cite{kleihaus_kunz2014}. The rotating collapse also radiates a $(2,0)$ burst from unperturbed, axisymmetric data, its energy growing with spin as the amplitude squared, while the static collapse radiates nothing.
+First, the spinning Ellis--Bronnikov parameter space is now available as tabulated solutions: both families from slow rotation to $v_e\approx0.99$, including the drainhole family for which nothing was published, with the published $\nu$ equation, Eq.~(12) of Ref.~\cite{chew2016}, corrected to Eq.~\eqref{eq:nueq}. The practical lesson generalizes: a solver checked only against the equations it imposes would have passed every test while solving a different system; the unimposed identities caught the difference. Second, the pipeline from these solutions to 3+1 evolution is validated at fourth order, and $O(J^2)$ initial data are shown to be unsuitable for stability work: their truncation error seeds the instability itself. Third, the nonlinear evolutions show the instability slowing and then changing branch. The radial collapse slows with spin ($\tau=5.4\to13.3$ from the static model to $24\%$ of the extremal angular momentum), its rate following $a-b\,(J/A)^2$, which extrapolates to zero at $32\%$, beside the second-order prediction of $33\%$~\cite{azad2023,azad2024}. Near $30\%$, where the perturbative mode crossing was conjectured to end the instability, the unperturbed throat expands instead, with a rate that rises with spin. From $58\%$ of the extremal angular momentum upward the throat shows no growth within the converged spans; at $81\%$ this holds to $t=150$, about 28 $e$-folding times of the static mode, at three resolutions, addressing, for this family and timescale, the four-dimensional stability question left open in Ref.~\cite{kleihaus_kunz2014}. The rotating collapse also radiates a $(2,0)$ burst from unperturbed, axisymmetric data, its energy growing with spin as the amplitude squared, while the static collapse radiates nothing.
 
-These conclusions carry their limits. The evolutions end at $t\le150$, so they bound growth only over that span; a slower mode could still emerge later. Between $33\%$ and $58\%$ the far end fails before the throat's behaviour can be measured, so that band is unmeasured. Only the drainhole family ($C=1$) was evolved; the symmetric family enters through the solver validation alone. The end state of each unperturbed run is set by the sign of its effective perturbation, so collapse and expansion label the seed, not the model. And the $32\%$ zero is an extrapolation of the collapse-branch fit beyond the last collapsing model at $24\%$, not a measured endpoint.
+These conclusions carry their limits. The evolutions end at $t\le150$, so they bound growth only over that span; a slower mode could still emerge later. Between $33\%$ and $58\%$ the far end fails before the throat's behaviour can be measured, so that band is unmeasured. Only the drainhole family ($C=1$) was evolved; the symmetric family enters through the solver validation alone. The end state of each unperturbed run is set by the sign of its effective perturbation, so collapse and expansion label the sign of that perturbation, not the model. And the $32\%$ zero is an extrapolation of the collapse-branch fit beyond the last collapsing model at $24\%$, not a measured endpoint.
 
 \section{Reproducibility and cost}
 \label{sec:data}
 
-The solver, the evolution code and the figure scripts are in the \texttt{GRTeclyn}~\cite{grteclyn} fork at \url{https://github.com/Nikchik-coder/GRTeclyn} (branch \texttt{feature/spinning}), whose \texttt{results/spinningwormhole} pack holds the solver's accepted solutions, the background-table headers the evolutions start from, and the finished runs' parameter files and diagnostic streams, with a run registry.
+The solver, the evolution code and the figure scripts are available at \url{https://github.com/Nikchik-coder/GRTeclyn} (branch \texttt{feature/spinning}). Its directory \texttt{results/spinningwormhole} holds the solver's accepted solutions, the headers of the background tables the evolutions start from, and every evolution's parameter file and diagnostic time series.
 
-Every evolution ran on one NVIDIA H100 80\,GB device, with \texttt{GRTeclyn} built CUDA-native against AMReX~26.02. A run on the $L=64$, $N=128$ grid takes 7.6--11.1\,h to $t=100$; the $N=192$ members 20\,h, peaking at 53\,GiB of the device; the $L=128$, $N=256$ runs 9.7\,h to $t=150$. The 17 finished evolutions of Table~\ref{tab:ladder} total 167 GPU-hours, recomputed from their archived logs.
-
-% The one-column region opens before the acknowledgments: REVTeX's column
-% balancer mangles a short two-column block that sits right before a grid
-% switch (the acknowledgments ended up alone in the right column).
-\onecolumngrid
+Every evolution ran on one NVIDIA H100 80\,GB device, with \texttt{GRTeclyn} built CUDA-native against AMReX~26.02. A run on the $L=64$, $N=128$ grid takes 7.6--11.1\,h to $t=100$; the $N=192$ members 20\,h, peaking at 53\,GiB; the $L=128$, $N=256$ runs 9.7\,h to $t=150$. The 19 evolutions of Table~\ref{tab:ladder} took 185 GPU-hours.
 
 \begin{acknowledgments}
 This work was supported by Gravity Frontiers
@@ -411,25 +396,25 @@ and \texttt{GRTeclyn}.
 \end{acknowledgments}
 
 \appendix
-\twocolumngrid
-
-% The appendix is two-column text; its two wide figures ride the tops of the
-% following pages as figure* floats, and the references flow on beneath them.
-% Ragged bottoms are global, so a column that falls short ends short.
 
 \section{Convergence of the evolutions}
 \label{app:conv}
 
 The two resolution triplets are D21, the slowest spinning collapse (Fig.~\ref{fig:conv02}), and D90, the stable fast model (Fig.~\ref{fig:conv09}), both read through the per-level constraint norms of Appendix~\ref{app:interface}. Rescaling constraint norms between resolutions is a valid convergence test because their exact value is zero. For the D21 triplet's grid spacings ($h\propto1/N$, $N=96/128/192$) the expected self-convergence factors $Q_n=(h_1^{\,n}-h_2^{\,n})/(h_2^{\,n}-h_3^{\,n})$ are $Q_3=1.95$ and $Q_4=2.69$; the offset-free growth rate of Sec.~\ref{sec:slow} measures $Q=2.3$, converging at the same order as the constraints.
 
-\begin{figure*}[t]
+% Both figures share one float page after the appendix text (\packfloatpages
+% stacks them from its top); the \FloatBarrier before the references puts
+% that page ahead of them.
+\packfloatpages
+
+\begin{figure*}[tp]
 \centering
 \includegraphics[width=0.82\textwidth]{convergence_02c.pdf}
 \caption{Convergence of the D21 model over its triplet $N=96/128/192$ ($L=64$; finest $\Delta x$ in each panel title). (a)--(d)~Hamiltonian and (e)--(h)~momentum constraint norms per refinement level; dashed and dotted, the $N=192$ norms rescaled by $2^{2}$ and $2^{4}$: the measured $N=96$ norms lie between the second- and fourth-order brackets on every level while the collapse grows. (i)~The equatorial throat radius against the stationary solution, falling with resolution. (j)~The collapse, each run aligned at its own $10\%$ time: the three resolutions land on one curve. (k)~$r\,\Delta\psi_4^{20}$ at $R=14$, aligned: $N=128$ and 192 overlap ($N=96$ dies in its collapse before the burst arrives). (l)~The MOTS radius, aligned: one horizon, settling at $R=2.52$. The collapse rate self-converges at third to fourth order ($Q=2.3$); the waveform and the horizon agree across resolutions.}
 \label{fig:conv02}
 \end{figure*}
 
-\begin{figure*}[t]
+\begin{figure*}[tp]
 \centering
 \includegraphics[width=0.82\textwidth]{convergence_09c.pdf}
 \caption{Stability of the D90 model over its triplet $N=128/192/256$ ($L=128$; finest $\Delta x$ in each panel title), to $t=150$. (a)--(h)~Constraint norms per level with the same second-/fourth-order brackets as Fig.~\ref{fig:conv02}: every level converges with resolution over the run. (i)~The equatorial throat radius holds the stationary value, its offset falling with resolution. (j)~The areal throat radius drifts by $\le7\times10^{-5}$ over the full run. (k)~The $(2,0)$ extraction at $R=18$, relative to its $t=0$ read-off: fluctuations at the $10^{-4}$ level, no burst. (l)~The lapse at the $\eta\to-\infty$ puncture falls smoothly at all three resolutions (the gauge, not the geometry). The D90 throat shows no growing radius and no wave at any resolution over the run, with constraint norms converging.}
@@ -440,6 +425,10 @@ The two resolution triplets are D21, the slowest spinning collapse (Fig.~\ref{fi
 \label{app:interface}
 
 The timestep $\Delta t=0.02\,\Delta x$ was adopted empirically in Refs.~\cite{shirokov2026,shirokov2026c}. We traced what sets it to a grid-scale mode pinned to the fixed coarse--fine interfaces of the nested refinement boxes, dissipation-starved at $\sigma=0.1$, whose growth rate rises with the timestep. Constraint norms evaluated per refinement level, with cells covered by finer levels masked, expose the mode by $t\approx10$; the domain-wide norm is blind to it until breakout. Raising the dissipation where the mode lives removes it: at $\sigma=0.4$ the interface-level norms sit $10^{2}$--$10^{4}$ below the $\sigma=0.1$ reference by $t=100$. The larger timesteps this would permit do not transfer to the spinning backgrounds, which lose the $\eta\to-\infty$ region (the puncture) by $t\approx22$--48 at $\Delta t=0.035$--$0.05\,\Delta x$, so the production runs take no speed-up.
+
+% No float may land inside the reference list: a figure still held here is
+% placed before it.
+\FloatBarrier
 
 \begin{thebibliography}{99}
 

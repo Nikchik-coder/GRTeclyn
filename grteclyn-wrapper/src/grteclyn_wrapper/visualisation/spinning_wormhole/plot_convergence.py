@@ -247,7 +247,8 @@ def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: in
     style.prd(8.0)
     hold = kind == "hold"
     # a collapse's (j)-(l) run on their own aligned time: only rows 1-2 and (i) share t
-    fig, axes = plt.subplots(3, LEVELS, figsize=(7.0, 5.6), sharex=hold, layout="constrained")
+    # 2026-10-21: 4.0 in tall (was 5.6), so the two triplets share one appendix page
+    fig, axes = plt.subplots(3, LEVELS, figsize=(7.0, 4.0), sharex=hold, layout="constrained")
     if not hold:
         for ax in list(axes[:2].flat):
             ax.sharex(axes[2, 0])
@@ -304,6 +305,8 @@ def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: in
     if hold:
         ax_j.set_ylabel(r"$10^5\,(R/R(0)-1)$")
         ax_k.set_yscale("symlog", linthresh=PSI4_LINTHRESH, linscale=0.5)
+        # every second decade: at 4.0 in, the labels around zero overlap
+        ax_k.set_yticks([-1e-2, -1e-4, 0.0, 1e-4])
         ax_k.set_ylabel(r"$\psi_4^{20}/\psi_4^{20}(0)-1$")
         ax_l.set(yscale="log", ylabel=r"$\alpha_{\min}$")
         titles = ("throat equatorial radius", "throat areal radius",

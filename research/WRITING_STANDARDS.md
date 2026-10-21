@@ -245,8 +245,10 @@ Sec. II A, the condensed Sec. IV B with the interface appendix, captions, title 
 Ellis–Bronnikov wormholes"; "to our knowledge, the first" was dropped from the abstract on 2026-10-20). What remains
 is substance:
 
-- [ ] Remove unfinished runs before submission. Table III still lists the D59 and D70 rows as "in progress"; they
-  leave the table (or land finished) before anything goes out.
+- [ ] Move every quoted number to a claims ledger (`claims/ledger_*.tsv` → `numbers.tex`, as in the binary paper);
+  the text still types them in place (this was the source's DRAFT header, removed 2026-10-21).
+- [ ] Code availability: Sec. VII links the branch `feature/spinning`; replace it with a tagged release or a Zenodo
+  DOI before submission.
 - [ ] Control the perturbation sign at 33%. The vₑ = 0.51 model expands with one outer-boundary treatment and shrinks
   with the other, so its end state depends on the boundary. Repeat the explicit ±ε radial perturbations run at
   vₑ = 0.21 on this model before claiming a branch switch.
