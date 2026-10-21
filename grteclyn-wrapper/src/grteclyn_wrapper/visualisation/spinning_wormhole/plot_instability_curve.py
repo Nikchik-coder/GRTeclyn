@@ -88,6 +88,14 @@ RUNS = (
          run="spin_hold_L128_ml3_ve060a_spdrv1_sig01_mc8_farfix_t150"),
     dict(label="D70", table="fam_a_ve070",
          run="spin_hold_L128_ml3_ve070a_spdrv1_sig01_mc8_farfix_t150"),
+    # 10-21: the first two rungs past the far-side mass's sign change (v_e 0.72), on the
+    # 0.9c's recipe; both stopped by hand at t ~ 147 with the campaign's close, throats
+    # flat, and each cut at its trust window (trust_windows.tsv) -- past it the far end's
+    # slow breakdown creeps into the throat numbers (the 0.75c: +0.39 % at t 142).
+    dict(label="D75", table="fam_a_ve075",
+         run="spin_hold_L128_ml3_ve075a_spdrv1_sig04_farfix_t150", tmax=75.0),
+    dict(label="D80", table="fam_a_ve080",
+         run="spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150", tmax=94.0),
     dict(label="D90", table="fam_a_ve090",
          run="spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150"),
 )
@@ -106,6 +114,8 @@ TAG_SIDES = {
     "D30": (-5, -4, "right", "top"),
     "D40": (-10, -9, "right", "top"),
     "D46": (12, 0, "left", "center"),
+    # the stable rungs: D80's tag a row above D75's and D90's, so the three fit
+    "D80": (0, 20, "center", "bottom"),
 }
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
 PALETTES = {
@@ -177,12 +187,21 @@ def rate_tau(t, radius, band=BAND, collapse=False):
     return 1.0 / np.polyfit(tt, np.log(vv), 1)[0], (tt[0], tt[-1])
 
 
-def measure(run: str):
+def measure(run: str, tmax: float | None = None):
     """The rung's tau from the areal radius (None while its deficit has not
-    crossed a band on either side), its branch, and the printed comparisons."""
+    crossed a band on either side), its branch, and the printed comparisons.
+    ``tmax`` is the rung's trust window (trust_windows.tsv): every stream is
+    cut there, so a breakdown after it (the 0.75c's far-end creep) cannot
+    paint a stable rung unstable or feed the fit."""
     s = streams(run)
     if s is None or s["spheres"].shape[0] < 5:
         return None
+    if tmax is not None:
+        # the streams' times carry float drift (t = 75 is stored 75.0000000000015):
+        # a hair of tolerance keeps the window's own row in, never the next (cadence 1)
+        for k in ("spheres", "geom", "mots"):
+            if s[k] is not None and s[k].ndim == 2:
+                s[k] = s[k][s[k][:, 0] <= tmax + 1e-6]
     sph = s["spheres"]
     tau, span = rate_tau(sph[:, 0], sph[:, 2], collapse=True)
     g_tau, g_span = rate_tau(sph[:, 0], sph[:, 2])
@@ -274,9 +293,10 @@ def draw(points, pal, jc_frac) -> None:
         else:
             ax.plot(p["frac"], 0.0, "o", ms=5.5, mfc="none", mec=pal["stable"],
                     mew=1.2, zorder=4)
-            ax.annotate(f"{p['label']}: no growth to $t={p['t_end']:.0f}$",
+            dx, dy, ha, va = TAG_SIDES.get(p["label"], (0, 7, "center", "bottom"))
+            ax.annotate(f"{p['label']}, $t\\leq{p['t_end']:.0f}$",
                         (p["frac"], 0.0), textcoords="offset points",
-                        xytext=(0, 7), fontsize=6.5, ha="center", va="bottom")
+                        xytext=(dx, dy), fontsize=6.5, ha=ha, va=va)
     ax.set_xlim(-2.0, 100.0)   # the static rung sits at 0: keep its marker whole
     ax.set_ylim(-0.012, 0.26)
     ax.set_xlabel(r"$8\pi J/A$ [%]")
@@ -299,7 +319,8 @@ def draw(points, pal, jc_frac) -> None:
                         "measured $\\tau$, expansion"))
     if any(p["stable"] for p in drawn):
         entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
-                                      mec=pal["stable"], mew=1.2), "no growth to $t=150$"))
+                                      mec=pal["stable"], mew=1.2),
+                        "no growth"))
     if fit is not None:
         tag = "collapse fit" + (f": zero at {x0:.0f} %" if x0 else "")
         entries.append((fit_line, tag))
@@ -327,7 +348,7 @@ def main() -> None:
     points, pending = [], []
     for rung in RUNS:
         j, frac = table_meta(rung["table"])
-        m = measure(rung["run"])
+        m = measure(rung["run"], rung.get("tmax"))
         if m is None or (m["tau"] is None and not m["stable"]):
             pending.append(rung["label"] + ("" if m is None else
                                             f" (|deficit| {m['flat']:.1e} at t {m['t_end']:.0f})"))

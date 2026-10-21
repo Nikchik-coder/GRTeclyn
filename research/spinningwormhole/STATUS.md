@@ -8,14 +8,17 @@ pre-fix ledger) is `git show 57c23b77:research/spinningwormhole/STATUS.md`. Plan
 Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per run; `trust_windows.tsv`). Branch
 `feature/spinning`, pushed to `myfork`.
 
-## RESULTS SO FAR (2026-10-20)
+## RESULTS SO FAR (2026-10-21)
 
 Spin slows the instability and the 0.9c is stable. Up to the 0.40c (24 % of extremal) the unperturbed throat
 collapses into a black hole. At the 0.46c (29 %) and the 0.5c (33 %, N 128) it shrinks a little, turns, and then
-inflates, growing as e^(t/τ) with τ ≈ 10–12: the instability's other branch, not its end. Where it ends lies between
-33 % and 81 %; every 0.6c / 0.7c run broke down numerically at the far-side centre, never at the throat: the
-Kreiss–Oliger term moves χ at the puncture from t 0 (the "far-side centre" bullet below). On σ 0.1 + min_chi 1e-8
-they died at 66.70 / 52.88 (10-20), later than on σ 0.4 (34 / 32) but no throat data past t 55 / 45.
+inflates, growing as e^(t/τ) with τ ≈ 10–12: the instability's other branch, not its end. Above the far-side mass's
+sign change the throat is FLAT: the 0.75c (57.6 %) within 6e-5 to t 75, the 0.8c (64.4 %) within 7e-5 to t 94
+(their trust windows; stopped by hand at t ≈ 147 at the campaign's close, 10-21) and the 0.9c (81 %) to t 150.
+The gap 33–58 % is where no run survives its far-side centre: every 0.6c / 0.7c run broke down there, never at the
+throat — the Kreiss–Oliger term moves χ at the puncture from t 0 (the "far-side centre" bullet below); on σ 0.1 +
+min_chi 1e-8 they died at 66.70 / 52.88 (10-20), with no throat data past t 55 / 45. CAMPAIGN CLOSED on these
+results (decided 10-21): the recipe is the 0.9c triplet's, so the stable points inherit its convergence story.
 Correction (10-20): on 10-19 the 0.46c's turn at t 83 was read as the end of the instability near Azad's ≈ 30 %; the
 t 150 run shows its throat inflating from t 101.
 
@@ -127,6 +130,8 @@ row): 5.13 / 5.46 / 6.1 / 8.0 / 13.2 (static → 0.46c), zero at J 4.03 (33 %).
 | 0.7c on L 128 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_farfix_t150` | 51.4 | – | – | – | STOPPED 107.65 (10-20 15:27, on the word): the χ floor, as the 0.5c / 0.6c L 128 — throat flat (≤ 0.006 %) to t 70, then the central lapse reached 0, the finest-level constraints 1.6e-3 (100× the 0.9c's) and the throat swung +0.18 % (t 100) → +0.03 % (t 106). Not packed, not usable; rerun below | – |
 | 0.7c on L 128, min_chi 1e-8 `spin_hold_L128_ml3_ve070a_spdrv1_sig04_mc8_farfix_t150` | 51.4 | – | – | – | DIED 32.36 (10-20 17:33; A11 NaN): σ 0.4 at the far-side centre, as the 0.6c — the lapse on its floor at t 27, |K| there 4.2 at the end; throat flat (≤ 0.0006 %). Not packed, not usable | – |
 | 0.7c on L 128, σ 0.1 `spin_hold_L128_ml3_ve070a_spdrv1_sig01_mc8_farfix_t150` | 51.4 | – | – | – | DIED 52.88 (10-20 ≈ 21:07; h11 NaN): the far-side centre — χ there on the 1e-8 floor by t 2.5, K negative, the lapse 0.21 → 0.26 (t 45), then collapsed along the axis; throat within 0.003 % to t 50, finest-level Ham off its trend at 45–50. Not packed, not usable | – |
+| 0.75c on L 128 `spin_hold_L128_ml3_ve075a_spdrv1_sig04_farfix_t150` | 57.6 | – | ∞ | – | STOPPED 147.10 (10-21 ≈ 08:15, on the word, campaign close; no NaN): FLAT, areal R within 6e-5 to t 75; after it the far end's slow breakdown creeps in (+0.39 % at 142, numerical). First rung past the far-side mass's sign change (μ₋ +0.15). Packed | 75 |
+| 0.8c on L 128 `spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150` | 64.4 | – | ∞ | – | STOPPED 146.70 (10-21 ≈ 08:15, on the word, campaign close; no NaN): FLAT, areal R within 7e-5 to t 94; the creep after is numerical (+0.09 % at 141). μ₋ +0.50. Packed | 94 |
 | 0.9c (L 128 triplet, fast) | 80.8 | flat to t 150 | ∞ | – | stable: areal R drift ≤ 7e-5, no MOTS | 150 |
 
 ψ4 (2,0), r·Δψ4 at R 14 (u as above): 0.2c trough −1.47e-4 (u 13), peak +2.3e-4 (u 24), ring-down period ≈ 24 (L 128,
@@ -137,8 +142,11 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 | run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| 0.75c L 128 `spin_hold_L128_ml3_ve075a_spdrv1_sig04_farfix_t150` | 1st / 0, alone | 0 @ 22:46 | 150 | ≈ 15.5 t/h | 10-21 ≈ 08:45 |
-| 0.8c L 128 `spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150` | 1st / 1, alone | 0 @ 22:46 | 150 | ≈ 15.5 t/h | 10-21 ≈ 08:45 |
+None. Both first-node cards and the second node's card are idle.
+
+- Ended 10-21: the 0.75c / 0.8c L 128 (STOPPED 147.10 / 146.70 ≈ 08:15 MSK by dump_and_stop on the word — the
+  campaign closes on them; no NaN; packed, trust 75 / 94). Their dump checkpoints and plotfiles pruned; nothing
+  queued needs them.
 
 - The positive-far-side-mass rungs (go 10-20 ≈ 22:45, no checkpoints): the far-side mass changes sign at v_e ≈ 0.72
   (fam_a_r1 step 19, the 0.7c, −0.106; step 20, v_e 0.725, +0.016); every negative one broke at the grid centre,
@@ -191,16 +199,16 @@ flat in R to 1.3 % over R 30–45); 0.30c first lobe 1.0e-4 (0.2c 6.5e-5), troug
 
 ## RUNS FOR THE PAPER (proposed, no go yet)
 
-No proposed run (decided 10-20: keep and pack the 0.30c t 130, the 0.5c t 150 and the 0.46c t 150; no 0.40c wave
+CAMPAIGN CLOSED (decided 10-21, on the 0.75c / 0.8c flat windows): no further runs — a min_chi 1e-3 rerun for
+"clean to 150" was considered and declined (it would need its own convergence test; the current points run the
+0.9c triplet's exact recipe and inherit its). The KO-on-the-deviation code option stays unbuilt for the same
+reason. No proposed run (decided 10-20: keep and pack the 0.30c t 130, the 0.5c t 150 and the 0.46c t 150; no 0.40c wave
 rerun — the 0.2c and 0.30c carry the wave claim). The 0.46c t 150 is packed (died 130.23, trust 121). Decided 10-20
 after the far-side-centre deaths: the 0.6c and 0.7c rerun on L 128 with the slow recipe (σ 0.1, min_chi 1e-8) for
 "flat to t 150" points beside the fit's zero; both died at the centre (66.70 / 52.88). The 0.5c is not rerun (its
 L 64 runs cover the rung); the dead L 128 rows leave the paper's table.
-Launched instead 10-20 ≈ 22:45: the 0.75c and 0.8c on the 0.9c's settings (LIVE). Still proposed (no go yet):
-Kreiss–Oliger on the deviation from the background, σ KO(state − background), with the
-background the drive and the Sommerfeld fix already hold on every level: a code option and a rebuild, then a
-≈ 20 min 0.7c check (χ at the centre must stay at 3.7e-7 past t 3, where σ 0.1 put it on the floor), then the 0.6c /
-0.7c L 128 to t 150 (≈ 10 h, both first-node cards).
+Launched instead 10-20 ≈ 22:45: the 0.75c and 0.8c on the 0.9c's settings; both ended flat (trust 75 / 94) and
+close the campaign.
 Free analyses:
 
 | analysis | what it settles | cost |

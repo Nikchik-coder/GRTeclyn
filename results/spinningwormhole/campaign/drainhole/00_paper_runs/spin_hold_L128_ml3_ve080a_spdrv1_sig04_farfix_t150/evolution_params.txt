@@ -1,0 +1,108 @@
+# 0.8c on L 128 at N 256 (fam_a_ve080: v_e 0.799, 64 % of extremal, far-side mass +0.50). Every negative-mass far side (0.46c-0.7c) broke down at the
+# grid centre; the positive ones (0.9c +2.09, 0.99c +26) ran clean to t 150. The paper 0.9c's params
+# (spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150: finest dx 0.0625, faces at 64, sponge drive on over 48-64,
+# min_chi 1e-4, sigma 0.4) with only the background table and the name swapped.
+#
+
+verbosity = 1
+
+output_path = "runs/spinning_wormhole/drainhole/00_paper_runs/spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150"
+amr.plot_file = "/tmp/grteclyn_scratch/spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150/SpinningWormholePlt"
+amr.check_file = "/tmp/grteclyn_scratch/spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150/SpinningWormholeChk"
+
+checkpoint_interval = -1             # no checkpoints for this run (asked 2026-10-16)
+plot_interval       = 100            # dt0 = 0.01 -> a plotfile every t = 1.0
+
+amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
+amr.derive_plot_vars = Weyl4
+
+pout_subpath = "pout"
+data_subpath = "data"
+
+print_progress_only_to_rank_0 = 1
+
+particle_interpolator.verbosity = 0
+
+
+spinning_background_file = "runs/spinning_p3/tables/fam_a_ve080.spinbg"
+spinning_initial_lapse_type = 0      # e^{f/2} = e^u, the drainhole's static lapse
+
+spinning_seed_amplitude = 0.0
+spinning_seed_width = 1.0
+spinning_seed_radius = 0.0
+
+phantom_mass = 0.0
+
+
+L = 128.0
+N1 = 256
+N2 = 256
+N3 = 256
+
+center = 64.0 64.0 64.0
+
+max_level = 3                        # dx: 0.5 / 0.25 / 0.125 / 0.0625
+regrid_interval = 16 16 16 16
+regrid_threshold = 0.05
+
+max_box_size = 32
+min_box_size = 16
+
+isPeriodic = 0 0 0
+hi_boundary = 1 1 1                  # Sommerfeld (outgoing)
+sommerfeld_relative_to_background = 1  # 2026-10-17: Sommerfeld on (state - t 0 background), the face fix
+lo_boundary = 1 1 1
+
+
+dt_multiplier = 0.02                 # production dt (the fast dt dies on spin data, 2026-10-16)
+stop_time = 150.0                    # past the old t = 64 window and the t ~ 128 crossing
+
+max_spatial_derivative_order = 4
+nan_check = 1
+
+min_chi = 1.0e-4                     # 2026-10-15 rescue knob: far side heals instead of grinding on the floor
+min_lapse = 1.0e-10
+
+lapse_advec_coeff = 1.0
+lapse_coeff = 2.0
+lapse_power = 1.0
+
+shift_advec_coeff = 0.0              # 2026-10-17: no advection of the rotating background shift (FAR-ZONE JUNK)
+shift_Gamma_coeff = 0.75
+eta = 1.0                            # the family's gauge, unchanged
+
+formulation = 0
+kappa1 = 3.0
+kappa2 = 0.
+kappa3 = 1.
+covariantZ4 = 0
+
+sigma = 0.4                          # 2026-10-16: the adopted trust-window dissipation (kills the interface mode)
+
+puncture_tracking.enabled = 0
+calculate_constraint_norms = 1
+constraint_norms_levels = 1          # per-level masked norms (73793542): which level carries any long-run growth
+constraint_norms_mask_radius = 0.75    # 2026-10-17: the 1e-4 chi floor clips the core to r ~ 0.6; mask it so level 3 measures the throat
+constraint_norms_edge_cells = 3      # 2026-10-17: per-level norms skip the Sommerfeld layer (outer 3 cells)
+
+
+spinning_diagnostics = 1
+core_radial_profile = 0
+
+sponge_enabled = 1
+sponge_inner_radius = 48.0           # the L = 128 value (the merger's and the old L128 holds')
+sponge_outer_radius = 64.0
+sponge_strength = 4.0
+sponge_ramp_power = 4
+sponge_drive_strength = 1.0          # damping sponge (SpongeDrive.hpp) -- physics-neutral absorber proven on the static testbed; makes the L64 box viable past its crossing time.  NOTE: the R = 30 psi4 sphere sits inside the drive shell (24-32), so R = 14 is the trusted waveform on this grid
+
+tagging_type = 1                     # fixed boxes on the centred throat
+tagging_L = 64.0                     # NOT L: 64 * 2^-(l+2) = merger's +/-16/8/4
+
+activate_extraction = 0
+write_extraction = 0
+
+amrex.the_arena_init_size = 1048576
+
+exact_quartic_interp = 1             # exact coarse-fine weights (AMReX's are rounded: ghosts 6e-8 low)
+rk_stage_refill = 0                  # no RHS re-fill of the RK stage (AmrLevel::RK already filled the ghosts)
