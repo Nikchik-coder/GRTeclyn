@@ -106,16 +106,22 @@ AZAD_W0, AZAD_DW2, ETA0 = 0.390, 0.384, 2.0
 AZAD_CONJECTURE = 30.0    # their conjectured end of the instability (% of extremal)
 BAND = (2e-3, 1e-2)       # the deficit band every rung's tau is fitted over
 WIDE_BANDS = ((3e-3, 3e-2), (1e-2, 1e-1))   # printed for comparison only
-# Per-rung tag offsets (points) and anchors: above-right where the falling fit
-# leaves that side free, below-left where a tag there would reach the rules.
+# Per-rung tag offsets (points) and anchors, each tag against its own marker
+# (2026-10-21: the diagonal offsets left the tags floating between rungs).  The
+# collapse dots take theirs on the left, under the falling fit; D0 above its
+# diamond, the spine being on its left; D46 above-left, the 30 % rule 2 pt to its
+# right.
 TAG_SIDES = {
-    "D0": (4, 11, "left", "bottom"),
-    "D21": (-6, -9, "right", "top"),
-    "D30": (-5, -4, "right", "top"),
-    "D40": (-10, -9, "right", "top"),
-    "D46": (12, 0, "left", "center"),
-    # the stable rungs: D80's tag a row above D75's and D90's, so the three fit
-    "D80": (0, 20, "center", "bottom"),
+    "D0": (-2, 9.5, "left", "bottom"),
+    "D21": (-4, -1.5, "right", "center"),
+    "D30": (-4, -1.5, "right", "center"),
+    "D40": (-4, -1.5, "right", "center"),
+    "D46": (0.5, 3.5, "right", "bottom"),
+    "D51": (4.5, 0, "left", "center"),
+    # the stable rungs sit 12 pt apart: D75's tag hangs left, D80's right
+    "D75": (1, 4.5, "right", "bottom"),
+    "D80": (-1, 4.5, "left", "bottom"),
+    "D90": (0, 4.5, "center", "bottom"),
 }
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
 PALETTES = {
@@ -269,8 +275,10 @@ def draw(points, pal, jc_frac) -> None:
     az = [(p["frac"], azad_rate(p["j"])) for p in drawn if azad_rate(p["j"]) > 0]
     if az:
         # Open diamonds over smaller dots: where a rung matches Azad the dot
-        # shows inside its diamond instead of hiding it.
-        ax.plot(*zip(*az), "D", ms=6.5, mfc="none", mec=pal["azad"], mew=1.0, zorder=5)
+        # shows inside its diamond instead of hiding it.  A scatter, so the label
+        # audit sees the diamonds and not the undrawn segments between them.
+        ax.scatter(*zip(*az), marker="D", s=6.5 ** 2, facecolors="none",
+                   edgecolors=pal["azad"], linewidths=1.0, zorder=5)
     fit = fit_zero(drawn)
     x0 = None
     if fit is not None:
@@ -285,7 +293,7 @@ def draw(points, pal, jc_frac) -> None:
             ax.plot(p["frac"], rate(p["tau"]), "^" if p["branch"] == "inflates" else "o",
                     ms=4.6 if p["branch"] == "inflates" else 3.8,
                     color=pal["measured"], zorder=4)
-            dx, dy, ha, va = TAG_SIDES.get(p["label"], (5, 3, "left", "bottom"))
+            dx, dy, ha, va = TAG_SIDES.get(p["label"], (4.5, 0, "left", "center"))
             ax.annotate(p["label"],
                         (p["frac"], rate(p["tau"])),
                         textcoords="offset points", xytext=(dx, dy), fontsize=6.5,
@@ -293,10 +301,10 @@ def draw(points, pal, jc_frac) -> None:
         else:
             ax.plot(p["frac"], 0.0, "o", ms=5.5, mfc="none", mec=pal["stable"],
                     mew=1.2, zorder=4)
-            dx, dy, ha, va = TAG_SIDES.get(p["label"], (0, 7, "center", "bottom"))
-            ax.annotate(f"{p['label']}, $t\\leq{p['t_end']:.0f}$",
+            dx, dy, ha, va = TAG_SIDES.get(p["label"], (0, 4.5, "center", "bottom"))
+            ax.annotate(f"{p['label']}\n$t\\leq{p['t_end']:.0f}$",
                         (p["frac"], 0.0), textcoords="offset points",
-                        xytext=(dx, dy), fontsize=6.5, ha=ha, va=va)
+                        xytext=(dx, dy), fontsize=6.5, ha=ha, va=va, multialignment=ha)
     ax.set_xlim(-2.0, 100.0)   # the static rung sits at 0: keep its marker whole
     ax.set_ylim(-0.012, 0.26)
     ax.set_xlabel(r"$8\pi J/A$ [%]")
