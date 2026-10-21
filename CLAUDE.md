@@ -231,6 +231,25 @@ what the claims check or the identity grep flags, and report in a few lines.
   (the horizon, or the fitted exponential); everything else is ink or grey.
 - A figure fix: make the minimal fix, render, run the label audit and show the image first; audits come after.
 
+## Publishing (arXiv and Zenodo)
+
+Learned on the spinning paper's submission (2026-10-21):
+
+- **A GitHub release does NOT reach Zenodo by itself.** The repo's Zenodo webhook has never delivered anything
+  (zero deliveries, "unused"). After every release, press "Sync now" on
+  https://zenodo.org/account/settings/github/ while logged in as the owner; ingestion took ~15 min. Verify with
+  the records API that the new version appears under concept DOI 10.5281/zenodo.23245933 — the papers cite the
+  concept DOI, which always resolves to the newest version.
+- **On arXiv's Review Files step, the auto-selected compiler "pdftex" is PLAIN TeX** and fails on
+  `\documentclass` with a wall of "Undefined control sequence". Select "pdflatex" by hand before processing.
+- The arXiv scanner's "missing files: Latin Modern Roman/Sans/Mono" warning is a false positive from the
+  fontspec branch of the articles' engine guard; ignore it.
+- arXiv limits the account to 2 submissions per calendar month (October 2026's quota is used up by the merger
+  replacement and the spinning paper).
+- After the arXiv number arrives, update the README's "arXiv number to follow", `CITATION.cff` and the GitHub
+  release notes. Spinning paper: submitted 2026-10-21 (submit/8264396), release `v1.0-spinning-wormhole`
+  (develop c80875eb), version DOI 10.5281/zenodo.23538851.
+
 ## Code
 
 - **Judge a solver by the equations it was never asked to satisfy.** Driving the discretized equations to 1e-12
