@@ -3,6 +3,7 @@
 #
 # Usage, on the node that runs the evolution:
 #   restart_consumer.sh [--dry-run] <run dir> <flag> ...   restart with <flag> ... appended
+#   restart_consumer.sh --busy <run dir> <flag> ...         the same for a watcher that lags (3b)
 #   restart_consumer.sh --check <run dir>                   validate a restart (read-only)
 #   e.g. restart_consumer.sh runs/wormhole_merger/<run> --horizon-half 3.0 --horizon-common-level 3
 #
@@ -22,6 +23,12 @@
 #      watcher sits in its poll sleep.  consumer.log cannot tell: "Processed N
 #      plotfile(s)." is not flushed until the next batch starts, so the log looks busy
 #      while the consumer idles (measured: ~1.5 min of work per plotfile).
+#   3b. A watcher slower than the run's plotfile interval is never idle (2026-10-17: the
+#      0.9c N 192's MOTS search, 22 min per plotfile against one every 12 min).  --busy
+#      kills it the moment it saves a plotfile to consume_state.json, which is the last
+#      write of that plotfile: all its rows are in, and the next plotfile has none yet
+#      (rows are written only after its whole extraction).  The new watcher redoes that
+#      next plotfile and redraws its frames over the same files.
 #   4. Kill the pid, never the group: the consumer shares its process group with the
 #      evolution and run_single.sh.
 #   5. The new watcher stopped when the evolution exits.  run_single.sh kills only the
@@ -41,12 +48,14 @@ VENV_BIN="${WRAPPER_DIR}/.venv/bin"
 PY="${VENV_BIN}/python"
 
 MODE=restart
+WAIT=idle
 case "${1:-}" in
   --dry-run) MODE=dry; shift ;;
   --check) MODE=check; shift ;;
+  --busy) WAIT=saved; shift ;;
 esac
 if [[ $# -lt 1 || ( "${MODE}" != check && $# -lt 2 ) ]]; then
-  echo "usage: restart_consumer.sh [--dry-run] <run dir> <consumer flag> ..." >&2
+  echo "usage: restart_consumer.sh [--dry-run|--busy] <run dir> <consumer flag> ..." >&2
   echo "       restart_consumer.sh --check <run dir>" >&2
   exit 2
 fi
@@ -119,6 +128,26 @@ sys.exit(1 if any(not state.get(n) for n in plts) else 0)
 PY
   [[ "$(cat "/proc/$1/wchan" 2>/dev/null)" == *sleep* ]]
 }
+# Saved (--busy, 3b): returns as soon as consume_state.json gains a processed plotfile.
+saved() {
+  "${PY}" - "${RUN}" <<'PY'
+import json, os, re, sys, time
+path = os.path.join(sys.argv[1], "small_data", "consume_state.json")
+def done():
+    try:
+        return {k for k, v in json.load(open(path)).items() if v is True and re.search(r"Plt\d+$", k)}
+    except (OSError, ValueError):
+        return None
+before = done() or set()
+t0 = time.time()
+while time.time() - t0 < 3600:
+    now = done()
+    if now and now - before:
+        sys.exit(0)
+    time.sleep(0.1)
+sys.exit(1)
+PY
+}
 
 if [[ "${MODE}" == check ]]; then
   bad=0
@@ -190,17 +219,24 @@ if [[ "${MODE}" == dry ]]; then
   exit 0
 fi
 
-echo "waiting for the watcher to be idle (up to 60 min) ..."
 ok=0
-for _ in $(seq 1 12000); do
-  if idle "${OLD}"; then
+if [[ "${WAIT}" == saved ]]; then
+  echo "waiting for the watcher to save its current plotfile (up to 60 min) ..."
+  saved && ok=1
+  HOW="between plotfiles"
+else
+  echo "waiting for the watcher to be idle (up to 60 min) ..."
+  for _ in $(seq 1 12000); do
+    if idle "${OLD}"; then
+      sleep 0.3
+      if idle "${OLD}"; then ok=1; break; fi
+    fi
     sleep 0.3
-    if idle "${OLD}"; then ok=1; break; fi
-  fi
-  sleep 0.3
-done
+  done
+  HOW="idle"
+fi
 if [[ "${ok}" != 1 ]]; then
-  echo "watcher ${OLD} never idle for an hour; nothing changed" >&2
+  echo "watcher ${OLD} never ${HOW} for an hour; nothing changed" >&2
   exit 1
 fi
 
@@ -214,7 +250,7 @@ if kill -0 "${OLD}" 2>/dev/null; then
   echo "watcher ${OLD} ignored SIGTERM; nothing started" >&2
   exit 1
 fi
-echo "[restart_consumer] $(date -u +%FT%TZ) watcher ${OLD} stopped idle (frames ${FRAMES_BEFORE}); appended: ${APPENDED}" \
+echo "[restart_consumer] $(date -u +%FT%TZ) watcher ${OLD} stopped ${HOW} (frames ${FRAMES_BEFORE}); appended: ${APPENDED}" \
   >> "${LOG}"
 { printf '%q ' "${EXTRA[@]}"; echo; } >> "${RUN}/consumer_args.extra"   # point 6
 

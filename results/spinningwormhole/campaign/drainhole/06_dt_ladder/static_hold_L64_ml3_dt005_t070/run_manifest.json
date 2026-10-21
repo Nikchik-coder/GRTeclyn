@@ -1,0 +1,13 @@
+{
+  "run": "static_hold_L64_ml3_dt005_t070",
+  "launched_utc": "2026-10-15T05:36:03Z",
+  "binary": {
+    "file": "main3d_levnorm_73793542_2026-10-15.ex",
+    "sha256": "c796b327efc1943d3bdd8c79c0e1a28b89c3b8f21143a8a94f8efba3dc7af8f5",
+    "grteclyn_commit": "73793542",
+    "amrex": "26.02-12-gd7da5045",
+    "flags": "USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90",
+    "nvcc": "Build cuda_12.1.r12.1/compiler.32688072_0"
+  },
+  "launcher_commit": "73793542"
+}

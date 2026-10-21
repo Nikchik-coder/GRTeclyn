@@ -20,7 +20,7 @@ import yt
 
 from ..extraction.symmetry import field_parity, reflect_axes
 from ..fields import _field_key, _register_derived_fields
-from .center import _frame_buff_size
+from .center import _frame_buff_size, _off_cell_face
 
 _AXIS = {"x": 0, "y": 1, "z": 2}
 # yt's image axes for a slice normal to each axis: (horizontal, vertical).
@@ -80,7 +80,7 @@ def mirrored_window(
     n_h = n_full // 2 if mh else n_full
     n_v = n_full // 2 if mv else n_full
     centre3 = [0.0, 0.0, 0.0]
-    centre3[ai] = plane
+    centre3[ai] = _off_cell_face(ds, ai, plane)
     centre3[h_ax] = 0.5 * (h_lo + h_hi)
     centre3[v_ax] = 0.5 * (v_lo + v_hi)
     slc = yt.SlicePlot(ds, axis, plot_field, center=ds.arr(centre3, "code_length"),

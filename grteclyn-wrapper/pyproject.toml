@@ -37,6 +37,13 @@ gw-search = [
     "scipy>=1.10",
 ]
 
+# The fast-spin Ellis-Bronnikov background solver (analysis/spinning_wormhole):
+# JAX gives the Newton solver its exact Jacobian (jacfwd), CPU + float64 only.
+spinning-solver = [
+    "jax>=0.4.30",
+    "sympy>=1.12",
+]
+
 rl = [
     "gymnasium>=0.29",
     "pyzmq>=25.0",

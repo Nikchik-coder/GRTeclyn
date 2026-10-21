@@ -1,0 +1,45 @@
+SPINBG_V1
+eta0 2.0
+n_x 4097
+n_mu 257
+x_min -1.0
+x_max 1.0
+num_components 6
+component_names f nu_bar omega domega_deta domega_dtheta_over_sintheta phi
+meta family fam_a catalogue ve050, solution fam_a_log_0017, leg fam_a_log
+meta generator grteclyn_wrapper.analysis.spinning_wormhole.backgrounds full (p5 catalogue)
+meta D 2.0012903728323628
+meta J 4.111161692775352
+meta J_over_A 0.013266576468935693
+meta J_over_A_extremal_frac 0.3334254333847647
+meta J_over_M2 1.1877112786439283
+meta M_ADM 1.8604878521954005
+meta Omega_throat 0.09757876493894281
+meta R_A 4.965899369861615
+meta R_eq 5.254270757919557
+meta R_pol 4.830754583678917
+meta area_throat 309.8886666354224
+meta ergo_max 12856.599332533551
+meta eta0 2.0
+meta eta_throat 1.0540060490747263
+meta gamma -3.141592653589793
+meta mu_minus -0.630715276971449
+meta mu_plus 1.8604878521954005
+meta omega_inf 0.1495649141801818
+meta omega_throat_eq 0.09757876493894281
+meta v_e 0.5127052512125934
+meta table_eta0 2.0
+meta table_D 2.0012903728323628
+meta table_M_ADM 1.8604878521954005
+meta table_J 4.111161692775352
+meta midpoint_err_f 7.917521416267448e-08
+meta gate_D2_median 4.0051631563914984
+meta gate_D2_spread 4.377288300598526e-12
+meta gate_D2_spread_fullgrid 2.795096358872681
+meta gate_Ec_rel 9.842491499143019e-12
+meta gate_J_flux 4.111161692775352
+meta gate_J_spread 7.744572323431787e-10
+meta gate_mu_end_spread 7.383326416920966e-08
+meta gate_smarr_rel 7.974802720577976e-07
+meta gate_tail_max 5.833215150913744e-14
+END_HEADER

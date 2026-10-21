@@ -19,7 +19,11 @@ session start goes stale within hours.
   - No leftovers of finished runs, except the checkpoints a queued run needs.
   - Report it in one line: clean (GB used and free), or what pollutes and how many GB.
   - A node this session cannot list: read its runs' logs for the checkpoint lines, and say its disk was not listed.
-- Every ETA is in hours and clock time (UTC).
+- Every ETA is in hours and clock time in Moscow time, UTC+3 (decided 2026-10-16; `date` on the nodes prints UTC — add 3).
+- **A convergence question wants the order table** (the user, 2026-10-18: "that is what i wanted"): one row per level
+  and constraint (Ham L0, Mom L0, … Ham L3, Mom L3), one column per time (e.g. t 10 / 20 / 30 / 40 / 50), each cell
+  the order between the members, N₁→N₂ / N₂→N₃ (from `constraint_norms_levels.dat`, p = ln(e₁/e₂) / ln(N₂/N₁)),
+  then two lines on what it shows. Not the norms' magnitudes, not prose.
 
 ## Environment
 
@@ -36,6 +40,15 @@ session start goes stale within hours.
 - **GPUs are shared** with other people's jobs: check `nvidia-smi` before every
   launch. Campaign processes are renamed: `test params.txt` (evolution),
   `test_post post.py` (consumer), `test_pre pre.py` (launch checks), `test_job run_single.sh`.
+- **On the cluster, one runaway process restarts the whole node container.** The containers run with
+  `memory.oom.group = 1` and no swap: a process that pushes the container over its memory limit
+  (`/sys/fs/cgroup/memory.max`) gets EVERY process in it OOM-killed (evolutions, consumers, sshd, the editor,
+  agent sessions), and the container restarts with an empty /tmp (scratch plotfiles, checkpoints, logs gone).
+  It looks like a reboot, and the OOM counters reset with it, so it leaves no trace. Run any CPU job that can
+  blow up (sympy `integrate`/`simplify`, large numpy work) under a per-process cap (`ulimit -v` in its
+  subshell, or `RLIMIT_AS`) with workers × cap well under the limit, its log on NFS, and inside the 24-CPU
+  quota (`/sys/fs/cgroup/cpu.max`; `nproc` says 128). (2026-10-12: a term-wise sympy integrate on 32 workers
+  restarted a GPU node's container twice within minutes.)
 
 ## Launching runs
 
@@ -60,7 +73,12 @@ after session because it lived only in one machine's agent memory.
    extraction/MOTS rows land in `small_data/`, and the keep-last pruning runs. A consumer that died (or was never
    started) is silent: the evolution runs happily while scratch fills and no frames, movies or horizon data exist.
    (2026-10-02: SEED-csm ran 1.5 h consumer-less — `--profile none` sets `WHM_CONSUME=0` and silently drops
-   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`.) **Changing or fixing a live
+   `--consume-args`; for a raw-args run pass a real profile with `--consume-args`.) **The consumer must also keep
+   up**: time one plotfile's pass (its frame's mtime to its `small_data` rows) against the run's plotfile interval;
+   a slower consumer piles plotfiles up on scratch until the disk fills. (2026-10-17: the 0.9c N 192's spectral MOTS
+   search, 2 seeds × 400 flow steps on a run that never has a MOTS, took 22 min per plotfile against one every
+   12 min; its cost grows as N³: 2.5 min at N 96, 6 at N 128. Fixed live with `--mots-spectral-steps 150` through
+   `restart_consumer.sh --busy`, since a lagging watcher is never idle.) **Changing or fixing a live
    run's consumer: only via `restart_consumer.sh <run_dir> <flag> ...`** (campaigns/wormhole_merger; `--check`
    first). It reuses the live watcher's exact command line, appends the flags, keeps the frames, and persists
    the flags in `consumer_args.extra` so the end-of-run drain gets them too. If the run has NO watcher at all,
@@ -190,9 +208,15 @@ what the claims check or the identity grep flags, and report in a few lines.
 
 ## The paper
 
+- **Readability: [`research/WRITING_STANDARDS.md`](research/WRITING_STANDARDS.md)**, for every paper (2026-10-20: GRG
+  rejected the Bondi dipole paper because both referees could not follow its undefined lab vocabulary and its excess
+  of numbers). Read it before writing or revising, and run its checklist before every submission.
 - Every quoted number is a row in `research/merger/article/claims/ledger_*.tsv` and
   reaches the text as a `\clm...` macro from the generated `numbers.tex`. Change the
   ledger, run `claims.py check`, then `claims.py tex` — never edit `numbers.tex`.
+- **The article's data lives in `results/`, git-tracked** (the user, 2026-10-20): every figure and table must rebuild
+  from a clean checkout off the cluster. When a figure input lives only under `runs/`, pack it into `results/`; if it
+  is big, ask first and pack the part the figure reads (the spinning tables' headers, the far-zone light speed).
 - Horizon numbers (R, M_MS, formation times) come from the 3D MOTS finder: `small_data/mots_spectral.dat`, which
   every binary profile writes on every plotfile, or `headon_first_law.py` offline. Never take them from the round or
   oriented scans, which read a deformed horizon 3–11 % low (2026-10-01). A row of nan means no MOTS on that plotfile.
@@ -209,6 +233,14 @@ what the claims check or the identity grep flags, and report in a few lines.
 
 ## Code
 
+- **Judge a solver by the equations it was never asked to satisfy.** Driving the discretized equations to 1e-12
+  proves only self-consistency. Overdetermined systems (Einstein's equations: five equations, three unknowns) come
+  with spare equations the solution must satisfy for free — measure them on every solution, unimposed. A defect
+  there that does not shrink with resolution and scales with a physical parameter is a wrong continuous equation,
+  not a numerics bug; convict the culprit by substituting a closed-form exact solution into each printed equation.
+  (2026-10-12: the spinning-wormhole solver converged at every resolution while the published CKK eq. (12) was
+  wrong; the unimposed constraints flagged it at O(J⁴), and extremal Kerr closed four equations to 160 digits
+  and left a finite residue in eq. (12) alone.)
 - **Never write "the user" in code**: not in comments, docstrings, help text or printed messages, and not
   "the user's word / call / rule / design / choice" either (2026-10-08). Say what was decided and why, with the date
   if it matters: `# 2026-10-05: K on one fixed linear scale (the colour bar danced)`, never
@@ -226,6 +258,15 @@ what the claims check or the identity grep flags, and report in a few lines.
   hook (`grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook`) blocks
   it. Say "the first/second GPU node", never the hostname.
 - Several sessions may share this working tree: **stage explicit paths**, never `git add -A`.
-- "Commit and push" from the user means now, in one step: stage, commit, push, one `ls-remote` check.
+- **Push to `myfork`, never `origin`** (2026-10-10): `origin` is upstream GRTLCollaboration (and its
+  https URL has no credentials here); the working remote is the SSH fork `myfork`. Every push and
+  `ls-remote` check uses `myfork`.
+- **Pull before you commit and push** (2026-10-13): `timeout 120 git pull --autostash < /dev/null`
+  first (`pull.rebase` is true, so a plain pull refuses while anything is unstaged), then re-read the
+  diff of every file both sides touched (STATUS.md above all) before staging. Other sessions push to
+  the same branch all day; a commit on a stale base needs a rebase later, and in the worst case
+  resolving a STATUS conflict. (2026-10-13: a close-out went straight to commit + push while
+  another session had just pushed a rewritten STATUS queue.)
+- "Commit and push" from the user means now, in one step: pull, stage, commit, push, one `ls-remote` check.
 - Push in the background with a timeout (`< /dev/null`), then verify with
   `git ls-remote`; a foreground push can hang the shell.

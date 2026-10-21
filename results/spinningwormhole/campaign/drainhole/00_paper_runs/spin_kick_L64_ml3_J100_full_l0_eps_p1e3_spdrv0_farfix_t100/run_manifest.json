@@ -1,0 +1,13 @@
+{
+  "run": "spin_kick_L64_ml3_J100_full_l0_eps_p1e3_spdrv0_farfix_t100",
+  "launched_utc": "2026-10-19T07:51:28Z",
+  "binary": {
+    "file": "main3d_kick_af28ad29_2026-10-18.ex",
+    "sha256": "a2660fcd78af4c55baab278b0ae06b3197bd05237da27d0ecd9737b9c9eca8ff",
+    "grteclyn_commit": "af28ad29",
+    "amrex": "26.02-12-gd7da5045",
+    "flags": "USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90",
+    "nvcc": "Build cuda_12.1.r12.1/compiler.32688072_0"
+  },
+  "launcher_commit": "e04ffcfb"
+}

@@ -285,8 +285,12 @@ def flow(
     step_size: float = 0.15,
     damp: float = 0.5,
     tol: float = 2.0e-3,
+    a_init=None,
 ) -> FlowResult:
-    """Drive r = h(theta, phi) toward theta_out = 0 by the smoothed flow."""
+    """Drive r = h(theta, phi) toward theta_out = 0 by the smoothed flow.
+
+    a_init: start from these Y_lm coefficients (e.g. the previous plotfile's surface,
+    padded or truncated to this box's harmonics) instead of the round seed r_seed."""
     th, ph, TH, PH, _ = _quadrature(nth, nph)
     ylm_q = np.stack([_real_ylm(l, m, TH, PH) for l, m in box.pairs])
     w = np.sin(TH) * (th[1] - th[0]) * (ph[1] - ph[0])  # quadrature weights
@@ -295,6 +299,10 @@ def flow(
     a[0] = r_seed * math.sqrt(4.0 * math.pi)  # a_00 Y_00 = r_seed
     if seed_deform != 0.0 and len(a) > 4:
         a[4] = seed_deform * a[0]  # an l = 2 dent to break sphericity
+    if a_init is not None:
+        a_init = np.asarray(a_init, dtype=float)
+        a[:] = 0.0
+        a[:min(a.size, a_init.size)] = a_init[:a.size]
 
     ls = np.array([l for l, _ in box.pairs], dtype=float)
     gain = step_size / (1.0 + damp * ls * (ls + 1.0))

@@ -104,6 +104,36 @@ def load_slice(path: str) -> tuple[np.ndarray, list[float], float, float]:
         )
 
 
+def crop_slice(
+    arr: np.ndarray, extent: Sequence[float], half: float | None
+) -> tuple[np.ndarray, list[float]]:
+    """The central window ``|x - x0|, |y - y0| <= half`` of one cached slice.
+
+    ``x0, y0`` is the window centre the frames are drawn about (the extent's
+    midpoint), so the cropped frame keeps the live frame's ``x - x0`` axes.
+    2026-10-18: the full-box frames of a collapsing throat (L 64) show the
+    throat at a tenth of the frame width; the core movies redraw the same cache
+    over the throat region only.  ``None`` returns the slice unchanged.
+    """
+    extent = [float(v) for v in extent]
+    if half is None:
+        return arr, extent
+    ny, nx = arr.shape
+    dx = (extent[1] - extent[0]) / nx
+    dy = (extent[3] - extent[2]) / ny
+    x0 = 0.5 * (extent[0] + extent[1])
+    y0 = 0.5 * (extent[2] + extent[3])
+    i0 = max(int(np.floor((x0 - half - extent[0]) / dx)), 0)
+    i1 = min(int(np.ceil((x0 + half - extent[0]) / dx)), nx)
+    j0 = max(int(np.floor((y0 - half - extent[2]) / dy)), 0)
+    j1 = min(int(np.ceil((y0 + half - extent[2]) / dy)), ny)
+    return (
+        arr[j0:j1, i0:i1],
+        [extent[0] + i0 * dx, extent[0] + i1 * dx,
+         extent[2] + j0 * dy, extent[2] + j1 * dy],
+    )
+
+
 def slice_time(path: str) -> float | None:
     """The simulation time stored in one cached slice (reads that scalar only)."""
     try:
@@ -146,7 +176,9 @@ def last_index_within(frames_out_dir: str, t_max: float) -> int | None:
     return best
 
 
-def series_zlim(paths: Iterable[str], field: str) -> tuple[float, float] | None:
+def series_zlim(
+    paths: Iterable[str], field: str, crop: float | None = None
+) -> tuple[float, float] | None:
     """The scale that clips nothing across a whole cached series.
 
     Each slice is asked for the limits it would have chosen on its own -- the
@@ -159,9 +191,10 @@ def series_zlim(paths: Iterable[str], field: str) -> tuple[float, float] | None:
     lo = hi = None
     for path in paths:
         try:
-            arr, _, _, _ = load_slice(path)
+            arr, extent, _, _ = load_slice(path)
         except (OSError, ValueError):
             continue
+        arr, _ = crop_slice(arr, extent, crop)
         one = _auto_zlim_from_array(arr, field)
         if one is None:
             continue
@@ -211,13 +244,17 @@ def rerender_series(
     linthresh: float | None = None,
     decades: float = DEFAULT_SYMLOG_DECADES,
     t_max: float | None = None,
+    crop: float | None = None,
+    draw_dir: str | None = None,
 ) -> tuple[int, tuple[float, float] | None]:
     """Redraw every frame of one series against a single fixed scale.
 
     Returns ``(frames_written, zlim_used)``.  With ``zlim`` given, that scale is
     used; otherwise it is measured from the cache.  With ``t_max`` (the run's
     trust window) only the frames at or before it are measured and redrawn;
-    later frames are left exactly as they are.
+    later frames are left exactly as they are.  ``crop`` redraws the central
+    window only (``crop_slice``), measuring the scale there; ``draw_dir`` is the
+    frames directory the PNGs go to (default: beside the cache, in place).
     """
     from ..config import _field_frame_config
     from .slice import draw_slice_png
@@ -226,7 +263,7 @@ def rerender_series(
     if not paths:
         return (0, None)
 
-    limits = tuple(zlim) if zlim is not None else series_zlim(paths, field)
+    limits = tuple(zlim) if zlim is not None else series_zlim(paths, field, crop)
     if limits is None:
         return (0, None)
     if norm == "symlog" and linthresh is None:
@@ -241,11 +278,12 @@ def rerender_series(
         except (OSError, ValueError) as exc:
             print(f"WARNING: rerender skipped {os.path.basename(path)}: {exc}")
             continue
+        arr, extent = crop_slice(arr, extent, crop)
         draw_slice_png(
             arr, extent,
             field=field, cfg=cfg, axis=axis,
             coord_val=coord_val, time=time, zlim=limits,
-            frames_out_dir=frames_out_dir, frame_idx=idx,
+            frames_out_dir=draw_dir or frames_out_dir, frame_idx=idx,
             corner=corner, verbose=verbose, note=" (cached)",
             norm=norm, linthresh=linthresh,
         )
@@ -261,14 +299,18 @@ def rerender_all(
     norms: dict[str, str] | None = None,
     decades: float = DEFAULT_SYMLOG_DECADES,
     field_decades: dict[str, float] | None = None,
+    field_zlims: dict[str, Sequence[float]] | None = None,
     only: Iterable[str] | None = None,
     skip: Iterable[str] | None = None,
     t_max: float | None = None,
+    crop: float | None = None,
+    draw_dir: str | None = None,
 ) -> dict[str, list[float]]:
     """Redraw every cached series, each against its own fixed scale.
 
     ``t_max`` restricts every series to the run's trust window (see
-    ``within_window``).
+    ``within_window``).  ``field_zlims`` hand-sets the scale of named fields
+    instead of measuring it, for a series whose loudest frames are noise.
 
     ``norms`` maps a field name to a colour normalisation ("symlog", "log") for
     that field only; every field left out keeps the linear default.  A key of
@@ -279,10 +321,13 @@ def rerender_all(
     and reads better at 1.5.  ``only`` restricts the redraw to named fields; ``skip`` leaves named
     fields' frames exactly as the consumer rendered them (a field whose live
     per-frame scale reads better than any one fixed scale, e.g. K).
+    ``crop`` and ``draw_dir`` redraw a central window into another frames
+    directory (see ``rerender_series``); the full frames stay as they are.
     """
     used: dict[str, list[float]] = {}
     norms = norms or {}
     field_decades = field_decades or {}
+    field_zlims = field_zlims or {}
     only = set(only) if only else None
     skip = set(skip) if skip else set()
     for field, axis in cached_fields(frames_out_dir):
@@ -293,8 +338,10 @@ def rerender_all(
             continue
         norm = norms.get(field, norms.get("*"))
         written, limits = rerender_series(
-            frames_out_dir, field, axis, corner=corner, verbose=verbose,
+            frames_out_dir, field, axis, zlim=field_zlims.get(field),
+            corner=corner, verbose=verbose,
             norm=norm, decades=field_decades.get(field, decades), t_max=t_max,
+            crop=crop, draw_dir=draw_dir,
         )
         if not written or limits is None:
             print(f"[rerender] {field}_{axis}: nothing cached, skipped")
@@ -302,12 +349,15 @@ def rerender_all(
         used[f"{field}_{axis}"] = [limits[0], limits[1]]
         dec = field_decades.get(field, decades)
         how = f" [{norm}, {dec:g} decades]" if norm == "symlog" else (f" [{norm}]" if norm else "")
+        if field in field_zlims:
+            how += " [hand-set]"
         print(
             f"[rerender] {field}_{axis}: {written} frame(s) at a fixed "
             f"{limits[0]:.6g} .. {limits[1]:.6g}{how}"
         )
     if used:
-        record = os.path.join(frames_out_dir, CACHE_DIR_NAME, "rerender_zlims.json")
+        record = (os.path.join(draw_dir, "rerender_zlims.json") if draw_dir
+                  else os.path.join(frames_out_dir, CACHE_DIR_NAME, "rerender_zlims.json"))
         try:
             with open(record, "w", encoding="utf-8") as fh:
                 json.dump({**used, **({"_t_max": t_max} if t_max is not None else {})},

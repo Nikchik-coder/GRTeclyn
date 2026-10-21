@@ -13,7 +13,7 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | Bondi dipole | [`research/bondi_dipole/`](research/bondi_dipole/) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/README.md) | `runs/bondi/` | published |
 | wormhole dynamics | [`research/wormholedynamics/`](research/wormholedynamics/) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) | — | published |
 | matter-first search | [`research/neuralspacetime/`](research/neuralspacetime/) | [`results/matter-first-…/`](results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/README.md) | `runs/neuralspacetime/` | — |
-| rotating wormhole | [`research/rotatingwormhole/`](research/rotatingwormhole/) | — | `runs/rotating_wormhole/` | — |
+| spinning wormhole | [`research/spinningwormhole/`](research/spinningwormhole/) | [`results/spinningwormhole/`](results/spinningwormhole/) | `runs/spinning_wormhole/` | active: [`STATUS.md`](research/spinningwormhole/STATUS.md) |
 
 ## The merger campaign: where to look
 

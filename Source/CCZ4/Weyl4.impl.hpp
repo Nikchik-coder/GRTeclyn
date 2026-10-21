@@ -352,7 +352,7 @@ void Weyl4::set_up(int a_state_index)
         name, amrex::IndexType::TheCellType(),
         static_cast<int>(var_names.size()), var_names, Weyl4::compute_mf,
         [=](const amrex::Box &box) { return amrex::grow(box, 2); },
-        &amrex::cell_quartic_interp);
+        grteclyn_cell_interp());
 
     // We need all of the CCZ4 variables to calculate Weyl4
     // (except B but easier to keep it in)

@@ -1,0 +1,13 @@
+{
+  "run": "t0conv_ve095b_L128_N192_ml3",
+  "launched_utc": "2026-10-13T14:49:12Z",
+  "binary": {
+    "file": "main3d_smoke_bfb65e8e_2026-10-10.ex",
+    "sha256": "972ec4dad80167e64a1a2ffec205057092d89f97d414383957b48900b01c69c5",
+    "grteclyn_commit": "bfb65e8e",
+    "amrex": "26.02-12-gd7da5045",
+    "flags": "USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90",
+    "nvcc": "Build cuda_12.1.r12.1/compiler.32688072_0"
+  },
+  "launcher_commit": "d1487fd0"
+}

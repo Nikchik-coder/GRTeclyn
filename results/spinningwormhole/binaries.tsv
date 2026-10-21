@@ -1,0 +1,9 @@
+# The GRTeclyn builds the packed runs used, one row per binary, tab-separated: file, the first 16
+# hex digits of its SHA-256, the source commit, AMReX version, build time, make flags, nvcc. The
+# binaries are not distributed; each builds from the listed commit.
+file	sha256_16	grteclyn_commit	amrex	built_utc	flags	nvcc
+main3d_smoke_bfb65e8e_2026-10-10.ex	972ec4dad80167e6	bfb65e8e	26.02-12-gd7da5045	2026-10-10T16:44:58Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0
+main3d_levnorm_73793542_2026-10-15.ex	c796b327efc1943d	73793542	26.02-12-gd7da5045	2026-10-15T05:35:11Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0
+main3d_spdrv_59345984_2026-10-15.ex	96a0ad59ea804a71	59345984	26.02-12-gd7da5045	2026-10-15T19:37:36Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0
+main3d_farfix_891d817d_2026-10-17.ex	e7231e5f0707bd92	891d817d	26.02-12-gd7da5045	2026-10-17T20:27:44Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0
+main3d_kick_af28ad29_2026-10-18.ex	a2660fcd78af4c55	af28ad29	26.02-12-gd7da5045	2026-10-18T09:02:05Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0

@@ -1,0 +1,26 @@
+# The last time each run's solution is converged, tab-separated: run, t_max, reason. The paper
+# quotes nothing after t_max (its Table V's t_conv). A run not listed is converged to its end.
+run	t_max	reason
+static_hold_L64_ml3_t100	64	the outgoing gauge pulse returns from the L = 64 box faces
+spin_hold_L64_ml3_J025_t100	64	the outgoing gauge pulse returns from the L = 64 box faces
+spin_hold_L64_ml3_J100_t100	57	the expanding throat leaves the finest refinement level
+spin_hold_L128_ml3_ve050a_sig04_dt005_t100	20	the puncture region leaves the dt = 0.02 dx reference
+spin_hold_L128_ml3_ve050a_sig04_t100	15	the puncture region leaves the sigma = 0.1 reference
+spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100	20	the puncture region starts to decay
+spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100	25	the puncture region starts to decay
+spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100	70	the Hamiltonian norm doubles at t = 74
+spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100	55	the conformal factor reaches its floor in the collapsing throat
+spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100	100	converged to the end outside the horizon
+spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100	100	converged to the end outside the horizon
+spin_hold_L128_ml3_J100_full_farfix_t150	150	converged to the end outside the horizon
+spin_kick_L64_ml3_J100_full_l0_eps_m1e3_spdrv0_farfix_t100	61	the expanding throat leaves the finest refinement level
+spin_kick_L64_ml3_J100_full_l0_eps_p1e3_spdrv0_farfix_t100	42	the conformal factor reaches its floor in the collapsing throat
+static_hold_L64_ml3_spdrv0_farfix_t100	60	the conformal factor reaches its floor inside the horizon
+spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100	100	converged to the end outside the horizon
+spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100	100	converged to the end outside the horizon
+spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100	100	converged to the end
+spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130	130	converged to the end outside the horizon
+spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150	95	the finest-level constraint norms grow from t = 96
+spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150	121	the finest-level constraint norms grow from t = 121.5
+spin_hold_L128_ml3_ve075a_spdrv1_sig04_farfix_t150	75	the finest-level constraint norms grow as the far end's lapse collapses
+spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150	94	the finest-level constraint norms grow as the far end's lapse collapses

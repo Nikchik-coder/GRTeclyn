@@ -1,0 +1,66 @@
+# The runs in this pack, one line per run, tab-separated: run, its directory under campaign/,
+# what it is (model as in the paper's Table IV: D<n> is the drainhole background with v_e ~ n/100;
+# box L, base cells N, Kreiss-Oliger strength sigma, timestep dt in units of the finest dx, the
+# outer damping layer), where the paper uses it, and its outcome.
+run	directory	what	paper	outcome
+spin_hold_L128_N128_ml3_ve090a_spdrv1_sig04_farfix_t150	drainhole/00_paper_runs	D90; L 128, N 128, sigma 0.4, dt 0.02 dx, damping layer on	Tables IV-V; Fig. 7	no growth: areal drift <= 7e-5 to t = 150
+spin_hold_L128_N192_ml3_ve090a_spdrv1_sig04_farfix_t150	drainhole/00_paper_runs	D90; L 128, N 192, sigma 0.4, dt 0.02 dx, damping layer on	Tables IV-V; Fig. 7	no growth: areal drift <= 7e-5 to t = 150
+spin_hold_L128_ml3_J100_full_farfix_t150	drainhole/00_paper_runs	D21; L 128, N 256, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V; Fig. 5	collapses; the horizon settles at R = 2.52; the (2,0) burst on spheres R = 14-45
+spin_hold_L128_ml3_ve075a_spdrv1_sig04_farfix_t150	drainhole/00_paper_runs	D75; L 128, N 256, sigma 0.4, dt 0.02 dx, damping layer on	Tables IV-V	no growth: areal drift <= 6e-5 to t = 75; stopped at t = 147.1
+spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150	drainhole/00_paper_runs	D80; L 128, N 256, sigma 0.4, dt 0.02 dx, damping layer on	Tables IV-V	no growth: areal drift <= 7e-5 to t = 94; stopped at t = 146.7
+spin_hold_L128_ml3_ve090a_spdrv1_sig04_farfix_t150	drainhole/00_paper_runs	D90; L 128, N 256, sigma 0.4, dt 0.02 dx, damping layer on	Tables IV-V; Fig. 7	no growth: areal drift <= 7e-5 to t = 150
+spin_hold_L64_N192_ml3_J100_full_spdrv1_farfix_t100	drainhole/00_paper_runs	D21; L 64, N 192, sigma 0.1, dt 0.02 dx, damping layer on	Tables IV-V; Fig. 6	collapses; horizon R = 2.53 at t = 100, settling
+spin_hold_L64_N192_ml3_ve050a_spdrv1_farfix_t100	drainhole/00_paper_runs	D51; L 64, N 192, sigma 0.1, dt 0.02 dx, damping layer on	Tables IV-V	shrinks: the opposite perturbation sign
+spin_hold_L64_N96_ml3_J100_full_spdrv1_farfix_t100	drainhole/00_paper_runs	D21; L 64, N 96, sigma 0.1, dt 0.02 dx, damping layer on	Tables IV-V; Fig. 6	collapses; the run ends mid-collapse at t = 62.6
+spin_hold_L64_ml3_J100_full_spdrv1_farfix_t100	drainhole/00_paper_runs	D21; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer on	Tables IV-V; Fig. 6	collapses; the horizon settles at R = 2.52
+spin_hold_L64_ml3_ve030a_spdrv0_farfix_t100	drainhole/00_paper_runs	D30; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	collapses; horizon R = 2.571 at t = 100
+spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130	drainhole/00_paper_runs	D30; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	collapses; the horizon settles at R = 2.567
+spin_hold_L64_ml3_ve040a_spdrv0_farfix_t100	drainhole/00_paper_runs	D40; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	collapses; the MOTS leaves the throat at t = 92
+spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100	drainhole/00_paper_runs	D46; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	areal radius -1.12 % at t = 83, turning back by t = 100
+spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150	drainhole/00_paper_runs	D46; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	expands from t = 101; the run ends at t = 130.2
+spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150	drainhole/00_paper_runs	D51; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	expands from t ~ 70; the run ends at t = 100.1
+spin_kick_L64_ml3_J100_full_l0_eps_m1e3_spdrv0_farfix_t100	drainhole/00_paper_runs	D21 - eps (inward radial perturbation 0.001); L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	expands
+spin_kick_L64_ml3_J100_full_l0_eps_p1e3_spdrv0_farfix_t100	drainhole/00_paper_runs	D21 + eps (outward radial perturbation 0.001); L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	collapses; the run ends mid-collapse at t = 44.1
+static_hold_L64_ml3_spdrv0_farfix_t100	drainhole/00_paper_runs	D0 (static); L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Tables IV-V	collapses; the run ends inside the horizon at t = 62.7
+static_hold_L64_ml3_t100	drainhole/01_static_hold	D0 (static); L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, check 3	reproduces the static evolution of arXiv:2610.13206 to t = 100: identical t = 0 data, Hamiltonian norm within 5e-7, collapse times within one time unit
+spin_hold_L64_ml3_J025_t100	drainhole/02_spin_hold	second-order O(J^2) data at J = 0.25; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. V	the throat expands, e-fold time 5.8
+spin_hold_L64_ml3_J100_t100	drainhole/02_spin_hold	second-order O(J^2) data at J = 1; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. V	the throat expands, e-fold time 5.6
+t0conv_ve050a_L64_N096_ml3	drainhole/03_t0_checks	t = 0 check, D51; L 64, N 96, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, check 1	see t0conv_ve050a_checks.txt
+t0conv_ve050a_L64_N128_ml3	drainhole/03_t0_checks	t = 0 check, D51; L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, check 1	see t0conv_ve050a_checks.txt
+t0conv_ve050a_L64_N192_ml3	drainhole/03_t0_checks	t = 0 check, D51; L 64, N 192, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, check 1	see t0conv_ve050a_checks.txt
+spin_hold_L128_ml3_ve050a_sig04_dt0035_t060	drainhole/06_dt_ladder	D51; L 128, N 256, sigma 0.4, dt 0.035 dx, damping layer off	Appendix B	the puncture region fails; stopped at t = 26.4
+spin_hold_L128_ml3_ve050a_sig04_dt005_t100	drainhole/06_dt_ladder	D51; L 128, N 256, sigma 0.4, dt 0.05 dx, damping layer off	Appendix B	the puncture region fails; the run ends at t = 47.9
+spin_hold_L128_ml3_ve050a_sig04_t100	drainhole/06_dt_ladder	D51; L 128, N 256, sigma 0.4, dt 0.02 dx, damping layer off	Appendix B	the puncture region fails; the run ends at t = 46.5
+spin_hold_L64_ml3_ve050a_spdrv1_sig02_dt005_t100	drainhole/06_dt_ladder	D51; L 64, N 128, sigma 0.2, dt 0.05 dx, damping layer on	Appendix B	the puncture region decays; stopped at t = 44.5
+spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100	drainhole/06_dt_ladder	D51; L 64, N 128, sigma 0.2, dt 0.02 dx, damping layer on	Appendix B	the puncture region decays; stopped at t = 23.9
+spin_hold_L64_ml3_ve050a_spdrv1_sig04_mc4_dt005_t100	drainhole/06_dt_ladder	D51; L 64, N 128, sigma 0.4, dt 0.05 dx, damping layer on	Appendix B	the dt = 0.05 dx instability; the run ends at t = 81.1
+static_hold_L64_ml3_dt002_sig04_t100	drainhole/06_dt_ladder	D0 (static); L 64, N 128, sigma 0.4, dt 0.02 dx, damping layer off	Appendix B	per-level constraint norms 1e2-1e4 below the reference at t = 100
+static_hold_L64_ml3_dt002ctl_t100	drainhole/06_dt_ladder	D0 (static); L 64, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Appendix B	reference for the timestep tests; reaches t = 100
+static_hold_L64_ml3_dt0035_t070	drainhole/06_dt_ladder	D0 (static); L 64, N 128, sigma 0.1, dt 0.035 dx, damping layer off	Appendix B	the refinement-interface mode grows from t ~ 43; the run ends at t = 62.1
+static_hold_L64_ml3_dt005_sig02_t045	drainhole/06_dt_ladder	D0 (static); L 64, N 128, sigma 0.2, dt 0.05 dx, damping layer off	Appendix B	the interface mode slows but still grows; reaches t = 45
+static_hold_L64_ml3_dt005_sig03_t045	drainhole/06_dt_ladder	D0 (static); L 64, N 128, sigma 0.3, dt 0.05 dx, damping layer off	Appendix B	no interface mode; reaches t = 45
+static_hold_L64_ml3_dt005_sig04_t045	drainhole/06_dt_ladder	D0 (static); L 64, N 128, sigma 0.4, dt 0.05 dx, damping layer off	Appendix B	no interface mode; reaches t = 45
+static_hold_L64_ml3_dt005_t070	drainhole/06_dt_ladder	D0 (static); L 64, N 128, sigma 0.1, dt 0.05 dx, damping layer off	Appendix B	the refinement-interface mode grows (level 2 at 61 times the reference at t = 15); the run ends at t = 45.3
+spin_hold_L64_N96_ml3_J100_full_spdrv0_farfix_t055	drainhole/10_sponge_test	D21; L 64, N 96, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV C	reaches t = 55
+spin_hold_L64_N96_ml3_J100_full_spdrv1w20p2_farfix_t055	drainhole/10_sponge_test	D21; L 64, N 96, sigma 0.1, dt 0.02 dx, damping layer on	Sec. IV C	reaches t = 55
+t0conv_ve024b_L128_N128_ml3	symmetric_massless/01_t0_checks/L128_A1/ve024b	t = 0 check, symmetric family at v_e 0.24; L 128, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve024b_L128_checks.txt
+t0conv_ve024b_L128_N192_ml3	symmetric_massless/01_t0_checks/L128_A1/ve024b	t = 0 check, symmetric family at v_e 0.24; L 128, N 192, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve024b_L128_checks.txt
+t0conv_ve024b_L128_N256_ml3	symmetric_massless/01_t0_checks/L128_A1/ve024b	t = 0 check, symmetric family at v_e 0.24; L 128, N 256, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve024b_L128_checks.txt
+t0conv_ve043b_L128_N128_ml3	symmetric_massless/01_t0_checks/L128_A1/ve043b	t = 0 check, symmetric family at v_e 0.43; L 128, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve043b_L128_checks.txt
+t0conv_ve043b_L128_N192_ml3	symmetric_massless/01_t0_checks/L128_A1/ve043b	t = 0 check, symmetric family at v_e 0.43; L 128, N 192, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve043b_L128_checks.txt
+t0conv_ve043b_L128_N256_ml3	symmetric_massless/01_t0_checks/L128_A1/ve043b	t = 0 check, symmetric family at v_e 0.43; L 128, N 256, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve043b_L128_checks.txt
+t0conv_ve067b_L128_N128_ml3	symmetric_massless/01_t0_checks/L128_A1/ve067b	t = 0 check, symmetric family at v_e 0.67; L 128, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve067b_L128_checks.txt
+t0conv_ve067b_L128_N192_ml3	symmetric_massless/01_t0_checks/L128_A1/ve067b	t = 0 check, symmetric family at v_e 0.67; L 128, N 192, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve067b_L128_checks.txt
+t0conv_ve067b_L128_N256_ml3	symmetric_massless/01_t0_checks/L128_A1/ve067b	t = 0 check, symmetric family at v_e 0.67; L 128, N 256, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve067b_L128_checks.txt
+t0conv_ve085b_L128_N128_ml3	symmetric_massless/01_t0_checks/L128_A1/ve085b	t = 0 check, symmetric family at v_e 0.85; L 128, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve085b_L128_checks.txt
+t0conv_ve085b_L128_N192_ml3	symmetric_massless/01_t0_checks/L128_A1/ve085b	t = 0 check, symmetric family at v_e 0.85; L 128, N 192, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve085b_L128_checks.txt
+t0conv_ve085b_L128_N256_ml3	symmetric_massless/01_t0_checks/L128_A1/ve085b	t = 0 check, symmetric family at v_e 0.85; L 128, N 256, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve085b_L128_checks.txt
+t0conv_ve090b_L128_N128_ml3	symmetric_massless/01_t0_checks/L128_A1/ve090b	t = 0 check, symmetric family at v_e 0.90; L 128, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve090b_L128_checks.txt
+t0conv_ve090b_L128_N192_ml3	symmetric_massless/01_t0_checks/L128_A1/ve090b	t = 0 check, symmetric family at v_e 0.90; L 128, N 192, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve090b_L128_checks.txt
+t0conv_ve090b_L128_N256_ml3	symmetric_massless/01_t0_checks/L128_A1/ve090b	t = 0 check, symmetric family at v_e 0.90; L 128, N 256, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve090b_L128_checks.txt
+t0conv_ve095b_L128_N128_ml3	symmetric_massless/01_t0_checks/L128_A1/ve095b	t = 0 check, symmetric family at v_e 0.95; L 128, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve095b_L128_checks.txt
+t0conv_ve095b_L128_N192_ml3	symmetric_massless/01_t0_checks/L128_A1/ve095b	t = 0 check, symmetric family at v_e 0.95; L 128, N 192, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve095b_L128_checks.txt
+t0conv_ve095b_L128_N256_ml3	symmetric_massless/01_t0_checks/L128_A1/ve095b	t = 0 check, symmetric family at v_e 0.95; L 128, N 256, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve095b_L128_checks.txt
+t0conv_ve099b_L128_N128_ml3	symmetric_massless/01_t0_checks/L128_A1/ve099b	t = 0 check, symmetric family at v_e 0.99; L 128, N 128, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve099b_L128_checks.txt
+t0conv_ve099b_L128_N192_ml3	symmetric_massless/01_t0_checks/L128_A1/ve099b	t = 0 check, symmetric family at v_e 0.99; L 128, N 192, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve099b_L128_checks.txt
+t0conv_ve099b_L128_N256_ml3	symmetric_massless/01_t0_checks/L128_A1/ve099b	t = 0 check, symmetric family at v_e 0.99; L 128, N 256, sigma 0.1, dt 0.02 dx, damping layer off	Sec. IV B, checks 1-2	see t0conv_ve099b_L128_checks.txt

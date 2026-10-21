@@ -1,0 +1,13 @@
+{
+  "run": "spin_hold_L64_N96_ml3_J100_full_spdrv0_farfix_t055",
+  "launched_utc": "2026-10-18T10:01:09Z",
+  "binary": {
+    "file": "main3d_farfix_891d817d_2026-10-17.ex",
+    "sha256": "e7231e5f0707bd9288604d0d109a068a81d02112f32f5a3bc4c2960e8282fd98",
+    "grteclyn_commit": "891d817d",
+    "amrex": "26.02-12-gd7da5045",
+    "flags": "USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90",
+    "nvcc": "Build cuda_12.1.r12.1/compiler.32688072_0"
+  },
+  "launcher_commit": "64eb2b88"
+}

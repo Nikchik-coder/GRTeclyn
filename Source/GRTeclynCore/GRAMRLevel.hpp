@@ -149,6 +149,15 @@ class GRAMRLevel : public amrex::AmrLevel
 
     virtual void specificUpdateODE(amrex::MultiFab & /*a_soln*/) {}
 
+    //! Reference state for the Sommerfeld boundaries: when non-null, the
+    //! condition acts on the deviation of the state from it (see
+    //! BoundaryConditions::apply_sommerfeld_boundaries).  Called after
+    //! specificEvalRHS in every RK stage; the default is none.
+    [[nodiscard]] virtual const amrex::MultiFab *sommerfeld_reference() const
+    {
+        return nullptr;
+    }
+
     //! Problem specific post restart
     virtual void specific_post_restart() {}
 

@@ -10,6 +10,7 @@
 #ifndef CONSTRAINTS_IMPL_HPP_
 #define CONSTRAINTS_IMPL_HPP_
 
+#include "CellQuarticExact.hpp"
 #include "Constraints.hpp"
 
 // AMReX includes
@@ -204,7 +205,7 @@ void Constraints::set_up(int a_state_index, bool a_calc_mom_norm)
         name, amrex::IndexType::TheCellType(),
         static_cast<int>(comp_names.size()), comp_names, compute_mf,
         [=](const amrex::Box &box) { return amrex::grow(box, num_ghosts); },
-        &amrex::cell_quartic_interp);
+        grteclyn_cell_interp());
 
     // Get all the vars to allow us to use the CCZ4Vars class
     // Technically not all needed but probably doesn't hurt performance

@@ -10,6 +10,7 @@
 #ifndef CONSTRAINTSWITHMATTER_IMPL_HPP_
 #define CONSTRAINTSWITHMATTER_IMPL_HPP_
 
+#include "CellQuarticExact.hpp"
 #include "ConstraintsWithMatter.hpp"
 #include "DimensionDefinitions.hpp"
 #include "GRParmParse.hpp"
@@ -112,7 +113,7 @@ void ConstraintsWithMatter<matter_t>::set_up(int a_state_index,
         Constraints::name, amrex::IndexType::TheCellType(),
         static_cast<int>(comp_names.size()), comp_names,
         ConstraintsWithMatter::compute_mf, [=](const amrex::Box &box)
-        { return amrex::grow(box, num_ghosts); }, &amrex::cell_quartic_interp);
+        { return amrex::grow(box, num_ghosts); }, grteclyn_cell_interp());
 
     derive_lst.addComponent(Constraints::name, desc_lst, a_state_index, 0,
                             NUM_VARS);

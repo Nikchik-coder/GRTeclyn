@@ -15,6 +15,7 @@ from grteclyn_wrapper.objective_modes import QD_OBJECTIVE_MODES
 
 from .extraction.horizon import HORIZON_HEADER
 from .extraction.mots_spectral import MOTS_SPECTRAL_HEADER
+from .extraction.throat_spheres import THROAT_SPHERES_HEADER
 from .config import _default_data_dir, _default_frames_out_dir, _frames_auto_zlim_enabled
 from .extraction.central import CENTRAL_TIMESERIES_HEADER
 from .extraction.confinement import CONFINEMENT_TIMESERIES_HEADER
@@ -180,6 +181,16 @@ def main() -> None:
              "to get a still colorbar when plotfiles are deleted on the fly.",
     )
     parser.add_argument(
+        "--frames-blank-edge",
+        type=int,
+        default=0,
+        metavar="CELLS",
+        help="Draw the outer CELLS base-grid cells of the Weyl4 frames blank (NaN in "
+             "the slice cache too). Weyl4's 4th-order stencil reaches two cells beyond "
+             "the box there, into extrapolated ghosts, so those values are not data and "
+             "would set the colour scale (frames/edge.py). 0 (default) draws them.",
+    )
+    parser.add_argument(
         "--frames-zlim-scan",
         action="store_true",
         help="Measure one fixed colorbar per field over ALL plotfiles before rendering "
@@ -323,6 +334,41 @@ def main() -> None:
                         help="Newton stops when every projected theta_out harmonic is below this.")
     parser.add_argument("--mots-spectral-seeds", type=float, nargs="+", default=[3.2, 2.6],
                         help="Seed radii of the flow when there is no previous surface.")
+    parser.add_argument("--mots-spectral-steps", type=int, default=400,
+                        help="Flow steps per seed when Newton has no previous surface to start from. "
+                             "A deforming surface needs more each plotfile (0.7c spin: 311 at t = 13, "
+                             "400 stalled at t = 22).")
+    parser.add_argument(
+        "--mots-spectral-untrapped",
+        action="store_true",
+        help=(
+            "Also record a surface with theta_out -> 0 whose theta_in is >= 0 somewhere (a MOTS that "
+            "is not marginally trapped; the log says 'taken although untrapped'). Without it such a "
+            "plotfile gets a row of nan (2026-10-16: the 0.7c spinning throat from t = 16 on)."
+        ),
+    )
+    parser.add_argument(
+        "--throat-spheres",
+        action="store_true",
+        help=(
+            "The throat's areal radius per plotfile to throat_spheres.dat: the outermost local minimum "
+            "of sqrt(A/4 pi) over coordinate spheres about the centre, full metric h_ij/chi "
+            "(extraction/throat_spheres.py). throat_geometry.dat's r >= 0.6 rays land in the min_chi-"
+            "floored core on the fast holds (2026-10-17)."
+        ),
+    )
+    parser.add_argument("--throat-spheres-center", type=float, nargs=3, default=None,
+                        help="Centre of the spheres (absolute). Default: --center.")
+    parser.add_argument("--throat-spheres-rmin", type=float, default=0.3, help="Innermost sphere radius.")
+    parser.add_argument(
+        "--mots-spectral-warm-flow",
+        action="store_true",
+        help=(
+            "When Newton from the previous plotfile's surface fails, flow from that surface before "
+            "the round seeds: a deformed surface (0.7c spin, 2026-10-16) stalls Newton, and the "
+            "flow from round seeds costs ~0.25 s a step and needs more steps each plotfile."
+        ),
+    )
     parser.add_argument("--mots-spectral-from", type=float, default=0.0,
                         help="Search plotfiles from this time on (before the common horizon there is none).")
     parser.add_argument(
@@ -569,6 +615,7 @@ def main() -> None:
     horizon_out_path = out_dir / "horizon_scan.dat"
     mots_out_path = out_dir / "mots_spectral.dat"
     mots_alm_path = out_dir / "mots_spectral_alm.jsonl"
+    throat_out_path = out_dir / "throat_spheres.dat"
     score_ts_path = out_dir / "score_timeseries.jsonl"
     stop_sim_path = Path(args.stop_sim_path) if args.stop_sim_path else Path(data_dir) / ".stop_sim"
     header = "# time  " + "  ".join([f"Re(R={R:g})  Im(R={R:g})" for R in args.radii])
@@ -627,6 +674,8 @@ def main() -> None:
         if args.mots_spectral:
             _truncate_if_exists(mots_out_path)
             _truncate_if_exists(mots_alm_path)
+        if args.throat_spheres:
+            _truncate_if_exists(throat_out_path)
         if args.incremental_score:
             _truncate_if_exists(score_ts_path)
         _save_state(state_path, {})
@@ -706,6 +755,8 @@ def main() -> None:
     def _handle_mots_outputs(res: dict) -> None:
         # The surface's coefficients are the next plotfile's start, and survive a restart
         # of the consumer in its state file.
+        if res.get("throat_line"):
+            _append_line(throat_out_path, header=THROAT_SPHERES_HEADER, line=res["throat_line"])
         if not res.get("mots_line"):
             return
         _append_line(mots_out_path, header=MOTS_SPECTRAL_HEADER, line=res["mots_line"])

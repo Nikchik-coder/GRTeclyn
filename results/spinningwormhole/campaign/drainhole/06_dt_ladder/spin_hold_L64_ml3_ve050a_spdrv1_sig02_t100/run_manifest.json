@@ -1,0 +1,13 @@
+{
+  "run": "spin_hold_L64_ml3_ve050a_spdrv1_sig02_t100",
+  "launched_utc": "2026-10-16T09:23:49Z",
+  "binary": {
+    "file": "main3d_spdrv_59345984_2026-10-15.ex",
+    "sha256": "96a0ad59ea804a710809ac00b60551e2f108cf48d7ddadb66b17733b7fa1b2e7",
+    "grteclyn_commit": "59345984",
+    "amrex": "26.02-12-gd7da5045",
+    "flags": "USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90",
+    "nvcc": "Build cuda_12.1.r12.1/compiler.32688072_0"
+  },
+  "launcher_commit": "a39878ef"
+}
