@@ -44,7 +44,7 @@ Superseded and kept because the article quoted them:
 templates; its slides did not wrap and its block overlap counted twice) and
 `o3b_scan_superseded_0.27h.json` (the first draft's shorter run).
 
-**What changed on 2026-10-05** (GPU_PLAN, same date): injections sit midway
+**What changed on 2026-10-05**: injections sit midway
 between two rungs, so they test the bank's spacing; the same-window fitting
 factor is the bank's maximum; the horizon takes σ from every template; the
 two blocks' 64 s overlap is counted once and its duplicate triggers dropped;

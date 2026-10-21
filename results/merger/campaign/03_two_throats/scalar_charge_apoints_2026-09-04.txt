@@ -1,4 +1,4 @@
-The scalar-charge law from four rest-release a-points (GPU_PLAN #8)
+The scalar-charge law from four rest-release a-points (the campaign log)
 ===================================================================
 Measured 2026-09-04.  Tool: grteclyn-wrapper/scripts/validation/apoint_repulsion.py
 
