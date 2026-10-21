@@ -2,7 +2,7 @@
 
 Initial-data measurements, no evolution: which throats a binary is made of, and what the pair
 weighs. CPU (OpenMP) build of commit 5955760 in a cloud container; the story is the plan entry
-"2026-09-27 (12:15 UTC) — parameter matching and the energy check" in `research/merger/GPU_PLAN.md`.
+"2026-09-27 (12:15 UTC) — parameter matching and the energy check" in `research/merger/the campaign log`.
 
 - `t0_checks.tsv` — the three checks: the single throat, each mouth of the superposed and the solved
   d = 8 pair (every puncture mode), and the d = 12 spiral pair. R_min: minimal coordinate sphere about

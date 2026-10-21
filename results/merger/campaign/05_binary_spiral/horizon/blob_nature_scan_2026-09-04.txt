@@ -1,4 +1,4 @@
-# GPU_PLAN #13 blob-nature scan raw output, 2026-09-04.
+# the campaign log blob-nature scan raw output, 2026-09-04.
 # Tool: grteclyn-wrapper/scripts/validation/blob_nature_scan.py (see its
 # docstring for every convention).  Shells about (32,32,32).
 

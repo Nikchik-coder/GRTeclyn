@@ -222,7 +222,7 @@ resolution.  The arms were measuring the fuse, not the bomb.
 **What these arms still owe.**  Both dx = 0.125 arms die within 3 units of their own
 turnover, so neither ever shows a growth *rate*.  Until they are re-run to t = 100
 with the surviving tagger, and a dx = 0.03125 arm is added, tau is a single-resolution
-number.  That ladder was TODO item 10 in research/merger/archive/GPU_PLAN_UPDATED_2026-09-08.md.
+number.  That ladder was TODO item 10 in research/merger/archive/the campaign log_UPDATED_2026-09-08.md.
 
 **It has since been run, and it is the campaign's most important single-throat result
 (2026-09-10 note; the measurement is `results/merger/campaign/01_single_throat/BRANCHES.md`).**

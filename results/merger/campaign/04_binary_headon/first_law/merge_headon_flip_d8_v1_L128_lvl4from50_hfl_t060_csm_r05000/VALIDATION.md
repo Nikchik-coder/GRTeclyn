@@ -121,6 +121,6 @@ The consumer's round scan (`horizon_scan.dat`, centre C) reads the horizon growi
 
 - `first_law_L3.json` and `first_law_L2.json` hold one entry per plotfile: R, area, M_MS, axes, expansions,
   flux, shear, q, the three rates, and the surface's a_lm.
-- The plotfiles stay on the second node's scratch, on the user's word (2026-10-01).
+- The plotfiles stay on the second node's scratch, as decided (2026-10-01).
 - To re-run:
   `OMP_NUM_THREADS=8 nice -n 19 grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/wormhole_merger/headon_first_law.py --json OUT.json --level 3 --lmax 6 PLT ...`

@@ -1,6 +1,6 @@
 SEPARATION LADDER — how the throat-throat push scales with distance
 ====================================================================
-measured 2026-09-04   GPU_PLAN #8b
+measured 2026-09-04   the campaign log
 
 WHAT WAS RUN
 ------------
@@ -107,5 +107,5 @@ Same four runs, L2 Hamiltonian growth over the common window t = 0 -> 11.5:
   d = 18   1.28x   e-fold 120
 
 Monotonic: closer pairs lose accuracy faster, everything else being equal.
-Recorded in GPU_PLAN section BLOCKER B1 as the controlled confirmation that
+Recorded in the campaign log as the controlled confirmation that
 the degradation rate is set by separation.

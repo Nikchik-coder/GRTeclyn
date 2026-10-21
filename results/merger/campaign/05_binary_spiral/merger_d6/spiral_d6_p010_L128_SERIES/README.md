@@ -12,7 +12,7 @@ time axis, built 2026-10-05 from the packed legs:
 
 Seam check on the 35.01–36.67 overlap at R = 20: the two legs agree to 4.6e-7 in |r Psi4|,
 0.002 % of the burst peak (2.12e-2). Built by the figure pass; the gluing script is inline in
-the session log (GPU_PLAN 2026-10-05) and reproducible from the three packed streams above.
+the session log and reproducible from the three packed streams above.
 
 ## The scalar record (added 2026-10-05)
 

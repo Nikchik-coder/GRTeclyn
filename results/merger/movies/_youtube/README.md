@@ -7,14 +7,14 @@ Built by
 grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.wormhole_merger.make_youtube
 ```
 
-**Layout (2026-10-05, the user's design): four panels, 2x2, in sync, on the
+**Layout (2026-10-05, the chosen design): four panels, 2x2, in sync, on the
 left** -- curvature K (top left), lapse (top right), conformal factor chi (bottom
 left), the wave Re(Psi4) (bottom right) -- as tall as the frame allows, each
 labelled on a band right above it with its role and its field ("CURVATURE
 trace K"). Every other word except the title sits in a column on the right:
 the two captions, justified, then the sponsor and the credit. **Every word is set in Computer Modern** (matplotlib's bundled
 cmr10/cmb10 and its `cm` maths, no TeX engine needed), in one ink and no
-colour coding: PRD style, the user's word. Exceptions, each because
+colour coding: PRD style, the decision. Exceptions, each because
 that run has no usable alternative: 01 shows phi in place of the wave (the run
 rendered no Weyl scalar); 02 shows Pi in place of the wave (its Psi4 frames were
 drawn on a scale set by late junk and have no slice cache to redraw); 08 and 09
@@ -39,7 +39,7 @@ FRONTIERS"); the credit line under it carries both names.
 label drawn on each panel is the true simulation time. Pass `--speed 2` if a
 particular upload wants it; the on-frame note follows automatically. The
 vacuum controls 08, 09 and 10 and the receding pair 12 saved a frame every half unit, so they play at
-20 fps and stay real time (the user's call, 2026-10-05). The one exception is
+20 fps and stay real time (the decision, 2026-10-05). The one exception is
 `01`: its run's frames are 2 units apart, so it plays t = 0–218 at 2x and its
 frame says so. Every video stops at its run's trust window (02 at t = 60, the
 user's call on 2026-10-05).
@@ -167,7 +167,7 @@ First Interstellar Institute: https://www.firstinterstellarinstitute.com/
 Research sponsored by Gravity Frontiers: https://www.gravityfrontiers.org/en
 ```
 
-Released 2026-10-06 (the user), after P060-EXT: held back since 10-05, its on-frame
+Released 2026-10-06, after P060-EXT: held back since 10-05, its on-frame
 captions rewritten (the old "loudest source", "separation 3.5 to 0" and "closure
 at t = 110-115" lines did not hold).
 

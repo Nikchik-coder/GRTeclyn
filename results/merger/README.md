@@ -49,7 +49,7 @@ that produced it does not.
   - `07_bbh_control/` — the vacuum BBH controls.
   - `08_convergence/` — the referee's convergence arms (no frames, no movies, by design — except
     CONV-fz, the head-on's three-level set lvl5 / FARZONE-ho / lvl7 on the L = 512 box, which keeps
-    its frames on the user's word, 10-07; FARZONE-ho itself runs to t = 250 with spheres to R = 180).
+    its frames as decided, 10-07; FARZONE-ho itself runs to t = 250 with spheres to R = 180).
     CONV-fz, all three levels packed 10-08 (Fig. 11(d, e)): E at R = 10 converges at order 1.67; the
     common MOTS forms at t = 18 at every level, R and M_MS equal to 0.08 %; ⟨H_ADM⟩ outside the MOTS
     at t = 100 changes by 1.4 % and then 0.4 % (`analysis/convfz_constraints_t100.tsv`).
@@ -64,7 +64,7 @@ that produced it does not.
 
 ## `figures/` — the paper's figures
 
-`figures/<group>/` holds the article's figures and nothing else (the user's rule,
+`figures/<group>/` holds the article's figures and nothing else (the standing rule,
 2026-09-26): every PNG/PDF pair there is included by `research/merger/article/research.tex`,
 and [`figures/FIGURES.md`](figures/FIGURES.md) maps each file to its figure number, label and
 the wrapper module that redraws it (one command each, no arguments). Every figure is drawn by
@@ -129,8 +129,8 @@ campaign/                         (as of 2026-10-06; the superposed-era subfolde
   08_convergence/<run>/           the convergence study for the referee: each arm is its
                                   partner's params with one knob changed (max_level from 0,
                                   the wave zone's level, the dissipation); no movies, no
-                                  frames kept (the user's word) -- except CONV-fz, which
-                                  keeps them (the user, 10-07)
+                                  frames kept (standing rule) -- except CONV-fz, which
+                                  keeps them (decided 10-07)
   00_archive/                     UNTRACKED: the superseded superposed / Bowen-York campaign
                                   (pack extracts, moved 2026-10-02 / 2026-10-06)
   <group>/NOTES.md                the group's working notes, copied from the run tree

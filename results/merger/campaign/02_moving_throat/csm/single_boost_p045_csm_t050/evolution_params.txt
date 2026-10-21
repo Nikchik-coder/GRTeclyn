@@ -1,22 +1,3 @@
-# MOMENTUM PROBE p = 0.45 (2026-09-29, proposed): one mode-3 solved throat with Bowen-York momentum 0.45 along +y, scalar at rest -- does momentum alone kick a throat toward inflation (the fly-by's mouths read -1.2 %)?
-#
-# WHY (STATUS, 2026-09-29 "Proposed ... single throat with momentum").  Each mode-3 binary mouth
-# starts inflating like a single throat kicked by eps_eff = -0.4 % (p = 0, d = 12) to -1.2 % (p = 0.45),
-# read from the seed ladder (eps = -1e-2 reaches R/R0 - 1 = +10 % at t = 23, -1e-3 at t = 34).  A boost
-# cannot change an exact throat's fate (time dilation only slows it), so a kick that grows with p would
-# be the setup's: the metric carries the Bowen-York momentum while the scalar starts at rest (Pi = 0).
-#
-# BASE: params_single_eps_m1e2_t100.txt (the seed ladder's own: L = 64, N = 128, level 3, dx = 0.0625,
-# sponge 24/32) with the seed removed.  Changed: the throat starts at y = -8 (p = 0.45 moves at v = 0.41
-# and stays >= 11 from the sponge by t = 50); momentum along +y, in the frames' z = 32 plane (B pinned
-# to zero: its default is minus A's); stop_time 50 (the +10 % time falls at t = 22-34 for kicks of
-# 1e-2 to 1e-3); checkpoints off (the user's call, asked 2026-09-29).
-# READ: the per-throat R_min (horizon_scan.dat, A rows, the scan follows the tracked pit); t10 = time
-# to R/R0 - 1 = +10 %; eps_eff = -1e-2 * 10^(-(t10 - 23)/11), less the control arm's own.
-# LAUNCH (on the go only): launch.sh --template params_<name>.txt --name <name> --gpu G
-#   --profile headon-scout --zoom 40 --coord 32 --binary runs/wormhole_merger/bin/main3d_csmatch_5f988dbc_2026-09-28.ex
-# ~18.5 GB each (the single throat at this grid: 18.4-18.5 GB arena); ~18 u/h alone, t = 50 in ~3 h.
-#
 verbosity = 1
 output_path = "runs/wormhole_merger/single_boost_p045_csm_t050"
 amr.plot_file = "/tmp/grteclyn_scratch/single_boost_p045_csm_t050/BinaryWormholePlt"
@@ -33,16 +14,16 @@ print_progress_only_to_rank_0 = 1
 particle_interpolator.verbosity = 0
 wormhole_id_type = 1
 wormhole_initial_lapse_type = 5
-wormhole_throat_radius_A = 2.0       # drainhole scale a
-wormhole_throat_radius_B = 0.0       # throat B OFF -- this is the control
-wormhole_drainhole_mass_A = 1.0      # M_ADM = 1, carried by the lapse
+wormhole_throat_radius_A = 2.0
+wormhole_throat_radius_B = 0.0
+wormhole_drainhole_mass_A = 1.0
 wormhole_drainhole_mass_B = 0.0
 wormhole_bare_mass_A = 0.0
 wormhole_bare_mass_B = 0.0
-wormhole_centerA = 0.0 -8.0 0.0    # PROBE: starts 8 below the box centre, moves +y
+wormhole_centerA = 0.0 -8.0 0.0
 wormhole_centerB = 0.0 0.0 0.0
-wormhole_momentumA = 0.0 0.45 0.0    # PROBE: Bowen-York momentum per unit one-body mass
-wormhole_momentumB = 0.0 0.0 0.0    # pinned: the default is minus momentumA
+wormhole_momentumA = 0.0 0.45 0.0
+wormhole_momentumB = 0.0 0.0 0.0
 wormhole_phi_sign_B = 1.0
 wormhole_subtract_phi_asymptote = 1
 wormhole_support_strength = 1.0
@@ -59,12 +40,12 @@ regrid_threshold = 0.05
 max_box_size = 32
 min_box_size = 16
 isPeriodic = 0 0 0
-hi_boundary = 1 1 1                  # 1 = SOMMERFELD_BC (outgoing)
+hi_boundary = 1 1 1
 lo_boundary = 1 1 1
 nonzero_asymptotic_vars = chi h11 h22 h33 lapse
 nonzero_asymptotic_values = 1.0 1.0 1.0 1.0 1.0
 dt_multiplier = 0.02
-stop_time = 50.0    # PROBE: the kick is read by t ~ 35
+stop_time = 50.0
 max_spatial_derivative_order = 4
 nan_check = 1
 min_chi = 1.0e-8
@@ -100,6 +81,6 @@ activate_extraction = 0
 write_extraction = 0
 amrex.the_arena_init_size = 1048576
 constraint_solve = 1
-constraint_solve_background = 0        # start from the exact throat
-constraint_solve_puncture_mode = 3     # the far-side mass and charge = the isolated throat's (the binaries' mouths)
+constraint_solve_background = 0
+constraint_solve_puncture_mode = 3
 constraint_solve_verbose = 1
