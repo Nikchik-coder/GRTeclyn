@@ -27,9 +27,9 @@ Every figure rebuilds from this directory without a GPU, with
 
 ## Layout
 
-- `solver/solutions.tsv` — every accepted solution of the spectral solver (462 rows): the
-  family and continuation leg, the grid, the global charges, the throat radii and the
-  identity checks of the paper's Table I.
+- `solver/solutions.tsv` — every solution of the spectral solver (462 rows): the family
+  and continuation leg, the grid, the global charges, the throat radii and the identity
+  checks. [`solver/README.md`](solver/README.md) defines every column and lists the legs.
 - `solver/kk2014_fig1_digitized.tsv` — the curves of Kleihaus and Kunz, Phys. Rev. D 90,
   121503(R) (2014), Fig. 1, digitized for Fig. 2 (reading error rms 1–6e-4).
 - `solutions/<leg>/` — the solutions the figures read, one pair per solution: `.npz`, the

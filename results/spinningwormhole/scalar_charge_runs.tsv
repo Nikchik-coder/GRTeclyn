@@ -2,7 +2,7 @@
 # phi = a + D g(r), g the background's exact profile on the isotropic radius, fitted over
 # 6 <= r <= 0.35 L. which: t0 = the first slice, end = the last slice inside the run's converged
 # span; rms_rel: the fit's rms over the field's range; pixels: the slice points fitted. Fig. 3
-# places each run by its t0 value, which matches its background's D to 1e-4.
+# places each run by its t0 value, which matches its background's D to 3e-4.
 run	background	which	t	L	D	a	rms_rel	pixels
 static_hold_L64_ml3_spdrv0_farfix_t100	static	t0	0.0000	64	2.23599650	2.015e-06	2.70e-03	374532
 static_hold_L64_ml3_spdrv0_farfix_t100	static	end	60.0000	64	1.88399411	-5.229e-03	1.16e-02	374532
