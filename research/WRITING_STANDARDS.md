@@ -255,9 +255,10 @@ is substance:
   the text still types them in place (this was the source's DRAFT header, removed 2026-10-21).
 - [ ] Code availability: Sec. VII links the branch `feature/spinning`; replace it with a tagged release or a Zenodo
   DOI before submission.
-- [ ] Control the perturbation sign at 33%. The vₑ = 0.51 model expands with one outer-boundary treatment and shrinks
-  with the other, so its end state depends on the boundary. Repeat the explicit ±ε radial perturbations run at
-  vₑ = 0.21 on this model before claiming a branch switch.
+- [x] Control the perturbation sign at 33% (resolved 2026-10-21 by scope, not by a run; decided: no extra runs). The
+  vₑ = 0.51 model expands with one numerical setup and shrinks with the other, so the text now says the sign of its
+  effective perturbation follows the setup and only the rate is a controlled measurement; the explicit ±ε control
+  exists at D21 alone, and the conclusions label collapse/expansion by the perturbation's sign, not the model.
 - [x] Converge τ (resolved 2026-10-20, the offset-free estimator adopted everywhere). The deficit-band fit was biased
   by the early transient's baseline, resolution-dependently, and failed to self-converge; the offset-free fit (slope
   of ln |dR_A/dt| over the same band) gives Q_meas = 2.3 between Q₃ = 1.95 and Q₄ = 2.69 on the D21 triplet, sits on
