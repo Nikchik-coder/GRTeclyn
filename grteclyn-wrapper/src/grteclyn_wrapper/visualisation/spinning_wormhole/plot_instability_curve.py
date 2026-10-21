@@ -21,9 +21,10 @@ at zero (open marker).
 
 Against it, Azad et al.'s second-order rate for this family (their C = 1
 row: |omega_I| eta0 = 0.390 - 0.384 (J/eta0^2)^2) at every model where it is
-positive, and two rules: where that rate vanishes on this axis (J_c 4.03,
-33 %; their "about 50 %" uses their second-order throat area), and their
-conjectured end of the instability, about 30 %.
+positive, and one rule: where that rate vanishes on this axis (J_c 4.03,
+33 %; their "about 50 %" uses their second-order throat area).  Their
+conjectured mode merger near 30 % belongs to the nearly symmetric family
+(C <= 0.2) and is not drawn (2026-10-21).
 
 A model is drawn when its pack (or live run dir) holds the streams.
 
@@ -85,7 +86,6 @@ RUNS = (
 # Azad et al.'s second-order unstable mode for this family (their C = 1 row,
 # Table 1): |omega_I| eta0 = W0 - DW2 (J/eta0^2)^2, eta0 = 2 here.
 AZAD_W0, AZAD_DW2, ETA0 = 0.390, 0.384, 2.0
-AZAD_CONJECTURE = 30.0    # their conjectured end of the instability (% of extremal)
 BAND = (2e-3, 1e-2)       # the band of |R_A/R_A(0) - 1| every tau is fitted over
 WIDE_BANDS = ((3e-3, 3e-2), (1e-2, 1e-1))   # printed for comparison only
 # Per-model tag offsets (points) and anchors, each tag against its own marker.
@@ -347,14 +347,15 @@ def draw(points, pal, jc_frac) -> None:
         entries.append((mlines.Line2D([], [], marker="D", ls="-", lw=0.9, ms=6.5,
                                       mfc="none", mec=pal["azad"], mew=1.0,
                                       color=pal["azad"]), "Azad et al., 2nd order"))
-    entries.append((mlines.Line2D([], [], ls=":", lw=0.8, color="#b5b5b2"),
-                    "Azad: end (30 %)" + (f", $J_c$ ({jc_frac:.0f} %)" if jc_frac else "")))
+    if jc_frac:
+        entries.append((mlines.Line2D([], [], ls=":", lw=0.8, color="#b5b5b2"),
+                        f"Azad $J_c$ ({jc_frac:.0f} %)"))
     # two columns, read row by row; rows opened so the large open markers do not touch
     style.legend_top(ax, entries, ncol=2, borderpad=0.6, handlelength=1.8, columnspacing=0.8,
                      labelspacing=0.65)
     # the rules go on last, once the key has fixed the frame, so they can break
     # around the tags laid on them
-    for x in [AZAD_CONJECTURE] + ([jc_frac] if jc_frac else []):
+    for x in ([jc_frac] if jc_frac else []):
         rule(ax, x)
     for ext in ("png", "pdf"):
         fig.savefig(FIGURES / f"instability_curve.{ext}", dpi=300)

@@ -22,5 +22,5 @@ spin_hold_L64_ml3_ve045a_spdrv0_farfix_t100	100	converged to the end
 spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130	130	converged to the end outside the horizon
 spin_hold_L64_ml3_ve050a_spdrv0_farfix_t150	95	the finest-level constraint norms grow from t = 96
 spin_hold_L64_ml3_ve045a_spdrv0_farfix_t150	121	the finest-level constraint norms grow from t = 121.5
-spin_hold_L128_ml3_ve075a_spdrv1_sig04_farfix_t150	75	the finest-level constraint norms grow as the far end's lapse collapses
-spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150	94	the finest-level constraint norms grow as the far end's lapse collapses
+spin_hold_L128_ml3_ve075a_spdrv1_sig04_farfix_t150	75	the constraint norms grow as the far end's lapse collapses
+spin_hold_L128_ml3_ve080a_spdrv1_sig04_farfix_t150	94	the constraint norms grow as the far end's lapse collapses
