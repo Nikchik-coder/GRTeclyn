@@ -84,6 +84,18 @@ t 150 run shows its throat inflating from t 101.
   outward, then K blows up (deaths 85–136). σ 0.4 vs 0.1 only scales the rate (deaths 32–34 vs 53–67 on 1e-8). The
   throat never moved before the breakdown in any of them. Fix proposed: KO on the deviation from the background
   (RUNS FOR THE PAPER). The paper's recipe F (and its box explanation) holds for the 0.9c only.
+- **What drives the 0.75c / 0.8c constraint growth (10-21,** slice-cache trace, both runs vs the 0.9c**).** One
+  root: their far-end lapse well is shallow (central lapse 0.195 / 0.163 at t 0 vs the 0.9c's 0.084, set by the
+  small μ₋ +0.15 / +0.50 vs +2.09), so the far end never freezes. Two effects follow. (1) Inner (L3, then L2):
+  the 1e-4 clamp flattens χ only inside r ≈ 0.18 (0.9c: 0.30), the centre χ lifts OFF the floor by t 10 (1.4e-4;
+  the 0.9c stays pinned at 1.00e-4 with a steady floor region all run) and the far end stays dynamical: its lapse
+  collapses to the 1e-10 floor by t ≈ 120 / 135 and K at r 0.75–2 grows to 0.11 / 0.025 by t 140 — the
+  negative-mass runs' slow failure, delayed past t 150, and the finest-level norms leave the 0.9c track with it
+  (t ≈ 60–80 / 100). (2) Outer (L0): the collapsing inner lapse launches a pure gauge pulse at t ≈ 35–45 (K and
+  δlapse fronts move together at speed ≈ 1.07; δφ flat, Weyl4 clean until it lands), amplitude |K| ~ 1e-3 — ~100×
+  the 0.9c's because the lapse falls 10× further — which hits the sponge shell + boundary (48–64) at t ≈ 90–110,
+  exactly when L0 Ham jumps (2e-8 → 1.7e-5 over t 80–100 / 4e-7 → 4.7e-5 over 100–120). Weyl4 in the extraction
+  zone is clean to t ≈ 100 / 110 on the equator slice.
 
 ## MAIN RESULTS TABLE
 
