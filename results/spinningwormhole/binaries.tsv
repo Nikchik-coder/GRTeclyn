@@ -1,20 +1,9 @@
-# Campaign binaries: which build is which.  One row per frozen binary under
-# runs/spinning_wormhole/bin/ -- that directory is untracked, so THIS file is
-# the record.  Rows are written by
-# grteclyn-wrapper/scripts/campaigns/spinning_wormhole/build_binary.sh; the
-# binaries carry grteclyn_version inside them (start-up banner,
-# parameters_and_version.txt).  Deleted binaries keep their row: packed runs
-# still name them.  Tab-separated; build_binary.sh appends.
-#file	sha256_16	grteclyn_version	amrex	built_utc	flags	nvcc	made_by	note
-main3d_first_cf8cca48_2026-10-10.ex	fad71629e6dd4025	cf8cca48	26.02-12-gd7da5045	2026-10-10T16:36:47Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	
-main3d_smoke_bfb65e8e_2026-10-10.ex	972ec4dad80167e6	bfb65e8e	26.02-12-gd7da5045	2026-10-10T16:44:58Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	
-main3d_levnorm_e6494a53-dirty_2026-10-15.ex	94d8ea2c85b5d9b2	e6494a53-dirty	26.02-12-gd7da5045	2026-10-15T05:30:13Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	compile test: per-level masked constraint norms
-main3d_levnorm_73793542_2026-10-15.ex	c796b327efc1943d	73793542	26.02-12-gd7da5045	2026-10-15T05:35:11Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	per-level masked constraint norms (numerics debt 2); dt-ladder binary
-main3d_spdrv_764449aa-dirty_2026-10-15.ex	2050ad5212b09b97	764449aa-dirty	26.02-12-gd7da5045	2026-10-15T19:36:38Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	compile test: damping sponge (drive to background)
-main3d_spdrv_59345984_2026-10-15.ex	96a0ad59ea804a71	59345984	26.02-12-gd7da5045	2026-10-15T19:37:36Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	damping sponge (drive to background); sponge-fix test binary
-main3d_spline_faadc95e_2026-10-17.ex	c23dd9113f280f7b	faadc95e	26.02-12-gd7da5045	2026-10-17T10:23:37Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	C2 cubic-spline table interpolation (default); spinning_background_interp = 0 restores bilinear
-main3d_exq_16228dcd_2026-10-17.ex	613fb737edbb2c51	16228dcd	26.02-12-gd7da5045	2026-10-17T13:39:14Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	exact-weight quartic coarse-fine interpolater (CellQuarticExact) when the params set exact_quartic_interp = 1; without it AMReX cell_quartic_interp as before
-main3d_rkfix_0661dac4_2026-10-17.ex	b1a432e4850c2cad	0661dac4	26.02-12-gd7da5045	2026-10-17T14:08:43Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	exq + rk_stage_refill: 0 drops the RHS re-fill of the RK stage (default 1 = as before); the rerun binary with exact_quartic_interp = 1, rk_stage_refill = 0
-main3d_somref_f01991c8_2026-10-17.ex	0cfcb173266424a0	f01991c8	26.02-12-gd7da5045	2026-10-17T20:10:29Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	rkfix + sommerfeld_relative_to_background: Sommerfeld on the deviation from the t 0 background (key, default 0 = rkfix bit for bit)
-main3d_farfix_891d817d_2026-10-17.ex	e7231e5f0707bd92	891d817d	26.02-12-gd7da5045	2026-10-17T20:27:44Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	somref + constraint_norms_edge_cells (per-level norms skip the box edge); with shift_advec_coeff 0 the far-zone fixed build for the 0.9c triplet
-main3d_kick_af28ad29_2026-10-18.ex	a2660fcd78af4c55	af28ad29	26.02-12-gd7da5045	2026-10-18T09:02:05Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0	build_binary.sh	farfix 891d817d + the declared throat kick (spinning_kick_*: l 0, P2, sectoral m; A_ij psi^-6, momentum exact)
+# The GRTeclyn builds the packed runs used, one row per binary, tab-separated: file, the first 16
+# hex digits of its SHA-256, the source commit, AMReX version, build time, make flags, nvcc. The
+# binaries are not distributed; each builds from the listed commit.
+file	sha256_16	grteclyn_commit	amrex	built_utc	flags	nvcc
+main3d_smoke_bfb65e8e_2026-10-10.ex	972ec4dad80167e6	bfb65e8e	26.02-12-gd7da5045	2026-10-10T16:44:58Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0
+main3d_levnorm_73793542_2026-10-15.ex	c796b327efc1943d	73793542	26.02-12-gd7da5045	2026-10-15T05:35:11Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0
+main3d_spdrv_59345984_2026-10-15.ex	96a0ad59ea804a71	59345984	26.02-12-gd7da5045	2026-10-15T19:37:36Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0
+main3d_farfix_891d817d_2026-10-17.ex	e7231e5f0707bd92	891d817d	26.02-12-gd7da5045	2026-10-17T20:27:44Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0
+main3d_kick_af28ad29_2026-10-18.ex	a2660fcd78af4c55	af28ad29	26.02-12-gd7da5045	2026-10-18T09:02:05Z	USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90	Build cuda_12.1.r12.1/compiler.32688072_0

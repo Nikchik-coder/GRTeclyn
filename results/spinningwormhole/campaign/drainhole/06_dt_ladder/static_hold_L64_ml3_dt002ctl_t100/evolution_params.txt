@@ -1,23 +1,3 @@
-# dt ladder control, dt_multiplier 0.02: the packed static_hold_L64_ml3_t100 rerun on the levnorm binary -- regression check + per-level norm baseline, to t = 100.
-#
-# The merger campaign's single_hold_t100 (results/merger/campaign/
-# 01_single_throat/hold/) is the reference: the exact static solution is a
-# fixed point, so every deviation is error or instability with no physics
-# mixed in, and its growth rate is the number this run must reproduce.
-# Everything that shapes that number is copied from its params verbatim:
-# dx0 = 0.5, max_level 3 with the SAME nested boxes (tagging_L = 64 tags
-# |x| < 64 * 2^-(l+2): levels at +/-16, +/-8, +/-4 around the throat),
-# dt_multiplier 0.02, sigma 0.1, the 1+log/Gamma-driver numbers, kappa1 3,
-# min_chi 1e-8.  The one deliberate difference: the box is L = 64 (N = 128),
-# not L = 128 -- same resolution everywhere, half the outer boundary, so the
-# sponge scales to 24/32 and boundary effects return ~2x earlier.  The trust
-# window ends where they arrive; the growth rate is measured well before.
-#
-# Background: the a = 2, m = 1 member of the static family,
-#   backgrounds static --eta0 2.0 --mass 1.0 --out .../static_eta2_m1.spinbg
-# (f = 2u is the drainhole's own lapse: initial_lapse_type 0 here is the
-# merger's type 5).  No seed: the hold watches what the truncation error does.
-
 verbosity = 1
 
 output_path = "runs/spinning_wormhole/drainhole/06_dt_ladder/static_hold_L64_ml3_dt002ctl_t100"
@@ -25,10 +5,8 @@ amr.plot_file = "/tmp/grteclyn_scratch/static_hold_L64_ml3_dt002ctl_t100/Spinnin
 amr.check_file = "/tmp/grteclyn_scratch/static_hold_L64_ml3_dt002ctl_t100/SpinningWormholeChk"
 
 checkpoint_interval = -1
-plot_interval       = 100            # dt0 = 0.01 -> a plotfile every t = 1.0
+plot_interval       = 100
 
-# The merger hold's full list: the spectral MOTS finder (hold profile) needs
-# the whole metric and A_ij once a horizon forms.
 amr.plot_vars = chi K lapse shift1 shift2 shift3 h11 h12 h13 h22 h23 h33 A11 A12 A13 A22 A23 A33 phi Pi
 amr.derive_plot_vars = Weyl4
 
@@ -37,24 +15,16 @@ data_subpath = "data"
 
 print_progress_only_to_rank_0 = 1
 
-# Required (ParmParse get) by the BHAMR Weyl4 particle interpolator
 particle_interpolator.verbosity = 0
 
-#################################################
-# Initial data: the massive static drainhole from its background table
-
 spinning_background_file = "runs/spinning_wormhole/backgrounds/static_eta2_m1.spinbg"
-spinning_initial_lapse_type = 0      # e^{f/2} = e^u, the drainhole's static lapse
+spinning_initial_lapse_type = 0
 
-# No seed: a hold run measures the instability the truncation error excites.
 spinning_seed_amplitude = 0.0
 spinning_seed_width = 1.0
 spinning_seed_radius = 0.0
 
 phantom_mass = 0.0
-
-#################################################
-# Grid
 
 L = 64.0
 N1 = 128
@@ -63,7 +33,7 @@ N3 = 128
 
 center = 32.0 32.0 32.0
 
-max_level = 3                        # dx: 0.5 / 0.25 / 0.125 / 0.0625
+max_level = 3
 regrid_interval = 16 16 16 16
 regrid_threshold = 0.05
 
@@ -71,13 +41,10 @@ max_box_size = 32
 min_box_size = 16
 
 isPeriodic = 0 0 0
-hi_boundary = 1 1 1                  # Sommerfeld (outgoing)
+hi_boundary = 1 1 1
 lo_boundary = 1 1 1
 
-#################################################
-# Evolution
-
-dt_multiplier = 0.02                 # the knob under test (production: 0.02)
+dt_multiplier = 0.02
 stop_time = 100.0
 
 max_spatial_derivative_order = 4
@@ -92,7 +59,7 @@ lapse_power = 1.0
 
 shift_advec_coeff = 1.0
 shift_Gamma_coeff = 0.75
-eta = 1.0                            # M_ADM = 1
+eta = 1.0
 
 formulation = 0
 kappa1 = 3.0
@@ -100,38 +67,32 @@ kappa2 = 0.
 kappa3 = 1.
 covariantZ4 = 0
 
-sigma = 0.1                          # the merger production value
+sigma = 0.1
 
 puncture_tracking.enabled = 0
 calculate_constraint_norms = 1
-
-#################################################
-# Diagnostics + extraction
 
 spinning_diagnostics = 1
 core_radial_profile = 0
 
 sponge_enabled = 1
-sponge_inner_radius = 24.0           # merger's 48/64, scaled to the L = 64 box
+sponge_inner_radius = 24.0
 sponge_outer_radius = 32.0
 sponge_strength = 4.0
 sponge_ramp_power = 4
 
-tagging_type = 1                     # fixed boxes on the centred throat
-tagging_L = 64.0                     # NOT L: 64 * 2^-(l+2) = merger's +/-16/8/4
+tagging_type = 1
+tagging_L = 64.0
 
 activate_extraction = 0
 write_extraction = 0
 
 amrex.the_arena_init_size = 1048576
 
-#################################################
-# dt-ladder diagnostics (numerics-debt items 1 + 2, 2026-10-15)
-
-constraint_norms_levels = 1          # per-level masked norms: which level carries the growth
+constraint_norms_levels = 1
 constraint_norms_mask_radius = 0.125
 
-core_radial_profile = 1              # WHERE max|K| grows: shells to past the sponge
+core_radial_profile = 1
 core_profile_r_max = 34.0
 core_profile_dr = 0.25
 core_profile_interval = 10
