@@ -48,7 +48,11 @@ the campaign tooling mean nothing to a referee and never appear in a paper.
 | trust, trust window | results are converged (reliable) up to t = … | Say why it ends there |
 | seed, the seed's sign | initial perturbation (truncation error) and its sign | |
 | fate, two fates | end state (collapse or expansion) | |
-| kicks; pushed in / out | imposed radial perturbation of amplitude ε; inward / outward | |
+| kicks; pushed in / out | added radial perturbation of amplitude ε; inward / outward | |
+| impose, imposed, unimposed, "identities the solver never imposes" | the solver solves equations; "identities the solver never uses"; an added perturbation; a boundary condition applied to | Decided 2026-10-21: "impose" reads as jargon |
+| transfer (of data to the grid), pipeline, milestones; a solution "seeds" the next | interpolation onto the AMR grid; name the steps; collapse times; the initial guess for the next | Decided 2026-10-21: "Three checks validate this transfer" read as jargon |
+| offset-free fit; baseline; "the band sits on a plateau" | say what is fitted and why: "we fit the rate of change, which removes the constant offset"; "the result hardly depends on the interval" | Decided 2026-10-21 |
+| a mode "taking over"; modes "merging away"; "the comparison is indicative" | becomes the faster-growing mode; the instability ends; the comparison is only approximate | Decided 2026-10-21 |
 | far side | the η → −∞ asymptotic region (the puncture) | |
 | results pack, registry | the data release (its Zenodo DOI) | |
 | csm, mode 3, seed tags | describe the method in words | |
@@ -109,13 +113,15 @@ Use the standard NR skeleton, so a referee can find and judge the methods withou
 
 1. Introduction: motivation, prior work, the gap, what this paper does, one sentence per later section.
 2. Model: action, field equations, consistency (conservation, energy conditions), units.
-3. Initial data: construction, constraint solve, transfer to the evolution grid.
+3. Initial data: construction, constraint solve, interpolation onto the evolution grid; its validation gets a
+   subsection of its own.
 4. Numerical methods: code, formulation, gauge, stencils, grid or AMR, boundaries and timestep, collected in one table.
 5. Diagnostics: each tracked quantity as a numbered equation, with one line on what it tests.
 6. Criteria: what counts as a positive result and what would falsify it.
 7. Results: one subsection per claim, each opening with the question it answers.
 8. Validation: convergence, control runs, systematics; long material goes to an appendix.
-9. Conclusions: findings, then their scope, then outlook.
+9. Conclusions: findings, then their scope, then outlook, written as a passage: never a "First, … Second, … Third, …"
+   menu (decided 2026-10-21). A derivation's steps may still be numbered.
 
 ## 7. Tables, figures and captions
 
@@ -186,7 +192,7 @@ What to show (as in Evstafyeva et al., Appendix A, Fig. 5, and Clough et al., Ap
 | Unequal masses—no. … The moving box—no. … The grid—yes. | We tested three possible causes: the mass mismatch, the moving domain and grid resolution. Only resolution changes the opening, which falls eightfold as Δx halves. | One sentence for the test, one for the result |
 | (1) The runaway is real, and it is steady. | (1) The pair accelerates at a constant rate. | Verb scaled to the evidence |
 | Perturbative initial data fail first. | We first evolved the second-order (O(J²)) backgrounds of Ref. [18] at J = 0.25 and 1. | Topic sentence says what was done |
-| …the static drainhole run through this pipeline is a numerical twin of the production hold of Ref. [11]… | Evolving the static drainhole with this pipeline reproduces Ref. [11]: identical initial data, Hamiltonian-constraint norms within 5 × 10⁻⁷ for t ≤ 100, and collapse times within one time unit. | No private terms |
+| …the static drainhole run through this pipeline is a numerical twin of the production hold of Ref. [11]… | Evolved from these data, the static drainhole reproduces Ref. [11]: identical initial data, Hamiltonian-constraint norms within 5 × 10⁻⁷ for t ≤ 100, and collapse times within one time unit. | No private terms |
 | …at 81% the throat is stable to t = 150 at three resolutions. | At 81% of the extremal angular momentum the throat radius shows no growth up to t = 150, about 34 e-folding times of the static mode, at three resolutions. | Claims absence of growth, scaled to the instability's own timescale |
 | One rate, two fates: the measured rate 1/τ (left axis; τ right) against… | Inverse e-folding time 1/τ of the throat's areal radius against angular momentum as a fraction of its extremal value. | Caption opens with what is plotted |
 | ε = ±10⁻³: pushed out collapses, in inflates | Radial perturbation, \|ε\| = 10⁻³: outward leads to collapse, inward to expansion | Readable as a table entry |
