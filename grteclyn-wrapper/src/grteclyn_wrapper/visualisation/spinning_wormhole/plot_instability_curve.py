@@ -120,9 +120,9 @@ TAG_SIDES = {
     "D46": (5, 1.5, "left", "center"),
     "D51": (4.5, 0, "left", "center"),
     # the stable rungs sit 12 pt apart: D75's tag hangs left, D80's right
-    "D75": (1, 4.5, "right", "bottom"),
-    "D80": (-1, 4.5, "left", "bottom"),
-    "D90": (0, 4.5, "center", "bottom"),
+    "D75": (1, 3.8, "right", "bottom"),
+    "D80": (-1, 3.8, "left", "bottom"),
+    "D90": (0, 3.8, "center", "bottom"),
 }
 SPIN_BLUE, SPIN_RED = "#1f77b4", "#d62728"
 PALETTES = {
@@ -336,14 +336,16 @@ def draw(points, pal, jc_frac) -> None:
                         textcoords="offset points", xytext=(dx, dy), fontsize=6.5,
                         ha=ha, va=va)
         else:
-            ax.plot(p["frac"], 0.0, "o", ms=5.5, mfc="none", mec=pal["stable"],
-                    mew=1.2, zorder=4)
-            dx, dy, ha, va = TAG_SIDES.get(p["label"], (0, 4.5, "center", "bottom"))
+            ax.plot(p["frac"], 0.0, "o", ms=4.2, mfc="none", mec=pal["stable"],
+                    mew=1.0, zorder=4)
+            dx, dy, ha, va = TAG_SIDES.get(p["label"], (0, 3.8, "center", "bottom"))
             ax.annotate(f"{p['label']}\n$t\\leq{p['t_end']:.0f}$",
                         (p["frac"], 0.0), textcoords="offset points",
                         xytext=(dx, dy), fontsize=6.5, ha=ha, va=va, multialignment=ha)
     ax.set_xlim(-2.0, 100.0)   # the static rung sits at 0: keep its marker whole
-    ax.set_ylim(-0.012, 0.26)
+    # 2026-10-21: the open circles at zero sit clear of the inward x ticks (80 and
+    # the minor 65 ran into D90 and D80)
+    ax.set_ylim(-0.02, 0.26)
     ax.set_xlabel(r"$8\pi J/A$ [%]")
     ax.set_ylabel(r"$1/\tau$")
     # The same scale relabelled in tau on the right edge: one axis, two units.
@@ -363,8 +365,8 @@ def draw(points, pal, jc_frac) -> None:
                                       color=pal["measured"]),
                         "measured $\\tau$, expansion"))
     if any(p["stable"] for p in drawn):
-        entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=5.5, mfc="none",
-                                      mec=pal["stable"], mew=1.2),
+        entries.append((mlines.Line2D([], [], marker="o", ls="none", ms=4.2, mfc="none",
+                                      mec=pal["stable"], mew=1.0),
                         "no growth"))
     if fit is not None:
         # 2026-10-21: the fit written out, a - b x^2 as a [1 - x^2/x0^2], so the
