@@ -13,7 +13,7 @@
  *
  * These are coordinate-ray proxies, deliberately cheap: one reduction pass,
  * every coarse step.  Horizon-quality surfaces (MOTS, the ergosurface shape)
- * come from the consumer's spectral finder on the plotfiles instead.
+ * come from the spectral finder run on the plotfiles instead.
  *
  * The rays are sampled from the cell columns nearest the axes (|transverse| <
  * 0.75 dx_fine), so the numbers are meaningful while the finest level covers
@@ -41,11 +41,11 @@ struct SpinningThroatDiagnostics
     {
         bool enabled{false};
         std::array<double, AMREX_SPACEDIM> grid_center{};
-        //! Cells with r < min_radius are excluded from BOTH ray minima: the
+        //! Cells with r < min_radius are excluded from both ray minima: the
         //! near-axis sampling columns pass within half a cell of the puncture,
-        //! where z * sqrt(gamma) of an off-axis cell is finite and small and
-        //! polluted the first smoke test's R_pol (0.79 instead of eta0 = 1,
-        //! 2026-10-10).  The level sets 0.3 eta0 when the key is negative.
+        //! where z * sqrt(gamma) of an off-axis cell is small and biases R_pol
+        //! low (0.79 instead of eta0 = 1).  The level sets 0.3 eta0 when the
+        //! key is negative.
         double min_radius{0.0};
     };
 

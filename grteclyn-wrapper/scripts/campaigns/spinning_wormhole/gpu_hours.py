@@ -11,7 +11,7 @@ so here every directory holding a run_tail.log is a run.
 
 Prints the GPU-hours per group and in total, then the paper's runs
 (00_paper_runs) by box and grid: speed, cost and peak device memory (AMReX's
-"[The Arena] max space (MB) used") -- the numbers of the article's
+"[The Arena] max space (MB) used"): the numbers of the article's
 reproducibility and cost paragraph.  Live runs are never packed, so a run in
 flight is not counted.
 

@@ -1,8 +1,8 @@
 # Spinning-wormhole campaign — status
 
 Compacted 2026-10-19 ≈ 18:30 MSK. The full earlier text (run-by-run start checks, the bug hunt step by step, the
-pre-fix ledger) is `git show 57c23b77:research/spinningwormhole/STATUS.md`. Plans: [`SpinningWormhole.md`](SpinningWormhole.md)
-(paper), [`SpinningSolver.md`](SpinningSolver.md) (solver, done). Code: `Examples/SpinningWormhole/`,
+pre-fix ledger) is `git show 57c23b77:research/spinningwormhole/STATUS.md`. Paper: [`article/research.tex`](article/research.tex);
+solver: [`SpinningSolver.md`](SpinningSolver.md). Code: `Examples/SpinningWormhole/`,
 `grteclyn-wrapper/scripts/campaigns/spinning_wormhole/`. Runs: `runs/spinning_wormhole/drainhole/00_paper_runs/`
 (launch `--subdir drainhole/00_paper_runs`, pack `research/spinningwormhole/pack_run.sh drainhole/00_paper_runs <run>`).
 Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per run; `trust_windows.tsv`). Branch
@@ -19,8 +19,8 @@ The gap 33–58 % is where no run survives its far-side centre: every 0.6c / 0.7
 throat — the Kreiss–Oliger term moves χ at the puncture from t 0 (the "far-side centre" bullet below); on σ 0.1 +
 min_chi 1e-8 they died at 66.70 / 52.88 (10-20), with no throat data past t 55 / 45. CAMPAIGN CLOSED on these
 results (decided 10-21): the recipe is the 0.9c triplet's, so the stable points inherit its convergence story.
-Correction (10-20): on 10-19 the 0.46c's turn at t 83 was read as the end of the instability near Azad's ≈ 30 %; the
-t 150 run shows its throat inflating from t 101.
+Correction (10-20): the 0.46c's turn at t 83 (read on 10-19 as the end of the instability near Azad's ≈ 30 %) is not
+the end; the t 150 run shows its throat inflating from t 101.
 
 - **Collapse is delayed by spin.** The throat reaches −1 % at t 43.7 (static), 46.9 (0.2c), 51.4 (0.30c) and 60.2
   (0.40c); the 0.5c on N 192 (drive on) reached −1 % at t 99.4, and the 0.9c stays flat to t 150 at all three
@@ -31,13 +31,13 @@ t 150 run shows its throat inflating from t 101.
   0.40c's collapse 12–13.6 on the same measure. The MOTS is lost once a throat expands (0.46c from t 104, 0.5c from
   t 78). The N 192 / drive-on 0.5c went the collapse way: the seed's sign picks the branch (the kicks' sign rule).
 - **Instability curve** (`figures/instability_curve.png`, `plot_instability_curve`; remeasured 10-20, models D0–D90):
-  every τ is now the offset-free fit, the slope of ln|dR_A/dt| over the first 0.2–1 % pass of the deficit (collapse)
+  every τ is the offset-free fit, the slope of ln|dR_A/dt| over the first 0.2–1 % pass of the deficit (collapse)
   or growth (expansion). The old deficit-band fit carried the early transient's baseline (1e-4 at N 96 vs 4e-6 at
   N 192), biased τ short by a resolution-dependent amount and failed to self-converge (Q_meas < 0); the offset-free
   fit gives τ 7.8 / 6.6 / 6.1 on the 0.2c triplet, Q_meas 2.3 between the order-3/4 expectations 1.95 / 2.69,
   continuum 5.9 (Richardson AT the measured order p 3.5; extrapolating at p 2 gives the earlier 5.5–5.7, wrong
   order), and sits on a band plateau (< 4 % between 0.2–1 % and 0.5–2 %). Collapse dots τ 5.4 / 6.6 /
-  8.3 / 13.3 (D0–D40), expansion triangles 12.1 / 8.8 (D46, D51). The fit a − b(J/A)² now goes through the collapse
+  8.3 / 13.3 (D0–D40), expansion triangles 12.1 / 8.8 (D46, D51). The fit a − b(J/A)² goes through the collapse
   branch ALONE (rms 2e-3): zero at 32 %; one curve through both branches described neither. The D59 / D70 rungs
   point at the σ 0.1 L 128 reruns (`sig01_mc8`, both dead at the far-side centre, the throats never through the band:
   pending).
@@ -97,7 +97,7 @@ t 150 run shows its throat inflating from t 101.
   (t ≈ 60–80 / 100). (2) Outer (L0): the collapsing inner lapse launches a pure gauge pulse at t ≈ 35–45 (K and
   δlapse fronts move together at speed ≈ 1.07; δφ flat, Weyl4 clean until it lands), amplitude |K| ~ 1e-3 — ~100×
   the 0.9c's because the lapse falls 10× further — which hits the sponge shell + boundary (48–64) at t ≈ 90–110,
-  exactly when L0 Ham jumps (2e-8 → 1.7e-5 over t 80–100 / 4e-7 → 4.7e-5 over 100–120). Weyl4 in the extraction
+  when L0 Ham jumps (2e-8 → 1.7e-5 over t 80–100 / 4e-7 → 4.7e-5 over 100–120). Weyl4 in the extraction
   zone is clean to t ≈ 100 / 110 on the equator slice.
 
 ## MAIN RESULTS TABLE
@@ -245,7 +245,7 @@ Paper notes:
   ∝ σ, sign set by the table; computed from the tables = measured in seven runs), and every non-collapsing
   negative-mass run (0.46c–0.7c) broke down there (t 53–136), never at the throat. For the article this is a methods
   statement (the compactified far end bounds the trust windows of the μ₋ < 0 rungs; the μ₋ > 0 ones run to t 150),
-  not a failure narrative. The 0.75c / 0.8c (LIVE 10-20) test it on the positive side. Fig. 3(c) carries it
+  not a failure narrative. The 0.75c / 0.8c tested it on the positive side: both flat (trust 75 / 94). Fig. 3(c) carries it
   (10-20): the sign change (dotted, v_e 0.72), the 3D runs (squares) and the breakdown band 0.46c–0.7c (shaded).
 - **Speed-up research** (dt × σ, 10-16, "goes fully to the article"): the dt ceiling was an AMR interface mode on
   the coarse–fine edges, where bugs 2–3 acted; retest dt 0.05 on the fixed binary before quoting it.

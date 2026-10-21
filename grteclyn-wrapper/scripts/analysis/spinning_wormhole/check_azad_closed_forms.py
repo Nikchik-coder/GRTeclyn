@@ -134,8 +134,8 @@ def project_l0(expr: sp.Expr) -> sp.Expr:
     """(1/2) integral of expr*sin(theta) over [0, pi], term by term.
 
     Exact and fast: each top-level term first has its theta-FREE factors
-    (the radial jungle) split off unexpanded -- a whole-expression expand is
-    what ran for hours -- then only the small theta-dependent remainder is
+    (the radial part) split off unexpanded (expanding the whole expression
+    takes hours), then only the small theta-dependent remainder is
     expanded, and each distinct theta factor integrates once from a cache.
     (A Poly split over (sin, cos) is NOT safe here: simplify leaves
     sin(2 theta) and tan(theta) atoms, which Poly silently holds as

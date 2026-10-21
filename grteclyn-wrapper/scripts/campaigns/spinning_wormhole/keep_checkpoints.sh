@@ -5,21 +5,21 @@
 #
 # WHY.  Production arms write a ROLLING checkpoint (checkpoint_keep = 1): each
 # new one deletes the last, so a checkpoint needed for a restart is gone
-# minutes after it lands.  Any arm that will be branched -- a gauge experiment,
-# a resolution down-step, a freeze restart -- needs its seed copied out of the
-# rolling set while the run continues.  This watches the log and copies.
+# minutes after it lands.  A run that will be branched (a gauge experiment, a
+# lower resolution, a freeze restart) needs its restart point copied out while
+# it continues.  This watches the log and copies.
 #
 # It COPIES.  Nothing in the run is touched, so it is safe to start and safe to
 # kill.  A checkpoint is complete when run.log shows "checkPoint() time" on the
 # line after its "CHECKPOINT: file = ..." line; copying before that yields a
 # torn directory that AMReX will not restart from.  The copy goes to a .partial
 # name and is renamed only on success, so an interrupted copy is never mistaken
-# for a seed.
+# for a restart point.
 #
 # START IT AFTER THE RUN IS UP.  Its "is the run gone?" check is
-# "no process AND no checkpoint line in the log" -- both true in the seconds
+# "no process AND no checkpoint line in the log", both true in the seconds
 # before the binary starts, so a keeper started too early gives up on every
-# checkpoint immediately and says nothing is coming (measured 2026-09-09).
+# checkpoint at once.
 # Wait for run.log to show "Level 0 step".
 #
 # OPTIONS
@@ -33,8 +33,8 @@
 #                  checkpoint name (SpinningWormholeChk03500 -> 03500)
 #   --scratch DIR  scratch root (default /tmp/grteclyn_scratch)
 #   --prefix NAME  checkpoint name prefix (default SpinningWormhole)
-#   --exe PAT      OBSOLETE since 2026-09-15 -- accepted and ignored.  Liveness
-#                  now comes from the run's launcher.pid; see the note below.
+#   --exe PAT      accepted and ignored; liveness comes from the run's
+#                  launcher.pid (see below)
 #   --poll S       seconds between log checks (default 20)
 set -uo pipefail
 
@@ -52,7 +52,7 @@ while [[ $# -gt 0 ]]; do
     --steps)   STEPS="$2"; shift 2 ;;
     --scratch) SCRATCH="$2"; shift 2 ;;
     --prefix)  PREFIX="$2"; shift 2 ;;
-    --exe)     EXE_PAT="$2"; shift 2 ;;    # accepted, unused since 2026-09-15
+    --exe)     EXE_PAT="$2"; shift 2 ;;    # accepted, unused
     --poll)    POLL="$2"; shift 2 ;;
     -h|--help) sed -n '2,38p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *)         echo "unknown option: $1 (try --help)" >&2; exit 2 ;;
@@ -71,16 +71,13 @@ PIDFILE="${RUNDIR}/launcher.pid"
 # IS THE RUN STILL UP?  The run's own launcher.pid, which run_single.sh
 # registers, is the only reliable answer, and it is the ONLY one accepted.
 #
-# A `pgrep -f "<exe>.*<run>"` can never work in either direction.  It cannot
-# MATCH a live run: every process of a run is started from inside the run
-# directory with relative paths and a neutral label ("test params.txt"),
-# precisely so the run name does not appear in a shared machine's process
-# table -- so a pattern-keeper decides the run is gone on its first poll and
-# gives up on every checkpoint not already written.  And when a pattern like
-# that does match, it is as likely to be matching the operator's own shell,
-# whose command line contains the pattern -- which would leave the keeper
-# polling a dead run forever.  This is the same reason the campaigns README
-# forbids `pkill -f` patterns outright.
+# A `pgrep -f "<exe>.*<run>"` fails both ways.  It cannot match a live run:
+# every process of a run starts inside the run directory with relative paths
+# and a neutral label ("test params.txt"), so the run name is not in the
+# process table, and the keeper would give up on its first poll.  When such a
+# pattern does match, it may be the operator's own shell, which would leave the
+# keeper polling a dead run forever (the campaigns README forbids `pkill -f`
+# patterns for the same reason).
 #
 # So: no pidfile, no keeper.  Refusing here is better than either failure.
 [[ -f "${PIDFILE}" ]] || {

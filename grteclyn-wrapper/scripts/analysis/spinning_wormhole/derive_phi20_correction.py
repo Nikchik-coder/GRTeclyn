@@ -16,9 +16,9 @@ rr residual fixes phi20 up to an additive constant:
 
     dphi20' = -(r^2+r0^2)/(4 r0) res_rr.
 
-(Correcting b0 from rr alone, the previous attempt, breaks ang, and its
-quadrature has a non-elementary piece, int tan(v)/v dv, with a log
-singularity at the throat; term-wise sympy integrate grew without bound.)
+(Correcting b0 from rr alone instead breaks ang, and its quadrature has a
+non-elementary piece, int tan(v)/v dv, with a log singularity at the throat;
+term-wise sympy integrate grows without bound on it.)
 
 The quadrature needs no integrate() heuristics: with p = atan(r/r0) - pi/2
 every coefficient is rational in r and p' = r0/(r^2+r0^2), so

@@ -7,9 +7,7 @@
 # The launcher's own stream captures the SAME bytes a second time, plus about
 # sixteen "[swh]" lines that exist nowhere else: which template, which binary,
 # which card, which scratch, which consumer flags, and the final plotfile
-# count.  That provenance is worth keeping and the duplicate body is not (the
-# merger campaign's backlog of duplicates was 434 MB when this was first run,
-# 2026-09-10).
+# count.  That provenance is worth keeping and the duplicate body is not.
 #
 # So for every launcher log whose run directory holds a run.log: write the
 # "[swh]" lines to <run>/launch_banner.txt and delete the log.  A run whose

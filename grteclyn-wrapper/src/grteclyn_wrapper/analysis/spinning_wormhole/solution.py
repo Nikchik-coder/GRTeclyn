@@ -116,9 +116,9 @@ class Solution:
 
     def tail_ratios(self) -> dict[str, float]:
         """Largest of the last 3 Chebyshev coefficients over the largest,
-        per field and direction (gate: <= 1e-11; omega is measured on its
-        correction about omega_inf q would be circular here, so the raw
-        field is used -- its tails decay the same way)."""
+        per field and direction (gate: <= 1e-11).  omega is measured on the
+        raw field, not its correction about omega_inf q; its tails decay
+        the same way."""
         out = {}
         for which in FIELDS:
             a = self.node_array(which)

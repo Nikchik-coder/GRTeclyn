@@ -1,17 +1,15 @@
 #!/usr/bin/env bash
-# SpinningWormhole -- THE campaign launcher.  One script for every arm.
+# SpinningWormhole campaign launcher, one script for every run.
 #
 #   bash grteclyn-wrapper/scripts/campaigns/spinning_wormhole/launch.sh \
 #        --template <params file> --name <run name> --gpu <id> --profile <name> [options]
 #
-# WHY THIS EXISTS.  Same shape as the merger campaign's launcher: nothing about
-# a new arm is new code -- it is a template, a name, a card, and what the
-# consumer should extract.  Those are arguments, the consumer flags are named
+# WHY.  A new run needs no new code: it is a template, a name, a card, and what
+# the consumer should extract.  Those are arguments, the consumer flags are named
 # profiles in lib/consumer_profiles.sh, and the launch policy (dry run, restart
 # suffix, registry line, detach, where the log goes) lives here once.
 #
-# WHAT IT DOES NOT DO.  It does not run the binary.  run_single.sh does, and
-# that separation is load-bearing: AMReX writes parameters_and_version.txt
+# It does not run the binary; run_single.sh does, because AMReX writes parameters_and_version.txt
 # into the CURRENT WORKING DIRECTORY with the absolute paths it was handed, so
 # the binary is only ever started from inside a run directory under runs/,
 # which is gitignored.  This script resolves and delegates; run_single.sh
@@ -49,19 +47,19 @@
 #                     without erroring)
 #   --center X Y Z    centre of the frame window (and the spectral MOTS), all
 #                     three coordinates.  The renderer defaults to the domain
-#                     midpoint, which is right for every [0, L] box -- but on a
-#                     box whose centre is not L/2, or whenever the window is
-#                     off-axis, SAY IT.  Either way: eyeball frame 0
+#                     midpoint, right for every [0, L] box; pass it when the
+#                     centre is not L/2 or the window is off-axis.  Either way,
+#                     eyeball frame 0
 #   --keep-last N     plotfiles to keep on scratch (default 3)
 #   --subdir NAME     run-tree subfolder under runs/spinning_wormhole/ the run
 #                     dir lands in.  Default: "smoke" for the smoke and none
-#                     profiles, the campaign root otherwise -- so probe runs
-#                     never mix into the production tree (decided 2026-10-10)
+#                     profiles, the campaign root otherwise, so probe runs
+#                     never mix into the production tree
 #   --restart DIR     checkpoint directory to continue from
-#   --binary PATH     evolution binary.  REQUIRED while the campaign has no
-#                     pinned binary (DEFAULT_BINARY below is empty); with
-#                     --restart, the parent run's own binary (its
-#                     run_manifest.json), and a refusal if that cannot be found
+#   --binary PATH     evolution binary.  Default: the campaign pin
+#                     (DEFAULT_BINARY below); with --restart, the parent run's
+#                     own binary (its run_manifest.json), and a refusal if that
+#                     cannot be found
 #   --max-level N     override max_level (run_single.sh rewrites
 #                     regrid_interval to match; AMReX aborts otherwise)
 #   --what TEXT       the registry line.  Default: the template's first
@@ -100,8 +98,7 @@ set -euo pipefail
 
 # The campaign pin.  Arms are compared against each other, so they must run the
 # SAME binary; the live build product changes under other work.  Frozen copies
-# live in runs/spinning_wormhole/bin/.  The pin is the campaign's first build
-# (2026-10-10, commit bfb65e8e, the smoke-test fixes; binaries.tsv row 2).
+# live in runs/spinning_wormhole/bin/ (commit bfb65e8e, binaries.tsv row 2).
 # Change it only when the whole campaign moves to a new build, and say so in
 # the campaign STATUS.
 DEFAULT_BINARY='runs/spinning_wormhole/bin/main3d_smoke_bfb65e8e_2026-10-10.ex'
@@ -202,8 +199,7 @@ if [[ -n "${RESTART}" ]]; then
   FULL_NAME="${NAME}_r${RESTART##*Chk}"
 fi
 
-# Probe runs live one level down so the campaign root holds production runs
-# only (decided 2026-10-10, after three smoke tests sat next to the templates).
+# Probe runs live one level down so the campaign root holds production runs only.
 if [[ -z "${SUBDIR}" ]] && [[ "${PROFILE}" == "smoke" || "${PROFILE}" == "none" ]]; then
   SUBDIR="smoke"
 fi
@@ -220,7 +216,7 @@ if [[ -n "${CONSUME_RAW}" ]]; then
 else
   CONSUME="$(consumer_profile "${PROFILE}" "${ZOOM}" "${COORD}" "${CENTER}")"
   # A profile that exists to be a frame subset says why; the caller's own
-  # SWH_FRAMES_SUBSET wins.  (No profile of this campaign is one, yet.)
+  # SWH_FRAMES_SUBSET wins.  (No profile of this campaign is one.)
   FRAMES_SUBSET="$(consumer_profile_frames_subset "${PROFILE}")"
 fi
 
@@ -297,10 +293,9 @@ if (( DRYRUN )); then
   exit 0
 fi
 
-# /usr/bin/env BY PATH, never bare `env`: on 2026-09-10 a shell whose PATH put uv's
-# installer directory first resolved `env` to uv's `env` *script* (meant to be
-# sourced, not run), which exports PATH and exits 0 without running anything --
-# four launches and their dry runs reported success and started nothing.
+# /usr/bin/env BY PATH, never bare `env`: a PATH with uv's installer directory
+# first resolves `env` to uv's `env` script (meant to be sourced), which exits 0
+# without running anything, so the launch reports success and starts nothing.
 #
 # Started from the script's own directory and with a neutral argv[0], so the
 # supervisor shows as "<label>_job run_single.sh" rather than a campaign path

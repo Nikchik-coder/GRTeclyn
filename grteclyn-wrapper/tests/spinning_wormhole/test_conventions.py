@@ -52,7 +52,7 @@ def test_static_member_d2_is_the_ckk_constant():
 
 
 def test_mu_signs_and_the_mass_map():
-    # CKK eq. 17 with the brief's sign fix: mu_+ = -gamma eta0 / (2 pi) > 0
+    # CKK eq. 17 with its sign fixed (CKK omit the minus): mu_+ = -gamma eta0 / (2 pi) > 0
     # for the drainhole (gamma < 0), and f_x = -gamma/2 at both ends.
     mu_p = cv.mu_plus_from_fx(-0.5 * GAMMA, ETA0)
     assert math.isclose(mu_p, cv.mass_of_gamma(GAMMA, ETA0), rel_tol=1e-15)

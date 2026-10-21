@@ -7,10 +7,9 @@ USE_PARTICLES = TRUE
 
 AMREX_HOME ?= $(realpath ../../../amrex)
 
-# GRTeclyn's Make.defs stamps the binary with `git describe` (GRTECLYN_VERSION:
+# GRTeclyn's Make.defs stamps the binary with `git describe` (GRTECLYN_VERSION,
 # printed at start-up and written to parameters_and_version.txt), then includes
-# AMReX's.  Including AMReX's directly left every binary reporting "version
-# (unknown)", so no run could say which commit it was built from.
+# AMReX's.
 include $(GRTECLYN_HOME)/Tools/GNUMake/Make.defs
 
 include ./Make.package
@@ -36,8 +35,7 @@ src_dirs := $(GRTECLYN_SOURCE)/BlackHoles \
 
 
 # The example's own Make.package (included above) fills GRTECLYN_CEXE_*;
-# Source/ dirs no longer carry Make.package files, so glob them instead
-# (same scheme as the upstream examples).
+# Source/ dirs carry no Make.package files, so glob them (as upstream does).
 CEXE_sources += $(GRTECLYN_CEXE_sources)
 CEXE_headers += $(GRTECLYN_CEXE_headers)
 CEXE_sources += $(notdir $(foreach dir, $(src_dirs), $(wildcard $(dir)/*.cpp)))

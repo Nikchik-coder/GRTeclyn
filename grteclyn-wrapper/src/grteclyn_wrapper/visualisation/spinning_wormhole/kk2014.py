@@ -223,8 +223,8 @@ def read_curve(excess: np.ndarray, ax: Axes, masked: list, key_box) -> np.ndarra
 
 
 def digitize(image: pathlib.Path = IMAGE, table: pathlib.Path = solutions.TABLE) -> dict:
-    """The four wormhole curves and, as the accuracy check, the three printed
-    Kerr curves the reader can reach, each an (n, 3) array."""
+    """The five wormhole curves of ``CURVES`` and, as the accuracy check, the
+    printed Kerr curves the reader can reach, each an (n, 3) array."""
     from PIL import Image
 
     from scipy.interpolate import PchipInterpolator

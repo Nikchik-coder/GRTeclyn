@@ -8,11 +8,8 @@ matrices, the coefficient transform, the tail-ratio resolution monitor,
 barycentric evaluation -- and the radial maps eta(xi).  Each map exposes
 (eta, eta', eta'') at the nodes, so the field equations (equations.py)
 never hard-code a map: switching to a stretched grid near extremality is a
-configuration change, not a rewrite.
-
-``lobatto`` and ``cheb_eval`` are the former ``backgrounds._cheb`` and
-``backgrounds._cheb_eval``, moved here so the O(J^2) generator and the full
-solver share one implementation.
+configuration change, not a rewrite.  The O(J^2) generator
+(backgrounds.py) shares ``lobatto`` and ``cheb_eval``.
 """
 
 from __future__ import annotations

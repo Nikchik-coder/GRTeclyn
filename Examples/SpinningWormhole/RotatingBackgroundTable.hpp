@@ -25,17 +25,14 @@
  * over exact ones.  Under mu -> -mu every component is even except
  * domega_dtheta_over_sintheta, which is odd; sample() applies the parity.
  *
- * Interpolation (2026-10-17): a C2 tensor-product cubic spline by default.
- * The bilinear sample the first campaign binaries used is continuous but has a
- * kink at every table line, so finite-difference second derivatives of the
- * initial data (the constraints, Gamma^i) GREW as the grid refined: measured
- * order -0.8 to -2.8 for f and nu_bar on every refinement level, which is why
- * no level's constraint norm converged on the 0.9c triplet and only the finest
- * one on the 0.2c.  The spline's second derivatives are continuous, and the
- * same check converges at order +4.  Not-a-knot ends in x; in mu the column is
- * mirrored through the equator with each component's parity, so mu = 0 needs
- * no end condition, and the axis (mu = 1) is not-a-knot.  spinning_background_
- * interp = 0 restores the bilinear sample.
+ * Interpolation: a C2 tensor-product cubic spline by default.  The bilinear
+ * sample is continuous but kinked at every table line, so finite-difference
+ * second derivatives of the initial data (the constraints, Gamma^i) grow as
+ * the grid refines (measured order -0.8 to -2.8 for f and nu_bar); with the
+ * spline the same check converges at order +4.  Not-a-knot ends in x; in mu
+ * the column is mirrored through the equator with each component's parity,
+ * so mu = 0 needs no end condition, and the axis (mu = 1) is not-a-knot.
+ * spinning_background_interp = 0 selects the bilinear sample.
  *
  * Header: text lines "key value ...", terminated by END_HEADER; body:
  * float64[n_mu][n_x][ncomp], C order (same conventions as .gridinit files).

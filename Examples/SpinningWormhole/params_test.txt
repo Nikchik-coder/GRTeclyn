@@ -24,8 +24,8 @@ amr.check_file = "./scratch/SpinningWormholeChk"
 checkpoint_interval = -1
 plot_interval       = 10
 
-# The full campaign frame set (frames_default.txt) needs the shift and the
-# metric diagonal (local_speed) as well as the core fields.
+# The default frame set (frames_default.txt) needs the shift and the metric
+# diagonal (local_speed) as well as the core fields.
 amr.plot_vars = chi h11 h22 h33 K lapse shift1 shift2 shift3 phi Pi
 amr.derive_plot_vars = Weyl4
 
@@ -71,9 +71,8 @@ isPeriodic = 0 0 0
 hi_boundary = 1 1 1
 lo_boundary = 1 1 1
 
-# Sommerfeld asymptotic values come from StateVariables::asymptotic_values in
-# code; the old nonzero_asymptotic_* keys are accepted but ignored, so this
-# campaign's templates do not carry them.
+# Sommerfeld asymptotic values come from StateVariables::asymptotic_values;
+# the nonzero_asymptotic_* keys are accepted but ignored.
 
 #################################################
 # Evolution

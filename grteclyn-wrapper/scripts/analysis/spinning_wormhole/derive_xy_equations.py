@@ -4,13 +4,12 @@
 The solver (research/spinningwormhole/SpinningSolver.md) imposes E_f, E_w,
 E_N and monitors E_c, D2, all defined ONCE in
 grteclyn_wrapper.analysis.spinning_wormhole.equations.residual_forms for a
-generic radial map eta(xi).  This script locks that formulation (plan P0):
+generic radial map eta(xi).  This script checks that formulation:
 
   forms    the five forms against Chew-Kleihaus-Kunz (arXiv:1608.05253)
-           eqs. (10)-(13) and (19) as transcribed in
-           deep_research_fast_spin_solver.md: evaluated on generic test
-           fields at 50 digits, identity / arctan / log-stretched maps
-           (gate: max relative difference <= 1e-30)
+           eqs. (10)-(13) and (19), transcribed in ckk_residuals:
+           evaluated on generic test fields at 50 digits, identity /
+           arctan / log-stretched maps (gate: max relative difference <= 1e-30)
   doc      the arctan specialization against the closed (x, y) forms of
            SpinningSolver.md section 2, transcribed here (symbolic zero)
   static   the static drainhole satisfies E_f, E_w, E_N, E_c exactly and
@@ -44,8 +43,9 @@ ETA, TH, XI, Y, ETA0 = sp.symbols("eta theta xi y eta0", real=True)
 
 def ckk_residuals(f, nu, w, eta0):
     """CKK eqs. (10)-(13) and the eq.-(19) RHS, transcribed verbatim from
-    deep_research_fast_spin_solver.md ("Field equations"); f, nu, w are
-    sympy expressions in (ETA, TH)."""
+    the solver's research brief (`git show
+    f66a10d4:research/spinningwormhole/deep_research_fast_spin_solver.md`);
+    f, nu, w are sympy expressions in (ETA, TH)."""
     h = ETA**2 + eta0**2
     s, c = sp.sin(TH), sp.cos(TH)
     e2f = sp.exp(-2 * f)
@@ -277,8 +277,8 @@ def check_kerr() -> bool:
     r = eta + M, e^{-f} = g_phph/(eta^2 sin^2 th), omega = -g_tph/g_phph,
     e^{nu} = (Sigma/eta^2) e^{f}.  The imposed forms E_f, E_w and the
     monitors E_c, D2 (D = 0 here) must vanish on it; the PUBLISHED eq. 12
-    (= sin^3 th * E_N) must NOT -- it leaves ~1e-2, the 2016 paper's typo
-    (found 2026-10-12).  Kept as a regression check so the N solve never
+    (= sin^3 th * E_N) must NOT: it leaves ~1e-2, an error in the published
+    equation.  Kept as a regression check so the N solve never
     reverts to the printed equation."""
     M = sp.Symbol("M", positive=True)
     eta = XI

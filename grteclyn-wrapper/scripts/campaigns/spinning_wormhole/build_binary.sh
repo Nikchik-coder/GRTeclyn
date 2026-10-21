@@ -4,11 +4,9 @@
 #   bash grteclyn-wrapper/scripts/campaigns/spinning_wormhole/build_binary.sh \
 #        [--tag NAME] [--jobs N] [--note TEXT] [--allow-dirty] [--clean] [--dry-run]
 #
-# WHY THIS EXISTS.  A binary named by date and feature, reporting "GRTeclyn
-# version (unknown)", ties no run to the source it ran -- and AMReX ignores a
-# params key an old binary does not read, without a word (the merger campaign
-# ran four seeded arms without their seed that way, 2026-09-23).  A binary
-# built here:
+# WHY.  A binary reporting "GRTeclyn version (unknown)" ties no run to its
+# source, and AMReX silently ignores a params key an old binary does not read.
+# A binary built here:
 #   - is compiled from a CLEAN tree (Source/, the example, Tools/GNUMake) unless
 #     --allow-dirty, in which case the name says -dirty and the diff is kept
 #     beside the binary as <name>.patch;
@@ -21,7 +19,7 @@
 # its own executable name (EBASE=pin), so the example's live build product
 # (main3d.gnu.MPI.CUDA.ex), which other work rebuilds, is never touched.  The
 # first build there is a full one (~20-40 min on 32 jobs); later ones are
-# incremental with correct header dependencies.
+# incremental.
 #
 # OPTIONS
 #   --tag NAME      short word for what the build is for (default: build)
@@ -33,11 +31,9 @@
 #   SWH_BUILD_FLAGS make flags (default: USE_CUDA=TRUE USE_MPI=TRUE COMP=gnu CUDA_ARCH=90,
 #                   what every campaign binary on these nodes is built with)
 #
-# The whole body is one { ... } block ending in `exit`: bash parses it
-# entirely before running it, so editing this file can never reach a live
-# run.  (bash otherwise reads a script by byte offset as it goes; an edit
-# made under a live run on 2026-09-24 would have had that run read the new
-# file at the old offset when its evolution ended.)  Keep it that way.
+# The whole body is one { ... } block ending in `exit`: bash parses it before
+# running it, so editing this file never reaches a live run (bash otherwise
+# reads a script by byte offset as it goes).  Keep it that way.
 {
 set -euo pipefail
 
@@ -99,7 +95,7 @@ echo "[build] output   : runs/spinning_wormhole/bin/${NAME}"
 # The machine overlay (grteclyn-wrapper/.env via env.sh) is what puts the
 # campaign's OpenMPI on PATH; without it AMReX stops at "Unknown mpi wrapper".
 # But env.sh also prepends the GRTresna conda env, whose g++ 15 fails nvcc's
-# "gcc <= 12" check (grteclyn-wrapper/README.md, build troubleshooting) -- so
+# "gcc <= 12" check (grteclyn-wrapper/README.md, build troubleshooting), so
 # blank GRTRESNA_ENV first: env.sh never overwrites an already-set variable.
 export GRTRESNA_ENV=""
 # shellcheck source=../../lib/env.sh

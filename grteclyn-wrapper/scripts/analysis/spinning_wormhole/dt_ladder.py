@@ -1,21 +1,21 @@
-"""Numerics-debt item 1: where and how fast the dt-dependent mode grows.
+"""Where and how fast the dt-dependent mode grows.
 
 Reads the dt-ladder arms (runs/spinning_wormhole/drainhole/06_dt_ladder/) and
 prints, per arm against the dt = 0.02 control:
 
 1. max|K|(t) from collapse_diagnostics.dat with sliding-window e-fold times
-   over the growth phase (the merger evidence: e-fold ~0.8 at dt_mult 0.1,
-   ~1.5 at 0.05, clean at 0.02 -- growth from t = 0, visible when it crosses
+   over the growth phase (in the merger runs: e-fold ~0.8 at dt_mult 0.1,
+   ~1.5 at 0.05, clean at 0.02; growth from t = 0, visible when it crosses
    the smooth background).
 2. Per-level masked constraint norms (constraint_norms_levels.dat): the ratio
-   arm/control per level at matched times -- WHICH level carries the growth.
+   arm/control per level at matched times: WHICH level carries the growth.
 3. The radial profile (core_radial_profile.dat): the first shell whose
-   absK_max exceeds `--shell-factor` x its own t <= 5 baseline -- WHERE the
+   absK_max exceeds `--shell-factor` x its own t <= 5 baseline: WHERE the
    mode lives (throat ~1, coarse-fine interfaces 4/8/16, sponge 24-32,
    boundary >= 32).
 4. Wave-zone psi4 P_total per plotfile (small_data/psi4_directional.dat):
    the earliest discriminator (x100+ by t ~ 10 at dt_mult 0.05 in the merger
-   evidence).
+   runs).
 
     python dt_ladder.py [--arms dt005_t070 dt0035_t070] [--control dt002ctl_t100]
 """

@@ -10,9 +10,7 @@
 # <flag> ... appended (argparse keeps the last value of a repeated option) and
 # --keep-existing-frames.
 #
-# Why this exists (2026-09-28, in the merger campaign): a rerun went up with the
-# wrong horizon window, and the fix was a consumer flag, so it must not cost the
-# evolution anything.  What a safe restart needs:
+# A consumer flag fix must not cost the evolution anything.  What a safe restart needs:
 #   1. --keep-existing-frames: a consumer clears every requested field's frames at
 #      startup, so a plain restart deletes the run's PNGs (see run_single.sh's drain).
 #   2. No index-0 plotfile on scratch: the consumer then takes the run for restarted
@@ -23,13 +21,12 @@
 #      while the consumer idles (measured: ~1.5 min of work per plotfile).
 #   4. Kill the pid, never the group: the consumer shares its process group with the
 #      evolution and run_single.sh.
-#   5. The new watcher stopped when the evolution exits.  run_single.sh kills only the
+#   5. The new watcher must stop when the evolution exits.  run_single.sh kills only the
 #      consumer it started and then drains the last plotfiles with the launch flags;
 #      a hand-started watcher left running would race that drain and never exit.
-#   6. The drain must extract what the watcher did (2026-10-01: it would have skipped the
-#      spectral MOTS on the last plotfiles).  The appended flags go into the run dir's
-#      consumer_args.extra, which every consumer started there reads at startup
-#      (consume_plotfiles/driver.py) -- the drain too, a fresh process at the run's end.
+#   6. The drain must extract what the watcher did.  The appended flags go into the run
+#      dir's consumer_args.extra, which every consumer started there reads at startup
+#      (consume_plotfiles/driver.py), the drain included.
 # Processes are found by /proc/<pid>/cwd, as in stop_campaign.sh: the run dir is in
 # no argv.
 set -uo pipefail

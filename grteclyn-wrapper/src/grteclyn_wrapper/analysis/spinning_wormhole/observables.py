@@ -1,9 +1,9 @@
 """Observables and identity gates of one Solution (SpinningSolver.md P2).
 
-Everything here is independent of the solve: the solver imposes only E_f,
-E_w, E_N and the boundary data, so the constraint E_c, the constancy of
-D^2 and of the flux J(x), and the Smarr relation all TEST a solution
-rather than restate it (section 8's per-solution rows).  Generalizes
+The solver imposes E_f, E_w (Newton) and fits N and D^2 to the E_c and
+eq. (19) rows by least squares, so the E_c residual, the spread of D^2,
+the constancy of the flux J(x) and the Smarr relation measure how well a
+solution satisfies the whole system (section 8's per-solution rows).  Generalizes
 backgrounds._throat_numbers to theta-dependent omega and nu.
 
 The 1/C^2 factors amplify round-off near the compactified ends, so the

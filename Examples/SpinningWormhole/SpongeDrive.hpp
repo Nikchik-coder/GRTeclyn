@@ -9,23 +9,19 @@
 /// Damping sponge: drive the state back to the stationary background in the
 /// outer shell.
 ///
-/// The existing SpongeZone adds extra Kreiss-Oliger dissipation, which damps
-/// at (k dx)^6 and is nearly transparent to the long-wavelength gauge pulse;
-/// the Sommerfeld boundary then assumes flat asymptotics the wormhole does
-/// not have (M_ADM ~ 2 at the box edge), and the pulse returns at t ~ L.
-/// This operator absorbs ALL wavelengths by adding, inside the same shell
-/// and with the same ramp profile as the sponge,
+/// SpongeZone adds extra Kreiss-Oliger dissipation, which damps at (k dx)^6
+/// and is nearly transparent to the long-wavelength gauge pulse; the
+/// Sommerfeld boundary assumes flat asymptotics the wormhole does not have
+/// (M_ADM ~ 2 at the box edge), so the pulse returns at t ~ L.  This
+/// operator absorbs all wavelengths by adding, inside the same shell and
+/// with the same ramp profile as the sponge,
 ///
 ///   rhs_n -= A * f(r) * (state_n - ref_n)        for every component n,
 ///
 /// where ref is the run's own t = 0 background (table data + InitialGammas,
-/// rebuilt exactly on restart or regrid).  For a hold around a stationary
-/// solution this is the physical statement that the far zone stays the
-/// background.  A = 0 reproduces the old evolution bit for bit.  Explicit
-/// stability needs A * dt < ~1; the quartic ramp keeps the drive smooth at
-/// the inner edge.  2026-10-15: every L64 trust window died at the t ~ 62
-/// boundary return and L128 would die at t ~ 120, which walls off the
-/// late-time hold physics.
+/// rebuilt exactly on restart or regrid).  A = 0 leaves the evolution
+/// unchanged bit for bit.  Explicit stability needs A * dt < ~1; the
+/// polynomial ramp (ramp_power) keeps the drive smooth at the inner edge.
 struct SpongeDrive
 {
     bool enabled{false};

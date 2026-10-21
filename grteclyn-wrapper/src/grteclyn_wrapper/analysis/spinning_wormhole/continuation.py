@@ -1,7 +1,7 @@
 """Solve one background; step families in J (SpinningSolver.md P2-P3).
 
 ``solve_point`` is the unit step: seed from the O(J^2) member (or a given
-Solution / unknown vector), Newton on (f, omega), the linear N solve, then
+Solution / unknown vector), Newton on (f, omega), the constraint solve for N, then
 observables and identity gates attached.  Families are labelled by J, not
 omega_{-inf}: omega_0 turns over along a family while J grows monotonically
 to the extremal end, so prescribing J steps straight past that fold
@@ -81,8 +81,7 @@ def solve_point(*, eta0: float, gamma: float, J: float | None = None,
     _, _, winf = problem.unpack(u)
     # N and D^2 from the constraint sector (eqs 13 + 19), NOT the printed
     # eq. 12: extremal Kerr satisfies 10, 11, 13, 19 exactly but violates
-    # the published eq. 12 at 1e-2 (2026-10-12, derive_xy_equations.py
-    # --stage kerr), and the elliptic eq.-12 N leaves a J^4-sized
+    # the published eq. 12 at 1e-2 (derive_xy_equations.py --stage kerr), and the elliptic eq.-12 N leaves a J^4-sized
     # constraint violation that no resolution removes.
     Nf, d2_solved, n_info = problem.solve_N_constrained(F, W)
     m = problem.map

@@ -1,8 +1,8 @@
 # SpinningWormhole
 
 Nonlinear evolution of **one rotating Ellis–Bronnikov wormhole** (Kleihaus–Kunz
-family: real phantom scalar, rotation in the metric). Plan:
-`research/spinningwormhole/SpinningWormhole.md`; campaign state:
+family: real phantom scalar, rotation in the metric). Paper:
+`research/spinningwormhole/article/research.tex`; campaign state:
 `research/spinningwormhole/STATUS.md`. Replaces the deleted
 `RotatingWormholeCollapse` (2026-10-10), whose complex-scalar phase winding put
 the angular momentum in the matter, not the geometry.

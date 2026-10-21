@@ -22,7 +22,7 @@ from grteclyn_wrapper.visualisation.spinning_wormhole.solutions import REPO
 
 SOURCES = (REPO / "runs" / "spinning_wormhole" / "backgrounds", REPO / "runs" / "spinning_p3" / "tables")
 HEADERS = REPO / "results" / "spinningwormhole" / "backgrounds"
-# the 0.2c (J = 1) and family (a)'s rungs evolved in 3D
+# the J = 1 model and family (a)'s spin models evolved in 3D
 ARTICLE = ("full_eta2_m1_J100", "fam_a_ve030", "fam_a_ve040", "fam_a_ve045",
            "fam_a_ve050", "fam_a_ve060", "fam_a_ve070", "fam_a_ve075",
            "fam_a_ve080", "fam_a_ve090")

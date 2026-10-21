@@ -47,13 +47,11 @@
  * Scalar: phi from the table (outer asymptote subtracted by the generator);
  * the stationary field is axisymmetric, so Pi = -(dt phi - beta^i d_i phi) /
  * alpha = 0.  An optional ell = 0 Gaussian shell in Pi,
- * A exp(-(eta - eta_c)^2 / w^2), seeds the radial modes; like the merger
- * seeds it violates the constraints at O(A) (constraint-solved seeds are a
- * planned upgrade, 2026-10: perturb Pi, then re-solve).
+ * A exp(-(eta - eta_c)^2 / w^2), seeds the radial modes; it violates the
+ * constraints at O(A).
  *
- * The kick (2026-10-18; the stability study after Evstafyeva, Siemonsen &
- * East, arXiv:2508.11527): the merger's single-throat seed carried over, a
- * Gaussian shell in the conformal factor laid on the throat,
+ * The kick (after the stability study of Evstafyeva, Siemonsen & East,
+ * arXiv:2508.11527): a Gaussian shell in the conformal factor on the throat,
  *
  *   gamma_ij -> psi_k^4 gamma_ij,
  *   psi_k = 1 + eps exp(-((eta - eta_c)/w)^2) S(theta, varphi),
@@ -61,13 +59,13 @@
  * with S = 1 (l = 0: the throat's areal radius moves by ~2 eps with the sign
  * of eps, the radial branch), P2(cos theta) (l = 2, m = 0), or
  * sin^m(theta) cos(m varphi) = Re[(X + iY)^m] / r^m (l = m >= 1: m = 1 pushes
- * the throat off centre, m = 2 is the bar, which the unkicked holds seed only
- * at round-off).  K_ij goes with it as psi_k^-2 K_ij (A_ij -> psi_k^-6 A_ij),
- * York's conformal scaling of a traceless K: with K = 0 and Pi = 0 the
- * momentum constraint stays exact for any psi_k, and only the Hamiltonian
- * constraint is violated, at O(eps) -- declared and measured, as with the
- * merger seeds, not solved away.  h_ij, the lapse and the shift keep their
- * background values (lapse types 1-3 read the kicked chi).
+ * the throat off centre, m = 2 is the bar, which the unkicked background
+ * seeds only at round-off).  K_ij goes with it as psi_k^-2 K_ij
+ * (A_ij -> psi_k^-6 A_ij), York's conformal scaling of a traceless K: with
+ * K = 0 and Pi = 0 the momentum constraint stays exact for any psi_k, and
+ * only the Hamiltonian constraint is violated, at O(eps); it is not solved
+ * away.  h_ij, the lapse and the shift keep their background values (lapse
+ * types 1-3 read the kicked chi).
  */
 
 #ifndef SPINNINGWORMHOLEINITIALDATA_HPP_
@@ -102,7 +100,7 @@ class SpinningWormholeInitialData
 
         //! The kick (psi_k above): signed amplitude eps, angular profile
         //! (l, m) = (0, 0), (2, 0) or (m, m), shell centre eta_c and width
-        //! in eta (<= 0: eta0 / 4, the merger's a / 4).
+        //! in eta (<= 0: eta0 / 4).
         double kick_amplitude{0.0};
         int kick_l{0};
         int kick_m{0};
@@ -120,8 +118,7 @@ class SpinningWormholeInitialData
     AMREX_GPU_DEVICE AMREX_FORCE_INLINE void
     compute(int i, int j, int k, amrex::Array4<amrex::Real> cell) const
     {
-        // Cell centre relative to the wormhole centre (prob_lo = 0 layout,
-        // as everywhere in this fork's examples).
+        // Cell centre relative to the wormhole centre (assumes prob_lo = 0).
         const double X = (i + 0.5) * m_dx - m_params.grid_center[0];
         const double Y = (j + 0.5) * m_dx - m_params.grid_center[1];
         const double Z = (k + 0.5) * m_dx - m_params.grid_center[2];
@@ -143,8 +140,7 @@ class SpinningWormholeInitialData
         const double emf = std::exp(-bg.f); // e^{-f}
         const double nu  = bg.nu_bar * s2;
 
-        // The kick's conformal factor; exactly 1 when off, so unkicked data
-        // are the old ones bit for bit.
+        // The kick's conformal factor; exactly 1 when the kick is off.
         double psi_k = 1.0;
         if (m_params.kick_amplitude != 0.0)
         {

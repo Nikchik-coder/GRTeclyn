@@ -6,12 +6,11 @@
     run_manifest.py finish --run-dir DIR --status N
     run_manifest.py backfill --run-dir DIR [--exe BIN] [--launch-log LOG]
 
-WHY.  A run's name plus a prose registry line is not an identity: the merger
-campaign had arms whose names promised a seed their binary ignored, and nothing
-checked either against what ran.  The manifest records the facts at launch --
-the exact params, the binary and the commit it carries, the source commit of
+WHY.  A run's name plus a prose registry line is not an identity: a name can
+promise a setting the binary ignored.  The manifest records the facts at launch
+(the exact params, the binary and the commit it carries, the source commit of
 the launcher, the node and card, the preflight verdict and the t = 0
-diagnostics -- and the run's end state at exit.
+diagnostics) and the run's end state at exit.
 
 `backfill` reconstructs a manifest for a run launched before the launcher wrote
 one, from its params.txt, parameters_and_version.txt, launcher log and streams;
@@ -40,9 +39,8 @@ REPO = HERE.parents[3]
 RUNS = REPO / "runs" / "spinning_wormhole"
 BINARIES_TSV = REPO / "results" / "spinningwormhole" / "binaries.tsv"
 NODES_MD = RUNS / "NODES.local.md"
-# The params/binary helpers live in the shared preflight engine (campaigns/lib,
-# 2026-10-10: one engine for every campaign; the campaign facts it checks come
-# from preflight_campaign.json, which these three helpers never touch).
+# The params/binary helpers live in the preflight engine shared by every campaign
+# (campaigns/lib); these three never touch preflight_campaign.json.
 sys.path.insert(0, str(HERE.parent / "lib"))
 from preflight import parse_params, static_check, t0_rows  # noqa: E402
 

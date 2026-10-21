@@ -9,8 +9,7 @@
  * the tabulated background, while this matches the evolution's own stencil).
  *
  * Source/CCZ4/GammaCalculator.hpp does the same job through the unported
- * Cell/BoxLoops API; this is its Array4 twin in the style the fork's
- * examples actually compile.
+ * Cell/BoxLoops API; this is its Array4 equivalent.
  *
  * Usage: run over VALID cells only, after the initial data has filled the
  * ghost cells too (the +-2 stencil then never reads garbage).  Reads only

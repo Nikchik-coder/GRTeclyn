@@ -14,14 +14,14 @@ eta0 fixed along a family, so mass and size grow without bound as v_e -> 1):
 - (c) the far side's mass over ours, M_-/M_+ (the drainhole's far side turns
   from negative to positive mass); the dotted rule marks the drainhole's sign
   change (v_e ~ 0.72), the squares the 3D runs' backgrounds at their own
-  M_-/M_+ (the packed table headers), and the grey band the rungs whose runs
-  broke down at the compactified far end before t = 150 (0.46c-0.7c);
+  M_-/M_+ (the packed table headers), and the grey band the models whose runs
+  broke down at the compactified far end before t = 150 (v_e 0.46-0.7);
 - (d) the throat's flattening R_p/R_e;
 - (e) the exotic matter: the phantom field's volume integral quantifier
   |int (rho + p_eta) dV| (Visser, Kar & Dadhich 2003) over the equatorial
   throat radius, relative to the family's static member (1 at v_e = 0; log),
   from the packed solutions; squares: the 3D runs, each
-  rung's value scaled by (D_run / D_background)^2 with D_run the charge
+  model's value scaled by (D_run / D_background)^2 with D_run the charge
   measured on the run's own t = 0 slice (results/spinningwormhole/
   scalar_charge_runs.tsv);
 - (f) the throat's rotation rate Omega eta0.
@@ -35,8 +35,7 @@ One key above the figure names the families' dashes and the extremal
 dots; a panel's own key names only what is its alone (the quantities of
 (a), the Kerr bound of (b)).
 
-Colours follow the spinning paper's red / green / blue by quantity (mass and
-shape red, angular momentum green, size and rotation blue; the exotic matter
+Colours are red / green / blue by quantity (mass and shape red, angular momentum green, size and rotation blue; the exotic matter
 ink); ``--colors C1,C2,C3`` redraws in another scheme.
 
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_spin_trends
@@ -81,9 +80,8 @@ FAMILIES = (
 )
 # three keys to a row fit a third of the page with shorter handles
 TIGHT = dict(handlelength=1.5, handletextpad=0.35, columnspacing=0.5)
-# 2026-10-20: the first and last rung whose 3D runs broke down at the far-side centre
-# (the compactified far end) before t = 150: 0.46c at 130.2, 0.5c at 100.1, 0.6c at
-# 66.7, 0.7c at 52.9; the slower rungs form a horizon first and the 0.9c holds
+# the first and last spin model whose 3D runs broke down at the far-side centre (the
+# compactified far end) before t = 150; slower models form a horizon first, v_e 0.9 holds
 FAR_END_BAND = ("fam_a_ve045", "fam_a_ve070")
 
 
@@ -166,8 +164,8 @@ def run_points(fam: dict) -> tuple[np.ndarray, np.ndarray]:
 
 def draw(fams, colours):
     style.prd(8.0)
-    # 2026-10-20: a lower grid (7 x 5 in took half a page); the top row keeps its v_e
-    # tick labels, which hold the rows far enough apart for the bottom row's tags
+    # the top row keeps its v_e tick labels, which hold the rows far enough apart
+    # for the bottom row's tags
     fig, axes = plt.subplots(2, 3, figsize=(7.05, 3.5), layout="constrained")
     (ax_a, ax_b, ax_c), (ax_d, ax_e, ax_f) = axes
     red, green, blue = colours
@@ -215,8 +213,7 @@ def draw(fams, colours):
     runmark = dict(ls="none", marker="s", ms=3.4, mfc="white", mec=style.INK, mew=0.8,
                    zorder=6, clip_on=False)
 
-    # (c) far-side mass over ours; 2026-10-20: the drainhole's sign change as a dotted
-    # rule (named in the key, as on the instability curve) and the 3D runs on it
+    # (c) far-side mass over ours, the drainhole's sign change as a dotted rule, the 3D runs
     ax_c.axhline(0.0, **rule)
     vrule = dict(color="#b5b5b2", lw=0.8, ls=":")
     v0 = sign_change(fams[0])
@@ -238,10 +235,8 @@ def draw(fams, colours):
     ax_d.plot([1.0], ext["Rp"], **dot)
     ax_d.set(xlim=(0, 1), ylim=(0.58, 1.02), ylabel=r"$R_p/R_e$", xlabel=r"$v_e$")
 
-    # (e) exotic matter per throat radius (2026-10-20: replaces the scalar charge, which
-    # Table II lists); the 3D runs' measured charge put on the drainhole curve.
-    # 2026-10-21: each family over its own static member, so the fall with spin reads
-    # at a glance (|I|/R_e alone needed the caption)
+    # (e) exotic matter per throat radius, each family over its own static member;
+    # the 3D runs' measured charge put on the drainhole curve
     ax_e.axhline(1.0, **rule)
     for f, (*_, ls) in zip(fams, FAMILIES):
         curve(ax_e, f, "Xrel", style.INK, ls)
@@ -261,8 +256,7 @@ def draw(fams, colours):
     ax_f.plot([1.0], [0.0], **dot)
     ax_f.set(xlim=(0, 1), ylim=(0.0, 0.55), ylabel=r"$\Omega\,\eta_0$", xlabel=r"$v_e$")
 
-    # 2026-10-20: the families' dashes and the extremal dots keyed once, above the
-    # figure (every panel repeated them)
+    # the families' dashes and the extremal dots, keyed once above the figure
     fig.legend(*zip(*[key(line(style.INK, ls), name) for *_, name, ls in FAMILIES],
                     key(dot, "extremal Kerr")),
                loc="outside upper center", ncol=3, frameon=False, fontsize=7.0,

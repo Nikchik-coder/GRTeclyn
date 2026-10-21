@@ -26,12 +26,12 @@ Derivatives are stored so a spectral generator hands over exact ones.
 
 The static family
 -----------------
-The v_e = 0 member is the massive drainhole of the merger campaign
+The v_e = 0 member is the massive drainhole of the wormhole-merger runs
 (f = 2u, u = (m/a)(atan(eta/a) - pi/2), nu = omega = 0, a = eta0).  On the
 x grid atan(eta/eta0) = pi x / 2 EXACTLY, so f and phi are linear in x and
 the C++ bilinear interpolation reproduces them to machine precision -- the
-static table is not an approximation.  This is the cross-check against the
-merger drainhole's t = 0 constraint norms (plan Step 0).
+static table is not an approximation, and its t = 0 constraint norms match
+the merger runs' drainhole.
 
 The slowly rotating family, O(J^2)
 ----------------------------------
@@ -216,8 +216,6 @@ def static_background(
 
 
 # --- slow rotation, O(J^2) (module docstring) ------------------------------
-# The Lobatto nodes/derivative matrix and barycentric evaluation moved to
-# spectral.py (2026-10-12), shared with the full fast-spin solver.
 
 
 def slow_rotation_omega(eta0: float, gamma: float, chi: np.ndarray) -> np.ndarray:

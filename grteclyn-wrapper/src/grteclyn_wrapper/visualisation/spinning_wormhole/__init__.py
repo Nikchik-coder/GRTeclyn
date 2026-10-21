@@ -19,8 +19,7 @@
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_kk2014_comparison
         THE PAPER FIGURE: our symmetric family as curves against KK 2014's
         digitized points and the closed-form Kerr curves; red/green/blue by
-        default (the spinning paper's colours; gold is the merger paper's),
-        --palette house or --colors C1,C2,C3 to redraw
+        default, --palette house or --colors C1,C2,C3 to redraw
 
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_kk2014_fig1
         an internal check only: our solutions as circles on the published
@@ -33,7 +32,7 @@
         extremal-Kerr limits and the drainhole holds evolved in 3D
 
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_convergence
-        the 0.9c hold's resolution triplet (N 128 / 192 / 256): the
+        the v_e = 0.9 hold's resolution triplet (N 128 / 192 / 256): the
         Hamiltonian and momentum constraints on every refinement level, with
         the finest member rescaled at 2nd and 4th order to bracket the
         coarsest, and a row on the throat and the wave zone (the equatorial
@@ -43,6 +42,6 @@
 
 The solver figures go to results/spinningwormhole/figures/solver/.  Every
 paper figure reads only tracked files under results/, so it rebuilds from a
-clean checkout (the instability curve takes a live run's streams from runs/
-until its pack lands).
+clean checkout (the instability curve falls back to a run's streams under
+runs/ while it is unpacked).
 """

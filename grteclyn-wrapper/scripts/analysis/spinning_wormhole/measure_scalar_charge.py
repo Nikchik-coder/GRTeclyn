@@ -33,7 +33,7 @@ import sys
 
 import numpy as np
 
-ETA0 = 2.0              # every drainhole rung: eta0 = 2 (code units)
+ETA0 = 2.0              # every drainhole run: eta0 = 2 (code units)
 R_IN = 6.0              # inside this the throat moves
 R_OUT_FRAC = 0.35       # of L: the sponge starts at 0.375 L
 

@@ -7,7 +7,7 @@ evolved from a background table).  The working output lands in
 `results/spinningwormhole/binaries.tsv` and
 `results/spinningwormhole/runs_registry.tsv`.
 
-The folder is the merger campaign's proven recipe
+The folder is the merger campaign's recipe
 (`../wormhole_merger/`, read-only: that campaign is live) with this
 campaign's identity: env vars `SWH_*`, log tag `[swh]`, run root
 `runs/spinning_wormhole/` (templates in `templates/`, frozen binaries in
@@ -24,10 +24,10 @@ launch.sh  ->  run_single.sh  ->  preflight (shared engine)  ->  evolution + con
 | --- | --- |
 | `launch.sh` | The launcher.  Resolves the template, the binary, the restart suffix, the consumer flags and the registry line, then hands off.  `--template/--name/--gpu/--profile` are required. |
 | `run_single.sh` | The engine: clones the params, rewrites output paths onto node-local scratch, runs the preflight, starts the binary and the consumer sidecar, registers `launcher.pid`, drains the consumer at the end.  Never call the binary yourself. |
-| `preflight_campaign.json` | This campaign's facts for the SHARED preflight engine (`../lib/preflight.py`, one engine for every campaign since 2026-10-10): the seed key (`spinning_seed_amplitude`), the run root, the mirror rules (reflective x or y boundaries are refused -- rotation about z breaks those mirrors; a z mirror is allowed), and the required background table (`spinning_background_file` must exist as a file). |
+| `preflight_campaign.json` | This campaign's facts for the SHARED preflight engine (`../lib/preflight.py`, one engine for every campaign since 2026-10-10): the seed key (`spinning_seed_amplitude`), the run root, the mirror rules (reflective x or y boundaries are refused, since rotation about z breaks those mirrors; a z mirror is allowed), and the required background table (`spinning_background_file` must exist as a file). |
 | `preflight_allow.txt` | Keys the preflight may see unread without refusing.  Carried over from the merger's generic entries only; re-audit it against the SpinningWormhole binary at its first build. |
 | `frames_default.txt` | The mandatory frame set, identical to the merger's.  A launch that renders less is refused unless `SWH_FRAMES_SUBSET="<reason>"` says why. |
-| `lib/consumer_profiles.sh` | What the consumer extracts, under a name: `hold` (full frames + spectral MOTS) and `none`. |
+| `lib/consumer_profiles.sh` | What the consumer extracts, under a name: `hold` (full frames + spectral MOTS), `smoke` (full frames, no ψ4) and `none`. |
 | `run_manifest.py` | Writes `run_manifest.json` at launch and completes it at exit; `backfill` reconstructs one for an older run. |
 | `build_binary.sh` | Builds `main3d_<tag>_<commit>_<date>.ex` into `runs/spinning_wormhole/bin/` from a clean tree (`EBASE=pin`, own object dir), stamped with its commit, and appends its row to `results/spinningwormhole/binaries.tsv`. |
 | `keep_checkpoints.sh`, `keep_plotfiles.sh`, `prune_checkpoints.sh` | Copy checkpoints out of a rolling run, hard-link plotfiles past `--keep-last`, prune scratch per policy (`MAIN_RE` is empty: no insured run yet). |
@@ -43,10 +43,10 @@ launch.sh  ->  run_single.sh  ->  preflight (shared engine)  ->  evolution + con
 - **Background-table initial data**: every template must set
   `spinning_background_file`; the preflight refuses a missing key or a path
   that is not a file.
-- **No pinned binary yet**: `launch.sh`'s `DEFAULT_BINARY` is empty, so every
-  launch (except a restart with a parent manifest) must say
-  `--binary runs/spinning_wormhole/bin/<build>.ex`.  Pin one once the campaign
-  settles on a build.
+- **No production pin**: `launch.sh`'s `DEFAULT_BINARY` is the 2026-10-10
+  smoke build (`main3d_smoke_bfb65e8e_2026-10-10.ex`), so every production
+  launch (except a restart with a parent manifest) passes
+  `--binary runs/spinning_wormhole/bin/<build>.ex`.
 - **Shared preflight**: the checks run from `../lib/preflight.py` with
   `--campaign-config preflight_campaign.json`; there is no preflight fork in
   this folder.
@@ -96,11 +96,11 @@ seconds without launching.
 - **Checkpoints are off by default** and are asked about per run; the
   preflight refuses checkpoints requested with
   `amr.checkpoint_files_output = 0`.
-- **`launch.sh` detaches and hangs an agent's shell tool**: redirect its
+- **`launch.sh` detaches and hangs a non-interactive shell**: redirect its
   output to a file (`< /dev/null > log 2>&1`) and poll.  An interrupted or
   rejected launch may still have started -- check `nvidia-smi` / `ps` after.
 - **GPUs are shared**: check `nvidia-smi` before every launch.  Processes are
-  camouflaged (`test params.txt`, `test_post post.py ...`, label `--label`).
+  renamed (`test params.txt`, `test_post post.py ...`, label `--label`).
 - **The consumer is part of the start**: `consumer.log` advances, frame 0
   renders, the first rows land in `small_data/`, keep-last pruning runs.  A
   dead consumer is silent while scratch fills.  Fix a live run's consumer only

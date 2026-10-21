@@ -1,7 +1,7 @@
 # Spinning-wormhole campaign — packed results
 
 Nonlinear evolutions of rotating Ellis–Bronnikov wormholes, slow spin to the
-extremal Kerr limit. Plan: `research/spinningwormhole/SpinningWormhole.md`;
+extremal Kerr limit. Paper: `research/spinningwormhole/article/research.tex`;
 live state: `research/spinningwormhole/STATUS.md`; code:
 `Examples/SpinningWormhole/` (launcher:
 `grteclyn-wrapper/scripts/campaigns/spinning_wormhole/`).
@@ -134,8 +134,9 @@ its rerun on binary rkfix 0661dac4. The pre-fix paper runs and their packs were 
   static hold to 4 digits while |K| falls two decades across the shell.
   The unchanged interior ring shows the t ≈ 60+ growth is
   collapse-sourced, not a boundary echo — the drive is adopted for runs
-  intended past the box-crossing time (t ≳ L), where it guarantees
-  absorption.
+  intended past the box-crossing time (t ≳ L).  (2026-10-18: the drive is
+  off for new runs; it pulls the shell back to the t 0 data, 48× more face
+  junk; STATUS.md.)
 - `05_hold_L128/ve050a/spin_hold_L128_ml3_ve050a_t100` (2026-10-15), Phase
   B1's N = 256 member: the drainhole at v_e 0.513 on the production L = 128
   box (the merger hold's layout, return t ≈ 120), to t = 100.  REACHED

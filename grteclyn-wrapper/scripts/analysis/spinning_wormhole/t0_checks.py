@@ -1,4 +1,4 @@
-"""Step 3 checks of a fast-spin table on the 3D grid, from a run's plotfile.
+"""t = 0 checks of a fast-spin table on the 3D grid, from a run's plotfile.
 
 For each run directory:
 

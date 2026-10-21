@@ -5,7 +5,7 @@
 #   bash .../keep_plotfiles.sh --status <run dir> [--dest DIR]
 #
 # WHY.  The consumer keeps only the last three plotfiles (--keep-last 3), but
-# late analyses -- oriented horizon scans, flow finders, offline core profiles --
+# late analyses (oriented horizon scans, flow finders, offline core profiles)
 # run on full plotfiles.  keep_checkpoints.sh does this for checkpoints; this
 # does it for plotfiles.
 #

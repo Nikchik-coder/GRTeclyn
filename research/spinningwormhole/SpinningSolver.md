@@ -15,7 +15,7 @@ The solver is done when both families pass every row from v_e = 0 to at least 0.
 | Criterion | Threshold | Measured by |
 |---|---|---|
 | Coverage | family (a) η₀ = 2, γ = −π and family (b) γ = 0, both v_e 0 → ≥ 0.95 (0.99 stretch) | continuation log |
-| Full-Einstein residual | ≤ 1e−8, or the check's round-off floor if higher; never above the brief's 1e−6 | generalized `check_slowspin_einstein.py` (independent sympy Ricci) |
+| Full-Einstein residual | ≤ 1e−8, or the check's round-off floor if higher; never above 1e−6 | generalized `check_slowspin_einstein.py` (independent sympy Ricci) |
 | Internal identities | D² spread ≤ 1e−9, constraint ≤ 1e−9, J-flux spread ≤ 1e−10, Smarr ≤ 1e−10 (all relative) | `observables.py` on every solution |
 | Spectral convergence | last 3 Chebyshev coefficients ≤ 1e−11 of the largest, per field and direction | tail monitor |
 | Benchmarks | CKK D anchors to 5 digits; agreement with O(J²) scaling as J⁴ | P2–P3 |
@@ -27,9 +27,9 @@ The solver is done when both families pass every row from v_e = 0 to at least 0.
 
 ## 2. Formulation
 
-Solve (f, ω) nonlinearly; N = ν/sin²θ and D² then follow without iteration.
+Solve (f, ω) nonlinearly; N = ν/sin²θ and D² then follow without iteration. The printed eq. 12 (E_N below) is wrong: the production solver takes N and D² from E_c and D² instead (execution notes, 2026-10-12).
 
-**Coordinates.** x = (2/π) arctan(η/η₀) as now, and y = cos 2θ, with C = cos(πx/2) and S = sin(πx/2). Since cos(2kθ) = T_k(y), the planned even cosine basis is simply Chebyshev in y. The axis is y = 1 and the equator y = −1. Regularity and equatorial symmetry are built in, so y needs no boundary rows. N is exactly the table's `nu_bar`.
+**Coordinates.** x = (2/π) arctan(η/η₀) as now, and y = cos 2θ, with C = cos(πx/2) and S = sin(πx/2). Since cos(2kθ) = T_k(y), the planned even cosine basis is Chebyshev in y. The axis is y = 1 and the equator y = −1. Regularity and equatorial symmetry are built in, so y needs no boundary rows. N is exactly the table's `nu_bar`.
 
 **Nonlinear system** (eq. 10 = sin θ · E_f, eq. 11 = h sin³θ e^{−2f} · E_ω):
 
@@ -109,8 +109,8 @@ Choose the grid by measurement: run the single-domain arctan grid until its tail
 Three options, in the order to try:
 
 1. **More nodes.** Lobatto nodes already cluster as 1/N² at x = ±1, so raising N_x may carry 0.95 alone. No code change; the sparse path past about 10k unknowns.
-2. **Log-stretched single domain.** ξ = tanh(asinh(η/η₀)/L) with L = 2k, k an integer. L = 2 gives ξ = η/(η₀ + √h), equivalent in character to the arctan map. For even L, 1/η stays analytic in (1 − ξ), so spectral convergence at the ends survives, while nodes spread evenly in log η out to η ≈ η₀ e^{2L}/2. This is my derivation; P0's script verifies it.
-3. **Three domains.** Split at |η| = η_c = √(η₀M): an inner arctan domain on [−η_c, η_c] and two outer domains compactified in η_c/η, with value and normal derivative matched at the interfaces. Most robust, most code.
+2. **Log-stretched single domain.** ξ = tanh(asinh(η/η₀)/L) with L = 2k, k an integer. L = 2 gives ξ = η/(η₀ + √h), equivalent in character to the arctan map. For even L, 1/η stays analytic in (1 − ξ), so spectral convergence at the ends survives, while nodes spread evenly in log η out to η ≈ η₀ e^{2L}/2. This map is our derivation; P0's script verifies it.
+3. **Three domains.** Split at |η| = η_c = √(η₀M): an inner arctan domain on [−η_c, η_c] and two outer domains compactified in η_c/η, with value and normal derivative matched at the interfaces. Most reliable, most code.
 
 **Physics checks in this regime.** D falls monotonically to 0. For γ = 0, μ₊/R_e → 1/2, J/R_e² → 1/4 and Q/R_e³ → 1/8. The polar Gaussian curvature of the throat turns negative near v_e = 0.9 (CKK §III.D). Use 1/4 for J/R_e², not the brief's 1/2: Volkov 2026 §X finds CKK's figure matches only if it plots 2J/R₀², and extremal Kerr with R_e = 2M gives J/R_e² = M²/4M² = 1/4.
 
@@ -191,7 +191,7 @@ Tests go in `tests/spinning_wormhole/`: static exactness, manufactured solutions
 - [x] Extremal trends: D → 0 (family (a): 2.23 → 0.325; family (b): 0.99 → 0.408, monotone), μ₊/R_e → 1/2 (γ = 0: 0.487 at v_e 0.991), J/R_e² → 1/4 (0.2458 — confirming Volkov's 1/4 over the brief's 1/2); polar curvature sign change near 0.9 NOT yet computed (needs the throat-surface curvature formula; small follow-up)
 - [x] Record the N needed at v_e = 0.95 and 0.99: family (b) 72×18 at both; family (a) 162×42 (arctan) at 0.95, 144×30 (log, L = 4) at 0.99
 
-**Gate (M3): PASSED 2026-10-13** — v_e = 0.9500/0.9521 and 0.9908/0.9907 on families (a)/(b) with every P2 gate green (tails ≤ 5e−14 at the endpoints); 0.99 achieved, not merely attempted.
+**Gate (M3): PASSED 2026-10-13** — v_e = 0.9500/0.9521 and 0.9908/0.9907 on families (a)/(b) with every P2 gate green (tails ≤ 5e−14 at the endpoints); 0.99 reached.
 
 ### P5 · Tables and 3D acceptance (starts at M1, runs beside P3–P4)
 
@@ -222,7 +222,7 @@ Every saved solution carries the per-solution rows in its JSON; the phase rows r
 | Full-Einstein residual | ≤ 1e−8 or the static floor | every catalogue entry | independent sympy Ricci |
 | Equal-J agreement with O(J²) | f, N ∝ J⁴; ω − Jw₁ ∝ J³; ratios within 5 % | P2 | `backgrounds.py slowspin` |
 | γ = 0 mirror symmetry | ≤ 1e−12 | family (b) | CKK symmetric family |
-| D anchors at η₀ = 1, ω₋∞ = 0.5 | 5 digits | P3 | CKK (anchors from the brief) |
+| D anchors at η₀ = 1, ω₋∞ = 0.5 | 5 digits | P3 | CKK |
 | Ergoregion onset and ergosurface law | onset at v_e = 1/2; deviation reported | P3 | CKK eq. 62, Fig. 7 |
 | Extremal trends μ₊/R_e, J/R_e², Q/R_e³, D | → 1/2, 1/4, 1/8, 0 | P4 | CKK §III; Volkov 2026 §X |
 | Polar Gaussian curvature | negative beyond v_e ≈ 0.9 | P4 | CKK §III.D |
@@ -274,10 +274,10 @@ printed eq. (12) is a reported diagnostic only, and
 check.  Measured gates at 64 x 16: D^2 spread 1.4e-12, E_c <= 1.3e-9,
 J-flux spread <= 1.3e-9 (floors, C >= 0.05), Smarr <= 9e-11, tails <=
 5e-12; independent full-Einstein residual (masked) 1.0e-10 at J = 0.25
-and 4.2e-10 at J = 1 against the static member's 2e-11 floor -- vs 3e-5
-and 1e-2 for the O(J^2) data.  J^4 agreement with the O(J^2) generator:
+and 4.2e-10 at J = 1 against the static member's 2e-11 floor; the O(J^2) data give 3e-5
+and 1e-2.  J^4 agreement with the O(J^2) generator:
 ratios constant to 1 %.  First table written (1025 x 65, midpoint error
-in f 1.8e-7, just above the 1e-7 target -- P5 sizes the grid).
+in f 1.8e-7, just above the 1e-7 target; P5 sizes the grid).
 
 **2026-10-13 (P3 done, M2 passed).** Both families reached the target on
 CPU (48 x 12 auto-refining to 108 x 28 along the way): family (a)
@@ -312,14 +312,14 @@ map: 72 x 18 carried it through v_e = 0.9907 (tails 4.7e-12), with the
 Kerr-limit ratios closing in (J/R_e^2 = 0.2458 -> 1/4, M/R_e = 0.487 ->
 1/2, D monotone to 0.408) -- also settling Volkov's 1/4 normalisation
 for CKK Fig. 2.  Family (a) is the two-scale case: the arctan grid
-died on schedule at v_e 0.961 (tails 1.5e-11 at 162 x 42, the 244 x 64
+failed at v_e 0.961, as section 5 expected (tails 1.5e-11 at 162 x 42, the 244 x 64
 refinement's Jacobian over the 64 GB cap), and the section-5 option 2
 log-stretch map (L = 4) retraced the family from J = 0.25 and carried
 it to v_e = 0.9908 at J = 19413, M/eta0 = 70, on a 144 x 30 grid with
-tails 4.9e-14 -- the map, not brute N, is what the two-scale layer
-wants.  Overlap between maps at the last two arctan points: omega_inf
+tails 4.9e-14: the two-scale layer needs the map, not more
+nodes.  Overlap between maps at the last two arctan points: omega_inf
 to 1e-10, M, D, R_eq to 1e-8..1e-9 (their own floor).  Observables mass
-read-off is now map-generic (far-field mu at the first interior node;
+read-off is map-generic (far-field mu at the first interior node;
 the arctan end-node formula kept as the exact special case).  The
 retrace doubles as a full-family cross-map check: every shared J agrees
 at the same level.  Open P4 item: the polar-curvature sign change near
@@ -363,5 +363,5 @@ None of these blocks P0–P2; the first two must be settled before the P5 catalo
 
 1. **What stays fixed across the 3D catalogue:** η₀ (as now, so M_ADM grows with spin and the box and AMR must grow too), or M_ADM, or R_eq. Tables can be rescaled either way.
 2. **Which scaled J the predicted mode merger at J_max/3 refers to** (Azad et al.'s definition). It sets where the catalogue is sampled densely.
-3. **Residual threshold:** keep 1e−8, or relax to the brief's 1e−6 if P1 shows a higher round-off floor.
+3. **Residual threshold:** keep 1e−8, or relax to 1e−6 if P1 shows a higher round-off floor.
 4. **JAX as a dependency:** faster to write with an exact Jacobian; the alternative is a hand-assembled numpy Jacobian with no new dependency.

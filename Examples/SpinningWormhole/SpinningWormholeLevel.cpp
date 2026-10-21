@@ -45,9 +45,8 @@ const RotatingBackgroundTable &background_table()
         s_table = std::make_unique<RotatingBackgroundTable>(
             SpinningWormholeLevel::simParams().spinning_background_file,
             SpinningWormholeLevel::simParams().spinning_background_interp);
-        // The table's managed memory must be freed BEFORE amrex::Finalize
-        // tears the arenas down; a static-destruction-time free crashed the
-        // first smoke test at exit ("pure virtual method called", 2026-10-10).
+        // 2026-10-10: freed before amrex::Finalize tears the arenas down
+        // (a static-destruction free crashed at exit).
         amrex::ExecOnFinalize([]() { s_table.reset(); });
     }
     return *s_table;
@@ -171,12 +170,12 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     BL_PROFILE("SpinningWormholeLevel::specificEvalRHS()");
     // AmrLevel::RK has already filled this stage's ghost cells (FillRKPatch,
     // from the coarse level's stored RK stages).  This FillPatch re-reads the
-    // WHOLE MultiFab, valid cells included, from the level's StateData at
+    // whole MultiFab, valid cells included, from the level's StateData at
     // a_time; RK4 keeps the stage in the new data, so at the half-step stages
     // it hands the RHS (U^n + U_stage)/2 = U^n + dt/4 k instead of
     // U^n + dt/2 k, and refills the ghosts by linear time interpolation.
-    // rk_stage_refill = 0 skips it, as upstream BinaryBH does; 1 (default)
-    // keeps the behaviour every run so far had (2026-10-17, under test).
+    // rk_stage_refill = 0 skips it, as upstream BinaryBH does; the default 1
+    // keeps the behaviour of existing runs.
     const int soln_ghosts = a_soln.nGrowVect()[0];
     if (soln_ghosts > 0 && simParams().rk_stage_refill != 0)
     {
@@ -218,11 +217,10 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
 
     // Sponge zone: extra radially-ramped Kreiss-Oliger dissipation in an
     // outer shell, damping outgoing junk before the Sommerfeld boundary
-    // returns it as a reflection.  The tabulated backgrounds carry O(h^2)
-    // interpolation defects (and the slow-spin family an O(J^3) truncation),
-    // so the first thing a run emits is a constraint burst from the throat;
-    // without a sponge it reflects and comes back through the throat at
-    // t ~ L, exactly when the radial modes are being measured.
+    // reflects it.  The tabulated backgrounds carry O(h^2) interpolation
+    // defects (and the slow-spin family an O(J^3) truncation), so a run
+    // starts with a constraint burst from the throat that would otherwise
+    // reflect and come back through the throat at t ~ L.
     if (simParams().sponge_params.enabled)
     {
         const SpongeZone sponge(simParams().sponge_params, Geom().CellSize(0));
@@ -235,14 +233,12 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
     }
 
     // Damping sponge (SpongeDrive.hpp): drive the state back to the
-    // stationary background in the sponge shell.  The KO sponge above damps
-    // at (k dx)^6 and passes the long-wavelength gauge pulse, which the
-    // Sommerfeld boundary (flat asymptotics; here M_ADM ~ 2 at the box
-    // edge) partially reflects -- every L64 trust window died at that t ~ 62
-    // return.  The reference is rebuilt from the table whenever the level's
-    // grids change, so restarts drive toward the same background.
-    // The background-relative Sommerfeld boundaries (applied after this
-    // function in the same RK stage) read the same reference.
+    // stationary background in the sponge shell, absorbing the
+    // long-wavelength gauge pulse the KO sponge passes.  The reference is
+    // rebuilt from the table whenever the level's grids change, so restarts
+    // drive toward the same background.  The background-relative Sommerfeld
+    // boundaries (applied after this function in the same RK stage) read the
+    // same reference.
     const bool need_ref =
         simParams().sponge_drive_strength > 0.0 ||
         simParams().sommerfeld_relative_to_background != 0;
@@ -518,19 +514,17 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
     }
 
     // ---- Per-level masked constraint norms --------------------------------
-    // The level-0 file above is the historic contract (whole box, puncture
-    // included) and stays untouched.  The triplet protocol needs each level's
-    // own norm: a growth is physical only if the finest-level constraints
-    // converge while it grows.  COMPOSITE coverage like CoreRadialProfile:
-    // a level's cell contributes only where no finer level covers it
-    // (amrex::makeFineMask), so every cell counts exactly once; cells within
-    // mask_radius of the centre are excluded on every level, because the
+    // The level-0 file above covers the whole box, puncture included.  This
+    // one gives each level's own norm, with composite coverage as in
+    // CoreRadialProfile: a level's cell contributes only where no finer level
+    // covers it (amrex::makeFineMask), so every cell counts exactly once.
+    // Excluded on every level: cells within mask_radius of the centre (the
     // compactified far end is a puncture whose floor-limited residual cannot
-    // converge; so are cells within edge_cells of the domain boundary (the
+    // converge) and cells within edge_cells of the domain boundary (the
     // Sommerfeld layer, where Einstein's equations are not what is solved).
-    // Columns are sized by max_level, not finestLevel(), so the
-    // file's width never changes mid-run; levels that do not exist yet write
-    // 0.  The last pair is the hierarchy-wide (masked) norm.
+    // Columns are sized by max_level, not finestLevel(), so the file's width
+    // never changes mid-run; levels that do not exist yet write 0.  The last
+    // pair is the hierarchy-wide (masked) norm.
     if (simParams().constraint_norms_levels && Level() == 0)
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
@@ -687,9 +681,8 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
         levels_file.write_time_data_line(cols);
     }
 
-    // ---- Global collapse diagnostics (same column contract as the merger
-    // and SupportedWormholeCollapse examples, so the existing single-throat
-    // analysis scripts read it without modification) ------------------------
+    // ---- Global collapse diagnostics (same columns as the merger and
+    // SupportedWormholeCollapse examples) -----------------------------------
     if (Level() == 0)
     {
         const amrex::Real time         = get_state_data(state_index).curTime();
@@ -855,8 +848,7 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
         }
 
         // ---- Radially binned core profile (own module, own file, switch) --
-        // collapse_diagnostics.dat above says WHEN; this says WHERE.
-        // COMPOSITE over the whole hierarchy: each level contributes where no
+        // Composite over the whole hierarchy: each level contributes where no
         // finer level covers it, so every shell is complete.
         if (simParams().core_profile_params.enabled)
         {

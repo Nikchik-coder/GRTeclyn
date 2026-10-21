@@ -3,16 +3,13 @@
 # writes one only when it renders the t = 0 frames, i.e. when the consumer is
 # on), and keys no code reads at all (dead leftovers in templates).
 # One key per line, then "# why" -- an entry without a reason is not allowed,
-# because every line here is a hole in the net (the merger campaign's net
-# caught a seed the binary silently ignored, 2026-09-23).  Add a key only
-# after checking the code that reads it.
+# because every line here is a hole in the net.  Add a key only after checking
+# the code that reads it.
 # "key when other = value" allows a key only while the params switch its
 # feature off (an absent "other" counts as that value: name the code default).
 #
-# STARTING LIST, 2026-10-10: carried over from the merger campaign's generic
-# entries only.  This list must be re-audited against the SpinningWormhole
-# binary at its first build (run a 0-step probe and read every entry's code
-# path): an entry that is right for one binary can be a hole for another.
+# Re-audit the list against each new binary (run a 0-step probe and read every
+# entry's code path): an entry that is right for one binary can be a hole for another.
 amr.plot_vars              # read by AmrLevel::setPlotVariables() when the first plotfile is written; the probe writes none unless it renders the frames (amr.plot_files_output = 0 otherwise)
 amr.derive_plot_vars       # same reader as amr.plot_vars
 G_Newton                   # read only by the 'constraints' derived plot variable (ConstraintsWithMatter::compute_mf, Source/Matter/ConstraintsWithMatter.impl.hpp: pp.get, no default -- the first plotfile aborts without it), so unread by a probe that writes no plotfile (2026-10-17)

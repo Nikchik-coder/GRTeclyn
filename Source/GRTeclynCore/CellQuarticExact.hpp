@@ -18,11 +18,10 @@ static_assert(AMREX_SPACEDIM == 3, "CellQuarticExact is written for 3D");
 //! decimals (0.01708984, -0.12304688, 0.92285156, 0.20507812, -0.02197266),
 //! which sum to 1 - 2e-8: each of its three sweeps scales the data by that
 //! sum, so every fine ghost value it fills at a coarse-fine boundary is
-//! 1 - 6e-8 times the field -- constants included.  A fixed jump of 6e-8
+//! 1 - 6e-8 times the field, constants included.  A fixed jump of 6e-8
 //! under a second derivative is 6e-8 / h^2, so the constraint violation in
-//! the layer along every fine level's boundary GROWS with resolution (the
-//! level's L2 at order -1.5; found 2026-10-17 on the spinning wormhole's
-//! t = 0 data, where it is the whole level-1 and level-2 norm).  The exact
+//! the layer along every fine level's boundary grows with resolution (the
+//! level's L2 at order -1.5 on the spinning wormhole's t = 0 data).  The exact
 //! weights are the Lagrange weights of the five coarse cells at the fine
 //! cell centre, (35, -252, 1890, 420, -45) / 2048, exact in binary floating
 //! point.  Stencils, sweep order and coarse box are AMReX's.
@@ -192,8 +191,8 @@ inline CellQuarticExact cell_quartic_exact_interp;
 
 //! The cell-centred coarse-to-fine interpolater of the evolved state and of
 //! every derived plot variable: the exact-weight quartic when the params set
-//! exact_quartic_interp = 1, AMReX's own (rounded weights) otherwise -- the
-//! default, so a binary run on params without the key behaves as before.
+//! exact_quartic_interp = 1, AMReX's own (rounded weights, the default)
+//! otherwise.
 inline amrex::Interpolater *grteclyn_cell_interp()
 {
     static const bool exact = []

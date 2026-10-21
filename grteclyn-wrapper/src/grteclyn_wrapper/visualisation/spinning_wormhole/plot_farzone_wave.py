@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
-r"""The 0.2c collapse's gravitational wave in the far zone: the L = 128, N = 256 run to t = 150.
+r"""The J = 1 collapse's gravitational wave in the far zone: the L = 128, N = 256 run to t = 150.
 
-The far-zone run is the paper 0.2c (the L = 64, N = 128 hold) on a box twice as
-wide: the same refined boxes about the throat (+-16 / 8 / 4, so the same grid
+The far-zone run is the J = 1 hold (L = 64, N = 128) on a box twice as wide: the same refined boxes about the throat (+-16 / 8 / 4, so the same grid
 inside r = 16), the base grid dx = 0.5 out to the face at 64, and a KO sponge at
 r = 48-64 with no drive.
 
@@ -10,15 +9,15 @@ r = 48-64 with no drive.
     t = 0 value (the stationary background's own curvature), against t - R: the
     consumer's stream already carries the factor r, so nothing here multiplies
     by R; the imaginary part stays below 1.1e-3 of the real one (axisymmetry);
-(b) the wave against spin: the same mode at R = 14 for this run (the 0.2c)
-    and the 0.30c (its t = 130 run), each against t - R - t10 with t10 the
-    time its own equatorial deficit reaches 10 %, so the bursts align on each
-    rung's collapse.  The static's line is the exact zero of spherical
+(b) the wave against spin: the same mode at R = 14 for this run (D21) and
+    D30 (its t = 130 run), each against t - R - t10 with t10 the time its own
+    equatorial deficit reaches 10 %, so the bursts align on each model's
+    collapse.  The static's line is the exact zero of spherical
     symmetry, dashed; its run confirms <= 4.2e-9 before it dies (NaN at
     horizon formation, trust 60) at u = -10.6, short of this window;
 (c) the energy radiated in the (2, 0) mode over the burst (t - R - t10 in
     0-45, the pre-burst mean subtracted before integrating),
-    E = 1/(16 pi) int |int r Psi4 dt'|^2 dt, over each rung's M_ADM, against
+    E = 1/(16 pi) int |int r Psi4 dt'|^2 dt, over each model's M_ADM, against
     the spin 8 pi J/A: at R = 18 and, as the measurement spread, R = 14;
 (d) the speed of each extremum of (a) between neighbouring spheres, Delta R
     over the difference of its arrival times (each time the vertex of a
@@ -27,16 +26,15 @@ r = 48-64 with no drive.
     c = alpha sqrt(chi) - beta^r, the radial null speed in these coordinates,
     read on the equator from the run's slice cache over t = 100-145.
 
-Axis labels carry only the quantity (decided 2026-10-20); everything else is
-caption material, including the dropped panels' numbers: the far-zone throat
-collapses as the L 64 hold's to <= 3.2e-4 of R_eq(0) through t = 100, and the
+Axis labels carry only the quantity.  Two printed numbers are not drawn: the
+far-zone throat collapses as the L 64 hold's to <= 3.2e-4 of R_eq(0) through t = 100, and the
 extrema of (a) are flat in R (the peak holds to 1.5 % over R = 30-45).
 
 Outcome: the wave has one shape in t - R at all five radii, and r Psi4 is flat
 in R, a radiative field: over R = 30-45 the peak (2.05e-4 to 2.02e-4) holds to
 1.5 %, the troughs to 7.2 % and 2.4 %; R = 14-18 differ more (the peak 2.27e-4
-at R = 14).  It grows with spin: aligned on each rung's collapse the 0.30c is
-the 0.2c's shape at 1.5x the amplitude (R 14 peak +3.4e-4 vs +2.3e-4) and
+at R = 14).  It grows with spin: aligned on each model's collapse D30 is
+D21's shape at 1.5x the amplitude (R 14 peak +3.4e-4 vs +2.3e-4) and
 2.6-2.8x the energy (E_20/M_ADM 8.0e-7 vs 2.9e-7 at R 18), while the static
 stays below 4.2e-9 to its death -- a spherical collapse radiates nothing.
 It travels at the speed of light: over R = 30-45 its extrema move
@@ -51,8 +49,7 @@ extremum is not a signal front).  Each panel's numbers are printed.
     ... plot_farzone_wave --palette house
     ... plot_farzone_wave --colors "#c6dbef,#9ecae1,#4292c6,#2171b5,#08306b"
 
-Colours (``--palette``): ``rgb``, the spinning paper's scheme and the default,
-draws the radii in its blue, light (R = 14) to dark (R = 45), and the speed of
+Colours (``--palette``): ``rgb``, the default, draws the radii in its blue, light (R = 14) to dark (R = 45), and the speed of
 light in its red; ``house`` is the house ordinal ramp with an ink light speed.
 ``--colors`` takes five colours, innermost radius first.
 
@@ -88,14 +85,14 @@ FARZONE = "spin_hold_L128_ml3_J100_full_farfix_t150"
 RUN_DIR = solutions.REPO / "runs" / "spinning_wormhole" / "drainhole" / "00_paper_runs" / FARZONE
 # (d)'s light speed against R, kept in the run's pack: its 1.2 GB slice cache stays under runs/
 LIGHT = PACKED / FARZONE / "light_speed_equator.dat"
-# the rungs of (b) and (c): label, packed run, trust window, background table (None: the static)
+# the spin models of (b) and (c): label, packed run, trust window, background table (None: the static)
 SPINS = (
     ("D0", "static_hold_L64_ml3_spdrv0_farfix_t100", 60.0, None),
     ("D21", FARZONE, 150.0, "full_eta2_m1_J100"),
     ("D30", "spin_hold_L64_ml3_ve030a_spdrv0_farfix_t130", 130.0, "fam_a_ve030"),
 )
 M_STATIC = 1.0              # the massive drainhole's M (a = 2, M = 1): the static has no table
-R_SPIN = 14.0               # (b)'s radius: the one every rung extracts
+R_SPIN = 14.0               # (b)'s radius: the one every run extracts
 U_SPIN = (-25.0, 46.0)      # (b)'s window in t - R - t10
 E_WINDOW = 45.0             # (c) integrates the burst over t - R - t10 in (0, this)
 # the extrema of (a) and (d), as windows in t - R
@@ -114,7 +111,6 @@ def blue_ramp(n: int) -> tuple[str, ...]:
     return tuple(mcolors.to_hex(light + (dark - light) * x) for x in np.linspace(0.0, 1.0, n))
 
 
-# 2026-10-13: the spinning paper colours red / green / blue; gold is the merger paper's accent.
 PALETTES = {
     "rgb": dict(radii=blue_ramp, light=SPIN_RED),
     "house": dict(radii=style.ordinal, light=style.INK),
@@ -143,8 +139,8 @@ def burst_energy(u: np.ndarray, w: np.ndarray) -> float | None:
     run does not cover the burst at this radius."""
     base = (u >= -20.0) & (u <= 0.0)
     burst = (u >= 0.0) & (u <= E_WINDOW)
-    # the 0.30c's t = 130 covers u = 41.0 at R = 18 (its t10 70.001): the burst is
-    # over by u ~ 40, so a window reaching 40 is enough
+    # D30's run covers u = 41.0 at R = 18; the burst is over by u ~ 40, so a
+    # window reaching 40 is enough
     if burst.sum() < 40 or not base.any() or u[burst][-1] < E_WINDOW - 5.0:
         return None
     y, uu = w[burst] - w[base].mean(), u[burst]
@@ -153,7 +149,7 @@ def burst_energy(u: np.ndarray, w: np.ndarray) -> float | None:
 
 
 def rungs() -> list[dict]:
-    """Per rung of SPINS: the R_SPIN waveform against t - R - t10 inside the
+    """Per entry of SPINS: the R_SPIN waveform against t - R - t10 inside the
     trust window, the spin 8 pi J/A (% of extremal), M_ADM, and E_20 per radius."""
     out = []
     for label, run, trust, table in SPINS:
@@ -251,7 +247,7 @@ def speeds(feats, light):
 
 def draw(t, waves, spins, look, light) -> plt.Figure:
     style.prd(8.0)
-    # 2026-10-20: one row, a strip across the page top (the 2 x 2 grid took half a page)
+    # one row, a strip across the page top
     fig, ax = plt.subplot_mosaic([["a", "b", "c", "d"]], figsize=(7.05, 2.25), layout="constrained",
                                  width_ratios=(1.25, 1.15, 0.8, 1.0))
     radii = sorted(waves)
@@ -267,7 +263,7 @@ def draw(t, waves, spins, look, light) -> plt.Figure:
     ax["a"].set_xticks(np.arange(40.0, U_RANGE[1] + 1.0, 20.0))
     style.legend_top(ax["a"], handles, ncol=3)
 
-    # (b) the wave against spin at R_SPIN, aligned on each rung's collapse.  The
+    # (b) the wave against spin at R_SPIN, aligned on each model's collapse.  The
     # static's line is the exact zero of spherical symmetry (dashed: a symmetry
     # statement, not a stream) -- the run confirms <= 4.2e-9 before it dies at
     # u = -10.6, short of this window.

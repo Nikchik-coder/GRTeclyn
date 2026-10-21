@@ -6,9 +6,8 @@ figure, which a paper cannot reuse without the publisher's permission.  The
 paper figure is ``plot_kk2014_comparison`` (our curves against their
 digitized numbers).
 
-The background is the printed figure (Kleihaus & Kunz, "Rotating Ellis
-wormholes in four dimensions", PRD 90, 121503(R) (2014), arXiv:1409.1503).
-Our members of the same family (eta0 = 1, gamma = 0 in the packed solver
+Background: Kleihaus & Kunz, "Rotating Ellis wormholes in four
+dimensions", PRD 90, 121503(R) (2014), arXiv:1409.1503.  Our members of the same family (eta0 = 1, gamma = 0 in the packed solver
 table) are drawn on top as open circles, at the places the figure's own axes
 give them: M/M0 = mu_+/R_e and J/J0 = 2J_+/R_e^2 in (a), R_p/R and R_A/R in
 (b) (normalisation and calibration: ``kk2014.py``).  Our

@@ -23,56 +23,28 @@
 #include <string>
 #include <vector>
 
-//! Radially binned core profile: WHERE the collapse indicators live.
+//! Radially binned core profile: where the collapse indicators live.
 /*!
-    Deliberately a SEPARATE module writing its OWN file
-    (core_radial_profile.dat), behind its own default-off switch.  The
-    collapse_diagnostics.dat contract is left untouched.
-
+    Writes core_radial_profile.dat, behind its own default-off switch.
     collapse_diagnostics.dat reduces min(chi), max(|K|) and min(lapse) over the
-    whole finest level and so says only WHEN something happens.  This module
-    reduces the same three quantities into spherical shells about the grid
-    centre and so also says WHERE.  That distinction is what the plotfiles were
-    being kept for; at dx = 0.0156 a plotfile is 6.2 GB and the consumer keeps
-    three, whereas this is a few tens of MB for a whole run and is written
-    every coarse step -- 100x finer in time than the plotfile cadence.
+    finest level and so says only when something happens; this reduces the
+    same three into spherical shells about the centre, every coarse step, and
+    so also says where.  It resolves features (e.g. a max|K| spike 0.25 wide on
+    the throat) that the plotfile slices cannot, at a few tens of MB per run.
 
-    Motivating measurement (2026-09-15, v2_spiral_d12_p012_L128_lvl5_t100_r03600):
-    offline shell profiles of the preserved t = 55/56/57 plotfiles showed max|K|
-    is NOT central but a thin spike ON the throat -- 0.07 outside, 2.62 at
-    r = 1.047, 0.07 again by r = 1.20, growing 0.98 -> 1.53 -> 2.60 over three
-    units while min(chi) and min(lapse) did not move at all.  A spike 0.25 wide
-    is 1.5 pixels in the frame slice cache (dx = 0.195), so nothing but the full
-    state resolves it.  Cross-checked against the in-code global reductions at
-    t = 57: this binning returns max|K| = 2.6192 and min(chi) = 6.795e-07, both
-    equal to collapse_diagnostics.dat to every digit printed.
+    Coverage: a composite reduction over the whole AMR hierarchy.  A level's
+    cell contributes only where no finer level covers it (amrex::makeFineMask),
+    so every cell is used once and each shell is taken at the best resolution
+    that exists there.  The finest level alone follows the throats as a box,
+    not a ball, and would sample the outer shells only partially.
 
-    COVERAGE - this is a COMPOSITE reduction over the WHOLE AMR hierarchy, not
-    a scan of the finest level.  Every cell is used exactly once: a level's cell
-    contributes only where no finer level covers it (amrex::makeFineMask), so
-    each shell is taken at the best resolution that actually exists there and
-    NO shell is ever partially sampled.
-
-    The first cut of this module reduced only the finest level, and that was
-    wrong in a way worth recording.  The finest level is laid down by the
-    moving-box tagger, which follows the throats, so it covers a box about them
-    and not a ball about the centre.  Measured on the live arm at t = 36.29 with
-    r_max = 2.0, the per-shell cell counts against the ideal shell volume ran
-    100 % out to r ~ 1.3 and then fell off a cliff -- 37 % at r = 1.58, 1.5 % at
-    r = 1.98.  Those outer shells were reporting min/max over whichever corners
-    of the shell the refinement happened to reach, which is not a spherical
-    reduction and is biased by the grid rather than by the physics.  Walking the
-    hierarchy removes the failure mode instead of documenting it, and r_max is
-    then free to be whatever the question needs.
-
-    Each shell still carries its own cell count, and also the dx of the finest
-    level that fed it, so the resolution behind every number is on the record.
-    A shell no level reaches at all (outside the domain) keeps n = 0 and the
+    Each shell carries its cell count and the dx of the finest level that fed
+    it.  A shell no level reaches (outside the domain) keeps n = 0 and the
     sentinels.
 
-    The shell width is a PARAMETER, not dx: the column count must not change
-    when AMR adds or drops a level mid-run, or the file's own header stops
-    describing it.
+    The shell width is a parameter, not dx: the column count must not change
+    when AMR adds or drops a level mid-run, or the header stops describing the
+    file.
 */
 class CoreRadialProfile
 {
@@ -218,15 +190,11 @@ class CoreRadialProfile
         }
         const std::string prefix = a_out_dir + "core_radial_profile";
 
-        // HEADER ON A RESTART.  SmallDataIO takes first_step to mean "start the
-        // file over", so it must stay false on a restart or an existing file is
-        // renamed away and lost.  But a restart into a FRESH run directory has
-        // no file yet, and keying the header off first_step alone would leave
-        // that file's columns unlabelled forever -- which is exactly what
-        // collapse_diagnostics.dat does on every restart in this campaign.
-        // Decide the header on the file instead: write it when there is nothing
-        // there to describe.  Probed on every rank (same filesystem, so the
-        // answer agrees) and write_header_line is IOProcessor-guarded anyway.
+        // SmallDataIO takes first_step to mean "start the file over", so it
+        // stays false on a restart.  A restart into a fresh run directory has
+        // no file yet, so the header is decided on the file: write it when the
+        // file is missing or empty.  Probed on every rank (same filesystem);
+        // write_header_line is IOProcessor-guarded.
         bool write_header = a_first_step;
         if (!write_header)
         {

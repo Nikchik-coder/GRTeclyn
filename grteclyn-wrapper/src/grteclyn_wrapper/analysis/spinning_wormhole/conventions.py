@@ -1,9 +1,8 @@
 """Sign and normalization conventions of the fast-spin background solver.
 
 One module, so a mu sign, a factor of 2 in J or an eta0 power can only be
-wrong in one place (SpinningSolver.md P0; risk table "convention slips").
-Everything follows Chew-Kleihaus-Kunz (arXiv:1608.05253) with the brief's
-two corrections: mu_+ = -gamma eta0 / (2 pi) (CKK print it without the
+wrong in one place (SpinningSolver.md P0).  Everything follows
+Chew-Kleihaus-Kunz (arXiv:1608.05253) with two corrections: mu_+ = -gamma eta0 / (2 pi) (CKK print it without the
 minus sign), and the extremal trend J/R_e^2 -> 1/4 (CKK Fig. 2 plots
 2J/R_0^2; Volkov 2026 section X).
 
@@ -22,7 +21,7 @@ The conventions:
 - v_e = R_eq Omega_throat at the area-minimizing eta = const surface,
   R_eq = e^{-f/2} sqrt(h) on the equator; extremal Kerr is v_e -> 1.
 - gamma = -2 pi m / eta0 rotates the static drainhole of mass m (family
-  (a) of the plan: eta0 = 2, m = 1, gamma = -pi; family (b): gamma = 0).
+  (a): eta0 = 2, m = 1, gamma = -pi; family (b): gamma = 0).
 """
 
 from __future__ import annotations

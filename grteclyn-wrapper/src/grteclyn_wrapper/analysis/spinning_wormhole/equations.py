@@ -19,7 +19,7 @@ divided by their angular weights so every equation is regular on the axis
     eq.(13) = sin^2 theta cos theta * (h / eta') * E_c
     eq.(19) rewritten as the D2 expression.
 
-THE PUBLISHED EQ. (12) IS WRONG (found 2026-10-12): closed-form extremal
+THE PUBLISHED EQ. (12) IS WRONG: closed-form extremal
 Kerr (a = M, eta0 = 0, which fits the ansatz exactly) satisfies eqs. 10,
 11, 13 and 19 to 1e-160 but leaves 1e-2 in the printed eq. 12, and the
 solutions of the printed elliptic system carry a J^4-sized violation of
@@ -37,9 +37,9 @@ sympy (scripts/analysis/spinning_wormhole/derive_xy_equations.py, which
 machine-checks every form against the CKK originals and emits the arctan
 specialization of SpinningSolver.md section 2).
 
-E_f, E_w are imposed nonlinearly on (f, omega); E_N is linear in N and
-solved afterwards; E_c and D2 are never imposed -- they are the accuracy
-monitors (D2 must come out one constant everywhere).
+E_f, E_w are imposed nonlinearly on (f, omega); E_c and D2, linear in
+(N, D^2), then fix N and D^2; E_N and the spread of D2 are the accuracy
+monitors.
 """
 
 from __future__ import annotations
@@ -60,7 +60,7 @@ def residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets):
 
     ``jets`` maps JET_NAMES to values; ``eta, deta, d2eta`` are eta(xi) and
     its first two xi-derivatives; ``y`` is cos 2 theta.  Returns a dict with
-    E_f, E_w, E_N (imposed), E_c and D2 (monitored).
+    E_f, E_w (Newton), E_c, D2 (the N, D^2 solve) and E_N (diagnostic).
     """
     f, f_x, f_xx, f_y, f_yy = (jets[k] for k in ("f", "f_x", "f_xx", "f_y", "f_yy"))
     w, w_x, w_xx, w_y, w_yy = (jets[k] for k in ("w", "w_x", "w_xx", "w_y", "w_yy"))
@@ -104,7 +104,8 @@ def residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets):
 
 class CollocationProblem:
     """Tensor Chebyshev-Lobatto collocation of E_f, E_w on (xi, y), with the
-    linear E_N solve and the E_c / D2 / J(x) diagnostics.
+    linear constraint solve for (N, D^2) and the E_c / D2 / E_N / J(x)
+    diagnostics.
 
     Unknowns are the corrections (df, dw) about f = (gamma/2)(1 - x) + df
     and omega = omega_inf q(xi) + dw, q = w1 / w1(-inf) from the closed-form
@@ -134,7 +135,7 @@ class CollocationProblem:
         # Modest thread pool BEFORE the first jax import: the container
         # advertises 128 CPUs but is quota-capped at 24, and XLA's default
         # one-thread-per-CPU pool both busts a ulimit -v sandbox
-        # (pthread_create EAGAIN, 2026-10-12) and would throttle live runs.
+        # (pthread_create EAGAIN) and would throttle live runs.
         os.environ.setdefault(
             "XLA_FLAGS",
             "--xla_cpu_multi_thread_eigen=false "
@@ -301,7 +302,7 @@ class CollocationProblem:
         return -(h2_over_deta / 8.0) * jnp.sum(
             self.mu_w * jnp.exp(-2.0 * f_g) * wx_g)
 
-    # -- the linear E_N solve ------------------------------------------------
+    # -- the printed eq. (12) N solve (comparison only) ----------------------
 
     def n_operator(self):
         """The dense eq.-(12) operator on N (Dirichlet rows at xi = +-1):
@@ -335,8 +336,8 @@ class CollocationProblem:
     def solve_N(self, F, W):
         """N from the PRINTED eq. (12) at fixed (f, omega): the paper's
         scheme, kept for comparison only.  Production is
-        solve_N_constrained -- the printed eq. 12 fails on extremal Kerr
-        (2026-10-12), see the module docstring."""
+        solve_N_constrained: the printed eq. 12 fails on extremal Kerr, see
+        the module docstring."""
         import numpy as np
 
         nx, ny = self.nx, self.ny
@@ -381,8 +382,7 @@ class CollocationProblem:
         linear in (N, D^2), plus N = 0 at xi = +-1, solved as one
         equilibrated least squares.
 
-        Decided 2026-10-12 after the P2 gate failure: the elliptic eq. (12)
-        solve leaves a J^4-sized violation of (13)/(19) that no resolution
+        Why: the elliptic eq. (12) solve leaves a J^4-sized violation of (13)/(19) that no resolution
         removes -- the (f, omega) pair is exact (the quadrature nu built
         from the constraints lands on nu(-inf) = 0 to 5e-9 by itself), so
         the constraints, whose geometric content is R_{eta theta} and the

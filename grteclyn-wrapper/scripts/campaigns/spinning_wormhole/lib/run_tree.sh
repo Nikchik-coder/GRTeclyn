@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # Where a run lives in runs/spinning_wormhole, by name.
 #
-# The campaign directory is filed by physics, as in the merger campaign since
-# 2026-09-10: a run that is on a card sits at the top level, and once it is
-# closed out it moves into its NN_name group folder.  Everything that takes a
-# run NAME -- close-out, log tidying, checkpoint keeping and pruning, the movie
-# stitcher -- resolves it through here, so nothing else has to know the layout.
+# The campaign directory is filed by physics: a live run sits at the top
+# level, and once closed out it moves into its NN_name group folder.  Everything
+# that takes a run NAME (close-out, log tidying, checkpoint keeping and pruning,
+# the movie stitcher) resolves it here, so nothing else has to know the layout.
 #
 #   source ".../lib/run_tree.sh"
 #   dir="$(run_tree_find "${CAMPAIGN}" "${name}")" || echo "no such run"

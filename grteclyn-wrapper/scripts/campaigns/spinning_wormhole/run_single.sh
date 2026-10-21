@@ -4,17 +4,13 @@
 # One run of Examples/SpinningWormhole through the campaign contract
 # (scripts/campaigns/README.md): launcher.pid registered for stop_campaign.sh,
 # .dat streams on the runs dir (NFS), plotfiles/checkpoints on node-local /tmp
-# scratch.  Never invoke the binary on a params file directly -- clone-and-
-# rewrite here is what keeps plotfiles off NFS and the run stoppable.
-#
-# "Never directly" also includes quick throwaway tests, and that is not a style
-# preference.  AMReX writes `parameters_and_version.txt` into the binary's
-# CURRENT WORKING DIRECTORY on every run, and that file records the absolute
-# output_path / plot_file / check_file it was given.  Run the binary from the
-# repo root or from the example directory and you have just written your home
-# directory into a tracked location; it reached a commit that way on
-# 2026-08-27.  This launcher cd's into the run directory under runs/, which is
-# gitignored, so the artefact lands somewhere harmless.  Machine paths come
+# scratch.  Never invoke the binary on a params file directly, not even for a
+# quick test: clone-and-rewrite here keeps plotfiles off NFS and the run
+# stoppable, and AMReX writes `parameters_and_version.txt`, with the absolute
+# output_path / plot_file / check_file, into the binary's CURRENT WORKING
+# DIRECTORY.  Run from the repo root, that puts a home path into a tracked
+# location.  This launcher cd's into the run directory under runs/, which is
+# gitignored.  Machine paths come
 # from the .env overlay below, so nothing here has to know them.
 #
 # Usage (attached, foreground -- detach only with explicit permission):
@@ -37,10 +33,9 @@
 #                 exactly max_level values)
 #   SWH_RESTART   absolute path to an AMReX checkpoint directory
 #                 (.../SpinningWormholeChkNNNNN).  Injects `amr.restart` into
-#                 the cloned params -- the ONLY key AMReX actually reads for
-#                 this; the root-level `restart_file` key is a trap (never
-#                 loaded, so its existence check runs on an empty path and
-#                 aborts).  Appends _rNNNNN to the run name, so the
+#                 the cloned params, the ONLY key AMReX reads for this (the
+#                 root-level `restart_file` key is never loaded, so its
+#                 existence check runs on an empty path and aborts).  Appends _rNNNNN to the run name, so the
 #                 continuation gets its own run dir and scratch and never
 #                 clobbers the parent run's streams.
 #   SWH_DRYRUN=1  resolve and print everything, touch nothing, exit
@@ -53,7 +48,7 @@
 #   SWH_REGISTRY  that registry's path, if not the default above
 #   SWH_FRAMES_FIELDS  frame fields when SWH_CONSUME_ARGS names none
 #                 (default: the campaign's full set, frames_default.txt)
-#                 ("none": no frames at all -- needs SWH_FRAMES_SUBSET)
+#                 ("none": no frames at all; needs SWH_FRAMES_SUBSET)
 #   SWH_FRAMES_SUBSET="<reason>"  the ONLY way to launch with fewer frame
 #                 fields than frames_default.txt: the preflight refuses a
 #                 subset without it, and records the reason (run_manifest.json)
@@ -62,7 +57,7 @@
 #   SWH_PROC_ALIAS=0  run the binary from its real path instead of the neutral
 #                 copy (the GPU process list then shows the campaign path)
 #   SWH_PROC_BIN_DIR  where the neutral copies live (default /tmp/ml_jobs/bin)
-#   SWH_PREFLIGHT  full (default) | static | off -- see "Preflight" below
+#   SWH_PREFLIGHT  full (default) | static | off; see "Preflight" below
 #   SWH_PREFLIGHT_ONLY=1  run the preflight, report, remove the run dir, stop
 #                 (its t = 0 frames are kept in logs/preflight_frames/)
 #
@@ -73,7 +68,7 @@
 # neutral argv[0]: `test params.txt` (evolution), `test_post post.py ...`
 # (consumer), `tee run.log`.  The GPU process list shows the executable's real
 # path, which argv[0] cannot change, so the binary runs from a copy under
-# SWH_PROC_BIN_DIR named after the label and the binary's own checksum -- one
+# SWH_PROC_BIN_DIR named after the label and the binary's own checksum, one
 # copy per distinct binary, reused by every later run.  What this does NOT
 # hide: the username, that the cards are busy, and the directory names on the
 # shared filesystem.  Nothing here changes what is computed; the real binary
@@ -91,19 +86,16 @@
 # deletion is ledger-gated, so anything not extracted during the run is gone
 # with the plotfile.  Pass extra extractions through SWH_CONSUME_ARGS.
 #
-# The whole body is one { ... } block ending in `exit`: bash parses it
-# entirely before running it, so editing this file can never reach a live
-# run.  (bash otherwise reads a script by byte offset as it goes; an edit
-# made under a live run on 2026-09-24 would have had that run read the new
-# file at the old offset when its evolution ended.)  Keep it that way.
+# The whole body is one { ... } block ending in `exit`: bash parses it before
+# running it, so editing this file never reaches a live run (bash otherwise
+# reads a script by byte offset as it goes).  Keep it that way.
 {
 set -euo pipefail
 
-# A launch that dies before the evolution starts must die LOUDLY (2026-10-03:
-# a set -e kill between two echo lines left a stub run dir and an idle card
-# for 25 minutes with nothing in any log).  Until the evolution is launched,
-# any exit -- an uncaught error above all -- names its line and command here,
-# in the same detached log every launch is polled on.
+# A launch that dies before the evolution starts must die LOUDLY: a silent
+# set -e exit leaves a stub run dir and an idle card with nothing in any log.
+# Until the evolution is launched, any exit names its line and command here,
+# in the detached log every launch is polled on.
 SWH_EVOLUTION_STARTED=0
 trap 'rc=$?; if [[ "${SWH_EVOLUTION_STARTED}" != "1" && "${rc}" != "0" ]]; then
   echo "[swh] !! LAUNCH FAILED before the evolution started (exit ${rc})" >&2
@@ -123,7 +115,7 @@ WRAPPER_DIR="$(cd -- "${SCRIPT_DIR}/../../.." && pwd)"
 source "${WRAPPER_DIR}/scripts/lib/env.sh"
 # env.sh computes a SCRIPT_DIR of its own and, being sourced, overwrites ours:
 # SCRIPT_DIR now points at scripts/lib rather than at this directory.  Restore it
-# from the copy taken above -- every relative source below (launcher_common.sh)
+# from the copy taken above: every relative source below (launcher_common.sh)
 # resolves against it.  Not re-derived from BASH_SOURCE: when this script is
 # invoked by a relative name (which it is, so that the process table shows no
 # campaign path) a re-derivation resolves against the current directory, and
@@ -131,9 +123,8 @@ source "${WRAPPER_DIR}/scripts/lib/env.sh"
 SCRIPT_DIR="${SELF_DIR}"
 REPO_ROOT="${GRTECLYN_ROOT:-$(cd -- "${WRAPPER_DIR}/.." && pwd)}"
 EXAMPLE_DIR="${REPO_ROOT}/Examples/SpinningWormhole"
-# The preflight is the SHARED engine (campaigns/lib/preflight.py, 2026-10-10:
-# one engine for every campaign); this campaign's facts live in
-# preflight_campaign.json beside this script.
+# The preflight is the engine shared by every campaign (campaigns/lib/preflight.py);
+# this campaign's facts live in preflight_campaign.json beside this script.
 CAMPAIGNS_LIB="$(cd -- "${SELF_DIR}/../lib" && pwd)"
 PREFLIGHT_PY="${CAMPAIGNS_LIB}/preflight.py"
 PREFLIGHT_CFG="${SELF_DIR}/preflight_campaign.json"
@@ -167,9 +158,8 @@ if [[ -n "${SWH_RESTART:-}" ]]; then
   fi
   # Suffix from the checkpoint's step number: .../SpinningWormholeChk02000 ->
   # _r02000.  Never doubled: a --name that already carries this restart's
-  # suffix is kept as is (2026-10-03: a merger extension launched as
-  # ..._r04000_r04000, and every path the launch derived -- the consumer's
-  # horizon track among them -- split between the two spellings).
+  # suffix is kept as is (a doubled suffix splits every derived path, the
+  # consumer's horizon track among them, between two spellings).
   if [[ "${NAME}" == *"_r${SWH_RESTART##*Chk}" ]]; then
     echo "[swh] name already ends _r${SWH_RESTART##*Chk} -- keeping it (no double suffix)"
   else
@@ -216,10 +206,8 @@ swh_consumer_args() {
 
   # The consumer's --center defaults to (0,0,0), but the campaign templates put
   # the physics at center = L/2.  Nothing errors when they disagree: the
-  # extractions still run, they just run in the far field, and --areal-radius
-  # happily reports r/sqrt(chi) ~ r off in the asymptotically flat region as if
-  # it were the throat (measured 2026-08-28 on a stage-1 drainhole: 0.845 at
-  # r = 0.829, against a throat of areal radius 3.890 at r = 1.618).  Read the
+  # extractions run in the far field, and --areal-radius reports r/sqrt(chi) ~ r
+  # in the asymptotically flat region as if it were the throat.  Read the
   # centre off the params the run is actually using so the two cannot disagree.
   # It goes in BEFORE SWH_CONSUME_ARGS, so an explicit --center there still wins.
   if grep -qE "^center[[:space:]]*=" "${params_file}"; then
@@ -253,10 +241,9 @@ swh_consumer_args() {
       *spinning_wormhole/*/*)
         # A path into a run that is NOT this run.  When the other name is this
         # run's own name with a missing or extra _r<step> suffix, it is the
-        # restart-suffix trap (2026-10-03: a merger extension's --horizon-track
-        # named the un-suffixed run and the consumer tracked a stream that never
-        # existed): repoint it to this run.  A genuinely different run is kept,
-        # loudly -- a cross-run reference must be deliberate.
+        # restart-suffix trap (the consumer would track a stream that never
+        # exists): repoint it to this run.  A genuinely different run is kept,
+        # loudly: a cross-run reference must be deliberate.
         rest="${consumer_args[i]#*spinning_wormhole/}"
         other="${rest%%/*}"
         if [[ "${other}" != "${NAME}" ]]; then
@@ -274,13 +261,12 @@ swh_consumer_args() {
 
   # Frames for EVERY field worth a movie, every launch.  The consumer deletes
   # the plotfiles behind the frames it renders, so a field not rendered live
-  # has no movie, ever (the merger's chi-only ladder of 2026-09-08 and F4 of
-  # 2026-09-25 both lost movies for good that way).  A launch that does not
+  # has no movie, ever.  A launch that does not
   # name --frames-fields in SWH_CONSUME_ARGS gets the campaign's full set
   # (frames_default.txt), with the slice cache (one fixed colour scale per run
   # through rerender_frames.py) and per-frame auto limits.  SWH_FRAMES_FIELDS
   # changes the list; an explicit --frames-fields in SWH_CONSUME_ARGS wins over
-  # both -- and either way the preflight refuses a list that misses a default
+  # both, and either way the preflight refuses a list that misses a default
   # field unless SWH_FRAMES_SUBSET says why.
   local frames_default="${SWH_FRAMES_FIELDS:-${SWH_FRAMES_FULL}}"
   if [[ "${SWH_FRAMES_FIELDS:-}" == "none" ]]; then
@@ -359,7 +345,7 @@ fi
 # Stop handle for scripts/campaigns/stop_campaign.sh.  Registered per RUN dir,
 # not the campaign root: several singles run concurrently (one per GPU), and a
 # shared pid file would be last-writer-wins.  `stop_campaign.sh <RUN_DIR>`
-# targets one rung; sweeping the root still catches workers by path.
+# targets one run; sweeping the root still catches workers by path.
 source "${SCRIPT_DIR}/../lib/launcher_common.sh"
 campaign_register_launcher "${RUN_DIR}"
 
@@ -381,8 +367,7 @@ sed -i \
   -e "s|^amr.check_file[[:space:]]*=.*|amr.check_file = \"${SCRATCH_DIR}/SpinningWormholeChk\"|" \
   "${RUN_PARAMS}"
 
-# Refinement-depth override.  This exists because max_level cannot be changed
-# on its own: regrid_interval must carry exactly max_level values or AMReX
+# Refinement-depth override.  max_level cannot be changed on its own: regrid_interval must carry exactly max_level values or AMReX
 # aborts with "queryarr too many values requested", so the two keys have to be
 # rewritten together.  The interval is taken from the template's first value
 # and repeated, which is what the campaign templates do anyway.
@@ -404,7 +389,7 @@ if [[ -n "${SWH_MAX_LEVEL:-}" ]]; then
   for ((i = 0; i < SWH_MAX_LEVEL; i++)); do ri_list+="${ri_first} "; done
   # max_level = 0 is the unigrid case and it needs ZERO regrid intervals, but
   # `regrid_interval =` with nothing after it is a ParmParse hard error
-  # ("no values for definition regrid_interval"), so the key cannot simply be
+  # ("no values for definition regrid_interval"), so the key cannot be
   # emptied.  A unigrid run never regrids, so the values are dead either way:
   # leave the template's list alone and rewrite only max_level.
   if [[ "${SWH_MAX_LEVEL}" -eq 0 ]]; then
@@ -420,9 +405,7 @@ if [[ -n "${SWH_MAX_LEVEL:-}" ]]; then
 fi
 
 # Restart injection.  --restart is the ONE source of amr.restart.  A template
-# cloned from a restart leg's packed params carries the parent's own line
-# (2026-10-03, in the merger campaign: one launch was refused twice over it --
-# once for doubling, once, without the flag, by the preflight probe): a line
+# cloned from a restart leg's packed params carries the parent's own line: one
 # that names the SAME checkpoint as --restart is stripped and re-injected; a
 # different one is a real ambiguity and is refused.  A template with
 # amr.restart and NO --restart is refused up front with the fix, instead of
@@ -452,7 +435,7 @@ elif grep -qE "^amr.restart[[:space:]]*=" "${RUN_PARAMS}"; then
 fi
 
 # The consumer's final flags (every params override above applied), and its
-# entry point -- here, before the preflight, which renders the t = 0 frames with
+# entry point, made here, before the preflight, which renders the t = 0 frames with
 # exactly this consumer and these flags.
 swh_consumer_args "${RUN_PARAMS}"
 CONSUMER_PY="${WRAPPER_DIR}/.venv/bin/python"
@@ -460,8 +443,8 @@ CONSUMER_MOD="grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
 CONSUMER_PID=""
 
 # The consumer's public name (see "Process table").  Python locates its virtual
-# environment through argv[0], so simply renaming the process loses every
-# installed package ("No module named 'numpy'", measured 2026-09-10).  The
+# environment through argv[0], so renaming the process loses every installed
+# package ("No module named 'numpy'").  The
 # neutral name is therefore a real symlink inside the venv's own bin directory,
 # with that directory first on PATH: python looks the bare name up on PATH,
 # resolves the link and finds the environment, and the command line still shows
@@ -498,11 +481,10 @@ export SWH_CONSUMER_ARGV SWH_FRAMES_SOURCE SWH_FRAMES_CMD
 # Preflight: refuse a launch the binary would not honour.
 # ---------------------------------------------------------------------------
 # AMReX ignores a key nothing reads, so a binary older than a feature runs the
-# params without it and says nothing (the merger campaign lost four arms and a
-# restartless death to exactly that, 2026-09-23/24).  preflight.py checks the
+# params without it and says nothing.  preflight.py checks the
 # FINAL params (every override above applied): contradictory settings, the
 # background table on disk, keys absent from the binary, keys a 0-step
-# start-up of the binary did not read, and -- when the seed is set -- that the
+# start-up of the binary did not read, and, when the seed is set, that the
 # seed changes the t = 0 data.  A few seconds on the card.
 # A refusal removes the run dir and scratch cell (nothing is registered or
 # started) and keeps the params and the report under logs/preflight_refused/.
@@ -513,7 +495,7 @@ export SWH_CONSUMER_ARGV SWH_FRAMES_SOURCE SWH_FRAMES_CMD
 # field of frames_default.txt (or SWH_FRAMES_SUBSET says why), and each
 # field's plot variable must be written; in full mode the start-up also writes
 # its t = 0 plotfile and the consumer renders every frame field from it, with
-# this run's flags, into preflight_frames/ -- a field that fails or comes out
+# this run's flags, into preflight_frames/; a field that fails or comes out
 # blank refuses the launch.  Those frames are frame 0, before the run exists:
 # eyeball them (logs/preflight_frames/ after --preflight-only).
 TOOLS_PY="${WRAPPER_DIR}/.venv/bin/python"
@@ -606,8 +588,8 @@ if [[ -n "${SWH_WHAT:-}" && -f "${REGISTRY}" ]]; then
   fi
 fi
 
-# What this run IS -- params, binary and the commit it carries, launcher commit,
-# node, card, preflight verdict, t = 0 diagnostics -- written before the first
+# What this run IS (params, binary and the commit it carries, launcher commit,
+# node, card, preflight verdict, t = 0 diagnostics), written before the first
 # step and completed at exit (run_manifest.py; packed beside the streams).
 # Revealing values go through the environment, not the public command line.
 SWH_MANIFEST_NAME="${NAME}" SWH_MANIFEST_TEMPLATE="${TEMPLATE}" SWH_MANIFEST_EXE="${EXE}" \
@@ -627,13 +609,10 @@ if [[ "${SWH_CONSUME:-1}" != "0" ]]; then
   CONSUMER_PID=$!
   echo "[swh] consumer  : pid ${CONSUMER_PID} -> ${RUN_DIR}/small_data"
 
-  # IS IT ACTUALLY UP?  A consumer that dies at startup -- one bad flag is
-  # enough, and argparse exits before it prints anything to the log tail anyone
-  # reads -- takes the frames, the python psi4 cross-check AND the plotfile
-  # deletion with it, and nothing downstream says so: the evolution runs its
-  # full length and scratch fills behind it (measured in the merger campaign,
-  # 2026-09-15).  Give it a moment to fail, then look; the cost is a few
-  # seconds once per run.
+  # IS IT UP?  A consumer that dies at startup (one bad flag is enough) takes
+  # the frames, the python psi4 cross-check AND the plotfile deletion with it,
+  # and nothing downstream says so: the evolution runs its full length and
+  # scratch fills behind it.  Give it a moment to fail, then look.
   sleep 8
   if ! kill -0 "${CONSUMER_PID}" 2>/dev/null; then
     echo "[swh] !! THE CONSUMER DIED AT STARTUP -- no frames, no python psi4, and" >&2
@@ -693,16 +672,16 @@ if [[ -n "${CONSUMER_PID}" ]]; then
   kill "${CONSUMER_PID}" 2>/dev/null || true
   wait "${CONSUMER_PID}" 2>/dev/null || true
   echo "[swh] draining consumer (final pass) ..."
-  # --keep-existing-frames is load-bearing here.  The consumer clears the frames
-  # for every requested field at startup, which is right for a fresh run and
-  # catastrophic for a second pass over the same run: without it this drain
+  # --keep-existing-frames: the consumer clears the frames for every requested
+  # field at startup, right for a fresh run and wrong for a second pass over
+  # the same run: without it this drain
   # deletes every PNG the watcher rendered during the evolution, and if the run
   # aborted there are no plotfiles left to re-render them from.
-  # --stable-seconds 0 is load-bearing too.  The consumer skips a plotfile whose
-  # Header is younger than 30 s, a guard against reading one mid-write; this
-  # pass starts about a second after the evolution exits, so with the default
-  # the run's last plotfile was never extracted (measured 2026-09-14).  The
-  # binary has exited, so every plotfile on scratch is complete.
+  # --stable-seconds 0: the consumer skips a plotfile whose Header is younger
+  # than 30 s (a guard against reading one mid-write); this pass starts about a
+  # second after the evolution exits, so with the default the run's last
+  # plotfile is never extracted.  The binary has exited, so every plotfile on
+  # scratch is complete.
   (
     cd "${RUN_DIR}"
     exec -a "${PROC_LABEL}_post" "${CONSUMER_BIN}" post.py "${consumer_args[@]}" \

@@ -1,7 +1,7 @@
 """ADM mass and angular momentum of 3D data on coordinate spheres.
 
-Step 3, check A1: the mass and spin of the 3D t = 0 data against the
-background table and the solver's values (STATUS.md, Phase A).
+Checks the mass and spin of the 3D t = 0 data against the background
+table and the solver's values.
 
     M(R) = (1/16 pi) oint (d_j gamma_ij - d_i gamma_jj) s^i R^2 dOmega
     J(R) = (1/8 pi)  oint (K^j_i - delta^j_i K) phi^i n_j dA

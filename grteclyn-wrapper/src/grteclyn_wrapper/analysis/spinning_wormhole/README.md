@@ -31,12 +31,13 @@ Before this solver, the only rotating data was the slow-spin O(J²) approximatio
   the data's error.
 - So that inflation cannot be credited to rotation; spin's own effect there was the throat
   flattening, which grew like J².
-- The J = 1 hold on this solver's exact data settles it.
+- The J = 1 hold on this solver's exact data settles it: the throat collapses on the static
+  hold's mode (τ 6.8 against 5.8).
 
 The solver's data is exact to 1e-10 to 4e-10 in Einstein's equations, about 10⁸ times better than
 O(J²) at J = 1. On the 3D grid its largest error is the C++ loader's bilinear interpolation of the
 table: ~2e-7 at v_e 0.5, ≤ 1e-7 in f up to v_e 0.9, and 2e-6 to 7e-5 at v_e 0.95–0.99. That is
-10⁴ times below the old push at v_e 0.5. The near-extremal end wants a bicubic loader.
+10⁴ times below the old push at v_e 0.5. The near-extremal end needs a bicubic loader.
 
 ## How we know the answer is right
 
@@ -113,7 +114,7 @@ log(J/η₀²).
   physics line of the 3D runs. It reaches v_e = 0.9908, the last stretch on the log-stretched
   map.
 - **(b) η₀ = 1, γ = 0:** the symmetric family Kleihaus and Kunz published, used for benchmarks
-  and the overspin test. It reaches v_e = 0.9907 on the arctan map.
+  (its evolutions and the overspin test were dropped 2026-10-15). It reaches v_e = 0.9907 on the arctan map.
 
 ## Where things are
 

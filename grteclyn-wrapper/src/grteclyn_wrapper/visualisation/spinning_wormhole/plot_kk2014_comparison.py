@@ -14,10 +14,9 @@ Omega0 = 1/R at fixed equatorial throat radius R), drawn from numbers only:
 - dashed lines: Kerr at fixed horizon radius from closed forms, the
   extremal values as dots at v_e = 1.
 
-Colours (``--palette``): ``rgb``, the spinning paper's scheme and the
-default, colours each quantity the way KK do -- red M/M0 and R_p/R, green
-J/J0 and R_A/R, blue Omega J/(Omega0 J0) -- with black extremal dots;
-``house`` is the merger paper's ink / deep blue with gold Kerr curves.
+Colours (``--palette``): ``rgb``, the default, colours each quantity the way
+KK do (red M/M0 and R_p/R, green J/J0 and R_A/R, blue Omega J/(Omega0 J0))
+with black extremal dots; ``house`` is ink / deep blue with gold Kerr curves.
 ``--colors C1,C2,C3`` replaces the three quantity colours of either, so the
 figure redraws in another scheme without touching the code.
 
@@ -56,8 +55,6 @@ YLIM_B = (0.595, 1.005)
 KK = "KK 2014"
 SOLID, DASHED, DOTTED = "-", (0, (6.5, 2.2)), (0, (1.3, 1.7))
 
-# 2026-10-13: the spinning paper colours its quantities red / green / blue,
-# as KK 2014 do; gold stays the merger paper's accent ("house").
 # colours: the three quantities (M or R_p, J or R_A, Omega J); kerr: one
 # colour for every Kerr curve, or None for the quantity's own.
 PALETTES = {
@@ -105,8 +102,7 @@ def agreement(fam, kk) -> dict[str, tuple[float, float, int]]:
 
 def draw(fam, kk, sep: float, lk: dict[str, dict]):
     style.prd(8.0)
-    # 2026-10-20: one column, the panels stacked, keys reading one quantity per row
-    # (the full-width figure was wider than two smooth curves need)
+    # one column, the panels stacked, keys reading one quantity per row
     fig, (ax_a, ax_b) = plt.subplots(2, 1, figsize=(3.4, 3.6), layout="constrained", sharex=True)
     v_ours = np.linspace(0.0, fam["v"][-1], 600)
     v_kerr = np.linspace(0.0, 1.0, 401)

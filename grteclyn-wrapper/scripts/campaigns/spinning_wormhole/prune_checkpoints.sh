@@ -3,15 +3,13 @@
 #
 # Insured runs keep the newest TWO checkpoints (one-deep leaves nothing to fall
 # back on if the process dies partway through writing the newest).  Every other
-# run keeps NONE -- they are cheap to restart and their checkpoints are pure
+# run keeps NONE: they are cheap to restart and their checkpoints are pure
 # disk cost.
 #
-# The insured set is MAIN_RE below.  It starts EMPTY for this campaign (no run
-# is insured yet, 2026-10-10): set MAIN_RE in the environment, or widen the
-# default here, once a run is many hours deep and losing it would cost more
-# than the ~30 GB it holds.  The merger campaign learned the price of an empty
-# insured set the hard way: a run died with its only restart point already
-# swept and had to be written off.
+# The insured set is MAIN_RE below, empty by default: set MAIN_RE in the
+# environment, or widen the default here, once a run is many hours deep and
+# losing it would cost more than the ~30 GB it holds.  With an empty set, a
+# run that dies has no restart point left.
 #
 # Scope is deliberately narrow: a scratch directory is touched only when a
 # matching run directory exists under the campaign, so a co-tenant's run on the

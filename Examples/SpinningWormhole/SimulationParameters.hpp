@@ -36,18 +36,16 @@ class SimulationParameters : public SimulationParametersBase
         // Per-level masked norms (constraint_norms_levels.dat): each level's
         // cells where no finer level covers them, outside mask_radius of the
         // centre.  The compactified far end is a puncture at r = 0 whose
-        // floor-limited cells dominate an unmasked norm without converging;
-        // the triplet protocol reads the masked file.  mask_radius 0.125 is
-        // the offline shell protocol's innermost edge (t0_checks.py).
+        // floor-limited cells dominate an unmasked norm without converging.
+        // The default 0.125 is the innermost shell edge of the offline checks
+        // (t0_checks.py).
         pp.load("constraint_norms_levels", constraint_norms_levels, false);
         pp.load("constraint_norms_mask_radius", constraint_norms_mask_radius,
                 0.125);
         // Cells within this many cells of the domain boundary are left out of
-        // the per-level norms too.  2026-10-17: the outer 3 base-grid cells
-        // evolve under the Sommerfeld condition, not Einstein's equations,
-        // and the constraint stencil there reaches the extrapolated ghosts;
-        // on the 0.9c that layer held level 0's norm at 1e5 x level 1's,
-        // frozen at its t = 0 value.  0 = the whole level (the old file).
+        // the per-level norms too: they evolve under the Sommerfeld condition,
+        // not Einstein's equations, and the constraint stencil there reaches
+        // the extrapolated ghosts.  0 = the whole level.
         pp.load("constraint_norms_edge_cells", constraint_norms_edge_cells, 0);
     }
 
@@ -59,9 +57,9 @@ class SimulationParameters : public SimulationParametersBase
         // generated offline by the wrapper.  No analytic in-code family.
         pp.load("spinning_background_file", spinning_background_file,
                 std::string(""));
-        // 1 (default since 2026-10-17): C2 cubic-spline interpolation of the
-        // table; 0: the bilinear sample of the earlier binaries, whose kinks
-        // made the constraints grow with resolution (RotatingBackgroundTable.hpp).
+        // 1 (default): C2 cubic-spline interpolation of the table; 0: bilinear,
+        // whose kinks make the constraints grow with resolution
+        // (RotatingBackgroundTable.hpp).
         pp.load("spinning_background_interp", spinning_background_interp, 1);
         pp.load("rk_stage_refill", rk_stage_refill, 1);
 
@@ -72,18 +70,17 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("spinning_initial_lapse_type",
                 spinning_params.initial_lapse_type, 0);
 
-        // ell = 0 Pi shell seed (both signs through the amplitude); like the
-        // merger campaign's seeds it violates the constraints at O(A).
+        // ell = 0 Pi shell seed (both signs through the amplitude); it
+        // violates the constraints at O(A).
         pp.load("spinning_seed_amplitude", spinning_params.seed_amplitude,
                 0.0);
         pp.load("spinning_seed_width", spinning_params.seed_width, 1.0);
         pp.load("spinning_seed_radius", spinning_params.seed_radius, 0.0);
 
-        // The kick (SpinningWormholeInitialData.hpp): the merger's declared
-        // conformal-factor shell on the throat, with an angular profile for
-        // the sectors the unkicked holds never seed.  m alone picks the
-        // sectoral (m, m); l = 2 alone the axisymmetric P2.  Default 0 =
-        // off, bit for bit.
+        // The kick (SpinningWormholeInitialData.hpp): a conformal-factor shell
+        // on the throat with an angular profile, to seed sectors the
+        // background does not.  m alone picks the sectoral (m, m); l = 2 alone
+        // the axisymmetric P2.  Amplitude 0 = off.
         pp.load("spinning_kick_amplitude", spinning_params.kick_amplitude,
                 0.0);
         pp.load("spinning_kick_m", spinning_params.kick_m, 0);
@@ -104,8 +101,7 @@ class SimulationParameters : public SimulationParametersBase
     void read_diagnostics_params(GRParmParse &pp)
     {
         // Throat radii + ergoregion monitor, one row per coarse step
-        // (SpinningThroatDiagnostics.hpp).  Own module, own file, default
-        // off; every campaign template turns it on.
+        // (SpinningThroatDiagnostics.hpp).  Own file, default off.
         pp.load("spinning_diagnostics", spinning_diag_params.enabled, false);
         spinning_diag_params.grid_center = spinning_params.grid_center;
         // Negative (the default) means 0.3 eta0, taken from the loaded table
@@ -131,8 +127,8 @@ class SimulationParameters : public SimulationParametersBase
     void read_sponge_params(GRParmParse &pp)
     {
         // Radially-ramped extra Kreiss-Oliger dissipation in an outer shell
-        // (Source/Grids/SpongeZone.hpp), same geometry defaults as the merger
-        // campaign: sponge the outer quarter of the half-width.
+        // (Source/Grids/SpongeZone.hpp); by default the outer quarter of the
+        // half-width.
         const double half_L = 0.5 * L;
         pp.load("sponge_enabled", sponge_params.enabled, false);
         pp.load("sponge_inner_radius", sponge_params.inner_radius,
@@ -144,15 +140,13 @@ class SimulationParameters : public SimulationParametersBase
                 spinning_params.grid_center);
         // Damping sponge (SpongeDrive.hpp): drive the state back to the
         // stationary background in the same shell, absorbing the
-        // long-wavelength gauge pulse the KO sponge passes.  0 = off (the
-        // old evolution bit for bit); explicit stability needs
-        // strength * dt < ~1.
+        // long-wavelength gauge pulse the KO sponge passes.  0 = off;
+        // explicit stability needs strength * dt < ~1.
         pp.load("sponge_drive_strength", sponge_drive_strength, 0.0);
         // Sommerfeld boundaries on the deviation from the t = 0 background
-        // (the drive's reference) instead of on the state.  2026-10-17: the
-        // 0.9c box face sits at ~5.5 M_ADM (chi 0.71, lapse 0.83), where the
-        // flat-space condition pushed junk in from t = 1 at every N.  0 = off
-        // (the old evolution bit for bit).
+        // (the drive's reference) instead of on the state, for box faces where
+        // the background is far from flat and the flat-space condition injects
+        // junk from t ~ 1.  0 = off.
         pp.load("sommerfeld_relative_to_background",
                 sommerfeld_relative_to_background, 0);
     }
@@ -161,9 +155,9 @@ class SimulationParameters : public SimulationParametersBase
     {
         // 0 = chi-gradient tagging (plus optional phi/K weights);
         // 1 = fixed nested boxes about tagging_center, composed with the
-        // ExtractionTagger (the merger campaign's production choice for a
-        // single centred throat: the resolution demand is static -- the
-        // throat and the compactified far universe both sit at the centre).
+        // ExtractionTagger (for a single centred throat the resolution demand
+        // is static: the throat and the compactified far universe both sit at
+        // the centre).
         pp.load("tagging_type", tagging_type, 0);
         pp.load("tagging_L", tagging_L, L);
         pp.load("tagging_center", tagging_center, center);

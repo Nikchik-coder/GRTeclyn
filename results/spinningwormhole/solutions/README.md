@@ -1,8 +1,8 @@
 # Spectral solver solutions (the families' source of truth)
 
 The spinning-wormhole solver's converged solutions, copied verbatim from the
-untracked `runs/spinning_p3/<leg>/` on 2026-10-15 so that no session has to
-re-solve a spin to get the real f, omega, nu fields. Each leg is one
+untracked `runs/spinning_p3/<leg>/` on 2026-10-15 so that the real f, omega, nu fields of a spin never have
+to be re-solved. Each leg is one
 continuation branch: `<leg>.tsv` (one row per step: v_e, J, the gates) plus
 `<leg>_<step>.json` (scalars + unimposed-constraint gates) and
 `<leg>_<step>.npz` (the spectral coefficients) per step.

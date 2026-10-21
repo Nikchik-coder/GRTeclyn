@@ -2,7 +2,7 @@
 r"""Convergence of a spinning hold's resolution triplet: the constraints on every level, the throat, the wave zone.
 
 The triplet's members differ only in the base grid: N = 128 / 192 / 256 on the
-0.9c's L = 128 box, so level l has dx = (1, 2/3, 1/2) / 2^l; everything else,
+v_e = 0.9 hold's L = 128 box, so level l has dx = (1, 2/3, 1/2) / 2^l; everything else,
 the refined boxes' tags included, is the same.
 
 Top two rows: each level's L2 norm of the Hamiltonian (first row) and momentum
@@ -30,40 +30,33 @@ As in the ExoZvezda code paper's convergence figure, the finest member is
 redrawn at the coarsest's resolution for orders 2 and 4, N 256 x (256/128)^n,
 on the constraints and on (i): at order n the coarsest member lies on the n-th
 curve, so N 128 between the dashed and the dotted curve brackets the order.
-One key above the panels names the lines.  Outcome (the 0.9c, t = 1-150, 128 ->
-256): every level converges, level 0 at order 2.3-3.6, levels 1 and 2 at
-1.7-2.6, level 3 at 2.6-4.1 (momentum) and 1.6-4.0 (Hamiltonian); the throat's
-equatorial radius converges to the exact value at about 2nd order, its areal
-radius holds to 6e-5, and Psi4 (2,0) at R = 18 stays within 1.7e-4 / 3.3e-5 /
-1.5e-5 (N 128 / 192 / 256) of its t = 0 value to t = 100.  From t ~ 100 every member drifts
-alike (Psi4 (2,0) by 2 % at t = 150, level 0's constraints after t ~ 140)
-while the far-side lapse falls to 1e-3, the same at every N.  Each panel's
-numbers are printed.
+One key above the panels names the lines.  Outcome (v_e = 0.9, t = 1-150, 128 ->
+256): every level converges at order 1.6-4.1; the throat's equatorial radius
+converges to the exact value at about 2nd order and its areal radius holds to
+6e-5.  From t ~ 100 every member drifts alike while the far-side lapse falls
+to 1e-3, the same at every N.  Each panel's numbers are printed.
 
-The 0.2c (``--spin 0.2c``): N = 96 / 128 / 192 on the L = 64 box (level l has
+The v_e = 0.2 hold (``--spin 0.2c``): N = 96 / 128 / 192 on the L = 64 box (level l has
 dx = (2/3, 1/2, 1/3) / 2^l).  This hold collapses, its onset seeded by the
 truncation error, so the collapse comes later at higher N (R_eq -1 % at
 t = 42.2 / 46.9 / 57.8; the N 96 dies mid-collapse at 62.6).  Rows 1-2 as
 above, at equal t.  The bottom row: (i) as above, against the background
-file's own exact R_eq (that leg is not a row of the packed solver table);
+file's own exact R_eq (that background is not a row of the packed solver table);
 (j)-(l) align each member at its own collapse stage, the time its R_eq has
 fallen 10 % (t = 57.7 / 62.0 / 71.9): (j) the deficit 1 - R_eq / R_eq(0),
 (k) the (2, 0) mode of r Psi4 at R = 14 minus its t = 0 value (the stream
 already carries the factor r), (l) the MOTS's areal radius.  Outcome: every
-level converges at equal t to t = 50 (orders 1.8-4.9 in both pairs); past the
-onset the members sit at different stages of the collapse, so equal-t orders
-mean nothing there, while at equal deficit (-0.1 % to -10 %) the throat level
-keeps converging at order 3.3-4.0 (Hamiltonian) and 3.4-4.2 (momentum, one
-8.0); aligned, the collapse curves overlap, the waves of N 128 and N 192 agree
-to 6-9 % and the horizons settle at R = 2.52-2.53.
+level converges at equal t to t = 50; past the onset the members sit at
+different stages of the collapse, so equal-t orders mean nothing there, while
+at equal deficit (-0.1 % to -10 %) the throat level keeps converging at order
+3.3-4.2.
 
     python -m grteclyn_wrapper.visualisation.spinning_wormhole.plot_convergence
     ... plot_convergence --spin 0.2c
     ... plot_convergence --palette house
     ... plot_convergence --colors "#c00000,#007a00,#0000c0"
 
-Colours (``--palette``): ``rgb``, the spinning paper's scheme and the default,
-red / green / blue from the coarsest member to the finest, the rescaled curves
+Colours (``--palette``): ``rgb``, the default, red / green / blue from the coarsest member to the finest, the rescaled curves
 in the finest's colour; ``house`` is an ordered light-to-dark ramp with ink
 rescaled curves.  ``--colors C1,C2,C3`` replaces the members' colours.
 
@@ -123,8 +116,7 @@ SOLID, DASHED, DOTTED = "-", (0, (4.0, 1.8)), (0, (1.2, 1.4))
 CONSTRAINTS = (r"$\|\mathcal{H}\|_2$", r"$\|\mathcal{M}\|_2$")
 TITLE = dict(loc="left", fontsize=7.0, pad=3.0)
 
-# 2026-10-13: the spinning paper colours red / green / blue; gold is the merger
-# paper's accent.  rescaled None: the finest member's own colour.
+# rescaled None: the finest member's own colour.
 PALETTES = {
     "rgb": dict(colours=("#d62728", "#2ca02c", "#1f77b4"), rescaled=None),
     "house": dict(colours=tuple(style.ordinal(3)), rescaled=style.INK),
@@ -247,7 +239,7 @@ def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: in
     style.prd(8.0)
     hold = kind == "hold"
     # a collapse's (j)-(l) run on their own aligned time: only rows 1-2 and (i) share t
-    # 2026-10-21: 4.0 in tall (was 5.6), so the two triplets share one appendix page
+    # 4.0 in tall, so the two triplets share one appendix page
     fig, axes = plt.subplots(3, LEVELS, figsize=(7.0, 4.0), sharex=hold, layout="constrained")
     if not hold:
         for ax in list(axes[:2].flat):
@@ -334,7 +326,7 @@ def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: in
         for ax in (ax_j, ax_k, ax_l):
             ax.set_xlim(*ALIGNED)
 
-    # 2026-10-18: one key above the whole figure; the lines are the same in every panel
+    # one key above the whole figure; the lines are the same in every panel
     fig.legend([Line2D([], [], **m) for m in members] + [Line2D([], [], **b) for b in brackets],
                [rf"$N={n}$" for n in ns]
                + [rf"$N={hi}\times{hi / lo:g}^{p}$ (order {p})" for p in ORDERS],
