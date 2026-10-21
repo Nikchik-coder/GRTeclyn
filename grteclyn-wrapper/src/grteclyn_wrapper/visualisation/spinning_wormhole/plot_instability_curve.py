@@ -330,7 +330,10 @@ def draw(points, pal, jc_frac) -> None:
                                       mec=pal["stable"], mew=1.2),
                         "no growth"))
     if fit is not None:
-        tag = "collapse fit" + (f": zero at {x0:.0f} %" if x0 else "")
+        # 2026-10-21: the fit written out, a - b x^2 as a [1 - x^2/x0^2], so the
+        # key shows its intercept and its zero ("collapse fit" said neither)
+        tag = (f"$1/\\tau={a:.2f}\\,[1-(8\\pi J/A)^2/({x0:.0f}\\,\\%)^2]$" if x0
+               else "collapse fit")
         entries.append((fit_line, tag))
     if az:
         entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=6.5, mfc="none",
