@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "GRTeclyn research fork — colliding traversable wormholes"
+title: "GRTeclyn research fork — colliding and rotating traversable wormholes"
 message: >-
   If you use this code or the packed campaign data, please cite the
   paper under "preferred-citation" below.
@@ -13,16 +13,17 @@ authors:
     given-names: Ilya
     affiliation: "Higher School of Economics, Moscow, Russia"
 repository-code: "https://github.com/Nikchik-coder/GRTeclyn"
-url: "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger"
+url: "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-spinning-wormhole"
 license: BSD-3-Clause
-version: v1.0.1-wormhole-merger
-date-released: "2026-10-09"
+version: v1.0-spinning-wormhole
+date-released: "2026-10-21"
 doi: 10.5281/zenodo.23245933
 keywords:
   - numerical relativity
   - traversable wormholes
   - Ellis-Bronnikov drainhole
   - phantom scalar field
+  - rotating wormholes
   - binary mergers
   - gravitational waves
   - black hole seeds
@@ -46,6 +47,21 @@ preferred-citation:
   journal: "arXiv e-prints"
   notes: "arXiv:2610.13206 [gr-qc]"
 references:
+  - type: article
+    title: >-
+      Rotation slows the instability of Ellis–Bronnikov wormholes
+    authors:
+      - family-names: Shirokov
+        given-names: "Nikita M."
+        email: shirokov.nm@phystech.edu
+        affiliation: "Moscow Institute of Physics and Technology, Moscow, Russia"
+      - family-names: Nachevsky
+        given-names: Ilya
+        affiliation: "Higher School of Economics, Moscow, Russia"
+    year: 2026
+    month: 10
+    journal: "arXiv e-prints"
+    notes: "arXiv number to follow; code and data at tag v1.0-spinning-wormhole"
   - type: article
     title: >-
       The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating

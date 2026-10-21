@@ -12,6 +12,7 @@ directory — there are no loose campaign folders at this level.
 | [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | Complete. Data, derived tables and the refit tooling ship together. |
 | [`wormhole-dynamics/`](wormhole-dynamics/) | Complete. Published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071). |
 | [`merger/`](merger/) | In preparation. The drainhole-merger campaign: packed runs, figures and analysis tables. |
+| [`spinningwormhole/`](spinningwormhole/) | Complete. Rotating drainholes: the solver's solutions and the 3D runs of the rotating-wormholes paper. |
 
 The pack scripts scrub machine identity at runtime through the shared scrubber
 [`grteclyn_wrapper.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py)
@@ -74,3 +75,14 @@ t = 60, which is what separates the physics from a code failure.
 Holds the four evolution streams per run (thinned, with the death window kept whole), the
 extracted waveforms at two radii, the launch and parameter provenance, movies, thinned
 stills, the offline horizon scan, and generated summary tables.
+
+### `spinningwormhole/`
+
+Stationary rotating Ellis–Bronnikov wormholes from slow rotation to 99 % of the speed of
+light, and their nonlinear 3+1 evolution: rotation slows the static wormhole's radial
+instability, near 30 % of the extremal angular momentum the unperturbed throat expands
+instead of collapsing, and from 58 % upward no growth is found over the evolved times.
+Holds the spectral solver's accepted solutions, the headers of the background tables, and
+the parameter files and diagnostic streams of the 61 runs the paper uses, with a registry
+saying where the paper uses each. Every figure rebuilds from the pack without a GPU; start
+with [`spinningwormhole/README.md`](spinningwormhole/README.md).

@@ -1,7 +1,7 @@
 {
   "upload_type": "software",
-  "title": "GRTeclyn research fork — colliding traversable wormholes",
-  "description": "<p>Code, run matrix and packed campaign data behind <em>Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves</em> (N. M. Shirokov and I. Nachevsky, 2026).</p><p>A GRTeclyn (AMReX/GPU) research fork with a Python orchestration layer: constraint-solved and exactly boosted binaries of Ellis–Bronnikov drainholes held open by a ghost scalar, CCZ4 evolution with refinement boxes that follow the throats, a spectral MOTS finder, Weyl-scalar and scalar-flux extraction, and the analysis and figure scripts. Includes the parameter files and thinned diagnostic streams of every run, the run registry, the figures and the movies — reproducible without a GPU.</p>",
+  "title": "GRTeclyn research fork — colliding and rotating traversable wormholes",
+  "description": "<p>Code, run matrices and packed campaign data behind <em>Rotation slows the instability of Ellis–Bronnikov wormholes</em> and <em>Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves</em> (N. M. Shirokov and I. Nachevsky, 2026).</p><p>A GRTeclyn (AMReX/GPU) research fork with a Python orchestration layer: a spectral solver for stationary rotating Ellis–Bronnikov wormholes, checked against identities it never uses; their 3+1 evolution with a background-relative outer boundary; constraint-solved and exactly boosted binaries of drainholes held open by a ghost scalar; CCZ4 evolution with refinement boxes that follow the throats, a spectral MOTS finder, Weyl-scalar and scalar-flux extraction, and the analysis and figure scripts. Includes the solver's accepted solutions, the parameter files and diagnostic streams of every run the papers use, the run registries and the figures — reproducible without a GPU.</p>",
   "creators": [
     {
       "name": "Shirokov, Nikita M.",
@@ -18,6 +18,8 @@
     "numerical relativity",
     "traversable wormholes",
     "Ellis-Bronnikov drainhole",
+    "spectral methods",
+    "rotating wormholes",
     "phantom scalar field",
     "binary mergers",
     "gravitational waves",
@@ -27,7 +29,7 @@
   ],
   "related_identifiers": [
     {
-      "identifier": "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger",
+      "identifier": "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-spinning-wormhole",
       "relation": "isSupplementTo",
       "scheme": "url"
     }

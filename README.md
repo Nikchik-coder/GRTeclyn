@@ -15,14 +15,18 @@
 >
 > | Paper | Data in this repo |
 > |---|---|
+> | *Rotation slows the instability of Ellis–Bronnikov wormholes* — arXiv number to follow | [`results/spinningwormhole/`](results/spinningwormhole/) |
 > | *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves* — [arXiv:2610.13206](https://arxiv.org/abs/2610.13206) | [`results/merger/`](results/merger/) |
 > | *The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive–Negative Mass Binary* — [arXiv:2608.24577](https://arxiv.org/abs/2608.24577) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/) |
 > | *Wormhole Dynamics: Nonlinear Collapse and Gravitational-Wave Emission* — [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) |
 >
-> The colliding-wormholes paper cites this repository at tag
+> The rotating-wormholes paper cites this repository at tag
+> [`v1.0-spinning-wormhole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-spinning-wormhole),
+> the colliding-wormholes paper at tag
 > [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger),
 > the Bondi dipole paper at tag
 > [`v1.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole).
+> Every release is archived on Zenodo under [doi:10.5281/zenodo.23245933](https://doi.org/10.5281/zenodo.23245933).
 > To cite the papers or this code, see [CITATION.cff](CITATION.cff).
 >
 > Upstream GRTeclyn is BSD-3-Clause; see [LICENSE](LICENSE). The research tree
