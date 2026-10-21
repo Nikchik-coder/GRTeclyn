@@ -116,7 +116,7 @@ TAG_SIDES = {
     "D21": (-4, -1.5, "right", "center"),
     "D30": (-4, -1.5, "right", "center"),
     "D40": (-4, -1.5, "right", "center"),
-    "D46": (0.5, 3.5, "right", "bottom"),
+    "D46": (14, -8, "left", "top"),   # below right, clear of Azad's drawn law and the rules
     "D51": (4.5, 0, "left", "center"),
     # the stable rungs sit 12 pt apart: D75's tag hangs left, D80's right
     "D75": (1, 4.5, "right", "bottom"),
@@ -272,6 +272,15 @@ def draw(points, pal, jc_frac) -> None:
     for x in rules:
         ax.axvline(x, color="#b5b5b2", lw=0.8, ls=":")
     drawn = [p for p in points if p["tau"] is not None or p["stable"]]
+    # 10-21: where the second order should and does hold -- the static and D21
+    # continuum rates sit within 8 % of Azad's values, and from D30 (18 %) the gap
+    # exceeds the resolution bias.  The band ends halfway between the two rungs.
+    fr_by = {p["label"]: p["frac"] for p in points}
+    if "D21" in fr_by and "D30" in fr_by:
+        edge = 0.5 * (fr_by["D21"] + fr_by["D30"])
+        ax.axvspan(-2.0, edge, facecolor="#edf3fa", zorder=0)
+        ax.text(0.5 * (-2.0 + edge), 0.008, "2nd-order\nagreement", fontsize=6.0,
+                ha="center", va="bottom", color=pal["azad"])
     az = [(p["frac"], azad_rate(p["j"])) for p in drawn if azad_rate(p["j"]) > 0]
     if az:
         # Open diamonds over smaller dots: where a rung matches Azad the dot
@@ -279,6 +288,15 @@ def draw(points, pal, jc_frac) -> None:
         # audit sees the diamonds and not the undrawn segments between them.
         ax.scatter(*zip(*az), marker="D", s=6.5 ** 2, facecolors="none",
                    edgecolors=pal["azad"], linewidths=1.0, zorder=5)
+        # 10-21: their law drawn as the curve it is, 1/tau = [W0 - DW2 (J/eta0^2)^2]
+        # / eta0, J mapped onto 8 pi J/A through the rungs' tables (the diamonds'
+        # own mapping): the measured rates leave it as spin grows -- the O(J^4) gap.
+        pj = sorted((p["j"], p["frac"]) for p in drawn)
+        js2 = np.array([q[0] for q in pj])
+        fr2 = np.array([q[1] for q in pj])
+        jg = np.linspace(0.0, ETA0 ** 2 * np.sqrt(AZAD_W0 / AZAD_DW2), 300)
+        ax.plot(np.interp(jg, js2, fr2), azad_rate(jg), ls="-", lw=0.9,
+                color=pal["azad"], alpha=0.85, zorder=3)
     fit = fit_zero(drawn)
     x0 = None
     if fit is not None:
@@ -336,8 +354,9 @@ def draw(points, pal, jc_frac) -> None:
                else "collapse fit")
         entries.append((fit_line, tag))
     if az:
-        entries.append((mlines.Line2D([], [], marker="D", ls="none", ms=6.5, mfc="none",
-                                      mec=pal["azad"], mew=1.0), "Azad et al., 2nd order"))
+        entries.append((mlines.Line2D([], [], marker="D", ls="-", lw=0.9, ms=6.5,
+                                      mfc="none", mec=pal["azad"], mew=1.0,
+                                      color=pal["azad"]), "Azad et al., 2nd order"))
     entries.append((mlines.Line2D([], [], ls=":", lw=0.8, color="#b5b5b2"),
                     "Azad: end (30 %)" + (f", $J_c$ ({jc_frac:.0f} %)" if jc_frac else "")))
     # 2026-10-20: two columns, read row by row (one entry a row took a third of the
