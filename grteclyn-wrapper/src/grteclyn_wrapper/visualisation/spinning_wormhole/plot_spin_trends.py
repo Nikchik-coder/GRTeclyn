@@ -19,7 +19,8 @@ eta0 fixed along a family, so mass and size grow without bound as v_e -> 1):
 - (d) the throat's flattening R_p/R_e;
 - (e) the exotic matter: the phantom field's volume integral quantifier
   |int (rho + p_eta) dV| (Visser, Kar & Dadhich 2003) over the equatorial
-  throat radius (log), from the packed solutions; squares: the 3D runs, each
+  throat radius, relative to the family's static member (1 at v_e = 0; log),
+  from the packed solutions; squares: the 3D runs, each
   rung's value scaled by (D_run / D_background)^2 with D_run the charge
   measured on the run's own t = 0 slice (results/spinningwormhole/
   scalar_charge_runs.tsv);
@@ -106,15 +107,16 @@ def family(rows: list[dict], eta0: float, gamma: float) -> dict[str, np.ndarray]
         exotic.append(abs(exotic_matter(Solution.load(path), r["D"])) / r["R_e"]
                       if path.exists() else math.nan)
     viq0, re0 = static_exotic_matter(eta0, gamma)
+    x0 = abs(viq0) / re0
     return {
         "v": c["v_e"], "M": c["mu_plus"] / eta0, "J": c["J"] / eta0**2,
         "Re": c["R_e"] / eta0, "JM2": c["J"] / c["mu_plus"] ** 2,
         "Mratio": c["mu_minus"] / c["mu_plus"], "Rp": c["R_pol"] / c["R_e"],
-        "X": np.array(exotic), "Om": c["Omega_throat"] * eta0,
+        "X": np.array(exotic), "Xrel": np.array(exotic) / x0, "Om": c["Omega_throat"] * eta0,
         "D0": math.sqrt(eta0**2 + m0**2),          # the static member's charge
         # exact static ends (v_e = 0)
         "static": {"Mratio": -1.0 if m0 > 0 else 1.0, "Rp": 1.0,
-                   "X": abs(viq0) / re0, "Om": 0.0},
+                   "X": x0, "Xrel": 1.0, "Om": 0.0},
     }
 
 
@@ -237,15 +239,21 @@ def draw(fams, colours):
     ax_d.set(xlim=(0, 1), ylim=(0.58, 1.02), ylabel=r"$R_p/R_e$", xlabel=r"$v_e$")
 
     # (e) exotic matter per throat radius (2026-10-20: replaces the scalar charge, which
-    # Table II lists); the 3D runs' measured charge put on the drainhole curve
+    # Table II lists); the 3D runs' measured charge put on the drainhole curve.
+    # 2026-10-21: each family over its own static member, so the fall with spin reads
+    # at a glance (|I|/R_e alone needed the caption)
+    ax_e.axhline(1.0, **rule)
     for f, (*_, ls) in zip(fams, FAMILIES):
-        curve(ax_e, f, "X", style.INK, ls)
-    ax_e.plot(*run_points(fams[0]), **runmark)
-    ax_e.set(yscale="log", xlim=(0, 1), ylim=(0.03, 10), ylabel=r"$|\mathcal{I}|/R_e$",
-             xlabel=r"$v_e$")
+        curve(ax_e, f, "Xrel", style.INK, ls)
+    v_runs, x_runs = run_points(fams[0])
+    ax_e.plot(v_runs, x_runs / fams[0]["static"]["X"], **runmark)
+    ax_e.set(yscale="log", xlim=(0, 1), ylim=(0.005, 2.0),
+             ylabel=r"$\mathcal{I}/\mathcal{I}_{\rm static}$", xlabel=r"$v_e$")
+    ax_e.set_yticks([0.01, 0.1, 1.0], ["0.01", "0.1", "1"])
     # a marker-only handle measures half a marker past its box: a little more border keeps
     # it inside the key
-    style.legend_top(ax_e, [key(runmark, r"3D runs, $t=0$")], borderpad=0.4)
+    style.legend_top(ax_e, [key(rule, "static wormhole"), key(runmark, r"3D runs, $t=0$")],
+                     ncol=2, borderpad=0.4, **TIGHT)
 
     # (f) rotation rate
     for f, (*_, ls) in zip(fams, FAMILIES):

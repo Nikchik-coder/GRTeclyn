@@ -310,7 +310,7 @@ def draw(data, box: float, ns, r_exact: float, look: dict, kind: str, psi4_r: in
         ax_k.set_ylabel(r"$\psi_4^{20}/\psi_4^{20}(0)-1$")
         ax_l.set(yscale="log", ylabel=r"$\alpha_{\min}$")
         titles = ("throat equatorial radius", "throat areal radius",
-                  rf"$\psi_4^{{20}}$ at $R={psi4_r}$", "far-side puncture lapse")
+                  rf"$\psi_4^{{20}}$ at $R={psi4_r}$", "puncture lapse")
         xlabels = (r"$t$",) * 4
     else:
         # (i) keeps t, on plain decades (the collapse spans six); (j)-(l) each
