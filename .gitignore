@@ -84,6 +84,8 @@ __pycache__/
 
 # Submission bundle (regenerable)
 /research/neuralspacetime/article/research_submission.zip
+/research/spinningwormhole/article/arxiv/
+/research/spinningwormhole/article/arxiv.tar.gz
 
 # Optional local ZeroMQ (RL) — rebuild with Tools/install_zmq.sh; do not commit
 /local/zeromq/

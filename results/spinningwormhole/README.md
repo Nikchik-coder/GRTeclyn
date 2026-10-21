@@ -1,10 +1,28 @@
 # Spinning-wormhole campaign — packed results
 
 Nonlinear evolutions of rotating Ellis–Bronnikov wormholes, slow spin to the
-extremal Kerr limit. Paper: `research/spinningwormhole/article/research.tex`;
-live state: `research/spinningwormhole/STATUS.md`; code:
+extremal Kerr limit, behind N. M. Shirokov and I. Nachevsky, *Rotation slows the
+instability of Ellis–Bronnikov wormholes* (2026). Code:
 `Examples/SpinningWormhole/` (launcher:
 `grteclyn-wrapper/scripts/campaigns/spinning_wormhole/`).
+
+## The paper
+
+The paper's 19 evolutions (its Table IV) are `campaign/drainhole/00_paper_runs/`.
+Every figure rebuilds from this directory without a GPU, with
+`grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.spinning_wormhole.<script>`:
+
+| In the paper | Data | Script |
+|---|---|---|
+| Fig. 2, Table II | `solver/solutions.tsv`, `solver/kk2014_fig1_digitized.tsv` | `plot_kk2014_comparison` |
+| Fig. 3, Table III | `solver/solutions.tsv`, `solutions/`, `backgrounds/`, `scalar_charge_runs.tsv` | `plot_spin_trends` |
+| Tables IV–V, Fig. 4 | `campaign/drainhole/00_paper_runs/`, `backgrounds/`, `runs_registry.tsv`, `trust_windows.tsv` | `plot_instability_curve` |
+| Fig. 5 | `campaign/drainhole/00_paper_runs/`, `backgrounds/` | `plot_farzone_wave` |
+| Fig. 6 / Fig. 7 | the D21 / D90 triplets in `campaign/drainhole/00_paper_runs/` | `plot_convergence --spin 0.2c` / `plot_convergence` |
+| Sec. IV B, the t = 0 checks | `campaign/drainhole/03_t0_checks/`, `campaign/symmetric_massless/01_t0_checks/` | — |
+
+The other groups below are the campaign's development record; the paper quotes
+none of their numbers.
 
 - `binaries.tsv` — the record of every frozen campaign binary (the bin/
   directory itself is untracked).
