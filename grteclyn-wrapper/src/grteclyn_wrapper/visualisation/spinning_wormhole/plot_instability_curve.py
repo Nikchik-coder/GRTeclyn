@@ -109,14 +109,15 @@ WIDE_BANDS = ((3e-3, 3e-2), (1e-2, 1e-1))   # printed for comparison only
 # Per-rung tag offsets (points) and anchors, each tag against its own marker
 # (2026-10-21: the diagonal offsets left the tags floating between rungs).  The
 # collapse dots take theirs on the left, under the falling fit; D0 above its
-# diamond, the spine being on its left; D46 above-left, the 30 % rule 2 pt to its
-# right.
+# diamond, the spine being on its left.  D46 is boxed in by Azad's drawn law,
+# the fit and the 30 % rule: its tag sits on its right like D51's, and the J_c
+# rule breaks behind it (see ``rule``).
 TAG_SIDES = {
     "D0": (-2, 9.5, "left", "bottom"),
     "D21": (-4, -1.5, "right", "center"),
     "D30": (-4, -1.5, "right", "center"),
     "D40": (-4, -1.5, "right", "center"),
-    "D46": (14, -8, "left", "top"),   # below right, clear of Azad's drawn law and the rules
+    "D46": (5, 1.5, "left", "center"),
     "D51": (4.5, 0, "left", "center"),
     # the stable rungs sit 12 pt apart: D75's tag hangs left, D80's right
     "D75": (1, 4.5, "right", "bottom"),
@@ -261,6 +262,27 @@ def azad_jc_frac(points) -> float | None:
     return float(np.interp(jc, js[order], xs[order]))
 
 
+def rule(ax, x: float, pad_pt: float = 1.5) -> None:
+    """A dotted rule at x, full height, broken where a tag sits on it
+    (2026-10-21: D46's only free side lies across the J_c rule, and a leader
+    to a tag past the rules read as one more line)."""
+    fig = ax.get_figure()
+    fig.canvas.draw()
+    to_ax = ax.transAxes.inverted()
+    ax_x = to_ax.transform(ax.transData.transform((x, 0.0)))[0]
+    pad = pad_pt * fig.dpi / 72.0
+    gaps = []
+    for txt in ax.texts:
+        b = txt.get_window_extent().padded(pad).transformed(to_ax)
+        if b.x0 <= ax_x <= b.x1:
+            gaps.append((max(b.y0, 0.0), min(b.y1, 1.0)))
+    lo = 0.0
+    for g0, g1 in sorted(gaps) + [(1.0, 1.0)]:
+        if g0 > lo:
+            ax.axvline(x, ymin=lo, ymax=g0, color="#b5b5b2", lw=0.8, ls=":")
+        lo = max(lo, g1)
+
+
 def draw(points, pal, jc_frac) -> None:
     style.prd(8.0)
     # 2026-10-20: the house typography (it drew in matplotlib's default sans), at the
@@ -268,9 +290,6 @@ def draw(points, pal, jc_frac) -> None:
     fig, ax = plt.subplots(figsize=(3.4, 2.3), layout="constrained")
     # The two thresholds are named in the key, not inside the frame (their
     # in-frame tags kept colliding with the rules and the fit, 2026-10-19).
-    rules = [AZAD_CONJECTURE] + ([jc_frac] if jc_frac else [])
-    for x in rules:
-        ax.axvline(x, color="#b5b5b2", lw=0.8, ls=":")
     drawn = [p for p in points if p["tau"] is not None or p["stable"]]
     # 10-21: where the second order should and does hold -- the static and D21
     # continuum rates sit within 8 % of Azad's values, and from D30 (18 %) the gap
@@ -364,6 +383,10 @@ def draw(points, pal, jc_frac) -> None:
     # open markers do not touch
     style.legend_top(ax, entries, ncol=2, borderpad=0.6, handlelength=1.8, columnspacing=0.8,
                      labelspacing=0.65)
+    # the rules go on last, once the key has fixed the frame, so they can break
+    # around the tags laid on them
+    for x in [AZAD_CONJECTURE] + ([jc_frac] if jc_frac else []):
+        rule(ax, x)
     for ext in ("png", "pdf"):
         fig.savefig(FIGURES / f"instability_curve.{ext}", dpi=300)
     bad = style.label_audit(fig)
