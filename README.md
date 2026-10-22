@@ -15,7 +15,7 @@
 >
 > | Paper | Data in this repo |
 > |---|---|
-> | *Rotation slows the instability of Ellis–Bronnikov wormholes* — arXiv number to follow | [`results/spinningwormhole/`](results/spinningwormhole/) |
+> | *Rotation slows the instability of Ellis–Bronnikov wormholes* — [arXiv:2610.29941](https://arxiv.org/abs/2610.29941) | [`results/spinningwormhole/`](results/spinningwormhole/) |
 > | *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves* — [arXiv:2610.13206](https://arxiv.org/abs/2610.13206) | [`results/merger/`](results/merger/) |
 > | *The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive–Negative Mass Binary* — [arXiv:2608.24577](https://arxiv.org/abs/2608.24577) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/) |
 > | *Wormhole Dynamics: Nonlinear Collapse and Gravitational-Wave Emission* — [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) |

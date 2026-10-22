@@ -246,9 +246,10 @@ Learned on the spinning paper's submission (2026-10-21):
   fontspec branch of the articles' engine guard; ignore it.
 - arXiv limits the account to 2 submissions per calendar month (October 2026's quota is used up by the merger
   replacement and the spinning paper).
-- After the arXiv number arrives, update the README's "arXiv number to follow", `CITATION.cff` and the GitHub
-  release notes. Spinning paper: submitted 2026-10-21 (submit/8264396), release `v1.0-spinning-wormhole`
-  (develop c80875eb), version DOI 10.5281/zenodo.23538851.
+- When the arXiv number arrives, put it into the root README's papers table, `CITATION.cff`, the paper's
+  `results/<pack>/README.md` and the GitHub release notes. Spinning paper: arXiv:2610.29941 (submitted
+  2026-10-21, announced 2026-10-22), release `v1.0-spinning-wormhole` (develop c80875eb), version DOI
+  10.5281/zenodo.23538851.
 
 ## Code
 

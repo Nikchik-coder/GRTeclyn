@@ -61,7 +61,7 @@ references:
     year: 2026
     month: 10
     journal: "arXiv e-prints"
-    notes: "arXiv number to follow; code and data at tag v1.0-spinning-wormhole"
+    notes: "arXiv:2610.29941 [gr-qc]; code and data at tag v1.0-spinning-wormhole"
   - type: article
     title: >-
       The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating

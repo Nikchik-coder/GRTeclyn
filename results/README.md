@@ -78,11 +78,13 @@ stills, the offline horizon scan, and generated summary tables.
 
 ### `spinningwormhole/`
 
-Stationary rotating Ellis–Bronnikov wormholes from slow rotation to 99 % of the speed of
+The data of *Rotation slows the instability of Ellis–Bronnikov wormholes*
+([arXiv:2610.29941](https://arxiv.org/abs/2610.29941)). Stationary rotating Ellis–Bronnikov
+wormholes from slow rotation to 99 % of the speed of
 light, and their nonlinear 3+1 evolution: rotation slows the static wormhole's radial
 instability, near 30 % of the extremal angular momentum the unperturbed throat expands
 instead of collapsing, and from 58 % upward no growth is found over the evolved times.
-Holds the spectral solver's accepted solutions, the headers of the background tables, and
+Holds the spectral solver's solutions, the headers of the background tables, and
 the parameter files and diagnostic streams of the 61 runs the paper uses, with a registry
 saying where the paper uses each. Every figure rebuilds from the pack without a GPU; start
 with [`spinningwormhole/README.md`](spinningwormhole/README.md).
