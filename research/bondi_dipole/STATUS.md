@@ -84,8 +84,15 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live**: nothing (10-22, 21:50 MSK). The direct-painted lone star at N 192 finished clean (t 10, 13 min);
-both cards idle.
+**Live** (first GPU node, launched 10-22 21:52 MSK, the data-chain split, all lone stars to t 10 on the
+signed-shells binary):
+- `diag_sgn_lone_p_L64_N128_lev0_t10` — card 0, the solved N 128 data rerun for its Hmean columns (~5 min);
+- `diag_direct_lone_p_L64_N256_lev0_t10` — card 0 after it, direct-painted data (paint running on CPU; ~45 min GPU,
+  done ≈ 22:50 MSK);
+- `diag_sgn_lone_p_L64_N192_lev0_t10` — card 1, fresh GRTresna solve then the run (~30 min solve + 13 min,
+  done ≈ 22:40 MSK).
+The direct-painted N 192 finished clean earlier (t 10, 13 min). The four stopped runs' scratch pruned (~15 GB,
+logged in `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-22.md`).
 
 **The third defect, localized 10-22 evening** (diag runs on the shell-norm binaries 65cc1a98 / d2511dca, which
 write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, every 0.1):
