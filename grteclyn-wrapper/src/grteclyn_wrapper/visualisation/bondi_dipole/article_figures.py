@@ -770,7 +770,7 @@ def fig_forcelaw():
 
 # ---------------------------------------------------------- fig: convergence
 def fig_convergence():
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(DOUBLE, 2.6))
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(DOUBLE, 2.0))
 
     styles = {128: (0, (1, 1.5)), 192: (0, (4, 1.6)), 256: "-"}
     for n in (128, 192, 256):
@@ -858,7 +858,7 @@ def fig_convergence():
     bx.text(0.237, 3.9e-6, "falls", fontsize=6.2, color="0.3", ha="center",
             va="top")
     bx.legend(loc="center left", borderaxespad=0.4, fontsize=6.8,
-              handlelength=1.9, labelspacing=0.4, borderpad=0.2)
+              handlelength=1.9, labelspacing=0.4, borderpad=0.4)
     bx.set_xscale("log")
     bx.set_yscale("log")
     bx.set_ylim(2.4e-6, 1.9e-3)  # room for the two trend arrows
@@ -901,7 +901,7 @@ def fig_convergence():
 
 # ------------------------------------------------------------ fig: same sign
 def fig_samesign():
-    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 3.62))
+    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 2.9))
 
     # (a) the two same-sign pairs merge on the same clock
     for cell, ls, lab, tm, mfc in (
@@ -939,7 +939,7 @@ def fig_samesign():
     bx.text(198, 5.5e-3, r"PP10, MM10 centroids, all $N$",
             fontsize=6.8, ha="right", color="0.3")
     bx.axvline(33.6, color="0.7", lw=0.5, ls=(0, (2, 2)))
-    bx.text(36.5, 6.5, "merger", fontsize=6.2, color="0.5", ha="left",
+    bx.text(31.0, 12, "merger", fontsize=6.2, color="0.5", ha="right",
             va="top", rotation=90)
     bx.set_yscale("log")
     bx.set_xlim(0, 205)
@@ -1145,7 +1145,9 @@ def fig_wavezone():
 
 # ------------------------------------------------------------ fig: constraints
 def fig_constraints():
-    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 3.4), sharex=True)
+    # 2026-10-22: a full-width strip, panels side by side (a single-column
+    # float drifted into the references)
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(DOUBLE, 1.8))
 
     styles = {128: (0, (1, 1.5)), 192: (0, (4, 1.6)), 256: "-"}
     for n in (128, 192, 256):
@@ -1168,6 +1170,8 @@ def fig_constraints():
               labelspacing=0.3, borderpad=0.2)
     ax.set_yscale("log")
     ax.set_ylim(1.5e-6, 2.5e-3)
+    ax.set_xlim(0, 205)
+    ax.set_xlabel("$t$")
     ax.set_ylabel(r"$L_2(\mathcal{H})$")
     ax.set_title("(a)", loc="left")
 
@@ -1178,7 +1182,7 @@ def fig_constraints():
     bx.set_ylabel(r"$L_2(\mathcal{M})$")
     bx.set_title("(b)", loc="left")
 
-    fig.subplots_adjust(hspace=0.16)
+    fig.subplots_adjust(wspace=0.30)
     fig.savefig(os.path.join(OUT, "fig_constraints.pdf"))
     plt.close(fig)
 

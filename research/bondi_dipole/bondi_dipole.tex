@@ -27,6 +27,10 @@
 \usepackage[protrusion=true,expansion=false]{microtype}
 
 \graphicspath{{figures/}}
+% Caption for a full-width figure set in place, outside the float queue (Appendix A).
+\makeatletter
+\newcommand{\inplacecaption}[1]{\refstepcounter{figure}\@makecaption{\fnum@figure}{#1}}
+\makeatother
 
 \hypersetup{
     colorlinks=true,
@@ -427,12 +431,15 @@ and \texttt{GRTeclyn}.
 
 Every constraint solve of a mixed pair converges monotonically and stops below its tolerance, which scales with the grid spacing: the relative residual of the Hamiltonian constraint is $8.6\times10^{-6}$ at $N=128$ after 13 nonlinear iterations and $8.7\times10^{-7}$ at $N=256$ after 16. Figure~\ref{fig:constraints} shows the $L_2$ norms of the Hamiltonian and momentum constraints over the evolution domain, in units $G=c=m=1$; the domain is mostly vacuum, so norms relative to the size of the matter terms would be dominated by small denominators. The large values at $t=0$, which grow with resolution, come from the cells next to the outer boundary of the evolution domain, which is cut from the larger domain of the elliptic solve: the norm that leaves out the four cells next to the boundary is a hundred times smaller at $t=0$ and decreases with resolution. This boundary transient decays by an order of magnitude within $t\approx3$, before the fit window of Eq.~\eqref{eq:fit} opens. The norms then stay bounded for the rest of the run at every resolution, as they do for PP10 through its merger.
 
-\begin{figure}[!tb]
+\raggedbottom
+\onecolumngrid
+\vspace{\textfloatsep}
+\noindent\begin{minipage}[b]{\textwidth}
 \centering
 \includegraphics{fig_constraints.pdf}
-\caption{$L_2$ norms over the evolution domain of (a)~the Hamiltonian and (b)~the momentum constraint for PM10 at $N=128$, 192 and 256 (line styles as in Fig.~\ref{fig:convergence}) and for PP10 at $N=256$ (grey). After a transient from the outer boundary that decays within $t\approx3$, the norms stay bounded for the whole run.}
-\label{fig:constraints}
-\end{figure}
+\inplacecaption{$L_2$ norms over the evolution domain of (a)~the Hamiltonian and (b)~the momentum constraint for PM10 at $N=128$, 192 and 256 (line styles as in Fig.~\ref{fig:convergence}) and for PP10 at $N=256$ (grey). After a transient from the outer boundary that decays within $t\approx3$, the norms stay bounded for the whole run.}\label{fig:constraints}
+\end{minipage}\par
+\twocolumngrid
 
 \begin{thebibliography}{99}
 
