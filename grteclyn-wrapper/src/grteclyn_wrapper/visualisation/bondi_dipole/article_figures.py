@@ -1019,7 +1019,7 @@ def fig_massscale():
     i = int(np.searchsorted(ys, 0.0))
     x0 = xs[i - 1] + (xs[i] - xs[i - 1]) * (-ys[i - 1]) / (ys[i] - ys[i - 1])
     bx.axvline(1.0, color="0.8", lw=0.5, ls=(0, (2, 2)), zorder=0)
-    bx.annotate(f"zero at ${x0:.3f}$,\npredicted $1$",
+    bx.annotate(f"zero at ${x0:.2f}$,\npredicted $1$",
                 xy=(1.005, 0.02), xytext=(1.425, -0.72), fontsize=6.8,
                 color="0.2", ha="right", va="center", ma="left",
                 arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",

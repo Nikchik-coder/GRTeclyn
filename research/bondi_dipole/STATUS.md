@@ -60,8 +60,11 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
       folded into Sec. IV A. Fixed on the way: the L = 128 run has Δx 0.50, not 0.25.
 - [x] Data availability statement (concept DOI for now).
 - [ ] Notation table: about 20 symbols, so WRITING_STANDARDS §2 asks for one. Decide whether it is worth the space.
-- [ ] The WRITING_STANDARDS checklist end to end and the outside-reader test (a fresh agent marks every word it had
-      to guess).
+- [x] Outside-reader test (2026-10-22): a fresh agent reviewed the paper against WRITING_STANDARDS as a PRD referee;
+      its ~60 findings are applied (signed mass dipole used consistently, CCZ4 / CTTK / AMR / shift defined at first
+      use, a parameter table, E / R / S labels explained, one word per position diagnostic, long sentences split,
+      precision matched to the error bars). Kept on purpose: British spelling (EPJC takes either, consistently) and
+      the question that opens each results subsection (§6).
 - [ ] After 2b: the convergence paragraph of Sec. VII A, App. A and Fig. 6(b) / Fig. 10 from the new runs (TODO
       comments in the tex; strip all comments before the arXiv upload).
 
