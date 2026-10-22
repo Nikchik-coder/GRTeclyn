@@ -209,12 +209,12 @@ def main(argv: list[str] | None = None) -> int:
     ek = _envelope(tk, kk)
     axB.semilogy(tk, ek, color=style.MUTED, lw=1.2, zorder=3,
                  ls=(0, (7, 1.5, 1, 1.5, 1, 1.5)),  # distinct from head-on R = 14
-                 label="lone throat, collapsed")
+                 label="isolated throat, collapsed")
     tl, kl = _flux(camp / SINGLE / "scalar_modes.dat", 18)
     el = _envelope(tl, kl)
     axB.semilogy(tl, el, color=style.MUTED, lw=0.9,
                  ls=(0, (1.2, 1.6)), alpha=0.75, zorder=2,
-                 label="lone throat, inflated")
+                 label="isolated throat, inflated")
     g = (tl >= 50.0) & (tl <= 95.0)
     c = np.polyfit(tl[g], np.log(el[g]), 1)
     print(f"[censorship] lone throat: collapsed arm peak {ek.max():.2e} -> "
