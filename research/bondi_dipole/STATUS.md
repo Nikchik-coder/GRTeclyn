@@ -65,6 +65,9 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
       use, a parameter table, E / R / S labels explained, one word per position diagnostic, long sentences split,
       precision matched to the error bars). Kept on purpose: British spelling (EPJC takes either, consistently) and
       the question that opens each results subsection (§6).
+- [x] Redundancy pass (2026-10-22): a fresh agent listed what the paper says twice; 24 of its 25 cuts applied (the
+      introduction keeps its scope sentence, §5). Abstract 234 → 182 words, text 6608 → 6191 words; still 13 pages,
+      which the full-width floats set.
 - [ ] After 2b: the convergence paragraph of Sec. VII A, App. A and Fig. 6(b) / Fig. 10 from the new runs (TODO
       comments in the tex; strip all comments before the arXiv upload).
 
