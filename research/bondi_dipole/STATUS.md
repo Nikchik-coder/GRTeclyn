@@ -84,16 +84,35 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live** (first GPU node, 10-22), the t 20 check of the lapse fix, launched 19:10 MSK on the go given 10-22 ("go on
-with this fix"). No checkpoints, frames off. Params differ from the 2a cells' only in paths and the initial data:
-- `conv2c_pair_d10_L64_N256_lev0_t20`, card 1 (57.5 GB), 15.8 units/h; at t 9.1 19:47 MSK, ETA t 20 ~20:29 MSK.
+**Live** (first GPU node, 10-22, launched 20:25 MSK on "continue debugging"): five t 10 diagnostic runs on the
+shell-norm binary (65cc1a98, `constraint_shells.dat` every 0.1), no checkpoints, frames off.
+`diag_facefix_pair_d10_L64_N{128,192,256}_lev0_t10` run the face-repaired data (N 256 card 0; 128 + 192 card 1);
+`diag_shells_pair_d10_L64_N{128,192}_lev0_t10` the unrepaired `lapsefix` data as the control. ETA t 10 ~18:10 MSK
+(N 256), the others sooner.
+
+**The face-layer step** (found 10-22, the second defect): with a target origin, the Chombo converter's nearest-cell
+fallback (`grtresna/io/chombo.py`, `_target_span_slice`) painted each face's outermost cell layer from a solve cell
+beyond the evolution box, so chi and the lapse step there by up to 3 × 10⁻⁴ (five of six faces; the matter is
+repainted analytically and clean). At t 0 the violation sits in shells r ≥ 29 at 3–8 × 10⁻⁷ and GROWS with N; the
+evolution then carries it inward, which is what capped the interior Hamiltonian order at ~1.2–1.5 from t ≈ 4 on
+(the paper's runs and 2a/2b/2c all carry it). Fixed in the converter (a source cell whose centre lies outside the
+target paints nothing, e3992acf) and, for the already-solved pairs, repaired in copies
+`facefix_pair_d10_L64_N*_lev0` by `repair_face_layer.py`: the outermost layer of chi and the lapse set by cubic
+extrapolation along each face normal (the solve's HDF5 is deleted after conversion, so the exact values are gone);
+`face_repair.json` records the change, everything else byte-identical. After the repair the r ≥ 29 shells sit at
+~10⁻⁸ and fall with N.
+
+The t 20 check of the lapse fix (conv2c, launched 19:10 MSK) found this: its interior momentum order is 2.4–3.6
+everywhere, but the Hamiltonian falls to ~1.2 (N 192→256) from t ≈ 4, the same as the stepped-lapse runs.
+- `conv2c_pair_d10_L64_N256_lev0_t20`: died at t 16.9 with the session restart (20:17 MSK, process killed with the
+  shell; no NaN). Data to t 16.9 intact; the facefix N 256 run supersedes it.
 - Done: `conv2c_pair_d10_L64_N128_lev0_t20` (19:31 MSK) and `conv2c_pair_d10_L64_N192_lev0_t20` (19:47 MSK), both
   t 20, no NaN, scratch purged. Card 0 idle.
 - Same N against the stepped lapse (2a), t ≤ 20: the separation agrees to 1.2 × 10⁻⁴ (N 128 and 192), ΔX is
   1.4 % larger at t 5 at both N (the lapse change itself, not resolution) and 0.01–0.02 % at t 20, and the
   acceleration fitted over 5 ≤ t ≤ 20 changes by −0.3 %. N 128→192 at t 5 / 10 / 15 / 20: Ham 2.4 / 1.7 / 1.6 /
   1.5 (stepped: the same to 0.1), Mom 3.1 / 2.8 / 2.6 / 2.4 (stepped 1.7 / 2.2 / 2.4 / 2.4). The step held down the
-  early orders only; what holds the later Hamiltonian order near 1.5 is still open.
+  early orders only; the later Hamiltonian cap traced to the face-layer step (above).
 - Each starts from `runs/bondi/staging/lapsefix_pair_d10_L64_N*_lev0`: the fixid data with only the lapse replaced
   (`grteclyn-wrapper/scripts/campaigns/bondi_dipole/patch_lapse_join.py`, record in `lapse_patch.json`).
 - Start checked: the first step's momentum violation (L2, r ≤ 24) is 5.1 / 1.5 / 0.63 × 10⁻⁸ at N 128 / 192 / 256,
