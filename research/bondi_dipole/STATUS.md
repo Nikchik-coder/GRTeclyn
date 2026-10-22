@@ -75,12 +75,13 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 **Live** (first GPU node, 10-22):
 - `conv2b_pair_d10_L64_N192_lev0`, card 0 (25 GB): the old N 192 cell on the fixed data, to t 200, no checkpoints,
-  started 17:37 MSK at 49 units/h; ETA t 200 ~21:45 MSK.
+  started 17:37 MSK at 49 units/h, 25 units/h while N 128 shares the card; ETA t 200 ~23:10 MSK.
 - `conv2b_pair_d10_L64_N256_lev0`, card 1 (57.5 GB): the old N 256 cell on the fixed data, to t 200, no
   checkpoints, frames off, started 18:12 MSK at 15.5 units/h; t 20 (the gate) ~19:30 MSK, ETA t 200 ~13 h,
   ~07:05 MSK 10-23.
 - `conv2b_pair_d10_L64_N128_lev0`, card 0 beside N 192 (~6 GB): the old N 128 cell on the fixed data, to t 200, no
-  checkpoints, frames off, started 18:31 MSK; ETA ~1–2 h while it shares the card.
+  checkpoints, frames off, started 18:31 MSK at 66 units/h (shared card); ETA t 200 ~3 h, ~21:35 MSK. Start
+  checked: its constraint norms match the t 20 test's row for row.
 - All three differ from their old cells' params only in paths and the gridinit (diffed at the start). Launched on the
   go given 10-22 ("once first solves complete push them to gpu runs"; N 128 on "so lets run 128").
 - Decided 10-22: the study is N 128 / 192 / 256 on the fixed data; no N 320 ("i see no reason for 320"). N 384 would
