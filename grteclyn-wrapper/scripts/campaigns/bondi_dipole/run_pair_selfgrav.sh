@@ -46,6 +46,10 @@
 #     BONDI_TREADMILL_BALL   -- core-tracking ball radius (default 8)
 #     BONDI_TREADMILL_FILL   -- 0=asymptotic 1/r fill (default), 1=plain copy
 #   BONDI_DRYRUN=1: resolve and print the parameters, then exit -- no solve, no GPU.
+#   BONDI_BINARY: the evolution binary (default: the example's own build,
+#     Examples/RadialRecipe/main3d.gnu.MPI.CUDA.ex, as every archived cell ran).
+#     Point it at a frozen, commit-stamped build in runs/bondi/bin/ to record
+#     exactly which code a cell ran.
 #   BONDI_GRTRESNA_RANKS: MPI ranks for the elliptic solve (default 8).  The
 #     evolution is single-GPU regardless.
 #   BONDI_S0_OMEGA: base star frequency for BOTH lumps (default 0.55).  0.55
@@ -208,6 +212,11 @@ fi
 checkpoint_args=()
 if [[ -n "${CHECKPOINT_INTERVAL}" ]]; then
   checkpoint_args=(--extra-override checkpoint_interval="${CHECKPOINT_INTERVAL}")
+fi
+
+binary_args=()
+if [[ -n "${BONDI_BINARY:-}" ]]; then
+  binary_args=(--executable "${BONDI_BINARY}")
 fi
 
 S1_OMEGA="${BONDI_S1_OMEGA:-}"
@@ -424,6 +433,7 @@ PYTHONPATH="${WRAPPER_DIR}/src" "${WRAPPER_DIR}/.venv/bin/python" \
   ${treadmill_args[@]+"${treadmill_args[@]}"} \
   ${gridinit_args[@]+"${gridinit_args[@]}"} \
   ${checkpoint_args[@]+"${checkpoint_args[@]}"} \
+  ${binary_args[@]+"${binary_args[@]}"} \
   ${dryrun_args[@]+"${dryrun_args[@]}"}
 
 echo "[bondi] pair cell complete: ${RUNS_DIR}/${out_name}"

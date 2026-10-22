@@ -426,6 +426,13 @@ def main() -> int:
         "the star's central amplitude comes from grtresna_bs_phi_c. The transport pump stays "
         "active (well_depth unchanged). Canonical (positive-energy) matter only.",
     )
+    parser.add_argument(
+        "--executable",
+        type=Path,
+        default=None,
+        help="Evolution binary (default: the RadialRecipe example's own build, "
+        "main3d.gnu.MPI.CUDA.ex). Relative paths resolve from the repo root.",
+    )
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
@@ -597,7 +604,7 @@ def main() -> int:
     executable = None
     if not args.dry_run and not args.solve_only:
         executable = resolve_executable(
-            None,
+            args.executable,
             example=example,
             mpi_ranks=args.evolution_mpi_ranks,
             comp="gnu",
