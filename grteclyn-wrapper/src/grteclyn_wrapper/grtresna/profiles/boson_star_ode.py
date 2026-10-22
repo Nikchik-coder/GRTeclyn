@@ -333,10 +333,23 @@ def _asymptotic_constant(f_m: float, df_m: float, r_m: float) -> float:
     """Extract the r->inf constant of a field behaving as ``f = A + B/r``.
 
     From ``f(r) = A + B/r`` we have ``f' = -B/r^2``, so ``B = -r^2 f'`` and
-    ``A = f + r f'``.  Used to read ``psi_inf`` and ``alpha_inf`` at a finite
-    match radius where the metric is already near-Schwarzschild.
+    ``A = f + r f'``.  Used to read ``psi_inf`` at a finite match radius where
+    the metric is already near-Schwarzschild.
     """
     return f_m + r_m * df_m
+
+
+def _lapse_join(alpha_m: float, dalpha_m: float, r_m: float) -> tuple[float, float]:
+    """``alpha_inf`` and ``x = M_alpha / (2 r_m)`` that join the lapse C^1.
+
+    The exterior lapse ``(1 - M_alpha/2r) / (1 + M_alpha/2r)`` meets the
+    interior ``alpha / alpha_inf`` at ``r_m`` with the same value and slope
+    when ``x / (1 - x^2) = q`` with ``q = r_m alpha' / (2 alpha)`` (the radial
+    rescaling cancels in ``q``), and then ``alpha_inf = alpha (1 + x)/(1 - x)``.
+    """
+    q = r_m * dalpha_m / (2.0 * alpha_m)
+    x = q if abs(q) < 1.0e-12 else (math.sqrt(1.0 + 4.0 * q * q) - 1.0) / (2.0 * q)
+    return alpha_m * (1.0 + x) / (1.0 - x), x
 
 
 def _build_profile(
@@ -392,9 +405,14 @@ def _build_profile(
 
     r_m = float(r_core[i_match])
 
-    # --- Read the asymptotic constants at the match radius (psi, alpha ~ A+B/r).
+    # --- Read the asymptotic constants at the match radius.  psi ~ A + B/r;
+    # the lapse is joined C^1 to its exterior (_lapse_join).  Reading alpha_inf
+    # as A + B/r and the exterior lapse off psi's mass left a step in the
+    # tabulated lapse at the match (4e-5 for the w075 pair, 2026-10-22), which
+    # the evolution's first step turns into a momentum-constraint violation
+    # that grows with resolution.
     psi_inf = _asymptotic_constant(float(psi[i_match]), float(dpsi[i_match]), r_m)
-    alpha_inf = _asymptotic_constant(float(alpha[i_match]), float(dalpha[i_match]), r_m)
+    alpha_inf, x_alpha = _lapse_join(float(alpha[i_match]), float(dalpha[i_match]), r_m)
     psi_inf = max(psi_inf, 1.0e-12)
     alpha_inf = max(alpha_inf, 1.0e-12)
 
@@ -422,14 +440,17 @@ def _build_profile(
     kappa = math.sqrt(max(mass * mass - omega_phys * omega_phys, 1.0e-30))
 
     # Exterior: analytic Yukawa tail phi ~ e^{-kappa r}/r matched at r_m, plus the
-    # isotropic Schwarzschild metric psi = 1 + M/2r, alpha = (1-M/2r)/(1+M/2r).
+    # isotropic Schwarzschild metric psi = 1 + M/2r, alpha = (1-M_a/2r)/(1+M_a/2r).
+    # M_a is the lapse's own mass at the match (M_a = 2 x_alpha r_m), not psi's:
+    # matter still outside r_m makes the two differ by ~2 %.
     tail_end = max(r_max, r_m_phys + 20.0 / max(kappa, 1.0e-6))
     n_tail = max(200, int((tail_end - r_m_phys) * 20))
     r_tail = np.linspace(r_m_phys, tail_end, n_tail)[1:]
     phi_tail = phi_m * (r_m_phys / r_tail) * np.exp(-kappa * (r_tail - r_m_phys))
     half_m_over_r = 0.5 * adm_mass / r_tail
     psi_tail = 1.0 + half_m_over_r
-    alpha_tail = (1.0 - half_m_over_r) / (1.0 + half_m_over_r)
+    half_ma_over_r = x_alpha * r_m_phys / r_tail
+    alpha_tail = (1.0 - half_ma_over_r) / (1.0 + half_ma_over_r)
 
     r_full = np.concatenate([r_core_keep, r_tail])
     phi_full = np.concatenate([phi_core_keep, phi_tail])

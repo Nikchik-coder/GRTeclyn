@@ -73,21 +73,36 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live** (first GPU node, 10-22):
-- `conv2b_pair_d10_L64_N192_lev0`, card 0 (25 GB): the old N 192 cell on the fixed data, to t 200, no checkpoints,
-  started 17:37 MSK at 49 units/h, 25 units/h while N 128 shares the card; ETA t 200 ~23:10 MSK.
-- `conv2b_pair_d10_L64_N256_lev0`, card 1 (57.5 GB): the old N 256 cell on the fixed data, to t 200, no
-  checkpoints, frames off, started 18:12 MSK at 15.5 units/h; t 20 (the gate) ~19:30 MSK, ETA t 200 ~13 h,
-  ~07:05 MSK 10-23.
-- `conv2b_pair_d10_L64_N128_lev0`, card 0 beside N 192 (~6 GB): the old N 128 cell on the fixed data, to t 200, no
-  checkpoints, frames off, started 18:31 MSK at 66 units/h (shared card); ETA t 200 ~3 h, ~21:35 MSK. Start
-  checked: its constraint norms match the t 20 test's row for row.
-- All three differ from their old cells' params only in paths and the gridinit (diffed at the start). Launched on the
-  go given 10-22 ("once first solves complete push them to gpu runs"; N 128 on "so lets run 128").
+**Live** (first GPU node, 10-22), the t 20 check of the lapse fix, launched 19:10 MSK on the go given 10-22 ("go on
+with this fix"). No checkpoints, frames off. Params differ from the 2a cells' only in paths and the initial data:
+- `conv2c_pair_d10_L64_N256_lev0_t20`, card 1 (57.5 GB), ~16 units/h; ETA t 20 ~1.3 h, ~20:25 MSK.
+- `conv2c_pair_d10_L64_N192_lev0_t20`, card 0 (25 GB); ETA ~0.6 h, ~19:45 MSK.
+- `conv2c_pair_d10_L64_N128_lev0_t20`, card 0 beside N 192 (~6 GB); ETA ~0.3 h, ~19:30 MSK.
+- Each starts from `runs/bondi/staging/lapsefix_pair_d10_L64_N*_lev0`: the fixid data with only the lapse replaced
+  (`grteclyn-wrapper/scripts/campaigns/bondi_dipole/patch_lapse_join.py`, record in `lapse_patch.json`).
+- Start checked: the first step's momentum violation (L2, r ≤ 24) is 5.1 / 1.5 / 0.63 × 10⁻⁸ at N 128 / 192 / 256,
+  order 3.0 / 3.05; with the stepped lapse it was 63 / 121 / 180 × 10⁻⁸, order −1.6 / −1.4.
+
+**The lapse step** (found 10-22): the star tables (`profiles/boson_star_ode.py`, `_build_profile`) join the
+integrated star to an analytic exterior at r ≈ 5.2, where the field is 5 % of its centre value. The interior lapse
+was scaled by α_∞ read as A + B/r, the exterior lapse took the conformal factor's mass, and the two did not meet: the
+lapse stepped by +4.3 × 10⁻⁵ (canonical star) and −5.1 × 10⁻⁵ (phantom). The field is smooth there and the lapse
+does not enter the t = 0 constraints, so every t = 0 check passed. The evolution's first step turns the step into a
+momentum violation growing like N^1.5; the step alone predicts 0.66 / 1.26 / 1.87 × 10⁻⁶ against the measured
+0.63 / 1.21 / 1.80 × 10⁻⁶. The 2a cells and the paper's runs have the same tables (byte-identical), so the step is
+what capped their order. Fixed at the source: the lapse is joined in value and slope (`_lapse_join`; the exterior
+lapse takes the lapse's own mass, 1.7 % above the conformal factor's; α_∞ moves by 4 × 10⁻⁶). The patch writes the
+same join into the existing tables and adds the change to the gridinit's lapse (≤ 5.5 × 10⁻⁵); all other fields stay
+byte-identical, and the star frequency and interior lapse scale together, so Im Π = −ωφ/α still holds.
+
+- Stopped and wiped 18:59 MSK on the word ("all current runs should be stoped and wiped"): the three 2b t 200 runs
+  (N 128 at t 29.9, N 192 at t 55.8, N 256 at t 12.4), which started from the stepped lapse. Run dirs and 9 GB of
+  scratch deleted, logged in `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-22.md`. Up to then their
+  orders matched 2a's to ±0.1 (the 2a fix removed 6–15 % of the t = 0 violation, not the cap).
 - Decided 10-22: the study is N 128 / 192 / 256 on the fixed data; no N 320 ("i see no reason for 320"). N 384 would
   not fit this node anyway (~195 GB of GPU memory, ~750 GB for its solve). Frames stay off on these runs: the star
   tracks, separation and acceleration come from `small_data/sector_dynamics.dat` and `sector_barycenters.dat`.
-- Paper check 10-22 (t ≤ 38): the new N 192 reproduces the paper's N 192 run, ΔX to 0.27 %, d to 4 digits, the
+- Paper check 10-22 (t ≤ 38): the 2b N 192 reproduced the paper's N 192 run, ΔX to 0.27 %, d to 4 digits, the
   acceleration fitted over 5 ≤ t ≤ 38 to 0.5 %. In the paper's own runs the barycentre separation dips to 9.71
   (−2.9 %) at t ≈ 51 before returning to 9.91; the text's "constant to 1 %" holds only for the net change (Table
   results: −0.9 %) and the proper core distance (+0.24 %). Reword in the revision.
@@ -206,6 +221,8 @@ order, so a fixed solve converges at 2 (the spinning paper's bar), not at the ev
       94 GB). Its 640³ solve needs about 430 GB and 2.5 h on 12 ranks, scaled from N 256, close to the container's
       524 GB: start it only with that much free, under a per-rank cap (CLAUDE.md, the OOM rule), never beside another
       solve.
+      10-22: N 320 dropped, the study is N 128 / 192 / 256. The t 200 runs were stopped for the lapse step (above);
+      they restart from the `lapsefix_*` data once the t 20 check gives an order near 2 for N 192→256.
 - [ ] 4. Compare 2b's N 256 with `campaign/runaway_pair_d10_L64_N256_lev0`, the same run on the old data. If the
       drift ΔX agrees, the paper's other runs stand, and the paper says the convergence runs use the corrected
       data. If it does not, those runs need the corrected data too.
