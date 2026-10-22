@@ -78,7 +78,7 @@ MSK; 207 / 49 / 16 units/h), all to t 20 with no NaN and their scratch cleared. 
 t ≤ 20 to 1 % (L2 norms) and 1.5e-6 (Linf_Ham_amr). Run dirs `runs/bondi/staging/conv2a_*`, each with its `launch.sh`
 (diffed against the old cell: only the stop time, frames off, the binary, solve ranks and timeout change) and its t = 0
 split in `t0_constraints.log`. The solve stops at 0.002 % × (128/N)⁴ relative error (16 Newton iterations at N 256).
-No checkpoints. Scratch on the node: 30 GB of two spinning `spin_hold_*_t150` leftovers, not this campaign's.
+No checkpoints. Scratch on the node: empty (the 29 GB of two dead spinning runs' plotfiles wiped 10-22 on the word).
 
 - [x] An interior norm in `Examples/RadialRecipe` beside the boundary-masked one: drop the outer boundary layer and
       the sponge (r > 24), as `SpinningWormhole`'s `constraint_norms_levels` does. Rebuild and record the binary.
