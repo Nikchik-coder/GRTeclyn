@@ -40,15 +40,18 @@
 
 \begin{document}
 
-\title{\texorpdfstring{\MakeTextUppercase{The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive--Negative Mass Binary}}{The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive-Negative Mass Binary}}
+\title{The Bondi dipole in full numerical relativity: a self-accelerating positive--negative mass binary}
 
-\author{\MakeTextUppercase{Nikita M. Shirokov}}
+\author{Nikita M. Shirokov}
 \email{shirokov.nm@phystech.edu}
-\affiliation{\textit{Independent Researcher, Moscow, Russia}}
+\affiliation{\textit{Moscow Institute of Physics and Technology, Moscow, Russia}}
+\author{Ilya Nachevsky}
+\email{ommnammashivaya@gmail.com}
+\affiliation{\textit{Higher School of Economics, Moscow, Russia}}
 \date{\today}
 
 \begin{abstract}
-Bondi showed in 1957 that bodies of opposite \emph{active} gravitational mass self-accelerate: the negative chases the positive it repels, and the pair runs off together. We evolve this ``Bondi dipole'' in $3{+}1$ numerical relativity: two complex scalars share identical Klein--Gordon dynamics; only the phantom enters Einstein's equations with a minus sign---inertial and passive masses positive, active mass negative. Across a matrix of thirty-four evolutions---runaway pairs, controls, and parameter scans---a mass-matched pair released at rest accelerates as a unit. The midpoint moves $3.00\pm0.01$ by $t=200$ with the separation held to $1\%$, and reaches a speed of $0.056c$ by $t=400$ with the acceleration steady to $2\%$; the total signed momentum holds at zero to $\lesssim1\%$. The force is gravity on both of its axes: $a\propto d^{-2.03\pm0.01}$ over $d=8$--$20$, $a\propto M^{0.97\pm0.06}$ over a factor $2.5$ in mass, and $a\,d^2/\bar M=1$ within $2.4\%$ on the equal-mass ladder. Swapping the sectors inverts the acceleration to two parts in $10^5$; gauge, solver-depth and mesh variations move the drift by $\lesssim0.01\%$ and box doubling by $4\%$; same-sign control pairs hold their centroids to $\lesssim8\times10^{-4}$ even while merging. The runaway carries no detectable gravitational radiation: the signed dipole cannot radiate, the quadrupole's $\ddot Q$ is constant, and the measured $\ell=2$ amplitude falls as $r^{-4.8}$---near zone, not flux. The phantom star is, to our knowledge, the first asymptotically flat body of negative ADM mass evolved in numerical relativity; alone it survives to $t=1000$, slowly relaxing outward.
+Bondi showed in 1957 that a body of negative active gravitational mass, paired with a positive one, should accelerate together with it indefinitely while the total momentum stays zero. We test this prediction in full $3{+}1$ numerical relativity. The matter consists of two complex scalar fields with identical self-interactions. One of them enters the Einstein equations with the opposite sign, so its inertial and passive masses are positive and its active mass, and with it its Arnowitt--Deser--Misner (ADM) mass, is negative. We construct constraint-satisfying initial data for solitonic boson stars of both signs and run 34 simulations, including same-sign pairs and isolated stars as controls. A pair of stars with equal ADM mass magnitude, released from rest, accelerates as a single object at constant separation, while its total signed matter momentum stays zero to within 1\%. The acceleration scales with separation and mass as Bondi's Newtonian law predicts, reverses when the two stars are exchanged, and is absent in every control. We detect no gravitational radiation from the accelerating pair, consistent with the absence of a mass dipole. To our knowledge, the negative-mass star is the first asymptotically flat body of negative ADM mass evolved in numerical relativity. Our simulations cover head-on pairs released from rest and followed up to a few percent of the speed of light.
 \end{abstract}
 
 \maketitle
@@ -56,135 +59,168 @@ Bondi showed in 1957 that bodies of opposite \emph{active} gravitational mass se
 \section{Introduction}
 \label{sec:intro}
 
-Bondi~\cite{bondi1957} gave negative mass its modern treatment, distinguishing inertial, passive and active gravitational mass and noting the consequence of mixing signs: a negative-mass body is \emph{attracted} by a positive one, the positive body is \emph{repelled} by the negative one, and the pair runs off together (Fig.~\ref{fig:schematic})---momentum conserved, because the negative body's contribution is negative. Bonnor and Swaminarayan~\cite{bonnor_swami1964} found exact solutions for uniformly accelerated opposite-mass pairs, later generalized in Ref.~\cite{bicak1983}; Forward~\cite{forward1990} showed ``in tedious detail'' that the self-accelerating pair violates neither momentum nor energy conservation, for equal and unequal mass magnitudes alike, so objections to negative mass must be sought elsewhere~\cite{hoffmann1966,martins1980}. Newtonian $N$-body work has since carried the same sign rules into cosmological structure formation~\cite{manfredi2018,manfredi2026}.
+Bondi~\cite{bondi1957} distinguished three kinds of mass in general relativity: the inertial mass, which resists acceleration; the passive gravitational mass, on which a gravitational field acts; and the active gravitational mass, which sources the field. He showed that a body whose active mass alone is negative is attracted by a positive mass, while the positive mass is pushed away from it. Released together, the two accelerate in the same direction without limit (Fig.~\ref{fig:schematic}), and momentum is conserved because the negative body's momentum counts with a negative sign. Bonnor and Swaminarayan~\cite{bonnor_swami1964} found exact solutions for uniformly accelerated pairs of this kind, later generalized in Ref.~\cite{bicak1983}. Forward~\cite{forward1990} showed that the self-accelerating pair conserves both momentum and energy, for equal and unequal mass magnitudes, so objections to negative mass must rest on other grounds~\cite{hoffmann1966,martins1980}. Newtonian $N$-body simulations have since applied the same sign rules to cosmological structure formation~\cite{manfredi2018,manfredi2026}.
 
 \begin{figure}[t]
 \centering
 \includegraphics{fig_schematic.pdf}
-\caption{Bondi's sign rules for two bodies released at rest, in the style of Forward's analysis~\cite{forward1990}. Every body has positive inertial and passive mass; only the \emph{active} (source) mass carries a sign---negative for the dashed bodies. (a)~Two positive-mass stars attract and fall together; (b)~two negative-mass stars repel; in both the forces oppose and the pair barycentre stays put. (c)~The mixed pair---the Bondi dipole: both forces point the \emph{same} way, so the pair accelerates while the system carries zero total momentum in the signed bookkeeping. Each row is a run family of Table~\ref{tab:matrix}; in our field-theoretic realization the same-sign rows additionally feel their shared field's own short-range attraction (Sec.~\ref{sec:nulls}), which the mixed row, by construction, cannot.}
+\caption{Bondi's sign rules for two bodies released from rest, after Forward~\cite{forward1990}. Every body has positive inertial and passive mass; the active mass of the dashed bodies is negative. (a)~Two positive masses attract and (b)~two negative masses repel; in both cases the forces are opposite and the barycentre stays at rest. (c)~For a positive and a negative mass both forces point the same way, so the pair accelerates while its total momentum stays zero.}
 \label{fig:schematic}
 \end{figure}
 
-Why put this in full numerical relativity? Because nothing in Einstein's equations forces mass to be positive---positivity is a theorem only once energy conditions are imposed~\cite{schoen_yau1979,witten1981}---and modern physics keeps producing sources that strain those conditions: Casimir energies, quantum fields in curved spacetime, phantom dark energy~\cite{caldwell2002}. Every traversable wormhole~\cite{morris_thorne1988} and warp spacetime~\cite{alcubierre1994} needs matter of exactly this kind---the ghost scalar holding a wormhole throat open violates the same energy condition, and gravitates with the same sign, as the phantom sector evolved here, though with inverted field dynamics (Sec.~\ref{sec:model})---and the standing objection to all of them is Bondi's runaway itself---matter that accelerates for free looks like a perpetual-motion machine~\cite{hoffmann1966,martins1980}. That objection has only ever been examined for point particles and prescribed metrics; the nonlinear evolutions that exist for energy-condition-violating matter---ghost-scalar wormholes in spherical symmetry~\cite{shinkai2002,gonzalez2009}, static phantom-field stars~\cite{dzhunushaliev2014}, and the $3{+}1$ collapse of an Alcubierre warp bubble~\cite{clough2024}---concern single objects. Whether the runaway survives full nonlinear gravity---finite bodies, backreaction, radiation---is a checkable question, and we are not aware of a previous $3{+}1$ evolution of a gravitationally bound positive--negative active-mass pair with dynamical, constraint-solved matter.
+Nothing in the Einstein equations requires mass to be positive. Positivity of the total mass is a theorem only for matter that satisfies energy conditions~\cite{schoen_yau1979,witten1981}, and several candidate sources violate them: Casimir energies, quantum fields in curved spacetime and phantom dark energy~\cite{caldwell2002}. Traversable wormholes~\cite{morris_thorne1988} and warp spacetimes~\cite{alcubierre1994} require such matter. The ghost scalar field that holds a wormhole throat open violates the same energy condition as the negative-mass matter evolved here, though with different field equations (Sec.~\ref{sec:model}). A standing objection to all such matter is Bondi's runaway itself, since a pair that accelerates without external force looks like a perpetual-motion machine~\cite{hoffmann1966,martins1980}. That objection has been examined for point particles and prescribed metrics. The existing nonlinear evolutions of matter that violates energy conditions concern single objects: ghost-scalar wormholes in spherical symmetry~\cite{shinkai2002,gonzalez2009}, static stars of phantom fields~\cite{dzhunushaliev2014}, and the collapse of an Alcubierre warp bubble in $3{+}1$ dimensions~\cite{clough2024}. Whether the runaway survives full nonlinear gravity, with finite bodies, backreaction and radiation, can be checked, and we are not aware of a previous $3{+}1$ evolution of a self-gravitating pair of positive and negative active mass with dynamical, constraint-solved matter.
 
-The question has acquired observational stakes: negative-mass binaries have been proposed as sources of anomalous gravitational-wave signatures---anti-chirps, dispersal, runaway motion---turning Bondi's paradox into an exclusion channel for real detectors~\cite{trivedi_loeb2026}, while Nojiri and Odintsov~\cite{nojiri2026} find that a bound positive--negative system \emph{can} form for a compact mass immersed in a cosmological fluid with negative cosmological constant. Our asymptotically flat, isolated pair is the complementary case, and it does not bind---it runs away.
+The question also has observational interest. Negative-mass binaries have been proposed as sources of anomalous gravitational-wave signals, such as anti-chirps, dispersal and runaway motion, which detectors could use to exclude them~\cite{trivedi_loeb2026}. Nojiri and Odintsov~\cite{nojiri2026} find that a bound positive--negative system can form around a compact mass in a cosmological fluid with a negative cosmological constant. We study the complementary case of an isolated, asymptotically flat pair.
 
-The programme: a minimal field-theoretic realization of Bondi's sign structure (Sec.~\ref{sec:model}); dressed soliton stars of both signs as constraint-satisfying initial data, with the two construction requirements that decide whether the measurement is possible at all (Sec.~\ref{sec:initialdata}); a falsifiable matrix of thirty-four evolutions, each a \emph{cell} of that matrix (Sec.~\ref{sec:setup}); the measurement---a constant-rate, zero-momentum, constant-separation runaway obeying $a=\bar M/d^2$, with every control null (Sec.~\ref{sec:results}); the gravitational-wave bound on a doubled box (Sec.~\ref{sec:weyl}); and the systematics with their measured sizes (Sec.~\ref{sec:caveats}). Every evolution ran on GPUs with \texttt{GRTeclyn}~\cite{grteclyn}, the AMReX-based~\cite{amrex} GPU port of \texttt{GRChombo}~\cite{grchombo}; with the wormhole campaign of Ref.~\cite{shirokov2026} these are, to our knowledge, the first evolutions of energy-condition-violating matter in GPU-native numerical relativity, the warp-bubble collapse of Ref.~\cite{clough2024} being the closest CPU-side precedent. Throughout, $G=c=1$, the scalar mass sets the unit ($m=1$), $X$ is the pair midpoint (the mean of the two sector barycentres), $\Delta X=X(t)-X(0)$ its drift, and $d$ the instantaneous separation between the two stars---the \emph{gap}. Runs are named for the sectors they contain, \texttt{P} for a canonical star and \texttt{M} for a phantom one: \texttt{PM} is the mixed pair, \texttt{PP} and \texttt{MM} the same-sign controls, \texttt{MP} the mixed pair with the sectors swapped in place.
+In this paper we realize Bondi's sign structure with two complex scalar fields that obey the same field equation, one of which enters the Einstein equations with a negative sign (Sec.~\ref{sec:model}). Both fields form solitonic boson stars, bound by their own self-interaction, which we construct as constraint-satisfying initial data (Sec.~\ref{sec:initialdata}). We evolve them with \texttt{GRTeclyn}~\cite{grteclyn}, the GPU port of \texttt{GRChombo}~\cite{grchombo} built on AMReX~\cite{amrex}, in 34 simulations that include same-sign pairs and isolated stars as controls. Section~\ref{sec:setup} gives the numerical methods, the diagnostics and the five predictions of Bondi's argument that we test; Sec.~\ref{sec:results} gives the results, Sec.~\ref{sec:weyl} the gravitational radiation, Sec.~\ref{sec:caveats} the systematic checks, and Sec.~\ref{sec:discussion} our conclusions. We use units with $G=c=1$ and scalar mass $m=1$. The midpoint $X$ of a pair is the mean of the two stars' barycentres, $\Delta X=X(t)-X(0)$ its displacement, $a$ its acceleration and $d$ the separation of the two stars. Simulations are labelled by the stars they contain, P for a positive-mass star and M for a negative-mass star: PM is a mixed pair, PP and MM are the same-sign controls, and MP is the mixed pair with the two stars exchanged.
 
-\section{The bicomplex scalar model}
+\section{The model}
 \label{sec:model}
 
-The matter must keep canonical \emph{dynamics}---positive inertial and passive mass---while only its gravitational \emph{source} changes sign; it must form stable, localized stars; and the negative-mass star must be held together by something other than gravity, since its own gravity pushes it apart. Each obvious candidate fails one of these: the negative-mass Schwarzschild spacetime is a naked singularity with exponentially growing smooth linear perturbations~\cite{gleiser2006} and contains no matter from which to build initial data; a negative-energy fluid has no equilibrium to sit in, Bonnor's static spheres~\cite{bonnor1989} demanding an inverted interior with no non-gravitational restoring force; and a \emph{kinetic-term} ghost---wrong-sign kinetic term, potential untouched---carries its sign flip into the Klein--Gordon equation, where it inverts the effective potential and unbinds the star, and flips inertial and passive mass along with the active one (Forward's all-negative matter~\cite{forward1990}, not the signature under test); such fields collapse or explode in evolution~\cite{shinkai2002,gonzalez2009,shirokov2026}. The phantom used here is the other kind of sign flip: an \emph{overall}-sign sector, defined in Eq.~\eqref{eq:action}, whose field equations are untouched and whose stress tensor alone is negated.
+The matter must keep positive inertial and passive mass while its active mass is negative, it must form stable, localized stars, and the negative-mass star must be bound by something other than gravity, since its own gravity pushes it apart. The obvious candidates each fail one of these requirements. The negative-mass Schwarzschild spacetime is a naked singularity whose linear perturbations grow exponentially~\cite{gleiser2006}, and it contains no matter from which to build initial data. A fluid of negative energy density has no equilibrium: Bonnor's static negative-mass spheres~\cite{bonnor1989} need an interior with no non-gravitational restoring force. A ghost field, whose kinetic term has the wrong sign (a phantom field in the language of cosmology~\cite{caldwell2002}), carries that sign into its own field equation. This inverts its effective potential, which unbinds the star, and it makes the inertial and passive masses negative together with the active mass, as for Forward's negative matter~\cite{forward1990}. Such fields collapse or explode in evolutions~\cite{shinkai2002,gonzalez2009,shirokov2026}. We instead reverse the overall sign of one field's Lagrangian, Eq.~\eqref{eq:action} below, which leaves its field equation unchanged and reverses only its stress-energy tensor.
 
-What passes is a \emph{soliton}: matter self-bound by its own interactions, for which gravity is a dressing rather than the binding agent. We take two independent complex scalars, $\Phi_+$ (\emph{canonical}) and $\Phi_-$ (\emph{phantom}), on one spacetime---a \emph{bicomplex} field in the sense used throughout this paper, meaning two independent complex sectors and not a bicomplex-number-valued field---sharing the standard sextic potential of Q-ball and solitonic boson-star studies~\cite{friedberg1976,coleman1985,friedberg1987},
+The stars are solitons: matter bound by its own self-interaction, with gravity a small correction rather than the binding force. We use two independent complex scalar fields, $\Phi_+$ and $\Phi_-$, on one spacetime, with the same sextic potential as in studies of Q-balls and solitonic boson stars~\cite{friedberg1976,coleman1985,friedberg1987},
 \begin{equation}
 V(|\Phi|^2)=\tfrac12 m^2|\Phi|^2-\tfrac14\lambda|\Phi|^4+\tfrac16\mu|\Phi|^6 ,
 \label{eq:potential}
 \end{equation}
-with $\lambda,\mu>0$: the mass term makes the field oscillate, the attractive quartic lets it clump, the repulsive sextic stops the clumping short of collapse. Sharing one potential makes the matter physics of the two sectors \emph{identical}, so the single sign introduced next is the only possible cause of any asymmetry the simulations show.
+where $m$ is the scalar mass and $\lambda,\mu>0$ are the quartic and sextic couplings: the mass term makes the field oscillate, the attractive quartic term lets it clump, and the repulsive sextic term stops the clumping before collapse. Because the two fields share one potential, their matter physics is identical, and the sign introduced next is the only difference between them.
 
-That sign lives in one place---the Einstein equations are sourced by the \emph{signed} sum of two canonical stress tensors,
+The model is defined by the action
 \begin{equation}
-G_{\mu\nu}=8\pi\left(T_{\mu\nu}[\Phi_+]-T_{\mu\nu}[\Phi_-]\right),
-\label{eq:einstein}
+S=\int d^4x\,\sqrt{-g}\left[\frac{R}{16\pi}+\mathcal{L}[\Phi_+]-\mathcal{L}[\Phi_-]\right],
+\label{eq:action}
 \end{equation}
-while the field equations of \emph{both} sectors keep their canonical form,
+where $g$ is the determinant of the spacetime metric, $R$ its Ricci scalar, and $\mathcal{L}[\Phi]=-\tfrac12\nabla_\mu\Phi^*\nabla^\mu\Phi-V(|\Phi|^2)$. Varying Eq.~\eqref{eq:action} with respect to each field gives the same Klein--Gordon equation for both,
 \begin{equation}
 \Box\,\Phi_\pm=2\,\frac{\partial V}{\partial|\Phi|^2}\,\Phi_\pm ,
 \label{eq:kg}
 \end{equation}
-the factor $2$ fixed by the $\tfrac12$-normalized kinetic term. In $3{+}1$ language the sources seen by normal observers accumulate per sector with a sign $\epsilon_\pm=\pm1$,
+because the overall sign of a field's Lagrangian cancels from its own Euler--Lagrange equation; the factor 2 comes from the $\tfrac12$ in the kinetic term. Varying with respect to the metric gives
+\begin{equation}
+G_{\mu\nu}=8\pi\left(T_{\mu\nu}[\Phi_+]-T_{\mu\nu}[\Phi_-]\right),
+\label{eq:einstein}
+\end{equation}
+where $T_{\mu\nu}[\Phi]$ is the standard stress-energy tensor of a complex scalar field: here the sign survives.
+
+Equations~\eqref{eq:kg} and~\eqref{eq:einstein} are consistent with each other and with the Bianchi identity $\nabla^\mu G_{\mu\nu}=0$. Each field's stress-energy tensor is conserved on solutions of its own field equation~\eqref{eq:kg}, so the signed sum on the right of Eq.~\eqref{eq:einstein} is conserved as well. Reversing the sign of $T_{\mu\nu}[\Phi_-]$ is therefore compatible with conservation of the total source, and it is exactly what the action~\eqref{eq:action} prescribes. Reversing only the kinetic term of $\Phi_-$, as for a ghost field, would instead change its field equation. The price of the sign is a violation of the null energy condition (NEC), $T_{\mu\nu}k^\mu k^\nu\ge0$ for every null vector $k^\mu$: the source $-T_{\mu\nu}[\Phi_-]$ violates it wherever $\Phi_-\neq0$. A field that gravitates with negative energy admits vacuum decay through graviton exchange~\cite{carroll2003,cline2004}, so we make no claim about the model's quantum consistency and use it as a classical probe of how gravity would act on such matter, as in phantom cosmology~\cite{caldwell2002}. The sign enters the CCZ4 evolution equations only through algebraic source terms, so the principal part of the evolution system is that of CCZ4 with ordinary scalar matter.
+
+The field $\Phi_-$ therefore moves like ordinary matter, with positive inertial and passive mass, but sources gravity with a negative sign, so its active mass is negative, and so is the ADM mass of an isolated $\Phi_-$ star. We call the stars of $\Phi_+$ and $\Phi_-$ positive-mass and negative-mass stars. In the $3{+}1$ split, the Einstein equations are sourced by the energy density $\rho=n^\mu n^\nu T_{\mu\nu}$, the momentum density $S_i=-\gamma_i{}^\mu n^\nu T_{\mu\nu}$ and the stress $S_{ij}=\gamma_i{}^\mu\gamma_j{}^\nu T_{\mu\nu}$, the projections of the total stress-energy tensor seen by observers moving along the unit normal $n^\mu$ to the spatial slices, where $\gamma_{ij}$ is the spatial metric. Each field contributes with its sign $\epsilon_\pm=\pm1$,
 \begin{equation}
 \rho=\sum_{s=\pm}\epsilon_s\,\rho[\Phi_s],\qquad
 S_i=\sum_{s=\pm}\epsilon_s\,S_i[\Phi_s],
 \label{eq:adm_sources}
 \end{equation}
-and likewise for $S_{ij}$, each bracket being the standard scalar expression. The model derives from
-\begin{equation}
-S=\int d^4x\,\sqrt{-g}\left[\frac{R}{16\pi}+\mathcal{L}[\Phi_+]-\mathcal{L}[\Phi_-]\right],
-\label{eq:action}
-\end{equation}
-with $\mathcal{L}[\Phi]=-\tfrac12\nabla_\mu\Phi^*\nabla^\mu\Phi-V(|\Phi|^2)$: a sector's overall Lagrangian sign cancels from its Euler--Lagrange equations---hence Eq.~\eqref{eq:kg}---but survives the metric variation---hence Eq.~\eqref{eq:einstein}. Bianchi consistency is automatic (each sector's stress tensor is separately conserved on shell, so the signed sum is too); well-posedness is inherited (the sector sign enters CCZ4 only through algebraic source terms); and the mass signature is Bondi's: the phantom \emph{moves} canonically---positive inertial and passive mass---but \emph{gravitates} with the minus sign of Eq.~\eqref{eq:einstein}, so its active mass, and its ADM mass, are negative.
+and likewise for $S_{ij}$, where each bracket is the standard expression for one complex scalar field.
 
-The model has exactly two interaction channels, and the run matrix is built to isolate them. The action carries no cross term between $\Phi_+$ and $\Phi_-$---each potential depends on its own $|\Phi_s|^2$ alone---so \textbf{two stars of different sectors interact only through the metric}: gravity is the mixed pair's only channel, by construction. Two stars of the \emph{same} sector, by contrast, live in one complex field, whose self-interaction gives overlapping lumps a direct, short-range attraction on top of gravity. Section~\ref{sec:nulls} measures that field channel---it is strong, and blind to the sign of the mass---and it is precisely why the mixed pair, which cannot have it, is the clean Bondi configuration.
+The action~\eqref{eq:action} has no term that couples $\Phi_+$ to $\Phi_-$, so stars of different fields interact only through the metric: in the mixed pair, gravity is the only interaction by construction. Two stars of the same field also attract each other directly through the field's self-interaction where they overlap. This short-range attraction does not depend on the sign of the mass; Sec.~\ref{sec:nulls} measures it, and the mixed pair cannot have it.
 
-The phantom sector violates the null energy condition by construction, and quantum viability is not claimed---a sector entering gravity with negative energy admits graviton-mediated vacuum decay~\cite{carroll2003,cline2004}---so the model is a classical probe of \emph{if such matter existed, what would gravity do}, in the spirit of phantom cosmology~\cite{caldwell2002}.
-
-\section{Initial data: dressed solitons}
+\section{Initial data}
 \label{sec:initialdata}
 
-\subsection{The stars}
+\subsection{Isolated stars}
 
-A soliton of this theory oscillates coherently, $\Phi\propto e^{-i\omega t}$, and $\omega$ labels the solution family: $\omega=m$ is the free-field limit, $1-\omega$ the binding energy per unit mass. The ratio $\lambda^2/\mu$ sets the lowest attainable frequency, $\omega_{\min}=\sqrt{1-3\lambda^2/16\mu}$~\cite{coleman1985}; all runs use $\lambda^2/\mu=4.8$ ($\lambda=10240$, $\mu\simeq2.18\times10^{7}$, amplitude ${\simeq}0.019$), so $\omega_{\min}=0.316$.
+A star of this model is a solution in which the field oscillates with a single frequency, $\Phi=\varphi_0(r)e^{-i\omega t}$; the frequency $\omega$ labels the family of solutions, with $\omega=m$ the free-field limit. The ratio $\lambda^2/\mu$ sets the lowest frequency a star can have, $\omega_{\min}=\sqrt{1-3\lambda^2/16\mu}$~\cite{coleman1985}. All our stars use $\lambda^2/\mu=4.8$ ($\lambda=10240$, $\mu\simeq2.18\times10^{7}$, central field amplitude ${\simeq}0.019$), so $\omega_{\min}=0.316$.
 
-A flat-space soliton cannot simply be placed on an initial slice: the constraints are violated by a bare Q-ball, and once its own gravity acts the profile is no longer an eigenstate. The star we need is solved with its gravity \emph{on}: the boson-star problem~\cite{kaup1968,ruffini1969,liebling2023} with a sextic self-interaction, posed for both source signs. With $\Phi=\varphi_0(r)e^{-i\omega t}$ and a conformally flat, maximally sliced metric, Eqs.~\eqref{eq:einstein}--\eqref{eq:kg} reduce to coupled ODEs for $(\psi,\alpha,\varphi_0)$; \textbf{the phantom star is obtained by flipping the sign of the matter sources in the metric equations only}, the Klein--Gordon line keeping its canonical form. The result is a self-interaction-bound soliton with repulsive gravity: $\psi<1$, $\alpha>1$ in the core, and negative ADM mass. We shoot at fixed frequency, bisecting the central amplitude and outer-iterating until $\omega/\alpha_\infty$ matches the request to ${\sim}10^{-5}$.
+A star built in flat space violates the constraints once its own gravity is included, so we solve for each star together with its gravity, as for boson stars~\cite{kaup1968,ruffini1969,liebling2023} with a sextic potential, for both signs of the source. We take a conformally flat spatial metric, $\gamma_{ij}=\psi^4\delta_{ij}$ with conformal factor $\psi$, maximal slicing, $K=0$ with $K$ the trace of the extrinsic curvature, and lapse $\alpha$. Equations~\eqref{eq:kg} and~\eqref{eq:einstein} then reduce to ordinary differential equations for $\psi(r)$, $\alpha(r)$ and $\varphi_0(r)$. The negative-mass star solves the same equations with the sign of the matter source reversed in the metric equations only. Its gravity is repulsive: $\psi<1$ and $\alpha>1$ in its core, and its ADM mass is negative. We solve the equations by shooting at fixed frequency, bisecting in the central amplitude, and iterate until the frequency measured at infinity, $\omega/\alpha_\infty$, matches the requested value to ${\sim}10^{-5}$.
 
 \begin{figure}[t]
 \centering
 \includegraphics{fig_family.pdf}
-\caption{ADM masses of the spherical stars against oscillation frequency at the working couplings. Lower $\omega$ means deeper binding and larger $|M_{\rm ADM}|$; at equal frequency the phantom star is the heavier in magnitude, its repulsive self-gravity spreading it over more volume. Stars: the campaign pair, mass-matched to $0.4\%$. Both branches floor at ${\simeq}0.54$ of the campaign mass near $\omega\simeq0.93$, and neither has a bound star at $\omega=1$---the bound that shapes the mass ladder of Sec.~\ref{sec:scaling}.}
+\caption{ADM mass of isolated stars against the oscillation frequency $\omega$, for positive-mass (solid) and negative-mass (dashed) stars at the couplings used here. Star symbols: the two stars of the reference pair, whose $|M_{\rm ADM}|$ agree to $0.4\%$. At equal $\omega$ the negative-mass star is heavier in magnitude, and neither family has a star lighter than about $0.54$ of the reference mass.}
 \label{fig:family}
 \end{figure}
 
-Figure~\ref{fig:family} shows both families. The campaign pair takes the canonical star at $\omega=0.750$, $M_{\rm ADM}=+0.014350$, and the phantom at $\omega=0.7603$, $M_{\rm ADM}=-0.014295$: mass-matched to $0.39\%$, because Bondi's point-mass limit is governed by each body's exterior field, hence its ADM mass, alone. The pair mean $\bar M\equiv\tfrac12(M_+{+}|M_-|)=0.014322$ is what the midpoint acceleration measures. The canonical star has rms radius $4.34$ and compactness $M/R\sim3\times10^{-3}$---two orders below what any horizon needs---and a four-point survey ($\omega=0.75$--$0.90$, $t=120$) confirms the family static where it is used: the minimum lapse moves by at most $1.2\times10^{-3}$ from birth. Each star is seeded from its own profile table with its own frequency, and the conjugate momentum carries the solved lapse, $\Pi=-({\omega}/{\alpha(r)})\,\varphi_0(r)$, so the harmonic phase starts on its eigenstate.
+Figure~\ref{fig:family} shows both families. The reference pair consists of a positive-mass star at $\omega=0.750$, with $M_+=+0.014350$, and a negative-mass star at $\omega=0.7603$, with $M_-=-0.014295$. We call such a pair an equal-mass pair, since $|M_-|=M_+$ to $0.4\%$. Equal ADM masses are the relevant match because, in Bondi's point-mass limit, each body acts on the other through its exterior field, which the ADM mass sets. We write $\bar M=\tfrac12(M_++|M_-|)$ for the mean mass of a pair, $0.014322$ for the reference pair. The positive-mass star has a root-mean-square (rms) radius of $4.34$, the rms distance from its barycentre weighted by $w_s$ of Eq.~\eqref{eq:bary} below, and a compactness $M/R\sim3\times10^{-3}$, two orders of magnitude below that of any star near forming a horizon. Four isolated positive-mass stars with $\omega=0.75$ to $0.90$, evolved to $t=120$, keep their minimum lapse within $1.2\times10^{-3}$ of its initial value. Each star's conjugate momentum is set from the lapse of its own solution, $\Pi=-(\omega/\alpha(r))\,\varphi_0(r)$, so that it starts in its stationary state.
 
-\subsection{Two construction requirements}
+\subsection{The pair}
 \label{sec:construction}
 
-\texttt{GRTresna}~\cite{grtresna} then re-solves the constraints for the pair (CTTK family~\cite{cttk}, sources summed with their signs star by star). Two choices in this step decide whether the runaway is measurable at all. Both were established by direct testing.
+We place the two stars at $x=\pm d_0/2$ about the centre of the domain, where $d_0$ is the initial separation, and superpose their fields. \texttt{GRTresna}~\cite{grtresna} then solves the Hamiltonian and momentum constraints for the pair, with each field's sources entering with its sign. Two choices in this step matter for the measurement, and we state them because other studies of mixed-sign matter will meet them.
 
-\emph{Both sectors must be built on the same slicing.} The CTTK algebraic ansatz ties the initial $K$ to the local energy density, $K\propto\sqrt{\rho}$---imaginary for $\rho<0$, so a phantom sector forces the maximal-slicing ($K=0$) path. Letting the canonical sector default to the algebraic path builds the two stars by \emph{different methods}: the canonical star is then born inside a coherent contraction ($\max|K|\approx0.1$ at $t=0$, four orders of magnitude above the phantom's) and squeezed through its first two field periods. We therefore construct \emph{both} sectors with $K=0$, which for this matter also converges better; the birth kick vanishes ($\max|K|\to10^{-5}$, landing on the phantom's value) and the two constructions differ in nothing but the sign of $\rho$.
+\emph{Both stars on the same slicing.} The CTTK method of \texttt{GRTresna}~\cite{cttk} can set the initial $K$ algebraically from the local energy density, $K\propto\sqrt{\rho}$, which is imaginary where $\rho<0$; the negative-mass star therefore requires its maximal-slicing option, $K=0$, which solves for $\psi$ instead. If the positive-mass star is built with the algebraic option, the two stars are built by different methods, and the positive-mass star starts inside a coherent contraction with $\max|K|\approx0.1$, four orders of magnitude above that of the negative-mass star. We therefore use $K=0$ for both stars. This removes the initial transient in $K$ ($\max|K|\approx10^{-5}$), and the two constructions then differ only in the sign of $\rho$.
 
-\emph{The solve grid must share the evolution grid's grid-cell centres.} The elliptic solve runs on its own (wider) box; if its spacing differs from the evolution's, the solved metric lands on the evolution grid displaced by a fraction of a grid cell while the matter is repainted exactly---so every star is born off the centre of its own well, the canonical falling back down it and the phantom pushed up it, a directional artefact that does not converge away and was comparable to the signal. Matching the spacings makes the transfer a straight copy: the solved metric moves grid cell by grid cell (a piecewise-constant transfer, exact once the grid-cell centres coincide) while the matter is repainted analytically from its radial profile table. The metric-minus-matter centroid offset is then zero to the diagnostic's $10^{-4}$ precision on every cell here, and the lone-star drift below is $269\times$ smaller than on mismatched grids. All solves run at the evolution spacing on a doubled box ($L=128$); exit residuals, tightened with the grid, are in Appendix~\ref{app:constraints}.
+\emph{The same grid spacing for the solve and the evolution.} The elliptic solve runs on a domain twice the size of the evolution domain. If its grid spacing differs from that of the evolution, the metric interpolated onto the evolution grid is displaced from the scalar field by a fraction of a cell, so each star starts away from the centre of its own gravitational potential. This produced a drift that did not converge away with resolution and was as large as the effect we measure. We therefore solve on the evolution's grid spacing, so that the cell centres coincide and the metric is copied cell by cell onto the evolution grid, while the scalar field is set on that grid from each star's radial profile. The offset between the centroids of the metric perturbation and of the matter is then below the diagnostic's precision of $10^{-4}$ in every simulation.
 
-Every pair places its lumps at $x=\pm d_0/2$ and paints both from their radial tables with the same internal $U(1)$ phase: all pairs are seeded \emph{in phase}, relative phase $\delta=0$ (the packed launch parameter \texttt{phase0} is the placement azimuth, $0$ and $\pi$, not the field phase). For the mixed pair $\delta$ is pure gauge, the two sectors being independent fields with no cross term. For the same-sector controls it is not: two Q-balls of one field attract through the shared field at $\delta=0$ and repel at $\delta=\pi$~\cite{battye_sutcliffe2000,palenzuela2008}, so the seeding used here is the attracting configuration, consistent with the merger those cells show (Sec.~\ref{sec:nulls}). Superposed same-field data also carries known phase-dependent constraint systematics that the re-solve reduces but does not eliminate~\cite{helfer2022}---one reason those cells serve as momentum nulls and not as precision force measurements.
+Both stars are given the same internal phase. For the mixed pair the relative phase has no effect, because the two fields do not couple. For two stars of the same field it matters: two Q-balls in phase attract each other through the shared field, and two in antiphase repel~\cite{battye_sutcliffe2000,palenzuela2008}. Our same-sign pairs therefore start in the attracting configuration, consistent with the mergers of Sec.~\ref{sec:nulls}. Superposed data for two stars of one field also carry phase-dependent constraint errors, which the constraint solve reduces but does not remove~\cite{helfer2022}; we use these pairs only as controls for the centroid motion.
 
-\section{The campaign}
+\section{Numerical methods, diagnostics and tests}
 \label{sec:setup}
 
-\subsection{Numerics}
+\subsection{Evolution}
 
-Evolutions use \texttt{GRTeclyn}: CCZ4~\cite{alic2012} with damping $(\kappa_1,\kappa_2,\kappa_3)=(3,0,1)$, $1{+}\log$ slicing~\cite{bona1995}, a Gamma-driver shift~\cite{campanelli2006,baker2006} with $\eta=1$, fourth-order stencils, RK4, Kreiss--Oliger dissipation $\sigma=2$, Sommerfeld outer boundaries, and---because massive-field radiation reflects from massless-wave boundaries---an absorbing sponge layer over $r=24$--$32$ (moved to $48$--$60$ on the doubled box). The sponge works: the net inward flux through the accounting boundary stays at round-off ($\lesssim10^{-7}$) even in the violent same-sign cells. The time step is $\Delta t=0.02\,\Delta x$, an order of magnitude below the usual CCZ4 Courant factor and the dominant cost of the campaign (Appendix~\ref{app:cost}); it is not conservatism but the sextic self-interaction's own stability limit---at $\Delta t=0.2\,\Delta x$ the star disperses outright.
+We evolve the Einstein equations in the conformal and covariant Z4 (CCZ4) formulation~\cite{alic2012} with constraint-damping parameters $(\kappa_1,\kappa_2,\kappa_3)=(3,0,1)$, $1{+}\log$ slicing~\cite{bona1995} and a Gamma-driver shift~\cite{campanelli2006,baker2006} with damping parameter $\eta=1$. Spatial derivatives use fourth-order finite differences, time integration the fourth-order Runge--Kutta method, and we add Kreiss--Oliger dissipation of strength $\sigma=2$. The CCZ4 variable $\chi=(\det\gamma_{ij})^{-1/3}$, equal to $\psi^{-4}$ on the conformally flat initial data, is below 1 in a positive-mass star and above 1 in a negative-mass star. The time step is $\Delta t=0.02\,\Delta x$, an order of magnitude below the usual CCZ4 value: it is set by the stability of the sextic self-interaction, and at $\Delta t=0.2\,\Delta x$ the star disperses. The outer boundaries use Sommerfeld conditions. Outgoing waves of a massive field reflect from boundary conditions designed for massless waves, so an absorbing layer, extra Kreiss--Oliger dissipation that rises with radius, covers $24\le r\le32$. With it, the net flux into the domain through its boundary stays below $10^{-7}$, even for the same-sign pairs.
 
-Every cell is \emph{strictly uniform-grid} (\texttt{max\_level}${}=0$), so the resolution ladder means exactly one thing---the grid spacing---and the aligned-grid handoff of Sec.~\ref{sec:construction} is preserved verbatim. The main box is $L=64$ at $N=128$, $192$, $256$ ($\Delta x=0.50$, $0.33$, $0.25$---about $9$, $13$ and $17$ points across a stellar rms radius of $4.3$); the wave-zone box doubles $L$ at fixed $\Delta x=0.25$ with extraction shells at $R=16$--$40$. The reference separation is $d_0=10$, about twice the $90\%$-weight radius, and the separation scan spans $d_0=8$--$20$. Stars are released \emph{at rest}---no boosts, no driving---so any drift is dynamical. All cells run to $t=200$ (the stability survey to $120$; the long pair run to $400$, the lone-phantom control to $1000$, and the two late-time follow-up cells of Sec.~\ref{sec:caveats} to $784$ and $600$), and every fitted acceleration $a$ is twice the quadratic coefficient of $X(t)$ over $5\le t\le200$, the first five units excluded while the gauge settles (Sec.~\ref{sec:caveats} for the convention's percent-level sensitivity).
+All simulations use a uniform grid without mesh refinement, so a change of resolution is a change of the grid spacing alone. The domain is a cube of side $L=64$ with $N=128$, $192$ or $256$ cells per side ($\Delta x=0.50$, $0.33$, $0.25$), which puts about 9, 13 and 17 grid points across the rms radius of a star. One simulation doubles the side to $L=128$ at $N=256$ ($\Delta x=0.50$), with the absorbing layer at $48\le r\le60$, to extract gravitational waves at larger radii. The reference initial separation is $d_0=10$, about twice the radius that contains $90\%$ of a star's weight $w_s$; other pairs use $d_0=8$ to $20$. Every pair is released from rest, without a boost, so any motion is dynamical. Most simulations end at $t=200$; Table~\ref{tab:matrix} lists the exceptions. Each simulation ran on one NVIDIA H100 GPU; a simulation to $t=200$ takes about 1, 5 and 15 hours at $N=128$, $192$ and $256$.
 
-\subsection{Diagnostics and the run matrix}
+\subsection{Diagnostics}
 
-Each sector is tracked two ways, continuously: a whole-domain barycentre with weight $w_s=(|\Phi_s|^2+|\Pi_s|^2)^{1/2}$, and a sub-cell core tracker at the sector's field peak. The headline quantity is the \emph{pair midpoint} $X=\tfrac12(\bar{x}^{(+)}+\bar{x}^{(-)})$: it is what Bondi's argument predicts to accelerate, it is defined identically for pairs and controls, and by symmetry it is exactly zero for every control---so the control rows of Table~\ref{tab:matrix} measure the noise floor rather than assume one. The two trackers agree on the pair drift to $1\%$. Volume-integrated sector momenta, constraint norms, confinement, the $\ell=2$ modes of $\Psi_4$, and energy-condition monitors are recorded alongside. The last return what the model prescribes and nothing more: the minimum NEC is $-2.20\times10^{-4}$ in every cell containing a phantom---the lone phantom's own value, flat over the run---while the lone canonical star stays positive everywhere, its minimum $+7\times10^{-42}$---zero to round-off in the vacuum tail, no violation at all.
+We track each field in two ways. Its barycentre
+\begin{equation}
+\bar x^{(s)}=\frac{\int x\,w_s\,d^3x}{\int w_s\,d^3x},\qquad w_s=\left(|\Phi_s|^2+|\Pi_s|^2\right)^{1/2},
+\label{eq:bary}
+\end{equation}
+is computed over the whole domain, with $\Pi_s$ the conjugate momentum of $\Phi_s$. Its core position is the $w_s^4$-weighted centroid of the cells where $w_s$ exceeds a fixed fraction of its maximum, which ignores the low-amplitude field a star sheds. The main diagnostic is the midpoint of the two stars and its displacement,
+\begin{equation}
+X=\tfrac12\left(\bar x^{(+)}+\bar x^{(-)}\right),\qquad \Delta X(t)=X(t)-X(0),
+\label{eq:mid}
+\end{equation}
+which Bondi's argument predicts to accelerate and which stays zero by symmetry for the same-sign controls. The two ways of tracking agree on $\Delta X$ of the mixed pair to $1\%$. The separation $d$ is the coordinate distance between the two barycentres; we also measure the proper distance between the two cores along the axis, $\int\sqrt{\gamma_{xx}}\,dx$. The acceleration $a$ is twice the quadratic coefficient of the least-squares fit
+\begin{equation}
+X(t)=X_0+v_0\,t+\tfrac12\,a\,t^2,\qquad 5\le t\le t_{\rm end},
+\label{eq:fit}
+\end{equation}
+which leaves out the first five time units while the gauge adjusts. For point masses with $|M_-|=M_+$, each star is accelerated by the other's active mass, and Bondi's argument predicts
+\begin{equation}
+a=\frac{\bar M}{d^2}.
+\label{eq:bondilaw}
+\end{equation}
+The matter momentum of each field and their signed total are
+\begin{equation}
+P^{(s)}=\int S_x[\Phi_s]\,\sqrt{\gamma}\,d^3x,\qquad P=P^{(+)}-P^{(-)},
+\label{eq:momentum}
+\end{equation}
+with $\gamma=\det\gamma_{ij}$. We also record the $L_2$ norms of the Hamiltonian and momentum constraints over the domain, the multipoles of the Newman--Penrose scalar $\Psi_4$, which carries outgoing gravitational waves, on spheres of radius $R$, and the energy conditions. The NEC is violated only where $\Phi_-$ is nonzero, and the isolated positive-mass star satisfies it everywhere.
 
-\begin{table}[t]
-\caption{The falsifiable run matrix: thirty-four cells. The sign structure predicts a drifting midpoint for the mixed pair only, reversal under swapping the sectors, and a $d^{-2}$ rate; every control row must return a null \emph{centroid drift}---including the same-sign pairs, which merge into one lump and still do not displace their centroid. $\Delta X$ at $t=200$ unless marked. The separation scan is $d_0=8,12,16,20$; the mass ladders are the three retuned pairs at $d_0{=}10$ and the four equal-mass pairs at $d_0{=}20$; the stability scan covers $\omega=0.75$--$0.90$. Full cell names and per-cell data are in the results pack (Sec.~\ref{sec:repro}).}
+\begin{table*}[t]
+\caption{The 34 simulations. Labels name the stars, P for a positive-mass and M for a negative-mass star, followed by the initial separation $d_0$. Unless stated, a simulation uses the stars of the reference pair ($\omega=0.750$ and $0.7603$, $|M_-|/M_+=0.996$), the domain $L=64$, and starts from rest.}
 \label{tab:matrix}
 \begin{ruledtabular}
-\begin{tabular}{llcc}
-run & grid(s) & $\Delta X$ & verdict \\
+\begin{tabular}{lp{0.31\textwidth}lll}
+Label & Configuration & $N$ & $t_{\rm end}$ & Purpose \\
 \hline
-\textbf{\texttt{PM}}, $d_0{=}10$ & $256^3$ & $\mathbf{+3.0016}$ & \textbf{runaway} \\
-\texttt{PM}, $d_0{=}10$ & $192^3$ & $+3.0139$ & converged pair \\
-\texttt{PM}, $d_0{=}10$ & $128^3$ & $+2.8815$ & $4\%$ low \\
-\texttt{PM}, $d_0{=}8$--$20$ & $128^3$ & --- & $a\propto d^{-2.03}$ \\
-\texttt{MP} mirror & $128^3$ & $-2.8815$ & reversed\footnotemark[1] \\
-\texttt{PM}, deeper solve & $128^3$ & $+2.8815$ & $+0.002\%$ \\
-\texttt{PM}, AMR on & $128^3$ & $+2.8815$ & $+0.001\%$ \\
-\texttt{PM}, gauge $\eta{=}2$ & $128^3$ & $+2.8813$ & $-0.007\%$ \\
-\texttt{PM}, box doubled & $256^3$ & $+2.7606$ & $-4.2\%$ \\
-\texttt{PM}, $t\le400$ & $128^3$ & $+11.518$ & $a$ steady \\
-\texttt{PM}, $t\le784$\footnotemark[4] & $128^3$ & --- & $0.12c$ reached \\
-\texttt{PP} $(+,+)$\footnotemark[2] & $128^3$--$256^3$ & $\le7.8\times10^{-4}$ & merges; null \\
-\texttt{MM} $(-,-)$\footnotemark[2] & $128^3$, $192^3$ & $\le5.3\times10^{-4}$ & merges; null \\
-\texttt{P}, \texttt{M} lone stars\footnotemark[3] & $128^3$ & $\le1.8\times10^{-3}$ & null \\
-\texttt{M} alone, $t\le1000$ & $128^3$ & --- & $-5.4\%$ peak \\
-mass ladders & $128^3$ & --- & $a\propto M^{0.97}$ \\
-stability scan & $128^3$ & --- & static \\
+PM10 & mixed pair, $d_0=10$ & 128, 192, 256 & 200 & reference; resolution study \\
+PM8, PM12, PM16, PM20 & mixed pair, $d_0=8$, 12, 16, 20 & 128 & 200 & dependence on separation \\
+E0.64, E1.34, E1.57 & as PM20, both stars rebuilt with $|M_-|=M_+$ (to $0.02\%$) and $\bar M$ equal to 0.64, 1.34 and 1.57 times that of PM20 & 128 & 200 & dependence on mass \\
+R0.60, R0.80, R1.33 & as PM10, one star rebuilt so that $|M_-|/M_+=0.60$, 0.80, 1.33 & 128 & 200 & unequal masses \\
+MP10 & as PM10, the two stars exchanged & 128 & 200 & reversal \\
+PM10-t400 & as PM10 & 128 & 400 & constancy of $a$ \\
+PM10-rec & as PM10, domain recentred on the pair during the run & 128 & 784 & separation after $t=200$ \\
+PM10-off & as PM10, pair started 10 units off centre in a fixed domain & 128 & 600 & separation after $t=200$ \\
+PM10-tol & as PM10, elliptic-solver tolerance 4.4 times tighter & 128 & 200 & initial-data accuracy \\
+PM10-AMR & as PM10, mesh refinement allowed & 128 & 200 & grid structure \\
+PM10-$\eta$2 & as PM10, shift damping $\eta=2$ & 128 & 200 & gauge \\
+PM10-L128 & as PM10, $L=128$ ($\Delta x=0.50$) & 256 & 200 & domain size; wave extraction \\
+\hline
+PP10 & two positive-mass stars, $d_0=10$ & 128, 192, 256 & 200 & same-sign control \\
+MM10 & two negative-mass stars, $d_0=10$ & 128 (twice), 192 & 200 & same-sign control \\
+P & isolated positive-mass star at the centre of the domain & 128 & 200 & isolated control \\
+M, M-t1000 & isolated negative-mass star, 5 units off centre & 128 & 200, 1000 & isolated control \\
+S0.75--S0.90 & isolated positive-mass stars with $\omega=0.75$, 0.80, 0.85, 0.90 & 128 & 120 & stationarity of the stars \\
 \end{tabular}
 \end{ruledtabular}
-\footnotetext[1]{Drift ratio $-1.000022$, acceleration ratio $-1.000010$.}
-\footnotetext[2]{Both same-sign pairs coalesce into a single lump (Sec.~\ref{sec:nulls}); the entry is the largest pair-centroid excursion \emph{through} that merger---the quantity the null tests. \texttt{MM} has two $128^3$ cells; the second adds frame output.}
-\footnotetext[3]{Largest core displacement on any axis over $t=200$; the phantom sits off-centre, the sharper test. Against the tracker the pair drift uses, the phantom's own barycentre moves $1.3\times10^{-2}$ (Sec.~\ref{sec:nulls}).}
-\footnotetext[4]{Two late-time follow-ups: a recentring box carried to $t=784$ and a static-box control started off-centre to $t=600$, which together exclude the diagnostic box and place the opening on the grid; pair rigidity is quoted only to $t\approx500$ (Sec.~\ref{sec:caveats}). The $0.12c$ is the leading star's speed; the midpoint reaches $0.081c$.}
-\end{table}
+\end{table*}
 
-Each row of Table~\ref{tab:matrix} is a falsifiable prediction of the sign structure.
+\subsection{Tests}
+\label{sec:tests}
+
+Bondi's argument makes five predictions for a mixed pair with $|M_-|=M_+$, and each has a control:
+(i)~the midpoint $X$ accelerates at a constant rate while the separation $d$ stays constant;
+(ii)~the signed matter momentum $P$ stays zero while the momentum of each field grows;
+(iii)~the acceleration follows Eq.~\eqref{eq:bondilaw}, $a\propto d^{-2}$ at fixed mass and $a\propto\bar M$ at fixed separation, and each star responds to its partner's mass;
+(iv)~exchanging the two stars reverses the acceleration;
+(v)~pairs without a mass dipole, the same-sign pairs and the isolated stars, do not move their centroids.
+A numerical artefact would fail at least one of these tests: it need not reverse when the stars are exchanged, need not follow $d^{-2}$ or the partner's mass, and would also appear in the controls. Section~\ref{sec:results} takes the tests in turn.
 
 \begin{figure*}[t]
 \centering
@@ -337,11 +373,9 @@ Every number and figure derives from the packed campaign under \texttt{results/b
 \begin{acknowledgments}
 This work was supported by Gravity Frontiers
 (\url{https://www.gravityfrontiers.org/en}), which funded the underlying
-research and the development of the numerical-simulation software. The author
-extends sincere gratitude to Ilya Nachevsky for generously providing the
-high-performance computing resources essential to this work, and acknowledges
-the GRTL Collaboration for \texttt{GRChombo}, \texttt{GRTresna}, and
-\texttt{GRTeclyn}.
+research and the development of the numerical-simulation software. The authors
+acknowledge the GRTL Collaboration for \texttt{GRChombo}, \texttt{GRTresna},
+and \texttt{GRTeclyn}.
 \end{acknowledgments}
 
 \appendix
