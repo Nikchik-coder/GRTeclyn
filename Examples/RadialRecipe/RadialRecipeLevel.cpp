@@ -707,7 +707,7 @@ void write_constraint_shells(const amrex::MultiFab &cst,
     }
 
     constexpr int ns = n_constraint_shells;
-    amrex::Gpu::DeviceVector<amrex::Real> d_sums(3 * ns, 0.0);
+    amrex::Gpu::DeviceVector<amrex::Real> d_sums(4 * ns, 0.0);
     amrex::Real *sums = d_sums.data();
 
     amrex::Box interior = geom.Domain();
@@ -741,13 +741,15 @@ void write_constraint_shells(const amrex::MultiFab &cst,
             const amrex::Real mom2 = a(i, j, k, 1) * a(i, j, k, 1) +
                                      a(i, j, k, 2) * a(i, j, k, 2) +
                                      a(i, j, k, 3) * a(i, j, k, 3);
-            amrex::Gpu::Atomic::AddNoRet(sums + 3 * s, ham * ham * cell_vol);
-            amrex::Gpu::Atomic::AddNoRet(sums + 3 * s + 1, mom2 * cell_vol);
-            amrex::Gpu::Atomic::AddNoRet(sums + 3 * s + 2, cell_vol);
+            amrex::Gpu::Atomic::AddNoRet(sums + 4 * s, ham * ham * cell_vol);
+            amrex::Gpu::Atomic::AddNoRet(sums + 4 * s + 1, mom2 * cell_vol);
+            amrex::Gpu::Atomic::AddNoRet(sums + 4 * s + 2, cell_vol);
+            // Signed mean: the growing mode's sign and phase (2026-10-22).
+            amrex::Gpu::Atomic::AddNoRet(sums + 4 * s + 3, ham * cell_vol);
         });
     amrex::Gpu::streamSynchronize();
 
-    std::vector<amrex::Real> h_sums(3 * ns);
+    std::vector<amrex::Real> h_sums(4 * ns);
     amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_sums.begin(), d_sums.end(),
                      h_sums.begin());
     amrex::ParallelDescriptor::ReduceRealSum(h_sums.data(),
@@ -763,16 +765,19 @@ void write_constraint_shells(const amrex::MultiFab &cst,
             names.push_back("Ham_r" + std::to_string(s));
         for (int s = 0; s < ns; ++s)
             names.push_back("Mom_r" + std::to_string(s));
+        for (int s = 0; s < ns; ++s)
+            names.push_back("Hmean_r" + std::to_string(s));
         shells_file.write_header_line(names);
     }
-    std::vector<double> row(2 * ns, 0.0);
+    std::vector<double> row(3 * ns, 0.0);
     for (int s = 0; s < ns; ++s)
     {
-        const amrex::Real vol = h_sums[3 * s + 2];
+        const amrex::Real vol = h_sums[4 * s + 2];
         if (vol > 0.0)
         {
-            row[s]      = std::sqrt(h_sums[3 * s] / vol);
-            row[ns + s] = std::sqrt(h_sums[3 * s + 1] / vol);
+            row[s]          = std::sqrt(h_sums[4 * s] / vol);
+            row[ns + s]     = std::sqrt(h_sums[4 * s + 1] / vol);
+            row[2 * ns + s] = h_sums[4 * s + 3] / vol;
         }
     }
     shells_file.write_time_data_line(row);
