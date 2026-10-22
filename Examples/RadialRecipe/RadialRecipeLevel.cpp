@@ -680,6 +680,103 @@ compute_amr_constraint_norms(amrex::Amr *parent,
     }
     return out;
 }
+
+// constraint_shells.dat: the L2 of Ham and Mom over level 0 in shells of unit
+// width about the sponge's centre, shell s holding s <= r < s + 1 and the last
+// one everything further out (the box's corners), with the same 4-cell outer
+// boundary layer dropped as the AMR norms.  Written once per
+// constraint_shells_dt, so where a violation sits, and whether it moves in
+// from the absorbing layer, can be read at every resolution (2026-10-22).
+constexpr int n_constraint_shells = 33;
+
+void write_constraint_shells(const amrex::MultiFab &cst,
+                             const amrex::Geometry &geom,
+                             const SimulationParameters &params,
+                             const std::string &out_dir, amrex::Real dt,
+                             amrex::Real time, amrex::Real restart_time,
+                             bool first_step)
+{
+    // Also the first step, where the initial data's own defects show.
+    const amrex::Real every = params.constraint_shells_dt;
+    const amrex::Real eps   = 1.0e-6 * every;
+    const bool first_row    = time - dt < eps;
+    if (!first_step && !first_row &&
+        std::floor((time + eps) / every) == std::floor((time - dt + eps) / every))
+    {
+        return;
+    }
+
+    constexpr int ns = n_constraint_shells;
+    amrex::Gpu::DeviceVector<amrex::Real> d_sums(3 * ns, 0.0);
+    amrex::Real *sums = d_sums.data();
+
+    amrex::Box interior = geom.Domain();
+    interior.grow(-4);
+    const amrex::IntVect ilo   = interior.smallEnd();
+    const amrex::IntVect ihi   = interior.bigEnd();
+    const auto prob_lo         = geom.ProbLoArray();
+    const auto dx              = geom.CellSizeArray();
+    const amrex::Real cell_vol = dx[0] * dx[1] * dx[2];
+    const amrex::Real cx       = params.sponge_params.center[0];
+    const amrex::Real cy       = params.sponge_params.center[1];
+    const amrex::Real cz       = params.sponge_params.center[2];
+    const auto arrs            = cst.const_arrays();
+
+    amrex::ParallelFor(
+        cst,
+        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k) noexcept
+        {
+            if (i < ilo[0] || i > ihi[0] || j < ilo[1] || j > ihi[1] ||
+                k < ilo[2] || k > ihi[2])
+            {
+                return;
+            }
+            const amrex::Real x = prob_lo[0] + (amrex::Real(i) + 0.5) * dx[0] - cx;
+            const amrex::Real y = prob_lo[1] + (amrex::Real(j) + 0.5) * dx[1] - cy;
+            const amrex::Real z = prob_lo[2] + (amrex::Real(k) + 0.5) * dx[2] - cz;
+            const int s = amrex::min(
+                static_cast<int>(std::sqrt(x * x + y * y + z * z)), ns - 1);
+            const auto a          = arrs[box_no];
+            const amrex::Real ham = a(i, j, k, 0);
+            const amrex::Real mom2 = a(i, j, k, 1) * a(i, j, k, 1) +
+                                     a(i, j, k, 2) * a(i, j, k, 2) +
+                                     a(i, j, k, 3) * a(i, j, k, 3);
+            amrex::Gpu::Atomic::AddNoRet(sums + 3 * s, ham * ham * cell_vol);
+            amrex::Gpu::Atomic::AddNoRet(sums + 3 * s + 1, mom2 * cell_vol);
+            amrex::Gpu::Atomic::AddNoRet(sums + 3 * s + 2, cell_vol);
+        });
+    amrex::Gpu::streamSynchronize();
+
+    std::vector<amrex::Real> h_sums(3 * ns);
+    amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_sums.begin(), d_sums.end(),
+                     h_sums.begin());
+    amrex::ParallelDescriptor::ReduceRealSum(h_sums.data(),
+                                             static_cast<int>(h_sums.size()));
+
+    SmallDataIO shells_file(out_dir + "constraint_shells", dt, time,
+                            restart_time, SmallDataIO::APPEND, first_step);
+    shells_file.remove_duplicate_time_data();
+    if (first_step)
+    {
+        std::vector<std::string> names;
+        for (int s = 0; s < ns; ++s)
+            names.push_back("Ham_r" + std::to_string(s));
+        for (int s = 0; s < ns; ++s)
+            names.push_back("Mom_r" + std::to_string(s));
+        shells_file.write_header_line(names);
+    }
+    std::vector<double> row(2 * ns, 0.0);
+    for (int s = 0; s < ns; ++s)
+    {
+        const amrex::Real vol = h_sums[3 * s + 2];
+        if (vol > 0.0)
+        {
+            row[s]      = std::sqrt(h_sums[3 * s] / vol);
+            row[ns + s] = std::sqrt(h_sums[3 * s + 1] / vol);
+        }
+    }
+    shells_file.write_time_data_line(row);
+}
 } // namespace
 
 void RadialRecipeLevel::specificPostTimeStep()
@@ -1002,6 +1099,12 @@ void RadialRecipeLevel::specificPostTimeStep()
              static_cast<double>(amr_norms.L2_Ham_ref),
              static_cast<double>(amr_norms.L2_Ham_int),
              static_cast<double>(amr_norms.L2_Mom_int)});
+
+        if (simParams().constraint_shells_dt > 0.0)
+        {
+            write_constraint_shells(cst, Geom(), simParams(), out_dir, dt, time,
+                                    restart_time, first_step);
+        }
     }
 
     if (Level() == 0)
