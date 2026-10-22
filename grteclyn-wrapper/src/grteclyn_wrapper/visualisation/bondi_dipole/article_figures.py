@@ -1320,7 +1320,7 @@ def print_gauge_and_invariants():
         anti = 0.5 * (bp - bc)         # separation-changing
         xmid = 0.5 * (D["xc"] + D["xp"])
         v = np.gradient(xmid, t)[-1]
-        drag = np.trapz(np.abs(sym), t)
+        drag = np.trapezoid(np.abs(sym), t)
         print(f"shift at cores, N={n}: max|beta_x| = {np.abs(np.r_[bc, bp]).max():.2e}; "
               f"antisymmetric part at t=200 = {anti[-1]:.2e}")
         print(f"  translational (mean) part: max = {np.abs(sym).max():.2e}, "
