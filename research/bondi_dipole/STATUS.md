@@ -67,13 +67,37 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-- [ ] An interior norm in `Examples/RadialRecipe` beside the boundary-masked one: drop the outer boundary layer and
+**Live** (the first GPU node; launched 09:37 UTC 10-22, each cell solves on CPU and then evolves on its card; ETAs
+rough until the solves' first Newton iterations land):
+
+| run | card | state | t / stop | ETA |
+|---|---|---|---|---|
+| `conv2a_pair_d10_L64_N128_lev0` | 1 | 256³ solve, 4 ranks | 0 / 20 | ~2 h (~14:40 MSK) |
+| `conv2a_pair_d10_L64_N192_lev0` | 1 | 384³ solve, 8 ranks | 0 / 20 | ~4 h (~16:40 MSK) |
+| `conv2a_pair_d10_L64_N256_lev0` | 0 | 512³ solve, 12 ranks | 0 / 20 | ~5 h (~17:40 MSK) |
+
+Run dirs `runs/bondi/staging/conv2a_*`, each with its `launch.sh` (diffed against the old cell: only the stop time,
+frames off, the binary, solve ranks and timeout change). No checkpoints. Scratch on the node: 30 GB of two spinning
+`spin_hold_*_t150` leftovers, not this campaign's.
+
+- [x] An interior norm in `Examples/RadialRecipe` beside the boundary-masked one: drop the outer boundary layer and
       the sponge (r > 24), as `SpinningWormhole`'s `constraint_norms_levels` does. Rebuild and record the binary.
       Code reaches the nodes only by push and pull.
+      Done 10-22 (8d0771d4): `constraint_norms.dat` cols 18-19, `L2_Ham_int` and `L2_Mom_int`, are the
+      boundary-masked norms (cols 12-13) restricted to r ≤ `constraint_norms_interior_radius` (default: the sponge's
+      inner radius, 24). Binary `runs/bondi/bin/main3d_intnorm_37ae5be1_2026-10-22.ex` (sha256 f5ca01e5fb417458,
+      AMReX 26.02-12-gd7da5045, nvcc 12.1, sm_90). It is stamped 37ae5be1, the same commit before the rebase onto
+      the paper commits: Source/, the example and Tools/GNUMake are identical in 8d0771d4. `run_pair_selfgrav.sh`
+      takes it as `BONDI_BINARY` (unset: the example's own build, as every archived cell ran). Source/ has changed since the archived runs' a6d9dccb, so the
+      2a runs' existing columns are checked against the archived rows over t ≤ 20.
 - [ ] 2a. Diagnosis: short runs (t ≤ 20) of the d₀ = 10 pair at N 128/192/256 with the interior norm, plus a CPU
       check of each initial-data set's t = 0 constraints. It finds what caps the order: the second-order GRTresna
       solve, a mismatch between the matter the solver used and the matter painted on the evolution grid, or
       under-resolved stars. Without it, N 320 may only reproduce order 1.5.
+      Suspects found in the code (10-22), for the CPU check to size: the solve's Im Π divides by each star's own
+      lapse, the painted Im Π by the summed lapse (the companion's α − 1 enters, independent of N); the solve
+      interpolates the star tables linearly and differentiates the interpolant, the evolution paints a cubic spline
+      and differentiates on the grid. The gridinit and the star tables are kept for it.
 - [ ] 2b. The resolution study N 192/256/320 (Δx 0.33/0.25/0.20) at L 64 to t 200. A rerun is its old run: start
       from `campaign/runaway_pair_d10_L64_N256_lev0` (`evolution_params.txt`, `launch_config.sh`) and change only N,
       the Δx-scaled solve tolerance and the diagnostics. N 320 needs about 94 GB, so it runs on both cards of the
