@@ -73,9 +73,18 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live**: plan step 2, the fixed solve of the N 128 / 192 / 256 initial data, CPU only on the first GPU node (4 / 8 /
-12 ranks, peak ~390 GB of 524), started 16:58 MSK 10-22; ETA ~17:20 / ~17:45 / ~18:15 MSK. Run dirs
-`runs/bondi/staging/fixid_pair_d10_L64_N*_lev0`. Both cards idle. The three 2a cells ran on the first GPU node on
+**Live** (first GPU node, 10-22):
+- Plan step 2, the fixed solves, CPU only: N 128 done 17:20 MSK (t = 0 check passed, below); N 192 (8 ranks) ETA
+  ~17:45, N 256 (12 ranks) ETA ~18:25 MSK. Run dirs `runs/bondi/staging/fixid_pair_d10_L64_N*_lev0`.
+- `conv2b_pair_d10_L64_N128_lev0_t20`, card 1: the 2a N 128 cell again on the fixed data (only the gridinit
+  changes), to t 20 at ~205 units/h, started 17:28 MSK, ETA ~17:35. It gives the gate its third rung.
+- Next on the go given 10-22 ("once first solves complete push them to gpu runs"): `conv2b_pair_d10_L64_N192_lev0`
+  on card 0 when its data lands, `conv2b_pair_d10_L64_N256_lev0` on card 1, both to t 200, no checkpoints.
+- Near-miss 17:22 MSK: the first N 128 launch from a gridinit re-solved a star for the unused pump width and reached
+  96 GB in Python beside the two solves (container 475 of 524 GB); killed in time, nothing else lost. The launches now
+  pass the old cells' width (`RL_PUMP_TARGET_WIDTH`, a new wrapper knob), which skips that solve.
+
+The three 2a cells ran on the first GPU node on
 10-22 (done N 128 13:13, N 192 13:41, N 256 15:08 MSK; 207 / 49 / 16 units/h), all to t 20 with no NaN and their
 scratch cleared. Each reproduces its archived run over
 t ≤ 20 to 1 % (L2 norms) and 1.5e-6 (Linf_Ham_amr). Run dirs `runs/bondi/staging/conv2a_*`, each with its `launch.sh`
@@ -154,7 +163,16 @@ order, so a fixed solve converges at 2 (the spinning paper's bar), not at the ev
 - [ ] 2. Check at t = 0 (~1.5 h, CPU only): re-solve N 128/192/256 together (N 256's took 68 min and 221 GB on
       12 ranks) and rerun `t0_constraints.py`. The two terms must vanish and the total keep order 1.9 at both steps.
       The N 192 and N 256 data carry over to step 3.
-      Live (see above): `GRTRESNA_ROOT` points the launch at the worktree; all 24 ranks run its binary.
+      Live (see above): `GRTRESNA_ROOT` points the launch at the worktree; all 24 ranks run its binary. The new
+      solves converge as the old ones did (12 / ~13 / ~16 Newton steps, each cutting the error ~2.5×).
+      N 128 (`t0_constraints.py --solve matched`, L2 over r ≤ 24): the Im Π term 4.55 × 10⁻⁷ → 8 × 10⁻²⁰, the
+      gradient term 3.5 × 10⁻⁷ → 0, interp 3 × 10⁻⁹ → 10⁻¹³; the solve's residual with the rebuilt matter
+      5.0 × 10⁻⁹ (the solve's tolerance), so the solve really used the new matter. The total stays 4.1 × 10⁻⁶, as
+      expected at N 128 (the solve's own 3.5 × 10⁻⁶ plus the evolution's stencil 7.4 × 10⁻⁷). Also gone: a spurious
+      A_ij ~ 10⁻⁷ (now 4 × 10⁻²⁰) and Mom 7 × 10⁻⁹ (now 2 × 10⁻²¹). The wrapper writes each star's frequency
+      into `lump{k}_omega`, which GRTresna reads as a rigid rotation rate; with the finite-difference gradient the
+      rotation term ω(x ∂_y φ − y ∂_x φ) most likely did not cancel and sourced a small Re Π and S_i the painter
+      never had.
 - [ ] 3. 2b, the resolution study N 192/256/320 (Δx 0.33/0.25/0.20) at L 64 to t 200 (~2 days, ~50 GPU-h; expected
       Q₂ 2.16, Q₃ 2.81, Q₄ 3.66). A rerun is its old run: start from `campaign/runaway_pair_d10_L64_N256_lev0`
       (`evolution_params.txt`, `launch_config.sh`) and change only N, the Δx-scaled solve tolerance and the

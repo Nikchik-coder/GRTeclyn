@@ -203,6 +203,20 @@ def _pump_controller_overrides(
                 overrides["rl_pump_stop_time"] = stop_t
         except (TypeError, ValueError):
             pass
+    # Optional fixed trap width (env RL_PUMP_TARGET_WIDTH > 0), which skips the
+    # self-gravitating star solve below.  That solve takes the central amplitude
+    # phi_c, and at the Bondi cells' sextic rung the default phi_c 0.08 has no
+    # bound star: omega -> m, and the Yukawa tail of length 20/kappa came out at
+    # 4e8 points, ~100 GB in this process, for a width the cells never use
+    # (their pump is off from t = 0).  2026-10-22: a launch beside two solves
+    # took the container to 475 of 524 GB.
+    width_raw = os.environ.get("RL_PUMP_TARGET_WIDTH", "").strip()
+    fixed_width = 0.0
+    if width_raw:
+        try:
+            fixed_width = float(width_raw)
+        except (TypeError, ValueError):
+            fixed_width = 0.0
     if mass > 0.0:
         overrides["rl_pump_target_profile"] = int(PROFILE_SECH_BOUND)
         if selfgrav:
@@ -211,7 +225,11 @@ def _pump_controller_overrides(
                 selfgrav_pump_target_width,
             )
 
-            target_width = selfgrav_pump_target_width(mass, lam, mu, phi_c)
+            target_width = (
+                fixed_width
+                if fixed_width > 0.0
+                else selfgrav_pump_target_width(mass, lam, mu, phi_c)
+            )
             # The trap must aim at the star's OWN central amplitude, not the
             # transport knob well_depth.  Aiming at a much smaller amplitude
             # makes the PD controller fight gravity and collapse the star.
