@@ -31,6 +31,8 @@ the code's order is 4:
 
 - Neither convergence test passes. The constraints converge at order 1.5 at best, and the momentum constraint stops
   converging between N 192 and 256. ΔX is non-monotone from t 50 on, so N 128 is outside the convergent regime.
+- Cause found 10-22: the star tables' lapse steps by 4–5 × 10⁻⁵ where each star's integrated interior meets its
+  analytic exterior (section 2, "The lapse step"). The paper's runs and the 2a cells used those tables.
 - The rise of the domain-wide Hamiltonian norm at t = 0 (2.0 → 3.7 → 5.6 × 10⁻⁴), which App. A and Fig. 4(b)
   attribute to the solve-to-evolution transfer, sits in the box's outer boundary layer: the boundary-masked norm
   falls (2.1 → 1.1 → 1.0 × 10⁻⁶). That explanation goes.
@@ -70,6 +72,15 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
       which the full-width floats set.
 - [ ] After 2b: the convergence paragraph of Sec. VII A, App. A and Fig. 6(b) / Fig. 10 from the new runs (TODO
       comments in the tex; strip all comments before the arXiv upload).
+- [ ] Initial data, Sec. III A "Isolated stars" (the lapse step, section 2). Say how each star's profile continues
+      past the matching radius, where the field has fallen to 5 % of its central value: the field's exponential tail
+      and the exterior Schwarzschild metric in isotropic coordinates, with the lapse matched to the interior in value
+      and slope, which fixes α_∞ and the lapse's exterior mass. Also say that the evolution starts from the
+      superposed lapse α = 1 + Σ_k (α_k − 1) of the two stars and that Π = −(ω/α) φ₀ uses it: the current "the lapse
+      of its own solution" holds only for an isolated star. Describe the construction as it is, not the step
+      (CLAUDE.md, the paper). How the other runs enter waits for step 4: if the joined-lapse N 256 reproduces ΔX,
+      Sec. VII "Other numerical choices" lists the join with its effect on ΔX(200); if not, those runs need the
+      joined lapse too.
 
 ### 2. Convergence (cluster)
 
@@ -94,6 +105,19 @@ what capped their order. Fixed at the source: the lapse is joined in value and s
 lapse takes the lapse's own mass, 1.7 % above the conformal factor's; α_∞ moves by 4 × 10⁻⁶). The patch writes the
 same join into the existing tables and adds the change to the gridinit's lapse (≤ 5.5 × 10⁻⁵); all other fields stay
 byte-identical, and the star frequency and interior lapse scale together, so Im Π = −ωφ/α still holds.
+
+Orders so far (19:26 MSK; N 256 at t 3.4), r ≤ 24, N 128→192 / 192→256, joined lapse against the stepped one (2a):
+
+| | t 0 | t 1 | t 2 | t 3 | t 5 |
+|---|---|---|---|---|---|
+| Ham, joined | 2.1 / 2.0 | 2.7 / 2.6 | 3.0 / 2.8 | 3.1 / 2.1 | 2.4 / – |
+| Ham, stepped | 1.9 / 1.6 | 1.1 / −0.7 | 1.6 / −0.3 | 2.5 / 0.3 | 2.3 / – |
+| Mom, joined | 3.0 / 3.1 | 2.5 / 2.8 | 3.0 / 3.4 | 2.8 / 3.6 | 3.1 / – |
+| Mom, stepped | −1.5 / −1.4 | −0.6 / −1.1 | −0.2 / −0.6 | 0.9 / 0.0 | 1.7 / – |
+
+From t 1 on, the boundary-masked norm, which adds the absorbing layer and the outer cells, matches the stepped runs'
+to ±0.1 (orders −2.2 to 0.6 at t ≤ 3): the outer region sets it, not the stars. The full t 20 table follows when
+N 256 ends.
 
 - Stopped and wiped 18:59 MSK on the word ("all current runs should be stoped and wiped"): the three 2b t 200 runs
   (N 128 at t 29.9, N 192 at t 55.8, N 256 at t 12.4), which started from the stepped lapse. Run dirs and 9 GB of
