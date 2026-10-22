@@ -74,12 +74,16 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 ### 2. Convergence (cluster)
 
 **Live** (first GPU node, 10-22):
-- Plan step 2, the fixed solves, CPU only: N 128 done 17:20 MSK (t = 0 check passed, below); N 192 (8 ranks) ETA
-  ~17:45, N 256 (12 ranks) ETA ~18:25 MSK. Run dirs `runs/bondi/staging/fixid_pair_d10_L64_N*_lev0`.
-- `conv2b_pair_d10_L64_N128_lev0_t20`, card 1: the 2a N 128 cell again on the fixed data (only the gridinit
-  changes), to t 20 at ~205 units/h, started 17:28 MSK, ETA ~17:35. It gives the gate its third rung.
-- Next on the go given 10-22 ("once first solves complete push them to gpu runs"): `conv2b_pair_d10_L64_N192_lev0`
-  on card 0 when its data lands, `conv2b_pair_d10_L64_N256_lev0` on card 1, both to t 200, no checkpoints.
+- Plan step 2, the fixed solves, CPU only: N 128 done 17:20, N 192 17:37 MSK (both t = 0 checks passed, below);
+  N 256 (12 ranks) ETA ~18:25 MSK. Run dirs `runs/bondi/staging/fixid_pair_d10_L64_N*_lev0`.
+- `conv2b_pair_d10_L64_N192_lev0`, card 0 (25 GB): the old N 192 cell on the fixed data, to t 200, no checkpoints,
+  started 17:37 MSK at 49 units/h; t 20 ~18:02, ETA t 200 ~4.1 h, ~21:45 MSK. Its params differ from the old
+  cell's only in paths and the gridinit.
+- Next on the go given 10-22 ("once first solves complete push them to gpu runs"): `conv2b_pair_d10_L64_N256_lev0`
+  on card 1 when its data lands (~18:25 MSK), to t 200 (~13 h), no checkpoints.
+- Done: `conv2b_pair_d10_L64_N128_lev0_t20`, card 1, 17:28–17:38 MSK: the 2a N 128 cell on the fixed data (only the
+  gridinit changes), t 20, no NaN, scratch cleared. At N 128 its norms match 2a's to 0.1 % (the fix hides under the
+  solve's own error there); it is the gate's third rung.
 - Near-miss 17:22 MSK: the first N 128 launch from a gridinit re-solved a star for the unused pump width and reached
   96 GB in Python beside the two solves (container 475 of 524 GB); killed in time, nothing else lost. The launches now
   pass the old cells' width (`RL_PUMP_TARGET_WIDTH`, a new wrapper knob), which skips that solve.
@@ -173,6 +177,10 @@ order, so a fixed solve converges at 2 (the spinning paper's bar), not at the ev
       into `lump{k}_omega`, which GRTresna reads as a rigid rotation rate; with the finite-difference gradient the
       rotation term ω(x ∂_y φ − y ∂_x φ) most likely did not cancel and sourced a small Re Π and S_i the painter
       never had.
+      N 192: the same (Im Π 7 × 10⁻²⁰, gradient 0, residual 2.0 × 10⁻⁹); the total 1.89 → 1.77 × 10⁻⁶; order of
+      the total N 128→192 2.07 (was 1.9). The momentum constraint's first step is unchanged at N 128 and N 192
+      (6.3 × 10⁻⁷ and 1.21 × 10⁻⁶ at t = dt, 2a 6.1 × 10⁻⁷ and 1.14 × 10⁻⁶), so that jump is not from the two
+      mismatches.
 - [ ] 3. 2b, the resolution study N 192/256/320 (Δx 0.33/0.25/0.20) at L 64 to t 200 (~2 days, ~50 GPU-h; expected
       Q₂ 2.16, Q₃ 2.81, Q₄ 3.66). A rerun is its old run: start from `campaign/runaway_pair_d10_L64_N256_lev0`
       (`evolution_params.txt`, `launch_config.sh`) and change only N, the Δx-scaled solve tolerance and the
