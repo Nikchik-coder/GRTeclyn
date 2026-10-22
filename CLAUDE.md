@@ -244,8 +244,9 @@ Learned on the spinning paper's submission (2026-10-21):
   `\documentclass` with a wall of "Undefined control sequence". Select "pdflatex" by hand before processing.
 - The arXiv scanner's "missing files: Latin Modern Roman/Sans/Mono" warning is a false positive from the
   fontspec branch of the articles' engine guard; ignore it.
-- arXiv limits the account to 2 submissions per calendar month (October 2026's quota is used up by the merger
-  replacement and the spinning paper).
+- arXiv limits each account to 2 new submissions per calendar month and 3 active ones (since 2026-10-01);
+  replacements have their own limit, one per week after v5. October 2026's two were the merger paper's v1 and the
+  spinning paper (the merger paper has no replacement).
 - When the arXiv number arrives, put it into the root README's papers table, `CITATION.cff`, the paper's
   `results/<pack>/README.md` and the GitHub release notes. Spinning paper: arXiv:2610.29941 (submitted
   2026-10-21, announced 2026-10-22), release `v1.0-spinning-wormhole` (develop c80875eb), version DOI
