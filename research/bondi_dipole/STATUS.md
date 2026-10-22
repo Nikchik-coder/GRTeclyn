@@ -84,8 +84,8 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live** (first GPU node, 10-22, 21:32 MSK): `diag_direct_lone_p_L64_N192_lev0_t10`, card 0, the direct-painted
-lone star at N 192 to t 10 (~10 min). Everything else stopped or finished; card 1 idle.
+**Live**: nothing (10-22, 21:50 MSK). The direct-painted lone star at N 192 finished clean (t 10, 13 min);
+both cards idle.
 
 **The third defect, localized 10-22 evening** (diag runs on the shell-norm binaries 65cc1a98 / d2511dca, which
 write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, every 0.1):
@@ -107,8 +107,20 @@ write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, eve
 - Stopped 21:20 MSK ("lets terminate the runs no point burning gpus"): the PP-pair and lone N 192 solves, the
   unrepaired N 256 control and the two signed pair reruns (log `runs/bondi/staging/stop_diag_2026-10-22.log`);
   superseded by the lone-star verdict. The finished diag runs' episodes are kept under `runs/bondi/staging/diag_*`.
-- Next: the direct star at N 192 settles whether the core drift is resolution-independent on exact data; then the
-  term hunt in the evolution with the core fingerprint.
+- **Revised verdict (10-22, 21:50 MSK, with the direct N 192 in): the drift is NOT resolution-independent on
+  exact data.** The signed core mean's growth rate (t 2-10): N 128 −1.21 × 10⁻⁵/t vs N 192 −5.20 × 10⁻⁶/t —
+  **order 2.1**; the t ≈ 0 values scale at order 3.8 (the stencils' own 4th-order error). The evolution has no
+  continuum defect; it converges at second order at the star core (something in its chain is 2nd-order accurate,
+  not 4th — acceptable, but worth naming for the paper).
+- The floor sits in the solved data: the facefix pair triplet's star-shell (r 5) L2 growth rate barely falls,
+  1.79 / 1.28 / 1.05 × 10⁻⁶/t at N 128/192/256 — order 0.8 then 0.7. GRTresna's output seeds a
+  near-resolution-independent violation that the evolution then grows linearly; this is what caps the study's
+  interior Ham order at ~1.2. (At N 128 the evolution's own 2nd-order error still dominates, which is why the
+  earlier lone solved-vs-direct comparison at N 128 looked "the same rate".)
+- Next, the split inside the data chain (one lone-star run each, t 10): the SOLVED lone star at N 192 — if its
+  rate also floors, the defect is in the single-star solve path (solve or conversion); if it converges like the
+  direct paint, the floor is superposition-specific (the Π = −(ω/Σα)φ ansatz, a continuum-level modelling error
+  that no grid refines away). Optionally the direct star at N 256 to confirm clean order 2 persists.
 
 **The face-layer step** (found 10-22, the second defect): with a target origin, the Chombo converter's nearest-cell
 fallback (`grtresna/io/chombo.py`, `_target_span_slice`) painted each face's outermost cell layer from a solve cell
