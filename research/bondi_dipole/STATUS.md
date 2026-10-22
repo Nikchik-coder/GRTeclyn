@@ -86,9 +86,14 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 **Live** (first GPU node, 10-22), the t 20 check of the lapse fix, launched 19:10 MSK on the go given 10-22 ("go on
 with this fix"). No checkpoints, frames off. Params differ from the 2a cells' only in paths and the initial data:
-- `conv2c_pair_d10_L64_N256_lev0_t20`, card 1 (57.5 GB), ~16 units/h; ETA t 20 ~1.3 h, ~20:25 MSK.
-- `conv2c_pair_d10_L64_N192_lev0_t20`, card 0 (25 GB); ETA ~0.6 h, ~19:45 MSK.
-- `conv2c_pair_d10_L64_N128_lev0_t20`, card 0 beside N 192 (~6 GB); ETA ~0.3 h, ~19:30 MSK.
+- `conv2c_pair_d10_L64_N256_lev0_t20`, card 1 (57.5 GB), 15.8 units/h; at t 9.1 19:47 MSK, ETA t 20 ~20:29 MSK.
+- Done: `conv2c_pair_d10_L64_N128_lev0_t20` (19:31 MSK) and `conv2c_pair_d10_L64_N192_lev0_t20` (19:47 MSK), both
+  t 20, no NaN, scratch purged. Card 0 idle.
+- Same N against the stepped lapse (2a), t ≤ 20: the separation agrees to 1.2 × 10⁻⁴ (N 128 and 192), ΔX is
+  1.4 % larger at t 5 at both N (the lapse change itself, not resolution) and 0.01–0.02 % at t 20, and the
+  acceleration fitted over 5 ≤ t ≤ 20 changes by −0.3 %. N 128→192 at t 5 / 10 / 15 / 20: Ham 2.4 / 1.7 / 1.6 /
+  1.5 (stepped: the same to 0.1), Mom 3.1 / 2.8 / 2.6 / 2.4 (stepped 1.7 / 2.2 / 2.4 / 2.4). The step held down the
+  early orders only; what holds the later Hamiltonian order near 1.5 is still open.
 - Each starts from `runs/bondi/staging/lapsefix_pair_d10_L64_N*_lev0`: the fixid data with only the lapse replaced
   (`grteclyn-wrapper/scripts/campaigns/bondi_dipole/patch_lapse_join.py`, record in `lapse_patch.json`).
 - Start checked: the first step's momentum violation (L2, r ≤ 24) is 5.1 / 1.5 / 0.63 × 10⁻⁸ at N 128 / 192 / 256,
