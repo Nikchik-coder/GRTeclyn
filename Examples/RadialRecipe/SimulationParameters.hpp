@@ -185,6 +185,13 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("sponge_ramp_power", sponge_params.ramp_power, 4);
         pp.load("sponge_center", sponge_params.center, center);
 
+        // Interior constraint norms (constraint_norms.dat, *_int columns):
+        // only cells within this radius of the sponge's centre, so neither
+        // the sponge nor the outer boundary layer enters.  Default: the
+        // sponge's inner radius.
+        pp.load("constraint_norms_interior_radius",
+                constraint_norms_interior_radius, sponge_params.inner_radius);
+
         // Recentring box ("treadmill"): once the source has drifted, carry the
         // DATA back toward the box centre by a whole number of cells and keep
         // an odometer of how far, so a runaway can be followed for as long as
@@ -351,6 +358,7 @@ class SimulationParameters : public SimulationParametersBase
 
     // Numerical sponge zone (radially-ramped extra KO dissipation).
     SpongeZoneParams sponge_params{};
+    double constraint_norms_interior_radius{24.0};
 
     // Recentring box (exact whole-cell translation + odometer).
     GridTreadmillParams treadmill_params{};
