@@ -84,11 +84,31 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live** (first GPU node, 10-22, launched 20:25 MSK on "continue debugging"): five t 10 diagnostic runs on the
-shell-norm binary (65cc1a98, `constraint_shells.dat` every 0.1), no checkpoints, frames off.
-`diag_facefix_pair_d10_L64_N{128,192,256}_lev0_t10` run the face-repaired data (N 256 card 0; 128 + 192 card 1);
-`diag_shells_pair_d10_L64_N{128,192}_lev0_t10` the unrepaired `lapsefix` data as the control. ETA t 10 ~18:10 MSK
-(N 256), the others sooner.
+**Live** (first GPU node, 10-22, 21:32 MSK): `diag_direct_lone_p_L64_N192_lev0_t10`, card 0, the direct-painted
+lone star at N 192 to t 10 (~10 min). Everything else stopped or finished; card 1 idle.
+
+**The third defect, localized 10-22 evening** (diag runs on the shell-norm binaries 65cc1a98 / d2511dca, which
+write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, every 0.1):
+- With both data fixes in, a Hamiltonian violation remains that grows linearly in time at a rate that does not
+  shrink with the grid (pair, shells r ≤ 8: ~1.1 × 10⁻⁶/t at both N 192 and N 256), capping the interior order
+  at ~1.2 from t ≈ 4. The face repair left the interior orders unchanged (Mom 2.5–3.6 ✓, Ham 1.7/1.2 ✗).
+- Not the superposition: the lone canonical star (`diag_lone_p_L64_N128_lev0_t10`, the control_lone recipe on the
+  fixed pipeline) grows the same way at half the pair's rate — one star, half the sources. The pair's midpoint
+  bump is the two stars' contributions adding.
+- Not GRTresna and not the star ODE: `paint_lone_star_direct.py` paints the lone star's data straight from the
+  ODE profile (exact to ~1e-10; vs the solved data: phi/Pi/lapse/K equal to 1e-11, only chi differs, by the
+  solve's 3.8 × 10⁻⁴). The run from it (`diag_direct_lone_p_L64_N128_lev0_t10`) grows at the same rate
+  (0.54 vs 0.66 × 10⁻⁶/t). Exact initial data cannot source a steady constraint drift under a consistent
+  evolution, so the defect is in the GRTeclyn evolution (or its diagnostic), not in the initial data chain.
+- The fingerprint: the signed mean per shell shows the growth at the star CORE (r < 1), negative, monotonic
+  (−9.5 × 10⁻⁶ at t 0 → −2.1 × 10⁻⁴ at t 10 at N 128): the matter's ρ drifts up against the geometry. The field's
+  oscillation itself is clean (max φ follows f cos ωt to 4 digits). At the core the quartic and sextic potential
+  terms nearly cancel (V ≈ 2 × 10⁻⁵ from ±4 × 10⁻⁴ pieces), so a small inconsistency there is amplified.
+- Stopped 21:20 MSK ("lets terminate the runs no point burning gpus"): the PP-pair and lone N 192 solves, the
+  unrepaired N 256 control and the two signed pair reruns (log `runs/bondi/staging/stop_diag_2026-10-22.log`);
+  superseded by the lone-star verdict. The finished diag runs' episodes are kept under `runs/bondi/staging/diag_*`.
+- Next: the direct star at N 192 settles whether the core drift is resolution-independent on exact data; then the
+  term hunt in the evolution with the core fingerprint.
 
 **The face-layer step** (found 10-22, the second defect): with a target origin, the Chombo converter's nearest-cell
 fallback (`grtresna/io/chombo.py`, `_target_span_slice`) painted each face's outermost cell layer from a solve cell
