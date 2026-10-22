@@ -10,14 +10,21 @@ and the star tables), and splits the Hamiltonian constraint on the interior
 
   solve      H4 - H2 with the solve's own matter: the second-order solve's
              truncation error as the evolution's fourth-order stencils see it;
-  Im Pi      16 pi drho from the U(1) momentum: the solve divides by each star's
-             own tabulated lapse, the painter by the summed lapse of the grid;
-  interp     16 pi drho from the field values: the solve interpolates the star
-             table linearly, the painter evaluates a cubic spline;
-  table grad 16 pi drho from |grad phi|^2: the solve differences its linear
-             interpolant at +-1e-3 width against the profile's exact derivative;
+  Im Pi      16 pi drho from the U(1) momentum: the solve's lapse against the
+             summed lapse of the grid, by which the painter divides;
+  interp     16 pi drho from the field values: the solve's interpolant of the
+             star table against the painter's cubic spline;
+  table grad 16 pi drho from |grad phi|^2: the solve's gradient against the
+             profile's exact derivative;
   stencil    the evolution's fourth-order gradient of the painted field against
              the same exact derivative (are the stars resolved on this grid?).
+
+Two solvers made the archived data.  ``--solve legacy`` (GRTresna before
+2026-10-22) interpolates the table linearly, differences that interpolant at
++-1e-3 width and divides Im Pi by each star's own lapse; ``--solve matched``
+(the fix of 2026-10-22, the default) evaluates the table's natural cubic
+spline and its exact derivative and divides by the summed lapse, so its Im Pi,
+interp and table grad terms vanish up to the table's 10 digits.
 
 The pieces add up exactly:
   H4[painted] = solve + H2[solver] + Im Pi + interp + table grad + stencil.
@@ -33,10 +40,11 @@ ConstraintsWithMatter, G = 1) reduce for h_ij = delta_ij, Gamma = 0 to
   M_i = d_j A_ij - 3/(2 chi) A_ij d_j chi - 2/3 d_i K - 8 pi j_i,
 with the matter of BiComplexScalarField; the solve's matter is GRTresna's
 ComplexScalarField::compute_emtensor (one star per lump, no cross terms) with
-BosonStarParams' linear table interpolation and lump_grad_phi1.
+BosonStarParams' table interpolation and lump_grad_phi1.
 
 Usage:
   t0_constraints.py <episode dir> [<episode dir> ...] [--radius 24]
+                    [--solve matched|legacy]
 """
 
 from __future__ import annotations
@@ -119,6 +127,7 @@ def solver_lumps(params: dict[str, list[str]], grtresna_dir: Path) -> list[dict]
             # The table's own natural cubic spline stands in for the exact
             # profile; it is checked against the painted field below.
             "spline": CubicSpline(r, phi0, bc_type="natural"),
+            "alpha_spline": CubicSpline(r, alpha, bc_type="natural"),
         })
     return lumps
 
@@ -166,7 +175,7 @@ def a_name(i: int, j: int) -> str:
     return SYM[(min(i, j), max(i, j))]
 
 
-def analyse(episode: Path, radius: float) -> dict:
+def analyse(episode: Path, radius: float, solve: str) -> dict:
     names, data, dx, origin = open_gridinit(episode / "initial_data.gridinit")
     if not np.allclose(dx, dx[0]):
         raise SystemExit(f"{episode}: anisotropic cells {dx}")
@@ -263,24 +272,42 @@ def analyse(episode: Path, radius: float) -> dict:
     parts = {key: np.zeros_like(chi_c)
              for key in ("impi", "interp", "table_grad", "stencil")}
     checks = {}
-    for k, lump in enumerate(lumps):
+    rel_r = []
+    for lump in lumps:
         rel = [xc - lump["center"][0], yc - lump["center"][1], zc - lump["center"][2]]
-        r_k = np.sqrt(rel[0] ** 2 + rel[1] ** 2 + rel[2] ** 2)
+        rel_r.append((rel, np.sqrt(rel[0] ** 2 + rel[1] ** 2 + rel[2] ** 2)))
+
+    def clipped(lump, r_k):
+        return np.clip(r_k, lump["r"][0], lump["r"][-1])
+
+    if solve == "matched":
+        # BosonStarParams::total_alpha: the superposed spline lapse.
+        alpha_sum = np.maximum(1.0 + sum(
+            lump["alpha_spline"](clipped(lump, r_k)) - 1.0
+            for lump, (_, r_k) in zip(lumps, rel_r)), 1.0e-3)
+    for k, (lump, (rel, r_k)) in enumerate(zip(lumps, rel_r)):
         norm = lump["amp"] / lump["phi0"][0]
+        r_safe = np.where(r_k > 0.0, r_k, 1.0)
+        if solve == "matched":
+            phi_s = norm * lump["spline"](clipped(lump, r_k))
+            alpha_s = alpha_sum
+            inside = (r_k > lump["r"][0]) & (r_k < lump["r"][-1])
+            dphi_s = np.where(inside, norm * lump["spline"](clipped(lump, r_k), 1), 0.0)
+            g_s = [dphi_s * c / r_safe for c in rel]
+        else:
+            def phi_lin(rr, lump=lump, norm=norm):
+                return norm * np.interp(rr, lump["r"], lump["phi0"])
 
-        def phi_lin(rr, lump=lump, norm=norm):
-            return norm * np.interp(rr, lump["r"], lump["phi0"])
-
-        phi_s = phi_lin(r_k)
-        alpha_k = np.interp(r_k, lump["r"], lump["alpha"])
-        eps = 1.0e-3 * lump["width"]
-        g_s = []
-        for a in range(3):
-            plus = [c + (eps if b == a else 0.0) for b, c in enumerate(rel)]
-            minus = [c - (eps if b == a else 0.0) for b, c in enumerate(rel)]
-            g_s.append((phi_lin(np.sqrt(sum(c**2 for c in plus)))
-                        - phi_lin(np.sqrt(sum(c**2 for c in minus)))) / (2.0 * eps))
-        pi_s = -lump["omega"] * phi_s / alpha_k
+            phi_s = phi_lin(r_k)
+            alpha_s = np.interp(r_k, lump["r"], lump["alpha"])
+            eps = 1.0e-3 * lump["width"]
+            g_s = []
+            for a in range(3):
+                plus = [c + (eps if b == a else 0.0) for b, c in enumerate(rel)]
+                minus = [c - (eps if b == a else 0.0) for b, c in enumerate(rel)]
+                g_s.append((phi_lin(np.sqrt(sum(c**2 for c in plus)))
+                            - phi_lin(np.sqrt(sum(c**2 for c in minus)))) / (2.0 * eps))
+        pi_s = -lump["omega"] * phi_s / alpha_s
         sign = lump["sign"]
         rho_s += sign * (0.5 * pi_s**2 + 0.5 * chi_c * sum(g**2 for g in g_s)
                          + potential(phi_s**2, mass, lam, mu))
@@ -288,16 +315,15 @@ def analyse(episode: Path, radius: float) -> dict:
             continue
         p = painted[sign]
         # Exact profile derivative along the radial unit vector.
-        r_safe = np.where(r_k > 0.0, r_k, 1.0)
         dphi = norm * lump["spline"](r_k, 1)
         g_e = [dphi * c / r_safe for c in rel]
         gs2 = sum(g**2 for g in g_s)
         ge2 = sum(g**2 for g in g_e)
         gp2 = sum(g**2 for g in p["grad"])
-        parts["impi"] += sign * (0.5 * (lump["omega"] * p["phi"] / alpha_k) ** 2
+        parts["impi"] += sign * (0.5 * (lump["omega"] * p["phi"] / alpha_s) ** 2
                                  - 0.5 * p["pi"] ** 2)
         parts["interp"] += sign * (0.5 * lump["omega"] ** 2 * (phi_s**2 - p["phi"] ** 2)
-                                   / alpha_k**2
+                                   / alpha_s**2
                                    + potential(phi_s**2, mass, lam, mu)
                                    - potential(p["phi"] ** 2, mass, lam, mu))
         parts["table_grad"] += sign * 0.5 * chi_c * (gs2 - ge2)
@@ -309,8 +335,9 @@ def analyse(episode: Path, radius: float) -> dict:
             # painted Im Pi against -omega phi / (grid lapse)
             "Pi vs -w phi/lapse": float(np.max(np.abs(p["pi"] + lump["omega"] * p["phi"]
                                                       / lapse_c)[star])),
-            "own lapse - grid lapse (centre)": float(
-                (alpha_k - lapse_c)[np.unravel_index(np.argmin(r_k), r_k.shape)]),
+            "solve lapse - grid lapse (centre)": float(
+                (np.broadcast_to(alpha_s, r_k.shape) - lapse_c)[
+                    np.unravel_index(np.argmin(r_k), r_k.shape)]),
             "max |Im phi|": p["max_im_phi"],
             "max |Re Pi|": p["max_re_pi"],
         }
@@ -325,9 +352,9 @@ def analyse(episode: Path, radius: float) -> dict:
         "matter: 16pi(rho_s - rho_p)": 4.0 * FOUR_PI * (rho_s - rho_p),
     }
     if split:
-        for key, label in (("impi", "  Im Pi: own vs summed lapse"),
-                           ("interp", "  interp: linear vs spline"),
-                           ("table_grad", "  table grad: interpolant FD"),
+        for key, label in (("impi", "  Im Pi: solve vs grid lapse"),
+                           ("interp", "  interp: solve vs painted phi"),
+                           ("table_grad", "  table grad: solve vs exact"),
                            ("stencil", "  stencil: 4th-order grad")):
             terms[label] = 4.0 * FOUR_PI * parts[key]
     del geo4, geo2
@@ -366,15 +393,18 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("episodes", nargs="+", type=Path,
                     help="episode dirs holding initial_data.gridinit and grtresna/")
+    ap.add_argument("--solve", choices=("matched", "legacy"), default="matched",
+                    help="the solver that made the data: matched (GRTresna since the "
+                         "2026-10-22 fix) or legacy (linear table, own lapse)")
     ap.add_argument("--radius", type=float, default=24.0,
                     help="interior radius about the grid centre (default 24, the sponge's inner edge)")
     args = ap.parse_args()
 
     results = []
     for ep in args.episodes:
-        res = analyse(ep.resolve(), args.radius)
+        res = analyse(ep.resolve(), args.radius, args.solve)
         results.append(res)
-        print(f"\n== {ep}  N = {res['N']}, dx = {res['dx']:.6g}")
+        print(f"\n== {ep}  N = {res['N']}, dx = {res['dx']:.6g}, solve {args.solve}")
         print(f"   conformally flat: {res['flat']};  {res['sums']}")
         for lump, c in res["checks"].items():
             print(f"   {lump}: " + ", ".join(f"{k} {v:.3e}" for k, v in c.items()))

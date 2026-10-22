@@ -73,8 +73,11 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live**: none. The three 2a cells ran on the first GPU node on 10-22 (done N 128 13:13, N 192 13:41, N 256 15:08
-MSK; 207 / 49 / 16 units/h), all to t 20 with no NaN and their scratch cleared. Each reproduces its archived run over
+**Live**: plan step 2, the fixed solve of the N 128 / 192 / 256 initial data, CPU only on the first GPU node (4 / 8 /
+12 ranks, peak ~390 GB of 524), started 16:58 MSK 10-22; ETA ~17:20 / ~17:45 / ~18:15 MSK. Run dirs
+`runs/bondi/staging/fixid_pair_d10_L64_N*_lev0`. Both cards idle. The three 2a cells ran on the first GPU node on
+10-22 (done N 128 13:13, N 192 13:41, N 256 15:08 MSK; 207 / 49 / 16 units/h), all to t 20 with no NaN and their
+scratch cleared. Each reproduces its archived run over
 t ≤ 20 to 1 % (L2 norms) and 1.5e-6 (Linf_Ham_amr). Run dirs `runs/bondi/staging/conv2a_*`, each with its `launch.sh`
 (diffed against the old cell: only the stop time, frames off, the binary, solve ranks and timeout change) and its t = 0
 split in `t0_constraints.log`. The solve stops at 0.002 % × (128/N)⁴ relative error (16 Newton iterations at N 256).
@@ -136,11 +139,22 @@ order, so a fixed solve converges at 2 (the spinning paper's bar), not at the ev
 
 **Plan to a convergence pass** (decided 10-22; about 2.5–3 days from the go):
 
-- [ ] 1. Fix the solve's matter in GRTresna: Im Π with the summed lapse, as painted, and |∇φ|² from the profile's
+- [x] 1. Fix the solve's matter in GRTresna: Im Π with the summed lapse, as painted, and |∇φ|² from the profile's
       exact (spline) derivative. A few hours; record the GRTresna build as the evolution binary is recorded.
+      Done 10-22: GRTresna branch `fix/bondi-solve-matches-painter` at 9a85e6a, built in its own worktree
+      `GRTresna_bondi_fix` beside `GRTresna`, so the main checkout and its 08-06 binary stay as they were (the 2a
+      cells ran on that binary). The star tables are now the painter's natural cubic spline (the C++ spline equals
+      scipy's on the tables to 5 × 10⁻¹⁶), ∇φ its exact derivative, and Im Π divides by the summed lapse. The lapse
+      column is splined too, so the initial lapse loses the same sawtooth (it does not enter the t = 0 constraints).
+      Binary sha256 94a12c672f972e62, frozen as `runs/bondi/bin/grtresna_BosonStarBH_9a85e6a_2026-10-22.MPI.ex`. The
+      unfixed HEAD rebuilt the same way reproduces the old binary's first Newton iteration to all printed digits
+      (25.00075 / 24.29425 % at N 128). This container has no `/bin/csh`: build with
+      `CSHELLCMD="$GRTRESNA_ENV/bin/csh -f -c"`. `run_pair_selfgrav.sh` gains `BONDI_SOLVE_ONLY=1` (solve and
+      gridinit, no GPU); `t0_constraints.py` gains `--solve matched|legacy` (the 2a data are `legacy`).
 - [ ] 2. Check at t = 0 (~1.5 h, CPU only): re-solve N 128/192/256 together (N 256's took 68 min and 221 GB on
       12 ranks) and rerun `t0_constraints.py`. The two terms must vanish and the total keep order 1.9 at both steps.
       The N 192 and N 256 data carry over to step 3.
+      Live (see above): `GRTRESNA_ROOT` points the launch at the worktree; all 24 ranks run its binary.
 - [ ] 3. 2b, the resolution study N 192/256/320 (Δx 0.33/0.25/0.20) at L 64 to t 200 (~2 days, ~50 GPU-h; expected
       Q₂ 2.16, Q₃ 2.81, Q₄ 3.66). A rerun is its old run: start from `campaign/runaway_pair_d10_L64_N256_lev0`
       (`evolution_params.txt`, `launch_config.sh`) and change only N, the Δx-scaled solve tolerance and the

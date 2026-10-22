@@ -46,6 +46,7 @@
 #     BONDI_TREADMILL_BALL   -- core-tracking ball radius (default 8)
 #     BONDI_TREADMILL_FILL   -- 0=asymptotic 1/r fill (default), 1=plain copy
 #   BONDI_DRYRUN=1: resolve and print the parameters, then exit -- no solve, no GPU.
+#   BONDI_SOLVE_ONLY=1: solve and write initial_data.gridinit, then exit -- no GPU.
 #   BONDI_BINARY: the evolution binary (default: the example's own build,
 #     Examples/RadialRecipe/main3d.gnu.MPI.CUDA.ex, as every archived cell ran).
 #     Point it at a frozen, commit-stamped build in runs/bondi/bin/ to record
@@ -179,6 +180,15 @@ CHECKPOINT_INTERVAL="${BONDI_CHECKPOINT_INTERVAL:-}"
 dryrun_args=()
 if [[ "${BONDI_DRYRUN:-0}" != "0" ]]; then
   dryrun_args=(--dry-run)
+fi
+
+# Solve only: the GRTresna solve and its CPU gates write the episode's
+# initial_data.gridinit, then stop without touching a GPU.  A later launch
+# evolves that file through BONDI_GRIDINIT (with another BONDI_RUNS_DIR, since
+# the episode dir then exists).
+solve_only_args=()
+if [[ "${BONDI_SOLVE_ONLY:-0}" != "0" ]]; then
+  solve_only_args=(--solve-only)
 fi
 
 sponge_args=()
@@ -434,6 +444,7 @@ PYTHONPATH="${WRAPPER_DIR}/src" "${WRAPPER_DIR}/.venv/bin/python" \
   ${gridinit_args[@]+"${gridinit_args[@]}"} \
   ${checkpoint_args[@]+"${checkpoint_args[@]}"} \
   ${binary_args[@]+"${binary_args[@]}"} \
+  ${solve_only_args[@]+"${solve_only_args[@]}"} \
   ${dryrun_args[@]+"${dryrun_args[@]}"}
 
 echo "[bondi] pair cell complete: ${RUNS_DIR}/${out_name}"
