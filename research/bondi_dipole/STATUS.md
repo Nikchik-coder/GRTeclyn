@@ -84,15 +84,9 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live** (first GPU node, launched 10-22 21:52 MSK, the data-chain split, all lone stars to t 10 on the
-signed-shells binary):
-- `diag_sgn_lone_p_L64_N128_lev0_t10` — card 0, the solved N 128 data rerun for its Hmean columns (~5 min);
-- `diag_direct_lone_p_L64_N256_lev0_t10` — card 0 after it, direct-painted data (paint running on CPU; ~45 min GPU,
-  done ≈ 22:50 MSK);
-- `diag_sgn_lone_p_L64_N192_lev0_t10` — card 1, fresh GRTresna solve then the run (~30 min solve + 13 min,
-  done ≈ 22:40 MSK).
-The direct-painted N 192 finished clean earlier (t 10, 13 min). The four stopped runs' scratch pruned (~15 GB,
-logged in `runs/wormhole_merger/manifests/MANIFEST_CLEANUP_2026-10-22.md`).
+**Live**: nothing (10-22, 22:40 MSK). The lone-star splitter set finished clean (t 10, no NaN): direct-painted
+N 128/192/256 and solved N 128/192, all on the signed-shells binary, episodes under `runs/bondi/staging/diag_*`.
+No runs queued (decided 10-22: finish this set and conclude). Scratch clean.
 
 **The third defect, localized 10-22 evening** (diag runs on the shell-norm binaries 65cc1a98 / d2511dca, which
 write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, every 0.1):
@@ -114,20 +108,23 @@ write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, eve
 - Stopped 21:20 MSK ("lets terminate the runs no point burning gpus"): the PP-pair and lone N 192 solves, the
   unrepaired N 256 control and the two signed pair reruns (log `runs/bondi/staging/stop_diag_2026-10-22.log`);
   superseded by the lone-star verdict. The finished diag runs' episodes are kept under `runs/bondi/staging/diag_*`.
-- **Revised verdict (10-22, 21:50 MSK, with the direct N 192 in): the drift is NOT resolution-independent on
-  exact data.** The signed core mean's growth rate (t 2-10): N 128 −1.21 × 10⁻⁵/t vs N 192 −5.20 × 10⁻⁶/t —
-  **order 2.1**; the t ≈ 0 values scale at order 3.8 (the stencils' own 4th-order error). The evolution has no
-  continuum defect; it converges at second order at the star core (something in its chain is 2nd-order accurate,
-  not 4th — acceptable, but worth naming for the paper).
-- The floor sits in the solved data: the facefix pair triplet's star-shell (r 5) L2 growth rate barely falls,
-  1.79 / 1.28 / 1.05 × 10⁻⁶/t at N 128/192/256 — order 0.8 then 0.7. GRTresna's output seeds a
-  near-resolution-independent violation that the evolution then grows linearly; this is what caps the study's
-  interior Ham order at ~1.2. (At N 128 the evolution's own 2nd-order error still dominates, which is why the
-  earlier lone solved-vs-direct comparison at N 128 looked "the same rate".)
-- Next, the split inside the data chain (one lone-star run each, t 10): the SOLVED lone star at N 192 — if its
-  rate also floors, the defect is in the single-star solve path (solve or conversion); if it converges like the
-  direct paint, the floor is superposition-specific (the Π = −(ω/Σα)φ ansatz, a continuum-level modelling error
-  that no grid refines away). Optionally the direct star at N 256 to confirm clean order 2 persists.
+- **Conclusion of the lone-star splitter set (10-22, 22:40 MSK; supersedes the "Not GRTresna and not the star ODE"
+  bullet above and the 21:50 reading that put the floor in the solved data):**
+  - The direct paint is not exact data. The star profile (`boson_star_ode._build_profile`) puts a vacuum exterior
+    (ψ = 1 + M/2r, Schwarzschild-like lapse) beyond the match radius r_m = 5.19 over the field's Yukawa tail,
+    which holds 2.75 × 10⁻⁴ of energy (1.9 % of the ADM mass). Hence Ham = −16πρ_tail there: predicted from the
+    profile 2.8 × 10⁻⁵ / 7.1 × 10⁻⁶ / 1.4 × 10⁻⁶ / 2.9 × 10⁻⁷ / 6.0 × 10⁻⁸ in shells r 5–10, measured the same
+    to 1–2 % (r ≥ 6) at N 128, 192 and 256 alike (order 0). The "defect in the evolution" verdict drawn from
+    the N 128 direct run rested on this false premise and is withdrawn.
+  - GRTresna repairs ψ there: the solved data's t 0 violation converges at order 2 in every shell (r 5–6:
+    3.7 → 1.7 × 10⁻⁶). The lapse and Π₂ = −ωφ/α beyond r_m stay the profile's vacuum-exterior ones.
+  - Not the superposition: the SOLVED LONE star reproduces the pair's order deficit in the star body. Ham L2
+    per shell at t 10, N 128 → 192: r 0–1 2.75, r 1–2 1.28, r 2–3 1.73, r 3–4 1.17, r 4–5 0.91, r ≥ 5 1.6–2.5
+    (pair interior: 1.7 / 1.2). The pair's growth is two stars' worth of the same single-star effect.
+  - What remains: a signed drift in r 1–5 (ρ ahead of the geometry), converging at order ≤ 1 on both the direct
+    and the solved data. Common to both: the profile's lapse and field tail beyond r_m, and the evolution. This
+    set cannot split those two; the splitter would be a profile whose exterior carries its own matter (the ODE
+    integrated through the tail, or the lapse solved with the tail), on solved data. Not queued.
 
 **The face-layer step** (found 10-22, the second defect): with a target origin, the Chombo converter's nearest-cell
 fallback (`grtresna/io/chombo.py`, `_target_span_slice`) painted each face's outermost cell layer from a solve cell
