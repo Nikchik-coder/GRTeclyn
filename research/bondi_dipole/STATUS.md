@@ -79,8 +79,17 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 - `conv2b_pair_d10_L64_N256_lev0`, card 1 (57.5 GB): the old N 256 cell on the fixed data, to t 200, no
   checkpoints, frames off, started 18:12 MSK at 15.5 units/h; t 20 (the gate) ~19:30 MSK, ETA t 200 ~13 h,
   ~07:05 MSK 10-23.
-- Both differ from their old cells' params only in paths and the gridinit (diffed at the start). Launched on the go
-  given 10-22 ("once first solves complete push them to gpu runs").
+- `conv2b_pair_d10_L64_N128_lev0`, card 0 beside N 192 (~6 GB): the old N 128 cell on the fixed data, to t 200, no
+  checkpoints, frames off, started 18:31 MSK; ETA ~1–2 h while it shares the card.
+- All three differ from their old cells' params only in paths and the gridinit (diffed at the start). Launched on the
+  go given 10-22 ("once first solves complete push them to gpu runs"; N 128 on "so lets run 128").
+- Decided 10-22: the study is N 128 / 192 / 256 on the fixed data; no N 320 ("i see no reason for 320"). N 384 would
+  not fit this node anyway (~195 GB of GPU memory, ~750 GB for its solve). Frames stay off on these runs: the star
+  tracks, separation and acceleration come from `small_data/sector_dynamics.dat` and `sector_barycenters.dat`.
+- Paper check 10-22 (t ≤ 38): the new N 192 reproduces the paper's N 192 run, ΔX to 0.27 %, d to 4 digits, the
+  acceleration fitted over 5 ≤ t ≤ 38 to 0.5 %. In the paper's own runs the barycentre separation dips to 9.71
+  (−2.9 %) at t ≈ 51 before returning to 9.91; the text's "constant to 1 %" holds only for the net change (Table
+  results: −0.9 %) and the proper core distance (+0.24 %). Reword in the revision.
 - Done: plan step 2's three solves (CPU, N 128 / 192 / 256 done 17:20 / 17:37 / 18:11 MSK).
 - Done: `conv2b_pair_d10_L64_N128_lev0_t20`, card 1, 17:28–17:38 MSK: the 2a N 128 cell on the fixed data (only the
   gridinit changes), t 20, no NaN, scratch cleared. At N 128 its norms match 2a's to 0.1 % (the fix hides under the
