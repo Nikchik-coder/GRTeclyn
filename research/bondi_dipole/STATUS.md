@@ -74,13 +74,14 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 ### 2. Convergence (cluster)
 
 **Live** (first GPU node, 10-22):
-- Plan step 2, the fixed solves, CPU only: N 128 done 17:20, N 192 17:37 MSK (both t = 0 checks passed, below);
-  N 256 (12 ranks) ETA ~18:25 MSK. Run dirs `runs/bondi/staging/fixid_pair_d10_L64_N*_lev0`.
 - `conv2b_pair_d10_L64_N192_lev0`, card 0 (25 GB): the old N 192 cell on the fixed data, to t 200, no checkpoints,
-  started 17:37 MSK at 49 units/h; t 20 ~18:02, ETA t 200 ~4.1 h, ~21:45 MSK. Its params differ from the old
-  cell's only in paths and the gridinit.
-- Next on the go given 10-22 ("once first solves complete push them to gpu runs"): `conv2b_pair_d10_L64_N256_lev0`
-  on card 1 when its data lands (~18:25 MSK), to t 200 (~13 h), no checkpoints.
+  started 17:37 MSK at 49 units/h; ETA t 200 ~21:45 MSK.
+- `conv2b_pair_d10_L64_N256_lev0`, card 1 (57.5 GB): the old N 256 cell on the fixed data, to t 200, no
+  checkpoints, frames off, started 18:12 MSK at 15.5 units/h; t 20 (the gate) ~19:30 MSK, ETA t 200 ~13 h,
+  ~07:05 MSK 10-23.
+- Both differ from their old cells' params only in paths and the gridinit (diffed at the start). Launched on the go
+  given 10-22 ("once first solves complete push them to gpu runs").
+- Done: plan step 2's three solves (CPU, N 128 / 192 / 256 done 17:20 / 17:37 / 18:11 MSK).
 - Done: `conv2b_pair_d10_L64_N128_lev0_t20`, card 1, 17:28–17:38 MSK: the 2a N 128 cell on the fixed data (only the
   gridinit changes), t 20, no NaN, scratch cleared. At N 128 its norms match 2a's to 0.1 % (the fix hides under the
   solve's own error there); it is the gate's third rung.
@@ -164,7 +165,7 @@ order, so a fixed solve converges at 2 (the spinning paper's bar), not at the ev
       (25.00075 / 24.29425 % at N 128). This container has no `/bin/csh`: build with
       `CSHELLCMD="$GRTRESNA_ENV/bin/csh -f -c"`. `run_pair_selfgrav.sh` gains `BONDI_SOLVE_ONLY=1` (solve and
       gridinit, no GPU); `t0_constraints.py` gains `--solve matched|legacy` (the 2a data are `legacy`).
-- [ ] 2. Check at t = 0 (~1.5 h, CPU only): re-solve N 128/192/256 together (N 256's took 68 min and 221 GB on
+- [x] 2. Check at t = 0 (~1.5 h, CPU only): re-solve N 128/192/256 together (N 256's took 68 min and 221 GB on
       12 ranks) and rerun `t0_constraints.py`. The two terms must vanish and the total keep order 1.9 at both steps.
       The N 192 and N 256 data carry over to step 3.
       Live (see above): `GRTRESNA_ROOT` points the launch at the worktree; all 24 ranks run its binary. The new
@@ -181,6 +182,12 @@ order, so a fixed solve converges at 2 (the spinning paper's bar), not at the ev
       the total N 128→192 2.07 (was 1.9). The momentum constraint's first step is unchanged at N 128 and N 192
       (6.3 × 10⁻⁷ and 1.21 × 10⁻⁶ at t = dt, 2a 6.1 × 10⁻⁷ and 1.14 × 10⁻⁶), so that jump is not from the two
       mismatches.
+      Done 10-22 18:12 MSK, passed. L2 over r ≤ 24 at N 128 / 192 / 256: total 4.10 / 1.77 / 0.985 × 10⁻⁶ (old data
+      4.09 / 1.89 / 1.20), order 2.07 / 2.05 (old 1.91 / 1.65); the Im Π and gradient terms ≤ 10⁻¹⁹ at every N; the
+      solve's own error order 1.87 / 1.93; the evolution's stencil on the painted stars order 3.6 / 3.8. Logs:
+      `fixid_pair_d10_L64_N*_lev0/t0_constraints.log` (the N 256 one holds all three and the orders).
+      First look at the evolution, N 128→192 (the N 128 t 20 rung and 2b's N 192), r ≤ 24 Ham / Mom at t 0 5 10 15 20:
+      2.0 / −1.6, 2.3 / 1.7, 1.7 / 2.2, 1.5 / 2.4, 1.5 / 2.4, the same as 2a's to ±0.1. N 192→256 decides the gate.
 - [ ] 3. 2b, the resolution study N 192/256/320 (Δx 0.33/0.25/0.20) at L 64 to t 200 (~2 days, ~50 GPU-h; expected
       Q₂ 2.16, Q₃ 2.81, Q₄ 3.66). A rerun is its old run: start from `campaign/runaway_pair_d10_L64_N256_lev0`
       (`evolution_params.txt`, `launch_config.sh`) and change only N, the Δx-scaled solve tolerance and the
