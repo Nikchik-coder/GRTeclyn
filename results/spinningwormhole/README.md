@@ -1,8 +1,9 @@
 # Rotating Ellis–Bronnikov wormholes — results pack
 
 The data behind N. M. Shirokov and I. Nachevsky, *Rotation slows the instability of
-Ellis–Bronnikov wormholes* (2026): the stationary rotating solutions, the 3D evolutions
-the paper quotes, and the inputs of every figure and table. The evolution code is
+Ellis–Bronnikov wormholes*, [arXiv:2610.29941](https://arxiv.org/abs/2610.29941) (2026): the
+stationary rotating solutions, the 3D evolutions the paper quotes, and the inputs of every
+figure and table. The evolution code is
 `Examples/SpinningWormhole/`; the spectral solver, the analysis and the figure scripts
 are in `grteclyn-wrapper/`.
 
