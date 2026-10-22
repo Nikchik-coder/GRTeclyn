@@ -74,13 +74,15 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 ### 2. Convergence (cluster)
 
 **Live** (the first GPU node; launched 09:37 UTC 10-22, each cell solves on CPU and then evolves on its card; as of
-13:15 MSK. The solve stops at 0.002 % × (128/N)⁴ relative error, so N 256 needs about 15 Newton iterations):
+13:45 MSK. The solve stops at 0.002 % × (128/N)⁴ relative error, so N 256 needs about 15 Newton iterations):
 
 | run | card | state | t / stop | speed | ETA |
 |---|---|---|---|---|---|
 | `conv2a_pair_d10_L64_N128_lev0` | 1 | done 13:13 MSK, no NaN, scratch cleared | 20 / 20 | 207 /h | – |
-| `conv2a_pair_d10_L64_N192_lev0` | 1 | 384³ solve, last iteration | 0 / 20 | – | evolves from ~13:25, done ~14:00 MSK |
-| `conv2a_pair_d10_L64_N256_lev0` | 0 | 512³ solve, iteration 8 | 0 / 20 | – | evolves from ~14:00, done ~15:30 MSK |
+| `conv2a_pair_d10_L64_N192_lev0` | 1 | done 13:41 MSK, no NaN, scratch cleared | 20 / 20 | 49 /h | – |
+| `conv2a_pair_d10_L64_N256_lev0` | 0 | 512³ solve, last iteration | 0 / 20 | – | evolves from ~14:00, done ~15:15 MSK |
+
+Both finished cells reproduce their archived runs over t ≤ 20 to 1 % (L2 norms) and 1e-6 (Linf_Ham_amr).
 
 Run dirs `runs/bondi/staging/conv2a_*`, each with its `launch.sh` (diffed against the old cell: only the stop time,
 frames off, the binary, solve ranks and timeout change). No checkpoints. Scratch on the node: 30 GB of two spinning
