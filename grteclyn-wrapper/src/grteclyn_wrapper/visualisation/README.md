@@ -58,14 +58,13 @@ More detail for live processing and `consume_plotfiles` options: [`process_wave/
 
 ## Prerequisites
 
-1. Install dependencies (from the project root):
+1. Install dependencies (in `grteclyn-wrapper/`):
 
    ```bash
-   uv sync
-   # or: source .venv/bin/activate && pip install -e .
+   uv sync --extra plots --extra visualization
    ```
 
-2. Required packages: `yt`, `numpy`, `matplotlib`, `scipy` (from `pyproject.toml`). Optional for MPI: `uv sync --extra mpi` or `pip install mpi4py`.
+2. Required packages: `yt`, `numpy`, `matplotlib`, `scipy` (the `visualization` extra of `grteclyn-wrapper/pyproject.toml`). Optional for MPI: `pip install mpi4py`.
 
 3. For animations: `ffmpeg` must be installed.
 
