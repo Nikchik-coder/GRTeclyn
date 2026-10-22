@@ -227,22 +227,7 @@ What to show (as in Evstafyeva et al., Appendix A, Fig. 5, and Clough et al., Ap
   honest fixes: add N = 320 (Δx = 0.2; a new run, so it needs a go) and quote Q_meas for the top three resolutions
   against their own Q₄; or state that N = 128 is not convergent, quote the N = 192/256 difference as the error bar,
   and put every base-grid number (separation scan, mass ladder) behind that caveat.
-- [ ] Rename the "phantom" sector, replace "bicomplex" with two independent complex scalar fields, split Table I into
-  setup and results tables, and give the consistency argument its own paragraph after the action.
-- [ ] A draft abstract to start from. Check every claim and number against the ledger before using it.
-
-  > Bondi showed in 1957 that a body of negative active gravitational mass, paired with a positive one, should
-  > accelerate together with it indefinitely while the total momentum stays zero. We test this prediction in full 3+1
-  > numerical relativity. The matter consists of two complex scalar fields with identical self-interactions; one
-  > enters the Einstein equations with the opposite sign, so its inertial and passive masses are positive and its
-  > active (ADM) mass is negative. We construct constraint-satisfying initial data for solitonic boson stars of both
-  > signs and evolve 34 configurations, including same-sign pairs and isolated stars as controls. A pair of stars with
-  > equal ADM mass magnitude, released from rest, accelerates as a single object at constant separation, while the
-  > total signed matter momentum stays zero to within 1%. The acceleration scales with separation and mass as Bondi's
-  > Newtonian law predicts, reverses when the two stars are exchanged, and is absent in every control run. We detect
-  > no gravitational radiation from the accelerating pair, consistent with the absence of a mass dipole. To our
-  > knowledge, the negative-mass star is the first asymptotically flat body of negative ADM mass evolved in numerical
-  > relativity.
+- The presentation pass landed 2026-10-22 (`research/bondi_dipole/STATUS.md`, REVISION); its draft abstract is in the paper.
 
 ### Spinning-wormhole paper
 

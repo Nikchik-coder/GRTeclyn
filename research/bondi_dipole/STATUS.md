@@ -38,27 +38,32 @@ the code's order is 4:
 
 ### 1. Text (workstation)
 
-Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 and its Bondi open items.
+Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 and its Bondi open items. Done
+2026-10-22 (pdflatex and lualatex both build: 13 pages, no overfull boxes, no undefined references):
 
-- [ ] Title in normal case. Abstract rebuilt from WRITING_STANDARDS' draft: at most three numbers, every symbol
-      defined, the scope at the end.
-- [ ] Define at first use, in the abstract and again in the body: a, d, M±, M̄, m, ψ, α, ρ / Sᵢ / Sᵢⱼ (the
-      projections of the stress-energy tensor that source the Einstein equations), rms, NEC, CCZ4, ADM, Q, ℓ.
-- [ ] Private vocabulary out (WRITING_STANDARDS §1): campaign, campaign pair, run matrix, cell, rung, ladder,
-      mass-matched, repainted, bicomplex, gap, birth kick, twin, verdict, certifies, nulls / signal, deeper solve,
-      box doubling; hill / well defined once. "Phantom" renamed, or defined once against its usual meaning.
-- [ ] Sec. II: the consistency argument (negating the stress tensor is the only choice compatible with conservation
-      of the total stress tensor and with field equations derived from the action) gets its own paragraph right
-      after the action, tied to the NEC violation.
-- [ ] The criteria before the results: what counts as the runaway, and what would falsify it.
-- [ ] Table I split in two: the simulations (model label, d₀, masses, L, N or Δx, final t, role) and the results.
-- [ ] Results: one number per claim, the rest into the results table or an appendix; no debugging chronology, no
-      bold sentences, verbs scaled to the evidence. Every number that remains is printed by `article_figures.py`.
-- [ ] Conclusions as a passage; "What is not established" becomes scope stated early.
-- [ ] Captions: what is plotted first, one outcome sentence last, five lines or fewer.
-- [ ] App. A: drop the transfer-residual explanation; show the boundary-masked norms.
-- [ ] Data and code availability statement, citing the new release's Zenodo DOI.
-- [ ] The WRITING_STANDARDS checklist and outside-reader test; both engines build.
+- [x] Title in normal case; Nachevsky co-author; acknowledgments as in the spinning paper. Abstract rebuilt from
+      WRITING_STANDARDS' draft: no undefined symbol, two result numbers, the scope at the end.
+- [x] Defined at first use: ADM, NEC, rms, CCZ4, m, λ, μ, ψ, α, K, χ, ρ / Sᵢ / Sᵢⱼ (as projections), a, d, M̄, X,
+      ΔX, P, Q. Diagnostics are numbered equations (barycentre, midpoint, fit, Bondi's law, momentum).
+- [x] Private vocabulary out of the text and the figure labels (`article_figures.py`): campaign, cell, run matrix,
+      rung, ladder, mass-matched, repainted, bicomplex, gap, birth kick, twin, verdict, certifies, nulls, deeper
+      solve, box doubling, hill / well, dressed. "Phantom" survives only in its usual meaning (cosmology, ghost
+      fields); our sectors are the positive- and negative-mass fields Φ₊, Φ₋.
+- [x] Sec. II: the consistency argument has its own paragraph right after the action, tied to the NEC.
+- [x] The five tests (Sec. IV C) come before the results; each results subsection opens with its question.
+- [x] Table I is the setup (34 simulations, labels PM10, R0.60, E1.34, …); Table II holds the results.
+- [x] Results: one number per claim, the rest in Table II; no chronology, no bold sentences. Convergence moved to
+      Sec. VII.
+- [x] Conclusions as a passage with a scope paragraph; "What is not established" is gone.
+- [x] Captions rewritten: what is plotted first, one outcome sentence last.
+- [x] App. A: the transfer-residual explanation is gone (the t = 0 rise is the outer boundary layer); App. B (cost)
+      folded into Sec. IV A. Fixed on the way: the L = 128 run has Δx 0.50, not 0.25.
+- [x] Data availability statement (concept DOI for now).
+- [ ] Notation table: about 20 symbols, so WRITING_STANDARDS §2 asks for one. Decide whether it is worth the space.
+- [ ] The WRITING_STANDARDS checklist end to end and the outside-reader test (a fresh agent marks every word it had
+      to guess).
+- [ ] After 2b: the convergence paragraph of Sec. VII A, App. A and Fig. 6(b) / Fig. 10 from the new runs (TODO
+      comments in the tex; strip all comments before the arXiv upload).
 
 ### 2. Convergence (cluster)
 

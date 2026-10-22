@@ -349,8 +349,8 @@ def fig_family():
 
     fig, ax = plt.subplots(figsize=(SINGLE, 2.30))
     for sector, ls, lab, ly, va in [
-            ("canonical", "-", "canonical", 0.047, "bottom"),
-            ("phantom", (0, (4, 1.6)), "phantom", -0.054, "top")]:
+            ("canonical", "-", "positive mass", 0.047, "bottom"),
+            ("phantom", (0, (4, 1.6)), "negative mass", -0.054, "top")]:
         om = np.array(sorted(fam[sector]))
         m = np.array([fam[sector][o] for o in om])
         ax.plot(om, m, color="k", ls=ls, lw=1.05)
@@ -358,7 +358,7 @@ def fig_family():
 
     ax.axhline(0, color="0.5", lw=0.5)
     ax.axvspan(0.500, 0.5265, color="0.92", zorder=0, lw=0)
-    ax.text(0.5133, -0.014, "no dressed star", rotation=90, ha="center",
+    ax.text(0.5133, -0.014, "no star", rotation=90, ha="center",
             va="center", fontsize=6.2, color="0.45", zorder=4)
 
     # the working pair (mass-matched to 0.4%; the caption carries the
@@ -457,9 +457,9 @@ def fig_chase_frames():
                     color="white")
     # name the two curvature signs on the panel that first shows them, so the
     # hill and the well are read off the figure and not out of the caption
-    axes[1, 0].text(27, 43.9, "hill", ha="center", va="top", fontsize=6.4,
+    axes[1, 0].text(27, 43.9, r"$\chi>1$", ha="center", va="top", fontsize=6.4,
                     color="0.15")
-    axes[1, 0].text(37, 43.9, "well", ha="center", va="top", fontsize=6.4,
+    axes[1, 0].text(37, 43.9, r"$\chi<1$", ha="center", va="top", fontsize=6.4,
                     color="0.15")
 
     # the two locked colour scales of the stills, so the sign divide of the
@@ -493,9 +493,9 @@ def fig_trajectories():
     ax.fill_between(t, xp, xc, color="0.93", lw=0)
     ax.plot(t, xc, color="k", ls="-", lw=1.0)
     ax.plot(t, xp, color="k", ls="--", lw=1.0)
-    ax.text(6, 41.4, r"canonical, $M_+>0$", color="k", fontsize=6.4,
+    ax.text(6, 41.4, r"$\Phi_+$, $M_+>0$", color="k", fontsize=6.4,
             ha="left", va="top")
-    ax.text(6, 25.0, r"phantom, $M_-<0$", color="k", fontsize=6.4,
+    ax.text(6, 25.0, r"$\Phi_-$, $M_-<0$", color="k", fontsize=6.4,
             ha="left", va="bottom")
     for tt in (12.0, 100.0, 188.0):
         a = float(np.interp(tt, t, xc))
@@ -522,7 +522,7 @@ def fig_trajectories():
     m = tL >= 5
     fit = np.polyfit(tL[m], dL[m], 2)
     bx.plot(tL, dL, color="k", ls="-", lw=1.0, zorder=4,
-            label=r"$N{=}128$, $t{\le}400$")
+            label=r"PM10-t400")
     bx.plot(tL, np.polyval(fit, tL), color=FIT, ls=(0, (3.4, 1.5)), lw=1.5,
             zorder=6,
             label=rf"fit, ${aL * 1e4:.2f}{{\times}}10^{{-4}}$")
@@ -555,7 +555,7 @@ def fig_trajectories():
             ls=(0, (5, 1.5)), lw=0.8)
     cx.text(200, 5.6, "mixed pair", fontsize=6.6, ha="right", va="center")
     # the four nulls all live in one decade; label the band, not the lines
-    cx.text(200, 1.05e-5, "nulls", fontsize=6.4,
+    cx.text(200, 1.05e-5, "controls", fontsize=6.4,
             ha="right", va="bottom", color="0.3",
             bbox=dict(facecolor="white", edgecolor="none", pad=0.8))
     # the separation bar: both tips land on the curves they measure --
@@ -590,9 +590,9 @@ def fig_trajectories():
                 alpha=al)
     px.axhline(0, color="0.75", lw=0.5, zorder=0)
     D2 = dyn(HEAD[256])
-    px.text(158, D2["pxc"][-1] * 1e4 - 0.55, r"$P_+,\ |P_-|$", fontsize=6.6,
+    px.text(158, D2["pxc"][-1] * 1e4 - 0.55, r"$P^{(+)},\ P^{(-)}$", fontsize=6.6,
             ha="right", va="top", color="k")
-    px.text(7, 6.55, r"$(P_++P_-)\times10$", fontsize=6.3,
+    px.text(7, 6.55, r"$10\,P$", fontsize=6.3,
             ha="left", va="top", color="k")
     _lab = dict(fontsize=5.9, ha="right", va="center", color="k",
                 bbox=dict(facecolor="white", edgecolor="none", pad=0.6))
@@ -601,7 +601,7 @@ def fig_trajectories():
     px.set_xlim(0, 205)
     px.set_ylim(-0.55, 6.9)
     px.set_xlabel("$t$")
-    px.set_ylabel(r"sector momentum $[10^{-4}]$")
+    px.set_ylabel(r"matter momentum $[10^{-4}]$")
     px.set_title("(d)", loc="left")
 
     fig.subplots_adjust(wspace=0.50)
@@ -794,9 +794,9 @@ def fig_convergence():
                label="$N=256$"),
         Line2D([], [], color="0.3", lw=0, marker="o", ms=2.6,
                markerfacecolor="white", markeredgewidth=0.7,
-               label=r"solve $4.4\times$ deeper"),
+               label="PM10-tol"),
         Line2D([], [], color="0.3", lw=0, marker="x", ms=2.8,
-               markeredgewidth=0.7, label="mesh refinement on"),
+               markeredgewidth=0.7, label="PM10-AMR"),
     ]
     ax.legend(handles=handles, loc="upper left", borderaxespad=0.4,
               fontsize=6.8, handlelength=1.9, labelspacing=0.35,
@@ -842,16 +842,11 @@ def fig_convergence():
         hl.append(ham[tn >= 150].mean())        # late-time mean
     bx.plot(dxs, h0, marker="o", ms=4, color="k", ls="-", lw=0.9,
             markerfacecolor="white", markeredgewidth=0.9,
-            label=r"$t=0$ (initial data)")
+            label=r"$t=0$")
     bx.plot(dxs, hl, marker="s", ms=4, color="0.35", ls="--", lw=0.9,
             markerfacecolor="white", markeredgewidth=0.9,
-            label=r"$t\ge150$ (evolution)")
-    dd = np.linspace(0.253, 0.53, 50)
-    bx.plot(dd, h0[0] * (0.5 / dd) ** 2, color=FIT, ls=(0, (2.6, 1.4)),
-            lw=1.2, zorder=3)
-    bx.text(0.30, 7.4e-4, r"$\propto\Delta x^{-2}$", fontsize=6.8,
-            color=FIT, ha="center", va="bottom")
-    # the point of the panel: the two error sources move opposite ways
+            label=r"mean over $t\ge150$")
+    # t = 0 is dominated by the outer boundary layer; the late mean falls
     bx.annotate("", xy=(0.237, 7.0e-4), xytext=(0.237, 3.1e-4),
                 arrowprops=dict(arrowstyle="-|>", mutation_scale=6, lw=0.7,
                                 color="0.35", shrinkA=0, shrinkB=0))
@@ -910,8 +905,8 @@ def fig_samesign():
 
     # (a) the two same-sign pairs merge on the same clock
     for cell, ls, lab, tm, mfc in (
-            (PP[256], "-", r"\texttt{PP} ($N{=}256$)", 33.6, "white"),
-            (MM["frames"], "--", r"\texttt{MM} ($N{=}128$)", 32.8, "k")):
+            (PP[256], "-", r"PP10 ($N{=}256$)", 33.6, "white"),
+            (MM["frames"], "--", r"MM10 ($N{=}128$)", 32.8, "k")):
         W = load(cell, "well_tracking.dat")
         t, gap = W[:, 0], W[:, 3]
         live = gap > 0
@@ -923,16 +918,12 @@ def fig_samesign():
                 va="center", ma="left",
                 arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",
                                 shrinkA=2, shrinkB=3))
-    ax.text(1.5, 0.45, "gravity attracts \\texttt{PP}, repels \\texttt{MM};\n"
-            "the shared-field force attracts both\n"
-            r"($\sim\!35\times$ gravity at this gap)",
-            fontsize=6.6, color="0.3", va="bottom")
     ax.legend(loc="upper right", borderaxespad=0.4, fontsize=6.8,
               handlelength=1.9, labelspacing=0.35, borderpad=0.2)
     ax.set_xlim(0, 45)
     ax.set_ylim(0, 9.4)
     ax.set_xlabel("$t$")
-    ax.set_ylabel(r"gap of the $|\chi-1|$ extrema")
+    ax.set_ylabel(r"$d$ of the $|\chi-1|$ extrema")
     ax.set_title("(a)", loc="left")
 
     # (b) and their centroids stay pinned through it
@@ -945,7 +936,7 @@ def fig_samesign():
             x = b[sect]
             bx.plot(b["t"], np.abs(x - x[0]), color="0.4", ls=ls, lw=0.7)
     bx.text(198, 6.5, "mixed pair", fontsize=6.8, ha="right", va="center")
-    bx.text(198, 5.5e-3, r"\texttt{PP}/\texttt{MM} centroids, all grids",
+    bx.text(198, 5.5e-3, r"PP10, MM10 centroids, all $N$",
             fontsize=6.8, ha="right", color="0.3")
     bx.axvline(33.6, color="0.7", lw=0.5, ls=(0, (2, 2)))
     bx.text(36.5, 6.5, "merger", fontsize=6.2, color="0.5", ha="left",
@@ -1004,7 +995,7 @@ def fig_massscale():
     ax.plot([0, 204], [0, 0], color="0.75", lw=0.5, zorder=0)
     ax.text(209, 1.02, r"$|M_-|/M_+$", fontsize=6.6, color="0.2",
             ha="left", va="top")
-    ax.text(7, 1.02, "phantom heavier: the gap opens", fontsize=6.4,
+    ax.text(7, 1.02, r"negative-mass star heavier: $d$ grows", fontsize=6.4,
             color="0.35", ha="left", va="top")
     ax.set_xlim(0, 256)
     ax.set_ylim(-1.55, 1.16)
@@ -1028,14 +1019,14 @@ def fig_massscale():
     i = int(np.searchsorted(ys, 0.0))
     x0 = xs[i - 1] + (xs[i] - xs[i - 1]) * (-ys[i - 1]) / (ys[i] - ys[i - 1])
     bx.axvline(1.0, color="0.8", lw=0.5, ls=(0, (2, 2)), zorder=0)
-    bx.annotate(f"sign flip at ${x0:.3f}$,\nagainst $1.000$ predicted",
+    bx.annotate(f"zero at ${x0:.3f}$,\npredicted $1$",
                 xy=(1.005, 0.02), xytext=(1.425, -0.72), fontsize=6.8,
                 color="0.2", ha="right", va="center", ma="left",
                 arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",
                                 shrinkA=2, shrinkB=3))
     bx.set_xlim(0.5, 1.45)
     bx.set_ylim(-1.65, 0.85)
-    bx.set_xlabel(r"phantom-to-canonical mass ratio $|M_-|/M_+$")
+    bx.set_xlabel(r"mass ratio $|M_-|/M_+$")
     bx.set_ylabel(r"$d(200)-d_0$")
     bx.set_title("(b)", loc="left")
 
@@ -1106,7 +1097,7 @@ def fig_wavezone():
     ax.text(0.025, 0.94, "(a)", transform=ax.transAxes, ha="left", va="top")
     # what the panel is a measurement of, stated on the panel
     ax.text(105, 4.0e-4, "ordered by radius at all times:\n"
-            "near-zone Coulombic curvature, no front", fontsize=6.4,
+            "near zone, no outgoing front", fontsize=6.4,
             color="0.3", ha="center", va="center", ma="center")
 
     # (b) the falloff: psi4 vs R against r^-1 (radiation) and the fit
@@ -1171,7 +1162,7 @@ def fig_constraints():
                       lw=1.0 if n == 256 else 0.7, label=f"$N={n}$")
                for n in (128, 192, 256)]
     handles.append(Line2D([], [], color="0.55", ls="-", lw=0.7,
-                          label=r"\texttt{PP} ($N{=}256$)"))
+                          label=r"PP10 ($N{=}256$)"))
     ax.legend(handles=handles, loc="upper right", ncol=2, borderaxespad=0.4,
               fontsize=6.6, handlelength=1.9, columnspacing=1.0,
               labelspacing=0.3, borderpad=0.2)
