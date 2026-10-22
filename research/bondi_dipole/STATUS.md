@@ -120,17 +120,41 @@ No checkpoints. Scratch on the node: empty (the 29 GB of two dead spinning runs'
       the likeliest source is the table derivative, whose error is a sawtooth at the table's spacing sampled at the
       grid points. The box norms are held down by the region outside r 24, where the sponge acts; the order is read
       inside r ≤ 24.
-- [ ] 2a-fix (proposed 10-22, waiting for the go). In the GRTresna solve's matter: Im Π with the summed lapse
-      1 + Σ(α_k − 1), as painted, and |∇φ|² from the profile's exact (spline) derivative. Then re-solve N 128/192/256
-      and rerun the t = 0 split: the two terms must vanish and the total keep order 1.9. Before 2b, which otherwise
-      inherits the fall to order 1.
-- [ ] 2b. The resolution study N 192/256/320 (Δx 0.33/0.25/0.20) at L 64 to t 200. A rerun is its old run: start
-      from `campaign/runaway_pair_d10_L64_N256_lev0` (`evolution_params.txt`, `launch_config.sh`) and change only N,
-      the Δx-scaled solve tolerance and the diagnostics. N 320 needs about 94 GB, so it runs on both cards of the
-      two-H100 node; its 640³ GRTresna solve takes about 10 h on 24 CPUs and runs under a per-process memory cap
-      (CLAUDE.md, the OOM rule). Roughly 2 days and 50 GPU-h in all. Expected Q₂ 2.16, Q₃ 2.81, Q₄ 3.66.
-- [ ] Paper: a convergence appendix with the rescaled ΔX differences and the rescaled Hamiltonian and momentum norms,
-      the order stated in words. The N 128 scans stay, quoted as ratios with the base-grid offset stated.
+**The error found (2a, 10-22).** The initial-data solver (GRTresna) and the evolution describe the stars differently
+in two places, so every run starts with a constraint violation of about 8 × 10⁻⁷ (L2 over r ≤ 24) that is the same
+at every resolution:
+
+1. The U(1) momentum Im Π: the solve divides by each star's own tabulated lapse, the painted data by the summed lapse
+   of the grid, 1 + Σ(α_k − 1), so the companion's α − 1 ≈ ±1.4 × 10⁻³ enters (4.55 × 10⁻⁷).
+2. The gradient term |∇φ|²: the solve differences its linear interpolant of the star table, the evolution
+   differentiates the painted cubic spline on the grid (3.5 × 10⁻⁷). Its error is a sawtooth at the table's spacing
+   sampled at the grid points, the likeliest source of the momentum constraint's first-step jump.
+
+At N 128 it hides under the solve's second-order error; by N 256 it is half the total, and the interior order falls
+from about 2 to about 1. The stars are resolved and the evolution is not at fault. The solve itself stays second
+order, so a fixed solve converges at 2 (the spinning paper's bar), not at the evolution's 4.
+
+**Plan to a convergence pass** (decided 10-22; about 2.5–3 days from the go):
+
+- [ ] 1. Fix the solve's matter in GRTresna: Im Π with the summed lapse, as painted, and |∇φ|² from the profile's
+      exact (spline) derivative. A few hours; record the GRTresna build as the evolution binary is recorded.
+- [ ] 2. Check at t = 0 (~1.5 h, CPU only): re-solve N 128/192/256 together (N 256's took 68 min and 221 GB on
+      12 ranks) and rerun `t0_constraints.py`. The two terms must vanish and the total keep order 1.9 at both steps.
+      The N 192 and N 256 data carry over to step 3.
+- [ ] 3. 2b, the resolution study N 192/256/320 (Δx 0.33/0.25/0.20) at L 64 to t 200 (~2 days, ~50 GPU-h; expected
+      Q₂ 2.16, Q₃ 2.81, Q₄ 3.66). A rerun is its old run: start from `campaign/runaway_pair_d10_L64_N256_lev0`
+      (`evolution_params.txt`, `launch_config.sh`) and change only N, the Δx-scaled solve tolerance and the
+      diagnostics. N 192 and N 256 go first, one per card (4 h and 13 h at today's speeds). Gate at t 20, about 1.5 h
+      in: the r ≤ 24 order N 192→256 must be about 2, or stop and look again. N 320 then runs on both cards (about
+      94 GB). Its 640³ solve needs about 430 GB and 2.5 h on 12 ranks, scaled from N 256, close to the container's
+      524 GB: start it only with that much free, under a per-rank cap (CLAUDE.md, the OOM rule), never beside another
+      solve.
+- [ ] 4. Compare 2b's N 256 with `campaign/runaway_pair_d10_L64_N256_lev0`, the same run on the old data. If the
+      drift ΔX agrees, the paper's other runs stand, and the paper says the convergence runs use the corrected
+      data. If it does not, those runs need the corrected data too.
+- [ ] 5. The pass: the r ≤ 24 order table and ΔX's self-convergence over t 200, into a convergence appendix with the
+      rescaled ΔX differences and the rescaled Hamiltonian and momentum norms, the order stated in words. The N 128
+      scans stay, quoted as ratios with the base-grid offset stated.
 
 ### 3. Release and submission
 
