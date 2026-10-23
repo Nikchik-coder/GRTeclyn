@@ -96,6 +96,14 @@ first constraint row equals the 64-unit N 256 run's to all ten printed digits.
 | `diag_direct_lone_p_L16_N128_lev0_t3` | 0 | 3 | 3 | 16 u/h | done 08:55 MSK, no NaN |
 | `diag_direct_lone_p_L16_N192_lev0_t3` | 0 | 3 | 3 | 7 u/h | done 09:04 MSK, no NaN |
 | `diag_direct_lone_p_L16_N256_lev0_t3` | 1 | 2.1 | 3 | 4 u/h | 0.2 h, 09:29 MSK |
+| `diag_rkfix_lone_p_L16_N64_lev0_t3` | 0 | 1.3 (09:19) | 3 | 80 u/h | 0.02 h, 09:20 MSK |
+| `diag_rkfix_lone_p_L16_N128_lev0_t3` | 0 | 0.25 (09:19) | 3 | 15 u/h | 0.2 h, 09:30 MSK |
+| `diag_rkfix_lone_p_L16_N256_lev0_t3` | 0 | 0 (09:19) | 3 | ~4 u/h | 0.75 h, ~10:05 MSK |
+| `diag_rkfix_lone_p_L16_N192_lev0_t3` | 1 | queued | 3 | ~7 u/h | starts when card 1 frees (~09:30), ~10:00 MSK |
+
+The A/B (`diag_rkfix_*`, launched 09:18 MSK on the go): the same four runs on the fixed binary
+`main3d_rkfix_aa0dc4a1-dirty` (only the binary and the cards differ; no checkpoints). It passes if the core drift
+collapses and converges at about order 4.
 
 Process names (10-23): every Bondi run launched from now on shows as `test params.txt` (run from the shared
 checksum-named copy in `/tmp/ml_jobs/bin`) and `test_post post.py`, as the merger runs do (`core/runner.py` with
@@ -112,8 +120,7 @@ it anti-damps |Φ| at ~ω² dt/6 per unit t, so ρ grows against the geometry: p
 no such call (AmrLevel::RK fills the stage ghosts itself, FillRKPatch). Fixed in RadialRecipe only (binary
 `main3d_rkfix_aa0dc4a1-dirty`); the same call sits in BinaryWormholeMerger, SpinningWormhole and
 SupportedWormholeCollapse, left to their campaigns. The spinning runs' order 3–4 stands: a static phantom field and
-a slow collapse make the error ∝ (rate of change)² dt negligible there. Next: the A/B, the four L 16 runs on the
-fixed binary (`diag_rkfix_lone_p_L16_N*_lev0_t3`, scripts ready), on the go.
+a slow collapse make the error ∝ (rate of change)² dt negligible there. The A/B on the fixed binary is live (above).
 
 **10-23: the drift starts inside the star** (supersedes "this set cannot split those two" below). The painted
 star's interior (r < 5.19) is exact, and nothing from r 5.19 reaches the core (r < 1) before t ≈ 3, even at the
