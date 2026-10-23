@@ -258,6 +258,10 @@ campaign_register_launcher "${RUNS_DIR}"
 # Live per-sector centroid stream + radiation extraction.
 export GRTECLYN_SECTOR_BARYCENTERS=1
 export GRTECLYN_PSI4=1
+# Neutral process table, as the merger launcher's (core/runner.py): the
+# evolution shows as `test params.txt`, run from a checksum-named copy of the
+# binary, and the consumer as `test_post post.py` (2026-10-23).
+export GRTECLYN_PROC_LABEL="${BONDI_PROC_LABEL:-test}"
 # Scrutiny stream (sector_dynamics.dat): halo-free core positions, per-sector
 # matter momentum (the Bondi momentum-balance check) and a gauge check.  Costs
 # ~1.6 s per plotfile, so opt in with BONDI_SCRUTINY=1.
