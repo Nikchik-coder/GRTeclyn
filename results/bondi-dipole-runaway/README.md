@@ -159,6 +159,7 @@ recorded with the campaign working notes, which are not part of this pack.
 | `analysis/` | derived tables and the scripts that regenerate them |
 | `campaign/<group>/<cell>/frames/` | one still per field every `dt = 10`, for the cells run with frames. The movies themselves stay in the gitignored run tree |
 | `patches/` | the matter-model modifications this campaign required |
+| `figures/` | the paper's figures (PDF), which the article reads from here (its `\graphicspath`), and the convergence figures `convergence_pair` / `convergence_lone` (PNG + PDF) — see "The figures" below |
 
 ### Data dictionary — `campaign/<group>/<cell>/`
 
@@ -302,6 +303,24 @@ were run before the initial-data grid alignment was fixed, so every star was
 born displaced from the centre of its own gravitational well by a fraction of a
 cell — an artefact the same size as the signal. They are in git history and
 nothing here depends on them.
+
+## The figures
+
+Every figure in `figures/` rebuilds with
+`grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole <target>`:
+
+| figures | target | needs |
+|---|---|---|
+| `fig_schematic`, `fig_family`, `fig_chase_frames`, `fig_trajectories`, `fig_forcelaw`, `fig_convergence`, `fig_samesign`, `fig_massscale`, `fig_wavezone`, `fig_constraints` | `article` | pdflatex (matplotlib's pgf backend): the workstation |
+| `fig_spacetime_bend` | `bend` | pdflatex |
+| `convergence_pair`, `convergence_lone` | `convergence` (or `plot_convergence --study pair` / `lone`) | nothing beyond the venv |
+
+The two convergence figures are the 2026-10-23 resolution sets on the fixed code (N 128 / 192 / 256 of PM10 and of
+M; `research/bondi_dipole/STATUS.md`): the constraints in four regions (inside the absorbing layer, the stars, the
+space between, the layer itself) with the finest member redrawn for orders 2 and 4, and the motion (ΔX and its
+distance from the finest grid, the separation, the acceleration; for M the core and barycentre drift). They read
+each member from `campaign/` once it is packed and until then from its run directory under `runs/bondi/`, so
+until the sets are packed they show the runs as far as they have got.
 
 ## Reproducing
 

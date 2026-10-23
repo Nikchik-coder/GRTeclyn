@@ -26,7 +26,8 @@
 \usepackage{placeins}
 \usepackage[protrusion=true,expansion=false]{microtype}
 
-\graphicspath{{figures/}}
+% The figures live in the results pack; figures/ here only as a fallback (2026-10-23).
+\graphicspath{{../../results/bondi-dipole-runaway/figures/}{figures/}}
 % Caption for a full-width figure set in place, outside the float queue (Appendix A).
 \makeatletter
 \newcommand{\inplacecaption}[1]{\refstepcounter{figure}\@makecaption{\fnum@figure}{#1}}

@@ -28,6 +28,9 @@ N 256 / 192 / 128, and a fitted over 5 ≤ t ≤ 28 is 7.8 % below at N 256 (1.5
 window; the paper quotes 1.55 × 10⁻⁴ over 5 ≤ t ≤ 200). The gaps shrink as Δx¹ and grow with t: the old runs'
 time-integration error. The model, the tests and the qualitative result are untouched; every number changes.
 
+Figures: `python -m grteclyn_wrapper.visualisation.bondi_dipole convergence` draws both sets into
+`results/bondi-dipole-runaway/figures/convergence_pair` / `convergence_lone` (constraints by region with the
+order-2 / order-4 rescaled curves, and the motion); the article's figures now live there too (`\graphicspath`).
 Report at any time (progress, order table, ΔX / d / a against the paper's runs):
 `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/bondi_dipole/study_report.py [--study pair|lone]`.
 
@@ -81,7 +84,7 @@ card, the run dir and `constraint_shells_dt` 0.1 differ.
 | `rkfix_pair_d10_L64_N192_lev0_t200` | 1st / 0 | 200, done 15:20 MSK, no NaN | 200 | 56 u/h | ΔX(200) 2.846, a(5–200) 1.427 × 10⁻⁴: −5.6 % / −8.3 % against the paper's N 192 (Bondi's point-mass ΔX(200) 2.86) |
 | `rkfix_pair_d10_L64_N256_lev0_t200` (frames) | 1st / 1 | 30.6 | 200 | 19 u/h | ~9 h, ~21:10 MSK |
 | `rkfix_lone_m_L64_N128_lev0_t200` (M) | 2nd / 0 | 200, done 12:47 MSK, no NaN | 200 | 207 u/h | consumer draining (t 32 of 200 at 12:41) |
-| `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | 1.1 (13:45), evolving from 13:43 (solve 15 Newton steps, 1.9 h) | 200 | 47 u/h | 4.2 h, ~17:55 MSK |
+| `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | 200, done 17:49 MSK, no NaN | 200 | 49 u/h | consumer draining (t 117 of 200 at 17:50) |
 
 The lone N 128 consumer lags (~80 s per plotfile against one every ~14 s; the N 192 solve holds 8 of the second
 node's 12 CPUs): 183 plotfiles (66 GB, 667 GB free) drain after the run, a few hours. Its constraints stay flat

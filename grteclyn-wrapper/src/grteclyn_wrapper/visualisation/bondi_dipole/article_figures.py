@@ -7,7 +7,7 @@ results/bondi-dipole-runaway/campaign/ -- the corrected-code-path runs
 Text is rendered by pdflatex through matplotlib's pgf backend, so figure
 fonts are the same Computer Modern as the article body.
 
-Outputs (research/bondi_dipole/figures/):
+Outputs (results/bondi-dipole-runaway/figures/, where the article looks for its figures first):
   fig_schematic.pdf      Bondi's sign rules (drawn, no data)
   fig_family.pdf         dressed-star families M(omega), both signs, with the
                          working pair and the light-star floors
@@ -49,7 +49,7 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                     *[os.pardir] * 5))
 PACK = os.path.join(REPO, "results", "bondi-dipole-runaway")
 CAMP = os.path.join(PACK, "campaign")
-OUT = os.path.join(REPO, "research", "bondi_dipole", "figures")
+OUT = os.path.join(PACK, "figures")
 os.makedirs(OUT, exist_ok=True)
 
 plt.rcParams.update(

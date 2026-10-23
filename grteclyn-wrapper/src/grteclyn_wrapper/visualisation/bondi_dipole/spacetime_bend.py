@@ -16,7 +16,7 @@ pgf backend, so it matches the article's typography.
   (b) the same pair in spacetime.  Both worldlines lean and curve; the width
       of the band between them never changes.
 
-Writes research/bondi_dipole/figures/fig_spacetime_bend.pdf.
+Writes results/bondi-dipole-runaway/figures/fig_spacetime_bend.pdf.
 """
 
 import argparse
@@ -34,7 +34,7 @@ from mpl_toolkits.mplot3d import proj3d  # noqa: E402
 # .../GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/bondi_dipole
 REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                     *[os.pardir] * 5))
-OUT = os.path.join(REPO, "research", "bondi_dipole", "figures")
+OUT = os.path.join(REPO, "results", "bondi-dipole-runaway", "figures")
 
 plt.rcParams.update(
     {
@@ -217,7 +217,7 @@ def build(path=None):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("-o", "--out", default=None,
-                    help="output PDF (default: the article's figures/)")
+                    help="output PDF (default: results/bondi-dipole-runaway/figures/)")
     args = ap.parse_args(argv)
     print(f"wrote {build(args.out)}")
 
