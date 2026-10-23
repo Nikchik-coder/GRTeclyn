@@ -97,7 +97,7 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | `M_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done** at t 200; packed when its consumer drains (Live) |
 | `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | solve at its floor (Ham 2.5 × 10⁻⁴ % against the Δx⁴-scaled 1.25 × 10⁻⁴ %, below N 192's accepted 3.9 × 10⁻⁴ %), so the gate rejects it; the evolution reuses its data (Live) |
 | `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | evolution done at t 400, no NaN; frames; its consumer drains (Live), then it decides PM10-rec / -off |
-| PM8, PM12, PM16, PM20 | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | queued |
+| PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 running (Live); PM16, PM20 queued |
 | E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
 | R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | queued; no `launch_config.sh` packed: rebuild from `runs/bondi/00_archive/superseded_2026-10-23/01_star_family` |
@@ -112,10 +112,12 @@ shows none, Sec. VII "Separation after t = 200" and both runs go.
 ## Live
 
 No checkpoints (on the word); frames off except PM10-t400 (frames and slice cache, the paper's figure and movie
-runs, with PM10 N 256). Card 1 of the first node is free since 21:34 MSK.
+runs, with PM10 N 256).
 
-| run | node / card | t (21:40) | stop | speed | ETA |
+| run | node / card | t (21:50) | stop | speed | ETA |
 |---|---|---|---|---|---|
+| `PM8_L64_N128` | 1st / 1 | fresh solve (4 ranks), launched 21:48 MSK | 200 | two per card, ~130 u/h each expected | solve ~15 min, then ~1.5–2 h: ~23:35–00:05 MSK |
+| `PM12_L64_N128` | 1st / 1 | fresh solve (4 ranks), launched 21:48 MSK | 200 | as PM8 | as PM8 |
 | `rkfix_lone_m_L64_N256_lev0_t200` → `M_L64_N256` | 1st / 0 | solve at iteration 34 of 50, ~5.3 min each (CPU, 221 GB) | 200 | ~18 u/h | the solve hits its 50-iteration cap ~23:00 MSK and the gate rejects it; the evolution then starts from its data as `staging/M_L64_N256` (launch script ready, BONDI_GRIDINIT), ~23:10 MSK, and ends ~10:00–12:00 MSK 10-24 |
 | `rkfix_pair_d10_L64_N128_lev0_t400` → `PM10_L64_N128_t400` (frames) | 1st / 0 | evolution done at t 400 (~21:00 MSK); consumer at t 222 | 400 | 27 s / plotfile | consumer drains ~23:20 MSK |
 | `rkfix_lone_m_L64_N192_lev0_t200` → `M_L64_N192` (consumer only) | 2nd | consumer at t 190 of 200 | — | ~265 s / plotfile | ~1 h, ~22:35 MSK |
