@@ -85,6 +85,7 @@ card, the run dir and `constraint_shells_dt` 0.1 differ.
 | `rkfix_pair_d10_L64_N256_lev0_t200` (frames) | 1st / 1 | 144.9 | 200 | 18 u/h | 3 h, ~21:30 MSK |
 | `rkfix_lone_m_L64_N128_lev0_t200` (M) | 2nd / 0 | 200, done 12:47 MSK, no NaN | 200 | 207 u/h | finished: filed in `runs/bondi/09_convergence/`, packed in `campaign/09_convergence/` |
 | `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | 200, done 17:49 MSK, no NaN | 200 | 49 u/h | evolution finished; consumer draining (t 136 of 200 at 18:30, 2.3 h, ~20:50 MSK), packed after |
+| `rkfix_lone_m_L64_N256_lev0_t200` | 1st / 0 | solve (221 GB, 8 ranks), launched 18:39 MSK | 200 | ~18 u/h | ~12.5 h, ~07:00 MSK 10-24 |
 
 The lone N 128 consumer lags (~80 s per plotfile against one every ~14 s; the N 192 solve holds 8 of the second
 node's 12 CPUs): 183 plotfiles (66 GB, 667 GB free) drain after the run, a few hours. Its constraints stay flat
