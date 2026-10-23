@@ -31,6 +31,7 @@ Run it from anywhere; it prints every number quoted in the article text.
 
 import os
 import csv
+import glob
 import re
 import json
 
@@ -138,8 +139,15 @@ M_LADDER = {0.75: 0.014349964, 0.7603: 0.014294692, 0.804: 0.011472499,
 
 
 # ------------------------------------------------------------------ loaders
+def cell_dir(cell):
+    """campaign/<NN_group>/<cell>: the pack files each run under the question
+    it answers (2026-10-23), so a cell is found by its name alone."""
+    hits = sorted(glob.glob(os.path.join(CAMP, "[0-9][0-9]_*", cell)))
+    return hits[0] if hits else os.path.join(CAMP, cell)
+
+
 def cell_file(cell, name):
-    return os.path.join(CAMP, cell, name)
+    return os.path.join(cell_dir(cell), name)
 
 
 def load(cell, name, skiprows=0):
@@ -626,7 +634,7 @@ def mass_ladder():
     written by research/bondi_dipole/fit_mass_law.py, which recomputes the
     masses from the frequencies the elliptic solver itself recorded.
     """
-    with open(os.path.join(CAMP, "mass_law.csv")) as fh:
+    with open(os.path.join(CAMP, "06_mass", "mass_law.csv")) as fh:
         text = fh.read()
     slope = re.search(r"^# slope p = ([-\d.]+) \+/- ([\d.]+)", text, re.M)
     if slope is None:
@@ -1283,9 +1291,11 @@ def print_numbers():
 
     total = 0.0
     per = {}
-    for c in sorted(os.listdir(CAMP)):
-        p = os.path.join(CAMP, c, "metadata.json")
-        if os.path.isdir(os.path.join(CAMP, c)) and os.path.exists(p):
+    for d in sorted(glob.glob(os.path.join(CAMP, "[0-9][0-9]_*", "*")),
+                    key=os.path.basename):
+        c = os.path.basename(d)
+        p = os.path.join(d, "metadata.json")
+        if os.path.isdir(d) and os.path.exists(p):
             m = json.load(open(p))
             s = m.get("simulation_elapsed_seconds", 0.0)
             total += s

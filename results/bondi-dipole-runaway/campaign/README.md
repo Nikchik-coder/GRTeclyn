@@ -1,8 +1,11 @@
 # Campaign extracts — the Bondi dipole runaway
 
-Publication-level data only. One folder per cell. Movies, plotfiles and the
-550 MB initial-data file stay in the gitignored run tree at
-`runs/bondi/staging/`, because they carry no number an analysis reads. Cells
+Publication-level data only. One folder per question (`01_star_family/` …
+`08_late_separation/`), one folder per cell inside it, in the same groups as the
+run tree; `../runs_registry.tsv` lists every cell with its folder. Movies,
+plotfiles and the 550 MB initial-data file stay in the gitignored run tree at
+`runs/bondi/<group>/<cell>/` (movies: `runs/bondi/movies/`), because they carry
+no number an analysis reads. Cells
 that were run with frames carry a `frames/` folder holding one still per field
 every `dt = 10` — enough to show what the movie shows, without the ~250 frames
 per field the movie is made from. The `t = 400` cell is the exception: it exists

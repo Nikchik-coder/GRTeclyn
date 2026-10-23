@@ -28,6 +28,8 @@ import pathlib
 import re
 import sys
 
+from pack_paths import runs
+
 CLEAN = 1.5   # max/min of r*psi4 across shells still counted as "one wave"
 U_GRID = (5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0)
 
@@ -100,7 +102,7 @@ def main(argv: list[str]) -> int:
     ]
     long_rows: list[dict] = []
 
-    for cell in sorted(camp.iterdir()):
+    for cell in runs(camp):
         f = cell / "psi4_mode_l2m0.dat"
         if not f.is_file():
             continue

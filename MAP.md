@@ -10,7 +10,7 @@ Rules for working here (agents and people): [`CLAUDE.md`](CLAUDE.md).
 | campaign | plan / paper | results (tracked) | runs (untracked) | state |
 |---|---|---|---|---|
 | wormhole merger | [`research/merger/`](research/merger/) | [`results/merger/`](results/merger/) | `runs/wormhole_merger/` | active: [`STATUS.md`](research/merger/STATUS.md) |
-| Bondi dipole | [`research/bondi_dipole/`](research/bondi_dipole/) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/README.md) | `runs/bondi/` | published |
+| Bondi dipole | [`research/bondi_dipole/`](research/bondi_dipole/) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/README.md) | `runs/bondi/` (by question, as the pack's `campaign/`; `runs/bondi/README.md`) | revision: [`STATUS.md`](research/bondi_dipole/STATUS.md) |
 | wormhole dynamics | [`research/wormholedynamics/`](research/wormholedynamics/) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) | — | published |
 | matter-first search | [`research/neuralspacetime/`](research/neuralspacetime/) | [`results/matter-first-…/`](results/matter-first-automated-discovery-of-transient-spacetime-shortcuts/README.md) | `runs/neuralspacetime/` | — |
 | spinning wormhole | [`research/spinningwormhole/`](research/spinningwormhole/) | [`results/spinningwormhole/`](results/spinningwormhole/) | `runs/spinning_wormhole/` | active: [`STATUS.md`](research/spinningwormhole/STATUS.md) |

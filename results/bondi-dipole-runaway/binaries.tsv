@@ -1,0 +1,23 @@
+# The GRTeclyn source each packed run was launched from, one row per commit, tab-separated: the commit
+# (metadata.json git_commit, first 8 hex digits) and the runs launched from it. Every v1 run used the
+# example's own build, Examples/RadialRecipe/main3d.gnu.MPI.CUDA.ex, rebuilt in place, so no binary hash
+# was recorded; the revision's frozen builds live in runs/bondi/bin/ and get rows here when their runs are
+# packed. '-' marks a run with no metadata.json (driven straight from the executable).
+grteclyn_commit	runs
+b3674eb3	stability_canonical_w075_L64_N128_lev0 stability_canonical_w080_L64_N128_lev0 stability_canonical_w085_L64_N128_lev0 stability_canonical_w090_L64_N128_lev0
+447a6372	control_lone_canonical_L64_N128_lev0 control_lone_phantom_L64_N128_lev0 runaway_pair_d10_L64_N128_lev0
+84441bac	control_lone_phantom_t1000_L64_N128_lev0 gaugetwin_pair_d10_eta2_L64_N128_lev0
+845a56b9	control_pair_pp_d10_L64_N128_lev0 massscale_pair_d10_w0804_L64_N128_lev0
+b2d87bdd	control_pair_pp_d10_L64_N192_lev0
+1c67c1ed	control_pair_pp_d10_L64_N256_lev0
+1318f556	control_pair_mm_d10_L64_N128_lev0 control_mirror_mp_d10_L64_N128_lev0
+618e8956	control_pair_mm_d10_L64_N128_lev0_frames
+d70bb4e9	control_pair_mm_d10_L64_N192_lev0 massratio_w088_r060_d10_L64_N128_lev0 amrcheck_pair_d10_L64_N128_lev1
+a6d9dccb	runaway_pair_d10_L64_N192_lev0 runaway_pair_d10_L64_N256_lev0 wavezone_pair_d10_L128_N256_lev0
+afd726f5	longrun_pair_d10_t400_L64_N128_lev0
+ffad9fbb	runaway_pair_d08_L64_N128_lev0 runaway_pair_d12_L64_N128_lev0 runaway_pair_d16_L64_N128_lev0
+200554cf	runaway_pair_d20_L64_N128_lev0 deepsolve_pair_d10_L64_N128_lev0
+391a9985	masslaw_pair_d20_w0850_L64_N128_lev0 masslaw_pair_d20_w0700_L64_N128_lev0 masslaw_pair_d20_w0675_L64_N128_lev0
+623975ae	massratio_heavyphantom_d10_L64_N128_lev0
+57b84787	chase03c_pair_d10_L64_N128_lev0
+-	nomill_left_pair_d10_L64_N128_lev0

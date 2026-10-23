@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Pack light, GitHub-friendly extracts of the omega = 0.75 runaway campaign
-# (runs/bondi/staging -- both the live cells and the promoted ones under
-# archive/) into results/bondi-dipole-runaway/campaign/.
+# (runs/bondi/NN_group/<cell>) into results/bondi-dipole-runaway/campaign/,
+# in the same groups (2026-10-23: one folder per question the paper asks).
 #
 # WHY A THIRD PACKER
 # pack_results.sh and pack_campaign.sh both read runs/bondi/rerun, which is the
@@ -20,9 +20,10 @@
 # gridinit -- they are large, they carry no number an analysis needs, and they
 # stay in the gitignored runs/ tree.
 #
-# Safe to re-run at any time, including while cells are still evolving: each
-# cell folder is rebuilt from scratch, so a partial extract is replaced
-# cleanly, and cells with no time series yet are skipped with a note.
+# Safe to re-run at any time: each cell folder is rebuilt from scratch, so a
+# partial extract is replaced cleanly, and cells with no time series yet are
+# skipped with a note.  Live runs sit in runs/bondi/staging/ and are never
+# packed; a run is packed once it is filed into its group.
 #
 # Machine identity is never hard-coded: absolute paths are scrubbed at runtime
 # by grteclyn_wrapper.packaging.scrub_paths using tokens derived from the
@@ -34,8 +35,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 SIM_ROOT="$(cd -- "${ROOT}/.." && pwd)"
-RUNS="${ROOT}/runs/bondi/staging"
-DEST="${ROOT}/results/bondi-dipole-runaway"
+RUNS="${ROOT}/runs/bondi"
+DEST="${BONDI_PACK_DEST:-${ROOT}/results/bondi-dipole-runaway}"
+# The groups the paper's v1 data come from.  09_convergence joins when the
+# revision's convergence study closes; 00_archive, 10_diagnostics and
+# 11_initial_data are working records and stay in the run tree.
+PACK_GROUPS="${PACK_GROUPS:-01_star_family 02_lone_star 03_same_sign 04_runaway 05_separation 06_mass 07_numerics 08_late_separation}"
 
 export ROOT SIM_ROOT
 scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py" "$@"; }
@@ -47,40 +52,28 @@ fi
 
 mkdir -p "${DEST}/campaign" "${DEST}/stars"
 
-# Cells are every top-level run directory.  Names beginning with '_' are
-# bookkeeping (the job queue, the abandoned tree), never cells.
-# Two directory names are groups of cells rather than cells: 'archive' (cells
-# already promoted past their gate) and 'stability' (the frequency survey).
-# Descend into those, keeping the grouping in the packed name so the extract
-# mirrors the run tree instead of flattening it.  Every other top-level
-# directory is a cell.
+# Cells are the run directories inside each packed group; names beginning
+# with '_' or 'logs' are bookkeeping, never cells.  Each packs to
+# campaign/<group>/<cell>, so the extract mirrors the run tree.
 cells=()
-collect() {  # $1 = directory to walk, $2 = name prefix for cells found in it
-  local dir="$1" prefix="$2" sub name
-  for sub in "${dir}"/*/; do
+for group in ${PACK_GROUPS}; do
+  for sub in "${RUNS}/${group}"/*/; do
     [[ -d "${sub}" ]] || continue
     name="$(basename "${sub}")"
-    [[ "${name}" == _* ]] && continue
-    case "${name}" in
-      archive)   collect "${sub%/}" "${prefix}" ;;
-      stability) collect "${sub%/}" "stability_" ;;
-      *)
-        # CELLS_SKIP names run directories that live in the campaign tree but
-        # are NOT campaign cells and must never enter the results pack.  The
-        # treadmill directories are implementation tests for the recentring
-        # box: they reuse another cell's initial data, answer engineering
-        # questions rather than physics ones, and carry their own README.
-        # chase03c and nomill_left are the 0.3c follow-up pair -- not part of
-        # this paper's campaign, but both finished (2026-08-24) and both carry
-        # the separation measurement the follow-up rests on, so they pack.
-        case " ${CELLS_SKIP:-treadmill_pair_d10_L64_N128_lev0} " in
-          *" ${name} "*) echo "[pack-runaway] ${name}: not a campaign cell -- skipping" ;;
-          *)             cells+=("${prefix}${name}|${sub%/}") ;;
-        esac ;;
+    [[ "${name}" == _* || "${name}" == logs ]] && continue
+    # CELLS_SKIP names run directories that live in the campaign tree but
+    # are NOT campaign cells and must never enter the results pack.  The
+    # treadmill directories are implementation tests for the recentring
+    # box: they reuse another cell's initial data, answer engineering
+    # questions rather than physics ones, and carry their own README.
+    # chase03c and nomill_left (08_late_separation) are the paper's PM10-rec
+    # and PM10-off: the separation after t = 200.
+    case " ${CELLS_SKIP:-treadmill_pair_d10_L64_N128_lev0} " in
+      *" ${name} "*) echo "[pack-runaway] ${name}: not a campaign cell -- skipping" ;;
+      *)             cells+=("${group}/${name}|${sub%/}") ;;
     esac
   done
-}
-collect "${RUNS}" ""
+done
 
 for entry in "${cells[@]}"; do
   cell="${entry%%|*}"
@@ -111,18 +104,13 @@ for entry in "${cells[@]}"; do
     [[ -f "${run}/${f}" ]] && cp "${run}/${f}" "${out}/"
   done
 
-  # The launch configuration.  Cells launched by hand carry their own
-  # launch.sh (or launch_<something>.sh, as the two follow-up cells do); the
-  # first four came off the job queue, where the equivalent record is the .job
-  # file.  Either way the packed copy is what lets a reader rebuild the cell
-  # without reading a params file line by line.
+  # The launch configuration: each cell's own launch.sh (or
+  # launch_<something>.sh, as the two follow-up cells have).  The packed copy
+  # is what lets a reader rebuild the cell without reading a params file line
+  # by line.  (The four stability cells came off a job queue that no longer
+  # exists, and have none.)
   hand_launch="$(ls "${celldir}"/launch*.sh 2>/dev/null | head -n 1 || true)"
-  if [[ -n "${hand_launch}" ]]; then
-    cp "${hand_launch}" "${out}/launch_config.sh"
-  else
-    job="$(ls -t "${RUNS}"/_queue/{done,failed,running}/*_"${cell}".job 2>/dev/null | head -n 1 || true)"
-    [[ -n "${job}" ]] && cp "${job}" "${out}/launch_config.sh"
-  fi
+  [[ -n "${hand_launch}" ]] && cp "${hand_launch}" "${out}/launch_config.sh"
 
   # Evolution-side diagnostics arrive at every-step cadence (~6000 rows for a
   # t = 200 cell); downsample to dt = 0.5 exactly as the two older packers do.
@@ -184,9 +172,9 @@ PY
   # 0.3c follow-up cells are skipped for the same reason and more so: they are
   # three and six times longer again, and their result is a separation curve
   # read off sector_dynamics.dat, never off a still.  Movies for both are in
-  # runs/bondi/staging/_movies/.
+  # runs/bondi/movies/masters/.
   case " ${FRAMES_SKIP:-longrun_pair_d10_t400_L64_N128_lev0 chase03c_pair_d10_L64_N128_lev0 nomill_left_pair_d10_L64_N128_lev0} " in
-    *" ${cell} "*) frames_wanted=0 ;;
+    *" ${cell##*/} "*) frames_wanted=0 ;;
     *)             frames_wanted=1 ;;
   esac
   if [[ -d "${run}/frames" && "${frames_wanted}" -eq 1 ]]; then
@@ -199,12 +187,12 @@ PY
   # off the fields.  Where a same-sign cell cached chi slices, derive the
   # two-lump track here so it is regenerated with the pack rather than kept as
   # a hand-made file (a repack wipes each cell directory).
-  case "${cell}" in
+  case "${cell##*/}" in
     control_pair_pp_*|control_pair_mm_*)
       if [[ -d "${run}/frames/_slice_cache/chi_minus_1_z" ]]; then
         "${ROOT}/.venv/bin/python" \
           "${ROOT}/results/bondi-dipole-runaway/analysis/track_wells.py" \
-          "${run}/frames" "${out}/well_tracking.dat" --label "${cell}" \
+          "${run}/frames" "${out}/well_tracking.dat" --label "${cell##*/}" \
           || echo "[pack-runaway] ${cell}: well tracking failed, continuing"
       fi
       ;;
@@ -226,7 +214,7 @@ done
 # Sourced from the corrected headline cell (d = 10).  The unmatched phantom at
 # omega = 0.750 has no corrected cell -- every corrected pair uses the
 # mass-matched 0.7603 partner -- so that table is left as previously packed.
-head_cell="${RUNS}/runaway_pair_d10_L64_N128_lev0"
+head_cell="${RUNS}/04_runaway/runaway_pair_d10_L64_N128_lev0"
 canon_src="$(find "${head_cell}" -name qball_profile.dat 2>/dev/null | head -n 1)"
 eqm_src="$(find "${head_cell}" -name qball_profile_exotic.dat 2>/dev/null | head -n 1)"
 [[ -n "${canon_src}" ]] && cp "${canon_src}" "${DEST}/stars/canonical_omega0.750.dat"

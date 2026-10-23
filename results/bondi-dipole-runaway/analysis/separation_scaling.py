@@ -29,6 +29,8 @@ import csv
 import pathlib
 import sys
 
+from pack_paths import run_dir
+
 # Dressed-star ADM masses at omega = 0.550 (stars/star_family.csv).
 M_CANON, M_PHANT = 0.06395, -0.07696
 # Finest grid of the convergence campaign (dx = 0.25), which is where the
@@ -81,7 +83,7 @@ def main(argv: list[str]) -> int:
     print("phantom drift, NR vs its own point-mass reference")
     print(" sep |" + "".join(f"   t={t:<3d}" for t in SAMPLE_TIMES))
     for sep, cell in CELLS.items():
-        path = pack / "campaign" / cell / "sector_barycenters.dat"
+        path = run_dir(pack / "campaign", cell) / "sector_barycenters.dat"
         if not path.is_file():
             print(f" {sep:3d} | (missing {cell})")
             continue

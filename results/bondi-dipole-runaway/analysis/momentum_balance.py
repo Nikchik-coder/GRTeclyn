@@ -33,6 +33,8 @@ import csv
 import pathlib
 import sys
 
+from pack_paths import run_dir
+
 # Dressed-star ADM masses (stars/star_family.csv, star_radius.csv).
 M_CANON = 0.06395
 CELLS = {
@@ -76,7 +78,7 @@ def main(argv: list[str]) -> int:
     out_rows: list[dict[str, object]] = []
 
     for cell, m_phantom in CELLS.items():
-        stream = pack / "campaign" / cell / "sector_dynamics.dat"
+        stream = run_dir(pack / "campaign", cell) / "sector_dynamics.dat"
         if not stream.is_file():
             print(f"[momB] {cell}: no sector_dynamics.dat -- skipped")
             continue

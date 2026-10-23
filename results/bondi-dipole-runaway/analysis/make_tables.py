@@ -21,6 +21,8 @@ import math
 import pathlib
 import sys
 
+from pack_paths import run_dir
+
 # Column indices (0-based) in the GRTeclyn small_data streams.
 SB = {"t": 0, "tot_c": 1, "x_c": 2, "rms_c": 5, "tot_p": 6, "x_p": 7, "rms_p": 10}
 CF = {"t": 0, "peak": 2, "conf": 4, "min_chi": 17}
@@ -70,7 +72,7 @@ def main(argv: list[str]) -> int:
     summary_rows: list[dict] = []
 
     for cell, sectors, geometry in CELLS:
-        cdir = data / cell
+        cdir = run_dir(data, cell)
         if not cdir.is_dir():
             continue
         sb = read_stream(cdir / "sector_barycenters.dat")

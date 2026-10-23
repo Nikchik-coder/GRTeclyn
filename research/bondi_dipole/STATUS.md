@@ -3,7 +3,8 @@
 One page, current only. Paper: [`bondi_dipole.tex`](bondi_dipole.tex), arXiv:2608.24577 (v1). Data:
 [`results/bondi-dipole-runaway/`](../../results/bondi-dipole-runaway/README.md), tag `v1.0-bondi-dipole`. Code:
 `Examples/RadialRecipe/`, launcher `grteclyn-wrapper/scripts/campaigns/bondi_dipole/run_pair_selfgrav.sh`. Runs:
-`runs/bondi/` (untracked). Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch
+`runs/bondi/` (untracked; filed by question since 10-23, live runs in `staging/` only: `runs/bondi/README.md`;
+the pack in the same groups, `campaign/NN_group/<run>`, with `runs_registry.tsv`). Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch
 `feature/fix_bondi`, cut from `feature/spinning` on 2026-10-22 (develop carries no `research/`; its code is the same).
 
 ## Journal trail
@@ -231,8 +232,8 @@ write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, eve
   oscillation itself is clean (max φ follows f cos ωt to 4 digits). At the core the quartic and sextic potential
   terms nearly cancel (V ≈ 2 × 10⁻⁵ from ±4 × 10⁻⁴ pieces), so a small inconsistency there is amplified.
 - Stopped 21:20 MSK ("lets terminate the runs no point burning gpus"): the PP-pair and lone N 192 solves, the
-  unrepaired N 256 control and the two signed pair reruns (log `runs/bondi/staging/stop_diag_2026-10-22.log`);
-  superseded by the lone-star verdict. The finished diag runs' episodes are kept under `runs/bondi/staging/diag_*`.
+  unrepaired N 256 control and the two signed pair reruns (log `runs/bondi/10_diagnostics/logs/stop_diag_2026-10-22.log`);
+  superseded by the lone-star verdict. The finished diag runs' episodes are kept under `runs/bondi/10_diagnostics/diag_*`.
 - **Conclusion of the lone-star splitter set (10-22, 22:40 MSK; supersedes the "Not GRTresna and not the star ODE"
   bullet above and the 21:50 reading that put the floor in the solved data):**
   - The direct paint is not exact data. The star profile (`boson_star_ode._build_profile`) puts a vacuum exterior
@@ -275,7 +276,7 @@ everywhere, but the Hamiltonian falls to ~1.2 (N 192→256) from t ≈ 4, the sa
   acceleration fitted over 5 ≤ t ≤ 20 changes by −0.3 %. N 128→192 at t 5 / 10 / 15 / 20: Ham 2.4 / 1.7 / 1.6 /
   1.5 (stepped: the same to 0.1), Mom 3.1 / 2.8 / 2.6 / 2.4 (stepped 1.7 / 2.2 / 2.4 / 2.4). The step held down the
   early orders only; the later Hamiltonian cap is the time integrator (the pair A/B, above).
-- Each starts from `runs/bondi/staging/lapsefix_pair_d10_L64_N*_lev0`: the fixid data with only the lapse replaced
+- Each starts from `runs/bondi/11_initial_data/lapsefix_pair_d10_L64_N*_lev0`: the fixid data with only the lapse replaced
   (`grteclyn-wrapper/scripts/campaigns/bondi_dipole/patch_lapse_join.py`, record in `lapse_patch.json`).
 - Start checked: the first step's momentum violation (L2, r ≤ 24) is 5.1 / 1.5 / 0.63 × 10⁻⁸ at N 128 / 192 / 256,
   order 3.0 / 3.05; with the stepped lapse it was 63 / 121 / 180 × 10⁻⁸, order −1.6 / −1.4.
@@ -327,7 +328,7 @@ N 256 ends.
 The three 2a cells ran on the first GPU node on
 10-22 (done N 128 13:13, N 192 13:41, N 256 15:08 MSK; 207 / 49 / 16 units/h), all to t 20 with no NaN and their
 scratch cleared. Each reproduces its archived run over
-t ≤ 20 to 1 % (L2 norms) and 1.5e-6 (Linf_Ham_amr). Run dirs `runs/bondi/staging/conv2a_*`, each with its `launch.sh`
+t ≤ 20 to 1 % (L2 norms) and 1.5e-6 (Linf_Ham_amr). Run dirs `runs/bondi/09_convergence/conv2a_*`, each with its `launch.sh`
 (diffed against the old cell: only the stop time, frames off, the binary, solve ranks and timeout change) and its t = 0
 split in `t0_constraints.log`. The solve stops at 0.002 % × (128/N)⁴ relative error (16 Newton iterations at N 256).
 No checkpoints. Scratch on the node: empty (the 29 GB of two dead spinning runs' plotfiles wiped 10-22 on the word).

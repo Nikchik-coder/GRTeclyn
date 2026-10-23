@@ -106,7 +106,7 @@ def main(argv: list[str]) -> int:
     for label, prefix in GROUPS:
         cells = sorted(
             (int(re.search(r"n(\d+)$", d.name).group(1)), d)
-            for d in camp.glob(f"{prefix}[0-9]*")
+            for d in camp.glob(f"[0-9][0-9]_*/{prefix}[0-9]*")
             if (d / "sector_barycenters.dat").is_file()
         )
         if len(cells) < 2:

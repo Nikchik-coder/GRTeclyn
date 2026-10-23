@@ -37,6 +37,8 @@ import pathlib
 import re
 import sys
 
+from pack_paths import runs
+
 # Column indices in constraint_norms.dat (0-based), from the header this pack
 # injects; see research/bondi_dipole/pack_campaign.sh.
 C_TIME, C_L2_HAM, C_L2_MOM, C_LINF_HAM = 0, 1, 2, 15
@@ -121,7 +123,7 @@ def main(argv: list[str]) -> int:
     csv_rows: list[dict] = []
     solved: dict[str, tuple[float, float]] = {}
 
-    for cell in sorted(camp.iterdir()):
+    for cell in runs(camp):
         f = cell / "Ham_and_Mom_errors.txt"
         if not f.is_file():
             continue
@@ -150,7 +152,7 @@ def main(argv: list[str]) -> int:
     ]
 
     ladders: dict[str, dict[int, list[list[float]]]] = {}
-    for cell in sorted(camp.iterdir()):
+    for cell in runs(camp):
         f = cell / "constraint_norms.dat"
         if not f.is_file():
             continue

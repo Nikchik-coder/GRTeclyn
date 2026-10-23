@@ -150,14 +150,17 @@ recorded with the campaign working notes, which are not part of this pack.
 | path | contents |
 |---|---|
 | [`MATTER_MODEL.md`](MATTER_MODEL.md) | the bicomplex model, where the sign flip lives, dressed-star initial data, code map |
-| [`LAUNCH.md`](LAUNCH.md) | how a cell is launched, what every knob selects, and the configuration table for all of them — the authoritative per-cell record is each `campaign/<cell>/launch_config.sh` |
-| `campaign/<cell>/` | every run — the resolution ladder, the separation series, the nulls, the wave-zone box and the long run (see the data dictionary below, and `campaign/README.md` for the guide) |
+| [`LAUNCH.md`](LAUNCH.md) | how a cell is launched, what every knob selects, and the configuration table for all of them — the authoritative per-cell record is each `campaign/<group>/<cell>/launch_config.sh` |
+| `campaign/<group>/<cell>/` | every run, filed by the question it answers (the groups below; the same layout as `runs/bondi/`) — see the data dictionary below, and `campaign/README.md` for the guide |
+| [`runs_registry.tsv`](runs_registry.tsv) | one line per run: its folder, its label in the paper's Table I, where the paper uses it, its outcome |
+| [`binaries.tsv`](binaries.tsv) | the GRTeclyn commit each run was launched from |
+| [`trust_windows.tsv`](trust_windows.tsv) | the last trustworthy time of any run that stops being trustworthy before its end (none yet) |
 | `stars/` | dressed-star profile tables `r φ₀(r) α(r)` + the M(ω) family scan |
 | `analysis/` | derived tables and the scripts that regenerate them |
-| `campaign/<cell>/frames/` | one still per field every `dt = 10`, for the cells run with frames. The movies themselves stay in the gitignored run tree |
+| `campaign/<group>/<cell>/frames/` | one still per field every `dt = 10`, for the cells run with frames. The movies themselves stay in the gitignored run tree |
 | `patches/` | the matter-model modifications this campaign required |
 
-### Data dictionary — `campaign/<cell>/`
+### Data dictionary — `campaign/<group>/<cell>/`
 
 Every `.dat` stream carries its own `#` header line naming each column.
 
@@ -205,7 +208,8 @@ absolute; drifts quoted anywhere in this pack are `x(t) − x(0)`.
 
 ## campaign/ — the cells behind the result (complete)
 
-Thirty-one cells, one folder each, all on **uniform** grids: the convergence
+The paper's 34 simulations, one folder each, filed in eight groups by the
+question they answer, all on **uniform** grids: the convergence
 argument needs a single cell size everywhere, so nothing here uses mesh
 refinement — with one deliberate exception, `amrcheck_*`, which switches it on
 once to show the choice costs nothing. Each folder carries the same streams and provenance files — the
@@ -216,24 +220,18 @@ files, and the exact launch environment.
 `campaign/README.md` is the detailed guide: how to read a cell name, what every
 file is, the per-cell numbers, and the caveats. The short version:
 
-| group | cells | what it settles |
+| folder | runs (Table I label) | what it settles |
 |---|---|---|
-| `runaway_pair_d{08,10,12,16,20}_L64_N128` | 5 | the separation law, `a ∝ d^−2.028` |
-| `runaway_pair_d10_L64_N{192,256}` | 2 | the resolution ladder's finer rungs — `d10_N128` above is its base. **The headline** |
-| `control_lone_{canonical,phantom}` | 2 | a lone star does not drift over `t = 200` |
-| `control_lone_phantom_t1000_L64_N128` | 1 | the same phantom to `t = 1000` — it decays `−0.632%` per 100 units and the pack's stability claim stops at `t = 400` |
-| `control_pair_{pp,mm}_d10_L64_N128` | 2 | same-sign pairs merge yet their centroid never moves — no runaway |
-| `control_pair_pp_d10_L64_N{192,256}` | 2 | the null's own resolution ladder |
-| `control_pair_mm_d10_L64_N192` | 1 | the mm null's second rung |
-| `control_pair_mm_d10_L64_N128_lev0_frames` | 1 | the phantom pair's per-star fate — it merges too, on the pp pair's clock |
-| `control_mirror_mp_d10_L64_N128` | 1 | flipping the pair reverses the runaway exactly |
-| `massscale_*` + `massratio_*` (2) | 3 | the pull follows the partner's mass — and reverses with it |
-| `amrcheck_pair_d10_L64_N128_lev1` | 1 | mesh refinement changes nothing (six-digit match) |
-| `deepsolve_pair_d10_L64_N128` | 1 | a `4.4×` deeper constraint solve changes nothing — the base rung is grid-limited |
-| `gaugetwin_pair_d10_eta2_L64_N128` | 1 | doubling the Gamma-driver damping moves the shift `−4.95%` and the drift `−0.007%` — not gauge-limited |
-| `wavezone_pair_d10_L128_N256` | 1 | doubled box, four extraction shells |
-| `longrun_pair_d10_t400_L64_N128` | 1 | the acceleration is steady to `t = 400` |
-| `stability_canonical_w{075,080,085,090}` | 4 | the star family is stable at all |
+| `01_star_family/` | `stability_canonical_w{075,080,085,090}` (S0.75–S0.90) | the star family is stable at all |
+| `02_lone_star/` | `control_lone_{canonical,phantom}` (P, M), `control_lone_phantom_t1000` (M-t1000) | a lone star does not drift over `t = 200`; the phantom carried to `t = 1000` decays `−0.632%` per 100 units |
+| `03_same_sign/` | `control_pair_pp_d10_L64_N{128,192,256}` (PP10), `control_pair_mm_d10_L64_N{128,192}` and `…_N128_lev0_frames` (MM10), `control_mirror_mp_d10_L64_N128` (MP10) | same-sign pairs merge yet their centroid never moves — no runaway, at every N; the phantom pair merges on the pp pair's clock; flipping the pair reverses the runaway exactly |
+| `04_runaway/` | `runaway_pair_d10_L64_N{128,192,256}` (PM10), `longrun_pair_d10_t400_L64_N128` (PM10-t400), `wavezone_pair_d10_L128_N256` (PM10-L128) | **the headline** and its resolution ladder; the acceleration is steady to `t = 400`; doubled box, four extraction shells |
+| `05_separation/` | `runaway_pair_d{08,12,16,20}_L64_N128` (PM8–PM20) | with PM10, the separation law, `a ∝ d^−2.028` |
+| `06_mass/` | `masslaw_pair_d20_w{0850,0700,0675}` (E0.64, E1.34, E1.57), `massratio_w088_r060`, `massscale_pair_d10_w0804`, `massratio_heavyphantom` (R0.60, R0.80, R1.33); `mass_law.csv` | the pull follows the partner's mass — and reverses with it |
+| `07_numerics/` | `deepsolve_pair_d10_L64_N128` (PM10-tol), `amrcheck_pair_d10_L64_N128_lev1` (PM10-AMR), `gaugetwin_pair_d10_eta2_L64_N128` (PM10-η2) | a `4.4×` deeper constraint solve, mesh refinement and doubled Gamma-driver damping change nothing — the base rung is grid-limited, not solve- or gauge-limited |
+| `08_late_separation/` | `chase03c_pair_d10_L64_N128` (PM10-rec), `nomill_left_pair_d10_L64_N128` (PM10-off) | the separation after `t = 200` |
+
+[`runs_registry.tsv`](runs_registry.tsv) spells out every run, its use in the paper and its outcome.
 
 ### What the campaign shows
 
@@ -288,8 +286,9 @@ static — not a measurement of a wave.
 ### Frames and movies
 
 Cells run with frames keep one still per field every `dt = 10` under
-`<cell>/frames/`, with a `FRAMES.md` listing the times kept. The full series
+`<group>/<cell>/frames/`, with a `FRAMES.md` listing the times kept. The full series
 (~250 frames per field) and the stitched movies stay in the gitignored run tree
+(`runs/bondi/movies/`)
 — 19 movies per cell, redrawn against a single fixed colour scale measured over
 the whole run so a colour means the same value in every frame.
 
@@ -309,7 +308,7 @@ nothing here depends on them.
 Regenerate this whole pack from the run tree:
 
 ```bash
-bash research/bondi_dipole/pack_runaway.sh          # every cell -> campaign/ + stars/
+bash research/bondi_dipole/pack_runaway.sh          # every cell -> campaign/<group>/ + stars/
 FRAME_DT=20 bash research/bondi_dipole/pack_runaway.sh   # fewer stills
 ```
 
@@ -344,5 +343,5 @@ To re-run the physics itself, see [`LAUNCH.md`](LAUNCH.md).
   per-cell ledger is kept with the campaign working notes.
 - Working notes are narrative and deliberately not part of this pack — every
   number quoted here is re-derivable from the data shipped alongside it.
-- Code state: wrapper commit recorded per cell in `campaign/<cell>/metadata.json`;
+- Code state: wrapper commit recorded per cell in `campaign/<group>/<cell>/metadata.json`;
   the GRTresna matter modifications are in [`patches/`](patches/).

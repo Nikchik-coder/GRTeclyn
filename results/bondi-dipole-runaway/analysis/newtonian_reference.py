@@ -29,6 +29,8 @@ import math
 import pathlib
 import sys
 
+from pack_paths import run_dir
+
 # Dressed-star ADM masses solved for this campaign (see stars/star_family.csv).
 M_CANON = 0.06395
 M_PHANT_UNEQUAL = -0.07696  # omega = 0.550
@@ -73,7 +75,7 @@ def integrate(m1: float, m2: float) -> list[tuple[float, float, float]]:
 
 
 def read_observed(pack: pathlib.Path, cell: str) -> dict[float, tuple[float, float]]:
-    path = pack / "campaign" / cell / "sector_barycenters.dat"
+    path = run_dir(pack / "campaign", cell) / "sector_barycenters.dat"
     rows = []
     for line in path.read_text(encoding="utf-8").splitlines():
         if line.startswith("#") or not line.strip():

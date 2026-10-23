@@ -54,13 +54,14 @@ FIT_T_MIN = 5.0  # gauge settling window, matches the pack README
 
 def find_cell(name: str) -> Path | None:
     """Locate a cell by name, preferring the packed extract over the run tree."""
-    packed = REPO / "results" / "bondi-dipole-runaway" / "campaign" / name
-    if (packed / "sector_barycenters.dat").is_file():
-        return packed
-    for base in (
-        REPO / "runs" / "bondi" / "staging" / name,
-        REPO / "runs" / "bondi" / "staging" / "archive" / name,
-    ):
+    # Both trees file runs in numbered groups (2026-10-23); a live run is
+    # still in runs/bondi/staging/.
+    camp = REPO / "results" / "bondi-dipole-runaway" / "campaign"
+    for packed in sorted(camp.glob(f"[0-9][0-9]_*/{name}")):
+        if (packed / "sector_barycenters.dat").is_file():
+            return packed
+    runs = REPO / "runs" / "bondi"
+    for base in (runs / "staging" / name, *sorted(runs.glob(f"[0-9][0-9]_*/{name}"))):
         if not base.is_dir():
             continue
         for run in sorted(base.glob("bondi_sg_*")):
@@ -174,7 +175,7 @@ def main() -> int:
     ap.add_argument("--t-min", type=float, default=FIT_T_MIN)
     ap.add_argument(
         "--csv",
-        default=str(REPO / "results" / "bondi-dipole-runaway" / "campaign" / "mass_law.csv"),
+        default=str(REPO / "results" / "bondi-dipole-runaway" / "campaign" / "06_mass" / "mass_law.csv"),
         help="where to write the fitted table (its own file, shared with nothing)",
     )
     args = ap.parse_args()

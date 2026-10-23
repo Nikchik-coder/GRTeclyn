@@ -4,7 +4,7 @@ How every cell in this pack was produced. Paths are repo-relative; run from the
 repository root.
 
 **The authoritative record is per cell, not this file.** Each
-`campaign/<cell>/launch_config.sh` is the exact script that produced that cell,
+`campaign/<group>/<cell>/launch_config.sh` is the exact script that produced that cell,
 with every environment variable it was given. This document explains what those
 variables mean and how the pieces fit together; where the two ever disagree,
 believe the cell's own file.
@@ -38,7 +38,7 @@ evolution only claims the GPU once the solve has landed.
 ## 2. Launching one cell
 
 Every cell follows the same shape. This is the finest runaway rung, copied from
-`campaign/runaway_pair_d10_L64_N256_lev0/launch_config.sh`:
+`campaign/04_runaway/runaway_pair_d10_L64_N256_lev0/launch_config.sh`:
 
 ```bash
 REPO="$(git rev-parse --show-toplevel)"
@@ -200,7 +200,8 @@ GPU is not necessarily one of these runs.
 bash research/bondi_dipole/pack_runaway.sh
 ```
 
-It walks the staging tree, copies each cell's time series, parameter files and
+It walks the run tree's groups (`runs/bondi/NN_group/`; a live run in
+`runs/bondi/staging/` is never packed), copies each cell's time series, parameter files and
 provenance, thins the rendered frames to one still per `dt = 10`
 (`FRAME_DT` overrides), derives the two-lump tracking for same-sign cells, and
 scrubs machine-specific paths. `CELLS_SKIP` and `FRAMES_SKIP` name what to leave
