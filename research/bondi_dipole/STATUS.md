@@ -86,35 +86,40 @@ card, the run dir and `constraint_shells_dt` 0.1 differ.
 The lone N 128 consumer lags (~80 s per plotfile against one every ~14 s; the N 192 solve holds 8 of the second
 node's 12 CPUs): its plotfiles queue on scratch (32 GB, 701 GB free) and drain after the run.
 
-## Queued: the full paper rerun
+## Queued: the paper rerun (list agreed 10-23)
 
-Each needs the go and the checkpoint question. Every run of Table I again on the fixed binary with fresh initial
-data (`GRTresna_bondi_fix`, the joined lapse, the fixed converter); otherwise its packed `evolution_params.txt` and
-`launch_config.sh` (a rerun is its old run). GPU-h on one H100 alone: N 128 ≈ 200 u/h, N 192 ≈ 50, N 256 ≈ 19, the
-L 128 box at N 256 (Δx 0.5) ≈ 37. Solves: N 128 ~6 min on the first node (12 ranks; ~25 min on the second), N 192
-~20 min and 93 GB, N 256 and the L 128 run 68 min and 221 GB, first node only (the second's limit is 195 GB). The
-second node's consumer cannot keep up with an N 128 run (12 CPUs): give it the N 192 / N 256 evolutions.
+Each needs the go and the checkpoint question. Each run is its packed run again (`evolution_params.txt`,
+`launch_config.sh`) on the fixed binary with fresh initial data (`GRTresna_bondi_fix`, the joined lapse, the fixed
+converter; star tables at new frequencies are rebuilt at launch). GPU-h on one H100 alone: N 128 ≈ 200 u/h, N 192
+≈ 50, N 256 ≈ 19, the L 128 box at N 256 ≈ 37. Solves: N 128 ~6 min on the first node (~25 min on the second),
+N 192 ~20 min and 93 GB, N 256 and the L 128 run 68 min and 221 GB, first node only (the second's limit is 195 GB).
+N 128 runs go to the first node, two per card: the second node's consumer cannot keep up with them (12 CPUs).
 
-| group | runs (Table I) | N | stop | GPU-h | notes |
+| runs (Table I) | for | N | stop | GPU-h | notes |
 |---|---|---|---|---|---|
-| 01 star family | S0.75, S0.80, S0.85, S0.90 | 128 | 120 | 2.4 | no `launch_config.sh` packed: rebuild from `runs/bondi/01_star_family` |
-| 02 lone star | P | 128 | 200 | 1 | |
-| | M | 256 | 200 | 11 | N 128 / 192 live; the N 256 solve on the first node |
-| | M-t1000 | 128 | 1000 | 5 | the old run wrote checkpoints: ask |
-| 03 same sign | PP10 | 128 / 192 / 256 | 200 | 16 | N 256 with frames and slice cache (its movie) |
-| | MM10 | 128 / 192 | 200 | 5 | one N 128 run with frames replaces the paper's two |
-| | MP10 | 128 | 200 | 1 | |
-| 04 runaway | PM10 | 128 / 192 / 256 | 200 | live | |
-| | PM10-t400 | 128 | 400 | 2 | frames |
-| | PM10-L128 | 256 (L 128) | 200 | 5.5 | |
-| 05 separation | PM8, PM12, PM16, PM20 | 128 | 200 | 4 | |
-| 06 mass | E0.64, E1.34, E1.57, R0.60, R0.80, R1.33 | 128 | 200 | 6 | |
-| 07 numerics | PM10-tol, PM10-AMR, PM10-η2 | 128 | 200 | 3.5 | |
-| 08 late separation | PM10-rec, PM10-off | 128 | 784 / 600 | 7 | PM10-rec wrote checkpoints: ask |
+| PM10-t400 | constant a to t 400; Fig. trajectories (b) | 128 | 400 | 2 | frames; first, it decides the late-separation runs |
+| PM8, PM12, PM16, PM20 | a ∝ d^−2.03 | 128 | 200 | 4 | |
+| E0.64, E1.34, E1.57 | a ∝ M̄^0.97 | 128 | 200 | 3 | the old error ∝ ω² differed between them |
+| R0.60, R0.80, R1.33 | each star follows its partner's mass | 128 | 200 | 3 | |
+| MP10 | exchange reverses the motion | 128 | 200 | 1 | |
+| PP10, MM10 | same-sign pairs merge, centroids at rest | 128 | 200 | 2 | MM10 with frames (its movie) |
+| PP10 | the same at a second resolution | 192 | 200 | 4 | frames and slice cache (its movie; replaces N 256) |
+| PM10-tol, PM10-η2 | solve tolerance, gauge | 128 | 200 | 2 | |
+| PM10-L128 | domain size; Ψ4 in the near zone | 256 (L 128) | 200 | 5.5 | 221 GB solve: first node |
+| S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 128 | 120 | 2.4 | no `launch_config.sh` packed: rebuild from `runs/bondi/01_star_family` |
 
-About 70 GPU-h beyond the live runs, a day on the three cards with two N 128 runs per card. Order: what the headline
-and the convergence appendix need first (PM10-t400, PP10, MM10, MP10, P, M N 256), then the scans (05, 06), the
-numerics (07), the long runs (M-t1000, 08), the star family last.
+About 29 GPU-h, ~10–12 h on the three cards. Dropped from the paper's 34 (the text changes with them):
+- P: at the centre, symmetry holds it; M (off centre) carries test (v), S0.75 the isolated positive-mass star.
+- PM10-AMR: no refined level is ever created (|χ − 1| stays below the 0.02 threshold); say so from PM10's own χ.
+- PP10 at N 256, MM10 at N 192 and MM10's second N 128 run: a same-sign pair's centroid is held by symmetry, so
+  N 128 and PP10 at N 192 suffice; Fig. same-sign (a) and the movie use PP10 at N 192.
+
+Decided after PM10-t400: PM10-rec and PM10-off (7 GPU-h). The old runs' separation growth after t 200 shrank
+eightfold per halving of Δx, so it is likely the old time error: if the fixed PM10-t400 shows none, Sec. VII
+"Separation after t = 200" and both runs go.
+
+Optional: M-t1000 (5 GPU-h; only if the text keeps "neither collapses nor disperses ... 1000 alone"), M at N 256
+(11 GPU-h, the 221 GB solve on the first node; the lone star's third resolution).
 
 ## Revision
 
