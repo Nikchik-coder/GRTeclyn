@@ -382,12 +382,12 @@ void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                                         const double a_time)
 {
     BL_PROFILE("RadialRecipeLevel::specificEvalRHS()");
-    const int soln_ghosts = a_soln.nGrowVect()[0];
-    if (soln_ghosts > 0)
-    {
-        FillPatch(*this, a_soln, soln_ghosts, a_time, state_index, 0,
-                  a_soln.nComp());
-    }
+    // No FillPatch here.  AmrLevel::RK fills the stage's ghost cells itself
+    // (FillRKPatch) right before this call, and FillPatch also overwrites the
+    // VALID cells with the old and new state interpolated to a_time: RK4's two
+    // mid stages then see Uold + k dt/4 instead of Uold + k dt/2, and the
+    // integrator drops to first order (2026-10-23: the Bondi stars' core drift
+    // converged at order 1.0 in dx with dt = 0.02 dx).
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
     PositiveChiAndLapse positive_chi_lapse;
