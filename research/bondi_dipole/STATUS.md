@@ -106,7 +106,8 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | optional, only if the text keeps that sentence |
 
 Queued: about 20 GPU-h, one night on the three cards. Decided 2026-10-23: the pair ends with PM10-t400 and the
-large box; PM10-rec / -off are dropped.
+large box; PM10-rec / -off are dropped. **Hold (decided 2026-10-23, 23:35 MSK): no new launches.** The four live
+runs finish and are packed as they land; the rest of the queue waits for the word.
 
 ## Live
 
