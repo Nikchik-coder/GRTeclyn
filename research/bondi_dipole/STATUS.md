@@ -99,11 +99,22 @@ first constraint row equals the 64-unit N 256 run's to all ten printed digits.
 | `diag_rkfix_lone_p_L16_N64_lev0_t3` | 0 | 3 | 3 | 80 u/h | done 09:20 MSK, no NaN |
 | `diag_rkfix_lone_p_L16_N128_lev0_t3` | 0 | 3 | 3 | 19 u/h | done 09:28 MSK, no NaN |
 | `diag_rkfix_lone_p_L16_N256_lev0_t3` | 0 | 1.5 | 3 | ~4 u/h | 0.4 h, ~10:05 MSK |
-| `diag_rkfix_lone_p_L16_N192_lev0_t3` | 1 | 3 | 3 | 14 u/h | done 09:42 MSK, no NaN; card 1 idle |
+| `diag_rkfix_lone_p_L16_N192_lev0_t3` | 1 | 3 | 3 | 14 u/h | done 09:42 MSK, no NaN |
 
 The A/B (`diag_rkfix_*`, launched 09:18 MSK on the go): the same four runs on the fixed binary
 `main3d_rkfix_aa0dc4a1-dirty` (only the binary and the cards differ; no checkpoints). It passes if the core drift
 collapses and converges at about order 4.
+
+**Live, the pair on the fixed binary** (10-23, on the go 09:45 MSK; no checkpoints, frames off): the facefix pair set
+`diag_facefix_pair_d10_L64_N*_lev0_t10` rerun to t 10 on `main3d_rkfix_aa0dc4a1-dirty`; each `launch.sh` differs
+from its old one only in binary, card and run dir. It shows whether the pair's interior Hamiltonian order (capped
+at ~1.2 from t ≈ 4) lifts with the fix.
+
+| run | card | t (09:46) | stop | speed | ETA |
+|---|---|---|---|---|---|
+| `diag_rkfix_pair_d10_L64_N256_lev0_t10` | 1 | 0 (started 09:46) | 10 | ~16 u/h | 0.65 h, ~10:25 MSK |
+| `diag_rkfix_pair_d10_L64_N128_lev0_t10` | 0 | queued | 10 | ~32 u/h | starts when the lone A/B ends (~10:05), ~10:30 MSK |
+| `diag_rkfix_pair_d10_L64_N192_lev0_t10` | 0 | queued | 10 | ~17 u/h | starts when the lone A/B ends (~10:05), ~10:50 MSK |
 
 Process names (10-23): every Bondi run launched from now on shows as `test params.txt` (run from the shared
 checksum-named copy in `/tmp/ml_jobs/bin`) and `test_post post.py`, as the merger runs do (`core/runner.py` with
