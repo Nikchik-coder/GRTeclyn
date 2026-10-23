@@ -18,7 +18,7 @@ Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `fea
   no convergence test), no invitation to resubmit. The reports are kept locally only, in `referee/` (git-excluded).
 - Next: EPJC (open access through SCOAP3; confirm it charges no APC), fallback IJMPD.
 
-## Current status (2026-10-23, 21:40 MSK)
+## Current status (2026-10-23, 23:05 MSK)
 
 The paper's simulations carry a numerical error that changes its numbers: the evolution integrated in time at first
 order instead of fourth (below). It is fixed and verified, and the paper is being rerun on the fixed code and fixed
@@ -94,7 +94,7 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | `PM10_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done**: ΔX(200) 2.846, a(5–200) 1.427 × 10⁻⁴; `09_convergence/` |
 | `PM10_L64_N256` | the headline; frames, figure and movie | 64 | 256 | 200 | 11 | **done**: ΔX(200) 2.874, a(5–200) 1.451 × 10⁻⁴ (order 4.4 / 4.2 with N 128, 192); `09_convergence/` |
 | `M_L64_N128` | the lone star sits still; convergence | 64 | 128 | 200 | 1 | **done**: `09_convergence/` |
-| `M_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done** at t 200; packed when its consumer drains (Live) |
+| `M_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done**: the minimum lapse moves −1.48 × 10⁻⁴ by t 200 (N 128 −1.47), the peak field +0.001 % (N 128's −0.13 % was numerical); constraints at order 2.8–2.9 inside r < 24 (N 128→192); `09_convergence/` |
 | `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | solve at its floor (Ham 2.5 × 10⁻⁴ % against the Δx⁴-scaled 1.25 × 10⁻⁴ %, below N 192's accepted 3.9 × 10⁻⁴ %), so the gate rejects it; the evolution reuses its data (Live) |
 | `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | evolution done at t 400, no NaN; frames; its consumer drains (Live), then it decides PM10-rec / -off |
 | PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 running (Live); PM16, PM20 queued |
@@ -114,13 +114,12 @@ shows none, Sec. VII "Separation after t = 200" and both runs go.
 No checkpoints (on the word); frames off except PM10-t400 (frames and slice cache, the paper's figure and movie
 runs, with PM10 N 256).
 
-| run | node / card | t (21:50) | stop | speed | ETA |
+| run | node / card | t (23:00) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `PM8_L64_N128` | 1st / 1 | fresh solve (4 ranks), launched 21:48 MSK | 200 | two per card, ~130 u/h each expected | solve ~15 min, then ~1.5–2 h: ~23:35–00:05 MSK |
-| `PM12_L64_N128` | 1st / 1 | fresh solve (4 ranks), launched 21:48 MSK | 200 | as PM8 | as PM8 |
-| `rkfix_lone_m_L64_N256_lev0_t200` → `M_L64_N256` | 1st / 0 | solve at iteration 34 of 50, ~5.3 min each (CPU, 221 GB) | 200 | ~18 u/h | the solve hits its 50-iteration cap ~23:00 MSK and the gate rejects it; the evolution then starts from its data as `staging/M_L64_N256` (launch script ready, BONDI_GRIDINIT), ~23:10 MSK, and ends ~10:00–12:00 MSK 10-24 |
-| `rkfix_pair_d10_L64_N128_lev0_t400` → `PM10_L64_N128_t400` (frames) | 1st / 0 | evolution done at t 400 (~21:00 MSK); consumer at t 222 | 400 | 27 s / plotfile | consumer drains ~23:20 MSK |
-| `rkfix_lone_m_L64_N192_lev0_t200` → `M_L64_N192` (consumer only) | 2nd | consumer at t 190 of 200 | — | ~265 s / plotfile | ~1 h, ~22:35 MSK |
+| `PM8_L64_N128` | 1st / 1 | 99 (launched 21:48 MSK) | 200 | ~100 u/h, two per card | ~1 h, ~00:05 MSK |
+| `PM12_L64_N128` | 1st / 1 | 99 (launched 21:48 MSK) | 200 | as PM8 | as PM8 |
+| `rkfix_lone_m_L64_N256_lev0_t200` → `M_L64_N256` | 1st / 0 | solve at iteration 50 of 50, its cap (CPU, 221 GB) | 200 | ~18 u/h | the gate rejects it ~23:10 MSK; the evolution then starts from its data as `staging/M_L64_N256` (launch script ready, BONDI_GRIDINIT) and ends ~10:00–12:00 MSK 10-24 |
+| `rkfix_pair_d10_L64_N128_lev0_t400` → `PM10_L64_N128_t400` (frames) | 1st / 0 | evolution done at t 400 (~21:00 MSK); consumer at t 367 | 400 | 27 s / plotfile | consumer drains ~23:20 MSK |
 
 ## Revision
 

@@ -52,7 +52,7 @@ STUDIES = {
              {128: "control_lone_phantom_L64_N128_lev0"}),
 }
 # Runs still live in staging/ under their launch names; each takes its readable name at close-out (2026-10-23).
-LAUNCH_NAMES = {"M_L64_N192": "rkfix_lone_m_L64_N192_lev0_t200"}
+LAUNCH_NAMES: dict[str, str] = {}
 DEFAULT_TIMES = (10.0, 20.0, 50.0, 100.0, 150.0, 200.0)
 FIT_START = 5.0
 SCRATCH = Path("/tmp/grteclyn_scratch")

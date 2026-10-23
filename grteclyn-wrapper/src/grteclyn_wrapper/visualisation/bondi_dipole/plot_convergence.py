@@ -69,7 +69,7 @@ STUDIES = {
                  experiment="bondi_sg_single_m_w07603", stem="convergence_lone"),
 }
 # Runs still live in staging/ under their launch names; each takes its readable name at close-out (2026-10-23).
-LAUNCH_NAMES = {"M_L64_N192": "rkfix_lone_m_L64_N192_lev0_t200"}
+LAUNCH_NAMES: dict[str, str] = {}
 SHELLS = 33                  # constraint_shells.dat: shell s holds s <= r < s + 1, the last one the corners
 SHELL_VOLUME = np.array([(s + 1) ** 3 - s ** 3 for s in range(SHELLS)], float)
 # (title, r_min, r_max): shells r_min .. r_max - 1, all whole inside the box's outer layer at every N

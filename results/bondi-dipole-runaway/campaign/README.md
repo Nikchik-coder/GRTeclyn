@@ -12,7 +12,7 @@ and scrubs absolute paths. Plotfiles, the initial-data file, frames and movies s
 
 | folder | cells |
 |---|---|
-| `09_convergence/` | PM10 (`PM10_L64_N128`, `PM10_L64_N192`, `PM10_L64_N256`) and M (`M_L64_N128`) to t 200; M at N 192 and N 256 join as they finish |
+| `09_convergence/` | PM10 (`PM10_L64_N128`, `PM10_L64_N192`, `PM10_L64_N256`) and M (`M_L64_N128`, `M_L64_N192`) to t 200; M at N 256 joins when it finishes |
 
 The other groups (`01_star_family/` … `08_late_separation/`) come back as their reruns finish; the list and its
 state are in `research/bondi_dipole/STATUS.md`, "Runs for the revision".
