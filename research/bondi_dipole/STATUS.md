@@ -80,11 +80,13 @@ card, the run dir and `constraint_shells_dt` 0.1 differ.
 | `rkfix_pair_d10_L64_N128_lev0_t200` (PM10) | 1st / 0 | 136.4 | 200 | 79 u/h | 0.8 h, ~13:00 MSK |
 | `rkfix_pair_d10_L64_N192_lev0_t200` | 1st / 0 | 49.5 | 200 | 30 u/h (shared) | ~5 h, ~17:15 MSK |
 | `rkfix_pair_d10_L64_N256_lev0_t200` (frames) | 1st / 1 | 30.6 | 200 | 19 u/h | ~9 h, ~21:10 MSK |
-| `rkfix_lone_m_L64_N128_lev0_t200` (M) | 2nd / 0 | 86.3 | 200 | 202 u/h | 0.6 h, ~12:50 MSK |
+| `rkfix_lone_m_L64_N128_lev0_t200` (M) | 2nd / 0 | 200, done 12:47 MSK, no NaN | 200 | 207 u/h | consumer draining (t 32 of 200 at 12:41) |
 | `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | solving, Newton step 2 of ~13 (~7.5 min each) | 200 | – | evolution ~13:45 → ~17:45 MSK |
 
 The lone N 128 consumer lags (~80 s per plotfile against one every ~14 s; the N 192 solve holds 8 of the second
-node's 12 CPUs): its plotfiles queue on scratch (32 GB, 701 GB free) and drain after the run.
+node's 12 CPUs): 183 plotfiles (66 GB, 667 GB free) drain after the run, a few hours. Its constraints stay flat
+(interior Ham 2.1 → 3.4 × 10⁻⁶ over t 10–189, Mom ~3.5 × 10⁻⁷); the paper's M at N 128 grew (boundary-masked Ham
+6.0 → 7.7 × 10⁻⁶ against our 3.5 → 3.3 × 10⁻⁶).
 
 ## Queued: the paper rerun (list agreed 10-23)
 
