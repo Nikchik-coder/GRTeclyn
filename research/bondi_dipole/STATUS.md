@@ -1,6 +1,6 @@
 # Bondi dipole paper — status
 
-One page, current only. Paper: [`bondi_dipole.tex`](bondi_dipole.tex), arXiv:2608.24577 (v1). Data:
+One page, current only. Paper: [`article/bondi_dipole.tex`](article/bondi_dipole.tex), arXiv:2608.24577 (v1). Data:
 [`results/bondi-dipole-runaway/`](../../results/bondi-dipole-runaway/README.md), tag `v1.0-bondi-dipole`. Code:
 `Examples/RadialRecipe/`, launchers `grteclyn-wrapper/scripts/campaigns/bondi_dipole/run_pair_selfgrav.sh` and
 `run_single_selfgrav.sh`. Runs: `runs/bondi/` (untracked): only the revision's runs on the fixed binary, filed by

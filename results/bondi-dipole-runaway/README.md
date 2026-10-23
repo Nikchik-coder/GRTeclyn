@@ -11,7 +11,7 @@
 <https://github.com/Nikchik-coder/GRTeclyn/tree/develop/results/bondi-dipole-runaway>.
 The same repository holds the evolution and initial-data code that produced it;
 the version behind the article is identified by its git tag. The article is
-`research/bondi_dipole/bondi_dipole.tex`, and every number and figure in it is
+`research/bondi_dipole/article/bondi_dipole.tex`, and every number and figure in it is
 reprinted by `grteclyn-wrapper/src/grteclyn_wrapper/visualisation/bondi_dipole/article_figures.py` from this pack
 alone — if a number here and a number there disagree, the script is the arbiter.
 
