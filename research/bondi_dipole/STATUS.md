@@ -123,6 +123,19 @@ grows any more. The box norms sit at order ~0.1 with both binaries: the painted 
 field's tail (r > 5.19, order 0, see "Conclusion of the lone-star splitter set" below), which reaches the r 2–3
 shell by t ≈ 2.5 (the order drop there; at the gauge speed √2 it reaches r 1 at t ≈ 3). `–`: a sign change.
 
+**Live, the t 200 study on the fixed binary** (10-23, on the go 10:32 MSK; launched 10:33 MSK; no checkpoints, on
+the word): the paper's PM10 runs `runaway_pair_d10_L64_N*_lev0` rerun on `main3d_rkfix_aa0dc4a1-dirty` and the
+corrected data (`facefix_*`, read, not re-solved). Each `launch.sh` is the A/B's with stop time 200; against the
+paper's `launch_config.sh` only the binary, the data, the card and the run dir differ, plus `constraint_shells_dt`
+0.1. Frames off at N 128 / 192; at N 256 on with the slice cache, as in the paper's run (its figure cell). Gate at
+t 20: the r ≤ 24 order N 128→192→256 must stay near 3.5–4.
+
+| run | card | t (10:34) | stop | speed | ETA |
+|---|---|---|---|---|---|
+| `rkfix_pair_d10_L64_N256_lev0_t200` | 1 | 0 | 200 | ~18 u/h | ~11 h, ~21:40 MSK |
+| `rkfix_pair_d10_L64_N128_lev0_t200` | 0 | 0 | 200 | ~80 u/h (shared) | ~2.5 h, ~13:05 MSK |
+| `rkfix_pair_d10_L64_N192_lev0_t200` | 0 | 0 | 200 | ~40 u/h (shared) | ~4.5 h, ~15:05 MSK |
+
 **10-23 10:20: the pair A/B passed.** The facefix pair set `diag_facefix_pair_d10_L64_N*_lev0_t10` rerun to t 10
 on `main3d_rkfix_aa0dc4a1-dirty` (`diag_rkfix_pair_d10_L64_N*_lev0_t10`, on the go 09:45 MSK; each `launch.sh`
 differs from its old one only in binary, card and run dir; no checkpoints, frames off). All three reached t 10 with
