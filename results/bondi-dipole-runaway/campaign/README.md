@@ -12,17 +12,18 @@ and scrubs absolute paths. Plotfiles, the initial-data file, frames and movies s
 
 | folder | cells |
 |---|---|
-| `09_convergence/` | PM10 (`rkfix_pair_d10_L64_N{128,192}_lev0_t200`) and M (`rkfix_lone_m_L64_N128_lev0_t200`) to t 200; both N 256 runs and M at N 192 join as they finish |
+| `09_convergence/` | PM10 (`PM10_L64_N128`, `PM10_L64_N192`) and M (`M_L64_N128`) to t 200; both N 256 runs and M at N 192 join as they finish |
 
 The other groups (`01_star_family/` … `08_late_separation/`) come back as their reruns finish; the list and its
 state are in `research/bondi_dipole/STATUS.md`, "Runs for the revision".
 
 ## How to read a cell name
 
-`rkfix_pair_d10_L64_N192_lev0_t200` = the mixed pair on the RK-fixed binary, stars `10` apart, evolution box of side
-`L = 64` with `N = 192` cells per side, `lev0` = no mesh refinement, stopped at `t = 200`; `rkfix_lone_m_...` is the
-lone negative-mass star, 5 units off the centre. The initial data are solved in a box of side 128 with the same cell
-size, so the solved metric lands on the evolution grid without interpolation. `evolution_params.txt` records
+`PM10_L64_N192` = the run labelled PM10 in the paper's Table I (the mixed pair, stars 10 apart), evolution box of
+side `L = 64` with `N = 192` cells per side, no mesh refinement. A stop time other than the paper's is appended
+(`PM10_L64_N128_t400`); `M_L64_N128` is the lone negative-mass star, 5 units off the centre. The initial data are
+filed as `<name>_initial_data` under `runs/bondi/11_initial_data/`. The initial data are solved in a box of side 128
+with the same cell size, so the solved metric lands on the evolution grid without interpolation. `evolution_params.txt` records
 `N_full` and `max_level` but not the evolution `L`; `launch_config.sh` is the authoritative record of the grid.
 
 ## Files in a cell

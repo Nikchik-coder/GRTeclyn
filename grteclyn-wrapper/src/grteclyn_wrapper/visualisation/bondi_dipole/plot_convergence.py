@@ -63,11 +63,15 @@ RUNS = REPO / "runs" / "bondi"
 FIGURES = REPO / "results" / "bondi-dipole-runaway" / "figures"
 NN = (128, 192, 256)
 STUDIES = {
-    "pair": dict(runs=tuple((n, f"rkfix_pair_d10_L64_N{n}_lev0_t200") for n in NN),
+    "pair": dict(runs=tuple((n, f"PM10_L64_N{n}") for n in NN),
                  experiment="bondi_sg_pair_pm_eqm_w075", stem="convergence_pair"),
-    "lone": dict(runs=tuple((n, f"rkfix_lone_m_L64_N{n}_lev0_t200") for n in NN),
+    "lone": dict(runs=tuple((n, f"M_L64_N{n}") for n in NN),
                  experiment="bondi_sg_single_m_w07603", stem="convergence_lone"),
 }
+# Runs still live in staging/ under their launch names; each takes its readable name at close-out (2026-10-23).
+LAUNCH_NAMES = {"PM10_L64_N256": "rkfix_pair_d10_L64_N256_lev0_t200",
+                "M_L64_N192": "rkfix_lone_m_L64_N192_lev0_t200",
+                "M_L64_N256": "rkfix_lone_m_L64_N256_lev0_t200"}
 SHELLS = 33                  # constraint_shells.dat: shell s holds s <= r < s + 1, the last one the corners
 SHELL_VOLUME = np.array([(s + 1) ** 3 - s ** 3 for s in range(SHELLS)], float)
 # (title, r_min, r_max): shells r_min .. r_max - 1, all whole inside the box's outer layer at every N
@@ -90,12 +94,16 @@ PALETTES = {
 
 def member_dir(run: str, experiment: str) -> tuple[pathlib.Path | None, bool]:
     """The member's files and whether they are packed: the packed cell (flat files)
-    if there is one, else the run's own output directory (``data/``, ``small_data/``)."""
-    for d in sorted(PACK.glob(f"*/{run}")):
-        return d, True
-    for d in (RUNS / "staging" / run / experiment, *sorted(RUNS.glob(f"*/{run}/{experiment}"))):
-        if d.is_dir():
-            return d, False
+    if there is one, else the run's own output directory (``data/``, ``small_data/``); a live
+    run under its launch name."""
+    for name in (run, LAUNCH_NAMES.get(run)):
+        if name is None:
+            continue
+        for d in sorted(PACK.glob(f"*/{name}")):
+            return d, True
+        for d in (RUNS / "staging" / name / experiment, *sorted(RUNS.glob(f"*/{name}/{experiment}"))):
+            if d.is_dir():
+                return d, False
     return None, False
 
 

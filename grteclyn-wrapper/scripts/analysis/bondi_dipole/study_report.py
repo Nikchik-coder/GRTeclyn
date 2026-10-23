@@ -3,8 +3,8 @@
 
 Studies (members N 128 / 192 / 256; a member that has not started is listed and skipped):
 
-  pair  rkfix_pair_d10_L64_N{n}_lev0_t200, against the paper's runaway_pair_d10_L64_N{n}_lev0
-  lone  rkfix_lone_m_L64_N{n}_lev0_t200 (the negative-mass star 5 units off centre), against the paper's
+  pair  PM10_L64_N{n}, against the paper's runaway_pair_d10_L64_N{n}_lev0
+  lone  M_L64_N{n} (the negative-mass star 5 units off centre), against the paper's
         control_lone_phantom_L64_N128_lev0
 Runs are looked up in runs/bondi/staging/ and then in its numbered groups (runs/bondi/NN_*/), the paper's v1 cells in
 their archive (runs/bondi/00_archive/superseded_2026-10-23/results_campaign/, since 2026-10-23) and its groups.
@@ -46,11 +46,15 @@ RUNS = Path("runs/bondi")
 PAPER = Path("runs/bondi/00_archive/superseded_2026-10-23/results_campaign")  # the v1 cells, archived 2026-10-23
 NN = (128, 192, 256)
 STUDIES = {
-    "pair": ("rkfix_pair_d10_L64_N{n}_lev0_t200/bondi_sg_pair_pm_eqm_w075",
+    "pair": ("PM10_L64_N{n}/bondi_sg_pair_pm_eqm_w075",
              {n: f"runaway_pair_d10_L64_N{n}_lev0" for n in NN}),
-    "lone": ("rkfix_lone_m_L64_N{n}_lev0_t200/bondi_sg_single_m_w07603",
+    "lone": ("M_L64_N{n}/bondi_sg_single_m_w07603",
              {128: "control_lone_phantom_L64_N128_lev0"}),
 }
+# Runs still live in staging/ under their launch names; each takes its readable name at close-out (2026-10-23).
+LAUNCH_NAMES = {"PM10_L64_N256": "rkfix_pair_d10_L64_N256_lev0_t200",
+                "M_L64_N192": "rkfix_lone_m_L64_N192_lev0_t200",
+                "M_L64_N256": "rkfix_lone_m_L64_N256_lev0_t200"}
 DEFAULT_TIMES = (10.0, 20.0, 50.0, 100.0, 150.0, 200.0)
 FIT_START = 5.0
 SCRATCH = Path("/tmp/grteclyn_scratch")
@@ -58,11 +62,15 @@ MSK = dt.timezone(dt.timedelta(hours=3))
 
 
 def locate(root: Path, rel: str) -> Path:
-    """A run or packed cell by name, wherever it is filed: staging/ while live, a numbered group after close-out."""
-    for cand in (root / "staging" / rel, root / rel, *sorted(root.glob(f"*/{rel}"))):
-        if cand.exists():
-            return cand
-    return root / "staging" / rel
+    """A run or packed cell by name, wherever it is filed: staging/ while live (under its launch name until
+    close-out), a numbered group after."""
+    head, _, tail = rel.partition("/")
+    rels = [rel] + ([f"{LAUNCH_NAMES[head]}/{tail}".rstrip("/")] if head in LAUNCH_NAMES else [])
+    for r in rels:
+        for cand in (root / "staging" / r, root / r, *sorted(root.glob(f"*/{r}"))):
+            if cand.exists():
+                return cand
+    return root / "staging" / rels[-1]
 
 
 def find(d: Path, name: str) -> Path:
