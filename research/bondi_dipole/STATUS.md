@@ -123,7 +123,19 @@ grows any more. The box norms sit at order ~0.1 with both binaries: the painted 
 field's tail (r > 5.19, order 0, see "Conclusion of the lone-star splitter set" below), which reaches the r 2–3
 shell by t ≈ 2.5 (the order drop there; at the gauge speed √2 it reaches r 1 at t ≈ 3). `–`: a sign change.
 
-**Live, the t 200 study on the fixed binary** (10-23, on the go 10:32 MSK; launched 10:33 MSK; no checkpoints, on
+**Live, the single-star convergence study** (second GPU node, one H100; 10-23, on the go 11:15 MSK, launched 11:20
+MSK; no checkpoints, on the word; frames off): the paper's `control_lone_phantom_L64_N128_lev0` (the negative-mass
+star 5 units off centre, t 200) at N 128 / 192 on the RK-fixed binary and the fixed solve pipeline
+(`GRTresna_bondi_fix`), each solved fresh (tolerance ∝ Δx⁴, 8 ranks). Its centre drift is the floor ΔX is compared
+against (test v). `launch.sh` in `runs/bondi/staging/rkfix_lone_m_L64_N*_lev0_t200`. N 256 waits: its solve took
+221 GB on the first node, over this node's 195 GB limit. N 192 starts when N 128's solve is done (one solve at a time).
+
+| run | node / card | t | stop | speed | ETA |
+|---|---|---|---|---|---|
+| `rkfix_lone_m_L64_N128_lev0_t200` | 2nd / 0 | solving | 200 | – | ~2.5 h after its solve |
+| `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | queued behind N 128's solve | 200 | – | ~4.5 h after its solve |
+
+**Live, the t 200 study on the fixed binary** (first GPU node; 10-23, on the go 10:32 MSK; launched 10:33 MSK; no checkpoints, on
 the word): the paper's PM10 runs `runaway_pair_d10_L64_N*_lev0` rerun on `main3d_rkfix_aa0dc4a1-dirty` and the
 corrected data (`facefix_*`, read, not re-solved). Each `launch.sh` is the A/B's with stop time 200; against the
 paper's `launch_config.sh` only the binary, the data, the card and the run dir differ, plus `constraint_shells_dt`
