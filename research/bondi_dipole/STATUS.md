@@ -90,16 +90,16 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 N, card, stop time, data path and the consumer's spheres (r 4 / 6, inside the box). Box check passed: the N 64 run's
 first constraint row equals the 64-unit N 256 run's to all ten printed digits.
 
-| run | card | t (09:16) | stop | speed | ETA |
+| run | card | t (09:30) | stop | speed | ETA |
 |---|---|---|---|---|---|
 | `diag_direct_lone_p_L16_N64_lev0_t3` | 0 | 3 | 3 | 80 u/h | done 08:46 MSK, no NaN |
 | `diag_direct_lone_p_L16_N128_lev0_t3` | 0 | 3 | 3 | 16 u/h | done 08:55 MSK, no NaN |
 | `diag_direct_lone_p_L16_N192_lev0_t3` | 0 | 3 | 3 | 7 u/h | done 09:04 MSK, no NaN |
-| `diag_direct_lone_p_L16_N256_lev0_t3` | 1 | 2.1 | 3 | 4 u/h | 0.2 h, 09:29 MSK |
-| `diag_rkfix_lone_p_L16_N64_lev0_t3` | 0 | 1.3 (09:19) | 3 | 80 u/h | 0.02 h, 09:20 MSK |
-| `diag_rkfix_lone_p_L16_N128_lev0_t3` | 0 | 0.25 (09:19) | 3 | 15 u/h | 0.2 h, 09:30 MSK |
-| `diag_rkfix_lone_p_L16_N256_lev0_t3` | 0 | 0 (09:19) | 3 | ~4 u/h | 0.75 h, ~10:05 MSK |
-| `diag_rkfix_lone_p_L16_N192_lev0_t3` | 1 | queued | 3 | ~7 u/h | starts when card 1 frees (~09:30), ~10:00 MSK |
+| `diag_direct_lone_p_L16_N256_lev0_t3` | 1 | 3 | 3 | 4 u/h | done 09:28 MSK, no NaN |
+| `diag_rkfix_lone_p_L16_N64_lev0_t3` | 0 | 3 | 3 | 80 u/h | done 09:20 MSK, no NaN |
+| `diag_rkfix_lone_p_L16_N128_lev0_t3` | 0 | 3 | 3 | 19 u/h | done 09:28 MSK, no NaN |
+| `diag_rkfix_lone_p_L16_N256_lev0_t3` | 0 | 0.5 | 3 | ~4 u/h | 0.6 h, ~10:07 MSK |
+| `diag_rkfix_lone_p_L16_N192_lev0_t3` | 1 | 0.1 (started 09:29) | 3 | ~14 u/h | 0.2 h, ~09:43 MSK |
 
 The A/B (`diag_rkfix_*`, launched 09:18 MSK on the go): the same four runs on the fixed binary
 `main3d_rkfix_aa0dc4a1-dirty` (only the binary and the cards differ; no checkpoints). It passes if the core drift
