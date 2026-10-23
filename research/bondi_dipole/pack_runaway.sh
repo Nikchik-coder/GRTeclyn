@@ -13,8 +13,8 @@
 # other.
 #
 # WHAT IS COPIED
-# Per-cell time series (small_data/*.dat), the four evolution diagnostic
-# streams downsampled to dt = 0.5, the solve and evolution parameter files, the
+# Per-cell time series (small_data/*.dat), the evolution diagnostic streams
+# (with the shell constraints the convergence figures read) downsampled to dt = 0.5, the solve and evolution parameter files, the
 # elliptic residual history, and the launch configuration that produced the
 # cell.  Deliberately NOT copied: PNG frames, movies, plotfiles and the
 # gridinit -- they are large, they carry no number an analysis needs, and they
@@ -117,14 +117,17 @@ for entry in "${cells[@]}"; do
   # None of these four streams writes its own header line, so supply the column
   # names the evolution code emits (RadialRecipeLevel.cpp write_header_line).
   # Header-only addition: the columns themselves are untouched, and every
-  # reader already skips '#' lines.
+  # reader already skips '#' lines.  The shell constraints (33 unit shells about
+  # the sponge's centre, write_constraint_shells) get their header only from a
+  # step-0 write, which a constraint_shells_dt run never makes, so theirs is
+  # supplied too (2026-10-23).
   # The recentring box writes its own stream beside them.  It is already at
   # every-20-steps cadence and it carries the odometer, without which a
   # treadmill cell's trajectory cannot be reconstructed at all -- so it is
   # copied whole rather than downsampled.
   [[ -f "${run}/data/treadmill.dat" ]] && cp "${run}/data/treadmill.dat" "${out}/"
 
-  for stream in constraint_norms energy_conditions curvature_invariants collapse_diagnostics; do
+  for stream in constraint_norms energy_conditions curvature_invariants collapse_diagnostics constraint_shells; do
     [[ -f "${run}/data/${stream}.dat" ]] || continue
     case "${stream}" in
       constraint_norms)
@@ -135,6 +138,8 @@ for entry in "${cells[@]}"; do
         header="time max_abs_ricci_scalar max_ricci_tensor_sq max_Kij_sq L2_ricci_scalar" ;;
       collapse_diagnostics)
         header="time min_lapse min_chi max_abs_K min_lapse_x min_lapse_y min_lapse_z max_ah_r min_theta_plus r_at_min_theta_plus min_phi max_phi min_Pi max_Pi pump_work" ;;
+      constraint_shells)
+        header="time$(printf ' Ham_r%d' {0..32})$(printf ' Mom_r%d' {0..32})$(printf ' Hmean_r%d' {0..32})" ;;
       *) header="" ;;
     esac
     HEADER="${header}" python3 - "${run}/data/${stream}.dat" "${out}/${stream}.dat" <<'PY'
