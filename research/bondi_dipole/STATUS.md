@@ -142,6 +142,14 @@ paper's `launch_config.sh` only the binary, the data, the card and the run dir d
 0.1. Frames off at N 128 / 192; at N 256 on with the slice cache, as in the paper's run (its figure cell). Gate at
 t 20: the r ≤ 24 order N 128→192→256 must stay near 3.5–4.
 
+Report: `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/bondi_dipole/study_report.py
+[--study pair|lone]` prints progress (t, speed, ETA), the order table and the motion against the paper's runs (ΔX,
+d, proper core distance, a, with Q and the N 256 ± N 192–256 values). At t 20 (11:40 MSK): gate passed, Ham
+3.6 / 4.0, Mom 3.0 / 3.7. ΔX(20) is below the paper's by 8.4 / 5.4 / 3.9 % at N 128 / 192 / 256 (+0.03 % at
+N 256 at t 9.6), and a over 5 ≤ t ≤ 20 by 14.9 / 9.6 / 6.9 %. Both gaps shrink as Δx¹ (orders 1.1 / 1.1): the old
+runs' first-order time error, growing with t. Whether the paper's a (5 ≤ t ≤ 200, 1.55 × 10⁻⁴) moves by as much
+shows at t 200.
+
 | run | card | t (10:34) | stop | speed | ETA |
 |---|---|---|---|---|---|
 | `rkfix_pair_d10_L64_N256_lev0_t200` | 1 | 0 | 200 | ~18 u/h | ~11 h, ~21:40 MSK |
