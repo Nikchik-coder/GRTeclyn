@@ -5,7 +5,9 @@ One page, current only. Paper: [`bondi_dipole.tex`](bondi_dipole.tex), arXiv:260
 `Examples/RadialRecipe/`, launchers `grteclyn-wrapper/scripts/campaigns/bondi_dipole/run_pair_selfgrav.sh` and
 `run_single_selfgrav.sh`. Runs: `runs/bondi/` (untracked): only the revision's runs on the fixed binary, filed by
 question (`NN_group/`), live runs in `staging/`; every earlier run, its movies and notes in
-`00_archive/superseded_2026-10-23/` (`runs/bondi/README.md`). The pack mirrors the groups, `campaign/NN_group/<run>`.
+`00_archive/superseded_2026-10-23/` (`runs/bondi/README.md`). The pack mirrors the groups, `campaign/NN_group/<run>`,
+and also holds only the fixed runs: the v1 cells, guide and registry are in that archive's `results_campaign/`, and
+the published v1 pack in the tag `v1.0-bondi-dipole`.
 Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `feature/fix_bondi`, cut from
 `feature/spinning` on 2026-10-22 (develop carries no `research/`; its code is the same).
 
@@ -73,7 +75,8 @@ data, set the cap. The full debugging record: `git show b81850d7:research/bondi_
 
 ## Runs for the revision
 
-Each run is its packed run again (`evolution_params.txt`, `launch_config.sh`) on the fixed binary with fresh initial
+Each run is its v1 cell again (`evolution_params.txt`, `launch_config.sh` in
+`runs/bondi/00_archive/superseded_2026-10-23/results_campaign/<group>/<cell>/`) on the fixed binary with fresh initial
 data (`GRTresna_bondi_fix`, the joined lapse, the fixed converter; star tables at new frequencies are rebuilt at
 launch); each needs the go and the checkpoint question. Finished runs are filed in `runs/bondi/NN_group/` and packed
 in `campaign/NN_group/`. GPU-h on one H100 alone: N 128 ≈ 200 u/h, N 192 ≈ 50, N 256 ≈ 19, the L 128 box at N 256
@@ -81,22 +84,22 @@ in `campaign/NN_group/`. GPU-h on one H100 alone: N 128 ≈ 200 u/h, N 192 ≈ 5
 run 68 min and 221 GB, first node only (the second's limit is 195 GB). N 128 runs go to the first node, two per
 card: the second node's consumer cannot keep up with them (12 CPUs).
 
-| runs (Table I) | for | N | stop | GPU-h | status |
-|---|---|---|---|---|---|
-| PM10 (`rkfix_pair_d10_L64_N128_lev0_t200`) | the runaway; convergence | 128 | 200 | 1 | **done**: ΔX(200) 2.648, a(5–200) 1.274 × 10⁻⁴; `09_convergence/` |
-| PM10 (`rkfix_pair_d10_L64_N192_lev0_t200`) | convergence | 192 | 200 | 4 | **done**: ΔX(200) 2.846, a(5–200) 1.427 × 10⁻⁴; `09_convergence/` |
-| PM10 (`rkfix_pair_d10_L64_N256_lev0_t200`) | the headline; frames, figure and movie | 256 | 200 | 11 | running (Live) |
-| M (`rkfix_lone_m_L64_N128_lev0_t200`) | the lone star sits still; convergence | 128 | 200 | 1 | **done**: `09_convergence/` |
-| M (`rkfix_lone_m_L64_N192_lev0_t200`) | convergence | 192 | 200 | 4 | **done** at t 200; packed when its consumer drains (Live) |
-| M (`rkfix_lone_m_L64_N256_lev0_t200`) | convergence | 256 | 200 | 11 | running (Live) |
-| PM10-t400 | constant a to t 400; Fig. trajectories (b) | 128 | 400 | 2 | queued, first: it decides PM10-rec / -off; frames |
-| PM8, PM12, PM16, PM20 | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 128 | 200 | 4 | queued |
-| E0.64, E1.34, E1.57 | a ∝ M̄^0.97 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
-| R0.60, R0.80, R1.33 | each star follows its partner's mass | 128 | 200 | 3 | queued |
-| S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 128 | 120 | 2.4 | queued; no `launch_config.sh` packed: rebuild from `runs/bondi/00_archive/superseded_2026-10-23/01_star_family` |
-| PM10-L128 | domain size (the old box moved ΔX by 4 %); Ψ4 in the near zone | 256 (L 128) | 200 | 5.5 | queued; 221 GB solve: first node |
-| PM10-rec, PM10-off | the separation after t 200 | 128 | 600–784 | 7 | only if PM10-t400 shows a late separation change |
-| M-t1000 | "neither collapses nor disperses ... 1000 alone" | 128 | 1000 | 5 | optional, only if the text keeps that sentence |
+| runs (Table I) | for | L | N | stop | GPU-h | status |
+|---|---|---|---|---|---|---|
+| PM10 (`rkfix_pair_d10_L64_N128_lev0_t200`) | the runaway; convergence | 64 | 128 | 200 | 1 | **done**: ΔX(200) 2.648, a(5–200) 1.274 × 10⁻⁴; `09_convergence/` |
+| PM10 (`rkfix_pair_d10_L64_N192_lev0_t200`) | convergence | 64 | 192 | 200 | 4 | **done**: ΔX(200) 2.846, a(5–200) 1.427 × 10⁻⁴; `09_convergence/` |
+| PM10 (`rkfix_pair_d10_L64_N256_lev0_t200`) | the headline; frames, figure and movie | 64 | 256 | 200 | 11 | running (Live) |
+| M (`rkfix_lone_m_L64_N128_lev0_t200`) | the lone star sits still; convergence | 64 | 128 | 200 | 1 | **done**: `09_convergence/` |
+| M (`rkfix_lone_m_L64_N192_lev0_t200`) | convergence | 64 | 192 | 200 | 4 | **done** at t 200; packed when its consumer drains (Live) |
+| M (`rkfix_lone_m_L64_N256_lev0_t200`) | convergence | 64 | 256 | 200 | 11 | running (Live) |
+| PM10-t400 (v1 `longrun_pair_d10_t400_L64_N128_lev0`) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | queued, first: it decides PM10-rec / -off; frames |
+| PM8, PM12, PM16, PM20 | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | queued |
+| E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
+| R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
+| S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | queued; no `launch_config.sh` packed: rebuild from `runs/bondi/00_archive/superseded_2026-10-23/01_star_family` |
+| PM10-L128 (v1 `wavezone_pair_d10_L128_N256_lev0`) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | queued; 221 GB solve: first node |
+| PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | only if PM10-t400 shows a late separation change |
+| M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | optional, only if the text keeps that sentence |
 
 Queued: about 20 GPU-h, one night on the three cards (+7 if PM10-rec / -off are needed). The old runs' separation
 growth after t 200 shrank eightfold per halving of Δx, so it is likely the old time error: if the fixed PM10-t400
@@ -123,6 +126,7 @@ an outside-reader pass (~60 findings applied) and a redundancy pass (text 6608 �
 
 - [ ] Every number, Table II and the figures from the reruns (the frames figure and movies from the new PM10 N 256
       and PM10-t400); Tables I and II and the text keep only the simulations in "Runs for the revision".
+      `article_figures.py` and `results/.../analysis/` still read the v1 cells (archived 10-23): re-point them.
 - [ ] Convergence (Sec. VII A, App. A, Fig. 6(b) / Fig. 10): the order table, ΔX's self-convergence over t 200 with
       the rescaled differences, the lone star's drift with resolution; App. A loses the transfer explanation.
 - [ ] Sec. III A, initial data as now built: the profile's exterior (field tail, isotropic Schwarzschild metric, the

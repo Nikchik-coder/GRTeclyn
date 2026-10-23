@@ -1,5 +1,11 @@
 # Bondi dipole runaway — publishable results pack
 
+> **Superseded, 2026-10-23.** The v1 runs evolved with first-order time integration, so every number below is off by
+> up to ~8 % (the headline ΔX(200) 3.00 is 2.86 on the fixed code). Their cells left this pack for the untracked
+> `runs/bondi/00_archive/superseded_2026-10-23/results_campaign/`; the published v1 pack stays in the tag
+> `v1.0-bondi-dipole`. `campaign/` now holds only the reruns on the fixed code (`campaign/README.md`); this README
+> is rewritten with them. State: `research/bondi_dipole/STATUS.md`.
+
 **Cite this pack as** the `results/bondi-dipole-runaway/` tree of
 <https://github.com/Nikchik-coder/GRTeclyn>, browsable at
 <https://github.com/Nikchik-coder/GRTeclyn/tree/develop/results/bondi-dipole-runaway>.

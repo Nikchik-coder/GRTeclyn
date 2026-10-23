@@ -6,8 +6,8 @@ Studies (members N 128 / 192 / 256; a member that has not started is listed and 
   pair  rkfix_pair_d10_L64_N{n}_lev0_t200, against the paper's runaway_pair_d10_L64_N{n}_lev0
   lone  rkfix_lone_m_L64_N{n}_lev0_t200 (the negative-mass star 5 units off centre), against the paper's
         control_lone_phantom_L64_N128_lev0
-Runs are looked up in runs/bondi/staging/ and then in its numbered groups (runs/bondi/NN_*/), the paper's cells in
-results/bondi-dipole-runaway/campaign/ and its groups, so filing either set does not break the report.
+Runs are looked up in runs/bondi/staging/ and then in its numbered groups (runs/bondi/NN_*/), the paper's v1 cells in
+their archive (runs/bondi/00_archive/superseded_2026-10-23/results_campaign/, since 2026-10-23) and its groups.
 
 Sections:
   1. Runs: t, stop time, speed (two reads --speed-window seconds apart), ETA in hours and Moscow time, minutes since
@@ -43,7 +43,7 @@ from pathlib import Path
 import numpy as np
 
 RUNS = Path("runs/bondi")
-PAPER = Path("results/bondi-dipole-runaway/campaign")
+PAPER = Path("runs/bondi/00_archive/superseded_2026-10-23/results_campaign")  # the v1 cells, archived 2026-10-23
 NN = (128, 192, 256)
 STUDIES = {
     "pair": ("rkfix_pair_d10_L64_N{n}_lev0_t200/bondi_sg_pair_pm_eqm_w075",

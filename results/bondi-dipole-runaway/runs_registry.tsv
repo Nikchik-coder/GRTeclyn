@@ -2,37 +2,6 @@
 # (its label in the paper's Table I first), where the paper uses it, and its outcome (the paper's Table II
 # unless a section is named). The groups follow the questions of the paper, in the same layout as runs/bondi/.
 run	directory	what	paper	outcome
-stability_canonical_w075_L64_N128_lev0	01_star_family/stability_canonical_w075_L64_N128_lev0	S0.75: isolated positive-mass star, omega 0.75, L 64, N 128, to t 120	Table I; Sec. III A	min lapse within 1.2e-3 of its initial value
-stability_canonical_w080_L64_N128_lev0	01_star_family/stability_canonical_w080_L64_N128_lev0	S0.80: as S0.75, omega 0.80	Table I; Sec. III A	min lapse within 1.2e-3 of its initial value
-stability_canonical_w085_L64_N128_lev0	01_star_family/stability_canonical_w085_L64_N128_lev0	S0.85: as S0.75, omega 0.85	Table I; Sec. III A	min lapse within 1.2e-3 of its initial value
-stability_canonical_w090_L64_N128_lev0	01_star_family/stability_canonical_w090_L64_N128_lev0	S0.90: as S0.75, omega 0.90	Table I; Sec. III A	min lapse within 1.2e-3 of its initial value
-control_lone_canonical_L64_N128_lev0	02_lone_star/control_lone_canonical_L64_N128_lev0	P: isolated positive-mass star at the box centre, to t 200	Tables I-II; test v	largest core displacement 1.8e-3 over t <= 200
-control_lone_phantom_L64_N128_lev0	02_lone_star/control_lone_phantom_L64_N128_lev0	M: isolated negative-mass star 5 units off centre (x = 37), to t 200	Tables I-II; test v	largest core displacement 1.6e-3 over t <= 200
-control_lone_phantom_t1000_L64_N128_lev0	02_lone_star/control_lone_phantom_t1000_L64_N128_lev0	M-t1000: M carried to t 1000	Tables I-II	peak field decays 0.63 % per 100 units after t ~ 200; no collapse, no dispersal
-control_pair_pp_d10_L64_N128_lev0	03_same_sign/control_pair_pp_d10_L64_N128_lev0	PP10: two positive-mass stars, d0 10, N 128	Tables I-II	merge; centroid displacement below 7.8e-4 (all PP10)
-control_pair_pp_d10_L64_N192_lev0	03_same_sign/control_pair_pp_d10_L64_N192_lev0	PP10 at N 192	Tables I-II	as PP10 N 128
-control_pair_pp_d10_L64_N256_lev0	03_same_sign/control_pair_pp_d10_L64_N256_lev0	PP10 at N 256, frames and slice cache (its movie)	Tables I-II; Figs. same-sign, constraints	merge at t 33.6
-control_pair_mm_d10_L64_N128_lev0	03_same_sign/control_pair_mm_d10_L64_N128_lev0	MM10: two negative-mass stars, d0 10, N 128	Tables I-II	merge; centroid displacement below 5.3e-4 (all MM10)
-control_pair_mm_d10_L64_N128_lev0_frames	03_same_sign/control_pair_mm_d10_L64_N128_lev0_frames	MM10, the second N 128 run, with frames (its movie)	Tables I-II; Fig. same-sign	merge at t 32.8
-control_pair_mm_d10_L64_N192_lev0	03_same_sign/control_pair_mm_d10_L64_N192_lev0	MM10 at N 192	Tables I-II	as MM10 N 128
-control_mirror_mp_d10_L64_N128_lev0	03_same_sign/control_mirror_mp_d10_L64_N128_lev0	MP10: PM10 with the two stars exchanged	Tables I-II	Delta X(200) and a are -1.00002 / -1.00001 times PM10's
-runaway_pair_d10_L64_N128_lev0	04_runaway/runaway_pair_d10_L64_N128_lev0	PM10: the reference mixed pair, d0 10, N 128	Tables I-II	a = 1.45e-4
-runaway_pair_d10_L64_N192_lev0	04_runaway/runaway_pair_d10_L64_N192_lev0	PM10 at N 192	Tables I-II	a = 1.56e-4
-runaway_pair_d10_L64_N256_lev0	04_runaway/runaway_pair_d10_L64_N256_lev0	PM10 at N 256, frames and slice cache (the headline movie)	Tables I-II; Figs. frames, trajectories	Delta X(200) = 3.00 +- 0.01; a = 1.55e-4; |P|/P+ = 0.007; d -0.9 % (barycentres), +0.24 % (proper)
-longrun_pair_d10_t400_L64_N128_lev0	04_runaway/longrun_pair_d10_t400_L64_N128_lev0	PM10-t400: PM10 at N 128 to t 400	Tables I-II; Fig. trajectories (b)	a = 1.45e-4 over 133-266, 1.42e-4 over 300-400
-wavezone_pair_d10_L128_N256_lev0	04_runaway/wavezone_pair_d10_L128_N256_lev0	PM10-L128: PM10 in the L 128 box (dx 0.50), four extraction spheres	Tables I-II	|Psi4|_l2 falls as R^-4.8 (not radiative); Delta X(200) -4.2 % from PM10 N 128
-runaway_pair_d08_L64_N128_lev0	05_separation/runaway_pair_d08_L64_N128_lev0	PM8: mixed pair, d0 8	Tables I-II	a d0^2 / Mbar = 1.031
-runaway_pair_d12_L64_N128_lev0	05_separation/runaway_pair_d12_L64_N128_lev0	PM12: mixed pair, d0 12	Tables I-II	a d0^2 / Mbar = 1.003
-runaway_pair_d16_L64_N128_lev0	05_separation/runaway_pair_d16_L64_N128_lev0	PM16: mixed pair, d0 16	Tables I-II	a d0^2 / Mbar = 1.001
-runaway_pair_d20_L64_N128_lev0	05_separation/runaway_pair_d20_L64_N128_lev0	PM20: mixed pair, d0 20	Tables I-II	a d0^2 / Mbar = 1.002; a(d0) exponent -2.03 +- 0.01 over PM8-PM20
-masslaw_pair_d20_w0850_L64_N128_lev0	06_mass/masslaw_pair_d20_w0850_L64_N128_lev0	E0.64: as PM20, both stars at omega 0.85 (Mbar 0.64 x PM20's)	Tables I-II	a d0^2 / Mbar = 1.024
-masslaw_pair_d20_w0700_L64_N128_lev0	06_mass/masslaw_pair_d20_w0700_L64_N128_lev0	E1.34: as PM20, both stars at omega 0.70	Tables I-II	a d0^2 / Mbar = 0.989
-masslaw_pair_d20_w0675_L64_N128_lev0	06_mass/masslaw_pair_d20_w0675_L64_N128_lev0	E1.57: as PM20, both stars at omega 0.675	Tables I-II	a d0^2 / Mbar = 0.987; a(Mbar) exponent 0.97 +- 0.06
-massratio_w088_r060_d10_L64_N128_lev0	06_mass/massratio_w088_r060_d10_L64_N128_lev0	R0.60: as PM10, the negative-mass star at omega 0.88, |M-|/M+ = 0.60	Tables I-II	C ratio, partner changed 0.618 (expected 0.600); unchanged 1.028
-massscale_pair_d10_w0804_L64_N128_lev0	06_mass/massscale_pair_d10_w0804_L64_N128_lev0	R0.80: as PM10, the negative-mass star at omega 0.804, |M-|/M+ = 0.80	Tables I-II	C ratio, partner changed 0.810 (expected 0.803); unchanged 1.011
-massratio_heavyphantom_d10_L64_N128_lev0	06_mass/massratio_heavyphantom_d10_L64_N128_lev0	R1.33: as PM10, a heavier negative-mass star, |M-|/M+ = 1.33	Tables I-II	C ratio, partner changed 0.756 (expected 0.747); unchanged 1.001; d(200) = d0 at |M-|/M+ = 1.00 +- 0.03
-deepsolve_pair_d10_L64_N128_lev0	07_numerics/deepsolve_pair_d10_L64_N128_lev0	PM10-tol: PM10 N 128 with a 4.4 x tighter elliptic tolerance	Tables I-II	Delta X(200) +0.0015 % from PM10 N 128
-amrcheck_pair_d10_L64_N128_lev1	07_numerics/amrcheck_pair_d10_L64_N128_lev1	PM10-AMR: PM10 N 128 with max_level 1	Tables I-II	Delta X(200) +0.0008 % from PM10 N 128
-gaugetwin_pair_d10_eta2_L64_N128_lev0	07_numerics/gaugetwin_pair_d10_eta2_L64_N128_lev0	PM10-eta2: PM10 N 128 with shift damping eta 2	Tables I-II	Delta X(200) -0.007 % from PM10 N 128
-chase03c_pair_d10_L64_N128_lev0	08_late_separation/chase03c_pair_d10_L64_N128_lev0	PM10-rec: PM10 N 128 in a box recentred on the pair, to t 784	Table I; Sec. VII	separation keeps growing after t ~ 200
-nomill_left_pair_d10_L64_N128_lev0	08_late_separation/nomill_left_pair_d10_L64_N128_lev0	PM10-off: PM10 N 128 started 10 units off centre in a fixed box, to t 600	Table I; Sec. VII	separation keeps growing after t ~ 200
+rkfix_pair_d10_L64_N128_lev0_t200	09_convergence/rkfix_pair_d10_L64_N128_lev0_t200	PM10 at N 128 on the fixed binary (c12664fd) and the fixed data (facefix), L 64, to t 200	revision: the runaway; convergence	ΔX(200) 2.648, a(5–200) 1.274e-4; no NaN
+rkfix_pair_d10_L64_N192_lev0_t200	09_convergence/rkfix_pair_d10_L64_N192_lev0_t200	PM10 at N 192, as the N 128 member	revision: convergence	ΔX(200) 2.846, a(5–200) 1.427e-4 (Bondi's point mass: 2.86, 1.43e-4); no NaN
+rkfix_lone_m_L64_N128_lev0_t200	09_convergence/rkfix_lone_m_L64_N128_lev0_t200	M: the negative-mass star (omega 0.7603) 5 units off centre, N 128, fixed binary, fresh solve on the fixed GRTresna, to t 200	revision: the lone star sits still; convergence	min lapse change -1.47e-4 (the same at N 192); peak field -0.13 % by t 200 (absent at N 192: numerical); no NaN

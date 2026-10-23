@@ -38,7 +38,7 @@ evolution only claims the GPU once the solve has landed.
 ## 2. Launching one cell
 
 Every cell follows the same shape. This is the finest runaway rung, copied from
-`campaign/04_runaway/runaway_pair_d10_L64_N256_lev0/launch_config.sh`:
+`campaign/04_runaway/runaway_pair_d10_L64_N256_lev0/launch_config.sh` (a v1 cell, in the tag `v1.0-bondi-dipole`):
 
 ```bash
 REPO="$(git rev-parse --show-toplevel)"
