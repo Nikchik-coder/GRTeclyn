@@ -3,9 +3,11 @@
 
 Studies (members N 128 / 192 / 256; a member that has not started is listed and skipped):
 
-  pair  runs/bondi/staging/rkfix_pair_d10_L64_N{n}_lev0_t200, against the paper's runaway_pair_d10_L64_N{n}_lev0
-  lone  runs/bondi/staging/rkfix_lone_m_L64_N{n}_lev0_t200 (the negative-mass star 5 units off centre), against
-        the paper's control_lone_phantom_L64_N128_lev0
+  pair  rkfix_pair_d10_L64_N{n}_lev0_t200, against the paper's runaway_pair_d10_L64_N{n}_lev0
+  lone  rkfix_lone_m_L64_N{n}_lev0_t200 (the negative-mass star 5 units off centre), against the paper's
+        control_lone_phantom_L64_N128_lev0
+Runs are looked up in runs/bondi/staging/ and then in its numbered groups (runs/bondi/NN_*/), the paper's cells in
+results/bondi-dipole-runaway/campaign/ and its groups, so filing either set does not break the report.
 
 Sections:
   1. Runs: t, stop time, speed (two reads --speed-window seconds apart), ETA in hours and Moscow time, minutes since
@@ -40,7 +42,7 @@ from pathlib import Path
 
 import numpy as np
 
-STAGING = Path("runs/bondi/staging")
+RUNS = Path("runs/bondi")
 PAPER = Path("results/bondi-dipole-runaway/campaign")
 NN = (128, 192, 256)
 STUDIES = {
@@ -53,6 +55,14 @@ DEFAULT_TIMES = (10.0, 20.0, 50.0, 100.0, 150.0, 200.0)
 FIT_START = 5.0
 SCRATCH = Path("/tmp/grteclyn_scratch")
 MSK = dt.timezone(dt.timedelta(hours=3))
+
+
+def locate(root: Path, rel: str) -> Path:
+    """A run or packed cell by name, wherever it is filed: staging/ while live, a numbered group after close-out."""
+    for cand in (root / "staging" / rel, root / rel, *sorted(root.glob(f"*/{rel}"))):
+        if cand.exists():
+            return cand
+    return root / "staging" / rel
 
 
 def find(d: Path, name: str) -> Path:
@@ -345,8 +355,8 @@ def main() -> int:
     args = ap.parse_args()
 
     pattern, paper_cells = STUDIES[args.study]
-    members = {n: STAGING / pattern.format(n=n) for n in NN}
-    paper = {n: PAPER / c for n, c in paper_cells.items()}
+    members = {n: locate(RUNS, pattern.format(n=n)) for n in NN}
+    paper = {n: locate(PAPER, c) for n, c in paper_cells.items()}
     runs_section(members, args.speed_window)
 
     reached = [t for t in (last_time(find(m, "collapse_diagnostics.dat")) for m in members.values()) if t]

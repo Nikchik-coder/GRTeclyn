@@ -132,8 +132,13 @@ against (test v). `launch.sh` in `runs/bondi/staging/rkfix_lone_m_L64_N*_lev0_t2
 
 | run | node / card | t | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `rkfix_lone_m_L64_N128_lev0_t200` | 2nd / 0 | solving | 200 | – | ~2.5 h after its solve |
-| `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | queued behind N 128's solve | 200 | – | ~4.5 h after its solve |
+| `rkfix_lone_m_L64_N128_lev0_t200` | 2nd / 0 | 13.5 (11:53), evolving from 11:49 | 200 | ~200 u/h | ~0.9 h, ~12:50 MSK |
+| `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | solving since 11:49 | 200 | – | ~4 h after its solve |
+
+N 128 started clean: params differ from the paper's control only in paths, `constraint_shells_dt` and the star
+frequency at 1e-8 (the joined lapse); its first-step whole-box Ham is 1.7 × 10⁻⁵ against the paper's 7.6 × 10⁻⁴.
+Its consumer takes ~1.5 min per plotfile against one every ~14 s (the solve holds 8 of the node's 12 CPUs), so
+plotfiles queue on scratch (≤ ~80 GB for N 128, 734 GB free) and drain after the evolution ends.
 
 **Live, the t 200 study on the fixed binary** (first GPU node; 10-23, on the go 10:32 MSK; launched 10:33 MSK; no checkpoints, on
 the word): the paper's PM10 runs `runaway_pair_d10_L64_N*_lev0` rerun on `main3d_rkfix_aa0dc4a1-dirty` and the
