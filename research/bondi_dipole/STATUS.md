@@ -78,7 +78,7 @@ card, the run dir and `constraint_shells_dt` 0.1 differ.
 | run | node / card | t (12:14) | stop | speed | ETA |
 |---|---|---|---|---|---|
 | `rkfix_pair_d10_L64_N128_lev0_t200` (PM10) | 1st / 0 | 200, done 13:01 MSK, no NaN | 200 | 81 u/h | ΔX(200) 2.648, a(5–200) 1.274 × 10⁻⁴: −8.1 % / −12.0 % against the paper's N 128 |
-| `rkfix_pair_d10_L64_N192_lev0_t200` | 1st / 0 | 49.5 | 200 | 30 u/h (shared) | ~5 h, ~17:15 MSK |
+| `rkfix_pair_d10_L64_N192_lev0_t200` | 1st / 0 | 200, done 15:20 MSK, no NaN | 200 | 56 u/h | ΔX(200) 2.846, a(5–200) 1.427 × 10⁻⁴: −5.6 % / −8.3 % against the paper's N 192 (Bondi's point-mass ΔX(200) 2.86) |
 | `rkfix_pair_d10_L64_N256_lev0_t200` (frames) | 1st / 1 | 30.6 | 200 | 19 u/h | ~9 h, ~21:10 MSK |
 | `rkfix_lone_m_L64_N128_lev0_t200` (M) | 2nd / 0 | 200, done 12:47 MSK, no NaN | 200 | 207 u/h | consumer draining (t 32 of 200 at 12:41) |
 | `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | 1.1 (13:45), evolving from 13:43 (solve 15 Newton steps, 1.9 h) | 200 | 47 u/h | 4.2 h, ~17:55 MSK |
