@@ -5,9 +5,9 @@
 #
 # WHY A THIRD PACKER
 # pack_results.sh and pack_campaign.sh both read runs/bondi/rerun, which is the
-# tree built by the binary that double-counted the potential in trS.  Those
-# extracts now live under campaign/_corrupted_runs/ and the two old scripts are
-# kept only as the provenance record for them.  This script owns the campaign
+# tree built by the binary that double-counted the potential in trS.  Both
+# were removed on 2026-10-23 (git history keeps them), long after their
+# extracts had left the pack.  This script owns the campaign
 # run after that fix -- a separate source tree, a separate destination, and no
 # shared state with either of them, so refreshing one can never rewrite the
 # other.

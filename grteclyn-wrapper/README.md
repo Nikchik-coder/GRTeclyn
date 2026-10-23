@@ -341,16 +341,11 @@ For the standard `L = 64`, `N = 128` grid solved in an `L = 128` box that is
 `N = 256`, no refinement. Resolving the initial data *finer* than the grid it
 will be evolved on buys nothing and costs exactly this.
 
-**Verify it, before spending GPU time** — the check runs in seconds on the file
-the solve drops:
-
-```bash
-grteclyn-wrapper/.venv/bin/python research/bondi_dipole/check_gridinit_alignment.py \
-    runs/<campaign>/<cell>/<eval>/initial_data.gridinit
-```
-
-The metric-minus-matter offset must be `0.0000`. Anything at the `1e-2` level
-means the transfer is interpolating and the run will drift.
+**Verify it in the solve log**: the transfer logs `Chombo level ... does not match
+target dx` (`grtresna/io/chombo.py`) whenever the two spacings differ, so a log
+without it means a straight copy. (The standalone checker
+`research/bondi_dipole/check_gridinit_alignment.py` was retired on 2026-10-23;
+git history keeps it.)
 
 ### 2. Refining the evolution grid alone makes the initial data worse
 
@@ -476,26 +471,18 @@ ruined campaign: every cell in `runs/bondi/staging/archive/` was audited on
 inside the 0.002% they asked for. Two-fold headroom is not much, so the check is
 worth running on every new cell rather than assumed from these.
 
-Check it on the two files that survive archiving (`Ham_and_Mom_errors.txt` and
-the solve's own `params.txt`; the per-rank `pout` logs are deleted):
-
-```bash
-grteclyn-wrapper/.venv/bin/python research/bondi_dipole/check_solve_exit.py \
-    runs/<campaign>/<cell>
-```
-
-Exit status is the gate. It also fails a solve that met the tolerance only on
-the last permitted iteration — that is met-by-luck, and the next rung of a
-ladder will not be so lucky.
+The gate reads the two files that survive archiving (`Ham_and_Mom_errors.txt`
+and the solve's own `params.txt`; the per-rank `pout` logs are deleted). It also
+fails a solve that met the tolerance only on the last permitted iteration — that
+is met-by-luck, and the next rung of a ladder will not be so lucky.
 
 Remember which side binds: the phantom sector's residual is the one that
 approaches the gate, the canonical sector's sits far inside it. Reading only
 the canonical number will tell you everything is fine when it is not.
 
 **Enforced in the campaign path since 2026-08-26.** The wrapper now classifies
-the exit door itself (`classify_solve_exit` in `grtresna/solver/convergence.py`
-— the library twin of `check_solve_exit.py`, met-on-last-iteration counts as
-`cap`), logs the truth instead of the unconditional "converged" label, records
+the exit door itself (`classify_solve_exit` in `grtresna/solver/convergence.py`;
+met-on-last-iteration counts as `cap`), logs the truth instead of the unconditional "converged" label, records
 the door in every eval's `metadata.json`, and — with
 `GRTRESNA_REQUIRE_CONVERGED=1`, the campaign-lib default — **rejects** stalled
 and capped solves before GPU time. The search-tier tolerance defaults also

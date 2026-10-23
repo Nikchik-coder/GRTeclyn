@@ -347,9 +347,8 @@ host, user, or site identity enters git.
 whose stills are not packed at all; the `t = 400` cell is skipped by default.
 Frame thinning itself lives in `research/bondi_dipole/thin_frames.py`.
 
-Two earlier packers, `pack_results.sh` and `pack_campaign.sh`, are **superseded
-and refuse to run** — they read run trees that no longer exist. They are kept
-for the reasoning in their headers.
+Two earlier packers, `pack_results.sh` and `pack_campaign.sh`, read run trees
+that no longer exist; they were removed on 2026-10-23 (git history keeps them).
 
 To re-run the physics itself, see [`LAUNCH.md`](LAUNCH.md).
 
