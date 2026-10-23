@@ -37,10 +37,11 @@ ROOT="$(cd -- "${SCRIPT_DIR}/../.." && pwd)"
 SIM_ROOT="$(cd -- "${ROOT}/.." && pwd)"
 RUNS="${ROOT}/runs/bondi"
 DEST="${BONDI_PACK_DEST:-${ROOT}/results/bondi-dipole-runaway}"
-# The groups the paper's v1 data come from.  09_convergence joins when the
-# revision's convergence study closes; 00_archive, 10_diagnostics and
-# 11_initial_data are working records and stay in the run tree.
-PACK_GROUPS="${PACK_GROUPS:-01_star_family 02_lone_star 03_same_sign 04_runaway 05_separation 06_mass 07_numerics 08_late_separation}"
+# The groups of the paper's questions.  Since 2026-10-23 they hold only the
+# revision's runs on the fixed binary (every earlier run is in
+# 00_archive/superseded_2026-10-23/); 00_archive and 11_initial_data stay in
+# the run tree.
+PACK_GROUPS="${PACK_GROUPS:-01_star_family 02_lone_star 03_same_sign 04_runaway 05_separation 06_mass 07_numerics 08_late_separation 09_convergence}"
 
 export ROOT SIM_ROOT
 scrub() { python3 "${ROOT}/grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py" "$@"; }
@@ -177,7 +178,7 @@ PY
   # 0.3c follow-up cells are skipped for the same reason and more so: they are
   # three and six times longer again, and their result is a separation curve
   # read off sector_dynamics.dat, never off a still.  Movies for both are in
-  # runs/bondi/movies/masters/.
+  # runs/bondi/00_archive/superseded_2026-10-23/movies/masters/.
   case " ${FRAMES_SKIP:-longrun_pair_d10_t400_L64_N128_lev0 chase03c_pair_d10_L64_N128_lev0 nomill_left_pair_d10_L64_N128_lev0} " in
     *" ${cell##*/} "*) frames_wanted=0 ;;
     *)             frames_wanted=1 ;;
@@ -219,9 +220,11 @@ done
 # Sourced from the corrected headline cell (d = 10).  The unmatched phantom at
 # omega = 0.750 has no corrected cell -- every corrected pair uses the
 # mass-matched 0.7603 partner -- so that table is left as previously packed.
-head_cell="${RUNS}/04_runaway/runaway_pair_d10_L64_N128_lev0"
-canon_src="$(find "${head_cell}" -name qball_profile.dat 2>/dev/null | head -n 1)"
-eqm_src="$(find "${head_cell}" -name qball_profile_exotic.dat 2>/dev/null | head -n 1)"
+# The v1 headline cell was archived on 2026-10-23; its tables stay the packed
+# ones until the reruns' tables replace them.
+head_cell="${RUNS}/00_archive/superseded_2026-10-23/04_runaway/runaway_pair_d10_L64_N128_lev0"
+canon_src="$(find "${head_cell}" -name qball_profile.dat 2>/dev/null | head -n 1 || true)"
+eqm_src="$(find "${head_cell}" -name qball_profile_exotic.dat 2>/dev/null | head -n 1 || true)"
 [[ -n "${canon_src}" ]] && cp "${canon_src}" "${DEST}/stars/canonical_omega0.750.dat"
 [[ -n "${eqm_src}"   ]] && cp "${eqm_src}"   "${DEST}/stars/phantom_omega0.7603.dat"
 scrub "${DEST}"/stars/*.dat

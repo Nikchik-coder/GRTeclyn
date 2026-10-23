@@ -289,7 +289,7 @@ static — not a measurement of a wave.
 Cells run with frames keep one still per field every `dt = 10` under
 `<group>/<cell>/frames/`, with a `FRAMES.md` listing the times kept. The full series
 (~250 frames per field) and the stitched movies stay in the gitignored run tree
-(`runs/bondi/movies/`)
+(`runs/bondi/00_archive/superseded_2026-10-23/movies/` for the v1 cells)
 — 19 movies per cell, redrawn against a single fixed colour scale measured over
 the whole run so a colour means the same value in every frame.
 

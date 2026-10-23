@@ -4,7 +4,8 @@ Publication-level data only. One folder per question (`01_star_family/` …
 `08_late_separation/`), one folder per cell inside it, in the same groups as the
 run tree; `../runs_registry.tsv` lists every cell with its folder. Movies,
 plotfiles and the 550 MB initial-data file stay in the gitignored run tree at
-`runs/bondi/<group>/<cell>/` (movies: `runs/bondi/movies/`), because they carry
+`runs/bondi/<group>/<cell>/` (the v1 cells, and their movies, in
+`runs/bondi/00_archive/superseded_2026-10-23/`), because they carry
 no number an analysis reads. Cells
 that were run with frames carry a `frames/` folder holding one still per field
 every `dt = 10` — enough to show what the movie shows, without the ~250 frames
