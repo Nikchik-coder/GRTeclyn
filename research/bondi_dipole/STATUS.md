@@ -81,7 +81,7 @@ card, the run dir and `constraint_shells_dt` 0.1 differ.
 | `rkfix_pair_d10_L64_N192_lev0_t200` | 1st / 0 | 49.5 | 200 | 30 u/h (shared) | ~5 h, ~17:15 MSK |
 | `rkfix_pair_d10_L64_N256_lev0_t200` (frames) | 1st / 1 | 30.6 | 200 | 19 u/h | ~9 h, ~21:10 MSK |
 | `rkfix_lone_m_L64_N128_lev0_t200` (M) | 2nd / 0 | 200, done 12:47 MSK, no NaN | 200 | 207 u/h | consumer draining (t 32 of 200 at 12:41) |
-| `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | solving, Newton step 2 of ~13 (~7.5 min each) | 200 | – | evolution ~13:45 → ~17:45 MSK |
+| `rkfix_lone_m_L64_N192_lev0_t200` | 2nd / 0 | 1.1 (13:45), evolving from 13:43 (solve 15 Newton steps, 1.9 h) | 200 | 47 u/h | 4.2 h, ~17:55 MSK |
 
 The lone N 128 consumer lags (~80 s per plotfile against one every ~14 s; the N 192 solve holds 8 of the second
 node's 12 CPUs): 183 plotfiles (66 GB, 667 GB free) drain after the run, a few hours. Its constraints stay flat
