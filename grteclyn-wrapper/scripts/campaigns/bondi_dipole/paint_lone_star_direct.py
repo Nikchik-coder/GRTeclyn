@@ -19,7 +19,7 @@ solve's O(h^2)).
 
 Usage:
   paint_lone_star_direct.py <reference episode dir> <output episode dir>
-      [--omega 0.75] [--n N] [--l 64.0]
+      [--omega 0.75] [--n N] [--l 64.0] [--center 32.0]
 """
 
 from __future__ import annotations
@@ -65,6 +65,9 @@ def main() -> int:
     ap.add_argument("--omega", type=float, default=0.75)
     ap.add_argument("--n", type=int, required=True)
     ap.add_argument("--l", type=float, default=64.0)
+    # The evolution box runs from 0 to L, so its centre is L/2: 32 for the
+    # L 64 boxes, 8 for the L 16 core tests (2026-10-23).
+    ap.add_argument("--center", type=float, default=32.0)
     args = ap.parse_args()
     ref, out = args.reference.resolve(), args.output.resolve()
     if out.exists():
@@ -107,7 +110,7 @@ def main() -> int:
     for name in ("initial_data.matter.json", "metadata.json"):
         if (ref / name).is_file():
             shutil.copy2(ref / name, out / name)
-    origin = np.array([32.0 - 0.5 * L] * 3)
+    origin = np.array([args.center - 0.5 * L] * 3)
     write_gridinit(data, COMPS, np.array([h, h, h]), origin,
                    out / "initial_data.gridinit")
 

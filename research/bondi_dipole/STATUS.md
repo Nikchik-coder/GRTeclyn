@@ -84,9 +84,46 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 
 ### 2. Convergence (cluster)
 
-**Live**: nothing (10-22, 22:40 MSK). The lone-star splitter set finished clean (t 10, no NaN): direct-painted
-N 128/192/256 and solved N 128/192, all on the signed-shells binary, episodes under `runs/bondi/staging/diag_*`.
-No runs queued (decided 10-22: finish this set and conclude). Scratch clean.
+**Live** (10-23, launched 08:44 MSK, first GPU node; no checkpoints, frames off, binary
+`main3d_sgnshells_d2511dca`): the core-drift resolution test, the lone star painted from its profile on a 16-unit box
+(centre 8) to t 3, Δx 0.25 / 0.125 / 0.083 / 0.0625. Each `launch.sh` differs from the 64-unit N 256 one only in box,
+N, card, stop time, data path and the consumer's spheres (r 4 / 6, inside the box). Box check passed: the N 64 run's
+first constraint row equals the 64-unit N 256 run's to all ten printed digits.
+
+| run | card | t (09:16) | stop | speed | ETA |
+|---|---|---|---|---|---|
+| `diag_direct_lone_p_L16_N64_lev0_t3` | 0 | 3 | 3 | 80 u/h | done 08:46 MSK, no NaN |
+| `diag_direct_lone_p_L16_N128_lev0_t3` | 0 | 3 | 3 | 16 u/h | done 08:55 MSK, no NaN |
+| `diag_direct_lone_p_L16_N192_lev0_t3` | 0 | 3 | 3 | 7 u/h | done 09:04 MSK, no NaN |
+| `diag_direct_lone_p_L16_N256_lev0_t3` | 1 | 2.1 | 3 | 4 u/h | 0.2 h, 09:29 MSK |
+
+Process names (10-23): every Bondi run launched from now on shows as `test params.txt` (run from the shared
+checksum-named copy in `/tmp/ml_jobs/bin`) and `test_post post.py`, as the merger runs do (`core/runner.py` with
+`GRTECLYN_PROC_LABEL`, set by both Bondi launchers). The four runs above predate it.
+
+**10-23: the cause found, a first-order time integrator.** At the star's centre the lapse drift converges at order
+1.0 on the fine grids (Δx 0.125 → 0.083 → 0.0625: 1.09 / 0.99 at t 0.3, 0.98 / 0.98 at t 0.5), and χ there too.
+`RadialRecipeLevel::specificEvalRHS` called `FillPatch(*this, a_soln, ...)` on every RK stage; AMReX's FillPatch
+overwrites the stage's VALID cells with the old and new state interpolated to the stage time, so RK4's two mid
+stages see Uold + k dt/4 instead of Uold + k dt/2. The update becomes 1 + z + z²/3 + …: first order (a replica of
+AMReX's RK4 converges at 4.00 clean, 1.00 with the overwrite). For the star's field, whose phase turns at ω = 0.75,
+it anti-damps |Φ| at ~ω² dt/6 per unit t, so ρ grows against the geometry: predicted core drift
+16π ρ_c ω² dt / 3 = 6.3 × 10⁻⁶ per unit t at dt 0.005, measured 4.4 × 10⁻⁶, same sign. Upstream `BinaryBH` has
+no such call (AmrLevel::RK fills the stage ghosts itself, FillRKPatch). Fixed in RadialRecipe only (binary
+`main3d_rkfix_aa0dc4a1-dirty`); the same call sits in BinaryWormholeMerger, SpinningWormhole and
+SupportedWormholeCollapse, left to their campaigns. The spinning runs' order 3–4 stands: a static phantom field and
+a slow collapse make the error ∝ (rate of change)² dt negligible there. Next: the A/B, the four L 16 runs on the
+fixed binary (`diag_rkfix_lone_p_L16_N*_lev0_t3`, scripts ready), on the go.
+
+**10-23: the drift starts inside the star** (supersedes "this set cannot split those two" below). The painted
+star's interior (r < 5.19) is exact, and nothing from r 5.19 reaches the core (r < 1) before t ≈ 3, even at the
+gauge speed √2. Yet the core's signed Hamiltonian grows from t ≈ 1 at −7.9 / −6.1 / −4.4 × 10⁻⁶ per unit t
+(N 128 / 192 / 256, t 1–2), order 0.6 / 1.1, and the solved star's core grows the same way. So the drift is made
+in the star's interior by the evolution, not by the tail join. Checked and clean: the potential and its derivative
+agree, the Klein-Gordon terms and the CCZ4 matter coupling are the standard GRChombo ones, the pump and treadmill
+are off. The live test tells whether the core's order climbs toward 4 at finer Δx (the grids are too coarse for the
+star) or stays near 1 (an order-1 error in the evolution). Also found: the field's tail is joined at r 5.19 in
+value only (a 0.4 % slope kink, ~10⁻⁷ in Ham: too small to drive the drift; the profile should join it C¹).
 
 **The third defect, localized 10-22 evening** (diag runs on the shell-norm binaries 65cc1a98 / d2511dca, which
 write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, every 0.1):
