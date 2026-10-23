@@ -123,16 +123,30 @@ grows any more. The box norms sit at order ~0.1 with both binaries: the painted 
 field's tail (r > 5.19, order 0, see "Conclusion of the lone-star splitter set" below), which reaches the r 2–3
 shell by t ≈ 2.5 (the order drop there; at the gauge speed √2 it reaches r 1 at t ≈ 3). `–`: a sign change.
 
-**Live, the pair on the fixed binary** (10-23, on the go 09:45 MSK; no checkpoints, frames off): the facefix pair set
-`diag_facefix_pair_d10_L64_N*_lev0_t10` rerun to t 10 on `main3d_rkfix_aa0dc4a1-dirty`; each `launch.sh` differs
-from its old one only in binary, card and run dir. It shows whether the pair's interior Hamiltonian order (capped
-at ~1.2 from t ≈ 4) lifts with the fix.
+**10-23 10:20: the pair A/B passed.** The facefix pair set `diag_facefix_pair_d10_L64_N*_lev0_t10` rerun to t 10
+on `main3d_rkfix_aa0dc4a1-dirty` (`diag_rkfix_pair_d10_L64_N*_lev0_t10`, on the go 09:45 MSK; each `launch.sh`
+differs from its old one only in binary, card and run dir; no checkpoints, frames off). All three reached t 10 with
+no NaN (N 128 10:10, N 192 10:17, N 256 10:19 MSK), scratch purged, both cards idle. Orders N 128→192 / 192→256 of
+the interior L2 (r ≤ 24, `constraint_norms.dat` cols 18–19), fixed binary against the old one on the same data:
 
-| run | card | t (10:03) | stop | speed | ETA |
-|---|---|---|---|---|---|
-| `diag_rkfix_pair_d10_L64_N256_lev0_t10` | 1 | 5.2 | 10 | 18 u/h | 0.3 h, ~10:20 MSK |
-| `diag_rkfix_pair_d10_L64_N128_lev0_t10` | 0 | 0.8 (started 10:02) | 10 | ~30 u/h | 0.3 h, ~10:25 MSK |
-| `diag_rkfix_pair_d10_L64_N192_lev0_t10` | 0 | 0.2 (started 10:02) | 10 | ~15 u/h | 0.65 h, ~10:45 MSK |
+| | t 0 | t 1 | t 2 | t 4 | t 6 | t 8 | t 10 |
+|---|---|---|---|---|---|---|---|
+| Ham L0, fix | 2.1 / 2.0 | 2.5 / 2.3 | 2.7 / 2.5 | 3.1 / 2.9 | 3.4 / 3.2 | 3.5 / 3.5 | 3.6 / 3.8 |
+| Ham L0, old | 2.1 / 2.0 | 2.7 / 2.6 | 3.0 / 2.8 | 2.8 / 1.6 | 2.2 / 1.2 | 1.9 / 1.2 | 1.7 / 1.2 |
+| Mom L0, fix | 3.0 / 3.0 | 2.5 / 2.7 | 3.0 / 3.2 | 2.9 / 3.5 | 3.0 / 3.6 | 3.0 / 3.6 | 3.0 / 3.7 |
+| Mom L0, old | 3.0 / 3.1 | 2.5 / 2.8 | 3.0 / 3.4 | 3.0 / 3.6 | 3.0 / 3.2 | 2.9 / 2.8 | 2.8 / 2.5 |
+
+The Hamiltonian cap at ~1.2 was the time integrator, not the face layer: the face-repaired data still cap there on
+the old binary, and on the fixed one the order climbs toward 4 from the t = 0 solve's 2. ΔX (Eq. mid) self-converges
+at order 4 on the fixed binary: Q = 6.1 / 7.4 / 7.0 at t 4 / 8 / 9.6 (Q₄ 5.94, Q₂ 2.86); old binary 2.9 / 11.9 /
+16.7, the paper's runs 2.8 / 12.8 / 18.7.
+
+Against the paper's runs (`runaway_pair_d10_L64_N*_lev0`, t ≤ 9.6, the last sample both share): ΔX(9.6) at N 256 is
+3.873 × 10⁻³ against 3.872 × 10⁻³ (+0.03 %; N 192 −0.15 %), and the barycentre separation d agrees to
+1.2 × 10⁻⁶ relative. The acceleration fitted over 5 ≤ t ≤ 9.6 is 1.8 % lower at N 256 (2.219 vs 2.258 × 10⁻⁴;
+N 192 −2.3 %): X(t) differs by ~1 × 10⁻⁵ inside the window, which a 4.6-unit fit turns into percent. Whether the
+paper's a (5 ≤ t ≤ 200) moves needs the t 200 runs. The proper core distance changes by less than the core
+tracker's sub-cell steps on t ≤ 10 (1 × 10⁻⁴ to 2 × 10⁻³, e.g. N 128 fixed at t 4.8), so it is not compared here.
 
 Process names (10-23): every Bondi run launched from now on shows as `test params.txt` (run from the shared
 checksum-named copy in `/tmp/ml_jobs/bin`) and `test_post post.py`, as the merger runs do (`core/runner.py` with
@@ -203,9 +217,10 @@ write `constraint_shells.dat`, the norms in unit shells, L2 and signed mean, eve
 fallback (`grtresna/io/chombo.py`, `_target_span_slice`) painted each face's outermost cell layer from a solve cell
 beyond the evolution box, so chi and the lapse step there by up to 3 × 10⁻⁴ (five of six faces; the matter is
 repainted analytically and clean). At t 0 the violation sits in shells r ≥ 29 at 3–8 × 10⁻⁷ and GROWS with N; the
-evolution then carries it inward, which is what capped the interior Hamiltonian order at ~1.2–1.5 from t ≈ 4 on
-(the paper's runs and 2a/2b/2c all carry it). Fixed in the converter (a source cell whose centre lies outside the
-target paints nothing, e3992acf) and, for the already-solved pairs, repaired in copies
+evolution then carries it inward (the paper's runs and 2a/2b/2c all carry it). It was blamed here for the interior
+Hamiltonian cap at ~1.2–1.5 from t ≈ 4; the pair A/B (10-23, above) traced that cap to the time integrator. Fixed
+in the converter (a source cell whose centre lies outside the target paints nothing, e3992acf) and, for the
+already-solved pairs, repaired in copies
 `facefix_pair_d10_L64_N*_lev0` by `repair_face_layer.py`: the outermost layer of chi and the lapse set by cubic
 extrapolation along each face normal (the solve's HDF5 is deleted after conversion, so the exact values are gone);
 `face_repair.json` records the change, everything else byte-identical. After the repair the r ≥ 29 shells sit at
@@ -221,7 +236,7 @@ everywhere, but the Hamiltonian falls to ~1.2 (N 192→256) from t ≈ 4, the sa
   1.4 % larger at t 5 at both N (the lapse change itself, not resolution) and 0.01–0.02 % at t 20, and the
   acceleration fitted over 5 ≤ t ≤ 20 changes by −0.3 %. N 128→192 at t 5 / 10 / 15 / 20: Ham 2.4 / 1.7 / 1.6 /
   1.5 (stepped: the same to 0.1), Mom 3.1 / 2.8 / 2.6 / 2.4 (stepped 1.7 / 2.2 / 2.4 / 2.4). The step held down the
-  early orders only; the later Hamiltonian cap traced to the face-layer step (above).
+  early orders only; the later Hamiltonian cap is the time integrator (the pair A/B, above).
 - Each starts from `runs/bondi/staging/lapsefix_pair_d10_L64_N*_lev0`: the fixid data with only the lapse replaced
   (`grteclyn-wrapper/scripts/campaigns/bondi_dipole/patch_lapse_join.py`, record in `lapse_patch.json`).
 - Start checked: the first step's momentum violation (L2, r ≤ 24) is 5.1 / 1.5 / 0.63 × 10⁻⁸ at N 128 / 192 / 256,
