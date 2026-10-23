@@ -90,7 +90,7 @@ Every presentation point of the GRG reports maps to WRITING_STANDARDS §1–7 an
 N, card, stop time, data path and the consumer's spheres (r 4 / 6, inside the box). Box check passed: the N 64 run's
 first constraint row equals the 64-unit N 256 run's to all ten printed digits.
 
-| run | card | t (09:42) | stop | speed | ETA |
+| run | card | t (10:02) | stop | speed | ETA |
 |---|---|---|---|---|---|
 | `diag_direct_lone_p_L16_N64_lev0_t3` | 0 | 3 | 3 | 80 u/h | done 08:46 MSK, no NaN |
 | `diag_direct_lone_p_L16_N128_lev0_t3` | 0 | 3 | 3 | 16 u/h | done 08:55 MSK, no NaN |
@@ -98,23 +98,41 @@ first constraint row equals the 64-unit N 256 run's to all ten printed digits.
 | `diag_direct_lone_p_L16_N256_lev0_t3` | 1 | 3 | 3 | 4 u/h | done 09:28 MSK, no NaN |
 | `diag_rkfix_lone_p_L16_N64_lev0_t3` | 0 | 3 | 3 | 80 u/h | done 09:20 MSK, no NaN |
 | `diag_rkfix_lone_p_L16_N128_lev0_t3` | 0 | 3 | 3 | 19 u/h | done 09:28 MSK, no NaN |
-| `diag_rkfix_lone_p_L16_N256_lev0_t3` | 0 | 1.5 | 3 | ~4 u/h | 0.4 h, ~10:05 MSK |
+| `diag_rkfix_lone_p_L16_N256_lev0_t3` | 0 | 3 | 3 | 4 u/h | done 10:02 MSK, no NaN |
 | `diag_rkfix_lone_p_L16_N192_lev0_t3` | 1 | 3 | 3 | 14 u/h | done 09:42 MSK, no NaN |
 
 The A/B (`diag_rkfix_*`, launched 09:18 MSK on the go): the same four runs on the fixed binary
 `main3d_rkfix_aa0dc4a1-dirty` (only the binary and the cards differ; no checkpoints). It passes if the core drift
 collapses and converges at about order 4.
 
+**10-23 10:05: the A/B passed.** Orders N 64→128 / 128→192 / 192→256 on the fixed binary (signed mean Ham per
+shell, `constraint_shells.dat`; the lapse drift at the centre, `collapse_diagnostics.dat`):
+
+| fixed | t 0.5 | t 1 | t 1.5 | t 2 | t 2.5 | t 3 |
+|---|---|---|---|---|---|---|
+| Ham L0 (box) | 0.1 / 0.1 / 0.1 | 0.1 / 0.1 / 0.1 | 0.1 / 0.1 / 0.1 | 0.1 / 0.1 / 0.0 | 0.1 / 0.1 / 0.0 | 0.1 / 0.1 / 0.0 |
+| Mom L0 (box) | 0.1 / 0.1 / 0.0 | 0.2 / 0.1 / 0.1 | 0.3 / 0.1 / 0.1 | 0.3 / 0.1 / 0.1 | 0.3 / 0.1 / 0.1 | 0.3 / 0.1 / 0.1 |
+| Ham r 0–1 | 4.7 / 4.6 / 4.4 | 4.6 / 4.5 / 4.4 | 4.7 / 4.6 / 4.6 | 4.8 / 4.7 / 4.7 | 4.8 / 4.8 / 4.8 | 5.0 / 6.7 / – |
+| Ham r 1–2 | 4.4 / 4.4 / 4.4 | 4.3 / 4.4 / 4.3 | 4.4 / 4.4 / 4.4 | 4.4 / 4.3 / 4.4 | 4.5 / 5.0 / 4.4 | 4.6 / 4.6 / 3.2 |
+| Ham r 2–3 | 4.8 / 5.0 / 5.2 | 4.3 / 4.3 / 4.3 | 4.3 / 4.0 / 3.6 | 4.2 / 4.2 / 6.8 | 3.5 / 1.4 / 0.3 | 2.4 / 0.5 / 0.1 |
+| lapse drift r 0 | – / 2.0 / 3.2 | 4.0 / 4.6 / 4.7 | 4.3 / 4.6 / 4.6 | 3.9 / 4.2 / 4.2 | 4.9 / 5.1 / 5.2 | – / 3.3 / 3.5 |
+
+The old binary gives 1.0 in every core cell at N 128→192→256. At N 256, t 2, the core's signed Ham is
+−6.9 × 10⁻⁹ against −2.6 × 10⁻⁶ (380× smaller) and the lapse drift 7.6 × 10⁻⁹ against −2.2 × 10⁻⁶, and neither
+grows any more. The box norms sit at order ~0.1 with both binaries: the painted profile's vacuum exterior over the
+field's tail (r > 5.19, order 0, see "Conclusion of the lone-star splitter set" below), which reaches the r 2–3
+shell by t ≈ 2.5 (the order drop there; at the gauge speed √2 it reaches r 1 at t ≈ 3). `–`: a sign change.
+
 **Live, the pair on the fixed binary** (10-23, on the go 09:45 MSK; no checkpoints, frames off): the facefix pair set
 `diag_facefix_pair_d10_L64_N*_lev0_t10` rerun to t 10 on `main3d_rkfix_aa0dc4a1-dirty`; each `launch.sh` differs
 from its old one only in binary, card and run dir. It shows whether the pair's interior Hamiltonian order (capped
 at ~1.2 from t ≈ 4) lifts with the fix.
 
-| run | card | t (09:46) | stop | speed | ETA |
+| run | card | t (10:03) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `diag_rkfix_pair_d10_L64_N256_lev0_t10` | 1 | 0 (started 09:46) | 10 | ~16 u/h | 0.65 h, ~10:25 MSK |
-| `diag_rkfix_pair_d10_L64_N128_lev0_t10` | 0 | queued | 10 | ~32 u/h | starts when the lone A/B ends (~10:05), ~10:30 MSK |
-| `diag_rkfix_pair_d10_L64_N192_lev0_t10` | 0 | queued | 10 | ~17 u/h | starts when the lone A/B ends (~10:05), ~10:50 MSK |
+| `diag_rkfix_pair_d10_L64_N256_lev0_t10` | 1 | 5.2 | 10 | 18 u/h | 0.3 h, ~10:20 MSK |
+| `diag_rkfix_pair_d10_L64_N128_lev0_t10` | 0 | 0.8 (started 10:02) | 10 | ~30 u/h | 0.3 h, ~10:25 MSK |
+| `diag_rkfix_pair_d10_L64_N192_lev0_t10` | 0 | 0.2 (started 10:02) | 10 | ~15 u/h | 0.65 h, ~10:45 MSK |
 
 Process names (10-23): every Bondi run launched from now on shows as `test params.txt` (run from the shared
 checksum-named copy in `/tmp/ml_jobs/bin`) and `test_post post.py`, as the merger runs do (`core/runner.py` with
@@ -362,6 +380,8 @@ order, so a fixed solve converges at 2 (the spinning paper's bar), not at the ev
       solve.
       10-22: N 320 dropped, the study is N 128 / 192 / 256. The t 200 runs were stopped for the lapse step (above);
       they restart from the `lapsefix_*` data once the t 20 check gives an order near 2 for N 192→256.
+      10-23: the `fixid_*` and `lapsefix_*` gridinits are deleted (on the word; `facefix_*` holds both fixes
+      plus the face repair); the restart uses `facefix_*`. `conv2a_*` is kept: the paper's initial data.
 - [ ] 4. Compare 2b's N 256 with `campaign/runaway_pair_d10_L64_N256_lev0`, the same run on the old data. If the
       drift ΔX agrees, the paper's other runs stand, and the paper says the convergence runs use the corrected
       data. If it does not, those runs need the corrected data too.
