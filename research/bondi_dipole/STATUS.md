@@ -18,7 +18,7 @@ Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `fea
   no convergence test), no invitation to resubmit. The reports are kept locally only, in `referee/` (git-excluded).
 - Next: EPJC (open access through SCOAP3; confirm it charges no APC), fallback IJMPD.
 
-## Current status (2026-10-23, 23:05 MSK)
+## Current status (2026-10-23, 23:30 MSK)
 
 The paper's simulations carry a numerical error that changes its numbers: the evolution integrated in time at first
 order instead of fourth (below). It is fixed and verified, and the paper is being rerun on the fixed code and fixed
@@ -96,30 +96,28 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | `M_L64_N128` | the lone star sits still; convergence | 64 | 128 | 200 | 1 | **done**: `09_convergence/` |
 | `M_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done**: the minimum lapse moves −1.48 × 10⁻⁴ by t 200 (N 128 −1.47), the peak field +0.001 % (N 128's −0.13 % was numerical); constraints at order 2.8–2.9 inside r < 24 (N 128→192); `09_convergence/` |
 | `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | the solve stopped at its floor, Ham 2.51 × 10⁻⁴ % against the Δx⁴-scaled 1.25 × 10⁻⁴ % (N 192's accepted 3.9 × 10⁻⁴ %), and the gate rejected it; the evolution runs from its data (`11_initial_data/M_L64_N256_initial_data`) (Live) |
-| `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | evolution done at t 400, no NaN; frames; its consumer drains (Live), then it decides PM10-rec / -off |
+| `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | **done**: d 9.98 at t 200, 10.84 at t 400 (the paper's run 10.00, 11.74); a 1.06 × 10⁻⁴ over 133–266 and 0.82 × 10⁻⁴ over 300–400 (the paper's 1.45, 1.42), falling as the stars lose 5.9 % of their matter by t 400, which is numerical (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256); no NaN; frames; `04_runaway/` |
 | PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 running (Live); PM16, PM20 queued |
 | E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
 | R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | queued; no `launch_config.sh` packed: rebuild from `runs/bondi/00_archive/superseded_2026-10-23/01_star_family` |
-| `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | queued; 221 GB solve: first node |
-| PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | only if PM10-t400 shows a late separation change |
+| `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | queued, the pair's last run; 221 GB solve: first node; `staging/PM10_L128_N256/launch.sh` ready (dry run matches the paper's run) |
+| PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
 | M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | optional, only if the text keeps that sentence |
 
-Queued: about 20 GPU-h, one night on the three cards (+7 if PM10-rec / -off are needed). The old runs' separation
-growth after t 200 shrank eightfold per halving of Δx, so it is likely the old time error: if the fixed PM10-t400
-shows none, Sec. VII "Separation after t = 200" and both runs go.
+Queued: about 20 GPU-h, one night on the three cards. Decided 2026-10-23: the pair ends with PM10-t400 and the
+large box; PM10-rec / -off are dropped.
 
 ## Live
 
 No checkpoints (on the word); frames off except PM10-t400 (frames and slice cache, the paper's figure and movie
 runs, with PM10 N 256).
 
-| run | node / card | t (23:10) | stop | speed | ETA |
+| run | node / card | t (23:25) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `PM8_L64_N128` | 1st / 1 | 99 (launched 21:48 MSK) | 200 | ~100 u/h, two per card | ~1 h, ~00:05 MSK |
-| `PM12_L64_N128` | 1st / 1 | 99 (launched 21:48 MSK) | 200 | as PM8 | as PM8 |
-| `M_L64_N256` | 1st / 0 | evolution from the rejected solve's data (BONDI_GRIDINIT), launched 23:09 MSK; t 0 matches N 192 | 200 | ~18 u/h | ~11 h, ~10:00 MSK 10-24 |
-| `rkfix_pair_d10_L64_N128_lev0_t400` → `PM10_L64_N128_t400` (frames) | 1st / 0 | evolution done at t 400 (~21:00 MSK); consumer at t 367 | 400 | 27 s / plotfile | consumer drains ~23:20 MSK |
+| `PM8_L64_N128` | 1st / 1 | 136 (launched 21:48 MSK) | 200 | ~103 u/h, two per card | ~0.6 h, ~00:00 MSK |
+| `PM12_L64_N128` | 1st / 1 | 135 (launched 21:48 MSK) | 200 | as PM8 | as PM8 |
+| `M_L64_N256` | 1st / 0 | 4 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~18 u/h | ~10.8 h, ~10:10 MSK 10-24 |
 
 ## Revision
 
