@@ -92,7 +92,7 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | M (`rkfix_lone_m_L64_N128_lev0_t200`) | the lone star sits still; convergence | 64 | 128 | 200 | 1 | **done**: `09_convergence/` |
 | M (`rkfix_lone_m_L64_N192_lev0_t200`) | convergence | 64 | 192 | 200 | 4 | **done** at t 200; packed when its consumer drains (Live) |
 | M (`rkfix_lone_m_L64_N256_lev0_t200`) | convergence | 64 | 256 | 200 | 11 | running (Live) |
-| PM10-t400 (v1 `longrun_pair_d10_t400_L64_N128_lev0`) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | queued, first: it decides PM10-rec / -off; frames |
+| PM10-t400 (v1 `longrun_pair_d10_t400_L64_N128_lev0`) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | running (Live), `rkfix_pair_d10_L64_N128_lev0_t400`; frames; it decides PM10-rec / -off |
 | PM8, PM12, PM16, PM20 | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | queued |
 | E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
 | R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
@@ -107,12 +107,14 @@ shows none, Sec. VII "Separation after t = 200" and both runs go.
 
 ## Live
 
-No checkpoints (on the word); frames off except PM10 N 256 (frames and slice cache, the paper's figure run).
+No checkpoints (on the word); frames off except PM10 N 256 and PM10-t400 (frames and slice cache, the paper's
+figure and movie runs).
 
 | run | node / card | t (18:56) | stop | speed | ETA |
 |---|---|---|---|---|---|
 | `rkfix_pair_d10_L64_N256_lev0_t200` (frames) | 1st / 1 | 152.8 | 200 | 18 u/h | 2.6 h, ~21:30 MSK |
 | `rkfix_lone_m_L64_N256_lev0_t200` | 1st / 0 | solve (221 GB, 8 ranks), launched 18:39 MSK | 200 | ~18 u/h | ~12 h, ~07:00 MSK 10-24 |
+| `rkfix_pair_d10_L64_N128_lev0_t400` (PM10-t400, frames) | 1st / 0 | 4.6, launched 19:23 MSK | 400 | 240 u/h alone | ~2–2.5 h, ~21:00–21:45 MSK (card 0 is shared once M N 256 evolves); the consumer (26 s per plotfile, one every 12 s) drains ~1.5 h after |
 | `rkfix_lone_m_L64_N192_lev0_t200` (consumer only) | 2nd | consumer at t 148 of 200 | — | ~100 s / plotfile | 1.8 h, ~20:45 MSK |
 
 ## Revision
