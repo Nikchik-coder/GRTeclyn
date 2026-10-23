@@ -18,7 +18,7 @@ Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `fea
   no convergence test), no invitation to resubmit. The reports are kept locally only, in `referee/` (git-excluded).
 - Next: EPJC (open access through SCOAP3; confirm it charges no APC), fallback IJMPD.
 
-## Current status (2026-10-23, 19:00 MSK)
+## Current status (2026-10-23, 21:40 MSK)
 
 The paper's simulations carry a numerical error that changes its numbers: the evolution integrated in time at first
 order instead of fourth (below). It is fixed and verified, and the paper is being rerun on the fixed code and fixed
@@ -26,9 +26,11 @@ initial data (the table below). The constraints now converge at order 3–4 (1.2
 a at about order 4.
 
 The headline changes: the paper's Table II gives ΔX(200) = 3.00 ± 0.01 and a = 1.55 × 10⁻⁴ (N 256), 5 % and 8 %
-above Bondi's point-mass 2.86 and 1.43 × 10⁻⁴; the fixed N 192 gives 2.846 and 1.427 × 10⁻⁴, on the point-mass
-values, and N 256 follows it (−3 % against the paper's N 256 at t 149). The separation is unchanged (0.1 %). The
-model, the tests and the qualitative result are untouched; every number changes.
+above Bondi's point-mass 2.86 and 1.43 × 10⁻⁴; the fixed N 256 gives ΔX(200) = 2.874 ± 0.029 and
+a = (1.451 ± 0.024) × 10⁻⁴ (error: the N 192 − 256 difference), on the point-mass values. Over N 128, 192, 256 they
+converge at order 4.4 and 4.2 (the paper's runs did not converge after t 50) and extrapolate to 2.886 and
+1.461 × 10⁻⁴. The separation is unchanged (0.1 %). The model, the tests and the qualitative result are untouched;
+every number changes.
 
 Figures: `python -m grteclyn_wrapper.visualisation.bondi_dipole convergence` draws both sets into
 `results/bondi-dipole-runaway/figures/convergence_pair` / `convergence_lone` (constraints by region with the
@@ -80,8 +82,8 @@ Each run is its v1 cell again (`evolution_params.txt`, `launch_config.sh` in
 data (`GRTresna_bondi_fix`, the joined lapse, the fixed converter; star tables at new frequencies are rebuilt at
 launch); each needs the go and the checkpoint question. Finished runs are filed in `runs/bondi/NN_group/` and packed
 in `campaign/NN_group/`. Names: the Table I label, the box and the cells (`PM10_L64_N128`), a stop time other than the
-paper's appended (`PM10_L64_N128_t400`); the initial data as `<name>_initial_data` in `runs/bondi/11_initial_data/`. The four
-live runs keep their launch names (`rkfix_*`) in `staging/` until close-out. GPU-h on one H100 alone: N 128 ≈ 200 u/h, N 192 ≈ 50, N 256 ≈ 19, the L 128 box at N 256
+paper's appended (`PM10_L64_N128_t400`); the initial data as `<name>_initial_data` in `runs/bondi/11_initial_data/`. Runs
+launched before the renaming keep their launch names (`rkfix_*`) in `staging/` until close-out. GPU-h on one H100 alone: N 128 ≈ 200 u/h, N 192 ≈ 50, N 256 ≈ 19, the L 128 box at N 256
 ≈ 37. Solves: N 128 ~6 min on the first node (~25 min on the second), N 192 ~20 min and 93 GB, N 256 and the L 128
 run 68 min and 221 GB, first node only (the second's limit is 195 GB). N 128 runs go to the first node, two per
 card: the second node's consumer cannot keep up with them (12 CPUs).
@@ -90,11 +92,11 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 |---|---|---|---|---|---|---|
 | `PM10_L64_N128` | the runaway; convergence | 64 | 128 | 200 | 1 | **done**: ΔX(200) 2.648, a(5–200) 1.274 × 10⁻⁴; `09_convergence/` |
 | `PM10_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done**: ΔX(200) 2.846, a(5–200) 1.427 × 10⁻⁴; `09_convergence/` |
-| `PM10_L64_N256` | the headline; frames, figure and movie | 64 | 256 | 200 | 11 | running (Live) |
+| `PM10_L64_N256` | the headline; frames, figure and movie | 64 | 256 | 200 | 11 | **done**: ΔX(200) 2.874, a(5–200) 1.451 × 10⁻⁴ (order 4.4 / 4.2 with N 128, 192); `09_convergence/` |
 | `M_L64_N128` | the lone star sits still; convergence | 64 | 128 | 200 | 1 | **done**: `09_convergence/` |
 | `M_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done** at t 200; packed when its consumer drains (Live) |
-| `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | running (Live) |
-| `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | running (Live); frames; it decides PM10-rec / -off |
+| `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | solve at its floor (Ham 2.5 × 10⁻⁴ % against the Δx⁴-scaled 1.25 × 10⁻⁴ %, below N 192's accepted 3.9 × 10⁻⁴ %), so the gate rejects it; the evolution reuses its data (Live) |
+| `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | evolution done at t 400, no NaN; frames; its consumer drains (Live), then it decides PM10-rec / -off |
 | PM8, PM12, PM16, PM20 | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | queued |
 | E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
 | R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
@@ -109,15 +111,14 @@ shows none, Sec. VII "Separation after t = 200" and both runs go.
 
 ## Live
 
-No checkpoints (on the word); frames off except PM10 N 256 and PM10-t400 (frames and slice cache, the paper's
-figure and movie runs).
+No checkpoints (on the word); frames off except PM10-t400 (frames and slice cache, the paper's figure and movie
+runs, with PM10 N 256). Card 1 of the first node is free since 21:34 MSK.
 
-| run | node / card | t (18:56) | stop | speed | ETA |
+| run | node / card | t (21:40) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `rkfix_pair_d10_L64_N256_lev0_t200` → `PM10_L64_N256` (frames) | 1st / 1 | 152.8 | 200 | 18 u/h | 2.6 h, ~21:30 MSK |
-| `rkfix_lone_m_L64_N256_lev0_t200` → `M_L64_N256` | 1st / 0 | solve (221 GB, 8 ranks), launched 18:39 MSK | 200 | ~18 u/h | ~12 h, ~07:00 MSK 10-24 |
-| `rkfix_pair_d10_L64_N128_lev0_t400` → `PM10_L64_N128_t400` (frames) | 1st / 0 | 4.6, launched 19:23 MSK | 400 | 240 u/h alone | ~2–2.5 h, ~21:00–21:45 MSK (card 0 is shared once M N 256 evolves); the consumer (26 s per plotfile, one every 12 s) drains ~1.5 h after |
-| `rkfix_lone_m_L64_N192_lev0_t200` → `M_L64_N192` (consumer only) | 2nd | consumer at t 148 of 200 | — | ~100 s / plotfile | 1.8 h, ~20:45 MSK |
+| `rkfix_lone_m_L64_N256_lev0_t200` → `M_L64_N256` | 1st / 0 | solve at iteration 34 of 50, ~5.3 min each (CPU, 221 GB) | 200 | ~18 u/h | the solve hits its 50-iteration cap ~23:00 MSK and the gate rejects it; the evolution then starts from its data as `staging/M_L64_N256` (launch script ready, BONDI_GRIDINIT), ~23:10 MSK, and ends ~10:00–12:00 MSK 10-24 |
+| `rkfix_pair_d10_L64_N128_lev0_t400` → `PM10_L64_N128_t400` (frames) | 1st / 0 | evolution done at t 400 (~21:00 MSK); consumer at t 222 | 400 | 27 s / plotfile | consumer drains ~23:20 MSK |
+| `rkfix_lone_m_L64_N192_lev0_t200` → `M_L64_N192` (consumer only) | 2nd | consumer at t 190 of 200 | — | ~265 s / plotfile | ~1 h, ~22:35 MSK |
 
 ## Revision
 

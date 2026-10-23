@@ -4,4 +4,5 @@
 run	directory	what	paper	outcome
 PM10_L64_N128	09_convergence/PM10_L64_N128	PM10 at N 128 on the fixed binary (c12664fd) and the fixed data (facefix), L 64, to t 200	revision: the runaway; convergence	ΔX(200) 2.648, a(5–200) 1.274e-4; no NaN
 PM10_L64_N192	09_convergence/PM10_L64_N192	PM10 at N 192, as the N 128 member	revision: convergence	ΔX(200) 2.846, a(5–200) 1.427e-4 (Bondi's point mass: 2.86, 1.43e-4); no NaN
+PM10_L64_N256	09_convergence/PM10_L64_N256	PM10 at N 256, as the N 128 member; frames and slice cache on (the figure and movie run)	revision: the runaway's headline (Table II); convergence	ΔX(200) 2.874 ± 0.029, a(5–200) (1.451 ± 0.024)e-4 (error: the N 192 − 256 difference; order 4.4 and 4.2 over N 128, 192, 256); no NaN
 M_L64_N128	09_convergence/M_L64_N128	M: the negative-mass star (omega 0.7603) 5 units off centre, N 128, fixed binary, fresh solve on the fixed GRTresna, to t 200	revision: the lone star sits still; convergence	min lapse change -1.47e-4 (the same at N 192); peak field -0.13 % by t 200 (absent at N 192: numerical); no NaN

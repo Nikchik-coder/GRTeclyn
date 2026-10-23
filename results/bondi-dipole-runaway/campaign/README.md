@@ -12,7 +12,7 @@ and scrubs absolute paths. Plotfiles, the initial-data file, frames and movies s
 
 | folder | cells |
 |---|---|
-| `09_convergence/` | PM10 (`PM10_L64_N128`, `PM10_L64_N192`) and M (`M_L64_N128`) to t 200; both N 256 runs and M at N 192 join as they finish |
+| `09_convergence/` | PM10 (`PM10_L64_N128`, `PM10_L64_N192`, `PM10_L64_N256`) and M (`M_L64_N128`) to t 200; M at N 192 and N 256 join as they finish |
 
 The other groups (`01_star_family/` … `08_late_separation/`) come back as their reruns finish; the list and its
 state are in `research/bondi_dipole/STATUS.md`, "Runs for the revision".
@@ -40,5 +40,6 @@ with the same cell size, so the solved metric lands on the evolution grid withou
 | `Ham_and_Mom_errors.txt` | the elliptic solve's convergence history (cells that solved their own data) |
 | `evolution_params.txt`, `grtresna_params.txt` | what was evolved, what was solved |
 | `launch_config.sh` | the exact environment the cell was launched with |
+| `frames/` | runs with frames only: stills every 10 time units per field, thinned from the run's frame set (`FRAMES.md`) |
 
 Every `.dat` carries its own `#` header naming the columns.
