@@ -87,6 +87,22 @@ after session because it lived only in one machine's agent memory.
    `test_post` on PATH — then `--check`. (2026-10-03: a hand-start with only the profile args sat idle
    watching nothing, and its `--horizon-track` named the wrong run dir — launch.sh appends `_r<step>` to
    `--name`, so a restart leg's consumer paths must use the FINAL suffixed name.)
+   **Consumer restart traps** (2026-10-24, the Bondi chase on the second node; the consumer is the usual failure):
+   - `restart_consumer.sh` takes a zombie watcher for alive. The Bondi runner (`replay_eval.py`) never reaps its
+     consumer, so after SIGTERM the old watcher stays `<defunct>`, the script prints `ignored SIGTERM; nothing
+     started`, and the run has NO consumer. Check `ps -o stat` for `Z` and start the new watcher at once as the
+     script's start block does (`env -i` with `/proc/<runner pid>/environ`, `setsid nohup`, the supervisor loop).
+   - The command to rebuild from: a Bondi run logs its watcher's exact argv in its `run.log` (`[wrapper] consumer
+     runs as: ...`); a zombie's `/proc/<pid>/cmdline` is empty. Bondi runs have no `consumer.log` until a restart
+     (the `--check` warning about it is harmless).
+   - `-j N > 1` fails through the run dir's `post.py`: it runs the module as `__main__` without a guard, so every
+     spawned worker dies ("... before the current process has finished its bootstrapping phase"); so does
+     `CONSUMER_JOBS > 1` at launch, which goes through the same `post.py`. Start the watcher as `test_post -m
+     grteclyn_wrapper.visualisation.process_wave.consume_plotfiles <args> -j 3 --keep-existing-frames` (the guarded
+     `__main__.py`). A failed batch loses nothing: its plotfiles stay on scratch, unmarked. Never put `-j > 1` in
+     `consumer_args.extra`: the end-of-run drain runs through `post.py`.
+   - Size it at launch: one N 192 plotfile with the full frame set takes ~2.7 min per worker on the second node
+     (~1 min on the first); a lone N 192 run (~50 u/h) needs a plotfile every ≥ 4 units (600 steps), not 1.6.
 5. **Update STATUS at once.** Every launch, stop or wipe goes into STATUS.md's Live/Queued tables (run, node/card, t,
    stop time, speed, ETA in hours and clock time). Commit and push it immediately and verify with `git ls-remote`. If
    the push is rejected, fetch, rebase and push again.
