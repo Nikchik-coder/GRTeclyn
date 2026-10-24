@@ -135,6 +135,19 @@ an outside-reader pass (~60 findings applied) and a redundancy pass (text 6608 �
       lapse joined in value and slope), and the evolution's superposed lapse α = 1 + Σ(α_k − 1) in Π = −(ω/α) φ₀.
 - [ ] The separation: "constant to 1 %" held only for the net change in the old runs (it dipped 2.9 % near t 51);
       recheck on the reruns.
+- [ ] PM10-L128, the domain size (Table II, the line "PM10-L128; -tol; …"; Sec. II on the two trackers): the box
+      does not move the stars. By the cores ΔX(200) changes +0.2 % from PM10 at N 128 and the separation is 10.07
+      in both boxes; by the whole-domain barycentres ΔX(200) changes −4.8 % (v1 −4.2 %), because in the L 128 box
+      they keep the field the stars shed, which the L 64 box's absorbing layer removes from r 24 (sector rms radius
+      16.9 against 5.8 at t 100). Table II's −4.2 % becomes +0.2 % by the cores (or the text says why the
+      barycentres move), and "the two ways of tracking agree on ΔX to 1 %" holds only in the L 64 box.
+- [ ] PM10-L128, Ψ4 (Fig. wavezone, Table II, the wave-extraction paragraph): |Ψ4|ₗ₌₂ falls as R^−4.7 (text −4.8)
+      and R|Ψ4| drops ×30 across the four spheres (text 31); the near-zone conclusion stands. The consumer stores
+      R Ψ4; `article_figures.py` divides by R, which is right.
+- [ ] Sec. VII, the separation after t 200: PM10-rec and PM10-off are dropped (decided 2026-10-23), so the paragraph
+      rests on PM10-t400 alone: at N 128 d is 9.98 at t 200 and 10.84 at t 400 (text: 11.8), a falls from
+      1.06 × 10⁻⁴ (133–266) to 0.82 × 10⁻⁴ (300–400), and the stars lose 5.9 % of their matter by t 400, a
+      numerical loss (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256).
 - [ ] Notation table (~20 symbols, WRITING_STANDARDS §2): decide whether it is worth the space.
 - [ ] Strip all TODO comments before the arXiv upload.
 
