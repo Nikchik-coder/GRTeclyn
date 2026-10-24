@@ -103,8 +103,8 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | PP10 (`PP10_L64_N128`, `_N192`, `_N256`) | test v: a same-sign pair stays at rest; Fig. same-sign (N 256 with frames, its movie), Fig. constraints | 64 | 128, 192, 256 | 200 | 16 | go 10-24, no checkpoints; tolerance 0.002 at every N, as the paper's runs |
 | MM10 (`MM10_L64_N128`, `_N192`) | test v; Fig. same-sign (N 128 with frames, its movie) | 64 | 128, 192 | 200 | 5 | go 10-24, no checkpoints; one N 128 run with frames for the paper's two |
 | PM10-tol, PM10-AMR, PM10-η2 (`PM10-tol_L64_N128`, …) | Table II: ΔX(200) against a 10× tighter solve tolerance, one refinement level, doubled shift damping | 64 | 128 | 200 | 4 | go 10-24, no checkpoints |
-| R0.60, R0.80, R1.33 (`R0.60_L64_N128`, …) | each star follows its partner's mass | 64 | 128 | 200 | 3 | go 10-24, no checkpoints: R0.60 + R0.80 on card 0 when M N 256 ends (~10:05 MSK), R1.33 with P on card 1 when PM16 / PM20 end (~10:20); scripts in `staging/`, dry runs match the paper's runs |
-| `P_L64_N128` (P) | the isolated positive-mass star (ω 0.75) at the centre: test v, Sec. III A | 64 | 128 | 200 | 1 | go 10-24, no checkpoints: with R1.33 on card 1 (~10:20 MSK); script in `staging/`, dry run matches the paper's run |
+| R0.60, R0.80, R1.33 (`R0.60_L64_N128`, …) | each star follows its partner's mass | 64 | 128 | 200 | 3 | running (Live), launched 10-24 08:28 MSK, no checkpoints; dry runs matched the paper's runs |
+| `P_L64_N128` (P) | the isolated positive-mass star (ω 0.75) at the centre: test v, Sec. III A | 64 | 128 | 200 | 1 | running (Live), launched 10-24 08:28 MSK, no checkpoints; dry run matched the paper's run |
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | dropped 2026-10-24: P backs the positive star instead (the M convergence covers the negative one) |
 | `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: the stars move as in the L 64 box: the cores' ΔX(200) is +0.2 % from PM10 N 128 and their separation the same (10.07); the whole-domain barycentres' ΔX moves −4.8 % (the paper's −4.2 %) because they take in the field the stars shed, which the larger box keeps; |Ψ4|ₗ₌₂ ∝ R^−4.7 (the paper's −4.8), R|Ψ4| falls ×30 over R 16–40 (31); no NaN; frames; `04_runaway/` |
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
@@ -125,6 +125,8 @@ No checkpoints (on the word); frames off.
 |---|---|---|---|---|---|
 | `PM16_L64_N128` | 1st / 1 | 1 (solve converged at iteration 12, Ham 9.0 × 10⁻⁴ %; evolution from 08:26 MSK; params and t 0 as the paper's run, consumer writing) | 200 | two per card, ~100 u/h each | ~2 h, ~10:30 MSK |
 | `PM20_L64_N128` | 1st / 1 | 4 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | as PM16 | as PM16 |
+| `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | fresh solves (4 ranks each), launched 08:28 MSK beside PM16 / PM20 | 200 | four on the card, ~50 u/h each expected | solves ~15 min, then ~4 h: ~12:45 MSK |
+| `R0.60_L64_N128`, `R0.80_L64_N128` | 1st / 0 | fresh solves (4 ranks each), launched 08:28 MSK beside M N 256 | 200 | ~70 u/h each expected | ~3 h: ~11:45 MSK |
 | `M_L64_N256` | 1st / 0 | 164 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~18.3 u/h | ~2 h, ~10:05 MSK 10-24 |
 
 ## Revision
