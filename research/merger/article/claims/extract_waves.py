@@ -942,14 +942,14 @@ def conv_order(era: str, which: str = "lo") -> float:
 
 @extractor
 def conv_psi_difference(pair: str) -> float:
-    """100 max|difference| / burst peak of plot_convergence (b): pair 'level'
+    """100 max|difference| / burst peak of plot_convergence (c): pair 'level'
     (throat level 4 vs 5, t <= 56) or 'wave-zone' (refined vs base, t <= 40)."""
     return float(_mod("plot_convergence").psi_difference(PACK, pair)[2])
 
 
 @extractor
 def near_zone(case: str, what: str = "excess", r_min: float = 0.0) -> float:
-    """plot_convergence (c), one record: 'excess' = 100 (E_in/E_out - 1), the
+    """plot_convergence (d), one record: 'excess' = 100 (E_in/E_out - 1), the
     innermost sphere's energy over the outermost's; 'amplitude' = the same in
     amplitude, 100 (sqrt(E_in/E_out) - 1); 'spread' = 100 (max - min)/E_out over
     the spheres R >= r_min; 'rmax' = the outermost sphere's R/M."""
@@ -965,7 +965,7 @@ def near_zone(case: str, what: str = "excess", r_min: float = 0.0) -> float:
 
 @extractor
 def conv_farzone(what: str, coarse: str = "1/16", fine: str = "1/32") -> float:
-    """plot_convergence (d), CONV-fz, two levels named by finest dx: 'psi' = 100
+    """plot_convergence (e), CONV-fz, two levels named by finest dx: 'psi' = 100
     max|difference| of the collision-axis r Psi4^20 at R = 10 over the finer
     level's peak, t <= 100; 'energy' = 100 |E_coarse/E_fine - 1| at R = 10 on
     (c)'s head-on window; 'mots' = 100 max(|dR/R|, |dM_MS/M_MS|) of the common

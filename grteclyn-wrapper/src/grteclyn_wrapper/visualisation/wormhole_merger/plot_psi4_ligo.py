@@ -443,7 +443,7 @@ def main(argv: list[str] | None = None) -> int:
         a["tau"] = a["u"] - a["u"][int(np.argmax(drawn_env))]   # aligned at the drawn peak
         # The key names, and only names: the energies are panel (d)'s subject
         # and repeating them here made the key a second table.
-        axA.semilogy(a["tau"], drawn_env, zorder=3, label={"spiral": "merger"}.get(a["name"], a["name"]),
+        axA.semilogy(a["tau"], drawn_env, zorder=3, label={"spiral": "merger", "vacuum BBH twin": "vacuum control"}.get(a["name"], a["name"]),
                      **LOOKS[a["name"]])
         print(f"  {a['name']:<18s} peak |rPsi4| M = {env.max():.3e} at "
               f"u = {a['u'][int(np.argmax(env))]:.1f} M, "

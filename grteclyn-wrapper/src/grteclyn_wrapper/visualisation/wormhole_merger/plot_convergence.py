@@ -1,26 +1,34 @@
 #!/usr/bin/env python3
-r"""Convergence on one strip: the static throat's order, the wave at two resolutions, the extraction radius.
+r"""Convergence in two rows: the static throat's order and momentum constraint, the wave at two resolutions, the extraction radius, the far-zone head-on.
 
 (a) The static throat from exact data at levels 2/3/4 (``single_hold_ml2_t100``,
     ``single_hold_t100``, ``single_hold_ml4_t100``; finest dx = 1/8, 1/16,
-    1/32): the three-level factor Q(t) = (R_2 - R_3)/(R_3 - R_4) of the minimal
-    areal radius at every dump t = 0-23 (level 2 ends at t = 24.17), on the
-    factors 4, 8, 16 of orders n = 2, 3, 4.  To t = 10 the static error of
-    reading the exact data dominates: Q = 4.5-5.0, n = 2.2-2.3 (the t = 0
+    1/32): the minimal areal radius's differences R_2 - R_3 and Q_n (R_3 - R_4),
+    Q_n = 2^n for n = 2, 3, 4, at every dump t = 0-23 (level 2 ends at
+    t = 24.17); the curve on R_2 - R_3 gives the order, Q = (R_2 - R_3)/(R_3 - R_4).
+    To t = 10 the static error of reading the exact data dominates:
+    Q = 4.5-5.0, n = 2.2-2.3 (the t = 0
     errors against R_star = sqrt(5) exp(arctan(2)/2) are 2.17e-3, 4.23e-4,
     5.41e-5).  Over t = 12-20 the evolution's own error takes over: Q = 8.1-9.9,
     n = 3.0-3.3, except at the one dump t = 16 (Q = 5.9), where level 2's R
     reads 1.2e-3 below both its neighbours, the dump before its minimum moves
     one coarse cell out (r = 1.565 -> 1.690).  Every dump is drawn; the order
     ranges (``EVOL_SKIP``) leave t = 16 out.
-(b) The d = 12, p = 0.12 spiral whose momentum is Bowen-York extrinsic
+(b) The same runs' momentum-constraint norm (``constraint_norms.dat``, a
+    base-grid L2 average) to t = 23, level j times 2^(4 (j - 2)), the factor
+    for fourth order.  The momentum constraint vanishes identically for the
+    static throat, so the norm measures the evolution's error alone; the three
+    curves nearly overlay.  The Hamiltonian norm is the same at all three
+    levels (2.51e-3 from the first step), the base grid's own error in the
+    static data, which the throat's refinement does not reach; it is not drawn.
+(c) The d = 12, p = 0.12 spiral whose momentum is Bowen-York extrinsic
     curvature (otherwise the paper's setup), L = 128, |r Psi4^22| at R = 20:
     level 5 to t = 56 (the two runs' trust windows are 56.5 and 57.2), its
     difference from level 4, and level 4 with the ball R <= 33.6 refined to
     level 1 (dx = 0.25 instead of 0.5 at R = 20 and 28) minus plain level 4,
     to the refined arm's stop at t = 40.  Both differences are fractions of
     the level-5 burst peak (1.93e-2 at t = 44): 0.38 % and 0.15 %.
-(c) The radiated energy E(R) on each sphere over the outermost sphere's,
+(d) The radiated energy E(R) on each sphere over the outermost sphere's,
     against R/M, by the paper's band integral (``psi4_math``'s
     ``_compute_radiated_energy`` with the peak of the smoothed burst PSD, as
     ``plot_psi4_ligo``), over one retarded window t - R <= u_max per record
@@ -28,7 +36,7 @@ r"""Convergence on one strip: the static throat's order, the wave at two resolut
     E(10)/E(44) = 1.28), the d = 6 merger to 55.96 (the last u its R = 44
     record covers), the fly-by to 67.6 on R = 20/28 (the outer spheres stop
     short of it), and the two vacuum controls to 70.
-(d) CONV-fz: the far-zone head-on (FARZONE-ho, the gallery's head-on row) on
+(e) CONV-fz: the far-zone head-on (FARZONE-ho, the gallery's head-on row) on
     its L = 512 box at finest dx = 1/16, 1/32, 1/64 (max_level 5 / 6 / 7, its
     params otherwise), to t = 100: the collision-axis |r Psi4^20| at R = 10 of
     the finest level packed and each neighbouring pair's difference.  A level
@@ -40,7 +48,7 @@ r"""Convergence on one strip: the static throat's order, the wave at two resolut
     level-7 peak (t = 39), E by 0.092 %, the MOTS to 0.078 % (t = 27).  So E
     converges at order 1.67, while the pointwise difference does not shrink
     over t = 36-60 (it does before and after).
-(e) The same levels' Hamiltonian constraint at t = 100, shell averages of
+(f) The same levels' Hamiltonian constraint at t = 100, shell averages of
     H_ADM outside the common MOTS (gold, its largest coordinate extent), read
     on level 4 (dx = 1/8): at t = 100 levels 6 and 7 sit within |x| < 2.5 and
     1.25 of the merged centre, so level 4 is the grid every level shares there.
@@ -56,9 +64,11 @@ and (b)/(c)/(d) through ``psi_difference``,
 (``extract_waves``).
 
 WHY: 2026-10-06, the referee: the paper had no Richardson convergence plot.
-2026-10-08: (d), the binary's own three-level set; (e), its constraints.
+2026-10-08: (e), the binary's own three-level set; (f), its constraints.
+2026-10-22: (a) as rescaled differences and (b), the momentum norm rescaled,
+the form research/WRITING_STANDARDS.md (Sec. 8) asks for.
 
-STYLE: the code-health strip, five panels on 9.4 in set at the full text
+STYLE: six panels in two rows of three on 9.4 in, set at the full text
 width (0.75 scale); a key above every frame names each line, letter tags
 level on the keys' last rows; ink for the measurements, grey for the
 references and the vacuum controls, gold only for (e)'s horizon.
@@ -76,7 +86,6 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
-from matplotlib.ticker import NullLocator  # noqa: E402
 
 from grteclyn_wrapper.visualisation.wormhole_merger import (  # noqa: E402
     plot_psi4_ligo, psi4_math, streams, style,
@@ -198,22 +207,61 @@ def draw_order(ax, pack_root) -> list:
               f"{' less t = ' + ', '.join(f'{s:g}' for s in skip) if skip else ''}: "
               f"Q = {2 ** lo:.2f}-{2 ** hi:.2f}, n = log2 Q = {lo:.3f}-{hi:.3f}")
 
-    q_line, = ax.plot(t, Q, color=style.INK, lw=0.6, marker="o", ms=2.6, zorder=3)
-    entries = [(q_line, "$Q$, levels 2/3/4")]
-    for q, n, dash in RULES:
-        rule = ax.axhline(q, color=style.MUTED, lw=0.8, ls=dash, zorder=1)
-        entries.append((rule, f"$n={n}$"))   # Q = 2^n: the ticks
+    d12, d23 = R[2] - R[3], R[3] - R[4]
+    line, = ax.plot(t, d12, color=style.INK, lw=0.6, marker="o", ms=2.6, zorder=3)
+    entries = [(line, "$R_2-R_3$")]
+    for q, n, dash in RULES:            # Q_n = 2^n for cells halved level to level
+        scaled, = ax.plot(t, q * d23, color=style.MUTED, lw=0.9, ls=dash, zorder=2)
+        entries.append((scaled, f"$Q_{n}\\,(R_3-R_4)$"))
     ax.set_yscale("log")
-    ax.set_ylim(3.3, 20.0)
-    ax.set_yticks([4, 8, 16], ["4", "8", "16"])
-    ax.yaxis.set_minor_locator(NullLocator())
     ax.set_xlim(-0.8, t[-1] + 0.8)
     ax.set_xlabel("$t$")
-    ax.set_ylabel("$(R_2-R_3)/(R_3-R_4)$")
+    ax.set_ylabel("radius differences")
     return entries
 
 
 # ------------------------------------------------------------------ (b)
+N_M = 4                     # the stencils' order: a factor 2^4 per halving of the cell
+T_M = 23.0                  # (a)'s last common dump; level 2 fails at t = 24.17
+M_STYLE = {2: dict(color=style.CONTEXT, lw=1.1),
+           3: dict(color=style.MUTED, lw=1.0, ls=(0, (4, 2))),
+           4: dict(color=style.INK, lw=1.0)}
+
+
+@functools.lru_cache(maxsize=None)
+def _momentum(pack_root: str) -> dict:
+    out = {}
+    for lev, run in LEVELS.items():
+        a = np.loadtxt(_campaign(pack_root) / HOLD / run / "constraint_norms.dat")
+        keep = (a[:, 0] > 0.0) & (a[:, 0] <= T_M + 1e-6)     # t = 0 is exactly zero
+        out[lev] = (a[keep, 0], a[keep, 2])
+    return out
+
+
+def static_momentum(pack_root):
+    """{level: (t, L2 momentum norm)} of the static throat to t = T_M."""
+    return _momentum(str(pack_root))
+
+
+def draw_momentum(ax, pack_root) -> list:
+    """Panel (b); returns its key entries."""
+    M = static_momentum(pack_root)
+    entries = []
+    for lev, (t, m) in M.items():
+        k = lev - 2
+        line, = ax.semilogy(t, m * 2.0 ** (N_M * k), zorder=3 + k, **M_STYLE[lev])
+        entries.append((line, f"level {lev}" + (f" $\\times2^{{{N_M * k}}}$" if k else "")))
+    for t0 in (2.0, 5.0, 10.0, 15.0, 20.0):
+        v = {lev: float(np.interp(t0, *M[lev])) for lev in M}
+        print(f"{TAG} (b) t = {t0:g}: |M| " + " / ".join(f"{v[x]:.3e}" for x in (2, 3, 4))
+              + f"; orders 2-3 {np.log2(v[2] / v[3]):.2f}, 3-4 {np.log2(v[3] / v[4]):.2f}")
+    ax.set_xlim(-0.8, T_M + 0.8)
+    ax.set_xlabel("$t$")
+    ax.set_ylabel(r"$L^2\,\mathcal{M}$, rescaled")
+    return entries
+
+
+# ------------------------------------------------------------------ (c)
 @functools.lru_cache(maxsize=None)
 def _psi(pack_root: str, arm: str) -> dict:
     t, modes = streams.load_mode(_campaign(pack_root) / SPIRAL[arm] / "Weyl4_mode_22.dat")
@@ -245,16 +293,16 @@ def psi_difference(pack_root, pair: str):
 
 
 def draw_wave(ax, pack_root) -> list:
-    """Panel (b); returns its key entries."""
+    """Panel (c); returns its key entries."""
     peak, t_peak = burst_peak(pack_root)
     t, y, _ = psi_pair(pack_root, "level 5", "level 5", T_LEVEL)
-    print(f"{TAG} (b) level 5 burst peak |r Psi4^22|(R = 20) = {peak:.4e} at t = {t_peak:.2f}")
+    print(f"{TAG} (c) level 5 burst peak |r Psi4^22|(R = 20) = {peak:.4e} at t = {t_peak:.2f}")
     entries = [(ax.plot(t, np.abs(y), color=style.INK, lw=0.9, zorder=3)[0], "level 5")]
     for pair, color, dash, label in (
             ("level", style.MUTED, "-", "level 4 $-$ level 5"),
             ("wave-zone", style.CONTEXT, (0, (3, 1.5)), "refined wave zone $-$ level 4")):
         td, d, pct, t_max = psi_difference(pack_root, pair)
-        print(f"{TAG} (b) {pair}: max|diff| = {d.max():.3e} at t = {t_max:.2f}, "
+        print(f"{TAG} (c) {pair}: max|diff| = {d.max():.3e} at t = {t_max:.2f}, "
               f"{pct:.4f} % of the burst peak (t <= {PAIRS[pair][2]:g})")
         line, = ax.plot(td, np.where(d > 0, d, np.nan), color=color, lw=0.7, ls=dash, zorder=2)
         entries.append((line, label))
@@ -265,7 +313,7 @@ def draw_wave(ax, pack_root) -> list:
     return entries
 
 
-# ------------------------------------------------------------------ (c)
+# ------------------------------------------------------------------ (d)
 def band_peak(w, dt: float) -> float:
     """The band integral's peak frequency: the maximum of the smoothed burst PSD."""
     f, S = psi4_math._burst_psd(w, 1.0 / dt)
@@ -318,15 +366,15 @@ def near_zone_spread(pack_root, case: str, r_min: float = 0.0) -> float:
 
 
 def draw_extraction(ax, pack_root) -> list:
-    """Panel (c); returns its key entries, wormhole and vacuum twin side by side."""
+    """Panel (d); returns its key entries, wormhole and vacuum twin side by side."""
     handles = {}
     for case, (M, u_max, E) in near_zone_energies(pack_root).items():
         label, vac = NEAR_ZONE[case][0], NEAR_ZONE[case][6]
         R = np.array(sorted(E))
         ratio = np.array([E[r] for r in R]) / E[R[-1]]
-        print(f"{TAG} (c) {case} (M = {M:g}, t - R <= {u_max:.2f}): " + "  ".join(
+        print(f"{TAG} (d) {case} (M = {M:g}, t - R <= {u_max:.2f}): " + "  ".join(
             f"E({r:g}) = {E[r]:.4e} [R/M {r / M:.2f}, {q:.4f}]" for r, q in zip(R, ratio)))
-        print(f"{TAG} (c) {case}: E(in)/E(out) = {near_zone_ratio(pack_root, case):.4f}, "
+        print(f"{TAG} (d) {case}: E(in)/E(out) = {near_zone_ratio(pack_root, case):.4f}, "
               f"spread {near_zone_spread(pack_root, case):.3f} % (all spheres), "
               f"{near_zone_spread(pack_root, case, 28.0):.3f} % (R >= 28)")
         color = style.MUTED if vac else style.INK
@@ -340,7 +388,7 @@ def draw_extraction(ax, pack_root) -> list:
     return [(handles[c], NEAR_ZONE[c][0]) for c in order]
 
 
-# ------------------------------------------------------------------ (d)
+# ------------------------------------------------------------------ (e)
 def fz_levels(pack_root) -> list[str]:
     """The CONV-fz levels packed so far, coarse to fine."""
     return [dx for dx, run in CONV_FZ if (_campaign(pack_root) / run).is_dir()]
@@ -393,7 +441,7 @@ def fz_mots_birth(pack_root) -> float:
     """The common MOTS's first dump, the same at every packed level."""
     births = {dx: min(_fz_mots(str(pack_root), dx)) for dx in fz_levels(pack_root)}
     if len(set(births.values())) > 1:
-        raise SystemExit(f"{TAG} (d) the levels' common MOTS first appear apart: {births}")
+        raise SystemExit(f"{TAG} (e) the levels' common MOTS first appear apart: {births}")
     return next(iter(births.values()))
 
 
@@ -408,26 +456,26 @@ def fz_mots_difference(pack_root, a: str, b: str):
 
 
 def draw_farzone(ax, pack_root) -> list:
-    """Panel (d); returns its key entries."""
+    """Panel (e); returns its key entries."""
     levels = fz_levels(pack_root)
     r = _fz_psi(str(pack_root), levels[-1])
     t = np.array(sorted(r))
     y = np.abs(np.array([r[x] for x in t]))
-    print(f"{TAG} (d) levels packed: {', '.join(levels)}; dx = {levels[-1]} peak "
+    print(f"{TAG} (e) levels packed: {', '.join(levels)}; dx = {levels[-1]} peak "
           f"|r Psi4^20|(R = 10) = {y.max():.4e} at t = {t[np.argmax(y)]:.2f}; common MOTS "
           f"from t = {fz_mots_birth(pack_root):g}")
     entries = [(ax.plot(t, y, color=style.INK, lw=0.9, zorder=3)[0], f"$\\Delta x={levels[-1]}$")]
     for (a, b), (color, dash) in zip(zip(levels, levels[1:]), FZ_PAIRS):
         td, d, pct, t_max = fz_psi_difference(pack_root, a, b)
         mots, t_mots = fz_mots_difference(pack_root, a, b)
-        print(f"{TAG} (d) {a} - {b}: max|diff| = {d.max():.3e} at t = {t_max:.2f}, {pct:.4f} % "
+        print(f"{TAG} (e) {a} - {b}: max|diff| = {d.max():.3e} at t = {t_max:.2f}, {pct:.4f} % "
               f"of the {b} peak; E(R = 10) {_fz_energy(str(pack_root), a):.5e} / "
               f"{_fz_energy(str(pack_root), b):.5e}, {fz_energy_difference(pack_root, a, b):.4f} %; "
               f"MOTS R, M_MS to {mots:.4f} % (t = {t_mots:g})")
         line, = ax.plot(td, np.where(d > 0, d, np.nan), color=color, lw=0.7, ls=dash, zorder=2)
         entries.append((line, f"${a}-{b}$"))
     if len(levels) == 3:
-        print(f"{TAG} (d) E(R = 10) three-level order log2[(E_{levels[0]} - E_{levels[1]}) / "
+        print(f"{TAG} (e) E(R = 10) three-level order log2[(E_{levels[0]} - E_{levels[1]}) / "
               f"(E_{levels[1]} - E_{levels[2]})] = {fz_energy_order(pack_root, *levels):.4f}")
     ax.set_yscale("log")
     ax.set_xlim(0.0, FZ_T)
@@ -436,7 +484,7 @@ def draw_farzone(ax, pack_root) -> list:
     return entries
 
 
-# ------------------------------------------------------------------ (e)
+# ------------------------------------------------------------------ (f)
 @functools.lru_cache(maxsize=None)
 def _fz_ham(pack_root: str) -> dict:
     """{dx: (r, <H_ADM>)} for the CONV-fz levels the table holds, coarse to fine."""
@@ -469,19 +517,19 @@ def fz_mots_extent(pack_root) -> float:
 
 
 def draw_constraint(ax, pack_root) -> list:
-    """Panel (e); returns its key entries."""
+    """Panel (f); returns its key entries."""
     ham = _fz_ham(str(pack_root))
     entries = []
     for dx, (r, H) in ham.items():
-        print(f"{TAG} (e) dx = {dx}: <H_ADM>(t = {FZ_T:g}) " + "  ".join(
+        print(f"{TAG} (f) dx = {dx}: <H_ADM>(t = {FZ_T:g}) " + "  ".join(
             f"{x:g}: {h:.4e}" for x, h in zip(r, H)))
         line, = ax.plot(r, -1e4 * H, zorder=3, **FZ_HAM_STYLE[dx])
         entries.append((line, f"$\\Delta x={dx}$"))
     levels = list(ham)
     for a, b in zip(levels, levels[1:]):
-        print(f"{TAG} (e) {a} vs {b}: max |H_a/H_b - 1| = {fz_ham_difference(pack_root, a, b):.3f} %")
+        print(f"{TAG} (f) {a} vs {b}: max |H_a/H_b - 1| = {fz_ham_difference(pack_root, a, b):.3f} %")
     r_mots = fz_mots_extent(pack_root)
-    print(f"{TAG} (e) the common MOTS reaches r = {r_mots:.3f} from the centre at t = {FZ_T:g}")
+    print(f"{TAG} (f) the common MOTS reaches r = {r_mots:.3f} from the centre at t = {FZ_T:g}")
     ax.axvline(r_mots, color=style.GOLD, lw=0.9, zorder=2)
     ax.annotate("MOTS", (r_mots, 0.0), xycoords=("data", "axes fraction"), xytext=(2.5, 4.0),
                 textcoords="offset points", ha="left", va="bottom", fontsize=7.5, color=style.GOLD)
@@ -499,15 +547,16 @@ def main(argv: list[str] | None = None) -> int:
     args = ap.parse_args(argv)
 
     style.prd(base=10.0)
-    fig, axes = plt.subplots(1, 5, figsize=(9.4, 2.6), constrained_layout=True,
-                             gridspec_kw={"width_ratios": (1.0, 1.05, 1.35, 0.95, 0.75)})
-    axA, axB, axC, axD, axE = axes
+    fig, axes = plt.subplots(2, 3, figsize=(9.4, 5.0), constrained_layout=True)
+    axes = list(axes.ravel())
+    axA, axB, axC, axD, axE, axF = axes
     style.legend_top(axA, draw_order(axA, args.pack_root), ncol=2)
-    style.legend_top(axB, draw_wave(axB, args.pack_root), ncol=1)
-    style.legend_top(axC, draw_extraction(axC, args.pack_root), ncol=2)
-    style.legend_top(axD, draw_farzone(axD, args.pack_root), ncol=1)
-    style.legend_top(axE, draw_constraint(axE, args.pack_root), ncol=1)
-    style.tag_keys(fig, axes, [f"({c})" for c in "abcde"], row="last")
+    style.legend_top(axB, draw_momentum(axB, args.pack_root), ncol=1)
+    style.legend_top(axC, draw_wave(axC, args.pack_root), ncol=1)
+    style.legend_top(axD, draw_extraction(axD, args.pack_root), ncol=2)
+    style.legend_top(axE, draw_farzone(axE, args.pack_root), ncol=1)
+    style.legend_top(axF, draw_constraint(axF, args.pack_root), ncol=1)
+    style.tag_keys(fig, axes, [f"({c})" for c in "abcdef"], row="last")
     problems = style.label_audit(fig)
     print(f"{TAG} label audit: {len(problems)} problem(s) {problems[:3]}")
 
