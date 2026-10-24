@@ -121,13 +121,13 @@ M-t1000, PM10-rec / -off, and PP10 at N 256 (10-24: N 192 does its job; the queu
 
 No checkpoints (on the word); frames off.
 
-| run | node / card | t (08:30 MSK 10-24) | stop | speed | ETA |
+| run | node / card | t (08:48 MSK 10-24) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `PM16_L64_N128` | 1st / 1 | 1 (solve converged at iteration 12, Ham 9.0 × 10⁻⁴ %; evolution from 08:26 MSK; params and t 0 as the paper's run, consumer writing) | 200 | two per card, ~100 u/h each | ~2 h, ~10:30 MSK |
-| `PM20_L64_N128` | 1st / 1 | 4 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | as PM16 | as PM16 |
-| `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | fresh solves (4 ranks each), launched 08:28 MSK beside PM16 / PM20 | 200 | four on the card, ~50 u/h each expected | solves ~15 min, then ~4 h: ~12:45 MSK |
-| `R0.60_L64_N128`, `R0.80_L64_N128` | 1st / 0 | fresh solves (4 ranks each), launched 08:28 MSK beside M N 256 | 200 | ~70 u/h each expected | ~3 h: ~11:45 MSK |
-| `M_L64_N256` | 1st / 0 | 164 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~18.3 u/h | ~2 h, ~10:05 MSK 10-24 |
+| `PM16_L64_N128` | 1st / 1 | 33 (solve converged at iteration 12, Ham 9.0 × 10⁻⁴ %; evolution from 08:26 MSK; params and t 0 as the paper's run, consumer writing) | 200 | four on the card, ~50 u/h each | ~3.3 h, ~12:10 MSK |
+| `PM20_L64_N128` | 1st / 1 | 36 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | as PM16 | ~3.3 h, ~12:05 MSK |
+| `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | 3 / 5 (solves converged at iteration 12, Ham 8.8 / 10.6 × 10⁻⁴ %; evolving from 08:44 MSK, consumers writing) | 200 | ~48 u/h each, ~100 once PM16 / PM20 land | ~3.7 h, ~12:30 MSK |
+| `R0.60_L64_N128`, `R0.80_L64_N128` | 1st / 0 | 3 / 3 (solves converged at iteration 12, Ham 8.7 / 8.6 × 10⁻⁴ %; evolving from 08:44 MSK, consumers writing) | 200 | ~52 u/h each | ~3.8 h, ~12:35 MSK |
+| `M_L64_N256` | 1st / 0 | 175 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~6 u/h beside R0.60 / R0.80 (18.3 alone: the card is time-shared) | ~4 h, ~12:45 MSK |
 
 ## Revision
 
