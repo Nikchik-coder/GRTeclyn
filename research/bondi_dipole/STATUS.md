@@ -121,10 +121,10 @@ from the paper: S0.75–S0.90, M-t1000, PM10-rec / -off. Launch scripts in `stag
 
 No checkpoints (on the word); frames off.
 
-| run | node / card | t (08:10 MSK 10-24) | stop | speed | ETA |
+| run | node / card | t (08:30 MSK 10-24) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `PM16_L64_N128` | 1st / 1 | fresh solve (4 ranks), launched 08:10 MSK; dry run matches the paper's run | 200 | two per card, ~100 u/h each | solve ~15 min, then ~2 h: ~10:20 MSK |
-| `PM20_L64_N128` | 1st / 1 | as PM16 | 200 | as PM16 | as PM16 |
+| `PM16_L64_N128` | 1st / 1 | 1 (solve converged at iteration 12, Ham 9.0 × 10⁻⁴ %; evolution from 08:26 MSK; params and t 0 as the paper's run, consumer writing) | 200 | two per card, ~100 u/h each | ~2 h, ~10:30 MSK |
+| `PM20_L64_N128` | 1st / 1 | 4 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | as PM16 | as PM16 |
 | `M_L64_N256` | 1st / 0 | 164 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~18.3 u/h | ~2 h, ~10:05 MSK 10-24 |
 
 ## Revision
