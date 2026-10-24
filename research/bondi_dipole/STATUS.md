@@ -97,7 +97,7 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | `M_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done**: the minimum lapse moves −1.48 × 10⁻⁴ by t 200 (N 128 −1.47), the peak field +0.001 % (N 128's −0.13 % was numerical); constraints at order 2.8–2.9 inside r < 24 (N 128→192); `09_convergence/` |
 | `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | the solve stopped at its floor, Ham 2.51 × 10⁻⁴ % against the Δx⁴-scaled 1.25 × 10⁻⁴ % (N 192's accepted 3.9 × 10⁻⁴ %), and the gate rejected it; the evolution runs from its data (`11_initial_data/M_L64_N256_initial_data`) (Live) |
 | `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | **done**: d 9.98 at t 200, 10.84 at t 400 (the paper's run 10.00, 11.74); a 1.06 × 10⁻⁴ over 133–266 and 0.82 × 10⁻⁴ over 300–400 (the paper's 1.45, 1.42), falling as the stars lose 5.9 % of their matter by t 400, which is numerical (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256); no NaN; frames; `04_runaway/` |
-| PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 **done**: a d0² is 0.994 and 1.009 of PM10's (a ∝ d0^−1.97 over d0 8–12, N 128); `05_separation/`; PM16, PM20 queued (hold) |
+| PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 **done**: a d0² is 0.994 and 1.009 of PM10's (a ∝ d0^−1.97 over d0 8–12, N 128); `05_separation/`; PM16, PM20 running (Live) |
 | E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
 | R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | queued; no `launch_config.sh` packed: rebuild from `runs/bondi/00_archive/superseded_2026-10-23/01_star_family` |
@@ -107,15 +107,18 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 
 Queued: about 20 GPU-h, one night on the three cards. Decided 2026-10-23: the pair ends with PM10-t400 and the
 large box; PM10-rec / -off are dropped. **Hold (decided 2026-10-23, 23:35 MSK): no new launches.** The four live
-runs finish and are packed as they land; the rest of the queue waits for the word.
+runs finish and are packed as they land; the rest of the queue waits for the word. PM16 and PM20 launched on the
+word, 10-24 08:10 MSK.
 
 ## Live
 
 No checkpoints (on the word); frames off.
 
-| run | node / card | t (07:55 MSK 10-24) | stop | speed | ETA |
+| run | node / card | t (08:10 MSK 10-24) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `M_L64_N256` | 1st / 0 | 159 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~18.3 u/h | ~2.2 h, ~10:10 MSK 10-24 |
+| `PM16_L64_N128` | 1st / 1 | fresh solve (4 ranks), launched 08:10 MSK; dry run matches the paper's run | 200 | two per card, ~100 u/h each | solve ~15 min, then ~2 h: ~10:20 MSK |
+| `PM20_L64_N128` | 1st / 1 | as PM16 | 200 | as PM16 | as PM16 |
+| `M_L64_N256` | 1st / 0 | 164 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~18.3 u/h | ~2 h, ~10:05 MSK 10-24 |
 
 ## Revision
 
