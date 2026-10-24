@@ -128,7 +128,7 @@ No checkpoints (on the word); frames on.
 
 | run | node / card | t (17:20 MSK 10-24) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `M_L64_N192_t1000` | 1st / 0 | starting (M N 192's data, no solve; launched 17:19 MSK; 20 GB on the card) | 1000 | ~50 u/h expected, alone on the card | ~20 h, ~13:20 MSK 10-25 |
+| `M_L64_N192_t1000` | 1st / 0 | 3 (M N 192's data, no solve; launched 17:19 MSK; its first rows and constraints match M N 192's to every digit; frame 0 as the paper's t 1000 run; the consumer takes ~1 min per plotfile, one every ~4.3 min; 20 GB on the card) | 1000 | ~56 u/h, alone on the card | ~17.8 h, ~11:10 MSK 10-25 |
 | `PM10-rec_L64_N192_t1000` | 2nd / 0 | 382 (PM10 N 192's data, no solve; launched 09:22 MSK; five shifts, the box 10 units on by t 376.7, each clean; no NaN; the consumer at t 267, left to lag: ~800 GB free on the second node) | 1000 | ~51 u/h | evolution ~12.2 h, ~05:10 MSK 10-25; the consumer's drain ~9 h more, ~14:00 MSK |
 
 ## Revision
