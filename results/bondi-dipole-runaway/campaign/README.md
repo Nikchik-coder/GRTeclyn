@@ -12,13 +12,15 @@ and scrubs absolute paths. Plotfiles, the initial-data file, frames and movies s
 
 | folder | cells |
 |---|---|
+| `02_lone_star/` | the positive-mass star alone at the box centre (`P_L64_N128`) to t 200 |
+| `03_same_sign/` | the swapped pair and the same-sign pairs (`MP10_L64_N128`, `PP10_L64_N128`, `MM10_L64_N128`) to t 200; PP10 and MM10 with frames |
 | `04_runaway/` | PM10 carried to t 400 (`PM10_L64_N128_t400`) and PM10 in the L 128 box (`PM10_L128_N256`), both with frames |
-| `05_separation/` | the mixed pair at d0 8 and 12 (`PM8_L64_N128`, `PM12_L64_N128`) to t 200 |
-| `06_mass/` | PM10 with the negative-mass star at ω 0.88 and 0.804, \|M₋\|/M₊ 0.60 and 0.80 (`R0.60_L64_N128`, `R0.80_L64_N128`), to t 200 |
+| `05_separation/` | the mixed pair at d0 8, 12, 16 and 20 (`PM8_L64_N128`, `PM12_L64_N128`, `PM16_L64_N128`, `PM20_L64_N128`) to t 200 |
+| `06_mass/` | the unequal-mass pairs, PM10 with one star at ω 0.88, 0.804 (negative) or 0.81 (positive) (`R0.60_L64_N128`, `R0.80_L64_N128`, `R1.33_L64_N128`), and the mass-matched pairs at d0 20 (`E0.64_L64_N128`, `E1.34_L64_N128`, `E1.57_L64_N128`), to t 200 |
 | `09_convergence/` | PM10 (`PM10_L64_N128`, `PM10_L64_N192`, `PM10_L64_N256`) and M (`M_L64_N128`, `M_L64_N192`, `M_L64_N256`) to t 200 |
 
-The other groups (`01_star_family/` … `08_late_separation/`) come back as their reruns finish; the list and its
-state are in `research/bondi_dipole/STATUS.md`, "Runs for the revision".
+Every run the revision keeps is here; `01_star_family/`, `07_numerics/` and `08_late_separation/` stay empty (their
+runs were dropped 2026-10-23/24, see `research/bondi_dipole/STATUS.md`, "Runs for the revision").
 
 ## How to read a cell name
 
