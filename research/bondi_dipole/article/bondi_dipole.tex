@@ -77,7 +77,7 @@ Nothing in the Einstein equations requires mass to be positive. Positivity of th
 
 The question also has observational interest. Negative-mass binaries have been proposed as sources of anomalous gravitational-wave signals, such as anti-chirps, dispersal and runaway motion, which detectors could use to exclude them~\cite{trivedi_loeb2026}. Nojiri and Odintsov~\cite{nojiri2026} find that a bound positive--negative system can form around a compact mass in a cosmological fluid with a negative cosmological constant. We study the complementary case of an isolated, asymptotically flat pair.
 
-In this paper we realize Bondi's sign structure with two complex scalar fields that obey the same field equation, one of which enters the Einstein equations with a negative sign (Sec.~\ref{sec:model}). Both fields form solitonic boson stars, bound by their own self-interaction, which we construct as constraint-satisfying initial data (Sec.~\ref{sec:initialdata}). We evolve them with \texttt{GRTeclyn}~\cite{grteclyn}, the GPU port of \texttt{GRChombo}~\cite{grchombo} built on AMReX~\cite{amrex}, in 34 simulations that include same-sign pairs and isolated stars as controls. The simulations cover head-on pairs released from rest in the weak-field regime, evolved to $t=200$ at up to three resolutions, with longer runs to $t=400$ for a pair and $t=1000$ for an isolated star. Section~\ref{sec:setup} gives the numerical methods, the diagnostics and the five predictions of Bondi's argument that we test; Sec.~\ref{sec:results} gives the results, Sec.~\ref{sec:weyl} the gravitational radiation, Sec.~\ref{sec:caveats} the systematic checks, and Sec.~\ref{sec:discussion} our conclusions. We use units with $G=c=1$ and scalar mass $m=1$.
+In this paper we realize Bondi's sign structure with two complex scalar fields that obey the same field equation, one of which enters the Einstein equations with a negative sign (Sec.~\ref{sec:model}). Both fields form solitonic boson stars, bound by their own self-interaction, which we construct as constraint-satisfying initial data (Sec.~\ref{sec:initialdata}). We evolve them with \texttt{GRTeclyn}~\cite{grteclyn}, the GPU port of \texttt{GRChombo}~\cite{grchombo} built on AMReX~\cite{amrex}, in 34 simulations that include same-sign pairs and isolated stars as controls. The simulations cover head-on pairs released from rest in the weak-field regime, evolved to $t=200$ at up to three resolutions, with a longer run to $t=400$ for a pair. Section~\ref{sec:setup} gives the numerical methods, the diagnostics and the five predictions of Bondi's argument that we test; Sec.~\ref{sec:results} gives the results, Sec.~\ref{sec:weyl} the gravitational radiation, Sec.~\ref{sec:caveats} the systematic checks, and Sec.~\ref{sec:discussion} our conclusions. We use units with $G=c=1$ and scalar mass $m=1$.
 
 \section{The model}
 \label{sec:model}
@@ -228,7 +228,7 @@ PM10-L128 & as PM10, $L=128$ ($\Delta x=0.50$) & 256 & 200 & domain size; wave e
 PP10 & two positive-mass stars, $d_0=10$ & 128, 192, 256 & 200 & same-sign control \\
 MM10 & two negative-mass stars, $d_0=10$ & 128 (two runs), 192 & 200 & same-sign control \\
 P & isolated positive-mass star at the centre of the domain & 128 & 200 & isolated control \\
-M, M-t1000 & isolated negative-mass star, 5 units off centre & 128 & 200, 1000 & isolated control \\
+M & isolated negative-mass star, 5 units off centre & 128 & 200 & isolated control \\
 S0.75--S0.90 & isolated positive-mass stars with $\omega=0.75$, 0.80, 0.85, 0.90 & 128 & 120 & stationarity of the stars \\
 \end{tabular}
 \end{ruledtabular}
@@ -286,7 +286,6 @@ PP10, all $N$; MM10, all $N$ & largest centroid displacement & $7.8\times10^{-4}
 P; M & largest core displacement over $t\le200$ & $1.8\times10^{-3}$; $1.6\times10^{-3}$ & 0 \\
 PM10-L128 & exponent of $|\Psi_4|_{\ell=2}(R)$ & $-4.8$ & $-1$ if radiative \\
 PM10-L128; -tol; -AMR; -$\eta$2 & change of $\Delta X(200)$ from PM10 at $N=128$ & $-4.2\%$; $+0.0015\%$; $+0.0008\%$; $-0.007\%$ & 0 \\
-M-t1000 & decay of the peak field per 100 time units & $0.63\%$ & -- \\
 \end{tabular}
 \end{ruledtabular}
 \end{table*}
@@ -339,8 +338,6 @@ Do pairs without a mass dipole stay at rest (test~v)? An isolated star moves its
 The same-sign pairs merge, PP10 at $t=33.6$ and MM10 at $t=32.8$ (Fig.~\ref{fig:samesign}a). Gravity attracts the two positive masses and repels the two negative ones (Fig.~\ref{fig:schematic}), so if gravity set the timescale, PP10 would merge while MM10 flew apart. The stars are instead pulled together by their shared field (Sec.~\ref{sec:model}). The required strength is consistent with this: Newtonian free fall from $d=10$ at these masses takes $t\approx207$, so merging at $t\approx33$ requires a force about 35 to 40 times that of gravity. Through infall, merger and the oscillations that follow, the centroids of both same-sign pairs move by less than $8\times10^{-4}$ at every resolution, four orders of magnitude below $\Delta X$ (Fig.~\ref{fig:samesign}b). The merged objects keep the sign of $\chi-1$, with $\min\chi=0.979$ for PP10 and $\max\chi=1.011$ for MM10.
 
 The same comparison shows that the field attraction is absent from the mixed pair, whose two stars are different fields with no coupling. At $d_0=10$, where same-field pairs merge within $t\approx33$, the separation of the mixed pair stays constant to $1\%$ for $t\le200$; even a few percent of a force 35 times gravity would have changed $d$ by much more than $1\%$. The mixed pair's acceleration also falls as a power of the separation, whereas an overlap force falls exponentially, and it follows the partner's ADM mass (Sec.~\ref{sec:scaling}), on which a force through the field does not depend.
-
-The isolated negative-mass star evolved to $t=1000$ (M-t1000) reproduces M up to $t=200$ and then neither collapses nor disperses. Its peak field amplitude decreases linearly, by $0.63\%$ per 100 time units after $t\approx200$, while its rms radius grows from $4.41$ to $4.83$ and the minimum of $\chi$ stays above 1. The star slowly relaxes outward; we quote this decay rate for the evolved time, not as a statement about stability at later times.
 
 \subsection{Each star follows its partner's mass}
 \label{sec:scaling}
@@ -405,7 +402,7 @@ At $N=128$ the separation grows after $t\approx200$: it reaches $11.8$ at $t=400
 
 We evolved Bondi's pair of positive and negative active mass as a full initial-value problem in $3{+}1$ numerical relativity, with two complex scalar fields that differ only in the sign with which they source the Einstein equations. Released from rest, a pair with equal $|M_{\rm ADM}|$ accelerates as a single object, at a constant rate and constant separation, while its total signed momentum stays zero. The acceleration follows Bondi's Newtonian law in both separation and mass, each star responds to its partner's mass, and exchanging the two stars reverses the motion. The same-sign pairs and the isolated stars, which have no mass dipole, stay at rest.
 
-We detect no gravitational radiation: the signed mass dipole stays constant, the second time derivative of the quadrupole is constant, and every extraction sphere lies in the near zone. The negative-mass star exists as constraint-satisfying, asymptotically flat initial data. It neither collapses nor disperses over the evolved time, 400 time units in a pair and 1000 alone, although it slowly relaxes outward.
+We detect no gravitational radiation: the signed mass dipole stays constant, the second time derivative of the quadrupole is constant, and every extraction sphere lies in the near zone. The negative-mass star exists as constraint-satisfying, asymptotically flat initial data. It neither collapses nor disperses over the evolved time, 400 time units in a pair and 200 alone.
 
 These results hold for head-on pairs released from rest, in the weak-field regime (compactness $3\times10^{-3}$), at speeds up to $0.06c$, and over the evolved times. Two extensions follow. Releases with a transverse offset would test whether the pair is stable against sideways perturbations. Relativistic speeds would test the question that motivates this configuration: the pair's total mass is only $0.4\%$ of either star's, and no positive-mass theorem bounds the energy it could radiate. Here the speed is limited by the resolution rather than by the length of the run, so that measurement needs finer grids; near $0.3c$ it would provide a concrete source for the signals proposed in Ref.~\cite{trivedi_loeb2026}. Our results do not address whether such matter exists.
 

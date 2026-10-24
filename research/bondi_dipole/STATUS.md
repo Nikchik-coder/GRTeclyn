@@ -98,18 +98,24 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | the solve stopped at its floor, Ham 2.51 × 10⁻⁴ % against the Δx⁴-scaled 1.25 × 10⁻⁴ % (N 192's accepted 3.9 × 10⁻⁴ %), and the gate rejected it; the evolution runs from its data (`11_initial_data/M_L64_N256_initial_data`) (Live) |
 | `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | **done**: d 9.98 at t 200, 10.84 at t 400 (the paper's run 10.00, 11.74); a 1.06 × 10⁻⁴ over 133–266 and 0.82 × 10⁻⁴ over 300–400 (the paper's 1.45, 1.42), falling as the stars lose 5.9 % of their matter by t 400, which is numerical (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256); no NaN; frames; `04_runaway/` |
 | PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 **done**: a d0² is 0.994 and 1.009 of PM10's (a ∝ d0^−1.97 over d0 8–12, N 128); `05_separation/`; PM16, PM20 running (Live) |
-| E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
+| E0.64, E1.34, E1.57 (d0 20; `E0.64_L64_N128`, …) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | go 10-24, no checkpoints; the old error ∝ ω² differed between them |
+| MP10 (`MP10_L64_N128`) | test iv: the motion reverses when the two stars are swapped | 64 | 128 | 200 | 1 | go 10-24, no checkpoints |
+| PP10 (`PP10_L64_N128`, `_N192`, `_N256`) | test v: a same-sign pair stays at rest; Fig. same-sign (N 256 with frames, its movie), Fig. constraints | 64 | 128, 192, 256 | 200 | 16 | go 10-24, no checkpoints; tolerance 0.002 at every N, as the paper's runs |
+| MM10 (`MM10_L64_N128`, `_N192`) | test v; Fig. same-sign (N 128 with frames, its movie) | 64 | 128, 192 | 200 | 5 | go 10-24, no checkpoints; one N 128 run with frames for the paper's two |
+| PM10-tol, PM10-AMR, PM10-η2 (`PM10-tol_L64_N128`, …) | Table II: ΔX(200) against a 10× tighter solve tolerance, one refinement level, doubled shift damping | 64 | 128 | 200 | 4 | go 10-24, no checkpoints |
 | R0.60, R0.80, R1.33 (`R0.60_L64_N128`, …) | each star follows its partner's mass | 64 | 128 | 200 | 3 | go 10-24, no checkpoints: R0.60 + R0.80 on card 0 when M N 256 ends (~10:05 MSK), R1.33 with P on card 1 when PM16 / PM20 end (~10:20); scripts in `staging/`, dry runs match the paper's runs |
 | `P_L64_N128` (P) | the isolated positive-mass star (ω 0.75) at the centre: test v, Sec. III A | 64 | 128 | 200 | 1 | go 10-24, no checkpoints: with R1.33 on card 1 (~10:20 MSK); script in `staging/`, dry run matches the paper's run |
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | dropped 2026-10-24: P backs the positive star instead (the M convergence covers the negative one) |
 | `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: the stars move as in the L 64 box: the cores' ΔX(200) is +0.2 % from PM10 N 128 and their separation the same (10.07); the whole-domain barycentres' ΔX moves −4.8 % (the paper's −4.2 %) because they take in the field the stars shed, which the larger box keeps; |Ψ4|ₗ₌₂ ∝ R^−4.7 (the paper's −4.8), R|Ψ4| falls ×30 over R 16–40 (31); no NaN; frames; `04_runaway/` |
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
-| M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | optional, only if the text keeps that sentence |
+| M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | dropped 2026-10-24; its text is out of the article |
 
 Queued: about 20 GPU-h, one night on the three cards. Decided 2026-10-23: the pair ends with PM10-t400 and the
 large box; PM10-rec / -off are dropped. **Hold (decided 2026-10-23, 23:35 MSK): no new launches.** The four live
-runs finish and are packed as they land; the rest of the queue waits for the word. PM16 and PM20 launched on the
-word, 10-24 08:10 MSK; R0.60, R0.80, R1.33 and P have the go and start as the cards free. E and M-t1000 wait.
+runs finish and are packed as they land. PM16 and PM20 launched on the word, 10-24 08:10 MSK. **Decided 2026-10-24:
+every simulation the paper keeps is rerun.** R, P, E, MP10, PP10, MM10 and PM10-tol / -AMR / -η2 have the go (~33
+GPU-h, no checkpoints) and start as the cards free, N 128 two per card, one 512³ solve at a time (221 GB). Dropped
+from the paper: S0.75–S0.90, M-t1000, PM10-rec / -off. Launch scripts in `staging/`, each from its v1 cell.
 
 ## Live
 
@@ -154,6 +160,10 @@ an outside-reader pass (~60 findings applied) and a redundancy pass (text 6608 �
       numerical loss (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256).
 - [ ] S0.75–S0.90 leave Table I (dropped 2026-10-24); Sec. III A's stationarity of the stars and test v rest on P
       (the positive star at the centre) and M (the negative star off centre).
+- [x] M-t1000 out of the article (2026-10-24): the introduction's longer runs, Table I's M row, Table II's decay
+      row, its results paragraph, and the conclusions' "1000 alone, although it slowly relaxes outward".
+- [ ] Table I's caption "The 34 simulations": recount when the reruns land (S0.75–S0.90, M-t1000, PM10-rec / -off
+      dropped; M at N 192 and 256 added; MM10 at N 128 is one run).
 - [ ] Notation table (~20 symbols, WRITING_STANDARDS §2): decide whether it is worth the space.
 - [ ] Strip all TODO comments before the arXiv upload.
 
