@@ -99,8 +99,9 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | **done**: d 9.98 at t 200, 10.84 at t 400 (the paper's run 10.00, 11.74); a 1.06 × 10⁻⁴ over 133–266 and 0.82 × 10⁻⁴ over 300–400 (the paper's 1.45, 1.42), falling as the stars lose 5.9 % of their matter by t 400, which is numerical (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256); no NaN; frames; `04_runaway/` |
 | PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 **done**: a d0² is 0.994 and 1.009 of PM10's (a ∝ d0^−1.97 over d0 8–12, N 128); `05_separation/`; PM16, PM20 running (Live) |
 | E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
-| R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
-| S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | queued; no `launch_config.sh` packed: rebuild from `runs/bondi/00_archive/superseded_2026-10-23/01_star_family` |
+| R0.60, R0.80, R1.33 (`R0.60_L64_N128`, …) | each star follows its partner's mass | 64 | 128 | 200 | 3 | go 10-24, no checkpoints: R0.60 + R0.80 on card 0 when M N 256 ends (~10:05 MSK), R1.33 with P on card 1 when PM16 / PM20 end (~10:20); scripts in `staging/`, dry runs match the paper's runs |
+| `P_L64_N128` (P) | the isolated positive-mass star (ω 0.75) at the centre: test v, Sec. III A | 64 | 128 | 200 | 1 | go 10-24, no checkpoints: with R1.33 on card 1 (~10:20 MSK); script in `staging/`, dry run matches the paper's run |
+| S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | dropped 2026-10-24: P backs the positive star instead (the M convergence covers the negative one) |
 | `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: the stars move as in the L 64 box: the cores' ΔX(200) is +0.2 % from PM10 N 128 and their separation the same (10.07); the whole-domain barycentres' ΔX moves −4.8 % (the paper's −4.2 %) because they take in the field the stars shed, which the larger box keeps; |Ψ4|ₗ₌₂ ∝ R^−4.7 (the paper's −4.8), R|Ψ4| falls ×30 over R 16–40 (31); no NaN; frames; `04_runaway/` |
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
 | M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | optional, only if the text keeps that sentence |
@@ -108,7 +109,7 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 Queued: about 20 GPU-h, one night on the three cards. Decided 2026-10-23: the pair ends with PM10-t400 and the
 large box; PM10-rec / -off are dropped. **Hold (decided 2026-10-23, 23:35 MSK): no new launches.** The four live
 runs finish and are packed as they land; the rest of the queue waits for the word. PM16 and PM20 launched on the
-word, 10-24 08:10 MSK.
+word, 10-24 08:10 MSK; R0.60, R0.80, R1.33 and P have the go and start as the cards free. E and M-t1000 wait.
 
 ## Live
 
@@ -151,6 +152,8 @@ an outside-reader pass (~60 findings applied) and a redundancy pass (text 6608 �
       rests on PM10-t400 alone: at N 128 d is 9.98 at t 200 and 10.84 at t 400 (text: 11.8), a falls from
       1.06 × 10⁻⁴ (133–266) to 0.82 × 10⁻⁴ (300–400), and the stars lose 5.9 % of their matter by t 400, a
       numerical loss (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256).
+- [ ] S0.75–S0.90 leave Table I (dropped 2026-10-24); Sec. III A's stationarity of the stars and test v rest on P
+      (the positive star at the centre) and M (the negative star off centre).
 - [ ] Notation table (~20 symbols, WRITING_STANDARDS §2): decide whether it is worth the space.
 - [ ] Strip all TODO comments before the arXiv upload.
 
