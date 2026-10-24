@@ -244,8 +244,8 @@ Learned on the spinning paper's submission (2026-10-21):
   `\documentclass` with a wall of "Undefined control sequence". Select "pdflatex" by hand before processing.
 - The arXiv scanner's "missing files: Latin Modern Roman/Sans/Mono" warning is a false positive from the
   fontspec branch of the articles' engine guard; ignore it.
-- arXiv limits the account to 2 submissions per calendar month (October 2026's quota is used up by the merger
-  replacement and the spinning paper).
+- arXiv limits the account to 2 new submissions per calendar month; replacements do not count (2026-10-24: the
+  merger paper's v2 went through after October's two, the merger v1 and the spinning paper).
 - When the arXiv number arrives, put it into the root README's papers table, `CITATION.cff`, the paper's
   `results/<pack>/README.md` and the GitHub release notes. Spinning paper: arXiv:2610.29941 (submitted
   2026-10-21, announced 2026-10-22), release `v1.0-spinning-wormhole` (develop c80875eb), version DOI
@@ -277,6 +277,12 @@ Learned on the spinning paper's submission (2026-10-21):
 - No machine identity in tracked files (user, host, home paths): the `pre-commit`
   hook (`grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook`) blocks
   it. Say "the first/second GPU node", never the hostname.
+- **Branches** (2026-10-24): **`trunk` is the working mainline**, with everything, `research/` included. Start
+  every feature or fix branch from `trunk` and merge it back when it is done; `feature/spinning` and
+  `feature/fix_merger` are merged into it, and `feature/fix_bondi` goes in when it finishes. `develop` is the
+  public release line and GitHub's default: at each release it gets `trunk` without `research/` and without
+  unpublished results such as `results/matter-first-…/` (the "Merge … into develop, without research/" commits).
+  Never branch from `develop`, and never let `research/` reach it.
 - Several sessions may share this working tree: **stage explicit paths**, never `git add -A`.
 - **Push to `myfork`, never `origin`** (2026-10-10): `origin` is upstream GRTLCollaboration (and its
   https URL has no credentials here); the working remote is the SSH fork `myfork`. Every push and
