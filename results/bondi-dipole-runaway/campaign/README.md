@@ -12,7 +12,7 @@ and scrubs absolute paths. Plotfiles, the initial-data file, frames and movies s
 
 | folder | cells |
 |---|---|
-| `04_runaway/` | PM10 carried to t 400 (`PM10_L64_N128_t400`), with frames |
+| `04_runaway/` | PM10 carried to t 400 (`PM10_L64_N128_t400`) and PM10 in the L 128 box (`PM10_L128_N256`), both with frames |
 | `05_separation/` | the mixed pair at d0 8 and 12 (`PM8_L64_N128`, `PM12_L64_N128`) to t 200 |
 | `09_convergence/` | PM10 (`PM10_L64_N128`, `PM10_L64_N192`, `PM10_L64_N256`) and M (`M_L64_N128`, `M_L64_N192`) to t 200; M at N 256 joins when it finishes |
 

@@ -18,7 +18,7 @@ Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `fea
   no convergence test), no invitation to resubmit. The reports are kept locally only, in `referee/` (git-excluded).
 - Next: EPJC (open access through SCOAP3; confirm it charges no APC), fallback IJMPD.
 
-## Current status (2026-10-23, 23:30 MSK)
+## Current status (2026-10-24, 08:00 MSK)
 
 The paper's simulations carry a numerical error that changes its numbers: the evolution integrated in time at first
 order instead of fourth (below). It is fixed and verified, and the paper is being rerun on the fixed code and fixed
@@ -101,7 +101,7 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
 | R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | queued; no `launch_config.sh` packed: rebuild from `runs/bondi/00_archive/superseded_2026-10-23/01_star_family` |
-| `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | the pair's last run: evolving on card 1 (Live); frames with the slice cache, the whole box |
+| `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: ΔX(200) 2.520, −4.8 % from PM10 N 128 in the L 64 box (the paper's run −4.2 %); d dips to 9.30 at t 100 and is 9.48 at t 200 (L 64: 9.83, 9.98); |Ψ4|ₗ₌₂ falls as R^−3.7 over R 16–40, as the paper's run does by the same measure; no NaN; frames; `04_runaway/` |
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
 | M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | optional, only if the text keeps that sentence |
 
@@ -111,13 +111,11 @@ runs finish and are packed as they land; the rest of the queue waits for the wor
 
 ## Live
 
-No checkpoints (on the word); frames off except PM10_L128_N256 (frames and the slice cache, the whole box, no
-zoom; decided 2026-10-23).
+No checkpoints (on the word); frames off.
 
-| run | node / card | t (00:30 MSK 10-24) | stop | speed | ETA |
+| run | node / card | t (07:55 MSK 10-24) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `PM10_L128_N256` | 1st / 1 | 3 (the solve converged at iteration 12, Ham 8.4 × 10⁻⁴ % against 2 × 10⁻³ %; evolution from 00:23 MSK; t 0 matches PM10 N 128 at the same Δx; frame 0 checked; consumer ~83 s per plotfile against one every 81 s, keeps up within a few plotfiles) | 200 | ~35.6 u/h | ~5.5 h, ~06:00 MSK 10-24 |
-| `M_L64_N256` | 1st / 0 | 16 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~18 u/h | ~10.8 h, ~10:10 MSK 10-24 |
+| `M_L64_N256` | 1st / 0 | 159 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~18.3 u/h | ~2.2 h, ~10:10 MSK 10-24 |
 
 ## Revision
 
