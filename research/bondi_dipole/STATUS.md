@@ -95,22 +95,22 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | `PM10_L64_N256` | the headline; frames, figure and movie | 64 | 256 | 200 | 11 | **done**: ΔX(200) 2.874, a(5–200) 1.451 × 10⁻⁴ (order 4.4 / 4.2 with N 128, 192); `09_convergence/` |
 | `M_L64_N128` | the lone star sits still; convergence | 64 | 128 | 200 | 1 | **done**: `09_convergence/` |
 | `M_L64_N192` | convergence | 64 | 192 | 200 | 4 | **done**: the minimum lapse moves −1.48 × 10⁻⁴ by t 200 (N 128 −1.47), the peak field +0.001 % (N 128's −0.13 % was numerical); constraints at order 2.8–2.9 inside r < 24 (N 128→192); `09_convergence/` |
-| `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | the solve stopped at its floor, Ham 2.51 × 10⁻⁴ % against the Δx⁴-scaled 1.25 × 10⁻⁴ % (N 192's accepted 3.9 × 10⁻⁴ %), and the gate rejected it; the evolution runs from its data (`11_initial_data/M_L64_N256_initial_data`) (Live) |
+| `M_L64_N256` | convergence | 64 | 256 | 200 | 11 | **done** (from its rejected solve's data, `11_initial_data/M_L64_N256_initial_data`: the solve stopped at its floor, Ham 2.51 × 10⁻⁴ %): the minimum lapse moves −1.49 × 10⁻⁴ by t 200 (N 192 −1.48), the peak field +0.003 %, the core 2.83 × 10⁻³ (N 192 2.84); around the star (r < 12) Ham converges at order 3.4 / 3.7 and Mom at 3.0 / 3.8 (medians, N 128→192 / 192→256); in 12 ≤ r < 24 Ham is the same at all three N after t 30, so over r < 24 the 192→256 Ham order falls from 3.7 at t 10 to 0.8 at t 200; no NaN; `09_convergence/` |
 | `PM10_L64_N128_t400` (PM10-t400) | PM10 carried to t 400: constant a; Fig. trajectories (b) | 64 | 128 | 400 | 2 | **done**: d 9.98 at t 200, 10.84 at t 400 (the paper's run 10.00, 11.74); a 1.06 × 10⁻⁴ over 133–266 and 0.82 × 10⁻⁴ over 300–400 (the paper's 1.45, 1.42), falling as the stars lose 5.9 % of their matter by t 400, which is numerical (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256); no NaN; frames; `04_runaway/` |
 | PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 **done**: a d0² is 0.994 and 1.009 of PM10's (a ∝ d0^−1.97 over d0 8–12, N 128); `05_separation/`; PM16, PM20 running (Live) |
 | E0.64, E1.34, E1.57 (d0 20; `E0.64_L64_N128`, …) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | running (Live), launched 10-24 08:58 MSK on card 1, no checkpoints; the old error ∝ ω² differed between them |
-| MP10 (`MP10_L64_N128`) | test iv: the motion reverses when the two stars are swapped | 64 | 128 | 200 | 1 | go 10-24, no checkpoints; card 0 when it frees (~12:45 MSK) |
-| PP10 (`PP10_L64_N128`) | test v: a same-sign pair stays at rest; Fig. same-sign (with frames, its movie), Fig. constraints | 64 | 128 | 200 | 1 | go 10-24, no checkpoints; card 0 when it frees; N 192 and 256 dropped 10-24 (a check, not a convergence study) |
-| MM10 (`MM10_L64_N128`) | test v; Fig. same-sign (with frames, its movie) | 64 | 128 | 200 | 1 | go 10-24, no checkpoints; card 0 when it frees; one run with frames for the paper's two N 128 runs; N 192 dropped 10-24 |
+| MP10 (`MP10_L64_N128`) | test iv: the motion reverses when the two stars are swapped | 64 | 128 | 200 | 1 | running (Live), launched 10-24 12:25 MSK on card 0, no checkpoints |
+| PP10 (`PP10_L64_N128`) | test v: a same-sign pair stays at rest; Fig. same-sign (with frames, its movie), Fig. constraints | 64 | 128 | 200 | 1 | running (Live), launched 10-24 12:25 MSK on card 0, no checkpoints; N 192 and 256 dropped 10-24 (a check, not a convergence study) |
+| MM10 (`MM10_L64_N128`) | test v; Fig. same-sign (with frames, its movie) | 64 | 128 | 200 | 1 | running (Live), launched 10-24 12:25 MSK on card 0, no checkpoints; one run with frames for the paper's two N 128 runs; N 192 dropped 10-24 |
 | PM10-tol, PM10-AMR, PM10-η2 | Table II: ΔX(200) against a tighter solve tolerance, one refinement level, doubled shift damping | 64 | 128 | 200 | 4 | dropped 2026-10-24: numerics checks (in v1 each moved ΔX(200) by < 0.01 %) |
-| R0.60, R0.80, R1.33 (`R0.60_L64_N128`, …) | each star follows its partner's mass | 64 | 128 | 200 | 3 | running (Live), launched 10-24 08:28 MSK, no checkpoints; dry runs matched the paper's runs |
+| R0.60, R0.80, R1.33 (`R0.60_L64_N128`, …) | each star follows its partner's mass | 64 | 128 | 200 | 3 | R0.60, R0.80 **done**: the positive star's pull C (its partner changed) is 0.610 and 0.806 of PM10's at N 128 (predicted 0.600, 0.803; the paper's runs 0.618, 0.810), the negative star's (partner unchanged) 1.034 and 1.006 (1.028, 1.011); d(200) − d0 −1.20 and −0.56 (−1.38, −0.59); no NaN; `06_mass/`. R1.33 running (Live) |
 | `P_L64_N128` (P) | the isolated positive-mass star (ω 0.75) at the centre: test v, Sec. III A | 64 | 128 | 200 | 1 | running (Live), launched 10-24 08:28 MSK, no checkpoints; dry run matched the paper's run |
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | dropped 2026-10-24: P backs the positive star instead (the M convergence covers the negative one) |
 | `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: the stars move as in the L 64 box: the cores' ΔX(200) is +0.2 % from PM10 N 128 and their separation the same (10.07); the whole-domain barycentres' ΔX moves −4.8 % (the paper's −4.2 %) because they take in the field the stars shed, which the larger box keeps; |Ψ4|ₗ₌₂ ∝ R^−4.7 (the paper's −4.8), R|Ψ4| falls ×30 over R 16–40 (31); no NaN; frames; `04_runaway/` |
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
 | M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | dropped 2026-10-24; its text is out of the article |
 
-Queued: MP10, PP10 and MM10 at N 128 (~3 GPU-h), for card 0 when M N 256 and R0.60 / R0.80 land (~12:45 MSK).
+Queue empty: MP10, PP10 and MM10 launched 10-24 12:25 MSK on card 0, when M N 256 and R0.60 / R0.80 landed.
 Decided 2026-10-23: the pair ends with PM10-t400 and the large box (PM10-rec / -off dropped). **Decided 2026-10-24:
 every simulation the paper keeps is rerun**, no checkpoints, as the cards free; the same-sign pairs and the numerics
 are checks, not a convergence study. Dropped from the paper: S0.75–S0.90, M-t1000, PM10-rec / -off, PM10-tol / -AMR /
@@ -124,17 +124,16 @@ stop, plot interval and treadmill keys differ from PM10 N 192.
 
 ## Live
 
-No checkpoints (on the word); frames off.
+No checkpoints (on the word); frames only on PP10, MM10 and the chase.
 
-| run | node / card | t (08:48 MSK 10-24) | stop | speed | ETA |
+| run | node / card | t (12:25 MSK 10-24) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `PM16_L64_N128` | 1st / 1 | 33 (solve converged at iteration 12, Ham 9.0 × 10⁻⁴ %; evolution from 08:26 MSK; params and t 0 as the paper's run, consumer writing) | 200 | ~50 u/h each with four on the card; ~28 with seven from ~09:15 | ~5.8 h, ~14:45 MSK |
-| `PM20_L64_N128` | 1st / 1 | 36 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | as PM16 | ~5.8 h, ~14:45 MSK |
-| `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | 3 / 5 (solves converged at iteration 12, Ham 8.8 / 10.6 × 10⁻⁴ %; evolving from 08:44 MSK, consumers writing) | 200 | as PM16 | ~6.3 h, ~15:20 MSK |
-| `E0.64_L64_N128`, `E1.34_L64_N128`, `E1.57_L64_N128` | 1st / 1 | 1 (launched 08:58 MSK; solves converged at iteration 12, Ham 9.1 / 9.5 / 9.7 × 10⁻⁴ %; evolving from 09:15 MSK, consumers writing) | 200 | ~28 u/h each expected | ~6.5 h, ~15:45 MSK |
-| `PM10-rec_L64_N192_t1000` | 2nd / 0 | 1 (PM10 N 192's data, no solve; launched 09:22 MSK; consumer running; 20 GB on the card) | 1000 | ~50 u/h expected | ~20 h, ~05:20 MSK 10-25 |
-| `R0.60_L64_N128`, `R0.80_L64_N128` | 1st / 0 | 3 / 3 (solves converged at iteration 12, Ham 8.7 / 8.6 × 10⁻⁴ %; evolving from 08:44 MSK, consumers writing) | 200 | ~52 u/h each | ~3.8 h, ~12:35 MSK |
-| `M_L64_N256` | 1st / 0 | 175 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~6 u/h beside R0.60 / R0.80 (18.3 alone: the card is time-shared) | ~4 h, ~12:45 MSK |
+| `PM16_L64_N128` | 1st / 1 | 145 (solve converged at iteration 12, Ham 9.0 × 10⁻⁴ %; params and t 0 as the paper's run) | 200 | ~29 u/h each with seven on the card | ~1.9 h, ~14:20 MSK |
+| `PM20_L64_N128` | 1st / 1 | 147 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | ~26 u/h | ~2.0 h, ~14:25 MSK |
+| `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | 115 / 117 (solves converged at iteration 12, Ham 8.8 / 10.6 × 10⁻⁴ %) | 200 | ~29 u/h | ~2.9 h, ~15:20 MSK |
+| `E0.64_L64_N128`, `E1.34_L64_N128`, `E1.57_L64_N128` | 1st / 1 | 91 (solves converged at iteration 12, Ham 9.1 / 9.5 / 9.7 × 10⁻⁴ %) | 200 | ~27–30 u/h | ~3.8 h, ~16:15 MSK |
+| `MP10_L64_N128`, `PP10_L64_N128`, `MM10_L64_N128` | 1st / 0 | solving (launched 12:25 MSK, three solves at once) | 200 | ~65 u/h each expected (three on the card) | ~3.3 h, ~15:45 MSK |
+| `PM10-rec_L64_N192_t1000` | 2nd / 0 | 152 (PM10 N 192's data, no solve; launched 09:22 MSK; 20 GB on the card) | 1000 | ~48 u/h | ~17.7 h, ~06:05 MSK 10-25 |
 
 ## Revision
 
