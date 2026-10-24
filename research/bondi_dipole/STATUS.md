@@ -108,12 +108,12 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | dropped 2026-10-24: P backs the positive star instead (the M convergence covers the negative one) |
 | `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: the stars move as in the L 64 box: the cores' ΔX(200) is +0.2 % from PM10 N 128 and their separation the same (10.07); the whole-domain barycentres' ΔX moves −4.8 % (the paper's −4.2 %) because they take in the field the stars shed, which the larger box keeps; |Ψ4|ₗ₌₂ ∝ R^−4.7 (the paper's −4.8), R|Ψ4| falls ×30 over R 16–40 (31); no NaN; frames; `04_runaway/` |
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
-| M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | dropped 2026-10-24; its text is out of the article |
+| M-t1000 (`M_L64_N192_t1000`) | "neither collapses nor disperses ... 1000 alone" | 64 | 192 | 1000 | 20 | back 10-24 at N 192 (the paper's N 128 run lost 5.4 % of its peak field by t 1000; at t 200 the peak moves +0.001 % at N 192, −0.13 % at N 128): running (Live), launched 10-24 17:19 MSK on card 0, M N 192's data (no solve), frames, no checkpoints |
 
-Queue empty: every run for the paper is done (the last, MP10 / PP10 / MM10, at ~15:40 MSK 10-24), filed and packed; the first node's cards are idle.
+Queue empty: every run for the paper is done (the last, MP10 / PP10 / MM10, at ~15:40 MSK 10-24), filed and packed, except M-t1000, back at N 192 and running since 17:19 MSK.
 Decided 2026-10-23: the pair ends with PM10-t400 and the large box (PM10-rec / -off dropped). **Decided 2026-10-24:
 every simulation the paper keeps is rerun**, no checkpoints, as the cards free; the same-sign pairs and the numerics
-are checks, not a convergence study. Dropped from the paper: S0.75–S0.90, M-t1000, PM10-rec / -off, PM10-tol / -AMR /
+are checks, not a convergence study. Dropped from the paper: S0.75–S0.90, PM10-rec / -off, PM10-tol / -AMR /
 -η2, and PP10 / MM10 at N 192 and 256. Launch scripts in `staging/`, each from its v1 cell; the dropped ones in
 `runs/bondi/00_archive/dropped_2026-10-24/`.
 
@@ -126,8 +126,9 @@ stop, plot interval and treadmill keys differ from PM10 N 192.
 
 No checkpoints (on the word); frames on.
 
-| run | node / card | t (16:59 MSK 10-24) | stop | speed | ETA |
+| run | node / card | t (17:20 MSK 10-24) | stop | speed | ETA |
 |---|---|---|---|---|---|
+| `M_L64_N192_t1000` | 1st / 0 | starting (M N 192's data, no solve; launched 17:19 MSK; 20 GB on the card) | 1000 | ~50 u/h expected, alone on the card | ~20 h, ~13:20 MSK 10-25 |
 | `PM10-rec_L64_N192_t1000` | 2nd / 0 | 382 (PM10 N 192's data, no solve; launched 09:22 MSK; five shifts, the box 10 units on by t 376.7, each clean; no NaN; the consumer at t 267, left to lag: ~800 GB free on the second node) | 1000 | ~51 u/h | evolution ~12.2 h, ~05:10 MSK 10-25; the consumer's drain ~9 h more, ~14:00 MSK |
 
 ## Revision
