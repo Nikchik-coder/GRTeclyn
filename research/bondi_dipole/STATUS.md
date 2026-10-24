@@ -126,14 +126,14 @@ stop, plot interval and treadmill keys differ from PM10 N 192.
 
 No checkpoints (on the word); frames only on PP10, MM10 and the chase.
 
-| run | node / card | t (12:25 MSK 10-24) | stop | speed | ETA |
+| run | node / card | t (12:44 MSK 10-24) | stop | speed | ETA |
 |---|---|---|---|---|---|
-| `PM16_L64_N128` | 1st / 1 | 145 (solve converged at iteration 12, Ham 9.0 × 10⁻⁴ %; params and t 0 as the paper's run) | 200 | ~29 u/h each with seven on the card | ~1.9 h, ~14:20 MSK |
-| `PM20_L64_N128` | 1st / 1 | 147 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | ~26 u/h | ~2.0 h, ~14:25 MSK |
-| `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | 115 / 117 (solves converged at iteration 12, Ham 8.8 / 10.6 × 10⁻⁴ %) | 200 | ~29 u/h | ~2.9 h, ~15:20 MSK |
-| `E0.64_L64_N128`, `E1.34_L64_N128`, `E1.57_L64_N128` | 1st / 1 | 91 (solves converged at iteration 12, Ham 9.1 / 9.5 / 9.7 × 10⁻⁴ %) | 200 | ~27–30 u/h | ~3.8 h, ~16:15 MSK |
-| `MP10_L64_N128`, `PP10_L64_N128`, `MM10_L64_N128` | 1st / 0 | solving (launched 12:25 MSK, three solves at once) | 200 | ~65 u/h each expected (three on the card) | ~3.3 h, ~15:45 MSK |
-| `PM10-rec_L64_N192_t1000` | 2nd / 0 | 152 (PM10 N 192's data, no solve; launched 09:22 MSK; 20 GB on the card) | 1000 | ~48 u/h | ~17.7 h, ~06:05 MSK 10-25 |
+| `PM16_L64_N128` | 1st / 1 | 154 (solve converged at iteration 12, Ham 9.0 × 10⁻⁴ %; params and t 0 as the paper's run) | 200 | ~27 u/h each with seven on the card | ~1.7 h, ~14:25 MSK |
+| `PM20_L64_N128` | 1st / 1 | 156 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | ~30 u/h | ~1.5 h, ~14:15 MSK |
+| `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | 124 / 126 (solves converged at iteration 12, Ham 8.8 / 10.6 × 10⁻⁴ %) | 200 | ~28 u/h | ~2.8 h, ~15:30 MSK |
+| `E0.64_L64_N128`, `E1.34_L64_N128`, `E1.57_L64_N128` | 1st / 1 | 99 / 100 / 100 (solves converged at iteration 12, Ham 9.1 / 9.5 / 9.7 × 10⁻⁴ %) | 200 | ~28–31 u/h | ~3.5 h, ~16:15 MSK |
+| `MP10_L64_N128`, `PP10_L64_N128`, `MM10_L64_N128` | 1st / 0 | 3 / 8 / 5 (launched 12:25 MSK; solves converged at iteration 12, Ham 8.6 / 12.7 / 13.3 × 10⁻⁴ %; evolving from 12:40 MSK; frame 0 of PP10 and MM10 as the paper's runs; consumers keep up, 2–3 plotfiles on scratch; 20 GB on the card) | 200 | ~66 u/h each | ~3 h, ~15:45 MSK |
+| `PM10-rec_L64_N192_t1000` | 2nd / 0 | 167 (PM10 N 192's data, no solve; launched 09:22 MSK; 20 GB on the card) | 1000 | ~51 u/h | ~16.4 h, ~05:10 MSK 10-25 |
 
 ## Revision
 
