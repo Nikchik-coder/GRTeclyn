@@ -133,7 +133,7 @@ No checkpoints (on the word); frames only on PP10, MM10 and the chase.
 | `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | 124 / 126 (solves converged at iteration 12, Ham 8.8 / 10.6 × 10⁻⁴ %) | 200 | ~28 u/h | ~2.8 h, ~15:30 MSK |
 | `E0.64_L64_N128`, `E1.34_L64_N128`, `E1.57_L64_N128` | 1st / 1 | 99 / 100 / 100 (solves converged at iteration 12, Ham 9.1 / 9.5 / 9.7 × 10⁻⁴ %) | 200 | ~28–31 u/h | ~3.5 h, ~16:15 MSK |
 | `MP10_L64_N128`, `PP10_L64_N128`, `MM10_L64_N128` | 1st / 0 | 3 / 8 / 5 (launched 12:25 MSK; solves converged at iteration 12, Ham 8.6 / 12.7 / 13.3 × 10⁻⁴ %; evolving from 12:40 MSK; frame 0 of PP10 and MM10 as the paper's runs; consumers keep up, 2–3 plotfiles on scratch; 20 GB on the card) | 200 | ~66 u/h each | ~3 h, ~15:45 MSK |
-| `PM10-rec_L64_N192_t1000` | 2nd / 0 | 167 (PM10 N 192's data, no solve; launched 09:22 MSK; 20 GB on the card) | 1000 | ~51 u/h | ~16.4 h, ~05:10 MSK 10-25 |
+| `PM10-rec_L64_N192_t1000` | 2nd / 0 | 167 (PM10 N 192's data, no solve; launched 09:22 MSK; 20 GB on the card; first shift at t 166.7, clean; the consumer lags, ~2.7 min per plotfile against one every 1.9 min, left as is: ~800 GB free on the second node) | 1000 | ~51 u/h | evolution ~16.4 h, ~05:10 MSK 10-25; the consumer's drain ~9 h more, ~14:00 MSK |
 
 ## Revision
 
