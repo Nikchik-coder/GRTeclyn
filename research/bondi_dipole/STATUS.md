@@ -119,8 +119,8 @@ are checks, not a convergence study. Dropped from the paper: S0.75–S0.90, M-t1
 
 Extra, not for the paper (10-24): `PM10-rec_L64_N192_t1000`, the recentring chase (v1 PM10-rec) at N 192 to t 1000,
 v ~ 0.14 c after ~71 units; no solve (PM10 N 192's data, so it repeats PM10_L64_N192 until the first shift, t ~ 170);
-frames, no checkpoints; ~20 h on one H100. Ready in `staging/` (dry run: only stop, plot interval and treadmill keys
-differ from PM10 N 192), for the second node, card 0, launched by hand.
+frames, no checkpoints; ~20 h on one H100. Launched 10-24 09:22 MSK on the second node, card 0 (Live); dry run: only
+stop, plot interval and treadmill keys differ from PM10 N 192.
 
 ## Live
 
@@ -132,6 +132,7 @@ No checkpoints (on the word); frames off.
 | `PM20_L64_N128` | 1st / 1 | 36 (as PM16: Ham 9.3 × 10⁻⁴ %) | 200 | as PM16 | ~5.8 h, ~14:45 MSK |
 | `R1.33_L64_N128`, `P_L64_N128` | 1st / 1 | 3 / 5 (solves converged at iteration 12, Ham 8.8 / 10.6 × 10⁻⁴ %; evolving from 08:44 MSK, consumers writing) | 200 | as PM16 | ~6.3 h, ~15:20 MSK |
 | `E0.64_L64_N128`, `E1.34_L64_N128`, `E1.57_L64_N128` | 1st / 1 | 1 (launched 08:58 MSK; solves converged at iteration 12, Ham 9.1 / 9.5 / 9.7 × 10⁻⁴ %; evolving from 09:15 MSK, consumers writing) | 200 | ~28 u/h each expected | ~6.5 h, ~15:45 MSK |
+| `PM10-rec_L64_N192_t1000` | 2nd / 0 | 1 (PM10 N 192's data, no solve; launched 09:22 MSK; consumer running; 20 GB on the card) | 1000 | ~50 u/h expected | ~20 h, ~05:20 MSK 10-25 |
 | `R0.60_L64_N128`, `R0.80_L64_N128` | 1st / 0 | 3 / 3 (solves converged at iteration 12, Ham 8.7 / 8.6 × 10⁻⁴ %; evolving from 08:44 MSK, consumers writing) | 200 | ~52 u/h each | ~3.8 h, ~12:35 MSK |
 | `M_L64_N256` | 1st / 0 | 175 (from the rejected solve's data, BONDI_GRIDINIT; launched 23:09 MSK; t 0 matches N 192) | 200 | ~6 u/h beside R0.60 / R0.80 (18.3 alone: the card is time-shared) | ~4 h, ~12:45 MSK |
 
