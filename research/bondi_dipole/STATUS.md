@@ -101,7 +101,7 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | E0.64, E1.34, E1.57 (d0 20) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | queued; the old error ∝ ω² differed between them |
 | R0.60, R0.80, R1.33 | each star follows its partner's mass | 64 | 128 | 200 | 3 | queued |
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | queued; no `launch_config.sh` packed: rebuild from `runs/bondi/00_archive/superseded_2026-10-23/01_star_family` |
-| `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: ΔX(200) 2.520, −4.8 % from PM10 N 128 in the L 64 box (the paper's run −4.2 %); d dips to 9.30 at t 100 and is 9.48 at t 200 (L 64: 9.83, 9.98); |Ψ4|ₗ₌₂ falls as R^−3.7 over R 16–40, as the paper's run does by the same measure; no NaN; frames; `04_runaway/` |
+| `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: the stars move as in the L 64 box: the cores' ΔX(200) is +0.2 % from PM10 N 128 and their separation the same (10.07); the whole-domain barycentres' ΔX moves −4.8 % (the paper's −4.2 %) because they take in the field the stars shed, which the larger box keeps; |Ψ4|ₗ₌₂ ∝ R^−4.7 (the paper's −4.8), R|Ψ4| falls ×30 over R 16–40 (31); no NaN; frames; `04_runaway/` |
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
 | M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | optional, only if the text keeps that sentence |
 
