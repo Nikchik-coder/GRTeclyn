@@ -100,7 +100,7 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | PM8, PM12, PM16, PM20 (`PM8_L64_N128`, …) | a ∝ d^−2.03 (the old −2.03 ± 0.01 sat 3σ from −2) | 64 | 128 | 200 | 4 | PM8, PM12 **done**: a d0² is 0.994 and 1.009 of PM10's (a ∝ d0^−1.97 over d0 8–12, N 128); `05_separation/`; PM16, PM20 running (Live) |
 | E0.64, E1.34, E1.57 (d0 20; `E0.64_L64_N128`, …) | a ∝ M̄^0.97 | 64 | 128 | 200 | 3 | go 10-24, no checkpoints; the old error ∝ ω² differed between them |
 | MP10 (`MP10_L64_N128`) | test iv: the motion reverses when the two stars are swapped | 64 | 128 | 200 | 1 | go 10-24, no checkpoints |
-| PP10 (`PP10_L64_N128`, `_N192`, `_N256`) | test v: a same-sign pair stays at rest; Fig. same-sign (N 256 with frames, its movie), Fig. constraints | 64 | 128, 192, 256 | 200 | 16 | go 10-24, no checkpoints; tolerance 0.002 at every N, as the paper's runs |
+| PP10 (`PP10_L64_N128`, `_N192`) | test v: a same-sign pair stays at rest; Fig. same-sign (N 192 with frames, its movie), Fig. constraints | 64 | 128, 192 | 200 | 5 | go 10-24, no checkpoints; tolerance 0.002 at every N, as the paper's runs; N 256 dropped 10-24 (its 512³ solve needed 221 GB; it is no convergence test, so N 192 takes over its figure, movie and constraint line) |
 | MM10 (`MM10_L64_N128`, `_N192`) | test v; Fig. same-sign (N 128 with frames, its movie) | 64 | 128, 192 | 200 | 5 | go 10-24, no checkpoints; one N 128 run with frames for the paper's two |
 | PM10-tol, PM10-AMR, PM10-η2 (`PM10-tol_L64_N128`, …) | Table II: ΔX(200) against a 10× tighter solve tolerance, one refinement level, doubled shift damping | 64 | 128 | 200 | 4 | go 10-24, no checkpoints |
 | R0.60, R0.80, R1.33 (`R0.60_L64_N128`, …) | each star follows its partner's mass | 64 | 128 | 200 | 3 | running (Live), launched 10-24 08:28 MSK, no checkpoints; dry runs matched the paper's runs |
@@ -110,12 +110,12 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
 | M-t1000 | "neither collapses nor disperses ... 1000 alone" | 64 | 128 | 1000 | 5 | dropped 2026-10-24; its text is out of the article |
 
-Queued: about 20 GPU-h, one night on the three cards. Decided 2026-10-23: the pair ends with PM10-t400 and the
+Queued: about 18 GPU-h (E, MP10, PP10, MM10, PM10-tol / -AMR / -η2). Decided 2026-10-23: the pair ends with PM10-t400 and the
 large box; PM10-rec / -off are dropped. **Hold (decided 2026-10-23, 23:35 MSK): no new launches.** The four live
 runs finish and are packed as they land. PM16 and PM20 launched on the word, 10-24 08:10 MSK. **Decided 2026-10-24:
-every simulation the paper keeps is rerun.** R, P, E, MP10, PP10, MM10 and PM10-tol / -AMR / -η2 have the go (~33
-GPU-h, no checkpoints) and start as the cards free, N 128 two per card, one 512³ solve at a time (221 GB). Dropped
-from the paper: S0.75–S0.90, M-t1000, PM10-rec / -off. Launch scripts in `staging/`, each from its v1 cell.
+every simulation the paper keeps is rerun.** R, P, E, MP10, PP10, MM10 and PM10-tol / -AMR / -η2 have the go (~22
+GPU-h, no checkpoints) and start as the cards free, N 128 two per card. Dropped from the paper: S0.75–S0.90,
+M-t1000, PM10-rec / -off, and PP10 at N 256 (10-24: N 192 does its job; the queue keeps no 512³ solve). Launch scripts in `staging/`, each from its v1 cell.
 
 ## Live
 
@@ -153,6 +153,8 @@ an outside-reader pass (~60 findings applied) and a redundancy pass (text 6608 �
       they keep the field the stars shed, which the L 64 box's absorbing layer removes from r 24 (sector rms radius
       16.9 against 5.8 at t 100). Table II's −4.2 % becomes +0.2 % by the cores (or the text says why the
       barycentres move), and "the two ways of tracking agree on ΔX to 1 %" holds only in the L 64 box.
+- [ ] PP10 at N 192 instead of 256 (dropped 10-24): Table I's row (128, 192), Fig. same-sign (a) and its movie,
+      the grey PP10 line of Fig. constraints, and the same-sign merger time (t 33.6) come from N 192.
 - [ ] PM10-L128, Ψ4 (Fig. wavezone, Table II, the wave-extraction paragraph): |Ψ4|ₗ₌₂ falls as R^−4.7 (text −4.8)
       and R|Ψ4| drops ×30 across the four spheres (text 31); the near-zone conclusion stands. The consumer stores
       R Ψ4; `article_figures.py` divides by R, which is right.
