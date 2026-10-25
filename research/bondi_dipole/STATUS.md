@@ -108,28 +108,28 @@ card: the second node's consumer cannot keep up with them (12 CPUs).
 | S0.75, S0.80, S0.85, S0.90 | stationarity of the stars | 64 | 128 | 120 | 2.4 | dropped 2026-10-24: P backs the positive star instead (the M convergence covers the negative one) |
 | `PM10_L128_N256` (PM10-L128) | domain size, the box doubled at the same Δx 0.5 (the old one moved ΔX by 4 %); Ψ4 in the near zone | 128 | 256 | 200 | 5.5 | **done**: the stars move as in the L 64 box: the cores' ΔX(200) is +0.2 % from PM10 N 128 and their separation the same (10.07); the whole-domain barycentres' ΔX moves −4.8 % (the paper's −4.2 %) because they take in the field the stars shed, which the larger box keeps; |Ψ4|ₗ₌₂ ∝ R^−4.7 (the paper's −4.8), R|Ψ4| falls ×30 over R 16–40 (31); no NaN; frames; `04_runaway/` |
 | PM10-rec, PM10-off | the separation after t 200 | 64 | 128 | 600–784 | 7 | dropped 2026-10-23: for the pair only the large box remains |
-| M-t1000 (`M_L64_N192_t1000`) | "neither collapses nor disperses ... 1000 alone" | 64 | 192 | 1000 | 20 | back 10-24 at N 192 (the paper's N 128 run lost 5.4 % of its peak field by t 1000; at t 200 the peak moves +0.001 % at N 192, −0.13 % at N 128): running (Live), launched 10-24 17:19 MSK on card 0, M N 192's data (no solve), frames, no checkpoints |
+| M-t1000 (`M_L64_N192_t1000`) | "neither collapses nor disperses ... 1000 alone" | 64 | 192 | 1000 | 20 | **done** 10-25 11:07 MSK, back at N 192 (the paper's N 128 run lost 5.4 % of its peak field by t 1000): the peak field +0.11 % by t 1000, the star's matter −2.3 %; the core moves 0.12 toward the centre, almost all after t 400 (N 128: 0.14); Ham (r < 24) ×3 to t 400, then falling (1.35 × 10⁻⁶ at t 1000), Mom flat; identical to M N 192 to t 200; no NaN; frames and movies in the run tree, not packed; `02_lone_star/` |
 
-Queue empty: every run for the paper is done (the last, MP10 / PP10 / MM10, at ~15:40 MSK 10-24), filed and packed, except M-t1000, back at N 192 and running since 17:19 MSK.
+Queue empty: every run for the paper is done (the last, M-t1000, at 11:07 MSK 10-25), filed and packed.
 Decided 2026-10-23: the pair ends with PM10-t400 and the large box (PM10-rec / -off dropped). **Decided 2026-10-24:
 every simulation the paper keeps is rerun**, no checkpoints, as the cards free; the same-sign pairs and the numerics
 are checks, not a convergence study. Dropped from the paper: S0.75–S0.90, PM10-rec / -off, PM10-tol / -AMR /
 -η2, and PP10 / MM10 at N 192 and 256. Launch scripts in `staging/`, each from its v1 cell; the dropped ones in
 `runs/bondi/00_archive/dropped_2026-10-24/`.
 
-Extra, not for the paper (10-24): `PM10-rec_L64_N192_t1000`, the recentring chase (v1 PM10-rec) at N 192 to t 1000,
-v ~ 0.14 c after ~71 units; no solve (PM10 N 192's data, so it repeats PM10_L64_N192 until the first shift, t ~ 170);
-frames, no checkpoints; ~20 h on one H100. Launched 10-24 09:22 MSK on the second node, card 0 (Live); dry run: only
-stop, plot interval and treadmill keys differ from PM10 N 192.
+Extra, not for the paper (10-24): `PM10-rec_L64_N192_t1000`, the recentring chase (v1 PM10-rec) at N 192 to t 1000;
+no solve (PM10 N 192's data, identical to PM10_L64_N192 until the first shift, t 167); frames, no checkpoints.
+**Done** 10-25 05:41 MSK on the second node (`04_runaway/`): both stars accelerate forward to t 1000 (v1 at N 128:
+the trailing star turned back near t 530 and d reached 24 by t 700, while its matter doubled). d 10.02 at t 200,
+10.24 at 400, 10.91 at 600, 12.04 at 800, 13.47 at 1000: after t 400 the trailing star accelerates ~9 % less than the
+leader (0.62 against 0.68 × 10⁻⁴ over 900–1000), numerical (d(200) − 10 is 0.071 / 0.016 / 0.005 at N 128 / 192 /
+256). Final v 0.115 c (leader) and 0.108 c (trailer), γ 1.006; the pair 63 units on (31 shifts); matter −2.7 %.
+Ham (r < 24) ×3.9 over t 10–1000, flat after t 600 (r < 12 ×2.9 to t 600, then flat; 12–24 still growing), Mom flat,
+the worst point flat at 4–5 × 10⁻⁵; no NaN. Frames and movies in the run tree, not packed.
 
 ## Live
 
-No checkpoints (on the word); frames on.
-
-| run | node / card | t (17:20 MSK 10-24) | stop | speed | ETA |
-|---|---|---|---|---|---|
-| `M_L64_N192_t1000` | 1st / 0 | 3 (M N 192's data, no solve; launched 17:19 MSK; its first rows and constraints match M N 192's to every digit; frame 0 as the paper's t 1000 run; the consumer takes ~1 min per plotfile, one every ~4.3 min; 20 GB on the card) | 1000 | ~56 u/h, alone on the card | ~17.8 h, ~11:10 MSK 10-25 |
-| `PM10-rec_L64_N192_t1000` | 2nd / 0 | 405 at 17:31 MSK (PM10 N 192's data, no solve; launched 09:22 MSK; five shifts, at t 167, 237, 290, 336, 377, the box 10 units on, each clean; no NaN; d (cores) 10.25, +2.5 %; v 0.055 c; a 1.42 × 10⁻⁴ over 5–200, 1.33 over 200–405; Ham in r < 24 ×3 since t 10, Mom flat. The consumer fell 77 plotfiles behind (1 worker, ~2.7 min a plotfile against one every 1.9 min); restarted 17:30 MSK with 3 workers through `-m` (through post.py every worker dies at spawn: no `__main__` guard), ~1 min a plotfile, the backlog clears by ~20:10 MSK; the end-of-run drain stays at 1 worker) | 1000 | ~50 u/h | ~11.9 h, ~05:25 MSK 10-25 |
+No runs live (10-25): card 0 of both nodes is free; scratch clean on the second node.
 
 ## Revision
 
@@ -170,6 +170,8 @@ an outside-reader pass (~60 findings applied) and a redundancy pass (text 6608 �
       (the positive star at the centre) and M (the negative star off centre).
 - [x] M-t1000 out of the article (2026-10-24): the introduction's longer runs, Table I's M row, Table II's decay
       row, its results paragraph, and the conclusions' "1000 alone, although it slowly relaxes outward".
+- [ ] M-t1000 is back (done 10-25 at N 192): restore those places with its numbers (peak field +0.11 % by t 1000,
+      where the N 128 run lost 5.4 %; matter −2.3 %; the core 0.12 toward the centre).
 - [ ] Table I's caption "The 34 simulations": recount when the reruns land (S0.75–S0.90, M-t1000, PM10-rec / -off
       dropped; M at N 192 and 256 added; MM10 at N 128 is one run).
 - [ ] Notation table (~20 symbols, WRITING_STANDARDS §2): decide whether it is worth the space.

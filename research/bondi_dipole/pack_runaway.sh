@@ -178,8 +178,11 @@ PY
   # 0.3c follow-up cells are skipped for the same reason and more so: they are
   # three and six times longer again, and their result is a separation curve
   # read off sector_dynamics.dat, never off a still.  Movies for both are in
-  # runs/bondi/00_archive/superseded_2026-10-23/movies/masters/.
-  case " ${FRAMES_SKIP:-longrun_pair_d10_t400_L64_N128_lev0 chase03c_pair_d10_L64_N128_lev0 nomill_left_pair_d10_L64_N128_lev0} " in
+  # runs/bondi/00_archive/superseded_2026-10-23/movies/masters/.  The revision's
+  # two t = 1000 cells (the N 192 chase and M-t1000, 2026-10-25) are skipped
+  # likewise: ~80 MB of stills each, and every number is read off the data
+  # streams; their frames and movies stay in their run directories.
+  case " ${FRAMES_SKIP:-longrun_pair_d10_t400_L64_N128_lev0 chase03c_pair_d10_L64_N128_lev0 nomill_left_pair_d10_L64_N128_lev0 PM10-rec_L64_N192_t1000 M_L64_N192_t1000} " in
     *" ${cell##*/} "*) frames_wanted=0 ;;
     *)             frames_wanted=1 ;;
   esac
