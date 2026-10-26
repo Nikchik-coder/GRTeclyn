@@ -1,23 +1,9 @@
-# The GRTeclyn source each packed run was launched from, one row per commit, tab-separated: the commit
-# (metadata.json git_commit, first 8 hex digits) and the runs launched from it. Every v1 run used the
-# example's own build, Examples/RadialRecipe/main3d.gnu.MPI.CUDA.ex, rebuilt in place, so no binary hash
-# was recorded; the revision's frozen builds live in runs/bondi/bin/ and get rows here when their runs are
-# packed. '-' marks a run with no metadata.json (driven straight from the executable).
-grteclyn_commit	runs
-b3674eb3	stability_canonical_w075_L64_N128_lev0 stability_canonical_w080_L64_N128_lev0 stability_canonical_w085_L64_N128_lev0 stability_canonical_w090_L64_N128_lev0
-447a6372	control_lone_canonical_L64_N128_lev0 control_lone_phantom_L64_N128_lev0 runaway_pair_d10_L64_N128_lev0
-84441bac	control_lone_phantom_t1000_L64_N128_lev0 gaugetwin_pair_d10_eta2_L64_N128_lev0
-845a56b9	control_pair_pp_d10_L64_N128_lev0 massscale_pair_d10_w0804_L64_N128_lev0
-b2d87bdd	control_pair_pp_d10_L64_N192_lev0
-1c67c1ed	control_pair_pp_d10_L64_N256_lev0
-1318f556	control_pair_mm_d10_L64_N128_lev0 control_mirror_mp_d10_L64_N128_lev0
-618e8956	control_pair_mm_d10_L64_N128_lev0_frames
-d70bb4e9	control_pair_mm_d10_L64_N192_lev0 massratio_w088_r060_d10_L64_N128_lev0 amrcheck_pair_d10_L64_N128_lev1
-a6d9dccb	runaway_pair_d10_L64_N192_lev0 runaway_pair_d10_L64_N256_lev0 wavezone_pair_d10_L128_N256_lev0
-afd726f5	longrun_pair_d10_t400_L64_N128_lev0
-ffad9fbb	runaway_pair_d08_L64_N128_lev0 runaway_pair_d12_L64_N128_lev0 runaway_pair_d16_L64_N128_lev0
-200554cf	runaway_pair_d20_L64_N128_lev0 deepsolve_pair_d10_L64_N128_lev0
-391a9985	masslaw_pair_d20_w0850_L64_N128_lev0 masslaw_pair_d20_w0700_L64_N128_lev0 masslaw_pair_d20_w0675_L64_N128_lev0
-623975ae	massratio_heavyphantom_d10_L64_N128_lev0
-57b84787	chase03c_pair_d10_L64_N128_lev0
--	nomill_left_pair_d10_L64_N128_lev0
+# The builds behind the packed runs (v2, run 2026-10-23 to 10-25), tab-separated: the stage, the build, its source,
+# and the runs it served. Every run evolved on the same GRTeclyn build. Each run's metadata.json records the
+# repository commit it was launched from, and its launch_config.sh names the build and the initial data it used. The
+# v1 builds are listed in the tag v1.0-bondi-dipole.
+stage	build	source	runs
+evolution	main3d_rkfix_aa0dc4a1-dirty_2026-10-23.ex (md5 f4253171)	GRTeclyn aa0dc4a1 with c12664fd (RadialRecipe: no ghost-cell refill on the Runge-Kutta stages)	all 24 runs
+initial data	grtresna_BosonStarBH_9a85e6a_2026-10-22.MPI.ex	GRTresna 9a85e6a, branch fix/bondi-solve-matches-painter of github.com/Nikchik-coder/GRTresna (patches/grtresna-solve-matches-painter.diff)	P, M (N 128, 192), MP10, PP10, MM10, PM8, PM12, PM16, PM20, E0.64, E1.34, E1.57, R0.60, R0.80, R1.33, PM10-L128 (a solve of their own); M at N 256 (its own solve, stopped at its residual floor, Ham 2.51e-4 %)
+initial data	the PM10 solves of 2026-10-22 (joined star lapse)	their outermost face layer of chi and the lapse repaired by cubic extrapolation along each face normal; the converter itself is fixed in e3992acf	PM10 at N 128, 192, 256; PM10-t400 (the N 128 data)
+initial data	no solve	the data of PM10 at N 192 and of M at N 192	PM10-rec; M-t1000

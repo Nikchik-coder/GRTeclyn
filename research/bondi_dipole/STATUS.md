@@ -19,6 +19,8 @@ Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `fea
 - Next (decided 2026-10-26): resubmit to GRG once the paper carries the rerun numbers, with a submission message
   that every referee point is addressed and a point-by-point response to both reports; it names the earlier
   submission (its manuscript number is not recorded here; take it from the decision e-mail). Fallback EPJC, then IJMPD.
+- 2026-10-26: Physics of the Dark Universe (Elsevier) considered instead of GRG; it published three of the
+  negative-mass papers the article cites in 2026.
 
 ## Current status (2026-10-26)
 
@@ -190,9 +192,13 @@ notation table, the absorbing-layer loss sentence (the d_0 = 20 runs lose no mor
 
 ### 2. Release and submission
 
-- [ ] Pack the reruns into `results/bondi-dipole-runaway/` (groups as now; the v1 cells there leave as their reruns
-      land) and update `runs_registry.tsv`.
-- [ ] Merge into develop without `research/`, tag (e.g. `v1.1-bondi-dipole`), GitHub release, then Zenodo
+- [x] Pack the reruns into `results/bondi-dipole-runaway/` (10-26): the 24 runs by group, the registry; the pack's
+      README, LAUNCH.md, MATTER_MODEL.md and binaries.tsv rewritten for v2, and the GRTresna fix 9a85e6a in
+      `patches/grtresna-solve-matches-painter.diff` (GRTresna is not in this repository; the paper's Code
+      availability now names the fork). Bibliography (10-26): Bičák et al. Part II (self-accelerating, 390, 411;
+      Part I as see also) and five preprints now published (Clough et al. OJAp, Nojiri-Odintsov, Trivedi-Loeb and
+      Manfredi et al. Phys. Dark Univ., GRTresna JOSS), each checked on Crossref; still 13 pages.
+- [ ] Merge into trunk, then trunk into develop without `research/` (CLAUDE.md, Branches), tag `v2.0-bondi-dipole`, GitHub release, then Zenodo
       "Sync now" (CLAUDE.md, Publishing) and check the version DOI under concept 10.5281/zenodo.23245933.
 - [ ] arXiv v2 of 2608.24577: account page → Articles You Own → Replace icon → upload the full source again (tex,
       bbl, figures, `anc/` movies) → compiler **pdflatex** → update the abstract and comments ("v2: corrected time
