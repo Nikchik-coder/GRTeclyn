@@ -208,7 +208,7 @@ ARMS = [
      None, 20.0, None, r""),
     ("fly-by", r"$p=0.45$, $d=12$", "(2,2)",
      "06_binary_flyby/merge_orbit_flip_d12_p045_L128_lvl4_t100_lbf_csm/Weyl4_mode_22.dat",
-     None, 20.0, 20.0 + FLYBY_TRUST, r"trust window"),
+     None, 20.0, 20.0 + FLYBY_TRUST, r"reliable up to the cap"),
     # The p = 0.60 plunge (2026-10-05): the chain glued into one record (its
     # SERIES README has the seam checks); the loudest row by amplitude.  Its
     # trust window t = 80 cuts every sphere (Weyl4 junk on the frames from
@@ -216,7 +216,7 @@ ARMS = [
     # Sec. VIII (clmEgwEnergySixty) is a floor.
     ("plunge", r"$p=0.60$, $d=12$", "(2,2)",
      "06_binary_flyby/merge_orbit_flip_d12_p060_L128_SERIES/Weyl4_mode_22.dat",
-     None, 20.0, 80.0, r"trust window"),
+     None, 20.0, 80.0, r"reliable up to the cap"),
     # The spiral's vacuum twin: a scenario of the LIGO figure and the ledger,
     # but not a gallery row (OVERLAID below).
     ("vacuum BBH twin", r"$p=0.12$, $d=12$", "(2,2)",
@@ -286,8 +286,8 @@ DRAW_GATES = {
     # (R <= 20) are clean to t ~ 80, R = 28 to ~ 90, level 0 to the end.
     "head-on": (lambda R: 80.0 if R <= 20.0 else (90.0 if R <= 28.0 else 100.0),
                 r"level-1 noise"),
-    "fly-by": (lambda R: FLYBY_TRUST + R, r"trust window"),
-    "plunge": (lambda R: 80.0, r"trust window"),
+    "fly-by": (lambda R: FLYBY_TRUST + R, r"reliable up to the cap"),
+    "plunge": (lambda R: 80.0, r"reliable up to the cap"),
 }
 
 # Drawn-record START per scenario.  The plunge's t040 leg carries loud

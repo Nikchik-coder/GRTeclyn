@@ -382,12 +382,12 @@ void RadialRecipeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                                         const double a_time)
 {
     BL_PROFILE("RadialRecipeLevel::specificEvalRHS()");
-    const int soln_ghosts = a_soln.nGrowVect()[0];
-    if (soln_ghosts > 0)
-    {
-        FillPatch(*this, a_soln, soln_ghosts, a_time, state_index, 0,
-                  a_soln.nComp());
-    }
+    // No FillPatch here.  AmrLevel::RK fills the stage's ghost cells itself
+    // (FillRKPatch) right before this call, and FillPatch also overwrites the
+    // VALID cells with the old and new state interpolated to a_time: RK4's two
+    // mid stages then see Uold + k dt/4 instead of Uold + k dt/2, and the
+    // integrator drops to first order (2026-10-23: the Bondi stars' core drift
+    // converged at order 1.0 in dx with dt = 0.02 dx).
     const auto &soln_arrs = a_soln.arrays();
     TraceARemoval trace_A_removal;
     PositiveChiAndLapse positive_chi_lapse;
@@ -483,10 +483,16 @@ struct AmrConstraintNorms
     amrex::Real L2_Mom_rel = 0.0;
     amrex::Real Linf_Ham   = 0.0; // max |Ham| over the same set -- undiluted
     amrex::Real L2_Ham_ref = 0.0; // refined region (levels >= 1) only
+    amrex::Real L2_Ham_int = 0.0; // the same set within the interior radius:
+    amrex::Real L2_Mom_int = 0.0; // no sponge, no boundary layer
 };
 
 // boundary_skip counts LEVEL-0 cells to drop at the outer domain boundary
 // (their violation is boundary-condition, not physics); scaled per level.
+// The interior norms keep only the cells of that set within
+// params.constraint_norms_interior_radius of the sponge's centre: the sponge
+// adds dissipation the Einstein equations do not have, so its shell is left
+// out like the boundary layer.
 // cst_level0, if given, is the caller's already-filled level-0 constraint
 // MultiFab (same 8 components, same with_abs_terms).  Reusing it matters: level
 // 0 holds ~99.9% of the cells, so recomputing it here would roughly double the
@@ -502,10 +508,17 @@ compute_amr_constraint_norms(amrex::Amr *parent,
     amrex::Real sum_ham2 = 0.0, sum_mom2 = 0.0, sum_vol = 0.0;
     amrex::Real sum_ham_abs2 = 0.0, sum_mom_abs2 = 0.0;
     amrex::Real sum_ham2_ref = 0.0, sum_vol_ref = 0.0;
+    amrex::Real sum_ham2_int = 0.0, sum_mom2_int = 0.0, sum_vol_int = 0.0;
     amrex::Real max_ham = 0.0;
 
     const int finest = parent->finestLevel();
     const int n0     = parent->Geom(0).Domain().length(0);
+
+    const amrex::Real r_int  = params.constraint_norms_interior_radius;
+    const amrex::Real r_int2 = r_int * r_int;
+    const amrex::Real icx    = params.sponge_params.center[0];
+    const amrex::Real icy    = params.sponge_params.center[1];
+    const amrex::Real icz    = params.sponge_params.center[2];
 
     for (int lev = 0; lev <= finest; ++lev)
     {
@@ -557,13 +570,17 @@ compute_amr_constraint_norms(amrex::Amr *parent,
         interior.grow(-boundary_skip * scale);
         const amrex::IntVect ilo = interior.smallEnd();
         const amrex::IntVect ihi = interior.bigEnd();
+        const auto prob_lo       = level.Geom().ProbLoArray();
 
         amrex::ReduceOps<amrex::ReduceOpSum, amrex::ReduceOpSum,
                          amrex::ReduceOpSum, amrex::ReduceOpSum,
-                         amrex::ReduceOpSum, amrex::ReduceOpMax>
+                         amrex::ReduceOpSum, amrex::ReduceOpMax,
+                         amrex::ReduceOpSum, amrex::ReduceOpSum,
+                         amrex::ReduceOpSum>
             ops;
         amrex::ReduceData<amrex::Real, amrex::Real, amrex::Real, amrex::Real,
-                          amrex::Real, amrex::Real>
+                          amrex::Real, amrex::Real, amrex::Real, amrex::Real,
+                          amrex::Real>
             data(ops);
         using Tuple = typename decltype(data)::Type;
 
@@ -580,7 +597,7 @@ compute_amr_constraint_norms(amrex::Amr *parent,
                     if (cov(i, j, k) != 0 || i < ilo[0] || i > ihi[0] ||
                         j < ilo[1] || j > ihi[1] || k < ilo[2] || k > ihi[2])
                     {
-                        return {0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+                        return {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
                     }
                     const amrex::Real ham     = arr(i, j, k, 0);
                     const amrex::Real m1      = arr(i, j, k, 1);
@@ -593,9 +610,23 @@ compute_amr_constraint_norms(amrex::Amr *parent,
                     const amrex::Real mom2    = m1 * m1 + m2 * m2 + m3 * m3;
                     const amrex::Real mom_abs2 =
                         ma1 * ma1 + ma2 * ma2 + ma3 * ma3;
-                    return {ham * ham * cell_vol, mom2 * cell_vol, cell_vol,
-                            ham_abs * ham_abs * cell_vol, mom_abs2 * cell_vol,
-                            std::abs(ham)};
+                    const amrex::Real x =
+                        prob_lo[0] + (amrex::Real(i) + 0.5) * dx[0] - icx;
+                    const amrex::Real y =
+                        prob_lo[1] + (amrex::Real(j) + 0.5) * dx[1] - icy;
+                    const amrex::Real z =
+                        prob_lo[2] + (amrex::Real(k) + 0.5) * dx[2] - icz;
+                    const amrex::Real in_int =
+                        (x * x + y * y + z * z <= r_int2) ? 1.0 : 0.0;
+                    return {ham * ham * cell_vol,
+                            mom2 * cell_vol,
+                            cell_vol,
+                            ham_abs * ham_abs * cell_vol,
+                            mom_abs2 * cell_vol,
+                            std::abs(ham),
+                            in_int * ham * ham * cell_vol,
+                            in_int * mom2 * cell_vol,
+                            in_int * cell_vol};
                 });
         }
 
@@ -608,6 +639,9 @@ compute_amr_constraint_norms(amrex::Amr *parent,
         sum_ham_abs2 += amrex::get<3>(v);
         sum_mom_abs2 += amrex::get<4>(v);
         max_ham = std::max(max_ham, amrex::get<5>(v));
+        sum_ham2_int += amrex::get<6>(v);
+        sum_mom2_int += amrex::get<7>(v);
+        sum_vol_int  += amrex::get<8>(v);
         if (lev >= 1)
         {
             sum_ham2_ref += lv_ham2;
@@ -622,6 +656,9 @@ compute_amr_constraint_norms(amrex::Amr *parent,
     amrex::ParallelDescriptor::ReduceRealSum(sum_mom_abs2);
     amrex::ParallelDescriptor::ReduceRealSum(sum_ham2_ref);
     amrex::ParallelDescriptor::ReduceRealSum(sum_vol_ref);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_ham2_int);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_mom2_int);
+    amrex::ParallelDescriptor::ReduceRealSum(sum_vol_int);
     amrex::ParallelDescriptor::ReduceRealMax(max_ham);
 
     if (sum_vol > 0.0)
@@ -636,7 +673,114 @@ compute_amr_constraint_norms(amrex::Amr *parent,
     out.Linf_Ham = max_ham;
     out.L2_Ham_ref =
         (sum_vol_ref > 0.0) ? std::sqrt(sum_ham2_ref / sum_vol_ref) : 0.0;
+    if (sum_vol_int > 0.0)
+    {
+        out.L2_Ham_int = std::sqrt(sum_ham2_int / sum_vol_int);
+        out.L2_Mom_int = std::sqrt(sum_mom2_int / sum_vol_int);
+    }
     return out;
+}
+
+// constraint_shells.dat: the L2 of Ham and Mom over level 0 in shells of unit
+// width about the sponge's centre, shell s holding s <= r < s + 1 and the last
+// one everything further out (the box's corners), with the same 4-cell outer
+// boundary layer dropped as the AMR norms.  Written once per
+// constraint_shells_dt, so where a violation sits, and whether it moves in
+// from the absorbing layer, can be read at every resolution (2026-10-22).
+constexpr int n_constraint_shells = 33;
+
+void write_constraint_shells(const amrex::MultiFab &cst,
+                             const amrex::Geometry &geom,
+                             const SimulationParameters &params,
+                             const std::string &out_dir, amrex::Real dt,
+                             amrex::Real time, amrex::Real restart_time,
+                             bool first_step)
+{
+    // Also the first step, where the initial data's own defects show.
+    const amrex::Real every = params.constraint_shells_dt;
+    const amrex::Real eps   = 1.0e-6 * every;
+    const bool first_row    = time - dt < eps;
+    if (!first_step && !first_row &&
+        std::floor((time + eps) / every) == std::floor((time - dt + eps) / every))
+    {
+        return;
+    }
+
+    constexpr int ns = n_constraint_shells;
+    amrex::Gpu::DeviceVector<amrex::Real> d_sums(4 * ns, 0.0);
+    amrex::Real *sums = d_sums.data();
+
+    amrex::Box interior = geom.Domain();
+    interior.grow(-4);
+    const amrex::IntVect ilo   = interior.smallEnd();
+    const amrex::IntVect ihi   = interior.bigEnd();
+    const auto prob_lo         = geom.ProbLoArray();
+    const auto dx              = geom.CellSizeArray();
+    const amrex::Real cell_vol = dx[0] * dx[1] * dx[2];
+    const amrex::Real cx       = params.sponge_params.center[0];
+    const amrex::Real cy       = params.sponge_params.center[1];
+    const amrex::Real cz       = params.sponge_params.center[2];
+    const auto arrs            = cst.const_arrays();
+
+    amrex::ParallelFor(
+        cst,
+        [=] AMREX_GPU_DEVICE(int box_no, int i, int j, int k) noexcept
+        {
+            if (i < ilo[0] || i > ihi[0] || j < ilo[1] || j > ihi[1] ||
+                k < ilo[2] || k > ihi[2])
+            {
+                return;
+            }
+            const amrex::Real x = prob_lo[0] + (amrex::Real(i) + 0.5) * dx[0] - cx;
+            const amrex::Real y = prob_lo[1] + (amrex::Real(j) + 0.5) * dx[1] - cy;
+            const amrex::Real z = prob_lo[2] + (amrex::Real(k) + 0.5) * dx[2] - cz;
+            const int s = amrex::min(
+                static_cast<int>(std::sqrt(x * x + y * y + z * z)), ns - 1);
+            const auto a          = arrs[box_no];
+            const amrex::Real ham = a(i, j, k, 0);
+            const amrex::Real mom2 = a(i, j, k, 1) * a(i, j, k, 1) +
+                                     a(i, j, k, 2) * a(i, j, k, 2) +
+                                     a(i, j, k, 3) * a(i, j, k, 3);
+            amrex::Gpu::Atomic::AddNoRet(sums + 4 * s, ham * ham * cell_vol);
+            amrex::Gpu::Atomic::AddNoRet(sums + 4 * s + 1, mom2 * cell_vol);
+            amrex::Gpu::Atomic::AddNoRet(sums + 4 * s + 2, cell_vol);
+            // Signed mean: the growing mode's sign and phase (2026-10-22).
+            amrex::Gpu::Atomic::AddNoRet(sums + 4 * s + 3, ham * cell_vol);
+        });
+    amrex::Gpu::streamSynchronize();
+
+    std::vector<amrex::Real> h_sums(4 * ns);
+    amrex::Gpu::copy(amrex::Gpu::deviceToHost, d_sums.begin(), d_sums.end(),
+                     h_sums.begin());
+    amrex::ParallelDescriptor::ReduceRealSum(h_sums.data(),
+                                             static_cast<int>(h_sums.size()));
+
+    SmallDataIO shells_file(out_dir + "constraint_shells", dt, time,
+                            restart_time, SmallDataIO::APPEND, first_step);
+    shells_file.remove_duplicate_time_data();
+    if (first_step)
+    {
+        std::vector<std::string> names;
+        for (int s = 0; s < ns; ++s)
+            names.push_back("Ham_r" + std::to_string(s));
+        for (int s = 0; s < ns; ++s)
+            names.push_back("Mom_r" + std::to_string(s));
+        for (int s = 0; s < ns; ++s)
+            names.push_back("Hmean_r" + std::to_string(s));
+        shells_file.write_header_line(names);
+    }
+    std::vector<double> row(3 * ns, 0.0);
+    for (int s = 0; s < ns; ++s)
+    {
+        const amrex::Real vol = h_sums[4 * s + 2];
+        if (vol > 0.0)
+        {
+            row[s]          = std::sqrt(h_sums[4 * s] / vol);
+            row[ns + s]     = std::sqrt(h_sums[4 * s + 1] / vol);
+            row[2 * ns + s] = h_sums[4 * s + 3] / vol;
+        }
+    }
+    shells_file.write_time_data_line(row);
 }
 } // namespace
 
@@ -924,6 +1068,8 @@ void RadialRecipeLevel::specificPostTimeStep()
         // Whole-hierarchy norms (cols 12-17). These are the ones to quote as
         // an accuracy figure; cols 2-3 above are the governor's input and stay
         // exactly as they were. 4 level-0 cells of outer boundary are dropped.
+        // Cols 18-19 are the same norms inside the sponge's inner radius
+        // (2026-10-22: the order test needs the interior alone).
         const AmrConstraintNorms amr_norms = compute_amr_constraint_norms(
             parent, simParams(), time, state_index, /*boundary_skip=*/4, &cst);
 
@@ -941,7 +1087,8 @@ void RadialRecipeLevel::specificPostTimeStep()
                  "integral_neg_rho", "L2_Ham_rel", "L2_Mom_rel",
                  "pump_force_L2", "governor", "pump_fi_L2", "L2_Ham_amr",
                  "L2_Mom_amr", "L2_Ham_amr_rel", "L2_Mom_amr_rel",
-                 "Linf_Ham_amr", "L2_Ham_amr_ref"});
+                 "Linf_Ham_amr", "L2_Ham_amr_ref", "L2_Ham_int",
+                 "L2_Mom_int"});
         }
         constraints_file.write_time_data_line(
             std::vector<double>{L2_Ham, L2_Mom, static_cast<double>(min_rho_req),
@@ -954,7 +1101,15 @@ void RadialRecipeLevel::specificPostTimeStep()
              static_cast<double>(amr_norms.L2_Ham_rel),
              static_cast<double>(amr_norms.L2_Mom_rel),
              static_cast<double>(amr_norms.Linf_Ham),
-             static_cast<double>(amr_norms.L2_Ham_ref)});
+             static_cast<double>(amr_norms.L2_Ham_ref),
+             static_cast<double>(amr_norms.L2_Ham_int),
+             static_cast<double>(amr_norms.L2_Mom_int)});
+
+        if (simParams().constraint_shells_dt > 0.0)
+        {
+            write_constraint_shells(cst, Geom(), simParams(), out_dir, dt, time,
+                                    restart_time, first_step);
+        }
     }
 
     if (Level() == 0)

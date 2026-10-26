@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import hashlib
 import os
 import shlex
+import shutil
 import signal
 import subprocess
 import sys
@@ -97,6 +99,89 @@ def _merged_env(cuda_devices: str | None = None, extra_env: Mapping[str, str] | 
     return env
 
 
+# Process table.  The cards are shared and `ps` / `nvidia-smi` are readable by
+# anyone on the node, so with GRTECLYN_PROC_LABEL set (the Bondi launchers set
+# it, 2026-10-23) a run takes the merger launcher's neutral names: the
+# evolution runs as `<label> params.txt` from the episode directory, from a
+# copy of the binary named after the label and its checksum (the GPU process
+# list shows the executable's real path, which argv[0] cannot change), and the
+# consumer as `<label>_post post.py ...` with episode-relative paths.  The real
+# commands still go to the episode's run.log.  Unset: nothing changes.
+_CONSUMER_MODULE = "grteclyn_wrapper.visualisation.process_wave.consume_plotfiles"
+
+
+def _proc_label() -> str | None:
+    label = os.environ.get("GRTECLYN_PROC_LABEL", "").strip()
+    return label or None
+
+
+def _neutral_executable(path: Path, label: str) -> Path:
+    """The binary's copy ``<label>_<md5[:8]>`` under GRTECLYN_PROC_BIN_DIR.
+
+    run_single.sh names its copy the same way, so both launchers share one
+    copy per distinct build and a rebuild never reuses an old copy.
+    """
+    bin_dir = Path(os.environ.get("GRTECLYN_PROC_BIN_DIR", "/tmp/ml_jobs/bin"))
+    bin_dir.mkdir(parents=True, exist_ok=True)
+    digest = hashlib.md5()
+    with path.open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1 << 20), b""):
+            digest.update(chunk)
+    target = bin_dir / f"{label}_{digest.hexdigest()[:8]}"
+    if not os.access(target, os.X_OK):
+        part = bin_dir / f"{target.name}.part{os.getpid()}"
+        shutil.copyfile(path, part)
+        part.chmod(0o755)
+        os.replace(part, target)
+    return target
+
+
+def _scratch_alias(episode: Episode) -> Path:
+    return episode.path / "scratch"
+
+
+def _neutral_consumer(
+    command: Sequence[str], episode: Episode, label: str
+) -> tuple[list[str], str]:
+    """argv and executable that run ``command`` as ``<label>_post post.py``.
+
+    python finds its environment through argv[0], so the name is a symlink in
+    the venv's own bin directory, which the caller puts first on PATH (as
+    run_single.sh does).  The module is entered through a one-line post.py so
+    its dotted name stays off the command line, and the plotfiles are reached
+    through a ``scratch`` link in the episode directory.
+    """
+    if list(command[1:3]) != ["-m", _CONSUMER_MODULE]:
+        raise ValueError(f"unexpected consumer command: {list(command[:3])}")
+    python = Path(command[0])
+    link = python.parent / f"{label}_post"
+    if not (link.is_symlink() and os.readlink(link) == python.name):
+        tmp = python.parent / f".{link.name}.{os.getpid()}"
+        tmp.unlink(missing_ok=True)
+        tmp.symlink_to(python.name)
+        os.replace(tmp, link)
+    (episode.path / "post.py").write_text(
+        "# written by grteclyn_wrapper.core.runner: entry point for the plotfile consumer\n"
+        "import runpy\n"
+        f'runpy.run_module("{_CONSUMER_MODULE}", run_name="__main__")\n',
+        encoding="utf-8",
+    )
+    root = episode.path.resolve()
+    scratch = plotfile_dir(episode.path).resolve()
+    if scratch != root and not _scratch_alias(episode).is_symlink():
+        _scratch_alias(episode).symlink_to(scratch)
+    args = []
+    for arg in command[3:]:
+        if arg.startswith("/"):
+            resolved = Path(arg).resolve()
+            if scratch != root and resolved == scratch:
+                arg = "scratch"
+            elif resolved == root or root in resolved.parents:
+                arg = str(resolved.relative_to(root))
+        args.append(arg)
+    return [link.name, "post.py", *args], str(link)
+
+
 def _run_and_tee(
     command: Sequence[str],
     log_path: Path,
@@ -105,14 +190,17 @@ def _run_and_tee(
     env: Mapping[str, str] | None = None,
     stop_sim_path: Path | None = None,
     poll_seconds: float = 2.0,
+    executable: str | None = None,
 ) -> RunResult:
     start = time.monotonic()
     log_path.parent.mkdir(parents=True, exist_ok=True)
     with log_path.open("a", encoding="utf-8") as log:
-        log.write(f"\n$ {' '.join(command)}\n")
+        real = f"   [executable {executable}, cwd {cwd}]" if executable else ""
+        log.write(f"\n$ {' '.join(command)}{real}\n")
         log.flush()
         process = subprocess.Popen(
             list(command),
+            executable=executable,
             cwd=cwd,
             env=dict(env) if env is not None else None,
             stdout=subprocess.PIPE,
@@ -199,10 +287,19 @@ def start_plotfile_consumer(
     )
     log = episode.log_path.open("a", encoding="utf-8")
     log.write(f"\n$ {' '.join(command)}\n")
+    executable = None
+    cwd = REPO_ROOT
+    label = _proc_label()
+    if label:
+        command, executable = _neutral_consumer(command, episode, label)
+        env["PATH"] = os.pathsep.join([str(Path(executable).parent), env.get("PATH", "")])
+        cwd = episode.path
+        log.write(f"[wrapper] consumer runs as: {' '.join(command)}\n")
     log.flush()
     return subprocess.Popen(
         command,
-        cwd=REPO_ROOT,
+        executable=executable,
+        cwd=cwd,
         stdout=log,
         stderr=subprocess.STDOUT,
         text=True,
@@ -279,6 +376,14 @@ def drain_plotfile_backlog(
         score_weights=score_weights,
         evolving_geodesic=evolving_geodesic,
     )
+    label = _proc_label()
+    if label:
+        command, executable = _neutral_consumer(command, episode, label)
+        env = dict(os.environ)
+        env["PATH"] = os.pathsep.join([str(Path(executable).parent), env.get("PATH", "")])
+        return _run_and_tee(
+            command, episode.log_path, cwd=episode.path, env=env, executable=executable
+        )
     return _run_and_tee(command, episode.log_path, cwd=REPO_ROOT)
 
 
@@ -320,6 +425,18 @@ def run_episode(
         env["GRTECLYN_GPU_IDS"] = cuda_devices
     if consumer_evolving_geodesic:
         env["GRTECLYN_EVOLVING_GEODESIC"] = "1"
+    # Neutral process table (see _proc_label); single-rank runs only.
+    label = None if executable.uses_mpi else _proc_label()
+    run_path = str(_neutral_executable(executable.path, label)) if label else None
+
+    def evolution_command(*extra: str) -> tuple[list[str], Path, str | None]:
+        if label:
+            return [label, episode.params_path.name, *extra], episode.path, run_path
+        command = build_command(
+            executable, episode.params_path, *extra, cuda_devices=cuda_devices
+        )
+        return command, example_dir, None
+
     update_metadata(
         episode,
         {
@@ -330,17 +447,15 @@ def run_episode(
             # The plotfiles are not in the episode directory any more, and the
             # scratch name carries a digest that does not invert.  Record it.
             "plotfile_dir": str(plotfile_dir(episode.path)),
+            **({"process_executable": run_path} if run_path else {}),
         },
     )
 
     if check_params:
-        check_command = build_command(
-            executable,
-            episode.params_path,
-            "check_params=1",
-            cuda_devices=cuda_devices,
+        check_command, check_cwd, check_exe = evolution_command("check_params=1")
+        check_result = _run_and_tee(
+            check_command, episode.log_path, cwd=check_cwd, env=env, executable=check_exe
         )
-        check_result = _run_and_tee(check_command, episode.log_path, cwd=example_dir, env=env)
         if check_result.returncode != 0:
             update_metadata(episode, {"check_params_exit_code": check_result.returncode})
             raise RuntimeError(f"check_params failed with exit code {check_result.returncode}")
@@ -364,11 +479,7 @@ def run_episode(
         )
 
     try:
-        command = build_command(
-            executable,
-            episode.params_path,
-            cuda_devices=cuda_devices,
-        )
+        command, run_cwd, run_exe = evolution_command()
         stop_sim_path = None
         if os.environ.get("GRTECLYN_SPLASH_EARLY_TERM", "").strip().lower() in {
             "1",
@@ -382,9 +493,10 @@ def run_episode(
         result = _run_and_tee(
             command,
             episode.log_path,
-            cwd=example_dir,
+            cwd=run_cwd,
             env=env,
             stop_sim_path=stop_sim_path,
+            executable=run_exe,
         )
     finally:
         if consumer is not None:
@@ -404,6 +516,9 @@ def run_episode(
                 score_weights=consumer_score_weights,
                 evolving_geodesic=consumer_evolving_geodesic,
             )
+        # The consumer's link to the plotfiles; scratch is purged after the run.
+        if _scratch_alias(episode).is_symlink():
+            _scratch_alias(episode).unlink()
 
     update_metadata(
         episode,

@@ -175,6 +175,10 @@ campaign_register_launcher "${RUNS_DIR}"
 # Live per-sector centroid stream + radiation extraction.
 export GRTECLYN_SECTOR_BARYCENTERS=1
 export GRTECLYN_PSI4=1
+# Neutral process table, as the merger launcher's (core/runner.py): the
+# evolution shows as `test params.txt`, run from a checksum-named copy of the
+# binary, and the consumer as `test_post post.py` (2026-10-23).
+export GRTECLYN_PROC_LABEL="${BONDI_PROC_LABEL:-test}"
 # Scrutiny stream (sector_dynamics.dat) -- same opt-in as the pair launcher.
 export GRTECLYN_SECTOR_DYNAMICS="${BONDI_SCRUTINY:-0}"
 export GRTECLYN_SECTOR_DYNAMICS_LEVEL="${BONDI_SCRUTINY_LEVEL:-0}"
@@ -246,6 +250,21 @@ if [[ -d "${RUNS_DIR}/${out_name}" ]]; then
   exit 1
 fi
 
+# BONDI_BINARY / BONDI_EXTRA: same semantics as run_pair_selfgrav.sh (a pinned
+# evolution binary; raw params.txt KEY=VALUE overrides applied last).  Empty by
+# default, so every archived single reproduces bit-for-bit without them.
+binary_args=()
+if [[ -n "${BONDI_BINARY:-}" ]]; then
+  binary_args=(--executable "${BONDI_BINARY}")
+fi
+EXTRA_FLAGS=()
+if [[ -n "${BONDI_EXTRA:-}" ]]; then
+  for _kv in ${BONDI_EXTRA}; do
+    [[ "${_kv}" == *=* ]] || { echo "[bondi] BONDI_EXTRA needs KEY=VALUE, got '${_kv}'"; exit 1; }
+    EXTRA_FLAGS+=(--extra-override "${_kv}")
+  done
+fi
+
 echo "[bondi] === ${out_name} (ultraweak rung, gravity-dressed star) ==="
 PYTHONPATH="${WRAPPER_DIR}/src" "${WRAPPER_DIR}/.venv/bin/python" \
   "${WRAPPER_DIR}/scripts/campaigns/hq/replay_eval.py" \
@@ -293,6 +312,8 @@ PYTHONPATH="${WRAPPER_DIR}/src" "${WRAPPER_DIR}/.venv/bin/python" \
   --extra-override trajectory_lump0_well_depth=0.15 \
   --extra-override trajectory_lump0_exotic="${EXOTIC}" \
   ${sponge_args[@]+"${sponge_args[@]}"} \
+  ${binary_args[@]+"${binary_args[@]}"} \
+  ${EXTRA_FLAGS[@]+"${EXTRA_FLAGS[@]}"} \
   ${dryrun_args[@]+"${dryrun_args[@]}"}
 
 echo "[bondi] dressed-star calibration complete: ${RUNS_DIR}/${out_name}"

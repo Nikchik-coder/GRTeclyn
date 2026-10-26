@@ -9,7 +9,7 @@ directory — there are no loose campaign folders at this level.
 
 | Paper pack | Status |
 |---|---|
-| [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | Complete. Data, derived tables and the refit tooling ship together. |
+| [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | Complete, version 2 (2026-10-26): the 24 reruns on the fixed code behind the paper's v2, [arXiv:2608.24577](https://arxiv.org/abs/2608.24577). |
 | [`wormhole-dynamics/`](wormhole-dynamics/) | Complete. Published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071). |
 | [`merger/`](merger/) | In preparation. The drainhole-merger campaign: packed runs, figures and analysis tables. |
 | [`spinningwormhole/`](spinningwormhole/) | Complete. Rotating drainholes: the solver's solutions and the 3D runs of the rotating-wormholes paper. |
@@ -21,27 +21,23 @@ hard-coded — and then gate the pack: a surviving token fails the run.
 
 ### `bondi-dipole-runaway/`
 
-A positive-active-mass and a negative-active-mass soliton, released at rest in
-full 3+1 numerical relativity with constraint-solved matter, self-accelerate
-together; both same-sector controls are null. Both axes of `a = GM/d²` are
-direct measurements — `a ∝ d^−2.028` across separations `d = 8…20`, and
-`a ∝ M^0.966 ± 0.061` across a ×2.46 mass range.
+A star of positive mass and a star of negative mass, released at rest in full 3+1 numerical relativity from
+constraint-solved initial data, accelerate together at constant separation, as Bondi predicted, while the same-sign
+pairs and the isolated stars stay at rest. The acceleration follows Newton's law in both separation and mass
+(`a ∝ d₀^−1.95`, `a ∝ M̄^0.97±0.16`) and converges at fourth order with resolution. Version 2 of the pack
+(2026-10-26) holds the 24 reruns on the fixed code behind the paper's v2.
 
-The pack holds the per-cell time series, dressed-star tables, solve and
-evolution parameters, code patches, curated frames and movies, and the derived
-tables — plus the physics findings, the debugging trail, the matter model and
-the launch reference as standalone documents.
-
-You can re-derive the headline number without a GPU:
+The pack holds each run's time series, parameter files and launch record, stills of the runs the figures draw, the
+videos the paper links, the figures, the matter model and the launch reference. Every figure and every number the
+paper quotes is redrawn from the pack without a GPU:
 
 ```bash
 # from the repository root
-uv run python results/bondi-dipole-runaway/tools/fit_mass_law.py
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole
 ```
 
-Start with [`bondi-dipole-runaway/README.md`](bondi-dipole-runaway/README.md),
-then [`campaign/README.md`](bondi-dipole-runaway/campaign/README.md) for how to
-read a cell name and every column in the data files.
+Start with [`bondi-dipole-runaway/README.md`](bondi-dipole-runaway/README.md), then
+[`campaign/README.md`](bondi-dipole-runaway/campaign/README.md) for how to read a run name and the files of a run.
 
 ### `wormhole-dynamics/`
 

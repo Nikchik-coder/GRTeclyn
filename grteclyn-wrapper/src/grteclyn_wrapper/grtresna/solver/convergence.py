@@ -2,8 +2,7 @@
 
 The solver leaves its nonlinear loop by three different doors and only one of
 them means the initial data is as good as it was asked to be (wrapper README
-rule 8; ``research/bondi_dipole/check_solve_exit.py`` is the standalone twin of
-the classification below):
+rule 8):
 
 ``converged``
     both relative errors fell below ``NL_exit_tolerance`` with iterations to

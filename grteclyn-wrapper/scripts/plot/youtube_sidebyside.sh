@@ -23,12 +23,15 @@ FONT=/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf
 FONTB=/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf
 command -v ffmpeg >/dev/null || { echo "ffmpeg not found" >&2; exit 1; }
 
+# Cells by their revision names (2026-10-26; the v1 set, on the first-order time integration, is in
+# runs/bondi/00_archive/superseded_2026-10-23/movies/).
 title_for() {
   case "$1" in
-    runaway_pair_d10_L64_N256_*)  echo "Bondi dipole runaway — mixed pair, separation 10";;
-    longrun_pair_d10_t400_*)      echo "Bondi dipole runaway — carried to t = 400";;
-    control_pair_pp_*)            echo "Control — two positive-mass stars";;
-    control_pair_mm_*)            echo "Control — two negative-mass stars";;
+    PM10_L64_N256*)               echo "Bondi dipole runaway — mixed pair, separation 10";;
+    PM10_L64_N128_t400*)          echo "Bondi dipole runaway — carried to t = 400";;
+    PM10-rec_*_t1000*)            echo "Bondi dipole runaway — followed to t = 1000";;
+    PP10_*)                       echo "Control — two positive-mass stars";;
+    MM10_*)                       echo "Control — two negative-mass stars";;
     *)                            echo "${1//_/ }";;
   esac
 }
@@ -39,19 +42,21 @@ title_for() {
 # which is what makes it the clean gravitational case. Say so on the frame.
 caption1_for() {
   case "$1" in
-    runaway_pair_d10_L64_N256_*)  echo "A positive-mass and a negative-mass boson star, released at rest. Neither falls toward the other — the pair accelerates off together.";;
-    longrun_pair_d10_t400_*)      echo "The same mixed pair carried four times longer, to t = 400. The acceleration does not decay, drift, or turn around.";;
-    control_pair_pp_*)            echo "Both masses positive. They attract, fall together, and merge at t = 33.6.";;
-    control_pair_mm_*)            echo "Both masses negative. Newtonian gravity says they should repel — they merge anyway, at t = 32.8.";;
+    PM10_L64_N256*)               echo "A positive-mass and a negative-mass boson star, released at rest. Neither falls toward the other — the pair accelerates off together.";;
+    PM10_L64_N128_t400*)          echo "The same mixed pair on a coarser grid, carried twice as long, to t = 400. Both stars keep accelerating in the same direction.";;
+    PM10-rec_*_t1000*)            echo "The mixed pair carried to t = 1000; the box moves with it, so the stars stay in view. They travel 63 units and reach 0.11 c.";;
+    PP10_*)                       echo "Both masses positive. They attract, fall together, and merge at t = 34.4.";;
+    MM10_*)                       echo "Both masses negative. Newtonian gravity says they should repel — they merge anyway, at t = 33.6.";;
     *)                            echo "";;
   esac
 }
 caption2_for() {
   case "$1" in
-    runaway_pair_d10_L64_N256_*)  echo "The two stars are different scalar fields with no cross-term in the potential, so no binding force exists between them — gravity is their only interaction.";;
-    longrun_pair_d10_t400_*)      echo "Different fields, no shared potential term: the gap holds while the pair translates. The measured acceleration is GM/d² with nothing subtracted.";;
-    control_pair_pp_*)            echo "Both stars are the SAME scalar field, so their profiles overlap in the self-interaction potential — a binding term about 35× gravity at this separation.";;
-    control_pair_mm_*)            echo "Same cause: identical fields overlapping in the same binding potential, and that term is blind to the sign of the mass. What collapses them is not gravity.";;
+    PM10_L64_N256*)               echo "The two stars are different scalar fields with no cross-term in the potential, so no binding force exists between them — gravity is their only interaction.";;
+    PM10_L64_N128_t400*)          echo "The gap widens slowly (10 to 10.9) and the acceleration fades: that is the coarse grid's error, about four times smaller on a 1.5× finer grid.";;
+    PM10-rec_*_t1000*)            echo "The gap widens from 10 to 13.5 by the end: that is the grid's error, not gravity, and it shrinks quickly as the grid is refined.";;
+    PP10_*)                       echo "Both stars are the SAME scalar field, so where their profiles overlap the field itself pulls them together — a direct force much stronger than gravity.";;
+    MM10_*)                       echo "Same cause: identical fields overlapping, and that pull is blind to the sign of the mass. What collapses them is not gravity.";;
     *)                            echo "";;
   esac
 }

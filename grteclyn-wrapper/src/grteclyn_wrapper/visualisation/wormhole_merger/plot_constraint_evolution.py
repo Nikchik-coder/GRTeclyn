@@ -201,17 +201,17 @@ def seed_scan(axH, axM, pack) -> None:
     style.legend_top(axH, [
         (Line2D([], [], lw=1.5, **ink), r"$\varepsilon=-0.01$, level 4"),
         (Line2D([], [], lw=1.5, ls=DASH, **ink), r"$\varepsilon=+0.01$, level 4"),
-        (Line2D([], [], color=style.CONTEXT, lw=0.9), "no kick, level 4"),
+        (Line2D([], [], color=style.CONTEXT, lw=0.9), "unperturbed, level 4"),
         (Line2D([], [], color=style.INK, ls="none", marker="o", ms=3.2), "stopped by hand")],
         # titles fit the quarter-width frame: a longer one runs past it
-        ncol=1, title="lone throat; dash = kick sign", **KEY)
+        ncol=1, title="isolated throat;\n" r"dash = sign of $\varepsilon$", **KEY)
     style.legend_top(axM, [
         (Line2D([], [], lw=0.9, **ink), r"$|\varepsilon|=0.001$, level 3"),
         (Line2D([], [], lw=2.1, **ink), r"$|\varepsilon|=0.1$, level 3"),
-        (_cross(), "death (NaN)")],
+        (_cross(), "failure (NaN)")],
         # borderpad: a marker-only handle's extent is its line's span plus half
         # the marker, so the cross bleeds 2.5 pt left of a one-column key
-        ncol=1, title="same arms;\nweight = kick size", borderpad=0.5, **KEY)
+        ncol=1, title="same runs;\n" r"weight = $|\varepsilon|$", borderpad=0.5, **KEY)
 
 
 def pure_quadrupole(ax, pack) -> None:
@@ -225,7 +225,7 @@ def pure_quadrupole(ax, pack) -> None:
     ax.set_xlim(0, 100)
     style.legend_top(ax, [(hH, r"$\mathcal{H}$"), (hM, r"$\mathcal{M}$"),
                           (_rule(style.GOLD, DOT), rf"MOTS, $t={collapse.T_MOTS:g}$"),
-                          (_rule(style.FAINT, DOT), rf"trust window, $t={collapse.T_TRUST:g}$")],
+                          (_rule(style.FAINT, DOT), rf"reliable to $t={collapse.T_TRUST:g}$")],
                      ncol=1, title="pure quadrupole,\n" r"$\varepsilon_2=0.01$, level 4", **KEY)
     late = cn[cn[:, 0] >= collapse.T_TRUST]
     early = cn[cn[:, 0] <= collapse.T_TRUST]
@@ -315,10 +315,10 @@ def headon_pair(ax, pack) -> None:
     lo = min(float(u[:, 1].min()) for u in used)
     hi = max(float(u[:, 1].max()) for u in used)
     ax.set_ylim(0.85 * lo, 2.3 * hi)
-    style.legend_top(ax, [(hU, "used legs, level 5-6-4"), (hO, "level-5 overrun"),
-                          (_cross(style.CONTEXT), "death (NaN)"),
+    style.legend_top(ax, [(hU, "used, levels 5-6-4"), (hO, "level 5, run past use"),
+                          (_cross(style.CONTEXT), "failure (NaN)"),
                           (_rule(style.GOLD, DOT), rf"MOTS, $t={headon.T_MOTS:g}$")],
-                     ncol=1, title=r"head-on chain, $\mathcal{H}$", borderpad=0.5, **KEY)
+                     ncol=1, title=r"head-on, $\mathcal{H}$", borderpad=0.5, **KEY)
     f = float(np.interp(headon.T_MOTS, c5[:, 0], c5[:, 1]))
     print(f"  (e) head-on: H at formation {f:.2e}; overrun dies {over[-1, 0]:g} "
           f"(H {over[-1, 1]:.2e}); leg ends {c5[-1, 0]:g}/{c6[-1, 0]:g}/{c4[-1, 0]:g}; "
@@ -361,12 +361,12 @@ def spiral_chain(ax, pack) -> None:
     _ladder_rules(ax, (mc.T_SEAM1, mc.T_SEAM2, mc.T_SEAM3), mc.T_MOTS)
     _levels(ax, ((18.0, "5"), (70.0, "4")))
     ax.set_xlim(0, 100)
-    style.legend_top(ax, [(hU, "used legs, level 5-4"),
-                          (hW, "level-6, 7 walls"),
-                          (hO, r"$\sigma$ arm, overruns"),
-                          (hM, r"$\mathcal{M}$, settle leg"),
+    style.legend_top(ax, [(hU, "used, levels 5-4"),
+                          (hW, "levels 6, 7, failed"),
+                          (hO, "segments run past use"),
+                          (hM, r"$\mathcal{M}$, last segment"),
                           (_rule(style.GOLD, DOT), rf"MOTS, $t={mc.T_MOTS:g}$")],
-                     ncol=1, title=r"merger chain, $d=6$, $\mathcal{H}$", **KEY)
+                     ncol=1, title=r"merger, $d=6$, $\mathcal{H}$", **KEY)
     print(f"  (f) d6 chain: leg ends {c1[-1, 0]:g}/{cs[-1, 0]:g}/{cc[-1, 0]:g}/{c4[-1, 0]:g}; "
           f"H at contact {float(np.interp(mc.T_MOTS, c1[:, 0], c1[:, 1])):.2e}, "
           f"settle end H {c4[-1, 1]:.2e} M {c4[-1, 2]:.2e}")
@@ -401,10 +401,10 @@ def p060_chain(ax, pack) -> None:
     ax.axvline(P60_TRUST, color=style.FAINT, lw=0.7, ls=DOT, zorder=1)
     _levels(ax, ((66.0, "level 4"),))
     ax.set_xlim(0, 100)
-    style.legend_top(ax, [(hU, "used legs"),
-                          (h5, "level-5 check"),
-                          (hO, "floor-free overrun"),
-                          (_rule(style.FAINT, DOT), rf"trust window, $t={P60_TRUST:g}$")],
+    style.legend_top(ax, [(hU, "used"),
+                          (h5, "level-5 restart"),
+                          (hO, r"no $\chi$ floor"),
+                          (_rule(style.FAINT, DOT), rf"reliable to $t={P60_TRUST:g}$")],
                      ncol=1, title="plunge, $p=0.60$, $\\mathcal{H}$;\n"
                      r"$\chi$ floor from $t=50$", **KEY)
     print(f"  (g) p060 chain: leg ends {c1[-1, 0]:g}/{ce[-1, 0]:g}/{cc[-1, 0]:g}; "
@@ -423,8 +423,8 @@ def flyby(ax, pack) -> None:
     ax.axvline(gate, color=style.FAINT, lw=0.7, ls=DOT, zorder=1)
     ax.set_xlim(0, 100)
     style.legend_top(ax, [(hH, r"$\mathcal{H}$"), (hM, r"$\mathcal{M}$"),
-                          (_rule(style.FAINT, RULE), rf"trust window, $t={FLYBY_TRUST:g}$"),
-                          (_rule(style.FAINT, DOT), rf"wave gate, $t={gate_tex}$")],
+                          (_rule(style.FAINT, RULE), rf"reliable to $t={FLYBY_TRUST:g}$"),
+                          (_rule(style.FAINT, DOT), "waves at $R=20$\n" rf"to $t={gate_tex}$")],
                      ncol=1, title=r"fly-by, $p=0.45$, level 4", **KEY)
     t = cn[:, 0]
     quiet = (t >= 10.0) & (t <= 40.0)

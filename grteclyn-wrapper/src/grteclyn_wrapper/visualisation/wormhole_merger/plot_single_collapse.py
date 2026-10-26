@@ -117,7 +117,7 @@ def main(argv: list[str] | None = None) -> int:
                                                           axT.transAxes)
     if t_dep is not None:
         axT.axvline(t_dep, color=style.FAINT, linewidth=0.7, zorder=1)
-        axT.annotate(f"leaves the twin by 10 % at $t={t_dep:.0f}$", (t_dep, 1.0),
+        axT.annotate(f"departs by 10 % at $t={t_dep:.0f}$", (t_dep, 1.0),
                      xycoords=top, xytext=(3, -4), textcoords="offset points",
                      fontsize=7, color=style.MUTED, ha="left", va="top")
         print(f"[single-collapse] leaves the unkicked twin by 10% at t = {t_dep:.1f}")
@@ -126,7 +126,7 @@ def main(argv: list[str] | None = None) -> int:
     # and the MOTS sit two units below).  The anchor is read off the data.
     rise = tw[:, 0] > 50.0
     t_c = float(np.interp(4.6, tw[rise, 1], tw[rise, 0]))
-    axT.annotate("unkicked twin (truncation seed)", (t_c, 4.6),
+    axT.annotate("unperturbed run", (t_c, 4.6),
                  xytext=(5, -2), textcoords="offset points", fontsize=7,
                  color=style.CONTEXT, ha="left", va="top")
     axT.plot(ar[:, 0], ar[:, 1], color=style.INK, linewidth=1.4, zorder=3)
@@ -140,7 +140,7 @@ def main(argv: list[str] | None = None) -> int:
     axT.annotate("minimal-surface areal radius", (2.0, ar[0, 1]),
                  xytext=(0, -3), textcoords="offset points", fontsize=7.5,
                  color=style.INK, ha="left", va="top")
-    axT.annotate("oriented scan's MOTS", (hA["time"][-1], hA["R_mots"][-1]), xytext=(5, 0),
+    axT.annotate("MOTS (round-sphere scan)", (hA["time"][-1], hA["R_mots"][-1]), xytext=(5, 0),
                  textcoords="offset points", fontsize=7, color=style.GOLD,
                  ha="left", va="center")
     axT.set_xlim(0, 100)

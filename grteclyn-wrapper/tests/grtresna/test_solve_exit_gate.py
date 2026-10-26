@@ -67,7 +67,7 @@ def test_cap_door(tmp_path: Path) -> None:
 
 def test_met_on_last_permitted_iteration_is_cap(tmp_path: Path) -> None:
     # Met-by-luck: the tolerance fell only on the final permitted iteration.
-    # The next rung of a ladder will not be so lucky (check_solve_exit.py).
+    # The next rung of a ladder will not be so lucky.
     wd = _work_dir(tmp_path, [(1, 12.5, 8.0), (50, 0.05, 0.04)], cap=50)
     result = classify_solve_exit(wd)
     assert result is not None

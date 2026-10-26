@@ -45,10 +45,20 @@ def _target_span_slice(
     n_target: int,
     target_origin: float = 0.0,
 ) -> slice:
-    """Target cell-center indices covered by one Chombo source cell."""
+    """Target cell-center indices covered by one Chombo source cell.
+
+    A source cell whose centre lies outside the target domain covers nothing.
+    Before 2026-10-22 the nearest-cell fallback below mapped such cells onto
+    the edge cell, and the last one painted won, so with a target origin each
+    face's outermost layer took the value of a solve cell beyond the box (a
+    step of up to 3e-4 in chi and the lapse for the Bondi pairs).
+    """
     dx = float(dx_target[axis])
     left = src_index * dx_lev
     right = (src_index + 1) * dx_lev
+    centre = ((left + right) * 0.5 - target_origin) / dx
+    if centre < 0.0 or centre > n_target:
+        return slice(0, 0)
     start = int(np.ceil((left - target_origin) / dx - 0.5 - 1.0e-12))
     stop = int(np.floor((right - target_origin) / dx - 0.5 + 1.0e-12)) + 1
     start = max(0, min(start, n_target))

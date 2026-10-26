@@ -232,9 +232,9 @@ def draw(ax) -> None:
     end = {k: (LEAF_X - REACH[k], y) for k, y in LEAVES}
     lone_out = (LONE[0] + 0.25, LONE[1])
     x0, x1 = prong(ax, lone_out, end["collapse"])
-    over(ax, x0, x1, Y["collapse"], r"pushed out, $\varepsilon>0$")
+    over(ax, x0, x1, Y["collapse"], r"outward, $\varepsilon>0$")
     x0, x1 = prong(ax, lone_out, end["inflation"])
-    over(ax, x0, x1, Y["inflation"], r"squeezed, $\varepsilon<0$", below=True, dx=-0.35)
+    over(ax, x0, x1, Y["inflation"], r"inward, $\varepsilon<0$", below=True, dx=-0.35)
 
     # the pair, of either relative sign
     throat(ax, PAIR[0] - 0.2, PAIR[1], 0.15, "±", fs=6.5)
