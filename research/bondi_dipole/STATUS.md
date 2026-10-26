@@ -39,8 +39,10 @@ Figures (2026-10-26): every article figure is drawn from the reruns by `python -
 grteclyn_wrapper.visualisation.bondi_dipole` into `results/bondi-dipole-runaway/figures/<group>/` (PDF + PNG, one
 folder per campaign group, index `FIGURES.md`); the old Fig. 10 is replaced by the two resolution sets,
 `09_convergence/convergence_pair` / `convergence_lone` (constraints by region with the order-2 / order-4 rescaled
-curves, and the motion), as Figs. 10 and 11 of Appendix A. Text pass 10-26: every number, both tables and every
-caption carry the rerun values (the checklist below).
+curves, and the motion), now Figs. 8 and 9 of Appendix A on one float page before the appendix text. Decided 10-26:
+the main-text resolution figure and the star-family plot leave the article (the appendix sets carry the first, the
+text the family's two facts); every key sits above its panel, no blue (orange the one accent). Text pass 10-26:
+every number, both tables and every caption carry the rerun values (the checklist below).
 Report at any time (progress, order table, ΔX / d / a against the paper's runs):
 `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/bondi_dipole/study_report.py [--study pair|lone]`.
 
@@ -165,10 +167,16 @@ Sec. IV carries the per-stage FillPatch pitfall (first order in Δt, amplified o
 constraint orders); Sec. III A why the lapse join must be smooth (a 5 × 10⁻⁵ step passes every t = 0 check and
 becomes a growing momentum violation); Sec. III B the solver–painter matter agreement (a mismatch is a t = 0
 floor no resolution removes), the face-layer copy, and that the corrected data enter at the solve's order 2.0.
+Audit pass 10-26 (four checks: numbers against the pack, figure provenance, WRITING_STANDARDS, repetition; 13 pages,
+both engines; GRG's Declarations block, funding, competing interests, data and code availability, replaces the Data
+availability section; the appendix float sits in Sec. VII A, so it prints before the references): the August star-table M₋ and M₊+M₋ become the solver's −0.014293 and 5.7 × 10⁻⁵; the signed momentum
+is below 0.5 % for t ≥ 5 (not 0.1 %), the residual falls ×49 from N 128 to 256, P's central lapse moves 7 × 10⁻⁴,
+the peak field < 0.3 %, the separation 0.05 % everywhere, the trailing star 0.108c, the zero crossing 0.99 ± 0.02
+(the code had hard-coded the v1 centre); the setup notes are stated as the final setup (no chronology), CTTK, κ, η,
+σ, α∞, Δx, ℓ and r defined, captions end with their outcome, about 170 words trimmed.
 
-- [ ] The five videos are remade from the reruns and packed upload-ready (d0e42206, `movies/youtube/`); upload
-      them, then update the four caption links (they still carry the v1 YouTube ids) and give Video 5 (the t 1000
-      chase, cited in Sec. V G) its link, before the v2 and the resubmission.
+- [x] The five videos are on YouTube (links in `movies/youtube/README.md`, 310bddff); the captions carry them and
+      Video 5 (the t 1000 chase) is linked in Sec. V G (10-26).
 - [ ] Strip the one remaining TODO comment (the release's version DOI, Data availability) at the arXiv upload.
 
 ### 2. Release and submission

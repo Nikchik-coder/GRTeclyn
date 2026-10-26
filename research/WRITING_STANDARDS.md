@@ -221,12 +221,6 @@ What to show (as in Evstafyeva et al., Appendix A, Fig. 5, and Clough et al., Ap
 
 ### Bondi dipole paper
 
-- [ ] **Convergence, the one point wording cannot fix.** ΔX(200) = 2.8815, 3.0139 and 3.0016 at N = 128/192/256 give
-  Q_meas = −10.8: the two differences have opposite signs, so N = 128 is outside the convergent regime. The draft's
-  argument that a base grid 4% low is "the opposite of what a discretization artefact does" will not persuade. Two
-  honest fixes: add N = 320 (Δx = 0.2; a new run, so it needs a go) and quote Q_meas for the top three resolutions
-  against their own Q₄; or state that N = 128 is not convergent, quote the N = 192/256 difference as the error bar,
-  and put every base-grid number (separation scan, mass ladder) behind that caveat.
 - The presentation pass landed 2026-10-22 (`research/bondi_dipole/STATUS.md`, REVISION); its draft abstract is in the paper.
 
 ### Spinning-wormhole paper

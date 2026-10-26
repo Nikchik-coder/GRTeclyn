@@ -34,7 +34,7 @@ constraints; (k) the change of the minimum lapse; (l) the peak field's.
 Colours (``--palette``): ``paper``, the default, is the Bondi article's look
 (2026-10-26): the members in black, dotted / dashed / solid from the coarsest to the
 finest as in its Fig. 9(a), the order-2 curve in its orange and the order-4 curve in
-its blue, fonts from pdflatex through the pgf backend (``article_figures.RC``).
+grey (2026-10-26: no blue), fonts from pdflatex through the pgf backend (``article_figures.RC``).
 ``rgb`` is red / green / blue from the coarsest member to the finest, the rescaled
 curves in the finest's colour, as in the spinning paper; ``house`` is an ordered
 light-to-dark ramp with ink rescaled curves.  ``--colors C1,C2,C3`` replaces the
@@ -248,7 +248,7 @@ def draw(data, ns, study: str, look: dict):
         rescaled = look["rescaled"] or colours[ns[-1]]
         members = {n: dict(color=colours[n], ls=SOLID, lw=1.1) for n in ns}
         brackets = [dict(color=rescaled, ls=ls, lw=0.9) for ls in (DASHED, DOTTED)]
-    fig, axes = plt.subplots(3, len(ZONES), figsize=(7.0, 4.4), sharex=True, layout="constrained")
+    fig, axes = plt.subplots(3, len(ZONES), figsize=(7.0, 3.7), sharex=True, layout="constrained")  # both sets on one page
     lo, hi = ns[0], ns[-1]
     t_end = min(d["shells"][-1, 0] for d in data.values())
     tags = iter("abcdefghijkl")
