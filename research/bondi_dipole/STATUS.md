@@ -202,10 +202,9 @@ notation table, the absorbing-layer loss sentence (the d_0 = 20 runs lose no mor
       release metadata (658bb941), tag and GitHub release `v2.0-bondi-dipole`; Zenodo ingested it within a minute:
       version DOI 10.5281/zenodo.23662692 under concept 10.5281/zenodo.23245933, which the paper's Data
       availability now cites.
-- [ ] arXiv v2 of 2608.24577: account page → Articles You Own → Replace icon → upload the full source again (tex,
-      bbl, figures, `anc/` movies) → compiler **pdflatex** → update the abstract and comments ("v2: corrected time
-      integration, all simulations rerun, convergence study added") → submit. Same identifier; v1 stays visible.
-      Replacements have their own limit (one per week after v5), not the monthly cap.
+- [x] arXiv v2 of 2608.24577 submitted 2026-10-26 as submit/8283157 (replacement), built from 7675b824: the package
+      and form text in `arxiv_submission/` (local, excluded from git); 13 pages, five videos in `anc/`, both authors,
+      comments ending with the v2 reason. Due for announcement Mon 26 Oct 20:00 ET (Tue 03:00 MSK).
 - [ ] Journal submission: the GRG resubmission (full LaTeX source and PDF; the message and the point-by-point
       response above), on the same day as the v2.
 
