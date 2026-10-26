@@ -24,8 +24,9 @@
 > [`v1.0-spinning-wormhole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-spinning-wormhole),
 > the colliding-wormholes paper at tag
 > [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger),
-> the Bondi dipole paper at tag
-> [`v1.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole).
+> the Bondi dipole paper's v2 at tag
+> [`v2.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v2.0-bondi-dipole) (its v1 at
+> [`v1.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole)).
 > Every release is archived on Zenodo under [doi:10.5281/zenodo.23245933](https://doi.org/10.5281/zenodo.23245933).
 > To cite the papers or this code, see [CITATION.cff](CITATION.cff).
 >
