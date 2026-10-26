@@ -163,7 +163,8 @@ recorded with the campaign working notes, which are not part of this pack.
 | [`trust_windows.tsv`](trust_windows.tsv) | the last trustworthy time of any run that stops being trustworthy before its end (none yet) |
 | `stars/` | dressed-star profile tables `r φ₀(r) α(r)` + the M(ω) family scan |
 | `analysis/` | derived tables and the scripts that regenerate them |
-| `campaign/<group>/<cell>/frames/` | one still per field every `dt = 10`, for the cells run with frames. The movies themselves stay in the gitignored run tree |
+| `campaign/<group>/<cell>/frames/` | one still per field every `dt = 10`, for the cells run with frames. The full movie sets stay in the gitignored run tree |
+| [`movies/youtube/`](movies/youtube/README.md) | the five upload-ready 1080p videos, matter beside geometry (PM10 at N 256, PM10-t400, the t 1000 chase, PP10, MM10), with their YouTube descriptions |
 | `patches/` | the matter-model modifications this campaign required |
 | `figures/` | the paper's figures (PDF), which the article reads from here (its `\graphicspath`), and the convergence figures `convergence_pair` / `convergence_lone` (PNG + PDF) — see "The figures" below |
 
