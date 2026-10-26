@@ -160,6 +160,11 @@ with the shed-field reading; Ψ4 is R^−4.7, ×30. New Sec. V G "Evolution to t
 (0.115 c / 0.107 c at t 1000 from the treadmill odometer, a 1.42 → 0.70 × 10⁻⁴, d 10.0 → 13.5, read as truncation
 error) beside M-t1000 (peak +0.11 %); the abstract notes the tenth of c, and momentum is 0.1 % (N 256).
 Decided 10-26: no notation table — every symbol is defined at first use, and a table would repeat Secs. II–IV.
+Setup-fix notes 10-26 (from "What was wrong", as the pitfall notes WRITING_STANDARDS §3.6 allows; 15 pages now):
+Sec. IV carries the per-stage FillPatch pitfall (first order in Δt, amplified oscillation, shows only in the
+constraint orders); Sec. III A why the lapse join must be smooth (a 5 × 10⁻⁵ step passes every t = 0 check and
+becomes a growing momentum violation); Sec. III B the solver–painter matter agreement (a mismatch is a t = 0
+floor no resolution removes), the face-layer copy, and that the corrected data enter at the solve's order 2.0.
 
 - [ ] The five videos are remade from the reruns and packed upload-ready (d0e42206, `movies/youtube/`); upload
       them, then update the four caption links (they still carry the v1 YouTube ids) and give Video 5 (the t 1000
