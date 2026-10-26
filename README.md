@@ -15,20 +15,19 @@
 >
 > | Paper | Data in this repo |
 > |---|---|
-> | *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves* — arXiv:XXXX.XXXXX (number to come) | [`results/merger/`](results/merger/) |
+> | *Rotation slows the instability of Ellis–Bronnikov wormholes* — [arXiv:2610.29941](https://arxiv.org/abs/2610.29941) | [`results/spinningwormhole/`](results/spinningwormhole/) |
+> | *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves* — [arXiv:2610.13206](https://arxiv.org/abs/2610.13206) | [`results/merger/`](results/merger/) |
 > | *The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating Positive–Negative Mass Binary* — [arXiv:2608.24577](https://arxiv.org/abs/2608.24577) | [`results/bondi-dipole-runaway/`](results/bondi-dipole-runaway/) |
 > | *Wormhole Dynamics: Nonlinear Collapse and Gravitational-Wave Emission* — [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`results/wormhole-dynamics/`](results/wormhole-dynamics/) |
 >
-> **Headline result — the Bondi dipole runaway.** A positive-mass boson star
-> paired with a negative-mass phantom one self-accelerates, with no horizon and
-> no numerical artefact. Both axes of `a = GM/d²` are measured directly:
-> `a ∝ d^−2.028` across separations, `a ∝ M^0.966 ± 0.061` across a ×2.46 mass
-> range.
->
-> The colliding-wormholes paper cites this repository at tag
+> The rotating-wormholes paper cites this repository at tag
+> [`v1.0-spinning-wormhole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-spinning-wormhole),
+> the colliding-wormholes paper at tag
 > [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger),
-> the Bondi dipole paper at tag
-> [`v1.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole).
+> the Bondi dipole paper's v2 at tag
+> [`v2.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v2.0-bondi-dipole) (its v1 at
+> [`v1.0-bondi-dipole`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0-bondi-dipole)).
+> Every release is archived on Zenodo under [doi:10.5281/zenodo.23245933](https://doi.org/10.5281/zenodo.23245933).
 > To cite the papers or this code, see [CITATION.cff](CITATION.cff).
 >
 > Upstream GRTeclyn is BSD-3-Clause; see [LICENSE](LICENSE). The research tree

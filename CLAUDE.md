@@ -267,6 +267,8 @@ Learned on the spinning paper's submission (2026-10-21):
   `results/<pack>/README.md` and the GitHub release notes. Spinning paper: arXiv:2610.29941 (submitted
   2026-10-21, announced 2026-10-22), release `v1.0-spinning-wormhole` (develop c80875eb), version DOI
   10.5281/zenodo.23538851.
+- Bondi paper v2: release `v2.0-bondi-dipole` (develop 658bb941, 2026-10-26), version DOI 10.5281/zenodo.23662692,
+  which appeared under the concept DOI 77 s after the release; check the records API every time all the same.
 
 ## Code
 

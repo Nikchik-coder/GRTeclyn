@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-title: "GRTeclyn research fork — colliding traversable wormholes"
+title: "GRTeclyn research fork — traversable wormholes and the Bondi dipole"
 message: >-
   If you use this code or the packed campaign data, please cite the
   paper under "preferred-citation" below.
@@ -13,19 +13,23 @@ authors:
     given-names: Ilya
     affiliation: "Higher School of Economics, Moscow, Russia"
 repository-code: "https://github.com/Nikchik-coder/GRTeclyn"
-url: "https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger"
+url: "https://github.com/Nikchik-coder/GRTeclyn/tree/v2.0-bondi-dipole"
 license: BSD-3-Clause
-version: v1.0.1-wormhole-merger
-date-released: "2026-10-09"
+version: v2.0-bondi-dipole
+date-released: "2026-10-26"
 doi: 10.5281/zenodo.23245933
 keywords:
   - numerical relativity
   - traversable wormholes
   - Ellis-Bronnikov drainhole
   - phantom scalar field
+  - rotating wormholes
   - binary mergers
   - gravitational waves
   - black hole seeds
+  - negative mass
+  - Bondi dipole
+  - boson stars
   - AMReX
   - GPU
 preferred-citation:
@@ -44,8 +48,23 @@ preferred-citation:
   year: 2026
   month: 10
   journal: "arXiv e-prints"
-  notes: "arXiv:XXXX.XXXXX [gr-qc] (the number comes with the submission)"
+  notes: "arXiv:2610.13206 [gr-qc]"
 references:
+  - type: article
+    title: >-
+      Rotation slows the instability of Ellis–Bronnikov wormholes
+    authors:
+      - family-names: Shirokov
+        given-names: "Nikita M."
+        email: shirokov.nm@phystech.edu
+        affiliation: "Moscow Institute of Physics and Technology, Moscow, Russia"
+      - family-names: Nachevsky
+        given-names: Ilya
+        affiliation: "Higher School of Economics, Moscow, Russia"
+    year: 2026
+    month: 10
+    journal: "arXiv e-prints"
+    notes: "arXiv:2610.29941 [gr-qc]; code and data at tag v1.0-spinning-wormhole"
   - type: article
     title: >-
       The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating
@@ -54,10 +73,13 @@ references:
       - family-names: Shirokov
         given-names: "Nikita M."
         email: shirokov.nm@phystech.edu
-        affiliation: "Independent Researcher, Moscow, Russia"
+        affiliation: "Moscow Institute of Physics and Technology, Moscow, Russia"
+      - family-names: Nachevsky
+        given-names: Ilya
+        affiliation: "Higher School of Economics, Moscow, Russia"
     year: 2026
     month: 8
     journal: "arXiv e-prints"
     doi: 10.48550/arXiv.2608.24577
     url: "https://arxiv.org/abs/2608.24577"
-    notes: "arXiv:2608.24577 [gr-qc]; code at tag v1.0-bondi-dipole"
+    notes: "arXiv:2608.24577 [gr-qc]; v2 code and data at tag v2.0-bondi-dipole (v1 at tag v1.0-bondi-dipole)"

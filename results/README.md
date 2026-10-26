@@ -10,7 +10,7 @@ directory — there are no loose campaign folders at this level.
 | Paper pack | Article | Regenerators |
 |---|---|---|
 | [`matter-first-automated-discovery-of-transient-spacetime-shortcuts/`](matter-first-automated-discovery-of-transient-spacetime-shortcuts/) | [`research/neuralspacetime/article/research.tex`](../research/neuralspacetime/article/research.tex) | [`pack_publishable_results.sh`](../research/neuralspacetime/pack_publishable_results.sh) (figures, tables, promotion runs) · [`pack_search_campaigns.sh`](../research/neuralspacetime/pack_search_campaigns.sh) (`search/`) |
-| [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | in preparation — source material in the pack itself | [`pack_runaway.sh`](../research/bondi_dipole/pack_runaway.sh) (`campaign/`) |
+| [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | [`research/bondi_dipole/article/bondi_dipole.tex`](../research/bondi_dipole/article/bondi_dipole.tex), v2 of [arXiv:2608.24577](https://arxiv.org/abs/2608.24577); data at tag `v2.0-bondi-dipole` | [`pack_runaway.sh`](../research/bondi_dipole/pack_runaway.sh) (`campaign/`) |
 | [`wormhole-dynamics/`](wormhole-dynamics/) | [`research/wormholedynamics/article.md`](../research/wormholedynamics/article.md) — published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`plot_diagnostic.sh`](../grteclyn-wrapper/scripts/plot/plot_diagnostic.sh) (diagnostics, embedding, `K_z` panels) · [`plot_extracted_psi4.py`](../grteclyn-wrapper/src/grteclyn_wrapper/visualisation/process_wave/plot_extracted_psi4.py) (`--combined --strain` GW panels) |
 | [`merger/`](merger/) | [`research/merger/article/research.tex`](../research/merger/article/research.tex) — arXiv:XXXX.XXXXX (number to come), code at tag [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger) | [`pack_results.sh`](../research/merger/pack_results.sh) (`campaign/`, `horizon/`, the summary tables) |
 
@@ -37,12 +37,23 @@ Headline: **35.94 %** persistence-gated evolving-geodesic path saving, and
 
 ### `bondi-dipole-runaway/`
 
-A positive-active-mass and a negative-active-mass soliton, released at rest in
-full 3+1 NR with constraint-solved matter, self-accelerate together; both
-same-sector controls are null. Holds the per-cell time series, dressed-star
-tables, solve/evolution parameters, code patches, curated frames and movies, and
-the derived tables — plus the physics findings, the debugging trail, the matter
-model, and the launch reference as standalone documents.
+A star of positive mass and a star of negative mass, released at rest in full 3+1 numerical relativity from
+constraint-solved initial data, accelerate together at constant separation, as Bondi predicted, while the same-sign
+pairs and the isolated stars stay at rest. The acceleration follows Newton's law in both separation and mass
+(`a ∝ d₀^−1.95`, `a ∝ M̄^0.97±0.16`) and converges at fourth order with resolution. Version 2 of the pack
+(2026-10-26) holds the 24 reruns on the fixed code behind the paper's v2.
+
+The pack holds each run's time series, parameter files and launch record, stills of the runs the figures draw, the
+videos the paper links, the figures, the matter model and the launch reference. Every figure and every number the
+paper quotes is redrawn from the pack without a GPU:
+
+```bash
+# from the repository root
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole
+```
+
+Start with [`bondi-dipole-runaway/README.md`](bondi-dipole-runaway/README.md), then
+[`campaign/README.md`](bondi-dipole-runaway/campaign/README.md) for how to read a run name and the files of a run.
 
 ### `wormhole-dynamics/`
 
