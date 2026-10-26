@@ -188,7 +188,7 @@ Sec. V G: Eq. (9) at the measured late-window d and matter predicts 0.87e-4, thr
 ref V A -> V B; forcelaw axes d_0, fit label Mbar; frames tag w_+ + w_-; wavezone/massscale 2.55 in, forcelaw 3.62,
 samesign 2.78; captions and p. 12 text trimmed so the references end on page 13. Skipped: the full radial ODEs, a
 notation table, the absorbing-layer loss sentence (the d_0 = 20 runs lose no more matter than PM10 at N 128).
-- [ ] Strip the one remaining TODO comment (the release's version DOI, Data availability) at the arXiv upload.
+- [x] Strip the one remaining TODO comment (the release's version DOI, Data availability): done 10-26.
 
 ### 2. Release and submission
 
@@ -198,8 +198,10 @@ notation table, the absorbing-layer loss sentence (the d_0 = 20 runs lose no mor
       availability now names the fork). Bibliography (10-26): Bičák et al. Part II (self-accelerating, 390, 411;
       Part I as see also) and five preprints now published (Clough et al. OJAp, Nojiri-Odintsov, Trivedi-Loeb and
       Manfredi et al. Phys. Dark Univ., GRTresna JOSS), each checked on Crossref; still 13 pages.
-- [ ] Merge into trunk, then trunk into develop without `research/` (CLAUDE.md, Branches), tag `v2.0-bondi-dipole`, GitHub release, then Zenodo
-      "Sync now" (CLAUDE.md, Publishing) and check the version DOI under concept 10.5281/zenodo.23245933.
+- [x] Released 10-26: `feature/fix_bondi` into trunk (3b4117b0), trunk into develop without `research/` (3ba44705),
+      release metadata (658bb941), tag and GitHub release `v2.0-bondi-dipole`; Zenodo ingested it within a minute:
+      version DOI 10.5281/zenodo.23662692 under concept 10.5281/zenodo.23245933, which the paper's Data
+      availability now cites.
 - [ ] arXiv v2 of 2608.24577: account page → Articles You Own → Replace icon → upload the full source again (tex,
       bbl, figures, `anc/` movies) → compiler **pdflatex** → update the abstract and comments ("v2: corrected time
       integration, all simulations rerun, convergence study added") → submit. Same identifier; v1 stays visible.
