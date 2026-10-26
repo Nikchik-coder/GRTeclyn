@@ -298,10 +298,12 @@ Learned on the spinning paper's submission (2026-10-21):
   it. Say "the first/second GPU node", never the hostname.
 - **Branches** (2026-10-24): **`trunk` is the working mainline**, with everything, `research/` included. Start
   every feature or fix branch from `trunk` and merge it back when it is done; `feature/spinning`,
-  `feature/fix_merger` and (2026-10-26, the Bondi v2 release) `feature/fix_bondi` are merged into it. `develop` is
-  the public release line and GitHub's default: at each release it gets `trunk` without `research/` and without
-  unpublished results such as `results/matter-first-…/` (the "Merge … into develop, without research/" commits).
-  Never branch from `develop`, and never let `research/` reach it.
+  `feature/fix_merger` and (2026-10-26, the Bondi v2 release) `feature/fix_bondi` were merged into it, and on
+  2026-10-26 every branch but `trunk` and `develop` was deleted, on GitHub and on the workstation (a node checkout
+  left on one moves with `git fetch myfork && git switch trunk`). `develop` is the public release line and GitHub's
+  default: at each release it gets `trunk` without `research/` and without unpublished results such as
+  `results/matter-first-…/` (the "Merge … into develop, without research/" commits). Never branch from `develop`,
+  and never let `research/` reach it.
 - Several sessions may share this working tree: **stage explicit paths**, never `git add -A`.
 - **Push to `myfork`, never `origin`** (2026-10-10): `origin` is upstream GRTLCollaboration (and its
   https URL has no credentials here); the working remote is the SSH fork `myfork`. Every push and

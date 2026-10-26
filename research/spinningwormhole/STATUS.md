@@ -6,7 +6,7 @@ solver: [`SpinningSolver.md`](SpinningSolver.md). Code: `Examples/SpinningWormho
 `grteclyn-wrapper/scripts/campaigns/spinning_wormhole/`. Runs: `runs/spinning_wormhole/drainhole/00_paper_runs/`
 (launch `--subdir drainhole/00_paper_runs`, pack `research/spinningwormhole/pack_run.sh drainhole/00_paper_runs <run>`).
 Packs: `results/spinningwormhole/` (`runs_registry.tsv`: one outcome line per run; `trust_windows.tsv`). Branch
-`feature/spinning`, pushed to `myfork`.
+`trunk`, pushed to `myfork` (`feature/spinning` was merged into it and deleted on 2026-10-26).
 
 ## RESULTS SO FAR (2026-10-21)
 

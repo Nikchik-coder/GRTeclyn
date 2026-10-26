@@ -171,7 +171,7 @@ before pasting a push or merge command from one checkout into another.
 
 | Checkout | Comes from | Branch / commit |
 |---|---|---|
-| `GRTeclyn` | the research fork | `feature/merger` (the research: code, `research/`, every campaign pack); `develop` is the public face (code + the Bondi pack) |
+| `GRTeclyn` | the research fork | `trunk` (the research: code, `research/`, every campaign pack); `develop` is the public face (code + the Bondi pack) |
 | `GRTresna` | the research fork | `feature/grteclyn-wrapper` (`5bfa15954815e7c799d6e32e9db30bd279e4c791` at the 2026-09-11 audit) |
 | `amrex` | `https://github.com/AMReX-Codes/amrex.git` | `d7da504589664922ce3e21972782713d31ec50e9` |
 | `Chombo` | `https://github.com/GRTLCollaboration/Chombo.git` | `8684f2e000106f1abadb72642e1d15351867f98f` |
@@ -200,7 +200,7 @@ for repo in GRTeclyn GRTresna; do
   git -C "$repo" config user.email "<you@example.com>"
   git -C "$repo" config core.sshCommand "$KEY"
 done
-git -C GRTeclyn checkout feature/merger
+git -C GRTeclyn checkout trunk
 git -C GRTresna checkout feature/grteclyn-wrapper
 
 # 3. The two libraries, read-only, at the pinned commits.

@@ -8,8 +8,8 @@ question (`NN_group/`), live runs in `staging/`; every earlier run, its movies a
 `00_archive/superseded_2026-10-23/` (`runs/bondi/README.md`). The pack mirrors the groups, `campaign/NN_group/<run>`,
 and also holds only the fixed runs: the v1 cells, guide and registry are in that archive's `results_campaign/`, and
 the published v1 pack in the tag `v1.0-bondi-dipole`.
-Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `feature/fix_bondi`, cut from
-`feature/spinning` on 2026-10-22 (develop carries no `research/`; its code is the same).
+Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Work is on `trunk`: `feature/fix_bondi`, cut
+from `feature/spinning` on 2026-10-22, was merged into it at the v2 release and deleted on 2026-10-26.
 
 ## Journal trail
 

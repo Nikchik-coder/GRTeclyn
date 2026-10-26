@@ -232,8 +232,8 @@ is substance:
 
 - [ ] Move every quoted number to a claims ledger (`claims/ledger_*.tsv` → `numbers.tex`, as in the binary paper);
   the text still types them in place (this was the source's DRAFT header, removed 2026-10-21).
-- [ ] Code availability: Sec. VII links the branch `feature/spinning`; replace it with a tagged release or a Zenodo
-  DOI before submission.
+- [x] Code availability: Sec. VII linked the branch `feature/spinning`; since 2026-10-21 (3b8b30cd) it cites the
+  repository and the Zenodo DOI.
 - [x] Control the perturbation sign at 33% (resolved 2026-10-21 by scope, not by a run; decided: no extra runs). The
   vₑ = 0.51 model expands with one numerical setup and shrinks with the other, so the text now says the sign of its
   effective perturbation follows the setup and only the rate is a controlled measurement; the explicit ±ε control
