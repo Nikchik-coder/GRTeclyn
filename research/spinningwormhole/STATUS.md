@@ -349,7 +349,7 @@ Paper notes:
 Step 0 (10-11): the static hold twins the merger's `single_hold`. Step 1 (10-12): the O(J²) holds' push was the
 data's error (∝ J⁴). Step 2 (10-13): the full solver, both families to v_e 0.99, tables in `runs/spinning_p3/tables/`
 (≤ 1e-7 to v_e 0.9). Step 3 (10-13 → 10-15): t 0 checks, the L 64 holds, the A1 ladder (the 3D ADM mass equals the
-table's to 1e-12). Assets: B1's Chk10000 in its `nfs_chk/`; `fam_a_ve020.spinbg` (a J = 1 cross-check).
+table's to 1e-12). Assets: B1's Chk10000 (deleted 10-23 with Chk09000, 40 GB, on the word); `fam_a_ve020.spinbg` (a J = 1 cross-check).
 
 ## RULES
 

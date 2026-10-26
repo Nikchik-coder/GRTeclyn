@@ -139,7 +139,7 @@ the request to ~1 part in 10⁵ (see `stars/star_family.csv`).
 Results at ω = 0.550: canonical φ_c = 0.019695, ADM = +0.063951, α(0) = 0.9773;
 phantom φ_c = 0.019589, ADM = −0.076962, α(0) = 1.0249.
 
-### 3.3 Painting the star, and the two subtleties that mattered
+### 3.3 Painting the star, and the three subtleties that mattered
 
 1. **The amplitude must be the star's own φ_c.** Both painters rescale the
    tabulated profile by `amp/φ_c`, so any other amplitude de-tunes the
@@ -153,7 +153,18 @@ phantom φ_c = 0.019589, ADM = −0.076962, α(0) = 1.0249.
 
    which is why the emitted profile table carries a third column α(r) and why
    the post-solve repaint divides Π₂ by the solved lapse. Painting with α = 1
-   gives the wrong kinetic energy and the seed radiates.
+   gives the wrong kinetic energy and the seed radiates. In a pair, the solve and
+   the repaint both divide by the superposed lapse α = 1 + Σ(α_s − 1), the lapse
+   written to the initial data, and both read the star tables through the same
+   natural cubic spline (GRTresna 9a85e6a, 2026-10-22; before it the solve divided
+   each star's Π by its own lapse and interpolated the tables linearly, a t = 0
+   violation of about 8 × 10⁻⁷ in the Hamiltonian constraint at every N).
+3. **The lapse is joined to its exterior.** Each table joins the integrated
+   interior to an analytic exterior at r ≈ 5.2; since 2026-10-22 the lapse is
+   joined with matching value and slope (`_lapse_join` in
+   `grteclyn_wrapper.grtresna.profiles.boson_star_ode`). The step it had before
+   (4–5 × 10⁻⁵) does not enter the t = 0 constraints, but the first time step
+   turned it into a momentum-constraint violation.
 
 Mixed-sector pairs get **one table per sector** — `qball_profile.dat` and
 `qball_profile_exotic.dat` — referenced per lump via `lump{k}_profile_path`,
@@ -164,7 +175,9 @@ because sharing the canonical table would seed the phantom off-equilibrium.
 GRTresna solves CTTKHybrid with these per-lump signed sources, then the wrapper
 converts the output to a GRTeclyn gridinit, **repainting the matter block
 analytically** from the same star tables (canonical lumps → Φ₊, phantom lumps →
-Φ₋) while keeping GRTresna's solved metric. Solve tolerances were tightened for
+Φ₋) while keeping GRTresna's solved metric. Since e3992acf (2026-10-22) the
+converter no longer fills each face's outermost layer of χ and α from a solve
+cell outside the evolution box. Solve tolerances were tightened for
 this campaign to `NL_exit_tolerance = 0.1 %`, `NL_stall_tolerance = 0.002`; at
 the old 1 % gate the residual radiated away as a visible χ ring that sloshed the
 star's envelope.
@@ -202,11 +215,13 @@ total = 17.083 / rms = 5.162 against the 17.05 / 5.16 prediction from the
 | diagnostic | file | what it gives |
 |---|---|---|
 | per-sector barycentres | `small_data/sector_barycenters.dat` (env `GRTECLYN_SECTOR_BARYCENTERS=1`) | separate integrals, centroids and rms radii for Φ₊ and Φ₋ — **the trajectory record** |
+| per-sector cores | `small_data/sector_dynamics.dat` | core positions and peaks, the coordinate and proper separation, the matter momenta, the shift at each core |
 | confinement / grip | `small_data/confinement.dat` | peak amplitude, confined fraction, min χ |
 | radiation | `small_data/psi4_*.dat` (env `GRTECLYN_PSI4=1`) | Ψ₄ modes and directionality at R = 8, 16 |
 
-Plotfiles are consumed and purged during the run, so the barycentre stream is
-the only recoverable trajectory record — worth knowing before designing a rerun.
+Plotfiles are consumed and purged during the run, so the barycentre and core
+streams (`sector_barycenters.dat`, `sector_dynamics.dat`) are the only
+recoverable trajectory records — worth knowing before designing a rerun.
 
 ## 6. Patch inventory
 
@@ -215,3 +230,4 @@ the only recoverable trajectory record — worth knowing before designing a reru
 | `patches/grtresna-matter.diff` | the C++ matter modifications: per-lump exotic sign in `compute_emtensor`, tabulated star loader with lapse column, per-lump `profile_path`, per-lump `bs_omega` |
 | `patches/wrapper-per-lump-omega.diff` | the per-lump frequency wiring + its regression test |
 | `patches/wrapper-phantom-star-solver.diff` | phantom-star solving (`gravity_sign`), per-sector table emission, exotic-veto lift |
+| `patches/grtresna-solve-matches-painter.diff` | GRTresna 9a85e6a (2026-10-22), the solver of the v2 runs: the superposed lapse in Π and the spline-read star tables (section 3.3) |

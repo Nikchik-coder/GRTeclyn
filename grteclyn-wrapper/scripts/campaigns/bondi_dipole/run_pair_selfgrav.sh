@@ -46,6 +46,11 @@
 #     BONDI_TREADMILL_BALL   -- core-tracking ball radius (default 8)
 #     BONDI_TREADMILL_FILL   -- 0=asymptotic 1/r fill (default), 1=plain copy
 #   BONDI_DRYRUN=1: resolve and print the parameters, then exit -- no solve, no GPU.
+#   BONDI_SOLVE_ONLY=1: solve and write initial_data.gridinit, then exit -- no GPU.
+#   BONDI_BINARY: the evolution binary (default: the example's own build,
+#     Examples/RadialRecipe/main3d.gnu.MPI.CUDA.ex, as every archived cell ran).
+#     Point it at a frozen, commit-stamped build in runs/bondi/bin/ to record
+#     exactly which code a cell ran.
 #   BONDI_GRTRESNA_RANKS: MPI ranks for the elliptic solve (default 8).  The
 #     evolution is single-GPU regardless.
 #   BONDI_S0_OMEGA: base star frequency for BOTH lumps (default 0.55).  0.55
@@ -177,6 +182,15 @@ if [[ "${BONDI_DRYRUN:-0}" != "0" ]]; then
   dryrun_args=(--dry-run)
 fi
 
+# Solve only: the GRTresna solve and its CPU gates write the episode's
+# initial_data.gridinit, then stop without touching a GPU.  A later launch
+# evolves that file through BONDI_GRIDINIT (with another BONDI_RUNS_DIR, since
+# the episode dir then exists).
+solve_only_args=()
+if [[ "${BONDI_SOLVE_ONLY:-0}" != "0" ]]; then
+  solve_only_args=(--solve-only)
+fi
+
 sponge_args=()
 if [[ "${SPONGE}" != "0" ]]; then
   sponge_args=(
@@ -210,6 +224,11 @@ if [[ -n "${CHECKPOINT_INTERVAL}" ]]; then
   checkpoint_args=(--extra-override checkpoint_interval="${CHECKPOINT_INTERVAL}")
 fi
 
+binary_args=()
+if [[ -n "${BONDI_BINARY:-}" ]]; then
+  binary_args=(--executable "${BONDI_BINARY}")
+fi
+
 S1_OMEGA="${BONDI_S1_OMEGA:-}"
 
 # Matter configuration -- nothing hard-coded below: frequency and potential
@@ -239,6 +258,10 @@ campaign_register_launcher "${RUNS_DIR}"
 # Live per-sector centroid stream + radiation extraction.
 export GRTECLYN_SECTOR_BARYCENTERS=1
 export GRTECLYN_PSI4=1
+# Neutral process table, as the merger launcher's (core/runner.py): the
+# evolution shows as `test params.txt`, run from a checksum-named copy of the
+# binary, and the consumer as `test_post post.py` (2026-10-23).
+export GRTECLYN_PROC_LABEL="${BONDI_PROC_LABEL:-test}"
 # Scrutiny stream (sector_dynamics.dat): halo-free core positions, per-sector
 # matter momentum (the Bondi momentum-balance check) and a gauge check.  Costs
 # ~1.6 s per plotfile, so opt in with BONDI_SCRUTINY=1.
@@ -424,6 +447,8 @@ PYTHONPATH="${WRAPPER_DIR}/src" "${WRAPPER_DIR}/.venv/bin/python" \
   ${treadmill_args[@]+"${treadmill_args[@]}"} \
   ${gridinit_args[@]+"${gridinit_args[@]}"} \
   ${checkpoint_args[@]+"${checkpoint_args[@]}"} \
+  ${binary_args[@]+"${binary_args[@]}"} \
+  ${solve_only_args[@]+"${solve_only_args[@]}"} \
   ${dryrun_args[@]+"${dryrun_args[@]}"}
 
 echo "[bondi] pair cell complete: ${RUNS_DIR}/${out_name}"

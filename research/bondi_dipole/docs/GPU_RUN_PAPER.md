@@ -1,7 +1,7 @@
 # The paper campaign — plan and run-book
 
 **Goal.** Produce every number, figure and table in
-`research/bondi_dipole/bondi_dipole.tex` from runs on the corrected code path,
+`research/bondi_dipole/article/bondi_dipole.tex` from runs on the corrected code path,
 so that nothing in the paper rests on the old campaign — which ran with the
 double-subtracted potential (canonical stars were collapsing) and the displaced
 initial-data metric (stars born off the centre of their own wells). The old

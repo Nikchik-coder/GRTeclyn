@@ -1,0 +1,4 @@
+# The last trustworthy time of each run whose solution stops being trustworthy before its end, tab-separated:
+# run, t_max, reason. Movies, figures and the paper quote nothing after t_max. A run not listed is
+# trustworthy to its end; no packed run has a window yet.
+run	t_max	reason

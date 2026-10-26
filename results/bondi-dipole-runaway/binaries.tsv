@@ -1,0 +1,9 @@
+# The builds behind the packed runs (v2, run 2026-10-23 to 10-25), tab-separated: the stage, the build, its source,
+# and the runs it served. Every run evolved on the same GRTeclyn build. Each run's metadata.json records the
+# repository commit it was launched from, and its launch_config.sh names the build and the initial data it used. The
+# v1 builds are listed in the tag v1.0-bondi-dipole.
+stage	build	source	runs
+evolution	main3d_rkfix_aa0dc4a1-dirty_2026-10-23.ex (md5 f4253171)	GRTeclyn aa0dc4a1 with c12664fd (RadialRecipe: no ghost-cell refill on the Runge-Kutta stages)	all 24 runs
+initial data	grtresna_BosonStarBH_9a85e6a_2026-10-22.MPI.ex	GRTresna 9a85e6a, branch fix/bondi-solve-matches-painter of github.com/Nikchik-coder/GRTresna (patches/grtresna-solve-matches-painter.diff)	P, M (N 128, 192), MP10, PP10, MM10, PM8, PM12, PM16, PM20, E0.64, E1.34, E1.57, R0.60, R0.80, R1.33, PM10-L128 (a solve of their own); M at N 256 (its own solve, stopped at its residual floor, Ham 2.51e-4 %)
+initial data	the PM10 solves of 2026-10-22 (joined star lapse)	their outermost face layer of chi and the lapse repaired by cubic extrapolation along each face normal; the converter itself is fixed in e3992acf	PM10 at N 128, 192, 256; PM10-t400 (the N 128 data)
+initial data	no solve	the data of PM10 at N 192 and of M at N 192	PM10-rec; M-t1000

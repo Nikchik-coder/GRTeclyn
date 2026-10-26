@@ -87,6 +87,22 @@ after session because it lived only in one machine's agent memory.
    `test_post` on PATH — then `--check`. (2026-10-03: a hand-start with only the profile args sat idle
    watching nothing, and its `--horizon-track` named the wrong run dir — launch.sh appends `_r<step>` to
    `--name`, so a restart leg's consumer paths must use the FINAL suffixed name.)
+   **Consumer restart traps** (2026-10-24, the Bondi chase on the second node; the consumer is the usual failure):
+   - `restart_consumer.sh` takes a zombie watcher for alive. The Bondi runner (`replay_eval.py`) never reaps its
+     consumer, so after SIGTERM the old watcher stays `<defunct>`, the script prints `ignored SIGTERM; nothing
+     started`, and the run has NO consumer. Check `ps -o stat` for `Z` and start the new watcher at once as the
+     script's start block does (`env -i` with `/proc/<runner pid>/environ`, `setsid nohup`, the supervisor loop).
+   - The command to rebuild from: a Bondi run logs its watcher's exact argv in its `run.log` (`[wrapper] consumer
+     runs as: ...`); a zombie's `/proc/<pid>/cmdline` is empty. Bondi runs have no `consumer.log` until a restart
+     (the `--check` warning about it is harmless).
+   - `-j N > 1` fails through the run dir's `post.py`: it runs the module as `__main__` without a guard, so every
+     spawned worker dies ("... before the current process has finished its bootstrapping phase"); so does
+     `CONSUMER_JOBS > 1` at launch, which goes through the same `post.py`. Start the watcher as `test_post -m
+     grteclyn_wrapper.visualisation.process_wave.consume_plotfiles <args> -j 3 --keep-existing-frames` (the guarded
+     `__main__.py`). A failed batch loses nothing: its plotfiles stay on scratch, unmarked. Never put `-j > 1` in
+     `consumer_args.extra`: the end-of-run drain runs through `post.py`.
+   - Size it at launch: one N 192 plotfile with the full frame set takes ~2.7 min per worker on the second node
+     (~1 min on the first); a lone N 192 run (~50 u/h) needs a plotfile every ≥ 4 units (600 steps), not 1.6.
 5. **Update STATUS at once.** Every launch, stop or wipe goes into STATUS.md's Live/Queued tables (run, node/card, t,
    stop time, speed, ETA in hours and clock time). Commit and push it immediately and verify with `git ls-remote`. If
    the push is rejected, fetch, rebase and push again.
@@ -227,8 +243,8 @@ what the claims check or the identity grep flags, and report in a few lines.
   outcome.
 - Figures: every label hangs on what it names and no line crosses text
   (`style.label_audit` in the wrapper's figure package checks this). Each panel gets a legend above its frame
-  naming every line; inside the frame there are at most tiny tags on vertical rules. `style.GOLD` is the one accent
-  (the horizon, or the fitted exponential); everything else is ink or grey.
+  naming every line; inside the frame there are at most tiny tags on vertical rules. Each paper keeps its own
+  palette: `style.GOLD` as the one accent, everything else ink or grey, is the merger paper's alone (2026-10-26).
 - A figure fix: make the minimal fix, render, run the label audit and show the image first; audits come after.
 
 ## Publishing (arXiv and Zenodo)
@@ -244,8 +260,9 @@ Learned on the spinning paper's submission (2026-10-21):
   `\documentclass` with a wall of "Undefined control sequence". Select "pdflatex" by hand before processing.
 - The arXiv scanner's "missing files: Latin Modern Roman/Sans/Mono" warning is a false positive from the
   fontspec branch of the articles' engine guard; ignore it.
-- arXiv limits the account to 2 new submissions per calendar month; replacements do not count (2026-10-24: the
-  merger paper's v2 went through after October's two, the merger v1 and the spinning paper).
+- arXiv limits each account to 2 new submissions per calendar month and 3 active ones (since 2026-10-01);
+  replacements do not count toward them (their own limit is one per week after v5; 2026-10-24: the merger paper's
+  v2 went through after October's two, the merger v1 and the spinning paper).
 - When the arXiv number arrives, put it into the root README's papers table, `CITATION.cff`, the paper's
   `results/<pack>/README.md` and the GitHub release notes. Spinning paper: arXiv:2610.29941 (submitted
   2026-10-21, announced 2026-10-22), release `v1.0-spinning-wormhole` (develop c80875eb), version DOI
@@ -278,9 +295,9 @@ Learned on the spinning paper's submission (2026-10-21):
   hook (`grteclyn-wrapper/scripts/ops/check_machine_paths.py --install-hook`) blocks
   it. Say "the first/second GPU node", never the hostname.
 - **Branches** (2026-10-24): **`trunk` is the working mainline**, with everything, `research/` included. Start
-  every feature or fix branch from `trunk` and merge it back when it is done; `feature/spinning` and
-  `feature/fix_merger` are merged into it, and `feature/fix_bondi` goes in when it finishes. `develop` is the
-  public release line and GitHub's default: at each release it gets `trunk` without `research/` and without
+  every feature or fix branch from `trunk` and merge it back when it is done; `feature/spinning`,
+  `feature/fix_merger` and (2026-10-26, the Bondi v2 release) `feature/fix_bondi` are merged into it. `develop` is
+  the public release line and GitHub's default: at each release it gets `trunk` without `research/` and without
   unpublished results such as `results/matter-first-…/` (the "Merge … into develop, without research/" commits).
   Never branch from `develop`, and never let `research/` reach it.
 - Several sessions may share this working tree: **stage explicit paths**, never `git add -A`.
