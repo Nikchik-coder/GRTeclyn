@@ -52,7 +52,7 @@
 \date{\today}
 
 \begin{abstract}
-Bondi showed in 1957 that a body of negative active gravitational mass and a positive one should accelerate together without limit while their total momentum stays zero. We test this prediction in full $3{+}1$ numerical relativity, from constraint-satisfying initial data. The matter is two complex scalar fields with identical self-interactions, one of which enters the Einstein equations with the opposite sign; its stars have positive inertial and passive masses but negative active and Arnowitt--Deser--Misner (ADM) masses. To our knowledge, they are the first asymptotically flat bodies of negative ADM mass evolved in numerical relativity. A pair of stars with equal and opposite ADM masses accelerates as a single object at constant separation, and its total momentum, to which the negative-mass star contributes with a minus sign, stays zero to within 0.5\%. The acceleration follows Newton's law of gravitation in both mass and separation, reverses when the stars are exchanged, and is absent in same-sign pairs and isolated stars. We detect no gravitational radiation. The results hold for head-on pairs released from rest, up to a few percent of the speed of light; in the longest run the pair reaches a tenth of the speed of light with both stars intact.
+Bondi showed in 1957 that a body of negative active gravitational mass and a positive one should accelerate together without limit while their total momentum stays zero. We test this prediction in full $3{+}1$ numerical relativity, from constraint-satisfying initial data. The matter is two complex scalar fields with identical self-interactions, one of which enters the Einstein equations with the opposite sign; its stars have positive inertial and passive masses but negative active and Arnowitt--Deser--Misner (ADM) masses. To our knowledge, they are the first asymptotically flat bodies of negative ADM mass evolved in numerical relativity. A pair of stars with equal and opposite ADM masses accelerates as a single object at constant separation, and its total momentum stays zero to within 0.5\%. The acceleration follows Newton's law of gravitation in both mass and separation, reverses when the stars are exchanged, and is absent in same-sign pairs and isolated stars. We detect no gravitational radiation. The results hold for head-on pairs released from rest, up to a few percent of the speed of light, and in the longest run the pair reaches a tenth of it with both stars intact.
 \end{abstract}
 
 \maketitle
@@ -69,7 +69,7 @@ Bondi~\cite{bondi1957} distinguished three kinds of mass in general relativity: 
 \label{fig:schematic}
 \end{figure}
 
-Nothing in the Einstein equations requires mass to be positive. Positivity of the total mass is a theorem only for matter that satisfies energy conditions~\cite{schoen_yau1979,witten1981}, and several candidate sources violate them: Casimir energies, quantum fields in curved spacetime and phantom dark energy~\cite{caldwell2002}. Traversable wormholes~\cite{morris_thorne1988} and warp-drive spacetimes~\cite{alcubierre1994} require such matter. The ghost scalar field, a field with a wrong-sign kinetic term, that holds a wormhole throat open violates the same energy condition as the negative-mass matter evolved here, though with different field equations (Sec.~\ref{sec:model}). Bondi's self-accelerating pair is itself a standing objection to all such matter, since a pair that accelerates without an external force looks like a perpetual-motion machine~\cite{hoffmann1966,martins1980}. That objection has been examined for point particles and prescribed metrics. The existing nonlinear evolutions of matter that violates energy conditions concern single objects: ghost-scalar wormholes in spherical symmetry~\cite{shinkai2002,gonzalez2009}, static stars of phantom fields~\cite{dzhunushaliev2014}, and the collapse of an Alcubierre warp bubble in $3{+}1$ dimensions~\cite{clough2024}. Negative-mass bubbles in de Sitter space~\cite{mbarek2014} and negative-mass black holes~\cite{mann1997} have also been studied. Here we test whether the self-acceleration survives full nonlinear gravity, with finite bodies, backreaction and radiation, for a self-gravitating pair of positive and negative active mass with dynamical, constraint-solved matter.
+Nothing in the Einstein equations requires mass to be positive. Positivity of the total mass is a theorem only for matter that satisfies energy conditions~\cite{schoen_yau1979,witten1981}, and several candidate sources violate them: Casimir energies, quantum fields in curved spacetime and phantom dark energy~\cite{caldwell2002}. Traversable wormholes~\cite{morris_thorne1988} and warp-drive spacetimes~\cite{alcubierre1994} require such matter. The ghost scalar field, a field with a wrong-sign kinetic term, that holds a wormhole throat open violates the same energy condition as the negative-mass matter evolved here, though with different field equations (Sec.~\ref{sec:model}). Bondi's self-accelerating pair is itself a standing objection to all such matter, since a pair that accelerates without an external force looks like a perpetual-motion machine~\cite{hoffmann1966,martins1980}. That objection has been examined for point particles and prescribed metrics. The existing nonlinear evolutions of matter that violates energy conditions concern ghost-scalar wormholes, in spherical symmetry~\cite{shinkai2002,gonzalez2009} and in $3{+}1$ dimensions, alone~\cite{shirokov2026,shirokov_spin2026} and in binaries~\cite{shirokov_merger2026}; static stars of phantom fields~\cite{dzhunushaliev2014}; and the collapse of an Alcubierre warp bubble in $3{+}1$ dimensions~\cite{clough2024}. Negative-mass bubbles in de Sitter space~\cite{mbarek2014} and negative-mass black holes~\cite{mann1997} have also been studied. Here we test whether the self-acceleration survives full nonlinear gravity, with finite bodies, backreaction and radiation, for a self-gravitating pair of positive and negative active mass with dynamical, constraint-solved matter.
 
 The question also has observational interest. Negative-mass binaries have been proposed as sources of anomalous gravitational-wave signals, such as anti-chirps, dispersal and runaway motion, which detectors could use to exclude them~\cite{trivedi_loeb2026}. Nojiri and Odintsov~\cite{nojiri2026} find that a bound positive--negative system can form around a compact mass in a cosmological fluid with a negative cosmological constant. We study the complementary case of an isolated, asymptotically flat pair.
 
@@ -78,9 +78,9 @@ In this paper we realize Bondi's sign structure with two complex scalar fields t
 \section{The model}
 \label{sec:model}
 
-The matter must meet three requirements: (i)~positive inertial and passive mass with negative active mass; (ii)~stable, localized stars; and (iii)~a binding force other than gravity for the negative-mass star, whose own gravity pushes it apart. The obvious candidates each fail one of them. The negative-mass Schwarzschild spacetime is a naked singularity whose linear perturbations grow exponentially~\cite{gleiser2006}, and it contains no matter from which to build initial data. A fluid of negative energy density has no equilibrium of its own: Bonnor's static negative-mass spheres~\cite{bonnor1989} require an inverted interior structure that no non-gravitational force supports. A ghost field (a phantom field in the language of cosmology~\cite{caldwell2002}) carries the sign of its kinetic term into its own field equation. This inverts its effective potential, which unbinds the star, and it makes the inertial and passive masses negative together with the active mass, as for Forward's negative matter~\cite{forward1990}. Such fields collapse or explode in evolutions~\cite{shinkai2002,gonzalez2009,shirokov2026}. We instead reverse the overall sign of one field's Lagrangian, Eq.~\eqref{eq:action} below, which leaves its field equation unchanged and reverses only its stress-energy tensor.
+The matter must meet three requirements: (i)~positive inertial and passive mass with negative active mass; (ii)~stable, localized stars; and (iii)~a binding force other than gravity for the negative-mass star, whose own gravity pushes it apart. The obvious candidates each fail one of them. The negative-mass Schwarzschild spacetime is a naked singularity whose linear perturbations grow exponentially~\cite{gleiser2006}, and it contains no matter from which to build initial data. A fluid of negative energy density has no equilibrium of its own: Bonnor's static negative-mass spheres~\cite{bonnor1989} require an inverted interior structure that no non-gravitational force supports. A ghost field (a phantom field in the language of cosmology~\cite{caldwell2002}) carries the sign of its kinetic term into its own field equation. This inverts its effective potential, which unbinds the star, and it makes the inertial and passive masses negative together with the active mass, as for Forward's negative matter~\cite{forward1990}. Wormholes held open by such fields collapse or explode in evolutions, alone~\cite{shinkai2002,gonzalez2009,shirokov2026} and in binaries~\cite{shirokov_merger2026}, and rotation slows this instability~\cite{shirokov_spin2026}. We instead reverse the overall sign of one field's Lagrangian, Eq.~\eqref{eq:action} below, which leaves its field equation unchanged and reverses only its stress-energy tensor.
 
-The stars are solitons: matter bound by its own self-interaction, with gravity a small correction rather than the binding force. We use two independent complex scalar fields, $\Phi_+$ and $\Phi_-$, on one spacetime, with the same sextic potential as in studies of Q-balls and solitonic boson stars~\cite{friedberg1976,coleman1985,friedberg1987},
+The stars are solitons: matter bound by its own self-interaction, with gravity a small correction rather than the binding force. We use two independent complex scalar fields, $\Phi_+$ and $\Phi_-$, on one spacetime, with the same sextic potential as in studies of Q-balls~\cite{friedberg1976,coleman1985} and solitonic boson stars~\cite{friedberg1987,evstafyeva2026},
 \begin{equation}
 V(|\Phi|^2)=\tfrac12 m^2|\Phi|^2-\tfrac14\lambda|\Phi|^4+\tfrac16\mu|\Phi|^6 ,
 \label{eq:potential}
@@ -526,6 +526,11 @@ R.~Friedberg, T.~D.~Lee, and Y.~Pang,
 \newblock ``Mini-soliton stars,''
 \newblock Phys.\ Rev.\ D \textbf{35}, 3658 (1987).
 
+\bibitem{evstafyeva2026}
+T.~Evstafyeva, N.~Siemonsen, and W.~E.~East,
+\newblock ``Assessing the stability of ultracompact spinning boson stars with nonlinear evolutions,''
+\newblock Phys.\ Rev.\ D \textbf{113}, 044024 (2026).
+
 \bibitem{kaup1968}
 D.~J.~Kaup,
 \newblock ``Klein--Gordon geon,''
@@ -660,6 +665,16 @@ N.~M.~Shirokov,
 N.~M.~Shirokov,
 \newblock ``Wormhole dynamics: nonlinear collapse and gravitational-wave emission,''
 \newblock arXiv:2604.00071 [gr-qc] (2026).
+
+\bibitem{shirokov_merger2026}
+N.~M.~Shirokov and I.~Nachevsky,
+\newblock ``Binary Ellis--Bronnikov wormholes in $3{+}1$ numerical relativity: mergers, fly-bys and gravitational waves,''
+\newblock arXiv:2610.13206 [gr-qc] (2026).
+
+\bibitem{shirokov_spin2026}
+N.~M.~Shirokov and I.~Nachevsky,
+\newblock ``Rotation slows the instability of Ellis--Bronnikov wormholes,''
+\newblock arXiv:2610.29941 [gr-qc] (2026).
 
 \end{thebibliography}
 
