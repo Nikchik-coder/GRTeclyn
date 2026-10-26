@@ -6,13 +6,13 @@ the fixed initial data; 2026-10-26). Each puts the matter view and the geometry 
 run. The v1 set, made from the runs on first-order time integration, is superseded and kept in the run tree's
 `runs/bondi/00_archive/superseded_2026-10-23/movies/`.
 
-| file | length | shows |
-|---|---|---|
-| `PM10_L64_N256.mp4` | 12.6 s | the result — the self-accelerating mixed pair, finest grid, to `t = 200` |
-| `PM10_L64_N128_t400.mp4` | 25.1 s | the same pair carried to `t = 400` on the coarse grid |
-| `PM10-rec_L64_N192_t1000.mp4` | 31.4 s | the same pair followed to `t = 1000` in a box that moves with it |
-| `PP10_L64_N128.mp4` | 12.6 s | control — two positive masses, they merge |
-| `MM10_L64_N128.mp4` | 12.6 s | control — two negative masses, they merge too |
+| file | length | shows | on YouTube |
+|---|---|---|---|
+| `PM10_L64_N256.mp4` | 12.7 s | the result — the self-accelerating mixed pair, finest grid, to `t = 200` | https://youtu.be/zz8_5i7A6zo |
+| `PM10_L64_N128_t400.mp4` | 25.2 s | the same pair carried to `t = 400` on the coarse grid | https://youtu.be/n5y8fBBCDUs |
+| `PM10-rec_L64_N192_t1000.mp4` | 31.5 s | the same pair followed to `t = 1000` in a box that moves with it | https://youtu.be/VeqhSRbtVas |
+| `PP10_L64_N128.mp4` | 12.7 s | control — two positive masses, they merge | https://youtu.be/ANS986k4RsA |
+| `MM10_L64_N128.mp4` | 12.7 s | control — two negative masses, they merge too | https://youtu.be/YKgzOYMcjk4 |
 
 **Publish the controls alongside the result, not separately.** Alone, the runaway invites "that is just gravity".
 The controls close that off.
@@ -50,6 +50,8 @@ simulation time.
 
 **Title:** A Positive Mass and a Negative Mass Star Accelerate Themselves | Full Numerical Relativity
 
+**Published:** https://youtu.be/zz8_5i7A6zo
+
 ```
 Two boson stars are released at rest, side by side. One has positive mass, the
 other negative. Nothing pushes them — and the pair accelerates away together,
@@ -81,6 +83,8 @@ as M^0.97 across a 2.5× range of mass.
 
 **Title:** The Runaway Does Not Stop: 400 Time Units of a Positive–Negative Mass Binary
 
+**Published:** https://youtu.be/n5y8fBBCDUs
+
 ```
 The same self-accelerating pair as before, carried twice as long — to t = 400
 in code units — on a coarser grid.
@@ -101,6 +105,8 @@ smaller; the t = 1000 video on this channel uses that finer grid.
 ## 3. `PM10-rec_L64_N192_t1000.mp4` — followed to t = 1000
 
 **Title:** Chasing the Bondi Dipole to t = 1000: 0.11 c Without a Push
+
+**Published:** https://youtu.be/VeqhSRbtVas
 
 ```
 The positive–negative pair, carried to t = 1000 in code units — five times the
@@ -130,6 +136,8 @@ video runs through simulation time twice as fast as the others.
 
 **Title:** Control: Two Positive-Mass Stars — They Fall Together and Merge
 
+**Published:** https://youtu.be/ANS986k4RsA
+
 ```
 A control run. Both stars have positive mass, at the same separation as the
 runaway.
@@ -154,6 +162,8 @@ what makes that configuration the clean gravitational case.
 ## 5. `MM10_L64_N128.mp4` — control, both negative
 
 **Title:** Control: Two Negative-Mass Stars Should Repel — They Merge Anyway
+
+**Published:** https://youtu.be/YKgzOYMcjk4
 
 ```
 A control run. Both stars have NEGATIVE mass.
