@@ -199,8 +199,8 @@ PY
   case "${cell##*/}" in
     PP[0-9]*|MM[0-9]*|control_pair_pp_*|control_pair_mm_*)
       if [[ -d "${run}/frames/_slice_cache/chi_minus_1_z" ]]; then
-        "${ROOT}/.venv/bin/python" \
-          "${ROOT}/results/bondi-dipole-runaway/analysis/track_wells.py" \
+        "${ROOT}/grteclyn-wrapper/.venv/bin/python" \
+          -m grteclyn_wrapper.analysis.bondi_dipole.track_wells \
           "${run}/frames" "${out}/well_tracking.dat" --label "${cell##*/}" \
           || echo "[pack-runaway] ${cell}: well tracking failed, continuing"
       fi

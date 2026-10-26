@@ -2,29 +2,32 @@
 """Generate the figures for the Bondi-dipole article (PRD style).
 
 Everything is derived from the packed campaign in
-results/bondi-dipole-runaway/campaign/ -- the corrected-code-path runs
-(matched solve/evolution grids, maximal slicing in both sectors, t = 200).
+results/bondi-dipole-runaway/campaign/ -- the revision's runs on the fixed
+code (fourth-order time integration, c12664fd, and the fixed initial data;
+research/bondi_dipole/STATUS.md), filed by question in campaign/NN_group/.
 Text is rendered by pdflatex through matplotlib's pgf backend, so figure
 fonts are the same Computer Modern as the article body.
 
-Outputs (results/bondi-dipole-runaway/figures/, where the article looks for its figures first):
-  fig_schematic.pdf      Bondi's sign rules (drawn, no data)
-  fig_family.pdf         dressed-star families M(omega), both signs, with the
-                         working pair and the light-star floors
-  fig_chase_frames.pdf   activity and chi-1 stills of the headline N=256 cell
-                         with the tracked cores overlaid
-  fig_trajectories.pdf   worldlines / drift+fit to t=400 / signal vs nulls
-  fig_forcelaw.pdf       both axes of a = M/d^2: the separation scan at fixed
-                         mass, and the equal-mass ladder at fixed separation
-  fig_convergence.pdf    resolution ladder + deep-solve/AMR twins; the two
-                         error sources with opposite grid behaviour
-  fig_samesign.pdf       the same-sign controls merge on one clock; their
-                         centroids stay pinned
-  fig_massscale.pdf      the gap opens/closes according to which star is
-                         heavier; zero crossing at mass ratio ~1
-  fig_wavezone.pdf       l=2 Weyl amplitude on four shells: near-zone falloff,
-                         no radiative tail (the null with a number)
-  fig_constraints.pdf    evolution-time constraint norms (appendix)
+Outputs (results/bondi-dipole-runaway/figures/<group>/, PDF + PNG, one folder per
+campaign group; the article reads them from there; FIGURES.md is the index):
+  00_overview/schematic        Bondi's sign rules (drawn, no data)
+  01_star_family/family        dressed-star families M(omega), both signs, with
+                               the working pair and the light-star floors
+  04_runaway/chase_frames      activity and chi-1 stills of the headline N=256
+                               cell with the tracked cores overlaid
+  04_runaway/trajectories      worldlines / drift+fit to t=400 / signal vs nulls
+  05_separation/forcelaw       both axes of a = M/d^2: the separation scan at
+                               fixed mass, and the equal-mass ladder at fixed
+                               separation
+  09_convergence/convergence   the resolution ladder of the headline pair
+  03_same_sign/samesign        the same-sign controls merge on one clock; their
+                               centroids stay pinned
+  06_mass/massscale            the gap opens/closes according to which star is
+                               heavier; zero crossing at mass ratio ~1
+  04_runaway/wavezone          l=2 Weyl amplitude on four shells: near-zone
+                               falloff, no radiative tail (the null with a number)
+The constraint record of the appendix is plot_convergence's two figures,
+09_convergence/convergence_pair and convergence_lone.
 
 Run it from anywhere; it prints every number quoted in the article text.
 """
@@ -44,47 +47,48 @@ matplotlib.use("pgf")
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 
+from grteclyn_wrapper.visualisation.wormhole_merger import style
+
 # .../GRTeclyn/grteclyn-wrapper/src/grteclyn_wrapper/visualisation/bondi_dipole
 REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                     *[os.pardir] * 5))
 PACK = os.path.join(REPO, "results", "bondi-dipole-runaway")
 CAMP = os.path.join(PACK, "campaign")
 OUT = os.path.join(PACK, "figures")
-os.makedirs(OUT, exist_ok=True)
 
-plt.rcParams.update(
-    {
-        "pgf.texsystem": "pdflatex",
-        "pgf.rcfonts": False,
-        "font.family": "serif",
-        "font.size": 8.5,
-        "axes.labelsize": 8.5,
-        "axes.titlesize": 8.5,
-        "legend.fontsize": 7.3,
-        "xtick.labelsize": 7.8,
-        "ytick.labelsize": 7.8,
-        "axes.linewidth": 0.5,
-        "xtick.direction": "in",
-        "ytick.direction": "in",
-        "xtick.top": True,
-        "ytick.right": True,
-        "xtick.minor.visible": True,
-        "ytick.minor.visible": True,
-        "xtick.major.size": 3.0,
-        "ytick.major.size": 3.0,
-        "xtick.minor.size": 1.6,
-        "ytick.minor.size": 1.6,
-        "xtick.major.width": 0.5,
-        "ytick.major.width": 0.5,
-        "xtick.minor.width": 0.4,
-        "ytick.minor.width": 0.4,
-        "lines.linewidth": 1.1,
-        "legend.frameon": False,
-        "legend.handlelength": 1.7,
-        "savefig.bbox": "tight",
-        "savefig.pad_inches": 0.02,
-    }
-)
+# The article's look; plot_convergence draws the appendix figures with it too
+RC = {
+    "pgf.texsystem": "pdflatex",
+    "pgf.rcfonts": False,
+    "font.family": "serif",
+    "font.size": 8.5,
+    "axes.labelsize": 8.5,
+    "axes.titlesize": 8.5,
+    "legend.fontsize": 7.3,
+    "xtick.labelsize": 7.8,
+    "ytick.labelsize": 7.8,
+    "axes.linewidth": 0.5,
+    "xtick.direction": "in",
+    "ytick.direction": "in",
+    "xtick.top": True,
+    "ytick.right": True,
+    "xtick.minor.visible": True,
+    "ytick.minor.visible": True,
+    "xtick.major.size": 3.0,
+    "ytick.major.size": 3.0,
+    "xtick.minor.size": 1.6,
+    "ytick.minor.size": 1.6,
+    "xtick.major.width": 0.5,
+    "ytick.major.width": 0.5,
+    "xtick.minor.width": 0.4,
+    "ytick.minor.width": 0.4,
+    "lines.linewidth": 1.1,
+    "legend.frameon": False,
+    "legend.handlelength": 1.7,
+    "savefig.bbox": "tight",
+    "savefig.pad_inches": 0.02,
+}
+plt.rcParams.update(RC)
 
 SINGLE = 3.375  # PRD column width, inches
 DOUBLE = 7.0
@@ -94,39 +98,43 @@ DOUBLE = 7.0
 # safe, and still a mid grey if the page is printed in black and white).
 FIT = "#D55E00"
 SUM = "#0072B2"   # signed-momentum accent (Okabe-Ito blue)
+# the resolution ladder, coarsest to finest, in every figure that shows it,
+# and the convergence orders it is measured against: order 2 in the fit
+# accent, order 4 in the blue one, each with its own dash for a grey print
+LADDER = {128: (0, (1, 1.5)), 192: (0, (4, 1.6)), 256: "-"}
+ORDER_COLOUR = {2: FIT, 4: SUM}
+ORDER_LS = {2: (0, (3.4, 1.5)), 4: (0, (3.4, 1.2, 1.0, 1.2))}
 
 # The frame stills carry locked colour scales (measured off their own colour
 # bars, identical on every frame kept): activity 0 -> 4.0e-2 in viridis, and
-# chi - 1 symmetric at +-0.0094 in RdBu, blue positive.
+# chi - 1 symmetric at +-8.7e-3 in RdBu, blue positive (2026-10-26, PM10 N 256
+# on the fixed code; the v1 stills were at +-9.4e-3).
 A_MAX = 0.040
-CHI_MAX = 0.0094
+CHI_MAX = 0.0087
 
 # ---------------------------------------------------------------- cell names
-HEAD = {128: "runaway_pair_d10_L64_N128_lev0",
-        192: "runaway_pair_d10_L64_N192_lev0",
-        256: "runaway_pair_d10_L64_N256_lev0"}
-SCAN = {8: "runaway_pair_d08_L64_N128_lev0",
-        10: "runaway_pair_d10_L64_N128_lev0",
-        12: "runaway_pair_d12_L64_N128_lev0",
-        16: "runaway_pair_d16_L64_N128_lev0",
-        20: "runaway_pair_d20_L64_N128_lev0"}
-MIRROR = "control_mirror_mp_d10_L64_N128_lev0"
-DEEPSOLVE = "deepsolve_pair_d10_L64_N128_lev0"
-AMRCHECK = "amrcheck_pair_d10_L64_N128_lev1"
-LONGRUN = "longrun_pair_d10_t400_L64_N128_lev0"
-WAVEZONE = "wavezone_pair_d10_L128_N256_lev0"
-LONE_P = "control_lone_canonical_L64_N128_lev0"
-LONE_M = "control_lone_phantom_L64_N128_lev0"
-PP = {128: "control_pair_pp_d10_L64_N128_lev0",
-      192: "control_pair_pp_d10_L64_N192_lev0",
-      256: "control_pair_pp_d10_L64_N256_lev0"}
-MM = {128: "control_pair_mm_d10_L64_N128_lev0",
-      192: "control_pair_mm_d10_L64_N192_lev0",
-      "frames": "control_pair_mm_d10_L64_N128_lev0_frames"}
-MASS = {"heavy": "massratio_heavyphantom_d10_L64_N128_lev0",
-        "matched": "runaway_pair_d10_L64_N128_lev0",
-        "w0804": "massscale_pair_d10_w0804_L64_N128_lev0",
-        "w088": "massratio_w088_r060_d10_L64_N128_lev0"}
+# The Table I label, the box and the cells (2026-10-23); one run per label
+# unless a resolution set is named.
+HEAD = {n: f"PM10_L64_N{n}" for n in (128, 192, 256)}
+SCAN = {8: "PM8_L64_N128",
+        10: "PM10_L64_N128",
+        12: "PM12_L64_N128",
+        16: "PM16_L64_N128",
+        20: "PM20_L64_N128"}
+MIRROR = "MP10_L64_N128"
+LONGRUN = "PM10_L64_N128_t400"
+WAVEZONE = "PM10_L128_N256"
+LONE_P = "P_L64_N128"
+# M at its finest grid: N 192 and 256 agree on its drift to 0.4 %, while the
+# N 128 core tracker takes a +2e-3 excursion over t 128-135
+LONE_M = "M_L64_N256"
+LONE_M_SET = {n: f"M_L64_N{n}" for n in (128, 192, 256)}
+PP = "PP10_L64_N128"
+MM = "MM10_L64_N128"
+MASS = {"heavy": "R1.33_L64_N128",
+        "matched": "PM10_L64_N128",
+        "w0804": "R0.80_L64_N128",
+        "w088": "R0.60_L64_N128"}
 
 # dressed ADM masses of the working stars (stars/*.dat headers)
 M_P = 0.014349964   # canonical, omega = 0.75
@@ -136,6 +144,19 @@ MBAR = 0.5 * (M_P + M_M)   # what the midpoint acceleration measures
 # dressed masses at the mass-ladder frequencies (stars/star_family_massratio.csv)
 M_LADDER = {0.75: 0.014349964, 0.7603: 0.014294692, 0.804: 0.011472499,
             0.81: 0.010720519, 0.88: 0.008573106}
+
+
+# ------------------------------------------------------------------- output
+def save(fig, stem):
+    """figures/<group>/<name>.pdf and its PNG, one folder per campaign group as
+    the merger pack's figures/ (2026-10-26); unchanged pixels are not rewritten.
+    Every text a line crosses, or that sits on another text or a key, is
+    printed (style.label_audit)."""
+    # a margin round every text, so a label resting on a curve is caught too
+    if style.label_audit(fig, pad=0.02):  # it prints what it finds
+        print(f"  ^ in {stem}")
+    style.save(fig, os.path.join(OUT, stem))
+    plt.close(fig)
 
 
 # ------------------------------------------------------------------ loaders
@@ -191,6 +212,19 @@ def norms(cell):
     """t, L2 Ham, L2 Mom on the evolution grid (constraint_norms.dat)."""
     d = load(cell, "constraint_norms.dat")
     return d[:, 0], d[:, 1], d[:, 2]
+
+
+def interior_norm(cell, constraint=0, r_max=24):
+    """t and the L2 norm of a constraint (0 Ham, 1 Mom) over r < r_max about
+    the box centre, combined by volume from the unit shells of
+    constraint_shells.dat (as plot_convergence.zone does); r_max 24 keeps the
+    absorbing layer out, whose dissipation is not part of the field
+    equations."""
+    d = load(cell, "constraint_shells.dat")
+    r = np.arange(r_max)
+    w = (r + 1.0) ** 3 - r ** 3
+    sh = d[:, 1 + constraint * 33 + r]
+    return d[:, 0], np.sqrt((sh ** 2 * w).sum(axis=1) / w.sum())
 
 
 def l2_amplitude(cell, radii):
@@ -338,8 +372,7 @@ def fig_schematic():
     ax.text(XR + R + 1.10, y - 1.28, "$x$", ha="left", va="center",
             fontsize=7.0, color="0.45")
 
-    fig.savefig(os.path.join(OUT, "fig_schematic.pdf"))
-    plt.close(fig)
+    save(fig, "00_overview/schematic")
 
 
 # ------------------------------------------------------------------ fig: family
@@ -356,33 +389,40 @@ def fig_family():
                         = float(r["adm_mass"])
 
     fig, ax = plt.subplots(figsize=(SINGLE, 2.30))
-    for sector, ls, lab, ly, va in [
-            ("canonical", "-", "positive mass", 0.047, "bottom"),
-            ("phantom", (0, (4, 1.6)), "negative mass", -0.054, "top")]:
+    # each branch through its computed stars (dots), named beside its own
+    # curve where both run flat, clear of the reference pair
+    for sector, ls, mfc, lab, ly, va in [
+            ("canonical", "-", "k", "positive mass", 1.45, "bottom"),
+            ("phantom", (0, (4, 1.6)), "white", "negative mass", -1.45,
+             "top")]:
         om = np.array(sorted(fam[sector]))
-        m = np.array([fam[sector][o] for o in om])
-        ax.plot(om, m, color="k", ls=ls, lw=1.05)
-        ax.text(0.607, ly, lab, fontsize=7.3, color="0.1", ha="left", va=va)
+        m = np.array([fam[sector][o] for o in om]) * 100
+        ax.plot(om, m, color="k", ls=ls, lw=1.0, marker="o", ms=2.0,
+                markerfacecolor=mfc, markeredgewidth=0.5)
+        ax.text(0.83, ly, lab, fontsize=7.0, color="0.1", ha="left", va=va)
 
-    ax.axhline(0, color="0.5", lw=0.5)
+    # no star below omega ~ 0.527: a band, its name in the band's upper half,
+    # and the zero line starting at its edge so the two never cross
     ax.axvspan(0.500, 0.5265, color="0.92", zorder=0, lw=0)
-    ax.text(0.5133, -0.014, "no star", rotation=90, ha="center",
-            va="center", fontsize=6.2, color="0.45", zorder=4)
+    ax.text(0.5133, 4.0, "no star", rotation=90, ha="center", va="center",
+            fontsize=6.2, color="0.45", zorder=4)
+    ax.plot([0.5265, 1.005], [0, 0], color="0.6", lw=0.5, zorder=1)
 
     # the working pair (mass-matched to 0.4%; the caption carries the
     # numbers).  The two stars sit at different frequencies on purpose: the
     # phantom is retuned until the mass magnitudes match, which is why the
     # stars are not vertically opposite each other.
-    ax.plot([0.75], [M_P], marker="*", ms=8.5, color="k", ls="none", zorder=5)
-    ax.plot([0.7603], [-M_M], marker="*", ms=8.5, color="k",
+    ax.plot([0.75], [M_P * 100], marker="*", ms=8.5, color="k", ls="none",
+            zorder=5)
+    ax.plot([0.7603], [-M_M * 100], marker="*", ms=8.5, color="k",
             markerfacecolor="white", markeredgewidth=0.8, ls="none", zorder=5)
 
     ax.set_xlim(0.50, 1.005)
-    ax.set_ylim(-0.105, 0.085)
+    ax.set_ylim(-10.5, 8.5)
+    ax.set_yticks([-10, -5, 0, 5])
     ax.set_xlabel(r"$\omega$")
-    ax.set_ylabel(r"$M_{\rm ADM}$")
-    fig.savefig(os.path.join(OUT, "fig_family.pdf"))
-    plt.close(fig)
+    ax.set_ylabel(r"$M_{\rm ADM}\ [10^{-2}]$")
+    save(fig, "01_star_family/family")
 
 
 # --------------------------------------------------------- fig: chase frames
@@ -484,11 +524,10 @@ def fig_chase_frames():
         norm=matplotlib.colors.Normalize(-CHI_MAX, CHI_MAX), cmap="RdBu"),
         cax=caxes[1])
     cb.set_ticks([-CHI_MAX, 0.0, CHI_MAX])
-    cb.set_ticklabels([f"$-{CHI_MAX:.3f}$", "$0$", f"$+{CHI_MAX:.3f}$"])
+    cb.set_ticklabels([f"$-{CHI_MAX:.4f}$", "$0$", f"$+{CHI_MAX:.4f}$"])
     cb.ax.tick_params(labelsize=6.2, width=0.4, length=1.8)
     cb.outline.set_linewidth(0.4)
-    fig.savefig(os.path.join(OUT, "fig_chase_frames.pdf"), dpi=300)
-    plt.close(fig)
+    save(fig, "04_runaway/chase_frames")
 
 
 # ------------------------------------------------------------ fig: trajectories
@@ -540,14 +579,16 @@ def fig_trajectories():
               handlelength=1.15, handletextpad=0.42, labelspacing=0.2,
               borderpad=0.16, framealpha=0.0)
     bx.set_xlim(0, 410)
-    bx.set_ylim(-0.4, 12.4)
+    bx.set_ylim(-0.3, 1.25 * dL.max())
     bx.set_xlabel("$t$")
     bx.set_ylabel(r"$\Delta X$")
     bx.set_title("(b)", loc="left")
 
     # (c) the signal against every null, log scale.  The lone stars are
     # tracked by their cores: the whole-domain barycentre of an off-centre
-    # star picks up domain noise in the sector weight (see the text).
+    # star picks up domain noise in the sector weight (see the text).  On the
+    # fixed code the star at the centre and the two same-sign pairs keep their
+    # mirror symmetry, so they sit at round-off; M, 5 units off centre, drifts.
     cx.plot(t3, np.abs(m3 - m3[0]), color="k", ls="-", lw=1.1, zorder=5)
     dP = dyn(LONE_P)
     cx.plot(dP["t"], np.abs(dP["xc"] - dP["xc"][0]), color="0.5",
@@ -555,15 +596,17 @@ def fig_trajectories():
     dM = dyn(LONE_M)
     cx.plot(dM["t"], np.abs(dM["xp"] - dM["xp"][0]), color="0.5",
             ls="-.", lw=0.8)
-    bpp = bary(PP[256])
+    bpp = bary(PP)
     cx.plot(bpp["t"], np.abs(bpp["xc"] - bpp["xc"][0]), color="0.35",
             ls=(0, (1, 1.5)), lw=0.8)
-    bmm = bary(MM[128])
+    bmm = bary(MM)
     cx.plot(bmm["t"], np.abs(bmm["xp"] - bmm["xp"][0]), color="0.35",
             ls=(0, (5, 1.5)), lw=0.8)
-    cx.text(200, 5.6, "mixed pair", fontsize=6.6, ha="right", va="center")
-    # the four nulls all live in one decade; label the band, not the lines
-    cx.text(200, 1.05e-5, "controls", fontsize=6.4,
+    cx.text(8, 60.0, "mixed pair", fontsize=6.6, ha="left", va="center")
+    cx.text(200, 4e-4, "M", fontsize=6.4, ha="right", va="top",
+            color="0.3")
+    # three nulls share the round-off band; label the band, not the lines
+    cx.text(200, 2.5e-12, "P, PP10, MM10", fontsize=6.4,
             ha="right", va="bottom", color="0.3",
             bbox=dict(facecolor="white", edgecolor="none", pad=0.8))
     # the separation bar: both tips land on the curves they measure --
@@ -578,9 +621,11 @@ def fig_trajectories():
                                 shrinkA=0, shrinkB=0))
     cx.set_yscale("log")
     cx.set_xlim(0, 205)
-    cx.set_ylim(6.5e-6, 16)
+    cx.set_ylim(3e-16, 3e3)          # headroom: the label sits above its curve
+    cx.set_yticks([1e-15, 1e-12, 1e-9, 1e-6, 1e-3, 1])
+    cx.minorticks_off()
     cx.set_xlabel("$t$")
-    cx.set_ylabel(r"$|\Delta X|$")
+    cx.set_ylabel(r"$|\Delta X|$", labelpad=1)
     cx.set_title("(c)", loc="left")
 
     # (d) the Bondi signature itself: each sector's volume-integrated matter
@@ -598,23 +643,30 @@ def fig_trajectories():
                 alpha=al)
     px.axhline(0, color="0.75", lw=0.5, zorder=0)
     D2 = dyn(HEAD[256])
-    px.text(158, D2["pxc"][-1] * 1e4 - 0.55, r"$P^{(+)},\ P^{(-)}$", fontsize=6.6,
-            ha="right", va="top", color="k")
-    px.text(7, 6.55, r"$10\,P$", fontsize=6.3,
-            ha="left", va="top", color="k")
-    _lab = dict(fontsize=5.9, ha="right", va="center", color="k",
+    p_top = D2["pxc"].max() * 1e4
+    px.text(158, float(np.interp(158, D2["t"], D2["pxc"])) * 1e4 + 0.12 * p_top,
+            r"$P^{(+)},\ P^{(-)}$", fontsize=6.6, ha="right", va="bottom",
+            color="k")
+    px.text(40, 0.06 * p_top, r"$10\,P$", fontsize=6.3,
+            ha="left", va="bottom", color="k")
+    # each rung's signed total named where it ends: the base rung above its
+    # line, the finest below its own, clear of the base rung's curve
+    _lab = dict(fontsize=5.9, ha="right", color="k",
                 bbox=dict(facecolor="white", edgecolor="none", pad=0.6))
-    px.text(203, 4.02, r"$N{=}128$", **_lab)
-    px.text(203, 0.78, r"$N{=}256$", **_lab)
+    for n, off, va in ((128, 0.04, "bottom"), (256, -0.05, "top")):
+        px.text(203, dyn(HEAD[n])["pxt"][-1] * 1e5 + off * p_top,
+                rf"$N{{=}}{n}$", va=va, **_lab)
     px.set_xlim(0, 205)
-    px.set_ylim(-0.55, 6.9)
+    px.set_ylim(-0.16 * p_top, 1.2 * p_top)
     px.set_xlabel("$t$")
     px.set_ylabel(r"matter momentum $[10^{-4}]$")
     px.set_title("(d)", loc="left")
 
-    fig.subplots_adjust(wspace=0.50)
-    fig.savefig(os.path.join(OUT, "fig_trajectories.pdf"))
-    plt.close(fig)
+    for a in (ax, cx, px):
+        a.set_xticks([0, 100, 200])
+    bx.set_xticks([0, 200, 400])
+    fig.subplots_adjust(wspace=0.56)
+    save(fig, "04_runaway/trajectories")
 
 
 # ------------------------------------------------------------ fig: force law
@@ -630,9 +682,10 @@ def mass_ladder():
     Each row carries the acceleration on the halo-free CORE tracker (the
     reported one), its window spread, and the whole-domain barycentre as the
     cross-check -- the two part company only on the lightest, most diffuse
-    pair, whose shed halo drags the barycentre fit 18% off.  The file is
-    written by research/bondi_dipole/fit_mass_law.py, which recomputes the
-    masses from the frequencies the elliptic solver itself recorded.
+    pair, whose shed halo drags the barycentre fit off.  The file is
+    written by grteclyn_wrapper.analysis.bondi_dipole.fit_mass_law, which
+    recomputes the masses from the frequencies the elliptic solver itself
+    recorded.
     """
     with open(os.path.join(CAMP, "06_mass", "mass_law.csv")) as fh:
         text = fh.read()
@@ -674,27 +727,31 @@ def fig_forcelaw():
     fig, ((ax, cx), (bx, dx)) = plt.subplots(2, 2, figsize=(SINGLE, 3.80))
 
     # (a) a(d) at fixed mass
-    ax.plot(ds, accs, ls="none", marker="o", ms=4, color="k",
+    ax.plot(ds, accs * 1e4, ls="none", marker="o", ms=4, color="k",
             markerfacecolor="white", markeredgewidth=0.9, zorder=5)
     dd = np.linspace(7.2, 22, 100)
-    ax.plot(dd, MBAR / dd ** 2, color="0.5", ls="-", lw=0.8,
-            label=r"$\bar M/d^2$ (point mass)")
-    ax.plot(dd, np.exp(off) * dd ** slope, color=FIT, ls=(0, (3.4, 1.5)),
-            lw=1.4, label=rf"fit $d^{{{slope:.2f}}}$")
-    ax.legend(loc="upper right", borderaxespad=0.4, fontsize=6.3,
+    ax.plot(dd, MBAR / dd ** 2 * 1e4, color="0.5", ls="-", lw=0.8,
+            label=r"$\bar M/d^2$")
+    ax.plot(dd, np.exp(off) * dd ** slope * 1e4, color=FIT,
+            ls=(0, (3.4, 1.5)), lw=1.4, label=rf"fit $d^{{{slope:.2f}}}$")
+    # the data fall from upper left to lower right: the key takes the corner
+    # they leave empty
+    ax.legend(loc="lower left", borderaxespad=0.4, fontsize=6.3,
               handlelength=1.6, labelspacing=0.35, borderpad=0.2)
     ax.set_xscale("log")
     ax.set_yscale("log")
     ax.set_xticks([8, 10, 12, 16, 20])
     ax.set_xticklabels(["$8$", "$10$", "$12$", "$16$", "$20$"])
+    ax.set_yticks([0.3, 0.5, 1, 2])
+    ax.set_yticklabels(["$0.3$", "$0.5$", "$1$", "$2$"])
     ax.minorticks_off()
     ax.set_xlim(7.2, 22)
-    ax.set_ylim(2.4e-5, 7.5e-4)      # headroom so the legend clears the data
+    ax.set_ylim(0.2, 3.2)
     ax.set_xlabel("$d$")
-    ax.set_ylabel(r"$a$")
+    ax.set_ylabel(r"$a\ [10^{-4}]$")
     ax.set_title(r"(a)\quad vary $d$, mass fixed", loc="left", fontsize=7.5)
 
-    # (b) a d^2 over the pair mass: the excess fades with separation
+    # (b) a d^2 over the pair mass, against separation
     ratio = accs * ds ** 2 / MBAR
     bx.axhspan(0.99, 1.01, color="0.93", zorder=0, lw=0)
     bx.axhline(1.0, color="0.5", lw=0.6)
@@ -704,10 +761,11 @@ def fig_forcelaw():
     a256 = fit_a(*midpoint(HEAD[256]))
     bx.plot([10], [a256 * 100 / MBAR], marker="D", ms=4, color="k",
             ls="none", markerfacecolor="0.75", markeredgewidth=0.8, zorder=6)
-    bx.text(7.3, 1.0043, r"$\pm1\%$", fontsize=6.4, color="0.45",
-            va="center", ha="left")
+    bx.text(20.7, 1.012, r"$\pm1\%$", fontsize=6.4, color="0.45",
+            va="bottom", ha="right")
     bx.set_xlim(7, 21)
-    bx.set_ylim(0.985, 1.095)
+    bx.set_ylim(min(ratio.min(), 0.99) - 0.015,
+                max(a256 * 100 / MBAR, 1.01) + 0.02)
     bx.set_xlabel("$d$")
     bx.set_ylabel(r"$a\,d^2/\bar M$")
     bx.set_title("(b)", loc="left", fontsize=7.5)
@@ -743,19 +801,22 @@ def fig_forcelaw():
     dx.errorbar(m2, ratio_m, yerr=aerr * dm ** 2 / mm, marker="o", ms=4,
                 color="k", ls="-", lw=0.8, markerfacecolor="white",
                 markeredgewidth=0.9, elinewidth=0.7, capsize=1.6, zorder=5)
-    dx.text(2.44, 1.0055, r"$\pm1\%$", fontsize=6.4, color="0.45",
-            va="center", ha="right")
+    dx.text(2.44, 1.012, r"$\pm1\%$", fontsize=6.4, color="0.45",
+            va="bottom", ha="right")
     dx.set_xticks([0.9, 1.2, 1.6, 2.0, 2.4])
     dx.set_xticklabels(["$0.9$", "$1.2$", "$1.6$", "$2.0$", "$2.4$"])
     dx.set_xlim(0.80, 2.45)
-    dx.set_ylim(0.935, 1.098)
+    # room for the error bars: at N = 128 a falls by ~20 % over the run in
+    # every rung (2026-10-26), so the window spread is ~10 %
+    err_m = aerr * dm ** 2 / mm
+    dx.set_ylim(min((ratio_m - err_m).min(), 0.99) - 0.02,
+                max((ratio_m + err_m).max(), 1.01) + 0.02)
     dx.set_xlabel(r"$\bar M\ [10^{-2}]$")
     dx.set_ylabel(r"$a\,d^2/\bar M$")
     dx.set_title("(d)", loc="left", fontsize=7.5)
 
     fig.subplots_adjust(hspace=0.58, wspace=0.55)
-    fig.savefig(os.path.join(OUT, "fig_forcelaw.pdf"))
-    plt.close(fig)
+    save(fig, "05_separation/forcelaw")
 
     print("fig_forcelaw stats:")
     for d, a in zip(ds, accs):
@@ -780,33 +841,20 @@ def fig_forcelaw():
 def fig_convergence():
     fig, (ax, bx) = plt.subplots(1, 2, figsize=(DOUBLE, 2.0))
 
-    styles = {128: (0, (1, 1.5)), 192: (0, (4, 1.6)), 256: "-"}
+    styles = LADDER
+    drift = {}
     for n in (128, 192, 256):
         t, m = midpoint(HEAD[n])
+        drift[n] = m[-1] - m[0]
         ax.plot(t, m - m[0], color="k", ls=styles[n],
                 lw=1.1 if n == 256 else 0.85, zorder=5)
-    tD, mD = midpoint(DEEPSOLVE)
-    ax.plot(tD[::20], (mD - mD[0])[::20], ls="none", marker="o", ms=2.6,
-            markerfacecolor="white", markeredgewidth=0.7,
-            markeredgecolor="0.3", zorder=6)
-    tA, mA = midpoint(AMRCHECK)
-    ax.plot(tA[::20], (mA - mA[0])[::20], ls="none", marker="x", ms=2.8,
-            markeredgewidth=0.7, color="0.3", zorder=6)
 
-    handles = [
-        Line2D([], [], color="k", ls=styles[128], lw=0.85,
-               label="$N=128$"),
-        Line2D([], [], color="k", ls=styles[192], lw=0.85,
-               label="$N=192$"),
-        Line2D([], [], color="k", ls=styles[256], lw=1.1,
-               label="$N=256$"),
-        Line2D([], [], color="0.3", lw=0, marker="o", ms=2.6,
-               markerfacecolor="white", markeredgewidth=0.7,
-               label="PM10-tol"),
-        Line2D([], [], color="0.3", lw=0, marker="x", ms=2.8,
-               markeredgewidth=0.7, label="PM10-AMR"),
-    ]
-    ax.legend(handles=handles, loc="upper left", borderaxespad=0.4,
+    handles = [Line2D([], [], color="k", ls=styles[n],
+                      lw=1.1 if n == 256 else 0.85, label=f"$N={n}$")
+               for n in (128, 192, 256)]
+    # the curves rise from lower left to upper right: the key takes the lower
+    # right, the zoom the upper left, so neither hides a curve
+    ax.legend(handles=handles, loc="lower right", borderaxespad=0.4,
               fontsize=6.8, handlelength=1.9, labelspacing=0.35,
               borderpad=0.2)
     ax.set_xlim(0, 205)
@@ -815,10 +863,8 @@ def fig_convergence():
     ax.set_ylabel(r"$\Delta X$")
     ax.set_title("(a)", loc="left")
 
-    # zoom on the endpoint: the fine pair coincide, the base rung sits 4% low
-    ins = ax.inset_axes([0.605, 0.085, 0.375, 0.40])
-    # child axes are drawn among the parent's artists, so it has to sit
-    # above the marker overlays (zorder 6) or they show through it
+    # zoom on the endpoint: the fine pair nearly coincide, the base rung runs low
+    ins = ax.inset_axes([0.11, 0.50, 0.36, 0.44])
     ins.set_zorder(9)
     ins.set_facecolor("white")
     ins.patch.set_alpha(1.0)
@@ -826,61 +872,66 @@ def fig_convergence():
         t, m = midpoint(HEAD[n])
         ins.plot(t, m - m[0], color="k", ls=styles[n],
                  lw=1.0 if n == 256 else 0.7)
-    ins.plot(tD[::10], (mD - mD[0])[::10], ls="none", marker="o", ms=2.2,
-             markerfacecolor="white", markeredgewidth=0.6,
-             markeredgecolor="0.3")
+    # all three rungs inside: the fine pair leaves the upper left empty for
+    # one label, the base rung the lower right for the other
     ins.set_xlim(178, 201)
-    ins.set_ylim(2.38, 3.16)
+    ins.set_ylim(0.70 * drift[256], 1.04 * drift[256])
     ins.set_xticks([180, 200])
-    ins.set_yticks([2.6, 3.0])
+    ins.set_yticks([2.2, 2.6])
     ins.tick_params(labelsize=6.2)
     ins.minorticks_off()
-    # the two fine rungs sit on top of each other; the base rung runs low
-    ins.text(0.05, 0.93, r"$0.4\%$ apart", transform=ins.transAxes,
-             fontsize=6.2, color="0.2", ha="left", va="top")
-    ins.text(0.97, 0.06, r"$4\%$ low", transform=ins.transAxes,
-             fontsize=6.2, color="0.35", ha="right", va="bottom")
+    ins.text(0.05, 0.93,
+             rf"${abs(drift[192] / drift[256] - 1) * 100:.1f}\%$ apart",
+             transform=ins.transAxes, fontsize=6.2, color="0.2", ha="left",
+             va="top")
+    ins.text(0.97, 0.06,
+             rf"${(1 - drift[128] / drift[256]) * 100:.0f}\%$ low",
+             transform=ins.transAxes, fontsize=6.2, color="0.35", ha="right",
+             va="bottom")
 
-    # (b) the two error sources with opposite grid behaviour
+    # (b) the Hamiltonian constraint inside the absorbing layer against the
+    # grid (2026-10-26): at t = 0 it carries the elliptic solve's second
+    # order, late in the run the evolution's higher one.  The whole-domain
+    # norm is set by the layer, which does not converge.
     dxs = np.array([0.5, 1 / 3, 0.25])
     h0, hl = [], []
     for n in (128, 192, 256):
-        tn, ham, _ = norms(HEAD[n])
-        h0.append(ham[0])                       # t = 0.01
+        tn, ham = interior_norm(HEAD[n])
+        h0.append(ham[0])                       # the first step, t = 0.02 dx
         hl.append(ham[tn >= 150].mean())        # late-time mean
+    h0, hl = np.array(h0), np.array(hl)
+    p0 = np.log(h0[0] / h0[-1]) / np.log(2.0)   # N 128 -> 256
+    pl = np.log(hl[0] / hl[-1]) / np.log(2.0)
     bx.plot(dxs, h0, marker="o", ms=4, color="k", ls="-", lw=0.9,
             markerfacecolor="white", markeredgewidth=0.9,
-            label=r"$t=0$")
+            label=rf"$t=0$, order ${p0:.1f}$", zorder=5)
     bx.plot(dxs, hl, marker="s", ms=4, color="0.35", ls="--", lw=0.9,
             markerfacecolor="white", markeredgewidth=0.9,
-            label=r"mean over $t\ge150$")
-    # t = 0 is dominated by the outer boundary layer; the late mean falls
-    bx.annotate("", xy=(0.237, 7.0e-4), xytext=(0.237, 3.1e-4),
-                arrowprops=dict(arrowstyle="-|>", mutation_scale=6, lw=0.7,
-                                color="0.35", shrinkA=0, shrinkB=0))
-    bx.text(0.237, 8.0e-4, "rises", fontsize=6.2, color="0.3", ha="center",
-            va="bottom")
-    bx.annotate("", xy=(0.237, 4.4e-6), xytext=(0.237, 8.6e-6),
-                arrowprops=dict(arrowstyle="-|>", mutation_scale=6, lw=0.7,
-                                color="0.35", shrinkA=0, shrinkB=0))
-    bx.text(0.237, 3.9e-6, "falls", fontsize=6.2, color="0.3", ha="center",
-            va="top")
-    bx.legend(loc="center left", borderaxespad=0.4, fontsize=6.8,
-              handlelength=1.9, labelspacing=0.4, borderpad=0.4)
+            label=rf"mean over $t\ge150$, order ${pl:.1f}$", zorder=5)
+    # one guide per series, through its coarsest point: the solve's order 2
+    # for t = 0, the scheme's order 4 for the late mean (order 2 orange,
+    # order 4 blue, as in the appendix figures)
+    gx = np.array([0.53, 0.235])
+    bx.plot(gx, h0[0] * (gx / 0.5) ** 2, color=FIT, ls=ORDER_LS[2],
+            lw=0.9, label=r"$\propto\Delta x^2$", zorder=3)
+    bx.plot(gx, hl[0] * (gx / 0.5) ** 4, color=SUM, ls=ORDER_LS[4],
+            lw=0.9, label=r"$\propto\Delta x^4$", zorder=3)
+    bx.legend(loc="upper right", borderaxespad=0.4, fontsize=6.6,
+              handlelength=1.9, labelspacing=0.3, borderpad=0.3)
     bx.set_xscale("log")
     bx.set_yscale("log")
-    bx.set_ylim(2.4e-6, 1.9e-3)  # room for the two trend arrows
+    lo = min(h0.min(), hl.min(), hl[0] * (0.235 / 0.5) ** 4)
+    bx.set_ylim(0.6 * lo, 12 * max(h0.max(), hl.max()))  # room for the key
     bx.set_xlim(0.56, 0.213)     # finer grids to the right
     bx.set_xticks([0.5, 1 / 3, 0.25])
     bx.set_xticklabels(["$0.50$", "$0.33$", "$0.25$"])
     bx.minorticks_off()
     bx.set_xlabel(r"$\Delta x$ \quad (grid refined $\rightarrow$)")
-    bx.set_ylabel(r"$L_2(\mathcal{H})$")
+    bx.set_ylabel(r"$L_2(\mathcal{H})$, $r<24$")
     bx.set_title("(b)", loc="left")
 
     fig.subplots_adjust(wspace=0.30)
-    fig.savefig(os.path.join(OUT, "fig_convergence.pdf"))
-    plt.close(fig)
+    save(fig, "09_convergence/convergence")
 
     print("fig_convergence stats:")
     for n in (128, 192, 256):
@@ -890,13 +941,6 @@ def fig_convergence():
         print(f"  N={n}: drift={m[-1] - m[0]:+.5f}  a5={fit_a(t, m):.4e}  "
               f"baryGap end {b['xc'][-1] - b['xp'][-1]:.3f}  "
               f"coreGap end {d['sep'][-1]:.3f}  px_end={d['pxt'][-1]:+.2e}")
-    for cell, tag in ((DEEPSOLVE, "deepsolve"), (AMRCHECK, "amrcheck")):
-        t, m = midpoint(cell)
-        t0, m0 = midpoint(HEAD[128])
-        print(f"  {tag}: drift={m[-1] - m[0]:+.5f} "
-              f"(vs N128 {m0[-1] - m0[0]:+.5f}, "
-              f"rel {abs((m[-1] - m[0]) / (m0[-1] - m0[0]) - 1) * 100:.4f}%)"
-              f"  a5={fit_a(t, m):.4e}")
     t1, m1 = midpoint(HEAD[192]); t2, m2 = midpoint(HEAD[256])
     d1, d2 = m1[-1] - m1[0], m2[-1] - m2[0]
     a1, a2 = fit_a(t1, m1), fit_a(t2, m2)
@@ -904,28 +948,35 @@ def fig_convergence():
           f"({abs(d1 / d2 - 1) * 100:.2f}%), "
           f"a {a1:.4e}/{a2:.4e} ({abs(a1 / a2 - 1) * 100:.2f}%)")
     for n, hh0, hhl in zip((128, 192, 256), h0, hl):
-        print(f"  N={n}: L2Ham(t=0.01)={hh0:.2e}  late mean={hhl:.2e}")
+        print(f"  N={n}: L2Ham(r<24) t=0 {hh0:.2e}  late mean {hhl:.2e}")
+    print(f"  orders N 128 -> 256: t=0 {p0:.2f}, late {pl:.2f}")
 
 
 # ------------------------------------------------------------ fig: same sign
+def merger_time(cell):
+    """The first frame at which the |chi - 1| profile has one maximum left
+    (well_tracking.dat, gap 0): the same-sign pair has merged."""
+    W = load(cell, "well_tracking.dat")
+    return float(W[W[:, 3] == 0, 0][0])
+
+
 def fig_samesign():
     fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 2.9))
 
     # (a) the two same-sign pairs merge on the same clock
-    for cell, ls, lab, tm, mfc in (
-            (PP[256], "-", r"PP10 ($N{=}256$)", 33.6, "white"),
-            (MM["frames"], "--", r"MM10 ($N{=}128$)", 32.8, "k")):
+    merged = {cell: merger_time(cell) for cell in (PP, MM)}
+    for cell, ls, lab, mfc in ((PP, "-", r"PP10", "white"),
+                               (MM, "--", r"MM10", "k")):
         W = load(cell, "well_tracking.dat")
         t, gap = W[:, 0], W[:, 3]
         live = gap > 0
         ax.plot(t[live], gap[live], color="k", ls=ls, lw=1.0, label=lab)
-        ax.plot([tm], [0.35], marker="v", ms=4, color="k",
+        ax.plot([merged[cell]], [0.35], marker="v", ms=4, color="k",
                 markerfacecolor=mfc, markeredgewidth=0.8, ls="none")
-    ax.annotate("merged:\n$t=33.6$ / $32.8$", xy=(33.6, 0.75),
-                xytext=(44.0, 2.65), fontsize=6.8, color="0.2", ha="right",
-                va="center", ma="left",
-                arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",
-                                shrinkA=2, shrinkB=3))
+    t_pp, t_mm = merged[PP], merged[MM]
+    # the note just left of the two markers it names, under the curves
+    ax.text(32.6, 1.3, f"merged:\n$t={t_pp:.1f}$ / ${t_mm:.1f}$",
+            fontsize=6.8, color="0.2", ha="right", va="center", ma="left")
     ax.legend(loc="upper right", borderaxespad=0.4, fontsize=6.8,
               handlelength=1.9, labelspacing=0.35, borderpad=0.2)
     ax.set_xlim(0, 45)
@@ -934,49 +985,50 @@ def fig_samesign():
     ax.set_ylabel(r"$d$ of the $|\chi-1|$ extrema")
     ax.set_title("(a)", loc="left")
 
-    # (b) and their centroids stay pinned through it
+    # (b) and their centroids stay pinned through it: on the fixed code the
+    # two pairs keep their mirror symmetry, so the centroid sits at round-off
     t3, m3 = midpoint(HEAD[256])
     bx.plot(t3, np.abs(m3 - m3[0]), color="k", ls="-", lw=1.1, zorder=5)
-    for grids, sect, ls in ((PP, "xc", (0, (1, 1.5))),
-                            (MM, "xp", (0, (4, 1.6)))):
-        for key, cell in grids.items():
-            b = bary(cell)
-            x = b[sect]
-            bx.plot(b["t"], np.abs(x - x[0]), color="0.4", ls=ls, lw=0.7)
-    bx.text(198, 6.5, "mixed pair", fontsize=6.8, ha="right", va="center")
-    bx.text(198, 5.5e-3, r"PP10, MM10 centroids, all $N$",
-            fontsize=6.8, ha="right", color="0.3")
-    bx.axvline(33.6, color="0.7", lw=0.5, ls=(0, (2, 2)))
-    bx.text(31.0, 12, "merger", fontsize=6.2, color="0.5", ha="right",
-            va="top", rotation=90)
+    for cell, sect, ls in ((PP, "xc", (0, (1, 1.5))),
+                           (MM, "xp", (0, (4, 1.6)))):
+        b = bary(cell)
+        x = b[sect]
+        bx.plot(b["t"], np.abs(x - x[0]), color="0.4", ls=ls, lw=0.7)
+    bx.text(40, 60.0, "mixed pair", fontsize=6.8, ha="left", va="center")
+    bx.text(198, 2.5e-12, r"PP10, MM10 centroids",
+            fontsize=6.8, ha="right", va="bottom", color="0.3")
+    # the merger marked between the signal and the round-off band, where
+    # its rule crosses nothing else
+    bx.axvline(t_pp, color="0.7", lw=0.5, ls=(0, (2, 2)))
+    bx.text(t_pp - 5.0, 1e-7, "merger", fontsize=6.2, color="0.5", ha="right",
+            va="center", rotation=90)
     bx.set_yscale("log")
     bx.set_xlim(0, 205)
-    bx.set_ylim(2e-5, 16)
+    bx.set_ylim(3e-16, 3e3)          # headroom: the label sits above its curve
+    bx.set_yticks([1e-15, 1e-12, 1e-9, 1e-6, 1e-3, 1])
+    bx.minorticks_off()
     bx.set_xlabel("$t$")
     bx.set_ylabel(r"$|\Delta X|$")
     bx.set_title("(b)", loc="left")
 
     fig.subplots_adjust(hspace=0.42)
-    fig.savefig(os.path.join(OUT, "fig_samesign.pdf"))
-    plt.close(fig)
+    save(fig, "03_same_sign/samesign")
 
     print("fig_samesign stats:")
-    for cell in (PP[256], MM["frames"]):
+    for cell in (PP, MM):
         W = load(cell, "well_tracking.dat")
         t, gap = W[:, 0], W[:, 3]
         gaps = "  ".join(f"g({tt})={float(np.interp(tt, t, gap)):.2f}"
                          for tt in (0, 20, 30, 32))
-        merged = t[gap == 0]
-        print(f"  {cell}: {gaps}  merged from t={merged[0]:.1f}")
-    for grids, sect in ((PP, "xc"), (MM, "xp")):
-        for key, cell in grids.items():
-            b = bary(cell)
-            x = b[sect]
-            print(f"  {cell}: centroid end {x[-1] - x[0]:+.5f} "
-                  f"max|.| {np.max(np.abs(x - x[0])):.1e}")
+        print(f"  {cell}: {gaps}  merged from t={merged[cell]:.1f}")
+    for cell, sect in ((PP, "xc"), (MM, "xp")):
+        b = bary(cell)
+        x = b[sect]
+        print(f"  {cell}: centroid end {x[-1] - x[0]:+.2e} "
+              f"max|.| {np.max(np.abs(x - x[0])):.1e}")
     tff = (np.pi / 2) * np.sqrt(10.0 ** 3 / (2 * (M_P + M_P)))
     print(f"  Newtonian free-fall (2 x M+, d=10): t={tff:.0f}; "
-          f"merger at 33.6 -> force ratio ~{(tff / 33.6) ** 2:.0f}")
+          f"merger at {t_pp:.1f} -> force ratio ~{(tff / t_pp) ** 2:.0f}")
 
 
 # ------------------------------------------------------------ fig: mass scale
@@ -1000,9 +1052,10 @@ def fig_massscale():
         ax.text(209, gap[-1] - gap[0], lab, fontsize=6.6, color=c,
                 ha="left", va="center")
     # stop the zero line short of the label column
-    ax.plot([0, 204], [0, 0], color="0.75", lw=0.5, zorder=0)
-    ax.text(209, 1.02, r"$|M_-|/M_+$", fontsize=6.6, color="0.2",
-            ha="left", va="top")
+    ax.plot([0, 202], [0, 0], color="0.75", lw=0.5, zorder=0)
+    # the column's header, inside the frame (it is wider than its values)
+    ax.text(249, 1.02, r"$|M_-|/M_+$", fontsize=6.6, color="0.2",
+            ha="right", va="top")
     ax.text(7, 1.02, r"negative-mass star heavier: $d$ grows", fontsize=6.4,
             color="0.35", ha="left", va="top")
     ax.set_xlim(0, 256)
@@ -1027,11 +1080,8 @@ def fig_massscale():
     i = int(np.searchsorted(ys, 0.0))
     x0 = xs[i - 1] + (xs[i] - xs[i - 1]) * (-ys[i - 1]) / (ys[i] - ys[i - 1])
     bx.axvline(1.0, color="0.8", lw=0.5, ls=(0, (2, 2)), zorder=0)
-    bx.annotate(f"zero at ${x0:.2f}$,\npredicted $1$",
-                xy=(1.005, 0.02), xytext=(1.425, -0.72), fontsize=6.8,
-                color="0.2", ha="right", va="center", ma="left",
-                arrowprops=dict(arrowstyle="-", lw=0.6, color="0.45",
-                                shrinkA=2, shrinkB=3))
+    bx.text(1.03, -0.3, f"zero at ${x0:.2f}$,\npredicted $1$", fontsize=6.8,
+            color="0.2", ha="left", va="top", ma="left")
     bx.set_xlim(0.5, 1.45)
     bx.set_ylim(-1.65, 0.85)
     bx.set_xlabel(r"mass ratio $|M_-|/M_+$")
@@ -1039,8 +1089,7 @@ def fig_massscale():
     bx.set_title("(b)", loc="left")
 
     fig.subplots_adjust(hspace=0.42)
-    fig.savefig(os.path.join(OUT, "fig_massscale.pdf"))
-    plt.close(fig)
+    save(fig, "06_mass/massscale")
 
     print("fig_massscale stats:")
     for key, x, y in zip(("w088", "w0804", "matched", "heavy"), xs, ys):
@@ -1099,14 +1148,20 @@ def fig_wavezone():
               handlelength=1.5, columnspacing=0.8, handletextpad=0.4)
     ax.set_yscale("log")
     ax.set_xlim(0, 205)
-    ax.set_ylim(1e-7, 3e-3)
+    top = max(A[R].max() for R in radii)
+    ax.set_ylim(0.5 * min(A[R][t >= 1].min() for R in radii), 30 * top)
     ax.set_xlabel("$t$")
     ax.set_ylabel(r"$A_{\ell=2}=|r\,\psi_4|_{\ell=2}$")
     ax.text(0.025, 0.94, "(a)", transform=ax.transAxes, ha="left", va="top")
-    # what the panel is a measurement of, stated on the panel
-    ax.text(105, 4.0e-4, "ordered by radius at all times:\n"
-            "near zone, no outgoing front", fontsize=6.4,
-            color="0.3", ha="center", va="center", ma="center")
+    # what the panel is a measurement of, stated on the panel: once the
+    # start-up pulse has crossed the spheres outward, the amplitude falls
+    # with radius at every time (a near zone)
+    stack = np.array([A[R] for R in radii])
+    ordered = np.all(stack[:-1] > stack[1:], axis=0)
+    t_ord = t[np.where(~ordered)[0][-1] + 1] if not ordered.all() else t[0]
+    ax.text(105, 6 * top, rf"ordered by radius from $t={t_ord:.0f}$:" "\n"
+            "near zone", fontsize=6.4, color="0.3", ha="center",
+            va="center", ma="center")
 
     # (b) the falloff: psi4 vs R against r^-1 (radiation) and the fit
     sel = (t >= 150) & (t <= 200)
@@ -1132,8 +1187,7 @@ def fig_wavezone():
     bx.set_title("(b)", loc="left")
 
     fig.subplots_adjust(hspace=0.42)
-    fig.savefig(os.path.join(OUT, "fig_wavezone.pdf"))
-    plt.close(fig)
+    save(fig, "04_runaway/wavezone")
 
     print("fig_wavezone stats:")
     i = int(np.argmin(np.abs(t - 199)))
@@ -1143,56 +1197,12 @@ def fig_wavezone():
               f"psi4={A[R][sel].mean() / R:.2e}")
     print(f"  psi4 ~ r^{p[0]:.2f} (mean 150-200); "
           f"r*psi4 falls x{A[16][sel].mean() / A[40][sel].mean():.0f} "
-          "from R=16 to 40")
+          f"from R=16 to 40; ordered by radius from t={t_ord:.1f}")
     tw, mw = midpoint(WAVEZONE)
     t1, m1 = midpoint(HEAD[128])
     print(f"  wavezone drift {mw[-1] - mw[0]:+.4f} vs L=64 "
           f"{m1[-1] - m1[0]:+.4f} "
           f"({(mw[-1] - mw[0]) / (m1[-1] - m1[0]) - 1:+.1%})")
-
-
-# ------------------------------------------------------------ fig: constraints
-def fig_constraints():
-    # 2026-10-22: a full-width strip, panels side by side (a single-column
-    # float drifted into the references)
-    fig, (ax, bx) = plt.subplots(1, 2, figsize=(DOUBLE, 1.8))
-
-    styles = {128: (0, (1, 1.5)), 192: (0, (4, 1.6)), 256: "-"}
-    for n in (128, 192, 256):
-        tn, ham, mom = norms(HEAD[n])
-        ax.plot(tn, ham, color="k", ls=styles[n],
-                lw=1.0 if n == 256 else 0.7)
-        bx.plot(tn, mom, color="k", ls=styles[n],
-                lw=1.0 if n == 256 else 0.7)
-    tp, hamp, momp = norms(PP[256])
-    ax.plot(tp, hamp, color="0.55", ls="-", lw=0.7)
-    bx.plot(tp, momp, color="0.55", ls="-", lw=0.7)
-
-    handles = [Line2D([], [], color="k", ls=styles[n],
-                      lw=1.0 if n == 256 else 0.7, label=f"$N={n}$")
-               for n in (128, 192, 256)]
-    handles.append(Line2D([], [], color="0.55", ls="-", lw=0.7,
-                          label=r"PP10 ($N{=}256$)"))
-    ax.legend(handles=handles, loc="upper right", ncol=2, borderaxespad=0.4,
-              fontsize=6.6, handlelength=1.9, columnspacing=1.0,
-              labelspacing=0.3, borderpad=0.2)
-    ax.set_yscale("log")
-    ax.set_ylim(1.5e-6, 2.5e-3)
-    ax.set_xlim(0, 205)
-    ax.set_xlabel("$t$")
-    ax.set_ylabel(r"$L_2(\mathcal{H})$")
-    ax.set_title("(a)", loc="left")
-
-    bx.set_yscale("log")
-    bx.set_ylim(1e-7, 2e-4)
-    bx.set_xlim(0, 205)
-    bx.set_xlabel("$t$")
-    bx.set_ylabel(r"$L_2(\mathcal{M})$")
-    bx.set_title("(b)", loc="left")
-
-    fig.subplots_adjust(wspace=0.30)
-    fig.savefig(os.path.join(OUT, "fig_constraints.pdf"))
-    plt.close(fig)
 
 
 # ------------------------------------------------------------------ numbers
@@ -1227,7 +1237,8 @@ def print_numbers():
           f"{(mm_[-1] - mm_[0]) / (m0[-1] - m0[0]):+.6f}, "
           f"a ratio {fit_a(tm, mm_) / fit_a(t0, m0):+.6f}")
 
-    for cell, cols in ((LONE_P, slice(1, 4)), (LONE_M, slice(5, 8))):
+    for cell, cols in ((LONE_P, slice(1, 4)),
+                       *((m, slice(5, 8)) for m in LONE_M_SET.values())):
         d = load(cell, "sector_dynamics.dat")
         db = load(cell, "sector_barycenters.dat")
         bcols = slice(2, 5) if cell == LONE_P else slice(7, 10)
@@ -1261,31 +1272,26 @@ def print_numbers():
     print(f"  gap {gapL[0]:.3f} -> {float(np.interp(200, tL, gapL)):.3f} "
           f"(t=200) -> {gapL[-1]:.3f} (t=400); final speed ~{v:.3f}")
 
-    Cpp = load(PP[256], "confinement.dat")
-    print(f"PP N256: activity {Cpp[0, 1]:.2f} -> "
+    Cpp = load(PP, "confinement.dat")
+    print(f"PP10: activity {Cpp[0, 1]:.2f} -> "
           f"x{Cpp[:, 1].max() / Cpp[0, 1]:.1f} at "
           f"t={Cpp[int(np.argmax(Cpp[:, 1])), 0]:.0f}; "
           f"min chi {Cpp[:, 17].min():.5f}")
-    F = load(PP[256], "boundary_flux.dat", skiprows=1)
+    F = load(PP, "boundary_flux.dat", skiprows=1)
     early = F[:, 0] <= 50
     print(f"  net boundary flux |max| t<=50: "
           f"{np.abs(F[early, 1]).max():.1e}; outward peak "
           f"{F[:, 1].max():.1e} at t={F[int(np.argmax(F[:, 1])), 0]:.0f}")
-    S = load(MM[128], "shell_profiles.dat")
+    S = load(MM, "shell_profiles.dat")
     print(f"MM hills: chi max on R=8 shell {S[:, 3].max():.4f}")
 
-    for w in ("075", "080", "085", "090"):
-        Ks = load(f"stability_canonical_w{w}_L64_N128_lev0",
-                  "collapse_diagnostics.dat")
-        print(f"stability w=0.{w[1:]}: lapse {Ks[0, 1]:.5f} -> "
-              f"{Ks[-1, 1]:.5f} (t={Ks[-1, 0]:.0f})")
-
-    for cell in (HEAD[128], HEAD[192], HEAD[256], DEEPSOLVE, PP[256]):
-        lines = [l.split() for l in
-                 open(cell_file(cell,
-                                "Ham_and_Mom_errors.txt")).readlines()[1:]
-                 if l.strip()]
-        print(f"solve {cell}: {len(lines)} NL iters, exit "
+    # every cell whose pack carries the elliptic solve's log (the PM10 set
+    # and M at N 256 carry none)
+    for d in sorted(glob.glob(os.path.join(CAMP, "[0-9][0-9]_*", "*",
+                                           "Ham_and_Mom_errors.txt"))):
+        lines = [l.split() for l in open(d).readlines()[1:] if l.strip()]
+        print(f"solve {os.path.basename(os.path.dirname(d))}: "
+              f"{len(lines)} NL iters, exit "
               f"Ham {float(lines[-1][1]):.2e}% "
               f"Mom {float(lines[-1][2]):.2e}%")
 
@@ -1360,10 +1366,16 @@ def print_gauge_and_invariants():
         t, H = d[:, 0], d[:, 1]
         pk = H[:20].max()
         late = H[t >= 150].mean()
-        t10 = t[np.where((t > t[np.argmax(H[:20])]) & (H <= 0.1 * pk))[0][0]]
-        t2 = t[np.where((t > t[np.argmax(H[:20])]) & (H <= 2 * late))[0][0]]
-        print(f"constraint spike N={n}: peak {pk:.2e} -> 10% by t={t10:.1f}, "
-              f"within 2x of the late plateau ({late:.2e}) by t={t2:.1f}")
+        after = t > t[np.argmax(H[:20])]
+
+        def first(mask):
+            # the fixed initial data (2026-10-23) left no t = 0 spike to decay
+            return t[after & mask][0] if np.any(after & mask) else float("nan")
+
+        t10, t2 = first(H <= 0.1 * pk), first(H <= 2 * late)
+        print(f"constraint spike N={n}: early peak {pk:.2e}, late plateau "
+              f"{late:.2e}; 10% of the peak by t={t10:.1f}, within 2x of the "
+              f"plateau by t={t2:.1f} (nan: never)")
 
     # --- the signed mass quadrupole and the radiated energy it implies
     D = dyn(HEAD[256])
@@ -1428,7 +1440,6 @@ def main():
     fig_samesign()
     fig_massscale()
     fig_wavezone()
-    fig_constraints()
     print_numbers()
     print_gauge_and_invariants()
     print("wrote figures to", OUT)

@@ -31,15 +31,19 @@ constraints; (k) the change of the minimum lapse; (l) the peak field's.
     ... plot_convergence --study lone
     ... plot_convergence --palette house
 
-Colours (``--palette``): ``rgb``, the default, red / green / blue from the coarsest
-member to the finest, the rescaled curves in the finest's colour, as in the spinning
-paper; ``house`` is an ordered light-to-dark ramp with ink rescaled curves.
-``--colors C1,C2,C3`` replaces the members' colours.
+Colours (``--palette``): ``paper``, the default, is the Bondi article's look
+(2026-10-26): the members in black, dotted / dashed / solid from the coarsest to the
+finest as in its Fig. 9(a), the order-2 curve in its orange and the order-4 curve in
+its blue, fonts from pdflatex through the pgf backend (``article_figures.RC``).
+``rgb`` is red / green / blue from the coarsest member to the finest, the rescaled
+curves in the finest's colour, as in the spinning paper; ``house`` is an ordered
+light-to-dark ramp with ink rescaled curves.  ``--colors C1,C2,C3`` replaces the
+members' colours.
 
 Reads each member from the pack, ``results/bondi-dipole-runaway/campaign/<group>/<run>/``,
 once it is packed, and until then from its run directory under ``runs/bondi/``; writes
-``results/bondi-dipole-runaway/figures/convergence_pair`` / ``convergence_lone`` (PNG +
-PDF) and prints every number the panels show.
+``results/bondi-dipole-runaway/figures/09_convergence/convergence_pair`` / ``convergence_lone``
+(PNG + PDF; the article's appendix figures) and prints every number the panels show.
 """
 
 from __future__ import annotations
@@ -64,17 +68,18 @@ FIGURES = REPO / "results" / "bondi-dipole-runaway" / "figures"
 NN = (128, 192, 256)
 STUDIES = {
     "pair": dict(runs=tuple((n, f"PM10_L64_N{n}") for n in NN),
-                 experiment="bondi_sg_pair_pm_eqm_w075", stem="convergence_pair"),
+                 experiment="bondi_sg_pair_pm_eqm_w075", stem="09_convergence/convergence_pair"),
     "lone": dict(runs=tuple((n, f"M_L64_N{n}") for n in NN),
-                 experiment="bondi_sg_single_m_w07603", stem="convergence_lone"),
+                 experiment="bondi_sg_single_m_w07603", stem="09_convergence/convergence_lone"),
 }
 # Runs still live in staging/ under their launch names; each takes its readable name at close-out (2026-10-23).
 LAUNCH_NAMES: dict[str, str] = {}
 SHELLS = 33                  # constraint_shells.dat: shell s holds s <= r < s + 1, the last one the corners
 SHELL_VOLUME = np.array([(s + 1) ** 3 - s ** 3 for s in range(SHELLS)], float)
 # (title, r_min, r_max): shells r_min .. r_max - 1, all whole inside the box's outer layer at every N
-ZONES = (("$r<24$, inside the absorbing layer", 0, 24), ("$r<12$, the stars", 0, 12),
-         (r"$12\leq r<24$", 12, 24), (r"$24\leq r<30$, in the layer", 24, 30))
+# (short enough for a 7-inch row in the article's fonts, 2026-10-26)
+ZONES = (("$r<24$", 0, 24), ("$r<12$, the stars", 0, 12),
+         (r"$12\leq r<24$", 12, 24), (r"$24\leq r<30$, the layer", 24, 30))
 ORDERS = (2, 4)              # the rescaled curves' two orders
 T_FROM = 1.0                 # orders are quoted from t = 1, past the first steps
 FIT_START = 5.0              # the paper's fit window opens here
@@ -83,8 +88,10 @@ SOLID, DASHED, DOTTED = "-", (0, (4.0, 1.8)), (0, (1.2, 1.4))
 CONSTRAINTS = (r"$\|\mathcal{H}\|_2$", r"$\|\mathcal{M}\|_2$")
 TITLE = dict(loc="left", fontsize=7.0, pad=3.0)
 
-# rescaled None: the finest member's own colour.
+# rescaled None: the finest member's own colour.  "paper" takes the article's
+# ladder, order colours and fonts from article_figures when it is drawn.
 PALETTES = {
+    "paper": dict(colours=("k", "k", "k"), rescaled=None, paper=True),
     "rgb": dict(colours=("#d62728", "#2ca02c", "#1f77b4"), rescaled=None),
     "house": dict(colours=tuple(style.ordinal(3)), rescaled=style.INK),
 }
@@ -227,14 +234,23 @@ def deviation_scale(ns, p: int) -> float:
 
 
 def draw(data, ns, study: str, look: dict):
-    style.prd(8.0)
+    colours = dict(zip(NN, look["colours"]))
+    if look.get("paper"):
+        # the article's own look: its rcParams, its ladder of line styles, and
+        # its two accents for the two orders
+        from . import article_figures as paper
+        plt.rcParams.update(paper.RC)
+        members = {n: dict(color=colours[n], ls=paper.LADDER[n], lw=1.1 if n == NN[-1] else 0.85)
+                   for n in ns}
+        brackets = [dict(color=paper.ORDER_COLOUR[p], ls=paper.ORDER_LS[p], lw=0.9) for p in ORDERS]
+    else:
+        style.prd(8.0)
+        rescaled = look["rescaled"] or colours[ns[-1]]
+        members = {n: dict(color=colours[n], ls=SOLID, lw=1.1) for n in ns}
+        brackets = [dict(color=rescaled, ls=ls, lw=0.9) for ls in (DASHED, DOTTED)]
     fig, axes = plt.subplots(3, len(ZONES), figsize=(7.0, 4.4), sharex=True, layout="constrained")
     lo, hi = ns[0], ns[-1]
-    colours = dict(zip(NN, look["colours"]))
-    rescaled = look["rescaled"] or colours[hi]
     t_end = min(d["shells"][-1, 0] for d in data.values())
-    members = {n: dict(color=colours[n], ls=SOLID, lw=1.1) for n in ns}
-    brackets = [dict(color=rescaled, ls=ls, lw=0.9) for ls in (DASHED, DOTTED)]
     tags = iter("abcdefghijkl")
 
     def draw_members(ax, curves, scale=None):
@@ -276,8 +292,8 @@ def draw(data, ns, study: str, look: dict):
         ax_j.set(yscale="log", ylabel=rf"$|\Delta X_N-\Delta X_{{{hi}}}|$")
         ax_k.set_ylabel(r"$d$")
         ax_l.set_ylabel(r"$10^4\,a$")
-        titles = ("midpoint displacement", "its distance from the finest grid",
-                  "separation", rf"acceleration, fit over ${FIT_START:g}\leq t'\leq t$")
+        titles = ("midpoint displacement", rf"distance from $N={hi}$",
+                  "separation", rf"$a$, fit over ${FIT_START:g}\leq t'\leq t$")
     else:
         draw_members(ax_i, bottom["i"])
         draw_members(ax_j, bottom["j"], scale=(hi, lambda p: (hi / lo) ** p))
@@ -287,13 +303,16 @@ def draw(data, ns, study: str, look: dict):
         ax_j.set(yscale="log", ylabel=r"barycentre shift")
         ax_k.set_ylabel(r"$10^4\,(\alpha_{\min}-\alpha_{\min}(0))$")
         ax_l.set_ylabel(r"$10^2\,(|\phi|_{\max}/|\phi|_{\max}(0)-1)$")
-        titles = ("core, largest shift since $t=0$", "barycentre shift",
+        titles = ("core shift, largest so far", "barycentre shift",
                   "minimum lapse", "peak field")
     for ax, title in zip(axes[2], titles):
         ax.set_title(f"({next(tags)})  {title}", **TITLE)
         ax.set_xlabel(r"$t$")
+    # the runs stop at t 199.6 (their last 0.1 sample): the axis closes at 200
+    t_lim = max(t_end, 10.0 * np.ceil(t_end / 10.0 - 0.1))
     for ax in axes.flat:
-        ax.set_xlim(0.0, t_end)
+        ax.set_xlim(0.0, t_lim)
+        ax.set_xticks(np.arange(0.0, t_lim + 1e-9, 50.0))
         if ax.get_yscale() == "log":
             floor_from(ax, T_FROM)
 
@@ -363,15 +382,16 @@ def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("--study", choices=sorted(STUDIES), default="pair")
     ap.add_argument("--out", type=pathlib.Path, default=None,
-                    help="output stem (default results/bondi-dipole-runaway/figures/<the study's stem>)")
-    ap.add_argument("--palette", choices=sorted(PALETTES), default="rgb",
-                    help="colour scheme (default rgb, the spinning paper's)")
+                    help="output stem (default results/bondi-dipole-runaway/figures/<the study's stem>, "
+                         "09_convergence/convergence_<study>)")
+    ap.add_argument("--palette", choices=sorted(PALETTES), default="paper",
+                    help="colour scheme (default paper, the Bondi article's; rgb is the spinning paper's)")
     ap.add_argument("--colors", default=None,
                     help="three comma-separated colours replacing the members' colours")
     args = ap.parse_args(argv)
-    # the article's other figure modules select pgf (pdflatex) when imported; this one needs no TeX
-    plt.switch_backend("Agg")
+    # the article's look renders its text with pdflatex (pgf); the others need no TeX
     look = dict(PALETTES[args.palette])
+    plt.switch_backend("pgf" if look.get("paper") else "Agg")
     if args.colors:
         look["colours"] = tuple(c.strip() for c in args.colors.split(","))
         if len(look["colours"]) != 3:
@@ -381,7 +401,7 @@ def main(argv=None) -> int:
     data, packed = load(spec)
     ns = tuple(sorted(data))
     fig = draw(data, ns, args.study, look)
-    problems = style.label_audit(fig)
+    problems = style.label_audit(fig, pad=0.02)   # a margin, as article_figures.save
     png = style.save(fig, args.out or FIGURES / spec["stem"])
 
     print(f"{args.study}: N {' / '.join(map(str, ns))}, t <= {min(d['shells'][-1, 0] for d in data.values()):.2f}; "

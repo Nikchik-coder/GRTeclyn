@@ -16,7 +16,8 @@ pgf backend, so it matches the article's typography.
   (b) the same pair in spacetime.  Both worldlines lean and curve; the width
       of the band between them never changes.
 
-Writes results/bondi-dipole-runaway/figures/fig_spacetime_bend.pdf.
+Writes results/bondi-dipole-runaway/figures/00_overview/spacetime_bend.pdf and
+its PNG.  Not in the article.
 """
 
 import argparse
@@ -206,10 +207,12 @@ def build(path=None):
     fig.text(0.012, 0.988, "(a)", ha="left", va="top", fontsize=8.5)
     fig.text(0.012, 0.4092, "(b)", ha="left", va="top", fontsize=8.5)
 
-    path = path or os.path.join(OUT, "fig_spacetime_bend.pdf")
+    path = path or os.path.join(OUT, "00_overview", "spacetime_bend.pdf")
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    fig.savefig(path, dpi=400, pad_inches=0.0,
-                bbox_inches=Bbox([[0.0, 0.0], [SINGLE, height]]))
+    # the PDF and, beside it, the PNG a note or a chat window shows
+    for out in (path, os.path.splitext(path)[0] + ".png"):
+        fig.savefig(out, dpi=400, pad_inches=0.0,
+                    bbox_inches=Bbox([[0.0, 0.0], [SINGLE, height]]))
     plt.close(fig)
     return path
 
@@ -217,7 +220,7 @@ def build(path=None):
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("-o", "--out", default=None,
-                    help="output PDF (default: results/bondi-dipole-runaway/figures/)")
+                    help="output PDF (default: results/bondi-dipole-runaway/figures/00_overview/)")
     args = ap.parse_args(argv)
     print(f"wrote {build(args.out)}")
 

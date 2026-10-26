@@ -161,12 +161,11 @@ recorded with the campaign working notes, which are not part of this pack.
 | [`runs_registry.tsv`](runs_registry.tsv) | one line per run: its folder, its label in the paper's Table I, where the paper uses it, its outcome |
 | [`binaries.tsv`](binaries.tsv) | the GRTeclyn commit each run was launched from |
 | [`trust_windows.tsv`](trust_windows.tsv) | the last trustworthy time of any run that stops being trustworthy before its end (none yet) |
-| `stars/` | dressed-star profile tables `r φ₀(r) α(r)` + the M(ω) family scan |
-| `analysis/` | derived tables and the scripts that regenerate them |
+| `stars/` | dressed-star profile tables `r φ₀(r) α(r)` + the M(ω) family scans (`star_family*.csv`, from `grteclyn_wrapper.analysis.bondi_dipole`) |
 | `campaign/<group>/<cell>/frames/` | one still per field every `dt = 10`, for the cells run with frames. The full movie sets stay in the gitignored run tree |
 | [`movies/youtube/`](movies/youtube/README.md) | the five upload-ready 1080p videos, matter beside geometry (PM10 at N 256, PM10-t400, the t 1000 chase, PP10, MM10), with their YouTube descriptions |
 | `patches/` | the matter-model modifications this campaign required |
-| `figures/` | the paper's figures (PDF), which the article reads from here (its `\graphicspath`), and the convergence figures `convergence_pair` / `convergence_lone` (PNG + PDF) — see "The figures" below |
+| `figures/` | the paper's figures, one folder per campaign group (`04_runaway/trajectories.pdf`, …), each a PDF beside its PNG; the article reads them from here (its `\graphicspath`); `figures/FIGURES.md` maps every figure to its label, script and runs — see "The figures" below |
 
 ### Data dictionary — `campaign/<group>/<cell>/`
 
@@ -194,25 +193,6 @@ seeded at `x = ±5` reads as `bary_x = 37 / 27`; the ladder rungs raise `N` to
 192 and 256 at the same `L`, and the wave-zone cell doubles `L` to 128 with
 `N = 256` (centre `64 64 64`). Barycentre coordinates in the streams are
 absolute; drifts quoted anywhere in this pack are `x(t) − x(0)`.
-
-### `analysis/`
-
-| file | contents |
-|---|---|
-| `summary.csv`, `summary.md` | one row per cell: birth checks → final state |
-| `trajectories.csv` | drift / separation / core series for every cell, sampled every Δt = 4 |
-| `newtonian_reference.csv` | point-mass Bondi integration with the measured ADM masses, aligned to the NR output |
-| `separation_scaling.csv`, `separation_scaling.py` | the separation series: measured drift against a point-mass integration of the *same* configuration, at separations 8 / 12 / 16 — the test that isolates the overlap |
-| `convergence_check.csv`, `convergence_check.md` | drift / gap / control artefact across grid resolutions, with the spread between grids |
-| `wave_check.csv`, `wave_check.md` | gravitational-wave amplitude on each extraction shell in retarded time, and whether the shells agree |
-| `constraint_check.csv`, `constraint_check.md` | constraint violation at both stages — the initial-data solve and the evolution — plus whether refining the grid reduces it |
-| `make_tables.py` | regenerates `summary.*` and `trajectories.csv` for the Δx = 0.5 production cells |
-| `newtonian_reference.py` | regenerates the point-mass reference (pure stdlib RK4) |
-| `convergence_check.py` | regenerates `convergence_check.*` from `campaign/` |
-| `wave_check.py` | regenerates `wave_check.*` from `campaign/` |
-| `constraint_check.py` | regenerates `constraint_check.*` from `campaign/` |
-| `star_family_scan.py` | regenerates `stars/star_family.csv` — the M(ω) table the matched pairing was chosen from (needs the wrapper venv) |
-| `star_family_massratio_scan.py` | regenerates `stars/star_family_massratio.csv` — both branches out to ω = 1.0, and the phantom branch's floor on how light its stars get (needs the wrapper venv) |
 
 ## campaign/ — the cells behind the result (complete)
 
@@ -270,7 +250,7 @@ tracker reports a single core at the pair midpoint and `separation = nan`.
 Their sevenfold activity growth (onset `t ≈ 40`, peak `t ≈ 95`, flat across
 N = 128/192/256) is, where frames allow it to be measured, the *merger* of the
 two stars — the PP wells close `8.78 → merged` at `t = 33.6`, the MM hills
-`8.57 → merged` at `t = 32.8` (`analysis/track_wells.py`), and the ejecta later
+`8.57 → merged` at `t = 32.8` (`grteclyn_wrapper.analysis.bondi_dipole.track_wells`), and the ejecta later
 drains through the sponge, with net inward boundary flux at round-off
 throughout. (An earlier revision blamed a boundary wave arriving at `t ≈ 32`;
 the flux measurement retires that.) The centroid null holds over the full run:
@@ -314,20 +294,20 @@ nothing here depends on them.
 ## The figures
 
 Every figure in `figures/` rebuilds with
-`grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole <target>`:
+`grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole <target>`; `figures/FIGURES.md`
+is the index (figure, label, file, script, runs):
 
 | figures | target | needs |
 |---|---|---|
-| `fig_schematic`, `fig_family`, `fig_chase_frames`, `fig_trajectories`, `fig_forcelaw`, `fig_convergence`, `fig_samesign`, `fig_massscale`, `fig_wavezone`, `fig_constraints` | `article` | pdflatex (matplotlib's pgf backend): the workstation |
-| `fig_spacetime_bend` | `bend` | pdflatex |
-| `convergence_pair`, `convergence_lone` | `convergence` (or `plot_convergence --study pair` / `lone`) | nothing beyond the venv |
+| `00_overview/schematic`, `01_star_family/family`, `04_runaway/chase_frames`, `04_runaway/trajectories`, `05_separation/forcelaw`, `03_same_sign/samesign`, `06_mass/massscale`, `04_runaway/wavezone`, `09_convergence/convergence` | `article` | pdflatex (matplotlib's pgf backend): the workstation |
+| `00_overview/spacetime_bend` (not in the article) | `bend` | pdflatex |
+| `09_convergence/convergence_pair`, `09_convergence/convergence_lone` (the article's Appendix A) | `convergence` (or `plot_convergence --study pair` / `lone`) | pdflatex in the article's look (`--palette paper`, the default); `--palette rgb` needs nothing beyond the venv |
 
 The two convergence figures are the 2026-10-23 resolution sets on the fixed code (N 128 / 192 / 256 of PM10 and of
 M; `research/bondi_dipole/STATUS.md`): the constraints in four regions (inside the absorbing layer, the stars, the
 space between, the layer itself) with the finest member redrawn for orders 2 and 4, and the motion (ΔX and its
 distance from the finest grid, the separation, the acceleration; for M the core and barycentre drift). They read
-each member from `campaign/` once it is packed and until then from its run directory under `runs/bondi/`, so
-until the sets are packed they show the runs as far as they have got.
+each member from `campaign/` once it is packed and until then from its run directory under `runs/bondi/`.
 
 ## Reproducing
 

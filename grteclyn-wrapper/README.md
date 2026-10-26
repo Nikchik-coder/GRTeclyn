@@ -272,7 +272,7 @@ numbers on a laptop, with no GPU and no solver:
 
 ```bash
 # from the repository root
-uv run python results/bondi-dipole-runaway/tools/fit_mass_law.py
+grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.analysis.bondi_dipole.fit_mass_law
 ```
 
 That refits the mass law from the packed cells and prints the exponent, the
@@ -1768,7 +1768,7 @@ Run-by-run results live outside this README:
 |-------|------|
 | [`results/bondi-dipole-runaway/`](../results/bondi-dipole-runaway/) | The published campaign — packed extracts, every cell, every gate verdict |
 | [`results/bondi-dipole-runaway/campaign/README.md`](../results/bondi-dipole-runaway/campaign/README.md) | How to read a cell name and every column in the data files |
-| [`results/bondi-dipole-runaway/tools/fit_mass_law.py`](../results/bondi-dipole-runaway/tools/fit_mass_law.py) | Refits the mass law from the packed data — no GPU needed |
+| [`src/grteclyn_wrapper/analysis/bondi_dipole/fit_mass_law.py`](src/grteclyn_wrapper/analysis/bondi_dipole/fit_mass_law.py) | Refits the mass law from the packed data — no GPU needed |
 
 Three takeaways that shape current work: (1) genuine gauge-invariant FTL
 shortcuts exist with exotic matter but are transient -- no configuration yet
@@ -2262,5 +2262,5 @@ nvidia-smi   # your cards should now be free
 | [`src/grteclyn_wrapper/gw_search/README.md`](src/grteclyn_wrapper/gw_search/README.md) | LIGO matched-filter methodology |
 | [`src/grteclyn_wrapper/visualisation/README.md`](src/grteclyn_wrapper/visualisation/README.md) | Plotting module reference |
 | [`../results/bondi-dipole-runaway/campaign/README.md`](../results/bondi-dipole-runaway/campaign/README.md) | Bondi dipole: packed data and how to read it |
-| [`../results/bondi-dipole-runaway/tools/fit_mass_law.py`](../results/bondi-dipole-runaway/tools/fit_mass_law.py) | Bondi dipole: refit the mass law from the packed data |
+| [`src/grteclyn_wrapper/analysis/bondi_dipole/fit_mass_law.py`](src/grteclyn_wrapper/analysis/bondi_dipole/fit_mass_law.py) | Bondi dipole: refit the mass law from the packed data |
 
