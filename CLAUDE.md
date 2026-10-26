@@ -243,8 +243,8 @@ what the claims check or the identity grep flags, and report in a few lines.
   outcome.
 - Figures: every label hangs on what it names and no line crosses text
   (`style.label_audit` in the wrapper's figure package checks this). Each panel gets a legend above its frame
-  naming every line; inside the frame there are at most tiny tags on vertical rules. `style.GOLD` is the one accent
-  (the horizon, or the fitted exponential); everything else is ink or grey.
+  naming every line; inside the frame there are at most tiny tags on vertical rules. Each paper keeps its own
+  palette: `style.GOLD` as the one accent, everything else ink or grey, is the merger paper's alone (2026-10-26).
 - A figure fix: make the minimal fix, render, run the label audit and show the image first; audits come after.
 
 ## Publishing (arXiv and Zenodo)
