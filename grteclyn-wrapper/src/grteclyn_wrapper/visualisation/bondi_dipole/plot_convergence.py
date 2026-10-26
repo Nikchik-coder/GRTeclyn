@@ -20,7 +20,8 @@ coarsest member lies on the p-th curve.
 Bottom row, pair: (i) the displacement Delta X of the midpoint of the two barycentres
 (the paper's Eq. mid); (j) each member's distance from the finest, |Delta X_N -
 Delta X_256|, with N 192's redrawn for orders 2 and 4 (x (2^p - 1) / (1.5^p - 1), so
-at order p N 128 lies on the p-th curve); (k) the separation d of the barycentres;
+at order p N 128 lies on the p-th curve); (k) the separation d of the cores (the
+paper's d; the barycentre separation takes in shed field at every N, 2026-10-26);
 (l) the acceleration a, twice the quadratic coefficient of X fitted over
 5 <= t' <= t (the paper's Eq. fit), against the window's end t.
 Bottom row, lone: (i) the core's largest shift on any axis since t = 0 (the paper's
@@ -192,7 +193,8 @@ def bottom_curves(data, ns, study: str) -> dict[str, dict[int, tuple[np.ndarray,
             if n != hi:
                 keep = t <= t_hi[-1] + 1e-9
                 out["j"][n] = (t[keep], np.abs((x[keep] - x[0]) - np.interp(t[keep], t_hi, x_hi - x_hi[0])))
-            out["k"][n] = (t, b[:, 2] - b[:, 7])
+            s = data[n]["dyn"]
+            out["k"][n] = (s[:, 0], s[:, 9])
             out["l"][n] = running_fit(b)
     else:
         for n in ns:
@@ -293,7 +295,7 @@ def draw(data, ns, study: str, look: dict):
         ax_k.set_ylabel(r"$d$")
         ax_l.set_ylabel(r"$10^4\,a$")
         titles = ("midpoint displacement", rf"distance from $N={hi}$",
-                  "separation", rf"$a$, fit over ${FIT_START:g}\leq t'\leq t$")
+                  "core separation", rf"$a$, fit over ${FIT_START:g}\leq t'\leq t$")
     else:
         draw_members(ax_i, bottom["i"])
         draw_members(ax_j, bottom["j"], scale=(hi, lambda p: (hi / lo) ** p))
@@ -302,7 +304,7 @@ def draw(data, ns, study: str, look: dict):
         ax_i.set(yscale="log", ylabel=r"core shift")
         ax_j.set(yscale="log", ylabel=r"barycentre shift")
         ax_k.set_ylabel(r"$10^4\,(\alpha_{\min}-\alpha_{\min}(0))$")
-        ax_l.set_ylabel(r"$10^2\,(|\phi|_{\max}/|\phi|_{\max}(0)-1)$")
+        ax_l.set_ylabel(r"$10^2\,(|\Phi_-|_{\max}/|\Phi_-|_{\max}(0)-1)$")
         titles = ("core shift, largest so far", "barycentre shift",
                   "minimum lapse", "peak field")
     for ax, title in zip(axes[2], titles):

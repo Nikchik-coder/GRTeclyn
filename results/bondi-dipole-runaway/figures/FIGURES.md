@@ -24,6 +24,11 @@ grteclyn-wrapper/.venv/bin/python -m grteclyn_wrapper.visualisation.bondi_dipole
 | 9 (App. A) | `fig:convergence_lone` | `09_convergence/convergence_lone` | `plot_convergence --study lone` | M N 128 / 192 / 256 |
 | — | not in the article | `00_overview/spacetime_bend` | `spacetime_bend` | none (drawn) |
 
+A referee-style audit (2026-10-26, second pass) switched Fig. 8(k) and the massscale curves to the core
+separation (the paper's d; the barycentre separation takes in shed field at every N), renamed the forcelaw axes to
+d_0 with the fit labelled by Mbar, tagged the frames' top row with the plotted sum w_+ + w_-, and trimmed the
+single-column heights (massscale and wavezone 2.55 in, forcelaw 3.62, samesign 2.78).
+
 Two figures left the article on 2026-10-26: the main-text resolution figure (`09_convergence/convergence`; the
 appendix sets show the same data, and `article_figures.print_convergence` still prints the numbers Sec. VII A
 quotes) and the star-family plot (`01_star_family/family`; the text states its two facts). The two appendix sets

@@ -455,9 +455,11 @@ def fig_chase_frames():
         axes[row, 0].set_yticks([20, 30, 40])
         axes[row, 0].set_ylabel("$y$")
 
-    axes[0, 0].text(0.04, 0.05, r"$\mathcal{A}$",
+    # the caption's "sum of the weights w_s", not a private symbol (2026-10-26);
+    # bottom right, clear of the release tick at x = 27
+    axes[0, 0].text(0.97, 0.05, r"$w_+{+}\,w_-$",
                     transform=axes[0, 0].transAxes,
-                    ha="left", va="bottom", fontsize=8.5, color="white")
+                    ha="right", va="bottom", fontsize=7.5, color="white")
     axes[1, 0].text(0.04, 0.05, r"$\chi-1$",
                     transform=axes[1, 0].transAxes,
                     ha="left", va="bottom", fontsize=8.5, color="0.2")
@@ -680,14 +682,14 @@ def fig_forcelaw():
     ratio_m = am * dm ** 2 / mm
     poff = np.mean(np.log(am) - pslope * np.log(mm))
 
-    fig, ((ax, cx), (bx, dx)) = plt.subplots(2, 2, figsize=(SINGLE, 3.80))
+    fig, ((ax, cx), (bx, dx)) = plt.subplots(2, 2, figsize=(SINGLE, 3.62))
 
     # (a) a(d) at fixed mass
     ax.plot(ds, accs * 1e4, ls="none", marker="o", ms=4, color="k",
             markerfacecolor="white", markeredgewidth=0.9, zorder=5)
     dd = np.linspace(7.2, 22, 100)
     ax.plot(dd, MBAR / dd ** 2 * 1e4, color="0.5", ls="-", lw=0.8,
-            label=r"$\bar M/d^2$")
+            label=r"$\bar M/d_0^2$")
     ax.plot(dd, np.exp(off) * dd ** slope * 1e4, color=FIT,
             ls=(0, (3.4, 1.5)), lw=1.4, label=rf"fit $d^{{{slope:.2f}}}$")
     key_above(ax, ncol=1, fontsize=6.0, handlelength=1.4)
@@ -700,7 +702,7 @@ def fig_forcelaw():
     ax.minorticks_off()
     ax.set_xlim(7.2, 22)
     ax.set_ylim(0.2, 3.2)
-    ax.set_xlabel("$d$")
+    ax.set_xlabel("$d_0$")
     ax.set_ylabel(r"$a\ [10^{-4}]$")
     ax.set_title(r"(a)\quad vary $d$, mass fixed", loc="left", fontsize=7.5,
                  pad=22)   # above its key
@@ -720,17 +722,17 @@ def fig_forcelaw():
     bx.set_xlim(7, 21)
     bx.set_ylim(min(ratio.min(), 0.99) - 0.015,
                 max(a256 * 100 / MBAR, 1.01) + 0.02)
-    bx.set_xlabel("$d$")
-    bx.set_ylabel(r"$a\,d^2/\bar M$")
+    bx.set_xlabel("$d_0$")
+    bx.set_ylabel(r"$a\,d_0^2/\bar M$")
     bx.set_title("(b)", loc="left", fontsize=7.5)
 
     # (c) a(M) at fixed separation -- the other axis of a = M/d^2
     mmline = np.linspace(0.80, 2.45, 100)
     cx.plot(mmline, mmline * 1e-2 / dm ** 2, color="0.5", ls="-", lw=0.8,
-            label=r"$\bar M/d^2$")
+            label=r"$\bar M/d_0^2$")
     cx.plot(mmline, np.exp(poff) * (mmline * 1e-2) ** pslope, color=FIT,
             ls=(0, (3.4, 1.5)), lw=1.4,
-            label=rf"fit $M^{{{pslope:.2f}}}$")
+            label=rf"fit $\bar M^{{{pslope:.2f}}}$")
     cx.errorbar(m2, am, yerr=aerr, ls="none", marker="o", ms=4, color="k",
                 markerfacecolor="white", markeredgewidth=0.9, elinewidth=0.7,
                 capsize=1.6, zorder=5)
@@ -766,7 +768,7 @@ def fig_forcelaw():
     dx.set_ylim(min((ratio_m - err_m).min(), 0.99) - 0.02,
                 max((ratio_m + err_m).max(), 1.01) + 0.02)
     dx.set_xlabel(r"$\bar M\ [10^{-2}]$")
-    dx.set_ylabel(r"$a\,d^2/\bar M$")
+    dx.set_ylabel(r"$a\,d_0^2/\bar M$")
     dx.set_title("(d)", loc="left", fontsize=7.5)
 
     fig.subplots_adjust(hspace=0.58, wspace=0.55)
@@ -835,7 +837,7 @@ def merger_time(cell):
 
 
 def fig_samesign():
-    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 2.9))
+    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 2.78))
 
     # (a) the two same-sign pairs merge on the same clock
     merged = {cell: merger_time(cell) for cell in (PP, MM)}
@@ -943,7 +945,7 @@ def sign_flip_spread():
 
 
 def fig_massscale():
-    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 2.75))
+    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 2.55))
 
     ratios = {"heavy": M_M / M_LADDER[0.81],          # |M-|/M+' = 1.333
               "matched": M_M / M_P,                    # 0.996
@@ -953,11 +955,12 @@ def fig_massscale():
               "matched": ((0, (1, 1.5)), "k", "$1.00$"),
               "w0804": ("--", "0.35", "$0.80$"),
               "w088": ("-.", "0.35", "$0.60$")}
+    # core separation, the paper's d (2026-10-26; the barycentres take in shed field)
     for key in ("heavy", "matched", "w0804", "w088"):
-        b = bary(MASS[key])
-        gap = np.abs(b["xc"] - b["xp"])
+        D = dyn(MASS[key])
+        gap = D["sep"]
         ls, c, lab = styles[key]
-        ax.plot(b["t"], gap - gap[0], color=c, ls=ls, lw=1.0,
+        ax.plot(D["t"], gap - gap[0], color=c, ls=ls, lw=1.0,
                 label=rf"$|M_-|/M_+={lab[1:-1]}$" if key == "heavy" else lab)
     ax.axhline(0, color="0.75", lw=0.5, zorder=0)
     key_above(ax, x0=0.09, ncol=4, fontsize=6.6, columnspacing=0.6)
@@ -971,8 +974,7 @@ def fig_massscale():
     # (b) the end-of-run gap change against the mass ratio
     xs, ys = [], []
     for key in ("w088", "w0804", "matched", "heavy"):
-        b = bary(MASS[key])
-        gap = np.abs(b["xc"] - b["xp"])
+        gap = dyn(MASS[key])["sep"]
         xs.append(ratios[key])
         ys.append(gap[-1] - gap[0])
     xs, ys = np.array(xs), np.array(ys)
@@ -1045,7 +1047,7 @@ def fig_wavezone():
     radii = (16, 24, 32, 40)
     t, A = l2_amplitude(WAVEZONE, radii)
 
-    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 2.75))
+    fig, (ax, bx) = plt.subplots(2, 1, figsize=(SINGLE, 2.55))
 
     styles = {16: "-", 24: "--", 32: "-.", 40: (0, (1, 1.5))}
     for R in radii:

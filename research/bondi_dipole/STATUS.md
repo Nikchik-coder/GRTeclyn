@@ -177,6 +177,15 @@ the peak field < 0.3 %, the separation 0.05 % everywhere, the trailing star 0.10
 
 - [x] The five videos are on YouTube (links in `movies/youtube/README.md`, 310bddff); the captions carry them and
       Video 5 (the t 1000 chase) is linked in Sec. V G (10-26).
+
+Referee-style audit, second pass (10-26, a simulated PRD referee; GRG-irrelevant items skipped): Pi_s defined with
+its imaginary t = 0 value and S_i = 0 stated; Box, delta_ij, body ADM, the norm symbols ||H||_2 / ||M||_2 defined;
+Q_meas/Q_n displayed as Eq. (11); d redefined as the core separation, and Fig. 8(k) and the massscale curves now
+plot the cores (the barycentre d hid the fourteenfold convergence behind shed field); E/R frequencies in Table II;
+Sec. V G: Eq. (9) at the measured late-window d and matter predicts 0.87e-4, three quarters of the fall; Sec. VI
+ref V A -> V B; forcelaw axes d_0, fit label Mbar; frames tag w_+ + w_-; wavezone/massscale 2.55 in, forcelaw 3.62,
+samesign 2.78; captions and p. 12 text trimmed so the references end on page 13. Skipped: the full radial ODEs, a
+notation table, the absorbing-layer loss sentence (the d_0 = 20 runs lose no more matter than PM10 at N 128).
 - [ ] Strip the one remaining TODO comment (the release's version DOI, Data availability) at the arXiv upload.
 
 ### 2. Release and submission
