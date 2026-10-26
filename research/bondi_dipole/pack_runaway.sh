@@ -197,7 +197,7 @@ PY
   # two-lump track here so it is regenerated with the pack rather than kept as
   # a hand-made file (a repack wipes each cell directory).
   case "${cell##*/}" in
-    control_pair_pp_*|control_pair_mm_*)
+    PP[0-9]*|MM[0-9]*|control_pair_pp_*|control_pair_mm_*)
       if [[ -d "${run}/frames/_slice_cache/chi_minus_1_z" ]]; then
         "${ROOT}/.venv/bin/python" \
           "${ROOT}/results/bondi-dipole-runaway/analysis/track_wells.py" \
