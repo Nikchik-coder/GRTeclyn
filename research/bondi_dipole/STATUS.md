@@ -16,7 +16,9 @@ Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `fea
 - PRD, then CQG: rejected (dates not recorded).
 - GRG: sent to review, rejected 2026-10-20 on presentation (undefined symbols and lab vocabulary, too many numbers,
   no convergence test), no invitation to resubmit. The reports are kept locally only, in `referee/` (git-excluded).
-- Next: EPJC (open access through SCOAP3; confirm it charges no APC), fallback IJMPD.
+- Next (decided 2026-10-26): resubmit to GRG once the paper carries the rerun numbers, with a submission message
+  that every referee point is addressed and a point-by-point response to both reports; it names the earlier
+  submission (its manuscript number is not recorded here; take it from the decision e-mail). Fallback EPJC, then IJMPD.
 
 ## Current status (2026-10-24, 08:00 MSK)
 
@@ -187,7 +189,8 @@ an outside-reader pass (~60 findings applied) and a redundancy pass (text 6608 �
       bbl, figures, `anc/` movies) → compiler **pdflatex** → update the abstract and comments ("v2: corrected time
       integration, all simulations rerun, convergence study added") → submit. Same identifier; v1 stays visible.
       Replacements have their own limit (one per week after v5), not the monthly cap.
-- [ ] Journal submission (EPJC), on the same day as the v2.
+- [ ] Journal submission: the GRG resubmission (full LaTeX source and PDF; the message and the point-by-point
+      response above), on the same day as the v2.
 
 ### After Bondi
 
