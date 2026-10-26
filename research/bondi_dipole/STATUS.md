@@ -20,12 +20,13 @@ Writing rules: [`../WRITING_STANDARDS.md`](../WRITING_STANDARDS.md). Branch `fea
   that every referee point is addressed and a point-by-point response to both reports; it names the earlier
   submission (its manuscript number is not recorded here; take it from the decision e-mail). Fallback EPJC, then IJMPD.
 
-## Current status (2026-10-24, 08:00 MSK)
+## Current status (2026-10-26)
 
-The paper's simulations carry a numerical error that changes its numbers: the evolution integrated in time at first
-order instead of fourth (below). It is fixed and verified, and the paper is being rerun on the fixed code and fixed
-initial data (the table below). The constraints now converge at order 3–4 (1.2–1.6 in the paper's runs) and ΔX and
-a at about order 4.
+The paper's v1 simulations carried a numerical error that changes its numbers: the evolution integrated in time at
+first order instead of fourth (below). It is fixed and verified, every simulation was rerun on the fixed code and
+fixed initial data (the table below), and the paper now carries the rerun numbers throughout (figures and text
+10-26; both engines build, 14 pages). The constraints converge at order 3–4 (1.2–1.6 in the v1 runs) and ΔX and
+a at order 4.4 / 4.2.
 
 The headline changes: the paper's Table II gives ΔX(200) = 3.00 ± 0.01 and a = 1.55 × 10⁻⁴ (N 256), 5 % and 8 %
 above Bondi's point-mass 2.86 and 1.43 × 10⁻⁴; the fixed N 256 gives ΔX(200) = 2.874 ± 0.029 and
@@ -34,9 +35,12 @@ converge at order 4.4 and 4.2 (the paper's runs did not converge after t 50) and
 1.461 × 10⁻⁴. The separation is unchanged (0.1 %). The model, the tests and the qualitative result are untouched;
 every number changes.
 
-Figures: `python -m grteclyn_wrapper.visualisation.bondi_dipole convergence` draws both sets into
-`results/bondi-dipole-runaway/figures/convergence_pair` / `convergence_lone` (constraints by region with the
-order-2 / order-4 rescaled curves, and the motion); the article's figures now live there too (`\graphicspath`).
+Figures (2026-10-26): every article figure is drawn from the reruns by `python -m
+grteclyn_wrapper.visualisation.bondi_dipole` into `results/bondi-dipole-runaway/figures/<group>/` (PDF + PNG, one
+folder per campaign group, index `FIGURES.md`); the old Fig. 10 is replaced by the two resolution sets,
+`09_convergence/convergence_pair` / `convergence_lone` (constraints by region with the order-2 / order-4 rescaled
+curves, and the motion), as Figs. 10 and 11 of Appendix A. Text pass 10-26: every number, both tables and every
+caption carry the rerun values (the checklist below).
 Report at any time (progress, order table, ΔX / d / a against the paper's runs):
 `grteclyn-wrapper/.venv/bin/python grteclyn-wrapper/scripts/analysis/bondi_dipole/study_report.py [--study pair|lone]`.
 
@@ -119,7 +123,8 @@ are checks, not a convergence study. Dropped from the paper: S0.75–S0.90, PM10
 -η2, and PP10 / MM10 at N 192 and 256. Launch scripts in `staging/`, each from its v1 cell; the dropped ones in
 `runs/bondi/00_archive/dropped_2026-10-24/`.
 
-Extra, not for the paper (10-24): `PM10-rec_L64_N192_t1000`, the recentring chase (v1 PM10-rec) at N 192 to t 1000;
+Extra (10-24), in the paper since 10-26 (Sec. V G, Table I row PM10-rec): `PM10-rec_L64_N192_t1000`, the
+recentring chase (v1 PM10-rec) at N 192 to t 1000;
 no solve (PM10 N 192's data, identical to PM10_L64_N192 until the first shift, t 167); frames, no checkpoints.
 **Done** 10-25 05:41 MSK on the second node (`04_runaway/`): both stars accelerate forward to t 1000 (v1 at N 128:
 the trailing star turned back near t 530 and d reached 24 by t 700, while its matter doubled). d 10.02 at t 200,
@@ -142,42 +147,24 @@ WRITING_STANDARDS §1–7 (title, abstract, symbols defined at first use, privat
 the results, Table I setup / Table II results, one number per claim, conclusions with a scope paragraph, captions),
 an outside-reader pass (~60 findings applied) and a redundancy pass (text 6608 → 6191 words).
 
-- [ ] Every number, Table II and the figures from the reruns (the frames figure and movies from the new PM10 N 256
-      and PM10-t400); Tables I and II and the text keep only the simulations in "Runs for the revision".
-      `article_figures.py` and `results/.../analysis/` still read the v1 cells (archived 10-23): re-point them.
-- [ ] Convergence (Sec. VII A, App. A, Fig. 6(b) / Fig. 10): the order table, ΔX's self-convergence over t 200 with
-      the rescaled differences, the lone star's drift with resolution; App. A loses the transfer explanation.
-- [ ] Sec. III A, initial data as now built: the profile's exterior (field tail, isotropic Schwarzschild metric, the
-      lapse joined in value and slope), and the evolution's superposed lapse α = 1 + Σ(α_k − 1) in Π = −(ω/α) φ₀.
-- [ ] The separation: "constant to 1 %" held only for the net change in the old runs (it dipped 2.9 % near t 51);
-      recheck on the reruns.
-- [ ] PM10-L128, the domain size (Table II, the line "PM10-L128; -tol; …"; Sec. II on the two trackers): the box
-      does not move the stars. By the cores ΔX(200) changes +0.2 % from PM10 at N 128 and the separation is 10.07
-      in both boxes; by the whole-domain barycentres ΔX(200) changes −4.8 % (v1 −4.2 %), because in the L 128 box
-      they keep the field the stars shed, which the L 64 box's absorbing layer removes from r 24 (sector rms radius
-      16.9 against 5.8 at t 100). Table II's −4.2 % becomes +0.2 % by the cores (or the text says why the
-      barycentres move), and "the two ways of tracking agree on ΔX to 1 %" holds only in the L 64 box.
-- [ ] Same-sign controls at N 128 only, numerics checks out (10-24): Table I's rows (PP10 128; MM10 128, one run; no
-      PM10-tol / -AMR / -η2), Table II's "PP10, all N; MM10, all N" and "PM10-L128; -tol; -AMR; -η2" rows, Fig.
-      same-sign (a) and its movie from PP10 at N 128, the grey PP10 line of Fig. constraints, Fig. convergence (a)'s
-      PM10-tol / -AMR markers, Sec. VII's numerical-choices paragraph, and the same-sign merger time (t 33.6).
-- [ ] PM10-L128, Ψ4 (Fig. wavezone, Table II, the wave-extraction paragraph): |Ψ4|ₗ₌₂ falls as R^−4.7 (text −4.8)
-      and R|Ψ4| drops ×30 across the four spheres (text 31); the near-zone conclusion stands. The consumer stores
-      R Ψ4; `article_figures.py` divides by R, which is right.
-- [ ] Sec. VII, the separation after t 200: PM10-rec and PM10-off are dropped (decided 2026-10-23), so the paragraph
-      rests on PM10-t400 alone: at N 128 d is 9.98 at t 200 and 10.84 at t 400 (text: 11.8), a falls from
-      1.06 × 10⁻⁴ (133–266) to 0.82 × 10⁻⁴ (300–400), and the stars lose 5.9 % of their matter by t 400, a
-      numerical loss (at t 200: −2.6 % at N 128, within 1 % at N 192 and 256).
-- [ ] S0.75–S0.90 leave Table I (dropped 2026-10-24); Sec. III A's stationarity of the stars and test v rest on P
-      (the positive star at the centre) and M (the negative star off centre).
-- [x] M-t1000 out of the article (2026-10-24): the introduction's longer runs, Table I's M row, Table II's decay
-      row, its results paragraph, and the conclusions' "1000 alone, although it slowly relaxes outward".
-- [ ] M-t1000 is back (done 10-25 at N 192): restore those places with its numbers (peak field +0.11 % by t 1000,
-      where the N 128 run lost 5.4 %; matter −2.3 %; the core 0.12 toward the centre).
-- [ ] Table I's caption "The 34 simulations": recount when the reruns land (S0.75–S0.90, M-t1000, PM10-rec / -off
-      dropped; M at N 192 and 256 added; MM10 at N 128 is one run).
-- [ ] Notation table (~20 symbols, WRITING_STANDARDS §2): decide whether it is worth the space.
-- [ ] Strip all TODO comments before the arXiv upload.
+Rerun-numbers pass done 10-26 (both engines build, 14 pages): every number, Table I (24 simulations) and Table II,
+and the captions of Figs. 3–9 carry the rerun values; Tables I and II keep only the kept runs (no -tol / -AMR /
+-η2 / -off / S0.75–S0.90; PP10 / MM10 at N 128, merger t 34.4 / 33.6, centroids at round-off). Sec. VII A quotes
+Q_meas = 6.9 between Q₄ = 5.9 and Q₅ = 8.7 (ΔX order 4.4, a 4.2; Richardson 2.89 and 1.46 × 10⁻⁴, inside the
+192–256 error bars), which closes WRITING_STANDARDS' open item on the non-convergent v1 base grid. App. A is
+rebuilt around Figs. 10–11 (the boundary-transient explanation is gone). Sec. III A describes the profile's
+analytic exterior (isotropic Schwarzschild, lapse joined in value and slope, the 1.9 % field tail) and the
+superposed lapse in Π. The separation is quoted by the cores (0.05 %; proper 0.15 %; Sec. V A says the barycentre
+gap dips 2.5 % near t 50 as the stars shed field). PM10-L128 is quoted by cores (+0.3 %) and barycentres (−4.8 %)
+with the shed-field reading; Ψ4 is R^−4.7, ×30. New Sec. V G "Evolution to t = 1000": PM10-rec is in the paper
+(0.115 c / 0.107 c at t 1000 from the treadmill odometer, a 1.42 → 0.70 × 10⁻⁴, d 10.0 → 13.5, read as truncation
+error) beside M-t1000 (peak +0.11 %); the abstract notes the tenth of c, and momentum is 0.1 % (N 256).
+Decided 10-26: no notation table — every symbol is defined at first use, and a table would repeat Secs. II–IV.
+
+- [ ] The five videos are remade from the reruns and packed upload-ready (d0e42206, `movies/youtube/`); upload
+      them, then update the four caption links (they still carry the v1 YouTube ids) and give Video 5 (the t 1000
+      chase, cited in Sec. V G) its link, before the v2 and the resubmission.
+- [ ] Strip the one remaining TODO comment (the release's version DOI, Data availability) at the arXiv upload.
 
 ### 2. Release and submission
 
