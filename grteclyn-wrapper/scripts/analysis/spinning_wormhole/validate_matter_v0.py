@@ -54,9 +54,12 @@ C_GATE = 0.05
 
 
 def validate(path: str, verbose: bool = False,
-             residual_only: bool = False) -> dict:
+             residual_only: bool = False, nx: int | None = None,
+             ny: int | None = None) -> dict:
     sol = Solution.load(path)
-    nx, ny = sol.F.shape[0] - 1, sol.F.shape[1] - 1
+    regrid = nx is not None or ny is not None
+    nx = nx if nx is not None else sol.F.shape[0] - 1
+    ny = ny if ny is not None else sol.F.shape[1] - 1
     d2 = sol.gates.get("D2_median") if sol.gates else None
     if d2 is None:
         from grteclyn_wrapper.analysis.spinning_wormhole.observables import (
@@ -69,9 +72,17 @@ def validate(path: str, verbose: bool = False,
     prob = MatterCollocationProblem(
         eta0=sol.eta0, gamma=sol.gamma, radial_map=sol.radial_map,
         nx=nx, ny=ny, prescribe=("omega_inf", sol.omega_inf))
-    zero = np.zeros_like(sol.F)
-    u0 = prob.pack(sol.F - prob.f_bg, sol.W - sol.omega_inf * prob.q,
-                   sol.N, zero, zero, psi_minus=psi_minus0)
+    if regrid:
+        # Resolution study: the saved member interpolated spectrally to
+        # the new grid; the field-diff gates do not apply.
+        F0 = sol.eval_grid("f", prob.sx, prob.sy)
+        W0 = sol.eval_grid("w", prob.sx, prob.sy)
+        N0 = sol.eval_grid("N", prob.sx, prob.sy)
+    else:
+        F0, W0, N0 = sol.F, sol.W, sol.N
+    zero = np.zeros_like(F0)
+    u0 = prob.pack(F0 - prob.f_bg, W0 - sol.omega_inf * prob.q,
+                   N0, zero, zero, psi_minus=psi_minus0)
     mask = (sol.eta0**2 / prob.h_i[:, 0]) >= C_GATE**2
     if residual_only:
         # The two largest grids: dense jacfwd will not fit, so gate on
@@ -92,9 +103,9 @@ def validate(path: str, verbose: bool = False,
         "newton": info["res_scaled_inf"],
         "iters": info["iters"],
         "converged": info["converged"],
-        "dF": float(np.max(np.abs(F - sol.F))),
-        "dW": float(np.max(np.abs(W - sol.W))),
-        "dN": float(np.max(np.abs(Nf - sol.N))),
+        "dF": float(np.max(np.abs(F - F0))),
+        "dW": float(np.max(np.abs(W - W0))),
+        "dN": float(np.max(np.abs(Nf - N0))),
         "dB": float(np.max(np.abs(B - 1.0))),
         "dpsim": abs(psi_minus - psi_minus0) / abs(psi_minus0),
         "E19": float(np.max(np.abs(diag["E19"][mask]))) / float(d2),
@@ -104,13 +115,16 @@ def validate(path: str, verbose: bool = False,
         "seconds": time.time() - t0,
     }
     gate_newton = (GATES["monitors"] if residual_only else GATES["newton"])
-    out["pass"] = (
-        out["converged"] and out["newton"] <= gate_newton
-        and max(out["dF"], out["dW"], out["dN"]) <= GATES["fields"]
-        and out["dB"] <= GATES["B"]
-        and out["dpsim"] <= GATES["psi_minus"]
-        and max(out["E19"], out["E_c"]) <= GATES["monitors"]
-    )
+    if regrid:
+        out["pass"] = out["converged"] and out["newton"] <= gate_newton
+    else:
+        out["pass"] = (
+            out["converged"] and out["newton"] <= gate_newton
+            and max(out["dF"], out["dW"], out["dN"]) <= GATES["fields"]
+            and out["dB"] <= GATES["B"]
+            and out["dpsim"] <= GATES["psi_minus"]
+            and max(out["E19"], out["E_c"]) <= GATES["monitors"]
+        )
     return out
 
 
@@ -121,11 +135,15 @@ def main() -> int:
     ap.add_argument("--residual-only", action="store_true",
                     help="no Newton / Jacobian: gate the saved fields' "
                     "masked residual (the two largest grids)")
+    ap.add_argument("--nx", type=int, help="resolution study: re-solve at "
+                    "this grid from the spectrally interpolated member")
+    ap.add_argument("--ny", type=int)
     args = ap.parse_args()
     failed = []
     for path in args.solutions:
         r = validate(path, verbose=args.verbose,
-                     residual_only=args.residual_only)
+                     residual_only=args.residual_only,
+                     nx=args.nx, ny=args.ny)
         name = path.rsplit("/", 1)[-1]
         print(f"{name}: {'res' if args.residual_only else 'newton'} "
               f"{r['newton']:.1e} ({r['iters']} it)  "
