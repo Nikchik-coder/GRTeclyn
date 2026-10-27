@@ -17,7 +17,8 @@ bill (2026-10-27).
 size-pin runs stopped partway (numbers below).
 
 Step 1 is done: 186 of 200 members pass every gate, and the other 14 were accepted on 2026-10-27 (below). Step 2 is
-under way: the J pin, the bill and the size pins work at V = 0; the traversability observables are not started.
+under way: the J pin, the bill and the size pins work at V = 0; the tidal acceleration at the throat is next, and the
+transit time and blueshift are skipped for now (decided 2026-10-27).
 
 ## Steps
 
@@ -43,7 +44,8 @@ under way: the J pin, the bill and the size pins work at V = 0; the traversabili
   - [x] Near-extremal E19 floor and the reference-side misses accepted (2026-10-27).
   - [ ] Optional, on the go: the solver on the node's H100 ([GPU notes](#gpu-notes)).
 - [ ] **2. Pin the throat, measure the bill.** Done when the observable reproduces the published Fig. 3e values on
-  the 200 saved solutions and the traversability observables match their closed forms on the static Ellis throat.
+  the 200 saved solutions and the traversability observables match their closed forms on the static Ellis throat
+  (transit time and blueshift skipped for now, 2026-10-27; the tidal acceleration stays).
   - [x] J pin tested (`validate_matter_v0.py --prescribe-j`): hold J, start ω∞ off by 1e-3, Newton recovers it
     in 3–4 iterations, to ≤ 7e-13 against the V = 0 solver on all 136 members run before the stop (122 by Newton,
     14 by block solve); the other 64 not run.
@@ -56,8 +58,9 @@ under way: the J pin, the bill and the size pins work at V = 0; the traversabili
     throat (root of dA/dξ, to round-off), the NEC integral along the axis and equatorial rays. Static Ellis closed
     forms reproduced to 1e-14 (VIQ, R_e, NEC −D²/(8η₀³)).
   - [ ] Fig. 3e reproduced on the 200 members: within 6.5e-10 of the published X on all 136 run before the stop.
-  - [ ] Traversability observables (tidal acceleration at the throat, transit time, blueshift), checked on the
-    static Ellis throat: not started; the transit time needs a choice of stations.
+  - [ ] Tidal acceleration at the throat, checked on the static Ellis throat (Morris and Thorne's closed form).
+  - [ ] Transit time and blueshift: skipped for now (decided 2026-10-27); the transit time needs a choice of stations
+    first.
 - [ ] **3. First science run: potential only.** Optimize the potential at three spins, bare field, no layers; the
   end-mass asymmetry γ gets the same scan. Done when the bill-vs-potential curve exists at three spins; a flat
   landscape shifts the weight to layers and angular structure.
@@ -122,8 +125,7 @@ under way: the J pin, the bill and the size pins work at V = 0; the traversabili
 
 1. Rerun what the stop cut short: the J pin and bill on the 64 members not reached (48 Newton, 16 large-grid),
    the size pins on fam_a_r1_0028; then tick those items.
-2. The traversability observables: tidal acceleration and blueshift at the throat, checked on static Ellis; the
-   transit time once its stations are chosen.
+2. The tidal acceleration at the throat, checked on static Ellis.
 3. A first solve with a potential (V ≠ 0) at pinned J and R_e, the entry to step 3.
 
 ## GPU notes
