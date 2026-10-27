@@ -204,7 +204,7 @@ notation table, the absorbing-layer loss sentence (the d_0 = 20 runs lose no mor
       availability now cites.
 - [x] arXiv v2 of 2608.24577 submitted 2026-10-26 as submit/8283157 (replacement), built from 7675b824: the package
       and form text in `arxiv_submission/` (local, excluded from git); 13 pages, five videos in `anc/`, both authors,
-      comments ending with the v2 reason. Due for announcement Mon 26 Oct 20:00 ET (Tue 03:00 MSK).
+      comments ending with the v2 reason. Announced Mon 26 Oct 20:00 ET (Tue 27 Oct 03:00 MSK): v2 is public.
 - [ ] Journal submission: the GRG resubmission (full LaTeX source and PDF; the message and the point-by-point
       response above), on the same day as the v2.
 

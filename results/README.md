@@ -12,7 +12,7 @@ directory — there are no loose campaign folders at this level.
 | [`matter-first-automated-discovery-of-transient-spacetime-shortcuts/`](matter-first-automated-discovery-of-transient-spacetime-shortcuts/) | [`research/neuralspacetime/article/research.tex`](../research/neuralspacetime/article/research.tex) | [`pack_publishable_results.sh`](../research/neuralspacetime/pack_publishable_results.sh) (figures, tables, promotion runs) · [`pack_search_campaigns.sh`](../research/neuralspacetime/pack_search_campaigns.sh) (`search/`) |
 | [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | [`research/bondi_dipole/article/bondi_dipole.tex`](../research/bondi_dipole/article/bondi_dipole.tex), v2 of [arXiv:2608.24577](https://arxiv.org/abs/2608.24577); data at tag `v2.0-bondi-dipole` | [`pack_runaway.sh`](../research/bondi_dipole/pack_runaway.sh) (`campaign/`) |
 | [`wormhole-dynamics/`](wormhole-dynamics/) | [`research/wormholedynamics/article.md`](../research/wormholedynamics/article.md) — published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071) | [`plot_diagnostic.sh`](../grteclyn-wrapper/scripts/plot/plot_diagnostic.sh) (diagnostics, embedding, `K_z` panels) · [`plot_extracted_psi4.py`](../grteclyn-wrapper/src/grteclyn_wrapper/visualisation/process_wave/plot_extracted_psi4.py) (`--combined --strain` GW panels) |
-| [`merger/`](merger/) | [`research/merger/article/research.tex`](../research/merger/article/research.tex) — [arXiv:2610.13206](https://arxiv.org/abs/2610.13206), code at tag [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger) | [`pack_results.sh`](../research/merger/pack_results.sh) (`campaign/`, `horizon/`, the summary tables) |
+| [`merger/`](merger/) | [`research/merger/article/research.tex`](../research/merger/article/research.tex) — v2 of [arXiv:2610.13206](https://arxiv.org/abs/2610.13206), code at tag [`v1.0.1-wormhole-merger`](https://github.com/Nikchik-coder/GRTeclyn/tree/v1.0.1-wormhole-merger) | [`pack_results.sh`](../research/merger/pack_results.sh) (`campaign/`, `horizon/`, the summary tables) |
 
 All pack scripts scrub machine identity at runtime through the shared scrubber
 [`grteclyn_wrapper.packaging.scrub_paths`](../grteclyn-wrapper/src/grteclyn_wrapper/packaging/scrub_paths.py)
@@ -77,12 +77,15 @@ fidelity.
 
 ### `merger/`
 
-Two exotic-matter wormhole throats merged in full 3+1 NR, and what became of the object
-they made. Reversing one throat's scalar field is the only gravity-driven route to a
-merger; the pair then forms a common horizon at t ≈ 30 and radiates — and the horizon
-afterwards **shrinks**, 1.07 → 0.59 between t = 51.5 and t = 55.0, as the infalling
-phantom matter eats it. A high-angular-momentum control that never merges runs clean to
-t = 60, which is what separates the physics from a code failure.
+Pairs of Ellis–Bronnikov wormhole throats, held open by a phantom scalar field, in full 3+1
+numerical relativity: the data of *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity:
+mergers, fly-bys and gravitational waves* ([arXiv:2610.13206](https://arxiv.org/abs/2610.13206), v2).
+An isolated throat collapses to a black hole or inflates, depending on the sign of a small
+perturbation. Throats with opposite scalar charges attract and merge: a head-on collision forms
+a common horizon around both throats while they are still open, and the horizon then loses 28 %
+of its area as it absorbs the scalar field. Pairs that fly past each other form no horizon, and
+both throats inflate. No throat survives more than a few orbital periods, so these binaries do
+not inspiral.
 
 Holds the four evolution streams per run (thinned, with the death window kept whole), the
 extracted waveforms at two radii, the launch and parameter provenance, movies, thinned

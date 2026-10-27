@@ -4,8 +4,11 @@
 > actually ran (binary, seeds, name check): [`runs_index.tsv`](runs_index.tsv), generated;
 > which binary is which: [`binaries.tsv`](binaries.tsv). Map: [`MAP.md`](../../MAP.md).
 
-Two exotic-matter (phantom scalar) drainhole throats, given a gentle orbital push,
-spiralling together in full 3+1 numerical relativity. This directory is the light
+Pairs of exotic-matter (phantom scalar) drainhole throats, at rest or with orbital momentum, in full
+3+1 numerical relativity: the data of *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity:
+mergers, fly-bys and gravitational waves* ([arXiv:2610.13206](https://arxiv.org/abs/2610.13206), v2). The
+paper cites tag `v1.0.1-wormhole-merger` (doi:10.5281/zenodo.23257999); its v2 rewrote the text and redrew
+the figures from the same data, and `figures/` holds the redrawn set. This directory is the light
 extract of that campaign: every number the analysis rests on, the movies, a thinned set
 of stills, and enough provenance to rebuild any run. It is what survives if the machine
 that produced it does not.
