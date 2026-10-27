@@ -5,8 +5,12 @@
 # cap (ulimit -v), nice, and a hard timeout, so a runaway cannot take out the
 # node container (memory.oom.group=1: one OOM kills every process in it).
 # State lives under <repo>/runs/capped_jobs/<name>/: job.sh, log, pid, pgid,
-# exit_code. Nothing is left running after stop/timeout: the whole process
-# group is signalled and status reports any survivor.
+# exit_code. Nothing is left running after stop/timeout: the job is tracked by
+# its SESSION (setsid: sid = the wrapper's pid), every process in it is
+# signalled, and status reports any survivor. Not by process group: GNU
+# timeout moves the command into a group of its own, so a group-only stop
+# (2026-10-27) killed the wrapper, reported "stopped", and left the workload
+# running. A job that calls setsid itself escapes this tracking.
 #
 # Usage:
 #   capped_job.sh start <name> [--threads N] [--mem GB] [--timeout S] [--gpu] \
@@ -27,16 +31,28 @@ die() { echo "capped_job: $*" >&2; exit 1; }
 
 job_dir() { echo "${JOB_ROOT}/$1"; }
 
-# Live process group? Prints the pgid if anything in it survives.
-live_pgid() {
-    local dir="$1" pgid
-    [[ -f "${dir}/pgid" ]] || return 1
-    pgid="$(cat "${dir}/pgid")"
-    if kill -0 -- "-${pgid}" 2>/dev/null; then
-        echo "${pgid}"
+# Every live process of session $1, one pid per line.
+session_pids() {
+    ps -eo pid=,sid= | awk -v s="$1" '$2 == s { print $1 }'
+}
+
+# Live job? Prints the session id if any process in it survives.
+live_sid() {
+    local dir="$1" sid
+    [[ -f "${dir}/pid" ]] || return 1
+    sid="$(cat "${dir}/pid")"
+    if [[ -n "$(session_pids "${sid}")" ]]; then
+        echo "${sid}"
         return 0
     fi
     return 1
+}
+
+signal_session() {
+    local sig="$1" p
+    for p in $(session_pids "$2"); do
+        kill "-${sig}" "${p}" 2>/dev/null
+    done
 }
 
 cmd_start() {
@@ -56,9 +72,9 @@ cmd_start() {
     [[ $# -gt 0 ]] || die "no command given after '--'"
     [[ "${name}" =~ ^[A-Za-z0-9._-]+$ ]] || die "bad job name '${name}'"
 
-    local dir; dir="$(job_dir "${name}")"
-    if pgid="$(live_pgid "${dir}")"; then
-        die "job '${name}' already running (pgid ${pgid}); stop it first"
+    local dir sid; dir="$(job_dir "${name}")"
+    if sid="$(live_sid "${dir}")"; then
+        die "job '${name}' already running (session ${sid}); stop it first"
     fi
     mkdir -p "${dir}"
     rm -f "${dir}/exit_code" "${dir}/pgid" "${dir}/pid"
@@ -92,19 +108,20 @@ cmd_start() {
     setsid nohup nice -n 10 bash "${dir}/job.sh" > "${dir}/log" 2>&1 < /dev/null &
     local pid=$!
     echo "${pid}" > "${dir}/pid"
-    echo "${pid}" > "${dir}/pgid"   # setsid: the child leads its own group = its pid
+    # setsid: the wrapper leads its own session and group, both = its pid
+    echo "${pid}" > "${dir}/pgid"
     disown "${pid}" 2>/dev/null || true
     echo "started '${name}' pid=${pid} log=${dir}/log"
 }
 
 status_one() {
-    local dir="$1" name state code="" pgid=""
+    local dir="$1" name state code="" sid=""
     name="$(basename "${dir}")"
-    if pgid="$(live_pgid "${dir}")"; then
+    if sid="$(live_sid "${dir}")"; then
         if [[ -f "${dir}/exit_code" ]]; then
-            state="LEFTOVER(pgid ${pgid})"   # finished but something survives
+            state="LEFTOVER(sid ${sid})"     # finished but something survives
         else
-            state="RUNNING(pgid ${pgid})"
+            state="RUNNING(sid ${sid})"
         fi
     elif [[ -f "${dir}/exit_code" ]]; then
         code="$(cat "${dir}/exit_code")"
@@ -120,8 +137,8 @@ status_one() {
     printf '%-28s %-18s %s\n' "${name}" "${state}" \
         "$(tail -c 300 "${dir}/log" 2>/dev/null | tail -n 1)"
     if [[ "${state}" == LEFTOVER* || "${state}" == RUNNING* ]]; then
-        ps -o pid=,etime=,rss=,args= -g "${pgid}" 2>/dev/null \
-            | sed 's/^/    /' | cut -c1-160
+        ps -o pid=,etime=,rss=,args= -p "$(session_pids "${sid}" | paste -sd,)" \
+            2>/dev/null | sed 's/^/    /' | cut -c1-160
     fi
 }
 
@@ -145,23 +162,25 @@ cmd_tail() {
 }
 
 cmd_stop() {
-    local dir pgid; dir="$(job_dir "$1")"
+    local dir sid; dir="$(job_dir "$1")"
     [[ -d "${dir}" ]] || die "no job '$1'"
-    if ! pgid="$(live_pgid "${dir}")"; then
+    if ! sid="$(live_sid "${dir}")"; then
         echo "'$1' not running"
         return 0
     fi
-    kill -TERM -- "-${pgid}" 2>/dev/null
+    # TERM on every round, so a child forked after the first wave (a loop
+    # starting its next command) is caught too.
     for _ in $(seq 1 20); do
-        kill -0 -- "-${pgid}" 2>/dev/null || { echo "'$1' stopped"; return 0; }
+        signal_session TERM "${sid}"
         sleep 0.5
+        [[ -n "$(session_pids "${sid}")" ]] || { echo "'$1' stopped"; return 0; }
     done
-    kill -KILL -- "-${pgid}" 2>/dev/null
-    sleep 0.5
-    if kill -0 -- "-${pgid}" 2>/dev/null; then
-        die "'$1': process group ${pgid} survived SIGKILL"
-    fi
-    echo "'$1' killed"
+    for _ in 1 2 3; do
+        signal_session KILL "${sid}"
+        sleep 0.5
+        [[ -n "$(session_pids "${sid}")" ]] || { echo "'$1' killed"; return 0; }
+    done
+    die "'$1': session ${sid} survived SIGKILL: $(session_pids "${sid}" | paste -sd' ')"
 }
 
 [[ $# -ge 1 ]] || die "usage: capped_job.sh start|status|tail|stop ..."
