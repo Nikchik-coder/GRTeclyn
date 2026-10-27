@@ -1,0 +1,25 @@
+{
+ "bound": "Ford-Roman Lorentzian, massless scalar, 3/(32 pi^2 tau0^4)",
+ "legs": [
+  "fam_a",
+  "fam_a_log",
+  "fam_a_p4",
+  "fam_a_p4b",
+  "fam_a_r1",
+  "fam_b",
+  "fam_b_low",
+  "fam_b_p4",
+  "fam_b_p4b",
+  "fam_b_r1"
+ ],
+ "n_rows": 202,
+ "observer_class": "stationary (u^eta = 0)",
+ "refinements": [
+  1.0,
+  1.5,
+  2.0
+ ],
+ "sampling_fraction": 1.0,
+ "solutions_root": "results/spinningwormhole/solutions",
+ "wall_seconds": 51.7
+}
