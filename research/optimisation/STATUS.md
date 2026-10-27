@@ -2,26 +2,26 @@
 
 Started 2026-10-27 on branch `feature/optimisation`. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md); its ten steps are the checklist below.
-Code: `grteclyn-wrapper/src/grteclyn_wrapper/analysis/spinning_wormhole/` (`matter_equations.py`, `potentials.py`) and
-`grteclyn-wrapper/scripts/analysis/spinning_wormhole/` (`derive_matter_equations.py`, `check_matter_n_row.py`,
-`validate_matter_v0.py`, `diagnose_matter_v0.py`). Test set: the spinning solver's 200 saved solutions,
+Code: `grteclyn-wrapper/src/grteclyn_wrapper/analysis/spinning_wormhole/` (`matter_equations.py`, `potentials.py`,
+`exoticity.py`) and `grteclyn-wrapper/scripts/analysis/spinning_wormhole/` (`derive_matter_equations.py`,
+`check_matter_n_row.py`, `validate_matter_v0.py`, `check_matter_pins.py`, `diagnose_matter_v0.py`). Test set: the spinning solver's 200 saved solutions,
 `results/spinningwormhole/solutions/`.
 Runs: CPU only, on the H100 test node (JAX is in the node's venv, not the workstation's), through
 `grteclyn-wrapper/scripts/ops/capped_job.sh`; logs in the node's `runs/capped_jobs/` (untracked).
-Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, then the N-row fix (2026-10-27).
+Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the N-row fix), then step 2's pins and
+bill (2026-10-27).
 
 ## Now (2026-10-27)
 
-**Running:** the V = 0 record sweep on the node (`v0-record-newton`, `v0-record-decoupled`; CPU, 4 threads each).
+**Nothing is running.** The last jobs were stopped on request and the node checked clean; the J-pin, bill and
+size-pin runs stopped partway (numbers below).
 
-N is settled: the saved (constraint-fitted) N was right, and the imposed E_N row was at fault. Newton now imposes the
-axis-regular row E_Nr. The gate passes everywhere except the near-extremal log-grid members, where the E19 monitor
-sits at its sensitivity floor ([record](#step-1-record)). Accepting that floor is the open decision before step 1 is
-ticked.
+Step 1 is done: 186 of 200 members pass every gate, and the other 14 were accepted on 2026-10-27 (below). Step 2 is
+under way: the J pin, the bill and the size pins work at V = 0; the traversability observables are not started.
 
 ## Steps
 
-- [ ] **1. The phantom becomes an unknown with a potential.** Done when V → 0 reproduces the KK family to 1e-10 on
+- [x] **1. The phantom becomes an unknown with a potential.** Done when V → 0 reproduces the KK family to 1e-10 on
   the saved solutions' gates.
   - [x] Matter system (`matter_equations.py`). ψ and B join f, ω, N as grid unknowns, bordered by ψ₋ (ψ at
     η → −∞). B is the extra metric function (p = B², B ≡ 1 at V = 0) that a potential needs. Five imposed rows
@@ -39,17 +39,25 @@ ticked.
     `--nx/--ny` re-solves on another grid; `--decoupled` solves the two largest grids block by block (exact at V = 0).
   - [x] Diagnostic (`diagnose_matter_v0.py`) and capped job runner (`capped_job.sh`, tracks jobs by session).
   - [x] Settle which discrete N is right: the constraint N.
-  - [ ] V = 0 record sweep over the 200 members (running).
-  - [ ] Decide the near-extremal E19 floor and the fam_a_log_0050 exception; tick step 1.
+  - [x] V = 0 record sweep over the 200 members: 186 pass, 14 accepted (below).
+  - [x] Near-extremal E19 floor and the reference-side misses accepted (2026-10-27).
   - [ ] Optional, on the go: the solver on the node's H100 ([GPU notes](#gpu-notes)).
 - [ ] **2. Pin the throat, measure the bill.** Done when the observable reproduces the published Fig. 3e values on
   the 200 saved solutions and the traversability observables match their closed forms on the static Ellis throat.
-  - [ ] J pin: the `prescribe=("J", value)` row is coded (B³-weighted flux) but not yet tested.
-  - [ ] Size pin: the R_e row first ([design below](#step-2-design-worked-out-not-coded)), then the area pin, which
-    frees the throat's shape.
-  - [ ] Exoticity module: the Fig. 3e integral and the NEC violation along throat-threading rays, with the
-    traversability observables beside it (tidal acceleration at the throat, transit time, blueshift).
-  - [ ] Fig. 3e reproduced on the 200 members; the traversability observables checked on the static Ellis throat.
+  - [x] J pin tested (`validate_matter_v0.py --prescribe-j`): hold J, start ω∞ off by 1e-3, Newton recovers it
+    in 3–4 iterations, to ≤ 7e-13 against the V = 0 solver on all 136 members run before the stop (122 by Newton,
+    14 by block solve); the other 64 not run.
+  - [x] Size pins coded (`pin=("R_e", value)` or `("area", value)`): a length scale σ and the throat position ξ_t join
+    the unknowns, rows dA/dξ = 0 and σR_e (or σ²A) = target; the potential scales by σ², J by σ².
+  - [ ] Size pins tested at V = 0 (`check_matter_pins.py`): both pins pass on the 4 members done before the stop
+    (fam_b_p4_0005, fam_b_0003, fam_a_r1_0026, fam_a_log_0042); from σ off by 1e-3, σ back to ≤ 8e-13, ω∞ to
+    ≤ 1e-13, the fields to ≤ 2e-12. fam_a_r1_0028 not finished.
+  - [x] Exoticity module (`exoticity.py`): the Fig. 3e bill X = |VIQ|/R_e from the solver's own fields (B, ψ, f), the
+    throat (root of dA/dξ, to round-off), the NEC integral along the axis and equatorial rays. Static Ellis closed
+    forms reproduced to 1e-14 (VIQ, R_e, NEC −D²/(8η₀³)).
+  - [ ] Fig. 3e reproduced on the 200 members: within 6.5e-10 of the published X on all 136 run before the stop.
+  - [ ] Traversability observables (tidal acceleration at the throat, transit time, blueshift), checked on the
+    static Ellis throat: not started; the transit time needs a choice of stations.
 - [ ] **3. First science run: potential only.** Optimize the potential at three spins, bare field, no layers; the
   end-mass asymmetry γ gets the same scan. Done when the bill-vs-potential curve exists at three spins; a flat
   landscape shifts the weight to layers and angular structure.
@@ -95,9 +103,15 @@ ticked.
 - **The reference.** The saved files stopped Newton at 1e-12; re-converged with their own solver, F moves by up to
   1.5e-9 and their monitors drop up to 600× (fam_a_log_0042: 1.3e-7 → 2e-10). On re-converged (f, ω) the two N agree
   to 1e-13 to 3e-12, so the field gates compare with the re-converged member, not the file.
-- **Sweep so far:** Newton 149 of 150 pass (fam_a_log_0018: dF 5.4e-10 between two converged solves of the same f, ω
-  rows, to check). Decoupled: the arctan members pass; fam_a_log 56–64 (144×30, v_e 0.97–0.99) fail on E19/D² only,
-  1.1e-8 to 3.7e-8, with fields within 3e-11 of the reference and the saved family itself at 0.7e-8 to 1.6e-8.
+- **Record sweep:** 186 of 200 pass every gate (Newton 165 of 170, block solve 21 of 30). Accepted 2026-10-27, all on
+  the reference's side or the monitor's floor:
+  - fam_a_log 56–64 (144×30, v_e 0.97–0.99) on E19/D² only, 1.1e-8 to 3.7e-8; fields within 3e-11 of the
+    reference, and the saved family itself at 0.7e-8 to 1.6e-8 (in the J run 51–55 sit at 1.0e-8 to 1.3e-8 too);
+  - fam_a_log_0049, fam_a_log_0050, fam_a_p4_0003, fam_a_p4_0004: N 1.1e-10 to 2.0e-10 from the reference, a
+    grid-scale wiggle at the throat equator in the reference N (last ξ coefficient 3e-12 to 5e-12, against 1e-14 to
+    5e-14 in E_Nr's N);
+  - fam_a_log_0018: F 5.4e-10 from the reference, whose Newton stalled at 8.4e-15; on the same f, ω the two N agree
+    to 1.5e-12.
 - **The E19 floor there.** At 120×25, Newton and the block solve of fam_a_log_0050 agree to 4e-12 in f and N yet
   give E19/D² 1.4e-9 and 1.6e-8; fam_a_log_0064 falls from 3.7e-8 to 1.0e-8 between 144×30 and 180×36.
 - **Leg ends.** fam_a_log_0049 fails on 96×20 and passes at 120×25. fam_a_log_0050 misses dN by 1.6e-10 on both
@@ -106,10 +120,11 @@ ticked.
 
 ## Next
 
-1. Finish the record sweep (the 108×28 members and the large grids); check fam_a_log_0018.
-2. Decide: gate the near-extremal members on the saved family's own monitor level and accept fam_a_log_0050's
-   reference wiggle, then tick step 1.
-3. Step 2: test the J pin, then the R_e row.
+1. Rerun what the stop cut short: the J pin and bill on the 64 members not reached (48 Newton, 16 large-grid),
+   the size pins on fam_a_r1_0028; then tick those items.
+2. The traversability observables: tidal acceleration and blueshift at the throat, checked on static Ellis; the
+   transit time once its stations are chosen.
+3. A first solve with a potential (V ≠ 0) at pinned J and R_e, the entry to step 3.
 
 ## GPU notes
 

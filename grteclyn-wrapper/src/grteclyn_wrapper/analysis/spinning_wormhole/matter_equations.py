@@ -243,12 +243,26 @@ class MatterCollocationProblem:
     normalization); the default ZERO gives the pure V = 0 system, whose
     converged solutions must match equations.CollocationProblem's -- the
     step-1 gate of the campaign brief.
+
+    ``pin`` holds the throat's size (campaign step 2): ("R_e", value), the
+    equatorial radius, or ("area", value), the throat's area.  The grid is
+    then dimensionless and a length scale sigma joins the unknowns:
+    physical lengths are sigma times the grid's, so cal V -> sigma^2 cal V
+    in the rows, the flux row holds sigma^2 J = value, and the pin row
+    holds sigma R_e or sigma^2 A.  The throat's position xi_t is a further
+    unknown, held at the area minimum by the row dA/dxi = 0, with
+    A = 2 pi h int dmu B^2 e^{-f + nu/2} and R_e = B e^{-f/2} sqrt(h) on
+    its equator.  Values at xi_t come from the Chebyshev coefficients
+    (T_k(xi) = cos(k arccos xi)), smooth in xi_t even on a node, as on the
+    symmetric family's xi = 0 throat.  The pins need prescribe = ("J",
+    value): with omega_inf held, the scale would move it.
     """
 
     def __init__(self, *, eta0: float, gamma: float, potential=None,
                  radial_map=None, nx: int = 64, ny: int = 16,
                  prescribe: tuple[str, float] = ("omega_inf", 0.0),
-                 psi_minus: float | None = None):
+                 psi_minus: float | None = None,
+                 pin: tuple[str, float] | None = None):
         import os
 
         # Modest thread pool BEFORE the first jax import (see
@@ -287,9 +301,14 @@ class MatterCollocationProblem:
         self.mode, self.value = mode, float(value)
         self.border_psi = psi_minus is None
         self.psi_minus_fixed = 0.0 if psi_minus is None else float(psi_minus)
+        if pin is not None and (pin[0] not in ("R_e", "area") or mode != "J"):
+            raise ValueError(f"pin {pin!r}: ('R_e' or 'area', value), with "
+                             "prescribe = ('J', value)")
+        self.pin = None if pin is None else (pin[0], float(pin[1]))
         self.n = (nx + 1) * (ny + 1)
         self.n_unknowns = (5 * self.n + (1 if mode == "J" else 0)
-                           + (1 if self.border_psi else 0))
+                           + (1 if self.border_psi else 0)
+                           + (2 if self.pin is not None else 0))
 
         xi_i = self.sx[1:-1]
         self.eta_i = self.map.eta(xi_i)[:, None]
@@ -321,13 +340,23 @@ class MatterCollocationProblem:
         self.h_mid = float(self.map.eta(0.0) ** 2 + eta0**2)
         self.deta_mid = float(self.map.deta(0.0))
 
+        # Throat quadrature for the pins: Chebyshev coefficients in xi
+        # (a = Cx @ A) and Gauss-Legendre in mu from the y nodes.
+        from .spectral import cheb_coeffs
+
+        self.Cx = cheb_coeffs(np.eye(nx + 1), axis=0)
+        self.w_g = w_g
+        self.sin2_g = 1.0 - mu_g**2
+
+        self._jax = jax
         self._jnp = jnp
         self._jit_residual = jax.jit(self._residual)
         self._jit_jacobian = jax.jit(jax.jacfwd(self._residual, argnums=0))
 
     # -- packing --------------------------------------------------------------
 
-    def pack(self, df, dw, dN, dB, dpsi, omega_inf=None, psi_minus=None):
+    def pack(self, df, dw, dN, dB, dpsi, omega_inf=None, psi_minus=None,
+             sigma=None, xi_t=None):
         import numpy as np
 
         parts = [np.ravel(df), np.ravel(dw), np.ravel(dN), np.ravel(dB),
@@ -340,6 +369,10 @@ class MatterCollocationProblem:
             if psi_minus is None:
                 raise ValueError("bordered problem: psi_minus is an unknown")
             parts.append(np.atleast_1d(float(psi_minus)))
+        if self.pin is not None:
+            if sigma is None or xi_t is None:
+                raise ValueError("pinned problem: sigma and xi_t are unknowns")
+            parts.append(np.array([float(sigma), float(xi_t)]))
         return np.concatenate(parts)
 
     def unpack(self, u):
@@ -356,8 +389,15 @@ class MatterCollocationProblem:
                      else self.psi_minus_fixed)
         return (*grids, omega_inf, psi_minus)
 
+    def scale(self, u):
+        """(sigma, xi_t) of a pinned problem; (1, None) otherwise."""
+        if self.pin is None:
+            return 1.0, None
+        return float(u[-2]), float(u[-1])
+
     def fields(self, u):
-        """Total (F, W, N, B, psi) node arrays from the unknown vector."""
+        """Total (F, W, N, B, psi) node arrays from the unknown vector, in
+        grid units (omega scales as 1/sigma)."""
         df, dw, dN, dB, dpsi, omega_inf, psi_minus = self.unpack(u)
         return (self.f_bg + df, omega_inf * self.q + dw, dN, 1.0 + dB,
                 psi_minus * self.psi_prof + dpsi)
@@ -387,6 +427,7 @@ class MatterCollocationProblem:
         else:
             omega_inf = value
         psi_minus = u[tail] if self.border_psi else self.psi_minus_fixed
+        sigma = u[-2] if self.pin is not None else 1.0
         F = self.f_bg + d["f"]
         W = omega_inf * self.q + d["w"]
         Nf = d["N"]
@@ -397,7 +438,8 @@ class MatterCollocationProblem:
         E = matter_residual_forms(
             jnp.exp, eta0=self.eta0, y=self.sy[None, :], eta=self.eta_i,
             deta=self.deta_i, d2eta=self.d2eta_i, jets=interior,
-            V=self.pot.V(interior["psi"]), dV=self.pot.dV(interior["psi"]))
+            V=sigma**2 * self.pot.V(interior["psi"]),
+            dV=sigma**2 * self.pot.dV(interior["psi"]))
         blocks = []
         for tag, key in (("f", "E_f"), ("w", "E_w"), ("N", "E_Nr"),
                          ("B", "E_B"), ("psi", "E_psi")):
@@ -406,12 +448,63 @@ class MatterCollocationProblem:
         out = jnp.concatenate(blocks)
         if self.mode == "J":
             out = jnp.concatenate(
-                [out,
-                 jnp.atleast_1d(self.j_flux(F, B, self.Dx @ W)) - value])
+                [out, jnp.atleast_1d(
+                    sigma**2 * self.j_flux(F, B, self.Dx @ W) - value)])
         if self.border_psi:
             out = jnp.concatenate(
                 [out, jnp.atleast_1d(E["E19"][self.mid - 1, -1])])
+        if self.pin is not None:
+            xi_t = u[-1]
+            dA = self._jax.grad(self._area)(xi_t, F, Nf, B)
+            if self.pin[0] == "R_e":
+                held = sigma * self._r_e(xi_t, F, B)
+            else:
+                held = sigma**2 * self._area(xi_t, F, Nf, B)
+            out = jnp.concatenate([out, jnp.stack([dA, held - self.pin[1]])])
         return out
+
+    # -- the throat (pins) ----------------------------------------------------
+
+    def _eta_of(self, xi):
+        """eta(xi) of the radial map, traceable."""
+        jnp = self._jnp
+        if self.map.name == "arctan":
+            return self.map.eta0 * jnp.tan(0.5 * jnp.pi * xi)
+        if self.map.name == "logstretch":
+            return self.map.eta0 * jnp.sinh(self.map.L * jnp.arctanh(xi))
+        raise ValueError(f"pins: no traceable eta for map {self.map.name!r}")
+
+    def _row_at(self, xi):
+        """Weights w with w @ A = A(xi, y nodes), smooth in xi."""
+        jnp = self._jnp
+        k = jnp.arange(self.nx + 1)
+        return jnp.cos(k * jnp.arccos(xi)) @ self.Cx
+
+    def _area(self, xi, F, N, B):
+        """Area of the eta(xi) = const surface, grid units."""
+        jnp = self._jnp
+        t = self._row_at(xi)
+        f, n, b = (self.By @ (t @ A) for A in (F, N, B))
+        h = self._eta_of(xi) ** 2 + self.eta0**2
+        return 2.0 * jnp.pi * h * jnp.sum(
+            self.w_g * b**2 * jnp.exp(-f + 0.5 * n * self.sin2_g))
+
+    def _r_e(self, xi, F, B):
+        """B e^{-f/2} sqrt(h) on the equator (the last y node) at xi."""
+        jnp = self._jnp
+        t = self._row_at(xi)
+        h = self._eta_of(xi) ** 2 + self.eta0**2
+        return (t @ B[:, -1]) * jnp.exp(-0.5 * (t @ F[:, -1])) * jnp.sqrt(h)
+
+    def throat(self, u):
+        """The pinned throat in physical units: sigma, xi_t, eta_t, R_e and
+        the area."""
+        sigma, xi_t = self.scale(u)
+        F, _, Nf, B, _ = self.fields(u)
+        return {"sigma": sigma, "xi_t": xi_t,
+                "eta_t": sigma * float(self._eta_of(xi_t)),
+                "R_e": sigma * float(self._r_e(xi_t, F, B)),
+                "area": sigma**2 * float(self._area(xi_t, F, Nf, B))}
 
     def set_prescribed(self, value: float) -> None:
         """Step the prescribed J (or omega_inf) -- continuation."""
@@ -448,12 +541,14 @@ class MatterCollocationProblem:
         import numpy as np
 
         F, W, Nf, B, PSI = (np.asarray(a) for a in self.fields(u))
+        s2 = self.scale(u)[0] ** 2
         jets = self._jets({"f": F, "w": W, "N": Nf, "B": B, "psi": PSI})
         interior = {k: np.asarray(v)[1:-1] for k, v in jets.items()}
         E = matter_residual_forms(
             np.exp, eta0=self.eta0, y=self.sy[None, :], eta=self.eta_i,
             deta=self.deta_i, d2eta=self.d2eta_i, jets=interior,
-            V=self.pot.V(interior["psi"]), dV=self.pot.dV(interior["psi"]))
+            V=s2 * self.pot.V(interior["psi"]),
+            dV=s2 * self.pot.dV(interior["psi"]))
         W_x = self.Dx @ W
         j_of_x = np.array([float(self.j_flux(F, B, W_x, column=i))
                            for i in range(1, self.nx)])
