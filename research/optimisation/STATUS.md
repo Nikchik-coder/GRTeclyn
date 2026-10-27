@@ -42,34 +42,39 @@ the two discrete N is right ([next actions](#next-step-1)).
     by name. Since 76f4bebf it tracks the whole session; on 2026-10-27 a stop by process group left the workloads
     running.
   - [ ] V = 0 sweep over the 200 members: 166 run, 139 pass, 27 fail, 34 not run.
+  - [ ] Optional, on the go: the solver on the node's H100 ([GPU notes](#gpu-notes)). Full Newton solves for the 30
+    large-grid members instead of `--residual-only`, and faster ladders; it does not settle N.
   - [ ] Settle which discrete N is right; fix the row or re-gate.
   - [ ] Gate passed on all 200; step-1 record written.
 - [ ] **2. Pin the throat, measure the bill.** Done when the observable reproduces the published Fig. 3e values on
-  the 200 saved solutions.
+  the 200 saved solutions and the traversability observables match their closed forms on the static Ellis throat.
   - [ ] J pin: the `prescribe=("J", value)` row is coded (B³-weighted flux) but not yet tested.
-  - [ ] R_e pin row ([design below](#step-2-design-worked-out-not-coded)).
-  - [ ] Exoticity module: the Fig. 3e integral and the NEC violation along throat-threading rays.
-  - [ ] Fig. 3e reproduced on the 200 members.
-- [ ] **3. First science run: potential only.** Optimize the potential at three spins, bare field, no layers. Done
-  when the bill-vs-potential curve exists at three spins; a flat landscape shifts the weight to layers and angular
-  structure.
+  - [ ] Size pin: the R_e row first ([design below](#step-2-design-worked-out-not-coded)), then the area pin, which
+    frees the throat's shape.
+  - [ ] Exoticity module: the Fig. 3e integral and the NEC violation along throat-threading rays, with the
+    traversability observables beside it (tidal acceleration at the throat, transit time, blueshift).
+  - [ ] Fig. 3e reproduced on the 200 members; the traversability observables checked on the static Ellis throat.
+- [ ] **3. First science run: potential only.** Optimize the potential at three spins, bare field, no layers; the
+  end-mass asymmetry γ gets the same scan. Done when the bill-vs-potential curve exists at three spins; a flat
+  landscape shifts the weight to layers and angular structure.
 - [ ] **4. Normal-matter layer.** A second, canonical scalar χ; the J = 0 limit cross-checked against the Bondi
-  paper's dressed star; 2–3 radial layers with free signs. Done when the identity gates pass with two fields and the
-  layered bill beats or matches step 3 at matched R_e and J.
+  paper's dressed star; 2–3 radial layers with free signs; a double throat allowed as a measured lineage. Done when
+  the identity gates pass with two fields and the layered bill beats or matches step 3 at matched R_e and J.
 - [ ] **5. Winding field and angular freedom.** The winding complex field, θ-dependent profiles with a hard ℓ cap and
-  a gradient penalty, a counter-rotating pair at pinned J. Done when all four knobs optimize together and a
-  Gibbs-driven Newton failure is reported as a resolution verdict, not a physics one.
+  a gradient penalty, a counter-rotating pair at pinned J, the exotic-free corridor lineage. Done when all four
+  knobs optimize together and a Gibbs-driven Newton failure is reported as a resolution verdict, not a physics one.
 - [ ] **6. Converge the search.** Gradients by implicit differentiation (CMA-ES as the fallback), the m = 0 growth
-  rate in the loop, the Pareto frontier of bill against instability rate and spin. Done when the frontier is
-  stationary under more budget and every member passes a grid-change re-solve.
+  rate in the loop, the traversability bounds and stability as inequality constraints, the batched GPU search as an
+  option. Products: the Pareto frontier of bill against instability rate and spin, and the design chart. Done when
+  the frontier is stationary under more budget, every member passes a grid-change re-solve, and the chart is filled.
 - [ ] **7. Extend the hand-off.** New background-table columns, read by `RotatingBackgroundTable.hpp`. Done when a
   bare-field table round-trips bit-compatibly.
 - [ ] **8. Wire the multi-field example.** A `SpinningWormhole` variant on the compiled matter classes, with the
   t = 0 contract check. Done when the check passes and a bare-KK table evolves identically through the new path.
 - [ ] **9. Evolve the winners** on the GPU, under the standing launch rules (nothing starts without the go). Done
   when each frontier member has a three-resolution verdict.
-- [ ] **10. Publish by the outcome tree.** The minimal-exoticity landscape (the Pareto frontier) and the dynamics of
-  the optimal designs; or, if every knob crawls back to KK, the rigidity result.
+- [ ] **10. Publish by the outcome tree.** The minimal-exoticity landscape (the Pareto frontier and the design chart)
+  and the dynamics of the optimal designs; or, if every knob crawls back to KK, the rigidity result.
 
 ## Step 1: results so far
 
@@ -116,6 +121,26 @@ already satisfies the row (Newton takes no step), and the two N agree.
 3. Finish the sweep: fam_a_r1 29–32 with Newton, then the 30 large-grid members with `--residual-only`.
 4. Write the step-1 record and tick step 1.
 
+## GPU notes
+
+The step-1 solver can run on the node's H100. Nothing starts on the card without the go.
+- **CPU only today**, three ways: the wrapper's `spinning-solver` extra pulls the CPU-only `jax`; the solver sets
+  `jax_platforms` from `JAX_PLATFORMS`, default `cpu`; `capped_job.sh` exports `JAX_PLATFORMS=cpu` unless given
+  `--gpu`.
+- **Where the time goes.** One Newton pass from a saved member, compilation included, on four CPU threads (the
+  sweep): 3 s at 48×12, 8–9 s at 72×18, 18–23 s at 96×20, 62–63 s at 108×28. Outside compilation the cost is the
+  dense Jacobian (`jax.jacfwd`) and its LU (scipy, on the host). The Jacobian is about 5(n_x+1)(n_y+1) square: 2 GB
+  at 108×28, 4 GB at 144×30, 10 GB at 162×42. What overflows on the two largest grids is the unchunked `jacfwd`,
+  whose intermediates carry every column at once.
+- **The port.** A CUDA build of JAX in the node's venv; `newton.py`'s `lu_factor`/`lu_solve` moved to
+  `jax.scipy.linalg`, so the Jacobian stays on the card; the Jacobian built in chunks of columns (chunking alone
+  would also let the CPU solve the large grids, at an estimated few minutes per pass). Jobs then run through
+  `capped_job.sh --gpu`, after `nvidia-smi`, since the card is shared.
+- **Expected, to be measured.** The H100 is fast in float64, which the solver needs, so a pass on the large grids
+  should drop from a minute to seconds, and the 30 large-grid members get full Newton solves. The small grids gain
+  little, since compilation dominates them, until candidates are batched (the plan's Split card, step 6). It speeds
+  up the sweep and the ladders but does not decide which N is right.
+
 ## Step 2: design worked out (not coded)
 
 - **The bill.** The published Fig. 3e plots X = |VIQ|/R_e, built by `plot_spin_trends.family()` from
@@ -127,7 +152,8 @@ already satisfies the row (Newton takes no step), and the two N agree.
 - **R_e pin.** Solve on the dimensionless grid (η̃₀ = 1) with a length scale σ as a bordered unknown; the potential
   scales by σ², R_e = σ R̃_e and J = σ² J̃. The throat position ξ_t is a further unknown, with the row dA/dξ = 0 for
   A = 2πh ∫dμ B² e^{−f+ν/2}; then R_e = B e^{−f/2} √h at the throat's equator (at B = 1, the R_eq of
-  `observables._throat`).
+  `observables._throat`). The area pin replaces the R_e condition with σ²A(ξ_t) = A₀; a double throat needs every
+  minimum of A tracked.
 - **Values off the nodes** (the throat, the rays): Chebyshev coefficients and Clenshaw, not barycentric
   interpolation. Barycentric interpolation breaks on a node, and the symmetric family's throat sits on ξ = 0, which
   is a node.
@@ -141,4 +167,5 @@ already satisfies the row (Newton takes no step), and the two N agree.
   `status`, `tail` and `stop` by name; check for leftovers when it ends. Node quota: 12 CPUs and 195 GB, with
   `memory.oom.group = 1`, so one runaway kills everything in the container.
 - No JAX in the workstation venv (decided 2026-10-27); local work uses at most 4 of its 8 cores.
-- No GPU start-up of any kind before step 9, and then only on the go.
+- No GPU start-up of any kind without the go: the solver's GPU port ([GPU notes](#gpu-notes)) as much as the step-9
+  evolutions.
