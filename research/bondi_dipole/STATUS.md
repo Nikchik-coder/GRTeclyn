@@ -21,6 +21,12 @@ from `feature/spinning` on 2026-10-22, was merged into it at the v2 release and 
   submission (its manuscript number is not recorded here; take it from the decision e-mail). Fallback EPJC, then IJMPD.
 - 2026-10-26: Physics of the Dark Universe (Elsevier) considered instead of GRG; it published three of the
   negative-mass papers the article cites in 2026.
+- 2026-10-27 08:20 MSK: **submitted to Physics of the Dark Universe** (Full Length Article, Elsevier's new
+  submission portal) instead of the GRG resubmission. Files in `pdu_submission/`: `manuscript.pdf` (arXiv v2 plus
+  the generative-AI statement Elsevier requires directly before the references; 14 pages), `cover_letter.pdf`, and
+  the five videos as supplementary Audio/Video. No competing interests (box ticked); funder Gravity Frontiers, no
+  grant number; data link https://doi.org/10.5281/zenodo.23662692 (Zenodo, original data); SSRN preprint declined
+  (on arXiv). The manuscript number comes with the confirmation e-mail.
 
 ## Current status (2026-10-26)
 
@@ -205,8 +211,8 @@ notation table, the absorbing-layer loss sentence (the d_0 = 20 runs lose no mor
 - [x] arXiv v2 of 2608.24577 submitted 2026-10-26 as submit/8283157 (replacement), built from 7675b824: the package
       and form text in `arxiv_submission/` (local, excluded from git); 13 pages, five videos in `anc/`, both authors,
       comments ending with the v2 reason. Announced Mon 26 Oct 20:00 ET (Tue 27 Oct 03:00 MSK): v2 is public.
-- [ ] Journal submission: the GRG resubmission (full LaTeX source and PDF; the message and the point-by-point
-      response above), on the same day as the v2.
+- [x] Journal submission: Physics of the Dark Universe, 2026-10-27 (see the journal trail above); the GRG
+      resubmission was dropped.
 
 ### After Bondi
 
