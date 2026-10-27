@@ -11,7 +11,7 @@ directory — there are no loose campaign folders at this level.
 |---|---|
 | [`bondi-dipole-runaway/`](bondi-dipole-runaway/) | Complete, version 2 (2026-10-26): the 24 reruns on the fixed code behind the paper's v2, [arXiv:2608.24577](https://arxiv.org/abs/2608.24577). |
 | [`wormhole-dynamics/`](wormhole-dynamics/) | Complete. Published as [arXiv:2604.00071](https://arxiv.org/abs/2604.00071). |
-| [`merger/`](merger/) | In preparation. The drainhole-merger campaign: packed runs, figures and analysis tables. |
+| [`merger/`](merger/) | Complete. The colliding-wormholes campaign behind [arXiv:2610.13206](https://arxiv.org/abs/2610.13206) (v2); the paper cites tag `v1.0.1-wormhole-merger`. |
 | [`spinningwormhole/`](spinningwormhole/) | Complete. Rotating drainholes: the solver's solutions and the 3D runs of the rotating-wormholes paper. |
 
 The pack scripts scrub machine identity at runtime through the shared scrubber
@@ -61,12 +61,15 @@ fidelity.
 
 ### `merger/`
 
-Two exotic-matter wormhole throats merged in full 3+1 NR, and what became of the object
-they made. Reversing one throat's scalar field is the only gravity-driven route to a
-merger; the pair then forms a common horizon at t ≈ 30 and radiates — and the horizon
-afterwards **shrinks**, 1.07 → 0.59 between t = 51.5 and t = 55.0, as the infalling
-phantom matter eats it. A high-angular-momentum control that never merges runs clean to
-t = 60, which is what separates the physics from a code failure.
+Pairs of Ellis–Bronnikov wormhole throats, held open by a phantom scalar field, in full 3+1
+numerical relativity: the data of *Binary Ellis–Bronnikov wormholes in 3+1 numerical relativity:
+mergers, fly-bys and gravitational waves* ([arXiv:2610.13206](https://arxiv.org/abs/2610.13206), v2).
+An isolated throat collapses to a black hole or inflates, depending on the sign of a small
+perturbation. Throats with opposite scalar charges attract and merge: a head-on collision forms
+a common horizon around both throats while they are still open, and the horizon then loses 28 %
+of its area as it absorbs the scalar field. Pairs that fly past each other form no horizon, and
+both throats inflate. No throat survives more than a few orbital periods, so these binaries do
+not inspiral.
 
 Holds the four evolution streams per run (thinned, with the death window kept whole), the
 extracted waveforms at two radii, the launch and parameter provenance, movies, thinned

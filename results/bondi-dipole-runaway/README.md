@@ -10,8 +10,8 @@ time integration and corrected initial data (see "What changed from v1"), so eve
 pack, behind the paper's v1, is the tag `v1.0-bondi-dipole`.
 
 **Cite this pack** as the `results/bondi-dipole-runaway/` tree of <https://github.com/Nikchik-coder/GRTeclyn> at the
-release `v2.0-bondi-dipole`, archived on Zenodo (concept DOI 10.5281/zenodo.23245933, which resolves to the newest
-version). The same repository holds the evolution code (`Examples/RadialRecipe/`) and the launchers
+release `v2.0-bondi-dipole`, archived on Zenodo as version DOI 10.5281/zenodo.23662692 (concept DOI
+10.5281/zenodo.23245933, which resolves to the newest version). The same repository holds the evolution code (`Examples/RadialRecipe/`) and the launchers
 (`grteclyn-wrapper/scripts/campaigns/bondi_dipole/`). Every figure of the paper is drawn, and every number it quotes is
 printed, from this pack alone by `python -m grteclyn_wrapper.visualisation.bondi_dipole` ("The figures", below); where
 a number here and the script disagree, the script is the arbiter.

@@ -48,7 +48,9 @@ preferred-citation:
   year: 2026
   month: 10
   journal: "arXiv e-prints"
-  notes: "arXiv:2610.13206 [gr-qc]"
+  doi: 10.48550/arXiv.2610.13206
+  url: "https://arxiv.org/abs/2610.13206"
+  notes: "arXiv:2610.13206 [gr-qc], v2; code and data at tag v1.0.1-wormhole-merger (doi:10.5281/zenodo.23257999)"
 references:
   - type: article
     title: >-
@@ -67,8 +69,8 @@ references:
     notes: "arXiv:2610.29941 [gr-qc]; code and data at tag v1.0-spinning-wormhole"
   - type: article
     title: >-
-      The Bondi Dipole in Full Numerical Relativity: a Self-Accelerating
-      Positive-Negative Mass Binary
+      The Bondi dipole in full numerical relativity: a self-accelerating
+      positive-negative mass binary
     authors:
       - family-names: Shirokov
         given-names: "Nikita M."
@@ -82,4 +84,4 @@ references:
     journal: "arXiv e-prints"
     doi: 10.48550/arXiv.2608.24577
     url: "https://arxiv.org/abs/2608.24577"
-    notes: "arXiv:2608.24577 [gr-qc]; v2 code and data at tag v2.0-bondi-dipole (v1 at tag v1.0-bondi-dipole)"
+    notes: "arXiv:2608.24577 [gr-qc], v2; code and data at tag v2.0-bondi-dipole (doi:10.5281/zenodo.23662692; v1 at tag v1.0-bondi-dipole)"
