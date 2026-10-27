@@ -4,21 +4,24 @@ Started 2026-10-27 on branch `feature/optimisation`. Plan:
 [`Minimal Exotic Wormhole Search.md`](Minimal%20Exotic%20Wormhole%20Search.md); its ten steps are the checklist below.
 Code: `grteclyn-wrapper/src/grteclyn_wrapper/analysis/spinning_wormhole/` (`matter_equations.py`, `potentials.py`,
 `exoticity.py`) and `grteclyn-wrapper/scripts/analysis/spinning_wormhole/` (`derive_matter_equations.py`,
-`check_matter_n_row.py`, `validate_matter_v0.py`, `check_matter_pins.py`, `diagnose_matter_v0.py`). Test set: the spinning solver's 200 saved solutions,
+`check_matter_n_row.py`, `validate_matter_v0.py`, `check_matter_pins.py`, `check_tidal.py`, `diagnose_matter_v0.py`,
+`first_matter_solve.py`). Test set: the spinning solver's 200 saved solutions,
 `results/spinningwormhole/solutions/`.
 Runs: CPU only, on the H100 test node (JAX is in the node's venv, not the workstation's), through
 `grteclyn-wrapper/scripts/ops/capped_job.sh`; logs in the node's `runs/capped_jobs/` (untracked).
 Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the N-row fix), then step 2's pins and
-bill (2026-10-27).
+bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27).
 
 ## Now (2026-10-27)
 
-**Nothing is running.** The last jobs were stopped on request and the node checked clean; the J-pin, bill and
-size-pin runs stopped partway (numbers below).
+**Nothing is running.** The runs the stop cut short were finished later the same day (by 16:20 UTC): the J pin and
+the bill on all 200 members, the size pins on all 5, the tidal observable with its closed-form gates, and the first
+V ≠ 0 solves (all below).
 
 Step 1 is done: 186 of 200 members pass every gate, and the other 14 were accepted on 2026-10-27 (below). Step 2 is
-under way: the J pin, the bill and the size pins work at V = 0; the tidal acceleration at the throat is next, and the
-transit time and blueshift are skipped for now (decided 2026-10-27).
+done except the observables skipped for now (transit time and blueshift, decided 2026-10-27): the J pin, the bill,
+the size pins and the tidal acceleration all pass their gates. The first V ≠ 0 solves (the entry to step 3) exist,
+pass the unimposed identities at resolution, and their bill FALLS with the kink mass ([Step 2 record](#step-2-record-2026-10-27)).
 
 ## Steps
 
@@ -43,22 +46,29 @@ transit time and blueshift are skipped for now (decided 2026-10-27).
   - [x] V = 0 record sweep over the 200 members: 186 pass, 14 accepted (below).
   - [x] Near-extremal E19 floor and the reference-side misses accepted (2026-10-27).
   - [ ] Optional, on the go: the solver on the node's H100 ([GPU notes](#gpu-notes)).
-- [ ] **2. Pin the throat, measure the bill.** Done when the observable reproduces the published Fig. 3e values on
+- [x] **2. Pin the throat, measure the bill.** Done when the observable reproduces the published Fig. 3e values on
   the 200 saved solutions and the traversability observables match their closed forms on the static Ellis throat
   (transit time and blueshift skipped for now, 2026-10-27; the tidal acceleration stays).
   - [x] J pin tested (`validate_matter_v0.py --prescribe-j`): hold J, start ω∞ off by 1e-3, Newton recovers it
-    in 3–4 iterations, to ≤ 7e-13 against the V = 0 solver on all 136 members run before the stop (122 by Newton,
-    14 by block solve); the other 64 not run.
+    in 3–4 iterations, to ≤ 4.3e-13 against the V = 0 solver on all 170 Newton members; held exactly in the 30
+    block solves. The 3 known accepted members (fam_a_log_0049/0050, fam_a_p4_0004) re-flag on their reference-side
+    dN (1.0–2.0e-10) and E19 floor only — the pin itself is clean on them.
   - [x] Size pins coded (`pin=("R_e", value)` or `("area", value)`): a length scale σ and the throat position ξ_t join
     the unknowns, rows dA/dξ = 0 and σR_e (or σ²A) = target; the potential scales by σ², J by σ².
-  - [ ] Size pins tested at V = 0 (`check_matter_pins.py`): both pins pass on the 4 members done before the stop
-    (fam_b_p4_0005, fam_b_0003, fam_a_r1_0026, fam_a_log_0042); from σ off by 1e-3, σ back to ≤ 8e-13, ω∞ to
-    ≤ 1e-13, the fields to ≤ 2e-12. fam_a_r1_0028 not finished.
+  - [x] Size pins tested at V = 0 (`check_matter_pins.py`): both pins pass on all 5 members (fam_b_p4_0005,
+    fam_b_0003, fam_a_r1_0026, fam_a_log_0042, fam_a_r1_0028 at 108×28): from σ off by 1e-3, σ back to ≤ 8e-13,
+    ω∞ to ≤ 1e-13, the fields to ≤ 2e-12. (The 108×28 five-field Jacobian OOMs a 40 GB cap; 120 GB ran in 123 s.)
   - [x] Exoticity module (`exoticity.py`): the Fig. 3e bill X = |VIQ|/R_e from the solver's own fields (B, ψ, f), the
     throat (root of dA/dξ, to round-off), the NEC integral along the axis and equatorial rays. Static Ellis closed
     forms reproduced to 1e-14 (VIQ, R_e, NEC −D²/(8η₀³)).
-  - [ ] Fig. 3e reproduced on the 200 members: within 6.5e-10 of the published X on all 136 run before the stop.
-  - [ ] Tidal acceleration at the throat, checked on the static Ellis throat (Morris and Thorne's closed form).
+  - [x] Fig. 3e reproduced on the 200 members: within 1.8e-8 of the published X (gate 1e-7); ≤ 6.5e-10 away from
+    the near-extremal tail, which carries the step-1 E19 floor.
+  - [x] Tidal acceleration at the throat (`exoticity.tidal`, gated by `check_tidal.py`): the full tidal tensor at
+    the throat's equator for a radial transit at speed v, from the metric's spectral jets through a numerical
+    Christoffel → Riemann assembly. Gates: Morris and Thorne's closed form on static Ellis (E_rad = 0, lateral
+    stretch −γ_L²v²η₀²/h², ≤ 2e-13), the γ ≠ 0 static drainhole against separately-derived class formulas
+    (≤ 3e-13), and on a rotating member the exact identities (boost-invariant E_rad, reflection zeros) to
+    round-off. The axis transit needs a Cartesian chart and waits with the transit time.
   - [ ] Transit time and blueshift: skipped for now (decided 2026-10-27); the transit time needs a choice of stations
     first.
 - [ ] **3. First science run: potential only.** Optimize the potential at three spins, bare field, no layers; the
@@ -121,12 +131,44 @@ transit time and blueshift are skipped for now (decided 2026-10-27).
   grids: the reference N carries a grid-scale wiggle at the throat equator (its last ξ coefficient 3e-12, against
   5e-14 for E_Nr's N).
 
+## Step 2 record (2026-10-27)
+
+- **J pin + bill on all 200** (node logs `runs/capped_jobs/j-pin-newton{,2}`, `j-pin-decoupled{,2}`): ω∞ recovered
+  to ≤ 4.3e-13 on the 170 Newton members, held exactly in the 30 block solves; X within 1.8e-8 of the published
+  Fig. 3e values (gate 1e-7; ≤ 6.5e-10 away from the near-extremal tail, which carries the E19 floor). The 3 known
+  accepted members re-flag on their reference-side dN and E19 floor only.
+- **Size pins 5 of 5** (`pins-v0`, `pins-v0-r1-0028b`): σ back to ≤ 8e-13, fields ≤ 2e-12. The 108×28 five-field
+  Jacobian OOMs a 40 GB cap (the unchunked jacfwd); 120 GB ran it in 123 s.
+- **Tidal** (`exoticity.tidal`): E_ij = R(e_i, u', e_j, u') in the radially-boosted ZAMO frame at the throat's
+  equator, MTW sign, a = −E ξ, a positive eigenvalue compresses. fam_b_0003's throat at v = 0.9: eigenvalues
+  (−3.99, −3.84, −0.044) — the lateral stretch of Morris and Thorne's Ellis form. Gates in `check_tidal.py`:
+  static Ellis ≤ 2e-13, the γ ≠ 0 drainhole against separately-derived class formulas ≤ 3e-13, exact identities
+  (boost-invariant E_rad, reflection zeros) on a rotating member to round-off.
+- **First V ≠ 0 solves** (`first_matter_solve.py`: fam_b_0003, J and R_e pinned, kink λψ²(ψ − ψ₋)², λ = m²/ψ₋²,
+  the vacuum riding the bordered ψ₋ via `potential_at`), at 96×20:
+
+| m | 0 | 0.1 | 0.2 | 0.3 | 0.5 |
+|---|---|---|---|---|---|
+| X | 2.99352 | 2.75596 | 2.56591 | 2.41054 | 2.17547 |
+| E19/D² | 9e-11 | 3.5e-5 | 1.8e-6 | 2.9e-7 | 2.9e-8 |
+| ψ₋ | −3.0919 | −2.9162 | −2.7639 | −2.6298 | −2.4059 |
+
+  - **The bill falls 27 % at m = 0.5 at fixed J and R_e**: the landscape is not flat, and the first knob already
+    pays. These are the campaign's first exact V ≠ 0 rotating wormholes.
+  - E19 falls with the grid (m = 0.1: 1.8e-3 → 1.7e-4 → 3.5e-5 over 48×12 → 72×18 → 96×20) in step with the
+    spectral tails: resolution-limited, not structural; the small-m Compton tail is the slow part, and m = 0.1
+    needs about 120×25 for the 1e-8 gate. X, σ and ψ₋ converge to 7–8 digits between 72×18 and 96×20.
+  - Field shifts scale ~ m, not m²: the potential lifts the V = 0 family's flat D direction.
+  - Two detuned forms were measured first and rejected by the monitors, both at Newton 1e-15: a frozen vacuum with
+    ψ₋ bordered drifts the end off the vacuum (non-flat, E19 = O(1)); ψ₋ fixed at the vacuum drops the E19 border
+    row and the constraint system's free constant survives (E19 0.1–0.8, linear in m). The unimposed identities
+    caught both — the step-1 discipline doing its job.
+
 ## Next
 
-1. Rerun what the stop cut short: the J pin and bill on the 64 members not reached (48 Newton, 16 large-grid),
-   the size pins on fam_a_r1_0028; then tick those items.
-2. The tidal acceleration at the throat, checked on static Ellis.
-3. A first solve with a potential (V ≠ 0) at pinned J and R_e, the entry to step 3.
+1. The m = 0.1 kink to the monitor gate on about 120×25, and the first-V ladder at two more spins.
+2. Step 3 proper: scan Q(ψ) beyond the pure kink at three spins, same gates and pins.
+3. Optional, on the go: the solver on the node's H100 ([GPU notes](#gpu-notes)).
 
 ## GPU notes
 
@@ -149,7 +191,7 @@ The step-1 solver can run on the node's H100. Nothing starts on the card without
   little, since compilation dominates them, until candidates are batched (the plan's Split card, step 6). It speeds
   up the sweep and the ladders.
 
-## Step 2: design worked out (not coded)
+## Step 2: design notes (coded, record above)
 
 - **The bill.** The published Fig. 3e plots X = |VIQ|/R_e, built by `plot_spin_trends.family()` from
   `observables.exotic_matter(sol, D)` and the throat's equatorial radius; families (η₀, γ) = (2, −π) "drainhole"

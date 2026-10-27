@@ -242,7 +242,14 @@ class MatterCollocationProblem:
     The potential is a potentials.PolynomialPotential (solver
     normalization); the default ZERO gives the pure V = 0 system, whose
     converged solutions must match equations.CollocationProblem's -- the
-    step-1 gate of the campaign brief.
+    step-1 gate of the campaign brief.  It may instead be a callable
+    psi_minus -> PolynomialPotential: a kink's vacuum must sit at the
+    bordered psi(-inf) exactly (V and V' vanish there, or the end is not
+    flat), so the potential rides on that unknown.  Holding psi_minus
+    fixed instead leaves the E19 border row unimposed, and the constraint
+    system's one free constant survives: 2026-10-27, Newton converged to
+    1e-15 on solutions carrying E19/D^2 = 0.1-0.8, linear in the kink
+    mass.
 
     ``pin`` holds the throat's size (campaign step 2): ("R_e", value), the
     equatorial radius, or ("area", value), the throat's area.  The grid is
@@ -395,6 +402,10 @@ class MatterCollocationProblem:
             return 1.0, None
         return float(u[-2]), float(u[-1])
 
+    def potential_at(self, psi_minus):
+        """The potential, possibly riding on the bordered psi(-inf)."""
+        return self.pot(psi_minus) if callable(self.pot) else self.pot
+
     def fields(self, u):
         """Total (F, W, N, B, psi) node arrays from the unknown vector, in
         grid units (omega scales as 1/sigma)."""
@@ -435,11 +446,12 @@ class MatterCollocationProblem:
         PSI = psi_minus * self.psi_prof + d["psi"]
         jets = self._jets({"f": F, "w": W, "N": Nf, "B": B, "psi": PSI})
         interior = {k: v[1:-1] for k, v in jets.items()}
+        pot = self.potential_at(psi_minus)
         E = matter_residual_forms(
             jnp.exp, eta0=self.eta0, y=self.sy[None, :], eta=self.eta_i,
             deta=self.deta_i, d2eta=self.d2eta_i, jets=interior,
-            V=sigma**2 * self.pot.V(interior["psi"]),
-            dV=sigma**2 * self.pot.dV(interior["psi"]))
+            V=sigma**2 * pot.V(interior["psi"]),
+            dV=sigma**2 * pot.dV(interior["psi"]))
         blocks = []
         for tag, key in (("f", "E_f"), ("w", "E_w"), ("N", "E_Nr"),
                          ("B", "E_B"), ("psi", "E_psi")):
@@ -542,13 +554,14 @@ class MatterCollocationProblem:
 
         F, W, Nf, B, PSI = (np.asarray(a) for a in self.fields(u))
         s2 = self.scale(u)[0] ** 2
+        pot = self.potential_at(self.unpack(u)[-1])
         jets = self._jets({"f": F, "w": W, "N": Nf, "B": B, "psi": PSI})
         interior = {k: np.asarray(v)[1:-1] for k, v in jets.items()}
         E = matter_residual_forms(
             np.exp, eta0=self.eta0, y=self.sy[None, :], eta=self.eta_i,
             deta=self.deta_i, d2eta=self.d2eta_i, jets=interior,
-            V=s2 * self.pot.V(interior["psi"]),
-            dV=s2 * self.pot.dV(interior["psi"]))
+            V=s2 * pot.V(interior["psi"]),
+            dV=s2 * pot.dV(interior["psi"]))
         W_x = self.Dx @ W
         j_of_x = np.array([float(self.j_flux(F, B, W_x, column=i))
                            for i in range(1, self.nx)])
