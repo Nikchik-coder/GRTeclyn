@@ -29,6 +29,15 @@ digits on generic test fields (stage `forms`).  At cal V = 0, B = 1 they
 reduce symbolically to equations.residual_forms, so the matter solver
 contains the published V = 0 solver exactly.
 
+Newton imposes E_Nr, not the nu row's E_N: (1 - y) E_Nr = E_N - (2/h)
+E19 + E_B / B holds identically (stage `nrow`), so the imposed five with
+E_c and E19 still span the full set, and E_N joins the monitors.  E_N's
+N operator degenerates on the axis, and its collocation solve amplified
+truncation-sized residuals into a spurious near-axis mode (2026-10-27: N
+off the constraint-fitted N by up to 5e-7, E19 / D2 up to 4e-4 on the
+saved family); E_Nr's operator is the V = 0 solver's eq.-(12) operator,
+regular on the axis.
+
 B's second derivatives legitimately appear in the monitors (rho is
 dynamical, so rho_{;ab}/rho enters them; at B = 1 those terms were the
 explicit eta0^2-type constants of CKK eqs. 13/19), including the one
@@ -44,7 +53,7 @@ stay potential-agnostic.
 
 from __future__ import annotations
 
-__all__ = ["matter_residual_forms", "MATTER_JET_NAMES",
+__all__ = ["matter_residual_forms", "MATTER_JET_NAMES", "row_matrix",
            "MatterCollocationProblem"]
 
 #: Every jet the matter forms read: value, d/dxi, d2/dxi2, d/dy, d2/dy2
@@ -62,10 +71,11 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
     ``jets`` maps MATTER_JET_NAMES to values; ``eta, deta, d2eta`` are
     eta(xi) and its first two xi-derivatives; ``y`` is cos 2 theta;
     ``V, dV`` are cal V(psi), cal V'(psi) at the nodes.  Returns a dict
-    with E_f, E_w, E_N, E_B, E_psi (imposed by Newton) and E_c, E19
-    (first-order constraints, monitored -- E19 is the pointwise
-    generalization of the V = 0 solver's D2 identity, normalized so that
-    at B = 1, psi_y = 0 it equals  D2_expression - W2 psi_x^2).
+    with E_f, E_w, E_Nr, E_B, E_psi (imposed by Newton), E_N (the derived
+    nu row, monitored) and E_c, E19 (first-order constraints, monitored --
+    E19 is the pointwise generalization of the V = 0 solver's D2
+    identity, normalized so that at B = 1, psi_y = 0 it equals
+    D2_expression - W2 psi_x^2).
     """
     f, f_x, f_xx, f_y, f_yy = (jets[k] for k in ("f", "f_x", "f_xx", "f_y", "f_yy"))
     w, w_x, w_xx, w_y, w_yy = (jets[k] for k in ("w", "w_x", "w_xx", "w_y", "w_yy"))
@@ -142,8 +152,69 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
         - W2 * (B_x / B) ** 2 - eta * h / (2 * deta) * (B_x / B)
         + h / (2 * B) * (A2 * B_xx - (h * d2eta / deta**3) * B_x)
     )
-    return {"E_f": E_f, "E_w": E_w, "E_N": E_N, "E_B": E_B,
+    # The N row Newton imposes: (1 - y) E_Nr = E_N - (2/h) E19 + E_B / B,
+    # an identity of these forms (derive_matter_equations.py, stage nrow).
+    # E_N's angular part is d^2 nu / d theta^2 alone, so its N operator
+    # degenerates on the axis (indicial roots -1/2 and -1: the axis value
+    # is fixed algebraically), and its collocation has a near-null mode on
+    # the y node next to the axis, flat in xi, singular value ~ ny^-4.
+    # E_Nr carries d^2/d theta^2 - cot theta d/d theta instead (roots 0
+    # and -1, the regular axis of a Laplacian); at cal V = 0, B = 1 it is
+    # the corrected CKK eq. (12) of the README.
+    E_Nr = (
+        (A2 * (N_xx + (B_x / B) * N_x) + A1 * N_x) / 2
+        + 2 * oy2 * N_yy - (5 * y + 3) * N_y - N
+        + 2 * (1 + y) * (B_y / B) * N - 2 * oy2 * (B_y / B) * N_y
+        + 8 * (1 + y) * B_yy / B + 4 * B_y / B
+        - 16 * (1 + y) * (B_y / B) ** 2
+        + 4 * (1 + y) * f_y**2 - 16 * (1 + y) * psi_y**2
+        - B2 * e2f * (W2 * w_x**2 / 2 + 4 * h * oy2 * w_y**2)
+    )
+    return {"E_f": E_f, "E_w": E_w, "E_N": E_N, "E_Nr": E_Nr, "E_B": E_B,
             "E_psi": E_psi, "E_c": E_c, "E19": E19}
+
+
+def row_matrix(key, field, *, eta0, y, eta, deta, d2eta, Dx, Dy):
+    """The ``field`` part of the form ``key`` at B = 1, cal V = 0, as a
+    dense matrix on the (nx+1)(ny+1) tensor nodes (xi-major) with
+    identity rows at xi = +-1: ("E_Nr" or "E_N", "N") and ("E_psi",
+    "psi").
+
+    Those rows are linear in that field's jets there, with coefficients
+    that hold no other field, so the coefficients are read off the forms
+    themselves; at cal V = 0 one solve with the matrix is Newton's block
+    for that field.  ``eta, deta, d2eta`` are the interior-node columns
+    (nx - 1, 1), ``y`` the ny + 1 angular nodes.  numpy only.
+    """
+    import numpy as np
+
+    nx, ny = Dx.shape[0] - 1, Dy.shape[0] - 1
+    shape = (nx - 1, ny + 1)
+    zero = np.zeros(shape)
+
+    def form(n_jets):
+        jets = {k: zero for k in MATTER_JET_NAMES}
+        jets["B"] = np.ones(shape)
+        jets.update(n_jets)
+        return matter_residual_forms(
+            np.exp, eta0=eta0, y=np.asarray(y)[None, :], eta=eta,
+            deta=deta, d2eta=d2eta, jets=jets, V=zero, dV=zero)[key]
+
+    base = form({})
+    Ix, Iy = np.eye(nx + 1), np.eye(ny + 1)
+    jet_ops = {field: np.kron(Ix, Iy), f"{field}_x": np.kron(Dx, Iy),
+               f"{field}_xx": np.kron(Dx @ Dx, Iy),
+               f"{field}_y": np.kron(Ix, Dy),
+               f"{field}_yy": np.kron(Ix, Dy @ Dy)}
+    n = (nx + 1) * (ny + 1)
+    rows = np.arange(ny + 1, n - (ny + 1))
+    A = np.zeros((n, n))
+    for jet, op in jet_ops.items():
+        c = (form({jet: np.ones(shape)}) - base).ravel()
+        A[rows] += c[:, None] * op[rows]
+    ends = np.r_[0:ny + 1, n - (ny + 1):n]
+    A[ends, ends] = 1.0
+    return A
 
 
 class MatterCollocationProblem:
@@ -328,7 +399,7 @@ class MatterCollocationProblem:
             deta=self.deta_i, d2eta=self.d2eta_i, jets=interior,
             V=self.pot.V(interior["psi"]), dV=self.pot.dV(interior["psi"]))
         blocks = []
-        for tag, key in (("f", "E_f"), ("w", "E_w"), ("N", "E_N"),
+        for tag, key in (("f", "E_f"), ("w", "E_w"), ("N", "E_Nr"),
                          ("B", "E_B"), ("psi", "E_psi")):
             blocks.append(jnp.concatenate([
                 d[tag][:1], E[key], d[tag][-1:]]).ravel())
@@ -372,7 +443,7 @@ class MatterCollocationProblem:
 
     def diagnostics(self, u):
         """The unimposed monitors on the interior nodes: E_c, E19 (its
-        spread is the D2_spread analogue), the remaining Einstein row
+        spread is the D2_spread analogue), E_N, the imposed row
         residuals, and J(x)."""
         import numpy as np
 
@@ -388,6 +459,7 @@ class MatterCollocationProblem:
                            for i in range(1, self.nx)])
         return {"E_c": np.asarray(E["E_c"]), "E19": np.asarray(E["E19"]),
                 "E_f": np.asarray(E["E_f"]), "E_N": np.asarray(E["E_N"]),
+                "E_Nr": np.asarray(E["E_Nr"]),
                 "E_B": np.asarray(E["E_B"]), "E_psi": np.asarray(E["E_psi"]),
                 "j_of_x": j_of_x,
                 "C2_i": (self.eta0**2 / self.h_i)[:, 0]}

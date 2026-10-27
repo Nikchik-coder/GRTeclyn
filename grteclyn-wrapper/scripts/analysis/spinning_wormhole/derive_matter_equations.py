@@ -43,6 +43,11 @@ Stages:
           eqs. (10) and (11) (the machine-checked ground truth of
           derive_xy_equations.py) up to a field-dependent factor that is
           printed, so the matter system contains the V = 0 solver exactly.
+  nrow    the N row Newton imposes: (1 - y) E_Nr = E_N - (2/h) E19
+          + E_B / B, identically in the jets (exact, symbolic).  E_N, E19
+          and E_B are each checked against the derived rows by `forms`,
+          and the map back, E_N = (1 - y) E_Nr + (2/h) E19 - E_B / B,
+          keeps the imposed five plus the two constraints rank 7.
 
 Run (repo root, CPU, capped -- a sympy runaway can OOM the node
 container, CLAUDE.md "Environment"):
@@ -570,6 +575,13 @@ def stage_v0forms() -> bool:
         + 16 * jets["psi_x"] * jets["psi_y"],
         "E19": new["E19"] - (old["D2"] - W2 * jets["psi_x"]**2
                              + 4 * h * oy2 * jets["psi_y"]**2),
+        # twice E_Nr is the printed eq. (12) with its two misprints
+        # corrected (the README's derivation): the f_y^2 term it lacks and
+        # the sign of its w_y^2 term, plus the scalar's psi_y^2
+        "E_Nr": 2 * new["E_Nr"] - (
+            old["E_N"] + 8 * (1 + y) * jets["f_y"]**2
+            - 16 * h * oy2 * sp.exp(-2 * jets["f"]) * jets["w_y"]**2
+            - 32 * (1 + y) * jets["psi_y"]**2),
     }
     ok = True
     for key, expr in checks.items():
@@ -580,16 +592,39 @@ def stage_v0forms() -> bool:
     return ok
 
 
+def stage_nrow() -> bool:
+    """(1 - y) E_Nr == E_N - (2/h) E19 + E_B / B in generic jets, for any
+    map, potential values and B."""
+    from grteclyn_wrapper.analysis.spinning_wormhole.matter_equations import (
+        MATTER_JET_NAMES,
+        matter_residual_forms,
+    )
+
+    y, et, dn, dnn = sp.symbols("yv etav detav d2etav", real=True)
+    jets = {k: sp.Symbol(k) for k in MATTER_JET_NAMES}
+    E = matter_residual_forms(sp.exp, eta0=eta0, y=y, eta=et, deta=dn,
+                              d2eta=dnn, jets=jets, V=V, dV=Vp)
+    h = et**2 + eta0**2
+    diff = sp.cancel(sp.expand(
+        (1 - y) * E["E_Nr"]
+        - (E["E_N"] - 2 / h * E["E19"] + E["E_B"] / jets["B"])))
+    ok = diff == 0
+    print(f"nrow: (1 - y) E_Nr - (E_N - (2/h) E19 + E_B/B) = "
+          f"{'0 identically' if ok else sp.sstr(diff)}  "
+          f"{'PASS' if ok else 'FAIL'}")
+    return ok
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--stage", choices=["rows", "span", "v0", "forms",
-                                        "v0forms"], action="append")
+                                        "v0forms", "nrow"], action="append")
     args = ap.parse_args()
-    stages = args.stage or ["rows", "span", "v0", "forms", "v0forms"]
+    stages = args.stage or ["rows", "span", "v0", "forms", "v0forms", "nrow"]
     failed = []
     for name, fun in (("rows", stage_rows), ("span", stage_span),
                       ("v0", stage_v0), ("forms", stage_forms),
-                      ("v0forms", stage_v0forms)):
+                      ("v0forms", stage_v0forms), ("nrow", stage_nrow)):
         if name in stages:
             print(f"== {name} ==", flush=True)
             if not fun():
