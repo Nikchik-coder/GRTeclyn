@@ -1,0 +1,10 @@
+arXiv:2610.13206 replacement (v2) -- metadata to paste
+
+Title (unchanged):
+Binary Ellis-Bronnikov wormholes in 3+1 numerical relativity: mergers, fly-bys and gravitational waves
+
+Comments:
+23 pages, 12 figures, 7 tables; 12 movies as ancillary files. Code and data: https://doi.org/10.5281/zenodo.23257999. v2: text rewritten for readability, convergence test with rescaled differences (Fig. 10); results unchanged
+
+Abstract:
+We present what are, to our knowledge, the first three-dimensional numerical-relativity evolutions of wormhole binaries: pairs of massive Ellis-Bronnikov wormholes held open by a phantom scalar field, whose energy density is nowhere positive. We construct constraint-satisfying initial data for single throats and for pairs, at rest and with orbital momentum, and evolve them with adaptive mesh refinement. An isolated throat is unstable: depending on the sign of a small perturbation, it collapses to a black hole or inflates, at the rate that linear perturbation theory predicts to within 1.9%. Two throats at rest repel when their scalar charges have the same sign and attract when the signs are opposite, with a strength ratio close to the scalar force law's prediction, so only opposite-signed pairs merge. A head-on collision forms a common horizon around both throats while they are still open. The horizon then loses 28% of its area as it absorbs the scalar field, and approaches the Schwarzschild radius of the pair's mass. Pairs that fly past each other form no horizon, and both throats inflate. Every encounter emits a short burst of gravitational waves and a scalar dipole wave of comparable, negative energy. An isolated collapsing throat rings at the quasinormal frequency of the black hole it becomes. No throat survives more than a few orbital periods, even when its initial perturbation is tiny, so these binaries do not inspiral. The results hold for one phantom-scalar model, equal masses, a single throat compactness and no spin.
