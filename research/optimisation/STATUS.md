@@ -16,10 +16,17 @@ Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the 
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-28, after the step-3 scans)
+## Now (2026-10-28, after the first step-4 cloud solves)
 
-**Nothing is running** (the six step-3 scans finished ~06:55 UTC / 09:55 MSK, the three open ray walks ~07:20 UTC /
-10:20 MSK; both cards verified clear). **Step 3's answer: the landscape is NOT flat, and no bottom was found.** The
+**Nothing is running** (the step-4 cloud jobs finished ~09:10 UTC / 12:10 MSK; both cards verified clear, scratch
+clean). **Step 4 has its first spinning two-field members** (`cloud_solve.py`; [record](#step-4-record-2026-10-28)):
+on fam_b_0003 at pinned J and R_e a mini-boson-star cloud sits peaked at the throat, the bill-vs-amplitude curve has
+a genuine optimum — on the pure kink m 0.3 the cloud buys a further −1.63 % clean (E19 2.4e-9 PASS) at φ_c 0.08,
+and too much cloud costs, like γ — and on the step-3 best shape (2.4, 2.4) the layered bill reaches −27.46 % vs
+V = 0, past step 3's −27.27 %, but on the monitor floor (frontier class, not clean; the record has the three-grid
+trend).
+
+**Step 3's answer: the landscape is NOT flat, and no bottom was found.** The
 shape scan (Q = 1 + q₁u + q₂u², `potentials.kink_q`, `scan_potential.py`, 5×5 box at kink mass 0.3, J and R_e
 pinned, 150×30 on the cards) lowers the bill monotonically toward +q₁, +q₂ at all three spins, and the open ray
 walks past the box (decided 2026-10-28: no preset limits, the gates call the stop) kept descending until Newton or
@@ -139,8 +146,13 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     identification is exact only through r = (η + √h)/2). E_c 2.4e-11; E19/D² 2.3e-5 at η₀ 0.2 is the phantom's
     near-throat layer at center-grid Chebyshev spacing (160× down from nx 120 → 200: truncation, not structure) —
     composites with η₀ ≪ the map scale need the map matched to the throat.
-  - [ ] First cloud solves on a spinning member (seeded X at prescribed ω_χ), the identity gates, then the layered
-    bill at matched R_e and J against step 3.
+  - [x] First cloud solves on a spinning member and the layered bill at matched R_e and J (2026-10-28,
+    `cloud_solve.py`; [record](#step-4-record-2026-10-28)): the cloud holds at every amplitude tried, the bill has
+    an optimum in the cloud amplitude, the clean gain on the pure kink is −1.63 % (PASS), and the layered bill
+    passes step 3's best clean by −0.27 % — on the monitor floor, so frontier class until the floor decision.
+  - [ ] Layers proper: multi-node clouds (the radial node count of X is the layer count), the sign freedom, a
+    double throat as a measured lineage; and the floor decision that certifies or demotes the layered frontier
+    rows.
 - [ ] **5. Winding field and angular freedom.** The winding complex field, θ-dependent profiles with a hard ℓ cap and
   a gradient penalty, a counter-rotating pair at pinned J, the exotic-free corridor lineage. Done when all four
   knobs optimize together and a Gibbs-driven Newton failure is reported as a resolution verdict, not a physics one.
@@ -230,14 +242,15 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. Step 4, continued: the first seeded cloud solves on a spinning member and the layered bill at matched R_e and J
-   (the two-field equations, solver and the J = 0 dressed-star cross-check all landed 2026-10-28; see the step-4
-   checklist). (The ray walks closed the widen-the-box item: every ray ran to the solver/grid limit with X still
-   falling.)
+1. Step 4, continued: multi-node clouds (the layer count) and the sign freedom; the cloud knobs (m_χ, φ_c) at the
+   other two spins; continuation between cloud rungs instead of per-rung star reseeding (two rungs failed Newton
+   from the raw star seed on the stiff shape).
 2. The shape knob's true bottom needs more than rays: a finer grid for the frontier (the monitors there are the
    resolution tail) and/or step 6's optimizer with the m, q₁, q₂ knobs together.
-3. Decide the small-m acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes
-   m ≤ 0.1 members; the same floor noise flips PASS/ABOVE-GATE verdicts near the gate between identical runs.
+3. Decide the floor acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes m ≤ 0.1
+   members or the layered frontier rows: the dense solve's round-off floor rises with n and flips PASS/ABOVE-GATE
+   near the gate between identical runs, and on the stiff shape + cloud rows it sits at 2e-7–1e-6 while X holds
+   to 9 digits across three grids.
 
 ## Step 3 record (2026-10-28)
 
@@ -282,6 +295,34 @@ the step-1/2 gates on every row.
   2026-10-28, the m-anchor chain stalled at 1.1e-14 against tol 1e-14). argparse needs the `--q2=-0.3,0` form for
   leading-dash lists (so the `pipeline.toml` stages use it). The ray TSVs are packed beside the others in
   `results/optimisation/scans/`, and the figure's (f) panel takes its best clean shape from box + rays.
+
+## Step 4 record (2026-10-28)
+
+The first spinning two-field members (`cloud_solve.py`, jobs `cloud-first` 48×12 CPU, then `cloud-150`,
+`cloud-150-q`, `cloud-180-q`, `cloud-120-q` on the cards): fam_b_0003 (v_e 0.27), J and R_e pinned, phantom walked
+to kink m 0.3 (and on to the shape (2.4, 2.4) in 0.3 steps), then the canonical cloud 𝒰 = m_χ²X², m_χ = 1. Each
+rung solves the 1D self-gravitating mini star at central amplitude φ_c (lam = mu = 0; ω is its gravitational
+eigenvalue, `solve_selfgrav_boson_star`), prescribes that ω as ω_χ and seeds X from the star's profile at
+r = σ(|η| + √h)/2; the metric continues from the previous rung. X = 0 always solves, so every cloud found is the
+nontrivial branch; every converged cloud peaks at the throat (max |X| = X_throat, anisotropy through ν only).
+
+- **The clean cloud optimum on the pure kink** (150×30): X 2.41053 → 2.40847 / 2.40223 / 2.37704 / **2.37129** /
+  2.37787 / 2.40405 / 2.41467 at φ_c 0.01 / 0.02 / 0.05 / 0.08 / 0.1 / 0.15 / 0.2 — a genuine minimum at
+  φ_c ≈ 0.08 (ω_χ 0.849, max X 0.30, σ 0.781): −1.63 % below the kink baseline, −20.79 % vs V = 0, E19 2.4e-9
+  PASS (0.05 and 0.15 also PASS; the others sit at 1e-8–9e-8, the near-gate noise). By φ_c 0.2 the cloud costs
+  (+0.17 %): structure pays only in moderation, as with γ. R_e held to 1.04003606 on every row; σ falls to 0.70
+  as the cloud deepens the well.
+- **The layered bill vs step 3** (shape (2.4, 2.4), whose no-cloud baseline reproduces X 2.17719659 exactly):
+  X 2.17501 at φ_c 0.02 and **2.17135 at φ_c 0.05** = −27.46 % vs V = 0, past step 3's best clean −27.27 %. X is
+  frozen to 9 digits across 120×24 / 150×30 / 180×36 while E19/D² RISES with the grid (φ_c 0.05:
+  2.7e-7 → 6.1e-7 → 9.5e-7; E_c stays ~1e-10): the dense solve's round-off floor, not a truncation tail (which
+  falls) and not a wrong continuous equation (which would sit still; the J = 0 cross-check's E19 fell 160× with
+  nx). Frontier class until the floor decision (Next 3); the step-4 done-when ("beats or matches step 3") is met
+  on the frontier and matched within 0.3 % clean.
+- Mechanics: `throat()` unpacks 6 fields now; two rungs on the stiff shape (φ_c 0.01, 0.08) failed Newton from
+  the raw star seed (8.5e-6, 1.04e-11 — the second a hair over the 1e-11 stall gate), bracketed by converged
+  neighbours: continuation between cloud rungs is Next 1. Heavier clouds are no slower (10–27 s per rung at
+  150×30–180×36 on a card).
 
 ## GPU notes
 

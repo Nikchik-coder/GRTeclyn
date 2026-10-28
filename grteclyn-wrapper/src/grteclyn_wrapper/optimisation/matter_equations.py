@@ -596,7 +596,7 @@ class MatterCollocationProblem:
         """The pinned throat in physical units: sigma, xi_t, eta_t, R_e and
         the area."""
         sigma, xi_t = self.scale(u)
-        F, _, Nf, B, _ = self.fields(u)
+        F, _, Nf, B = self.fields(u)[:4]
         return {"sigma": sigma, "xi_t": xi_t,
                 "eta_t": sigma * float(self._eta_of(xi_t)),
                 "R_e": sigma * float(self._r_e(xi_t, F, B)),
