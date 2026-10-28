@@ -60,16 +60,19 @@ __all__ = ["matter_residual_forms", "MATTER_JET_NAMES", "row_matrix",
 #: Every jet the matter forms read: value, d/dxi, d2/dxi2, d/dy, d2/dy2
 #: per field, plus the one mixed jet of E_c.  ``chi`` is the amplitude X
 #: of the canonical layer field chi = X e^{i omega_c t} (campaign step 4);
-#: a five-field caller passes zeros for its jets.
+#: ``z`` is the REGULARIZED amplitude zeta = Z / sin^k theta of the
+#: winding field Lambda = Z e^{i(omega_z t + k phi)} (campaign step 5).
+#: A caller without one of them passes zeros for its jets.
 MATTER_JET_NAMES = tuple(
     f"{field}{suffix}"
-    for field in ("f", "w", "N", "B", "psi", "chi")
+    for field in ("f", "w", "N", "B", "psi", "chi", "z")
     for suffix in ("", "_x", "_xx", "_y", "_yy")
 ) + ("B_xy",)
 
 
 def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
-                          U=0.0, dU=0.0, oc2=0.0):
+                          U=0.0, dU=0.0, oc2=0.0,
+                          uz=0.0, duz=0.0, oz=0.0, kz=0, expm1u=None):
     """The matter forms, elementwise, for any backend.
 
     ``jets`` maps MATTER_JET_NAMES to values; ``eta, deta, d2eta`` are
@@ -92,6 +95,26 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
     E_Nr: machine-checked by derive_matter_equations.py).  ``U, dU`` are
     cal U(X), cal U'(X) at the nodes and ``oc2`` is omega_c^2; the
     defaults give the five-field system unchanged.
+
+    The winding field (campaign step 5) is Lambda = Z e^{i(omega_z t
+    + k phi)}, canonical like chi, but its phase winds in phi: the
+    matter carries angular momentum, so the twist row E_w gains the
+    source -4 k Omega e^nu Z^2 / sin^2 theta with Omega = omega_z
+    + k omega the frame-dragged frequency, and the harmonic slots carry
+    Omega^2 e^{-f} Z^2 where chi carries omega_c^2 e^{-f} X^2.  The
+    centrifugal k^2 / sin^2 theta barrier forces Z ~ sin^k theta on the
+    axis, so the forms take the REGULAR amplitude zeta = Z / sin^k theta
+    (the ``z`` jets): every Z bilinear becomes polynomial in y through
+    SK = sin^2 theta = (1 - y)/2, and the one removable (e^nu - 1)/nu
+    structure (the KG centrifugal against e^nu, and its E_Nr image)
+    goes through ``expm1u``, a caller-supplied (e^u - 1)/u that is safe
+    at u = 0 (the axis).  ``uz, duz`` are cal U_z(Z) and cal U_z'(Z)/Z
+    at the nodes (the ratio stays finite on the axis for the even
+    cal U_z the winding field needs), ``oz`` is omega_z and ``kz`` the
+    integer winding number k >= 1; kz = 0 (the default) is the
+    six-field system unchanged, bit for bit.  All winding terms are
+    machine-checked by derive_matter_equations.py (stages wind, forms,
+    nrow), transcribed 2026-10-28.
     """
     f, f_x, f_xx, f_y, f_yy = (jets[k] for k in ("f", "f_x", "f_xx", "f_y", "f_yy"))
     w, w_x, w_xx, w_y, w_yy = (jets[k] for k in ("w", "w_x", "w_xx", "w_y", "w_yy"))
@@ -101,6 +124,8 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
         jets[k] for k in ("psi", "psi_x", "psi_xx", "psi_y", "psi_yy"))
     chi, chi_x, chi_xx, chi_y, chi_yy = (
         jets[k] for k in ("chi", "chi_x", "chi_xx", "chi_y", "chi_yy"))
+    z, z_x, z_xx, z_y, z_yy = (
+        jets[k] for k in ("z", "z_x", "z_xx", "z_y", "z_yy"))
     B_xy = jets["B_xy"]
 
     h = eta * eta + eta0 * eta0
@@ -123,6 +148,18 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
     harm = oc2 * ef1 * chi * chi
     VU1 = V - U + harm
     VU2 = V - U + 2 * harm
+    if kz:
+        # the winding field's slots: SK = sin^2 theta, Omega the
+        # frame-dragged frequency; skk z^2 = Z^2 and skm z^2 = Z^2/SK
+        # are both polynomial in y for k >= 1
+        sk = (1 - y) / 2
+        skm = sk ** (kz - 1)
+        skk = skm * sk
+        enu = exp(N * (1 - y) / 2)
+        Om = oz + kz * w
+        harm_z = Om * Om * ef1 * skk * z * z
+        VU1 = VU1 - uz + harm_z
+        VU2 = VU2 - uz + 2 * harm_z
 
     E_f = (
         A2 * f_xx + A1 * f_x + 4 * oy2 * f_yy - (6 * y + 2) * f_y
@@ -205,8 +242,41 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
         + 16 * (1 + y) * chi_y**2
         - B2 * e2f * (W2 * w_x**2 / 2 + 4 * h * oy2 * w_y**2)
     )
+    E_z = 0.0 * z
+    if kz:
+        # the winding additions, each the exact zeta-chart image of the
+        # derived rows' winding part (stage wind, 2026-10-28): the twist
+        # source, the centrifugal terms (+2 in E_B, -6 in E_N, their
+        # E_Nr image through the N-row identity), and the chi-signed
+        # gradient twins with their SK chain-rule companions
+        gz = expm1u(N * (1 - y) / 2)
+        E_w = E_w - 4 * kz * Om * enu * skm * z * z
+        E_B = E_B + 2 * kz * kz * skm * z * z * B * enu
+        E_N = (E_N + 2 * A2 * skk * z_x**2 + 8 * oy2 * skk * z_y**2
+               - 4 * kz * oy2 * skm * z * z_y
+               + kz * kz * (1 + y) * skm * z * z
+               - 6 * kz * kz * skm * z * z * enu)
+        E_c = E_c + 16 * skk * z_x * z_y - 4 * kz * skm * z * z_x
+        E19 = (E19 + W2 * skk * z_x**2 - 4 * h * oy2 * skk * z_y**2
+               + 2 * kz * h * oy2 * skm * z * z_y
+               - kz * kz * h * (1 + y) * skm * z * z / 2)
+        E_Nr = (E_Nr + 16 * (1 + y) * skk * z_y**2
+                - 8 * kz * (1 + y) * skm * z * z_y
+                - 2 * kz * kz * skm * z * z * (1 + N * gz))
+        # the regularized KG row: the sin^k theta shift moves the
+        # centrifugal barrier into the -kz (kz + 1) z term plus the
+        # removable e^nu mismatch N gz
+        E_z = (
+            A2 * z_xx + A1 * z_x + A2 * (B_x / B) * z_x
+            + 4 * oy2 * z_yy - ((4 * kz + 6) * y + 4 * kz + 2) * z_y
+            + 4 * oy2 * (B_y / B) * z_y
+            - kz * (kz + 1) * z - 2 * kz * (1 + y) * (B_y / B) * z
+            - kz * kz * N * gz * z
+            + (Om * Om * ef1 * z - duz * z / 2) * B2 * h * env
+        )
     return {"E_f": E_f, "E_w": E_w, "E_N": E_N, "E_Nr": E_Nr, "E_B": E_B,
-            "E_psi": E_psi, "E_chi": E_chi, "E_c": E_c, "E19": E19}
+            "E_psi": E_psi, "E_chi": E_chi, "E_z": E_z, "E_c": E_c,
+            "E19": E19}
 
 
 def row_matrix(key, field, *, eta0, y, eta, deta, d2eta, Dx, Dy):
@@ -310,6 +380,31 @@ class MatterCollocationProblem:
     node count of X is the layer count.  cal U must be EVEN in X.  Its
     stress tensor is stationary and carries no angular momentum (no
     winding phase), so the flux row is untouched.
+
+    ``winding = (cal U_z, omega_z, k)`` adds the winding field of
+    campaign step 5: Lambda = Z e^{i(omega_z t + k phi)}, canonical like
+    chi, with integer winding number k >= 1.  The grid unknown is the
+    REGULAR amplitude zeta = Z / sin^k theta (zero Dirichlet at
+    xi = +-1, nothing imposed on the axis -- the sin^k shift makes every
+    row regular there), seeded through ``dzeta``; zeta = 0 always
+    solves.  cal U_z must be EVEN in Z with no linear term
+    (``dV_over``).  Unlike chi, the winding phase carries angular
+    momentum: the twist row gains the source -4 k Omega Z^2 B^3 h
+    e^{nu - 2f} with Omega = omega_z + k omega, so the flux J(x) is no
+    longer column-independent and the J row holds
+    sigma^2 (j_flux(mid) + j_matter) = J, the total at eta = +infinity,
+    with ``j_matter`` the twist source integrated from the mid column
+    out (``diagnostics`` returns the per-column tails: j_of_x
+    + j_matter_tail must be flat on a solution).  omega_z is physical
+    under a pin (it scales as 1/sigma, like omega_chi).
+
+    ``pin_zeta = A`` makes omega_z a bordered unknown (the winding
+    tuple's omega_z seeds it through ``pack``) held by the row
+    zeta(mid column, equator) = A: the boson-star way around the fragile
+    fixed-frequency Newton, whose trivial zeta = 0 branch swallows seeds
+    (2026-10-28: four gaussian-seeded fixed-omega_z rungs all fell to
+    it).  The cloud's amplitude is the dial and the frequency is the
+    eigenvalue, as in the 1D star solvers.
     """
 
     def __init__(self, *, eta0: float, gamma: float, potential=None,
@@ -317,7 +412,9 @@ class MatterCollocationProblem:
                  prescribe: tuple[str, float] = ("omega_inf", 0.0),
                  psi_minus: float | None = None,
                  pin: tuple[str, float] | None = None,
-                 chi: tuple | None = None):
+                 chi: tuple | None = None,
+                 winding: tuple | None = None,
+                 pin_zeta: float | None = None):
         # thread cap, platform and float64 BEFORE the first jax import
         from .solver.device import configure_jax
         from .solver.jacobian import dense_jacobian
@@ -368,11 +465,26 @@ class MatterCollocationProblem:
         if chi is not None:
             u_pot, omega_chi = chi
             self.chi = (u_pot, float(omega_chi))
-        self.nf = 6 if self.chi is not None else 5
-        self.tags = (("f", "w", "N", "B", "psi", "chi")[: self.nf])
+        # the winding field (campaign step 5): (cal U_z, omega_z, k); the
+        # grid unknown is zeta = Z / sin^k theta
+        self.winding = None
+        if winding is not None:
+            uz_pot, omega_z, k_w = winding
+            if int(k_w) < 1:
+                raise ValueError("winding: k must be a positive integer")
+            uz_pot.dV_over(0.0)   # refuses a linear term now, not mid-solve
+            self.winding = (uz_pot, float(omega_z), int(k_w))
+        if pin_zeta is not None and self.winding is None:
+            raise ValueError("pin_zeta needs a winding field")
+        self.pin_zeta = None if pin_zeta is None else float(pin_zeta)
+        self.tags = (("f", "w", "N", "B", "psi")
+                     + (("chi",) if self.chi is not None else ())
+                     + (("z",) if self.winding is not None else ()))
+        self.nf = len(self.tags)
         self.n = (nx + 1) * (ny + 1)
         self.n_unknowns = (self.nf * self.n + (1 if mode == "J" else 0)
                            + (1 if self.border_psi else 0)
+                           + (1 if self.pin_zeta is not None else 0)
                            + (2 if self.pin is not None else 0))
 
         xi_i = self.sx[1:-1]
@@ -415,6 +527,27 @@ class MatterCollocationProblem:
         self.w_g = w_g
         self.sin2_g = 1.0 - mu_g**2
 
+        # Winding precomputes: sin^k theta on the y nodes (Z = sin^k
+        # theta zeta), h and deta on ALL xi nodes for the twist-source
+        # integral j_matter, and the weights of int_0^1 dxi on the
+        # Lobatto values through the Chebyshev coefficients.  deta's
+        # endpoints are zeroed: zeta carries zero Dirichlet data and
+        # deta diverges there.
+        if self.winding is not None:
+            k_w = self.winding[2]
+            self.sink_i = np.sqrt((1.0 - self.sy[None, :]) / 2.0) ** k_w
+            self.h_all = (eta_all**2 + eta0**2)[:, None]
+            deta_edge = np.zeros(nx + 1)
+            deta_edge[1:-1] = self.map.deta(self.sx[1:-1])
+            self.deta_edge = deta_edge
+            t_int = np.zeros(nx + 1)
+            t_int[0], t_int[1] = 1.0, 0.5
+            for m in range(2, nx + 1):
+                lo = (np.cos((m + 1) * np.pi / 2) / (m + 1)
+                      - np.cos((m - 1) * np.pi / 2) / (m - 1)) / 2.0
+                t_int[m] = -1.0 / (m * m - 1.0) - lo
+            self.int_half = t_int @ self.Cx
+
         self._jax = jax
         self._jnp = jnp
         self._jit_residual = jax.jit(self._residual)
@@ -425,7 +558,7 @@ class MatterCollocationProblem:
     # -- packing --------------------------------------------------------------
 
     def pack(self, df, dw, dN, dB, dpsi, omega_inf=None, psi_minus=None,
-             sigma=None, xi_t=None, dchi=None):
+             sigma=None, xi_t=None, dchi=None, dzeta=None, omega_z=None):
         import numpy as np
 
         parts = [np.ravel(df), np.ravel(dw), np.ravel(dN), np.ravel(dB),
@@ -435,6 +568,11 @@ class MatterCollocationProblem:
                 raise ValueError("chi problem: dchi (the X seed) is an "
                                  "unknown")
             parts.append(np.ravel(dchi))
+        if self.winding is not None:
+            if dzeta is None:
+                raise ValueError("winding problem: dzeta (the zeta seed) "
+                                 "is an unknown")
+            parts.append(np.ravel(dzeta))
         if self.mode == "J":
             if omega_inf is None:
                 raise ValueError("bordered problem: omega_inf is an unknown")
@@ -443,6 +581,11 @@ class MatterCollocationProblem:
             if psi_minus is None:
                 raise ValueError("bordered problem: psi_minus is an unknown")
             parts.append(np.atleast_1d(float(psi_minus)))
+        if self.pin_zeta is not None:
+            if omega_z is None:
+                raise ValueError("pin_zeta problem: omega_z is an unknown "
+                                 "(seed it)")
+            parts.append(np.atleast_1d(float(omega_z)))
         if self.pin is not None:
             if sigma is None or xi_t is None:
                 raise ValueError("pinned problem: sigma and xi_t are unknowns")
@@ -469,19 +612,31 @@ class MatterCollocationProblem:
             return 1.0, None
         return float(u[-2]), float(u[-1])
 
+    def omega_z_of(self, u):
+        """omega_z: the bordered unknown of a pin_zeta problem, else the
+        winding tuple's prescribed value."""
+        if self.winding is None:
+            raise ValueError("no winding field")
+        if self.pin_zeta is None:
+            return self.winding[1]
+        i = (self.nf * self.n + (1 if self.mode == "J" else 0)
+             + (1 if self.border_psi else 0))
+        return float(u[i])
+
     def potential_at(self, psi_minus):
         """The potential, possibly riding on the bordered psi(-inf)."""
         return self.pot(psi_minus) if callable(self.pot) else self.pot
 
     def fields(self, u):
-        """Total (F, W, N, B, psi[, X]) node arrays from the unknown
-        vector, in grid units (omega scales as 1/sigma).  X, the layer
-        amplitude, only on a chi problem."""
+        """Total (F, W, N, B, psi[, X][, zeta]) node arrays from the
+        unknown vector, in grid units (omega scales as 1/sigma).  X, the
+        layer amplitude, only on a chi problem; zeta, the regular
+        winding amplitude, only on a winding problem (in tags order)."""
         *grids, omega_inf, psi_minus = self.unpack(u)
         df, dw, dN, dB, dpsi = grids[:5]
         out = (self.f_bg + df, omega_inf * self.q + dw, dN, 1.0 + dB,
                psi_minus * self.psi_prof + dpsi)
-        return out + (grids[5],) if self.chi is not None else out
+        return out + tuple(grids[5:])
 
     # -- residual -------------------------------------------------------------
 
@@ -508,6 +663,12 @@ class MatterCollocationProblem:
         else:
             omega_inf = value
         psi_minus = u[tail] if self.border_psi else self.psi_minus_fixed
+        if self.border_psi:
+            tail += 1
+        omega_z_run = None
+        if self.winding is not None:
+            omega_z_run = (u[tail] if self.pin_zeta is not None
+                           else self.winding[1])
         sigma = u[-2] if self.pin is not None else 1.0
         F = self.f_bg + d["f"]
         W = omega_inf * self.q + d["w"]
@@ -519,16 +680,27 @@ class MatterCollocationProblem:
         if self.chi is not None:
             totals["chi"] = d["chi"]      # no background: the cloud is dchi
             u_pot, omega_chi = self.chi
+        if self.winding is not None:
+            totals["z"] = d["z"]          # no background: the cloud is dzeta
         jets = self._jets(totals)
         interior = {k: v[1:-1] for k, v in jets.items()}
-        if self.chi is None:
-            for k in MATTER_JET_NAMES:
-                if k.startswith("chi"):
-                    interior[k] = 0.0
-        else:
+        for absent in ("chi", "z"):
+            if absent not in self.tags:
+                for k in MATTER_JET_NAMES:
+                    if k.startswith(absent):
+                        interior[k] = 0.0
+        if self.chi is not None:
             chi_kw = {"U": sigma**2 * u_pot.V(interior["chi"]),
                       "dU": sigma**2 * u_pot.dV(interior["chi"]),
                       "oc2": sigma**2 * omega_chi**2}
+        if self.winding is not None:
+            uz_pot, _, k_w = self.winding
+            Zv = self.sink_i * interior["z"]
+            chi_kw.update(
+                uz=sigma**2 * uz_pot.V(Zv),
+                duz=sigma**2 * uz_pot.dV_over(Zv),
+                oz=sigma * omega_z_run, kz=k_w,
+                expm1u=self._expm1u(jnp))
         pot = self.potential_at(psi_minus)
         E = matter_residual_forms(
             jnp.exp, eta0=self.eta0, y=self.sy[None, :], eta=self.eta_i,
@@ -536,19 +708,24 @@ class MatterCollocationProblem:
             V=sigma**2 * pot.V(interior["psi"]),
             dV=sigma**2 * pot.dV(interior["psi"]), **chi_kw)
         blocks = []
-        for tag, key in (("f", "E_f"), ("w", "E_w"), ("N", "E_Nr"),
-                         ("B", "E_B"), ("psi", "E_psi"),
-                         ("chi", "E_chi"))[: self.nf]:
+        keys = {"f": "E_f", "w": "E_w", "N": "E_Nr", "B": "E_B",
+                "psi": "E_psi", "chi": "E_chi", "z": "E_z"}
+        for tag in self.tags:
             blocks.append(jnp.concatenate([
-                d[tag][:1], E[key], d[tag][-1:]]).ravel())
+                d[tag][:1], E[keys[tag]], d[tag][-1:]]).ravel())
         out = jnp.concatenate(blocks)
         if self.mode == "J":
-            out = jnp.concatenate(
-                [out, jnp.atleast_1d(
-                    sigma**2 * self.j_flux(F, B, self.Dx @ W) - value)])
+            jtot = sigma**2 * self.j_flux(F, B, self.Dx @ W)
+            if self.winding is not None:
+                jtot = jtot + sigma**2 * self.j_matter(
+                    F, Nf, B, W, d["z"], sigma * omega_z_run)
+            out = jnp.concatenate([out, jnp.atleast_1d(jtot - value)])
         if self.border_psi:
             out = jnp.concatenate(
                 [out, jnp.atleast_1d(E["E19"][self.mid - 1, -1])])
+        if self.pin_zeta is not None:
+            out = jnp.concatenate(
+                [out, jnp.atleast_1d(d["z"][self.mid, -1] - self.pin_zeta)])
         if self.pin is not None:
             xi_t = u[-1]
             dA = self._jax.grad(self._area)(xi_t, F, Nf, B)
@@ -628,6 +805,41 @@ class MatterCollocationProblem:
         return -(h2_over_deta / 8.0) * jnp.sum(
             self.mu_w * b_g**3 * jnp.exp(-2.0 * f_g) * wx_g)
 
+    # -- the winding cloud's angular momentum ----------------------------------
+
+    @staticmethod
+    def _expm1u(xp):
+        """(e^u - 1)/u for backend xp, safe at u = 0 (the axis node):
+        the double-where keeps the derivative free of nan under AD."""
+        def g(u):
+            safe = xp.where(u == 0.0, 1.0, u)
+            return xp.where(u == 0.0, 1.0, xp.expm1(safe) / safe)
+        return g
+
+    def _j_matter_profile(self, F, N, B, W, zeta, oz, xp):
+        """The twist source's mu-integral on every xi node, times deta
+        (endpoints zeroed: zeta has zero Dirichlet data there):
+        dJ/dxi = -(k/2) v, so J(+inf) - J(xi) = -(k/2) int_xi^1 v."""
+        k = self.winding[2]
+        f_g = F @ self.By.T
+        b_g = B @ self.By.T
+        n_g = N @ self.By.T
+        w_g = W @ self.By.T
+        zt_g = zeta @ self.By.T
+        s2 = self.sin2_g[None, :]
+        integ = ((oz + k * w_g) * s2**k * zt_g**2 * b_g**3 * self.h_all
+                 * xp.exp(n_g * s2 - 2.0 * f_g)) @ self.w_g
+        return self.deta_edge * integ
+
+    def j_matter(self, F, N, B, W, zeta, oz):
+        """The winding cloud's angular momentum between the mid column
+        and eta = +infinity, grid units: the twist row's source
+        -4 k Omega Z^2 B^3 h e^{nu - 2f} integrated (dJ/deta =
+        -(1/8) int s S dtheta), so J(+inf) = j_flux(mid) + j_matter and
+        the J row pins the total.  Traceable."""
+        v = self._j_matter_profile(F, N, B, W, zeta, oz, self._jnp)
+        return -(self.winding[2] / 2.0) * (self.int_half @ v)
+
     # -- diagnostics (never imposed) ------------------------------------------
 
     def diagnostics(self, u):
@@ -638,23 +850,33 @@ class MatterCollocationProblem:
 
         all_fields = [np.asarray(a) for a in self.fields(u)]
         F, W, Nf, B, PSI = all_fields[:5]
-        s2 = self.scale(u)[0] ** 2
+        sig = self.scale(u)[0]
+        s2 = sig ** 2
         pot = self.potential_at(self.unpack(u)[-1])
         totals = {"f": F, "w": W, "N": Nf, "B": B, "psi": PSI}
+        for extra, A in zip(self.tags[5:], all_fields[5:]):
+            totals[extra] = A
         chi_kw = {}
-        if self.chi is not None:
-            totals["chi"] = all_fields[5]
-            u_pot, omega_chi = self.chi
         jets = self._jets(totals)
         interior = {k: np.asarray(v)[1:-1] for k, v in jets.items()}
-        if self.chi is None:
-            for k in MATTER_JET_NAMES:
-                if k.startswith("chi"):
-                    interior[k] = 0.0
-        else:
+        for absent in ("chi", "z"):
+            if absent not in self.tags:
+                for k in MATTER_JET_NAMES:
+                    if k.startswith(absent):
+                        interior[k] = 0.0
+        if self.chi is not None:
+            u_pot, omega_chi = self.chi
             chi_kw = {"U": s2 * u_pot.V(interior["chi"]),
                       "dU": s2 * u_pot.dV(interior["chi"]),
                       "oc2": s2 * omega_chi**2}
+        if self.winding is not None:
+            uz_pot, _, k_w = self.winding
+            omega_z = self.omega_z_of(u)
+            Zv = self.sink_i * interior["z"]
+            chi_kw.update(uz=s2 * uz_pot.V(Zv),
+                          duz=s2 * uz_pot.dV_over(Zv),
+                          oz=sig * omega_z, kz=k_w,
+                          expm1u=self._expm1u(np))
         E = matter_residual_forms(
             np.exp, eta0=self.eta0, y=self.sy[None, :], eta=self.eta_i,
             deta=self.deta_i, d2eta=self.d2eta_i, jets=interior,
@@ -671,4 +893,24 @@ class MatterCollocationProblem:
                "C2_i": (self.eta0**2 / self.h_i)[:, 0]}
         if self.chi is not None:
             out["E_chi"] = np.asarray(E["E_chi"])
+        if self.winding is not None:
+            out["E_z"] = np.asarray(E["E_z"])
+            # J(+inf) seen from each column: j_of_x + j_matter_tail must
+            # be flat on a solution -- the gate on the J bookkeeping
+            ZETA = totals["z"]
+            v = self._j_matter_profile(F, Nf, B, W, ZETA,
+                                       sig * omega_z, np)
+            a = self.Cx @ v
+            A = np.zeros(self.nx + 2)
+            for m in range(1, self.nx + 2):
+                am1 = (2.0 * a[0] if m == 1
+                       else (a[m - 1] if m - 1 <= self.nx else 0.0))
+                ap1 = a[m + 1] if m + 1 <= self.nx else 0.0
+                A[m] = (am1 - ap1) / (2.0 * m)
+            kk = np.arange(self.nx + 2)
+            P1 = A.sum()
+            Pi = np.cos(np.arccos(self.sx[1:-1])[:, None]
+                        * kk[None, :]) @ A
+            # grid units, like j_of_x (the J row scales both by sigma^2)
+            out["j_matter_tail"] = -(k_w / 2.0) * (P1 - Pi)
         return out

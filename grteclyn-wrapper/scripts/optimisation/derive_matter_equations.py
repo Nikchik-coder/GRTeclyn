@@ -24,12 +24,29 @@ a CANONICAL complex scalar in the same normalization:
 
 (g^{tt} = -e^{-f}; X has no t or phi dependence, so the stress tensor is
 stationary, axisymmetric and carries no angular momentum, and the twist
-row keeps no chi source).  Ground truth is E_ab = R_ab + 2 psi_a psi_b
+row keeps no chi source), and (campaign step 5) the winding field
+Lambda = Z e^{i(omega_z t + k phi)}, a canonical complex scalar whose
+phase winds in phi, so the matter itself carries angular momentum:
+
+    R_ab += 2 [Z_a Z_b + Z^2 kappa_a kappa_b] + cal U_z g_ab,
+    kappa_a = (omega_z, 0, 0, k),
+    box Z + e^{-f} (omega_z + k omega)^2 Z - k^2 e^f Z / (p h sin^2 th)
+        = cal U_z'(Z) / 2.
+
+kappa_t kappa_phi sources E_{t phi}, so the twist row gains the matter
+spin source -4 k (omega_z + k omega) Z^2 B^3 h e^{nu - 2f} (its factor
+-2 e^nu B^3 h / e^f is the exact pure-field multiple C with
+transcribed w row = C * t_ph, checked 2026-10-28 with t_ph carrying
+only w second jets); the centrifugal k^2 / sin^2 theta term forces
+Z ~ sin^k theta on the axis, so the SOLVER's unknown is the regular
+amplitude zeta = Z / sin^k theta, while everything here works in the
+generic Z.  Ground truth is E_ab = R_ab + 2 psi_a psi_b
 + cal V g_ab - 2 [X_a X_b + omega_c^2 X^2 delta^t_a delta^t_b]
-- cal U g_ab and the two KG residuals, built symbolically from the
-metric; cal V, cal V', cal U, cal U', omega_c^2 enter as the plain
-symbols V, Vp, U, Up, OC2 (no equation differentiates them in the
-coordinates).
+- cal U g_ab - 2 [Z_a Z_b + Z^2 kappa_a kappa_b] - cal U_z g_ab and the
+three KG residuals, built symbolically from the metric; cal V, cal V',
+cal U, cal U', omega_c^2, cal U_z, cal U_z', omega_z, k enter as the
+plain symbols V, Vp, U, Up, OC2, UZ, UZp, WZ, KW (no equation
+differentiates them in the coordinates).
 Every expression is then rationalized exactly -- e^f -> EF, e^nu -> EN,
 sin -> SS, cos -> CC -- so all linear algebra runs over the rational
 function field, with no floating point anywhere.
@@ -47,9 +64,12 @@ Stages:
           those were the explicit eta0^2-type constants of CKK eqs.
           13/19).  Everything is printed collected in the jets -- the
           source for matter_equations.matter_residual_forms.
-  span    exact rational points: each of the seven rows lies in the span
-          of the mixed Einstein + KG set AND the seven together span it
-          (rank 7 both ways), so solving the derived system is equivalent
+  wind    print each derived row's winding part (the row minus itself at
+          Z = WZ = KW = UZ = UZp = 0), collected in the jets -- the
+          source for the winding terms of matter_residual_forms.
+  span    exact rational points: each of the nine rows lies in the span
+          of the mixed Einstein + KG set AND the nine together span it
+          (rank 9 both ways), so solving the derived system is equivalent
           to Einstein + KG, not merely implied by it.
   v0      at V = 0, B = 1, psi = psi(eta): the f and w rows reduce to CKK
           eqs. (10) and (11) (the machine-checked ground truth of
@@ -83,9 +103,12 @@ eta0 = sp.Symbol("eta0", positive=True)
 V, Vp = sp.symbols("V Vp", real=True)
 U, Up = sp.symbols("U Up", real=True)            # cal U(X), cal U'(X)
 OC2 = sp.Symbol("OC2", positive=True)            # omega_c^2
+UZ, UZp = sp.symbols("UZ UZp", real=True)        # cal U_z(Z), cal U_z'(Z)
+WZ = sp.Symbol("WZ", real=True)                  # omega_z
+KW = sp.Symbol("KW", positive=True)              # the winding number k
 EF, EN = sp.symbols("EF EN", positive=True)      # e^f, e^nu
 SS, CC = sp.symbols("SS CC", positive=True)      # sin theta, cos theta
-FIELDS = ("f", "nu", "w", "b", "psi", "x")
+FIELDS = ("f", "nu", "w", "b", "psi", "x", "z")
 ORDERS = [(2, 0), (1, 1), (0, 2), (1, 0), (0, 1), (0, 0)]
 SECOND = [(2, 0), (1, 1), (0, 2)]
 
@@ -139,7 +162,7 @@ def build_system():
         return _cache["G"], _cache["syms"]
     t0 = time.time()
     fn = functions()
-    F, NU, W, B, PSI, Xf = (fn[k] for k in FIELDS)
+    F, NU, W, B, PSI, Xf, Zf = (fn[k] for k in FIELDS)
     h = eta**2 + eta0**2
     s, c = sp.sin(th), sp.cos(th)
     p = B**2
@@ -181,15 +204,23 @@ def build_system():
 
     dpsi = {1: sp.diff(PSI, eta), 2: sp.diff(PSI, th)}
     dchi = {1: sp.diff(Xf, eta), 2: sp.diff(Xf, th)}
+    dzet = {1: sp.diff(Zf, eta), 2: sp.diff(Zf, th)}
     E = {}
     for (bb, cc), R in ricci.items():
         E[(bb, cc)] = (R + 2 * dpsi.get(bb, 0) * dpsi.get(cc, 0)
                        + V * g[bb, cc]
                        - 2 * dchi.get(bb, 0) * dchi.get(cc, 0)
-                       - U * g[bb, cc])
+                       - U * g[bb, cc]
+                       - 2 * dzet.get(bb, 0) * dzet.get(cc, 0)
+                       - UZ * g[bb, cc])
     # the harmonic phase's t-t source, the one place omega_c^2 reaches
     # the Einstein set
     E[(0, 0)] -= 2 * OC2 * Xf**2
+    # the winding phase's kappa_a kappa_b sources, kappa = (WZ, 0, 0, KW):
+    # the t-phi one is where the matter's angular momentum enters
+    E[(0, 0)] -= 2 * WZ**2 * Zf**2
+    E[(0, 3)] -= 2 * WZ * KW * Zf**2
+    E[(3, 3)] -= 2 * KW**2 * Zf**2
     # Mixed components: the Killing block through gi, the 2D block by its
     # diagonal inverse.  ph_t is a linear combination of the other three
     # Killing rows (4 mixed from 3 covariant), so it is left out.
@@ -211,6 +242,14 @@ def build_system():
     mixed["kg_x"] = (sp.diff(B * h * s * sp.diff(Xf, eta), eta)
                      + sp.diff(B * s * sp.diff(Xf, th), th)
                      + B**3 * h * s * enu / ef * (OC2 * Xf / ef - Up / 2))
+    # the winding amplitude's KG: -g^{ab} kappa_a kappa_b
+    # = e^{-f} (WZ + KW omega)^2 - KW^2 e^f / (p h s^2), under the same
+    # sqrt(-g) weight (the centrifugal term's weight is B e^nu / s)
+    mixed["kg_z"] = (sp.diff(B * h * s * sp.diff(Zf, eta), eta)
+                     + sp.diff(B * s * sp.diff(Zf, th), th)
+                     + B**3 * h * s * enu / ef
+                     * ((WZ + KW * W)**2 * Zf / ef - UZp / 2)
+                     - KW**2 * B * enu * Zf / s)
 
     subs, syms = jet_subs(fn)
     _cache["syms"] = syms
@@ -223,21 +262,31 @@ def build_system():
 def transcribed_rows(syms):
     """The w, rho and KG rows (span-confirmed divergence forms), in jets."""
     fn = functions()
-    F, NU, W, B, PSI, Xf = (fn[k] for k in FIELDS)
+    F, NU, W, B, PSI, Xf, Zf = (fn[k] for k in FIELDS)
     h = eta**2 + eta0**2
     s = sp.sin(th)
     d = sp.diff
     subs, _ = jet_subs(fn)
     C = {
-        # the twist equation: D.(rho^3 e^{-2f} D omega) = 0 (the layer
-        # field has no winding phase, so it never sources it)
-        "w": (d(B**3 * h**2 * s**3 * sp.exp(-2 * F) * d(W, eta), eta)
-              + d(B**3 * h * s**3 * sp.exp(-2 * F) * d(W, th), th)) / s,
-        # the rho equation D^2 rho = 2 (cal V - cal U
-        # + omega_c^2 e^{-f} X^2) rho, rho = B sqrt(h) s
+        # the twist equation: D.(rho^3 e^{-2f} D omega) = source.  The
+        # layer field has no winding phase and never sources it; the
+        # winding field does: the source is C * (the winding part of
+        # t_ph) = C * 2 KW e^{-f} (WZ + KW omega) Z^2, with
+        # C = -2 e^nu B^3 h / e^f the exact pure-field multiple in
+        # transcribed row = C * t_ph (checked 2026-10-28; t_ph carries
+        # only w second jets).
+        "w": ((d(B**3 * h**2 * s**3 * sp.exp(-2 * F) * d(W, eta), eta)
+               + d(B**3 * h * s**3 * sp.exp(-2 * F) * d(W, th), th)) / s
+              - 4 * KW * (WZ + KW * W) * Zf**2 * B**3 * h
+              * sp.exp(NU - 2 * F)),
+        # the rho equation D^2 rho = 2 (cal V - cal U - cal U_z
+        # + omega_c^2 e^{-f} X^2 + (WZ + KW omega)^2 e^{-f} Z^2
+        # - KW^2 e^f Z^2 / (B^2 h s^2)) rho, rho = B sqrt(h) s
         "B": (d(h**sp.Rational(3, 2) * d(B, eta), eta) / sp.sqrt(h)
               + d(s**2 * d(B, th), th) / s**2
-              - 2 * (V - U + OC2 * Xf**2 * sp.exp(-F))
+              - 2 * (V - U - UZ + OC2 * Xf**2 * sp.exp(-F)
+                     + (WZ + KW * W)**2 * Zf**2 * sp.exp(-F)
+                     - KW**2 * Zf**2 * sp.exp(F) / (B**2 * h * s**2))
               * B**3 * h * sp.exp(NU - F)),
         # KG times sqrt(-g), divided by s
         "psi": ((d(B * h * s * d(PSI, eta), eta)
@@ -248,6 +297,14 @@ def transcribed_rows(syms):
                + d(B * s * d(Xf, th), th)) / s
               + B**3 * h * sp.exp(NU - F)
               * (OC2 * Xf * sp.exp(-F) - Up / 2)),
+        # the winding amplitude's KG: the harmonic term at the dragged
+        # frequency WZ + KW omega, and the centrifugal term (weight
+        # B e^nu / s^2 after the division by s)
+        "z": ((d(B * h * s * d(Zf, eta), eta)
+               + d(B * s * d(Zf, th), th)) / s
+              + B**3 * h * sp.exp(NU - F)
+              * ((WZ + KW * W)**2 * Zf * sp.exp(-F) - UZp / 2)
+              - KW**2 * B * sp.exp(NU) * Zf / s**2),
     }
     return {k: ratform(to_jets(sp.expand(v), subs)) for k, v in C.items()}
 
@@ -350,7 +407,7 @@ def stage_rows() -> bool:
     rows = derive_all()
     syms = _cache["syms"]
     ok = True
-    for label in ("f", "nu", "w", "B", "psi", "x", "c13", "c19"):
+    for label in ("f", "nu", "w", "B", "psi", "x", "z", "c13", "c19"):
         out = rows.get(label)
         if out is None:
             ok = False
@@ -358,6 +415,29 @@ def stage_rows() -> bool:
         num = sp.collect(sp.expand(out), list(syms.values()))
         print(f"\nrows[{label}]:")
         print(sp.sstr(num, order="lex"))
+        print(flush=True)
+    return ok
+
+
+def stage_wind() -> bool:
+    """Print each derived row's winding part (the row minus itself at
+    Z = WZ = KW = UZ = UZp = 0), collected in the jets: the source for
+    the winding terms of matter_residual_forms."""
+    rows = derive_all()
+    syms = _cache["syms"]
+    at0 = {UZ: 0, UZp: 0, WZ: 0, KW: 0}
+    for i, j in ORDERS:
+        at0[syms[f"z_{i}{j}"]] = 0
+    ok = True
+    for label in ("f", "nu", "w", "B", "psi", "x", "z", "c13", "c19"):
+        out = rows.get(label)
+        if out is None:
+            ok = False
+            continue
+        part = sp.expand(out - out.subs(at0))
+        part = sp.collect(part, list(syms.values()))
+        print(f"\nwind[{label}]:")
+        print(sp.sstr(part, order="lex") if part != 0 else "0")
         print(flush=True)
     return ok
 
@@ -376,6 +456,7 @@ def rational_point(seed):
 
     at = {eta: q(), eta0: sp.Rational(2), V: q(), Vp: q(),
           U: q(), Up: q(), OC2: q(0, 4),
+          UZ: q(), UZp: q(), WZ: q(), KW: q(0, 4),
           SS: sp.Rational(3, 5), CC: sp.Rational(4, 5),
           EF: sp.Rational(2, 3), EN: sp.Rational(5, 7)}
     for name, sym in _cache["syms"].items():
@@ -415,7 +496,7 @@ def stage_span() -> bool:
         Rm = sp.Matrix([affine_vector(v, at, second) for v in rows.values()])
         rank_g, rank_r = Gm.rank(), Rm.rank()
         both = sp.Matrix.vstack(Gm, Rm).rank()
-        good = rank_g == rank_r == both == 8
+        good = rank_g == rank_r == both == 9
         ok = ok and good
         print(f"span[seed {seed}]: rank(G) = {rank_g}, rank(rows) = {rank_r},"
               f" rank(G + rows) = {both}  "
@@ -433,11 +514,13 @@ def stage_v0() -> bool:
         print("v0: rows incomplete, skipping")
         return False
     h = eta**2 + eta0**2
-    at0 = {syms["b_00"]: 1, V: 0, Vp: 0, U: 0, Up: 0, OC2: 0}
+    at0 = {syms["b_00"]: 1, V: 0, Vp: 0, U: 0, Up: 0, OC2: 0,
+           UZ: 0, UZp: 0, WZ: 0, KW: 0}
     for i, j in ORDERS[:-1]:
         at0[syms[f"b_{i}{j}"]] = 0
     for i, j in ORDERS:
         at0[syms[f"x_{i}{j}"]] = 0
+        at0[syms[f"z_{i}{j}"]] = 0
     eq10 = (h * SS * syms["f_20"] + 2 * eta * SS * syms["f_10"]
             + SS * syms["f_02"] + CC * syms["f_01"]
             - h * SS**3 / EF**2 * (h * syms["w_10"]**2 + syms["w_01"]**2))
@@ -460,7 +543,8 @@ def stage_v0() -> bool:
 
 
 # Generic test fields in (ETA, Y) for the forms check: nonzero mixed
-# derivatives everywhere, B near 1 and positive.
+# derivatives everywhere, B near 1 and positive.  "z" is the REGULAR
+# winding amplitude zeta; the rows side multiplies it by sin^k theta.
 ETA_S, Y_S = sp.symbols("ETAS YS", real=True)
 TEST_FIELDS = {
     "f": (sp.sin(ETA_S / 2 + sp.Rational(1, 5)) * (1 + Y_S / 3)
@@ -475,18 +559,31 @@ TEST_FIELDS = {
             + sp.exp(-ETA_S**2 / 20) * Y_S**2 / 7),
     "chi": (sp.cos(ETA_S / 7 + sp.Rational(2, 9)) * (1 - Y_S / 8)
             + sp.exp(-ETA_S**2 / 15) * Y_S**2 / 13),
+    "z": (sp.sin(ETA_S / 8 + sp.Rational(3, 7)) * (1 + Y_S / 9)
+          + sp.exp(-ETA_S**2 / 18) * Y_S**2 / 17),
 }
+
+#: The concrete even winding potential and frequency of the forms
+#: check: cal U_z = a Z^2 + b Z^4, so UZp = Z * duz with
+#: duz = 2 a + 4 b Z^2 finite on the axis.
+DUZ = sp.Symbol("DUZ", real=True)
+WIND_A, WIND_B = sp.Rational(3, 7), sp.Rational(-2, 9)
+WIND_WZ = sp.Rational(5, 4)
 
 #: printed row == PREFACTOR * matter_residual_forms[...], fixed by the
 #: leading-jet coefficients of the derived rows (h = eta^2 + eta0^2,
-#: dη = eta'(xi), b = B at the node).
+#: dη = eta'(xi), b = B at the node).  The z row carries the sin^k theta
+#: of zeta = Z / sin^k theta (KW is substituted by the pass's k).
 PREFACTORS = {
     ("f", "E_f"): lambda b, h, dn: -EF**2 * SS * b,
     ("w", "E_w"): lambda b, h, dn: SS**2 * b**3 * h / EF**2,
     ("B", "E_B"): lambda b, h, dn: sp.Integer(1),
     ("psi", "E_psi"): lambda b, h, dn: b,
     ("x", "E_chi"): lambda b, h, dn: b,
-    ("nu", "E_N"): lambda b, h, dn: -2 * EF**2 * SS * b**2 * h,
+    ("z", "E_z"): lambda b, h, dn: b * SS**KW,
+    # nu's nullspace denominator gained a bare SS when the winding
+    # centrifugal (1/s^2 in ph_ph) joined the system (2026-10-28)
+    ("nu", "E_N"): lambda b, h, dn: -2 * EF**2 * SS**2 * b**2 * h,
     ("c13", "E_c"): lambda b, h, dn: EF**2 * SS**2 * CC * b**2 * h**2 / dn,
     ("c19", "E19"): lambda b, h, dn: -4 * EF**2 * SS * b**2,
 }
@@ -524,64 +621,77 @@ def stage_forms() -> bool:
             jets[f"{tag}_y"] = sp.diff(e, Yv)
             jets[f"{tag}_yy"] = sp.diff(e, Yv, 2)
         jets["B_xy"] = sp.diff(comp["B"], XI, Yv)
-        E = matter_residual_forms(sp.exp, eta0=eta0, y=Yv, eta=eta_of,
-                                  deta=deta_of, d2eta=d2eta_of, jets=jets,
-                                  V=V, dV=Vp, U=U, dU=Up, oc2=OC2)
-
-        # The same fields as functions of (eta, theta) for the rows side:
-        # nu = N sin^2 theta, y = cos 2 theta.
-        y_th = sp.cos(2 * THv)
-        et = {k: e.subs(Y_S, y_th) for k, e in TEST_FIELDS.items()}
-        et["nu"] = et.pop("N") * sp.sin(THv)**2
-        et["b"] = et.pop("B")
-        et["x"] = et.pop("chi")
-        rowsub = []
-        for name in FIELDS:
-            if name in ("f",):
-                base = et["f"]
-            else:
-                base = et[name]
-            for i, j in ORDERS:
-                if name == "f" and (i, j) == (0, 0):
-                    continue
-                if name == "nu" and (i, j) == (0, 0):
-                    continue
-                val = sp.diff(base, ETA_S, i) if j == 0 else \
-                    sp.diff(sp.diff(base, ETA_S, i), THv, j)
-                rowsub.append((syms[f"{name}_{i}{j}"], val))
-        rowsub += [(EF, sp.exp(et["f"])), (EN, sp.exp(et["nu"])),
-                   (SS, sp.sin(THv)), (CC, sp.cos(THv))]
-
         xis = [sp.Rational(-7, 10), sp.Rational(1, 5), sp.Rational(3, 5)]
         if mname == "logstretch4":
             xis = [sp.Rational(-2, 5), sp.Rational(1, 10), sp.Rational(3, 10)]
-        for xi_val in xis:
-            for th_val in (sp.Rational(2, 5), sp.Rational(13, 10)):
-                pots = {V: sp.Rational(5, 11), Vp: sp.Rational(7, 13),
-                        U: sp.Rational(3, 7), Up: sp.Rational(5, 9),
-                        OC2: sp.Rational(8, 5)}
-                at_xy = {XI: xi_val, Yv: sp.cos(2 * th_val), eta0: 2,
-                         **pots}
-                eta_val = eta_of.subs({XI: xi_val, eta0: 2})
-                at_et = {ETA_S: eta_val, THv: th_val, eta: eta_val,
-                         eta0: 2, **pots}
-                b_val = TEST_FIELDS["B"].subs(
-                    [(ETA_S, eta_val), (Y_S, sp.cos(2 * th_val))])
-                h_val = eta_val**2 + 4
-                dn_val = deta_of.subs({XI: xi_val, eta0: 2})
-                for (rkey, fkey), P in PREFACTORS.items():
-                    lhs = rows[rkey].subs(rowsub).subs(at_et).evalf(50)
-                    pref = P(b_val, h_val, dn_val).subs(rowsub) \
-                        .subs(at_et).evalf(50)
-                    rhs = (E[fkey].subs(at_xy).evalf(50)) * pref
-                    scale = max(1, abs(lhs), abs(rhs))
-                    rel = float(abs(lhs - rhs) / scale)
-                    worst = max(worst, rel)
-                    if rel > 1e-30:
-                        print(f"  forms[{mname}] {rkey} vs {fkey} at "
-                              f"xi={xi_val} th={th_val}: rel {rel:.2e} FAIL")
-        print(f"  forms[{mname}]: max rel diff so far {worst:.3e}",
-              flush=True)
+        for k_w in (1, 2):
+            E = matter_residual_forms(
+                sp.exp, eta0=eta0, y=Yv, eta=eta_of, deta=deta_of,
+                d2eta=d2eta_of, jets=jets, V=V, dV=Vp, U=U, dU=Up,
+                oc2=OC2, uz=UZ, duz=DUZ, oz=WZ, kz=k_w,
+                expm1u=lambda u: (sp.exp(u) - 1) / u)
+
+            # The same fields as functions of (eta, theta) for the rows
+            # side: nu = N sin^2 theta, y = cos 2 theta, Z = sin^k zeta.
+            y_th = sp.cos(2 * THv)
+            et = {k: e.subs(Y_S, y_th) for k, e in TEST_FIELDS.items()}
+            et["nu"] = et.pop("N") * sp.sin(THv)**2
+            et["b"] = et.pop("B")
+            et["x"] = et.pop("chi")
+            et["z"] = sp.sin(THv)**k_w * et["z"]
+            rowsub = []
+            for name in FIELDS:
+                base = et[name]
+                for i, j in ORDERS:
+                    if name in ("f", "nu") and (i, j) == (0, 0):
+                        continue
+                    val = sp.diff(base, ETA_S, i) if j == 0 else \
+                        sp.diff(sp.diff(base, ETA_S, i), THv, j)
+                    rowsub.append((syms[f"{name}_{i}{j}"], val))
+            rowsub += [(EF, sp.exp(et["f"])), (EN, sp.exp(et["nu"])),
+                       (SS, sp.sin(THv)), (CC, sp.cos(THv))]
+
+            for xi_val in xis:
+                for th_val in (sp.Rational(2, 5), sp.Rational(13, 10)):
+                    pots = {V: sp.Rational(5, 11), Vp: sp.Rational(7, 13),
+                            U: sp.Rational(3, 7), Up: sp.Rational(5, 9),
+                            OC2: sp.Rational(8, 5)}
+                    eta_val = eta_of.subs({XI: xi_val, eta0: 2})
+                    # the winding potential cal U_z = a Z^2 + b Z^4 at the
+                    # point's Z = sin^k theta * zeta
+                    zeta_val = TEST_FIELDS["z"].subs(
+                        [(ETA_S, eta_val), (Y_S, sp.cos(2 * th_val))])
+                    z_val = sp.sin(th_val) ** k_w * zeta_val
+                    uz_val = WIND_A * z_val**2 + WIND_B * z_val**4
+                    wind_xy = {UZ: uz_val,
+                               DUZ: 2 * WIND_A + 4 * WIND_B * z_val**2,
+                               WZ: WIND_WZ}
+                    wind_et = {UZ: uz_val,
+                               UZp: 2 * WIND_A * z_val
+                               + 4 * WIND_B * z_val**3,
+                               WZ: WIND_WZ, KW: k_w}
+                    at_xy = {XI: xi_val, Yv: sp.cos(2 * th_val), eta0: 2,
+                             **pots, **wind_xy}
+                    at_et = {ETA_S: eta_val, THv: th_val, eta: eta_val,
+                             eta0: 2, **pots, **wind_et}
+                    b_val = TEST_FIELDS["B"].subs(
+                        [(ETA_S, eta_val), (Y_S, sp.cos(2 * th_val))])
+                    h_val = eta_val**2 + 4
+                    dn_val = deta_of.subs({XI: xi_val, eta0: 2})
+                    for (rkey, fkey), P in PREFACTORS.items():
+                        lhs = rows[rkey].subs(rowsub).subs(at_et).evalf(50)
+                        pref = P(b_val, h_val, dn_val).subs(rowsub) \
+                            .subs(at_et).evalf(50)
+                        rhs = (E[fkey].subs(at_xy).evalf(50)) * pref
+                        scale = max(1, abs(lhs), abs(rhs))
+                        rel = float(abs(lhs - rhs) / scale)
+                        worst = max(worst, rel)
+                        if rel > 1e-30:
+                            print(f"  forms[{mname}, k={k_w}] {rkey} vs "
+                                  f"{fkey} at xi={xi_val} th={th_val}: "
+                                  f"rel {rel:.2e} FAIL")
+            print(f"  forms[{mname}, k={k_w}]: max rel diff so far "
+                  f"{worst:.3e}", flush=True)
     print(f"forms: max relative difference {worst:.3e} (gate 1e-30): "
           f"{'PASS' if worst <= 1e-30 else 'FAIL'}")
     return worst <= 1e-30
@@ -601,13 +711,15 @@ def stage_v0forms() -> bool:
     y, et, dn, dnn = sp.symbols("yv etav detav d2etav", real=True)
     jets = {k: sp.Symbol(k) for k in MATTER_JET_NAMES}
     jets.update(B=sp.Integer(1), B_x=0, B_xx=0, B_y=0, B_yy=0, B_xy=0)
-    jets.update({k: 0 for k in MATTER_JET_NAMES if k.startswith("chi")})
+    jets.update({k: 0 for k in MATTER_JET_NAMES
+                 if k.startswith(("chi", "z"))})
     new = matter_residual_forms(sp.exp, eta0=eta0, y=y, eta=et, deta=dn,
                                 d2eta=dnn, jets=jets, V=0, dV=0)
     old = residual_forms(sp.exp, eta0=eta0, y=y, eta=et, deta=dn,
                          d2eta=dnn,
                          jets={k: jets[k] for k in jets
-                               if not k.startswith(("B", "psi", "chi"))})
+                               if not k.startswith(("B", "psi", "chi",
+                                                    "z"))})
     h = et**2 + eta0**2
     W2 = (h / dn) ** 2
     oy2 = 1 - y**2
@@ -637,7 +749,8 @@ def stage_v0forms() -> bool:
 
 def stage_nrow() -> bool:
     """(1 - y) E_Nr == E_N - (2/h) E19 + E_B / B in generic jets, for any
-    map, potential values and B."""
+    map, potential values and B -- without winding and at winding numbers
+    1, 2, 3."""
     from grteclyn_wrapper.optimisation.matter_equations import (
         MATTER_JET_NAMES,
         matter_residual_forms,
@@ -645,28 +758,37 @@ def stage_nrow() -> bool:
 
     y, et, dn, dnn = sp.symbols("yv etav detav d2etav", real=True)
     jets = {k: sp.Symbol(k) for k in MATTER_JET_NAMES}
-    E = matter_residual_forms(sp.exp, eta0=eta0, y=y, eta=et, deta=dn,
-                              d2eta=dnn, jets=jets, V=V, dV=Vp,
-                              U=U, dU=Up, oc2=OC2)
     h = et**2 + eta0**2
-    diff = sp.cancel(sp.expand(
-        (1 - y) * E["E_Nr"]
-        - (E["E_N"] - 2 / h * E["E19"] + E["E_B"] / jets["B"])))
-    ok = diff == 0
-    print(f"nrow: (1 - y) E_Nr - (E_N - (2/h) E19 + E_B/B) = "
-          f"{'0 identically' if ok else sp.sstr(diff)}  "
-          f"{'PASS' if ok else 'FAIL'}")
+    ok = True
+    for k_w in (0, 1, 2, 3):
+        wind = {} if k_w == 0 else dict(
+            uz=UZ, duz=DUZ, oz=WZ, kz=k_w,
+            expm1u=lambda u: (sp.exp(u) - 1) / u)
+        E = matter_residual_forms(sp.exp, eta0=eta0, y=y, eta=et, deta=dn,
+                                  d2eta=dnn, jets=jets, V=V, dV=Vp,
+                                  U=U, dU=Up, oc2=OC2, **wind)
+        diff = sp.cancel(sp.expand(
+            (1 - y) * E["E_Nr"]
+            - (E["E_N"] - 2 / h * E["E19"] + E["E_B"] / jets["B"])))
+        good = diff == 0
+        ok = ok and good
+        print(f"nrow[k={k_w}]: (1 - y) E_Nr - (E_N - (2/h) E19 + E_B/B) = "
+              f"{'0 identically' if good else sp.sstr(diff)}  "
+              f"{'PASS' if good else 'FAIL'}", flush=True)
     return ok
 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("--stage", choices=["rows", "span", "v0", "forms",
-                                        "v0forms", "nrow"], action="append")
+    ap.add_argument("--stage", choices=["rows", "wind", "span", "v0",
+                                        "forms", "v0forms", "nrow"],
+                    action="append")
     args = ap.parse_args()
-    stages = args.stage or ["rows", "span", "v0", "forms", "v0forms", "nrow"]
+    stages = args.stage or ["rows", "wind", "span", "v0", "forms",
+                            "v0forms", "nrow"]
     failed = []
-    for name, fun in (("rows", stage_rows), ("span", stage_span),
+    for name, fun in (("rows", stage_rows), ("wind", stage_wind),
+                      ("span", stage_span),
                       ("v0", stage_v0), ("forms", stage_forms),
                       ("v0forms", stage_v0forms), ("nrow", stage_nrow)):
         if name in stages:

@@ -10,16 +10,29 @@ Code (its own package since 2026-10-28; layout and rules in its
 `check_tidal.py`, `check_matter_n_row.py`, `diagnose_matter_v0.py`, `derive_matter_equations.py`); tests in
 `grteclyn-wrapper/tests/optimisation/`. It reads the published spinning package, which never imports it.
 Test set: the spinning solver's 200 saved solutions, `results/spinningwormhole/solutions/`.
-Runs: on the H100 test node (JAX is in the node's venv, not the workstation's), CPU by default and on a card with the
-go, through `grteclyn-wrapper/scripts/ops/capped_job.sh`; logs in the node's `runs/capped_jobs/` (untracked).
+Runs: on the H100 test node (JAX is in the node's venv, not the workstation's), on a card by default for solver
+jobs since 2026-10-28 (the no-GPU-without-the-go rule is the evolutions'; see Rules), through
+`grteclyn-wrapper/scripts/ops/capped_job.sh`; logs in the node's `runs/capped_jobs/` (untracked).
 Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the N-row fix), then step 2's pins and
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-28, after the first step-4 cloud solves)
+## Now (2026-10-28 evening, step 5 open on a flagged J row; paused)
 
-**Nothing is running** (the step-4 cloud jobs finished ~09:10 UTC / 12:10 MSK; both cards verified clear, scratch
-clean). **Step 4 has its first spinning two-field members** (`cloud_solve.py`; [record](#step-4-record-2026-10-28)):
+**Nothing is running** (the last job, `winding-96-gpu`, ended 14:22 UTC / 17:22 MSK; both cards verified clear,
+scratch clean — only `_cache`, 579 G free). **Step 5's winding brick is in**: the winding field Λ = Z e^{i(ω_z t + kφ)}
+derived and machine-checked (span rank 9, forms 2.6e-51, the N-row identity with winding at k = 1–3), the solver
+carries it (ζ = Z/sin^kθ regular chart, the J row = flux + matter, `pin_zeta` amplitude continuation, the
+frozen-metric linear-mode seeding — the fixed-ω_z and gaussian-seeded routes both demonstrably fail), 19 tests
+pass, and the first k = 1 clouds CONVERGE on fam_b_0003 at pinned J and R_e — **but the unimposed identities fail
+grid-persistently (E19 ∝ amp², rising with the grid while ζ's tails fall; j-flat far off), so a wrong continuous
+equation sits in the solver wiring — prime suspect the J row's matter integral — and nothing from step 5 is
+quotable until the written discriminating test runs** ([the step-5 sub-item](#steps) has the detail). Two
+same-day decisions: **solver jobs run on a card by default** (the no-go rule stays for evolutions; see Rules), and
+**the m = 0 growth-rate stability screen is the first piece after step 5** (step-6 sub-items). A repo check found
+the step-7/8 C++ gap: the layered and winding winners need a new combined matter class (step-7 sub-item).
+
+**Step 4 has its first spinning two-field members** (`cloud_solve.py`; [record](#step-4-record-2026-10-28)):
 on fam_b_0003 at pinned J and R_e a mini-boson-star cloud sits peaked at the throat, the bill-vs-amplitude curve has
 a genuine optimum — on the pure kink m 0.3 the cloud buys a further −1.63 % clean (E19 2.4e-9 PASS) at φ_c 0.08,
 and too much cloud costs, like γ — and on the step-3 best shape (2.4, 2.4) the layered bill reaches −27.46 % vs
@@ -156,14 +169,76 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 - [ ] **5. Winding field and angular freedom.** The winding complex field, θ-dependent profiles with a hard ℓ cap and
   a gradient penalty, a counter-rotating pair at pinned J, the exotic-free corridor lineage. Done when all four
   knobs optimize together and a Gibbs-driven Newton failure is reported as a resolution verdict, not a physics one.
+  - [x] Winding system derived and machine-checked (2026-10-28). Λ = Z e^{i(ω_z t + kφ)}, a canonical complex
+    scalar whose phase winds in φ: the matter carries angular momentum, so the twist row gains the spin source
+    −4k(ω_z + kω)Z²B³h e^{ν−2f} (its factor −2e^νB³h/e^f is the exact pure-field multiple of t_ph, which carries
+    only w second jets), E_B/E_N gain centrifugal k²Z²/s² terms (+2/−6 × SK^{k−1}ζ²e^ν), and the harmonic slots
+    carry the frame-DRAGGED frequency Ω = ω_z + kω where χ carries ω_χ. `derive_matter_equations.py` extended
+    (field z, symbols UZ, UZp, WZ, KW, the kg_z row, stage `wind` prints each row's winding part): span rank 9
+    both ways at three exact points, forms 2.6e-51 (gate 1e-30) at k = 1 and 2 under both maps, v0forms identical,
+    and the N-row identity holds identically WITH winding at k = 1, 2, 3. The nu nullspace row's normalization
+    gained a bare sin θ when the 1/s² centrifugal joined (the one forms failure, fixed in its PREFACTOR).
+  - [x] The regular chart and the solver (2026-10-28). The centrifugal barrier forces Z ~ sin^k θ on the axis, so
+    the solver's unknown is ζ = Z/sin^k θ: every bilinear becomes polynomial in y through SK = (1−y)/2, no axis
+    condition is needed, and the one removable (e^ν − 1)/ν structure (the KG centrifugal against e^ν, and its
+    E_Nr image) goes through a double-where-safe `expm1u`. `MatterCollocationProblem(..., winding=(𝒰_z, ω_z, k))`
+    adds ζ as a grid unknown (zero Dirichlet, no background; ζ = 0 always solves); 𝒰_z must be even
+    (`dV_over` = 𝒰'/Z refuses a linear term); the J row pins the TOTAL J = σ²(flux(mid) + j_matter), the twist
+    source integrated, and `diagnostics` returns the per-column tails so j_of_x + j_matter_tail flat-in-x is a new
+    unimposed gate on the J bookkeeping. Tests: the zero-cloud embedding (round-off exact; the larger jit graph
+    reassociates by a ulp), the identity with a cloud on a grid holding the axis node, the half-line quadrature —
+    19 pass.
+  - [ ] First k = 1 clouds on fam_b_0003 — **converge, but an open defect stands** ([record](#step-5-record-2026-10-28)):
+    fixed-ω_z Newton always falls to the trivial branch, so the amplitude is pinned instead (`pin_zeta`:
+    ζ(mid, equator) = A borders ω_z as the eigenvalue) and the first rung is seeded exactly by the frozen-metric
+    linear mode — at ζ = 0 the Jacobian's z block decouples into L(ω) = L0 + ωL1 + ω²L2, a quadratic eigenproblem
+    solved dense (`winding_solve.py linear_mode`; the bound mode is a result in itself: ω_z 0.869 at 96×20 on the
+    kink-0.3 background). Newton then converges at every amplitude tried with R_e held exactly — and the unimposed
+    identities fail GRID-PERSISTENTLY: E19 ∝ amp², RISING 6.5e-2 → 1.5e-1 (48×12 → 96×20 at amp 0.005) while ζ's
+    spectral tails FALL 3.2e-2 → 1.3e-2, and the new j-flat gate is far off (0.21 → 8.6). By the campaign's own
+    discipline that is a wrong continuous equation in the SOLVER WIRING, not truncation — the forms are
+    50-digit-checked, so the suspects are what that check cannot see, first the J row's matter integral
+    (`j_matter`: its integrand carries deta ~ η², which amplifies outer-node junk). The discriminating test is
+    written, not yet run (scratch `winding_debug2.py`): re-solve the amp-0.005 cloud with ω∞ prescribed — no J
+    row, no pins — and see whether E19 heals; plus dump where E19 and the j_matter integrand live on the pinned
+    solution. NOTHING from step 5 is quotable until this closes.
+  - [ ] θ-dependent profiles (the ℓ cap and gradient penalty), the counter-rotating pair at pinned J, the
+    exotic-free corridor lineage.
 - [ ] **6. Converge the search.** Gradients by implicit differentiation (CMA-ES as the fallback), the m = 0 growth
   rate in the loop, the traversability bounds and stability as inequality constraints, the batched GPU search as an
   option. Products: the Pareto frontier of bill against instability rate and spin, and the design chart. Done when
   the frontier is stationary under more budget, every member passes a grid-change re-solve, and the chart is filled.
+  - [ ] **The m = 0 growth-rate solver — the pre-GPU stability screen** (decided 2026-10-28: the first
+    infrastructure piece after step 5's winding brick; today nothing in steps 1–4 checks stability before a GPU
+    run, so the frontier has no second axis and the cards would judge unscreened candidates). Linearize the
+    evolution equations about a solved background in the axisymmetric m = 0 sector: a generalized eigenproblem,
+    largest real Ω by shift-invert on one LU (the dense GPU path already in use; jax linearizes the operators the
+    way it builds J). The traps: gauge/constraint modes masquerading as instabilities, a non-self-adjoint operator
+    (rotation breaks the static Ω² structure), decaying/outgoing conditions at both ends. Gates, in order: the
+    static Ellis single unstable radial mode, then the published 3+1 growth rates across the spinning families
+    (the rotation-slows-instability paper is the calibration set). Fallbacks if the eigenproblem is slow to land:
+    the 1D radial J = 0 check (the dressed-star machinery is close to it), or a short coarse one-card 3+1 screen.
+  - [ ] The score with stability in it: whether the search objective combines the exotic bill and the growth rate
+    into one number (a weighted penalty) or keeps them as the two-axis Pareto frontier — decide once the
+    growth-rate solver exists (raised 2026-10-28); the frontier is the paper's product either way.
 - [ ] **7. Extend the hand-off.** New background-table columns, read by `RotatingBackgroundTable.hpp`. Done when a
   bare-field table round-trips bit-compatibly.
+  - [ ] **The plan's Split card overstates the compiled matter classes** (repo check, 2026-10-28): "the matter
+    classes are already compiled, only example-level wiring is new" is true only for the bare-field winner.
+    The layered (χ) and winding winners need a NEW combined C++ matter class — the phantom with its own potential
+    plus one or two canonical complex scalars in separate state slots, stress-energy summed (no new physics,
+    roughly a few hundred lines). Today: `ExoticScalarField<potential_t>` matches the solver's sign convention but
+    only `PhantomDecayPotential` (½m²φ²) ships — the kink needs a ~30-line potential header;
+    `RotatingBackgroundTable.hpp` takes exactly six columns, so B needs a 7th column and B² must scale γ_ij and
+    K_ij in the initial data; the phantom and complex classes hard-code the same c_phi/c_Pi slots so they collide
+    in one state vector; Bondi's `BiComplexScalarField` makes the phantom complex under one shared U(1) sextic
+    (cannot represent the kink); `GRTresnaIndependentScalars` puts a single potential on the sum;
+    `ComplexExoticScalarField` is unused and phantom-signed while the winding field is canonical; `RadialRecipe`
+    picks one matter model per run. The initial data must also set the clouds' time derivatives from ω_χ and
+    ω_z + kω.
 - [ ] **8. Wire the multi-field example.** A `SpinningWormhole` variant on the compiled matter classes, with the
   t = 0 contract check. Done when the check passes and a bare-KK table evolves identically through the new path.
+  Carries the step-7 finding above: the combined matter class is a prerequisite, not wiring.
 - [ ] **9. Evolve the winners** on the GPU, under the standing launch rules (nothing starts without the go). Done
   when each frontier member has a three-resolution verdict.
 - [ ] **10. Publish by the outcome tree.** The minimal-exoticity landscape (the Pareto frontier and the design chart)
@@ -242,6 +317,11 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
+0. **Step 5's defect first**: run the discriminating test (ω∞-prescribed cloud, no J row — the scratch
+   `winding_debug2.py`, recreatable from the step-5 sub-item), convict the wrong equation (J row's `j_matter`
+   integral the prime suspect: deta-amplified outer-node junk; fix candidate — integrate the twist source in
+   Chebyshev coefficient space or damp the outer nodes), then rerun the 48×12 → 96×20 → 150×30 ladder and demand
+   E19 falls with the grid. Nothing from step 5 is quotable before that.
 1. Step 4, continued: multi-node clouds (the layer count) and the sign freedom; the cloud knobs (m_χ, φ_c) at the
    other two spins; continuation between cloud rungs instead of per-rung star reseeding (two rungs failed Newton
    from the raw star seed on the stiff shape).
@@ -252,6 +332,9 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
    members or the layered frontier rows: the dense solve's round-off floor rises with n and flips PASS/ABOVE-GATE
    near the gate between identical runs, and on the stiff shape + cloud rows it sits at 2e-7–1e-6 while X holds
    to 9 digits across three grids.
+4. After step 5: the m = 0 growth-rate solver (the step-6 sub-item above) — the pre-GPU stability screen, gated on
+   static Ellis then the published spinning growth rates; and the one-score-or-two decision (bill + growth rate
+   combined vs the two-axis frontier).
 
 ## Step 3 record (2026-10-28)
 
@@ -333,6 +416,33 @@ nontrivial branch; every converged cloud peaks at the throat (max |X| = X_throat
   neighbours: continuation between cloud rungs is Next 1. Heavier clouds are no slower (10–27 s per rung at
   150×30–180×36 on a card).
 
+## Step 5 record (2026-10-28)
+
+The winding ladders (`winding_solve.py`, jobs `winding-first{,2,3,4,5}` 48×12 CPU, `winding-96-gpu` on card 0):
+fam_b_0003, J and R_e pinned, kink m 0.3, then 𝒰_z = m_z²Z², m_z = 1, k = 1, amplitude-pinned with ω_z bordered.
+
+- **Route that works**: the frozen-metric linear mode seeds the first rung (96×20: oz 0.8773, ω_z 0.8690 — the
+  winding field's bound frequency on this background), Newton 5e-13 in 5–12 iterations at amp 0.005 / 0.01 / 0.02;
+  amp 0.05 failed Newton at 96×20 (converged at 48×12 at ω_z 0.634 — deep backreaction, σ 0.896). R_e held to
+  1.04003606 on every converged rung; σ falls as the cloud deepens; X falls ~0.1 % at amp 0.02 (NOT quotable:
+  below).
+- **Routes that fail** (all converge to machine Newton or stall honestly): fixed ω_z from a gaussian seed falls to
+  the trivial ζ = 0 branch at every (ω_z, amp) tried (ω_z/m_z 0.6–0.95, amp 0.005–0.4); the amplitude-pinned solve
+  from a gaussian overshoots (the Jacobian checked exact against the residual to 2.3e-12 — the full step leaves
+  the basin, |du|∞ ≈ 3.3).
+- **The open defect.** At matched amp 0.005: E19/D² 6.5e-2 (48×12) → 1.5e-1 (96×20), E_c 1.2e-2 → 2.0e-2, both
+  ∝ amp² at fixed grid, while ζ's spectral tails fall 3.2e-2 → 1.3e-2 and X moves only in the 4th digit; the
+  j-flat gate (max |j_of_x + j_matter_tail − J/σ²|/|J/σ²|, the new winding-specific unimposed identity) sits at
+  0.21 → 8.6 and worsens with amp and grid. Grid-persistent + amp²-scaling = a wrong continuous equation in the
+  solver wiring (the forms themselves are 50-digit-verified at k = 1, 2 under both maps). Suspect list, in order:
+  the J row's `j_matter` integral (not covered by any forms check; its integrand carries deta ~ η² at the outer
+  nodes, amplifying spectral junk in ζ² — consistent with j-flat worsening as the grid reaches further out), the
+  σ-scalings of (uz, duz, oz), the pin wiring. The ω∞-prescribed re-solve (no J row) discriminates; written, not
+  run.
+- Timing: a 96×20 seven-field rung solves in 4–5 s on a card; the linear-mode seed cost 476 s, nearly all the
+  2(nx+1)(ny+1) = 4074 dense generalized eigenproblem in scipy on CPU — move it to the card or solve it at 48×12
+  and interpolate when it matters.
+
 ## GPU notes
 
 **Ported 2026-10-28** (the go that morning). Nothing starts on a card without the go; the cards are shared, so
@@ -391,5 +501,7 @@ nontrivial branch; every converged cloud peaks at the throat (max |X| = X_throat
   `status`, `tail` and `stop` by name; check for leftovers when it ends. Node quota: 12 CPUs and 195 GB, with
   `memory.oom.group = 1`, so one runaway kills everything in the container.
 - No JAX in the workstation venv (decided 2026-10-27); local work uses at most 4 of its 8 cores.
-- No GPU start-up of any kind without the go: the solver's GPU port ([GPU notes](#gpu-notes)) as much as the step-9
-  evolutions.
+- **Solver jobs run on a card by default** (decided 2026-10-28): the 2D solves are ~25× faster there, so ladders,
+  scans and cloud/winding solves take `--gpu N` as the first option — check `nvidia-smi` first (shared cards) and
+  cap at 220 GB address space. CPU stays for pytest and tiny smoke runs. The no-GPU-without-the-go rule remains
+  for the GRTeclyn evolutions (step 9 and anything through launch.sh).

@@ -9,7 +9,7 @@ what ran, what it showed and what is next: [`research/optimisation/STATUS.md`](.
 
 | path | holds |
 |---|---|
-| `matter_equations.py` | the matter problem: the seven field forms (five imposed, two unimposed monitors) and `MatterCollocationProblem`, with the J, R_e and area pins |
+| `matter_equations.py` | the matter problem: the field forms (the imposed rows and the unimposed monitors, through the step-4 layer field chi and the step-5 winding field zeta) and `MatterCollocationProblem`, with the J, R_e and area pins |
 | `potentials.py` | scalar potentials in the solver's normalization; every one is a kink ψ²(ψ − ψ₋)²Q(ψ) |
 | `exoticity.py` | the bill X = \|VIQ\|/R_e, the throat, NEC along rays, the tidal tensor at the throat |
 | `solver/newton.py` | damped Newton: equilibrated dense LU, Armijo backtracking, chord steps; on the host, or the whole solve on the card when the Jacobian arrives there |
@@ -19,6 +19,10 @@ what ran, what it showed and what is next: [`research/optimisation/STATUS.md`](.
 Scripts, in [`grteclyn-wrapper/scripts/optimisation/`](../../../scripts/optimisation/):
 - `pipeline.py` and `pipeline.toml`: the campaign's runnable stages;
 - `first_matter_solve.py`: the V ≠ 0 kink ladders;
+- `scan_potential.py`: the step-3 shape and γ scans and the open rays;
+- `cloud_solve.py`: the step-4 layer-field ladders (the mini-boson-star cloud);
+- `winding_solve.py`: the step-5 winding-field ladders (spin carried by the matter phase);
+- `check_chi_star.py`: the step-4 J = 0 cross-check against the published dressed star;
 - the gates: `validate_matter_v0.py` (V = 0 against the published solver), `check_matter_pins.py`, `check_tidal.py`,
   `check_matter_n_row.py`;
 - `diagnose_matter_v0.py`;
@@ -49,7 +53,9 @@ $PY grteclyn-wrapper/scripts/optimisation/pipeline.py run <stage>           # CP
 $PY grteclyn-wrapper/scripts/optimisation/pipeline.py run <stage> --gpu N   # card N; refuses a busy card
 ```
 
-GPU switches. Nothing starts on a card without the go, and the cards are shared, so check `nvidia-smi` first.
+GPU switches. Solver jobs run on a card by default (2026-10-28: the solves are ~25× faster there; the
+no-GPU-without-the-go rule is the evolutions', not the solver's). The cards are shared, so check `nvidia-smi`
+first.
 - `--gpu CARD` and `--jac-chunk` on `first_matter_solve.py` call `solver.device.select_device`. It sets
   `JAX_PLATFORMS=cuda`, `CUDA_VISIBLE_DEVICES` and `XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async` (2026-10-28: the
   default grow-only pool fragments across a ladder's solves and OOM'd every m > 0 Jacobian at 180x36).

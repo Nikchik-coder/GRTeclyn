@@ -51,6 +51,20 @@ class PolynomialPotential:
             out = out * psi + k * self.coeffs[k]
         return out
 
+    def dV_over(self, psi):
+        """cal V'(psi) / psi without the division:
+        sum_{k >= 2} k coeffs[k] psi^{k-2}.  The winding and layer KG
+        rows need the ratio where the field has zeros (the winding
+        amplitude vanishes on the axis), so a linear term is refused --
+        the ratio would be singular there."""
+        if len(self.coeffs) > 1 and self.coeffs[1] != 0.0:
+            raise ValueError("dV_over: the potential has a linear term")
+        out = 0.0 * psi
+        n = len(self.coeffs)
+        for k in range(n - 1, 1, -1):
+            out = out * psi + k * self.coeffs[k]
+        return out
+
     @property
     def is_zero(self) -> bool:
         return all(c == 0.0 for c in self.coeffs)
