@@ -51,5 +51,6 @@ $PY grteclyn-wrapper/scripts/optimisation/pipeline.py run <stage> --gpu N   # ca
 
 GPU switches. Nothing starts on a card without the go, and the cards are shared, so check `nvidia-smi` first.
 - `--gpu CARD` and `--jac-chunk` on `first_matter_solve.py` call `solver.device.select_device`. It sets
-  `JAX_PLATFORMS=cuda`, `CUDA_VISIBLE_DEVICES` and `XLA_PYTHON_CLIENT_PREALLOCATE=false`.
+  `JAX_PLATFORMS=cuda`, `CUDA_VISIBLE_DEVICES` and `XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async` (2026-10-28: the
+  default grow-only pool fragments across a ladder's solves and OOM'd every m > 0 Jacobian at 180x36).
 - `WH_JAC_CHUNK` sets the Jacobian's column block: 1024 by default on a card, unchunked on the CPU.

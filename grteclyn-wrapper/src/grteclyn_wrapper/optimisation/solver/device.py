@@ -30,8 +30,12 @@ def select_device(card: int | None = None,
     if card is not None:
         os.environ["JAX_PLATFORMS"] = "cuda"
         os.environ["CUDA_VISIBLE_DEVICES"] = str(card)
-        # take only what the solve uses on a shared card
-        os.environ.setdefault("XLA_PYTHON_CLIENT_PREALLOCATE", "false")
+        # take only what the solve uses on a shared card, and give it back
+        # between solves.  2026-10-28: the default bfc pool (capped at 75 %
+        # of the card, grow-only) fragments across a ladder's per-mass
+        # solves -- at 180x36 (n = 32k) every m > 0 Jacobian died asking
+        # for a contiguous 16.9 GiB the pool had but could not compact.
+        os.environ.setdefault("XLA_PYTHON_CLIENT_ALLOCATOR", "cuda_async")
     if jac_chunk is not None:
         os.environ["WH_JAC_CHUNK"] = str(jac_chunk)
 

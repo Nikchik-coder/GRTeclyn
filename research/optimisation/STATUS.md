@@ -16,9 +16,9 @@ Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the 
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-28)
+## Now (2026-10-28, after the morning's GPU pass)
 
-**Nothing is running** (everything stopped on the word, ~06:05 UTC / 09:05 MSK; both cards verified clear). The
+**Nothing is running** (the morning's two stages finished ~06:30–06:35 UTC / 09:30–09:35 MSK; both cards clear). The
 solver now runs on the GPU ([GPU notes](#gpu-notes): port done and verified 2026-10-28), and the campaign has an
 entry point: `grteclyn-wrapper/scripts/optimisation/pipeline.py plan | list | run <stage> [--gpu N]`, with the
 stages in `pipeline.toml` beside it. The campaign's code moved out of `analysis/spinning_wormhole/` into the
@@ -31,11 +31,18 @@ the 48×12 ladder keeps its digits (X 2.75525806, σ 1.0013837069 at m = 0.1).
 - fam_b_0003 (v_e 0.27): X 2.99352 → 2.17547 at m = 0.5 (−27 %); E19/D² m 0.1/0.2/0.3/0.5 =
   1.2e-6 / 7.6e-8 / 1.4e-9 PASS / 3.2e-9 PASS.
 - fam_b_0012 (v_e 0.50): X 2.62527 → 1.93361 (−26 %); E19 1.2e-6 / 3.5e-8 / 9.3e-10 PASS / 2.7e-7.
-- fam_b_0025 (v_e 0.85), stopped mid-ladder after m = 0.2: X 1.46184 → 1.37131 (m 0.1) → 1.29815 (m 0.2, −11 %);
-  E19 8.9e-7 / 8.4e-8. The bill falls with the kink mass at every spin measured; the relative fall shrinks
-  with spin.
-- The m = 0.1 rung misses the 1e-8 gate at every grid so far (8.6e-6 at 120×25 CPU, 1.2e-6 at 150×30); the 180×36
-  rung (`first-v-0003-180`) was launched and stopped on the word after its clean m = 0 solve (E19 1.1e-10).
+- fam_b_0025 (v_e 0.85), completed 2026-10-28: X 1.46184 → 1.37131 → 1.29815 → 1.24120 → 1.16133 at
+  m 0.1/0.2/0.3/0.5 (−21 % at m = 0.5); E19 8.9e-7 / 1.9e-8 / 1.1e-9 PASS / 4.1e-9 PASS. The bill falls with the
+  kink mass at every spin; the relative fall shrinks with spin (−27 % / −26 % / −21 % at v_e 0.27 / 0.50 / 0.85).
+- The 180×36 rung (`first-v-0003-180`, 2026-10-28, run twice on the card): **m = 0.1 still misses the 1e-8 gate** —
+  E19/D² 2.2e-7 (identical both runs), down from 8.6e-6 (120×25) and 1.2e-6 (150×30), ~6× per rung, so the gate
+  sits near 240×48. X is already grid-converged there (2.7559726, vs 2.7559756 at 120×25). m = 0.2 passes and
+  reproduces (2.9e-9). m = 0.3 and 0.5 sit on a run-to-run noisy floor at this n = 32k: across the two identical
+  runs E19 1.2e-8 / 3.8e-7 (m 0.3, the second's Newton stalling at 6.4e-12) and 5.0e-8 / 1.3e-6 (m 0.5), both UP
+  from 150×30 (1.4e-9, 3.2e-9), while X holds to 9 digits (2.41053484, 2.17547410) and σ to 8. The GPU solve's
+  reductions are non-deterministic, and the dense solve's round-off floor rises with the grid. Chasing the
+  m = 0.1 gate by grid alone runs into that floor; either accept the small-m rungs on their falling-with-grid
+  trend or treat the fixed-small-m gate as resolution-limited.
 
 The 120×25 CPU ladder (fam_b_0003, `first-v-0003-120`, 7 min): X converges to 6 digits against 96×20
 (m = 0.1: X 2.75597558), E19 at m = 0.1 still 8.6e-6; m = 0.5 ticked up (2.9e-8 → 6.8e-8), floor-like.
@@ -188,9 +195,11 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. Finish `first-v-0025-150` (stopped after m = 0.2) and the 180×36 rung for the m = 0.1 gate
-   (`pipeline.py run <stage> --gpu N`; each is about a minute on a card).
-2. Step 3 proper: scan Q(ψ) beyond the pure kink at three spins, same gates and pins.
+1. Step 3 proper: scan Q(ψ) beyond the pure kink at three spins, same gates and pins. (The 2026-10-28 GPU pass
+   closed the two queued rungs: the fam_b_0025 ladder is complete and the 180×36 rung ran whole — the m = 0.1
+   gate stays resolution-limited, see Now.)
+2. Decide the small-m acceptance (gate at the floor vs the falling-with-grid trend) before the scan quotes
+   m ≤ 0.1 members.
 
 ## GPU notes
 
@@ -205,7 +214,10 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
   `jacfwd` OOMs). `MatterCollocationProblem` reads it through `jacobian.dense_jacobian`; the spinning package's
   V = 0 `CollocationProblem`, the validation reference, keeps its published CPU `jacfwd`. `first_matter_solve.py`
   takes `--gpu CARD` and `--jac-chunk` (`device.select_device`), which also sets
-  `XLA_PYTHON_CLIENT_PREALLOCATE=false` so a solve takes only what it uses on a shared card.
+  `XLA_PYTHON_CLIENT_ALLOCATOR=cuda_async` so a solve takes only what it uses on a shared card and gives it back
+  between solves. (2026-10-28: with jax's default allocator — a grow-only pool capped at 75 % of the card — the
+  180×36 ladder solved m = 0 then OOM'd every m > 0 Jacobian on a contiguous 16.9 GiB ask into the fragmented
+  pool; `cuda_async` ran the same ladder whole, twice.)
 - **Verified 2026-10-28**: at 48×12 the GPU run reproduces the CPU ladder digit for digit (X 2.75525806,
   σ 1.0013837069, E19 1.8e-3), Newton at round-off; the CPU chunked path (`WH_JAC_CHUNK=256`) likewise. GPU jobs
   run with a 220 GB address-space cap: CUDA's virtual reservations need the headroom, the resident set stays small.
