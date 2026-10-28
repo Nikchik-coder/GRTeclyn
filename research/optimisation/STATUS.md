@@ -245,8 +245,9 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 1. Step 4, continued: multi-node clouds (the layer count) and the sign freedom; the cloud knobs (m_χ, φ_c) at the
    other two spins; continuation between cloud rungs instead of per-rung star reseeding (two rungs failed Newton
    from the raw star seed on the stiff shape).
-2. The shape knob's true bottom needs more than rays: a finer grid for the frontier (the monitors there are the
-   resolution tail) and/or step 6's optimizer with the m, q₁, q₂ knobs together.
+2. The shape knob's true bottom needs more than rays: the q₃ fan broke the m₋ collapse (two independent dials —
+   m₋ and the mid-kink barrier profile), so step 6's optimizer should carry (m, q₁, q₂, q₃) together, on a finer
+   grid for the frontier (the monitors there are the resolution tail).
 3. Decide the floor acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes m ≤ 0.1
    members or the layered frontier rows: the dense solve's round-off floor rises with n and flips PASS/ABOVE-GATE
    near the gate between identical runs, and on the stiff shape + cloud rows it sits at 2e-7–1e-6 while X holds
@@ -291,6 +292,14 @@ the step-1/2 gates on every row.
   admissibility stop added to the ray mode). The fan moved the v_e 0.85 best clean to X 1.16011 at (1.5, 4.5)
   (−20.6 % vs V = 0) and the v_e 0.50 frontier to 1.82861 at (6.6, 2.2); at v_e 0.27 the below-axis ray (0.3, −0.1)
   walked farthest, to (6, −2). The figure's (a)–(c) panels show every solved point.
+- **q₃ fan — the far-well-mass collapse BREAKS at cubic order** (2026-10-28, job `q3-fan-0003-150`; the ray mode
+  takes any shape order now, TSV `fam_b_0003_rays3_150x30.tsv`). Two findings at fixed m₋ = m√(1+Σq): (i) pure q₁
+  beats pure q₃ at every matched Σq (X 2.24021 vs 2.32077 at Σq = 2.4, 2.21106 vs 2.30489 at 3.0 — weight at
+  lower powers of u pays more); (ii) the m₋-NEUTRAL ray (+0.3, 0, −0.3) — Q = 1 + 0.3k·u(1 − u²), both vacua's
+  curvatures untouched — walked to (4.8, 0, −4.8) with X falling the whole way, 2.41053 → 2.22486 (−7.7 % at
+  CONSTANT m₋, Newton the stop), and its reverse (−0.3, 0, +0.3) rises immediately. So the shape family is at
+  least two-dimensional: m₋ AND where Q's weight sits across the kink (mid-kink barrier height). Two knobs are
+  not enough; step 6's optimizer should carry (m, q₁, q₂, q₃).
 - Mechanics: `scan_potential.py` accepts a line-search stall at ≤ 1e-11 as a solve (the step-1 Newton gate;
   2026-10-28, the m-anchor chain stalled at 1.1e-14 against tol 1e-14). argparse needs the `--q2=-0.3,0` form for
   leading-dash lists (so the `pipeline.toml` stages use it). The ray TSVs are packed beside the others in

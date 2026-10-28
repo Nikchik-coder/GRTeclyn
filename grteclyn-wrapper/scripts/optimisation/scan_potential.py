@@ -58,14 +58,19 @@ TOL = 1e-14
 C_GATE = 0.05
 MONITOR_GATE = 1e-8
 
-TSV_HEADER = ("member\tnx\tny\tmode\tmass\tgamma\tq1\tq2\tnewton\titers\t"
-              "X\tdX_kink\tsigma\tpsi_minus\tR_e\tE19\tE_c\ttails\tminQ\t"
-              "verdict\n")
+def tsv_header(n_q: int) -> str:
+    qcols = "\t".join(f"q{k + 1}" for k in range(n_q))
+    return (f"member\tnx\tny\tmode\tmass\tgamma\t{qcols}\tnewton\titers\t"
+            "X\tdX_kink\tsigma\tpsi_minus\tR_e\tE19\tE_c\ttails\tminQ\t"
+            "verdict\n")
 
 
-def min_q(q1: float, q2: float) -> float:
+def min_q(*q: float) -> float:
     u = np.linspace(0.0, 1.0, 1001)
-    return float(np.min(1.0 + q1 * u + q2 * u * u))
+    acc = np.ones_like(u)
+    for k, qk in enumerate(q):
+        acc = acc + qk * u ** (k + 1)
+    return float(np.min(acc))
 
 
 def main() -> int:
@@ -82,8 +87,9 @@ def main() -> int:
                     help="gamma-scan values, walked in order from the "
                          "member's gamma (switches the scan axis)")
     ap.add_argument("--rays", default=None,
-                    help="semicolon-separated (dq1,dq2) directions for the "
-                         "open-ended ray walk (switches the scan axis)")
+                    help="semicolon-separated (dq1,dq2[,dq3,...]) directions "
+                         "for the open-ended ray walk (switches the scan "
+                         "axis; kink_q takes any shape order)")
     ap.add_argument("--nx", type=int, default=None)
     ap.add_argument("--ny", type=int, default=None)
     ap.add_argument("--gpu", type=int, default=None, metavar="CARD",
@@ -102,13 +108,17 @@ def main() -> int:
     nx = args.nx or sol.nx
     ny = args.ny or sol.ny
     mode = "gamma" if args.gammas else ("rays" if args.rays else "shape")
+    rays = ([tuple(float(v) for v in r.split(","))
+             for r in args.rays.split(";")] if args.rays else [])
+    n_q = max([2] + [len(r) for r in rays])
     name = args.solution.rsplit("/", 1)[-1]
     stem = name.rsplit(".", 1)[0]
+    fname_mode = f"rays{n_q}" if mode == "rays" and n_q > 2 else mode
     out = pathlib.Path(args.out or f"runs/optimisation/scans/"
-                                   f"{stem}_{mode}_{nx}x{ny}.tsv")
+                                   f"{stem}_{fname_mode}_{nx}x{ny}.tsv")
     out.parent.mkdir(parents=True, exist_ok=True)
     if not out.exists():
-        out.write_text(TSV_HEADER)
+        out.write_text(tsv_header(n_q))
 
     # the member holding J on its own grid, and its measured throat
     p1 = MatterCollocationProblem(
@@ -186,13 +196,15 @@ def main() -> int:
         return row, nxt
 
     def record(gamma, q, row, x_ref):
+        q = tuple(q) + (0.0,) * (n_q - len(q))
         tag = (f"gamma {gamma:+.4f}" if mode == "gamma"
-               else f"q1 {q[0]:+.2f} q2 {q[1]:+.2f}")
+               else " ".join(f"q{i + 1} {v:+.2f}" for i, v in enumerate(q)))
+        qvals = "\t".join(f"{v:g}" for v in q)
         if row["verdict"] == "FAILED":
             print(f"  {tag}: NEWTON FAILED ({row['err']})  "
                   f"[{row['secs']:.0f}s]", flush=True)
             line = (f"{name}\t{nx}\t{ny}\t{mode}\t{args.mass:g}\t{gamma:g}\t"
-                    f"{q[0]:g}\t{q[1]:g}\tnan\tnan\tnan\tnan\tnan\tnan\tnan\t"
+                    f"{qvals}\tnan\tnan\tnan\tnan\tnan\tnan\tnan\t"
                     f"nan\tnan\tnan\t{min_q(*q):.3f}\tFAILED\n")
         else:
             dxk = "" if x_ref is None else f" (dXk {row['X'] - x_ref:+.3e})"
@@ -203,7 +215,7 @@ def main() -> int:
                   f"tails {row['tails']:.1e}  minQ {min_q(*q):.2f}  "
                   f"{row['verdict']}  [{row['secs']:.0f}s]", flush=True)
             line = (f"{name}\t{nx}\t{ny}\t{mode}\t{args.mass:g}\t{gamma:g}\t"
-                    f"{q[0]:g}\t{q[1]:g}\t{row['newton']:.3e}\t"
+                    f"{qvals}\t{row['newton']:.3e}\t"
                     f"{row['iters']}\t{row['X']:.10e}\t"
                     f"{'nan' if x_ref is None else f'{row['X'] - x_ref:.3e}'}"
                     f"\t{row['sigma']:.10f}\t{row['psim']:.10f}\t"
@@ -240,15 +252,13 @@ def main() -> int:
         return 0
 
     if mode == "rays":
-        for ray in args.rays.split(";"):
-            # dq names: d2 is the monitors' D^2 normalizer in solve()
-            dq1, dq2 = (float(v) for v in ray.split(","))
+        for dq in rays:
             prev_r, last_x = prev, x_kink
             above = rising = 0
             k = 0
             while True:
                 k += 1
-                q = (round(k * dq1, 10), round(k * dq2, 10))
+                q = tuple(round(k * d, 10) for d in dq)
                 if min_q(*q) <= 0.0:
                     why = "min Q <= 0: inadmissible"
                     break
@@ -267,8 +277,8 @@ def main() -> int:
                 if rising >= 3:
                     why = "X rising: the minimum is behind us"
                     break
-            print(f"  ray ({dq1:g},{dq2:g}) stopped at rung {k}: {why}",
-                  flush=True)
+            print(f"  ray ({','.join(f'{d:g}' for d in dq)}) stopped at "
+                  f"rung {k}: {why}", flush=True)
         return 0
 
     q1s = [float(v) for v in args.q1.split(",")]
