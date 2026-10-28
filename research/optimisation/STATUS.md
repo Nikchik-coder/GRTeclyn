@@ -211,8 +211,10 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Step 3 record (2026-10-28)
 
-All six scans through `pipeline.py run <stage> --gpu N` (capped jobs of the same names; TSVs in the node's
-`runs/optimisation/scans/fam_b_00{03,12,25}_{shape,gamma}_150x30.tsv`), at 150×30, kink mass 0.3 (the gate-clean
+All six scans through `pipeline.py run <stage> --gpu N` (capped jobs of the same names; TSVs packed into
+`results/optimisation/scans/`, the kink ladders into `results/optimisation/ladders_150x30.tsv`, and the figure —
+`plot_potential_scans.py` in `visualisation/optimisation/`, which reads only the packed TSVs — into
+`results/optimisation/figures/potential_scans`), at 150×30, kink mass 0.3 (the gate-clean
 anchor), J and R_e pinned per member, each point a full Newton solve continued from its nearest solved neighbour,
 the step-1/2 gates on every row.
 
