@@ -236,9 +236,24 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     `ComplexExoticScalarField` is unused and phantom-signed while the winding field is canonical; `RadialRecipe`
     picks one matter model per run. The initial data must also set the clouds' time derivatives from ω_χ and
     ω_z + kω.
-- [ ] **8. Wire the multi-field example.** A `SpinningWormhole` variant on the compiled matter classes, with the
-  t = 0 contract check. Done when the check passes and a bare-KK table evolves identically through the new path.
-  Carries the step-7 finding above: the combined matter class is a prerequisite, not wiring.
+  - [ ] **The C++ fix plan** (2026-10-28; all of it before the step-9 evolutions, no new physics, smallest first):
+    1. *Bare-field winner (small).* A ~30-line polynomial kink-potential header for `ExoticScalarField`
+       (coefficients from the solver via 𝒱 = 8πV, ψ = √(4π)φ); B as a 7th table column, with B² scaling γ_ij and
+       K_ij in `SpinningWormholeInitialData`. That is steps 7–8 for this winner, whole. Check: a V = 0, B = 1
+       table evolves identically to today's path.
+    2. *Layered and winding winners (moderate).* ONE new matter class: the real phantom with its own potential
+       plus up to two canonical complex fields, each with its own `ComplexScalarPotential` and its own state
+       slots, stress-energy summed, each field's evolution reusing `ScalarFieldKernels` — roughly 250 lines plus
+       a new `StateVariables` for a spinning-wormhole variant. A NEW class, never an edit of the existing ones:
+       the merger binaries are built from those.
+    3. *Initial data for the new fields.* χ = X with its time derivative set by ω_χ; Λ = Z e^{ikφ} with its time
+       derivative set by ω_z + kω. Checks: with zero cloud it reproduces step 1 exactly, and the cloud alone
+       matches the Bondi star run through `ComplexScalarField`. Building and the t = 0 checks need no card; any
+       test evolution waits for the go.
+- [ ] **8. Wire the multi-field example.** A `SpinningWormhole` variant on the matter classes — which are NOT
+  already compiled for the layered and winding winners (the step-7 finding and fix plan above; the plan's Split
+  card said otherwise and is corrected by it) — with the t = 0 contract check. Done when the check passes and a
+  bare-KK table evolves identically through the new path.
 - [ ] **9. Evolve the winners** on the GPU, under the standing launch rules (nothing starts without the go). Done
   when each frontier member has a three-resolution verdict.
 - [ ] **10. Publish by the outcome tree.** The minimal-exoticity landscape (the Pareto frontier and the design chart)
@@ -317,24 +332,26 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-0. **Step 5's defect first**: run the discriminating test (ω∞-prescribed cloud, no J row — the scratch
-   `winding_debug2.py`, recreatable from the step-5 sub-item), convict the wrong equation (J row's `j_matter`
-   integral the prime suspect: deta-amplified outer-node junk; fix candidate — integrate the twist source in
-   Chebyshev coefficient space or damp the outer nodes), then rerun the 48×12 → 96×20 → 150×30 ladder and demand
-   E19 falls with the grid. Nothing from step 5 is quotable before that.
-1. Step 4, continued: multi-node clouds (the layer count) and the sign freedom; the cloud knobs (m_χ, φ_c) at the
+1. **The bare-field campaign continues** (decided 2026-10-28: the potential-only profile needs no new C++ beyond
+   the small step-7 fix, so it explores while steps 4–5 wait): the (m, q₁, q₂, q₃) search together at the three
+   spins — the q₃ fan showed two independent dials, so rays are not enough; a derivative-free optimizer over the
+   shape at pinned J and R_e, gates on every accepted point, on the cards.
+2. **The stability screen starts now** (moved up 2026-10-28 with the bare-field decision; the step-6 sub-item has
+   the full spec): first the 1D radial m = 0 growth rate on the static (J = 0) kink backgrounds, gated on the
+   known Ellis unstable mode, as the first stability column of the potential search; the rotating 2D eigenproblem
+   after.
+3. **Step 5's defect, parked until the bare-field pass lands**: run the discriminating test (ω∞-prescribed cloud,
+   no J row — the scratch `winding_debug2.py`, recreatable from the step-5 sub-item), convict the wrong equation
+   (J row's `j_matter` integral the prime suspect: deta-amplified outer-node junk; fix candidate — integrate the
+   twist source in Chebyshev coefficient space or damp the outer nodes), then rerun the 48×12 → 96×20 → 150×30
+   ladder and demand E19 falls with the grid. Nothing from step 5 is quotable before that.
+4. Step 4, continued: multi-node clouds (the layer count) and the sign freedom; the cloud knobs (m_χ, φ_c) at the
    other two spins; continuation between cloud rungs instead of per-rung star reseeding (two rungs failed Newton
    from the raw star seed on the stiff shape).
-2. The shape knob's true bottom needs more than rays: the q₃ fan broke the m₋ collapse (two independent dials —
-   m₋ and the mid-kink barrier profile), so step 6's optimizer should carry (m, q₁, q₂, q₃) together, on a finer
-   grid for the frontier (the monitors there are the resolution tail).
-3. Decide the floor acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes m ≤ 0.1
+5. Decide the floor acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes m ≤ 0.1
    members or the layered frontier rows: the dense solve's round-off floor rises with n and flips PASS/ABOVE-GATE
    near the gate between identical runs, and on the stiff shape + cloud rows it sits at 2e-7–1e-6 while X holds
    to 9 digits across three grids.
-4. After step 5: the m = 0 growth-rate solver (the step-6 sub-item above) — the pre-GPU stability screen, gated on
-   static Ellis then the published spinning growth rates; and the one-score-or-two decision (bill + growth rate
-   combined vs the two-axis frontier).
 
 ## Step 3 record (2026-10-28)
 
