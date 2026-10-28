@@ -13,6 +13,13 @@ bill X = |VIQ|/R_e per point, the step-1/2 gates printed on every row:
     point continues Newton from the nearest solved neighbour.
   - the gamma scan (--gammas): the end-mass asymmetry, continued in
     the given order from the member's own gamma, at the pure kink.
+  - the ray walk (--rays "dq1,dq2;..."): open-ended continuation
+    outward from the kink along each (dq1, dq2) direction, one step
+    per rung, with NO preset box (decided 2026-10-28): a ray stops
+    only when the solutions themselves say stop -- Newton fails, the
+    unimposed monitors exceed 1e-6 on two consecutive rungs (well past
+    the grid's floor scatter: the resolution limit), or X rises on
+    three consecutive rungs (the minimum is behind us).
 
 The anchor chain is the ladder's (first_matter_solve.py): the m = 0
 pinned solve, then the pure kink continued in thirds of the scan mass.
@@ -74,6 +81,9 @@ def main() -> int:
     ap.add_argument("--gammas", default=None,
                     help="gamma-scan values, walked in order from the "
                          "member's gamma (switches the scan axis)")
+    ap.add_argument("--rays", default=None,
+                    help="semicolon-separated (dq1,dq2) directions for the "
+                         "open-ended ray walk (switches the scan axis)")
     ap.add_argument("--nx", type=int, default=None)
     ap.add_argument("--ny", type=int, default=None)
     ap.add_argument("--gpu", type=int, default=None, metavar="CARD",
@@ -91,7 +101,7 @@ def main() -> int:
     psim0 = -math.pi * sol.observables["D"] / sol.eta0
     nx = args.nx or sol.nx
     ny = args.ny or sol.ny
-    mode = "gamma" if args.gammas else "shape"
+    mode = "gamma" if args.gammas else ("rays" if args.rays else "shape")
     name = args.solution.rsplit("/", 1)[-1]
     stem = name.rsplit(".", 1)[0]
     out = pathlib.Path(args.out or f"runs/optimisation/scans/"
@@ -227,6 +237,35 @@ def main() -> int:
             record(g, (0.0, 0.0), row, x_kink)
             if nxt is not None:
                 prev = nxt
+        return 0
+
+    if mode == "rays":
+        for ray in args.rays.split(";"):
+            # dq names: d2 is the monitors' D^2 normalizer in solve()
+            dq1, dq2 = (float(v) for v in ray.split(","))
+            prev_r, last_x = prev, x_kink
+            above = rising = 0
+            k = 0
+            while True:
+                k += 1
+                q = (round(k * dq1, 10), round(k * dq2, 10))
+                row, nxt = solve(prev_r, sol.gamma, args.mass, q)
+                record(sol.gamma, q, row, x_kink)
+                if nxt is None:
+                    why = "Newton"
+                    break
+                prev_r = nxt
+                above = above + 1 if max(row["e19"], row["e_c"]) > 1e-6 else 0
+                rising = rising + 1 if row["X"] > last_x else 0
+                last_x = row["X"]
+                if above >= 2:
+                    why = "monitors > 1e-6 twice: the grid's limit"
+                    break
+                if rising >= 3:
+                    why = "X rising: the minimum is behind us"
+                    break
+            print(f"  ray ({dq1:g},{dq2:g}) stopped at rung {k}: {why}",
+                  flush=True)
         return 0
 
     q1s = [float(v) for v in args.q1.split(",")]

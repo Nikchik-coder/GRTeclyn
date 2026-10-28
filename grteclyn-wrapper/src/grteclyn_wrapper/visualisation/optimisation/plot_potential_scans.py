@@ -16,7 +16,10 @@ solve at pinned J and R_e, grid 150x30, from the packed TSVs:
   drainhole's -pi at the pure kink m 0.3 -- a ~ +42 % penalty, nearly
   spin-independent.
 - (f) the summary by design: X against v_e for the V = 0 member, the
-  pure kink m 0.3, and the box's best clean shape.
+  pure kink m 0.3, and the best clean shape over the box plus the open
+  ray walks (q-rays stages; every ray ended on Newton or the monitor
+  limit with X still falling, so these are frontier values at this
+  grid, not the landscape's bottom).
 
 Colours are red / green / blue by spin (the keys above (a)-(c) name
 them); ``--colors C1,C2,C3`` redraws in another scheme.
@@ -69,19 +72,25 @@ def read(path: pathlib.Path) -> list[dict]:
 
 
 def shape(member: str) -> dict:
-    """The member's (q1, q2) landscape: X / X_kink - 1 in percent (nan
-    where no solution exists), and the box's best clean point."""
+    """The member's (q1, q2) landscape: X / X_kink - 1 in percent over the
+    box (nan where no solution exists), the box's best clean point, and the
+    best clean point over the box plus the open ray walks."""
     rows = read(SCANS / f"{member}_shape_{GRID}.tsv")
+    rays = SCANS / f"{member}_rays_{GRID}.tsv"
     kink = next(r["X"] for r in rows if r["q1"] == 0.0 and r["q2"] == 0.0)
     rel = np.full((len(QS), len(QS)), np.nan)      # [q2, q1]
-    best = (math.inf, None)
-    for r in rows:
+    box_best = best = (math.inf, None)
+    for r in rows + (read(rays) if rays.exists() else []):
         if math.isnan(r["X"]):
             continue
-        rel[QS.index(r["q2"]), QS.index(r["q1"])] = 100.0 * (r["X"] / kink - 1.0)
+        if r["q1"] in QS and r["q2"] in QS:
+            rel[QS.index(r["q2"]), QS.index(r["q1"])] = \
+                100.0 * (r["X"] / kink - 1.0)
+            if r["verdict"] == "PASS" and r["X"] < box_best[0]:
+                box_best = (r["X"], (r["q1"], r["q2"]))
         if r["verdict"] == "PASS" and r["X"] < best[0]:
             best = (r["X"], (r["q1"], r["q2"]))
-    return {"rel": rel, "kink": kink, "best": best}
+    return {"rel": rel, "kink": kink, "box_best": box_best, "best": best}
 
 
 def gamma(member: str) -> dict:
@@ -131,7 +140,7 @@ def draw(shapes, gammas, lads, colours):
         mesh = ax.pcolormesh(edges, edges, np.ma.masked_invalid(s["rel"]),
                              cmap=cmap, vmin=-vmax, vmax=vmax,
                              edgecolors="white", lw=0.4)
-        ax.plot([s["best"][1][0]], [s["best"][1][1]], **dot)
+        ax.plot([s["box_best"][1][0]], [s["box_best"][1][1]], **dot)
         ax.set(xticks=QS, yticks=QS, xlabel="$q_1$", aspect="equal")
         style.legend_top(ax, [key(line(c), f"$v_e = {ve:.2f}$")], **TIGHT)
     top[0].set_ylabel("$q_2$")

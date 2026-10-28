@@ -18,13 +18,15 @@ package with the GPU port and the pipeline (2026-10-28).
 
 ## Now (2026-10-28, after the step-3 scans)
 
-**Nothing is running** (the six step-3 scans finished ~06:55 UTC / 09:55 MSK; both cards verified clear). **Step 3's
-first-pass answer: the landscape is NOT flat.** The shape scan (Q = 1 + q₁u + q₂u², `potentials.kink_q`,
-`scan_potential.py`, 5×5 box at kink mass 0.3, J and R_e pinned, 150×30 on the cards) lowers the bill monotonically
-toward +q₁, +q₂ at all three spins — best clean PASS: −21.8 % / −21.5 % / −16.4 % against the V = 0 member — and
-the slope still points outside the box, so the shape knob is not exhausted. The γ scan walks to the drainhole's −π
-and the bill RISES monotonically, ≈ +42 % at γ = −π at all three spins (a nearly spin-independent relative
-penalty); asymmetry costs, it never pays ([Step 3 record](#step-3-record-2026-10-28)). The
+**Nothing is running** (the six step-3 scans finished ~06:55 UTC / 09:55 MSK, the three open ray walks ~07:20 UTC /
+10:20 MSK; both cards verified clear). **Step 3's answer: the landscape is NOT flat, and no bottom was found.** The
+shape scan (Q = 1 + q₁u + q₂u², `potentials.kink_q`, `scan_potential.py`, 5×5 box at kink mass 0.3, J and R_e
+pinned, 150×30 on the cards) lowers the bill monotonically toward +q₁, +q₂ at all three spins, and the open ray
+walks past the box (decided 2026-10-28: no preset limits, the gates call the stop) kept descending until Newton or
+the 1e-6 monitor ceiling ended every ray — best clean against the V = 0 member: **−27.3 % / −26.9 % / −17.1 %** at
+v_e 0.27 / 0.50 / 0.85, frontier (monitors above the 1e-8 gate but under 1e-6) −32 % / −30 % / −24 %. The γ scan
+walks to the drainhole's −π and the bill RISES monotonically, ≈ +42 % at γ = −π at all three spins (a nearly
+spin-independent relative penalty); asymmetry costs, it never pays ([Step 3 record](#step-3-record-2026-10-28)). The
 solver now runs on the GPU ([GPU notes](#gpu-notes): port done and verified 2026-10-28), and the campaign has an
 entry point: `grteclyn-wrapper/scripts/optimisation/pipeline.py plan | list | run <stage> [--gpu N]`, with the
 stages in `pipeline.toml` beside it. The campaign's code moved out of `analysis/spinning_wormhole/` into the
@@ -203,11 +205,12 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. Widen the shape box past its +q₁,+q₂ edge (the scans are monotone into the corner at every spin), or pull
-   step 6's optimizer forward for this one knob; same gates and pins, stages in `pipeline.toml`.
-2. Step 4: the normal-matter layer (the second canonical scalar χ, the J = 0 dressed-star cross-check).
+1. Step 4: the normal-matter layer (the second canonical scalar χ, the J = 0 dressed-star cross-check). (The ray
+   walks closed the widen-the-box item: every ray ran to the solver/grid limit with X still falling.)
+2. The shape knob's true bottom needs more than rays: a finer grid for the frontier (the monitors there are the
+   resolution tail) and/or step 6's optimizer with the m, q₁, q₂ knobs together.
 3. Decide the small-m acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes
-   m ≤ 0.1 members.
+   m ≤ 0.1 members; the same floor noise flips PASS/ABOVE-GATE verdicts near the gate between identical runs.
 
 ## Step 3 record (2026-10-28)
 
@@ -233,9 +236,19 @@ the step-1/2 gates on every row.
   2.41053 → 3.42888 (v_e 0.27), 2.13174 → 3.03551 (v_e 0.50), 1.24120 → 1.76892 (v_e 0.85) at γ = −π: +42 % at
   all three spins, nearly spin-independent, with σ falling to ≈ 0.52–0.54 (the pinned throat compresses the
   solution). End-mass asymmetry buys nothing anywhere on the walk.
+- **Open ray walks** (same day, the box's +q₁,+q₂ edge was never a bottom; `--rays "0.3,0;0,0.3;0.3,0.3"`, stages
+  `q-rays-*-150`): no preset limits — a ray stops on Newton failure, monitors > 1e-6 twice running, or X rising
+  three rungs. Every ray ended on Newton or the monitor ceiling with X still falling: the landscape descends past
+  everything reached, and the limit is the solver/grid, not the physics. Frontiers: v_e 0.27 X 2.03657 at
+  (5.4, 5.4); v_e 0.50 X 1.84193 at (7.2, 0) — its pure-q₁ ray ran to q₁ = 7.2 before the monitor stop; v_e 0.85
+  X 1.10451 at (7.2, 7.2). Best clean: 2.17720 at (2.4, 2.4), 1.92007 at (2.7, 2.7); at v_e 0.85 no rung past the
+  box came in under the 1e-8 gate (E19 sat at 1e-8–1e-6), so its best clean stays the box corner, 1.21174. The
+  rung at (0.6, 0.6) re-solved PASS in the walks after flagging ABOVE-GATE in the box scan (X agreeing to 1e-5):
+  the monitor verdict near the gate carries the known run-to-run floor noise.
 - Mechanics: `scan_potential.py` accepts a line-search stall at ≤ 1e-11 as a solve (the step-1 Newton gate;
   2026-10-28, the m-anchor chain stalled at 1.1e-14 against tol 1e-14). argparse needs the `--q2=-0.3,0` form for
-  leading-dash lists (so the `pipeline.toml` stages use it).
+  leading-dash lists (so the `pipeline.toml` stages use it). The ray TSVs are packed beside the others in
+  `results/optimisation/scans/`, and the figure's (f) panel takes its best clean shape from box + rays.
 
 ## GPU notes
 

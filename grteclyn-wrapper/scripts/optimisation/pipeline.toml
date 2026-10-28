@@ -117,3 +117,34 @@ args = ["results/spinningwormhole/solutions/fam_b/fam_b_0025.json",
         "--mass", "0.3",
         "--gammas=-0.3927,-0.7854,-1.1781,-1.5708,-1.9635,-2.3562,-2.7489,-3.1416",
         "--nx", "150", "--ny", "30"]
+
+# -- step 3 extension: the open-ended ray walks (decided 2026-10-28) ---------
+# No preset box past +q1,+q2: each ray continues until Newton fails, the
+# monitors pass 1e-6 twice running, or X rises three rungs.
+
+[[stage]]
+name = "q-rays-0003-150"
+step = "3"
+title = "fam_b_0003 (v_e 0.27) open ray walk at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0003.json",
+        "--mass", "0.3", "--rays", "0.3,0;0,0.3;0.3,0.3",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-rays-0012-150"
+step = "3"
+title = "fam_b_0012 (v_e 0.50) open ray walk at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0012.json",
+        "--mass", "0.3", "--rays", "0.3,0;0,0.3;0.3,0.3",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-rays-0025-150"
+step = "3"
+title = "fam_b_0025 (v_e 0.85) open ray walk at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0025.json",
+        "--mass", "0.3", "--rays", "0.3,0;0,0.3;0.3,0.3",
+        "--nx", "150", "--ny", "30"]
