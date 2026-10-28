@@ -17,10 +17,20 @@ Commits so far: fc086e35, 7f090b51, 424fbe66, fdd8bd9b, 76f4bebf, 4bea3ebd (the 
 bill, and the step-2 close — tidal and the first V ≠ 0 solves (2026-10-27); then the move into the `optimisation`
 package with the GPU port and the pipeline (2026-10-28).
 
-## Now (2026-10-28 evening, step 5 open on a flagged J row; paused)
+## Now (2026-10-28 evening, step 5 open on a flagged J row; bare-field optimizer + stability screen running)
 
-**Nothing is running** (the last job, `winding-96-gpu`, ended 14:22 UTC / 17:22 MSK; both cards verified clear,
-scratch clean — only `_cache`, 579 G free). **Step 5's winding brick is in**: the winding field Λ = Z e^{i(ω_z t + kφ)}
+**The 4-knob bare-field optimizer is live and paying** (`optimize_potential.py`, Nelder–Mead over (m, q₁, q₂, q₃)
+at pinned J and R_e, gate penalties on every point, nearest-solved-seed continuation, 150×30 on the cards): the
+first two 200-eval runs finished 14:52 UTC — **fam_b_0012 (v_e 0.50) best clean X 1.69676 at m 0.538,
+q (2.173, 2.414, 0.386)** (E19 6.7e-10, E_c 3.8e-10; frontier 1.67230 at m 0.576) and fam_b_0003 (v_e 0.27) best
+clean X 2.03471 at m 0.397, q (2.202, 2.867, −0.002) (frontier 1.98056 at m 0.448) — both past every step-3
+scan/ray frontier at their spin, found by the optimizer alone. The third start (fam_b_0025, x0 0.3, 1.5, 4.5, 0)
+runs on a card (`opt4-0025-150b`; the first start died on a marginal walk-in stall, the walk-in bisects now).
+**The stability screen's first rung is built and GATED** (`stability_radial.py` +
+`derive_radial_perturbation.py` + `check_growth_rate.py`: the 1D radial m = 0 pencil in a zero-shift conformal
+gauge regular through the throat; derivation λ-structure PASS, 50-digit transcription PASS at 3.8e-16, and the
+drainhole gate **PASS: λη₀ = 0.389823 vs the published 0.390** at nx 200, grid-converged — the step-6 sub-item has
+the gauge-mode finding that forced two-grid eigenvalue selection). **Step 5's winding brick is in**: the winding field Λ = Z e^{i(ω_z t + kφ)}
 derived and machine-checked (span rank 9, forms 2.6e-51, the N-row identity with winding at k = 1–3), the solver
 carries it (ζ = Z/sin^kθ regular chart, the J row = flux + matter, `pin_zeta` amplitude continuation, the
 frozen-metric linear-mode seeding — the fixed-ω_z and gaussian-seeded routes both demonstrably fail), 19 tests
@@ -208,6 +218,10 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
   rate in the loop, the traversability bounds and stability as inequality constraints, the batched GPU search as an
   option. Products: the Pareto frontier of bill against instability rate and spin, and the design chart. Done when
   the frontier is stationary under more budget, every member passes a grid-change re-solve, and the chart is filled.
+  - [~] **The 4-knob shape optimizer runs** (2026-10-28, `optimize_potential.py`: Nelder–Mead over
+    (m, q₁, q₂, q₃), bounds m ∈ [0.15, 1.2], gate penalties — inadmissible/Newton-failed worst+1, frontier +0.1,
+    above-gate +1 — nearest-solved-seed continuation with a walk-in chain, TSV per run in `runs/optimisation/opt/`).
+    First 200-eval results in the [step 6 record](#step-6-record-2026-10-28).
   - [ ] **The m = 0 growth-rate solver — the pre-GPU stability screen** (decided 2026-10-28: the first
     infrastructure piece after step 5's winding brick; today nothing in steps 1–4 checks stability before a GPU
     run, so the frontier has no second axis and the cards would judge unscreened candidates). Linearize the
@@ -218,6 +232,22 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
     static Ellis single unstable radial mode, then the published 3+1 growth rates across the spinning families
     (the rotation-slows-instability paper is the calibration set). Fallbacks if the eigenproblem is slow to land:
     the 1D radial J = 0 check (the dressed-star machinery is close to it), or a short coarse one-card 3+1 screen.
+    **The 1D radial rung is built and gated PASS** (2026-10-28): `optimisation/stability_radial.py` (pencil
+    K u = −λ²M u, Lobatto + arctan map, Dirichlet decay rows, the unimposed E_tt/E_tη monitors on the mode),
+    derived and machine-checked by `derive_radial_perturbation.py` (zero-shift conformal gauge
+    ds² = −e^F dt² + P²e^{−F}[dη² + h dΩ²], regular through the throat; imposed ee/θθ/KG carry λ only as λ²
+    PASS, E_tη exactly linear PASS; 50-digit transcription PASS at 3.8e-16), gated by `check_growth_rate.py` on
+    the closed-form drainhole: **λη₀ = 0.389823 vs the published 0.390 (arXiv:2301.05243, C = 1 at J = 0), rel
+    5e-4, drift 1.2e-4 over nx 150→200**; the γ = 0 symmetric Ellis gives λη₀ = 1.182. The predicted trap bit
+    exactly as predicted: the pencil keeps exact GAUGE solutions (the constant-tail mode (dF, dP) → (c, c/2),
+    dψ → 0 satisfies all five rows at ANY λ and leaks through the Dirichlet rows), so every eigenvector is
+    gauge-polluted (the physical mode carries dψ/peak ~ 1e-4) and NO within-grid filter works — localization
+    fails on the vector, and gauge modes satisfy the constraint monitors too; a (1−ξ²)-basis buys nothing. What
+    junk cannot do is hold its eigenvalue under a grid change: the physical λ² repeats to ≤ 1e-4 between grids
+    while every spurious value moves by factors, so `growth_rate` selects by TWO-GRID MATCHING (match_frac 0.7,
+    match_tol 5e-2, λ² floor 1e-3) and the tt/tη monitors are reported at the pollution level (~5e-2), not
+    round-off — the verdict rests on eigenvalue convergence plus the published-rate calibration. Next: run it on
+    the solved kink/optimizer backgrounds (V ≠ 0 enters through V0/V1/V2), then the rotating 2D problem.
   - [ ] The score with stability in it: whether the search objective combines the exotic bill and the growth rate
     into one number (a weighted penalty) or keeps them as the two-axis Pareto frontier — decide once the
     growth-rate solver exists (raised 2026-10-28); the frontier is the paper's product either way.
@@ -336,10 +366,10 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
    the small step-7 fix, so it explores while steps 4–5 wait): the (m, q₁, q₂, q₃) search together at the three
    spins — the q₃ fan showed two independent dials, so rays are not enough; a derivative-free optimizer over the
    shape at pinned J and R_e, gates on every accepted point, on the cards.
-2. **The stability screen starts now** (moved up 2026-10-28 with the bare-field decision; the step-6 sub-item has
-   the full spec): first the 1D radial m = 0 growth rate on the static (J = 0) kink backgrounds, gated on the
-   known Ellis unstable mode, as the first stability column of the potential search; the rotating 2D eigenproblem
-   after.
+2. **The stability screen's first rung is gated** (2026-10-28, drainhole λη₀ = 0.3898 vs 0.390 PASS; the step-6
+   sub-item has the spec and the gauge-mode finding): next run it on the static (J = 0) kink and
+   optimizer-winner backgrounds as the first stability column of the potential search; the rotating 2D
+   eigenproblem after.
 3. **Step 5's defect, parked until the bare-field pass lands**: run the discriminating test (ω∞-prescribed cloud,
    no J row — the scratch `winding_debug2.py`, recreatable from the step-5 sub-item), convict the wrong equation
    (J row's `j_matter` integral the prime suspect: deta-amplified outer-node junk; fix candidate — integrate the
@@ -459,6 +489,26 @@ fam_b_0003, J and R_e pinned, kink m 0.3, then 𝒰_z = m_z²Z², m_z = 1, k = 1
 - Timing: a 96×20 seven-field rung solves in 4–5 s on a card; the linear-mode seed cost 476 s, nearly all the
   2(nx+1)(ny+1) = 4074 dense generalized eigenproblem in scipy on CPU — move it to the card or solve it at 48×12
   and interpolate when it matters.
+
+## Step 6 record (2026-10-28)
+
+The 4-knob optimizer's first pass (`optimize_potential.py`, Nelder–Mead over (m, q₁, q₂, q₃), kink mass bounds
+[0.15, 1.2], pinned J and R_e, 150×30 on the cards, 200 evaluations each, x0 the spin's step-3 best clean shape;
+jobs `opt4-*-150`, TSVs in `runs/optimisation/opt/`):
+
+- **fam_b_0012 (v_e 0.50): best clean X 1.69676 at m 0.538, q (2.173, 2.414, 0.386)** (E19 6.7e-10, E_c 3.8e-10;
+  frontier 1.67230 at m 0.576, q (2.112, 2.379, 0.414)). Step 3's best clean at this spin was 1.92007 at
+  (2.7, 2.7) with m fixed at 0.3 — the optimizer buys another −11.6 % by moving the mass and adding q₃ > 0.
+- **fam_b_0003 (v_e 0.27): best clean X 2.03471 at m 0.397, q (2.202, 2.867, −0.002)** (frontier 1.98056 at
+  m 0.448, q (2.004, 2.992, 0.004)). Step 3's best clean was 2.17720 at (2.4, 2.4), m 0.3: −6.5 % more. q₃
+  pinched to ~0 here — the cubic dial pays at mid spin, not at low.
+- Both simplices collapsed into tight basins well before the 200-eval cap (the last ~40 evals move X in the 5th
+  digit); the stop was maxfev, not fatol, so the basins are converged for the knob noise level, not starved.
+- Scattered NEWTON FAILED and PASS/FRONTIER flips between near-identical points along the collapsed simplex are
+  the known near-gate floor noise (step-3 record); the penalty (worst+1) just steers the simplex around them.
+- fam_b_0025 (v_e 0.85, x0 the fan's (1.5, 4.5)): the first start died in the walk-in at (0.3, 0.9, 2.7, 0),
+  Newton stalled 1.8e-11 — the straight-line chain hits the stiff-spin terrain the fan skirted. The walk-in
+  bisects toward the last solved point now (capped at 6 splits); rerun `opt4-0025-150b` in flight.
 
 ## GPU notes
 
