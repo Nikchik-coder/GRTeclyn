@@ -148,3 +148,65 @@ script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
 args = ["results/spinningwormhole/solutions/fam_b/fam_b_0025.json",
         "--mass", "0.3", "--rays", "0.3,0;0,0.3;0.3,0.3",
         "--nx", "150", "--ny", "30"]
+
+# -- step 3, for the map: the q-plane fill to 3 and the ray fan --------------
+
+[[stage]]
+name = "q-fill-0003-150"
+step = "3"
+title = "fam_b_0003 q-plane fill to 3 at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0003.json",
+        "--mass", "0.3",
+        "--q1=-0.6,-0.3,0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3",
+        "--q2=-0.6,-0.3,0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-fill-0012-150"
+step = "3"
+title = "fam_b_0012 q-plane fill to 3 at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0012.json",
+        "--mass", "0.3",
+        "--q1=-0.6,-0.3,0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3",
+        "--q2=-0.6,-0.3,0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-fill-0025-150"
+step = "3"
+title = "fam_b_0025 q-plane fill to 3 at m 0.3, 150x30"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0025.json",
+        "--mass", "0.3",
+        "--q1=-0.6,-0.3,0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3",
+        "--q2=-0.6,-0.3,0,0.3,0.6,0.9,1.2,1.5,1.8,2.1,2.4,2.7,3",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-fan-0003-150"
+step = "3"
+title = "fam_b_0003 ray fan (slopes 3, 1/3, below the axes) at m 0.3"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0003.json",
+        "--mass", "0.3", "--rays", "0.3,0.1;0.1,0.3;0.3,-0.1;-0.1,0.3",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-fan-0012-150"
+step = "3"
+title = "fam_b_0012 ray fan (slopes 3, 1/3, below the axes) at m 0.3"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0012.json",
+        "--mass", "0.3", "--rays", "0.3,0.1;0.1,0.3;0.3,-0.1;-0.1,0.3",
+        "--nx", "150", "--ny", "30"]
+
+[[stage]]
+name = "q-fan-0025-150"
+step = "3"
+title = "fam_b_0025 ray fan (slopes 3, 1/3, below the axes) at m 0.3"
+script = "grteclyn-wrapper/scripts/optimisation/scan_potential.py"
+args = ["results/spinningwormhole/solutions/fam_b/fam_b_0025.json",
+        "--mass", "0.3", "--rays", "0.3,0.1;0.1,0.3;0.3,-0.1;-0.1,0.3",
+        "--nx", "150", "--ny", "30"]

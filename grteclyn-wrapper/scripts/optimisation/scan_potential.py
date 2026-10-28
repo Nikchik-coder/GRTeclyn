@@ -249,6 +249,9 @@ def main() -> int:
             while True:
                 k += 1
                 q = (round(k * dq1, 10), round(k * dq2, 10))
+                if min_q(*q) <= 0.0:
+                    why = "min Q <= 0: inadmissible"
+                    break
                 row, nxt = solve(prev_r, sol.gamma, args.mass, q)
                 record(sol.gamma, q, row, x_kink)
                 if nxt is None:

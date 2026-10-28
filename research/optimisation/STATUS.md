@@ -23,8 +23,10 @@ package with the GPU port and the pipeline (2026-10-28).
 shape scan (Q = 1 + q₁u + q₂u², `potentials.kink_q`, `scan_potential.py`, 5×5 box at kink mass 0.3, J and R_e
 pinned, 150×30 on the cards) lowers the bill monotonically toward +q₁, +q₂ at all three spins, and the open ray
 walks past the box (decided 2026-10-28: no preset limits, the gates call the stop) kept descending until Newton or
-the 1e-6 monitor ceiling ended every ray — best clean against the V = 0 member: **−27.3 % / −26.9 % / −17.1 %** at
-v_e 0.27 / 0.50 / 0.85, frontier (monitors above the 1e-8 gate but under 1e-6) −32 % / −30 % / −24 %. The γ scan
+the 1e-6 monitor ceiling ended every ray. With the q-plane fill to 3 and the four-direction ray fan (same day,
+262 / 284 / 312 solved points per spin), best clean against the V = 0 member: **−27.3 % / −26.9 % / −20.6 %** at
+v_e 0.27 / 0.50 / 0.85 (the last at (1.5, 4.5), found by the fan), frontier (monitors above the 1e-8 gate but
+under 1e-6) −32 % / −30 % / −24 %. The γ scan
 walks to the drainhole's −π and the bill RISES monotonically, ≈ +42 % at γ = −π at all three spins (a nearly
 spin-independent relative penalty); asymmetry costs, it never pays ([Step 3 record](#step-3-record-2026-10-28)). The
 solver now runs on the GPU ([GPU notes](#gpu-notes): port done and verified 2026-10-28), and the campaign has an
@@ -245,6 +247,12 @@ the step-1/2 gates on every row.
   box came in under the 1e-8 gate (E19 sat at 1e-8–1e-6), so its best clean stays the box corner, 1.21174. The
   rung at (0.6, 0.6) re-solved PASS in the walks after flagging ABOVE-GATE in the box scan (X agreeing to 1e-5):
   the monitor verdict near the gate carries the known run-to-run floor noise.
+- **Map fill and fan** (same day, stages `q-fill-*-150` and `q-fan-*-150`): the (q₁, q₂) square filled to 3 at 0.3
+  step (169 points each; 15 / 14 / 4 Newton failures by spin — the solvable region widens with spin) and four more
+  ray directions (slopes 3 and 1/3, and (0.3, −0.1) / (−0.1, 0.3) dipping below the axes, with the min Q ≤ 0
+  admissibility stop added to the ray mode). The fan moved the v_e 0.85 best clean to X 1.16011 at (1.5, 4.5)
+  (−20.6 % vs V = 0) and the v_e 0.50 frontier to 1.82861 at (6.6, 2.2); at v_e 0.27 the below-axis ray (0.3, −0.1)
+  walked farthest, to (6, −2). The figure's (a)–(c) panels show every solved point.
 - Mechanics: `scan_potential.py` accepts a line-search stall at ≤ 1e-11 as a solve (the step-1 Newton gate;
   2026-10-28, the m-anchor chain stalled at 1.1e-14 against tol 1e-14). argparse needs the `--q2=-0.3,0` form for
   leading-dash lists (so the `pipeline.toml` stages use it). The ray TSVs are packed beside the others in
