@@ -455,9 +455,22 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 ## Next
 
 1. **The drainhole joint searches** (live, Now): D51 and D30 at 400 evaluations each, D90's scaled rerun
-   queued; then screen every best clean point the loop could not certify and recheck the winners on a finer
-   grid (the drainhole's monitors sit at 1e-6–1e-5 on many shapes at 150×30). The open v_e 0.50 symmetric best
-   clean (−43.7 %) needs the screen at a finer grid or the looser stall cut.
+   queued. **Their 150×30 bills are not yet proven physics** (decided 2026-10-28, the plan below agreed): the
+   classical drainhole solves clean there (E19 1.3e-10 – 5.3e-10) and one kink point does (3.3e-10, X 1.606),
+   but most kink points sit at E19 1e-7 – 1e-5 — the unimposed equations see the numerics, and on this family
+   it is not yet shown that X converges regardless (it did on the symmetric family: 9 digits across three
+   grids while E19 floor-flipped). A point solved in two runs agrees to 8 digits (X 1.82148203 / 1.82148206),
+   which is reproducibility, not resolution. The plan, once the searches end:
+   1. Re-solve the top ~5 points per member on 150×30 → 180×36 → 210×42 with `grid_check.py` (one walk-in on
+      the first grid, then each finer grid seeded by spectral interpolation, the same R_e pin on all), ~20–30
+      min per member on a card.
+   2. E19 falls with the grid → under-resolution (the suspected cause: the far side's e^{−f} → e^{π} makes the
+      field ~5× heavier there, an estimate): rerun a ~150-eval search at 180×36 from the winners, or give the
+      radial map more nodes on the far side.
+   3. E19 stalls while X holds → the round-off floor: the floor decision (item 6), gating the drainhole
+      winners on grid-converged X and a falling E19 trend rather than the absolute 1e-8.
+   Also open: the v_e 0.50 symmetric best clean (−43.7 %) needs the screen at a finer grid or the looser stall
+   cut.
 2. **Smoke tests of the optimizer's solutions in GRTeclyn, later** (decided 2026-10-28: the searches run first).
    The C++ side is updated and built (step 7, `main3d_matter_6c7ac156-dirty_2026-10-28.ex`, never run), so a
    winner's saved .npz → `optimisation.handoff` table → this binary is the whole path. First measure the

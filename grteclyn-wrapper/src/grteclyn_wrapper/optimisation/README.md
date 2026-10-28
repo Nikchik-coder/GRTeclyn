@@ -27,6 +27,8 @@ Scripts, in [`grteclyn-wrapper/scripts/optimisation/`](../../../scripts/optimisa
 - `optimize_potential.py`: the step-6 4-knob (m, q₁, q₂, q₃) search at pinned J and R_e (Nelder–Mead or
   CMA-ES; `--stability` adds each candidate's J = 0 radial growth rate to the score); it saves each best point's
   solved fields as .npz, which `python -m grteclyn_wrapper.optimisation.handoff` turns into a 7-column table;
+- `grid_check.py`: grid convergence of solved potentials at the member's J (one walk-in, then each finer grid
+  seeded by spectral interpolation, one R_e pin for all), to tell under-resolution from the round-off floor;
 - `stability_screen.py`: the radial stability column — re-solves each potential at J = 0 on the member's R_e pin
   and runs `stability_radial.growth_rate` on the flattened 1D background;
 - the gates: `validate_matter_v0.py` (V = 0 against the published solver), `check_matter_pins.py`, `check_tidal.py`,
