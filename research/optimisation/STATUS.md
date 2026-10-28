@@ -41,7 +41,8 @@ kink's stiffness is m·R_e, not m** — m is physical, and the [0.15, 1.2] range
 (m·R_e ≥ 0.64 / 0.79) and run as launched; D90 (R_e 23.8, where m 0.3 means m·R_e ≈ 7) reruns with m, its bounds
 and its CMA step scaled by 1/R_e (`--m-step`, x0 m 0.04, bounds [0.012, 0.1]). Live: `cmasd-0012` (card 0,
 launched 18:08 UTC, 400 evals at ~3.3 per minute, ETA ≈ 2 h, ≈ 20:10 UTC / 23:10 MSK), `cmasd-0005` (card 1,
-D30's 400 evals from 18:20 UTC, similar ETA); D90's production follows on the first freed card. Options on all
+D30's 400 evals from 18:20 UTC, similar ETA); D90's scaled rerun is queued, not launched (decided 2026-10-28:
+the two live searches run first). Options on all
 three: `--engine cma --stability --stall-ok 1e-9 --twin-stall-ok 1e-9`
 at 150×30 — the drainhole's dense solve floors at 1e-11 to 2e-10 (line search stalled; bisection does not lift
 it), so the 1e-11 step-1 cut cannot hold there, and the identity monitors still gate every accepted solve
@@ -453,23 +454,28 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. **The drainhole joint searches** (live, Now): D51 / D30 / D90 at 400 evaluations each; then screen every
-   best clean point the loop could not certify, measure the cubic-spline table error, and cut the first
-   production table from the best stable drainhole winner for the step-7 C++ path (t = 0 check on the go).
-   The open v_e 0.50 symmetric best clean (−43.7 %) needs the screen at a finer grid or the looser stall cut.
-2. **The stability screen's first rung is gated AND run** (2026-10-28, drainhole λη₀ = 0.3898 vs 0.390 PASS;
+1. **The drainhole joint searches** (live, Now): D51 and D30 at 400 evaluations each, D90's scaled rerun
+   queued; then screen every best clean point the loop could not certify and recheck the winners on a finer
+   grid (the drainhole's monitors sit at 1e-6–1e-5 on many shapes at 150×30). The open v_e 0.50 symmetric best
+   clean (−43.7 %) needs the screen at a finer grid or the looser stall cut.
+2. **Smoke tests of the optimizer's solutions in GRTeclyn, later** (decided 2026-10-28: the searches run first).
+   The C++ side is updated and built (step 7, `main3d_matter_6c7ac156-dirty_2026-10-28.ex`, never run), so a
+   winner's saved .npz → `optimisation.handoff` table → this binary is the whole path. First measure the
+   cubic-spline table error, then a t = 0 check of a drainhole winner against its own V = 0 member (the paper's
+   D30 / D51 / D90), then short evolutions — every GPU start-up on the go.
+3. **The stability screen's first rung is gated AND run** (2026-10-28, drainhole λη₀ = 0.3898 vs 0.390 PASS;
    classical member unstable at 1.182, all kink/winner backgrounds show no unstable radial mode up to nx 300 —
    the step-6 record has the table): next the rotating 2D eigenproblem calibrated on the published spinning
    rates, and the non-radial static sectors.
-3. **Step 5's defect, parked until the bare-field pass lands**: run the discriminating test (ω∞-prescribed cloud,
+4. **Step 5's defect, parked until the bare-field pass lands**: run the discriminating test (ω∞-prescribed cloud,
    no J row — the scratch `winding_debug2.py`, recreatable from the step-5 sub-item), convict the wrong equation
    (J row's `j_matter` integral the prime suspect: deta-amplified outer-node junk; fix candidate — integrate the
    twist source in Chebyshev coefficient space or damp the outer nodes), then rerun the 48×12 → 96×20 → 150×30
    ladder and demand E19 falls with the grid. Nothing from step 5 is quotable before that.
-4. Step 4, continued: multi-node clouds (the layer count) and the sign freedom; the cloud knobs (m_χ, φ_c) at the
+5. Step 4, continued: multi-node clouds (the layer count) and the sign freedom; the cloud knobs (m_χ, φ_c) at the
    other two spins; continuation between cloud rungs instead of per-rung star reseeding (two rungs failed Newton
    from the raw star seed on the stiff shape).
-5. Decide the floor acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes m ≤ 0.1
+6. Decide the floor acceptance (gate at the floor vs the falling-with-grid trend) before anything quotes m ≤ 0.1
    members or the layered frontier rows: the dense solve's round-off floor rises with n and flips PASS/ABOVE-GATE
    near the gate between identical runs, and on the stiff shape + cloud rows it sits at 2e-7–1e-6 while X holds
    to 9 digits across three grids.
