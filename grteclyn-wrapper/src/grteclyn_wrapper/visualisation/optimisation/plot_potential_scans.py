@@ -10,8 +10,12 @@ solve at pinned J and R_e, grid 150x30, from the packed TSVs:
   falls toward +q1, +q2 at every spin; the black dot is the box's best
   clean point (all monitors inside the 1e-8 gate), grey cells have no
   solution (min Q <= 0, or Newton stalled).
-- (d) the pure-kink mass ladders: X against the kink mass m, the m = 0
-  end the V = 0 member under the same pins.
+- (d) every walk down the landscape on one axis, the far-well mass
+  m_- = m sqrt(1 + q1 + q2) (the curvature of the psi_minus well): the
+  pure-kink mass ladders (dots, q = 0, m_- = m) and the open ray walks
+  (thin lines, m = 0.3).  The rays nearly collapse onto m_-, pure q1
+  running lowest -- the far well's steepness carries most of the shape
+  knob.
 - (e) the end-mass asymmetry: X(gamma)/X(0) walking gamma to the
   drainhole's -pi at the pure kink m 0.3 -- a ~ +42 % penalty, nearly
   spin-independent.
@@ -102,6 +106,26 @@ def gamma(member: str) -> dict:
             "rel": np.array([r["X"] / x0 for r in rows])}
 
 
+RAY_STYLES = (("$+q_1$", "-"), ("$+q_2$", (0, (1.0, 1.2))),
+              ("diagonal", (0, (3.0, 1.6))))
+
+
+def rays(member: str) -> list[dict]:
+    """The member's ray walks as (far-well mass, X) curves, in the
+    RAY_STYLES order: pure q1, pure q2, the diagonal."""
+    rows = read(SCANS / f"{member}_rays_{GRID}.tsv")
+    picks = (lambda r: r["q2"] == 0.0, lambda r: r["q1"] == 0.0,
+             lambda r: r["q1"] == r["q2"])
+    out = []
+    for pick in picks:
+        keep = sorted((r for r in rows if pick(r) and not math.isnan(r["X"])),
+                      key=lambda r: r["q1"] + r["q2"])
+        out.append({"mm": MASS * np.sqrt([1.0 + r["q1"] + r["q2"]
+                                          for r in keep]),
+                    "X": np.array([r["X"] for r in keep])})
+    return out
+
+
 def ladders() -> dict[str, dict]:
     rows = read(LADDERS)
     out: dict[str, dict] = {}
@@ -113,7 +137,7 @@ def ladders() -> dict[str, dict]:
     return out
 
 
-def draw(shapes, gammas, lads, colours):
+def draw(shapes, gammas, lads, rayss, colours):
     style.prd(8.0)
     fig, axes = plt.subplots(2, 3, figsize=(7.05, 3.6), layout="constrained")
     top, (ax_d, ax_e, ax_f) = axes
@@ -147,14 +171,21 @@ def draw(shapes, gammas, lads, colours):
     cb = fig.colorbar(mesh, ax=list(top), pad=0.015, fraction=0.05)
     cb.set_label(r"$X/X_{\rm kink} - 1$ [%]")
 
-    # (d) the pure-kink mass ladders
-    for (member, ve), c in zip(MEMBERS, colours):
+    # (d) every walk on the far-well mass axis: the kink ladders (dots,
+    # m_- = m) continued by the open ray walks (thin lines, m = 0.3)
+    for (member, ve), rr, c in zip(MEMBERS, rayss, colours):
         ax_d.plot(lads[member]["m"], lads[member]["X"],
                   marker="o", ms=2.8, **line(c))
-    ax_d.set(xlim=(-0.02, 0.52), ylim=(1.0, 3.1), xlabel="kink mass $m$",
+        for r, (_, ls) in zip(rr, RAY_STYLES):
+            ax_d.plot(r["mm"], r["X"], **line(c, ls=ls, lw=0.9))
+    ax_d.set(xlim=(-0.02, 1.25), ylim=(1.0, 3.1),
+             xlabel=r"far-well mass $m_- = m\sqrt{1 + q_1 + q_2}$",
              ylabel=r"$X = |{\rm VIQ}|/R_e$")
-    style.legend_top(ax_d, [key(line(style.INK), r"$m = 0$: the $V = 0$ member")],
-                     **TIGHT)
+    style.legend_top(ax_d, [key(dict(line(style.INK), marker="o", ms=2.8),
+                                "kink ladder")] +
+                           [key(line(style.INK, ls=ls, lw=0.9), lab)
+                            for lab, ls in RAY_STYLES],
+                     ncol=2, borderpad=0.4, **TIGHT)
 
     # (e) the gamma walk, relative to gamma = 0; the three curves lie on
     # top of one another (the penalty is nearly spin-independent), so
@@ -209,7 +240,8 @@ def main(argv=None) -> int:
     shapes = [shape(m) for m, _ in MEMBERS]
     gammas = [gamma(m) for m, _ in MEMBERS]
     lads = ladders()
-    fig = draw(shapes, gammas, lads, colours)
+    rayss = [rays(m) for m, _ in MEMBERS]
+    fig = draw(shapes, gammas, lads, rayss, colours)
     problems = style.label_audit(fig)
     png = style.save(fig, args.out)
     for (member, ve), s in zip(MEMBERS, shapes):
