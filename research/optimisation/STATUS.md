@@ -118,6 +118,22 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 - [ ] **4. Normal-matter layer.** A second, canonical scalar χ; the J = 0 limit cross-checked against the Bondi
   paper's dressed star; 2–3 radial layers with free signs; a double throat allowed as a measured lineage. Done when
   the identity gates pass with two fields and the layered bill beats or matches step 3 at matched R_e and J.
+  - [x] Two-field system derived and machine-checked (2026-10-28). χ = X e^{iω_χ t}, a canonical complex scalar
+    (R_ab += 2Re(χ_aχ̄_b) + 𝒰g_ab): stationary, axisymmetric, no angular momentum, so the twist row keeps no χ
+    source. `derive_matter_equations.py` extended (field x, symbols U, Up, OC2, the kg_x row): span rank 8 both
+    ways at three exact points, forms vs the derived rows 2.6e-51 (gate 1e-30), v0/v0forms reductions identical,
+    and (1 − y)E_Nr = E_N − (2/h)E19 + E_B/B holds identically WITH the cloud. The harmonic phase reaches the
+    rows as ω_χ²e^{−f}X²: doubled in E_f, once in E_B and E_N, ω_χ²e^{−f}X in the new KG row E_chi; every ψ
+    bilinear gains a sign-flipped X twin; E_w, E_c, E19, E_Nr carry no potential or harmonic term.
+  - [x] Solver carries it: `MatterCollocationProblem(..., chi=(cal U, omega_chi))` adds X as a sixth grid unknown
+    (zero Dirichlet, no background; the pack's `dchi` is the Newton seed — X = 0 always solves, a cloud is found
+    boson-star style at prescribed ω_χ, and the radial node count of X is the layer count). 𝒰 must be even in X
+    (`PolynomialPotential.solitonic` is the dressed-star form). chi=None is the five-field system bit for bit
+    (`test_chi_layer.py`: the six-field residual with a zero cloud embeds the five-field one exactly; pytest 15).
+  - [ ] J = 0 cross-check against the Bondi dressed star (`analysis/bondi_dipole` + `grtresna/profiles/
+    boson_star_ode.py` are the 1D machinery; conventions map to settle: χ vs their φ normalization, ω_χ units).
+  - [ ] First cloud solves on a spinning member (seeded X at prescribed ω_χ), the identity gates, then the layered
+    bill at matched R_e and J against step 3.
 - [ ] **5. Winding field and angular freedom.** The winding complex field, θ-dependent profiles with a hard ℓ cap and
   a gradient penalty, a counter-rotating pair at pinned J, the exotic-free corridor lineage. Done when all four
   knobs optimize together and a Gibbs-driven Newton failure is reported as a resolution verdict, not a physics one.
@@ -207,7 +223,8 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
 
 ## Next
 
-1. Step 4: the normal-matter layer (the second canonical scalar χ, the J = 0 dressed-star cross-check). (The ray
+1. Step 4, continued: the J = 0 dressed-star cross-check, then the first seeded cloud solves and the layered bill
+   (the two-field equations and solver landed 2026-10-28, machine-checked; see the step-4 checklist). (The ray
    walks closed the widen-the-box item: every ray ran to the solver/grid limit with X still falling.)
 2. The shape knob's true bottom needs more than rays: a finer grid for the frontier (the monitors there are the
    resolution tail) and/or step 6's optimizer with the m, q₁, q₂ knobs together.

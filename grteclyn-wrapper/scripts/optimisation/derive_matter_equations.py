@@ -13,11 +13,23 @@ generalized quasi-isotropic ansatz is
 with the exotic scalar of conventions.py (psi = sqrt(4 pi) phi,
 cal V = 8 pi V_evo):
 
-    R_ab = -2 psi_a psi_b - cal V g_ab,     box psi = cal V'(psi) / 2.
+    R_ab = -2 psi_a psi_b - cal V g_ab,     box psi = cal V'(psi) / 2,
 
-Ground truth is E_ab = R_ab + 2 psi_a psi_b + cal V g_ab and the KG
-residual, built symbolically from the metric; cal V, cal V' enter as the
-plain symbols V, Vp (no equation differentiates them in the coordinates).
+and (campaign step 4) the canonical layer field chi = X e^{i omega_c t},
+a CANONICAL complex scalar in the same normalization:
+
+    R_ab += 2 Re(chi_a chi_b*) + cal U g_ab
+          = 2 [X_a X_b + omega_c^2 X^2 delta^t_a delta^t_b] + cal U g_ab,
+    box chi = cal U'/2   i.e.   box X + omega_c^2 e^{-f} X = cal U'(X)/2
+
+(g^{tt} = -e^{-f}; X has no t or phi dependence, so the stress tensor is
+stationary, axisymmetric and carries no angular momentum, and the twist
+row keeps no chi source).  Ground truth is E_ab = R_ab + 2 psi_a psi_b
++ cal V g_ab - 2 [X_a X_b + omega_c^2 X^2 delta^t_a delta^t_b]
+- cal U g_ab and the two KG residuals, built symbolically from the
+metric; cal V, cal V', cal U, cal U', omega_c^2 enter as the plain
+symbols V, Vp, U, Up, OC2 (no equation differentiates them in the
+coordinates).
 Every expression is then rationalized exactly -- e^f -> EF, e^nu -> EN,
 sin -> SS, cos -> CC -- so all linear algebra runs over the rational
 function field, with no floating point anywhere.
@@ -69,9 +81,11 @@ import sympy as sp
 t, eta, th, ph = sp.symbols("t eta theta phi", real=True)
 eta0 = sp.Symbol("eta0", positive=True)
 V, Vp = sp.symbols("V Vp", real=True)
+U, Up = sp.symbols("U Up", real=True)            # cal U(X), cal U'(X)
+OC2 = sp.Symbol("OC2", positive=True)            # omega_c^2
 EF, EN = sp.symbols("EF EN", positive=True)      # e^f, e^nu
 SS, CC = sp.symbols("SS CC", positive=True)      # sin theta, cos theta
-FIELDS = ("f", "nu", "w", "b", "psi")
+FIELDS = ("f", "nu", "w", "b", "psi", "x")
 ORDERS = [(2, 0), (1, 1), (0, 2), (1, 0), (0, 1), (0, 0)]
 SECOND = [(2, 0), (1, 1), (0, 2)]
 
@@ -125,7 +139,7 @@ def build_system():
         return _cache["G"], _cache["syms"]
     t0 = time.time()
     fn = functions()
-    F, NU, W, B, PSI = (fn[k] for k in FIELDS)
+    F, NU, W, B, PSI, Xf = (fn[k] for k in FIELDS)
     h = eta**2 + eta0**2
     s, c = sp.sin(th), sp.cos(th)
     p = B**2
@@ -166,9 +180,16 @@ def build_system():
     print(f"  [build] ricci {time.time() - t0:.0f}s", flush=True)
 
     dpsi = {1: sp.diff(PSI, eta), 2: sp.diff(PSI, th)}
+    dchi = {1: sp.diff(Xf, eta), 2: sp.diff(Xf, th)}
     E = {}
     for (bb, cc), R in ricci.items():
-        E[(bb, cc)] = R + 2 * dpsi.get(bb, 0) * dpsi.get(cc, 0) + V * g[bb, cc]
+        E[(bb, cc)] = (R + 2 * dpsi.get(bb, 0) * dpsi.get(cc, 0)
+                       + V * g[bb, cc]
+                       - 2 * dchi.get(bb, 0) * dchi.get(cc, 0)
+                       - U * g[bb, cc])
+    # the harmonic phase's t-t source, the one place omega_c^2 reaches
+    # the Einstein set
+    E[(0, 0)] -= 2 * OC2 * Xf**2
     # Mixed components: the Killing block through gi, the 2D block by its
     # diagonal inverse.  ph_t is a linear combination of the other three
     # Killing rows (4 mixed from 3 covariant), so it is left out.
@@ -185,6 +206,11 @@ def build_system():
     mixed["kg"] = (sp.diff(B * h * s * sp.diff(PSI, eta), eta)
                    + sp.diff(B * s * sp.diff(PSI, th), th)
                    - B**3 * h * s * enu / ef * Vp / 2)
+    # the layer amplitude's KG: the harmonic phase adds
+    # -g^{tt} omega_c^2 X = e^{-f} OC2 X under the same weight
+    mixed["kg_x"] = (sp.diff(B * h * s * sp.diff(Xf, eta), eta)
+                     + sp.diff(B * s * sp.diff(Xf, th), th)
+                     + B**3 * h * s * enu / ef * (OC2 * Xf / ef - Up / 2))
 
     subs, syms = jet_subs(fn)
     _cache["syms"] = syms
@@ -197,24 +223,31 @@ def build_system():
 def transcribed_rows(syms):
     """The w, rho and KG rows (span-confirmed divergence forms), in jets."""
     fn = functions()
-    F, NU, W, B, PSI = (fn[k] for k in FIELDS)
+    F, NU, W, B, PSI, Xf = (fn[k] for k in FIELDS)
     h = eta**2 + eta0**2
     s = sp.sin(th)
     d = sp.diff
     subs, _ = jet_subs(fn)
     C = {
-        # the twist equation: D.(rho^3 e^{-2f} D omega) = 0
+        # the twist equation: D.(rho^3 e^{-2f} D omega) = 0 (the layer
+        # field has no winding phase, so it never sources it)
         "w": (d(B**3 * h**2 * s**3 * sp.exp(-2 * F) * d(W, eta), eta)
               + d(B**3 * h * s**3 * sp.exp(-2 * F) * d(W, th), th)) / s,
-        # the rho equation D^2 rho = 2 cal V rho, rho = B sqrt(h) s:
-        # h B_ee + 3 eta B_e + B_thth + 2 (c/s) B_th = 2 V B^3 h e^{nu-f}
+        # the rho equation D^2 rho = 2 (cal V - cal U
+        # + omega_c^2 e^{-f} X^2) rho, rho = B sqrt(h) s
         "B": (d(h**sp.Rational(3, 2) * d(B, eta), eta) / sp.sqrt(h)
               + d(s**2 * d(B, th), th) / s**2
-              - 2 * V * B**3 * h * sp.exp(NU - F)),
+              - 2 * (V - U + OC2 * Xf**2 * sp.exp(-F))
+              * B**3 * h * sp.exp(NU - F)),
         # KG times sqrt(-g), divided by s
         "psi": ((d(B * h * s * d(PSI, eta), eta)
                  + d(B * s * d(PSI, th), th)) / s
                 - B**3 * h * sp.exp(NU - F) * Vp / 2),
+        # the layer amplitude's KG, same weight, plus the harmonic term
+        "x": ((d(B * h * s * d(Xf, eta), eta)
+               + d(B * s * d(Xf, th), th)) / s
+              + B**3 * h * sp.exp(NU - F)
+              * (OC2 * Xf * sp.exp(-F) - Up / 2)),
     }
     return {k: ratform(to_jets(sp.expand(v), subs)) for k, v in C.items()}
 
@@ -317,7 +350,7 @@ def stage_rows() -> bool:
     rows = derive_all()
     syms = _cache["syms"]
     ok = True
-    for label in ("f", "nu", "w", "B", "psi", "c13", "c19"):
+    for label in ("f", "nu", "w", "B", "psi", "x", "c13", "c19"):
         out = rows.get(label)
         if out is None:
             ok = False
@@ -342,6 +375,7 @@ def rational_point(seed):
                 return val
 
     at = {eta: q(), eta0: sp.Rational(2), V: q(), Vp: q(),
+          U: q(), Up: q(), OC2: q(0, 4),
           SS: sp.Rational(3, 5), CC: sp.Rational(4, 5),
           EF: sp.Rational(2, 3), EN: sp.Rational(5, 7)}
     for name, sym in _cache["syms"].items():
@@ -381,7 +415,7 @@ def stage_span() -> bool:
         Rm = sp.Matrix([affine_vector(v, at, second) for v in rows.values()])
         rank_g, rank_r = Gm.rank(), Rm.rank()
         both = sp.Matrix.vstack(Gm, Rm).rank()
-        good = rank_g == rank_r == both == 7
+        good = rank_g == rank_r == both == 8
         ok = ok and good
         print(f"span[seed {seed}]: rank(G) = {rank_g}, rank(rows) = {rank_r},"
               f" rank(G + rows) = {both}  "
@@ -399,9 +433,11 @@ def stage_v0() -> bool:
         print("v0: rows incomplete, skipping")
         return False
     h = eta**2 + eta0**2
-    at0 = {syms["b_00"]: 1, V: 0, Vp: 0}
+    at0 = {syms["b_00"]: 1, V: 0, Vp: 0, U: 0, Up: 0, OC2: 0}
     for i, j in ORDERS[:-1]:
         at0[syms[f"b_{i}{j}"]] = 0
+    for i, j in ORDERS:
+        at0[syms[f"x_{i}{j}"]] = 0
     eq10 = (h * SS * syms["f_20"] + 2 * eta * SS * syms["f_10"]
             + SS * syms["f_02"] + CC * syms["f_01"]
             - h * SS**3 / EF**2 * (h * syms["w_10"]**2 + syms["w_01"]**2))
@@ -437,6 +473,8 @@ TEST_FIELDS = {
           + sp.exp(-ETA_S**2 / 12) * Y_S / 9),
     "psi": (sp.sin(ETA_S / 6 + sp.Rational(1, 3)) * (1 + Y_S / 6)
             + sp.exp(-ETA_S**2 / 20) * Y_S**2 / 7),
+    "chi": (sp.cos(ETA_S / 7 + sp.Rational(2, 9)) * (1 - Y_S / 8)
+            + sp.exp(-ETA_S**2 / 15) * Y_S**2 / 13),
 }
 
 #: printed row == PREFACTOR * matter_residual_forms[...], fixed by the
@@ -447,6 +485,7 @@ PREFACTORS = {
     ("w", "E_w"): lambda b, h, dn: SS**2 * b**3 * h / EF**2,
     ("B", "E_B"): lambda b, h, dn: sp.Integer(1),
     ("psi", "E_psi"): lambda b, h, dn: b,
+    ("x", "E_chi"): lambda b, h, dn: b,
     ("nu", "E_N"): lambda b, h, dn: -2 * EF**2 * SS * b**2 * h,
     ("c13", "E_c"): lambda b, h, dn: EF**2 * SS**2 * CC * b**2 * h**2 / dn,
     ("c19", "E19"): lambda b, h, dn: -4 * EF**2 * SS * b**2,
@@ -487,7 +526,7 @@ def stage_forms() -> bool:
         jets["B_xy"] = sp.diff(comp["B"], XI, Yv)
         E = matter_residual_forms(sp.exp, eta0=eta0, y=Yv, eta=eta_of,
                                   deta=deta_of, d2eta=d2eta_of, jets=jets,
-                                  V=V, dV=Vp)
+                                  V=V, dV=Vp, U=U, dU=Up, oc2=OC2)
 
         # The same fields as functions of (eta, theta) for the rows side:
         # nu = N sin^2 theta, y = cos 2 theta.
@@ -495,6 +534,7 @@ def stage_forms() -> bool:
         et = {k: e.subs(Y_S, y_th) for k, e in TEST_FIELDS.items()}
         et["nu"] = et.pop("N") * sp.sin(THv)**2
         et["b"] = et.pop("B")
+        et["x"] = et.pop("chi")
         rowsub = []
         for name in FIELDS:
             if name in ("f",):
@@ -517,12 +557,14 @@ def stage_forms() -> bool:
             xis = [sp.Rational(-2, 5), sp.Rational(1, 10), sp.Rational(3, 10)]
         for xi_val in xis:
             for th_val in (sp.Rational(2, 5), sp.Rational(13, 10)):
+                pots = {V: sp.Rational(5, 11), Vp: sp.Rational(7, 13),
+                        U: sp.Rational(3, 7), Up: sp.Rational(5, 9),
+                        OC2: sp.Rational(8, 5)}
                 at_xy = {XI: xi_val, Yv: sp.cos(2 * th_val), eta0: 2,
-                         V: sp.Rational(5, 11), Vp: sp.Rational(7, 13)}
+                         **pots}
                 eta_val = eta_of.subs({XI: xi_val, eta0: 2})
                 at_et = {ETA_S: eta_val, THv: th_val, eta: eta_val,
-                         eta0: 2, V: sp.Rational(5, 11),
-                         Vp: sp.Rational(7, 13)}
+                         eta0: 2, **pots}
                 b_val = TEST_FIELDS["B"].subs(
                     [(ETA_S, eta_val), (Y_S, sp.cos(2 * th_val))])
                 h_val = eta_val**2 + 4
@@ -559,12 +601,13 @@ def stage_v0forms() -> bool:
     y, et, dn, dnn = sp.symbols("yv etav detav d2etav", real=True)
     jets = {k: sp.Symbol(k) for k in MATTER_JET_NAMES}
     jets.update(B=sp.Integer(1), B_x=0, B_xx=0, B_y=0, B_yy=0, B_xy=0)
+    jets.update({k: 0 for k in MATTER_JET_NAMES if k.startswith("chi")})
     new = matter_residual_forms(sp.exp, eta0=eta0, y=y, eta=et, deta=dn,
                                 d2eta=dnn, jets=jets, V=0, dV=0)
     old = residual_forms(sp.exp, eta0=eta0, y=y, eta=et, deta=dn,
                          d2eta=dnn,
                          jets={k: jets[k] for k in jets
-                               if not k.startswith(("B", "psi"))})
+                               if not k.startswith(("B", "psi", "chi"))})
     h = et**2 + eta0**2
     W2 = (h / dn) ** 2
     oy2 = 1 - y**2
@@ -603,7 +646,8 @@ def stage_nrow() -> bool:
     y, et, dn, dnn = sp.symbols("yv etav detav d2etav", real=True)
     jets = {k: sp.Symbol(k) for k in MATTER_JET_NAMES}
     E = matter_residual_forms(sp.exp, eta0=eta0, y=y, eta=et, deta=dn,
-                              d2eta=dnn, jets=jets, V=V, dV=Vp)
+                              d2eta=dnn, jets=jets, V=V, dV=Vp,
+                              U=U, dU=Up, oc2=OC2)
     h = et**2 + eta0**2
     diff = sp.cancel(sp.expand(
         (1 - y) * E["E_Nr"]

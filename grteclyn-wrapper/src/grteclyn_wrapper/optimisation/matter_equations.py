@@ -58,25 +58,40 @@ __all__ = ["matter_residual_forms", "MATTER_JET_NAMES", "row_matrix",
            "MatterCollocationProblem"]
 
 #: Every jet the matter forms read: value, d/dxi, d2/dxi2, d/dy, d2/dy2
-#: per field, plus the one mixed jet of E_c.
+#: per field, plus the one mixed jet of E_c.  ``chi`` is the amplitude X
+#: of the canonical layer field chi = X e^{i omega_c t} (campaign step 4);
+#: a five-field caller passes zeros for its jets.
 MATTER_JET_NAMES = tuple(
     f"{field}{suffix}"
-    for field in ("f", "w", "N", "B", "psi")
+    for field in ("f", "w", "N", "B", "psi", "chi")
     for suffix in ("", "_x", "_xx", "_y", "_yy")
 ) + ("B_xy",)
 
 
-def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
-    """The seven matter forms, elementwise, for any backend.
+def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV,
+                          U=0.0, dU=0.0, oc2=0.0):
+    """The matter forms, elementwise, for any backend.
 
     ``jets`` maps MATTER_JET_NAMES to values; ``eta, deta, d2eta`` are
     eta(xi) and its first two xi-derivatives; ``y`` is cos 2 theta;
     ``V, dV`` are cal V(psi), cal V'(psi) at the nodes.  Returns a dict
-    with E_f, E_w, E_Nr, E_B, E_psi (imposed by Newton), E_N (the derived
-    nu row, monitored) and E_c, E19 (first-order constraints, monitored --
-    E19 is the pointwise generalization of the V = 0 solver's D2
-    identity, normalized so that at B = 1, psi_y = 0 it equals
-    D2_expression - W2 psi_x^2).
+    with E_f, E_w, E_Nr, E_B, E_psi, E_chi (imposed by Newton), E_N (the
+    derived nu row, monitored) and E_c, E19 (first-order constraints,
+    monitored -- E19 is the pointwise generalization of the V = 0
+    solver's D2 identity, normalized so that at B = 1, psi_y = 0 it
+    equals D2_expression - W2 psi_x^2).
+
+    The canonical layer field (campaign step 4) is chi = X e^{i omega_c
+    t}: a CANONICAL complex scalar, R_ab = +2 Re(chi_a chi_b*)
+    + cal U g_ab and box chi = cal U'/2, against the exotic psi's
+    flipped signs -- so every psi bilinear of the derived rows gains a
+    sign-flipped X twin, cal V gains -cal U in the same slots, and the
+    harmonic phase adds omega_c^2 e^{-f} X^2 where the t-t source
+    reaches a row (twice that weight in E_f, once in E_B and E_N,
+    omega_c^2 e^{-f} X in the KG row E_chi; nothing in E_w, E_c, E19,
+    E_Nr: machine-checked by derive_matter_equations.py).  ``U, dU`` are
+    cal U(X), cal U'(X) at the nodes and ``oc2`` is omega_c^2; the
+    defaults give the five-field system unchanged.
     """
     f, f_x, f_xx, f_y, f_yy = (jets[k] for k in ("f", "f_x", "f_xx", "f_y", "f_yy"))
     w, w_x, w_xx, w_y, w_yy = (jets[k] for k in ("w", "w_x", "w_xx", "w_y", "w_yy"))
@@ -84,6 +99,8 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
     B, B_x, B_xx, B_y, B_yy = (jets[k] for k in ("B", "B_x", "B_xx", "B_y", "B_yy"))
     psi, psi_x, psi_xx, psi_y, psi_yy = (
         jets[k] for k in ("psi", "psi_x", "psi_xx", "psi_y", "psi_yy"))
+    chi, chi_x, chi_xx, chi_y, chi_yy = (
+        jets[k] for k in ("chi", "chi_x", "chi_xx", "chi_y", "chi_yy"))
     B_xy = jets["B_xy"]
 
     h = eta * eta + eta0 * eta0
@@ -94,16 +111,24 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
     D1 = eta / deta - h * d2eta / deta**3       # the nu row's weight
     W2 = (h / deta) ** 2                  # (h d/d eta)^2 weight
     e2f = exp(-2 * f)
+    ef1 = exp(-f)
     oy2 = 1 - y * y
     # e^{nu - f} with nu = N sin^2 theta = N (1 - y) / 2
     env = exp(N * (1 - y) / 2 - f)
     B2 = B * B
+    # the potential slot of the gravity rows: cal V minus the canonical
+    # cal U, plus the harmonic omega_c^2 e^{-f} X^2 (doubled in E_f: the
+    # t-t source enters E^t_t + omega E^t_phi twice as strongly as the
+    # g_ab trace part)
+    harm = oc2 * ef1 * chi * chi
+    VU1 = V - U + harm
+    VU2 = V - U + 2 * harm
 
     E_f = (
         A2 * f_xx + A1 * f_x + 4 * oy2 * f_yy - (6 * y + 2) * f_y
         + A2 * (B_x / B) * f_x + 4 * oy2 * (B_y / B) * f_y
         - (1 - y) / 2 * B2 * e2f * (W2 * w_x**2 + 4 * h * oy2 * w_y**2)
-        - 2 * V * B2 * h * env
+        - 2 * VU2 * B2 * h * env
     )
     E_w = (
         A2 * (w_xx - 2 * f_x * w_x + 3 * (B_x / B) * w_x) + B1 * w_x
@@ -112,13 +137,19 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
     )
     E_B = (
         A2 * B_xx + C1 * B_x + 4 * oy2 * B_yy - (8 * y + 4) * B_y
-        - 2 * V * B2 * B * h * env
+        - 2 * VU1 * B2 * B * h * env
     )
     E_psi = (
         A2 * psi_xx + A1 * psi_x + A2 * (B_x / B) * psi_x
         + 4 * oy2 * psi_yy - (6 * y + 2) * psi_y
         + 4 * oy2 * (B_y / B) * psi_y
         - dV / 2 * B2 * h * env
+    )
+    E_chi = (
+        A2 * chi_xx + A1 * chi_x + A2 * (B_x / B) * chi_x
+        + 4 * oy2 * chi_yy - (6 * y + 2) * chi_y
+        + 4 * oy2 * (B_y / B) * chi_y
+        + (oc2 * ef1 * chi - dU / 2) * B2 * h * env
     )
     E_N = (
         (1 - y) / 2 * (A2 * N_xx + D1 * N_x)
@@ -128,10 +159,11 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
         + A2 / 2 * f_x**2 + 2 * oy2 * f_y**2
         - 3 * (1 - y) / 4 * B2 * e2f * (W2 * w_x**2 + 4 * h * oy2 * w_y**2)
         - 2 * A2 * psi_x**2 - 8 * oy2 * psi_y**2
-        + 2 * eta0 * eta0 / h + 2 * V * B2 * h * env
+        + 2 * A2 * chi_x**2 + 8 * oy2 * chi_y**2
+        + 2 * eta0 * eta0 / h + 2 * VU1 * B2 * h * env
     )
     E_c = (
-        4 * f_x * f_y - 16 * psi_x * psi_y
+        4 * f_x * f_y - 16 * psi_x * psi_y + 16 * chi_x * chi_y
         + N_x * (1 - 2 * (1 - y) * (B_y / B))
         + (2 * eta * deta / h + 2 * B_x / B) * (N - (1 - y) * N_y)
         - 2 * h * (1 - y) * B2 * e2f * w_x * w_y
@@ -148,6 +180,7 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
         - (1 - y) / 8 * B2 * e2f * (h * W2 * w_x**2
                                     - 4 * h * h * oy2 * w_y**2)
         - W2 * psi_x**2 + 4 * h * oy2 * psi_y**2
+        + W2 * chi_x**2 - 4 * h * oy2 * chi_y**2
         + 4 * h * oy2 * (B_y / B) ** 2
         - 2 * h / B * (oy2 * B_yy - y * B_y)
         - W2 * (B_x / B) ** 2 - eta * h / (2 * deta) * (B_x / B)
@@ -169,10 +202,11 @@ def matter_residual_forms(exp, *, eta0, y, eta, deta, d2eta, jets, V, dV):
         + 8 * (1 + y) * B_yy / B + 4 * B_y / B
         - 16 * (1 + y) * (B_y / B) ** 2
         + 4 * (1 + y) * f_y**2 - 16 * (1 + y) * psi_y**2
+        + 16 * (1 + y) * chi_y**2
         - B2 * e2f * (W2 * w_x**2 / 2 + 4 * h * oy2 * w_y**2)
     )
     return {"E_f": E_f, "E_w": E_w, "E_N": E_N, "E_Nr": E_Nr, "E_B": E_B,
-            "E_psi": E_psi, "E_c": E_c, "E19": E19}
+            "E_psi": E_psi, "E_chi": E_chi, "E_c": E_c, "E19": E19}
 
 
 def row_matrix(key, field, *, eta0, y, eta, deta, d2eta, Dx, Dy):
@@ -265,13 +299,25 @@ class MatterCollocationProblem:
     (T_k(xi) = cos(k arccos xi)), smooth in xi_t even on a node, as on the
     symmetric family's xi = 0 throat.  The pins need prescribe = ("J",
     value): with omega_inf held, the scale would move it.
+
+    ``chi = (cal U, omega_chi)`` adds the canonical layer field of
+    campaign step 4: chi = X e^{i omega_chi t}, a canonical complex
+    scalar whose amplitude X joins the grid unknowns with zero Dirichlet
+    data and no background profile (the seed is the ``dchi`` passed to
+    ``pack``).  X = 0 always solves, so a nontrivial cloud is found by
+    seeding Newton near one, boson-star style, at the prescribed
+    omega_chi (grid units under a pin: it scales as 1/sigma); the radial
+    node count of X is the layer count.  cal U must be EVEN in X.  Its
+    stress tensor is stationary and carries no angular momentum (no
+    winding phase), so the flux row is untouched.
     """
 
     def __init__(self, *, eta0: float, gamma: float, potential=None,
                  radial_map=None, nx: int = 64, ny: int = 16,
                  prescribe: tuple[str, float] = ("omega_inf", 0.0),
                  psi_minus: float | None = None,
-                 pin: tuple[str, float] | None = None):
+                 pin: tuple[str, float] | None = None,
+                 chi: tuple | None = None):
         # thread cap, platform and float64 BEFORE the first jax import
         from .solver.device import configure_jax
         from .solver.jacobian import dense_jacobian
@@ -311,8 +357,21 @@ class MatterCollocationProblem:
             raise ValueError(f"pin {pin!r}: ('R_e' or 'area', value), with "
                              "prescribe = ('J', value)")
         self.pin = None if pin is None else (pin[0], float(pin[1]))
+        # the canonical layer field (campaign step 4): chi = (cal U,
+        # omega_chi) adds the amplitude X as a sixth grid unknown with
+        # zero Dirichlet data (the cloud vanishes at both ends); cal U is
+        # a PolynomialPotential, EVEN in X (layers are its sign changes),
+        # and omega_chi the prescribed harmonic frequency, in grid units
+        # under a pin (it scales as 1/sigma, like a mass).  chi = None is
+        # the five-field system, bit for bit.
+        self.chi = None
+        if chi is not None:
+            u_pot, omega_chi = chi
+            self.chi = (u_pot, float(omega_chi))
+        self.nf = 6 if self.chi is not None else 5
+        self.tags = (("f", "w", "N", "B", "psi", "chi")[: self.nf])
         self.n = (nx + 1) * (ny + 1)
-        self.n_unknowns = (5 * self.n + (1 if mode == "J" else 0)
+        self.n_unknowns = (self.nf * self.n + (1 if mode == "J" else 0)
                            + (1 if self.border_psi else 0)
                            + (2 if self.pin is not None else 0))
 
@@ -366,11 +425,16 @@ class MatterCollocationProblem:
     # -- packing --------------------------------------------------------------
 
     def pack(self, df, dw, dN, dB, dpsi, omega_inf=None, psi_minus=None,
-             sigma=None, xi_t=None):
+             sigma=None, xi_t=None, dchi=None):
         import numpy as np
 
         parts = [np.ravel(df), np.ravel(dw), np.ravel(dN), np.ravel(dB),
                  np.ravel(dpsi)]
+        if self.chi is not None:
+            if dchi is None:
+                raise ValueError("chi problem: dchi (the X seed) is an "
+                                 "unknown")
+            parts.append(np.ravel(dchi))
         if self.mode == "J":
             if omega_inf is None:
                 raise ValueError("bordered problem: omega_inf is an unknown")
@@ -388,8 +452,8 @@ class MatterCollocationProblem:
     def unpack(self, u):
         shape = (self.nx + 1, self.ny + 1)
         grids = [u[k * self.n: (k + 1) * self.n].reshape(shape)
-                 for k in range(5)]
-        tail = 5 * self.n
+                 for k in range(self.nf)]
+        tail = self.nf * self.n
         if self.mode == "J":
             omega_inf = float(u[tail])
             tail += 1
@@ -410,11 +474,14 @@ class MatterCollocationProblem:
         return self.pot(psi_minus) if callable(self.pot) else self.pot
 
     def fields(self, u):
-        """Total (F, W, N, B, psi) node arrays from the unknown vector, in
-        grid units (omega scales as 1/sigma)."""
-        df, dw, dN, dB, dpsi, omega_inf, psi_minus = self.unpack(u)
-        return (self.f_bg + df, omega_inf * self.q + dw, dN, 1.0 + dB,
-                psi_minus * self.psi_prof + dpsi)
+        """Total (F, W, N, B, psi[, X]) node arrays from the unknown
+        vector, in grid units (omega scales as 1/sigma).  X, the layer
+        amplitude, only on a chi problem."""
+        *grids, omega_inf, psi_minus = self.unpack(u)
+        df, dw, dN, dB, dpsi = grids[:5]
+        out = (self.f_bg + df, omega_inf * self.q + dw, dN, 1.0 + dB,
+               psi_minus * self.psi_prof + dpsi)
+        return out + (grids[5],) if self.chi is not None else out
 
     # -- residual -------------------------------------------------------------
 
@@ -433,8 +500,8 @@ class MatterCollocationProblem:
         jnp = self._jnp
         shape = (self.nx + 1, self.ny + 1)
         d = {tag: u[k * self.n: (k + 1) * self.n].reshape(shape)
-             for k, tag in enumerate(("f", "w", "N", "B", "psi"))}
-        tail = 5 * self.n
+             for k, tag in enumerate(self.tags)}
+        tail = self.nf * self.n
         if self.mode == "J":
             omega_inf = u[tail]
             tail += 1
@@ -447,17 +514,31 @@ class MatterCollocationProblem:
         Nf = d["N"]
         B = 1.0 + d["B"]
         PSI = psi_minus * self.psi_prof + d["psi"]
-        jets = self._jets({"f": F, "w": W, "N": Nf, "B": B, "psi": PSI})
+        totals = {"f": F, "w": W, "N": Nf, "B": B, "psi": PSI}
+        chi_kw = {}
+        if self.chi is not None:
+            totals["chi"] = d["chi"]      # no background: the cloud is dchi
+            u_pot, omega_chi = self.chi
+        jets = self._jets(totals)
         interior = {k: v[1:-1] for k, v in jets.items()}
+        if self.chi is None:
+            for k in MATTER_JET_NAMES:
+                if k.startswith("chi"):
+                    interior[k] = 0.0
+        else:
+            chi_kw = {"U": sigma**2 * u_pot.V(interior["chi"]),
+                      "dU": sigma**2 * u_pot.dV(interior["chi"]),
+                      "oc2": sigma**2 * omega_chi**2}
         pot = self.potential_at(psi_minus)
         E = matter_residual_forms(
             jnp.exp, eta0=self.eta0, y=self.sy[None, :], eta=self.eta_i,
             deta=self.deta_i, d2eta=self.d2eta_i, jets=interior,
             V=sigma**2 * pot.V(interior["psi"]),
-            dV=sigma**2 * pot.dV(interior["psi"]))
+            dV=sigma**2 * pot.dV(interior["psi"]), **chi_kw)
         blocks = []
         for tag, key in (("f", "E_f"), ("w", "E_w"), ("N", "E_Nr"),
-                         ("B", "E_B"), ("psi", "E_psi")):
+                         ("B", "E_B"), ("psi", "E_psi"),
+                         ("chi", "E_chi"))[: self.nf]:
             blocks.append(jnp.concatenate([
                 d[tag][:1], E[key], d[tag][-1:]]).ravel())
         out = jnp.concatenate(blocks)
@@ -555,22 +636,39 @@ class MatterCollocationProblem:
         residuals, and J(x)."""
         import numpy as np
 
-        F, W, Nf, B, PSI = (np.asarray(a) for a in self.fields(u))
+        all_fields = [np.asarray(a) for a in self.fields(u)]
+        F, W, Nf, B, PSI = all_fields[:5]
         s2 = self.scale(u)[0] ** 2
         pot = self.potential_at(self.unpack(u)[-1])
-        jets = self._jets({"f": F, "w": W, "N": Nf, "B": B, "psi": PSI})
+        totals = {"f": F, "w": W, "N": Nf, "B": B, "psi": PSI}
+        chi_kw = {}
+        if self.chi is not None:
+            totals["chi"] = all_fields[5]
+            u_pot, omega_chi = self.chi
+        jets = self._jets(totals)
         interior = {k: np.asarray(v)[1:-1] for k, v in jets.items()}
+        if self.chi is None:
+            for k in MATTER_JET_NAMES:
+                if k.startswith("chi"):
+                    interior[k] = 0.0
+        else:
+            chi_kw = {"U": s2 * u_pot.V(interior["chi"]),
+                      "dU": s2 * u_pot.dV(interior["chi"]),
+                      "oc2": s2 * omega_chi**2}
         E = matter_residual_forms(
             np.exp, eta0=self.eta0, y=self.sy[None, :], eta=self.eta_i,
             deta=self.deta_i, d2eta=self.d2eta_i, jets=interior,
             V=s2 * pot.V(interior["psi"]),
-            dV=s2 * pot.dV(interior["psi"]))
+            dV=s2 * pot.dV(interior["psi"]), **chi_kw)
         W_x = self.Dx @ W
         j_of_x = np.array([float(self.j_flux(F, B, W_x, column=i))
                            for i in range(1, self.nx)])
-        return {"E_c": np.asarray(E["E_c"]), "E19": np.asarray(E["E19"]),
-                "E_f": np.asarray(E["E_f"]), "E_N": np.asarray(E["E_N"]),
-                "E_Nr": np.asarray(E["E_Nr"]),
-                "E_B": np.asarray(E["E_B"]), "E_psi": np.asarray(E["E_psi"]),
-                "j_of_x": j_of_x,
-                "C2_i": (self.eta0**2 / self.h_i)[:, 0]}
+        out = {"E_c": np.asarray(E["E_c"]), "E19": np.asarray(E["E19"]),
+               "E_f": np.asarray(E["E_f"]), "E_N": np.asarray(E["E_N"]),
+               "E_Nr": np.asarray(E["E_Nr"]),
+               "E_B": np.asarray(E["E_B"]), "E_psi": np.asarray(E["E_psi"]),
+               "j_of_x": j_of_x,
+               "C2_i": (self.eta0**2 / self.h_i)[:, 0]}
+        if self.chi is not None:
+            out["E_chi"] = np.asarray(E["E_chi"])
+        return out
