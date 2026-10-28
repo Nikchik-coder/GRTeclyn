@@ -12,8 +12,12 @@
 
 #include <array>
 #include <cmath>
+#include <exception>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 #include <string>
+#include <vector>
 
 class SimulationParameters : public SimulationParametersBase
 {
@@ -94,7 +98,8 @@ class SimulationParameters : public SimulationParametersBase
         pp.load("spinning_kick_radius", spinning_params.kick_radius, 0.0);
 
         // Potential mass of the phantom scalar (0 = the Ellis-Bronnikov
-        // massless field that supports the throat).
+        // massless field that supports the throat).  The table's
+        // potential_coeffs add to it (check_params reads them).
         pp.load("phantom_mass", phantom_mass, 0.0);
     }
 
@@ -183,6 +188,31 @@ class SimulationParameters : public SimulationParametersBase
                              spinning_background_file);
             }
         }
+        // The potential's polynomial lives in the table header, beside the
+        // background it was solved with; every potential site reads this copy.
+        try
+        {
+            potential_coeffs =
+                RotatingBackgroundTable::read_header(spinning_background_file)
+                    .potential_coeffs;
+        }
+        catch (const std::exception &e)
+        {
+            amrex::Abort(e.what());
+        }
+        if (!potential_coeffs.empty())
+        {
+            std::ostringstream msg;
+            msg << std::setprecision(17)
+                << "SpinningWormhole potential: V = 1/2 m^2 phi^2 + sum_k a_k "
+                   "phi^k, m = "
+                << phantom_mass << ", a_0.. =";
+            for (const double a : potential_coeffs)
+            {
+                msg << " " << a;
+            }
+            amrex::Print() << msg.str() << "\n";
+        }
         if (tagging_type != 0 && tagging_type != 1)
         {
             amrex::Abort("tagging_type must be 0 (chi) or 1 (fixed boxes)");
@@ -252,6 +282,8 @@ class SimulationParameters : public SimulationParametersBase
     SpinningWormholeInitialData::params_t spinning_params{};
     bool kick_radius_given{};
     double phantom_mass{};
+    //! a_0 .. a_n of the table header's potential_coeffs (empty: none)
+    std::vector<double> potential_coeffs;
 
     SpinningThroatDiagnostics::params_t spinning_diag_params{};
     CoreRadialProfile::params_t core_profile_params{};

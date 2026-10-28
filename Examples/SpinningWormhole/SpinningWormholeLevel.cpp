@@ -30,6 +30,10 @@
 #include <cmath>
 #include <memory>
 
+static_assert(PhantomDecayPotential::max_num_coeffs >=
+                  RotatingBackgroundTable::max_potential_coeffs,
+              "the potential must hold every coefficient the table allows");
+
 namespace
 {
 const SimulationParameters *s_sim_params = nullptr;
@@ -101,7 +105,8 @@ void SpinningWormholeLevel::variableSetUp()
     BL_PROFILE("SpinningWormholeLevel::variableSetUp()");
     stateVariableSetUp();
 
-    PhantomDecayPotential potential;
+    PhantomDecayPotential potential(simParams().phantom_mass,
+                                    simParams().potential_coeffs);
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
     ConstraintsWithMatter<
         ExoticScalarField<PhantomDecayPotential>>::set_up(state_index);
@@ -201,7 +206,8 @@ void SpinningWormholeLevel::specificEvalRHS(amrex::MultiFab &a_soln,
                            positive_chi_lapse(i, j, k, soln_arrs[box_no]);
                        });
 
-    PhantomDecayPotential potential(simParams().phantom_mass);
+    PhantomDecayPotential potential(simParams().phantom_mass,
+                                    simParams().potential_coeffs);
     ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
     CCZ4RHSWithMatter<ExoticScalarField<PhantomDecayPotential>,
                       MovingPunctureGaugeWithMatter, FourthOrderDerivatives>
@@ -444,7 +450,8 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
         amrex::MultiFab cst(state_new.boxArray(), state_new.DistributionMap(),
                             4, 0);
         cst.setVal(0.0);
-        PhantomDecayPotential potential(simParams().phantom_mass);
+        PhantomDecayPotential potential(simParams().phantom_mass,
+                                        simParams().potential_coeffs);
         ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
         const auto dx = Geom().CellSizeArray();
         ConstraintsWithMatter<ExoticScalarField<PhantomDecayPotential>>
@@ -562,7 +569,8 @@ void SpinningWormholeLevel::write_scalar_diagnostics()
             amrex::MultiFab cst(state_lev.boxArray(),
                                 state_lev.DistributionMap(), 4, 0);
             cst.setVal(0.0);
-            PhantomDecayPotential potential(simParams().phantom_mass);
+            PhantomDecayPotential potential(simParams().phantom_mass,
+                                            simParams().potential_coeffs);
             ExoticScalarField<PhantomDecayPotential> exotic_scalar(potential);
             const auto &geom_lev = parent->Geom(lev);
             const auto dx        = geom_lev.CellSizeArray();

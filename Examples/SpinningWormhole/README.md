@@ -14,6 +14,19 @@ O(J²) and full numerical backgrounds all arrive through this file, generated
 by `grteclyn_wrapper.analysis.spinning_wormhole.backgrounds`; the C++ never
 changes with the family.
 
+**Matter backgrounds (optional, backward compatible).** Written by
+`python -m grteclyn_wrapper.optimisation.handoff <npz> --out <table>`. A 7th
+column `B` (header `num_components 7`, `component_names f nu_bar omega
+domega_deta domega_dtheta_over_sintheta phi B`) multiplies the spatial metric
+by B² (lapse and shift unchanged); it enters only through χ (→ χ/B²), since
+h_ij, Ã_ij and Γ̃^i do not change. A header line `potential_coeffs a_0 … a_n`
+(n ≤ 11) adds V = Σ a_k φ^k to the `phantom_mass` term, in G = 1 units and
+the phi column's φ; the evolution solves □φ = dV/dφ with
+R_ab = −8π(∂_aφ ∂_bφ + V g_ab). A 6-column table means B ≡ 1, no line means
+no polynomial, and both run exactly as before. Binaries older than
+`main3d_matter_*` refuse a 7-column table but silently ignore
+`potential_coeffs`.
+
 | file | responsibility |
 |---|---|
 | `RotatingBackgroundTable.hpp` | load + GPU-sample the `.spinbg` table |

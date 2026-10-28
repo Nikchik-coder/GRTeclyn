@@ -35,9 +35,14 @@ r1_0012 is the same model to 0.2 % in v_e on the arctan map the screen was calib
 the pure kink m 0.3 at J = 0 has no unstable radial mode at X 2.356 / 2.485 against the classical 4.89835
 (−52 / −49 %). Classical spinning bills: D51 X 3.39986, D90 0.59955; a 16-eval smoke on D51 already reached
 X 1.60617 clean and stable (−52.8 %). At D90 the start shape (0.3, 1.5, 4.5, 0) costs instead: X 0.91286
-against 0.59955 (+52 %). Live: `cmasd-0012` (card 0, launched 18:08 UTC, 400 evals, ETA ≈ 1 h, ≈ 19:15 UTC /
-22:15 MSK), `cmasd-0005` (card 1: a D90 smoke, then D30's 400 evals); D90's production follows
-on the first freed card. Options on all three: `--engine cma --stability --stall-ok 1e-9 --twin-stall-ok 1e-9`
+against 0.59955 (+52 %), and its 8-eval smoke had every point far above the gate (E19 2e-5 to 1.7e-3): **the
+kink's stiffness is m·R_e, not m** — m is physical, and the [0.15, 1.2] range was tuned on members with R_e
+≈ 1–1.9, where the symmetric winners sat at m·R_e ≈ 0.8–1.1. D30 / D51 (R_e 4.27 / 5.26) still reach that band
+(m·R_e ≥ 0.64 / 0.79) and run as launched; D90 (R_e 23.8, where m 0.3 means m·R_e ≈ 7) reruns with m, its bounds
+and its CMA step scaled by 1/R_e (`--m-step`, x0 m 0.04, bounds [0.012, 0.1]). Live: `cmasd-0012` (card 0,
+launched 18:08 UTC, 400 evals at ~3.3 per minute, ETA ≈ 2 h, ≈ 20:10 UTC / 23:10 MSK), `cmasd-0005` (card 1,
+D30's 400 evals from 18:20 UTC, similar ETA); D90's production follows on the first freed card. Options on all
+three: `--engine cma --stability --stall-ok 1e-9 --twin-stall-ok 1e-9`
 at 150×30 — the drainhole's dense solve floors at 1e-11 to 2e-10 (line search stalled; bisection does not lift
 it), so the 1e-11 step-1 cut cannot hold there, and the identity monitors still gate every accepted solve
 (stalled points come out ABOVE-GATE on E19, so nothing loose reaches the clean class).
@@ -320,10 +325,18 @@ pass the unimposed identities at resolution, and their bill FALLS with the kink 
       midpoint check in f is 5.8e-6 / 1.4e-6 / 3.6e-7 at 1025×65 / 2049×129 / 4097×257 (order 2, against the
       1e-7 bilinear gate); the C++ default is the C2 cubic spline (order 4), whose error is still to be measured
       before a production table is cut.
-    - [ ] *C++* (in progress 2026-10-28): the 7th column B, `potential_coeffs` into a generalised
-      `PhantomDecayPotential` (mass term + coefficients, so the four hard-coded sites only change their
-      constructor arguments), B² on the spatial metric in the initial data, the default path bitwise unchanged,
-      a new binary beside the old ones. The t = 0 check and any evolution wait for the go.
+    - [x] *C++* (2026-10-28; built, never run): `RotatingBackgroundTable.hpp` takes 6 columns, or 7 with B last
+      (refusing any other set, B ≤ 0 and malformed `potential_coeffs`; B interpolated by the same spline loop),
+      `SimulationParameters` reads `potential_coeffs` from the table header (restarts included), and the four
+      `PhantomDecayPotential` sites pass (phantom_mass, coefficients) — a fixed 12-slot device array, Horner for
+      V and V′, the mass-term arithmetic untouched when there are none. In the initial data B enters through χ
+      alone (χ → χ/B²): h_ij, Ã_ij, Γ̃ⁱ, K = 0, lapse and shift are unchanged, since K_ij scales by B² and
+      βᵏ∂_k B = 0. Checked on the host against the HEAD headers on stub AMReX: a 6-column table gives bitwise the
+      old samples and initial data, a 7-column one changes χ alone, K_ij matches L_βγ/2α of the B metric by finite
+      differences to 2e-8, and 13 malformed headers are refused. Binary
+      `runs/spinning_wormhole/bin/main3d_matter_6c7ac156-dirty_2026-10-28.ex` (row in
+      `results/spinningwormhole/binaries.tsv`; its source is 6c7ac156 + the `.patch` beside it, committed next).
+      Not verified: device floating point. The t = 0 check and any evolution wait for the go.
     - [x] *Baseline.* Moving the search to the drainhole (above) means the V = 0 evolution baseline already
       exists for each target member (the spinning paper's D30 / D51 / D90); a family-(b) winner would first need
       a fresh V = 0 fam_b hold past t ≈ 23 (1–2 GPU days, never retried after the 10-17 numerics fixes).

@@ -109,6 +109,11 @@ def main() -> int:
                     help="smallest kink mass the grid resolves (m = 0.1 "
                          "misses the gate below 240x48, step-2 record)")
     ap.add_argument("--m-max", type=float, default=1.2)
+    ap.add_argument("--m-step", type=float, default=SCALES[0],
+                    help="the mass knob's scale (CMA step, simplex edge, "
+                         "seed metric); m is physical, its stiffness is "
+                         "m R_e, so a member with a larger throat takes "
+                         "m, its bounds and this step scaled by 1/R_e")
     ap.add_argument("--engine", choices=["nm", "cma"], default="nm",
                     help="nm: scipy Nelder-Mead (one basin, the first "
                          "pass); cma: CMA-ES (population-based, escapes "
@@ -164,6 +169,7 @@ def main() -> int:
     args = ap.parse_args()
     select_device(args.gpu, args.jac_chunk)
     x0 = np.array([float(v) for v in args.x0.split(",")])
+    scales = np.array([args.m_step, *SCALES[1:]])
     assert x0.size == 4, "--x0 takes m,q1,q2,q3"
 
     sol = Solution.load(args.solution)
@@ -350,7 +356,7 @@ def main() -> int:
         m, q = float(x[0]), tuple(float(v) for v in x[1:])
         near = min(state["solved_j0"],
                    key=lambda s: float(np.sum(np.abs(
-                       (np.array(s) - np.array(key)) / SCALES))))
+                       (np.array(s) - np.array(key)) / scales))))
         _, jnxt = solve_at(x, state["solved_j0"][near], jval=0.0)
         route = "direct"
         if jnxt is None:
@@ -417,7 +423,7 @@ def main() -> int:
         else:
             near = min(state["solved"],
                        key=lambda s: float(np.sum(np.abs(
-                           (np.array(s) - np.array(key)) / SCALES))))
+                           (np.array(s) - np.array(key)) / scales))))
             seed = state["solved"][near]
         row, nxt = solve_at(x, seed)
         lam = None
@@ -520,7 +526,7 @@ def main() -> int:
 
         es = cma.CMAEvolutionStrategy(
             list(x0), args.sigma0,
-            {"CMA_stds": list(SCALES),
+            {"CMA_stds": list(scales),
              "bounds": [[args.m_min, None, None, None],
                         [args.m_max, None, None, None]],
              "popsize": args.popsize, "maxfevals": args.maxfev,
@@ -533,7 +539,7 @@ def main() -> int:
     else:
         from scipy.optimize import minimize
 
-        simplex = np.vstack([x0] + [x0 + SCALES[i] * np.eye(4)[i]
+        simplex = np.vstack([x0] + [x0 + scales[i] * np.eye(4)[i]
                                     for i in range(4)])
         res = minimize(objective, x0, method="Nelder-Mead",
                        options={"maxfev": args.maxfev, "fatol": args.fatol,
